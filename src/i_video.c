@@ -1691,21 +1691,33 @@ void I_GraphicsCheckCommandLine(void)
 
     //!
     // @category video
-    // @arg <WxY>
+    // @arg <WxY>[wf]
     //
-    // Specify the screen mode (when running fullscreen) or the window
-    // dimensions (when running in windowed mode).
+    // Specify the dimensions of the window or fullscreen mode.  An
+    // optional letter of w or f appended to the dimensions selects
+    // windowed or fullscreen mode.
 
     i = M_CheckParmWithArgs("-geometry", 1);
 
     if (i > 0)
     {
-        int w, h;
+        int w, h, s;
+        char f;
 
-        if (sscanf(myargv[i + 1], "%ix%i", &w, &h) == 2)
+        s = sscanf(myargv[i + 1], "%ix%i%1c", &w, &h, &f);
+        if (s == 2 || s == 3)
         {
             screen_width = w;
             screen_height = h;
+
+            if (s == 3 && f == 'f')
+            {
+                fullscreen = true;
+            }
+            else if (s == 3 && f == 'w')
+            {
+                fullscreen = false;
+            }
         }
     }
 
