@@ -199,7 +199,7 @@ static int 	leveljuststarted = 1; 	// kluge until AM_LevelInit() is called
 
 boolean    	automapactive = false;
 static int 	finit_width = SCREENWIDTH;
-static int 	finit_height = SCREENHEIGHT - 32;
+static int 	finit_height = SCREENHEIGHT - (32 << hires); // [crispy] -> [cndoom]
 
 // location of window on screen
 static int 	f_x;
@@ -1320,10 +1320,11 @@ void AM_drawMarks(void)
 	    //      h = SHORT(marknums[i]->height);
 	    w = 5; // because something's wrong with the wad, i guess
 	    h = 6; // because something's wrong with the wad, i guess
-	    fx = CXMTOF(markpoints[i].x);
-	    fy = CYMTOF(markpoints[i].y);
-	    if (fx >= f_x && fx <= f_w - w && fy >= f_y && fy <= f_h - h)
-		V_DrawPatch(fx, fy, marknums[i]);
+	    // [crispy] center marks around player -> [cndoom]
+	    fx = (CXMTOF(markpoints[i].x) >> hires) - 1;
+	    fy = (CYMTOF(markpoints[i].y) >> hires) - 2;
+	    if (fx >= f_x && fx <= (f_w >> hires) - w && fy >= f_y && fy <= (f_h >> hires) - h)
+		V_DrawPatch(fx >> hires, fy >> hires, marknums[i]);
 	}
     }
 

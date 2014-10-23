@@ -13,7 +13,8 @@ Detailed explanation about each setting:
 // Competition doom behaviour
 // 0 - No, 1 - Yes (Default)
 // If disabled it will behave the same as original Chocolate Doom
-cn_compat                     1
+//cn_compat                     1
+// This is a TODO
 
 // Display ingame/intermission screen timer
 // 0 - No, 1 - Yes (Default)

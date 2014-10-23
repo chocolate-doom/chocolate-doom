@@ -15,6 +15,7 @@
 #include "r_main.h"
 #include "g_game.h"
 #include "wi_stuff.h"
+#include "m_misc.h"
 
 static int timer_x, timer_y;			// final calculated position
 static int timer_width, timer_height;		// and size
@@ -151,7 +152,7 @@ void CN_DrawIntermissionTime (int x, int y, int time)
     w += 4;
     x -= w;
 
-    CN_DimBox (x, y-1, w, SHORT(winum[0]->height) + 2, 20);
+    // CN_DimBox (x, y-1, w, SHORT(winum[0]->height) + 2, 20); broken after high resolution
 
     x += w-2;
 

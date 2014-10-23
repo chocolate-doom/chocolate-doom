@@ -128,7 +128,7 @@ typedef	struct
 
     int			linecount;
     struct line_s**	lines;	// [linecount] size
-    
+
 } sector_t;
 
 
@@ -184,7 +184,7 @@ typedef struct line_s
     fixed_t	dy;
 
     // Animation related.
-    short	flags;
+    unsigned short	flags; // [crispy] extended nodes
     short	special;
     short	tag;
 
@@ -431,15 +431,15 @@ typedef struct
   
   // leave pads for [minx-1]/[maxx+1]
   
-  byte		pad1;
+  unsigned short		pad1; // [crispy] hires -> [cndoom]
   // Here lies the rub for all
   //  dynamic resize/change of resolution.
-  byte		top[SCREENWIDTH];
-  byte		pad2;
-  byte		pad3;
+  unsigned short		top[SCREENWIDTH]; // [crispy] hires -> [cndoom]
+  unsigned short		pad2; // [crispy] hires -> [cndoom]
+  unsigned short		pad3; // [crispy] hires -> [cndoom]
   // See above.
-  byte		bottom[SCREENWIDTH];
-  byte		pad4;
+  unsigned short		bottom[SCREENWIDTH]; // [crispy] hires -> [cndoom]
+  unsigned short		pad4; // [crispy] hires -> [cndoom]
 
 } visplane_t;
 
