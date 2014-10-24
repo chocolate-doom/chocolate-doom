@@ -24,18 +24,18 @@
 
 // Screen width and height.
 
-// [crispy] -> [cndoom]
+// [crispy] -> [cndoom] high resolution
 #define hires 1
 #define ORIGWIDTH  320
 #define ORIGHEIGHT 200
 #define SCREENWIDTH  (ORIGWIDTH << hires)
 #define SCREENHEIGHT (ORIGHEIGHT << hires)
 
-// Screen width used for "squash" scale functions // [crispy] -> [cndoom]
+// Screen width used for "squash" scale functions // [crispy] -> [cndoom] high resolution
 
 #define SCREENWIDTH_4_3 (256 << hires)
 
-// Screen height used for "stretch" scale functions. // [crispy] -> [cndoom]
+// Screen height used for "stretch" scale functions. // [crispy] -> [cndoom] high resolution
 
 #define SCREENHEIGHT_4_3 (240 << hires)
 
@@ -146,9 +146,9 @@ extern boolean screenvisible;
 
 extern float mouse_acceleration;
 extern int mouse_threshold;
-//extern float mouse_acceleration_y;
-//extern int mouse_threshold_y;
-//extern int mouse_y_invert;
+//extern float mouse_acceleration_y; // [crispy] mouse y
+//extern int mouse_threshold_y; // [crispy] mouse y
+//extern int mouse_y_invert; // [crispy] mouse y
 extern int vanilla_keyboard_mapping;
 extern boolean screensaver_mode;
 extern int usegamma;
@@ -159,6 +159,6 @@ extern int screen_height;
 extern int screen_bpp;
 extern int fullscreen;
 extern int aspect_ratio_correct;
-// extern int novert;
+// extern int novert;  // [crispy] mouse y
 
 #endif

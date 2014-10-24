@@ -130,7 +130,7 @@ boolean         main_loop_started = false;
 char		wadfile[1024];		// primary wad file
 char		mapdir[1024];           // directory of development maps
 
-// int             cn_secretmessage = 0; // [crispy] -> [cndoom]
+// int             cn_secretmessage = 0; // [crispy] -> [cndoom] high resolution
 int             show_endoom = 0; // [cndoom]
 
 boolean         noblit;          //  [cndoom]
@@ -225,11 +225,11 @@ void D_Display (void)
 	    break;
 	if (automapactive)
 	    AM_Drawer ();
-	if (wipe || (scaledviewheight != (200 << hires) && fullscreen) ) // [crispy] -> [cndoom]
+	if (wipe || (scaledviewheight != (200 << hires) && fullscreen) ) // [crispy] -> [cndoom] high resolution
 	    redrawsbar = true;
 	if (inhelpscreensstate && !inhelpscreens)
 	    redrawsbar = true;              // just put away the help screen
-	ST_Drawer (scaledviewheight == (200 << hires), redrawsbar ); // [crispy] -> [cndoom]
+	ST_Drawer (scaledviewheight == (200 << hires), redrawsbar ); // [crispy] -> [cndoom] high resolution
     fullscreen = scaledviewheight == (200 << hires);
 	break;
 
@@ -268,7 +268,7 @@ void D_Display (void)
     }
 
     // see if the border needs to be updated to the screen
-    if (gamestate == GS_LEVEL && !automapactive && scaledviewwidth != (320 << hires)) // [crispy] -> [cndoom]
+    if (gamestate == GS_LEVEL && !automapactive && scaledviewwidth != (320 << hires)) // [crispy] -> [cndoom] high resolution
     {
 	if (menuactive || menuactivestate || !viewactivestate)
 	    borderdrawcount = 3;
@@ -298,9 +298,9 @@ void D_Display (void)
 	if (automapactive)
 	    y = 4;
 	else
-	    y = (viewwindowy >> hires)+4; // [crispy] -> [cndoom]
+	    y = (viewwindowy >> hires)+4; // [crispy] -> [cndoom] high resolution
 	V_DrawPatchDirect((viewwindowx >> hires) + ((scaledviewwidth >> hires) - 68) / 2, y,
-                          W_CacheLumpName (DEH_String("M_PAUSE"), PU_CACHE)); // [crispy] -> [cndoom]
+                          W_CacheLumpName (DEH_String("M_PAUSE"), PU_CACHE)); // [crispy] -> [cndoom] high resolution
     }
 
 
@@ -427,7 +427,7 @@ void D_BindVariables(void)
     M_BindVariable("cn_timer_offset_y",      &cn_timer_offset_y);
     M_BindVariable("cn_timer_color_index",   &cn_timer_color_index);
     M_BindVariable("cn_timer_shadow_index",  &cn_timer_shadow_index);
-//    M_BindVariable("cn_secretmessage",       &cn_secretmessage); // [crispy] -> [cndoom]
+//    M_BindVariable("cn_secretmessage",       &cn_secretmessage); // [crispy] -> [cndoom] high resolution
 
     // Multiplayer chat macros
 

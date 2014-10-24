@@ -431,15 +431,15 @@ typedef struct
   
   // leave pads for [minx-1]/[maxx+1]
   
-  unsigned short		pad1; // [crispy] hires -> [cndoom]
+  unsigned short		pad1; // [crispy] -> [cndoom] high resolution
   // Here lies the rub for all
   //  dynamic resize/change of resolution.
-  unsigned short		top[SCREENWIDTH]; // [crispy] hires -> [cndoom]
-  unsigned short		pad2; // [crispy] hires -> [cndoom]
-  unsigned short		pad3; // [crispy] hires -> [cndoom]
+  unsigned short		top[SCREENWIDTH]; // [crispy] -> [cndoom] high resolution
+  unsigned short		pad2; // [crispy] -> [cndoom] high resolution
+  unsigned short		pad3; // [crispy] -> [cndoom] high resolution
   // See above.
-  unsigned short		bottom[SCREENWIDTH]; // [crispy] hires -> [cndoom]
-  unsigned short		pad4; // [crispy] hires -> [cndoom]
+  unsigned short		bottom[SCREENWIDTH]; // [crispy] -> [cndoom] high resolution
+  unsigned short		pad4; // [crispy] -> [cndoom] high resolution
 
 } visplane_t;
 

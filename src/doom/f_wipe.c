@@ -268,7 +268,7 @@ wipe_ScreenWipe
 	wipe_initMelt, wipe_doMelt, wipe_exitMelt
     };
 
-    ticks <<= hires; // [crispy] -> [cndoom]
+    ticks <<= hires; // [crispy] -> [cndoom] high resolution
 
     // initial stuff
     if (!go)

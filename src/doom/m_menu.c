@@ -68,6 +68,7 @@ extern boolean		chat_on;		// in heads-up code
 // defaulted values
 //
 int			mouseSensitivity = 5;
+// int			mouseSensitivity_y = 5; // [crispy] mouse y
 
 // Show messages has default, 0 = off, 1 = on
 int			showMessages = 1;
@@ -186,11 +187,13 @@ void M_QuitDOOM(int choice);
 
 void M_ChangeMessages(int choice);
 void M_ChangeSensitivity(int choice);
+// static void M_ChangeSensitivity_y(int choice); // [crispy] mouse y
 void M_SfxVol(int choice);
 void M_MusicVol(int choice);
 void M_ChangeDetail(int choice);
 void M_SizeDisplay(int choice);
 void M_StartGame(int choice);
+// static void M_Mouse(int choice); // [crispy] mouse y
 void M_Sound(int choice);
 
 void M_FinishReadThis(int choice);
@@ -206,6 +209,7 @@ void M_DrawReadThis2(void);
 void M_DrawNewGame(void);
 void M_DrawEpisode(void);
 void M_DrawOptions(void);
+// static void M_DrawMouse(void); // [crispy] mouse y
 void M_DrawSound(void);
 void M_DrawLoad(void);
 void M_DrawSave(void);
@@ -348,6 +352,7 @@ menuitem_t OptionsMenu[]=
     {1,"M_DETAIL",	M_ChangeDetail,'g'},
     {2,"M_SCRNSZ",	M_SizeDisplay,'s'},
     {-1,"",0,'\0'},
+//    {1,"M_MSENS",	M_Mouse,'m', "Mouse Sensitivity"}, // [crispy] mouse sensitivity menu 
     {2,"M_MSENS",	M_ChangeSensitivity,'m'},
     {-1,"",0,'\0'},
     {1,"M_SVOL",	M_Sound,'s'}
@@ -363,6 +368,39 @@ menu_t  OptionsDef =
     0
 };
 
+/*
+// [crispy] mouse sensitivity menu
+enum
+{
+    mouse_horiz,
+    mouse_empty1,
+    mouse_vert,
+    mouse_empty2,
+    mouse_invert,
+    mouse_look,
+    mouse_end
+} mouse_e;
+
+static menuitem_t MouseMenu[]=
+{
+    {2,"",	M_ChangeSensitivity,'h'},
+    {-1,"",0,'\0'},
+    {2,"",	M_ChangeSensitivity_y,'v'},
+    {-1,"",0,'\0'},
+    {1,"",	M_MouseInvert,'i'},
+    {1,"",	M_MouseLook,'l'},
+};
+
+static menu_t  MouseDef =
+{
+    mouse_end,
+    &OptionsDef,
+    MouseMenu,
+    M_DrawMouse,
+    80,64,
+    0
+};
+*/
 //
 // Read This! MENU 1 & 2
 //
@@ -1014,6 +1052,33 @@ void M_DrawOptions(void)
                       W_CacheLumpName(DEH_String(msgNames[showMessages]),
                                       PU_CACHE));
 
+/*
+// [crispy] mouse sensitivity menu
+static void M_DrawMouse(void)
+{
+    char mouse_menu_text[48];
+    V_DrawPatchDirect (60, 38, W_CacheLumpName(DEH_String("M_MSENS"), PU_CACHE));
+    M_WriteText(MouseDef.x, MouseDef.y + LINEHEIGHT * mouse_horiz + 6,
+                "HORIZONTAL");
+    M_DrawThermo(MouseDef.x, MouseDef.y + LINEHEIGHT * mouse_empty1,
+		 21, mouseSensitivity);
+    M_WriteText(MouseDef.x, MouseDef.y + LINEHEIGHT * mouse_vert + 6,
+                "VERTICAL");
+    M_DrawThermo(MouseDef.x, MouseDef.y + LINEHEIGHT * mouse_empty2,
+		 21, mouseSensitivity_y);
+    M_snprintf(mouse_menu_text, sizeof(mouse_menu_text),
+               "%sInvert Mouse: %s%s", crstr[CR_NONE], crstr[CR_GREEN],
+               mouse_y_invert ? "On" : "Off");
+    M_WriteText(MouseDef.x, MouseDef.y + LINEHEIGHT * mouse_invert + 6,
+                mouse_menu_text);
+    M_snprintf(mouse_menu_text, sizeof(mouse_menu_text),
+               "%sPermanent Mouse Look: %s%s", crstr[CR_NONE], crstr[CR_GREEN],
+               crispy_mouselook ? "On" : "Off");
+    M_WriteText(MouseDef.x, MouseDef.y + LINEHEIGHT * mouse_look + 6,
+                mouse_menu_text);
+    V_ClearDPTranslation();
+}
+*/
     M_DrawThermo(OptionsDef.x, OptionsDef.y + LINEHEIGHT * (mousesens + 1),
 		 10, mouseSensitivity);
 
@@ -1025,8 +1090,25 @@ void M_Options(int choice)
 {
     M_SetupNextMenu(&OptionsDef);
 }
+/*
+// [crispy] correctly handle inverted y-axis
+static void M_Mouse(int choice)
+{
+    if (mouseSensitivity_y < 0)
+    {
+        mouseSensitivity_y = -mouseSensitivity_y;
+        mouse_y_invert = 1;
+    }
 
+    if (mouse_acceleration_y < 0)
+    {
+        mouse_acceleration_y = -mouse_acceleration_y;
+        mouse_y_invert = 1;
+    }
 
+    M_SetupNextMenu(&MouseDef);
+}
+*/
 
 //
 //      Toggle messages on/off
@@ -1202,13 +1284,43 @@ void M_ChangeSensitivity(int choice)
 	    mouseSensitivity--;
 	break;
       case 1:
+    // if (mouseSensitivity < 255) // [crispy] extended range
 	if (mouseSensitivity < 9)
 	    mouseSensitivity++;
 	break;
     }
 }
 
+/*
+static void M_ChangeSensitivity_y(int choice)
+{
+    switch(choice)
+    {
+      case 0:
+	if (mouseSensitivity_y)
+	    mouseSensitivity_y--;
+	break;
+      case 1:
+	if (mouseSensitivity_y < 255) // [crispy] extended range
+	    mouseSensitivity_y++;
+	break;
+    }
+}
 
+static void M_MouseInvert(int choice)
+{
+    choice = 0;
+    mouse_y_invert = 1 - mouse_y_invert;
+}
+
+static void M_MouseLook(int choice)
+{
+    choice = 0;
+    crispy_mouselook = 1 - crispy_mouselook;
+
+    players2[consoleplayer].lookdir = 0;
+}
+*/
 
 
 void M_ChangeDetail(int choice)
@@ -1277,8 +1389,20 @@ M_DrawThermo
     }
     V_DrawPatchDirect(xx, y, W_CacheLumpName(DEH_String("M_THERMR"), PU_CACHE));
 
+    /*
+    // [crispy] do not crash anymore if value exceeds thermometer range
+    if (thermDot >= thermWidth)
+    {
+        char num[4];
+        M_snprintf(num, 4, "%3d", thermDot);
+        M_WriteText(xx + 8, y + 3, num);
+        thermDot = thermWidth - 1;
+        dp_translation = cr[CR_DARK];
+    }
+    */
     V_DrawPatchDirect((x + 8) + thermDot * 8, y,
 		      W_CacheLumpName(DEH_String("M_THERMO"), PU_CACHE));
+    // V_ClearDPTranslation(); [crispy]
 }
 
 
@@ -1407,7 +1531,7 @@ M_WriteText
 	}
 		
 	w = SHORT (hu_font[c]->width);
-	if (cx+w > SCREENWIDTH)
+	if (cx+w > ORIGWIDTH) // [crispy] -> [cndoom] high resolution
 	    break;
 	V_DrawPatchDirect(cx, cy, hu_font[c]);
 	cx+=w;

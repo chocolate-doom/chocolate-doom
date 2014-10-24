@@ -254,7 +254,7 @@
 #define ST_OUTHEIGHT		1
 
 #define ST_MAPTITLEX \
-    (ORIGWIDTH - ST_MAPWIDTH * ST_CHATFONTWIDTH) // [crispy] -> [cndoom]
+    (ORIGWIDTH - ST_MAPWIDTH * ST_CHATFONTWIDTH) // [crispy] -> [cndoom] high resolution
 
 #define ST_MAPTITLEY		0
 #define ST_MAPHEIGHT		1
@@ -1413,6 +1413,6 @@ void ST_Stop (void)
 void ST_Init (void)
 {
     ST_loadData();
-    st_backing_screen = (byte *) Z_Malloc((ST_WIDTH << hires) * (ST_HEIGHT << hires), PU_STATIC, 0); // [crispy] -> [cndoom]
+    st_backing_screen = (byte *) Z_Malloc((ST_WIDTH << hires) * (ST_HEIGHT << hires), PU_STATIC, 0); // [crispy] -> [cndoom] high resolution
 }
 

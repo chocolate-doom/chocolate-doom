@@ -28,8 +28,8 @@
 // Size of statusbar.
 // Now sensitive for scaling.
 #define ST_HEIGHT	32
-#define ST_WIDTH	ORIGWIDTH // [crispy] -> [cndoom]
-#define ST_Y		(ORIGHEIGHT - ST_HEIGHT) // [crispy] -> [cndoom]
+#define ST_WIDTH	ORIGWIDTH // [crispy] -> [cndoom] high resolution
+#define ST_Y		(ORIGHEIGHT - ST_HEIGHT) // [crispy] -> [cndoom] high resolution
 
 
 //

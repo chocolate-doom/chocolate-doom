@@ -1314,7 +1314,7 @@ void WI_drawNetgameStats(void)
 
     // [cndoom] draw timer for NET games
     V_DrawPatch(SP_TIMEX, SP_TIMEY, timepatch); // [cndoom] timer
-	CN_DrawIntermissionTime (SCREENWIDTH/2-SP_TIMEX+16 /* + 2*SHORT(winum[0]->width) + SHORT(wicolon->width) */,
+	CN_DrawIntermissionTime (ORIGWIDTH/2-SP_TIMEX+16 /* + 2*SHORT(winum[0]->width) + SHORT(wicolon->width) */,
 				 SP_TIMEY /* + SHORT(timepatch->height) */,
 				 plrs[me].stime);
             

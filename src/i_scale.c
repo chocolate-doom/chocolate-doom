@@ -51,7 +51,7 @@ static int dest_pitch;
 
 static byte *stretch_tables[2] = { NULL, NULL };
 
-// 25%/75% stretch table, for 400x300 squash mode [crispy] -> [cndoom]
+// 25%/75% stretch table, for 400x300 squash mode [crispy] -> [cndoom] high resolution
 
 static byte *quarter_stretch_table = NULL;
 
@@ -236,7 +236,7 @@ screen_mode_t mode_scale_4x = {
     SCREENWIDTH * 4, SCREENHEIGHT * 4,
     NULL,
     I_Scale4x,
-    false || hires, // [crispy] -> [cndoom]
+    false || hires, // [crispy] -> [cndoom] high resolution
 };
 
 // 5x scale (1600x1000)
@@ -289,7 +289,7 @@ screen_mode_t mode_scale_5x = {
     SCREENWIDTH * 5, SCREENHEIGHT * 5,
     NULL,
     I_Scale5x,
-    false || hires, // [crispy] -> [cndoom]
+    false || hires, // [crispy] -> [cndoom] high resolution
 };
 
 
@@ -395,10 +395,10 @@ static void I_InitSquashTable(byte *palette)
         return;
     }
 
-    printf("I_InitSquashTable: Generating lookup tables.."); // [crispy] -> [cndoom]
+    printf("I_InitSquashTable: Generating lookup tables.."); // [crispy] -> [cndoom] high resolution
     fflush(stdout);
     half_stretch_table = GenerateStretchTable(palette, 50);
-    // [crispy] -> [cndoom]
+    // [crispy] -> [cndoom] high resolution
     printf(".."); fflush(stdout);
 
     if (quarter_stretch_table != NULL)
@@ -408,7 +408,7 @@ static void I_InitSquashTable(byte *palette)
     }
 
     quarter_stretch_table = GenerateStretchTable(palette, 25);
-    //
+
     puts("");
 }
 
@@ -436,15 +436,14 @@ void I_ResetScaleTables(byte *palette)
 
         half_stretch_table = GenerateStretchTable(palette, 50);
     }
-    // [crispy] -> [cndoom]
-    if (quarter_stretch_table != NULL)
+    if (quarter_stretch_table != NULL) // [crispy] -> [cndoom] high resolution
     {
         Z_Free(quarter_stretch_table);
 
         printf("I_ResetScaleTables: Regenerating lookup table..\n");
 
         quarter_stretch_table = GenerateStretchTable(palette, 25);
-    } //
+    }
 }
 
 
@@ -525,7 +524,7 @@ screen_mode_t mode_stretch_1x = {
     SCREENWIDTH, SCREENHEIGHT_4_3,
     I_InitStretchTables,
     I_Stretch1x,
-    true && !hires, // [crispy] -> [cndoom]
+    true && !hires, // [crispy] -> [cndoom] high resolution
 };
 
 static inline void WriteLine2x(byte *dest, byte *src)
@@ -777,7 +776,7 @@ screen_mode_t mode_stretch_3x = {
     SCREENWIDTH * 3, SCREENHEIGHT_4_3 * 3,
     I_InitStretchTables,
     I_Stretch3x,
-    false || hires, // [crispy] -> [cndoom]
+    false || hires, // [crispy] -> [cndoom] high resolution
 };
 
 static inline void WriteLine4x(byte *dest, byte *src)
@@ -942,7 +941,7 @@ screen_mode_t mode_stretch_4x = {
     SCREENWIDTH * 4, SCREENHEIGHT_4_3 * 4,
     I_InitStretchTables,
     I_Stretch4x,
-    false || hires, // [crispy] -> [cndoom]
+    false || hires, // [crispy] -> [cndoom] high resolution
 };
 
 static inline void WriteLine5x(byte *dest, byte *src)
@@ -1013,7 +1012,7 @@ static boolean I_Stretch5x(int x1, int y1, int x2, int y2)
     // test hack for Porsche Monty... scan line simulation:
     // See here: http://www.doomworld.com/vb/post/962612
 
-    if (M_CheckParm("-scanline") > 0 && !hires) // [crispy] -> [cndoom]
+    if (M_CheckParm("-scanline") > 0 && !hires) // [crispy] -> [cndoom] high resolution
     {
         screenp = (byte *) dest_buffer + 2 * dest_pitch;
 
@@ -1032,7 +1031,7 @@ screen_mode_t mode_stretch_5x = {
     SCREENWIDTH * 5, SCREENHEIGHT_4_3 * 5,
     I_InitStretchTables,
     I_Stretch5x,
-    false || hires, // [crispy] -> [cndoom]
+    false || hires, // [crispy] -> [cndoom] high resolution
 };
 
 //
@@ -1115,7 +1114,7 @@ screen_mode_t mode_squash_1x = {
     true,
 };
 
-// [crispy] -> [cndoom]
+// [crispy] -> [cndoom] high resolution
 // 1.5x squashed scale (400x300)
 //
 
@@ -1377,7 +1376,7 @@ static boolean I_Squash3x(int x1, int y1, int x2, int y2)
 }
 
 screen_mode_t mode_squash_3x = {
-    800 << hires, 600 << hires, // [crispy] -> [cndoom]
+    800 << hires, 600 << hires, // [crispy] -> [cndoom] high resolution
     I_InitSquashTable,
     I_Squash3x,
     false,
@@ -1491,7 +1490,7 @@ screen_mode_t mode_squash_4x = {
     SCREENWIDTH_4_3 * 4, SCREENHEIGHT * 4,
     I_InitStretchTables,
     I_Squash4x,
-    false || hires, // [crispy] -> [cndoom]
+    false || hires, // [crispy] -> [cndoom] high resolution
 };
 
 #define DRAW_PIXEL5 \
@@ -1556,7 +1555,7 @@ screen_mode_t mode_squash_5x = {
     SCREENWIDTH_4_3 * 5, SCREENHEIGHT * 5,
     I_InitStretchTables,
     I_Squash5x,
-    false || hires, // [crispy] -> [cndoom]
+    false || hires, // [crispy] -> [cndoom] high resolution
 };
 
 
