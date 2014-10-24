@@ -1247,34 +1247,26 @@ static void RestartCurrentTrack(void)
     double start = (double) file_metadata.start_time
                  / file_metadata.samplerate_hz;
 
-    // If the track is playing on loop then reset to the start point.
-    // Otherwise we need to stop the track.
-    if (current_track_loop)
+    // If the track finished we need to restart it.
+    if (current_track_music != NULL)
     {
-        // If the track finished we need to restart it.
-        if (current_track_music != NULL)
-        {
-            Mix_PlayMusic(current_track_music, 1);
-        }
+        Mix_PlayMusic(current_track_music, 1);
+    }
 
-        Mix_SetMusicPosition(start);
-        SDL_LockAudio();
-        current_track_pos = file_metadata.start_time;
-        SDL_UnlockAudio();
-    }
-    else
-    {
-        Mix_HaltMusic();
-        current_track_music = NULL;
-        playing_substitute = false;
-    }
+    Mix_SetMusicPosition(start);
+    SDL_LockAudio();
+    current_track_pos = file_metadata.start_time;
+    SDL_UnlockAudio();
 }
 
 // Poll music position; if we have passed the loop point end position
 // then we need to go back.
 static void I_SDL_PollMusic(void)
 {
-    if (playing_substitute && file_metadata.valid)
+    // When playing substitute tracks, loop tags only apply if we're playing
+    // a looping track. Tracks like the title screen music have the loop
+    // tags ignored.
+    if (current_track_loop && playing_substitute && file_metadata.valid)
     {
         double end = (double) file_metadata.end_time
                    / file_metadata.samplerate_hz;
@@ -1286,7 +1278,7 @@ static void I_SDL_PollMusic(void)
         }
 
         // Have we reached the actual end of track (not loop end)?
-        if (!Mix_PlayingMusic() && current_track_loop)
+        if (!Mix_PlayingMusic())
         {
             RestartCurrentTrack();
         }
