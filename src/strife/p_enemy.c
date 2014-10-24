@@ -3163,6 +3163,10 @@ void A_TeleportBeacon(mobj_t* actor)
 
     mobj = P_SpawnMobj(actor->x, actor->y, ONFLOORZ, MT_REBEL1);
 
+    // haleyjd 20141024: missing code from disassembly; transfer allegiance
+    // originally from master player to the rebel.
+    mobj->miscdata = actor->miscdata;
+
     if(!P_TryMove(mobj, mobj->x, mobj->y))
     {
         // Rebel is probably stuck in something.. too bad
