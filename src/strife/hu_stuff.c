@@ -667,6 +667,10 @@ boolean HU_Responder(event_t *ev)
                         DEH_snprintf(lastmessage, sizeof(lastmessage),
                             "%s now %.13s", player_names[consoleplayer],
                             w_chat.l.l);
+                        // haleyjd 20141024: missing name set for local client
+                        DEH_snprintf(player_names[consoleplayer],
+                            sizeof(player_names[consoleplayer]),
+                            "%.13s: ", w_chat.l.l);
                         hu_setting_name = false;
                     }
                     else
