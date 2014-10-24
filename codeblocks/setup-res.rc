@@ -1,21 +1,21 @@
 1 ICON "../data/setup.ico"
 
 1 VERSIONINFO
-PRODUCTVERSION 2,0,0,0
-FILEVERSION 2,0,0,0
+PRODUCTVERSION 2,0,3,1
+FILEVERSION 2,0,3,1
 FILETYPE 1
 {
  BLOCK "StringFileInfo"
  {
   BLOCK "040904E4"
   {
-   VALUE "FileVersion", "2.0.0"
-   VALUE "FileDescription", "Chocolate Doom Setup"
-   VALUE "InternalName", "chocolate-setup"
-   VALUE "CompanyName", "Chocolate Doom"
+   VALUE "FileVersion", "2.0.3.1"
+   VALUE "FileDescription", "Competition Doom Setup"
+   VALUE "InternalName", "cnsetup"
+   VALUE "CompanyName", "Competition Doom"
    VALUE "LegalCopyright", "GNU General Public License"
-   VALUE "ProductName", "Chocolate Doom Setup"
-   VALUE "ProductVersion", "2.0.0"
+   VALUE "ProductName", "Competition Doom Setup"
+   VALUE "ProductVersion", "2.0.3.1"
   }
  }
  BLOCK "VarFileInfo"

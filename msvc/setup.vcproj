@@ -143,7 +143,7 @@
 				OutputFile="$(OutDir)\cnsetup.exe"
 				IgnoreDefaultLibraryNames="msvcrtd"
 				GenerateDebugInformation="false"
-				SubSystem="2"
+				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				TargetMachine="1"
@@ -205,6 +205,10 @@
 			</File>
 			<File
 				RelativePath="..\src\setup\execute.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\i_main.c"
 				>
 			</File>
 			<File
@@ -276,31 +280,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\setup\setup_icon.c"
+				>
+			</File>
+			<File
 				RelativePath="..\src\setup\sound.c"
 				>
 			</File>
 			<File
-				RelativePath="..\textscreen\txt_button.c"
-				>
-			</File>
-			<File
-				RelativePath="..\textscreen\txt_checkbox.c"
-				>
-			</File>
-			<File
-				RelativePath="..\textscreen\txt_desktop.c"
-				>
-			</File>
-			<File
-				RelativePath="..\textscreen\txt_dropdown.c"
-				>
-			</File>
-			<File
-				RelativePath="..\textscreen\txt_fileselect.c"
-				>
-			</File>
-			<File
-				RelativePath="..\textscreen\txt_inputbox.c"
+				RelativePath="..\src\setup\txt_joyaxis.c"
 				>
 			</File>
 			<File
@@ -312,15 +300,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\textscreen\txt_label.c"
-				>
-			</File>
-			<File
 				RelativePath="..\src\setup\txt_mouseinput.c"
-				>
-			</File>
-			<File
-				RelativePath="..\textscreen\txt_radiobutton.c"
 				>
 			</File>
 			<File
@@ -328,35 +308,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\textscreen\txt_separator.c"
-				>
-			</File>
-			<File
-				RelativePath="..\textscreen\txt_spinctrl.c"
-				>
-			</File>
-			<File
-				RelativePath="..\textscreen\txt_strut.c"
-				>
-			</File>
-			<File
-				RelativePath="..\textscreen\txt_table.c"
-				>
-			</File>
-			<File
-				RelativePath="..\textscreen\txt_widget.c"
-				>
-			</File>
-			<File
-				RelativePath="..\textscreen\txt_window.c"
-				>
-			</File>
-			<File
-				RelativePath="..\textscreen\txt_window_action.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\z_native.c"
+				RelativePath="..\src\z_zone.c"
 				>
 			</File>
 		</Filter>
@@ -374,14 +326,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\config.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\doom\d_englsh.h"
-				>
-			</File>
-			<File
 				RelativePath="..\src\d_iwad.h"
 				>
 			</File>
@@ -395,18 +339,6 @@
 			</File>
 			<File
 				RelativePath="..\src\setup\display.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\doomfeatures.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\doomkeys.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\doomtype.h"
 				>
 			</File>
 			<File
@@ -458,10 +390,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\net_defs.h"
-				>
-			</File>
-			<File
 				RelativePath="..\src\net_io.h"
 				>
 			</File>
@@ -486,31 +414,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\textscreen\textscreen.h"
-				>
-			</File>
-			<File
-				RelativePath="..\textscreen\txt_button.h"
-				>
-			</File>
-			<File
-				RelativePath="..\textscreen\txt_checkbox.h"
-				>
-			</File>
-			<File
-				RelativePath="..\textscreen\txt_desktop.h"
-				>
-			</File>
-			<File
-				RelativePath="..\textscreen\txt_dropdown.h"
-				>
-			</File>
-			<File
-				RelativePath="..\textscreen\txt_fileselect.h"
-				>
-			</File>
-			<File
-				RelativePath="..\textscreen\txt_inputbox.h"
+				RelativePath="..\src\setup\txt_joyaxis.h"
 				>
 			</File>
 			<File
@@ -522,51 +426,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\textscreen\txt_label.h"
-				>
-			</File>
-			<File
-				RelativePath="..\textscreen\txt_main.h"
-				>
-			</File>
-			<File
 				RelativePath="..\src\setup\txt_mouseinput.h"
 				>
 			</File>
 			<File
-				RelativePath="..\textscreen\txt_radiobutton.h"
-				>
-			</File>
-			<File
 				RelativePath="..\textscreen\txt_scrollpane.h"
-				>
-			</File>
-			<File
-				RelativePath="..\textscreen\txt_separator.h"
-				>
-			</File>
-			<File
-				RelativePath="..\textscreen\txt_spinctrl.h"
-				>
-			</File>
-			<File
-				RelativePath="..\textscreen\txt_strut.h"
-				>
-			</File>
-			<File
-				RelativePath="..\textscreen\txt_table.h"
-				>
-			</File>
-			<File
-				RelativePath="..\textscreen\txt_widget.h"
-				>
-			</File>
-			<File
-				RelativePath="..\textscreen\txt_window.h"
-				>
-			</File>
-			<File
-				RelativePath="..\textscreen\txt_window_action.h"
 				>
 			</File>
 			<File

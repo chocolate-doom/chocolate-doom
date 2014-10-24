@@ -159,7 +159,7 @@ R_RenderMaskedSegRange
 	{
 	    if (!fixedcolormap)
 	    {
-		index = spryscale>>LIGHTSCALESHIFT;
+		index = spryscale>>(LIGHTSCALESHIFT - (detailshift && hires) + hires); // [crispy] -> [cndoom] high resolution
 
 		if (index >=  MAXLIGHTSCALE )
 		    index = MAXLIGHTSCALE-1;
@@ -257,7 +257,7 @@ void R_RenderSegLoop (void)
 	    texturecolumn = rw_offset-FixedMul(finetangent[angle],rw_distance);
 	    texturecolumn >>= FRACBITS;
 	    // calculate lighting
-	    index = rw_scale>>LIGHTSCALESHIFT;
+	    index = rw_scale>>(LIGHTSCALESHIFT - (detailshift && hires) + hires); // [crispy] -> [cndoom] high resolution
 
 	    if (index >=  MAXLIGHTSCALE )
 		index = MAXLIGHTSCALE-1;

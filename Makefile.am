@@ -3,7 +3,7 @@ AUX_DIST_GEN =                          \
         $(ac_aux_dir)/missing
 
 MSVC_FILES=                             \
-        msvc/chocolate.sln              \
+        msvc/cndoom.sln                 \
         msvc/config.h                   \
         msvc/doom.vcproj                \
         msvc/heretic.vcproj             \
@@ -18,7 +18,7 @@ MSVC_FILES=                             \
         msvc/win32.rc
 
 CODEBLOCKS_FILES=                              \
-        codeblocks/chocolate.workspace         \
+        codeblocks/cndoom.workspace            \
         codeblocks/config.h                    \
         codeblocks/doom.cbp                    \
         codeblocks/game-res.rc                 \
@@ -47,6 +47,7 @@ EXTRA_DIST=                             \
         README.Strife                   \
         .lvimrc                         \
         HACKING                         \
+        TODO                            \
         rpm.spec
 
 doomdocsdir = ${docdir}/../${PROGRAM_PREFIX}doom

@@ -1,30 +1,30 @@
 
 /* Name of package */
-#define PACKAGE "chocolate-doom"
+#define PACKAGE "cndoom"
 
 /* Define to the address where bug reports for this package should be sent. */
-#define PACKAGE_BUGREPORT "fraggle@gmail.com"
+#define PACKAGE_BUGREPORT "admin@doom.com.hr"
 
 /* Define to the full name of this package. */
-#define PACKAGE_NAME "Chocolate Doom"
+#define PACKAGE_NAME "Competition Doom"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "Chocolate Doom 2.0.0"
+#define PACKAGE_STRING "Competition Doom 2.0.3.1"
 
 /* Define to the one symbol short name of this package. */
-#define PACKAGE_TARNAME "chocolate-doom"
+#define PACKAGE_TARNAME "cndoom"
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "2.0.0"
+#define PACKAGE_VERSION "2.0.3.1"
 
 /* Change this when you create your awesome forked version */
-#define PROGRAM_PREFIX "chocolate-"
+#define PROGRAM_PREFIX "cn"
 
 /* Define to 1 if you have the ANSI C header files. */
 #define STDC_HEADERS 1
 
 /* Version number of package */
-#define VERSION "2.0.0"
+#define VERSION "2.0.3.1"
 
 /* Define to 1 if your processor stores words with the most significant byte
    first (like Motorola and SPARC, unlike Intel and VAX). */

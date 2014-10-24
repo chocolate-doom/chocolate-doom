@@ -41,7 +41,6 @@
 
 #include "doomtype.h"
 #include "m_controls.h" // [cndoom]
-//extern int cn_precache_sounds; // [cndoom]
 
 #define LOW_PASS_FILTER
 //#define DEBUG_DUMP_WAVS
@@ -746,7 +745,7 @@ static void I_SDL_PrecacheSounds(sfxinfo_t *sounds, int num_sounds)
 
     // Don't need to precache the sounds unless we are using libsamplerate.
 
-    if (use_libsamplerate == 0)
+    if (use_libsamplerate == 0 OR cn_precache_sounds) // [cndoom]
     {
 	return;
     }
@@ -778,36 +777,7 @@ static void I_SDL_PrecacheSounds(sfxinfo_t *sounds, int num_sounds)
 
 static void I_SDL_PrecacheSounds(sfxinfo_t *sounds, int num_sounds)
 {
-    // [cndoom]
-    // precache sounds even when not using libsamplerate to avoid slowdown
-    // inside game
-    if (cn_precache_sounds)
-    {
-    char namebuf[9];
-    int i;
-    printf("I_SDL_PrecacheSounds: Precaching all sound effects..");
-
-    for (i=0; i<num_sounds; ++i)
-    {
-        if ((i % 6) == 0)
-        {
-            printf(".");
-            fflush(stdout);
-        }
-
-        GetSfxLumpName(&sounds[i], namebuf);
-
-        sounds[i].lumpnum = W_CheckNumForName(namebuf);
-
-        if (sounds[i].lumpnum != -1)
-        {
-            CacheSFX(&sounds[i]);
-        }
-    }
-
-    printf("\n");
-    }
-    // [cndoom] end
+    // no-op
 }
 
 #endif
@@ -1120,4 +1090,3 @@ sound_module_t sound_sdl_module =
     I_SDL_SoundIsPlaying,
     I_SDL_PrecacheSounds,
 };
-

@@ -54,6 +54,7 @@
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="%(PreprocessorDefinitions)"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
@@ -135,6 +136,7 @@
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="%(PreprocessorDefinitions)"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"

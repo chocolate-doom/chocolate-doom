@@ -1,18 +1,18 @@
 #ifdef DOOM
-#define LONG_GAME_NAME Chocolate Doom
-#define LONG_EXE_NAME  chocolate-doom
+#define LONG_GAME_NAME Competition Doom
+#define LONG_EXE_NAME  cndoom
 #define DEFAULT_IWAD   doom2.wad
 #elif HERETIC
-#define LONG_GAME_NAME Chocolate Heretic
-#define LONG_EXE_NAME  chocolate-heretic
+#define LONG_GAME_NAME Competition Heretic
+#define LONG_EXE_NAME  cnheretic
 #define DEFAULT_IWAD   heretic.wad
 #elif HEXEN
-#define LONG_GAME_NAME Chocolate Hexen
-#define LONG_EXE_NAME  chocolate-hexen
+#define LONG_GAME_NAME Competition Hexen
+#define LONG_EXE_NAME  cnhexen
 #define DEFAULT_IWAD   hexen.wad
 #elif STRIFE
-#define LONG_GAME_NAME Chocolate Strife
-#define LONG_EXE_NAME  chocolate-strife
+#define LONG_GAME_NAME Competition Strife
+#define LONG_EXE_NAME  cnstrife
 #define DEFAULT_IWAD   strife1.wad
 #endif
 
@@ -84,19 +84,6 @@ the shareware version of Doom (extract the file named doom1.wad):
  * http://www.doomworld.com/idgames/index.php?id=7053
    (idstuff/doom/win95/doom95.zip in your nearest /idgames mirror)
 
-If you have a commercial version, obtaining the IWAD file is usually
-straightforward.  The method depends on how you obtained your copy of
-the game:
-
-#if _WIN32
- * The Doom games are available to buy for download on Steam
-   (http://www.steampowered.com/).  Competition Doom will autodetect
-   IWADs installed by Steam and you do not need to do anything.
-#else
- * The Doom games are available to buy for download on Steam
-   (http://www.steampowered.com/).  To find the IWAD files on a
-   Windows system, look in the Steam directory (usually within
-   "Program Files"), under the "steamapps/common" path.
 #endif
 If you have a commercial version on a CD-ROM, obtaining the IWAD
 file is usually straightforward. Simply locate the IWAD file on the

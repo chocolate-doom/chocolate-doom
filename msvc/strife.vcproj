@@ -60,6 +60,7 @@
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="%(PreprocessorDefinitions)"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
@@ -142,6 +143,7 @@
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="%(PreprocessorDefinitions)"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
@@ -154,6 +156,7 @@
 				IgnoreDefaultLibraryNames="msvcrtd"
 				GenerateDebugInformation="false"
 				GenerateMapFile="true"
+				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				LinkTimeCodeGeneration="1"
