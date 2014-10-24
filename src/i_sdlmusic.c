@@ -405,6 +405,13 @@ static void ReadLoopPoints(char *filename, file_metadata_t *metadata)
 
     // Only valid if at the very least we read the sample rate.
     metadata->valid = metadata->samplerate_hz > 0;
+
+    // If start and end time are both zero, ignore the loop tags.
+    // This is consistent with other source ports.
+    if (metadata->start_time == 0 && metadata->end_time == 0)
+    {
+        metadata->valid = false;
+    }
 }
 
 // Given a MUS lump, look up a substitute MUS file to play instead
