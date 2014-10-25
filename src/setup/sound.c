@@ -20,6 +20,7 @@
 
 #include "textscreen.h"
 #include "m_config.h"
+#include "m_misc.h"
 
 #include "mode.h"
 #include "sound.h"
@@ -327,8 +328,8 @@ void BindSoundVariables(void)
         M_BindVariable("show_talk",       &show_talk);
     }
 
-    timidity_cfg_path = strdup("");
-    gus_patch_path = strdup("");
+    timidity_cfg_path = M_StringDuplicate("");
+    gus_patch_path = M_StringDuplicate("");
 
     // Default sound volumes - different games use different values.
 

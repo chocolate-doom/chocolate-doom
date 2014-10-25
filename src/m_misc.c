@@ -254,7 +254,7 @@ char *M_DirName(char *path)
 {
     char *src, *res;
 
-    res = strdup(path);
+    res = M_StringDuplicate(path);
     src = res + strlen(res) - 1;
 
     while (src != res)
@@ -270,7 +270,7 @@ char *M_DirName(char *path)
 
     // path string does not contain a directory separator
     free(res);
-    return strdup(".");
+    return M_StringDuplicate(".");
 }
 
 //---------------------------------------------------------------------------
@@ -323,6 +323,26 @@ char *M_StrCaseStr(char *haystack, char *needle)
     }
 
     return NULL;
+}
+
+//
+// Safe version of strdup() that checks the string was successfully
+// allocated.
+//
+
+char *M_StringDuplicate(const char *orig)
+{
+    char *result;
+
+    result = strdup(orig);
+
+    if (result == NULL)
+    {
+        I_Error("Failed to duplicate string (length %i)\n",
+                strlen(orig));
+    }
+
+    return result;
 }
 
 //

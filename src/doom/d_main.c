@@ -1197,7 +1197,7 @@ static void LoadIwadDeh(void)
         }
         else
         {
-            chex_deh = strdup("chex.deh");
+            chex_deh = M_StringDuplicate("chex.deh");
         }
 
         // If the dehacked patch isn't found, try searching the WAD
@@ -1246,7 +1246,7 @@ static void LoadNerveWad(void)
         }
         else
         {
-            nervewadfile = strdup("nerve.wad");
+            nervewadfile = M_StringDuplicate("nerve.wad");
         }
 
         if (!M_FileExists(nervewadfile))

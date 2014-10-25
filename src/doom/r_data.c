@@ -950,7 +950,7 @@ void R_InitColormaps (void)
 	for (i = 0; i < CRMAX; i++)
 	{
 	    M_snprintf(c, sizeof(c), "\x1b%c", '0' + i);
-	    crstr[i] = strdup(c);
+	    crstr[i] = M_StringDuplicate(c);
 	}
 
 	// [crispy] fill cr_none[] colormap with self-references

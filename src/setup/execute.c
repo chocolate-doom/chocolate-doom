@@ -268,7 +268,7 @@ static char *GetFullExePath(const char *program)
 
     if (sep == NULL)
     {
-        result = strdup(program);
+        result = M_StringDuplicate(program);
     }
     else
     {

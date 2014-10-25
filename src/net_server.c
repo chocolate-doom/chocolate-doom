@@ -563,7 +563,7 @@ static void NET_SV_InitNewClient(net_client_t *client,
     NET_Conn_InitServer(&client->connection, addr);
     client->addr = addr;
     client->last_send_time = -1;
-    client->name = strdup(player_name);
+    client->name = M_StringDuplicate(player_name);
 
     // init the ticcmd send queue
 
@@ -612,9 +612,9 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
         return;
     }
 
-    // [crispy] allow Chocolate Doom 2.0.0 clients to connect to Crispy Doom servers
+    // [crispy] allow Chocolate Doom 2.1.0 clients to connect to Crispy Doom servers
     if (strcmp(client_version, PACKAGE_STRING) != 0 &&
-        strcmp(client_version, "Chocolate Doom 2.0.0") != 0)
+        strcmp(client_version, "Chocolate Doom 2.1.0") != 0)
     {
         //!
         // @category net

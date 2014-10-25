@@ -3,7 +3,7 @@ Name: @PACKAGE@
 Summary: @PACKAGE_SHORTDESC@
 Version: @VERSION@
 Release: 1
-Source: http://mesh.dl.sourceforge.net/project/chocolate-doom/@PACKAGE@/@VERSION@/@PACKAGE@-@VERSION@.tar.gz
+Source: http://www.chocolate-doom.org/downloads/@VERSION@/@PACKAGE@-@VERSION@.tar.gz
 URL: @PACKAGE_URL@
 Group: Amusements/Games
 BuildRoot: /var/tmp/@PACKAGE@-buildroot
