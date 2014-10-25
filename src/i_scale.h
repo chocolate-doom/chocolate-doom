@@ -1,8 +1,6 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
-// Copyright(C) 2006 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -14,15 +12,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // DESCRIPTION:
 //      Pixel-doubling scale up functions.
 //
-//-----------------------------------------------------------------------------
 
 
 #ifndef __I_SCALE__
@@ -55,7 +47,7 @@ extern screen_mode_t mode_squash_1x;
 extern screen_mode_t mode_squash_2x;
 extern screen_mode_t mode_squash_3x;
 extern screen_mode_t mode_squash_4x;
-extern screen_mode_t mode_squash_5x;
+// we don't do 5x.
 
 #endif /* #ifndef __I_SCALE__ */
 

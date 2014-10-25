@@ -1,7 +1,5 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
-// Copyright(C) 2009 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -13,15 +11,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // DESCRIPTION:
 //     OPL SDL interface.
 //
-//-----------------------------------------------------------------------------
 
 #include "config.h"
 
@@ -47,7 +39,7 @@ typedef struct
     unsigned int rate;        // Number of times the timer is advanced per sec.
     unsigned int enabled;     // Non-zero if timer is enabled.
     unsigned int value;       // Last value that was set.
-    unsigned int expire_time; // Calculated time that timer will expire.
+    uint64_t expire_time;     // Calculated time that timer will expire.
 } opl_timer_t;
 
 // When the callback mutex is locked using OPL_Lock, callback functions
@@ -63,18 +55,18 @@ static opl_callback_queue_t *callback_queue;
 
 static SDL_mutex *callback_queue_mutex = NULL;
 
-// Current time, in number of samples since startup:
+// Current time, in us since startup:
 
-static int current_time;
+static uint64_t current_time;
 
 // If non-zero, playback is currently paused.
 
 static int opl_sdl_paused;
 
-// Time offset (in samples) due to the fact that callbacks
+// Time offset (in us) due to the fact that callbacks
 // were previously paused.
 
-static unsigned int pause_offset;
+static uint64_t pause_offset;
 
 // OPL software emulator structure.
 
@@ -114,20 +106,22 @@ static void AdvanceTime(unsigned int nsamples)
 {
     opl_callback_t callback;
     void *callback_data;
+    uint64_t us;
 
     SDL_LockMutex(callback_queue_mutex);
 
     // Advance time.
 
-    current_time += nsamples;
+    us = ((uint64_t) nsamples * OPL_SECOND) / mixing_freq;
+    current_time += us;
 
     if (opl_sdl_paused)
     {
-        pause_offset += nsamples;
+        pause_offset += us;
     }
 
     // Are there callbacks to invoke now?  Keep invoking them
-    // until there are none more left.
+    // until there are no more left.
 
     while (!OPL_Queue_IsEmpty(callback_queue)
         && current_time >= OPL_Queue_Peek(callback_queue) + pause_offset)
@@ -201,8 +195,8 @@ static void OPL_Mix_Callback(void *udata,
 
     while (filled < buffer_len)
     {
-        unsigned int next_callback_time;
-        unsigned int nsamples;
+        uint64_t next_callback_time;
+        uint64_t nsamples;
 
         SDL_LockMutex(callback_queue_mutex);
 
@@ -218,7 +212,8 @@ static void OPL_Mix_Callback(void *udata,
         {
             next_callback_time = OPL_Queue_Peek(callback_queue) + pause_offset;
 
-            nsamples = next_callback_time - current_time;
+            nsamples = (next_callback_time - current_time) * mixing_freq;
+            nsamples = (nsamples + OPL_SECOND - 1) / OPL_SECOND;
 
             if (nsamples > buffer_len - filled)
             {
@@ -403,7 +398,7 @@ static void OPLTimer_CalculateEndTime(opl_timer_t *timer)
     {
         tics = 0x100 - timer->value;
         timer->expire_time = current_time
-                           + (tics * opl_sample_rate) / timer->rate;
+                           + ((uint64_t) tics * OPL_SECOND) / timer->rate;
     }
 }
 
@@ -462,13 +457,12 @@ static void OPL_SDL_PortWrite(opl_port_t port, unsigned int value)
     }
 }
 
-static void OPL_SDL_SetCallback(unsigned int ms,
-                                opl_callback_t callback,
+static void OPL_SDL_SetCallback(uint64_t us, opl_callback_t callback,
                                 void *data)
 {
     SDL_LockMutex(callback_queue_mutex);
     OPL_Queue_Push(callback_queue, callback, data,
-                   current_time - pause_offset + (ms * mixing_freq) / 1000);
+                   current_time - pause_offset + us);
     SDL_UnlockMutex(callback_queue_mutex);
 }
 
@@ -494,6 +488,13 @@ static void OPL_SDL_SetPaused(int paused)
     opl_sdl_paused = paused;
 }
 
+static void OPL_SDL_AdjustCallbacks(float factor)
+{
+    SDL_LockMutex(callback_queue_mutex);
+    OPL_Queue_AdjustCallbacks(callback_queue, current_time, factor);
+    SDL_UnlockMutex(callback_queue_mutex);
+}
+
 opl_driver_t opl_sdl_driver =
 {
     "SDL",
@@ -505,6 +506,7 @@ opl_driver_t opl_sdl_driver =
     OPL_SDL_ClearCallbacks,
     OPL_SDL_Lock,
     OPL_SDL_Unlock,
-    OPL_SDL_SetPaused
+    OPL_SDL_SetPaused,
+    OPL_SDL_AdjustCallbacks,
 };
 

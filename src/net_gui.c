@@ -1,7 +1,5 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -12,11 +10,6 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
 //
 // Graphical stuff related to the networking code:
 //
@@ -34,6 +27,7 @@
 #include "i_system.h"
 #include "i_timer.h"
 #include "i_video.h"
+#include "m_argv.h"
 #include "m_misc.h"
 
 #include "net_client.h"
@@ -50,6 +44,11 @@ static txt_label_t *ip_labels[NET_MAXPLAYERS];
 static txt_label_t *drone_label;
 static txt_label_t *master_msg_label;
 static boolean had_warning;
+
+// Number of players we expect to be in the game. When the number is
+// reached, we auto-start the game (if we're the controller). If
+// zero, do not autostart.
+static int expected_nodes;
 
 static void EscapePressed(TXT_UNCAST_ARG(widget), void *unused)
 {
@@ -250,11 +249,19 @@ static void PrintSHA1Digest(char *s, byte *digest)
     printf("\n");
 }
 
+static void CloseWindow(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(window))
+{
+    TXT_CAST_ARG(txt_window_t, window);
+
+    TXT_CloseWindow(window);
+}
+
 static void CheckSHA1Sums(void)
 {
     boolean correct_wad, correct_deh;
     boolean same_freedoom;
     txt_window_t *window;
+    txt_window_action_t *cont_button;
 
     if (!net_client_received_wait_data || had_warning)
     {
@@ -296,8 +303,13 @@ static void CheckSHA1Sums(void)
         PrintSHA1Digest("Server", net_client_wait_data.deh_sha1sum);
     }
 
-    window = TXT_NewWindow("WARNING");
+    window = TXT_NewWindow("WARNING!");
 
+    cont_button = TXT_NewWindowAction(KEY_ENTER, "Continue");
+    TXT_SignalConnect(cont_button, "pressed", CloseWindow, window);
+
+    TXT_SetWindowAction(window, TXT_HORIZ_LEFT, NULL);
+    TXT_SetWindowAction(window, TXT_HORIZ_CENTER, cont_button);
     TXT_SetWindowAction(window, TXT_HORIZ_RIGHT, NULL);
 
     if (!same_freedoom)
@@ -343,6 +355,43 @@ static void CheckSHA1Sums(void)
     had_warning = true;
 }
 
+static void ParseCommandLineArgs(void)
+{
+    int i;
+
+    //!
+    // @arg <n>
+    // @category net
+    //
+    // Autostart the netgame when n nodes (clients) have joined the server.
+    //
+
+    i = M_CheckParmWithArgs("-nodes", 1);
+    if (i > 0)
+    {
+        expected_nodes = atoi(myargv[i + 1]);
+    }
+}
+
+static void CheckAutoLaunch(void)
+{
+    int nodes;
+
+    if (net_client_received_wait_data
+     && net_client_wait_data.is_controller
+     && expected_nodes > 0)
+    {
+        nodes = net_client_wait_data.num_players
+              + net_client_wait_data.num_drones;
+
+        if (nodes >= expected_nodes)
+        {
+            StartGame(NULL, NULL);
+            expected_nodes = 0;
+        }
+    }
+}
+
 void NET_WaitForLaunch(void)
 {
     if (!TXT_Init())
@@ -353,12 +402,14 @@ void NET_WaitForLaunch(void)
 
     I_InitWindowIcon();
 
+    ParseCommandLineArgs();
     OpenWaitDialog();
     had_warning = false;
 
     while (net_waiting_for_launch)
     {
         UpdateGUI();
+        CheckAutoLaunch();
         CheckSHA1Sums();
         CheckMasterStatus();
 

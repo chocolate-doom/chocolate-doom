@@ -1,5 +1,3 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2010 James Haley, Samuel Villarreal
@@ -14,18 +12,12 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // DESCRIPTION:
 //
 // [STRIFE] New Module
 //
 // Dialog Engine for Strife
 //
-//-----------------------------------------------------------------------------
 
 #include <stdlib.h>
 
@@ -926,24 +918,24 @@ boolean P_GiveItemToPlayer(player_t *player, int sprnum, mobjtype_t type)
 
         case MT_TOKEN_DOOR1: // Door special 1
             junk.tag = 222;
-            EV_DoDoor(&junk, open);
+            EV_DoDoor(&junk, vld_open);
             break;
 
         case MT_TOKEN_PRISON_PASS: // Door special 1 - Prison pass
             junk.tag = 223;
-            EV_DoDoor(&junk, open);
+            EV_DoDoor(&junk, vld_open);
             if(gamemap == 2) // If on Tarnhill, give Prison pass object
                 P_GiveInventoryItem(player, sprnum, type);
             break;
 
         case MT_TOKEN_SHOPCLOSE: // Door special 3 - "Shop close" - unused?
             junk.tag = 222;
-            EV_DoDoor(&junk, close);
+            EV_DoDoor(&junk, vld_close);
             break;
 
         case MT_TOKEN_DOOR3: // Door special 4 (or 3? :P ) 
             junk.tag = 224;
-            EV_DoDoor(&junk, close);
+            EV_DoDoor(&junk, vld_close);
             break;
 
         case MT_TOKEN_STAMINA: // Stamina upgrade

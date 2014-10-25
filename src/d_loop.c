@@ -1,8 +1,6 @@
-// Emacs style mode select   -*- C++ -*-
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -14,15 +12,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // DESCRIPTION:
 //     Main loop code.
 //
-//-----------------------------------------------------------------------------
 
 #include <stdlib.h>
 #include <string.h>
@@ -357,13 +349,21 @@ void D_StartNetGame(net_gamesettings_t *settings,
     //!
     // @category net
     //
-    // Use original game sync code.
+    // Use new network client sync code rather than the classic
+    // sync code. This is currently disabled by default because it
+    // has some bugs.
     //
-
-    if (M_CheckParm("-oldsync") > 0)
-	settings->new_sync = 0;
+    if (M_CheckParm("-newsync") > 0)
+        settings->new_sync = 1;
     else
-	settings->new_sync = 1;
+        settings->new_sync = 0;
+
+    // TODO: New sync code is not enabled by default because it's
+    // currently broken. 
+    //if (M_CheckParm("-oldsync") > 0)
+    //    settings->new_sync = 0;
+    //else
+    //    settings->new_sync = 1;
 
     //!
     // @category net
@@ -427,10 +427,11 @@ void D_StartNetGame(net_gamesettings_t *settings,
     ticdup = settings->ticdup;
     new_sync = settings->new_sync;
 
-    if (!new_sync)
-    {
-	printf("Syncing netgames like Vanilla Doom.\n");
-    }
+    // TODO: Message disabled until we fix new_sync.
+    //if (!new_sync)
+    //{
+    //    printf("Syncing netgames like Vanilla Doom.\n");
+    //}
 }
 
 boolean D_InitNetGame(net_connect_data_t *connect_data)

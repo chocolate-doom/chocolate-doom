@@ -1,7 +1,5 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
-// Copyright(C) 2005,2006 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -13,16 +11,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
-//-----------------------------------------------------------------------------
 //
 // Text mode emulation in SDL
 //
-//-----------------------------------------------------------------------------
 
 #include "SDL.h"
 
@@ -58,6 +49,7 @@ typedef struct
 #define BLINK_PERIOD 250
 
 static SDL_Surface *screen;
+static SDL_Surface *screenbuffer;
 static unsigned char *screendata;
 static int key_mapping = 1;
 
@@ -244,24 +236,29 @@ static void ChooseFont(void)
 
 int TXT_Init(void)
 {
-    int flags;
-
     if (SDL_InitSubSystem(SDL_INIT_VIDEO) < 0)
     {
         return 0;
     }
 
-    flags = SDL_SWSURFACE | SDL_HWPALETTE | SDL_DOUBLEBUF;
-
     ChooseFont();
 
+    // Always create the screen at the native screen depth (bpp=0);
+    // some systems nowadays don't seem to support true 8-bit palettized
+    // screen modes very well and we end up with screwed up colors.
     screen = SDL_SetVideoMode(TXT_SCREEN_W * font->w,
-                              TXT_SCREEN_H * font->h, 8, flags);
+                              TXT_SCREEN_H * font->h, 0, 0);
 
     if (screen == NULL)
         return 0;
 
-    SDL_SetColors(screen, ega_colors, 0, 16);
+    // Instead, we draw everything into an intermediate 8-bit surface
+    // the same dimensions as the screen. SDL then takes care of all the
+    // 8->32 bit (or whatever depth) color conversions for us.
+    screenbuffer = SDL_CreateRGBSurface(0, TXT_SCREEN_W * font->w,
+                                        TXT_SCREEN_H * font->h,
+                                        8, 0, 0, 0, 0);
+    SDL_SetColors(screenbuffer, ega_colors, 0, 16);
     SDL_EnableUNICODE(1);
 
     screendata = malloc(TXT_SCREEN_W * TXT_SCREEN_H * 2);
@@ -283,6 +280,8 @@ void TXT_Shutdown(void)
 {
     free(screendata);
     screendata = NULL;
+    SDL_FreeSurface(screenbuffer);
+    screenbuffer = NULL;
     SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
 
@@ -322,8 +321,8 @@ static inline void UpdateCharacter(int x, int y)
     bytes = (font->w + 7) / 8;
     p = &font->data[character * font->h * bytes];
 
-    s = ((unsigned char *) screen->pixels)
-      + (y * font->h * screen->pitch)
+    s = ((unsigned char *) screenbuffer->pixels)
+      + (y * font->h * screenbuffer->pitch)
       + (x * font->w);
 
     for (y1=0; y1<font->h; ++y1)
@@ -355,7 +354,7 @@ static inline void UpdateCharacter(int x, int y)
             ++p;
         }
 
-        s += screen->pitch;
+        s += screenbuffer->pitch;
     }
 }
 
@@ -377,6 +376,7 @@ static int LimitToRange(int val, int min, int max)
 
 void TXT_UpdateScreenArea(int x, int y, int w, int h)
 {
+    SDL_Rect rect;
     int x1, y1;
     int x_end;
     int y_end;
@@ -394,9 +394,13 @@ void TXT_UpdateScreenArea(int x, int y, int w, int h)
         }
     }
 
-    SDL_UpdateRect(screen,
-                   x * font->w, y * font->h,
-                   (x_end - x) * font->w, (y_end - y) * font->h);
+    rect.x = x * font->w;
+    rect.y = y * font->h;
+    rect.w = (x_end - x) * font->w;
+    rect.h = (y_end - y) * font->h;
+
+    SDL_BlitSurface(screenbuffer, &rect, screen, &rect);
+    SDL_UpdateRects(screen, 1, &rect);
 }
 
 void TXT_UpdateScreen(void)

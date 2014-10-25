@@ -1,7 +1,5 @@
-/* ... */
-//-----------------------------------------------------------------------------
 //
-// Copyright(C) 2009 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -13,12 +11,6 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
-//-----------------------------------------------------------------------------
 
 #include <stdlib.h>
 #include <string.h>
@@ -114,15 +106,9 @@ static NSString *IWADFilenames[NUM_IWAD_TYPES + 1] =
     }
 }
 
-// Get the name used for the executable for the selected IWAD.
-
-- (const char *) getGameName
+static const char *NameForIWAD(IWAD iwad)
 {
-    IWAD selectedIWAD;
-
-    selectedIWAD = [self getSelectedIWAD];
-
-    switch (selectedIWAD)
+    switch (iwad)
     {
         case IWAD_HERETIC:
             return "heretic";
@@ -136,6 +122,13 @@ static NSString *IWADFilenames[NUM_IWAD_TYPES + 1] =
         default:
             return "doom";
     }
+}
+
+// Get the name used for the executable for the selected IWAD.
+
+- (const char *) getGameName
+{
+    return NameForIWAD([self getSelectedIWAD]);
 }
 
 - (void) setIWADConfig
@@ -413,6 +406,41 @@ static NSString *IWADFilenames[NUM_IWAD_TYPES + 1] =
 
     // No IWAD found with this name.
 
+    return NO;
+}
+
+- (BOOL) selectGameByName: (const char *) name
+{
+    IWADLocation *iwadList[NUM_IWAD_TYPES];
+    NSString *location;
+    const char *name2;
+    int i;
+
+    // Already selected an IWAD of the desired type? Just return
+    // success.
+    if (!strcmp(name, [self getGameName]))
+    {
+        return YES;
+    }
+
+    // Search through the configured IWADs and try to select the
+    // desired game.
+    [self getIWADList: iwadList];
+
+    for (i = 0; i < NUM_IWAD_TYPES; ++i)
+    {
+        location = [iwadList[i] getLocation];
+        name2 = NameForIWAD(i);
+
+        if (!strcmp(name, name2)
+         && location != nil && [location length] > 0)
+        {
+            [self->iwadSelector selectItemWithTitle:IWADLabels[i]];
+            return YES;
+        }
+    }
+
+    // User hasn't configured any WAD(s) for the desired game type.
     return NO;
 }
 

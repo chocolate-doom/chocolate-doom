@@ -1,7 +1,5 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -12,11 +10,6 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
 //
 // Reading and writing various structures into packets
 //
@@ -199,7 +192,7 @@ void NET_WriteTiccmdDiff(net_packet_t *packet, net_ticdiff_t *diff,
     if (diff->diff & NET_TICDIFF_STRIFE)
     {
         NET_WriteInt8(packet, diff->cmd.buttons2);
-        NET_WriteInt8(packet, diff->cmd.inventory);
+        NET_WriteInt16(packet, diff->cmd.inventory);
     }
 }
 
@@ -284,7 +277,7 @@ boolean NET_ReadTiccmdDiff(net_packet_t *packet, net_ticdiff_t *diff,
             return false;
         diff->cmd.buttons2 = val;
 
-        if (!NET_ReadInt8(packet, &val))
+        if (!NET_ReadInt16(packet, &val))
             return false;
         diff->cmd.inventory = val;
     }

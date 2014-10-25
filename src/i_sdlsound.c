@@ -1,8 +1,6 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
-// Copyright(C) 2005-8 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 // Copyright(C) 2008 David Flater
 //
 // This program is free software; you can redistribute it and/or
@@ -15,15 +13,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // DESCRIPTION:
 //	System interface for sound.
 //
-//-----------------------------------------------------------------------------
 
 #include "config.h"
 
@@ -94,7 +86,7 @@ int use_libsamplerate = 0;
 // of the time: with all the Doom IWAD sound effects, at least. If a PWAD
 // is used, clipping might occur.
 
-float libsamplerate_scale = 0.65;
+float libsamplerate_scale = 0.65f;
 
 // Hook a sound into the linked list at the head.
 
@@ -826,7 +818,7 @@ static void I_SDL_UpdateSoundParams(int handle, int vol, int sep)
 {
     int left, right;
 
-    if (!sound_initialized)
+    if (!sound_initialized || handle < 0 || handle >= NUM_CHANNELS)
     {
         return;
     }
@@ -869,7 +861,7 @@ static int I_SDL_StartSound(sfxinfo_t *sfxinfo, int channel, int vol, int sep)
 {
     allocated_sound_t *snd;
 
-    if (!sound_initialized)
+    if (!sound_initialized || channel < 0 || channel >= NUM_CHANNELS)
     {
         return -1;
     }
@@ -901,9 +893,9 @@ static int I_SDL_StartSound(sfxinfo_t *sfxinfo, int channel, int vol, int sep)
     return channel;
 }
 
-static void I_SDL_StopSound (int handle)
+static void I_SDL_StopSound(int handle)
 {
-    if (!sound_initialized)
+    if (!sound_initialized || handle < 0 || handle >= NUM_CHANNELS)
     {
         return;
     }
@@ -919,7 +911,7 @@ static void I_SDL_StopSound (int handle)
 
 static boolean I_SDL_SoundIsPlaying(int handle)
 {
-    if (handle < 0)
+    if (!sound_initialized || handle < 0 || handle >= NUM_CHANNELS)
     {
         return false;
     }

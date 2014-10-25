@@ -40,11 +40,11 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".;..\src;..\src\strife;..\src\doom;..\textscreen;..\pcsound;..\opl"
+				AdditionalIncludeDirectories=".;..\src;..\src\hexen;..\textscreen;..\pcsound;..\opl"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;PROGRAM_PREFIX=&quot;\&quot;chocolate-\&quot;&quot;"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="2"
+				RuntimeLibrary="3"
 				WarningLevel="3"
 				DebugInformationFormat="4"
 				CompileAs="1"
@@ -60,10 +60,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="SDL.lib SDL_mixer.lib SDL_net.lib SDLmain.lib ..\lib\libpcsound.lib ..\lib\libtextscreen.lib ..\lib\libopl.lib"
+				AdditionalDependencies="SDL.lib SDL_mixer.lib SDL_net.lib SDLmain.lib"
 				OutputFile="$(OutDir)\chocolate-hexen-dbg.exe"
 				IgnoreAllDefaultLibraries="false"
-				IgnoreDefaultLibraryNames="msvcrtd.lib"
+				IgnoreDefaultLibraryNames="msvcrt"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="1"
@@ -116,14 +116,17 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
+				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories=".;..\src;..\src\doom;..\src\heretic;..\textscreen;..\pcsound"
+				FavorSizeOrSpeed="1"
+				OmitFramePointers="true"
+				WholeProgramOptimization="true"
+				AdditionalIncludeDirectories=".;..\src;..\src\hexen;..\textscreen;..\pcsound;..\opl"
 				PreprocessorDefinitions="WIN32;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;PROGRAM_PREFIX=&quot;\&quot;chocolate-\&quot;&quot;"
-				StringPooling="true"
-				ExceptionHandling="0"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
-				WarningLevel="0"
+				UsePrecompiledHeader="0"
+				WarningLevel="3"
 				DebugInformationFormat="0"
 				CompileAs="1"
 			/>
@@ -140,10 +143,16 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="SDL.lib SDL_mixer.lib SDL_net.lib SDLmain.lib"
 				OutputFile="$(OutDir)\chocolate-hexen.exe"
+				LinkIncremental="0"
+				IgnoreDefaultLibraryNames="msvcrtd"
 				GenerateDebugInformation="false"
+				GenerateMapFile="true"
 				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
+				LinkTimeCodeGeneration="1"
+				DataExecutionPrevention="0"
+				TurnOffAssemblyGeneration="false"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -186,11 +195,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\d_loop.c"
+				>
+			</File>
+			<File
 				RelativePath="..\src\d_mode.c"
 				>
 			</File>
 			<File
 				RelativePath="..\src\deh_str.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\gusconf.c"
 				>
 			</File>
 			<File
@@ -278,10 +295,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\md5.c"
-				>
-			</File>
-			<File
 				RelativePath="..\src\memio.c"
 				>
 			</File>
@@ -291,6 +304,50 @@
 			</File>
 			<File
 				RelativePath="..\src\mus2mid.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\net_client.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\net_common.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\net_gui.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\net_io.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\net_loop.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\net_packet.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\net_query.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\net_sdl.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\net_server.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\net_structrw.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\sha1.c"
 				>
 			</File>
 			<File
@@ -552,6 +609,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\d_loop.h"
+				>
+			</File>
+			<File
 				RelativePath="..\src\d_mode.h"
 				>
 			</File>
@@ -573,6 +634,10 @@
 			</File>
 			<File
 				RelativePath="..\src\doomtype.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\gusconf.h"
 				>
 			</File>
 			<File
@@ -640,15 +705,55 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\md5.h"
-				>
-			</File>
-			<File
 				RelativePath="..\src\memio.h"
 				>
 			</File>
 			<File
 				RelativePath="..\src\mus2mid.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\net_client.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\net_common.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\net_gui.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\net_io.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\net_loop.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\net_packet.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\net_query.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\net_sdl.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\net_server.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\net_structrw.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\sha1.h"
 				>
 			</File>
 			<File

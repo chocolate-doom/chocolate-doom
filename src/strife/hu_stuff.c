@@ -1,8 +1,6 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -14,14 +12,8 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // DESCRIPTION:  Heads-up displays
 //
-//-----------------------------------------------------------------------------
 
 
 #include <ctype.h>
@@ -675,6 +667,10 @@ boolean HU_Responder(event_t *ev)
                         DEH_snprintf(lastmessage, sizeof(lastmessage),
                             "%s now %.13s", player_names[consoleplayer],
                             w_chat.l.l);
+                        // haleyjd 20141024: missing name set for local client
+                        DEH_snprintf(player_names[consoleplayer],
+                            sizeof(player_names[consoleplayer]),
+                            "%.13s: ", w_chat.l.l);
                         hu_setting_name = false;
                     }
                     else

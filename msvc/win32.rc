@@ -1,6 +1,5 @@
-//-----------------------------------------------------------------------------
 //
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 // Copyright(C) 2008 "GhostlyDeath" (ghostlydeath@gmail.com)
 //
 // This program is free software; you can redistribute it and/or
@@ -13,15 +12,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // DESCRIPTION:
 //	Win32 Resources
 //
-//-----------------------------------------------------------------------------
 
 #ifndef DEDICATEDSERVER
 #ifdef CHOCOLATESETUP
@@ -32,8 +25,8 @@
 #endif
 
 1 VERSIONINFO
-PRODUCTVERSION 2,0,0,0
-FILEVERSION 2,0,0,0
+PRODUCTVERSION 2,1,0,0
+FILEVERSION 2,1,0,0
 FILETYPE 1
 BEGIN
 	BLOCK "StringFileInfo"
@@ -41,12 +34,12 @@ BEGIN
 		BLOCK "040904E4"
 		BEGIN
 			VALUE "FileVersion", "1.0.0"
-			VALUE "FileDescription", "Chocolate Doom 2.0.0"
+			VALUE "FileDescription", "Chocolate Doom 2.1.0"
 			VALUE "InternalName", "chocolate-doom"
 			VALUE "CompanyName", "fraggle@gmail.com"
 			VALUE "LegalCopyright", "GNU General Public License"
 			VALUE "ProductName", "Chocolate Doom"
-			VALUE "ProductVersion", "2.0.0"
+			VALUE "ProductVersion", "2.1.0"
 		END
 	END
 	BLOCK "VarFileInfo"

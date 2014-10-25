@@ -1,7 +1,5 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
-// Copyright(C) 2006 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -12,11 +10,6 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
 //
 
 #include <ctype.h>
@@ -244,10 +237,11 @@ static int TXT_InputBoxKeyPress(TXT_UNCAST_ARG(inputbox), int key)
 
     c = TXT_KEY_TO_UNICODE(key);
 
-    if (c >= 128 || isprint(c))
+    // Add character to the buffer, but only if it's a printable character
+    // that we can represent on the screen.
+    if (isprint(c)
+     || (c >= 128 && TXT_CanDrawCharacter(c)))
     {
-        // Add character to the buffer
-
         AddCharacter(inputbox, c);
     }
 

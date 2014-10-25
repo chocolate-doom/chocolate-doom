@@ -1,8 +1,6 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -14,15 +12,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // DESCRIPTION:
 //	DOOM graphics stuff for SDL.
 //
-//-----------------------------------------------------------------------------
 
 
 #include "SDL.h"
@@ -131,7 +123,6 @@ static screen_mode_t *screen_modes_corrected[] = {
     &mode_squash_2x,
     &mode_squash_3x,
     &mode_squash_4x,
-    &mode_squash_5x,
 };
 
 // SDL video driver name
@@ -195,7 +186,7 @@ int screen_height = SCREENHEIGHT;
 
 // Color depth.
 
-int screen_bpp = 8;
+int screen_bpp = 0;
 
 // Automatically adjust video settings if the selected mode is 
 // not a valid video mode.
@@ -1510,6 +1501,19 @@ static void AutoAdjustColorDepth(void)
     const SDL_VideoInfo *info;
     int flags;
 
+    // If screen_bpp=0, we should use the current (default) pixel depth.
+    // Fetch it from SDL.
+
+    if (screen_bpp == 0)
+    {
+        info = SDL_GetVideoInfo();
+
+        if (info != NULL && info->vfmt != NULL)
+        {
+            screen_bpp = info->vfmt->BitsPerPixel;
+        }
+    }
+
     if (fullscreen)
     {
         flags = SDL_FULLSCREEN;
@@ -1734,21 +1738,33 @@ void I_GraphicsCheckCommandLine(void)
 
     //!
     // @category video
-    // @arg <WxY>
+    // @arg <WxY>[wf]
     //
-    // Specify the screen mode (when running fullscreen) or the window
-    // dimensions (when running in windowed mode).
+    // Specify the dimensions of the window or fullscreen mode.  An
+    // optional letter of w or f appended to the dimensions selects
+    // windowed or fullscreen mode.
 
     i = M_CheckParmWithArgs("-geometry", 1);
 
     if (i > 0)
     {
-        int w, h;
+        int w, h, s;
+        char f;
 
-        if (sscanf(myargv[i + 1], "%ix%i", &w, &h) == 2)
+        s = sscanf(myargv[i + 1], "%ix%i%1c", &w, &h, &f);
+        if (s == 2 || s == 3)
         {
             screen_width = w;
             screen_height = h;
+
+            if (s == 3 && f == 'f')
+            {
+                fullscreen = true;
+            }
+            else if (s == 3 && f == 'w')
+            {
+                fullscreen = false;
+            }
         }
     }
 

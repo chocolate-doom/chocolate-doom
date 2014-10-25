@@ -1,7 +1,5 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
-// Copyright(C) 2005-2010 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -13,18 +11,12 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
-//-----------------------------------------------------------------------------
 //
 // Parses Text substitution sections in dehacked files
 //
-//-----------------------------------------------------------------------------
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "doomtype.h"
@@ -785,7 +777,7 @@ static void *DEH_TextStart(deh_context_t *context, char *line)
         return NULL;
     }
 
-    repl_text = Z_Malloc(repl_len + 1, PU_STATIC, NULL);
+    repl_text = malloc(repl_len + 1);
 
     // read in the "to" text
 
@@ -828,13 +820,10 @@ static void *DEH_TextStart(deh_context_t *context, char *line)
         // Success.
 
         DEH_AddStringReplacement(orig_text, repl_text);
-
-        return NULL;
     }
 
-    // Failure.
-
-    Z_Free(repl_text);
+    // We must always free the replacement text.
+    free(repl_text);
 
     return NULL;
 }

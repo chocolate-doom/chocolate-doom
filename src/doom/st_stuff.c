@@ -1,8 +1,6 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -14,17 +12,11 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // DESCRIPTION:
 //	Status bar code.
 //	Does the face/direction indicator animatin.
 //	Does palette indicators as well (red pain/berserk, bright pickup)
 //
-//-----------------------------------------------------------------------------
 
 
 
@@ -654,14 +646,16 @@ ST_Responder (event_t* ev)
 	  && ((epsd > 1) || (map > 9)))
 	return false;
 
+      // The source release has this check as map > 34. However, Vanilla
+      // Doom allows IDCLEV up to MAP40 even though it normally crashes.
       if ((gamemode == commercial)
-	&& (( epsd > 1) || (map > 34)))
+	&& (( epsd > 1) || (map > 40)))
 	return false;
 
       // So be it.
       plyr->message = DEH_String(STSTR_CLEV);
       G_DeferedInitNew(gameskill, epsd, map);
-    }    
+    }
   }
   return false;
 }

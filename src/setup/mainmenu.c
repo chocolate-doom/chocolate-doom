@@ -1,7 +1,5 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
-// Copyright(C) 2006 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -12,11 +10,6 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
 //
 
 #include <stdio.h>
@@ -129,6 +122,8 @@ static void DoQuit(void *widget, void *dosave)
         M_SaveDefaults();
     }
 
+    TXT_Shutdown();
+
     exit(0);
 }
 
@@ -215,15 +210,15 @@ void MainMenu(void)
     window = TXT_NewWindow("Main Menu");
 
     TXT_AddWidgets(window,
-          TXT_NewButton2("Configure Display", 
+          TXT_NewButton2("Configure Display",
                          (TxtWidgetSignalFunc) ConfigDisplay, NULL),
-          TXT_NewButton2("Configure Sound", 
+          TXT_NewButton2("Configure Sound",
                          (TxtWidgetSignalFunc) ConfigSound, NULL),
-          TXT_NewButton2("Configure Keyboard", 
+          TXT_NewButton2("Configure Keyboard",
                          (TxtWidgetSignalFunc) ConfigKeyboard, NULL),
-          TXT_NewButton2("Configure Mouse", 
+          TXT_NewButton2("Configure Mouse",
                          (TxtWidgetSignalFunc) ConfigMouse, NULL),
-          TXT_NewButton2("Configure Joystick", 
+          TXT_NewButton2("Configure Gamepad/Joystick",
                          (TxtWidgetSignalFunc) ConfigJoystick, NULL),
           NULL);
 

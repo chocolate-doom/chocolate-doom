@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".;..\src;..\src\doom;..\textscreen"
+				AdditionalIncludeDirectories=".;..\src;..\textscreen"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;CHOCOLATESETUP"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -61,8 +61,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="SDL.lib SDLmain.lib"
+				AdditionalDependencies="SDL.lib SDLmain.lib SDL_net.lib"
 				OutputFile="$(OutDir)\chocolate-setup-dbg.exe"
+				IgnoreDefaultLibraryNames="msvcrt"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="1"
@@ -116,7 +117,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories=".;..\src;..\src\doom;..\textscreen"
+				AdditionalIncludeDirectories=".;..\src;..\textscreen"
 				PreprocessorDefinitions="WIN32;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;CHOCOLATESETUP"
 				StringPooling="true"
 				ExceptionHandling="0"
@@ -138,8 +139,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="SDL.lib SDLmain.lib"
+				AdditionalDependencies="SDL.lib SDLmain.lib SDL_net.lib"
 				OutputFile="$(OutDir)\chocolate-setup.exe"
+				IgnoreDefaultLibraryNames="msvcrtd"
 				GenerateDebugInformation="false"
 				SubSystem="1"
 				OptimizeReferences="2"
@@ -178,67 +180,131 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\setup\compatibility.c"
+				RelativePath="..\src\setup\compatibility.c"
 				>
 			</File>
 			<File
-				RelativePath="..\setup\configfile.c"
+				RelativePath="..\src\d_iwad.c"
 				>
 			</File>
 			<File
-				RelativePath="..\setup\display.c"
+				RelativePath="..\src\d_mode.c"
 				>
 			</File>
 			<File
-				RelativePath="..\setup\execute.c"
+				RelativePath="..\src\deh_str.c"
 				>
 			</File>
 			<File
-				RelativePath="..\setup\joystick.c"
+				RelativePath="..\src\setup\display.c"
 				>
 			</File>
 			<File
-				RelativePath="..\setup\keyboard.c"
+				RelativePath="..\src\setup\execute.c"
 				>
 			</File>
 			<File
-				RelativePath="..\setup\m_argv.c"
+				RelativePath="..\src\i_main.c"
 				>
 			</File>
 			<File
-				RelativePath="..\setup\mainmenu.c"
+				RelativePath="..\src\i_system.c"
 				>
 			</File>
 			<File
-				RelativePath="..\setup\mouse.c"
+				RelativePath="..\src\i_timer.c"
 				>
 			</File>
 			<File
-				RelativePath="..\setup\multiplayer.c"
+				RelativePath="..\src\setup\joystick.c"
 				>
 			</File>
 			<File
-				RelativePath="..\setup\setup_icon.c"
+				RelativePath="..\src\setup\keyboard.c"
 				>
 			</File>
 			<File
-				RelativePath="..\setup\sound.c"
+				RelativePath="..\src\m_argv.c"
 				>
 			</File>
 			<File
-				RelativePath="..\setup\txt_joybinput.c"
+				RelativePath="..\src\m_config.c"
 				>
 			</File>
 			<File
-				RelativePath="..\setup\txt_keyinput.c"
+				RelativePath="..\src\m_controls.c"
 				>
 			</File>
 			<File
-				RelativePath="..\setup\txt_mouseinput.c"
+				RelativePath="..\src\m_misc.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\setup\mainmenu.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\setup\mode.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\setup\mouse.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\setup\multiplayer.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\net_io.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\net_packet.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\net_query.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\net_sdl.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\net_structrw.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\setup\setup_icon.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\setup\sound.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\setup\txt_joyaxis.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\setup\txt_joybinput.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\setup\txt_keyinput.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\setup\txt_mouseinput.c"
 				>
 			</File>
 			<File
 				RelativePath="..\textscreen\txt_scrollpane.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\z_zone.c"
 				>
 			</File>
 		</Filter>
@@ -248,59 +314,119 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\setup\compatibility.h"
+				RelativePath="..\src\setup\compatibility.h"
 				>
 			</File>
 			<File
-				RelativePath="..\setup\configfile.h"
+				RelativePath="..\src\d_iwad.h"
 				>
 			</File>
 			<File
-				RelativePath="..\setup\display.h"
+				RelativePath="..\src\d_mode.h"
 				>
 			</File>
 			<File
-				RelativePath="..\setup\execute.h"
+				RelativePath="..\src\deh_str.h"
 				>
 			</File>
 			<File
-				RelativePath="..\setup\joystick.h"
+				RelativePath="..\src\setup\display.h"
 				>
 			</File>
 			<File
-				RelativePath="..\setup\keyboard.h"
+				RelativePath="..\src\setup\execute.h"
 				>
 			</File>
 			<File
-				RelativePath="..\setup\m_argv.h"
+				RelativePath="..\src\i_system.h"
 				>
 			</File>
 			<File
-				RelativePath="..\setup\mouse.h"
+				RelativePath="..\src\i_timer.h"
 				>
 			</File>
 			<File
-				RelativePath="..\setup\multiplayer.h"
+				RelativePath="..\src\setup\joystick.h"
 				>
 			</File>
 			<File
-				RelativePath="..\setup\sound.h"
+				RelativePath="..\src\setup\keyboard.h"
 				>
 			</File>
 			<File
-				RelativePath="..\setup\txt_joybinput.h"
+				RelativePath="..\src\m_argv.h"
 				>
 			</File>
 			<File
-				RelativePath="..\setup\txt_keyinput.h"
+				RelativePath="..\src\m_config.h"
 				>
 			</File>
 			<File
-				RelativePath="..\setup\txt_mouseinput.h"
+				RelativePath="..\src\m_controls.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\m_misc.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\setup\mode.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\setup\mouse.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\setup\multiplayer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\net_io.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\net_packet.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\net_query.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\net_sdl.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\net_structrw.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\setup\sound.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\setup\txt_joyaxis.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\setup\txt_joybinput.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\setup\txt_keyinput.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\setup\txt_mouseinput.h"
 				>
 			</File>
 			<File
 				RelativePath="..\textscreen\txt_scrollpane.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\z_zone.h"
 				>
 			</File>
 		</Filter>

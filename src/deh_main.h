@@ -1,7 +1,5 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -13,16 +11,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
-//-----------------------------------------------------------------------------
 //
 // Dehacked entrypoint and common code
 //
-//-----------------------------------------------------------------------------
 
 #ifndef DEH_MAIN_H
 #define DEH_MAIN_H
@@ -39,15 +30,16 @@
 #define DEH_VANILLA_NUMSTATES 966
 #define DEH_VANILLA_NUMSFX 107
 
-void DEH_Init(void);
+void DEH_ParseCommandLine(void);
 int DEH_LoadFile(char *filename);
-int DEH_LoadLump(int lumpnum, boolean allow_long);
-int DEH_LoadLumpByName(char *name, boolean allow_long);
+int DEH_LoadLump(int lumpnum, boolean allow_long, boolean allow_error);
+int DEH_LoadLumpByName(char *name, boolean allow_long, boolean allow_error);
 
 boolean DEH_ParseAssignment(char *line, char **variable_name, char **value);
 
 void DEH_Checksum(sha1_digest_t digest);
 
+extern boolean deh_allow_extended_strings;
 extern boolean deh_allow_long_strings;
 extern boolean deh_allow_long_cheats;
 extern boolean deh_apply_cheats;

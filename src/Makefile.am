@@ -219,10 +219,23 @@ EXTRA_DIST =                        \
         manifest.xml
 
 appdir = $(prefix)/share/applications
-app_DATA = @PROGRAM_PREFIX@doom.desktop
+app_DATA =                                 \
+           @PROGRAM_PREFIX@doom.desktop    \
+           @PROGRAM_PREFIX@heretic.desktop \
+           @PROGRAM_PREFIX@hexen.desktop   \
+           @PROGRAM_PREFIX@strife.desktop
 
 @PROGRAM_PREFIX@doom.desktop : doom.desktop
 	cp doom.desktop $@
+
+@PROGRAM_PREFIX@heretic.desktop : heretic.desktop
+	cp heretic.desktop $@
+
+@PROGRAM_PREFIX@hexen.desktop : hexen.desktop
+	cp hexen.desktop $@
+
+@PROGRAM_PREFIX@strife.desktop : strife.desktop
+	cp strife.desktop $@
 
 screensaverdir = $(prefix)/share/applications/screensavers
 screensaver_DATA = @PROGRAM_PREFIX@doom-screensaver.desktop

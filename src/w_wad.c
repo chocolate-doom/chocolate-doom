@@ -1,8 +1,6 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -14,15 +12,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // DESCRIPTION:
 //	Handles WAD file header, directory, lump I/O.
 //
-//-----------------------------------------------------------------------------
 
 
 
@@ -34,6 +26,8 @@
 
 #include "doomtype.h"
 
+#include "config.h"
+#include "d_iwad.h"
 #include "i_swap.h"
 #include "i_system.h"
 #include "i_video.h"
@@ -89,6 +83,46 @@ unsigned int W_LumpNameHash(const char *s)
     return result;
 }
 
+// Increase the size of the lumpinfo[] array to the specified size.
+static void ExtendLumpInfo(int newnumlumps)
+{
+    lumpinfo_t *newlumpinfo;
+    unsigned int i;
+
+    newlumpinfo = calloc(newnumlumps, sizeof(lumpinfo_t));
+
+    if (newlumpinfo == NULL)
+    {
+	I_Error ("Couldn't realloc lumpinfo");
+    }
+
+    // Copy over lumpinfo_t structures from the old array. If any of
+    // these lumps have been cached, we need to update the user
+    // pointers to the new location.
+    for (i = 0; i < numlumps && i < newnumlumps; ++i)
+    {
+        memcpy(&newlumpinfo[i], &lumpinfo[i], sizeof(lumpinfo_t));
+
+        if (newlumpinfo[i].cache != NULL)
+        {
+            Z_ChangeUser(newlumpinfo[i].cache, &newlumpinfo[i].cache);
+        }
+
+        // We shouldn't be generating a hash table until after all WADs have
+        // been loaded, but just in case...
+        if (lumpinfo[i].next != NULL)
+        {
+            int nextlumpnum = lumpinfo[i].next - lumpinfo;
+            newlumpinfo[i].next = &newlumpinfo[nextlumpnum];
+        }
+    }
+
+    // All done.
+    free(lumpinfo);
+    lumpinfo = newlumpinfo;
+    numlumps = newnumlumps;
+}
+
 //
 // LUMP BASED ROUTINES.
 //
@@ -112,19 +146,20 @@ wad_file_t *W_AddFile (char *filename)
     int startlump;
     filelump_t *fileinfo;
     filelump_t *filerover;
-    
+    int newnumlumps;
+
     // open the file and add to directory
 
     wad_file = W_OpenFile(filename);
-		
+
     if (wad_file == NULL)
     {
 	printf (" couldn't open %s\n", filename);
 	return NULL;
     }
 
-    startlump = numlumps;
-	
+    newnumlumps = numlumps;
+
     if (strcasecmp(filename+strlen(filename)-3 , "wad" ) )
     {
 	// single lump file
@@ -142,7 +177,7 @@ wad_file_t *W_AddFile (char *filename)
         // extension).
 
 	M_ExtractFileBase (filename, fileinfo->name);
-	numlumps++;
+	newnumlumps++;
     }
     else 
     {
@@ -167,19 +202,15 @@ wad_file_t *W_AddFile (char *filename)
 	fileinfo = Z_Malloc(length, PU_STATIC, 0);
 
         W_Read(wad_file, header.infotableofs, fileinfo, length);
-	numlumps += header.numlumps;
+	newnumlumps += header.numlumps;
     }
 
-    // Fill in lumpinfo
-    lumpinfo = realloc(lumpinfo, numlumps * sizeof(lumpinfo_t));
-
-    if (lumpinfo == NULL)
-    {
-	I_Error ("Couldn't realloc lumpinfo");
-    }
+    // Increase size of numlumps array to accomodate the new file.
+    startlump = numlumps;
+    ExtendLumpInfo(newnumlumps);
 
     lump_p = &lumpinfo[startlump];
-	
+
     filerover = fileinfo;
 
     for (i=startlump; i<numlumps; ++i)
@@ -193,7 +224,7 @@ wad_file_t *W_AddFile (char *filename)
         ++lump_p;
         ++filerover;
     }
-	
+
     Z_Free(fileinfo);
 
     if (lumphash != NULL)
@@ -535,5 +566,46 @@ void W_GenerateHashTable(void)
     }
 
     // All done!
+}
+
+// Lump names that are unique to particular game types. This lets us check
+// the user is not trying to play with the wrong executable, eg.
+// chocolate-doom -iwad hexen.wad.
+static const struct
+{
+    GameMission_t mission;
+    char *lumpname;
+} unique_lumps[] = {
+    { doom,    "POSSA1" },
+    { heretic, "IMPXA1" },
+    { hexen,   "ETTNA1" },
+    { strife,  "AGRDA1" },
+};
+
+void W_CheckCorrectIWAD(GameMission_t mission)
+{
+    int i;
+    int lumpnum;
+
+    for (i = 0; i < arrlen(unique_lumps); ++i)
+    {
+        if (mission != unique_lumps[i].mission)
+        {
+            lumpnum = W_CheckNumForName(unique_lumps[i].lumpname);
+
+            if (lumpnum >= 0)
+            {
+                I_Error("\nYou are trying to use a %s IWAD file with "
+                        "the %s%s binary.\nThis isn't going to work.\n"
+                        "You probably want to use the %s%s binary.",
+                        D_SuggestGameName(unique_lumps[i].mission,
+                                          indetermined),
+                        PROGRAM_PREFIX,
+                        D_GameMissionString(mission),
+                        PROGRAM_PREFIX,
+                        D_GameMissionString(unique_lumps[i].mission));
+            }
+        }
+    }
 }
 

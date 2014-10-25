@@ -1,9 +1,7 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 1993-2008 Raven Software
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -15,15 +13,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // DESCRIPTION:
 //      Miscellaneous.
 //
-//-----------------------------------------------------------------------------
 
 
 #include <stdio.h>
@@ -293,6 +285,26 @@ char *M_StrCaseStr(char *haystack, char *needle)
 }
 
 //
+// Safe version of strdup() that checks the string was successfully
+// allocated.
+//
+
+char *M_StringDuplicate(const char *orig)
+{
+    char *result;
+
+    result = strdup(orig);
+
+    if (result == NULL)
+    {
+        I_Error("Failed to duplicate string (length %i)\n",
+                strlen(orig));
+    }
+
+    return result;
+}
+
+//
 // String replace function.
 //
 
@@ -349,6 +361,8 @@ char *M_StringReplace(const char *haystack, const char *needle,
             ++p;
         }
     }
+
+    *dst = '\0';
 
     return result;
 }

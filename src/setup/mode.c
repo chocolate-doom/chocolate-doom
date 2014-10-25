@@ -1,7 +1,5 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
-// Copyright(C) 2006 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -12,11 +10,6 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
 //
 
 #include <stdlib.h>
@@ -47,7 +40,7 @@
 #include "mode.h"
 
 GameMission_t gamemission;
-static iwad_t **iwads;
+static const iwad_t **iwads;
 
 typedef struct
 {
@@ -280,7 +273,7 @@ static void OpenGameSelectDialog(GameSelectCallback callback)
 {
     mission_config_t *mission = NULL;
     txt_window_t *window;
-    iwad_t **iwads;
+    const iwad_t **iwads;
     int num_games;
     int i;
 
@@ -345,7 +338,7 @@ void SetupMission(GameSelectCallback callback)
     // @arg <game>
     //
     // Specify the game to configure the settings for.  Valid
-    // values are 'doom', 'heretic' and 'hexen'.
+    // values are 'doom', 'heretic', 'hexen' and 'strife'.
     //
 
     p = M_CheckParm("-game");
@@ -380,7 +373,7 @@ char *GetGameTitle(void)
     return game_title;
 }
 
-iwad_t **GetIwads(void)
+const iwad_t **GetIwads(void)
 {
     return iwads;
 }

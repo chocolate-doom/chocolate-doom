@@ -1,7 +1,5 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
-// Copyright(C) 2006 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -13,11 +11,6 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -27,6 +20,9 @@
 
 #include "doomkeys.h"
 #include "joystick.h"
+#include "i_joystick.h"
+#include "i_system.h"
+#include "m_controls.h"
 #include "m_misc.h"
 
 #include "txt_joybinput.h"
@@ -38,6 +34,111 @@
 
 #define JOYSTICK_INPUT_WIDTH 10
 
+extern int joystick_physical_buttons[NUM_VIRTUAL_BUTTONS];
+
+// Joystick button variables.
+// The ordering of this array is important. We will always try to map
+// each variable to the virtual button with the same array index. For
+// example: joybfire should always be 0, and then we change
+// joystick_physical_buttons[0] to point to the physical joystick
+// button that the user wants to use for firing. We do this so that
+// the menus work (the game code is hard coded to interpret
+// button #0 = select menu item, button #1 = go back to previous menu).
+static int *all_joystick_buttons[] =
+{
+    &joybfire,
+    &joybuse,
+    &joybstrafe,
+    &joybspeed,
+    &joybstrafeleft,
+    &joybstraferight,
+    &joybprevweapon,
+    &joybnextweapon,
+    &joybjump,
+    &joybmenu,
+};
+
+static int PhysicalForVirtualButton(int vbutton)
+{
+    if (vbutton < NUM_VIRTUAL_BUTTONS)
+    {
+        return joystick_physical_buttons[vbutton];
+    }
+    else
+    {
+        return vbutton;
+    }
+}
+
+// Get the virtual button number for the given variable, ie. the
+// variable's index in all_joystick_buttons[].
+static int VirtualButtonForVariable(int *variable)
+{
+    int i;
+
+    for (i = 0; i < arrlen(all_joystick_buttons); ++i)
+    {
+        if (variable == all_joystick_buttons[i])
+        {
+            return i;
+        }
+    }
+
+    I_Error("Couldn't find virtual button");
+    return -1;
+}
+
+// Rearrange joystick button configuration to be in "canonical" form:
+// each joyb* variable should have a value equal to its index in
+// all_joystick_buttons[] above.
+static void CanonicalizeButtons(void)
+{
+    int new_mapping[NUM_VIRTUAL_BUTTONS];
+    int vbutton;
+    int i;
+
+    for (i = 0; i < arrlen(all_joystick_buttons); ++i)
+    {
+        vbutton = *all_joystick_buttons[i];
+
+        // Don't remap the speed key if it's bound to "always run".
+        // Also preserve "unbound" variables.
+        if ((all_joystick_buttons[i] == &joybspeed && vbutton >= 20)
+         || vbutton < 0)
+        {
+            new_mapping[i] = i;
+        }
+        else
+        {
+            new_mapping[i] = PhysicalForVirtualButton(vbutton);
+            *all_joystick_buttons[i] = i;
+        }
+    }
+
+    for (i = 0; i < NUM_VIRTUAL_BUTTONS; ++i)
+    {
+        joystick_physical_buttons[i] = new_mapping[i];
+    }
+}
+
+// Check all existing buttons and clear any using the specified physical
+// button.
+static void ClearVariablesUsingButton(int physbutton)
+{
+    int vbutton;
+    int i;
+
+    for (i = 0; i < arrlen(all_joystick_buttons); ++i)
+    {
+        vbutton = *all_joystick_buttons[i];
+
+        if (vbutton >= 0 && physbutton == PhysicalForVirtualButton(vbutton))
+        {
+            *all_joystick_buttons[i] = -1;
+        }
+    }
+}
+
 // Called in response to SDL events when the prompt window is open:
 
 static int EventCallback(SDL_Event *event, TXT_UNCAST_ARG(joystick_input))
@@ -48,12 +149,23 @@ static int EventCallback(SDL_Event *event, TXT_UNCAST_ARG(joystick_input))
 
     if (event->type == SDL_JOYBUTTONDOWN)
     {
-        *joystick_input->variable = event->jbutton.button;
+        int vbutton, physbutton;
+
+        // Before changing anything, remap button configuration into
+        // canonical form, to avoid conflicts.
+        CanonicalizeButtons();
+
+        vbutton = VirtualButtonForVariable(joystick_input->variable);
+        physbutton = event->jbutton.button;
 
         if (joystick_input->check_conflicts)
         {
-            TXT_EmitSignal(joystick_input, "set");
+            ClearVariablesUsingButton(physbutton);
         }
+
+        // Set mapping.
+        *joystick_input->variable = vbutton;
+        joystick_physical_buttons[vbutton] = physbutton;
 
         TXT_CloseWindow(joystick_input->prompt_window);
         return 1;
@@ -125,9 +237,11 @@ static void TXT_JoystickInputSizeCalc(TXT_UNCAST_ARG(joystick_input))
     joystick_input->widget.h = 1;
 }
 
-static void GetJoystickButtonDescription(int button, char *buf, size_t buf_len)
+static void GetJoystickButtonDescription(int vbutton, char *buf,
+                                         size_t buf_len)
 {
-    M_snprintf(buf, buf_len, "BUTTON #%i", button + 1);
+    M_snprintf(buf, buf_len, "BUTTON #%i",
+               PhysicalForVirtualButton(vbutton) + 1);
 }
 
 static void TXT_JoystickInputDrawer(TXT_UNCAST_ARG(joystick_input))
@@ -148,9 +262,9 @@ static void TXT_JoystickInputDrawer(TXT_UNCAST_ARG(joystick_input))
 
     TXT_SetWidgetBG(joystick_input);
     TXT_FGColor(TXT_COLOR_BRIGHT_WHITE);
-    
+
     TXT_DrawString(buf);
-    
+
     for (i=strlen(buf); i<JOYSTICK_INPUT_WIDTH; ++i)
     {
         TXT_DrawString(" ");
@@ -161,11 +275,11 @@ static void TXT_JoystickInputDestructor(TXT_UNCAST_ARG(joystick_input))
 {
 }
 
-static int TXT_JoystickInputKeyPress(TXT_UNCAST_ARG(joystick_input), int joystick)
+static int TXT_JoystickInputKeyPress(TXT_UNCAST_ARG(joystick_input), int key)
 {
     TXT_CAST_ARG(txt_joystick_input_t, joystick_input);
 
-    if (joystick == KEY_ENTER)
+    if (key == KEY_ENTER)
     {
         // Open a window to prompt for the new joystick press
 
@@ -174,13 +288,18 @@ static int TXT_JoystickInputKeyPress(TXT_UNCAST_ARG(joystick_input), int joystic
         return 1;
     }
 
+    if (key == KEY_BACKSPACE || key == KEY_DEL)
+    {
+        *joystick_input->variable = -1;
+    }
+
     return 0;
 }
 
 static void TXT_JoystickInputMousePress(TXT_UNCAST_ARG(widget), int x, int y, int b)
 {
     TXT_CAST_ARG(txt_joystick_input_t, widget);
-            
+
     // Clicking is like pressing enter
 
     if (b == TXT_MOUSE_LEFT)

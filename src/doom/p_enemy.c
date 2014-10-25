@@ -1,8 +1,6 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -14,17 +12,11 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // DESCRIPTION:
 //	Enemy thinking, AI.
 //	Action Pointer Functions
 //	that are associated with states/frames. 
 //
-//-----------------------------------------------------------------------------
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -264,11 +256,6 @@ boolean P_CheckMissileRange (mobj_t* actor)
 //
 fixed_t	xspeed[8] = {FRACUNIT,47000,0,-47000,-FRACUNIT,-47000,0,47000};
 fixed_t yspeed[8] = {0,47000,FRACUNIT,47000,0,-47000,-FRACUNIT,-47000};
-
-#define MAXSPECIALCROSS	8
-
-extern	line_t*	spechit[MAXSPECIALCROSS];
-extern	int	numspechit;
 
 boolean P_Move (mobj_t*	actor)
 {
@@ -587,7 +574,7 @@ void A_KeenDie (mobj_t* mo)
     }
 
     junk.tag = 666;
-    EV_DoDoor(&junk,open);
+    EV_DoDoor(&junk, vld_open);
 }
 
 
@@ -1750,7 +1737,7 @@ void A_BossDeath (mobj_t* mo)
 	    {
 	      case 6:
 		junk.tag = 666;
-		EV_DoDoor (&junk, blazeOpen);
+		EV_DoDoor (&junk, vld_blazeOpen);
 		return;
 		break;
 		

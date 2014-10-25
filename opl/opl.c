@@ -1,7 +1,5 @@
-// Emacs style mode select   -*- C++ -*-
-//-----------------------------------------------------------------------------
 //
-// Copyright(C) 2009 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -13,15 +11,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // DESCRIPTION:
 //     OPL interface.
 //
-//-----------------------------------------------------------------------------
 
 #include "config.h"
 
@@ -303,7 +295,7 @@ int OPL_Detect(void)
         OPL_ReadStatus();
     }
 
-    OPL_Delay(1);
+    OPL_Delay(1 * OPL_MS);
 
     // Read status
     result2 = OPL_ReadStatus();
@@ -365,11 +357,11 @@ void OPL_InitRegisters(void)
 // Timer functions.
 //
 
-void OPL_SetCallback(unsigned int ms, opl_callback_t callback, void *data)
+void OPL_SetCallback(uint64_t us, opl_callback_t callback, void *data)
 {
     if (driver != NULL)
     {
-        driver->set_callback_func(ms, callback, data);
+        driver->set_callback_func(us, callback, data);
     }
 }
 
@@ -417,7 +409,7 @@ static void DelayCallback(void *_delay_data)
     SDL_UnlockMutex(delay_data->mutex);
 }
 
-void OPL_Delay(unsigned int ms)
+void OPL_Delay(uint64_t us)
 {
     delay_data_t delay_data;
 
@@ -433,7 +425,7 @@ void OPL_Delay(unsigned int ms)
     delay_data.mutex = SDL_CreateMutex();
     delay_data.cond = SDL_CreateCond();
 
-    OPL_SetCallback(ms, DelayCallback, &delay_data);
+    OPL_SetCallback(us, DelayCallback, &delay_data);
 
     // Wait until the callback is invoked.
 
@@ -457,6 +449,14 @@ void OPL_SetPaused(int paused)
     if (driver != NULL)
     {
         driver->set_paused_func(paused);
+    }
+}
+
+void OPL_AdjustCallbacks(float value)
+{
+    if (driver != NULL)
+    {
+        driver->adjust_callbacks_func(value);
     }
 }
 

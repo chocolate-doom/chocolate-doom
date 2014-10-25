@@ -1,8 +1,6 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
-// Copyright(C) 2005,2006 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -14,17 +12,11 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // DESCRIPTION:
 //     Screen scale-up code: 
 //         1x,2x,3x,4x pixel doubling
 //         Aspect ratio-correcting stretch functions
 //
-//-----------------------------------------------------------------------------
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -1392,69 +1384,12 @@ screen_mode_t mode_squash_4x = {
     false,
 };
 
-#define DRAW_PIXEL5 \
-        *dest++ = *dest2++ = *dest3++ = *dest4++ = *dest5++ = c
-
-static inline void WriteSquashedLine5x(byte *dest, byte *src)
-{
-    int x;
-    int c;
-    byte *dest2, *dest3, *dest4, *dest5;
-
-    dest2 = dest + dest_pitch;
-    dest3 = dest + dest_pitch * 2;
-    dest4 = dest + dest_pitch * 3;
-    dest5 = dest + dest_pitch * 4;
-
-    for (x=0; x<SCREENWIDTH; ++x)
-    {
-        // Draw in blocks of 5
-
-        // 100% pixel 0  x4
-
-        c = *src++;
-        DRAW_PIXEL5;
-        DRAW_PIXEL5;
-        DRAW_PIXEL5;
-        DRAW_PIXEL5;
-    }
-}
-
-//
-// 5x squashed (1280x1000)
-//
-
-static boolean I_Squash5x(int x1, int y1, int x2, int y2)
-{
-    byte *bufp, *screenp;
-    int y;
-
-    // Only works with full screen update
-
-    if (x1 != 0 || y1 != 0 || x2 != SCREENWIDTH || y2 != SCREENHEIGHT)
-    {
-        return false;
-    }    
-
-    bufp = src_buffer;
-    screenp = (byte *) dest_buffer;
-
-    for (y=0; y<SCREENHEIGHT; ++y) 
-    {
-        WriteSquashedLine5x(screenp, bufp);
-
-        screenp += dest_pitch * 5;
-        bufp += SCREENWIDTH;
-    }
-
-    return true;
-}
-
-screen_mode_t mode_squash_5x = {
-    SCREENWIDTH_4_3 * 5, SCREENHEIGHT * 5,
-    I_InitStretchTables,
-    I_Squash5x,
-    false,
-};
-
+// We used to have mode_squash_5x here as well, but it got removed.
+// 5x squashing gives 1280x1000, which is very close to the 4x stretched
+// 1280x960. The difference is that 1280x1000 is the wrong aspect ratio.
+// It was ultimately decided that it was better to use the right aspect
+// ratio and have slightly larger borders than to have slightly smaller
+// windowboxing borders. It also means that the aspect ratio is correct
+// when running at 1280x1024. See bug #460 for more details, or this
+// post: http://www.doomworld.com/vb/post/1316735
 

@@ -1,8 +1,6 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -14,15 +12,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // DESCRIPTION:
 //
 //    
-//-----------------------------------------------------------------------------
 
 
 #ifndef __D_EVENT__
@@ -49,10 +41,30 @@ typedef enum
 // Event structure.
 typedef struct
 {
-    evtype_t	type;
-    int		data1;		// keys / mouse/joystick buttons
-    int		data2;		// mouse/joystick x move
-    int		data3;		// mouse/joystick y move
+    evtype_t type;
+
+    // Event-related data that depends on the type of event:
+    //
+    // ev_keydown/ev_keyup:
+    //    data1: Key code (from doomkeys.h) of the key that was
+    //           pressed or released.
+    //    data2: Ascii text of the character that was pressed,
+    //           shifted appropriately (eg. '$' if 4 was pressed
+    //           while shift was held).
+    //
+    // ev_mouse:
+    //    data1: Bitfield of buttons currently held down.
+    //           (bit 0 = left; bit 1 = right; bit 2 = middle).
+    //    data2: X axis mouse movement (turn).
+    //    data3: Y axis mouse movement (forward/backward).
+    //
+    // ev_joystick:
+    //    data1: Bitfield of buttons currently pressed.
+    //    data2: X axis mouse movement (turn).
+    //    data3: Y axis mouse movement (forward/backward).
+    //    data4: Third axis mouse movement (strafe).
+
+    int data1, data2, data3, data4;
 } event_t;
 
  

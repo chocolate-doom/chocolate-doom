@@ -1,8 +1,6 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -14,18 +12,12 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // DESCRIPTION:
 //	DOOM main program (D_DoomMain) and game loop (D_DoomLoop),
 //	plus functions to determine game mode (shareware, registered),
 //	parse command line parameters, configure game parameters (turbo),
 //	and call the startup functions.
 //
-//-----------------------------------------------------------------------------
 
 
 #include <ctype.h>
@@ -847,19 +839,24 @@ void D_IdentifyVersion(void)
             if((p = M_CheckParm("-iwad")) && p < myargc - 1)
             {
                 char   *iwad     = myargv[p + 1];
-                size_t  len      = strlen(iwad) + 24;
-                char   *filename = malloc(len);
-                char    sepchar;
+                size_t  len      = strlen(iwad) + 1;
+                char   *iwadpath = Z_Malloc(len, PU_STATIC, NULL);
+                char   *voiceswad;
+                
+                // extract base path of IWAD parameter
+                M_GetFilePath(iwad, iwadpath, len);
+                
+                // concatenate with /voices.wad
+                voiceswad = M_SafeFilePath(iwadpath, "voices.wad");
+                Z_Free(iwadpath);
 
-                // how the heck is Choco surviving without this routine?
-                sepchar = M_GetFilePath(iwad, filename, len);
-                filename[strlen(filename)] = sepchar;
-                M_StringConcat(filename, "voices.wad", sizeof(filename));
-
-                if(!M_FileExists(filename))
+                if(!M_FileExists(voiceswad))
+                {
                     disable_voices = 1;
+                    Z_Free(voiceswad);
+                }
                 else
-                    name = filename; // STRIFE-FIXME: memory leak!!
+                    name = voiceswad; // STRIFE-FIXME: memory leak!!
             }
             else
                 disable_voices = 1;
@@ -1393,12 +1390,6 @@ void D_DoomMain (void)
     }
 
 #endif
-            
-#ifdef FEATURE_DEHACKED
-    if(devparm)
-        printf("DEH_Init: Init Dehacked support.\n");
-    DEH_Init();
-#endif
 
     //!
     // @vanilla
@@ -1560,6 +1551,14 @@ void D_DoomMain (void)
     if(devparm) // [STRIFE] Devparm only
         DEH_printf("W_Init: Init WADfiles.\n");
     D_AddFile(iwadfile);
+    W_CheckCorrectIWAD(strife);
+
+#ifdef FEATURE_DEHACKED
+    // Load dehacked patches specified on the command line.
+    DEH_ParseCommandLine();
+#endif
+
+    // Load PWAD files.
     modifiedgame = W_ParseCommandLine();
 
     // [STRIFE] serial number output

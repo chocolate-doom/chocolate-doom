@@ -1,8 +1,6 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -14,16 +12,10 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // DESCRIPTION:
 //	DOOM selection menu, options, episode etc.
 //	Sliders and icons. Kinda widget stuff.
 //
-//-----------------------------------------------------------------------------
 
 
 #include <stdlib.h>
@@ -991,32 +983,12 @@ static char *msgNames[2] = {"M_MSGOFF","M_MSGON"};
 
 void M_DrawOptions(void)
 {
-    char *detail_patch;
-
     V_DrawPatchDirect(108, 15, W_CacheLumpName(DEH_String("M_OPTTTL"),
                                                PU_CACHE));
-
-    // Workaround for BFG edition IWAD weirdness.
-    // The BFG edition doesn't have the "low detail" menu option (fair
-    // enough). But bizarrely, it reuses the M_GDHIGH patch as a label
-    // for the options menu (says "Fullscreen:"). Why the perpetrators
-    // couldn't just add a new graphic lump and had to reuse this one,
-    // I don't know.
-    //
-    // The end result is that M_GDHIGH is too wide and causes the game
-    // to crash. As a workaround to get a minimum level of support for
-    // the BFG edition IWADs, use the "ON"/"OFF" graphics instead.
-    if (bfgedition)
-    {
-        detail_patch = msgNames[!detailLevel];
-    }
-    else
-    {
-        detail_patch = detailNames[detailLevel];
-    }
-
+	
     V_DrawPatchDirect(OptionsDef.x + 175, OptionsDef.y + LINEHEIGHT * detail,
-		      W_CacheLumpName(DEH_String(detail_patch), PU_CACHE));
+		      W_CacheLumpName(DEH_String(detailNames[detailLevel]),
+			              PU_CACHE));
 
     V_DrawPatchDirect(OptionsDef.x + 120, OptionsDef.y + LINEHEIGHT * messages,
                       W_CacheLumpName(DEH_String(msgNames[showMessages]),
@@ -1524,6 +1496,11 @@ boolean M_Responder (event_t* ev)
 	    key = key_menu_back;
 	    joywait = I_GetTime() + 5;
 	}
+        if (joybmenu >= 0 && (ev->data1 & (1 << joybmenu)) != 0)
+        {
+            key = key_menu_activate;
+	    joywait = I_GetTime() + 5;
+        }
     }
     else
     {

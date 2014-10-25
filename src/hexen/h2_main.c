@@ -1,9 +1,7 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 1993-2008 Raven Software
-// Copyright(C) 2008 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -15,12 +13,6 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
-//-----------------------------------------------------------------------------
 
 
 // HEADER FILES ------------------------------------------------------------
@@ -194,6 +186,40 @@ static void D_SetDefaultSavePath(void)
     }
 }
 
+// The Mac version of the Hexen IWAD is different to the "normal" DOS
+// version - it doesn't include lumps used by the DOS DMX library.
+// This means that we can't do GUS or OPL emulation and need to apply
+// a workaround.
+static void AdjustForMacIWAD(void)
+{
+    boolean adjust_music = false;
+
+    switch (snd_musicdevice)
+    {
+        case SNDDEVICE_ADLIB:
+        case SNDDEVICE_SB:
+            adjust_music = W_CheckNumForName("GENMIDI") < 0;
+            break;
+
+        case SNDDEVICE_GUS:
+            adjust_music = W_CheckNumForName("DMXGUS") < 0;
+            break;
+
+        default:
+            break;
+    }
+
+    if (adjust_music)
+    {
+        printf("** Note: You appear to be using the Mac version of the Hexen\n"
+               "** IWAD file. This is missing the lumps required for OPL or\n"
+               "** GUS emulation. Your music configuration is being adjusted\n"
+               "** to a different setting that won't cause the game to "
+               "crash.\n");
+        snd_musicdevice = SNDDEVICE_GENMIDI;
+    }
+}
+
 //
 // D_GrabMouseCallback
 //
@@ -304,6 +330,8 @@ void D_DoomMain(void)
     }
 
     D_AddFile(iwadfile);
+    W_CheckCorrectIWAD(hexen);
+    AdjustForMacIWAD();
 
     HandleArgs();
 

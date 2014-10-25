@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".;..\src;..\src\doom;..\textscreen;..\pcsound"
+				AdditionalIncludeDirectories=".;..\src;..\src\doom;..\textscreen;..\pcsound;..\opl"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;PROGRAM_PREFIX=&quot;\&quot;chocolate-\&quot;&quot;"
 				MinimalRebuild="true"
 				ExceptionHandling="0"
@@ -69,6 +69,7 @@
 				AdditionalDependencies="SDL.lib SDL_mixer.lib SDL_net.lib SDLmain.lib"
 				OutputFile="$(OutDir)\chocolate-doom-dbg.exe"
 				LinkIncremental="2"
+				IgnoreDefaultLibraryNames="msvcrt"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				DataExecutionPrevention="0"
@@ -122,14 +123,18 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
+				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories=".;..\src;..\src\doom;..\textscreen;..\pcsound"
+				FavorSizeOrSpeed="1"
+				OmitFramePointers="true"
+				WholeProgramOptimization="true"
+				AdditionalIncludeDirectories=".;..\src;..\src\doom;..\textscreen;..\pcsound;..\opl"
 				PreprocessorDefinitions="WIN32;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;PROGRAM_PREFIX=&quot;\&quot;chocolate-\&quot;&quot;"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				DebugInformationFormat="3"
+				DebugInformationFormat="0"
 				CompileAs="1"
 			/>
 			<Tool
@@ -146,7 +151,9 @@
 				AdditionalDependencies="SDL.lib SDL_mixer.lib SDL_net.lib SDLmain.lib"
 				OutputFile="$(OutDir)\chocolate-doom.exe"
 				LinkIncremental="0"
+				IgnoreDefaultLibraryNames="msvcrtd"
 				GenerateDebugInformation="false"
+				GenerateMapFile="true"
 				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
@@ -193,11 +200,31 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\d_loop.h"
+				>
+			</File>
+			<File
 				RelativePath="..\src\d_mode.h"
 				>
 			</File>
 			<File
 				RelativePath="..\src\d_ticcmd.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\deh_defs.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\deh_io.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\deh_main.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\deh_mapping.h"
 				>
 			</File>
 			<File
@@ -214,6 +241,10 @@
 			</File>
 			<File
 				RelativePath="..\src\doomtype.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\gusconf.h"
 				>
 			</File>
 			<File
@@ -281,11 +312,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\md5.h"
+				RelativePath="..\src\memio.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\memio.h"
+				RelativePath="..\src\midifile.h"
 				>
 			</File>
 			<File
@@ -341,6 +372,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\sha1.h"
+				>
+			</File>
+			<File
 				RelativePath="..\src\tables.h"
 				>
 			</File>
@@ -358,6 +393,10 @@
 			</File>
 			<File
 				RelativePath="..\src\w_file.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\w_main.h"
 				>
 			</File>
 			<File
@@ -409,18 +448,6 @@
 				</File>
 				<File
 					RelativePath="..\src\doom\deh_defs.h"
-					>
-				</File>
-				<File
-					RelativePath="..\src\doom\deh_io.h"
-					>
-				</File>
-				<File
-					RelativePath="..\src\doom\deh_main.h"
-					>
-				</File>
-				<File
-					RelativePath="..\src\doom\deh_mapping.h"
 					>
 				</File>
 				<File
@@ -568,6 +595,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\src\doom\statdump.h"
+					>
+				</File>
+				<File
 					RelativePath="..\src\doom\wi_stuff.h"
 					>
 				</File>
@@ -585,11 +616,35 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\d_loop.c"
+				>
+			</File>
+			<File
 				RelativePath="..\src\d_mode.c"
 				>
 			</File>
 			<File
+				RelativePath="..\src\deh_io.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\deh_main.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\deh_mapping.c"
+				>
+			</File>
+			<File
 				RelativePath="..\src\deh_str.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\deh_text.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\gusconf.c"
 				>
 			</File>
 			<File
@@ -606,6 +661,10 @@
 			</File>
 			<File
 				RelativePath="..\src\i_main.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\i_oplmusic.c"
 				>
 			</File>
 			<File
@@ -673,11 +732,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\md5.c"
+				RelativePath="..\src\memio.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\memio.c"
+				RelativePath="..\src\midifile.c"
 				>
 			</File>
 			<File
@@ -690,6 +749,10 @@
 			</File>
 			<File
 				RelativePath="..\src\net_common.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\net_dedicated.c"
 				>
 			</File>
 			<File
@@ -725,6 +788,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\sha1.c"
+				>
+			</File>
+			<File
 				RelativePath="..\src\tables.c"
 				>
 			</File>
@@ -750,6 +817,10 @@
 			</File>
 			<File
 				RelativePath="..\src\w_file_win32.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\w_main.c"
 				>
 			</File>
 			<File
@@ -792,19 +863,11 @@
 					>
 				</File>
 				<File
+					RelativePath="..\src\doom\deh_doom.c"
+					>
+				</File>
+				<File
 					RelativePath="..\src\doom\deh_frame.c"
-					>
-				</File>
-				<File
-					RelativePath="..\src\doom\deh_io.c"
-					>
-				</File>
-				<File
-					RelativePath="..\src\doom\deh_main.c"
-					>
-				</File>
-				<File
-					RelativePath="..\src\doom\deh_mapping.c"
 					>
 				</File>
 				<File
@@ -817,10 +880,6 @@
 				</File>
 				<File
 					RelativePath="..\src\doom\deh_sound.c"
-					>
-				</File>
-				<File
-					RelativePath="..\src\doom\deh_text.c"
 					>
 				</File>
 				<File
@@ -997,6 +1056,10 @@
 				</File>
 				<File
 					RelativePath="..\src\doom\st_stuff.c"
+					>
+				</File>
+				<File
+					RelativePath="..\src\doom\statdump.c"
 					>
 				</File>
 				<File

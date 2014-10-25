@@ -1,8 +1,6 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
-// Copyright(C) 2005,2006,2007 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -14,15 +12,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // DESCRIPTION:
 //	Endianess handling, swapping 16bit and 32bit.
 //
-//-----------------------------------------------------------------------------
 
 
 #ifndef __I_SWAP__
@@ -39,7 +31,7 @@
 // of the macros in the original source and some code relies on it.
 
 #define SHORT(x)  ((signed short) SDL_SwapLE16(x))
-#define LONG(x)   ((signed long) SDL_SwapLE32(x))
+#define LONG(x)   ((signed int) SDL_SwapLE32(x))
 
 // Defines for checking the endianness of the system.
 

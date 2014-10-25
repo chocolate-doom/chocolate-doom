@@ -1,7 +1,5 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
-// Copyright(C) 2013 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -13,11 +11,6 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // DESCRIPTION:
 //     GUS emulation code.
 //
@@ -26,7 +19,6 @@
 //     supports GUS patch files. This code therefore converts Doom's
 //     DMXGUS lump into an equivalent Timidity configuration file.
 //
-//-----------------------------------------------------------------------------
 
 
 #include <stdio.h>
@@ -34,6 +26,7 @@
 #include <string.h>
 #include <ctype.h>
 
+#include "m_misc.h"
 #include "w_wad.h"
 #include "z_zone.h"
 
@@ -130,7 +123,7 @@ static void ParseLine(gus_config_t *config, char *line)
     mapped_id = atoi(fields[MappingIndex()]);
 
     free(config->patch_names[instr_id]);
-    config->patch_names[instr_id] = strdup(fields[5]);
+    config->patch_names[instr_id] = M_StringDuplicate(fields[5]);
     config->mapping[instr_id] = mapped_id;
 }
 

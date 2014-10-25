@@ -1,7 +1,5 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -13,18 +11,12 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
-//-----------------------------------------------------------------------------
 //
 // Parses Text substitution sections in dehacked files
 //
-//-----------------------------------------------------------------------------
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "doomtype.h"
@@ -60,7 +52,7 @@ static void *DEH_TextStart(deh_context_t *context, char *line)
     char *from_text, *to_text;
     int fromlen, tolen;
     int i;
-    
+
     if (sscanf(line, "Text %i %i", &fromlen, &tolen) != 2)
     {
         DEH_Warning(context, "Parse error on section start");
@@ -77,36 +69,30 @@ static void *DEH_TextStart(deh_context_t *context, char *line)
         return NULL;
     }
 
-    from_text = Z_Malloc(fromlen + 1, PU_STATIC, NULL);
-    to_text = Z_Malloc(tolen + 1, PU_STATIC, NULL);
+    from_text = malloc(fromlen + 1);
+    to_text = malloc(tolen + 1);
 
     // read in the "from" text
 
     for (i=0; i<fromlen; ++i)
     {
-        int c;
-
-        c = DEH_GetChar(context);
-            
-        from_text[i] = c;
+        from_text[i] = DEH_GetChar(context);
     }
-
     from_text[fromlen] = '\0';
 
     // read in the "to" text
 
     for (i=0; i<tolen; ++i)
     {
-        int c;
-
-        c = DEH_GetChar(context);
-            
-        to_text[i] = c;
+        to_text[i] = DEH_GetChar(context);
     }
     to_text[tolen] = '\0';
 
     DEH_AddStringReplacement(from_text, to_text);
-    
+
+    free(from_text);
+    free(to_text);
+
     return NULL;
 }
 

@@ -1,9 +1,7 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 1993-2008 Raven Software
-// Copyright(C) 2008 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -15,12 +13,6 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
-//-----------------------------------------------------------------------------
 
 
 #include <string.h>
@@ -162,6 +154,7 @@ int dclicktime2, dclickstate2, dclicks2;
 #define MAX_JOY_BUTTONS 20
 
 int joyxmove, joyymove;         // joystick values are repeated
+int joystrafemove;
 boolean joyarray[MAX_JOY_BUTTONS + 1];
 boolean *joybuttons = &joyarray[1];     // allow [-1]
 
@@ -313,11 +306,13 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
     {
         forward -= forwardmove[pClass][speed];
     }
-    if (gamekeydown[key_straferight])
+    if (gamekeydown[key_straferight] || joystrafemove > 0
+     || joybuttons[joybstraferight])
     {
         side += sidemove[pClass][speed];
     }
-    if (gamekeydown[key_strafeleft])
+    if (gamekeydown[key_strafeleft] || joystrafemove < 0
+     || joybuttons[joybstrafeleft])
     {
         side -= sidemove[pClass][speed];
     }
@@ -659,7 +654,7 @@ void G_DoLoadLevel(void)
 // 
 
     memset(gamekeydown, 0, sizeof(gamekeydown));
-    joyxmove = joyymove = 0;
+    joyxmove = joyymove = joystrafemove = 0;
     mousex = mousey = 0;
     sendpause = sendsave = paused = false;
     memset(mousearray, 0, sizeof(mousearray));
@@ -876,6 +871,7 @@ boolean G_Responder(event_t * ev)
             SetJoyButtons(ev->data1);
             joyxmove = ev->data2;
             joyymove = ev->data3;
+            joystrafemove = ev->data4;
             return (true);      // eat events
 
         default:

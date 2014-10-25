@@ -1,9 +1,7 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 1993-2008 Raven Software
-// Copyright(C) 2008 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -15,12 +13,6 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
-//-----------------------------------------------------------------------------
 
 
 // HEADER FILES ------------------------------------------------------------
@@ -1173,6 +1165,17 @@ boolean MN_Responder(event_t * event)
         }
 
         return true;
+    }
+
+    // Allow the menu to be activated from a joystick button if a button
+    // is bound for joybmenu.
+    if (event->type == ev_joystick)
+    {
+        if (joybmenu >= 0 && (event->data1 & (1 << joybmenu)) != 0)
+        {
+            MN_ActivateMenu();
+            return true;
+        }
     }
 
     // Only care about keypresses beyond this point.

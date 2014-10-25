@@ -1,7 +1,5 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
-// Copyright(C) 2006 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -13,11 +11,6 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 
 // Sound control menu
 
@@ -27,6 +20,7 @@
 
 #include "textscreen.h"
 #include "m_config.h"
+#include "m_misc.h"
 
 #include "mode.h"
 #include "sound.h"
@@ -331,8 +325,8 @@ void BindSoundVariables(void)
         M_BindVariable("show_talk",       &show_talk);
     }
 
-    timidity_cfg_path = strdup("");
-    gus_patch_path = strdup("");
+    timidity_cfg_path = M_StringDuplicate("");
+    gus_patch_path = M_StringDuplicate("");
 
     // Default sound volumes - different games use different values.
 

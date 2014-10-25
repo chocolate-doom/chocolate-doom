@@ -1,7 +1,5 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
-// Copyright(C) 2006 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -13,16 +11,10 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // DESCRIPTION:
 //     Search for and locate an IWAD file, and initialize according
 //     to the IWAD type.
 //
-//-----------------------------------------------------------------------------
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -39,7 +31,7 @@
 #include "w_wad.h"
 #include "z_zone.h"
 
-static iwad_t iwads[] =
+static const iwad_t iwads[] =
 {
     { "doom2.wad",    doom2,     commercial, "Doom II" },
     { "plutonia.wad", pack_plut, commercial, "Final Doom: Plutonia Experiment" },
@@ -421,7 +413,7 @@ static char *CheckDirectoryHasIWAD(char *dir, char *iwadname)
 
     if (DirIsFile(dir, iwadname) && M_FileExists(dir))
     {
-        return strdup(dir);
+        return M_StringDuplicate(dir);
     }
 
     // Construct the full path to the IWAD if it is located in
@@ -429,7 +421,7 @@ static char *CheckDirectoryHasIWAD(char *dir, char *iwadname)
 
     if (!strcmp(dir, "."))
     {
-        filename = strdup(iwadname);
+        filename = M_StringDuplicate(iwadname);
     }
     else
     {
@@ -531,7 +523,7 @@ static void AddDoomWadPath(void)
         return;
     }
 
-    doomwadpath = strdup(doomwadpath);
+    doomwadpath = M_StringDuplicate(doomwadpath);
 
     // Add the initial directory
 
@@ -648,7 +640,7 @@ char *D_FindWADByName(char *name)
 
         if (DirIsFile(iwad_dirs[i], name) && M_FileExists(iwad_dirs[i]))
         {
-            return strdup(iwad_dirs[i]);
+            return M_StringDuplicate(iwad_dirs[i]);
         }
 
         // Construct a string for the full path
@@ -749,9 +741,9 @@ char *D_FindIWAD(int mask, GameMission_t *mission)
 
 // Find all IWADs in the IWAD search path matching the given mask.
 
-iwad_t **D_FindAllIWADs(int mask)
+const iwad_t **D_FindAllIWADs(int mask)
 {
-    iwad_t **result;
+    const iwad_t **result;
     int result_len;
     char *filename;
     int i;
@@ -833,7 +825,8 @@ char *D_SuggestGameName(GameMission_t mission, GameMode_t mode)
 
     for (i = 0; i < arrlen(iwads); ++i)
     {
-        if (iwads[i].mission == mission && iwads[i].mode == mode)
+        if (iwads[i].mission == mission
+         && (mode == indetermined || iwads[i].mode == mode))
         {
             return iwads[i].description;
         }

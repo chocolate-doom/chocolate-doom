@@ -1,7 +1,5 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
-// Copyright(C) 2006 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -13,15 +11,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // DESCRIPTION:
 //     Find IWAD and initialize according to IWAD type.
 //
-//-----------------------------------------------------------------------------
 
 
 #ifndef __D_IWAD__
@@ -50,10 +42,11 @@ typedef struct
 char *D_FindWADByName(char *filename);
 char *D_TryFindWADByName(char *filename);
 char *D_FindIWAD(int mask, GameMission_t *mission);
-iwad_t **D_FindAllIWADs(int mask);
+const iwad_t **D_FindAllIWADs(int mask);
 char *D_SaveGameIWADName(GameMission_t gamemission);
 char *D_SuggestIWADName(GameMission_t mission, GameMode_t mode);
 char *D_SuggestGameName(GameMission_t mission, GameMode_t mode);
+void D_CheckCorrectIWAD(GameMission_t mission);
 
 #endif
 

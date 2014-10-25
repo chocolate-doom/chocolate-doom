@@ -1,7 +1,5 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
-// Copyright(C) 2006 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -12,11 +10,6 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
 //
 
 #include <stdio.h>
@@ -52,7 +45,7 @@ typedef enum
 
 // Fallback IWADs to use if no IWADs are detected.
 
-static iwad_t fallback_iwads[] = {
+static const iwad_t fallback_iwads[] = {
     { "doom.wad",     doom,     registered,  "Doom" },
     { "heretic.wad",  heretic,  retail,      "Heretic" },
     { "hexen.wad",    hexen,    commercial,  "Hexen" },
@@ -61,12 +54,12 @@ static iwad_t fallback_iwads[] = {
 
 // Array of IWADs found to be installed
 
-static iwad_t **found_iwads;
+static const iwad_t **found_iwads;
 static char *iwad_labels[8];
 
 // Index of the currently selected IWAD
 
-static int found_iwad_selected;
+static int found_iwad_selected = -1;
 
 // Filename to pass to '-iwad'.
 
@@ -153,14 +146,14 @@ static int query_servers_found;
 
 // Find an IWAD from its description
 
-static iwad_t *GetCurrentIWAD(void)
+static const iwad_t *GetCurrentIWAD(void)
 {
     return found_iwads[found_iwad_selected];
 }
 
 // Is the currently selected IWAD the Chex Quest chex.wad?
 
-static boolean IsChexQuest(iwad_t *iwad)
+static boolean IsChexQuest(const iwad_t *iwad)
 {
     return !strcmp(iwad->name, "chex.wad");
 }
@@ -320,7 +313,7 @@ static void UpdateWarpButton(void)
 
 static void UpdateSkillButton(void)
 {
-    iwad_t *iwad = GetCurrentIWAD();
+    const iwad_t *iwad = GetCurrentIWAD();
 
     if (IsChexQuest(iwad))
     {
@@ -393,7 +386,7 @@ static void LevelSelectDialog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(user_data))
     txt_window_t *window;
     txt_table_t *table;
     txt_button_t *button;
-    iwad_t *iwad;
+    const iwad_t *iwad;
     char buf[10];
     int episodes;
     int x, y;
@@ -477,7 +470,7 @@ static void LevelSelectDialog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(user_data))
 
 static void IWADSelected(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
 {
-    iwad_t *iwad;
+    const iwad_t *iwad;
 
     // Find the iwad_t selected
 
@@ -493,7 +486,7 @@ static void IWADSelected(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
 static void UpdateWarpType(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
 {
     warptype_t new_warptype;
-    iwad_t *iwad;
+    const iwad_t *iwad;
 
     // Get the selected IWAD
 
@@ -527,9 +520,9 @@ static void UpdateWarpType(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
 // Get an IWAD list with a default fallback IWAD that is appropriate
 // for the game we are configuring (matches gamemission global variable).
 
-static iwad_t **GetFallbackIwadList(void)
+static const iwad_t **GetFallbackIwadList(void)
 {
-    static iwad_t *fallback_iwad_list[2];
+    static const iwad_t *fallback_iwad_list[2];
     unsigned int i;
 
     // Default to use if we don't find something better.
@@ -599,9 +592,15 @@ static txt_widget_t *IWADSelector(void)
         result = (txt_widget_t *) dropdown;
     }
 
-    // Select first in the list.
+    // The first time the dialog is opened, found_iwad_selected=-1,
+    // so select the first IWAD in the list. Don't lose the setting
+    // if we close and reopen the dialog.
 
-    found_iwad_selected = 0;
+    if (found_iwad_selected < 0 || found_iwad_selected >= num_iwads)
+    {
+        found_iwad_selected = 0;
+    }
+
     IWADSelected(NULL, NULL);
 
     return result;
@@ -795,6 +794,13 @@ static void DoJoinGame(void *unused1, void *unused2)
 {
     execute_context_t *exec;
 
+    if (connect_address == NULL || strlen(connect_address) <= 0)
+    {
+        TXT_MessageBox(NULL, "Please enter a server address\n"
+                             "to connect to.");
+        return;
+    }
+
     exec = NewExecuteContext();
 
     AddCmdLineParameter(exec, "-connect %s", connect_address);
@@ -850,7 +856,7 @@ static void SelectQueryAddress(TXT_UNCAST_ARG(button),
     // Set address to connect to:
 
     free(connect_address);
-    connect_address = strdup(button->label);
+    connect_address = M_StringDuplicate(button->label);
 
     // Auto-choose IWAD if there is already a player connected.
 
@@ -1038,7 +1044,7 @@ void SetChatMacroDefaults(void)
     {
         if (chat_macros[i] == NULL)
         {
-            chat_macros[i] = strdup(defaults[i]);
+            chat_macros[i] = M_StringDuplicate(defaults[i]);
         }
     }
 }
@@ -1047,12 +1053,12 @@ void SetPlayerNameDefault(void)
 {
     if (net_player_name == NULL)
     {
-        net_player_name = strdup(getenv("USER"));
+        net_player_name = M_StringDuplicate(getenv("USER"));
     }
 
     if (net_player_name == NULL)
     {
-        net_player_name = strdup(getenv("USERNAME"));
+        net_player_name = M_StringDuplicate(getenv("USERNAME"));
     }
 
     // On Windows, environment variables are in OEM codepage
@@ -1067,7 +1073,7 @@ void SetPlayerNameDefault(void)
 
     if (net_player_name == NULL)
     {
-        net_player_name = strdup("player");
+        net_player_name = M_StringDuplicate("player");
     }
 }
 
