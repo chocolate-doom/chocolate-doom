@@ -122,7 +122,6 @@ static screen_mode_t *screen_modes_corrected[] = {
     &mode_squash_2x,
     &mode_squash_3x,
     &mode_squash_4x,
-    &mode_squash_5x,
 };
 
 // SDL video driver name

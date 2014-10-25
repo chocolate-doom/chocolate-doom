@@ -47,7 +47,7 @@ extern screen_mode_t mode_squash_1x;
 extern screen_mode_t mode_squash_2x;
 extern screen_mode_t mode_squash_3x;
 extern screen_mode_t mode_squash_4x;
-extern screen_mode_t mode_squash_5x;
+// we don't do 5x.
 
 #endif /* #ifndef __I_SCALE__ */
 
