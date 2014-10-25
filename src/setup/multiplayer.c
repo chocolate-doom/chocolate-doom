@@ -856,7 +856,7 @@ static void SelectQueryAddress(TXT_UNCAST_ARG(button),
     // Set address to connect to:
 
     free(connect_address);
-    connect_address = strdup(button->label);
+    connect_address = M_StringDuplicate(button->label);
 
     // Auto-choose IWAD if there is already a player connected.
 
@@ -1044,7 +1044,7 @@ void SetChatMacroDefaults(void)
     {
         if (chat_macros[i] == NULL)
         {
-            chat_macros[i] = strdup(defaults[i]);
+            chat_macros[i] = M_StringDuplicate(defaults[i]);
         }
     }
 }
@@ -1053,12 +1053,12 @@ void SetPlayerNameDefault(void)
 {
     if (net_player_name == NULL)
     {
-        net_player_name = strdup(getenv("USER"));
+        net_player_name = M_StringDuplicate(getenv("USER"));
     }
 
     if (net_player_name == NULL)
     {
-        net_player_name = strdup(getenv("USERNAME"));
+        net_player_name = M_StringDuplicate(getenv("USERNAME"));
     }
 
     // On Windows, environment variables are in OEM codepage
@@ -1073,7 +1073,7 @@ void SetPlayerNameDefault(void)
 
     if (net_player_name == NULL)
     {
-        net_player_name = strdup("player");
+        net_player_name = M_StringDuplicate("player");
     }
 }
 

@@ -1429,7 +1429,7 @@ static char *savename = NULL;
 
 void G_LoadGame(char *name)
 {
-    savename = strdup(name);
+    savename = M_StringDuplicate(name);
     gameaction = ga_loadgame;
 }
 

@@ -498,14 +498,14 @@ static char *GetFullPath(char *base_filename, char *path)
     // so just return it.
     if (path[0] == DIR_SEPARATOR)
     {
-        return strdup(path);
+        return M_StringDuplicate(path);
     }
 
 #ifdef _WIN32
     // d:\path\...
     if (isalpha(path[0]) && path[1] == ':' && path[2] == DIR_SEPARATOR)
     {
-        return strdup(path);
+        return M_StringDuplicate(path);
     }
 #endif
 
@@ -516,7 +516,7 @@ static char *GetFullPath(char *base_filename, char *path)
 
     // Copy config filename and cut off the filename to just get the
     // parent dir.
-    basedir = strdup(base_filename);
+    basedir = M_StringDuplicate(base_filename);
     p = strrchr(basedir, DIR_SEPARATOR);
     if (p != NULL)
     {
@@ -525,7 +525,7 @@ static char *GetFullPath(char *base_filename, char *path)
     }
     else
     {
-        result = strdup(path);
+        result = M_StringDuplicate(path);
     }
     free(basedir);
     free(path);
@@ -672,7 +672,7 @@ static void LoadSubstituteConfigs(void)
 
     if (!strcmp(configdir, ""))
     {
-        musicdir = strdup("");
+        musicdir = M_StringDuplicate("");
     }
     else
     {
@@ -805,7 +805,7 @@ static boolean WriteWrapperTimidityConfig(char *write_path)
     p = strrchr(timidity_cfg_path, DIR_SEPARATOR);
     if (p != NULL)
     {
-        path = strdup(timidity_cfg_path);
+        path = M_StringDuplicate(timidity_cfg_path);
         path[p - timidity_cfg_path] = '\0';
         fprintf(fstream, "dir %s\n", path);
         free(path);
