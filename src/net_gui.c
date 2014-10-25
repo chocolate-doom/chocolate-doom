@@ -249,11 +249,19 @@ static void PrintSHA1Digest(char *s, byte *digest)
     printf("\n");
 }
 
+static void CloseWindow(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(window))
+{
+    TXT_CAST_ARG(txt_window_t, window);
+
+    TXT_CloseWindow(window);
+}
+
 static void CheckSHA1Sums(void)
 {
     boolean correct_wad, correct_deh;
     boolean same_freedoom;
     txt_window_t *window;
+    txt_window_action_t *cont_button;
 
     if (!net_client_received_wait_data || had_warning)
     {
@@ -295,8 +303,13 @@ static void CheckSHA1Sums(void)
         PrintSHA1Digest("Server", net_client_wait_data.deh_sha1sum);
     }
 
-    window = TXT_NewWindow("WARNING");
+    window = TXT_NewWindow("WARNING!");
 
+    cont_button = TXT_NewWindowAction(KEY_ENTER, "Continue");
+    TXT_SignalConnect(cont_button, "pressed", CloseWindow, window);
+
+    TXT_SetWindowAction(window, TXT_HORIZ_LEFT, NULL);
+    TXT_SetWindowAction(window, TXT_HORIZ_CENTER, cont_button);
     TXT_SetWindowAction(window, TXT_HORIZ_RIGHT, NULL);
 
     if (!same_freedoom)
