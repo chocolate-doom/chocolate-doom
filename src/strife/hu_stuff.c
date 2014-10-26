@@ -437,7 +437,7 @@ void HU_Ticker(void)
             if (i != consoleplayer
                 && (c = players[i].cmd.chatchar))
             {
-                if (c <= HU_BROADCAST)
+                if (c <= HU_CHANGENAME) // [STRIFE]: allow HU_CHANGENAME here
                     chat_dest[i] = c;
                 else
                 {
