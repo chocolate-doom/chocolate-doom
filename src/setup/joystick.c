@@ -156,6 +156,22 @@ static const joystick_config_t ps3_controller[] =
     {NULL, 0},
 };
 
+// Playstation 4 Dual Shock 4 (DS4)
+static const joystick_config_t ps4_ds4_controller[] =
+{
+    {"joystick_x_axis",        CREATE_HAT_AXIS(0, HAT_AXIS_HORIZONTAL)},
+    {"joystick_y_axis",        CREATE_HAT_AXIS(0, HAT_AXIS_VERTICAL)},
+    {"joyb_fire",              0},  // Square
+    {"joyb_speed",             1},  // X
+    {"joyb_use",               2},  // Circle
+    {"joyb_jump",              3},  // Triangle
+    {"joyb_strafeleft",        6},  // Bottom shoulder buttons
+    {"joyb_straferight",       7},
+    {"joyb_prevweapon",        4},  // Top shoulder buttons
+    {"joyb_nextweapon",        5},
+    {"joyb_menu_activate",     12}, // Playstation logo button
+};
+
 static const joystick_config_t airflo_controller[] =
 {
     {"joystick_x_axis",        CREATE_HAT_AXIS(0, HAT_AXIS_HORIZONTAL)},
@@ -331,6 +347,15 @@ static const known_joystick_t known_joysticks[] =
         "USB,2-axis 8-button gamepad  ",
         2, 8, 0,
         buffalo_classic_controller,
+    },
+
+    // PS4 controller just appears as the generic-sounding "Wireless
+    // Controller". Hopefully the number of buttons/axes/hats should be
+    // enough to distinguish it from other gamepads.
+    {
+        "Wireless Controller",
+        6, 14, 1,
+        ps4_ds4_controller,
     },
 };
 
