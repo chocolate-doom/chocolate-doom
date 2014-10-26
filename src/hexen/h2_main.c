@@ -305,7 +305,7 @@ void D_DoomMain(void)
     }
 
     D_SetDefaultSavePath();
-    M_SetConfigFilenames("cnhexen.cfg", PROGRAM_PREFIX "hexen.cfg");
+    M_SetConfigFilenames("hexen.cfg", PROGRAM_PREFIX "hexen.cfg");
     M_LoadDefaults();
 
     I_AtExit(M_SaveDefaults, false);
@@ -771,8 +771,8 @@ static void DrawAndBlit(void)
     {
         if (!netgame)
         {
-            V_DrawPatch(160, viewwindowy + 5, W_CacheLumpName("PAUSED",
-                                                              PU_CACHE));
+            V_DrawPatch(160, (viewwindowy >> hires) + 5, W_CacheLumpName("PAUSED",
+                                                              PU_CACHE)); // [cndoom] hires
         }
         else
         {
