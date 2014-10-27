@@ -1712,6 +1712,8 @@ void D_DoomMain (void)
 		    I_Error(DEH_String("\nThis is not the registered version."));
     }
 
+// [crispy] disable meaningless warning, we always use "-merge" anyway
+#if 0
     if (W_CheckNumForName("SS_START") >= 0
      || W_CheckNumForName("FF_END") >= 0)
     {
@@ -1720,6 +1722,7 @@ void D_DoomMain (void)
                " floor textures.  You may want to use the '-merge' command\n"
                " line option instead of '-file'.\n");
     }
+#endif
 
     I_PrintStartupBanner(gamedescription);
     PrintDehackedBanners();
