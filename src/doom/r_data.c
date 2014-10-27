@@ -923,7 +923,7 @@ void R_InitColormaps (void)
 	byte *playpal = W_CacheLumpName("PLAYPAL", PU_STATIC);
 	char c[3];
 	int i, j;
-	extern byte V_Colorize (byte *playpal, int cr, byte source);
+	extern byte V_Colorize (byte *playpal, int cr, byte source, boolean coloredgray);
 
 	if (!crstr)
 	    crstr = malloc(CRMAX * sizeof(*crstr));
@@ -932,7 +932,7 @@ void R_InitColormaps (void)
 	{
 	    for (j = 0; j < 256; j++)
 	    {
-		cr[i][j] = V_Colorize(playpal, i, j);
+		cr[i][j] = V_Colorize(playpal, i, j, crispy_coloredgray);
 	    }
 
 	    M_snprintf(c, sizeof(c), "\x1b%c", '0' + i);

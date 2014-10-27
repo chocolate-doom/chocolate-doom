@@ -30,6 +30,7 @@
 
 extern boolean crispy_cleanscreenshot;
 extern uint8_t crispy_coloredblood;
+extern boolean crispy_coloredgray;
 extern boolean crispy_democritical;
 extern boolean crispy_flashinghom;
 extern boolean crispy_fliplevels;
