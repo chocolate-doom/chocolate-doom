@@ -655,7 +655,7 @@ void R_ProjectSprite (mobj_t* thing)
 	    vis->translation = cr[CR_GREEN];
 	else
 	if ((crispy_coloredblood & (1 << 2)) && thing->target->type == MT_HEAD)
-	    vis->translation = cr[CR_BLUE2];
+	    vis->translation = cr[CR_BLUE];
 	else
 	// [crispy] Thorn Things in Hacx bleed green blood
 	if ((crispy_coloredblood & (1 << 5)) && thing->target->type == MT_BABY)

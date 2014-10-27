@@ -43,7 +43,7 @@ enum
     CR_GREEN,
     CR_GOLD,
     CR_RED,
-    CR_BLUE2,
+    CR_BLUE,
     CRMAX
 } cr_t;
 

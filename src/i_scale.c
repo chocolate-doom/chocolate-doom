@@ -295,8 +295,8 @@ screen_mode_t mode_scale_5x = {
 
 // Search through the given palette, finding the nearest color that matches
 // the given color.
-
-static int FindNearestColor(byte *palette, int r, int g, int b)
+// [crispy] share with v_trans.c:V_Colorize() and r_data.c:R_InitTranMap()
+int FindNearestColor(byte *palette, int r, int g, int b)
 {
     byte *col;
     int best;

@@ -1299,7 +1299,7 @@ static byte* ST_WidgetColor(int i)
                 else if (ammopct <= 100)
                     return cr[CR_GREEN];
                 else
-                    return cr[CR_BLUE2];
+                    return cr[CR_BLUE];
             }
             break;
         }
@@ -1318,7 +1318,7 @@ static byte* ST_WidgetColor(int i)
             else if (health <= 100)
                 return cr[CR_GREEN];
             else
-                return cr[CR_BLUE2];
+                return cr[CR_BLUE];
 
             break;
         }
@@ -1347,7 +1347,7 @@ static byte* ST_WidgetColor(int i)
 	    else if (plyr->armortype == 1)
                 return cr[CR_GREEN];
 	    else if (plyr->armortype == 2)
-                return cr[CR_BLUE2];
+                return cr[CR_BLUE];
 /*
             // [crispy] alternatively, color by armor points
             int armor = plyr->armorpoints;
@@ -1359,7 +1359,7 @@ static byte* ST_WidgetColor(int i)
             else if (armor <= 100)
                 return cr[CR_GREEN];
             else
-                return cr[CR_BLUE2];
+                return cr[CR_BLUE];
 */
             break;
         }

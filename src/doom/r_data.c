@@ -849,8 +849,8 @@ void R_InitTranMap()
 	    fread(tranmap, 256, 256, cachefp) != 256 ) // [crispy] could not read entire translucency map
 	{
 	byte *fg, *bg, blend[3], *tp = tranmap;
-	unsigned long match, best;
-	int i, j, k, btmp;
+	int i, j, btmp;
+	extern int FindNearestColor(byte *palette, int r, int g, int b);
 
 	// [crispy] background color
 	for (i = 0; i < 256; i++)
@@ -877,28 +877,7 @@ void R_InitTranMap()
 		blend[g] = (tran_filter_pct * fg[g] + (100 - tran_filter_pct) * bg[g]) / (100 + btmp);
 		blend[b] = (tran_filter_pct * fg[b] + (100 - tran_filter_pct) * bg[b]) / 100;
 
-		// [crispy] find palette color that matches blended color best
-		best = LONG_MAX;
-		for (k = 0; k < 256; k++)
-		{
-		    // [crispy] sum of squared residuals
-		    match = ((playpal[3*k+r] - blend[r]) * (playpal[3*k+r] - blend[r]) +
-		             (playpal[3*k+g] - blend[g]) * (playpal[3*k+g] - blend[g]) +
-		             (playpal[3*k+b] - blend[b]) * (playpal[3*k+b] - blend[b]));
-
-		    // [crispy] better than the previous match?
-		    if (match <= best) // [crispy] "or equal" because gray comes early
-		    {
-			best = match;
-			*tp = k;
-
-			// [crispy] perfect match?
-			if (!match)
-			    break;
-		    }
-		}
-		// [crispy] go to next entry in the translucency map
-		tp++;
+		*tp++ = FindNearestColor(playpal, blend[r], blend[g], blend[b]);
 	    }
 	}
 
@@ -939,28 +918,28 @@ void R_InitColormaps (void)
     lump = W_GetNumForName(DEH_String("COLORMAP"));
     colormaps = W_CacheLumpNum(lump, PU_STATIC);
 
-    // [crispy] initialize colormaps strings array
+    // [crispy] initialize color translation and color strings tables
     {
+	byte *playpal = W_CacheLumpName("PLAYPAL", PU_STATIC);
 	char c[3];
-	int i;
+	int i, j;
+	extern byte V_Colorize (byte *playpal, int cr, byte source);
 
 	if (!crstr)
 	    crstr = malloc(CRMAX * sizeof(*crstr));
 
 	for (i = 0; i < CRMAX; i++)
 	{
+	    for (j = 0; j < 256; j++)
+	    {
+		cr[i][j] = V_Colorize(playpal, i, j);
+	    }
+
 	    M_snprintf(c, sizeof(c), "\x1b%c", '0' + i);
 	    crstr[i] = M_StringDuplicate(c);
 	}
 
-	// [crispy] fill cr_none[] colormap with self-references
-	for (i = 0; i < 256; i++)
-	{
-	    cr[CR_NONE][i] = i;
-	}
-
-	// [crispy] fill cr_dark[] colormap with colormaps[16*256] content
-	memcpy(cr[CR_DARK], &colormaps[16*256], 256);
+	Z_ChangeTag(playpal, PU_CACHE);
     }
 }
 
