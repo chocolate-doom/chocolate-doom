@@ -184,7 +184,6 @@ byte V_Colorize (byte *playpal, int cr, byte source)
     else
     {
 	// [crispy] hack some colors into gray shades
-	// disabled in the palette-based renderer
 	if (hsv.y < CTOLERANCE)
 	{
 	    if (hsv.z < 0.5)
@@ -200,20 +199,12 @@ byte V_Colorize (byte *playpal, int cr, byte source)
 
 	if (cr == CR_GREEN)
 	{
-	    hsv.x = 105./360.;
-	    if (hsv.z > .1)
-	    {
-		hsv.x = (103.8 + hsv.z * 12. / 0.9)/360.;
-	    }
+	    hsv.x = 135./360.;
 	}
 	else
 	if (cr == CR_GOLD)
 	{
-	    hsv.x = 22./360.;
-	    if (hsv.z > .45)
-	    {
-		hsv.x = (-9.1 + hsv.z * 38. / 0.55)/360.;
-	    }
+	    hsv.x = 45./360.;
 	}
 	else
 	if (cr == CR_RED)
