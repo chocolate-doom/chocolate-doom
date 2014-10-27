@@ -3174,8 +3174,8 @@ void A_TeleportBeacon(mobj_t* actor)
         return;
     }
 
-    // beacon no longer solid
-    actor->flags &= ~MF_SOLID;
+    // beacon no longer special
+    actor->flags &= ~MF_SPECIAL;
 
     // set color and flags
     mobj->flags |= ((actor->miscdata << MF_TRANSSHIFT) | MF_NODIALOG);
