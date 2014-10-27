@@ -745,7 +745,7 @@ static void I_SDL_PrecacheSounds(sfxinfo_t *sounds, int num_sounds)
 
     // Don't need to precache the sounds unless we are using libsamplerate.
 
-    if (use_libsamplerate == 0 OR cn_precache_sounds) // [cndoom]
+    if (use_libsamplerate == 0 || cn_precache_sounds) // [cndoom]
     {
 	return;
     }
