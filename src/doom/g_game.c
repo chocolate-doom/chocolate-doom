@@ -1961,9 +1961,9 @@ void G_WriteDemoTiccmd (ticcmd_t* cmd)
 { 
     byte *demo_start;
     
-     // [cndoom] moved this elsewhere so it works during playback too
-     /* if (gamekeydown[key_demo_quit])           // press q to end demo recording 
-	G_CheckDemoStatus (); */
+    // [cndoom] moved this elsewhere so it works during playback too
+    // if (gamekeydown[key_demo_quit])           // press q to end demo recording 
+	//G_CheckDemoStatus ();
 
     demo_start = demo_p;
 
@@ -1971,7 +1971,7 @@ void G_WriteDemoTiccmd (ticcmd_t* cmd)
     *demo_p++ = cmd->sidemove; 
 
     // If this is a longtics demo, record in higher resolution
- 
+
     if (longtics)
     {
         *demo_p++ = (cmd->angleturn & 0xff);
@@ -2077,6 +2077,7 @@ void G_BeginRecording (void)
     //
 
     longtics = M_CheckParm("-longtics") != 0;
+    longtics = true; // [cndoom]
 
     // If not recording a longtics demo, record in low res
 
