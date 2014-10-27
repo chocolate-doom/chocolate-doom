@@ -1701,7 +1701,7 @@ void D_DoomMain (void)
     D_IntroTick(); // [STRIFE]
     
     // get skill / episode / map from parms
-    startskill = sk_medium;
+    startskill = sk_easy; // [STRIFE]: inits to sk_easy
     startepisode = 1;
     startmap = 1;
     autostart = false;
