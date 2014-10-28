@@ -1794,7 +1794,7 @@ void D_DoomMain (void)
 
 	// [crispy] check for status bar graphics replacements
 	i = W_CheckNumForName("sttnum0"); // [crispy] Status Bar '0'
-	crispy_coloredgray = (i >= 0 && strcmp(lumpinfo[i].wad_file->path, iwadbasename));
+	crispy_coloredgray = (i >= 0 && !!strcmp(lumpinfo[i].wad_file->path, iwadbasename));
     }
 
     // [crispy] check for NWT-style merging
