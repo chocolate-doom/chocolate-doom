@@ -16,6 +16,10 @@ Detailed explanation about each setting:
 //cn_compat                     1
 // This is a TODO
 
+// Display "Secret is revealed!" in demo playback.
+// 0 - No (Default), 1 - Yes
+cn_secretmessage              0
+
 // Display ingame/intermission screen timer
 // 0 - No, 1 - Yes (Default)
 cn_timer_enabled              1
