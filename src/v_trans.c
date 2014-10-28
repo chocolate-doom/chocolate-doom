@@ -184,7 +184,7 @@ byte V_Colorize (byte *playpal, int cr, byte source, boolean coloredgray)
     else
     {
 	// [crispy] hack some colors into gray shades
-	if (hsv.y < CTOLERANCE && coloredgray)
+	if (coloredgray)
 	{
 	    hsv.y = 1.0;
 	}
