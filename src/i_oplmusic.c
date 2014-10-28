@@ -734,9 +734,14 @@ static unsigned int FrequencyForVoice(opl_voice_t *voice)
 
     // Avoid possible overflow due to base note offset:
 
-    if (note > 0x7f)
+    while (note < 0)
     {
-        note = voice->note;
+        note += 12;
+    }
+    
+    while (note > 95)
+    {
+        note -= 12;
     }
 
     freq_index = 64 + 32 * note + voice->channel->bend;
@@ -770,14 +775,7 @@ static unsigned int FrequencyForVoice(opl_voice_t *voice)
 
     if (octave >= 7)
     {
-        if (sub_index < 5)
-        {
-            octave = 7;
-        }
-        else
-        {
-            octave = 6;
-        }
+        octave = 7;
     }
 
     // Calculate the resulting register value to use for the frequency.
