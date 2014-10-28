@@ -508,39 +508,45 @@ static void SetVoiceVolume(opl_voice_t *voice, unsigned int volume)
 {
     genmidi_voice_t *opl_voice;
     unsigned int full_volume;
-    unsigned int car_volume;
-    unsigned int mod_volume;
-    
+    unsigned int op_volume;
+    unsigned int reg_volume;
+
     voice->note_volume = volume;
-    
+
     opl_voice = &voice->current_instr->voices[voice->current_instr_voice];
-    
+
     // Multiply note volume and channel volume to get the actual volume.
-    
-    full_volume = (volume_mapping_table[voice->note_volume] * (2 * (volume_mapping_table[(voice->channel->volume * current_music_volume) / 127] + 1))) >> 9;
-    
+
+    full_volume = (volume_mapping_table[voice->note_volume]
+                   * volume_mapping_table[voice->channel->volume]
+                   * volume_mapping_table[current_music_volume]) / (127 * 127);
+
+    // The volume of each instrument can be controlled via GENMIDI:
+
+    op_volume = 0x3f - opl_voice->carrier.level;
+
     // The volume value to use in the register:
-    car_volume = 0x3f - full_volume;
-    
+
+    reg_volume = (op_volume * full_volume) / 128;
+    reg_volume = (0x3f - reg_volume) | opl_voice->carrier.scale;
+
     // Update the volume register(s) if necessary.
-    
-    if (car_volume != voice->reg_volume)
+
+    if (reg_volume != voice->reg_volume)
     {
-        voice->reg_volume = car_volume | (opl_voice->carrier.scale & 0xc0);
-        
-        OPL_WriteRegister(OPL_REGS_LEVEL + voice->op2, voice->reg_volume);
-        
+        voice->reg_volume = reg_volume;
+
+        OPL_WriteRegister(OPL_REGS_LEVEL + voice->op2, reg_volume);
+
         // If we are using non-modulated feedback mode, we must set the
         // volume for both voices.
-        
-        if ((opl_voice->feedback & 0x01) != 0 && opl_voice->modulator.level != 0x3f)
+        // Note that the same register volume value is written for
+        // both voices, always calculated from the carrier's level
+        // value.
+
+        if ((opl_voice->feedback & 0x01) != 0)
         {
-            mod_volume = 0x3f - opl_voice->modulator.level;
-            if (mod_volume >= car_volume)
-            {
-                mod_volume = car_volume;
-            }
-            OPL_WriteRegister(OPL_REGS_LEVEL + voice->op1, mod_volume | (opl_voice->modulator.scale & 0xc0));
+            OPL_WriteRegister(OPL_REGS_LEVEL + voice->op1, reg_volume);
         }
     }
 }
@@ -728,9 +734,14 @@ static unsigned int FrequencyForVoice(opl_voice_t *voice)
 
     // Avoid possible overflow due to base note offset:
 
-    if (note > 0x7f)
+    while (note < 0)
     {
-        note = voice->note;
+        note += 12;
+    }
+    
+    while (note > 95)
+    {
+        note -= 12;
     }
 
     freq_index = 64 + 32 * note + voice->channel->bend;
@@ -764,14 +775,7 @@ static unsigned int FrequencyForVoice(opl_voice_t *voice)
 
     if (octave >= 7)
     {
-        if (sub_index < 5)
-        {
-            octave = 7;
-        }
-        else
-        {
-            octave = 6;
-        }
+        octave = 7;
     }
 
     // Calculate the resulting register value to use for the frequency.
