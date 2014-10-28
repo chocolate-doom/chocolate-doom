@@ -1521,6 +1521,15 @@ static default_t extra_defaults_list[] =
     // [cndoom] additional config options start
 
     //!
+    // @game doom
+    //
+    // Show a message when a secret is found only in demo playback.
+    // Default: 0
+    //
+
+    CONFIG_VARIABLE_INT(cn_secretmessage),
+    
+    //!
     // alternate strafe ON key for second SR50 combination
     // (Default:x)
 

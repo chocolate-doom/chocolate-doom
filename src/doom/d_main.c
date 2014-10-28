@@ -130,9 +130,8 @@ boolean         main_loop_started = false;
 char		wadfile[1024];		// primary wad file
 char		mapdir[1024];           // directory of development maps
 
-// int             cn_secretmessage = 0; // [crispy] -> [cndoom] high resolution
+int             cn_secretmessage = 0;
 int             show_endoom = 0; // [cndoom]
-
 boolean         noblit;          //  [cndoom]
 void D_ConnectNetGame(void);
 void D_CheckNetGame(void);
@@ -427,7 +426,7 @@ void D_BindVariables(void)
     M_BindVariable("cn_timer_offset_y",      &cn_timer_offset_y);
     M_BindVariable("cn_timer_color_index",   &cn_timer_color_index);
     M_BindVariable("cn_timer_shadow_index",  &cn_timer_shadow_index);
-//    M_BindVariable("cn_secretmessage",       &cn_secretmessage); // [crispy] -> [cndoom] high resolution
+    M_BindVariable("cn_secretmessage",       &cn_secretmessage);
 
     // Multiplayer chat macros
 

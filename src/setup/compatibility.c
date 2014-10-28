@@ -22,9 +22,9 @@
 
 #include "compatibility.h"
 
-// [cndoom] turn off limits by default
 int vanilla_savegame_limit = 0;
 int vanilla_demo_limit = 0;
+int cn_secretmessage = 0;
 
 void CompatibilitySettings(void)
 {
@@ -37,6 +37,8 @@ void CompatibilitySettings(void)
                                    &vanilla_savegame_limit),
                    TXT_NewCheckBox("Vanilla demo limit",
                                    &vanilla_demo_limit),
+                   TXT_NewCheckBox("Show \"secret revealed\" message",
+                                   &cn_secretmessage),
                    NULL);
 }
 
@@ -46,6 +48,7 @@ void BindCompatibilityVariables(void)
     {
         M_BindVariable("vanilla_savegame_limit", &vanilla_savegame_limit);
         M_BindVariable("vanilla_demo_limit",     &vanilla_demo_limit);
+        M_BindVariable("cn_secretmessage",       &cn_secretmessage);
     }
 }
 
