@@ -91,8 +91,8 @@ static const char shiftxform[] =
 };
 
 
-#define LOADING_DISK_W (16 << hires) // [crispy] -> [cndoom] high resolution
-#define LOADING_DISK_H (16 << hires) // [crispy] -> [cndoom] high resolution
+#define LOADING_DISK_W (16 << hires)
+#define LOADING_DISK_H (16 << hires)
 
 // Non aspect ratio-corrected modes (direct multiples of 320x200)
 
@@ -119,11 +119,10 @@ static screen_mode_t *screen_modes_corrected[] = {
     // Horizontally squashed modes (320x200 -> 256x200 and multiples)
 
     &mode_squash_1x,
-    &mode_squash_1p5x, // [crispy] -> [cndoom] high resolution
+    &mode_squash_1p5x,
     &mode_squash_2x,
     &mode_squash_3x,
     &mode_squash_4x,
-    &mode_squash_5x,
 };
 
 // SDL video driver name
@@ -170,11 +169,11 @@ static unsigned int mouse_button_state = 0;
 // motion.  Specified with the '-novert' command line parameter.
 // This is an int to allow saving to config file
 
-int novert = 1; // [cndoom]
+int novert = 1;
 
 // Save screenshots in PNG format.
 
-int png_screenshots = 1; // [crispy] -> [cndoom]
+int png_screenshots = 1;
 
 // if true, I_VideoBuffer is screen->pixels
 
@@ -264,7 +263,7 @@ static unsigned int last_resize_time;
 // The sensible thing to do is to disable this if you have a non-US
 // keyboard.
 
-int vanilla_keyboard_mapping = false; // [cndoom]
+int vanilla_keyboard_mapping = false;
 
 // Is the shift key currently down?
 
@@ -282,14 +281,13 @@ static int shiftdown = 0;
 float mouse_acceleration = 2.0;
 int mouse_threshold = 10;
  
-// [crispy] mouse y
 //float mouse_acceleration_y = 1.0;
 //int mouse_threshold_y = 0;
 //int mouse_y_invert = 0;
 
 // Gamma correction level to use
 
-int usegamma = 4; // [cndoom]
+int usegamma = 4;
 
 static void ApplyWindowResize(unsigned int w, unsigned int h);
 
@@ -427,7 +425,7 @@ void I_EnableLoadingDisk(void)
 
     // Draw the patch into a temporary buffer
 
-    tmpbuf = Z_Malloc(SCREENWIDTH * ((disk->height + 1) << hires), PU_STATIC, NULL); // [crispy] -> [cndoom] high resolution
+    tmpbuf = Z_Malloc(SCREENWIDTH * ((disk->height + 1) << hires), PU_STATIC, NULL);
     V_UseBuffer(tmpbuf);
 
     // Draw the disk to the screen:
@@ -640,7 +638,7 @@ static int AccelerateMouse(int val)
         return val;
     }
 }
-/* [crispy] mouse y
+/*
 static int AccelerateMouseY(int val)
 {
     if (val < 0)
@@ -881,10 +879,10 @@ static void I_ReadMouse(void)
         ev.data1 = mouse_button_state;
         ev.data2 = AccelerateMouse(x);
 
-        // if (!novert || 1) // Moved to src/*/g_game.c // [crispy] mouse y
+        // if (!novert || 1) // Moved to src/*/g_game.c
         if (!novert)
         {
-            // ev.data3 = -AccelerateMouseY(y); // [crispy] mouse y
+            // ev.data3 = -AccelerateMouseY(y);
             ev.data3 = -AccelerateMouse(y);
         }
         else
@@ -1320,7 +1318,7 @@ static screen_mode_t *I_FindScreenMode(int w, int h)
         {
             return &mode_scale_1x;
         }
-        else if (w == SCREENWIDTH*2 && h == SCREENHEIGHT*2 && !hires) // [crispy] -> [cndoom] high resolution
+        else if (w == SCREENWIDTH*2 && h == SCREENHEIGHT*2 && !hires)
         {
             return &mode_scale_2x;
         }
@@ -2158,7 +2156,7 @@ void I_InitGraphics(void)
     // Not sure about repeat rate - probably dependent on which DOS
     // driver is used.  This is good enough though.
 
-    // [crispy] fix "holding ESC causes the menu to flicker on and off repeatedly" -> [cndoom] high resolution
+    // [crispy] fix "holding ESC causes the menu to flicker on and off repeatedly"
     //SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
 
     // clear out any events waiting at the start and center the mouse
@@ -2188,9 +2186,9 @@ void I_BindVideoVariables(void)
     M_BindVariable("grabmouse",                 &grabmouse);
     M_BindVariable("mouse_acceleration",        &mouse_acceleration);
     M_BindVariable("mouse_threshold",           &mouse_threshold);
-//    M_BindVariable("mouse_acceleration_y",      &mouse_acceleration_y); // [crispy] mouse y
-//    M_BindVariable("mouse_threshold_y",         &mouse_threshold_y); // [crispy] mouse y
-//    M_BindVariable("mouse_y_invert",            &mouse_threshold_y); // [crispy] mouse y
+//    M_BindVariable("mouse_acceleration_y",      &mouse_acceleration_y);
+//    M_BindVariable("mouse_threshold_y",         &mouse_threshold_y);
+//    M_BindVariable("mouse_y_invert",            &mouse_threshold_y);
     M_BindVariable("video_driver",              &video_driver);
     M_BindVariable("window_position",           &window_position);
     M_BindVariable("usegamma",                  &usegamma);

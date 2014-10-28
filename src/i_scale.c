@@ -51,7 +51,7 @@ static int dest_pitch;
 
 static byte *stretch_tables[2] = { NULL, NULL };
 
-// 25%/75% stretch table, for 400x300 squash mode [crispy] -> [cndoom] high resolution
+// 25%/75% stretch table, for 400x300 squash mode
 
 static byte *quarter_stretch_table = NULL;
 
@@ -236,7 +236,7 @@ screen_mode_t mode_scale_4x = {
     SCREENWIDTH * 4, SCREENHEIGHT * 4,
     NULL,
     I_Scale4x,
-    false || hires, // [crispy] -> [cndoom] high resolution
+    false || hires,
 };
 
 // 5x scale (1600x1000)
@@ -289,7 +289,7 @@ screen_mode_t mode_scale_5x = {
     SCREENWIDTH * 5, SCREENHEIGHT * 5,
     NULL,
     I_Scale5x,
-    false || hires, // [crispy] -> [cndoom] high resolution
+    false || hires,
 };
 
 
@@ -395,10 +395,10 @@ static void I_InitSquashTable(byte *palette)
         return;
     }
 
-    printf("I_InitSquashTable: Generating lookup tables.."); // [crispy] -> [cndoom] high resolution
+    printf("I_InitSquashTable: Generating lookup tables..");
     fflush(stdout);
     half_stretch_table = GenerateStretchTable(palette, 50);
-    // [crispy] -> [cndoom] high resolution
+   
     printf(".."); fflush(stdout);
 
     if (quarter_stretch_table != NULL)
@@ -436,7 +436,7 @@ void I_ResetScaleTables(byte *palette)
 
         half_stretch_table = GenerateStretchTable(palette, 50);
     }
-    if (quarter_stretch_table != NULL) // [crispy] -> [cndoom] high resolution
+    if (quarter_stretch_table != NULL)
     {
         Z_Free(quarter_stretch_table);
 
@@ -524,7 +524,7 @@ screen_mode_t mode_stretch_1x = {
     SCREENWIDTH, SCREENHEIGHT_4_3,
     I_InitStretchTables,
     I_Stretch1x,
-    true && !hires, // [crispy] -> [cndoom] high resolution
+    true && !hires,
 };
 
 static inline void WriteLine2x(byte *dest, byte *src)
@@ -776,7 +776,7 @@ screen_mode_t mode_stretch_3x = {
     SCREENWIDTH * 3, SCREENHEIGHT_4_3 * 3,
     I_InitStretchTables,
     I_Stretch3x,
-    false || hires, // [crispy] -> [cndoom] high resolution
+    false || hires,
 };
 
 static inline void WriteLine4x(byte *dest, byte *src)
@@ -941,7 +941,7 @@ screen_mode_t mode_stretch_4x = {
     SCREENWIDTH * 4, SCREENHEIGHT_4_3 * 4,
     I_InitStretchTables,
     I_Stretch4x,
-    false || hires, // [crispy] -> [cndoom] high resolution
+    false || hires,
 };
 
 static inline void WriteLine5x(byte *dest, byte *src)
@@ -1012,7 +1012,7 @@ static boolean I_Stretch5x(int x1, int y1, int x2, int y2)
     // test hack for Porsche Monty... scan line simulation:
     // See here: http://www.doomworld.com/vb/post/962612
 
-    if (M_CheckParm("-scanline") > 0 && !hires) // [crispy] -> [cndoom] high resolution
+    if (M_CheckParm("-scanline") > 0 && !hires)
     {
         screenp = (byte *) dest_buffer + 2 * dest_pitch;
 
@@ -1031,7 +1031,7 @@ screen_mode_t mode_stretch_5x = {
     SCREENWIDTH * 5, SCREENHEIGHT_4_3 * 5,
     I_InitStretchTables,
     I_Stretch5x,
-    false || hires, // [crispy] -> [cndoom] high resolution
+    false || hires,
 };
 
 //
@@ -1114,7 +1114,7 @@ screen_mode_t mode_squash_1x = {
     true,
 };
 
-// [crispy] -> [cndoom] high resolution
+//
 // 1.5x squashed scale (400x300)
 //
 
@@ -1200,7 +1200,7 @@ screen_mode_t mode_squash_1p5x = {
     I_InitSquashTable,
     I_Squash1p5x,
     true && !hires,
-}; // [end cndoom]
+};
 //
 // 2x squashed scale (512x400)
 //
@@ -1376,7 +1376,7 @@ static boolean I_Squash3x(int x1, int y1, int x2, int y2)
 }
 
 screen_mode_t mode_squash_3x = {
-    800 << hires, 600 << hires, // [crispy] -> [cndoom] high resolution
+    800 << hires, 600 << hires,
     I_InitSquashTable,
     I_Squash3x,
     false,
@@ -1490,72 +1490,5 @@ screen_mode_t mode_squash_4x = {
     SCREENWIDTH_4_3 * 4, SCREENHEIGHT * 4,
     I_InitStretchTables,
     I_Squash4x,
-    false || hires, // [crispy] -> [cndoom] high resolution
+    false || hires,
 };
-
-#define DRAW_PIXEL5 \
-        *dest++ = *dest2++ = *dest3++ = *dest4++ = *dest5++ = c
-
-static inline void WriteSquashedLine5x(byte *dest, byte *src)
-{
-    int x;
-    int c;
-    byte *dest2, *dest3, *dest4, *dest5;
-
-    dest2 = dest + dest_pitch;
-    dest3 = dest + dest_pitch * 2;
-    dest4 = dest + dest_pitch * 3;
-    dest5 = dest + dest_pitch * 4;
-
-    for (x=0; x<SCREENWIDTH; ++x)
-    {
-        // Draw in blocks of 5
-
-        // 100% pixel 0  x4
-
-        c = *src++;
-        DRAW_PIXEL5;
-        DRAW_PIXEL5;
-        DRAW_PIXEL5;
-        DRAW_PIXEL5;
-    }
-}
-
-//
-// 5x squashed (1280x1000)
-//
-
-static boolean I_Squash5x(int x1, int y1, int x2, int y2)
-{
-    byte *bufp, *screenp;
-    int y;
-
-    // Only works with full screen update
-
-    if (x1 != 0 || y1 != 0 || x2 != SCREENWIDTH || y2 != SCREENHEIGHT)
-    {
-        return false;
-    }    
-
-    bufp = src_buffer;
-    screenp = (byte *) dest_buffer;
-
-    for (y=0; y<SCREENHEIGHT; ++y) 
-    {
-        WriteSquashedLine5x(screenp, bufp);
-
-        screenp += dest_pitch * 5;
-        bufp += SCREENWIDTH;
-    }
-
-    return true;
-}
-
-screen_mode_t mode_squash_5x = {
-    SCREENWIDTH_4_3 * 5, SCREENHEIGHT * 5,
-    I_InitStretchTables,
-    I_Squash5x,
-    false || hires, // [crispy] -> [cndoom] high resolution
-};
-
-

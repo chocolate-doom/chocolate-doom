@@ -80,7 +80,6 @@ static screen_mode_t screen_modes_scaled[] =
     { 960,  720 },
     { 1024, 800 },
     { 1280, 960 },
-    { 1280, 1000 },
     { 1600, 1200 },
     { 0, 0},
 };
@@ -97,15 +96,15 @@ static char *window_position = "";
 static int autoadjust_video_settings = 1;
 static int aspect_ratio_correct = 1;
 static int fullscreen = 1;
-static int screen_width = 640; // [crispy] -> [cndoom] high resolution
-static int screen_height = 400; // [crispy] -> [cndoom] high resolution
+static int screen_width = 640;
+static int screen_height = 400;
 static int screen_bpp = 0;
 static int startup_delay = 1000;
-static int usegamma = 4; // [cndoom]
+static int usegamma = 4;
 
 int graphical_startup = 1;
-int show_endoom = 0; // [cndoom]
-int png_screenshots = 1; // [crispy] -> [cndoom]
+int show_endoom = 0;
+int png_screenshots = 1;
 
 // These are the last screen width/height values that were chosen by the
 // user.  These are used when finding the "nearest" mode, so when 
@@ -323,7 +322,7 @@ static int GoodFullscreenMode(screen_mode_t *mode)
 
     // 320x200 and 640x400 are always good (special case)
 
-    if ((w == 320 && h == 200  && 0) || (w == 640 && h == 400)) // [crispy] -> [cndoom] high resolution
+    if ((w == 320 && h == 200  && 0) || (w == 640 && h == 400))
     {
         return 1;
     }
@@ -331,7 +330,7 @@ static int GoodFullscreenMode(screen_mode_t *mode)
     // Special case: 320x240 letterboxed mode is okay (but not aspect
     // ratio corrected 320x240)
 
-    if (w == 640 && h == 480 && !aspect_ratio_correct) // [crispy] -> [cndoom] high resolution
+    if (w == 640 && h == 480 && !aspect_ratio_correct)
     {
         return 1;
     }
@@ -480,7 +479,7 @@ static void GenerateModesTable(TXT_UNCAST_ARG(widget),
             continue;
         }
 
-        if (modes[i].w < 640 || modes[i].h < 400) // [crispy] -> [cndoom] high resolution
+        if (modes[i].w < 640 || modes[i].h < 400)
         {
             continue;
         }
