@@ -390,7 +390,6 @@ void D_BindVariables(void)
     I_BindVideoVariables();
     I_BindJoystickVariables();
     I_BindSoundVariables();
- ff   
     M_BindBaseControls();
     M_BindWeaponControls();
     M_BindMapControls();
