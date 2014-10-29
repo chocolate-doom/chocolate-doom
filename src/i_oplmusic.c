@@ -364,6 +364,7 @@ static boolean LoadInstrumentTable(void)
 static opl_voice_t *GetFreeVoice(void)
 {
     opl_voice_t *result;
+    opl_voice_t **rover;
 
     // None available?
 
@@ -379,8 +380,15 @@ static opl_voice_t *GetFreeVoice(void)
 
     // Add to allocated list
 
-    result->next = voice_alloced_list;
-    voice_alloced_list = result;
+    rover = &voice_alloced_list;
+
+    while (*rover != NULL)
+    {
+        rover = &(*rover)->next;
+    }
+
+    *rover = result;
+    result->next = NULL;
 
     return result;
 }
@@ -636,22 +644,12 @@ static void KeyOffEvent(opl_track_data_t *track, midi_event_t *event)
     }
 }
 
-// Compare the priorities of channels, returning either -1, 0 or 1.
-
-static int CompareChannelPriorities(opl_channel_data_t *chan1,
-                                    opl_channel_data_t *chan2)
-{
-    // TODO ...
-
-    return 1;
-}
-
 // When all voices are in use, we must discard an existing voice to
 // play a new note.  Find and free an existing voice.  The channel
 // passed to the function is the channel for the new note to be
 // played.
 
-static opl_voice_t *ReplaceExistingVoice(opl_channel_data_t *channel)
+static void ReplaceExistingVoice()
 {
     opl_voice_t *rover;
     opl_voice_t *result;
@@ -664,51 +662,19 @@ static opl_voice_t *ReplaceExistingVoice(opl_channel_data_t *channel)
     // than higher-numbered channels, eg. MIDI channel 1 is never
     // discarded for MIDI channel 2.
 
-    result = NULL;
+    result = voice_alloced_list;
 
     for (rover = voice_alloced_list; rover != NULL; rover = rover->next)
     {
         if (rover->current_instr_voice != 0
-         || (rover->channel > channel
-             && CompareChannelPriorities(channel, rover->channel) > 0))
+         || rover->channel >= result->channel)
         {
             result = rover;
-            break;
         }
     }
-
-    // If we didn't find a voice, find an existing voice being used to
-    // play a note on the same channel, and use that.
-
-    if (result == NULL)
-    {
-        for (rover = voice_alloced_list; rover != NULL; rover = rover->next)
-        {
-            if (rover->channel == channel)
-            {
-                result = rover;
-                break;
-            }
-        }
-    }
-
-    // Still nothing found?  Give up and just use the first voice in
-    // the list.
-
-    if (result == NULL)
-    {
-        result = voice_alloced_list;
-    }
-
-    // Stop playing this voice playing and release it back to the free
-    // list.
 
     VoiceKeyOff(result);
     ReleaseVoice(result);
-
-    // Re-allocate the voice again and return it.
-
-    return GetFreeVoice();
 }
 
 
@@ -822,21 +788,9 @@ static void VoiceKeyOn(opl_channel_data_t *channel,
 
     voice = GetFreeVoice();
 
-    // If there are no more voices left, we must decide what to do.
-    // If this is the first voice of the instrument, free an existing
-    // voice and use that.  Otherwise, if this is the second voice,
-    // it isn't as important; just discard it.
-
     if (voice == NULL)
     {
-        if (instrument_voice == 0)
-        {
-            voice = ReplaceExistingVoice(channel);
-        }
-        else
-        {
-            return;
-        }
+        return;
     }
 
     voice->channel = channel;
@@ -917,6 +871,11 @@ static void KeyOnEvent(opl_track_data_t *track, midi_event_t *event)
     else
     {
         instrument = channel->instrument;
+    }
+
+    if (voice_free_list == NULL)
+    {
+    	ReplaceExistingVoice();
     }
 
     // Find and program a voice for this instrument.  If this
