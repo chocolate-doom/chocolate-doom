@@ -812,6 +812,7 @@ static void UpdateVoiceFrequency(opl_voice_t *voice)
 static void VoiceKeyOn(opl_channel_data_t *channel,
                        genmidi_instr_t *instrument,
                        unsigned int instrument_voice,
+                       unsigned int note,
                        unsigned int key,
                        unsigned int volume)
 {
@@ -850,7 +851,7 @@ static void VoiceKeyOn(opl_channel_data_t *channel,
     }
     else
     {
-        voice->note = key;
+        voice->note = note;
     }
 
     // Program the voice with the instrument data:
@@ -871,6 +872,7 @@ static void KeyOnEvent(opl_track_data_t *track, midi_event_t *event)
 {
     genmidi_instr_t *instrument;
     opl_channel_data_t *channel;
+    unsigned int note;
     unsigned int key;
     unsigned int volume;
 
@@ -881,6 +883,7 @@ static void KeyOnEvent(opl_track_data_t *track, midi_event_t *event)
            event->data.channel.param2);
 */
 
+    note = event->data.channel.param1;
     key = event->data.channel.param1;
     volume = event->data.channel.param2;
 
@@ -909,6 +912,7 @@ static void KeyOnEvent(opl_track_data_t *track, midi_event_t *event)
 
         last_perc[last_perc_count] = key;
         last_perc_count = (last_perc_count + 1) % PERCUSSION_LOG_LEN;
+        note = 60;
     }
     else
     {
@@ -918,11 +922,11 @@ static void KeyOnEvent(opl_track_data_t *track, midi_event_t *event)
     // Find and program a voice for this instrument.  If this
     // is a double voice instrument, we must do this twice.
 
-    VoiceKeyOn(channel, instrument, 0, key, volume);
+    VoiceKeyOn(channel, instrument, 0, note, key, volume);
 
     if ((SHORT(instrument->flags) & GENMIDI_FLAG_2VOICE) != 0)
     {
-        VoiceKeyOn(channel, instrument, 1, key, volume);
+        VoiceKeyOn(channel, instrument, 1, note, key, volume);
     }
 }
 
