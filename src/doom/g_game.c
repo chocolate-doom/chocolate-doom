@@ -2077,7 +2077,6 @@ void G_BeginRecording (void)
     //
 
     longtics = M_CheckParm("-longtics") != 0;
-    longtics = true; // [cndoom]
 
     // If not recording a longtics demo, record in low res
 
