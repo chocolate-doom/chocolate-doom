@@ -715,10 +715,10 @@ static opl_voice_t *ReplaceExistingVoice(opl_channel_data_t *channel)
 static unsigned int FrequencyForVoice(opl_voice_t *voice)
 {
     genmidi_voice_t *gm_voice;
-    unsigned int freq_index;
+    signed int freq_index;
     unsigned int octave;
     unsigned int sub_index;
-    unsigned int note;
+    signed int note;
 
     note = voice->note;
 
@@ -754,6 +754,11 @@ static unsigned int FrequencyForVoice(opl_voice_t *voice)
         freq_index += (voice->current_instr->fine_tuning / 2) - 64;
     }
 
+    if (freq_index < 0)
+    {
+    	freq_index = 0;
+    }
+    
     // The first 7 notes use the start of the table, while
     // consecutive notes loop around the latter part.
 
