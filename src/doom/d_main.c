@@ -75,7 +75,6 @@
 
 #include "d_main.h"
 
-// [cndoom]
 #include "cn_timer.h"
 #include "cn_meta.h"
 
@@ -131,8 +130,8 @@ char		wadfile[1024];		// primary wad file
 char		mapdir[1024];           // directory of development maps
 
 int             cn_secretmessage = 0;
-int             show_endoom = 0; // [cndoom]
-boolean         noblit;          //  [cndoom]
+int             show_endoom = 0;
+boolean         noblit;
 void D_ConnectNetGame(void);
 void D_CheckNetGame(void);
 
@@ -197,10 +196,10 @@ void D_Display (void)
 	R_ExecuteSetViewSize ();
 	oldgamestate = -1;                      // force background redraw
 	borderdrawcount = 3;
-    // cndoom timer
+
     if (cn_timer_enabled)
     {
-	CN_UpdateTimerLocation(1); // [cndoom] timer
+	CN_UpdateTimerLocation(1);
     }
     }
 
@@ -224,12 +223,12 @@ void D_Display (void)
 	    break;
 	if (automapactive)
 	    AM_Drawer ();
-	if (wipe || (scaledviewheight != (200 << hires) && fullscreen) ) // [crispy] -> [cndoom] high resolution
+	if (wipe || (scaledviewheight != (200 << hires) && fullscreen) )
 	    redrawsbar = true;
 	if (inhelpscreensstate && !inhelpscreens)
 	    redrawsbar = true;              // just put away the help screen
-	ST_Drawer (scaledviewheight == (200 << hires), redrawsbar ); // [crispy] -> [cndoom] high resolution
-    fullscreen = scaledviewheight == (200 << hires);
+	ST_Drawer (scaledviewheight == (200 << hires), redrawsbar );
+	fullscreen = scaledviewheight == (200 << hires);
 	break;
 
       case GS_INTERMISSION:
@@ -267,7 +266,7 @@ void D_Display (void)
     }
 
     // see if the border needs to be updated to the screen
-    if (gamestate == GS_LEVEL && !automapactive && scaledviewwidth != (320 << hires)) // [crispy] -> [cndoom] high resolution
+    if (gamestate == GS_LEVEL && !automapactive && scaledviewwidth != (320 << hires))
     {
 	if (menuactive || menuactivestate || !viewactivestate)
 	    borderdrawcount = 3;
@@ -297,9 +296,9 @@ void D_Display (void)
 	if (automapactive)
 	    y = 4;
 	else
-	    y = (viewwindowy >> hires)+4; // [crispy] -> [cndoom] high resolution
+	    y = (viewwindowy >> hires)+4;
 	V_DrawPatchDirect((viewwindowx >> hires) + ((scaledviewwidth >> hires) - 68) / 2, y,
-                          W_CacheLumpName (DEH_String("M_PAUSE"), PU_CACHE)); // [crispy] -> [cndoom] high resolution
+                          W_CacheLumpName (DEH_String("M_PAUSE"), PU_CACHE));
     }
 
 
@@ -307,7 +306,6 @@ void D_Display (void)
     M_Drawer ();          // menu is drawn even on top of everything
     NetUpdate ();         // send out any new accumulation
 
-    // [cndoom] draw timer here
     if (gamestate == GS_LEVEL && !inhelpscreens && !automapactive && !wipe)
     {
 	if (cn_timer_enabled)
@@ -395,7 +393,7 @@ void D_BindVariables(void)
     M_BindMapControls();
     M_BindMenuControls();
     M_BindChatControls(MAXPLAYERS);
-    CN_BindMetaVariables(); // [cndoom]
+    CN_BindMetaVariables();
 
     key_multi_msgplayer[0] = HUSTR_KEYGREEN;
     key_multi_msgplayer[1] = HUSTR_KEYINDIGO;
@@ -407,6 +405,7 @@ void D_BindVariables(void)
 #endif
 
     M_BindVariable("mouse_sensitivity",      &mouseSensitivity);
+    M_BindVariable("mouse_sensitivity_y",    &mouseSensitivity_y);
     M_BindVariable("sfx_volume",             &sfxVolume);
     M_BindVariable("music_volume",           &musicVolume);
     M_BindVariable("show_messages",          &showMessages);
@@ -416,7 +415,6 @@ void D_BindVariables(void)
     M_BindVariable("vanilla_savegame_limit", &vanilla_savegame_limit);
     M_BindVariable("vanilla_demo_limit",     &vanilla_demo_limit);
     M_BindVariable("show_endoom",            &show_endoom);
-    // [cndoom]
     M_BindVariable("cn_quickstart_delay",    &cn_quickstart_delay);
     M_BindVariable("cn_precache_sounds",     &cn_precache_sounds);
     M_BindVariable("cn_timer_enabled",       &cn_timer_enabled);
@@ -466,7 +464,7 @@ boolean D_GrabMouseCallback(void)
 //
 void D_DoomLoop (void)
 {
-    int i, qsdelay; // [cndoom]
+    int i, qsdelay;
     if (bfgedition &&
         (demorecording || (gameaction == ga_playdemo) || netgame))
     {
@@ -522,7 +520,6 @@ void D_DoomLoop (void)
     V_RestoreBuffer();
     R_ExecuteSetViewSize();
 
-    // [cndoom]
     CN_ResetTimer();
     CN_UpdateTimerLocation(1); 
     
@@ -1173,7 +1170,6 @@ void D_DoomMain (void)
 {
     int             p;
     char            file[256];
-    // char            demolumpname[9]; // [cndoom] remove restriction of 9 chars
 
     I_AtExit(D_Endoom, false);
 
@@ -1427,68 +1423,6 @@ void D_DoomMain (void)
 
     modifiedgame = W_ParseCommandLine();
 
-
-
-// [cndoom] don't bother with the WAD manager at all for external
-// (.lmp) demos
-/*
-
-    //!
-    // @arg <demo>
-    // @category demo
-    // @vanilla
-    //
-    // Play back the demo named demo.lmp.
-    //
-
-    p = M_CheckParmWithArgs ("-playdemo", 1);
-
-    if (!p)
-    {
-    //!
-    // @arg <demo>
-    // @category demo
-    // @vanilla
-    //
-    // Play back the demo named demo.lmp, determining the framerate
-    // of the screen.
-    //
- 
-	p = M_CheckParmWithArgs("-timedemo", 1);
-
-    }
-
-    if (p)
-    {
-        // With Vanilla you have to specify the file without extension,
-        // but make that optional.
-        if (M_StringEndsWith(myargv[p + 1], ".lmp"))
-        {
-            M_StringCopy(file, myargv[p + 1], sizeof(file));
-        }
-        else
-        {
-            DEH_snprintf(file, sizeof(file), "%s.lmp", myargv[p+1]);
-        }
-
-        if (D_AddFile(file))
-        {
-            M_StringCopy(demolumpname, lumpinfo[numlumps - 1].name,
-                         sizeof(demolumpname));
-        }
-        else
-        {
-            // If file failed to load, still continue trying to play
-            // the demo in the same way as Vanilla Doom.  This makes
-            // tricks like "-playdemo demo1" possible.
-
-            M_StringCopy(demolumpname, myargv[p + 1], sizeof(demolumpname));
-        }
-
-        printf("Playing demo %s.\n", file);
-    }
-// [cndoom] end
-*/
     I_AtExit((atexit_func_t) G_CheckDemoStatus, true);
 
     
@@ -1628,7 +1562,7 @@ void D_DoomMain (void)
     {
     startepisode = myargv[p+1][0]-'0';
     startmap = 1;
-    if (gamemission != doom) // [cndoom]
+    if (gamemission != doom)
     {
     if (startepisode == 2) { startmap = 11; }
     if (startepisode == 3) { startmap = 21; }
@@ -1823,20 +1757,19 @@ void D_DoomMain (void)
 	autostart = true;
     }
 
-// [cndoom] don't bother with the WAD manager at all for external
-// (.lmp) demos
+
     p = M_CheckParmWithArgs("-playdemo", 1);
     if (p)
     {
 	singledemo = true;              // quit after one demo
-	G_DeferedPlayDemo (myargv[p+1]); // [cndoom]
+	G_DeferedPlayDemo (myargv[p+1]);
 	D_DoomLoop ();  // never returns
     }
 	
     p = M_CheckParmWithArgs("-timedemo", 1);
     if (p)
     {
-	G_TimeDemo (myargv[p+1]); // [cndoom]
+	G_TimeDemo (myargv[p+1]);
 	D_DoomLoop ();  // never returns
     }
 	

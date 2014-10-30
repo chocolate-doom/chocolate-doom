@@ -295,8 +295,8 @@ screen_mode_t mode_scale_5x = {
 
 // Search through the given palette, finding the nearest color that matches
 // the given color.
-
-static int FindNearestColor(byte *palette, int r, int g, int b)
+// [crispy] share with v_trans.c:V_Colorize() and r_data.c:R_InitTranMap()
+int FindNearestColor(byte *palette, int r, int g, int b)
 {
     byte *col;
     int best;
@@ -398,7 +398,6 @@ static void I_InitSquashTable(byte *palette)
     printf("I_InitSquashTable: Generating lookup tables..");
     fflush(stdout);
     half_stretch_table = GenerateStretchTable(palette, 50);
-   
     printf(".."); fflush(stdout);
 
     if (quarter_stretch_table != NULL)
@@ -408,7 +407,6 @@ static void I_InitSquashTable(byte *palette)
     }
 
     quarter_stretch_table = GenerateStretchTable(palette, 25);
-
     puts("");
 }
 
@@ -436,6 +434,7 @@ void I_ResetScaleTables(byte *palette)
 
         half_stretch_table = GenerateStretchTable(palette, 50);
     }
+
     if (quarter_stretch_table != NULL)
     {
         Z_Free(quarter_stretch_table);
@@ -1201,6 +1200,7 @@ screen_mode_t mode_squash_1p5x = {
     I_Squash1p5x,
     true && !hires,
 };
+
 //
 // 2x squashed scale (512x400)
 //

@@ -122,6 +122,12 @@ static default_t	doom_defaults_list[] =
     CONFIG_VARIABLE_INT(mouse_sensitivity),
 
     //!
+    // Vertical mouse sensitivity
+    //
+
+    CONFIG_VARIABLE_INT(mouse_sensitivity_y),
+
+    //!
     // Volume of sound effects, range 0-15.
     //
 
@@ -779,6 +785,22 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_INT(mouse_threshold),
+
+    //!
+    // Vertical mouse acceleration factor.  When the speed of mouse movement
+    // exceeds the threshold value (mouse_threshold), the speed is
+    // multiplied by this value.
+    //
+
+    CONFIG_VARIABLE_FLOAT(mouse_acceleration_y),
+
+    //!
+    // Vertical mouse acceleration threshold.  When the speed of mouse movement
+    // exceeds this threshold value, the speed is multiplied by an
+    // acceleration factor (mouse_acceleration).
+    //
+
+    CONFIG_VARIABLE_INT(mouse_threshold_y),
 
     //!
     // Sound output sample rate, in Hz.  Typical values to use are
@@ -2149,7 +2171,7 @@ static char *GetDefaultConfigDir(void)
 {
 #if !defined(_WIN32) || defined(_WIN32_WCE)
 
-    // Configuration settings are stored in ~/.competition-doom/,
+    // Configuration settings are stored in ~/.cndoom/,
     // except on Windows, where we behave like Vanilla Doom and
     // save in the current directory.
 
@@ -2179,7 +2201,7 @@ static char *GetDefaultConfigDir(void)
 // SetConfigDir:
 //
 // Sets the location of the configuration directory, where configuration
-// files are stored - default.cfg, competition-doom.cfg, savegames, etc.
+// files are stored - default.cfg, cndoom.cfg, savegames, etc.
 //
 
 void M_SetConfigDir(char *dir)
@@ -2224,12 +2246,12 @@ char *M_GetSaveGameDir(char *iwadname)
     }
     else
     {
-        // ~/.competition-doom/savegames/
+        // ~/.cndoom/savegames/
 
         topdir = M_StringJoin(configdir, "savegames", NULL);
         M_MakeDirectory(topdir);
 
-        // eg. ~/.competition-doom/savegames/doom2.wad/
+        // eg. ~/.cndoom/savegames/doom2.wad/
 
         savegamedir = M_StringJoin(topdir, DIR_SEPARATOR_S, iwadname,
                                    DIR_SEPARATOR_S, NULL);

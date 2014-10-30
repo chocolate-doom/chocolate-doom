@@ -58,6 +58,7 @@
 
 #include "m_menu.h"
 
+#include "v_trans.h"
 
 extern patch_t*		hu_font[HU_FONTSIZE];
 extern boolean		message_dontfuckwithme;
@@ -68,7 +69,7 @@ extern boolean		chat_on;		// in heads-up code
 // defaulted values
 //
 int			mouseSensitivity = 5;
-// int			mouseSensitivity_y = 5; // [crispy] mouse y
+int			mouseSensitivity_y = 5;
 
 // Show messages has default, 0 = off, 1 = on
 int			showMessages = 1;
@@ -76,7 +77,7 @@ int			showMessages = 1;
 
 // Blocky mode, has default, 0 = high, 1 = normal
 int			detailLevel = 0;
-int			screenblocks = 10; // [cndoom]
+int			screenblocks = 10;
 
 // temp for screenblocks (0-9)
 int			screenSize;
@@ -120,6 +121,7 @@ boolean			menuactive;
 
 #define SKULLXOFF		-32
 #define LINEHEIGHT		16
+#define CN_LINEHEIGHT	12
 
 extern boolean		sendpause;
 char			savegamestrings[10][SAVESTRINGSIZE];
@@ -145,6 +147,7 @@ typedef struct
     
     // hotkey in menu
     char	alphaKey;			
+    char	*alttext;
 } menuitem_t;
 
 
@@ -187,13 +190,15 @@ void M_QuitDOOM(int choice);
 
 void M_ChangeMessages(int choice);
 void M_ChangeSensitivity(int choice);
-// static void M_ChangeSensitivity_y(int choice); // [crispy] mouse y
+static void M_ChangeSensitivity_y(int choice);
+static void M_ToggleSecretmessage(int choice);
 void M_SfxVol(int choice);
 void M_MusicVol(int choice);
 void M_ChangeDetail(int choice);
 void M_SizeDisplay(int choice);
 void M_StartGame(int choice);
-// static void M_Mouse(int choice); // [crispy] mouse y
+static void M_Mouse(int choice);
+static void M_Advanced(int choice);
 void M_Sound(int choice);
 
 void M_FinishReadThis(int choice);
@@ -209,7 +214,8 @@ void M_DrawReadThis2(void);
 void M_DrawNewGame(void);
 void M_DrawEpisode(void);
 void M_DrawOptions(void);
-// static void M_DrawMouse(void); // [crispy] mouse y
+static void M_DrawMouse(void);
+static void M_DrawAdvanced(void);
 void M_DrawSound(void);
 void M_DrawLoad(void);
 void M_DrawSave(void);
@@ -340,22 +346,21 @@ enum
     scrnsize,
     option_empty1,
     mousesens,
-    option_empty2,
     soundvol,
+    advanced,
     opt_end
 } options_e;
 
 menuitem_t OptionsMenu[]=
 {
-    {1,"M_ENDGAM",	M_EndGame,'e'},
-    {1,"M_MESSG",	M_ChangeMessages,'m'},
-    {1,"M_DETAIL",	M_ChangeDetail,'g'},
-    {2,"M_SCRNSZ",	M_SizeDisplay,'s'},
+    {1,"M_ENDGAM",	M_EndGame,'e', "End Game"},
+    {1,"M_MESSG",	M_ChangeMessages,'m', "Messages: "},
+    {1,"M_DETAIL",	M_ChangeDetail,'g', "Graphic Detail: "},
+    {2,"M_SCRNSZ",	M_SizeDisplay,'s', "Screen Size"},
     {-1,"",0,'\0'},
-//    {1,"M_MSENS",	M_Mouse,'m', "Mouse Sensitivity"}, // [crispy] mouse sensitivity menu 
-    {2,"M_MSENS",	M_ChangeSensitivity,'m'},
-    {-1,"",0,'\0'},
-    {1,"M_SVOL",	M_Sound,'s'}
+    {1,"M_MSENS",	M_Mouse,'m', "Mouse Sensitivity"}, // [crispy] mouse sensitivity menu
+    {1,"M_SVOL",	M_Sound,'s', "Sound Volume"},
+    {1,"",	M_Advanced,'o', "Advanced"}
 };
 
 menu_t  OptionsDef =
@@ -368,16 +373,12 @@ menu_t  OptionsDef =
     0
 };
 
-/*
-// [crispy] mouse sensitivity menu
 enum
 {
     mouse_horiz,
     mouse_empty1,
     mouse_vert,
     mouse_empty2,
-    mouse_invert,
-    mouse_look,
     mouse_end
 } mouse_e;
 
@@ -387,8 +388,6 @@ static menuitem_t MouseMenu[]=
     {-1,"",0,'\0'},
     {2,"",	M_ChangeSensitivity_y,'v'},
     {-1,"",0,'\0'},
-    {1,"",	M_MouseInvert,'i'},
-    {1,"",	M_MouseLook,'l'},
 };
 
 static menu_t  MouseDef =
@@ -400,7 +399,27 @@ static menu_t  MouseDef =
     80,64,
     0
 };
-*/
+
+enum
+{
+    advanced_secretmessage,
+    advanced_end
+} advanced_e;
+
+static menuitem_t AdvancedMenu[]=
+{
+    {1,"",	M_ToggleSecretmessage,'s'},
+};
+
+static menu_t AdvancedDef =
+{
+    advanced_end,
+    &OptionsDef,
+    AdvancedMenu,
+    M_DrawAdvanced,
+    48,36,
+    0
+};
 //
 // Read This! MENU 1 & 2
 //
@@ -1016,99 +1035,81 @@ void M_Episode(int choice)
 //
 // M_Options
 //
-static char *detailNames[2] = {"M_GDHIGH","M_GDLOW"};
-static char *msgNames[2] = {"M_MSGOFF","M_MSGON"};
 
 void M_DrawOptions(void)
 {
-    char *detail_patch;
-
     V_DrawPatchDirect(108, 15, W_CacheLumpName(DEH_String("M_OPTTTL"),
                                                PU_CACHE));
 
-    // Workaround for BFG edition IWAD weirdness.
-    // The BFG edition doesn't have the "low detail" menu option (fair
-    // enough). But bizarrely, it reuses the M_GDHIGH patch as a label
-    // for the options menu (says "Fullscreen:"). Why the perpetrators
-    // couldn't just add a new graphic lump and had to reuse this one,
-    // I don't know.
-    //
-    // The end result is that M_GDHIGH is too wide and causes the game
-    // to crash. As a workaround to get a minimum level of support for
-    // the BFG edition IWADs, use the "ON"/"OFF" graphics instead.
-    if (bfgedition)
-    {
-        detail_patch = msgNames[!detailLevel];
-    }
-    else
-    {
-        detail_patch = detailNames[detailLevel];
-    }
+    M_WriteText(OptionsDef.x + M_StringWidth("Graphic Detail: "),
+                OptionsDef.y + LINEHEIGHT * detail + 8 - (M_StringHeight("HighLow")/2),
+                detailLevel ? "Low" : "High");
 
-    V_DrawPatchDirect(OptionsDef.x + 175, OptionsDef.y + LINEHEIGHT * detail,
-		      W_CacheLumpName(DEH_String(detail_patch), PU_CACHE));
+    M_WriteText(OptionsDef.x + M_StringWidth("Messages: "),
+                OptionsDef.y + LINEHEIGHT * messages + 8 - (M_StringHeight("OnOff")/2),
+                showMessages ? "On" : "Off");
+}
 
-    V_DrawPatchDirect(OptionsDef.x + 120, OptionsDef.y + LINEHEIGHT * messages,
-                      W_CacheLumpName(DEH_String(msgNames[showMessages]),
-                                      PU_CACHE));
-
-/*
-// [crispy] mouse sensitivity menu
 static void M_DrawMouse(void)
 {
-    char mouse_menu_text[48];
     V_DrawPatchDirect (60, 38, W_CacheLumpName(DEH_String("M_MSENS"), PU_CACHE));
+
     M_WriteText(MouseDef.x, MouseDef.y + LINEHEIGHT * mouse_horiz + 6,
                 "HORIZONTAL");
+
     M_DrawThermo(MouseDef.x, MouseDef.y + LINEHEIGHT * mouse_empty1,
 		 21, mouseSensitivity);
+
     M_WriteText(MouseDef.x, MouseDef.y + LINEHEIGHT * mouse_vert + 6,
                 "VERTICAL");
+
     M_DrawThermo(MouseDef.x, MouseDef.y + LINEHEIGHT * mouse_empty2,
 		 21, mouseSensitivity_y);
-    M_snprintf(mouse_menu_text, sizeof(mouse_menu_text),
-               "%sInvert Mouse: %s%s", crstr[CR_NONE], crstr[CR_GREEN],
-               mouse_y_invert ? "On" : "Off");
-    M_WriteText(MouseDef.x, MouseDef.y + LINEHEIGHT * mouse_invert + 6,
-                mouse_menu_text);
-    M_snprintf(mouse_menu_text, sizeof(mouse_menu_text),
-               "%sPermanent Mouse Look: %s%s", crstr[CR_NONE], crstr[CR_GREEN],
-               crispy_mouselook ? "On" : "Off");
-    M_WriteText(MouseDef.x, MouseDef.y + LINEHEIGHT * mouse_look + 6,
-                mouse_menu_text);
+
     V_ClearDPTranslation();
 }
-*/
-    M_DrawThermo(OptionsDef.x, OptionsDef.y + LINEHEIGHT * (mousesens + 1),
-		 10, mouseSensitivity);
 
-    M_DrawThermo(OptionsDef.x,OptionsDef.y+LINEHEIGHT*(scrnsize+1),
-		 9,screenSize);
+static void M_DrawAdvanced(void)
+{
+    char advanced_menu_text[48];
+
+    M_snprintf(advanced_menu_text, sizeof(advanced_menu_text),
+               "%sAdvanced", crstr[CR_GOLD]);
+    M_WriteText(160 - M_StringWidth("Settings") / 2, 20, advanced_menu_text);
+
+    M_snprintf(advanced_menu_text, sizeof(advanced_menu_text),
+               "%s\"Secret Revealed\" Message: %s%s", crstr[CR_NONE], crstr[CR_GREEN],
+               cn_secretmessage ? "On" : "Off");
+    M_WriteText(AdvancedDef.x, AdvancedDef.y + CN_LINEHEIGHT * cn_secretmessage + 6,
+                advanced_menu_text);
+
+    V_ClearDPTranslation();
 }
-
 void M_Options(int choice)
 {
     M_SetupNextMenu(&OptionsDef);
 }
-/*
-// [crispy] correctly handle inverted y-axis
+
+
 static void M_Mouse(int choice)
 {
     if (mouseSensitivity_y < 0)
     {
         mouseSensitivity_y = -mouseSensitivity_y;
-        mouse_y_invert = 1;
     }
 
     if (mouse_acceleration_y < 0)
     {
         mouse_acceleration_y = -mouse_acceleration_y;
-        mouse_y_invert = 1;
     }
 
     M_SetupNextMenu(&MouseDef);
 }
-*/
+
+static void M_Advanced(int choice)
+{
+    M_SetupNextMenu(&AdvancedDef);
+}
 
 //
 //      Toggle messages on/off
@@ -1273,8 +1274,6 @@ void M_QuitDOOM(int choice)
 }
 
 
-
-
 void M_ChangeSensitivity(int choice)
 {
     switch(choice)
@@ -1284,14 +1283,12 @@ void M_ChangeSensitivity(int choice)
 	    mouseSensitivity--;
 	break;
       case 1:
-    // if (mouseSensitivity < 255) // [crispy] extended range
-	if (mouseSensitivity < 9)
+	if (mouseSensitivity < 255)
 	    mouseSensitivity++;
 	break;
     }
 }
 
-/*
 static void M_ChangeSensitivity_y(int choice)
 {
     switch(choice)
@@ -1301,27 +1298,16 @@ static void M_ChangeSensitivity_y(int choice)
 	    mouseSensitivity_y--;
 	break;
       case 1:
-	if (mouseSensitivity_y < 255) // [crispy] extended range
+	if (mouseSensitivity_y < 255)
 	    mouseSensitivity_y++;
 	break;
     }
 }
-
-static void M_MouseInvert(int choice)
+static void M_ToggleSecretmessage(int choice)
 {
     choice = 0;
-    mouse_y_invert = 1 - mouse_y_invert;
+    cn_secretmessage = 1 - cn_secretmessage;
 }
-
-static void M_MouseLook(int choice)
-{
-    choice = 0;
-    crispy_mouselook = 1 - crispy_mouselook;
-
-    players2[consoleplayer].lookdir = 0;
-}
-*/
-
 
 void M_ChangeDetail(int choice)
 {
@@ -1335,8 +1321,6 @@ void M_ChangeDetail(int choice)
     else
 	players[consoleplayer].message = DEH_String(DETAILLO);
 }
-
-
 
 
 void M_SizeDisplay(int choice)
@@ -1364,8 +1348,6 @@ void M_SizeDisplay(int choice)
 }
 
 
-
-
 //
 //      Menu Functions
 //
@@ -1389,7 +1371,6 @@ M_DrawThermo
     }
     V_DrawPatchDirect(xx, y, W_CacheLumpName(DEH_String("M_THERMR"), PU_CACHE));
 
-    /*
     // [crispy] do not crash anymore if value exceeds thermometer range
     if (thermDot >= thermWidth)
     {
@@ -1399,12 +1380,10 @@ M_DrawThermo
         thermDot = thermWidth - 1;
         dp_translation = cr[CR_DARK];
     }
-    */
     V_DrawPatchDirect((x + 8) + thermDot * 8, y,
 		      W_CacheLumpName(DEH_String("M_THERMO"), PU_CACHE));
-    // V_ClearDPTranslation(); [crispy]
+    V_ClearDPTranslation();
 }
-
 
 
 void
@@ -1531,7 +1510,7 @@ M_WriteText
 	}
 		
 	w = SHORT (hu_font[c]->width);
-	if (cx+w > ORIGWIDTH) // [crispy] -> [cndoom] high resolution
+	if (cx+w > ORIGWIDTH)
 	    break;
 	V_DrawPatchDirect(cx, cy, hu_font[c]);
 	cx+=w;
@@ -1688,6 +1667,19 @@ boolean M_Responder (event_t* ev)
 	    {
 		key = key_menu_back;
 		mousewait = I_GetTime() + 15;
+	    }
+
+        // [crispy] scroll menus with mouse wheel
+	    if (ev->data1 & (1 << mousebprevweapon))
+	    {
+		key = key_menu_down;
+		mousewait = I_GetTime() + 5;
+	    }
+	    else
+	    if (ev->data1 & (1 << mousebnextweapon))
+	    {
+		key = key_menu_up;
+		mousewait = I_GetTime() + 5;
 	    }
 	}
 	else
@@ -2132,7 +2124,7 @@ void M_Drawer (void)
             }
 
 	    x = 160 - M_StringWidth(string) / 2;
-	    M_WriteText(x, y, string);
+	    M_WriteText(x > 0 ? x : 0, y, string);
 	    y += SHORT(hu_font[0]->height);
 	}
 
@@ -2161,13 +2153,30 @@ void M_Drawer (void)
 
 	if (name[0])
 	{
+if (currentMenu == &OptionsDef)
+	    {
+		char *alttext = currentMenu->menuitems[i].alttext;
+
+		if (alttext)
+		    M_WriteText(x, y+8-(M_StringHeight(alttext)/2), alttext);
+	    }
+	    else
 	    V_DrawPatchDirect (x, y, W_CacheLumpName(name, PU_CACHE));
+
+	    V_ClearDPTranslation();
 	}
 	y += LINEHEIGHT;
     }
 
     
     // DRAW SKULL
+    if (currentMenu == &AdvancedDef)
+    {
+    V_DrawPatchDirect(x + SKULLXOFF, currentMenu->y - 5 + itemOn*CN_LINEHEIGHT,
+		      W_CacheLumpName(DEH_String(skullName[whichSkull]),
+				      PU_CACHE));
+    }
+    else
     V_DrawPatchDirect(x + SKULLXOFF, currentMenu->y - 5 + itemOn*LINEHEIGHT,
 		      W_CacheLumpName(DEH_String(skullName[whichSkull]),
 				      PU_CACHE));

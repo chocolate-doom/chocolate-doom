@@ -49,6 +49,7 @@
 // Only used in Heretic/Hexen
 
 byte *tinttable = NULL;
+byte *dp_translation = NULL;
 
 // villsa [STRIFE] Blending table used for Strife
 byte *xlatab = NULL;
@@ -89,14 +90,12 @@ void V_CopyRect(int srcx, int srcy, byte *source,
     byte *src;
     byte *dest; 
  
- // [crispy] -> [cndoom] high resolution
     srcx <<= hires;
     srcy <<= hires;
     width <<= hires;
     height <<= hires;
     destx <<= hires;
     desty <<= hires;
-//
 
 #ifdef RANGECHECK 
     if (srcx < 0
@@ -153,7 +152,7 @@ void V_DrawPatch(int x, int y, patch_t *patch)
     byte *desttop;
     byte *dest;
     byte *source;
-    int w, f; // [crispy] -> [cndoom] high resolution
+    int w, f;
 
     y -= SHORT(patch->topoffset);
     x -= SHORT(patch->leftoffset);
@@ -167,9 +166,9 @@ void V_DrawPatch(int x, int y, patch_t *patch)
 
 #ifdef RANGECHECK
     if (x < 0
-     || x + SHORT(patch->width) > ORIGWIDTH // [crispy] -> [cndoom] high resolution
+     || x + SHORT(patch->width) > ORIGWIDTH
      || y < 0
-     || y + SHORT(patch->height) > ORIGHEIGHT) // [crispy] -> [cndoom] high resolution
+     || y + SHORT(patch->height) > ORIGHEIGHT)
     {
         I_Error("Bad V_DrawPatch");
     }
@@ -178,10 +177,14 @@ void V_DrawPatch(int x, int y, patch_t *patch)
     V_MarkRect(x, y, SHORT(patch->width), SHORT(patch->height));
 
     col = 0;
-    desttop = dest_screen + (y << hires) * SCREENWIDTH + x; // [crispy] -> [cndoom] high resolution
+    desttop = dest_screen + (y << hires) * SCREENWIDTH + x;
 
     w = SHORT(patch->width);
 
+  // [crispy] quadruple for-loop for each dp_translation and dp_translucent case
+  // to avoid checking these variables for each pixel and instead check once per patch
+  // (1) normal, opaque patch
+  if (!dp_translation)
     for ( ; col<w ; x++, col++, desttop++)
     {
         column = (column_t *)((byte *)patch + LONG(patch->columnofs[col]));
@@ -189,20 +192,49 @@ void V_DrawPatch(int x, int y, patch_t *patch)
         // step through the posts in a column
         while (column->topdelta != 0xff)
         {
-          for (f = 0; f <= hires; f++) // [crispy] -> [cndoom] high resolution
-          { // [crispy] -> [cndoom] high resolution
+          for (f = 0; f <= hires; f++)
+          {
             source = (byte *)column + 3;
-            dest = desttop + column->topdelta*(SCREENWIDTH << hires) + (x * hires) + f; // [crispy] -> [cndoom] high resolution
+            dest = desttop + column->topdelta*(SCREENWIDTH << hires) + (x * hires) + f;
             count = column->length;
 
             while (count--)
             {
-                if (hires) // [crispy] -> [cndoom] high resolution
+                if (hires)
                 {
                     *dest = *source;
                     dest += SCREENWIDTH;
                 }
                 *dest = *source++;
+                dest += SCREENWIDTH;
+            }
+          }
+            column = (column_t *)((byte *)column + column->length + 4);
+        }
+    }
+  else
+  if (dp_translation)
+    for ( ; col<w ; x++, col++, desttop++)
+    {
+        column = (column_t *)((byte *)patch + LONG(patch->columnofs[col]));
+
+        // step through the posts in a column
+        while (column->topdelta != 0xff)
+        {
+          for (f = 0; f <= hires; f++)
+          {
+            source = (byte *)column + 3;
+            dest = desttop + column->topdelta*(SCREENWIDTH << hires) + (x * hires) + f;
+            count = column->length;
+
+            while (count--)
+            {
+                if (hires)
+                {
+                    *dest = dp_translation[*source];
+                    dest += SCREENWIDTH;
+                }
+                *dest = dp_translation[*source++];
                 dest += SCREENWIDTH;
             }
           }
@@ -225,7 +257,7 @@ void V_DrawPatchFlipped(int x, int y, patch_t *patch)
     byte *desttop;
     byte *dest;
     byte *source; 
-    int w, f; // [crispy] -> [cndoom] high resolution
+    int w, f;
  
     y -= SHORT(patch->topoffset); 
     x -= SHORT(patch->leftoffset); 
@@ -239,9 +271,9 @@ void V_DrawPatchFlipped(int x, int y, patch_t *patch)
 
 #ifdef RANGECHECK 
     if (x < 0
-     || x + SHORT(patch->width) > ORIGWIDTH  // [crispy] -> [cndoom] high resolution
+     || x + SHORT(patch->width) > ORIGWIDTH
      || y < 0
-     || y + SHORT(patch->height) > ORIGHEIGHT)  // [crispy] -> [cndoom] high resolution
+     || y + SHORT(patch->height) > ORIGHEIGHT)
     {
         I_Error("Bad V_DrawPatchFlipped");
     }
@@ -250,7 +282,7 @@ void V_DrawPatchFlipped(int x, int y, patch_t *patch)
     V_MarkRect (x, y, SHORT(patch->width), SHORT(patch->height));
 
     col = 0;
-    desttop = dest_screen + (y << hires) * SCREENWIDTH + x; // [crispy] -> [cndoom] high resolution
+    desttop = dest_screen + (y << hires) * SCREENWIDTH + x;
 
     w = SHORT(patch->width);
 
@@ -261,15 +293,15 @@ void V_DrawPatchFlipped(int x, int y, patch_t *patch)
         // step through the posts in a column
         while (column->topdelta != 0xff )
         {
-          for (f = 0; f <= hires; f++) // [crispy] -> [cndoom] high resolution
+          for (f = 0; f <= hires; f++)
           {
             source = (byte *)column + 3;
-            dest = desttop + column->topdelta*(SCREENWIDTH << hires) + (x * hires) + f; // [crispy] -> [cndoom] high resolution
+            dest = desttop + column->topdelta*(SCREENWIDTH << hires) + (x * hires) + f;
             count = column->length;
 
             while (count--)
             {
-               if (hires) // [crispy] -> [cndoom] high resolution
+                if (hires)
                 {
                     *dest = *source;
                     dest += SCREENWIDTH;
@@ -306,21 +338,21 @@ void V_DrawTLPatch(int x, int y, patch_t * patch)
     int count, col;
     column_t *column;
     byte *desttop, *dest, *source;
-    int w, f; // [crispy] -> [cndoom] high resolution
+    int w, f;
 
     y -= SHORT(patch->topoffset);
     x -= SHORT(patch->leftoffset);
 
     if (x < 0
-     || x + SHORT(patch->width) > ORIGWIDTH // [crispy] -> [cndoom] high resolution
+     || x + SHORT(patch->width) > ORIGWIDTH
      || y < 0
-     || y + SHORT(patch->height) > ORIGHEIGHT) // [crispy] -> [cndoom] high resolution
+     || y + SHORT(patch->height) > ORIGHEIGHT)
     {
         I_Error("Bad V_DrawTLPatch");
     }
 
     col = 0;
-    desttop = dest_screen + (y << hires) * SCREENWIDTH + x; // [crispy] -> [cndoom] high resolution
+    desttop = dest_screen + (y << hires) * SCREENWIDTH + x;
 
     w = SHORT(patch->width);
     for (; col < w; x++, col++, desttop++)
@@ -331,15 +363,15 @@ void V_DrawTLPatch(int x, int y, patch_t * patch)
 
         while (column->topdelta != 0xff)
         {
-          for (f = 0; f <= hires; f++) // [crispy] -> [cndoom] high resolution
+          for (f = 0; f <= hires; f++)
           {
             source = (byte *) column + 3;
-            dest = desttop + column->topdelta * (SCREENWIDTH << hires) + (x * hires) + f; // [crispy] -> [cndoom] high resolution
+            dest = desttop + column->topdelta * (SCREENWIDTH << hires) + (x * hires) + f;
             count = column->length;
 
             while (count--)
             {
-                if (hires) // [crispy] -> [cndoom] high resolution
+                if (hires)
                 {
                     *dest = tinttable[((*dest) << 8) + *source];
                     dest += SCREENWIDTH;
@@ -364,7 +396,7 @@ void V_DrawXlaPatch(int x, int y, patch_t * patch)
     int count, col;
     column_t *column;
     byte *desttop, *dest, *source;
-    int w, f; // [crispy] -> [cndoom] high resolution
+    int w, f;
 
     y -= SHORT(patch->topoffset);
     x -= SHORT(patch->leftoffset);
@@ -376,7 +408,7 @@ void V_DrawXlaPatch(int x, int y, patch_t * patch)
     }
 
     col = 0;
-    desttop = dest_screen + (y << hires) * SCREENWIDTH + x; // [crispy] -> [cndoom] high resolution
+    desttop = dest_screen + (y << hires) * SCREENWIDTH + x;
 
     w = SHORT(patch->width);
     for(; col < w; x++, col++, desttop++)
@@ -387,15 +419,15 @@ void V_DrawXlaPatch(int x, int y, patch_t * patch)
 
         while(column->topdelta != 0xff)
         {
-          for (f = 0; f <= hires; f++) // [crispy] -> [cndoom] high resolution
+          for (f = 0; f <= hires; f++)
           {
             source = (byte *) column + 3;
-            dest = desttop + column->topdelta * (SCREENWIDTH << hires) + (x * hires) + f; // [crispy] -> [cndoom] high resolution
+            dest = desttop + column->topdelta * (SCREENWIDTH << hires) + (x * hires) + f;
             count = column->length;
 
             while(count--)
             {
-                if (hires) // [crispy] -> [cndoom] high resolution
+                if (hires)
                 {
                     *dest = xlatab[*dest + ((*source) << 8)];
                     dest += SCREENWIDTH;
@@ -421,21 +453,21 @@ void V_DrawAltTLPatch(int x, int y, patch_t * patch)
     int count, col;
     column_t *column;
     byte *desttop, *dest, *source;
-    int w, f; // [crispy] -> [cndoom] high resolution
+    int w, f;
 
     y -= SHORT(patch->topoffset);
     x -= SHORT(patch->leftoffset);
 
     if (x < 0
-     || x + SHORT(patch->width) > ORIGWIDTH  // [crispy] -> [cndoom] high resolution
+     || x + SHORT(patch->width) > ORIGWIDTH
      || y < 0
-     || y + SHORT(patch->height) > ORIGHEIGHT) // [crispy] -> [cndoom] high resolution
+     || y + SHORT(patch->height) > ORIGHEIGHT)
     {
         I_Error("Bad V_DrawAltTLPatch");
     }
 
     col = 0;
-    desttop = dest_screen + (y << hires) * SCREENWIDTH + x; // [crispy] -> [cndoom] high resolution
+    desttop = dest_screen + (y << hires) * SCREENWIDTH + x;
 
     w = SHORT(patch->width);
     for (; col < w; x++, col++, desttop++)
@@ -446,15 +478,15 @@ void V_DrawAltTLPatch(int x, int y, patch_t * patch)
 
         while (column->topdelta != 0xff)
         {
-          for (f = 0; f <= hires; f++) // [crispy] -> [cndoom] high resolution
+          for (f = 0; f <= hires; f++)
           {
             source = (byte *) column + 3;
-            dest = desttop + column->topdelta * (SCREENWIDTH << hires) + (x * hires) + f; // [crispy] -> [cndoom] high resolution
+            dest = desttop + column->topdelta * (SCREENWIDTH << hires) + (x * hires) + f;
             count = column->length;
 
             while (count--)
             {
-                if (hires) // [crispy] -> [cndoom] high resolution
+                if (hires)
                 {
                     *dest = tinttable[((*dest) << 8) + *source];
                     dest += SCREENWIDTH;
@@ -480,22 +512,22 @@ void V_DrawShadowedPatch(int x, int y, patch_t *patch)
     column_t *column;
     byte *desttop, *dest, *source;
     byte *desttop2, *dest2;
-    int w, f; // [crispy] -> [cndoom] high resolution
+    int w, f;
 
     y -= SHORT(patch->topoffset);
     x -= SHORT(patch->leftoffset);
 
     if (x < 0
-     || x + SHORT(patch->width) > ORIGWIDTH // [crispy] -> [cndoom] high resolution
+     || x + SHORT(patch->width) > ORIGWIDTH
      || y < 0
-     || y + SHORT(patch->height) > ORIGHEIGHT) // [crispy] -> [cndoom] high resolution
+     || y + SHORT(patch->height) > ORIGHEIGHT)
     {
         I_Error("Bad V_DrawShadowedPatch");
     }
 
     col = 0;
-    desttop = dest_screen + (y << hires) * SCREENWIDTH + x; // [crispy] -> [cndoom] high resolution
-    desttop2 = dest_screen + ((y + 2) << hires) * SCREENWIDTH + x + 2; // [crispy] -> [cndoom] high resolution
+    desttop = dest_screen + (y << hires) * SCREENWIDTH + x;
+    desttop2 = dest_screen + ((y + 2) << hires) * SCREENWIDTH + x + 2;
 
     w = SHORT(patch->width);
     for (; col < w; x++, col++, desttop++, desttop2++)
@@ -506,16 +538,16 @@ void V_DrawShadowedPatch(int x, int y, patch_t *patch)
 
         while (column->topdelta != 0xff)
         {
-          for (f = 0; f <= hires; f++) // [crispy] -> [cndoom] high resolution
+          for (f = 0; f <= hires; f++)
           {
             source = (byte *) column + 3;
-            dest = desttop + column->topdelta * (SCREENWIDTH << hires) + (x * hires) + f; // [crispy] -> [cndoom] high resolution
-            dest2 = desttop2 + column->topdelta * (SCREENWIDTH << hires) + (x * hires) + f; // [crispy] -> [cndoom] high resolution
+            dest = desttop + column->topdelta * (SCREENWIDTH << hires) + (x * hires) + f;
+            dest2 = desttop2 + column->topdelta * (SCREENWIDTH << hires) + (x * hires) + f;
             count = column->length;
 
             while (count--)
             {
-                if (hires) // [crispy] -> [cndoom] high resolution
+                if (hires)
                 {
                     *dest2 = tinttable[((*dest2) << 8)];
                     dest2 += SCREENWIDTH;
@@ -575,7 +607,7 @@ void V_DrawBlock(int x, int y, int width, int height, byte *src)
  
     V_MarkRect (x, y, width, height); 
  
-    dest = dest_screen + (y << hires) * SCREENWIDTH + x; // [crispy] -> [cndoom] high resolution
+    dest = dest_screen + (y << hires) * SCREENWIDTH + x;
 
     while (height--) 
     { 
@@ -585,7 +617,6 @@ void V_DrawBlock(int x, int y, int width, int height, byte *src)
     } 
 } 
 
-// [crispy] -> [cndoom] high resolution
 void V_DrawScaledBlock(int x, int y, int width, int height, byte *src)
 {
     byte *dest;
@@ -673,7 +704,7 @@ void V_DrawBox(int x, int y, int w, int h, int c)
 // Draw a "raw" screen (lump containing raw data to blit directly
 // to the screen)
 //
-// [crispy] -> [cndoom] high resolution
+
 void V_CopyScaledBuffer(byte *dest, byte *src, size_t size)
 {
     int i, j;
@@ -700,7 +731,7 @@ void V_CopyScaledBuffer(byte *dest, byte *src, size_t size)
  
 void V_DrawRawScreen(byte *raw)
 {
-    V_CopyScaledBuffer(dest_screen, raw, ORIGWIDTH * ORIGHEIGHT); // [crispy] -> [cndoom] high resolution
+    V_CopyScaledBuffer(dest_screen, raw, ORIGWIDTH * ORIGHEIGHT);
 }
 
 //

@@ -281,9 +281,8 @@ static int shiftdown = 0;
 float mouse_acceleration = 2.0;
 int mouse_threshold = 10;
  
-//float mouse_acceleration_y = 1.0;
-//int mouse_threshold_y = 0;
-//int mouse_y_invert = 0;
+float mouse_acceleration_y = 1.0;
+int mouse_threshold_y = 0;
 
 // Gamma correction level to use
 
@@ -638,7 +637,6 @@ static int AccelerateMouse(int val)
         return val;
     }
 }
-/*
 static int AccelerateMouseY(int val)
 {
     if (val < 0)
@@ -653,7 +651,6 @@ static int AccelerateMouseY(int val)
         return val;
     }
 }
-*/
 // Get the equivalent ASCII (Unicode?) character for a keypress.
 
 static int GetTypedChar(SDL_Event *event)
@@ -879,11 +876,9 @@ static void I_ReadMouse(void)
         ev.data1 = mouse_button_state;
         ev.data2 = AccelerateMouse(x);
 
-        // if (!novert || 1) // Moved to src/*/g_game.c
-        if (!novert)
+        if (!novert || 1) // Moved to src/*/g_game.c
         {
-            // ev.data3 = -AccelerateMouseY(y);
-            ev.data3 = -AccelerateMouse(y);
+            ev.data3 = -AccelerateMouseY(y);
         }
         else
         {
@@ -2186,9 +2181,8 @@ void I_BindVideoVariables(void)
     M_BindVariable("grabmouse",                 &grabmouse);
     M_BindVariable("mouse_acceleration",        &mouse_acceleration);
     M_BindVariable("mouse_threshold",           &mouse_threshold);
-//    M_BindVariable("mouse_acceleration_y",      &mouse_acceleration_y);
-//    M_BindVariable("mouse_threshold_y",         &mouse_threshold_y);
-//    M_BindVariable("mouse_y_invert",            &mouse_threshold_y);
+    M_BindVariable("mouse_acceleration_y",      &mouse_acceleration_y);
+    M_BindVariable("mouse_threshold_y",         &mouse_threshold_y);
     M_BindVariable("video_driver",              &video_driver);
     M_BindVariable("window_position",           &window_position);
     M_BindVariable("usegamma",                  &usegamma);

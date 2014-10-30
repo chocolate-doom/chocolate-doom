@@ -41,6 +41,8 @@
 #include "dstrings.h"
 #include "sounds.h"
 
+#include "v_video.h"
+
 //
 // Locally used constants, shortcuts.
 //
@@ -329,7 +331,6 @@ void HU_Start(void)
 		    HU_MSGX, HU_MSGY, HU_MSGHEIGHT,
 		    hu_font,
 		    HU_FONTSTART, &message_on);
-
     // [crispy] create the secret message widget
     HUlib_initSText(&w_secret,
 		    HU_MSGX, HU_MSGY, HU_MSGHEIGHT,
@@ -429,8 +430,6 @@ void HU_Ticker(void)
     }
     if (showMessages || message_dontfuckwithme)
     {
-
-	// [crispy] display message
 	if (plr->message)
 	{
 	    HUlib_addMessageToSText(&w_secret, 0, plr->message);

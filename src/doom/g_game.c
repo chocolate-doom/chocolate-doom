@@ -71,8 +71,6 @@
 
 
 #include "g_game.h"
-
-// [cndoom] for demo metadata stuff
 #include "cn_meta.h"
 
 #define SAVEGAMESIZE	0x2c000
@@ -157,7 +155,6 @@ byte		consistancy[MAXPLAYERS][BACKUPTICS];
 int leveltimes[MAXLEVELTIMES];
 int totaltime;
 int ki, it, se;
-// [cndoom] end
 
 #define MAXPLMOVE		(forwardmove[1]) 
  
@@ -237,8 +234,8 @@ static char     savedescription[32];
 mobj_t*		bodyque[BODYQUESIZE]; 
 int		bodyqueslot; 
  
-int             vanilla_savegame_limit = 0; // [cndoom]
-int             vanilla_demo_limit = 0; // [cndoom]
+int             vanilla_savegame_limit = 0;
+int             vanilla_demo_limit = 0;
  
 int G_CmdChecksum (ticcmd_t* cmd) 
 { 
@@ -346,7 +343,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
  
     strafe = gamekeydown[key_strafe] || mousebuttons[mousebstrafe] 
     || joybuttons[joybstrafe] 
-    || gamekeydown[key_strafe_alt];  // [cndoom]
+    || gamekeydown[key_strafe_alt];
 
     // fraggle: support the old "joyb_speed = 31" hack which
     // allowed an autorun effect
@@ -622,6 +619,22 @@ void G_DoLoadLevel (void)
 
     skyflatnum = R_FlatNumForName(DEH_String(SKYFLATNAME));
 
+    if (gamemode == commercial)
+    {
+	char *skytexturename;
+
+	if (gamemap < 12)
+	    skytexturename = "SKY1";
+	else if (gamemap < 21)
+	    skytexturename = "SKY2";
+	else
+	    skytexturename = "SKY3";
+
+	skytexturename = DEH_String(skytexturename);
+
+	skytexture = R_TextureNumForName(skytexturename);
+    }
+
     levelstarttic = gametic;        // for time calculation
     
     if (wipegamestate == GS_LEVEL) 
@@ -813,7 +826,7 @@ boolean G_Responder (event_t* ev)
       case ev_mouse: 
         SetMouseButtons(ev->data1);
 	mousex = ev->data2*(mouseSensitivity+5)/10; 
-	mousey = ev->data3*(mouseSensitivity+5)/10; 
+	mousey = ev->data3*(mouseSensitivity_y+5)/10;
 	return true;    // eat events 
  
       case ev_joystick: 
@@ -877,10 +890,6 @@ void G_Ticker (void)
 	  case ga_completed: 
 	    G_DoCompleted (); 
 	    break; 
-	  // [cndoom] not needed anymore
-	  /* case ga_victory: 
-	    F_StartFinale (); 
-	    break; */
 	  case ga_worlddone: 
 	    G_DoWorldDone (); 
 	    break; 
@@ -1492,7 +1501,6 @@ void G_DoCompleted (void)
 
 	fflush(stdout);
     }
-    // end cndoom
  
     WI_Start (&wminfo); 
 } 
@@ -1532,7 +1540,6 @@ void G_WorldDone (void)
 	    F_StartFinale();
     // [cndoom] do not end episodes
     else if (gamemap == 8)
-    
     {
         wminfo.next = 0; // go to first map
         
@@ -1552,9 +1559,7 @@ void G_WorldDone (void)
                 break;
         }
         WI_Start (&wminfo);
-        // F_StartFinale();
     }
-// [cndoom] end
     }
 }
 
@@ -2105,7 +2110,7 @@ void G_BeginRecording (void)
     *demo_p++ = consoleplayer;
 	 
     for (i=0 ; i<MAXPLAYERS ; i++) 
-    *demo_p++ = playeringame[i]; 	 
+    *demo_p++ = playeringame[i];
     // [cndoom] fill the consoleplayer's slot in the metadata player info
     // array here, others should have been filled correctly inside the
     // network code already
