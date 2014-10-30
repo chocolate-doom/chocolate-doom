@@ -145,11 +145,11 @@ int             crispy_recoil = 0;
 
 // [crispy] in-game switches
 uint8_t         crispy_coloredblood = 0;
-boolean         crispy_coloredgray = false;
 boolean         crispy_flashinghom = false;
 boolean         crispy_fliplevels = false;
 boolean         crispy_havemap33 = false;
 boolean         crispy_havessg = false;
+boolean         crispy_keepgray109 = false;
 boolean         crispy_nwtmerge = false;
 
 void D_ConnectNetGame(void);
@@ -1794,7 +1794,7 @@ void D_DoomMain (void)
 
 	// [crispy] check for status bar graphics replacements
 	i = W_CheckNumForName("sttnum0"); // [crispy] Status Bar '0'
-	crispy_coloredgray = (i >= 0 && !!strcmp(lumpinfo[i].wad_file->path, iwadbasename));
+	crispy_keepgray109 = (i >= 0 && !strcmp(lumpinfo[i].wad_file->path, iwadbasename));
     }
 
     // [crispy] check for NWT-style merging

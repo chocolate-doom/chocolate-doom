@@ -30,12 +30,12 @@
 
 extern boolean crispy_cleanscreenshot;
 extern uint8_t crispy_coloredblood;
-extern boolean crispy_coloredgray;
 extern boolean crispy_democritical;
 extern boolean crispy_flashinghom;
 extern boolean crispy_fliplevels;
 extern boolean crispy_havemap33;
 extern boolean crispy_havessg;
+extern boolean crispy_keepgray109;
 extern boolean crispy_nwtmerge;
 
 extern int crispy_automapstats;
