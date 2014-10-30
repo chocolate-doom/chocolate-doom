@@ -479,7 +479,7 @@ fixed_t R_ScaleFromGlobalAngle (angle_t visangle)
     // both sines are allways positive
     sinea = finesine[anglea>>ANGLETOFINESHIFT];	
     sineb = finesine[angleb>>ANGLETOFINESHIFT];
-    num = FixedMul(projection,sineb)<<(detailshift && !hires); // [crispy] -> [cndoom] high resolution
+    num = FixedMul(projection,sineb)<<(detailshift && !hires);
     den = FixedMul(rw_distance,sinea);
 
     if (den > num>>16)
@@ -622,7 +622,7 @@ void R_InitLightTables (void)
 	startmap = ((LIGHTLEVELS-1-i)*2)*NUMCOLORMAPS/LIGHTLEVELS;
 	for (j=0 ; j<MAXLIGHTZ ; j++)
 	{
-	    scale = FixedDiv ((ORIGWIDTH/2*FRACUNIT), (j+1)<<LIGHTZSHIFT); // [crispy] -> [cndoom] high resolution
+	    scale = FixedDiv ((ORIGWIDTH/2*FRACUNIT), (j+1)<<LIGHTZSHIFT);
 	    scale >>= LIGHTSCALESHIFT;
 	    level = startmap - scale/DISTMAP;
 	    
@@ -678,17 +678,17 @@ void R_ExecuteSetViewSize (void)
     if (setblocks == 11)
     {
 	scaledviewwidth = SCREENWIDTH;
-	scaledviewheight = SCREENHEIGHT; // [crispy] -> [cndoom] high resolution
+	scaledviewheight = SCREENHEIGHT;
     }
     else
     {
-	scaledviewwidth = (setblocks*32)<<hires; // [crispy] -> [cndoom] high resolution
-	scaledviewheight = ((setblocks*168/10)&~7)<<hires; // [crispy] -> [cndoom] high resolution
+	scaledviewwidth = (setblocks*32)<<hires;
+	scaledviewheight = ((setblocks*168/10)&~7)<<hires;
     }
     
     detailshift = setdetail;
     viewwidth = scaledviewwidth>>detailshift;
-    viewheight = scaledviewheight>>(detailshift && hires); // [crispy] -> [cndoom] high resolution
+    viewheight = scaledviewheight>>(detailshift && hires);
 	
     centery = viewheight/2;
     centerx = viewwidth/2;
@@ -711,13 +711,13 @@ void R_ExecuteSetViewSize (void)
 	spanfunc = R_DrawSpanLow;
     }
 
-    R_InitBuffer (scaledviewwidth, scaledviewheight); // [crispy] -> [cndoom] high resolution
+    R_InitBuffer (scaledviewwidth, scaledviewheight);
 	
     R_InitTextureMapping ();
     
     // psprite scales
-    pspritescale = FRACUNIT*viewwidth/ORIGWIDTH; // [crispy] -> [cndoom] high resolution
-    pspriteiscale = FRACUNIT*ORIGWIDTH/viewwidth; // [crispy] -> [cndoom] high resolution
+    pspritescale = FRACUNIT*viewwidth/ORIGWIDTH;
+    pspriteiscale = FRACUNIT*ORIGWIDTH/viewwidth;
     
     // thing clipping
     for (i=0 ; i<viewwidth ; i++)
@@ -728,7 +728,7 @@ void R_ExecuteSetViewSize (void)
     {
 	dy = ((i-viewheight/2)<<FRACBITS)+FRACUNIT/2;
 	dy = abs(dy);
-	yslope[i] = FixedDiv ( (viewwidth<<(detailshift && !hires))/2*FRACUNIT, dy); // [crispy] -> [cndoom] high resolution
+	yslope[i] = FixedDiv ( (viewwidth<<(detailshift && !hires))/2*FRACUNIT, dy);
     }
 	
     for (i=0 ; i<viewwidth ; i++)

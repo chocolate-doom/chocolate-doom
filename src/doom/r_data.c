@@ -37,7 +37,6 @@
 
 
 #include "r_data.h"
-#include "v_trans.h"
 
 //
 // Graphics.

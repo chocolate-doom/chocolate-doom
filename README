@@ -1,4 +1,4 @@
-Competition Doom is a Doom source port based on Chocolate Doom v2
+Competition Doom is a Doom source port based on Chocolate Doom
 and adds additional features and settings to it.
 
 
@@ -6,7 +6,7 @@ and adds additional features and settings to it.
 == Configuration File ==
 
 Competition Doom also provides some extra settings.
-These are stored in a file named 'cndoom.cfg' with a prefix cn_.
+These are stored in a file named 'cndoom.cfg'.
 
 Detailed explanation about each setting:
 
@@ -85,7 +85,7 @@ cn_meta_id
 
 For Windows:
 - DirectX 9.0c
-Microsoft .NET Framework 2.0 or higher (required only for launcher)
+- Microsoft .NET Framework 2.0 or higher (required only for launcher)
 
 For Win 9x, use -gdi command line option or start setup and change
 video_driver. All files, patches and fixes can be downloaded from here:
@@ -103,11 +103,19 @@ video_driver. All files, patches and fixes can be downloaded from here:
    You are encouraged to sign up and contribute any useful information
    you may have regarding the port!
 
- * Competition Doom is distributed under the GNU GPL.  See the COPYING
-   file for more information.
-
- * Please send any feedback, questions or suggestions to
-   admin@doom.com.hr  Thanks!
+ * Competition Doom is distributed under the GNU GPL.
+ 
+ * Please send any feedback, questions or suggestions to:
+   Zvonimir Bužaniæ
+   admin@doom.com.hr
    
- * Competition Doom would not exist without Simon 'fraggle' Howard
- * and Ville 'xttl' Vuorinen, big thanks to both of them!
+ * Competition Doom would not exist without help of good people
+   big thanks to all of them (listed below) and others that contributed!
+
+== Authors ==
+Simon Howard <fraggle@gmail.com>
+James Haley <haleyjd@hotmail.com>
+Samuel Villarreal <svkaiser@gmail.com>
+Ville Vuorinen <vv@ydin.org>
+Hippocrates Sendoukas <hs@keystone.gr>
+Fabian Greffrath <fabian@greffrath.com>

@@ -58,8 +58,6 @@
 
 #include "m_menu.h"
 
-#include "v_trans.h"
-
 extern patch_t*		hu_font[HU_FONTSIZE];
 extern boolean		message_dontfuckwithme;
 
@@ -121,7 +119,6 @@ boolean			menuactive;
 
 #define SKULLXOFF		-32
 #define LINEHEIGHT		16
-#define CN_LINEHEIGHT	12
 
 extern boolean		sendpause;
 char			savegamestrings[10][SAVESTRINGSIZE];
@@ -147,10 +144,7 @@ typedef struct
     
     // hotkey in menu
     char	alphaKey;			
-    char	*alttext;
 } menuitem_t;
-
-
 
 typedef struct menu_s
 {
@@ -191,14 +185,12 @@ void M_QuitDOOM(int choice);
 void M_ChangeMessages(int choice);
 void M_ChangeSensitivity(int choice);
 static void M_ChangeSensitivity_y(int choice);
-static void M_ToggleSecretmessage(int choice);
 void M_SfxVol(int choice);
 void M_MusicVol(int choice);
 void M_ChangeDetail(int choice);
 void M_SizeDisplay(int choice);
 void M_StartGame(int choice);
 static void M_Mouse(int choice);
-static void M_Advanced(int choice);
 void M_Sound(int choice);
 
 void M_FinishReadThis(int choice);
@@ -215,7 +207,6 @@ void M_DrawNewGame(void);
 void M_DrawEpisode(void);
 void M_DrawOptions(void);
 static void M_DrawMouse(void);
-static void M_DrawAdvanced(void);
 void M_DrawSound(void);
 void M_DrawLoad(void);
 void M_DrawSave(void);
@@ -346,21 +337,21 @@ enum
     scrnsize,
     option_empty1,
     mousesens,
+    option_empty2,
     soundvol,
-    advanced,
     opt_end
 } options_e;
 
 menuitem_t OptionsMenu[]=
 {
-    {1,"M_ENDGAM",	M_EndGame,'e', "End Game"},
-    {1,"M_MESSG",	M_ChangeMessages,'m', "Messages: "},
-    {1,"M_DETAIL",	M_ChangeDetail,'g', "Graphic Detail: "},
-    {2,"M_SCRNSZ",	M_SizeDisplay,'s', "Screen Size"},
+    {1,"M_ENDGAM",	M_EndGame,'e'},
+    {1,"M_MESSG",	M_ChangeMessages,'m'},
+    {1,"M_DETAIL",	M_ChangeDetail,'g'},
+    {2,"M_SCRNSZ",	M_SizeDisplay,'s'},
     {-1,"",0,'\0'},
-    {1,"M_MSENS",	M_Mouse,'m', "Mouse Sensitivity"}, // [crispy] mouse sensitivity menu
-    {1,"M_SVOL",	M_Sound,'s', "Sound Volume"},
-    {1,"",	M_Advanced,'o', "Advanced"}
+    {1,"M_MSENS",	M_Mouse,'m'},
+    {-1,"",0,'\0'},
+    {1,"M_SVOL",	M_Sound,'s'}
 };
 
 menu_t  OptionsDef =
@@ -400,26 +391,6 @@ static menu_t  MouseDef =
     0
 };
 
-enum
-{
-    advanced_secretmessage,
-    advanced_end
-} advanced_e;
-
-static menuitem_t AdvancedMenu[]=
-{
-    {1,"",	M_ToggleSecretmessage,'s'},
-};
-
-static menu_t AdvancedDef =
-{
-    advanced_end,
-    &OptionsDef,
-    AdvancedMenu,
-    M_DrawAdvanced,
-    48,36,
-    0
-};
 //
 // Read This! MENU 1 & 2
 //
@@ -1035,25 +1006,28 @@ void M_Episode(int choice)
 //
 // M_Options
 //
+static char *detailNames[2] = {"M_GDHIGH","M_GDLOW"};
+static char *msgNames[2] = {"M_MSGOFF","M_MSGON"};
 
 void M_DrawOptions(void)
 {
     V_DrawPatchDirect(108, 15, W_CacheLumpName(DEH_String("M_OPTTTL"),
                                                PU_CACHE));
+	
+    V_DrawPatchDirect(OptionsDef.x + 175, OptionsDef.y + LINEHEIGHT * detail,
+		      W_CacheLumpName(DEH_String(detailNames[detailLevel]),
+			              PU_CACHE));
 
-    M_WriteText(OptionsDef.x + M_StringWidth("Graphic Detail: "),
-                OptionsDef.y + LINEHEIGHT * detail + 8 - (M_StringHeight("HighLow")/2),
-                detailLevel ? "Low" : "High");
-
-    M_WriteText(OptionsDef.x + M_StringWidth("Messages: "),
-                OptionsDef.y + LINEHEIGHT * messages + 8 - (M_StringHeight("OnOff")/2),
-                showMessages ? "On" : "Off");
+    V_DrawPatchDirect(OptionsDef.x + 120, OptionsDef.y + LINEHEIGHT * messages,
+                      W_CacheLumpName(DEH_String(msgNames[showMessages]),
+                                      PU_CACHE));
+    M_DrawThermo(OptionsDef.x,OptionsDef.y+LINEHEIGHT*(scrnsize+1),
+		 9,screenSize);
 }
 
 static void M_DrawMouse(void)
 {
     V_DrawPatchDirect (60, 38, W_CacheLumpName(DEH_String("M_MSENS"), PU_CACHE));
-
     M_WriteText(MouseDef.x, MouseDef.y + LINEHEIGHT * mouse_horiz + 6,
                 "HORIZONTAL");
 
@@ -1065,26 +1039,8 @@ static void M_DrawMouse(void)
 
     M_DrawThermo(MouseDef.x, MouseDef.y + LINEHEIGHT * mouse_empty2,
 		 21, mouseSensitivity_y);
-
-    V_ClearDPTranslation();
 }
 
-static void M_DrawAdvanced(void)
-{
-    char advanced_menu_text[48];
-
-    M_snprintf(advanced_menu_text, sizeof(advanced_menu_text),
-               "%sAdvanced", crstr[CR_GOLD]);
-    M_WriteText(160 - M_StringWidth("Settings") / 2, 20, advanced_menu_text);
-
-    M_snprintf(advanced_menu_text, sizeof(advanced_menu_text),
-               "%s\"Secret Revealed\" Message: %s%s", crstr[CR_NONE], crstr[CR_GREEN],
-               cn_secretmessage ? "On" : "Off");
-    M_WriteText(AdvancedDef.x, AdvancedDef.y + CN_LINEHEIGHT * cn_secretmessage + 6,
-                advanced_menu_text);
-
-    V_ClearDPTranslation();
-}
 void M_Options(int choice)
 {
     M_SetupNextMenu(&OptionsDef);
@@ -1095,20 +1051,15 @@ static void M_Mouse(int choice)
 {
     if (mouseSensitivity_y < 0)
     {
-        mouseSensitivity_y = -mouseSensitivity_y;
+        mouseSensitivity_y = 0;
     }
 
     if (mouse_acceleration_y < 0)
     {
-        mouse_acceleration_y = -mouse_acceleration_y;
+        mouse_acceleration_y = 0;
     }
 
     M_SetupNextMenu(&MouseDef);
-}
-
-static void M_Advanced(int choice)
-{
-    M_SetupNextMenu(&AdvancedDef);
 }
 
 //
@@ -1303,11 +1254,6 @@ static void M_ChangeSensitivity_y(int choice)
 	break;
     }
 }
-static void M_ToggleSecretmessage(int choice)
-{
-    choice = 0;
-    cn_secretmessage = 1 - cn_secretmessage;
-}
 
 void M_ChangeDetail(int choice)
 {
@@ -1321,7 +1267,6 @@ void M_ChangeDetail(int choice)
     else
 	players[consoleplayer].message = DEH_String(DETAILLO);
 }
-
 
 void M_SizeDisplay(int choice)
 {
@@ -1371,18 +1316,15 @@ M_DrawThermo
     }
     V_DrawPatchDirect(xx, y, W_CacheLumpName(DEH_String("M_THERMR"), PU_CACHE));
 
-    // [crispy] do not crash anymore if value exceeds thermometer range
     if (thermDot >= thermWidth)
     {
         char num[4];
         M_snprintf(num, 4, "%3d", thermDot);
         M_WriteText(xx + 8, y + 3, num);
         thermDot = thermWidth - 1;
-        dp_translation = cr[CR_DARK];
     }
     V_DrawPatchDirect((x + 8) + thermDot * 8, y,
 		      W_CacheLumpName(DEH_String("M_THERMO"), PU_CACHE));
-    V_ClearDPTranslation();
 }
 
 
@@ -1669,7 +1611,7 @@ boolean M_Responder (event_t* ev)
 		mousewait = I_GetTime() + 15;
 	    }
 
-        // [crispy] scroll menus with mouse wheel
+	    // [crispy] scroll menus with mouse wheel
 	    if (ev->data1 & (1 << mousebprevweapon))
 	    {
 		key = key_menu_down;
@@ -2153,30 +2095,13 @@ void M_Drawer (void)
 
 	if (name[0])
 	{
-if (currentMenu == &OptionsDef)
-	    {
-		char *alttext = currentMenu->menuitems[i].alttext;
-
-		if (alttext)
-		    M_WriteText(x, y+8-(M_StringHeight(alttext)/2), alttext);
-	    }
-	    else
 	    V_DrawPatchDirect (x, y, W_CacheLumpName(name, PU_CACHE));
-
-	    V_ClearDPTranslation();
 	}
 	y += LINEHEIGHT;
     }
 
     
     // DRAW SKULL
-    if (currentMenu == &AdvancedDef)
-    {
-    V_DrawPatchDirect(x + SKULLXOFF, currentMenu->y - 5 + itemOn*CN_LINEHEIGHT,
-		      W_CacheLumpName(DEH_String(skullName[whichSkull]),
-				      PU_CACHE));
-    }
-    else
     V_DrawPatchDirect(x + SKULLXOFF, currentMenu->y - 5 + itemOn*LINEHEIGHT,
 		      W_CacheLumpName(DEH_String(skullName[whichSkull]),
 				      PU_CACHE));
