@@ -55,7 +55,7 @@ static const iwad_t fallback_iwads[] = {
 // Array of IWADs found to be installed
 
 static const iwad_t **found_iwads;
-static char *iwad_labels[8];
+static char **iwad_labels;
 
 // Index of the currently selected IWAD
 
@@ -559,8 +559,14 @@ static txt_widget_t *IWADSelector(void)
 
     for (i=0; found_iwads[i] != NULL; ++i)
     {
-        iwad_labels[i] = found_iwads[i]->description;
          ++num_iwads;
+    }
+
+    iwad_labels = malloc(sizeof(*iwad_labels) * num_iwads);
+
+    for (i=0; i < num_iwads; ++i)
+    {
+        iwad_labels[i] = found_iwads[i]->description;
     }
 
     // If no IWADs are found, provide Doom 2 as an option, but
