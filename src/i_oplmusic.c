@@ -700,10 +700,10 @@ static void ReplaceExistingVoice()
 static unsigned int FrequencyForVoice(opl_voice_t *voice)
 {
     genmidi_voice_t *gm_voice;
-    unsigned int freq_index;
+    signed int freq_index;
     unsigned int octave;
     unsigned int sub_index;
-    unsigned int note;
+    signed int note;
 
     note = voice->note;
 
@@ -719,9 +719,14 @@ static unsigned int FrequencyForVoice(opl_voice_t *voice)
 
     // Avoid possible overflow due to base note offset:
 
-    if (note > 0x7f)
+    while (note < 0)
     {
-        note = voice->note;
+        note += 12;
+    }
+    
+    while (note > 95)
+    {
+        note -= 12;
     }
 
     freq_index = 64 + 32 * note + voice->channel->bend;
@@ -734,6 +739,11 @@ static unsigned int FrequencyForVoice(opl_voice_t *voice)
         freq_index += (voice->current_instr->fine_tuning / 2) - 64;
     }
 
+    if (freq_index < 0)
+    {
+    	freq_index = 0;
+    }
+    
     // The first 7 notes use the start of the table, while
     // consecutive notes loop around the latter part.
 
@@ -755,14 +765,7 @@ static unsigned int FrequencyForVoice(opl_voice_t *voice)
 
     if (octave >= 7)
     {
-        if (sub_index < 5)
-        {
-            octave = 7;
-        }
-        else
-        {
-            octave = 6;
-        }
+        octave = 7;
     }
 
     // Calculate the resulting register value to use for the frequency.
