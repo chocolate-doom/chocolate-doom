@@ -170,7 +170,7 @@ mline_t thintriangle_guy[] = {
 
 
 static int 	cheating = 0;
-static int 	grid = 0;
+//static int 	grid = 0;     [STRIFE]: no such variable
 
 static int 	leveljuststarted = 1; 	// kluge until AM_LevelInit() is called
 
