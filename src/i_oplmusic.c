@@ -610,6 +610,26 @@ static void VoiceKeyOff(opl_voice_t *voice)
     OPL_WriteRegister(OPL_REGS_FREQ_2 + voice->index, voice->freq >> 8);
 }
 
+static opl_channel_data_t *TrackChannelForEvent(opl_track_data_t *track,
+                                                midi_event_t *event)
+{
+    unsigned int channel_num = event->data.channel.channel;
+
+    // MIDI uses track #9 for percussion, but for MUS it's track #15
+    // instead. Because DMX works on MUS data internally, we need to
+    // swap back to the MUS version of the channel number.
+    if (channel_num == 9)
+    {
+        channel_num = 15;
+    }
+    else if (channel_num == 15)
+    {
+        channel_num = 9;
+    }
+
+    return &track->channels[channel_num];
+}
+
 // Get the frequency that we should be using for a voice.
 
 static void KeyOffEvent(opl_track_data_t *track, midi_event_t *event)
@@ -625,7 +645,7 @@ static void KeyOffEvent(opl_track_data_t *track, midi_event_t *event)
            event->data.channel.param2);
 */
 
-    channel = &track->channels[event->data.channel.channel];
+    channel = TrackChannelForEvent(track, event);
     key = event->data.channel.param1;
 
     // Turn off voices being used to play this key.
@@ -826,9 +846,7 @@ static void KeyOnEvent(opl_track_data_t *track, midi_event_t *event)
 {
     genmidi_instr_t *instrument;
     opl_channel_data_t *channel;
-    unsigned int note;
-    unsigned int key;
-    unsigned int volume;
+    unsigned int note, key, volume;
 
 /*
     printf("note on: channel %i, %i, %i\n",
@@ -851,10 +869,9 @@ static void KeyOnEvent(opl_track_data_t *track, midi_event_t *event)
     }
 
     // The channel.
-    channel = &track->channels[event->data.channel.channel];
+    channel = TrackChannelForEvent(track, event);
 
-    // Percussion channel (10) is treated differently.
-
+    // Percussion channel is treated differently.
     if (event->data.channel.channel == 9)
     {
         if (key < 35 || key > 81)
@@ -891,14 +908,14 @@ static void KeyOnEvent(opl_track_data_t *track, midi_event_t *event)
 
 static void ProgramChangeEvent(opl_track_data_t *track, midi_event_t *event)
 {
-    int channel;
+    opl_channel_data_t *channel;
     int instrument;
 
     // Set the instrument used on this channel.
 
-    channel = event->data.channel.channel;
+    channel = TrackChannelForEvent(track, event);
     instrument = event->data.channel.param1;
-    track->channels[channel].instrument = &main_instrs[instrument];
+    channel->instrument = &main_instrs[instrument];
 
     // TODO: Look through existing voices that are turned on on this
     // channel, and change the instrument.
@@ -938,9 +955,9 @@ static void AllNotesOff(opl_channel_data_t *channel, unsigned int param)
 
 static void ControllerEvent(opl_track_data_t *track, midi_event_t *event)
 {
+    opl_channel_data_t *channel;
     unsigned int controller;
     unsigned int param;
-    opl_channel_data_t *channel;
 
 /*
     printf("change controller: channel %i, %i, %i\n",
@@ -949,7 +966,7 @@ static void ControllerEvent(opl_track_data_t *track, midi_event_t *event)
            event->data.channel.param2);
 */
 
-    channel = &track->channels[event->data.channel.channel];
+    channel = TrackChannelForEvent(track, event);
     controller = event->data.channel.param1;
     param = event->data.channel.param2;
 
@@ -981,7 +998,7 @@ static void PitchBendEvent(opl_track_data_t *track, midi_event_t *event)
     // Update the channel bend value.  Only the MSB of the pitch bend
     // value is considered: this is what Doom does.
 
-    channel = &track->channels[event->data.channel.channel];
+    channel = TrackChannelForEvent(track, event);
     channel->bend = event->data.channel.param2 - 64;
 
     // Update all voices for this channel.
