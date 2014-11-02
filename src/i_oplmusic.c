@@ -13,7 +13,7 @@
 // GNU General Public License for more details.
 //
 // DESCRIPTION:
-//	System interface for music.
+//   System interface for music.
 //
 
 
@@ -519,32 +519,32 @@ static void SetVoiceVolume(opl_voice_t *voice, unsigned int volume)
     unsigned int full_volume;
     unsigned int car_volume;
     unsigned int mod_volume;
-    
+
     voice->note_volume = volume;
-    
+
     opl_voice = &voice->current_instr->voices[voice->current_instr_voice];
-    
+
     // Multiply note volume and channel volume to get the actual volume.
-    
+
     midi_volume = 2 * (volume_mapping_table[(voice->channel->volume
                   * current_music_volume) / 127] + 1);
-    
+
     full_volume = (volume_mapping_table[voice->note_volume] * midi_volume) >> 9;
-    
+
     // The volume value to use in the register:
     car_volume = 0x3f - full_volume;
-    
+
     // Update the volume register(s) if necessary.
-    
+
     if (car_volume != voice->reg_volume)
     {
         voice->reg_volume = car_volume | (opl_voice->carrier.scale & 0xc0);
-        
+
         OPL_WriteRegister(OPL_REGS_LEVEL + voice->op2, voice->reg_volume);
-        
+
         // If we are using non-modulated feedback mode, we must set the
         // volume for both voices.
-        
+
         if ((opl_voice->feedback & 0x01) != 0 && opl_voice->modulator.level != 0x3f)
         {
             mod_volume = 0x3f - opl_voice->modulator.level;
@@ -570,7 +570,7 @@ static void InitVoices(void)
 
     // Initialize each voice.
 
-    for (i=0; i<OPL_NUM_VOICES; ++i)
+    for (i = 0; i < OPL_NUM_VOICES; ++i)
     {
         voices[i].index = i;
         voices[i].op1 = voice_operators[0][i];
@@ -595,7 +595,7 @@ static void I_OPL_SetMusicVolume(int volume)
 
     // Update the volume of all voices.
 
-    for (i=0; i<OPL_NUM_VOICES; ++i)
+    for (i = 0; i < OPL_NUM_VOICES; ++i)
     {
         if (voices[i].channel != NULL)
         {
@@ -650,7 +650,7 @@ static void KeyOffEvent(opl_track_data_t *track, midi_event_t *event)
     // Turn off voices being used to play this key.
     // If it is a double voice instrument there will be two.
 
-    for (i=0; i<OPL_NUM_VOICES; ++i)
+    for (i = 0; i < OPL_NUM_VOICES; ++i)
     {
         if (voices[i].channel == channel && voices[i].key == key)
         {
@@ -723,7 +723,7 @@ static unsigned int FrequencyForVoice(opl_voice_t *voice)
     {
         note += 12;
     }
-    
+
     while (note > 95)
     {
         note -= 12;
@@ -741,9 +741,9 @@ static unsigned int FrequencyForVoice(opl_voice_t *voice)
 
     if (freq_index < 0)
     {
-    	freq_index = 0;
+        freq_index = 0;
     }
-    
+
     // The first 7 notes use the start of the table, while
     // consecutive notes loop around the latter part.
 
@@ -793,7 +793,7 @@ static void UpdateVoiceFrequency(opl_voice_t *voice)
     }
 }
 
-// Program a single voice for an instrument.  For a double voice 
+// Program a single voice for an instrument.  For a double voice
 // instrument (GENMIDI_FLAG_2VOICE), this is called twice for each
 // key on event.
 
@@ -894,7 +894,7 @@ static void KeyOnEvent(opl_track_data_t *track, midi_event_t *event)
 
     if (voice_free_list == NULL)
     {
-    	ReplaceExistingVoice();
+        ReplaceExistingVoice();
     }
 
     // Find and program a voice for this instrument.  If this
@@ -931,7 +931,7 @@ static void SetChannelVolume(opl_channel_data_t *channel, unsigned int volume)
 
     // Update all voices that this channel is using.
 
-    for (i=0; i<OPL_NUM_VOICES; ++i)
+    for (i = 0; i < OPL_NUM_VOICES; ++i)
     {
         if (voices[i].channel == channel)
         {
@@ -1005,7 +1005,7 @@ static void PitchBendEvent(opl_track_data_t *track, midi_event_t *event)
 
     // Update all voices for this channel.
 
-    for (i=0; i<OPL_NUM_VOICES; ++i)
+    for (i = 0; i < OPL_NUM_VOICES; ++i)
     {
         if (voices[i].channel == channel)
         {
@@ -1118,7 +1118,7 @@ static void RestartSong(void *unused)
 
     running_tracks = num_tracks;
 
-    for (i=0; i<num_tracks; ++i)
+    for (i = 0; i < num_tracks; ++i)
     {
         MIDI_RestartIterator(tracks[i].iter);
         ScheduleTrack(&tracks[i]);
@@ -1206,7 +1206,7 @@ static void StartTrack(midi_file_t *file, unsigned int track_num)
     track = &tracks[track_num];
     track->iter = MIDI_IterateTrack(file, track_num);
 
-    for (i=0; i<MIDI_CHANNELS_PER_TRACK; ++i)
+    for (i = 0; i < MIDI_CHANNELS_PER_TRACK; ++i)
     {
         InitChannel(track, &track->channels[i]);
     }
@@ -1245,7 +1245,7 @@ static void I_OPL_PlaySong(void *handle, boolean looping)
 
     us_per_beat = 500 * 1000;
 
-    for (i=0; i<num_tracks; ++i)
+    for (i = 0; i < num_tracks; ++i)
     {
         StartTrack(file, i);
     }
@@ -1267,7 +1267,7 @@ static void I_OPL_PauseSong(void)
     // Turn off all main instrument voices (not percussion).
     // This is what Vanilla does.
 
-    for (i=0; i<OPL_NUM_VOICES; ++i)
+    for (i = 0; i < OPL_NUM_VOICES; ++i)
     {
         if (voices[i].channel != NULL
          && voices[i].current_instr < percussion_instrs)
@@ -1304,7 +1304,7 @@ static void I_OPL_StopSong(void)
 
     // Free all voices.
 
-    for (i=0; i<OPL_NUM_VOICES; ++i)
+    for (i = 0; i < OPL_NUM_VOICES; ++i)
     {
         if (voices[i].channel != NULL)
         {
@@ -1315,7 +1315,7 @@ static void I_OPL_StopSong(void)
 
     // Free all track data.
 
-    for (i=0; i<num_tracks; ++i)
+    for (i = 0; i < num_tracks; ++i)
     {
         MIDI_FreeIterator(tracks[i].iter);
     }
@@ -1341,7 +1341,7 @@ static void I_OPL_UnRegisterSong(void *handle)
     }
 }
 
-// Determine whether memory block is a .mid file 
+// Determine whether memory block is a .mid file
 
 static boolean IsMid(byte *mem, int len)
 {
@@ -1395,7 +1395,7 @@ static void *I_OPL_RegisterSong(void *data, int len)
     }
     else
     {
-	// Assume a MUS file and try to convert
+        // Assume a MUS file and try to convert
 
         ConvertMus(data, len, filename);
     }
