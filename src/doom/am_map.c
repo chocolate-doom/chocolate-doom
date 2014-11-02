@@ -344,7 +344,8 @@ void AM_addMark(void)
 {
     markpoints[markpointnum].x = m_x + m_w/2;
     markpoints[markpointnum].y = m_y + m_h/2;
-    markpointnum = (markpointnum + 1) % AM_NUMMARKPOINTS;
+    //markpointnum = (markpointnum + 1) % AM_NUMMARKPOINTS;
+    ++markpointnum; // haleyjd 20141101 [STRIFE]: does not wrap around
 
 }
 
@@ -672,6 +673,8 @@ AM_Responder
             else
                 plr->message = DEH_String(AMSTR_FOLLOWOFF);
         }
+        // haleyjd 20141101 [STRIFE]: grid is not supported
+        /*
         else if (key == key_map_grid)
         {
             grid = !grid;
@@ -680,17 +683,26 @@ AM_Responder
             else
                 plr->message = DEH_String(AMSTR_GRIDOFF);
         }
+        */
         else if (key == key_map_mark)
         {
+            // haleyjd 20141101 [STRIFE]: if full, mark 10 is replaced
+            if(markpointnum == AM_NUMMARKPOINTS)
+                --markpointnum; 
             M_snprintf(buffer, sizeof(buffer), "%s %d",
-                       DEH_String(AMSTR_MARKEDSPOT), markpointnum);
+                       DEH_String(AMSTR_MARKEDSPOT), markpointnum + 1); // [STRIFE]: +1
             plr->message = buffer;
             AM_addMark();
         }
         else if (key == key_map_clearmark)
         {
-            AM_clearMarks();
-            plr->message = DEH_String(AMSTR_MARKSCLEARED);
+            // haleyjd 20141101 [STRIFE]: modified to only clear last mark
+            if(markpointnum > 0)
+            {
+                markpoints[markpointnum - 1].x = -1;
+                --markpointnum;
+                plr->message = DEH_String(AMSTR_MARKSCLEARED);
+            }
         }
         else
         {
