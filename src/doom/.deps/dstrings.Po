@@ -1,7 +1,0 @@
-dstrings.o: dstrings.c /usr/include/stdc-predef.h dstrings.h d_englsh.h
-
-/usr/include/stdc-predef.h:
-
-dstrings.h:
-
-d_englsh.h:

@@ -1,5 +1,0 @@
-w_file_win32.o: w_file_win32.c /usr/include/stdc-predef.h ../config.h
-
-/usr/include/stdc-predef.h:
-
-../config.h:
