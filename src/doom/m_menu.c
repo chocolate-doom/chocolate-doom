@@ -1183,7 +1183,7 @@ static void M_DrawMouse(void)
 		 21, mouseSensitivity_y);
 
     M_snprintf(mouse_menu_text, sizeof(mouse_menu_text),
-               "%sInvert Mouse: %s%s", crstr[CR_NONE], crstr[CR_GREEN],
+               "%sInvert Vertical Axis: %s%s", crstr[CR_NONE], crstr[CR_GREEN],
                mouse_y_invert ? "On" : "Off");
     M_WriteText(MouseDef.x, MouseDef.y + LINEHEIGHT * mouse_invert + 6,
                 mouse_menu_text);
@@ -1651,6 +1651,12 @@ M_DrawThermo
 {
     int		xx;
     int		i;
+    char	num[4];
+
+    if (!thermDot)
+    {
+        dp_translation = cr[CR_DARK];
+    }
 
     xx = x;
     V_DrawPatchDirect(xx, y, W_CacheLumpName(DEH_String("M_THERML"), PU_CACHE));
@@ -1662,12 +1668,12 @@ M_DrawThermo
     }
     V_DrawPatchDirect(xx, y, W_CacheLumpName(DEH_String("M_THERMR"), PU_CACHE));
 
+    M_snprintf(num, 4, "%3d", thermDot);
+    M_WriteText(xx + 8, y + 3, num);
+
     // [crispy] do not crash anymore if value exceeds thermometer range
     if (thermDot >= thermWidth)
     {
-        char num[4];
-        M_snprintf(num, 4, "%3d", thermDot);
-        M_WriteText(xx + 8, y + 3, num);
         thermDot = thermWidth - 1;
         dp_translation = cr[CR_DARK];
     }

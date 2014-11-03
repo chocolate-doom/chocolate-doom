@@ -956,8 +956,14 @@ boolean G_Responder (event_t* ev)
 		 
       case ev_mouse: 
         SetMouseButtons(ev->data1);
+	if (mouseSensitivity)
 	mousex = ev->data2*(mouseSensitivity+5)/10; 
+	else
+	    mousex = 0; // [crispy] disable entirely
+	if (mouseSensitivity_y)
 	mousey = ev->data3*(mouseSensitivity_y+5)/10; // [crispy] separate sensitivity for y-axis
+	else
+	    mousey = 0; // [crispy] disable entirely
 	return true;    // eat events 
  
       case ev_joystick: 
