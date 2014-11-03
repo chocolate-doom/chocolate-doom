@@ -337,7 +337,6 @@ enum
     scrnsize,
     option_empty1,
     mousesens,
-    option_empty2,
     soundvol,
     opt_end
 } options_e;
@@ -350,7 +349,6 @@ menuitem_t OptionsMenu[]=
     {2,"M_SCRNSZ",	M_SizeDisplay,'s'},
     {-1,"",0,'\0'},
     {1,"M_MSENS",	M_Mouse,'m'},
-    {-1,"",0,'\0'},
     {1,"M_SVOL",	M_Sound,'s'}
 };
 
@@ -1305,6 +1303,7 @@ M_DrawThermo
 {
     int		xx;
     int		i;
+    char    num[4];
 
     xx = x;
     V_DrawPatchDirect(xx, y, W_CacheLumpName(DEH_String("M_THERML"), PU_CACHE));
@@ -1315,12 +1314,12 @@ M_DrawThermo
 	xx += 8;
     }
     V_DrawPatchDirect(xx, y, W_CacheLumpName(DEH_String("M_THERMR"), PU_CACHE));
-
+    
+    M_snprintf(num, 4, "%3d", thermDot);
+    M_WriteText(xx + 8, y + 3, num);
+    
     if (thermDot >= thermWidth)
     {
-        char num[4];
-        M_snprintf(num, 4, "%3d", thermDot);
-        M_WriteText(xx + 8, y + 3, num);
         thermDot = thermWidth - 1;
     }
     V_DrawPatchDirect((x + 8) + thermDot * 8, y,
