@@ -770,6 +770,38 @@ static char *GetGameName(char *gamename)
     return gamename;
 }
 
+static void SetMissionForPackName(char *pack_name)
+{
+    int i;
+    static const struct
+    {
+        char *name;
+        int mission;
+    } packs[] = {
+        { "doom2",    doom2 },
+        { "tnt",      pack_tnt },
+        { "plutonia", pack_plut },
+    };
+
+    for (i = 0; i < arrlen(packs); ++i)
+    {
+        if (!strcasecmp(pack_name, packs[i].name))
+        {
+            gamemission = packs[i].mission;
+            return;
+        }
+    }
+
+    printf("Valid mission packs are:\n");
+
+    for (i = 0; i < arrlen(packs); ++i)
+    {
+        printf("\t%s\n", packs[i].name);
+    }
+
+    I_Error("Unknown mission pack name: %s", pack_name);
+}
+
 //
 // Find out what version of Doom is playing.
 //
@@ -831,9 +863,27 @@ void D_IdentifyVersion(void)
     }
     else
     {
-        // Doom 2 of some kind.
+        int p;
 
+        // Doom 2 of some kind.
         gamemode = commercial;
+
+        // We can manually override the gamemission that we got from the
+        // IWAD detection code. This allows us to eg. play Plutonia 2
+        // with Freedoom and get the right level names.
+
+        //!
+        // @arg <pack>
+        //
+        // Explicitly specify a Doom II "mission pack" to run as, instead of
+        // detecting it based on the filename. Valid values are: "doom2",
+        // "tnt" and "plutonia".
+        //
+        p = M_CheckParmWithArgs("-pack", 1);
+        if (p > 0)
+        {
+            SetMissionForPackName(myargv[p + 1]);
+        }
     }
 }
 
@@ -841,18 +891,25 @@ void D_IdentifyVersion(void)
 
 void D_SetGameDescription(void)
 {
+    boolean is_freedoom = W_CheckNumForName("FREEDOOM") >= 0,
+            is_freedm = W_CheckNumForName("FREEDM") >= 0;
+
     gamedescription = "Unknown";
 
     if (logical_gamemission == doom)
     {
         // Doom 1.  But which version?
 
-        if (gamemode == retail)
+        if (is_freedoom)
+        {
+            gamedescription = GetGameName("Freedoom: Phase 1");
+        }
+        else if (gamemode == retail)
         {
             // Ultimate Doom
 
             gamedescription = GetGameName("The Ultimate DOOM");
-        } 
+        }
         else if (gamemode == registered)
         {
             gamedescription = GetGameName("DOOM Registered");
@@ -866,12 +923,29 @@ void D_SetGameDescription(void)
     {
         // Doom 2 of some kind.  But which mission?
 
-        if (logical_gamemission == doom2)
+        if (is_freedoom)
+        {
+            if (is_freedm)
+            {
+                gamedescription = GetGameName("FreeDM");
+            }
+            else
+            {
+                gamedescription = GetGameName("Freedoom: Phase 2");
+            }
+        }
+        else if (logical_gamemission == doom2)
+        {
             gamedescription = GetGameName("DOOM 2: Hell on Earth");
+        }
         else if (logical_gamemission == pack_plut)
+        {
             gamedescription = GetGameName("DOOM 2: Plutonia Experiment"); 
+        }
         else if (logical_gamemission == pack_tnt)
+        {
             gamedescription = GetGameName("DOOM 2: TNT - Evilution");
+        }
     }
 }
 
@@ -1075,59 +1149,6 @@ void PrintGameVersion(void)
     }
 }
 
-// Load the Chex Quest dehacked file, if we are in Chex mode.
-
-static void LoadChexDeh(void)
-{
-    char *chex_deh = NULL;
-    char *sep;
-
-    if (gameversion == exe_chex)
-    {
-        // Look for chex.deh in the same directory as the IWAD file.
-
-        sep = strrchr(iwadfile, DIR_SEPARATOR);
-
-        if (sep != NULL)
-        {
-            size_t chex_deh_len = strlen(iwadfile) + 9;
-            chex_deh = malloc(chex_deh_len);
-            M_StringCopy(chex_deh, iwadfile, chex_deh_len);
-            chex_deh[sep - iwadfile + 1] = '\0';
-            M_StringConcat(chex_deh, "chex.deh", chex_deh_len);
-        }
-        else
-        {
-            chex_deh = strdup("chex.deh");
-        }
-
-        // If the dehacked patch isn't found, try searching the WAD
-        // search path instead.  We might find it...
-
-        if (!M_FileExists(chex_deh))
-        {
-            free(chex_deh);
-            chex_deh = D_FindWADByName("chex.deh");
-        }
-
-        // Still not found?
-
-        if (chex_deh == NULL)
-        {
-            I_Error("Unable to find Chex Quest dehacked file (chex.deh).\n"
-                    "The dehacked file is required in order to emulate\n"
-                    "chex.exe correctly.  It can be found in your nearest\n"
-                    "/idgames repository mirror at:\n\n"
-                    "   utils/exe_edit/patches/chexdeh.zip");
-        }
-
-        if (!DEH_LoadFile(chex_deh))
-        {
-            I_Error("Failed to load chex.deh needed for emulating chex.exe.");
-        }
-    }
-}
-
 // Function called at exit to display the ENDOOM screen
 
 static void D_Endoom(void)
@@ -1149,16 +1170,72 @@ static void D_Endoom(void)
     I_Endoom(endoom);
 }
 
-static void LoadHacxDeh(void)
+// Load dehacked patches needed for certain IWADs.
+static void LoadIwadDeh(void)
 {
-    // If this is the HACX IWAD, we need to load the DEHACKED lump.
+    // The Freedoom IWADs have DEHACKED lumps that must be loaded.
+    if (W_CheckNumForName("FREEDOOM") >= 0)
+    {
+        // Old versions of Freedoom (before 2014-09) did not have technically
+        // valid DEHACKED lumps, so ignore errors and just continue if this
+        // is an old IWAD.
+        DEH_LoadLumpByName("DEHACKED", false, true);
+    }
 
+    // If this is the HACX IWAD, we need to load the DEHACKED lump.
     if (gameversion == exe_hacx)
     {
         if (!DEH_LoadLumpByName("DEHACKED", true, false))
         {
             I_Error("DEHACKED lump not found.  Please check that this is the "
                     "Hacx v1.2 IWAD.");
+        }
+    }
+
+    // Chex Quest needs a separate Dehacked patch which must be downloaded
+    // and installed next to the IWAD.
+    if (gameversion == exe_chex)
+    {
+        char *chex_deh = NULL;
+        char *sep;
+
+        // Look for chex.deh in the same directory as the IWAD file.
+        sep = strrchr(iwadfile, DIR_SEPARATOR);
+
+        if (sep != NULL)
+        {
+            size_t chex_deh_len = strlen(iwadfile) + 9;
+            chex_deh = malloc(chex_deh_len);
+            M_StringCopy(chex_deh, iwadfile, chex_deh_len);
+            chex_deh[sep - iwadfile + 1] = '\0';
+            M_StringConcat(chex_deh, "chex.deh", chex_deh_len);
+        }
+        else
+        {
+            chex_deh = M_StringDuplicate("chex.deh");
+        }
+
+        // If the dehacked patch isn't found, try searching the WAD
+        // search path instead.  We might find it...
+        if (!M_FileExists(chex_deh))
+        {
+            free(chex_deh);
+            chex_deh = D_FindWADByName("chex.deh");
+        }
+
+        // Still not found?
+        if (chex_deh == NULL)
+        {
+            I_Error("Unable to find Chex Quest dehacked file (chex.deh).\n"
+                    "The dehacked file is required in order to emulate\n"
+                    "chex.exe correctly.  It can be found in your nearest\n"
+                    "/idgames repository mirror at:\n\n"
+                    "   utils/exe_edit/patches/chexdeh.zip");
+        }
+
+        if (!DEH_LoadFile(chex_deh))
+        {
+            I_Error("Failed to load chex.deh needed for emulating chex.exe.");
         }
     }
 }
@@ -1168,8 +1245,10 @@ static void LoadHacxDeh(void)
 //
 void D_DoomMain (void)
 {
-    int             p;
-    char            file[256];
+    int p;
+    char file[256];
+    // char demolumpname[9];
+    int numiwadlumps;
 
     I_AtExit(D_Endoom, false);
 
@@ -1237,11 +1316,6 @@ void D_DoomMain (void)
         exit(0);
     }
 
-#endif
-            
-#ifdef FEATURE_DEHACKED
-    printf("DEH_Init: Init Dehacked support.\n");
-    DEH_Init();
 #endif
 
     //!
@@ -1315,7 +1389,7 @@ void D_DoomMain (void)
     // allowing play from CD.
     //
 
-    if (M_CheckParm("-cdrom") > 0)
+    if (M_ParmExists("-cdrom"))
     {
         printf(D_CDROM);
 
@@ -1328,7 +1402,7 @@ void D_DoomMain (void)
 
         M_SetConfigDir(NULL);
     }
-    
+
     //!
     // @arg <x>
     // @vanilla
@@ -1384,17 +1458,26 @@ void D_DoomMain (void)
 
     DEH_printf("W_Init: Init WADfiles.\n");
     D_AddFile(iwadfile);
+    numiwadlumps = numlumps;
 
     W_CheckCorrectIWAD(doom);
 
-    // The Freedoom IWADs have DEHACKED lumps with cosmetic changes to the
-    // in-game messages. Load this.
-    // Old versions of Freedoom (before 2014-09) did not have technically
-    // valid DEHACKED lumps, so ignore errors and just continue if this
-    // is an old IWAD.
-    if (W_CheckNumForName("FREEDOOM") >= 0)
+    // Now that we've loaded the IWAD, we can figure out what gamemission
+    // we're playing and which version of Vanilla Doom we need to emulate.
+    D_IdentifyVersion();
+    InitGameVersion();
+
+    //!
+    // @category mod
+    //
+    // Disable automatic loading of Dehacked patches for certain
+    // IWAD files.
+    //
+    if (!M_ParmExists("-nodeh"))
     {
-        DEH_LoadLumpByName("DEHACKED", false, true);
+        // Some IWADs have dehacked patches that need to be loaded for
+        // them to be played properly.
+        LoadIwadDeh();
     }
 
     // Doom 3: BFG Edition includes modified versions of the classic
@@ -1419,8 +1502,32 @@ void D_DoomMain (void)
         DEH_AddStringReplacement(HUSTR_31, "level 31: idkfa");
         DEH_AddStringReplacement(HUSTR_32, "level 32: keen");
         DEH_AddStringReplacement(PHUSTR_1, "level 33: betray");
+
+        // The BFG edition doesn't have the "low detail" menu option (fair
+        // enough). But bizarrely, it reuses the M_GDHIGH patch as a label
+        // for the options menu (says "Fullscreen:"). Why the perpetrators
+        // couldn't just add a new graphic lump and had to reuse this one,
+        // I don't know.
+        //
+        // The end result is that M_GDHIGH is too wide and causes the game
+        // to crash. As a workaround to get a minimum level of support for
+        // the BFG edition IWADs, use the "ON"/"OFF" graphics instead.
+
+        DEH_AddStringReplacement("M_GDHIGH", "M_MSGON");
+        DEH_AddStringReplacement("M_GDLOW", "M_MSGOFF");
     }
 
+#ifdef FEATURE_DEHACKED
+    // Load Dehacked patches specified on the command line with -deh.
+    // Note that there's a very careful and deliberate ordering to how
+    // Dehacked patches are loaded. The order we use is:
+    //  1. IWAD dehacked patches.
+    //  2. Command line dehacked patches specified with -deh.
+    //  3. PWAD dehacked patches in DEHACKED lumps.
+    DEH_ParseCommandLine();
+#endif
+
+    // Load PWAD files.
     modifiedgame = W_ParseCommandLine();
 
     I_AtExit((atexit_func_t) G_CheckDemoStatus, true);
@@ -1428,15 +1535,48 @@ void D_DoomMain (void)
     
     
     // Generate the WAD hash table.  Speed things up a bit.
-
     W_GenerateHashTable();
-    
-    D_IdentifyVersion();
-    InitGameVersion();
-    LoadChexDeh();
-    LoadHacxDeh();
+
+    // Load DEHACKED lumps from WAD files - but only if we give the right
+    // command line parameter.
+
+    //!
+    // @category mod
+    //
+    // Load Dehacked patches from DEHACKED lumps contained in one of the
+    // loaded PWAD files.
+    //
+    if (M_ParmExists("-dehlump"))
+    {
+        int i, loaded = 0;
+
+        for (i = numiwadlumps; i < numlumps; ++i)
+        {
+            if (!strncmp(lumpinfo[i].name, "DEHACKED", 8))
+            {
+                DEH_LoadLump(i, false, false);
+                loaded++;
+            }
+        }
+
+        printf("  loaded %i DEHACKED lumps from PWAD files.\n", loaded);
+    }
+
+    // Set the gamedescription string. This is only possible now that
+    // we've finished loading Dehacked patches.
     D_SetGameDescription();
-    savegamedir = M_GetSaveGameDir(D_SaveGameIWADName(gamemission));
+
+#ifdef _WIN32
+    // In -cdrom mode, we write savegames to c:\doomdata as well as configs.
+    if (M_ParmExists("-cdrom"))
+    {
+        savegamedir = configdir;
+    }
+    else
+#endif
+    {
+        savegamedir = M_GetSaveGameDir(D_SaveGameIWADName(gamemission));
+    }
 
     // Check for -file in shareware
     if (modifiedgame)
@@ -1485,31 +1625,6 @@ void D_DoomMain (void)
                " for more information on how to play using Freedoom:\n"
                "   http://www.chocolate-doom.org/wiki/index.php/Freedoom\n");
         I_PrintDivider();
-    }
-
-    // Load DEHACKED lumps from WAD files - but only if we give the right
-    // command line parameter.
-
-    //!
-    // @category mod
-    //
-    // Load Dehacked patches from DEHACKED lumps contained in one of the
-    // loaded PWAD files.
-    //
-    if (M_ParmExists("-dehlump"))
-    {
-        int i, loaded = 0;
-
-        for (i = 0; i < numlumps; ++i)
-        {
-            if (!strncmp(lumpinfo[i].name, "DEHACKED", 8))
-            {
-                DEH_LoadLump(i, false, false);
-                loaded++;
-            }
-        }
-
-        printf("Loaded %i DEHACKED lumps from WAD files.\n", loaded);
     }
 
     DEH_printf("I_Init: Setting up machine state.\n");

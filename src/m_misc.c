@@ -286,6 +286,26 @@ char *M_StrCaseStr(char *haystack, char *needle)
 }
 
 //
+// Safe version of strdup() that checks the string was successfully
+// allocated.
+//
+
+char *M_StringDuplicate(const char *orig)
+{
+    char *result;
+
+    result = strdup(orig);
+
+    if (result == NULL)
+    {
+        I_Error("Failed to duplicate string (length %i)\n",
+                strlen(orig));
+    }
+
+    return result;
+}
+
+//
 // String replace function.
 //
 

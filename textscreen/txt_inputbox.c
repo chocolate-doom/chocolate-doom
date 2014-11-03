@@ -237,10 +237,11 @@ static int TXT_InputBoxKeyPress(TXT_UNCAST_ARG(inputbox), int key)
 
     c = TXT_KEY_TO_UNICODE(key);
 
-    if (c >= 128 || isprint(c))
+    // Add character to the buffer, but only if it's a printable character
+    // that we can represent on the screen.
+    if (isprint(c)
+     || (c >= 128 && TXT_CanDrawCharacter(c)))
     {
-        // Add character to the buffer
-
         AddCharacter(inputbox, c);
     }
 

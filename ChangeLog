@@ -1,3 +1,4 @@
+00021   Merged with latest Chocolate Doom, setup icon, cleanup
 00020   Mouse x and y sensitivity from Crispy Doom, cleanup, icon
 00019   Show "Secret is revealed!" as normal message. Disabled by default.
         Message is displayed only in demo playback.

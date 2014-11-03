@@ -443,6 +443,21 @@ void Z_ChangeTag2(void *ptr, int tag, char *file, int line)
     block->tag = tag;
 }
 
+void Z_ChangeUser(void *ptr, void **user)
+{
+    memblock_t*	block;
+
+    block = (memblock_t *) ((byte *)ptr - sizeof(memblock_t));
+
+    if (block->id != ZONEID)
+    {
+        I_Error("Z_ChangeUser: Tried to change user for invalid block!");
+    }
+
+    block->user = user;
+    *user = ptr;
+}
+
 
 
 //

@@ -1492,3 +1492,12 @@ screen_mode_t mode_squash_4x = {
     I_Squash4x,
     false || hires,
 };
+
+// We used to have mode_squash_5x here as well, but it got removed.
+// 5x squashing gives 1280x1000, which is very close to the 4x stretched
+// 1280x960. The difference is that 1280x1000 is the wrong aspect ratio.
+// It was ultimately decided that it was better to use the right aspect
+// ratio and have slightly larger borders than to have slightly smaller
+// windowboxing borders. It also means that the aspect ratio is correct
+// when running at 1280x1024. See bug #460 for more details, or this
+// post: http://www.doomworld.com/vb/post/1316735

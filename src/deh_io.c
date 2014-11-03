@@ -97,7 +97,7 @@ deh_context_t *DEH_OpenFile(char *filename)
 
     context->type = DEH_INPUT_FILE;
     context->stream = fstream;
-    context->filename = strdup(filename);
+    context->filename = M_StringDuplicate(filename);
 
     return context;
 }

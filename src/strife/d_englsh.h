@@ -227,7 +227,7 @@
 #define AMSTR_GRIDOFF	"Grid OFF"
 
 #define AMSTR_MARKEDSPOT        "Marked Spot"
-#define AMSTR_MARKSCLEARED      "All Marks Cleared"
+#define AMSTR_MARKSCLEARED      "Last Mark Cleared" // [STRIFE]
 
 //
 //	ST_stuff.C

@@ -781,10 +781,11 @@ void P_KillMobj(mobj_t* source, mobj_t* target)
             source->player->frags[target->player-players]++;
 
             // villsa [STRIFE] new messages when fragging players
+            // haleyjd 20141024: corrected; uses player->allegiance, not mo->miscdata
             DEH_snprintf(plrkilledmsg, sizeof(plrkilledmsg),
                          "%s killed %s",
-                         player_names[source->player->mo->miscdata],
-                         player_names[target->player->mo->miscdata]);
+                         player_names[source->player->allegiance],
+                         player_names[target->player->allegiance]);
 
             if(netgame)
                 players[consoleplayer].message = plrkilledmsg;

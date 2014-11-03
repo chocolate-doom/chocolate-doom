@@ -1,0 +1,28 @@
+1 ICON "../data/doom.ico"
+
+CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST "manifest.xml"
+
+1 VERSIONINFO
+PRODUCTVERSION 2, 0, 3, 1
+FILEVERSION 2, 0, 3, 1
+FILETYPE 1
+{
+ BLOCK "StringFileInfo"
+ {
+  BLOCK "040904E4"
+  {
+   VALUE "FileVersion", "2.0.3.1.0"
+   VALUE "FileDescription", "Competition Doom 2.0.3.1"
+   VALUE "InternalName", "cndoom"
+   VALUE "CompanyName", "admin@doom.com.hr"
+   VALUE "LegalCopyright", "Copyright (C) 1993-2015. Licensed under GNU General Public License, version 2"
+   VALUE "ProductName", "Competition Doom"
+   VALUE "ProductVersion", "2.0.3.1"
+  }
+ }
+ BLOCK "VarFileInfo"
+ {
+  VALUE "Translation", 0x409, 1252
+ }
+}
+

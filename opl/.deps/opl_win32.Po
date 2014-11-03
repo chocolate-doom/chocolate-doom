@@ -1,0 +1,5 @@
+opl_win32.o: opl_win32.c /usr/include/stdc-predef.h ../config.h
+
+/usr/include/stdc-predef.h:
+
+../config.h:

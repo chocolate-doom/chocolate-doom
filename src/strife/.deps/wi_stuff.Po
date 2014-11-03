@@ -1,0 +1,3 @@
+wi_stuff.o: wi_stuff.c /usr/include/stdc-predef.h
+
+/usr/include/stdc-predef.h:

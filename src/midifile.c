@@ -699,14 +699,14 @@ int MIDI_GetNextEvent(midi_track_iter_t *iter, midi_event_t **event)
 
 unsigned int MIDI_GetFileTimeDivision(midi_file_t *file)
 {
-    short result = SHORT(file->header.time_division);
+    short result = SDL_SwapBE16(file->header.time_division);
 
     // Negative time division indicates SMPTE time and must be handled
     // differently.
     if (result < 0)
     {
-        // TODO: Figure this out.
-        return 96;
+        return (signed int)(-(result/256))
+             * (signed int)(result & 0xFF);
     }
     else
     {

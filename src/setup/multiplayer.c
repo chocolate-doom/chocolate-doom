@@ -55,7 +55,7 @@ static const iwad_t fallback_iwads[] = {
 // Array of IWADs found to be installed
 
 static const iwad_t **found_iwads;
-static char *iwad_labels[8];
+static char **iwad_labels;
 
 // Index of the currently selected IWAD
 
@@ -559,8 +559,14 @@ static txt_widget_t *IWADSelector(void)
 
     for (i=0; found_iwads[i] != NULL; ++i)
     {
-        iwad_labels[i] = found_iwads[i]->description;
          ++num_iwads;
+    }
+
+    iwad_labels = malloc(sizeof(*iwad_labels) * num_iwads);
+
+    for (i=0; i < num_iwads; ++i)
+    {
+        iwad_labels[i] = found_iwads[i]->description;
     }
 
     // If no IWADs are found, provide Doom 2 as an option, but
@@ -856,7 +862,7 @@ static void SelectQueryAddress(TXT_UNCAST_ARG(button),
     // Set address to connect to:
 
     free(connect_address);
-    connect_address = strdup(button->label);
+    connect_address = M_StringDuplicate(button->label);
 
     // Auto-choose IWAD if there is already a player connected.
 
@@ -1044,7 +1050,7 @@ void SetChatMacroDefaults(void)
     {
         if (chat_macros[i] == NULL)
         {
-            chat_macros[i] = strdup(defaults[i]);
+            chat_macros[i] = M_StringDuplicate(defaults[i]);
         }
     }
 }
@@ -1053,12 +1059,12 @@ void SetPlayerNameDefault(void)
 {
     if (net_player_name == NULL)
     {
-        net_player_name = strdup(getenv("USER"));
+        net_player_name = M_StringDuplicate(getenv("USER"));
     }
 
     if (net_player_name == NULL)
     {
-        net_player_name = strdup(getenv("USERNAME"));
+        net_player_name = M_StringDuplicate(getenv("USERNAME"));
     }
 
     // On Windows, environment variables are in OEM codepage
@@ -1073,7 +1079,7 @@ void SetPlayerNameDefault(void)
 
     if (net_player_name == NULL)
     {
-        net_player_name = strdup("player");
+        net_player_name = M_StringDuplicate("player");
     }
 }
 

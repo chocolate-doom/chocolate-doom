@@ -322,6 +322,29 @@ static void PutUnicodeChar(unsigned int c)
     TXT_PutChar('\xa8');
 }
 
+int TXT_CanDrawCharacter(unsigned int c)
+{
+    unsigned int i;
+
+    // Standard ASCII range?
+    if (c < 128)
+    {
+        return 1;
+    }
+
+    // Extended ASCII range?
+    for (i = 0; i < 128; ++i)
+    {
+        if (cp437_unicode[i] == c)
+        {
+            return 1;
+        }
+    }
+
+    // Nope.
+    return 0;
+}
+
 void TXT_DrawUTF8String(const char *s)
 {
     int x, y;

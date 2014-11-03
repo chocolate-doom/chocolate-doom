@@ -22,6 +22,7 @@
 
 #include "i_system.h"
 #include "i_timer.h"
+#include "m_misc.h"
 
 #include "net_common.h"
 #include "net_defs.h"
@@ -900,7 +901,7 @@ boolean NET_StartSecureDemo(prng_seed_t seed)
 
             if (signature != NULL)
             {
-                securedemo_start_message = strdup(signature);
+                securedemo_start_message = M_StringDuplicate(signature);
                 result = true;
             }
         }

@@ -270,8 +270,10 @@ static boolean WeaponSelectable(weapontype_t weapon)
     // Special rules for switching to alternate versions of weapons.
     // These must match the weapon-switching rules in P_PlayerThink()
 
+    // haleyjd 20141024: same fix here as in P_PlayerThink for torpedo.
+
     if (weapon == wp_torpedo
-     && player->ammo[weaponinfo[am_cell].ammo] < 30)
+     && player->ammo[weaponinfo[wp_torpedo].ammo] < 30)
     {
         return false;
     }
