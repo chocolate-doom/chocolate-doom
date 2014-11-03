@@ -923,16 +923,22 @@ void R_InitColormaps (void)
 	byte *playpal = W_CacheLumpName("PLAYPAL", PU_STATIC);
 	char c[3];
 	int i, j;
+	boolean keepgray = false;
+	extern char *iwadfile;
 	extern byte V_Colorize (byte *playpal, int cr, byte source, boolean keepgray109);
 
 	if (!crstr)
 	    crstr = malloc(CRMAX * sizeof(*crstr));
 
+	// [crispy] check for status bar graphics replacements
+	i = W_CheckNumForName(DEH_String("sttnum0")); // [crispy] Status Bar '0'
+	keepgray = (i >= 0 && !strcmp(lumpinfo[i].wad_file->path, M_BaseName(iwadfile)));
+
 	for (i = 0; i < CRMAX; i++)
 	{
 	    for (j = 0; j < 256; j++)
 	    {
-		cr[i][j] = V_Colorize(playpal, i, j, crispy_keepgray109);
+		cr[i][j] = V_Colorize(playpal, i, j, keepgray);
 	    }
 
 	    M_snprintf(c, sizeof(c), "\x1b%c", '0' + i);
