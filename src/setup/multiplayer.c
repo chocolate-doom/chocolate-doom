@@ -1059,28 +1059,29 @@ void SetPlayerNameDefault(void)
 {
     if (net_player_name == NULL)
     {
-        net_player_name = M_StringDuplicate(getenv("USER"));
+        net_player_name = getenv("USER");
     }
 
     if (net_player_name == NULL)
     {
-        net_player_name = M_StringDuplicate(getenv("USERNAME"));
+        net_player_name = getenv("USERNAME");
     }
 
-    // On Windows, environment variables are in OEM codepage
-    // encoding, so convert to UTF8:
+    if (net_player_name == NULL)
+    {
+        net_player_name = "player";
+    }
+
+    // Now strdup() the string so that it's in a mutable form
+    // that can be freed when the value changes.
 
 #ifdef _WIN32
-    if (net_player_name != NULL)
-    {
-        net_player_name = M_OEMToUTF8(net_player_name);
-    }
+    // On Windows, environment variables are in OEM codepage
+    // encoding, so convert to UTF8:
+    net_player_name = M_OEMToUTF8(net_player_name);
+#else
+    net_player_name = M_StringDuplicate(net_player_name);
 #endif
-
-    if (net_player_name == NULL)
-    {
-        net_player_name = M_StringDuplicate("player");
-    }
 }
 
 void MultiplayerConfig(void)
