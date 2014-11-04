@@ -494,11 +494,7 @@ P_TouchSpecialThing
 	    return;
 	player->message = DEH_String(GOTBERSERK);
 	if (player->readyweapon != wp_fist)
-	{
 	    player->pendingweapon = wp_fist;
-	    // [crispy] suppress second "power up" sound
-	    p2fromp(player)->berserkpow = true;
-	}
 	sound = sfx_getpow;
 	break;
 	
