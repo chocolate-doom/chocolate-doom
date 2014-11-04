@@ -447,7 +447,7 @@ void HU_Start(void)
     }
 
     // [crispy] explicitely display (episode and) map if the
-    // map is from a PWAD of if the map title string has been dehacked
+    // map is from a PWAD or if the map title string has been dehacked
     {
 	char map[6], *wad;
 	extern char *iwadfile;

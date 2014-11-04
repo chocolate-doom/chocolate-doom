@@ -644,7 +644,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     else
     if (!novert)
     {
-        forward += mousey;
+    forward += mousey;
     }
 
     // [crispy] single click on mouse look button centers view
