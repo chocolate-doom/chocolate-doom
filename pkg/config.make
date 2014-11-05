@@ -20,8 +20,6 @@ PACKAGE_VERSION = 2.0.3.1
 # Documentation files to distribute with packages.
 
 DOC_FILES = README        \
-            README.Music  \
-            COPYING       \
-            ChangeLog     \
-            NEWS
+            ChangeLog
+
 
