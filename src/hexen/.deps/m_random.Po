@@ -1,5 +1,0 @@
-m_random.o: m_random.c /usr/include/stdc-predef.h m_random.h
-
-/usr/include/stdc-predef.h:
-
-m_random.h:
