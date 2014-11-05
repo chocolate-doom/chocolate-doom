@@ -1130,8 +1130,11 @@ static void M_Expansion(int choice)
 //
 // M_Options
 //
+// [crispy] no patches are drawn in the Options menu anymore
+/*
 static char *detailNames[2] = {"M_GDHIGH","M_GDLOW"};
 static char *msgNames[2] = {"M_MSGOFF","M_MSGON"};
+*/
 
 void M_DrawOptions(void)
 {
@@ -1183,13 +1186,15 @@ static void M_DrawMouse(void)
 		 21, mouseSensitivity_y);
 
     M_snprintf(mouse_menu_text, sizeof(mouse_menu_text),
-               "%sInvert Vertical Axis: %s%s", crstr[CR_NONE], crstr[CR_GREEN],
+               "%sInvert Vertical Axis: %s%s", crstr[CR_NONE],
+               mouse_y_invert ? crstr[CR_GREEN] : crstr[CR_DARK],
                mouse_y_invert ? "On" : "Off");
     M_WriteText(MouseDef.x, MouseDef.y + LINEHEIGHT * mouse_invert + 6,
                 mouse_menu_text);
 
     M_snprintf(mouse_menu_text, sizeof(mouse_menu_text),
-               "%sPermanent Mouse Look: %s%s", crstr[CR_NONE], crstr[CR_GREEN],
+               "%sPermanent Mouse Look: %s%s", crstr[CR_NONE],
+               crispy_mouselook ? crstr[CR_GREEN] : crstr[CR_DARK],
                crispy_mouselook ? "On" : "Off");
     M_WriteText(MouseDef.x, MouseDef.y + LINEHEIGHT * mouse_look + 6,
                 mouse_menu_text);
@@ -1198,6 +1203,7 @@ static void M_DrawMouse(void)
 }
 
 // [crispy] crispness menu
+#define disablemenuitem (demorecording || netgame)
 static void M_DrawCrispness(void)
 {
     char crispy_menu_text[48];
@@ -1207,62 +1213,72 @@ static void M_DrawCrispness(void)
     M_WriteText(160 - M_StringWidth("Crispness") / 2, 20, crispy_menu_text);
 
     M_snprintf(crispy_menu_text, sizeof(crispy_menu_text),
-               "%sEnable translucency: %s%s", crstr[CR_NONE], crstr[CR_GREEN],
+               "%sEnable translucency: %s%s", crstr[CR_NONE],
+               crispy_translucency ? crstr[CR_GREEN] : crstr[CR_DARK],
                crispy_translucency ? "On" : "Off");
     M_WriteText(CrispnessDef.x, CrispnessDef.y + CRISPY_LINEHEIGHT * crispness_translucency + 6,
                 crispy_menu_text);
 
     M_snprintf(crispy_menu_text, sizeof(crispy_menu_text),
-               "%sColorize status bar and texts: %s%s", crstr[CR_NONE], crstr[CR_GREEN],
+               "%sColorize status bar and texts: %s%s", crstr[CR_NONE],
+               crispy_coloredhud ? crstr[CR_GREEN] : crstr[CR_DARK],
                crispy_coloredhud ? "On" : "Off");
     M_WriteText(CrispnessDef.x, CrispnessDef.y + CRISPY_LINEHEIGHT * crispness_coloredhud + 6,
                 crispy_menu_text);
 
     M_snprintf(crispy_menu_text, sizeof(crispy_menu_text),
-               "%sLevel Stats in Automap: %s%s", crstr[CR_NONE], crstr[CR_GREEN],
+               "%sLevel Stats in Automap: %s%s", crstr[CR_NONE],
+               crispy_automapstats ? crstr[CR_GREEN] : crstr[CR_DARK],
                crispy_automapstats ? "On" : "Off");
     M_WriteText(CrispnessDef.x, CrispnessDef.y + CRISPY_LINEHEIGHT * crispness_automapstats + 6,
                 crispy_menu_text);
 
     M_snprintf(crispy_menu_text, sizeof(crispy_menu_text),
-               "%s\"Secret Revealed\" Message: %s%s", crstr[CR_NONE], crstr[CR_GREEN],
+               "%s\"Secret Revealed\" Message: %s%s", crstr[CR_NONE],
+               crispy_secretmessage ? crstr[CR_GREEN] : crstr[CR_DARK],
                crispy_secretmessage ? "On" : "Off");
     M_WriteText(CrispnessDef.x, CrispnessDef.y + CRISPY_LINEHEIGHT * crispness_secretmessage + 6,
                 crispy_menu_text);
 
     M_snprintf(crispy_menu_text, sizeof(crispy_menu_text),
-               "%sLaser Pointer: %s%s", crstr[CR_NONE], crstr[CR_GREEN],
+               "%sLaser Pointer: %s%s", crstr[CR_NONE],
+               crispy_crosshair ? crstr[CR_GREEN] : crstr[CR_DARK],
                crispy_crosshair ? "On" : "Off");
     M_WriteText(CrispnessDef.x, CrispnessDef.y + CRISPY_LINEHEIGHT * crispness_crosshair + 6,
                 crispy_menu_text);
 
     M_snprintf(crispy_menu_text, sizeof(crispy_menu_text),
-               "%sAllow Free Look: %s%s", crstr[CR_NONE], crstr[CR_GREEN],
+               "%sAllow Free Look: %s%s", crstr[CR_NONE],
+               crispy_freelook ? crstr[CR_GREEN] : crstr[CR_DARK],
                crispy_freelook ? "On" : "Off");
     M_WriteText(CrispnessDef.x, CrispnessDef.y + CRISPY_LINEHEIGHT * crispness_freelook + 6,
                 crispy_menu_text);
 
     M_snprintf(crispy_menu_text, sizeof(crispy_menu_text),
-               "%sVertical Aiming: %s%s", uncrispy ? crstr[CR_DARK] : crstr[CR_NONE], uncrispy ? crstr[CR_DARK] : crstr[CR_GREEN],
-               crispy_freeaim && !uncrispy ? "On" : "Off");
+               "%sVertical Aiming: %s%s", disablemenuitem ? crstr[CR_DARK] : crstr[CR_NONE],
+               disablemenuitem ? crstr[CR_DARK] : (crispy_freeaim ? crstr[CR_GREEN] : crstr[CR_DARK]),
+               crispy_freeaim && !disablemenuitem ? "On" : "Off");
     M_WriteText(CrispnessDef.x, CrispnessDef.y + CRISPY_LINEHEIGHT * crispness_freeaim + 6,
                 crispy_menu_text);
 
     M_snprintf(crispy_menu_text, sizeof(crispy_menu_text),
-               "%sAllow Jumping: %s%s", uncrispy ? crstr[CR_DARK] : crstr[CR_NONE], uncrispy ? crstr[CR_DARK] : crstr[CR_GREEN],
-               crispy_jump && !uncrispy ? "On" : "Off");
+               "%sAllow Jumping: %s%s", disablemenuitem ? crstr[CR_DARK] : crstr[CR_NONE],
+               disablemenuitem ? crstr[CR_DARK] : (crispy_jump ? crstr[CR_GREEN] : crstr[CR_DARK]),
+               crispy_jump && !disablemenuitem ? "On" : "Off");
     M_WriteText(CrispnessDef.x, CrispnessDef.y + CRISPY_LINEHEIGHT * crispness_jumping + 6,
                 crispy_menu_text);
 
     M_snprintf(crispy_menu_text, sizeof(crispy_menu_text),
-               "%sWalk over/under Monsters: %s%s", uncrispy ? crstr[CR_DARK] : crstr[CR_NONE], uncrispy ? crstr[CR_DARK] : crstr[CR_GREEN],
-               crispy_overunder && !uncrispy ? "On" : "Off");
+               "%sWalk over/under Monsters: %s%s", disablemenuitem ? crstr[CR_DARK] :crstr[CR_NONE],
+               disablemenuitem ? crstr[CR_DARK] : (crispy_overunder ? crstr[CR_GREEN] : crstr[CR_DARK]),
+               crispy_overunder && !disablemenuitem ? "On" : "Off");
     M_WriteText(CrispnessDef.x, CrispnessDef.y + CRISPY_LINEHEIGHT * crispness_overunder + 6,
                 crispy_menu_text);
 
     M_snprintf(crispy_menu_text, sizeof(crispy_menu_text),
-               "%sWeapon Recoil: %s%s", uncrispy ? crstr[CR_DARK] : crstr[CR_NONE], uncrispy ? crstr[CR_DARK] : crstr[CR_GREEN],
-               crispy_recoil && !uncrispy ? "On" : "Off");
+               "%sWeapon Recoil: %s%s", disablemenuitem ? crstr[CR_DARK] : crstr[CR_NONE],
+               disablemenuitem ? crstr[CR_DARK] : (crispy_recoil ? crstr[CR_GREEN] : crstr[CR_DARK]),
+               crispy_recoil && !disablemenuitem ? "On" : "Off");
     M_WriteText(CrispnessDef.x, CrispnessDef.y + CRISPY_LINEHEIGHT * crispness_recoil + 6,
                 crispy_menu_text);
 
@@ -1561,7 +1577,7 @@ static void M_CrispyToggleFreelook(int choice)
 
 static void M_CrispyToggleFreeaim(int choice)
 {
-    if (uncrispy)
+    if (disablemenuitem)
 	return;
 
     choice = 0;
@@ -1570,7 +1586,7 @@ static void M_CrispyToggleFreeaim(int choice)
 
 static void M_CrispyToggleJumping(int choice)
 {
-    if (uncrispy)
+    if (disablemenuitem)
 	return;
 
     choice = 0;
@@ -1579,7 +1595,7 @@ static void M_CrispyToggleJumping(int choice)
 
 static void M_CrispyToggleOverunder(int choice)
 {
-    if (uncrispy)
+    if (disablemenuitem)
 	return;
 
     choice = 0;
@@ -1588,7 +1604,7 @@ static void M_CrispyToggleOverunder(int choice)
 
 static void M_CrispyToggleRecoil(int choice)
 {
-    if (uncrispy)
+    if (disablemenuitem)
 	return;
 
     choice = 0;
