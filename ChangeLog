@@ -1,3 +1,7 @@
+00022   Moved all custom configuration to competition menu, fix char->int,
+        fixed naming scheme for cn_secret_message, re-enabled SDL keyboard
+        repeat but enable custom values with cn_typematic_delay and
+        cn_typematic_rate, as we had these settings in DOS/BIOS + cleanups
 00021   Merged with latest Chocolate Doom, setup icon, cleanup
 00020   Mouse x and y sensitivity from Crispy Doom, cleanup, icon
 00019   Show "Secret is revealed!" as normal message. Disabled by default.
