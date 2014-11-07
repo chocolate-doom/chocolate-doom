@@ -42,6 +42,5 @@ void ConfigCompetition(void)
                 TXT_NewSeparator(""),
                 TXT_NewCheckBox("Show \"Secret is revealed!\" message",
                                 &cn_secret_message),
-
                 NULL);
 }

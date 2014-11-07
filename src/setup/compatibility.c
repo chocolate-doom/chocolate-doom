@@ -25,7 +25,6 @@
 int vanilla_savegame_limit = 0;
 int vanilla_demo_limit = 0;
 
-
 void CompatibilitySettings(void)
 {
     txt_window_t *window;
