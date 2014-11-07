@@ -1549,7 +1549,27 @@ static default_t extra_defaults_list[] =
     // Default: 0
     //
 
-    CONFIG_VARIABLE_INT(cn_secretmessage),
+    CONFIG_VARIABLE_INT(cn_secret_message),
+
+    //!
+    // @game doom
+    //
+    // Define keyboard delay between keypreses.
+    // SDL default delay is 500ms and BIOS fastest delay is 200ms
+    // Default: 200
+    //
+
+    CONFIG_VARIABLE_INT(cn_typematic_delay),
+
+    //!
+    // @game doom
+    //
+    // Define keyboard character rate per second.
+    // SDL and BIOS default rate is 30 chars/sec 
+    // Default: 30
+    //
+
+    CONFIG_VARIABLE_INT(cn_typematic_rate),
     
     //!
     // alternate strafe ON key for second SR50 combination
@@ -1606,48 +1626,10 @@ static default_t extra_defaults_list[] =
 
     CONFIG_VARIABLE_INT(cn_precache_sounds),
 
-    
-/*
-    //!
-    // Player firstname
-
-    CONFIG_VARIABLE_STRING(cn_meta_firstname),
-
-    //!
-    // Player lastname
-
-    CONFIG_VARIABLE_STRING(cn_meta_lastname),
-
-    //!
-    // Player nickname
-
-    CONFIG_VARIABLE_STRING(cn_meta_nickname),
-
-    //!
-    // Player birthdate
-
-    CONFIG_VARIABLE_STRING(cn_meta_birthdate),
-    
-    //!
-    // Player country
-
-    CONFIG_VARIABLE_STRING(cn_meta_country),
-
-    //!
-    // Player email
-
-    CONFIG_VARIABLE_STRING(cn_meta_email),
-
-    //!
-    // Player homepage
-
-    CONFIG_VARIABLE_STRING(cn_meta_url),
-*/
-
     //!
     // Competition Doom ID from http://www.doom.com.hr/
     // You have to register on forum and request ID
-    CONFIG_VARIABLE_STRING(cn_meta_id),
+    CONFIG_VARIABLE_INT(cn_meta_id),
     
     //!
     // @game hexen strife

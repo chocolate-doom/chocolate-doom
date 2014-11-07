@@ -129,6 +129,7 @@ boolean         main_loop_started = false;
 char		wadfile[1024];		// primary wad file
 char		mapdir[1024];           // directory of development maps
 
+int             cn_secret_message = 0;
 int             show_endoom = 0;
 boolean         noblit;
 void D_ConnectNetGame(void);
@@ -424,7 +425,7 @@ void D_BindVariables(void)
     M_BindVariable("cn_timer_shadow_index",  &cn_timer_shadow_index);
     M_BindVariable("cn_secret_message",      &cn_secret_message);
     M_BindVariable("cn_typematic_delay",     &cn_typematic_delay);
-    M_BindVariable("cn_typematic_rate",      &cn_typematic_rate);
+    M_BindVariable("cn_typematic_delay",     &cn_typematic_rate);
 
     // Multiplayer chat macros
 

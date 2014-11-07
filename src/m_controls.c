@@ -40,28 +40,19 @@ int key_strafe = KEY_RALT;
 
 
 // [cndoom] config variables for setup
-int key_strafe_alt          = 'x'; // [cndoom]
-int cn_precache_sounds      = 1; // [cndoom]
-int cn_quickstart_delay     = 3000; // [cndoom]
+int key_strafe_alt          = 'x';
+int cn_precache_sounds      = 1;
+int cn_quickstart_delay     = 3000;
 int cn_timer_enabled        = 1;
 int cn_timer_offset_x       = -1;
 int cn_timer_offset_y       = 0;
 int cn_timer_color_index    = 168;
 int cn_timer_shadow_index   = 0;
 int cn_timer_bg_colormap    = 16;
-/* not used
-char *cn_meta_firstname     = "Joe";
-char *cn_meta_lastname      = "Doe";
-char *cn_meta_nickname      = "foobar";
-char *cn_meta_birthdate     = "1985-04-22";
-char *cn_meta_country       = "zw";
-char *cn_meta_email         = "jdoe@example.net";
-char *cn_meta_url           = "http://www.example.net";
-*/
-char *cn_meta_id            = " ";
-// [cndoom] end
-
-
+int cn_typematic_delay      = 200;
+int cn_typematic_rate       = 30;
+int cn_secret_message       = 0;
+int cn_meta_id              = '0';
 
 int key_speed = KEY_RSHIFT; 
 
@@ -208,7 +199,7 @@ int key_menu_screenshot = 0;
 int joybfire = 0; 
 int joybstrafe = 1; 
 int joybuse = 3; 
-int joybspeed = 29; // [cndoom]
+int joybspeed = 29;
 
 int joybstrafeleft = -1;
 int joybstraferight = -1;
@@ -223,7 +214,7 @@ int joybmenu = -1;
 // Control whether if a mouse button is double clicked, it acts like 
 // "use" has been pressed
 
-int dclick_use = 0; // [cndoom] no double click
+int dclick_use = 0;
  
 // 
 // Bind all of the common controls used by Doom and all other games.
@@ -242,7 +233,6 @@ void M_BindBaseControls(void)
     M_BindVariable("key_strafe",         &key_strafe);
     M_BindVariable("key_speed",          &key_speed);
 
-    // [cndoom] new values
     M_BindVariable("key_strafe_alt",            &key_strafe_alt),
     M_BindVariable("cn_precache_sounds",        &cn_precache_sounds),
     M_BindVariable("cn_quickstart_delay",       &cn_quickstart_delay),
@@ -252,16 +242,10 @@ void M_BindBaseControls(void)
     M_BindVariable("cn_timer_offset_y",         &cn_timer_offset_y);
     M_BindVariable("cn_timer_color_index",      &cn_timer_color_index);
     M_BindVariable("cn_timer_shadow_index",     &cn_timer_shadow_index);
-    /* not used
-    M_BindVariable("cn_meta_firstname",         &cn_meta_firstname);
-    M_BindVariable("cn_meta_lastname",          &cn_meta_lastname);
-    M_BindVariable("cn_meta_nickname",          &cn_meta_nickname);
-    M_BindVariable("cn_meta_birthdate",         &cn_meta_birthdate);
-    M_BindVariable("cn_meta_country",           &cn_meta_country);
-    M_BindVariable("cn_meta_email",             &cn_meta_email);
-    M_BindVariable("cn_meta_url",               &cn_meta_url);
-    */
     M_BindVariable("cn_meta_id",                &cn_meta_id);
+    M_BindVariable("cn_secret_message",         &cn_secret_message);
+    M_BindVariable("cn_typematic_delay",        &cn_typematic_delay);
+    M_BindVariable("cn_typematic_rate",         &cn_typematic_rate);
 
     M_BindVariable("mouseb_fire",        &mousebfire);
     M_BindVariable("mouseb_strafe",      &mousebstrafe);

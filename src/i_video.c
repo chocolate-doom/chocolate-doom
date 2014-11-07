@@ -48,6 +48,9 @@
 #include "w_wad.h"
 #include "z_zone.h"
 
+extern int cn_typematic_delay;
+extern int cn_typematic_rate;
+
 // Lookup table for mapping ASCII characters to their equivalent when
 // shift is pressed on an American layout keyboard:
 
@@ -2163,8 +2166,7 @@ void I_InitGraphics(void)
     // Not sure about repeat rate - probably dependent on which DOS
     // driver is used.  This is good enough though.
 
-    // [crispy] fix "holding ESC causes the menu to flicker on and off repeatedly"
-    //SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
+    SDL_EnableKeyRepeat(cn_typematic_delay, cn_typematic_rate);
 
     // clear out any events waiting at the start and center the mouse
   

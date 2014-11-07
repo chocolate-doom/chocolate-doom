@@ -10,9 +10,16 @@ These are stored in a file named 'cndoom.cfg'.
 
 Detailed explanation about each setting:
 
-// Display "Secret is revealed!" in demo playback.
-// 0 - No (Default), 1 - Yes
-cn_secretmessage              0
+// Competition Doom ID (required for demo submission)
+// You have to register on forum http://www.doom.com.hr/forum/
+// and request ID there or send request to cndoom@doom.com.hr
+// Default: 0 (means your record will NOT BE VALID!)
+cn_meta_id                    0
+
+// Delay starting the game in miliseconds (0 - 9999) with
+// progress bar so you can adjust/press your mouse and key
+// 0 - 9999 (Default: 3000)
+cn_quickstart_delay           3000
 
 // Display ingame/intermission screen timer
 // 0 - No, 1 - Yes (Default)
@@ -38,21 +45,22 @@ cn_timer_shadow_index         0
 // 0 - 255 (Default:16)
 cn_timer_bg_colormap          16
 
-// Delay starting the game in miliseconds (0 - 9999) with
-// progress bar so you can adjust/press your mouse and key
-// 0 - 9999 (Default: 3000)
-cn_quickstart_delay           3000
-
 // Precache all sounds at start, otherwise game will 'skip/lag'
 // when new sound is loaded.
 // 0 - No, 1 - Yes (Default)
 cn_precache_sounds            1
 
-// Competition Doom ID (required for demo submission)
-// You have to register on forum http://www.doom.com.hr/forum/
-// and request ID there or send request to cndoom@doom.com.hr
-cn_meta_id
+// Display "Secret is revealed!" only in demo playback.
+// 0 - No (Default), 1 - Yes
+cn_secret_message             0
 
+// Define keyboard delay between keypreses.
+// 0 - 1000 (Default: 200)
+cn_typematic_delay            200
+
+// Define keyboard character rate per second.
+// 1 - 30 (Default: 30)
+cn_typematic_delay            30
 
 
 == Additional Competition Doom command-line options ==

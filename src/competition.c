@@ -29,19 +29,19 @@ void ConfigCompetition(void)
     window = TXT_NewWindow("Competition");
 
     TXT_AddWidgets(window, 
+                TXT_NewSeparator(""),
+                TXT_NewStrut(0, 1),
                 TXT_NewHorizBox(TXT_NewLabel("Competition Doom ID: "),
                                 TXT_NewIntInputBox(&cn_meta_id, 4),
                                 NULL),
-                TXT_NewSeparator(""),
-                TXT_NewHorizBox(TXT_NewLabel("Keyboard delay between keypreses: "),
+                TXT_NewStrut(0, 1),
+                TXT_NewCheckBox("Show \"secret revealed\" message",
+                                &cn_secret_message),
+                TXT_NewHorizBox(TXT_NewLabel("Keyboard delay: "),
                                 TXT_NewIntInputBox(&cn_typematic_delay, 4),
                                 NULL),
-                TXT_NewHorizBox(TXT_NewLabel("Keyboard character rate per second: "),
+                TXT_NewHorizBox(TXT_NewLabel("Keyboard char. rate: "),
                                 TXT_NewIntInputBox(&cn_typematic_rate, 2),
                                 NULL),
-                TXT_NewSeparator(""),
-                TXT_NewCheckBox("Show \"Secret is revealed!\" message",
-                                &cn_secret_message),
-
                 NULL);
 }
