@@ -1940,6 +1940,7 @@ void G_DoNewGame (void)
     consoleplayer = 0;
     G_InitNew (d_skill, d_episode, d_map); 
     gameaction = ga_nothing; 
+    crispy_democritical = demorecording;
 } 
 
 
