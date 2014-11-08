@@ -1203,7 +1203,6 @@ static void M_DrawMouse(void)
 }
 
 // [crispy] crispness menu
-#define disablemenuitem (demorecording || netgame)
 static void M_DrawCrispness(void)
 {
     char crispy_menu_text[48];
@@ -1255,30 +1254,30 @@ static void M_DrawCrispness(void)
                 crispy_menu_text);
 
     M_snprintf(crispy_menu_text, sizeof(crispy_menu_text),
-               "%sVertical Aiming: %s%s", disablemenuitem ? crstr[CR_DARK] : crstr[CR_NONE],
-               disablemenuitem ? crstr[CR_DARK] : (crispy_freeaim ? crstr[CR_GREEN] : crstr[CR_DARK]),
-               crispy_freeaim && !disablemenuitem ? "On" : "Off");
+               "%sVertical Aiming: %s%s", singleplayer ? crstr[CR_NONE] : crstr[CR_DARK],
+               singleplayer ? (crispy_freeaim ? crstr[CR_GREEN] : crstr[CR_DARK]) : crstr[CR_DARK],
+               crispy_freeaim && singleplayer ? "On" : "Off");
     M_WriteText(CrispnessDef.x, CrispnessDef.y + CRISPY_LINEHEIGHT * crispness_freeaim + 6,
                 crispy_menu_text);
 
     M_snprintf(crispy_menu_text, sizeof(crispy_menu_text),
-               "%sAllow Jumping: %s%s", disablemenuitem ? crstr[CR_DARK] : crstr[CR_NONE],
-               disablemenuitem ? crstr[CR_DARK] : (crispy_jump ? crstr[CR_GREEN] : crstr[CR_DARK]),
-               crispy_jump && !disablemenuitem ? "On" : "Off");
+               "%sAllow Jumping: %s%s", singleplayer ? crstr[CR_NONE] : crstr[CR_DARK],
+               singleplayer ? (crispy_jump ? crstr[CR_GREEN] : crstr[CR_DARK]) : crstr[CR_DARK],
+               crispy_jump && singleplayer ? "On" : "Off");
     M_WriteText(CrispnessDef.x, CrispnessDef.y + CRISPY_LINEHEIGHT * crispness_jumping + 6,
                 crispy_menu_text);
 
     M_snprintf(crispy_menu_text, sizeof(crispy_menu_text),
-               "%sWalk over/under Monsters: %s%s", disablemenuitem ? crstr[CR_DARK] :crstr[CR_NONE],
-               disablemenuitem ? crstr[CR_DARK] : (crispy_overunder ? crstr[CR_GREEN] : crstr[CR_DARK]),
-               crispy_overunder && !disablemenuitem ? "On" : "Off");
+               "%sWalk over/under Monsters: %s%s", singleplayer ? crstr[CR_NONE] : crstr[CR_DARK],
+               singleplayer ? (crispy_overunder ? crstr[CR_GREEN] : crstr[CR_DARK]) : crstr[CR_DARK],
+               crispy_overunder && singleplayer ? "On" : "Off");
     M_WriteText(CrispnessDef.x, CrispnessDef.y + CRISPY_LINEHEIGHT * crispness_overunder + 6,
                 crispy_menu_text);
 
     M_snprintf(crispy_menu_text, sizeof(crispy_menu_text),
-               "%sWeapon Recoil: %s%s", disablemenuitem ? crstr[CR_DARK] : crstr[CR_NONE],
-               disablemenuitem ? crstr[CR_DARK] : (crispy_recoil ? crstr[CR_GREEN] : crstr[CR_DARK]),
-               crispy_recoil && !disablemenuitem ? "On" : "Off");
+               "%sWeapon Recoil: %s%s", singleplayer ? crstr[CR_NONE] : crstr[CR_DARK],
+               singleplayer ? (crispy_recoil ? crstr[CR_GREEN] : crstr[CR_DARK]) : crstr[CR_DARK],
+               crispy_recoil && singleplayer ? "On" : "Off");
     M_WriteText(CrispnessDef.x, CrispnessDef.y + CRISPY_LINEHEIGHT * crispness_recoil + 6,
                 crispy_menu_text);
 
@@ -1577,7 +1576,7 @@ static void M_CrispyToggleFreelook(int choice)
 
 static void M_CrispyToggleFreeaim(int choice)
 {
-    if (disablemenuitem)
+    if (!singleplayer)
 	return;
 
     choice = 0;
@@ -1586,7 +1585,7 @@ static void M_CrispyToggleFreeaim(int choice)
 
 static void M_CrispyToggleJumping(int choice)
 {
-    if (disablemenuitem)
+    if (!singleplayer)
 	return;
 
     choice = 0;
@@ -1595,7 +1594,7 @@ static void M_CrispyToggleJumping(int choice)
 
 static void M_CrispyToggleOverunder(int choice)
 {
-    if (disablemenuitem)
+    if (!singleplayer)
 	return;
 
     choice = 0;
@@ -1604,7 +1603,7 @@ static void M_CrispyToggleOverunder(int choice)
 
 static void M_CrispyToggleRecoil(int choice)
 {
-    if (disablemenuitem)
+    if (!singleplayer)
 	return;
 
     choice = 0;
