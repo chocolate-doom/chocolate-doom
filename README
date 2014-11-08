@@ -60,7 +60,7 @@ cn_typematic_delay            200
 
 // Define keyboard character rate per second.
 // 1 - 30 (Default: 30)
-cn_typematic_delay            30
+cn_typematic_rate             30
 
 
 == Additional Competition Doom command-line options ==
@@ -114,10 +114,10 @@ video_driver. All files, patches and fixes can be downloaded from here:
  * Competition Doom is distributed under the GNU GPL.
  
  * Please send any feedback, questions or suggestions to:
-   Zvonimir BuûaniÊ
+   Zvonimir Bu≈æani√¶
    admin@doom.com.hr
    
- * Competition Doom would not exist without help of good people
+ * Competition Doom would not exist without help of good people,
    big thanks to all of them (listed below) and others that contributed!
 
 == Authors ==
