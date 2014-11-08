@@ -2032,7 +2032,7 @@ void G_RecordDemo (char *name)
     demoname_size = strlen(name) + 5;
     demoname = Z_Malloc(demoname_size, PU_STATIC, NULL);
     // [cndoom] only append .lmp if it's missing, to match new -playdemo behaviour
-    if (!M_StringEndsWith(name, ".lmp"))
+    if (M_StringEndsWith(name, ".lmp"))
         M_StringCopy(demoname, name, demoname_size);
     else
         M_snprintf(demoname, demoname_size, "%s.lmp", name);

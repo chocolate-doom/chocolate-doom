@@ -59,7 +59,7 @@ cn_secret_message             0
 cn_typematic_delay            200
 
 // Define keyboard character rate per second.
-// 1 - 30 (Default: 30)
+// 0 - 30 (Default: 30)
 cn_typematic_rate             30
 
 

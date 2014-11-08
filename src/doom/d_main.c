@@ -1798,19 +1798,6 @@ void D_DoomMain (void)
     // -fastdemo from boom
     // cn_fastdemo = M_CheckParm("-fastdemo");
     
-    /* not used
-    // [cndoom] reserve space for metadata player info here
-    for (p=0; p<MAXPLAYERS; p++)
-    {
-	cn_meta_playerinfos[p].firstname = malloc(CN_NETMETALEN);
-	cn_meta_playerinfos[p].lastname = malloc(CN_NETMETALEN);
-	cn_meta_playerinfos[p].nickname = malloc(CN_NETMETALEN);
-	cn_meta_playerinfos[p].birthdate = malloc(CN_NETMETALEN);
-	cn_meta_playerinfos[p].country = malloc(CN_NETMETALEN);
-	cn_meta_playerinfos[p].email = malloc(CN_NETMETALEN);
-	cn_meta_playerinfos[p].url = malloc(CN_NETMETALEN);
-    }
-    */
     DEH_printf("S_Init: Setting up sound.\n");
     S_Init (sfxVolume * 8, musicVolume * 8);
 
