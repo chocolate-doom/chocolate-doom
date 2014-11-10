@@ -494,6 +494,19 @@ void HU_Start(void)
 
 }
 
+// [crispy] print a bar indicating demo progress at the bottom of the screen
+static void HU_DemoProgressBar (void)
+{
+    int i;
+    extern char *demo_p, *demobuffer;
+    extern int defdemosize;
+
+    i = defdemosize ? SCREENWIDTH * (demo_p - demobuffer) / defdemosize : 0;
+
+    V_DrawHorizLine(0, SCREENHEIGHT - 2, i, 0); // [crispy] black
+    V_DrawHorizLine(0, SCREENHEIGHT - 1, i, 4); // [crispy] white
+}
+
 void HU_Drawer(void)
 {
 
@@ -603,6 +616,10 @@ void HU_Drawer(void)
 
     V_ClearDPTranslation();
     }
+
+    // [crispy] demo progress bar
+    if (demoplayback)
+	HU_DemoProgressBar();
 }
 
 void HU_Erase(void)

@@ -2306,6 +2306,7 @@ void G_BeginRecording (void)
 //
 
 char*	defdemoname; 
+int	defdemosize; // [crispy] demo progress bar
  
 void G_DeferedPlayDemo (char* name) 
 { 
@@ -2360,6 +2361,14 @@ void G_DoPlayDemo (void)
 	 
     gameaction = ga_nothing; 
     demobuffer = demo_p = W_CacheLumpName (defdemoname, PU_STATIC); 
+
+    // [crispy] demo progress bar
+    defdemosize = 0;
+    while (*demo_p++ != DEMOMARKER)
+    {
+	defdemosize++;
+    }
+    demo_p = demobuffer;
 
     demoversion = *demo_p++;
 
