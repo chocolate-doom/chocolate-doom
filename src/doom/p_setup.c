@@ -971,29 +971,6 @@ void P_LoadLineDefs (int lump)
 	    ld->backsector = sides[ld->sidenum[1]].sector;
 	else
 	    ld->backsector = 0;
-
-	// [crispy] fix common wad errors (missing sidedefs)
-	// adapted from prboom-plus/src/p_setup.c:1426
-	{
-	    // linedef has out-of-range sidedef number
-	    if (ld->sidenum[0] != NO_INDEX && ld->sidenum[0] >= numsides)
-		ld->sidenum[0] = NO_INDEX;
-
-	    if (ld->sidenum[1] != NO_INDEX && ld->sidenum[1] >= numsides)
-		ld->sidenum[1] = NO_INDEX;
-
-	    // linedef missing first sidedef
-	    if (ld->sidenum[0] == NO_INDEX)
-		ld->sidenum[0] = 0; // Substitute dummy sidedef for missing right side
-
-	    // linedef has two-sided flag set, but no second sidedef
-	    if ((ld->sidenum[1] == NO_INDEX) && (ld->flags & ML_TWOSIDED))
-	    {
-		// e6y: ML_TWOSIDED flag shouldn't be cleared for compatibility purposes
-		if (!M_CheckParm("-record") && !M_CheckParm("-playdemo") && !M_CheckParm("-timedemo"))
-		    ld->flags &= ~ML_TWOSIDED; // Clear 2s flag for missing left side
-	    }
-	}
     }
 
     // [crispy] warn about unknown linedef types
