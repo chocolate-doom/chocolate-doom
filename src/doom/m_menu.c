@@ -457,7 +457,7 @@ enum
     crispness_automapstats,
     crispness_secretmessage,
     crispness_crosshair,
-    crispness_sep_movement,
+    crispness_sep_physical,
     crispness_jumping,
     crispness_freeaim,
     crispness_overunder,
@@ -1283,10 +1283,10 @@ static void M_DrawCrispness(void)
 
     M_DrawCrispnessItem(crispness_freelook, "Allow Free Look", crispy_freelook, true);
     M_DrawCrispnessItem(crispness_automapstats, "Show Level Stats in Automap", crispy_automapstats, true);
-    M_DrawCrispnessItem(crispness_secretmessage, "Report Revealed Secrets", crispy_secretmessage, true);
-    M_DrawCrispnessItem(crispness_crosshair, "Enable Laser Aiming", crispy_crosshair, true);
+    M_DrawCrispnessItem(crispness_secretmessage, "Show Revealed Secrets", crispy_secretmessage, true);
+    M_DrawCrispnessItem(crispness_crosshair, "Show Laser Aiming", crispy_crosshair, true);
 
-    M_DrawCrispnessSeparator(crispness_sep_movement, "Movement");
+    M_DrawCrispnessSeparator(crispness_sep_physical, "Physical");
 
     M_DrawCrispnessItem(crispness_jumping, "Allow Jumping", crispy_jump, singleplayer);
     M_DrawCrispnessItem(crispness_freeaim, "Allow Vertical Aiming", crispy_freeaim, singleplayer);

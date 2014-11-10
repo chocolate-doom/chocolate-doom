@@ -157,7 +157,7 @@ void ConfigMouse(void)
                    TXT_NewFloatSpinControl(&mouse_acceleration_y, 1.0, 5.0),
                    TXT_NewLabel("Acceleration threshold (v)"),
                    TXT_NewSpinControl(&mouse_threshold_y, 0, 32),
-                   TXT_NewCheckBox("Invert mouse (v)", &mouse_y_invert),
+                   TXT_NewCheckBox("Invert Vertical Axis", &mouse_y_invert),
                    NULL);
     }
     else
