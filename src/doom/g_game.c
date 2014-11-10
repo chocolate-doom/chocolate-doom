@@ -140,9 +140,6 @@ byte*		demo_p;
 byte*		demoend; 
 boolean         singledemo;            	// quit after playing a demo from cmdline 
  
-// [crispy] for non-user-visible, non-gameplay-affecting changes
-boolean         crispy_democritical = false;
-
 boolean         precache = true;        // if true, load all graphics at start 
 
 boolean         testcontrols = false;    // Invoked by setup to test controls
@@ -1940,7 +1937,6 @@ void G_DoNewGame (void)
     consoleplayer = 0;
     G_InitNew (d_skill, d_episode, d_map); 
     gameaction = ga_nothing; 
-    crispy_democritical = demorecording;
 } 
 
 
@@ -2211,7 +2207,6 @@ void G_RecordDemo (char *name)
     int maxsize;
     FILE *fp = NULL;
 
-    crispy_democritical = true;
     usergame = false;
     demoname_size = strlen(name) + 5 + 4; // [crispy] + 4 for "-000"
     demoname = Z_Malloc(demoname_size, PU_STATIC, NULL);
@@ -2363,7 +2358,6 @@ void G_DoPlayDemo (void)
     int             i, episode, map; 
     int demoversion;
 	 
-    crispy_democritical = true;
     gameaction = ga_nothing; 
     demobuffer = demo_p = W_CacheLumpName (defdemoname, PU_STATIC); 
 

@@ -25,11 +25,10 @@
 
 #define CRISPY_HUD 12
 
-#define singleplayer (!crispy_democritical && !netgame)
+#define singleplayer (!demorecording && !demoplayback && !netgame)
 
 extern boolean crispy_cleanscreenshot;
 extern uint8_t crispy_coloredblood;
-extern boolean crispy_democritical;
 extern boolean crispy_flashinghom;
 extern boolean crispy_fliplevels;
 extern boolean crispy_havemap33;
