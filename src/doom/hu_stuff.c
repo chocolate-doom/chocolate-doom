@@ -501,7 +501,7 @@ static void HU_DemoProgressBar (void)
     extern char *demo_p, *demobuffer;
     extern int defdemosize;
 
-    i = defdemosize ? SCREENWIDTH * (demo_p - demobuffer) / defdemosize : 0;
+    i = SCREENWIDTH * (demo_p - demobuffer) / defdemosize;
 
     V_DrawHorizLine(0, SCREENHEIGHT - 2, i, 0); // [crispy] black
     V_DrawHorizLine(0, SCREENHEIGHT - 1, i, 4); // [crispy] white
