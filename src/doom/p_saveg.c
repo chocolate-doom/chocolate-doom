@@ -1741,7 +1741,7 @@ void P_RestoreTargets (void)
 
     if (restoretargets_fail)
     {
-	printf ("P_RestoreTargets: Failed to restore %d target pointers.\n", restoretargets_fail);
+	fprintf (stderr, "P_RestoreTargets: Failed to restore %d target pointers.\n", restoretargets_fail);
 	restoretargets_fail = 0;
     }
 }

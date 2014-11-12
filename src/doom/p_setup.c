@@ -478,7 +478,7 @@ void P_LoadLineDefs (int lump)
 	// [crispy] warn about unknown linedef types
 	if (ld->special > 141)
 	{
-	    //fprintf (stderr, "P_LoadLineDefs: unknown special %d at line %d\n", ld->special, i);
+	    //fprintf (stderr, "P_LoadLineDefs: Unknown special %d at line %d\n", ld->special, i);
 	    warn++;
 	}
 	ld->tag = SHORT(mld->tag);
@@ -546,7 +546,7 @@ void P_LoadLineDefs (int lump)
     // [crispy] warn about unknown linedef types
     if (warn)
     {
-	fprintf (stderr, "P_LoadLineDefs: this map contains unknown linedef types and may not work as expected\n");
+	fprintf (stderr, "P_LoadLineDefs: This map contains unknown linedef types and may not work as expected!\n");
     }
 
     W_ReleaseLumpNum(lump);
