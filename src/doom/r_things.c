@@ -328,7 +328,7 @@ vissprite_t* R_NewVisSprite (void)
 
 	if (!max && numvissprites == 32 * MAXVISSPRITES)
 	{
-	    printf("R_NewVisSprite: MAXVISSPRITES limit capped at %d.\n", numvissprites);
+	    fprintf(stderr, "R_NewVisSprite: MAXVISSPRITES limit capped at %d.\n", numvissprites);
 	    max++;
 	}
 
@@ -340,7 +340,7 @@ vissprite_t* R_NewVisSprite (void)
 	vissprite_p = vissprites + numvissprites_old;
 
 	if (numvissprites_old)
-	    printf("R_NewVisSprite: Hit MAXVISSPRITES limit at %d, raised to %d.\n", numvissprites_old, numvissprites);
+	    fprintf(stderr, "R_NewVisSprite: Hit MAXVISSPRITES limit at %d, raised to %d.\n", numvissprites_old, numvissprites);
     }
     
     vissprite_p++;

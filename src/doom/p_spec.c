@@ -341,6 +341,7 @@ P_FindNextHighestFloor
     static int heightlist_size = 0;
 
     // [crispy] remove MAX_ADJOINING_SECTORS Vanilla limit
+    // from prboom-plus/src/p_spec.c:404-411
     if (sec->linecount > heightlist_size)
     {
 	do
@@ -368,7 +369,7 @@ P_FindNextHighestFloor
             else if (h == MAX_ADJOINING_SECTORS + 2)
             {
                 // Fatal overflow: game crashes at 22 sectors
-                 puts("Sector with more than 22 adjoining sectors. "
+                   fprintf(stderr, "P_FindNextHighestFloor: Sector with more than 22 adjoining sectors. "
                         "Vanilla will crash here");
             }
 
@@ -1089,7 +1090,7 @@ void P_PlayerInSpecialSector (player_t* player)
 	if (error != sector)
 	{
 	error = sector;
-	printf ("P_PlayerInSpecialSector: "
+	fprintf (stderr, "P_PlayerInSpecialSector: "
 		 "unknown special %i\n",
 		 sector->special);
 	}

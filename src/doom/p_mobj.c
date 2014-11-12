@@ -809,7 +809,7 @@ void P_SpawnMapThing (mapthing_t* mthing)
     if (i==NUMMOBJTYPES)
     {
 	// [crispy] ignore unknown map things
-	printf ("P_SpawnMapThing: Unknown type %i at (%i, %i)\n",
+	fprintf (stderr, "P_SpawnMapThing: Unknown type %i at (%i, %i)\n",
 		 mthing->type,
 		 mthing->x, mthing->y);
 	return;
