@@ -462,6 +462,7 @@ void P_LoadLineDefs (int lump)
     line_t*		ld;
     vertex_t*		v1;
     vertex_t*		v2;
+    int warn = 0; // [crispy] warn about unknown linedef types
 	
     numlines = W_LumpLength (lump) / sizeof(maplinedef_t);
     lines = Z_Malloc (numlines*sizeof(line_t),PU_LEVEL,0);	
@@ -474,6 +475,12 @@ void P_LoadLineDefs (int lump)
     {
 	ld->flags = (unsigned short)SHORT(mld->flags); // [crispy] extended nodes
 	ld->special = SHORT(mld->special);
+	// [crispy] warn about unknown linedef types
+	if (ld->special > 141)
+	{
+	    //fprintf (stderr, "P_LoadLineDefs: unknown special %d at line %d\n", ld->special, i);
+	    warn++;
+	}
 	ld->tag = SHORT(mld->tag);
 	if (crispy_fliplevels)
 	{
@@ -534,6 +541,12 @@ void P_LoadLineDefs (int lump)
 	    ld->backsector = sides[ld->sidenum[1]].sector;
 	else
 	    ld->backsector = 0;
+    }
+
+    // [crispy] warn about unknown linedef types
+    if (warn)
+    {
+	fprintf (stderr, "P_LoadLineDefs: this map contains unknown linedef types and may not work as expected\n");
     }
 
     W_ReleaseLumpNum(lump);
