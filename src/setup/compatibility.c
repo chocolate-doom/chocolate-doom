@@ -25,17 +25,18 @@
 int vanilla_savegame_limit = 0;
 int vanilla_demo_limit = 0;
 
-int crispy_translucency = 0;
-int crispy_coloredhud = 0;
 int crispy_automapstats = 0;
-int crispy_secretmessage = 0;
+int crispy_centerweapon = 0;
+int crispy_coloredhud = 0;
 int crispy_crosshair = 0;
-int crispy_jump = 0;
-int crispy_freelook = 0;
-int crispy_mouselook = 0;
 int crispy_freeaim = 0;
+int crispy_freelook = 0;
+int crispy_jump = 0;
+int crispy_mouselook = 0;
 int crispy_overunder = 0;
 int crispy_recoil = 0;
+int crispy_secretmessage = 0;
+int crispy_translucency = 0;
 
 void CompatibilitySettings(void)
 {
@@ -62,6 +63,8 @@ void CompatibilitySettings(void)
                                    &crispy_secretmessage),
                    TXT_NewCheckBox("Show Laser Aiming",
                                    &crispy_crosshair),
+                   TXT_NewCheckBox("Center Weapon when Firing",
+                                   &crispy_centerweapon),
                    TXT_NewSeparator("Physical"),
                    TXT_NewCheckBox("Allow Jumping [*]",
                                    &crispy_jump),
@@ -94,17 +97,18 @@ void BindCompatibilityVariables(void)
         M_BindVariable("vanilla_demo_limit",     &vanilla_demo_limit);
         if (gamemission == doom)
         {
-        M_BindVariable("crispy_translucency",    &crispy_translucency);
-        M_BindVariable("crispy_coloredhud",      &crispy_coloredhud);
         M_BindVariable("crispy_automapstats",    &crispy_automapstats);
-        M_BindVariable("crispy_secretmessage",   &crispy_secretmessage);
+        M_BindVariable("crispy_centerweapon",    &crispy_centerweapon);
+        M_BindVariable("crispy_coloredhud",      &crispy_coloredhud);
         M_BindVariable("crispy_crosshair",       &crispy_crosshair);
-        M_BindVariable("crispy_jump",            &crispy_jump);
-        M_BindVariable("crispy_freelook",        &crispy_freelook);
-        M_BindVariable("crispy_mouselook",       &crispy_mouselook);
         M_BindVariable("crispy_freeaim",         &crispy_freeaim);
+        M_BindVariable("crispy_freelook",        &crispy_freelook);
+        M_BindVariable("crispy_jump",            &crispy_jump);
+        M_BindVariable("crispy_mouselook",       &crispy_mouselook);
         M_BindVariable("crispy_overunder",       &crispy_overunder);
         M_BindVariable("crispy_recoil",          &crispy_recoil);
+        M_BindVariable("crispy_secretmessage",   &crispy_secretmessage);
+        M_BindVariable("crispy_translucency",    &crispy_translucency);
         }
     }
 }

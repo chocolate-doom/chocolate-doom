@@ -131,17 +131,18 @@ char		mapdir[1024];           // directory of development maps
 int             show_endoom = 0; // [crispy] disable
 
 // [crispy] "crispness" config variables
-int             crispy_translucency = 0;
-int             crispy_coloredhud = 0;
 int             crispy_automapstats = 0;
-int             crispy_secretmessage = 0;
+int             crispy_centerweapon = 0;
+int             crispy_coloredhud = 0;
 int             crispy_crosshair = 0;
-int             crispy_jump = 0;
-int             crispy_freelook = 0;
-int             crispy_mouselook = 0;
 int             crispy_freeaim = 0;
+int             crispy_freelook = 0;
+int             crispy_jump = 0;
+int             crispy_mouselook = 0;
 int             crispy_overunder = 0;
 int             crispy_recoil = 0;
+int             crispy_secretmessage = 0;
+int             crispy_translucency = 0;
 
 // [crispy] in-game switches
 uint8_t         crispy_coloredblood = 0;
@@ -438,17 +439,18 @@ void D_BindVariables(void)
     }
 
     // [crispy] bind "crispness" config variables
-    M_BindVariable("crispy_translucency",    &crispy_translucency);
-    M_BindVariable("crispy_coloredhud",      &crispy_coloredhud);
     M_BindVariable("crispy_automapstats",    &crispy_automapstats);
-    M_BindVariable("crispy_secretmessage",   &crispy_secretmessage);
+    M_BindVariable("crispy_centerweapon",    &crispy_centerweapon);
+    M_BindVariable("crispy_coloredhud",      &crispy_coloredhud);
     M_BindVariable("crispy_crosshair",       &crispy_crosshair);
-    M_BindVariable("crispy_jump",            &crispy_jump);
-    M_BindVariable("crispy_freelook",        &crispy_freelook);
-    M_BindVariable("crispy_mouselook",       &crispy_mouselook);
     M_BindVariable("crispy_freeaim",         &crispy_freeaim);
+    M_BindVariable("crispy_freelook",        &crispy_freelook);
+    M_BindVariable("crispy_jump",            &crispy_jump);
+    M_BindVariable("crispy_mouselook",       &crispy_mouselook);
     M_BindVariable("crispy_overunder",       &crispy_overunder);
     M_BindVariable("crispy_recoil",          &crispy_recoil);
+    M_BindVariable("crispy_secretmessage",   &crispy_secretmessage);
+    M_BindVariable("crispy_translucency",    &crispy_translucency);
 }
 
 //

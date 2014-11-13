@@ -1724,6 +1724,14 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_INT(crispy_recoil),
+
+    //!
+    // @game doom
+    //
+    // Center Weapon when Firing.
+    //
+
+    CONFIG_VARIABLE_INT(crispy_centerweapon),
 };
 
 static default_collection_t extra_defaults =

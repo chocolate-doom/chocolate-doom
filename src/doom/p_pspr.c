@@ -274,7 +274,8 @@ void P_FireWeapon (player_t* player)
     P_NoiseAlert (player->mo, player->mo);
 
     // [crispy] center the weapon sprite horizontally
-    player->psprites[ps_weapon].sx = FRACUNIT;
+    if (crispy_centerweapon)
+	player->psprites[ps_weapon].sx = FRACUNIT;
 }
 
 

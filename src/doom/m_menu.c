@@ -197,16 +197,17 @@ void M_ChangeSensitivity(int choice);
 static void M_ChangeSensitivity_y(int choice);
 static void M_MouseInvert(int choice);
 static void M_MouseLook(int choice);
-static void M_CrispyToggleTranslucency(int choice);
-static void M_CrispyToggleColoredhud(int choice);
 static void M_CrispyToggleAutomapstats(int choice);
-static void M_CrispyToggleSecretmessage(int choice);
+static void M_CrispyToggleCenterweapon(int choice);
+static void M_CrispyToggleColoredhud(int choice);
 static void M_CrispyToggleCrosshair(int choice);
-static void M_CrispyToggleFreelook(int choice);
 static void M_CrispyToggleFreeaim(int choice);
+static void M_CrispyToggleFreelook(int choice);
 static void M_CrispyToggleJumping(int choice);
 static void M_CrispyToggleOverunder(int choice);
 static void M_CrispyToggleRecoil(int choice);
+static void M_CrispyToggleSecretmessage(int choice);
+static void M_CrispyToggleTranslucency(int choice);
 void M_SfxVol(int choice);
 void M_MusicVol(int choice);
 void M_ChangeDetail(int choice);
@@ -457,6 +458,7 @@ enum
     crispness_automapstats,
     crispness_secretmessage,
     crispness_crosshair,
+    crispness_centerweapon,
     crispness_sep_physical,
     crispness_jumping,
     crispness_freeaim,
@@ -475,6 +477,7 @@ static menuitem_t CrispnessMenu[]=
     {1,"",	M_CrispyToggleAutomapstats,'a'},
     {1,"",	M_CrispyToggleSecretmessage,'s'},
     {1,"",	M_CrispyToggleCrosshair,'l'},
+    {1,"",	M_CrispyToggleCenterweapon,'c'},
     {-1,"",0,'\0'},
     {1,"",	M_CrispyToggleJumping,'j'},
     {1,"",	M_CrispyToggleFreeaim,'v'},
@@ -1285,6 +1288,7 @@ static void M_DrawCrispness(void)
     M_DrawCrispnessItem(crispness_automapstats, "Show Level Stats in Automap", crispy_automapstats, true);
     M_DrawCrispnessItem(crispness_secretmessage, "Show Revealed Secrets", crispy_secretmessage, true);
     M_DrawCrispnessItem(crispness_crosshair, "Show Laser Aiming", crispy_crosshair, true);
+    M_DrawCrispnessItem(crispness_centerweapon, "Center Weapon when Firing", crispy_centerweapon, true);
 
     M_DrawCrispnessSeparator(crispness_sep_physical, "Physical");
 
@@ -1533,13 +1537,13 @@ static void M_ChangeSensitivity_y(int choice)
 static void M_MouseInvert(int choice)
 {
     choice = 0;
-    mouse_y_invert = 1 - mouse_y_invert;
+    mouse_y_invert = 1 - !!mouse_y_invert;
 }
 
 static void M_MouseLook(int choice)
 {
     choice = 0;
-    crispy_mouselook = 1 - crispy_mouselook;
+    crispy_mouselook = 1 - !!crispy_mouselook;
 
     players2[consoleplayer].lookdir = 0;
 }
@@ -1547,7 +1551,7 @@ static void M_MouseLook(int choice)
 static void M_CrispyToggleTranslucency(int choice)
 {
     choice = 0;
-    crispy_translucency = 1 - crispy_translucency;
+    crispy_translucency = 1 - !!crispy_translucency;
 
     // [crispy] translucent Crispy HUD?
     if (screenblocks > CRISPY_HUD)
@@ -1557,31 +1561,37 @@ static void M_CrispyToggleTranslucency(int choice)
 static void M_CrispyToggleColoredhud(int choice)
 {
     choice = 0;
-    crispy_coloredhud = 1 - crispy_coloredhud;
+    crispy_coloredhud = 1 - !!crispy_coloredhud;
 }
 
 static void M_CrispyToggleAutomapstats(int choice)
 {
     choice = 0;
-    crispy_automapstats = 1 - crispy_automapstats;
+    crispy_automapstats = 1 - !!crispy_automapstats;
 }
 
 static void M_CrispyToggleSecretmessage(int choice)
 {
     choice = 0;
-    crispy_secretmessage = 1 - crispy_secretmessage;
+    crispy_secretmessage = 1 - !!crispy_secretmessage;
 }
 
 static void M_CrispyToggleCrosshair(int choice)
 {
     choice = 0;
-    crispy_crosshair = 1 - crispy_crosshair;
+    crispy_crosshair = 1 - !!crispy_crosshair;
+}
+
+static void M_CrispyToggleCenterweapon(int choice)
+{
+    choice = 0;
+    crispy_centerweapon = 1 - !!crispy_centerweapon;
 }
 
 static void M_CrispyToggleFreelook(int choice)
 {
     choice = 0;
-    crispy_freelook = 1 - crispy_freelook;
+    crispy_freelook = 1 - !!crispy_freelook;
 
     players2[consoleplayer].lookdir = 0;
 }
@@ -1592,7 +1602,7 @@ static void M_CrispyToggleFreeaim(int choice)
 	return;
 
     choice = 0;
-    crispy_freeaim = 1 - crispy_freeaim;
+    crispy_freeaim = 1 - !!crispy_freeaim;
 }
 
 static void M_CrispyToggleJumping(int choice)
@@ -1601,7 +1611,7 @@ static void M_CrispyToggleJumping(int choice)
 	return;
 
     choice = 0;
-    crispy_jump = 1 - crispy_jump;
+    crispy_jump = 1 - !!crispy_jump;
 }
 
 static void M_CrispyToggleOverunder(int choice)
@@ -1610,7 +1620,7 @@ static void M_CrispyToggleOverunder(int choice)
 	return;
 
     choice = 0;
-    crispy_overunder = 1 - crispy_overunder;
+    crispy_overunder = 1 - !!crispy_overunder;
 }
 
 static void M_CrispyToggleRecoil(int choice)
@@ -1619,7 +1629,7 @@ static void M_CrispyToggleRecoil(int choice)
 	return;
 
     choice = 0;
-    crispy_recoil = 1 - crispy_recoil;
+    crispy_recoil = 1 - !!crispy_recoil;
 }
 
 
