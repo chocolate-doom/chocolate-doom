@@ -701,16 +701,18 @@ static void R_DrawLSprite (void)
     // [crispy] the original patch has 5x5 pixels, cap the projection at 20x20
     xscale = (xscale > 4*FRACUNIT) ? 4*FRACUNIT : xscale;
 
+    tx = -(FixedMul(laserspot->y - viewy, viewcos) - FixedMul(laserspot->x - viewx, viewsin));
+
     vis = R_NewVisSprite();
     memset(vis, 0, sizeof(*vis)); // [crispy] set all fields to NULL, except ...
     vis->patch = lump - firstspritelump; // [crispy] not a sprite patch
     vis->colormap = fixedcolormap ? fixedcolormap : colormaps; // [crispy] always full brightness
     vis->mobjflags |= MF_TRANSLUCENT;
     vis->xiscale = FixedDiv (FRACUNIT, xscale);
-    vis->texturemid = laserspot->z + (patch->topoffset<<FRACBITS) - viewz;
+    vis->texturemid = laserspot->z - viewz;
     vis->scale = xscale<<(detailshift && !hires);
 
-    tx = -((SHORT(patch->width)/2)<<FRACBITS);
+    tx -= SHORT(patch->width/2)<<FRACBITS;
     vis->x1 =  (centerxfrac + FixedMul(tx, xscale))>>FRACBITS;
     tx += SHORT(patch->width)<<FRACBITS;
     vis->x2 = ((centerxfrac + FixedMul(tx, xscale))>>FRACBITS) - 1;

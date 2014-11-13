@@ -1103,8 +1103,8 @@ boolean PTR_ShootTraverse (intercept_t* in)
 	if (th->flags & MF_SHADOW)
 	    return true;
 
-	laserspot->x = x;
-	laserspot->y = y;
+	laserspot->x = th->x;
+	laserspot->y = th->y;
 	laserspot->z = z;
 	return false;
     }
@@ -1208,9 +1208,11 @@ P_LineLaser
   fixed_t	distance,
   fixed_t	slope )
 {
+    fixed_t	lslope;
+
     laserspot->x = laserspot->y = laserspot->z = 0;
 
-    P_AimLineAttack(t1, angle, distance);
+    lslope = P_AimLineAttack(t1, angle, distance);
 
     // [crispy] increase accuracy
     if (!linetarget)
@@ -1218,12 +1220,18 @@ P_LineLaser
 	angle_t an = angle;
 
 	an += 1<<26;
-	P_AimLineAttack(t1, an, distance);
+	lslope = P_AimLineAttack(t1, an, distance);
 
 	if (!linetarget)
 	{
 	    an -= 2<<26;
-	    P_AimLineAttack(t1, an, distance);
+	    lslope = P_AimLineAttack(t1, an, distance);
+
+	    if (!linetarget && crispy_freeaim)
+	    {
+		lslope = slope;
+	    }
+
 	}
     }
 
@@ -1232,7 +1240,7 @@ P_LineLaser
 	P_LineAttack(t1, angle, distance, aimslope, INT_MIN);
     else
 	// [crispy] double the auto aim distance
-	P_LineAttack(t1, angle, 2*distance, slope, INT_MIN);
+	P_LineAttack(t1, angle, 2*distance, lslope, INT_MIN);
 }
 
 
