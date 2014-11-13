@@ -433,6 +433,10 @@ P_NightmareRespawn (mobj_t* mobj)
     mo->spawnpoint = mobj->spawnpoint;	
     mo->angle = ANG45 * (mthing->angle/45);
 
+    // [crispy] fix Kills stats
+    if (crispy_fixkills && singleplayer)
+	totalkills++;
+
     if (mthing->options & MTF_AMBUSH)
 	mo->flags |= MF_AMBUSH;
 
@@ -815,11 +819,14 @@ void P_SpawnMapThing (mapthing_t* mthing)
     if (deathmatch && mobjinfo[i].flags & MF_NOTDMATCH)
 	return;
 		
+
     // don't spawn any monsters if -nomonsters
     if (nomonsters
 	&& ( i == MT_SKULL
 	     || (mobjinfo[i].flags & MF_COUNTKILL)) )
     {
+	// [crispy] fix Kills stats
+	if (!(crispy_fixkills && singleplayer && i == MT_KEEN))
 	return;
     }
     
@@ -834,6 +841,15 @@ void P_SpawnMapThing (mapthing_t* mthing)
     
     mobj = P_SpawnMobj (x,y,z, i);
     mobj->spawnpoint = *mthing;
+
+    // [crispy] fix Kills stats
+    if (crispy_fixkills && singleplayer)
+    {
+	if (i == MT_SKULL)
+	    mobj->flags |= MF_COUNTKILL;
+	if (i == MT_KEEN)
+	    mobj->flags &= ~MF_COUNTKILL;
+    }
 
     if (mobj->tics > 0)
 	mobj->tics = 1 + (P_Random () % mobj->tics);

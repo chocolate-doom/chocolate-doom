@@ -1213,6 +1213,10 @@ void A_VileChase (mobj_t* actor)
 		    corpsehit->health = info->spawnhealth;
 		    corpsehit->target = NULL;
 
+		    // [crispy] fix Kills stats
+		    if (crispy_fixkills && singleplayer)
+			totalkills++;
+
 		    // [crispy] resurrected pools of gore ("ghost monsters") are translucent
 		    if (corpsehit->height == 0 && corpsehit->radius == 0)
 		        corpsehit->flags |= MF_TRANSLUCENT;
@@ -1515,6 +1519,10 @@ A_PainShootSkull
     // [crispy] Lost Souls bleed Puffs
     if (crispy_coloredblood2 && notchexnothacx)
 	newmobj->flags |= MF_NOBLOOD;
+
+    // [crispy] fix Kills stats
+    if (crispy_fixkills && singleplayer)
+	totalkills++;
 
     newmobj->target = actor->target;
     A_SkullAttack (newmobj);
@@ -2004,6 +2012,11 @@ void A_SpawnFly (mobj_t* mo)
 	type = MT_BRUISER;		
 
     newmobj	= P_SpawnMobj (targ->x, targ->y, targ->z, type);
+
+    // [crispy] fix Kills stats
+    if (crispy_fixkills && singleplayer)
+	totalkills++;
+
     if (P_LookForPlayers (newmobj, true) )
 	P_SetMobjState (newmobj, newmobj->info->seestate);
 	

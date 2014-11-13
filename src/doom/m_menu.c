@@ -203,6 +203,7 @@ static void M_CrispyToggleColoredblood(int choice);
 static void M_CrispyToggleColoredblood2(int choice);
 static void M_CrispyToggleColoredhud(int choice);
 static void M_CrispyToggleCrosshair(int choice);
+static void M_CrispyToggleFixkills(int choice);
 static void M_CrispyToggleFlipcorpses(int choice);
 static void M_CrispyToggleFreeaim(int choice);
 static void M_CrispyToggleFreelook(int choice);
@@ -464,6 +465,7 @@ enum
     crispness_sep_tactical,
     crispness_freelook,
     crispness_automapstats,
+    crispness_fixkills,
     crispness_secretmessage,
     crispness_crosshair,
     crispness_centerweapon,
@@ -483,6 +485,7 @@ static menuitem_t CrispnessMenu[]=
     {-1,"",0,'\0'},
     {1,"",	M_CrispyToggleFreelook,'f'},
     {1,"",	M_CrispyToggleAutomapstats,'a'},
+    {1,"",	M_CrispyToggleFixkills,'f'},
     {1,"",	M_CrispyToggleSecretmessage,'s'},
     {1,"",	M_CrispyToggleCrosshair,'l'},
     {1,"",	M_CrispyToggleCenterweapon,'c'},
@@ -1305,7 +1308,7 @@ static void M_DrawCrispnessItem(int y, char *item, int feat, boolean cond)
     M_snprintf(crispy_menu_text, sizeof(crispy_menu_text),
                "%s%s: %s%s", cond ? crstr[CR_NONE] : crstr[CR_DARK], item,
                cond ? (feat ? crstr[CR_GREEN] : crstr[CR_DARK]) : crstr[CR_DARK],
-               cond && feat ? "On" : "Off");
+               feat ? "On" : "Off");
     M_WriteText(CrispnessDef.x, CrispnessDef.y + CRISPY_LINEHEIGHT * y, crispy_menu_text);
 }
 
@@ -1336,11 +1339,12 @@ static void M_DrawCrispness(void)
 
     M_DrawCrispnessItem(crispness_freelook, "Allow Free Look", crispy_freelook, true);
     M_DrawCrispnessItem(crispness_automapstats, "Show Level Stats in Automap", crispy_automapstats, true);
+    M_DrawCrispnessItem(crispness_fixkills, "Fix Kills Stats", crispy_fixkills, (singleplayer && !usergame));
     M_DrawCrispnessItem(crispness_secretmessage, "Show Revealed Secrets", crispy_secretmessage, true);
     M_DrawCrispnessItem(crispness_crosshair, "Show Laser Aiming", crispy_crosshair, true);
     M_DrawCrispnessItem(crispness_centerweapon, "Center Weapon when Firing", crispy_centerweapon, true);
 
-    M_DrawCrispnessGoto(crispness_goto2, "Next Page");
+    M_DrawCrispnessGoto(crispness_goto2, "Next Page >");
 
     V_ClearDPTranslation();
 }
@@ -1358,7 +1362,7 @@ static void M_DrawCrispness2(void)
     M_DrawCrispnessItem(crispness_overunder, "Walk over/under Monsters", crispy_overunder, singleplayer);
     M_DrawCrispnessItem(crispness_recoil, "Enable Weapon Recoil", crispy_recoil, singleplayer);
 
-    M_DrawCrispnessGoto(crispness_goto1, "Prev Page");
+    M_DrawCrispnessGoto(crispness_goto1, "< Prev Page");
 
     V_ClearDPTranslation();
 }
@@ -1656,6 +1660,18 @@ static void M_CrispyToggleCenterweapon(int choice)
     crispy_centerweapon = 1 - !!crispy_centerweapon;
 }
 
+static void M_CrispyToggleFixkills(int choice)
+{
+    if (!(singleplayer && !usergame))
+    {
+	S_StartSound(NULL,sfx_oof);
+	return;
+    }
+
+    choice = 0;
+    crispy_fixkills = 1 - !!crispy_fixkills;
+}
+
 static void M_CrispyToggleFreelook(int choice)
 {
     choice = 0;
@@ -1667,7 +1683,10 @@ static void M_CrispyToggleFreelook(int choice)
 static void M_CrispyToggleFreeaim(int choice)
 {
     if (!singleplayer)
+    {
+	S_StartSound(NULL,sfx_oof);
 	return;
+    }
 
     choice = 0;
     crispy_freeaim = 1 - !!crispy_freeaim;
@@ -1676,7 +1695,10 @@ static void M_CrispyToggleFreeaim(int choice)
 static void M_CrispyToggleJumping(int choice)
 {
     if (!singleplayer)
+    {
+	S_StartSound(NULL,sfx_oof);
 	return;
+    }
 
     choice = 0;
     crispy_jump = 1 - !!crispy_jump;
@@ -1685,7 +1707,10 @@ static void M_CrispyToggleJumping(int choice)
 static void M_CrispyToggleOverunder(int choice)
 {
     if (!singleplayer)
+    {
+	S_StartSound(NULL,sfx_oof);
 	return;
+    }
 
     choice = 0;
     crispy_overunder = 1 - !!crispy_overunder;
@@ -1694,7 +1719,10 @@ static void M_CrispyToggleOverunder(int choice)
 static void M_CrispyToggleRecoil(int choice)
 {
     if (!singleplayer)
+    {
+	S_StartSound(NULL,sfx_oof);
 	return;
+    }
 
     choice = 0;
     crispy_recoil = 1 - !!crispy_recoil;
@@ -1703,7 +1731,10 @@ static void M_CrispyToggleRecoil(int choice)
 static void M_CrispyToggleColoredblood(int choice)
 {
     if (!notchex)
+    {
+	S_StartSound(NULL,sfx_oof);
 	return;
+    }
 
     choice = 0;
     crispy_coloredblood = 1 - !!crispy_coloredblood;
@@ -1712,7 +1743,10 @@ static void M_CrispyToggleColoredblood(int choice)
 static void M_CrispyToggleColoredblood2(int choice)
 {
     if (!notchexnothacx)
+    {
+	S_StartSound(NULL,sfx_oof);
 	return;
+    }
 
     choice = 0;
     crispy_coloredblood2 = 1 - !!crispy_coloredblood2;
@@ -1721,7 +1755,10 @@ static void M_CrispyToggleColoredblood2(int choice)
 static void M_CrispyToggleFlipcorpses(int choice)
 {
     if (!notchex)
+    {
+	S_StartSound(NULL,sfx_oof);
 	return;
+    }
 
     choice = 0;
     crispy_flipcorpses = 1 - !!crispy_flipcorpses;

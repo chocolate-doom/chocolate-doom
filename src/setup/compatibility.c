@@ -31,6 +31,7 @@ int crispy_coloredblood = 0;
 int crispy_coloredblood2 = 0;
 int crispy_coloredhud = 0;
 int crispy_crosshair = 0;
+int crispy_fixkills = 0;
 int crispy_flipcorpses = 0;
 int crispy_freeaim = 0;
 int crispy_freelook = 0;
@@ -68,6 +69,8 @@ void CompatibilitySettings(void)
                                    &crispy_mouselook),
                    TXT_NewCheckBox("Show Level Stats in Automap",
                                    &crispy_automapstats),
+                   TXT_NewCheckBox("Fix Kills Stats",
+                                   &crispy_fixkills),
                    TXT_NewCheckBox("Show Revealed Secrets",
                                    &crispy_secretmessage),
                    TXT_NewCheckBox("Show Laser Aiming",
@@ -112,6 +115,7 @@ void BindCompatibilityVariables(void)
         M_BindVariable("crispy_coloredblood2",   &crispy_coloredblood2);
         M_BindVariable("crispy_coloredhud",      &crispy_coloredhud);
         M_BindVariable("crispy_crosshair",       &crispy_crosshair);
+        M_BindVariable("crispy_fixkills",        &crispy_fixkills);
         M_BindVariable("crispy_flipcorpses",     &crispy_flipcorpses);
         M_BindVariable("crispy_freeaim",         &crispy_freeaim);
         M_BindVariable("crispy_freelook",        &crispy_freelook);
