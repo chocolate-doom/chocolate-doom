@@ -1517,7 +1517,7 @@ A_PainShootSkull
     }
 		
     // [crispy] Lost Souls bleed Puffs
-    if (crispy_coloredblood2 && notchexnothacx)
+    if (crispy_coloredblood2)
 	newmobj->flags |= MF_NOBLOOD;
 
     // [crispy] fix Kills stats

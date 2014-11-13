@@ -1308,7 +1308,7 @@ static void M_DrawCrispnessItem(int y, char *item, int feat, boolean cond)
     M_snprintf(crispy_menu_text, sizeof(crispy_menu_text),
                "%s%s: %s%s", cond ? crstr[CR_NONE] : crstr[CR_DARK], item,
                cond ? (feat ? crstr[CR_GREEN] : crstr[CR_DARK]) : crstr[CR_DARK],
-               feat ? "On" : "Off");
+               cond && feat ? "On" : "Off");
     M_WriteText(CrispnessDef.x, CrispnessDef.y + CRISPY_LINEHEIGHT * y, crispy_menu_text);
 }
 
@@ -1332,7 +1332,7 @@ static void M_DrawCrispness(void)
     M_DrawCrispnessItem(crispness_coloredhud, "Colorize Status Bar and Texts", crispy_coloredhud, true);
     M_DrawCrispnessItem(crispness_translucency, "Enable Translucency", crispy_translucency, true);
     M_DrawCrispnessItem(crispness_coloredblood, "Enable Colored Blood", crispy_coloredblood, true);
-    M_DrawCrispnessItem(crispness_coloredblood2, "Fix Spectre and Lost Soul Blood", crispy_coloredblood2, notchexnothacx);
+    M_DrawCrispnessItem(crispness_coloredblood2, "Fix Spectre and Lost Soul Blood", crispy_coloredblood2, true);
     M_DrawCrispnessItem(crispness_flipcorpses, "Randomly Mirrored Corpses", crispy_flipcorpses, true);
 
     M_DrawCrispnessSeparator(crispness_sep_tactical, "Tactical");
@@ -1736,12 +1736,6 @@ static void M_CrispyToggleColoredblood(int choice)
 
 static void M_CrispyToggleColoredblood2(int choice)
 {
-    if (!notchexnothacx)
-    {
-	S_StartSound(NULL,sfx_oof);
-	return;
-    }
-
     choice = 0;
     crispy_coloredblood2 = 1 - !!crispy_coloredblood2;
 }
