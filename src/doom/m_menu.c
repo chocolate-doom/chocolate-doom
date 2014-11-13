@@ -203,6 +203,7 @@ static void M_CrispyToggleColoredblood(int choice);
 static void M_CrispyToggleColoredblood2(int choice);
 static void M_CrispyToggleColoredhud(int choice);
 static void M_CrispyToggleCrosshair(int choice);
+static void M_CrispyToggleFlipcorpses(int choice);
 static void M_CrispyToggleFreeaim(int choice);
 static void M_CrispyToggleFreelook(int choice);
 static void M_CrispyToggleJumping(int choice);
@@ -459,6 +460,7 @@ enum
     crispness_translucency,
     crispness_coloredblood,
     crispness_coloredblood2,
+    crispness_flipcorpses,
     crispness_sep_tactical,
     crispness_freelook,
     crispness_automapstats,
@@ -477,6 +479,7 @@ static menuitem_t CrispnessMenu[]=
     {1,"",	M_CrispyToggleTranslucency,'t'},
     {1,"",	M_CrispyToggleColoredblood,'e'},
     {1,"",	M_CrispyToggleColoredblood2,'f'},
+    {1,"",	M_CrispyToggleFlipcorpses,'r'},
     {-1,"",0,'\0'},
     {1,"",	M_CrispyToggleFreelook,'f'},
     {1,"",	M_CrispyToggleAutomapstats,'a'},
@@ -1327,6 +1330,7 @@ static void M_DrawCrispness(void)
     M_DrawCrispnessItem(crispness_translucency, "Enable Translucency", crispy_translucency, true);
     M_DrawCrispnessItem(crispness_coloredblood, "Enable Colored Blood", crispy_coloredblood, notchex);
     M_DrawCrispnessItem(crispness_coloredblood2, "Fix Spectre and Lost Soul Blood", crispy_coloredblood2, notchexnothacx);
+    M_DrawCrispnessItem(crispness_flipcorpses, "Randomly Mirrored Corpses", crispy_flipcorpses, notchex);
 
     M_DrawCrispnessSeparator(crispness_sep_tactical, "Tactical");
 
@@ -1712,6 +1716,15 @@ static void M_CrispyToggleColoredblood2(int choice)
 
     choice = 0;
     crispy_coloredblood2 = 1 - !!crispy_coloredblood2;
+}
+
+static void M_CrispyToggleFlipcorpses(int choice)
+{
+    if (!notchex)
+	return;
+
+    choice = 0;
+    crispy_flipcorpses = 1 - !!crispy_flipcorpses;
 }
 
 void M_ChangeDetail(int choice)

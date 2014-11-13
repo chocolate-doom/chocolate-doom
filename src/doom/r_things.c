@@ -598,7 +598,7 @@ void R_ProjectSprite (mobj_t* thing)
         thing->flags & MF_CORPSE &&
         thing->health & 1)
     {
-        flip = true;
+        flip = !!crispy_flipcorpses;
     }
 
     if (flip)
@@ -645,7 +645,7 @@ void R_ProjectSprite (mobj_t* thing)
     }	
 
     // [crispy] colored blood
-    if (crispy_coloredblood && notchex &&
+    if (crispy_coloredblood &&
         thing->type == MT_BLOOD && thing->target)
     {
 	// [crispy] Thorn Things in Hacx bleed green blood
