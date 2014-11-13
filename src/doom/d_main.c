@@ -147,8 +147,6 @@ int             crispy_secretmessage = 0;
 int             crispy_translucency = 0;
 
 // [crispy] in-game switches
-boolean         crispy_checkblood = false;
-boolean         crispy_checkblood2 = false;
 boolean         crispy_flashinghom = false;
 boolean         crispy_fliplevels = false;
 boolean         crispy_havemap33 = false;
@@ -1764,11 +1762,6 @@ void D_DoomMain (void)
             W_CheckNumForName("dsdbcls")  != -1    // [crispy] closing sound
         )
     );
-
-    // [crispy] disable any colored blood in Chex Quest,
-    // disable modifying Stealth Buzzer and D-Man blood in Hacx
-    crispy_checkblood = (gamemission != pack_chex);
-    crispy_checkblood2 = (gamemission != pack_chex && gamemission != pack_hacx);
 
     // [crispy] check for presence of MAP33
     crispy_havemap33 = (W_CheckNumForName("MAP33") != -1);

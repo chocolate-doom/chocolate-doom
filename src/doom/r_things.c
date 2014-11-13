@@ -645,7 +645,7 @@ void R_ProjectSprite (mobj_t* thing)
     }	
 
     // [crispy] colored blood
-    if (crispy_coloredblood && crispy_checkblood &&
+    if (crispy_coloredblood && notchex &&
         thing->type == MT_BLOOD && thing->target)
     {
 	// [crispy] Thorn Things in Hacx bleed green blood

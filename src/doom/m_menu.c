@@ -1325,8 +1325,8 @@ static void M_DrawCrispness(void)
 
     M_DrawCrispnessItem(crispness_coloredhud, "Colorize Status Bar and Texts", crispy_coloredhud, true);
     M_DrawCrispnessItem(crispness_translucency, "Enable Translucency", crispy_translucency, true);
-    M_DrawCrispnessItem(crispness_coloredblood, "Enable Colored Blood", crispy_coloredblood, crispy_checkblood);
-    M_DrawCrispnessItem(crispness_coloredblood2, "Fix Spectre and Lost Soul Blood", crispy_coloredblood2, crispy_checkblood2);
+    M_DrawCrispnessItem(crispness_coloredblood, "Enable Colored Blood", crispy_coloredblood, notchex);
+    M_DrawCrispnessItem(crispness_coloredblood2, "Fix Spectre and Lost Soul Blood", crispy_coloredblood2, notchexnothacx);
 
     M_DrawCrispnessSeparator(crispness_sep_tactical, "Tactical");
 
@@ -1698,7 +1698,7 @@ static void M_CrispyToggleRecoil(int choice)
 
 static void M_CrispyToggleColoredblood(int choice)
 {
-    if (!crispy_checkblood)
+    if (!notchex)
 	return;
 
     choice = 0;
@@ -1707,7 +1707,7 @@ static void M_CrispyToggleColoredblood(int choice)
 
 static void M_CrispyToggleColoredblood2(int choice)
 {
-    if (!crispy_checkblood2)
+    if (!notchexnothacx)
 	return;
 
     choice = 0;

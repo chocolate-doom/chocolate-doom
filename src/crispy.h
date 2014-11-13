@@ -26,9 +26,9 @@
 #define CRISPY_HUD 12
 
 #define singleplayer (!demorecording && !demoplayback && !netgame)
+#define notchex (gamemission != pack_chex)
+#define notchexnothacx (gamemission != pack_chex && gamemission != pack_hacx)
 
-extern boolean crispy_checkblood;
-extern boolean crispy_checkblood2;
 extern boolean crispy_cleanscreenshot;
 extern boolean crispy_flashinghom;
 extern boolean crispy_fliplevels;
