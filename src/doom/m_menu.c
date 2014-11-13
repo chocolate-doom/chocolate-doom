@@ -1331,15 +1331,15 @@ static void M_DrawCrispness(void)
 
     M_DrawCrispnessItem(crispness_coloredhud, "Colorize Status Bar and Texts", crispy_coloredhud, true);
     M_DrawCrispnessItem(crispness_translucency, "Enable Translucency", crispy_translucency, true);
-    M_DrawCrispnessItem(crispness_coloredblood, "Enable Colored Blood", crispy_coloredblood, notchex);
+    M_DrawCrispnessItem(crispness_coloredblood, "Enable Colored Blood", crispy_coloredblood, true);
     M_DrawCrispnessItem(crispness_coloredblood2, "Fix Spectre and Lost Soul Blood", crispy_coloredblood2, notchexnothacx);
-    M_DrawCrispnessItem(crispness_flipcorpses, "Randomly Mirrored Corpses", crispy_flipcorpses, notchex);
+    M_DrawCrispnessItem(crispness_flipcorpses, "Randomly Mirrored Corpses", crispy_flipcorpses, true);
 
     M_DrawCrispnessSeparator(crispness_sep_tactical, "Tactical");
 
     M_DrawCrispnessItem(crispness_freelook, "Allow Free Look", crispy_freelook, true);
     M_DrawCrispnessItem(crispness_automapstats, "Show Level Stats in Automap", crispy_automapstats, true);
-    M_DrawCrispnessItem(crispness_fixkills, "Fix Kills Stats", crispy_fixkills, (singleplayer && !usergame));
+    M_DrawCrispnessItem(crispness_fixkills, "Fix Kills Stats", crispy_fixkills, singleplayer);
     M_DrawCrispnessItem(crispness_secretmessage, "Show Revealed Secrets", crispy_secretmessage, true);
     M_DrawCrispnessItem(crispness_crosshair, "Show Laser Aiming", crispy_crosshair, true);
     M_DrawCrispnessItem(crispness_centerweapon, "Center Weapon when Firing", crispy_centerweapon, true);
@@ -1662,7 +1662,7 @@ static void M_CrispyToggleCenterweapon(int choice)
 
 static void M_CrispyToggleFixkills(int choice)
 {
-    if (!(singleplayer && !usergame))
+    if (!singleplayer)
     {
 	S_StartSound(NULL,sfx_oof);
 	return;
@@ -1730,12 +1730,6 @@ static void M_CrispyToggleRecoil(int choice)
 
 static void M_CrispyToggleColoredblood(int choice)
 {
-    if (!notchex)
-    {
-	S_StartSound(NULL,sfx_oof);
-	return;
-    }
-
     choice = 0;
     crispy_coloredblood = 1 - !!crispy_coloredblood;
 }
@@ -1754,12 +1748,6 @@ static void M_CrispyToggleColoredblood2(int choice)
 
 static void M_CrispyToggleFlipcorpses(int choice)
 {
-    if (!notchex)
-    {
-	S_StartSound(NULL,sfx_oof);
-	return;
-    }
-
     choice = 0;
     crispy_flipcorpses = 1 - !!crispy_flipcorpses;
 }
