@@ -217,6 +217,7 @@ void M_SizeDisplay(int choice);
 void M_StartGame(int choice);
 static void M_Mouse(int choice);
 static void M_Crispness(int choice);
+static void M_Crispness2(int choice);
 void M_Sound(int choice);
 
 void M_FinishReadThis(int choice);
@@ -234,6 +235,7 @@ void M_DrawEpisode(void);
 void M_DrawOptions(void);
 static void M_DrawMouse(void);
 static void M_DrawCrispness(void);
+static void M_DrawCrispness2(void);
 void M_DrawSound(void);
 void M_DrawLoad(void);
 void M_DrawSave(void);
@@ -463,11 +465,8 @@ enum
     crispness_secretmessage,
     crispness_crosshair,
     crispness_centerweapon,
-    crispness_sep_physical,
-    crispness_jumping,
-    crispness_freeaim,
-    crispness_overunder,
-    crispness_recoil,
+    crispness_sep_goto2,
+    crispness_goto2,
     crispness_end
 } crispness_e;
 
@@ -485,10 +484,7 @@ static menuitem_t CrispnessMenu[]=
     {1,"",	M_CrispyToggleCrosshair,'l'},
     {1,"",	M_CrispyToggleCenterweapon,'c'},
     {-1,"",0,'\0'},
-    {1,"",	M_CrispyToggleJumping,'j'},
-    {1,"",	M_CrispyToggleFreeaim,'v'},
-    {1,"",	M_CrispyToggleOverunder,'o'},
-    {1,"",	M_CrispyToggleRecoil,'r'},
+    {1,"",	M_Crispness2,'g'},
 };
 
 static menu_t  CrispnessDef =
@@ -497,6 +493,39 @@ static menu_t  CrispnessDef =
     &OptionsDef,
     CrispnessMenu,
     M_DrawCrispness,
+    48,36,
+    1
+};
+
+enum
+{
+    crispness_sep_physical,
+    crispness_jumping,
+    crispness_freeaim,
+    crispness_overunder,
+    crispness_recoil,
+    crispness_sep_goto1,
+    crispness_goto1,
+    crispness2_end
+} crispness2_e;
+
+static menuitem_t Crispness2Menu[]=
+{
+    {-1,"",0,'\0'},
+    {1,"",	M_CrispyToggleJumping,'j'},
+    {1,"",	M_CrispyToggleFreeaim,'v'},
+    {1,"",	M_CrispyToggleOverunder,'o'},
+    {1,"",	M_CrispyToggleRecoil,'r'},
+    {-1,"",0,'\0'},
+    {1,"",	M_Crispness,'g'},
+};
+
+static menu_t  Crispness2Def =
+{
+    crispness2_end,
+    &CrispnessDef,
+    Crispness2Menu,
+    M_DrawCrispness2,
     48,36,
     1
 };
@@ -1277,11 +1306,20 @@ static void M_DrawCrispnessItem(int y, char *item, int feat, boolean cond)
     M_WriteText(CrispnessDef.x, CrispnessDef.y + CRISPY_LINEHEIGHT * y, crispy_menu_text);
 }
 
+static void M_DrawCrispnessGoto(int y, char *item)
+{
+    char crispy_menu_text[48];
+
+    M_snprintf(crispy_menu_text, sizeof(crispy_menu_text),
+               "%s%s", crstr[CR_GOLD], item);
+    M_WriteText(CrispnessDef.x, CrispnessDef.y + CRISPY_LINEHEIGHT * y, crispy_menu_text);
+}
+
 static void M_DrawCrispness(void)
 {
     M_DrawCrispnessBackground();
 
-    M_DrawCrispnessHeader("Crispness");
+    M_DrawCrispnessHeader("Crispness 1/2");
 
     M_DrawCrispnessSeparator(crispness_sep_visual, "Visual");
 
@@ -1298,12 +1336,25 @@ static void M_DrawCrispness(void)
     M_DrawCrispnessItem(crispness_crosshair, "Show Laser Aiming", crispy_crosshair, true);
     M_DrawCrispnessItem(crispness_centerweapon, "Center Weapon when Firing", crispy_centerweapon, true);
 
+    M_DrawCrispnessGoto(crispness_goto2, "Next Page");
+
+    V_ClearDPTranslation();
+}
+
+static void M_DrawCrispness2(void)
+{
+    M_DrawCrispnessBackground();
+
+    M_DrawCrispnessHeader("Crispness 2/2");
+
     M_DrawCrispnessSeparator(crispness_sep_physical, "Physical");
 
     M_DrawCrispnessItem(crispness_jumping, "Allow Jumping", crispy_jump, singleplayer);
     M_DrawCrispnessItem(crispness_freeaim, "Allow Vertical Aiming", crispy_freeaim, singleplayer);
     M_DrawCrispnessItem(crispness_overunder, "Walk over/under Monsters", crispy_overunder, singleplayer);
     M_DrawCrispnessItem(crispness_recoil, "Enable Weapon Recoil", crispy_recoil, singleplayer);
+
+    M_DrawCrispnessGoto(crispness_goto1, "Prev Page");
 
     V_ClearDPTranslation();
 }
@@ -1334,6 +1385,11 @@ static void M_Mouse(int choice)
 static void M_Crispness(int choice)
 {
     M_SetupNextMenu(&CrispnessDef);
+}
+
+static void M_Crispness2(int choice)
+{
+    M_SetupNextMenu(&Crispness2Def);
 }
 
 
@@ -2657,7 +2713,7 @@ void M_Drawer (void)
 
     
     // DRAW SKULL
-    if (currentMenu == &CrispnessDef)
+    if (currentMenu == &CrispnessDef || currentMenu == &Crispness2Def)
     {
 	char item[4];
 	M_snprintf(item, sizeof(item), "%s>", whichSkull ? crstr[CR_NONE] : crstr[CR_DARK]);
