@@ -825,7 +825,7 @@ void P_SpawnMapThing (mapthing_t* mthing)
 	&& ( i == MT_SKULL
 	     || (mobjinfo[i].flags & MF_COUNTKILL)) )
     {
-	// [crispy] fix Kills stats
+	// [crispy] preserve keens in -nomonsters games
 	if (!(crispy_fixkills && singleplayer && i == MT_KEEN))
 	return;
     }
@@ -847,7 +847,8 @@ void P_SpawnMapThing (mapthing_t* mthing)
     {
 	if (i == MT_SKULL)
 	    mobj->flags |= MF_COUNTKILL;
-	if (i == MT_KEEN)
+	// [crispy] don't count keens in -nomonsters games
+	if (i == MT_KEEN && nomonsters)
 	    mobj->flags &= ~MF_COUNTKILL;
     }
 
