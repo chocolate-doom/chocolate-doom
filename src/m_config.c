@@ -1732,6 +1732,22 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_INT(crispy_centerweapon),
+
+    //!
+    // @game doom
+    //
+    // Enable Colored Blood.
+    //
+
+    CONFIG_VARIABLE_INT(crispy_coloredblood),
+
+    //!
+    // @game doom
+    //
+    // Fix Spectre and Lost Soul Blood.
+    //
+
+    CONFIG_VARIABLE_INT(crispy_coloredblood2),
 };
 
 static default_collection_t extra_defaults =

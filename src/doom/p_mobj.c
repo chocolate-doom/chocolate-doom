@@ -847,7 +847,7 @@ void P_SpawnMapThing (mapthing_t* mthing)
 	mobj->flags |= MF_AMBUSH;
 
     // [crispy] Lost Souls bleed Puffs
-    if ((crispy_coloredblood & (1 << 3)) && i == MT_SKULL)
+    if ((crispy_coloredblood2 && crispy_checkblood2) && i == MT_SKULL)
         mobj->flags |= MF_NOBLOOD;
 }
 
@@ -908,7 +908,7 @@ P_SpawnBlood
     th->target = target;
 
     // [crispy] Spectres bleed spectre blood
-    if ((crispy_coloredblood & (1 << 4)) && target->flags & MF_SHADOW)
+    if ((crispy_coloredblood2 && crispy_checkblood2) && target->flags & MF_SHADOW)
 	th->flags |= MF_SHADOW;
 
     if (th->tics < 1)

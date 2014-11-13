@@ -199,6 +199,8 @@ static void M_MouseInvert(int choice);
 static void M_MouseLook(int choice);
 static void M_CrispyToggleAutomapstats(int choice);
 static void M_CrispyToggleCenterweapon(int choice);
+static void M_CrispyToggleColoredblood(int choice);
+static void M_CrispyToggleColoredblood2(int choice);
 static void M_CrispyToggleColoredhud(int choice);
 static void M_CrispyToggleCrosshair(int choice);
 static void M_CrispyToggleFreeaim(int choice);
@@ -453,6 +455,8 @@ enum
     crispness_sep_visual,
     crispness_coloredhud,
     crispness_translucency,
+    crispness_coloredblood,
+    crispness_coloredblood2,
     crispness_sep_tactical,
     crispness_freelook,
     crispness_automapstats,
@@ -472,6 +476,8 @@ static menuitem_t CrispnessMenu[]=
     {-1,"",0,'\0'},
     {1,"",	M_CrispyToggleColoredhud,'c'},
     {1,"",	M_CrispyToggleTranslucency,'t'},
+    {1,"",	M_CrispyToggleColoredblood,'e'},
+    {1,"",	M_CrispyToggleColoredblood2,'f'},
     {-1,"",0,'\0'},
     {1,"",	M_CrispyToggleFreelook,'f'},
     {1,"",	M_CrispyToggleAutomapstats,'a'},
@@ -1279,8 +1285,10 @@ static void M_DrawCrispness(void)
 
     M_DrawCrispnessSeparator(crispness_sep_visual, "Visual");
 
-    M_DrawCrispnessItem(crispness_coloredhud, "Colorize status bar and texts", crispy_coloredhud, true);
-    M_DrawCrispnessItem(crispness_translucency, "Enable translucency", crispy_translucency, true);
+    M_DrawCrispnessItem(crispness_coloredhud, "Colorize Status Bar and Texts", crispy_coloredhud, true);
+    M_DrawCrispnessItem(crispness_translucency, "Enable Translucency", crispy_translucency, true);
+    M_DrawCrispnessItem(crispness_coloredblood, "Enable Colored Blood", crispy_coloredblood, crispy_checkblood);
+    M_DrawCrispnessItem(crispness_coloredblood2, "Fix Spectre and Lost Soul Blood", crispy_coloredblood2, crispy_checkblood2);
 
     M_DrawCrispnessSeparator(crispness_sep_tactical, "Tactical");
 
@@ -1632,6 +1640,23 @@ static void M_CrispyToggleRecoil(int choice)
     crispy_recoil = 1 - !!crispy_recoil;
 }
 
+static void M_CrispyToggleColoredblood(int choice)
+{
+    if (!crispy_checkblood)
+	return;
+
+    choice = 0;
+    crispy_coloredblood = 1 - !!crispy_coloredblood;
+}
+
+static void M_CrispyToggleColoredblood2(int choice)
+{
+    if (!crispy_checkblood2)
+	return;
+
+    choice = 0;
+    crispy_coloredblood2 = 1 - !!crispy_coloredblood2;
+}
 
 void M_ChangeDetail(int choice)
 {

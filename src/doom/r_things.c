@@ -644,22 +644,32 @@ void R_ProjectSprite (mobj_t* thing)
 	vis->colormap = spritelights[index];
     }	
 
-    // [crispy] Cacodemons bleed blue blood
-    // Barons of Hell and Hell Knights bleed green blood
-    if (thing->type == MT_BLOOD && thing->target)
+    // [crispy] colored blood
+    if (crispy_coloredblood && crispy_checkblood &&
+        thing->type == MT_BLOOD && thing->target)
     {
-	if ((crispy_coloredblood & 1) && thing->target->type == MT_BRUISER)
-	    vis->translation = cr[CR_GREEN];
-	else
-	if ((crispy_coloredblood & (1 << 1)) && thing->target->type == MT_KNIGHT)
-	    vis->translation = cr[CR_GREEN];
-	else
-	if ((crispy_coloredblood & (1 << 2)) && thing->target->type == MT_HEAD)
-	    vis->translation = cr[CR_BLUE];
-	else
 	// [crispy] Thorn Things in Hacx bleed green blood
-	if ((crispy_coloredblood & (1 << 5)) && thing->target->type == MT_BABY)
-	    vis->translation = cr[CR_GREEN];
+	if (gamemission == pack_hacx)
+	{
+	    if (thing->target->type == MT_BABY)
+	    {
+		vis->translation = cr[CR_GREEN];
+	    }
+	}
+	else
+	{
+	    // [crispy] Barons of Hell and Hell Knights bleed green blood
+	    if (thing->target->type == MT_BRUISER || thing->target->type == MT_KNIGHT)
+	    {
+		vis->translation = cr[CR_GREEN];
+	    }
+	    else
+	    // [crispy] Cacodemons bleed blue blood
+	    if (thing->target->type == MT_HEAD)
+	    {
+		vis->translation = cr[CR_BLUE];
+	    }
+	}
     }
 }
 

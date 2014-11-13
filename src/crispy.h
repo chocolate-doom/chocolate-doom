@@ -27,8 +27,9 @@
 
 #define singleplayer (!demorecording && !demoplayback && !netgame)
 
+extern boolean crispy_checkblood;
+extern boolean crispy_checkblood2;
 extern boolean crispy_cleanscreenshot;
-extern uint8_t crispy_coloredblood;
 extern boolean crispy_flashinghom;
 extern boolean crispy_fliplevels;
 extern boolean crispy_havemap33;
@@ -37,6 +38,8 @@ extern boolean crispy_nwtmerge;
 
 extern int crispy_automapstats;
 extern int crispy_centerweapon;
+extern int crispy_coloredblood;
+extern int crispy_coloredblood2;
 extern int crispy_coloredhud;
 extern int crispy_crosshair;
 extern int crispy_freeaim;

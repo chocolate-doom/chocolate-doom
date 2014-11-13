@@ -133,6 +133,8 @@ int             show_endoom = 0; // [crispy] disable
 // [crispy] "crispness" config variables
 int             crispy_automapstats = 0;
 int             crispy_centerweapon = 0;
+int             crispy_coloredblood = 0;
+int             crispy_coloredblood2 = 0;
 int             crispy_coloredhud = 0;
 int             crispy_crosshair = 0;
 int             crispy_freeaim = 0;
@@ -145,7 +147,8 @@ int             crispy_secretmessage = 0;
 int             crispy_translucency = 0;
 
 // [crispy] in-game switches
-uint8_t         crispy_coloredblood = 0;
+boolean         crispy_checkblood = false;
+boolean         crispy_checkblood2 = false;
 boolean         crispy_flashinghom = false;
 boolean         crispy_fliplevels = false;
 boolean         crispy_havemap33 = false;
@@ -441,6 +444,8 @@ void D_BindVariables(void)
     // [crispy] bind "crispness" config variables
     M_BindVariable("crispy_automapstats",    &crispy_automapstats);
     M_BindVariable("crispy_centerweapon",    &crispy_centerweapon);
+    M_BindVariable("crispy_coloredblood",    &crispy_coloredblood);
+    M_BindVariable("crispy_coloredblood2",   &crispy_coloredblood2);
     M_BindVariable("crispy_coloredhud",      &crispy_coloredhud);
     M_BindVariable("crispy_crosshair",       &crispy_crosshair);
     M_BindVariable("crispy_freeaim",         &crispy_freeaim);
@@ -1760,39 +1765,13 @@ void D_DoomMain (void)
         )
     );
 
+    // [crispy] disable any colored blood in Chex Quest,
+    // disable modifying Stealth Buzzer and D-Man blood in Hacx
+    crispy_checkblood = (gamemission != pack_chex);
+    crispy_checkblood2 = (gamemission != pack_chex && gamemission != pack_hacx);
+
     // [crispy] check for presence of MAP33
     crispy_havemap33 = (W_CheckNumForName("MAP33") != -1);
-
-    // [crispy] check for colored blood
-    {
-	int i;
-	char *iwadbasename = M_BaseName(iwadfile);
-
-	// [crispy] check for monster sprite replacements
-	// (first sprites of monster death frames)
-	i = W_CheckNumForName("bossi0");  // [crispy] Baron of Hell
-	crispy_coloredblood |= (i >= 0 && !strcmp(lumpinfo[i].wad_file->path, iwadbasename));
-
-	i = W_CheckNumForName("bos2i0"); // [crispy] Hell Knight
-	crispy_coloredblood |= (i >= 0 && !strcmp(lumpinfo[i].wad_file->path, iwadbasename)) << 1;
-
-	i = W_CheckNumForName("headg0"); // [crispy] Cacodemon
-	crispy_coloredblood |= (i >= 0 && !strcmp(lumpinfo[i].wad_file->path, iwadbasename)) << 2;
-
-	i = W_CheckNumForName("skulg0"); // [crispy] Lost Soul
-	crispy_coloredblood |= (i >= 0 && !strcmp(lumpinfo[i].wad_file->path, iwadbasename)) << 3;
-
-	i = W_CheckNumForName("sargi0");  // [crispy] Demon (Spectre)
-	crispy_coloredblood |= (i >= 0 && !strcmp(lumpinfo[i].wad_file->path, iwadbasename)) << 4;
-
-	// [crispy] no colored blood in Chex Quest and Hacx
-	// except for the Thorn Things in Hacx which bleed green blood
-	if (gamemission == pack_chex || gamemission == pack_hacx)
-	{
-	    i = W_CheckNumForName("bspij0");  // [crispy] Ararchnotron (Thorn Thing)
-	    crispy_coloredblood = 0 | ((i >= 0 && !strcmp(lumpinfo[i].wad_file->path, iwadbasename)) << 5);
-	}
-    }
 
     // [crispy] check for NWT-style merging
     crispy_nwtmerge =
