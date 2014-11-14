@@ -717,7 +717,7 @@ static void R_DrawLSprite (void)
     memset(vis, 0, sizeof(*vis)); // [crispy] set all fields to NULL, except ...
     vis->patch = lump - firstspritelump; // [crispy] not a sprite patch
     vis->colormap = fixedcolormap ? fixedcolormap : colormaps; // [crispy] always full brightness
-    vis->mobjflags |= MF_TRANSLUCENT;
+//  vis->mobjflags |= MF_TRANSLUCENT;
     vis->xiscale = FixedDiv (FRACUNIT, xscale);
     vis->texturemid = laserspot->z - viewz;
     vis->scale = xscale<<(detailshift && !hires);
