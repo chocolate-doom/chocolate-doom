@@ -2750,6 +2750,7 @@ void M_Drawer (void)
 	char item[4];
 	M_snprintf(item, sizeof(item), "%s>", whichSkull ? crstr[CR_NONE] : crstr[CR_DARK]);
 	M_WriteText(CrispnessDef.x - 8, CrispnessDef.y + CRISPY_LINEHEIGHT * itemOn, item);
+	V_ClearDPTranslation();
     }
     else
     V_DrawPatchDirect(x + SKULLXOFF, currentMenu->y - 5 + itemOn*LINEHEIGHT,
