@@ -464,11 +464,11 @@ enum
     crispness_flipcorpses,
     crispness_sep_tactical,
     crispness_freelook,
-    crispness_automapstats,
-    crispness_fixkills,
-    crispness_secretmessage,
     crispness_crosshair,
     crispness_centerweapon,
+    crispness_secretmessage,
+    crispness_automapstats,
+    crispness_fixkills,
     crispness_sep_goto2,
     crispness_goto2,
     crispness_end
@@ -484,11 +484,11 @@ static menuitem_t CrispnessMenu[]=
     {1,"",	M_CrispyToggleFlipcorpses,'r'},
     {-1,"",0,'\0'},
     {1,"",	M_CrispyToggleFreelook,'f'},
-    {1,"",	M_CrispyToggleAutomapstats,'a'},
-    {1,"",	M_CrispyToggleFixkills,'f'},
-    {1,"",	M_CrispyToggleSecretmessage,'s'},
     {1,"",	M_CrispyToggleCrosshair,'l'},
     {1,"",	M_CrispyToggleCenterweapon,'c'},
+    {1,"",	M_CrispyToggleSecretmessage,'s'},
+    {1,"",	M_CrispyToggleAutomapstats,'a'},
+    {1,"",	M_CrispyToggleFixkills,'f'},
     {-1,"",0,'\0'},
     {1,"",	M_Crispness2,'g'},
 };
@@ -1338,11 +1338,11 @@ static void M_DrawCrispness(void)
     M_DrawCrispnessSeparator(crispness_sep_tactical, "Tactical");
 
     M_DrawCrispnessItem(crispness_freelook, "Allow Free Look", crispy_freelook, true);
-    M_DrawCrispnessItem(crispness_automapstats, "Show Level Stats in Automap", crispy_automapstats, true);
-    M_DrawCrispnessItem(crispness_fixkills, "Fix Kills Stats", crispy_fixkills, singleplayer);
-    M_DrawCrispnessItem(crispness_secretmessage, "Show Revealed Secrets", crispy_secretmessage, true);
     M_DrawCrispnessItem(crispness_crosshair, "Show Laser Aiming", crispy_crosshair, true);
     M_DrawCrispnessItem(crispness_centerweapon, "Center Weapon when Firing", crispy_centerweapon, true);
+    M_DrawCrispnessItem(crispness_secretmessage, "Show Revealed Secrets", crispy_secretmessage, true);
+    M_DrawCrispnessItem(crispness_automapstats, "Show Level Stats in Automap", crispy_automapstats, true);
+    M_DrawCrispnessItem(crispness_fixkills, "Fix Kills Stats", crispy_fixkills, singleplayer);
 
     M_DrawCrispnessGoto(crispness_goto2, "Next Page >");
 
