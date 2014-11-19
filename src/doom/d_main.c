@@ -342,6 +342,7 @@ void D_Display (void)
     } while (!done);
 }
 
+/*
 static void CN_QSScreen (int qsdelay)
 {
     int qs_starttime, qs_endtime, bar_width, bar_x, bar_y;
@@ -373,7 +374,7 @@ static void CN_QSScreen (int qsdelay)
 
     return;
 }
-
+*/
 //
 // Add configuration file variable bindings.
 //
@@ -507,17 +508,19 @@ void D_DoomLoop (void)
 	if (i)
 	    qsdelay = atoi(myargv[i+1]);
 
-	if (qsdelay)
+	/*if (qsdelay)
 	    CN_QSScreen(qsdelay);
+    */
     }
+    
     TryRunTics();
-
+    
     I_SetWindowTitle(gamedescription);
     I_GraphicsCheckCommandLine();
     I_SetGrabMouseCallback(D_GrabMouseCallback);
     I_InitGraphics();
     I_EnableLoadingDisk();
-
+  
     V_RestoreBuffer();
     R_ExecuteSetViewSize();
 

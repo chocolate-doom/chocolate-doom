@@ -39,7 +39,7 @@
 ticcmd_t *netcmds;
 
 extern void H2_DoAdvanceDemo(void);
-extern void H2_ProcessEvents(void);
+extern void D_ProcessEvents(void);
 extern void G_BuildTiccmd(ticcmd_t *cmd, int maketic);
 extern boolean G_CheckDemoStatus(void);
 
@@ -96,7 +96,7 @@ static void RunTic(ticcmd_t *cmds, boolean *ingame)
 }
 
 static loop_interface_t hexen_loop_interface = {
-    H2_ProcessEvents,
+    D_ProcessEvents,
     G_BuildTiccmd,
     RunTic,
     MN_Ticker

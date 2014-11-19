@@ -47,6 +47,8 @@
 #include "v_video.h"
 #include "w_wad.h"
 #include "z_zone.h"
+#include "doom/d_main.h"
+#include "m_controls.h"
 
 extern int cn_typematic_delay;
 extern int cn_typematic_rate;
@@ -2013,6 +2015,7 @@ void I_InitGraphics(void)
     SDL_Event dummy;
     byte *doompal;
     char *env;
+    int p; // try ghostydeath's patch
 
     // [crispy] disable special lock-key behavior
     putenv("SDL_DISABLE_LOCK_KEYS=1");
@@ -2115,6 +2118,15 @@ void I_InitGraphics(void)
 
     UpdateFocus();
     UpdateGrab();
+
+    // Update network and delay the game slightly to create re-orientate
+    // yourself on the first tic.
+    for (p = 0; p < 10; p++)
+    {
+        SDL_Delay(cn_quickstart_delay);	// CRT changing screen modes?
+        I_GetEvent();	// Handle events
+        D_ProcessEvents();	// Process them
+    }
 
     // On some systems, it takes a second or so for the screen to settle
     // after changing modes.  We include the option to add a delay when
