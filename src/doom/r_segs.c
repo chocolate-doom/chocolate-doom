@@ -572,9 +572,14 @@ R_StoreWallRange
     ds_p->curline = curline;
     rw_stopx = stop+1;
     
+// [crispy] disable WiggleFix for the time being
+// more crashes occurred in complex levels and
+// I cannot wrap my head around where the overflow happens
+#if 0
     // [crispy] WiggleFix: add this line, in r_segs.c:R_StoreWallRange,
     // right before calls to R_ScaleFromGlobalAngle:
     R_FixWiggle(frontsector);
+#endif
 
     // calculate scale at both ends and step
     ds_p->scale1 = rw_scale = 
