@@ -1108,16 +1108,33 @@ void A_MinotaurFade2(mobj_t * actor)
 
 void A_MinotaurLook(mobj_t * actor);
 
+// Check the age of the minotaur and stomp it after MAULATORTICS of time
+// have passed. Returns false if killed.
+static boolean CheckMinotaurAge(mobj_t *mo)
+{
+    unsigned int starttime;
+
+    // The start time is stored in the mobj_t structure, but it is stored
+    // in little endian format. For Vanilla savegame compatibility we must
+    // swap it to the native endianness.
+    memcpy(&starttime, mo->args, sizeof(unsigned int));
+
+    if (leveltime - LONG(starttime) >= MAULATORTICS)
+    {
+        P_DamageMobj(mo, NULL, NULL, 10000);
+        return false;
+    }
+
+    return true;
+}
+
 void A_MinotaurRoam(mobj_t * actor)
 {
-    unsigned int *starttime = (unsigned int *) actor->args;
-
     actor->flags &= ~MF_SHADOW; // In case pain caused him to 
     actor->flags &= ~MF_ALTSHADOW;      // skip his fade in.
 
-    if ((leveltime - *starttime) >= MAULATORTICS)
+    if (!CheckMinotaurAge(actor))
     {
-        P_DamageMobj(actor, NULL, NULL, 10000);
         return;
     }
 
@@ -1231,14 +1248,11 @@ void A_MinotaurLook(mobj_t * actor)
 
 void A_MinotaurChase(mobj_t * actor)
 {
-    unsigned int *starttime = (unsigned int *) actor->args;
-
     actor->flags &= ~MF_SHADOW; // In case pain caused him to 
     actor->flags &= ~MF_ALTSHADOW;      // skip his fade in.
 
-    if ((leveltime - *starttime) >= MAULATORTICS)
+    if (!CheckMinotaurAge(actor))
     {
-        P_DamageMobj(actor, NULL, NULL, 10000);
         return;
     }
 
