@@ -680,7 +680,7 @@ void R_ProjectSprite (mobj_t* thing)
 static void R_DrawLSprite (void)
 {
     fixed_t		xscale;
-    fixed_t		tx;
+    fixed_t		tx, tz;
     vissprite_t*	vis;
 
     static int		lump;
@@ -707,11 +707,18 @@ static void R_DrawLSprite (void)
 	patch = W_CacheLumpNum(lump, PU_CACHE);
     }
 
-    xscale = FixedDiv(projection, FixedMul(laserspot->x - viewx, viewcos) + FixedMul(laserspot->y - viewy, viewsin));
+    tz = FixedMul(laserspot->x - viewx, viewcos) +
+         FixedMul(laserspot->y - viewy, viewsin);
+
+    if (tz < MINZ)
+	return;
+
+    xscale = FixedDiv(projection, tz);
     // [crispy] the original patch has 5x5 pixels, cap the projection at 20x20
     xscale = (xscale > 4*FRACUNIT) ? 4*FRACUNIT : xscale;
 
-    tx = -(FixedMul(laserspot->y - viewy, viewcos) - FixedMul(laserspot->x - viewx, viewsin));
+    tx = -(FixedMul(laserspot->y - viewy, viewcos) -
+           FixedMul(laserspot->x - viewx, viewsin));
 
     vis = R_NewVisSprite();
     memset(vis, 0, sizeof(*vis)); // [crispy] set all fields to NULL, except ...
