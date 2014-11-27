@@ -4781,7 +4781,8 @@ void A_FreezeDeath(mobj_t * actor)
         }
     }
     else if (actor->flags & MF_COUNTKILL && actor->special)
-    {                           // Initiate monster death actions
+    {
+        // Initiate monster death actions.
         P_ExecuteLineSpecial(actor->special, actor->args, NULL, 0, actor);
     }
 }
@@ -4933,7 +4934,7 @@ void A_KoraxChase(mobj_t * actor)
 {
     mobj_t *spot;
     int lastfound;
-    byte args[3] = { 0, 0, 0 };
+    byte args[3] = {0, 0, 0};
 
     if ((!actor->special2.i) &&
         (actor->health <= (actor->info->spawnhealth / 2)))
