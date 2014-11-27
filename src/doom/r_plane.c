@@ -51,8 +51,8 @@ static int		numvisplanes;
 
 // ?
 #define MAXOPENINGS	SCREENWIDTH*64*4
-short			openings[MAXOPENINGS];
-short*			lastopening;
+int			openings[MAXOPENINGS]; // [crispy] 32-bit integer math
+int*			lastopening; // [crispy] 32-bit integer math
 
 
 //
@@ -60,8 +60,8 @@ short*			lastopening;
 //  floorclip starts out SCREENHEIGHT
 //  ceilingclip starts out -1
 //
-short			floorclip[SCREENWIDTH];
-short			ceilingclip[SCREENWIDTH];
+int			floorclip[SCREENWIDTH]; // [crispy] 32-bit integer math
+int			ceilingclip[SCREENWIDTH]; // [crispy] 32-bit integer math
 
 //
 // spanstart holds the start of a plane span
@@ -315,7 +315,7 @@ R_CheckPlane
     }
 
     for (x=intrl ; x<= intrh ; x++)
-	if (pl->top[x] != 0xffff) // [crispy] hires
+	if (pl->top[x] != 0xffffffffu) // [crispy] hires / 32-bit integer math
 	    break;
 
   // [crispy] fix HOM if ceilingplane and floorplane are the same
@@ -354,10 +354,10 @@ R_CheckPlane
 void
 R_MakeSpans
 ( int		x,
-  int		t1,
-  int		b1,
-  int		t2,
-  int		b2 )
+  unsigned int		t1, // [crispy] 32-bit integer math
+  unsigned int		b1, // [crispy] 32-bit integer math
+  unsigned int		t2, // [crispy] 32-bit integer math
+  unsigned int		b2 ) // [crispy] 32-bit integer math
 {
     while (t1 < t2 && t1<=b1)
     {
@@ -437,7 +437,7 @@ void R_DrawPlanes (void)
 		dc_yl = pl->top[x];
 		dc_yh = pl->bottom[x];
 
-		if (dc_yl <= dc_yh)
+		if ((unsigned) dc_yl <= dc_yh) // [crispy] 32-bit integer math
 		{
 		    angle = (viewangle + xtoviewangle[x])>>ANGLETOSKYSHIFT;
 		    dc_x = x;
@@ -463,8 +463,8 @@ void R_DrawPlanes (void)
 
 	planezlight = zlight[light];
 
-	pl->top[pl->maxx+1] = 0xffff; // [crispy] hires
-	pl->top[pl->minx-1] = 0xffff; // [crispy] hires
+	pl->top[pl->maxx+1] = 0xffffffffu; // [crispy] hires / 32-bit integer math
+	pl->top[pl->minx-1] = 0xffffffffu; // [crispy] hires / 32-bit integer math
 		
 	stop = pl->maxx + 1;
 

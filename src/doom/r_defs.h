@@ -327,9 +327,9 @@ typedef struct drawseg_s
     
     // Pointers to lists for sprite clipping,
     //  all three adjusted so [x1] is first value.
-    short*		sprtopclip;		
-    short*		sprbottomclip;	
-    short*		maskedtexturecol;
+    int*		sprtopclip; // [crispy] 32-bit integer math
+    int*		sprbottomclip; // [crispy] 32-bit integer math
+    int*		maskedtexturecol; // [crispy] 32-bit integer math
     
 } drawseg_t;
 
@@ -435,15 +435,15 @@ typedef struct
   
   // leave pads for [minx-1]/[maxx+1]
   
-  unsigned short		pad1; // [crispy] hires
+  unsigned int		pad1; // [crispy] hires / 32-bit integer math
   // Here lies the rub for all
   //  dynamic resize/change of resolution.
-  unsigned short		top[SCREENWIDTH]; // [crispy] hires
-  unsigned short		pad2; // [crispy] hires
-  unsigned short		pad3; // [crispy] hires
+  unsigned int		top[SCREENWIDTH]; // [crispy] hires / 32-bit integer math
+  unsigned int		pad2; // [crispy] hires / 32-bit integer math
+  unsigned int		pad3; // [crispy] hires / 32-bit integer math
   // See above.
-  unsigned short		bottom[SCREENWIDTH]; // [crispy] hires
-  unsigned short		pad4; // [crispy] hires
+  unsigned int		bottom[SCREENWIDTH]; // [crispy] hires / 32-bit integer math
+  unsigned int		pad4; // [crispy] hires / 32-bit integer math
 
 } visplane_t;
 
