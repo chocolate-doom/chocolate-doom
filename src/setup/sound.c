@@ -46,7 +46,6 @@ typedef enum
     MUSICMODE_OPL,
     MUSICMODE_GUS,
     MUSICMODE_NATIVE,
-    MUSICMODE_CD,
     NUM_MUSICMODES
 } musicmode_t;
 
@@ -56,7 +55,6 @@ static char *musicmode_strings[] =
     "OPL (Adlib/SB)",
     "GUS (emulated)",
     "Native MIDI",
-    "CD audio"
 };
 
 static char *cfg_extension[] = { "cfg", NULL };
@@ -126,9 +124,6 @@ static void UpdateSndDevices(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(data))
         case MUSICMODE_GUS:
             snd_musicdevice = SNDDEVICE_GUS;
             break;
-        case MUSICMODE_CD:
-            snd_musicdevice = SNDDEVICE_CD;
-            break;
     }
 }
 
@@ -171,7 +166,7 @@ void ConfigSound(void)
     txt_table_t *extra_table;
     txt_dropdown_list_t *sfx_mode_control;
     txt_dropdown_list_t *music_mode_control;
-    int num_sfx_modes, num_music_modes;
+    int num_sfx_modes;
 
     // Work out what sfx mode we are currently using:
 
@@ -195,9 +190,6 @@ void ConfigSound(void)
         case SNDDEVICE_GENMIDI:
             snd_musicmode = MUSICMODE_NATIVE;
             break;
-        case SNDDEVICE_CD:
-            snd_musicmode = MUSICMODE_CD;
-            break;
         case SNDDEVICE_SB:
         case SNDDEVICE_ADLIB:
         case SNDDEVICE_AWE32:
@@ -220,17 +212,6 @@ void ConfigSound(void)
     else
     {
         num_sfx_modes = NUM_SFXMODES - 1;
-    }
-
-    // Hexen has CD audio; others do not.
-
-    if (gamemission == hexen)
-    {
-        num_music_modes = NUM_MUSICMODES;
-    }
-    else
-    {
-        num_music_modes = NUM_MUSICMODES - 1;
     }
 
     // Build the window
@@ -280,7 +261,7 @@ void ConfigSound(void)
                    TXT_NewLabel("Music"),
                    music_mode_control = TXT_NewDropdownList(&snd_musicmode,
                                                             musicmode_strings,
-                                                            num_music_modes),
+                                                            NUM_MUSICMODES),
                    TXT_NewLabel("Music volume"),
                    TXT_NewSpinControl(&musicVolume, 0, 15),
                    NULL);
