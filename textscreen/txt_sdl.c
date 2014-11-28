@@ -48,7 +48,7 @@ typedef struct
 
 #define BLINK_PERIOD 250
 
-static SDL_Surface *screen;
+static SDL_Window *screen;
 static SDL_Surface *screenbuffer;
 static unsigned char *screendata;
 static int key_mapping = 1;
@@ -68,22 +68,22 @@ static txt_font_t *font;
 
 static SDL_Color ega_colors[] = 
 {
-    {0x00, 0x00, 0x00, 0x00},          // 0: Black
-    {0x00, 0x00, 0xa8, 0x00},          // 1: Blue
-    {0x00, 0xa8, 0x00, 0x00},          // 2: Green
-    {0x00, 0xa8, 0xa8, 0x00},          // 3: Cyan
-    {0xa8, 0x00, 0x00, 0x00},          // 4: Red
-    {0xa8, 0x00, 0xa8, 0x00},          // 5: Magenta
-    {0xa8, 0x54, 0x00, 0x00},          // 6: Brown
-    {0xa8, 0xa8, 0xa8, 0x00},          // 7: Grey
-    {0x54, 0x54, 0x54, 0x00},          // 8: Dark grey
-    {0x54, 0x54, 0xfe, 0x00},          // 9: Bright blue
-    {0x54, 0xfe, 0x54, 0x00},          // 10: Bright green
-    {0x54, 0xfe, 0xfe, 0x00},          // 11: Bright cyan
-    {0xfe, 0x54, 0x54, 0x00},          // 12: Bright red
-    {0xfe, 0x54, 0xfe, 0x00},          // 13: Bright magenta
-    {0xfe, 0xfe, 0x54, 0x00},          // 14: Yellow
-    {0xfe, 0xfe, 0xfe, 0x00},          // 15: Bright white
+    {0x00, 0x00, 0x00, 0xff},          // 0: Black
+    {0x00, 0x00, 0xa8, 0xff},          // 1: Blue
+    {0x00, 0xa8, 0x00, 0xff},          // 2: Green
+    {0x00, 0xa8, 0xa8, 0xff},          // 3: Cyan
+    {0xa8, 0x00, 0x00, 0xff},          // 4: Red
+    {0xa8, 0x00, 0xa8, 0xff},          // 5: Magenta
+    {0xa8, 0x54, 0x00, 0xff},          // 6: Brown
+    {0xa8, 0xa8, 0xa8, 0xff},          // 7: Grey
+    {0x54, 0x54, 0x54, 0xff},          // 8: Dark grey
+    {0x54, 0x54, 0xfe, 0xff},          // 9: Bright blue
+    {0x54, 0xfe, 0x54, 0xff},          // 10: Bright green
+    {0x54, 0xfe, 0xfe, 0xff},          // 11: Bright cyan
+    {0xfe, 0x54, 0x54, 0xff},          // 12: Bright red
+    {0xfe, 0x54, 0xfe, 0xff},          // 13: Bright magenta
+    {0xfe, 0xfe, 0x54, 0xff},          // 14: Yellow
+    {0xfe, 0xfe, 0xfe, 0xff},          // 15: Bright white
 };
 
 #else
@@ -94,22 +94,22 @@ static SDL_Color ega_colors[] =
 
 static SDL_Color ega_colors[] = 
 {
-    {0x2e, 0x34, 0x36, 0x00},          // 0: Black
-    {0x34, 0x65, 0xa4, 0x00},          // 1: Blue
-    {0x4e, 0x9a, 0x06, 0x00},          // 2: Green
-    {0x06, 0x98, 0x9a, 0x00},          // 3: Cyan
-    {0xcc, 0x00, 0x00, 0x00},          // 4: Red
-    {0x75, 0x50, 0x7b, 0x00},          // 5: Magenta
-    {0xc4, 0xa0, 0x00, 0x00},          // 6: Brown
-    {0xd3, 0xd7, 0xcf, 0x00},          // 7: Grey
-    {0x55, 0x57, 0x53, 0x00},          // 8: Dark grey
-    {0x72, 0x9f, 0xcf, 0x00},          // 9: Bright blue
-    {0x8a, 0xe2, 0x34, 0x00},          // 10: Bright green
-    {0x34, 0xe2, 0xe2, 0x00},          // 11: Bright cyan
-    {0xef, 0x29, 0x29, 0x00},          // 12: Bright red
-    {0x34, 0xe2, 0xe2, 0x00},          // 13: Bright magenta
-    {0xfc, 0xe9, 0x4f, 0x00},          // 14: Yellow
-    {0xee, 0xee, 0xec, 0x00},          // 15: Bright white
+    {0x2e, 0x34, 0x36, 0xff},          // 0: Black
+    {0x34, 0x65, 0xa4, 0xff},          // 1: Blue
+    {0x4e, 0x9a, 0x06, 0xff},          // 2: Green
+    {0x06, 0x98, 0x9a, 0xff},          // 3: Cyan
+    {0xcc, 0x00, 0x00, 0xff},          // 4: Red
+    {0x75, 0x50, 0x7b, 0xff},          // 5: Magenta
+    {0xc4, 0xa0, 0x00, 0xff},          // 6: Brown
+    {0xd3, 0xd7, 0xcf, 0xff},          // 7: Grey
+    {0x55, 0x57, 0x53, 0xff},          // 8: Dark grey
+    {0x72, 0x9f, 0xcf, 0xff},          // 9: Bright blue
+    {0x8a, 0xe2, 0x34, 0xff},          // 10: Bright green
+    {0x34, 0xe2, 0xe2, 0xff},          // 11: Bright cyan
+    {0xef, 0x29, 0x29, 0xff},          // 12: Bright red
+    {0x34, 0xe2, 0xe2, 0xff},          // 13: Bright magenta
+    {0xfc, 0xe9, 0x4f, 0xff},          // 14: Yellow
+    {0xee, 0xee, 0xec, 0xff},          // 15: Bright white
 };
 
 #endif
@@ -171,7 +171,7 @@ static txt_font_t *FontForName(char *name)
 
 static void ChooseFont(void)
 {
-    const SDL_VideoInfo *info;
+    SDL_DisplayMode desktop_info;
     char *env;
 
     // Allow normal selection to be overridden from an environment variable:
@@ -188,14 +188,11 @@ static void ChooseFont(void)
         }
     }
 
-    // Get desktop resolution:
-
-    info = SDL_GetVideoInfo();
-
+    // Get desktop resolution.
     // If in doubt and we can't get a list, always prefer to
     // fall back to the normal font:
 
-    if (info == NULL)
+    if (!SDL_GetCurrentDisplayMode(0, &desktop_info))
     {
         font = &main_font;
         return;
@@ -206,7 +203,7 @@ static void ChooseFont(void)
     // a modern high-resolution display, and we can use the
     // large font.
 
-    if (info->current_w < 640 || info->current_h < 480)
+    if (desktop_info.w < 640 || desktop_info.h < 480)
     {
         font = &small_font;
     }
@@ -219,7 +216,7 @@ static void ChooseFont(void)
         font = &large_font;
     }
 #else
-    else if (info->current_w >= 1920 && info->current_h >= 1080)
+    else if (desktop_info.w >= 1920 && desktop_info.h >= 1080)
     {
         font = &large_font;
     }
@@ -238,7 +235,7 @@ static void ChooseFont(void)
 
 int TXT_Init(void)
 {
-    if (SDL_InitSubSystem(SDL_INIT_VIDEO) < 0)
+    if (SDL_Init(SDL_INIT_VIDEO) < 0)
     {
         return 0;
     }
@@ -248,8 +245,10 @@ int TXT_Init(void)
     // Always create the screen at the native screen depth (bpp=0);
     // some systems nowadays don't seem to support true 8-bit palettized
     // screen modes very well and we end up with screwed up colors.
-    screen = SDL_SetVideoMode(TXT_SCREEN_W * font->w,
-                              TXT_SCREEN_H * font->h, 0, 0);
+    screen = SDL_CreateWindow("libtextscreen",
+                              SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+                              TXT_SCREEN_W * font->w, TXT_SCREEN_H * font->h,
+                              0);//SDL_WINDOW_ALLOW_HIGHDPI);
 
     if (screen == NULL)
         return 0;
@@ -257,23 +256,26 @@ int TXT_Init(void)
     // Instead, we draw everything into an intermediate 8-bit surface
     // the same dimensions as the screen. SDL then takes care of all the
     // 8->32 bit (or whatever depth) color conversions for us.
-    screenbuffer = SDL_CreateRGBSurface(0, TXT_SCREEN_W * font->w,
+    screenbuffer = SDL_CreateRGBSurface(0,
+                                        TXT_SCREEN_W * font->w,
                                         TXT_SCREEN_H * font->h,
                                         8, 0, 0, 0, 0);
-    SDL_SetColors(screenbuffer, ega_colors, 0, 16);
-    SDL_EnableUNICODE(1);
+
+    SDL_LockSurface(screenbuffer);
+    SDL_SetPaletteColors(screenbuffer->format->palette, ega_colors, 0, 16);
+    SDL_UnlockSurface(screenbuffer);
+    // SDL2-TODO SDL_EnableUNICODE(1);
 
     screendata = malloc(TXT_SCREEN_W * TXT_SCREEN_H * 2);
     memset(screendata, 0, TXT_SCREEN_W * TXT_SCREEN_H * 2);
 
     // Ignore all mouse motion events
-
 //    SDL_EventState(SDL_MOUSEMOTION, SDL_IGNORE);
 
     // Repeat key presses so we can hold down arrows to scroll down the
     // menu, for example. This is what setup.exe does.
 
-    SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
+    // SDL2-TODO SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
 
     return 1;
 }
@@ -383,6 +385,8 @@ void TXT_UpdateScreenArea(int x, int y, int w, int h)
     int x_end;
     int y_end;
 
+    SDL_LockSurface(screenbuffer);
+
     x_end = LimitToRange(x + w, 0, TXT_SCREEN_W);
     y_end = LimitToRange(y + h, 0, TXT_SCREEN_H);
     x = LimitToRange(x, 0, TXT_SCREEN_W);
@@ -401,8 +405,10 @@ void TXT_UpdateScreenArea(int x, int y, int w, int h)
     rect.w = (x_end - x) * font->w;
     rect.h = (y_end - y) * font->h;
 
-    SDL_BlitSurface(screenbuffer, &rect, screen, &rect);
-    SDL_UpdateRects(screen, 1, &rect);
+    SDL_UnlockSurface(screenbuffer);
+
+    SDL_BlitSurface(screenbuffer, &rect, SDL_GetWindowSurface(screen), &rect);
+    SDL_UpdateWindowSurfaceRects(screen, &rect, 1);
 }
 
 void TXT_UpdateScreen(void)
@@ -412,11 +418,7 @@ void TXT_UpdateScreen(void)
 
 void TXT_GetMousePosition(int *x, int *y)
 {
-#if SDL_VERSION_ATLEAST(1, 3, 0)
-    SDL_GetMouseState(0, x, y);
-#else
     SDL_GetMouseState(x, y);
-#endif
 
     *x /= font->w;
     *y /= font->h;
@@ -466,10 +468,6 @@ static int TranslateKey(SDL_Keysym *sym)
 
         case SDLK_LALT:
         case SDLK_RALT:
-#if !SDL_VERSION_ATLEAST(1, 3, 0)
-        case SDLK_LMETA:
-        case SDLK_RMETA:
-#endif
                                return KEY_RALT;
 
         case SDLK_CAPSLOCK:    return KEY_CAPSLOCK;
@@ -504,6 +502,8 @@ static int TranslateKey(SDL_Keysym *sym)
         // Unicode characters beyond the ASCII range need to be
         // mapped up into textscreen's Unicode range.
 
+#if 0
+    // SDL2-TODO
         if (sym->unicode < 128)
         {
             return sym->unicode;
@@ -512,6 +512,8 @@ static int TranslateKey(SDL_Keysym *sym)
         {
             return sym->unicode - 128 + TXT_UNICODE_BASE;
         }
+#endif
+        return 0;
     }
     else
     {
@@ -604,10 +606,6 @@ static void UpdateModifierState(SDL_Keysym *sym, int pressed)
 
         case SDLK_LALT:
         case SDLK_RALT:
-#if !SDL_VERSION_ATLEAST(1, 3, 0)
-        case SDLK_LMETA:
-        case SDLK_RMETA:
-#endif
             mod = TXT_MOD_ALT;
             break;
 
@@ -865,7 +863,7 @@ void TXT_EnableKeyMapping(int enable)
 
 void TXT_SetWindowTitle(char *title)
 {
-    SDL_WM_SetCaption(title, NULL);
+    SDL_SetWindowTitle(screen, title);
 }
 
 void TXT_SDL_SetEventCallback(TxtSDLEventCallbackFunc callback, void *user_data)
