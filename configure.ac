@@ -34,7 +34,7 @@ fi
 
 dnl Search for SDL ...
 
-AM_PATH_SDL(1.1.3)
+AM_PATH_SDL2(2.0.3)
 
 # Add the SDL compiler flags to the default compiler flag variables. 
 # It is important to do this now, before checking for headers and
@@ -57,7 +57,7 @@ AC_SDL_MAIN_WORKAROUND([
 
     # Check for SDL_mixer.
 
-    AC_CHECK_LIB(SDL_mixer,Mix_LoadMUS,[
+    AC_CHECK_LIB(SDL2_mixer,Mix_LoadMUS,[
         SDLMIXER_LIBS="$SDLMIXER_LIBS -lSDL_mixer"
     ],[
         echo "*** Could not find SDL_mixer.  Please install it."
@@ -66,7 +66,7 @@ AC_SDL_MAIN_WORKAROUND([
 
     # Check for SDL_net.
 
-    AC_CHECK_LIB(SDL_net,SDLNet_UDP_Send,[
+    AC_CHECK_LIB(SDL2_net,SDLNet_UDP_Send,[
         SDLNET_LIBS="$SDLNET_LIBS -lSDL_net"
     ],[
         echo "*** Could not find SDL_net.  Please install it."
