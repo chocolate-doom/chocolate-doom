@@ -978,7 +978,8 @@ void P_LoadLineDefs (int lump)
     // [crispy] warn about unknown linedef types
     if (warn)
     {
-	fprintf (stderr, "P_LoadLineDefs: This map contains unknown linedef types and may not work as expected!\n");
+	fprintf(stderr, "P_LoadLineDefs: This map contains %d line%s with unknown linedef type "
+	                "and may not work as expected!\n", warn, (warn > 1) ? "s" : "");
     }
 
     W_ReleaseLumpNum(lump);
@@ -1712,6 +1713,8 @@ P_SetupLevel
 	R_PrecacheLevel ();
 
     //printf ("free memory: 0x%x\n", Z_FreeMemory());
+    // [crispy] better logging
+    printf("P_SetupLevel: %s (%s), Skill %d\n", lumpname, lumpinfo[lumpnum]->wad_file->path, (int) skill);
 }
 
 
