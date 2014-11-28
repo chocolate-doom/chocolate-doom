@@ -449,7 +449,7 @@ void I_EnableLoadingDisk(void)
 // Translates the SDL key
 //
 
-static int TranslateKey(SDL_keysym *sym)
+static int TranslateKey(SDL_Keysym *sym)
 {
     switch(sym->sym)
     {
@@ -472,7 +472,7 @@ static int TranslateKey(SDL_keysym *sym)
       case SDLK_F10:	return KEY_F10;
       case SDLK_F11:	return KEY_F11;
       case SDLK_F12:	return KEY_F12;
-      case SDLK_PRINT:  return KEY_PRTSCR;
+      case SDLK_PRINTSCREEN:  return KEY_PRTSCR;
 
       case SDLK_BACKSPACE: return KEY_BACKSPACE;
       case SDLK_DELETE:	return KEY_DEL;
@@ -502,19 +502,19 @@ static int TranslateKey(SDL_keysym *sym)
         return KEY_RALT;
 
       case SDLK_CAPSLOCK: return KEY_CAPSLOCK;
-      case SDLK_SCROLLOCK: return KEY_SCRLCK;
+      case SDLK_SCROLLLOCK: return KEY_SCRLCK;
       case SDLK_NUMLOCK: return KEY_NUMLOCK;
 
-      case SDLK_KP0: return KEYP_0;
-      case SDLK_KP1: return KEYP_1;
-      case SDLK_KP2: return KEYP_2;
-      case SDLK_KP3: return KEYP_3;
-      case SDLK_KP4: return KEYP_4;
-      case SDLK_KP5: return KEYP_5;
-      case SDLK_KP6: return KEYP_6;
-      case SDLK_KP7: return KEYP_7;
-      case SDLK_KP8: return KEYP_8;
-      case SDLK_KP9: return KEYP_9;
+      case SDLK_KP_0: return KEYP_0;
+      case SDLK_KP_1: return KEYP_1;
+      case SDLK_KP_2: return KEYP_2;
+      case SDLK_KP_3: return KEYP_3;
+      case SDLK_KP_4: return KEYP_4;
+      case SDLK_KP_5: return KEYP_5;
+      case SDLK_KP_6: return KEYP_6;
+      case SDLK_KP_7: return KEYP_7;
+      case SDLK_KP_8: return KEYP_8;
+      case SDLK_KP_9: return KEYP_9;
 
       case SDLK_KP_PERIOD:   return KEYP_PERIOD;
       case SDLK_KP_MULTIPLY: return KEYP_MULTIPLY;
