@@ -33,6 +33,7 @@ then
 fi
 
 dnl Search for SDL ...
+dnl SDL2-TODO: Use pkg-config?
 
 AM_PATH_SDL2(2.0.3)
 
@@ -58,18 +59,18 @@ AC_SDL_MAIN_WORKAROUND([
     # Check for SDL_mixer.
 
     AC_CHECK_LIB(SDL2_mixer,Mix_LoadMUS,[
-        SDLMIXER_LIBS="$SDLMIXER_LIBS -lSDL_mixer"
+        SDLMIXER_LIBS="$SDLMIXER_LIBS -lSDL2_mixer"
     ],[
-        echo "*** Could not find SDL_mixer.  Please install it."
+        echo "*** Could not find SDL2_mixer.  Please install it."
         exit -1
     ])
 
     # Check for SDL_net.
 
     AC_CHECK_LIB(SDL2_net,SDLNet_UDP_Send,[
-        SDLNET_LIBS="$SDLNET_LIBS -lSDL_net"
+        SDLNET_LIBS="$SDLNET_LIBS -lSDL2_net"
     ],[
-        echo "*** Could not find SDL_net.  Please install it."
+        echo "*** Could not find SDL2_net.  Please install it."
         exit -1
     ])
 
