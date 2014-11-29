@@ -153,7 +153,7 @@ void I_InitJoystick(void)
 
     // Initialized okay!
 
-    printf("I_InitJoystick: %s\n", SDL_JoystickName(joystick_index));
+    printf("I_InitJoystick: %s\n", SDL_JoystickName(joystick));
 
     I_AtExit(I_ShutdownJoystick, true);
 }
