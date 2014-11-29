@@ -256,7 +256,8 @@ void I_Quit (void)
     exit(0);
 }
 
-#if !defined(_WIN32) && !defined(__MACOSX__)
+// SDL2-TODO: Fix the dialog box on OS X.
+#if !defined(_WIN32) && !defined(__DISABLED__MACOSX__)
 #define ZENITY_BINARY "/usr/bin/zenity"
 
 // returns non-zero if zenity is available
@@ -409,7 +410,7 @@ void I_Error (char *error, ...)
 
         MessageBoxW(NULL, wmsgbuf, L"", MB_OK);
     }
-#elif defined(__MACOSX__)
+#elif defined(__DISABLED__MACOSX__)
     {
         CFStringRef message;
 	int i;
