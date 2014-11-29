@@ -688,6 +688,32 @@ static void UpdateShiftStatus(SDL_Event *event)
     }
 }
 
+static void HandleWindowEvent(SDL_WindowEvent *event)
+{
+    switch (event->event)
+    {
+#if 0 // SDL2-TODO
+        case SDL_ACTIVEEVENT:
+            // need to update our focus state
+            UpdateFocus();
+            break;
+#endif
+        case SDL_WINDOWEVENT_EXPOSED:
+            palette_to_set = true;
+            break;
+
+        case SDL_WINDOWEVENT_RESIZED:
+            need_resize = true;
+            resize_w = event->data1;
+            resize_h = event->data2;
+            last_resize_time = SDL_GetTicks();
+            break;
+
+        default:
+            break;
+    }
+}
+
 void I_GetEvent(void)
 {
     SDL_Event sdlevent;
@@ -782,23 +808,12 @@ void I_GetEvent(void)
                 D_PostEvent(&event);
                 break;
 
-#if 0 // SDL2-TODO
-            case SDL_ACTIVEEVENT:
-                // need to update our focus state
-                UpdateFocus();
+            case SDL_WINDOWEVENT:
+                if (sdlevent.window.windowID == SDL_GetWindowID(screen))
+                {
+                    HandleWindowEvent(&sdlevent.window);
+                }
                 break;
-
-            case SDL_VIDEOEXPOSE:
-                palette_to_set = true;
-                break;
-
-            case SDL_RESIZABLE:
-                need_resize = true;
-                resize_w = sdlevent.resize.w;
-                resize_h = sdlevent.resize.h;
-                last_resize_time = SDL_GetTicks();
-                break;
-#endif
 
             default:
                 break;
@@ -1760,6 +1775,15 @@ static void SetVideoMode(screen_mode_t *mode, int w, int h)
     if (screenbuffer != NULL)
     {
         SDL_FreeSurface(screenbuffer);
+        screenbuffer = NULL;
+    }
+
+    // Close the current window.
+
+    if (screen != NULL)
+    {
+        SDL_DestroyWindow(screen);
+        screen = NULL;
     }
 
     // Generate lookup tables before setting the video mode.
@@ -1783,9 +1807,7 @@ static void SetVideoMode(screen_mode_t *mode, int w, int h)
         // running.  This feature is disabled on OS X, as it adds an ugly
         // scroll handle to the corner of the screen.
 
-#ifndef __MACOSX__
         flags |= SDL_WINDOW_RESIZABLE;
-#endif
     }
 
     screen = SDL_CreateWindow(
@@ -1798,6 +1820,9 @@ static void SetVideoMode(screen_mode_t *mode, int w, int h)
         I_Error("Error setting video mode %ix%i: %s\n",
                 w, h, SDL_GetError());
     }
+
+    I_InitWindowTitle();
+    I_InitWindowIcon();
 
     // Blank out the full screen area in case there is any junk in
     // the borders that won't otherwise be overwritten.
@@ -1946,9 +1971,6 @@ void I_InitGraphics(void)
 
         SetVideoMode(screen_mode, w, h);
     }
-
-    I_InitWindowTitle();
-    I_InitWindowIcon();
 
     // Start with a clear black screen
     // (screen will be flipped after we set the palette)
