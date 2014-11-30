@@ -1092,8 +1092,6 @@ void PrintGameVersion(void)
 }
 
 // Function called at exit to display the ENDOOM screen
-<<<<<<< HEAD
-
 static void D_Endoom(void)
 {
     byte *endoom;
@@ -1125,40 +1123,6 @@ static void LoadIwadDeh(void)
         DEH_LoadLumpByName("DEHACKED", false, true);
     }
 
-=======
-
-static void D_Endoom(void)
-{
-    byte *endoom;
-
-    // Don't show ENDOOM if we have it disabled, or we're running
-    // in screensaver or control test mode. Only show it once the
-    // game has actually started.
-
-    if (!show_endoom || !main_loop_started
-     || screensaver_mode || M_CheckParm("-testcontrols") > 0)
-    {
-        return;
-    }
-
-    endoom = W_CacheLumpName(DEH_String("ENDOOM"), PU_STATIC);
-
-    I_Endoom(endoom);
-}
-
-// Load dehacked patches needed for certain IWADs.
-static void LoadIwadDeh(void)
-{
-    // The Freedoom IWADs have DEHACKED lumps that must be loaded.
-    if (W_CheckNumForName("FREEDOOM") >= 0)
-    {
-        // Old versions of Freedoom (before 2014-09) did not have technically
-        // valid DEHACKED lumps, so ignore errors and just continue if this
-        // is an old IWAD.
-        DEH_LoadLumpByName("DEHACKED", false, true);
-    }
-
->>>>>>> 6b217ee03c5155dd751245dc3133167f3bcd7478
     // If this is the HACX IWAD, we need to load the DEHACKED lump.
     if (gameversion == exe_hacx)
     {
@@ -1224,11 +1188,7 @@ void D_DoomMain (void)
 {
     int p;
     char file[256];
-<<<<<<< HEAD
     // char demolumpname[9];
-=======
-    char demolumpname[9];
->>>>>>> 6b217ee03c5155dd751245dc3133167f3bcd7478
     int numiwadlumps;
 
     I_AtExit(D_Endoom, false);
@@ -1541,8 +1501,6 @@ void D_DoomMain (void)
         printf("  loaded %i DEHACKED lumps from PWAD files.\n", loaded);
     }
 
-<<<<<<< HEAD
-=======
     I_AtExit((atexit_func_t) G_CheckDemoStatus, true);
 
     // Generate the WAD hash table.  Speed things up a bit.
@@ -1573,7 +1531,6 @@ void D_DoomMain (void)
         printf("  loaded %i DEHACKED lumps from PWAD files.\n", loaded);
     }
 
->>>>>>> 6b217ee03c5155dd751245dc3133167f3bcd7478
     // Set the gamedescription string. This is only possible now that
     // we've finished loading Dehacked patches.
     D_SetGameDescription();
