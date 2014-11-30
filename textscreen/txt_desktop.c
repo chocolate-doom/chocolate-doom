@@ -290,6 +290,7 @@ void TXT_GUIMainLoop(void)
         if (num_windows <= 0)
         {
             TXT_ExitMainLoop();
+            continue;
         }
 
         TXT_DrawDesktop();

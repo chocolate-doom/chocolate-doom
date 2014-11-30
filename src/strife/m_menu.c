@@ -77,11 +77,10 @@ int			mouseSensitivity = 5;
 // [STRIFE]: removed this entirely
 // Show messages has default, 0 = off, 1 = on
 //int			showMessages = 1;
-	
 
 // Blocky mode, has default, 0 = high, 1 = normal
 int			detailLevel = 0;
-int			screenblocks = 10; // [cndoom]
+int			screenblocks = 10; // [STRIFE] default 10, not 9
 
 // temp for screenblocks (0-9)
 int			screenSize;
@@ -114,11 +113,11 @@ char gammamsg[5][26] =
 };
 
 // we are going to be entering a savegame string
-int			saveStringEnter;              
+int			saveStringEnter;
 int             	saveSlot;	// which slot to save in
 int			saveCharIndex;	// which char we're editing
 // old save description before edit
-char			saveOldString[SAVESTRINGSIZE];  
+char			saveOldString[SAVESTRINGSIZE];
 
 boolean                 inhelpscreens;
 boolean                 menuactive;
@@ -152,7 +151,7 @@ char    *cursorName[8] = {"M_CURS1", "M_CURS2", "M_CURS3", "M_CURS4",
 int menuskill;
 
 // current menudef
-menu_t*	currentMenu;                          
+menu_t*	currentMenu;
 
 // haleyjd 03/01/13: [STRIFE] v1.31-only:
 // Keeps track of whether the save game menu is being used to name a new
@@ -430,7 +429,7 @@ enum
 } sound_e;
 
 // haleyjd 08/29/10:
-// [STRIFE] 
+// [STRIFE]
 // * Added voice volume
 // * Moved mouse sensitivity here (who knows why...)
 menuitem_t SoundMenu[]=
@@ -439,7 +438,7 @@ menuitem_t SoundMenu[]=
     {-1,"",0,'\0'},
     {2,"M_MUSVOL",M_MusicVol,'m'},
     {-1,"",0,'\0'},
-    {2,"M_VOIVOL",M_VoiceVol,'v'}, 
+    {2,"M_VOIVOL",M_VoiceVol,'v'},
     {-1,"",0,'\0'},
     {2,"M_MSENS",M_ChangeSensitivity,'m'},
     {-1,"",0,'\0'}
@@ -608,11 +607,11 @@ void M_DoNameChar(int choice)
     sendsave = 1;
     ClearTmp();
     G_WriteSaveName(choice, savegamestrings[choice]);
-    quickSaveSlot = choice;  
+    quickSaveSlot = choice;
     SaveDef.lastOn = choice;
     ClearSlot();
     FromCurr();
-    
+
     if(isdemoversion)
         map = 33;
     else
@@ -629,7 +628,7 @@ void M_DrawLoad(void)
 {
     int             i;
 
-    V_DrawPatchDirect(72, 28, 
+    V_DrawPatchDirect(72, 28,
                       W_CacheLumpName(DEH_String("M_LOADG"), PU_CACHE));
 
     for (i = 0;i < load_end; i++)
@@ -658,7 +657,7 @@ void M_DrawSaveLoadBorder(int x,int y)
         x += 8;
     }
 
-    V_DrawPatchDirect(x, y + 7, 
+    V_DrawPatchDirect(x, y + 7,
                       W_CacheLumpName(DEH_String("M_LSRGHT"), PU_CACHE));
 }
 
@@ -735,12 +734,12 @@ void M_DoSave(int slot)
         sendsave = 1;
         G_WriteSaveName(slot, savegamestrings[slot]);
         M_ClearMenus(0);
-        quickSaveSlot = slot;        
-        // haleyjd 20130922: slight divergence. We clear the destination slot 
-        // of files here, which vanilla did not do. As a result, 1.31 had 
-        // broken save behavior to the point of unusability. fraggle agrees 
+        quickSaveSlot = slot;
+        // haleyjd 20130922: slight divergence. We clear the destination slot
+        // of files here, which vanilla did not do. As a result, 1.31 had
+        // broken save behavior to the point of unusability. fraggle agrees
         // this is detrimental enough to be fixed - unconditionally, for now.
-        ClearSlot();        
+        ClearSlot();
         FromCurr();
     }
     else
@@ -919,7 +918,7 @@ void M_DrawReadThis2(void)
 void M_DrawReadThis3(void)
 {
     inhelpscreens = true;
-    
+
     V_DrawPatchDirect(0, 0, W_CacheLumpName(DEH_String("HELP3"), PU_CACHE));
 }
 
@@ -1104,7 +1103,7 @@ void M_Episode(int choice)
 	       "M_Episode: 4th episode requires UltimateDOOM\n");
       choice = 0;
     }
-	 
+
     epi = choice;
     M_SetupNextMenu(&NewDef);
 }
@@ -1328,7 +1327,7 @@ void M_QuitStrife(int choice)
 {
     DEH_snprintf(endstring, sizeof(endstring),
                  "Do you really want to leave?\n\n" DOSY);
-  
+
     M_StartMessage(endstring, M_QuitResponse, true);
 }
 
@@ -1641,7 +1640,7 @@ void M_DialogDimMsg(int x, int y, char *str, boolean useyfont)
                 {
                     tempptr--;
                     // BUG: they didn't add the first char to linewidth yet...
-                    linewidth -= charwidth; 
+                    linewidth -= charwidth;
                     i--;
                     al = toupper(*tempptr);
                     if(al < HU_FONTSTART || al > HU_FONTEND)
@@ -1732,7 +1731,7 @@ boolean M_Responder (event_t* ev)
     }
 
     // key is the key pressed, ch is the actual character typed
-  
+
     ch = 0;
     key = -1;
 
@@ -2105,7 +2104,6 @@ boolean M_Responder (event_t* ev)
         return false;
     }
 
-    
     // Keys usable within menu
 
     if (key == key_menu_down)
@@ -2251,7 +2249,7 @@ void M_StartControlPanel (void)
     // intro might call this repeatedly
     if (menuactive)
         return;
-    
+
     menuactive = 1;
     menupause = true;
     currentMenu = &MainDef;         // JDC
@@ -2275,7 +2273,7 @@ void M_Drawer (void)
     int			start;
 
     inhelpscreens = false;
-    
+
     // Horiz. & Vertically center string and print it.
     if (messageToPrint)
     {
@@ -2322,7 +2320,7 @@ void M_Drawer (void)
 
     if (currentMenu->routine)
         currentMenu->routine();         // call Draw routine
-    
+
     // DRAW MENU
     x = currentMenu->x;
     y = currentMenu->y;
@@ -2339,7 +2337,7 @@ void M_Drawer (void)
         y += LINEHEIGHT;
     }
 
-    
+
     // haleyjd 08/27/10: [STRIFE] Adjust to draw spinning Sigil
     // DRAW SIGIL
     V_DrawPatchDirect(x + CURSORXOFF, currentMenu->y - 5 + itemOn*LINEHEIGHT,
