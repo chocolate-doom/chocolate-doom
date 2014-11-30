@@ -76,64 +76,50 @@ void CN_WriteMetaData(char *filename)
 	char  temp[16];
 
 	//!
-	// @arg
 	// @category demo
-	// @vanilla
 	//
 	// Used only when recording speed demo for Competition
-	speedparm = M_CheckParm ("-speed");
-
-	//!
-	// @arg
-	// @category demo
-	// @vanilla
-	//
-	// Used only when recording nightmare demo for Competition
-	nmareparm = M_CheckParm ("-nmare");
-
-	//!
-	// @arg
-	// @category demo
-	// @vanilla
-	//
-	// Used only when recording max demo for Competition
-	maxparm = M_CheckParm ("-max");
-
-	//!
-	// @arg
-	// @category demo
-	// @vanilla
-	//
-	// Used only when recording nightmare 100% secrets demo for Competition
-	nm100sparm = M_CheckParm ("-nm100s");
-
-	//!
-	// @arg
-	// @category demo
-	// @vanilla
-	//
-	// Used only when recording tyson demo for Competition
-	tysonparm = M_CheckParm ("-tyson");
-
-	//!
-	// @arg
-	// @category demo
-	// @vanilla
-	//
-	// Used only when recording pacifist demo for Competition
-	pacifistparm = M_CheckParm ("-pacifist");
-
-	episodeparm = M_CheckParm ("-episode");
+	speedparm = M_CheckParm("-speed");
     
 	//!
-	// @arg
 	// @category demo
-	// @vanilla
+	//
+	// Used only when recording nightmare demo for Competition
+	nmareparm = M_CheckParm("-nmare");
+
+	//!
+	// @category demo
+	//
+	// Used only when recording max demo for Competition
+	maxparm = M_CheckParm("-max");
+
+	//!
+	// @category demo
+	//
+	// Used only when recording nightmare 100% secrets demo for Competition
+	nm100sparm = M_CheckParm("-nm100s");
+
+	//!
+	// @category demo
+	//
+	// Used only when recording tyson demo for Competition
+	tysonparm = M_CheckParm("-tyson");
+
+	//!
+	// @category demo
+	//
+	// Used only when recording pacifist demo for Competition
+	pacifistparm = M_CheckParm("-pacifist");
+
+	episodeparm = M_CheckParm("-episode");
+    
+	//!
+	// @category demo
 	//
 	// Used only when recording movie demo for Competition
-	movieparm = M_CheckParm ("-movie");
+	movieparm = M_CheckParm("-movie");
 
-    dmparm = M_CheckParm ("-deathmatch");
+    dmparm = M_CheckParm("-deathmatch");
     
     // check if game is DM or not
     if (!dmparm)

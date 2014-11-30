@@ -130,7 +130,6 @@ char		wadfile[1024];		// primary wad file
 char		mapdir[1024];           // directory of development maps
 
 int             show_endoom = 0;
-boolean         noblit;
 void D_ConnectNetGame(void);
 void D_CheckNetGame(void);
 
@@ -227,6 +226,7 @@ void D_Display (void)
 	if (inhelpscreensstate && !inhelpscreens)
 	    redrawsbar = true;              // just put away the help screen
 	ST_Drawer (scaledviewheight == (200 << hires), redrawsbar );
+    
 	fullscreen = scaledviewheight == (200 << hires);
 	break;
 
@@ -342,39 +342,6 @@ void D_Display (void)
     } while (!done);
 }
 
-/*
-static void CN_QSScreen (int qsdelay)
-{
-    int qs_starttime, qs_endtime, bar_width, bar_x, bar_y;
-    float bar_progress, bar_factor;
-
-    qs_starttime = I_GetTimeMS();
-    qs_endtime = qs_starttime + qsdelay;
-    bar_factor = (float)(qs_endtime - qs_starttime) / 10 / SCREENWIDTH;
-
-    while (I_GetTimeMS() < qs_endtime)
-    {
-	bar_progress = (I_GetTimeMS() / 10 + 10) / bar_factor;
-
-	bar_width = (int)bar_progress;
-	if (bar_width > SCREENWIDTH)
-	    bar_width = SCREENWIDTH;
-
-	for (bar_y=SCREENHEIGHT-10; bar_y<SCREENHEIGHT; bar_y++)
-	{
-	    for (bar_x=0; bar_x<bar_width; bar_x++)
-	    {
-		I_VideoBuffer[bar_y*SCREENWIDTH+bar_x] = 128;
-	    }
-	}
-
-	I_FinishUpdate();
-	I_Sleep(10);
-    }
-
-    return;
-}
-*/
 //
 // Add configuration file variable bindings.
 //
@@ -466,7 +433,6 @@ boolean D_GrabMouseCallback(void)
 //
 void D_DoomLoop (void)
 {
-    int i, qsdelay;
     if (bfgedition &&
         (demorecording || (gameaction == ga_playdemo) || netgame))
     {
@@ -481,46 +447,18 @@ void D_DoomLoop (void)
 
     main_loop_started = true;
 
-    
-    // [cndoom] don't run any tics before the player has a chance to move,
-    // and optionally wait for a little while after I_InitGraphics has been
-    // called and input grabbed, so the player can start moving immediately
-    // after the level loads.
-
     // [cndoom] don't initialize graphics at all if -nodraw is in use
     if (!nodrawers)
 	I_InitGraphics ();
-	
-    if (demorecording)
-    {
-	qsdelay = cn_quickstart_delay;
-    
-    //!
-    // @arg <x>
-    // @category demo
-    // @vanilla
-    //
-    // Delay starting the game in miliseconds (0 - 9999) with
-    // progress bar so you can adjust/press your mouse and key
-    //
-    
-	i = M_CheckParmWithArgs("-quickstart", 1);
-	if (i)
-	    qsdelay = atoi(myargv[i+1]);
 
-	/*if (qsdelay)
-	    CN_QSScreen(qsdelay);
-    */
-    }
-    
-    TryRunTics();
-    
     I_SetWindowTitle(gamedescription);
     I_GraphicsCheckCommandLine();
     I_SetGrabMouseCallback(D_GrabMouseCallback);
     I_InitGraphics();
     I_EnableLoadingDisk();
-  
+
+    TryRunTics();
+    
     V_RestoreBuffer();
     R_ExecuteSetViewSize();
 
@@ -1681,12 +1619,12 @@ void D_DoomMain (void)
     {
     startepisode = myargv[p+1][0]-'0';
     startmap = 1;
+
     if (gamemission != doom)
     {
     if (startepisode == 2) { startmap = 11; }
     if (startepisode == 3) { startmap = 21; }
     }	
-
 
 	autostart = true;
     }
@@ -1796,11 +1734,7 @@ void D_DoomMain (void)
 
     DEH_printf("\nP_Init: Init Playloop state.\n");
     P_Init ();
-
-    // [cndoom] "fast" timer for quickly speeding through demos, similar to
-    // -fastdemo from boom
-    // cn_fastdemo = M_CheckParm("-fastdemo");
-    
+  
     DEH_printf("S_Init: Setting up sound.\n");
     S_Init (sfxVolume * 8, musicVolume * 8);
 
@@ -1821,32 +1755,12 @@ void D_DoomMain (void)
 
     if (gamemode == commercial && W_CheckNumForName("map01") < 0)
         storedemo = true;
-    
-    // [cndoom] moved these here from G_TimeDemo so that they can be used
-    // without -timedemo
-
-    //!
-    // @vanilla 
-    //
-    // Disable rendering the screen entirely.
-    //
-
-    nodrawers = M_CheckParm ("-nodraw");
-
-    //!
-    // @vanilla
-    //
-    // Disable blitting the screen.
-    //
-
-    noblit = M_CheckParm ("-noblit"); 
 
     if (M_CheckParmWithArgs("-statdump", 1))
     {
         I_AtExit(StatDump, true);
         DEH_printf("External statistics registered.\n");
     }
-
     //!
     // @arg <x>
     // @category demo
@@ -1862,7 +1776,6 @@ void D_DoomMain (void)
 	G_RecordDemo (myargv[p+1]);
 	autostart = true;
     }
-
 
     p = M_CheckParmWithArgs("-playdemo", 1);
     if (p)

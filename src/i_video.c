@@ -50,9 +50,6 @@
 #include "doom/d_main.h"
 #include "m_controls.h"
 
-extern int cn_typematic_delay;
-extern int cn_typematic_rate;
-
 // Lookup table for mapping ASCII characters to their equivalent when
 // shift is pressed on an American layout keyboard:
 
@@ -2015,7 +2012,7 @@ void I_InitGraphics(void)
     SDL_Event dummy;
     byte *doompal;
     char *env;
-    int p; // try ghostydeath's patch
+    int i, p, qsdelay; // try ghostydeath's patch
 
     // [crispy] disable special lock-key behavior
     putenv("SDL_DISABLE_LOCK_KEYS=1");
@@ -2119,11 +2116,25 @@ void I_InitGraphics(void)
     UpdateFocus();
     UpdateGrab();
 
+    qsdelay = cn_quickstart_delay;
+    
+    //!
+    // @arg <x>
+    // @game doom heretic
+    //
+    // Delay starting the game in miliseconds (0 - 9999) so you can
+    // adjust/press your mouse and key before the game starts
+    //
+
+	i = M_CheckParmWithArgs("-quickstart", 1);
+	if (i)
+	    qsdelay = atoi(myargv[i+1]);
+    
     // Update network and delay the game slightly to create re-orientate
     // yourself on the first tic.
     for (p = 0; p < 10; p++)
     {
-        SDL_Delay(cn_quickstart_delay);	// CRT changing screen modes?
+        SDL_Delay(qsdelay);	// CRT changing screen modes?
         I_GetEvent();	// Handle events
         D_ProcessEvents();	// Process them
     }

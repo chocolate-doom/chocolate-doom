@@ -12,7 +12,7 @@
 typedef struct
 {
     char *firstname, *lastname, *nickname,
-	 *birthdate, *country,  *email,
+     *birthdate, *country,  *email,
          *url;
 } cn_playerinfo_t;
 

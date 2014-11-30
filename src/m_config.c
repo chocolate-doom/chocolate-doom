@@ -1267,6 +1267,7 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_KEY(key_menu_qload),
 
     //!
+    // @game doom heretic
     // Keyboard shortcut to quit the game.
     //
 
@@ -1540,10 +1541,8 @@ static default_t extra_defaults_list[] =
 
     CONFIG_VARIABLE_KEY(key_multi_msgplayer4),
 
-    // [cndoom] additional config options start
-
     //!
-    // @game doom
+    // @game doom heretic
     //
     // Show a message when a secret is found only in demo playback.
     // Default: 0
@@ -1552,7 +1551,7 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(cn_secret_message),
 
     //!
-    // @game doom
+    // @game doom heretic
     //
     // Define keyboard delay between keypreses.
     // SDL default delay is 500ms and BIOS fastest delay is 200ms
@@ -1562,7 +1561,7 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(cn_typematic_delay),
 
     //!
-    // @game doom
+    // @game doom heretic
     //
     // Define keyboard character rate per second.
     // SDL and BIOS default rate is 30 chars/sec 
@@ -1572,51 +1571,69 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(cn_typematic_rate),
     
     //!
+    // @game doom heretic
+    //
     // alternate strafe ON key for second SR50 combination
     // (Default:x)
 
     CONFIG_VARIABLE_KEY(key_strafe_alt),
     
-    //!    
+    //!
+    // @game doom heretic
+    //  
     // Display ingame/intermission screen timer
     // 0 - No. 1 - Yes (Default)
 
     CONFIG_VARIABLE_INT(cn_timer_enabled),
 
-    //!    
+    //!
+    // @game doom heretic
+    //   
     // Timer X position
     // Default: -1
 
     CONFIG_VARIABLE_INT(cn_timer_offset_x),
 
     //!
+    // @game doom heretic
+    //
     // Timer Y position
     // Default: 0
 
     CONFIG_VARIABLE_INT(cn_timer_offset_y),
 
     //!
+    // @game doom heretic
+    //
     // Timer color
     // 0 - 255 (Default:168)
 
     CONFIG_VARIABLE_INT(cn_timer_color_index),
-    //!    
+
+    //!
+    // @game doom heretic
+    //
     // Shadow for timer
     // 0 - No (Default). 1 - Yes
 
     CONFIG_VARIABLE_INT(cn_timer_shadow_index),
 
-    //!    
+    //!
+    // @game doom heretic
+    //
     // Backgroung color for timer
     // 0 - 255 (Default:16)
 
     CONFIG_VARIABLE_INT(cn_timer_bg_colormap),
 
     //!
+    // @arg <x>
+    // @game doom heretic
+    //
     // quickstart settings, see d_main.c
     // Quickstart delay so monitor can change resolution and
     // let you adjust mouse and keys before the game starts.
-    // 0 - 99999 (Default:3000)
+    // 0 - 99999 (Default:50)
 
     CONFIG_VARIABLE_INT(cn_quickstart_delay),
 
@@ -1629,7 +1646,7 @@ static default_t extra_defaults_list[] =
     //!
     // Competition Doom ID from http://www.doom.com.hr/
     // You have to register on forum and request ID
-    CONFIG_VARIABLE_INT(cn_meta_id),
+    CONFIG_VARIABLE_STRING(cn_meta_id),
     
     //!
     // @game hexen strife

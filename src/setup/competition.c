@@ -33,7 +33,7 @@ void ConfigCompetition(void)
 
     TXT_AddWidgets(window, 
             TXT_NewHorizBox(TXT_NewLabel("Competition Doom ID: "),
-                    TXT_NewIntInputBox(&cn_meta_id, 4),
+                    TXT_NewInputBox(&cn_meta_id, 4),
                     NULL),
             TXT_NewSeparator("Keyboard extra setup"),
             TXT_NewHorizBox(TXT_NewLabel("Delay between keypreses: "),

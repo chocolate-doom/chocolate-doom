@@ -1,3 +1,6 @@
+00023   Removed quickstart as it was completely bugged after hires patch
+        Implemented Ghostlydeath's patch for choco, adjusted
+        cn_quickstart_delay to "50" for new patch
 00022   Moved all custom configuration to competition menu, fix char->int,
         fixed naming scheme for cn_secret_message, re-enabled SDL keyboard
         repeat but enable custom values with cn_typematic_delay and

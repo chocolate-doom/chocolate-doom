@@ -42,7 +42,7 @@ int key_strafe = KEY_RALT;
 // [cndoom] config variables for setup
 int key_strafe_alt          = 'x';
 int cn_precache_sounds      = 1;
-int cn_quickstart_delay     = 200;
+int cn_quickstart_delay     = 50;
 int cn_timer_enabled        = 1;
 int cn_timer_offset_x       = -1;
 int cn_timer_offset_y       = 0;
@@ -52,7 +52,7 @@ int cn_timer_bg_colormap    = 16;
 int cn_typematic_delay      = 200;
 int cn_typematic_rate       = 30;
 int cn_secret_message       = 0;
-int cn_meta_id              = '0';
+char *cn_meta_id            = "0";
 
 int key_speed = KEY_RSHIFT; 
 
