@@ -720,6 +720,9 @@ static void R_DrawLSprite (void)
     tx = -(FixedMul(laserspot->y - viewy, viewcos) -
            FixedMul(laserspot->x - viewx, viewsin));
 
+    if (abs(tx) > (tz<<2))
+	return;
+
     vis = R_NewVisSprite();
     memset(vis, 0, sizeof(*vis)); // [crispy] set all fields to NULL, except ...
     vis->patch = lump - firstspritelump; // [crispy] not a sprite patch
@@ -733,6 +736,10 @@ static void R_DrawLSprite (void)
     vis->x1 =  (centerxfrac + FixedMul(tx, xscale))>>FRACBITS;
     tx += SHORT(patch->width)<<FRACBITS;
     vis->x2 = ((centerxfrac + FixedMul(tx, xscale))>>FRACBITS) - 1;
+
+    if (vis->x1 < 0 || vis->x1 >= viewwidth ||
+        vis->x2 < 0 || vis->x2 >= viewwidth)
+	return;
 
     R_DrawVisSprite (vis, vis->x1, vis->x2);
 }
