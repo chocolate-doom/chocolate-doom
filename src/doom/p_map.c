@@ -367,6 +367,15 @@ boolean PIT_CheckThing (mobj_t* thing)
 	return !solid;
     }
 
+    // [crispy] a solid hanging body will allow sufficiently small things underneath it
+    if (singleplayer && crispy_overunder &&
+        (thing->flags & (MF_SOLID | MF_SPAWNCEILING)) == (MF_SOLID | MF_SPAWNCEILING) &&
+        tmthing->z + tmthing->height <= thing->z)
+    {
+	tmceilingz = thing->z;
+	return true;
+    }
+
     // [crispy] allow players to walk over/under shootable objects
     if (singleplayer && crispy_overunder &&
         tmthing->player && thing->flags & MF_SHOOTABLE)
