@@ -396,7 +396,7 @@ cheatseq_t cheat_ammonokey = CHEAT("idfa", 0);
 cheatseq_t cheat_noclip = CHEAT("idspispopd", 0);
 cheatseq_t cheat_commercial_noclip = CHEAT("idclip", 0);
 
-cheatseq_t	cheat_powerup[7] =
+cheatseq_t	cheat_powerup[8] = // [crispy] idbehold0
 {
     CHEAT("idbeholdv", 0),
     CHEAT("idbeholds", 0),
@@ -405,6 +405,7 @@ cheatseq_t	cheat_powerup[7] =
     CHEAT("idbeholda", 0),
     CHEAT("idbeholdl", 0),
     CHEAT("idbehold", 0),
+    CHEAT("idbehold0", 0), // [crispy] idbehold0
 };
 
 cheatseq_t cheat_choppers = CHEAT("idchoppers", 0);
@@ -758,6 +759,12 @@ ST_Responder (event_t* ev)
 	  
 	  plyr->message = DEH_String(STSTR_BEHOLDX);
 	}
+      }
+      // [crispy] idbehold0
+      if (cht_CheckCheat(&cheat_powerup[7], ev->data2))
+      {
+	memset(plyr->powers, 0, sizeof(plyr->powers));
+	plyr->message = DEH_String(STSTR_BEHOLDX);
       }
       
       // 'behold' power-up menu

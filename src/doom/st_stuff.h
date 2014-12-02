@@ -80,7 +80,7 @@ extern cheatseq_t cheat_ammo;
 extern cheatseq_t cheat_ammonokey;
 extern cheatseq_t cheat_noclip;
 extern cheatseq_t cheat_commercial_noclip;
-extern cheatseq_t cheat_powerup[7];
+extern cheatseq_t cheat_powerup[8]; // [crispy] idbehold0
 extern cheatseq_t cheat_choppers;
 extern cheatseq_t cheat_clev;
 extern cheatseq_t cheat_mypos;
