@@ -909,9 +909,9 @@ void P_LoadLineDefs (int lump)
 	ld->flags = (unsigned short)SHORT(mld->flags); // [crispy] extended nodes
 	ld->special = SHORT(mld->special);
 	// [crispy] warn about unknown linedef types
-	if (ld->special > 141)
+	if ((unsigned short) ld->special > 141)
 	{
-	    //fprintf (stderr, "P_LoadLineDefs: Unknown special %d at line %d\n", ld->special, i);
+	    fprintf(stderr, "P_LoadLineDefs: Unknown special %d at line %d\n", ld->special, i);
 	    warn++;
 	}
 	ld->tag = SHORT(mld->tag);
@@ -978,8 +978,8 @@ void P_LoadLineDefs (int lump)
     // [crispy] warn about unknown linedef types
     if (warn)
     {
-	fprintf(stderr, "P_LoadLineDefs: This map contains %d line%s with unknown linedef type "
-	                "and may not work as expected!\n", warn, (warn > 1) ? "s" : "");
+	fprintf(stderr, "P_LoadLineDefs: Found %d line%s with unknown linedef type.\n"
+	                "THIS MAP MAY NOT WORK AS EXPECTED!\n", warn, (warn > 1) ? "s" : "");
     }
 
     W_ReleaseLumpNum(lump);
