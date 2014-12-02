@@ -591,14 +591,18 @@ ST_Responder (event_t* ev)
 	if (plyr->playerstate == PST_DEAD)
 	{
 	    mapthing_t mt;
+	    signed int an;
 	    extern void P_SpawnPlayer (mapthing_t* mthing);
 
 	    mt.x = plyr->mo->x >> FRACBITS;
 	    mt.y = plyr->mo->y >> FRACBITS;
 	    mt.angle = plyr->mo->angle*(uint64_t)45/ANG45;
 	    mt.type = consoleplayer + 1;
-
 	    P_SpawnPlayer(&mt);
+
+	    // [crispy] spawn a teleport fog
+	    an = plyr->mo->angle >> ANGLETOFINESHIFT;
+	    P_SpawnMobj(plyr->mo->x+20*finecosine[an], plyr->mo->y+20*finesine[an], plyr->mo->z, MT_TFOG);
 	}
 
 	plyr->cheats ^= CF_GODMODE;
