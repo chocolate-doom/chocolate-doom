@@ -587,6 +587,20 @@ ST_Responder (event_t* ev)
       // 'dqd' cheat for toggleable god mode
       if (cht_CheckCheat(&cheat_god, ev->data2))
       {
+	// [crispy] dead players are first respawned at the current position
+	if (plyr->playerstate == PST_DEAD)
+	{
+	    mapthing_t mt;
+	    extern void P_SpawnPlayer (mapthing_t* mthing);
+
+	    mt.x = plyr->mo->x >> FRACBITS;
+	    mt.y = plyr->mo->y >> FRACBITS;
+	    mt.angle = plyr->mo->angle*(uint64_t)45/ANG45;
+	    mt.type = consoleplayer + 1;
+
+	    P_SpawnPlayer(&mt);
+	}
+
 	plyr->cheats ^= CF_GODMODE;
 	if (plyr->cheats & CF_GODMODE)
 	{
