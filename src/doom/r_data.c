@@ -588,8 +588,10 @@ void R_InitTextures (void)
 	    patch->patch = patchlookup[SHORT(mpatch->patch)];
 	    if (patch->patch == -1)
 	    {
-		I_Error ("R_InitTextures: Missing patch in texture %s",
+		// [crispy] make non-fatal
+		fprintf (stderr, "R_InitTextures: Missing patch in texture %s\n",
 			 texture->name);
+		patch->patch = 0;
 	    }
 	}		
 	texturecolumnlump[i] = Z_Malloc (texture->width*sizeof(**texturecolumnlump), PU_STATIC,0);
@@ -780,8 +782,10 @@ int	R_TextureNumForName (char* name)
 
     if (i==-1)
     {
-	I_Error ("R_TextureNumForName: %s not found",
+	// [crispy] make non-fatal
+	fprintf (stderr, "R_TextureNumForName: %s not found\n",
 		 name);
+	return 0;
     }
     return i;
 }
