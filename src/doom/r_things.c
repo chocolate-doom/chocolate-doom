@@ -693,6 +693,23 @@ static void R_DrawLSprite (void)
         viewplayer->playerstate == PST_DEAD)
 	return;
 
+    if (!lump)
+    {
+	lump = W_GetNumForName(HU_LASERSPOT);
+	patch = W_CacheLumpNum(lump, PU_CACHE);
+    }
+
+    // [crispy] static, non-projected crosshair
+#if 0
+    if (!singleplayer)
+    {
+	extern void V_DrawPatch(int x, int y, patch_t *patch);
+
+	V_DrawPatch(160-SHORT(patch->width/2), 100, patch);
+	return;
+    }
+#endif
+
     P_LineLaser(viewplayer->mo, viewplayer->mo->angle,
                 16*64*FRACUNIT, ((p2fromp(viewplayer)->lookdir/MLOOKUNIT)<<FRACBITS)/173);
 
@@ -700,12 +717,6 @@ static void R_DrawLSprite (void)
         !laserspot->y &&
         !laserspot->z)
 	return;
-
-    if (!lump)
-    {
-	lump = W_GetNumForName(HU_LASERSPOT);
-	patch = W_CacheLumpNum(lump, PU_CACHE);
-    }
 
     tz = FixedMul(laserspot->x - viewx, viewcos) +
          FixedMul(laserspot->y - viewy, viewsin);
