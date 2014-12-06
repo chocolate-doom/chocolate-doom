@@ -38,7 +38,7 @@ CLEANFILES = $(app_DATA)
 
 if HAVE_PYTHON
 
-setup_icon.c : $(top_builddir)/data/setup8.ico
+setup_icon.c : $(top_builddir)/data/setup.png
 	$(top_builddir)/data/convert-icon $^ $@
 
 endif

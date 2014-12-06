@@ -29,7 +29,7 @@ except ImportError:
 
 def convert_image(filename, output_filename):
 
-    im = Image.open(filename).convert("RGB")
+    im = Image.open(filename)
 
     outfile = open(output_filename, "w")
 
@@ -43,7 +43,7 @@ def convert_image(filename, output_filename):
     outfile.write("static int %s_h = %i;\n" % (struct_name, size[1]))
 
     outfile.write("\n")
-    outfile.write("static unsigned char %s_data[] = {\n" % (struct_name))
+    outfile.write("static const unsigned int %s_data[] = {\n" % (struct_name))
 
     elements_on_line = 0
 
@@ -52,10 +52,10 @@ def convert_image(filename, output_filename):
     for y in range(size[1]):
         for x in range(size[0]):
             val = im.getpixel((x, y))
-            outfile.write("0x%02x,0x%02x,0x%02x,  " % val)
+            outfile.write("0x%02x%02x%02x%02x, " % val)
             elements_on_line += 1
 
-            if elements_on_line >= 4:
+            if elements_on_line >= 6:
                 elements_on_line = 0
                 outfile.write("\n")
                 outfile.write("    ")

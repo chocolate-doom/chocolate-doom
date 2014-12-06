@@ -278,42 +278,16 @@ static void InitConfig(void)
 
 static void SetIcon(void)
 {
-// SDL2-TODO:
-#if 0 
+    extern SDL_Window *TXT_SDLWindow;
     SDL_Surface *surface;
-    Uint8 *mask;
-    int i;
 
-    // Generate the mask
-  
-    mask = malloc(setup_icon_w * setup_icon_h / 8);
-    memset(mask, 0, setup_icon_w * setup_icon_h / 8);
+    surface = SDL_CreateRGBSurfaceFrom((void *) setup_icon_data, setup_icon_w,
+                                       setup_icon_h, 32, setup_icon_w * 4,
+                                       0xff << 24, 0xff << 16,
+                                       0xff << 8, 0xff << 0);
 
-    for (i=0; i<setup_icon_w * setup_icon_h; ++i) 
-    {
-        if (setup_icon_data[i * 3] != 0x00
-         || setup_icon_data[i * 3 + 1] != 0x00
-         || setup_icon_data[i * 3 + 2] != 0x00)
-        {
-            mask[i / 8] |= 1 << (7 - i % 8);
-        }
-    }
-
-
-    surface = SDL_CreateRGBSurfaceFrom(setup_icon_data,
-                                       setup_icon_w,
-                                       setup_icon_h,
-                                       24,
-                                       setup_icon_w * 3,
-                                       0xff << 0,
-                                       0xff << 8,
-                                       0xff << 16,
-                                       0);
-
-    SDL_WM_SetIcon(surface, mask);
+    SDL_SetWindowIcon(TXT_SDLWindow, surface);
     SDL_FreeSurface(surface);
-    free(mask);
-#endif
 }
 
 static void SetWindowTitle(void)

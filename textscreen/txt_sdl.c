@@ -48,7 +48,7 @@ typedef struct
 
 #define BLINK_PERIOD 250
 
-static SDL_Window *screen;
+SDL_Window *TXT_SDLWindow;
 static SDL_Surface *screenbuffer;
 static unsigned char *screendata;
 static int key_mapping = 1;
@@ -245,12 +245,13 @@ int TXT_Init(void)
     // Always create the screen at the native screen depth (bpp=0);
     // some systems nowadays don't seem to support true 8-bit palettized
     // screen modes very well and we end up with screwed up colors.
-    screen = SDL_CreateWindow("libtextscreen",
-                              SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-                              TXT_SCREEN_W * font->w, TXT_SCREEN_H * font->h,
-                              0);//SDL_WINDOW_ALLOW_HIGHDPI);
+    TXT_SDLWindow =
+        SDL_CreateWindow("libtextscreen",
+                         SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+                         TXT_SCREEN_W * font->w, TXT_SCREEN_H * font->h,
+                         0);
 
-    if (screen == NULL)
+    if (TXT_SDLWindow == NULL)
         return 0;
 
     // Instead, we draw everything into an intermediate 8-bit surface
@@ -407,8 +408,9 @@ void TXT_UpdateScreenArea(int x, int y, int w, int h)
 
     SDL_UnlockSurface(screenbuffer);
 
-    SDL_BlitSurface(screenbuffer, &rect, SDL_GetWindowSurface(screen), &rect);
-    SDL_UpdateWindowSurfaceRects(screen, &rect, 1);
+    SDL_BlitSurface(screenbuffer, &rect,
+                    SDL_GetWindowSurface(TXT_SDLWindow), &rect);
+    SDL_UpdateWindowSurfaceRects(TXT_SDLWindow, &rect, 1);
 }
 
 void TXT_UpdateScreen(void)
@@ -863,7 +865,7 @@ void TXT_EnableKeyMapping(int enable)
 
 void TXT_SetWindowTitle(char *title)
 {
-    SDL_SetWindowTitle(screen, title);
+    SDL_SetWindowTitle(TXT_SDLWindow, title);
 }
 
 void TXT_SDL_SetEventCallback(TxtSDLEventCallbackFunc callback, void *user_data)
