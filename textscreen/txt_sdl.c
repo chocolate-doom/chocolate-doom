@@ -246,8 +246,7 @@ int TXT_Init(void)
     // some systems nowadays don't seem to support true 8-bit palettized
     // screen modes very well and we end up with screwed up colors.
     TXT_SDLWindow =
-        SDL_CreateWindow("libtextscreen",
-                         SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+        SDL_CreateWindow("", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
                          TXT_SCREEN_W * font->w, TXT_SCREEN_H * font->h,
                          0);
 
