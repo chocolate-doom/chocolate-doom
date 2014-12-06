@@ -278,6 +278,8 @@ static void InitConfig(void)
 
 static void SetIcon(void)
 {
+// SDL2-TODO:
+#if 0 
     SDL_Surface *surface;
     Uint8 *mask;
     int i;
@@ -311,6 +313,7 @@ static void SetIcon(void)
     SDL_WM_SetIcon(surface, mask);
     SDL_FreeSurface(surface);
     free(mask);
+#endif
 }
 
 static void SetWindowTitle(void)

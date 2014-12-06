@@ -58,7 +58,8 @@ static int KeyPressCallback(txt_window_t *window, int key,
 
 static void ReleaseGrab(TXT_UNCAST_ARG(window), TXT_UNCAST_ARG(unused))
 {
-    SDL_WM_GrabInput(SDL_GRAB_OFF);
+    // SDL2-TODO: Needed?
+    // SDL_WM_GrabInput(SDL_GRAB_OFF);
 }
 
 static void OpenPromptWindow(txt_key_input_t *key_input)
@@ -81,7 +82,8 @@ static void OpenPromptWindow(txt_key_input_t *key_input)
     // handheld devices, the hardware keypresses are only
     // detected when input is grabbed.
 
-    SDL_WM_GrabInput(SDL_GRAB_ON);
+    // SDL2-TODO: Needed?
+    //SDL_WM_GrabInput(SDL_GRAB_ON);
     TXT_SignalConnect(window, "closed", ReleaseGrab, NULL);
 }
 

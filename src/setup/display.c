@@ -32,27 +32,6 @@ extern void RestartTextscreen(void);
 
 typedef struct
 {
-    char *description;
-    int bpp;
-} pixel_depth_t;
-
-// List of supported pixel depths.
-
-static pixel_depth_t pixel_depths[] =
-{
-    { "8-bit",    8 },
-    { "16-bit",   16 },
-    { "24-bit",   24 },
-    { "32-bit",   32 },
-};
-
-// List of strings containing supported pixel depths.
-
-static char **supported_bpps;
-static int num_supported_bpps;
-
-typedef struct 
-{
     int w, h;
 } screen_mode_t;
 
@@ -98,7 +77,6 @@ static int aspect_ratio_correct = 1;
 static int fullscreen = 1;
 static int screen_width = 320;
 static int screen_height = 200;
-static int screen_bpp = 0;
 static int startup_delay = 1000;
 static int usegamma = 0;
 
@@ -112,10 +90,6 @@ int png_screenshots = 0;
 // jump around.
 
 static int selected_screen_width = 0, selected_screen_height;
-
-// Index into the supported_bpps of the selected pixel depth.
-
-static int selected_bpp = 0;
 
 static int system_video_env_set;
 
@@ -148,155 +122,6 @@ void SetDisplayDriver(void)
         env_string = M_StringJoin("SDL_VIDEODRIVER=", video_driver, NULL);
         putenv(env_string);
         free(env_string);
-    }
-}
-
-// Query SDL as to whether any fullscreen modes are available for the
-// specified pixel depth.
-
-static int PixelDepthSupported(int bpp)
-{
-    SDL_PixelFormat format;
-    SDL_Rect **modes;
-
-    format.BitsPerPixel = bpp;
-    format.BytesPerPixel = (bpp + 7) / 8;
-
-    modes = SDL_ListModes(&format, SDL_FULLSCREEN);
-
-    return modes != NULL;
-}
-
-// Query SDL and populate the supported_bpps array.
-
-static void IdentifyPixelDepths(void)
-{
-    unsigned int i;
-    unsigned int num_depths = sizeof(pixel_depths) / sizeof(*pixel_depths);
-
-    if (supported_bpps != NULL)
-    {
-        free(supported_bpps);
-    }
-
-    supported_bpps = malloc(sizeof(char *) * num_depths);
-    num_supported_bpps = 0;
-
-    // Check each bit depth to determine if modes are available.
-
-    for (i = 0; i < num_depths; ++i)
-    {
-        // If modes are available, add this bit depth to the list.
-
-        if (PixelDepthSupported(pixel_depths[i].bpp))
-        {
-            supported_bpps[num_supported_bpps] = pixel_depths[i].description;
-            ++num_supported_bpps;
-        }
-    }
-
-    // No supported pixel depths?  That's kind of a problem.  Add 8bpp
-    // as a fallback.
-
-    if (num_supported_bpps == 0)
-    {
-        supported_bpps[0] = pixel_depths[0].description;
-        ++num_supported_bpps;
-    }
-}
-
-// Get the screen pixel depth corresponding to what selected_bpp is set to.
-
-static int GetSelectedBPP(void)
-{
-    unsigned int num_depths = sizeof(pixel_depths) / sizeof(*pixel_depths);
-    unsigned int i;
-
-    // Find which pixel depth is selected, and set screen_bpp.
-
-    for (i = 0; i < num_depths; ++i)
-    {
-        if (pixel_depths[i].description == supported_bpps[selected_bpp])
-        {
-            return pixel_depths[i].bpp;
-        }
-    }
-
-    // Default fallback value.
-
-    return 8;
-}
-
-// Get the index into supported_bpps of the specified pixel depth string.
-
-static int GetSupportedBPPIndex(char *description)
-{
-    unsigned int i;
-
-    for (i = 0; i < num_supported_bpps; ++i)
-    {
-        if (supported_bpps[i] == description)
-        {
-            return i;
-        }
-    }
-
-    return -1;
-}
-
-// Set selected_bpp to match screen_bpp.
-
-static int TrySetSelectedBPP(void)
-{
-    unsigned int num_depths = sizeof(pixel_depths) / sizeof(*pixel_depths);
-    unsigned int i;
-
-    // Search pixel_depths, find the bpp that corresponds to screen_bpp,
-    // then set selected_bpp to match.
-
-    for (i = 0; i < num_depths; ++i)
-    {
-        if (pixel_depths[i].bpp == screen_bpp)
-        {
-            selected_bpp = GetSupportedBPPIndex(pixel_depths[i].description);
-
-            if (selected_bpp >= 0)
-            {
-                return 1;
-            }
-        }
-    }
-
-    return 0;
-}
-
-static void SetSelectedBPP(void)
-{
-    const SDL_VideoInfo *info;
-
-    if (TrySetSelectedBPP())
-    {
-        return;
-    }
-
-    // screen_bpp does not match any supported pixel depth.  Query SDL
-    // to find out what it recommends using.
-
-    info = SDL_GetVideoInfo();
-
-    if (info != NULL && info->vfmt != NULL)
-    {
-        screen_bpp = info->vfmt->BitsPerPixel;
-    }
-
-    // Try again.
-
-    if (!TrySetSelectedBPP())
-    {
-        // Give up and just use the first in the list.
-
-        selected_bpp = 0;
-        screen_bpp = GetSelectedBPP();
     }
 }
 
@@ -344,11 +169,10 @@ static int GoodFullscreenMode(screen_mode_t *mode)
 
 static void BuildFullscreenModesList(void)
 {
-    SDL_PixelFormat format;
-    SDL_Rect **modes;
     screen_mode_t *m1;
     screen_mode_t *m2;
     screen_mode_t m;
+    int display = 0;  // SDL2-TODO
     int num_modes;
     int i;
 
@@ -359,35 +183,21 @@ static void BuildFullscreenModesList(void)
         free(screen_modes_fullscreen);
     }
 
-    // Get a list of fullscreen modes and find out how many
-    // modes are in the list.
+    num_modes = SDL_GetNumDisplayModes(display);
+    screen_modes_fullscreen = calloc(num_modes, sizeof(screen_mode_t) + 1);
 
-    format.BitsPerPixel = screen_bpp;
-    format.BytesPerPixel = (screen_bpp + 7) / 8;
-
-    modes = SDL_ListModes(&format, SDL_FULLSCREEN);
-
-    if (modes == NULL || modes == (SDL_Rect **) -1)
+    for (i = 0; i < SDL_GetNumDisplayModes(display); ++i)
     {
-        num_modes = 0;
-    }
-    else
-    {
-        for (num_modes=0; modes[num_modes] != NULL; ++num_modes);
+        SDL_DisplayMode mode;
+
+        SDL_GetDisplayMode(display, i, &mode);
+        screen_modes_fullscreen[i].w = mode.w;
+        screen_modes_fullscreen[i].h = mode.h;
+        // SDL2-TODO: Deal with duplicate modes due to different pixel formats.
     }
 
-    // Build the screen_modes_fullscreen array
-
-    screen_modes_fullscreen = malloc(sizeof(screen_mode_t) * (num_modes + 1));
-
-    for (i=0; i<num_modes; ++i)
-    {
-        screen_modes_fullscreen[i].w = modes[i]->w;
-        screen_modes_fullscreen[i].h = modes[i]->h;
-    }
-
-    screen_modes_fullscreen[i].w = 0;
-    screen_modes_fullscreen[i].h = 0;
+    screen_modes_fullscreen[num_modes].w = 0;
+    screen_modes_fullscreen[num_modes].h = 0;
 
     // Reverse the order of the modes list (smallest modes first)
 
@@ -497,20 +307,6 @@ static void GenerateModesTable(TXT_UNCAST_ARG(widget),
     }
 }
 
-// Callback invoked when the BPP selector is changed.
-
-static void UpdateBPP(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(modes_table))
-{
-    TXT_CAST_ARG(txt_table_t, modes_table);
-
-    screen_bpp = GetSelectedBPP();
-
-    // Rebuild list of fullscreen modes.
-
-    BuildFullscreenModesList();
-    GenerateModesTable(NULL, modes_table);
-}
-
 static void UpdateModeSeparator(TXT_UNCAST_ARG(widget),
                                 TXT_UNCAST_ARG(separator))
 {
@@ -569,19 +365,11 @@ void ConfigDisplay(void)
     txt_window_t *window;
     txt_table_t *modes_table;
     txt_separator_t *modes_separator;
-    txt_table_t *bpp_table;
     txt_window_action_t *advanced_button;
     txt_checkbox_t *fs_checkbox;
-    int i;
     int num_columns;
     int num_rows;
     int window_y;
-
-    // What color depths are supported?  Generate supported_bpps array
-    // and set selected_bpp to match the current value of screen_bpp.
-
-    IdentifyPixelDepths();
-    SetSelectedBPP();
 
     // First time in? Initialise selected_screen_{width,height}
 
@@ -618,27 +406,8 @@ void ConfigDisplay(void)
 
     // Build window:
 
-    TXT_AddWidget(window, 
+    TXT_AddWidget(window,
                   fs_checkbox = TXT_NewCheckBox("Full screen", &fullscreen));
-
-    if (num_supported_bpps > 1)
-    {
-        TXT_AddWidgets(window,
-                       TXT_NewSeparator("Color depth"),
-                       bpp_table = TXT_NewTable(4),
-                       NULL);
-
-        for (i = 0; i < num_supported_bpps; ++i)
-        {
-            txt_radiobutton_t *button;
-
-            button = TXT_NewRadioButton(supported_bpps[i],
-                                        &selected_bpp, i);
-
-            TXT_AddWidget(bpp_table, button);
-            TXT_SignalConnect(button, "selected", UpdateBPP, modes_table);
-        }
-    }
 
     TXT_AddWidgets(window,
                    modes_separator = TXT_NewSeparator(""),
@@ -661,11 +430,6 @@ void ConfigDisplay(void)
     if (num_rows < 4)
     {
         num_rows = 4;
-    }
-
-    if (num_supported_bpps > 1)
-    {
-        num_rows += 2;
     }
 
     if (num_rows < 14)
@@ -705,7 +469,6 @@ void BindDisplayVariables(void)
     M_BindVariable("fullscreen",                &fullscreen);
     M_BindVariable("screen_width",              &screen_width);
     M_BindVariable("screen_height",             &screen_height);
-    M_BindVariable("screen_bpp",                &screen_bpp);
     M_BindVariable("startup_delay",             &startup_delay);
     M_BindVariable("video_driver",              &video_driver);
     M_BindVariable("window_position",           &window_position);
@@ -723,27 +486,6 @@ void BindDisplayVariables(void)
     {
         M_BindVariable("graphical_startup",        &graphical_startup);
     }
-
-    // Windows Vista or later?  Set screen color depth to
-    // 32 bits per pixel, as 8-bit palettized screen modes
-    // don't work properly in recent versions.
-
-#if defined(_WIN32) && !defined(_WIN32_WCE)
-    {
-        OSVERSIONINFOEX version_info;
-
-        ZeroMemory(&version_info, sizeof(OSVERSIONINFOEX));
-        version_info.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
-
-        GetVersionEx((OSVERSIONINFO *) &version_info);
-
-        if (version_info.dwPlatformId == VER_PLATFORM_WIN32_NT
-         && version_info.dwMajorVersion >= 6)
-        {
-            screen_bpp = 32;
-        }
-    }
-#endif
 
     // Disable fullscreen by default on OS X, as there is an SDL bug
     // where some old versions of OS X (<= Snow Leopard) crash.
