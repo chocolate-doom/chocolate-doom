@@ -232,7 +232,7 @@ static grabmouse_callback_t grabmouse_callback = NULL;
 
 static byte *disk_image = NULL;
 static byte *saved_background;
-static boolean window_focused;
+static boolean window_focused = true;
 
 // Empty mouse cursor
 
@@ -328,31 +328,6 @@ void I_DisplayFPSDots(boolean dots_on)
 {
     display_fps_dots = dots_on;
 }
-
-// Update the value of window_focused when we get a focus event
-//
-// We try to make ourselves be well-behaved: the grab on the mouse
-// is removed if we lose focus (such as a popup window appearing),
-// and we dont move the mouse around if we aren't focused either.
-
-#if 0
-// SDL2-TODO
-static void UpdateFocus(void)
-{
-    Uint8 state;
-
-    state = SDL_GetAppState();
-
-    // We should have input (keyboard) focus and be visible 
-    // (not minimized)
-
-    window_focused = (state & SDL_APPINPUTFOCUS) && (state & SDL_APPACTIVE);
-
-    // Should the screen be grabbed?
-
-    screenvisible = (state & SDL_APPACTIVE) != 0;
-}
-#endif
 
 // Show or hide the mouse cursor. We have to use different techniques
 // depending on the OS.
@@ -707,6 +682,33 @@ static void HandleWindowEvent(SDL_WindowEvent *event)
             resize_w = event->data1;
             resize_h = event->data2;
             last_resize_time = SDL_GetTicks();
+            break;
+
+        // Don't render the screen when the window is minimized:
+
+        case SDL_WINDOWEVENT_MINIMIZED:
+            screenvisible = false;
+            break;
+
+        case SDL_WINDOWEVENT_MAXIMIZED:
+        case SDL_WINDOWEVENT_RESTORED:
+            screenvisible = true;
+            break;
+
+        // Update the value of window_focused when we get a focus event
+        //
+        // We try to make ourselves be well-behaved: the grab on the mouse
+        // is removed if we lose focus (such as a popup window appearing),
+        // and we dont move the mouse around if we aren't focused either.
+
+        case SDL_WINDOWEVENT_ENTER:
+        case SDL_WINDOWEVENT_FOCUS_GAINED:
+            window_focused = true;
+            break;
+
+        case SDL_WINDOWEVENT_LEAVE:
+        case SDL_WINDOWEVENT_FOCUS_LOST:
+            window_focused = false;
             break;
 
         default:
@@ -1806,7 +1808,6 @@ static void SetVideoMode(screen_mode_t *mode, int w, int h)
         // In windowed mode, the window can be resized while the game is
         // running.  This feature is disabled on OS X, as it adds an ugly
         // scroll handle to the corner of the screen.
-
         flags |= SDL_WINDOW_RESIZABLE;
     }
 
