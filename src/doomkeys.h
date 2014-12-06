@@ -89,5 +89,30 @@
 #define KEYP_EQUALS     KEY_EQUALS
 #define KEYP_ENTER      KEY_ENTER
 
+#define SCANCODE_TO_KEYS_ARRAY {                                            \
+    0,   0,   0,   0,   'a',                                  /* 0-9 */     \
+    'b', 'c', 'd', 'e', 'f',                                                \
+    'g', 'h', 'i', 'j', 'k',                                  /* 10-19 */   \
+    'l', 'm', 'n', 'o', 'p',                                                \
+    'q', 'r', 's', 't', 'u',                                  /* 20-29 */   \
+    'v', 'w', 'x', 'y', 'z',                                                \
+    '1', '2', '3', '4', '5',                                  /* 30-39 */   \
+    '6', '7', '8', '9', '0',                                                \
+    KEY_ENTER, KEY_ESCAPE, KEY_BACKSPACE, KEY_TAB, ' ',       /* 40-49 */   \
+    KEY_MINUS, KEY_EQUALS, '[', ']', '\\',                                  \
+    0,   ';', '\'', '`', ',',                                 /* 50-59 */   \
+    '.', '/', KEY_CAPSLOCK, KEY_F1, KEY_F2,                                 \
+    KEY_F3, KEY_F4, KEY_F5, KEY_F6, KEY_F7,                   /* 60-69 */   \
+    KEY_F8, KEY_F9, KEY_F10, KEY_F11, KEY_F12,                              \
+    KEY_PRTSCR, KEY_SCRLCK, KEY_PAUSE, KEY_INS, KEY_HOME,     /* 70-79 */   \
+    KEY_PGUP, KEY_DEL, KEY_END, KEY_PGDN, KEY_RIGHTARROW,                   \
+    KEY_LEFTARROW, KEY_DOWNARROW, KEY_UPARROW,                /* 80-89 */   \
+    KEY_NUMLOCK, KEYP_DIVIDE,                                               \
+    KEYP_MULTIPLY, KEYP_MINUS, KEYP_PLUS, KEYP_ENTER, KEYP_1,               \
+    KEYP_2, KEYP_3, KEYP_4, KEYP_5, KEYP_6,                   /* 90-99 */   \
+    KEYP_7, KEYP_8, KEYP_9, KEYP_0, KEYP_PERIOD,                            \
+    0, 0, 0, KEYP_EQUALS,                                     /* 100-103 */ \
+}
+
 #endif          // __DOOMKEYS__
 

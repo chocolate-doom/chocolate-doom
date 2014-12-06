@@ -48,6 +48,8 @@
 #include "w_wad.h"
 #include "z_zone.h"
 
+static const int scancode_translate_table[] = SCANCODE_TO_KEYS_ARRAY;
+
 // Lookup table for mapping ASCII characters to their equivalent when
 // shift is pressed on an American layout keyboard:
 
@@ -417,90 +419,33 @@ void I_EnableLoadingDisk(void)
 
 static int TranslateKey(SDL_Keysym *sym)
 {
-    switch(sym->sym)
+    int scancode = sym->scancode;
+
+    switch (scancode)
     {
-      case SDLK_LEFT:	return KEY_LEFTARROW;
-      case SDLK_RIGHT:	return KEY_RIGHTARROW;
-      case SDLK_DOWN:	return KEY_DOWNARROW;
-      case SDLK_UP:	return KEY_UPARROW;
-      case SDLK_ESCAPE:	return KEY_ESCAPE;
-      case SDLK_RETURN:	return KEY_ENTER;
-      case SDLK_TAB:	return KEY_TAB;
-      case SDLK_F1:	return KEY_F1;
-      case SDLK_F2:	return KEY_F2;
-      case SDLK_F3:	return KEY_F3;
-      case SDLK_F4:	return KEY_F4;
-      case SDLK_F5:	return KEY_F5;
-      case SDLK_F6:	return KEY_F6;
-      case SDLK_F7:	return KEY_F7;
-      case SDLK_F8:	return KEY_F8;
-      case SDLK_F9:	return KEY_F9;
-      case SDLK_F10:	return KEY_F10;
-      case SDLK_F11:	return KEY_F11;
-      case SDLK_F12:	return KEY_F12;
-      case SDLK_PRINTSCREEN:  return KEY_PRTSCR;
+        case SDL_SCANCODE_LCTRL:
+        case SDL_SCANCODE_RCTRL:
+            return KEY_RCTRL;
 
-      case SDLK_BACKSPACE: return KEY_BACKSPACE;
-      case SDLK_DELETE:	return KEY_DEL;
+        case SDL_SCANCODE_LSHIFT:
+        case SDL_SCANCODE_RSHIFT:
+            return KEY_RSHIFT;
 
-      case SDLK_PAUSE:	return KEY_PAUSE;
+        case SDL_SCANCODE_LALT:
+            return KEY_LALT;
 
-      case SDLK_EQUALS: return KEY_EQUALS;
+        case SDL_SCANCODE_RALT:
+            return KEY_RALT;
 
-      case SDLK_MINUS:          return KEY_MINUS;
-
-      case SDLK_LSHIFT:
-      case SDLK_RSHIFT:
-	return KEY_RSHIFT;
-	
-      case SDLK_LCTRL:
-      case SDLK_RCTRL:
-	return KEY_RCTRL;
-	
-      case SDLK_LALT:
-      case SDLK_RALT:
-        return KEY_RALT;
-
-      case SDLK_CAPSLOCK: return KEY_CAPSLOCK;
-      case SDLK_SCROLLLOCK: return KEY_SCRLCK;
-      // SDL2-TODO case SDLK_NUMLOCK: return KEY_NUMLOCK;
-
-      case SDLK_KP_0: return KEYP_0;
-      case SDLK_KP_1: return KEYP_1;
-      case SDLK_KP_2: return KEYP_2;
-      case SDLK_KP_3: return KEYP_3;
-      case SDLK_KP_4: return KEYP_4;
-      case SDLK_KP_5: return KEYP_5;
-      case SDLK_KP_6: return KEYP_6;
-      case SDLK_KP_7: return KEYP_7;
-      case SDLK_KP_8: return KEYP_8;
-      case SDLK_KP_9: return KEYP_9;
-
-      case SDLK_KP_PERIOD:   return KEYP_PERIOD;
-      case SDLK_KP_MULTIPLY: return KEYP_MULTIPLY;
-      case SDLK_KP_PLUS:     return KEYP_PLUS;
-      case SDLK_KP_MINUS:    return KEYP_MINUS;
-      case SDLK_KP_DIVIDE:   return KEYP_DIVIDE;
-      case SDLK_KP_EQUALS:   return KEYP_EQUALS;
-      case SDLK_KP_ENTER:    return KEYP_ENTER;
-
-      case SDLK_HOME: return KEY_HOME;
-      case SDLK_INSERT: return KEY_INS;
-      case SDLK_END: return KEY_END;
-      case SDLK_PAGEUP: return KEY_PGUP;
-      case SDLK_PAGEDOWN: return KEY_PGDN;
-
-#ifdef SDL_HAVE_APP_KEYS
-        case SDLK_APP1:        return KEY_F1;
-        case SDLK_APP2:        return KEY_F2;
-        case SDLK_APP3:        return KEY_F3;
-        case SDLK_APP4:        return KEY_F4;
-        case SDLK_APP5:        return KEY_F5;
-        case SDLK_APP6:        return KEY_F6;
-#endif
-
-      default:
-        return tolower(sym->sym);
+        default:
+            if (scancode >= 0 && scancode < arrlen(scancode_translate_table))
+            {
+                return scancode_translate_table[scancode];
+            }
+            else
+            {
+                return 0;
+            }
     }
 }
 
@@ -595,47 +540,27 @@ static int AccelerateMouse(int val)
 }
 
 // Get the equivalent ASCII (Unicode?) character for a keypress.
-
 static int GetTypedChar(SDL_Event *event)
 {
-    int key;
-
-    // If Vanilla keyboard mapping enabled, the keyboard
-    // scan code is used to give the character typed.
-    // This does not change depending on keyboard layout.
-    // If you have a German keyboard, pressing 'z' will
-    // give 'y', for example.  It is desirable to be able
-    // to fix this so that people with non-standard 
-    // keyboard mappings can type properly.  If vanilla
-    // mode is disabled, use the properly translated 
-    // version.
-
+    // If we're strictly emulating Vanilla, we should always act like
+    // we're using a US layout keyboard (in ev_keydown, data1=data2).
+    // Otherwise we should use the native key mapping.
     if (vanilla_keyboard_mapping)
     {
-        key = TranslateKey(&event->key.keysym);
-
-        // Is shift held down?  If so, perform a translation.
-
-        if (shiftdown > 0)
-        {
-            if (key >= 0 && key < arrlen(shiftxform))
-            {
-                key = shiftxform[key];
-            }
-            else
-            {
-                key = 0;
-            }
-        }
-
-        return key;
+        return TranslateKey(&event->key.keysym);
     }
     else
     {
-        // Unicode value, from key layout.
+        int unicode = event->key.keysym.sym;
 
-        // SDL2-TODO return tolower(event->key.keysym.unicode);
-        return 0;
+        if (unicode < 128)
+        {
+            return unicode;
+        }
+        else
+        {
+            return 0;
+        }
     }
 }
 
@@ -756,6 +681,11 @@ void I_GetEvent(void)
                 event.type = ev_keydown;
                 event.data1 = TranslateKey(&sdlevent.key.keysym);
                 event.data2 = GetTypedChar(&sdlevent);
+
+                // SDL2-TODO: Need to generate a parallel text input event
+                // here that can be used for typing text, eg. multiplayer
+                // chat and savegame names. This is only for the Vanilla
+                // case; we must use the shiftxform table.
 
                 if (event.data1 != 0)
                 {
