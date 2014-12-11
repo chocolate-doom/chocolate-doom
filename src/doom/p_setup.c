@@ -787,6 +787,66 @@ void P_GroupLines (void)
 	
 }
 
+// [crispy] remove slime trails
+// mostly taken from Lee Killough's implementation in mbfsrc/P_SETUP.C:849-924,
+// with the exception that not the actual vertex coordinates are modified,
+// but pseudovertexes which are dummies that are *only* used in rendering,
+// i.e. r_bsp.c:R_AddLine()
+
+pseudovertex_t *pseudovertexes = NULL;
+
+static void P_RemoveSlimeTrails(void)
+{
+    int i;
+
+    pseudovertex_t *pv;
+    pseudovertexes = realloc(pseudovertexes, numvertexes * sizeof(*pseudovertexes));
+
+    // [crispy] initialize pseudovertexes with actual vertex coordinates
+    for (i = 0; i < numvertexes; i++)
+    {
+	pseudovertexes[i].x = vertexes[i].x;
+	pseudovertexes[i].y = vertexes[i].y;
+	pseudovertexes[i].moved = false;
+    }
+
+    for (i = 0; i < numsegs; i++)
+    {
+	const line_t *l = segs[i].linedef;
+	const vertex_t *v = segs[i].v1;
+
+	// [crispy] ignore exactly vertical or horizontal linedefs
+	if (l->dx && l->dy)
+	{
+	    do
+	    {
+		pv = &pseudovertexes[v - vertexes];
+		// [crispy] vertex wasn't already moved
+		if (!pv->moved)
+		{
+		    pv->moved = true;
+		    // [crispy] ignore endpoints of linedefs
+		    if (v != l->v1 && v != l->v2)
+		    {
+			// [crispy] move the vertex towards the linedef
+			// by projecting it using the law of cosines
+			int64_t dx2 = (l->dx >> FRACBITS) * (l->dx >> FRACBITS);
+			int64_t dy2 = (l->dy >> FRACBITS) * (l->dy >> FRACBITS);
+			int64_t dxy = (l->dx >> FRACBITS) * (l->dy >> FRACBITS);
+			int64_t s = dx2 + dy2;
+			int x0 = v->x, y0 = v->y, x1 = l->v1->x, y1 = l->v1->y;
+
+			// [crispy] MBF actually overrides v->x and v->y here
+			pv->x = (fixed_t)((dx2 * x0 + dy2 * x1 + dxy * (y0 - y1)) / s);
+			pv->y = (fixed_t)((dy2 * y0 + dx2 * y1 + dxy * (x0 - x1)) / s);
+		    }
+		}
+	    // [crispy] if v doesn't point to the second vertex of the seg already, point it there
+	    } while ((v != segs[i].v2) && (v = segs[i].v2));
+	}
+    }
+}
+
 // Pad the REJECT lump with extra data when the lump is too small,
 // to simulate a REJECT buffer overflow in Vanilla Doom.
 
@@ -961,6 +1021,9 @@ P_SetupLevel
 
     P_GroupLines ();
     P_LoadReject (lumpnum+ML_REJECT);
+
+    // [crispy] remove slime trails
+    P_RemoveSlimeTrails();
 
     bodyqueslot = 0;
     deathmatch_p = deathmatchstarts;

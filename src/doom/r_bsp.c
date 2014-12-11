@@ -259,12 +259,16 @@ void R_AddLine (seg_t*	line)
     angle_t		angle2;
     angle_t		span;
     angle_t		tspan;
+    pseudovertex_t	*pv1, *pv2; // [crispy] remove slime trails
     
     curline = line;
 
     // OPTIMIZE: quickly reject orthogonal back sides.
-    angle1 = R_PointToAngle (line->v1->x, line->v1->y);
-    angle2 = R_PointToAngle (line->v2->x, line->v2->y);
+    // [crispy] remove slime trails
+    pv1 = &pseudovertexes[line->v1 - vertexes];
+    angle1 = R_PointToAngle (pv1->x, pv1->y);
+    pv2 = &pseudovertexes[line->v2 - vertexes];
+    angle2 = R_PointToAngle (pv2->x, pv2->y);
     
     // Clip to view edges.
     // OPTIMIZE: make constant out of 2*clipangle (FIELDOFVIEW).
