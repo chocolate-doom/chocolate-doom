@@ -782,9 +782,13 @@ int	R_TextureNumForName (char* name)
 
     if (i==-1)
     {
+	// [crispy] fix absurd texture name in error message
+	char	namet[9];
+	namet[8] = '\0';
+	memcpy (namet, name, 8);
 	// [crispy] make non-fatal
 	fprintf (stderr, "R_TextureNumForName: %s not found\n",
-		 name);
+		 namet);
 	return 0;
     }
     return i;
