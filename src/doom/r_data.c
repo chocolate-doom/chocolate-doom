@@ -1003,7 +1003,9 @@ int R_FlatNumForName (char* name)
     {
 	namet[8] = 0;
 	memcpy (namet, name,8);
-	I_Error ("R_FlatNumForName: %s not found",namet);
+	// [crispy] make non-fatal
+	fprintf (stderr, "R_FlatNumForName: %s not found", namet);
+	return firstflat;
     }
     return i - firstflat;
 }
