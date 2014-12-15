@@ -432,7 +432,7 @@ void WI_drawLF(void)
     {
         // MAP33 - nothing is displayed!
     }
-    else if (wbs->last > NUMCMAPS)
+    else if (wbs->last > NUMCMAPS && 0) // [crispy] avoid crashing
     {
         // > MAP33.  Doom bombs out here with a Bad V_DrawPatch error.
         // I'm pretty sure that doom2.exe is just reading into random
