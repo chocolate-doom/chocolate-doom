@@ -762,6 +762,7 @@ boolean P_GiveItemToPlayer(player_t *player, int sprnum, mobjtype_t type)
     case SPR_CHST: // 50 gold
         for(i = 0; i < 50; i++)
             P_GiveInventoryItem(player, SPR_COIN, MT_MONY_1);
+        break; // haleyjd 20141215: missing break, caused Rowan to not take ring from you.
 
     case SPR_BBOX: // Box of Bullets
         if(!P_GiveAmmo(player, am_bullets, 5))
