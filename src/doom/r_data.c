@@ -349,6 +349,7 @@ static void R_GenerateComposite(int texnum)
 static void R_GenerateLookup(int texnum)
 {
   const texture_t *texture = textures[texnum];
+  char texturename[9];
 
   // Composited texture not created yet.
 
@@ -366,6 +367,9 @@ static void R_GenerateLookup(int texnum)
 
   const texpatch_t *patch = texture->patches;
   int i = texture->patchcount;
+
+  texturename[8] = '\0';
+  memcpy(texturename, texture->name, 8);
 
   while (--i >= 0)
     {
@@ -432,10 +436,10 @@ static void R_GenerateLookup(int texnum)
 		      if (badcol)
 			{
 			  badcol = 0;
-			  printf("\nWarning: Texture %8.8s "
+			  fprintf(stderr, "\nWarning: Texture %8.8s "
 				 "(height %d) has bad column(s)"
 				 " starting at x = %d.",
-				 texture->name, texture->height, x);
+				 texturename, texture->height, x);
 			}
 		      break;
 		    }
@@ -462,9 +466,9 @@ static void R_GenerateLookup(int texnum)
 	  if (devparm)
 	    {
 	      // killough 8/8/98
-	      printf("\nR_GenerateLookup:"
+	      fprintf(stderr, "\nR_GenerateLookup:"
 		     " Column %d is without a patch in texture %.8s",
-		     x, texture->name);
+		     x, texturename);
 	    }
 	  else
 	    err = 1;               // killough 10/98
@@ -493,8 +497,8 @@ static void R_GenerateLookup(int texnum)
 
     if (err)       // killough 10/98: non-verbose output
       {
-	printf("\nR_GenerateLookup: Column without a patch in texture %.8s",
-	       texture->name);
+	fprintf(stderr, "\nR_GenerateLookup: Column without a patch in texture %.8s",
+	       texturename);
       }
   }
   free(count);                    // killough 4/9/98
@@ -715,9 +719,12 @@ void R_InitTextures (void)
 	    patch->patch = patchlookup[SHORT(mpatch->patch)];
 	    if (patch->patch == -1)
 	    {
+		char	texturename[9];
+		texturename[8] = '\0';
+		memcpy (texturename, texture->name, 8);
 		// [crispy] make non-fatal
 		fprintf (stderr, "R_InitTextures: Missing patch in texture %s\n",
-			 texture->name);
+			 texturename);
 		patch->patch = 0;
 	    }
 	}		
