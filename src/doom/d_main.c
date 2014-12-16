@@ -1092,6 +1092,7 @@ void PrintGameVersion(void)
 }
 
 // Function called at exit to display the ENDOOM screen
+
 static void D_Endoom(void)
 {
     byte *endoom;
@@ -1122,6 +1123,7 @@ static void LoadIwadDeh(void)
         // is an old IWAD.
         DEH_LoadLumpByName("DEHACKED", false, true);
     }
+
 
     // If this is the HACX IWAD, we need to load the DEHACKED lump.
     if (gameversion == exe_hacx)
