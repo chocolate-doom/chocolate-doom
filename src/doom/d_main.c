@@ -1768,7 +1768,8 @@ void D_DoomMain (void)
     );
 
     // [crispy] check for presence of MAP33
-    crispy_havemap33 = (W_CheckNumForName("MAP33") != -1);
+    crispy_havemap33 = (W_CheckNumForName("map33") != -1) &&
+                       (W_CheckNumForName("cwilv32") != -1);
 
     // [crispy] check for NWT-style merging
     crispy_nwtmerge =
