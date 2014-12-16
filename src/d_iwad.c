@@ -183,6 +183,10 @@ static char *steam_install_subdirs[] =
     // From Doom 3: BFG Edition:
 
     "steamapps\\common\\DOOM 3 BFG Edition\\base\\wads",
+
+    // From Strife: Veteran Edition:
+
+    "steamapps\\common\\Strife",
 };
 
 #define STEAM_BFG_GUS_PATCHES \
