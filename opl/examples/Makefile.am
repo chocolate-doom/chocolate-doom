@@ -1,5 +1,5 @@
 
-AM_CFLAGS = -I..
+AM_CFLAGS = -I$(top_srcdir)/opl
 
 noinst_PROGRAMS=droplay
 
