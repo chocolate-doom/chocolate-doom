@@ -1419,6 +1419,12 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_KEY(key_map_clearmark),
 
     //!
+    // Key to toogle the overlay mode when in the map view.
+    //
+
+    CONFIG_VARIABLE_KEY(key_map_overlay),
+
+    //!
     // Key to select weapon 1.
     //
 

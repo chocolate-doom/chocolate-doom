@@ -515,32 +515,27 @@ void HU_Drawer(void)
 
     if (crispy_cleanscreenshot)
     {
-        HU_Erase();
-        return;
+	HU_Erase();
+	return;
     }
 
     // [crispy] translucent messages for translucent HUD
-    if (crispy_translucency && screenblocks > CRISPY_HUD && !automapactive)
+    if (crispy_translucency && screenblocks > CRISPY_HUD && (!automapactive || (automapactive && crispy_automapoverlay)))
 	dp_translucent = true;
 
     V_ClearDPTranslation();
     HUlib_drawSText(&w_message);
-    dp_translation = cr[CR_GOLD];
-    HUlib_drawSText(&w_secret);
-    V_ClearDPTranslation();
     HUlib_drawIText(&w_chat);
 
-    if (dp_translucent)
-	dp_translucent = false;
+    if (crispy_coloredhud)
+	dp_translation = cr[CR_GOLD];
+    HUlib_drawSText(&w_secret);
 
     if (automapactive)
-    {
-	if (crispy_coloredhud)
-	    dp_translation = cr[CR_GOLD];
 	HUlib_drawTextLine(&w_title, false);
 
-	if (crispy_automapstats)
-	{
+    if (automapactive && crispy_automapstats)
+    {
 	int time = leveltime / TICRATE;
 
 	HUlib_drawTextLine(&w_map, false);
@@ -576,17 +571,12 @@ void HU_Drawer(void)
 	while (*s)
 	    HUlib_addCharToTextLine(&w_ltime, *(s++));
 	HUlib_drawTextLine(&w_ltime, false);
-	}
-    V_ClearDPTranslation();
     }
 
     // [crispy] show map coordinates in upper right corner
     // if either automap stats or IDMYPOS cheat are enabled
     if ((automapactive && crispy_automapstats) || coord_on)
     {
-	if (crispy_translucency && screenblocks > CRISPY_HUD && !automapactive)
-	    dp_translucent = true;
-
 	M_snprintf(str, sizeof(str), "%sX: %s%-5d", crstr[CR_GREEN], crstr[CR_GRAY],
 	        (players[consoleplayer].mo->x)>>FRACBITS);
 	HUlib_clearTextLine(&w_coordx);
@@ -610,12 +600,12 @@ void HU_Drawer(void)
 	while (*s)
 	    HUlib_addCharToTextLine(&w_coorda, *(s++));
 	HUlib_drawTextLine(&w_coorda, false);
-
-	if (dp_translucent)
-	    dp_translucent = false;
+    }
 
     V_ClearDPTranslation();
-    }
+
+    if (dp_translucent)
+	dp_translucent = false;
 
     // [crispy] demo progress bar
     if (demoplayback)

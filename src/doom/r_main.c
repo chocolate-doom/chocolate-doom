@@ -899,7 +899,7 @@ void R_RenderPlayerView (player_t* player)
     R_ClearDrawSegs ();
     R_ClearPlanes ();
     R_ClearSprites ();
-    if (automapactive)
+    if (automapactive && !crispy_automapoverlay)
     {
         R_RenderBSPNode (numnodes-1);
         return;

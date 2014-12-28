@@ -149,6 +149,7 @@ int             crispy_secretmessage = 0;
 int             crispy_translucency = 0;
 
 // [crispy] in-game switches
+boolean         crispy_automapoverlay = false;
 boolean         crispy_flashinghom = false;
 boolean         crispy_fliplevels = false;
 boolean         crispy_havemap33 = false;
@@ -241,7 +242,7 @@ void D_Display (void)
       case GS_LEVEL:
 	if (!gametic)
 	    break;
-	if (automapactive)
+	if (automapactive && !crispy_automapoverlay)
 	{
 	    // [crispy] update automap while playing
 	    R_RenderPlayerView (&players[displayplayer]);
@@ -272,7 +273,7 @@ void D_Display (void)
     I_UpdateNoBlit ();
     
     // draw the view directly
-    if (gamestate == GS_LEVEL && !automapactive && gametic)
+    if (gamestate == GS_LEVEL && (!automapactive || (automapactive && crispy_automapoverlay)) && gametic)
     {
 	R_RenderPlayerView (&players[displayplayer]);
 
@@ -281,7 +282,9 @@ void D_Display (void)
             ST_Drawer(false, false);
     }
 
-    if (gamestate == GS_LEVEL && gametic)
+    // [crispy] in automap overlay mode,
+    // the HUD is drawn on top of everything else
+    if (gamestate == GS_LEVEL && gametic && !(automapactive && crispy_automapoverlay))
 	HU_Drawer ();
     
     // clean up border stuff
@@ -296,7 +299,7 @@ void D_Display (void)
     }
 
     // see if the border needs to be updated to the screen
-    if (gamestate == GS_LEVEL && !automapactive && scaledviewwidth != (320 << hires))
+    if (gamestate == GS_LEVEL && (!automapactive || (automapactive && crispy_automapoverlay)) && scaledviewwidth != (320 << hires))
     {
 	if (menuactive || menuactivestate || !viewactivestate)
 	    borderdrawcount = 3;
@@ -320,6 +323,18 @@ void D_Display (void)
     inhelpscreensstate = inhelpscreens;
     oldgamestate = wipegamestate = gamestate;
     
+    // [crispy] in automap overlay mode,
+    // draw the automap and HUD on top of everything else
+    if (automapactive && crispy_automapoverlay)
+    {
+	AM_Drawer ();
+	HU_Drawer ();
+
+	// [crispy] force redraw of status bar and border
+	viewactivestate = false;
+	inhelpscreensstate = true;
+    }
+
     // [crispy] shade background when a menu is active or the game is paused
     if (paused || menuactive)
     {
@@ -346,7 +361,7 @@ void D_Display (void)
     // draw pause pic
     if (paused)
     {
-	if (automapactive)
+	if (automapactive && !crispy_automapoverlay)
 	    y = 4;
 	else
 	    y = (viewwindowy >> hires)+4;
