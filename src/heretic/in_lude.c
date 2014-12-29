@@ -25,6 +25,7 @@
 #include "deh_str.h"
 #include "p_local.h"
 #include "s_sound.h"
+#include "i_swap.h"
 #include "i_system.h"
 #include "i_video.h"
 #include "v_video.h"

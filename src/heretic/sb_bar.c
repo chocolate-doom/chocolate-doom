@@ -19,6 +19,7 @@
 #include "doomdef.h"
 #include "deh_str.h"
 #include "i_video.h"
+#include "i_swap.h"
 #include "m_cheat.h"
 #include "m_misc.h"
 #include "m_random.h"
