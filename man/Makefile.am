@@ -93,7 +93,7 @@ INSTALL.heretic: $(MANDIR)/INSTALL.template
 	$(DOCGEN) -g hexen -m $(MANDIR)/hexen.template $(top_srcdir)/src $(top_srcdir)/src/hexen > $@
 
 hexen.cfg.5: $(top_srcdir)/src $(MANDIR)/default.cfg.template
-	$(DOCGEN) -g hexen -m $(MANDIR)default.cfg.template \
+	$(DOCGEN) -g hexen -m $(MANDIR)/default.cfg.template \
                  -c default $(top_srcdir)/src/m_config.c > $@
 
 @PROGRAM_PREFIX@hexen.cfg.5: $(top_srcdir)/src $(MANDIR)/extra.cfg.template
