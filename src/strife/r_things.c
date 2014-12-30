@@ -470,7 +470,7 @@ R_DrawVisSprite
     // villsa [STRIFE] clip sprite's feet if needed
     if(vis->mobjflags & MF_FEETCLIPPED)
     {
-        sprbotscreen = sprtopscreen + FixedMul(spryscale, patch->height << FRACBITS);
+        sprbotscreen = sprtopscreen + FixedMul(spryscale, SHORT(patch->height) << FRACBITS);
         clip = (sprbotscreen - FixedMul(10*FRACUNIT, spryscale)) >> FRACBITS;
     }
     else

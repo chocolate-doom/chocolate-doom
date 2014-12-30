@@ -19,6 +19,7 @@
 #include "doomdef.h"
 #include "deh_str.h"
 #include "i_video.h"
+#include "i_swap.h"
 #include "m_cheat.h"
 #include "m_misc.h"
 #include "m_random.h"
@@ -353,19 +354,19 @@ static void DrBNumber(signed int val, int x, int y)
     if (val > 99)
     {
         patch = W_CacheLumpNum(FontBNumBase + val / 100, PU_CACHE);
-        V_DrawShadowedPatch(xpos + 6 - patch->width / 2, y, patch);
+        V_DrawShadowedPatch(xpos + 6 - SHORT(patch->width) / 2, y, patch);
     }
     val = val % 100;
     xpos += 12;
     if (val > 9 || oldval > 99)
     {
         patch = W_CacheLumpNum(FontBNumBase + val / 10, PU_CACHE);
-        V_DrawShadowedPatch(xpos + 6 - patch->width / 2, y, patch);
+        V_DrawShadowedPatch(xpos + 6 - SHORT(patch->width) / 2, y, patch);
     }
     val = val % 10;
     xpos += 12;
     patch = W_CacheLumpNum(FontBNumBase + val, PU_CACHE);
-    V_DrawShadowedPatch(xpos + 6 - patch->width / 2, y, patch);
+    V_DrawShadowedPatch(xpos + 6 - SHORT(patch->width) / 2, y, patch);
 }
 
 //---------------------------------------------------------------------------

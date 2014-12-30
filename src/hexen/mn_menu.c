@@ -378,7 +378,7 @@ void MN_DrTextAYellow(char *text, int x, int y)
         {
             p = W_CacheLumpNum(FontAYellowBaseLump + c - 33, PU_CACHE);
             V_DrawPatch(x, y, p);
-            x += p->width - 1;
+            x += SHORT(p->width) - 1;
         }
     }
 }

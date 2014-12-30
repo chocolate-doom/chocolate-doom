@@ -1,4 +1,4 @@
-AM_CFLAGS=-I.. @SDL_CFLAGS@ @SDLMIXER_CFLAGS@ @SDLNET_CFLAGS@
+AM_CFLAGS=-I$(top_srcdir)/src @SDL_CFLAGS@ @SDLMIXER_CFLAGS@ @SDLNET_CFLAGS@
 
 noinst_LIBRARIES=libhexen.a
 
@@ -58,10 +58,10 @@ sounds.c            sounds.h          \
 st_start.c          st_start.h        \
 sv_save.c                             \
                     textdefs.h        \
-                    xddefs.h          
+                    xddefs.h
 
 EXTRA_DIST=                           \
 i_ibm.c                               \
-i_sound.c           
+i_sound.c
 
 libhexen_a_SOURCES=$(SOURCE_FILES)

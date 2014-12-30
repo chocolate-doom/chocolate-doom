@@ -25,6 +25,7 @@
 #include "deh_str.h"
 #include "p_local.h"
 #include "s_sound.h"
+#include "i_swap.h"
 #include "i_system.h"
 #include "i_video.h"
 #include "v_video.h"
@@ -1004,14 +1005,14 @@ void IN_DrawNumber(int val, int x, int y, int digits)
     if (digits == 4)
     {
         patch = FontBNumbers[val / 1000];
-        V_DrawShadowedPatch(xpos + 6 - patch->width / 2 - 12, y, patch);
+        V_DrawShadowedPatch(xpos + 6 - SHORT(patch->width) / 2 - 12, y, patch);
     }
     if (digits > 2)
     {
         if (realdigits > 2)
         {
             patch = FontBNumbers[val / 100];
-            V_DrawShadowedPatch(xpos + 6 - patch->width / 2, y, patch);
+            V_DrawShadowedPatch(xpos + 6 - SHORT(patch->width) / 2, y, patch);
         }
         xpos += 12;
     }
@@ -1021,7 +1022,7 @@ void IN_DrawNumber(int val, int x, int y, int digits)
         if (val > 9)
         {
             patch = FontBNumbers[val / 10];
-            V_DrawShadowedPatch(xpos + 6 - patch->width / 2, y, patch);
+            V_DrawShadowedPatch(xpos + 6 - SHORT(patch->width) / 2, y, patch);
         }
         else if (digits == 2 || oldval > 99)
         {
@@ -1031,11 +1032,11 @@ void IN_DrawNumber(int val, int x, int y, int digits)
     }
     val = val % 10;
     patch = FontBNumbers[val];
-    V_DrawShadowedPatch(xpos + 6 - patch->width / 2, y, patch);
+    V_DrawShadowedPatch(xpos + 6 - SHORT(patch->width) / 2, y, patch);
     if (neg)
     {
         patch = FontBNegative;
-        V_DrawShadowedPatch(xpos + 6 - patch->width / 2 - 12 * (realdigits),
+        V_DrawShadowedPatch(xpos + 6 - SHORT(patch->width) / 2 - 12 * (realdigits),
                             y, patch);
     }
 }
@@ -1061,7 +1062,7 @@ void IN_DrTextB(char *text, int x, int y)
         {
             p = W_CacheLumpNum(FontBLump + c - 33, PU_CACHE);
             V_DrawShadowedPatch(x, y, p);
-            x += p->width - 1;
+            x += SHORT(p->width) - 1;
         }
     }
 }

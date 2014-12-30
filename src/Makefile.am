@@ -18,9 +18,9 @@ SETUP_BINARIES = @PROGRAM_PREFIX@doom-setup$(EXEEXT)    \
 
 execgames_SCRIPTS = $(SETUP_BINARIES)
 
-AM_CFLAGS = -I$(top_builddir)/textscreen            \
-            -I$(top_builddir)/opl                   \
-            -I$(top_builddir)/pcsound               \
+AM_CFLAGS = -I$(top_srcdir)/textscreen            \
+            -I$(top_srcdir)/opl                   \
+            -I$(top_srcdir)/pcsound               \
             @SDLMIXER_CFLAGS@ @SDLNET_CFLAGS@
 
 # Common source files used by absolutely everything:
