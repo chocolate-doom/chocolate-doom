@@ -331,6 +331,13 @@ static const known_joystick_t known_joysticks[] =
         xbox360_controller_linux,
     },
 
+    // Xbox One controller as it appears on Linux.
+    {
+        "Microsoft X-Box One pad",
+        6, 11, 1,
+        xbox360_controller_linux,
+    },
+
     {
         "Logitech Dual Action",
         4, 12, 1,
