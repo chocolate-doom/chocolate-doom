@@ -1426,7 +1426,7 @@ void ST_drawWidgets(boolean refresh)
 
     dp_translation = ST_WidgetColor(hudcolor_health);
     // [crispy] in the Crispy HUD, health blinks if below 10%
-    if (screenblocks < CRISPY_HUD || automapactive || plyr->health > 10 || (gametic & TICRATE/2) > TICRATE/4)
+    if (screenblocks < CRISPY_HUD || automapactive || plyr->health > 9 || (gametic & TICRATE/2) > TICRATE/4)
     {
     STlib_updatePercent(&w_health, refresh || screenblocks >= CRISPY_HUD);
     }
