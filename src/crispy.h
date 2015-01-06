@@ -27,6 +27,7 @@
 
 #define singleplayer (!demorecording && !demoplayback && !netgame)
 
+extern boolean crispy_automapoverlay;
 extern boolean crispy_cleanscreenshot;
 extern boolean crispy_flashinghom;
 extern boolean crispy_fliplevels;

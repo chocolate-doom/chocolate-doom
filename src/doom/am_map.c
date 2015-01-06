@@ -705,6 +705,14 @@ AM_Responder
             AM_clearMarks();
             plr->message = DEH_String(AMSTR_MARKSCLEARED);
         }
+        else if (key == key_map_overlay)
+        {
+            crispy_automapoverlay = !crispy_automapoverlay;
+            if (crispy_automapoverlay)
+                plr->message = DEH_String(AMSTR_OVERLAYON);
+            else
+                plr->message = DEH_String(AMSTR_OVERLAYOFF);
+        }
         else
         {
             rc = false;
@@ -1475,6 +1483,7 @@ void AM_Drawer (void)
 {
     if (!automapactive) return;
 
+    if (!crispy_automapoverlay)
     AM_clearFB(BACKGROUND);
     if (grid)
 	AM_drawGrid(GRIDCOLORS);

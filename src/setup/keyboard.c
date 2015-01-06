@@ -71,6 +71,7 @@ static int *map_keys[] = { &key_map_north, &key_map_south, &key_map_east,
                            &key_map_west, &key_map_zoomin, &key_map_zoomout,
                            &key_map_toggle, &key_map_maxzoom, &key_map_follow,
                            &key_map_grid, &key_map_mark, &key_map_clearmark,
+                           &key_map_overlay,
                            NULL };
 
 static void UpdateJoybSpeed(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(var))
@@ -352,6 +353,7 @@ static void OtherKeysDialog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
     AddKeyControl(table, "Toggle grid",           &key_map_grid);
     AddKeyControl(table, "Mark location",         &key_map_mark);
     AddKeyControl(table, "Clear all marks",       &key_map_clearmark);
+    AddKeyControl(table, "Overlay mode",          &key_map_overlay);
 
     AddSectionLabel(table, "Multiplayer", true);
 

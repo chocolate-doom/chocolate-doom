@@ -1441,7 +1441,7 @@ void ST_drawWidgets(boolean refresh)
     STlib_updatePercent(&w_armor, refresh || screenblocks >= CRISPY_HUD);
     V_ClearDPTranslation();
 
-    if (screenblocks < CRISPY_HUD || automapactive)
+    if (screenblocks < CRISPY_HUD || (automapactive && !crispy_automapoverlay))
     {
     STlib_updateBinIcon(&w_armsbg, refresh);
     }
@@ -1449,7 +1449,7 @@ void ST_drawWidgets(boolean refresh)
     for (i=0;i<6;i++)
 	STlib_updateMultIcon(&w_arms[i], refresh || screenblocks >= CRISPY_HUD);
 
-    if (screenblocks < CRISPY_HUD || automapactive)
+    if (screenblocks < CRISPY_HUD || (automapactive && !crispy_automapoverlay))
     {
     STlib_updateMultIcon(&w_faces, refresh);
     }
@@ -1484,7 +1484,7 @@ void ST_diffDraw(void)
 void ST_Drawer (boolean fullscreen, boolean refresh)
 {
   
-    st_statusbaron = (!fullscreen) || automapactive || screenblocks >= CRISPY_HUD;
+    st_statusbaron = (!fullscreen) || (automapactive && !crispy_automapoverlay) || screenblocks >= CRISPY_HUD;
     st_firsttime = st_firsttime || refresh;
 
     if (crispy_cleanscreenshot && screenblocks >= CRISPY_HUD)
@@ -1494,7 +1494,7 @@ void ST_Drawer (boolean fullscreen, boolean refresh)
     ST_doPaletteStuff();
 
     // [crispy] translucent HUD
-    if (crispy_translucency && screenblocks > CRISPY_HUD && !automapactive)
+    if (crispy_translucency && screenblocks > CRISPY_HUD && !(automapactive && !crispy_automapoverlay))
 	dp_translucent = true;
 
     // If just after ST_Start(), refresh all
