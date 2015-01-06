@@ -1756,14 +1756,6 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_INT(crispy_flipcorpses),
-
-    //!
-    // @game doom
-    //
-    // Fix Kills Stats.
-    //
-
-    CONFIG_VARIABLE_INT(crispy_fixkills),
 };
 
 static default_collection_t extra_defaults =

@@ -203,7 +203,6 @@ static void M_CrispyToggleColoredblood(int choice);
 static void M_CrispyToggleColoredblood2(int choice);
 static void M_CrispyToggleColoredhud(int choice);
 static void M_CrispyToggleCrosshair(int choice);
-static void M_CrispyToggleFixkills(int choice);
 static void M_CrispyToggleFlipcorpses(int choice);
 static void M_CrispyToggleFreeaim(int choice);
 static void M_CrispyToggleFreelook(int choice);
@@ -468,7 +467,6 @@ enum
     crispness_centerweapon,
     crispness_secretmessage,
     crispness_automapstats,
-    crispness_fixkills,
     crispness_sep_goto2,
     crispness_goto2,
     crispness_end
@@ -488,7 +486,6 @@ static menuitem_t CrispnessMenu[]=
     {1,"",	M_CrispyToggleCenterweapon,'c'},
     {1,"",	M_CrispyToggleSecretmessage,'s'},
     {1,"",	M_CrispyToggleAutomapstats,'a'},
-    {1,"",	M_CrispyToggleFixkills,'f'},
     {-1,"",0,'\0'},
     {1,"",	M_Crispness2,'g'},
 };
@@ -1342,7 +1339,6 @@ static void M_DrawCrispness(void)
     M_DrawCrispnessItem(crispness_centerweapon, "Center Weapon when Firing", crispy_centerweapon, true);
     M_DrawCrispnessItem(crispness_secretmessage, "Show Revealed Secrets", crispy_secretmessage, true);
     M_DrawCrispnessItem(crispness_automapstats, "Show Level Stats in Automap", crispy_automapstats, true);
-    M_DrawCrispnessItem(crispness_fixkills, "Fix Kills Stats", crispy_fixkills, singleplayer);
 
     M_DrawCrispnessGoto(crispness_goto2, "Next Page >");
 
@@ -1658,18 +1654,6 @@ static void M_CrispyToggleCenterweapon(int choice)
 {
     choice = 0;
     crispy_centerweapon = 1 - !!crispy_centerweapon;
-}
-
-static void M_CrispyToggleFixkills(int choice)
-{
-    if (!singleplayer)
-    {
-	S_StartSound(NULL,sfx_oof);
-	return;
-    }
-
-    choice = 0;
-    crispy_fixkills = 1 - !!crispy_fixkills;
 }
 
 static void M_CrispyToggleFreelook(int choice)

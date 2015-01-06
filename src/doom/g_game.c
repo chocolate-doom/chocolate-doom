@@ -128,6 +128,7 @@ int             consoleplayer;          // player taking events and displaying
 int             displayplayer;          // view being displayed 
 int             levelstarttic;          // gametic at level start 
 int             totalkills, totalitems, totalsecret;    // for intermission 
+int             extrakills;             // [crispy] count Lost Souls and spawned monsters
  
 char           *demoname;
 boolean         demorecording; 

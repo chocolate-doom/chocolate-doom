@@ -545,8 +545,13 @@ void HU_Drawer(void)
 
 	HUlib_drawTextLine(&w_map, false);
 
-	M_snprintf(str, sizeof(str), "%sKills: %s%d/%d", crstr[CR_RED], crstr[CR_GRAY],
-	        players[consoleplayer].killcount, totalkills);
+	// [crispy] count Lost Souls and spawned monsters
+	if (extrakills)
+	    M_snprintf(str, sizeof(str), "%sKills: %s%d/%d+%d", crstr[CR_RED], crstr[CR_GRAY],
+	            players[consoleplayer].killcount, totalkills, extrakills);
+	else
+	    M_snprintf(str, sizeof(str), "%sKills: %s%d/%d", crstr[CR_RED], crstr[CR_GRAY],
+	            players[consoleplayer].killcount, totalkills);
 	HUlib_clearTextLine(&w_kills);
 	s = str;
 	while (*s)
