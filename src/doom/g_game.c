@@ -1998,13 +1998,7 @@ G_InitNew
     */
 
     if (map < 1)
-    {
-	// [crispy] support E1M10 "Sewers"
-	if (!crispy_havee1m10 || episode != 1)
 	map = 1;
-	else
-	map = 10;
-    }
 
     if ( (map > 9)
 	 && ( gamemode != commercial) )
