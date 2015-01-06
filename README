@@ -16,12 +16,12 @@ Detailed explanation about each setting:
 // Default: 0 (means your record will NOT BE VALID!)
 cn_meta_id                    0
 
-// Delay starting the game in miliseconds (0 - 9999) so you can
+// Delay starting the game in milliseconds (0 - 9999) so you can
 // adjust/press your mouse and key before the game starts
 // 0 - 9999 (Default: 50)
 cn_quickstart_delay           50
 
-// Display ingame/intermission screen timer
+// Display in-game/intermission screen timer
 // 0 - No, 1 - Yes (Default)
 cn_timer_enabled              1
 
@@ -41,11 +41,11 @@ cn_timer_color_index          168
 // 0 - No (Default), 1 - Yes
 cn_timer_shadow_index         0
 
-// Backgroung color for timer
+// Background color for timer
 // 0 - 255 (Default:16)
 cn_timer_bg_colormap          16
 
-// Precache all sounds at start, otherwise game will 'skip/lag'
+// Pre-cache all sounds at start, otherwise game will 'skip/lag'
 // when new sound is loaded.
 // 0 - No, 1 - Yes (Default)
 cn_precache_sounds            1
@@ -65,7 +65,7 @@ cn_typematic_rate             30
 
 == Additional Competition Doom command-line options ==
 
--quickstart x   Delay starting the game in miliseconds (0 - 9999)
+-quickstart x   Delay starting the game in milliseconds (0 - 9999)
                 so you can adjust/press your mouse and key
 -printstats     Outputs gameplay stats per map/total to stdout/console
 
@@ -85,7 +85,7 @@ cn_typematic_rate             30
                 Combine category and episode eg. cndoom -speed -episode 2
 
 -movie          Use when recording movie (Doom and Doom 2)
-                Combine vategory and movie eg. cndoom -max -movie
+                Combine category and movie eg. cndoom -max -movie
 
 
 
@@ -109,7 +109,7 @@ video_driver. All files, patches and fixes can be downloaded from here:
 	http://www.doom.com.hr/compet-n/
 	http://www.doom.com.hr/forum/
 
-   You are encouraged to sign up to dorums and contribute any useful
+   You are encouraged to sign up to forums and contribute any useful
    information you may have regarding the Competition Doom!
 
  * Competition Doom is distributed under the GNU GPL.
