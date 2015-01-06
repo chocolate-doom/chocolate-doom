@@ -807,7 +807,7 @@ void WI_drawShowNextLoc(void)
 	    return;
 	}
 	
-	last = (wbs->last == 8) ? wbs->next - 1 : wbs->last;
+	last = (wbs->last == 8 || wbs->last == 9) ? wbs->next - 1 : wbs->last; // [crispy] support E1M10 "Sewers"
 
 	// draw a splat on taken cities.
 	for (i=0 ; i<=last ; i++)
@@ -1584,6 +1584,12 @@ static void WI_loadUnloadData(load_callback_t callback)
 	    DEH_snprintf(name, 9, "WILV%d%d", wbs->epsd, i);
             callback(name, &lnames[i]);
 	}
+	// [crispy] support E1M10 "Sewers"
+	if (crispy_havee1m10)
+	{
+	    DEH_snprintf(name, 9, "SEWERS");
+	    callback(name, &lnames[i]);
+	}
 
 	// you are here
         callback(DEH_String("WIURH0"), &yah[0]);
@@ -1728,7 +1734,9 @@ void WI_loadData(void)
     }
     else
     {
-	lnames = (patch_t **) Z_Malloc(sizeof(patch_t*) * NUMMAPS,
+	// [crispy] support E1M10 "Sewers"
+	int nummaps = crispy_havee1m10 ? NUMMAPS + 1 : NUMMAPS;
+	lnames = (patch_t **) Z_Malloc(sizeof(patch_t*) * nummaps,
 				       PU_STATIC, NULL);
     }
 

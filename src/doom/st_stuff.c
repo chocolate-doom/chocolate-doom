@@ -912,12 +912,19 @@ ST_Responder (event_t* ev)
       if ((map == 0) && (buf[0] - '0' == 0)) // [crispy] IDCLEV00 restarts current map
 	map = gamemap;
       else
+      if ((map == 0) && crispy_havee1m10 && epsd == 1) // [crispy] support E1M10 "Sewers"
+	map = 10;
+      else
       if (map < 1)
 	return false;
 
       // Ohmygod - this is not going to work.
-      if ((gamemode == retail)
+      if ((gamemode == retail && (!crispy_havee1m10 || epsd != 1)) // [crispy] support E1M10 "Sewers"
 	  && ((epsd > 4) || (map > 9)))
+	return false;
+
+      if ((gamemode == retail && crispy_havee1m10 && epsd == 1) // [crispy] support E1M10 "Sewers"
+	  && ((epsd > 4) || (map > 10)))
 	return false;
 
       if ((gamemode == registered)

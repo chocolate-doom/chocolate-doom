@@ -150,6 +150,7 @@ int             crispy_translucency = 0;
 // [crispy] in-game switches
 boolean         crispy_flashinghom = false;
 boolean         crispy_fliplevels = false;
+boolean         crispy_havee1m10 = false;
 boolean         crispy_havemap33 = false;
 boolean         crispy_havessg = false;
 boolean         crispy_nwtmerge = false;
@@ -1758,6 +1759,10 @@ void D_DoomMain (void)
             W_CheckNumForName("dsdbcls")  != -1    // [crispy] closing sound
         )
     );
+
+    // [crispy] check for presence of E1M10
+    crispy_havee1m10 = (W_CheckNumForName("e1m10") != -1) &&
+                       (W_CheckNumForName("sewers") != -1);
 
     // [crispy] check for presence of MAP33
     crispy_havemap33 = (W_CheckNumForName("map33") != -1) &&

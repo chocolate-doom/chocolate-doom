@@ -980,6 +980,10 @@ P_SetupLevel
 	lumpname[4] = 0;
     }
 
+    // [crispy] support E1M10 "Sewers"
+    if (crispy_havee1m10 && episode == 1 && map == 10)
+	DEH_snprintf(lumpname, 9, "E1M10");
+
     lumpnum = W_GetNumForName (lumpname);
 	
     if (nervewadfile)

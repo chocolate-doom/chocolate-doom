@@ -1625,7 +1625,12 @@ void G_DoCompleted (void)
     else
     {
 	if (secretexit) 
+	{
+	    if (crispy_havee1m10 && singleplayer && gameepisode == 1 && gamemap == 1)
+	    wminfo.next = 9; // [crispy] go to secret level E1M10 "Sewers"
+	    else
 	    wminfo.next = 8; 	// go to secret level 
+	}
 	else if (gamemap == 9) 
 	{
 	    // returning from secret level 
@@ -1645,6 +1650,9 @@ void G_DoCompleted (void)
 		break;
 	    }                
 	} 
+	else
+	if (crispy_havee1m10 && singleplayer && gameepisode == 1 && gamemap == 10)
+	    wminfo.next = 1; // [crispy] returning from secret level E1M10 "Sewers"
 	else 
 	    wminfo.next = gamemap;          // go to next level 
     }
@@ -1993,8 +2001,12 @@ G_InitNew
 	map = 1;
 
     if ( (map > 9)
-	 && ( gamemode != commercial) )
+	 && ( gamemode != commercial) && (!crispy_havee1m10 || episode != 1) ) // [crispy] support E1M10 "Sewers"
       map = 9;
+
+    if ( (map > 10)
+	 && ( gamemode != commercial) && crispy_havee1m10 && episode == 1) // [crispy] support E1M10 "Sewers"
+      map = 10;
 
     M_ClearRandom ();
 
