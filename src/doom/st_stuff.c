@@ -919,13 +919,12 @@ ST_Responder (event_t* ev)
 	return false;
 
       // Ohmygod - this is not going to work.
-      if ((gamemode == retail && (!crispy_havee1m10 || epsd != 1)) // [crispy] support E1M10 "Sewers"
+      if ((gamemode == retail)
 	  && ((epsd > 4) || (map > 9)))
+      {
+	if (!(crispy_havee1m10 && epsd == 1 && map == 10)) // [crispy] support E1M10 "Sewers"
 	return false;
-
-      if ((gamemode == retail && crispy_havee1m10 && epsd == 1) // [crispy] support E1M10 "Sewers"
-	  && ((epsd > 4) || (map > 10)))
-	return false;
+      }
 
       if ((gamemode == registered)
 	  && ((epsd > 3) || (map > 9)))
