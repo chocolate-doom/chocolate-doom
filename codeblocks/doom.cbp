@@ -114,6 +114,9 @@
 		<Unit filename="../src/doom/deh_ammo.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="../src/doom/deh_bexstr.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="../src/doom/deh_cheat.c">
 			<Option compilerVar="CC" />
 		</Unit>
