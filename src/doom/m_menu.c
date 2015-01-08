@@ -2049,7 +2049,7 @@ static int G_GotoNextLevel(void)
       map = doom_next[gameepisode-1][gamemap-1] % 10;
     }
 
-    // [crispy] support E1M10 "Sewers"
+    // [crispy] special-casing for E1M10 "Sewers" support
     if (crispy_havee1m10 && gameepisode == 1)
     {
 	if (gamemap == 1)

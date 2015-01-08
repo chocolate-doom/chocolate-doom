@@ -1724,6 +1724,9 @@ void G_WorldDone (void)
     gameaction = ga_worlddone; 
 
     if (secretexit) 
+      // [crispy] special-casing for E1M10 "Sewers" support
+      // i.e. avoid drawing the splat for E1M9 already
+      if (!crispy_havee1m10 || gameepisode != 1 || gamemap != 1)
 	players[consoleplayer].didsecret = true; 
 
     if ( gamemission == pack_nerve && singleplayer )

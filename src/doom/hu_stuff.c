@@ -446,6 +446,12 @@ void HU_Start(void)
         s = HU_TITLE_CHEX;
     }
 
+    // [crispy] special-casing for E1M10 "Sewers" support
+    if (crispy_havee1m10 && gameepisode == 1 && gamemap == 10)
+    {
+	s = HUSTR_E1M10;
+    }
+
     // [crispy] explicitely display (episode and) map if the
     // map is from a PWAD or if the map title string has been dehacked
     {

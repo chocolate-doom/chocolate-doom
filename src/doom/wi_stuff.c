@@ -817,6 +817,12 @@ void WI_drawShowNextLoc(void)
 	if (wbs->didsecret)
 	    WI_drawOnLnode(8, splat);
 
+	// [crispy] the splat for E1M10 "Sewers" is drawn only once,
+	// i.e. now, when returning from the level
+	// (and this is not going to change)
+	if (crispy_havee1m10 && wbs->epsd == 0 && wbs->last == 9)
+	    WI_drawOnLnode(9, splat);
+
 	// draw flashing ptr
 	if (snl_pointeron)
 	    WI_drawOnLnode(wbs->next, yah); 
@@ -1584,7 +1590,7 @@ static void WI_loadUnloadData(load_callback_t callback)
 	    DEH_snprintf(name, 9, "WILV%d%d", wbs->epsd, i);
             callback(name, &lnames[i]);
 	}
-	// [crispy] support E1M10 "Sewers"
+	// [crispy] special-casing for E1M10 "Sewers" support
 	if (crispy_havee1m10)
 	{
 	    DEH_snprintf(name, 9, "SEWERS");
