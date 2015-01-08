@@ -100,6 +100,7 @@ extern int key_map_grid;
 extern int key_map_mark;
 extern int key_map_clearmark;
 extern int key_map_overlay;
+extern int key_map_rotate;
 
 // menu keys:
 
