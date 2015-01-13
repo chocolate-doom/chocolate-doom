@@ -480,6 +480,7 @@ ST_Responder (event_t* ev)
 	    mt.type = consoleplayer + 1;
 
 	    P_SpawnPlayer(&mt);
+	    S_StartSound(plyr, sfx_slop);
 	}
 
 	plyr->cheats ^= CF_GODMODE;
