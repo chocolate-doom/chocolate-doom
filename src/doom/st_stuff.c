@@ -418,6 +418,7 @@ cheatseq_t cheat_massacre = CHEAT("tntem", 0);
 cheatseq_t cheat_hom = CHEAT("tnthom", 0);
 cheatseq_t cheat_notarget = CHEAT("notarget", 0);
 cheatseq_t cheat_spechits = CHEAT("spechits", 0);
+cheatseq_t cheat_nomomentum = CHEAT("nomomentum", 0);
 
 //
 // STATUS BAR CODE
@@ -766,6 +767,18 @@ ST_Responder (event_t* ev)
 	M_snprintf(msg, sizeof(msg), "Notarget Mode %s%s",
 	           crstr[CR_GREEN],
 	           (plyr->cheats & CF_NOTARGET) ? "ON" : "OFF");
+	plyr->message = msg;
+      }
+      // [crispy] implement "nomomentum" cheat, ne debug aid -- pretty useless, though
+      else if (cht_CheckCheat(&cheat_nomomentum, ev->data2))
+      {
+	static char msg[32];
+
+	plyr->cheats ^= CF_NOMOMENTUM;
+
+	M_snprintf(msg, sizeof(msg), "Nomomentum Mode %s%s",
+	           crstr[CR_GREEN],
+	           (plyr->cheats & CF_NOMOMENTUM) ? "ON" : "OFF");
 	plyr->message = msg;
       }
       // 'behold?' power-up cheats
