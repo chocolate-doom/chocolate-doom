@@ -858,10 +858,13 @@ void R_InitTextures (void)
 
 	for (j=0 ; j<texture->patchcount ; j++, mpatch++, patch++)
 	{
+	    short p;
 	    patch->originx = SHORT(mpatch->originx);
 	    patch->originy = SHORT(mpatch->originy);
-	    patch->patch = patchlookup[SHORT(mpatch->patch) + texturelump->pnamesoffset];
-	    if (patch->patch == -1)
+	    p = SHORT(mpatch->patch) + texturelump->pnamesoffset;
+	    if (p < nummappatches)
+		patch->patch = patchlookup[p];
+	    if (patch->patch == -1 || p >= nummappatches)
 	    {
 		char	texturename[9];
 		texturename[8] = '\0';
