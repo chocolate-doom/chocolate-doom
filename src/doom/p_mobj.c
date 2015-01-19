@@ -1038,8 +1038,6 @@ P_SpawnPlayerMissile
     
     extern void A_Recoil (player_t* player);
 
-    A_Recoil (source->player);
-
     // see which target is to be aimed at
     an = source->angle;
     slope = P_AimLineAttack (source, an, 16*64*FRACUNIT);
@@ -1083,5 +1081,7 @@ P_SpawnPlayerMissile
     th->momz = FixedMul( th->info->speed, slope);
 
     P_CheckMissileSpawn (th);
+
+    A_Recoil (source->player);
 }
 
