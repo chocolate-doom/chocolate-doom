@@ -588,14 +588,19 @@ void R_InitTextures (void)
 
     int			i;
     int			j;
+    int			k;
 
     int*		maptex;
+/*
     int*		maptex2;
     int*		maptex1;
+*/
     
     char		name[9];
+/*
     char*		names;
     char*		name_p;
+*/
     
     int*		patchlookup;
     
@@ -603,9 +608,11 @@ void R_InitTextures (void)
     int			nummappatches;
     int			offset;
     int			maxoff;
+/*
     int			maxoff2;
     int			numtextures1;
     int			numtextures2;
+*/
 
     int*		directory;
     
@@ -614,6 +621,52 @@ void R_InitTextures (void)
     int			temp3;
 
     
+    int			numpnameslumps;
+    int			numtexturelumps;
+
+    typedef struct
+    {
+	int lumpnum;
+	void *names;
+	short nummappatches;
+	short summappatches;
+	char *name_p;
+    } pnameslump_t;
+
+    typedef struct
+    {
+	int lumpnum;
+	int *maptex;
+	int maxoff;
+	short numtextures;
+	short sumtextures;
+	short pnamesoffset;
+    } texturelump_t;
+
+    pnameslump_t		*pnameslumps;
+    texturelump_t		*texturelumps, *texturelump;
+
+    // [crispy] count the number of PNAMES and TEXTURE? lumps ...
+    {
+	numpnameslumps = 0;
+	numtexturelumps = 0;
+
+	for (i = numlumps - 1; i >= 0; i--)
+	{
+	    if (!strncasecmp(lumpinfo[i].name, DEH_String("PNAMES"), 6))
+		numpnameslumps++;
+	    else
+	    if (!strncasecmp(lumpinfo[i].name, DEH_String("TEXTURE1"), 8) ||
+	        !strncasecmp(lumpinfo[i].name, DEH_String("TEXTURE2"), 8))
+		numtexturelumps++;
+	}
+
+	// [crispy] ... and allocate appropriate amount of memory
+	pnameslumps = Z_Malloc(numpnameslumps * sizeof(*pnameslumps), PU_STATIC, NULL);
+	texturelumps = Z_Malloc(numtexturelumps * sizeof(*texturelumps), PU_STATIC, NULL);
+    }
+
+#if 0
     // Load the patch names from pnames.lmp.
     name[8] = 0;
     names = W_CacheLumpName (DEH_String("PNAMES"), PU_STATIC);
@@ -627,7 +680,45 @@ void R_InitTextures (void)
         patchlookup[i] = W_CheckNumForName(name);
     }
     W_ReleaseLumpName(DEH_String("PNAMES"));
+#endif
 
+    // [crispy] calculate total number of patches ...
+    {
+	j = 0;
+	nummappatches = 0;
+
+	for (i = numlumps - 1; i >= 0; i--)
+	{
+	    if (!strncasecmp(lumpinfo[i].name, DEH_String("PNAMES"), 6))
+	    {
+		pnameslumps[j].lumpnum = i;
+		pnameslumps[j].names = W_CacheLumpNum(pnameslumps[j].lumpnum, PU_STATIC);
+		pnameslumps[j].nummappatches = LONG(*((int *) pnameslumps[j].names));
+		// [crispy] accumulated number of patches in the lookup tables
+		// excluding the current one
+		pnameslumps[j].summappatches = nummappatches;
+		pnameslumps[j].name_p = pnameslumps[j].names + 4;
+
+		nummappatches += pnameslumps[j].nummappatches;
+		j++;
+	    }
+	}
+
+	// [crispy] ... and fill up the patch lookup table
+	name[8] = 0;
+	patchlookup = Z_Malloc(nummappatches * sizeof(*patchlookup), PU_STATIC, NULL);
+
+	for (j = 0, k = 0; j < numpnameslumps; j++)
+	{
+	    for (i = 0; i < pnameslumps[j].nummappatches; i++)
+	    {
+		M_StringCopy(name, pnameslumps[j].name_p + i * 8, sizeof(name));
+		patchlookup[k++] = W_CheckNumForName(name);
+	    }
+	}
+    }
+
+#if 0
     // Load the map texture definitions from textures.lmp.
     // The data is contained in one or two lumps,
     //  TEXTURE1 for shareware, plus TEXTURE2 for commercial.
@@ -649,7 +740,59 @@ void R_InitTextures (void)
 	maxoff2 = 0;
     }
     numtextures = numtextures1 + numtextures2;
+#endif
+
+    // [crispy] calculate total number of textures ...
+    {
+	j = 0;
+	numtextures = 0;
+
+	for (i = numlumps - 1; i >= 0; i--)
+	{
+	    if (!strncasecmp(lumpinfo[i].name, DEH_String("TEXTURE1"), 8) ||
+	        !strncasecmp(lumpinfo[i].name, DEH_String("TEXTURE2"), 8))
+	    {
+		texturelumps[j].lumpnum = i;
+		texturelumps[j].maptex = W_CacheLumpNum(texturelumps[j].lumpnum, PU_STATIC);
+		texturelumps[j].maxoff = W_LumpLength(texturelumps[j].lumpnum);
+		texturelumps[j].pnamesoffset = 0;
+		texturelumps[j].numtextures = LONG(*texturelumps[j].maptex);
+
+		// [crispy] accumulated number of textures in the texture files
+		// including the current one
+		numtextures += texturelumps[j].numtextures;
+		texturelumps[j].sumtextures = numtextures;
+		j++;
+	    }
+	}
+
+	// [crispy] ... and link textures to their own WAD's patch lookup table (if any)
+	for (i = 0; i < numtexturelumps; i++)
+	{
+	    for (j = 0; j < numpnameslumps; j++)
+	    {
+		if (!strcmp(lumpinfo[texturelumps[i].lumpnum].wad_file->path,
+		            lumpinfo[pnameslumps[j].lumpnum].wad_file->path))
+		{
+		    texturelumps[i].pnamesoffset = pnameslumps[j].summappatches;
+		    break;
+		}
+	    }
+	}
+
+	// [crispy] release memory allocated for patch lookup tables
+	for (j = 0; j < numpnameslumps; j++)
+	{
+	    W_ReleaseLumpNum(pnameslumps[j].lumpnum);
+	}
+	Z_Free(pnameslumps);
+    }
 	
+    texturelump = texturelumps;
+    maptex = texturelump->maptex;
+    maxoff = texturelump->maxoff;
+    directory = maptex+1;
+
     textures = Z_Malloc (numtextures * sizeof(*textures), PU_STATIC, 0);
     texturecolumnlump = Z_Malloc (numtextures * sizeof(*texturecolumnlump), PU_STATIC, 0);
     texturecolumnofs = Z_Malloc (numtextures * sizeof(*texturecolumnofs), PU_STATIC, 0);
@@ -684,11 +827,12 @@ void R_InitTextures (void)
 	if (!(i&63))
 	    printf (".");
 
-	if (i == numtextures1)
+	if (i == texturelump->sumtextures)
 	{
-	    // Start looking in second texture file.
-	    maptex = maptex2;
-	    maxoff = maxoff2;
+	    // [crispy] start looking in next texture file
+	    texturelump++;
+	    maptex = texturelump->maptex;
+	    maxoff = texturelump->maxoff;
 	    directory = maptex+1;
 	}
 		
@@ -714,10 +858,13 @@ void R_InitTextures (void)
 
 	for (j=0 ; j<texture->patchcount ; j++, mpatch++, patch++)
 	{
+	    short p;
 	    patch->originx = SHORT(mpatch->originx);
 	    patch->originy = SHORT(mpatch->originy);
-	    patch->patch = patchlookup[SHORT(mpatch->patch)];
-	    if (patch->patch == -1)
+	    p = SHORT(mpatch->patch) + texturelump->pnamesoffset;
+	    if (p < nummappatches)
+		patch->patch = patchlookup[p];
+	    if (patch->patch == -1 || p >= nummappatches)
 	    {
 		char	texturename[9];
 		texturename[8] = '\0';
@@ -743,9 +890,12 @@ void R_InitTextures (void)
 
     Z_Free(patchlookup);
 
-    W_ReleaseLumpName(DEH_String("TEXTURE1"));
-    if (maptex2)
-        W_ReleaseLumpName(DEH_String("TEXTURE2"));
+    // release memory allocated for texture files
+    for (j = 0; j < numtexturelumps; j++)
+    {
+	W_ReleaseLumpNum(texturelumps[j].lumpnum);
+    }
+    Z_Free(texturelumps);
     
     // Precalculate whatever possible.	
 

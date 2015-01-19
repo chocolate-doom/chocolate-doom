@@ -700,10 +700,11 @@ A_FirePistol
     P_SetPsprite (player,
 		  ps_flash,
 		  weaponinfo[player->readyweapon].flashstate);
-    A_Recoil (player);
 
     P_BulletSlope (player->mo);
     P_GunShot (player->mo, !player->refire);
+
+    A_Recoil (player);
 }
 
 
@@ -725,12 +726,13 @@ A_FireShotgun
     P_SetPsprite (player,
 		  ps_flash,
 		  weaponinfo[player->readyweapon].flashstate);
-    A_Recoil (player);
 
     P_BulletSlope (player->mo);
 	
     for (i=0 ; i<7 ; i++)
 	P_GunShot (player->mo, false);
+
+    A_Recoil (player);
 }
 
 
@@ -756,7 +758,6 @@ A_FireShotgun2
     P_SetPsprite (player,
 		  ps_flash,
 		  weaponinfo[player->readyweapon].flashstate);
-    A_Recoil (player);
 
     P_BulletSlope (player->mo);
 	
@@ -770,6 +771,8 @@ A_FireShotgun2
 		      MISSILERANGE,
 		      bulletslope + ((P_Random()-P_Random())<<5), damage);
     }
+
+    A_Recoil (player);
 }
 
 
@@ -794,11 +797,12 @@ A_FireCGun
 		  weaponinfo[player->readyweapon].flashstate
 		  + psp->state
 		  - &states[S_CHAIN1] );
-    A_Recoil (player);
 
     P_BulletSlope (player->mo);
 	
     P_GunShot (player->mo, !player->refire);
+
+    A_Recoil (player);
 }
 
 
