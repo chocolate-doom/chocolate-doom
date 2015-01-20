@@ -451,9 +451,11 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
 
     // Weapon cycling. Switch to previous or next weapon.
     // (Disabled when player is a pig).
-
-    if (players[consoleplayer].morphTics == 0 && next_weapon != 0)
+    if (gamestate == GS_LEVEL
+     && players[consoleplayer].morphTics == 0 && next_weapon != 0)
     {
+        int start_i;
+
         if (players[consoleplayer].pendingweapon == WP_NOCHANGE)
         {
             i = players[consoleplayer].readyweapon;
@@ -463,9 +465,11 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
             i = players[consoleplayer].pendingweapon;
         }
 
+        // Don't loop forever.
+        start_i = i;
         do {
-            i = (i + next_weapon) % NUMWEAPONS;
-        } while (!players[consoleplayer].weaponowned[i]);
+            i = (i + next_weapon + NUMWEAPONS) % NUMWEAPONS;
+        } while (i != start_i && !players[consoleplayer].weaponowned[i]);
 
         cmd->buttons |= BT_CHANGE;
         cmd->buttons |= i << BT_WEAPONSHIFT;

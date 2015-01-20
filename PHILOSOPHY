@@ -155,14 +155,7 @@ something that is useful for people making Vanilla format maps. On the
 other hand, painstakingly emulating Vanilla Doom by starting with no
 sound or music by default is not helpful to anyone.
 
-== Other philosophical aspects ==
-
-Chocolate Doom aims for maximal portability. That includes running on
-many different CPUs, different operating systems and different devices
-(ie. not just a desktop machine with a keyboard and mouse).
-
-Chocolate Doom is and will always remain Free Software. It will never
-include code that is not compatible with the GNU GPL.
+== Minimalism ==
 
 Chocolate Doom aims to be minimalist and straightforward to configure;
 in particular, the setup tool should have a sane interface. Part of
@@ -179,6 +172,29 @@ are hidden away in configuration files and deliberately not exposed in
 the setup tool. The assumption is that if you care enough about those
 obscure features, editing a configuration file by hand should not be a
 huge problem for you.
+
+Also inspirational was the README file from Havoc's Metacity window
+manager, where the list of features begins:
+
+  Boring window manager for the adult in you. Many window managers
+  are like Marshmallow Froot Loops; Metacity is like Cheerios.
+
+I'd like to think that Chocolate Doom's philosophy towards features is
+similar. The idea is for a source port that is boring. I find the best
+software - both proprietary and open source - is software that is
+"egoless": it does a job well without pretentions about its importance
+or delusions of grandeur. A couple of other notable examples of
+software that I feel embody this spirit of design in a beautiful way
+are Marco Pesenti Gritti's Epiphany web browser and Evince PDF viewer.
+
+== Other philosophical aspects ==
+
+Chocolate Doom aims for maximal portability. That includes running on
+many different CPUs, different operating systems and different devices
+(ie. not just a desktop machine with a keyboard and mouse).
+
+Chocolate Doom is and will always remain Free Software. It will never
+include code that is not compatible with the GNU GPL.
 
 # vim: tw=70
 
