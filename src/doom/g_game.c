@@ -281,7 +281,7 @@ static boolean WeaponSelectable(weapontype_t weapon)
 static int G_NextWeapon(int direction)
 {
     weapontype_t weapon;
-    int i;
+    int start_i, i;
 
     // Find index in the table.
 
@@ -302,13 +302,13 @@ static int G_NextWeapon(int direction)
         }
     }
 
-    // Switch weapon.
-
+    // Switch weapon. Don't loop forever.
+    start_i = i;
     do
     {
         i += direction;
         i = (i + arrlen(weapon_order_table)) % arrlen(weapon_order_table);
-    } while (!WeaponSelectable(weapon_order_table[i].weapon));
+    } while (i != start_i && !WeaponSelectable(weapon_order_table[i].weapon));
 
     return weapon_order_table[i].weapon_num;
 }
@@ -445,12 +445,11 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     // next_weapon variable is set to change weapons when
     // we generate a ticcmd.  Choose a new weapon.
 
-    if (next_weapon != 0)
+    if (gamestate == GS_LEVEL && next_weapon != 0)
     {
         i = G_NextWeapon(next_weapon);
         cmd->buttons |= BT_CHANGE;
         cmd->buttons |= i << BT_WEAPONSHIFT;
-        next_weapon = 0;
     }
     else
     {
@@ -468,6 +467,8 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
             }
         }
     }
+
+    next_weapon = 0;
 
     // mouse
     if (mousebuttons[mousebforward]) 
