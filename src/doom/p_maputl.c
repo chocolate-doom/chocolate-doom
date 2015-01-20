@@ -602,10 +602,13 @@ PIT_AddLineIntercepts (line_t* ld)
     intercept_p->d.line = ld;
     InterceptsOverrun(intercept_p - intercepts, intercept_p);
     // [crispy] intercepts overflow guard
-    if (crispy_crosshair == 2 &&
-        intercept_p - intercepts == MAXINTERCEPTS_ORIGINAL)
+    if (intercept_p - intercepts == MAXINTERCEPTS_ORIGINAL + 1)
     {
-	return false;
+	if (crispy_crosshair == 2)
+	    return false;
+	else
+	    // [crispy] print a warning
+	    fprintf(stderr, "PIT_AddLineIntercepts: Triggered INTERCEPTS overflow!\n");
     }
     intercept_p++;
 
@@ -674,10 +677,13 @@ boolean PIT_AddThingIntercepts (mobj_t* thing)
     intercept_p->d.thing = thing;
     InterceptsOverrun(intercept_p - intercepts, intercept_p);
     // [crispy] intercepts overflow guard
-    if (crispy_crosshair == 2 &&
-        intercept_p - intercepts == MAXINTERCEPTS_ORIGINAL)
+    if (intercept_p - intercepts == MAXINTERCEPTS_ORIGINAL + 1)
     {
-	return false;
+	if (crispy_crosshair == 2)
+	    return false;
+	else
+	    // [crispy] print a warning
+	    fprintf(stderr, "PIT_AddThingIntercepts: Triggered INTERCEPTS overflow!\n");
     }
     intercept_p++;
 
