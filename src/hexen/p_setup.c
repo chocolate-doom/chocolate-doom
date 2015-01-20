@@ -796,8 +796,18 @@ static void InitMapInfo(void)
     int mcmdValue;
     mapInfo_t *info;
     char songMulch[10];
+    char *default_sky_name = DEFAULT_SKY_NAME;
 
     mapMax = 1;
+
+    // The Hexen Shareware, ne 4-level Demo, is missing the SKY1 lump
+    // and uses the SKY2 lump instead. Let's use this fact to identify
+    // it and set gamemode accordingly
+    if (W_CheckNumForName(default_sky_name) == -1)
+    {
+	default_sky_name = "SKY2";
+	gamemode = shareware;
+    }
 
     // Put defaults into MapInfo[0]
     info = MapInfo;
@@ -805,7 +815,7 @@ static void InitMapInfo(void)
     info->warpTrans = 0;
     info->nextMap = 1;          // Always go to map 1 if not specified
     info->cdTrack = 1;
-    info->sky1Texture = R_TextureNumForName(DEFAULT_SKY_NAME);
+    info->sky1Texture = R_TextureNumForName(default_sky_name);
     info->sky2Texture = info->sky1Texture;
     info->sky1ScrollDelta = 0;
     info->sky2ScrollDelta = 0;

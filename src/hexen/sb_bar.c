@@ -314,6 +314,7 @@ void SB_Init(void)
 void SB_SetClassData(void)
 {
     int class;
+    int maxplayers = (gamemode == shareware) ? 4 : MAXPLAYERS;
 
     class = PlayerClass[consoleplayer]; // original player class (not pig)
     PatchWEAPONSLOT = W_CacheLumpNum(W_GetNumForName("wpslot0")
@@ -330,12 +331,12 @@ void SB_SetClassData(void)
     if (!netgame)
     {                           // single player game uses red life gem (the second gem)
         PatchLIFEGEM = W_CacheLumpNum(W_GetNumForName("lifegem")
-                                      + MAXPLAYERS * class + 1, PU_STATIC);
+                                      + maxplayers * class + 1, PU_STATIC);
     }
     else
     {
         PatchLIFEGEM = W_CacheLumpNum(W_GetNumForName("lifegem")
-                                      + MAXPLAYERS * class + consoleplayer,
+                                      + maxplayers * class + consoleplayer,
                                       PU_STATIC);
     }
     SB_state = -1;

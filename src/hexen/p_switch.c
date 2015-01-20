@@ -66,6 +66,13 @@ void P_InitSwitchList(void)
             switchlist[index] = -1;
             break;
         }
+
+        if (R_CheckTextureNumForName(alphSwitchList[i].name1) == -1 &&
+            gamemode == shareware)
+        {
+            continue;
+        }
+
         switchlist[index++] = R_TextureNumForName(alphSwitchList[i].name1);
         switchlist[index++] = R_TextureNumForName(alphSwitchList[i].name2);
     }

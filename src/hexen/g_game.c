@@ -1467,6 +1467,12 @@ void G_SecretExitLevel (void)
 
 void G_Completed(int map, int position)
 {
+    if (gamemode == shareware && map > 4)
+    {
+        P_SetMessage(&players[consoleplayer], "access denied -- demo", true);
+        return;
+    }
+
     gameaction = ga_completed;
     LeaveMap = map;
     LeavePosition = position;
