@@ -623,6 +623,7 @@ void R_InitTextures (void)
     
     int			numpnameslumps;
     int			numtexturelumps;
+    int			first;
 
     typedef struct
     {
@@ -650,15 +651,25 @@ void R_InitTextures (void)
     {
 	numpnameslumps = 0;
 	numtexturelumps = 0;
+	first = 0;
 
 	for (i = numlumps - 1; i >= 0; i--)
 	{
 	    if (!strncasecmp(lumpinfo[i].name, DEH_String("PNAMES"), 6))
 		numpnameslumps++;
 	    else
-	    if (!strncasecmp(lumpinfo[i].name, DEH_String("TEXTURE1"), 8) ||
-	        !strncasecmp(lumpinfo[i].name, DEH_String("TEXTURE2"), 8))
+	    if (!strncasecmp(lumpinfo[i].name, DEH_String("TEXTURE2"), 8))
 		numtexturelumps++;
+	    else
+	    if (!strncasecmp(lumpinfo[i].name, DEH_String("TEXTURE1"), 8))
+	    {
+		// [crispy] make sure the first available TEXTURE1 lump
+		// is always processed first
+		if (!first)
+		    first = i;
+
+		numtexturelumps++;
+	    }
 	}
 
 	// [crispy] ... and allocate appropriate amount of memory
@@ -747,8 +758,14 @@ void R_InitTextures (void)
 	j = 0;
 	numtextures = 0;
 
-	for (i = numlumps - 1; i >= 0; i--)
+	for (i = first; i >= 0; i--)
 	{
+	    // [crispy] make sure the first available TEXTURE1 lump
+	    // is always processed first (i.e. j == 0)
+	    // afterwards, iterate through all the other lumps and skip this one
+	    if (i == first && j)
+		continue;
+
 	    if (!strncasecmp(lumpinfo[i].name, DEH_String("TEXTURE1"), 8) ||
 	        !strncasecmp(lumpinfo[i].name, DEH_String("TEXTURE2"), 8))
 	    {
@@ -763,6 +780,11 @@ void R_InitTextures (void)
 		numtextures += texturelumps[j].numtextures;
 		texturelumps[j].sumtextures = numtextures;
 		j++;
+
+		// [crispy] when the first TEXTURE1 lump has been processed
+		// reset the index to iterate through all the other lumps again
+		if (i == first)
+		    i = numlumps;
 	    }
 	}
 
@@ -890,7 +912,7 @@ void R_InitTextures (void)
 
     Z_Free(patchlookup);
 
-    // release memory allocated for texture files
+    // [crispy] release memory allocated for texture files
     for (j = 0; j < numtexturelumps; j++)
     {
 	W_ReleaseLumpNum(texturelumps[j].lumpnum);
