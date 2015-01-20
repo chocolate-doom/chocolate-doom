@@ -601,6 +601,11 @@ PIT_AddLineIntercepts (line_t* ld)
     intercept_p->isaline = true;
     intercept_p->d.line = ld;
     InterceptsOverrun(intercept_p - intercepts, intercept_p);
+    if (intercept_p - intercepts == MAXINTERCEPTS_ORIGINAL + 1)
+    {
+	    // [crispy] print a warning
+	    fprintf(stderr, "PIT_AddLineIntercepts: Triggered INTERCEPTS overflow!\n");
+    }
     intercept_p++;
 
     return true;	// continue
@@ -667,6 +672,11 @@ boolean PIT_AddThingIntercepts (mobj_t* thing)
     intercept_p->isaline = false;
     intercept_p->d.thing = thing;
     InterceptsOverrun(intercept_p - intercepts, intercept_p);
+    if (intercept_p - intercepts == MAXINTERCEPTS_ORIGINAL + 1)
+    {
+	    // [crispy] print a warning
+	    fprintf(stderr, "PIT_AddThingIntercepts: Triggered INTERCEPTS overflow!\n");
+    }
     intercept_p++;
 
     return true;		// keep going
