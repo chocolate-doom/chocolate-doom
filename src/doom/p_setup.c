@@ -1007,7 +1007,12 @@ P_SetupLevel
 
     if (nervewadfile && gamemission != pack_nerve)
     {
-        lumpnum = W_GetSecondNumForName (lumpname);
+	lumpnum = W_CheckSecondNumForName (lumpname);
+
+	if (lumpnum < 0)
+	{
+	    I_Error ("W_GetNumForName: %s not found!", lumpname);
+	}
     }
 
     leveltime = 0;
