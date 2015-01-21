@@ -767,6 +767,9 @@ void R_InitTextures (void)
 
 	for (i = first; i >= 0; i--)
 	{
+	    if (j == numtexturelumps)
+		break;
+
 	    // [crispy] make sure the first available TEXTURE1/2 lumps
 	    // is always processed first (i.e. j == 0/1, resp.)
 	    // afterwards, iterate through all the other lumps and skip these ones
