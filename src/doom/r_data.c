@@ -623,7 +623,7 @@ void R_InitTextures (void)
     
     int			numpnameslumps;
     int			numtexturelumps;
-    int			first;
+    int			first, second;
 
     typedef struct
     {
@@ -651,7 +651,7 @@ void R_InitTextures (void)
     {
 	numpnameslumps = 0;
 	numtexturelumps = 0;
-	first = 0;
+	first = second = -1;
 
 	for (i = numlumps - 1; i >= 0; i--)
 	{
@@ -659,13 +659,20 @@ void R_InitTextures (void)
 		numpnameslumps++;
 	    else
 	    if (!strncasecmp(lumpinfo[i].name, DEH_String("TEXTURE2"), 8))
+	    {
+		// [crispy] make sure the first available TEXTURE1/2 lumps
+		// are always processed first
+		if (second < 0)
+		    second = i;
+
 		numtexturelumps++;
+	    }
 	    else
 	    if (!strncasecmp(lumpinfo[i].name, DEH_String("TEXTURE1"), 8))
 	    {
-		// [crispy] make sure the first available TEXTURE1 lump
-		// is always processed first
-		if (!first)
+		// [crispy] make sure the first available TEXTURE1/2 lumps
+		// are always processed first
+		if (first < 0)
 		    first = i;
 
 		numtexturelumps++;
@@ -760,10 +767,11 @@ void R_InitTextures (void)
 
 	for (i = first; i >= 0; i--)
 	{
-	    // [crispy] make sure the first available TEXTURE1 lump
-	    // is always processed first (i.e. j == 0)
-	    // afterwards, iterate through all the other lumps and skip this one
-	    if (i == first && j)
+	    // [crispy] make sure the first available TEXTURE1/2 lumps
+	    // is always processed first (i.e. j == 0/1, resp.)
+	    // afterwards, iterate through all the other lumps and skip these ones
+	    if ((i == first && j != 0) ||
+	        (i == second && j != 1))
 		continue;
 
 	    if (!strncasecmp(lumpinfo[i].name, DEH_String("TEXTURE1"), 8) ||
@@ -781,9 +789,12 @@ void R_InitTextures (void)
 		texturelumps[j].sumtextures = numtextures;
 		j++;
 
-		// [crispy] when the first TEXTURE1 lump has been processed
+		// [crispy] when the first TEXTURE1/2 lumps have been processed
 		// reset the index to iterate through all the other lumps again
-		if (i == first)
+		if (i == first && second > -1)
+		    i = second + 1;
+		else
+		if (i == first || i == second)
 		    i = numlumps;
 	    }
 	}
