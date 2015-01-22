@@ -41,27 +41,32 @@
 #define WEAPONBOTTOM	128*FRACUNIT
 #define WEAPONTOP		32*FRACUNIT
 
-// from prboom-plus/src/p_pspr.c:73-83
-static const int recoil_values[] = {
-  10, // wp_fist
-  10, // wp_pistol
-  30, // wp_shotgun
-  10, // wp_chaingun
-  100,// wp_missile
-  20, // wp_plasma
-  100,// wp_bfg
-  0,  // wp_chainsaw
-  80  // wp_supershotgun
+// [crispy] weapon recoil {thrust, pitch} values
+// thrust values from prboom-plus/src/p_pspr.c:73-83
+static const int recoil_values[][2] = {
+  {10,   0}, // wp_fist
+  {10,   4}, // wp_pistol
+  {30,  12}, // wp_shotgun
+  {10,   4}, // wp_chaingun
+  {100, 16}, // wp_missile
+  {20,   8}, // wp_plasma
+  {100, 16}, // wp_bfg
+  {0,   -2}, // wp_chainsaw
+  {80,  16}, // wp_supershotgun
 };
 
 // [crispy] add weapon recoil
 // adapted from prboom-plus/src/p_pspr.c:484-495 (A_FireSomething ())
 void A_Recoil (player_t* player)
 {
+    player2_t *player2 = p2fromp(player);
     extern void P_Thrust (player_t* player, angle_t angle, fixed_t move);
 
     if (singleplayer && crispy_recoil && !(player->mo->flags & MF_NOCLIP))
-	P_Thrust(player, ANG180 + player->mo->angle, 2048 * recoil_values[player->readyweapon]);
+	P_Thrust(player, ANG180 + player->mo->angle, 2048 * recoil_values[player->readyweapon][0]);
+
+    if (crispy_pitch)
+	player2->recoilpitch = recoil_values[player->readyweapon][1]<<FRACBITS;
 }
 
 
@@ -536,6 +541,8 @@ A_Saw
     // use meleerange + 1 se the puff doesn't skip the flash
     slope = P_AimLineAttack (player->mo, angle, MELEERANGE+1);
     P_LineAttack (player->mo, angle, MELEERANGE+1, slope, damage);
+
+    A_Recoil (player);
 
     if (!linetarget)
     {

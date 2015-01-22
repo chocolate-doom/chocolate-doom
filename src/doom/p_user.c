@@ -302,6 +302,18 @@ void P_PlayerThink (player_t* player)
         }
     }
 
+    // [crispy] weapon recoil pitch
+    // adapted from strife-ve-src/src/strife/p_user.c:677-688
+    if (player2->recoilpitch)
+    {
+	fixed_t recoil = (player2->recoilpitch >> 3);
+
+	if(player2->recoilpitch - recoil > 0)
+	    player2->recoilpitch -= recoil;
+	else
+	    player2->recoilpitch = 0;
+    }
+
     if (player->playerstate == PST_DEAD)
     {
 	P_DeathThink (player);

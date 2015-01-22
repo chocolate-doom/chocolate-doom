@@ -841,6 +841,7 @@ void R_SetupFrame (player_t* player)
     int		i;
     int		tempCentery;
     player2_t* 	player2 = p2fromp(player);
+    int		pitch;
     
     viewplayer = player;
     viewx = player->mo->x;
@@ -850,13 +851,21 @@ void R_SetupFrame (player_t* player)
 
     viewz = player->viewz;
 
+    // [crispy] pitch is actual lookdir and weapon pitch
+    pitch = player2->lookdir/MLOOKUNIT + (player2->recoilpitch>>FRACBITS);
+    if (pitch > LOOKDIRMAX)
+	pitch = LOOKDIRMAX;
+    else
+    if (pitch < -LOOKDIRMIN)
+	pitch = -LOOKDIRMIN;
+
     // apply new yslope[] whenever "lookdir", "detailshift" or "screenblocks" change
-    tempCentery = viewheight/2 + ((player2->lookdir/MLOOKUNIT) << (hires && !detailshift)) * (screenblocks < 11 ? screenblocks : 11) / 10;
+    tempCentery = viewheight/2 + (pitch << (hires && !detailshift)) * (screenblocks < 11 ? screenblocks : 11) / 10;
     if (centery != tempCentery)
     {
         centery = tempCentery;
         centeryfrac = centery << FRACBITS;
-        yslope = yslopes[LOOKDIRMIN + player2->lookdir/MLOOKUNIT];
+        yslope = yslopes[LOOKDIRMIN + pitch];
     }
     
     viewsin = finesine[viewangle>>ANGLETOFINESHIFT];

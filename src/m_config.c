@@ -1740,6 +1740,14 @@ static default_t extra_defaults_list[] =
     //!
     // @game doom
     //
+    // Enable weapon pitch.
+    //
+
+    CONFIG_VARIABLE_INT(crispy_pitch),
+
+    //!
+    // @game doom
+    //
     // Center Weapon when Firing.
     //
 

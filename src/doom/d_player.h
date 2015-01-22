@@ -170,6 +170,7 @@ typedef struct player2_s
     boolean	centering;
     unsigned int	jumpTics;
     boolean	mapcoords;
+    fixed_t	recoilpitch;
 } player2_t;
 
 //

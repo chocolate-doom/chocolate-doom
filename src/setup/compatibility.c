@@ -37,6 +37,7 @@ int crispy_freelook = 0;
 int crispy_jump = 0;
 int crispy_mouselook = 0;
 int crispy_overunder = 0;
+int crispy_pitch = 0;
 int crispy_recoil = 0;
 int crispy_secretmessage = 0;
 int crispy_translucency = 0;
@@ -70,6 +71,8 @@ void CompatibilitySettings(void)
                                    &crispy_crosshair),
                    TXT_NewCheckBox("Center Weapon when Firing",
                                    &crispy_centerweapon),
+                   TXT_NewCheckBox("Enable Weapon Pitch",
+                                   &crispy_pitch),
                    TXT_NewCheckBox("Show Revealed Secrets",
                                    &crispy_secretmessage),
                    TXT_NewCheckBox("Show Level Stats in Automap",
@@ -118,6 +121,7 @@ void BindCompatibilityVariables(void)
         M_BindVariable("crispy_jump",            &crispy_jump);
         M_BindVariable("crispy_mouselook",       &crispy_mouselook);
         M_BindVariable("crispy_overunder",       &crispy_overunder);
+        M_BindVariable("crispy_pitch",           &crispy_pitch);
         M_BindVariable("crispy_recoil",          &crispy_recoil);
         M_BindVariable("crispy_secretmessage",   &crispy_secretmessage);
         M_BindVariable("crispy_translucency",    &crispy_translucency);

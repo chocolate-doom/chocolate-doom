@@ -36,6 +36,8 @@ extern boolean crispy_havemap33;
 extern boolean crispy_havessg;
 extern boolean crispy_nwtmerge;
 
+#define crispy_stretchsky (crispy_freelook || crispy_mouselook || crispy_pitch)
+
 extern int crispy_automapstats;
 extern int crispy_centerweapon;
 extern int crispy_coloredblood;
@@ -48,6 +50,7 @@ extern int crispy_freelook;
 extern int crispy_jump;
 extern int crispy_mouselook;
 extern int crispy_overunder;
+extern int crispy_pitch;
 extern int crispy_recoil;
 extern int crispy_secretmessage;
 extern int crispy_translucency;

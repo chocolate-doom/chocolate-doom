@@ -208,6 +208,7 @@ static void M_CrispyToggleFreeaim(int choice);
 static void M_CrispyToggleFreelook(int choice);
 static void M_CrispyToggleJumping(int choice);
 static void M_CrispyToggleOverunder(int choice);
+static void M_CrispyTogglePitch(int choice);
 static void M_CrispyToggleRecoil(int choice);
 static void M_CrispyToggleSecretmessage(int choice);
 static void M_CrispyToggleTranslucency(int choice);
@@ -465,6 +466,7 @@ enum
     crispness_freelook,
     crispness_crosshair,
     crispness_centerweapon,
+    crispness_pitch,
     crispness_secretmessage,
     crispness_automapstats,
     crispness_sep_goto2,
@@ -484,6 +486,7 @@ static menuitem_t CrispnessMenu[]=
     {1,"",	M_CrispyToggleFreelook,'f'},
     {1,"",	M_CrispyToggleCrosshair,'l'},
     {1,"",	M_CrispyToggleCenterweapon,'c'},
+    {1,"",	M_CrispyTogglePitch,'p'},
     {1,"",	M_CrispyToggleSecretmessage,'s'},
     {1,"",	M_CrispyToggleAutomapstats,'a'},
     {-1,"",0,'\0'},
@@ -1337,6 +1340,7 @@ static void M_DrawCrispness(void)
     M_DrawCrispnessItem(crispness_freelook, "Allow Free Look", crispy_freelook, true);
     M_DrawCrispnessItem(crispness_crosshair, "Show Laser Aiming", crispy_crosshair, true);
     M_DrawCrispnessItem(crispness_centerweapon, "Center Weapon when Firing", crispy_centerweapon, true);
+    M_DrawCrispnessItem(crispness_pitch, "Enable Weapon Pitch", crispy_pitch, true);
     M_DrawCrispnessItem(crispness_secretmessage, "Show Revealed Secrets", crispy_secretmessage, true);
     M_DrawCrispnessItem(crispness_automapstats, "Show Level Stats in Automap", crispy_automapstats, true);
 
@@ -1698,6 +1702,12 @@ static void M_CrispyToggleOverunder(int choice)
 
     choice = 0;
     crispy_overunder = 1 - !!crispy_overunder;
+}
+
+static void M_CrispyTogglePitch(int choice)
+{
+    choice = 0;
+    crispy_pitch = 1 - !!crispy_pitch;
 }
 
 static void M_CrispyToggleRecoil(int choice)

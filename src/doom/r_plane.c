@@ -422,7 +422,7 @@ void R_DrawPlanes (void)
 	{
 	    dc_iscale = pspriteiscale>>(detailshift && !hires);
 	    // [crispy] stretch sky
-	    if (crispy_freelook || crispy_mouselook)
+	    if (crispy_stretchsky)
 	        dc_iscale = dc_iscale * 128 / 228;
 	    
 	    // Sky is allways drawn full bright,
