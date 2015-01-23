@@ -124,6 +124,8 @@ extern int		showMessages;
 
 static boolean		headsupactive = false;
 
+extern int		screenblocks; // [crispy]
+
 //
 // Builtin map names.
 // The actual names can be found in DStrings.h.
@@ -513,10 +515,34 @@ static void HU_DemoProgressBar (void)
     V_DrawHorizLine(0, SCREENHEIGHT - 1, i, 4); // [crispy] white
 }
 
+#if 0
+// [crispy] static, non-projected crosshair
+static void HU_DrawCrosshair (void)
+{
+    static int		lump;
+    static patch_t*	patch;
+
+    if (plr->readyweapon == wp_fist ||
+        plr->readyweapon == wp_chainsaw ||
+        plr->playerstate == PST_DEAD)
+	return;
+
+    if (!lump)
+    {
+	lump = W_GetNumForName(CRISPY_CROSSHAIR);
+	patch = W_CacheLumpNum(lump, PU_CACHE);
+    }
+
+    if (crispy_translucency)
+	dp_translucent = true;
+
+    V_DrawPatch(160-SHORT(patch->width/2), (screenblocks <= 10) ? 84 : 100, patch);
+}
+#endif
+
 void HU_Drawer(void)
 {
 
-    extern int screenblocks;
     static char str[32], *s;
 
     if (crispy_cleanscreenshot)
@@ -614,6 +640,11 @@ void HU_Drawer(void)
     }
 
     V_ClearDPTranslation();
+
+#if 0
+    if (crispy_crosshairstatic)
+	HU_DrawCrosshair();
+#endif
 
     if (dp_translucent)
 	dp_translucent = false;

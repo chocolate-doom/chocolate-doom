@@ -673,9 +673,6 @@ void R_ProjectSprite (mobj_t* thing)
     }
 }
 
- // [crispy] HU font plus sign
- #define HU_LASERSPOT "STCFN043"
-
 // [crispy] generate a vissprite for the laser spot
 static void R_DrawLSprite (void)
 {
@@ -695,20 +692,9 @@ static void R_DrawLSprite (void)
 
     if (!lump)
     {
-	lump = W_GetNumForName(HU_LASERSPOT);
+	lump = W_GetNumForName(CRISPY_CROSSHAIR);
 	patch = W_CacheLumpNum(lump, PU_CACHE);
     }
-
-    // [crispy] static, non-projected crosshair
-#if 0
-    if (!singleplayer)
-    {
-	extern void V_DrawPatch(int x, int y, patch_t *patch);
-
-	V_DrawPatch(160-SHORT(patch->width/2), 100, patch);
-	return;
-    }
-#endif
 
     crispy_crosshair = 2; // [crispy] intercepts overflow guard
     P_LineLaser(viewplayer->mo, viewplayer->mo->angle,

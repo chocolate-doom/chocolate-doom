@@ -24,6 +24,7 @@
 #include "doomtype.h"
 
 #define CRISPY_HUD 12
+#define CRISPY_CROSSHAIR "STCFN043"
 
 #define singleplayer (!demorecording && !demoplayback && !netgame)
 
