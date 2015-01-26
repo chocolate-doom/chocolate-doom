@@ -137,6 +137,7 @@ int             crispy_coloredblood = 0;
 int             crispy_coloredblood2 = 0;
 int             crispy_coloredhud = 0;
 int             crispy_crosshair = 0;
+int             crispy_crosshair2 = 0;
 int             crispy_flipcorpses = 0;
 int             crispy_freeaim = 0;
 int             crispy_freelook = 0;
@@ -458,6 +459,7 @@ void D_BindVariables(void)
     M_BindVariable("crispy_coloredblood2",   &crispy_coloredblood2);
     M_BindVariable("crispy_coloredhud",      &crispy_coloredhud);
     M_BindVariable("crispy_crosshair",       &crispy_crosshair);
+    M_BindVariable("crispy_crosshair2",      &crispy_crosshair2);
     M_BindVariable("crispy_flipcorpses",     &crispy_flipcorpses);
     M_BindVariable("crispy_freeaim",         &crispy_freeaim);
     M_BindVariable("crispy_freelook",        &crispy_freelook);

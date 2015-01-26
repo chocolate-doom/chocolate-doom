@@ -913,7 +913,7 @@ void R_DrawPlayerSprites (void)
     mfloorclip = screenheightarray;
     mceilingclip = negonearray;
     
-    if (crispy_crosshair)
+    if (crispy_crosshair && crispy_crosshair2)
 	R_DrawLSprite();
 
     // add all active psprites

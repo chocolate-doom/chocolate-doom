@@ -1684,10 +1684,18 @@ static default_t extra_defaults_list[] =
     //!
     // @game doom
     //
-    // Show a laser pointer.
+    // Draw a crosshair.
     //
 
     CONFIG_VARIABLE_INT(crispy_crosshair),
+
+    //!
+    // @game doom
+    //
+    // Project Crosshair into Game World.
+    //
+
+    CONFIG_VARIABLE_INT(crispy_crosshair2),
 
     //!
     // @game doom

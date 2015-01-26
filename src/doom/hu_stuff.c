@@ -515,7 +515,6 @@ static void HU_DemoProgressBar (void)
     V_DrawHorizLine(0, SCREENHEIGHT - 1, i, 4); // [crispy] white
 }
 
-#if 0
 // [crispy] static, non-projected crosshair
 static void HU_DrawCrosshair (void)
 {
@@ -538,7 +537,6 @@ static void HU_DrawCrosshair (void)
 
     V_DrawPatch(160-SHORT(patch->width/2), (screenblocks <= 10) ? 84 : 100, patch);
 }
-#endif
 
 void HU_Drawer(void)
 {
@@ -641,10 +639,8 @@ void HU_Drawer(void)
 
     V_ClearDPTranslation();
 
-#if 0
-    if (crispy_crosshairstatic)
+    if (crispy_crosshair && !crispy_crosshair2)
 	HU_DrawCrosshair();
-#endif
 
     if (dp_translucent)
 	dp_translucent = false;

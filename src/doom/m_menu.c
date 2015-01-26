@@ -203,6 +203,7 @@ static void M_CrispyToggleColoredblood(int choice);
 static void M_CrispyToggleColoredblood2(int choice);
 static void M_CrispyToggleColoredhud(int choice);
 static void M_CrispyToggleCrosshair(int choice);
+static void M_CrispyToggleCrosshair2(int choice);
 static void M_CrispyToggleFlipcorpses(int choice);
 static void M_CrispyToggleFreeaim(int choice);
 static void M_CrispyToggleFreelook(int choice);
@@ -465,6 +466,7 @@ enum
     crispness_sep_tactical,
     crispness_freelook,
     crispness_crosshair,
+    crispness_crosshair2,
     crispness_centerweapon,
     crispness_pitch,
     crispness_secretmessage,
@@ -485,6 +487,7 @@ static menuitem_t CrispnessMenu[]=
     {-1,"",0,'\0'},
     {1,"",	M_CrispyToggleFreelook,'f'},
     {1,"",	M_CrispyToggleCrosshair,'l'},
+    {1,"",	M_CrispyToggleCrosshair2,'g'},
     {1,"",	M_CrispyToggleCenterweapon,'c'},
     {1,"",	M_CrispyTogglePitch,'p'},
     {1,"",	M_CrispyToggleSecretmessage,'s'},
@@ -1338,7 +1341,8 @@ static void M_DrawCrispness(void)
     M_DrawCrispnessSeparator(crispness_sep_tactical, "Tactical");
 
     M_DrawCrispnessItem(crispness_freelook, "Allow Free Look", crispy_freelook, true);
-    M_DrawCrispnessItem(crispness_crosshair, "Show Laser Aiming", crispy_crosshair, true);
+    M_DrawCrispnessItem(crispness_crosshair, "Draw Crosshair", crispy_crosshair, true);
+    M_DrawCrispnessItem(crispness_crosshair2, "Project Crosshair into Game World", crispy_crosshair2, crispy_crosshair);
     M_DrawCrispnessItem(crispness_centerweapon, "Center Weapon when Firing", crispy_centerweapon, true);
     M_DrawCrispnessItem(crispness_pitch, "Enable Weapon Pitch", crispy_pitch, true);
     M_DrawCrispnessItem(crispness_secretmessage, "Show Revealed Secrets", crispy_secretmessage, true);
@@ -1652,6 +1656,18 @@ static void M_CrispyToggleCrosshair(int choice)
 {
     choice = 0;
     crispy_crosshair = 1 - !!crispy_crosshair;
+}
+
+static void M_CrispyToggleCrosshair2(int choice)
+{
+    if (!crispy_crosshair)
+    {
+	S_StartSound(NULL,sfx_oof);
+	return;
+    }
+
+    choice = 0;
+    crispy_crosshair2 = 1 - !!crispy_crosshair2;
 }
 
 static void M_CrispyToggleCenterweapon(int choice)
