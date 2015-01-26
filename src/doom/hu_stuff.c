@@ -523,7 +523,11 @@ static void HU_DrawCrosshair (void)
 
     if (plr->readyweapon == wp_fist ||
         plr->readyweapon == wp_chainsaw ||
-        plr->playerstate == PST_DEAD)
+        plr->playerstate == PST_DEAD ||
+        automapactive ||
+        menuactive ||
+        paused ||
+        secret_on)
 	return;
 
     if (!lump)
