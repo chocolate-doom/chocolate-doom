@@ -555,6 +555,14 @@ R_StoreWallRange
     distangle = ANG90 - offsetangle;
     hyp = R_PointToDist (curline->v1->x, curline->v1->y);
     sineval = finesine[distangle>>ANGLETOFINESHIFT];
+    // [crispy] fix wobbling long walls bug
+    // only for vertical and horizontal lines for the time being
+    if (!curline->linedef->dy)
+	rw_distance = abs(viewy - curline->v1->y);
+    else
+    if (!curline->linedef->dx)
+	rw_distance = abs(viewx - curline->v1->x);
+    else
     rw_distance = FixedMul (hyp, sineval);
 		
 	
