@@ -144,6 +144,11 @@ void P_LoadVertexes (int lump)
 
 	if (crispy_fliplevels)
 	    li->x = -li->x;
+
+	// [crispy] initialize pseudovertexes with actual vertex coordinates
+	li->px = li->x;
+	li->py = li->y;
+	li->moved = false;
     }
 
     // Free buffer memory.
@@ -793,38 +798,24 @@ void P_GroupLines (void)
 // but pseudovertexes which are dummies that are *only* used in rendering,
 // i.e. r_bsp.c:R_AddLine()
 
-pseudovertex_t *pseudovertexes = NULL;
-
 static void P_RemoveSlimeTrails(void)
 {
     int i;
 
-    pseudovertex_t *pv;
-    pseudovertexes = realloc(pseudovertexes, numvertexes * sizeof(*pseudovertexes));
-
-    // [crispy] initialize pseudovertexes with actual vertex coordinates
-    for (i = 0; i < numvertexes; i++)
-    {
-	pseudovertexes[i].x = vertexes[i].x;
-	pseudovertexes[i].y = vertexes[i].y;
-	pseudovertexes[i].moved = false;
-    }
-
     for (i = 0; i < numsegs; i++)
     {
 	const line_t *l = segs[i].linedef;
-	const vertex_t *v = segs[i].v1;
+	vertex_t *v = segs[i].v1;
 
 	// [crispy] ignore exactly vertical or horizontal linedefs
 	if (l->dx && l->dy)
 	{
 	    do
 	    {
-		pv = &pseudovertexes[v - vertexes];
 		// [crispy] vertex wasn't already moved
-		if (!pv->moved)
+		if (!v->moved)
 		{
-		    pv->moved = true;
+		    v->moved = true;
 		    // [crispy] ignore endpoints of linedefs
 		    if (v != l->v1 && v != l->v2)
 		    {
@@ -837,8 +828,8 @@ static void P_RemoveSlimeTrails(void)
 			int x0 = v->x, y0 = v->y, x1 = l->v1->x, y1 = l->v1->y;
 
 			// [crispy] MBF actually overrides v->x and v->y here
-			pv->x = (fixed_t)((dx2 * x0 + dy2 * x1 + dxy * (y0 - y1)) / s);
-			pv->y = (fixed_t)((dy2 * y0 + dx2 * y1 + dxy * (x0 - x1)) / s);
+			v->px = (fixed_t)((dx2 * x0 + dy2 * x1 + dxy * (y0 - y1)) / s);
+			v->py = (fixed_t)((dy2 * y0 + dx2 * y1 + dxy * (x0 - x1)) / s);
 		    }
 		}
 	    // [crispy] if v doesn't point to the second vertex of the seg already, point it there
