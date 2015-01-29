@@ -764,6 +764,8 @@ void M_LoadSelect(int choice)
 	
     M_StringCopy(name, P_SaveGameFile(choice), sizeof(name));
 
+    // [crispy] save the last game you loaded
+    SaveDef.lastOn = choice;
     G_LoadGame (name);
     M_ClearMenus ();
 
@@ -830,6 +832,8 @@ void M_SaveSelect(int choice)
     // we are going to be intercepting all chars
     saveStringEnter = 1;
     
+    // [crispy] load the last game you saved
+    LoadDef.lastOn = choice;
     saveSlot = choice;
     M_StringCopy(saveOldString,savegamestrings[choice], SAVESTRINGSIZE);
     if (!strcmp(savegamestrings[choice], EMPTYSTRING))
