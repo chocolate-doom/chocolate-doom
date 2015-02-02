@@ -220,6 +220,13 @@ void P_LoadSegs (int lump)
 	li->v1 = &vertexes[(unsigned short)SHORT(ml->v1)]; // [crispy] extended nodes
 	li->v2 = &vertexes[(unsigned short)SHORT(ml->v2)]; // [crispy] extended nodes
 
+	// [crispy] fix long wall wobble
+	{
+	    fixed_t dx = li->v2->x - li->v1->x;
+	    fixed_t dy = li->v2->y - li->v1->y;
+	    li->length = (fixed_t)sqrt((double)dx*dx + (double)dy*dy);
+	}
+
 	li->angle = (SHORT(ml->angle))<<FRACBITS;
 //	li->offset = (SHORT(ml->offset))<<FRACBITS; // [crispy] recalculated below
 	linedef = (unsigned short)SHORT(ml->linedef); // [crispy] extended nodes

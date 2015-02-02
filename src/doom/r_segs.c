@@ -515,11 +515,10 @@ R_StoreWallRange
 ( int	start,
   int	stop )
 {
-    fixed_t		hyp;
-    fixed_t		sineval;
     angle_t		distangle, offsetangle;
     fixed_t		vtop;
     int			lightnum;
+    int64_t		dx, dy, dx1, dy1; // [crispy] fix long wall wobble
 
     // [crispy] remove MAXDRAWSEGS Vanilla limit
     if (ds_p == &drawsegs[numdrawsegs])
@@ -553,17 +552,14 @@ R_StoreWallRange
 	offsetangle = ANG90;
 
     distangle = ANG90 - offsetangle;
-    hyp = R_PointToDist (curline->v1->x, curline->v1->y);
-    sineval = finesine[distangle>>ANGLETOFINESHIFT];
-    // [crispy] fix wobbling long walls bug
-    // only for vertical and horizontal lines for the time being
-    if (!curline->linedef->dy)
-	rw_distance = abs(viewy - curline->v1->y);
-    else
-    if (!curline->linedef->dx)
-	rw_distance = abs(viewx - curline->v1->x);
-    else
-    rw_distance = FixedMul (hyp, sineval);
+    // [crispy] fix long wall wobble
+    // thank you very much Linguica, e6y and kb1
+    // http://www.doomworld.com/vb/post/1340718
+    dx = curline->v2->x - curline->v1->x;
+    dy = curline->v2->y - curline->v1->y;
+    dx1 = viewx - curline->v1->x;
+    dy1 = viewy - curline->v1->y;
+    rw_distance = (fixed_t)((dy * dx1 - dx * dy1) / curline->length);
 		
 	
     ds_p->x1 = rw_x = start;
@@ -786,8 +782,8 @@ R_StoreWallRange
 	if (offsetangle > ANG90)
 	    offsetangle = ANG90;
 
-	sineval = finesine[offsetangle >>ANGLETOFINESHIFT];
-	rw_offset = FixedMul (hyp, sineval);
+	// [crispy] fix long wall wobble
+	rw_offset = (fixed_t)((dx*dx1 + dy*dy1) / curline->length);
 
 	if (rw_normalangle-rw_angle1 < ANG180)
 	    rw_offset = -rw_offset;
