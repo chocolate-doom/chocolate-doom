@@ -784,10 +784,6 @@ R_StoreWallRange
 
 	// [crispy] fix long wall wobble
 	rw_offset = (fixed_t)((dx*dx1 + dy*dy1) / curline->length);
-
-	if (rw_normalangle-rw_angle1 < ANG180)
-	    rw_offset = -rw_offset;
-
 	rw_offset += sidedef->textureoffset + curline->offset;
 	rw_centerangle = ANG90 + viewangle - rw_normalangle;
 	
