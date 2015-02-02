@@ -208,6 +208,13 @@ void P_LoadSegs (int lump)
             li->v2 = tmp;
 	}
 
+	// [crispy] fix long wall wobble
+	{
+	    fixed_t dx = li->v2->x - li->v1->x;
+	    fixed_t dy = li->v2->y - li->v1->y;
+	    li->length = (fixed_t)sqrt((double)dx*dx + (double)dy*dy);
+	}
+
 	li->angle = (SHORT(ml->angle))<<16;
 
 	if (crispy_fliplevels)
