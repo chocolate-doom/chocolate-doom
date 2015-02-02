@@ -335,6 +335,16 @@ void D_DoomMain(void)
 
     HandleArgs();
 
+    // The 4 Level Demo Version prints a four-lined banner here
+    // (and indeed waits for a keypress):
+    /*
+Hexen:  Beyond Heretic
+
+4 Level Demo Version
+Press any key to continue.
+    */
+    // However, we currently only detect if we are running the 4 Level Demo Version
+    // at all much later in P_Init().
     I_PrintStartupBanner("Hexen");
 
     ST_Message("MN_Init: Init menu system.\n");
