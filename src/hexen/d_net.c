@@ -172,7 +172,7 @@ static void InitConnectData(net_connect_data_t *connect_data)
 
     connect_data->lowres_turn = false;
     connect_data->drone = false;
-    connect_data->max_players = MAXPLAYERS;
+    connect_data->max_players = (gamemode == shareware) ? 4 : MAXPLAYERS;
 
     //!
     // @category net
