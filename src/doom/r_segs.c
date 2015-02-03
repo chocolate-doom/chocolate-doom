@@ -564,10 +564,10 @@ R_StoreWallRange
     // [crispy] fix long wall wobble
     // thank you very much Linguica, e6y and kb1
     // http://www.doomworld.com/vb/post/1340718
-    dx = curline->v2->x - curline->v1->x;
-    dy = curline->v2->y - curline->v1->y;
-    dx1 = viewx - curline->v1->x;
-    dy1 = viewy - curline->v1->y;
+    dx = curline->v2->px - curline->v1->px;
+    dy = curline->v2->py - curline->v1->py;
+    dx1 = viewx - curline->v1->px;
+    dy1 = viewy - curline->v1->py;
     rw_distance = (fixed_t)((dy * dx1 - dx * dy1) / curline->length);
 		
 	

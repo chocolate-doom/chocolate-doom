@@ -208,13 +208,6 @@ void P_LoadSegs (int lump)
             li->v2 = tmp;
 	}
 
-	// [crispy] fix long wall wobble
-	{
-	    fixed_t dx = li->v2->x - li->v1->x;
-	    fixed_t dy = li->v2->y - li->v1->y;
-	    li->length = (fixed_t)sqrt((double)dx*dx + (double)dy*dy);
-	}
-
 	li->angle = (SHORT(ml->angle))<<16;
 
 	if (crispy_fliplevels)
@@ -265,6 +258,21 @@ void P_LoadSegs (int lump)
     W_ReleaseLumpNum(lump);
 }
 
+// [crispy] fix long wall wobble
+void P_SegLengths (void)
+{
+    int i;
+    seg_t *li;
+    fixed_t dx, dy;
+
+    for (i = 0; i < numsegs; i++)
+    {
+	li = &segs[i];
+	dx = li->v2->px - li->v1->px;
+	dy = li->v2->py - li->v1->py;
+	li->length = (fixed_t)sqrt((double)dx*dx + (double)dy*dy);
+    }
+}
 
 //
 // P_LoadSubsectors
@@ -1217,6 +1225,8 @@ P_SetupLevel
 
     // [crispy] remove slime trails
     P_RemoveSlimeTrails();
+    // [crispy] fix long wall wobble
+    P_SegLengths();
 
     bodyqueslot = 0;
     deathmatch_p = deathmatchstarts;
