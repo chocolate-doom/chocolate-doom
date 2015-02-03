@@ -680,30 +680,47 @@ static void P_CreateBlockMap(void)
     typedef struct { int n, nalloc, *list; } bmap_t;  // blocklist structure
     unsigned tot = bmapwidth * bmapheight;            // size of blockmap
     bmap_t *bmap = calloc(sizeof *bmap, tot);         // array of blocklists
+    int x, y, adx, dx, ady, dy, diff, b, bend;
 
     for (i=0; i < numlines; i++)
       {
 	// starting coordinates
-	int x = (lines[i].v1->x >> FRACBITS) - minx;
-	int y = (lines[i].v1->y >> FRACBITS) - miny;
+	if (crispy_fliplevels)
+	{
+	    x = (lines[i].v2->x >> FRACBITS) - minx;
+	    y = (lines[i].v2->y >> FRACBITS) - miny;
+	}
+	else
+	{
+	    x = (lines[i].v1->x >> FRACBITS) - minx;
+	    y = (lines[i].v1->y >> FRACBITS) - miny;
+	}
 
 	// x-y deltas
-	int adx = lines[i].dx >> FRACBITS, dx = adx < 0 ? -1 : 1;
-	int ady = lines[i].dy >> FRACBITS, dy = ady < 0 ? -1 : 1;
+	adx = lines[i].dx >> FRACBITS, dx = adx < 0 ? -1 : 1;
+	ady = lines[i].dy >> FRACBITS, dy = ady < 0 ? -1 : 1;
 
 	// difference in preferring to move across y (>0) instead of x (<0)
-	int diff = !adx ? 1 : !ady ? -1 :
+	diff = !adx ? 1 : !ady ? -1 :
 	  (((x >> MAPBTOFRAC) << MAPBTOFRAC) +
 	   (dx > 0 ? MAPBLOCKUNITS-1 : 0) - x) * (ady = abs(ady)) * dx -
 	  (((y >> MAPBTOFRAC) << MAPBTOFRAC) +
 	   (dy > 0 ? MAPBLOCKUNITS-1 : 0) - y) * (adx = abs(adx)) * dy;
 
 	// starting block, and pointer to its blocklist structure
-	int b = (y >> MAPBTOFRAC)*bmapwidth + (x >> MAPBTOFRAC);
+	b = (y >> MAPBTOFRAC)*bmapwidth + (x >> MAPBTOFRAC);
 
 	// ending block
-	int bend = (((lines[i].v2->y >> FRACBITS) - miny) >> MAPBTOFRAC) *
-	  bmapwidth + (((lines[i].v2->x >> FRACBITS) - minx) >> MAPBTOFRAC);
+	if (crispy_fliplevels)
+	{
+	    bend = (((lines[i].v1->y >> FRACBITS) - miny) >> MAPBTOFRAC) *
+	        bmapwidth + (((lines[i].v1->x >> FRACBITS) - minx) >> MAPBTOFRAC);
+	}
+	else
+	{
+	    bend = (((lines[i].v2->y >> FRACBITS) - miny) >> MAPBTOFRAC) *
+	        bmapwidth + (((lines[i].v2->x >> FRACBITS) - minx) >> MAPBTOFRAC);
+	}
 
 	// delta for pointer when moving across y
 	dy *= bmapwidth;
@@ -778,6 +795,7 @@ static void P_CreateBlockMap(void)
       free(bmap);    // Free uncompressed blockmap
     }
   }
+
   // [crispy] copied over from P_LoadBlockMap()
   {
     int count = sizeof(*blocklinks) * bmapwidth * bmapheight;
