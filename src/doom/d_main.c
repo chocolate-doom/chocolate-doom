@@ -574,6 +574,9 @@ void D_PageTicker (void)
 //
 void D_PageDrawer (void)
 {
+    if (crispy_fliplevels)
+    V_DrawPatchFlipped (0, 0, W_CacheLumpName(pagename, PU_CACHE));
+    else
     V_DrawPatch (0, 0, W_CacheLumpName(pagename, PU_CACHE));
 }
 
