@@ -845,6 +845,10 @@ P_SetupLevel
 	
     leveltime = 0;
 	
+    // [crispy] refuse to load Hexen-format maps, avoid segfaults
+    if (!strncasecmp(lumpinfo[lumpnum+ML_BLOCKMAP+1]->name, "BEHAVIOR", 8))
+	I_Error("P_SetupLevel: Hexen map format on %s not supported!", lumpname);
+
     // note: most of this ordering is important	
     P_LoadBlockMap (lumpnum+ML_BLOCKMAP);
     P_LoadVertexes (lumpnum+ML_VERTEXES);
