@@ -1651,6 +1651,34 @@ void D_DoomMain (void)
     // Load PWAD files.
     modifiedgame |= W_ParseCommandLine(); // [crispy] OR'ed
 
+    //!
+    // @arg <file>
+    // @category mod
+    //
+    // [crispy] experimental feature: in conjunction with -merge <files>
+    // merges PWADs into the main IWAD and writes the merged data into <file>
+    //
+
+    p = M_CheckParmWithArgs ("-mergeout", 1);
+
+    if (p)
+    {
+	if (M_StringEndsWith(myargv[p + 1], ".wad"))
+	{
+	    M_StringCopy(file, myargv[p + 1], sizeof(file));
+	}
+	else
+	{
+	    DEH_snprintf(file, sizeof(file), "%s.wad", myargv[p+1]);
+	}
+
+	if (W_MergeOut(file))
+	{
+	    printf("Merging into file %s.\n", file);
+	    I_Quit();
+	}
+    }
+
     // Debug:
 //    W_PrintDirectory();
 

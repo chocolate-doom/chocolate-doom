@@ -20,5 +20,7 @@
 
 boolean W_ParseCommandLine(void);
 
+int W_MergeOut (const char *file);
+
 #endif /* #ifndef W_MAIN_H */
 
