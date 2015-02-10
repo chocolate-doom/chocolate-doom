@@ -687,7 +687,7 @@ static void R_DrawLSprite (void)
 
     if (viewplayer->readyweapon == wp_fist ||
         viewplayer->readyweapon == wp_chainsaw ||
-        viewplayer->playerstate == PST_DEAD)
+        viewplayer->playerstate > PST_LIVE)
 	return;
 
     if (!lump)
