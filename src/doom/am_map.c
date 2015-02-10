@@ -405,8 +405,9 @@ void AM_findMinMaxBoundaries(void)
 	    max_y = vertexes[i].y;
     }
   
-    max_w = max_x - min_x;
-    max_h = max_y - min_y;
+    // [crispy] cope with huge level dimensions which span the entire INT range
+    max_w = max_x/2 - min_x/2;
+    max_h = max_y/2 - min_y/2;
 
     min_w = 2*PLAYERRADIUS; // const? never changed?
     min_h = 2*PLAYERRADIUS;
@@ -414,7 +415,7 @@ void AM_findMinMaxBoundaries(void)
     a = FixedDiv(f_w<<FRACBITS, max_w);
     b = FixedDiv(f_h<<FRACBITS, max_h);
   
-    min_scale_mtof = a < b ? a : b;
+    min_scale_mtof = a < b ? a/2 : b/2;
     max_scale_mtof = FixedDiv(f_h<<FRACBITS, 2*PLAYERRADIUS);
 
 }
@@ -1379,18 +1380,18 @@ AM_rotate
 // adapted from prboom-plus/src/am_map.c:898-920
 static void AM_rotatePoint (mpoint_t *pt)
 {
-    fixed_t tmpx;
+    int64_t tmpx;
 
     pt->x -= mapcenter.x;
     pt->y -= mapcenter.y;
 
-    tmpx = FixedMul(pt->x, finecosine[mapangle>>ANGLETOFINESHIFT])
-         - FixedMul(pt->y, finesine[mapangle>>ANGLETOFINESHIFT])
+    tmpx = (int64_t)FixedMul(pt->x, finecosine[mapangle>>ANGLETOFINESHIFT])
+         - (int64_t)FixedMul(pt->y, finesine[mapangle>>ANGLETOFINESHIFT])
          + mapcenter.x;
 
-    pt->y = FixedMul(pt->x, finesine[mapangle>>ANGLETOFINESHIFT])
-         + FixedMul(pt->y, finecosine[mapangle>>ANGLETOFINESHIFT])
-         + mapcenter.y;
+    pt->y = (int64_t)FixedMul(pt->x, finesine[mapangle>>ANGLETOFINESHIFT])
+          + (int64_t)FixedMul(pt->y, finecosine[mapangle>>ANGLETOFINESHIFT])
+          + mapcenter.y;
 
     pt->x = tmpx;
 }
