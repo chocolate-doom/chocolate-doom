@@ -320,26 +320,21 @@ int W_GetNumForName (char* name)
     return i;
 }
 
-int W_CheckSecondNumForName (char* name)
+int W_GetSecondNumForName (char* name)
 {
     int	i, j;
 
-    i = W_CheckNumForName (name);
-
-    if (i < 0)
-    {
-	return -1;
-    }
+    i = W_GetNumForName (name);
 
     for (j = i - 1; j >= 0; j--)
     {
-	if (!strncasecmp(lumpinfo[j].name, name, 8))
-	{
-	    return j;
-	}
+        if (!strncasecmp(lumpinfo[j].name, name, 8))
+        {
+            return j;
+        }
     }
 
-    return -1;
+    return i;
 }
 
 //
