@@ -1346,7 +1346,7 @@ static void M_DrawCrispness(void)
 
     M_DrawCrispnessItem(crispness_freelook, "Allow Free Look", crispy_freelook, true);
     M_DrawCrispnessItem(crispness_crosshair, "Draw Crosshair", crispy_crosshair, true);
-    M_DrawCrispnessItem(crispness_crosshair2, "Project Crosshair into Game World", crispy_crosshair2, crispy_crosshair);
+    M_DrawCrispnessItem(crispness_crosshair2, "Project Crosshair into Scene", crispy_crosshair2, crispy_crosshair);
     M_DrawCrispnessItem(crispness_centerweapon, "Center Weapon when Firing", crispy_centerweapon, true);
     M_DrawCrispnessItem(crispness_pitch, "Enable Weapon Pitch", crispy_pitch, true);
     M_DrawCrispnessItem(crispness_secretmessage, "Show Revealed Secrets", crispy_secretmessage, true);

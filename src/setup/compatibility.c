@@ -71,7 +71,7 @@ void CompatibilitySettings(void)
                                    &crispy_mouselook),
                    TXT_NewCheckBox("Draw Crosshair",
                                    &crispy_crosshair),
-                   TXT_NewCheckBox("Project Crosshair into Game World",
+                   TXT_NewCheckBox("Project Crosshair into Scene",
                                    &crispy_crosshair2),
                    TXT_NewCheckBox("Center Weapon when Firing",
                                    &crispy_centerweapon),
