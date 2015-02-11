@@ -335,6 +335,10 @@ void P_LoadSubsectors (int lump)
     subsectors = Z_Malloc (numsubsectors*sizeof(subsector_t),PU_LEVEL,0);	
     data = W_CacheLumpNum (lump,PU_STATIC);
 	
+    // [crispy] fail on missing subsectors
+    if (!data || !numsubsectors)
+	I_Error("P_LoadSubsectors: No subsectors in map!");
+
     ms = (mapsubsector_t *)data;
     memset (subsectors,0, numsubsectors*sizeof(subsector_t));
     ss = subsectors;
@@ -359,6 +363,10 @@ static void P_LoadSubsectors_DeePBSP (int lump)
     subsectors = Z_Malloc(numsubsectors * sizeof(subsector_t), PU_LEVEL, 0);
     data = (mapsubsector_deepbsp_t *)W_CacheLumpNum(lump, PU_STATIC);
 
+    // [crispy] fail on missing subsectors
+    if (!data || !numsubsectors)
+	I_Error("P_LoadSubsectors: No subsectors in map!");
+
     for (i = 0; i < numsubsectors; i++)
     {
 	subsectors[i].numlines = (int)data[i].numsegs;
@@ -379,11 +387,19 @@ void P_LoadSectors (int lump)
     mapsector_t*	ms;
     sector_t*		ss;
 	
+    // [crispy] fail on missing sectors
+    if (lump >= numlumps)
+	I_Error("P_LoadSectors: No sectors in map!");
+
     numsectors = W_LumpLength (lump) / sizeof(mapsector_t);
     sectors = Z_Malloc (numsectors*sizeof(sector_t),PU_LEVEL,0);	
     memset (sectors, 0, numsectors*sizeof(sector_t));
     data = W_CacheLumpNum (lump,PU_STATIC);
 	
+    // [crispy] fail on missing sectors
+    if (!data || !numsectors)
+	I_Error("P_LoadSectors: No sectors in map!");
+
     ms = (mapsector_t *)data;
     ss = sectors;
     for (i=0 ; i<numsectors ; i++, ss++, ms++)
@@ -422,7 +438,7 @@ void P_LoadNodes (int lump)
     if (!data || !numnodes)
     {
 	if (numsubsectors == 1)
-	    fprintf(stderr, "P_LoadNodes: No nodes in map, but only one subsector\n");
+	    fprintf(stderr, "P_LoadNodes: No nodes in map, but only one subsector.\n");
 	else
 	    I_Error("P_LoadNodes: No nodes in map!");
     }
@@ -477,7 +493,7 @@ static void P_LoadNodes_DeePBSP (int lump)
     if (!data || !numnodes)
     {
 	if (numsubsectors == 1)
-	    fprintf(stderr, "P_LoadNodes: No nodes in map, but only one subsector\n");
+	    fprintf(stderr, "P_LoadNodes: No nodes in map, but only one subsector.\n");
 	else
 	    I_Error("P_LoadNodes: No nodes in map!");
     }
@@ -1313,7 +1329,7 @@ static void P_LoadReject(int lumpnum)
 static mapformat_t P_CheckMapFormat (int lumpnum)
 {
     mapformat_t format = 0;
-    byte *nodes;
+    byte *nodes = NULL;
     int b;
 
     if ((b = lumpnum+ML_BLOCKMAP+1) < numlumps &&
@@ -1328,8 +1344,8 @@ static mapformat_t P_CheckMapFormat (int lumpnum)
     if (!((b = lumpnum+ML_NODES) < numlumps &&
         (nodes = W_CacheLumpNum(b, PU_CACHE)) &&
         W_LumpLength(b) > 0))
-	I_Error("no nodes!");
-
+	fprintf(stderr, "no nodes.\n");
+    else
     if (!memcmp(nodes, "xNd4\0\0\0\0", 8))
     {
 	fprintf(stderr, "DeePBSP nodes.\n");
@@ -1350,7 +1366,8 @@ static mapformat_t P_CheckMapFormat (int lumpnum)
     else
 	fprintf(stderr, "normal BSP nodes.\n");
 
-    W_ReleaseLumpNum(b);
+    if (nodes)
+	W_ReleaseLumpNum(b);
 
     return format;
 }
