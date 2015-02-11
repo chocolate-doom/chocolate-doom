@@ -871,14 +871,12 @@ static void P_LoadNodes_ZDBSP (int lump, boolean compressed)
 	}
     }
 
-    W_ReleaseLumpNum(lump);
-
 #ifdef HAVE_LIBZ
     if (compressed)
-    {
 	Z_Free(output);
-    }
+    else
 #endif
+    W_ReleaseLumpNum(lump);
 }
 
 
