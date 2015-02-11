@@ -96,6 +96,7 @@ static const char shiftxform[] =
 #define LOADING_DISK_W 16
 #define LOADING_DISK_H 16
 
+#if 0 // obsolete software scaling routines
 // Non aspect ratio-corrected modes (direct multiples of 320x200)
 
 static screen_mode_t *screen_modes[] = {
@@ -125,6 +126,7 @@ static screen_mode_t *screen_modes_corrected[] = {
     &mode_squash_3x,
     &mode_squash_4x,
 };
+#endif
 
 // SDL video driver name
 
@@ -134,17 +136,27 @@ char *video_driver = "";
 
 static char *window_position = "";
 
-// SDL surface for the screen.
+// These are (1) the window (or the full screen) that our game is rendered to
+// and (2) the renderer that scales the texture (see below) into this window.
 
 static SDL_Window *screen;
+static SDL_Renderer *renderer;
 
 // Window title
 
 static char *window_title = "";
 
-// Intermediate 8-bit buffer that we draw to instead of 'screen'.
+// These are (1) the 320x200x8 paletted buffer that we draw to (i.e. the one
+// that holds I_VideoBuffer), (2) the 320x200x32 RGBA intermediate buffer that
+// we blit the former buffer to and (3) the texture that we load the RGBA
+// buffer to and that is scaled into the window by the renderer (see above).
+// TODO: Check if the intermediate RGBA buffer is still necessary in newer
+// SDL releases. It surely is in 2.0.2, i.e. it is currently impossible to
+// update the texture with the pixels from the 8-bit paletted buffer.
 
 static SDL_Surface *screenbuffer = NULL;
+static SDL_Surface *rgbabuffer = NULL;
+static SDL_Texture *texture = NULL;
 
 // palette
 
@@ -276,7 +288,9 @@ int mouse_threshold = 10;
 
 int usegamma = 0;
 
+#if 0 // obsolete software scaling routines
 static void ApplyWindowResize(unsigned int w, unsigned int h);
+#endif
 
 static boolean MouseShouldBeGrabbed()
 {
@@ -875,6 +889,7 @@ static void UpdateGrab(void)
 
 }
 
+#if 0 // obsolete software scaling routines
 // Update a small portion of the screen
 //
 // Does stretching and buffer blitting if neccessary
@@ -906,7 +921,11 @@ static boolean BlitArea(int x1, int y1, int x2, int y2)
 
     return result;
 }
+#endif
 
+// TODO: needed for I_BeginRead() and I_EndRead(),
+// but let's forget about this for a while
+/*
 static void UpdateRect(int x1, int y1, int x2, int y2)
 {
     SDL_Rect update_rect;
@@ -931,9 +950,12 @@ static void UpdateRect(int x1, int y1, int x2, int y2)
         SDL_UpdateWindowSurfaceRects(screen, &update_rect, 1);
     }
 }
+*/
 
+// TODO: let's forget about this for a while
 void I_BeginRead(void)
 {
+/*
     byte *screenloc = I_VideoBuffer
                     + (SCREENHEIGHT - LOADING_DISK_H) * SCREENWIDTH
                     + (SCREENWIDTH - LOADING_DISK_W);
@@ -958,10 +980,13 @@ void I_BeginRead(void)
 
     UpdateRect(SCREENWIDTH - LOADING_DISK_W, SCREENHEIGHT - LOADING_DISK_H,
                SCREENWIDTH, SCREENHEIGHT);
+*/
 }
 
+// TODO: let's forget about this for a while
 void I_EndRead(void)
 {
+/*
     byte *screenloc = I_VideoBuffer
                     + (SCREENHEIGHT - LOADING_DISK_H) * SCREENWIDTH
                     + (SCREENWIDTH - LOADING_DISK_W);
@@ -983,6 +1008,7 @@ void I_EndRead(void)
 
     UpdateRect(SCREENWIDTH - LOADING_DISK_W, SCREENHEIGHT - LOADING_DISK_H,
                SCREENWIDTH, SCREENHEIGHT);
+*/
 }
 
 //
@@ -991,8 +1017,10 @@ void I_EndRead(void)
 void I_FinishUpdate (void)
 {
     static int lasttic;
+#if 0 // obsolete software scaling routines
     SDL_Rect dst_rect;
     int screen_w, screen_h;
+#endif
     int tics;
     int i;
 
@@ -1002,9 +1030,17 @@ void I_FinishUpdate (void)
     if (noblit)
         return;
 
+    // TODO: Decrease the forced delay: we are not changing a screen mode
+    // anymore but simply modify the texture scaling factor
     if (need_resize && SDL_GetTicks() > last_resize_time + 500)
     {
+#if 0 // obsolete software scaling reoutines
         ApplyWindowResize(resize_w, resize_h);
+#endif
+        screen_width = resize_w;
+        screen_height = resize_h;
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+        SDL_RenderClear(renderer);
         need_resize = false;
         palette_to_set = true;
     }
@@ -1035,9 +1071,11 @@ void I_FinishUpdate (void)
 	    I_VideoBuffer[ (SCREENHEIGHT-1)*SCREENWIDTH + i] = 0x0;
     }
 
+#if 0 // obsolete software scaling routines
     // draw to screen
 
     BlitArea(0, 0, SCREENWIDTH, SCREENHEIGHT);
+#endif
 
     if (palette_to_set)
     {
@@ -1045,6 +1083,7 @@ void I_FinishUpdate (void)
         palette_to_set = false;
     }
 
+#if 0 // obsolete software scaling routines
     // Blit from the fake 8-bit screen buffer to the real screen
     // before doing a screen flip.
 
@@ -1057,6 +1096,26 @@ void I_FinishUpdate (void)
     SDL_BlitSurface(screenbuffer, NULL,
                     SDL_GetWindowSurface(screen), &dst_rect);
     SDL_UpdateWindowSurface(screen);
+#endif
+
+    // Blit from the fake 8-bit screen buffer to the intermediate
+    // 32-bit RGBA buffer that we can load into the texture
+
+    SDL_BlitSurface(screenbuffer, NULL, rgbabuffer, NULL);
+
+    // Update the texture with the content of the 32-bit RGBA buffer
+    // (the last argument is the pitch, i.e. 320 pixels of 4 RGBA-bytes)
+
+    SDL_UpdateTexture(texture, NULL, rgbabuffer->pixels,
+                      SCREENWIDTH * sizeof(Uint32));
+
+    // Render the texture into the window
+
+    SDL_RenderCopy(renderer, texture, NULL, NULL);
+
+    // Draw!
+
+    SDL_RenderPresent(renderer);
 }
 
 
@@ -1157,6 +1216,7 @@ void I_InitWindowIcon(void)
     SDL_FreeSurface(surface);
 }
 
+#if 0 // obsolete software scaling routines
 // Pick the modes list to use:
 
 static void GetScreenModes(screen_mode_t ***modes_list, int *num_modes)
@@ -1378,6 +1438,7 @@ static void I_AutoAdjustSettings(void)
                "configuration file.\n");
     }
 }
+#endif
 
 // Set video size to a particular scale factor (1x, 2x, 3x, etc.)
 
@@ -1650,6 +1711,7 @@ static void SetWindowPositionVars(void)
     }
 }
 
+#if 0 // obsolete software scaling routines
 static char *WindowBoxType(screen_mode_t *mode, int w, int h)
 {
     if (mode->width != w && mode->height != h) 
@@ -1669,6 +1731,7 @@ static char *WindowBoxType(screen_mode_t *mode, int w, int h)
         return "...";
     }
 }
+#endif
 
 static void SetVideoMode(screen_mode_t *mode, int w, int h)
 {
@@ -1707,7 +1770,9 @@ static void SetVideoMode(screen_mode_t *mode, int w, int h)
 
     if (fullscreen)
     {
-        flags |= SDL_WINDOW_FULLSCREEN;
+        // This flags means "Never change the screen resolution! Instead,
+        // draw to the entire screen by scaling the texture appropriately".
+        flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
     }
     else
     {
@@ -1717,16 +1782,31 @@ static void SetVideoMode(screen_mode_t *mode, int w, int h)
         flags |= SDL_WINDOW_RESIZABLE;
     }
 
-    screen = SDL_CreateWindow(
-        "",
-        SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-        w, h, flags);
+    // Set the scaling quality: "nearest" is gritty and pixelated and resembles
+    // software scaling pretty well, "linear" and "best" look much softer and
+    // smoother. TODO: Turn this into a config option / command line parameter.
 
-    if (screen == NULL)
+    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");
+
+    // Create window and renderer context at once. We set the window title
+    // later anyway and leave the window position "undefined". If "flags"
+    // contains the fullscreen flag (see above), then w and h are ignored.
+
+    SDL_CreateWindowAndRenderer(w, h, flags, &screen, &renderer);
+
+    if (screen == NULL || renderer == NULL)
     {
         I_Error("Error setting video mode %ix%i: %s\n",
                 w, h, SDL_GetError());
     }
+
+    // Important: Set the "logical size" of the rendering context. At the same
+    // time this also defines the aspect ratio that is preserved while scaling
+    // and stretching the texture into the window.
+
+    SDL_RenderSetLogicalSize(renderer,
+                             SCREENWIDTH,
+                             aspect_ratio_correct ? SCREENHEIGHT_4_3 : SCREENHEIGHT);
 
     I_InitWindowTitle();
     I_InitWindowIcon();
@@ -1734,8 +1814,11 @@ static void SetVideoMode(screen_mode_t *mode, int w, int h)
     // Blank out the full screen area in case there is any junk in
     // the borders that won't otherwise be overwritten.
 
-    SDL_FillRect(SDL_GetWindowSurface(screen), NULL, 0);
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    SDL_RenderClear(renderer);
+    SDL_RenderPresent(renderer);
 
+#if 0 // obsolete software scaling routines
     // If mode was not set, it must be set now that we know the
     // screen size.
 
@@ -1759,19 +1842,30 @@ static void SetVideoMode(screen_mode_t *mode, int w, int h)
             mode->InitMode(doompal);
         }
     }
+#endif
 
-    // Create the screenbuffer surface.
+    // Create the fake 8-bit paletted and the 32-bit RGBA screenbuffer surfaces.
 
     screenbuffer = SDL_CreateRGBSurface(0,
-                                        mode->width, mode->height, 8,
+                                        SCREENWIDTH, SCREENHEIGHT, 8,
                                         0, 0, 0, 0);
     SDL_FillRect(screenbuffer, NULL, 0);
+
+    rgbabuffer = SDL_CreateRGBSurface(0,
+                                      SCREENWIDTH, SCREENHEIGHT, 32,
+                                      0, 0, 0, 0);
+    SDL_FillRect(rgbabuffer, NULL, 0);
+
+    // Create the texture that the RGBA surface gets loaded into.
+
+    texture = SDL_CreateTextureFromSurface(renderer, rgbabuffer);
 
     // Save screen mode.
 
     screen_mode = mode;
 }
 
+#if 0 // obsolete software scaling routines
 static void ApplyWindowResize(unsigned int w, unsigned int h)
 {
     screen_mode_t *mode;
@@ -1797,6 +1891,7 @@ static void ApplyWindowResize(unsigned int w, unsigned int h)
     screen_width = mode->width;
     screen_height = mode->height;
 }
+#endif
 
 void I_InitGraphics(void)
 {
@@ -1853,14 +1948,17 @@ void I_InitGraphics(void)
     {
         int w, h;
 
+#if 0 // obsolete software scaling routines
         if (autoadjust_video_settings)
         {
             I_AutoAdjustSettings();
         }
+#endif
 
         w = screen_width;
         h = screen_height;
 
+#if 0 // obsolete software scaling routines
         screen_mode = I_FindScreenMode(w, h);
 
         if (screen_mode == NULL)
@@ -1875,6 +1973,7 @@ void I_InitGraphics(void)
                    WindowBoxType(screen_mode, w, h),
                    screen_mode->width, screen_mode->height, w, h);
         }
+#endif
 
         SetVideoMode(screen_mode, w, h);
     }
@@ -1905,11 +2004,12 @@ void I_InitGraphics(void)
         SDL_Delay(startup_delay);
     }
 
-    // If not, allocate a buffer and copy from that buffer to the
-    // screen when we do an update
+    // The actual 320x200 canvas that we draw to. This is the pixel buffer of
+    // the 8-bit paletted screen buffer that gets blit on an intermediate
+    // 32-bit RGBA screen buffer that gets loaded into a texture that gets
+    // finally rendered into our window or full screen in I_FinishUpdate().
 
-    I_VideoBuffer = (unsigned char *) Z_Malloc (SCREENWIDTH * SCREENHEIGHT, 
-                                                PU_STATIC, NULL);
+    I_VideoBuffer = screenbuffer->pixels;
     V_RestoreBuffer();
 
     // Clear the screen to black.
