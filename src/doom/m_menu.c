@@ -131,7 +131,7 @@ char	endstring[160];
 static boolean opldev;
 
 boolean crispy_cleanscreenshot = false;
-extern inline boolean G_SpeedKeyDown();
+extern boolean speedkeydown (void);
 
 //
 // MENU TYPEDEFS
@@ -1572,7 +1572,7 @@ static char *M_SelectEndMessage(void)
 void M_QuitDOOM(int choice)
 {
     // [crispy] fast exit if "run" key is held down
-    if (G_SpeedKeyDown())
+    if (speedkeydown())
 	I_Quit();
 
     DEH_snprintf(endstring, sizeof(endstring), "%s\n\n" DOSY,
@@ -2355,7 +2355,7 @@ boolean M_Responder (event_t* ev)
         (key != 0 && key == key_menu_screenshot))
     {
 	// [crispy] take screen shot without weapons and HUD
-	if (G_SpeedKeyDown())
+	if (speedkeydown())
 	    crispy_cleanscreenshot++;
 	G_ScreenShot ();
 	return true;

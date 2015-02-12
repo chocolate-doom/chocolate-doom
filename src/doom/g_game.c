@@ -320,7 +320,7 @@ static int G_NextWeapon(int direction)
 
 // [crispy] holding down the "Run" key may trigger special behavior,
 // e.g. quick exit, clean screenshots, resurrection from savegames
-inline boolean G_SpeedKeyDown()
+boolean speedkeydown (void)
 {
     return (key_speed < NUMKEYS && gamekeydown[key_speed]) ||
            (joybspeed < MAX_JOY_BUTTONS && joybuttons[joybspeed]);
@@ -361,7 +361,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     // pressing the "run" key will result in walking
     speed = key_speed >= NUMKEYS
          || joybspeed >= MAX_JOY_BUTTONS;
-    speed ^= G_SpeedKeyDown();
+    speed ^= speedkeydown();
  
     forward = side = look = 0;
     
@@ -1412,7 +1412,7 @@ void G_DoReborn (int playernum)
 	// [crispy] if the player dies and the game has been loaded or saved
 	// in the mean time, reload that savegame instead of restarting the level
 	// when "Run" is pressed upon resurrection
-	if (singleplayer && *savename && G_SpeedKeyDown())
+	if (singleplayer && *savename && speedkeydown())
 	gameaction = ga_loadgame;
 	else
 	{
