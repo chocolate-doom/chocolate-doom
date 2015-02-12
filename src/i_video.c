@@ -1857,8 +1857,13 @@ static void SetVideoMode(screen_mode_t *mode, int w, int h)
     SDL_FillRect(rgbabuffer, NULL, 0);
 
     // Create the texture that the RGBA surface gets loaded into.
+    // SDL_TEXTUREACCESS_STREAMING means that this texture's content
+    // are going to change frequently.
 
-    texture = SDL_CreateTextureFromSurface(renderer, rgbabuffer);
+    texture = SDL_CreateTexture(renderer,
+                                SDL_PIXELFORMAT_ARGB8888,
+                                SDL_TEXTUREACCESS_STREAMING,
+                                SCREENWIDTH, SCREENHEIGHT);
 
     // Save screen mode.
 
