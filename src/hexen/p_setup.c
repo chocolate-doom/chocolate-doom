@@ -800,13 +800,9 @@ static void InitMapInfo(void)
 
     mapMax = 1;
 
-    // The Hexen Shareware, ne 4-level Demo, is missing the SKY1 lump
-    // and uses the SKY2 lump instead. Let's use this fact to identify
-    // it and set gamemode accordingly
-    if (W_CheckNumForName(default_sky_name) == -1)
+    if (gamemode == shareware)
     {
 	default_sky_name = "SKY2";
-	gamemode = shareware;
     }
 
     // Put defaults into MapInfo[0]

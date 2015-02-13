@@ -93,6 +93,7 @@ extern boolean askforquit;
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 GameMode_t gamemode;
+char *gamedescription;
 char *iwadfile;
 static char demolumpname[9];    // Demo lump to start playing.
 boolean nomonsters;             // checkparm of -nomonsters
@@ -252,6 +253,45 @@ static void D_AddFile(char *filename)
     W_AddFile(filename);
 }
 
+// Find out what version of Hexen is playing.
+
+void D_IdentifyVersion(void)
+{
+    // The Hexen Shareware, ne 4 Level Demo Version, is missing the SKY1 lump
+    // and uses the SKY2 lump instead. Let's use this fact and the missing
+    // levels from MAP05 onward to identify it and set gamemode accordingly.
+
+    if (W_CheckNumForName("SKY1") == -1 &&
+        W_CheckNumForName("MAP05") == -1 )
+    {
+	gamemode = shareware;
+    }
+}
+
+// Set the gamedescription string.
+
+void D_SetGameDescription(void)
+{
+/*
+    NB: The 4 Level Demo Version actually prints a four-lined banner
+    (and indeed waits for a keypress):
+
+    Hexen:  Beyond Heretic
+
+    4 Level Demo Version
+    Press any key to continue.
+*/
+
+    if (gamemode == shareware)
+    {
+	gamedescription = "Hexen: 4 Level Demo Version";
+    }
+    else
+    {
+	gamedescription = "Hexen";
+    }
+}
+
 //==========================================================================
 //
 // H2_Main
@@ -331,21 +371,13 @@ void D_DoomMain(void)
 
     D_AddFile(iwadfile);
     W_CheckCorrectIWAD(hexen);
+    D_IdentifyVersion();
+    D_SetGameDescription();
     AdjustForMacIWAD();
 
     HandleArgs();
 
-    // The 4 Level Demo Version prints a four-lined banner here
-    // (and indeed waits for a keypress):
-    /*
-Hexen:  Beyond Heretic
-
-4 Level Demo Version
-Press any key to continue.
-    */
-    // However, we currently only detect if we are running the 4 Level Demo Version
-    // at all much later in P_Init().
-    I_PrintStartupBanner("Hexen");
+    I_PrintStartupBanner(gamedescription);
 
     ST_Message("MN_Init: Init menu system.\n");
     MN_Init();
@@ -673,7 +705,7 @@ void H2_GameLoop(void)
         M_snprintf(filename, sizeof(filename), "debug%i.txt", consoleplayer);
         debugfile = fopen(filename, "w");
     }
-    I_SetWindowTitle("Hexen");
+    I_SetWindowTitle(gamedescription);
     I_GraphicsCheckCommandLine();
     I_SetGrabMouseCallback(D_GrabMouseCallback);
     I_InitGraphics();
