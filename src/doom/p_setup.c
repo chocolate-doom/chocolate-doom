@@ -124,14 +124,16 @@ typedef enum
 } mapformat_t;
 
 // [crispy] recalculate seg offsets
-// taken from prboom-plus/src/p_setup.c:474-482
-static int GetOffset(vertex_t *v1, vertex_t *v2)
+// adapted from prboom-plus/src/p_setup.c:474-482
+static fixed_t GetOffset(vertex_t *v1, vertex_t *v2)
 {
-    float a, b;
-    int r;
-    a = (float)(v1->x - v2->x) / (float)FRACUNIT;
-    b = (float)(v1->y - v2->y) / (float)FRACUNIT;
-    r = (int)(sqrt(a*a+b*b) * (float)FRACUNIT);
+    fixed_t dx, dy;
+    fixed_t r;
+
+    dx = (v1->x - v2->x)>>FRACBITS;
+    dy = (v1->y - v2->y)>>FRACBITS;
+    r = (fixed_t)(sqrt(dx*dx + dy*dy))<<FRACBITS;
+
     return r;
 }
 
