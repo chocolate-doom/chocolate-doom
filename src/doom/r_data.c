@@ -594,7 +594,7 @@ void R_InitTextures (void)
     int			j;
     int			k;
 
-    int*		maptex;
+    int*		maptex = NULL;
     
     char		name[9];
     
@@ -603,9 +603,9 @@ void R_InitTextures (void)
     int			totalwidth;
     int			nummappatches;
     int			offset;
-    int			maxoff;
+    int			maxoff = 0;
 
-    int*		directory;
+    int*		directory = NULL;
     
     int			temp1;
     int			temp2;
@@ -782,7 +782,7 @@ void R_InitTextures (void)
 	if (!(i&63))
 	    printf (".");
 
-	if (!i || i == texturelump->sumtextures)
+	if (i == 0 || i == texturelump->sumtextures)
 	{
 	    // [crispy] start looking in next texture file
 	    texturelump++;
