@@ -281,7 +281,7 @@ R_RenderMaskedSegRange
 		    t > (int64_t) SCREENHEIGHT << FRACBITS*2)
 			continue; // skip if the texture is out of screen's range
 
-		sprtopscreen = (long)(t >> FRACBITS);
+		sprtopscreen = (int64_t)(t >> FRACBITS);
 	    }
 
 	    dc_iscale = 0xffffffffu / (unsigned)spryscale;
