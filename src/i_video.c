@@ -157,6 +157,8 @@ static char *window_title = "";
 static SDL_Surface *screenbuffer = NULL;
 static SDL_Surface *rgbabuffer = NULL;
 static SDL_Texture *texture = NULL;
+static int pitch;
+static void *pixels;
 
 // palette
 
@@ -1104,10 +1106,10 @@ void I_FinishUpdate (void)
     SDL_BlitSurface(screenbuffer, NULL, rgbabuffer, NULL);
 
     // Update the texture with the content of the 32-bit RGBA buffer
-    // (the last argument is the pitch, i.e. 320 pixels of 4 RGBA-bytes)
 
-    SDL_UpdateTexture(texture, NULL, rgbabuffer->pixels,
-                      SCREENWIDTH * sizeof(Uint32));
+    SDL_LockTexture(texture, NULL, &pixels, &pitch);
+    memcpy(pixels, rgbabuffer->pixels, SCREENHEIGHT*pitch);
+    SDL_UnlockTexture(texture);
 
     // Render the texture into the window
 
