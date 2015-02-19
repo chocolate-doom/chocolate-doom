@@ -137,6 +137,9 @@ R_MapPlane
 // [crispy] visplanes with the same flats now match up far better than before
 // adapted from prboom-plus/src/r_plane.c:191-239, translated to fixed-point math
 
+    if (y == centery)
+	return;
+
     distance = FixedMul(planeheight, yslope[y]);
 
     ds_xstep = FixedMul(viewsin, planeheight) / abs(centery - y);
