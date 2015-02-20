@@ -1712,11 +1712,12 @@ void ST_createWidgets(void)
     // weapons owned
     for(i=0;i<6;i++)
     {
-	STlib_initMultIcon(&w_arms[i],
-			   ST_ARMSX+(i%3)*ST_ARMSXSPACE,
-			   ST_ARMSY+(i/3)*ST_ARMSYSPACE,
-			   arms[i], (int *) &plyr->weaponowned[i+1],
-			   &st_armson);
+        STlib_initMultIcon(&w_arms[i],
+                           ST_ARMSX+(i%3)*ST_ARMSXSPACE,
+                           ST_ARMSY+(i/3)*ST_ARMSYSPACE,
+                           arms[i],
+                           &plyr->weaponowned[i+1],
+                           &st_armson);
     }
 
     // frags sum

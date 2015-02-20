@@ -446,5 +446,5 @@ void ConfigKeyboard(void)
 
 void BindKeyboardVariables(void)
 {
-    M_BindVariable("vanilla_keyboard_mapping", &vanilla_keyboard_mapping);
+    M_BindIntVariable("vanilla_keyboard_mapping", &vanilla_keyboard_mapping);
 }

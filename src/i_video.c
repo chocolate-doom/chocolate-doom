@@ -281,6 +281,7 @@ static int shiftdown = 0;
 float mouse_acceleration = 2.0;
 int mouse_threshold = 10;
 
+// [crispy]
 float mouse_acceleration_y = 1.0;
 int mouse_threshold_y = 0;
 int mouse_y_invert = 0;
@@ -639,6 +640,7 @@ static int AccelerateMouse(int val)
     }
 }
 
+// [crispy]
 static int AccelerateMouseY(int val)
 {
     if (val < 0)
@@ -879,7 +881,7 @@ static void I_ReadMouse(void)
         ev.data1 = mouse_button_state;
         ev.data2 = AccelerateMouse(x);
 
-        if (!novert || 1) // Moved to src/*/g_game.c
+        if (!novert || 1) // [crispy] moved to src/*/g_game.c
         {
             ev.data3 = -AccelerateMouseY(y);
         }
@@ -2185,26 +2187,26 @@ void I_InitGraphics(void)
 
 void I_BindVideoVariables(void)
 {
-    M_BindVariable("use_mouse",                 &usemouse);
-    M_BindVariable("autoadjust_video_settings", &autoadjust_video_settings);
-    M_BindVariable("fullscreen",                &fullscreen);
-    M_BindVariable("aspect_ratio_correct",      &aspect_ratio_correct);
-    M_BindVariable("startup_delay",             &startup_delay);
-    M_BindVariable("screen_width",              &screen_width);
-    M_BindVariable("screen_height",             &screen_height);
-    M_BindVariable("screen_bpp",                &screen_bpp);
-    M_BindVariable("grabmouse",                 &grabmouse);
-    M_BindVariable("mouse_acceleration",        &mouse_acceleration);
-    M_BindVariable("mouse_threshold",           &mouse_threshold);
-    M_BindVariable("mouse_acceleration_y",      &mouse_acceleration_y);
-    M_BindVariable("mouse_threshold_y",         &mouse_threshold_y);
-    M_BindVariable("mouse_y_invert",            &mouse_threshold_y);
-    M_BindVariable("video_driver",              &video_driver);
-    M_BindVariable("window_position",           &window_position);
-    M_BindVariable("usegamma",                  &usegamma);
-    M_BindVariable("vanilla_keyboard_mapping",  &vanilla_keyboard_mapping);
-    M_BindVariable("novert",                    &novert);
-    M_BindVariable("png_screenshots",           &png_screenshots);
+    M_BindIntVariable("use_mouse",                 &usemouse);
+    M_BindIntVariable("autoadjust_video_settings", &autoadjust_video_settings);
+    M_BindIntVariable("fullscreen",                &fullscreen);
+    M_BindIntVariable("aspect_ratio_correct",      &aspect_ratio_correct);
+    M_BindIntVariable("startup_delay",             &startup_delay);
+    M_BindIntVariable("screen_width",              &screen_width);
+    M_BindIntVariable("screen_height",             &screen_height);
+    M_BindIntVariable("screen_bpp",                &screen_bpp);
+    M_BindIntVariable("grabmouse",                 &grabmouse);
+    M_BindFloatVariable("mouse_acceleration",      &mouse_acceleration);
+    M_BindFloatVariable("mouse_acceleration_y",    &mouse_acceleration_y); // [crispy]
+    M_BindIntVariable("mouse_threshold",           &mouse_threshold);
+    M_BindIntVariable("mouse_threshold_y",         &mouse_threshold_y); // [crispy]
+    M_BindIntVariable("mouse_y_invert",            &mouse_y_invert); // [crispy]
+    M_BindStringVariable("video_driver",           &video_driver);
+    M_BindStringVariable("window_position",        &window_position);
+    M_BindIntVariable("usegamma",                  &usegamma);
+    M_BindIntVariable("vanilla_keyboard_mapping",  &vanilla_keyboard_mapping);
+    M_BindIntVariable("novert",                    &novert);
+    M_BindIntVariable("png_screenshots",           &png_screenshots);
 
     // Windows Vista or later?  Set screen color depth to
     // 32 bits per pixel, as 8-bit palettized screen modes

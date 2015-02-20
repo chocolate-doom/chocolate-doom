@@ -430,17 +430,17 @@ void D_BindVariables(void)
     NET_BindVariables();
 #endif
 
-    M_BindVariable("mouse_sensitivity",      &mouseSensitivity);
-    M_BindVariable("mouse_sensitivity_y",    &mouseSensitivity_y);
-    M_BindVariable("sfx_volume",             &sfxVolume);
-    M_BindVariable("music_volume",           &musicVolume);
-    M_BindVariable("show_messages",          &showMessages);
-    M_BindVariable("screenblocks",           &screenblocks);
-    M_BindVariable("detaillevel",            &detailLevel);
-    M_BindVariable("snd_channels",           &snd_channels);
-    M_BindVariable("vanilla_savegame_limit", &vanilla_savegame_limit);
-    M_BindVariable("vanilla_demo_limit",     &vanilla_demo_limit);
-    M_BindVariable("show_endoom",            &show_endoom);
+    M_BindIntVariable("mouse_sensitivity",      &mouseSensitivity);
+    M_BindIntVariable("mouse_sensitivity_y",    &mouseSensitivity_y); // [crispy]
+    M_BindIntVariable("sfx_volume",             &sfxVolume);
+    M_BindIntVariable("music_volume",           &musicVolume);
+    M_BindIntVariable("show_messages",          &showMessages);
+    M_BindIntVariable("screenblocks",           &screenblocks);
+    M_BindIntVariable("detaillevel",            &detailLevel);
+    M_BindIntVariable("snd_channels",           &snd_channels);
+    M_BindIntVariable("vanilla_savegame_limit", &vanilla_savegame_limit);
+    M_BindIntVariable("vanilla_demo_limit",     &vanilla_demo_limit);
+    M_BindIntVariable("show_endoom",            &show_endoom);
 
     // Multiplayer chat macros
 
@@ -449,27 +449,27 @@ void D_BindVariables(void)
         char buf[12];
 
         M_snprintf(buf, sizeof(buf), "chatmacro%i", i);
-        M_BindVariable(buf, &chat_macros[i]);
+        M_BindStringVariable(buf, &chat_macros[i]);
     }
 
     // [crispy] bind "crispness" config variables
-    M_BindVariable("crispy_automapstats",    &crispy_automapstats);
-    M_BindVariable("crispy_centerweapon",    &crispy_centerweapon);
-    M_BindVariable("crispy_coloredblood",    &crispy_coloredblood);
-    M_BindVariable("crispy_coloredblood2",   &crispy_coloredblood2);
-    M_BindVariable("crispy_coloredhud",      &crispy_coloredhud);
-    M_BindVariable("crispy_crosshair",       &crispy_crosshair);
-    M_BindVariable("crispy_crosshair2",      &crispy_crosshair2);
-    M_BindVariable("crispy_flipcorpses",     &crispy_flipcorpses);
-    M_BindVariable("crispy_freeaim",         &crispy_freeaim);
-    M_BindVariable("crispy_freelook",        &crispy_freelook);
-    M_BindVariable("crispy_jump",            &crispy_jump);
-    M_BindVariable("crispy_mouselook",       &crispy_mouselook);
-    M_BindVariable("crispy_overunder",       &crispy_overunder);
-    M_BindVariable("crispy_pitch",           &crispy_pitch);
-    M_BindVariable("crispy_recoil",          &crispy_recoil);
-    M_BindVariable("crispy_secretmessage",   &crispy_secretmessage);
-    M_BindVariable("crispy_translucency",    &crispy_translucency);
+    M_BindIntVariable("crispy_automapstats",    &crispy_automapstats);
+    M_BindIntVariable("crispy_centerweapon",    &crispy_centerweapon);
+    M_BindIntVariable("crispy_coloredblood",    &crispy_coloredblood);
+    M_BindIntVariable("crispy_coloredblood2",   &crispy_coloredblood2);
+    M_BindIntVariable("crispy_coloredhud",      &crispy_coloredhud);
+    M_BindIntVariable("crispy_crosshair",       &crispy_crosshair);
+    M_BindIntVariable("crispy_crosshair2",      &crispy_crosshair2);
+    M_BindIntVariable("crispy_flipcorpses",     &crispy_flipcorpses);
+    M_BindIntVariable("crispy_freeaim",         &crispy_freeaim);
+    M_BindIntVariable("crispy_freelook",        &crispy_freelook);
+    M_BindIntVariable("crispy_jump",            &crispy_jump);
+    M_BindIntVariable("crispy_mouselook",       &crispy_mouselook);
+    M_BindIntVariable("crispy_overunder",       &crispy_overunder);
+    M_BindIntVariable("crispy_pitch",           &crispy_pitch);
+    M_BindIntVariable("crispy_recoil",          &crispy_recoil);
+    M_BindIntVariable("crispy_secretmessage",   &crispy_secretmessage);
+    M_BindIntVariable("crispy_translucency",    &crispy_translucency);
 }
 
 //

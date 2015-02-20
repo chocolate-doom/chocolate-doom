@@ -149,14 +149,15 @@ void D_BindVariables(void)
     key_multi_msgplayer[6] = CT_KEY_PLAYER7;
     key_multi_msgplayer[7] = CT_KEY_PLAYER8;
 
-    M_BindVariable("graphical_startup",      &graphical_startup);
-    M_BindVariable("mouse_sensitivity",      &mouseSensitivity);
-    M_BindVariable("sfx_volume",             &snd_MaxVolume);
-    M_BindVariable("music_volume",           &snd_MusicVolume);
-    M_BindVariable("messageson",             &messageson);
-    M_BindVariable("screenblocks",           &screenblocks);
-    M_BindVariable("snd_channels",           &snd_Channels);
-    M_BindVariable("savedir",                &SavePath);
+    M_BindIntVariable("graphical_startup",      &graphical_startup);
+    M_BindIntVariable("mouse_sensitivity",      &mouseSensitivity);
+    M_BindIntVariable("sfx_volume",             &snd_MaxVolume);
+    M_BindIntVariable("music_volume",           &snd_MusicVolume);
+    M_BindIntVariable("messageson",             &messageson);
+    M_BindIntVariable("screenblocks",           &screenblocks);
+    M_BindIntVariable("snd_channels",           &snd_Channels);
+
+    M_BindStringVariable("savedir", &SavePath);
 
     // Multiplayer chat macros
 
@@ -165,7 +166,7 @@ void D_BindVariables(void)
         char buf[12];
 
         M_snprintf(buf, sizeof(buf), "chatmacro%i", i);
-        M_BindVariable(buf, &chat_macros[i]);
+        M_BindStringVariable(buf, &chat_macros[i]);
     }
 }
 

@@ -63,6 +63,8 @@ static char *CalibrationLabel(txt_joystick_axis_t *joystick_axis)
                        "right, and press the button.";
             }
     }
+
+    return NULL;
 }
 
 static void SetCalibrationLabel(txt_joystick_axis_t *joystick_axis)
@@ -265,6 +267,8 @@ static int NextCalibrateStage(txt_joystick_axis_t *joystick_axis)
         case CONFIG_STAGE2:
             return CONFIG_CENTER;
     }
+
+    return -1;
 }
 
 static int EventCallback(SDL_Event *event, TXT_UNCAST_ARG(joystick_axis))

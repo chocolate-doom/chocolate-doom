@@ -30,10 +30,10 @@ static int usemouse = 1;
 static int mouseSensitivity = 5;
 static float mouse_acceleration = 2.0;
 static int mouse_threshold = 10;
-static int mouseSensitivity_y = 5;
-static float mouse_acceleration_y = 1.0;
-static int mouse_threshold_y = 0;
-static int mouse_y_invert = 0;
+static int mouseSensitivity_y = 5; // [crispy]
+static float mouse_acceleration_y = 1.0; // [crispy]
+static int mouse_threshold_y = 0; // [crispy]
+static int mouse_y_invert = 0; // [crispy]
 static int grabmouse = 1;
 
 int novert = 1;
@@ -49,7 +49,7 @@ static int *all_mouse_buttons[] = {
     &mousebjump,
     &mousebprevweapon,
     &mousebnextweapon,
-    &mousebmouselook
+    &mousebmouselook // [crispy]
 };
 
 static void MouseSetCallback(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(variable))
@@ -107,7 +107,7 @@ static void ConfigExtraButtons(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
 
     AddMouseControl(buttons_table, "Previous weapon", &mousebprevweapon);
     AddMouseControl(buttons_table, "Next weapon", &mousebnextweapon);
-    if (gamemission == doom) // Crispy
+    if (gamemission == doom) // [crispy]
     {
     AddMouseControl(buttons_table, "Free look [*]", &mousebmouselook);
     }
@@ -142,7 +142,7 @@ void ConfigMouse(void)
 
     TXT_SetColumnWidths(motion_table, 27, 5);
 
-    if (gamemission == doom) // Crispy
+    if (gamemission == doom) // [crispy]
     {
     TXT_AddWidgets(motion_table,
                    TXT_NewLabel("Speed (h)"),
@@ -183,17 +183,17 @@ void ConfigMouse(void)
 
 void BindMouseVariables(void)
 {
-    M_BindVariable("use_mouse",            &usemouse);
-    M_BindVariable("novert",               &novert);
-    M_BindVariable("mouse_sensitivity",    &mouseSensitivity);
-    M_BindVariable("mouse_acceleration",   &mouse_acceleration);
-    M_BindVariable("mouse_threshold",      &mouse_threshold);
-    if (gamemission == doom) // Crispy
+    M_BindIntVariable("use_mouse",               &usemouse);
+    M_BindIntVariable("novert",                  &novert);
+    M_BindIntVariable("grabmouse",               &grabmouse);
+    M_BindIntVariable("mouse_sensitivity",       &mouseSensitivity);
+    M_BindIntVariable("mouse_threshold",         &mouse_threshold);
+    M_BindFloatVariable("mouse_acceleration",    &mouse_acceleration);
+    if (gamemission == doom) // [crispy]
     {
-    M_BindVariable("mouse_sensitivity_y",  &mouseSensitivity_y);
-    M_BindVariable("mouse_acceleration_y", &mouse_acceleration_y);
-    M_BindVariable("mouse_threshold_y",    &mouse_threshold_y);
-    M_BindVariable("mouse_y_invert",       &mouse_y_invert);
+    M_BindIntVariable("mouse_sensitivity_y",     &mouseSensitivity_y);
+    M_BindIntVariable("mouse_threshold_y",       &mouse_threshold_y);
+    M_BindFloatVariable("mouse_acceleration_y",  &mouse_acceleration_y);
+    M_BindIntVariable("mouse_y_invert",          &mouse_y_invert);
     }
-    M_BindVariable("grabmouse",            &grabmouse);
 }

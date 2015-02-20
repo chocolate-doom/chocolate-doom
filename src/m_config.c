@@ -23,6 +23,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <errno.h>
+#include <assert.h>
 
 #include "config.h"
 
@@ -64,7 +65,11 @@ typedef struct
     char *name;
 
     // Pointer to the location in memory of the variable
-    void *location;
+    union {
+        int *i;
+        char **s;
+        float *f;
+    } location;
 
     // Type of the variable
     default_type_t type;
@@ -93,7 +98,7 @@ typedef struct
 } default_collection_t;
 
 #define CONFIG_VARIABLE_GENERIC(name, type) \
-    { #name, NULL, type, 0, 0, false }
+    { #name, {NULL}, type, 0, 0, false }
 
 #define CONFIG_VARIABLE_KEY(name) \
     CONFIG_VARIABLE_GENERIC(name, DEFAULT_KEY)
@@ -1881,7 +1886,7 @@ static void SaveDefaultCollection(default_collection_t *collection)
                 // the possibility of screwing up the user's config
                 // file
                 
-                v = * (int *) defaults[i].location;
+                v = *defaults[i].location.i;
 
                 if (v == KEY_RSHIFT)
                 {
@@ -1922,19 +1927,19 @@ static void SaveDefaultCollection(default_collection_t *collection)
                 break;
 
             case DEFAULT_INT:
-	        fprintf(f, "%i", * (int *) defaults[i].location);
+	        fprintf(f, "%i", *defaults[i].location.i);
                 break;
 
             case DEFAULT_INT_HEX:
-	        fprintf(f, "0x%x", * (int *) defaults[i].location);
+	        fprintf(f, "0x%x", *defaults[i].location.i);
                 break;
 
             case DEFAULT_FLOAT:
-                fprintf(f, "%f", * (float *) defaults[i].location);
+                fprintf(f, "%f", *defaults[i].location.f);
                 break;
 
             case DEFAULT_STRING:
-	        fprintf(f,"\"%s\"", * (char **) (defaults[i].location));
+	        fprintf(f,"\"%s\"", *defaults[i].location.s);
                 break;
         }
 
@@ -1967,12 +1972,12 @@ static void SetVariable(default_t *def, char *value)
     switch (def->type)
     {
         case DEFAULT_STRING:
-            * (char **) def->location = M_StringDuplicate(value);
+            *def->location.s = M_StringDuplicate(value);
             break;
 
         case DEFAULT_INT:
         case DEFAULT_INT_HEX:
-            * (int *) def->location = ParseIntParameter(value);
+            *def->location.i = ParseIntParameter(value);
             break;
 
         case DEFAULT_KEY:
@@ -1992,11 +1997,11 @@ static void SetVariable(default_t *def, char *value)
             }
 
             def->original_translated = intparm;
-            * (int *) def->location = intparm;
+            *def->location.i = intparm;
             break;
 
         case DEFAULT_FLOAT:
-            * (float *) def->location = (float) atof(value);
+            *def->location.f = (float) atof(value);
             break;
     }
 }
@@ -2192,13 +2197,38 @@ static default_t *GetDefaultForName(char *name)
 // Bind a variable to a given configuration file variable, by name.
 //
 
-void M_BindVariable(char *name, void *location)
+void M_BindIntVariable(char *name, int *location)
 {
     default_t *variable;
 
     variable = GetDefaultForName(name);
+    assert(variable->type == DEFAULT_INT
+        || variable->type == DEFAULT_INT_HEX
+        || variable->type == DEFAULT_KEY);
 
-    variable->location = location;
+    variable->location.i = location;
+    variable->bound = true;
+}
+
+void M_BindFloatVariable(char *name, float *location)
+{
+    default_t *variable;
+
+    variable = GetDefaultForName(name);
+    assert(variable->type == DEFAULT_FLOAT);
+
+    variable->location.f = location;
+    variable->bound = true;
+}
+
+void M_BindStringVariable(char *name, char **location)
+{
+    default_t *variable;
+
+    variable = GetDefaultForName(name);
+    assert(variable->type == DEFAULT_STRING);
+
+    variable->location.s = location;
     variable->bound = true;
 }
 
@@ -2235,10 +2265,10 @@ int M_GetIntVariable(char *name)
         return 0;
     }
 
-    return *((int *) variable->location);
+    return *variable->location.i;
 }
 
-const char *M_GetStrVariable(char *name)
+const char *M_GetStringVariable(char *name)
 {
     default_t *variable;
 
@@ -2250,7 +2280,7 @@ const char *M_GetStrVariable(char *name)
         return NULL;
     }
 
-    return *((const char **) variable->location);
+    return *variable->location.s;
 }
 
 float M_GetFloatVariable(char *name)
@@ -2265,7 +2295,7 @@ float M_GetFloatVariable(char *name)
         return 0;
     }
 
-    return *((float *) variable->location);
+    return *variable->location.f;
 }
 
 // Get the path to the default configuration dir to use, if NULL
