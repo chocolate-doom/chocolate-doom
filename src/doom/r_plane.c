@@ -123,6 +123,7 @@ R_MapPlane
     fixed_t	distance;
 //    fixed_t	length;
     unsigned	index;
+    int dx, dy;
 	
 #ifdef RANGECHECK
     if (x2 < x1
@@ -137,16 +138,17 @@ R_MapPlane
 // [crispy] visplanes with the same flats now match up far better than before
 // adapted from prboom-plus/src/r_plane.c:191-239, translated to fixed-point math
 
-    if (y == centery)
+    if (!(dy = abs(centery - y)))
 	return;
 
     distance = FixedMul(planeheight, yslope[y]);
+    dx = x1 - centerx;
 
-    ds_xstep = FixedMul(viewsin, planeheight) / abs(centery - y);
-    ds_ystep = FixedMul(viewcos, planeheight) / abs(centery - y);
+    ds_xstep = FixedMul(viewsin, planeheight) / dy;
+    ds_ystep = FixedMul(viewcos, planeheight) / dy;
 
-    ds_xfrac =  viewx + FixedMul(viewcos, distance) + (x1 - centerx) * ds_xstep;
-    ds_yfrac = -viewy - FixedMul(viewsin, distance) + (x1 - centerx) * ds_ystep;
+    ds_xfrac =  viewx + FixedMul(viewcos, distance) + dx * ds_xstep;
+    ds_yfrac = -viewy - FixedMul(viewsin, distance) + dx * ds_ystep;
 
 /*
     if (planeheight != cachedheight[y])
