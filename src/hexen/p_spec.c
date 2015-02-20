@@ -864,7 +864,7 @@ boolean P_ActivateLine(line_t * line, mobj_t * mo, int side,
         if (line->flags & ML_SECRET)
             return false;       // never open secret doors
     }
-    repeat = line->flags & ML_REPEAT_SPECIAL;
+    repeat = (line->flags & ML_REPEAT_SPECIAL) != 0;
     buttonSuccess = false;
 
     // Construct args[] array to contain the arguments from the line, as we
