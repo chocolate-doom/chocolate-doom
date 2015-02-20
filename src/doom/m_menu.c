@@ -1617,13 +1617,13 @@ static void M_ChangeSensitivity_y(int choice)
 static void M_MouseInvert(int choice)
 {
     choice = 0;
-    mouse_y_invert = 1 - !!mouse_y_invert;
+    mouse_y_invert = !mouse_y_invert;
 }
 
 static void M_MouseLook(int choice)
 {
     choice = 0;
-    crispy_mouselook = 1 - !!crispy_mouselook;
+    crispy_mouselook = !crispy_mouselook;
 
     players2[consoleplayer].lookdir = 0;
 }
@@ -1631,7 +1631,7 @@ static void M_MouseLook(int choice)
 static void M_CrispyToggleTranslucency(int choice)
 {
     choice = 0;
-    crispy_translucency = 1 - !!crispy_translucency;
+    crispy_translucency = !crispy_translucency;
 
     // [crispy] translucent Crispy HUD?
     if (screenblocks > CRISPY_HUD)
@@ -1641,25 +1641,25 @@ static void M_CrispyToggleTranslucency(int choice)
 static void M_CrispyToggleColoredhud(int choice)
 {
     choice = 0;
-    crispy_coloredhud = 1 - !!crispy_coloredhud;
+    crispy_coloredhud = !crispy_coloredhud;
 }
 
 static void M_CrispyToggleAutomapstats(int choice)
 {
     choice = 0;
-    crispy_automapstats = 1 - !!crispy_automapstats;
+    crispy_automapstats = !crispy_automapstats;
 }
 
 static void M_CrispyToggleSecretmessage(int choice)
 {
     choice = 0;
-    crispy_secretmessage = 1 - !!crispy_secretmessage;
+    crispy_secretmessage = !crispy_secretmessage;
 }
 
 static void M_CrispyToggleCrosshair(int choice)
 {
     choice = 0;
-    crispy_crosshair = 1 - !!crispy_crosshair;
+    crispy_crosshair = !crispy_crosshair;
 }
 
 static void M_CrispyToggleCrosshair2(int choice)
@@ -1671,19 +1671,19 @@ static void M_CrispyToggleCrosshair2(int choice)
     }
 
     choice = 0;
-    crispy_crosshair2 = 1 - !!crispy_crosshair2;
+    crispy_crosshair2 = !crispy_crosshair2;
 }
 
 static void M_CrispyToggleCenterweapon(int choice)
 {
     choice = 0;
-    crispy_centerweapon = 1 - !!crispy_centerweapon;
+    crispy_centerweapon = !crispy_centerweapon;
 }
 
 static void M_CrispyToggleFreelook(int choice)
 {
     choice = 0;
-    crispy_freelook = 1 - !!crispy_freelook;
+    crispy_freelook = !crispy_freelook;
 
     players2[consoleplayer].lookdir = 0;
 }
@@ -1697,7 +1697,7 @@ static void M_CrispyToggleFreeaim(int choice)
     }
 
     choice = 0;
-    crispy_freeaim = 1 - !!crispy_freeaim;
+    crispy_freeaim = !crispy_freeaim;
 }
 
 static void M_CrispyToggleJumping(int choice)
@@ -1709,7 +1709,7 @@ static void M_CrispyToggleJumping(int choice)
     }
 
     choice = 0;
-    crispy_jump = 1 - !!crispy_jump;
+    crispy_jump = !crispy_jump;
 }
 
 static void M_CrispyToggleOverunder(int choice)
@@ -1721,13 +1721,13 @@ static void M_CrispyToggleOverunder(int choice)
     }
 
     choice = 0;
-    crispy_overunder = 1 - !!crispy_overunder;
+    crispy_overunder = !crispy_overunder;
 }
 
 static void M_CrispyTogglePitch(int choice)
 {
     choice = 0;
-    crispy_pitch = 1 - !!crispy_pitch;
+    crispy_pitch = !crispy_pitch;
 }
 
 static void M_CrispyToggleRecoil(int choice)
@@ -1739,25 +1739,25 @@ static void M_CrispyToggleRecoil(int choice)
     }
 
     choice = 0;
-    crispy_recoil = 1 - !!crispy_recoil;
+    crispy_recoil = !crispy_recoil;
 }
 
 static void M_CrispyToggleColoredblood(int choice)
 {
     choice = 0;
-    crispy_coloredblood = 1 - !!crispy_coloredblood;
+    crispy_coloredblood = !crispy_coloredblood;
 }
 
 static void M_CrispyToggleColoredblood2(int choice)
 {
     choice = 0;
-    crispy_coloredblood2 = 1 - !!crispy_coloredblood2;
+    crispy_coloredblood2 = !crispy_coloredblood2;
 }
 
 static void M_CrispyToggleFlipcorpses(int choice)
 {
     choice = 0;
-    crispy_flipcorpses = 1 - !!crispy_flipcorpses;
+    crispy_flipcorpses = !crispy_flipcorpses;
 }
 
 void M_ChangeDetail(int choice)
