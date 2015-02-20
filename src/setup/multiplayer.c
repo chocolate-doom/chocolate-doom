@@ -1127,13 +1127,13 @@ void BindMultiplayerVariables(void)
     int i;
 
 #ifdef FEATURE_MULTIPLAYER
-    M_BindVariable("player_name", &net_player_name);
+    M_BindStringVariable("player_name", &net_player_name);
 #endif
 
     for (i=0; i<10; ++i)
     {
         M_snprintf(buf, sizeof(buf), "chatmacro%i", i);
-        M_BindVariable(buf, &chat_macros[i]);
+        M_BindStringVariable(buf, &chat_macros[i]);
     }
 
     switch (gamemission)

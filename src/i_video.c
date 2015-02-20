@@ -2161,23 +2161,23 @@ void I_InitGraphics(void)
 
 void I_BindVideoVariables(void)
 {
-    M_BindVariable("use_mouse",                 &usemouse);
-    M_BindVariable("autoadjust_video_settings", &autoadjust_video_settings);
-    M_BindVariable("fullscreen",                &fullscreen);
-    M_BindVariable("aspect_ratio_correct",      &aspect_ratio_correct);
-    M_BindVariable("startup_delay",             &startup_delay);
-    M_BindVariable("screen_width",              &screen_width);
-    M_BindVariable("screen_height",             &screen_height);
-    M_BindVariable("screen_bpp",                &screen_bpp);
-    M_BindVariable("grabmouse",                 &grabmouse);
-    M_BindVariable("mouse_acceleration",        &mouse_acceleration);
-    M_BindVariable("mouse_threshold",           &mouse_threshold);
-    M_BindVariable("video_driver",              &video_driver);
-    M_BindVariable("window_position",           &window_position);
-    M_BindVariable("usegamma",                  &usegamma);
-    M_BindVariable("vanilla_keyboard_mapping",  &vanilla_keyboard_mapping);
-    M_BindVariable("novert",                    &novert);
-    M_BindVariable("png_screenshots",           &png_screenshots);
+    M_BindIntVariable("use_mouse",                 &usemouse);
+    M_BindIntVariable("autoadjust_video_settings", &autoadjust_video_settings);
+    M_BindIntVariable("fullscreen",                &fullscreen);
+    M_BindIntVariable("aspect_ratio_correct",      &aspect_ratio_correct);
+    M_BindIntVariable("startup_delay",             &startup_delay);
+    M_BindIntVariable("screen_width",              &screen_width);
+    M_BindIntVariable("screen_height",             &screen_height);
+    M_BindIntVariable("screen_bpp",                &screen_bpp);
+    M_BindIntVariable("grabmouse",                 &grabmouse);
+    M_BindFloatVariable("mouse_acceleration",      &mouse_acceleration);
+    M_BindIntVariable("mouse_threshold",           &mouse_threshold);
+    M_BindStringVariable("video_driver",           &video_driver);
+    M_BindStringVariable("window_position",        &window_position);
+    M_BindIntVariable("usegamma",                  &usegamma);
+    M_BindIntVariable("vanilla_keyboard_mapping",  &vanilla_keyboard_mapping);
+    M_BindIntVariable("novert",                    &novert);
+    M_BindIntVariable("png_screenshots",           &png_screenshots);
 
     // Windows Vista or later?  Set screen color depth to
     // 32 bits per pixel, as 8-bit palettized screen modes

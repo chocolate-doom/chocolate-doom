@@ -1102,5 +1102,5 @@ void NET_Init(void)
 
 void NET_BindVariables(void)
 {
-    M_BindVariable("player_name", &net_player_name);
+    M_BindStringVariable("player_name", &net_player_name);
 }

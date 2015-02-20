@@ -359,16 +359,16 @@ void D_BindVariables(void)
     NET_BindVariables();
 #endif
 
-    M_BindVariable("mouse_sensitivity",      &mouseSensitivity);
-    M_BindVariable("sfx_volume",             &sfxVolume);
-    M_BindVariable("music_volume",           &musicVolume);
-    M_BindVariable("show_messages",          &showMessages);
-    M_BindVariable("screenblocks",           &screenblocks);
-    M_BindVariable("detaillevel",            &detailLevel);
-    M_BindVariable("snd_channels",           &snd_channels);
-    M_BindVariable("vanilla_savegame_limit", &vanilla_savegame_limit);
-    M_BindVariable("vanilla_demo_limit",     &vanilla_demo_limit);
-    M_BindVariable("show_endoom",            &show_endoom);
+    M_BindIntVariable("mouse_sensitivity",      &mouseSensitivity);
+    M_BindIntVariable("sfx_volume",             &sfxVolume);
+    M_BindIntVariable("music_volume",           &musicVolume);
+    M_BindIntVariable("show_messages",          &showMessages);
+    M_BindIntVariable("screenblocks",           &screenblocks);
+    M_BindIntVariable("detaillevel",            &detailLevel);
+    M_BindIntVariable("snd_channels",           &snd_channels);
+    M_BindIntVariable("vanilla_savegame_limit", &vanilla_savegame_limit);
+    M_BindIntVariable("vanilla_demo_limit",     &vanilla_demo_limit);
+    M_BindIntVariable("show_endoom",            &show_endoom);
 
     // Multiplayer chat macros
 
@@ -377,7 +377,7 @@ void D_BindVariables(void)
         char buf[12];
 
         M_snprintf(buf, sizeof(buf), "chatmacro%i", i);
-        M_BindVariable(buf, &chat_macros[i]);
+        M_BindStringVariable(buf, &chat_macros[i]);
     }
 }
 
