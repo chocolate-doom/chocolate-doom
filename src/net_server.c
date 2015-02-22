@@ -514,7 +514,8 @@ static void NET_SV_AdvanceWindow(void)
         
         // Advance the window
 
-        memcpy(recvwindow, recvwindow + 1, sizeof(*recvwindow) * (BACKUPTICS - 1));
+        memmove(recvwindow, recvwindow + 1,
+                sizeof(*recvwindow) * (BACKUPTICS - 1));
         memset(&recvwindow[BACKUPTICS-1], 0, sizeof(*recvwindow));
         ++recvwindow_start;
 
