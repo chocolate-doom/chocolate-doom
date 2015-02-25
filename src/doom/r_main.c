@@ -35,6 +35,9 @@
 #include "r_local.h"
 #include "r_sky.h"
 
+// haleyjd 20150224: Medusa Effect emulation
+#include "r_medusa.h"
+
 
 
 
@@ -806,7 +809,9 @@ void R_Init (void)
     R_InitSkyMap ();
     R_InitTranslationTables ();
     printf (".");
-	
+
+    R_InitMedusaBuffer(); // haleyjd 20150224: Medusa Effect emulation
+
     framecount = 0;
 }
 

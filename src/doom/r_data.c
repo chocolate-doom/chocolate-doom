@@ -405,6 +405,14 @@ R_GetColumn
     return texturecomposite[tex] + ofs;
 }
 
+//
+// haleyjd 20150224: Return maximum extent of column for Medusa effect 
+// emulation. Call only after R_GetColumn (column must be in cache).
+//
+byte *R_ColumnMaxExtent(int tex)
+{
+    return texturecomposite[tex] + texturecompositesize[tex];
+}
 
 static void GenerateTextureHashTable(void)
 {

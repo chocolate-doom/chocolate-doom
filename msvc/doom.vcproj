@@ -792,6 +792,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\r_medusa.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\r_medusa.h"
+				>
+			</File>
+			<File
 				RelativePath="..\src\sha1.c"
 				>
 			</File>
