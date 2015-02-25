@@ -32,6 +32,7 @@
 #include "w_wad.h"
 
 #include "r_local.h"
+#include "r_medusa.h"
 
 #include "doomstat.h"
 
@@ -340,11 +341,12 @@ short*		mceilingclip;
 fixed_t		spryscale;
 fixed_t		sprtopscreen;
 
-void R_DrawMaskedColumn (column_t* column)
+void R_DrawMaskedColumn (column_t* column, byte *maxextent)
 {
     int		topscreen;
     int 	bottomscreen;
     fixed_t	basetexturemid;
+    boolean	medusa = false;
 	
     basetexturemid = dc_texturemid;
 	
@@ -374,6 +376,15 @@ void R_DrawMaskedColumn (column_t* column)
 	    colfunc ();	
 	}
 	column = (column_t *)(  (byte *)column + column->length + 4);
+
+	// haleyjd 20150224: Medusa Effect emulation: if we have run over the
+	// extent of the texture, then we need to divert to reading from the
+	// Medusa emulation buffer.
+	if(maxextent && column >= maxextent && !medusa)
+	{
+	    column = R_GetMedusaBuffer();
+	    medusa = true;
+	}
     }
 	
     dc_texturemid = basetexturemid;
@@ -428,7 +439,7 @@ R_DrawVisSprite
 #endif
 	column = (column_t *) ((byte *)patch +
 			       LONG(patch->columnofs[texturecolumn]));
-	R_DrawMaskedColumn (column);
+	R_DrawMaskedColumn (column, NULL);
     }
 
     colfunc = basecolfunc;

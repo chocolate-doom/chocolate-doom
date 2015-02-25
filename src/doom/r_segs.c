@@ -173,8 +173,9 @@ R_RenderMaskedSegRange
 	    // draw the texture
 	    col = (column_t *)( 
 		(byte *)R_GetColumn(texnum,maskedtexturecol[dc_x]) -3);
-			
-	    R_DrawMaskedColumn (col);
+
+	    // haleyjd: 20150224: needs max extent of texture for Medusa emulation
+	    R_DrawMaskedColumn (col, R_ColumnMaxExtent(texnum));
 	    maskedtexturecol[dc_x] = SHRT_MAX;
 	}
 	spryscale += rw_scalestep;
