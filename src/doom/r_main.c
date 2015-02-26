@@ -809,8 +809,6 @@ void R_Init (void)
     R_InitTranslationTables ();
     printf (".");
 
-    R_InitMedusaBuffer();
-
     framecount = 0;
 }
 
