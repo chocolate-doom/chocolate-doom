@@ -1830,9 +1830,10 @@ A_CloseShotgun2
 
 
 
-mobj_t*		braintargets[32];
+mobj_t**		braintargets = NULL;
 int		numbraintargets = 0; // [crispy] initialize
 int		braintargeton = 0;
+static int	maxbraintargets; // [crispy] remove braintargets limit
 
 void A_BrainAwake (mobj_t* mo)
 {
@@ -1855,6 +1856,16 @@ void A_BrainAwake (mobj_t* mo)
 
 	if (m->type == MT_BOSSTARGET )
 	{
+	    // [crispy] remove braintargets limit
+	    if (numbraintargets == maxbraintargets)
+	    {
+		maxbraintargets = maxbraintargets ? 2 * maxbraintargets : 32;
+		braintargets = realloc(braintargets, maxbraintargets * sizeof(*braintargets));
+
+		if (maxbraintargets > 32)
+		    fprintf(stderr, "R_BrainAwake: Raised braintargets limit to %d.\n", maxbraintargets);
+	    }
+
 	    braintargets[numbraintargets] = m;
 	    numbraintargets++;
 	}
