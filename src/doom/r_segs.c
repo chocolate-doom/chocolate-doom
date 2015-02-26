@@ -290,7 +290,6 @@ R_RenderMaskedSegRange
 	    col = (column_t *)( 
 		(byte *)R_GetColumn(texnum,maskedtexturecol[dc_x]) -3);
 
-	    // haleyjd: 20150224: needs max extent of texture for Medusa emulation
 	    R_DrawMaskedColumn (col, R_ColumnMaxExtent(texnum));
 	    maskedtexturecol[dc_x] = INT_MAX; // [crispy] 32-bit integer math
 	}

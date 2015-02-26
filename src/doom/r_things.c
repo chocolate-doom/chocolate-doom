@@ -401,7 +401,7 @@ void R_DrawMaskedColumn (column_t* column, byte *maxextent)
 	// haleyjd 20150224: Medusa Effect emulation: if we have run over the
 	// extent of the texture, then we need to divert to reading from the
 	// Medusa emulation buffer.
-	if(maxextent && column >= maxextent && !medusa)
+	if (maxextent && column >= maxextent && !medusa)
 	{
 	    column = R_GetMedusaBuffer();
 	    medusa = true;
