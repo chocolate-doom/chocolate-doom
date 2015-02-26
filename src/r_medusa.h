@@ -20,8 +20,7 @@
 #ifndef R_MEDUSA_H__
 #define R_MEDUSA_H__
 
-void  R_InitMedusaBuffer(void);
-byte *R_GetMedusaBuffer(void);
+byte *R_GetMedusaBuffer(byte **end);
 
 #endif
 

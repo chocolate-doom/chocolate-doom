@@ -20,8 +20,9 @@
 #include <stdlib.h>
 #include <time.h>
 #include "doomtype.h"
-#include "r_defs.h"
-#include "r_draw.h"
+
+// Because this is not game-specific, we cannot include r_data.h here.
+extern int dc_x;
 
 // The zone heap was allocated at a max of 6 MB; on average, a texture will be
 // allocated near the middle of the heap due to constant purging of PU_CACHE
@@ -116,27 +117,19 @@ static void R_FillMedusaBuffer(void)
 }
 
 //
-// Allocate the Medusa buffer if it hasn't been allocated already
+// Get a pointer to the Medusa Effect emulation buffer.
 //
-void R_InitMedusaBuffer(void)
+byte *R_GetMedusaBuffer(byte **end)
 {
-    srand((unsigned int)time(NULL));
-    
+    static int count;
+
     if(!r_medusabuffer)
     {
         if(!(r_medusabuffer = malloc(r_medusabuffersize)))
-            return; // well that's tough I guess, no emulation.
+            return NULL;
+        srand((unsigned int)time(NULL));
+        R_FillMedusaBuffer();
     }
-
-    R_FillMedusaBuffer();
-}
-
-//
-// Get a pointer to the Medusa Effect emulation buffer.
-//
-byte *R_GetMedusaBuffer(void)
-{
-    static int count;
 
     if(++count >= 100000 && (rand() & 1))
     {
@@ -145,6 +138,7 @@ byte *R_GetMedusaBuffer(void)
         count = 0;
     }
 
+    *end = r_medusabuffer + r_medusabuffersize;
     return r_medusacolumnstarts[dc_x % MEDUSA_COLUMN_STARTS];
 }
 
