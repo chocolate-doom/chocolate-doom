@@ -71,15 +71,15 @@ int		worldbottom;
 int		worldhigh;
 int		worldlow;
 
-fixed_t		pixhigh;
-fixed_t		pixlow;
+int64_t		pixhigh; // [crispy] WiggleFix
+int64_t		pixlow; // [crispy] WiggleFix
 fixed_t		pixhighstep;
 fixed_t		pixlowstep;
 
-fixed_t		topfrac;
+int64_t		topfrac; // [crispy] WiggleFix
 fixed_t		topstep;
 
-fixed_t		bottomfrac;
+int64_t		bottomfrac; // [crispy] WiggleFix
 fixed_t		bottomstep;
 
 
@@ -281,7 +281,7 @@ R_RenderMaskedSegRange
 		    t > (int64_t) SCREENHEIGHT << FRACBITS*2)
 			continue; // skip if the texture is out of screen's range
 
-		sprtopscreen = (int64_t)(t >> FRACBITS);
+		sprtopscreen = (int64_t)(t >> FRACBITS); // [crispy] WiggleFix
 	    }
 
 	    dc_iscale = 0xffffffffu / (unsigned)spryscale;
@@ -326,7 +326,7 @@ void R_RenderSegLoop (void)
     for ( ; rw_x < rw_stopx ; rw_x++)
     {
 	// mark floor / ceiling areas
-	yl = (topfrac+heightunit-1)>>heightbits;
+	yl = (int)((topfrac+heightunit-1)>>heightbits); // [crispy] WiggleFix
 
 	// no space above wall?
 	if (yl < ceilingclip[rw_x]+1)
@@ -347,7 +347,7 @@ void R_RenderSegLoop (void)
 	    }
 	}
 		
-	yh = bottomfrac>>heightbits;
+	yh = (int)(bottomfrac>>heightbits); // [crispy] WiggleFix
 
 	if (yh >= floorclip[rw_x])
 	    yh = floorclip[rw_x]-1;
@@ -408,7 +408,7 @@ void R_RenderSegLoop (void)
 	    if (toptexture)
 	    {
 		// top wall
-		mid = pixhigh>>heightbits;
+		mid = (int)(pixhigh>>heightbits); // [crispy] WiggleFix
 		pixhigh += pixhighstep;
 
 		if (mid >= floorclip[rw_x])
@@ -437,7 +437,7 @@ void R_RenderSegLoop (void)
 	    if (bottomtexture)
 	    {
 		// bottom wall
-		mid = (pixlow+heightunit-1)>>heightbits;
+		mid = (int)((pixlow+heightunit-1)>>heightbits); // [crispy] WiggleFix
 		pixlow += pixlowstep;
 
 		// no space above wall?
@@ -841,10 +841,10 @@ R_StoreWallRange
     worldbottom >>= invhgtbits;
 	
     topstep = -FixedMul (rw_scalestep, worldtop);
-    topfrac = (centeryfrac>>invhgtbits) - FixedMul (worldtop, rw_scale);
+    topfrac = ((int64_t)centeryfrac>>invhgtbits) - (((int64_t)worldtop * rw_scale)>>FRACBITS); // [crispy] WiggleFix
 
     bottomstep = -FixedMul (rw_scalestep,worldbottom);
-    bottomfrac = (centeryfrac>>invhgtbits) - FixedMul (worldbottom, rw_scale);
+    bottomfrac = ((int64_t)centeryfrac>>invhgtbits) - (((int64_t)worldbottom * rw_scale)>>FRACBITS); // [crispy] WiggleFix
 	
     if (backsector)
     {	
@@ -853,13 +853,13 @@ R_StoreWallRange
 
 	if (worldhigh < worldtop)
 	{
-	    pixhigh = (centeryfrac>>invhgtbits) - FixedMul (worldhigh, rw_scale);
+	    pixhigh = ((int64_t)centeryfrac>>invhgtbits) - (((int64_t)worldhigh * rw_scale)>>FRACBITS); // [crispy] WiggleFix
 	    pixhighstep = -FixedMul (rw_scalestep,worldhigh);
 	}
 	
 	if (worldlow > worldbottom)
 	{
-	    pixlow = (centeryfrac>>invhgtbits) - FixedMul (worldlow, rw_scale);
+	    pixlow = ((int64_t)centeryfrac>>invhgtbits) - (((int64_t)worldlow * rw_scale)>>FRACBITS); // [crispy] WiggleFix
 	    pixlowstep = -FixedMul (rw_scalestep,worldlow);
 	}
     }
