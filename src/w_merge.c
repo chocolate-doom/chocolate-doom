@@ -723,7 +723,7 @@ void W_NWTDashMerge(char *filename)
     W_CloseFile(wad_file);
 }
 
-int W_MergeOut (const char *file)
+int W_MergeDump (const char *file)
 {
     FILE *fp = NULL;
     char *lump_p = NULL;

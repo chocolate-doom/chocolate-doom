@@ -1659,7 +1659,7 @@ void D_DoomMain (void)
     // merges PWADs into the main IWAD and writes the merged data into <file>
     //
 
-    p = M_CheckParmWithArgs ("-mergeout", 1);
+    p = M_CheckParmWithArgs ("-mergedump", 1);
 
     if (p)
     {
@@ -1672,7 +1672,7 @@ void D_DoomMain (void)
 	    DEH_snprintf(file, sizeof(file), "%s.wad", myargv[p+1]);
 	}
 
-	if (W_MergeOut(file))
+	if (W_MergeDump(file))
 	{
 	    printf("Merging into file %s.\n", file);
 	    I_Quit();
