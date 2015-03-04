@@ -1,8 +1,8 @@
-AC_INIT(Crispy Doom, 2.2, fabian@greffrath.com, crispy-doom)
+AC_INIT(Crispy Doom, 2.3, fabian@greffrath.com, crispy-doom)
 
 PACKAGE_SHORTNAME=${PACKAGE_NAME% Doom}
 PACKAGE_SHORTDESC="Limit-removing enhanced-resolution Doom source port"
-PACKAGE_COPYRIGHT="Copyright (C) 1993-2014"
+PACKAGE_COPYRIGHT="Copyright (C) 1993-2015"
 PACKAGE_LICENSE="GNU General Public License, version 2"
 PACKAGE_MAINTAINER="Fabian Greffrath"
 PACKAGE_URL="http://www.chocolate-doom.org/wiki/index.php/Crispy_Doom"
