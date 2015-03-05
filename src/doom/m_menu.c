@@ -1348,7 +1348,7 @@ static void M_DrawCrispness(void)
     M_DrawCrispnessItem(crispness_crosshair, "Draw Crosshair", crispy_crosshair, true);
     M_DrawCrispnessItem(crispness_crosshair2, "Project Crosshair into Scene", crispy_crosshair2, crispy_crosshair);
     M_DrawCrispnessItem(crispness_centerweapon, "Center Weapon when Firing", crispy_centerweapon, true);
-    M_DrawCrispnessItem(crispness_pitch, "Enable Weapon Pitch", crispy_pitch, true);
+    M_DrawCrispnessItem(crispness_pitch, "Enable Weapon Recoil Pitch", crispy_pitch, true);
     M_DrawCrispnessItem(crispness_secretmessage, "Show Revealed Secrets", crispy_secretmessage, true);
     M_DrawCrispnessItem(crispness_automapstats, "Show Level Stats in Automap", crispy_automapstats, true);
 
@@ -1368,7 +1368,7 @@ static void M_DrawCrispness2(void)
     M_DrawCrispnessItem(crispness_jumping, "Allow Jumping", crispy_jump, singleplayer);
     M_DrawCrispnessItem(crispness_freeaim, "Allow Vertical Aiming", crispy_freeaim, singleplayer);
     M_DrawCrispnessItem(crispness_overunder, "Walk over/under Monsters", crispy_overunder, singleplayer);
-    M_DrawCrispnessItem(crispness_recoil, "Enable Weapon Recoil", crispy_recoil, singleplayer);
+    M_DrawCrispnessItem(crispness_recoil, "Enable Weapon Recoil Thrust", crispy_recoil, singleplayer);
 
     M_DrawCrispnessGoto(crispness_goto1, "< Prev Page");
 

@@ -77,7 +77,7 @@ void CompatibilitySettings(void)
                                    &crispy_crosshair2),
                    TXT_NewCheckBox("Center Weapon when Firing",
                                    &crispy_centerweapon),
-                   TXT_NewCheckBox("Enable Weapon Pitch",
+                   TXT_NewCheckBox("Enable Weapon Recoil Pitch",
                                    &crispy_pitch),
                    TXT_NewCheckBox("Show Revealed Secrets",
                                    &crispy_secretmessage),
@@ -90,7 +90,7 @@ void CompatibilitySettings(void)
                                    &crispy_freeaim),
                    TXT_NewCheckBox("Walk over/under Monsters",
                                    &crispy_overunder),
-                   TXT_NewCheckBox("Enable Weapon Recoil",
+                   TXT_NewCheckBox("Enable Weapon Recoil Thrust",
                                    &crispy_recoil),
                    NULL);
     }

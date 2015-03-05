@@ -1745,7 +1745,7 @@ static default_t extra_defaults_list[] =
     //!
     // @game doom
     //
-    // Enable weapon recoil.
+    // Enable weapon recoil thrust.
     //
 
     CONFIG_VARIABLE_INT(crispy_recoil),
@@ -1753,7 +1753,7 @@ static default_t extra_defaults_list[] =
     //!
     // @game doom
     //
-    // Enable weapon pitch.
+    // Enable weapon recoil pitch.
     //
 
     CONFIG_VARIABLE_INT(crispy_pitch),
