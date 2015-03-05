@@ -64,11 +64,15 @@ typedef struct
 void FunctionName(int argument, int arg2, int arg3, int arg4, int arg5,
                   int arg6, int arg7)
 {
-    if (condition)
+    int assign_var;
+
+    assign_var = arg2 + arg3 * arg4 * (arg5 + arg6);
+
+    if (foo && !bar || baz && qux || !(foo && bar && baz))
     {
         body;
     }
-    else if (condition)
+    else if (xyz + 4 < abc * 4 + 3)
     {
         body;
     }
@@ -97,9 +101,10 @@ void FunctionName(int argument, int arg2, int arg3, int arg4, int arg5,
             break;
     }
 
-    for (a=0; a<10; ++a)
+    for (a = 0; a < 10; ++a)
     {
-        loop_body;
+        FunctionCall(arg1, arg2, arg3, arg4,
+                     arg_split_onto_second_line);
     }
 
     while (a < 10)
