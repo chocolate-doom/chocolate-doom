@@ -147,7 +147,7 @@ typedef struct
 
 typedef byte lighttable_t;      // this could be wider for >8 bit display
 
-#define	MAXVISPLANES	128*8
+#define	MAXVISPLANES	128
 #define	MAXOPENINGS		SCREENWIDTH*64*4
 
 typedef struct
@@ -184,7 +184,7 @@ typedef struct drawseg_s
 #define SIL_TOP		2
 #define	SIL_BOTH	3
 
-#define	MAXDRAWSEGS		256*8
+#define	MAXDRAWSEGS		256
 
 // A vissprite_t is a thing that will be drawn during a refresh
 typedef struct vissprite_s
@@ -325,7 +325,8 @@ extern boolean markfloor;       // false if the back side is the same plane
 extern boolean markceiling;
 extern boolean skymap;
 
-extern drawseg_t drawsegs[MAXDRAWSEGS], *ds_p;
+extern drawseg_t *drawsegs, *ds_p;
+extern int numdrawsegs;
 
 extern lighttable_t **hscalelight, **vscalelight, **dscalelight;
 
@@ -400,9 +401,9 @@ void R_PrecacheLevel(void);
 //
 // R_things.c
 //
-#define	MAXVISSPRITES	128*8
+#define	MAXVISSPRITES	128
 
-extern vissprite_t vissprites[MAXVISSPRITES], *vissprite_p;
+extern vissprite_t *vissprites, *vissprite_p;
 extern vissprite_t vsprsortedhead;
 
 // constant arrays used for psprite clipping and initializing clipping
