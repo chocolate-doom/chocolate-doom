@@ -1627,7 +1627,7 @@ void D_DoomMain (void)
 
     // [crispy] PWAD files in the config directory following
     // the preload?.wad naming scheme are preloaded at game startup
-    if (!M_ParmExists("-noload"))
+    if (!M_ParmExists("-noload") && gamemode != shareware)
     {
 	int i;
 	char file[16], *path;
