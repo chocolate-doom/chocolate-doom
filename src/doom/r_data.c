@@ -579,10 +579,7 @@ static void GenerateTextureHashTable(void)
 // Initializes the texture list
 //  with the textures from the world map.
 //
-// [crispy] partly rewritten to merge up to MAXPNAMESLUMPS PNAMES lumps
-// and up to MAXTEXTURELUMPS TEXTURE1/2 lumps
-#define MAXTEXTURELUMPS 8 // [crispy] seems reasonable
-#define MAXPNAMESLUMPS MAXTEXTURELUMPS/2
+// [crispy] partly rewritten to merge PNAMES and TEXTURE1/2 lumps
 void R_InitTextures (void)
 {
     maptexture_t*	mtexture;
@@ -611,10 +608,6 @@ void R_InitTextures (void)
     int			temp2;
     int			temp3;
 
-    
-    int			numpnameslumps;
-    int			numtexturelumps;
-
     typedef struct
     {
 	int lumpnum;
@@ -634,15 +627,18 @@ void R_InitTextures (void)
 	short pnamesoffset;
     } texturelump_t;
 
-    pnameslump_t	pnameslumps[MAXPNAMESLUMPS];
-    texturelump_t	texturelumps[MAXTEXTURELUMPS], *texturelump;
+    pnameslump_t	*pnameslumps = NULL;
+    texturelump_t	*texturelumps = NULL, *texturelump;
 
-    // [crispy] initialize the pnameslumps[] and texturelumps[] arrays,
-    // so that the lumpnum fields are all -1
-    numpnameslumps = 0;
-    numtexturelumps = 0;
-    memset(pnameslumps, -1, sizeof(pnameslumps));
-    memset(texturelumps, -1, sizeof(texturelumps));
+    int			maxpnameslumps = 1; // PNAMES
+    int			maxtexturelumps = 2; // TEXTURE1, TEXTURE2
+
+    int			numpnameslumps = 0;
+    int			numtexturelumps = 0;
+
+    // [crispy] allocate memory for the pnameslumps and texturelumps arrays
+    pnameslumps = realloc(pnameslumps, maxpnameslumps * sizeof(*pnameslumps));
+    texturelumps = realloc(texturelumps, maxtexturelumps * sizeof(*texturelumps));
 
     // [crispy] make sure the first available TEXTURE1/2 lumps
     // are always processed first
@@ -659,8 +655,11 @@ void R_InitTextures (void)
     {
 	if (!strncasecmp(lumpinfo[i].name, DEH_String("PNAMES"), 6))
 	{
-	    if (numpnameslumps == arrlen(pnameslumps))
-		continue;
+	    if (numpnameslumps == maxpnameslumps)
+	    {
+		maxpnameslumps++;
+		pnameslumps = realloc(pnameslumps, maxpnameslumps * sizeof(*pnameslumps));
+	    }
 
 	    pnameslumps[numpnameslumps].lumpnum = i;
 	    pnameslumps[numpnameslumps].names = W_CacheLumpNum(pnameslumps[numpnameslumps].lumpnum, PU_STATIC);
@@ -678,9 +677,6 @@ void R_InitTextures (void)
 	else
 	if (!strncasecmp(lumpinfo[i].name, DEH_String("TEXTURE"), 7))
 	{
-	    if (numtexturelumps == arrlen(texturelumps))
-		continue;
-
 	    // [crispy] support only TEXTURE1/2 lumps, not TEXTURE3 etc.
 	    if (lumpinfo[i].name[7] != '1' &&
 	        lumpinfo[i].name[7] != '2')
@@ -691,6 +687,12 @@ void R_InitTextures (void)
 	    if (i == texturelumps[0].lumpnum ||
 	        i == texturelumps[1].lumpnum) // [crispy] may still be -1
 		continue;
+
+	    if (numtexturelumps == maxtexturelumps)
+	    {
+		maxtexturelumps++;
+		texturelumps = realloc(texturelumps, maxtexturelumps * sizeof(*texturelumps));
+	    }
 
 	    // [crispy] do not proceed any further, yet
 	    // we first need a complete pnameslumps[] array and need
@@ -744,6 +746,7 @@ void R_InitTextures (void)
     {
 	W_ReleaseLumpNum(pnameslumps[i].lumpnum);
     }
+    free(pnameslumps);
 
     // [crispy] pointer to (i.e. actually before) the first texture file
     texturelump = texturelumps - 1; // [crispy] gets immediately increased below
@@ -853,6 +856,7 @@ void R_InitTextures (void)
     {
 	W_ReleaseLumpNum(texturelumps[i].lumpnum);
     }
+    free(texturelumps);
     
     // Precalculate whatever possible.	
 
