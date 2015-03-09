@@ -237,9 +237,9 @@ void I_BindSoundVariables(void);
 typedef enum {
     opl_v_old, // hexen heretic
     opl_v_new // doom strife
-} opl_driver_ver;
+} opl_driver_ver_t;
 
-void I_SetOPLDriverVer(opl_driver_ver ver);
+void I_SetOPLDriverVer(opl_driver_ver_t ver);
 
 #endif
 

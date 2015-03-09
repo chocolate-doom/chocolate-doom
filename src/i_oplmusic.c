@@ -297,7 +297,7 @@ static const unsigned int volume_mapping_table[] = {
     124, 124, 125, 125, 126, 126, 127, 127
 };
 
-opl_driver_ver opl_drv_ver = opl_v_new;
+opl_driver_ver_t opl_drv_ver = opl_v_new;
 static boolean music_initialized = false;
 
 //static boolean musicpaused = false;
@@ -534,8 +534,8 @@ static void SetVoiceInstrument(opl_voice_t *voice,
 
     // Calculate voice priority.
 
-    voice->priority = 0x0f - (data->carrier.attack>>4)
-                      + 0x0f - (data->carrier.sustain & 0x0f);
+    voice->priority = 0x0f - (data->carrier.attack >> 4)
+                    + 0x0f - (data->carrier.sustain & 0x0f);
 }
 
 static void SetVoiceVolume(opl_voice_t *voice, unsigned int volume)
