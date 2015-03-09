@@ -644,9 +644,9 @@ void R_InitTextures (void)
     // are always processed first
     texturelumps[numtexturelumps++].lumpnum = W_GetNumForName(DEH_String("TEXTURE1"));
     if ((i = W_CheckNumForName(DEH_String("TEXTURE2"))) != -1)
-    {
 	texturelumps[numtexturelumps++].lumpnum = i;
-    }
+    else
+	texturelumps[numtexturelumps].lumpnum = -1;
 
     // [crispy] fill the arrays with all available PNAMES lumps
     // and the remaining available TEXTURE1/2 lumps
