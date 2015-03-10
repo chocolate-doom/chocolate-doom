@@ -848,6 +848,7 @@ void R_SetupFrame (player_t* player)
     viewy = player->mo->y;
     viewangle = player->mo->angle + viewangleoffset;
     extralight = player->extralight;
+    extralight += crispy_flashlight;
 
     viewz = player->viewz;
 
