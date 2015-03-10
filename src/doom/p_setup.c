@@ -86,9 +86,9 @@ static int      totallines;
 // Blockmap size.
 int		bmapwidth;
 int		bmapheight;	// size in mapblocks
-long*		blockmap;	// int for larger maps // [crispy] BLOCKMAP limit
+int64_t*	blockmap;	// int for larger maps // [crispy] BLOCKMAP limit
 // offsets in blockmap are from here
-long*		blockmaplump; // [crispy] BLOCKMAP limit
+int64_t*	blockmaplump; // [crispy] BLOCKMAP limit
 // origin of block map
 fixed_t		bmaporgx;
 fixed_t		bmaporgy;
@@ -1439,15 +1439,15 @@ void P_LoadBlockMap (int lump)
 
     blockmaplump[0] = SHORT(wadblockmaplump[0]);
     blockmaplump[1] = SHORT(wadblockmaplump[1]);
-    blockmaplump[2] = (long)(SHORT(wadblockmaplump[2])) & 0xffff;
-    blockmaplump[3] = (long)(SHORT(wadblockmaplump[3])) & 0xffff;
+    blockmaplump[2] = (int64_t)(SHORT(wadblockmaplump[2])) & 0xffff;
+    blockmaplump[3] = (int64_t)(SHORT(wadblockmaplump[3])) & 0xffff;
 
     // Swap all short integers to native byte ordering.
   
     for (i=4; i<count; i++)
     {
 	short t = SHORT(wadblockmaplump[i]);
-	blockmaplump[i] = (t == -1) ? -1l : (long) t & 0xffff;
+	blockmaplump[i] = (t == -1) ? -1l : (int64_t) t & 0xffff;
     }
 
     Z_Free(wadblockmaplump);
@@ -1462,7 +1462,7 @@ void P_LoadBlockMap (int lump)
     if (crispy_fliplevels)
     {
 	int x, y;
-	long* rowoffset; // [crispy] BLOCKMAP limit
+	int64_t* rowoffset; // [crispy] BLOCKMAP limit
 
 	bmaporgx += bmapwidth * 128 * FRACUNIT;
 	bmaporgx = -bmaporgx;
@@ -1473,7 +1473,7 @@ void P_LoadBlockMap (int lump)
 
 	    for (x = 0; x < bmapwidth / 2; x++)
 	    {
-	        long tmp; // [crispy] BLOCKMAP limit
+	        int64_t tmp; // [crispy] BLOCKMAP limit
 
 	        tmp = rowoffset[x];
 	        rowoffset[x] = rowoffset[bmapwidth-1-x];
