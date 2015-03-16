@@ -52,6 +52,7 @@
 #include "m_menu.h"
 #include "p_saveg.h"
 
+#include "i_capture.h"
 #include "i_endoom.h"
 #include "i_joystick.h"
 #include "i_system.h"
@@ -1806,6 +1807,12 @@ void D_DoomMain (void)
     p = M_CheckParmWithArgs("-timedemo", 1);
     if (p)
     {
+	p = M_CheckParmWithArgs("-viddump", 1);
+	if (p)
+	{
+	    I_InitCapture(myargv[p + 1]);
+	}
+
 	G_TimeDemo (demolumpname);
 	D_DoomLoop ();  // never returns
     }

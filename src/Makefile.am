@@ -62,6 +62,7 @@ d_loop.c             d_loop.h              \
 d_mode.c             d_mode.h              \
                      d_ticcmd.h            \
 deh_str.c            deh_str.h             \
+i_capture.c          i_capture.h           \
 i_cdmus.c            i_cdmus.h             \
 i_endoom.c           i_endoom.h            \
 i_joystick.c         i_joystick.h          \

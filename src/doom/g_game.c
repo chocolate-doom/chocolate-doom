@@ -35,6 +35,7 @@
 #include "m_misc.h"
 #include "m_menu.h"
 #include "m_random.h"
+#include "i_capture.h"
 #include "i_system.h"
 #include "i_timer.h"
 #include "i_video.h"
@@ -2192,6 +2193,11 @@ boolean G_CheckDemoStatus (void)
         // Prevent recursive calls
         timingdemo = false;
         demoplayback = false;
+
+        if (I_VideoCapture)
+        {
+            I_QuitCapture();
+        }
 
 	I_Error ("timed %i gametics in %i realtics (%f fps)",
                  gametic, realtics, fps);

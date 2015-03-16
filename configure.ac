@@ -90,6 +90,17 @@ AC_SDL_MAIN_WORKAROUND([
         AC_CHECK_LIB(z, zlibVersion)
         AC_CHECK_LIB(png, png_get_io_ptr)
     ])
+    # Check for libav*.
+    AC_ARG_WITH([libav],
+    AS_HELP_STRING([--without-libav],
+        [Build without libav @<:@default=check@:>@]),
+    [],
+    [
+        AC_CHECK_LIB(avutil, av_frame_free)
+        AC_CHECK_LIB(avcodec, avcodec_register_all)
+        AC_CHECK_LIB(avformat, av_register_all)
+        AC_CHECK_LIB(swscale, sws_getContext)
+    ])
     AC_CHECK_LIB(m, log)
 
     AC_CHECK_HEADERS([linux/kd.h dev/isa/spkrio.h dev/speaker/speaker.h])

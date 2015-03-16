@@ -34,6 +34,7 @@
 #include "deh_str.h"
 #include "doomtype.h"
 #include "doomkeys.h"
+#include "i_capture.h"
 #include "i_joystick.h"
 #include "i_system.h"
 #include "i_swap.h"
@@ -1111,6 +1112,11 @@ void I_FinishUpdate (void)
         SDL_SetColors(screenbuffer, palette, 0, 256);
         palette_to_set = false;
 
+        if (I_VideoCapture)
+        {
+            I_SetCapturePalette(palette);
+        }
+
         // In native 8-bit mode, if we have a palette to set, the act
         // of setting the palette updates the screen
 
@@ -1118,6 +1124,11 @@ void I_FinishUpdate (void)
         {
             return;
         }
+    }
+
+    if (I_VideoCapture)
+    {
+	I_CaptureEncode();
     }
 
     // In 8in32 mode, we must blit from the fake 8-bit screen buffer
