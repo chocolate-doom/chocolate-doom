@@ -1107,9 +1107,11 @@ void I_FinishUpdate (void)
 
     // Update the texture with the content of the 32-bit RGBA buffer
 
-    SDL_LockTexture(texture, NULL, &pixels, &pitch);
-    memcpy(pixels, rgbabuffer->pixels, SCREENHEIGHT*pitch);
-    SDL_UnlockTexture(texture);
+    if (!SDL_LockTexture(texture, NULL, &pixels, &pitch))
+    {
+	memcpy(pixels, rgbabuffer->pixels, SCREENHEIGHT*pitch);
+	SDL_UnlockTexture(texture);
+    }
 
     // Render the texture into the window
 
