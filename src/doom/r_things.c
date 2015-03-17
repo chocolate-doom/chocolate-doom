@@ -409,6 +409,8 @@ void R_DrawMaskedColumn (column_t* column)
 }
 
 
+// [crispy] invisibility is rendered translucently
+#define crispy_transshadow 0
 
 //
 // R_DrawVisSprite
@@ -448,7 +450,9 @@ R_DrawVisSprite
 	dc_translation = vis->translation;
     }
     // [crispy] translucent sprites
-    if (crispy_translucency && (vis->mobjflags & MF_TRANSLUCENT) && dc_colormap)
+    if (crispy_translucency && dc_colormap &&
+        ((vis->mobjflags & MF_TRANSLUCENT) ||
+        ((vis->mobjflags & MF_SHADOW) && crispy_transshadow)))
     {
 	colfunc = tlcolfunc;
     }
@@ -617,7 +621,8 @@ void R_ProjectSprite (mobj_t* thing)
     vis->patch = lump;
     
     // get light level
-    if (thing->flags & MF_SHADOW)
+    // [crispy] do not invalidate colormap if invisibility is rendered translucently
+    if (thing->flags & MF_SHADOW && !crispy_transshadow)
     {
 	// shadow draw
 	vis->colormap = NULL;
@@ -857,8 +862,10 @@ void R_DrawPSprite (pspdef_t* psp, psprnum_t psprnum) // [crispy] differentiate 
 
     vis->patch = lump;
 
-    if (viewplayer->powers[pw_invisibility] > 4*32
+    // [crispy] do not invalidate colormap if invisibility is rendered translucently
+    if ((viewplayer->powers[pw_invisibility] > 4*32
 	|| viewplayer->powers[pw_invisibility] & 8)
+	&& !crispy_transshadow)
     {
 	// shadow draw
 	vis->colormap = NULL;
@@ -879,6 +886,14 @@ void R_DrawPSprite (pspdef_t* psp, psprnum_t psprnum) // [crispy] differentiate 
 	vis->colormap = spritelights[MAXLIGHTSCALE-1];
     }
 	
+    // [crispy] invisibility is rendered translucently
+    if ((viewplayer->powers[pw_invisibility] > 4*32 ||
+        viewplayer->powers[pw_invisibility] & 8) &&
+        crispy_transshadow)
+    {
+	vis->mobjflags |= MF_TRANSLUCENT;
+    }
+
     // [crispy] translucent gun flash sprites
     if (psprnum == ps_flash)
         vis->mobjflags |= MF_TRANSLUCENT;
