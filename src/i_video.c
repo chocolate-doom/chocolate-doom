@@ -1103,7 +1103,8 @@ void I_FinishUpdate (void)
     // Blit from the fake 8-bit screen buffer to the intermediate
     // 32-bit RGBA buffer that we can load into the texture
 
-    SDL_BlitSurface(screenbuffer, NULL, rgbabuffer, NULL);
+    SDL_LowerBlit(screenbuffer, &screenbuffer->clip_rect,
+                  rgbabuffer, &rgbabuffer->clip_rect);
 
     // Update the texture with the content of the 32-bit RGBA buffer
 
