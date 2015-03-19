@@ -714,6 +714,9 @@ static const float rates[2][9] =
     {66.3, 57.2, 48.7, 41.3, 35.0, 29.7, 25.5, 21.3, 22.4}  // low
 };
 
+int fps = 0;
+boolean showfps = false;
+
 //
 // I_FinishUpdate
 //
@@ -723,6 +726,10 @@ void I_FinishUpdate (void)
     int tics;
     int i;
     int rate;
+
+    static int lastmili;
+    static int fpscount;
+    int mili;
 
     if (!initialized)
         return;
@@ -799,6 +806,25 @@ void I_FinishUpdate (void)
 	for ( ; i<20*4 ; i+=4)
 	    I_VideoBuffer[ (SCREENHEIGHT-1)*actualwidth + i] = 0x0;
     }
+
+	// [AM] Real FPS counter
+	if (M_CheckParm("-showfps") > 0)
+	{
+		fpscount += 1;
+
+		i = SDL_GetTicks();
+		mili = i - lastmili;
+
+		// Update FPS counter every 100ms
+		if (mili >= 100)
+		{
+			fps = (fpscount * 1000) / mili;
+			fpscount = 0;
+			lastmili = i;
+		}
+
+		showfps = true;
+	}
 
     // Draw disk icon before blit, if necessary.
     V_DrawDiskIcon();
