@@ -1087,6 +1087,11 @@ void I_FinishUpdate (void)
     int		tics;
     int		i;
 
+    static int	lastmili;
+    static int	fpscount;
+    static char	fpsbuf[5];
+    int		mili;
+
     if (!initialized)
         return;
 
@@ -1123,6 +1128,25 @@ void I_FinishUpdate (void)
 	for ( ; i<20*4 ; i+=4)
 	    I_VideoBuffer[ (SCREENHEIGHT-1)*SCREENWIDTH + i] = 0x0;
     }
+
+	// [AM] Real FPS counter
+	if (true)
+	{
+		fpscount += 1;
+
+		i = SDL_GetTicks();
+		mili = i - lastmili;
+
+		// Update FPS counter every 100ms
+		if (mili >= 100)
+		{
+			itoa(((fpscount * 1000) / mili), fpsbuf, 10);
+			fpscount = 0;
+			lastmili = i;
+		}
+
+		M_WriteText(ORIGWIDTH - (8 * 3), 0, fpsbuf);
+	}
 
     // draw to screen
 
