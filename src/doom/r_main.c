@@ -831,7 +831,12 @@ R_PointInSubsector
     return &subsectors[nodenum & ~NF_SUBSECTOR];
 }
 
-
+static player_t* iplayer;
+static int oldgametic;
+static int oldx;
+static int oldy;
+static int oldz;
+static angle_t oldangle;
 
 //
 // R_SetupFrame
@@ -842,14 +847,33 @@ void R_SetupFrame (player_t* player)
     int		tempCentery;
     player2_t* 	player2 = p2fromp(player);
     int		pitch;
+    fixed_t nowfrac;
     
     viewplayer = player;
-    viewx = player->mo->x;
-    viewy = player->mo->y;
-    viewangle = player->mo->angle + viewangleoffset;
-    extralight = player->extralight;
 
-    viewz = player->viewz;
+    // TODO: Detect teleporting
+    if (crispy_uncappedframerate && iplayer == player)
+    {
+        // [AM] Interpolate view camera
+
+        // Figure out how far into the current tic we're in as a fixed_t
+        nowfrac = I_GetTimeMS() * TICRATE % 1000 * FRACUNIT / 1000;
+
+        // Interpolate player position from their old position to their current one.
+        viewx = oldx + FixedMul(player->mo->x - oldx, nowfrac);
+        viewy = oldy + FixedMul(player->mo->y - oldy, nowfrac);
+        viewz = oldz + FixedMul(player->viewz - oldz, nowfrac);
+        viewangle = oldangle + FixedMul(player->mo->angle - oldangle, nowfrac) + viewangleoffset;
+    }
+    else
+    {
+        viewx = player->mo->x;
+        viewy = player->mo->y;
+        viewz = player->viewz;
+        viewangle = player->mo->angle + viewangleoffset;
+    }
+
+    extralight = player->extralight;
 
     // [crispy] pitch is actual lookdir and weapon pitch
     pitch = player2->lookdir/MLOOKUNIT + (player2->recoilpitch>>FRACBITS);
@@ -887,6 +911,18 @@ void R_SetupFrame (player_t* player)
     else
 	fixedcolormap = 0;
 		
+    if (!iplayer || gametic != oldgametic)
+    {
+        // [AM] Record data for this tic so we can
+        //      interpolate from it next tic.
+        iplayer = player;
+        oldgametic = gametic;
+        oldx = player->mo->x;
+        oldy = player->mo->y;
+        oldz = player->viewz;
+        oldangle = player->mo->angle;
+    }
+
     framecount++;
     validcount++;
 }
