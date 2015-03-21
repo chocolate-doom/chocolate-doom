@@ -522,7 +522,7 @@ void R_ProjectSprite (mobj_t* thing)
         interpx = thing->oldx + FixedMul(thing->x - thing->oldx, fractionaltic);
         interpy = thing->oldy + FixedMul(thing->y - thing->oldy, fractionaltic);
         interpz = thing->oldz + FixedMul(thing->z - thing->oldz, fractionaltic);
-        interpangle = thing->oldangle + FixedMul(thing->angle - thing->oldangle, fractionaltic);
+        interpangle = thing->oldangle + (angle_t)((thing->angle - thing->oldangle) * FIXED2DOUBLE(fractionaltic));
     }
     else
     {

@@ -457,9 +457,6 @@ void P_MobjThinker (mobj_t* mobj)
     mobj->oldz = mobj->z;
     mobj->oldangle = mobj->angle;
 
-    if (mobj->player)
-        mobj->player->oldviewz = mobj->player->viewz;
-
     // momentum movement
     if (mobj->momx
 	|| mobj->momy

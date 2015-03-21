@@ -854,11 +854,13 @@ void R_SetupFrame (player_t* player)
     // TODO: Detect teleporting
     if (crispy_uncappedframerate)
     {
-        // Interpolate player position from their old position to their current one.
+        // [AM] Interpolate player camera from their old position to their current one.
         viewx = player->mo->oldx + FixedMul(player->mo->x - player->mo->oldx, fractionaltic);
         viewy = player->mo->oldy + FixedMul(player->mo->y - player->mo->oldy, fractionaltic);
         viewz = player->oldviewz + FixedMul(player->viewz - player->oldviewz, fractionaltic);
-        viewangle = player->mo->oldangle + FixedMul(player->mo->angle - player->mo->oldangle, fractionaltic) + viewangleoffset;
+
+        // TODO: Use mouse movement to add to this
+        viewangle = player->mo->angle + viewangleoffset;
     }
     else
     {

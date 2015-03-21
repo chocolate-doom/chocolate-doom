@@ -268,6 +268,9 @@ void P_PlayerThink (player_t* player)
     weapontype_t	newweapon;
     player2_t*		player2 = p2fromp(player);
 	
+    // [AM] Store starting position for camera interpolation.
+    player->oldviewz = player->viewz;
+
     // fixme: do this in the cheat code
     if (player->cheats & CF_NOCLIP)
 	player->mo->flags |= MF_NOCLIP;
