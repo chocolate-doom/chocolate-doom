@@ -79,6 +79,10 @@ fixed_t			viewsin;
 
 player_t*		viewplayer;
 
+// [AM] Fractional part of the current tic, in the half-open
+//      range of [0.0, 1.0).  Used for interpolation.
+fixed_t                 fractionaltic;
+
 // 0 = high, 1 = low
 int			detailshift;	
 
@@ -831,13 +835,6 @@ R_PointInSubsector
     return &subsectors[nodenum & ~NF_SUBSECTOR];
 }
 
-static player_t* iplayer;
-static int oldgametic;
-static int oldx;
-static int oldy;
-static int oldz;
-static angle_t oldangle;
-
 //
 // R_SetupFrame
 //
@@ -847,23 +844,21 @@ void R_SetupFrame (player_t* player)
     int		tempCentery;
     player2_t* 	player2 = p2fromp(player);
     int		pitch;
-    fixed_t nowfrac;
     
     viewplayer = player;
 
+    // Figure out how far into the current tic we're in as a fixed_t
+    if (crispy_uncappedframerate)
+        fractionaltic = I_GetTimeMS() * TICRATE % 1000 * FRACUNIT / 1000;
+
     // TODO: Detect teleporting
-    if (crispy_uncappedframerate && iplayer == player)
+    if (crispy_uncappedframerate)
     {
-        // [AM] Interpolate view camera
-
-        // Figure out how far into the current tic we're in as a fixed_t
-        nowfrac = I_GetTimeMS() * TICRATE % 1000 * FRACUNIT / 1000;
-
         // Interpolate player position from their old position to their current one.
-        viewx = oldx + FixedMul(player->mo->x - oldx, nowfrac);
-        viewy = oldy + FixedMul(player->mo->y - oldy, nowfrac);
-        viewz = oldz + FixedMul(player->viewz - oldz, nowfrac);
-        viewangle = oldangle + FixedMul(player->mo->angle - oldangle, nowfrac) + viewangleoffset;
+        viewx = player->mo->oldx + FixedMul(player->mo->x - player->mo->oldx, fractionaltic);
+        viewy = player->mo->oldy + FixedMul(player->mo->y - player->mo->oldy, fractionaltic);
+        viewz = player->oldviewz + FixedMul(player->viewz - player->oldviewz, fractionaltic);
+        viewangle = player->mo->oldangle + FixedMul(player->mo->angle - player->mo->oldangle, fractionaltic) + viewangleoffset;
     }
     else
     {
@@ -911,18 +906,6 @@ void R_SetupFrame (player_t* player)
     else
 	fixedcolormap = 0;
 		
-    if (!iplayer || gametic != oldgametic)
-    {
-        // [AM] Record data for this tic so we can
-        //      interpolate from it next tic.
-        iplayer = player;
-        oldgametic = gametic;
-        oldx = player->mo->x;
-        oldy = player->mo->y;
-        oldz = player->viewz;
-        oldangle = player->mo->angle;
-    }
-
     framecount++;
     validcount++;
 }

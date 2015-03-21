@@ -280,6 +280,13 @@ typedef struct mobj_s
     // Thing being chased/attacked for tracers.
     struct mobj_s*	tracer;	
     
+    // [AM] Previous position of mobj before think.
+    //      Used to interpolate between positions.
+    fixed_t		oldx;
+    fixed_t		oldy;
+    fixed_t		oldz;
+    angle_t		oldangle;
+
 } mobj_t;
 
 

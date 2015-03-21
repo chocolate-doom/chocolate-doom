@@ -451,6 +451,15 @@ P_NightmareRespawn (mobj_t* mobj)
 //
 void P_MobjThinker (mobj_t* mobj)
 {
+    // [AM] Store starting position for interpolation
+    mobj->oldx = mobj->x;
+    mobj->oldy = mobj->y;
+    mobj->oldz = mobj->z;
+    mobj->oldangle = mobj->angle;
+
+    if (mobj->player)
+        mobj->player->oldviewz = mobj->player->viewz;
+
     // momentum movement
     if (mobj->momx
 	|| mobj->momy
@@ -562,6 +571,11 @@ P_SpawnMobj
 	mobj->z = mobj->ceilingz - mobj->info->height;
     else 
 	mobj->z = z;
+
+    mobj->oldx = mobj->x;
+    mobj->oldy = mobj->y;
+    mobj->oldz = mobj->z;
+    mobj->oldangle = mobj->angle;
 
     mobj->thinker.function.acp1 = (actionf_p1)P_MobjThinker;
 	

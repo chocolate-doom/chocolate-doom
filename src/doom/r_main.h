@@ -79,6 +79,10 @@ extern lighttable_t*	fixedcolormap;
 #define NUMCOLORMAPS		32
 
 
+// [AM] Fractional part of the current tic, in the half-open
+//      range of [0.0, 1.0).  Used for interpolation.
+extern fixed_t          fractionaltic;
+
 // Blocky/low detail mode.
 //B remove this?
 //  0 = high, 1 = low
