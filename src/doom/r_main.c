@@ -835,6 +835,8 @@ R_PointInSubsector
     return &subsectors[nodenum & ~NF_SUBSECTOR];
 }
 
+extern int leveltime;
+
 //
 // R_SetupFrame
 //
@@ -847,14 +849,20 @@ void R_SetupFrame (player_t* player)
     
     viewplayer = player;
 
+    // [AM] Interpolate the player camera if the feature is enabled.
+
     // Figure out how far into the current tic we're in as a fixed_t
     if (crispy_uncappedframerate)
         fractionaltic = I_GetTimeMS() * TICRATE % 1000 * FRACUNIT / 1000;
 
-    // TODO: Detect teleporting
-    if (crispy_uncappedframerate)
+    if (crispy_uncappedframerate &&
+        // Don't interpolate on the first tic of a level
+        leveltime > 1 &&
+        // Don't interpolate if the player has teleported
+        abs(player->mo->x - player->mo->oldx) <= MAXMOVE &&
+        abs(player->mo->y - player->mo->oldy) <= MAXMOVE)
     {
-        // [AM] Interpolate player camera from their old position to their current one.
+        // Interpolate player camera from their old position to their current one.
         viewx = player->mo->oldx + FixedMul(player->mo->x - player->mo->oldx, fractionaltic);
         viewy = player->mo->oldy + FixedMul(player->mo->y - player->mo->oldy, fractionaltic);
         viewz = player->oldviewz + FixedMul(player->viewz - player->oldviewz, fractionaltic);
