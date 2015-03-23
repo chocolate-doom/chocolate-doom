@@ -25,7 +25,14 @@
 //      CHANGE THE TEXTURE OF A WALL SWITCH TO ITS OPPOSITE
 //
 //==================================================================
-switchlist_t alphSwitchList[] = {
+switchlist_t alphSwitchListDemo[] = {
+    {"SW_1_UP", "SW_1_DN", SFX_SWITCH1},
+    {"SW_2_UP", "SW_2_DN", SFX_SWITCH1},
+    {"SW52_OFF", "SW52_ON", SFX_SWITCH2},
+    {"\0", "\0", 0}
+};
+
+switchlist_t alphSwitchListFull[] = {
     {"SW_1_UP", "SW_1_DN", SFX_SWITCH1},
     {"SW_2_UP", "SW_2_DN", SFX_SWITCH1},
     {"VALVE1", "VALVE2", SFX_VALVE_TURN},
@@ -38,6 +45,8 @@ switchlist_t alphSwitchList[] = {
     {"PUZZLE8", "PUZZLE12", SFX_SWITCH1},
     {"\0", "\0", 0}
 };
+
+switchlist_t *alphSwitchList = NULL;
 
 int switchlist[MAXSWITCHES * 2];
 int numswitches;
@@ -58,6 +67,18 @@ void P_InitSwitchList(void)
     int i;
     int index;
 
+    if (!alphSwitchList)
+    {
+        if (gamemode == shareware)
+        {
+            alphSwitchList = alphSwitchListDemo;
+        }
+        else
+        {
+            alphSwitchList = alphSwitchListFull;
+        }
+    }
+
     for (index = 0, i = 0; i < MAXSWITCHES; i++)
     {
         if (!alphSwitchList[i].soundID)
@@ -66,13 +87,6 @@ void P_InitSwitchList(void)
             switchlist[index] = -1;
             break;
         }
-
-        if (R_CheckTextureNumForName(alphSwitchList[i].name1) == -1 &&
-            gamemode == shareware)
-        {
-            continue;
-        }
-
         switchlist[index++] = R_TextureNumForName(alphSwitchList[i].name1);
         switchlist[index++] = R_TextureNumForName(alphSwitchList[i].name2);
     }
