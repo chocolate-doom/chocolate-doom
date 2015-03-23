@@ -23,6 +23,7 @@
 #include "i_timer.h"
 #include "i_video.h"
 #include "i_system.h"
+#include "m_misc.h"
 
 // This is our global "-viddump" feature indicator ;)
 void *I_VideoCapture = NULL;
@@ -90,7 +91,7 @@ void I_InitCapture (const char *filename)
 	I_Error("I_InitCapture: Failed to allocate avformat context!");
     }
     oc->oformat = fmt;
-    snprintf(oc->filename, sizeof(oc->filename), "%s", filename);
+    M_snprintf(oc->filename, sizeof(oc->filename), "%s", filename);
 
     // Find default video encoder for the chosen container format
     codec = avcodec_find_encoder(fmt->video_codec);
