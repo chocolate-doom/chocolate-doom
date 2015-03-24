@@ -516,7 +516,9 @@ void R_ProjectSprite (mobj_t* thing)
     fixed_t             interpz;
     fixed_t             interpangle;
 
-    if (crispy_uncappedframerate)
+    if (crispy_uncappedframerate &&
+        // Don't interpolate during a paused state
+        !paused && !menuactive)
     {
         // [AM] Interpolate between current and last position.
         interpx = thing->oldx + FixedMul(thing->x - thing->oldx, fractionaltic);

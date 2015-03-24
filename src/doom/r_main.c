@@ -27,6 +27,7 @@
 
 
 #include "doomdef.h"
+#include "doomstat.h" // [AM] leveltime, paused, menuactive
 #include "d_loop.h"
 
 #include "m_bbox.h"
@@ -854,8 +855,6 @@ R_PointInSubsector
     return &subsectors[nodenum & ~NF_SUBSECTOR];
 }
 
-extern int leveltime;
-
 //
 // R_SetupFrame
 //
@@ -879,7 +878,9 @@ void R_SetupFrame (player_t* player)
         leveltime > 1 &&
         // Don't interpolate if the player has teleported
         abs(player->mo->x - player->mo->oldx) <= MAXMOVE &&
-        abs(player->mo->y - player->mo->oldy) <= MAXMOVE)
+        abs(player->mo->y - player->mo->oldy) <= MAXMOVE &&
+        // Don't interpolate during a paused state
+        !paused && !menuactive)
     {
         // Interpolate player camera from their old position to their current one.
         viewx = player->mo->oldx + FixedMul(player->mo->x - player->mo->oldx, fractionaltic);
