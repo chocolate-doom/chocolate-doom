@@ -451,11 +451,15 @@ P_NightmareRespawn (mobj_t* mobj)
 //
 void P_MobjThinker (mobj_t* mobj)
 {
-    // [AM] Store starting position for interpolation
-    mobj->oldx = mobj->x;
-    mobj->oldy = mobj->y;
-    mobj->oldz = mobj->z;
-    mobj->oldangle = mobj->angle;
+    // [AM] Store starting position for interpolation...unless
+    //      we're an active player - that's done in the player thinker.
+    if (!(mobj->player != NULL && mobj == mobj->player->mo))
+    {
+        mobj->oldx = mobj->x;
+        mobj->oldy = mobj->y;
+        mobj->oldz = mobj->z;
+        mobj->oldangle = mobj->angle;
+    }
 
     // momentum movement
     if (mobj->momx

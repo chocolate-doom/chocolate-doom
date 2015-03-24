@@ -268,7 +268,11 @@ void P_PlayerThink (player_t* player)
     weapontype_t	newweapon;
     player2_t*		player2 = p2fromp(player);
 	
-    // [AM] Store starting position for camera interpolation.
+    // [AM] Store starting position for player interpolation.
+    player->mo->oldx = player->mo->x;
+    player->mo->oldy = player->mo->y;
+    player->mo->oldz = player->mo->z;
+    player->mo->oldangle = player->mo->angle;
     player->oldviewz = player->viewz;
 
     // fixme: do this in the cheat code

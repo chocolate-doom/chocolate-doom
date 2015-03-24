@@ -836,6 +836,7 @@ R_PointInSubsector
 }
 
 extern int leveltime;
+extern boolean paused;
 
 //
 // R_SetupFrame
@@ -868,7 +869,7 @@ void R_SetupFrame (player_t* player)
         viewz = player->oldviewz + FixedMul(player->viewz - player->oldviewz, fractionaltic);
 
         // TODO: Use mouse movement to add to this
-        viewangle = player->mo->angle + viewangleoffset;
+        viewangle = player->mo->oldangle + (angle_t)((player->mo->angle - player->mo->oldangle) * FIXED2DOUBLE(fractionaltic)) + viewangleoffset;
     }
     else
     {
