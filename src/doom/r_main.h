@@ -147,7 +147,8 @@ R_AddPointToBox
   int		y,
   fixed_t*	box );
 
-
+// [AM] Interpolate between two angles.
+angle_t R_InterpolateAngle(angle_t oangle, angle_t nangle);
 
 //
 // REFRESH - the actual rendering functions.

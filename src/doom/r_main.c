@@ -507,7 +507,26 @@ fixed_t R_ScaleFromGlobalAngle (angle_t visangle)
 }
 #endif
 
-
+// [AM] Interpolate between two angles.
+angle_t R_InterpolateAngle(angle_t oangle, angle_t nangle, fixed_t scale)
+{
+    if (nangle == oangle)
+        return nangle;
+    else if (nangle > oangle)
+    {
+        if (nangle - oangle < ANG270)
+            return oangle + (angle_t)((nangle - oangle) * FIXED2DOUBLE(scale));
+        else // Wrapped around
+            return oangle - (angle_t)((oangle - nangle) * FIXED2DOUBLE(scale));
+    }
+    else // nangle < oangle
+    {
+        if (oangle - nangle < ANG270)
+            return oangle - (angle_t)((oangle - nangle) * FIXED2DOUBLE(scale));
+        else // Wrapped around
+            return oangle + (angle_t)((nangle - oangle) * FIXED2DOUBLE(scale));
+    }
+}
 
 //
 // R_InitTables
@@ -836,7 +855,6 @@ R_PointInSubsector
 }
 
 extern int leveltime;
-extern boolean paused;
 
 //
 // R_SetupFrame
@@ -867,9 +885,7 @@ void R_SetupFrame (player_t* player)
         viewx = player->mo->oldx + FixedMul(player->mo->x - player->mo->oldx, fractionaltic);
         viewy = player->mo->oldy + FixedMul(player->mo->y - player->mo->oldy, fractionaltic);
         viewz = player->oldviewz + FixedMul(player->viewz - player->oldviewz, fractionaltic);
-
-        // TODO: Use mouse movement to add to this
-        viewangle = player->mo->oldangle + (angle_t)((player->mo->angle - player->mo->oldangle) * FIXED2DOUBLE(fractionaltic)) + viewangleoffset;
+        viewangle = R_InterpolateAngle(player->mo->oldangle, player->mo->angle, fractionaltic) + viewangleoffset;
     }
     else
     {
