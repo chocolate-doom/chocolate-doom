@@ -320,13 +320,13 @@ void R_AddLine (seg_t*	line)
 	goto clipsolid;		
 
     // Closed door.
-    if (backsector->ceilingheight <= frontsector->floorheight
-	|| backsector->floorheight >= frontsector->ceilingheight)
+    if (backsector->interpceilingheight <= frontsector->interpfloorheight
+	|| backsector->interpfloorheight >= frontsector->interpceilingheight)
 	goto clipsolid;		
 
     // Window.
-    if (backsector->ceilingheight != frontsector->ceilingheight
-	|| backsector->floorheight != frontsector->floorheight)
+    if (backsector->interpceilingheight != frontsector->interpceilingheight
+	|| backsector->interpfloorheight != frontsector->interpfloorheight)
 	goto clippass;	
 		
     // Reject empty lines used for triggers
@@ -509,19 +509,31 @@ void R_Subsector (int num)
     count = sub->numlines;
     line = &segs[sub->firstline];
 
-    if (frontsector->floorheight < viewz)
+    if (crispy_uncappedframerate && frontsector->oldgametic == gametic - 1 && false)
     {
-	floorplane = R_FindPlane (frontsector->floorheight,
+        // [AM] Interpolate between current and last floor/ceiling position.
+        frontsector->interpfloorheight = frontsector->oldfloorheight + FixedMul(frontsector->floorheight - frontsector->oldfloorheight, fractionaltic);
+        frontsector->interpceilingheight = frontsector->oldceilingheight + FixedMul(frontsector->ceilingheight - frontsector->oldceilingheight, fractionaltic);
+    }
+    else
+    {
+        frontsector->interpfloorheight = frontsector->floorheight;
+        frontsector->interpceilingheight = frontsector->ceilingheight;
+    }
+
+    if (frontsector->interpfloorheight < viewz)
+    {
+        floorplane = R_FindPlane(frontsector->interpfloorheight,
 				  frontsector->floorpic,
 				  frontsector->lightlevel);
     }
     else
 	floorplane = NULL;
     
-    if (frontsector->ceilingheight > viewz 
+    if (frontsector->interpceilingheight > viewz
 	|| frontsector->ceilingpic == skyflatnum)
     {
-	ceilingplane = R_FindPlane (frontsector->ceilingheight,
+        ceilingplane = R_FindPlane(frontsector->interpceilingheight,
 				    frontsector->ceilingpic,
 				    frontsector->lightlevel);
     }
