@@ -204,70 +204,70 @@ int dclick_use = 1;
 
 void M_BindBaseControls(void)
 {
-    M_BindVariable("key_right",          &key_right);
-    M_BindVariable("key_left",           &key_left);
-    M_BindVariable("key_up",             &key_up);
-    M_BindVariable("key_down",           &key_down);
-    M_BindVariable("key_strafeleft",     &key_strafeleft);
-    M_BindVariable("key_straferight",    &key_straferight);
-    M_BindVariable("key_fire",           &key_fire);
-    M_BindVariable("key_use",            &key_use);
-    M_BindVariable("key_strafe",         &key_strafe);
-    M_BindVariable("key_speed",          &key_speed);
+    M_BindIntVariable("key_right",          &key_right);
+    M_BindIntVariable("key_left",           &key_left);
+    M_BindIntVariable("key_up",             &key_up);
+    M_BindIntVariable("key_down",           &key_down);
+    M_BindIntVariable("key_strafeleft",     &key_strafeleft);
+    M_BindIntVariable("key_straferight",    &key_straferight);
+    M_BindIntVariable("key_fire",           &key_fire);
+    M_BindIntVariable("key_use",            &key_use);
+    M_BindIntVariable("key_strafe",         &key_strafe);
+    M_BindIntVariable("key_speed",          &key_speed);
 
-    M_BindVariable("mouseb_fire",        &mousebfire);
-    M_BindVariable("mouseb_strafe",      &mousebstrafe);
-    M_BindVariable("mouseb_forward",     &mousebforward);
+    M_BindIntVariable("mouseb_fire",        &mousebfire);
+    M_BindIntVariable("mouseb_strafe",      &mousebstrafe);
+    M_BindIntVariable("mouseb_forward",     &mousebforward);
 
-    M_BindVariable("joyb_fire",          &joybfire);
-    M_BindVariable("joyb_strafe",        &joybstrafe);
-    M_BindVariable("joyb_use",           &joybuse);
-    M_BindVariable("joyb_speed",         &joybspeed);
+    M_BindIntVariable("joyb_fire",          &joybfire);
+    M_BindIntVariable("joyb_strafe",        &joybstrafe);
+    M_BindIntVariable("joyb_use",           &joybuse);
+    M_BindIntVariable("joyb_speed",         &joybspeed);
 
-    M_BindVariable("joyb_menu_activate", &joybmenu);
+    M_BindIntVariable("joyb_menu_activate", &joybmenu);
 
     // Extra controls that are not in the Vanilla versions:
 
-    M_BindVariable("joyb_strafeleft",    &joybstrafeleft);
-    M_BindVariable("joyb_straferight",   &joybstraferight);
-    M_BindVariable("mouseb_strafeleft",  &mousebstrafeleft);
-    M_BindVariable("mouseb_straferight", &mousebstraferight);
-    M_BindVariable("mouseb_use",         &mousebuse);
-    M_BindVariable("mouseb_backward",    &mousebbackward);
-    M_BindVariable("dclick_use",         &dclick_use);
-    M_BindVariable("key_pause",          &key_pause);
-    M_BindVariable("key_message_refresh", &key_message_refresh);
+    M_BindIntVariable("joyb_strafeleft",     &joybstrafeleft);
+    M_BindIntVariable("joyb_straferight",    &joybstraferight);
+    M_BindIntVariable("mouseb_strafeleft",   &mousebstrafeleft);
+    M_BindIntVariable("mouseb_straferight",  &mousebstraferight);
+    M_BindIntVariable("mouseb_use",          &mousebuse);
+    M_BindIntVariable("mouseb_backward",     &mousebbackward);
+    M_BindIntVariable("dclick_use",          &dclick_use);
+    M_BindIntVariable("key_pause",           &key_pause);
+    M_BindIntVariable("key_message_refresh", &key_message_refresh);
 }
 
 void M_BindHereticControls(void)
 {
-    M_BindVariable("key_flyup",          &key_flyup);
-    M_BindVariable("key_flydown",        &key_flydown);
-    M_BindVariable("key_flycenter",      &key_flycenter);
+    M_BindIntVariable("key_flyup",          &key_flyup);
+    M_BindIntVariable("key_flydown",        &key_flydown);
+    M_BindIntVariable("key_flycenter",      &key_flycenter);
 
-    M_BindVariable("key_lookup",         &key_lookup);
-    M_BindVariable("key_lookdown",       &key_lookdown);
-    M_BindVariable("key_lookcenter",     &key_lookcenter);
+    M_BindIntVariable("key_lookup",         &key_lookup);
+    M_BindIntVariable("key_lookdown",       &key_lookdown);
+    M_BindIntVariable("key_lookcenter",     &key_lookcenter);
 
-    M_BindVariable("key_invleft",        &key_invleft);
-    M_BindVariable("key_invright",       &key_invright);
-    M_BindVariable("key_useartifact",    &key_useartifact);
+    M_BindIntVariable("key_invleft",        &key_invleft);
+    M_BindIntVariable("key_invright",       &key_invright);
+    M_BindIntVariable("key_useartifact",    &key_useartifact);
 }
 
 void M_BindHexenControls(void)
 {
-    M_BindVariable("key_jump",           &key_jump);
-    M_BindVariable("mouseb_jump",        &mousebjump);
-    M_BindVariable("joyb_jump",          &joybjump);
+    M_BindIntVariable("key_jump",           &key_jump);
+    M_BindIntVariable("mouseb_jump",        &mousebjump);
+    M_BindIntVariable("joyb_jump",          &joybjump);
 
-    M_BindVariable("key_arti_all",             &key_arti_all);
-    M_BindVariable("key_arti_health",          &key_arti_health);
-    M_BindVariable("key_arti_poisonbag",       &key_arti_poisonbag);
-    M_BindVariable("key_arti_blastradius",     &key_arti_blastradius);
-    M_BindVariable("key_arti_teleport",        &key_arti_teleport);
-    M_BindVariable("key_arti_teleportother",   &key_arti_teleportother);
-    M_BindVariable("key_arti_egg",             &key_arti_egg);
-    M_BindVariable("key_arti_invulnerability", &key_arti_invulnerability);
+    M_BindIntVariable("key_arti_all",             &key_arti_all);
+    M_BindIntVariable("key_arti_health",          &key_arti_health);
+    M_BindIntVariable("key_arti_poisonbag",       &key_arti_poisonbag);
+    M_BindIntVariable("key_arti_blastradius",     &key_arti_blastradius);
+    M_BindIntVariable("key_arti_teleport",        &key_arti_teleport);
+    M_BindIntVariable("key_arti_teleportother",   &key_arti_teleportother);
+    M_BindIntVariable("key_arti_egg",             &key_arti_egg);
+    M_BindIntVariable("key_arti_invulnerability", &key_arti_invulnerability);
 }
 
 void M_BindStrifeControls(void)
@@ -282,95 +282,95 @@ void M_BindStrifeControls(void)
     key_invleft  = KEY_INS;
     key_invright = KEY_DEL;
 
-    M_BindVariable("key_jump",           &key_jump);
-    M_BindVariable("key_lookUp",         &key_lookup);
-    M_BindVariable("key_lookDown",       &key_lookdown);
-    M_BindVariable("key_invLeft",        &key_invleft);
-    M_BindVariable("key_invRight",       &key_invright);
+    M_BindIntVariable("key_jump",           &key_jump);
+    M_BindIntVariable("key_lookUp",         &key_lookup);
+    M_BindIntVariable("key_lookDown",       &key_lookdown);
+    M_BindIntVariable("key_invLeft",        &key_invleft);
+    M_BindIntVariable("key_invRight",       &key_invright);
 
     // Custom Strife-only Keys:
-    M_BindVariable("key_useHealth",      &key_usehealth);
-    M_BindVariable("key_invquery",       &key_invquery);
-    M_BindVariable("key_mission",        &key_mission);
-    M_BindVariable("key_invPop",         &key_invpop);
-    M_BindVariable("key_invKey",         &key_invkey);
-    M_BindVariable("key_invHome",        &key_invhome);
-    M_BindVariable("key_invEnd",         &key_invend);
-    M_BindVariable("key_invUse",         &key_invuse);
-    M_BindVariable("key_invDrop",        &key_invdrop);
+    M_BindIntVariable("key_useHealth",      &key_usehealth);
+    M_BindIntVariable("key_invquery",       &key_invquery);
+    M_BindIntVariable("key_mission",        &key_mission);
+    M_BindIntVariable("key_invPop",         &key_invpop);
+    M_BindIntVariable("key_invKey",         &key_invkey);
+    M_BindIntVariable("key_invHome",        &key_invhome);
+    M_BindIntVariable("key_invEnd",         &key_invend);
+    M_BindIntVariable("key_invUse",         &key_invuse);
+    M_BindIntVariable("key_invDrop",        &key_invdrop);
 
     // Strife also supports jump on mouse and joystick, and in the exact same
     // manner as Hexen!
-    M_BindVariable("mouseb_jump",        &mousebjump);
-    M_BindVariable("joyb_jump",          &joybjump);
+    M_BindIntVariable("mouseb_jump",        &mousebjump);
+    M_BindIntVariable("joyb_jump",          &joybjump);
 }
 
 void M_BindWeaponControls(void)
 {
-    M_BindVariable("key_weapon1",        &key_weapon1);
-    M_BindVariable("key_weapon2",        &key_weapon2);
-    M_BindVariable("key_weapon3",        &key_weapon3);
-    M_BindVariable("key_weapon4",        &key_weapon4);
-    M_BindVariable("key_weapon5",        &key_weapon5);
-    M_BindVariable("key_weapon6",        &key_weapon6);
-    M_BindVariable("key_weapon7",        &key_weapon7);
-    M_BindVariable("key_weapon8",        &key_weapon8);
+    M_BindIntVariable("key_weapon1",        &key_weapon1);
+    M_BindIntVariable("key_weapon2",        &key_weapon2);
+    M_BindIntVariable("key_weapon3",        &key_weapon3);
+    M_BindIntVariable("key_weapon4",        &key_weapon4);
+    M_BindIntVariable("key_weapon5",        &key_weapon5);
+    M_BindIntVariable("key_weapon6",        &key_weapon6);
+    M_BindIntVariable("key_weapon7",        &key_weapon7);
+    M_BindIntVariable("key_weapon8",        &key_weapon8);
 
-    M_BindVariable("key_prevweapon",     &key_prevweapon);
-    M_BindVariable("key_nextweapon",     &key_nextweapon);
+    M_BindIntVariable("key_prevweapon",     &key_prevweapon);
+    M_BindIntVariable("key_nextweapon",     &key_nextweapon);
 
-    M_BindVariable("joyb_prevweapon",    &joybprevweapon);
-    M_BindVariable("joyb_nextweapon",    &joybnextweapon);
+    M_BindIntVariable("joyb_prevweapon",    &joybprevweapon);
+    M_BindIntVariable("joyb_nextweapon",    &joybnextweapon);
 
-    M_BindVariable("mouseb_prevweapon",  &mousebprevweapon);
-    M_BindVariable("mouseb_nextweapon",  &mousebnextweapon);
+    M_BindIntVariable("mouseb_prevweapon",  &mousebprevweapon);
+    M_BindIntVariable("mouseb_nextweapon",  &mousebnextweapon);
 }
 
 void M_BindMapControls(void)
 {
-    M_BindVariable("key_map_north",      &key_map_north);
-    M_BindVariable("key_map_south",      &key_map_south);
-    M_BindVariable("key_map_east",       &key_map_east);
-    M_BindVariable("key_map_west",       &key_map_west);
-    M_BindVariable("key_map_zoomin",     &key_map_zoomin);
-    M_BindVariable("key_map_zoomout",    &key_map_zoomout);
-    M_BindVariable("key_map_toggle",     &key_map_toggle);
-    M_BindVariable("key_map_maxzoom",    &key_map_maxzoom);
-    M_BindVariable("key_map_follow",     &key_map_follow);
-    M_BindVariable("key_map_grid",       &key_map_grid);
-    M_BindVariable("key_map_mark",       &key_map_mark);
-    M_BindVariable("key_map_clearmark",  &key_map_clearmark);
+    M_BindIntVariable("key_map_north",      &key_map_north);
+    M_BindIntVariable("key_map_south",      &key_map_south);
+    M_BindIntVariable("key_map_east",       &key_map_east);
+    M_BindIntVariable("key_map_west",       &key_map_west);
+    M_BindIntVariable("key_map_zoomin",     &key_map_zoomin);
+    M_BindIntVariable("key_map_zoomout",    &key_map_zoomout);
+    M_BindIntVariable("key_map_toggle",     &key_map_toggle);
+    M_BindIntVariable("key_map_maxzoom",    &key_map_maxzoom);
+    M_BindIntVariable("key_map_follow",     &key_map_follow);
+    M_BindIntVariable("key_map_grid",       &key_map_grid);
+    M_BindIntVariable("key_map_mark",       &key_map_mark);
+    M_BindIntVariable("key_map_clearmark",  &key_map_clearmark);
 }
 
 void M_BindMenuControls(void)
 {
-    M_BindVariable("key_menu_activate",  &key_menu_activate);
-    M_BindVariable("key_menu_up",        &key_menu_up);
-    M_BindVariable("key_menu_down",      &key_menu_down);
-    M_BindVariable("key_menu_left",      &key_menu_left);
-    M_BindVariable("key_menu_right",     &key_menu_right);
-    M_BindVariable("key_menu_back",      &key_menu_back);
-    M_BindVariable("key_menu_forward",   &key_menu_forward);
-    M_BindVariable("key_menu_confirm",   &key_menu_confirm);
-    M_BindVariable("key_menu_abort",     &key_menu_abort);
+    M_BindIntVariable("key_menu_activate",  &key_menu_activate);
+    M_BindIntVariable("key_menu_up",        &key_menu_up);
+    M_BindIntVariable("key_menu_down",      &key_menu_down);
+    M_BindIntVariable("key_menu_left",      &key_menu_left);
+    M_BindIntVariable("key_menu_right",     &key_menu_right);
+    M_BindIntVariable("key_menu_back",      &key_menu_back);
+    M_BindIntVariable("key_menu_forward",   &key_menu_forward);
+    M_BindIntVariable("key_menu_confirm",   &key_menu_confirm);
+    M_BindIntVariable("key_menu_abort",     &key_menu_abort);
 
-    M_BindVariable("key_menu_help",      &key_menu_help);
-    M_BindVariable("key_menu_save",      &key_menu_save);
-    M_BindVariable("key_menu_load",      &key_menu_load);
-    M_BindVariable("key_menu_volume",    &key_menu_volume);
-    M_BindVariable("key_menu_detail",    &key_menu_detail);
-    M_BindVariable("key_menu_qsave",     &key_menu_qsave);
-    M_BindVariable("key_menu_endgame",   &key_menu_endgame);
-    M_BindVariable("key_menu_messages",  &key_menu_messages);
-    M_BindVariable("key_menu_qload",     &key_menu_qload);
-    M_BindVariable("key_menu_quit",      &key_menu_quit);
-    M_BindVariable("key_menu_gamma",     &key_menu_gamma);
+    M_BindIntVariable("key_menu_help",      &key_menu_help);
+    M_BindIntVariable("key_menu_save",      &key_menu_save);
+    M_BindIntVariable("key_menu_load",      &key_menu_load);
+    M_BindIntVariable("key_menu_volume",    &key_menu_volume);
+    M_BindIntVariable("key_menu_detail",    &key_menu_detail);
+    M_BindIntVariable("key_menu_qsave",     &key_menu_qsave);
+    M_BindIntVariable("key_menu_endgame",   &key_menu_endgame);
+    M_BindIntVariable("key_menu_messages",  &key_menu_messages);
+    M_BindIntVariable("key_menu_qload",     &key_menu_qload);
+    M_BindIntVariable("key_menu_quit",      &key_menu_quit);
+    M_BindIntVariable("key_menu_gamma",     &key_menu_gamma);
 
-    M_BindVariable("key_menu_incscreen", &key_menu_incscreen);
-    M_BindVariable("key_menu_decscreen", &key_menu_decscreen);
-    M_BindVariable("key_menu_screenshot",&key_menu_screenshot);
-    M_BindVariable("key_demo_quit",      &key_demo_quit);
-    M_BindVariable("key_spy",            &key_spy);
+    M_BindIntVariable("key_menu_incscreen", &key_menu_incscreen);
+    M_BindIntVariable("key_menu_decscreen", &key_menu_decscreen);
+    M_BindIntVariable("key_menu_screenshot",&key_menu_screenshot);
+    M_BindIntVariable("key_demo_quit",      &key_demo_quit);
+    M_BindIntVariable("key_spy",            &key_spy);
 }
 
 void M_BindChatControls(unsigned int num_players)
@@ -378,12 +378,12 @@ void M_BindChatControls(unsigned int num_players)
     char name[32];  // haleyjd: 20 not large enough - Thank you, come again!
     unsigned int i; // haleyjd: signedness conflict
 
-    M_BindVariable("key_multi_msg",     &key_multi_msg);
+    M_BindIntVariable("key_multi_msg",     &key_multi_msg);
 
     for (i=0; i<num_players; ++i)
     {
         M_snprintf(name, sizeof(name), "key_multi_msgplayer%i", i + 1);
-        M_BindVariable(name, &key_multi_msgplayer[i]);
+        M_BindIntVariable(name, &key_multi_msgplayer[i]);
     }
 }
 
