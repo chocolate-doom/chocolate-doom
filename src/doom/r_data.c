@@ -668,7 +668,7 @@ void R_InitTextures (void)
 	    // [crispy] accumulated number of patches in the lookup tables
 	    // excluding the current one
 	    pnameslumps[numpnameslumps].summappatches = nummappatches;
-	    pnameslumps[numpnameslumps].name_p = pnameslumps[numpnameslumps].names + 4;
+	    pnameslumps[numpnameslumps].name_p = (char*)pnameslumps[numpnameslumps].names + 4;
 
 	    // [crispy] calculate total number of patches
 	    nummappatches += pnameslumps[numpnameslumps].nummappatches;
