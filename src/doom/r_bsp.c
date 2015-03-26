@@ -246,6 +246,24 @@ void R_ClearClipSegs (void)
     newend = solidsegs+2;
 }
 
+// [AM] Interpolate the passed sector, if prudent.
+void R_MaybeInterpolateSector(sector_t* sector)
+{
+    if (crispy_uncappedframerate &&
+        // Only if we moved the sector last tic.
+        sector->oldgametic == gametic - 1)
+    {
+        // Interpolate between current and last floor/ceiling position.
+        sector->interpfloorheight = sector->oldfloorheight + FixedMul(sector->floorheight - sector->oldfloorheight, fractionaltic);
+        sector->interpceilingheight = sector->oldceilingheight + FixedMul(sector->ceilingheight - sector->oldceilingheight, fractionaltic);
+    }
+    else
+    {
+        sector->interpfloorheight = sector->floorheight;
+        sector->interpceilingheight = sector->ceilingheight;
+    }
+}
+
 //
 // R_AddLine
 // Clips the given segment
@@ -318,6 +336,11 @@ void R_AddLine (seg_t*	line)
     // Single sided line?
     if (!backsector)
 	goto clipsolid;		
+
+    // [AM] Interpolate sector movement before
+    //      running clipping tests.  Frontsector
+    //      should already be interpolated.
+    R_MaybeInterpolateSector(backsector);
 
     // Closed door.
     if (backsector->interpceilingheight <= frontsector->interpfloorheight
@@ -509,17 +532,9 @@ void R_Subsector (int num)
     count = sub->numlines;
     line = &segs[sub->firstline];
 
-    if (crispy_uncappedframerate && frontsector->oldgametic == gametic - 1 && false)
-    {
-        // [AM] Interpolate between current and last floor/ceiling position.
-        frontsector->interpfloorheight = frontsector->oldfloorheight + FixedMul(frontsector->floorheight - frontsector->oldfloorheight, fractionaltic);
-        frontsector->interpceilingheight = frontsector->oldceilingheight + FixedMul(frontsector->ceilingheight - frontsector->oldceilingheight, fractionaltic);
-    }
-    else
-    {
-        frontsector->interpfloorheight = frontsector->floorheight;
-        frontsector->interpceilingheight = frontsector->ceilingheight;
-    }
+    // [AM] Interpolate sector movement.  Usually only needed
+    //      when you're standing inside the sector.
+    R_MaybeInterpolateSector(frontsector);
 
     if (frontsector->interpfloorheight < viewz)
     {
