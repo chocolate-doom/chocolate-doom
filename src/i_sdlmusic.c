@@ -422,7 +422,7 @@ static char *GetSubstituteMusicFile(void *data, size_t data_len)
     sha1_context_t context;
     sha1_digest_t hash;
     char *filename;
-    int i;
+    unsigned int i;
 
     // Don't bother doing a hash if we're never going to find anything.
     if (subst_music_len == 0)
@@ -734,7 +734,8 @@ static void DumpSubstituteConfig(char *filename)
     char name[9];
     byte *data;
     FILE *fs;
-    int lumpnum, h;
+    unsigned int lumpnum;
+    size_t h;
 
     fs = fopen(filename, "w");
 
