@@ -957,7 +957,7 @@ static void ServerQueryWindow(char *title)
                   TXT_NewScrollPane(70, 10,
                                     results_table = TXT_NewTable(3)));
 
-    TXT_SetColumnWidths(results_table, 7, 16, 46);
+    TXT_SetColumnWidths(results_table, 7, 22, 40);
     TXT_SetPeriodicCallback(QueryPeriodicCallback, results_table, 1);
 
     TXT_SignalConnect(query_window, "closed", QueryWindowClosed, NULL);
