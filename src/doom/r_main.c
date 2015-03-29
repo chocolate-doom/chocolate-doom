@@ -874,8 +874,8 @@ void R_SetupFrame (player_t* player)
         fractionaltic = I_GetTimeMS() * TICRATE % 1000 * FRACUNIT / 1000;
 
     if (crispy_uncappedframerate &&
-        // Don't interpolate on the first tic of a level, otherwise
-        // oldviewz might be garbage.
+        // Don't interpolate on the first tic of a level,
+        // otherwise oldviewz might be garbage.
         leveltime > 1 &&
         // Don't interpolate if the player did something 
         // that would necessitate turning it off for a tic.
