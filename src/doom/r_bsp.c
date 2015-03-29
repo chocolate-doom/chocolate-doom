@@ -254,8 +254,14 @@ void R_MaybeInterpolateSector(sector_t* sector)
         sector->oldgametic == gametic - 1)
     {
         // Interpolate between current and last floor/ceiling position.
-        sector->interpfloorheight = sector->oldfloorheight + FixedMul(sector->floorheight - sector->oldfloorheight, fractionaltic);
-        sector->interpceilingheight = sector->oldceilingheight + FixedMul(sector->ceilingheight - sector->oldceilingheight, fractionaltic);
+        if (sector->floorheight != sector->oldfloorheight)
+            sector->interpfloorheight = sector->oldfloorheight + FixedMul(sector->floorheight - sector->oldfloorheight, fractionaltic);
+        else
+            sector->interpfloorheight = sector->floorheight;
+        if (sector->ceilingheight != sector->oldceilingheight)
+            sector->interpceilingheight = sector->oldceilingheight + FixedMul(sector->ceilingheight - sector->oldceilingheight, fractionaltic);
+        else
+            sector->interpceilingheight = sector->ceilingheight;
     }
     else
     {
