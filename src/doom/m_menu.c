@@ -1669,7 +1669,7 @@ static void M_MouseLook(int choice)
     choice = 0;
     crispy_mouselook = !crispy_mouselook;
 
-    players2[consoleplayer].lookdir = 0;
+    players[consoleplayer].lookdir = 0;
 }
 
 static void M_CrispyToggleTranslucency(int choice)
@@ -1729,7 +1729,7 @@ static void M_CrispyToggleFreelook(int choice)
     choice = 0;
     crispy_freelook = !crispy_freelook;
 
-    players2[consoleplayer].lookdir = 0;
+    players[consoleplayer].lookdir = 0;
 }
 
 static void M_CrispyToggleFreeaim(int choice)

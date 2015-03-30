@@ -32,7 +32,7 @@
 #include "m_bbox.h"
 #include "m_menu.h"
 
-#include "p_local.h" // [crispy] p2fromp(), MLOOKUNIT
+#include "p_local.h" // [crispy] MLOOKUNIT
 #include "r_local.h"
 #include "r_sky.h"
 
@@ -840,7 +840,6 @@ void R_SetupFrame (player_t* player)
 {		
     int		i;
     int		tempCentery;
-    player2_t* 	player2 = p2fromp(player);
     int		pitch;
     
     viewplayer = player;
@@ -853,7 +852,7 @@ void R_SetupFrame (player_t* player)
     viewz = player->viewz;
 
     // [crispy] pitch is actual lookdir and weapon pitch
-    pitch = player2->lookdir/MLOOKUNIT + (player2->recoilpitch>>FRACBITS);
+    pitch = player->lookdir/MLOOKUNIT + (player->recoilpitch>>FRACBITS);
     if (pitch > LOOKDIRMAX)
 	pitch = LOOKDIRMAX;
     else

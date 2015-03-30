@@ -59,14 +59,13 @@ static const int recoil_values[][2] = {
 // adapted from prboom-plus/src/p_pspr.c:484-495 (A_FireSomething ())
 void A_Recoil (player_t* player)
 {
-    player2_t *player2 = p2fromp(player);
     extern void P_Thrust (player_t* player, angle_t angle, fixed_t move);
 
     if (singleplayer && crispy_recoil && !(player->mo->flags & MF_NOCLIP))
 	P_Thrust(player, ANG180 + player->mo->angle, 2048 * recoil_values[player->readyweapon][0]);
 
     if (crispy_pitch)
-	player2->recoilpitch = recoil_values[player->readyweapon][1]<<FRACBITS;
+	player->recoilpitch = recoil_values[player->readyweapon][1]<<FRACBITS;
 }
 
 
@@ -663,7 +662,7 @@ void P_BulletSlope (mobj_t*	mo)
 	    bulletslope = P_AimLineAttack (mo, an, 16*64*FRACUNIT);
 	    if (!linetarget && singleplayer && crispy_freeaim)
 	    {
-		bulletslope = ((p2fromp(mo->player)->lookdir / MLOOKUNIT) << FRACBITS) / 173;
+		bulletslope = ((mo->player->lookdir / MLOOKUNIT) << FRACBITS) / 173;
 	    }
 	}
     }

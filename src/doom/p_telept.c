@@ -109,7 +109,7 @@ EV_Teleport
 		{
 		    thing->player->viewz = thing->z+thing->player->viewheight;
 		    // [crispy] center view after teleporting
-		    p2fromp(thing->player)->centering = true;
+		    thing->player->centering = true;
 		}
 
 		// spawn teleport fog at source and destination

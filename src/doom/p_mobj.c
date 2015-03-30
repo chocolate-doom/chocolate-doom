@@ -316,7 +316,7 @@ void P_ZMovement (mobj_t* mo)
 	{
 	    // [crispy] delay next jump
 	    if (mo->player)
-		p2fromp(mo->player)->jumpTics = 7;
+		mo->player->jumpTics = 7;
 	    if (mo->player
 		&& mo->momz < -GRAVITY*8)	
 	    {
@@ -327,7 +327,7 @@ void P_ZMovement (mobj_t* mo)
 		mo->player->deltaviewheight = mo->momz>>3;
 		// [crispy] center view if not using permanent mouselook
 		if (!crispy_mouselook)
-		    p2fromp(mo->player)->centering = true;
+		    mo->player->centering = true;
 		S_StartSound (mo, sfx_oof);
 	    }
 	    mo->momz = 0;
@@ -1057,7 +1057,7 @@ P_SpawnPlayerMissile
 	{
 	    an = source->angle;
 	    if (singleplayer && crispy_freeaim)
-               slope = ((p2fromp(source->player)->lookdir / MLOOKUNIT) << FRACBITS) / 173;
+               slope = ((source->player->lookdir / MLOOKUNIT) << FRACBITS) / 173;
 	    else
 	    slope = 0;
 	}

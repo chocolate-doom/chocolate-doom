@@ -899,7 +899,7 @@ ST_Responder (event_t* ev)
                    players[consoleplayer].mo->y);
         plyr->message = buf;
 */
-        p2fromp(plyr)->mapcoords ^= 1;
+        plyr->mapcoords ^= 1;
       }
     }
     

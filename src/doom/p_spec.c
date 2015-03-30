@@ -1033,7 +1033,6 @@ void P_PlayerInSpecialSector (player_t* player)
 {
     sector_t*	sector;
     extern int showMessages;
-    player2_t  *player2 = p2fromp(player);
     static sector_t*	error;
 	
     sector = player->mo->subsector->sector;
@@ -1076,7 +1075,7 @@ void P_PlayerInSpecialSector (player_t* player)
 	// [crispy] show centered "Secret Revealed!" message
 	if (showMessages && crispy_secretmessage)
 	{
-	    player2->centermessage = HUSTR_SECRETFOUND;
+	    player->centermessage = HUSTR_SECRETFOUND;
 	    if (player == &players[consoleplayer])
 	        S_StartSound(NULL, sfx_itmbk);
 	}

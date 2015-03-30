@@ -90,7 +90,6 @@ char*	player_names[] =
 
 char			chat_char; // remove later.
 static player_t*	plr;
-static player2_t*	plr2;
 patch_t*		hu_font[HU_FONTSIZE];
 static hu_textline_t	w_title;
 static hu_textline_t	w_map;
@@ -347,7 +346,6 @@ void HU_Start(void)
 	HU_Stop();
 
     plr = &players[consoleplayer];
-    plr2 = &players2[consoleplayer];
     message_on = false;
     message_dontfuckwithme = false;
     message_nottobefuckedwith = false;
@@ -694,18 +692,18 @@ void HU_Ticker(void)
     {
 
 	// [crispy] display centered message
-	if (plr2->centermessage)
+	if (plr->centermessage)
 	{
-	    HUlib_addMessageToSText(&w_secret, 0, plr2->centermessage);
-	    plr2->centermessage = 0;
+	    HUlib_addMessageToSText(&w_secret, 0, plr->centermessage);
+	    plr->centermessage = 0;
 	    secret_on = true;
 	    secret_counter = HU_MSGTIMEOUT >> 1;
 	}
 
 	// [crispy] display map coordinates
-	if (plr2->mapcoords)
+	if (plr->mapcoords)
 	{
-	    plr2->mapcoords = 0;
+	    plr->mapcoords = 0;
 	    coord_on = true;
 	    coord_counter = HU_MSGTIMEOUT << 1;
 	}

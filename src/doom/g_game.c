@@ -120,7 +120,6 @@ int             deathmatch;           	// only if started as net death
 boolean         netgame;                // only true if packets are broadcast 
 boolean         playeringame[MAXPLAYERS]; 
 player_t        players[MAXPLAYERS]; 
-player2_t       players2[MAXPLAYERS];
 
 boolean         turbodetected[MAXPLAYERS];
  
@@ -631,14 +630,14 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     if ((crispy_freelook && mousebuttons[mousebmouselook]) ||
          crispy_mouselook)
     {
-        players2[consoleplayer].lookdir +=
+        players[consoleplayer].lookdir +=
             mouse_y_invert ? -mousey : mousey;
 
-        if (players2[consoleplayer].lookdir > LOOKDIRMAX * MLOOKUNIT)
-            players2[consoleplayer].lookdir = LOOKDIRMAX * MLOOKUNIT;
+        if (players[consoleplayer].lookdir > LOOKDIRMAX * MLOOKUNIT)
+            players[consoleplayer].lookdir = LOOKDIRMAX * MLOOKUNIT;
         else
-        if (players2[consoleplayer].lookdir < -LOOKDIRMIN * MLOOKUNIT)
-            players2[consoleplayer].lookdir = -LOOKDIRMIN * MLOOKUNIT;
+        if (players[consoleplayer].lookdir < -LOOKDIRMIN * MLOOKUNIT)
+            players[consoleplayer].lookdir = -LOOKDIRMIN * MLOOKUNIT;
     }
     else
     if (!novert)
@@ -1193,14 +1192,11 @@ void G_InitPlayer (int player)
 void G_PlayerFinishLevel (int player) 
 { 
     player_t*	p; 
-    player2_t*	p2;
 	 
     p = &players[player]; 
-    p2 = &players2[player];
 	 
     memset (p->powers, 0, sizeof (p->powers)); 
     memset (p->cards, 0, sizeof (p->cards)); 
-    memset (p2, 0, sizeof (*p2));
     p->mo->flags &= ~MF_SHADOW;		// cancel invisibility 
     p->extralight = 0;			// cancel gun flashes 
     p->fixedcolormap = 0;		// cancel ir gogles 
@@ -1217,7 +1213,6 @@ void G_PlayerFinishLevel (int player)
 void G_PlayerReborn (int player) 
 { 
     player_t*	p; 
-    player2_t*	p2;
     int		i; 
     int		frags[MAXPLAYERS]; 
     int		killcount;
@@ -1231,8 +1226,6 @@ void G_PlayerReborn (int player)
 	 
     p = &players[player]; 
     memset (p, 0, sizeof(*p)); 
-    p2 = &players2[player];
-    memset (p2, 0, sizeof(*p2));
  
     memcpy (players[player].frags, frags, sizeof(players[player].frags)); 
     players[player].killcount = killcount; 

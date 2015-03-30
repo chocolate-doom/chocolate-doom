@@ -706,7 +706,7 @@ P_KillMobj
 	target->player->playerstate = PST_DEAD;
 	P_DropWeapon (target->player);
 	// [crispy] center view when dying
-	p2fromp(target->player)->centering = true;
+	target->player->centering = true;
 
 	if (target->player == &players[consoleplayer]
 	    && automapactive)

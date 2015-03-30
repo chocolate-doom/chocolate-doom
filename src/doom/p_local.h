@@ -87,7 +87,6 @@ void P_DropWeapon (player_t* player);
 //
 #define MLOOKUNIT	8
 void	P_PlayerThink (player_t* player);
-player2_t* p2fromp (player_t* player);
 
 
 //

@@ -143,7 +143,6 @@ void P_MovePlayer (player_t* player)
 {
     ticcmd_t*		cmd;
     int		look;
-    player2_t*		player2 = p2fromp(player);
 	
     cmd = &player->cmd;
 	
@@ -185,15 +184,15 @@ void P_MovePlayer (player_t* player)
     {
         if (look == TOCENTER)
         {
-            player2->centering = true;
+            player->centering = true;
         }
         else
         {
-            player2->lookdir += MLOOKUNIT * 5 * look;
-            if (player2->lookdir > LOOKDIRMAX * MLOOKUNIT ||
-                player2->lookdir < -LOOKDIRMIN * MLOOKUNIT)
+            player->lookdir += MLOOKUNIT * 5 * look;
+            if (player->lookdir > LOOKDIRMAX * MLOOKUNIT ||
+                player->lookdir < -LOOKDIRMIN * MLOOKUNIT)
             {
-                player2->lookdir -= MLOOKUNIT * 5 * look;
+                player->lookdir -= MLOOKUNIT * 5 * look;
             }
         }
     }
@@ -266,7 +265,6 @@ void P_PlayerThink (player_t* player)
 {
     ticcmd_t*		cmd;
     weapontype_t	newweapon;
-    player2_t*		player2 = p2fromp(player);
 	
     // fixme: do this in the cheat code
     if (player->cheats & CF_NOCLIP)
@@ -287,33 +285,33 @@ void P_PlayerThink (player_t* player)
 	
     // [crispy] center view
     // e.g. after teleporting, dying, jumping and on demand
-    if (player2->centering)
+    if (player->centering)
     {
-        if (player2->lookdir > 0)
+        if (player->lookdir > 0)
         {
-            player2->lookdir -= 8 * MLOOKUNIT;
+            player->lookdir -= 8 * MLOOKUNIT;
         }
-        else if (player2->lookdir < 0)
+        else if (player->lookdir < 0)
         {
-            player2->lookdir += 8 * MLOOKUNIT;
+            player->lookdir += 8 * MLOOKUNIT;
         }
-        if (abs(player2->lookdir) < 8 * MLOOKUNIT)
+        if (abs(player->lookdir) < 8 * MLOOKUNIT)
         {
-            player2->lookdir = 0;
-            player2->centering = false;
+            player->lookdir = 0;
+            player->centering = false;
         }
     }
 
     // [crispy] weapon recoil pitch
     // adapted from strife-ve-src/src/strife/p_user.c:677-688
-    if (player2->recoilpitch)
+    if (player->recoilpitch)
     {
-	fixed_t recoil = (player2->recoilpitch >> 3);
+	fixed_t recoil = (player->recoilpitch >> 3);
 
-	if(player2->recoilpitch - recoil > 0)
-	    player2->recoilpitch -= recoil;
+	if(player->recoilpitch - recoil > 0)
+	    player->recoilpitch -= recoil;
 	else
-	    player2->recoilpitch = 0;
+	    player->recoilpitch = 0;
     }
 
     if (player->playerstate == PST_DEAD)
@@ -323,9 +321,9 @@ void P_PlayerThink (player_t* player)
     }
 
     // [crispy] delay next possible jump
-    if (player2->jumpTics)
+    if (player->jumpTics)
     {
-        player2->jumpTics--;
+        player->jumpTics--;
     }
     
     // Move around.
@@ -344,11 +342,11 @@ void P_PlayerThink (player_t* player)
     // [crispy] jumping: apply vertical momentum
     if (cmd->arti)
     {
-        if ((cmd->arti & AFLAG_JUMP) && onground && !player2->jumpTics)
+        if ((cmd->arti & AFLAG_JUMP) && onground && !player->jumpTics)
         {
             // [crispy] Hexen sets 9; Strife adds 8
             player->mo->momz = 9 * FRACUNIT;
-            player2->jumpTics = 18;
+            player->jumpTics = 18;
         }
     }
 
@@ -461,14 +459,4 @@ void P_PlayerThink (player_t* player)
 	player->fixedcolormap = 0;
 }
 
-// [crispy] return the corresponding player2_t for a given player_t
-player2_t* p2fromp (player_t* player)
-{
-    int p;
 
-    for (p = 0; p < MAXPLAYERS; p++)
-        if (&players[p] == player)
-            return &players2[p];
-
-    return NULL;
-}
