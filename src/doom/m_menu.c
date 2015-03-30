@@ -221,6 +221,7 @@ void M_StartGame(int choice);
 static void M_Mouse(int choice);
 static void M_Crispness(int choice);
 static void M_Crispness2(int choice);
+static void M_Crispness3(int choice);
 void M_Sound(int choice);
 
 void M_FinishReadThis(int choice);
@@ -239,6 +240,7 @@ void M_DrawOptions(void);
 static void M_DrawMouse(void);
 static void M_DrawCrispness(void);
 static void M_DrawCrispness2(void);
+static void M_DrawCrispness3(void);
 void M_DrawSound(void);
 void M_DrawLoad(void);
 void M_DrawSave(void);
@@ -463,17 +465,9 @@ enum
     crispness_coloredblood,
     crispness_coloredblood2,
     crispness_flipcorpses,
-    crispness_sep_tactical,
-    crispness_freelook,
-    crispness_crosshair,
-    crispness_crosshair2,
-    crispness_centerweapon,
-    crispness_pitch,
-    crispness_secretmessage,
-    crispness_automapstats,
-    crispness_sep_goto2,
-    crispness_goto2,
-    crispness_end
+    crispness1_sep_goto2,
+    crispness1_goto2,
+    crispness1_end
 } crispness_e;
 
 static menuitem_t CrispnessMenu[]=
@@ -485,6 +479,38 @@ static menuitem_t CrispnessMenu[]=
     {1,"",	M_CrispyToggleColoredblood2,'f'},
     {1,"",	M_CrispyToggleFlipcorpses,'r'},
     {-1,"",0,'\0'},
+    {1,"",	M_Crispness2,'g'},
+};
+
+static menu_t  CrispnessDef =
+{
+    crispness1_end,
+    &OptionsDef,
+    CrispnessMenu,
+    M_DrawCrispness,
+    48,36,
+    1
+};
+
+enum
+{
+    crispness_sep_tactical,
+    crispness_freelook,
+    crispness_crosshair,
+    crispness_crosshair2,
+    crispness_centerweapon,
+    crispness_pitch,
+    crispness_secretmessage,
+    crispness_automapstats,
+    crispness2_sep_goto2,
+    crispness2_goto3,
+    crispness2_goto1,
+    crispness2_end
+} crispness2_e;
+
+static menuitem_t Crispness2Menu[]=
+{
+    {-1,"",0,'\0'},
     {1,"",	M_CrispyToggleFreelook,'f'},
     {1,"",	M_CrispyToggleCrosshair,'l'},
     {1,"",	M_CrispyToggleCrosshair2,'g'},
@@ -493,15 +519,16 @@ static menuitem_t CrispnessMenu[]=
     {1,"",	M_CrispyToggleSecretmessage,'s'},
     {1,"",	M_CrispyToggleAutomapstats,'a'},
     {-1,"",0,'\0'},
-    {1,"",	M_Crispness2,'g'},
+    {1,"",	M_Crispness3,'g'},
+    {1,"",	M_Crispness,'g'},
 };
 
-static menu_t  CrispnessDef =
+static menu_t  Crispness2Def =
 {
-    crispness_end,
-    &OptionsDef,
-    CrispnessMenu,
-    M_DrawCrispness,
+    crispness2_end,
+    &CrispnessDef,
+    Crispness2Menu,
+    M_DrawCrispness2,
     48,36,
     1
 };
@@ -513,12 +540,12 @@ enum
     crispness_freeaim,
     crispness_overunder,
     crispness_recoil,
-    crispness_sep_goto1,
-    crispness_goto1,
-    crispness2_end
-} crispness2_e;
+    crispness3_sep_goto1,
+    crispness3_goto2,
+    crispness3_end
+} crispness3_e;
 
-static menuitem_t Crispness2Menu[]=
+static menuitem_t Crispness3Menu[]=
 {
     {-1,"",0,'\0'},
     {1,"",	M_CrispyToggleJumping,'j'},
@@ -526,15 +553,15 @@ static menuitem_t Crispness2Menu[]=
     {1,"",	M_CrispyToggleOverunder,'o'},
     {1,"",	M_CrispyToggleRecoil,'r'},
     {-1,"",0,'\0'},
-    {1,"",	M_Crispness,'g'},
+    {1,"",	M_Crispness2,'g'},
 };
 
-static menu_t  Crispness2Def =
+static menu_t  Crispness3Def =
 {
-    crispness2_end,
-    &CrispnessDef,
-    Crispness2Menu,
-    M_DrawCrispness2,
+    crispness3_end,
+    &Crispness2Def,
+    Crispness3Menu,
+    M_DrawCrispness3,
     48,36,
     1
 };
@@ -1332,7 +1359,7 @@ static void M_DrawCrispness(void)
 {
     M_DrawCrispnessBackground();
 
-    M_DrawCrispnessHeader("Crispness 1/2");
+    M_DrawCrispnessHeader("Crispness 1/3");
 
     M_DrawCrispnessSeparator(crispness_sep_visual, "Visual");
 
@@ -1341,6 +1368,17 @@ static void M_DrawCrispness(void)
     M_DrawCrispnessItem(crispness_coloredblood, "Enable Colored Blood", crispy_coloredblood, true);
     M_DrawCrispnessItem(crispness_coloredblood2, "Fix Spectre and Lost Soul Blood", crispy_coloredblood2, true);
     M_DrawCrispnessItem(crispness_flipcorpses, "Randomly Mirrored Corpses", crispy_flipcorpses, true);
+
+    M_DrawCrispnessGoto(crispness1_goto2, "Next Page >");
+
+    V_ClearDPTranslation();
+}
+
+static void M_DrawCrispness2(void)
+{
+    M_DrawCrispnessBackground();
+
+    M_DrawCrispnessHeader("Crispness 2/3");
 
     M_DrawCrispnessSeparator(crispness_sep_tactical, "Tactical");
 
@@ -1352,16 +1390,17 @@ static void M_DrawCrispness(void)
     M_DrawCrispnessItem(crispness_secretmessage, "Show Revealed Secrets", crispy_secretmessage, true);
     M_DrawCrispnessItem(crispness_automapstats, "Show Level Stats in Automap", crispy_automapstats, true);
 
-    M_DrawCrispnessGoto(crispness_goto2, "Next Page >");
+    M_DrawCrispnessGoto(crispness2_goto3, "Next Page >");
+    M_DrawCrispnessGoto(crispness2_goto1, "< Prev Page");
 
     V_ClearDPTranslation();
 }
 
-static void M_DrawCrispness2(void)
+static void M_DrawCrispness3(void)
 {
     M_DrawCrispnessBackground();
 
-    M_DrawCrispnessHeader("Crispness 2/2");
+    M_DrawCrispnessHeader("Crispness 3/3");
 
     M_DrawCrispnessSeparator(crispness_sep_physical, "Physical");
 
@@ -1370,7 +1409,7 @@ static void M_DrawCrispness2(void)
     M_DrawCrispnessItem(crispness_overunder, "Walk over/under Monsters", crispy_overunder, singleplayer);
     M_DrawCrispnessItem(crispness_recoil, "Enable Weapon Recoil Thrust", crispy_recoil, singleplayer);
 
-    M_DrawCrispnessGoto(crispness_goto1, "< Prev Page");
+    M_DrawCrispnessGoto(crispness3_goto2, "< Prev Page");
 
     V_ClearDPTranslation();
 }
@@ -1406,6 +1445,11 @@ static void M_Crispness(int choice)
 static void M_Crispness2(int choice)
 {
     M_SetupNextMenu(&Crispness2Def);
+}
+
+static void M_Crispness3(int choice)
+{
+    M_SetupNextMenu(&Crispness3Def);
 }
 
 
@@ -2774,7 +2818,7 @@ void M_Drawer (void)
 
     
     // DRAW SKULL
-    if (currentMenu == &CrispnessDef || currentMenu == &Crispness2Def)
+    if (currentMenu == &CrispnessDef || currentMenu == &Crispness2Def || currentMenu == &Crispness3Def)
     {
 	char item[4];
 	M_snprintf(item, sizeof(item), "%s>", whichSkull ? crstr[CR_NONE] : crstr[CR_DARK]);
