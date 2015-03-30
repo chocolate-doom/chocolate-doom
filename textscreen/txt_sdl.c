@@ -218,12 +218,12 @@ static void ChooseFont(void)
     {
         font = &large_font;
     }
-#else
-    else if (info->current_w >= 1920 && info->current_h >= 1080)
-    {
-        font = &large_font;
-    }
 #endif
+    // TODO: Detect high DPI on Linux by inquiring about Gtk+ scale
+    // settings. This looks like it should just be a case of shelling
+    // out to invoke the 'gsettings' command, eg.
+    //   gsettings get org.gnome.desktop.interface text-scaling-factor
+    // and using large_font if the result is >= 2.
     else
     {
         font = &main_font;
