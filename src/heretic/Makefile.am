@@ -53,10 +53,6 @@ sb_bar.c                                             \
 sounds.c               sounds.h                      \
 s_sound.c              s_sound.h
 
-EXTRA_DIST=                                          \
-i_sound.c                                            \
-i_ibm.c
-
 FEATURE_DEHACKED_SOURCE_FILES =            \
 deh_ammo.c                                 \
 deh_frame.c                                \
