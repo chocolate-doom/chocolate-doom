@@ -1190,11 +1190,13 @@ boolean MN_Responder(event_t * event)
 
     if (InfoType)
     {
+        /* The 4-Level Demo Version also has 3 Info pages
         if (gamemode == shareware)
         {
             InfoType = (InfoType + 1) % 5;
         }
         else
+        */
         {
             InfoType = (InfoType + 1) % 4;
         }

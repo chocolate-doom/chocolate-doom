@@ -303,6 +303,34 @@ void SB_Init(void)
         PatchKILLS = W_CacheLumpName("KILLS", PU_STATIC);
     }
     SB_SetClassData();
+
+    if (gamemode == shareware)
+    {
+	CheatGodSeq = (cheatseq_t) CHEAT("bgokey", 0);
+	CheatNoClipSeq = (cheatseq_t) CHEAT("rjohnson", 0);
+	CheatWeaponsSeq = (cheatseq_t) CHEAT("crhinehart", 0);
+	CheatHealthSeq =  (cheatseq_t) CHEAT("sgurno", 0);
+	CheatKeysSeq = (cheatseq_t) CHEAT("mraymondjudy", 0);
+	CheatSoundSeq = (cheatseq_t) CHEAT("kschilder", 0);
+	CheatTickerSeq = (cheatseq_t) CHEAT("rrettenmund", 0);
+	CheatArtifactAllSeq = (cheatseq_t) CHEAT("braffel", 0);
+	CheatPuzzleSeq = (cheatseq_t) CHEAT("tmoore", 0);
+	CheatWarpSeq = (cheatseq_t) CHEAT("bpelletier", 2);
+	CheatPigSeq = (cheatseq_t) CHEAT("ebiessman", 0);
+	CheatMassacreSeq = (cheatseq_t) CHEAT("cstika", 0);
+	CheatIDKFASeq = (cheatseq_t) CHEAT("rambo", 0);
+	CheatQuickenSeq1 = (cheatseq_t) CHEAT("quicken", 0);
+	CheatQuickenSeq2 = (cheatseq_t) CHEAT("quickenquicken", 0);
+	CheatQuickenSeq3 = (cheatseq_t) CHEAT("quickenquickenquicken", 0);
+	CheatClass1Seq = (cheatseq_t) CHEAT("plipo", 0);
+	CheatClass2Seq = (cheatseq_t) CHEAT("plipo", 1);
+	CheatVersionSeq = (cheatseq_t) CHEAT("pmacarther", 0);
+	CheatDebugSeq = (cheatseq_t) CHEAT("jsumwalt", 0);
+	CheatScriptSeq1 = (cheatseq_t) CHEAT("mwagabaza", 0);
+	CheatScriptSeq2 = (cheatseq_t) CHEAT("mwagabaza", 1);
+	CheatScriptSeq3 = (cheatseq_t) CHEAT("mwagabaza", 2);
+	CheatRevealSeq = (cheatseq_t) CHEAT("reveal", 0);
+    }
 }
 
 //==========================================================================
@@ -330,12 +358,12 @@ void SB_SetClassData(void)
     if (!netgame)
     {                           // single player game uses red life gem (the second gem)
         PatchLIFEGEM = W_CacheLumpNum(W_GetNumForName("lifegem")
-                                      + MAXPLAYERS * class + 1, PU_STATIC);
+                                      + maxplayers * class + 1, PU_STATIC);
     }
     else
     {
         PatchLIFEGEM = W_CacheLumpNum(W_GetNumForName("lifegem")
-                                      + MAXPLAYERS * class + consoleplayer,
+                                      + maxplayers * class + consoleplayer,
                                       PU_STATIC);
     }
     SB_state = -1;
@@ -1024,7 +1052,7 @@ void DrawMainBar(void)
     if (deathmatch)
     {
         temp = 0;
-        for (i = 0; i < MAXPLAYERS; i++)
+        for (i = 0; i < maxplayers; i++)
         {
             temp += CPlayer->frags[i];
         }
@@ -1351,7 +1379,7 @@ void DrawFullScreenStuff(void)
     if (deathmatch)
     {
         temp = 0;
-        for (i = 0; i < MAXPLAYERS; i++)
+        for (i = 0; i < maxplayers; i++)
         {
             if (playeringame[i])
             {

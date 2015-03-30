@@ -292,7 +292,7 @@ void AM_initVariables(void)
 
     // find player to center on initially
     if (!playeringame[pnum = consoleplayer])
-        for (pnum = 0; pnum < MAXPLAYERS; pnum++)
+        for (pnum = 0; pnum < maxplayers; pnum++)
             if (playeringame[pnum])
                 break;
     plr = &players[pnum];
@@ -1280,7 +1280,7 @@ void AM_drawPlayers(void)
         return;
     }
 
-    for (i = 0; i < MAXPLAYERS; i++)
+    for (i = 0; i < maxplayers; i++)
     {
         their_color++;
         p = &players[i];
@@ -1418,12 +1418,12 @@ void AM_DrawDeathmatchStats(void)
     char textBuffer[80];
     int yPosition;
 
-    for (i = 0; i < MAXPLAYERS; i++)
+    for (i = 0; i < maxplayers; i++)
     {
         fragCount[i] = 0;
         order[i] = -1;
     }
-    for (i = 0; i < MAXPLAYERS; i++)
+    for (i = 0; i < maxplayers; i++)
     {
         if (!playeringame[i])
         {
@@ -1431,14 +1431,14 @@ void AM_DrawDeathmatchStats(void)
         }
         else
         {
-            for (j = 0; j < MAXPLAYERS; j++)
+            for (j = 0; j < maxplayers; j++)
             {
                 if (playeringame[j])
                 {
                     fragCount[i] += players[i].frags[j];
                 }
             }
-            for (k = 0; k < MAXPLAYERS; k++)
+            for (k = 0; k < maxplayers; k++)
             {
                 if (order[k] == -1)
                 {
@@ -1447,7 +1447,7 @@ void AM_DrawDeathmatchStats(void)
                 }
                 else if (fragCount[i] > fragCount[order[k]])
                 {
-                    for (m = MAXPLAYERS - 1; m > k; m--)
+                    for (m = maxplayers - 1; m > k; m--)
                     {
                         order[m] = order[m - 1];
                     }
@@ -1458,7 +1458,7 @@ void AM_DrawDeathmatchStats(void)
         }
     }
     yPosition = 15;
-    for (i = 0; i < MAXPLAYERS; i++)
+    for (i = 0; i < maxplayers; i++)
     {
         if (!playeringame[order[i]])
         {
