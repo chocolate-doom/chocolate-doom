@@ -113,6 +113,7 @@ boolean autostart;
 boolean advancedemo;
 FILE *debugfile;
 int UpdateState;
+int maxplayers = MAXPLAYERS;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -266,6 +267,7 @@ void D_IdentifyVersion(void)
         W_CheckNumForName("MAP05") == -1 )
     {
 	gamemode = shareware;
+	maxplayers = 4;
     }
 }
 

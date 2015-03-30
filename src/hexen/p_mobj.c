@@ -1190,7 +1190,7 @@ mobj_t *P_SpawnMobj(fixed_t x, fixed_t y, fixed_t z, mobjtype_t type)
     {
         mobj->reactiontime = info->reactiontime;
     }
-    mobj->lastlook = P_Random() % MAXPLAYERS;
+    mobj->lastlook = P_Random() % maxplayers;
 
     // Set the state, but do not use P_SetMobjState, because action
     // routines can't be called yet.  If the spawnstate has an action
@@ -1295,7 +1295,7 @@ void P_SpawnPlayer(mapthing_t * mthing)
     fixed_t x, y, z;
     mobj_t *mobj;
 
-    if (mthing->type - 1 >= MAXPLAYERS || !playeringame[mthing->type - 1])
+    if (mthing->type - 1 >= maxplayers || !playeringame[mthing->type - 1])
     {                           // Not playing
         return;
     }
@@ -1500,7 +1500,7 @@ void P_SpawnMapThing(mapthing_t * mthing)
     else if (deathmatch == false)
     {                           // Cooperative
         spawnMask = 0;
-        for (i = 0; i < MAXPLAYERS; i++)
+        for (i = 0; i < maxplayers; i++)
         {
             if (playeringame[i])
             {

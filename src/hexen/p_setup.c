@@ -387,7 +387,7 @@ void P_LoadThings(int lump)
         return;
     }
     playerCount = 0;
-    for (i = 0; i < MAXPLAYERS; i++)
+    for (i = 0; i < maxplayers; i++)
     {
         playerCount += playeringame[i];
     }
@@ -672,7 +672,7 @@ void P_SetupLevel(int episode, int map, int playermask, skill_t skill)
     int lumpnum;
     mobj_t *mobj;
 
-    for (i = 0; i < MAXPLAYERS; i++)
+    for (i = 0; i < maxplayers; i++)
     {
         players[i].killcount = players[i].secretcount
             = players[i].itemcount = 0;
@@ -722,7 +722,7 @@ void P_SetupLevel(int episode, int map, int playermask, skill_t skill)
     TimerGame = 0;
     if (deathmatch)
     {
-        for (i = 0; i < MAXPLAYERS; i++)
+        for (i = 0; i < maxplayers; i++)
         {
             if (playeringame[i])
             {                   // must give a player spot before deathmatchspawn

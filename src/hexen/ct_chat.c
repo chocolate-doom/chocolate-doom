@@ -116,7 +116,7 @@ void CT_Init(void)
     tail = 0;
     chatmodeon = false;
     memset(ChatQueue, 0, QUEUESIZE);
-    for (i = 0; i < MAXPLAYERS; i++)
+    for (i = 0; i < maxplayers; i++)
     {
         chat_dest[i] = 0;
         msgptr[i] = 0;
@@ -292,7 +292,7 @@ void CT_Ticker(void)
     char c;
     int numplayers;
 
-    for (i = 0; i < MAXPLAYERS; i++)
+    for (i = 0; i < maxplayers; i++)
     {
         if (!playeringame[i])
         {
@@ -312,7 +312,7 @@ void CT_Ticker(void)
             else if (c == KEY_ENTER)
             {
                 numplayers = 0;
-                for (j = 0; j < MAXPLAYERS; j++)
+                for (j = 0; j < maxplayers; j++)
                 {
                     numplayers += playeringame[j];
                 }

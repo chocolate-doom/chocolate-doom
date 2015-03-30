@@ -639,7 +639,7 @@ void G_DoLoadLevel(void)
 
     levelstarttic = gametic;    // for time calculation 
     gamestate = GS_LEVEL;
-    for (i = 0; i < MAXPLAYERS; i++)
+    for (i = 0; i < maxplayers; i++)
     {
         if (playeringame[i] && players[i].playerstate == PST_DEAD)
             players[i].playerstate = PST_REBORN;
@@ -756,7 +756,7 @@ boolean G_Responder(event_t * ev)
         do
         {
             displayplayer++;
-            if (displayplayer == MAXPLAYERS)
+            if (displayplayer == maxplayers)
             {
                 displayplayer = 0;
             }
@@ -899,7 +899,7 @@ void G_Ticker(void)
 //
 // do player reborns if needed
 //
-    for (i = 0; i < MAXPLAYERS; i++)
+    for (i = 0; i < maxplayers; i++)
         if (playeringame[i] && players[i].playerstate == PST_REBORN)
             G_DoReborn(i);
 
@@ -963,7 +963,7 @@ void G_Ticker(void)
     //buf = gametic%BACKUPTICS;
     buf = (gametic / ticdup) % BACKUPTICS;
 
-    for (i = 0; i < MAXPLAYERS; i++)
+    for (i = 0; i < maxplayers; i++)
         if (playeringame[i])
         {
             cmd = &players[i].cmd;
@@ -993,7 +993,7 @@ void G_Ticker(void)
 //
 // check for special buttons
 //
-    for (i = 0; i < MAXPLAYERS; i++)
+    for (i = 0; i < maxplayers; i++)
         if (playeringame[i])
         {
             if (players[i].cmd.buttons & BT_SPECIAL)
@@ -1335,7 +1335,7 @@ void G_DoReborn(int playernum)
         else
         {
             // Try to spawn at one of the other player start spots
-            for (i = 0; i < MAXPLAYERS; i++)
+            for (i = 0; i < maxplayers; i++)
             {
                 if (G_CheckSpot(playernum, &playerstarts[RebornPosition][i]))
                 {               // Found an open start spot
@@ -1492,7 +1492,7 @@ void G_DoCompleted(void)
     {
         return;
     }
-    for (i = 0; i < MAXPLAYERS; i++)
+    for (i = 0; i < maxplayers; i++)
     {
         if (playeringame[i])
         {
@@ -1519,7 +1519,7 @@ void G_DoCompleted(void)
 	{
 		return;
 	}
-	for(i = 0; i < MAXPLAYERS; i++)
+	for(i = 0; i < maxplayers; i++)
 	{
 		if(playeringame[i])
 		{
@@ -1732,7 +1732,7 @@ void G_InitNew(skill_t skill, int episode, int map)
     }
     M_ClearRandom();
     // Force players to be initialized upon first level load
-    for (i = 0; i < MAXPLAYERS; i++)
+    for (i = 0; i < maxplayers; i++)
     {
         players[i].playerstate = PST_REBORN;
         players[i].worldTimer = 0;
@@ -1755,7 +1755,7 @@ void G_InitNew(skill_t skill, int episode, int map)
     // Give one null ticcmd_t
     //gametic = 0;
     //maketic = 1;
-    //for (i=0 ; i<MAXPLAYERS ; i++)
+    //for (i=0 ; i<maxplayers ; i++)
     //      nettics[i] = 1; // one null event for this gametic
     //memset (localcmds,0,sizeof(localcmds));
     //memset (netcmds,0,sizeof(netcmds));
@@ -1826,7 +1826,7 @@ void G_RecordDemo(skill_t skill, int numplayers, int episode, int map,
     *demo_p++ = episode;
     *demo_p++ = map;
 
-    for (i = 0; i < MAXPLAYERS; i++)
+    for (i = 0; i < maxplayers; i++)
     {
         *demo_p++ = playeringame[i];
         *demo_p++ = PlayerClass[i];
@@ -1862,7 +1862,7 @@ void G_DoPlayDemo(void)
     episode = *demo_p++;
     map = *demo_p++;
 
-    for (i = 0; i < MAXPLAYERS; i++)
+    for (i = 0; i < maxplayers; i++)
     {
         playeringame[i] = *demo_p++;
         PlayerClass[i] = *demo_p++;
@@ -1897,7 +1897,7 @@ void G_TimeDemo(char *name)
     episode = *demo_p++;
     map = *demo_p++;
 
-    for (i = 0; i < MAXPLAYERS; i++)
+    for (i = 0; i < maxplayers; i++)
     {
         playeringame[i] = *demo_p++;
         PlayerClass[i] = *demo_p++;

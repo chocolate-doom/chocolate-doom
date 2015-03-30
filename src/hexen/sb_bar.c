@@ -342,7 +342,6 @@ void SB_Init(void)
 void SB_SetClassData(void)
 {
     int class;
-    int maxplayers = (gamemode == shareware) ? 4 : MAXPLAYERS;
 
     class = PlayerClass[consoleplayer]; // original player class (not pig)
     PatchWEAPONSLOT = W_CacheLumpNum(W_GetNumForName("wpslot0")
@@ -1053,7 +1052,7 @@ void DrawMainBar(void)
     if (deathmatch)
     {
         temp = 0;
-        for (i = 0; i < MAXPLAYERS; i++)
+        for (i = 0; i < maxplayers; i++)
         {
             temp += CPlayer->frags[i];
         }
@@ -1380,7 +1379,7 @@ void DrawFullScreenStuff(void)
     if (deathmatch)
     {
         temp = 0;
-        for (i = 0; i < MAXPLAYERS; i++)
+        for (i = 0; i < maxplayers; i++)
         {
             if (playeringame[i])
             {
