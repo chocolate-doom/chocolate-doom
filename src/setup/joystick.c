@@ -28,6 +28,8 @@
 #include "txt_joyaxis.h"
 #include "txt_joybinput.h"
 
+#define WINDOW_HELP_URL "http://www.chocolate-doom.org/setup-gamepad"
+
 typedef struct
 {
     char *name;  // Config file name
@@ -684,6 +686,8 @@ void ConfigJoystick(void)
     txt_table_t *joystick_table;
 
     window = TXT_NewWindow("Gamepad/Joystick configuration");
+
+    TXT_SetWindowHelpURL(window, WINDOW_HELP_URL);
 
     TXT_AddWidgets(window,
                    TXT_NewCheckBox("Enable gamepad/joystick", &usejoystick),
