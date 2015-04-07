@@ -829,11 +829,7 @@ static void CenterMouse(void)
     // Clear any relative movement caused by warping
 
     SDL_PumpEvents();
-#if SDL_VERSION_ATLEAST(1, 3, 0)
-    SDL_GetRelativeMouseState(0, NULL, NULL);
-#else
     SDL_GetRelativeMouseState(NULL, NULL);
-#endif
 }
 
 //
@@ -847,11 +843,7 @@ static void I_ReadMouse(void)
     int x, y;
     event_t ev;
 
-#if SDL_VERSION_ATLEAST(1, 3, 0)
-    SDL_GetRelativeMouseState(0, &x, &y);
-#else
     SDL_GetRelativeMouseState(&x, &y);
-#endif
 
     if (x != 0 || y != 0) 
     {
@@ -939,11 +931,7 @@ static void UpdateGrab(void)
         // Clear any relative movement caused by warping
 
         SDL_PumpEvents();
-    #if SDL_VERSION_ATLEAST(1, 3, 0)
-        SDL_GetRelativeMouseState(0, NULL, NULL);
-    #else
         SDL_GetRelativeMouseState(NULL, NULL);
-    #endif
     }
 
     currently_grabbed = grab;
