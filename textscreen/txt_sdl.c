@@ -412,11 +412,7 @@ void TXT_UpdateScreen(void)
 
 void TXT_GetMousePosition(int *x, int *y)
 {
-#if SDL_VERSION_ATLEAST(1, 3, 0)
-    SDL_GetMouseState(0, x, y);
-#else
     SDL_GetMouseState(x, y);
-#endif
 
     *x /= font->w;
     *y /= font->h;
@@ -466,10 +462,8 @@ static int TranslateKey(SDL_keysym *sym)
 
         case SDLK_LALT:
         case SDLK_RALT:
-#if !SDL_VERSION_ATLEAST(1, 3, 0)
         case SDLK_LMETA:
         case SDLK_RMETA:
-#endif
                                return KEY_RALT;
 
         case SDLK_CAPSLOCK:    return KEY_CAPSLOCK;
@@ -604,10 +598,8 @@ static void UpdateModifierState(SDL_keysym *sym, int pressed)
 
         case SDLK_LALT:
         case SDLK_RALT:
-#if !SDL_VERSION_ATLEAST(1, 3, 0)
         case SDLK_LMETA:
         case SDLK_RMETA:
-#endif
             mod = TXT_MOD_ALT;
             break;
 
