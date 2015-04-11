@@ -16,6 +16,7 @@
 
 // MN_menu.c
 
+#include <stdlib.h>
 #include <ctype.h>
 
 #include "deh_str.h"
