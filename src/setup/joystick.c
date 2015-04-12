@@ -387,7 +387,14 @@ static const known_joystick_t known_joysticks[] =
     // which should just be the same configuration.
     {
         "WiseGroup.,Ltd Gameport to USB Controller",
-        3, 8, 1,
+        4, 8, 1,
+        pc_gameport_controller,
+    },
+
+    // How the Super Joy Box 7 appears on Mac OS X.
+    {
+        "Gameport to USB Controller",
+        2, 8, 1,
         pc_gameport_controller,
     },
 };
