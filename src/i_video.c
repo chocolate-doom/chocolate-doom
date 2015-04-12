@@ -923,6 +923,10 @@ static void UpdateGrab(void)
         // example.
 
         SDL_WarpMouse(screen->w - 16, screen->h - 16);
+
+        // Clear any relative movement caused by warping
+
+        SDL_PumpEvents();
         SDL_GetRelativeMouseState(NULL, NULL);
     }
 
