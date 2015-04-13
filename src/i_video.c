@@ -1129,7 +1129,7 @@ void I_FinishUpdate (void)
 		// Update FPS counter every 100ms
 		if (mili >= 100)
 		{
-			itoa(((fpscount * 1000) / mili), fpsbuf, 10);
+			M_snprintf(fpsbuf, sizeof(fpsbuf), "%d", ((fpscount * 1000) / mili));
 			fpscount = 0;
 			lastmili = i;
 		}
