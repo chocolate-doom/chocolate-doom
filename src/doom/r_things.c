@@ -729,7 +729,7 @@ static void R_DrawLSprite (void)
     }
 
     crispy_crosshair = 2; // [crispy] intercepts overflow guard
-    P_LineLaser(viewplayer->mo, viewplayer->mo->angle,
+    P_LineLaser(viewplayer->mo, viewangle,
                 16*64*FRACUNIT, ((viewplayer->lookdir/MLOOKUNIT)<<FRACBITS)/173);
     crispy_crosshair = 1; // [crispy] intercepts overflow guard
 
