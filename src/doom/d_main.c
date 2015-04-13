@@ -157,6 +157,7 @@ boolean         crispy_havee1m10 = false;
 boolean         crispy_havemap33 = false;
 boolean         crispy_havessg = false;
 boolean         crispy_nwtmerge = false;
+boolean         crispy_uncappedframerate = true;
 
 void D_ConnectNetGame(void);
 void D_CheckNetGame(void);

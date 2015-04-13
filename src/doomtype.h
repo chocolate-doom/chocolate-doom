@@ -102,5 +102,11 @@ typedef uint8_t byte;
 
 #define arrlen(array) (sizeof(array) / sizeof(*array))
 
+#ifdef _MSC_VER
+
+#define inline __inline
+
+#endif
+
 #endif
 
