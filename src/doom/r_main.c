@@ -946,7 +946,6 @@ void R_SetupFrame (player_t* player)
 //
 void R_RenderPlayerView (player_t* player)
 {	
-    extern boolean automapactive;
     extern void V_DrawFilledBox (int x, int y, int w, int h, int c);
 
     R_SetupFrame (player);
