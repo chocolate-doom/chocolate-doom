@@ -320,9 +320,9 @@ void R_InitTranslationTables(void)
     V_LoadTintTable();
 
     // Allocate translation tables
-    translationtables = Z_Malloc(256 * 3 * (MAXPLAYERS - 1), PU_STATIC, 0);
+    translationtables = Z_Malloc(256 * 3 * (maxplayers - 1), PU_STATIC, 0);
 
-    for (i = 0; i < 3 * (MAXPLAYERS - 1); i++)
+    for (i = 0; i < 3 * (maxplayers - 1); i++)
     {
         lumpnum = W_GetNumForName("trantbl0") + i;
         transLump = W_CacheLumpNum(lumpnum, PU_STATIC);

@@ -12,6 +12,7 @@
 // GNU General Public License for more details.
 //
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
 #include <string.h>
@@ -70,6 +71,7 @@ txt_window_t *TXT_NewWindow(char *title)
     win->vert_align = TXT_VERT_CENTER;
     win->key_listener = NULL;
     win->mouse_listener = NULL;
+    win->help_url = NULL;
 
     TXT_AddWidget(win, TXT_NewSeparator(NULL));
 
@@ -365,7 +367,7 @@ void TXT_SetWindowPosition(txt_window_t *window,
     window->y = y;
 }
 
-static void MouseButtonPress(txt_window_t *window, int b)
+static int MouseButtonPress(txt_window_t *window, int b)
 {
     int x, y;
     int i;
@@ -375,7 +377,7 @@ static void MouseButtonPress(txt_window_t *window, int b)
     // Lay out the window, set positions and sizes of all widgets
 
     TXT_LayoutWindow(window);
-    
+
     // Get the current mouse position
 
     TXT_GetMousePosition(&x, &y);
@@ -390,10 +392,10 @@ static void MouseButtonPress(txt_window_t *window, int b)
         if (window->mouse_listener(window, x, y, b, 
                                    window->mouse_listener_data))
         {
-            return;
+            return 1;
         }
     }
-    
+
     // Is it within the table range?
 
     widgets = (txt_widget_t *) window;
@@ -402,7 +404,7 @@ static void MouseButtonPress(txt_window_t *window, int b)
      && y >= widgets->y && y < (signed) (widgets->y + widgets->h))
     {
         TXT_WidgetMousePress(window, x, y, b);
-        return;
+        return 1;
     }
 
     // Was one of the action area buttons pressed?
@@ -429,21 +431,22 @@ static void MouseButtonPress(txt_window_t *window, int b)
             // Pass through mouse press.
 
             TXT_WidgetMousePress(widget, x, y, b);
-            return;
+            return 1;
         }
     }
+
+    return 0;
 }
 
-void TXT_WindowKeyPress(txt_window_t *window, int c)
+int TXT_WindowKeyPress(txt_window_t *window, int c)
 {
     int i;
 
     // Is this a mouse button ?
-    
+
     if (c >= TXT_MOUSE_BASE && c < TXT_MOUSE_BASE + TXT_MAX_MOUSE_BUTTONS)
     {
-        MouseButtonPress(window, c);
-        return;
+        return MouseButtonPress(window, c);
     }
 
     // Try the window key spy
@@ -454,15 +457,15 @@ void TXT_WindowKeyPress(txt_window_t *window, int c)
 
         if (window->key_listener(window, c, window->key_listener_data))
         {
-            return;
+            return 1;
         }
     }
 
-    // Send to the currently selected widget 
+    // Send to the currently selected widget:
 
     if (TXT_WidgetKeyPress(window, c))
     {
-        return;
+        return 1;
     }
 
     // Try all of the action buttons
@@ -472,9 +475,11 @@ void TXT_WindowKeyPress(txt_window_t *window, int c)
         if (window->actions[i] != NULL
          && TXT_WidgetKeyPress(window->actions[i], c))
         {
-            return;
+            return 1;
         }
     }
+
+    return 0;
 }
 
 void TXT_SetKeyListener(txt_window_t *window, TxtWindowKeyPress key_listener, 
@@ -495,6 +500,48 @@ void TXT_SetMouseListener(txt_window_t *window,
 void TXT_SetWindowFocus(txt_window_t *window, int focused)
 {
     TXT_SetWidgetFocus(window, focused);
+}
+
+void TXT_SetWindowHelpURL(txt_window_t *window, char *help_url)
+{
+    window->help_url = help_url;
+}
+
+void TXT_OpenURL(char *url)
+{
+    char *cmd;
+    size_t cmd_len;
+
+    cmd_len = strlen(url) + 30;
+    cmd = malloc(cmd_len);
+
+#if defined(_WIN32)
+    TXT_snprintf(cmd, cmd_len, "start \"%s\"", url);
+#elif defined(__MACOSX__)
+    TXT_snprintf(cmd, cmd_len, "open \"%s\"", url);
+#else
+    // The Unix situation sucks as usual, but the closest thing to a
+    // standard that exists is the xdg-utils package.
+    if (system("xdg-open --version 2>/dev/null") != 0)
+    {
+        fprintf(stderr,
+                "xdg-utils is not installed. Can't open this URL:\n%s\n", url);
+        return;
+    }
+
+    TXT_snprintf(cmd, cmd_len, "xdg-open \"%s\"", url);
+#endif
+
+    system(cmd);
+    free(cmd);
+}
+
+void TXT_OpenWindowHelpURL(txt_window_t *window)
+{
+    if (window->help_url != NULL)
+    {
+        TXT_OpenURL(window->help_url);
+    }
 }
 
 txt_window_t *TXT_MessageBox(char *title, char *message, ...)

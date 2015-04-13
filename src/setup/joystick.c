@@ -14,6 +14,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "doomtype.h"
 #include "i_joystick.h"
@@ -27,6 +28,8 @@
 #include "mode.h"
 #include "txt_joyaxis.h"
 #include "txt_joybinput.h"
+
+#define WINDOW_HELP_URL "http://www.chocolate-doom.org/setup-gamepad"
 
 typedef struct
 {
@@ -292,6 +295,24 @@ static const joystick_config_t buffalo_classic_controller[] =
     {NULL, 0},
 };
 
+// Config for if the user is actually using an old PC joystick or gamepad,
+// probably via a USB-Gameport adapter.
+static const joystick_config_t pc_gameport_controller[] =
+{
+    {"joystick_x_axis",        0},
+    {"joystick_y_axis",        1},
+    // Button configuration is the default as used for Vanilla Doom,
+    // Heretic and Hexen. When playing with a Gravis Gamepad, this
+    // layout should also be vaguely similar to the standard layout
+    // described above.
+    {"joyb_fire",              0},
+    {"joyb_strafe",            1},
+    {"joyb_use",               3},
+    {"joyb_speed",             2},
+    {NULL, 0},
+};
+
+
 static const known_joystick_t known_joysticks[] =
 {
     {
@@ -331,6 +352,13 @@ static const known_joystick_t known_joysticks[] =
         xbox360_controller_linux,
     },
 
+    // Xbox One controller as it appears on Linux.
+    {
+        "Microsoft X-Box One pad",
+        6, 11, 1,
+        xbox360_controller_linux,
+    },
+
     {
         "Logitech Dual Action",
         4, 12, 1,
@@ -356,6 +384,25 @@ static const known_joystick_t known_joysticks[] =
         "Wireless Controller",
         6, 14, 1,
         ps4_ds4_controller,
+    },
+
+    // This is the configuration for the USB-Gameport adapter listed on
+    // this page as the "Mayflash USB to Gameport Adapter" (though the
+    // device is labeled as "Super Joy Box 7"):
+    // https://sites.google.com/site/joystickrehab/itemcatal
+    // TODO: Add extra configurations here for other USB-Gameport adapters,
+    // which should just be the same configuration.
+    {
+        "WiseGroup.,Ltd Gameport to USB Controller",
+        4, 8, 1,
+        pc_gameport_controller,
+    },
+
+    // How the Super Joy Box 7 appears on Mac OS X.
+    {
+        "Gameport to USB Controller",
+        2, 8, 1,
+        pc_gameport_controller,
     },
 };
 
@@ -684,6 +731,8 @@ void ConfigJoystick(void)
     txt_table_t *joystick_table;
 
     window = TXT_NewWindow("Gamepad/Joystick configuration");
+
+    TXT_SetWindowHelpURL(window, WINDOW_HELP_URL);
 
     TXT_AddWidgets(window,
                    TXT_NewCheckBox("Enable gamepad/joystick", &usejoystick),

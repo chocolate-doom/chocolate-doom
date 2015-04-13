@@ -485,9 +485,7 @@ static int TranslateKey(SDL_keysym *sym)
 
       case SDLK_PAUSE:	return KEY_PAUSE;
 
-#if !SDL_VERSION_ATLEAST(1, 3, 0)
       case SDLK_EQUALS: return KEY_EQUALS;
-#endif
 
       case SDLK_MINUS:          return KEY_MINUS;
 
@@ -501,10 +499,8 @@ static int TranslateKey(SDL_keysym *sym)
 	
       case SDLK_LALT:
       case SDLK_RALT:
-#if !SDL_VERSION_ATLEAST(1, 3, 0)
       case SDLK_LMETA:
       case SDLK_RMETA:
-#endif
         return KEY_RALT;
 
       case SDLK_CAPSLOCK: return KEY_CAPSLOCK;
@@ -851,11 +847,7 @@ static void CenterMouse(void)
     // Clear any relative movement caused by warping
 
     SDL_PumpEvents();
-#if SDL_VERSION_ATLEAST(1, 3, 0)
-    SDL_GetRelativeMouseState(0, NULL, NULL);
-#else
     SDL_GetRelativeMouseState(NULL, NULL);
-#endif
 }
 
 //
@@ -869,11 +861,7 @@ static void I_ReadMouse(void)
     int x, y;
     event_t ev;
 
-#if SDL_VERSION_ATLEAST(1, 3, 0)
-    SDL_GetRelativeMouseState(0, &x, &y);
-#else
     SDL_GetRelativeMouseState(&x, &y);
-#endif
 
     if (x != 0 || y != 0) 
     {
@@ -957,6 +945,7 @@ static void UpdateGrab(void)
         // example.
 
         SDL_WarpMouse(screen->w - 16, screen->h - 16);
+        SDL_PumpEvents();
         SDL_GetRelativeMouseState(NULL, NULL);
     }
 
@@ -2048,9 +2037,7 @@ void I_InitGraphics(void)
     // has to be done before the call to SDL_SetVideoMode.
 
     I_InitWindowTitle();
-#if !SDL_VERSION_ATLEAST(1, 3, 0)
     I_InitWindowIcon();
-#endif
 
     // Warning to OS X users... though they might never see it :(
 #ifdef __MACOSX__

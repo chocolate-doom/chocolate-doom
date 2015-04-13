@@ -22,6 +22,8 @@
 
 #include "compatibility.h"
 
+#define WINDOW_HELP_URL "http://www.chocolate-doom.org/setup-compat"
+
 int vanilla_savegame_limit = 0;
 int vanilla_demo_limit = 0;
 
@@ -98,7 +100,9 @@ void CompatibilitySettings(void)
     {
     window = TXT_NewWindow("Compatibility");
 
-    TXT_AddWidgets(window, 
+    TXT_SetWindowHelpURL(window, WINDOW_HELP_URL);
+
+    TXT_AddWidgets(window,
                    TXT_NewCheckBox("Vanilla savegame limit",
                                    &vanilla_savegame_limit),
                    TXT_NewCheckBox("Vanilla demo limit",

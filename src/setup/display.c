@@ -28,6 +28,8 @@
 #include "display.h"
 #include "config.h"
 
+#define WINDOW_HELP_URL "http://www.chocolate-doom.org/setup-display"
+
 extern void RestartTextscreen(void);
 
 typedef struct
@@ -540,6 +542,8 @@ static void AdvancedDisplayConfig(TXT_UNCAST_ARG(widget),
 
     window = TXT_NewWindow("Advanced display options");
 
+    TXT_SetWindowHelpURL(window, WINDOW_HELP_URL);
+
     TXT_SetColumnWidths(window, 35);
 
     TXT_AddWidgets(window,
@@ -599,6 +603,8 @@ void ConfigDisplay(void)
     // Open the window
 
     window = TXT_NewWindow("Display Configuration");
+
+    TXT_SetWindowHelpURL(window, WINDOW_HELP_URL);
 
     // Some machines can have lots of video modes.  This tries to
     // keep a limit of six lines by increasing the number of

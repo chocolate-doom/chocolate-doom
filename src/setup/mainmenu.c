@@ -38,6 +38,8 @@
 #include "multiplayer.h"
 #include "sound.h"
 
+#define WINDOW_HELP_URL "http://www.chocolate-doom.org/setup"
+
 static const int cheat_sequence[] =
 {
     KEY_UPARROW, KEY_UPARROW, KEY_DOWNARROW, KEY_DOWNARROW,
@@ -209,6 +211,8 @@ void MainMenu(void)
 
     window = TXT_NewWindow("Main Menu");
 
+    TXT_SetWindowHelpURL(window, WINDOW_HELP_URL);
+
     TXT_AddWidgets(window,
           TXT_NewButton2("Configure Display",
                          (TxtWidgetSignalFunc) ConfigDisplay, NULL),
@@ -258,7 +262,7 @@ void MainMenu(void)
           NULL);
 
     quit_action = TXT_NewWindowAction(KEY_ESCAPE, "Quit");
-    warp_action = TXT_NewWindowAction(KEY_F1, "Warp");
+    warp_action = TXT_NewWindowAction(KEY_F2, "Warp");
     TXT_SignalConnect(quit_action, "pressed", QuitConfirm, NULL);
     TXT_SignalConnect(warp_action, "pressed",
                       (TxtWidgetSignalFunc) WarpMenu, NULL);

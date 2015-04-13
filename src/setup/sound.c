@@ -25,6 +25,8 @@
 #include "mode.h"
 #include "sound.h"
 
+#define WINDOW_HELP_URL "http://www.chocolate-doom.org/setup-sound"
+
 typedef enum
 {
     SFXMODE_DISABLED,
@@ -239,6 +241,8 @@ void ConfigSound(void)
     // Build the window
 
     window = TXT_NewWindow("Sound configuration");
+
+    TXT_SetWindowHelpURL(window, WINDOW_HELP_URL);
 
     TXT_SetWindowPosition(window, TXT_HORIZ_CENTER, TXT_VERT_TOP,
                                   TXT_SCREEN_W / 2, 5);
