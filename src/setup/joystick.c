@@ -300,7 +300,9 @@ static const joystick_config_t buffalo_classic_controller[] =
 static const joystick_config_t pc_gameport_controller[] =
 {
     {"joystick_x_axis",        0},
+    {"joystick_x_invert",      1},
     {"joystick_y_axis",        1},
+    {"joystick_y_invert",      1},
     // Button configuration is the default as used for Vanilla Doom,
     // Heretic and Hexen. When playing with a Gravis Gamepad, this
     // layout should also be vaguely similar to the standard layout
