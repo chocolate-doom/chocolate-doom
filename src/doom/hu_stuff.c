@@ -100,6 +100,7 @@ static hu_textline_t	w_ltime;
 static hu_textline_t	w_coordx;
 static hu_textline_t	w_coordy;
 static hu_textline_t	w_coorda;
+static hu_textline_t	w_fps;
 boolean			chat_on;
 static hu_itext_t	w_chat;
 static boolean		always_off = false;
@@ -412,6 +413,11 @@ void HU_Start(void)
 		       hu_font,
 		       HU_FONTSTART);
 
+    HUlib_initTextLine(&w_fps,
+		       HU_COORDX, HU_MSGY,
+		       hu_font,
+		       HU_FONTSTART);
+
     
     switch ( logical_gamemission )
     {
@@ -639,6 +645,18 @@ void HU_Drawer(void)
 	HUlib_drawTextLine(&w_coorda, false);
     }
 
+    if (crispy_showfps)
+    {
+	extern int crispy_fps;
+
+	M_snprintf(str, sizeof(str), "%s%-4d %sFPS", crstr[CR_GRAY], crispy_fps, crstr[CR_GREEN]);
+	HUlib_clearTextLine(&w_fps);
+	s = str;
+	while (*s)
+	    HUlib_addCharToTextLine(&w_fps, *(s++));
+	HUlib_drawTextLine(&w_fps, false);
+    }
+
     V_ClearDPTranslation();
 
     if (crispy_crosshair && !crispy_crosshair2)
@@ -662,6 +680,7 @@ void HU_Erase(void)
     HUlib_eraseTextLine(&w_coordx);
     HUlib_eraseTextLine(&w_coordy);
     HUlib_eraseTextLine(&w_coorda);
+    HUlib_eraseTextLine(&w_fps);
 
 }
 

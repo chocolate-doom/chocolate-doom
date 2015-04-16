@@ -1067,6 +1067,9 @@ void I_EndRead(void)
                SCREENWIDTH, SCREENHEIGHT);
 }
 
+int crispy_fps = 0;
+boolean crispy_showfps = false;
+
 //
 // I_FinishUpdate
 //
@@ -1078,7 +1081,6 @@ void I_FinishUpdate (void)
 
     static int	lastmili;
     static int	fpscount;
-    static char	fpsbuf[5];
     int		mili;
 
     if (!initialized)
@@ -1119,22 +1121,20 @@ void I_FinishUpdate (void)
     }
 
 	// [AM] Real FPS counter
-	if (true)
+	if (crispy_showfps)
 	{
 		fpscount += 1;
 
 		i = SDL_GetTicks();
 		mili = i - lastmili;
 
-		// Update FPS counter every 100ms
-		if (mili >= 100)
+		// Update FPS counter every second
+		if (mili >= 1000)
 		{
-			M_snprintf(fpsbuf, sizeof(fpsbuf), "%d", ((fpscount * 1000) / mili));
+			crispy_fps = (fpscount * 1000) / mili;
 			fpscount = 0;
 			lastmili = i;
 		}
-
-		M_WriteText(ORIGWIDTH - (8 * 3), 0, fpsbuf);
 	}
 
     // draw to screen
