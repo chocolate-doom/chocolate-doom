@@ -523,7 +523,7 @@ void R_ProjectSprite (mobj_t* thing)
     // [AM] Interpolate between current and last position,
     //      if prudent.
     if (crispy_uncapped &&
-        // Don't interpolate if the mobj did something 
+        // Don't interpolate if the mobj did something
         // that would necessitate turning it off for a tic.
         thing->interp == true &&
         // Don't interpolate during a paused state.

@@ -1123,7 +1123,7 @@ void I_FinishUpdate (void)
 	// [AM] Real FPS counter
 	if (crispy_showfps)
 	{
-		fpscount += 1;
+		fpscount++;
 
 		i = SDL_GetTicks();
 		mili = i - lastmili;

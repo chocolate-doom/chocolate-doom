@@ -508,6 +508,7 @@ fixed_t R_ScaleFromGlobalAngle (angle_t visangle)
 }
 #endif
 
+
 // [AM] Interpolate between two angles.
 angle_t R_InterpolateAngle(angle_t oangle, angle_t nangle, fixed_t scale)
 {
@@ -855,6 +856,8 @@ R_PointInSubsector
     return &subsectors[nodenum & ~NF_SUBSECTOR];
 }
 
+
+
 //
 // R_SetupFrame
 //
@@ -876,7 +879,7 @@ void R_SetupFrame (player_t* player)
         // Don't interpolate on the first tic of a level,
         // otherwise oldviewz might be garbage.
         leveltime > 1 &&
-        // Don't interpolate if the player did something 
+        // Don't interpolate if the player did something
         // that would necessitate turning it off for a tic.
         player->mo->interp == true &&
         // Don't interpolate during a paused state

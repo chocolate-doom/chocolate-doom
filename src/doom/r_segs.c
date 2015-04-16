@@ -828,7 +828,7 @@ R_StoreWallRange
 	markfloor = false;
     }
     
-    if (frontsector->interpceilingheight <= viewz 
+    if (frontsector->interpceilingheight <= viewz
 	&& frontsector->ceilingpic != skyflatnum)
     {
 	// below view plane
