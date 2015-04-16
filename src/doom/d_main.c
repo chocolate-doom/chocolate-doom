@@ -470,6 +470,7 @@ void D_BindVariables(void)
     M_BindIntVariable("crispy_recoil",          &crispy_recoil);
     M_BindIntVariable("crispy_secretmessage",   &crispy_secretmessage);
     M_BindIntVariable("crispy_translucency",    &crispy_translucency);
+    M_BindIntVariable("crispy_uncapped",        &crispy_uncapped);
 }
 
 //

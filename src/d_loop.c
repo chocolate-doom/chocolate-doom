@@ -684,7 +684,7 @@ static void SinglePlayerClear(ticcmd_set_t *set)
     }
 }
 
-boolean crispy_uncapped = true;
+int crispy_uncapped = 0;
 
 //
 // TryRunTics

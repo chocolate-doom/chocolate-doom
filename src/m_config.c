@@ -1789,6 +1789,14 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_INT(crispy_flipcorpses),
+
+    //!
+    // @game doom
+    //
+    // Uncapped Framerate.
+    //
+
+    CONFIG_VARIABLE_INT(crispy_uncapped),
 };
 
 static default_collection_t extra_defaults =
