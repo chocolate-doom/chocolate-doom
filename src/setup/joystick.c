@@ -139,6 +139,7 @@ static const joystick_config_t empty_defaults[] =
     {"joyb_straferight",       -1},
     {"joyb_prevweapon",        -1},
     {"joyb_nextweapon",        -1},
+    {"joyb_jump",              -1},
     {"joyb_menu_activate",     -1},
     {NULL, 0},
 };
