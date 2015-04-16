@@ -684,6 +684,8 @@ static void SinglePlayerClear(ticcmd_set_t *set)
     }
 }
 
+boolean crispy_uncappedframerate = true;
+
 //
 // TryRunTics
 //
