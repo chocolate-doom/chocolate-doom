@@ -737,7 +737,7 @@ void TryRunTics (void)
 
         // [AM] If we've uncapped the framerate and there are no tics
         //      to run, return early instead of waiting around.
-        if (counts == 0 && crispy_uncappedframerate)
+        if (counts == 0 && crispy_uncappedframerate && gametic)
             return;
 
         if (counts < 1)
