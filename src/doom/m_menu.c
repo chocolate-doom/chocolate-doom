@@ -1366,7 +1366,7 @@ static void M_DrawCrispness(void)
 
     M_DrawCrispnessSeparator(crispness_sep_visual, "Visual");
 
-    M_DrawCrispnessItem(crispness_uncapped, "Uncapped Framerate", crispy_uncappedframerate, true);
+    M_DrawCrispnessItem(crispness_uncapped, "Uncapped Framerate", crispy_uncapped, true);
     M_DrawCrispnessItem(crispness_coloredhud, "Colorize Status Bar and Texts", crispy_coloredhud, true);
     M_DrawCrispnessItem(crispness_translucency, "Enable Translucency", crispy_translucency, true);
     M_DrawCrispnessItem(crispness_coloredblood, "Enable Colored Blood", crispy_coloredblood, true);
@@ -1695,7 +1695,7 @@ static void M_CrispyToggleColoredhud(int choice)
 static void M_CrispyToggleUncapped(int choice)
 {
     choice = 0;
-    crispy_uncappedframerate = !crispy_uncappedframerate;
+    crispy_uncapped = !crispy_uncapped;
 }
 
 static void M_CrispyToggleAutomapstats(int choice)

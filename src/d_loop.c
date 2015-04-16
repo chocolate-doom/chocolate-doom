@@ -684,7 +684,7 @@ static void SinglePlayerClear(ticcmd_set_t *set)
     }
 }
 
-boolean crispy_uncappedframerate = true;
+boolean crispy_uncapped = true;
 
 //
 // TryRunTics
@@ -739,7 +739,7 @@ void TryRunTics (void)
 
         // [AM] If we've uncapped the framerate and there are no tics
         //      to run, return early instead of waiting around.
-        if (counts == 0 && crispy_uncappedframerate && gametic)
+        if (counts == 0 && crispy_uncapped && gametic)
             return;
 
         if (counts < 1)

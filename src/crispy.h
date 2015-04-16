@@ -37,7 +37,7 @@ extern boolean crispy_havemap33;
 extern boolean crispy_havessg;
 extern boolean crispy_nwtmerge;
 extern boolean crispy_showfps;
-extern boolean crispy_uncappedframerate;
+extern boolean crispy_uncapped;
 extern int crispy_flashlight;
 
 #define crispy_stretchsky (crispy_freelook || crispy_mouselook || crispy_pitch)
