@@ -139,6 +139,7 @@ static const joystick_config_t empty_defaults[] =
     {"joyb_straferight",       -1},
     {"joyb_prevweapon",        -1},
     {"joyb_nextweapon",        -1},
+    {"joyb_jump",              -1},
     {"joyb_menu_activate",     -1},
     {NULL, 0},
 };
@@ -567,7 +568,7 @@ static int OpenAllJoysticks(void)
 
     result = 0;
 
-    for (i=0; i<num_joysticks; ++i) 
+    for (i = 0; i < num_joysticks; ++i)
     {
         all_joysticks[i] = SDL_JoystickOpen(i);
 
@@ -603,7 +604,7 @@ static void CloseAllJoysticks(void)
 
     num_joysticks = SDL_NumJoysticks();
 
-    for (i=0; i<num_joysticks; ++i)
+    for (i = 0; i < num_joysticks; ++i)
     {
         if (all_joysticks[i] != NULL)
         {
@@ -634,6 +635,7 @@ static int CalibrationEventCallback(SDL_Event *event, void *user_data)
     // At this point, we have a button press.
     // In the first "center" stage, we're just trying to work out which
     // joystick is being configured and which button the user is pressing.
+    usejoystick = 1;
     joystick_index = event->jbutton.which;
     calibrate_button = event->jbutton.button;
 
@@ -642,7 +644,6 @@ static int CalibrationEventCallback(SDL_Event *event, void *user_data)
     if (IsKnownJoystick(joystick_index))
     {
         LoadKnownConfiguration();
-        usejoystick = 1;
         TXT_CloseWindow(calibration_window);
     }
     else
@@ -660,11 +661,12 @@ static int CalibrationEventCallback(SDL_Event *event, void *user_data)
 
 static void NoJoystick(void)
 {
-    TXT_MessageBox(NULL, "No joysticks or gamepads could be found.\n\n"
+    TXT_MessageBox(NULL, "No gamepads or joysticks could be found.\n\n"
                          "Try configuring your controller from within\n"
                          "your OS first. Maybe you need to install\n"
                          "some drivers or otherwise configure it.");
 
+    usejoystick = 0;
     joystick_index = -1;
     SetJoystickButtonLabel();
 }
@@ -706,7 +708,7 @@ static void CalibrateJoystick(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
     TXT_SignalConnect(calibration_window, "closed", CalibrateWindowClosed, NULL);
 
     // Start calibration
-
+    usejoystick = 0;
     joystick_index = -1;
 }
 
@@ -735,12 +737,18 @@ void ConfigJoystick(void)
     TXT_SetWindowHelpURL(window, WINDOW_HELP_URL);
 
     TXT_AddWidgets(window,
-                   TXT_NewCheckBox("Enable gamepad/joystick", &usejoystick),
                    joystick_table = TXT_NewTable(2),
                    TXT_NewSeparator("Axes"),
                    axis_table = TXT_NewTable(2),
                    TXT_NewSeparator("Buttons"),
                    button_table = TXT_NewTable(4),
+                   NULL);
+
+    TXT_SetColumnWidths(joystick_table, 13, 40);
+
+    TXT_AddWidgets(joystick_table,
+                   TXT_NewLabel("Controller"),
+                   joystick_button = TXT_NewButton("zzzz"),
                    NULL);
 
     TXT_SetColumnWidths(axis_table, 20, 15);
@@ -758,13 +766,6 @@ void ConfigJoystick(void)
                    TXT_NewJoystickAxis(&joystick_strafe_axis,
                                        &joystick_strafe_invert,
                                         JOYSTICK_AXIS_HORIZONTAL),
-                   NULL);
-
-    TXT_SetColumnWidths(joystick_table, 20, 15);
-
-    TXT_AddWidgets(joystick_table,
-                   TXT_NewLabel("Current controller"),
-                   joystick_button = TXT_NewButton("zzzz"),
                    NULL);
 
     TXT_SetColumnWidths(button_table, 16, 12, 14, 11);
