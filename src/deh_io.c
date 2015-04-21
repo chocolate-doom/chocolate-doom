@@ -60,6 +60,9 @@ struct deh_context_s
 
     // Error handling.
     boolean had_error;
+
+    // [crispy] pointer to start of current line
+    long linestart;
 };
 
 static deh_context_t *DEH_NewContext(void)
@@ -76,6 +79,7 @@ static deh_context_t *DEH_NewContext(void)
     context->last_was_newline = true;
 
     context->had_error = false;
+    context->linestart = -1; // [crispy] initialize
 
     return context;
 }
@@ -221,6 +225,42 @@ static void IncreaseReadBuffer(deh_context_t *context)
 
     context->readbuffer = newbuffer;
     context->readbuffer_size = newbuffer_size;
+}
+
+// [crispy] Save pointer to start of current line ...
+void DEH_SaveLineStart (deh_context_t *context)
+{
+    if (context->type == DEH_INPUT_FILE)
+    {
+	context->linestart = ftell(context->stream);
+    }
+    else
+    if (context->type == DEH_INPUT_LUMP)
+    {
+	context->linestart = context->input_buffer_pos;
+    }
+}
+
+// [crispy] ... and reset context to start of current line
+// to retry with previous line parser in case of a parsing error
+void DEH_RestoreLineStart (deh_context_t *context)
+{
+    // [crispy] never point past the start
+    if (context->linestart < 0)
+	return;
+
+    if (context->type == DEH_INPUT_FILE)
+    {
+	fseek(context->stream, context->linestart, SEEK_SET);
+    }
+    else
+    if (context->type == DEH_INPUT_LUMP)
+    {
+	context->input_buffer_pos = context->linestart;
+    }
+
+    // [crispy] don't count this line twice
+    --context->linenum;
 }
 
 // Read a whole line
