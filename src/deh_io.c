@@ -235,7 +235,7 @@ char *DEH_ReadLine(deh_context_t *context, boolean extended)
     {
         c = DEH_GetChar(context);
 
-        if (c < 0)
+        if (c < 0 && pos == 0)
         {
             // end of file
 
@@ -273,7 +273,7 @@ char *DEH_ReadLine(deh_context_t *context, boolean extended)
 
         // blanks before the backslash are included in the string
         // but indentation after the linefeed is not
-        if (escaped && isspace(c) && c != '\n')
+        if (escaped && c >= 0 && isspace(c) && c != '\n')
         {
             continue;
         }
@@ -282,7 +282,7 @@ char *DEH_ReadLine(deh_context_t *context, boolean extended)
             escaped = false;
         }
 
-        if (c == '\n')
+        if (c == '\n' || c < 0)
         {
             // end of line: a full line has been read
 
