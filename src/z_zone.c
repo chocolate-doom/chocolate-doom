@@ -16,10 +16,11 @@
 //	Zone Memory Allocation. Neat.
 //
 
+#include "doomtype.h"
+#include "i_system.h"
+#include "m_argv.h"
 
 #include "z_zone.h"
-#include "i_system.h"
-#include "doomtype.h"
 
 
 //
@@ -61,8 +62,8 @@ typedef struct
 
 
 
-memzone_t*	mainzone;
-
+static memzone_t *mainzone;
+static boolean zero_on_free;
 
 
 //
@@ -110,13 +111,19 @@ void Z_Init (void)
     mainzone->blocklist.user = (void *)mainzone;
     mainzone->blocklist.tag = PU_STATIC;
     mainzone->rover = block;
-	
+
     block->prev = block->next = &mainzone->blocklist;
 
     // free block
     block->tag = PU_FREE;
-    
+
     block->size = mainzone->size - sizeof(memzone_t);
+
+    //!
+    // Zone memory debugging flag. If set, zero memory after it is freed
+    // to deliberately break any code that attempts to use it after free.
+    //
+    zero_on_free = M_ParmExists("-zonezero");
 }
 
 
@@ -127,12 +134,12 @@ void Z_Free (void* ptr)
 {
     memblock_t*		block;
     memblock_t*		other;
-	
+
     block = (memblock_t *) ( (byte *)ptr - sizeof(memblock_t));
 
     if (block->id != ZONEID)
 	I_Error ("Z_Free: freed a pointer without ZONEID");
-		
+
     if (block->tag != PU_FREE && block->user != NULL)
     {
     	// clear the user's mark
@@ -143,7 +150,14 @@ void Z_Free (void* ptr)
     block->tag = PU_FREE;
     block->user = NULL;
     block->id = 0;
-	
+
+    // If the -zonezero flag is provided, we zero out the block on free
+    // to break code that depends on reading freed memory.
+    if (zero_on_free)
+    {
+        memset(ptr, 0, block->size - sizeof(memblock_t));
+    }
+
     other = block->prev;
 
     if (other->tag == PU_FREE)
@@ -158,7 +172,7 @@ void Z_Free (void* ptr)
 
         block = other;
     }
-	
+
     other = block->next;
     if (other->tag == PU_FREE)
     {
@@ -285,7 +299,7 @@ Z_Malloc
     mainzone->rover = base->next;	
 	
     base->id = ZONEID;
-    
+   
     return result;
 }
 
