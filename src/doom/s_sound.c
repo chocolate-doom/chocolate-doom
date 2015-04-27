@@ -174,11 +174,12 @@ static void S_StopChannel(int cnum)
                 break;
             }
         }
-        
+
         // degrade usefulness of sound data
 
         c->sfxinfo->usefulness--;
         c->sfxinfo = NULL;
+        c->origin = NULL;
     }
 }
 

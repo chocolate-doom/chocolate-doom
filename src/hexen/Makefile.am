@@ -15,7 +15,6 @@ g_game.c                              \
 h2_main.c                             \
 info.c              info.h            \
 in_lude.c                             \
-m_misc.c                              \
 m_random.c          m_random.h        \
 mn_menu.c                             \
 p_acs.c                               \
