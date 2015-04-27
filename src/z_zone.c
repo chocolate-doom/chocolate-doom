@@ -64,6 +64,7 @@ typedef struct
 
 static memzone_t *mainzone;
 static boolean zero_on_free;
+static boolean scan_on_free;
 
 
 //
@@ -120,12 +121,54 @@ void Z_Init (void)
     block->size = mainzone->size - sizeof(memzone_t);
 
     //!
-    // Zone memory debugging flag. If set, zero memory after it is freed
+    // Zone memory debugging flag. If set, memory is zeroed after it is freed
     // to deliberately break any code that attempts to use it after free.
     //
     zero_on_free = M_ParmExists("-zonezero");
+
+    //!
+    // Zone memory debugging flag. If set, each time memory is freed, the zone
+    // heap is scanned to look for remaining pointers to the freed block.
+    //
+    scan_on_free = M_ParmExists("-zonescan");
 }
 
+// Scan the zone heap for pointers within the specified range, and warn about
+// any remaining pointers.
+static void ScanForBlock(void *start, void *end)
+{
+    memblock_t *block;
+    void **mem;
+    int i, len, tag;
+
+    block = mainzone->blocklist.next;
+
+    while (block->next != &mainzone->blocklist)
+    {
+        tag = block->tag;
+
+        if (tag == PU_STATIC || tag == PU_LEVEL || tag == PU_LEVSPEC)
+        {
+            // Scan for pointers on the assumption that pointers are aligned
+            // on word boundaries (word size depending on pointer size):
+            mem = (void **) ((byte *) block + sizeof(memblock_t));
+            len = (block->size - sizeof(memblock_t)) / sizeof(void *);
+
+            for (i = 0; i < len; ++i)
+            {
+                if (start <= mem[i] && mem[i] <= end)
+                {
+                    fprintf(stderr,
+                            "%p has dangling pointer into freed block "
+                            "%p (%p -> %p)\n",
+                            mem, start, &mem[i], mem[i]);
+                }
+            }
+        }
+
+        block = block->next;
+    }
+}
 
 //
 // Z_Free
@@ -156,6 +199,11 @@ void Z_Free (void* ptr)
     if (zero_on_free)
     {
         memset(ptr, 0, block->size - sizeof(memblock_t));
+    }
+    if (scan_on_free)
+    {
+        ScanForBlock(ptr,
+                     (byte *) ptr + block->size - sizeof(memblock_t));
     }
 
     other = block->prev;
