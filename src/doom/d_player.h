@@ -167,6 +167,7 @@ typedef struct player_s
     unsigned int	jumpTics;
     boolean	mapcoords;
     fixed_t	recoilpitch;
+    int	mapped;
 } player_t;
 
 

@@ -96,6 +96,7 @@ static hu_textline_t	w_map;
 static hu_textline_t	w_kills;
 static hu_textline_t	w_items;
 static hu_textline_t	w_scrts;
+static hu_textline_t	w_mapped;
 static hu_textline_t	w_ltime;
 static hu_textline_t	w_coordx;
 static hu_textline_t	w_coordy;
@@ -392,6 +393,11 @@ void HU_Start(void)
 		       hu_font,
 		       HU_FONTSTART);
 
+    HUlib_initTextLine(&w_mapped,
+		       HU_TITLEX, HU_MSGY + 4 * 8,
+		       hu_font,
+		       HU_FONTSTART);
+
     HUlib_initTextLine(&w_ltime,
 		       HU_TITLEX, HU_MSGY + 5 * 8,
 		       hu_font,
@@ -600,6 +606,19 @@ void HU_Drawer(void)
 	while (*s)
 	    HUlib_addCharToTextLine(&w_scrts, *(s++));
 	HUlib_drawTextLine(&w_scrts, false);
+
+	// [crispy] show explored fraction of map with IDDT cheat
+	if (players[consoleplayer].mapped)
+	{
+	extern int numlines;
+	M_snprintf(str, sizeof(str), "%sMapped: %s%d%%", crstr[CR_RED], crstr[CR_GRAY],
+	        100*players[consoleplayer].mapped/numlines);
+	HUlib_clearTextLine(&w_mapped);
+	s = str;
+	while (*s)
+	    HUlib_addCharToTextLine(&w_mapped, *(s++));
+	HUlib_drawTextLine(&w_mapped, false);
+	}
 
 	M_snprintf(str, sizeof(str), "%s%02d:%02d:%02d", crstr[CR_GRAY],
 	        time/3600, (time%3600)/60, time%60);
