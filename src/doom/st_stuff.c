@@ -1882,6 +1882,21 @@ void ST_Stop (void)
 
 void ST_Init (void)
 {
+    // [crispy] colorize the confusing 'behold' power-up menu
+    if (!strcmp(STSTR_BEHOLD, DEH_String(STSTR_BEHOLD)))
+    {
+	char str_behold[80];
+	M_snprintf(str_behold, sizeof(str_behold),
+	           "in%sV%suln, %sS%str, %sI%snviso, %sR%sad, %sA%sllmap, or %sL%site-amp",
+	           crstr[CR_GOLD], crstr[CR_NONE],
+	           crstr[CR_GOLD], crstr[CR_NONE],
+	           crstr[CR_GOLD], crstr[CR_NONE],
+	           crstr[CR_GOLD], crstr[CR_NONE],
+	           crstr[CR_GOLD], crstr[CR_NONE],
+	           crstr[CR_GOLD], crstr[CR_NONE]);
+	DEH_AddStringReplacement(STSTR_BEHOLD, str_behold);
+    }
+
     ST_loadData();
     st_backing_screen = (byte *) Z_Malloc((ST_WIDTH << hires) * (ST_HEIGHT << hires), PU_STATIC, 0);
 }
