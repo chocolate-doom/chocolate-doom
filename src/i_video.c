@@ -1067,6 +1067,9 @@ void I_EndRead(void)
                SCREENWIDTH, SCREENHEIGHT);
 }
 
+int crispy_fps = 0;
+boolean crispy_showfps = false;
+
 //
 // I_FinishUpdate
 //
@@ -1075,6 +1078,10 @@ void I_FinishUpdate (void)
     static int	lasttic;
     int		tics;
     int		i;
+
+    static int	lastmili;
+    static int	fpscount;
+    int		mili;
 
     if (!initialized)
         return;
@@ -1112,6 +1119,23 @@ void I_FinishUpdate (void)
 	for ( ; i<20*4 ; i+=4)
 	    I_VideoBuffer[ (SCREENHEIGHT-1)*SCREENWIDTH + i] = 0x0;
     }
+
+	// [AM] Real FPS counter
+	if (crispy_showfps)
+	{
+		fpscount++;
+
+		i = SDL_GetTicks();
+		mili = i - lastmili;
+
+		// Update FPS counter every second
+		if (mili >= 1000)
+		{
+			crispy_fps = (fpscount * 1000) / mili;
+			fpscount = 0;
+			lastmili = i;
+		}
+	}
 
     // draw to screen
 

@@ -421,6 +421,7 @@ cheatseq_t cheat_notarget = CHEAT("notarget", 0);
 cheatseq_t cheat_spechits = CHEAT("spechits", 0);
 cheatseq_t cheat_nomomentum = CHEAT("nomomentum", 0);
 cheatseq_t cheat_ducttape = CHEAT("ducttape", 0);
+cheatseq_t cheat_showfps = CHEAT("showfps", 0);
 
 //
 // STATUS BAR CODE
@@ -800,6 +801,11 @@ ST_Responder (event_t* ev)
 	           crstr[CR_GREEN],
 	           (plyr->cheats & CF_NOMOMENTUM) ? "ON" : "OFF");
 	plyr->message = msg;
+      }
+      // [crispy] implement Crispy Doom's "showfps" cheat, ne debug aid
+      else if (cht_CheckCheat(&cheat_showfps, ev->data2))
+      {
+	crispy_showfps ^= 1;
       }
       // 'behold?' power-up cheats
       for (i=0;i<6;i++)

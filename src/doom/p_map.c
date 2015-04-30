@@ -187,6 +187,10 @@ P_TeleportMove
     thing->x = x;
     thing->y = y;
 
+    // [AM] Don't interpolate mobjs that pass
+    //      through teleporters
+    thing->interp = false;
+
     P_SetThingPosition (thing);
 	
     return true;
