@@ -1,7 +1,7 @@
 .TP
 \fBDOOMWADDIR\fR, \fBDOOMWADPATH\fR
 These environment variables provide paths to search for Doom .WAD files when
-looking for a game IWAD file or a PWAD file specified with the `-file' option.
+looking for a game IWAD file or a PWAD file specified with the `\-file' option.
 \fBDOOMWADDIR\fR specifies a single path in which to look for WAD files,
 while \fBDOOMWWADPATH\fR specifies a colon-separated list of paths to search.
 .TP
