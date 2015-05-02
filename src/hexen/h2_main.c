@@ -623,16 +623,22 @@ static void HandleArgs(void)
 
     if (p)
     {
+        char *uc_filename;
         char file[256];
 
         M_StringCopy(file, myargv[p+1], sizeof(file));
 
         // With Vanilla Hexen you have to specify the file without
         // extension, but make that optional.
-        if (!M_StringEndsWith(myargv[p+1], ".lmp"))
+        uc_filename = strdup(myargv[p + 1]);
+        M_ForceUppercase(uc_filename);
+
+        if (!M_StringEndsWith(uc_filename, ".LMP"))
         {
             M_StringConcat(file, ".lmp", sizeof(file));
         }
+
+        free(uc_filename);
 
         if (W_AddFile(file) != NULL)
         {
