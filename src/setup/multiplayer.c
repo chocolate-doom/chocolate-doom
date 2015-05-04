@@ -355,7 +355,7 @@ static void SetExMyWarp(TXT_UNCAST_ARG(widget), void *val)
 {
     int l;
 
-    l = (int) val;
+    l = (intptr_t) val;
 
     warpepisode = l / 10;
     warpmap = l % 10;
@@ -367,7 +367,7 @@ static void SetMAPxyWarp(TXT_UNCAST_ARG(widget), void *val)
 {
     int l;
 
-    l = (int) val;
+    l = (intptr_t) val;
 
     warpmap = l;
 
@@ -389,8 +389,8 @@ static void LevelSelectDialog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(user_data))
     const iwad_t *iwad;
     char buf[10];
     int episodes;
-    int x, y;
-    int l;
+    intptr_t x, y;
+    intptr_t l;
     int i;
 
     window = TXT_NewWindow("Select level");
