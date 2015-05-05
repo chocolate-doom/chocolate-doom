@@ -855,7 +855,7 @@ static void DrawMessage(void)
     player_t *player;
 
     player = &players[consoleplayer];
-    if (player->messageTics <= 0 || !player->message)
+    if (player->messageTics <= 0)
     {                           // No message
         return;
     }
