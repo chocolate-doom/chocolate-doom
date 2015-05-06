@@ -554,7 +554,7 @@ R_StoreWallRange
         return;
 
     // calculate rw_distance for scale calculation
-    rw_normalangle = curline->angle + ANG90;
+    rw_normalangle = curline->pangle + ANG90; // [crispy] use re-calculated angle
     offsetangle = abs(rw_normalangle-rw_angle1);
     
     if (offsetangle > ANG90)
