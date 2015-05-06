@@ -255,6 +255,7 @@ typedef struct
     sector_t*	backsector;
     
     uint32_t	length; // [crispy] fix long wall wobble
+    angle_t	pangle; // [crispy] re-calculated angle used for rendering
 } seg_t;
 
 

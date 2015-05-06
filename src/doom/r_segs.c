@@ -545,7 +545,7 @@ R_StoreWallRange
     linedef->flags |= ML_MAPPED;
     
     // calculate rw_distance for scale calculation
-    rw_normalangle = curline->angle + ANG90;
+    rw_normalangle = curline->pangle + ANG90; // [crispy] use re-calculated angle
     
     // [crispy] fix long wall wobble
     // thank you very much Linguica, e6y and kb1
