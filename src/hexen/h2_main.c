@@ -269,6 +269,17 @@ void D_IdentifyVersion(void)
 	gamemode = shareware;
 	maxplayers = 4;
     }
+
+    // The v1.0 IWAD file is missing a bunch of lumps.
+    if (W_CheckNumForName("CLUS1MSG") == -1)
+    {
+        printf(
+            "** WARNING: You are playing with the Hexen v1.0 IWAD. This\n"
+            "** isn't supported by " PACKAGE_NAME ", and you may find that\n"
+            "** the game will crash. Please upgrade to the v1.1 IWAD file.\n"
+            "** See here for more information:\n"
+            "**   http://www.doomworld.com/classicdoom/info/patches.php\n");
+    }
 }
 
 // Set the gamedescription string.
