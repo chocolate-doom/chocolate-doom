@@ -271,7 +271,7 @@ void D_IdentifyVersion(void)
     }
 
     // The v1.0 IWAD file is missing a bunch of lumps.
-    if (W_CheckNumForName("CLUS1MSG") == -1)
+    if (gamemode != shareware && W_CheckNumForName("CLUS1MSG") == -1)
     {
         printf(
             "** WARNING: You are playing with the Hexen v1.0 IWAD. This\n"
