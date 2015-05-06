@@ -515,7 +515,6 @@ R_StoreWallRange
 ( int	start,
   int	stop )
 {
-    angle_t		offsetangle;
     fixed_t		vtop;
     int			lightnum;
     int64_t		dx, dy, dx1, dy1; // [crispy] fix long wall wobble
@@ -546,11 +545,7 @@ R_StoreWallRange
     
     // calculate rw_distance for scale calculation
     rw_normalangle = curline->angle + ANG90;
-    offsetangle = abs(rw_normalangle-rw_angle1);
     
-    if (offsetangle > ANG90)
-	offsetangle = ANG90;
-
     // [crispy] fix long wall wobble
     // thank you very much Linguica, e6y and kb1
     // http://www.doomworld.com/vb/post/1340718
@@ -773,14 +768,7 @@ R_StoreWallRange
 
     if (segtextured)
     {
-	offsetangle = rw_normalangle-rw_angle1;
 	
-	if (offsetangle > ANG180)
-	    offsetangle = -offsetangle;
-
-	if (offsetangle > ANG90)
-	    offsetangle = ANG90;
-
 	// [crispy] fix long wall wobble
 	rw_offset = (fixed_t)((dx*dx1 + dy*dy1) / curline->length);
 	rw_offset += sidedef->textureoffset + curline->offset;
