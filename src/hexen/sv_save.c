@@ -346,7 +346,7 @@ static void StreamIn_player_t(player_t *str)
 
     // mobj_t *mo;
     // Pointer value is reset on load.
-    GET_LONG;
+    str->mo = (void *) (intptr_t) GET_LONG;
     str->mo = NULL;
 
     // playerstate_t playerstate;
@@ -478,12 +478,12 @@ static void StreamIn_player_t(player_t *str)
 
     // mobj_t *poisoner;
     // Pointer value is reset.
-    GET_LONG;
+    str->poisoner = (void *) (intptr_t) GET_LONG;
     str->poisoner = NULL;
 
     // mobj_t *attacker;
     // Pointer value is reset.
-    GET_LONG;
+    str->attacker = (void *) (intptr_t) GET_LONG;
     str->attacker = NULL;
 
     // int extralight;
@@ -685,14 +685,14 @@ static void StreamIn_thinker_t(thinker_t *str)
 {
     // struct thinker_s *prev, *next;
     // Pointers are discarded:
-    GET_LONG;
+    str->prev = (void *) (intptr_t) GET_LONG;
     str->prev = NULL;
-    GET_LONG;
+    str->next = (void *) (intptr_t) GET_LONG;
     str->next = NULL;
 
     // think_t function;
     // Function pointer is discarded:
-    GET_LONG;
+    str->function = (void *) (intptr_t) GET_LONG;
     str->function = NULL;
 }
 
@@ -766,9 +766,9 @@ static void StreamIn_mobj_t(mobj_t *str)
 
     // struct mobj_s *snext, *sprev;
     // Pointer values are discarded:
-    GET_LONG;
+    str->snext = (void *) (intptr_t) GET_LONG;
     str->snext = NULL;
-    GET_LONG;
+    str->sprev = (void *) (intptr_t) GET_LONG;
     str->sprev = NULL;
 
     // angle_t angle;
@@ -783,14 +783,14 @@ static void StreamIn_mobj_t(mobj_t *str)
     // struct mobj_s *bnext, *bprev;
     // Values are read but discarded; this will be restored when the thing's
     // position is set.
-    GET_LONG;
+    str->bnext = (void *) (intptr_t) GET_LONG;
     str->bnext = NULL;
-    GET_LONG;
+    str->bprev = (void *) (intptr_t) GET_LONG;
     str->bprev = NULL;
 
     // struct subsector_s *subsector;
     // Read but discard: pointer will be restored when thing position is set.
-    GET_LONG;
+    str->subsector = (void *) (intptr_t) GET_LONG;
     str->subsector = NULL;
 
     // fixed_t floorz, ceilingz;
@@ -817,7 +817,7 @@ static void StreamIn_mobj_t(mobj_t *str)
 
     // mobjinfo_t *info;
     // Pointer value is read but discarded.
-    GET_LONG;
+    str->info = (void *) (intptr_t) GET_LONG;
     str->info = NULL;
 
     // int tics;

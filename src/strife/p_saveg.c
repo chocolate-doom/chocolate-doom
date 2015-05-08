@@ -186,12 +186,12 @@ static void saveg_write_pad(void)
 
 static void *saveg_readp(void)
 {
-    return (void *) saveg_read32();
+    return (void *) (intptr_t) saveg_read32();
 }
 
 static void saveg_writep(void *p)
 {
-    saveg_write32((int) p);
+    saveg_write32((intptr_t) p);
 }
 
 // Enum values are 32-bit integers.

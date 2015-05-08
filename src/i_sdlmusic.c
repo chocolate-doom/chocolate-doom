@@ -633,7 +633,7 @@ static boolean ReadSubstituteConfig(char *filename)
     FILE *fs;
     char *error;
     int linenum = 1;
-    int old_subst_music_len;
+//    int old_subst_music_len;
 
     fs = fopen(filename, "r");
 
@@ -642,7 +642,7 @@ static boolean ReadSubstituteConfig(char *filename)
         return false;
     }
 
-    old_subst_music_len = subst_music_len;
+//    old_subst_music_len = subst_music_len;
 
     while (!feof(fs))
     {

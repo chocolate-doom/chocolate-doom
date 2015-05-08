@@ -3855,7 +3855,7 @@ void A_IceGuyDie(mobj_t * actor)
 void A_IceGuyMissileExplode(mobj_t * actor)
 {
     mobj_t *mo;
-    int i;
+    unsigned int i;
 
     for (i = 0; i < 8; i++)
     {

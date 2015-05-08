@@ -1001,9 +1001,12 @@ void D_DoomMain(void)
 
     if (p)
     {
+        char *uc_filename = strdup(myargv[p + 1]);
+        M_ForceUppercase(uc_filename);
+
         // In Vanilla, the filename must be specified without .lmp,
         // but make that optional.
-        if (M_StringEndsWith(myargv[p + 1], ".lmp"))
+        if (M_StringEndsWith(uc_filename, ".LMP"))
         {
             M_StringCopy(file, myargv[p + 1], sizeof(file));
         }
@@ -1011,6 +1014,8 @@ void D_DoomMain(void)
         {
             DEH_snprintf(file, sizeof(file), "%s.lmp", myargv[p + 1]);
         }
+
+        free(uc_filename);
 
         if (D_AddFile(file))
         {

@@ -343,7 +343,7 @@ static boolean ExpandSoundData_SRC(sfxinfo_t *sfxinfo,
 {
     SRC_DATA src_data;
     uint32_t i, abuf_index=0, clipped=0;
-    uint32_t alen;
+//    uint32_t alen;
     int retn;
     int16_t *expanded;
     Mix_Chunk *chunk;
@@ -375,7 +375,7 @@ static boolean ExpandSoundData_SRC(sfxinfo_t *sfxinfo,
 
     // Allocate the new chunk.
 
-    alen = src_data.output_frames_gen * 4;
+//    alen = src_data.output_frames_gen * 4;
 
     chunk = AllocateSound(sfxinfo, src_data.output_frames_gen * 4);
 

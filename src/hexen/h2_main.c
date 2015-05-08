@@ -269,6 +269,17 @@ void D_IdentifyVersion(void)
 	gamemode = shareware;
 	maxplayers = 4;
     }
+
+    // The v1.0 IWAD file is missing a bunch of lumps.
+    if (gamemode != shareware && W_CheckNumForName("CLUS1MSG") == -1)
+    {
+        printf(
+            "** WARNING: You are playing with the Hexen v1.0 IWAD. This\n"
+            "** isn't supported by " PACKAGE_NAME ", and you may find that\n"
+            "** the game will crash. Please upgrade to the v1.1 IWAD file.\n"
+            "** See here for more information:\n"
+            "**   http://www.doomworld.com/classicdoom/info/patches.php\n");
+    }
 }
 
 // Set the gamedescription string.
@@ -623,16 +634,22 @@ static void HandleArgs(void)
 
     if (p)
     {
+        char *uc_filename;
         char file[256];
 
         M_StringCopy(file, myargv[p+1], sizeof(file));
 
         // With Vanilla Hexen you have to specify the file without
         // extension, but make that optional.
-        if (!M_StringEndsWith(myargv[p+1], ".lmp"))
+        uc_filename = strdup(myargv[p + 1]);
+        M_ForceUppercase(uc_filename);
+
+        if (!M_StringEndsWith(uc_filename, ".LMP"))
         {
             M_StringConcat(file, ".lmp", sizeof(file));
         }
+
+        free(uc_filename);
 
         if (W_AddFile(file) != NULL)
         {
@@ -849,7 +866,7 @@ static void DrawMessage(void)
     player_t *player;
 
     player = &players[consoleplayer];
-    if (player->messageTics <= 0 || !player->message)
+    if (player->messageTics <= 0)
     {                           // No message
         return;
     }
