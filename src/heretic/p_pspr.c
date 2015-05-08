@@ -1330,7 +1330,7 @@ void A_DeathBallImpact(mobj_t * ball)
 
 void A_SpawnRippers(mobj_t * actor)
 {
-    int i;
+    unsigned int i;
     angle_t angle;
     mobj_t *ripper;
 
