@@ -1495,8 +1495,8 @@ void ST_loadGraphics(void)
 
 void ST_loadData(void)
 {
-    static int dword_8848C = 1; // STRIFE-TODO: what is the purpose of this?
-    dword_8848C = 0;
+//    static int dword_8848C = 1; // STRIFE-TODO: what is the purpose of this?
+//    dword_8848C = 0;
 
     lu_palette = W_GetNumForName (DEH_String("PLAYPAL"));
     ST_loadGraphics();
