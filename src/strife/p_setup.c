@@ -324,7 +324,7 @@ void P_LoadThings (int lump)
     mapthing_t         *mt;
     mapthing_t          spawnthing;
     int			numthings;
-    boolean		spawn;
+//    boolean		spawn;
 
     data = W_CacheLumpNum (lump,PU_STATIC);
     numthings = W_LumpLength (lump) / sizeof(mapthing_t);
@@ -332,7 +332,7 @@ void P_LoadThings (int lump)
     mt = (mapthing_t *)data;
     for (i=0 ; i<numthings ; i++, mt++)
     {
-        spawn = true;
+//        spawn = true;
 
         // Do not spawn cool, new monsters if !commercial
         // STRIFE-TODO: replace with isregistered stuff
