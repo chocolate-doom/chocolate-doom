@@ -785,6 +785,9 @@ P_SetupLevel
     // UNUSED W_Profile ();
     P_InitThinkers ();
 
+    // if working with a devlopment map, reload it
+    W_Reload();
+
     // [STRIFE] Removed ExMy map support
     if (map<10)
         DEH_snprintf(lumpname, 9, "map0%i", map);

@@ -1831,7 +1831,10 @@ P_SetupLevel
 
     // UNUSED W_Profile ();
     P_InitThinkers ();
-	   
+
+    // if working with a devlopment map, reload it
+    W_Reload ();
+
     // find map name
     if ( gamemode == commercial)
     {
