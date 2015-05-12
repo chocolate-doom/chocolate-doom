@@ -241,7 +241,7 @@ void M_DrawNewGame(void);
 void M_DrawEpisode(void);
 void M_DrawOptions(void);
 static void M_DrawMouse(void);
-static void M_DrawCrispness(void);
+static void M_DrawCrispness1(void);
 static void M_DrawCrispness2(void);
 static void M_DrawCrispness3(void);
 void M_DrawSound(void);
@@ -487,12 +487,12 @@ static menuitem_t CrispnessMenu[]=
     {1,"",	M_Crispness2,'g'},
 };
 
-static menu_t  CrispnessDef =
+static menu_t  Crispness1Def =
 {
     crispness1_end,
     &OptionsDef,
     CrispnessMenu,
-    M_DrawCrispness,
+    M_DrawCrispness1,
     48,36,
     1
 };
@@ -531,7 +531,7 @@ static menuitem_t Crispness2Menu[]=
 static menu_t  Crispness2Def =
 {
     crispness2_end,
-    &CrispnessDef,
+    &Crispness1Def,
     Crispness2Menu,
     M_DrawCrispness2,
     48,36,
@@ -1337,7 +1337,7 @@ static void M_DrawCrispnessSeparator(int y, char *item)
 
     M_snprintf(crispy_menu_text, sizeof(crispy_menu_text),
                "%s%s", crstr[CR_GOLD], item);
-    M_WriteText(CrispnessDef.x - 8, CrispnessDef.y + CRISPY_LINEHEIGHT * y, crispy_menu_text);
+    M_WriteText(Crispness1Def.x - 8, Crispness1Def.y + CRISPY_LINEHEIGHT * y, crispy_menu_text);
 }
 
 static void M_DrawCrispnessItem(int y, char *item, int feat, boolean cond)
@@ -1348,7 +1348,7 @@ static void M_DrawCrispnessItem(int y, char *item, int feat, boolean cond)
                "%s%s: %s%s", cond ? crstr[CR_NONE] : crstr[CR_DARK], item,
                cond ? (feat ? crstr[CR_GREEN] : crstr[CR_DARK]) : crstr[CR_DARK],
                cond && feat ? "On" : "Off");
-    M_WriteText(CrispnessDef.x, CrispnessDef.y + CRISPY_LINEHEIGHT * y, crispy_menu_text);
+    M_WriteText(Crispness1Def.x, Crispness1Def.y + CRISPY_LINEHEIGHT * y, crispy_menu_text);
 }
 
 static void M_DrawCrispnessGoto(int y, char *item)
@@ -1357,12 +1357,12 @@ static void M_DrawCrispnessGoto(int y, char *item)
 
     M_snprintf(crispy_menu_text, sizeof(crispy_menu_text),
                "%s%s", crstr[CR_GOLD], item);
-    M_WriteText(CrispnessDef.x, CrispnessDef.y + CRISPY_LINEHEIGHT * y, crispy_menu_text);
+    M_WriteText(Crispness1Def.x, Crispness1Def.y + CRISPY_LINEHEIGHT * y, crispy_menu_text);
 }
 
-static void M_DrawCrispness(void)
+static void M_DrawCrispness1(void)
 {
-    CrispnessXDef = &CrispnessDef;
+    CrispnessXDef = &Crispness1Def;
 
     M_DrawCrispnessBackground();
 
@@ -1452,14 +1452,14 @@ static void M_Mouse(int choice)
 static void M_Crispness(int choice)
 {
     if (!CrispnessXDef)
-	CrispnessXDef = &CrispnessDef;
+	CrispnessXDef = &Crispness1Def;
 
     M_SetupNextMenu(CrispnessXDef);
 }
 
 static void M_Crispness1(int choice)
 {
-    M_SetupNextMenu(&CrispnessDef);
+    M_SetupNextMenu(&Crispness1Def);
 }
 
 static void M_Crispness2(int choice)
@@ -2844,11 +2844,11 @@ void M_Drawer (void)
 
     
     // DRAW SKULL
-    if (currentMenu == &CrispnessDef || currentMenu == &Crispness2Def || currentMenu == &Crispness3Def)
+    if (currentMenu == &Crispness1Def || currentMenu == &Crispness2Def || currentMenu == &Crispness3Def)
     {
 	char item[4];
 	M_snprintf(item, sizeof(item), "%s>", whichSkull ? crstr[CR_NONE] : crstr[CR_DARK]);
-	M_WriteText(CrispnessDef.x - 8, CrispnessDef.y + CRISPY_LINEHEIGHT * itemOn, item);
+	M_WriteText(Crispness1Def.x - 8, Crispness1Def.y + CRISPY_LINEHEIGHT * itemOn, item);
 	V_ClearDPTranslation();
     }
     else
