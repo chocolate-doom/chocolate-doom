@@ -176,6 +176,7 @@ char    *skullName[2] = {"M_SKULL1","M_SKULL2"};
 
 // current menudef
 menu_t*	currentMenu;                          
+static menu_t *CrispnessXDef;
 
 //
 // PROTOTYPES
@@ -221,6 +222,7 @@ void M_SizeDisplay(int choice);
 void M_StartGame(int choice);
 static void M_Mouse(int choice);
 static void M_Crispness(int choice);
+static void M_Crispness1(int choice);
 static void M_Crispness2(int choice);
 static void M_Crispness3(int choice);
 void M_Sound(int choice);
@@ -523,7 +525,7 @@ static menuitem_t Crispness2Menu[]=
     {1,"",	M_CrispyToggleAutomapstats,'a'},
     {-1,"",0,'\0'},
     {1,"",	M_Crispness3,'g'},
-    {1,"",	M_Crispness,'g'},
+    {1,"",	M_Crispness1,'g'},
 };
 
 static menu_t  Crispness2Def =
@@ -1360,6 +1362,8 @@ static void M_DrawCrispnessGoto(int y, char *item)
 
 static void M_DrawCrispness(void)
 {
+    CrispnessXDef = &CrispnessDef;
+
     M_DrawCrispnessBackground();
 
     M_DrawCrispnessHeader("Crispness 1/3");
@@ -1380,6 +1384,8 @@ static void M_DrawCrispness(void)
 
 static void M_DrawCrispness2(void)
 {
+    CrispnessXDef = &Crispness2Def;
+
     M_DrawCrispnessBackground();
 
     M_DrawCrispnessHeader("Crispness 2/3");
@@ -1402,6 +1408,8 @@ static void M_DrawCrispness2(void)
 
 static void M_DrawCrispness3(void)
 {
+    CrispnessXDef = &Crispness3Def;
+
     M_DrawCrispnessBackground();
 
     M_DrawCrispnessHeader("Crispness 3/3");
@@ -1442,6 +1450,14 @@ static void M_Mouse(int choice)
 }
 
 static void M_Crispness(int choice)
+{
+    if (!CrispnessXDef)
+	CrispnessXDef = &CrispnessDef;
+
+    M_SetupNextMenu(CrispnessXDef);
+}
+
+static void M_Crispness1(int choice)
 {
     M_SetupNextMenu(&CrispnessDef);
 }
