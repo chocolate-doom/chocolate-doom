@@ -176,7 +176,6 @@ char    *skullName[2] = {"M_SKULL1","M_SKULL2"};
 
 // current menudef
 menu_t*	currentMenu;                          
-static menu_t *CrispnessXDef;
 
 //
 // PROTOTYPES
@@ -496,6 +495,8 @@ static menu_t  Crispness1Def =
     48,36,
     1
 };
+
+static menu_t *CrispnessXDef = &Crispness1Def;
 
 enum
 {
@@ -1337,7 +1338,7 @@ static void M_DrawCrispnessSeparator(int y, char *item)
 
     M_snprintf(crispy_menu_text, sizeof(crispy_menu_text),
                "%s%s", crstr[CR_GOLD], item);
-    M_WriteText(Crispness1Def.x - 8, Crispness1Def.y + CRISPY_LINEHEIGHT * y, crispy_menu_text);
+    M_WriteText(currentMenu->x - 8, currentMenu->y + CRISPY_LINEHEIGHT * y, crispy_menu_text);
 }
 
 static void M_DrawCrispnessItem(int y, char *item, int feat, boolean cond)
@@ -1348,7 +1349,7 @@ static void M_DrawCrispnessItem(int y, char *item, int feat, boolean cond)
                "%s%s: %s%s", cond ? crstr[CR_NONE] : crstr[CR_DARK], item,
                cond ? (feat ? crstr[CR_GREEN] : crstr[CR_DARK]) : crstr[CR_DARK],
                cond && feat ? "On" : "Off");
-    M_WriteText(Crispness1Def.x, Crispness1Def.y + CRISPY_LINEHEIGHT * y, crispy_menu_text);
+    M_WriteText(currentMenu->x, currentMenu->y + CRISPY_LINEHEIGHT * y, crispy_menu_text);
 }
 
 static void M_DrawCrispnessGoto(int y, char *item)
@@ -1357,7 +1358,7 @@ static void M_DrawCrispnessGoto(int y, char *item)
 
     M_snprintf(crispy_menu_text, sizeof(crispy_menu_text),
                "%s%s", crstr[CR_GOLD], item);
-    M_WriteText(Crispness1Def.x, Crispness1Def.y + CRISPY_LINEHEIGHT * y, crispy_menu_text);
+    M_WriteText(currentMenu->x, currentMenu->y + CRISPY_LINEHEIGHT * y, crispy_menu_text);
 }
 
 static void M_DrawCrispness1(void)
@@ -1451,9 +1452,6 @@ static void M_Mouse(int choice)
 
 static void M_Crispness(int choice)
 {
-    if (!CrispnessXDef)
-	CrispnessXDef = &Crispness1Def;
-
     M_SetupNextMenu(CrispnessXDef);
 }
 
@@ -2844,11 +2842,11 @@ void M_Drawer (void)
 
     
     // DRAW SKULL
-    if (currentMenu == &Crispness1Def || currentMenu == &Crispness2Def || currentMenu == &Crispness3Def)
+    if (currentMenu == CrispnessXDef)
     {
 	char item[4];
 	M_snprintf(item, sizeof(item), "%s>", whichSkull ? crstr[CR_NONE] : crstr[CR_DARK]);
-	M_WriteText(Crispness1Def.x - 8, Crispness1Def.y + CRISPY_LINEHEIGHT * itemOn, item);
+	M_WriteText(currentMenu->x - 8, currentMenu->y + CRISPY_LINEHEIGHT * itemOn, item);
 	V_ClearDPTranslation();
     }
     else
