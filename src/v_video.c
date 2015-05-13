@@ -136,6 +136,8 @@ void V_SetPatchClipCallback(vpatchclipfunc_t func)
 // Masks a column based masked pic to the screen. 
 //
 
+#define dest_in_framebuffer ((dest-dest_screen) < SCREENHEIGHT*SCREENWIDTH)
+
 void V_DrawPatch(int x, int y, patch_t *patch)
 { 
     int count;
@@ -158,9 +160,9 @@ void V_DrawPatch(int x, int y, patch_t *patch)
 
 #ifdef RANGECHECK
     if (x < 0
-     || x + SHORT(patch->width) > SCREENWIDTH
+     /* || x + SHORT(patch->width) > SCREENWIDTH */
      || y < 0
-     || y + SHORT(patch->height) > SCREENHEIGHT)
+     /* || y + SHORT(patch->height) > SCREENHEIGHT */ )
     {
         I_Error("Bad V_DrawPatch");
     }
@@ -173,6 +175,12 @@ void V_DrawPatch(int x, int y, patch_t *patch)
 
     w = SHORT(patch->width);
 
+    // [crispy] prevent framebuffer overflow
+    if (x > SCREENWIDTH || y > SCREENHEIGHT)
+        return;
+    else
+    if (x + w > SCREENWIDTH)
+        w = SCREENWIDTH - x;
     for ( ; col<w ; x++, col++, desttop++)
     {
         column = (column_t *)((byte *)patch + LONG(patch->columnofs[col]));
@@ -184,7 +192,8 @@ void V_DrawPatch(int x, int y, patch_t *patch)
             dest = desttop + column->topdelta*SCREENWIDTH;
             count = column->length;
 
-            while (count--)
+            // [crispy] prevent framebuffer overflow
+            while (count-- && dest_in_framebuffer)
             {
                 *dest = *source++;
                 dest += SCREENWIDTH;
@@ -222,9 +231,9 @@ void V_DrawPatchFlipped(int x, int y, patch_t *patch)
 
 #ifdef RANGECHECK 
     if (x < 0
-     || x + SHORT(patch->width) > SCREENWIDTH
+     /* || x + SHORT(patch->width) > SCREENWIDTH */
      || y < 0
-     || y + SHORT(patch->height) > SCREENHEIGHT)
+     /* || y + SHORT(patch->height) > SCREENHEIGHT */ )
     {
         I_Error("Bad V_DrawPatchFlipped");
     }
@@ -237,6 +246,13 @@ void V_DrawPatchFlipped(int x, int y, patch_t *patch)
 
     w = SHORT(patch->width);
 
+    // [crispy] prevent framebuffer overflow
+    if (x > SCREENWIDTH || y > SCREENHEIGHT)
+        return;
+    else
+    if (x + w > SCREENWIDTH)
+        w = SCREENWIDTH - x;
+
     for ( ; col<w ; x++, col++, desttop++)
     {
         column = (column_t *)((byte *)patch + LONG(patch->columnofs[w-1-col]));
@@ -248,7 +264,8 @@ void V_DrawPatchFlipped(int x, int y, patch_t *patch)
             dest = desttop + column->topdelta*SCREENWIDTH;
             count = column->length;
 
-            while (count--)
+            // [crispy] prevent framebuffer overflow
+            while (count-- && dest_in_framebuffer)
             {
                 *dest = *source++;
                 dest += SCREENWIDTH;
