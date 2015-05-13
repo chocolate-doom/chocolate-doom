@@ -1307,15 +1307,9 @@ static void M_DrawCrispnessBackground(void)
 
 	for (y = 0; y < SCREENHEIGHT; y++)
 	{
-	    for (x = 0; x < SCREENWIDTH / 64; x++)
+	    for (x = 0; x < SCREENWIDTH; x++)
 	    {
-		memcpy(dest, src+((y & 63) << 6), 64);
-		dest += 64;
-	    }
-	    if (SCREENWIDTH & 63)
-	    {
-		memcpy(dest, src + ((y & 63) << 6), SCREENWIDTH & 63);
-		dest += (SCREENWIDTH & 63);
+		*dest++ = src[(y & 63) * 64 + (x & 63)];
 	    }
 	}
     }
