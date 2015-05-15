@@ -136,7 +136,8 @@ void V_SetPatchClipCallback(vpatchclipfunc_t func)
 // Masks a column based masked pic to the screen. 
 //
 
-#define dest_in_framebuffer ((dest-dest_screen) < SCREENHEIGHT*SCREENWIDTH)
+// [crispy] prevent framebuffer overflow
+#define dest_in_framebuffer (safe || ((dest-dest_screen) < SCREENHEIGHT*SCREENWIDTH))
 
 void V_DrawPatch(int x, int y, patch_t *patch)
 { 
@@ -147,6 +148,8 @@ void V_DrawPatch(int x, int y, patch_t *patch)
     byte *dest;
     byte *source;
     int w;
+    // [crispy] prevent framebuffer overflow
+    const boolean safe = !(y + SHORT(patch->height) > SCREENHEIGHT);
 
     y -= SHORT(patch->topoffset);
     x -= SHORT(patch->leftoffset);
@@ -218,6 +221,8 @@ void V_DrawPatchFlipped(int x, int y, patch_t *patch)
     byte *dest;
     byte *source; 
     int w; 
+    // [crispy] prevent framebuffer overflow
+    const boolean safe = !(y + SHORT(patch->height) > SCREENHEIGHT);
  
     y -= SHORT(patch->topoffset); 
     x -= SHORT(patch->leftoffset); 
