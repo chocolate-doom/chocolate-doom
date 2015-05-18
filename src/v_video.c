@@ -173,9 +173,9 @@ void V_DrawPatch(int x, int y, patch_t *patch)
 
 #ifdef RANGECHECK
     if (x < 0
-     /* || x + SHORT(patch->width) > ORIGWIDTH */
+     || x /* + SHORT(patch->width) */ > ORIGWIDTH
      || y < 0
-     /* || y + SHORT(patch->height) > ORIGHEIGHT */ )
+     || y /* + SHORT(patch->height) */ > ORIGHEIGHT )
     {
         I_Error("Bad V_DrawPatch");
     }
@@ -189,9 +189,6 @@ void V_DrawPatch(int x, int y, patch_t *patch)
     w = SHORT(patch->width);
 
     // [crispy] prevent framebuffer overflow
-    if (x > ORIGWIDTH || y > ORIGHEIGHT)
-        return;
-    else
     if (x + w > ORIGWIDTH)
         w = ORIGWIDTH - x;
 
@@ -352,9 +349,9 @@ void V_DrawPatchFlipped(int x, int y, patch_t *patch)
 
 #ifdef RANGECHECK 
     if (x < 0
-     /* || x + SHORT(patch->width) > ORIGWIDTH */
+     || x /* + SHORT(patch->width) */ > ORIGWIDTH
      || y < 0
-     /* || y + SHORT(patch->height) > ORIGHEIGHT */ )
+     || y /* + SHORT(patch->height) */ > ORIGHEIGHT )
     {
         I_Error("Bad V_DrawPatchFlipped");
     }
@@ -368,9 +365,6 @@ void V_DrawPatchFlipped(int x, int y, patch_t *patch)
     w = SHORT(patch->width);
 
     // [crispy] prevent framebuffer overflow
-    if (x > ORIGWIDTH || y > ORIGHEIGHT)
-        return;
-    else
     if (x + w > ORIGWIDTH)
         w = ORIGWIDTH - x;
 
