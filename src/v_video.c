@@ -163,9 +163,9 @@ void V_DrawPatch(int x, int y, patch_t *patch)
 
 #ifdef RANGECHECK
     if (x < 0
-     /* || x + SHORT(patch->width) > SCREENWIDTH */
+     || x /* + SHORT(patch->width) */ > SCREENWIDTH
      || y < 0
-     /* || y + SHORT(patch->height) > SCREENHEIGHT */ )
+     || y /* + SHORT(patch->height) */ > SCREENHEIGHT )
     {
         I_Error("Bad V_DrawPatch");
     }
@@ -179,9 +179,6 @@ void V_DrawPatch(int x, int y, patch_t *patch)
     w = SHORT(patch->width);
 
     // [crispy] prevent framebuffer overflow
-    if (x > SCREENWIDTH || y > SCREENHEIGHT)
-        return;
-    else
     if (x + w > SCREENWIDTH)
         w = SCREENWIDTH - x;
     for ( ; col<w ; x++, col++, desttop++)
@@ -236,9 +233,9 @@ void V_DrawPatchFlipped(int x, int y, patch_t *patch)
 
 #ifdef RANGECHECK 
     if (x < 0
-     /* || x + SHORT(patch->width) > SCREENWIDTH */
+     || x /* + SHORT(patch->width) */ > SCREENWIDTH
      || y < 0
-     /* || y + SHORT(patch->height) > SCREENHEIGHT */ )
+     || y /* + SHORT(patch->height) */ > SCREENHEIGHT )
     {
         I_Error("Bad V_DrawPatchFlipped");
     }
@@ -252,9 +249,6 @@ void V_DrawPatchFlipped(int x, int y, patch_t *patch)
     w = SHORT(patch->width);
 
     // [crispy] prevent framebuffer overflow
-    if (x > SCREENWIDTH || y > SCREENHEIGHT)
-        return;
-    else
     if (x + w > SCREENWIDTH)
         w = SCREENWIDTH - x;
 
