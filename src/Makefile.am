@@ -79,6 +79,7 @@ m_cheat.c            m_cheat.h             \
 m_config.c           m_config.h            \
 m_controls.c         m_controls.h          \
 m_fixed.c            m_fixed.h             \
+r_medusa.c           r_medusa.h            \
 sha1.c               sha1.h                \
 memio.c              memio.h               \
 tables.c             tables.h              \
