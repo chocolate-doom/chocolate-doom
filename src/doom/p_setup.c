@@ -1816,8 +1816,6 @@ P_SetupLevel
     {
 	players[i].killcount = players[i].secretcount 
 	    = players[i].itemcount = 0;
-	// [crispy] explored fraction of map
-	players[i].mapped = 0;
     }
 
     // Initial height of PointOfView

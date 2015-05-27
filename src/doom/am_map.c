@@ -1251,8 +1251,6 @@ void AM_drawWalls(void)
     int i;
     static mline_t l;
 
-    // [crispy] explored fraction of map
-    plr->mapped = 0;
     for (i=0;i<numlines;i++)
     {
 	l.a.x = lines[i].v1->x;
@@ -1266,10 +1264,6 @@ void AM_drawWalls(void)
 	}
 	if (cheating || (lines[i].flags & ML_MAPPED))
 	{
-	    // [crispy] show explored fraction of map with IDDT cheat
-	    if (cheating && lines[i].flags & ML_MAPPED)
-		plr->mapped++;
-
 	    if ((lines[i].flags & LINE_NEVERSEE) && !cheating)
 		continue;
 	    {
