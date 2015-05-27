@@ -1878,6 +1878,12 @@ void D_DoomMain (void)
     crispy_havemap33 = (W_CheckNumForName("map33") != -1) &&
                        (W_CheckNumForName("cwilv32") != -1);
 
+    // [crispy] change level name for MAP33 if not already changed
+    if (crispy_havemap33 && !strcmp(PHUSTR_1, DEH_String(PHUSTR_1)))
+    {
+        DEH_AddStringReplacement(PHUSTR_1, "level 33: betray");
+    }
+
     // [crispy] check for NWT-style merging
     crispy_nwtmerge =
 	M_CheckParmWithArgs("-nwtmerge", 1) ||
