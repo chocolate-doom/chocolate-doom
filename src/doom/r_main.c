@@ -900,7 +900,6 @@ void R_SetupFrame (player_t* player)
     }
 
     extralight = player->extralight;
-    extralight += crispy_flashlight;
 
     // [crispy] pitch is actual lookdir and weapon pitch
     pitch = player->lookdir/MLOOKUNIT + (player->recoilpitch>>FRACBITS);

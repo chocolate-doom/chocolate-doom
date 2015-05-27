@@ -61,7 +61,6 @@
 #include "v_trans.h" // [crispy] colored cheat messages
 
 extern int screenblocks; // [crispy] for the Crispy HUD
-int crispy_flashlight = 0;
 
 //
 // STATUS BAR DATA
@@ -420,7 +419,6 @@ cheatseq_t cheat_hom = CHEAT("tnthom", 0);
 cheatseq_t cheat_notarget = CHEAT("notarget", 0);
 cheatseq_t cheat_spechits = CHEAT("spechits", 0);
 cheatseq_t cheat_nomomentum = CHEAT("nomomentum", 0);
-cheatseq_t cheat_ducttape = CHEAT("ducttape", 0);
 cheatseq_t cheat_showfps = CHEAT("showfps", 0);
 
 //
@@ -693,24 +691,6 @@ ST_Responder (event_t* ev)
 	M_snprintf(msg, sizeof(msg), "%s%d %sSpecial Line%s Triggered",
 	           crstr[CR_GOLD],
 	           triggeredlines, crstr[CR_NONE], (triggeredlines == 1) ? "" : "s");
-	plyr->message = msg;
-      }
-      // [crispy] implement Crispy Doom's "ducttape" cheat
-      else if (cht_CheckCheat(&cheat_ducttape, ev->data2))
-      {
-	static char msg[32];
-
-	crispy_flashlight++;
-
-	if (crispy_flashlight > 4)
-	    crispy_flashlight = 0;
-
-	if (!crispy_flashlight)
-	    M_snprintf(msg, sizeof(msg), "Flashlight %soff", crstr[CR_GOLD]);
-	else
-	    M_snprintf(msg, sizeof(msg), "Flashlight level %s%d",
-	               crstr[CR_GOLD], crispy_flashlight);
-
 	plyr->message = msg;
       }
       // [crispy] implement Boom's "tnthom" cheat
