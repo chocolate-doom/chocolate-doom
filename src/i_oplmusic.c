@@ -143,6 +143,9 @@ struct opl_voice_s
     // The current volume (register value) that has been set for this channel.
     unsigned int reg_volume;
 
+    // Priority.
+    unsigned int priority;
+
     // Next in linked list; a voice is always either in the
     // free list or the allocated list.
     opl_voice_t *next;
@@ -294,6 +297,7 @@ static const unsigned int volume_mapping_table[] = {
     124, 124, 125, 125, 126, 126, 127, 127
 };
 
+opl_driver_ver_t opl_drv_ver = opl_v_new;
 static boolean music_initialized = false;
 
 //static boolean musicpaused = false;
@@ -311,6 +315,7 @@ static char (*percussion_names)[32];
 static opl_voice_t voices[OPL_NUM_VOICES];
 static opl_voice_t *voice_free_list;
 static opl_voice_t *voice_alloced_list;
+static int voice_alloced_num;
 
 // Track data for playing tracks:
 
@@ -391,6 +396,8 @@ static opl_voice_t *GetFreeVoice(void)
     *rover = result;
     result->next = NULL;
 
+    voice_alloced_num++;
+
     return result;
 }
 
@@ -410,6 +417,7 @@ static void RemoveVoiceFromAllocedList(opl_voice_t *voice)
         {
             *rover = voice->next;
             voice->next = NULL;
+            voice_alloced_num--;
             break;
         }
 
@@ -419,12 +427,19 @@ static void RemoveVoiceFromAllocedList(opl_voice_t *voice)
 
 // Release a voice back to the freelist.
 
+static void VoiceKeyOff(opl_voice_t *voice);
+
 static void ReleaseVoice(opl_voice_t *voice)
 {
     opl_voice_t **rover;
+    opl_voice_t *next;
+    boolean doublev;
 
     voice->channel = NULL;
     voice->note = 0;
+
+    doublev = voice->current_instr_voice != 0;
+    next = voice->next;
 
     // Remove from alloced list.
 
@@ -441,6 +456,12 @@ static void ReleaseVoice(opl_voice_t *voice)
 
     *rover = voice;
     voice->next = NULL;
+
+    if (next != NULL && doublev && opl_drv_ver == opl_v_old)
+    {
+        VoiceKeyOff(next);
+        ReleaseVoice(next);
+    }
 }
 
 // Load data to the specified operator
@@ -511,6 +532,11 @@ static void SetVoiceInstrument(opl_voice_t *voice,
     // Hack to force a volume update.
 
     voice->reg_volume = 999;
+
+    // Calculate voice priority.
+
+    voice->priority = 0x0f - (data->carrier.attack >> 4)
+                    + 0x0f - (data->carrier.sustain & 0x0f);
 }
 
 static void SetVoiceVolume(opl_voice_t *voice, unsigned int volume)
@@ -638,8 +664,9 @@ static opl_channel_data_t *TrackChannelForEvent(opl_track_data_t *track,
 static void KeyOffEvent(opl_track_data_t *track, midi_event_t *event)
 {
     opl_channel_data_t *channel;
+    opl_voice_t *rover;
+    opl_voice_t *prev;
     unsigned int key;
-    unsigned int i;
 
 /*
     printf("note off: channel %i, %i, %i\n",
@@ -654,15 +681,31 @@ static void KeyOffEvent(opl_track_data_t *track, midi_event_t *event)
     // Turn off voices being used to play this key.
     // If it is a double voice instrument there will be two.
 
-    for (i = 0; i < OPL_NUM_VOICES; ++i)
+    rover = voice_alloced_list;
+    prev = NULL;
+
+    while (rover!=NULL)
     {
-        if (voices[i].channel == channel && voices[i].key == key)
+        if (rover->channel == channel && rover->key == key)
         {
-            VoiceKeyOff(&voices[i]);
+            VoiceKeyOff(rover);
 
             // Finished with this voice now.
 
-            ReleaseVoice(&voices[i]);
+            ReleaseVoice(rover);
+            if (prev == NULL)
+            {
+                rover = voice_alloced_list;
+            }
+            else
+            {
+                rover = prev->next;
+            }
+        }
+        else
+        {
+            prev = rover;
+            rover = rover->next;
         }
     }
 }
@@ -693,6 +736,39 @@ static void ReplaceExistingVoice(void)
          || (rover->current_instr_voice == result->current_instr_voice
           && rover->channel >= result->channel))
         {
+            result = rover;
+        }
+    }
+
+    VoiceKeyOff(result);
+    ReleaseVoice(result);
+}
+
+static void ReplaceExistingVoiceOld(opl_channel_data_t *channel)
+{
+    opl_voice_t *rover;
+    opl_voice_t *result;
+    opl_voice_t *roverend;
+    int i;
+    int priority;
+
+    result = voice_alloced_list;
+
+    roverend = voice_alloced_list;
+
+    for (i = 0; i < voice_alloced_num - 3; i++)
+    {
+        roverend = roverend->next;
+    }
+
+    priority = 0x8000;
+
+    for (rover = voice_alloced_list; rover != roverend; rover = rover->next)
+    {
+        if (rover->priority < priority
+         && rover->channel >= channel)
+        {
+            priority = rover->priority;
             result = rover;
         }
     }
@@ -854,6 +930,7 @@ static void KeyOnEvent(opl_track_data_t *track, midi_event_t *event)
     genmidi_instr_t *instrument;
     opl_channel_data_t *channel;
     unsigned int note, key, volume;
+    boolean doublev;
 
 /*
     printf("note on: channel %i, %i, %i\n",
@@ -896,20 +973,45 @@ static void KeyOnEvent(opl_track_data_t *track, midi_event_t *event)
     {
         instrument = channel->instrument;
     }
+    doublev = (SHORT(instrument->flags) & GENMIDI_FLAG_2VOICE) != 0;
 
-    if (voice_free_list == NULL)
+	if (opl_drv_ver == opl_v_old)
     {
-        ReplaceExistingVoice();
+        if (voice_alloced_num == OPL_NUM_VOICES)
+        {
+            ReplaceExistingVoiceOld(channel);
+        }
+        if (voice_alloced_num == OPL_NUM_VOICES - 1 && doublev)
+        {
+            ReplaceExistingVoiceOld(channel);
+        }
+
+        // Find and program a voice for this instrument.  If this
+        // is a double voice instrument, we must do this twice.
+
+        if (doublev)
+        {
+            VoiceKeyOn(channel, instrument, 1, note, key, volume);
+        }
+
+        VoiceKeyOn(channel, instrument, 0, note, key, volume);
     }
-
-    // Find and program a voice for this instrument.  If this
-    // is a double voice instrument, we must do this twice.
-
-    VoiceKeyOn(channel, instrument, 0, note, key, volume);
-
-    if ((SHORT(instrument->flags) & GENMIDI_FLAG_2VOICE) != 0)
+    else
     {
-        VoiceKeyOn(channel, instrument, 1, note, key, volume);
+        if (voice_free_list == NULL)
+        {
+            ReplaceExistingVoice();
+        }
+
+        // Find and program a voice for this instrument.  If this
+        // is a double voice instrument, we must do this twice.
+
+        VoiceKeyOn(channel, instrument, 0, note, key, volume);
+
+        if (doublev)
+        {
+            VoiceKeyOn(channel, instrument, 1, note, key, volume);
+        }
     }
 }
 
@@ -948,14 +1050,34 @@ static void SetChannelVolume(opl_channel_data_t *channel, unsigned int volume)
 // Handler for the MIDI_CONTROLLER_ALL_NOTES_OFF channel event.
 static void AllNotesOff(opl_channel_data_t *channel, unsigned int param)
 {
-    unsigned int i;
+    opl_voice_t *rover;
+    opl_voice_t *prev;
 
-    for (i = 0; i < OPL_NUM_VOICES; ++i)
+    rover = voice_alloced_list;
+    prev = NULL;
+
+    while (rover!=NULL)
     {
-        if (voices[i].channel == channel)
+        if (rover->channel == channel)
         {
-            VoiceKeyOff(&voices[i]);
-            ReleaseVoice(&voices[i]);
+            VoiceKeyOff(rover);
+
+            // Finished with this voice now.
+
+            ReleaseVoice(rover);
+            if (prev == NULL)
+            {
+                rover = voice_alloced_list;
+            }
+            else
+            {
+                rover = prev->next;
+            }
+        }
+        else
+        {
+            prev = rover;
+            rover = rover->next;
         }
     }
 }

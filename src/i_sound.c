@@ -66,6 +66,7 @@ extern music_module_t music_opl_module;
 
 // For OPL module:
 
+extern opl_driver_ver_t opl_drv_ver;
 extern int opl_io_port;
 
 // For native music module:
@@ -470,5 +471,10 @@ void I_BindSoundVariables(void)
         }
     }
 #endif
+}
+
+void I_SetOPLDriverVer(opl_driver_ver_t ver)
+{
+    opl_drv_ver = ver;
 }
 

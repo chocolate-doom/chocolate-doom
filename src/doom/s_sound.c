@@ -115,6 +115,7 @@ void S_Init(int sfxVolume, int musicVolume)
 {  
     int i;
 
+    I_SetOPLDriverVer(opl_v_new);
     I_PrecacheSounds(S_sfx, NUMSFX);
 
     S_SetSfxVolume(sfxVolume);
