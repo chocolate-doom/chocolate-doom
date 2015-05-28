@@ -732,9 +732,8 @@ static void ReplaceExistingVoice(void)
 
     for (rover = voice_alloced_list; rover != NULL; rover = rover->next)
     {
-        if (rover->current_instr_voice > result->current_instr_voice
-         || (rover->current_instr_voice == result->current_instr_voice
-          && rover->channel >= result->channel))
+        if (rover->current_instr_voice != 0
+         || rover->channel >= result->channel)
         {
             result = rover;
         }
