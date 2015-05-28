@@ -347,7 +347,7 @@ void D_Display (void)
 
 	if (menushade < 16 && gametic != firsttic)
 	{
-	    menushade++;
+	    menushade += ticdup;
 	    firsttic = gametic;
 	}
 
