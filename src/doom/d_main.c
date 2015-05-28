@@ -340,11 +340,16 @@ void D_Display (void)
     // [crispy] shade background when a menu is active or the game is paused
     if (paused || menuactive)
     {
+	static int firsttic;
+
 	for (y = 0; y < SCREENWIDTH * SCREENHEIGHT; y++)
 	    I_VideoBuffer[y] = colormaps[menushade * 256 + I_VideoBuffer[y]];
 
-	if (menushade < 16)
+	if (menushade < 16 && gametic != firsttic)
+	{
 	    menushade++;
+	    firsttic = gametic;
+	}
 
 	// [crispy] force redraw of status bar and border
 	viewactivestate = false;
