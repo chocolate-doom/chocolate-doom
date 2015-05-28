@@ -5,7 +5,8 @@
        Fabian Greffrath for his careful investigation and emulation of
        the demo game's behavior in developing this.
      * OPL music playback has been changed to match the behavior of
-       Vanilla Doom's DMX library much more closely (thanks khokh2001).
+       Vanilla Doom's DMX library much more closely (thanks to Alexey
+       Khokholov for the excellent research).
      * New gamepad configurations:
         - PS4 DualShock 4 (thanks Matt '3nT' Davis).
         - Xbox One controller on Linux (thanks chungy).
