@@ -321,7 +321,7 @@ int OPL_Detect(void)
     {
         result1 = OPL_ReadPort(OPL_REGISTER_PORT);
         result2 = OPL_ReadPort(OPL_REGISTER_PORT_OPL3);
-        if (result1 == 0x00 && result2 == 0xff)
+        if (result1 == 0x00)
         {
             return 2;
         }
