@@ -473,8 +473,3 @@ void I_BindSoundVariables(void)
 #endif
 }
 
-void I_SetOPLDriverVer(opl_driver_ver_t ver)
-{
-    opl_drv_ver = ver;
-}
-

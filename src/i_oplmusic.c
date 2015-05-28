@@ -297,7 +297,7 @@ static const unsigned int volume_mapping_table[] = {
     124, 124, 125, 125, 126, 126, 127, 127
 };
 
-opl_driver_ver_t opl_drv_ver = opl_v_new;
+static opl_driver_ver_t opl_drv_ver = opl_v_new;
 static boolean music_initialized = false;
 
 //static boolean musicpaused = false;
@@ -433,12 +433,12 @@ static void ReleaseVoice(opl_voice_t *voice)
 {
     opl_voice_t **rover;
     opl_voice_t *next;
-    boolean doublev;
+    boolean double_voice;
 
     voice->channel = NULL;
     voice->note = 0;
 
-    doublev = voice->current_instr_voice != 0;
+    double_voice = voice->current_instr_voice != 0;
     next = voice->next;
 
     // Remove from alloced list.
@@ -457,7 +457,7 @@ static void ReleaseVoice(opl_voice_t *voice)
     *rover = voice;
     voice->next = NULL;
 
-    if (next != NULL && doublev && opl_drv_ver == opl_v_old)
+    if (next != NULL && double_voice && opl_drv_ver == opl_v_old)
     {
         VoiceKeyOff(next);
         ReleaseVoice(next);
@@ -684,7 +684,7 @@ static void KeyOffEvent(opl_track_data_t *track, midi_event_t *event)
     rover = voice_alloced_list;
     prev = NULL;
 
-    while (rover!=NULL)
+    while (rover != NULL)
     {
         if (rover->channel == channel && rover->key == key)
         {
@@ -743,6 +743,9 @@ static void ReplaceExistingVoice(void)
     VoiceKeyOff(result);
     ReleaseVoice(result);
 }
+
+// Alternate version of ReplaceExistingVoice() used when emulating old
+// versions of the DMX library used in Heretic and Hexen.
 
 static void ReplaceExistingVoiceOld(opl_channel_data_t *channel)
 {
@@ -930,7 +933,7 @@ static void KeyOnEvent(opl_track_data_t *track, midi_event_t *event)
     genmidi_instr_t *instrument;
     opl_channel_data_t *channel;
     unsigned int note, key, volume;
-    boolean doublev;
+    boolean double_voice;
 
 /*
     printf("note on: channel %i, %i, %i\n",
@@ -973,15 +976,16 @@ static void KeyOnEvent(opl_track_data_t *track, midi_event_t *event)
     {
         instrument = channel->instrument;
     }
-    doublev = (SHORT(instrument->flags) & GENMIDI_FLAG_2VOICE) != 0;
 
-	if (opl_drv_ver == opl_v_old)
+    double_voice = (SHORT(instrument->flags) & GENMIDI_FLAG_2VOICE) != 0;
+
+    if (opl_drv_ver == opl_v_old)
     {
         if (voice_alloced_num == OPL_NUM_VOICES)
         {
             ReplaceExistingVoiceOld(channel);
         }
-        if (voice_alloced_num == OPL_NUM_VOICES - 1 && doublev)
+        if (voice_alloced_num == OPL_NUM_VOICES - 1 && double_voice)
         {
             ReplaceExistingVoiceOld(channel);
         }
@@ -989,7 +993,7 @@ static void KeyOnEvent(opl_track_data_t *track, midi_event_t *event)
         // Find and program a voice for this instrument.  If this
         // is a double voice instrument, we must do this twice.
 
-        if (doublev)
+        if (double_voice)
         {
             VoiceKeyOn(channel, instrument, 1, note, key, volume);
         }
@@ -1008,7 +1012,7 @@ static void KeyOnEvent(opl_track_data_t *track, midi_event_t *event)
 
         VoiceKeyOn(channel, instrument, 0, note, key, volume);
 
-        if (doublev)
+        if (double_voice)
         {
             VoiceKeyOn(channel, instrument, 1, note, key, volume);
         }
@@ -1625,6 +1629,11 @@ music_module_t music_opl_module =
     I_OPL_MusicIsPlaying,
     NULL,  // Poll
 };
+
+void I_SetOPLDriverVer(opl_driver_ver_t ver)
+{
+    opl_drv_ver = ver;
+}
 
 //----------------------------------------------------------------------
 //

@@ -234,9 +234,10 @@ extern char *snd_musiccmd;
 
 void I_BindSoundVariables(void);
 
+// DMX version to emulate for OPL emulation:
 typedef enum {
-    opl_v_old, // hexen heretic
-    opl_v_new // doom strife
+    opl_v_old,   // Hexen, Heretic
+    opl_v_new    // Doom, Strife
 } opl_driver_ver_t;
 
 void I_SetOPLDriverVer(opl_driver_ver_t ver);
