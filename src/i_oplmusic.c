@@ -353,7 +353,8 @@ static boolean LoadInstrumentTable(void)
 
     main_instrs = (genmidi_instr_t *) (lump + strlen(GENMIDI_HEADER));
     percussion_instrs = main_instrs + GENMIDI_NUM_INSTRS;
-    main_instr_names = (char (*)[32]) (percussion_instrs + GENMIDI_NUM_PERCUSSION);
+    main_instr_names =
+        (char (*)[32]) (percussion_instrs + GENMIDI_NUM_PERCUSSION);
     percussion_names = main_instr_names + GENMIDI_NUM_INSTRS;
 
     return true;
@@ -529,7 +530,8 @@ static void SetVoiceVolume(opl_voice_t *voice, unsigned int volume)
     midi_volume = 2 * (volume_mapping_table[(voice->channel->volume
                   * current_music_volume) / 127] + 1);
 
-    full_volume = (volume_mapping_table[voice->note_volume] * midi_volume) >> 9;
+    full_volume = (volume_mapping_table[voice->note_volume] * midi_volume)
+                >> 9;
 
     // The volume value to use in the register:
     car_volume = 0x3f - full_volume;
@@ -545,7 +547,8 @@ static void SetVoiceVolume(opl_voice_t *voice, unsigned int volume)
         // If we are using non-modulated feedback mode, we must set the
         // volume for both voices.
 
-        if ((opl_voice->feedback & 0x01) != 0 && opl_voice->modulator.level != 0x3f)
+        if ((opl_voice->feedback & 0x01) != 0
+         && opl_voice->modulator.level != 0x3f)
         {
             mod_volume = 0x3f - opl_voice->modulator.level;
             if (mod_volume >= car_volume)
@@ -553,7 +556,8 @@ static void SetVoiceVolume(opl_voice_t *voice, unsigned int volume)
                 mod_volume = car_volume;
             }
             OPL_WriteRegister(OPL_REGS_LEVEL + voice->op1,
-                              mod_volume | (opl_voice->modulator.scale & 0xc0));
+                              mod_volume |
+                              (opl_voice->modulator.scale & 0xc0));
         }
     }
 }
@@ -668,7 +672,7 @@ static void KeyOffEvent(opl_track_data_t *track, midi_event_t *event)
 // passed to the function is the channel for the new note to be
 // played.
 
-static void ReplaceExistingVoice()
+static void ReplaceExistingVoice(void)
 {
     opl_voice_t *rover;
     opl_voice_t *result;
@@ -685,8 +689,9 @@ static void ReplaceExistingVoice()
 
     for (rover = voice_alloced_list; rover != NULL; rover = rover->next)
     {
-        if (rover->current_instr_voice != 0
-         || rover->channel >= result->channel)
+        if (rover->current_instr_voice > result->current_instr_voice
+         || (rover->current_instr_voice == result->current_instr_voice
+          && rover->channel >= result->channel))
         {
             result = rover;
         }
