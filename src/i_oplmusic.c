@@ -326,8 +326,8 @@ static opl_voice_t voices[OPL_NUM_VOICES * 2];
 static opl_voice_t *voice_free_list;
 static opl_voice_t *voice_alloced_list;
 static int voice_alloced_num;
-static int opl_new;
-static int opl_voice_num;
+static int opl_opl3mode;
+static int num_opl_voices;
 
 // Track data for playing tracks:
 
@@ -581,7 +581,8 @@ static void SetVoiceVolume(opl_voice_t *voice, unsigned int volume)
     {
         voice->reg_volume = car_volume | (opl_voice->carrier.scale & 0xc0);
 
-        OPL_WriteRegister((OPL_REGS_LEVEL + voice->op2) | voice->array, voice->reg_volume);
+        OPL_WriteRegister((OPL_REGS_LEVEL + voice->op2) | voice->array,
+                          voice->reg_volume);
 
         // If we are using non-modulated feedback mode, we must set the
         // volume for both voices.
@@ -624,7 +625,7 @@ static void InitVoices(void)
 
     // Initialize each voice.
 
-    for (i = 0; i < opl_voice_num; ++i)
+    for (i = 0; i < num_opl_voices; ++i)
     {
         voices[i].index = i % OPL_NUM_VOICES;
         voices[i].op1 = voice_operators[0][i % OPL_NUM_VOICES];
@@ -650,7 +651,7 @@ static void I_OPL_SetMusicVolume(int volume)
 
     // Update the volume of all voices.
 
-    for (i = 0; i < opl_voice_num; ++i)
+    for (i = 0; i < num_opl_voices; ++i)
     {
         if (voices[i].channel != NULL)
         {
@@ -661,7 +662,8 @@ static void I_OPL_SetMusicVolume(int volume)
 
 static void VoiceKeyOff(opl_voice_t *voice)
 {
-    OPL_WriteRegister((OPL_REGS_FREQ_2 + voice->index) | voice->array, voice->freq >> 8);
+    OPL_WriteRegister((OPL_REGS_FREQ_2 + voice->index) | voice->array,
+                      voice->freq >> 8);
 }
 
 static opl_channel_data_t *TrackChannelForEvent(opl_track_data_t *track,
@@ -894,8 +896,10 @@ static void UpdateVoiceFrequency(opl_voice_t *voice)
 
     if (voice->freq != freq)
     {
-        OPL_WriteRegister((OPL_REGS_FREQ_1 + voice->index) | voice->array, freq & 0xff);
-        OPL_WriteRegister((OPL_REGS_FREQ_2 + voice->index) | voice->array, (freq >> 8) | 0x20);
+        OPL_WriteRegister((OPL_REGS_FREQ_1 + voice->index) | voice->array,
+                          freq & 0xff);
+        OPL_WriteRegister((OPL_REGS_FREQ_2 + voice->index) | voice->array,
+                          (freq >> 8) | 0x20);
 
         voice->freq = freq;
     }
@@ -1007,11 +1011,11 @@ static void KeyOnEvent(opl_track_data_t *track, midi_event_t *event)
 
     if (opl_drv_ver == opl_v_old)
     {
-        if (voice_alloced_num == OPL_NUM_VOICES)
+        if (voice_alloced_num == num_opl_voices)
         {
             ReplaceExistingVoiceOld(channel);
         }
-        if (voice_alloced_num == OPL_NUM_VOICES - 1 && double_voice)
+        if (voice_alloced_num == num_opl_voices - 1 && double_voice)
         {
             ReplaceExistingVoiceOld(channel);
         }
@@ -1068,7 +1072,7 @@ static void SetChannelVolume(opl_channel_data_t *channel, unsigned int volume)
 
     // Update all voices that this channel is using.
 
-    for (i = 0; i < opl_voice_num; ++i)
+    for (i = 0; i < num_opl_voices; ++i)
     {
         if (voices[i].channel == channel)
         {
@@ -1082,7 +1086,7 @@ static void SetChannelPan(opl_channel_data_t *channel, unsigned int pan)
     unsigned int reg_pan;
     unsigned int i;
 
-    if (opl_new)
+    if (opl_opl3mode)
     {
         if (pan >= 96)
         {
@@ -1099,7 +1103,7 @@ static void SetChannelPan(opl_channel_data_t *channel, unsigned int pan)
         if (channel->pan != reg_pan)
         {
             channel->pan = reg_pan;
-            for (i = 0; i < opl_voice_num; i++)
+            for (i = 0; i < num_opl_voices; i++)
             {
                 if (voices[i].channel == channel)
                 {
@@ -1199,7 +1203,7 @@ static void PitchBendEvent(opl_track_data_t *track, midi_event_t *event)
 
     // Update all voices for this channel.
 
-    for (i = 0; i < opl_voice_num; ++i)
+    for (i = 0; i < num_opl_voices; ++i)
     {
         if (voices[i].channel == channel)
         {
@@ -1462,7 +1466,7 @@ static void I_OPL_PauseSong(void)
     // Turn off all main instrument voices (not percussion).
     // This is what Vanilla does.
 
-    for (i = 0; i < opl_voice_num; ++i)
+    for (i = 0; i < num_opl_voices; ++i)
     {
         if (voices[i].channel != NULL
          && voices[i].current_instr < percussion_instrs)
@@ -1499,7 +1503,7 @@ static void I_OPL_StopSong(void)
 
     // Free all voices.
 
-    for (i = 0; i < opl_voice_num; ++i)
+    for (i = 0; i < num_opl_voices; ++i)
     {
         if (voices[i].channel != NULL)
         {
@@ -1659,18 +1663,18 @@ static boolean I_OPL_InitMusic(void)
 
     if (opl_chip_type == 2 && opl_type)
     {
-        opl_new = 1;
-        opl_voice_num = OPL_NUM_VOICES * 2;
+        opl_opl3mode = 1;
+        num_opl_voices = OPL_NUM_VOICES * 2;
     }
     else
     {
-        opl_new = 0;
-        opl_voice_num = OPL_NUM_VOICES;
+        opl_opl3mode = 0;
+        num_opl_voices = OPL_NUM_VOICES;
     }
 
     // Initialize all registers.
 
-    OPL_InitRegisters(opl_new);
+    OPL_InitRegisters(opl_opl3mode);
 
     // Load instruments from GENMIDI lump:
 

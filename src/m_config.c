@@ -825,7 +825,7 @@ static default_t extra_defaults_list[] =
 
     //!
     // OPL chip type.
-	//
+    //
     CONFIG_VARIABLE_INT(opl_type),
 
     //!
