@@ -188,7 +188,7 @@ static void FillBuffer(int16_t *buffer, unsigned int nsamples)
             buffer[i * 2] = (int16_t) mix_buffer[i];
             buffer[i * 2 + 1] = (int16_t) mix_buffer[i];
         }
-	}
+    }
 }
 
 // Callback function to fill a new sound buffer:
