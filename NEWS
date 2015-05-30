@@ -4,9 +4,11 @@
      * The Hexen four level demo IWAD is now supported. Thanks to
        Fabian Greffrath for his careful investigation and emulation of
        the demo game's behavior in developing this.
-     * OPL music playback has been changed to match the behavior of
-       Vanilla Doom's DMX library much more closely (thanks to Alexey
-       Khokholov for the excellent research).
+     * OPL music playback has been improved in a number of ways to
+       match the behavior of Vanilla Doom's DMX library much more
+       closely. OPL3 playback is also now supported. Thanks go to
+       Alexey Khokholov for his excellent research into the Vanilla
+       DMX library that enabled these improvements.
      * New gamepad configurations:
         - PS4 DualShock 4 (thanks Matt '3nT' Davis).
         - Xbox One controller on Linux (thanks chungy).
@@ -82,11 +84,12 @@
      * Code that starts ACS scripts is no longer compiler-dependent.
 
     Strife (all these are thanks to Quasar):
-     * Sound priority was changed to match Vanilla, fixing a bug
-       that caused the Stalker enemies to make a constant ticking
-       sound (thanks GeoffLedak).
+     * Sound priority was changed, so that the ticking sound that
+       Stalker enemies make while active matches Vanilla behavior
+       (thanks GeoffLedak).
      * Minor fixes to game behavior to match Vanilla, discovered
        during development of Strife: Veteran edition.
+     * Behavior of descending stairs was fixed to match Vanilla.
      * Inventory items beyond the 8-bit range are now allowed in
        netgames.
      * Automap behavior better matches Vanilla now.
