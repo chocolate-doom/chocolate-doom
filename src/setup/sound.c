@@ -61,6 +61,12 @@ static char *musicmode_strings[] =
     "CD audio"
 };
 
+static char *opltype_strings[] =
+{
+    "OPL2",
+    "OPL3"
+};
+
 static char *cfg_extension[] = { "cfg", NULL };
 
 // Config file variables:
@@ -84,6 +90,7 @@ static float libsamplerate_scale = 0.65;
 static char *timidity_cfg_path = NULL;
 static char *gus_patch_path = NULL;
 static int gus_ram_kb = 1024;
+static int opl_type = 0;
 
 // DOS specific variables: these are unused but should be maintained
 // so that the config file can be shared between chocolate
@@ -139,29 +146,36 @@ static void UpdateExtraTable(TXT_UNCAST_ARG(widget),
 {
     TXT_CAST_ARG(txt_table_t, extra_table);
 
-    // Rebuild the GUS table. Start by emptying it, then only add the
-    // GUS control widget if we are in GUS music mode.
-
-    TXT_ClearTable(extra_table);
-
-    if (snd_musicmode == MUSICMODE_GUS)
+    switch (snd_musicmode)
     {
+    case MUSICMODE_OPL:
+        TXT_InitTable(extra_table, 2);
+        TXT_SetColumnWidths(extra_table, 19, 4);
         TXT_AddWidgets(extra_table,
-                       TXT_NewLabel("GUS patch path:"),
-                       TXT_NewFileSelector(&gus_patch_path, 30,
-                                           "Select path to GUS patches",
-                                           TXT_DIRECTORY),
-                       NULL);
-    }
+                        TXT_NewLabel("OPL type"),
+                        TXT_NewDropdownList(&opl_type, opltype_strings, 2),
+                        NULL);
+        break;
 
-    if (snd_musicmode == MUSICMODE_NATIVE)
-    {
+    case MUSICMODE_GUS:
+        TXT_InitTable(extra_table, 1);
         TXT_AddWidgets(extra_table,
-                       TXT_NewLabel("Timidity configuration file:"),
-                       TXT_NewFileSelector(&timidity_cfg_path, 30,
-                                           "Select Timidity config file",
-                                           cfg_extension),
-                       NULL);
+                        TXT_NewLabel("GUS patch path:"),
+                        TXT_NewFileSelector(&gus_patch_path, 30,
+                                            "Select path to GUS patches",
+                                            TXT_DIRECTORY),
+                        NULL);
+        break;
+
+    case MUSICMODE_NATIVE:
+        TXT_InitTable(extra_table, 1);
+        TXT_AddWidgets(extra_table,
+                        TXT_NewLabel("Timidity configuration file:"),
+                        TXT_NewFileSelector(&timidity_cfg_path, 30,
+                                            "Select Timidity config file",
+                                            cfg_extension),
+                        NULL);
+        break;
     }
 }
 
@@ -324,6 +338,7 @@ void BindSoundVariables(void)
 
     M_BindIntVariable("snd_cachesize",            &snd_cachesize);
     M_BindIntVariable("opl_io_port",              &opl_io_port);
+    M_BindIntVariable("opl_type",                 &opl_type);
 
     if (gamemission == strife)
     {
