@@ -31,6 +31,9 @@
        considered GPL3.
 
     Bug fixes:
+     * A long-standing bug that could cause every display frame to be
+       rendered twice was fixed (thanks Linguica, Harha, Alexandre-
+       Xavier).
      * Lots of endianness fixes were integrated that were found by
        Ronald Lasmanowicz during development of his Wii port of
        Chocolate Doom, including a fix for a bug that could cause
