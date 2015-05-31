@@ -34,6 +34,10 @@
 #include "net_io.h"
 #include "net_query.h"
 
+#define MULTI_START_HELP_URL "http://www.chocolate-doom.org/setup-multi-start"
+#define MULTI_JOIN_HELP_URL "http://www.chocolate-doom.org/setup-multi-join"
+#define MULTI_CONFIG_HELP_URL "http://www.chocolate-doom.org/setup-multi-config"
+
 #define NUM_WADS 10
 #define NUM_EXTRA_PARAMS 10
 
@@ -711,6 +715,7 @@ static void StartGameMenu(char *window_title, int multiplayer)
     txt_widget_t *iwad_selector;
 
     window = TXT_NewWindow(window_title);
+    TXT_SetWindowHelpURL(window, MULTI_START_HELP_URL);
 
     TXT_AddWidgets(window, 
                    gameopt_table = TXT_NewTable(2),
@@ -985,6 +990,7 @@ void JoinMultiGame(void)
     txt_inputbox_t *address_box;
 
     window = TXT_NewWindow("Join multiplayer game");
+    TXT_SetWindowHelpURL(window, MULTI_JOIN_HELP_URL);
 
     TXT_AddWidgets(window, 
         gameopt_table = TXT_NewTable(2),
@@ -1093,6 +1099,7 @@ void MultiplayerConfig(void)
     int i;
 
     window = TXT_NewWindow("Multiplayer Configuration");
+    TXT_SetWindowHelpURL(window, MULTI_CONFIG_HELP_URL);
 
     TXT_AddWidgets(window, 
                    TXT_NewStrut(0, 1),
