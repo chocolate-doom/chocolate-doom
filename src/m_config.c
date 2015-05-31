@@ -878,6 +878,11 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT_HEX(opl_io_port),
 
     //!
+    // OPL chip type.
+    //
+    CONFIG_VARIABLE_INT(opl_type),
+
+    //!
     // @game doom heretic strife
     //
     // If non-zero, the ENDOOM text screen is displayed when exiting the

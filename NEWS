@@ -1,4 +1,118 @@
 
+2.2.0 (2015-05-??):
+
+     * The Hexen four level demo IWAD is now supported. Thanks to
+       Fabian Greffrath for his careful investigation and emulation of
+       the demo game's behavior in developing this.
+     * OPL music playback has been improved in a number of ways to
+       match the behavior of Vanilla Doom's DMX library much more
+       closely. OPL3 playback is also now supported. Thanks go to
+       Alexey Khokholov for his excellent research into the Vanilla
+       DMX library that enabled these improvements.
+     * New gamepad configurations:
+        - PS4 DualShock 4 (thanks Matt '3nT' Davis).
+        - Xbox One controller on Linux (thanks chungy).
+        - "Super Joy Box 7" USB/PC gameport adapter.
+     * The Doom reload hack has been added back. See the wiki for more
+       context on this: http://doomwiki.org/wiki/Reload_hack
+     * The IWAD file from Strife: Veteran Edition is now detected
+       automatically (thanks chungy).
+     * It's now possible to build outside of the source directory
+       (thanks Dave Murphy).
+     * MSVC project files were brought up to date (thanks dbrackett16).
+     * M_StringDuplicate() has been added as a safer replacement for
+       strdup() (thanks Quasar). M_StringCopy() now handles short
+       buffers more gracefully.
+     * The netgame discrepancy window is now dismissed by pressing
+       enter to proceed, not escape (thanks Alexandre-Xavier).
+     * A couple of source files that were in the previous release and
+       were GPL3 have been replaced by GPL2 equivalents. Previous
+       releases that included these files should be retroactively
+       considered GPL3.
+
+    Bug fixes:
+     * A long-standing bug that could cause every display frame to be
+       rendered twice was fixed (thanks Linguica, Harha, Alexandre-
+       Xavier).
+     * Lots of endianness fixes were integrated that were found by
+       Ronald Lasmanowicz during development of his Wii port of
+       Chocolate Doom, including a fix for a bug that could cause
+       monsters to become partially invisible.
+     * DeHackEd files without a newline character at the EOF are now
+       correctly parsed (thanks Fabian).
+     * An infinite loop that could occur in the weapon cycling code
+       was fixed (thanks raithe, Fabian).
+     * Mouse input triggered by cursor warp was fixed (thanks Super6-4).
+     * Loop tags in substitute music files are ignored if both of the
+       loop tags are equal to zero. This makes us consistent with
+       other source ports that support the tags.
+     * It's now possible to more conveniently play back demo .lmp
+       files with names that end in the all-caps '.LMP' (thanks Ioan
+       Chera).
+     * Some code that accessed memory after freeing it was fixed. Two
+       new parameters, -zonezero and -zonescan, were added to try to
+       help detect these cases.
+     * Mistaken assumptions about representations of booleans that
+       affected some ARM systems were fixed (thanks floppes).
+     * memcpy() uses on overlapping memory were changed to use
+       memmove(), fixing abort traps on OpenBSD (thanks ryan-sg).
+     * Hyphens in manpages were fixed (thanks chungy, Fabian).
+     * Lots of compiler build warnings were fixed (thanks Fabian).
+
+    Setup tool:
+     * The setup tool now has help buttons for its various different
+       screens, which link to articles on the wiki that give more
+       information (thanks to chungy for helping to put the wiki pages
+       together).
+     * A fix was applied for a buffer overrun that could occur if the
+       user had lots of IWAD files installed (thanks Fabian).
+     * A crash related to username lookup was fixed.
+     * It's now possible to connect via the setup tool to multiplayer
+       servers that are not listening on the default port (thanks
+       Alexandre-Xavier).
+
+    Doom:
+     * Sky transitions when emulating the id anthology version of the
+       Final Doom executable were fixed (thanks Fabian, chungy).
+     * Structure fields in the stair-building functions were fixed to
+       be deterministic, fixing a desync in mm09-512.lmp (thanks
+       Fabian).
+
+    Hexen:
+     * A bug with texture names that had long names was fixed (thanks
+       ETTiNGRiNDER).
+     * Minotaur spawn time is now stored in little endian format,
+       fixing a bug that affected compatibility with Vanilla savegames
+       on big endian systems.
+     * Code that starts ACS scripts is no longer compiler-dependent.
+
+    Strife (all these are thanks to Quasar):
+     * Sound priority was changed, so that the ticking sound that
+       Stalker enemies make while active matches Vanilla behavior
+       (thanks GeoffLedak).
+     * Minor fixes to game behavior to match Vanilla, discovered
+       during development of Strife: Veteran edition.
+     * Behavior of descending stairs was fixed to match Vanilla.
+     * Inventory items beyond the 8-bit range are now allowed in
+       netgames.
+     * Automap behavior better matches Vanilla now.
+     * Multiplayer name changes were fixed.
+     * Sound origin behavior for switches was fixed.
+     * Teleport beacon behavior was fixed.
+     * Default Strife skill level and screen size were changed to
+       match Vanilla.
+     * Bug was fixed where Rowan would not always take Beldin's ring.
+     * Totally-invisible objects are now displayed correctly, and a
+       Vanilla glitch with Shadow Acolytes is correctly emulated.
+     * The level name for MAP29 (Entity's Lair) was fixed (thanks
+       chungy).
+
+    libtextscreen:
+     * The main loop now exits immediately once all windows are closed
+       (thanks Alexander-Xavier).
+     * The large font is no longer selected based entirely on screen
+       size.
+
 2.1.0 (2014-10-22):
 
     Chocolate Doom now supports high-quality substitute music packs
