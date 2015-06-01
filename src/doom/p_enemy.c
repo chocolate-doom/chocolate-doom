@@ -1688,7 +1688,9 @@ void A_BossDeath (mobj_t* mo)
 		
     if ( gamemode == commercial)
     {
-	if (gamemap != 7)
+	if (gamemap != 7 &&
+	// [crispy] Master Levels in PC slot 7
+	!(singleplayer && gamemission == pack_master && (gamemap == 14 || gamemap == 15 || gamemap == 16)))
 	    return;
 		
 	if ((mo->type != MT_FATSO)
