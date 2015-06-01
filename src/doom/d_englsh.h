@@ -295,6 +295,28 @@
 #define NHUSTR_8	"level 8: Tomb of Malevolence"
 #define NHUSTR_9	"level 9: March of the Demons"
 
+#define MHUSTR_1	"level 1: Attack"
+#define MHUSTR_2	"level 2: Canyon"
+#define MHUSTR_3	"level 3: The Catwalk"
+#define MHUSTR_4	"level 4: The Combine"
+#define MHUSTR_5	"level 5: The Fistula"
+#define MHUSTR_6	"level 6: The Garrison"
+#define MHUSTR_7	"level 7: Titan Manor"
+#define MHUSTR_8	"level 8: Paradox"
+#define MHUSTR_9	"level 9: Subspace"
+#define MHUSTR_10	"level 10: Subterra"
+#define MHUSTR_11	"level 11: Trapped On Titan"
+#define MHUSTR_12	"level 12: Virgil's Lead"
+#define MHUSTR_13	"level 13: Minos' Judgement"
+#define MHUSTR_14	"level 14: Bloodsea Keep"
+#define MHUSTR_15	"level 15: Mephisto's Maosoleum"
+#define MHUSTR_16	"level 16: Nessus"
+#define MHUSTR_17	"level 17: Geryon"
+#define MHUSTR_18	"level 18: Vesperas"
+#define MHUSTR_19	"level 19: Black Tower"
+#define MHUSTR_20	"level 20: The Express Elevator To Hell"
+#define MHUSTR_21	"level 21: Bad Dream"
+
 #define HUSTR_CHATMACRO1	"I'm ready to kick butt!"
 #define HUSTR_CHATMACRO2	"I'm OK."
 #define HUSTR_CHATMACRO3	"I'm not looking too good!"
@@ -698,6 +720,10 @@
 "HITTING THE FLOOR. HIS DEATH MOAN GURGLES\n" \
 "OUT THROUGH THE MESS YOU LEFT OF HIS FACE.\n\n" \
 "THIS RIDE IS CLOSED."
+
+#define M1TEXT \
+"CONGRATULATIONS YOU HAVE FINISHED... \n\n"\
+"THE MASTER LEVELS\n"
 
 //
 // Character cast strings F_FINALE.C

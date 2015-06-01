@@ -52,6 +52,7 @@
 #define HU_TITLEP	(mapnames_commercial[gamemap-1 + 32])
 #define HU_TITLET	(mapnames_commercial[gamemap-1 + 64])
 #define HU_TITLEN	(mapnames_commercial[gamemap-1 + 96])
+#define HU_TITLEM	(mapnames_commercial[gamemap-1 + 105])
 #define HU_TITLE_CHEX   (mapnames[gamemap - 1])
 #define HU_TITLEHEIGHT	1
 #define HU_TITLEX	0
@@ -312,7 +313,29 @@ char *mapnames_commercial[] =
     NHUSTR_6,
     NHUSTR_7,
     NHUSTR_8,
-    NHUSTR_9
+    NHUSTR_9,
+
+    MHUSTR_1,
+    MHUSTR_2,
+    MHUSTR_3,
+    MHUSTR_4,
+    MHUSTR_5,
+    MHUSTR_6,
+    MHUSTR_7,
+    MHUSTR_8,
+    MHUSTR_9,
+    MHUSTR_10,
+    MHUSTR_11,
+    MHUSTR_12,
+    MHUSTR_13,
+    MHUSTR_14,
+    MHUSTR_15,
+    MHUSTR_16,
+    MHUSTR_17,
+    MHUSTR_18,
+    MHUSTR_19,
+    MHUSTR_20,
+    MHUSTR_21
 };
 
 void HU_Init(void)
@@ -439,6 +462,12 @@ void HU_Start(void)
 	else
 	  s = HU_TITLE2;
 	break;
+      case pack_master:
+	if (gamemap <= 21)
+	  s = HU_TITLEM;
+	else
+	  s = HU_TITLE2;
+	break;
       default:
          s = "Unknown level";
          break;
@@ -471,7 +500,7 @@ void HU_Start(void)
 
 	wad = lumpinfo[W_GetNumForName(map)].wad_file->path;
 
-	if (strcmp(s, DEH_String(s)) || (strcmp(wad, M_BaseName(iwadfile)) && !nervewadfile))
+	if (strcmp(s, DEH_String(s)) || (strcmp(wad, M_BaseName(iwadfile)) && !nervewadfile && gamemission != pack_master))
 	{
 	    char *m;
 

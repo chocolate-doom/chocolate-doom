@@ -793,6 +793,7 @@ void WI_drawShowNextLoc(void)
 
     int		i;
     int		last;
+    extern boolean secretexit; // [crispy] Master Level support
 
     WI_slamBackground();
 
@@ -828,7 +829,10 @@ void WI_drawShowNextLoc(void)
 	    WI_drawOnLnode(wbs->next, yah); 
     }
 
-    if (gamemission == pack_nerve && singleplayer && wbs->last == 7)
+    if (singleplayer && (
+        (gamemission == pack_nerve && wbs->last == 7) ||
+        (gamemission == pack_master && wbs->last == 19 && !secretexit) ||
+        (gamemission == pack_master && wbs->last == 20)))
         return;
 
     // draws which level you are entering..

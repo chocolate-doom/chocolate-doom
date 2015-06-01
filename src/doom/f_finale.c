@@ -95,6 +95,7 @@ static textscreen_t textscreens[] =
     { pack_plut, 1, 31, "RROCK19",   P6TEXT},
 
     { pack_nerve, 1, 8, "SLIME16",   N1TEXT},
+    { pack_master, 1, 20, "SLIME16",   M1TEXT},
 };
 
 char*	finaletext;
@@ -137,6 +138,12 @@ void F_StartFinale (void)
         if (gameversion == exe_chex && screen->mission == doom)
         {
             screen->level = 5;
+        }
+
+        // [crispy] Hack for Master Levels MAP21: Bad Dream
+        if (gamemission == pack_master && screen->mission == pack_master && gamemap == 21)
+        {
+            screen->level = 21;
         }
 
         if (logical_gamemission == screen->mission
@@ -188,6 +195,9 @@ void F_Ticker (void)
       if (i < MAXPLAYERS)
       {	
 	if (gamemission == pack_nerve && singleplayer && gamemap == 8)
+	  F_StartCast ();
+	else
+	if (gamemission == pack_master && singleplayer && (gamemap == 20 || gamemap == 21))
 	  F_StartCast ();
 	else
 	if (gamemap == 30)

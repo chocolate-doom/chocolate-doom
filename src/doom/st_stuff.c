@@ -521,7 +521,9 @@ static int ST_cheat_spechits()
     dummy.tag = 666;
     if (gamemode == commercial)
     {
-	if (gamemap == 7)
+	if (gamemap == 7 ||
+	// [crispy] Master Levels in PC slot 7
+	(gamemission == pack_master && (gamemap == 14 || gamemap == 15 || gamemap == 16)))
 	{
 	    // Mancubi
 	    speciallines += EV_DoFloor(&dummy, lowerFloorToLowest);
@@ -956,12 +958,16 @@ ST_Responder (event_t* ev)
 
       // The source release has this check as map > 34. However, Vanilla
       // Doom allows IDCLEV up to MAP40 even though it normally crashes.
-      if ((gamemode == commercial && gamemission != pack_nerve)
+      if ((gamemode == commercial && gamemission != pack_nerve && gamemission != pack_master)
 	&& (( epsd > 1) || (map > 40)))
 	return false;
 
       if ((gamemission == pack_nerve)
 	&& (( epsd > 2) || (map > 9)))
+	return false;
+
+      if ((gamemission == pack_master)
+	&& (( epsd > 1) || (map > 21)))
 	return false;
 
       // So be it.

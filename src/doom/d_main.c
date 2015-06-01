@@ -961,6 +961,10 @@ void D_SetGameDescription(void)
         {
             gamedescription = GetGameName("DOOM 2: No Rest For The Living");
         }
+        else if (logical_gamemission == pack_master)
+        {
+            gamedescription = GetGameName("Master Levels for DOOM 2");
+        }
     }
 }
 
@@ -1306,6 +1310,23 @@ static void LoadNerveWad(void)
 	{
 	    gamemission = pack_nerve;
 	    DEH_AddStringReplacement ("TITLEPIC", "INTERPIC");
+	}
+    }
+}
+
+// [crispy] support loading MASTERLEVELS.WAD alongside DOOM2.WAD
+static void LoadMasterlevelsWad(void)
+{
+    int i, j;
+
+    if (gamemission == doom2 && modifiedgame)
+    {
+	i = W_GetNumForName("map01");
+	j = W_GetNumForName("map21");
+	if (!strcasecmp(lumpinfo[i].wad_file->path, "masterlevels.wad") &&
+	    !strcasecmp(lumpinfo[j].wad_file->path, "masterlevels.wad"))
+	{
+	    gamemission = pack_master;
 	}
     }
 }
@@ -1759,7 +1780,10 @@ void D_DoomMain (void)
 
     // [crispy] allow overriding of special-casing
     if (!M_ParmExists("-nodeh"))
+    {
+	LoadMasterlevelsWad();
 	LoadNerveWad();
+    }
 
     // Load DEHACKED lumps from WAD files - but only if we give the right
     // command line parameter.

@@ -1602,6 +1602,11 @@ void G_DoCompleted (void)
 	    }
     }
     else
+    if ( gamemission == pack_master && singleplayer )
+    {
+	wminfo.next = gamemap;
+    }
+    else
     if ( gamemode == commercial)
     {
 	if (secretexit)
@@ -1667,8 +1672,8 @@ void G_DoCompleted (void)
     // Set par time. Doom episode 4 doesn't have a par time, so this
     // overflows into the cpars array. It's necessary to emulate this
     // for statcheck regression testing.
-    if (gamemap == 33)
-	// [crispy] map 33 par time sucks
+    if (gamemap == 33 || (gameepisode == 1 && gamemap == 10) || gamemission == pack_master)
+	// [crispy] par time for inofficial maps sucks
 	wminfo.partime = INT_MAX;
     else
     if (gamemission == pack_nerve)
@@ -1736,6 +1741,19 @@ void G_WorldDone (void)
 	switch (gamemap)
 	{
 	  case 8:
+	    F_StartFinale ();
+	    break;
+	}
+    }
+    else
+    if ( gamemission == pack_master && singleplayer )
+    {
+	switch (gamemap)
+	{
+	  case 20:
+	    if (secretexit)
+		break;
+	  case 21:
 	    F_StartFinale ();
 	    break;
 	}
