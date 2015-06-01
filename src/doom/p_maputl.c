@@ -297,7 +297,7 @@ void P_LineOpening (line_t* linedef)
     sector_t*	front;
     sector_t*	back;
 	
-    if (linedef->sidenum[1] == -1)
+    if (linedef->sidenum[1] == NO_INDEX) // [crispy] extended nodes
     {
 	// single sided line
 	openrange = 0;
@@ -470,7 +470,7 @@ P_BlockLinesIterator
   boolean(*func)(line_t*) )
 {
     int			offset;
-    short*		list;
+    int64_t*		list; // [crispy] BLOCKMAP limit
     line_t*		ld;
 	
     if (x<0
@@ -601,6 +601,15 @@ PIT_AddLineIntercepts (line_t* ld)
     intercept_p->isaline = true;
     intercept_p->d.line = ld;
     InterceptsOverrun(intercept_p - intercepts, intercept_p);
+    // [crispy] intercepts overflow guard
+    if (intercept_p - intercepts == MAXINTERCEPTS_ORIGINAL + 1)
+    {
+	if (crispy_crosshair == 2)
+	    return false;
+	else
+	    // [crispy] print a warning
+	    fprintf(stderr, "PIT_AddLineIntercepts: Triggered INTERCEPTS overflow!\n");
+    }
     intercept_p++;
 
     return true;	// continue
@@ -667,6 +676,15 @@ boolean PIT_AddThingIntercepts (mobj_t* thing)
     intercept_p->isaline = false;
     intercept_p->d.thing = thing;
     InterceptsOverrun(intercept_p - intercepts, intercept_p);
+    // [crispy] intercepts overflow guard
+    if (intercept_p - intercepts == MAXINTERCEPTS_ORIGINAL + 1)
+    {
+	if (crispy_crosshair == 2)
+	    return false;
+	else
+	    // [crispy] print a warning
+	    fprintf(stderr, "PIT_AddThingIntercepts: Triggered INTERCEPTS overflow!\n");
+    }
     intercept_p++;
 
     return true;		// keep going

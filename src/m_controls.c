@@ -28,15 +28,21 @@
 
 int key_right = KEY_RIGHTARROW;
 int key_left = KEY_LEFTARROW;
+int key_reverse = 0; // [crispy]
 
 int key_up = KEY_UPARROW;
+int key_alt_up = 'w'; // [crispy]
 int key_down = KEY_DOWNARROW; 
+int key_alt_down = 's'; // [crispy]
 int key_strafeleft = ',';
+int key_alt_strafeleft = 'a'; // [crispy]
 int key_straferight = '.';
+int key_alt_straferight = 'd'; // [crispy]
 int key_fire = KEY_RCTRL;
 int key_use = ' ';
 int key_strafe = KEY_RALT;
 int key_speed = KEY_RSHIFT; 
+int key_toggleautorun = KEY_CAPSLOCK; // [crispy]
 
 // 
 // Heretic keyboard controls
@@ -103,9 +109,10 @@ int mousebstrafeleft = -1;
 int mousebstraferight = -1;
 int mousebbackward = -1;
 int mousebuse = -1;
+int mousebmouselook = -1; // [crispy]
 
-int mousebprevweapon = -1;
-int mousebnextweapon = -1;
+int mousebprevweapon = 4;
+int mousebnextweapon = 3;
 
 
 int key_message_refresh = KEY_ENTER;
@@ -145,6 +152,8 @@ int key_map_follow    = 'f';
 int key_map_grid      = 'g';
 int key_map_mark      = 'm';
 int key_map_clearmark = 'c';
+int key_map_overlay   = 'o'; // [crispy]
+int key_map_rotate    = 'r'; // [crispy]
 
 // menu keys:
 
@@ -173,6 +182,9 @@ int key_menu_gamma     = KEY_F11;
 int key_menu_incscreen = KEY_EQUALS;
 int key_menu_decscreen = KEY_MINUS;
 int key_menu_screenshot = 0;
+int key_menu_nextlevel = 0; // [crispy]
+int key_menu_reloadlevel = 0; // [crispy]
+
 
 //
 // Joystick controls
@@ -181,7 +193,7 @@ int key_menu_screenshot = 0;
 int joybfire = 0;
 int joybstrafe = 1;
 int joybuse = 3;
-int joybspeed = 2;
+int joybspeed = 29;
 
 int joybstrafeleft = -1;
 int joybstraferight = -1;
@@ -207,9 +219,13 @@ void M_BindBaseControls(void)
     M_BindIntVariable("key_right",          &key_right);
     M_BindIntVariable("key_left",           &key_left);
     M_BindIntVariable("key_up",             &key_up);
+    M_BindIntVariable("key_alt_up",         &key_alt_up); // [crispy]
     M_BindIntVariable("key_down",           &key_down);
+    M_BindIntVariable("key_alt_down",       &key_alt_down); // [crispy]
     M_BindIntVariable("key_strafeleft",     &key_strafeleft);
+    M_BindIntVariable("key_alt_strafeleft",  &key_alt_strafeleft); // [crispy]
     M_BindIntVariable("key_straferight",    &key_straferight);
+    M_BindIntVariable("key_alt_straferight", &key_alt_straferight); // [crispy]
     M_BindIntVariable("key_fire",           &key_fire);
     M_BindIntVariable("key_use",            &key_use);
     M_BindIntVariable("key_strafe",         &key_strafe);
@@ -237,6 +253,18 @@ void M_BindBaseControls(void)
     M_BindIntVariable("dclick_use",          &dclick_use);
     M_BindIntVariable("key_pause",           &key_pause);
     M_BindIntVariable("key_message_refresh", &key_message_refresh);
+
+    M_BindIntVariable("key_lookup",         &key_lookup); // [crispy]
+    M_BindIntVariable("key_lookdown",       &key_lookdown); // [crispy]
+    M_BindIntVariable("key_lookcenter",     &key_lookcenter); // [crispy]
+
+    M_BindIntVariable("key_jump",           &key_jump); // [crispy]
+    M_BindIntVariable("mouseb_jump",        &mousebjump); // [crispy]
+    M_BindIntVariable("joyb_jump",          &joybjump); // [crispy]
+
+    M_BindIntVariable("mouseb_mouselook",   &mousebmouselook); // [crispy]
+    M_BindIntVariable("key_reverse",        &key_reverse); // [crispy]
+    M_BindIntVariable("key_toggleautorun",  &key_toggleautorun); // [crispy]
 }
 
 void M_BindHereticControls(void)
@@ -245,9 +273,7 @@ void M_BindHereticControls(void)
     M_BindIntVariable("key_flydown",        &key_flydown);
     M_BindIntVariable("key_flycenter",      &key_flycenter);
 
-    M_BindIntVariable("key_lookup",         &key_lookup);
-    M_BindIntVariable("key_lookdown",       &key_lookdown);
-    M_BindIntVariable("key_lookcenter",     &key_lookcenter);
+    // [crispy] key_look* moved to M_BindBaseControls()
 
     M_BindIntVariable("key_invleft",        &key_invleft);
     M_BindIntVariable("key_invright",       &key_invright);
@@ -256,9 +282,7 @@ void M_BindHereticControls(void)
 
 void M_BindHexenControls(void)
 {
-    M_BindIntVariable("key_jump",           &key_jump);
-    M_BindIntVariable("mouseb_jump",        &mousebjump);
-    M_BindIntVariable("joyb_jump",          &joybjump);
+    // [crispy] *_jump moved to M_BindBaseControls()
 
     M_BindIntVariable("key_arti_all",             &key_arti_all);
     M_BindIntVariable("key_arti_health",          &key_arti_health);
@@ -340,6 +364,8 @@ void M_BindMapControls(void)
     M_BindIntVariable("key_map_grid",       &key_map_grid);
     M_BindIntVariable("key_map_mark",       &key_map_mark);
     M_BindIntVariable("key_map_clearmark",  &key_map_clearmark);
+    M_BindIntVariable("key_map_overlay",    &key_map_overlay); // [crispy]
+    M_BindIntVariable("key_map_rotate",     &key_map_rotate); // [crispy]
 }
 
 void M_BindMenuControls(void)
@@ -371,6 +397,8 @@ void M_BindMenuControls(void)
     M_BindIntVariable("key_menu_screenshot",&key_menu_screenshot);
     M_BindIntVariable("key_demo_quit",      &key_demo_quit);
     M_BindIntVariable("key_spy",            &key_spy);
+    M_BindIntVariable("key_menu_nextlevel", &key_menu_nextlevel); // [crispy]
+    M_BindIntVariable("key_menu_reloadlevel", &key_menu_reloadlevel); // [crispy]
 }
 
 void M_BindChatControls(unsigned int num_players)

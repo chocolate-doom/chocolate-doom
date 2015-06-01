@@ -67,7 +67,9 @@ typedef enum
     // No damage, no health loss.
     CF_GODMODE		= 2,
     // Not really a cheat, just a debug aid.
-    CF_NOMOMENTUM	= 4
+    CF_NOMOMENTUM	= 4,
+    // [crispy] monsters don't target
+    CF_NOTARGET         = 8
 
 } cheat_t;
 
@@ -158,6 +160,17 @@ typedef struct player_s
     // True if secret level has been done.
     boolean		didsecret;	
 
+    // [AM] Previous position of viewz before think.
+    //      Used to interpolate between camera positions.
+    angle_t		oldviewz;
+
+    // [crispy] additional fields for crispy features
+    char*	centermessage;
+    int	lookdir;
+    boolean	centering;
+    unsigned int	jumpTics;
+    boolean	mapcoords;
+    fixed_t	recoilpitch;
 } player_t;
 
 

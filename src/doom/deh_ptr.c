@@ -26,7 +26,7 @@
 #include "deh_io.h"
 #include "deh_main.h"
 
-static actionf_t codeptrs[NUMSTATES];
+actionf_t codeptrs[NUMSTATES]; // [crispy] share with deh_bexptr.c
 
 static int CodePointerIndex(actionf_t *ptr)
 {

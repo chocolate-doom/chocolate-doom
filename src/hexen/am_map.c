@@ -36,7 +36,7 @@ static int leveljuststarted = 1;        // kluge until AM_LevelInit() is called
 
 boolean automapactive = false;
 static int finit_width = SCREENWIDTH;
-static int finit_height = SCREENHEIGHT - SBARHEIGHT - 3;
+static int finit_height = SCREENHEIGHT - SBARHEIGHT - (3 << hires);
 static int f_x, f_y;            // location of window on screen
 static int f_w, f_h;            // size of window on screen
 static int lightlev;            // used for funky strobing effect
@@ -255,14 +255,14 @@ void AM_changeWindowLoc(void)
     // in AM_clearFB).
     mapxstart += MTOF(m_paninc.x+FRACUNIT/2);
     mapystart -= MTOF(m_paninc.y+FRACUNIT/2);
-    if(mapxstart >= finit_width)
-        mapxstart -= finit_width;
+    if(mapxstart >= (finit_width >> hires))
+        mapxstart -= (finit_width >> hires);
     if(mapxstart < 0)
-        mapxstart += finit_width;
-    if(mapystart >= finit_height)
-        mapystart -= finit_height;
+        mapxstart += (finit_width >> hires);
+    if(mapystart >= (finit_height >> hires))
+        mapystart -= (finit_height >> hires);
     if(mapystart < 0)
-        mapystart += finit_height;
+        mapystart += (finit_height >> hires);
     // - end of code that was commented-out
 
     m_x2 = m_x + m_w;
@@ -669,14 +669,14 @@ void AM_clearFB(int color)
         mapxstart += dmapx >> 1;
         mapystart += dmapy >> 1;
 
-        while (mapxstart >= finit_width)
-            mapxstart -= finit_width;
+        while (mapxstart >= (finit_width >> hires))
+            mapxstart -= (finit_width >> hires);
         while (mapxstart < 0)
-            mapxstart += finit_width;
-        while (mapystart >= finit_height)
-            mapystart -= finit_height;
+            mapxstart += (finit_width >> hires);
+        while (mapystart >= (finit_height >> hires))
+            mapystart -= (finit_height >> hires);
         while (mapystart < 0)
-            mapystart += finit_height;
+            mapystart += (finit_height >> hires);
     }
     else
     {
@@ -686,19 +686,19 @@ void AM_clearFB(int color)
         /*
         mapxstart += (MTOF(m_paninc.x) >> 1);
         mapystart -= (MTOF(m_paninc.y) >> 1);
-        if (mapxstart >= finit_width)
-            mapxstart -= finit_width;
+        if (mapxstart >= (finit_width >> hires))
+            mapxstart -= (finit_width >> hires);
         if (mapxstart < 0)
-            mapxstart += finit_width;
-        if (mapystart >= finit_height)
-            mapystart -= finit_height;
+            mapxstart += (finit_width >> hires);
+        if (mapystart >= (finit_height >> hires))
+            mapystart -= (finit_height >> hires);
         if (mapystart < 0)
-            mapystart += finit_height;
+            mapystart += (finit_height >> hires);
         */
     }
 
     //blit the automap background to the screen.
-    j = mapystart * finit_width;
+    j = (mapystart & ~hires) * (finit_width >> hires);
     for (i = 0; i < SCREENHEIGHT - SBARHEIGHT; i++)
     {
         memcpy(I_VideoBuffer + i * finit_width, maplump + j + mapxstart,
@@ -706,7 +706,7 @@ void AM_clearFB(int color)
         memcpy(I_VideoBuffer + i * finit_width + finit_width - mapxstart,
                maplump + j, mapxstart);
         j += finit_width;
-        if (j >= finit_height * finit_width)
+        if (j >= (finit_height >> hires) * (finit_width >> hires))
             j = 0;
     }
 
@@ -943,17 +943,17 @@ void PUTDOT(short xx, short yy, byte * cc, byte * cm)
     if (yy == oldyy + 1)
     {
         oldyy++;
-        oldyyshifted += 320;
+        oldyyshifted += (320 << hires);
     }
     else if (yy == oldyy - 1)
     {
         oldyy--;
-        oldyyshifted -= 320;
+        oldyyshifted -= (320 << hires);
     }
     else if (yy != oldyy)
     {
         oldyy = yy;
-        oldyyshifted = yy * 320;
+        oldyyshifted = yy * (320 << hires);
     }
     fb[oldyyshifted + xx] = *(cc);
 //      fb[(yy)*f_w+(xx)]=*(cc);

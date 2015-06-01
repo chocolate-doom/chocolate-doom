@@ -71,6 +71,7 @@
 
 
 #include "g_game.h"
+#include "v_trans.h" // [crispy] colored "always run" message
 
 
 #define SAVEGAMESIZE	0x2c000
@@ -126,6 +127,7 @@ int             consoleplayer;          // player taking events and displaying
 int             displayplayer;          // view being displayed 
 int             levelstarttic;          // gametic at level start 
 int             totalkills, totalitems, totalsecret;    // for intermission 
+int             extrakills;             // [crispy] count Lost Souls and spawned monsters
  
 char           *demoname;
 boolean         demorecording; 
@@ -197,6 +199,7 @@ static const struct
 
 static boolean  gamekeydown[NUMKEYS]; 
 static int      turnheld;		// for accelerative turning 
+static int      lookheld;		// [crispy] for accelerative looking
  
 static boolean  mousearray[MAX_MOUSE_BUTTONS + 1];
 static boolean *mousebuttons = &mousearray[1];  // allow [-1]
@@ -219,6 +222,7 @@ static int      joystrafemove;
 static boolean  joyarray[MAX_JOY_BUTTONS + 1]; 
 static boolean *joybuttons = &joyarray[1];		// allow [-1] 
  
+static char     savename[256]; // [crispy] moved here, made static
 static int      savegameslot; 
 static char     savedescription[32]; 
  
@@ -227,8 +231,8 @@ static char     savedescription[32];
 mobj_t*		bodyque[BODYQUESIZE]; 
 int		bodyqueslot; 
  
-int             vanilla_savegame_limit = 1;
-int             vanilla_demo_limit = 1;
+int             vanilla_savegame_limit = 0; // [crispy] disabled
+int             vanilla_demo_limit = 0; // [crispy] disabled
  
 int G_CmdChecksum (ticcmd_t* cmd) 
 { 
@@ -245,7 +249,7 @@ static boolean WeaponSelectable(weapontype_t weapon)
 {
     // Can't select the super shotgun in Doom 1.
 
-    if (weapon == wp_supershotgun && logical_gamemission == doom)
+    if (weapon == wp_supershotgun && !crispy_havessg)
     {
         return false;
     }
@@ -313,6 +317,14 @@ static int G_NextWeapon(int direction)
     return weapon_order_table[i].weapon_num;
 }
 
+// [crispy] holding down the "Run" key may trigger special behavior,
+// e.g. quick exit, clean screenshots, resurrection from savegames
+boolean speedkeydown (void)
+{
+    return (key_speed < NUMKEYS && gamekeydown[key_speed]) ||
+           (joybspeed < MAX_JOY_BUTTONS && joybuttons[joybspeed]);
+}
+
 //
 // G_BuildTiccmd
 // Builds a ticcmd from all of the available inputs
@@ -326,8 +338,12 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     boolean	bstrafe; 
     int		speed;
     int		tspeed; 
+    int		lspeed;
     int		forward;
     int		side;
+    int		look;
+    static int		mbmlookctrl = 0; // [crispy] single click view centering
+    static int		joybspeed_old = 2; // [crispy] toggle "always run"
 
     memset(cmd, 0, sizeof(ticcmd_t));
 
@@ -340,12 +356,13 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     // fraggle: support the old "joyb_speed = 31" hack which
     // allowed an autorun effect
 
+    // [crispy] when "always run" is active,
+    // pressing the "run" key will result in walking
     speed = key_speed >= NUMKEYS
-         || joybspeed >= MAX_JOY_BUTTONS
-         || gamekeydown[key_speed] 
-         || joybuttons[joybspeed];
+         || joybspeed >= MAX_JOY_BUTTONS;
+    speed ^= speedkeydown();
  
-    forward = side = 0;
+    forward = side = look = 0;
     
     // use two stage accelerative turning
     // on the keyboard and joystick
@@ -362,6 +379,54 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     else 
 	tspeed = speed;
     
+    // [crispy] use two stage accelerative looking
+    if (gamekeydown[key_lookdown] || gamekeydown[key_lookup])
+    {
+        lookheld += ticdup;
+    }
+    else
+    {
+        lookheld = 0;
+    }
+    if (lookheld < SLOWTURNTICS)
+    {
+        lspeed = 1;
+    }
+    else
+    {
+        lspeed = 2;
+    }
+
+    // [crispy] add quick 180° reverse
+    if (gamekeydown[key_reverse])
+    {
+        cmd->angleturn += ANG180 >> FRACBITS;
+        gamekeydown[key_reverse] = false;
+    }
+
+    // [crispy] toggle "always run"
+    if (gamekeydown[key_toggleautorun])
+    {
+        static char autorunmsg[24];
+
+        if (joybspeed >= MAX_JOY_BUTTONS)
+        {
+            joybspeed = joybspeed_old;
+        }
+        else
+        {
+            joybspeed_old = joybspeed;
+            joybspeed = 29;
+        }
+
+        M_snprintf(autorunmsg, sizeof(autorunmsg), "ALWAYS RUN %s%s",
+            crstr[CR_GREEN],
+            (joybspeed >= MAX_JOY_BUTTONS) ? "ON" : "OFF");
+        players[consoleplayer].message = autorunmsg;
+
+        gamekeydown[key_toggleautorun] = false;
+    }
+
     // let movement keys cancel each other out
     if (strafe) 
     { 
@@ -393,12 +458,12 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
 	    cmd->angleturn += angleturn[tspeed]; 
     } 
  
-    if (gamekeydown[key_up]) 
+    if (gamekeydown[key_up] || gamekeydown[key_alt_up]) // [crispy] add key_alt_*
     {
 	// fprintf(stderr, "up\n");
 	forward += forwardmove[speed]; 
     }
-    if (gamekeydown[key_down]) 
+    if (gamekeydown[key_down] || gamekeydown[key_alt_down]) // [crispy] add key_alt_*
     {
 	// fprintf(stderr, "down\n");
 	forward -= forwardmove[speed]; 
@@ -409,7 +474,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     if (joyymove > 0) 
         forward -= forwardmove[speed]; 
 
-    if (gamekeydown[key_strafeleft]
+    if (gamekeydown[key_strafeleft] || gamekeydown[key_alt_strafeleft] // [crispy] add key_alt_*
      || joybuttons[joybstrafeleft]
      || mousebuttons[mousebstrafeleft]
      || joystrafemove < 0)
@@ -417,12 +482,39 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
         side -= sidemove[speed];
     }
 
-    if (gamekeydown[key_straferight]
+    if (gamekeydown[key_straferight] || gamekeydown[key_alt_straferight] // [crispy] add key_alt_*
      || joybuttons[joybstraferight]
      || mousebuttons[mousebstraferight]
      || joystrafemove > 0)
     {
         side += sidemove[speed]; 
+    }
+
+    // [crispy] look up/down/center keys
+    if (crispy_freelook)
+    {
+        if (gamekeydown[key_lookup])
+        {
+            look = lspeed;
+        }
+        if (gamekeydown[key_lookdown])
+        {
+            look = -lspeed;
+        }
+        if (gamekeydown[key_lookcenter])
+        {
+            look = TOCENTER;
+        }
+    }
+
+    // [crispy] jump keys
+    if (crispy_jump && singleplayer)
+    {
+        if (gamekeydown[key_jump] || mousebuttons[mousebjump]
+            || joybuttons[joybjump])
+        {
+            cmd->arti |= AFLAG_JUMP;
+        }
     }
 
     // buttons
@@ -534,7 +626,36 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
         } 
     }
 
-    forward += mousey; 
+    // [crispy] mouse look
+    if ((crispy_freelook && mousebuttons[mousebmouselook]) ||
+         crispy_mouselook)
+    {
+        players[consoleplayer].lookdir +=
+            mouse_y_invert ? -mousey : mousey;
+
+        if (players[consoleplayer].lookdir > LOOKDIRMAX * MLOOKUNIT)
+            players[consoleplayer].lookdir = LOOKDIRMAX * MLOOKUNIT;
+        else
+        if (players[consoleplayer].lookdir < -LOOKDIRMIN * MLOOKUNIT)
+            players[consoleplayer].lookdir = -LOOKDIRMIN * MLOOKUNIT;
+    }
+    else
+    if (!novert)
+    {
+    forward += mousey;
+    }
+
+    // [crispy] single click on mouse look button centers view
+    if (mousebuttons[mousebmouselook]) // [crispy] clicked
+    {
+        mbmlookctrl += ticdup;
+    }
+    if (mbmlookctrl && !mousebuttons[mousebmouselook]) // [crispy] released
+    {
+        if (mbmlookctrl < 6) // [crispy] short click
+            look = TOCENTER;
+        mbmlookctrl = 0;
+    }
 
     if (strafe) 
 	side += mousex*2; 
@@ -561,12 +682,26 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
  
     cmd->forwardmove += forward; 
     cmd->sidemove += side;
+
+    // [crispy] lookdir delta is stored in the lower 4 bits of the lookfly variable
+    if (players[consoleplayer].playerstate == PST_LIVE)
+    {
+        if (look < 0)
+        {
+            look += 16;
+        }
+        cmd->lookfly = look;
+    }
     
     // special buttons
     if (sendpause) 
     { 
 	sendpause = false; 
+	// [crispy] ignore un-pausing in menus during demo recording
+	if (!(menuactive && demorecording && paused))
+	{
 	cmd->buttons = BT_SPECIAL | BTS_PAUSE; 
+	}
     } 
  
     if (sendsave) 
@@ -614,7 +749,8 @@ void G_DoLoadLevel (void)
 
     // The "Sky never changes in Doom II" bug was fixed in
     // the id Anthology version of doom2.exe for Final Doom.
-    if ((gamemode == commercial) && (gameversion == exe_final2))
+    // [crispy] correct "Sky never changes in Doom II" bug
+    if ((gamemode == commercial) /* && (gameversion == exe_final2) */ )
     {
         char *skytexturename;
 
@@ -826,8 +962,14 @@ boolean G_Responder (event_t* ev)
 		 
       case ev_mouse: 
         SetMouseButtons(ev->data1);
+	if (mouseSensitivity)
 	mousex = ev->data2*(mouseSensitivity+5)/10; 
-	mousey = ev->data3*(mouseSensitivity+5)/10; 
+	else
+	    mousex = 0; // [crispy] disable entirely
+	if (mouseSensitivity_y)
+	mousey = ev->data3*(mouseSensitivity_y+5)/10; // [crispy] separate sensitivity for y-axis
+	else
+	    mousey = 0; // [crispy] disable entirely
 	return true;    // eat events 
  
       case ev_joystick: 
@@ -891,6 +1033,14 @@ void G_Ticker (void)
 	    G_DoWorldDone (); 
 	    break; 
 	  case ga_screenshot: 
+	    // [crispy] when the "run" button is pressed,
+	    // remove all obstacles in the current tic and
+	    // take the actual screenshot in the next one
+	    if (crispy_cleanscreenshot)
+	    {
+	        crispy_cleanscreenshot--;
+	        break;
+	    }
 	    V_ScreenShot("DOOM%02i.%s"); 
             players[consoleplayer].message = DEH_String("screen shot");
 	    gameaction = ga_nothing; 
@@ -1244,6 +1394,13 @@ void G_DeathMatchSpawnPlayer (int playernum)
     P_SpawnPlayer (&playerstarts[playernum]); 
 } 
 
+// [crispy] clear the "savename" variable,
+// i.e. restart level from scratch upon resurrection
+static inline void G_ClearSavename ()
+{
+    M_StringCopy(savename, "", sizeof(savename));
+}
+
 //
 // G_DoReborn 
 // 
@@ -1253,8 +1410,17 @@ void G_DoReborn (int playernum)
 	 
     if (!netgame)
     {
+	// [crispy] if the player dies and the game has been loaded or saved
+	// in the mean time, reload that savegame instead of restarting the level
+	// when "Run" is pressed upon resurrection
+	if (singleplayer && *savename && speedkeydown())
+	gameaction = ga_loadgame;
+	else
+	{
 	// reload the level from scratch
 	gameaction = ga_loadlevel;  
+	G_ClearSavename();
+	}
     }
     else 
     {
@@ -1318,6 +1484,17 @@ int cpars[32] =
     120,30					// 31-32
 };
  
+// [crispy] Episode 4 par times from the BFG Edition
+static int e4pars[10] =
+{
+    0,165,255,135,150,180,390,135,360,180
+};
+
+// [crispy] No Rest For The Living par times from the BFG Edition
+static int npars[9] =
+{
+    75,105,120,105,210,105,165,105,135
+};
 
 //
 // G_DoCompleted 
@@ -1328,6 +1505,7 @@ extern char*	pagename;
 void G_ExitLevel (void) 
 { 
     secretexit = false; 
+    G_ClearSavename();
     gameaction = ga_completed; 
 } 
 
@@ -1340,12 +1518,14 @@ void G_SecretExitLevel (void)
 	secretexit = false;
     else
 	secretexit = true; 
+    G_ClearSavename();
     gameaction = ga_completed; 
 } 
  
 void G_DoCompleted (void) 
 { 
     int             i; 
+    extern int bex_pars[4][10], bex_cpars[32]; // [crispy] support [PARS] sections in BEX files
 	 
     gameaction = ga_nothing; 
  
@@ -1407,6 +1587,26 @@ void G_DoCompleted (void)
     wminfo.last = gamemap -1;
     
     // wminfo.next is 0 biased, unlike gamemap
+    if ( gamemission == pack_nerve && singleplayer )
+    {
+	if (secretexit)
+	    switch(gamemap)
+	    {
+	      case  4: wminfo.next = 8; break;
+	    }
+	else
+	    switch(gamemap)
+	    {
+	      case  9: wminfo.next = 4; break;
+	      default: wminfo.next = gamemap;
+	    }
+    }
+    else
+    if ( gamemission == pack_master && singleplayer )
+    {
+	wminfo.next = gamemap;
+    }
+    else
     if ( gamemode == commercial)
     {
 	if (secretexit)
@@ -1414,19 +1614,30 @@ void G_DoCompleted (void)
 	    {
 	      case 15: wminfo.next = 30; break;
 	      case 31: wminfo.next = 31; break;
+	      case  2:
+	          if (crispy_havemap33 && singleplayer)
+	               wminfo.next = 32; break;
 	    }
 	else
 	    switch(gamemap)
 	    {
 	      case 31:
 	      case 32: wminfo.next = 15; break;
+	      case 33:
+	          if (crispy_havemap33 && singleplayer)
+	               wminfo.next =  2; break;
 	      default: wminfo.next = gamemap;
 	    }
     }
     else
     {
 	if (secretexit) 
+	{
+	    if (crispy_havee1m10 && singleplayer && gameepisode == 1 && gamemap == 1)
+	    wminfo.next = 9; // [crispy] go to secret level E1M10 "Sewers"
+	    else
 	    wminfo.next = 8; 	// go to secret level 
+	}
 	else if (gamemap == 9) 
 	{
 	    // returning from secret level 
@@ -1446,6 +1657,9 @@ void G_DoCompleted (void)
 		break;
 	    }                
 	} 
+	else
+	if (crispy_havee1m10 && singleplayer && gameepisode == 1 && gamemap == 10)
+	    wminfo.next = 1; // [crispy] returning from secret level E1M10 "Sewers"
 	else 
 	    wminfo.next = gamemap;          // go to next level 
     }
@@ -1458,10 +1672,31 @@ void G_DoCompleted (void)
     // Set par time. Doom episode 4 doesn't have a par time, so this
     // overflows into the cpars array. It's necessary to emulate this
     // for statcheck regression testing.
+    if (gamemap == 33 || (gameepisode == 1 && gamemap == 10) || gamemission == pack_master)
+	// [crispy] par time for inofficial maps sucks
+	wminfo.partime = INT_MAX;
+    else
+    if (gamemission == pack_nerve)
+	wminfo.partime = TICRATE*npars[gamemap-1];
+    else
     if (gamemode == commercial)
+    {
+	// [crispy] support [PARS] sections in BEX files
+	if (bex_cpars[gamemap-1])
+	    wminfo.partime = TICRATE*bex_cpars[gamemap-1];
+	else
 	wminfo.partime = TICRATE*cpars[gamemap-1];
+    }
     else if (gameepisode < 4)
+    {
+	// [crispy] support [PARS] sections in BEX files
+	if (bex_pars[gameepisode][gamemap])
+	    wminfo.partime = TICRATE*bex_pars[gameepisode][gamemap];
+	else
 	wminfo.partime = TICRATE*pars[gameepisode][gamemap];
+    }
+    else if (gameepisode == 4 && singleplayer)
+	wminfo.partime = TICRATE*e4pars[gamemap];
     else
         wminfo.partime = TICRATE*cpars[gamemap];
 
@@ -1496,8 +1731,34 @@ void G_WorldDone (void)
     gameaction = ga_worlddone; 
 
     if (secretexit) 
+      // [crispy] special-casing for E1M10 "Sewers" support
+      // i.e. avoid drawing the splat for E1M9 already
+      if (!crispy_havee1m10 || gameepisode != 1 || gamemap != 1)
 	players[consoleplayer].didsecret = true; 
 
+    if ( gamemission == pack_nerve && singleplayer )
+    {
+	switch (gamemap)
+	{
+	  case 8:
+	    F_StartFinale ();
+	    break;
+	}
+    }
+    else
+    if ( gamemission == pack_master && singleplayer )
+    {
+	switch (gamemap)
+	{
+	  case 20:
+	    if (secretexit)
+		break;
+	  case 21:
+	    F_StartFinale ();
+	    break;
+	}
+    }
+    else
     if ( gamemode == commercial )
     {
 	switch (gamemap)
@@ -1534,7 +1795,6 @@ void G_DoWorldDone (void)
 extern boolean setsizeneeded;
 void R_ExecuteSetViewSize (void);
 
-char	savename[256];
 
 void G_LoadGame (char* name) 
 { 
@@ -1578,6 +1838,7 @@ void G_DoLoadGame (void)
     P_UnArchiveWorld (); 
     P_UnArchiveThinkers (); 
     P_UnArchiveSpecials (); 
+    P_RestoreTargets (); // [crispy] restore mobj->target and mobj->tracer pointers
  
     if (!P_ReadSaveGameEOF())
 	I_Error ("Bad savegame");
@@ -1589,6 +1850,11 @@ void G_DoLoadGame (void)
     
     // draw the pattern into the back screen
     R_FillBackScreen ();   
+
+    // [crispy] if the player is dead in this savegame,
+    // do not consider it for reload
+    if (!players[consoleplayer].health)
+	G_ClearSavename();
 } 
  
 
@@ -1658,6 +1924,7 @@ void G_DoSaveGame (void)
     
     gameaction = ga_nothing; 
     M_StringCopy(savedescription, "", sizeof(savedescription));
+    M_StringCopy(savename, savegame_file, sizeof(savename));
 
     players[consoleplayer].message = DEH_String(GGSAVED);
 
@@ -1684,6 +1951,7 @@ G_DeferedInitNew
     d_skill = skill; 
     d_episode = episode; 
     d_map = map; 
+    G_ClearSavename();
     gameaction = ga_newgame; 
 } 
 
@@ -1757,7 +2025,13 @@ G_InitNew
 
     if ( (map > 9)
 	 && ( gamemode != commercial) )
+    {
+      // [crispy] support E1M10 "Sewers"
+      if (!crispy_havee1m10 || episode != 1)
       map = 9;
+      else
+      map = 10;
+    }
 
     M_ClearRandom ();
 
@@ -1969,11 +2243,21 @@ void G_RecordDemo (char *name)
     size_t demoname_size;
     int i;
     int maxsize;
+    FILE *fp = NULL;
 
     usergame = false;
-    demoname_size = strlen(name) + 5;
+    demoname_size = strlen(name) + 5 + 4; // [crispy] + 4 for "-000"
     demoname = Z_Malloc(demoname_size, PU_STATIC, NULL);
     M_snprintf(demoname, demoname_size, "%s.lmp", name);
+
+    // [crispy] prevent overriding demos by adding a file name suffix
+    for (i = 0; i <= 999 && (fp = fopen(demoname, "rb")) != NULL; i++)
+    {
+	M_snprintf(demoname, demoname_size, "%s-%03d.lmp", name, i);
+    }
+    if (fp)
+	fclose (fp);
+
     maxsize = 0x20000;
 
     //!
@@ -2060,6 +2344,7 @@ void G_BeginRecording (void)
 //
 
 char*	defdemoname; 
+int	defdemosize; // [crispy] demo progress bar
  
 void G_DeferedPlayDemo (char* name) 
 { 
@@ -2114,6 +2399,14 @@ void G_DoPlayDemo (void)
 	 
     gameaction = ga_nothing; 
     demobuffer = demo_p = W_CacheLumpName (defdemoname, PU_STATIC); 
+
+    // [crispy] demo progress bar
+    defdemosize = 0;
+    while (*demo_p++ != DEMOMARKER)
+    {
+	defdemosize++;
+    }
+    demo_p = demobuffer;
 
     demoversion = *demo_p++;
 

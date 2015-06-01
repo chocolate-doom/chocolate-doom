@@ -41,6 +41,32 @@
 #define WEAPONBOTTOM	128*FRACUNIT
 #define WEAPONTOP		32*FRACUNIT
 
+// [crispy] weapon recoil {thrust, pitch} values
+// thrust values from prboom-plus/src/p_pspr.c:73-83
+static const int recoil_values[][2] = {
+  {10,   0}, // wp_fist
+  {10,   4}, // wp_pistol
+  {30,  12}, // wp_shotgun
+  {10,   4}, // wp_chaingun
+  {100, 16}, // wp_missile
+  {20,   8}, // wp_plasma
+  {100, 16}, // wp_bfg
+  {0,   -2}, // wp_chainsaw
+  {80,  16}, // wp_supershotgun
+};
+
+// [crispy] add weapon recoil
+// adapted from prboom-plus/src/p_pspr.c:484-495 (A_FireSomething ())
+void A_Recoil (player_t* player)
+{
+    extern void P_Thrust (player_t* player, angle_t angle, fixed_t move);
+
+    if (singleplayer && crispy_recoil && !(player->mo->flags & MF_NOCLIP))
+	P_Thrust(player, ANG180 + player->mo->angle, 2048 * recoil_values[player->readyweapon][0]);
+
+    if (crispy_pitch)
+	player->recoilpitch = recoil_values[player->readyweapon][1]<<FRACBITS;
+}
 
 
 //
@@ -164,6 +190,11 @@ boolean P_CheckAmmo (player_t* player)
     else
 	count = 1;	// Regular.
 
+    // [crispy] force weapon switch if weapon not owned
+    // only relevant when removing current weapon with TNTWEAPx cheat
+    if (!player->weaponowned[player->readyweapon])
+	count = INT_MAX;
+
     // Some do not need ammunition anyway.
     // Return if current ammunition sufficient.
     if (ammo == am_noammo || player->ammo[ammo] >= count)
@@ -181,7 +212,7 @@ boolean P_CheckAmmo (player_t* player)
 	}
 	else if (player->weaponowned[wp_supershotgun] 
 		 && player->ammo[am_shell]>2
-		 && (gamemode == commercial) )
+		 && (crispy_havessg) )
 	{
 	    player->pendingweapon = wp_supershotgun;
 	}
@@ -245,6 +276,10 @@ void P_FireWeapon (player_t* player)
     newstate = weaponinfo[player->readyweapon].atkstate;
     P_SetPsprite (player, ps_weapon, newstate);
     P_NoiseAlert (player->mo, player->mo);
+
+    // [crispy] center the weapon sprite horizontally
+    if (crispy_centerweapon)
+	player->psprites[ps_weapon].sx = FRACUNIT;
 }
 
 
@@ -506,6 +541,8 @@ A_Saw
     slope = P_AimLineAttack (player->mo, angle, MELEERANGE+1);
     P_LineAttack (player->mo, angle, MELEERANGE+1, slope, damage);
 
+    A_Recoil (player);
+
     if (!linetarget)
     {
 	S_StartSound (player->mo, sfx_sawful);
@@ -623,6 +660,10 @@ void P_BulletSlope (mobj_t*	mo)
 	{
 	    an -= 2<<26;
 	    bulletslope = P_AimLineAttack (mo, an, 16*64*FRACUNIT);
+	    if (!linetarget && singleplayer && crispy_freeaim)
+	    {
+		bulletslope = ((mo->player->lookdir / MLOOKUNIT) << FRACBITS) / 173;
+	    }
 	}
     }
 }
@@ -668,6 +709,8 @@ A_FirePistol
 
     P_BulletSlope (player->mo);
     P_GunShot (player->mo, !player->refire);
+
+    A_Recoil (player);
 }
 
 
@@ -694,6 +737,8 @@ A_FireShotgun
 	
     for (i=0 ; i<7 ; i++)
 	P_GunShot (player->mo, false);
+
+    A_Recoil (player);
 }
 
 
@@ -732,6 +777,8 @@ A_FireShotgun2
 		      MISSILERANGE,
 		      bulletslope + ((P_Random()-P_Random())<<5), damage);
     }
+
+    A_Recoil (player);
 }
 
 
@@ -760,6 +807,8 @@ A_FireCGun
     P_BulletSlope (player->mo);
 	
     P_GunShot (player->mo, !player->refire);
+
+    A_Recoil (player);
 }
 
 

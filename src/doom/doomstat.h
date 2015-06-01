@@ -38,6 +38,7 @@
 
 #include "net_defs.h"
 
+#include "crispy.h"
 
 
 // ------------------------
@@ -60,6 +61,7 @@ extern char            *gamedescription;
 
 // If true, we're using one of the mangled BFG edition IWADs.
 extern boolean bfgedition;
+extern char *nervewadfile;
 
 // Convenience macro.
 // 'gamemission' can be equal to pack_chex or pack_hacx, but these are
@@ -172,6 +174,7 @@ extern  int	displayplayer;
 extern  int	totalkills;
 extern	int	totalitems;
 extern	int	totalsecret;
+extern	int	extrakills; // [crispy] count Lost Souls and spawned monsters
 
 // Timer, for scores.
 extern  int	levelstarttic;	// gametic at level start
@@ -258,6 +261,7 @@ extern  boolean         precache;
 extern  gamestate_t     wipegamestate;
 
 extern  int             mouseSensitivity;
+extern  int             mouseSensitivity_y;
 
 extern  int             bodyqueslot;
 

@@ -153,6 +153,10 @@ P_NoiseAlert
 ( mobj_t*	target,
   mobj_t*	emmiter )
 {
+    // [crispy] monsters are deaf with NOTARGET cheat
+    if (target && target->player && (target->player->cheats & CF_NOTARGET))
+        return;
+
     soundtarget = target;
     validcount++;
     P_RecursiveSound (emmiter->subsector->sector, 0);
@@ -511,6 +515,10 @@ P_LookForPlayers
 	
 	player = &players[actor->lastlook];
 
+	// [crispy] monsters don't look for players with NOTARGET cheat
+	if (player->cheats & CF_NOTARGET)
+	    continue;
+
 	if (player->health <= 0)
 	    continue;		// dead
 
@@ -592,6 +600,10 @@ void A_Look (mobj_t* actor)
 	
     actor->threshold = 0;	// any shot will wake up
     targ = actor->subsector->sector->soundtarget;
+
+    // [crispy] monsters don't look for players with NOTARGET cheat
+    if (targ && targ->player && (targ->player->cheats & CF_NOTARGET))
+        return;
 
     if (targ
 	&& (targ->flags & MF_SHOOTABLE) )
@@ -1201,6 +1213,13 @@ void A_VileChase (mobj_t* actor)
 		    corpsehit->health = info->spawnhealth;
 		    corpsehit->target = NULL;
 
+		    // [crispy] count resurrected monsters
+		    extrakills++;
+
+		    // [crispy] resurrected pools of gore ("ghost monsters") are translucent
+		    if (corpsehit->height == 0 && corpsehit->radius == 0)
+		        corpsehit->flags |= MF_TRANSLUCENT;
+
 		    return;
 		}
 	    }
@@ -1496,6 +1515,13 @@ A_PainShootSkull
 	return;
     }
 		
+    // [crispy] Lost Souls bleed Puffs
+    if (crispy_coloredblood2)
+	newmobj->flags |= MF_NOBLOOD;
+
+    // [crispy] count spawned Lost Souls
+    extrakills++;
+
     newmobj->target = actor->target;
     A_SkullAttack (newmobj);
 }
@@ -1705,7 +1731,9 @@ void A_BossDeath (mobj_t* mo)
     // victory!
     if ( gamemode == commercial)
     {
-	if (gamemap == 7)
+	if (gamemap == 7 ||
+	// [crispy] Master Levels in PC slot 7
+	(singleplayer && gamemission == pack_master && (gamemap == 14 || gamemap == 15 || gamemap == 16)))
 	{
 	    if (mo->type == MT_FATSO)
 	    {
@@ -1804,9 +1832,10 @@ A_CloseShotgun2
 
 
 
-mobj_t*		braintargets[32];
-int		numbraintargets;
+mobj_t**		braintargets = NULL;
+int		numbraintargets = 0; // [crispy] initialize
 int		braintargeton = 0;
+static int	maxbraintargets; // [crispy] remove braintargets limit
 
 void A_BrainAwake (mobj_t* mo)
 {
@@ -1829,12 +1858,26 @@ void A_BrainAwake (mobj_t* mo)
 
 	if (m->type == MT_BOSSTARGET )
 	{
+	    // [crispy] remove braintargets limit
+	    if (numbraintargets == maxbraintargets)
+	    {
+		maxbraintargets = maxbraintargets ? 2 * maxbraintargets : 32;
+		braintargets = realloc(braintargets, maxbraintargets * sizeof(*braintargets));
+
+		if (maxbraintargets > 32)
+		    fprintf(stderr, "R_BrainAwake: Raised braintargets limit to %d.\n", maxbraintargets);
+	    }
+
 	    braintargets[numbraintargets] = m;
 	    numbraintargets++;
 	}
     }
 	
     S_StartSound (NULL,sfx_bossit);
+
+    // [crispy] no spawn spots available
+    if (numbraintargets == 0)
+	numbraintargets = INT_MIN;
 }
 
 
@@ -1888,6 +1931,9 @@ void A_BrainExplode (mobj_t* mo)
     th->tics -= P_Random()&7;
     if (th->tics < 1)
 	th->tics = 1;
+
+    // [crispy] brain explosions are translucent
+    th->flags |= MF_TRANSLUCENT;
 }
 
 
@@ -1907,6 +1953,14 @@ void A_BrainSpit (mobj_t*	mo)
     if (gameskill <= sk_easy && (!easy))
 	return;
 		
+    // [crispy] avoid division by zero by recalculating the number of spawn spots
+    if (numbraintargets == 0)
+	A_BrainAwake(NULL);
+
+    // [crispy] still no spawn spots available
+    if (numbraintargets == INT_MIN)
+	return;
+
     // shoot a cube at current target
     targ = braintargets[braintargeton];
     braintargeton = (braintargeton+1)%numbraintargets;
@@ -1977,6 +2031,10 @@ void A_SpawnFly (mobj_t* mo)
 	type = MT_BRUISER;		
 
     newmobj	= P_SpawnMobj (targ->x, targ->y, targ->z, type);
+
+    // [crispy] count spawned monsters
+    extrakills++;
+
     if (P_LookForPlayers (newmobj, true) )
 	P_SetMobjState (newmobj, newmobj->info->seestate);
 	

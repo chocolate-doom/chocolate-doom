@@ -24,20 +24,20 @@
 
 #define MAXVISSPRITES  	128
 
-extern vissprite_t	vissprites[MAXVISSPRITES];
+extern vissprite_t*	vissprites;
 extern vissprite_t*	vissprite_p;
 extern vissprite_t	vsprsortedhead;
 
 // Constant arrays used for psprite clipping
 //  and initializing clipping.
-extern short		negonearray[SCREENWIDTH];
-extern short		screenheightarray[SCREENWIDTH];
+extern int		negonearray[SCREENWIDTH]; // [crispy] 32-bit integer math
+extern int		screenheightarray[SCREENWIDTH]; // [crispy] 32-bit integer math
 
 // vars for R_DrawMaskedColumn
-extern short*		mfloorclip;
-extern short*		mceilingclip;
+extern int*		mfloorclip; // [crispy] 32-bit integer math
+extern int*		mceilingclip; // [crispy] 32-bit integer math
 extern fixed_t		spryscale;
-extern fixed_t		sprtopscreen;
+extern int64_t		sprtopscreen; // [crispy] WiggleFix
 
 extern fixed_t		pspritescale;
 extern fixed_t		pspriteiscale;

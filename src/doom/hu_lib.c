@@ -27,6 +27,7 @@
 #include "hu_lib.h"
 #include "r_local.h"
 #include "r_draw.h"
+#include "v_trans.h" // [crispy] colored HUlib_drawTextLine()
 
 // boolean : whether the screen is always erased
 #define noterased viewwindowx
@@ -106,12 +107,24 @@ HUlib_drawTextLine
     for (i=0;i<l->len;i++)
     {
 	c = toupper(l->l[i]);
+	// [crispy] support multi-colored text lines
+	if (c == '\x1b')
+	{
+	    if (++i < l->len)
+	    {
+		if (l->l[i] >= '0' && l->l[i] <= '0' + CRMAX - 1)
+		{
+		    dp_translation = (crispy_coloredhud) ? cr[(int) (l->l[i] - '0')] : NULL;
+		}
+	    }
+	}
+	else
 	if (c != ' '
 	    && c >= l->sc
 	    && c <= '_')
 	{
 	    w = SHORT(l->f[c - l->sc]->width);
-	    if (x+w > SCREENWIDTH)
+	    if (x+w > ORIGWIDTH)
 		break;
 	    V_DrawPatchDirect(x, l->y, l->f[c - l->sc]);
 	    x += w;
@@ -119,14 +132,14 @@ HUlib_drawTextLine
 	else
 	{
 	    x += 4;
-	    if (x >= SCREENWIDTH)
+	    if (x >= ORIGWIDTH)
 		break;
 	}
     }
 
     // draw the cursor if requested
     if (drawcursor
-	&& x + SHORT(l->f['_' - l->sc]->width) <= SCREENWIDTH)
+	&& x + SHORT(l->f['_' - l->sc]->width) <= ORIGWIDTH)
     {
 	V_DrawPatchDirect(x, l->y, l->f['_' - l->sc]);
     }
@@ -145,17 +158,17 @@ void HUlib_eraseTextLine(hu_textline_t* l)
     // (because of a recent change back from the automap)
 
     if (!automapactive &&
-	viewwindowx && l->needsupdate)
+	viewwindowx && (l->needsupdate || crispy_cleanscreenshot))
     {
-	lh = SHORT(l->f[0]->height) + 1;
-	for (y=l->y,yoffset=y*SCREENWIDTH ; y<l->y+lh ; y++,yoffset+=SCREENWIDTH)
+	lh = (SHORT(l->f[0]->height) + 1) << hires;
+	for (y=(l->y << hires),yoffset=y*SCREENWIDTH ; y<(l->y << hires)+lh ; y++,yoffset+=SCREENWIDTH)
 	{
-	    if (y < viewwindowy || y >= viewwindowy + viewheight)
+	    if (y < viewwindowy || y >= viewwindowy + scaledviewheight)
 		R_VideoErase(yoffset, SCREENWIDTH); // erase entire line
 	    else
 	    {
 		R_VideoErase(yoffset, viewwindowx); // erase left border
-		R_VideoErase(yoffset + viewwindowx + viewwidth, viewwindowx);
+		R_VideoErase(yoffset + viewwindowx + scaledviewwidth, viewwindowx);
 		// erase right border
 	    }
 	}

@@ -24,6 +24,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h> // [crispy] time_t, time(), struct tm, localtime()
 
 #include "config.h"
 #include "deh_main.h"
@@ -119,6 +120,7 @@ boolean         storedemo;
 
 // "BFG Edition" version of doom2.wad does not include TITLEPIC.
 boolean         bfgedition;
+char            *nervewadfile = NULL;
 
 // If true, the main game loop has started.
 boolean         main_loop_started = false;
@@ -126,8 +128,35 @@ boolean         main_loop_started = false;
 char		wadfile[1024];		// primary wad file
 char		mapdir[1024];           // directory of development maps
 
-int             show_endoom = 1;
+int             show_endoom = 0; // [crispy] disable
 
+// [crispy] "crispness" config variables
+int             crispy_automapstats = 0;
+int             crispy_centerweapon = 0;
+int             crispy_coloredblood = 0;
+int             crispy_coloredblood2 = 0;
+int             crispy_coloredhud = 0;
+int             crispy_crosshair = 0;
+int             crispy_crosshair2 = 0;
+int             crispy_flipcorpses = 0;
+int             crispy_freeaim = 0;
+int             crispy_freelook = 0;
+int             crispy_jump = 0;
+int             crispy_mouselook = 0;
+int             crispy_overunder = 0;
+int             crispy_pitch = 0;
+int             crispy_recoil = 0;
+int             crispy_secretmessage = 0;
+int             crispy_translucency = 0;
+
+// [crispy] in-game switches
+boolean         crispy_automapoverlay = false;
+boolean         crispy_flashinghom = false;
+boolean         crispy_fliplevels = false;
+boolean         crispy_havee1m10 = false;
+boolean         crispy_havemap33 = false;
+boolean         crispy_havessg = false;
+boolean         crispy_nwtmerge = false;
 
 void D_ConnectNetGame(void);
 void D_CheckNetGame(void);
@@ -175,6 +204,7 @@ void D_Display (void)
     static  boolean		fullscreen = false;
     static  gamestate_t		oldgamestate = -1;
     static  int			borderdrawcount;
+    static  char		menushade; // [crispy] shade menu background
     int				nowtime;
     int				tics;
     int				wipestart;
@@ -214,14 +244,18 @@ void D_Display (void)
       case GS_LEVEL:
 	if (!gametic)
 	    break;
-	if (automapactive)
+	if (automapactive && !crispy_automapoverlay)
+	{
+	    // [crispy] update automap while playing
+	    R_RenderPlayerView (&players[displayplayer]);
 	    AM_Drawer ();
-	if (wipe || (viewheight != 200 && fullscreen) )
+	}
+	if (wipe || (scaledviewheight != (200 << hires) && fullscreen) )
 	    redrawsbar = true;
 	if (inhelpscreensstate && !inhelpscreens)
 	    redrawsbar = true;              // just put away the help screen
-	ST_Drawer (viewheight == 200, redrawsbar );
-	fullscreen = viewheight == 200;
+	ST_Drawer (scaledviewheight == (200 << hires), redrawsbar );
+	fullscreen = scaledviewheight == (200 << hires);
 	break;
 
       case GS_INTERMISSION:
@@ -241,10 +275,18 @@ void D_Display (void)
     I_UpdateNoBlit ();
     
     // draw the view directly
-    if (gamestate == GS_LEVEL && !automapactive && gametic)
+    if (gamestate == GS_LEVEL && (!automapactive || (automapactive && crispy_automapoverlay)) && gametic)
+    {
 	R_RenderPlayerView (&players[displayplayer]);
 
-    if (gamestate == GS_LEVEL && gametic)
+        // [crispy] Crispy HUD
+        if (screenblocks >= CRISPY_HUD)
+            ST_Drawer(false, false);
+    }
+
+    // [crispy] in automap overlay mode,
+    // the HUD is drawn on top of everything else
+    if (gamestate == GS_LEVEL && gametic && !(automapactive && crispy_automapoverlay))
 	HU_Drawer ();
     
     // clean up border stuff
@@ -259,7 +301,7 @@ void D_Display (void)
     }
 
     // see if the border needs to be updated to the screen
-    if (gamestate == GS_LEVEL && !automapactive && scaledviewwidth != 320)
+    if (gamestate == GS_LEVEL && (!automapactive || (automapactive && crispy_automapoverlay)) && scaledviewwidth != (320 << hires))
     {
 	if (menuactive || menuactivestate || !viewactivestate)
 	    borderdrawcount = 3;
@@ -283,14 +325,48 @@ void D_Display (void)
     inhelpscreensstate = inhelpscreens;
     oldgamestate = wipegamestate = gamestate;
     
+    // [crispy] in automap overlay mode,
+    // draw the automap and HUD on top of everything else
+    if (automapactive && crispy_automapoverlay)
+    {
+	AM_Drawer ();
+	HU_Drawer ();
+
+	// [crispy] force redraw of status bar and border
+	viewactivestate = false;
+	inhelpscreensstate = true;
+    }
+
+    // [crispy] shade background when a menu is active or the game is paused
+    if (paused || menuactive)
+    {
+	static int firsttic;
+
+	for (y = 0; y < SCREENWIDTH * SCREENHEIGHT; y++)
+	    I_VideoBuffer[y] = colormaps[menushade * 256 + I_VideoBuffer[y]];
+
+	if (menushade < 16 && gametic != firsttic)
+	{
+	    menushade += ticdup;
+	    firsttic = gametic;
+	}
+
+	// [crispy] force redraw of status bar and border
+	viewactivestate = false;
+	inhelpscreensstate = true;
+    }
+    else
+    if (menushade)
+	menushade = 0;
+
     // draw pause pic
     if (paused)
     {
-	if (automapactive)
+	if (automapactive && !crispy_automapoverlay)
 	    y = 4;
 	else
-	    y = viewwindowy+4;
-	V_DrawPatchDirect(viewwindowx + (scaledviewwidth - 68) / 2, y,
+	    y = (viewwindowy >> hires)+4;
+	V_DrawPatchDirect((viewwindowx >> hires) + ((scaledviewwidth >> hires) - 68) / 2, y,
                           W_CacheLumpName (DEH_String("M_PAUSE"), PU_CACHE));
     }
 
@@ -360,6 +436,7 @@ void D_BindVariables(void)
 #endif
 
     M_BindIntVariable("mouse_sensitivity",      &mouseSensitivity);
+    M_BindIntVariable("mouse_sensitivity_y",    &mouseSensitivity_y); // [crispy]
     M_BindIntVariable("sfx_volume",             &sfxVolume);
     M_BindIntVariable("music_volume",           &musicVolume);
     M_BindIntVariable("show_messages",          &showMessages);
@@ -379,6 +456,26 @@ void D_BindVariables(void)
         M_snprintf(buf, sizeof(buf), "chatmacro%i", i);
         M_BindStringVariable(buf, &chat_macros[i]);
     }
+
+    // [crispy] bind "crispness" config variables
+    M_BindIntVariable("crispy_automapstats",    &crispy_automapstats);
+    M_BindIntVariable("crispy_centerweapon",    &crispy_centerweapon);
+    M_BindIntVariable("crispy_coloredblood",    &crispy_coloredblood);
+    M_BindIntVariable("crispy_coloredblood2",   &crispy_coloredblood2);
+    M_BindIntVariable("crispy_coloredhud",      &crispy_coloredhud);
+    M_BindIntVariable("crispy_crosshair",       &crispy_crosshair);
+    M_BindIntVariable("crispy_crosshair2",      &crispy_crosshair2);
+    M_BindIntVariable("crispy_flipcorpses",     &crispy_flipcorpses);
+    M_BindIntVariable("crispy_freeaim",         &crispy_freeaim);
+    M_BindIntVariable("crispy_freelook",        &crispy_freelook);
+    M_BindIntVariable("crispy_jump",            &crispy_jump);
+    M_BindIntVariable("crispy_mouselook",       &crispy_mouselook);
+    M_BindIntVariable("crispy_overunder",       &crispy_overunder);
+    M_BindIntVariable("crispy_pitch",           &crispy_pitch);
+    M_BindIntVariable("crispy_recoil",          &crispy_recoil);
+    M_BindIntVariable("crispy_secretmessage",   &crispy_secretmessage);
+    M_BindIntVariable("crispy_translucency",    &crispy_translucency);
+    M_BindIntVariable("crispy_uncapped",        &crispy_uncapped);
 }
 
 //
@@ -483,6 +580,9 @@ void D_PageTicker (void)
 //
 void D_PageDrawer (void)
 {
+    if (crispy_fliplevels)
+    V_DrawPatchFlipped (0, 0, W_CacheLumpName(pagename, PU_CACHE));
+    else
     V_DrawPatch (0, 0, W_CacheLumpName(pagename, PU_CACHE));
 }
 
@@ -857,6 +957,14 @@ void D_SetGameDescription(void)
         {
             gamedescription = GetGameName("DOOM 2: TNT - Evilution");
         }
+        else if (logical_gamemission == pack_nerve)
+        {
+            gamedescription = GetGameName("DOOM 2: No Rest For The Living");
+        }
+        else if (logical_gamemission == pack_master)
+        {
+            gamedescription = GetGameName("Master Levels for DOOM 2");
+        }
     }
 }
 
@@ -1151,6 +1259,78 @@ static void LoadIwadDeh(void)
     }
 }
 
+// [crispy] support loading NERVE.WAD alongside DOOM2.WAD
+static void LoadNerveWad(void)
+{
+    int i;
+    char lumpname[9];
+
+    if (gamemission != doom2)
+        return;
+
+    if (bfgedition && !modifiedgame)
+    {
+
+        if (strrchr(iwadfile, DIR_SEPARATOR) != NULL)
+        {
+            char *dir;
+            dir = M_DirName(iwadfile);
+            nervewadfile = M_StringJoin(dir, DIR_SEPARATOR_S, "nerve.wad", NULL);
+            free(dir);
+        }
+        else
+        {
+            nervewadfile = M_StringDuplicate("nerve.wad");
+        }
+
+        if (!M_FileExists(nervewadfile))
+        {
+            free(nervewadfile);
+            nervewadfile = D_FindWADByName("nerve.wad");
+        }
+
+        if (nervewadfile == NULL)
+        {
+            return;
+        }
+
+        D_AddFile(nervewadfile);
+
+        // [crispy] rename level name patch lumps out of the way
+        for (i = 0; i < 9; i++)
+        {
+            M_snprintf (lumpname, 9, "CWILV%2.2d", i);
+            lumpinfo[W_GetNumForName(lumpname)].name[0] = 'N';
+        }
+    }
+    else
+    {
+	i = W_GetNumForName("map01");
+	if (!strcasecmp(lumpinfo[i].wad_file->path, "nerve.wad"))
+	{
+	    gamemission = pack_nerve;
+	    DEH_AddStringReplacement ("TITLEPIC", "INTERPIC");
+	}
+    }
+}
+
+// [crispy] support loading MASTERLEVELS.WAD alongside DOOM2.WAD
+static void LoadMasterlevelsWad(void)
+{
+    int i, j;
+
+    if (gamemission == doom2 && modifiedgame)
+    {
+	i = W_GetNumForName("map01");
+	j = W_GetNumForName("map21");
+	if (!strcasecmp(lumpinfo[i].wad_file->path, "masterlevels.wad") &&
+	    !strcasecmp(lumpinfo[j].wad_file->path, "masterlevels.wad"))
+	{
+	    gamemission = pack_master;
+	}
+    }
+}
+
 static void G_CheckDemoStatusAtExit (void)
 {
     G_CheckDemoStatus();
@@ -1356,6 +1536,14 @@ void D_DoomMain (void)
     D_BindVariables();
     M_LoadDefaults();
 
+    // [crispy] unconditionally disable savegame and demo limits
+    vanilla_savegame_limit = 0;
+    vanilla_demo_limit = 0;
+
+    // [crispy] normalize screenblocks
+    if (screenblocks > CRISPY_HUD)
+	screenblocks = CRISPY_HUD + (crispy_translucency ? 1 : 0);
+
     // Save configuration at exit.
     I_AtExit(M_SaveDefaults, false);
 
@@ -1438,13 +1626,90 @@ void D_DoomMain (void)
     // Note that there's a very careful and deliberate ordering to how
     // Dehacked patches are loaded. The order we use is:
     //  1. IWAD dehacked patches.
+    // [crispy] 1.a. dehacked patches in the config directory following
+    // the preload?.deh/.bex naming scheme are preloaded at game startup
+    if (!M_ParmExists("-nodeh") && !M_ParmExists("-noload"))
+    {
+	int i;
+	char file[16], *path;
+
+	for (i = 0; i < 10; i++)
+	{
+	    M_snprintf(file, sizeof(file), "preload%d.deh", i);
+	    path = M_StringJoin(configdir, file, NULL);
+
+	    if (M_FileExists(path))
+		DEH_LoadFile(path);
+	    else
+	    {
+		free(path);
+		M_snprintf(file, sizeof(file), "preload%d.bex", i);
+		path = M_StringJoin(configdir, file, NULL);
+
+		if (M_FileExists(path))
+		    DEH_LoadFile(path);
+	    }
+	    free(path);
+	}
+    }
     //  2. Command line dehacked patches specified with -deh.
     //  3. PWAD dehacked patches in DEHACKED lumps.
     DEH_ParseCommandLine();
 #endif
 
+    // [crispy] PWAD files in the config directory following
+    // the preload?.wad naming scheme are preloaded at game startup
+    if (!M_ParmExists("-noload") && gamemode != shareware)
+    {
+	int i;
+	char file[16], *path;
+	extern void W_MergeFile(char *filename);
+
+	for (i = 0; i < 10; i++)
+	{
+	    M_snprintf(file, sizeof(file), "preload%d.wad", i);
+	    path = M_StringJoin(configdir, file, NULL);
+
+	    if (M_FileExists(path))
+	    {
+		modifiedgame = true;
+		printf(" auto-merging %s !\n", path);
+		W_MergeFile(path);
+	    }
+	    free(path);
+	}
+    }
+
     // Load PWAD files.
-    modifiedgame = W_ParseCommandLine();
+    modifiedgame |= W_ParseCommandLine(); // [crispy] OR'ed
+
+    //!
+    // @arg <file>
+    // @category mod
+    //
+    // [crispy] experimental feature: in conjunction with -merge <files>
+    // merges PWADs into the main IWAD and writes the merged data into <file>
+    //
+
+    p = M_CheckParmWithArgs ("-mergedump", 1);
+
+    if (p)
+    {
+	if (M_StringEndsWith(myargv[p + 1], ".wad"))
+	{
+	    M_StringCopy(file, myargv[p + 1], sizeof(file));
+	}
+	else
+	{
+	    DEH_snprintf(file, sizeof(file), "%s.wad", myargv[p+1]);
+	}
+
+	if (W_MergeDump(file))
+	{
+	    printf("Merging into file %s.\n", file);
+	    I_Quit();
+	}
+    }
 
     // Debug:
 //    W_PrintDirectory();
@@ -1513,6 +1778,13 @@ void D_DoomMain (void)
     // Generate the WAD hash table.  Speed things up a bit.
     W_GenerateHashTable();
 
+    // [crispy] allow overriding of special-casing
+    if (!M_ParmExists("-nodeh"))
+    {
+	LoadMasterlevelsWad();
+	LoadNerveWad();
+    }
+
     // Load DEHACKED lumps from WAD files - but only if we give the right
     // command line parameter.
 
@@ -1522,7 +1794,8 @@ void D_DoomMain (void)
     // Load Dehacked patches from DEHACKED lumps contained in one of the
     // loaded PWAD files.
     //
-    if (M_ParmExists("-dehlump"))
+    // [crispy] load DEHACKED lumps by default, but allow overriding
+    if (!M_ParmExists("-nodehlump") && !M_ParmExists("-nodeh"))
     {
         int i, loaded = 0;
 
@@ -1530,7 +1803,7 @@ void D_DoomMain (void)
         {
             if (!strncmp(lumpinfo[i].name, "DEHACKED", 8))
             {
-                DEH_LoadLump(i, false, false);
+                DEH_LoadLump(i, true, true); // [crispy] allow long, allow error
                 loaded++;
             }
         }
@@ -1579,6 +1852,8 @@ void D_DoomMain (void)
 		    I_Error(DEH_String("\nThis is not the registered version."));
     }
 
+// [crispy] disable meaningless warning, we always use "-merge" anyway
+#if 0
     if (W_CheckNumForName("SS_START") >= 0
      || W_CheckNumForName("FF_END") >= 0)
     {
@@ -1587,6 +1862,7 @@ void D_DoomMain (void)
                " floor textures.  You may want to use the '-merge' command\n"
                " line option instead of '-file'.\n");
     }
+#endif
 
     I_PrintStartupBanner(gamedescription);
     PrintDehackedBanners();
@@ -1609,6 +1885,39 @@ void D_DoomMain (void)
     I_InitJoystick();
     I_InitSound(true);
     I_InitMusic();
+
+    // [crispy] check for SSG resources
+    crispy_havessg =
+    (
+        gamemode == commercial ||
+        (
+            W_CheckNumForName("sht2a0")   != -1 && // [crispy] wielding/firing sprite sequence
+            W_CheckNumForName("dsdshtgn") != -1 && // [crispy] firing sound
+            W_CheckNumForName("dsdbopn")  != -1 && // [crispy] opening sound
+            W_CheckNumForName("dsdbload") != -1 && // [crispy] reloading sound
+            W_CheckNumForName("dsdbcls")  != -1    // [crispy] closing sound
+        )
+    );
+
+    // [crispy] check for presence of E1M10
+    crispy_havee1m10 = (W_CheckNumForName("e1m10") != -1) &&
+                       (W_CheckNumForName("sewers") != -1);
+
+    // [crispy] check for presence of MAP33
+    crispy_havemap33 = (W_CheckNumForName("map33") != -1) &&
+                       (W_CheckNumForName("cwilv32") != -1);
+
+    // [crispy] change level name for MAP33 if not already changed
+    if (crispy_havemap33 && !strcmp(PHUSTR_1, DEH_String(PHUSTR_1)))
+    {
+        DEH_AddStringReplacement(PHUSTR_1, "level 33: betray");
+    }
+
+    // [crispy] check for NWT-style merging
+    crispy_nwtmerge =
+	M_CheckParmWithArgs("-nwtmerge", 1) ||
+	M_CheckParmWithArgs("-af", 1) ||
+	M_CheckParmWithArgs("-aa", 1);
 
 #ifdef FEATURE_MULTIPLAYER
     printf ("NET_Init: Init network subsystem.\n");
@@ -1711,7 +2020,8 @@ void D_DoomMain (void)
             }
             else
             {
-                startmap = 1;
+                // [crispy] allow second digit without space in between for Doom 1
+                startmap = myargv[p+1][1]-'0';
             }
         }
         autostart = true;
@@ -1728,6 +2038,31 @@ void D_DoomMain (void)
         startmap = 1;
         autostart = true;
         testcontrols = true;
+    }
+
+    // [crispy] enable flashing HOM indicator
+    p = M_CheckParm("-flashinghom");
+
+    if (p > 0)
+    {
+        crispy_flashinghom = true;
+    }
+
+    // [crispy] port level flipping feature over from Strawberry Doom
+    {
+        time_t curtime = time(NULL);
+        struct tm *tm;
+
+        if ((tm = localtime(&curtime)) != NULL &&
+            tm->tm_mon == 3 && tm->tm_mday == 1)
+            crispy_fliplevels = true;
+    }
+
+    p = M_CheckParm("-fliplevels");
+
+    if (p > 0)
+    {
+        crispy_fliplevels = !crispy_fliplevels;
     }
 
     // Check for load game parameter

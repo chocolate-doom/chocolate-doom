@@ -127,6 +127,12 @@ static default_t	doom_defaults_list[] =
     CONFIG_VARIABLE_INT(mouse_sensitivity),
 
     //!
+    // Vertical mouse sensitivity
+    //
+
+    CONFIG_VARIABLE_INT(mouse_sensitivity_y),
+
+    //!
     // Volume of sound effects, range 0-15.
     //
 
@@ -190,16 +196,40 @@ static default_t	doom_defaults_list[] =
     CONFIG_VARIABLE_KEY(key_down),
 
     //!
+    // Keyboard key to move forward (alternative).
+    //
+
+    CONFIG_VARIABLE_KEY(key_alt_up),
+
+    //!
+    // Keyboard key to move backward (alternative).
+    //
+
+    CONFIG_VARIABLE_KEY(key_alt_down),
+
+    //!
     // Keyboard key to strafe left.
     //
 
     CONFIG_VARIABLE_KEY(key_strafeleft),
 
     //!
+    // Keyboard key to strafe left (alternative).
+    //
+
+    CONFIG_VARIABLE_KEY(key_alt_strafeleft),
+
+    //!
     // Keyboard key to strafe right.
     //
 
     CONFIG_VARIABLE_KEY(key_straferight),
+
+    //!
+    // Keyboard key to strafe right (alternative).
+    //
+
+    CONFIG_VARIABLE_KEY(key_alt_straferight),
 
     //!
     // @game strife
@@ -444,6 +474,14 @@ static default_t	doom_defaults_list[] =
     //
 
     CONFIG_VARIABLE_INT(mouseb_jump),
+
+    //!
+    // @game doom
+    //
+    // Mouse button to enable free looking.
+    //
+
+    CONFIG_VARIABLE_INT(mouseb_mouselook),
 
     //!
     // If non-zero, joystick input is enabled.
@@ -784,6 +822,22 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_INT(mouse_threshold),
+
+    //!
+    // Vertical mouse acceleration factor.  When the speed of mouse movement
+    // exceeds the threshold value (mouse_threshold), the speed is
+    // multiplied by this value.
+    //
+
+    CONFIG_VARIABLE_FLOAT(mouse_acceleration_y),
+
+    //!
+    // Vertical mouse acceleration threshold.  When the speed of mouse movement
+    // exceeds this threshold value, the speed is multiplied by an
+    // acceleration factor (mouse_acceleration).
+    //
+
+    CONFIG_VARIABLE_INT(mouse_threshold_y),
 
     //!
     // Sound output sample rate, in Hz.  Typical values to use are
@@ -1273,6 +1327,18 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_KEY(key_spy),
 
     //!
+    // Keyboard shortcut to go to next level.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_nextlevel),
+
+    //!
+    // Keyboard shortcut to reload current level.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_reloadlevel),
+
+    //!
     // Keyboard shortcut to increase the screen size.
     //
 
@@ -1361,6 +1427,18 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_KEY(key_map_clearmark),
+
+    //!
+    // Key to toogle the overlay mode when in the map view.
+    //
+
+    CONFIG_VARIABLE_KEY(key_map_overlay),
+
+    //!
+    // Key to toogle the rotate mode when in the map view.
+    //
+
+    CONFIG_VARIABLE_KEY(key_map_rotate),
 
     //!
     // Key to select weapon 1.
@@ -1559,6 +1637,171 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_KEY(key_multi_msgplayer8),
+
+    //!
+    // @game doom
+    // Quick 180° reverse.
+    //
+
+    CONFIG_VARIABLE_KEY(key_reverse),
+
+    //!
+    // @game doom
+    // Toggle always run.
+    //
+
+    CONFIG_VARIABLE_KEY(key_toggleautorun),
+
+    //!
+    // @game doom
+    // Invert vertical mouse movement.
+    //
+
+    CONFIG_VARIABLE_KEY(mouse_y_invert),
+
+    //!
+    // @game doom
+    //
+    // Enable translucency.
+    //
+
+    CONFIG_VARIABLE_INT(crispy_translucency),
+
+    //!
+    // @game doom
+    //
+    // Show colored numbers in the status bar.
+    //
+
+    CONFIG_VARIABLE_INT(crispy_coloredhud),
+
+    //!
+    // @game doom
+    //
+    // Show additional level statistics in the automap.
+    //
+
+    CONFIG_VARIABLE_INT(crispy_automapstats),
+
+    //!
+    // @game doom
+    //
+    // Show a centered message and play a sound when a secret is found.
+    //
+
+    CONFIG_VARIABLE_INT(crispy_secretmessage),
+
+    //!
+    // @game doom
+    //
+    // Draw a crosshair.
+    //
+
+    CONFIG_VARIABLE_INT(crispy_crosshair),
+
+    //!
+    // @game doom
+    //
+    // Project Crosshair into Scene.
+    //
+
+    CONFIG_VARIABLE_INT(crispy_crosshair2),
+
+    //!
+    // @game doom
+    //
+    // Enable jumping.
+    //
+
+    CONFIG_VARIABLE_INT(crispy_jump),
+
+    //!
+    // @game doom
+    //
+    // Enable looking up and down.
+    //
+
+    CONFIG_VARIABLE_INT(crispy_freelook),
+
+    //!
+    // @game doom
+    //
+    // Use the mouse to look up and down.
+    //
+
+    CONFIG_VARIABLE_INT(crispy_mouselook),
+
+    //!
+    // @game doom
+    //
+    // Enable vertical aiming.
+    //
+
+    CONFIG_VARIABLE_INT(crispy_freeaim),
+
+    //!
+    // @game doom
+    //
+    // Players may walk over and under shootable things.
+    //
+
+    CONFIG_VARIABLE_INT(crispy_overunder),
+
+    //!
+    // @game doom
+    //
+    // Enable weapon recoil thrust.
+    //
+
+    CONFIG_VARIABLE_INT(crispy_recoil),
+
+    //!
+    // @game doom
+    //
+    // Enable weapon recoil pitch.
+    //
+
+    CONFIG_VARIABLE_INT(crispy_pitch),
+
+    //!
+    // @game doom
+    //
+    // Center Weapon when Firing.
+    //
+
+    CONFIG_VARIABLE_INT(crispy_centerweapon),
+
+    //!
+    // @game doom
+    //
+    // Enable Colored Blood.
+    //
+
+    CONFIG_VARIABLE_INT(crispy_coloredblood),
+
+    //!
+    // @game doom
+    //
+    // Fix Spectre and Lost Soul Blood.
+    //
+
+    CONFIG_VARIABLE_INT(crispy_coloredblood2),
+
+    //!
+    // @game doom
+    //
+    // Enable Mirrored Corpses.
+    //
+
+    CONFIG_VARIABLE_INT(crispy_flipcorpses),
+
+    //!
+    // @game doom
+    //
+    // Uncapped Framerate.
+    //
+
+    CONFIG_VARIABLE_INT(crispy_uncapped),
 };
 
 static default_collection_t extra_defaults =

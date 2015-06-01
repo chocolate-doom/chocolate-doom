@@ -1187,9 +1187,27 @@ static void *I_SDL_RegisterSong(void *data, int len)
 
     filename = M_TempFile("doom.mid");
 
-    if (IsMid(data, len) && len < MAXMIDLENGTH)
+    // [crispy] remove MID file size limit
+    if (IsMid(data, len) /* && len < MAXMIDLENGTH */)
     {
         M_WriteFile(filename, data, len);
+    }
+    // [crispy] support OGG/FLAC music from lumps
+    else if (len > 4 && !memcmp(data, OGG_HEADER, 4))
+    {
+        filename = M_TempFile("doom.ogg");
+        M_WriteFile(filename, data, len);
+
+        playing_substitute = true;
+        ReadLoopPoints(filename, &file_metadata);
+    }
+    else if (len > 4 && !memcmp(data, FLAC_HEADER, 4))
+    {
+        filename = M_TempFile("doom.flac");
+        M_WriteFile(filename, data, len);
+
+        playing_substitute = true;
+        ReadLoopPoints(filename, &file_metadata);
     }
     else
     {

@@ -40,6 +40,8 @@
 #include "net_sdl.h"
 #include "net_loop.h"
 
+#include "crispy.h"
+
 // The complete set of data for a particular tic.
 
 typedef struct
@@ -688,6 +690,8 @@ static void SinglePlayerClear(ticcmd_set_t *set)
     }
 }
 
+int crispy_uncapped = 0;
+
 //
 // TryRunTics
 //
@@ -738,6 +742,11 @@ void TryRunTics (void)
             counts = realtics;
         else
             counts = availabletics;
+
+        // [AM] If we've uncapped the framerate and there are no tics
+        //      to run, return early instead of waiting around.
+        if (counts == 0 && crispy_uncapped && gametic)
+            return;
 
         if (counts < 1)
             counts = 1;

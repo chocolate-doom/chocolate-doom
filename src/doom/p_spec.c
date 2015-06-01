@@ -47,6 +47,7 @@
 // Data.
 #include "sounds.h"
 
+#define HUSTR_SECRETFOUND	"A secret is revealed!"
 
 //
 // Animating textures and planes
@@ -133,7 +134,7 @@ anim_t*		lastanim;
 //
 //      Animating line specials
 //
-#define MAXLINEANIMS            64
+#define MAXLINEANIMS            64*256
 
 extern  short	numlinespecials;
 extern  line_t*	linespeciallist[MAXLINEANIMS];
@@ -337,7 +338,19 @@ P_FindNextHighestFloor
     line_t*     check;
     sector_t*   other;
     fixed_t     height = currentheight;
-    fixed_t     heightlist[MAX_ADJOINING_SECTORS + 2];
+    static fixed_t *heightlist = NULL;
+    static int heightlist_size = 0;
+
+    // [crispy] remove MAX_ADJOINING_SECTORS Vanilla limit
+    // from prboom-plus/src/p_spec.c:404-411
+    if (sec->linecount > heightlist_size)
+    {
+	do
+	{
+	    heightlist_size = heightlist_size ? 2 * heightlist_size : MAX_ADJOINING_SECTORS;
+	} while (sec->linecount > heightlist_size);
+	heightlist = realloc(heightlist, heightlist_size * sizeof(*heightlist));
+    }
 
     for (i=0, h=0; i < sec->linecount; i++)
     {
@@ -357,7 +370,7 @@ P_FindNextHighestFloor
             else if (h == MAX_ADJOINING_SECTORS + 2)
             {
                 // Fatal overflow: game crashes at 22 textures
-                I_Error("Sector with more than 22 adjoining sectors. "
+                   fprintf(stderr, "P_FindNextHighestFloor: Sector with more than 22 adjoining sectors. "
                         "Vanilla will crash here");
             }
 
@@ -1019,6 +1032,8 @@ P_ShootSpecialLine
 void P_PlayerInSpecialSector (player_t* player)
 {
     sector_t*	sector;
+    extern int showMessages;
+    static sector_t*	error;
 	
     sector = player->mo->subsector->sector;
 
@@ -1057,6 +1072,13 @@ void P_PlayerInSpecialSector (player_t* player)
 			
       case 9:
 	// SECRET SECTOR
+	// [crispy] show centered "Secret Revealed!" message
+	if (showMessages && crispy_secretmessage)
+	{
+	    player->centermessage = HUSTR_SECRETFOUND;
+	    if (player == &players[consoleplayer])
+	        S_StartSound(NULL, sfx_itmbk);
+	}
 	player->secretcount++;
 	sector->special = 0;
 	break;
@@ -1073,9 +1095,14 @@ void P_PlayerInSpecialSector (player_t* player)
 	break;
 			
       default:
-	I_Error ("P_PlayerInSpecialSector: "
-		 "unknown special %i",
+	// [crispy] ignore unknown special sectors
+	if (error != sector)
+	{
+	error = sector;
+	fprintf (stderr, "P_PlayerInSpecialSector: "
+		 "unknown special %i\n",
 		 sector->special);
+	}
 	break;
     };
 }

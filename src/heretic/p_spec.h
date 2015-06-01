@@ -55,7 +55,7 @@ extern int *TerrainTypes;
 //
 //      Animating line specials
 //
-#define	MAXLINEANIMS		64
+#define	MAXLINEANIMS		64*256
 extern short numlinespecials;
 extern line_t *linespeciallist[MAXLINEANIMS];
 
@@ -233,7 +233,7 @@ typedef struct
 
 #define	PLATWAIT	3
 #define	PLATSPEED	FRACUNIT
-#define	MAXPLATS	30
+#define	MAXPLATS	30*256
 
 extern plat_t *activeplats[MAXPLATS];
 

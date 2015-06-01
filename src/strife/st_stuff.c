@@ -963,11 +963,13 @@ void ST_drawNumFontY2(int x, int y, int num)
 void ST_drawLine(int x, int y, int len, int color)
 {
     byte putcolor = (byte)(color);
-    byte *drawpos = I_VideoBuffer + y * SCREENWIDTH + x;
+    byte *drawpos = I_VideoBuffer + (y << hires) * SCREENWIDTH + (x << hires);
     int i = 0;
 
-    while(i < len)
+    while(i < (len << hires))
     {
+        if (hires)
+            *(drawpos + SCREENWIDTH) = putcolor;
         *drawpos++ = putcolor;
         ++i;
     }

@@ -91,8 +91,8 @@ static const char shiftxform[] =
 };
 
 
-#define LOADING_DISK_W 16
-#define LOADING_DISK_H 16
+#define LOADING_DISK_W (16 << hires)
+#define LOADING_DISK_H (16 << hires)
 
 // Non aspect ratio-corrected modes (direct multiples of 320x200)
 
@@ -119,6 +119,7 @@ static screen_mode_t *screen_modes_corrected[] = {
     // Horizontally squashed modes (320x200 -> 256x200 and multiples)
 
     &mode_squash_1x,
+    &mode_squash_1p5x,
     &mode_squash_2x,
     &mode_squash_3x,
     &mode_squash_4x,
@@ -168,11 +169,11 @@ static unsigned int mouse_button_state = 0;
 // motion.  Specified with the '-novert' command line parameter.
 // This is an int to allow saving to config file
 
-int novert = 0;
+int novert = 1;
 
 // Save screenshots in PNG format.
 
-int png_screenshots = 0;
+int png_screenshots = 1;
 
 // if true, I_VideoBuffer is screen->pixels
 
@@ -262,7 +263,7 @@ static unsigned int last_resize_time;
 // The sensible thing to do is to disable this if you have a non-US
 // keyboard.
 
-int vanilla_keyboard_mapping = true;
+int vanilla_keyboard_mapping = 0;
 
 // Is the shift key currently down?
 
@@ -279,6 +280,11 @@ static int shiftdown = 0;
 
 float mouse_acceleration = 2.0;
 int mouse_threshold = 10;
+
+// [crispy]
+float mouse_acceleration_y = 1.0;
+int mouse_threshold_y = 0;
+int mouse_y_invert = 0;
 
 // Gamma correction level to use
 
@@ -420,7 +426,7 @@ void I_EnableLoadingDisk(void)
 
     // Draw the patch into a temporary buffer
 
-    tmpbuf = Z_Malloc(SCREENWIDTH * (disk->height + 1), PU_STATIC, NULL);
+    tmpbuf = Z_Malloc(SCREENWIDTH * ((disk->height + 1) << hires), PU_STATIC, NULL);
     V_UseBuffer(tmpbuf);
 
     // Draw the disk to the screen:
@@ -623,6 +629,22 @@ static int AccelerateMouse(int val)
     if (val > mouse_threshold)
     {
         return (int)((val - mouse_threshold) * mouse_acceleration + mouse_threshold);
+    }
+    else
+    {
+        return val;
+    }
+}
+
+// [crispy]
+static int AccelerateMouseY(int val)
+{
+    if (val < 0)
+        return -AccelerateMouseY(-val);
+
+    if (val > mouse_threshold_y)
+    {
+        return (int)((val - mouse_threshold_y) * mouse_acceleration_y + mouse_threshold_y);
     }
     else
     {
@@ -847,9 +869,9 @@ static void I_ReadMouse(void)
         ev.data1 = mouse_button_state;
         ev.data2 = AccelerateMouse(x);
 
-        if (!novert)
+        if (!novert || 1) // [crispy] moved to src/*/g_game.c
         {
-            ev.data3 = -AccelerateMouse(y);
+            ev.data3 = -AccelerateMouseY(y);
         }
         else
         {
@@ -1045,6 +1067,9 @@ void I_EndRead(void)
                SCREENWIDTH, SCREENHEIGHT);
 }
 
+int crispy_fps = 0;
+boolean crispy_showfps = false;
+
 //
 // I_FinishUpdate
 //
@@ -1053,6 +1078,10 @@ void I_FinishUpdate (void)
     static int	lasttic;
     int		tics;
     int		i;
+
+    static int	lastmili;
+    static int	fpscount;
+    int		mili;
 
     if (!initialized)
         return;
@@ -1090,6 +1119,23 @@ void I_FinishUpdate (void)
 	for ( ; i<20*4 ; i+=4)
 	    I_VideoBuffer[ (SCREENHEIGHT-1)*SCREENWIDTH + i] = 0x0;
     }
+
+	// [AM] Real FPS counter
+	if (crispy_showfps)
+	{
+		fpscount++;
+
+		i = SDL_GetTicks();
+		mili = i - lastmili;
+
+		// Update FPS counter every second
+		if (mili >= 1000)
+		{
+			crispy_fps = (fpscount * 1000) / mili;
+			fpscount = 0;
+			lastmili = i;
+		}
+	}
 
     // draw to screen
 
@@ -1285,7 +1331,7 @@ static screen_mode_t *I_FindScreenMode(int w, int h)
         {
             return &mode_scale_1x;
         }
-        else if (w == SCREENWIDTH*2 && h == SCREENHEIGHT*2)
+        else if (w == SCREENWIDTH*2 && h == SCREENHEIGHT*2 && !hires)
         {
             return &mode_scale_2x;
         }
@@ -1983,6 +2029,9 @@ void I_InitGraphics(void)
     byte *doompal;
     char *env;
 
+    // [crispy] disable special lock-key behavior
+    putenv("SDL_DISABLE_LOCK_KEYS=1");
+
     // Pass through the XSCREENSAVER_WINDOW environment variable to 
     // SDL_WINDOWID, to embed the SDL window into the Xscreensaver
     // window.
@@ -2130,7 +2179,8 @@ void I_InitGraphics(void)
     // Not sure about repeat rate - probably dependent on which DOS
     // driver is used.  This is good enough though.
 
-    SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
+    // [crispy] fix "holding ESC causes the menu to flicker on and off repeatedly"
+    //SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
 
     // clear out any events waiting at the start and center the mouse
   
@@ -2158,7 +2208,10 @@ void I_BindVideoVariables(void)
     M_BindIntVariable("screen_bpp",                &screen_bpp);
     M_BindIntVariable("grabmouse",                 &grabmouse);
     M_BindFloatVariable("mouse_acceleration",      &mouse_acceleration);
+    M_BindFloatVariable("mouse_acceleration_y",    &mouse_acceleration_y); // [crispy]
     M_BindIntVariable("mouse_threshold",           &mouse_threshold);
+    M_BindIntVariable("mouse_threshold_y",         &mouse_threshold_y); // [crispy]
+    M_BindIntVariable("mouse_y_invert",            &mouse_y_invert); // [crispy]
     M_BindStringVariable("video_driver",           &video_driver);
     M_BindStringVariable("window_position",        &window_position);
     M_BindIntVariable("usegamma",                  &usegamma);

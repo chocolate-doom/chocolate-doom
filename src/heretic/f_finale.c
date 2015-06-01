@@ -270,20 +270,20 @@ void F_DemonScroll(void)
     p2 = W_CacheLumpName(DEH_String("FINAL2"), PU_LEVEL);
     if (finalecount < 70)
     {
-        memcpy(I_VideoBuffer, p1, SCREENHEIGHT * SCREENWIDTH);
+        V_CopyScaledBuffer(I_VideoBuffer, p1, ORIGHEIGHT * ORIGWIDTH);
         nextscroll = finalecount;
         return;
     }
     if (yval < 64000)
     {
-        memcpy(I_VideoBuffer, p2 + SCREENHEIGHT * SCREENWIDTH - yval, yval);
-        memcpy(I_VideoBuffer + yval, p1, SCREENHEIGHT * SCREENWIDTH - yval);
-        yval += SCREENWIDTH;
+        V_CopyScaledBuffer(I_VideoBuffer, p2 + ORIGHEIGHT * ORIGWIDTH - yval, yval);
+        V_CopyScaledBuffer(I_VideoBuffer + (yval << (2 * hires)), p1, ORIGHEIGHT * ORIGWIDTH - yval);
+        yval += ORIGWIDTH;
         nextscroll = finalecount + 3;
     }
     else
     {                           //else, we'll just sit here and wait, for now
-        memcpy(I_VideoBuffer, p2, SCREENWIDTH * SCREENHEIGHT);
+        V_CopyScaledBuffer(I_VideoBuffer, p2, ORIGWIDTH * ORIGHEIGHT);
     }
 }
 

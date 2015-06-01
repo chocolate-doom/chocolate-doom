@@ -27,11 +27,13 @@
 
 
 #include "doomdef.h"
+#include "doomstat.h" // [AM] leveltime, paused, menuactive
 #include "d_loop.h"
 
 #include "m_bbox.h"
 #include "m_menu.h"
 
+#include "p_local.h" // [crispy] MLOOKUNIT
 #include "r_local.h"
 #include "r_sky.h"
 
@@ -78,6 +80,10 @@ fixed_t			viewsin;
 
 player_t*		viewplayer;
 
+// [AM] Fractional part of the current tic, in the half-open
+//      range of [0.0, 1.0).  Used for interpolation.
+fixed_t                 fractionaltic;
+
 // 0 = high, 1 = low
 int			detailshift;	
 
@@ -110,6 +116,7 @@ void (*colfunc) (void);
 void (*basecolfunc) (void);
 void (*fuzzcolfunc) (void);
 void (*transcolfunc) (void);
+void (*tlcolfunc) (void);
 void (*spanfunc) (void);
 
 
@@ -439,6 +446,9 @@ void R_InitPointToAngle (void)
 }
 
 
+// [crispy] WiggleFix: move R_ScaleFromGlobalAngle function to r_segs.c,
+// above R_StoreWallRange
+#if 0
 //
 // R_ScaleFromGlobalAngle
 // Returns the texture mapping scale
@@ -479,7 +489,7 @@ fixed_t R_ScaleFromGlobalAngle (angle_t visangle)
     // both sines are allways positive
     sinea = finesine[anglea>>ANGLETOFINESHIFT];	
     sineb = finesine[angleb>>ANGLETOFINESHIFT];
-    num = FixedMul(projection,sineb)<<detailshift;
+    num = FixedMul(projection,sineb)<<(detailshift && !hires);
     den = FixedMul(rw_distance,sinea);
 
     if (den > num>>16)
@@ -496,8 +506,29 @@ fixed_t R_ScaleFromGlobalAngle (angle_t visangle)
 	
     return scale;
 }
+#endif
 
 
+// [AM] Interpolate between two angles.
+angle_t R_InterpolateAngle(angle_t oangle, angle_t nangle, fixed_t scale)
+{
+    if (nangle == oangle)
+        return nangle;
+    else if (nangle > oangle)
+    {
+        if (nangle - oangle < ANG270)
+            return oangle + (angle_t)((nangle - oangle) * FIXED2DOUBLE(scale));
+        else // Wrapped around
+            return oangle - (angle_t)((oangle - nangle) * FIXED2DOUBLE(scale));
+    }
+    else // nangle < oangle
+    {
+        if (oangle - nangle < ANG270)
+            return oangle - (angle_t)((oangle - nangle) * FIXED2DOUBLE(scale));
+        else // Wrapped around
+            return oangle + (angle_t)((nangle - oangle) * FIXED2DOUBLE(scale));
+    }
+}
 
 //
 // R_InitTables
@@ -622,7 +653,7 @@ void R_InitLightTables (void)
 	startmap = ((LIGHTLEVELS-1-i)*2)*NUMCOLORMAPS/LIGHTLEVELS;
 	for (j=0 ; j<MAXLIGHTZ ; j++)
 	{
-	    scale = FixedDiv ((SCREENWIDTH/2*FRACUNIT), (j+1)<<LIGHTZSHIFT);
+	    scale = FixedDiv ((ORIGWIDTH/2*FRACUNIT), (j+1)<<LIGHTZSHIFT);
 	    scale >>= LIGHTSCALESHIFT;
 	    level = startmap - scale/DISTMAP;
 	    
@@ -675,19 +706,20 @@ void R_ExecuteSetViewSize (void)
 
     setsizeneeded = false;
 
-    if (setblocks == 11)
+    if (setblocks >= 11) // [crispy] Crispy HUD
     {
 	scaledviewwidth = SCREENWIDTH;
-	viewheight = SCREENHEIGHT;
+	scaledviewheight = SCREENHEIGHT;
     }
     else
     {
-	scaledviewwidth = setblocks*32;
-	viewheight = (setblocks*168/10)&~7;
+	scaledviewwidth = (setblocks*32)<<hires;
+	scaledviewheight = ((setblocks*168/10)&~7)<<hires;
     }
     
     detailshift = setdetail;
     viewwidth = scaledviewwidth>>detailshift;
+    viewheight = scaledviewheight>>(detailshift && hires);
 	
     centery = viewheight/2;
     centerx = viewwidth/2;
@@ -700,6 +732,7 @@ void R_ExecuteSetViewSize (void)
 	colfunc = basecolfunc = R_DrawColumn;
 	fuzzcolfunc = R_DrawFuzzColumn;
 	transcolfunc = R_DrawTranslatedColumn;
+	tlcolfunc = R_DrawTLColumn;
 	spanfunc = R_DrawSpan;
     }
     else
@@ -707,16 +740,17 @@ void R_ExecuteSetViewSize (void)
 	colfunc = basecolfunc = R_DrawColumnLow;
 	fuzzcolfunc = R_DrawFuzzColumnLow;
 	transcolfunc = R_DrawTranslatedColumnLow;
+	tlcolfunc = R_DrawTLColumnLow;
 	spanfunc = R_DrawSpanLow;
     }
 
-    R_InitBuffer (scaledviewwidth, viewheight);
+    R_InitBuffer (scaledviewwidth, scaledviewheight);
 	
     R_InitTextureMapping ();
     
     // psprite scales
-    pspritescale = FRACUNIT*viewwidth/SCREENWIDTH;
-    pspriteiscale = FRACUNIT*SCREENWIDTH/viewwidth;
+    pspritescale = FRACUNIT*viewwidth/ORIGWIDTH;
+    pspriteiscale = FRACUNIT*ORIGWIDTH/viewwidth;
     
     // thing clipping
     for (i=0 ; i<viewwidth ; i++)
@@ -725,10 +759,17 @@ void R_ExecuteSetViewSize (void)
     // planes
     for (i=0 ; i<viewheight ; i++)
     {
-	dy = ((i-viewheight/2)<<FRACBITS)+FRACUNIT/2;
+	// [crispy] re-generate lookup-table for yslope[] (free look)
+	// whenever "detailshift" or "screenblocks" change
+	const fixed_t num = (viewwidth<<(detailshift && !hires))/2*FRACUNIT;
+	for (j = 0; j < LOOKDIRS; j++)
+	{
+	dy = ((i-(viewheight/2 + ((j-LOOKDIRMIN) << (hires && !detailshift)) * (screenblocks < 11 ? screenblocks : 11) / 10))<<FRACBITS)+FRACUNIT/2;
 	dy = abs(dy);
-	yslope[i] = FixedDiv ( (viewwidth<<detailshift)/2*FRACUNIT, dy);
+	yslopes[j][i] = FixedDiv (num, dy);
+	}
     }
+    yslope = yslopes[LOOKDIRMIN];
 	
     for (i=0 ; i<viewwidth ; i++)
     {
@@ -823,14 +864,59 @@ R_PointInSubsector
 void R_SetupFrame (player_t* player)
 {		
     int		i;
+    int		tempCentery;
+    int		pitch;
     
     viewplayer = player;
-    viewx = player->mo->x;
-    viewy = player->mo->y;
-    viewangle = player->mo->angle + viewangleoffset;
+
+    // [AM] Interpolate the player camera if the feature is enabled.
+
+    // Figure out how far into the current tic we're in as a fixed_t
+    if (crispy_uncapped)
+        fractionaltic = I_GetTimeMS() * TICRATE % 1000 * FRACUNIT / 1000;
+
+    if (crispy_uncapped &&
+        // Don't interpolate on the first tic of a level,
+        // otherwise oldviewz might be garbage.
+        leveltime > 1 &&
+        // Don't interpolate if the player did something
+        // that would necessitate turning it off for a tic.
+        player->mo->interp == true &&
+        // Don't interpolate during a paused state
+        !paused && !menuactive)
+    {
+        // Interpolate player camera from their old position to their current one.
+        viewx = player->mo->oldx + FixedMul(player->mo->x - player->mo->oldx, fractionaltic);
+        viewy = player->mo->oldy + FixedMul(player->mo->y - player->mo->oldy, fractionaltic);
+        viewz = player->oldviewz + FixedMul(player->viewz - player->oldviewz, fractionaltic);
+        viewangle = R_InterpolateAngle(player->mo->oldangle, player->mo->angle, fractionaltic) + viewangleoffset;
+    }
+    else
+    {
+        viewx = player->mo->x;
+        viewy = player->mo->y;
+        viewz = player->viewz;
+        viewangle = player->mo->angle + viewangleoffset;
+    }
+
     extralight = player->extralight;
 
-    viewz = player->viewz;
+    // [crispy] pitch is actual lookdir and weapon pitch
+    pitch = player->lookdir/MLOOKUNIT + (player->recoilpitch>>FRACBITS);
+    if (pitch > LOOKDIRMAX)
+	pitch = LOOKDIRMAX;
+    else
+    if (pitch < -LOOKDIRMIN)
+	pitch = -LOOKDIRMIN;
+
+    // apply new yslope[] whenever "lookdir", "detailshift" or "screenblocks" change
+    tempCentery = viewheight/2 + (pitch << (hires && !detailshift)) * (screenblocks < 11 ? screenblocks : 11) / 10;
+    if (centery != tempCentery)
+    {
+        centery = tempCentery;
+        centeryfrac = centery << FRACBITS;
+        yslope = yslopes[LOOKDIRMIN + pitch];
+    }
     
     viewsin = finesine[viewangle>>ANGLETOFINESHIFT];
     viewcos = finecosine[viewangle>>ANGLETOFINESHIFT];
@@ -862,6 +948,8 @@ void R_SetupFrame (player_t* player)
 //
 void R_RenderPlayerView (player_t* player)
 {	
+    extern void V_DrawFilledBox (int x, int y, int w, int h, int c);
+
     R_SetupFrame (player);
 
     // Clear buffers.
@@ -869,7 +957,18 @@ void R_RenderPlayerView (player_t* player)
     R_ClearDrawSegs ();
     R_ClearPlanes ();
     R_ClearSprites ();
+    if (automapactive && !crispy_automapoverlay)
+    {
+        R_RenderBSPNode (numnodes-1);
+        return;
+    }
     
+    // [crispy] flashing HOM indicator
+    V_DrawFilledBox(viewwindowx, viewwindowy,
+        scaledviewwidth, scaledviewheight,
+        crispy_flashinghom &&
+        (gametic % 20) < 9 ? 0xb0 : 0);
+
     // check for new console commands.
     NetUpdate ();
 

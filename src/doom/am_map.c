@@ -66,17 +66,17 @@
 #define BACKGROUND	BLACK
 #define YOURCOLORS	WHITE
 #define YOURRANGE	0
-#define WALLCOLORS	REDS
+#define WALLCOLORS	(REDS + REDRANGE/2) // [crispy] a tad darker
 #define WALLRANGE	REDRANGE
 #define TSWALLCOLORS	GRAYS
 #define TSWALLRANGE	GRAYSRANGE
 #define FDWALLCOLORS	BROWNS
 #define FDWALLRANGE	BROWNRANGE
-#define CDWALLCOLORS	YELLOWS
+#define CDWALLCOLORS	(YELLOWS + YELLOWRANGE) // [crispy] a tad darker
 #define CDWALLRANGE	YELLOWRANGE
 #define THINGCOLORS	GREENS
 #define THINGRANGE	GREENRANGE
-#define SECRETWALLCOLORS WALLCOLORS
+#define SECRETWALLCOLORS 252 // [crispy] purple
 #define SECRETWALLRANGE WALLRANGE
 #define GRIDCOLORS	(GRAYS + GRAYSRANGE/2)
 #define GRIDRANGE	0
@@ -99,8 +99,9 @@
 #define M_ZOOMOUT       ((int) (FRACUNIT/1.02))
 
 // translates between frame-buffer and map distances
-#define FTOM(x) FixedMul(((x)<<16),scale_ftom)
-#define MTOF(x) (FixedMul((x),scale_mtof)>>16)
+// [crispy] fix int overflow that causes map and grid lines to disappear
+#define FTOM(x) (((int64_t)((x)<<16) * scale_ftom) >> FRACBITS)
+#define MTOF(x) ((((int64_t)(x) * scale_mtof) >> FRACBITS)>>16)
 // translates between frame-buffer and map coordinates
 #define CXMTOF(x)  (f_x + MTOF((x)-m_x))
 #define CYMTOF(y)  (f_y + (f_h - MTOF((y)-m_y)))
@@ -120,7 +121,7 @@ typedef struct
 
 typedef struct
 {
-    fixed_t		x,y;
+    int64_t		x,y;
 } mpoint_t;
 
 typedef struct
@@ -133,6 +134,13 @@ typedef struct
     fixed_t slp, islp;
 } islope_t;
 
+typedef enum
+{
+    no_key,
+    red_key,
+    yellow_key,
+    blue_key
+} keycolor_t;
 
 
 //
@@ -187,6 +195,11 @@ mline_t thintriangle_guy[] = {
     { { (fixed_t)(R    ), (fixed_t)(0    ) }, { (fixed_t)(-.5*R), (fixed_t)(.7*R ) } },
     { { (fixed_t)(-.5*R), (fixed_t)(.7*R ) }, { (fixed_t)(-.5*R), (fixed_t)(-.7*R) } }
 };
+// [crispy] print keys as crosses
+static mline_t cross_mark[] = {
+    { { -R, 0 }, { R, 0 } },
+    { { 0, -R }, { 0, R } },
+};
 #undef R
 
 
@@ -199,7 +212,7 @@ static int 	leveljuststarted = 1; 	// kluge until AM_LevelInit() is called
 
 boolean    	automapactive = false;
 static int 	finit_width = SCREENWIDTH;
-static int 	finit_height = SCREENHEIGHT - 32;
+static int 	finit_height = SCREENHEIGHT - (32 << hires);
 
 // location of window on screen
 static int 	f_x;
@@ -217,14 +230,14 @@ static mpoint_t m_paninc; // how far the window pans each tic (map coords)
 static fixed_t 	mtof_zoommul; // how far the window zooms in each tic (map coords)
 static fixed_t 	ftom_zoommul; // how far the window zooms in each tic (fb coords)
 
-static fixed_t 	m_x, m_y;   // LL x,y where the window is on the map (map coords)
-static fixed_t 	m_x2, m_y2; // UR x,y where the window is on the map (map coords)
+static int64_t 	m_x, m_y;   // LL x,y where the window is on the map (map coords)
+static int64_t 	m_x2, m_y2; // UR x,y where the window is on the map (map coords)
 
 //
 // width/height of window on map (map coords)
 //
-static fixed_t 	m_w;
-static fixed_t	m_h;
+static int64_t 	m_w;
+static int64_t 	m_h;
 
 // based on level size
 static fixed_t 	min_x;
@@ -244,8 +257,8 @@ static fixed_t 	min_scale_mtof; // used to tell when to stop zooming out
 static fixed_t 	max_scale_mtof; // used to tell when to stop zooming in
 
 // old stuff for recovery later
-static fixed_t old_m_w, old_m_h;
-static fixed_t old_m_x, old_m_y;
+static int64_t old_m_w, old_m_h;
+static int64_t old_m_x, old_m_y;
 
 // old location used by the Follower routine
 static mpoint_t f_oldloc;
@@ -266,6 +279,14 @@ static int followplayer = 1; // specifies whether to follow the player around
 cheatseq_t cheat_amap = CHEAT("iddt", 0);
 
 static boolean stopped = true;
+
+// [crispy] automap rotate mode ...
+static boolean crispy_automaprotate = false;
+// ... needs these early on
+void AM_rotate (int64_t *x, int64_t *y, angle_t a);
+static void AM_rotatePoint (mpoint_t *pt);
+static mpoint_t mapcenter;
+static angle_t mapangle;
 
 // Calculates the slope and slope according to the x-axis of a line
 // segment in map coordinates (with the upright y-axis n' all) so
@@ -342,8 +363,18 @@ void AM_restoreScaleAndLoc(void)
 //
 void AM_addMark(void)
 {
+    // [crispy] keep the map static in overlay mode
+    // if not following the player
+    if (!(!followplayer && crispy_automapoverlay))
+    {
     markpoints[markpointnum].x = m_x + m_w/2;
     markpoints[markpointnum].y = m_y + m_h/2;
+    }
+    else
+    {
+	markpoints[markpointnum].x = plr->mo->x;
+	markpoints[markpointnum].y = plr->mo->y;
+    }
     markpointnum = (markpointnum + 1) % AM_NUMMARKPOINTS;
 
 }
@@ -374,8 +405,9 @@ void AM_findMinMaxBoundaries(void)
 	    max_y = vertexes[i].y;
     }
   
-    max_w = max_x - min_x;
-    max_h = max_y - min_y;
+    // [crispy] cope with huge level dimensions which span the entire INT range
+    max_w = max_x/2 - min_x/2;
+    max_h = max_y/2 - min_y/2;
 
     min_w = 2*PLAYERRADIUS; // const? never changed?
     min_h = 2*PLAYERRADIUS;
@@ -383,7 +415,7 @@ void AM_findMinMaxBoundaries(void)
     a = FixedDiv(f_w<<FRACBITS, max_w);
     b = FixedDiv(f_h<<FRACBITS, max_h);
   
-    min_scale_mtof = a < b ? a : b;
+    min_scale_mtof = a < b ? a/2 : b/2;
     max_scale_mtof = FixedDiv(f_h<<FRACBITS, 2*PLAYERRADIUS);
 
 }
@@ -394,14 +426,22 @@ void AM_findMinMaxBoundaries(void)
 //
 void AM_changeWindowLoc(void)
 {
+    int64_t incx, incy;
+
     if (m_paninc.x || m_paninc.y)
     {
 	followplayer = 0;
 	f_oldloc.x = INT_MAX;
     }
 
-    m_x += m_paninc.x;
-    m_y += m_paninc.y;
+    incx = m_paninc.x;
+    incy = m_paninc.y;
+    if (crispy_automaprotate)
+    {
+	AM_rotate(&incx, &incy, -mapangle);
+    }
+    m_x += incx;
+    m_y += incy;
 
     if (m_x + m_w/2 > max_x)
 	m_x = max_x - m_w/2;
@@ -619,22 +659,24 @@ AM_Responder
 
         if (key == key_map_east)          // pan right
         {
-            if (!followplayer) m_paninc.x = FTOM(F_PANINC);
+            // [crispy] keep the map static in overlay mode
+            // if not following the player
+            if (!followplayer && !crispy_automapoverlay) m_paninc.x = FTOM(F_PANINC);
             else rc = false;
         }
         else if (key == key_map_west)     // pan left
         {
-            if (!followplayer) m_paninc.x = -FTOM(F_PANINC);
+            if (!followplayer && !crispy_automapoverlay) m_paninc.x = -FTOM(F_PANINC);
             else rc = false;
         }
         else if (key == key_map_north)    // pan up
         {
-            if (!followplayer) m_paninc.y = FTOM(F_PANINC);
+            if (!followplayer && !crispy_automapoverlay) m_paninc.y = FTOM(F_PANINC);
             else rc = false;
         }
         else if (key == key_map_south)    // pan down
         {
-            if (!followplayer) m_paninc.y = -FTOM(F_PANINC);
+            if (!followplayer && !crispy_automapoverlay) m_paninc.y = -FTOM(F_PANINC);
             else rc = false;
         }
         else if (key == key_map_zoomout)  // zoom out
@@ -691,6 +733,22 @@ AM_Responder
         {
             AM_clearMarks();
             plr->message = DEH_String(AMSTR_MARKSCLEARED);
+        }
+        else if (key == key_map_overlay)
+        {
+            crispy_automapoverlay = !crispy_automapoverlay;
+            if (crispy_automapoverlay)
+                plr->message = DEH_String(AMSTR_OVERLAYON);
+            else
+                plr->message = DEH_String(AMSTR_OVERLAYOFF);
+        }
+        else if (key == key_map_rotate)
+        {
+            crispy_automaprotate = !crispy_automaprotate;
+            if (crispy_automaprotate)
+                plr->message = DEH_String(AMSTR_ROTATEON);
+            else
+                plr->message = DEH_String(AMSTR_ROTATEOFF);
         }
         else
         {
@@ -825,6 +883,16 @@ void AM_Ticker (void)
     // Update light level
     // AM_updateLightLev();
 
+    // [crispy] required for AM_rotatePoint()
+    if (crispy_automaprotate)
+    {
+	mapcenter.x = m_x + m_w / 2;
+	mapcenter.y = m_y + m_h / 2;
+	// [crispy] keep the map static in overlay mode
+	// if not following the player
+	if (!(!followplayer && crispy_automapoverlay))
+	mapangle = ANG90 - viewangle;
+    }
 }
 
 
@@ -1076,41 +1144,73 @@ AM_drawMline
 //
 void AM_drawGrid(int color)
 {
-    fixed_t x, y;
-    fixed_t start, end;
+    int64_t x, y;
+    int64_t start, end;
     mline_t ml;
 
     // Figure out start of vertical gridlines
     start = m_x;
+    if (crispy_automaprotate)
+    {
+	start -= m_h / 2;
+    }
     if ((start-bmaporgx)%(MAPBLOCKUNITS<<FRACBITS))
 	start += (MAPBLOCKUNITS<<FRACBITS)
 	    - ((start-bmaporgx)%(MAPBLOCKUNITS<<FRACBITS));
     end = m_x + m_w;
+    if (crispy_automaprotate)
+    {
+	end += m_h / 2;
+    }
 
     // draw vertical gridlines
-    ml.a.y = m_y;
-    ml.b.y = m_y+m_h;
     for (x=start; x<end; x+=(MAPBLOCKUNITS<<FRACBITS))
     {
 	ml.a.x = x;
 	ml.b.x = x;
+	// [crispy] moved here
+	ml.a.y = m_y;
+	ml.b.y = m_y+m_h;
+	if (crispy_automaprotate)
+	{
+	    ml.a.y -= m_w / 2;
+	    ml.b.y += m_w / 2;
+	    AM_rotatePoint(&ml.a);
+	    AM_rotatePoint(&ml.b);
+	}
 	AM_drawMline(&ml, color);
     }
 
     // Figure out start of horizontal gridlines
     start = m_y;
+    if (crispy_automaprotate)
+    {
+	start -= m_w / 2;
+    }
     if ((start-bmaporgy)%(MAPBLOCKUNITS<<FRACBITS))
 	start += (MAPBLOCKUNITS<<FRACBITS)
 	    - ((start-bmaporgy)%(MAPBLOCKUNITS<<FRACBITS));
     end = m_y + m_h;
+    if (crispy_automaprotate)
+    {
+	end += m_w / 2;
+    }
 
     // draw horizontal gridlines
-    ml.a.x = m_x;
-    ml.b.x = m_x + m_w;
     for (y=start; y<end; y+=(MAPBLOCKUNITS<<FRACBITS))
     {
 	ml.a.y = y;
 	ml.b.y = y;
+	// [crispy] moved here
+	ml.a.x = m_x;
+	ml.b.x = m_x + m_w;
+	if (crispy_automaprotate)
+	{
+	    ml.a.x -= m_h / 2;
+	    ml.b.x += m_h / 2;
+	    AM_rotatePoint(&ml.a);
+	    AM_rotatePoint(&ml.b);
+	}
 	AM_drawMline(&ml, color);
     }
 
@@ -1120,6 +1220,32 @@ void AM_drawGrid(int color)
 // Determines visible lines, draws them.
 // This is LineDef based, not LineSeg based.
 //
+
+// [crispy] keyed linedefs (PR, P1, SR, S1)
+static keycolor_t AM_DoorColor(int type)
+{
+    switch (type)
+    {
+	case 26:
+	case 32:
+	case 99:
+	case 133:
+	    return blue_key;
+	case 27:
+	case 34:
+	case 136:
+	case 137:
+	    return yellow_key;
+	case 28:
+	case 33:
+	case 134:
+	case 135:
+	    return red_key;
+	default:
+	    return no_key;
+    }
+}
+
 void AM_drawWalls(void)
 {
     int i;
@@ -1131,24 +1257,80 @@ void AM_drawWalls(void)
 	l.a.y = lines[i].v1->y;
 	l.b.x = lines[i].v2->x;
 	l.b.y = lines[i].v2->y;
+	if (crispy_automaprotate)
+	{
+	    AM_rotatePoint(&l.a);
+	    AM_rotatePoint(&l.b);
+	}
 	if (cheating || (lines[i].flags & ML_MAPPED))
 	{
 	    if ((lines[i].flags & LINE_NEVERSEE) && !cheating)
 		continue;
+	    {
+		// [crispy] draw keyed doors in their respective colors
+		// (no Boom multiple keys)
+		keycolor_t amd;
+		if (!(lines[i].flags & ML_SECRET) &&
+		    (amd = AM_DoorColor(lines[i].special)) > no_key)
+		{
+		    switch (amd)
+		    {
+			case blue_key:
+			    AM_drawMline(&l, BLUES);
+			    continue;
+			case yellow_key:
+			    AM_drawMline(&l, YELLOWS);
+			    continue;
+			case red_key:
+			    AM_drawMline(&l, REDS);
+			    continue;
+			default:
+			    // [crispy] it should be impossible to reach here
+			    break;
+		    }
+		}
+	    }
+	    // [crispy] draw exit lines in white (no Boom exit lines 197, 198)
+	    // NB: Choco does not have this at all, Boom/PrBoom+ have this disabled by default
+	    if (lines[i].special == 11 ||
+	        lines[i].special == 51 ||
+	        lines[i].special == 52 ||
+	        lines[i].special == 124)
+	    {
+		AM_drawMline(&l, WHITE);
+		continue;
+	    }
 	    if (!lines[i].backsector)
 	    {
+		// [crispy] draw 1S secret sector boundaries in purple
+		if (cheating && (lines[i].frontsector->special == 9))
+		    AM_drawMline(&l, SECRETWALLCOLORS);
+		else
 		AM_drawMline(&l, WALLCOLORS+lightlev);
 	    }
 	    else
 	    {
-		if (lines[i].special == 39)
+		// [crispy] draw teleporters in green
+		// and also WR teleporters 97 if they are not secret
+		// (no monsters-only teleporters 125, 126; no Boom teleporters)
+		if (lines[i].special == 39 ||
+		    (!(lines[i].flags & ML_SECRET) && lines[i].special == 97))
 		{ // teleporters
-		    AM_drawMline(&l, WALLCOLORS+WALLRANGE/2);
+		    AM_drawMline(&l, GREENS+GREENRANGE/2);
 		}
 		else if (lines[i].flags & ML_SECRET) // secret door
 		{
-		    if (cheating) AM_drawMline(&l, SECRETWALLCOLORS + lightlev);
+		    // [crispy] NB: Choco has this check, but (SECRETWALLCOLORS == WALLCOLORS)
+		    // Boom/PrBoom+ does not have this check at all
+		    if (0 && cheating) AM_drawMline(&l, SECRETWALLCOLORS + lightlev);
 		    else AM_drawMline(&l, WALLCOLORS+lightlev);
+		}
+		// [crispy] draw 2S secret sector boundaries in purple
+		else if (cheating &&
+		    (lines[i].backsector->special == 9 ||
+		    lines[i].frontsector->special == 9))
+		{
+		    AM_drawMline(&l, SECRETWALLCOLORS);
 		}
 		else if (lines[i].backsector->floorheight
 			   != lines[i].frontsector->floorheight) {
@@ -1177,11 +1359,11 @@ void AM_drawWalls(void)
 //
 void
 AM_rotate
-( fixed_t*	x,
-  fixed_t*	y,
+( int64_t*	x,
+  int64_t*	y,
   angle_t	a )
 {
-    fixed_t tmpx;
+    int64_t tmpx;
 
     tmpx =
 	FixedMul(*x,finecosine[a>>ANGLETOFINESHIFT])
@@ -1192,6 +1374,26 @@ AM_rotate
 	+ FixedMul(*y,finecosine[a>>ANGLETOFINESHIFT]);
 
     *x = tmpx;
+}
+
+// [crispy] rotate point around map center
+// adapted from prboom-plus/src/am_map.c:898-920
+static void AM_rotatePoint (mpoint_t *pt)
+{
+    int64_t tmpx;
+
+    pt->x -= mapcenter.x;
+    pt->y -= mapcenter.y;
+
+    tmpx = (int64_t)FixedMul(pt->x, finecosine[mapangle>>ANGLETOFINESHIFT])
+         - (int64_t)FixedMul(pt->y, finesine[mapangle>>ANGLETOFINESHIFT])
+         + mapcenter.x;
+
+    pt->y = (int64_t)FixedMul(pt->x, finesine[mapangle>>ANGLETOFINESHIFT])
+          + (int64_t)FixedMul(pt->y, finecosine[mapangle>>ANGLETOFINESHIFT])
+          + mapcenter.y;
+
+    pt->x = tmpx;
 }
 
 void
@@ -1206,6 +1408,11 @@ AM_drawLineCharacter
 {
     int		i;
     mline_t	l;
+
+    if (crispy_automaprotate)
+    {
+	angle += mapangle;
+    }
 
     for (i=0;i<lineguylines;i++)
     {
@@ -1250,17 +1457,25 @@ void AM_drawPlayers(void)
     static int 	their_colors[] = { GREENS, GRAYS, BROWNS, REDS };
     int		their_color = -1;
     int		color;
+    mpoint_t	pt;
 
     if (!netgame)
     {
+	pt.x = plr->mo->x;
+	pt.y = plr->mo->y;
+	if (crispy_automaprotate)
+	{
+	    AM_rotatePoint(&pt);
+	}
+
 	if (cheating)
 	    AM_drawLineCharacter
 		(cheat_player_arrow, arrlen(cheat_player_arrow), 0,
-		 plr->mo->angle, WHITE, plr->mo->x, plr->mo->y);
+		 plr->mo->angle, WHITE, pt.x, pt.y);
 	else
 	    AM_drawLineCharacter
 		(player_arrow, arrlen(player_arrow), 0, plr->mo->angle,
-		 WHITE, plr->mo->x, plr->mo->y);
+		 WHITE, pt.x, pt.y);
 	return;
     }
 
@@ -1268,6 +1483,13 @@ void AM_drawPlayers(void)
     {
 	their_color++;
 	p = &players[i];
+
+	pt.x = p->mo->x;
+	pt.y = p->mo->y;
+	if (crispy_automaprotate)
+	{
+	    AM_rotatePoint(&pt);
+	}
 
 	if ( (deathmatch && !singledemo) && p != plr)
 	    continue;
@@ -1282,7 +1504,7 @@ void AM_drawPlayers(void)
 	
 	AM_drawLineCharacter
 	    (player_arrow, arrlen(player_arrow), 0, p->mo->angle,
-	     color, p->mo->x, p->mo->y);
+	     color, pt.x, pt.y);
     }
 
 }
@@ -1294,15 +1516,75 @@ AM_drawThings
 {
     int		i;
     mobj_t*	t;
+    keycolor_t	key;
+    mpoint_t	pt;
 
     for (i=0;i<numsectors;i++)
     {
 	t = sectors[i].thinglist;
 	while (t)
 	{
+	    // [crispy] do not draw an extra triangle for the player
+	    if (t == plr->mo)
+	    {
+		t = t->snext;
+		continue;
+	    }
+
+	    pt.x = t->x;
+	    pt.y = t->y;
+	    if (crispy_automaprotate)
+	    {
+		AM_rotatePoint(&pt);
+	    }
+
+	    // [crispy] skull keys and key cards
+	    switch (t->info->doomednum)
+	    {
+		case 38:
+		case 13:
+		    key = red_key;
+		    break;
+		case 39:
+		case 6:
+		    key = yellow_key;
+		    break;
+		case 40:
+		case 5:
+		    key = blue_key;
+		    break;
+		default:
+		    key = no_key;
+		    break;
+	    }
+
+	    // [crispy] draw keys as crosses in their respective colors
+	    if (key > no_key)
+	    {
+	    AM_drawLineCharacter
+		(cross_mark, arrlen(cross_mark),
+		 16<<FRACBITS, t->angle,
+		 (key == red_key) ? REDS :
+		 (key == yellow_key) ? YELLOWS :
+		 (key == blue_key) ? BLUES :
+		 colors+lightlev,
+		 pt.x, pt.y);
+	    }
+	    else
+	    {
 	    AM_drawLineCharacter
 		(thintriangle_guy, arrlen(thintriangle_guy),
-		 16<<FRACBITS, t->angle, colors+lightlev, t->x, t->y);
+		// [crispy] triangle size represents actual thing size
+		 t->radius, t->angle,
+		// [crispy] show countable kills in red ...
+		 ((t->flags & (MF_COUNTKILL | MF_CORPSE)) == MF_COUNTKILL) ? REDS :
+		// [crispy] ... corpses in gray ...
+		 (t->flags & MF_CORPSE) ? GRAYS :
+		// [crispy] ... and countable items in yellow
+		 (t->flags & MF_COUNTITEM) ? YELLOWS :
+		 colors+lightlev,
+		 pt.x, pt.y);
+	    }
 	    t = t->snext;
 	}
     }
@@ -1311,6 +1593,7 @@ AM_drawThings
 void AM_drawMarks(void)
 {
     int i, fx, fy, w, h;
+    mpoint_t pt;
 
     for (i=0;i<AM_NUMMARKPOINTS;i++)
     {
@@ -1320,9 +1603,16 @@ void AM_drawMarks(void)
 	    //      h = SHORT(marknums[i]->height);
 	    w = 5; // because something's wrong with the wad, i guess
 	    h = 6; // because something's wrong with the wad, i guess
-	    fx = CXMTOF(markpoints[i].x);
-	    fy = CYMTOF(markpoints[i].y);
-	    if (fx >= f_x && fx <= f_w - w && fy >= f_y && fy <= f_h - h)
+	    // [crispy] center marks around player
+	    pt.x = markpoints[i].x;
+	    pt.y = markpoints[i].y;
+	    if (crispy_automaprotate)
+	    {
+		AM_rotatePoint(&pt);
+	    }
+	    fx = (CXMTOF(pt.x) >> hires) - 1;
+	    fy = (CYMTOF(pt.y) >> hires) - 2;
+	    if (fx >= f_x && fx <= (f_w >> hires) - w && fy >= f_y && fy <= (f_h >> hires) - h)
 		V_DrawPatch(fx, fy, marknums[i]);
 	}
     }
@@ -1331,6 +1621,23 @@ void AM_drawMarks(void)
 
 void AM_drawCrosshair(int color)
 {
+    // [crispy] draw an actual crosshair
+    if (!followplayer)
+    {
+	static fline_t h, v;
+
+	if (!h.a.x)
+	{
+	    h.a.x = h.b.x = v.a.x = v.b.x = f_x + f_w / 2;
+	    h.a.y = h.b.y = v.a.y = v.b.y = f_y + f_h / 2;
+	    h.a.x -= 2; h.b.x += 2;
+	    v.a.y -= 2; v.b.y += 2;
+	}
+
+	AM_drawFline(&h, color);
+	AM_drawFline(&v, color);
+    }
+    else
     fb[(f_w*(f_h+1))/2] = color; // single point for now
 
 }
@@ -1339,6 +1646,7 @@ void AM_Drawer (void)
 {
     if (!automapactive) return;
 
+    if (!crispy_automapoverlay)
     AM_clearFB(BACKGROUND);
     if (grid)
 	AM_drawGrid(GRIDCOLORS);

@@ -140,8 +140,8 @@ boolean         isdemoversion;
 char		wadfile[1024];          // primary wad file
 char		mapdir[1024];           // directory of development maps
 
-int             show_endoom = 1;
-int             graphical_startup = 1;
+int             show_endoom = 0;
+int             graphical_startup = 0;
 
 // If true, startup has completed and the main game loop has started.
 
@@ -251,13 +251,13 @@ void D_Display (void)
             break;
         if (automapactive)
             AM_Drawer ();
-        if (wipe || (viewheight != 200 && fullscreen) )
+        if (wipe || (viewheight != (200 <<hires) && fullscreen) )
             redrawsbar = true;
         // haleyjd 08/29/10: [STRIFE] Always redraw sbar if menu is/was active
         if (menuactivestate || (inhelpscreensstate && !inhelpscreens))
             redrawsbar = true;              // just put away the help screen
-        ST_Drawer (viewheight == 200, redrawsbar );
-        fullscreen = viewheight == 200;
+        ST_Drawer (viewheight == (200 << hires), redrawsbar );
+        fullscreen = viewheight == (200 << hires);
         break;
       
      // haleyjd 08/23/2010: [STRIFE] No intermission
@@ -298,7 +298,7 @@ void D_Display (void)
     }
 
     // see if the border needs to be updated to the screen
-    if (gamestate == GS_LEVEL && !automapactive && scaledviewwidth != 320)
+    if (gamestate == GS_LEVEL && !automapactive && scaledviewwidth != (320 << hires))
     {
         if (menuactive || menuactivestate || !viewactivestate)
         {
@@ -344,8 +344,8 @@ void D_Display (void)
         if (automapactive)
             y = 4;
         else
-            y = viewwindowy+4;
-        V_DrawPatchDirect(viewwindowx + (scaledviewwidth - 68) / 2, y,
+            y = (viewwindowy >> hires)+4;
+        V_DrawPatchDirect((viewwindowx >> hires) + ((scaledviewwidth >> hires) - 68) / 2, y,
                           W_CacheLumpName (DEH_String("M_PAUSE"), PU_CACHE));
     }
 
@@ -1092,8 +1092,8 @@ boolean D_PatchClipCallback(patch_t *patch, int x, int y)
 {
     // note that offsets were already accounted for in V_DrawPatch
     return (x >= 0 && y >= 0 
-            && x + SHORT(patch->width) <= SCREENWIDTH 
-            && y + SHORT(patch->height) <= SCREENHEIGHT);
+            && x + SHORT(patch->width) <= ORIGWIDTH 
+            && y + SHORT(patch->height) <= ORIGHEIGHT);
 }
 
 //
@@ -1150,7 +1150,7 @@ static void D_IntroBackground(void)
 
     // Draw a 95-pixel rect from STARTUP0 starting at y=57 to (0,41) on the
     // screen (this was a memcpy directly to 0xA3340 in low DOS memory)
-    V_DrawBlock(0, 41, 320, 95, rawgfx_startup0 + (320*57));
+    V_DrawScaledBlock(0, 41, 320, 95, rawgfx_startup0 + (320*57));
 }
 
 //
@@ -1230,7 +1230,7 @@ static void D_DrawIntroSequence(void)
     // Draw the laser
     // Blitted 16 bytes for 16 rows starting at 705280 + laserpos
     // (705280 - 0xA0000) / 320 == 156
-    V_DrawBlock(laserpos, 156, 16, 16, rawgfx_startlz[laserpos % 2]);
+    V_DrawScaledBlock(laserpos, 156, 16, 16, rawgfx_startlz[laserpos % 2]);
 
     // Robot position
     robotpos = laserpos % 5 - 2;
@@ -1238,12 +1238,12 @@ static void D_DrawIntroSequence(void)
     // Draw the robot
     // Blitted 48 bytes for 48 rows starting at 699534 + (320*robotpos)
     // 699534 - 0xA0000 == 44174, which % 320 == 14, / 320 == 138
-    V_DrawBlock(14, 138 + robotpos, 48, 48, rawgfx_startbot);
+    V_DrawScaledBlock(14, 138 + robotpos, 48, 48, rawgfx_startbot);
 
     // Draw the peasant
     // Blitted 32 bytes for 64 rows starting at 699142
     // 699142 - 0xA0000 == 43782, which % 320 == 262, / 320 == 136
-    V_DrawBlock(262, 136, 32, 64, rawgfx_startp[laserpos % 4]);
+    V_DrawScaledBlock(262, 136, 32, 64, rawgfx_startp[laserpos % 4]);
 
     I_FinishUpdate();
 }

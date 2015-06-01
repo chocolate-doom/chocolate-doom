@@ -26,7 +26,7 @@
 
 
 // Visplane related.
-extern  short*		lastopening;
+extern  int*		lastopening; // [crispy] 32-bit integer math
 
 
 typedef void (*planefunction_t) (int top, int bottom);
@@ -34,10 +34,11 @@ typedef void (*planefunction_t) (int top, int bottom);
 extern planefunction_t	floorfunc;
 extern planefunction_t	ceilingfunc_t;
 
-extern short		floorclip[SCREENWIDTH];
-extern short		ceilingclip[SCREENWIDTH];
+extern int		floorclip[SCREENWIDTH]; // [crispy] 32-bit integer math
+extern int		ceilingclip[SCREENWIDTH]; // [crispy] 32-bit integer math
 
-extern fixed_t		yslope[SCREENHEIGHT];
+extern fixed_t*	yslope;
+extern fixed_t		yslopes[LOOKDIRS][SCREENHEIGHT];
 extern fixed_t		distscale[SCREENWIDTH];
 
 void R_InitPlanes (void);
@@ -52,10 +53,10 @@ R_MapPlane
 void
 R_MakeSpans
 ( int		x,
-  int		t1,
-  int		b1,
-  int		t2,
-  int		b2 );
+  unsigned int		t1, // [crispy] 32-bit integer math
+  unsigned int		b1, // [crispy] 32-bit integer math
+  unsigned int		t2, // [crispy] 32-bit integer math
+  unsigned int		b2 ); // [crispy] 32-bit integer math
 
 void R_DrawPlanes (void);
 

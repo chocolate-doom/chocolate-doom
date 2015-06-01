@@ -24,7 +24,8 @@ side_t *sidedef;
 line_t *linedef;
 sector_t *frontsector, *backsector;
 
-drawseg_t drawsegs[MAXDRAWSEGS], *ds_p;
+drawseg_t *drawsegs = NULL, *ds_p;
+int numdrawsegs = 0;
 
 void R_StoreWallRange(int start, int stop);
 
@@ -58,7 +59,8 @@ typedef struct
     int first, last;
 } cliprange_t;
 
-#define	MAXSEGS	32
+// [crispy] raise MAXSEGS limit
+#define	MAXSEGS	(SCREENWIDTH/2+1)
 
 cliprange_t solidsegs[MAXSEGS], *newend;        // newend is one past the last valid seg
 

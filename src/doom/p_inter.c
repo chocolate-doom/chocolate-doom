@@ -473,7 +473,8 @@ P_TouchSpecialThing
 	if (!P_GiveBody (player, 25))
 	    return;
 
-	if (player->health < 25)
+	// [crispy] show "Picked up a Medikit that you really need" message as intended
+	if (player->health < 50)
 	    player->message = DEH_String(GOTMEDINEED);
 	else
 	    player->message = DEH_String(GOTMEDIKIT);
@@ -704,6 +705,8 @@ P_KillMobj
 	target->flags &= ~MF_SOLID;
 	target->player->playerstate = PST_DEAD;
 	P_DropWeapon (target->player);
+	// [crispy] center view when dying
+	target->player->centering = true;
 
 	if (target->player == &players[consoleplayer]
 	    && automapactive)
@@ -715,6 +718,12 @@ P_KillMobj
 	
     }
 
+    // [crispy] Lost Soul, Pain Elemental and Barrel explosions are translucent
+    if (target->type == MT_SKULL ||
+        target->type == MT_PAIN ||
+        target->type == MT_BARREL)
+        target->flags |= MF_TRANSLUCENT;
+
     if (target->health < -target->info->spawnhealth 
 	&& target->info->xdeathstate)
     {
@@ -723,6 +732,9 @@ P_KillMobj
     else
 	P_SetMobjState (target, target->info->deathstate);
     target->tics -= P_Random()&3;
+
+    // [crispy] randomize corpse health
+    target->health -= target->tics & 1;
 
     if (target->tics < 1)
 	target->tics = 1;

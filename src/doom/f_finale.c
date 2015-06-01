@@ -36,6 +36,7 @@
 
 #include "doomstat.h"
 #include "r_state.h"
+#include "m_controls.h" // [crispy] key_*
 
 typedef enum
 {
@@ -92,6 +93,9 @@ static textscreen_t textscreens[] =
     { pack_plut, 1, 30, "RROCK17",   P4TEXT},
     { pack_plut, 1, 15, "RROCK13",   P5TEXT},
     { pack_plut, 1, 31, "RROCK19",   P6TEXT},
+
+    { pack_nerve, 1, 8, "SLIME16",   N1TEXT},
+    { pack_master, 1, 20, "SLIME16",   M1TEXT},
 };
 
 char*	finaletext;
@@ -134,6 +138,12 @@ void F_StartFinale (void)
         if (gameversion == exe_chex && screen->mission == doom)
         {
             screen->level = 5;
+        }
+
+        // [crispy] Hack for Master Levels MAP21: Bad Dream
+        if (gamemission == pack_master && screen->mission == pack_master && gamemap == 21)
+        {
+            screen->level = 21;
         }
 
         if (logical_gamemission == screen->mission
@@ -184,6 +194,12 @@ void F_Ticker (void)
 				
       if (i < MAXPLAYERS)
       {	
+	if (gamemission == pack_nerve && singleplayer && gamemap == 8)
+	  F_StartCast ();
+	else
+	if (gamemission == pack_master && singleplayer && (gamemap == 20 || gamemap == 21))
+	  F_StartCast ();
+	else
 	if (gamemap == 30)
 	  F_StartCast ();
 	else
@@ -284,7 +300,7 @@ void F_TextWrite (void)
 	}
 		
 	w = SHORT (hu_font[c]->width);
-	if (cx+w > SCREENWIDTH)
+	if (cx+w > ORIGWIDTH)
 	    break;
 	V_DrawPatch(cx, cy, hu_font[c]);
 	cx+=w;
@@ -332,6 +348,8 @@ boolean		castdeath;
 int		castframes;
 int		castonmelee;
 boolean		castattacking;
+static signed char	castangle; // [crispy] turnable cast
+static signed char	castskip; // [crispy] skippable cast
 
 
 //
@@ -363,8 +381,14 @@ void F_CastTicker (void)
     if (--casttics > 0)
 	return;			// not time to change state yet
 		
-    if (caststate->tics == -1 || caststate->nextstate == S_NULL)
+    if (caststate->tics == -1 || caststate->nextstate == S_NULL || castskip) // [crispy] skippable cast
     {
+	if (castskip)
+	{
+	    castnum += castskip;
+	    castskip = 0;
+	}
+	else
 	// switch from deathstate to next monster
 	castnum++;
 	castdeath = false;
@@ -374,6 +398,7 @@ void F_CastTicker (void)
 	    S_StartSound (NULL, mobjinfo[castorder[castnum].type].seesound);
 	caststate = &states[mobjinfo[castorder[castnum].type].seestate];
 	castframes = 0;
+	castangle = 0; // [crispy] turnable cast
     }
     else
     {
@@ -464,18 +489,57 @@ void F_CastTicker (void)
 
 boolean F_CastResponder (event_t* ev)
 {
+    boolean xdeath = false;
+
     if (ev->type != ev_keydown)
 	return false;
+
+    // [crispy] make monsters turnable in cast ...
+    if (ev->data1 == key_left)
+    {
+	if (++castangle > 7)
+	    castangle = 0;
+	return false;
+    }
+    else
+    if (ev->data1 == key_right)
+    {
+	if (--castangle < 0)
+	    castangle = 7;
+	return false;
+    }
+    else
+    // [crispy] ... and allow to skip through them ..
+    if (ev->data1 == key_strafeleft || ev->data1 == key_alt_strafeleft)
+    {
+	castskip = castnum ? -1 : arrlen(castorder)-2;
+	return false;
+    }
+    else
+    if (ev->data1 == key_straferight || ev->data1 == key_alt_straferight)
+    {
+	castskip = +1;
+	return false;
+    }
+    // [crispy] ... and finally turn them into gibbs
+    if (ev->data1 == key_speed)
+	xdeath = true;
 		
     if (castdeath)
 	return true;			// already in dying frames
 		
     // go into death frame
     castdeath = true;
+    if (xdeath && mobjinfo[castorder[castnum].type].xdeathstate)
+	caststate = &states[mobjinfo[castorder[castnum].type].xdeathstate];
+    else
     caststate = &states[mobjinfo[castorder[castnum].type].deathstate];
     casttics = caststate->tics;
     castframes = 0;
     castattacking = false;
+    if (xdeath && mobjinfo[castorder[castnum].type].xdeathstate)
+        S_StartSound (NULL, sfx_slop);
+    else
     if (mobjinfo[castorder[castnum].type].deathsound)
 	S_StartSound (NULL, mobjinfo[castorder[castnum].type].deathsound);
 	
@@ -554,8 +618,8 @@ void F_CastDrawer (void)
     // draw the current frame in the middle of the screen
     sprdef = &sprites[caststate->sprite];
     sprframe = &sprdef->spriteframes[ caststate->frame & FF_FRAMEMASK];
-    lump = sprframe->lump[0];
-    flip = (boolean)sprframe->flip[0];
+    lump = sprframe->lump[castangle]; // [crispy] turnable cast
+    flip = (boolean)sprframe->flip[castangle]; // [crispy] turnable cast
 			
     patch = W_CacheLumpNum (lump+firstspritelump, PU_CACHE);
     if (flip)
@@ -578,7 +642,7 @@ F_DrawPatchCol
     byte*	source;
     byte*	dest;
     byte*	desttop;
-    int		count;
+    int		count, f;
 	
     column = (column_t *)((byte *)patch + LONG(patch->columnofs[col]));
     desttop = I_VideoBuffer + x;
@@ -586,15 +650,23 @@ F_DrawPatchCol
     // step through the posts in a column
     while (column->topdelta != 0xff )
     {
+      for (f = 0; f <= hires; f++)
+      {
 	source = (byte *)column + 3;
-	dest = desttop + column->topdelta*SCREENWIDTH;
+	dest = desttop + column->topdelta*(SCREENWIDTH << hires) + (x * hires) + f;
 	count = column->length;
 		
 	while (count--)
 	{
+	    if (hires)
+	    {
+	        *dest = *source;
+	        dest += SCREENWIDTH;
+	    }
 	    *dest = *source++;
 	    dest += SCREENWIDTH;
 	}
+      }
 	column = (column_t *)(  (byte *)column + column->length + 4 );
     }
 }
@@ -624,7 +696,7 @@ void F_BunnyScroll (void)
     if (scrolled < 0)
 	scrolled = 0;
 		
-    for ( x=0 ; x<SCREENWIDTH ; x++)
+    for ( x=0 ; x<ORIGWIDTH ; x++)
     {
 	if (x+scrolled < 320)
 	    F_DrawPatchCol (x, p1, x+scrolled);
@@ -636,8 +708,8 @@ void F_BunnyScroll (void)
 	return;
     if (finalecount < 1180)
     {
-        V_DrawPatch((SCREENWIDTH - 13 * 8) / 2,
-                    (SCREENHEIGHT - 8 * 8) / 2, 
+        V_DrawPatch((ORIGWIDTH - 13 * 8) / 2,
+                    (ORIGHEIGHT - 8 * 8) / 2,
                     W_CacheLumpName(DEH_String("END0"), PU_CACHE));
 	laststage = 0;
 	return;
@@ -653,8 +725,8 @@ void F_BunnyScroll (void)
     }
 	
     DEH_snprintf(name, 10, "END%i", stage);
-    V_DrawPatch((SCREENWIDTH - 13 * 8) / 2, 
-                (SCREENHEIGHT - 8 * 8) / 2, 
+    V_DrawPatch((ORIGWIDTH - 13 * 8) / 2,
+                (ORIGHEIGHT - 8 * 8) / 2,
                 W_CacheLumpName (name,PU_CACHE));
 }
 

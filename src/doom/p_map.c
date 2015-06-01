@@ -187,6 +187,10 @@ P_TeleportMove
     thing->x = x;
     thing->y = y;
 
+    // [AM] Don't interpolate mobjs that pass
+    //      through teleporters
+    thing->interp = false;
+
     P_SetThingPosition (thing);
 	
     return true;
@@ -262,6 +266,9 @@ boolean PIT_CheckLine (line_t* ld)
         // fraggle: spechits overrun emulation code from prboom-plus
         if (numspechit > MAXSPECIALCROSS_ORIGINAL)
         {
+            // [crispy] print a warning
+            if (numspechit == MAXSPECIALCROSS_ORIGINAL + 1)
+                fprintf(stderr, "PIT_CheckLine: Triggered SPECHITS overflow!\n");
             SpechitOverrun(ld);
         }
     }
@@ -276,6 +283,7 @@ boolean PIT_CheckThing (mobj_t* thing)
 {
     fixed_t		blockdist;
     boolean		solid;
+    boolean		unblocking = false;
     int			damage;
 		
     if (!(thing->flags & (MF_SOLID|MF_SPECIAL|MF_SHOOTABLE) ))
@@ -365,8 +373,54 @@ boolean PIT_CheckThing (mobj_t* thing)
 	}
 	return !solid;
     }
+
+    // [crispy] a solid hanging body will allow sufficiently small things underneath it
+    if (singleplayer && crispy_overunder &&
+        (thing->flags & (MF_SOLID | MF_SPAWNCEILING)) == (MF_SOLID | MF_SPAWNCEILING) &&
+        tmthing->z + tmthing->height <= thing->z)
+    {
+	tmceilingz = thing->z;
+	return true;
+    }
+
+    // [crispy] allow players to walk over/under shootable objects
+    if (singleplayer && crispy_overunder &&
+        tmthing->player && thing->flags & MF_SHOOTABLE)
+    {
+        if (tmthing->z >= thing->z + thing->height)
+        {
+            // player walks over object
+            tmfloorz = thing->z + thing->height;
+            thing->ceilingz = tmthing->z;
+            return true;
+        }
+        else
+        if (tmthing->z + tmthing->height <= thing->z)
+        {
+            // player walks underneath object
+            tmceilingz = thing->z;
+            thing->floorz = tmthing->z + tmthing->height;
+            return true;
+        }
+
+        // [crispy] check if things are stuck and allow them to move further apart
+        // taken from doomretro/src/p_map.c:319-332
+        if (tmx == tmthing->x && tmy == tmthing->y)
+            unblocking = true;
+        else
+        {
+            fixed_t newdist = P_AproxDistance(thing->x - tmx, thing->y - tmy);
+            fixed_t olddist = P_AproxDistance(thing->x - tmthing->x, thing->y - tmthing->y);
+
+            if (newdist > olddist)
+            {
+                unblocking = (tmthing->z < thing->z + thing->height
+                           && tmthing->z + tmthing->height > thing->z);
+            }
+        }
+    }
 	
-    return !(thing->flags & MF_SOLID);
+    return !(thing->flags & MF_SOLID) || unblocking;
 }
 
 
@@ -834,6 +888,7 @@ fixed_t		aimslope;
 extern fixed_t	topslope;
 extern fixed_t	bottomslope;	
 
+extern laserspot_t *laserspot;
 
 //
 // PTR_AimTraverse
@@ -945,7 +1000,8 @@ boolean PTR_ShootTraverse (intercept_t* in)
     {
 	li = in->d.line;
 	
-	if (li->special)
+	// [crispy] laser spot does not shoot any line
+	if (li->special && la_damage > INT_MIN)
 	    P_ShootSpecialLine (shootthing, li);
 
 	if ( !(li->flags & ML_TWOSIDED) )
@@ -1006,7 +1062,18 @@ boolean PTR_ShootTraverse (intercept_t* in)
 	    
 	    // it's a sky hack wall
 	    if	(li->backsector && li->backsector->ceilingpic == skyflatnum)
+	      // [crispy] fix laser spot not appearing in outdoor areas
+	      if (la_damage > INT_MIN || li->backsector->ceilingheight < z)
 		return false;		
+	}
+
+	// [crispy] update laser spot position and return
+	if (la_damage == INT_MIN)
+	{
+	    laserspot->x = x;
+	    laserspot->y = y;
+	    laserspot->z = z;
+	    return false;
 	}
 
 	// Spawn bullet puffs.
@@ -1045,12 +1112,25 @@ boolean PTR_ShootTraverse (intercept_t* in)
     y = trace.y + FixedMul (trace.dy, frac);
     z = shootz + FixedMul (aimslope, FixedMul(frac, attackrange));
 
+    // [crispy] update laser spot position and return
+    if (la_damage == INT_MIN)
+    {
+	// [crispy] pass through Spectres
+	if (th->flags & MF_SHADOW)
+	    return true;
+
+	laserspot->x = th->x;
+	laserspot->y = th->y;
+	laserspot->z = z;
+	return false;
+    }
+
     // Spawn bullet puffs or blod spots,
     // depending on target type.
     if (in->d.thing->flags & MF_NOBLOOD)
 	P_SpawnPuff (x,y,z);
     else
-	P_SpawnBlood (x,y,z, la_damage);
+	P_SpawnBlood (x,y,z, la_damage, th); // [crispy] pass thing type
 
     if (la_damage)
 	P_DamageMobj (th, shootthing, shootthing, la_damage);
@@ -1105,6 +1185,8 @@ P_AimLineAttack
 // P_LineAttack
 // If damage == 0, it is just a test trace
 // that will leave linetarget set.
+// [crispy] if damage == INT_MIN, it is a trace
+// to update the laser spot position
 //
 void
 P_LineAttack
@@ -1132,6 +1214,50 @@ P_LineAttack
 		     PTR_ShootTraverse );
 }
  
+// [crispy] update laser spot position
+// call P_AimLineAttack() to check if a target is aimed at (linetarget)
+// then call P_LineAttack() with either aimslope or the passed slope
+void
+P_LineLaser
+( mobj_t*	t1,
+  angle_t	angle,
+  fixed_t	distance,
+  fixed_t	slope )
+{
+    fixed_t	lslope;
+
+    laserspot->x = laserspot->y = laserspot->z = 0;
+
+    lslope = P_AimLineAttack(t1, angle, distance);
+
+    // [crispy] increase accuracy
+    if (!linetarget)
+    {
+	angle_t an = angle;
+
+	an += 1<<26;
+	lslope = P_AimLineAttack(t1, an, distance);
+
+	if (!linetarget)
+	{
+	    an -= 2<<26;
+	    lslope = P_AimLineAttack(t1, an, distance);
+
+	    if (!linetarget && crispy_freeaim)
+	    {
+		lslope = slope;
+	    }
+
+	}
+    }
+
+    // [crispy] don't aim at Spectres
+    if (linetarget && !(linetarget->flags & MF_SHADOW))
+	P_LineAttack(t1, angle, distance, aimslope, INT_MIN);
+    else
+	// [crispy] double the auto aim distance
+	P_LineAttack(t1, angle, 2*distance, lslope, INT_MIN);
+}
 
 
 //
@@ -1350,6 +1476,8 @@ boolean PIT_ChangeSector (mobj_t*	thing)
 	mo = P_SpawnMobj (thing->x,
 			  thing->y,
 			  thing->z + thing->height/2, MT_BLOOD);
+	// [crispy] connect blood object with the monster that bleeds it
+	mo->target = thing;
 	
 	mo->momx = (P_Random() - P_Random ())<<12;
 	mo->momy = (P_Random() - P_Random ())<<12;

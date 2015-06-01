@@ -228,7 +228,18 @@ void MainMenu(void)
 
     // The compatibility window is only appropriate for Doom/Strife.
 
-    if (gamemission == doom || gamemission == strife)
+    if (gamemission == doom)
+    {
+        txt_button_t *button;
+
+        button = TXT_NewButton2("Crispness",
+                                (TxtWidgetSignalFunc) CompatibilitySettings,
+                                NULL);
+
+        TXT_AddWidget(window, button);
+    }
+    else
+    if (gamemission == strife)
     {
         txt_button_t *button;
 

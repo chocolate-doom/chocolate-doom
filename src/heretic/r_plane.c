@@ -35,8 +35,9 @@ fixed_t skyiscale;
 // opening
 //
 
-visplane_t visplanes[MAXVISPLANES], *lastvisplane;
+visplane_t *visplanes = NULL, *lastvisplane;
 visplane_t *floorplane, *ceilingplane;
+static int numvisplanes;
 
 short openings[MAXOPENINGS], *lastopening;
 
@@ -85,7 +86,7 @@ void R_InitSkyMap(void)
 {
     skyflatnum = R_FlatNumForName(DEH_String("F_SKY1"));
     skytexturemid = 200 * FRACUNIT;
-    skyiscale = FRACUNIT;
+    skyiscale = FRACUNIT >> hires;
 }
 
 
@@ -209,6 +210,30 @@ void R_ClearPlanes(void)
 }
 
 
+// [crispy] remove MAXVISPLANES limit
+static void R_RaiseVisplanes (visplane_t** vp)
+{
+    if (lastvisplane - visplanes == numvisplanes)
+    {
+	int numvisplanes_old = numvisplanes;
+	visplane_t* visplanes_old = visplanes;
+
+	numvisplanes = numvisplanes ? 2 * numvisplanes : MAXVISPLANES;
+	visplanes = realloc(visplanes, numvisplanes * sizeof(*visplanes));
+	memset(visplanes + numvisplanes_old, 0, (numvisplanes - numvisplanes_old) * sizeof(*visplanes));
+
+	lastvisplane = visplanes + numvisplanes_old;
+	floorplane = visplanes + (floorplane - visplanes_old);
+	ceilingplane = visplanes + (ceilingplane - visplanes_old);
+
+	if (numvisplanes_old)
+	    fprintf(stderr, "R_FindPlane: Hit MAXVISPLANES limit at %d, raised to %d.\n", numvisplanes_old, numvisplanes);
+
+	// keep the pointer passed as argument in relation to the visplanes pointer
+	if (vp)
+	    *vp = visplanes + (*vp - visplanes_old);
+    }
+}
 
 /*
 ===============
@@ -243,10 +268,7 @@ visplane_t *R_FindPlane(fixed_t height, int picnum,
         return (check);
     }
 
-    if (lastvisplane - visplanes == MAXVISPLANES)
-    {
-        I_Error("R_FindPlane: no more visplanes");
-    }
+    R_RaiseVisplanes(&check);
 
     lastvisplane++;
     check->height = height;
@@ -296,7 +318,7 @@ visplane_t *R_CheckPlane(visplane_t * pl, int start, int stop)
     }
 
     for (x = intrl; x <= intrh; x++)
-        if (pl->top[x] != 0xff)
+        if (pl->top[x] != 0xffff)
             break;
 
     if (x > intrh)
@@ -308,6 +330,7 @@ visplane_t *R_CheckPlane(visplane_t * pl, int start, int stop)
 
 // make a new visplane
 
+    R_RaiseVisplanes(&pl);
     lastvisplane->height = pl->height;
     lastvisplane->picnum = pl->picnum;
     lastvisplane->lightlevel = pl->lightlevel;
@@ -385,9 +408,9 @@ void R_DrawPlanes(void)
     extern int columnofs[MAXWIDTH];
 
 #ifdef RANGECHECK
-    if (ds_p - drawsegs > MAXDRAWSEGS)
+    if (ds_p - drawsegs > numdrawsegs)
         I_Error("R_DrawPlanes: drawsegs overflow (%i)", ds_p - drawsegs);
-    if (lastvisplane - visplanes > MAXVISPLANES)
+    if (lastvisplane - visplanes > numvisplanes)
         I_Error("R_DrawPlanes: visplane overflow (%i)",
                 lastvisplane - visplanes);
     if (lastopening - openings > MAXOPENINGS)
@@ -430,11 +453,11 @@ void R_DrawPlanes(void)
 
                     dest = ylookup[dc_yl] + columnofs[dc_x];
 
-                    fracstep = 1;
-                    frac = (dc_texturemid >> FRACBITS) + (dc_yl - centery);
+                    fracstep = dc_iscale;
+                    frac = dc_texturemid + (dc_yl - centery) * fracstep;
                     do
                     {
-                        *dest = dc_source[frac];
+                        *dest = dc_source[frac >> FRACBITS];
                         dest += SCREENWIDTH;
                         frac += fracstep;
                     }
@@ -500,8 +523,8 @@ void R_DrawPlanes(void)
             light = 0;
         planezlight = zlight[light];
 
-        pl->top[pl->maxx + 1] = 0xff;
-        pl->top[pl->minx - 1] = 0xff;
+        pl->top[pl->maxx + 1] = 0xffff;
+        pl->top[pl->minx - 1] = 0xffff;
 
         stop = pl->maxx + 1;
         for (x = pl->minx; x <= stop; x++)

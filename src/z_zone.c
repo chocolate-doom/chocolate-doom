@@ -283,7 +283,14 @@ Z_Malloc
         if (rover == start)
         {
             // scanned all the way around the list
-            I_Error ("Z_Malloc: failed on allocation of %i bytes", size);
+//          I_Error ("Z_Malloc: failed on allocation of %i bytes", size);
+
+            // [crispy] allocate another zone twice as big
+            Z_Init();
+
+            base = mainzone->rover;
+            rover = base;
+            start = base->prev;
         }
 	
         if (rover->tag != PU_FREE)

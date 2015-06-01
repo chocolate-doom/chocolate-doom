@@ -35,6 +35,8 @@ typedef enum
     heretic,         // Heretic
     hexen,           // Hexen
     strife,          // Strife
+    pack_nerve,      // Doom 2: No Rest For The Living
+    pack_master,     // Master Levels for Doom 2
 
     none
 } GameMission_t;

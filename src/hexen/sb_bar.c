@@ -1013,7 +1013,7 @@ void DrawCommonBar(void)
 
 void DrawMainBar(void)
 {
-    int i;
+    int i, j, k;
     int temp;
     patch_t *manaPatch1, *manaPatch2;
     patch_t *manaVialPatch1, *manaVialPatch2;
@@ -1177,16 +1177,24 @@ void DrawMainBar(void)
         V_DrawPatch(94, 164, manaVialPatch1);
         for (i = 165; i < 187 - (22 * CPlayer->mana[0]) / MAX_MANA; i++)
         {
-            I_VideoBuffer[i * SCREENWIDTH + 95] = 0;
-            I_VideoBuffer[i * SCREENWIDTH + 96] = 0;
-            I_VideoBuffer[i * SCREENWIDTH + 97] = 0;
+         for (j = 0; j <= hires; j++)
+          for (k = 0; k <= hires; k++)
+          {
+            I_VideoBuffer[((i << hires) + j) * SCREENWIDTH + ((95 << hires) + k)] = 0;
+            I_VideoBuffer[((i << hires) + j) * SCREENWIDTH + ((96 << hires) + k)] = 0;
+            I_VideoBuffer[((i << hires) + j) * SCREENWIDTH + ((97 << hires) + k)] = 0;
+          }
         }
         V_DrawPatch(102, 164, manaVialPatch2);
         for (i = 165; i < 187 - (22 * CPlayer->mana[1]) / MAX_MANA; i++)
         {
-            I_VideoBuffer[i * SCREENWIDTH + 103] = 0;
-            I_VideoBuffer[i * SCREENWIDTH + 104] = 0;
-            I_VideoBuffer[i * SCREENWIDTH + 105] = 0;
+         for (j = 0; j <= hires; j++)
+          for (k = 0; k <= hires; k++)
+          {
+            I_VideoBuffer[((i << hires) + j) * SCREENWIDTH + ((103 << hires) + k)] = 0;
+            I_VideoBuffer[((i << hires) + j) * SCREENWIDTH + ((104 << hires) + k)] = 0;
+            I_VideoBuffer[((i << hires) + j) * SCREENWIDTH + ((105 << hires) + k)] = 0;
+          }
         }
         oldweapon = CPlayer->readyweapon;
         UpdateState |= I_STATBAR;

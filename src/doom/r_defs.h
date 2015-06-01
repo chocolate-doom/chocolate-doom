@@ -69,8 +69,15 @@ typedef struct
     fixed_t	x;
     fixed_t	y;
     
+// [crispy] remove slime trails
+// pseudovertexes are dummies that have their coordinates modified to get
+// moved towards the linedef associated with their seg by projecting them
+// using the law of cosines in p_setup.c:P_RemoveSlimeTrails();
+// they are *only* used in rendering
+    fixed_t	px;
+    fixed_t	py;
+    boolean	moved;
 } vertex_t;
-
 
 // Forward of LineDefs, for Sectors.
 struct line_s;
@@ -128,6 +135,27 @@ typedef	struct
     int			linecount;
     struct line_s**	lines;	// [linecount] size
     
+    // [crispy] WiggleFix: [kb] for R_FixWiggle()
+    int		cachedheight;
+    int		scaleindex;
+
+    // [AM] Previous position of floor and ceiling before
+    //      think.  Used to interpolate between positions.
+    fixed_t	oldfloorheight;
+    fixed_t	oldceilingheight;
+
+    // [AM] Gametic when the old positions were recorded.
+    //      Has a dual purpose; it prevents movement thinkers
+    //      from storing old positions twice in a tic, and
+    //      prevents the renderer from attempting to interpolate
+    //      if old values were not updated recently.
+    int         oldgametic;
+
+    // [AM] Interpolated floor and ceiling height.
+    //      Calculated once per tic and used inside
+    //      the renderer.
+    fixed_t	interpfloorheight;
+    fixed_t	interpceilingheight;
 } sector_t;
 
 
@@ -183,13 +211,13 @@ typedef struct line_s
     fixed_t	dy;
 
     // Animation related.
-    short	flags;
+    unsigned short	flags; // [crispy] extended nodes
     short	special;
     short	tag;
 
     // Visual appearance: SideDefs.
-    //  sidenum[1] will be -1 if one sided
-    short	sidenum[2];			
+    //  sidenum[1] will be -1 (NO_INDEX) if one sided
+    unsigned short	sidenum[2]; // [crispy] extended nodes
 
     // Neat. Another bounding box, for the extent
     //  of the LineDef.
@@ -223,8 +251,8 @@ typedef struct line_s
 typedef struct subsector_s
 {
     sector_t*	sector;
-    short	numlines;
-    short	firstline;
+    int	numlines; // [crispy] extended nodes
+    int	firstline; // [crispy] extended nodes
     
 } subsector_t;
 
@@ -251,6 +279,8 @@ typedef struct
     sector_t*	frontsector;
     sector_t*	backsector;
     
+    fixed_t	length; // [crispy] fix long wall wobble
+    angle_t	pangle; // [crispy] re-calculated angle used for rendering
 } seg_t;
 
 
@@ -270,7 +300,7 @@ typedef struct
     fixed_t	bbox[2][4];
 
     // If NF_SUBSECTOR its a subsector.
-    unsigned short children[2];
+    int children[2]; // [crispy] extended nodes
     
 } node_t;
 
@@ -324,9 +354,9 @@ typedef struct drawseg_s
     
     // Pointers to lists for sprite clipping,
     //  all three adjusted so [x1] is first value.
-    short*		sprtopclip;		
-    short*		sprbottomclip;	
-    short*		maskedtexturecol;
+    int*		sprtopclip; // [crispy] 32-bit integer math
+    int*		sprbottomclip; // [crispy] 32-bit integer math
+    int*		maskedtexturecol; // [crispy] 32-bit integer math
     
 } drawseg_t;
 
@@ -368,6 +398,8 @@ typedef struct vissprite_s
     lighttable_t*	colormap;
    
     int			mobjflags;
+    // [crispy] color translation table for blood colored by monster class
+    byte*			translation;
     
 } vissprite_t;
 
@@ -430,19 +462,24 @@ typedef struct
   
   // leave pads for [minx-1]/[maxx+1]
   
-  byte		pad1;
+  unsigned int		pad1; // [crispy] hires / 32-bit integer math
   // Here lies the rub for all
   //  dynamic resize/change of resolution.
-  byte		top[SCREENWIDTH];
-  byte		pad2;
-  byte		pad3;
+  unsigned int		top[SCREENWIDTH]; // [crispy] hires / 32-bit integer math
+  unsigned int		pad2; // [crispy] hires / 32-bit integer math
+  unsigned int		pad3; // [crispy] hires / 32-bit integer math
   // See above.
-  byte		bottom[SCREENWIDTH];
-  byte		pad4;
+  unsigned int		bottom[SCREENWIDTH]; // [crispy] hires / 32-bit integer math
+  unsigned int		pad4; // [crispy] hires / 32-bit integer math
 
 } visplane_t;
 
 
+// [crispy] map-coordinates of the laser vision spot
+typedef struct
+{
+    fixed_t x, y, z;
+} laserspot_t;
 
 
 #endif

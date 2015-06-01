@@ -32,9 +32,13 @@ static int usemouse = 1;
 static int mouseSensitivity = 5;
 static float mouse_acceleration = 2.0;
 static int mouse_threshold = 10;
+static int mouseSensitivity_y = 5; // [crispy]
+static float mouse_acceleration_y = 1.0; // [crispy]
+static int mouse_threshold_y = 0; // [crispy]
+static int mouse_y_invert = 0; // [crispy]
 static int grabmouse = 1;
 
-int novert = 0;
+int novert = 1;
 
 static int *all_mouse_buttons[] = {
     &mousebfire,
@@ -46,7 +50,8 @@ static int *all_mouse_buttons[] = {
     &mousebuse,
     &mousebjump,
     &mousebprevweapon,
-    &mousebnextweapon
+    &mousebnextweapon,
+    &mousebmouselook // [crispy]
 };
 
 static void MouseSetCallback(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(variable))
@@ -106,6 +111,10 @@ static void ConfigExtraButtons(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
 
     AddMouseControl(buttons_table, "Previous weapon", &mousebprevweapon);
     AddMouseControl(buttons_table, "Next weapon", &mousebnextweapon);
+    if (gamemission == doom) // [crispy]
+    {
+    AddMouseControl(buttons_table, "Free look [*]", &mousebmouselook);
+    }
 }
 
 void ConfigMouse(void)
@@ -139,6 +148,26 @@ void ConfigMouse(void)
 
     TXT_SetColumnWidths(motion_table, 27, 5);
 
+    if (gamemission == doom) // [crispy]
+    {
+    TXT_AddWidgets(motion_table,
+                   TXT_NewLabel("Speed (h)"),
+                   TXT_NewSpinControl(&mouseSensitivity, 0, 255), // [crispy] extended range
+                   TXT_NewLabel("Acceleration (h)"),
+                   TXT_NewFloatSpinControl(&mouse_acceleration, 1.0, 5.0),
+                   TXT_NewLabel("Acceleration threshold (h)"),
+                   TXT_NewSpinControl(&mouse_threshold, 0, 32),
+                   TXT_NewLabel("Speed (v)"),
+                   TXT_NewSpinControl(&mouseSensitivity_y, 0, 255), // [crispy] extended range
+                   TXT_NewLabel("Acceleration (v)"),
+                   TXT_NewFloatSpinControl(&mouse_acceleration_y, 1.0, 5.0),
+                   TXT_NewLabel("Acceleration threshold (v)"),
+                   TXT_NewSpinControl(&mouse_threshold_y, 0, 32),
+                   TXT_NewCheckBox("Invert Vertical Axis", &mouse_y_invert),
+                   NULL);
+    }
+    else
+    {
     TXT_AddWidgets(motion_table,
                    TXT_NewLabel("Speed"),
                    TXT_NewSpinControl(&mouseSensitivity, 1, 256),
@@ -147,6 +176,7 @@ void ConfigMouse(void)
                    TXT_NewLabel("Acceleration threshold"),
                    TXT_NewSpinControl(&mouse_threshold, 0, 32),
                    NULL);
+    }
 
     TXT_SetColumnWidths(buttons_table, 27, 5);
 
@@ -165,4 +195,11 @@ void BindMouseVariables(void)
     M_BindIntVariable("mouse_sensitivity",       &mouseSensitivity);
     M_BindIntVariable("mouse_threshold",         &mouse_threshold);
     M_BindFloatVariable("mouse_acceleration",    &mouse_acceleration);
+    if (gamemission == doom) // [crispy]
+    {
+    M_BindIntVariable("mouse_sensitivity_y",     &mouseSensitivity_y);
+    M_BindIntVariable("mouse_threshold_y",       &mouse_threshold_y);
+    M_BindFloatVariable("mouse_acceleration_y",  &mouse_acceleration_y);
+    M_BindIntVariable("mouse_y_invert",          &mouse_y_invert);
+    }
 }

@@ -25,6 +25,51 @@
 #include "deh_mapping.h"
 
 #include "info.h"
+#include "p_mobj.h" // [crispy] MF_*
+
+typedef struct {
+    char *flag;
+    int bits;
+} bex_thingbits_t;
+
+static const bex_thingbits_t bex_thingbitstable[] = {
+    {"SPECIAL", MF_SPECIAL},
+    {"SOLID", MF_SOLID},
+    {"SHOOTABLE", MF_SHOOTABLE},
+    {"NOSECTOR", MF_NOSECTOR},
+    {"NOBLOCKMAP", MF_NOBLOCKMAP},
+    {"AMBUSH", MF_AMBUSH},
+    {"JUSTHIT", MF_JUSTHIT},
+    {"JUSTATTACKED", MF_JUSTATTACKED},
+    {"SPAWNCEILING", MF_SPAWNCEILING},
+    {"NOGRAVITY", MF_NOGRAVITY},
+    {"DROPOFF", MF_DROPOFF},
+    {"PICKUP", MF_PICKUP},
+    {"NOCLIP", MF_NOCLIP},
+    {"SLIDE", MF_SLIDE},
+    {"FLOAT", MF_FLOAT},
+    {"TELEPORT", MF_TELEPORT},
+    {"MISSILE", MF_MISSILE},
+    {"DROPPED", MF_DROPPED},
+    {"SHADOW", MF_SHADOW},
+    {"NOBLOOD", MF_NOBLOOD},
+    {"CORPSE", MF_CORPSE},
+    {"INFLOAT", MF_INFLOAT},
+    {"COUNTKILL", MF_COUNTKILL},
+    {"COUNTITEM", MF_COUNTITEM},
+    {"SKULLFLY", MF_SKULLFLY},
+    {"NOTDMATCH", MF_NOTDMATCH},
+    {"TRANSLUCENT", MF_TRANSLUCENT},
+    // TRANSLATION consists of 2 bits, not 1
+    {"TRANSLATION", 0x04000000},
+    {"TRANSLATION1", 0x04000000},
+    {"TRANSLATION2", 0x08000000},
+    // unused bits, for Boom compatibility
+    {"UNUSED1", 0x08000000},
+    {"UNUSED2", 0x10000000},
+    {"UNUSED3", 0x20000000},
+    {"UNUSED4", 0x40000000},
+};
 
 DEH_BEGIN_MAPPING(thing_mapping, mobjinfo_t)
   DEH_MAPPING("ID #",                doomednum)
@@ -104,6 +149,21 @@ static void DEH_ThingParseLine(deh_context_t *context, char *line, void *tag)
 
     ivalue = atoi(value);
     
+    // [crispy] support BEX bits mnemonics in Things fields
+    if (!ivalue && !strcasecmp(variable_name, "bits"))
+    {
+	for ( ; (value = strtok(value, ",+| \t\f\r")); value = NULL)
+	{
+	    int i;
+	    for (i = 0; i < arrlen(bex_thingbitstable); i++)
+		if (!strcasecmp(value, bex_thingbitstable[i].flag))
+		{
+		    ivalue |= bex_thingbitstable[i].bits;
+		    break;
+		}
+	}
+    }
+
     // Set the field value
 
     DEH_SetMapping(context, &thing_mapping, mobj, variable_name, ivalue);

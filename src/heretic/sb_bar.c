@@ -406,10 +406,16 @@ static void ShadeLine(int x, int y, int height, int shade)
     byte *dest;
     byte *shades;
 
+    x <<= hires;
+    y <<= hires;
+    height <<= hires;
+
     shades = colormaps + 9 * 256 + shade * 2 * 256;
     dest = I_VideoBuffer + y * SCREENWIDTH + x;
     while (height--)
     {
+        if (hires)
+            *(dest + 1) = *(shades + *dest);
         *(dest) = *(shades + *dest);
         dest += SCREENWIDTH;
     }

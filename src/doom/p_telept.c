@@ -106,7 +106,11 @@ EV_Teleport
 		    thing->z = thing->floorz;
 
 		if (thing->player)
+		{
 		    thing->player->viewz = thing->z+thing->player->viewheight;
+		    // [crispy] center view after teleporting
+		    thing->player->centering = true;
+		}
 
 		// spawn teleport fog at source and destination
 		fog = P_SpawnMobj (oldx, oldy, oldz, MT_TFOG);

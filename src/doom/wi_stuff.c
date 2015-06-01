@@ -80,7 +80,7 @@
 #define SP_STATSY		50
 
 #define SP_TIMEX		16
-#define SP_TIMEY		(SCREENHEIGHT-32)
+#define SP_TIMEY		(ORIGHEIGHT-32)
 
 
 // NET GAME STUFF
@@ -420,13 +420,13 @@ void WI_drawLF(void)
     if (gamemode != commercial || wbs->last < NUMCMAPS)
     {
         // draw <LevelName> 
-        V_DrawPatch((SCREENWIDTH - SHORT(lnames[wbs->last]->width))/2,
+        V_DrawPatch((ORIGWIDTH - SHORT(lnames[wbs->last]->width))/2,
                     y, lnames[wbs->last]);
 
         // draw "Finished!"
         y += (5*SHORT(lnames[wbs->last]->height))/4;
 
-        V_DrawPatch((SCREENWIDTH - SHORT(finished->width)) / 2, y, finished);
+        V_DrawPatch((ORIGWIDTH - SHORT(finished->width)) / 2, y, finished);
     }
     else if (wbs->last == NUMCMAPS)
     {
@@ -439,7 +439,7 @@ void WI_drawLF(void)
         // bits of memory at this point, but let's try to be accurate
         // anyway.  This deliberately triggers a V_DrawPatch error.
 
-        patch_t tmp = { SCREENWIDTH, SCREENHEIGHT, 1, 1, 
+        patch_t tmp = { ORIGWIDTH, ORIGHEIGHT, 1, 1,
                         { 0, 0, 0, 0, 0, 0, 0, 0 } };
 
         V_DrawPatch(0, y, &tmp);
@@ -454,14 +454,14 @@ void WI_drawEL(void)
     int y = WI_TITLEY;
 
     // draw "Entering"
-    V_DrawPatch((SCREENWIDTH - SHORT(entering->width))/2,
+    V_DrawPatch((ORIGWIDTH - SHORT(entering->width))/2,
 		y,
                 entering);
 
     // draw level
     y += (5*SHORT(lnames[wbs->next]->height))/4;
 
-    V_DrawPatch((SCREENWIDTH - SHORT(lnames[wbs->next]->width))/2,
+    V_DrawPatch((ORIGWIDTH - SHORT(lnames[wbs->next]->width))/2,
 		y, 
                 lnames[wbs->next]);
 
@@ -489,9 +489,9 @@ WI_drawOnLnode
 	bottom = top + SHORT(c[i]->height);
 
 	if (left >= 0
-	    && right < SCREENWIDTH
+	    && right < ORIGWIDTH
 	    && top >= 0
-	    && bottom < SCREENHEIGHT)
+	    && bottom < ORIGHEIGHT)
 	{
 	    fits = true;
 	}
@@ -793,6 +793,7 @@ void WI_drawShowNextLoc(void)
 
     int		i;
     int		last;
+    extern boolean secretexit; // [crispy] Master Level support
 
     WI_slamBackground();
 
@@ -807,7 +808,7 @@ void WI_drawShowNextLoc(void)
 	    return;
 	}
 	
-	last = (wbs->last == 8) ? wbs->next - 1 : wbs->last;
+	last = (wbs->last == 8 || wbs->last == 9) ? wbs->next - 1 : wbs->last; // [crispy] support E1M10 "Sewers"
 
 	// draw a splat on taken cities.
 	for (i=0 ; i<=last ; i++)
@@ -817,10 +818,22 @@ void WI_drawShowNextLoc(void)
 	if (wbs->didsecret)
 	    WI_drawOnLnode(8, splat);
 
+	// [crispy] the splat for E1M10 "Sewers" is drawn only once,
+	// i.e. now, when returning from the level
+	// (and this is not going to change)
+	if (crispy_havee1m10 && wbs->epsd == 0 && wbs->last == 9)
+	    WI_drawOnLnode(9, splat);
+
 	// draw flashing ptr
 	if (snl_pointeron)
 	    WI_drawOnLnode(wbs->next, yah); 
     }
+
+    if (singleplayer && (
+        (gamemission == pack_nerve && wbs->last == 7) ||
+        (gamemission == pack_master && wbs->last == 19 && !secretexit) ||
+        (gamemission == pack_master && wbs->last == 20)))
+        return;
 
     // draws which level you are entering..
     if ( (gamemode != commercial)
@@ -1459,21 +1472,21 @@ void WI_drawStats(void)
     WI_drawLF();
 
     V_DrawPatch(SP_STATSX, SP_STATSY, kills);
-    WI_drawPercent(SCREENWIDTH - SP_STATSX, SP_STATSY, cnt_kills[0]);
+    WI_drawPercent(ORIGWIDTH - SP_STATSX, SP_STATSY, cnt_kills[0]);
 
     V_DrawPatch(SP_STATSX, SP_STATSY+lh, items);
-    WI_drawPercent(SCREENWIDTH - SP_STATSX, SP_STATSY+lh, cnt_items[0]);
+    WI_drawPercent(ORIGWIDTH - SP_STATSX, SP_STATSY+lh, cnt_items[0]);
 
     V_DrawPatch(SP_STATSX, SP_STATSY+2*lh, sp_secret);
-    WI_drawPercent(SCREENWIDTH - SP_STATSX, SP_STATSY+2*lh, cnt_secret[0]);
+    WI_drawPercent(ORIGWIDTH - SP_STATSX, SP_STATSY+2*lh, cnt_secret[0]);
 
     V_DrawPatch(SP_TIMEX, SP_TIMEY, timepatch);
-    WI_drawTime(SCREENWIDTH/2 - SP_TIMEX, SP_TIMEY, cnt_time);
+    WI_drawTime(ORIGWIDTH/2 - SP_TIMEX, SP_TIMEY, cnt_time);
 
-    if (wbs->epsd < 3)
+    if (wbs->epsd < 4)
     {
-	V_DrawPatch(SCREENWIDTH/2 + SP_TIMEX, SP_TIMEY, par);
-	WI_drawTime(SCREENWIDTH - SP_TIMEX, SP_TIMEY, cnt_par);
+	V_DrawPatch(ORIGWIDTH/2 + SP_TIMEX, SP_TIMEY, par);
+	WI_drawTime(ORIGWIDTH - SP_TIMEX, SP_TIMEY, cnt_par);
     }
 
 }
@@ -1557,6 +1570,15 @@ static void WI_loadUnloadData(load_callback_t callback)
     char name[9];
     anim_t *a;
 
+    if (nervewadfile && gamemission == pack_nerve)
+    {
+	for (i=0 ; i<9 ; i++)
+	{
+	    DEH_snprintf(name, 9, "NWILV%2.2d", i);
+            callback(name, &lnames[i]);
+	}
+    }
+    else
     if (gamemode == commercial)
     {
 	for (i=0 ; i<NUMCMAPS ; i++)
@@ -1571,6 +1593,12 @@ static void WI_loadUnloadData(load_callback_t callback)
 	{
 	    DEH_snprintf(name, 9, "WILV%d%d", wbs->epsd, i);
             callback(name, &lnames[i]);
+	}
+	// [crispy] special-casing for E1M10 "Sewers" support
+	if (crispy_havee1m10)
+	{
+	    DEH_snprintf(name, 9, "SEWERS");
+	    callback(name, &lnames[i]);
 	}
 
 	// you are here
@@ -1710,13 +1738,15 @@ void WI_loadData(void)
 {
     if (gamemode == commercial)
     {
-	NUMCMAPS = 32;
+	NUMCMAPS = (crispy_havemap33) ? 33 : 32;
 	lnames = (patch_t **) Z_Malloc(sizeof(patch_t*) * NUMCMAPS,
 				       PU_STATIC, NULL);
     }
     else
     {
-	lnames = (patch_t **) Z_Malloc(sizeof(patch_t*) * NUMMAPS,
+	// [crispy] support E1M10 "Sewers"
+	int nummaps = crispy_havee1m10 ? NUMMAPS + 1 : NUMMAPS;
+	lnames = (patch_t **) Z_Malloc(sizeof(patch_t*) * nummaps,
 				       PU_STATIC, NULL);
     }
 

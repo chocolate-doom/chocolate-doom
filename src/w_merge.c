@@ -723,3 +723,56 @@ void W_NWTDashMerge(char *filename)
     W_CloseFile(wad_file);
 }
 
+int W_MergeDump (const char *file)
+{
+    FILE *fp = NULL;
+    char *lump_p = NULL;
+    uint32_t i, dir_p;
+
+    // WAD directory structure
+    typedef struct {
+	uint32_t pos;
+	uint32_t size;
+	char name[8];
+    } directory_t;
+    directory_t *dir = NULL;
+
+    // open file for writing
+    if (!(fp = fopen(file, "wb")))
+	I_Error("Failed writing to file %s!", file);
+
+    // prepare directory
+    if (!(dir = malloc(numlumps * sizeof(*dir))))
+	I_Error("Failed allocating memory!");
+    memset(dir, 0, numlumps * sizeof(*dir));
+
+    // write lumps to file, starting at offset 12
+    fseek(fp, 12, SEEK_SET);
+    for (i = 0; i < numlumps; i++)
+    {
+	dir[i].pos = ftell(fp);
+	dir[i].size = lumpinfo[i].size;
+	memcpy(dir[i].name, lumpinfo[i].name, 8);
+
+	// avoid flooding Doom's Zone Memory
+	lump_p = realloc(lump_p, lumpinfo[i].size);
+	W_ReadLump(i, lump_p);
+	fwrite(lump_p, 1, lumpinfo[i].size, fp);
+    }
+    free(lump_p);
+
+    // write directory
+    dir_p = ftell(fp);
+    fwrite(dir, sizeof(*dir), numlumps, fp);
+    free(dir);
+
+    // write WAD header
+    fseek(fp, 0, SEEK_SET);
+    fwrite("IWAD", 1, 4, fp);
+    fwrite(&i, 4, 1, fp);
+    fwrite(&dir_p, 4, 1, fp);
+
+    fclose(fp);
+
+    return (i);
+}
