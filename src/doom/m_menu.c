@@ -2114,6 +2114,7 @@ static int G_GotoNextLevel(void)
       }
       if (gamemission == pack_master)
       {
+        doom2_next[1] = 3;
         doom2_next[14] = 16;
         doom2_next[20] = 1;
       }
