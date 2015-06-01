@@ -2083,7 +2083,7 @@ static int G_GotoNextLevel(void)
     {42, 49, 44, 45, 46, 47, 48, 11, 43}
   };
   static byte doom2_next[33] = {
-    2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+    0, 3, 4, 5, 6, 7, 8, 9, 10, 11,
     12, 13, 14, 15, 31, 17, 18, 19, 20, 21,
     22, 23, 24, 25, 26, 27, 28, 29, 30, 1,
     32, 16, 3
@@ -2094,37 +2094,43 @@ static int G_GotoNextLevel(void)
 
   int changed = false;
 
-  if (gamemode == commercial)
+  // [crispy] process only once
+  if (!doom2_next[0])
   {
-    if (crispy_havemap33)
-      doom2_next[1] = 33;
+    doom2_next[0] = 2;
 
-    if (W_CheckNumForName("map31") < 0)
-      doom2_next[14] = 16;
-
-    if (gamemission == pack_hacx)
+    if (gamemode == commercial)
     {
-      doom2_next[30] = 16;
-      doom2_next[20] = 1;
+      if (crispy_havemap33)
+        doom2_next[1] = 33;
+
+      if (W_CheckNumForName("map31") < 0)
+        doom2_next[14] = 16;
+
+      if (gamemission == pack_hacx)
+      {
+        doom2_next[30] = 16;
+        doom2_next[20] = 1;
+      }
+      if (gamemission == pack_master)
+      {
+        doom2_next[14] = 16;
+        doom2_next[20] = 1;
+      }
     }
-    if (gamemission == pack_master)
+    else
     {
-      doom2_next[14] = 16;
-      doom2_next[20] = 1;
-    }
-  }
-  else
-  {
-    if (gamemode == shareware)
-      doom_next[0][7] = 11;
+      if (gamemode == shareware)
+        doom_next[0][7] = 11;
 
-    if (gamemode == registered)
-      doom_next[2][7] = 11;
+      if (gamemode == registered)
+        doom_next[2][7] = 11;
 
-    if (gamemission == pack_chex)
-    {
-      doom_next[0][2] = 14;
-      doom_next[0][4] = 11;
+      if (gamemission == pack_chex)
+      {
+        doom_next[0][2] = 14;
+        doom_next[0][4] = 11;
+      }
     }
   }
 
