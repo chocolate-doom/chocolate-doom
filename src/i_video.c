@@ -295,7 +295,7 @@ static void ApplyWindowResize(unsigned int w, unsigned int h);
 static boolean MouseShouldBeGrabbed()
 {
     // never grab the mouse when in screensaver mode
-   
+
     if (screensaver_mode)
         return false;
 
@@ -492,11 +492,11 @@ static int TranslateKey(SDL_keysym *sym)
       case SDLK_LSHIFT:
       case SDLK_RSHIFT:
 	return KEY_RSHIFT;
-	
+
       case SDLK_LCTRL:
       case SDLK_RCTRL:
 	return KEY_RCTRL;
-	
+
       case SDLK_LALT:
       case SDLK_RALT:
       case SDLK_LMETA:
@@ -723,11 +723,11 @@ void I_GetEvent(void)
     event_t event;
 
     // possibly not needed
-    
+
     SDL_PumpEvents();
 
     // put event-grabbing stuff in here
-    
+
     while (SDL_PollEvent(&sdlevent))
     {
         // ignore mouse events when the window is not focused
@@ -748,7 +748,7 @@ void I_GetEvent(void)
         UpdateShiftStatus(&sdlevent);
 
         // process event
-        
+
         switch (sdlevent.type)
         {
             case SDL_KEYDOWN:
@@ -2194,25 +2194,25 @@ void I_InitGraphics(void)
 
 void I_BindVideoVariables(void)
 {
-    M_BindVariable("use_mouse",                 &usemouse);
-    M_BindVariable("autoadjust_video_settings", &autoadjust_video_settings);
-    M_BindVariable("fullscreen",                &fullscreen);
-    M_BindVariable("aspect_ratio_correct",      &aspect_ratio_correct);
-    M_BindVariable("startup_delay",             &startup_delay);
-    M_BindVariable("screen_width",              &screen_width);
-    M_BindVariable("screen_height",             &screen_height);
-    M_BindVariable("screen_bpp",                &screen_bpp);
-    M_BindVariable("grabmouse",                 &grabmouse);
-    M_BindVariable("mouse_acceleration",        &mouse_acceleration);
-    M_BindVariable("mouse_threshold",           &mouse_threshold);
-    M_BindVariable("mouse_acceleration_y",      &mouse_acceleration_y);
-    M_BindVariable("mouse_threshold_y",         &mouse_threshold_y);
-    M_BindVariable("video_driver",              &video_driver);
-    M_BindVariable("window_position",           &window_position);
-    M_BindVariable("usegamma",                  &usegamma);
-    M_BindVariable("vanilla_keyboard_mapping",  &vanilla_keyboard_mapping);
-    M_BindVariable("novert",                    &novert);
-    M_BindVariable("png_screenshots",           &png_screenshots);
+    M_BindIntVariable("use_mouse",                 &usemouse);
+    M_BindIntVariable("autoadjust_video_settings", &autoadjust_video_settings);
+    M_BindIntVariable("fullscreen",                &fullscreen);
+    M_BindIntVariable("aspect_ratio_correct",      &aspect_ratio_correct);
+    M_BindIntVariable("startup_delay",             &startup_delay);
+    M_BindIntVariable("screen_width",              &screen_width);
+    M_BindIntVariable("screen_height",             &screen_height);
+    M_BindIntVariable("screen_bpp",                &screen_bpp);
+    M_BindIntVariable("grabmouse",                 &grabmouse);
+    M_BindFloatVariable("mouse_acceleration",        &mouse_acceleration);
+    M_BindIntVariable("mouse_threshold",           &mouse_threshold);
+    M_BindFloatVariable("mouse_acceleration_y",      &mouse_acceleration_y);
+    M_BindIntVariable("mouse_threshold_y",         &mouse_threshold_y);
+    M_BindStringVariable("video_driver",              &video_driver);
+    M_BindStringVariable("window_position",           &window_position);
+    M_BindIntVariable("usegamma",                  &usegamma);
+    M_BindIntVariable("vanilla_keyboard_mapping",  &vanilla_keyboard_mapping);
+    M_BindIntVariable("novert",                    &novert);
+    M_BindIntVariable("png_screenshots",           &png_screenshots);
 
     // Windows Vista or later?  Set screen color depth to
     // 32 bits per pixel, as 8-bit palettized screen modes

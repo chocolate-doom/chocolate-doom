@@ -21,7 +21,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-#include "doomdef.h" 
+#include "doomdef.h"
 #include "doomkeys.h"
 #include "doomstat.h"
 
@@ -208,9 +208,9 @@ static int      turnheld;		// for accelerative turning
 static boolean  mousearray[MAX_MOUSE_BUTTONS + 1];
 static boolean *mousebuttons = &mousearray[1];  // allow [-1]
 
-// mouse values are used once 
+// mouse values are used once
 int             mousex;
-int             mousey;         
+int             mousey;
 
 static int      dclicktime;
 static boolean  dclickstate;
@@ -352,9 +352,9 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
          || joybspeed >= MAX_JOY_BUTTONS
          || gamekeydown[key_speed] 
          || joybuttons[joybspeed];
- 
+
     forward = side = 0;
-    
+
     // use two stage accelerative turning
     // on the keyboard and joystick
     if (joyxmove < 0
@@ -367,9 +367,9 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
 
     if (turnheld < SLOWTURNTICS) 
 	tspeed = 2;             // slow turn 
-    else 
+    else
 	tspeed = speed;
-    
+
     // let movement keys cancel each other out
     if (strafe) 
     { 
@@ -446,7 +446,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     { 
 	cmd->buttons |= BT_USE;
 	// clear double clicks if hit use button 
-	dclicks = 0;                   
+	dclicks = 0;
     } 
 
     // If the previous or next weapon button is pressed, the

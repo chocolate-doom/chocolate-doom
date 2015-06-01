@@ -1,4 +1,4 @@
-AC_INIT(Competition Doom, 2.0.3.1, admin@doom.com.hr, cndoom)
+AC_INIT(Competition Doom, 2.0.3.2, admin@doom.com.hr, cndoom)
 
 PACKAGE_SHORTNAME=${PACKAGE_NAME% Doom}
 PACKAGE_SHORTDESC="Conservative source port"

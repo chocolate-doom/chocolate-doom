@@ -40,7 +40,7 @@
 // DEFAULTS
 //
 
-// Location where all configuration data is stored - 
+// Location where all configuration data is stored -
 // default.cfg, savegames, etc.
 
 char *configdir;
@@ -50,7 +50,7 @@ char *configdir;
 static char *default_main_config;
 static char *default_extra_config;
 
-typedef enum 
+typedef enum
 {
     DEFAULT_INT,
     DEFAULT_INT_HEX,
@@ -79,7 +79,7 @@ typedef struct
     // If zero, we didn't read this value from a config file.
     int untranslated;
 
-    // The value we translated the scancode into when we read the 
+    // The value we translated the scancode into when we read the
     // config file on startup.  If the variable value is different from
     // this, it has been changed and needs to be converted; otherwise,
     // use the 'untranslated' value.
@@ -1574,12 +1574,12 @@ static default_t extra_defaults_list[] =
     // @game doom heretic
     //
     // Define keyboard character rate per second.
-    // SDL and BIOS default rate is 30 chars/sec 
+    // SDL and BIOS default rate is 30 chars/sec
     // Default: 30
     //
 
     CONFIG_VARIABLE_INT(cn_typematic_rate),
-    
+
     //!
     // @game doom heretic
     //
@@ -1587,10 +1587,10 @@ static default_t extra_defaults_list[] =
     // (Default:x)
 
     CONFIG_VARIABLE_KEY(key_strafe_alt),
-    
+
     //!
     // @game doom heretic
-    //  
+    //
     // Display ingame/intermission screen timer
     // 0 - No. 1 - Yes (Default)
 
@@ -1598,7 +1598,7 @@ static default_t extra_defaults_list[] =
 
     //!
     // @game doom heretic
-    //   
+    //
     // Timer X position
     // Default: -1
 
@@ -1656,8 +1656,9 @@ static default_t extra_defaults_list[] =
     //!
     // Competition Doom ID from http://www.doom.com.hr/
     // You have to register on forum and request ID
+
     CONFIG_VARIABLE_STRING(cn_meta_id),
-    
+
     //!
     // @game hexen strife
     //
@@ -1704,7 +1705,7 @@ static default_t *SearchCollection(default_collection_t *collection, char *name)
 {
     int i;
 
-    for (i=0; i<collection->numdefaults; ++i) 
+    for (i=0; i<collection->numdefaults; ++i)
     {
         if (!strcmp(name, collection->defaults[i].name))
         {
@@ -1751,13 +1752,13 @@ static void SaveDefaultCollection(default_collection_t *collection)
     default_t *defaults;
     int i, v;
     FILE *f;
-	
+
     f = fopen (collection->filename, "w");
     if (!f)
 	return; // can't write the file, but don't complain
 
     defaults = collection->defaults;
-		
+
     for (i=0 ; i<collection->numdefaults ; i++)
     {
         int chars_written;
@@ -1785,7 +1786,7 @@ static void SaveDefaultCollection(default_collection_t *collection)
                 // use the untranslated version if we can, to reduce
                 // the possibility of screwing up the user's config
                 // file
-                
+
                 v = *defaults[i].location.i;
 
                 if (v == KEY_RSHIFT)
@@ -2017,7 +2018,7 @@ void M_SaveDefaultsAlternate(char *main, char *extra)
 void M_LoadDefaults (void)
 {
     int i;
- 
+
     // check for a custom default file
 
     //!
@@ -2231,7 +2232,7 @@ static char *GetDefaultConfigDir(void)
     }
 }
 
-// 
+//
 // SetConfigDir:
 //
 // Sets the location of the configuration directory, where configuration

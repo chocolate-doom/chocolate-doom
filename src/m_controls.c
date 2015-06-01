@@ -196,9 +196,9 @@ int key_menu_screenshot = 0;
 // Joystick controls
 //
 
-int joybfire = 0; 
-int joybstrafe = 1; 
-int joybuse = 3; 
+int joybfire = 0;
+int joybstrafe = 1;
+int joybuse = 3;
 int joybspeed = 29;
 
 int joybstrafeleft = -1;
@@ -222,41 +222,41 @@ int dclick_use = 0;
 
 void M_BindBaseControls(void)
 {
-    M_BindVariable("key_right",          &key_right);
-    M_BindVariable("key_left",           &key_left);
-    M_BindVariable("key_up",             &key_up);
-    M_BindVariable("key_down",           &key_down);
-    M_BindVariable("key_strafeleft",     &key_strafeleft);
-    M_BindVariable("key_straferight",    &key_straferight);
-    M_BindVariable("key_fire",           &key_fire);
-    M_BindVariable("key_use",            &key_use);
-    M_BindVariable("key_strafe",         &key_strafe);
-    M_BindVariable("key_speed",          &key_speed);
+    M_BindIntVariable("key_right",          &key_right);
+    M_BindIntVariable("key_left",           &key_left);
+    M_BindIntVariable("key_up",             &key_up);
+    M_BindIntVariable("key_down",           &key_down);
+    M_BindIntVariable("key_strafeleft",     &key_strafeleft);
+    M_BindIntVariable("key_straferight",    &key_straferight);
+    M_BindIntVariable("key_fire",           &key_fire);
+    M_BindIntVariable("key_use",            &key_use);
+    M_BindIntVariable("key_strafe",         &key_strafe);
+    M_BindIntVariable("key_speed",          &key_speed);
 
-    M_BindVariable("key_strafe_alt",            &key_strafe_alt),
-    M_BindVariable("cn_precache_sounds",        &cn_precache_sounds),
-    M_BindVariable("cn_quickstart_delay",       &cn_quickstart_delay),
-    M_BindVariable("cn_timer_enabled",          &cn_timer_enabled);
-    M_BindVariable("cn_timer_bg_colormap",      &cn_timer_bg_colormap);
-    M_BindVariable("cn_timer_offset_x",         &cn_timer_offset_x);
-    M_BindVariable("cn_timer_offset_y",         &cn_timer_offset_y);
-    M_BindVariable("cn_timer_color_index",      &cn_timer_color_index);
-    M_BindVariable("cn_timer_shadow_index",     &cn_timer_shadow_index);
-    M_BindVariable("cn_meta_id",                &cn_meta_id);
-    M_BindVariable("cn_secret_message",         &cn_secret_message);
-    M_BindVariable("cn_typematic_delay",        &cn_typematic_delay);
-    M_BindVariable("cn_typematic_rate",         &cn_typematic_rate);
+    M_BindIntVariable("key_strafe_alt",            &key_strafe_alt),
+    M_BindIntVariable("cn_precache_sounds",        &cn_precache_sounds),
+    M_BindIntVariable("cn_quickstart_delay",       &cn_quickstart_delay),
+    M_BindIntVariable("cn_timer_enabled",          &cn_timer_enabled);
+    M_BindIntVariable("cn_timer_bg_colormap",      &cn_timer_bg_colormap);
+    M_BindIntVariable("cn_timer_offset_x",         &cn_timer_offset_x);
+    M_BindIntVariable("cn_timer_offset_y",         &cn_timer_offset_y);
+    M_BindIntVariable("cn_timer_color_index",      &cn_timer_color_index);
+    M_BindIntVariable("cn_timer_shadow_index",     &cn_timer_shadow_index);
+    M_BindIntVariable("cn_secret_message",         &cn_secret_message);
+    M_BindIntVariable("cn_typematic_delay",        &cn_typematic_delay);
+    M_BindIntVariable("cn_typematic_rate",         &cn_typematic_rate);
+    M_BindStringVariable("cn_meta_id",             &cn_meta_id);
 
-    M_BindVariable("mouseb_fire",        &mousebfire);
-    M_BindVariable("mouseb_strafe",      &mousebstrafe);
-    M_BindVariable("mouseb_forward",     &mousebforward);
+    M_BindIntVariable("mouseb_fire",        &mousebfire);
+    M_BindIntVariable("mouseb_strafe",      &mousebstrafe);
+    M_BindIntVariable("mouseb_forward",     &mousebforward);
 
-    M_BindVariable("joyb_fire",          &joybfire);
-    M_BindVariable("joyb_strafe",        &joybstrafe);
-    M_BindVariable("joyb_use",           &joybuse);
-    M_BindVariable("joyb_speed",         &joybspeed);
+    M_BindIntVariable("joyb_fire",          &joybfire);
+    M_BindIntVariable("joyb_strafe",        &joybstrafe);
+    M_BindIntVariable("joyb_use",           &joybuse);
+    M_BindIntVariable("joyb_speed",         &joybspeed);
 
-    M_BindVariable("joyb_menu_activate", &joybmenu);
+    M_BindIntVariable("joyb_menu_activate", &joybmenu);
 
     // Extra controls that are not in the Vanilla versions:
 

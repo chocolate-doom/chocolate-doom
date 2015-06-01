@@ -759,21 +759,21 @@ void D_BindVariables(void)
     M_BindMenuControls();
     M_BindMapControls();
 
-    M_BindVariable("mouse_sensitivity",      &mouseSensitivity);
-    M_BindVariable("sfx_volume",             &snd_MaxVolume);
-    M_BindVariable("music_volume",           &snd_MusicVolume);
-    M_BindVariable("screenblocks",           &screenblocks);
-    M_BindVariable("snd_channels",           &snd_Channels);
-    M_BindVariable("show_endoom",            &show_endoom);
-    M_BindVariable("graphical_startup",      &graphical_startup);
+    M_BindIntVariable("mouse_sensitivity",      &mouseSensitivity);
+    M_BindIntVariable("sfx_volume",             &snd_MaxVolume);
+    M_BindIntVariable("music_volume",           &snd_MusicVolume);
+    M_BindIntVariable("screenblocks",           &screenblocks);
+    M_BindIntVariable("snd_channels",           &snd_Channels);
+    M_BindIntVariable("show_endoom",            &show_endoom);
+    M_BindIntVariable("graphical_startup",      &graphical_startup);
     // [cndoom]
-    //M_BindVariable("cn_timer_enabled",       &cn_timer_enabled);
-    //M_BindVariable("cn_timer_bg_colormap",   &cn_timer_bg_colormap);
-    //M_BindVariable("cn_timer_offset_x",      &cn_timer_offset_x);
-    //M_BindVariable("cn_timer_offset_y",      &cn_timer_offset_y);
-    //M_BindVariable("cn_timer_color_index",   &cn_timer_color_index);
-    //M_BindVariable("cn_timer_shadow_index",  &cn_timer_shadow_index);
-    M_BindVariable("cn_meta_id",               &cn_meta_id);
+    //M_BindIntVariable("cn_timer_enabled",       &cn_timer_enabled);
+    //M_BindIntVariable("cn_timer_bg_colormap",   &cn_timer_bg_colormap);
+    //M_BindIntVariable("cn_timer_offset_x",      &cn_timer_offset_x);
+    //M_BindIntVariable("cn_timer_offset_y",      &cn_timer_offset_y);
+    //M_BindIntVariable("cn_timer_color_index",   &cn_timer_color_index);
+    //M_BindIntVariable("cn_timer_shadow_index",  &cn_timer_shadow_index);
+    M_BindIntVariable("cn_meta_id",               &cn_meta_id);
 
     for (i=0; i<10; ++i)
     {

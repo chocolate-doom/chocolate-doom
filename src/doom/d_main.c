@@ -371,28 +371,28 @@ void D_BindVariables(void)
     NET_BindVariables();
 #endif
 
-    M_BindVariable("mouse_sensitivity",      &mouseSensitivity);
-    M_BindVariable("mouse_sensitivity_y",    &mouseSensitivity_y);
-    M_BindVariable("sfx_volume",             &sfxVolume);
-    M_BindVariable("music_volume",           &musicVolume);
-    M_BindVariable("show_messages",          &showMessages);
-    M_BindVariable("screenblocks",           &screenblocks);
-    M_BindVariable("detaillevel",            &detailLevel);
-    M_BindVariable("snd_channels",           &snd_channels);
-    M_BindVariable("vanilla_savegame_limit", &vanilla_savegame_limit);
-    M_BindVariable("vanilla_demo_limit",     &vanilla_demo_limit);
-    M_BindVariable("show_endoom",            &show_endoom);
-    M_BindVariable("cn_quickstart_delay",    &cn_quickstart_delay);
-    M_BindVariable("cn_precache_sounds",     &cn_precache_sounds);
-    M_BindVariable("cn_timer_enabled",       &cn_timer_enabled);
-    M_BindVariable("cn_timer_bg_colormap",   &cn_timer_bg_colormap);
-    M_BindVariable("cn_timer_offset_x",      &cn_timer_offset_x);
-    M_BindVariable("cn_timer_offset_y",      &cn_timer_offset_y);
-    M_BindVariable("cn_timer_color_index",   &cn_timer_color_index);
-    M_BindVariable("cn_timer_shadow_index",  &cn_timer_shadow_index);
-    M_BindVariable("cn_secret_message",      &cn_secret_message);
-    M_BindVariable("cn_typematic_delay",     &cn_typematic_delay);
-    M_BindVariable("cn_typematic_rate",      &cn_typematic_rate);
+    M_BindIntVariable("mouse_sensitivity",      &mouseSensitivity);
+    M_BindIntVariable("mouse_sensitivity_y",    &mouseSensitivity_y);
+    M_BindIntVariable("sfx_volume",             &sfxVolume);
+    M_BindIntVariable("music_volume",           &musicVolume);
+    M_BindIntVariable("show_messages",          &showMessages);
+    M_BindIntVariable("screenblocks",           &screenblocks);
+    M_BindIntVariable("detaillevel",            &detailLevel);
+    M_BindIntVariable("snd_channels",           &snd_channels);
+    M_BindIntVariable("vanilla_savegame_limit", &vanilla_savegame_limit);
+    M_BindIntVariable("vanilla_demo_limit",     &vanilla_demo_limit);
+    M_BindIntVariable("show_endoom",            &show_endoom);
+    M_BindIntVariable("cn_quickstart_delay",    &cn_quickstart_delay);
+    M_BindIntVariable("cn_precache_sounds",     &cn_precache_sounds);
+    M_BindIntVariable("cn_timer_enabled",       &cn_timer_enabled);
+    M_BindIntVariable("cn_timer_bg_colormap",   &cn_timer_bg_colormap);
+    M_BindIntVariable("cn_timer_offset_x",      &cn_timer_offset_x);
+    M_BindIntVariable("cn_timer_offset_y",      &cn_timer_offset_y);
+    M_BindIntVariable("cn_timer_color_index",   &cn_timer_color_index);
+    M_BindIntVariable("cn_timer_shadow_index",  &cn_timer_shadow_index);
+    M_BindIntVariable("cn_secret_message",      &cn_secret_message);
+    M_BindIntVariable("cn_typematic_delay",     &cn_typematic_delay);
+    M_BindIntVariable("cn_typematic_rate",      &cn_typematic_rate);
 
     // Multiplayer chat macros
 

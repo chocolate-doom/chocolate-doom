@@ -434,29 +434,23 @@ void D_BindVariables(void)
     // * screenblocks -> screensize
     // * Added nickname, comport
 
-    M_BindVariable("mouse_sensitivity",      &mouseSensitivity);
-    M_BindVariable("sfx_volume",             &sfxVolume);
-    M_BindVariable("music_volume",           &musicVolume);
-    M_BindVariable("voice_volume",           &voiceVolume); 
-    M_BindVariable("show_talk",              &dialogshowtext);
-    M_BindVariable("screensize",             &screenblocks);
-    M_BindVariable("snd_channels",           &snd_channels);
-    M_BindVariable("vanilla_savegame_limit", &vanilla_savegame_limit);
-    M_BindVariable("vanilla_demo_limit",     &vanilla_demo_limit);
-    M_BindVariable("show_endoom",            &show_endoom);
-    M_BindVariable("back_flat",              &back_flat);
-    M_BindVariable("graphical_startup",      &graphical_startup);
+    M_BindIntVariable("mouse_sensitivity",      &mouseSensitivity);
+    M_BindIntVariable("sfx_volume",             &sfxVolume);
+    M_BindIntVariable("music_volume",           &musicVolume);
+    M_BindIntVariable("voice_volume",           &voiceVolume); 
+    M_BindIntVariable("show_talk",              &dialogshowtext);
+    M_BindIntVariable("screensize",             &screenblocks);
+    M_BindIntVariable("snd_channels",           &snd_channels);
+    M_BindIntVariable("vanilla_savegame_limit", &vanilla_savegame_limit);
+    M_BindIntVariable("vanilla_demo_limit",     &vanilla_demo_limit);
+    M_BindIntVariable("show_endoom",            &show_endoom);
+    M_BindIntVariable("graphical_startup",      &graphical_startup);
 
-    M_BindVariable("nickname",               &nickname);
-    M_BindVariable("comport",                &comport);
 
-    // [cndoom]
-    //M_BindVariable("cn_timer_enabled",       &cn_timer_enabled);
-    //M_BindVariable("cn_timer_bg_colormap",   &cn_timer_bg_colormap);
-    //M_BindVariable("cn_timer_offset_x",      &cn_timer_offset_x);
-    //M_BindVariable("cn_timer_offset_y",      &cn_timer_offset_y);
-    //M_BindVariable("cn_timer_color_index",   &cn_timer_color_index);
-    //M_BindVariable("cn_timer_shadow_index",  &cn_timer_shadow_index);
+    M_BindStringVariable("back_flat",              &back_flat);
+    M_BindStringVariable("nickname",               &nickname);
+
+    M_BindIntVariable("comport",                &comport);
 
     // Multiplayer chat macros
 

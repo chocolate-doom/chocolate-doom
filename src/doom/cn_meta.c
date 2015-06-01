@@ -32,7 +32,7 @@ static FILE *metafp;
 
 void CN_BindMetaVariables(void)
 {
-    M_BindVariable("cn_meta_id",                &cn_meta_id);
+    M_BindStringVariable("cn_meta_id",                &cn_meta_id);
 }
 
 static void write_int(FILE *f, int v)
@@ -80,7 +80,7 @@ void CN_WriteMetaData(char *filename)
 	//
 	// Used only when recording speed demo for Competition
 	speedparm = M_CheckParm("-speed");
-    
+
 	//!
 	// @category demo
 	//
@@ -112,7 +112,7 @@ void CN_WriteMetaData(char *filename)
 	pacifistparm = M_CheckParm("-pacifist");
 
 	episodeparm = M_CheckParm("-episode");
-    
+
 	//!
 	// @category demo
 	//
@@ -120,11 +120,11 @@ void CN_WriteMetaData(char *filename)
 	movieparm = M_CheckParm("-movie");
 
     dmparm = M_CheckParm("-deathmatch");
-    
+
     // check if game is DM or not
     if (!dmparm)
         coopparm = M_CheckParm ("-connect");
-    
+
 	metafp = fopen(filename, "rb+");
 	if (!metafp)
 		return;
@@ -144,15 +144,15 @@ void CN_WriteMetaData(char *filename)
 	// write meta version
 	write_bytes(metafp, cn_meta_version, 4);
     write_bytes(metafp, "#", 1);
- 
+
 	// write CNDOOM version
 	write_bytes(metafp, PACKAGE_VERSION, 7);
     write_bytes(metafp, "#", 1);
-    
+
 	// write Competition ID
 	write_bytes(metafp, cn_meta_id, 4);
     write_bytes(metafp, "#", 1);
- 
+
 	// player2 ID
 	write_bytes(metafp, "0000", 4);
     write_bytes(metafp, "#", 1);
@@ -164,7 +164,7 @@ void CN_WriteMetaData(char *filename)
 	// player4 ID
 	write_bytes(metafp, "0000", 4);
     write_bytes(metafp, "#", 1);
- 
+
 	// write game
 	p = M_CheckParmWithArgs ("-file", 1);
 	if (p)
@@ -193,12 +193,12 @@ void CN_WriteMetaData(char *filename)
 				                             "00", 2);
 	}
     write_bytes(metafp, "#", 1);
-	
+
     // write episode
 	if (gameepisode>=1 && gameepisode<=4)   sprintf(temp, "%d", gameepisode);
 	write_bytes(metafp, temp, 1);
     write_bytes(metafp, "#", 1);
-    
+
 	// write map
     if ((gamemission == doom) && (gameepisode == 1)) {
              if (gamemap>=1 && gamemap<=3 && !secretexit) sprintf(temp,"11%d",gamemap);
@@ -231,7 +231,7 @@ void CN_WriteMetaData(char *filename)
 	write_bytes(metafp, temp, 3);
     write_bytes(metafp, "#", 1);
 
-	// write category  
+	// write category
 	write_bytes(metafp,
 		(nomonsters)   ? "31" :
 		(speedparm)    ? "01" :
@@ -258,7 +258,7 @@ void CN_WriteMetaData(char *filename)
 			(coopparm)  ? "C" :
 			              "S", 1);
     write_bytes(metafp, "#", 1);
-                          
+
 	// write skill
 	write_bytes(metafp,
 			(gameskill == sk_baby)      ? "1" :
@@ -291,10 +291,10 @@ void CN_WriteMetaData(char *filename)
 		write_bytes(metafp, "XX:XX:XX.XX", 11);
         write_bytes(metafp, "#", 1);
         }
-        
+
     // META FOOTER
     write_bytes(metafp, "*", 1);
-        
+
 	// finally write metadata location and # of tags
 	write_int(metafp, metapos);
 
