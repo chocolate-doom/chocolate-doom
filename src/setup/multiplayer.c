@@ -34,6 +34,10 @@
 #include "net_io.h"
 #include "net_query.h"
 
+#define MULTI_START_HELP_URL "http://www.chocolate-doom.org/setup-multi-start"
+#define MULTI_JOIN_HELP_URL "http://www.chocolate-doom.org/setup-multi-join"
+#define MULTI_CONFIG_HELP_URL "http://www.chocolate-doom.org/setup-multi-config"
+
 #define NUM_WADS 10
 #define NUM_EXTRA_PARAMS 10
 
@@ -355,7 +359,7 @@ static void SetExMyWarp(TXT_UNCAST_ARG(widget), void *val)
 {
     int l;
 
-    l = (int) val;
+    l = (intptr_t) val;
 
     warpepisode = l / 10;
     warpmap = l % 10;
@@ -367,7 +371,7 @@ static void SetMAPxyWarp(TXT_UNCAST_ARG(widget), void *val)
 {
     int l;
 
-    l = (int) val;
+    l = (intptr_t) val;
 
     warpmap = l;
 
@@ -389,8 +393,8 @@ static void LevelSelectDialog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(user_data))
     const iwad_t *iwad;
     char buf[10];
     int episodes;
-    int x, y;
-    int l;
+    intptr_t x, y;
+    intptr_t l;
     int i;
 
     window = TXT_NewWindow("Select level");
@@ -711,6 +715,7 @@ static void StartGameMenu(char *window_title, int multiplayer)
     txt_widget_t *iwad_selector;
 
     window = TXT_NewWindow(window_title);
+    TXT_SetWindowHelpURL(window, MULTI_START_HELP_URL);
 
     TXT_AddWidgets(window, 
                    gameopt_table = TXT_NewTable(2),
@@ -957,7 +962,7 @@ static void ServerQueryWindow(char *title)
                   TXT_NewScrollPane(70, 10,
                                     results_table = TXT_NewTable(3)));
 
-    TXT_SetColumnWidths(results_table, 7, 16, 46);
+    TXT_SetColumnWidths(results_table, 7, 22, 40);
     TXT_SetPeriodicCallback(QueryPeriodicCallback, results_table, 1);
 
     TXT_SignalConnect(query_window, "closed", QueryWindowClosed, NULL);
@@ -985,6 +990,7 @@ void JoinMultiGame(void)
     txt_inputbox_t *address_box;
 
     window = TXT_NewWindow("Join multiplayer game");
+    TXT_SetWindowHelpURL(window, MULTI_JOIN_HELP_URL);
 
     TXT_AddWidgets(window, 
         gameopt_table = TXT_NewTable(2),
@@ -1093,6 +1099,7 @@ void MultiplayerConfig(void)
     int i;
 
     window = TXT_NewWindow("Multiplayer Configuration");
+    TXT_SetWindowHelpURL(window, MULTI_CONFIG_HELP_URL);
 
     TXT_AddWidgets(window, 
                    TXT_NewStrut(0, 1),
@@ -1127,13 +1134,13 @@ void BindMultiplayerVariables(void)
     int i;
 
 #ifdef FEATURE_MULTIPLAYER
-    M_BindVariable("player_name", &net_player_name);
+    M_BindStringVariable("player_name", &net_player_name);
 #endif
 
     for (i=0; i<10; ++i)
     {
         M_snprintf(buf, sizeof(buf), "chatmacro%i", i);
-        M_BindVariable(buf, &chat_macros[i]);
+        M_BindStringVariable(buf, &chat_macros[i]);
     }
 
     switch (gamemission)

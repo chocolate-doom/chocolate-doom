@@ -603,8 +603,9 @@ P_TouchSpecialThing
 	break;
 	
       case SPR_MGUN:
-	if (!P_GiveWeapon (player, wp_chaingun, special->flags&MF_DROPPED) )
-	    return;
+        if (!P_GiveWeapon(player, wp_chaingun,
+                          (special->flags & MF_DROPPED) != 0))
+            return;
 	player->message = DEH_String(GOTCHAINGUN);
 	sound = sfx_wpnup;	
 	break;
@@ -631,15 +632,17 @@ P_TouchSpecialThing
 	break;
 	
       case SPR_SHOT:
-	if (!P_GiveWeapon (player, wp_shotgun, special->flags&MF_DROPPED ) )
-	    return;
+        if (!P_GiveWeapon(player, wp_shotgun,
+                          (special->flags & MF_DROPPED) != 0))
+            return;
 	player->message = DEH_String(GOTSHOTGUN);
 	sound = sfx_wpnup;	
 	break;
 		
       case SPR_SGN2:
-	if (!P_GiveWeapon (player, wp_supershotgun, special->flags&MF_DROPPED ) )
-	    return;
+        if (!P_GiveWeapon(player, wp_supershotgun,
+                          (special->flags & MF_DROPPED) != 0))
+            return;
 	player->message = DEH_String(GOTSHOTGUN2);
 	sound = sfx_wpnup;	
 	break;

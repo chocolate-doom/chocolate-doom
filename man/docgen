@@ -425,6 +425,8 @@ def manpage_output(targets, template_file):
     for t in targets:
         content += t.manpage_output() + "\n"
 
+    content = content.replace("-", "\\-")
+
     print_template(template_file, content)
 
 def wiki_output(targets, template):

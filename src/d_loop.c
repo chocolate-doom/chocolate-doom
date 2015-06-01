@@ -48,6 +48,12 @@ typedef struct
     boolean ingame[NET_MAXPLAYERS];
 } ticcmd_set_t;
 
+// Maximum time that we wait in TryRunTics() for netgame data to be
+// received before we bail out and render a frame anyway.
+// Vanilla Doom used 20 for this value, but we use a smaller value
+// instead for better responsiveness of the menu when we're stuck.
+#define MAX_NETGAME_STALL_TICS  5
+
 //
 // gametic is the tic about to (or currently being) run
 // maketic is the tic that hasn't had control made for it yet
@@ -746,7 +752,6 @@ void TryRunTics (void)
 	counts = 1;
 
     // wait for new tics if needed
-
     while (!PlayersInGame() || lowtic < gametic/ticdup + counts)
     {
 	NetUpdate ();
@@ -756,15 +761,19 @@ void TryRunTics (void)
 	if (lowtic < gametic/ticdup)
 	    I_Error ("TryRunTics: lowtic < gametic");
 
-        // Don't stay in this loop forever.  The menu is still running,
-        // so return to update the screen
+        // Still no tics to run? Sleep until some are available.
+        if (lowtic < gametic/ticdup + counts)
+        {
+            // If we're in a netgame, we might spin forever waiting for
+            // new network data to be received. So don't stay in here
+            // forever - give the menu a chance to work.
+            if (I_GetTime() / ticdup - entertic >= MAX_NETGAME_STALL_TICS)
+            {
+                return;
+            }
 
-	if (I_GetTime() / ticdup - entertic > 0)
-	{
-	    return;
-	}
-
-        I_Sleep(1);
+            I_Sleep(1);
+        }
     }
 
     // run the count * ticdup dics

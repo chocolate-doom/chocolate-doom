@@ -31,7 +31,7 @@ void TXT_DrawDesktop(void);
 void TXT_DispatchEvents(void);
 void TXT_DrawWindow(txt_window_t *window);
 void TXT_SetWindowFocus(txt_window_t *window, int focused);
-void TXT_WindowKeyPress(txt_window_t *window, int c);
+int TXT_WindowKeyPress(txt_window_t *window, int c);
 
 /**
  * Set the title displayed at the top of the screen.

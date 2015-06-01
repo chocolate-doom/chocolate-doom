@@ -24,6 +24,7 @@
 #include "s_sound.h"
 #include <ctype.h>
 #include "v_video.h"
+#include "i_swap.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -224,12 +225,12 @@ static void TextWrite(void)
             continue;
         }
         w = W_CacheLumpNum(FontABaseLump + c - 33, PU_CACHE);
-        if (cx + w->width > SCREENWIDTH)
+        if (cx + SHORT(w->width) > SCREENWIDTH)
         {
             break;
         }
         V_DrawPatch(cx, cy, w);
-        cx += w->width;
+        cx += SHORT(w->width);
     }
 }
 

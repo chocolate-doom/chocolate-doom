@@ -85,6 +85,10 @@ struct txt_window_s
 
     int window_x, window_y;
     unsigned int window_w, window_h;
+
+    // URL of a webpage with help about this window. If set, a help key
+    // indicator is shown while this window is active.
+    char *help_url;
 };
 
 /**
@@ -193,6 +197,24 @@ void TXT_SetMouseListener(txt_window_t *window,
  */
 
 txt_window_t *TXT_MessageBox(char *title, char *message, ...);
+
+/**
+ * Set the help URL for the given window.
+ *
+ * @param window          The window.
+ * @param help_url        String containing URL of the help page for this
+ *                        window, or NULL to set no help for this window.
+ */
+
+void TXT_SetWindowHelpURL(txt_window_t *window, char *help_url);
+
+/**
+ * Open the help URL for the given window, if one is set.
+ *
+ * @param window          The window.
+ */
+
+void TXT_OpenWindowHelpURL(txt_window_t *window);
 
 #endif /* #ifndef TXT_WINDOW_H */
 

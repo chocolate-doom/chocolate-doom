@@ -28,10 +28,6 @@
 #include "m_argv.h"
 #include "z_zone.h"
 
-#if defined(_MSC_VER) && !defined(__cplusplus)
-#define inline __inline
-#endif
-
 // Should be I_VideoBuffer
 
 static byte *src_buffer;

@@ -137,6 +137,7 @@ void S_Init(int sfxVolume, int musicVolume, int voiceVolume)
 {  
     int i;
 
+    I_SetOPLDriverVer(opl_v_new);
     I_PrecacheSounds(S_sfx, NUMSFX);
 
     S_SetSfxVolume(sfxVolume);
@@ -277,7 +278,7 @@ static int S_GetChannel(mobj_t *origin, sfxinfo_t *sfxinfo, boolean isvoice)
     channel_t*        c;
 
     // Find an open channel
-     for (cnum=0 ; cnum<snd_channels ; cnum++)
+    for (cnum=0 ; cnum<snd_channels ; cnum++)
     {
         if (!channels[cnum].sfxinfo)
         {
@@ -286,6 +287,11 @@ static int S_GetChannel(mobj_t *origin, sfxinfo_t *sfxinfo, boolean isvoice)
         else if (origin && channels[cnum].origin == origin &&
                  (isvoice || cnum != i_voicehandle)) // haleyjd
         {
+            // haleyjd 20150220: [STRIFE] missing sound channel priority check
+            // Is a higher priority sound by same origin already playing?
+            if(!isvoice && sfxinfo->priority > channels[cnum].sfxinfo->priority)
+                return -1;
+
             S_StopChannel(cnum);
             break;
         }

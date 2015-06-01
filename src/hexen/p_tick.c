@@ -58,7 +58,7 @@ void P_Ticker(void)
     {
         return;
     }
-    for (i = 0; i < MAXPLAYERS; i++)
+    for (i = 0; i < maxplayers; i++)
     {
         if (playeringame[i])
         {
@@ -86,11 +86,13 @@ void P_Ticker(void)
 
 static void RunThinkers(void)
 {
-    thinker_t *currentthinker;
+    thinker_t *currentthinker, *nextthinker;
 
     currentthinker = thinkercap.next;
     while (currentthinker != &thinkercap)
     {
+        nextthinker = currentthinker->next;
+
         if (currentthinker->function == (think_t) - 1)
         {                       // Time to remove it
             currentthinker->next->prev = currentthinker->prev;
@@ -101,7 +103,8 @@ static void RunThinkers(void)
         {
             currentthinker->function(currentthinker);
         }
-        currentthinker = currentthinker->next;
+
+        currentthinker = nextthinker;
     }
 }
 

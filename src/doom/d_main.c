@@ -401,7 +401,7 @@ void D_BindVariables(void)
         char buf[12];
 
         M_snprintf(buf, sizeof(buf), "chatmacro%i", i);
-        M_BindVariable(buf, &chat_macros[i]);
+        M_BindStringVariable(buf, &chat_macros[i]);
     }
 }
 
@@ -1183,6 +1183,11 @@ static void LoadIwadDeh(void)
     }
 }
 
+static void G_CheckDemoStatusAtExit (void)
+{
+    G_CheckDemoStatus();
+}
+
 //
 // D_DoomMain
 //
@@ -1503,7 +1508,7 @@ void D_DoomMain (void)
         printf("  loaded %i DEHACKED lumps from PWAD files.\n", loaded);
     }
 
-    I_AtExit((atexit_func_t) G_CheckDemoStatus, true);
+    I_AtExit(G_CheckDemoStatusAtExit, true);
 
     // Generate the WAD hash table.  Speed things up a bit.
     W_GenerateHashTable();

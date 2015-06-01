@@ -1,5 +1,5 @@
 
-AM_CFLAGS = -I$(top_builddir)/src
+AM_CFLAGS = -I$(top_srcdir)/src
 
 CTAGS_ARGS=-I TXT_UNCAST_ARG+
 

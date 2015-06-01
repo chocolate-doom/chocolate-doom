@@ -96,6 +96,8 @@ void SetupWindow(void)
     
     window = TXT_NewWindow("Window test");
 
+    TXT_SetWindowHelpURL(window, "https://www.youtube.com/watch?v=dQw4w9WgXcQ");
+
     TXT_AddWidget(window, TXT_NewSeparator("Main section"));
     table = TXT_NewTable(3);
 

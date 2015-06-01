@@ -279,8 +279,8 @@ static void NET_CL_AdvanceWindow(void)
 
         // Advance the window
 
-        memcpy(recvwindow, recvwindow + 1, 
-               sizeof(net_server_recv_t) * (BACKUPTICS - 1));
+        memmove(recvwindow, recvwindow + 1,
+                sizeof(net_server_recv_t) * (BACKUPTICS - 1));
         memset(&recvwindow[BACKUPTICS-1], 0, sizeof(net_server_recv_t));
 
         ++recvwindow_start;
@@ -1102,5 +1102,5 @@ void NET_Init(void)
 
 void NET_BindVariables(void)
 {
-    M_BindVariable("player_name", &net_player_name);
+    M_BindStringVariable("player_name", &net_player_name);
 }

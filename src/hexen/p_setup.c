@@ -387,7 +387,7 @@ void P_LoadThings(int lump)
         return;
     }
     playerCount = 0;
-    for (i = 0; i < MAXPLAYERS; i++)
+    for (i = 0; i < maxplayers; i++)
     {
         playerCount += playeringame[i];
     }
@@ -672,7 +672,7 @@ void P_SetupLevel(int episode, int map, int playermask, skill_t skill)
     int lumpnum;
     mobj_t *mobj;
 
-    for (i = 0; i < MAXPLAYERS; i++)
+    for (i = 0; i < maxplayers; i++)
     {
         players[i].killcount = players[i].secretcount
             = players[i].itemcount = 0;
@@ -722,7 +722,7 @@ void P_SetupLevel(int episode, int map, int playermask, skill_t skill)
     TimerGame = 0;
     if (deathmatch)
     {
-        for (i = 0; i < MAXPLAYERS; i++)
+        for (i = 0; i < maxplayers; i++)
         {
             if (playeringame[i])
             {                   // must give a player spot before deathmatchspawn
@@ -796,8 +796,14 @@ static void InitMapInfo(void)
     int mcmdValue;
     mapInfo_t *info;
     char songMulch[10];
+    char *default_sky_name = DEFAULT_SKY_NAME;
 
     mapMax = 1;
+
+    if (gamemode == shareware)
+    {
+	default_sky_name = "SKY2";
+    }
 
     // Put defaults into MapInfo[0]
     info = MapInfo;
@@ -805,7 +811,7 @@ static void InitMapInfo(void)
     info->warpTrans = 0;
     info->nextMap = 1;          // Always go to map 1 if not specified
     info->cdTrack = 1;
-    info->sky1Texture = R_TextureNumForName(DEFAULT_SKY_NAME);
+    info->sky1Texture = R_TextureNumForName(default_sky_name);
     info->sky2Texture = info->sky1Texture;
     info->sky1ScrollDelta = 0;
     info->sky2ScrollDelta = 0;

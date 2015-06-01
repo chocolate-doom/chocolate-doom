@@ -774,13 +774,13 @@ void D_BindVariables(void)
     //M_BindVariable("cn_timer_color_index",   &cn_timer_color_index);
     //M_BindVariable("cn_timer_shadow_index",  &cn_timer_shadow_index);
     M_BindVariable("cn_meta_id",               &cn_meta_id);
-    
+
     for (i=0; i<10; ++i)
     {
         char buf[12];
 
         M_snprintf(buf, sizeof(buf), "chatmacro%i", i);
-        M_BindVariable(buf, &chat_macros[i]);
+        M_BindStringVariable(buf, &chat_macros[i]);
     }
 }
 
@@ -1012,9 +1012,12 @@ void D_DoomMain(void)
 
     if (p)
     {
+        char *uc_filename = strdup(myargv[p + 1]);
+        M_ForceUppercase(uc_filename);
+
         // In Vanilla, the filename must be specified without .lmp,
         // but make that optional.
-        if (M_StringEndsWith(myargv[p + 1], ".lmp"))
+        if (M_StringEndsWith(uc_filename, ".LMP"))
         {
             M_StringCopy(file, myargv[p + 1], sizeof(file));
         }
@@ -1022,6 +1025,8 @@ void D_DoomMain(void)
         {
             DEH_snprintf(file, sizeof(file), "%s.lmp", myargv[p + 1]);
         }
+
+        free(uc_filename);
 
         if (D_AddFile(file))
         {

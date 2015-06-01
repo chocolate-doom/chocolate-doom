@@ -28,6 +28,8 @@
 #include "display.h"
 #include "config.h"
 
+#define WINDOW_HELP_URL "http://www.chocolate-doom.org/setup-display"
+
 extern void RestartTextscreen(void);
 
 typedef struct
@@ -540,6 +542,8 @@ static void AdvancedDisplayConfig(TXT_UNCAST_ARG(widget),
 
     window = TXT_NewWindow("Advanced display options");
 
+    TXT_SetWindowHelpURL(window, WINDOW_HELP_URL);
+
     TXT_SetColumnWidths(window, 35);
 
     TXT_AddWidgets(window,
@@ -599,6 +603,8 @@ void ConfigDisplay(void)
     // Open the window
 
     window = TXT_NewWindow("Display Configuration");
+
+    TXT_SetWindowHelpURL(window, WINDOW_HELP_URL);
 
     // Some machines can have lots of video modes.  This tries to
     // keep a limit of six lines by increasing the number of
@@ -705,28 +711,28 @@ void ConfigDisplay(void)
 
 void BindDisplayVariables(void)
 {
-    M_BindVariable("autoadjust_video_settings", &autoadjust_video_settings);
-    M_BindVariable("aspect_ratio_correct",      &aspect_ratio_correct);
-    M_BindVariable("fullscreen",                &fullscreen);
-    M_BindVariable("screen_width",              &screen_width);
-    M_BindVariable("screen_height",             &screen_height);
-    M_BindVariable("screen_bpp",                &screen_bpp);
-    M_BindVariable("startup_delay",             &startup_delay);
-    M_BindVariable("video_driver",              &video_driver);
-    M_BindVariable("window_position",           &window_position);
-    M_BindVariable("usegamma",                  &usegamma);
-    M_BindVariable("png_screenshots",           &png_screenshots);
+    M_BindIntVariable("autoadjust_video_settings", &autoadjust_video_settings);
+    M_BindIntVariable("aspect_ratio_correct",      &aspect_ratio_correct);
+    M_BindIntVariable("fullscreen",                &fullscreen);
+    M_BindIntVariable("screen_width",              &screen_width);
+    M_BindIntVariable("screen_height",             &screen_height);
+    M_BindIntVariable("screen_bpp",                &screen_bpp);
+    M_BindIntVariable("startup_delay",             &startup_delay);
+    M_BindStringVariable("video_driver",           &video_driver);
+    M_BindStringVariable("window_position",        &window_position);
+    M_BindIntVariable("usegamma",                  &usegamma);
+    M_BindIntVariable("png_screenshots",           &png_screenshots);
 
 
     if (gamemission == doom || gamemission == heretic
      || gamemission == strife)
     {
-        M_BindVariable("show_endoom",               &show_endoom);
+        M_BindIntVariable("show_endoom",               &show_endoom);
     }
 
     if (gamemission == heretic || gamemission == hexen || gamemission == strife)
     {
-        M_BindVariable("graphical_startup",        &graphical_startup);
+        M_BindIntVariable("graphical_startup",        &graphical_startup);
     }
 
     // Windows Vista or later?  Set screen color depth to

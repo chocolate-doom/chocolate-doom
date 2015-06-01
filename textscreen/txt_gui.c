@@ -488,8 +488,8 @@ void TXT_InitClipArea(void)
         cliparea = malloc(sizeof(txt_cliparea_t));
         cliparea->x1 = 0;
         cliparea->x2 = TXT_SCREEN_W;
-        cliparea->y1 = 1;
-        cliparea->y2 = TXT_SCREEN_H - 1;
+        cliparea->y1 = 0;
+        cliparea->y2 = TXT_SCREEN_H;
         cliparea->next = NULL;
     }
 }
