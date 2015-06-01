@@ -531,6 +531,7 @@ static int ST_cheat_spechits()
 	    // Arachnotrons
 	    dummy.tag = 667;
 	    speciallines += EV_DoFloor(&dummy, raiseToTexture);
+	    dummy.tag = 666;
 	}
     }
     else
