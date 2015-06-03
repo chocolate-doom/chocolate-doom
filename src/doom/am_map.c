@@ -736,6 +736,10 @@ AM_Responder
         }
         else if (key == key_map_overlay)
         {
+            // [crispy] force redraw status bar
+            extern boolean inhelpscreens;
+            inhelpscreens = true;
+
             crispy_automapoverlay = !crispy_automapoverlay;
             if (crispy_automapoverlay)
                 plr->message = DEH_String(AMSTR_OVERLAYON);
