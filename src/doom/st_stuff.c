@@ -1445,7 +1445,7 @@ void ST_drawWidgets(boolean refresh)
     V_ClearDPTranslation();
 
     // [crispy] draw berserk pack instead of no ammo if appropriate
-    if (screenblocks >= CRISPY_HUD && !automapactive &&
+    if (screenblocks >= CRISPY_HUD && (!automapactive || (automapactive && crispy_automapoverlay)) &&
         plyr->readyweapon == wp_fist && plyr->powers[pw_strength])
     {
         V_DrawPatch(ST_AMMOX-23, ST_AMMOY+13, W_CacheLumpName("PSTRA0", PU_CACHE));
@@ -1459,7 +1459,7 @@ void ST_drawWidgets(boolean refresh)
 
     dp_translation = ST_WidgetColor(hudcolor_health);
     // [crispy] in the Crispy HUD, health blinks if below 10%
-    if (screenblocks < CRISPY_HUD || automapactive || plyr->health > 9 || (gametic & TICRATE/2) > TICRATE/4)
+    if (screenblocks < CRISPY_HUD || (automapactive && !crispy_automapoverlay) || plyr->health > 9 || (gametic & TICRATE/2) > TICRATE/4)
     {
     STlib_updatePercent(&w_health, refresh || screenblocks >= CRISPY_HUD);
     }
