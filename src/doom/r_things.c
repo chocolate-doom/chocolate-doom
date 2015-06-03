@@ -465,10 +465,19 @@ R_DrawVisSprite
 	
     for (dc_x=vis->x1 ; dc_x<=vis->x2 ; dc_x++, frac += vis->xiscale)
     {
+	static boolean error = 0;
 	texturecolumn = frac>>FRACBITS;
 #ifdef RANGECHECK
 	if (texturecolumn < 0 || texturecolumn >= SHORT(patch->width))
-	    I_Error ("R_DrawSpriteRange: bad texturecolumn");
+	{
+	    // [crispy] make non-fatal
+	    if (!error)
+	    {
+	    fprintf (stderr, "R_DrawSpriteRange: bad texturecolumn\n");
+	    error++;
+	    }
+	    continue;
+	}
 #endif
 	column = (column_t *) ((byte *)patch +
 			       LONG(patch->columnofs[texturecolumn]));
