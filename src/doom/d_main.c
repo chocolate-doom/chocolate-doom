@@ -1496,54 +1496,6 @@ void D_DoomMain (void)
         int i, loaded = 0;
 
         for (i = numiwadlumps; i < numlumps; ++i)
-
-        // With Vanilla you have to specify the file without extension,
-        // but make that optional.
-        if (M_StringEndsWith(myargv[p + 1], ".lmp"))
-        {
-            M_StringCopy(file, myargv[p + 1], sizeof(file));
-        }
-        else
-        {
-            DEH_snprintf(file, sizeof(file), "%s.lmp", myargv[p+1]);
-        }
-
-        if (D_AddFile(file))
-        {
-            M_StringCopy(file, lumpinfo[numlumps - 1].name,
-                         sizeof(file));
-        }
-        else
-        {
-            if (!strncmp(lumpinfo[i].name, "DEHACKED", 8))
-            {
-                DEH_LoadLump(i, false, false);
-                loaded++;
-            }
-        }
-
-        printf("  loaded %i DEHACKED lumps from PWAD files.\n", loaded);
-    }
-
-    I_AtExit(G_CheckDemoStatusAtExit, true);
-
-    // Generate the WAD hash table.  Speed things up a bit.
-    W_GenerateHashTable();
-
-    // Load DEHACKED lumps from WAD files - but only if we give the right
-    // command line parameter.
-
-    //!
-    // @category mod
-    //
-    // Load Dehacked patches from DEHACKED lumps contained in one of the
-    // loaded PWAD files.
-    //
-    if (M_ParmExists("-dehlump"))
-    {
-        int i, loaded = 0;
-
-        for (i = numiwadlumps; i < numlumps; ++i)
         {
             if (!strncmp(lumpinfo[i].name, "DEHACKED", 8))
             {

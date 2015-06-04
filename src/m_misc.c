@@ -198,7 +198,7 @@ boolean M_StrToInt(const char *str, int *result)
 void M_ExtractFileBase(char *path, char *dest)
 {
     char *src;
-    char *filename; 
+    char *filename;
 // [cndoom] unused var
 //    int length;
 
