@@ -73,7 +73,8 @@
 
     Doom:
      * Sky transitions when emulating the id anthology version of the
-       Final Doom executable were fixed (thanks Fabian, chungy).
+       Final Doom executable were fixed (thanks Alexandre-Xavier,
+       Fabian, chungy).
      * Structure fields in the stair-building functions were fixed to
        be deterministic, fixing a desync in mm09-512.lmp (thanks
        Fabian).
