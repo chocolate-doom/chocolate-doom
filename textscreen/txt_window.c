@@ -516,7 +516,7 @@ void TXT_OpenURL(char *url)
     cmd = malloc(cmd_len);
 
 #if defined(_WIN32)
-    TXT_snprintf(cmd, cmd_len, "start \"%s\"", url);
+    TXT_snprintf(cmd, cmd_len, "cmd /c start \"%s\"", url);
 #elif defined(__MACOSX__)
     TXT_snprintf(cmd, cmd_len, "open \"%s\"", url);
 #else
