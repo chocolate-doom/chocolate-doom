@@ -446,9 +446,8 @@ void D_BindVariables(void)
     M_BindIntVariable("show_endoom",            &show_endoom);
     M_BindIntVariable("graphical_startup",      &graphical_startup);
 
-
-    M_BindStringVariable("back_flat",              &back_flat);
-    M_BindStringVariable("nickname",               &nickname);
+    M_BindStringVariable("back_flat",           &back_flat);
+    M_BindStringVariable("nickname",            &nickname);
 
     M_BindIntVariable("comport",                &comport);
 

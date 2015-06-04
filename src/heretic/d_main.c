@@ -766,14 +766,6 @@ void D_BindVariables(void)
     M_BindIntVariable("snd_channels",           &snd_Channels);
     M_BindIntVariable("show_endoom",            &show_endoom);
     M_BindIntVariable("graphical_startup",      &graphical_startup);
-    // [cndoom]
-    //M_BindIntVariable("cn_timer_enabled",       &cn_timer_enabled);
-    //M_BindIntVariable("cn_timer_bg_colormap",   &cn_timer_bg_colormap);
-    //M_BindIntVariable("cn_timer_offset_x",      &cn_timer_offset_x);
-    //M_BindIntVariable("cn_timer_offset_y",      &cn_timer_offset_y);
-    //M_BindIntVariable("cn_timer_color_index",   &cn_timer_color_index);
-    //M_BindIntVariable("cn_timer_shadow_index",  &cn_timer_shadow_index);
-    //M_BindStringVariable("cn_meta_id",          &cn_meta_id);
 
     for (i=0; i<10; ++i)
     {

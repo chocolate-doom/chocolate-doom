@@ -1195,7 +1195,6 @@ void D_DoomMain (void)
 {
     int p;
     char file[256];
-    // char demolumpname[9];
     int numiwadlumps;
 
     I_AtExit(D_Endoom, false);
@@ -1497,6 +1496,24 @@ void D_DoomMain (void)
         int i, loaded = 0;
 
         for (i = numiwadlumps; i < numlumps; ++i)
+
+        // With Vanilla you have to specify the file without extension,
+        // but make that optional.
+        if (M_StringEndsWith(myargv[p + 1], ".lmp"))
+        {
+            M_StringCopy(file, myargv[p + 1], sizeof(file));
+        }
+        else
+        {
+            DEH_snprintf(file, sizeof(file), "%s.lmp", myargv[p+1]);
+        }
+
+        if (D_AddFile(file))
+        {
+            M_StringCopy(file, lumpinfo[numlumps - 1].name,
+                         sizeof(file));
+        }
+        else
         {
             if (!strncmp(lumpinfo[i].name, "DEHACKED", 8))
             {

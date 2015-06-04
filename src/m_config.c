@@ -1786,7 +1786,6 @@ static void SaveDefaultCollection(default_collection_t *collection)
                 // use the untranslated version if we can, to reduce
                 // the possibility of screwing up the user's config
                 // file
-
                 v = *defaults[i].location.i;
 
                 if (v == KEY_RSHIFT)

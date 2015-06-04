@@ -182,16 +182,16 @@ void ConfigMouse(void)
 
 void BindMouseVariables(void)
 {
-    M_BindIntVariable("use_mouse",            &usemouse);
-    M_BindIntVariable("novert",               &novert);
-    M_BindIntVariable("grabmouse",            &grabmouse);
-    M_BindIntVariable("mouse_sensitivity",    &mouseSensitivity);
-    M_BindIntVariable("mouse_threshold",      &mouse_threshold);
+    M_BindIntVariable("use_mouse",              &usemouse);
+    M_BindIntVariable("novert",                 &novert);
+    M_BindIntVariable("grabmouse",              &grabmouse);
+    M_BindIntVariable("mouse_sensitivity",      &mouseSensitivity);
+    M_BindIntVariable("mouse_threshold",        &mouse_threshold);
     M_BindFloatVariable("mouse_acceleration",   &mouse_acceleration);
     if (gamemission == doom)
     {
-    M_BindIntVariable("mouse_sensitivity_y",  &mouseSensitivity_y);
-    M_BindIntVariable("mouse_threshold_y",    &mouse_threshold_y);
+    M_BindIntVariable("mouse_sensitivity_y",    &mouseSensitivity_y);
+    M_BindIntVariable("mouse_threshold_y",      &mouse_threshold_y);
     M_BindFloatVariable("mouse_acceleration_y", &mouse_acceleration_y);
     }
 }

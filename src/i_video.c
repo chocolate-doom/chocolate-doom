@@ -2203,16 +2203,16 @@ void I_BindVideoVariables(void)
     M_BindIntVariable("screen_height",             &screen_height);
     M_BindIntVariable("screen_bpp",                &screen_bpp);
     M_BindIntVariable("grabmouse",                 &grabmouse);
-    M_BindFloatVariable("mouse_acceleration",        &mouse_acceleration);
     M_BindIntVariable("mouse_threshold",           &mouse_threshold);
-    M_BindFloatVariable("mouse_acceleration_y",      &mouse_acceleration_y);
     M_BindIntVariable("mouse_threshold_y",         &mouse_threshold_y);
-    M_BindStringVariable("video_driver",              &video_driver);
-    M_BindStringVariable("window_position",           &window_position);
     M_BindIntVariable("usegamma",                  &usegamma);
     M_BindIntVariable("vanilla_keyboard_mapping",  &vanilla_keyboard_mapping);
     M_BindIntVariable("novert",                    &novert);
     M_BindIntVariable("png_screenshots",           &png_screenshots);
+    M_BindFloatVariable("mouse_acceleration",      &mouse_acceleration);
+    M_BindFloatVariable("mouse_acceleration_y",    &mouse_acceleration_y);
+    M_BindStringVariable("video_driver",           &video_driver);
+    M_BindStringVariable("window_position",        &window_position);
 
     // Windows Vista or later?  Set screen color depth to
     // 32 bits per pixel, as 8-bit palettized screen modes
