@@ -175,7 +175,7 @@ void CN_WriteMetaData(char *filename)
 			write_bytes(metafp,
 				(strcasecmp(wadfilename,"av.wad") == 0)       ? "05" :
 				(strcasecmp(wadfilename,"hr.wad") == 0)       ? "06" :
-                (strcasecmp(wadfilename,"hr2.wad") == 0)      ? "07" :
+				(strcasecmp(wadfilename,"scythe.wad") == 0)   ? "07" :
 				(strcasecmp(wadfilename,"mm.wad") == 0)       ? "08" :
 				(strcasecmp(wadfilename,"mm2.wad") == 0)      ? "09" :
 				(strcasecmp(wadfilename,"requiem.wad") == 0)  ? "10" :
