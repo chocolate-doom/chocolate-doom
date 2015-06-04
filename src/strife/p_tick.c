@@ -104,11 +104,10 @@ void P_RunThinkers (void)
     currentthinker = thinkercap.next;
     while (currentthinker != &thinkercap)
     {
-        nextthinker = currentthinker->next;
-
         if ( currentthinker->function.acv == (actionf_v)(-1) )
         {
             // time to remove it
+            nextthinker = currentthinker->next;
             currentthinker->next->prev = currentthinker->prev;
             currentthinker->prev->next = currentthinker->next;
             Z_Free (currentthinker);
@@ -117,6 +116,7 @@ void P_RunThinkers (void)
         {
             if (currentthinker->function.acp1)
                 currentthinker->function.acp1 (currentthinker);
+            nextthinker = currentthinker->next;
         }
 
         currentthinker = nextthinker;
