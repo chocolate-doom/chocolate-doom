@@ -278,7 +278,7 @@ void CN_WriteMetaData(char *filename)
     write_bytes(metafp, "#", 1);
 
 	// write record time
-	if (totaltime != NULL)
+	if (totaltime)
 		{
         fprintf(metafp, "%02i:%02i:%05.2f",
 			totaltime / TICRATE / 60 / 60,

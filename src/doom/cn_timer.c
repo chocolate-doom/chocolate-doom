@@ -135,7 +135,7 @@ static void CN_DimBox (int x, int y, int w, int h, int cm)
 void CN_DrawIntermissionTime (int x, int y, int time)
 {
     int i, l;
-    static byte buffer[16];
+    static char buffer[16];
     int w = 0;
 
     l = M_snprintf (buffer, 16, "%02i:%05.2f", leveltime / TICRATE / 60,
@@ -175,7 +175,7 @@ void CN_DrawIntermissionTime (int x, int y, int time)
 void CN_DrawTotalTime (void)
 {
     int i;
-    static byte buffer[16];
+    static char buffer[16];
 
     i = M_snprintf (buffer, 16, "%02i:%02i:%05.2f", totaltime / TICRATE / 60 / 60, (totaltime / TICRATE / 60) % 60,
                   (float)(totaltime % (60*TICRATE)) / TICRATE);

@@ -21,7 +21,7 @@ extern cn_playerinfo_t cn_meta_playerinfos[MAXPLAYERS];
 
 void CN_BindMetaVariables(void);
 
-extern void CN_WriteMetaData (demoname);
+extern void CN_WriteMetaData (char *demoname);
 
 #endif
 

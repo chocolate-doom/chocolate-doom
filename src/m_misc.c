@@ -198,8 +198,9 @@ boolean M_StrToInt(const char *str, int *result)
 void M_ExtractFileBase(char *path, char *dest)
 {
     char *src;
-    char *filename;
-    int length;
+    char *filename; 
+// [cndoom] unused var
+//    int length;
 
     src = path + strlen(path) - 1;
 
@@ -216,7 +217,7 @@ void M_ExtractFileBase(char *path, char *dest)
     // with a base of more than eight characters.  To remove the 8.3
     // filename limit, instead we simply truncate the name.
     /* [cndoom] remove file limit
-     length = 0;
+    length = 0;
     memset(dest, 0, 8);
 
     while (*src != '\0' && *src != '.')
