@@ -449,7 +449,7 @@ void I_ResetScaleTables(byte *palette)
 // screen mode.
 //
 
-static inline void WriteBlendedLine1x(byte *dest, byte *src1, byte *src2,
+static inline void WriteBlendedLine1x(byte *dest, byte *src1, byte *src2, 
                                byte *stretch_table)
 {
     int x;
@@ -649,7 +649,7 @@ static inline void WriteLine3x(byte *dest, byte *src)
     }
 }
 
-static inline void WriteBlendedLine3x(byte *dest, byte *src1, byte *src2,
+static inline void WriteBlendedLine3x(byte *dest, byte *src1, byte *src2, 
                                byte *stretch_table)
 {
     int x;
@@ -789,7 +789,7 @@ static inline void WriteLine4x(byte *dest, byte *src)
     }
 }
 
-static inline void WriteBlendedLine4x(byte *dest, byte *src1, byte *src2,
+static inline void WriteBlendedLine4x(byte *dest, byte *src1, byte *src2, 
                                byte *stretch_table)
 {
     int x;

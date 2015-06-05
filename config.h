@@ -40,9 +40,6 @@
 /* Define to 1 if you have the `mmap' function. */
 #define HAVE_MMAP 1
 
-/* Define to 1 if you have the `sched_setaffinity' function. */
-#define HAVE_SCHED_SETAFFINITY 1
-
 /* Define to 1 if you have the <stdint.h> header file. */
 #define HAVE_STDINT_H 1
 
@@ -74,7 +71,7 @@
 #define PACKAGE_NAME "Competition Doom"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "Competition Doom 2.0.3.1"
+#define PACKAGE_STRING "Competition Doom 2.0.3.2"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "cndoom"
@@ -83,7 +80,7 @@
 #define PACKAGE_URL ""
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "2.0.3.1"
+#define PACKAGE_VERSION "2.0.3.2"
 
 /* Change this when you create your awesome forked version */
 #define PROGRAM_PREFIX "cn"
@@ -92,4 +89,4 @@
 #define STDC_HEADERS 1
 
 /* Version number of package */
-#define VERSION "2.0.3.1"
+#define VERSION "2.0.3.2"

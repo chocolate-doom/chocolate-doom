@@ -1,9 +1,9 @@
 
 Name: cndoom
 Summary: Conservative source port
-Version: 2.0.3.1
+Version: 2.0.3.2
 Release: 1
-Source: http://doom.com.hr/cndoom/cndoom-2.0.3.1.tar.gz
+Source: http://doom.com.hr/cndoom/cndoom-2.0.3.2.tar.gz
 URL: http://www.doom.com.hr/
 Group: Amusements/Games
 BuildRoot: /var/tmp/cndoom-buildroot

@@ -93,7 +93,7 @@ static int num_screen_modes_fullscreen;
 
 static int vidmode = 0;
 
-static char *video_driver = "";
+static char *video_driver = "directx";
 static char *window_position = "";
 static int autoadjust_video_settings = 1;
 static int aspect_ratio_correct = 1;
@@ -101,7 +101,7 @@ static int fullscreen = 1;
 static int screen_width = 640;
 static int screen_height = 400;
 static int screen_bpp = 0;
-static int startup_delay = 1000;
+static int startup_delay = 0;
 static int usegamma = 4;
 
 int graphical_startup = 1;

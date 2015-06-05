@@ -1,6 +1,7 @@
-00025 Merged with latest Chocolate Doom, v2.0.3.2 beta1
-00024 Merged with latest Chocolate Doom, final release 2.0.3.1
-00023 Removed quickstart as it was completely bugged after hires patch
+00026   Crash/overflow fix introduced by hires patch startup_delay is 0.
+00025   Merged with latest Chocolate Doom, v2.0.3.2 beta1
+00024   Merged with latest Chocolate Doom, final release 2.0.3.1
+00023   Removed quickstart as it was completely bugged after hires patch
         Implemented Ghostlydeath's patch for choco, adjusted
         cn_quickstart_delay to "50" for new patch
 00022   Moved all custom configuration to competition menu, fix char->int,

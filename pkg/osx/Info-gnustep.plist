@@ -2,14 +2,14 @@
     ApplicationName = "Competition Doom";
     ApplicationDescription = "Conservative source port";
     ApplicationIcon = app.png;
-    ApplicationRelease = 2.0.3.1;
+    ApplicationRelease = 2.0.3.2;
     ApplicationURL = "http://www.doom.com.hr/";
     Authors = (
         "Zvonimir Buzanic <admin@doom.com.hr>"
     );
     Copyright = "Copyright (C) 1993-2015";
     CopyrightDescription = "GNU General Public License, version 2";
-    FullVersionID = 2.0.3.1;
+    FullVersionID = 2.0.3.2;
     GSMainMarkupFile = "";
     NSExecutable = "launcher";
     NSIcon = app.png;

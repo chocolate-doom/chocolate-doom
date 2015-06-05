@@ -39,9 +39,6 @@
 /* Define to 1 if you have the `mmap' function. */
 #undef HAVE_MMAP
 
-/* Define to 1 if you have the `sched_setaffinity' function. */
-#undef HAVE_SCHED_SETAFFINITY
-
 /* Define to 1 if you have the <stdint.h> header file. */
 #undef HAVE_STDINT_H
 

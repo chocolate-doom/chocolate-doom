@@ -13,9 +13,9 @@ STRIP = strip
 PROGRAM_PREFIX = cn
 PACKAGE = cndoom
 PACKAGE_NAME = Competition Doom
-PACKAGE_STRING = Competition Doom 2.0.3.1
+PACKAGE_STRING = Competition Doom 2.0.3.2
 PACKAGE_TARNAME = cndoom
-PACKAGE_VERSION = 2.0.3.1
+PACKAGE_VERSION = 2.0.3.2
 
 # Documentation files to distribute with packages.
 
