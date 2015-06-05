@@ -417,7 +417,7 @@ void R_DrawVisSprite(vissprite_t * vis, int x1, int x2)
 
     if (vis->footclip && !vis->psprite)
     {
-        sprbotscreen = sprtopscreen + FixedMul(patch->height << FRACBITS,
+        sprbotscreen = sprtopscreen + FixedMul(SHORT(patch->height) << FRACBITS,
                                                spryscale);
         baseclip = (sprbotscreen - FixedMul(vis->footclip << FRACBITS,
                                             spryscale)) >> FRACBITS;

@@ -846,7 +846,7 @@ static void InterceptsOverrun(int num_intercepts, intercept_t *intercept)
 
     InterceptsMemoryOverrun(location, intercept->frac);
     InterceptsMemoryOverrun(location + 4, intercept->isaline);
-    InterceptsMemoryOverrun(location + 8, (int) intercept->d.thing);
+    InterceptsMemoryOverrun(location + 8, (intptr_t) intercept->d.thing);
 }
 
 
@@ -887,7 +887,7 @@ P_PathTraverse
 
     int		count;
 		
-    earlyout = flags & PT_EARLYOUT;
+    earlyout = (flags & PT_EARLYOUT) != 0;
 		
     validcount++;
     intercept_p = intercepts;

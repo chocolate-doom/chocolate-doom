@@ -16,6 +16,8 @@
 
 // P_tick.c
 
+#include <stdlib.h>
+
 #include "doomdef.h"
 #include "i_swap.h"
 #include "i_system.h"

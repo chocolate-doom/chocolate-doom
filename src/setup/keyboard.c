@@ -25,6 +25,8 @@
 #include "joystick.h"
 #include "keyboard.h"
 
+#define WINDOW_HELP_URL "http://www.chocolate-doom.org/setup-keyboard"
+
 int vanilla_keyboard_mapping = 1;
 
 static int always_run = 0;
@@ -181,6 +183,8 @@ static void ConfigExtraKeys(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
 
     window = TXT_NewWindow("Extra keyboard controls");
 
+    TXT_SetWindowHelpURL(window, WINDOW_HELP_URL);
+
     table = TXT_NewTable(2);
 
     TXT_SetColumnWidths(table, 21, 9);
@@ -270,6 +274,8 @@ static void OtherKeysDialog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
 
     window = TXT_NewWindow("Other keys");
 
+    TXT_SetWindowHelpURL(window, WINDOW_HELP_URL);
+
     table = TXT_NewTable(2);
 
     TXT_SetColumnWidths(table, 25, 9);
@@ -356,6 +362,8 @@ void ConfigKeyboard(void)
 
     window = TXT_NewWindow("Keyboard configuration");
 
+    TXT_SetWindowHelpURL(window, WINDOW_HELP_URL);
+
     TXT_AddWidgets(window,
                    TXT_NewSeparator("Movement"),
                    movement_table = TXT_NewTable(4),
@@ -408,5 +416,5 @@ void ConfigKeyboard(void)
 
 void BindKeyboardVariables(void)
 {
-    M_BindVariable("vanilla_keyboard_mapping", &vanilla_keyboard_mapping);
+    M_BindIntVariable("vanilla_keyboard_mapping", &vanilla_keyboard_mapping);
 }

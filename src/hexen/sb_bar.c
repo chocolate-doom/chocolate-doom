@@ -26,6 +26,7 @@
 #include "p_local.h"
 #include "s_sound.h"
 #include "v_video.h"
+#include "i_swap.h"
 
 // TYPES -------------------------------------------------------------------
 
@@ -241,6 +242,10 @@ static Cheat_t Cheats[] = {
     {CheatRevealFunc, &CheatRevealSeq},
 };
 
+#define SET_CHEAT(cheat, seq) \
+    { memcpy(cheat.sequence, seq, sizeof(seq)); \
+      cheat.sequence_len = sizeof(seq) - 1; }
+
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
@@ -302,6 +307,34 @@ void SB_Init(void)
         PatchKILLS = W_CacheLumpName("KILLS", PU_STATIC);
     }
     SB_SetClassData();
+
+    if (gamemode == shareware)
+    {
+	SET_CHEAT(CheatGodSeq, "bgokey");
+	SET_CHEAT(CheatNoClipSeq, "rjohnson");
+	SET_CHEAT(CheatWeaponsSeq, "crhinehart");
+	SET_CHEAT(CheatHealthSeq,"sgurno");
+	SET_CHEAT(CheatKeysSeq, "mraymondjudy");
+	SET_CHEAT(CheatSoundSeq, "kschilder");
+	SET_CHEAT(CheatTickerSeq, "rrettenmund");
+	SET_CHEAT(CheatArtifactAllSeq, "braffel");
+	SET_CHEAT(CheatPuzzleSeq, "tmoore");
+	SET_CHEAT(CheatWarpSeq, "bpelletier");
+	SET_CHEAT(CheatPigSeq, "ebiessman");
+	SET_CHEAT(CheatMassacreSeq, "cstika");
+	SET_CHEAT(CheatIDKFASeq, "rambo");
+	SET_CHEAT(CheatQuickenSeq1, "quicken");
+	SET_CHEAT(CheatQuickenSeq2, "quickenquicken");
+	SET_CHEAT(CheatQuickenSeq3, "quickenquickenquicken");
+	SET_CHEAT(CheatClass1Seq, "plipo");
+	SET_CHEAT(CheatClass2Seq, "plipo");
+	SET_CHEAT(CheatVersionSeq, "pmacarther");
+	SET_CHEAT(CheatDebugSeq, "jsumwalt");
+	SET_CHEAT(CheatScriptSeq1, "mwagabaza");
+	SET_CHEAT(CheatScriptSeq2, "mwagabaza");
+	SET_CHEAT(CheatScriptSeq3, "mwagabaza");
+	SET_CHEAT(CheatRevealSeq, "reveal");
+    }
 }
 
 //==========================================================================
@@ -329,12 +362,12 @@ void SB_SetClassData(void)
     if (!netgame)
     {                           // single player game uses red life gem (the second gem)
         PatchLIFEGEM = W_CacheLumpNum(W_GetNumForName("lifegem")
-                                      + MAXPLAYERS * class + 1, PU_STATIC);
+                                      + maxplayers * class + 1, PU_STATIC);
     }
     else
     {
         PatchLIFEGEM = W_CacheLumpNum(W_GetNumForName("lifegem")
-                                      + MAXPLAYERS * class + consoleplayer,
+                                      + maxplayers * class + consoleplayer,
                                       PU_STATIC);
     }
     SB_state = -1;
@@ -496,19 +529,19 @@ static void DrBNumber(signed int val, int x, int y)
     if (val > 99)
     {
         patch = W_CacheLumpNum(FontBNumBase + val / 100, PU_CACHE);
-        V_DrawShadowedPatch(xpos + 6 - patch->width / 2, y, patch);
+        V_DrawShadowedPatch(xpos + 6 - SHORT(patch->width) / 2, y, patch);
     }
     val = val % 100;
     xpos += 12;
     if (val > 9 || oldval > 99)
     {
         patch = W_CacheLumpNum(FontBNumBase + val / 10, PU_CACHE);
-        V_DrawShadowedPatch(xpos + 6 - patch->width / 2, y, patch);
+        V_DrawShadowedPatch(xpos + 6 - SHORT(patch->width) / 2, y, patch);
     }
     val = val % 10;
     xpos += 12;
     patch = W_CacheLumpNum(FontBNumBase + val, PU_CACHE);
-    V_DrawShadowedPatch(xpos + 6 - patch->width / 2, y, patch);
+    V_DrawShadowedPatch(xpos + 6 - SHORT(patch->width) / 2, y, patch);
 }
 
 //==========================================================================
@@ -1023,7 +1056,7 @@ void DrawMainBar(void)
     if (deathmatch)
     {
         temp = 0;
-        for (i = 0; i < MAXPLAYERS; i++)
+        for (i = 0; i < maxplayers; i++)
         {
             temp += CPlayer->frags[i];
         }
@@ -1350,7 +1383,7 @@ void DrawFullScreenStuff(void)
     if (deathmatch)
     {
         temp = 0;
-        for (i = 0; i < MAXPLAYERS; i++)
+        for (i = 0; i < maxplayers; i++)
         {
             if (playeringame[i])
             {

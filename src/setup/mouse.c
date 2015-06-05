@@ -25,6 +25,8 @@
 #include "mode.h"
 #include "mouse.h"
 
+#define WINDOW_HELP_URL "http://www.chocolate-doom.org/setup-mouse"
+
 static int usemouse = 1;
 
 static int mouseSensitivity = 5;
@@ -84,6 +86,8 @@ static void ConfigExtraButtons(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
 
     window = TXT_NewWindow("Additional mouse buttons");
 
+    TXT_SetWindowHelpURL(window, WINDOW_HELP_URL);
+
     TXT_AddWidgets(window,
                    buttons_table = TXT_NewTable(2),
                    NULL);
@@ -111,6 +115,8 @@ void ConfigMouse(void)
     txt_table_t *buttons_table;
 
     window = TXT_NewWindow("Mouse configuration");
+
+    TXT_SetWindowHelpURL(window, WINDOW_HELP_URL);
 
     TXT_AddWidgets(window,
                    TXT_NewCheckBox("Enable mouse", &usemouse),
@@ -153,10 +159,10 @@ void ConfigMouse(void)
 
 void BindMouseVariables(void)
 {
-    M_BindVariable("use_mouse",            &usemouse);
-    M_BindVariable("novert",               &novert);
-    M_BindVariable("mouse_sensitivity",    &mouseSensitivity);
-    M_BindVariable("mouse_acceleration",   &mouse_acceleration);
-    M_BindVariable("mouse_threshold",      &mouse_threshold);
-    M_BindVariable("grabmouse",            &grabmouse);
+    M_BindIntVariable("use_mouse",               &usemouse);
+    M_BindIntVariable("novert",                  &novert);
+    M_BindIntVariable("grabmouse",               &grabmouse);
+    M_BindIntVariable("mouse_sensitivity",       &mouseSensitivity);
+    M_BindIntVariable("mouse_threshold",         &mouse_threshold);
+    M_BindFloatVariable("mouse_acceleration",    &mouse_acceleration);
 }

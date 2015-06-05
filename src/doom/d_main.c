@@ -359,16 +359,16 @@ void D_BindVariables(void)
     NET_BindVariables();
 #endif
 
-    M_BindVariable("mouse_sensitivity",      &mouseSensitivity);
-    M_BindVariable("sfx_volume",             &sfxVolume);
-    M_BindVariable("music_volume",           &musicVolume);
-    M_BindVariable("show_messages",          &showMessages);
-    M_BindVariable("screenblocks",           &screenblocks);
-    M_BindVariable("detaillevel",            &detailLevel);
-    M_BindVariable("snd_channels",           &snd_channels);
-    M_BindVariable("vanilla_savegame_limit", &vanilla_savegame_limit);
-    M_BindVariable("vanilla_demo_limit",     &vanilla_demo_limit);
-    M_BindVariable("show_endoom",            &show_endoom);
+    M_BindIntVariable("mouse_sensitivity",      &mouseSensitivity);
+    M_BindIntVariable("sfx_volume",             &sfxVolume);
+    M_BindIntVariable("music_volume",           &musicVolume);
+    M_BindIntVariable("show_messages",          &showMessages);
+    M_BindIntVariable("screenblocks",           &screenblocks);
+    M_BindIntVariable("detaillevel",            &detailLevel);
+    M_BindIntVariable("snd_channels",           &snd_channels);
+    M_BindIntVariable("vanilla_savegame_limit", &vanilla_savegame_limit);
+    M_BindIntVariable("vanilla_demo_limit",     &vanilla_demo_limit);
+    M_BindIntVariable("show_endoom",            &show_endoom);
 
     // Multiplayer chat macros
 
@@ -377,7 +377,7 @@ void D_BindVariables(void)
         char buf[12];
 
         M_snprintf(buf, sizeof(buf), "chatmacro%i", i);
-        M_BindVariable(buf, &chat_macros[i]);
+        M_BindStringVariable(buf, &chat_macros[i]);
     }
 }
 
@@ -1151,6 +1151,11 @@ static void LoadIwadDeh(void)
     }
 }
 
+static void G_CheckDemoStatusAtExit (void)
+{
+    G_CheckDemoStatus();
+}
+
 //
 // D_DoomMain
 //
@@ -1470,9 +1475,12 @@ void D_DoomMain (void)
 
     if (p)
     {
+        char *uc_filename = strdup(myargv[p + 1]);
+        M_ForceUppercase(uc_filename);
+
         // With Vanilla you have to specify the file without extension,
         // but make that optional.
-        if (M_StringEndsWith(myargv[p + 1], ".lmp"))
+        if (M_StringEndsWith(uc_filename, ".LMP"))
         {
             M_StringCopy(file, myargv[p + 1], sizeof(file));
         }
@@ -1480,6 +1488,8 @@ void D_DoomMain (void)
         {
             DEH_snprintf(file, sizeof(file), "%s.lmp", myargv[p+1]);
         }
+
+        free(uc_filename);
 
         if (D_AddFile(file))
         {
@@ -1498,7 +1508,7 @@ void D_DoomMain (void)
         printf("Playing demo %s.\n", file);
     }
 
-    I_AtExit((atexit_func_t) G_CheckDemoStatus, true);
+    I_AtExit(G_CheckDemoStatusAtExit, true);
 
     // Generate the WAD hash table.  Speed things up a bit.
     W_GenerateHashTable();

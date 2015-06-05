@@ -183,6 +183,10 @@ static char *steam_install_subdirs[] =
     // From Doom 3: BFG Edition:
 
     "steamapps\\common\\DOOM 3 BFG Edition\\base\\wads",
+
+    // From Strife: Veteran Edition:
+
+    "steamapps\\common\\Strife",
 };
 
 #define STEAM_BFG_GUS_PATCHES \
@@ -328,7 +332,7 @@ static void CheckSteamGUSPatches(void)
     int len;
 
     // Already configured? Don't stomp on the user's choices.
-    current_path = M_GetStrVariable("gus_patch_path");
+    current_path = M_GetStringVariable("gus_patch_path");
     if (current_path != NULL && strlen(current_path) > 0)
     {
         return;

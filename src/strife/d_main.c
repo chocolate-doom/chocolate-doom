@@ -431,21 +431,22 @@ void D_BindVariables(void)
     // * screenblocks -> screensize
     // * Added nickname, comport
 
-    M_BindVariable("mouse_sensitivity",      &mouseSensitivity);
-    M_BindVariable("sfx_volume",             &sfxVolume);
-    M_BindVariable("music_volume",           &musicVolume);
-    M_BindVariable("voice_volume",           &voiceVolume); 
-    M_BindVariable("show_talk",              &dialogshowtext);
-    M_BindVariable("screensize",             &screenblocks);
-    M_BindVariable("snd_channels",           &snd_channels);
-    M_BindVariable("vanilla_savegame_limit", &vanilla_savegame_limit);
-    M_BindVariable("vanilla_demo_limit",     &vanilla_demo_limit);
-    M_BindVariable("show_endoom",            &show_endoom);
-    M_BindVariable("back_flat",              &back_flat);
-    M_BindVariable("graphical_startup",      &graphical_startup);
+    M_BindIntVariable("mouse_sensitivity",      &mouseSensitivity);
+    M_BindIntVariable("sfx_volume",             &sfxVolume);
+    M_BindIntVariable("music_volume",           &musicVolume);
+    M_BindIntVariable("voice_volume",           &voiceVolume); 
+    M_BindIntVariable("show_talk",              &dialogshowtext);
+    M_BindIntVariable("screensize",             &screenblocks);
+    M_BindIntVariable("snd_channels",           &snd_channels);
+    M_BindIntVariable("vanilla_savegame_limit", &vanilla_savegame_limit);
+    M_BindIntVariable("vanilla_demo_limit",     &vanilla_demo_limit);
+    M_BindIntVariable("show_endoom",            &show_endoom);
+    M_BindIntVariable("graphical_startup",      &graphical_startup);
 
-    M_BindVariable("nickname",               &nickname);
-    M_BindVariable("comport",                &comport);
+    M_BindStringVariable("back_flat",           &back_flat);
+    M_BindStringVariable("nickname",            &nickname);
+
+    M_BindIntVariable("comport",                &comport);
 
     // Multiplayer chat macros
 
@@ -454,7 +455,7 @@ void D_BindVariables(void)
         char buf[12];
 
         M_snprintf(buf, sizeof(buf), "chatmacro%i", i);
-        M_BindVariable(buf, &chat_macros[i]);
+        M_BindStringVariable(buf, &chat_macros[i]);
     }
 }
 
@@ -1284,6 +1285,11 @@ void D_IntroTick(void)
 //
 //=============================================================================
 
+static void G_CheckDemoStatusAtExit (void)
+{
+    G_CheckDemoStatus();
+}
+
 //
 // D_DoomMain
 //
@@ -1605,9 +1611,12 @@ void D_DoomMain (void)
 
     if (p)
     {
+        char *uc_filename = strdup(myargv[p + 1]);
+        M_ForceUppercase(uc_filename);
+
         // With Vanilla you have to specify the file without extension,
         // but make that optional.
-        if (M_StringEndsWith(myargv[p + 1], ".lmp"))
+        if (M_StringEndsWith(uc_filename, ".LMP"))
         {
             M_StringCopy(file, myargv[p + 1], sizeof(file));
         }
@@ -1615,6 +1624,8 @@ void D_DoomMain (void)
         {
             DEH_snprintf(file, sizeof(file), "%s.lmp", myargv[p+1]);
         }
+
+        free(uc_filename);
 
         if (D_AddFile (file))
         {
@@ -1633,7 +1644,7 @@ void D_DoomMain (void)
         printf("Playing demo %s.\n", file);
     }
 
-    I_AtExit((atexit_func_t) G_CheckDemoStatus, true);
+    I_AtExit(G_CheckDemoStatusAtExit, true);
 
     // Generate the WAD hash table.  Speed things up a bit.
 

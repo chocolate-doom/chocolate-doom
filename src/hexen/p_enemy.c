@@ -546,8 +546,8 @@ boolean P_LookForPlayers(mobj_t * actor, boolean allaround)
     // stop = (actor->lastlook - 1) & 3;
     // for (;; actor->lastlook = (actor->lastlook + 1) & 3)
 
-    stop = (actor->lastlook + MAXPLAYERS - 1) % MAXPLAYERS;
-    for (;; actor->lastlook = (actor->lastlook + 1) % MAXPLAYERS)
+    stop = (actor->lastlook + maxplayers - 1) % maxplayers;
+    for (;; actor->lastlook = (actor->lastlook + 1) % maxplayers)
     {
         if (!playeringame[actor->lastlook])
             continue;
@@ -1179,7 +1179,7 @@ void A_MinotaurLook(mobj_t * actor)
     actor->target = NULL;
     if (deathmatch)             // Quick search for players
     {
-        for (i = 0; i < MAXPLAYERS; i++)
+        for (i = 0; i < maxplayers; i++)
         {
             if (!playeringame[i])
                 continue;
@@ -3855,7 +3855,7 @@ void A_IceGuyDie(mobj_t * actor)
 void A_IceGuyMissileExplode(mobj_t * actor)
 {
     mobj_t *mo;
-    int i;
+    unsigned int i;
 
     for (i = 0; i < 8; i++)
     {

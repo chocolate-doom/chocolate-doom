@@ -747,6 +747,12 @@ static void TryPickupArtifact(player_t * player, artitype_t artifactType,
         TXT_ARTIPUZZGEAR
     };
 
+    if (gamemode == shareware)
+    {
+        artifactMessages[arti_blastradius] = TXT_ARTITELEPORT;
+        artifactMessages[arti_teleport] = TXT_ARTIBLASTRADIUS;
+    }
+
     if (P_GiveArtifact(player, artifactType, artifact))
     {
         if (artifact->special)

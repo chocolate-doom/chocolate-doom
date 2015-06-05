@@ -67,6 +67,8 @@ unsigned int opl_sample_rate = 22050;
 
 static int InitDriver(opl_driver_t *_driver, unsigned int port_base)
 {
+    int result1, result2;
+
     // Initialize the driver.
 
     if (!_driver->init_func(port_base))
@@ -82,7 +84,9 @@ static int InitDriver(opl_driver_t *_driver, unsigned int port_base)
     driver = _driver;
     init_stage_reg_writes = 1;
 
-    if (!OPL_Detect() || !OPL_Detect())
+    result1 = OPL_Detect();
+    result2 = OPL_Detect();
+    if (!result1 || !result2)
     {
         printf("OPL_Init: No OPL detected using '%s' driver.\n", _driver->name);
         _driver->shutdown_func();
@@ -90,15 +94,11 @@ static int InitDriver(opl_driver_t *_driver, unsigned int port_base)
         return 0;
     }
 
-    // Initialize all registers.
-
-    OPL_InitRegisters();
-
     init_stage_reg_writes = 0;
 
     printf("OPL_Init: Using driver '%s'.\n", driver->name);
 
-    return 1;
+    return result2;
 }
 
 // Find a driver automatically by trying each in the list.
@@ -106,12 +106,14 @@ static int InitDriver(opl_driver_t *_driver, unsigned int port_base)
 static int AutoSelectDriver(unsigned int port_base)
 {
     int i;
+    int result;
 
     for (i=0; drivers[i] != NULL; ++i)
     {
-        if (InitDriver(drivers[i], port_base))
+        result = InitDriver(drivers[i], port_base);
+        if (result)
         {
-            return 1;
+            return result;
         }
     }
 
@@ -127,6 +129,7 @@ int OPL_Init(unsigned int port_base)
 {
     char *driver_name;
     int i;
+    int result;
 
     driver_name = getenv("OPL_DRIVER");
 
@@ -138,9 +141,10 @@ int OPL_Init(unsigned int port_base)
         {
             if (!strcmp(driver_name, drivers[i]->name))
             {
-                if (InitDriver(drivers[i], port_base))
+                result = InitDriver(drivers[i], port_base);
+                if (result)
                 {
-                    return 1;
+                    return result;
                 }
                 else
                 {
@@ -233,7 +237,14 @@ void OPL_WriteRegister(int reg, int value)
 {
     int i;
 
-    OPL_WritePort(OPL_REGISTER_PORT, reg);
+    if (reg & 0x100)
+    {
+        OPL_WritePort(OPL_REGISTER_PORT_OPL3, reg);
+    }
+    else
+    {
+        OPL_WritePort(OPL_REGISTER_PORT, reg);
+    }
 
     // For timing, read the register port six times after writing the
     // register number to cause the appropriate delay
@@ -306,13 +317,22 @@ int OPL_Detect(void)
     // Enable interrupts:
     OPL_WriteRegister(OPL_REG_TIMER_CTRL, 0x80);
 
-    return (result1 & 0xe0) == 0x00
-        && (result2 & 0xe0) == 0xc0;
+    if ((result1 & 0xe0) == 0x00 && (result2 & 0xe0) == 0xc0)
+    {
+        result1 = OPL_ReadPort(OPL_REGISTER_PORT);
+        result2 = OPL_ReadPort(OPL_REGISTER_PORT_OPL3);
+        if (result1 == 0x00)
+        {
+            return 2;
+        }
+        return 1;
+    }
+    return 0;
 }
 
 // Initialize registers on startup
 
-void OPL_InitRegisters(void)
+void OPL_InitRegisters(int opl3)
 {
     int r;
 
@@ -349,8 +369,42 @@ void OPL_InitRegisters(void)
     // "Allow FM chips to control the waveform of each operator":
     OPL_WriteRegister(OPL_REG_WAVEFORM_ENABLE, 0x20);
 
+    if (opl3)
+    {
+        OPL_WriteRegister(OPL_REG_NEW, 0x01);
+
+        // Initialize level registers
+
+        for (r=OPL_REGS_LEVEL; r <= OPL_REGS_LEVEL + OPL_NUM_OPERATORS; ++r)
+        {
+            OPL_WriteRegister(r | 0x100, 0x3f);
+        }
+
+        // Initialize other registers
+        // These two loops write to registers that actually don't exist,
+        // but this is what Doom does ...
+        // Similarly, the <= is also intenational.
+
+        for (r=OPL_REGS_ATTACK; r <= OPL_REGS_WAVEFORM + OPL_NUM_OPERATORS; ++r)
+        {
+            OPL_WriteRegister(r | 0x100, 0x00);
+        }
+
+        // More registers ...
+
+        for (r=1; r < OPL_REGS_LEVEL; ++r)
+        {
+            OPL_WriteRegister(r | 0x100, 0x00);
+        }
+    }
+
     // Keyboard split point on (?)
     OPL_WriteRegister(OPL_REG_FM_MODE,         0x40);
+
+    if (opl3)
+    {
+        OPL_WriteRegister(OPL_REG_NEW, 0x01);
+    }
 }
 
 //

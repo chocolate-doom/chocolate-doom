@@ -47,85 +47,87 @@ strifedocs_DATA  = INSTALL.strife  CMDLINE.strife
 CLEANFILES = $(GENERATED_MAN_PAGES) $(SETUP_MAN_PAGES) \
              $(doomdocs_DATA) $(hereticdocs_DATA) \
              $(hexendocs_DATA) $(strifedocs_DATA)
+MANDIR = $(top_srcdir)/man
+DOCGEN = $(MANDIR)/docgen
 
 $(SETUP_MAN_PAGES): chocolate-setup.6
 	cp $< $@
 
 @PROGRAM_PREFIX@doom.6: ../src $(MANPAGE_GEN_FILES)
-	./docgen -g doom -m doom.template ../src ../src/doom > $@
+	$(DOCGEN) -g doom -m doom.template $(top_srcdir)/src $(top_srcdir)/src/doom > $@
 
-default.cfg.5: ../src default.cfg.template
-	./docgen -g doom -m default.cfg.template \
-                 -c default ../src/m_config.c > $@
+default.cfg.5: $(top_srcdir)/src $(MANDIR)/default.cfg.template
+	$(DOCGEN) -g doom -m $(MANDIR)/default.cfg.template \
+                 -c default $(top_srcdir)/src/m_config.c > $@
 
 @PROGRAM_PREFIX@doom.cfg.5: ../src extra.cfg.template
-	./docgen -g doom -m extra.cfg.template \
-                 -c extended ../src/m_config.c > $@
+	$(DOCGEN) -g doom -m extra.cfg.template \
+                 -c extended $(top_srcdir)/src/m_config.c > $@
 
-CMDLINE.doom : CMDLINE.template ../src ../src/doom
-	./docgen -p CMDLINE.template ../src/ ../src/doom/ > $@
+CMDLINE.doom : $(MANDIR)/CMDLINE.template $(top_srcdir)/src $(top_srcdir)/src/doom
+	$(DOCGEN) -p $(MANDIR)/CMDLINE.template $(top_srcdir)/src/ $(top_srcdir)/src/doom/ > $@
 
-INSTALL.doom: INSTALL.template
-	./simplecpp -DDOOM -DPRECOMPILED < INSTALL.template > $@
-
-
-@PROGRAM_PREFIX@heretic.6: ../src $(MANPAGE_GEN_FILES)
-	./docgen -g heretic -m heretic.template ../src ../src/heretic > $@
-
-heretic.cfg.5: ../src default.cfg.template
-	./docgen -g heretic -m default.cfg.template \
-                 -c default ../src/m_config.c > $@
-
-@PROGRAM_PREFIX@heretic.cfg.5: ../src extra.cfg.template
-	./docgen -g heretic -m extra.cfg.template \
-                 -c extended ../src/m_config.c > $@
-
-CMDLINE.heretic : CMDLINE.template ../src ../src/heretic
-	./docgen -p CMDLINE.template ../src/ ../src/heretic/ > $@
-
-INSTALL.heretic: INSTALL.template
-	./simplecpp -DHERETIC -DPRECOMPILED < INSTALL.template > $@
+INSTALL.doom: $(MANDIR)/INSTALL.template
+	$(MANDIR)/simplecpp -DDOOM -DPRECOMPILED < $(MANDIR)/INSTALL.template > $@
 
 
-@PROGRAM_PREFIX@hexen.6: ../src $(MANPAGE_GEN_FILES)
-	./docgen -g hexen -m hexen.template ../src ../src/hexen > $@
+@PROGRAM_PREFIX@heretic.6: $(top_srcdir)/src $(MANPAGE_GEN_FILES)
+	$(DOCGEN) -g heretic -m $(top_srcdir)/man/heretic.template $(top_srcdir)/src $(top_srcdir)/src/heretic > $@
 
-hexen.cfg.5: ../src default.cfg.template
-	./docgen -g hexen -m default.cfg.template \
-                 -c default ../src/m_config.c > $@
+heretic.cfg.5: $(top_srcdir)/src $(MANDIR)/default.cfg.template
+	$(DOCGEN) -g heretic -m $(MANDIR)/default.cfg.template \
+                 -c default $(top_srcdir)/src/m_config.c > $@
 
-@PROGRAM_PREFIX@hexen.cfg.5: ../src extra.cfg.template
-	./docgen -g hexen -m extra.cfg.template \
-                 -c extended ../src/m_config.c > $@
+@PROGRAM_PREFIX@heretic.cfg.5: $(top_srcdir)/src $(MANDIR)/extra.cfg.template
+	$(DOCGEN) -g heretic -m $(MANDIR)/extra.cfg.template \
+                 -c extended $(top_srcdir)/src/m_config.c > $@
 
-CMDLINE.hexen : CMDLINE.template ../src ../src/hexen
-	./docgen -p CMDLINE.template ../src/ ../src/hexen/ > $@
+CMDLINE.heretic : $(MANDIR)/CMDLINE.template $(top_srcdir)/src $(top_srcdir)/src/heretic
+	$(DOCGEN) -p $(MANDIR)/CMDLINE.template $(top_srcdir)/src/ $(top_srcdir)/src/heretic/ > $@
 
-INSTALL.hexen: INSTALL.template
-	./simplecpp -DHEXEN -DPRECOMPILED < INSTALL.template > $@
+INSTALL.heretic: $(MANDIR)/INSTALL.template
+	$(MANDIR)/simplecpp -DHERETIC -DPRECOMPILED < $(MANDIR)/INSTALL.template > $@
 
 
-@PROGRAM_PREFIX@strife.6: ../src $(MANPAGE_GEN_FILES)
-	./docgen -g strife -m strife.template ../src ../src/strife > $@
+@PROGRAM_PREFIX@hexen.6: $(top_srcdir)/src $(MANPAGE_GEN_FILES)
+	$(DOCGEN) -g hexen -m $(MANDIR)/hexen.template $(top_srcdir)/src $(top_srcdir)/src/hexen > $@
 
-strife.cfg.5: ../src default.cfg.template
-	./docgen -g strife -m default.cfg.template \
-                 -c default ../src/m_config.c > $@
+hexen.cfg.5: $(top_srcdir)/src $(MANDIR)/default.cfg.template
+	$(DOCGEN) -g hexen -m $(MANDIR)/default.cfg.template \
+                 -c default $(top_srcdir)/src/m_config.c > $@
 
-@PROGRAM_PREFIX@strife.cfg.5: ../src extra.cfg.template
-	./docgen -g strife -m extra.cfg.template \
-                 -c extended ../src/m_config.c > $@
+@PROGRAM_PREFIX@hexen.cfg.5: $(top_srcdir)/src $(MANDIR)/extra.cfg.template
+	$(DOCGEN) -g hexen -m $(MANDIR)/extra.cfg.template \
+                 -c extended $(top_srcdir)/src/m_config.c > $@
 
-CMDLINE.strife : CMDLINE.template ../src ../src/strife
-	./docgen -p CMDLINE.template ../src/ ../src/strife/ > $@
+CMDLINE.hexen : $(MANDIR)/CMDLINE.template $(top_srcdir)/src $(top_srcdir)/src/hexen
+	$(DOCGEN) -p $(MANDIR)/CMDLINE.template $(top_srcdir)/src/ $(top_srcdir)/src/hexen/ > $@
+
+INSTALL.hexen: $(MANDIR)/INSTALL.template
+	$(MANDIR)/simplecpp -DHEXEN -DPRECOMPILED < $(MANDIR)/INSTALL.template > $@
+
+
+@PROGRAM_PREFIX@strife.6: $(top_srcdir)/src $(MANPAGE_GEN_FILES)
+	$(DOCGEN) -g strife -m $(MANDIR)/strife.template $(top_srcdir)/src $(top_srcdir)/src/strife > $@
+
+strife.cfg.5: $(top_srcdir)/src $(MANDIR)/default.cfg.template
+	$(DOCGEN) -g strife -m $(MANDIR)/default.cfg.template \
+                 -c default $(top_srcdir)/src/m_config.c > $@
+
+@PROGRAM_PREFIX@strife.cfg.5: $(top_srcdir)/src $(MANDIR)/extra.cfg.template
+	$(DOCGEN) -g strife -m $(MANDIR)/extra.cfg.template \
+                 -c extended $(top_srcdir)/src/m_config.c > $@
+
+CMDLINE.strife : $(MANDIR)/CMDLINE.template $(top_srcdir)/src $(top_srcdir)/src/strife
+	$(DOCGEN) -p $(MANDIR)/CMDLINE.template $(top_srcdir)/src/ $(top_srcdir)/src/strife/ > $@
 
 INSTALL.strife: INSTALL.template
-	./simplecpp -DSTRIFE -DPRECOMPILED < INSTALL.template > $@
+	$(MANDIR)/simplecpp -DSTRIFE -DPRECOMPILED < $(MANDIR)/INSTALL.template > $@
 
 
-INSTALL: INSTALL.template
-	./simplecpp -DDOOM -DHERETIC -DHEXEN -DSTRIFE \
-	            -DPRECOMPILED < INSTALL.template > $@
+INSTALL: $(MANDIR)/INSTALL.template
+	$(MANDIR)//simplecpp -DDOOM -DHERETIC -DHEXEN -DSTRIFE \
+	            -DPRECOMPILED < $(MANDIR)/INSTALL.template > $@
 
 endif
 

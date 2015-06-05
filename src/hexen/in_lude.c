@@ -23,6 +23,7 @@
 #include "m_misc.h"
 #include "p_local.h"
 #include "v_video.h"
+#include "i_swap.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -105,7 +106,7 @@ void IN_Start(void)
     skipintermission = false;
     intertime = 0;
     AM_Stop();
-    for (i = 0; i < MAXPLAYERS; i++)
+    for (i = 0; i < maxplayers; i++)
     {
         players[i].messageTics = 0;
         players[i].message[0] = 0;
@@ -207,13 +208,13 @@ static void InitStats(void)
         posnum = 0;
         playercount = 0;
         slaughtercount = 0;
-        for (i = 0; i < MAXPLAYERS; i++)
+        for (i = 0; i < maxplayers; i++)
         {
             totalFrags[i] = 0;
             if (playeringame[i])
             {
                 playercount++;
-                for (j = 0; j < MAXPLAYERS; j++)
+                for (j = 0; j < maxplayers; j++)
                 {
                     if (playeringame[j])
                     {
@@ -337,7 +338,7 @@ static void CheckForSkip(void)
     player_t *player;
     static boolean triedToSkip;
 
-    for (i = 0, player = players; i < MAXPLAYERS; i++, player++)
+    for (i = 0, player = players; i < maxplayers; i++, player++)
     {
         if (playeringame[i])
         {
@@ -477,10 +478,10 @@ static void DrDeathTally(void)
         S_StartSound(NULL, SFX_PLATFORM_STOP);
     }
     y = yPos >> FRACBITS;
-    for (i = 0; i < MAXPLAYERS; i++)
+    for (i = 0; i < maxplayers; i++)
     {
         xPos = xStart;
-        for (j = 0; j < MAXPLAYERS; j++, xPos += xDelta)
+        for (j = 0; j < maxplayers; j++, xPos += xDelta)
         {
             x = xPos >> FRACBITS;
             bold = (i == consoleplayer || j == consoleplayer);
@@ -600,11 +601,11 @@ static void DrawHubText(void)
             continue;
         }
         w = W_CacheLumpNum(FontABaseLump + c - 33, PU_CACHE);
-        if (cx + w->width > SCREENWIDTH)
+        if (cx + SHORT(w->width) > SCREENWIDTH)
         {
             break;
         }
         V_DrawPatch(cx, cy, w);
-        cx += w->width;
+        cx += SHORT(w->width);
     }
 }

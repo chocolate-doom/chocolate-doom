@@ -891,7 +891,7 @@ void A_Look (mobj_t* actor)
     // as a parameter to control allaround look behavior. Did they just run out of
     // flags, or what? 
     // STRIFE-TODO: Needs serious verification.
-    if (!P_LookForPlayers (actor, actor->flags & MF_GIVEQUEST) )
+    if (!P_LookForPlayers(actor, (actor->flags & MF_GIVEQUEST) != 0))
         return;
 
     // go into chase state
@@ -975,7 +975,7 @@ void A_FriendLook(mobj_t* actor)
             gamemap != 3 && gamemap != 34)
         {
             // STRIFE-TODO: Needs serious verification.
-            if(P_LookForPlayers(actor, actor->flags & MF_GIVEQUEST))
+            if(P_LookForPlayers(actor, (actor->flags & MF_GIVEQUEST) != 0))
             {
                 P_SetMobjState(actor, actor->info->seestate);
                 actor->flags |= MF_NODIALOG;

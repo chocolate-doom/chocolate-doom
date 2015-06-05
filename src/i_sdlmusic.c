@@ -20,6 +20,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
+
 #include "SDL.h"
 #include "SDL_mixer.h"
 
@@ -422,7 +424,7 @@ static char *GetSubstituteMusicFile(void *data, size_t data_len)
     sha1_context_t context;
     sha1_digest_t hash;
     char *filename;
-    int i;
+    unsigned int i;
 
     // Don't bother doing a hash if we're never going to find anything.
     if (subst_music_len == 0)
@@ -631,7 +633,7 @@ static boolean ReadSubstituteConfig(char *filename)
     FILE *fs;
     char *error;
     int linenum = 1;
-    int old_subst_music_len;
+//    int old_subst_music_len;
 
     fs = fopen(filename, "r");
 
@@ -640,7 +642,7 @@ static boolean ReadSubstituteConfig(char *filename)
         return false;
     }
 
-    old_subst_music_len = subst_music_len;
+//    old_subst_music_len = subst_music_len;
 
     while (!feof(fs))
     {
@@ -734,7 +736,8 @@ static void DumpSubstituteConfig(char *filename)
     char name[9];
     byte *data;
     FILE *fs;
-    int lumpnum, h;
+    unsigned int lumpnum;
+    size_t h;
 
     fs = fopen(filename, "w");
 

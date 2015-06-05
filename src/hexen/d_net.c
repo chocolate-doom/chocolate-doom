@@ -76,7 +76,7 @@ static void RunTic(ticcmd_t *cmds, boolean *ingame)
 
     // Check for player quits.
 
-    for (i = 0; i < MAXPLAYERS; ++i)
+    for (i = 0; i < maxplayers; ++i)
     {
         if (!demoplayback && playeringame[i] && !ingame[i])
         {
@@ -120,7 +120,7 @@ static void LoadGameSettings(net_gamesettings_t *settings)
     respawnparm = settings->respawn_monsters;
     consoleplayer = settings->consoleplayer;
 
-    for (i=0; i<MAXPLAYERS; ++i)
+    for (i=0; i<maxplayers; ++i)
     {
         playeringame[i] = i < settings->num_players;
         PlayerClass[i] = settings->player_classes[i];
@@ -172,7 +172,7 @@ static void InitConnectData(net_connect_data_t *connect_data)
 
     connect_data->lowres_turn = false;
     connect_data->drone = false;
-    connect_data->max_players = MAXPLAYERS;
+    connect_data->max_players = maxplayers;
 
     //!
     // @category net
