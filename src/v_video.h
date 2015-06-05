@@ -107,7 +107,7 @@ void V_LoadXlaTable(void);
 
 void V_DrawMouseSpeedBox(int speed);
 
-static _inline void V_ClearDPTranslation(void)
+static inline void V_ClearDPTranslation(void)
 {
     if (dp_translation)
 	dp_translation = NULL;

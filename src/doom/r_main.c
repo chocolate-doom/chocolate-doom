@@ -728,9 +728,10 @@ void R_ExecuteSetViewSize (void)
     {
 	dy = ((i-viewheight/2)<<FRACBITS)+FRACUNIT/2;
 	dy = abs(dy);
+
 	yslope[i] = FixedDiv ( (viewwidth<<(detailshift && !hires))/2*FRACUNIT, dy);
     }
-	
+
     for (i=0 ; i<viewwidth ; i++)
     {
 	cosadj = abs(finecosine[xtoviewangle[i]>>ANGLETOFINESHIFT]);

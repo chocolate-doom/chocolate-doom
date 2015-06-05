@@ -187,7 +187,7 @@ wipe_doMelt
 	    }
 	    else if (y[i] < height)
 	    {
-		dy = (y[i] < 16) ? y[i]+1 : 8;
+		dy = (y[i] < 16) ? y[i]+1 : (8 << hires);
 		if (y[i]+dy >= height) dy = height - y[i];
 		s = &((short *)wipe_scr_end)[i*height+y[i]];
 		d = &((short *)wipe_scr)[y[i]*width+i];
@@ -267,8 +267,6 @@ wipe_ScreenWipe
 	wipe_initColorXForm, wipe_doColorXForm, wipe_exitColorXForm,
 	wipe_initMelt, wipe_doMelt, wipe_exitMelt
     };
-
-    ticks <<= hires; // [crispy] -> [cndoom] high resolution
 
     // initial stuff
     if (!go)

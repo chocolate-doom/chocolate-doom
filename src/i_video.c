@@ -265,7 +265,7 @@ static unsigned int last_resize_time;
 // The sensible thing to do is to disable this if you have a non-US
 // keyboard.
 
-int vanilla_keyboard_mapping = false;
+int vanilla_keyboard_mapping = 0;
 
 // Is the shift key currently down?
 

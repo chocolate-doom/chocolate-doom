@@ -103,14 +103,19 @@ void V_CopyRect(int srcx, int srcy, byte *source,
      || srcy < 0
      || srcy + height > SCREENHEIGHT 
      || destx < 0
-     || destx + width > SCREENWIDTH
+     || destx /* + width */ > SCREENWIDTH
      || desty < 0
-     || desty + height > SCREENHEIGHT)
+     || desty /* + height */ > SCREENHEIGHT)
     {
         I_Error ("Bad V_CopyRect");
     }
 #endif 
 
+    // [crispy] prevent framebuffer overflow
+    if (destx + width > SCREENWIDTH)
+	width = SCREENWIDTH - destx;
+    if (desty + height > SCREENHEIGHT)
+	height = SCREENHEIGHT - desty;
     V_MarkRect(destx, desty, width, height); 
  
     src = source + SCREENWIDTH * srcy + srcx; 
@@ -144,6 +149,8 @@ void V_SetPatchClipCallback(vpatchclipfunc_t func)
 // Masks a column based masked pic to the screen. 
 //
 
+// [crispy] prevent framebuffer overflow
+#define dest_in_framebuffer (safe || ((dest-dest_screen) < SCREENHEIGHT*SCREENWIDTH))
 void V_DrawPatch(int x, int y, patch_t *patch)
 { 
     int count;
@@ -153,7 +160,8 @@ void V_DrawPatch(int x, int y, patch_t *patch)
     byte *dest;
     byte *source;
     int w, f;
-
+    // [crispy] prevent framebuffer overflow
+    const boolean safe = !(y + SHORT(patch->height) > ORIGHEIGHT);
     y -= SHORT(patch->topoffset);
     x -= SHORT(patch->leftoffset);
 
@@ -166,9 +174,9 @@ void V_DrawPatch(int x, int y, patch_t *patch)
 
 #ifdef RANGECHECK
     if (x < 0
-     || x + SHORT(patch->width) > ORIGWIDTH
+     || x /* + SHORT(patch->width) */ > ORIGWIDTH
      || y < 0
-     || y + SHORT(patch->height) > ORIGHEIGHT)
+     || y /* + SHORT(patch->height) */ > ORIGHEIGHT)
     {
         I_Error("Bad V_DrawPatch");
     }
@@ -181,6 +189,10 @@ void V_DrawPatch(int x, int y, patch_t *patch)
 
     w = SHORT(patch->width);
 
+    // [crispy] prevent framebuffer overflow
+    if (x + w > ORIGWIDTH)
+        w = ORIGWIDTH - x;
+    
   // [crispy] quadruple for-loop for each dp_translation and dp_translucent case
   // to avoid checking these variables for each pixel and instead check once per patch
   // (1) normal, opaque patch
@@ -198,7 +210,8 @@ void V_DrawPatch(int x, int y, patch_t *patch)
             dest = desttop + column->topdelta*(SCREENWIDTH << hires) + (x * hires) + f;
             count = column->length;
 
-            while (count--)
+            // [crispy] prevent framebuffer overflow
+            while (count-- && dest_in_framebuffer)
             {
                 if (hires)
                 {
@@ -227,7 +240,8 @@ void V_DrawPatch(int x, int y, patch_t *patch)
             dest = desttop + column->topdelta*(SCREENWIDTH << hires) + (x * hires) + f;
             count = column->length;
 
-            while (count--)
+            // [crispy] prevent framebuffer overflow
+            while (count-- && dest_in_framebuffer)
             {
                 if (hires)
                 {
@@ -258,6 +272,8 @@ void V_DrawPatchFlipped(int x, int y, patch_t *patch)
     byte *dest;
     byte *source; 
     int w, f;
+    // [crispy] prevent framebuffer overflow
+    const boolean safe = !(y + SHORT(patch->height) > ORIGHEIGHT);
  
     y -= SHORT(patch->topoffset); 
     x -= SHORT(patch->leftoffset); 
@@ -271,9 +287,9 @@ void V_DrawPatchFlipped(int x, int y, patch_t *patch)
 
 #ifdef RANGECHECK 
     if (x < 0
-     || x + SHORT(patch->width) > ORIGWIDTH
+     || x /* + SHORT(patch->width) */ > ORIGWIDTH
      || y < 0
-     || y + SHORT(patch->height) > ORIGHEIGHT)
+     || y /* + SHORT(patch->height) */ > ORIGHEIGHT)
     {
         I_Error("Bad V_DrawPatchFlipped");
     }
@@ -286,6 +302,9 @@ void V_DrawPatchFlipped(int x, int y, patch_t *patch)
 
     w = SHORT(patch->width);
 
+    // [crispy] prevent framebuffer overflow
+    if (x + w > ORIGWIDTH)
+        w = ORIGWIDTH - x;
     for ( ; col<w ; x++, col++, desttop++)
     {
         column = (column_t *)((byte *)patch + LONG(patch->columnofs[w-1-col]));
@@ -299,7 +318,8 @@ void V_DrawPatchFlipped(int x, int y, patch_t *patch)
             dest = desttop + column->topdelta*(SCREENWIDTH << hires) + (x * hires) + f;
             count = column->length;
 
-            while (count--)
+            // [crispy] prevent framebuffer overflow
+            while (count-- && dest_in_framebuffer)
             {
                 if (hires)
                 {
@@ -591,11 +611,11 @@ void V_LoadXlaTable(void)
 // Draw a linear block of pixels into the view buffer.
 //
 
-void V_DrawBlock(int x, int y, int width, int height, byte *src) 
-{ 
-    byte *dest; 
- 
-#ifdef RANGECHECK 
+void V_DrawBlock(int x, int y, int width, int height, byte *src)
+{
+    byte *dest;
+
+#ifdef RANGECHECK
     if (x < 0
      || x + width >SCREENWIDTH
      || y < 0
@@ -603,19 +623,19 @@ void V_DrawBlock(int x, int y, int width, int height, byte *src)
     {
 	I_Error ("Bad V_DrawBlock");
     }
-#endif 
- 
-    V_MarkRect (x, y, width, height); 
- 
+#endif
+
+    V_MarkRect (x, y, width, height);
+
     dest = dest_screen + (y << hires) * SCREENWIDTH + x;
 
-    while (height--) 
-    { 
-	memcpy (dest, src, width); 
-	src += width; 
-	dest += SCREENWIDTH; 
-    } 
-} 
+    while (height--)
+    {
+	memcpy (dest, src, width);
+	src += width;
+	dest += SCREENWIDTH;
+    }
+}
 
 void V_DrawScaledBlock(int x, int y, int width, int height, byte *src)
 {
@@ -728,7 +748,7 @@ void V_CopyScaledBuffer(byte *dest, byte *src, size_t size)
         }
     }
 }
- 
+
 void V_DrawRawScreen(byte *raw)
 {
     V_CopyScaledBuffer(dest_screen, raw, ORIGWIDTH * ORIGHEIGHT);
@@ -736,9 +756,9 @@ void V_DrawRawScreen(byte *raw)
 
 //
 // V_Init
-// 
-void V_Init (void) 
-{ 
+//
+void V_Init (void)
+{
     // no-op!
     // There used to be separate screens that could be drawn to; these are
     // now handled in the upper layers.
@@ -773,17 +793,17 @@ typedef struct
     unsigned short	ymin;
     unsigned short	xmax;
     unsigned short	ymax;
-    
+
     unsigned short	hres;
     unsigned short	vres;
 
     unsigned char	palette[48];
-    
+
     char		reserved;
     char		color_planes;
     unsigned short	bytes_per_line;
     unsigned short	palette_type;
-    
+
     char		filler[58];
     unsigned char	data;		// unbounded
 } PACKEDATTR pcx_t;
@@ -801,7 +821,7 @@ void WritePCXfile(char *filename, byte *data,
     int		length;
     pcx_t*	pcx;
     byte*	pack;
-	
+
     pcx = Z_Malloc (width*height*2+1000, PU_STATIC, NULL);
 
     pcx->manufacturer = 0x0a;		// PCX id
@@ -822,7 +842,7 @@ void WritePCXfile(char *filename, byte *data,
 
     // pack the image
     pack = &pcx->data;
-	
+
     for (i=0 ; i<width*height ; i++)
     {
 	if ( (*data & 0xc0) != 0xc0)
@@ -833,12 +853,12 @@ void WritePCXfile(char *filename, byte *data,
 	    *pack++ = *data++;
 	}
     }
-    
+
     // write the palette
     *pack++ = 0x0c;	// palette ID byte
     for (i=0 ; i<768 ; i++)
 	*pack++ = *palette++;
-    
+
     // write output file
     length = pack - (byte *)pcx;
     M_WriteFile (filename, pcx, length);
@@ -936,7 +956,7 @@ void V_ScreenShot(char *format)
     int i;
     char lbmname[16]; // haleyjd 20110213: BUG FIX - 12 is too small!
     char *ext;
-    
+
     // find a file name to save it to
 
 #ifdef HAVE_LIBPNG
