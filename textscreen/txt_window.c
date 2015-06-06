@@ -27,6 +27,12 @@
 #include "txt_separator.h"
 #include "txt_window.h"
 
+#ifdef _WIN32
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#include <shellapi.h>
+#endif
+
 void TXT_SetWindowAction(txt_window_t *window,
                          txt_horiz_align_t position, 
                          txt_window_action_t *action)
@@ -516,7 +522,7 @@ void TXT_OpenURL(char *url)
     cmd = malloc(cmd_len);
 
 #if defined(_WIN32)
-    TXT_snprintf(cmd, cmd_len, "cmd /c start \"%s\"", url);
+    TXT_snprintf(cmd, cmd_len, "%s", url);
 #elif defined(__MACOSX__)
     TXT_snprintf(cmd, cmd_len, "open \"%s\"", url);
 #else
@@ -532,7 +538,11 @@ void TXT_OpenURL(char *url)
     TXT_snprintf(cmd, cmd_len, "xdg-open \"%s\"", url);
 #endif
 
+#if defined(_WIN32)
+    ShellExecute(NULL, "open", cmd, NULL, NULL, SW_SHOWNORMAL);
+#else
     system(cmd);
+#endif
     free(cmd);
 }
 
