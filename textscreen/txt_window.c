@@ -521,11 +521,9 @@ void TXT_OpenURL(char *url)
     cmd_len = strlen(url) + 30;
     cmd = malloc(cmd_len);
 
-#if defined(_WIN32)
-    TXT_snprintf(cmd, cmd_len, "%s", url);
-#elif defined(__MACOSX__)
+#if defined(__MACOSX__)
     TXT_snprintf(cmd, cmd_len, "open \"%s\"", url);
-#else
+#elif !defined(_WIN32)
     // The Unix situation sucks as usual, but the closest thing to a
     // standard that exists is the xdg-utils package.
     if (system("xdg-open --version 2>/dev/null") != 0)
@@ -539,7 +537,7 @@ void TXT_OpenURL(char *url)
 #endif
 
 #if defined(_WIN32)
-    ShellExecute(NULL, "open", cmd, NULL, NULL, SW_SHOWNORMAL);
+    ShellExecute(NULL, "open", url, NULL, NULL, SW_SHOWNORMAL);
 #else
     system(cmd);
 #endif
