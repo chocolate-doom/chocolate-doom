@@ -27,6 +27,12 @@
 #include "txt_separator.h"
 #include "txt_window.h"
 
+#ifdef _WIN32
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#include <shellapi.h>
+#endif
+
 void TXT_SetWindowAction(txt_window_t *window,
                          txt_horiz_align_t position, 
                          txt_window_action_t *action)
@@ -515,11 +521,9 @@ void TXT_OpenURL(char *url)
     cmd_len = strlen(url) + 30;
     cmd = malloc(cmd_len);
 
-#if defined(_WIN32)
-    TXT_snprintf(cmd, cmd_len, "cmd /c start \"%s\"", url);
-#elif defined(__MACOSX__)
+#if defined(__MACOSX__)
     TXT_snprintf(cmd, cmd_len, "open \"%s\"", url);
-#else
+#elif !defined(_WIN32)
     // The Unix situation sucks as usual, but the closest thing to a
     // standard that exists is the xdg-utils package.
     if (system("xdg-open --version 2>/dev/null") != 0)
@@ -532,7 +536,11 @@ void TXT_OpenURL(char *url)
     TXT_snprintf(cmd, cmd_len, "xdg-open \"%s\"", url);
 #endif
 
+#if defined(_WIN32)
+    ShellExecute(NULL, "open", url, NULL, NULL, SW_SHOWNORMAL);
+#else
     system(cmd);
+#endif
     free(cmd);
 }
 
