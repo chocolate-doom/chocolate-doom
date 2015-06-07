@@ -513,6 +513,15 @@ void TXT_SetWindowHelpURL(txt_window_t *window, char *help_url)
     window->help_url = help_url;
 }
 
+#ifdef _WIN32
+
+void TXT_OpenURL(char *url)
+{
+    ShellExecute(NULL, "open", url, NULL, NULL, SW_SHOWNORMAL);
+}
+
+#else
+
 void TXT_OpenURL(char *url)
 {
     char *cmd;
@@ -523,7 +532,7 @@ void TXT_OpenURL(char *url)
 
 #if defined(__MACOSX__)
     TXT_snprintf(cmd, cmd_len, "open \"%s\"", url);
-#elif !defined(_WIN32)
+#else
     // The Unix situation sucks as usual, but the closest thing to a
     // standard that exists is the xdg-utils package.
     if (system("xdg-open --version 2>/dev/null") != 0)
@@ -536,13 +545,11 @@ void TXT_OpenURL(char *url)
     TXT_snprintf(cmd, cmd_len, "xdg-open \"%s\"", url);
 #endif
 
-#if defined(_WIN32)
-    ShellExecute(NULL, "open", url, NULL, NULL, SW_SHOWNORMAL);
-#else
     system(cmd);
-#endif
     free(cmd);
 }
+
+#endif /* #ifndef _WIN32 */
 
 void TXT_OpenWindowHelpURL(txt_window_t *window)
 {
