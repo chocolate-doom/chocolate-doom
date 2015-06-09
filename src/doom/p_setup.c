@@ -1883,7 +1883,13 @@ P_SetupLevel
     leveltime = 0;
 	
     // [crispy] better logging
-    fprintf(stderr, "P_SetupLevel: %s (%s), Skill %d, ", lumpname, lumpinfo[lumpnum].wad_file->path, (int) skill);
+    {
+	extern int savedleveltime;
+	const int time = savedleveltime / TICRATE;
+
+	fprintf(stderr, "P_SetupLevel: %s (%s), Skill %d, Time %d:%02d, ",
+	    lumpname, lumpinfo[lumpnum].wad_file->path, (int) skill, time/60, time%60);
+    }
     // [crispy] check and log map and nodes format
     crispy_mapformat = P_CheckMapFormat(lumpnum);
     crispy_createblockmap = false;

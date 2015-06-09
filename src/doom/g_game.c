@@ -1805,9 +1805,9 @@ void G_LoadGame (char* name)
 #define VERSIONSIZE		16 
 
 
+int savedleveltime = 0; // [crispy] moved here for level time logging
 void G_DoLoadGame (void) 
 { 
-    int savedleveltime;
 	 
     gameaction = ga_nothing; 
 	 
@@ -1832,6 +1832,7 @@ void G_DoLoadGame (void)
     G_InitNew (gameskill, gameepisode, gamemap); 
  
     leveltime = savedleveltime;
+    savedleveltime = 0;
 
     // dearchive all the modifications
     P_UnArchivePlayers (); 
