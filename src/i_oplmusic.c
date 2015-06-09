@@ -1651,12 +1651,12 @@ static void I_OPL_ShutdownMusic(void)
 static boolean I_OPL_InitMusic(void)
 {
     char *dmxoption;
-    int opl_chip_type;
+    opl_init_result_t chip_type;
 
     OPL_SetSampleRate(snd_samplerate);
 
-    opl_chip_type = OPL_Init(opl_io_port);
-    if (!opl_chip_type)
+    chip_type = OPL_Init(opl_io_port);
+    if (chip_type == OPL_INIT_NONE)
     {
         printf("Dude.  The Adlib isn't responding.\n");
         return false;
@@ -1670,7 +1670,7 @@ static boolean I_OPL_InitMusic(void)
         dmxoption = snd_dmxoption != NULL ? snd_dmxoption : "";
     }
 
-    if (opl_chip_type == 2 && strstr(dmxoption, "-opl3") != NULL)
+    if (chip_type == OPL_INIT_OPL3 && strstr(dmxoption, "-opl3") != NULL)
     {
         opl_opl3mode = 1;
         num_opl_voices = OPL_NUM_VOICES * 2;
