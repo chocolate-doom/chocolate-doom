@@ -349,8 +349,8 @@ static unsigned int last_perc_count;
 // Configuration file variable, containing the port number for the
 // adlib chip.
 
+char *snd_dmxoption = "";
 int opl_io_port = 0x388;
-int opl_type = 0;
 
 // Load instrument table from GENMIDI lump:
 
@@ -1650,6 +1650,7 @@ static void I_OPL_ShutdownMusic(void)
 
 static boolean I_OPL_InitMusic(void)
 {
+    char *dmxoption;
     int opl_chip_type;
 
     OPL_SetSampleRate(snd_samplerate);
@@ -1661,7 +1662,15 @@ static boolean I_OPL_InitMusic(void)
         return false;
     }
 
-    if (opl_chip_type == 2 && opl_type)
+    // The DMXOPTION variable must be set to enable OPL3 support.
+    // As an extension, we also allow it to be set from the config file.
+    dmxoption = getenv("DMXOPTION");
+    if (dmxoption == NULL)
+    {
+        dmxoption = snd_dmxoption != NULL ? snd_dmxoption : "";
+    }
+
+    if (opl_chip_type == 2 && strstr(dmxoption, "-opl3") != NULL)
     {
         opl_opl3mode = 1;
         num_opl_voices = OPL_NUM_VOICES * 2;
