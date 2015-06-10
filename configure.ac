@@ -1,8 +1,8 @@
-AC_INIT(Chocolate Doom, 2.1.0, fraggle@gmail.com, chocolate-doom)
+AC_INIT(Chocolate Doom, 2.2.0, fraggle@gmail.com, chocolate-doom)
 
 PACKAGE_SHORTNAME=${PACKAGE_NAME% Doom}
 PACKAGE_SHORTDESC="Conservative source port"
-PACKAGE_COPYRIGHT="Copyright (C) 1993-2013"
+PACKAGE_COPYRIGHT="Copyright (C) 1993-2015"
 PACKAGE_LICENSE="GNU General Public License, version 2"
 PACKAGE_MAINTAINER="Simon Howard"
 PACKAGE_URL="http://www.chocolate-doom.org/"
