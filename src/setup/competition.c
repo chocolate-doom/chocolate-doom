@@ -45,5 +45,12 @@ void ConfigCompetition(void)
             TXT_NewSeparator("Demo playback"),
             TXT_NewCheckBox("Show \"Secret is revealed!\" message",
                     &cn_secret_message),
+            TXT_NewSeparator("Startup delay & quickstart"),
+            TXT_NewHorizBox(TXT_NewLabel("Startup delay (ms): "),
+                    TXT_NewSpinControl(&startup_delay, 0, 5000),
+                    NULL),
+            TXT_NewHorizBox(TXT_NewLabel("Quickstart (ms*10): "),
+                    TXT_NewSpinControl(&cn_quickstart_delay, 0, 300),
+                    NULL),
             NULL);
 }

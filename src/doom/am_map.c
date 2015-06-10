@@ -396,7 +396,6 @@ void AM_findMinMaxBoundaries(void)
 //
 void AM_changeWindowLoc(void)
 {
-    int64_t incx, incy;
     if (m_paninc.x || m_paninc.y)
     {
 	followplayer = 0;

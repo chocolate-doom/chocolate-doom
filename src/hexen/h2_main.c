@@ -270,15 +270,26 @@ void D_IdentifyVersion(void)
 	maxplayers = 4;
     }
 
-    // The v1.0 IWAD file is missing a bunch of lumps.
-    if (gamemode != shareware && W_CheckNumForName("CLUS1MSG") == -1)
+    // The v1.0 IWAD file is missing a bunch of lumps that can cause the game
+    // to crash, so we exit with an error if the user tries to play with it.
+    // But we provide an override command line flag if they really want to
+    // do it.
+
+    //!
+    // If provided, the check for the v1.0 IWAD file is disabled, even though
+    // it will almost certainly cause the game to crash.
+    //
+    // @category compat
+    //
+
+    if (!M_ParmExists("-v10override")
+     && gamemode != shareware && W_CheckNumForName("CLUS1MSG") < 0)
     {
-        printf(
-            "** WARNING: You are playing with the Hexen v1.0 IWAD. This\n"
-            "** isn't supported by " PACKAGE_NAME ", and you may find that\n"
-            "** the game will crash. Please upgrade to the v1.1 IWAD file.\n"
-            "** See here for more information:\n"
-            "**   http://www.doomworld.com/classicdoom/info/patches.php\n");
+        I_Error(
+            "You are trying to use the Hexen v1.0 IWAD. This isn't\n"
+            "supported by " PACKAGE_NAME ". Please upgrade to the v1.1\n"
+            "IWAD file. See here for more information:\n"
+            "  http://www.doomworld.com/classicdoom/info/patches.php");
     }
 }
 

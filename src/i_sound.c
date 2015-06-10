@@ -68,7 +68,6 @@ extern music_module_t music_opl_module;
 
 extern opl_driver_ver_t opl_drv_ver;
 extern int opl_io_port;
-extern int opl_type;
 
 // For native music module:
 
@@ -433,6 +432,7 @@ boolean I_MusicIsPlaying(void)
 
 void I_BindSoundVariables(void)
 {
+    extern char *snd_dmxoption;
     extern int use_libsamplerate;
     extern float libsamplerate_scale;
 
@@ -444,10 +444,10 @@ void I_BindSoundVariables(void)
     M_BindIntVariable("snd_mport",               &snd_mport);
     M_BindIntVariable("snd_maxslicetime_ms",     &snd_maxslicetime_ms);
     M_BindStringVariable("snd_musiccmd",         &snd_musiccmd);
+    M_BindStringVariable("snd_dmxoption",        &snd_dmxoption);
     M_BindIntVariable("snd_samplerate",          &snd_samplerate);
     M_BindIntVariable("snd_cachesize",           &snd_cachesize);
     M_BindIntVariable("opl_io_port",             &opl_io_port);
-    M_BindIntVariable("opl_type",                &opl_type);
 
     M_BindStringVariable("timidity_cfg_path",    &timidity_cfg_path);
     M_BindStringVariable("gus_patch_path",       &gus_patch_path);

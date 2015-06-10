@@ -101,12 +101,12 @@ static int fullscreen = 1;
 static int screen_width = 640;
 static int screen_height = 400;
 static int screen_bpp = 0;
-static int startup_delay = 0;
 static int usegamma = 4;
 
 int graphical_startup = 1;
 int show_endoom = 0;
 int png_screenshots = 1;
+int startup_delay = 1000; // [cndoom]
 
 // These are the last screen width/height values that were chosen by the
 // user.  These are used when finding the "nearest" mode, so when 

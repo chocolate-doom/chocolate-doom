@@ -198,8 +198,8 @@ boolean M_StrToInt(const char *str, int *result)
 void M_ExtractFileBase(char *path, char *dest)
 {
     char *src;
-    char *filename;
-// [cndoom] unused var
+// [cndoom] unused vars
+//    char *filename;
 //    int length;
 
     src = path + strlen(path) - 1;
@@ -210,7 +210,7 @@ void M_ExtractFileBase(char *path, char *dest)
 	src--;
     }
 
-    filename = src;
+    // filename = src;
 
     // Copy up to eight characters
     // Note: Vanilla Doom exits with an error if a filename is specified
