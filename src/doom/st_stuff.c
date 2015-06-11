@@ -420,6 +420,7 @@ cheatseq_t cheat_notarget = CHEAT("notarget", 0);
 cheatseq_t cheat_spechits = CHEAT("spechits", 0);
 cheatseq_t cheat_nomomentum = CHEAT("nomomentum", 0);
 cheatseq_t cheat_showfps = CHEAT("showfps", 0);
+static char msg[32];
 
 //
 // STATUS BAR CODE
@@ -677,7 +678,6 @@ ST_Responder (event_t* ev)
       // [crispy] implement Boom's "tntem" cheat
       else if (cht_CheckCheat(&cheat_massacre, ev->data2))
       {
-	static char msg[32];
 	int killcount = ST_cheat_massacre();
 
 	M_snprintf(msg, sizeof(msg), "%s%d %sMonster%s Killed",
@@ -688,7 +688,6 @@ ST_Responder (event_t* ev)
       // [crispy] implement Crispy Doom's "spechits" cheat
       else if (cht_CheckCheat(&cheat_spechits, ev->data2))
       {
-	static char msg[32];
 	int triggeredlines = ST_cheat_spechits();
 
 	M_snprintf(msg, sizeof(msg), "%s%d %sSpecial Line%s Triggered",
@@ -699,8 +698,6 @@ ST_Responder (event_t* ev)
       // [crispy] implement Boom's "tnthom" cheat
       else if (cht_CheckCheat(&cheat_hom, ev->data2))
       {
-	static char msg[32];
-
 	crispy_flashinghom = !crispy_flashinghom;
 
 	M_snprintf(msg, sizeof(msg), "HOM Detection %s%s",
@@ -764,7 +761,6 @@ ST_Responder (event_t* ev)
       // [crispy] implement PrBoom+'s "notarget" cheat
       else if (cht_CheckCheat(&cheat_notarget, ev->data2))
       {
-	static char msg[32];
 	thinker_t *currentthinker=&thinkercap;
 
 	plyr->cheats ^= CF_NOTARGET;
@@ -788,8 +784,6 @@ ST_Responder (event_t* ev)
       // [crispy] implement "nomomentum" cheat, ne debug aid -- pretty useless, though
       else if (cht_CheckCheat(&cheat_nomomentum, ev->data2))
       {
-	static char msg[32];
-
 	plyr->cheats ^= CF_NOMOMENTUM;
 
 	M_snprintf(msg, sizeof(msg), "Nomomentum Mode %s%s",
@@ -834,7 +828,6 @@ ST_Responder (event_t* ev)
       {
 	char		buf[2];
 	int		w;
-	static char	msg[32];
 
 	cht_GetParam(&cheat_weapon, buf);
 	w = *buf - '1';
