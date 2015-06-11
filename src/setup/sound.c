@@ -61,6 +61,13 @@ static char *musicmode_strings[] =
     "CD audio"
 };
 
+typedef enum
+{
+    OPLMODE_OPL2,
+    OPLMODE_OPL3,
+    NUM_OPLMODES,
+} oplmode_t;
+
 static char *opltype_strings[] =
 {
     "OPL2",
@@ -90,10 +97,10 @@ static int show_talk = 0;
 static int use_libsamplerate = 1;
 static float libsamplerate_scale = 0.65;
 
+static char *snd_dmxoption = "";
 static char *timidity_cfg_path = NULL;
 static char *gus_patch_path = NULL;
 static int gus_ram_kb = 1024;
-static int opl_type = 0;
 
 // DOS specific variables: these are unused but should be maintained
 // so that the config file can be shared between chocolate
@@ -108,6 +115,7 @@ static int snd_mport = 0;
 
 static int snd_sfxmode;
 static int snd_musicmode;
+static int snd_oplmode;
 
 static void UpdateSndDevices(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(data))
 {
@@ -142,6 +150,38 @@ static void UpdateSndDevices(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(data))
             snd_musicdevice = SNDDEVICE_CD;
             break;
     }
+
+    switch (snd_oplmode)
+    {
+        default:
+        case OPLMODE_OPL2:
+            snd_dmxoption = "";
+            break;
+
+        case OPLMODE_OPL3:
+            snd_dmxoption = "-opl3";
+            break;
+    }
+}
+
+static txt_dropdown_list_t *OPLTypeSelector(void)
+{
+    txt_dropdown_list_t *result;
+
+    if (snd_dmxoption != NULL && strstr(snd_dmxoption, "-opl3") != NULL)
+    {
+        snd_oplmode = OPLMODE_OPL3;
+    }
+    else
+    {
+        snd_oplmode = OPLMODE_OPL2;
+    }
+
+    result = TXT_NewDropdownList(&snd_oplmode, opltype_strings, 2);
+
+    TXT_SignalConnect(result, "changed", UpdateSndDevices, NULL);
+
+    return result;
 }
 
 static void UpdateExtraTable(TXT_UNCAST_ARG(widget),
@@ -156,7 +196,7 @@ static void UpdateExtraTable(TXT_UNCAST_ARG(widget),
         TXT_SetColumnWidths(extra_table, 19, 4);
         TXT_AddWidgets(extra_table,
                         TXT_NewLabel("OPL type"),
-                        TXT_NewDropdownList(&opl_type, opltype_strings, 2),
+                        OPLTypeSelector(),
                         NULL);
         break;
 
@@ -338,10 +378,10 @@ void BindSoundVariables(void)
     M_BindIntVariable("snd_mport",                &snd_mport);
     M_BindIntVariable("snd_maxslicetime_ms",      &snd_maxslicetime_ms);
     M_BindStringVariable("snd_musiccmd",          &snd_musiccmd);
+    M_BindStringVariable("snd_dmxoption",         &snd_dmxoption);
 
     M_BindIntVariable("snd_cachesize",            &snd_cachesize);
     M_BindIntVariable("opl_io_port",              &opl_io_port);
-    M_BindIntVariable("opl_type",                 &opl_type);
 
     if (gamemission == strife)
     {

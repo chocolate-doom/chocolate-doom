@@ -65,15 +65,16 @@ unsigned int opl_sample_rate = 22050;
 // Initialize the specified driver and detect an OPL chip.  Returns
 // true if an OPL is detected.
 
-static int InitDriver(opl_driver_t *_driver, unsigned int port_base)
+static opl_init_result_t InitDriver(opl_driver_t *_driver,
+                                    unsigned int port_base)
 {
-    int result1, result2;
+    opl_init_result_t result1, result2;
 
     // Initialize the driver.
 
     if (!_driver->init_func(port_base))
     {
-        return 0;
+        return OPL_INIT_NONE;
     }
 
     // The driver was initialized okay, so we now have somewhere
@@ -86,12 +87,12 @@ static int InitDriver(opl_driver_t *_driver, unsigned int port_base)
 
     result1 = OPL_Detect();
     result2 = OPL_Detect();
-    if (!result1 || !result2)
+    if (result1 == OPL_INIT_NONE || result2 == OPL_INIT_NONE)
     {
         printf("OPL_Init: No OPL detected using '%s' driver.\n", _driver->name);
         _driver->shutdown_func();
         driver = NULL;
-        return 0;
+        return OPL_INIT_NONE;
     }
 
     init_stage_reg_writes = 0;
@@ -103,15 +104,15 @@ static int InitDriver(opl_driver_t *_driver, unsigned int port_base)
 
 // Find a driver automatically by trying each in the list.
 
-static int AutoSelectDriver(unsigned int port_base)
+static opl_init_result_t AutoSelectDriver(unsigned int port_base)
 {
     int i;
-    int result;
+    opl_init_result_t result;
 
     for (i=0; drivers[i] != NULL; ++i)
     {
         result = InitDriver(drivers[i], port_base);
-        if (result)
+        if (result != OPL_INIT_NONE)
         {
             return result;
         }
@@ -119,13 +120,13 @@ static int AutoSelectDriver(unsigned int port_base)
 
     printf("OPL_Init: Failed to find a working driver.\n");
 
-    return 0;
+    return OPL_INIT_NONE;
 }
 
-// Initialize the OPL library.  Returns true if initialized
-// successfully.
+// Initialize the OPL library. Return value indicates type of OPL chip
+// detected, if any.
 
-int OPL_Init(unsigned int port_base)
+opl_init_result_t OPL_Init(unsigned int port_base)
 {
     char *driver_name;
     int i;
@@ -150,14 +151,14 @@ int OPL_Init(unsigned int port_base)
                 {
                     printf("OPL_Init: Failed to initialize "
                            "driver: '%s'.\n", driver_name);
-                    return 0;
+                    return OPL_INIT_NONE;
                 }
             }
         }
 
         printf("OPL_Init: unknown driver: '%s'.\n", driver_name);
 
-        return 0;
+        return OPL_INIT_NONE;
     }
     else
     {
@@ -278,7 +279,7 @@ void OPL_WriteRegister(int reg, int value)
 
 // Detect the presence of an OPL chip
 
-int OPL_Detect(void)
+opl_init_result_t OPL_Detect(void)
 {
     int result1, result2;
     int i;
@@ -323,11 +324,17 @@ int OPL_Detect(void)
         result2 = OPL_ReadPort(OPL_REGISTER_PORT_OPL3);
         if (result1 == 0x00)
         {
-            return 2;
+            return OPL_INIT_OPL3;
         }
-        return 1;
+        else
+        {
+            return OPL_INIT_OPL2;
+        }
     }
-    return 0;
+    else
+    {
+        return OPL_INIT_NONE;
+    }
 }
 
 // Initialize registers on startup
