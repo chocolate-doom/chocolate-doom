@@ -1902,11 +1902,13 @@ void D_DoomMain (void)
     );
 
     // [crispy] check for presence of E1M10
-    crispy_havee1m10 = (W_CheckNumForName("e1m10") != -1) &&
+    crispy_havee1m10 = (gamemode == retail) &&
+                       (W_CheckNumForName("e1m10") != -1) &&
                        (W_CheckNumForName("sewers") != -1);
 
     // [crispy] check for presence of MAP33
-    crispy_havemap33 = (W_CheckNumForName("map33") != -1) &&
+    crispy_havemap33 = (gamemode == commercial) &&
+                       (W_CheckNumForName("map33") != -1) &&
                        (W_CheckNumForName("cwilv32") != -1);
 
     // [crispy] change level name for MAP33 if not already changed
