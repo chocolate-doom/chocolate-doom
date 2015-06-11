@@ -544,8 +544,12 @@ static void HU_DemoProgressBar (void)
 
     i = SCREENWIDTH * (demo_p - demobuffer) / defdemosize;
 
+    V_DrawHorizLine(0, SCREENHEIGHT - 3, i, 4); // [crispy] white
     V_DrawHorizLine(0, SCREENHEIGHT - 2, i, 0); // [crispy] black
     V_DrawHorizLine(0, SCREENHEIGHT - 1, i, 4); // [crispy] white
+
+    V_DrawHorizLine(0, SCREENHEIGHT - 2, 1, 4); // [crispy] white start
+    V_DrawHorizLine(i - 1, SCREENHEIGHT - 2, 1, 4); // [crispy] white end
 }
 
 // [crispy] static, non-projected crosshair
