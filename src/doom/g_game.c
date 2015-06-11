@@ -1672,7 +1672,7 @@ void G_DoCompleted (void)
     // Set par time. Doom episode 4 doesn't have a par time, so this
     // overflows into the cpars array. It's necessary to emulate this
     // for statcheck regression testing.
-    if (gamemap == 33 || (gameepisode == 1 && gamemap == 10) || gamemission == pack_master)
+    if (gamemap == 33 || (crispy_havee1m10 && gameepisode == 1 && gamemap == 10) || gamemission == pack_master)
 	// [crispy] par time for inofficial maps sucks
 	wminfo.partime = INT_MAX;
     else
