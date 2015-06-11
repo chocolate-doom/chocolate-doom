@@ -773,6 +773,10 @@ static void F_ArtScreenDrawer(void)
 //
 void F_Drawer (void)
 {
+    // [crispy] draw no text in demo warp mode
+    if (crispy_demowarp)
+	return;
+
     switch (finalestage)
     {
         case F_STAGE_CAST:

@@ -1964,6 +1964,14 @@ P_SetupLevel
 	R_PrecacheLevel ();
 
     //printf ("free memory: 0x%x\n", Z_FreeMemory());
+
+    // [crispy] stop demo warp mode now
+    if (crispy_demowarp == map)
+    {
+	crispy_demowarp = 0;
+	nodrawers = false;
+	singletics = false;
+    }
 }
 
 

@@ -158,6 +158,8 @@ boolean         crispy_havemap33 = false;
 boolean         crispy_havessg = false;
 boolean         crispy_nwtmerge = false;
 
+int             crispy_demowarp = 0;
+
 void D_ConnectNetGame(void);
 void D_CheckNetGame(void);
 
@@ -2025,6 +2027,8 @@ void D_DoomMain (void)
             }
         }
         autostart = true;
+        // [crispy] if used with -playdemo, fast-forward demo up to the desired map
+        crispy_demowarp = startmap;
     }
 
     // Undocumented:
@@ -2147,6 +2151,7 @@ void D_DoomMain (void)
 	G_DeferedPlayDemo (demolumpname);
 	D_DoomLoop ();  // never returns
     }
+    crispy_demowarp = 0; // [crispy] nope
 	
     p = M_CheckParmWithArgs("-timedemo", 1);
     if (p)

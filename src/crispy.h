@@ -59,5 +59,6 @@ extern int crispy_secretmessage;
 extern int crispy_translucency;
 extern int crispy_uncapped;
 
-#endif
+extern int crispy_demowarp;
 
+#endif

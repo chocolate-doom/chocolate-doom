@@ -2351,6 +2351,13 @@ void G_DeferedPlayDemo (char* name)
 { 
     defdemoname = name; 
     gameaction = ga_playdemo; 
+
+    // [crispy] fast-forward demo up to the desired map
+    if (crispy_demowarp)
+    {
+	nodrawers = true;
+	singletics = true;
+    }
 } 
 
 // Generate a string describing a demo version
