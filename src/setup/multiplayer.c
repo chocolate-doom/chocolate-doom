@@ -37,6 +37,7 @@
 #define MULTI_START_HELP_URL "http://www.chocolate-doom.org/setup-multi-start"
 #define MULTI_JOIN_HELP_URL "http://www.chocolate-doom.org/setup-multi-join"
 #define MULTI_CONFIG_HELP_URL "http://www.chocolate-doom.org/setup-multi-config"
+#define LEVEL_WARP_HELP_URL "http://www.chocolate-doom.org/setup-level-warp"
 
 #define NUM_WADS 10
 #define NUM_EXTRA_PARAMS 10
@@ -715,9 +716,17 @@ static void StartGameMenu(char *window_title, int multiplayer)
     txt_widget_t *iwad_selector;
 
     window = TXT_NewWindow(window_title);
-    TXT_SetWindowHelpURL(window, MULTI_START_HELP_URL);
 
-    TXT_AddWidgets(window, 
+    if (multiplayer)
+    {
+        TXT_SetWindowHelpURL(window, MULTI_START_HELP_URL);
+    }
+    else
+    {
+        TXT_SetWindowHelpURL(window, LEVEL_WARP_HELP_URL);
+    }
+
+    TXT_AddWidgets(window,
                    gameopt_table = TXT_NewTable(2),
                    TXT_NewSeparator("Monster options"),
                    TXT_NewInvertedCheckBox("Monsters enabled", &nomonsters),
