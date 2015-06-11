@@ -765,6 +765,7 @@ ST_Responder (event_t* ev)
       else if (cht_CheckCheat(&cheat_notarget, ev->data2))
       {
 	static char msg[32];
+	thinker_t *currentthinker=&thinkercap;
 
 	plyr->cheats ^= CF_NOTARGET;
 
@@ -772,6 +773,17 @@ ST_Responder (event_t* ev)
 	           crstr[CR_GREEN],
 	           (plyr->cheats & CF_NOTARGET) ? "ON" : "OFF");
 	plyr->message = msg;
+
+	// [crispy] forget about current target
+	while ((currentthinker=currentthinker->next) != &thinkercap)
+	{
+	    if (currentthinker->function.acp1 == (actionf_p1)P_MobjThinker &&
+	        (((mobj_t *)currentthinker)->flags & MF_COUNTKILL ||
+	        ((mobj_t *)currentthinker)->type == MT_SKULL))
+	    {
+		((mobj_t *)currentthinker)->target = ((mobj_t *)currentthinker)->tracer = NULL;
+	    }
+	}
       }
       // [crispy] implement "nomomentum" cheat, ne debug aid -- pretty useless, though
       else if (cht_CheckCheat(&cheat_nomomentum, ev->data2))
