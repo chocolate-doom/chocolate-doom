@@ -2018,7 +2018,8 @@ void D_DoomMain (void)
         {
             startepisode = myargv[p+1][0]-'0';
 
-            if (p + 2 < myargc)
+            // [crispy] only if second argument is not another option
+            if (p + 2 < myargc && myargv[p+2][0] != '-')
             {
                 startmap = myargv[p+2][0]-'0';
             }
