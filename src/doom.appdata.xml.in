@@ -25,8 +25,7 @@
     </p>
   </description>
   <screenshots>
-    <!-- TODO: The AppData specification demands that screenshot images be -->
-    <!-- in a 16:9 aspect ratio. We can create some with the Chocolate Doom -->
-    <!-- window centered against a transparent background. -->
+    <!-- TODO: Provide some screenshots here.  The default GNOME -->
+    <!-- window frames with the game at 640x480 should be ideal. -->
   </screenshots>
 </application>
