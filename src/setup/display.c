@@ -93,7 +93,7 @@ static int num_screen_modes_fullscreen;
 
 static int vidmode = 0;
 
-static char *video_driver = "directx";
+static char *video_driver = "";
 static char *window_position = "";
 static int autoadjust_video_settings = 1;
 static int aspect_ratio_correct = 1;
@@ -150,6 +150,14 @@ void SetDisplayDriver(void)
         env_string = M_StringJoin("SDL_VIDEODRIVER=", video_driver, NULL);
         putenv(env_string);
         free(env_string);
+    }
+    else
+    {
+#ifdef _WIN32
+        // On Windows, use DirectX over windib by default.
+
+        putenv("SDL_VIDEODRIVER=directx");
+#endif
     }
 }
 
@@ -533,6 +541,54 @@ static void UpdateModeSeparator(TXT_UNCAST_ARG(widget),
     }
 }
 
+#ifdef _WIN32
+
+static int use_directx = 1;
+
+static void SetWin32VideoDriver(void)
+{
+    if (!strcmp(video_driver, "windib"))
+    {
+        use_directx = 0;
+    }
+    else
+    {
+        use_directx = 1;
+    }
+}
+
+static void UpdateVideoDriver(TXT_UNCAST_ARG(widget), 
+                              TXT_UNCAST_ARG(modes_table))
+{
+    TXT_CAST_ARG(txt_table_t, modes_table);
+
+    if (use_directx)
+    {
+        video_driver = "directx";
+    }
+    else
+    {
+        video_driver = "windib";
+    }
+
+    // When the video driver is changed, we need to restart the textscreen 
+    // library.
+
+    RestartTextscreen();
+
+    // Rebuild the list of supported pixel depths.
+
+    IdentifyPixelDepths();
+    SetSelectedBPP();
+
+    // Rebuild the video modes list
+
+    BuildFullscreenModesList();
+    GenerateModesTable(NULL, modes_table);
+}
+
+#endif
+
 static void AdvancedDisplayConfig(TXT_UNCAST_ARG(widget),
                                   TXT_UNCAST_ARG(modes_table))
 {
@@ -571,6 +627,29 @@ static void AdvancedDisplayConfig(TXT_UNCAST_ARG(widget),
 #endif
 
     TXT_SignalConnect(ar_checkbox, "changed", GenerateModesTable, modes_table);
+
+    // On Windows, there is an extra control to change between 
+    // the Windows GDI and DirectX video drivers.
+
+#if defined(_WIN32) && !defined(_WIN32_WCE)
+    {
+        txt_radiobutton_t *dx_button, *gdi_button;
+
+        TXT_AddWidgets(window,
+                       TXT_NewSeparator("Windows video driver"),
+                       dx_button = TXT_NewRadioButton("DirectX",
+                                                      &use_directx, 1),
+                       gdi_button = TXT_NewRadioButton("Windows GDI",
+                                                       &use_directx, 0),
+                       NULL);
+
+        TXT_SignalConnect(dx_button, "selected",
+                          UpdateVideoDriver, modes_table);
+        TXT_SignalConnect(gdi_button, "selected",
+                          UpdateVideoDriver, modes_table);
+        SetWin32VideoDriver();
+    }
+#endif
 }
 
 void ConfigDisplay(void)

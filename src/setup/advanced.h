@@ -1,5 +1,5 @@
 //
-// Copyright(C) Zvonimir Bužanić
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -12,25 +12,15 @@
 // GNU General Public License for more details.
 //
 
-// Competition options
+#ifndef SETUP_ADVANCED_H
+#define SETUP_ADVANCED_H
 
-#include <stdlib.h>
+void AdvancedSettings(void);
+void BindAdvancedVariables(void);
 
-#include "m_config.h"
-#include "textscreen.h"
-#include "mode.h"
-#include "m_controls.h"
-#include "competition.h"
+extern int startup_delay;
+extern int vanilla_savegame_limit;
+extern int vanilla_demo_limit;
+extern int cn_timer_enabled;
 
-void ConfigCompetition(void)
-{
-    txt_window_t *window;
-
-    window = TXT_NewWindow("Competition");
-
-    TXT_AddWidgets(window, 
-            TXT_NewHorizBox(TXT_NewLabel("Competition Doom ID: "),
-                    TXT_NewInputBox(&cn_meta_id, 4),
-                    NULL),
-            NULL);
-}
+#endif /* #ifndef SETUP_ADVANCED_H */

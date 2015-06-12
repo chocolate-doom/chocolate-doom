@@ -29,7 +29,7 @@
 #include "m_controls.h"
 #include "m_misc.h"
 
-#include "compatibility.h"
+#include "advanced.h"
 #include "display.h"
 #include "joystick.h"
 #include "keyboard.h"
@@ -185,7 +185,7 @@ void InitBindings(void)
 
     // All other variables
 
-    BindCompatibilityVariables();
+    BindAdvancedVariables();
     BindDisplayVariables();
     BindJoystickVariables();
     BindKeyboardVariables();
