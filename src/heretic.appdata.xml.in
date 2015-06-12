@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<application>
+  <id type="desktop">@PROGRAM_PREFIX@heretic.desktop</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-2.0+</project_license>
+  <developer_name>@PACKAGE_MAINTAINER@</developer_name>
+  <url type="homepage">@PACKAGE_URL@</url>
+  <url type="bugtracker">@PACKAGE_ISSUES@</url>
+  <description>
+    <p>
+      @PACKAGE_SHORTNAME@ Heretic is a conservative,
+      historically-accurate Heretic source port, which is compatible
+      with mods and levels that were made before the Heretic source
+      code was released.  Unlike other source ports, the goal is to
+      preserve the original look, feel, limitations, and bugs of the
+      original DOS executable.
+    </p>
+    <p>
+      Full support for single- and multi-player games is provided.
+      Unlike the original executable, network play is implemented on
+      the IP network stack, allowing it to function on modern LANs and
+      the Internet.
+    </p>
+  </description>
+  <screenshots>
+    <!-- TODO: The AppData specification demands that screenshot images be -->
+    <!-- in a 16:9 aspect ratio. We can create some with the Chocolate Doom -->
+    <!-- window centered against a transparent background. -->
+  </screenshots>
+</application>

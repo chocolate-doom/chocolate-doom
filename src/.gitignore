@@ -14,5 +14,6 @@ chocolate-strife-setup
 chocolate-setup
 *.exe
 *.desktop
+*.appdata.xml
 tags
 TAGS
