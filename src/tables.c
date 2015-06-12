@@ -38,9 +38,9 @@
 // which is looked up in the tantoangle[] table.  The +1 size is to handle
 // the case when x==y without additional checking.
 
-int SlopeDiv(unsigned int num, unsigned int den)
+int SlopeDivVanilla(unsigned int num, unsigned int den)
 {
-    int64_t ans;
+    unsigned ans;
     
     if (den < 512)
     {
@@ -48,11 +48,11 @@ int SlopeDiv(unsigned int num, unsigned int den)
     }
     else
     {
-        ans = ((int64_t) num << 3) / (den >> 8);
+        ans = (num << 3) / (den >> 8);
 
         if (ans <= SLOPERANGE)
         {
-            return (int) ans;
+            return ans;
         }
         else
         {
@@ -60,6 +60,20 @@ int SlopeDiv(unsigned int num, unsigned int den)
         }
     }
 }
+
+// [crispy] catch SlopeDiv overflows, only used in rendering
+int SlopeDivCrispy(unsigned int num, unsigned int den)
+{
+    // [crispy] catch overflow for very big enumerators
+    if (num & 0xe0000000)
+    {
+	return SLOPERANGE;
+    }
+
+    return SlopeDivVanilla(num, den);
+}
+
+int (* SlopeDiv)(unsigned int num, unsigned int den) = SlopeDivVanilla;
 
 const int finetangent[4096] =
 {
