@@ -56,7 +56,7 @@ static opl_driver_t *drivers[] =
 static opl_driver_t *driver = NULL;
 static int init_stage_reg_writes = 1;
 
-unsigned int opl_sample_rate = 22050;
+unsigned int opl_sample_rate = 49716;
 
 //
 // Init/shutdown code.
