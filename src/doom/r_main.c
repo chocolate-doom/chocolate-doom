@@ -886,6 +886,9 @@ void R_SetupFrame (player_t* player)
 //
 void R_RenderPlayerView (player_t* player)
 {	
+    // [crispy] catch SlopeDiv overflows
+    SlopeDiv = SlopeDivCrispy;
+
     R_SetupFrame (player);
 
     // Clear buffers.
@@ -912,4 +915,7 @@ void R_RenderPlayerView (player_t* player)
 
     // Check for new console commands.
     NetUpdate ();				
+
+    // [crispy] back to Vanilla SlopeDiv
+    SlopeDiv = SlopeDivVanilla;
 }
