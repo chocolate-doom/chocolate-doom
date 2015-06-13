@@ -37,14 +37,11 @@ void AdvancedSettings(void)
     TXT_SetWindowHelpURL(window, WINDOW_HELP_URL);
 
     TXT_AddWidgets(window,
-            TXT_NewCheckBox("Vanilla savegame limit",
-                                   &vanilla_savegame_limit),
-            TXT_NewCheckBox("Vanilla demo limit",
-                                   &vanilla_demo_limit),
-
-                    TXT_NewSeparator("Demo playback"),
+                    TXT_NewSeparator("Demo playback and ingame timer"),
             TXT_NewCheckBox("Show \"Secret is revealed!\" message",
                                    &cn_secret_message),
+            TXT_NewCheckBox("Show ingame timer",
+                                   &cn_timer_enabled),
 
                     TXT_NewSeparator("Keyboard extra setup"),
             TXT_NewHorizBox(TXT_NewLabel("Delay between keypreses: "),
@@ -61,8 +58,12 @@ void AdvancedSettings(void)
             TXT_NewHorizBox(TXT_NewLabel("Quickstart (ms*10?): "),
                 TXT_NewSpinControl(&cn_quickstart_delay, 0, 300),
                     NULL),
-            TXT_NewCheckBox("Show ingame timer",
-                                   &cn_timer_enabled),
+
+            TXT_NewCheckBox("Vanilla savegame limit",
+                                   &vanilla_savegame_limit),
+            TXT_NewCheckBox("Vanilla demo limit",
+                                   &vanilla_demo_limit),
+
             NULL);
 }
 
