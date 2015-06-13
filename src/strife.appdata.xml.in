@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<application>
-  <id type="desktop">@PROGRAM_PREFIX@strife.desktop</id>
+<component type="desktop">
+  <id>@PROGRAM_PREFIX@strife.desktop</id>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>GPL-2.0+</project_license>
   <developer_name>@PACKAGE_MAINTAINER@</developer_name>
@@ -25,7 +25,21 @@
     </p>
   </description>
   <screenshots>
-    <!-- TODO: Provide some screenshots here.  The default GNOME -->
-    <!-- window frames with the game at 640x480 should be ideal. -->
+    <screenshot type="default">
+      <image>http://www.chocolate-doom.org/wiki/images/b/b2/GNOME_Strife_Rowan.png</image>
+      <caption>Talking to Rowan</caption>
+    </screenshot>
+    <screenshot>
+      <image>http://www.chocolate-doom.org/wiki/images/1/1f/GNOME_Strife_Town.png</image>
+      <caption>The Town</caption>
+    </screenshot>
+    <screenshot>
+      <image>http://www.chocolate-doom.org/wiki/images/8/8a/GNOME_Strife_Opening.png</image>
+      <caption>Opening Cinematic</caption>
+    </screenshot>
+    <screenshot>
+      <image>http://www.chocolate-doom.org/wiki/images/c/c4/GNOME_Strife_Sewage.png</image>
+      <caption>In the sewage</caption>
+    </screenshot>
   </screenshots>
-</application>
+</component>
