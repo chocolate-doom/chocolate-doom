@@ -43,14 +43,6 @@ void AdvancedSettings(void)
             TXT_NewCheckBox("Show ingame timer",
                                    &cn_timer_enabled),
 
-                    TXT_NewSeparator("Keyboard extra setup"),
-            TXT_NewHorizBox(TXT_NewLabel("Delay between keypreses: "),
-                TXT_NewSpinControl(&cn_typematic_delay, 0, 1000),
-                    NULL),
-            TXT_NewHorizBox(TXT_NewLabel("Character rate per second: "),
-                TXT_NewSpinControl(&cn_typematic_rate, 0, 30),
-                    NULL),
-
                     TXT_NewSeparator("Startup delay & quickstart"),
             TXT_NewHorizBox(TXT_NewLabel("Startup delay (ms): "),
                 TXT_NewSpinControl(&startup_delay, 0, 5000),
@@ -59,6 +51,15 @@ void AdvancedSettings(void)
                 TXT_NewSpinControl(&cn_quickstart_delay, 0, 300),
                     NULL),
 
+                    TXT_NewSeparator("Keyboard extra setup"),
+            TXT_NewHorizBox(TXT_NewLabel("Delay between keypreses: "),
+                TXT_NewSpinControl(&cn_typematic_delay, 0, 1000),
+                    NULL),
+            TXT_NewHorizBox(TXT_NewLabel("Character rate per second: "),
+                TXT_NewSpinControl(&cn_typematic_rate, 0, 30),
+                    NULL),
+
+                    TXT_NewSeparator("Compatibility"),
             TXT_NewCheckBox("Vanilla savegame limit",
                                    &vanilla_savegame_limit),
             TXT_NewCheckBox("Vanilla demo limit",

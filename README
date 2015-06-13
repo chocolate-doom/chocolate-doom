@@ -67,6 +67,7 @@ cn_typematic_rate             30
 
 -quickstart x   Delay starting the game in milliseconds (0 - 9999)
                 so you can adjust/press your mouse and key
+
 -printstats     Outputs gameplay stats per map/total to stdout/console
 
 -speed          Use when recording speed category
@@ -98,6 +99,19 @@ For Windows:
 For Win 9x, use -gdi command line option or start setup and change
 video_driver. All files, patches and fixes can be downloaded from here:
     http://doom.com.hr/cndoom/support/ 
+
+
+
+== Troubleshooting ==
+Q: Game runs slow/lags.
+A: If on Windows, in setup select DirectX video driver and 16bit color.
+   Select it under Setup -> Display -> Advanced
+
+Q: Screen is blank/black for a long time.
+A: In setup under Advanced settings set Quickstart and Startup delay to 0.
+
+Report other issues/bugs/fixes here:
+    https://github.com/fx02/cndoom/issues
 
 
 
