@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<application>
-  <id type="desktop">@PROGRAM_PREFIX@hexen.desktop</id>
+<component type="desktop">
+  <id>@PROGRAM_PREFIX@hexen.desktop</id>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>GPL-2.0+</project_license>
   <developer_name>@PACKAGE_MAINTAINER@</developer_name>
@@ -24,7 +24,21 @@
     </p>
   </description>
   <screenshots>
-    <!-- TODO: Provide some screenshots here.  The default GNOME -->
-    <!-- window frames with the game at 640x480 should be ideal. -->
+    <screenshot type="default">
+      <image>http://www.chocolate-doom.org/wiki/images/0/0f/GNOME_Hexen_Guardian_of_Fire.png</image>
+      <caption>Level "Guardian of Fire"</caption>
+    </screenshot>
+    <screenshot>
+      <image>http://www.chocolate-doom.org/wiki/images/5/5c/GNOME_Hexen_Effluvium.png</image>
+      <caption>Level "Effluvium"</caption>
+    </screenshot>
+    <screenshot>
+      <image>http://www.chocolate-doom.org/wiki/images/c/c1/GNOME_Hexen_Dragon_Chapel.png</image>
+      <caption>Level "Dragon Chapel"</caption>
+    </screenshot>
+    <screenshot>
+      <image>http://www.chocolate-doom.org/wiki/images/a/a7/GNOME_Hexen_Darkmere.png</image>
+      <caption>Level "Darkmere"</caption>
+    </screenshot>
   </screenshots>
-</application>
+</component>

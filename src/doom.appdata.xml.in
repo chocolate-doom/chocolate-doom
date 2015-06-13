@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<application>
-  <id type="desktop">@PROGRAM_PREFIX@doom.desktop</id>
+<component type="desktop">
+  <id>@PROGRAM_PREFIX@doom.desktop</id>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>GPL-2.0+</project_license>
   <developer_name>@PACKAGE_MAINTAINER@</developer_name>
@@ -25,7 +25,21 @@
     </p>
   </description>
   <screenshots>
-    <!-- TODO: Provide some screenshots here.  The default GNOME -->
-    <!-- window frames with the game at 640x480 should be ideal. -->
+    <screenshot type="default">
+      <image>http://www.chocolate-doom.org/wiki/images/9/97/GNOME_FreeDM_DEMO4.png</image>
+      <caption>FreeDM, DM05: Metal</caption>
+    </screenshot>
+    <screenshot>
+      <image>http://www.chocolate-doom.org/wiki/images/a/a6/GNOME_Doom_II_DEMO2.png</image>
+      <caption>Doom II, Level 5: The Waste Tunnels</caption>
+    </screenshot>
+    <screenshot>
+      <image>http://www.chocolate-doom.org/wiki/images/4/41/GNOME_Doomsday_of_UAC.png</image>
+      <caption>Doomsday of UAC (uac_dead.wad)</caption>
+    </screenshot>
+    <screenshot>
+      <image>http://www.chocolate-doom.org/wiki/images/2/2a/GNOME_Freedoom_DTWID_DEMO3.png</image>
+      <caption>Doom the Way id Did, on Freedoom. Level 3-2: City of Corpses</caption>
+    </screenshot>
   </screenshots>
-</application>
+</component>
