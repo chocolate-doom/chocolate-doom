@@ -185,6 +185,9 @@ void D_Display (void)
     if (nodrawers)
 	return;                    // for comparative timing / profiling
 		
+    // [crispy] catch SlopeDiv overflows
+    SlopeDiv = SlopeDivCrispy;
+
     redrawsbar = false;
     
     // change the view size if needed
@@ -298,6 +301,8 @@ void D_Display (void)
     M_Drawer ();          // menu is drawn even on top of everything
     NetUpdate ();         // send out any new accumulation
 
+    // [crispy] back to Vanilla SlopeDiv
+    SlopeDiv = SlopeDivVanilla;
 
     // normal update
     if (!wipe)
