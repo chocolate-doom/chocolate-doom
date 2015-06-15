@@ -22,6 +22,7 @@
 
 #include <stdio.h>
 
+#include "i_swap.h" // [crispy] SHORT()
 #include "i_system.h"
 #include "i_video.h"
 #include "z_zone.h"
@@ -1453,7 +1454,18 @@ void ST_drawWidgets(boolean refresh)
     if (screenblocks >= CRISPY_HUD && (!automapactive || (automapactive && crispy_automapoverlay)) &&
         plyr->readyweapon == wp_fist && plyr->powers[pw_strength])
     {
-        V_DrawPatch(ST_AMMOX-23, ST_AMMOY+13, W_CacheLumpName("PSTRA0", PU_CACHE));
+	static patch_t *patch;
+	static short x, y;
+
+	if (!patch)
+	{
+	    // [crispy] (23,179) is the center of the Ammo widget
+	    patch = W_CacheLumpName("PSTRA0", PU_STATIC);
+	    x = 23 - SHORT(patch->width)/2 + SHORT(patch->leftoffset);
+	    y = 179 - SHORT(patch->height)/2 + SHORT(patch->topoffset);
+	}
+
+	V_DrawPatch(x, y, patch);
     }
 
     for (i=0;i<4;i++)
