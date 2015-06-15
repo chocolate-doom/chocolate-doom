@@ -64,13 +64,25 @@ int SlopeDivVanilla(unsigned int num, unsigned int den)
 // [crispy] catch SlopeDiv overflows, only used in rendering
 int SlopeDivCrispy(unsigned int num, unsigned int den)
 {
-    // [crispy] catch overflow for very big enumerators
-    if (num & 0xe0000000)
+    uint64_t ans;
+
+    if (den < 512)
     {
 	return SLOPERANGE;
     }
+    else
+    {
+	ans = ((uint64_t) num << 3) / (den >> 8);
 
-    return SlopeDivVanilla(num, den);
+	if (ans <= SLOPERANGE)
+	{
+	    return (int) ans;
+	}
+	else
+	{
+	    return SLOPERANGE;
+	}
+    }
 }
 
 int (* SlopeDiv)(unsigned int num, unsigned int den) = SlopeDivVanilla;
