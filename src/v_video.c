@@ -143,7 +143,7 @@ void V_SetPatchClipCallback(vpatchclipfunc_t func)
 //
 
 // [crispy] prevent framebuffer overflow
-#define dest_in_framebuffer (safe || ((dest-dest_screen) < SCREENHEIGHT*SCREENWIDTH))
+#define dest_in_framebuffer ((dest >= dest_screen) && (dest < dest_screen + SCREENHEIGHT*SCREENWIDTH))
 
 void V_DrawPatch(int x, int y, patch_t *patch)
 { 
@@ -154,8 +154,6 @@ void V_DrawPatch(int x, int y, patch_t *patch)
     byte *dest;
     byte *source;
     int w;
-    // [crispy] prevent framebuffer overflow
-    const boolean safe = !(y + SHORT(patch->height) > SCREENHEIGHT);
 
     y -= SHORT(patch->topoffset);
     x -= SHORT(patch->leftoffset);
@@ -167,11 +165,11 @@ void V_DrawPatch(int x, int y, patch_t *patch)
             return;
     }
 
-#ifdef RANGECHECK
+#ifdef RANGECHECK_NOTHANKS
     if (x < 0
-     || x /* + SHORT(patch->width) */ > SCREENWIDTH
+     || x + SHORT(patch->width) > SCREENWIDTH
      || y < 0
-     || y /* + SHORT(patch->height) */ > SCREENHEIGHT )
+     || y + SHORT(patch->height) > SCREENHEIGHT )
     {
         I_Error("Bad V_DrawPatch");
     }
@@ -198,9 +196,16 @@ void V_DrawPatch(int x, int y, patch_t *patch)
             dest = desttop + column->topdelta*SCREENWIDTH;
             count = column->length;
 
-            // [crispy] prevent framebuffer overflow
-            while (count-- && dest_in_framebuffer)
+            while (count--)
             {
+                // [crispy] prevent framebuffer overflow
+                if (!dest_in_framebuffer)
+                {
+                    source++;
+                    dest += SCREENWIDTH;
+                    continue;
+                }
+
                 *dest = *source++;
                 dest += SCREENWIDTH;
             }
@@ -224,8 +229,6 @@ void V_DrawPatchFlipped(int x, int y, patch_t *patch)
     byte *dest;
     byte *source; 
     int w; 
-    // [crispy] prevent framebuffer overflow
-    const boolean safe = !(y + SHORT(patch->height) > SCREENHEIGHT);
  
     y -= SHORT(patch->topoffset); 
     x -= SHORT(patch->leftoffset); 
@@ -237,11 +240,11 @@ void V_DrawPatchFlipped(int x, int y, patch_t *patch)
             return;
     }
 
-#ifdef RANGECHECK 
+#ifdef RANGECHECK_NOTHANKS
     if (x < 0
-     || x /* + SHORT(patch->width) */ > SCREENWIDTH
+     || x + SHORT(patch->width) > SCREENWIDTH
      || y < 0
-     || y /* + SHORT(patch->height) */ > SCREENHEIGHT )
+     || y + SHORT(patch->height) > SCREENHEIGHT )
     {
         I_Error("Bad V_DrawPatchFlipped");
     }
@@ -269,9 +272,16 @@ void V_DrawPatchFlipped(int x, int y, patch_t *patch)
             dest = desttop + column->topdelta*SCREENWIDTH;
             count = column->length;
 
-            // [crispy] prevent framebuffer overflow
-            while (count-- && dest_in_framebuffer)
+            while (count--)
             {
+                // [crispy] prevent framebuffer overflow
+                if (!dest_in_framebuffer)
+                {
+                    source++;
+                    dest += SCREENWIDTH;
+                    continue;
+                }
+
                 *dest = *source++;
                 dest += SCREENWIDTH;
             }
