@@ -1037,6 +1037,9 @@ void G_Ticker (void)
 		    break; 
 					 
 		  case BTS_SAVEGAME: 
+		    // [crispy] never override savegames by demo playback
+		    if (demoplayback)
+			break;
 		    if (!savedescription[0]) 
                     {
                         M_StringCopy(savedescription, "NET GAME",
