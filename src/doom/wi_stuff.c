@@ -1781,10 +1781,6 @@ void WI_unloadData(void)
 
 void WI_Drawer (void)
 {
-    // [crispy] show now intermission in demo warp mode
-    if (crispy_demowarp)
-	return;
-
     switch (state)
     {
       case StatCount:
