@@ -25,4 +25,4 @@
 void CN_BindMetaVariables(void);
 void ConfigCompetition(void);
 
-#endif /* #ifndef SETUP_COMPATIBILITY_H */
+#endif /* #ifndef SETUP_COMPETITION_H */

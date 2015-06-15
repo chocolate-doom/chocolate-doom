@@ -1,8 +1,8 @@
-AC_INIT(Competition Doom, 2.0.3, admin@doom.com.hr, cndoom)
+AC_INIT(Competition Doom, 2.0.3.2, admin@doom.com.hr, cndoom)
 
 PACKAGE_SHORTNAME=${PACKAGE_NAME% Doom}
-PACKAGE_SHORTDESC="Conservative Doom source port"
-PACKAGE_COPYRIGHT="Copyright (C) 1993-2013"
+PACKAGE_SHORTDESC="Conservative source port"
+PACKAGE_COPYRIGHT="Copyright (C) 1993-2015"
 PACKAGE_LICENSE="GNU General Public License, version 2"
 PACKAGE_MAINTAINER="Zvonimir Buzanic"
 PACKAGE_URL="http://www.doom.com.hr/"
@@ -93,7 +93,7 @@ AC_SDL_MAIN_WORKAROUND([
     AC_CHECK_LIB(m, log)
 
     AC_CHECK_HEADERS([linux/kd.h dev/isa/spkrio.h dev/speaker/speaker.h])
-    AC_CHECK_FUNCS(mmap sched_setaffinity ioperm)
+    AC_CHECK_FUNCS(mmap ioperm)
 
     # OpenBSD I/O i386 library for I/O port access.
     # (64 bit has the same thing with a different name!)
@@ -113,7 +113,7 @@ dnl Automake v1.8.0 is required, please upgrade!
 AM_INIT_AUTOMAKE([1.8.0 foreign])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
-WINDOWS_RC_VERSION=`echo $PACKAGE_VERSION | sed 's/-.*//; s/\./, /g; s/$/, 0/'`
+WINDOWS_RC_VERSION=`echo $PACKAGE_VERSION | sed 's/-.*//; s/\./, /g'`
 
 # This controls the prefix added to the start of program names.  For example,
 # if this is changed to "lemon-", the programs generated will be named
@@ -176,4 +176,3 @@ src/strife/Makefile
 textscreen/Makefile
 textscreen/examples/Makefile
 ])
-

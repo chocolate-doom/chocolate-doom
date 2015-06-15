@@ -198,8 +198,9 @@ boolean M_StrToInt(const char *str, int *result)
 void M_ExtractFileBase(char *path, char *dest)
 {
     char *src;
-    char *filename;
-    int length;
+// [cndoom] unused vars
+//    char *filename;
+//    int length;
 
     src = path + strlen(path) - 1;
 
@@ -209,14 +210,14 @@ void M_ExtractFileBase(char *path, char *dest)
 	src--;
     }
 
-    filename = src;
+    // filename = src;
 
     // Copy up to eight characters
     // Note: Vanilla Doom exits with an error if a filename is specified
     // with a base of more than eight characters.  To remove the 8.3
     // filename limit, instead we simply truncate the name.
     /* [cndoom] remove file limit
-     length = 0;
+    length = 0;
     memset(dest, 0, 8);
 
     while (*src != '\0' && *src != '.')
@@ -283,6 +284,26 @@ char *M_StrCaseStr(char *haystack, char *needle)
     }
 
     return NULL;
+}
+
+//
+// Safe version of strdup() that checks the string was successfully
+// allocated.
+//
+
+char *M_StringDuplicate(const char *orig)
+{
+    char *result;
+
+    result = strdup(orig);
+
+    if (result == NULL)
+    {
+        I_Error("Failed to duplicate string (length %i)\n",
+                strlen(orig));
+    }
+
+    return result;
 }
 
 //
@@ -353,12 +374,20 @@ char *M_StringReplace(const char *haystack, const char *needle,
 
 boolean M_StringCopy(char *dest, const char *src, size_t dest_size)
 {
+    size_t len;
+
     if (dest_size >= 1)
     {
         dest[dest_size - 1] = '\0';
         strncpy(dest, src, dest_size - 1);
     }
-    return strlen(dest) == strlen(src);
+    else
+    {
+        return false;
+    }
+
+    len = strlen(dest);
+    return src[len] == '\0';
 }
 
 // Safe string concat function that works like OpenBSD's strlcat().

@@ -27,6 +27,7 @@
 
 // MACROS ------------------------------------------------------------------
 
+#define MAX_SCRIPT_ARGS 3
 #define SCRIPT_CONTINUE 0
 #define SCRIPT_STOP 1
 #define SCRIPT_TERMINATE 2
@@ -195,7 +196,7 @@ static acs_t *NewScript;
 
 static int (*PCodeCmds[]) (void) =
 {
-CmdNOP,
+        CmdNOP,
         CmdTerminate,
         CmdSuspend,
         CmdPushNumber,
@@ -294,7 +295,10 @@ CmdNOP,
         CmdSoundSequence,
         CmdSetLineTexture,
         CmdSetLineBlocking,
-        CmdSetLineSpecial, CmdThingSound, CmdEndPrintBold};
+        CmdSetLineSpecial,
+        CmdThingSound,
+        CmdEndPrintBold,
+};
 
 // CODE --------------------------------------------------------------------
 
@@ -335,6 +339,16 @@ void P_LoadACScripts(int lump)
 
         info->argCount = LONG(*buffer);
         ++buffer;
+
+        if (info->argCount > MAX_SCRIPT_ARGS)
+        {
+            fprintf(stderr, "Warning: ACS script #%i has %i arguments, more "
+                            "than the maximum of %i. Enforcing limit.\n"
+                            "If you are seeing this message, please report "
+                            "the name of the WAD where you saw it.\n",
+                            i, info->argCount, MAX_SCRIPT_ARGS);
+            info->argCount = MAX_SCRIPT_ARGS;
+        }
 
         if (info->number >= OPEN_SCRIPTS_BASE)
         {                       // Auto-activate
@@ -414,6 +428,9 @@ void P_CheckACSStore(void)
 //
 // P_StartACS
 //
+// Start an ACS script. The 'args' array should be at least MAX_SCRIPT_ARGS
+// elements in length.
+//
 //==========================================================================
 
 static char ErrorMsg[128];
@@ -458,7 +475,7 @@ boolean P_StartACS(int number, int map, byte * args, mobj_t * activator,
     script->side = side;
     script->ip = ACSInfo[infoIndex].address;
     script->thinker.function = T_InterpretACS;
-    for (i = 0; i < ACSInfo[infoIndex].argCount; i++)
+    for (i = 0; i < MAX_SCRIPT_ARGS && i < ACSInfo[infoIndex].argCount; i++)
     {
         script->vars[i] = args[i];
     }
@@ -503,7 +520,7 @@ static boolean AddToACSStore(int map, int number, byte * args)
     }
     ACSStore[index].map = map;
     ACSStore[index].script = number;
-    memcpy(ACSStore[index].args, args, sizeof(int));
+    memcpy(ACSStore[index].args, args, MAX_SCRIPT_ARGS);
     return true;
 }
 
@@ -1664,7 +1681,7 @@ static int CmdEndPrintBold(void)
 {
     int i;
 
-    for (i = 0; i < MAXPLAYERS; i++)
+    for (i = 0; i < maxplayers; i++)
     {
         if (playeringame[i])
         {
@@ -1705,7 +1722,7 @@ static int CmdPlayerCount(void)
     int count;
 
     count = 0;
-    for (i = 0; i < MAXPLAYERS; i++)
+    for (i = 0; i < maxplayers; i++)
     {
         count += playeringame[i];
     }

@@ -34,6 +34,11 @@
 #include "net_io.h"
 #include "net_query.h"
 
+#define MULTI_START_HELP_URL "http://www.chocolate-doom.org/setup-multi-start"
+#define MULTI_JOIN_HELP_URL "http://www.chocolate-doom.org/setup-multi-join"
+#define MULTI_CONFIG_HELP_URL "http://www.chocolate-doom.org/setup-multi-config"
+#define LEVEL_WARP_HELP_URL "http://www.chocolate-doom.org/setup-level-warp"
+
 #define NUM_WADS 10
 #define NUM_EXTRA_PARAMS 10
 
@@ -55,7 +60,7 @@ static const iwad_t fallback_iwads[] = {
 // Array of IWADs found to be installed
 
 static const iwad_t **found_iwads;
-static char *iwad_labels[8];
+static char **iwad_labels;
 
 // Index of the currently selected IWAD
 
@@ -355,7 +360,7 @@ static void SetExMyWarp(TXT_UNCAST_ARG(widget), void *val)
 {
     int l;
 
-    l = (int) val;
+    l = (intptr_t) val;
 
     warpepisode = l / 10;
     warpmap = l % 10;
@@ -367,7 +372,7 @@ static void SetMAPxyWarp(TXT_UNCAST_ARG(widget), void *val)
 {
     int l;
 
-    l = (int) val;
+    l = (intptr_t) val;
 
     warpmap = l;
 
@@ -389,8 +394,8 @@ static void LevelSelectDialog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(user_data))
     const iwad_t *iwad;
     char buf[10];
     int episodes;
-    int x, y;
-    int l;
+    intptr_t x, y;
+    intptr_t l;
     int i;
 
     window = TXT_NewWindow("Select level");
@@ -559,8 +564,14 @@ static txt_widget_t *IWADSelector(void)
 
     for (i=0; found_iwads[i] != NULL; ++i)
     {
-        iwad_labels[i] = found_iwads[i]->description;
          ++num_iwads;
+    }
+
+    iwad_labels = malloc(sizeof(*iwad_labels) * num_iwads);
+
+    for (i=0; i < num_iwads; ++i)
+    {
+        iwad_labels[i] = found_iwads[i]->description;
     }
 
     // If no IWADs are found, provide Doom 2 as an option, but
@@ -706,7 +717,16 @@ static void StartGameMenu(char *window_title, int multiplayer)
 
     window = TXT_NewWindow(window_title);
 
-    TXT_AddWidgets(window, 
+    if (multiplayer)
+    {
+        TXT_SetWindowHelpURL(window, MULTI_START_HELP_URL);
+    }
+    else
+    {
+        TXT_SetWindowHelpURL(window, LEVEL_WARP_HELP_URL);
+    }
+
+    TXT_AddWidgets(window,
                    gameopt_table = TXT_NewTable(2),
                    TXT_NewSeparator("Monster options"),
                    TXT_NewInvertedCheckBox("Monsters enabled", &nomonsters),
@@ -856,7 +876,7 @@ static void SelectQueryAddress(TXT_UNCAST_ARG(button),
     // Set address to connect to:
 
     free(connect_address);
-    connect_address = strdup(button->label);
+    connect_address = M_StringDuplicate(button->label);
 
     // Auto-choose IWAD if there is already a player connected.
 
@@ -951,7 +971,7 @@ static void ServerQueryWindow(char *title)
                   TXT_NewScrollPane(70, 10,
                                     results_table = TXT_NewTable(3)));
 
-    TXT_SetColumnWidths(results_table, 7, 16, 46);
+    TXT_SetColumnWidths(results_table, 7, 22, 40);
     TXT_SetPeriodicCallback(QueryPeriodicCallback, results_table, 1);
 
     TXT_SignalConnect(query_window, "closed", QueryWindowClosed, NULL);
@@ -979,6 +999,7 @@ void JoinMultiGame(void)
     txt_inputbox_t *address_box;
 
     window = TXT_NewWindow("Join multiplayer game");
+    TXT_SetWindowHelpURL(window, MULTI_JOIN_HELP_URL);
 
     TXT_AddWidgets(window, 
         gameopt_table = TXT_NewTable(2),
@@ -1044,7 +1065,7 @@ void SetChatMacroDefaults(void)
     {
         if (chat_macros[i] == NULL)
         {
-            chat_macros[i] = strdup(defaults[i]);
+            chat_macros[i] = M_StringDuplicate(defaults[i]);
         }
     }
 }
@@ -1053,28 +1074,29 @@ void SetPlayerNameDefault(void)
 {
     if (net_player_name == NULL)
     {
-        net_player_name = strdup(getenv("USER"));
+        net_player_name = getenv("USER");
     }
 
     if (net_player_name == NULL)
     {
-        net_player_name = strdup(getenv("USERNAME"));
+        net_player_name = getenv("USERNAME");
     }
 
-    // On Windows, environment variables are in OEM codepage
-    // encoding, so convert to UTF8:
+    if (net_player_name == NULL)
+    {
+        net_player_name = "player";
+    }
+
+    // Now strdup() the string so that it's in a mutable form
+    // that can be freed when the value changes.
 
 #ifdef _WIN32
-    if (net_player_name != NULL)
-    {
-        net_player_name = M_OEMToUTF8(net_player_name);
-    }
+    // On Windows, environment variables are in OEM codepage
+    // encoding, so convert to UTF8:
+    net_player_name = M_OEMToUTF8(net_player_name);
+#else
+    net_player_name = M_StringDuplicate(net_player_name);
 #endif
-
-    if (net_player_name == NULL)
-    {
-        net_player_name = strdup("player");
-    }
 }
 
 void MultiplayerConfig(void)
@@ -1086,6 +1108,7 @@ void MultiplayerConfig(void)
     int i;
 
     window = TXT_NewWindow("Multiplayer Configuration");
+    TXT_SetWindowHelpURL(window, MULTI_CONFIG_HELP_URL);
 
     TXT_AddWidgets(window, 
                    TXT_NewStrut(0, 1),
@@ -1120,13 +1143,13 @@ void BindMultiplayerVariables(void)
     int i;
 
 #ifdef FEATURE_MULTIPLAYER
-    M_BindVariable("player_name", &net_player_name);
+    M_BindStringVariable("player_name", &net_player_name);
 #endif
 
     for (i=0; i<10; ++i)
     {
         M_snprintf(buf, sizeof(buf), "chatmacro%i", i);
-        M_BindVariable(buf, &chat_macros[i]);
+        M_BindStringVariable(buf, &chat_macros[i]);
     }
 
     switch (gamemission)

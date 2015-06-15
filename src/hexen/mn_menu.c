@@ -378,7 +378,7 @@ void MN_DrTextAYellow(char *text, int x, int y)
         {
             p = W_CacheLumpNum(FontAYellowBaseLump + c - 33, PU_CACHE);
             V_DrawPatch(x, y, p);
-            x += p->width - 1;
+            x += SHORT(p->width) - 1;
         }
     }
 }
@@ -1190,11 +1190,13 @@ boolean MN_Responder(event_t * event)
 
     if (InfoType)
     {
+        /* The 4-Level Demo Version also has 3 Info pages
         if (gamemode == shareware)
         {
             InfoType = (InfoType + 1) % 5;
         }
         else
+        */
         {
             InfoType = (InfoType + 1) % 4;
         }
@@ -1743,9 +1745,9 @@ void MN_DeactivateMenu(void)
 void MN_DrawInfo(void)
 {
     I_SetPalette(W_CacheLumpName("PLAYPAL", PU_CACHE));
-    memcpy(I_VideoBuffer,
+    V_CopyScaledBuffer(I_VideoBuffer,
            (byte *) W_CacheLumpNum(W_GetNumForName("TITLE") + InfoType,
-                                   PU_CACHE), SCREENWIDTH * SCREENHEIGHT);
+                                   PU_CACHE), ORIGWIDTH * ORIGHEIGHT); // [cndoom] hires
 //      V_DrawPatch(0, 0, W_CacheLumpNum(W_GetNumForName("TITLE")+InfoType,
 //              PU_CACHE));
 }

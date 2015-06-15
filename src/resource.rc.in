@@ -1,6 +1,6 @@
-1 ICON "../data/doom.ico"
+1 ICON "@top_srcdir@/data/doom.ico"
 
-CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST "manifest.xml"
+CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST "@top_srcdir@/src/manifest.xml"
 
 1 VERSIONINFO
 PRODUCTVERSION @WINDOWS_RC_VERSION@

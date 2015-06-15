@@ -891,7 +891,7 @@ void A_Look (mobj_t* actor)
     // as a parameter to control allaround look behavior. Did they just run out of
     // flags, or what? 
     // STRIFE-TODO: Needs serious verification.
-    if (!P_LookForPlayers (actor, actor->flags & MF_GIVEQUEST) )
+    if (!P_LookForPlayers(actor, (actor->flags & MF_GIVEQUEST) != 0))
         return;
 
     // go into chase state
@@ -975,7 +975,7 @@ void A_FriendLook(mobj_t* actor)
             gamemap != 3 && gamemap != 34)
         {
             // STRIFE-TODO: Needs serious verification.
-            if(P_LookForPlayers(actor, actor->flags & MF_GIVEQUEST))
+            if(P_LookForPlayers(actor, (actor->flags & MF_GIVEQUEST) != 0))
             {
                 P_SetMobjState(actor, actor->info->seestate);
                 actor->flags |= MF_NODIALOG;
@@ -3163,6 +3163,10 @@ void A_TeleportBeacon(mobj_t* actor)
 
     mobj = P_SpawnMobj(actor->x, actor->y, ONFLOORZ, MT_REBEL1);
 
+    // haleyjd 20141024: missing code from disassembly; transfer allegiance
+    // originally from master player to the rebel.
+    mobj->miscdata = actor->miscdata;
+
     if(!P_TryMove(mobj, mobj->x, mobj->y))
     {
         // Rebel is probably stuck in something.. too bad
@@ -3170,8 +3174,8 @@ void A_TeleportBeacon(mobj_t* actor)
         return;
     }
 
-    // beacon no longer solid
-    actor->flags &= ~MF_SOLID;
+    // beacon no longer special
+    actor->flags &= ~MF_SPECIAL;
 
     // set color and flags
     mobj->flags |= ((actor->miscdata << MF_TRANSSHIFT) | MF_NODIALOG);

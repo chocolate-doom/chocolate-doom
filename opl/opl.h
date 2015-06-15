@@ -23,10 +23,20 @@
 
 typedef void (*opl_callback_t)(void *data);
 
+// Result from OPL_Init(), indicating what type of OPL chip was detected,
+// if any.
+typedef enum
+{
+    OPL_INIT_NONE,
+    OPL_INIT_OPL2,
+    OPL_INIT_OPL3,
+} opl_init_result_t;
+
 typedef enum
 {
     OPL_REGISTER_PORT = 0,
-    OPL_DATA_PORT = 1
+    OPL_DATA_PORT = 1,
+    OPL_REGISTER_PORT_OPL3 = 2
 } opl_port_t;
 
 #define OPL_NUM_OPERATORS   21
@@ -37,6 +47,7 @@ typedef enum
 #define OPL_REG_TIMER2            0x03
 #define OPL_REG_TIMER_CTRL        0x04
 #define OPL_REG_FM_MODE           0x08
+#define OPL_REG_NEW               0x105
 
 // Operator registers (21 of each):
 
@@ -64,7 +75,7 @@ typedef enum
 
 // Initialize the OPL subsystem.
 
-int OPL_Init(unsigned int port_base);
+opl_init_result_t OPL_Init(unsigned int port_base);
 
 // Shut down the OPL subsystem.
 
@@ -97,11 +108,11 @@ void OPL_WriteRegister(int reg, int value);
 // Perform a detection sequence to determine that an
 // OPL chip is present.
 
-int OPL_Detect(void);
+opl_init_result_t OPL_Detect(void);
 
 // Initialize all registers, performed on startup.
 
-void OPL_InitRegisters(void);
+void OPL_InitRegisters(int opl3);
 
 //
 // Timer callback functions.

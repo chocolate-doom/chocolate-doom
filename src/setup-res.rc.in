@@ -1,6 +1,6 @@
-1 ICON "../data/setup.ico"
+1 ICON "@top_srcdir@/data/setup.ico"
 
-1 24 MOVEABLE PURE "setup/setup-manifest.xml"
+1 24 MOVEABLE PURE "@top_builddir@/src/setup/setup-manifest.xml"
 
 1 VERSIONINFO
 PRODUCTVERSION @WINDOWS_RC_VERSION@

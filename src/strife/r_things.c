@@ -445,7 +445,17 @@ R_DrawVisSprite
             dc_translation = translationtables - 256 + (translation >> (MF_TRANSSHIFT - 8));
         }
     }
-    else if (translation)     // villsa [STRIFE] new translation tables
+    else if(vis->mobjflags & MF_MVIS)
+    {
+        // haleyjd 20141215: [STRIFE] Objects which are *only* MF_MVIS (players
+        // using double Shadow Armors, in particular) are totally invisible. 
+        // Upstreamed after discovered in SVE. Note this causes a 
+        // vanilla-accurate glitch with Shadow Acolytes - if they die while
+        // MF_MVIS is set, A_Fall fails to remove it and their corpse will
+        // completely disappear (that's also fixed in SVE, but not here).
+        return;
+    }
+    else if(translation)     // villsa [STRIFE] new translation tables
     {
         colfunc = transcolfunc;
         dc_translation = translationtables - 256 + (translation >> (MF_TRANSSHIFT - 8));
@@ -460,7 +470,7 @@ R_DrawVisSprite
     // villsa [STRIFE] clip sprite's feet if needed
     if(vis->mobjflags & MF_FEETCLIPPED)
     {
-        sprbotscreen = sprtopscreen + FixedMul(spryscale, patch->height << FRACBITS);
+        sprbotscreen = sprtopscreen + FixedMul(spryscale, SHORT(patch->height) << FRACBITS);
         clip = (sprbotscreen - FixedMul(10*FRACUNIT, spryscale)) >> FRACBITS;
     }
     else
@@ -641,7 +651,7 @@ void R_ProjectSprite (mobj_t* thing)
     else
     {
 	// diminished light
-	index = xscale>>(LIGHTSCALESHIFT-detailshift);
+	index = xscale>>(LIGHTSCALESHIFT-detailshift+hires);
 
 	if (index >= MAXLIGHTSCALE) 
 	    index = MAXLIGHTSCALE-1;
@@ -757,7 +767,7 @@ void R_DrawPSprite (pspdef_t* psp)
     }
 
     // villsa [STRIFE] calculate y offset with view pitch
-    vis->texturemid = ((BASEYCENTER<<FRACBITS)+FRACUNIT/2)-(psp->sy-spritetopoffset[lump])
+    vis->texturemid = ((BASEYCENTER<<FRACBITS)/*+FRACUNIT/2*/)-(psp->sy-spritetopoffset[lump])
         + FixedMul(vis->xiscale, (centery-viewheight/2)<<FRACBITS);
 
     if (vis->x1 > x1)

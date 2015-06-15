@@ -43,7 +43,7 @@
 
 // status bar height at bottom of screen
 // haleyjd 08/31/10: Verified unmodified.
-#define SBARHEIGHT              32
+#define SBARHEIGHT              (32 << hires)
 
 //
 // All drawing to the view buffer is accomplished in this file.
@@ -869,36 +869,36 @@ void R_FillBackScreen (void)
 
     patch = W_CacheLumpName(DEH_String("brdr_t"),PU_CACHE);
 
-    for (x=0 ; x<scaledviewwidth ; x+=8)
-	V_DrawPatch(viewwindowx+x, viewwindowy-8, patch);
+    for (x=0 ; x<(scaledviewwidth >> hires) ; x+=8)
+	V_DrawPatch((viewwindowx >> hires)+x, (viewwindowy >> hires)-8, patch);
     patch = W_CacheLumpName(DEH_String("brdr_b"),PU_CACHE);
 
-    for (x=0 ; x<scaledviewwidth ; x+=8)
-	V_DrawPatch(viewwindowx+x, viewwindowy+viewheight, patch);
+    for (x=0 ; x<(scaledviewwidth >> hires) ; x+=8)
+	V_DrawPatch((viewwindowx >> hires)+x, (viewwindowy >> hires)+(viewheight >> hires), patch);
     patch = W_CacheLumpName(DEH_String("brdr_l"),PU_CACHE);
 
-    for (y=0 ; y<viewheight ; y+=8)
-	V_DrawPatch(viewwindowx-8, viewwindowy+y, patch);
+    for (y=0 ; y<(viewheight >> hires) ; y+=8)
+	V_DrawPatch((viewwindowx >> hires)-8, (viewwindowy >> hires)+y, patch);
     patch = W_CacheLumpName(DEH_String("brdr_r"),PU_CACHE);
 
-    for (y=0 ; y<viewheight ; y+=8)
-	V_DrawPatch(viewwindowx+scaledviewwidth, viewwindowy+y, patch);
+    for (y=0 ; y<(viewheight >> hires) ; y+=8)
+	V_DrawPatch((viewwindowx >> hires)+(scaledviewwidth >> hires), (viewwindowy >> hires)+y, patch);
 
     // Draw beveled edge. 
-    V_DrawPatch(viewwindowx-8,
-                viewwindowy-8,
+    V_DrawPatch((viewwindowx >> hires)-8,
+                (viewwindowy >> hires)-8,
                 W_CacheLumpName(DEH_String("brdr_tl"),PU_CACHE));
     
-    V_DrawPatch(viewwindowx+scaledviewwidth,
-                viewwindowy-8,
+    V_DrawPatch((viewwindowx >> hires)+(scaledviewwidth >> hires),
+                (viewwindowy >> hires)-8,
                 W_CacheLumpName(DEH_String("brdr_tr"),PU_CACHE));
     
-    V_DrawPatch(viewwindowx-8,
-                viewwindowy+viewheight,
+    V_DrawPatch((viewwindowx >> hires)-8,
+                (viewwindowy >> hires)+(viewheight >> hires),
                 W_CacheLumpName(DEH_String("brdr_bl"),PU_CACHE));
     
-    V_DrawPatch(viewwindowx+scaledviewwidth,
-                viewwindowy+viewheight,
+    V_DrawPatch((viewwindowx >> hires)+(scaledviewwidth >> hires),
+                (viewwindowy >> hires)+(viewheight >> hires),
                 W_CacheLumpName(DEH_String("brdr_br"),PU_CACHE));
 
     V_RestoreBuffer();

@@ -52,8 +52,8 @@ visplane_t*		ceilingplane;
 // ?
 // [cndoom] Doom+ limits
 #define MAXOPENINGS	65536 // was SCREENWIDTH*64 = 20480
-short			openings[MAXOPENINGS];
-short*			lastopening;
+int			    openings[MAXOPENINGS];
+int*			lastopening;
 
 
 //
@@ -61,8 +61,8 @@ short*			lastopening;
 //  floorclip starts out SCREENHEIGHT
 //  ceilingclip starts out -1
 //
-short			floorclip[SCREENWIDTH];
-short			ceilingclip[SCREENWIDTH];
+int	    		floorclip[SCREENWIDTH];
+int	    		ceilingclip[SCREENWIDTH];
 
 //
 // spanstart holds the start of a plane span
@@ -292,7 +292,7 @@ R_CheckPlane
     }
 
     for (x=intrl ; x<= intrh ; x++)
-	if (pl->top[x] != 0xff)
+	if (pl->top[x] != 0xffffffffu) // [crispy] hires -> [cndoom] high resolution
 	    break;
 
     if (x > intrh)
@@ -324,11 +324,11 @@ R_CheckPlane
 //
 void
 R_MakeSpans
-( int		x,
-  int		t1,
-  int		b1,
-  int		t2,
-  int		b2 )
+( int       x,
+  unsigned  int		t1,
+  unsigned  int		b1,
+  unsigned  int		t2,
+  unsigned  int		b2 )
 {
     while (t1 < t2 && t1<=b1)
     {
@@ -391,7 +391,7 @@ void R_DrawPlanes (void)
 	// sky flat
 	if (pl->picnum == skyflatnum)
 	{
-	    dc_iscale = pspriteiscale>>detailshift;
+	    dc_iscale = pspriteiscale>>(detailshift && !hires); // [crispy] -> [cndoom] high resolution
 	    
 	    // Sky is allways drawn full bright,
 	    //  i.e. colormaps[0] is used.
@@ -404,7 +404,7 @@ void R_DrawPlanes (void)
 		dc_yl = pl->top[x];
 		dc_yh = pl->bottom[x];
 
-		if (dc_yl <= dc_yh)
+		if ((unsigned) dc_yl <= dc_yh)
 		{
 		    angle = (viewangle + xtoviewangle[x])>>ANGLETOSKYSHIFT;
 		    dc_x = x;
@@ -430,8 +430,8 @@ void R_DrawPlanes (void)
 
 	planezlight = zlight[light];
 
-	pl->top[pl->maxx+1] = 0xff;
-	pl->top[pl->minx-1] = 0xff;
+	pl->top[pl->maxx+1] = 0xffffffffu; // [crispy] hires -> [cndoom] high resolution
+	pl->top[pl->minx-1] = 0xffffffffu; // [crispy] hires -> [cndoom] high resolution
 		
 	stop = pl->maxx + 1;
 

@@ -254,13 +254,13 @@ void D_Display (void)
             break;
         if (automapactive)
             AM_Drawer ();
-        if (wipe || (viewheight != 200 && fullscreen) )
+        if (wipe || (viewheight != (200 <<hires) && fullscreen) )
             redrawsbar = true;
         // haleyjd 08/29/10: [STRIFE] Always redraw sbar if menu is/was active
         if (menuactivestate || (inhelpscreensstate && !inhelpscreens))
             redrawsbar = true;              // just put away the help screen
-        ST_Drawer (viewheight == 200, redrawsbar );
-        fullscreen = viewheight == 200;
+        ST_Drawer (viewheight == (200 << hires), redrawsbar );
+        fullscreen = viewheight == (200 << hires);
         break;
       
      // haleyjd 08/23/2010: [STRIFE] No intermission
@@ -301,7 +301,7 @@ void D_Display (void)
     }
 
     // see if the border needs to be updated to the screen
-    if (gamestate == GS_LEVEL && !automapactive && scaledviewwidth != 320)
+    if (gamestate == GS_LEVEL && !automapactive && scaledviewwidth != (320 << hires))
     {
         if (menuactive || menuactivestate || !viewactivestate)
         {
@@ -347,8 +347,8 @@ void D_Display (void)
         if (automapactive)
             y = 4;
         else
-            y = viewwindowy+4;
-        V_DrawPatchDirect(viewwindowx + (scaledviewwidth - 68) / 2, y,
+            y = (viewwindowy >> hires)+4;
+        V_DrawPatchDirect((viewwindowx >> hires) + ((scaledviewwidth >> hires) - 68) / 2, y,
                           W_CacheLumpName (DEH_String("M_PAUSE"), PU_CACHE));
     }
 
@@ -434,29 +434,22 @@ void D_BindVariables(void)
     // * screenblocks -> screensize
     // * Added nickname, comport
 
-    M_BindVariable("mouse_sensitivity",      &mouseSensitivity);
-    M_BindVariable("sfx_volume",             &sfxVolume);
-    M_BindVariable("music_volume",           &musicVolume);
-    M_BindVariable("voice_volume",           &voiceVolume); 
-    M_BindVariable("show_talk",              &dialogshowtext);
-    M_BindVariable("screensize",             &screenblocks);
-    M_BindVariable("snd_channels",           &snd_channels);
-    M_BindVariable("vanilla_savegame_limit", &vanilla_savegame_limit);
-    M_BindVariable("vanilla_demo_limit",     &vanilla_demo_limit);
-    M_BindVariable("show_endoom",            &show_endoom);
-    M_BindVariable("back_flat",              &back_flat);
-    M_BindVariable("graphical_startup",      &graphical_startup);
+    M_BindIntVariable("mouse_sensitivity",      &mouseSensitivity);
+    M_BindIntVariable("sfx_volume",             &sfxVolume);
+    M_BindIntVariable("music_volume",           &musicVolume);
+    M_BindIntVariable("voice_volume",           &voiceVolume); 
+    M_BindIntVariable("show_talk",              &dialogshowtext);
+    M_BindIntVariable("screensize",             &screenblocks);
+    M_BindIntVariable("snd_channels",           &snd_channels);
+    M_BindIntVariable("vanilla_savegame_limit", &vanilla_savegame_limit);
+    M_BindIntVariable("vanilla_demo_limit",     &vanilla_demo_limit);
+    M_BindIntVariable("show_endoom",            &show_endoom);
+    M_BindIntVariable("graphical_startup",      &graphical_startup);
 
-    M_BindVariable("nickname",               &nickname);
-    M_BindVariable("comport",                &comport);
-    
-    // [cndoom]
-    //M_BindVariable("cn_timer_enabled",       &cn_timer_enabled);
-    //M_BindVariable("cn_timer_bg_colormap",   &cn_timer_bg_colormap);
-    //M_BindVariable("cn_timer_offset_x",      &cn_timer_offset_x);
-    //M_BindVariable("cn_timer_offset_y",      &cn_timer_offset_y);
-    //M_BindVariable("cn_timer_color_index",   &cn_timer_color_index);
-    //M_BindVariable("cn_timer_shadow_index",  &cn_timer_shadow_index);
+    M_BindStringVariable("back_flat",           &back_flat);
+    M_BindStringVariable("nickname",            &nickname);
+
+    M_BindIntVariable("comport",                &comport);
 
     // Multiplayer chat macros
 
@@ -465,7 +458,7 @@ void D_BindVariables(void)
         char buf[12];
 
         M_snprintf(buf, sizeof(buf), "chatmacro%i", i);
-        M_BindVariable(buf, &chat_macros[i]);
+        M_BindStringVariable(buf, &chat_macros[i]);
     }
 }
 
@@ -1102,8 +1095,8 @@ boolean D_PatchClipCallback(patch_t *patch, int x, int y)
 {
     // note that offsets were already accounted for in V_DrawPatch
     return (x >= 0 && y >= 0 
-            && x + SHORT(patch->width) <= SCREENWIDTH 
-            && y + SHORT(patch->height) <= SCREENHEIGHT);
+            && x + SHORT(patch->width) <= ORIGWIDTH 
+            && y + SHORT(patch->height) <= ORIGHEIGHT);
 }
 
 //
@@ -1160,7 +1153,7 @@ static void D_IntroBackground(void)
 
     // Draw a 95-pixel rect from STARTUP0 starting at y=57 to (0,41) on the
     // screen (this was a memcpy directly to 0xA3340 in low DOS memory)
-    V_DrawBlock(0, 41, 320, 95, rawgfx_startup0 + (320*57));
+    V_DrawScaledBlock(0, 41, 320, 95, rawgfx_startup0 + (320*57));
 }
 
 //
@@ -1240,7 +1233,7 @@ static void D_DrawIntroSequence(void)
     // Draw the laser
     // Blitted 16 bytes for 16 rows starting at 705280 + laserpos
     // (705280 - 0xA0000) / 320 == 156
-    V_DrawBlock(laserpos, 156, 16, 16, rawgfx_startlz[laserpos % 2]);
+    V_DrawScaledBlock(laserpos, 156, 16, 16, rawgfx_startlz[laserpos % 2]);
 
     // Robot position
     robotpos = laserpos % 5 - 2;
@@ -1248,12 +1241,12 @@ static void D_DrawIntroSequence(void)
     // Draw the robot
     // Blitted 48 bytes for 48 rows starting at 699534 + (320*robotpos)
     // 699534 - 0xA0000 == 44174, which % 320 == 14, / 320 == 138
-    V_DrawBlock(14, 138 + robotpos, 48, 48, rawgfx_startbot);
+    V_DrawScaledBlock(14, 138 + robotpos, 48, 48, rawgfx_startbot);
 
     // Draw the peasant
     // Blitted 32 bytes for 64 rows starting at 699142
     // 699142 - 0xA0000 == 43782, which % 320 == 262, / 320 == 136
-    V_DrawBlock(262, 136, 32, 64, rawgfx_startp[laserpos % 4]);
+    V_DrawScaledBlock(262, 136, 32, 64, rawgfx_startp[laserpos % 4]);
 
     I_FinishUpdate();
 }
@@ -1294,6 +1287,11 @@ void D_IntroTick(void)
 // End Chocolate Strife Specifics
 //
 //=============================================================================
+
+static void G_CheckDemoStatusAtExit (void)
+{
+    G_CheckDemoStatus();
+}
 
 //
 // D_DoomMain
@@ -1400,12 +1398,6 @@ void D_DoomMain (void)
         exit(0);
     }
 
-#endif
-            
-#ifdef FEATURE_DEHACKED
-    if(devparm)
-        printf("DEH_Init: Init Dehacked support.\n");
-    DEH_Init();
 #endif
 
     //!
@@ -1539,9 +1531,9 @@ void D_DoomMain (void)
     V_Init ();
 
     // Load configuration files before initialising other subsystems.
-    // haleyjd 08/22/2010: [STRIFE] - use cnstrife.cfg
+    // haleyjd 08/22/2010: [STRIFE] - use strife.cfg
     // DEH_printf("M_LoadDefaults: Load system defaults.\n"); [STRIFE] removed
-    M_SetConfigFilenames("cnstrife.cfg", PROGRAM_PREFIX "strife.cfg");
+    M_SetConfigFilenames("strife.cfg", PROGRAM_PREFIX "strife.cfg");
     D_BindVariables();
     M_LoadDefaults();
 
@@ -1569,6 +1561,13 @@ void D_DoomMain (void)
         DEH_printf("W_Init: Init WADfiles.\n");
     D_AddFile(iwadfile);
     W_CheckCorrectIWAD(strife);
+
+#ifdef FEATURE_DEHACKED
+    // Load dehacked patches specified on the command line.
+    DEH_ParseCommandLine();
+#endif
+
+    // Load PWAD files.
     modifiedgame = W_ParseCommandLine();
 
     // [STRIFE] serial number output
@@ -1615,9 +1614,12 @@ void D_DoomMain (void)
 
     if (p)
     {
+        char *uc_filename = strdup(myargv[p + 1]);
+        M_ForceUppercase(uc_filename);
+
         // With Vanilla you have to specify the file without extension,
         // but make that optional.
-        if (M_StringEndsWith(myargv[p + 1], ".lmp"))
+        if (M_StringEndsWith(uc_filename, ".LMP"))
         {
             M_StringCopy(file, myargv[p + 1], sizeof(file));
         }
@@ -1625,6 +1627,8 @@ void D_DoomMain (void)
         {
             DEH_snprintf(file, sizeof(file), "%s.lmp", myargv[p+1]);
         }
+
+        free(uc_filename);
 
         if (D_AddFile (file))
         {
@@ -1643,7 +1647,7 @@ void D_DoomMain (void)
         printf("Playing demo %s.\n", file);
     }
 
-    I_AtExit((atexit_func_t) G_CheckDemoStatus, true);
+    I_AtExit(G_CheckDemoStatusAtExit, true);
 
     // Generate the WAD hash table.  Speed things up a bit.
 
@@ -1711,7 +1715,7 @@ void D_DoomMain (void)
     D_IntroTick(); // [STRIFE]
     
     // get skill / episode / map from parms
-    startskill = sk_medium;
+    startskill = sk_easy; // [STRIFE]: inits to sk_easy
     startepisode = 1;
     startmap = 1;
     autostart = false;

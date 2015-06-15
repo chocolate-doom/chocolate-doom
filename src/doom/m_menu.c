@@ -58,7 +58,6 @@
 
 #include "m_menu.h"
 
-
 extern patch_t*		hu_font[HU_FONTSIZE];
 extern boolean		message_dontfuckwithme;
 
@@ -68,6 +67,7 @@ extern boolean		chat_on;		// in heads-up code
 // defaulted values
 //
 int			mouseSensitivity = 5;
+int			mouseSensitivity_y = 5;
 
 // Show messages has default, 0 = off, 1 = on
 int			showMessages = 1;
@@ -75,7 +75,7 @@ int			showMessages = 1;
 
 // Blocky mode, has default, 0 = high, 1 = normal
 int			detailLevel = 0;
-int			screenblocks = 10; // [cndoom]
+int			screenblocks = 10;
 
 // temp for screenblocks (0-9)
 int			screenSize;
@@ -146,8 +146,6 @@ typedef struct
     char	alphaKey;			
 } menuitem_t;
 
-
-
 typedef struct menu_s
 {
     short		numitems;	// # of menu items
@@ -186,11 +184,13 @@ void M_QuitDOOM(int choice);
 
 void M_ChangeMessages(int choice);
 void M_ChangeSensitivity(int choice);
+static void M_ChangeSensitivity_y(int choice);
 void M_SfxVol(int choice);
 void M_MusicVol(int choice);
 void M_ChangeDetail(int choice);
 void M_SizeDisplay(int choice);
 void M_StartGame(int choice);
+static void M_Mouse(int choice);
 void M_Sound(int choice);
 
 void M_FinishReadThis(int choice);
@@ -206,6 +206,7 @@ void M_DrawReadThis2(void);
 void M_DrawNewGame(void);
 void M_DrawEpisode(void);
 void M_DrawOptions(void);
+static void M_DrawMouse(void);
 void M_DrawSound(void);
 void M_DrawLoad(void);
 void M_DrawSave(void);
@@ -336,7 +337,6 @@ enum
     scrnsize,
     option_empty1,
     mousesens,
-    option_empty2,
     soundvol,
     opt_end
 } options_e;
@@ -348,8 +348,7 @@ menuitem_t OptionsMenu[]=
     {1,"M_DETAIL",	M_ChangeDetail,'g'},
     {2,"M_SCRNSZ",	M_SizeDisplay,'s'},
     {-1,"",0,'\0'},
-    {2,"M_MSENS",	M_ChangeSensitivity,'m'},
-    {-1,"",0,'\0'},
+    {1,"M_MSENS",	M_Mouse,'m'},
     {1,"M_SVOL",	M_Sound,'s'}
 };
 
@@ -360,6 +359,33 @@ menu_t  OptionsDef =
     OptionsMenu,
     M_DrawOptions,
     60,37,
+    0
+};
+
+enum
+{
+    mouse_horiz,
+    mouse_empty1,
+    mouse_vert,
+    mouse_empty2,
+    mouse_end
+} mouse_e;
+
+static menuitem_t MouseMenu[]=
+{
+    {2,"",	M_ChangeSensitivity,'h'},
+    {-1,"",0,'\0'},
+    {2,"",	M_ChangeSensitivity_y,'v'},
+    {-1,"",0,'\0'},
+};
+
+static menu_t  MouseDef =
+{
+    mouse_end,
+    &OptionsDef,
+    MouseMenu,
+    M_DrawMouse,
+    80,64,
     0
 };
 
@@ -983,42 +1009,34 @@ static char *msgNames[2] = {"M_MSGOFF","M_MSGON"};
 
 void M_DrawOptions(void)
 {
-    char *detail_patch;
-
     V_DrawPatchDirect(108, 15, W_CacheLumpName(DEH_String("M_OPTTTL"),
                                                PU_CACHE));
-
-    // Workaround for BFG edition IWAD weirdness.
-    // The BFG edition doesn't have the "low detail" menu option (fair
-    // enough). But bizarrely, it reuses the M_GDHIGH patch as a label
-    // for the options menu (says "Fullscreen:"). Why the perpetrators
-    // couldn't just add a new graphic lump and had to reuse this one,
-    // I don't know.
-    //
-    // The end result is that M_GDHIGH is too wide and causes the game
-    // to crash. As a workaround to get a minimum level of support for
-    // the BFG edition IWADs, use the "ON"/"OFF" graphics instead.
-    if (bfgedition)
-    {
-        detail_patch = msgNames[!detailLevel];
-    }
-    else
-    {
-        detail_patch = detailNames[detailLevel];
-    }
-
+	
     V_DrawPatchDirect(OptionsDef.x + 175, OptionsDef.y + LINEHEIGHT * detail,
-		      W_CacheLumpName(DEH_String(detail_patch), PU_CACHE));
+		      W_CacheLumpName(DEH_String(detailNames[detailLevel]),
+			              PU_CACHE));
 
     V_DrawPatchDirect(OptionsDef.x + 120, OptionsDef.y + LINEHEIGHT * messages,
                       W_CacheLumpName(DEH_String(msgNames[showMessages]),
                                       PU_CACHE));
-
-    M_DrawThermo(OptionsDef.x, OptionsDef.y + LINEHEIGHT * (mousesens + 1),
-		 10, mouseSensitivity);
-
     M_DrawThermo(OptionsDef.x,OptionsDef.y+LINEHEIGHT*(scrnsize+1),
 		 9,screenSize);
+}
+
+static void M_DrawMouse(void)
+{
+    V_DrawPatchDirect (60, 38, W_CacheLumpName(DEH_String("M_MSENS"), PU_CACHE));
+    M_WriteText(MouseDef.x, MouseDef.y + LINEHEIGHT * mouse_horiz + 6,
+                "HORIZONTAL");
+
+    M_DrawThermo(MouseDef.x, MouseDef.y + LINEHEIGHT * mouse_empty1,
+		 21, mouseSensitivity);
+
+    M_WriteText(MouseDef.x, MouseDef.y + LINEHEIGHT * mouse_vert + 6,
+                "VERTICAL");
+
+    M_DrawThermo(MouseDef.x, MouseDef.y + LINEHEIGHT * mouse_empty2,
+		 21, mouseSensitivity_y);
 }
 
 void M_Options(int choice)
@@ -1027,6 +1045,20 @@ void M_Options(int choice)
 }
 
 
+static void M_Mouse(int choice)
+{
+    if (mouseSensitivity_y < 0)
+    {
+        mouseSensitivity_y = 0;
+    }
+
+    if (mouse_acceleration_y < 0)
+    {
+        mouse_acceleration_y = 0;
+    }
+
+    M_SetupNextMenu(&MouseDef);
+}
 
 //
 //      Toggle messages on/off
@@ -1191,8 +1223,6 @@ void M_QuitDOOM(int choice)
 }
 
 
-
-
 void M_ChangeSensitivity(int choice)
 {
     switch(choice)
@@ -1202,14 +1232,26 @@ void M_ChangeSensitivity(int choice)
 	    mouseSensitivity--;
 	break;
       case 1:
-	if (mouseSensitivity < 9)
+	if (mouseSensitivity < 255)
 	    mouseSensitivity++;
 	break;
     }
 }
 
-
-
+static void M_ChangeSensitivity_y(int choice)
+{
+    switch(choice)
+    {
+      case 0:
+	if (mouseSensitivity_y)
+	    mouseSensitivity_y--;
+	break;
+      case 1:
+	if (mouseSensitivity_y < 255)
+	    mouseSensitivity_y++;
+	break;
+    }
+}
 
 void M_ChangeDetail(int choice)
 {
@@ -1223,9 +1265,6 @@ void M_ChangeDetail(int choice)
     else
 	players[consoleplayer].message = DEH_String(DETAILLO);
 }
-
-
-
 
 void M_SizeDisplay(int choice)
 {
@@ -1252,8 +1291,6 @@ void M_SizeDisplay(int choice)
 }
 
 
-
-
 //
 //      Menu Functions
 //
@@ -1266,6 +1303,7 @@ M_DrawThermo
 {
     int		xx;
     int		i;
+    char    num[4];
 
     xx = x;
     V_DrawPatchDirect(xx, y, W_CacheLumpName(DEH_String("M_THERML"), PU_CACHE));
@@ -1276,11 +1314,17 @@ M_DrawThermo
 	xx += 8;
     }
     V_DrawPatchDirect(xx, y, W_CacheLumpName(DEH_String("M_THERMR"), PU_CACHE));
-
+    
+    M_snprintf(num, 4, "%3d", thermDot);
+    M_WriteText(xx + 8, y + 3, num);
+    
+    if (thermDot >= thermWidth)
+    {
+        thermDot = thermWidth - 1;
+    }
     V_DrawPatchDirect((x + 8) + thermDot * 8, y,
 		      W_CacheLumpName(DEH_String("M_THERMO"), PU_CACHE));
 }
-
 
 
 void
@@ -1407,7 +1451,7 @@ M_WriteText
 	}
 		
 	w = SHORT (hu_font[c]->width);
-	if (cx+w > SCREENWIDTH)
+	if (cx+w > ORIGWIDTH)
 	    break;
 	V_DrawPatchDirect(cx, cy, hu_font[c]);
 	cx+=w;
@@ -1564,6 +1608,19 @@ boolean M_Responder (event_t* ev)
 	    {
 		key = key_menu_back;
 		mousewait = I_GetTime() + 15;
+	    }
+
+	    // [crispy] scroll menus with mouse wheel
+	    if (ev->data1 & (1 << mousebprevweapon))
+	    {
+		key = key_menu_down;
+		mousewait = I_GetTime() + 5;
+	    }
+	    else
+	    if (ev->data1 & (1 << mousebnextweapon))
+	    {
+		key = key_menu_up;
+		mousewait = I_GetTime() + 5;
 	    }
 	}
 	else
@@ -2008,7 +2065,7 @@ void M_Drawer (void)
             }
 
 	    x = 160 - M_StringWidth(string) / 2;
-	    M_WriteText(x, y, string);
+	    M_WriteText(x > 0 ? x : 0, y, string);
 	    y += SHORT(hu_font[0]->height);
 	}
 

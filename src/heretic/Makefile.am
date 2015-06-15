@@ -1,6 +1,6 @@
 
-AM_CFLAGS=-I..                                            \
-          -I$(top_builddir)/textscreen                    \
+AM_CFLAGS=-I$(top_srcdir)/src                           \
+          -I$(top_srcdir)/textscreen                    \
           @SDL_CFLAGS@ @SDLMIXER_CFLAGS@ @SDLNET_CFLAGS@
 
 noinst_LIBRARIES=libheretic.a
@@ -51,11 +51,7 @@ r_segs.c                                             \
 r_things.c                                           \
 sb_bar.c                                             \
 sounds.c               sounds.h                      \
-s_sound.c              s_sound.h                     
-
-EXTRA_DIST=                                          \
-i_sound.c                                            \
-i_ibm.c   
+s_sound.c              s_sound.h
 
 FEATURE_DEHACKED_SOURCE_FILES =            \
 deh_ammo.c                                 \

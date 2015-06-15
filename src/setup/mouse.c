@@ -25,14 +25,19 @@
 #include "mode.h"
 #include "mouse.h"
 
+#define WINDOW_HELP_URL "http://www.chocolate-doom.org/setup-mouse"
+
 static int usemouse = 1;
 
 static int mouseSensitivity = 5;
 static float mouse_acceleration = 2.0;
 static int mouse_threshold = 10;
+static int mouseSensitivity_y = 5;
+static float mouse_acceleration_y = 1.0;
+static int mouse_threshold_y = 0;
 static int grabmouse = 1;
 
-int novert = 1; // [cndoom]
+int novert = 1;
 
 static int *all_mouse_buttons[] = {
     &mousebfire,
@@ -84,6 +89,8 @@ static void ConfigExtraButtons(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
 
     window = TXT_NewWindow("Additional mouse buttons");
 
+    TXT_SetWindowHelpURL(window, WINDOW_HELP_URL);
+
     TXT_AddWidgets(window,
                    buttons_table = TXT_NewTable(2),
                    NULL);
@@ -112,6 +119,8 @@ void ConfigMouse(void)
 
     window = TXT_NewWindow("Mouse configuration");
 
+    TXT_SetWindowHelpURL(window, WINDOW_HELP_URL);
+
     TXT_AddWidgets(window,
                    TXT_NewCheckBox("Enable mouse", &usemouse),
                    TXT_NewInvertedCheckBox("Allow vertical mouse movement", 
@@ -133,6 +142,25 @@ void ConfigMouse(void)
 
     TXT_SetColumnWidths(motion_table, 27, 5);
 
+    if (gamemission == doom) // Crispy
+    {
+    TXT_AddWidgets(motion_table,
+                   TXT_NewLabel("Speed (h)"),
+                   TXT_NewSpinControl(&mouseSensitivity, 0, 256),
+                   TXT_NewLabel("Acceleration (h)"),
+                   TXT_NewFloatSpinControl(&mouse_acceleration, 1.0, 5.0),
+                   TXT_NewLabel("Acceleration threshold (h)"),
+                   TXT_NewSpinControl(&mouse_threshold, 0, 32),
+                   TXT_NewLabel("Speed (v)"),
+                   TXT_NewSpinControl(&mouseSensitivity_y, 0, 256),
+                   TXT_NewLabel("Acceleration (v)"),
+                   TXT_NewFloatSpinControl(&mouse_acceleration_y, 1.0, 5.0),
+                   TXT_NewLabel("Acceleration threshold (v)"),
+                   TXT_NewSpinControl(&mouse_threshold_y, 0, 32),
+                   NULL);
+    }
+    else
+    {
     TXT_AddWidgets(motion_table,
                    TXT_NewLabel("Speed"),
                    TXT_NewSpinControl(&mouseSensitivity, 1, 256),
@@ -141,22 +169,29 @@ void ConfigMouse(void)
                    TXT_NewLabel("Acceleration threshold"),
                    TXT_NewSpinControl(&mouse_threshold, 0, 32),
                    NULL);
+    }
 
     TXT_SetColumnWidths(buttons_table, 27, 5);
 
     AddMouseControl(buttons_table, "Fire/Attack", &mousebfire);
     AddMouseControl(buttons_table, "Move forward", &mousebforward);
     AddMouseControl(buttons_table, "Strafe on", &mousebstrafe);
-    
+
     TXT_SetWindowAction(window, TXT_HORIZ_CENTER, TestConfigAction());
 }
 
 void BindMouseVariables(void)
 {
-    M_BindVariable("use_mouse",            &usemouse);
-    M_BindVariable("novert",               &novert);
-    M_BindVariable("mouse_sensitivity",    &mouseSensitivity);
-    M_BindVariable("mouse_acceleration",   &mouse_acceleration);
-    M_BindVariable("mouse_threshold",      &mouse_threshold);
-    M_BindVariable("grabmouse",            &grabmouse);
+    M_BindIntVariable("use_mouse",              &usemouse);
+    M_BindIntVariable("novert",                 &novert);
+    M_BindIntVariable("grabmouse",              &grabmouse);
+    M_BindIntVariable("mouse_sensitivity",      &mouseSensitivity);
+    M_BindIntVariable("mouse_threshold",        &mouse_threshold);
+    M_BindFloatVariable("mouse_acceleration",   &mouse_acceleration);
+    if (gamemission == doom)
+    {
+    M_BindIntVariable("mouse_sensitivity_y",    &mouseSensitivity_y);
+    M_BindIntVariable("mouse_threshold_y",      &mouse_threshold_y);
+    M_BindFloatVariable("mouse_acceleration_y", &mouse_acceleration_y);
+    }
 }

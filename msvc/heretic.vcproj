@@ -54,6 +54,7 @@
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="%(PreprocessorDefinitions)"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
@@ -62,6 +63,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="SDL.lib SDL_mixer.lib SDL_net.lib SDLmain.lib"
 				OutputFile="$(OutDir)\cnheretic-dbg.exe"
+				IgnoreDefaultLibraryNames="msvcrt"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="1"
@@ -133,6 +135,7 @@
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="%(PreprocessorDefinitions)"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
@@ -198,10 +201,6 @@
 			</File>
 			<File
 				RelativePath="..\src\d_mode.c"
-				>
-			</File>
-			<File
-				RelativePath="..\opl\dbopl.c"
 				>
 			</File>
 			<File
@@ -282,10 +281,6 @@
 			</File>
 			<File
 				RelativePath="..\src\icon.c"
-				>
-			</File>
-			<File
-				RelativePath="..\opl\ioperm_sys.c"
 				>
 			</File>
 			<File
@@ -370,34 +365,6 @@
 			</File>
 			<File
 				RelativePath="..\src\net_structrw.c"
-				>
-			</File>
-			<File
-				RelativePath="..\opl\opl.c"
-				>
-			</File>
-			<File
-				RelativePath="..\opl\opl_linux.c"
-				>
-			</File>
-			<File
-				RelativePath="..\opl\opl_obsd.c"
-				>
-			</File>
-			<File
-				RelativePath="..\opl\opl_queue.c"
-				>
-			</File>
-			<File
-				RelativePath="..\opl\opl_sdl.c"
-				>
-			</File>
-			<File
-				RelativePath="..\opl\opl_timer.c"
-				>
-			</File>
-			<File
-				RelativePath="..\opl\opl_win32.c"
 				>
 			</File>
 			<File
@@ -667,6 +634,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\deh_defs.h"
+				>
+			</File>
+			<File
 				RelativePath="..\src\deh_io.h"
 				>
 			</File>
@@ -728,10 +699,6 @@
 			</File>
 			<File
 				RelativePath="..\src\i_video.h"
-				>
-			</File>
-			<File
-				RelativePath="..\opl\ioperm_sys.h"
 				>
 			</File>
 			<File
@@ -820,22 +787,6 @@
 			</File>
 			<File
 				RelativePath="..\src\net_structrw.h"
-				>
-			</File>
-			<File
-				RelativePath="..\opl\opl.h"
-				>
-			</File>
-			<File
-				RelativePath="..\opl\opl_internal.h"
-				>
-			</File>
-			<File
-				RelativePath="..\opl\opl_queue.h"
-				>
-			</File>
-			<File
-				RelativePath="..\opl\opl_timer.h"
 				>
 			</File>
 			<File

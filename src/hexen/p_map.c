@@ -661,7 +661,7 @@ boolean PIT_CheckThing(mobj_t * thing)
     // Check for special thing
     if (thing->flags & MF_SPECIAL)
     {
-        solid = thing->flags & MF_SOLID;
+        solid = (thing->flags & MF_SOLID) != 0;
         if (tmflags & MF_PICKUP)
         {                       // Can be picked up by tmthing
             P_TouchSpecialThing(thing, tmthing);        // Can remove thing
@@ -2003,6 +2003,7 @@ static boolean PuzzleActivated;
 boolean PTR_PuzzleItemTraverse(intercept_t * in)
 {
     mobj_t *mobj;
+    byte args[3];
     int sound;
 
     if (in->isaline)
@@ -2045,8 +2046,14 @@ boolean PTR_PuzzleItemTraverse(intercept_t * in)
         {                       // Item type doesn't match
             return false;
         }
-        P_StartACS(in->d.line->arg2, 0, &in->d.line->arg3,
-                   PuzzleItemUser, in->d.line, 0);
+
+        // Construct an args[] array that would contain the values from
+        // the line that would be passed by Vanilla Hexen.
+        args[0] = in->d.line->arg3;
+        args[1] = in->d.line->arg4;
+        args[2] = in->d.line->arg5;
+
+        P_StartACS(in->d.line->arg2, 0, args, PuzzleItemUser, in->d.line, 0);
         in->d.line->special = 0;
         PuzzleActivated = true;
         return false;           // Stop searching
@@ -2061,6 +2068,7 @@ boolean PTR_PuzzleItemTraverse(intercept_t * in)
     {                           // Item type doesn't match
         return true;
     }
+
     P_StartACS(mobj->args[1], 0, &mobj->args[2], PuzzleItemUser, NULL, 0);
     mobj->special = 0;
     PuzzleActivated = true;

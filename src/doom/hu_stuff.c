@@ -41,6 +41,8 @@
 #include "dstrings.h"
 #include "sounds.h"
 
+#include "v_video.h"
+
 //
 // Locally used constants, shortcuts.
 //
@@ -96,9 +98,12 @@ static hu_itext_t w_inputbuffer[MAXPLAYERS];
 static boolean		message_on;
 boolean			message_dontfuckwithme;
 static boolean		message_nottobefuckedwith;
+static boolean		secret_on;
 
 static hu_stext_t	w_message;
 static int		message_counter;
+static hu_stext_t	w_secret;
+static int		secret_counter;
 
 extern int		showMessages;
 
@@ -318,6 +323,7 @@ void HU_Start(void)
     message_on = false;
     message_dontfuckwithme = false;
     message_nottobefuckedwith = false;
+    secret_on = false;
     chat_on = false;
 
     // create the message widget
@@ -325,7 +331,11 @@ void HU_Start(void)
 		    HU_MSGX, HU_MSGY, HU_MSGHEIGHT,
 		    hu_font,
 		    HU_FONTSTART, &message_on);
-
+    // [crispy] create the secret message widget
+    HUlib_initSText(&w_secret,
+		    HU_MSGX, HU_MSGY, HU_MSGHEIGHT,
+		    hu_font,
+		    HU_FONTSTART, &secret_on);
     // create the map title widget
     HUlib_initTextLine(&w_title,
 		       HU_TITLEX, HU_TITLEY,
@@ -384,6 +394,7 @@ void HU_Drawer(void)
 {
 
     HUlib_drawSText(&w_message);
+    HUlib_drawSText(&w_secret);
     HUlib_drawIText(&w_chat);
     if (automapactive)
 	HUlib_drawTextLine(&w_title, false);
@@ -394,6 +405,7 @@ void HU_Erase(void)
 {
 
     HUlib_eraseSText(&w_message);
+    HUlib_eraseSText(&w_secret);
     HUlib_eraseIText(&w_chat);
     HUlib_eraseTextLine(&w_title);
 
@@ -412,8 +424,19 @@ void HU_Ticker(void)
 	message_nottobefuckedwith = false;
     }
 
+    if (secret_counter && !--secret_counter)
+    {
+	secret_on = false;
+    }
     if (showMessages || message_dontfuckwithme)
     {
+	if (plr->message)
+	{
+	    HUlib_addMessageToSText(&w_secret, 0, plr->message);
+	    plr->message = 0;
+	    secret_on = true;
+	    secret_counter = HU_MSGTIMEOUT >> 1;
+	}
 
 	// display message if necessary
 	if ((plr->message && !message_nottobefuckedwith)

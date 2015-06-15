@@ -20,8 +20,6 @@ PACKAGE_VERSION = @PACKAGE_VERSION@
 # Documentation files to distribute with packages.
 
 DOC_FILES = README        \
-            README.Music  \
-            COPYING       \
-            ChangeLog     \
-            NEWS
+            ChangeLog
+
 

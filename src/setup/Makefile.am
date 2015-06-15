@@ -3,13 +3,13 @@ gamesdir = $(prefix)/games
 
 AM_CFLAGS = @SDL_CFLAGS@                                           \
             @SDLMIXER_CFLAGS@                                      \
-            -I$(top_builddir)/textscreen -I..
+            -I$(top_srcdir)/textscreen -I$(top_srcdir)/src
 
 noinst_LIBRARIES = libsetup.a
 
 SOURCE_FILES =                                  \
     competition.c     competition.h             \
-    compatibility.c   compatibility.h           \
+    advanced.c        advanced.h                \
     display.c         display.h                 \
     joystick.c        joystick.h                \
     keyboard.c        keyboard.h                \

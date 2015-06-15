@@ -270,8 +270,10 @@ static boolean WeaponSelectable(weapontype_t weapon)
     // Special rules for switching to alternate versions of weapons.
     // These must match the weapon-switching rules in P_PlayerThink()
 
+    // haleyjd 20141024: same fix here as in P_PlayerThink for torpedo.
+
     if (weapon == wp_torpedo
-     && player->ammo[weaponinfo[am_cell].ammo] < 30)
+     && player->ammo[weaponinfo[wp_torpedo].ammo] < 30)
     {
         return false;
     }
@@ -287,7 +289,7 @@ static boolean WeaponSelectable(weapontype_t weapon)
 static int G_NextWeapon(int direction)
 {
     weapontype_t weapon;
-    int i;
+    int start_i, i;
 
     // Find index in the table.
 
@@ -309,12 +311,12 @@ static int G_NextWeapon(int direction)
     }
 
     // Switch weapon.
-
+    start_i = i;
     do
     {
         i += direction;
         i = (i + arrlen(weapon_order_table)) % arrlen(weapon_order_table);
-    } while (!WeaponSelectable(weapon_order_table[i].weapon));
+    } while (i != start_i && !WeaponSelectable(weapon_order_table[i].weapon));
 
     return weapon_order_table[i].weapon_num;
 }
@@ -509,12 +511,11 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     // next_weapon variable is set to change weapons when
     // we generate a ticcmd.  Choose a new weapon.
 
-    if (next_weapon != 0)
+    if (gamestate == GS_LEVEL && next_weapon != 0)
     {
         i = G_NextWeapon(next_weapon);
         cmd->buttons |= BT_CHANGE;
         cmd->buttons |= i << BT_WEAPONSHIFT;
-        next_weapon = 0;
     }
     else
     {
@@ -532,6 +533,8 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
             }
         }
     }
+
+    next_weapon = 0;
 
     // mouse
     if (mousebuttons[mousebforward]) 
@@ -981,7 +984,6 @@ void G_Ticker (void)
                 && turbodetected[i])
             {
                 static char turbomessage[80];
-                extern char player_names[8][16];
                 M_snprintf(turbomessage, sizeof(turbomessage),
                            "%s is turbo!", player_names[i]);
                 players[consoleplayer].message = turbomessage;

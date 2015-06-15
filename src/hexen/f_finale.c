@@ -24,6 +24,7 @@
 #include "s_sound.h"
 #include <ctype.h>
 #include "v_video.h"
+#include "i_swap.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -169,8 +170,8 @@ static void TextWrite(void)
     int cx, cy;
     patch_t *w;
 
-    memcpy(I_VideoBuffer, W_CacheLumpNum(FinaleLumpNum, PU_CACHE),
-           SCREENWIDTH * SCREENHEIGHT);
+    V_CopyScaledBuffer(I_VideoBuffer, W_CacheLumpNum(FinaleLumpNum, PU_CACHE),
+           ORIGWIDTH * ORIGHEIGHT); // [cndoom] hires
     if (FinaleStage == 5)
     {                           // Chess pic, draw the correct character graphic
         if (netgame)
@@ -224,12 +225,12 @@ static void TextWrite(void)
             continue;
         }
         w = W_CacheLumpNum(FontABaseLump + c - 33, PU_CACHE);
-        if (cx + w->width > SCREENWIDTH)
+        if (cx + SHORT(w->width) > SCREENWIDTH)
         {
             break;
         }
         V_DrawPatch(cx, cy, w);
-        cx += w->width;
+        cx += SHORT(w->width);
     }
 }
 
@@ -310,8 +311,8 @@ static void FadePic(void)
 
 static void DrawPic(void)
 {
-    memcpy(I_VideoBuffer, W_CacheLumpNum(FinaleLumpNum, PU_CACHE),
-           SCREENWIDTH * SCREENHEIGHT);
+    V_CopyScaledBuffer(I_VideoBuffer, W_CacheLumpNum(FinaleLumpNum, PU_CACHE),
+           ORIGWIDTH * ORIGHEIGHT); // [cndoom] hires
     if (FinaleStage == 4 || FinaleStage == 5)
     {                           // Chess pic, draw the correct character graphic
         if (netgame)

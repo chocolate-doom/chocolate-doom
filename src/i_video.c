@@ -47,6 +47,8 @@
 #include "v_video.h"
 #include "w_wad.h"
 #include "z_zone.h"
+#include "doom/d_main.h"
+#include "m_controls.h"
 
 // Lookup table for mapping ASCII characters to their equivalent when
 // shift is pressed on an American layout keyboard:
@@ -91,8 +93,8 @@ static const char shiftxform[] =
 };
 
 
-#define LOADING_DISK_W 16
-#define LOADING_DISK_H 16
+#define LOADING_DISK_W (16 << hires)
+#define LOADING_DISK_H (16 << hires)
 
 // Non aspect ratio-corrected modes (direct multiples of 320x200)
 
@@ -119,10 +121,10 @@ static screen_mode_t *screen_modes_corrected[] = {
     // Horizontally squashed modes (320x200 -> 256x200 and multiples)
 
     &mode_squash_1x,
+    &mode_squash_1p5x,
     &mode_squash_2x,
     &mode_squash_3x,
     &mode_squash_4x,
-    &mode_squash_5x,
 };
 
 // SDL video driver name
@@ -169,11 +171,11 @@ static unsigned int mouse_button_state = 0;
 // motion.  Specified with the '-novert' command line parameter.
 // This is an int to allow saving to config file
 
-int novert = 1; // [cndoom]
+int novert = 1;
 
 // Save screenshots in PNG format.
 
-int png_screenshots = 0;
+int png_screenshots = 1;
 
 // if true, I_VideoBuffer is screen->pixels
 
@@ -204,7 +206,7 @@ int aspect_ratio_correct = true;
 // Time to wait for the screen to settle on startup before starting the
 // game (ms)
 
-static int startup_delay = 1000;
+int startup_delay = 1000; // [cndoom]
 
 // Grab the mouse? (int type for config code)
 
@@ -263,7 +265,7 @@ static unsigned int last_resize_time;
 // The sensible thing to do is to disable this if you have a non-US
 // keyboard.
 
-int vanilla_keyboard_mapping = false; // [cndoom]
+int vanilla_keyboard_mapping = 0;
 
 // Is the shift key currently down?
 
@@ -280,17 +282,20 @@ static int shiftdown = 0;
 
 float mouse_acceleration = 2.0;
 int mouse_threshold = 10;
+ 
+float mouse_acceleration_y = 1.0;
+int mouse_threshold_y = 0;
 
 // Gamma correction level to use
 
-int usegamma = 4; // [cndoom]
+int usegamma = 4;
 
 static void ApplyWindowResize(unsigned int w, unsigned int h);
 
 static boolean MouseShouldBeGrabbed()
 {
     // never grab the mouse when in screensaver mode
-   
+
     if (screensaver_mode)
         return false;
 
@@ -421,7 +426,7 @@ void I_EnableLoadingDisk(void)
 
     // Draw the patch into a temporary buffer
 
-    tmpbuf = Z_Malloc(SCREENWIDTH * (disk->height + 1), PU_STATIC, NULL);
+    tmpbuf = Z_Malloc(SCREENWIDTH * ((disk->height + 1) << hires), PU_STATIC, NULL);
     V_UseBuffer(tmpbuf);
 
     // Draw the disk to the screen:
@@ -480,26 +485,22 @@ static int TranslateKey(SDL_keysym *sym)
 
       case SDLK_PAUSE:	return KEY_PAUSE;
 
-#if !SDL_VERSION_ATLEAST(1, 3, 0)
       case SDLK_EQUALS: return KEY_EQUALS;
-#endif
 
       case SDLK_MINUS:          return KEY_MINUS;
 
       case SDLK_LSHIFT:
       case SDLK_RSHIFT:
 	return KEY_RSHIFT;
-	
+
       case SDLK_LCTRL:
       case SDLK_RCTRL:
 	return KEY_RCTRL;
-	
+
       case SDLK_LALT:
       case SDLK_RALT:
-#if !SDL_VERSION_ATLEAST(1, 3, 0)
       case SDLK_LMETA:
       case SDLK_RMETA:
-#endif
         return KEY_RALT;
 
       case SDLK_CAPSLOCK: return KEY_CAPSLOCK;
@@ -634,7 +635,20 @@ static int AccelerateMouse(int val)
         return val;
     }
 }
+static int AccelerateMouseY(int val)
+{
+    if (val < 0)
+        return -AccelerateMouseY(-val);
 
+    if (val > mouse_threshold_y)
+    {
+        return (int)((val - mouse_threshold_y) * mouse_acceleration_y + mouse_threshold_y);
+    }
+    else
+    {
+        return val;
+    }
+}
 // Get the equivalent ASCII (Unicode?) character for a keypress.
 
 static int GetTypedChar(SDL_Event *event)
@@ -709,11 +723,11 @@ void I_GetEvent(void)
     event_t event;
 
     // possibly not needed
-    
+
     SDL_PumpEvents();
 
     // put event-grabbing stuff in here
-    
+
     while (SDL_PollEvent(&sdlevent))
     {
         // ignore mouse events when the window is not focused
@@ -734,7 +748,7 @@ void I_GetEvent(void)
         UpdateShiftStatus(&sdlevent);
 
         // process event
-        
+
         switch (sdlevent.type)
         {
             case SDL_KEYDOWN:
@@ -830,11 +844,7 @@ static void CenterMouse(void)
     // Clear any relative movement caused by warping
 
     SDL_PumpEvents();
-#if SDL_VERSION_ATLEAST(1, 3, 0)
-    SDL_GetRelativeMouseState(0, NULL, NULL);
-#else
     SDL_GetRelativeMouseState(NULL, NULL);
-#endif
 }
 
 //
@@ -848,11 +858,7 @@ static void I_ReadMouse(void)
     int x, y;
     event_t ev;
 
-#if SDL_VERSION_ATLEAST(1, 3, 0)
-    SDL_GetRelativeMouseState(0, &x, &y);
-#else
     SDL_GetRelativeMouseState(&x, &y);
-#endif
 
     if (x != 0 || y != 0) 
     {
@@ -860,9 +866,9 @@ static void I_ReadMouse(void)
         ev.data1 = mouse_button_state;
         ev.data2 = AccelerateMouse(x);
 
-        if (!novert)
+        if (!novert || 1) // Moved to src/*/g_game.c
         {
-            ev.data3 = -AccelerateMouse(y);
+            ev.data3 = -AccelerateMouseY(y);
         }
         else
         {
@@ -936,6 +942,7 @@ static void UpdateGrab(void)
         // example.
 
         SDL_WarpMouse(screen->w - 16, screen->h - 16);
+        SDL_PumpEvents();
         SDL_GetRelativeMouseState(NULL, NULL);
     }
 
@@ -1297,7 +1304,7 @@ static screen_mode_t *I_FindScreenMode(int w, int h)
         {
             return &mode_scale_1x;
         }
-        else if (w == SCREENWIDTH*2 && h == SCREENHEIGHT*2)
+        else if (w == SCREENWIDTH*2 && h == SCREENHEIGHT*2 && !hires)
         {
             return &mode_scale_2x;
         }
@@ -1691,21 +1698,33 @@ void I_GraphicsCheckCommandLine(void)
 
     //!
     // @category video
-    // @arg <WxY>
+    // @arg <WxY>[wf]
     //
-    // Specify the screen mode (when running fullscreen) or the window
-    // dimensions (when running in windowed mode).
+    // Specify the dimensions of the window or fullscreen mode.  An
+    // optional letter of w or f appended to the dimensions selects
+    // windowed or fullscreen mode.
 
     i = M_CheckParmWithArgs("-geometry", 1);
 
     if (i > 0)
     {
-        int w, h;
+        int w, h, s;
+        char f;
 
-        if (sscanf(myargv[i + 1], "%ix%i", &w, &h) == 2)
+        s = sscanf(myargv[i + 1], "%ix%i%1c", &w, &h, &f);
+        if (s == 2 || s == 3)
         {
             screen_width = w;
             screen_height = h;
+
+            if (s == 3 && f == 'f')
+            {
+                fullscreen = true;
+            }
+            else if (s == 3 && f == 'w')
+            {
+                fullscreen = false;
+            }
         }
     }
 
@@ -1807,6 +1826,36 @@ static void SetSDLVideoDriver(void)
         putenv(env_string);
         free(env_string);
     }
+
+#ifdef _WIN32
+
+    // Allow -gdi as a shortcut for using the windib driver.
+
+    //!
+    // @category video 
+    // @platform windows
+    //
+    // Use the Windows GDI driver instead of DirectX.
+    //
+
+    if (M_CheckParm("-gdi") > 0)
+    {
+        putenv("SDL_VIDEODRIVER=windib");
+    }
+
+    // From the SDL 1.2.10 release notes: 
+    //
+    // > The "windib" video driver is the default now, to prevent 
+    // > problems with certain laptops, 64-bit Windows, and Windows 
+    // > Vista. 
+    //
+    // The hell with that.
+
+    if (getenv("SDL_VIDEODRIVER") == NULL)
+    {
+        putenv("SDL_VIDEODRIVER=directx");
+    }
+#endif
 }
 
 static void SetWindowPositionVars(void)
@@ -1982,6 +2031,10 @@ void I_InitGraphics(void)
     SDL_Event dummy;
     byte *doompal;
     char *env;
+    int i, p, qsdelay; // try ghostydeath's patch
+
+    // [crispy] disable special lock-key behavior
+    putenv("SDL_DISABLE_LOCK_KEYS=1");
 
     // Pass through the XSCREENSAVER_WINDOW environment variable to 
     // SDL_WINDOWID, to embed the SDL window into the Xscreensaver
@@ -2012,9 +2065,7 @@ void I_InitGraphics(void)
     // has to be done before the call to SDL_SetVideoMode.
 
     I_InitWindowTitle();
-#if !SDL_VERSION_ATLEAST(1, 3, 0)
     I_InitWindowIcon();
-#endif
 
     // Warning to OS X users... though they might never see it :(
 #ifdef __MACOSX__
@@ -2082,6 +2133,29 @@ void I_InitGraphics(void)
     UpdateFocus();
     UpdateGrab();
 
+    qsdelay = cn_quickstart_delay;
+    
+    //!
+    // @arg <x>
+    // @game doom heretic
+    //
+    // Delay starting the game in miliseconds (0 - 9999) so you can
+    // adjust/press your mouse and key before the game starts
+    //
+
+	i = M_CheckParmWithArgs("-quickstart", 1);
+	if (i)
+	    qsdelay = atoi(myargv[i+1]);
+    
+    // Update network and delay the game slightly to create re-orientate
+    // yourself on the first tic.
+    for (p = 0; p < 10; p++)
+    {
+        SDL_Delay(qsdelay);	// CRT changing screen modes?
+        I_GetEvent();	// Handle events
+        D_ProcessEvents();	// Process them
+    }
+
     // On some systems, it takes a second or so for the screen to settle
     // after changing modes.  We include the option to add a delay when
     // setting the screen mode, so that the game doesn't start immediately
@@ -2132,7 +2206,7 @@ void I_InitGraphics(void)
     // Not sure about repeat rate - probably dependent on which DOS
     // driver is used.  This is good enough though.
 
-    SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
+    SDL_EnableKeyRepeat(cn_typematic_delay, cn_typematic_rate);
 
     // clear out any events waiting at the start and center the mouse
   
@@ -2150,23 +2224,25 @@ void I_InitGraphics(void)
 
 void I_BindVideoVariables(void)
 {
-    M_BindVariable("use_mouse",                 &usemouse);
-    M_BindVariable("autoadjust_video_settings", &autoadjust_video_settings);
-    M_BindVariable("fullscreen",                &fullscreen);
-    M_BindVariable("aspect_ratio_correct",      &aspect_ratio_correct);
-    M_BindVariable("startup_delay",             &startup_delay);
-    M_BindVariable("screen_width",              &screen_width);
-    M_BindVariable("screen_height",             &screen_height);
-    M_BindVariable("screen_bpp",                &screen_bpp);
-    M_BindVariable("grabmouse",                 &grabmouse);
-    M_BindVariable("mouse_acceleration",        &mouse_acceleration);
-    M_BindVariable("mouse_threshold",           &mouse_threshold);
-    M_BindVariable("video_driver",              &video_driver);
-    M_BindVariable("window_position",           &window_position);
-    M_BindVariable("usegamma",                  &usegamma);
-    M_BindVariable("vanilla_keyboard_mapping",  &vanilla_keyboard_mapping);
-    M_BindVariable("novert",                    &novert);
-    M_BindVariable("png_screenshots",           &png_screenshots);
+    M_BindIntVariable("use_mouse",                 &usemouse);
+    M_BindIntVariable("autoadjust_video_settings", &autoadjust_video_settings);
+    M_BindIntVariable("fullscreen",                &fullscreen);
+    M_BindIntVariable("aspect_ratio_correct",      &aspect_ratio_correct);
+    M_BindIntVariable("startup_delay",             &startup_delay);
+    M_BindIntVariable("screen_width",              &screen_width);
+    M_BindIntVariable("screen_height",             &screen_height);
+    M_BindIntVariable("screen_bpp",                &screen_bpp);
+    M_BindIntVariable("grabmouse",                 &grabmouse);
+    M_BindIntVariable("mouse_threshold",           &mouse_threshold);
+    M_BindIntVariable("mouse_threshold_y",         &mouse_threshold_y);
+    M_BindIntVariable("usegamma",                  &usegamma);
+    M_BindIntVariable("vanilla_keyboard_mapping",  &vanilla_keyboard_mapping);
+    M_BindIntVariable("novert",                    &novert);
+    M_BindIntVariable("png_screenshots",           &png_screenshots);
+    M_BindFloatVariable("mouse_acceleration",      &mouse_acceleration);
+    M_BindFloatVariable("mouse_acceleration_y",    &mouse_acceleration_y);
+    M_BindStringVariable("video_driver",           &video_driver);
+    M_BindStringVariable("window_position",        &window_position);
 
     // Windows Vista or later?  Set screen color depth to
     // 32 bits per pixel, as 8-bit palettized screen modes

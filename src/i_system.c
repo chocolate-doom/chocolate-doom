@@ -53,8 +53,8 @@
 #include <CoreFoundation/CFUserNotification.h>
 #endif
 
-#define DEFAULT_RAM 16 /* MiB */
-#define MIN_RAM     4  /* MiB */
+#define DEFAULT_RAM 16*2 /* MiB */
+#define MIN_RAM     4*4  /* MiB */
 
 
 typedef struct atexit_listentry_s atexit_listentry_t;
@@ -133,6 +133,7 @@ byte *I_ZoneBase (int *size)
     byte *zonemem;
     int min_ram, default_ram;
     int p;
+    static int i = 1;
 
     //!
     // @arg <mb>
@@ -153,7 +154,10 @@ byte *I_ZoneBase (int *size)
         min_ram = MIN_RAM;
     }
 
-    zonemem = AutoAllocMemory(size, default_ram, min_ram);
+    zonemem = AutoAllocMemory(size, default_ram * i, min_ram * i);
+
+    // [crispy] if called again, allocate another zone twice as big
+    i *= 2;
 
     printf("zone memory: %p, %x allocated for zone\n", 
            zonemem, *size);
@@ -250,6 +254,8 @@ void I_Quit (void)
         entry->func();
         entry = entry->next;
     }
+
+    SDL_Quit();
 
     exit(0);
 }
@@ -445,6 +451,8 @@ void I_Error (char *error, ...)
 #endif
 
     // abort();
+
+    SDL_Quit();
 
     exit(-1);
 }

@@ -934,11 +934,11 @@ void F_DrawMap34End (void)
 {
     signed int  scrolled;
     int         x;
-    patch_t*    p1;
-    patch_t*    p2;
+//    patch_t*    p1;
+//    patch_t*    p2;
 
-    p1 = W_CacheLumpName (DEH_String("credit"),  PU_LEVEL);
-    p2 = W_CacheLumpName (DEH_String("vellogo"), PU_LEVEL);
+//    p1 = W_CacheLumpName (DEH_String("credit"),  PU_LEVEL);
+//    p2 = W_CacheLumpName (DEH_String("vellogo"), PU_LEVEL);
 
     V_MarkRect (0, 0, SCREENWIDTH, SCREENHEIGHT);
 

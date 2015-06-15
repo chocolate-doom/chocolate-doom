@@ -747,6 +747,12 @@ static void TryPickupArtifact(player_t * player, artitype_t artifactType,
         TXT_ARTIPUZZGEAR
     };
 
+    if (gamemode == shareware)
+    {
+        artifactMessages[arti_blastradius] = TXT_ARTITELEPORT;
+        artifactMessages[arti_teleport] = TXT_ARTIBLASTRADIUS;
+    }
+
     if (P_GiveArtifact(player, artifactType, artifact))
     {
         if (artifact->special)
@@ -1280,7 +1286,7 @@ mobj_t *ActiveMinotaur(player_t * master)
 
 void P_KillMobj(mobj_t * source, mobj_t * target)
 {
-    int dummy;
+    byte dummyArgs[3] = {0, 0, 0};
     mobj_t *master;
 
     target->flags &= ~(MF_SHOOTABLE | MF_FLOAT | MF_SKULLFLY | MF_NOGRAVITY);
@@ -1292,8 +1298,7 @@ void P_KillMobj(mobj_t * source, mobj_t * target)
     {                           // Initiate monster death actions
         if (target->type == MT_SORCBOSS)
         {
-            dummy = 0;
-            P_StartACS(target->special, 0, (byte *) & dummy, target, NULL, 0);
+            P_StartACS(target->special, 0, dummyArgs, target, NULL, 0);
         }
         else
         {

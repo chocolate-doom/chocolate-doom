@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Competition Hexen
+Exec=cnhexen
+Icon=cndoom
+Type=Application
+Comment=Conservative source port
+Categories=Game;ActionGame;
+Keywords=first;person;shooter;doom;vanilla;

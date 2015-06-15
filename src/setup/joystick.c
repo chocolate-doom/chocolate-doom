@@ -14,6 +14,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "doomtype.h"
 #include "i_joystick.h"
@@ -27,6 +28,8 @@
 #include "mode.h"
 #include "txt_joyaxis.h"
 #include "txt_joybinput.h"
+
+#define WINDOW_HELP_URL "http://www.chocolate-doom.org/setup-gamepad"
 
 typedef struct
 {
@@ -136,6 +139,7 @@ static const joystick_config_t empty_defaults[] =
     {"joyb_straferight",       -1},
     {"joyb_prevweapon",        -1},
     {"joyb_nextweapon",        -1},
+    {"joyb_jump",              -1},
     {"joyb_menu_activate",     -1},
     {NULL, 0},
 };
@@ -154,6 +158,22 @@ static const joystick_config_t ps3_controller[] =
     {"joyb_nextweapon",        11},
     {"joyb_menu_activate",     3},   // Start
     {NULL, 0},
+};
+
+// Playstation 4 Dual Shock 4 (DS4)
+static const joystick_config_t ps4_ds4_controller[] =
+{
+    {"joystick_x_axis",        CREATE_HAT_AXIS(0, HAT_AXIS_HORIZONTAL)},
+    {"joystick_y_axis",        CREATE_HAT_AXIS(0, HAT_AXIS_VERTICAL)},
+    {"joyb_fire",              0},  // Square
+    {"joyb_speed",             1},  // X
+    {"joyb_use",               2},  // Circle
+    {"joyb_jump",              3},  // Triangle
+    {"joyb_strafeleft",        6},  // Bottom shoulder buttons
+    {"joyb_straferight",       7},
+    {"joyb_prevweapon",        4},  // Top shoulder buttons
+    {"joyb_nextweapon",        5},
+    {"joyb_menu_activate",     12}, // Playstation logo button
 };
 
 static const joystick_config_t airflo_controller[] =
@@ -276,6 +296,24 @@ static const joystick_config_t buffalo_classic_controller[] =
     {NULL, 0},
 };
 
+// Config for if the user is actually using an old PC joystick or gamepad,
+// probably via a USB-Gameport adapter.
+static const joystick_config_t pc_gameport_controller[] =
+{
+    {"joystick_x_axis",        0},
+    {"joystick_y_axis",        1},
+    // Button configuration is the default as used for Vanilla Doom,
+    // Heretic and Hexen. When playing with a Gravis Gamepad, this
+    // layout should also be vaguely similar to the standard layout
+    // described above.
+    {"joyb_fire",              0},
+    {"joyb_strafe",            1},
+    {"joyb_use",               3},
+    {"joyb_speed",             2},
+    {NULL, 0},
+};
+
+
 static const known_joystick_t known_joysticks[] =
 {
     {
@@ -315,6 +353,13 @@ static const known_joystick_t known_joysticks[] =
         xbox360_controller_linux,
     },
 
+    // Xbox One controller as it appears on Linux.
+    {
+        "Microsoft X-Box One pad",
+        6, 11, 1,
+        xbox360_controller_linux,
+    },
+
     {
         "Logitech Dual Action",
         4, 12, 1,
@@ -331,6 +376,34 @@ static const known_joystick_t known_joysticks[] =
         "USB,2-axis 8-button gamepad  ",
         2, 8, 0,
         buffalo_classic_controller,
+    },
+
+    // PS4 controller just appears as the generic-sounding "Wireless
+    // Controller". Hopefully the number of buttons/axes/hats should be
+    // enough to distinguish it from other gamepads.
+    {
+        "Wireless Controller",
+        6, 14, 1,
+        ps4_ds4_controller,
+    },
+
+    // This is the configuration for the USB-Gameport adapter listed on
+    // this page as the "Mayflash USB to Gameport Adapter" (though the
+    // device is labeled as "Super Joy Box 7"):
+    // https://sites.google.com/site/joystickrehab/itemcatal
+    // TODO: Add extra configurations here for other USB-Gameport adapters,
+    // which should just be the same configuration.
+    {
+        "WiseGroup.,Ltd Gameport to USB Controller",
+        4, 8, 1,
+        pc_gameport_controller,
+    },
+
+    // How the Super Joy Box 7 appears on Mac OS X.
+    {
+        "Gameport to USB Controller",
+        2, 8, 1,
+        pc_gameport_controller,
     },
 };
 
@@ -495,7 +568,7 @@ static int OpenAllJoysticks(void)
 
     result = 0;
 
-    for (i=0; i<num_joysticks; ++i) 
+    for (i = 0; i < num_joysticks; ++i)
     {
         all_joysticks[i] = SDL_JoystickOpen(i);
 
@@ -531,7 +604,7 @@ static void CloseAllJoysticks(void)
 
     num_joysticks = SDL_NumJoysticks();
 
-    for (i=0; i<num_joysticks; ++i)
+    for (i = 0; i < num_joysticks; ++i)
     {
         if (all_joysticks[i] != NULL)
         {
@@ -562,6 +635,7 @@ static int CalibrationEventCallback(SDL_Event *event, void *user_data)
     // At this point, we have a button press.
     // In the first "center" stage, we're just trying to work out which
     // joystick is being configured and which button the user is pressing.
+    usejoystick = 1;
     joystick_index = event->jbutton.which;
     calibrate_button = event->jbutton.button;
 
@@ -570,7 +644,6 @@ static int CalibrationEventCallback(SDL_Event *event, void *user_data)
     if (IsKnownJoystick(joystick_index))
     {
         LoadKnownConfiguration();
-        usejoystick = 1;
         TXT_CloseWindow(calibration_window);
     }
     else
@@ -588,11 +661,12 @@ static int CalibrationEventCallback(SDL_Event *event, void *user_data)
 
 static void NoJoystick(void)
 {
-    TXT_MessageBox(NULL, "No joysticks or gamepads could be found.\n\n"
+    TXT_MessageBox(NULL, "No gamepads or joysticks could be found.\n\n"
                          "Try configuring your controller from within\n"
                          "your OS first. Maybe you need to install\n"
                          "some drivers or otherwise configure it.");
 
+    usejoystick = 0;
     joystick_index = -1;
     SetJoystickButtonLabel();
 }
@@ -634,7 +708,7 @@ static void CalibrateJoystick(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
     TXT_SignalConnect(calibration_window, "closed", CalibrateWindowClosed, NULL);
 
     // Start calibration
-
+    usejoystick = 0;
     joystick_index = -1;
 }
 
@@ -660,13 +734,21 @@ void ConfigJoystick(void)
 
     window = TXT_NewWindow("Gamepad/Joystick configuration");
 
+    TXT_SetWindowHelpURL(window, WINDOW_HELP_URL);
+
     TXT_AddWidgets(window,
-                   TXT_NewCheckBox("Enable gamepad/joystick", &usejoystick),
                    joystick_table = TXT_NewTable(2),
                    TXT_NewSeparator("Axes"),
                    axis_table = TXT_NewTable(2),
                    TXT_NewSeparator("Buttons"),
                    button_table = TXT_NewTable(4),
+                   NULL);
+
+    TXT_SetColumnWidths(joystick_table, 13, 40);
+
+    TXT_AddWidgets(joystick_table,
+                   TXT_NewLabel("Controller"),
+                   joystick_button = TXT_NewButton("zzzz"),
                    NULL);
 
     TXT_SetColumnWidths(axis_table, 20, 15);
@@ -684,13 +766,6 @@ void ConfigJoystick(void)
                    TXT_NewJoystickAxis(&joystick_strafe_axis,
                                        &joystick_strafe_invert,
                                         JOYSTICK_AXIS_HORIZONTAL),
-                   NULL);
-
-    TXT_SetColumnWidths(joystick_table, 20, 15);
-
-    TXT_AddWidgets(joystick_table,
-                   TXT_NewLabel("Current controller"),
-                   joystick_button = TXT_NewButton("zzzz"),
                    NULL);
 
     TXT_SetColumnWidths(button_table, 16, 12, 14, 11);
@@ -732,20 +807,20 @@ void BindJoystickVariables(void)
 {
     int i;
 
-    M_BindVariable("use_joystick",          &usejoystick);
-    M_BindVariable("joystick_index",        &joystick_index);
-    M_BindVariable("joystick_x_axis",       &joystick_x_axis);
-    M_BindVariable("joystick_y_axis",       &joystick_y_axis);
-    M_BindVariable("joystick_strafe_axis",  &joystick_strafe_axis);
-    M_BindVariable("joystick_x_invert",     &joystick_x_invert);
-    M_BindVariable("joystick_y_invert",     &joystick_y_invert);
-    M_BindVariable("joystick_strafe_invert",&joystick_strafe_invert);
+    M_BindIntVariable("use_joystick",           &usejoystick);
+    M_BindIntVariable("joystick_index",         &joystick_index);
+    M_BindIntVariable("joystick_x_axis",        &joystick_x_axis);
+    M_BindIntVariable("joystick_y_axis",        &joystick_y_axis);
+    M_BindIntVariable("joystick_strafe_axis",   &joystick_strafe_axis);
+    M_BindIntVariable("joystick_x_invert",      &joystick_x_invert);
+    M_BindIntVariable("joystick_y_invert",      &joystick_y_invert);
+    M_BindIntVariable("joystick_strafe_invert", &joystick_strafe_invert);
 
     for (i = 0; i < NUM_VIRTUAL_BUTTONS; ++i)
     {
         char name[32];
         M_snprintf(name, sizeof(name), "joystick_physical_button%i", i);
-        M_BindVariable(name, &joystick_physical_buttons[i]);
+        M_BindIntVariable(name, &joystick_physical_buttons[i]);
     }
 }
 

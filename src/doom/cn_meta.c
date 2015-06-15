@@ -26,13 +26,13 @@ boolean     coopparm;
 boolean     dmparm;
 
 char        cn_meta_signature[4]    = "CNDM";
-char        cn_meta_version[4]      = "0001";
+char        cn_meta_version[4]      = "0002";
 
 static FILE *metafp;
 
 void CN_BindMetaVariables(void)
 {
-    M_BindVariable("cn_meta_id",                &cn_meta_id);
+    M_BindStringVariable("cn_meta_id",                &cn_meta_id);
 }
 
 static void write_int(FILE *f, int v)
@@ -76,69 +76,55 @@ void CN_WriteMetaData(char *filename)
 	char  temp[16];
 
 	//!
-	// @arg
 	// @category demo
-	// @vanilla
 	//
 	// Used only when recording speed demo for Competition
-	speedparm = M_CheckParm ("-speed");
+	speedparm = M_CheckParm("-speed");
 
 	//!
-	// @arg
 	// @category demo
-	// @vanilla
 	//
 	// Used only when recording nightmare demo for Competition
-	nmareparm = M_CheckParm ("-nmare");
+	nmareparm = M_CheckParm("-nmare");
 
 	//!
-	// @arg
 	// @category demo
-	// @vanilla
 	//
 	// Used only when recording max demo for Competition
-	maxparm = M_CheckParm ("-max");
+	maxparm = M_CheckParm("-max");
 
 	//!
-	// @arg
 	// @category demo
-	// @vanilla
 	//
 	// Used only when recording nightmare 100% secrets demo for Competition
-	nm100sparm = M_CheckParm ("-nm100s");
+	nm100sparm = M_CheckParm("-nm100s");
 
 	//!
-	// @arg
 	// @category demo
-	// @vanilla
 	//
 	// Used only when recording tyson demo for Competition
-	tysonparm = M_CheckParm ("-tyson");
+	tysonparm = M_CheckParm("-tyson");
 
 	//!
-	// @arg
 	// @category demo
-	// @vanilla
 	//
 	// Used only when recording pacifist demo for Competition
-	pacifistparm = M_CheckParm ("-pacifist");
+	pacifistparm = M_CheckParm("-pacifist");
 
-	episodeparm = M_CheckParm ("-episode");
-    
+	episodeparm = M_CheckParm("-episode");
+
 	//!
-	// @arg
 	// @category demo
-	// @vanilla
 	//
 	// Used only when recording movie demo for Competition
-	movieparm = M_CheckParm ("-movie");
+	movieparm = M_CheckParm("-movie");
 
-    dmparm = M_CheckParm ("-deathmatch");
-    
+    dmparm = M_CheckParm("-deathmatch");
+
     // check if game is DM or not
     if (!dmparm)
         coopparm = M_CheckParm ("-connect");
-    
+
 	metafp = fopen(filename, "rb+");
 	if (!metafp)
 		return;
@@ -158,15 +144,15 @@ void CN_WriteMetaData(char *filename)
 	// write meta version
 	write_bytes(metafp, cn_meta_version, 4);
     write_bytes(metafp, "#", 1);
- 
+
 	// write CNDOOM version
-	write_bytes(metafp, PACKAGE_VERSION, 5);
+	write_bytes(metafp, PACKAGE_VERSION, 7);
     write_bytes(metafp, "#", 1);
-    
+
 	// write Competition ID
 	write_bytes(metafp, cn_meta_id, 4);
     write_bytes(metafp, "#", 1);
- 
+
 	// player2 ID
 	write_bytes(metafp, "0000", 4);
     write_bytes(metafp, "#", 1);
@@ -178,7 +164,7 @@ void CN_WriteMetaData(char *filename)
 	// player4 ID
 	write_bytes(metafp, "0000", 4);
     write_bytes(metafp, "#", 1);
- 
+
 	// write game
 	p = M_CheckParmWithArgs ("-file", 1);
 	if (p)
@@ -189,7 +175,7 @@ void CN_WriteMetaData(char *filename)
 			write_bytes(metafp,
 				(strcasecmp(wadfilename,"av.wad") == 0)       ? "05" :
 				(strcasecmp(wadfilename,"hr.wad") == 0)       ? "06" :
-                (strcasecmp(wadfilename,"hr2.wad") == 0)      ? "07" :
+				(strcasecmp(wadfilename,"scythe.wad") == 0)   ? "07" :
 				(strcasecmp(wadfilename,"mm.wad") == 0)       ? "08" :
 				(strcasecmp(wadfilename,"mm2.wad") == 0)      ? "09" :
 				(strcasecmp(wadfilename,"requiem.wad") == 0)  ? "10" :
@@ -207,12 +193,12 @@ void CN_WriteMetaData(char *filename)
 				                             "00", 2);
 	}
     write_bytes(metafp, "#", 1);
-	
+
     // write episode
 	if (gameepisode>=1 && gameepisode<=4)   sprintf(temp, "%d", gameepisode);
 	write_bytes(metafp, temp, 1);
     write_bytes(metafp, "#", 1);
-    
+
 	// write map
     if ((gamemission == doom) && (gameepisode == 1)) {
              if (gamemap>=1 && gamemap<=3 && !secretexit) sprintf(temp,"11%d",gamemap);
@@ -245,7 +231,7 @@ void CN_WriteMetaData(char *filename)
 	write_bytes(metafp, temp, 3);
     write_bytes(metafp, "#", 1);
 
-	// write category  
+	// write category
 	write_bytes(metafp,
 		(nomonsters)   ? "31" :
 		(speedparm)    ? "01" :
@@ -272,7 +258,7 @@ void CN_WriteMetaData(char *filename)
 			(coopparm)  ? "C" :
 			              "S", 1);
     write_bytes(metafp, "#", 1);
-                          
+
 	// write skill
 	write_bytes(metafp,
 			(gameskill == sk_baby)      ? "1" :
@@ -292,7 +278,7 @@ void CN_WriteMetaData(char *filename)
     write_bytes(metafp, "#", 1);
 
 	// write record time
-	if (totaltime != NULL)
+	if (totaltime)
 		{
         fprintf(metafp, "%02i:%02i:%05.2f",
 			totaltime / TICRATE / 60 / 60,
@@ -305,10 +291,10 @@ void CN_WriteMetaData(char *filename)
 		write_bytes(metafp, "XX:XX:XX.XX", 11);
         write_bytes(metafp, "#", 1);
         }
-        
+
     // META FOOTER
     write_bytes(metafp, "*", 1);
-        
+
 	// finally write metadata location and # of tags
 	write_int(metafp, metapos);
 

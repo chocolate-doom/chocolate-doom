@@ -18,6 +18,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 #include <sys/types.h>
 
@@ -268,7 +269,7 @@ static char *GetFullExePath(const char *program)
 
     if (sep == NULL)
     {
-        result = strdup(program);
+        result = M_StringDuplicate(program);
     }
     else
     {

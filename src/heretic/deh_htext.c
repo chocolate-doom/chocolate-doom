@@ -16,6 +16,7 @@
 //
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "doomtype.h"
@@ -776,7 +777,7 @@ static void *DEH_TextStart(deh_context_t *context, char *line)
         return NULL;
     }
 
-    repl_text = Z_Malloc(repl_len + 1, PU_STATIC, NULL);
+    repl_text = malloc(repl_len + 1);
 
     // read in the "to" text
 
@@ -819,13 +820,10 @@ static void *DEH_TextStart(deh_context_t *context, char *line)
         // Success.
 
         DEH_AddStringReplacement(orig_text, repl_text);
-
-        return NULL;
     }
 
-    // Failure.
-
-    Z_Free(repl_text);
+    // We must always free the replacement text.
+    free(repl_text);
 
     return NULL;
 }

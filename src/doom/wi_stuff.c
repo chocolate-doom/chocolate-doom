@@ -83,7 +83,7 @@
 #define SP_STATSY		50
 
 #define SP_TIMEX		16
-#define SP_TIMEY		(SCREENHEIGHT-32)
+#define SP_TIMEY		(ORIGHEIGHT-32)
 
 
 // NET GAME STUFF
@@ -426,13 +426,13 @@ void WI_drawLF(void)
     if (gamemode != commercial || wbs->last < NUMCMAPS)
     {
         // draw <LevelName> 
-        V_DrawPatch((SCREENWIDTH - SHORT(lnames[wbs->last]->width))/2,
+        V_DrawPatch((ORIGWIDTH - SHORT(lnames[wbs->last]->width))/2,
                     y, lnames[wbs->last]);
 
         // draw "Finished!"
         y += (5*SHORT(lnames[wbs->last]->height))/4;
 
-        V_DrawPatch((SCREENWIDTH - SHORT(finished->width)) / 2, y, finished);
+        V_DrawPatch((ORIGWIDTH - SHORT(finished->width)) / 2, y, finished);
     }
     else if (wbs->last == NUMCMAPS)
     {
@@ -445,7 +445,7 @@ void WI_drawLF(void)
         // bits of memory at this point, but let's try to be accurate
         // anyway.  This deliberately triggers a V_DrawPatch error.
 
-        patch_t tmp = { SCREENWIDTH, SCREENHEIGHT, 1, 1, 
+        patch_t tmp = { ORIGWIDTH, ORIGHEIGHT, 1, 1,
                         { 0, 0, 0, 0, 0, 0, 0, 0 } };
 
         V_DrawPatch(0, y, &tmp);
@@ -460,14 +460,14 @@ void WI_drawEL(void)
     int y = WI_TITLEY;
 
     // draw "Entering"
-    V_DrawPatch((SCREENWIDTH - SHORT(entering->width))/2,
+    V_DrawPatch((ORIGWIDTH - SHORT(entering->width))/2,
 		y,
                 entering);
 
     // draw level
     y += (5*SHORT(lnames[wbs->next]->height))/4;
 
-    V_DrawPatch((SCREENWIDTH - SHORT(lnames[wbs->next]->width))/2,
+    V_DrawPatch((ORIGWIDTH - SHORT(lnames[wbs->next]->width))/2,
 		y, 
                 lnames[wbs->next]);
 
@@ -495,9 +495,9 @@ WI_drawOnLnode
 	bottom = top + SHORT(c[i]->height);
 
 	if (left >= 0
-	    && right < SCREENWIDTH
+	    && right < ORIGWIDTH
 	    && top >= 0
-	    && bottom < SCREENHEIGHT)
+	    && bottom < ORIGHEIGHT)
 	{
 	    fits = true;
 	}
@@ -1314,7 +1314,7 @@ void WI_drawNetgameStats(void)
 
     // [cndoom] draw timer for NET games
     V_DrawPatch(SP_TIMEX, SP_TIMEY, timepatch); // [cndoom] timer
-	CN_DrawIntermissionTime (SCREENWIDTH/2-SP_TIMEX+16 /* + 2*SHORT(winum[0]->width) + SHORT(wicolon->width) */,
+	CN_DrawIntermissionTime (ORIGWIDTH/2-SP_TIMEX+16 /* + 2*SHORT(winum[0]->width) + SHORT(wicolon->width) */,
 				 SP_TIMEY /* + SHORT(timepatch->height) */,
 				 plrs[me].stime);
             
@@ -1480,22 +1480,22 @@ void WI_drawStats(void)
     WI_drawLF();
 
     V_DrawPatch(SP_STATSX, SP_STATSY, kills);
-    WI_drawPercent(SCREENWIDTH - SP_STATSX, SP_STATSY, cnt_kills[0]);
+    WI_drawPercent(ORIGWIDTH - SP_STATSX, SP_STATSY, cnt_kills[0]);
 
     V_DrawPatch(SP_STATSX, SP_STATSY+lh, items);
-    WI_drawPercent(SCREENWIDTH - SP_STATSX, SP_STATSY+lh, cnt_items[0]);
+    WI_drawPercent(ORIGWIDTH - SP_STATSX, SP_STATSY+lh, cnt_items[0]);
 
     V_DrawPatch(SP_STATSX, SP_STATSY+2*lh, sp_secret);
-    WI_drawPercent(SCREENWIDTH - SP_STATSX, SP_STATSY+2*lh, cnt_secret[0]);
+    WI_drawPercent(ORIGWIDTH - SP_STATSX, SP_STATSY+2*lh, cnt_secret[0]);
 
     V_DrawPatch(SP_TIMEX, SP_TIMEY, timepatch);
     // [cndoom] remove old timer
-    // WI_drawTime(SCREENWIDTH/2 - SP_TIMEX, SP_TIMEY, cnt_time); // [cndoom] timer
+    // WI_drawTime(ORIGWIDTH/2 - SP_TIMEX, SP_TIMEY, cnt_time); // [cndoom] timer
 
     // [cndoom] overlay more accurate timer
     if (sp_state >= 8)
     {
-	CN_DrawIntermissionTime (SCREENWIDTH/2-SP_TIMEX+16 /* + 2*SHORT(winum[0]->width) + SHORT(wicolon->width) */,
+	CN_DrawIntermissionTime (ORIGWIDTH/2-SP_TIMEX+16 /* + 2*SHORT(winum[0]->width) + SHORT(wicolon->width) */,
 				 SP_TIMEY /* + SHORT(timepatch->height) */,
 				 plrs[me].stime);
     }
@@ -1503,8 +1503,8 @@ void WI_drawStats(void)
 
     if (wbs->epsd < 3)
     {
-	V_DrawPatch(SCREENWIDTH/2 + SP_TIMEX, SP_TIMEY, par);
-	WI_drawTime(SCREENWIDTH - SP_TIMEX, SP_TIMEY, cnt_par);
+	V_DrawPatch(ORIGWIDTH/2 + SP_TIMEX, SP_TIMEY, par);
+	WI_drawTime(ORIGWIDTH - SP_TIMEX, SP_TIMEY, cnt_par);
     }
 
 }

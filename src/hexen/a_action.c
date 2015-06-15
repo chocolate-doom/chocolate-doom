@@ -211,7 +211,7 @@ void A_PotteryCheck(mobj_t * actor)
     }
     else
     {
-        for (i = 0; i < MAXPLAYERS; i++)
+        for (i = 0; i < maxplayers; i++)
         {
             if (!playeringame[i])
             {
@@ -636,7 +636,12 @@ void A_Summon(mobj_t * actor)
             return;
         }
 
-        memcpy((void *) mo->args, &leveltime, sizeof(leveltime));
+        // Store leveltime into mo->args. This must be stored in little-
+        // endian format for Vanilla savegame compatibility.
+        mo->args[0] = leveltime & 0xff;
+        mo->args[1] = (leveltime >> 8) & 0xff;
+        mo->args[2] = (leveltime >> 16) & 0xff;
+        mo->args[3] = (leveltime >> 24) & 0xff;
         master = actor->special1.m;
         if (master->flags & MF_CORPSE)
         {                       // Master dead
@@ -900,7 +905,7 @@ void A_Quake(mobj_t * actor)
 
     if (actor->args[1]-- > 0)
     {
-        for (playnum = 0; playnum < MAXPLAYERS; playnum++)
+        for (playnum = 0; playnum < maxplayers; playnum++)
         {
             player = &players[playnum];
             if (!playeringame[playnum])
@@ -929,7 +934,7 @@ void A_Quake(mobj_t * actor)
     }
     else
     {
-        for (playnum = 0; playnum < MAXPLAYERS; playnum++)
+        for (playnum = 0; playnum < maxplayers; playnum++)
         {
             localQuakeHappening[playnum] = false;
         }

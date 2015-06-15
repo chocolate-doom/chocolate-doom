@@ -320,9 +320,9 @@ void R_InitTranslationTables(void)
     V_LoadTintTable();
 
     // Allocate translation tables
-    translationtables = Z_Malloc(256 * 3 * (MAXPLAYERS - 1), PU_STATIC, 0);
+    translationtables = Z_Malloc(256 * 3 * (maxplayers - 1), PU_STATIC, 0);
 
-    for (i = 0; i < 3 * (MAXPLAYERS - 1); i++)
+    for (i = 0; i < 3 * (maxplayers - 1); i++)
     {
         lumpnum = W_GetNumForName("trantbl0") + i;
         transLump = W_CacheLumpNum(lumpnum, PU_STATIC);
@@ -468,26 +468,26 @@ void R_DrawViewBorder(void)
             dest += (SCREENWIDTH & 63);
         }
     }
-    for (x = viewwindowx; x < viewwindowx + viewwidth; x += 16)
+    for (x = (viewwindowx >> hires); x < (viewwindowx >> hires) + (viewwidth >> hires); x += 16) // [cndoom] hires
     {
-        V_DrawPatch(x, viewwindowy - 4, W_CacheLumpName("bordt", PU_CACHE));
-        V_DrawPatch(x, viewwindowy + viewheight, W_CacheLumpName("bordb",
-                                                                 PU_CACHE));
+        V_DrawPatch(x, (viewwindowy >> hires) - 4, W_CacheLumpName("bordt", PU_CACHE)); // [cndoom] hires
+        V_DrawPatch(x, (viewwindowy >> hires) + (viewheight >> hires), W_CacheLumpName("bordb",
+                                                                 PU_CACHE)); // [cndoom] hires
     }
-    for (y = viewwindowy; y < viewwindowy + viewheight; y += 16)
+    for (y = (viewwindowy >> hires); y < (viewwindowy >> hires) + (viewheight >> hires); y += 16) // [cndoom] hires
     {
-        V_DrawPatch(viewwindowx - 4, y, W_CacheLumpName("bordl", PU_CACHE));
-        V_DrawPatch(viewwindowx + viewwidth, y, W_CacheLumpName("bordr",
-                                                                PU_CACHE));
+        V_DrawPatch((viewwindowx >> hires) - 4, y, W_CacheLumpName("bordl", PU_CACHE)); // [cndoom] hires
+        V_DrawPatch((viewwindowx >> hires) + (viewwidth >> hires), y, W_CacheLumpName("bordr",
+                                                                PU_CACHE)); // [cndoom] hires
     }
-    V_DrawPatch(viewwindowx - 4, viewwindowy - 4, W_CacheLumpName("bordtl",
-                                                                  PU_CACHE));
-    V_DrawPatch(viewwindowx + viewwidth, viewwindowy - 4,
-                W_CacheLumpName("bordtr", PU_CACHE));
-    V_DrawPatch(viewwindowx + viewwidth, viewwindowy + viewheight,
-                W_CacheLumpName("bordbr", PU_CACHE));
-    V_DrawPatch(viewwindowx - 4, viewwindowy + viewheight,
-                W_CacheLumpName("bordbl", PU_CACHE));
+    V_DrawPatch((viewwindowx >> hires) - 4, (viewwindowy >> hires) - 4, W_CacheLumpName("bordtl",
+                                                                  PU_CACHE)); // [cndoom] hires
+    V_DrawPatch((viewwindowx >> hires) + (viewwidth >> hires), (viewwindowy >> hires) - 4,
+                W_CacheLumpName("bordtr", PU_CACHE)); // [cndoom] hires
+    V_DrawPatch((viewwindowx >> hires) + (viewwidth >> hires), (viewwindowy >> hires) + (viewheight >> hires),
+                W_CacheLumpName("bordbr", PU_CACHE)); // [cndoom] hires
+    V_DrawPatch((viewwindowx >> hires) - 4, (viewwindowy >> hires) + (viewheight >> hires),
+                W_CacheLumpName("bordbl", PU_CACHE)); // [cndoom] hires
 }
 
 /*
@@ -536,23 +536,23 @@ void R_DrawTopBorder(void)
     }
     if (viewwindowy < 35)
     {
-        for (x = viewwindowx; x < viewwindowx + viewwidth; x += 16)
+        for (x = (viewwindowx >> hires); x < (viewwindowx >> hires) + (viewwidth >> hires); x += 16) // [cndoom] hires
         {
-            V_DrawPatch(x, viewwindowy - 4,
-                        W_CacheLumpName("bordt", PU_CACHE));
+            V_DrawPatch(x, (viewwindowy >> hires) - 4,
+                        W_CacheLumpName("bordt", PU_CACHE)); // [cndoom] hires
         }
-        V_DrawPatch(viewwindowx - 4, viewwindowy, W_CacheLumpName("bordl",
-                                                                  PU_CACHE));
-        V_DrawPatch(viewwindowx + viewwidth, viewwindowy,
-                    W_CacheLumpName("bordr", PU_CACHE));
-        V_DrawPatch(viewwindowx - 4, viewwindowy + 16,
-                    W_CacheLumpName("bordl", PU_CACHE));
-        V_DrawPatch(viewwindowx + viewwidth, viewwindowy + 16,
-                    W_CacheLumpName("bordr", PU_CACHE));
+        V_DrawPatch((viewwindowx >> hires) - 4, (viewwindowy >> hires), W_CacheLumpName("bordl",
+                                                                  PU_CACHE)); // [cndoom] hires
+        V_DrawPatch((viewwindowx >> hires) + (viewwidth >> hires), (viewwindowy >> hires),
+                    W_CacheLumpName("bordr", PU_CACHE)); // [cndoom] hires
+        V_DrawPatch((viewwindowx >> hires) - 4, (viewwindowy >> hires) + 16,
+                    W_CacheLumpName("bordl", PU_CACHE)); // [cndoom] hires
+        V_DrawPatch((viewwindowx >> hires) + (viewwidth >> hires), (viewwindowy >> hires) + 16,
+                    W_CacheLumpName("bordr", PU_CACHE)); // [cndoom] hires
 
-        V_DrawPatch(viewwindowx - 4, viewwindowy - 4,
-                    W_CacheLumpName("bordtl", PU_CACHE));
-        V_DrawPatch(viewwindowx + viewwidth, viewwindowy - 4,
-                    W_CacheLumpName("bordtr", PU_CACHE));
+        V_DrawPatch((viewwindowx >> hires) - 4, (viewwindowy >> hires) - 4,
+                    W_CacheLumpName("bordtl", PU_CACHE)); // [cndoom] hires
+        V_DrawPatch((viewwindowx >> hires) + (viewwidth >> hires), (viewwindowy >> hires) - 4,
+                    W_CacheLumpName("bordtr", PU_CACHE)); // [cndoom] hires
     }
 }

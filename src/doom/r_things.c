@@ -72,8 +72,8 @@ lighttable_t**	spritelights;
 
 // constant arrays
 //  used for psprite clipping and initializing clipping
-short		negonearray[SCREENWIDTH];
-short		screenheightarray[SCREENWIDTH];
+int		negonearray[SCREENWIDTH]; // [crispy] 32-bit integer math
+int		screenheightarray[SCREENWIDTH]; // [crispy] 32-bit integer math
 
 
 //
@@ -334,8 +334,8 @@ vissprite_t* R_NewVisSprite (void)
 // Masked means: partly transparent, i.e. stored
 //  in posts/runs of opaque pixels.
 //
-short*		mfloorclip;
-short*		mceilingclip;
+int*		mfloorclip; // [crispy] 32-bit integer math
+int*		mceilingclip; // [crispy] 32-bit integer math
 
 fixed_t		spryscale;
 fixed_t		sprtopscreen;
@@ -413,7 +413,7 @@ R_DrawVisSprite
 	    ( (vis->mobjflags & MF_TRANSLATION) >> (MF_TRANSSHIFT-8) );
     }
 	
-    dc_iscale = abs(vis->xiscale)>>detailshift;
+    dc_iscale = abs(vis->xiscale)>>(detailshift && !hires); // [crispy] -> [cndoom] high resolution
     dc_texturemid = vis->texturemid;
     frac = vis->startfrac;
     spryscale = vis->scale;
@@ -541,7 +541,7 @@ void R_ProjectSprite (mobj_t* thing)
     // store information in a vissprite
     vis = R_NewVisSprite ();
     vis->mobjflags = thing->flags;
-    vis->scale = xscale<<detailshift;
+    vis->scale = xscale<<(detailshift && !hires); // [crispy] -> [cndoom] high resolution
     vis->gx = thing->x;
     vis->gy = thing->y;
     vis->gz = thing->z;
@@ -586,7 +586,7 @@ void R_ProjectSprite (mobj_t* thing)
     else
     {
 	// diminished light
-	index = xscale>>(LIGHTSCALESHIFT-detailshift);
+	index = xscale>>(LIGHTSCALESHIFT-detailshift+hires); // [crispy] -> [cndoom] high resolution
 
 	if (index >= MAXLIGHTSCALE) 
 	    index = MAXLIGHTSCALE-1;
@@ -687,7 +687,7 @@ void R_DrawPSprite (pspdef_t* psp)
     vis->texturemid = (BASEYCENTER<<FRACBITS)+FRACUNIT/2-(psp->sy-spritetopoffset[lump]);
     vis->x1 = x1 < 0 ? 0 : x1;
     vis->x2 = x2 >= viewwidth ? viewwidth-1 : x2;	
-    vis->scale = pspritescale<<detailshift;
+    vis->scale = pspritescale<<(detailshift && !hires); // [crispy] -> [cndoom] high resolution
     
     if (flip)
     {
@@ -835,8 +835,8 @@ void R_SortVisSprites (void)
 void R_DrawSprite (vissprite_t* spr)
 {
     drawseg_t*		ds;
-    short		clipbot[SCREENWIDTH];
-    short		cliptop[SCREENWIDTH];
+    int		    clipbot[SCREENWIDTH]; // [crispy] 32-bit integer math
+    int		    cliptop[SCREENWIDTH]; // [crispy] 32-bit integer math
     int			x;
     int			r1;
     int			r2;

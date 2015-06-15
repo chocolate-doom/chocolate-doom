@@ -537,7 +537,7 @@ void P_TouchSpecialThing(mobj_t* special, mobj_t* toucher)
 
     // rifle
     case SPR_RIFL:
-        if(!P_GiveWeapon(player, wp_rifle, special->flags & MF_DROPPED))
+        if(!P_GiveWeapon(player, wp_rifle, (special->flags & MF_DROPPED) != 0))
             return;
         sound = sfx_wpnup; // haleyjd: SHK-CHK!
         break;
@@ -560,7 +560,8 @@ void P_TouchSpecialThing(mobj_t* special, mobj_t* toucher)
 
     // grenade launcher
     case SPR_GRND:
-        if(!P_GiveWeapon(player, wp_hegrenade, special->flags & MF_DROPPED))
+        if(!P_GiveWeapon(player, wp_hegrenade,
+                         (special->flags & MF_DROPPED) != 0))
             return;
         sound = sfx_wpnup; // haleyjd: SHK-CHK!
         break;
@@ -574,14 +575,15 @@ void P_TouchSpecialThing(mobj_t* special, mobj_t* toucher)
 
     // electric bolt crossbow
     case SPR_CBOW:
-        if(!P_GiveWeapon(player, wp_elecbow, special->flags & MF_DROPPED))
+        if(!P_GiveWeapon(player, wp_elecbow,
+                         (special->flags & MF_DROPPED) != 0))
             return;
         sound = sfx_wpnup; // haleyjd: SHK-CHK!
         break;
 
     // haleyjd 09/21/10: missed case: THE SIGIL!
     case SPR_SIGL:
-        if(!P_GiveWeapon(player, wp_sigil, special->flags & MF_DROPPED))
+        if(!P_GiveWeapon(player, wp_sigil, (special->flags & MF_DROPPED) != 0))
         {
             player->sigiltype = special->frame;
             return;
@@ -781,10 +783,11 @@ void P_KillMobj(mobj_t* source, mobj_t* target)
             source->player->frags[target->player-players]++;
 
             // villsa [STRIFE] new messages when fragging players
+            // haleyjd 20141024: corrected; uses player->allegiance, not mo->miscdata
             DEH_snprintf(plrkilledmsg, sizeof(plrkilledmsg),
                          "%s killed %s",
-                         player_names[source->player->mo->miscdata],
-                         player_names[target->player->mo->miscdata]);
+                         player_names[source->player->allegiance],
+                         player_names[target->player->allegiance]);
 
             if(netgame)
                 players[consoleplayer].message = plrkilledmsg;

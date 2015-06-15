@@ -68,7 +68,7 @@ void S_InitScript(void);
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
-void H2_ProcessEvents(void);
+void D_ProcessEvents(void);
 void H2_DoAdvanceDemo(void);
 void H2_AdvanceDemo(void);
 void H2_StartTitle(void);
@@ -93,6 +93,7 @@ extern boolean askforquit;
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 GameMode_t gamemode;
+char *gamedescription;
 char *iwadfile;
 static char demolumpname[9];    // Demo lump to start playing.
 boolean nomonsters;             // checkparm of -nomonsters
@@ -112,6 +113,7 @@ boolean autostart;
 boolean advancedemo;
 FILE *debugfile;
 int UpdateState;
+int maxplayers = MAXPLAYERS;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -149,14 +151,15 @@ void D_BindVariables(void)
     key_multi_msgplayer[6] = CT_KEY_PLAYER7;
     key_multi_msgplayer[7] = CT_KEY_PLAYER8;
 
-    M_BindVariable("graphical_startup",      &graphical_startup);
-    M_BindVariable("mouse_sensitivity",      &mouseSensitivity);
-    M_BindVariable("sfx_volume",             &snd_MaxVolume);
-    M_BindVariable("music_volume",           &snd_MusicVolume);
-    M_BindVariable("messageson",             &messageson);
-    M_BindVariable("screenblocks",           &screenblocks);
-    M_BindVariable("snd_channels",           &snd_Channels);
-    M_BindVariable("savedir",                &SavePath);
+    M_BindIntVariable("graphical_startup",      &graphical_startup);
+    M_BindIntVariable("mouse_sensitivity",      &mouseSensitivity);
+    M_BindIntVariable("sfx_volume",             &snd_MaxVolume);
+    M_BindIntVariable("music_volume",           &snd_MusicVolume);
+    M_BindIntVariable("messageson",             &messageson);
+    M_BindIntVariable("screenblocks",           &screenblocks);
+    M_BindIntVariable("snd_channels",           &snd_Channels);
+
+    M_BindStringVariable("savedir", &SavePath);
 
     // Multiplayer chat macros
 
@@ -165,7 +168,7 @@ void D_BindVariables(void)
         char buf[12];
 
         M_snprintf(buf, sizeof(buf), "chatmacro%i", i);
-        M_BindVariable(buf, &chat_macros[i]);
+        M_BindStringVariable(buf, &chat_macros[i]);
     }
 }
 
@@ -252,6 +255,68 @@ static void D_AddFile(char *filename)
     W_AddFile(filename);
 }
 
+// Find out what version of Hexen is playing.
+
+void D_IdentifyVersion(void)
+{
+    // The Hexen Shareware, ne 4 Level Demo Version, is missing the SKY1 lump
+    // and uses the SKY2 lump instead. Let's use this fact and the missing
+    // levels from MAP05 onward to identify it and set gamemode accordingly.
+
+    if (W_CheckNumForName("SKY1") == -1 &&
+        W_CheckNumForName("MAP05") == -1 )
+    {
+	gamemode = shareware;
+	maxplayers = 4;
+    }
+
+    // The v1.0 IWAD file is missing a bunch of lumps that can cause the game
+    // to crash, so we exit with an error if the user tries to play with it.
+    // But we provide an override command line flag if they really want to
+    // do it.
+
+    //!
+    // If provided, the check for the v1.0 IWAD file is disabled, even though
+    // it will almost certainly cause the game to crash.
+    //
+    // @category compat
+    //
+
+    if (!M_ParmExists("-v10override")
+     && gamemode != shareware && W_CheckNumForName("CLUS1MSG") < 0)
+    {
+        I_Error(
+            "You are trying to use the Hexen v1.0 IWAD. This isn't\n"
+            "supported by " PACKAGE_NAME ". Please upgrade to the v1.1\n"
+            "IWAD file. See here for more information:\n"
+            "  http://www.doomworld.com/classicdoom/info/patches.php");
+    }
+}
+
+// Set the gamedescription string.
+
+void D_SetGameDescription(void)
+{
+/*
+    NB: The 4 Level Demo Version actually prints a four-lined banner
+    (and indeed waits for a keypress):
+
+    Hexen:  Beyond Heretic
+
+    4 Level Demo Version
+    Press any key to continue.
+*/
+
+    if (gamemode == shareware)
+    {
+	gamedescription = "Hexen: 4 Level Demo Version";
+    }
+    else
+    {
+	gamedescription = "Hexen";
+    }
+}
+
 //==========================================================================
 //
 // H2_Main
@@ -305,7 +370,7 @@ void D_DoomMain(void)
     }
 
     D_SetDefaultSavePath();
-    M_SetConfigFilenames("cnhexen.cfg", PROGRAM_PREFIX "hexen.cfg");
+    M_SetConfigFilenames("hexen.cfg", PROGRAM_PREFIX "hexen.cfg");
     M_LoadDefaults();
 
     I_AtExit(M_SaveDefaults, false);
@@ -331,11 +396,13 @@ void D_DoomMain(void)
 
     D_AddFile(iwadfile);
     W_CheckCorrectIWAD(hexen);
+    D_IdentifyVersion();
+    D_SetGameDescription();
     AdjustForMacIWAD();
 
     HandleArgs();
 
-    I_PrintStartupBanner("Hexen");
+    I_PrintStartupBanner(gamedescription);
 
     ST_Message("MN_Init: Init menu system.\n");
     MN_Init();
@@ -578,16 +645,22 @@ static void HandleArgs(void)
 
     if (p)
     {
+        char *uc_filename;
         char file[256];
 
         M_StringCopy(file, myargv[p+1], sizeof(file));
 
         // With Vanilla Hexen you have to specify the file without
         // extension, but make that optional.
-        if (!M_StringEndsWith(myargv[p+1], ".lmp"))
+        uc_filename = strdup(myargv[p + 1]);
+        M_ForceUppercase(uc_filename);
+
+        if (!M_StringEndsWith(uc_filename, ".LMP"))
         {
             M_StringConcat(file, ".lmp", sizeof(file));
         }
+
+        free(uc_filename);
 
         if (W_AddFile(file) != NULL)
         {
@@ -663,7 +736,7 @@ void H2_GameLoop(void)
         M_snprintf(filename, sizeof(filename), "debug%i.txt", consoleplayer);
         debugfile = fopen(filename, "w");
     }
-    I_SetWindowTitle("Hexen");
+    I_SetWindowTitle(gamedescription);
     I_GraphicsCheckCommandLine();
     I_SetGrabMouseCallback(D_GrabMouseCallback);
     I_InitGraphics();
@@ -686,13 +759,13 @@ void H2_GameLoop(void)
 
 //==========================================================================
 //
-// H2_ProcessEvents
+// D_ProcessEvents
 //
 // Send all the events of the given timestamp down the responder chain.
 //
 //==========================================================================
 
-void H2_ProcessEvents(void)
+void D_ProcessEvents(void)
 {
     event_t *ev;
 
@@ -771,8 +844,8 @@ static void DrawAndBlit(void)
     {
         if (!netgame)
         {
-            V_DrawPatch(160, viewwindowy + 5, W_CacheLumpName("PAUSED",
-                                                              PU_CACHE));
+            V_DrawPatch(160, (viewwindowy >> hires) + 5, W_CacheLumpName("PAUSED",
+                                                              PU_CACHE)); // [cndoom] hires
         }
         else
         {
@@ -804,7 +877,7 @@ static void DrawMessage(void)
     player_t *player;
 
     player = &players[consoleplayer];
-    if (player->messageTics <= 0 || !player->message)
+    if (player->messageTics <= 0)
     {                           // No message
         return;
     }

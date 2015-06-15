@@ -28,29 +28,21 @@ have to the code is the binary executable file. Tools such as IDA Pro have
 been employed to disassemble and decompile the executable, which was cross-
 referenced against the Linux DOOM and DOS Heretic sources and painstakingly
 combed over multiple times, instruction-by-instruction, to ensure that the
-resulting Chocolate-Doom-based executable is as close as possible to the
+resulting Chocolate Doom-based executable is as close as possible to the
 original.
 
 
 * Is it Legal? *
 
-Reverse engineering is a protected activity so long as the original code is
-not used directly in the product. Due to the vast amount of information lost
-through the process of compilation, and the need to refactor large portions
-of code in order to eliminate non-portable idioms or to adapt them properly to
-Chocolate Doom's framework, the resulting code behaves the same, but is not
-the *same* code.
+Chocolate Strife was originally reverse-engineered from the DOS Strife
+binaries. Although reverse engineering is legally a protected activity, this
+nonetheless left some open questions about its legal status.
 
-In addition, James Monroe and John Carmack have both stated that they have no
-objections to the project. Because they are the original authors of the code,
-and neither Rogue nor their publisher, Velocity, Inc., exist any longer as legal
-entities, this is as close to legal permission as can be obtained.
-
-The transformed results of the disassembly have been combined with the
-raven-branch version of the Chocolate Doom source port by Simon 'fraggle'
-Howard, with his direct assistance, and have been released for the benefit of
-the community under the GNU General Public License v2.0. See the file "COPYING"
-for more details
+In 2014, a new commercial release of Strife was published (Strife: Veteran
+Edition) based on the Chocolate Strife code, and developed by the authors of
+Chocolate Strife under commercial license. The release of Strife: Veteran
+Edition, along with its GPL-licensed source code, constitutes tacit approval
+for the legal status of Chocolate Strife by its current copyright holder.
 
 
 * Is it Perfect? *
@@ -126,48 +118,4 @@ program is available from the same location where you downloaded this package.
 
 Aside from Chocolate Doom, portions of the code are derived from the Eternity
 Engine, Copyright 2011 Team Eternity, as published under the GNU GPL.
-
-
-* New in v2.0 Release *
-
-+ No infinite loop if menus are up during a screen fade.
-
-+ Peasant death sound during intro plays at normal volume level.
-
-+ Torches no longer produce pipping sounds (special thanks to fraggle).
-
-+ Fade to black occurs at the start of slideshow sequences as in vanilla.
-
-+ Network game support, with up to 8 players.
-
-+ No more infinite horizon effect if screen is resized while looking up or
-  down.
-
-+ Corrected default internal Acolyte and Beggar dialogue strings.
-
-+ Proper save game directory behavior (same as other Choco ports).
-
-+ Vanilla behavior for crush-and-raise floor types (special thanks to Gez).
-
-+ Bug fix for all crushing floor types.
-
-+ Broken power coupling awards erroneous quest flag #32, as in vanilla.
-
-+ Complete support for emulation of Strife v1.31, including abililty to save
-  on multiple save slots.
-
-+ Telefrags insta-kill as in vanilla (player cannot heal 10000 damage even with
-  a full inventory of health items).
-
-+ Frags are displayed on the keys popup during deathmatch.
-
-+ Multiplayer chat features, including ability to set player names, now match
-  vanilla behavior.
-
-+ Support for -random parameter.
-
-+ Vanilla behavior when pressing pause on menus with scroll bars (special
-  thanks to fraggle and Alexandre Xavier).
-
-+ Merged into Chocolate Doom trunk for v2.0 release.
 

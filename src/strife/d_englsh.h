@@ -173,7 +173,7 @@
 #define HUSTR_26        "AREA 26: proving grounds"
 #define HUSTR_27        "AREA 27: The Lab"
 #define HUSTR_28        "AREA 28: Alien Ship"
-#define HUSTR_29        "AREA 29: Entity"
+#define HUSTR_29        "AREA 29: Entity's Lair"
 
 #define HUSTR_30        "AREA 30: Abandoned Front Base"
 #define HUSTR_31        "AREA 31: Training Facility"
@@ -227,7 +227,7 @@
 #define AMSTR_GRIDOFF	"Grid OFF"
 
 #define AMSTR_MARKEDSPOT        "Marked Spot"
-#define AMSTR_MARKSCLEARED      "All Marks Cleared"
+#define AMSTR_MARKSCLEARED      "Last Mark Cleared" // [STRIFE]
 
 //
 //	ST_stuff.C

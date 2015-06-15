@@ -183,6 +183,10 @@ static char *steam_install_subdirs[] =
     // From Doom 3: BFG Edition:
 
     "steamapps\\common\\DOOM 3 BFG Edition\\base\\wads",
+
+    // From Strife: Veteran Edition:
+
+    "steamapps\\common\\Strife",
 };
 
 #define STEAM_BFG_GUS_PATCHES \
@@ -328,7 +332,7 @@ static void CheckSteamGUSPatches(void)
     int len;
 
     // Already configured? Don't stomp on the user's choices.
-    current_path = M_GetStrVariable("gus_patch_path");
+    current_path = M_GetStringVariable("gus_patch_path");
     if (current_path != NULL && strlen(current_path) > 0)
     {
         return;
@@ -413,7 +417,7 @@ static char *CheckDirectoryHasIWAD(char *dir, char *iwadname)
 
     if (DirIsFile(dir, iwadname) && M_FileExists(dir))
     {
-        return strdup(dir);
+        return M_StringDuplicate(dir);
     }
 
     // Construct the full path to the IWAD if it is located in
@@ -421,7 +425,7 @@ static char *CheckDirectoryHasIWAD(char *dir, char *iwadname)
 
     if (!strcmp(dir, "."))
     {
-        filename = strdup(iwadname);
+        filename = M_StringDuplicate(iwadname);
     }
     else
     {
@@ -523,7 +527,7 @@ static void AddDoomWadPath(void)
         return;
     }
 
-    doomwadpath = strdup(doomwadpath);
+    doomwadpath = M_StringDuplicate(doomwadpath);
 
     // Add the initial directory
 
@@ -640,7 +644,7 @@ char *D_FindWADByName(char *name)
 
         if (DirIsFile(iwad_dirs[i], name) && M_FileExists(iwad_dirs[i]))
         {
-            return strdup(iwad_dirs[i]);
+            return M_StringDuplicate(iwad_dirs[i]);
         }
 
         // Construct a string for the full path

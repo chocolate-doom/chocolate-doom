@@ -21,6 +21,10 @@
 #ifndef __DOOMTYPE__
 #define __DOOMTYPE__
 
+#if defined(_MSC_VER) && !defined(__cplusplus)
+#define inline __inline
+#endif
+
 // #define macros to provide functions missing in Windows.
 // Outside Windows, we use strings.h for str[n]casecmp.
 

@@ -498,6 +498,9 @@ Events are operations triggered by using, crossing, or shooting special lines, o
 //
 // P_ExecuteLineSpecial
 //
+// Invoked when crossing a linedef. The args[] array should be at least
+// 5 elements in length.
+//
 //============================================================================
 
 boolean P_ExecuteLineSpecial(int special, byte * args, line_t * line,
@@ -842,6 +845,7 @@ boolean P_ExecuteLineSpecial(int special, byte * args, line_t * line,
 boolean P_ActivateLine(line_t * line, mobj_t * mo, int side,
                        int activationType)
 {
+    byte args[5];
     int lineActivation;
     boolean repeat;
     boolean buttonSuccess;
@@ -860,11 +864,17 @@ boolean P_ActivateLine(line_t * line, mobj_t * mo, int side,
         if (line->flags & ML_SECRET)
             return false;       // never open secret doors
     }
-    repeat = line->flags & ML_REPEAT_SPECIAL;
+    repeat = (line->flags & ML_REPEAT_SPECIAL) != 0;
     buttonSuccess = false;
 
-    buttonSuccess = P_ExecuteLineSpecial(line->special, &line->arg1, line,
-                                         side, mo);
+    // Construct args[] array to contain the arguments from the line, as we
+    // cannot rely on struct field ordering and layout.
+    args[0] = line->arg1;
+    args[1] = line->arg2;
+    args[2] = line->arg3;
+    args[3] = line->arg4;
+    args[4] = line->arg5;
+    buttonSuccess = P_ExecuteLineSpecial(line->special, args, line, side, mo);
     if (!repeat && buttonSuccess)
     {                           // clear the special on non-retriggerable lines
         line->special = 0;

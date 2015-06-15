@@ -29,7 +29,7 @@
 #include "m_controls.h"
 #include "m_misc.h"
 
-#include "compatibility.h"
+#include "advanced.h"
 #include "display.h"
 #include "joystick.h"
 #include "keyboard.h"
@@ -115,14 +115,14 @@ static void BindMiscVariables(void)
 {
     if (gamemission == doom)
     {
-        M_BindVariable("detaillevel",       &detailLevel);
-        M_BindVariable("show_messages",     &showMessages);
+        M_BindIntVariable("detaillevel",   &detailLevel);
+        M_BindIntVariable("show_messages", &showMessages);
     }
 
     if (gamemission == hexen)
     {
-        M_BindVariable("savedir",           &savedir);
-        M_BindVariable("messageson",        &showMessages);
+        M_BindStringVariable("savedir", &savedir);
+        M_BindIntVariable("messageson", &showMessages);
 
         // Hexen has a variable to control the savegame directory
         // that is used.
@@ -140,14 +140,15 @@ static void BindMiscVariables(void)
 
     if (gamemission == strife)
     {
-        M_BindVariable("back_flat",         &back_flat);
-        M_BindVariable("screensize"  ,      &screenblocks);
-        M_BindVariable("comport",           &comport);
-        M_BindVariable("nickname",          &nickname);
+        M_BindStringVariable("back_flat",   &back_flat);
+        M_BindStringVariable("nickname",    &nickname);
+
+        M_BindIntVariable("screensize",     &screenblocks);
+        M_BindIntVariable("comport",        &comport);
     }
     else
     {
-        M_BindVariable("screenblocks",      &screenblocks);
+        M_BindIntVariable("screenblocks",   &screenblocks);
     }
 
 }
@@ -184,7 +185,7 @@ void InitBindings(void)
 
     // All other variables
 
-    BindCompatibilityVariables();
+    BindAdvancedVariables();
     BindDisplayVariables();
     BindJoystickVariables();
     BindKeyboardVariables();

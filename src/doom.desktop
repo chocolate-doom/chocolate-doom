@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Competition Doom
+Exec=cndoom
+Icon=cndoom
+Type=Application
+Comment=Conservative source port
+Categories=Game;ActionGame;
+Keywords=first;person;shooter;vanilla;

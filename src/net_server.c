@@ -514,7 +514,8 @@ static void NET_SV_AdvanceWindow(void)
         
         // Advance the window
 
-        memcpy(recvwindow, recvwindow + 1, sizeof(*recvwindow) * (BACKUPTICS - 1));
+        memmove(recvwindow, recvwindow + 1,
+                sizeof(*recvwindow) * (BACKUPTICS - 1));
         memset(&recvwindow[BACKUPTICS-1], 0, sizeof(*recvwindow));
         ++recvwindow_start;
 
@@ -563,7 +564,7 @@ static void NET_SV_InitNewClient(net_client_t *client,
     NET_Conn_InitServer(&client->connection, addr);
     client->addr = addr;
     client->last_send_time = -1;
-    client->name = strdup(player_name);
+    client->name = M_StringDuplicate(player_name);
 
     // init the ticcmd send queue
 

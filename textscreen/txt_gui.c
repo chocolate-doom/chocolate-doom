@@ -322,6 +322,29 @@ static void PutUnicodeChar(unsigned int c)
     TXT_PutChar('\xa8');
 }
 
+int TXT_CanDrawCharacter(unsigned int c)
+{
+    unsigned int i;
+
+    // Standard ASCII range?
+    if (c < 128)
+    {
+        return 1;
+    }
+
+    // Extended ASCII range?
+    for (i = 0; i < 128; ++i)
+    {
+        if (cp437_unicode[i] == c)
+        {
+            return 1;
+        }
+    }
+
+    // Nope.
+    return 0;
+}
+
 void TXT_DrawUTF8String(const char *s)
 {
     int x, y;
@@ -465,8 +488,8 @@ void TXT_InitClipArea(void)
         cliparea = malloc(sizeof(txt_cliparea_t));
         cliparea->x1 = 0;
         cliparea->x2 = TXT_SCREEN_W;
-        cliparea->y1 = 1;
-        cliparea->y2 = TXT_SCREEN_H - 1;
+        cliparea->y1 = 0;
+        cliparea->y2 = TXT_SCREEN_H;
         cliparea->next = NULL;
     }
 }

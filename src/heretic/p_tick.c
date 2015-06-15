@@ -110,13 +110,16 @@ void P_AllocateThinker(thinker_t * thinker)
 
 void P_RunThinkers(void)
 {
-    thinker_t *currentthinker;
+    thinker_t *currentthinker, *nextthinker;
 
     currentthinker = thinkercap.next;
     while (currentthinker != &thinkercap)
     {
+        nextthinker = currentthinker->next;
+
         if (currentthinker->function == (think_t) - 1)
         {                       // time to remove it
+            nextthinker = currentthinker->next;
             currentthinker->next->prev = currentthinker->prev;
             currentthinker->prev->next = currentthinker->next;
             Z_Free(currentthinker);
@@ -125,8 +128,9 @@ void P_RunThinkers(void)
         {
             if (currentthinker->function)
                 currentthinker->function(currentthinker);
+            nextthinker = currentthinker->next;
         }
-        currentthinker = currentthinker->next;
+        currentthinker = nextthinker;
     }
 }
 

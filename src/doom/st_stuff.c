@@ -254,7 +254,7 @@
 #define ST_OUTHEIGHT		1
 
 #define ST_MAPTITLEX \
-    (SCREENWIDTH - ST_MAPWIDTH * ST_CHATFONTWIDTH)
+    (ORIGWIDTH - ST_MAPWIDTH * ST_CHATFONTWIDTH) // [crispy] -> [cndoom] high resolution
 
 #define ST_MAPTITLEY		0
 #define ST_MAPHEIGHT		1
@@ -528,7 +528,8 @@ ST_Responder (event_t* ev)
 	{
 	  musnum = mus_runnin + (buf[0]-'0')*10 + buf[1]-'0' - 1;
 	  
-	  if (((buf[0]-'0')*10 + buf[1]-'0') > 35)
+	  // [crispy] prevent crash with IDMUS00 -> [cndoom]
+	  if (((buf[0]-'0')*10 + buf[1]-'0') > 35 || musnum < mus_runnin)
 	    plyr->message = DEH_String(STSTR_NOMUS);
 	  else
 	    S_ChangeMusic(musnum, 1);
@@ -537,7 +538,8 @@ ST_Responder (event_t* ev)
 	{
 	  musnum = mus_e1m1 + (buf[0]-'1')*9 + (buf[1]-'1');
 	  
-	  if (((buf[0]-'1')*9 + buf[1]-'1') > 31)
+	  // [crispy] prevent crash with IDMUS0x or IDMUSx0 -> [cndoom]
+	  if (((buf[0]-'1')*9 + buf[1]-'1') > 31 || buf[0] < '1' || buf[1] < '1')
 	    plyr->message = DEH_String(STSTR_NOMUS);
 	  else
 	    S_ChangeMusic(musnum, 1);
@@ -1261,11 +1263,12 @@ void ST_createWidgets(void)
     // weapons owned
     for(i=0;i<6;i++)
     {
-	STlib_initMultIcon(&w_arms[i],
-			   ST_ARMSX+(i%3)*ST_ARMSXSPACE,
-			   ST_ARMSY+(i/3)*ST_ARMSYSPACE,
-			   arms[i], (int *) &plyr->weaponowned[i+1],
-			   &st_armson);
+        STlib_initMultIcon(&w_arms[i],
+                           ST_ARMSX+(i%3)*ST_ARMSXSPACE,
+                           ST_ARMSY+(i/3)*ST_ARMSYSPACE,
+                           arms[i],
+                           &plyr->weaponowned[i+1],
+                           &st_armson);
     }
 
     // frags sum
@@ -1411,6 +1414,6 @@ void ST_Stop (void)
 void ST_Init (void)
 {
     ST_loadData();
-    st_backing_screen = (byte *) Z_Malloc(ST_WIDTH * ST_HEIGHT, PU_STATIC, 0);
+    st_backing_screen = (byte *) Z_Malloc((ST_WIDTH << hires) * (ST_HEIGHT << hires), PU_STATIC, 0); // [crispy] -> [cndoom] high resolution
 }
 

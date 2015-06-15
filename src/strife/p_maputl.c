@@ -941,7 +941,7 @@ P_PathTraverse
 
     int     count;
 
-    earlyout = flags & PT_EARLYOUT;
+    earlyout = (flags & PT_EARLYOUT) != 0;
 
     validcount++;
     intercept_p = intercepts;

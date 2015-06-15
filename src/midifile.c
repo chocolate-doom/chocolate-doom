@@ -130,7 +130,7 @@ static boolean ReadByte(byte *result, FILE *stream)
 static boolean ReadVariableLength(unsigned int *result, FILE *stream)
 {
     int i;
-    byte b;
+    byte b = 0;
 
     *result = 0;
 
@@ -203,7 +203,7 @@ static boolean ReadChannelEvent(midi_event_t *event,
                                 byte event_type, boolean two_param,
                                 FILE *stream)
 {
-    byte b;
+    byte b = 0;
 
     // Set basics:
 
@@ -269,7 +269,7 @@ static boolean ReadSysExEvent(midi_event_t *event, int event_type,
 
 static boolean ReadMetaEvent(midi_event_t *event, FILE *stream)
 {
-    byte b;
+    byte b = 0;
 
     event->event_type = MIDI_EVENT_META;
 
@@ -308,7 +308,7 @@ static boolean ReadMetaEvent(midi_event_t *event, FILE *stream)
 static boolean ReadEvent(midi_event_t *event, unsigned int *last_event_type,
                          FILE *stream)
 {
-    byte event_type;
+    byte event_type = 0;
 
     if (!ReadVariableLength(&event->delta_time, stream))
     {
@@ -699,14 +699,14 @@ int MIDI_GetNextEvent(midi_track_iter_t *iter, midi_event_t **event)
 
 unsigned int MIDI_GetFileTimeDivision(midi_file_t *file)
 {
-    short result = SHORT(file->header.time_division);
+    short result = SDL_SwapBE16(file->header.time_division);
 
     // Negative time division indicates SMPTE time and must be handled
     // differently.
     if (result < 0)
     {
-        // TODO: Figure this out.
-        return 96;
+        return (signed int)(-(result/256))
+             * (signed int)(result & 0xFF);
     }
     else
     {

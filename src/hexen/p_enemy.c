@@ -546,8 +546,8 @@ boolean P_LookForPlayers(mobj_t * actor, boolean allaround)
     // stop = (actor->lastlook - 1) & 3;
     // for (;; actor->lastlook = (actor->lastlook + 1) & 3)
 
-    stop = (actor->lastlook + MAXPLAYERS - 1) % MAXPLAYERS;
-    for (;; actor->lastlook = (actor->lastlook + 1) % MAXPLAYERS)
+    stop = (actor->lastlook + maxplayers - 1) % maxplayers;
+    for (;; actor->lastlook = (actor->lastlook + 1) % maxplayers)
     {
         if (!playeringame[actor->lastlook])
             continue;
@@ -1108,16 +1108,33 @@ void A_MinotaurFade2(mobj_t * actor)
 
 void A_MinotaurLook(mobj_t * actor);
 
+// Check the age of the minotaur and stomp it after MAULATORTICS of time
+// have passed. Returns false if killed.
+static boolean CheckMinotaurAge(mobj_t *mo)
+{
+    unsigned int starttime;
+
+    // The start time is stored in the mobj_t structure, but it is stored
+    // in little endian format. For Vanilla savegame compatibility we must
+    // swap it to the native endianness.
+    memcpy(&starttime, mo->args, sizeof(unsigned int));
+
+    if (leveltime - LONG(starttime) >= MAULATORTICS)
+    {
+        P_DamageMobj(mo, NULL, NULL, 10000);
+        return false;
+    }
+
+    return true;
+}
+
 void A_MinotaurRoam(mobj_t * actor)
 {
-    unsigned int *starttime = (unsigned int *) actor->args;
-
     actor->flags &= ~MF_SHADOW; // In case pain caused him to 
     actor->flags &= ~MF_ALTSHADOW;      // skip his fade in.
 
-    if ((leveltime - *starttime) >= MAULATORTICS)
+    if (!CheckMinotaurAge(actor))
     {
-        P_DamageMobj(actor, NULL, NULL, 10000);
         return;
     }
 
@@ -1162,7 +1179,7 @@ void A_MinotaurLook(mobj_t * actor)
     actor->target = NULL;
     if (deathmatch)             // Quick search for players
     {
-        for (i = 0; i < MAXPLAYERS; i++)
+        for (i = 0; i < maxplayers; i++)
         {
             if (!playeringame[i])
                 continue;
@@ -1231,14 +1248,11 @@ void A_MinotaurLook(mobj_t * actor)
 
 void A_MinotaurChase(mobj_t * actor)
 {
-    unsigned int *starttime = (unsigned int *) actor->args;
-
     actor->flags &= ~MF_SHADOW; // In case pain caused him to 
     actor->flags &= ~MF_ALTSHADOW;      // skip his fade in.
 
-    if ((leveltime - *starttime) >= MAULATORTICS)
+    if (!CheckMinotaurAge(actor))
     {
-        P_DamageMobj(actor, NULL, NULL, 10000);
         return;
     }
 
@@ -3841,7 +3855,7 @@ void A_IceGuyDie(mobj_t * actor)
 void A_IceGuyMissileExplode(mobj_t * actor)
 {
     mobj_t *mo;
-    int i;
+    unsigned int i;
 
     for (i = 0; i < 8; i++)
     {
@@ -4767,7 +4781,8 @@ void A_FreezeDeath(mobj_t * actor)
         }
     }
     else if (actor->flags & MF_COUNTKILL && actor->special)
-    {                           // Initiate monster death actions
+    {
+        // Initiate monster death actions.
         P_ExecuteLineSpecial(actor->special, actor->args, NULL, 0, actor);
     }
 }
@@ -4919,7 +4934,7 @@ void A_KoraxChase(mobj_t * actor)
 {
     mobj_t *spot;
     int lastfound;
-    byte args[3] = { 0, 0, 0 };
+    byte args[3] = {0, 0, 0};
 
     if ((!actor->special2.i) &&
         (actor->health <= (actor->info->spawnhealth / 2)))

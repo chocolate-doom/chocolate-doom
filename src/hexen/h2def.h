@@ -570,7 +570,7 @@ typedef struct player_s
 #define	CF_GODMODE		2
 #define	CF_NOMOMENTUM	4       // not really a cheat, just a debug aid
 
-#define	SBARHEIGHT	39      // status bar height at bottom of screen
+#define	SBARHEIGHT	(39 << hires)      // status bar height at bottom of screen [cndoom] hires
 
 void NET_SendFrags(player_t * player);
 
@@ -655,6 +655,7 @@ extern int RebornPosition;
 
 #define MAX_PLAYER_STARTS 8
 extern mapthing_t playerstarts[MAX_PLAYER_STARTS][MAXPLAYERS];
+extern int maxplayers;
 
 extern int mouseSensitivity;
 

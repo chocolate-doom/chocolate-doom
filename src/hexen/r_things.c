@@ -388,7 +388,7 @@ void R_DrawVisSprite(vissprite_t * vis, int x1, int x2)
         {
             colfunc = R_DrawTranslatedTLColumn;
             dc_translation = translationtables - 256
-                + vis->class * ((MAXPLAYERS - 1) * 256) +
+                + vis->class * ((maxplayers - 1) * 256) +
                 ((vis->mobjflags & MF_TRANSLATION) >> (MF_TRANSSHIFT - 8));
         }
         else if (vis->mobjflags & MF_SHADOW)
@@ -405,7 +405,7 @@ void R_DrawVisSprite(vissprite_t * vis, int x1, int x2)
         // Draw using translated column function
         colfunc = R_DrawTranslatedColumn;
         dc_translation = translationtables - 256
-            + vis->class * ((MAXPLAYERS - 1) * 256) +
+            + vis->class * ((maxplayers - 1) * 256) +
             ((vis->mobjflags & MF_TRANSLATION) >> (MF_TRANSSHIFT - 8));
     }
 
@@ -426,7 +426,7 @@ void R_DrawVisSprite(vissprite_t * vis, int x1, int x2)
 
     if (vis->floorclip && !vis->psprite)
     {
-        sprbotscreen = sprtopscreen + FixedMul(patch->height << FRACBITS,
+        sprbotscreen = sprtopscreen + FixedMul(SHORT(patch->height) << FRACBITS,
                                                spryscale);
         baseclip = (sprbotscreen - FixedMul(vis->floorclip,
                                             spryscale)) >> FRACBITS;
@@ -607,7 +607,7 @@ void R_ProjectSprite(mobj_t * thing)
         vis->colormap = colormaps;      // full bright
     else
     {                           // diminished light
-        index = xscale >> (LIGHTSCALESHIFT - detailshift);
+        index = xscale >> (LIGHTSCALESHIFT - detailshift + hires); // [cndoom] hires
         if (index >= MAXLIGHTSCALE)
             index = MAXLIGHTSCALE - 1;
         vis->colormap = spritelights[index];
@@ -727,8 +727,8 @@ void R_DrawPSprite(pspdef_t * psp)
     vis->mobjflags = 0;
     vis->class = 0;
     vis->psprite = true;
-    vis->texturemid = (BASEYCENTER << FRACBITS) + FRACUNIT / 2
-        - (psp->sy - spritetopoffset[lump]);
+    vis->texturemid = (BASEYCENTER << FRACBITS) /* + FRACUNIT / 2 */
+        - (psp->sy - spritetopoffset[lump]); // [cndoom] hires
     if (viewheight == SCREENHEIGHT)
     {
         vis->texturemid -= PSpriteSY[viewplayer->class]

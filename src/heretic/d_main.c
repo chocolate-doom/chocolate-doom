@@ -192,7 +192,7 @@ void D_Display(void)
     {
         if (!netgame)
         {
-            V_DrawPatch(160, viewwindowy + 5, W_CacheLumpName(DEH_String("PAUSED"),
+            V_DrawPatch(160, (viewwindowy >> hires) + 5, W_CacheLumpName(DEH_String("PAUSED"), // [cndoom] hires
                                                               PU_CACHE));
         }
         else
@@ -759,28 +759,20 @@ void D_BindVariables(void)
     M_BindMenuControls();
     M_BindMapControls();
 
-    M_BindVariable("mouse_sensitivity",      &mouseSensitivity);
-    M_BindVariable("sfx_volume",             &snd_MaxVolume);
-    M_BindVariable("music_volume",           &snd_MusicVolume);
-    M_BindVariable("screenblocks",           &screenblocks);
-    M_BindVariable("snd_channels",           &snd_Channels);
-    M_BindVariable("show_endoom",            &show_endoom);
-    M_BindVariable("graphical_startup",      &graphical_startup);
-    // [cndoom]
-    //M_BindVariable("cn_timer_enabled",       &cn_timer_enabled);
-    //M_BindVariable("cn_timer_bg_colormap",   &cn_timer_bg_colormap);
-    //M_BindVariable("cn_timer_offset_x",      &cn_timer_offset_x);
-    //M_BindVariable("cn_timer_offset_y",      &cn_timer_offset_y);
-    //M_BindVariable("cn_timer_color_index",   &cn_timer_color_index);
-    //M_BindVariable("cn_timer_shadow_index",  &cn_timer_shadow_index);
-    M_BindVariable("cn_meta_id",               &cn_meta_id);
-    
+    M_BindIntVariable("mouse_sensitivity",      &mouseSensitivity);
+    M_BindIntVariable("sfx_volume",             &snd_MaxVolume);
+    M_BindIntVariable("music_volume",           &snd_MusicVolume);
+    M_BindIntVariable("screenblocks",           &screenblocks);
+    M_BindIntVariable("snd_channels",           &snd_Channels);
+    M_BindIntVariable("show_endoom",            &show_endoom);
+    M_BindIntVariable("graphical_startup",      &graphical_startup);
+
     for (i=0; i<10; ++i)
     {
         char buf[12];
 
         M_snprintf(buf, sizeof(buf), "chatmacro%i", i);
-        M_BindVariable(buf, &chat_macros[i]);
+        M_BindStringVariable(buf, &chat_macros[i]);
     }
 }
 
@@ -966,11 +958,6 @@ void D_DoomMain(void)
     DEH_printf("Z_Init: Init zone memory allocation daemon.\n");
     Z_Init();
 
-#ifdef FEATURE_DEHACKED
-    printf("DEH_Init: Init Dehacked support.\n");
-    DEH_Init();
-#endif
-
     DEH_printf("W_Init: Init WADfiles.\n");
 
     iwadfile = D_FindIWAD(IWAD_MASK_HERETIC, &gamemission);
@@ -983,6 +970,13 @@ void D_DoomMain(void)
 
     D_AddFile(iwadfile);
     W_CheckCorrectIWAD(heretic);
+
+#ifdef FEATURE_DEHACKED
+    // Load dehacked patches specified on the command line.
+    DEH_ParseCommandLine();
+#endif
+
+    // Load PWAD files.
     W_ParseCommandLine();
 
     //!
@@ -1010,9 +1004,12 @@ void D_DoomMain(void)
 
     if (p)
     {
+        char *uc_filename = strdup(myargv[p + 1]);
+        M_ForceUppercase(uc_filename);
+
         // In Vanilla, the filename must be specified without .lmp,
         // but make that optional.
-        if (M_StringEndsWith(myargv[p + 1], ".lmp"))
+        if (M_StringEndsWith(uc_filename, ".LMP"))
         {
             M_StringCopy(file, myargv[p + 1], sizeof(file));
         }
@@ -1020,6 +1017,8 @@ void D_DoomMain(void)
         {
             DEH_snprintf(file, sizeof(file), "%s.lmp", myargv[p + 1]);
         }
+
+        free(uc_filename);
 
         if (D_AddFile(file))
         {

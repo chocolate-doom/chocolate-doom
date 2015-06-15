@@ -1,5 +1,5 @@
 
-AM_CFLAGS = -I.. -I$(top_builddir)/src
+AM_CFLAGS =  -I$(top_srcdir)/src -I$(top_srcdir)/textscreen
 
 noinst_PROGRAMS=guitest calculator
 
