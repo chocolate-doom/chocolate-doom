@@ -607,7 +607,7 @@ void R_ProjectSprite(mobj_t * thing)
         vis->colormap = colormaps;      // full bright
     else
     {                           // diminished light
-        index = xscale >> (LIGHTSCALESHIFT - detailshift);
+        index = xscale >> (LIGHTSCALESHIFT - detailshift + hires); // [cndoom] hires
         if (index >= MAXLIGHTSCALE)
             index = MAXLIGHTSCALE - 1;
         vis->colormap = spritelights[index];
@@ -727,8 +727,8 @@ void R_DrawPSprite(pspdef_t * psp)
     vis->mobjflags = 0;
     vis->class = 0;
     vis->psprite = true;
-    vis->texturemid = (BASEYCENTER << FRACBITS) + FRACUNIT / 2
-        - (psp->sy - spritetopoffset[lump]);
+    vis->texturemid = (BASEYCENTER << FRACBITS) /* + FRACUNIT / 2 */
+        - (psp->sy - spritetopoffset[lump]); // [cndoom] hires
     if (viewheight == SCREENHEIGHT)
     {
         vis->texturemid -= PSpriteSY[viewplayer->class]

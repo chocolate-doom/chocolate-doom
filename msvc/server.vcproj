@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="Server"
 	ProjectGUID="{10DCBB24-F8BB-4796-A653-6DE9C8AAC24B}"
 	RootNamespace="Server"
@@ -62,7 +62,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="SDL.lib SDL_net.lib SDLmain.lib"
-				OutputFile="$(OutDir)\chocolate-server-dbg.exe"
+				OutputFile="$(OutDir)\cnserver-dbg.exe"
 				IgnoreDefaultLibraryNames="msvcrt"
 				GenerateDebugInformation="true"
 				SubSystem="1"
@@ -140,7 +140,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="SDL.lib SDL_net.lib SDLmain.lib"
-				OutputFile="$(OutDir)\chocolate-server.exe"
+				OutputFile="$(OutDir)\cnserver.exe"
 				IgnoreDefaultLibraryNames="msvcrtd"
 				GenerateDebugInformation="false"
 				SubSystem="1"

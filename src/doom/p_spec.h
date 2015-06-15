@@ -300,7 +300,8 @@ typedef struct
 
 #define PLATWAIT		3
 #define PLATSPEED		FRACUNIT
-#define MAXPLATS		30
+// [cndoom] Doom+ limits
+#define MAXPLATS		7680 // was 30
 
 
 extern plat_t*	activeplats[MAXPLATS];

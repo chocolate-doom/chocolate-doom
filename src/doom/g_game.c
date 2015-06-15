@@ -21,7 +21,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-#include "doomdef.h" 
+#include "doomdef.h"
 #include "doomkeys.h"
 #include "doomstat.h"
 
@@ -71,7 +71,7 @@
 
 
 #include "g_game.h"
-
+#include "cn_meta.h"
 
 #define SAVEGAMESIZE	0x2c000
 
@@ -148,7 +148,14 @@ int             testcontrols_mousespeed;
 wbstartstruct_t wminfo;               	// parms for world map / intermission 
  
 byte		consistancy[MAXPLAYERS][BACKUPTICS]; 
- 
+
+// [cndoom] all level times saved here on map completion for later use,
+// also keep track of total time spent on all levels so far.
+#define MAXLEVELTIMES 49
+int leveltimes[MAXLEVELTIMES];
+int totaltime;
+int ki, it, se;
+
 #define MAXPLMOVE		(forwardmove[1]) 
  
 #define TURBOTHRESHOLD	0x32
@@ -201,9 +208,9 @@ static int      turnheld;		// for accelerative turning
 static boolean  mousearray[MAX_MOUSE_BUTTONS + 1];
 static boolean *mousebuttons = &mousearray[1];  // allow [-1]
 
-// mouse values are used once 
+// mouse values are used once
 int             mousex;
-int             mousey;         
+int             mousey;
 
 static int      dclicktime;
 static boolean  dclickstate;
@@ -227,8 +234,8 @@ static char     savedescription[32];
 mobj_t*		bodyque[BODYQUESIZE]; 
 int		bodyqueslot; 
  
-int             vanilla_savegame_limit = 1;
-int             vanilla_demo_limit = 1;
+int             vanilla_savegame_limit = 0;
+int             vanilla_demo_limit = 0;
  
 int G_CmdChecksum (ticcmd_t* cmd) 
 { 
@@ -335,7 +342,8 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
 	consistancy[consoleplayer][maketic%BACKUPTICS]; 
  
     strafe = gamekeydown[key_strafe] || mousebuttons[mousebstrafe] 
-	|| joybuttons[joybstrafe]; 
+    || joybuttons[joybstrafe] 
+    || gamekeydown[key_strafe_alt];
 
     // fraggle: support the old "joyb_speed = 31" hack which
     // allowed an autorun effect
@@ -344,9 +352,9 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
          || joybspeed >= MAX_JOY_BUTTONS
          || gamekeydown[key_speed] 
          || joybuttons[joybspeed];
- 
+
     forward = side = 0;
-    
+
     // use two stage accelerative turning
     // on the keyboard and joystick
     if (joyxmove < 0
@@ -359,9 +367,9 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
 
     if (turnheld < SLOWTURNTICS) 
 	tspeed = 2;             // slow turn 
-    else 
+    else
 	tspeed = speed;
-    
+
     // let movement keys cancel each other out
     if (strafe) 
     { 
@@ -438,7 +446,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     { 
 	cmd->buttons |= BT_USE;
 	// clear double clicks if hit use button 
-	dclicks = 0;                   
+	dclicks = 0;
     } 
 
     // If the previous or next weapon button is pressed, the
@@ -826,10 +834,15 @@ boolean G_Responder (event_t* ev)
 		 
       case ev_mouse: 
         SetMouseButtons(ev->data1);
-	mousex = ev->data2*(mouseSensitivity+5)/10; 
-	mousey = ev->data3*(mouseSensitivity+5)/10; 
-	return true;    // eat events 
- 
+        if (mouseSensitivity)
+            mousex = ev->data2*(mouseSensitivity+5)/10; 
+        else
+            mousex = 0;
+        if (mouseSensitivity_y)
+        mousey = ev->data3*(mouseSensitivity_y+5)/10;
+        else
+            mousey = 0;
+        return true;    // eat events 
       case ev_joystick: 
         SetJoyButtons(ev->data1);
 	joyxmove = ev->data2; 
@@ -855,6 +868,13 @@ void G_Ticker (void)
     int		i;
     int		buf; 
     ticcmd_t*	cmd;
+    
+    // [cndoom] moved this here so it works during playback too
+    // G_CheckDemoStatus just returns if no demo is playing or recording,
+    // and during the regular demo loop the keystroke goes to the menu 
+    // code so there should be no unwanted side effects.
+    if (gamekeydown[key_demo_quit])
+	G_CheckDemoStatus ();
     
     // do player reborns if needed
     for (i=0 ; i<MAXPLAYERS ; i++) 
@@ -883,9 +903,6 @@ void G_Ticker (void)
 	    break; 
 	  case ga_completed: 
 	    G_DoCompleted (); 
-	    break; 
-	  case ga_victory: 
-	    F_StartFinale (); 
 	    break; 
 	  case ga_worlddone: 
 	    G_DoWorldDone (); 
@@ -1355,53 +1372,18 @@ void G_DoCompleted (void)
 	 
     if (automapactive) 
 	AM_Stop (); 
-	
-    if (gamemode != commercial)
-    {
-        // Chex Quest ends after 5 levels, rather than 8.
 
-        if (gameversion == exe_chex)
-        {
-            if (gamemap == 5)
-            {
-                gameaction = ga_victory;
-                return;
-            }
-        }
-        else
-        {
-            switch(gamemap)
-            {
-              case 8:
-                gameaction = ga_victory;
-                return;
-              case 9: 
-                for (i=0 ; i<MAXPLAYERS ; i++) 
-                    players[i].didsecret = true; 
-                break;
-            }
-        }
-    }
+    // [cndoom] handle ending after map8 for gamemode != commercial in the
+    // same place it's done for gamemode == commercial (G_WorldDone), so that
+    // that timers in the intermission screen can be seen.
 
-//#if 0  Hmmm - why?
-    if ( (gamemap == 8)
-	 && (gamemode != commercial) ) 
-    {
-	// victory 
-	gameaction = ga_victory; 
-	return; 
-    } 
-	 
-    if ( (gamemap == 9)
-	 && (gamemode != commercial) ) 
+    if ((gamemap == 9) && (gamemode != commercial)) 
     {
 	// exit secret level 
 	for (i=0 ; i<MAXPLAYERS ; i++) 
 	    players[i].didsecret = true; 
     } 
-//#endif
-    
-	 
+
     wminfo.didsecret = players[consoleplayer].didsecret; 
     wminfo.epsd = gameepisode -1; 
     wminfo.last = gamemap -1;
@@ -1454,16 +1436,12 @@ void G_DoCompleted (void)
     wminfo.maxitems = totalitems; 
     wminfo.maxsecret = totalsecret; 
     wminfo.maxfrags = 0; 
-
-    // Set par time. Doom episode 4 doesn't have a par time, so this
-    // overflows into the cpars array. It's necessary to emulate this
-    // for statcheck regression testing.
-    if (gamemode == commercial)
-	wminfo.partime = TICRATE*cpars[gamemap-1];
+    if ( gamemode == commercial )
+	wminfo.partime = TICRATE*cpars[gamemap-1]; 
     else if (gameepisode < 4)
-	wminfo.partime = TICRATE*pars[gameepisode][gamemap];
+	wminfo.partime = TICRATE*pars[gameepisode][gamemap]; 
     else
-        wminfo.partime = TICRATE*cpars[gamemap];
+    wminfo.partime = TICRATE*cpars[gamemap];
 
     wminfo.pnum = consoleplayer; 
  
@@ -1481,12 +1459,65 @@ void G_DoCompleted (void)
     gamestate = GS_INTERMISSION; 
     viewactive = false; 
     automapactive = false; 
-
     StatCopy(&wminfo);
+ 
+     //[cndoom] save leveltime here for later use, also calculate total
+    // time spent on all levels so far for use in the intermission screen
+    if (gamemode == commercial) { leveltimes[gamemap-1] = leveltime;}
+    else { leveltimes[gameepisode*9+gamemap-1] = leveltime; }
+
+    for (i=0, totaltime=0; i < MAXLEVELTIMES; i++)
+	totaltime += leveltimes[i];
+
+    //!
+    // @vanilla
+    //
+    // Outputs gameplay stats per map/total to stdout/console
+    //
+    
+    if (M_CheckParm("-printstats") || M_CheckParm("-record"))
+    {
+	printf ("\n### ");
+	if (gamemode == commercial)
+	    printf ("MAP%02i ", gamemap);
+	else
+	    printf ("E%iM%i #", gameepisode, gamemap);
+	printf ("#####################################\n"\
+		"#                                             #\n");
+
+	if (leveltime >= TICRATE*35*60)
+	{
+		printf ("#   Time: %03i:%05.2f", leveltime / TICRATE / 60,
+		(float)(leveltime % (60*TICRATE)) / TICRATE);
+	}
+	else
+	{
+		printf ("#   Time:  %02i:%05.2f", leveltime / TICRATE / 60,
+		(float)(leveltime % (60*TICRATE)) / TICRATE);
+	}
+
+	for (i = ki = it = se = 0; i<MAXPLAYERS; i++)
+	{
+	    ki += players[i].killcount;
+	    it += players[i].itemcount;
+	    se += players[i].secretcount;
+	}
+
+	printf ("       Kills: % 5i/%-5i  #\n", ki, totalkills);
+	printf ("#  Items: % 5i/%-5i   ", it, totalitems);
+	printf ("Secrets: % 5i/%-5i  #\n", se, totalsecret);
+
+	printf ("#                                             #\n"\
+		"################### Total time: %02i:%02i:%05.2f ###\n",
+		totaltime / TICRATE / 60 / 60,
+		(totaltime / TICRATE / 60) % 60,
+		(float)(totaltime % (60*TICRATE)) / TICRATE);
+
+	fflush(stdout);
+    }
  
     WI_Start (&wminfo); 
 } 
-
 
 //
 // G_WorldDone 
@@ -1498,7 +1529,7 @@ void G_WorldDone (void)
     if (secretexit) 
 	players[consoleplayer].didsecret = true; 
 
-    if ( gamemode == commercial )
+    if (gamemode == commercial)
     {
 	switch (gamemap)
 	{
@@ -1514,8 +1545,38 @@ void G_WorldDone (void)
 	    break;
 	}
     }
-} 
- 
+    // [cndoom] gamemode != commercial is handled here now instead of
+    // setting ga_victory in G_DoCompleted so that the intermission
+    // screen gets shown for ExM8
+    else
+    {
+	if (gameversion == exe_chex && gamemap == 5)
+	    F_StartFinale();
+    // [cndoom] do not end episodes
+    else if (gamemap == 8)
+    {
+        wminfo.next = 0; // go to first map
+        
+        switch (gameepisode)
+        {
+            case 1: 
+                gameepisode = 2;
+                break; 
+            case 2: 
+                gameepisode = 3;
+                break; 
+            case 3: 
+                gameepisode = 4;
+                break; 
+            case 4:
+                F_StartFinale();
+                break;
+        }
+        WI_Start (&wminfo);
+    }
+    }
+}
+
 void G_DoWorldDone (void) 
 {        
     gamestate = GS_LEVEL; 
@@ -1713,6 +1774,9 @@ G_InitNew
     char *skytexturename;
     int             i;
 
+    // [cndoom] clear leveltimes
+    memset (leveltimes, 0, sizeof(int)*MAXLEVELTIMES);
+
     if (paused)
     {
 	paused = false;
@@ -1894,7 +1958,8 @@ static void IncreaseDemoBuffer(void)
     // Generate a new buffer twice the size
     new_length = current_length * 2;
     
-    new_demobuffer = Z_Malloc(new_length, PU_STATIC, 0);
+    // [cndoom] don't use zone for the demo buffer
+    new_demobuffer = malloc(new_length);
     new_demop = new_demobuffer + (demo_p - demobuffer);
 
     // Copy over the old data
@@ -1903,7 +1968,8 @@ static void IncreaseDemoBuffer(void)
 
     // Free the old buffer and point the demo pointers at the new buffer.
 
-    Z_Free(demobuffer);
+    // [cndoom] don't use zone for the demo buffer
+    free(demobuffer);
 
     demobuffer = new_demobuffer;
     demo_p = new_demop;
@@ -1913,9 +1979,10 @@ static void IncreaseDemoBuffer(void)
 void G_WriteDemoTiccmd (ticcmd_t* cmd) 
 { 
     byte *demo_start;
-
-    if (gamekeydown[key_demo_quit])           // press q to end demo recording 
-	G_CheckDemoStatus (); 
+    
+    // [cndoom] moved this elsewhere so it works during playback too
+    // if (gamekeydown[key_demo_quit])           // press q to end demo recording 
+	//G_CheckDemoStatus ();
 
     demo_start = demo_p;
 
@@ -1923,7 +1990,7 @@ void G_WriteDemoTiccmd (ticcmd_t* cmd)
     *demo_p++ = cmd->sidemove; 
 
     // If this is a longtics demo, record in higher resolution
- 
+
     if (longtics)
     {
         *demo_p++ = (cmd->angleturn & 0xff);
@@ -1973,7 +2040,11 @@ void G_RecordDemo (char *name)
     usergame = false;
     demoname_size = strlen(name) + 5;
     demoname = Z_Malloc(demoname_size, PU_STATIC, NULL);
-    M_snprintf(demoname, demoname_size, "%s.lmp", name);
+    // [cndoom] only append .lmp if it's missing, to match new -playdemo behaviour
+    if (M_StringEndsWith(name, ".lmp"))
+        M_StringCopy(demoname, name, demoname_size);
+    else
+        M_snprintf(demoname, demoname_size, "%s.lmp", name);
     maxsize = 0x20000;
 
     //!
@@ -1987,7 +2058,9 @@ void G_RecordDemo (char *name)
     i = M_CheckParmWithArgs("-maxdemo", 1);
     if (i)
 	maxsize = atoi(myargv[i+1])*1024;
-    demobuffer = Z_Malloc (maxsize,PU_STATIC,NULL); 
+
+    // [cndoom] don't use zone for the demo buffer
+    demobuffer = malloc(maxsize);
     demoend = demobuffer + maxsize;
 	
     demorecording = true; 
@@ -2051,7 +2124,10 @@ void G_BeginRecording (void)
     *demo_p++ = consoleplayer;
 	 
     for (i=0 ; i<MAXPLAYERS ; i++) 
-	*demo_p++ = playeringame[i]; 		 
+    *demo_p++ = playeringame[i];
+    // [cndoom] fill the consoleplayer's slot in the metadata player info
+    // array here, others should have been filled correctly inside the
+    // network code already
 } 
  
 
@@ -2106,15 +2182,52 @@ static char *DemoVersionDescription(int version)
     }
 }
 
+// [cndoom]
+static boolean demo_from_file;
 void G_DoPlayDemo (void) 
 { 
     skill_t skill; 
     int             i, episode, map; 
     int demoversion;
-	 
+    FILE *demofp;
+    char file[256];
     gameaction = ga_nothing; 
-    demobuffer = demo_p = W_CacheLumpName (defdemoname, PU_STATIC); 
 
+    // [cndoom] External (.lmp) demos are now loaded directly from the disk
+    // bypassing the WAD manager, demos in WAD must still go through it. Files
+    // take priority over lumps.
+
+    // append .lmp to the demo name if necessary
+    if (!strcasecmp(defdemoname + strlen(defdemoname) - 4, ".lmp"))
+	strncpy(file, defdemoname, 256);
+    else
+	M_snprintf(file, 256, "%s.lmp", defdemoname);
+
+    demofp = fopen (file, "rb");
+    if (!demofp) // file doesn't exist, see if the lump does
+    {
+	i = W_CheckNumForName (defdemoname);
+	if (i >= 0)
+    	demobuffer = demo_p = W_CacheLumpName (defdemoname, PU_STATIC);
+
+	else // lump didn't exist either
+	    I_Error ("G_DoPlayDemo: No file or lump found for demo \"%s\".", defdemoname);
+
+	demo_from_file = false;
+    }
+    else // load from file
+    {
+	i = M_FileLength(demofp);
+	demobuffer = malloc(i);
+	if (!demobuffer)
+	    I_Error ("G_DoPlayDemo: Couldn't malloc %i bytes for demo buffer.", i);
+
+	demo_p = demobuffer;
+	fread (demobuffer, 1, i, demofp);
+	fclose (demofp);
+
+	demo_from_file = true;
+    }
     demoversion = *demo_p++;
 
     if (demoversion == G_VanillaVersionCode())
@@ -2174,14 +2287,9 @@ void G_DoPlayDemo (void)
 //
 void G_TimeDemo (char* name) 
 {
-    //!
-    // @vanilla 
-    //
-    // Disable rendering the screen entirely.
-    //
 
-    nodrawers = M_CheckParm ("-nodraw"); 
-
+    // [cndoom] allow -nodraw / -noblit even without -timedemo, checkparms
+    // moved to D_DoomMain
     timingdemo = true; 
     singletics = true; 
 
@@ -2203,7 +2311,6 @@ void G_TimeDemo (char* name)
 boolean G_CheckDemoStatus (void) 
 { 
     int             endtime; 
-	 
     if (timingdemo) 
     { 
         float fps;
@@ -2222,8 +2329,14 @@ boolean G_CheckDemoStatus (void)
     } 
 	 
     if (demoplayback) 
-    { 
+    {
+	// [cndoom] don't attempt to release demos loaded directly from files,
+	// instead just free the demo buffer
+	if (demo_from_file)
+	    free(demobuffer);
+	else
         W_ReleaseLumpName(defdemoname);
+
 	demoplayback = false; 
 	netdemo = false;
 	netgame = false;
@@ -2245,11 +2358,16 @@ boolean G_CheckDemoStatus (void)
     if (demorecording) 
     { 
 	*demo_p++ = DEMOMARKER; 
+
 	M_WriteFile (demoname, demobuffer, demo_p - demobuffer); 
-	Z_Free (demobuffer); 
+	
+	// [cndoom] don't use zone for the demo buffer
+	free(demobuffer); 
 	demorecording = false; 
-	I_Error ("Demo %s recorded",demoname); 
-    } 
+    // [cndoom] attach metadata to the file here
+	CN_WriteMetaData (demoname); 
+    I_Error ("Demo %s recorded",demoname); 
+    }
 	 
     return false; 
 } 

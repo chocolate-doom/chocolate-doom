@@ -68,7 +68,7 @@ void S_InitScript(void);
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
-void H2_ProcessEvents(void);
+void D_ProcessEvents(void);
 void H2_DoAdvanceDemo(void);
 void H2_AdvanceDemo(void);
 void H2_StartTitle(void);
@@ -759,13 +759,13 @@ void H2_GameLoop(void)
 
 //==========================================================================
 //
-// H2_ProcessEvents
+// D_ProcessEvents
 //
 // Send all the events of the given timestamp down the responder chain.
 //
 //==========================================================================
 
-void H2_ProcessEvents(void)
+void D_ProcessEvents(void)
 {
     event_t *ev;
 
@@ -844,8 +844,8 @@ static void DrawAndBlit(void)
     {
         if (!netgame)
         {
-            V_DrawPatch(160, viewwindowy + 5, W_CacheLumpName("PAUSED",
-                                                              PU_CACHE));
+            V_DrawPatch(160, (viewwindowy >> hires) + 5, W_CacheLumpName("PAUSED",
+                                                              PU_CACHE)); // [cndoom] hires
         }
         else
         {

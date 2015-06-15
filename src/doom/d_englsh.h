@@ -303,6 +303,8 @@
 
 #define HUSTR_MESSAGESENT	"[Message Sent]"
 
+#define HUSTR_SECRETFOUND	"A secret is revealed!"
+
 // The following should NOT be changed unless it seems
 // just AWFULLY necessary
 

@@ -44,6 +44,7 @@ extern screen_mode_t mode_stretch_5x;
 // Horizontally squashed modes (320x200 -> multiples of 256x200)
 
 extern screen_mode_t mode_squash_1x;
+extern screen_mode_t mode_squash_1p5x;
 extern screen_mode_t mode_squash_2x;
 extern screen_mode_t mode_squash_3x;
 extern screen_mode_t mode_squash_4x;

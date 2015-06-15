@@ -30,7 +30,8 @@
 #include "setup_icon.c"
 #include "mode.h"
 
-#include "compatibility.h"
+#include "advanced.h" // [cndoom]
+#include "competition.h" // [cndoom]
 #include "display.h"
 #include "joystick.h"
 #include "keyboard.h"
@@ -85,11 +86,11 @@ static void SensibleDefaults(void)
     snd_musicdevice = 3;
     joybspeed = 29;                 // Always run
     vanilla_savegame_limit = 0;
-    vanilla_keyboard_mapping = 0;
-    vanilla_demo_limit = 0;
+    vanilla_keyboard_mapping = 0; // [cndoom]
+    vanilla_demo_limit = 0; // [cndoom]
     graphical_startup = 0;
     show_endoom = 0;
-    dclick_use = 0;
+    dclick_use = 0;  // [cndoom]
     novert = 1;
 }
 
@@ -224,16 +225,20 @@ void MainMenu(void)
                          (TxtWidgetSignalFunc) ConfigMouse, NULL),
           TXT_NewButton2("Configure Gamepad/Joystick",
                          (TxtWidgetSignalFunc) ConfigJoystick, NULL),
+          // [cndoom]
+          TXT_NewButton2("Competition", 
+                         (TxtWidgetSignalFunc) ConfigCompetition, NULL),
+          // [cndoom]
           NULL);
 
-    // The compatibility window is only appropriate for Doom/Strife.
+    // The advanced window is only appropriate for Doom/Strife.
 
     if (gamemission == doom || gamemission == strife)
     {
         txt_button_t *button;
 
-        button = TXT_NewButton2("Compatibility", 
-                                (TxtWidgetSignalFunc) CompatibilitySettings,
+        button = TXT_NewButton2("Advanced settings", 
+                                (TxtWidgetSignalFunc) AdvancedSettings,
                                 NULL);
 
         TXT_AddWidget(window, button);

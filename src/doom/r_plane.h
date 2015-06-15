@@ -26,7 +26,7 @@
 
 
 // Visplane related.
-extern  short*		lastopening;
+extern  int*		lastopening;
 
 
 typedef void (*planefunction_t) (int top, int bottom);
@@ -34,8 +34,8 @@ typedef void (*planefunction_t) (int top, int bottom);
 extern planefunction_t	floorfunc;
 extern planefunction_t	ceilingfunc_t;
 
-extern short		floorclip[SCREENWIDTH];
-extern short		ceilingclip[SCREENWIDTH];
+extern int		floorclip[SCREENWIDTH];
+extern int		ceilingclip[SCREENWIDTH];
 
 extern fixed_t		yslope[SCREENHEIGHT];
 extern fixed_t		distscale[SCREENWIDTH];
@@ -52,10 +52,10 @@ R_MapPlane
 void
 R_MakeSpans
 ( int		x,
-  int		t1,
-  int		b1,
-  int		t2,
-  int		b2 );
+  unsigned  int		t1,
+  unsigned  int		b1,
+  unsigned  int		t2,
+  unsigned  int		b2 );
 
 void R_DrawPlanes (void);
 

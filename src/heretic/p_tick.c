@@ -115,6 +115,8 @@ void P_RunThinkers(void)
     currentthinker = thinkercap.next;
     while (currentthinker != &thinkercap)
     {
+        nextthinker = currentthinker->next;
+
         if (currentthinker->function == (think_t) - 1)
         {                       // time to remove it
             nextthinker = currentthinker->next;

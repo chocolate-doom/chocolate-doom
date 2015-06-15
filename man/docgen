@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # 
-# Chocolate Doom self-documentation tool.  This works similar to javadoc
+# Competition Doom self-documentation tool.  This works similar to javadoc
 # or doxygen, but documents command line parameters and configuration
 # file values, generating documentation in Unix manpage, wikitext and
 # plain text forms.

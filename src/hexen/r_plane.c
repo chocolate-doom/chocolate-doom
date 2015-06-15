@@ -303,7 +303,7 @@ visplane_t *R_CheckPlane(visplane_t * pl, int start, int stop)
 
     for (x = intrl; x <= intrh; x++)
     {
-        if (pl->top[x] != 0xff)
+        if (pl->top[x] != 0xffff) // [cndoom] hires
         {
             break;
         }
@@ -383,6 +383,8 @@ void R_DrawPlanes(void)
     int offset2;
     int skyTexture2;
     int scrollOffset;
+    int frac; // [cndoom] hires
+    int fracstep = FRACUNIT >> hires; // [cndoom] hires
 
     extern byte *ylookup[MAXHEIGHT];
     extern int columnofs[MAXWIDTH];
@@ -431,22 +433,21 @@ void R_DrawPlanes(void)
                         }
                         angle = (viewangle + xtoviewangle[x])
                             >> ANGLETOSKYSHIFT;
-                        source = R_GetColumn(skyTexture, angle + offset)
-                            + SKYTEXTUREMIDSHIFTED + (dc_yl - centery);
-                        source2 = R_GetColumn(skyTexture2, angle + offset2)
-                            + SKYTEXTUREMIDSHIFTED + (dc_yl - centery);
+                        source = R_GetColumn(skyTexture, angle + offset); // [cndoom] hires
+                        source2 = R_GetColumn(skyTexture2, angle + offset2); // [cndoom] hires
                         dest = ylookup[dc_yl] + columnofs[x];
+                        frac = SKYTEXTUREMIDSHIFTED * FRACUNIT + (dc_yl - centery) * fracstep; // [cndoom] hires
                         do
                         {
-                            if (*source)
+                            if (source[frac >> FRACBITS]) // [cndoom] hires
                             {
-                                *dest = *source++;
-                                source2++;
+                                *dest = source[frac >> FRACBITS]; // [cndoom] hires
+                                frac += fracstep; // [cndoom] hires
                             }
                             else
                             {
-                                *dest = *source2++;
-                                source++;
+                                *dest = source2[frac >> FRACBITS]; // [cndoom] hires
+                                frac += fracstep; // [cndoom] hires
                             }
                             dest += SCREENWIDTH;
                         }
@@ -480,13 +481,14 @@ void R_DrawPlanes(void)
                         }
                         angle = (viewangle + xtoviewangle[x])
                             >> ANGLETOSKYSHIFT;
-                        source = R_GetColumn(skyTexture, angle + offset)
-                            + SKYTEXTUREMIDSHIFTED + (dc_yl - centery);
+                        source = R_GetColumn(skyTexture, angle + offset); // [cndoom] hires
                         dest = ylookup[dc_yl] + columnofs[x];
+                        frac = SKYTEXTUREMIDSHIFTED * FRACUNIT + (dc_yl - centery) * fracstep; // [cndoom] hires
                         do
                         {
-                            *dest = *source++;
+                            *dest = source[frac >> FRACBITS]; // [cndoom] hires
                             dest += SCREENWIDTH;
+                            frac += fracstep; // [cndoom] hires
                         }
                         while (count--);
                     }
@@ -568,8 +570,8 @@ void R_DrawPlanes(void)
         }
         planezlight = zlight[light];
 
-        pl->top[pl->maxx + 1] = 0xff;
-        pl->top[pl->minx - 1] = 0xff;
+        pl->top[pl->maxx + 1] = 0xffff; // [cndoom] hires
+        pl->top[pl->minx - 1] = 0xffff; // [cndoom] hires
 
         stop = pl->maxx + 1;
         for (x = pl->minx; x <= stop; x++)

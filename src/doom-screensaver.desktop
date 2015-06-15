@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Competition Doom
+Comment=Conservative source port
+TryExec=cndoom
+Exec=cndoom
+StartupNotify=false
+Terminal=false
+Type=Application
+OnlyShowIn=GNOME;MATE;
+Categories=Screensaver;

@@ -47,6 +47,9 @@
 // Data.
 #include "sounds.h"
 
+#include "m_controls.h"
+
+#define HUSTR_SECRETFOUND	"A secret is revealed!"
 
 //
 // Animating textures and planes
@@ -132,8 +135,9 @@ anim_t*		lastanim;
 
 //
 //      Animating line specials
-//
-#define MAXLINEANIMS            64
+// [cndoom] Doom+ limits
+
+#define MAXLINEANIMS            16384 // was 64
 
 extern  short	numlinespecials;
 extern  line_t*	linespeciallist[MAXLINEANIMS];
@@ -337,7 +341,19 @@ P_FindNextHighestFloor
     line_t*     check;
     sector_t*   other;
     fixed_t     height = currentheight;
-    fixed_t     heightlist[MAX_ADJOINING_SECTORS + 2];
+    static fixed_t *heightlist = NULL;
+    static int heightlist_size = 0;
+
+    // [crispy] remove MAX_ADJOINING_SECTORS Vanilla limit
+    // from prboom-plus/src/p_spec.c:404-411
+    if (sec->linecount > heightlist_size)
+    {
+	do
+	{
+	    heightlist_size = heightlist_size ? 2 * heightlist_size : MAX_ADJOINING_SECTORS;
+	} while (sec->linecount > heightlist_size);
+	heightlist = realloc(heightlist, heightlist_size * sizeof(*heightlist));
+    }
 
     for (i=0, h=0; i < sec->linecount; i++)
     {
@@ -354,10 +370,11 @@ P_FindNextHighestFloor
             {
                 height = other->floorheight;
             }
+
             else if (h == MAX_ADJOINING_SECTORS + 2)
             {
                 // Fatal overflow: game crashes at 22 textures
-                I_Error("Sector with more than 22 adjoining sectors. "
+                   puts("Sector with more than 22 adjoining sectors. "
                         "Vanilla will crash here");
             }
 
@@ -1019,6 +1036,7 @@ P_ShootSpecialLine
 void P_PlayerInSpecialSector (player_t* player)
 {
     sector_t*	sector;
+    extern int showMessages;
 	
     sector = player->mo->subsector->sector;
 
@@ -1057,6 +1075,11 @@ void P_PlayerInSpecialSector (player_t* player)
 			
       case 9:
 	// SECRET SECTOR
+	// [crispy] show "Secret Revealed!" message
+	if (showMessages && cn_secret_message && demoplayback)
+	{
+	    player->message = HUSTR_SECRETFOUND;
+	}
 	player->secretcount++;
 	sector->special = 0;
 	break;

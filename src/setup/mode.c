@@ -29,7 +29,7 @@
 #include "m_controls.h"
 #include "m_misc.h"
 
-#include "compatibility.h"
+#include "advanced.h"
 #include "display.h"
 #include "joystick.h"
 #include "keyboard.h"
@@ -102,7 +102,7 @@ static GameSelectCallback game_selected_callback;
 // Miscellaneous variables that aren't used in setup.
 
 static int showMessages = 1;
-static int screenblocks = 9;
+static int screenblocks = 10;
 static int detailLevel = 0;
 static char *savedir = NULL;
 static char *executable = NULL;
@@ -185,7 +185,7 @@ void InitBindings(void)
 
     // All other variables
 
-    BindCompatibilityVariables();
+    BindAdvancedVariables();
     BindDisplayVariables();
     BindJoystickVariables();
     BindKeyboardVariables();

@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=Competition Setup
+Exec=cnsetup
+Icon=cnsetup
+Type=Application
+Comment=Setup tool for Competition
+Categories=Settings

@@ -258,6 +258,7 @@ extern  boolean         precache;
 extern  gamestate_t     wipegamestate;
 
 extern  int             mouseSensitivity;
+extern  int             mouseSensitivity_y;
 
 extern  int             bodyqueslot;
 

@@ -503,8 +503,8 @@ void R_InitLightTables(void)
         for (j = 0; j < MAXLIGHTZ; j++)
         {
             scale =
-                FixedDiv((SCREENWIDTH / 2 * FRACUNIT),
-                         (j + 1) << LIGHTZSHIFT);
+                FixedDiv((ORIGWIDTH / 2 * FRACUNIT),
+                         (j + 1) << LIGHTZSHIFT); // [cndoom] hires
             scale >>= LIGHTSCALESHIFT;
             level = startmap - scale / DISTMAP;
             if (level < 0)
@@ -560,8 +560,8 @@ void R_ExecuteSetViewSize(void)
     }
     else
     {
-        scaledviewwidth = setblocks * 32;
-        viewheight = (setblocks * 161 / 10);
+        scaledviewwidth = (setblocks * 32) << hires; // [cndoom] hires
+        viewheight = (setblocks * 161 / 10) << hires; // [cndoom] hires
     }
 
     detailshift = setdetail;
@@ -595,8 +595,8 @@ void R_ExecuteSetViewSize(void)
 //
 // psprite scales
 //
-    pspritescale = FRACUNIT * viewwidth / SCREENWIDTH;
-    pspriteiscale = FRACUNIT * SCREENWIDTH / viewwidth;
+    pspritescale = FRACUNIT * viewwidth / ORIGWIDTH; // [cndoom] hires
+    pspriteiscale = FRACUNIT * ORIGWIDTH / viewwidth; // [cndoom] hires
 
 //
 // thing clipping
@@ -734,7 +734,7 @@ void R_SetupFrame(player_t * player)
     extralight = player->extralight;
     viewz = player->viewz;
 
-    tempCentery = viewheight / 2 + (player->lookdir) * screenblocks / 10;
+    tempCentery = viewheight / 2 + ((player->lookdir) << hires) * screenblocks / 10; // [cndoom] hires
     if (centery != tempCentery)
     {
         centery = tempCentery;

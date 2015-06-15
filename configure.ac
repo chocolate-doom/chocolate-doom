@@ -1,11 +1,11 @@
-AC_INIT(Chocolate Doom, 2.2.0, fraggle@gmail.com, chocolate-doom)
+AC_INIT(Competition Doom, 2.0.3.2, admin@doom.com.hr, cndoom)
 
 PACKAGE_SHORTNAME=${PACKAGE_NAME% Doom}
 PACKAGE_SHORTDESC="Conservative source port"
 PACKAGE_COPYRIGHT="Copyright (C) 1993-2015"
 PACKAGE_LICENSE="GNU General Public License, version 2"
-PACKAGE_MAINTAINER="Simon Howard"
-PACKAGE_URL="http://www.chocolate-doom.org/"
+PACKAGE_MAINTAINER="Zvonimir Buzanic"
+PACKAGE_URL="http://www.doom.com.hr/"
 
 AC_CONFIG_AUX_DIR(autotools)
 
@@ -113,13 +113,13 @@ dnl Automake v1.8.0 is required, please upgrade!
 AM_INIT_AUTOMAKE([1.8.0 foreign])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
-WINDOWS_RC_VERSION=`echo $PACKAGE_VERSION | sed 's/-.*//; s/\./, /g; s/$/, 0/'`
+WINDOWS_RC_VERSION=`echo $PACKAGE_VERSION | sed 's/-.*//; s/\./, /g'`
 
 # This controls the prefix added to the start of program names.  For example,
 # if this is changed to "lemon-", the programs generated will be named
 # lemon-doom, lemon-heretic, etc.
 
-PROGRAM_PREFIX=chocolate-
+PROGRAM_PREFIX=cn
 
 AC_SUBST(PROGRAM_PREFIX)
 AC_DEFINE_UNQUOTED(PROGRAM_PREFIX, "$PROGRAM_PREFIX",
@@ -176,4 +176,3 @@ src/strife/Makefile
 textscreen/Makefile
 textscreen/examples/Makefile
 ])
-

@@ -46,6 +46,9 @@
 #include "w_main.h"
 #include "v_video.h"
 
+// [cndoom]
+//#include "doom/cn_meta.h"
+
 #define CT_KEY_GREEN    'g'
 #define CT_KEY_YELLOW   'y'
 #define CT_KEY_RED      'r'
@@ -79,7 +82,7 @@ boolean advancedemo;
 
 FILE *debugfile;
 
-static int show_endoom = 1;
+static int show_endoom = 0; // [cndoom]
 
 void D_ConnectNetGame(void);
 void D_CheckNetGame(void);
@@ -189,7 +192,7 @@ void D_Display(void)
     {
         if (!netgame)
         {
-            V_DrawPatch(160, viewwindowy + 5, W_CacheLumpName(DEH_String("PAUSED"),
+            V_DrawPatch(160, (viewwindowy >> hires) + 5, W_CacheLumpName(DEH_String("PAUSED"), // [cndoom] hires
                                                               PU_CACHE));
         }
         else

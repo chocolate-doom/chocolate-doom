@@ -8,7 +8,8 @@ AM_CFLAGS = @SDL_CFLAGS@                                           \
 noinst_LIBRARIES = libsetup.a
 
 SOURCE_FILES =                                  \
-    compatibility.c   compatibility.h           \
+    competition.c     competition.h             \
+    advanced.c        advanced.h                \
     display.c         display.h                 \
     joystick.c        joystick.h                \
     keyboard.c        keyboard.h                \

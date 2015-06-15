@@ -29,7 +29,7 @@
 
 int vanilla_keyboard_mapping = 1;
 
-static int always_run = 0;
+static int always_run = 1; // [cndoom]
 
 // Keys within these groups cannot have the same value.
 
@@ -264,6 +264,8 @@ static void ConfigExtraKeys(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
     AddKeyControl(table, "Weapon 8", &key_weapon8);
     AddKeyControl(table, "Previous weapon",       &key_prevweapon);
     AddKeyControl(table, "Next weapon",           &key_nextweapon);
+    // [cndoom] alternate strafe
+    AddKeyControl(table, "Alternate Strafe On",   &key_strafe_alt);
 }
 
 static void OtherKeysDialog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))

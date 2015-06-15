@@ -232,8 +232,8 @@ int      testcontrols_mousespeed;
 mobj_t*		bodyque[BODYQUESIZE]; 
 //int       bodyqueslot; [STRIFE] unused
  
-int             vanilla_savegame_limit = 1;
-int             vanilla_demo_limit = 1;
+int             vanilla_savegame_limit = 0;  // [cndoom]
+int             vanilla_demo_limit = 0; // [cndoom]
  
 
 int G_CmdChecksum (ticcmd_t* cmd) 

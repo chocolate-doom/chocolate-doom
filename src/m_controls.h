@@ -27,6 +27,15 @@ extern int key_straferight;
 extern int key_fire;
 extern int key_use;
 extern int key_strafe;
+
+extern int cn_quickstart_delay;
+extern int cn_precache_sounds;
+extern int cn_secret_message;
+extern int cn_typematic_delay;
+extern int cn_typematic_rate;
+extern int key_strafe_alt;
+extern char *cn_meta_id;
+
 extern int key_speed;
 
 extern int key_jump;

@@ -45,6 +45,9 @@
 
 #include "wi_stuff.h"
 
+// [cndoom]
+#include "cn_timer.h"
+
 //
 // Data needed to add patches to full screen intermission pics.
 // Patches are statistics messages, and animations.
@@ -80,7 +83,7 @@
 #define SP_STATSY		50
 
 #define SP_TIMEX		16
-#define SP_TIMEY		(SCREENHEIGHT-32)
+#define SP_TIMEY		(ORIGHEIGHT-32)
 
 
 // NET GAME STUFF
@@ -343,12 +346,15 @@ static patch_t*		yah[3] = { NULL, NULL, NULL };
 // splat
 static patch_t*		splat[2] = { NULL, NULL };
 
+// [cndoom] colon and 0-9 needed in cn_timer.c, so not static anymore,
+// wi prefix added to names
 // %, : graphics
-static patch_t*		percent;
-static patch_t*		colon;
+static patch_t*		wipercent; // [cndoom]
+patch_t*		wicolon; // [cndoom]
 
 // 0-9 graphic
-static patch_t*		num[10];
+// [cndoom] not static, changed name from num to winum
+patch_t*		winum[10];
 
 // minus sign
 static patch_t*		wiminus;
@@ -420,13 +426,13 @@ void WI_drawLF(void)
     if (gamemode != commercial || wbs->last < NUMCMAPS)
     {
         // draw <LevelName> 
-        V_DrawPatch((SCREENWIDTH - SHORT(lnames[wbs->last]->width))/2,
+        V_DrawPatch((ORIGWIDTH - SHORT(lnames[wbs->last]->width))/2,
                     y, lnames[wbs->last]);
 
         // draw "Finished!"
         y += (5*SHORT(lnames[wbs->last]->height))/4;
 
-        V_DrawPatch((SCREENWIDTH - SHORT(finished->width)) / 2, y, finished);
+        V_DrawPatch((ORIGWIDTH - SHORT(finished->width)) / 2, y, finished);
     }
     else if (wbs->last == NUMCMAPS)
     {
@@ -439,7 +445,7 @@ void WI_drawLF(void)
         // bits of memory at this point, but let's try to be accurate
         // anyway.  This deliberately triggers a V_DrawPatch error.
 
-        patch_t tmp = { SCREENWIDTH, SCREENHEIGHT, 1, 1, 
+        patch_t tmp = { ORIGWIDTH, ORIGHEIGHT, 1, 1,
                         { 0, 0, 0, 0, 0, 0, 0, 0 } };
 
         V_DrawPatch(0, y, &tmp);
@@ -454,14 +460,14 @@ void WI_drawEL(void)
     int y = WI_TITLEY;
 
     // draw "Entering"
-    V_DrawPatch((SCREENWIDTH - SHORT(entering->width))/2,
+    V_DrawPatch((ORIGWIDTH - SHORT(entering->width))/2,
 		y,
                 entering);
 
     // draw level
     y += (5*SHORT(lnames[wbs->next]->height))/4;
 
-    V_DrawPatch((SCREENWIDTH - SHORT(lnames[wbs->next]->width))/2,
+    V_DrawPatch((ORIGWIDTH - SHORT(lnames[wbs->next]->width))/2,
 		y, 
                 lnames[wbs->next]);
 
@@ -489,9 +495,9 @@ WI_drawOnLnode
 	bottom = top + SHORT(c[i]->height);
 
 	if (left >= 0
-	    && right < SCREENWIDTH
+	    && right < ORIGWIDTH
 	    && top >= 0
-	    && bottom < SCREENHEIGHT)
+	    && bottom < ORIGHEIGHT)
 	{
 	    fits = true;
 	}
@@ -632,7 +638,7 @@ WI_drawNum
   int		digits )
 {
 
-    int		fontwidth = SHORT(num[0]->width);
+    int		fontwidth = SHORT(winum[0]->width); // [cndoom]
     int		neg;
     int		temp;
 
@@ -669,13 +675,13 @@ WI_drawNum
     while (digits--)
     {
 	x -= fontwidth;
-	V_DrawPatch(x, y, num[ n % 10 ]);
+	V_DrawPatch(x, y, winum[ n % 10 ]); // [cndoom]
 	n /= 10;
     }
 
     // draw a minus sign if necessary
     if (neg)
-	V_DrawPatch(x-=8, y, wiminus);
+	V_DrawPatch(x-=8, y, wiminus); // [cndoom]
 
     return x;
 
@@ -690,7 +696,7 @@ WI_drawPercent
     if (p < 0)
 	return;
 
-    V_DrawPatch(x, y, percent);
+    V_DrawPatch(x, y, wipercent); // [cndoom]
     WI_drawNum(x, y, p, -1);
 }
 
@@ -720,12 +726,12 @@ WI_drawTime
 	do
 	{
 	    n = (t / div) % 60;
-	    x = WI_drawNum(x, y, n, 2) - SHORT(colon->width);
+	    x = WI_drawNum(x, y, n, 2) - SHORT(wicolon->width); // [cndoom]
 	    div *= 60;
 
 	    // draw
 	    if (div==60 || t / div)
-		V_DrawPatch(x, y, colon);
+		V_DrawPatch(x, y, wicolon); // [cndoom]
 	    
 	} while (t / div);
     }
@@ -771,6 +777,15 @@ static boolean		snl_pointeron = false;
 
 void WI_initShowNextLoc(void)
 {
+
+    // [cndoom] exit intermission here if ExM8 in Doom1
+    if (gamemode != commercial && gamemap == 8)
+    {
+	G_WorldDone();
+	return;
+    }
+
+
     state = ShowNextLoc;
     acceleratestage = 0;
     cnt = SHOWNEXTLOCDELAY * TICRATE;
@@ -1061,7 +1076,7 @@ void WI_drawDeathmatchStats(void)
 
     // draw stats
     y = DM_MATRIXY+10;
-    w = SHORT(num[0]->width);
+    w = SHORT(winum[0]->width); // [cndoom]
 
     for (i=0 ; i<MAXPLAYERS ; i++)
     {
@@ -1274,7 +1289,7 @@ void WI_drawNetgameStats(void)
     int		i;
     int		x;
     int		y;
-    int		pwidth = SHORT(percent->width);
+    int		pwidth = SHORT(wipercent->width); // [cndoom]
 
     WI_slamBackground();
     
@@ -1297,6 +1312,12 @@ void WI_drawNetgameStats(void)
 	V_DrawPatch(NG_STATSX+4*NG_SPACINGX-SHORT(frags->width),
 		    NG_STATSY, frags);
 
+    // [cndoom] draw timer for NET games
+    V_DrawPatch(SP_TIMEX, SP_TIMEY, timepatch); // [cndoom] timer
+	CN_DrawIntermissionTime (ORIGWIDTH/2-SP_TIMEX+16 /* + 2*SHORT(winum[0]->width) + SHORT(wicolon->width) */,
+				 SP_TIMEY /* + SHORT(timepatch->height) */,
+				 plrs[me].stime);
+            
     // draw stats
     y = NG_STATSY + SHORT(kills->height);
 
@@ -1449,7 +1470,7 @@ void WI_drawStats(void)
     // line height
     int lh;	
 
-    lh = (3*SHORT(num[0]->height))/2;
+    lh = (3*SHORT(winum[0]->height))/2; // [cndoom]
 
     WI_slamBackground();
 
@@ -1459,21 +1480,31 @@ void WI_drawStats(void)
     WI_drawLF();
 
     V_DrawPatch(SP_STATSX, SP_STATSY, kills);
-    WI_drawPercent(SCREENWIDTH - SP_STATSX, SP_STATSY, cnt_kills[0]);
+    WI_drawPercent(ORIGWIDTH - SP_STATSX, SP_STATSY, cnt_kills[0]);
 
     V_DrawPatch(SP_STATSX, SP_STATSY+lh, items);
-    WI_drawPercent(SCREENWIDTH - SP_STATSX, SP_STATSY+lh, cnt_items[0]);
+    WI_drawPercent(ORIGWIDTH - SP_STATSX, SP_STATSY+lh, cnt_items[0]);
 
     V_DrawPatch(SP_STATSX, SP_STATSY+2*lh, sp_secret);
-    WI_drawPercent(SCREENWIDTH - SP_STATSX, SP_STATSY+2*lh, cnt_secret[0]);
+    WI_drawPercent(ORIGWIDTH - SP_STATSX, SP_STATSY+2*lh, cnt_secret[0]);
 
     V_DrawPatch(SP_TIMEX, SP_TIMEY, timepatch);
-    WI_drawTime(SCREENWIDTH/2 - SP_TIMEX, SP_TIMEY, cnt_time);
+    // [cndoom] remove old timer
+    // WI_drawTime(ORIGWIDTH/2 - SP_TIMEX, SP_TIMEY, cnt_time); // [cndoom] timer
+
+    // [cndoom] overlay more accurate timer
+    if (sp_state >= 8)
+    {
+	CN_DrawIntermissionTime (ORIGWIDTH/2-SP_TIMEX+16 /* + 2*SHORT(winum[0]->width) + SHORT(wicolon->width) */,
+				 SP_TIMEY /* + SHORT(timepatch->height) */,
+				 plrs[me].stime);
+    }
+    // [cndoom] end
 
     if (wbs->epsd < 3)
     {
-	V_DrawPatch(SCREENWIDTH/2 + SP_TIMEX, SP_TIMEY, par);
-	WI_drawTime(SCREENWIDTH - SP_TIMEX, SP_TIMEY, cnt_par);
+	V_DrawPatch(ORIGWIDTH/2 + SP_TIMEX, SP_TIMEY, par);
+	WI_drawTime(ORIGWIDTH - SP_TIMEX, SP_TIMEY, cnt_par);
     }
 
 }
@@ -1613,11 +1644,11 @@ static void WI_loadUnloadData(load_callback_t callback)
     {
 	 // numbers 0-9
 	DEH_snprintf(name, 9, "WINUM%d", i);
-        callback(name, &num[i]);
+        callback(name, &winum[i]); // [cndoom]
     }
 
     // percent sign
-    callback(DEH_String("WIPCNT"), &percent);
+    callback(DEH_String("WIPCNT"), &wipercent); // [cndoom]
 
     // "finished"
     callback(DEH_String("WIF"), &finished);
@@ -1650,7 +1681,7 @@ static void WI_loadUnloadData(load_callback_t callback)
     callback(DEH_String("WIFRGS"), &frags);
 
     // ":"
-    callback(DEH_String("WICOLON"), &colon);
+    callback(DEH_String("WICOLON"), &wicolon); // [cndoom]
 
     // "time"
     callback(DEH_String("WITIME"), &timepatch);

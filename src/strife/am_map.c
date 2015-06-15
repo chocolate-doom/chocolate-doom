@@ -176,7 +176,7 @@ static int 	leveljuststarted = 1; 	// kluge until AM_LevelInit() is called
 
 boolean    	automapactive = false;
 static int 	finit_width = SCREENWIDTH;
-static int 	finit_height = SCREENHEIGHT - 32;
+static int 	finit_height = SCREENHEIGHT - (32 << hires);
 
 // location of window on screen
 static int 	f_x;
@@ -1358,7 +1358,7 @@ void AM_drawMarks(void)
             {
                 // villsa [STRIFE]
                 if(i >= mapmarknum)
-                    V_DrawPatch(fx, fy, marknums[i]);
+                    V_DrawPatch(fx >> hires, fy >> hires, marknums[i]);
             }
         }
     }

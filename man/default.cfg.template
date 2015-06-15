@@ -1,19 +1,19 @@
 .TH default.cfg 5
 .SH NAME
-default.cfg \- Chocolate Doom configuration file
+default.cfg \- Competition Doom configuration file
 .SH DESCRIPTION
 .PP
 \fIdefault.cfg\fR
-is the configuration file for \fBchocolate-doom\fR(6).  The configuration
+is the configuration file for \fBcndoom\fR(6).  The configuration
 options stored in the file are the same as those stored in the
 original DOS Vanilla Doom. 
-Extra Chocolate Doom-specific options are stored in a separate 
-configuration file, \fBchocolate-doom.cfg\fR.
+Extra Competition Doom-specific options are stored in a separate 
+configuration file, \fBcndoom.cfg\fR.
 .PP
 \fIdefault.cfg\fR is normally stored in the user's home directory,
-in \fI~/.chocolate-doom/default.cfg\fR.
+in \fI~/.cndoom/default.cfg\fR.
 .PP
-The \fBchocolate-setup\fR(6) tool provides a simple to use front-end
+The \fBcnsetup\fR(6) tool provides a simple to use front-end
 for editing \fIdefault.cfg\fR.
 .br
 .SH FILE FORMAT
@@ -47,7 +47,7 @@ indicating "false" and a non-zero value indicating "true".
 @content
 
 .SH SEE ALSO
-\fBchocolate-doom\fR(6),
-\fBchocolate-doom.cfg\fR(5),
-\fBchocolate-setup\fR(6)
+\fBcndoom\fR(6),
+\fBcndoom.cfg\fR(5),
+\fBcnsetup\fR(6)
 

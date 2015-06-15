@@ -40,7 +40,7 @@
 // DEFAULTS
 //
 
-// Location where all configuration data is stored - 
+// Location where all configuration data is stored -
 // default.cfg, savegames, etc.
 
 char *configdir;
@@ -50,7 +50,7 @@ char *configdir;
 static char *default_main_config;
 static char *default_extra_config;
 
-typedef enum 
+typedef enum
 {
     DEFAULT_INT,
     DEFAULT_INT_HEX,
@@ -79,7 +79,7 @@ typedef struct
     // If zero, we didn't read this value from a config file.
     int untranslated;
 
-    // The value we translated the scancode into when we read the 
+    // The value we translated the scancode into when we read the
     // config file on startup.  If the variable value is different from
     // this, it has been changed and needs to be converted; otherwise,
     // use the 'untranslated' value.
@@ -125,6 +125,12 @@ static default_t	doom_defaults_list[] =
     //
 
     CONFIG_VARIABLE_INT(mouse_sensitivity),
+
+    //!
+    // Vertical mouse sensitivity
+    //
+
+    CONFIG_VARIABLE_INT(mouse_sensitivity_y),
 
     //!
     // Volume of sound effects, range 0-15.
@@ -786,6 +792,22 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(mouse_threshold),
 
     //!
+    // Vertical mouse acceleration factor.  When the speed of mouse movement
+    // exceeds the threshold value (mouse_threshold), the speed is
+    // multiplied by this value.
+    //
+
+    CONFIG_VARIABLE_FLOAT(mouse_acceleration_y),
+
+    //!
+    // Vertical mouse acceleration threshold.  When the speed of mouse movement
+    // exceeds this threshold value, the speed is multiplied by an
+    // acceleration factor (mouse_acceleration).
+    //
+
+    CONFIG_VARIABLE_INT(mouse_threshold_y),
+
+    //!
     // Sound output sample rate, in Hz.  Typical values to use are
     // 11025, 22050, 44100 and 48000.
     //
@@ -1257,6 +1279,7 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_KEY(key_menu_qload),
 
     //!
+    // @game doom heretic
     // Keyboard shortcut to quit the game.
     //
 
@@ -1531,6 +1554,114 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_KEY(key_multi_msgplayer4),
 
     //!
+    // @game doom heretic
+    //
+    // Show a message when a secret is found only in demo playback.
+    // Default: 0
+    //
+
+    CONFIG_VARIABLE_INT(cn_secret_message),
+
+    //!
+    // @game doom heretic
+    //
+    // Define keyboard delay between keypreses.
+    // SDL default delay is 500ms and BIOS fastest delay is 200ms
+    // Default: 200
+    //
+
+    CONFIG_VARIABLE_INT(cn_typematic_delay),
+
+    //!
+    // @game doom heretic
+    //
+    // Define keyboard character rate per second.
+    // SDL and BIOS default rate is 30 chars/sec
+    // Default: 30
+    //
+
+    CONFIG_VARIABLE_INT(cn_typematic_rate),
+
+    //!
+    // @game doom heretic
+    //
+    // alternate strafe ON key for second SR50 combination
+    // (Default:x)
+
+    CONFIG_VARIABLE_KEY(key_strafe_alt),
+
+    //!
+    // @game doom heretic
+    //
+    // Display ingame/intermission screen timer
+    // 0 - No. 1 - Yes (Default)
+
+    CONFIG_VARIABLE_INT(cn_timer_enabled),
+
+    //!
+    // @game doom heretic
+    //
+    // Timer X position
+    // Default: -1
+
+    CONFIG_VARIABLE_INT(cn_timer_offset_x),
+
+    //!
+    // @game doom heretic
+    //
+    // Timer Y position
+    // Default: 0
+
+    CONFIG_VARIABLE_INT(cn_timer_offset_y),
+
+    //!
+    // @game doom heretic
+    //
+    // Timer color
+    // 0 - 255 (Default:168)
+
+    CONFIG_VARIABLE_INT(cn_timer_color_index),
+
+    //!
+    // @game doom heretic
+    //
+    // Shadow for timer
+    // 0 - No (Default). 1 - Yes
+
+    CONFIG_VARIABLE_INT(cn_timer_shadow_index),
+
+    //!
+    // @game doom heretic
+    //
+    // Backgroung color for timer
+    // 0 - 255 (Default:16)
+
+    CONFIG_VARIABLE_INT(cn_timer_bg_colormap),
+
+    //!
+    // @arg <x>
+    // @game doom heretic
+    //
+    // quickstart settings, see d_main.c
+    // Quickstart delay so monitor can change resolution and
+    // let you adjust mouse and keys before the game starts.
+    // 0 - 99999 (Default:50)
+
+    CONFIG_VARIABLE_INT(cn_quickstart_delay),
+
+    //!
+    // Precache all sounds
+    // 0 - No. 1 - Yes (Default)
+
+    CONFIG_VARIABLE_INT(cn_precache_sounds),
+
+    //!
+    // Competition Doom ID from http://www.doom.com.hr/
+    // You have to register on forum and request ID
+
+    CONFIG_VARIABLE_STRING(cn_meta_id),
+
+    //!
     // @game hexen strife
     //
     // Key to send a message to player 5 during multiplayer games.
@@ -1576,7 +1707,7 @@ static default_t *SearchCollection(default_collection_t *collection, char *name)
 {
     int i;
 
-    for (i=0; i<collection->numdefaults; ++i) 
+    for (i=0; i<collection->numdefaults; ++i)
     {
         if (!strcmp(name, collection->defaults[i].name))
         {
@@ -1623,13 +1754,13 @@ static void SaveDefaultCollection(default_collection_t *collection)
     default_t *defaults;
     int i, v;
     FILE *f;
-	
+
     f = fopen (collection->filename, "w");
     if (!f)
 	return; // can't write the file, but don't complain
 
     defaults = collection->defaults;
-		
+
     for (i=0 ; i<collection->numdefaults ; i++)
     {
         int chars_written;
@@ -1657,7 +1788,6 @@ static void SaveDefaultCollection(default_collection_t *collection)
                 // use the untranslated version if we can, to reduce
                 // the possibility of screwing up the user's config
                 // file
-                
                 v = *defaults[i].location.i;
 
                 if (v == KEY_RSHIFT)
@@ -1889,7 +2019,7 @@ void M_SaveDefaultsAlternate(char *main, char *extra)
 void M_LoadDefaults (void)
 {
     int i;
- 
+
     // check for a custom default file
 
     //!
@@ -2077,7 +2207,7 @@ static char *GetDefaultConfigDir(void)
 {
 #if !defined(_WIN32) || defined(_WIN32_WCE)
 
-    // Configuration settings are stored in ~/.chocolate-doom/,
+    // Configuration settings are stored in ~/.cndoom/,
     // except on Windows, where we behave like Vanilla Doom and
     // save in the current directory.
 
@@ -2103,11 +2233,11 @@ static char *GetDefaultConfigDir(void)
     }
 }
 
-// 
+//
 // SetConfigDir:
 //
 // Sets the location of the configuration directory, where configuration
-// files are stored - default.cfg, chocolate-doom.cfg, savegames, etc.
+// files are stored - default.cfg, cndoom.cfg, savegames, etc.
 //
 
 void M_SetConfigDir(char *dir)
@@ -2152,12 +2282,12 @@ char *M_GetSaveGameDir(char *iwadname)
     }
     else
     {
-        // ~/.chocolate-doom/savegames
+        // ~/.cndoom/savegames/
 
         topdir = M_StringJoin(configdir, "savegames", NULL);
         M_MakeDirectory(topdir);
 
-        // eg. ~/.chocolate-doom/savegames/doom2.wad/
+        // eg. ~/.cndoom/savegames/doom2.wad/
 
         savegamedir = M_StringJoin(topdir, DIR_SEPARATOR_S, iwadname,
                                    DIR_SEPARATOR_S, NULL);

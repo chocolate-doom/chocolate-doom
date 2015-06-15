@@ -24,8 +24,8 @@
 
 #define WINDOW_HELP_URL "http://www.chocolate-doom.org/setup-compat"
 
-int vanilla_savegame_limit = 1;
-int vanilla_demo_limit = 1;
+int vanilla_savegame_limit = 0;
+int vanilla_demo_limit = 0;
 
 void CompatibilitySettings(void)
 {
