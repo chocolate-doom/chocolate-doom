@@ -1460,7 +1460,7 @@ void ST_drawWidgets(boolean refresh)
 	if (!patch)
 	{
 	    // [crispy] (23,179) is the center of the Ammo widget
-	    patch = W_CacheLumpName("PSTRA0", PU_STATIC);
+	    patch = W_CacheLumpName("PSTRA0", PU_LEVEL);
 	    x = 23 - SHORT(patch->width)/2 + SHORT(patch->leftoffset);
 	    y = 179 - SHORT(patch->height)/2 + SHORT(patch->topoffset);
 	}
