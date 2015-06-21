@@ -438,7 +438,7 @@ void S_StartSound(void *origin_p, int sfx_id)
 
         if (origin->x == players[consoleplayer].mo->x
          && origin->y == players[consoleplayer].mo->y)
-        {        
+        {
             sep = NORM_SEP;
         }
 
@@ -446,7 +446,7 @@ void S_StartSound(void *origin_p, int sfx_id)
         {
             return;
         }
-    }        
+    }
     else
     {
         sep = NORM_SEP;

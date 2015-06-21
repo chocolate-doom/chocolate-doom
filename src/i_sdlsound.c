@@ -875,7 +875,7 @@ static int I_SDL_StartSound(sfxinfo_t *sfxinfo, int channel, int vol, int sep)
 
     if (!LockSound(sfxinfo))
     {
-	return -1;
+        return -1;
     }
 
     snd = sfxinfo->driver_data;
@@ -887,7 +887,7 @@ static int I_SDL_StartSound(sfxinfo_t *sfxinfo, int channel, int vol, int sep)
     channels_playing[channel] = sfxinfo;
 
     // set separation, etc.
- 
+
     I_SDL_UpdateSoundParams(channel, vol, sep);
 
     return channel;
@@ -919,7 +919,7 @@ static boolean I_SDL_SoundIsPlaying(int handle)
     return Mix_Playing(handle);
 }
 
-// 
+//
 // Periodically called to update the sound system
 //
 
@@ -935,14 +935,14 @@ static void I_SDL_UpdateSound(void)
         {
             // Sound has finished playing on this channel,
             // but sound data has not been released to cache
-            
+
             ReleaseSoundOnChannel(i);
         }
     }
 }
 
 static void I_SDL_ShutdownSound(void)
-{    
+{
     if (!sound_initialized)
     {
         return;
