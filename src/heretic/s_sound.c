@@ -268,10 +268,8 @@ void S_StartSound(void *_origin, int sound_id)
             sep = 512 - sep;
     }
 
-    // TODO: Play pitch-shifted sounds as in Vanilla Heretic
-
     channel[i].pitch = (byte) (NORM_PITCH + (M_Random() & 7) - (M_Random() & 7));
-    channel[i].handle = I_StartSound(&S_sfx[sound_id], i, vol, sep);
+    channel[i].handle = I_StartSound(&S_sfx[sound_id], i, vol, sep, channel[i].pitch);
     channel[i].mo = origin;
     channel[i].sound_id = sound_id;
     channel[i].priority = priority;
@@ -327,9 +325,8 @@ void S_StartSoundAtVolume(void *_origin, int sound_id, int volume)
         S_sfx[sound_id].lumpnum = I_GetSfxLumpNum(&S_sfx[sound_id]);
     }
 
-    // TODO: Pitch shifting.
     channel[i].pitch = (byte) (NORM_PITCH - (M_Random() & 3) + (M_Random() & 3));
-    channel[i].handle = I_StartSound(&S_sfx[sound_id], i, volume, 128);
+    channel[i].handle = I_StartSound(&S_sfx[sound_id], i, volume, 128, channel[i].pitch);
     channel[i].mo = origin;
     channel[i].sound_id = sound_id;
     channel[i].priority = 1;    //super low priority.

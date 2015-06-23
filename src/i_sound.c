@@ -308,12 +308,12 @@ void I_UpdateSoundParams(int channel, int vol, int sep)
     }
 }
 
-int I_StartSound(sfxinfo_t *sfxinfo, int channel, int vol, int sep)
+int I_StartSound(sfxinfo_t *sfxinfo, int channel, int vol, int sep, int pitch)
 {
     if (sound_module != NULL)
     {
         CheckVolumeSeparation(&vol, &sep);
-        return sound_module->StartSound(sfxinfo, channel, vol, sep);
+        return sound_module->StartSound(sfxinfo, channel, vol, sep, pitch);
     }
     else
     {

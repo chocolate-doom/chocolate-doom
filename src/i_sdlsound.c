@@ -858,7 +858,7 @@ static void I_SDL_UpdateSoundParams(int handle, int vol, int sep)
 //  is set, but currently not used by mixing.
 //
 
-static int I_SDL_StartSound(sfxinfo_t *sfxinfo, int channel, int vol, int sep)
+static int I_SDL_StartSound(sfxinfo_t *sfxinfo, int channel, int vol, int sep, int pitch)
 {
     allocated_sound_t *snd;
 

@@ -517,7 +517,8 @@ void S_StartSoundAtVolume(mobj_t * origin, int sound_id, int volume)
     Channel[i].handle = I_StartSound(&S_sfx[sound_id],
                                      i,
                                      vol,
-                                     sep /* , Channel[i].pitch] */);
+                                     sep,
+                                     NORM_PITCH);
     Channel[i].sound_id = sound_id;
     Channel[i].priority = priority;
     Channel[i].volume = volume;

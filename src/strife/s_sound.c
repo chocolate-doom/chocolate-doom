@@ -73,6 +73,8 @@ typedef struct
 
     // handle of the sound being played
     int handle;
+
+    int pitch;
     
 } channel_t;
 
@@ -407,6 +409,7 @@ void S_StartSound(void *origin_p, int sfx_id)
     mobj_t *origin;
     int rc;
     int sep;
+    int pitch;
     int cnum;
     int volume;
 
@@ -466,6 +469,7 @@ void S_StartSound(void *origin_p, int sfx_id)
     {
         sep = NORM_SEP;
     }
+    pitch = NORM_PITCH;
 
     // kill old sound [STRIFE] - nope!
     //S_StopSound(origin);
@@ -489,7 +493,7 @@ void S_StartSound(void *origin_p, int sfx_id)
         sfx->lumpnum = I_GetSfxLumpNum(sfx);
     }
 
-    channels[cnum].handle = I_StartSound(sfx, cnum, volume, sep);
+    channels[cnum].handle = I_StartSound(sfx, cnum, volume, sep, pitch);
 }
 
 
@@ -616,7 +620,7 @@ void I_StartVoice(const char *lumpname)
         i_voicehandle = S_GetChannel(NULL, &voice->sfx, true);
 
         channels[i_voicehandle].handle 
-            = I_StartSound(&voice->sfx, i_voicehandle, snd_VoiceVolume, NORM_SEP);
+            = I_StartSound(&voice->sfx, i_voicehandle, snd_VoiceVolume, NORM_SEP, NORM_PITCH);
     }
 }
 

@@ -135,7 +135,7 @@ typedef struct
     // Start a sound on a given channel.  Returns the channel id
     // or -1 on failure.
 
-    int (*StartSound)(sfxinfo_t *sfxinfo, int channel, int vol, int sep);
+    int (*StartSound)(sfxinfo_t *sfxinfo, int channel, int vol, int sep, int pitch);
 
     // Stop the sound playing on the given channel.
 
@@ -156,7 +156,7 @@ void I_ShutdownSound(void);
 int I_GetSfxLumpNum(sfxinfo_t *sfxinfo);
 void I_UpdateSound(void);
 void I_UpdateSoundParams(int channel, int vol, int sep);
-int I_StartSound(sfxinfo_t *sfxinfo, int channel, int vol, int sep);
+int I_StartSound(sfxinfo_t *sfxinfo, int channel, int vol, int sep, int pitch);
 void I_StopSound(int channel);
 boolean I_SoundIsPlaying(int channel);
 void I_PrecacheSounds(sfxinfo_t *sounds, int num_sounds);
