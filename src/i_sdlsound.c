@@ -279,7 +279,7 @@ static void UnlockAllocatedSound(allocated_sound_t *snd)
     //printf("-- %s: Use count=%i\n", snd->sfxinfo->name, snd->use_count);
 }
 
-// When a sound stops, check if it is still playing.  If it is not, 
+// When a sound stops, check if it is still playing.  If it is not,
 // we can mark the sound data as CACHE to be freed back for other
 // means.
 

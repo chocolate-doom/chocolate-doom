@@ -454,7 +454,7 @@ void S_StartSound(void *origin_p, int sfx_id)
 
         if (origin->x == players[consoleplayer].mo->x
          && origin->y == players[consoleplayer].mo->y)
-        {        
+        {
             sep = NORM_SEP;
         }
 
@@ -462,7 +462,7 @@ void S_StartSound(void *origin_p, int sfx_id)
         {
             return;
         }
-    }        
+    }
     else
     {
         sep = NORM_SEP;
@@ -615,7 +615,7 @@ void I_StartVoice(const char *lumpname)
 
         // get a channel for the voice
         i_voicehandle = S_GetChannel(NULL, &voice->sfx, true);
-        
+
         channels[i_voicehandle].handle 
             = I_StartSound(&voice->sfx, i_voicehandle, snd_VoiceVolume, NORM_SEP);
     }
@@ -693,7 +693,7 @@ void S_UpdateSounds(mobj_t *listener)
                                                   c->origin,
                                                   &volume,
                                                   &sep);
-                    
+
                     if (!audible)
                     {
                         S_StopChannel(cnum);
