@@ -46,7 +46,6 @@ extern int crispy_coloredblood;
 extern int crispy_coloredblood2;
 extern int crispy_coloredhud;
 extern int crispy_crosshair;
-extern int crispy_crosshair2;
 extern int crispy_flipcorpses;
 extern int crispy_freeaim;
 extern int crispy_freelook;
@@ -60,5 +59,22 @@ extern int crispy_translucency;
 extern int crispy_uncapped;
 
 extern int crispy_demowarp;
+
+enum
+{
+    JUMP_OFF,
+    JUMP_LOW,
+    JUMP_HIGH,
+    NUM_JUMPS
+};
+
+enum
+{
+    CROSSHAIR_OFF,
+    CROSSHAIR_STATIC,
+    CROSSHAIR_PROJECTED,
+    NUM_CROSSHAIRS,
+    CROSSHAIR_INTERCEPT = 0x10
+};
 
 #endif

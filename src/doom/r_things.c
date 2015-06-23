@@ -737,10 +737,10 @@ static void R_DrawLSprite (void)
 	patch = W_CacheLumpNum(lump, PU_CACHE);
     }
 
-    crispy_crosshair = 2; // [crispy] intercepts overflow guard
+    crispy_crosshair |= CROSSHAIR_INTERCEPT; // [crispy] intercepts overflow guard
     P_LineLaser(viewplayer->mo, viewangle,
                 16*64*FRACUNIT, ((viewplayer->lookdir/MLOOKUNIT)<<FRACBITS)/173);
-    crispy_crosshair = 1; // [crispy] intercepts overflow guard
+    crispy_crosshair &= ~CROSSHAIR_INTERCEPT; // [crispy] intercepts overflow guard
 
     if (!laserspot->x &&
         !laserspot->y &&
@@ -964,7 +964,7 @@ void R_DrawPlayerSprites (void)
     mfloorclip = screenheightarray;
     mceilingclip = negonearray;
     
-    if (crispy_crosshair && crispy_crosshair2)
+    if (crispy_crosshair == CROSSHAIR_PROJECTED)
 	R_DrawLSprite();
 
     // add all active psprites

@@ -692,7 +692,7 @@ void HU_Drawer(void)
 
     V_ClearDPTranslation();
 
-    if (crispy_crosshair && !crispy_crosshair2)
+    if (crispy_crosshair == CROSSHAIR_STATIC)
 	HU_DrawCrosshair();
 
     if (dp_translucent)

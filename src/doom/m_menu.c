@@ -241,7 +241,6 @@ static void M_CrispyToggleColoredblood(int choice);
 static void M_CrispyToggleColoredblood2(int choice);
 static void M_CrispyToggleColoredhud(int choice);
 static void M_CrispyToggleCrosshair(int choice);
-static void M_CrispyToggleCrosshair2(int choice);
 static void M_CrispyToggleFlipcorpses(int choice);
 static void M_CrispyToggleFreeaim(int choice);
 static void M_CrispyToggleFreelook(int choice);
@@ -501,9 +500,8 @@ static menu_t *CrispnessXDef = &Crispness1Def;
 enum
 {
     crispness_sep_tactical,
-    crispness_freelook,
     crispness_crosshair,
-    crispness_crosshair2,
+    crispness_freelook,
     crispness_centerweapon,
     crispness_pitch,
     crispness_secretmessage,
@@ -517,9 +515,8 @@ enum
 static menuitem_t Crispness2Menu[]=
 {
     {-1,"",0,'\0'},
-    {1,"",	M_CrispyToggleFreelook,'f'},
     {1,"",	M_CrispyToggleCrosshair,'l'},
-    {1,"",	M_CrispyToggleCrosshair2,'g'},
+    {1,"",	M_CrispyToggleFreelook,'f'},
     {1,"",	M_CrispyToggleCenterweapon,'c'},
     {1,"",	M_CrispyTogglePitch,'p'},
     {1,"",	M_CrispyToggleSecretmessage,'s'},
@@ -1352,19 +1349,18 @@ typedef struct
     char *name;
 } multiitem_t;
 
-enum
-{
-    JUMP_OFF,
-    JUMP_LOW,
-    JUMP_HIGH,
-    NUM_JUMPS
-};
-
 static multiitem_t multiitem_jump[NUM_JUMPS] =
 {
     {JUMP_OFF, "off"},
     {JUMP_LOW, "low"},
     {JUMP_HIGH, "high"},
+};
+
+static multiitem_t multiitem_crosshair[NUM_CROSSHAIRS] =
+{
+    {CROSSHAIR_OFF, "off"},
+    {CROSSHAIR_STATIC, "static"},
+    {CROSSHAIR_PROJECTED, "projected"},
 };
 
 static void M_DrawCrispnessMultiItem(int y, char *item, multiitem_t *multiitem, int feat, boolean cond)
@@ -1419,9 +1415,8 @@ static void M_DrawCrispness2(void)
 
     M_DrawCrispnessSeparator(crispness_sep_tactical, "Tactical");
 
+    M_DrawCrispnessMultiItem(crispness_crosshair, "Draw Crosshair", multiitem_crosshair, crispy_crosshair, true);
     M_DrawCrispnessItem(crispness_freelook, "Allow Free Look", crispy_freelook, true);
-    M_DrawCrispnessItem(crispness_crosshair, "Draw Crosshair", crispy_crosshair, true);
-    M_DrawCrispnessItem(crispness_crosshair2, "Project Crosshair into Scene", crispy_crosshair2, crispy_crosshair);
     M_DrawCrispnessItem(crispness_centerweapon, "Center Weapon when Firing", crispy_centerweapon, true);
     M_DrawCrispnessItem(crispness_pitch, "Enable Weapon Recoil Pitch", crispy_pitch, true);
     M_DrawCrispnessItem(crispness_secretmessage, "Show Revealed Secrets", crispy_secretmessage, true);
@@ -1749,19 +1744,7 @@ static void M_CrispyToggleColoredhud(int choice)
 static void M_CrispyToggleCrosshair(int choice)
 {
     choice = 0;
-    crispy_crosshair = !crispy_crosshair;
-}
-
-static void M_CrispyToggleCrosshair2(int choice)
-{
-    if (!crispy_crosshair)
-    {
-	S_StartSound(NULL,sfx_oof);
-	return;
-    }
-
-    choice = 0;
-    crispy_crosshair2 = !crispy_crosshair2;
+    crispy_crosshair = (crispy_crosshair + 1) % NUM_CROSSHAIRS;
 }
 
 static void M_CrispyToggleFlipcorpses(int choice)
