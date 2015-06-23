@@ -357,7 +357,7 @@ void P_PlayerThink (player_t* player)
         if ((cmd->arti & AFLAG_JUMP) && onground && !player->jumpTics)
         {
             // [crispy] Hexen sets 9; Strife adds 8
-            player->mo->momz = 9 * FRACUNIT;
+            player->mo->momz = (7 + crispy_jump) * FRACUNIT;
             player->jumpTics = 18;
         }
     }

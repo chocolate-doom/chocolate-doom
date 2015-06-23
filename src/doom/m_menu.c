@@ -1346,6 +1346,38 @@ static void M_DrawCrispnessItem(int y, char *item, int feat, boolean cond)
     M_WriteText(currentMenu->x, currentMenu->y + CRISPY_LINEHEIGHT * y, crispy_menu_text);
 }
 
+typedef struct
+{
+    int value;
+    char *name;
+} multiitem_t;
+
+enum
+{
+    JUMP_OFF,
+    JUMP_LOW,
+    JUMP_HIGH,
+    NUM_JUMPS
+};
+
+static multiitem_t multiitem_jump[NUM_JUMPS] =
+{
+    {JUMP_OFF, "off"},
+    {JUMP_LOW, "low"},
+    {JUMP_HIGH, "high"},
+};
+
+static void M_DrawCrispnessMultiItem(int y, char *item, multiitem_t *multiitem, int feat, boolean cond)
+{
+    char crispy_menu_text[48];
+
+    M_snprintf(crispy_menu_text, sizeof(crispy_menu_text),
+               "%s%s: %s%s", cond ? crstr[CR_NONE] : crstr[CR_DARK], item,
+               cond ? (feat ? crstr[CR_GREEN] : crstr[CR_DARK]) : crstr[CR_DARK],
+               multiitem[feat].name);
+    M_WriteText(currentMenu->x, currentMenu->y + CRISPY_LINEHEIGHT * y, crispy_menu_text);
+}
+
 static void M_DrawCrispnessGoto(int y, char *item)
 {
     char crispy_menu_text[48];
@@ -1411,7 +1443,7 @@ static void M_DrawCrispness3(void)
 
     M_DrawCrispnessSeparator(crispness_sep_physical, "Physical");
 
-    M_DrawCrispnessItem(crispness_jumping, "Allow Jumping", crispy_jump, singleplayer);
+    M_DrawCrispnessMultiItem(crispness_jumping, "Allow Jumping", multiitem_jump, crispy_jump, singleplayer);
     M_DrawCrispnessItem(crispness_freeaim, "Allow Vertical Aiming", crispy_freeaim, singleplayer);
     M_DrawCrispnessItem(crispness_overunder, "Walk over/under Monsters", crispy_overunder, singleplayer);
     M_DrawCrispnessItem(crispness_recoil, "Enable Weapon Recoil Thrust", crispy_recoil, singleplayer);
@@ -1767,7 +1799,7 @@ static void M_CrispyToggleJumping(int choice)
     }
 
     choice = 0;
-    crispy_jump = !crispy_jump;
+    crispy_jump = (crispy_jump + 1) % NUM_JUMPS;
 }
 
 static void M_CrispyToggleOverunder(int choice)
