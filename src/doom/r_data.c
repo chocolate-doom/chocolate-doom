@@ -1164,17 +1164,19 @@ void R_InitData (void)
 //
 int R_FlatNumForName (char* name)
 {
-    int		i, j;
+    int		i;
     char	namet[9];
 
-    if (crispy_nwtmerge)
     i = W_CheckNumForName (name);
-    else
+
+    // [crispy] do slow linear search only if the returned
+    // lump number is not within the "flats" range
+    if (!crispy_nwtmerge && (i < firstflat || i > lastflat))
     {
+	int j;
 	// [crispy] restrict lump numbers returned by
 	// R_FlatNumForName() into the "flats" range
-	i = -1;
-	for (j = firstflat; j <= lastflat; j++)
+	for (i = -1, j = lastflat; j >= firstflat; j--)
 	{
 	    if (!strncasecmp(lumpinfo[j].name, name, 8))
 	    {
