@@ -136,10 +136,6 @@ static void FreeAllocatedSound(allocated_sound_t *snd)
 
     AllocatedSoundUnlink(snd);
 
-    // Unlink from higher-level code.
-
-    snd->sfxinfo->driver_data = NULL;
-
     // Keep track of the amount of allocated sound data:
 
     allocated_sounds_size -= snd->chunk.alen;
@@ -235,10 +231,6 @@ static Mix_Chunk *AllocateSound(sfxinfo_t *sfxinfo, size_t len)
     snd->sfxinfo = sfxinfo;
     snd->use_count = 0;
 
-    // driver_data pointer points to the allocated_sound structure.
-
-    sfxinfo->driver_data = snd;
-
     // Keep track of how much memory all these cached sounds are using...
 
     allocated_sounds_size += len;
@@ -277,6 +269,24 @@ static void UnlockAllocatedSound(allocated_sound_t *snd)
     --snd->use_count;
 
     //printf("-- %s: Use count=%i\n", snd->sfxinfo->name, snd->use_count);
+}
+
+// Search through the list of allocated sounds and return the one that matches
+// the supplied sfxinfo entry.
+
+static allocated_sound_t * GetAllocatedSoundBySfxInfo(sfxinfo_t *sfxinfo)
+{
+    allocated_sound_t * p = allocated_sounds_head;
+
+    while(p != NULL)
+    {
+        if(p->sfxinfo == sfxinfo)
+        {
+            return p;
+        }
+        p = p->next;
+    }
+    return NULL;
 }
 
 // When a sound stops, check if it is still playing.  If it is not,
@@ -787,8 +797,7 @@ static void I_SDL_PrecacheSounds(sfxinfo_t *sounds, int num_sounds)
 static boolean LockSound(sfxinfo_t *sfxinfo)
 {
     // If the sound isn't loaded, load it now
-
-    if (sfxinfo->driver_data == NULL)
+    if (GetAllocatedSoundBySfxInfo(sfxinfo) == NULL)
     {
         if (!CacheSFX(sfxinfo))
         {
@@ -796,7 +805,7 @@ static boolean LockSound(sfxinfo_t *sfxinfo)
         }
     }
 
-    LockAllocatedSound(sfxinfo->driver_data);
+    LockAllocatedSound(GetAllocatedSoundBySfxInfo(sfxinfo));
 
     return true;
 }
@@ -879,7 +888,7 @@ static int I_SDL_StartSound(sfxinfo_t *sfxinfo, int channel, int vol, int sep, i
         return -1;
     }
 
-    snd = sfxinfo->driver_data;
+    snd = GetAllocatedSoundBySfxInfo(sfxinfo);
 
     // play sound
 
