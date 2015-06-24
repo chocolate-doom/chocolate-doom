@@ -726,18 +726,25 @@ void R_InitData (void)
 //
 int R_FlatNumForName (char* name)
 {
-    int		i, j;
+    int		i;
     char	namet[9];
 
-    // [crispy] restrict lump numbers returned by
-    // R_FlatNumForName() into the "flats" range
-    i = -1;
-    for (j = firstflat; j <= lastflat; j++)
+    i = W_CheckNumForName (name);
+
+    // [crispy] do slow linear search only if the returned
+    // lump number is not within the "flats" range
+    if (i < firstflat || i > lastflat)
     {
-	if (!strncasecmp(lumpinfo[j]->name, name, 8))
+	int j;
+	// [crispy] restrict lump numbers returned by
+	// R_FlatNumForName() into the "flats" range
+	for (i = -1, j = lastflat; j >= firstflat; j--)
 	{
-	    i = j;
-	    break;
+	    if (!strncasecmp(lumpinfo[j]->name, name, 8))
+	    {
+		i = j;
+		break;
+	    }
 	}
     }
 
