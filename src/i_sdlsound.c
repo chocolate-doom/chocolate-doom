@@ -196,7 +196,7 @@ static void ReserveCacheSpace(size_t len)
 
 // Allocate a block for a new sound effect.
 
-static Mix_Chunk *AllocateSound(sfxinfo_t *sfxinfo, size_t len)
+static allocated_sound_t *AllocateSound(sfxinfo_t *sfxinfo, size_t len)
 {
     allocated_sound_t *snd;
 
@@ -237,7 +237,7 @@ static Mix_Chunk *AllocateSound(sfxinfo_t *sfxinfo, size_t len)
 
     AllocatedSoundLink(snd);
 
-    return &snd->chunk;
+    return snd;
 }
 
 // Lock a sound, to indicate that it may not be freed.
@@ -353,6 +353,7 @@ static boolean ExpandSoundData_SRC(sfxinfo_t *sfxinfo,
 //    uint32_t alen;
     int retn;
     int16_t *expanded;
+    allocated_sound_t *snd;
     Mix_Chunk *chunk;
 
     src_data.input_frames = length;
@@ -384,13 +385,14 @@ static boolean ExpandSoundData_SRC(sfxinfo_t *sfxinfo,
 
 //    alen = src_data.output_frames_gen * 4;
 
-    chunk = AllocateSound(sfxinfo, src_data.output_frames_gen * 4);
+    snd = AllocateSound(sfxinfo, src_data.output_frames_gen * 4);
 
-    if (chunk == NULL)
+    if (snd == NULL)
     {
         return false;
     }
 
+    chunk = &snd->chunk;
     expanded = (int16_t *) chunk->abuf;
 
     // Convert the result back into 16-bit integers.
@@ -543,6 +545,7 @@ static boolean ExpandSoundData_SDL(sfxinfo_t *sfxinfo,
                                    int length)
 {
     SDL_AudioCVT convertor;
+    allocated_sound_t *snd;
     Mix_Chunk *chunk;
     uint32_t expanded_length;
 
@@ -556,12 +559,14 @@ static boolean ExpandSoundData_SDL(sfxinfo_t *sfxinfo,
 
     // Allocate a chunk in which to expand the sound
 
-    chunk = AllocateSound(sfxinfo, expanded_length);
+    snd = AllocateSound(sfxinfo, expanded_length);
 
-    if (chunk == NULL)
+    if (snd == NULL)
     {
         return false;
     }
+
+    chunk = &snd->chunk;
 
     // If we can, use the standard / optimized SDL conversion routines.
 
