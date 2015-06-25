@@ -361,6 +361,9 @@ void P_SegLengths (void)
     seg_t *li;
     fixed_t dx, dy;
 
+    // [crispy] catch SlopeDiv overflows
+    SlopeDiv = SlopeDivCrispy;
+
     for (i = 0; i < numsegs; i++)
     {
 	li = &segs[i];
@@ -370,6 +373,9 @@ void P_SegLengths (void)
 	// [crispy] re-calculate angle used for rendering
 	li->pangle = R_PointToAngle2(li->v1->px, li->v1->py, li->v2->px, li->v2->py);
     }
+
+    // [crispy] back to Vanilla SlopeDiv
+    SlopeDiv = SlopeDivVanilla;
 }
 
 //
