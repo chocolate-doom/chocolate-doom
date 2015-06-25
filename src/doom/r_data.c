@@ -348,8 +348,12 @@ void R_GenerateLookup (int texnum)
     {
 	if (!patchcount[x])
 	{
+	    // [crispy] fix absurd texture name in error message
+	    char namet[9];
+	    namet[8] = 0;
+	    memcpy (namet, texture->name, 8);
 	    printf ("R_GenerateLookup: column without a patch (%s)\n",
-		    texture->name);
+		    namet);
 	    return;
 	}
 	// I_Error ("R_GenerateLookup: column without a patch");
@@ -732,7 +736,9 @@ int R_FlatNumForName (char* name)
 	memcpy (namet, name,8);
 	// [crispy] make non-fatal
 	fprintf (stderr, "R_FlatNumForName: %s not found\n", namet);
-	return 0;
+	// [crispy] since there is no "No Flat" marker,
+	// render missing flats as SKY
+	return skyflatnum;
     }
     return i - firstflat;
 }
