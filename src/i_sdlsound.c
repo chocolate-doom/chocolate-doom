@@ -52,6 +52,7 @@ struct allocated_sound_s
     sfxinfo_t *sfxinfo;
     Mix_Chunk chunk;
     int use_count;
+    int pitch;
     allocated_sound_t *prev, *next;
 };
 
@@ -227,6 +228,7 @@ static allocated_sound_t *AllocateSound(sfxinfo_t *sfxinfo, size_t len)
     snd->chunk.alen = len;
     snd->chunk.allocated = 1;
     snd->chunk.volume = MIX_MAX_VOLUME;
+    snd->pitch = NORM_PITCH;
 
     snd->sfxinfo = sfxinfo;
     snd->use_count = 0;
@@ -272,15 +274,15 @@ static void UnlockAllocatedSound(allocated_sound_t *snd)
 }
 
 // Search through the list of allocated sounds and return the one that matches
-// the supplied sfxinfo entry.
+// the supplied sfxinfo entry and pitch level.
 
-static allocated_sound_t * GetAllocatedSoundBySfxInfo(sfxinfo_t *sfxinfo)
+static allocated_sound_t * GetAllocatedSoundBySfxInfoAndPitch(sfxinfo_t *sfxinfo, int pitch)
 {
     allocated_sound_t * p = allocated_sounds_head;
 
     while(p != NULL)
     {
-        if(p->sfxinfo == sfxinfo)
+        if(p->sfxinfo == sfxinfo && p->pitch == pitch)
         {
             return p;
         }
@@ -802,7 +804,7 @@ static void I_SDL_PrecacheSounds(sfxinfo_t *sounds, int num_sounds)
 static boolean LockSound(sfxinfo_t *sfxinfo)
 {
     // If the sound isn't loaded, load it now
-    if (GetAllocatedSoundBySfxInfo(sfxinfo) == NULL)
+    if (GetAllocatedSoundBySfxInfoAndPitch(sfxinfo, NORM_PITCH) == NULL)
     {
         if (!CacheSFX(sfxinfo))
         {
@@ -810,7 +812,7 @@ static boolean LockSound(sfxinfo_t *sfxinfo)
         }
     }
 
-    LockAllocatedSound(GetAllocatedSoundBySfxInfo(sfxinfo));
+    LockAllocatedSound(GetAllocatedSoundBySfxInfoAndPitch(sfxinfo, NORM_PITCH));
 
     return true;
 }
@@ -893,7 +895,7 @@ static int I_SDL_StartSound(sfxinfo_t *sfxinfo, int channel, int vol, int sep, i
         return -1;
     }
 
-    snd = GetAllocatedSoundBySfxInfo(sfxinfo);
+    snd = GetAllocatedSoundBySfxInfoAndPitch(sfxinfo, NORM_PITCH);
 
     // play sound
 
