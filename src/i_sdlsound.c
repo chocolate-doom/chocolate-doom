@@ -59,7 +59,7 @@ static boolean setpanning_workaround = false;
 
 static boolean sound_initialized = false;
 
-static sfxinfo_t *channels_playing[NUM_CHANNELS];
+static allocated_sound_t *channels_playing[NUM_CHANNELS];
 
 static int mixer_freq;
 static Uint16 mixer_format;
@@ -285,16 +285,16 @@ static void UnlockAllocatedSound(allocated_sound_t *snd)
 
 static void ReleaseSoundOnChannel(int channel)
 {
-    sfxinfo_t *sfxinfo = channels_playing[channel];
+    allocated_sound_t *snd = channels_playing[channel];
 
-    if (sfxinfo == NULL)
+    if (snd == NULL)
     {
         return;
     }
 
     channels_playing[channel] = NULL;
 
-    UnlockAllocatedSound(sfxinfo->driver_data);
+    UnlockAllocatedSound(snd);
 }
 
 #ifdef HAVE_LIBSAMPLERATE
@@ -885,7 +885,7 @@ static int I_SDL_StartSound(sfxinfo_t *sfxinfo, int channel, int vol, int sep, i
 
     Mix_PlayChannel(channel, &snd->chunk, 0);
 
-    channels_playing[channel] = sfxinfo;
+    channels_playing[channel] = snd;
 
     // set separation, etc.
 
