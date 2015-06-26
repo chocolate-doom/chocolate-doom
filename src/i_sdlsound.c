@@ -291,6 +291,49 @@ static allocated_sound_t * GetAllocatedSoundBySfxInfoAndPitch(sfxinfo_t *sfxinfo
     return NULL;
 }
 
+// Allocate a new sound chunk and pitch-shift an existing sound up-or-down
+// into it.
+
+static allocated_sound_t * PitchShift(allocated_sound_t *insnd, int pitch)
+{
+    allocated_sound_t * outsnd;
+    Sint16 *inp, *outp;
+    Sint16 *srcbuf, *dstbuf;
+    Uint32 srclen, dstlen;
+
+    srcbuf = (Sint16 *)insnd->chunk.abuf;
+    srclen = insnd->chunk.alen;
+
+    // determine ratio pitch:NORM_PITCH and apply to srclen, then invert.
+    // This is an approximation of vanilla behaviour based on measurements
+    dstlen = (int)((1 + (1 - (float)pitch / NORM_PITCH)) * srclen);
+
+    // ensure that the new buffer is an even length
+    if( (dstlen % 2) == 0)
+    {
+        dstlen++;
+    }
+
+    outsnd = AllocateSound(insnd->sfxinfo, dstlen);
+
+    if(!outsnd)
+    {
+        return NULL;
+    }
+
+    outsnd->pitch = pitch;
+    dstbuf = (Sint16 *)outsnd->chunk.abuf;
+
+    // loop over output buffer. find corresponding input cell, copy over
+    for(outp = dstbuf; outp < dstbuf + dstlen/2; ++outp)
+    {
+        inp = srcbuf + (int)((float)(outp - dstbuf) / dstlen * srclen);
+        *outp = *inp;
+    }
+
+    return outsnd;
+}
+
 // When a sound stops, check if it is still playing.  If it is not,
 // we can mark the sound data as CACHE to be freed back for other
 // means.
@@ -895,7 +938,32 @@ static int I_SDL_StartSound(sfxinfo_t *sfxinfo, int channel, int vol, int sep, i
         return -1;
     }
 
-    snd = GetAllocatedSoundBySfxInfoAndPitch(sfxinfo, NORM_PITCH);
+    snd = GetAllocatedSoundBySfxInfoAndPitch(sfxinfo, pitch);
+
+    if(snd == NULL)
+    {
+        allocated_sound_t *newsnd;
+        // fetch the base sound effect, un-pitch-shifted
+        snd = GetAllocatedSoundBySfxInfoAndPitch(sfxinfo, NORM_PITCH);
+
+        if(!snd)
+        {
+            return -1;
+        }
+
+        newsnd = PitchShift(snd, pitch);
+
+        if(newsnd)
+        {
+            LockAllocatedSound(newsnd);
+            UnlockAllocatedSound(snd);
+            snd = newsnd;
+        }
+    }
+    else
+    {
+        LockAllocatedSound(snd);
+    }
 
     // play sound
 
