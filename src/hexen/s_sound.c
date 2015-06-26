@@ -502,11 +502,11 @@ void S_StartSoundAtVolume(mobj_t * origin, int sound_id, int volume)
 // TODO
     if (S_sfx[sound_id].changePitch)
     {
-        Channel[i].pitch = (byte) (127 + (M_Random() & 7) - (M_Random() & 7));
+        Channel[i].pitch = (byte) (NORM_PITCH + (M_Random() & 7) - (M_Random() & 7));
     }
     else
     {
-        Channel[i].pitch = 127;
+        Channel[i].pitch = NORM_PITCH;
     }
 #endif
     if (S_sfx[sound_id].lumpnum == 0)

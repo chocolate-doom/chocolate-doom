@@ -59,7 +59,6 @@
 
 #define S_STEREO_SWING (96 * FRACUNIT)
 
-#define NORM_PITCH 128
 #define NORM_PRIORITY 64
 #define NORM_SEP 128
 
