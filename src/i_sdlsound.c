@@ -535,8 +535,8 @@ static boolean ExpandSoundData_SDL(sfxinfo_t *sfxinfo,
     SDL_AudioCVT convertor;
     Mix_Chunk *chunk;
     uint32_t expanded_length;
- 
-    // Calculate the length of the expanded version of the sample.    
+
+    // Calculate the length of the expanded version of the sample.
 
     expanded_length = (uint32_t) ((((uint64_t) length) * mixer_freq) / samplerate);
 

@@ -76,13 +76,13 @@ typedef struct
 
     // lump number of music
     int lumpnum;
-    
+
     // music data
     void *data;
 
     // music handle once registered
     void *handle;
-    
+
 } musicinfo_t;
 
 typedef enum 
