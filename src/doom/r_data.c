@@ -182,36 +182,7 @@ lighttable_t	*colormaps;
 // [crispy] replace R_DrawColumnInCache(), R_GenerateComposite() and R_GenerateLookup()
 // with Lee Killough's implementations found in MBF to fix Medusa bug
 // taken from mbfsrc/R_DATA.C:136-425
-
-// Emacs style mode select   -*- C++ -*-
-//-----------------------------------------------------------------------------
 //
-// $Id: r_data.c,v 1.23 1998/05/23 08:05:57 killough Exp $
-//
-//  Copyright (C) 1999 by
-//  id Software, Chi Hoang, Lee Killough, Jim Flynn, Rand Phares, Ty Halderman
-//
-//  This program is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU General Public License
-//  as published by the Free Software Foundation; either version 2
-//  of the License, or (at your option) any later version.
-//
-//  This program is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU General Public License for more details.
-//
-//  You should have received a copy of the GNU General Public License
-//  along with this program; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 
-//  02111-1307, USA.
-//
-// DESCRIPTION:
-//      Preparation of data for rendering,
-//      generation of lookups, caching, retrieval by name.
-//
-//-----------------------------------------------------------------------------
-
 // R_DrawColumnInCache
 // Clip and draw a column
 //  from a patch into a cached post.
