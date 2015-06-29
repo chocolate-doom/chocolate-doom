@@ -696,11 +696,12 @@ static boolean CacheSFX(sfxinfo_t *sfxinfo)
 #ifdef DEBUG_DUMP_WAVS
     {
         char filename[16];
+        allocated_sound_t * snd;
 
         M_snprintf(filename, sizeof(filename), "%s.wav",
-                   DEH_String(S_sfx[sound].name));
-        WriteWAV(filename, sound_chunks[sound].abuf,
-                 sound_chunks[sound].alen, mixer_freq);
+                   DEH_String(sfxinfo->name));
+        snd = GetAllocatedSoundBySfxInfoAndPitch(sfxinfo, NORM_PITCH);
+        WriteWAV(filename, snd->chunk.abuf, snd->chunk.alen,mixer_freq);
     }
 #endif
 
