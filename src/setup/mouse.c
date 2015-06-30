@@ -113,7 +113,8 @@ static void ConfigExtraButtons(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
     AddMouseControl(buttons_table, "Next weapon", &mousebnextweapon);
     if (gamemission == doom) // [crispy]
     {
-    AddMouseControl(buttons_table, "Free look [*]", &mousebmouselook);
+        AddMouseControl(buttons_table, "Free look [*]", &mousebmouselook);
+        AddMouseControl(buttons_table, "Jump [*]", &mousebjump);
     }
 }
 
