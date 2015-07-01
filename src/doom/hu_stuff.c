@@ -603,13 +603,23 @@ void HU_Drawer(void)
     HUlib_drawSText(&w_secret);
 
     if (automapactive)
+    {
+	// [crispy] move map title to the bottom
+	if (crispy_automapoverlay && screenblocks >= CRISPY_HUD - 1)
+	    w_title.y = HU_TITLEY + 32; // [crispy] 32 == ST_HEIGHT
+	else
+	    w_title.y = HU_TITLEY;
+
 	HUlib_drawTextLine(&w_title, false);
+    }
 
     if (automapactive && crispy_automapstats)
     {
 	int time = leveltime / TICRATE;
 
-	HUlib_drawTextLine(&w_map, false);
+	// [crispy] move obtrusive line out of player view
+	if (!crispy_automapoverlay || screenblocks < CRISPY_HUD - 1)
+	    HUlib_drawTextLine(&w_map, false);
 
 	// [crispy] count Lost Souls and spawned monsters
 	if (extrakills)
