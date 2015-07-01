@@ -85,6 +85,7 @@ int opl_io_port = 0x388;
 int snd_cachesize = 64 * 1024 * 1024;
 int snd_maxslicetime_ms = 28;
 char *snd_musiccmd = "";
+int snd_pitchshift = 0;
 
 static int numChannels = 8;
 static int sfxVolume = 8;
@@ -314,6 +315,7 @@ void ConfigSound(void)
                    TXT_NewSpinControl(&numChannels, 1, 8),
                    TXT_NewLabel("SFX volume"),
                    TXT_NewSpinControl(&sfxVolume, 0, 15),
+                   TXT_NewCheckBox("Pitch-shift sounds", &snd_pitchshift),
                    NULL);
 
     if (gamemission == strife)
@@ -379,6 +381,8 @@ void BindSoundVariables(void)
 
     M_BindIntVariable("snd_cachesize",            &snd_cachesize);
     M_BindIntVariable("opl_io_port",              &opl_io_port);
+
+    M_BindIntVariable("snd_pitchshift",           &snd_pitchshift);
 
     if (gamemission == strife)
     {

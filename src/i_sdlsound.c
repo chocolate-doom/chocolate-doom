@@ -951,13 +951,16 @@ static int I_SDL_StartSound(sfxinfo_t *sfxinfo, int channel, int vol, int sep, i
             return -1;
         }
 
-        newsnd = PitchShift(snd, pitch);
-
-        if(newsnd)
+        if(snd_pitchshift)
         {
-            LockAllocatedSound(newsnd);
-            UnlockAllocatedSound(snd);
-            snd = newsnd;
+            newsnd = PitchShift(snd, pitch);
+
+            if(newsnd)
+            {
+                LockAllocatedSound(newsnd);
+                UnlockAllocatedSound(snd);
+                snd = newsnd;
+            }
         }
     }
     else
