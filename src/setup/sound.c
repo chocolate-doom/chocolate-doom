@@ -290,6 +290,14 @@ void ConfigSound(void)
         num_music_modes = NUM_MUSICMODES - 1;
     }
 
+    // All versions of Heretic and Hexen did pitch-shifting.
+    // Most versions of Doom did not and Strife never did.
+
+    if(gamemission == heretic || gamemission == hexen)
+    {
+        snd_pitchshift = 1;
+    }
+
     // Build the window
 
     window = TXT_NewWindow("Sound configuration");
@@ -315,8 +323,15 @@ void ConfigSound(void)
                    TXT_NewSpinControl(&numChannels, 1, 8),
                    TXT_NewLabel("SFX volume"),
                    TXT_NewSpinControl(&sfxVolume, 0, 15),
-                   TXT_NewCheckBox("Pitch-shift sounds", &snd_pitchshift),
                    NULL);
+
+    // strife did not implement pitch shifting at all, so hide the option.
+
+    if (gamemission != strife)
+    {
+        TXT_AddWidget(sfx_table,
+                   TXT_NewCheckBox("Pitch-shift sounds", &snd_pitchshift));
+    }
 
     if (gamemission == strife)
     {
