@@ -63,7 +63,6 @@ int		viewwindowx;
 int		viewwindowy; 
 byte*		ylookup[MAXHEIGHT]; 
 int		columnofs[MAXWIDTH]; 
-static const int	linesize = SCREENWIDTH;
 
 // Color tables for different players,
 //  translate a limited part to another
@@ -102,121 +101,79 @@ int			dccount;
 // Thus a special case loop for very fast rendering can
 //  be used. It has also been used with Wolfenstein 3D.
 // 
-
 // [crispy] replace R_DrawColumn() with Lee Killough's implementation
 // found in MBF to fix Tutti-Frutti, taken from mbfsrc/R_DRAW.C:99-1979
 
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
-//
-// $Id: r_draw.c,v 1.16 1998/05/03 22:41:46 killough Exp $
-//
-//  Copyright (C) 1999 by
-//  id Software, Chi Hoang, Lee Killough, Jim Flynn, Rand Phares, Ty Halderman
-//
-//  This program is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU General Public License
-//  as published by the Free Software Foundation; either version 2
-//  of the License, or (at your option) any later version.
-//
-//  This program is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU General Public License for more details.
-//
-//  You should have received a copy of the GNU General Public License
-//  along with this program; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 
-//  02111-1307, USA.
-//
-// DESCRIPTION:
-//      The actual span/column drawing functions.
-//      Here find the main potential for optimization,
-//       e.g. inline assembly, different algorithms.
-//
-//-----------------------------------------------------------------------------
-
 void R_DrawColumn (void) 
 { 
-  int              count;
-  register byte    *dest;            // killough
-  register fixed_t frac;            // killough
-  fixed_t          fracstep;
+    int			count; 
+    byte*		dest; 
+    fixed_t		frac;
+    fixed_t		fracstep;	 
+    int			heightmask = dc_texheight - 1;
+ 
+    count = dc_yh - dc_yl; 
 
-  count = dc_yh - dc_yl + 1;
+    // Zero length, column does not exceed a pixel.
+    if (count < 0) 
+	return; 
+				 
+#ifdef RANGECHECK 
+    if ((unsigned)dc_x >= SCREENWIDTH
+	|| dc_yl < 0
+	|| dc_yh >= SCREENHEIGHT) 
+	I_Error ("R_DrawColumn: %i to %i at %i", dc_yl, dc_yh, dc_x); 
+#endif 
 
-  if (count <= 0)    // Zero length, column does not exceed a pixel.
-    return;
+    // Framebuffer destination address.
+    // Use ylookup LUT to avoid multiply with ScreenWidth.
+    // Use columnofs LUT for subwindows? 
+    dest = ylookup[dc_yl] + columnofs[dc_x];  
 
-#ifdef RANGECHECK
-  if ((unsigned)dc_x >= SCREENWIDTH
-      || dc_yl < 0
-      || dc_yh >= SCREENHEIGHT)
-    I_Error ("R_DrawColumn: %i to %i at %i", dc_yl, dc_yh, dc_x);
-#endif
+    // Determine scaling,
+    //  which is the only mapping to be done.
+    fracstep = dc_iscale; 
+    frac = dc_texturemid + (dc_yl-centery)*fracstep; 
 
-  // Framebuffer destination address.
-  // Use ylookup LUT to avoid multiply with ScreenWidth.
-  // Use columnofs LUT for subwindows?
+    // Inner loop that does the actual texture mapping,
+    //  e.g. a DDA-lile scaling.
+    // This is as fast as it gets.
 
-  dest = ylookup[dc_yl] + columnofs[dc_x];
-
-  // Determine scaling, which is the only mapping to be done.
-
-  fracstep = dc_iscale;
-  frac = dc_texturemid + (dc_yl-centery)*fracstep;
-
-  // Inner loop that does the actual texture mapping,
-  //  e.g. a DDA-lile scaling.
-  // This is as fast as it gets.       (Yeah, right!!! -- killough)
-  //
-  // killough 2/1/98: more performance tuning
-
+  // heightmask is the Tutti-Frutti fix -- killough
+  if (dc_texheight & heightmask) // not a power of 2 -- killough
   {
-    register const byte *source = dc_source;
-    register const lighttable_t *colormap = dc_colormap;
-    register int heightmask = dc_texheight-1;
-    if (dc_texheight & heightmask)   // not a power of 2 -- killough
-      {
-        heightmask++;
-        heightmask <<= FRACBITS;
+    heightmask++;
+    heightmask <<= FRACBITS;
 
-        if (frac < 0)
-          while ((frac += heightmask) < 0);
-        else
-          while (frac >= heightmask)
-            frac -= heightmask;
-
-        do
-          {
-            // Re-map color indices from wall texture column
-            //  using a lighting/special effects LUT.
-
-            // heightmask is the Tutti-Frutti fix -- killough
-
-            *dest = colormap[source[frac>>FRACBITS]];
-            dest += linesize;                     // killough 11/98
-            if ((frac += fracstep) >= heightmask)
-              frac -= heightmask;
-          }
-        while (--count);
-      }
+    if (frac < 0)
+	while ((frac += heightmask) < 0);
     else
-      {
-        while ((count-=2)>=0)   // texture height is a power of 2 -- killough
-          {
-            *dest = colormap[source[(frac>>FRACBITS) & heightmask]];
-            dest += linesize;   // killough 11/98
-            frac += fracstep;
-            *dest = colormap[source[(frac>>FRACBITS) & heightmask]];
-            dest += linesize;   // killough 11/98
-            frac += fracstep;
-          }
-        if (count & 1)
-          *dest = colormap[source[(frac>>FRACBITS) & heightmask]];
-      }
+	while (frac >= heightmask)
+	    frac -= heightmask;
+
+    do
+    {
+	*dest = dc_colormap[dc_source[frac>>FRACBITS]];
+
+	dest += SCREENWIDTH;
+	if ((frac += fracstep) >= heightmask)
+	    frac -= heightmask;
+    } while (count--);
   }
-}
+  else // texture height is a power of 2 -- killough
+  {
+    do 
+    {
+	// Re-map color indices from wall texture column
+	//  using a lighting/special effects LUT.
+	*dest = dc_colormap[dc_source[(frac>>FRACBITS)&heightmask]];
+	
+	dest += SCREENWIDTH; 
+	frac += fracstep;
+	
+    } while (count--); 
+  }
+} 
 
 
 
