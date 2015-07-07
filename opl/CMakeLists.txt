@@ -1,5 +1,6 @@
 include_directories(
     "${CMAKE_CURRENT_BINARY_DIR}/.."
+    ${SDL_INCLUDE_DIR}
     ${SDL_MIXER_INCLUDE_DIR})
 add_library(opl STATIC
                                 opl_internal.h

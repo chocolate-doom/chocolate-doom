@@ -139,17 +139,22 @@ set(EXTRA_LIBS
     ${SDL_MIXER_LIBRARY}
     ${SDL_NET_LIBRARY})
 
+find_library(MATH_LIBRARY NAMES m)
+if(MATH_LIBRARY)
+    list(APPEND EXTRA_LIBS ${MATH_LIBRARY})
+endif()
+
 add_executable("${PROGRAM_PREFIX}doom" ${SOURCE_FILES_WITH_DEH} resource.rc)
-target_link_libraries("${PROGRAM_PREFIX}doom" doom ${EXTRA_LIBS} m)
+target_link_libraries("${PROGRAM_PREFIX}doom" doom ${EXTRA_LIBS})
 
 add_executable("${PROGRAM_PREFIX}heretic" ${SOURCE_FILES_WITH_DEH} resource.rc)
-target_link_libraries("${PROGRAM_PREFIX}heretic" heretic ${EXTRA_LIBS} m)
+target_link_libraries("${PROGRAM_PREFIX}heretic" heretic ${EXTRA_LIBS})
 
 add_executable("${PROGRAM_PREFIX}hexen" ${SOURCE_FILES} resource.rc)
-target_link_libraries("${PROGRAM_PREFIX}hexen" hexen ${EXTRA_LIBS} m)
+target_link_libraries("${PROGRAM_PREFIX}hexen" hexen ${EXTRA_LIBS})
 
 add_executable("${PROGRAM_PREFIX}strife" ${SOURCE_FILES_WITH_DEH} resource.rc)
-target_link_libraries("${PROGRAM_PREFIX}strife" strife ${EXTRA_LIBS} m)
+target_link_libraries("${PROGRAM_PREFIX}strife" strife ${EXTRA_LIBS})
 
 # Source files needed for chocolate-setup:
 
@@ -167,7 +172,16 @@ set(SETUP_FILES
     net_structrw.c       net_structrw.h
     z_native.c           z_zone.h)
 
+set(SETUP_LIBS
+    textscreen
+    ${SDL_LIBRARY}
+    ${SDL_NET_LIBRARY})
+
+if(MATH_LIBRARY)
+    list(APPEND SETUP_LIBS ${MATH_LIBRARY})
+endif()
+
 add_executable("${PROGRAM_PREFIX}setup"
                ${SETUP_FILES} ${COMMON_SOURCE_FILES} setup-res.rc)
 target_link_libraries("${PROGRAM_PREFIX}setup"
-                      setup textscreen ${SDL_LIBRARY} ${SDL_NET_LIBRARY} m)
+                      setup textscreen ${SETUP_LIBS})

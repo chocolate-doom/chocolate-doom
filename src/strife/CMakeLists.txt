@@ -3,6 +3,11 @@ include_directories(
     ".."
     ${SDL_INCLUDE_DIR})
 
+if(WIN32)
+    # For win_opendir.h
+    include_directories("../../msvc")
+endif()
+
 set(SOURCE_FILES
     am_map.c           am_map.h
                        d_englsh.h
@@ -62,6 +67,10 @@ set(SOURCE_FILES
     st_lib.c           st_lib.h
     st_stuff.c         st_stuff.h
     wi_stuff.c         wi_stuff.h)
+
+if(WIN32)
+    list(APPEND SOURCE_FILES "../../msvc/win_opendir.c")
+endif()
 
 set(FEATURE_DEHACKED_SOURCE_FILES
     deh_ammo.c

@@ -2,7 +2,8 @@ include_directories(
     "${CMAKE_CURRENT_BINARY_DIR}/../.."
     ".."
     "../../textscreen"
-    ${SDL_INCLUDE_DIR})
+    ${SDL_INCLUDE_DIR}
+    ${SDL_MIXER_INCLUDE_DIR})
 
 set(SOURCE_FILES
     compatibility.c   compatibility.h
