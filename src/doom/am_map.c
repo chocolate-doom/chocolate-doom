@@ -1493,6 +1493,10 @@ void AM_drawPlayers(void)
 	their_color++;
 	p = &players[i];
 
+	// [crispy] move up here
+	if (!playeringame[i])
+	    continue;
+
 	pt.x = p->mo->x;
 	pt.y = p->mo->y;
 	if (crispy_automaprotate)
@@ -1501,9 +1505,6 @@ void AM_drawPlayers(void)
 	}
 
 	if ( (deathmatch && !singledemo) && p != plr)
-	    continue;
-
-	if (!playeringame[i])
 	    continue;
 
 	if (p->powers[pw_invisibility])
