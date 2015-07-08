@@ -175,6 +175,7 @@ set(SETUP_FILES
 set(SETUP_LIBS
     textscreen
     ${SDL_LIBRARY}
+    ${SDL_MIXER_LIBRARY}
     ${SDL_NET_LIBRARY})
 
 if(MATH_LIBRARY)
