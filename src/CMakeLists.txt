@@ -144,16 +144,16 @@ if(MATH_LIBRARY)
     list(APPEND EXTRA_LIBS ${MATH_LIBRARY})
 endif()
 
-add_executable("${PROGRAM_PREFIX}doom" ${SOURCE_FILES_WITH_DEH} resource.rc)
+add_executable("${PROGRAM_PREFIX}doom" ${SOURCE_FILES_WITH_DEH} "${CMAKE_CURRENT_BINARY_DIR}/resource.rc")
 target_link_libraries("${PROGRAM_PREFIX}doom" doom ${EXTRA_LIBS})
 
-add_executable("${PROGRAM_PREFIX}heretic" ${SOURCE_FILES_WITH_DEH} resource.rc)
+add_executable("${PROGRAM_PREFIX}heretic" ${SOURCE_FILES_WITH_DEH} "${CMAKE_CURRENT_BINARY_DIR}/resource.rc")
 target_link_libraries("${PROGRAM_PREFIX}heretic" heretic ${EXTRA_LIBS})
 
-add_executable("${PROGRAM_PREFIX}hexen" ${SOURCE_FILES} resource.rc)
+add_executable("${PROGRAM_PREFIX}hexen" ${SOURCE_FILES} "${CMAKE_CURRENT_BINARY_DIR}/resource.rc")
 target_link_libraries("${PROGRAM_PREFIX}hexen" hexen ${EXTRA_LIBS})
 
-add_executable("${PROGRAM_PREFIX}strife" ${SOURCE_FILES_WITH_DEH} resource.rc)
+add_executable("${PROGRAM_PREFIX}strife" ${SOURCE_FILES_WITH_DEH} "${CMAKE_CURRENT_BINARY_DIR}/resource.rc")
 target_link_libraries("${PROGRAM_PREFIX}strife" strife ${EXTRA_LIBS})
 
 # Source files needed for chocolate-setup:
@@ -182,6 +182,6 @@ if(MATH_LIBRARY)
 endif()
 
 add_executable("${PROGRAM_PREFIX}setup"
-               ${SETUP_FILES} ${COMMON_SOURCE_FILES} setup-res.rc)
+               ${SETUP_FILES} ${COMMON_SOURCE_FILES} "${CMAKE_CURRENT_BINARY_DIR}/setup-res.rc")
 target_link_libraries("${PROGRAM_PREFIX}setup"
                       setup textscreen ${SETUP_LIBS})

@@ -14,8 +14,14 @@ find_package(SDL)
 find_package(SDL_mixer)
 find_package(SDL_net)
 
-configure_file("cmake/config.h.in" "${CMAKE_CURRENT_BINARY_DIR}/config.h")
-configure_file("cmake/resource.rc.in" "${CMAKE_CURRENT_BINARY_DIR}/src/resource.rc")
+configure_file("cmake/config.h.in"
+               "${CMAKE_CURRENT_BINARY_DIR}/config.h")
+configure_file("cmake/resource.rc.in"
+               "${CMAKE_CURRENT_BINARY_DIR}/src/resource.rc")
+configure_file("cmake/setup-res.rc.in"
+               "${CMAKE_CURRENT_BINARY_DIR}/src/setup-res.rc")
+configure_file("src/setup/setup-manifest.xml.in"
+               "${CMAKE_CURRENT_BINARY_DIR}/src/setup/setup-manifest.xml")
 
 add_subdirectory(opl)
 add_subdirectory(pcsound)
