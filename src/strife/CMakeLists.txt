@@ -3,7 +3,9 @@ include_directories(
     ".."
     ${SDL_INCLUDE_DIR})
 
-if(WIN32)
+include(CheckFunctionExists)
+check_function_exists(opendir HAVE_OPENDIR)
+if(NOT HAVE_OPENDIR)
     # For win_opendir.h
     include_directories("../../msvc")
 endif()
@@ -68,7 +70,7 @@ set(SOURCE_FILES
     st_stuff.c         st_stuff.h
     wi_stuff.c         wi_stuff.h)
 
-if(WIN32)
+if(NOT HAVE_OPENDIR)
     list(APPEND SOURCE_FILES "../../msvc/win_opendir.c")
 endif()
 
