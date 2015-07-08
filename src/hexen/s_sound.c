@@ -498,9 +498,8 @@ void S_StartSoundAtVolume(mobj_t * origin, int sound_id, int volume)
 //              vol = SoundCurve[dist];
     }
 
-#if 0
-// TODO
-    if (S_sfx[sound_id].changePitch)
+    // if the sfxinfo_t is marked as 'can be pitch shifted'
+    if (S_sfx[sound_id].pitch)
     {
         Channel[i].pitch = (byte) (NORM_PITCH + (M_Random() & 7) - (M_Random() & 7));
     }
@@ -508,7 +507,7 @@ void S_StartSoundAtVolume(mobj_t * origin, int sound_id, int volume)
     {
         Channel[i].pitch = NORM_PITCH;
     }
-#endif
+
     if (S_sfx[sound_id].lumpnum == 0)
     {
         S_sfx[sound_id].lumpnum = I_GetSfxLumpNum(&S_sfx[sound_id]);
@@ -518,7 +517,7 @@ void S_StartSoundAtVolume(mobj_t * origin, int sound_id, int volume)
                                      i,
                                      vol,
                                      sep,
-                                     NORM_PITCH);
+                                     Channel[i].pitch);
     Channel[i].sound_id = sound_id;
     Channel[i].priority = priority;
     Channel[i].volume = volume;
@@ -772,7 +771,7 @@ void S_UpdateSounds(mobj_t * listener)
                 if (sep > 192)
                     sep = 512 - sep;
             }
-            I_UpdateSoundParams(i, vol, sep /*, Channel[i].pitch */);
+            I_UpdateSoundParams(i, vol, sep);
             priority = S_sfx[Channel[i].sound_id].priority;
             priority *= PRIORITY_MAX_ADJUST - (dist / DIST_ADJUST);
             Channel[i].priority = priority;

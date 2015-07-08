@@ -46,7 +46,7 @@ struct sfxinfo_struct
     // referenced sound if a link
     sfxinfo_t *link;
 
-    // pitch if a link
+    // pitch if a link (Doom), whether to pitch-shift (Hexen)
     int pitch;
 
     // volume if a link
