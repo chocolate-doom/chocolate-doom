@@ -142,6 +142,12 @@ void S_Init(int sfxVolume, int musicVolume)
         S_sfx[i].lumpnum = S_sfx[i].usefulness = -1;
     }
 
+    // Doom defaults to pitch-shifting off.
+    if(snd_pitchshift == -1)
+    {
+        snd_pitchshift = 0;
+    }
+
     I_AtExit(S_Shutdown, true);
 }
 

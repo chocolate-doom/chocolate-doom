@@ -49,8 +49,9 @@ int snd_maxslicetime_ms = 28;
 char *snd_musiccmd = "";
 
 // Whether to vary the pitch of sound effects
+// Each game will set the default differently
 
-int snd_pitchshift = 0;
+int snd_pitchshift = -1;
 
 // Low-level sound and music modules we are using
 

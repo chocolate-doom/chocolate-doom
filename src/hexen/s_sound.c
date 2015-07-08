@@ -800,6 +800,12 @@ void S_Init(void)
 
     I_AtExit(S_ShutDown, true);
 
+    // Hexen defaults to pitch-shifting on
+    if(snd_pitchshift == -1)
+    {
+        snd_pitchshift = 1;
+    }
+
     I_PrecacheSounds(S_sfx, NUMSFX);
 
     // Attempt to setup CD music
