@@ -48,6 +48,11 @@ int snd_maxslicetime_ms = 28;
 
 char *snd_musiccmd = "";
 
+// Whether to vary the pitch of sound effects
+// Each game will set the default differently
+
+int snd_pitchshift = -1;
+
 // Low-level sound and music modules we are using
 
 static sound_module_t *sound_module;
@@ -308,12 +313,12 @@ void I_UpdateSoundParams(int channel, int vol, int sep)
     }
 }
 
-int I_StartSound(sfxinfo_t *sfxinfo, int channel, int vol, int sep)
+int I_StartSound(sfxinfo_t *sfxinfo, int channel, int vol, int sep, int pitch)
 {
     if (sound_module != NULL)
     {
         CheckVolumeSeparation(&vol, &sep);
-        return sound_module->StartSound(sfxinfo, channel, vol, sep);
+        return sound_module->StartSound(sfxinfo, channel, vol, sep, pitch);
     }
     else
     {
@@ -448,6 +453,7 @@ void I_BindSoundVariables(void)
     M_BindIntVariable("snd_samplerate",          &snd_samplerate);
     M_BindIntVariable("snd_cachesize",           &snd_cachesize);
     M_BindIntVariable("opl_io_port",             &opl_io_port);
+    M_BindIntVariable("snd_pitchshift",          &snd_pitchshift);
 
     M_BindStringVariable("timidity_cfg_path",    &timidity_cfg_path);
     M_BindStringVariable("gus_patch_path",       &gus_patch_path);
