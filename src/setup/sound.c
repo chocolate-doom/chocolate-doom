@@ -186,36 +186,40 @@ static void UpdateExtraTable(TXT_UNCAST_ARG(widget),
 {
     TXT_CAST_ARG(txt_table_t, extra_table);
 
+    TXT_ClearTable(extra_table);
+
     switch (snd_musicmode)
     {
-    case MUSICMODE_OPL:
-        TXT_InitTable(extra_table, 2);
-        TXT_SetColumnWidths(extra_table, 19, 4);
-        TXT_AddWidgets(extra_table,
-                        TXT_NewLabel("OPL type"),
-                        OPLTypeSelector(),
-                        NULL);
-        break;
+        case MUSICMODE_OPL:
+            TXT_SetColumnWidths(extra_table, 19, 4);
+            TXT_AddWidgets(extra_table,
+                           TXT_NewLabel("OPL type"),
+                           OPLTypeSelector(),
+                           NULL);
+            break;
 
-    case MUSICMODE_GUS:
-        TXT_InitTable(extra_table, 1);
-        TXT_AddWidgets(extra_table,
-                        TXT_NewLabel("GUS patch path:"),
-                        TXT_NewFileSelector(&gus_patch_path, 30,
-                                            "Select path to GUS patches",
-                                            TXT_DIRECTORY),
-                        NULL);
-        break;
+        case MUSICMODE_GUS:
+            TXT_AddWidgets(extra_table,
+                           TXT_NewLabel("GUS patch path:"),
+                           TXT_NewStrut(0, 0),
+                           TXT_NewFileSelector(&gus_patch_path, 30,
+                                               "Select path to GUS patches",
+                                               TXT_DIRECTORY),
+                           NULL);
+            break;
 
-    case MUSICMODE_NATIVE:
-        TXT_InitTable(extra_table, 1);
-        TXT_AddWidgets(extra_table,
-                        TXT_NewLabel("Timidity configuration file:"),
-                        TXT_NewFileSelector(&timidity_cfg_path, 30,
-                                            "Select Timidity config file",
-                                            cfg_extension),
-                        NULL);
-        break;
+        case MUSICMODE_NATIVE:
+            TXT_AddWidgets(extra_table,
+                           TXT_NewLabel("Timidity configuration file:"),
+                           TXT_NewStrut(0, 0),
+                           TXT_NewFileSelector(&timidity_cfg_path, 30,
+                                               "Select Timidity config file",
+                                               cfg_extension),
+                           NULL);
+            break;
+
+        default:
+            break;
     }
 }
 
@@ -329,7 +333,7 @@ void ConfigSound(void)
     TXT_AddWidgets(window,
                TXT_NewSeparator("Music"),
                music_table = TXT_NewTable(2),
-               extra_table = TXT_NewTable(1),
+               extra_table = TXT_NewTable(2),
                NULL);
 
     TXT_SetColumnWidths(music_table, 19, 15);
