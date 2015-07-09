@@ -174,7 +174,8 @@ static boolean IsDisabledSound(sfxinfo_t *sfxinfo)
 static int I_PCS_StartSound(sfxinfo_t *sfxinfo,
                             int channel,
                             int vol,
-                            int sep)
+                            int sep,
+                            int pitch)
 {
     int result;
 

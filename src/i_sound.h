@@ -22,6 +22,8 @@
 
 #include "doomtype.h"
 
+// so that the individual game logic and sound driver code agree
+#define NORM_PITCH 127
 
 //
 // SoundFX struct.
@@ -44,7 +46,7 @@ struct sfxinfo_struct
     // referenced sound if a link
     sfxinfo_t *link;
 
-    // pitch if a link
+    // pitch if a link (Doom), whether to pitch-shift (Hexen)
     int pitch;
 
     // volume if a link
@@ -76,13 +78,13 @@ typedef struct
 
     // lump number of music
     int lumpnum;
-    
+
     // music data
     void *data;
 
     // music handle once registered
     void *handle;
-    
+
 } musicinfo_t;
 
 typedef enum 
@@ -133,7 +135,7 @@ typedef struct
     // Start a sound on a given channel.  Returns the channel id
     // or -1 on failure.
 
-    int (*StartSound)(sfxinfo_t *sfxinfo, int channel, int vol, int sep);
+    int (*StartSound)(sfxinfo_t *sfxinfo, int channel, int vol, int sep, int pitch);
 
     // Stop the sound playing on the given channel.
 
@@ -154,7 +156,7 @@ void I_ShutdownSound(void);
 int I_GetSfxLumpNum(sfxinfo_t *sfxinfo);
 void I_UpdateSound(void);
 void I_UpdateSoundParams(int channel, int vol, int sep);
-int I_StartSound(sfxinfo_t *sfxinfo, int channel, int vol, int sep);
+int I_StartSound(sfxinfo_t *sfxinfo, int channel, int vol, int sep, int pitch);
 void I_StopSound(int channel);
 boolean I_SoundIsPlaying(int channel);
 void I_PrecacheSounds(sfxinfo_t *sounds, int num_sounds);
@@ -231,6 +233,7 @@ extern int snd_samplerate;
 extern int snd_cachesize;
 extern int snd_maxslicetime_ms;
 extern char *snd_musiccmd;
+extern int snd_pitchshift;
 
 void I_BindSoundVariables(void);
 

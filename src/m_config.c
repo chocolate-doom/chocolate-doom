@@ -809,6 +809,14 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(snd_maxslicetime_ms),
 
     //!
+    // If non-zero, sound effects will have their pitch varied up or
+    // down by a random amount during play. If zero, sound effects
+    // play back at their default pitch. The default is zero.
+    //
+
+    CONFIG_VARIABLE_INT(snd_pitchshift),
+
+    //!
     // External command to invoke to perform MIDI playback. If set to
     // the empty string, SDL_mixer's internal MIDI playback is used.
     // This only has any effect when snd_musicdevice is set to General
