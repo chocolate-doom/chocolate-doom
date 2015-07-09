@@ -36,6 +36,19 @@
 #define TXT_TABLE_OVERFLOW_DOWN (&txt_table_overflow_down)
 
 /**
+ * Magic value that if given to @ref TXT_AddWidget(), will pad out all
+ * columns until the end of line.
+ */
+#define TXT_TABLE_EOL (&txt_table_eol)
+
+/**
+ * Indicates an empty space to @ref TXT_AddWidgets(). Equivalent to
+ * TXT_AddWidget(table, NULL), except that NULL is used by TXT_AddWidgets()
+ * to indicate the end of input.
+ */
+#define TXT_TABLE_EMPTY (&txt_table_empty)
+
+/**
  * Table widget.
  *
  * A table is a widget that contains other widgets.  It may have
@@ -71,8 +84,10 @@ struct txt_table_s
 };
 
 extern txt_widget_class_t txt_table_class;
-extern const txt_widget_t txt_table_overflow_right;
-extern const txt_widget_t txt_table_overflow_down;
+extern txt_widget_t txt_table_overflow_right;
+extern txt_widget_t txt_table_overflow_down;
+extern txt_widget_t txt_table_eol;
+extern txt_widget_t txt_table_empty;
 
 void TXT_InitTable(txt_table_t *table, int columns);
 
