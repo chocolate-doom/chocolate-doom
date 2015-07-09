@@ -22,6 +22,20 @@
  */
 
 /**
+ * Magic value that if used in a table, will indicate that the cell is
+ * empty and the widget in the cell to the left can overflow into it.
+ */
+
+#define TXT_TABLE_OVERFLOW_RIGHT (&txt_table_overflow_right)
+
+/**
+ * Magic value that if used in a table, will indicate that the cell is
+ * empty and the widget in the cell above it can overflow down into it.
+ */
+
+#define TXT_TABLE_OVERFLOW_DOWN (&txt_table_overflow_down)
+
+/**
  * Table widget.
  *
  * A table is a widget that contains other widgets.  It may have
@@ -45,21 +59,20 @@ struct txt_table_s
 
     // Widgets in this table
     // The widget at (x,y) in the table is widgets[columns * y + x]
-
     txt_widget_t **widgets;
     int num_widgets;
 
     // Number of columns
-
     int columns;
 
-    // Currently selected 
-
+    // Currently selected:
     int selected_x;
     int selected_y;
 };
 
 extern txt_widget_class_t txt_table_class;
+extern const txt_widget_t txt_table_overflow_right;
+extern const txt_widget_t txt_table_overflow_down;
 
 void TXT_InitTable(txt_table_t *table, int columns);
 
