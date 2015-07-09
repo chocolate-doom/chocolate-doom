@@ -143,7 +143,7 @@ void S_Init(int sfxVolume, int musicVolume)
     }
 
     // Doom defaults to pitch-shifting off.
-    if(snd_pitchshift == -1)
+    if (snd_pitchshift == -1)
     {
         snd_pitchshift = 0;
     }

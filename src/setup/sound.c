@@ -294,14 +294,6 @@ void ConfigSound(void)
         num_music_modes = NUM_MUSICMODES - 1;
     }
 
-    // All versions of Heretic and Hexen did pitch-shifting.
-    // Most versions of Doom did not and Strife never did.
-
-    if(gamemission == heretic || gamemission == hexen)
-    {
-        snd_pitchshift = 1;
-    }
-
     // Build the window
 
     window = TXT_NewWindow("Sound configuration");
@@ -411,6 +403,10 @@ void BindSoundVariables(void)
 
     timidity_cfg_path = M_StringDuplicate("");
     gus_patch_path = M_StringDuplicate("");
+
+    // All versions of Heretic and Hexen did pitch-shifting.
+    // Most versions of Doom did not and Strife never did.
+    snd_pitchshift = gamemission == heretic || gamemission == hexen;
 
     // Default sound volumes - different games use different values.
 

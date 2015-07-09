@@ -280,14 +280,15 @@ static allocated_sound_t * GetAllocatedSoundBySfxInfoAndPitch(sfxinfo_t *sfxinfo
 {
     allocated_sound_t * p = allocated_sounds_head;
 
-    while(p != NULL)
+    while (p != NULL)
     {
-        if(p->sfxinfo == sfxinfo && p->pitch == pitch)
+        if (p->sfxinfo == sfxinfo && p->pitch == pitch)
         {
             return p;
         }
         p = p->next;
     }
+
     return NULL;
 }
 
@@ -309,14 +310,14 @@ static allocated_sound_t * PitchShift(allocated_sound_t *insnd, int pitch)
     dstlen = (int)((1 + (1 - (float)pitch / NORM_PITCH)) * srclen);
 
     // ensure that the new buffer is an even length
-    if( (dstlen % 2) == 0)
+    if ((dstlen % 2) == 0)
     {
         dstlen++;
     }
 
     outsnd = AllocateSound(insnd->sfxinfo, dstlen);
 
-    if(!outsnd)
+    if (!outsnd)
     {
         return NULL;
     }
@@ -325,7 +326,7 @@ static allocated_sound_t * PitchShift(allocated_sound_t *insnd, int pitch)
     dstbuf = (Sint16 *)outsnd->chunk.abuf;
 
     // loop over output buffer. find corresponding input cell, copy over
-    for(outp = dstbuf; outp < dstbuf + dstlen/2; ++outp)
+    for (outp = dstbuf; outp < dstbuf + dstlen/2; ++outp)
     {
         inp = srcbuf + (int)((float)(outp - dstbuf) / dstlen * srclen);
         *outp = *inp;
@@ -353,7 +354,7 @@ static void ReleaseSoundOnChannel(int channel)
 
     // if the sound is a pitch-shift and it's not in use, immediately
     // free it
-    if(snd->pitch != NORM_PITCH && snd->use_count <= 0)
+    if (snd->pitch != NORM_PITCH && snd->use_count <= 0)
     {
         FreeAllocatedSound(snd);
     }
@@ -947,22 +948,22 @@ static int I_SDL_StartSound(sfxinfo_t *sfxinfo, int channel, int vol, int sep, i
 
     snd = GetAllocatedSoundBySfxInfoAndPitch(sfxinfo, pitch);
 
-    if(snd == NULL)
+    if (snd == NULL)
     {
         allocated_sound_t *newsnd;
         // fetch the base sound effect, un-pitch-shifted
         snd = GetAllocatedSoundBySfxInfoAndPitch(sfxinfo, NORM_PITCH);
 
-        if(!snd)
+        if (snd == NULL)
         {
             return -1;
         }
 
-        if(snd_pitchshift)
+        if (snd_pitchshift)
         {
             newsnd = PitchShift(snd, pitch);
 
-            if(newsnd)
+            if (newsnd)
             {
                 LockAllocatedSound(newsnd);
                 UnlockAllocatedSound(snd);
