@@ -173,6 +173,22 @@ void TXT_AddWidgets(TXT_UNCAST_ARG(table), ...);
 int TXT_SelectWidget(TXT_UNCAST_ARG(table), TXT_UNCAST_ARG(widget));
 
 /**
+ * Change the number of columns in the table.
+ *
+ * Existing widgets in the table will be preserved, unless the change
+ * reduces the number of columns, in which case the widgets from the
+ * 'deleted' columns will be freed.
+ *
+ * This function can be useful for changing the number of columns in
+ * a window, which by default are tables containing a single column.
+ *
+ * @param table         The table.
+ * @param new_columns   The new number of columns.
+ */
+
+void TXT_SetTableColumns(TXT_UNCAST_ARG(table), int new_columns);
+
+/**
  * Set the widths of the columns of the table.
  *
  * The arguments to this function are variable, and correspond

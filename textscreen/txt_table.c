@@ -999,6 +999,66 @@ int TXT_SelectWidget(TXT_UNCAST_ARG(table), TXT_UNCAST_ARG(widget))
     return 0;
 }
 
+void TXT_SetTableColumns(TXT_UNCAST_ARG(table), int new_columns)
+{
+    TXT_CAST_ARG(txt_table_t, table);
+    txt_widget_t **new_widgets;
+    txt_widget_t *widget;
+    int new_num_widgets;
+    int i, j, x;
+
+    // We need as many full rows as are in the current list, plus the
+    // remainder from the last row.
+    new_num_widgets = (table->num_widgets / table->columns) * new_columns
+                    + (table->num_widgets % table->columns);
+    new_widgets = calloc(new_num_widgets, sizeof(txt_widget_t *));
+
+    // Reset and add one by one from the old table.
+    new_num_widgets = 0;
+
+    for (i = 0; i < table->num_widgets; ++i)
+    {
+        widget = table->widgets[i];
+        x = i % table->columns;
+
+        if (x < new_columns)
+        {
+            new_widgets[new_num_widgets] = widget;
+            ++new_num_widgets;
+        }
+        else if (IsActualWidget(widget))
+        {
+            TXT_DestroyWidget(widget);
+        }
+
+        // When we reach the last column of a row, we must pad it out with
+        // extra widgets to reach the next row.
+        if (x == table->columns - 1)
+        {
+            for (j = table->columns; j < new_columns; ++j)
+            {
+                // First row? We need to add struts that are used to apply
+                // the column widths.
+                if (i < table->columns)
+                {
+                    widget = &TXT_NewStrut(0, 0)->widget;
+                }
+                else
+                {
+                    widget = &txt_table_overflow_right;
+                }
+                new_widgets[new_num_widgets] = widget;
+                ++new_num_widgets;
+            }
+        }
+    }
+
+    free(table->widgets);
+    table->widgets = new_widgets;
+    table->num_widgets = new_num_widgets;
+    table->columns = new_columns;
+}
+
 // Sets the widths of columns in a table.
 
 void TXT_SetColumnWidths(TXT_UNCAST_ARG(table), ...)
