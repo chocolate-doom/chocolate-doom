@@ -151,8 +151,9 @@ static void KeySetCallback(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(variable))
 
 // Add a label and keyboard input to the specified table.
 
-static void AddKeyControl(txt_table_t *table, char *name, int *var)
+static void AddKeyControl(TXT_UNCAST_ARG(table), char *name, int *var)
 {
+    TXT_CAST_ARG(txt_table_t, table);
     txt_key_input_t *key_input;
 
     TXT_AddWidget(table, TXT_NewLabel(name));
@@ -162,20 +163,26 @@ static void AddKeyControl(txt_table_t *table, char *name, int *var)
     TXT_SignalConnect(key_input, "set", KeySetCallback, var);
 }
 
-static void AddSectionLabel(txt_table_t *table, char *title, boolean add_space)
+static void AddSectionLabel(TXT_UNCAST_ARG(table), char *title,
+                            boolean add_space)
 {
+    TXT_CAST_ARG(txt_table_t, table);
     char buf[64];
 
     if (add_space)
     {
-        TXT_AddWidgets(table, TXT_NewStrut(0, 1), TXT_NewStrut(0, 1),
-                              NULL);
+        TXT_AddWidgets(table,
+                       TXT_NewStrut(0, 1),
+                       TXT_TABLE_EOL,
+                       NULL);
     }
 
     M_snprintf(buf, sizeof(buf), " - %s - ", title);
 
-    TXT_AddWidgets(table, TXT_NewLabel(buf),  TXT_NewStrut(0, 0),
-                          NULL);
+    TXT_AddWidgets(table,
+                   TXT_NewLabel(buf),
+                   TXT_TABLE_EOL,
+                   NULL);
 }
 static void ConfigExtraKeys(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
 {
@@ -273,7 +280,8 @@ static void ConfigExtraKeys(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
             AddKeyControl(table, "Chaos Device", &key_arti_teleport);
             AddKeyControl(table, "Banishment Device", &key_arti_teleportother);
             AddKeyControl(table, "Porkalator", &key_arti_egg);
-            AddKeyControl(table, "Icon of the Defender", &key_arti_invulnerability);
+            AddKeyControl(table, "Icon of the Defender",
+                          &key_arti_invulnerability);
         }
     }
     else
@@ -291,8 +299,8 @@ static void ConfigExtraKeys(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
     AddKeyControl(table, "Weapon 6", &key_weapon6);
     AddKeyControl(table, "Weapon 7", &key_weapon7);
     AddKeyControl(table, "Weapon 8", &key_weapon8);
-    AddKeyControl(table, "Previous weapon",       &key_prevweapon);
-    AddKeyControl(table, "Next weapon",           &key_nextweapon);
+    AddKeyControl(table, "Previous weapon", &key_prevweapon);
+    AddKeyControl(table, "Next weapon", &key_nextweapon);
 }
 
 static void OtherKeysDialog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
@@ -386,9 +394,6 @@ static void OtherKeysDialog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
 void ConfigKeyboard(void)
 {
     txt_window_t *window;
-    txt_table_t *movement_table;
-    txt_table_t *action_table;
-    txt_table_t *dialogs_table;
     txt_checkbox_t *run_control;
 
     always_run = joybspeed >= 20;
@@ -397,59 +402,62 @@ void ConfigKeyboard(void)
 
     TXT_SetWindowHelpURL(window, WINDOW_HELP_URL);
 
-    TXT_AddWidgets(window,
-                   TXT_NewSeparator("Movement"),
-                   movement_table = TXT_NewTable(4),
+    // The window is on a 5-column grid layout that looks like:
+    // Label | Control | | Label | Control
+    // There is a small gap between the two conceptual "columns" of
+    // controls, just for spacing.
+    TXT_SetTableColumns(window, 5);
+    TXT_SetColumnWidths(window, 15, 8, 2, 15, 8);
 
-                   TXT_NewSeparator("Action"),
-                   action_table = TXT_NewTable(4),
-                   dialogs_table = TXT_NewTable(2),
+    TXT_AddWidget(window, TXT_NewSeparator("Movement"));
+    AddKeyControl(window, "Move Forward", &key_up);
+    TXT_AddWidget(window, TXT_TABLE_EMPTY);
+    AddKeyControl(window, "Strafe Left", &key_strafeleft);
 
-                   TXT_NewSeparator("Misc."),
-                   run_control = TXT_NewCheckBox("Always run", &always_run),
-                   TXT_NewInvertedCheckBox("Use native keyboard mapping", 
-                                           &vanilla_keyboard_mapping),
-                   NULL);
+    AddKeyControl(window, "Move Backward", &key_down);
+    TXT_AddWidget(window, TXT_TABLE_EMPTY);
+    AddKeyControl(window, "Strafe Right", &key_straferight);
 
-    TXT_SetColumnWidths(movement_table, 15, 8, 15, 8);
+    AddKeyControl(window, "Turn Left", &key_left);
+    TXT_AddWidget(window, TXT_TABLE_EMPTY);
+    AddKeyControl(window, "Speed On", &key_speed);
 
-    TXT_SignalConnect(run_control, "changed", UpdateJoybSpeed, NULL);
-
-    AddKeyControl(movement_table, "Move Forward", &key_up);
-    AddKeyControl(movement_table, " Strafe Left", &key_strafeleft);
-    AddKeyControl(movement_table, "Move Backward", &key_down);
-    AddKeyControl(movement_table, " Strafe Right", &key_straferight);
-    AddKeyControl(movement_table, "Turn Left", &key_left);
-    AddKeyControl(movement_table, " Speed On", &key_speed);
-    AddKeyControl(movement_table, "Turn Right", &key_right);
-    AddKeyControl(movement_table, " Strafe On", &key_strafe);
+    AddKeyControl(window, "Turn Right", &key_right);
+    TXT_AddWidget(window, TXT_TABLE_EMPTY);
+    AddKeyControl(window, "Strafe On", &key_strafe);
 
     if (gamemission == hexen || gamemission == strife)
     {
-        AddKeyControl(movement_table, "Jump", &key_jump);
+        AddKeyControl(window, "Jump", &key_jump);
     }
     else
     if (gamemission == doom) // Crispy
     {
-        AddKeyControl(movement_table, "Jump [*]", &key_jump);
+        AddKeyControl(window, "Jump [*]", &key_jump);
     }
 
-    TXT_SetColumnWidths(action_table, 15, 8, 15, 8);
+    TXT_AddWidget(window, TXT_NewSeparator("Action"));
+    AddKeyControl(window, "Fire/Attack", &key_fire);
+    TXT_AddWidget(window, TXT_TABLE_EMPTY);
+    AddKeyControl(window, "Use", &key_use);
 
-    AddKeyControl(action_table, "Fire/Attack", &key_fire);
-    AddKeyControl(action_table, " Use", &key_use);
-
-    // Other key bindings are stored in separate sub-dialogs:
-
-    TXT_SetColumnWidths(dialogs_table, 24, 24);
-
-    TXT_AddWidgets(dialogs_table,
+    TXT_AddWidgets(window,
                    TXT_NewButton2("More controls...", ConfigExtraKeys, NULL),
+                   TXT_TABLE_OVERFLOW_RIGHT,
+                   TXT_TABLE_EMPTY,
                    TXT_NewButton2("Other keys...", OtherKeysDialog, NULL),
+                   TXT_TABLE_OVERFLOW_RIGHT,
+
+                   TXT_NewSeparator("Misc."),
+                   run_control = TXT_NewCheckBox("Always run", &always_run),
+                   TXT_TABLE_EOL,
+                   TXT_NewInvertedCheckBox("Use native keyboard mapping",
+                                           &vanilla_keyboard_mapping),
+                   TXT_TABLE_EOL,
                    NULL);
 
+    TXT_SignalConnect(run_control, "changed", UpdateJoybSpeed, NULL);
     TXT_SetWindowAction(window, TXT_HORIZ_CENTER, TestConfigAction());
-
 }
 
 void BindKeyboardVariables(void)

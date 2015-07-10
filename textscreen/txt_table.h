@@ -22,6 +22,33 @@
  */
 
 /**
+ * Magic value that if used in a table, will indicate that the cell is
+ * empty and the widget in the cell to the left can overflow into it.
+ */
+
+#define TXT_TABLE_OVERFLOW_RIGHT (&txt_table_overflow_right)
+
+/**
+ * Magic value that if used in a table, will indicate that the cell is
+ * empty and the widget in the cell above it can overflow down into it.
+ */
+
+#define TXT_TABLE_OVERFLOW_DOWN (&txt_table_overflow_down)
+
+/**
+ * Magic value that if given to @ref TXT_AddWidget(), will pad out all
+ * columns until the end of line.
+ */
+#define TXT_TABLE_EOL (&txt_table_eol)
+
+/**
+ * Indicates an empty space to @ref TXT_AddWidgets(). Equivalent to
+ * TXT_AddWidget(table, NULL), except that NULL is used by TXT_AddWidgets()
+ * to indicate the end of input.
+ */
+#define TXT_TABLE_EMPTY (&txt_table_empty)
+
+/**
  * Table widget.
  *
  * A table is a widget that contains other widgets.  It may have
@@ -45,21 +72,22 @@ struct txt_table_s
 
     // Widgets in this table
     // The widget at (x,y) in the table is widgets[columns * y + x]
-
     txt_widget_t **widgets;
     int num_widgets;
 
     // Number of columns
-
     int columns;
 
-    // Currently selected 
-
+    // Currently selected:
     int selected_x;
     int selected_y;
 };
 
 extern txt_widget_class_t txt_table_class;
+extern txt_widget_t txt_table_overflow_right;
+extern txt_widget_t txt_table_overflow_down;
+extern txt_widget_t txt_table_eol;
+extern txt_widget_t txt_table_empty;
 
 void TXT_InitTable(txt_table_t *table, int columns);
 
@@ -143,6 +171,22 @@ void TXT_AddWidgets(TXT_UNCAST_ARG(table), ...);
  */
 
 int TXT_SelectWidget(TXT_UNCAST_ARG(table), TXT_UNCAST_ARG(widget));
+
+/**
+ * Change the number of columns in the table.
+ *
+ * Existing widgets in the table will be preserved, unless the change
+ * reduces the number of columns, in which case the widgets from the
+ * 'deleted' columns will be freed.
+ *
+ * This function can be useful for changing the number of columns in
+ * a window, which by default are tables containing a single column.
+ *
+ * @param table         The table.
+ * @param new_columns   The new number of columns.
+ */
+
+void TXT_SetTableColumns(TXT_UNCAST_ARG(table), int new_columns);
 
 /**
  * Set the widths of the columns of the table.

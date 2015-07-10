@@ -195,7 +195,6 @@ static void UpdateExtraTable(TXT_UNCAST_ARG(widget),
     switch (snd_musicmode)
     {
         case MUSICMODE_OPL:
-            TXT_SetColumnWidths(extra_table, 19, 4);
             TXT_AddWidgets(extra_table,
                            TXT_NewLabel("OPL type"),
                            OPLTypeSelector(),
@@ -205,20 +204,22 @@ static void UpdateExtraTable(TXT_UNCAST_ARG(widget),
         case MUSICMODE_GUS:
             TXT_AddWidgets(extra_table,
                            TXT_NewLabel("GUS patch path:"),
-                           TXT_NewStrut(0, 0),
-                           TXT_NewFileSelector(&gus_patch_path, 30,
+                           TXT_TABLE_OVERFLOW_RIGHT,
+                           TXT_NewFileSelector(&gus_patch_path, 34,
                                                "Select path to GUS patches",
                                                TXT_DIRECTORY),
+                           TXT_TABLE_OVERFLOW_RIGHT,
                            NULL);
             break;
 
         case MUSICMODE_NATIVE:
             TXT_AddWidgets(extra_table,
                            TXT_NewLabel("Timidity configuration file:"),
-                           TXT_NewStrut(0, 0),
-                           TXT_NewFileSelector(&timidity_cfg_path, 30,
+                           TXT_TABLE_OVERFLOW_RIGHT,
+                           TXT_NewFileSelector(&timidity_cfg_path, 34,
                                                "Select Timidity config file",
                                                cfg_extension),
+                           TXT_TABLE_OVERFLOW_RIGHT,
                            NULL);
             break;
 
@@ -230,8 +231,6 @@ static void UpdateExtraTable(TXT_UNCAST_ARG(widget),
 void ConfigSound(void)
 {
     txt_window_t *window;
-    txt_table_t *sfx_table;
-    txt_table_t *music_table;
     txt_table_t *extra_table;
     txt_dropdown_list_t *sfx_mode_control;
     txt_dropdown_list_t *music_mode_control;
@@ -300,20 +299,15 @@ void ConfigSound(void)
     // Build the window
 
     window = TXT_NewWindow("Sound configuration");
-
     TXT_SetWindowHelpURL(window, WINDOW_HELP_URL);
+    TXT_SetTableColumns(window, 2);
+    TXT_SetColumnWidths(window, 19, 15);
 
     TXT_SetWindowPosition(window, TXT_HORIZ_CENTER, TXT_VERT_TOP,
                                   TXT_SCREEN_W / 2, 5);
 
     TXT_AddWidgets(window,
-               TXT_NewSeparator("Sound effects"),
-               sfx_table = TXT_NewTable(2),
-               NULL);
-
-    TXT_SetColumnWidths(sfx_table, 19, 15);
-
-    TXT_AddWidgets(sfx_table,
+                   TXT_NewSeparator("Sound effects"),
                    TXT_NewLabel("Sound effects"),
                    sfx_mode_control = TXT_NewDropdownList(&snd_sfxmode,
                                                           sfxmode_strings,
@@ -324,41 +318,39 @@ void ConfigSound(void)
                    TXT_NewSpinControl(&sfxVolume, 0, 15),
                    NULL);
 
-    // strife did not implement pitch shifting at all, so hide the option.
-
-    if (gamemission != strife)
+    // Only show for games that implemented pitch shifting:
+    if (gamemission == doom || gamemission == heretic || gamemission == hexen)
     {
-        TXT_AddWidget(sfx_table,
-                   TXT_NewCheckBox("Pitch-shift sounds", &snd_pitchshift));
+        TXT_AddWidgets(window,
+                       TXT_NewCheckBox("Pitch-shifted sounds",
+                                       &snd_pitchshift),
+                       TXT_TABLE_OVERFLOW_RIGHT,
+                       NULL);
     }
 
     if (gamemission == strife)
     {
-        TXT_AddWidgets(sfx_table,
+        TXT_AddWidgets(window,
                        TXT_NewLabel("Voice volume"),
                        TXT_NewSpinControl(&voiceVolume, 0, 15),
+                       TXT_NewCheckBox("Show text with voices", &show_talk),
+                       TXT_TABLE_OVERFLOW_RIGHT,
                        NULL);
-        TXT_AddWidget(window,
-                      TXT_NewCheckBox("Show text with voices", &show_talk));
     }
 
     TXT_AddWidgets(window,
-               TXT_NewSeparator("Music"),
-               music_table = TXT_NewTable(2),
-               extra_table = TXT_NewTable(2),
-               NULL);
-
-    TXT_SetColumnWidths(music_table, 19, 15);
-
-    TXT_AddWidgets(music_table,
+                   TXT_NewSeparator("Music"),
                    TXT_NewLabel("Music"),
                    music_mode_control = TXT_NewDropdownList(&snd_musicmode,
                                                             musicmode_strings,
                                                             num_music_modes),
                    TXT_NewLabel("Music volume"),
                    TXT_NewSpinControl(&musicVolume, 0, 15),
+                   extra_table = TXT_NewTable(2),
+                   TXT_TABLE_OVERFLOW_RIGHT,
                    NULL);
 
+    TXT_SetColumnWidths(extra_table, 19, 15);
 
     TXT_SignalConnect(sfx_mode_control, "changed", UpdateSndDevices, NULL);
     TXT_SignalConnect(music_mode_control, "changed", UpdateSndDevices, NULL);
