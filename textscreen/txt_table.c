@@ -275,10 +275,20 @@ static void TXT_CalcTableSize(TXT_UNCAST_ARG(table))
     free(column_widths);
 }
 
+static void FillRowToEnd(txt_table_t *table)
+{
+    while ((table->num_widgets % table->columns) != 0)
+    {
+        TXT_AddWidget(table, &txt_table_overflow_right);
+    }
+}
+
 void TXT_AddWidget(TXT_UNCAST_ARG(table), TXT_UNCAST_ARG(widget))
 {
     TXT_CAST_ARG(txt_table_t, table);
     TXT_CAST_ARG(txt_widget_t, widget);
+    int is_separator;
+    int i;
 
     // Convenience alias for NULL:
     if (widget == &txt_table_empty)
@@ -287,34 +297,43 @@ void TXT_AddWidget(TXT_UNCAST_ARG(table), TXT_UNCAST_ARG(widget))
     }
     else if (widget == &txt_table_eol)
     {
-        while ((table->num_widgets % table->columns) != 0)
-        {
-            TXT_AddWidget(table, &txt_table_overflow_right);
-        }
+        FillRowToEnd(table);
         return;
     }
 
-    if (table->num_widgets > 0)
+    // We have special handling for the separator widget:
+    is_separator = IsActualWidget(widget)
+                && widget->widget_class == &txt_separator_class;
+
+    // If we add two separators consecutively, the new separator replaces the
+    // first. This allows us to override the "implicit" separator that is
+    // added at the top of a window when it is created.
+    if (is_separator)
     {
-        txt_widget_t *last_widget;
-
-        last_widget = table->widgets[table->num_widgets - 1];
-
-        if (IsActualWidget(widget)
-         && IsActualWidget(last_widget)
-         && widget->widget_class == &txt_separator_class
-         && last_widget->widget_class == &txt_separator_class)
+        for (i = table->num_widgets - 1; i >= 0; --i)
         {
-            // The previous widget added was a separator; replace it with
-            // this one. This way, if the first widget added to a window is
-            // a separator, it replaces the "default" separator that the
-            // window itself adds on creation.
-            table->widgets[table->num_widgets - 1] = widget;
+            txt_widget_t *last_widget;
+            last_widget = table->widgets[i];
 
-            TXT_DestroyWidget(last_widget);
-
-            return;
+            if (IsActualWidget(last_widget)
+             && widget->widget_class == &txt_separator_class
+             && last_widget->widget_class == &txt_separator_class)
+            {
+                table->widgets[i] = widget;
+                TXT_DestroyWidget(last_widget);
+                return;
+            }
+            else if (last_widget != &txt_table_overflow_right)
+            {
+                break;
+            }
         }
+    }
+
+    // Separators begin on a new line.
+    if (is_separator)
+    {
+        FillRowToEnd(table);
     }
 
     table->widgets = realloc(table->widgets,
@@ -323,10 +342,15 @@ void TXT_AddWidget(TXT_UNCAST_ARG(table), TXT_UNCAST_ARG(widget))
     ++table->num_widgets;
 
     // Maintain parent pointer.
-
     if (IsActualWidget(widget))
     {
         widget->parent = &table->widget;
+    }
+
+    // Separators always take up the entire line.
+    if (is_separator)
+    {
+        FillRowToEnd(table);
     }
 }
 
