@@ -26,10 +26,10 @@
 #include "txt_strut.h"
 #include "txt_table.h"
 
-txt_widget_t txt_table_overflow_right = {};
-txt_widget_t txt_table_overflow_down = {};
-txt_widget_t txt_table_eol = {};
-txt_widget_t txt_table_empty = {};
+txt_widget_t txt_table_overflow_right;
+txt_widget_t txt_table_overflow_down;
+txt_widget_t txt_table_eol;
+txt_widget_t txt_table_empty;
 
 // Returns true if the given widget in the table's widgets[] array refers
 // to an actual widget - not NULL, or one of the special overflow pointers.
