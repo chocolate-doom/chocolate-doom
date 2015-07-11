@@ -500,6 +500,29 @@ static int TXT_TableKeyPress(TXT_UNCAST_ARG(table), int key)
         }
     }
 
+    if (key == KEY_TAB)
+    {
+        int dir;
+        int i;
+
+        dir = TXT_GetModifierState(TXT_MOD_SHIFT) ? -1 : 1;
+
+        // Cycle through all widgets until we find one that can be selected.
+        for (i = table->selected_y * table->columns + table->selected_x + dir;
+             i >= 0 && i < table->num_widgets;
+             i += dir)
+        {
+            if (IsActualWidget(table->widgets[i])
+             && TXT_SelectableWidget(table->widgets[i]))
+            {
+                ChangeSelection(table, i % table->columns, i / table->columns);
+                return 1;
+            }
+        }
+
+        return 0;
+    }
+
     if (key == KEY_DOWNARROW)
     {
         int new_x, new_y;
@@ -518,7 +541,7 @@ static int TXT_TableKeyPress(TXT_UNCAST_ARG(table), int key)
 
                 return 1;
             }
-        } 
+        }
     }
 
     if (key == KEY_UPARROW)
@@ -539,7 +562,7 @@ static int TXT_TableKeyPress(TXT_UNCAST_ARG(table), int key)
 
                 return 1;
             }
-        } 
+        }
     }
 
     if (key == KEY_LEFTARROW)
