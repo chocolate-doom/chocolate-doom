@@ -389,7 +389,6 @@ static void CloseLevelSelectDialog(TXT_UNCAST_ARG(button), TXT_UNCAST_ARG(window
 static void LevelSelectDialog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(user_data))
 {
     txt_window_t *window;
-    txt_table_t *table;
     txt_button_t *button;
     const iwad_t *iwad;
     char buf[10];
@@ -404,7 +403,7 @@ static void LevelSelectDialog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(user_data))
     if (warptype == WARP_ExMy)
     {
         episodes = D_GetNumEpisodes(iwad->mission, iwad->mode);
-        table = TXT_NewTable(episodes);
+        TXT_SetTableColumns(window, episodes);
 
         // ExMy levels
 
@@ -419,7 +418,7 @@ static void LevelSelectDialog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(user_data))
 
                 if (!D_ValidEpisodeMap(iwad->mission, iwad->mode, x, y))
                 {
-                    TXT_AddWidget(table, NULL);
+                    TXT_AddWidget(window, NULL);
                     continue;
                 }
 
@@ -429,18 +428,18 @@ static void LevelSelectDialog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(user_data))
                                   SetExMyWarp, (void *) (x * 10 + y));
                 TXT_SignalConnect(button, "pressed",
                                   CloseLevelSelectDialog, window);
-                TXT_AddWidget(table, button);
+                TXT_AddWidget(window, button);
 
                 if (warpepisode == x && warpmap == y)
                 {
-                    TXT_SelectWidget(table, button);
+                    TXT_SelectWidget(window, button);
                 }
             }
         }
     }
     else
     {
-        table = TXT_NewTable(6);
+        TXT_SetTableColumns(window, 6);
 
         for (i=0; i<60; ++i)
         {
@@ -451,7 +450,7 @@ static void LevelSelectDialog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(user_data))
 
             if (!D_ValidEpisodeMap(iwad->mission, iwad->mode, 1, l))
             {
-                TXT_AddWidget(table, NULL);
+                TXT_AddWidget(window, NULL);
                 continue;
             }
 
@@ -461,16 +460,14 @@ static void LevelSelectDialog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(user_data))
                               SetMAPxyWarp, (void *) l);
             TXT_SignalConnect(button, "pressed",
                               CloseLevelSelectDialog, window);
-            TXT_AddWidget(table, button);
+            TXT_AddWidget(window, button);
 
             if (warpmap == l)
             {
-                TXT_SelectWidget(table, button);
+                TXT_SelectWidget(window, button);
             }
         }
     }
-
-    TXT_AddWidget(window, table);
 }
 
 static void IWADSelected(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
@@ -711,11 +708,11 @@ static txt_dropdown_list_t *GameTypeDropdown(void)
 static void StartGameMenu(char *window_title, int multiplayer)
 {
     txt_window_t *window;
-    txt_table_t *gameopt_table;
-    txt_table_t *advanced_table;
     txt_widget_t *iwad_selector;
 
     window = TXT_NewWindow(window_title);
+    TXT_SetTableColumns(window, 2);
+    TXT_SetColumnWidths(window, 12, 6);
 
     if (multiplayer)
     {
@@ -726,30 +723,18 @@ static void StartGameMenu(char *window_title, int multiplayer)
         TXT_SetWindowHelpURL(window, LEVEL_WARP_HELP_URL);
     }
 
-    TXT_AddWidgets(window,
-                   gameopt_table = TXT_NewTable(2),
-                   TXT_NewSeparator("Monster options"),
-                   TXT_NewInvertedCheckBox("Monsters enabled", &nomonsters),
-                   TXT_NewCheckBox("Fast monsters", &fast),
-                   TXT_NewCheckBox("Respawning monsters", &respawn),
-                   TXT_NewSeparator("Advanced"),
-                   advanced_table = TXT_NewTable(2),
-                   NULL);
-
     TXT_SetWindowAction(window, TXT_HORIZ_CENTER, WadWindowAction());
     TXT_SetWindowAction(window, TXT_HORIZ_RIGHT, StartGameAction(multiplayer));
 
-    TXT_SetColumnWidths(gameopt_table, 12, 6);
-
-    TXT_AddWidgets(gameopt_table,
-           TXT_NewLabel("Game"),
-           iwad_selector = IWADSelector(),
-           NULL);
+    TXT_AddWidgets(window,
+                   TXT_NewLabel("Game"),
+                   iwad_selector = IWADSelector(),
+                   NULL);
 
     if (gamemission == hexen)
     {
         txt_dropdown_list_t *cc_dropdown;
-        TXT_AddWidgets(gameopt_table,
+        TXT_AddWidgets(window,
                        TXT_NewLabel("Character class "),
                        cc_dropdown = TXT_NewDropdownList(&character_class,
                                                          character_classes, 3),
@@ -760,16 +745,16 @@ static void StartGameMenu(char *window_title, int multiplayer)
         TXT_SignalConnect(cc_dropdown, "changed", UpdateWarpType, NULL);
     }
 
-    TXT_AddWidgets(gameopt_table,
-           TXT_NewLabel("Skill"),
-           skillbutton = TXT_NewDropdownList(&skill, doom_skills, 5),
-           TXT_NewLabel("Level warp"),
-           warpbutton = TXT_NewButton2("????", LevelSelectDialog, NULL),
-           NULL);
+    TXT_AddWidgets(window,
+                   TXT_NewLabel("Skill"),
+                   skillbutton = TXT_NewDropdownList(&skill, doom_skills, 5),
+                   TXT_NewLabel("Level warp"),
+                   warpbutton = TXT_NewButton2("?", LevelSelectDialog, NULL),
+                   NULL);
 
     if (multiplayer)
     {
-        TXT_AddWidgets(gameopt_table,
+        TXT_AddWidgets(window,
                TXT_NewLabel("Game type"),
                GameTypeDropdown(),
                TXT_NewLabel("Time limit"),
@@ -777,22 +762,35 @@ static void StartGameMenu(char *window_title, int multiplayer)
                                TXT_NewLabel("minutes"),
                                NULL),
                NULL);
+    }
 
-        TXT_AddWidget(window,
-                      TXT_NewInvertedCheckBox("Register with master server",
-                                              &privateserver));
+    TXT_AddWidgets(window,
+                   TXT_NewSeparator("Monster options"),
+                   TXT_NewInvertedCheckBox("Monsters enabled", &nomonsters),
+                   TXT_TABLE_OVERFLOW_RIGHT,
+                   TXT_NewCheckBox("Fast monsters", &fast),
+                   TXT_TABLE_OVERFLOW_RIGHT,
+                   TXT_NewCheckBox("Respawning monsters", &respawn),
+                   TXT_TABLE_OVERFLOW_RIGHT,
+                   NULL);
 
-        TXT_AddWidgets(advanced_table,
+    if (multiplayer)
+    {
+        TXT_AddWidgets(window,
+                       TXT_NewSeparator("Advanced"),
                        TXT_NewLabel("UDP port"),
                        TXT_NewIntInputBox(&udpport, 5),
+                       TXT_NewInvertedCheckBox("Register with master server",
+                                               &privateserver),
+                       TXT_TABLE_OVERFLOW_RIGHT,
                        NULL);
     }
 
-    TXT_AddWidget(window,
-                  TXT_NewButton2("Add extra parameters...", 
-                                 OpenExtraParamsWindow, NULL));
-
-    TXT_SetColumnWidths(advanced_table, 12, 6);
+    TXT_AddWidgets(window,
+                   TXT_NewButton2("Add extra parameters...",
+                                  OpenExtraParamsWindow, NULL),
+                   TXT_TABLE_OVERFLOW_RIGHT,
+                   NULL);
 
     TXT_SignalConnect(iwad_selector, "changed", UpdateWarpType, NULL);
 
@@ -994,46 +992,43 @@ static void FindLANServer(TXT_UNCAST_ARG(widget),
 void JoinMultiGame(void)
 {
     txt_window_t *window;
-    txt_table_t *gameopt_table;
-    txt_table_t *serveropt_table;
     txt_inputbox_t *address_box;
 
     window = TXT_NewWindow("Join multiplayer game");
+    TXT_SetTableColumns(window, 2);
+    TXT_SetColumnWidths(window, 12, 12);
+
     TXT_SetWindowHelpURL(window, MULTI_JOIN_HELP_URL);
 
-    TXT_AddWidgets(window, 
-        gameopt_table = TXT_NewTable(2),
-        TXT_NewSeparator("Server"),
-        serveropt_table = TXT_NewTable(1),
-        TXT_NewStrut(0, 1),
-        TXT_NewButton2("Add extra parameters...", OpenExtraParamsWindow, NULL),
-        NULL);
-
-    TXT_SetColumnWidths(gameopt_table, 12, 12);
-
-    TXT_AddWidgets(gameopt_table,
+    TXT_AddWidgets(window,
                    TXT_NewLabel("Game"),
                    IWADSelector(),
                    NULL);
 
     if (gamemission == hexen)
     {
-        TXT_AddWidgets(gameopt_table,
+        TXT_AddWidgets(window,
                        TXT_NewLabel("Character class "),
                        TXT_NewDropdownList(&character_class,
                                            character_classes, 3),
                        NULL);
     }
 
-    TXT_AddWidgets(serveropt_table,
-                   TXT_NewHorizBox(
-                           TXT_NewLabel("Connect to address: "),
-                           address_box = TXT_NewInputBox(&connect_address, 30),
-                           NULL),
+    TXT_AddWidgets(window,
+                   TXT_NewSeparator("Server"),
+                   TXT_NewLabel("Connect to address: "),
+                   address_box = TXT_NewInputBox(&connect_address, 30),
+
                    TXT_NewButton2("Find server on Internet...",
                                   FindInternetServer, NULL),
+                   TXT_TABLE_OVERFLOW_RIGHT,
                    TXT_NewButton2("Find server on local network...",
                                   FindLANServer, NULL),
+                   TXT_TABLE_OVERFLOW_RIGHT,
+                   TXT_NewStrut(0, 1),
+                   TXT_TABLE_OVERFLOW_RIGHT,
+                   TXT_NewButton2("Add extra parameters...",
+                                  OpenExtraParamsWindow, NULL),
                    NULL);
 
     TXT_SelectWidget(window, address_box);
@@ -1110,7 +1105,7 @@ void MultiplayerConfig(void)
     window = TXT_NewWindow("Multiplayer Configuration");
     TXT_SetWindowHelpURL(window, MULTI_CONFIG_HELP_URL);
 
-    TXT_AddWidgets(window, 
+    TXT_AddWidgets(window,
                    TXT_NewStrut(0, 1),
                    TXT_NewHorizBox(TXT_NewLabel("Player name:  "),
                                    TXT_NewInputBox(&net_player_name, 25),
@@ -1133,7 +1128,7 @@ void MultiplayerConfig(void)
                        TXT_NewInputBox(&chat_macros[(i + 1) % 10], 40),
                        NULL);
     }
-    
+
     TXT_AddWidget(window, table);
 }
 
