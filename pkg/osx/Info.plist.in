@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+        <key>CFBundleIdentifier</key>
+        <string>org.chocolate-doom.launcher</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleDisplayName</key>
@@ -26,6 +28,10 @@
 	<string>NSApplication</string>
 	<key>NSMainNibFile</key>
 	<string>launcher</string>
+        <key>NSHumanReadableCopyright</key>
+        <string>Copyright (C) 1993-2015, id Software and Raven Software, Simon Howard, James Haley, Samuel Villarreal and other contributors.
+
+Licensed under the GNU GPL v2.</string>
 
         <!-- file associations: -->
 
