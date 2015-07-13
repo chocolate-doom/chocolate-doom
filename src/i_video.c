@@ -148,14 +148,17 @@ static char *window_title = "";
 
 // These are (1) the 320x200x8 paletted buffer that we draw to (i.e. the one
 // that holds I_VideoBuffer), (2) the 320x200x32 RGBA intermediate buffer that
-// we blit the former buffer to and (3) the texture that we load the RGBA
+// we blit the former buffer to, (3) another intermediate RGBA buffer upscaled
+// linearly by factor UPSCALE and (4) the texture that we load the upscaled RGBA
 // buffer to and that is scaled into the window by the renderer (see above).
 // TODO: Check if the intermediate RGBA buffer is still necessary in newer
 // SDL releases. It surely is in 2.0.2, i.e. it is currently impossible to
 // update the texture with the pixels from the 8-bit paletted buffer.
 
+#define UPSCALE	4
 static SDL_Surface *screenbuffer = NULL;
 static SDL_Surface *rgbabuffer = NULL;
+static SDL_Surface *rgbabuffer_upscaled = NULL;
 static SDL_Texture *texture = NULL;
 static int pitch;
 static void *pixels;
@@ -1103,14 +1106,15 @@ void I_FinishUpdate (void)
     // Blit from the fake 8-bit screen buffer to the intermediate
     // 32-bit RGBA buffer that we can load into the texture
 
-    SDL_LowerBlit(screenbuffer, &screenbuffer->clip_rect,
-                  rgbabuffer, &rgbabuffer->clip_rect);
+    SDL_BlitSurface(screenbuffer, NULL, rgbabuffer, NULL);
+
+    SDL_BlitScaled(rgbabuffer, NULL, rgbabuffer_upscaled, NULL);
 
     // Update the texture with the content of the 32-bit RGBA buffer
 
     if (!SDL_LockTexture(texture, NULL, &pixels, &pitch))
     {
-	memcpy(pixels, rgbabuffer->pixels, SCREENHEIGHT*pitch);
+	memcpy(pixels, rgbabuffer_upscaled->pixels, UPSCALE*SCREENHEIGHT*pitch);
 	SDL_UnlockTexture(texture);
     }
 
@@ -1788,10 +1792,12 @@ static void SetVideoMode(screen_mode_t *mode, int w, int h)
     }
 
     // Set the scaling quality: "nearest" is gritty and pixelated and resembles
-    // software scaling pretty well, "linear" and "best" look much softer and
-    // smoother. TODO: Turn this into a config option / command line parameter.
+    // software scaling pretty well, but unfortunately renders the status bar
+    // numbers with unconsistent widths; "linear" and "best" look much softer
+    // and smoother but do a better job at downscaling from the upscaled
+    // buffer to the texture.
 
-    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");
+    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
 
     // Create window and renderer context at once. We set the window title
     // later anyway and leave the window position "undefined". If "flags"
@@ -1861,14 +1867,24 @@ static void SetVideoMode(screen_mode_t *mode, int w, int h)
                                       0, 0, 0, 0);
     SDL_FillRect(rgbabuffer, NULL, 0);
 
-    // Create the texture that the RGBA surface gets loaded into.
+    rgbabuffer_upscaled = SDL_CreateRGBSurface(0,
+                                      UPSCALE*SCREENWIDTH, UPSCALE*SCREENHEIGHT, 32,
+                                      0, 0, 0, 0);
+    SDL_FillRect(rgbabuffer_upscaled, NULL, 0);
+
+    // Prevent alpha-blending for scaled blitting
+
+    SDL_SetSurfaceBlendMode(rgbabuffer, SDL_BLENDMODE_NONE);
+    SDL_SetSurfaceBlendMode(rgbabuffer_upscaled, SDL_BLENDMODE_NONE);
+
+    // Create the texture that the upscaled RGBA surface gets loaded into.
     // SDL_TEXTUREACCESS_STREAMING means that this texture's content
     // are going to change frequently.
 
     texture = SDL_CreateTexture(renderer,
                                 SDL_PIXELFORMAT_ARGB8888,
                                 SDL_TEXTUREACCESS_STREAMING,
-                                SCREENWIDTH, SCREENHEIGHT);
+                                UPSCALE*SCREENWIDTH, UPSCALE*SCREENHEIGHT);
 
     // Save screen mode.
 
