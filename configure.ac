@@ -35,7 +35,7 @@ fi
 dnl Search for SDL ...
 dnl SDL2-TODO: Use pkg-config?
 
-AM_PATH_SDL2(2.0.3)
+AM_PATH_SDL2(2.0.2)
 
 # Add the SDL compiler flags to the default compiler flag variables. 
 # It is important to do this now, before checking for headers and
