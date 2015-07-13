@@ -1096,6 +1096,13 @@ void P_LoadLineDefs (int lump)
 	ld->sidenum[0] = SHORT(mld->sidenum[0]);
 	ld->sidenum[1] = SHORT(mld->sidenum[1]);
 
+	// [crispy] substitute dummy sidedef for missing right side
+	if (ld->sidenum[0] == NO_INDEX)
+	{
+	    ld->sidenum[0] = 0;
+	    fprintf(stderr, "P_LoadLineDefs: linedef %d without first sidedef!\n", i);
+	}
+
 	if (ld->sidenum[0] != NO_INDEX) // [crispy] extended nodes
 	    ld->frontsector = sides[ld->sidenum[0]].sector;
 	else
