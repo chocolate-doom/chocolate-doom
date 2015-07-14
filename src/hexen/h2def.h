@@ -169,7 +169,7 @@ struct player_s;
 
 typedef union
 {
-    int i;
+    intptr_t i;
     struct mobj_s *m;
     struct player_s *p;
 } specialval_t;
