@@ -347,6 +347,17 @@ void D_Display (void)
 	inhelpscreensstate = true;
     }
 
+    // [crispy] back to Vanilla SlopeDiv
+    SlopeDiv = SlopeDivVanilla;
+
+    // [crispy] do not shade background and draw neither pause pic nor menu
+    // when taking a clean screenshot
+    if (crispy_cleanscreenshot)
+    {
+	I_FinishUpdate ();              // page flip or blit buffer
+	return;
+    }
+
     // [crispy] shade background when a menu is active or the game is paused
     if (paused || menuactive)
     {
@@ -385,8 +396,6 @@ void D_Display (void)
     M_Drawer ();          // menu is drawn even on top of everything
     NetUpdate ();         // send out any new accumulation
 
-    // [crispy] back to Vanilla SlopeDiv
-    SlopeDiv = SlopeDivVanilla;
 
     // normal update
     if (!wipe)
