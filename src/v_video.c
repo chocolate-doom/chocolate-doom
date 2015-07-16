@@ -773,9 +773,9 @@ void WritePNGfile(char *filename, byte *data,
 
     png_write_info(ppng, pinfo);
 
-    for (i = 0; i < SCREENHEIGHT; i++)
+    for (i = 0; i < height; i++)
     {
-        png_write_row(ppng, data + i*SCREENWIDTH);
+        png_write_row(ppng, data + i*width);
     }
 
     png_write_end(ppng, pinfo);
