@@ -2249,3 +2249,11 @@ void I_BindVideoVariables(void)
     screen_height = 600;
 #endif
 }
+
+// [crispy] screenshots are actual reproductions of the screen content
+void I_GetVideobuffer (byte **buffer, int *w, int *h)
+{
+    *buffer = screenbuffer->pixels;
+    *w = screenbuffer->w;
+    *h = screenbuffer->h;
+}
