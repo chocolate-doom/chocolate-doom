@@ -86,6 +86,7 @@ int snd_cachesize = 64 * 1024 * 1024;
 int snd_maxslicetime_ms = 28;
 char *snd_musiccmd = "";
 int snd_pitchshift = 0;
+char *snd_dmxoption = "";
 
 static int numChannels = 8;
 static int sfxVolume = 8;
@@ -95,7 +96,6 @@ static int show_talk = 0;
 static int use_libsamplerate = 0;
 static float libsamplerate_scale = 0.65;
 
-static char *snd_dmxoption = "";
 static char *timidity_cfg_path = NULL;
 static char *gus_patch_path = NULL;
 static int gus_ram_kb = 1024;
