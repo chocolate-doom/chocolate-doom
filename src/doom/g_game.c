@@ -1038,6 +1038,7 @@ void G_Ticker (void)
 	    // take the actual screenshot in the next one
 	    if (crispy_cleanscreenshot)
 	    {
+	        D_Display();
 	        crispy_cleanscreenshot--;
 	        break;
 	    }
