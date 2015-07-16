@@ -1026,14 +1026,20 @@ static void warning_fn(png_structp p, png_const_charp s)
 }
 
 void WritePNGfile(char *filename, byte *data,
-                  int width, int height,
+                  int inwidth, int inheight,
                   byte *palette)
 {
     png_structp ppng;
     png_infop pinfo;
     png_colorp pcolor;
     FILE *handle;
-    int i;
+    int i, j;
+    int width, height;
+    byte *rowbuf;
+
+    // scale up to accommodate aspect ratio correction
+    width = inwidth * 5;
+    height = inheight * 6;
 
     handle = fopen(filename, "wb");
     if (!handle)
@@ -1080,9 +1086,26 @@ void WritePNGfile(char *filename, byte *data,
 
     png_write_info(ppng, pinfo);
 
-    for (i = 0; i < SCREENHEIGHT; i++)
+    rowbuf = malloc(width);
+
+    if (rowbuf)
     {
-        png_write_row(ppng, data + i*SCREENWIDTH);
+        for (i = 0; i < SCREENHEIGHT; i++)
+        {
+            // expand the row 5x
+            for (j = 0; j < SCREENWIDTH; j++)
+            {
+                memset(rowbuf + j * 5, *(data + i*SCREENWIDTH + j), 5);
+            }
+
+            // write the row 6 times
+            for (j = 0; j < 6; j++)
+            {
+                png_write_row(ppng, rowbuf);
+            }
+        }
+
+        free(rowbuf);
     }
 
     png_write_end(ppng, pinfo);
