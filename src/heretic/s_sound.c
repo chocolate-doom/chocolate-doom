@@ -513,7 +513,7 @@ void S_UpdateSounds(mobj_t * listener)
 
 void S_Init(void)
 {
-    I_SetOPLDriverVer(opl_v_old);
+    I_SetOPLDriverVer(opl_doom2_1_666);
     soundCurve = Z_Malloc(MAX_SND_DIST, PU_STATIC, NULL);
     if (snd_Channels > 8)
     {

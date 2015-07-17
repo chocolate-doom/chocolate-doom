@@ -116,7 +116,22 @@ void S_Init(int sfxVolume, int musicVolume)
 {
     int i;
 
-    I_SetOPLDriverVer(opl_v_new);
+    if (gameversion == exe_doom_1_666)
+    {
+        if (logical_gamemission == doom)
+        {
+            I_SetOPLDriverVer(opl_doom1_1_666);
+        }
+        else
+        {
+            I_SetOPLDriverVer(opl_doom2_1_666);
+        }
+    }
+    else
+    {
+        I_SetOPLDriverVer(opl_doom_1_9);
+    }
+
     I_PrecacheSounds(S_sfx, NUMSFX);
 
     S_SetSfxVolume(sfxVolume);

@@ -528,7 +528,8 @@ ST_Responder (event_t* ev)
 	{
 	  musnum = mus_runnin + (buf[0]-'0')*10 + buf[1]-'0' - 1;
 	  
-	  if (((buf[0]-'0')*10 + buf[1]-'0') > 35)
+	  if (((buf[0]-'0')*10 + buf[1]-'0') > 35
+       && gameversion >= exe_doom_1_8)
 	    plyr->message = DEH_String(STSTR_NOMUS);
 	  else
 	    S_ChangeMusic(musnum, 1);
