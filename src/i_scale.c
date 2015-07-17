@@ -1002,7 +1002,7 @@ static boolean I_Stretch5x(int x1, int y1, int x2, int y2)
 
 screen_mode_t mode_stretch_5x = {
     SCREENWIDTH * 5, SCREENHEIGHT_4_3 * 5,
-    I_InitStretchTables,
+    NULL,
     I_Stretch5x,
     false,
 };
