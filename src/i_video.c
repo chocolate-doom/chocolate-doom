@@ -2134,6 +2134,8 @@ void I_BindVideoVariables(void)
     M_BindIntVariable("startup_delay",             &startup_delay);
     M_BindIntVariable("screen_width",              &screen_width);
     M_BindIntVariable("screen_height",             &screen_height);
+    M_BindIntVariable("screenshot_width",          &screenshot_width);
+    M_BindIntVariable("screenshot_height",         &screenshot_height);
     M_BindIntVariable("screen_bpp",                &screen_bpp);
     M_BindIntVariable("grabmouse",                 &grabmouse);
     M_BindFloatVariable("mouse_acceleration",      &mouse_acceleration);

@@ -30,6 +30,7 @@
 #include "deh_str.h"
 #include "i_swap.h"
 #include "i_video.h"
+#include "i_scale.h"
 #include "m_bbox.h"
 #include "m_misc.h"
 #include "v_video.h"
@@ -62,6 +63,12 @@ int dirtybox[4];
 // haleyjd 08/28/10: clipping callback function for patches.
 // This is needed for Chocolate Strife, which clips patches to the screen.
 static vpatchclipfunc_t patchclip_callback = NULL;
+
+// We use a different scaler for PNG screenshots from screen rendering.
+// Default value is the smallest required for a lossless aspect-correct shot.
+static screen_mode_t *screenshot_scaler;
+int screenshot_width = SCREENWIDTH * 5;
+int screenshot_height = SCREENHEIGHT * 6;
 
 //
 // V_MarkRect 
@@ -592,8 +599,42 @@ void V_DrawRawScreen(byte *raw)
 }
 
 //
-// V_Init
+// V_InitScreenShotScaler
+// find a scaler for writing out PNG screenshots
 // 
+
+static void V_InitScreenShotScaler()
+{
+    screen_mode_t *mode;
+    byte *doompal;
+
+    mode = I_FindScreenMode(screenshot_width, screenshot_height, 0);
+
+    if (!mode)
+    {
+        return;
+    }
+
+    if (mode->InitMode)
+    {
+        doompal = W_CacheLumpName(DEH_String("PLAYPAL"), PU_CACHE);
+
+        if (!doompal)
+        {
+            return;
+        }
+
+        mode->InitMode(doompal);
+    }
+
+    screenshot_width = mode->width;
+    screenshot_height = mode->height;
+    screenshot_scaler = mode;
+}
+
+//
+// V_Init
+//
 void V_Init (void) 
 { 
     // no-op!
@@ -826,9 +867,27 @@ void V_ScreenShot(char *format)
 #ifdef HAVE_LIBPNG
     if (png_screenshots)
     {
-    WritePNGfile(lbmname, I_VideoBuffer,
-                 SCREENWIDTH, SCREENHEIGHT,
-                 W_CacheLumpName (DEH_String("PLAYPAL"), PU_CACHE));
+        // Prepare a temporary buffer to write the screenshot to
+        byte *buf = malloc(screenshot_width * screenshot_height);
+
+        if (!buf)
+        {
+            return;
+        }
+
+        // Ideally we'd do this only once, but V_Init is called too early
+        // and screenshot_width/height haven't been read from the config
+        V_InitScreenShotScaler();
+
+        if(screenshot_scaler)
+        {
+            screenshot_scaler->DrawScreen(buf, screenshot_width);
+            WritePNGfile(lbmname, buf,
+                         screenshot_width, screenshot_height,
+                         W_CacheLumpName (DEH_String("PLAYPAL"), PU_CACHE));
+        }
+
+        free(buf);
     }
     else
 #endif

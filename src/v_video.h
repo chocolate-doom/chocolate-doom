@@ -38,6 +38,10 @@ extern int dirtybox[4];
 
 extern byte *tinttable;
 
+// dimensions for PNG screenshots
+extern int screenshot_width;
+extern int screenshot_height;
+
 // haleyjd 08/28/10: implemented for Strife support
 // haleyjd 08/28/10: Patch clipping callback, implemented to support Choco
 // Strife.
