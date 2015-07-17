@@ -120,6 +120,7 @@ static struct {
     GameMission_t mission;
     GameVersion_t version;
 } valid_versions[] = {
+    { doom,     exe_doom_1_666 },
     { doom,     exe_doom_1_9 },
     { doom,     exe_hacx },
     { doom,     exe_ultimate },
