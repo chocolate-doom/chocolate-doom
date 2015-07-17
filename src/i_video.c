@@ -931,13 +931,13 @@ static void UpdateGrab(void)
 
 }
 
-// Update a small portion of the screen
+// Update the screen
 //
 // Does stretching and buffer blitting if neccessary
 //
 // Return true if blit was successful.
 
-static boolean BlitArea(int x1, int y1, int x2, int y2)
+static boolean Blit()
 {
     int x_offset, y_offset;
     boolean result;
@@ -954,12 +954,12 @@ static boolean BlitArea(int x1, int y1, int x2, int y2)
 
     if (SDL_LockSurface(screenbuffer) >= 0)
     {
-        I_InitScale(I_VideoBuffer,
-                    (byte *) screenbuffer->pixels
-                                + (y_offset * screenbuffer->pitch)
-                                + x_offset,
-                    screenbuffer->pitch);
-        result = screen_mode->DrawScreen(x1, y1, x2, y2);
+        result = screen_mode->DrawScreen(
+            (byte *) screenbuffer->pixels
+                        + (y_offset * screenbuffer->pitch)
+                        + x_offset,
+            screenbuffer->pitch);
+
       	SDL_UnlockSurface(screenbuffer);
     }
     else
@@ -1069,7 +1069,7 @@ void I_FinishUpdate (void)
 
     // draw to screen
 
-    BlitArea(0, 0, SCREENWIDTH, SCREENHEIGHT);
+    Blit();
 
     if (palette_to_set)
     {
@@ -2091,6 +2091,9 @@ void I_InitGraphics(void)
 	I_VideoBuffer = (unsigned char *) Z_Malloc (SCREENWIDTH * SCREENHEIGHT, 
                                                     PU_STATIC, NULL);
     }
+
+    // Ensure the scaler has the right video buffer to scale from
+    I_InitScale(I_VideoBuffer);
 
     V_RestoreBuffer();
 
