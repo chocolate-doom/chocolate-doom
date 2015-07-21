@@ -436,7 +436,7 @@ void D_StartNetGame(net_gamesettings_t *settings,
 
     ticdup = settings->ticdup;
     new_sync = settings->new_sync;
-	pistolstart = settings->pistolstart;
+    pistolstart = settings->pistolstart;
 
     // TODO: Message disabled until we fix new_sync.
     //if (!new_sync)

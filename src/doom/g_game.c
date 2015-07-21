@@ -652,19 +652,17 @@ void G_DoLoadLevel (void)
 	memset (players[i].frags,0,sizeof(players[i].frags)); 
     } 
 		 
-	// Undocumented:
-	// Reset to pistol start condition if -pistolstart was invoked
-	// and no demo involved
+    // Undocumented:
+    // Reset to pistol start condition if -pistolstart was invoked
+    // and no demo involved
 	
-	if (pistolstart && !demorecording && !demoplayback)
-	{
-		for (i = 0; i < MAXPLAYERS; i++)
-		{
-			//players[i].playerstate = PST_REBORN;
-			G_PlayerReborn(i);
-
-		}
-	}
+    if (pistolstart && !demorecording && !demoplayback)
+    {
+        for (i = 0; i < MAXPLAYERS; i++)
+        {
+            G_PlayerReborn(i);
+        }
+    }
 
     P_SetupLevel (gameepisode, gamemap, 0, gameskill);    
     displayplayer = consoleplayer;		// view the guy you are playing    
