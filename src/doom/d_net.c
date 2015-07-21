@@ -121,6 +121,8 @@ static void LoadGameSettings(net_gamesettings_t *settings)
     timelimit = settings->timelimit;
     consoleplayer = settings->consoleplayer;
 
+	pistolstart = settings->pistolstart;
+
     if (lowres_turn)
     {
         printf("NOTE: Turning resolution is reduced; this is probably "
@@ -151,6 +153,8 @@ static void SaveGameSettings(net_gamesettings_t *settings)
     settings->fast_monsters = fastparm;
     settings->respawn_monsters = respawnparm;
     settings->timelimit = timelimit;
+
+	settings->pistolstart = pistolstart;
 
     settings->lowres_turn = M_CheckParm("-record") > 0
                          && M_CheckParm("-longtics") == 0;

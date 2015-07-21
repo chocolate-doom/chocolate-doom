@@ -100,6 +100,8 @@ boolean         nomonsters;	// checkparm of -nomonsters
 boolean         respawnparm;	// checkparm of -respawn
 boolean         fastparm;	// checkparm of -fast
 
+boolean			pistolstart; // checkparm of -pistolstart
+
 //extern int soundVolume;
 //extern  int	sfxVolume;
 //extern  int	musicVolume;
@@ -1384,6 +1386,11 @@ void D_DoomMain (void)
 	sidemove[1] = sidemove[1]*scale/100;
     }
     
+	if (M_CheckParm("-pistolstart"))
+	{
+		pistolstart = true;
+	}
+
     // init subsystems
     DEH_printf("V_Init: allocate screens.\n");
     V_Init ();
