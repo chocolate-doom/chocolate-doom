@@ -100,7 +100,7 @@ boolean         nomonsters;	// checkparm of -nomonsters
 boolean         respawnparm;	// checkparm of -respawn
 boolean         fastparm;	// checkparm of -fast
 
-boolean			pistolstart; // checkparm of -pistolstart
+boolean         pistolstart; // checkparm of -pistolstart
 
 //extern int soundVolume;
 //extern  int	sfxVolume;

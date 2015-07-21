@@ -177,7 +177,7 @@ typedef struct
     int timelimit;
     int loadgame;
     int random;  // [Strife only]
-	int pistolstart;
+    int pistolstart;
 
     // These fields are only used by the server when sending a game
     // start message:
