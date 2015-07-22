@@ -651,10 +651,6 @@ void G_DoLoadLevel (void)
 	    players[i].playerstate = PST_REBORN; 
 	memset (players[i].frags,0,sizeof(players[i].frags)); 
     } 
-		 
-    // Undocumented:
-    // Reset to pistol start condition if -pistolstart was invoked
-    // and no demo involved
 	
     if (pistolstart && !demorecording && !demoplayback)
     {
