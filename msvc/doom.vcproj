@@ -859,6 +859,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\src\doom\deh_bexstr.c"
+					>
+				</File>
+				<File
 					RelativePath="..\src\doom\deh_cheat.c"
 					>
 				</File>
