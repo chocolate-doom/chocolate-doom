@@ -99,7 +99,14 @@ static void CellOverflowedSize(txt_table_t *table, int x, int y,
         // Every overflow cell must point to either (x, y) or another
         // overflow cell. This means the first in every row must be
         // txt_table_overflow_down.
+
+        if (y1 * table->columns + x >= table->num_widgets)
+        {
+            break;
+        }
+
         widget = table->widgets[y1 * table->columns + x];
+
         if (y1 != y && widget != &txt_table_overflow_down)
         {
             break;
