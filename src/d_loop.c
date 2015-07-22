@@ -105,7 +105,7 @@ static boolean  new_sync = true;
 
 // Enforce pistol start if -pistolstart is set
 
-extern int	pistolstart;
+extern boolean  pistolstart;
 
 // Callback functions for loop code.
 

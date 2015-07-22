@@ -1385,6 +1385,12 @@ void D_DoomMain (void)
 	sidemove[1] = sidemove[1]*scale/100;
     }
     
+    //!
+    // Players will start every new level from scratch, with none of their 
+    // accumulated weapons and ammo carrying over. Disabled during demo
+    // recording and playback.
+    //
+
     if (M_CheckParm("-pistolstart"))
     {
         pistolstart = true;
