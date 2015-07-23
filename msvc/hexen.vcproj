@@ -426,19 +426,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\src\hexen\i_sound.c"
-					>
-				</File>
-				<File
 					RelativePath="..\src\hexen\in_lude.c"
 					>
 				</File>
 				<File
 					RelativePath="..\src\hexen\info.c"
-					>
-				</File>
-				<File
-					RelativePath="..\src\hexen\m_misc.c"
 					>
 				</File>
 				<File
