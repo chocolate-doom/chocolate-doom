@@ -469,10 +469,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\src\heretic\i_sound.c"
-					>
-				</File>
-				<File
 					RelativePath="..\src\heretic\in_lude.c"
 					>
 				</File>
