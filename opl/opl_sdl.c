@@ -173,8 +173,8 @@ static void FillBuffer(int16_t *buffer, unsigned int nsamples)
 
         for (i=0; i<nsamples; ++i)
         {
-            buffer[i * 2] = (int16_t) mix_buffer[i * 2];
-            buffer[i * 2 + 1] = (int16_t) mix_buffer[i * 2 + 1];
+            buffer[i * 2 + 1] = (int16_t) mix_buffer[i * 2];
+            buffer[i * 2] = (int16_t) mix_buffer[i * 2 + 1];
         }
     }
     else
