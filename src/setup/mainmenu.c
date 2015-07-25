@@ -91,7 +91,7 @@ static void SensibleDefaults(void)
     show_endoom = 0;
     dclick_use = 0;
     novert = 1;
-    snd_dmxoption = "-opl3";
+    snd_dmxoption = "-opl3 -reverse";
     png_screenshots = 1;
 }
 
