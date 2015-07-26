@@ -1810,7 +1810,7 @@ void WI_initVariables(wbstartstruct_t* wbstartstruct)
     if (!wbs->maxsecret)
 	wbs->maxsecret = 1;
 
-    if ( gamemode != retail )
+    if ( gameversion < exe_ultimate )
       if (wbs->epsd > 2)
 	wbs->epsd -= 3;
 }

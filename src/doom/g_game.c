@@ -1725,9 +1725,6 @@ G_InitNew
     // the -warp command line parameter to behave differently.
     // This is left here for posterity.
 
-    if (skill > sk_nightmare)
-	skill = sk_nightmare;
-
     // This was quite messy with SPECIAL and commented parts.
     // Supposedly hacks to make the latest edition work.
     // It might not work properly.
@@ -1750,6 +1747,33 @@ G_InitNew
 	episode = 3;
     }
     */
+
+    if (skill > sk_nightmare)
+	skill = sk_nightmare;
+
+    if (gameversion >= exe_ultimate)
+    {
+        if (episode == 0)
+        {
+            episode = 4;
+        }
+    }
+    else
+    {
+        if (episode < 1)
+        {
+            episode = 1;
+        }
+        if (episode > 3)
+        {
+            episode = 3;
+        }
+    }
+
+    if (episode > 1 && gamemode == shareware)
+    {
+        episode = 1;
+    }
 
     if (map < 1)
 	map = 1;
