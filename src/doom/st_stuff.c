@@ -638,7 +638,7 @@ ST_Responder (event_t* ev)
           {
               return false;
           }
-          if (epsd == 4 && gamemode != retail)
+          if (epsd == 4 && gameversion < exe_ultimate)
           {
               return false;
           }
