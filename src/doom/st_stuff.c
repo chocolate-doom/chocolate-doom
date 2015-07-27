@@ -653,7 +653,7 @@ ST_Responder (event_t* ev)
       }
       else
       {
-          if (map < 0)
+          if (map < 1)
           {
               return false;
           }
