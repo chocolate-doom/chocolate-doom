@@ -618,13 +618,21 @@ ST_Responder (event_t* ev)
       {
 	epsd = buf[0] - '0';
 	map = buf[1] - '0';
-      }
 
-      // Chex.exe always warps to episode 1.
+    // Chex.exe always warps to episode 1.
 
-      if (gameversion == exe_chex)
-      {
-        epsd = 1;
+    if (gameversion == exe_chex)
+    {
+        if (epsd > 1)
+        {
+            epsd = 1;
+        }
+        if (map > 5)
+        {
+            map = 5;
+        }
+    }
+
       }
 
       // Catch invalid maps.
