@@ -727,6 +727,10 @@ static char *banners[] =
     "                         "
     "DOOM 2: Hell on Earth v%i.%i"
     "                           ",
+    // doom2.wad v1.666
+    "                         "
+    "DOOM 2: Hell on Earth v%i.%i66"
+    "                          ",
     // doom1.wad
     "                            "
     "DOOM Shareware Startup v%i.%i"
@@ -739,6 +743,10 @@ static char *banners[] =
     "                          "
     "DOOM System Startup v%i.%i"
     "                          ",
+    // Doom v1.666
+    "                          "
+    "DOOM System Startup v%i.%i66"
+    "                          "
     // doom.wad (Ultimate DOOM)
     "                         "
     "The Ultimate DOOM Startup v%i.%i"
@@ -1073,8 +1081,12 @@ static struct
 
 static void InitGameVersion(void)
 {
+    byte *demolump;
+    byte demolumpname[6];
+    int demoversion;
     int p;
     int i;
+    boolean status;
 
     //! 
     // @arg <version>
@@ -1126,13 +1138,46 @@ static void InitGameVersion(void)
 
             gameversion = exe_hacx;
         }
-        else if (gamemode == shareware || gamemode == registered)
+        else if (gamemode == shareware || gamemode == registered
+              || (gamemode == commercial && gamemission == doom2))
         {
             // original
-
             gameversion = exe_doom_1_9;
 
-            // TODO: Detect IWADs earlier than Doom v1.9.
+            // Detect version from demo lump
+            for (i = 1; i <= 3; ++i)
+            {
+                M_snprintf(demolumpname, 6, "demo%i", i);
+                if (W_CheckNumForName(demolumpname) > 0)
+                {
+                    demolump = W_CacheLumpName(demolumpname, PU_STATIC);
+                    demoversion = demolump[0];
+                    W_ReleaseLumpName(demolumpname);
+                    status = true;
+                    switch (demoversion)
+                    {
+                        case 106:
+                            gameversion = exe_doom_1_666;
+                            break;
+                        case 107:
+                            gameversion = exe_doom_1_7;
+                            break;
+                        case 108:
+                            gameversion = exe_doom_1_8;
+                            break;
+                        case 109:
+                            gameversion = exe_doom_1_9;
+                            break;
+                        default:
+                            status = false;
+                            break;
+                    }
+                    if (status)
+                    {
+                        break;
+                    }
+                }
+            }
         }
         else if (gamemode == retail)
         {
@@ -1140,20 +1185,13 @@ static void InitGameVersion(void)
         }
         else if (gamemode == commercial)
         {
-            if (gamemission == doom2)
-            {
-                gameversion = exe_doom_1_9;
-            }
-            else
-            {
-                // Final Doom: tnt or plutonia
-                // Defaults to emulating the first Final Doom executable,
-                // which has the crash in the demo loop; however, having
-                // this as the default should mean that it plays back
-                // most demos correctly.
+            // Final Doom: tnt or plutonia
+            // Defaults to emulating the first Final Doom executable,
+            // which has the crash in the demo loop; however, having
+            // this as the default should mean that it plays back
+            // most demos correctly.
 
-                gameversion = exe_final;
-            }
+            gameversion = exe_final;
         }
     }
     

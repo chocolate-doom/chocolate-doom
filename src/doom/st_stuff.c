@@ -726,7 +726,8 @@ ST_Responder (event_t* ev)
 	  musnum = mus_runnin + (buf[0]-'0')*10 + buf[1]-'0' - 1;
 	  
 	  // [crispy] prevent crash with IDMUS00
-	  if (((buf[0]-'0')*10 + buf[1]-'0') > 35 || musnum < mus_runnin)
+	  if ((((buf[0]-'0')*10 + buf[1]-'0') > 35 || musnum < mus_runnin)
+       && gameversion >= exe_doom_1_8)
 	    plyr->message = DEH_String(STSTR_NOMUS);
 	  else
 	    S_ChangeMusic(musnum, 1);
@@ -922,13 +923,20 @@ ST_Responder (event_t* ev)
       {
 	epsd = buf[0] - '0';
 	map = buf[1] - '0';
-      }
 
-      // Chex.exe always warps to episode 1.
+        // Chex.exe always warps to episode 1.
 
-      if (gameversion == exe_chex)
-      {
-        epsd = 1;
+        if (gameversion == exe_chex)
+        {
+            if (epsd > 1)
+            {
+                epsd = 1;
+            }
+            if (map > 5)
+            {
+                map = 5;
+            }
+        }
       }
 
       // Catch invalid maps.
