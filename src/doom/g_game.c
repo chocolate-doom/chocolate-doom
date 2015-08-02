@@ -1037,7 +1037,10 @@ void G_Ticker (void)
 	    // redraw view without weapons and HUD
 	    if (crispy_cleanscreenshot)
 	    {
+	        extern void D_Display (void);
+
 	        D_Display();
+	        S_StartSound(NULL, gamemode == commercial ? sfx_radio : sfx_tink);
 	        crispy_cleanscreenshot = false;
 	    }
 	    V_ScreenShot("DOOM%02i.%s"); 
