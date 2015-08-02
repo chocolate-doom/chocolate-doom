@@ -1034,13 +1034,11 @@ void G_Ticker (void)
 	    break; 
 	  case ga_screenshot: 
 	    // [crispy] when the "run" button is pressed,
-	    // remove all obstacles in the current tic and
-	    // take the actual screenshot in the next one
+	    // redraw view without weapons and HUD
 	    if (crispy_cleanscreenshot)
 	    {
 	        D_Display();
-	        crispy_cleanscreenshot--;
-	        break;
+	        crispy_cleanscreenshot = false;
 	    }
 	    V_ScreenShot("DOOM%02i.%s"); 
             players[consoleplayer].message = DEH_String("screen shot");

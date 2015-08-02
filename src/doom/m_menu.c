@@ -2445,7 +2445,7 @@ boolean M_Responder (event_t* ev)
     {
 	// [crispy] take screen shot without weapons and HUD
 	if (speedkeydown())
-	    crispy_cleanscreenshot++;
+	    crispy_cleanscreenshot = true;
 	G_ScreenShot ();
 	return true;
     }
