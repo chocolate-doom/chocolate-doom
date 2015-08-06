@@ -1868,11 +1868,6 @@ static void SetVideoMode(screen_mode_t *mode, int w, int h)
                                       0, 0, 0, 0);
     SDL_FillRect(rgbabuffer_upscaled, NULL, 0);
 
-    // Prevent alpha-blending for scaled blitting
-
-    SDL_SetSurfaceBlendMode(rgbabuffer, SDL_BLENDMODE_NONE);
-    SDL_SetSurfaceBlendMode(rgbabuffer_upscaled, SDL_BLENDMODE_NONE);
-
     // Create the texture that the upscaled RGBA surface gets loaded into.
     // SDL_TEXTUREACCESS_STREAMING means that this texture's content
     // are going to change frequently.
