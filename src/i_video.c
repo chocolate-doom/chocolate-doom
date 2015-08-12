@@ -1873,7 +1873,7 @@ static void SetVideoMode(screen_mode_t *mode, int w, int h)
     // are going to change frequently.
 
     texture = SDL_CreateTexture(renderer,
-                                SDL_GetWindowPixelFormat(screen),
+                                SDL_PIXELFORMAT_ARGB8888,
                                 SDL_TEXTUREACCESS_STREAMING,
                                 UPSCALE*SCREENWIDTH, UPSCALE*SCREENHEIGHT);
 
