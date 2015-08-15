@@ -62,7 +62,6 @@ boolean respawnparm;            // checkparm of -respawn
 boolean debugmode;              // checkparm of -debug
 boolean ravpic;                 // checkparm of -ravpic
 boolean cdrom;                  // true if cd-rom mode active
-boolean singletics;             // debug flag to cancel adaptiveness
 boolean noartiskip;             // whether shift-enter skips an artifact
 
 skill_t startskill;
