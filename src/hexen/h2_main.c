@@ -663,7 +663,7 @@ static void HandleArgs(void)
 
         if (W_AddFile(file) != NULL)
         {
-            M_StringCopy(demolumpname, lumpinfo[numlumps - 1].name,
+            M_StringCopy(demolumpname, lumpinfo[numlumps - 1]->name,
                          sizeof(demolumpname));
         }
         else
