@@ -954,7 +954,7 @@ static struct
 static void InitGameVersion(void)
 {
     byte *demolump;
-    byte demolumpname[6];
+    char demolumpname[6];
     int demoversion;
     int p;
     int i;
