@@ -612,12 +612,12 @@ void W_Reload(void)
         return;
     }
 
-    // We must release any lumps being held in the PWAD we're about to reload:
+    // We must free any lumps being cached from the PWAD we're about to reload:
     for (i = reloadlump; i < numlumps; ++i)
     {
         if (lumpinfo[i].cache != NULL)
         {
-            W_ReleaseLumpNum(i);
+            Z_Free(lumpinfo[i].cache);
         }
     }
 
