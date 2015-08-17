@@ -23,8 +23,6 @@
 #include <stdio.h>
 
 #include "doomtype.h"
-#include "d_mode.h"
-
 #include "w_file.h"
 
 
@@ -73,7 +71,5 @@ extern unsigned int W_LumpNameHash(const char *s);
 
 void W_ReleaseLumpNum(lumpindex_t lump);
 void W_ReleaseLumpName(char *name);
-
-void W_CheckCorrectIWAD(GameMission_t mission);
 
 #endif

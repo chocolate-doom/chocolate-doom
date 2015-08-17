@@ -26,8 +26,6 @@
 
 #include "doomtype.h"
 
-#include "config.h"
-#include "d_iwad.h"
 #include "i_swap.h"
 #include "i_system.h"
 #include "i_video.h"
@@ -612,46 +610,5 @@ void W_Reload(void)
     // The WAD directory has changed, so we have to regenerate the
     // fast lookup hashtable:
     W_GenerateHashTable();
-}
-
-// Lump names that are unique to particular game types. This lets us check
-// the user is not trying to play with the wrong executable, eg.
-// chocolate-doom -iwad hexen.wad.
-static const struct
-{
-    GameMission_t mission;
-    char *lumpname;
-} unique_lumps[] = {
-    { doom,    "POSSA1" },
-    { heretic, "IMPXA1" },
-    { hexen,   "ETTNA1" },
-    { strife,  "AGRDA1" },
-};
-
-void W_CheckCorrectIWAD(GameMission_t mission)
-{
-    int i;
-    lumpindex_t lumpnum;
-
-    for (i = 0; i < arrlen(unique_lumps); ++i)
-    {
-        if (mission != unique_lumps[i].mission)
-        {
-            lumpnum = W_CheckNumForName(unique_lumps[i].lumpname);
-
-            if (lumpnum >= 0)
-            {
-                I_Error("\nYou are trying to use a %s IWAD file with "
-                        "the %s%s binary.\nThis isn't going to work.\n"
-                        "You probably want to use the %s%s binary.",
-                        D_SuggestGameName(unique_lumps[i].mission,
-                                          indetermined),
-                        PROGRAM_PREFIX,
-                        D_GameMissionString(mission),
-                        PROGRAM_PREFIX,
-                        D_GameMissionString(unique_lumps[i].mission));
-            }
-        }
-    }
 }
 
