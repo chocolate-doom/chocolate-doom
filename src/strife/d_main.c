@@ -1629,7 +1629,7 @@ void D_DoomMain (void)
 
         if (D_AddFile (file))
         {
-            M_StringCopy(demolumpname, lumpinfo[numlumps - 1].name,
+            M_StringCopy(demolumpname, lumpinfo[numlumps - 1]->name,
                          sizeof(demolumpname));
         }
         else

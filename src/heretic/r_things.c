@@ -175,15 +175,15 @@ void R_InitSpriteDefs(char **namelist)
         // scan the lumps, filling in the frames for whatever is found
         //
         for (l = start + 1; l < end; l++)
-            if (!strncasecmp(lumpinfo[l].name, spritename, 4))
+            if (!strncasecmp(lumpinfo[l]->name, spritename, 4))
             {
-                frame = lumpinfo[l].name[4] - 'A';
-                rotation = lumpinfo[l].name[5] - '0';
+                frame = lumpinfo[l]->name[4] - 'A';
+                rotation = lumpinfo[l]->name[5] - '0';
                 R_InstallSpriteLump(l, frame, rotation, false);
-                if (lumpinfo[l].name[6])
+                if (lumpinfo[l]->name[6])
                 {
-                    frame = lumpinfo[l].name[6] - 'A';
-                    rotation = lumpinfo[l].name[7] - '0';
+                    frame = lumpinfo[l]->name[6] - 'A';
+                    rotation = lumpinfo[l]->name[7] - '0';
                     R_InstallSpriteLump(l, frame, rotation, true);
                 }
             }

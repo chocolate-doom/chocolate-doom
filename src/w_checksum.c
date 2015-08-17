@@ -33,7 +33,7 @@ static int GetFileNumber(wad_file_t *handle)
     int i;
     int result;
 
-    for (i=0; i<num_open_wadfiles; ++i)
+    for (i = 0; i < num_open_wadfiles; ++i)
     {
         if (open_wadfiles[i] == handle)
         {
@@ -77,11 +77,11 @@ void W_Checksum(sha1_digest_t digest)
     // Go through each entry in the WAD directory, adding information
     // about each entry to the SHA1 hash.
 
-    for (i=0; i<numlumps; ++i)
+    for (i = 0; i < numlumps; ++i)
     {
-        ChecksumAddLump(&sha1_context, &lumpinfo[i]);
+        ChecksumAddLump(&sha1_context, lumpinfo[i]);
     }
-    
+
     SHA1_Final(digest, &sha1_context);
 }
 

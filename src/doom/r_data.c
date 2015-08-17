@@ -693,7 +693,7 @@ void R_InitTextures (void)
     nummappatches = 0;
     for (i = numlumps - 1; i >= 0; i--)
     {
-	if (!strncasecmp(lumpinfo[i].name, DEH_String("PNAMES"), 6))
+	if (!strncasecmp(lumpinfo[i]->name, DEH_String("PNAMES"), 6))
 	{
 	    if (numpnameslumps == maxpnameslumps)
 	    {
@@ -715,11 +715,11 @@ void R_InitTextures (void)
 	    numpnameslumps++;
 	}
 	else
-	if (!strncasecmp(lumpinfo[i].name, DEH_String("TEXTURE"), 7))
+	if (!strncasecmp(lumpinfo[i]->name, DEH_String("TEXTURE"), 7))
 	{
 	    // [crispy] support only TEXTURE1/2 lumps, not TEXTURE3 etc.
-	    if (lumpinfo[i].name[7] != '1' &&
-	        lumpinfo[i].name[7] != '2')
+	    if (lumpinfo[i]->name[7] != '1' &&
+	        lumpinfo[i]->name[7] != '2')
 		continue;
 
 	    // [crispy] make sure the first available TEXTURE1/2 lumps
@@ -772,8 +772,8 @@ void R_InitTextures (void)
 	for (j = 0; j < numpnameslumps; j++)
 	{
 	    // [crispy] both point to the same WAD file name string?
-	    if (lumpinfo[texturelumps[i].lumpnum].wad_file->path ==
-	        lumpinfo[pnameslumps[j].lumpnum].wad_file->path)
+	    if (lumpinfo[texturelumps[i].lumpnum]->wad_file->path ==
+	        lumpinfo[pnameslumps[j].lumpnum]->wad_file->path)
 	    {
 		texturelumps[i].pnamesoffset = pnameslumps[j].summappatches;
 		break;
@@ -1094,7 +1094,7 @@ void R_InitColormaps (void)
 
 	// [crispy] check for status bar graphics replacements
 	i = W_CheckNumForName(DEH_String("sttnum0")); // [crispy] Status Bar '0'
-	keepgray = (i >= 0 && !strcmp(lumpinfo[i].wad_file->path, M_BaseName(iwadfile)));
+	keepgray = (i >= 0 && !strcmp(lumpinfo[i]->wad_file->path, M_BaseName(iwadfile)));
 
 	for (i = 0; i < CRMAX; i++)
 	{
@@ -1153,7 +1153,7 @@ int R_FlatNumForName (char* name)
 	// R_FlatNumForName() into the "flats" range
 	for (i = -1, j = lastflat; j >= firstflat; j--)
 	{
-	    if (!strncasecmp(lumpinfo[j].name, name, 8))
+	    if (!strncasecmp(lumpinfo[j]->name, name, 8))
 	    {
 		i = j;
 		break;
@@ -1279,7 +1279,7 @@ void R_PrecacheLevel (void)
 	if (flatpresent[i])
 	{
 	    lump = firstflat + i;
-	    flatmemory += lumpinfo[lump].size;
+	    flatmemory += lumpinfo[lump]->size;
 	    W_CacheLumpNum(lump, PU_CACHE);
 	}
     }
@@ -1316,7 +1316,7 @@ void R_PrecacheLevel (void)
 	for (j=0 ; j<texture->patchcount ; j++)
 	{
 	    lump = texture->patches[j].patch;
-	    texturememory += lumpinfo[lump].size;
+	    texturememory += lumpinfo[lump]->size;
 	    W_CacheLumpNum(lump , PU_CACHE);
 	}
     }
@@ -1345,7 +1345,7 @@ void R_PrecacheLevel (void)
 	    for (k=0 ; k<8 ; k++)
 	    {
 		lump = firstspritelump + sf->lump[k];
-		spritememory += lumpinfo[lump].size;
+		spritememory += lumpinfo[lump]->size;
 		W_CacheLumpNum(lump , PU_CACHE);
 	    }
 	}

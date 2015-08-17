@@ -1769,7 +1769,7 @@ static mapformat_t P_CheckMapFormat (int lumpnum)
     int b;
 
     if ((b = lumpnum+ML_BLOCKMAP+1) < numlumps &&
-        !strncasecmp(lumpinfo[b].name, "BEHAVIOR", 8))
+        !strncasecmp(lumpinfo[b]->name, "BEHAVIOR", 8))
     {
 	fprintf(stderr, "Hexen map format, ");
 	format |= HEXEN;
@@ -1901,7 +1901,7 @@ P_SetupLevel
 	const int time = savedleveltime / TICRATE;
 
 	fprintf(stderr, "P_SetupLevel: %s (%s), Skill %d, Time %d:%02d, ",
-	    lumpname, lumpinfo[lumpnum].wad_file->path, (int) skill, time/60, time%60);
+	    lumpname, lumpinfo[lumpnum]->wad_file->path, (int) skill, time/60, time%60);
     }
     // [crispy] check and log map and nodes format
     crispy_mapformat = P_CheckMapFormat(lumpnum);

@@ -88,7 +88,6 @@ int RebornPosition;
 
 int consoleplayer;              // player taking events and displaying
 int displayplayer;              // view being displayed
-int gametic;
 int levelstarttic;              // gametic at level start
 
 char demoname[32];

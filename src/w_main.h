@@ -18,7 +18,10 @@
 #ifndef W_MAIN_H
 #define W_MAIN_H
 
+#include "d_mode.h"
+
 boolean W_ParseCommandLine(void);
+void W_CheckCorrectIWAD(GameMission_t mission);
 
 int W_MergeDump (const char *file);
 
