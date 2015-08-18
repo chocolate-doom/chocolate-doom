@@ -862,9 +862,11 @@ void P_SpawnMapThing (mapthing_t* mthing)
     mobj = P_SpawnMobj (x,y,z, i);
     mobj->spawnpoint = *mthing;
 
-    // [crispy] count Lost Souls
+    // [crispy] count Lost Souls -- nope
+/*
     if (i == MT_SKULL)
 	extrakills++;
+*/
 
     if (mobj->tics > 0)
 	mobj->tics = 1 + (P_Random () % mobj->tics);
