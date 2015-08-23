@@ -1,0 +1,48 @@
+To play, an IWAD file is needed. This is a large file containing all of the
+levels, graphics, sound effects, music and other material that make up the
+game. IWAD files are named according to the game; the standard names are:
+.TP
+\fBdoom.wad, doom1.wad, doom2.wad, tnt.wad, plutonia.wad\fR
+Doom, Doom II, Final Doom
+.TP
+\fBheretic.wad, heretic1.wad, hexen.wad, strife1.wad\fR
+Heretic, Hexen and Strife (commercial Doom engine games).
+.TP
+\fBhacx.wad, chex.wad\fR
+Hacx and Chex Quest - more obscure games based on the Doom engine.
+.TP
+\fBfreedm.wad, freedoom1.wad, freedoom2.wad\fR
+The Freedoom open content IWAD files.
+.LP
+The following directory paths are searched in order to find an IWAD:
+.TP
+\fBCurrent working directory\fR
+Any IWAD files found in the current working directory will be used in
+preference to IWADs found in any other directories.
+.TP
+\fBDOOMWADDIR\fR
+This environment variable can be set to contain a path to a single directory
+in which to look for IWAD files. This environment variable is supported by
+most Doom source ports.
+.TP
+\fBDOOMWADPATH\fR
+This environment variable, if set, can contain a colon-separated list of
+directories in which to look for IWAD files, or alternatively full paths to
+specific IWAD files.
+.TP
+\fB$HOME/.local/share/games/doom\fR
+Writeable directory in the user's home directory. The path can be overridden
+using the \fBXDG_DATA_HOME\fR environment variable (see the XDG Base Directory
+Specification).
+.TP
+\fB/usr/local/share/games/doom, /usr/share/games/doom\fR
+System-wide locations that can be accessed by all users. The path
+\fB/usr/share/games/doom\fR is a standard path that is supported by most
+Doom source ports. These paths can be overridden using the \fBXDG_DATA_DIRS\fR
+environment variable (see the XDG Base Directory Specification).
+.LP
+The above can be overridden on a one-time basis by using the \fB\-iwad\fR
+command line parameter to provide the path to an IWAD file to use. This
+parameter can also be used to specify the name of a particular IWAD to use
+from one of the above paths. For example, '\fB-iwad doom.wad\fR' will search
+the above paths for the file \fBdoom.wad\fR to use.
