@@ -13,6 +13,8 @@ of the original programmers of the game (see the section HISTORY below).
 
 @content
 
+.SH IWAD SEARCH PATHS
+@include iwad_paths.man
 .SH ENVIRONMENT
 This section describes environment variables that control Chocolate Strife's
 behavior.
