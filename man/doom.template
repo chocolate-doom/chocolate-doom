@@ -10,6 +10,8 @@ Chocolate Doom is a port of Id Software's 1993 game "Doom" that is designed
 to behave as similar to the original DOS version of Doom as is possible.
 .br
 @content
+.SH IWAD SEARCH PATHS
+@include iwad_paths.man
 .SH ENVIRONMENT
 This section describes environment variables that control Chocolate Doom's
 behavior.
