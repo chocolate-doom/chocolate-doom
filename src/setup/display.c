@@ -65,11 +65,6 @@ static screen_mode_t screen_modes_scaled[] =
     { 0, 0},
 };
 
-// List of fullscreen modes generated at runtime
-
-static screen_mode_t *screen_modes_fullscreen = NULL;
-static int num_screen_modes_fullscreen;
-
 static int vidmode = 0;
 
 static char *video_driver = "";
@@ -88,7 +83,7 @@ int show_diskicon = 1;
 int png_screenshots = 0;
 
 // These are the last screen width/height values that were chosen by the
-// user.  These are used when finding the "nearest" mode, so when 
+// user.  These are used when finding the "nearest" mode, so when
 // changing the fullscreen / aspect ratio options, the setting does not
 // jump around.
 
@@ -141,82 +136,6 @@ static void ModeSelected(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(mode))
     selected_screen_height = screen_height;
 }
 
-static int GoodFullscreenMode(screen_mode_t *mode)
-{
-    int w, h;
-
-    w = mode->w;
-    h = mode->h;
-
-    // 320x200 and 640x400 are always good (special case)
-
-    if ((w == 320 && h == 200) || (w == 640 && h == 400))
-    {
-        return 1;
-    }
-
-    // Special case: 320x240 letterboxed mode is okay (but not aspect
-    // ratio corrected 320x240)
-
-    if (w == 320 && h == 240 && !aspect_ratio_correct)
-    {
-        return 1;
-    }
-
-    // Ignore all modes less than 640x480
-
-    return w >= 640 && h >= 480;
-}
-
-// Build screen_modes_fullscreen
-
-static void BuildFullscreenModesList(void)
-{
-    screen_mode_t *m1;
-    screen_mode_t *m2;
-    screen_mode_t m;
-    int display = 0;  // SDL2-TODO
-    int num_modes;
-    int i;
-
-    // Free the existing modes list, if one exists
-
-    if (screen_modes_fullscreen != NULL)
-    {
-        free(screen_modes_fullscreen);
-    }
-
-    num_modes = SDL_GetNumDisplayModes(display);
-    screen_modes_fullscreen = calloc(num_modes, sizeof(screen_mode_t) + 1);
-
-    for (i = 0; i < SDL_GetNumDisplayModes(display); ++i)
-    {
-        SDL_DisplayMode mode;
-
-        SDL_GetDisplayMode(display, i, &mode);
-        screen_modes_fullscreen[i].w = mode.w;
-        screen_modes_fullscreen[i].h = mode.h;
-        // SDL2-TODO: Deal with duplicate modes due to different pixel formats.
-    }
-
-    screen_modes_fullscreen[num_modes].w = 0;
-    screen_modes_fullscreen[num_modes].h = 0;
-
-    // Reverse the order of the modes list (smallest modes first)
-
-    for (i=0; i<num_modes / 2; ++i)
-    {
-        m1 = &screen_modes_fullscreen[i];
-        m2 = &screen_modes_fullscreen[num_modes - 1 - i];
-
-        memcpy(&m, m1, sizeof(screen_mode_t));
-        memcpy(m1, m2, sizeof(screen_mode_t));
-        memcpy(m2, &m, sizeof(screen_mode_t));
-    }
-
-    num_screen_modes_fullscreen = num_modes;
-}
-
 static int FindBestMode(screen_mode_t *modes)
 {
     int i;
@@ -229,11 +148,6 @@ static int FindBestMode(screen_mode_t *modes)
 
     for (i=0; modes[i].w != 0; ++i)
     {
-        if (fullscreen && !GoodFullscreenMode(&modes[i]))
-        {
-            continue;
-        }
-
         diff = (selected_screen_width - modes[i].w)
                   * (selected_screen_width - modes[i].w) 
              + (selected_screen_height - modes[i].h)
@@ -260,16 +174,7 @@ static void GenerateModesTable(TXT_UNCAST_ARG(widget),
 
     // Pick which modes list to use
 
-    if (fullscreen)
-    {
-        if (screen_modes_fullscreen == NULL)
-        {
-            BuildFullscreenModesList();
-        }
-
-        modes = screen_modes_fullscreen;
-    }
-    else if (aspect_ratio_correct) 
+    if (aspect_ratio_correct)
     {
         modes = screen_modes_scaled;
     }
@@ -283,15 +188,8 @@ static void GenerateModesTable(TXT_UNCAST_ARG(widget),
     TXT_ClearTable(modes_table);
     TXT_SetColumnWidths(modes_table, 14, 14, 14, 14, 14);
 
-    for (i=0; modes[i].w != 0; ++i) 
+    for (i=0; modes[i].w != 0; ++i)
     {
-        // Skip bad fullscreen modes
-
-        if (fullscreen && !GoodFullscreenMode(&modes[i]))
-        {
-            continue;
-        }
-
         M_snprintf(buf, sizeof(buf), "%ix%i", modes[i].w, modes[i].h);
         rbutton = TXT_NewRadioButton(buf, &vidmode, i);
         TXT_AddWidget(modes_table, rbutton);
@@ -314,15 +212,7 @@ static void UpdateModeSeparator(TXT_UNCAST_ARG(widget),
                                 TXT_UNCAST_ARG(separator))
 {
     TXT_CAST_ARG(txt_separator_t, separator);
-
-    if (fullscreen)
-    {
-        TXT_SetSeparatorLabel(separator, "Screen mode");
-    }
-    else
-    {
-        TXT_SetSeparatorLabel(separator, "Window size");
-    }
+    TXT_SetSeparatorLabel(separator, "Window size");
 }
 
 static void AdvancedDisplayConfig(TXT_UNCAST_ARG(widget),
@@ -401,21 +291,7 @@ void ConfigDisplay(void)
     // keep a limit of six lines by increasing the number of
     // columns.  In extreme cases, the window is moved up slightly.
 
-    BuildFullscreenModesList();
-
-    if (num_screen_modes_fullscreen <= 24)
-    {
-        num_columns = 3;
-    }
-    else if (num_screen_modes_fullscreen <= 40)
-    {
-        num_columns = 4;
-    }
-    else
-    {
-        num_columns = 5;
-    }
-
+    num_columns = 3;
     modes_table = TXT_NewTable(num_columns);
 
     // Build window:
@@ -439,7 +315,7 @@ void ConfigDisplay(void)
     // The windowed modes list is four rows, so take the maximum of
     // windowed and fullscreen.
 
-    num_rows = (num_screen_modes_fullscreen + num_columns - 1) / num_columns;
+    num_rows = (num_columns - 1) / num_columns;
 
     if (num_rows < 4)
     {
