@@ -144,7 +144,7 @@ static registry_value_t uninstall_values[] =
 
 // Values installed by the GOG.com and Collector's Edition versions
 
-static registry_value_t gogcom_collectors_edition_values[] =
+static registry_value_t root_path_keys[] =
 {
     // Doom Collector's Edition
 
@@ -181,7 +181,7 @@ static registry_value_t gogcom_collectors_edition_values[] =
 
 // Subdirectories of the above install path, where IWADs are installed.
 
-static char *gogcom_collectors_edition_subdirs[] =
+static char *root_path_subdirs[] =
 {
     ".",
     "Doom2",
@@ -301,27 +301,27 @@ static void CheckUninstallStrings(void)
 
 // Check for GOG.com and Doom: Collector's Edition
 
-static void CheckGOGcomCollectorsEdition(void)
+static void CheckInstallRootPaths(void)
 {
     unsigned int i;
 
-    for (i=0; i<arrlen(gogcom_collectors_edition_values); ++i)
+    for (i=0; i<arrlen(root_path_keys); ++i)
     {
         char *install_path;
         char *subpath;
         unsigned int j;
 
-        install_path = GetRegistryString(&gogcom_collectors_edition_values[i]);
+        install_path = GetRegistryString(&root_path_keys[i]);
 
         if (install_path == NULL)
         {
             continue;
         }
 
-        for (j=0; j<arrlen(gogcom_collectors_edition_subdirs); ++j)
+        for (j=0; j<arrlen(root_path_subdirs); ++j)
         {
             subpath = M_StringJoin(install_path, DIR_SEPARATOR_S,
-                                   gogcom_collectors_edition_subdirs[j], NULL);
+                                   root_path_subdirs[j], NULL);
             AddIWADDir(subpath);
         }
 
@@ -670,7 +670,7 @@ static void BuildIWADDirList(void)
     // Search the registry and find where IWADs have been installed.
 
     CheckUninstallStrings();
-    CheckGOGcomCollectorsEdition();
+    CheckInstallRootPaths();
     CheckSteamEdition();
     CheckDOSDefaults();
 
