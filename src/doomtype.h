@@ -51,7 +51,13 @@
 //
 
 #ifdef __GNUC__
+
+#ifdef __clang__
+#define PACKEDATTR __attribute__((packed))
+#else
 #define PACKEDATTR __attribute__((packed,gcc_struct))
+#endif
+
 #else
 #define PACKEDATTR
 #endif
