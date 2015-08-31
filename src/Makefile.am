@@ -218,6 +218,25 @@ EXTRA_DIST =                        \
         doom-screensaver.desktop.in \
         manifest.xml
 
+appdatadir = $(prefix)/share/appdata
+appdata_DATA =                              \
+        @PROGRAM_PREFIX@doom.appdata.xml    \
+        @PROGRAM_PREFIX@heretic.appdata.xml \
+        @PROGRAM_PREFIX@hexen.appdata.xml   \
+        @PROGRAM_PREFIX@strife.appdata.xml
+
+@PROGRAM_PREFIX@doom.appdata.xml : doom.appdata.xml
+	cp doom.appdata.xml $@
+
+@PROGRAM_PREFIX@heretic.appdata.xml : heretic.appdata.xml
+	cp heretic.appdata.xml $@
+
+@PROGRAM_PREFIX@hexen.appdata.xml : hexen.appdata.xml
+	cp hexen.appdata.xml $@
+
+@PROGRAM_PREFIX@strife.appdata.xml : strife.appdata.xml
+	cp strife.appdata.xml $@
+
 appdir = $(prefix)/share/applications
 app_DATA =                                 \
            @PROGRAM_PREFIX@doom.desktop    \
