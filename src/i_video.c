@@ -31,6 +31,7 @@
 #include "icon.c"
 
 #include "config.h"
+#include "d_loop.h"
 #include "deh_str.h"
 #include "doomtype.h"
 #include "doomkeys.h"
@@ -992,6 +993,8 @@ static void UpdateRect(int x1, int y1, int x2, int y2)
     }
 }
 
+static int readtic;
+
 void I_BeginRead(void)
 {
     byte *screenloc = I_VideoBuffer
@@ -1001,6 +1004,8 @@ void I_BeginRead(void)
 
     if (!initialized || disk_image == NULL)
         return;
+
+    readtic = gametic;
 
     // save background and copy the disk image in
 
@@ -1015,9 +1020,6 @@ void I_BeginRead(void)
 
         screenloc += SCREENWIDTH;
     }
-
-    UpdateRect(SCREENWIDTH - LOADING_DISK_W, SCREENHEIGHT - LOADING_DISK_H,
-               SCREENWIDTH, SCREENHEIGHT);
 }
 
 void I_EndRead(void)
@@ -1030,6 +1032,8 @@ void I_EndRead(void)
     if (!initialized || disk_image == NULL)
         return;
 
+    readtic = 0;
+
     // save background and copy the disk image in
 
     for (y=0; y<LOADING_DISK_H; ++y)
@@ -1040,9 +1044,6 @@ void I_EndRead(void)
 
         screenloc += SCREENWIDTH;
     }
-
-    UpdateRect(SCREENWIDTH - LOADING_DISK_W, SCREENHEIGHT - LOADING_DISK_H,
-               SCREENWIDTH, SCREENHEIGHT);
 }
 
 //
@@ -1089,6 +1090,13 @@ void I_FinishUpdate (void)
 	    I_VideoBuffer[ (SCREENHEIGHT-1)*SCREENWIDTH + i] = 0xff;
 	for ( ; i<20*4 ; i+=4)
 	    I_VideoBuffer[ (SCREENHEIGHT-1)*SCREENWIDTH + i] = 0x0;
+    }
+
+    // show a disk icon if lumps have been read in the previous tic
+
+    if (readtic && gametic > readtic)
+    {
+        I_EndRead();
     }
 
     // draw to screen

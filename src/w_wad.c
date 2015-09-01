@@ -356,8 +356,6 @@ void W_ReadLump(lumpindex_t lump, void *dest)
         I_Error("W_ReadLump: only read %i of %i on lump %i",
                 c, l->size, lump);
     }
-
-    I_EndRead();
 }
 
 
