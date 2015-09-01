@@ -1005,21 +1005,24 @@ void I_BeginRead(void)
     if (!initialized || disk_image == NULL)
         return;
 
-    readtic = gametic;
-
     // save background and copy the disk image in
 
     for (y=0; y<LOADING_DISK_H; ++y)
     {
-        memcpy(saved_background + y * LOADING_DISK_W,
-               screenloc,
-               LOADING_DISK_W);
+        if (!readtic)
+        {
+            memcpy(saved_background + y * LOADING_DISK_W,
+                   screenloc,
+                   LOADING_DISK_W);
+        }
         memcpy(screenloc,
                disk_image + y * LOADING_DISK_W,
                LOADING_DISK_W);
 
         screenloc += SCREENWIDTH;
     }
+
+    readtic = gametic;
 }
 
 void I_EndRead(void)
@@ -1032,8 +1035,6 @@ void I_EndRead(void)
     if (!initialized || disk_image == NULL)
         return;
 
-    readtic = 0;
-
     // save background and copy the disk image in
 
     for (y=0; y<LOADING_DISK_H; ++y)
@@ -1044,6 +1045,8 @@ void I_EndRead(void)
 
         screenloc += SCREENWIDTH;
     }
+
+    readtic = 0;
 }
 
 //
