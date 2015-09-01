@@ -970,28 +970,6 @@ static boolean BlitArea(int x1, int y1, int x2, int y2)
     return result;
 }
 
-static void UpdateRect(int x1, int y1, int x2, int y2)
-{
-    int x1_scaled, x2_scaled, y1_scaled, y2_scaled;
-
-    // Do stretching and blitting
-
-    if (BlitArea(x1, y1, x2, y2))
-    {
-        // Update the area
-
-        x1_scaled = (x1 * screen_mode->width) / SCREENWIDTH;
-        y1_scaled = (y1 * screen_mode->height) / SCREENHEIGHT;
-        x2_scaled = (x2 * screen_mode->width) / SCREENWIDTH;
-        y2_scaled = (y2 * screen_mode->height) / SCREENHEIGHT;
-
-        SDL_UpdateRect(screen,
-                       x1_scaled, y1_scaled,
-                       x2_scaled - x1_scaled,
-                       y2_scaled - y1_scaled);
-    }
-}
-
 void I_BeginRead(void)
 {
     byte *screenloc = I_VideoBuffer
@@ -1016,8 +994,7 @@ void I_BeginRead(void)
         screenloc += SCREENWIDTH;
     }
 
-    UpdateRect(SCREENWIDTH - LOADING_DISK_W, SCREENHEIGHT - LOADING_DISK_H,
-               SCREENWIDTH, SCREENHEIGHT);
+    // TODO: draw the loading disk onto the screen
 }
 
 void I_EndRead(void)
@@ -1041,8 +1018,7 @@ void I_EndRead(void)
         screenloc += SCREENWIDTH;
     }
 
-    UpdateRect(SCREENWIDTH - LOADING_DISK_W, SCREENHEIGHT - LOADING_DISK_H,
-               SCREENWIDTH, SCREENHEIGHT);
+    // TODO: draw the loading disk onto the screen
 }
 
 //
