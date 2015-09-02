@@ -1067,9 +1067,16 @@ void I_FinishUpdate (void)
 
     // show a disk icon if lumps have been read in the previous tic
 
-    if (readtic && gametic > readtic)
+    if (readtic)
     {
-        I_EndRead();
+        if (gametic > readtic)
+        {
+            I_EndRead();
+        }
+        else
+        {
+            I_BeginRead();
+        }
     }
 
     // draw to screen
