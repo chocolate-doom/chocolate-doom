@@ -403,15 +403,6 @@ void I_EnableLoadingDisk(void)
 
     SDL_VideoDriverName(buf, 15);
 
-    if (!strcmp(buf, "Quartz"))
-    {
-        // MacOS Quartz gives us pageflipped graphics that screw up the 
-        // display when we use the loading disk.  Disable it.
-        // This is a gross hack.
-
-        return;
-    }
-
     if (M_CheckParm("-cdrom") > 0)
         disk_name = DEH_String("STCDROM");
     else
