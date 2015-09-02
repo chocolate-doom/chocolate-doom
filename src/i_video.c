@@ -971,29 +971,7 @@ static boolean BlitArea(int x1, int y1, int x2, int y2)
     return result;
 }
 
-static void UpdateRect(int x1, int y1, int x2, int y2)
-{
-    int x1_scaled, x2_scaled, y1_scaled, y2_scaled;
-
-    // Do stretching and blitting
-
-    if (BlitArea(x1, y1, x2, y2))
-    {
-        // Update the area
-
-        x1_scaled = (x1 * screen_mode->width) / SCREENWIDTH;
-        y1_scaled = (y1 * screen_mode->height) / SCREENHEIGHT;
-        x2_scaled = (x2 * screen_mode->width) / SCREENWIDTH;
-        y2_scaled = (y2 * screen_mode->height) / SCREENHEIGHT;
-
-        SDL_UpdateRect(screen,
-                       x1_scaled, y1_scaled,
-                       x2_scaled - x1_scaled,
-                       y2_scaled - y1_scaled);
-    }
-}
-
-static int readtic;
+static int readtic = 0;
 
 void I_BeginRead(void)
 {
@@ -1005,16 +983,17 @@ void I_BeginRead(void)
     if (!initialized || disk_image == NULL)
         return;
 
-    // save background and copy the disk image in
-
     for (y=0; y<LOADING_DISK_H; ++y)
     {
+        // save background if the disk isn't already drawn
         if (!readtic)
         {
             memcpy(saved_background + y * LOADING_DISK_W,
                    screenloc,
                    LOADING_DISK_W);
         }
+
+        // copy the disk image in
         memcpy(screenloc,
                disk_image + y * LOADING_DISK_W,
                LOADING_DISK_W);
@@ -1032,10 +1011,10 @@ void I_EndRead(void)
                     + (SCREENWIDTH - LOADING_DISK_W);
     int y;
 
-    if (!initialized || disk_image == NULL)
+    if (!initialized || saved_background == NULL)
         return;
 
-    // save background and copy the disk image in
+    // restore background from beneath disk indicator
 
     for (y=0; y<LOADING_DISK_H; ++y)
     {
