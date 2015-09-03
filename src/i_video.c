@@ -934,7 +934,7 @@ static boolean BlitArea(int x1, int y1, int x2, int y2)
 
 static int readtic = 0;
 
-void I_PrepareRead()
+void I_PrepareRead(void)
 {
     byte *screenloc = I_VideoBuffer
                     + (SCREENHEIGHT - LOADING_DISK_H) * SCREENWIDTH
@@ -956,7 +956,7 @@ void I_PrepareRead()
     }
 }
 
-void I_BeginRead()
+void I_BeginRead(void)
 {
     if (!initialized || disk == NULL)
         return;
