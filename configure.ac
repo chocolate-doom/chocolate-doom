@@ -103,7 +103,15 @@ AC_SDL_MAIN_WORKAROUND([
     AC_CHECK_LIB(amd64, amd64_iopl)
 ])
 
-AC_CHECK_TOOL(WINDRES, windres, )
+case $host in
+  *cygwin* | *mingw* )
+    AC_CHECK_TOOL(WINDRES, windres, )
+    ;;
+  *)
+    WINDRES=
+    ;;
+esac
+
 AC_CHECK_TOOL(STRIP, strip, )
 
 AM_CONDITIONAL(HAVE_WINDRES, test "$WINDRES" != "")
