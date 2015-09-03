@@ -347,7 +347,7 @@ void W_ReadLump(lumpindex_t lump, void *dest)
 
     l = lumpinfo[lump];
 
-    I_BeginRead(false);
+    I_BeginRead();
 
     c = W_Read(l->wad_file, l->position, dest, l->size);
 

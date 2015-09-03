@@ -238,10 +238,9 @@ static boolean noblit;
 
 static grabmouse_callback_t grabmouse_callback = NULL;
 
-// disk image patch name (either STDISK or STCDROM) and
+// disk image patch (either STDISK or STCDROM) and
 // background overwritten by the disk to be restored by EndRead
 
-static char *disk_name;
 static patch_t *disk;
 static byte *saved_background;
 static boolean window_focused;
@@ -396,6 +395,8 @@ static void SetShowCursor(boolean show)
 
 void I_EnableLoadingDisk(void)
 {
+    char *disk_name;
+
     if (M_CheckParm("-cdrom") > 0)
         disk_name = DEH_String("STCDROM");
     else
@@ -933,28 +934,38 @@ static boolean BlitArea(int x1, int y1, int x2, int y2)
 
 static int readtic = 0;
 
-void I_BeginRead(boolean force)
+void I_PrepareRead()
 {
     byte *screenloc = I_VideoBuffer
                     + (SCREENHEIGHT - LOADING_DISK_H) * SCREENWIDTH
                     + (SCREENWIDTH - LOADING_DISK_W);
     int y;
 
+    if (!initialized || saved_background == NULL)
+        return;
+
+    // save background
+
+    for (y=0; y<LOADING_DISK_H; ++y)
+    {
+        memcpy(saved_background + y * LOADING_DISK_W,
+               screenloc,
+               LOADING_DISK_W);
+
+        screenloc += SCREENWIDTH;
+    }
+}
+
+void I_BeginRead()
+{
     if (!initialized || disk == NULL)
         return;
 
     // save background if the disk isn't already drawn
 
-    if (!readtic || force)
+    if (!readtic)
     {
-        for (y=0; y<LOADING_DISK_H; ++y)
-        {
-            memcpy(saved_background + y * LOADING_DISK_W,
-                   screenloc,
-                   LOADING_DISK_W);
-
-            screenloc += SCREENWIDTH;
-        }
+        I_PrepareRead();
     }
 
     // Draw the disk to the screen
@@ -1048,7 +1059,7 @@ void I_FinishUpdate (void)
         }
         else
         {
-            I_BeginRead(false);
+            I_BeginRead();
         }
     }
 
