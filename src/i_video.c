@@ -238,10 +238,11 @@ static boolean noblit;
 
 static grabmouse_callback_t grabmouse_callback = NULL;
 
-// disk image data and background overwritten by the disk to be
-// restored by EndRead
+// disk image patch name (either STDISK or STCDROM) and
+// background overwritten by the disk to be restored by EndRead
 
-static byte *disk_image = NULL;
+static char *disk_name;
+static patch_t *disk;
 static byte *saved_background;
 static boolean window_focused;
 
@@ -395,14 +396,6 @@ static void SetShowCursor(boolean show)
 
 void I_EnableLoadingDisk(void)
 {
-    patch_t *disk;
-    byte *tmpbuf;
-    char *disk_name;
-    int y;
-    char buf[20];
-
-    SDL_VideoDriverName(buf, 15);
-
     if (M_CheckParm("-cdrom") > 0)
         disk_name = DEH_String("STCDROM");
     else
@@ -410,31 +403,7 @@ void I_EnableLoadingDisk(void)
 
     disk = W_CacheLumpName(disk_name, PU_STATIC);
 
-    // Draw the patch into a temporary buffer
-
-    tmpbuf = Z_Malloc(SCREENWIDTH * (disk->height + 1), PU_STATIC, NULL);
-    V_UseBuffer(tmpbuf);
-
-    // Draw the disk to the screen:
-
-    V_DrawPatch(0, 0, disk);
-
-    disk_image = Z_Malloc(LOADING_DISK_W * LOADING_DISK_H, PU_STATIC, NULL);
     saved_background = Z_Malloc(LOADING_DISK_W * LOADING_DISK_H, PU_STATIC, NULL);
-
-    for (y=0; y<LOADING_DISK_H; ++y) 
-    {
-        memcpy(disk_image + LOADING_DISK_W * y,
-               tmpbuf + SCREENWIDTH * y,
-               LOADING_DISK_W);
-    }
-
-    // All done - free the screen buffer and restore the normal 
-    // video buffer.
-
-    W_ReleaseLumpName(disk_name);
-    V_RestoreBuffer();
-    Z_Free(tmpbuf);
 }
 
 //
@@ -964,33 +933,37 @@ static boolean BlitArea(int x1, int y1, int x2, int y2)
 
 static int readtic = 0;
 
-void I_BeginRead(void)
+void I_BeginRead(boolean force)
 {
     byte *screenloc = I_VideoBuffer
                     + (SCREENHEIGHT - LOADING_DISK_H) * SCREENWIDTH
                     + (SCREENWIDTH - LOADING_DISK_W);
     int y;
 
-    if (!initialized || disk_image == NULL)
+    if (!initialized || disk == NULL)
         return;
 
-    for (y=0; y<LOADING_DISK_H; ++y)
+    // save background if the disk isn't already drawn
+
+    if (!readtic || force)
     {
-        // save background if the disk isn't already drawn
-        if (!readtic)
+        for (y=0; y<LOADING_DISK_H; ++y)
         {
             memcpy(saved_background + y * LOADING_DISK_W,
                    screenloc,
                    LOADING_DISK_W);
+
+            screenloc += SCREENWIDTH;
         }
-
-        // copy the disk image in
-        memcpy(screenloc,
-               disk_image + y * LOADING_DISK_W,
-               LOADING_DISK_W);
-
-        screenloc += SCREENWIDTH;
     }
+
+    // Draw the disk to the screen
+
+    V_DrawPatch(
+        SCREENWIDTH - LOADING_DISK_W,
+        SCREENHEIGHT - LOADING_DISK_H,
+        disk
+    );
 
     readtic = gametic;
 }
@@ -1075,7 +1048,7 @@ void I_FinishUpdate (void)
         }
         else
         {
-            I_BeginRead();
+            I_BeginRead(false);
         }
     }
 
