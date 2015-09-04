@@ -509,7 +509,7 @@ void D_DoomLoop (void)
         I_InitGraphics();
     }
 
-    I_EnableLoadingDisk();
+    I_EnableLoadingDisk(SCREENWIDTH - LOADING_DISK_W, 0);
     I_SetGrabMouseCallback(D_GrabMouseCallback);
 
     V_RestoreBuffer();

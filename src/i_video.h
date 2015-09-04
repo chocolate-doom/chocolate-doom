@@ -35,6 +35,11 @@
 
 #define SCREENHEIGHT_4_3 240
 
+// Dimensions of the flashing "loading" disk icon
+
+#define LOADING_DISK_W 16
+#define LOADING_DISK_H 16
+
 #define MAX_MOUSE_BUTTONS 8
 
 typedef struct
@@ -136,7 +141,7 @@ void I_StartTic (void);
 
 // Enable the loading disk image displayed when reading from disk.
 
-void I_EnableLoadingDisk(void);
+void I_EnableLoadingDisk(int xoffs, int yoffs);
 
 extern char *video_driver;
 extern boolean screenvisible;

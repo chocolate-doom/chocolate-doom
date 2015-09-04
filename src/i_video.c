@@ -92,8 +92,8 @@ static const char shiftxform[] =
 };
 
 
-#define LOADING_DISK_W 16
-#define LOADING_DISK_H 16
+static int loading_disk_xoffs = 0;
+static int loading_disk_yoffs = 0;
 
 // Non aspect ratio-corrected modes (direct multiples of 320x200)
 
@@ -393,9 +393,12 @@ static void SetShowCursor(boolean show)
     }
 }
 
-void I_EnableLoadingDisk(void)
+void I_EnableLoadingDisk(int xoffs, int yoffs)
 {
     char *disk_name;
+
+    loading_disk_xoffs = xoffs;
+    loading_disk_yoffs = yoffs;
 
     if (M_CheckParm("-cdrom") > 0)
         disk_name = DEH_String("STCDROM");
@@ -937,8 +940,8 @@ static int readtic = 0;
 void I_PrepareRead(void)
 {
     byte *screenloc = I_VideoBuffer
-                    + (SCREENHEIGHT - LOADING_DISK_H) * SCREENWIDTH
-                    + (SCREENWIDTH - LOADING_DISK_W);
+                    + loading_disk_yoffs * SCREENWIDTH
+                    + loading_disk_xoffs;
     int y;
 
     if (!initialized || saved_background == NULL)
@@ -969,12 +972,7 @@ void I_BeginRead(void)
     }
 
     // Draw the disk to the screen
-
-    V_DrawPatch(
-        SCREENWIDTH - LOADING_DISK_W,
-        SCREENHEIGHT - LOADING_DISK_H,
-        disk
-    );
+    V_DrawPatch(loading_disk_xoffs, loading_disk_yoffs, disk);
 
     readtic = gametic;
 }
@@ -982,8 +980,8 @@ void I_BeginRead(void)
 void I_EndRead(void)
 {
     byte *screenloc = I_VideoBuffer
-                    + (SCREENHEIGHT - LOADING_DISK_H) * SCREENWIDTH
-                    + (SCREENWIDTH - LOADING_DISK_W);
+                    + loading_disk_yoffs * SCREENWIDTH
+                    + loading_disk_xoffs;
     int y;
 
     if (!initialized || saved_background == NULL)
