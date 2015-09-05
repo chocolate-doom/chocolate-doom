@@ -335,6 +335,8 @@ int W_LumpLength(lumpindex_t lump)
 // Loads the lump into the given buffer,
 //  which must be >= W_LumpLength().
 //
+boolean disk_indicator = false;
+
 void W_ReadLump(lumpindex_t lump, void *dest)
 {
     int c;
@@ -347,7 +349,7 @@ void W_ReadLump(lumpindex_t lump, void *dest)
 
     l = lumpinfo[lump];
 
-    I_BeginRead();
+    disk_indicator = true;
 
     c = W_Read(l->wad_file, l->position, dest, l->size);
 

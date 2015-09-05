@@ -114,9 +114,7 @@ void I_FinishUpdate (void);
 
 void I_ReadScreen (byte* scr);
 
-void I_PrepareRead (void);
 void I_BeginRead (void);
-void I_EndRead (void);
 
 void I_SetWindowTitle(char *title);
 

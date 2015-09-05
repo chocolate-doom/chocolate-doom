@@ -52,6 +52,7 @@ struct lumpinfo_s
 
 extern lumpinfo_t **lumpinfo;
 extern unsigned int numlumps;
+extern boolean disk_indicator;
 
 wad_file_t *W_AddFile(char *filename);
 void W_Reload(void);

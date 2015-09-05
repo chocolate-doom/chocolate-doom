@@ -1052,8 +1052,6 @@ void ST_doRefresh(void)
     // and refresh all widgets
     ST_drawWidgets(true);
 
-    I_PrepareRead();
-
 }
 
 void ST_diffDraw(void)

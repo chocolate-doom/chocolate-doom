@@ -31,7 +31,6 @@
 #include "icon.c"
 
 #include "config.h"
-#include "d_loop.h"
 #include "deh_str.h"
 #include "doomtype.h"
 #include "doomkeys.h"
@@ -242,7 +241,6 @@ static grabmouse_callback_t grabmouse_callback = NULL;
 // background overwritten by the disk to be restored by EndRead
 
 static patch_t *disk;
-static byte *saved_background;
 static boolean window_focused;
 
 // Empty mouse cursor
@@ -406,8 +404,6 @@ void I_EnableLoadingDisk(int xoffs, int yoffs)
         disk_name = DEH_String("STDISK");
 
     disk = W_CacheLumpName(disk_name, PU_STATIC);
-
-    saved_background = Z_Malloc(LOADING_DISK_W * LOADING_DISK_H, PU_STATIC, NULL);
 }
 
 //
@@ -935,70 +931,13 @@ static boolean BlitArea(int x1, int y1, int x2, int y2)
     return result;
 }
 
-static int readtic = 0;
-
-void I_PrepareRead(void)
-{
-    byte *screenloc = I_VideoBuffer
-                    + loading_disk_yoffs * SCREENWIDTH
-                    + loading_disk_xoffs;
-    int y;
-
-    if (!initialized || saved_background == NULL)
-        return;
-
-    // save background
-
-    for (y=0; y<LOADING_DISK_H; ++y)
-    {
-        memcpy(saved_background + y * LOADING_DISK_W,
-               screenloc,
-               LOADING_DISK_W);
-
-        screenloc += SCREENWIDTH;
-    }
-}
-
 void I_BeginRead(void)
 {
     if (!initialized || disk == NULL)
         return;
 
-    // save background if the disk isn't already drawn
-
-    if (!readtic)
-    {
-        I_PrepareRead();
-    }
-
     // Draw the disk to the screen
     V_DrawPatch(loading_disk_xoffs, loading_disk_yoffs, disk);
-
-    readtic = gametic;
-}
-
-void I_EndRead(void)
-{
-    byte *screenloc = I_VideoBuffer
-                    + loading_disk_yoffs * SCREENWIDTH
-                    + loading_disk_xoffs;
-    int y;
-
-    if (!initialized || saved_background == NULL)
-        return;
-
-    // restore background from beneath disk indicator
-
-    for (y=0; y<LOADING_DISK_H; ++y)
-    {
-        memcpy(screenloc,
-               saved_background + y * LOADING_DISK_W,
-               LOADING_DISK_W);
-
-        screenloc += SCREENWIDTH;
-    }
-
-    readtic = 0;
 }
 
 //
@@ -1047,18 +986,10 @@ void I_FinishUpdate (void)
 	    I_VideoBuffer[ (SCREENHEIGHT-1)*SCREENWIDTH + i] = 0x0;
     }
 
-    // show a disk icon if lumps have been read in the previous tic
-
-    if (readtic)
+    if (disk_indicator)
     {
-        if (gametic > readtic)
-        {
-            I_EndRead();
-        }
-        else
-        {
-            I_BeginRead();
-        }
+	I_BeginRead();
+	disk_indicator = false;
     }
 
     // draw to screen

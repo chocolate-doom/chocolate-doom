@@ -182,10 +182,17 @@ void D_Display (void)
     boolean			done;
     boolean			wipe;
     boolean			redrawsbar;
+    static boolean force_redrawsbar = false;
 
     if (nodrawers)
 	return;                    // for comparative timing / profiling
 		
+    if (force_redrawsbar)
+    {
+	redrawsbar = true;
+	force_redrawsbar = false;
+    }
+    else
     redrawsbar = false;
     
     // change the view size if needed
@@ -303,6 +310,11 @@ void D_Display (void)
     // normal update
     if (!wipe)
     {
+	if (disk_indicator)
+	{
+	    force_redrawsbar = true;
+	}
+
 	I_FinishUpdate ();              // page flip or blit buffer
 	return;
     }
