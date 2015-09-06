@@ -739,12 +739,12 @@ void D_IdentifyVersion(void)
 
         for (i=0; i<numlumps; ++i)
         {
-            if (!strncasecmp(lumpinfo[i].name, "MAP01", 8))
+            if (!strncasecmp(lumpinfo[i]->name, "MAP01", 8))
             {
                 gamemission = doom2;
                 break;
             } 
-            else if (!strncasecmp(lumpinfo[i].name, "E1M1", 8))
+            else if (!strncasecmp(lumpinfo[i]->name, "E1M1", 8))
             {
                 gamemission = doom;
                 break;
@@ -954,7 +954,7 @@ static struct
 static void InitGameVersion(void)
 {
     byte *demolump;
-    byte demolumpname[6];
+    char demolumpname[6];
     int demoversion;
     int p;
     int i;
@@ -1531,7 +1531,7 @@ void D_DoomMain (void)
 
         if (D_AddFile(file))
         {
-            M_StringCopy(demolumpname, lumpinfo[numlumps - 1].name,
+            M_StringCopy(demolumpname, lumpinfo[numlumps - 1]->name,
                          sizeof(demolumpname));
         }
         else
@@ -1566,7 +1566,7 @@ void D_DoomMain (void)
 
         for (i = numiwadlumps; i < numlumps; ++i)
         {
-            if (!strncmp(lumpinfo[i].name, "DEHACKED", 8))
+            if (!strncmp(lumpinfo[i]->name, "DEHACKED", 8))
             {
                 DEH_LoadLump(i, false, false);
                 loaded++;

@@ -352,6 +352,12 @@ static unsigned int last_perc_count;
 char *snd_dmxoption = "";
 int opl_io_port = 0x388;
 
+// If true, OPL sound channels are reversed to their correct arrangement
+// (as intended by the MIDI standard) rather than the backwards one
+// used by DMX due to a bug.
+
+static boolean opl_stereo_correct = false;
+
 // Load instrument table from GENMIDI lump:
 
 static boolean LoadInstrumentTable(void)
@@ -1133,6 +1139,16 @@ static void SetChannelPan(opl_channel_data_t *channel, unsigned int pan)
     unsigned int reg_pan;
     unsigned int i;
 
+    // The DMX library has the stereo channels backwards, maybe because
+    // Paul Radek had a Soundblaster card with the channels reversed, or
+    // perhaps it was just a bug in the OPL3 support that was never
+    // finished. By default we preserve this bug, but we also provide a
+    // secret DMXOPTION to fix it.
+    if (opl_stereo_correct)
+    {
+        pan = 144 - pan;
+    }
+
     if (opl_opl3mode)
     {
         if (pan >= 96)
@@ -1727,6 +1743,10 @@ static boolean I_OPL_InitMusic(void)
         opl_opl3mode = 0;
         num_opl_voices = OPL_NUM_VOICES;
     }
+
+    // Secret, undocumented DMXOPTION that reverses the stereo channels
+    // into their correct orientation.
+    opl_stereo_correct = strstr(dmxoption, "-reverse") != NULL;
 
     // Initialize all registers.
 

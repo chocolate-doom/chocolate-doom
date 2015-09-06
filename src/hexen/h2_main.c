@@ -103,7 +103,6 @@ boolean debugmode;              // checkparm of -debug
 boolean ravpic;                 // checkparm of -ravpic
 boolean cdrom = false;          // true if cd-rom mode active
 boolean cmdfrag;                // true if a CMD_FRAG packet should be sent out
-boolean singletics;             // debug flag to cancel adaptiveness
 boolean artiskip;               // whether shift-enter skips an artifact
 int maxzone = 0x800000;         // Maximum allocated for zone heap (8meg default)
 skill_t startskill;
@@ -664,7 +663,7 @@ static void HandleArgs(void)
 
         if (W_AddFile(file) != NULL)
         {
-            M_StringCopy(demolumpname, lumpinfo[numlumps - 1].name,
+            M_StringCopy(demolumpname, lumpinfo[numlumps - 1]->name,
                          sizeof(demolumpname));
         }
         else
