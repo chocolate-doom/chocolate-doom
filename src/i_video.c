@@ -986,13 +986,17 @@ void I_FinishUpdate (void)
 	    I_VideoBuffer[ (SCREENHEIGHT-1)*SCREENWIDTH + i] = 0x0;
     }
 
-    if (disk_indicator)
+    if (disk_indicator == disk_on)
     {
 	I_BeginRead();
-	disk_indicator = false;
+	disk_indicator = disk_dirty;
+    }
+    else if (disk_indicator == disk_dirty)
+    {
+	disk_indicator = disk_off;
     }
 
-    // draw to screen
+   // draw to screen
 
     BlitArea(0, 0, SCREENWIDTH, SCREENHEIGHT);
 

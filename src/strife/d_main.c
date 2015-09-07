@@ -217,7 +217,6 @@ void D_Display (void)
     boolean                     done;
     boolean                     wipe;
     boolean                     redrawsbar;
-    static boolean force_borderdraw = false;
 
     if (nodrawers)
         return;                    // for comparative timing / profiling
@@ -301,11 +300,10 @@ void D_Display (void)
     // see if the border needs to be updated to the screen
     if (gamestate == GS_LEVEL && !automapactive && scaledviewwidth != 320)
     {
-        if (menuactive || menuactivestate || !viewactivestate || force_borderdraw)
+        if (menuactive || menuactivestate || !viewactivestate || disk_indicator == disk_dirty)
         {
             borderdrawcount = 3;
             popupactivestate = false;
-            force_borderdraw = false;
         }
         if (borderdrawcount)
         {
@@ -360,11 +358,6 @@ void D_Display (void)
     // normal update
     if (!wipe)
     {
-        if (disk_indicator)
-        {
-            force_borderdraw = true;
-        }
-
         I_FinishUpdate ();              // page flip or blit buffer
         return;
     }

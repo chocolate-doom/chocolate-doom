@@ -49,10 +49,17 @@ struct lumpinfo_s
     lumpindex_t next;
 };
 
+typedef enum
+{
+    disk_off,
+    disk_on,
+    disk_dirty
+} disk_indicator_e;
+
+extern disk_indicator_e disk_indicator;
 
 extern lumpinfo_t **lumpinfo;
 extern unsigned int numlumps;
-extern boolean disk_indicator;
 
 wad_file_t *W_AddFile(char *filename);
 void W_Reload(void);
