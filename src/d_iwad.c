@@ -142,22 +142,53 @@ static registry_value_t uninstall_values[] =
     },
 };
 
-// Value installed by the Collector's Edition when it is installed
+// Values installed by the GOG.com and Collector's Edition versions
 
-static registry_value_t collectors_edition_value =
+static registry_value_t root_path_keys[] =
 {
-    HKEY_LOCAL_MACHINE,
-    SOFTWARE_KEY "\\Activision\\DOOM Collector's Edition\\v1.0",
-    "INSTALLPATH",
+    // Doom Collector's Edition
+
+    {
+        HKEY_LOCAL_MACHINE,
+        SOFTWARE_KEY "\\Activision\\DOOM Collector's Edition\\v1.0",
+        "INSTALLPATH",
+    },
+
+    // Ultimate Doom
+
+    {
+        HKEY_LOCAL_MACHINE,
+        SOFTWARE_KEY "\\GOG.com\\Games\\1435827232",
+        "PATH",
+    },
+
+    // Doom II
+
+    {
+        HKEY_LOCAL_MACHINE,
+        SOFTWARE_KEY "\\GOG.com\\Games\\1435848814",
+        "PATH",
+    },
+
+    // Final Doom
+
+    {
+        HKEY_LOCAL_MACHINE,
+        SOFTWARE_KEY "\\GOG.com\\Games\\1435848742",
+        "PATH",
+    },
 };
 
 // Subdirectories of the above install path, where IWADs are installed.
 
-static char *collectors_edition_subdirs[] = 
+static char *root_path_subdirs[] =
 {
+    ".",
     "Doom2",
     "Final Doom",
     "Ultimate Doom",
+    "TNT",
+    "Plutonia",
 };
 
 // Location where Steam is installed
@@ -268,30 +299,34 @@ static void CheckUninstallStrings(void)
     }
 }
 
-// Check for Doom: Collector's Edition
+// Check for GOG.com and Doom: Collector's Edition
 
-static void CheckCollectorsEdition(void)
+static void CheckInstallRootPaths(void)
 {
-    char *install_path;
-    char *subpath;
     unsigned int i;
 
-    install_path = GetRegistryString(&collectors_edition_value);
-
-    if (install_path == NULL)
+    for (i=0; i<arrlen(root_path_keys); ++i)
     {
-        return;
+        char *install_path;
+        char *subpath;
+        unsigned int j;
+
+        install_path = GetRegistryString(&root_path_keys[i]);
+
+        if (install_path == NULL)
+        {
+            continue;
+        }
+
+        for (j=0; j<arrlen(root_path_subdirs); ++j)
+        {
+            subpath = M_StringJoin(install_path, DIR_SEPARATOR_S,
+                                   root_path_subdirs[j], NULL);
+            AddIWADDir(subpath);
+        }
+
+        free(install_path);
     }
-
-    for (i=0; i<arrlen(collectors_edition_subdirs); ++i)
-    {
-        subpath = M_StringJoin(install_path, DIR_SEPARATOR_S,
-                               collectors_edition_subdirs[i], NULL);
-
-        AddIWADDir(subpath);
-    }
-
-    free(install_path);
 }
 
 
@@ -635,7 +670,7 @@ static void BuildIWADDirList(void)
     // Search the registry and find where IWADs have been installed.
 
     CheckUninstallStrings();
-    CheckCollectorsEdition();
+    CheckInstallRootPaths();
     CheckSteamEdition();
     CheckDOSDefaults();
 
