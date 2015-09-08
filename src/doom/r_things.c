@@ -633,8 +633,8 @@ void R_ProjectSprite (mobj_t* thing)
     iscale = FixedDiv (FRACUNIT, xscale);
 
     // [crispy] flip death sprites and corpses randomly
-    // except for the Cyberdemon which is too asymmetrical
-    if (thing->type != MT_CYBORG &&
+    // except for Cyberdemons and Barrels which are too asymmetrical
+    if (thing->type != MT_CYBORG && thing->type != MT_BARREL &&
         thing->flags & MF_CORPSE &&
         thing->health & 1)
     {
