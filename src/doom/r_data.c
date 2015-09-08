@@ -291,7 +291,7 @@ void R_GenerateComposite (int texnum)
 	for ( ; x<x2 ; x++)
 	{
 	    // Column does not have multiple patches?
-	    // [crispy] generate composites for single-patched textures as well
+	    // [crispy] generate composites for single-patched columns as well
 	    /*
 	    if (collump[x] >= 0)
 		continue;
@@ -301,7 +301,9 @@ void R_GenerateComposite (int texnum)
 				    + LONG(realpatch->columnofs[x-x1]));
 	    R_DrawColumnInCache (patchcol,
 				 block + colofs[x],
-				 patch->originy,
+				 // [crispy] single-patched columns are normally not composited
+				 // but directly read from the patch lump ignoring their originy
+				 collump[x] >= 0 ? 0 : patch->originy,
 				 texture->height,
 				 marks + x * texture->height);
 	}
