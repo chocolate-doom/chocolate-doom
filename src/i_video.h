@@ -35,11 +35,6 @@
 
 #define SCREENHEIGHT_4_3 240
 
-// Dimensions of the flashing "loading" disk icon
-
-#define LOADING_DISK_W 16
-#define LOADING_DISK_H 16
-
 #define MAX_MOUSE_BUTTONS 8
 
 typedef struct

@@ -30,6 +30,7 @@
 #include "i_system.h"
 #include "i_video.h"
 #include "m_misc.h"
+#include "v_diskicon.h"
 #include "z_zone.h"
 
 #include "w_wad.h"
@@ -335,8 +336,6 @@ int W_LumpLength(lumpindex_t lump)
 // Loads the lump into the given buffer,
 //  which must be >= W_LumpLength().
 //
-disk_indicator_e disk_indicator = false;
-
 void W_ReadLump(lumpindex_t lump, void *dest)
 {
     int c;

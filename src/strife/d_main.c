@@ -40,6 +40,7 @@
 #include "w_main.h"
 #include "w_wad.h"
 #include "s_sound.h"
+#include "v_diskicon.h"
 #include "v_video.h"
 
 #include "f_finale.h"
@@ -509,7 +510,7 @@ void D_DoomLoop (void)
         I_InitGraphics();
     }
 
-    I_EnableLoadingDisk(SCREENWIDTH - LOADING_DISK_W, 0);
+    V_EnableLoadingDisk(SCREENWIDTH - LOADING_DISK_W, 0);
     I_SetGrabMouseCallback(D_GrabMouseCallback);
 
     V_RestoreBuffer();

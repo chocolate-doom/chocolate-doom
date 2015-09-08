@@ -44,6 +44,7 @@
 #include "m_config.h"
 #include "m_misc.h"
 #include "tables.h"
+#include "v_diskicon.h"
 #include "v_video.h"
 #include "w_wad.h"
 #include "z_zone.h"
@@ -89,10 +90,6 @@ static const char shiftxform[] =
     'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
     '{', '|', '}', '~', 127
 };
-
-
-static int loading_disk_xoffs = 0;
-static int loading_disk_yoffs = 0;
 
 // Non aspect ratio-corrected modes (direct multiples of 320x200)
 
@@ -237,10 +234,6 @@ static boolean noblit;
 
 static grabmouse_callback_t grabmouse_callback = NULL;
 
-// disk image patch (either STDISK or STCDROM) and
-// background overwritten by the disk to be restored by EndRead
-
-static patch_t *disk;
 static boolean window_focused;
 
 // Empty mouse cursor
@@ -389,21 +382,6 @@ static void SetShowCursor(boolean show)
     {
         SDL_WM_GrabInput(!show);
     }
-}
-
-void I_EnableLoadingDisk(int xoffs, int yoffs)
-{
-    char *disk_name;
-
-    loading_disk_xoffs = xoffs;
-    loading_disk_yoffs = yoffs;
-
-    if (M_CheckParm("-cdrom") > 0)
-        disk_name = DEH_String("STCDROM");
-    else
-        disk_name = DEH_String("STDISK");
-
-    disk = W_CacheLumpName(disk_name, PU_STATIC);
 }
 
 //
@@ -931,15 +909,6 @@ static boolean BlitArea(int x1, int y1, int x2, int y2)
     return result;
 }
 
-void I_BeginRead(void)
-{
-    if (!initialized || disk == NULL)
-        return;
-
-    // Draw the disk to the screen
-    V_DrawPatch(loading_disk_xoffs, loading_disk_yoffs, disk);
-}
-
 //
 // I_FinishUpdate
 //
@@ -988,15 +957,14 @@ void I_FinishUpdate (void)
 
     if (disk_indicator == disk_on)
     {
-	I_BeginRead();
-	disk_indicator = disk_dirty;
+	V_BeginRead();
     }
     else if (disk_indicator == disk_dirty)
     {
 	disk_indicator = disk_off;
     }
 
-   // draw to screen
+    // draw to screen
 
     BlitArea(0, 0, SCREENWIDTH, SCREENHEIGHT);
 
