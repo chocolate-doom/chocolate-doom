@@ -392,6 +392,13 @@ EV_VerticalDoor
 	break;
     }
 	
+    // [crispy] if the wrong side of door is pushed, give oof sound
+    if (line->sidenum[1] == NO_INDEX)
+    {
+	S_StartSound(NULL,sfx_oof);
+	return;
+    }
+
     // if the sector has an active thinker, use it
 
     if (line->sidenum[side^1] == -1)
