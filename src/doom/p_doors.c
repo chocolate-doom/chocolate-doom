@@ -398,10 +398,9 @@ EV_VerticalDoor
 	break;
     }
 	
-    // [crispy] if the wrong side of door is pushed, give oof sound
-    if (line->sidenum[1] == NO_INDEX)
+    // [crispy] do not crash if the wrong side of the door is pushed
+    if (line->sidenum[side^1] == NO_INDEX)
     {
-	S_StartSound(NULL,sfx_oof);
 	return;
     }
 

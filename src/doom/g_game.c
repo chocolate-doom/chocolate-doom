@@ -751,7 +751,7 @@ void G_DoLoadLevel (void)
     // the id Anthology version of doom2.exe for Final Doom.
     // [crispy] correct "Sky never changes in Doom II" bug
     if ((gamemode == commercial)
-     && (gameversion == exe_final2 || gameversion == exe_chex || 1))
+    /* && (gameversion == exe_final2 || gameversion == exe_chex) */ )
     {
         char *skytexturename;
 
@@ -1041,7 +1041,6 @@ void G_Ticker (void)
 	        extern void D_Display (void);
 
 	        D_Display();
-	        S_StartSound(NULL, gamemode == commercial ? sfx_radio : sfx_tink);
 	        crispy_cleanscreenshot = false;
 	    }
 	    V_ScreenShot("DOOM%02i.%s"); 
