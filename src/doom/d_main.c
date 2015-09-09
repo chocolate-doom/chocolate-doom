@@ -363,8 +363,13 @@ void D_Display (void)
     {
 	static int firsttic;
 
-	for (y = 0; y < SCREENWIDTH * SCREENHEIGHT && !automapactive; y++)
-	    I_VideoBuffer[y] = colormaps[menushade * 256 + I_VideoBuffer[y]];
+	if (!automapactive || (automapactive && crispy_automapoverlay))
+	{
+	    for (y = 0; y < SCREENWIDTH * SCREENHEIGHT; y++)
+	    {
+		I_VideoBuffer[y] = colormaps[menushade * 256 + I_VideoBuffer[y]];
+	    }
+	}
 
 	if (menushade < 16 && gametic != firsttic)
 	{
