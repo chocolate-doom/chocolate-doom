@@ -62,10 +62,11 @@ extern int crispy_demowarp;
 
 enum
 {
-    JUMP_OFF,
-    JUMP_LOW,
-    JUMP_HIGH,
-    NUM_JUMPS
+    COLOREDHUD_OFF,
+    COLOREDHUD_BAR,
+    COLOREDHUD_TEXT,
+    COLOREDHUD_BOTH,
+    NUM_COLOREDHUD
 };
 
 enum
@@ -75,6 +76,14 @@ enum
     CROSSHAIR_PROJECTED,
     NUM_CROSSHAIRS,
     CROSSHAIR_INTERCEPT = 0x10
+};
+
+enum
+{
+    JUMP_OFF,
+    JUMP_LOW,
+    JUMP_HIGH,
+    NUM_JUMPS
 };
 
 #endif

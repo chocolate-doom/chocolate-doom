@@ -649,7 +649,7 @@ void HU_Drawer(void)
     HUlib_drawSText(&w_message);
     HUlib_drawIText(&w_chat);
 
-    if (crispy_coloredhud)
+    if (crispy_coloredhud & COLOREDHUD_TEXT)
 	dp_translation = cr[CR_GOLD];
     HUlib_drawSText(&w_secret);
 

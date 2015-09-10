@@ -1352,11 +1352,13 @@ typedef struct
     char *name;
 } multiitem_t;
 
-static multiitem_t multiitem_jump[NUM_JUMPS] =
+
+static multiitem_t multiitem_coloredhud[NUM_COLOREDHUD] =
 {
-    {JUMP_OFF, "off"},
-    {JUMP_LOW, "low"},
-    {JUMP_HIGH, "high"},
+    {COLOREDHUD_OFF, "off"},
+    {COLOREDHUD_BAR, "status bar"},
+    {COLOREDHUD_TEXT, "hud texts"},
+    {COLOREDHUD_BOTH, "both"},
 };
 
 static multiitem_t multiitem_crosshair[NUM_CROSSHAIRS] =
@@ -1364,6 +1366,13 @@ static multiitem_t multiitem_crosshair[NUM_CROSSHAIRS] =
     {CROSSHAIR_OFF, "off"},
     {CROSSHAIR_STATIC, "static"},
     {CROSSHAIR_PROJECTED, "projected"},
+};
+
+static multiitem_t multiitem_jump[NUM_JUMPS] =
+{
+    {JUMP_OFF, "off"},
+    {JUMP_LOW, "low"},
+    {JUMP_HIGH, "high"},
 };
 
 static void M_DrawCrispnessMultiItem(int y, char *item, multiitem_t *multiitem, int feat, boolean cond)
@@ -1397,7 +1406,7 @@ static void M_DrawCrispness1(void)
     M_DrawCrispnessSeparator(crispness_sep_visual, "Visual");
 
     M_DrawCrispnessItem(crispness_uncapped, "Uncapped Framerate", crispy_uncapped, true);
-    M_DrawCrispnessItem(crispness_coloredhud, "Colorize Status Bar and Texts", crispy_coloredhud, true);
+    M_DrawCrispnessMultiItem(crispness_coloredhud, "Colorize HUD Elements", multiitem_coloredhud, crispy_coloredhud, true);
     M_DrawCrispnessItem(crispness_translucency, "Enable Translucency", crispy_translucency, true);
     M_DrawCrispnessItem(crispness_coloredblood, "Enable Colored Blood", crispy_coloredblood, true);
     M_DrawCrispnessItem(crispness_coloredblood2, "Fix Spectre and Lost Soul Blood", crispy_coloredblood2, true);
@@ -1741,7 +1750,7 @@ static void M_CrispyToggleColoredblood2(int choice)
 static void M_CrispyToggleColoredhud(int choice)
 {
     choice = 0;
-    crispy_coloredhud = !crispy_coloredhud;
+    crispy_coloredhud = (crispy_coloredhud + 1) % NUM_COLOREDHUD;
 }
 
 static void M_CrispyToggleCrosshair(int choice)
@@ -2049,7 +2058,7 @@ M_WriteText
 	if (c == '\x1b')
 	{
 	    c = *ch++;
-	    dp_translation = (crispy_coloredhud) ? cr[(int) (c - '0')] : NULL;
+	    dp_translation = (crispy_coloredhud & COLOREDHUD_TEXT) ? cr[(int) (c - '0')] : NULL;
 	    continue;
 	}
 		

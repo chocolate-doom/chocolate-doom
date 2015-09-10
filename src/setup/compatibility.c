@@ -60,7 +60,7 @@ void CompatibilitySettings(void)
                    TXT_NewSeparator("Visual"),
                    TXT_NewCheckBox("Uncapped Framerate",
                                    &crispy_uncapped),
-                   TXT_NewCheckBox("Colorize Status Bar and Texts",
+                   TXT_NewCheckBox("Colorize Status Bar",
                                    &crispy_coloredhud),
                    TXT_NewCheckBox("Enable Translucency",
                                    &crispy_translucency),

@@ -1351,7 +1351,7 @@ enum
 // [crispy] return ammo/health/armor widget color
 static byte* ST_WidgetColor(int i)
 {
-    if (!crispy_coloredhud)
+    if (!(crispy_coloredhud & COLOREDHUD_BAR))
         return NULL;
 
     switch (i)
