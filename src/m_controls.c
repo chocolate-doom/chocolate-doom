@@ -182,6 +182,7 @@ int key_menu_gamma     = KEY_F11;
 int key_menu_incscreen = KEY_EQUALS;
 int key_menu_decscreen = KEY_MINUS;
 int key_menu_screenshot = 0;
+int key_menu_cleanscreenshot = 0; // [crispy]
 int key_menu_nextlevel = 0; // [crispy]
 int key_menu_reloadlevel = 0; // [crispy]
 
@@ -395,6 +396,7 @@ void M_BindMenuControls(void)
     M_BindIntVariable("key_menu_incscreen", &key_menu_incscreen);
     M_BindIntVariable("key_menu_decscreen", &key_menu_decscreen);
     M_BindIntVariable("key_menu_screenshot",&key_menu_screenshot);
+    M_BindIntVariable("key_menu_cleanscreenshot",&key_menu_cleanscreenshot); // [crispy]
     M_BindIntVariable("key_demo_quit",      &key_demo_quit);
     M_BindIntVariable("key_spy",            &key_spy);
     M_BindIntVariable("key_menu_nextlevel", &key_menu_nextlevel); // [crispy]

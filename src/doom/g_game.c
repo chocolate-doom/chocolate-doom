@@ -1034,8 +1034,7 @@ void G_Ticker (void)
 	    G_DoWorldDone (); 
 	    break; 
 	  case ga_screenshot: 
-	    // [crispy] when the "run" button is pressed,
-	    // redraw view without weapons and HUD
+	    // [crispy] redraw view without weapons and HUD
 	    if (crispy_cleanscreenshot)
 	    {
 	        extern void D_Display (void);
