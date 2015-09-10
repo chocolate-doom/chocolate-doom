@@ -342,7 +342,8 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     int		forward;
     int		side;
     int		look;
-    static int		mbmlookctrl = 0; // [crispy] single click view centering
+    static unsigned int	mbmlookctrl = 0; // [crispy] keyboard lookspring
+    static unsigned int	kbdlookctrl = 0; // [crispy] single click view centering
     static int		joybspeed_old = 2; // [crispy] toggle "always run"
 
     memset(cmd, 0, sizeof(ticcmd_t));
@@ -496,14 +497,26 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
         if (gamekeydown[key_lookup])
         {
             look = lspeed;
+            kbdlookctrl += ticdup;
         }
+        else
         if (gamekeydown[key_lookdown])
         {
             look = -lspeed;
+            kbdlookctrl += ticdup;
         }
+        else
         if (gamekeydown[key_lookcenter])
         {
             look = TOCENTER;
+            kbdlookctrl = 0;
+        }
+
+        if (crispy_freelook == FREELOOK_SPRING && kbdlookctrl &&
+            !gamekeydown[key_lookup] && !gamekeydown[key_lookdown])
+        {
+            look = TOCENTER;
+            kbdlookctrl = 0;
         }
     }
 
@@ -652,7 +665,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     }
     if (mbmlookctrl && !mousebuttons[mousebmouselook]) // [crispy] released
     {
-        if (mbmlookctrl < 6) // [crispy] short click
+        if (crispy_freelook == FREELOOK_SPRING || mbmlookctrl < 6) // [crispy] short click
             look = TOCENTER;
         mbmlookctrl = 0;
     }

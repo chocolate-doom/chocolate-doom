@@ -80,6 +80,14 @@ enum
 
 enum
 {
+    FREELOOK_OFF,
+    FREELOOK_SPRING,
+    FREELOOK_LOCK,
+    NUM_FREELOOKS
+};
+
+enum
+{
     JUMP_OFF,
     JUMP_LOW,
     JUMP_HIGH,

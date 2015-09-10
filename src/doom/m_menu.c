@@ -1368,6 +1368,13 @@ static multiitem_t multiitem_crosshair[NUM_CROSSHAIRS] =
     {CROSSHAIR_PROJECTED, "projected"},
 };
 
+static multiitem_t multiitem_freelook[NUM_FREELOOKS] =
+{
+    {FREELOOK_OFF, "off"},
+    {FREELOOK_SPRING, "spring"},
+    {FREELOOK_LOCK, "lock"},
+};
+
 static multiitem_t multiitem_jump[NUM_JUMPS] =
 {
     {JUMP_OFF, "off"},
@@ -1428,7 +1435,7 @@ static void M_DrawCrispness2(void)
     M_DrawCrispnessSeparator(crispness_sep_tactical, "Tactical");
 
     M_DrawCrispnessMultiItem(crispness_crosshair, "Draw Crosshair", multiitem_crosshair, crispy_crosshair, true);
-    M_DrawCrispnessItem(crispness_freelook, "Allow Free Look", crispy_freelook, true);
+    M_DrawCrispnessMultiItem(crispness_freelook, "Allow Free Look", multiitem_freelook, crispy_freelook, true);
     M_DrawCrispnessItem(crispness_centerweapon, "Center Weapon when Firing", crispy_centerweapon, true);
     M_DrawCrispnessItem(crispness_pitch, "Enable Weapon Recoil Pitch", crispy_pitch, true);
     M_DrawCrispnessItem(crispness_secretmessage, "Show Revealed Secrets", crispy_secretmessage, true);
@@ -1780,7 +1787,7 @@ static void M_CrispyToggleFreeaim(int choice)
 static void M_CrispyToggleFreelook(int choice)
 {
     choice = 0;
-    crispy_freelook = !crispy_freelook;
+    crispy_freelook = (crispy_freelook + 1) % NUM_FREELOOKS;
 
     players[consoleplayer].lookdir = 0;
 }
