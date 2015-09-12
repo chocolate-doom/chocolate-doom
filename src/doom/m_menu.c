@@ -1297,10 +1297,11 @@ static void M_DrawCrispnessBackground(void)
 {
     byte *src, *dest;
     static byte *sdest;
-    int x, y;
 
     if (!sdest)
     {
+	int x, y;
+
 	src = W_CacheLumpName("FLOOR4_6" , PU_CACHE);
 	dest = (unsigned char *) Z_Malloc (SCREENWIDTH * SCREENHEIGHT, PU_STATIC, NULL);
 	sdest = dest;

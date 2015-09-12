@@ -248,7 +248,7 @@ void P_LoadSegs (int lump)
 	li->sidedef = &sides[ldef->sidenum[side]];
 	li->frontsector = sides[ldef->sidenum[side]].sector;
 	// [crispy] recalculate
-	li->offset = GetOffset(li->v1, (ml->side^crispy_fliplevels ? ldef->v2 : ldef->v1));
+	li->offset = GetOffset(li->v1, ((ml->side ^ crispy_fliplevels) ? ldef->v2 : ldef->v1));
 
         if (ldef-> flags & ML_TWOSIDED)
         {
@@ -328,7 +328,7 @@ static void P_LoadSegs_DeePBSP (int lump)
 	li->sidedef = &sides[ldef->sidenum[side]];
 	li->frontsector = sides[ldef->sidenum[side]].sector;
 	// [crispy] recalculate
-	li->offset = GetOffset(li->v1, (ml->side^crispy_fliplevels ? ldef->v2 : ldef->v1));
+	li->offset = GetOffset(li->v1, ((ml->side ^ crispy_fliplevels) ? ldef->v2 : ldef->v1));
 
 	if (ldef->flags & ML_TWOSIDED)
 	{
@@ -679,7 +679,7 @@ static void P_LoadNodes_ZDBSP (int lump, boolean compressed)
 	{
 	    int outlen_old = outlen;
 	    outlen = 2 * outlen_old;
-	    output = realloc(output, outlen);
+	    output = crispy_realloc(output, outlen);
 	    zstream->next_out = output + outlen_old;
 	    zstream->avail_out = outlen - outlen_old;
 	}
@@ -691,7 +691,6 @@ static void P_LoadNodes_ZDBSP (int lump, boolean compressed)
 	        (float)zstream->total_out/zstream->total_in);
 
 	data = output;
-	len = zstream->total_out;
 
 	if (inflateEnd(zstream) != Z_OK)
 	    I_Error("P_LoadNodes: Error during ZDBSP nodes decompression shut-down!");
@@ -724,8 +723,8 @@ static void P_LoadNodes_ZDBSP (int lump, boolean compressed)
     else
     {
 	newvertarray = Z_Malloc((orgVerts + newVerts) * sizeof(vertex_t), PU_LEVEL, 0);
-	memset(newvertarray, 0, (orgVerts + newVerts) * sizeof(vertex_t));
 	memcpy(newvertarray, vertexes, orgVerts * sizeof(vertex_t));
+	memset(newvertarray + orgVerts, 0, newVerts * sizeof(vertex_t));
     }
 
     for (i = 0; i < newVerts; i++)
@@ -832,7 +831,7 @@ static void P_LoadNodes_ZDBSP (int lump, boolean compressed)
 		if (li->sidedef->midtexture)
 		{
 		    li->backsector = 0;
-		    fprintf(stderr, "P_LoadSegs: Linedef %d has two-sided flag set, but no second sidedef\n", i);
+		    fprintf(stderr, "P_LoadSegs: Linedef %u has two-sided flag set, but no second sidedef\n", i);
 		}
 		else
 		    li->backsector = GetSectorAtNullAddress();
@@ -1315,10 +1314,12 @@ static void P_CreateBlockMap(void)
     typedef struct { int n, nalloc, *list; } bmap_t;  // blocklist structure
     unsigned tot = bmapwidth * bmapheight;            // size of blockmap
     bmap_t *bmap = calloc(sizeof *bmap, tot);         // array of blocklists
-    int x, y, adx, dx, ady, dy, diff, b, bend;
+    int x, y, adx, ady, bend;
 
     for (i=0; i < numlines; i++)
       {
+	int dx, dy, diff, b;
+
 	// starting coordinates
 	if (crispy_fliplevels)
 	{
@@ -1369,7 +1370,7 @@ static void P_CreateBlockMap(void)
 	  {
 	    // Increase size of allocated list if necessary
 	    if (bmap[b].n >= bmap[b].nalloc)
-	      bmap[b].list = realloc(bmap[b].list,
+	      bmap[b].list = crispy_realloc(bmap[b].list,
 				     (bmap[b].nalloc = bmap[b].nalloc ?
 				      bmap[b].nalloc*2 : 8)*sizeof*bmap->list);
 

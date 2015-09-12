@@ -94,4 +94,6 @@ enum
     NUM_JUMPS
 };
 
+void *crispy_realloc (void *ptr, size_t size);
+
 #endif

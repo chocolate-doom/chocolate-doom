@@ -40,7 +40,7 @@ static void DEH_BEXParsParseLine(deh_context_t *context, char *line, void *tag)
 {
     int episode, map, partime;
 
-    if (sscanf(line, "par %d %d %d", &episode, &map, &partime) == 3)
+    if (sscanf(line, "par %32d %32d %32d", &episode, &map, &partime) == 3)
     {
 	if (episode >= 1 && episode <= 3 && map >= 1 && map <= 9)
 	    bex_pars[episode][map] = partime;
@@ -51,7 +51,7 @@ static void DEH_BEXParsParseLine(deh_context_t *context, char *line, void *tag)
 	}
     }
     else
-    if (sscanf(line, "par %d %d", &map, &partime) == 2)
+    if (sscanf(line, "par %32d %32d", &map, &partime) == 2)
     {
 	if (map >= 1 && map <= 32)
 	    bex_cpars[map-1] = partime;

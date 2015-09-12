@@ -46,14 +46,14 @@ static void *DEH_BEXInclStart(deh_context_t *context, char *line)
 	return NULL;
     }
 
-    inc_file = malloc(sizeof(*inc_file) * strlen(line));
+    inc_file = malloc(strlen(line) + 1);
 
-    if (sscanf(line, "INCLUDE NOTEXT %s", inc_file) == 1)
+    if (sscanf(line, "INCLUDE NOTEXT %32s", inc_file) == 1)
     {
 	bex_notext = true;
     }
     else
-    if (sscanf(line, "INCLUDE %s", inc_file) == 1)
+    if (sscanf(line, "INCLUDE %32s", inc_file) == 1)
     {
 	// well, fine
     }

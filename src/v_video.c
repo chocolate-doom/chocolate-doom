@@ -782,8 +782,7 @@ void V_CopyScaledBuffer(byte *dest, byte *src, size_t size)
     int i, j;
 
 #ifdef RANGECHECK
-    if (size < 0
-     || size > ORIGWIDTH * ORIGHEIGHT)
+    if (size > ORIGWIDTH * ORIGHEIGHT)
     {
         I_Error("Bad V_CopyScaledBuffer");
     }

@@ -341,7 +341,7 @@ vissprite_t* R_NewVisSprite (void)
 	return &overflowsprite;
 
 	numvissprites = numvissprites ? 2 * numvissprites : MAXVISSPRITES;
-	vissprites = realloc(vissprites, numvissprites * sizeof(*vissprites));
+	vissprites = crispy_realloc(vissprites, numvissprites * sizeof(*vissprites));
 	memset(vissprites + numvissprites_old, 0, (numvissprites - numvissprites_old) * sizeof(*vissprites));
 
 	vissprite_p = vissprites + numvissprites_old;
@@ -465,7 +465,7 @@ R_DrawVisSprite
 	
     for (dc_x=vis->x1 ; dc_x<=vis->x2 ; dc_x++, frac += vis->xiscale)
     {
-	static boolean error = 0;
+	static boolean error = false;
 	texturecolumn = frac>>FRACBITS;
 #ifdef RANGECHECK
 	if (texturecolumn < 0 || texturecolumn >= SHORT(patch->width))
@@ -474,7 +474,7 @@ R_DrawVisSprite
 	    if (!error)
 	    {
 	    fprintf (stderr, "R_DrawSpriteRange: bad texturecolumn\n");
-	    error++;
+	    error = true;
 	    }
 	    continue;
 	}

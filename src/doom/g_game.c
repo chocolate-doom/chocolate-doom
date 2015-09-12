@@ -342,9 +342,6 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     int		forward;
     int		side;
     int		look;
-    static unsigned int	mbmlookctrl = 0; // [crispy] keyboard lookspring
-    static unsigned int	kbdlookctrl = 0; // [crispy] single click view centering
-    static int		joybspeed_old = 2; // [crispy] toggle "always run"
 
     memset(cmd, 0, sizeof(ticcmd_t));
 
@@ -409,6 +406,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     if (gamekeydown[key_toggleautorun])
     {
         static char autorunmsg[24];
+        static int joybspeed_old = 2;
 
         if (joybspeed >= MAX_JOY_BUTTONS)
         {
@@ -494,6 +492,8 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     // [crispy] look up/down/center keys
     if (crispy_freelook)
     {
+        static unsigned int kbdlookctrl = 0;
+
         if (gamekeydown[key_lookup])
         {
             look = lspeed;
@@ -512,6 +512,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
             kbdlookctrl = 0;
         }
 
+        // [crispy] keyboard lookspring
         if (crispy_freelook == FREELOOK_SPRING && kbdlookctrl &&
             !gamekeydown[key_lookup] && !gamekeydown[key_lookdown])
         {
@@ -659,15 +660,25 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     }
 
     // [crispy] single click on mouse look button centers view
-    if (mousebuttons[mousebmouselook]) // [crispy] clicked
+    if (crispy_freelook)
     {
-        mbmlookctrl += ticdup;
-    }
-    if (mbmlookctrl && !mousebuttons[mousebmouselook]) // [crispy] released
-    {
-        if (crispy_freelook == FREELOOK_SPRING || mbmlookctrl < 6) // [crispy] short click
-            look = TOCENTER;
-        mbmlookctrl = 0;
+        static unsigned int mbmlookctrl = 0;
+
+        // [crispy] single click view centering
+        if (mousebuttons[mousebmouselook]) // [crispy] clicked
+        {
+            mbmlookctrl += ticdup;
+        }
+        else
+        // [crispy] released
+        if (mbmlookctrl)
+        {
+            if (crispy_freelook == FREELOOK_SPRING || mbmlookctrl < 6) // [crispy] short click
+            {
+                look = TOCENTER;
+            }
+            mbmlookctrl = 0;
+        }
     }
 
     if (strafe) 
@@ -2274,9 +2285,8 @@ void G_RecordDemo (char *name)
     for (i = 0; i <= 999 && (fp = fopen(demoname, "rb")) != NULL; i++)
     {
 	M_snprintf(demoname, demoname_size, "%s-%03d.lmp", name, i);
-    }
-    if (fp)
 	fclose (fp);
+    }
 
     maxsize = 0x20000;
 

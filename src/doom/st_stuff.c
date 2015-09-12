@@ -1459,7 +1459,7 @@ void ST_drawWidgets(boolean refresh)
     V_ClearDPTranslation();
 
     // [crispy] draw berserk pack instead of no ammo if appropriate
-    if (screenblocks >= CRISPY_HUD && (!automapactive || (automapactive && crispy_automapoverlay)) &&
+    if (screenblocks >= CRISPY_HUD && (!automapactive || crispy_automapoverlay) &&
         plyr->readyweapon == wp_fist && plyr->powers[pw_strength])
     {
 	static patch_t *patch;

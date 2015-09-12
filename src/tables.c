@@ -64,15 +64,13 @@ int SlopeDivVanilla(unsigned int num, unsigned int den)
 // [crispy] catch SlopeDiv overflows, only used in rendering
 int SlopeDivCrispy(unsigned int num, unsigned int den)
 {
-    uint64_t ans;
-
     if (den < 512)
     {
 	return SLOPERANGE;
     }
     else
     {
-	ans = ((uint64_t) num << 3) / (den >> 8);
+	uint64_t ans = ((uint64_t) num << 3) / (den >> 8);
 
 	if (ans <= SLOPERANGE)
 	{

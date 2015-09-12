@@ -642,7 +642,7 @@ void HU_Drawer(void)
     }
 
     // [crispy] translucent messages for translucent HUD
-    if (crispy_translucency && screenblocks > CRISPY_HUD && (!automapactive || (automapactive && crispy_automapoverlay)))
+    if (crispy_translucency && screenblocks > CRISPY_HUD && (!automapactive || crispy_automapoverlay))
 	dp_translucent = true;
 
     V_ClearDPTranslation();

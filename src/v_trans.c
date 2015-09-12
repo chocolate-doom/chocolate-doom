@@ -84,8 +84,6 @@ typedef struct vect {
 
 static void hsv_to_rgb(vect *hsv, vect *rgb)
 {
-    int i;
-    float f, p, q, t;
     float h, s, v;
 
     h = hsv->x;
@@ -97,6 +95,9 @@ static void hsv_to_rgb(vect *hsv, vect *rgb)
         rgb->y = v;
         rgb->z = v;
     } else {
+        int i;
+        float f, p, q, t;
+
         if (h>=360.0)
             h  -= 360.0;
         h /= 60.0;
@@ -143,9 +144,8 @@ static void hsv_to_rgb(vect *hsv, vect *rgb)
 static void rgb_to_hsv(vect *rgb, vect *hsv)
 {
     float h, s, v;
-    float cmax, cmin, cdelta;
+    float cmax, cmin;
     float r, g, b;
-    float rc, gc, bc;
 
     r = rgb->x;
     g = rgb->y;
@@ -167,6 +167,9 @@ static void rgb_to_hsv(vect *rgb, vect *hsv)
     if (s<CTOLERANCE)
         h = 0.0;
     else {
+        float cdelta;
+        float rc, gc, bc;
+
         cdelta = cmax-cmin;
         rc = (cmax-r)/cdelta;
         gc = (cmax-g)/cdelta;

@@ -233,7 +233,7 @@ static void R_RaiseVisplanes (visplane_t** vp)
 	visplane_t* visplanes_old = visplanes;
 
 	numvisplanes = numvisplanes ? 2 * numvisplanes : MAXVISPLANES;
-	visplanes = realloc(visplanes, numvisplanes * sizeof(*visplanes));
+	visplanes = crispy_realloc(visplanes, numvisplanes * sizeof(*visplanes));
 	memset(visplanes + numvisplanes_old, 0, (numvisplanes - numvisplanes_old) * sizeof(*visplanes));
 
 	lastvisplane = visplanes + numvisplanes_old;

@@ -227,7 +227,7 @@ static void DEH_BEXPtrParseLine(deh_context_t *context, char *line, void *tag)
     }
 
     // parse "FRAME nn", where frame_number = "nn"
-    if (sscanf(variable_name, "FRAME %d", &frame_number) != 1)
+    if (sscanf(variable_name, "FRAME %32d", &frame_number) != 1)
     {
 	DEH_Warning(context, "Failed to parse assignment");
 	return;

@@ -49,7 +49,6 @@ int crispy_uncapped = 0;
 void CompatibilitySettings(void)
 {
     txt_window_t *window;
-    txt_scrollpane_t *scrollpane;
 
     // [crispy]
     if (gamemission == doom)

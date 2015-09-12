@@ -679,8 +679,8 @@ void R_InitTextures (void)
     int			numtexturelumps = 0;
 
     // [crispy] allocate memory for the pnameslumps and texturelumps arrays
-    pnameslumps = realloc(pnameslumps, maxpnameslumps * sizeof(*pnameslumps));
-    texturelumps = realloc(texturelumps, maxtexturelumps * sizeof(*texturelumps));
+    pnameslumps = crispy_realloc(pnameslumps, maxpnameslumps * sizeof(*pnameslumps));
+    texturelumps = crispy_realloc(texturelumps, maxtexturelumps * sizeof(*texturelumps));
 
     // [crispy] make sure the first available TEXTURE1/2 lumps
     // are always processed first
@@ -700,7 +700,7 @@ void R_InitTextures (void)
 	    if (numpnameslumps == maxpnameslumps)
 	    {
 		maxpnameslumps++;
-		pnameslumps = realloc(pnameslumps, maxpnameslumps * sizeof(*pnameslumps));
+		pnameslumps = crispy_realloc(pnameslumps, maxpnameslumps * sizeof(*pnameslumps));
 	    }
 
 	    pnameslumps[numpnameslumps].lumpnum = i;
@@ -733,7 +733,7 @@ void R_InitTextures (void)
 	    if (numtexturelumps == maxtexturelumps)
 	    {
 		maxtexturelumps++;
-		texturelumps = realloc(texturelumps, maxtexturelumps * sizeof(*texturelumps));
+		texturelumps = crispy_realloc(texturelumps, maxtexturelumps * sizeof(*texturelumps));
 	    }
 
 	    // [crispy] do not proceed any further, yet
@@ -986,12 +986,14 @@ void R_InitTranMap()
     {
 	// Set a pointer to the translucency filter maps.
 	tranmap = W_CacheLumpNum(lump, PU_STATIC);
-	printf(":"); // [crispy] loaded from a lump
+	// [crispy] loaded from a lump
+	printf(":");
     }
     else
     {
 	// Compose a default transparent filter map based on PLAYPAL.
 	unsigned char *playpal = W_CacheLumpName("PLAYPAL", PU_STATIC);
+	FILE *cachefp;
 	char *fname = NULL;
 	extern char *configdir;
 
@@ -1000,66 +1002,78 @@ void R_InitTranMap()
 	    unsigned char playpal[256*3]; // [crispy] a palette has 768 bytes!
 	} cache;
 
-	FILE *cachefp = fopen(fname = M_StringJoin(configdir,
-	                      "tranmap.dat", NULL), "r+b"); // [crispy] open file readable
-
 	tranmap = Z_Malloc(256*256, PU_STATIC, 0);
+	fname = M_StringJoin(configdir, "tranmap.dat", NULL);
 
-	// Use cached translucency filter if it's available
-	if (!cachefp ? cachefp = fopen(fname,"wb") , 1 : // [crispy] if file not readable, open writable, continue
-	    fread(&cache, 1, sizeof cache, cachefp) != sizeof cache || // [crispy] could not read struct cache from file
-	    cache.pct != tran_filter_pct || // [crispy] filter percents differ
-	    memcmp(cache.playpal, playpal, sizeof cache.playpal) || // [crispy] base palettes differ
-	    fread(tranmap, 256, 256, cachefp) != 256 ) // [crispy] could not read entire translucency map
+	// [crispy] open file readable
+	if ((cachefp = fopen(fname, "rb")) &&
+	    // [crispy] could read struct cache from file
+	    fread(&cache, 1, sizeof(cache), cachefp) == sizeof(cache) &&
+	    // [crispy] same filter percents
+	    cache.pct == tran_filter_pct &&
+	    // [crispy] same base palettes
+	    memcmp(cache.playpal, playpal, sizeof(cache.playpal)) == 0 &&
+	    // [crispy] could read entire translucency map
+	    fread(tranmap, 256, 256, cachefp) == 256 )
 	{
-	byte *fg, *bg, blend[3], *tp = tranmap;
-	int i, j, btmp;
-	extern int FindNearestColor(byte *palette, int r, int g, int b);
+		// [crispy] loaded from a file
+		printf(".");
+	}
+	// [crispy] file not readable
+	else
+	{
+	    byte *fg, *bg, blend[3], *tp = tranmap;
+	    int i, j, btmp;
+	    extern int FindNearestColor(byte *palette, int rgb_r, int rgb_g, int rgb_b);
 
-	// [crispy] background color
-	for (i = 0; i < 256; i++)
-	{
-	    // [crispy] foreground color
-	    for (j = 0; j < 256; j++)
+	    // [crispy] background color
+	    for (i = 0; i < 256; i++)
 	    {
-		// [crispy] shortcut: identical foreground and background
-		if (i == j)
+		// [crispy] foreground color
+		for (j = 0; j < 256; j++)
 		{
-		    *tp++ = i;
-		    continue;
+		    // [crispy] shortcut: identical foreground and background
+		    if (i == j)
+		    {
+			*tp++ = i;
+			continue;
+		    }
+
+		    bg = playpal + 3*i;
+		    fg = playpal + 3*j;
+
+		    // [crispy] blended color - emphasize blues
+		    // Colour matching in RGB space doesn't work very well with the blues
+		    // in Doom's palette. Rather than do any colour conversions, just
+		    // emphasize the blues when building the translucency table.
+		    btmp = fg[b] * 1.666 < (fg[r] + fg[g]) ? 0 : 50;
+		    blend[r] = (tran_filter_pct * fg[r] + (100 - tran_filter_pct) * bg[r]) / (100 + btmp);
+		    blend[g] = (tran_filter_pct * fg[g] + (100 - tran_filter_pct) * bg[g]) / (100 + btmp);
+		    blend[b] = (tran_filter_pct * fg[b] + (100 - tran_filter_pct) * bg[b]) / 100;
+
+		    *tp++ = FindNearestColor(playpal, blend[r], blend[g], blend[b]);
 		}
+	    }
 
-		bg = playpal + 3*i;
-		fg = playpal + 3*j;
+	    // [crispy] file not readable, open writable
+	    if ((cachefp = fopen(fname, "wb")))
+	    {
+		// write out the cached translucency map
+		cache.pct = tran_filter_pct; // [crispy] set filter percents
+		memcpy(cache.playpal, playpal, sizeof(cache.playpal)); // [crispy] set base palette
+		fseek(cachefp, 0, SEEK_SET); // [crispy] go to start of file
+		fwrite(&cache, 1, sizeof(cache), cachefp); // [crispy] write struct cache
+		fwrite(tranmap, 256, 256, cachefp); // [crispy] write translucency map
 
-		// [crispy] blended color - emphasize blues
-		// Colour matching in RGB space doesn't work very well with the blues
-		// in Doom's palette. Rather than do any colour conversions, just
-		// emphasize the blues when building the translucency table.
-		btmp = fg[b] * 1.666 < (fg[r] + fg[g]) ? 0 : 50;
-		blend[r] = (tran_filter_pct * fg[r] + (100 - tran_filter_pct) * bg[r]) / (100 + btmp);
-		blend[g] = (tran_filter_pct * fg[g] + (100 - tran_filter_pct) * bg[g]) / (100 + btmp);
-		blend[b] = (tran_filter_pct * fg[b] + (100 - tran_filter_pct) * bg[b]) / 100;
-
-		*tp++ = FindNearestColor(playpal, blend[r], blend[g], blend[b]);
+		// [crispy] generated and saved
+		printf("!");
+	    }
+	    else
+	    {
+		// [crispy] generated, but not saved
+		printf("?");
 	    }
 	}
-
-	// write out the cached translucency map
-	if (cachefp)
-	{
-	    cache.pct = tran_filter_pct; // [crispy] set filter percents
-	    memcpy(cache.playpal, playpal, sizeof cache.playpal); // [crispy] set base palette
-	    fseek(cachefp, 0, SEEK_SET); // [crispy] go to start of file
-	    fwrite(&cache, 1, sizeof cache, cachefp); // [crispy] write struct cache
-	    fwrite(tranmap, 256, 256, cachefp); // [crispy] write translucency map
-	    printf("!"); // [crispy] generated and saved
-	}
-	else
-	    printf("?"); // [crispy] generated, but not saved
-	}
-	else
-	    printf("."); // [crispy] loaded from a file
 
 	if (cachefp)
 	    fclose(cachefp);

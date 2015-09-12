@@ -16,6 +16,7 @@
 //	Zone Memory Allocation. Neat.
 //
 
+#include <stdlib.h> // [crispy] realloc()
 #include <string.h>
 
 #include "doomtype.h"
@@ -557,3 +558,20 @@ unsigned int Z_ZoneSize(void)
     return mainzone->size;
 }
 
+void *crispy_realloc(void *ptr, size_t size)
+{
+    void *newp;
+
+    newp = realloc(ptr, size);
+
+    if (!newp)
+    {
+	I_Error ("crispy_realloc: failed on (re-)allocation of %i bytes", size);
+    }
+    else
+    {
+	ptr = newp;
+    }
+
+    return ptr;
+}
