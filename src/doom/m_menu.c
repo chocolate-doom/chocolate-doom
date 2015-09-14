@@ -1253,7 +1253,7 @@ void M_DrawOptions(void)
                 showMessages ? "On" : "Off");
 
     M_DrawThermo(OptionsDef.x,OptionsDef.y+LINEHEIGHT*(scrnsize+1),
-		 9 + (crispy_translucency ? 2 : 1),screenSize); // [crispy] Crispy HUD
+		 9 + 2,screenSize); // [crispy] Crispy HUD
 }
 
 // [crispy] mouse sensitivity menu
@@ -1845,10 +1845,6 @@ static void M_CrispyToggleTranslucency(int choice)
 {
     choice = 0;
     crispy_translucency = !crispy_translucency;
-
-    // [crispy] translucent Crispy HUD?
-    if (screenblocks > CRISPY_HUD)
-	M_SizeDisplay(0);
 }
 
 static void M_CrispyToggleUncapped(int choice)
@@ -1885,7 +1881,7 @@ void M_SizeDisplay(int choice)
 	}
 	break;
       case 1:
-	if (screenSize < 8 + (crispy_translucency ? 2 : 1)) // [crispy] Crispy HUD
+	if (screenSize < 8 + 2) // [crispy] Crispy HUD
 	{
 	    screenblocks++;
 	    screenSize++;

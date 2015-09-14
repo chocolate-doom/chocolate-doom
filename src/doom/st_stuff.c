@@ -1541,7 +1541,7 @@ void ST_Drawer (boolean fullscreen, boolean refresh)
     ST_doPaletteStuff();
 
     // [crispy] translucent HUD
-    if (crispy_translucency && screenblocks > CRISPY_HUD && !(automapactive && !crispy_automapoverlay))
+    if (screenblocks > CRISPY_HUD && !(automapactive && !crispy_automapoverlay))
 	dp_translucent = true;
 
     // If just after ST_Start(), refresh all
