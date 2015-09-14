@@ -1295,11 +1295,11 @@ static void M_DrawMouse(void)
 // [crispy] crispness menu
 static void M_DrawCrispnessBackground(void)
 {
-    byte *src, *dest;
     static byte *sdest;
 
     if (!sdest)
     {
+	byte *src, *dest;
 	int x, y;
 
 	src = W_CacheLumpName("FLOOR4_6" , PU_CACHE);

@@ -1058,12 +1058,16 @@ void R_InitTranMap()
 	    // [crispy] file not readable, open writable
 	    if ((cachefp = fopen(fname, "wb")))
 	    {
-		// write out the cached translucency map
-		cache.pct = tran_filter_pct; // [crispy] set filter percents
-		memcpy(cache.playpal, playpal, sizeof(cache.playpal)); // [crispy] set base palette
-		fseek(cachefp, 0, SEEK_SET); // [crispy] go to start of file
-		fwrite(&cache, 1, sizeof(cache), cachefp); // [crispy] write struct cache
-		fwrite(tranmap, 256, 256, cachefp); // [crispy] write translucency map
+		// [crispy] set filter percents
+		cache.pct = tran_filter_pct;
+		// [crispy] set base palette
+		memcpy(cache.playpal, playpal, sizeof(cache.playpal));
+		// [crispy] go to start of file
+		fseek(cachefp, 0, SEEK_SET);
+		// [crispy] write struct cache
+		fwrite(&cache, 1, sizeof(cache), cachefp);
+		// [crispy] write translucency map
+		fwrite(tranmap, 256, 256, cachefp);
 
 		// [crispy] generated and saved
 		printf("!");

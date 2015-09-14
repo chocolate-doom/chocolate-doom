@@ -448,15 +448,14 @@ R_DrawVisSprite
 	dc_translation = vis->translation;
     }
     // [crispy] translucent sprites
-    if (crispy_translucency && dc_colormap &&
-        vis->mobjflags & MF_TRANSLUCENT)
+    else if (crispy_translucency && vis->mobjflags & MF_TRANSLUCENT)
     {
-	if ((vis->mobjflags & MF_NOGRAVITY && !(crispy_translucency & TRANSLUCENCY_MISSILE)) ||
-	    (vis->mobjflags & MF_COUNTITEM && !(crispy_translucency & TRANSLUCENCY_ITEM)))
+	if (!(vis->mobjflags & (MF_NOGRAVITY | MF_COUNTITEM)) ||
+	    (vis->mobjflags & MF_NOGRAVITY && crispy_translucency & TRANSLUCENCY_MISSILE) ||
+	    (vis->mobjflags & MF_COUNTITEM && crispy_translucency & TRANSLUCENCY_ITEM))
 	{
+	    colfunc = tlcolfunc;
 	}
-	else
-	colfunc = tlcolfunc;
     }
 	
     dc_iscale = abs(vis->xiscale)>>(detailshift && !hires);
