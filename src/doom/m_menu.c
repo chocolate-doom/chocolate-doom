@@ -1383,6 +1383,14 @@ static multiitem_t multiitem_jump[NUM_JUMPS] =
     {JUMP_HIGH, "high"},
 };
 
+static multiitem_t multiitem_translucency[NUM_TRANSLUCENCY] =
+{
+    {TRANSLUCENCY_OFF, "off"},
+    {TRANSLUCENCY_MISSILE, "missiles"},
+    {TRANSLUCENCY_ITEM, "items"},
+    {TRANSLUCENCY_BOTH, "both"},
+};
+
 static void M_DrawCrispnessMultiItem(int y, char *item, multiitem_t *multiitem, int feat, boolean cond)
 {
     char crispy_menu_text[48];
@@ -1415,7 +1423,7 @@ static void M_DrawCrispness1(void)
 
     M_DrawCrispnessItem(crispness_uncapped, "Uncapped Framerate", crispy_uncapped, true);
     M_DrawCrispnessMultiItem(crispness_coloredhud, "Colorize HUD Elements", multiitem_coloredhud, crispy_coloredhud, true);
-    M_DrawCrispnessItem(crispness_translucency, "Enable Translucency", crispy_translucency, true);
+    M_DrawCrispnessMultiItem(crispness_translucency, "Enable Translucency", multiitem_translucency, crispy_translucency, true);
     M_DrawCrispnessItem(crispness_coloredblood, "Enable Colored Blood", crispy_coloredblood, true);
     M_DrawCrispnessItem(crispness_coloredblood2, "Fix Spectre and Lost Soul Blood", crispy_coloredblood2, true);
     M_DrawCrispnessItem(crispness_flipcorpses, "Randomly Mirrored Corpses", crispy_flipcorpses, true);
@@ -1844,7 +1852,7 @@ static void M_CrispyToggleSecretmessage(int choice)
 static void M_CrispyToggleTranslucency(int choice)
 {
     choice = 0;
-    crispy_translucency = !crispy_translucency;
+    crispy_translucency = (crispy_translucency + 1) % NUM_TRANSLUCENCY;
 }
 
 static void M_CrispyToggleUncapped(int choice)

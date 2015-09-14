@@ -451,6 +451,11 @@ R_DrawVisSprite
     if (crispy_translucency && dc_colormap &&
         vis->mobjflags & MF_TRANSLUCENT)
     {
+	if ((vis->mobjflags & MF_NOGRAVITY && !(crispy_translucency & TRANSLUCENCY_MISSILE)) ||
+	    (vis->mobjflags & MF_COUNTITEM && !(crispy_translucency & TRANSLUCENCY_ITEM)))
+	{
+	}
+	else
 	colfunc = tlcolfunc;
     }
 	

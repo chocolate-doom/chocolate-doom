@@ -94,6 +94,15 @@ enum
     NUM_JUMPS
 };
 
+enum
+{
+    TRANSLUCENCY_OFF,
+    TRANSLUCENCY_MISSILE,
+    TRANSLUCENCY_ITEM,
+    TRANSLUCENCY_BOTH,
+    NUM_TRANSLUCENCY
+};
+
 void *crispy_realloc (void *ptr, size_t size);
 
 #endif
