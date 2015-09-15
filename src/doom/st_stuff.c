@@ -1467,14 +1467,18 @@ void ST_drawWidgets(boolean refresh)
 
 	if (!patch)
 	{
-	    // [crispy] (23,179) is the center of the Ammo widget
-	    patch = W_CacheLumpName("PSTRA0", PU_STATIC);
-	    x = 23 - SHORT(patch->width)/2 + SHORT(patch->leftoffset);
-	    y = 179 - SHORT(patch->height)/2 + SHORT(patch->topoffset);
+	    if (W_CheckNumForName(DEH_String("PSTRA0")) >= 0)
+	    {
+		patch = W_CacheLumpName(DEH_String("PSTRA0"), PU_STATIC);
+		// [crispy] (23,179) is the center of the Ammo widget
+		x = 23 - SHORT(patch->width)/2 + SHORT(patch->leftoffset);
+		y = 179 - SHORT(patch->height)/2 + SHORT(patch->topoffset);
+	    }
 	}
 
-	V_DrawPatch(x, y, patch);
-    }
+	if (patch)
+	    V_DrawPatch(x, y, patch);
+   }
 
     for (i=0;i<4;i++)
     {
