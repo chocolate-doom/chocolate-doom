@@ -1835,6 +1835,22 @@ static void SetVideoMode(screen_mode_t *mode, int w, int h)
                 w, h, SDL_GetError());
     }
 
+    // If we are running fullscreen, the whole screen is our "window".
+
+    if (fullscreen)
+    {
+        SDL_DisplayMode mode;
+
+        // We do not change the video mode to run fullscreen but scale to fill
+        // the desktop that "screen" is assigned to. So, use desktop dimensions
+        // to calculate the size of the upscaled texture.
+
+        SDL_GetDesktopDisplayMode(SDL_GetWindowDisplayIndex(screen), &mode);
+
+        h = mode.h;
+        w = mode.w;
+    }
+
     // The SDL_RENDERER_TARGETTEXTURE flag is required to render the
     // intermediate texture into the upscaled texture.
 
