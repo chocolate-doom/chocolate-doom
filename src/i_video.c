@@ -153,7 +153,6 @@ static char *window_title = "";
 // is upscaled by an integer factor UPSCALE using "nearest" scaling and which
 // in turn is finally rendered to screen using "linear" scaling.
 
-#define UPSCALE	2
 static SDL_Surface *screenbuffer = NULL;
 static SDL_Surface *rgbabuffer = NULL;
 static SDL_Texture *texture = NULL;
@@ -1012,6 +1011,41 @@ void I_EndRead(void)
 */
 }
 
+static void CreateUpscaledTexture(int w, int h)
+{
+    const int w_scale = (w / SCREENWIDTH) + 1;
+    const int h_scale = (h / SCREENHEIGHT) + 1;
+    int upscale;
+
+    if (texture_upscaled)
+    {
+        SDL_DestroyTexture(texture_upscaled);
+    }
+
+    // When the screen or window dimensions do not match the aspect ratio
+    // of the texture, the rendered area is scaled down to fit
+
+    upscale = (w_scale < h_scale) ? w_scale : h_scale;
+
+    // Limit upscaling factor to 6 (1920x1200)
+
+    if (upscale > 6)
+    {
+        upscale = 6;
+    }
+
+    // Set the scaling quality for rendering the upscaled texture to "linear",
+    // which looks much softer and smoother than "nearest" but does a better
+    // job at downscaling from the upscaled texture to screen.
+
+    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
+
+    texture_upscaled = SDL_CreateTexture(renderer,
+                                SDL_PIXELFORMAT_ARGB8888,
+                                SDL_TEXTUREACCESS_TARGET,
+                                upscale*SCREENWIDTH, upscale*SCREENHEIGHT);
+}
+
 //
 // I_FinishUpdate
 //
@@ -1031,13 +1065,12 @@ void I_FinishUpdate (void)
     if (noblit)
         return;
 
-    // TODO: Decrease the forced delay: we are not changing a screen mode
-    // anymore but simply modify the texture scaling factor
-    if (need_resize && SDL_GetTicks() > last_resize_time + 500)
+    if (need_resize && SDL_GetTicks() > last_resize_time + 1000/TICRATE)
     {
 #if 0 // obsolete software scaling reoutines
         ApplyWindowResize(resize_w, resize_h);
 #endif
+        CreateUpscaledTexture(resize_w, resize_h);
         screen_width = resize_w;
         screen_height = resize_h;
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
@@ -1884,16 +1917,9 @@ static void SetVideoMode(screen_mode_t *mode, int w, int h)
                                 SDL_TEXTUREACCESS_STREAMING,
                                 SCREENWIDTH, SCREENHEIGHT);
 
-    // Set the scaling quality for rendering the upscaled texture to "linear",
-    // which looks much softer and smoother than "nearest" but does a better
-    // job at downscaling from the upscaled texture to screen.
+    // Initially create the upscaled texture for rendering to screen
 
-    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
-
-    texture_upscaled = SDL_CreateTexture(renderer,
-                                SDL_PIXELFORMAT_ARGB8888,
-                                SDL_TEXTUREACCESS_TARGET,
-                                UPSCALE*SCREENWIDTH, UPSCALE*SCREENHEIGHT);
+    CreateUpscaledTexture(w, h);
 
     // Save screen mode.
 
