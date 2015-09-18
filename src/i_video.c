@@ -1016,11 +1016,7 @@ static void CreateUpscaledTexture(int w, int h)
     const int w_scale = (w / SCREENWIDTH) + 1;
     const int h_scale = (h / SCREENHEIGHT) + 1;
     int upscale;
-
-    if (texture_upscaled)
-    {
-        SDL_DestroyTexture(texture_upscaled);
-    }
+    static int upscale_old;
 
     // When the screen or window dimensions do not match the aspect ratio
     // of the texture, the rendered area is scaled down to fit
@@ -1029,9 +1025,25 @@ static void CreateUpscaledTexture(int w, int h)
 
     // Limit upscaling factor to 6 (1920x1200)
 
-    if (upscale > 6)
+    if (upscale < 2)
+    {
+        upscale = 2;
+    }
+    else if (upscale > 6)
     {
         upscale = 6;
+    }
+
+    if (upscale == upscale_old)
+    {
+        return;
+    }
+
+    upscale_old = upscale;
+
+    if (texture_upscaled)
+    {
+        SDL_DestroyTexture(texture_upscaled);
     }
 
     // Set the scaling quality for rendering the upscaled texture to "linear",
