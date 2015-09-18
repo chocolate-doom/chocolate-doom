@@ -158,6 +158,13 @@ static SDL_Surface *rgbabuffer = NULL;
 static SDL_Texture *texture = NULL;
 static SDL_Texture *texture_upscaled = NULL;
 
+static SDL_Rect blit_rect = {
+    .h = SCREENHEIGHT,
+    .w = SCREENWIDTH,
+    .x = 0,
+    .y = 0,
+};
+
 // palette
 
 static SDL_Color palette[256];
@@ -1147,7 +1154,7 @@ void I_FinishUpdate (void)
     // Blit from the paletted 8-bit screen buffer to the intermediate
     // 32-bit RGBA buffer that we can load into the texture.
 
-    SDL_BlitSurface(screenbuffer, NULL, rgbabuffer, NULL);
+    SDL_LowerBlit(screenbuffer, &blit_rect, rgbabuffer, &blit_rect);
 
     // Update the intermediate texture with the contents of the RGBA buffer.
 
