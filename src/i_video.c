@@ -1092,8 +1092,6 @@ void I_FinishUpdate (void)
         CreateUpscaledTexture(resize_w, resize_h);
         screen_width = resize_w;
         screen_height = resize_h;
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-        SDL_RenderClear(renderer);
         need_resize = false;
         palette_to_set = true;
     }
@@ -1159,6 +1157,10 @@ void I_FinishUpdate (void)
     // Update the intermediate texture with the contents of the RGBA buffer.
 
     SDL_UpdateTexture(texture, NULL, rgbabuffer->pixels, rgbabuffer->pitch);
+
+    // Make sure the pillarboxes are kept clear each frame.
+
+    SDL_RenderClear(renderer);
 
     // Render this intermediate texture into the upscaled texture
     // using "nearest" integer scaling.
