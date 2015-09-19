@@ -60,7 +60,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="SDL.lib SDL_mixer.lib SDL_net.lib SDLmain.lib"
+				AdditionalDependencies="SDL2_mixer.lib SDL2_net.lib SDL2main.lib SDL2.lib"
 				OutputFile="$(OutDir)\chocolate-heretic-dbg.exe"
 				IgnoreDefaultLibraryNames="msvcrt"
 				GenerateDebugInformation="true"
@@ -140,7 +140,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="SDL.lib SDL_mixer.lib SDL_net.lib SDLmain.lib"
+				AdditionalDependencies="SDL2_mixer.lib SDL2_net.lib SDL2main.lib SDL2.lib"
 				OutputFile="$(OutDir)\chocolate-heretic.exe"
 				LinkIncremental="0"
 				IgnoreDefaultLibraryNames="msvcrtd"

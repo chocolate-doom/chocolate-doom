@@ -61,7 +61,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="SDL.lib SDL_net.lib SDLmain.lib"
+				AdditionalDependencies="SDL2_net.lib SDL2main.lib SDL2.lib"
 				OutputFile="$(OutDir)\chocolate-server-dbg.exe"
 				IgnoreDefaultLibraryNames="msvcrt"
 				GenerateDebugInformation="true"
@@ -139,7 +139,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="SDL.lib SDL_net.lib SDLmain.lib"
+				AdditionalDependencies="SDL2_net.lib SDL2main.lib SDL2.lib"
 				OutputFile="$(OutDir)\chocolate-server.exe"
 				IgnoreDefaultLibraryNames="msvcrtd"
 				GenerateDebugInformation="false"
