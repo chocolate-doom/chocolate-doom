@@ -159,10 +159,10 @@ static SDL_Texture *texture = NULL;
 static SDL_Texture *texture_upscaled = NULL;
 
 static SDL_Rect blit_rect = {
-    .h = SCREENHEIGHT,
-    .w = SCREENWIDTH,
-    .x = 0,
-    .y = 0,
+    0,
+    0,
+    SCREENWIDTH,
+    SCREENHEIGHT
 };
 
 // palette
