@@ -60,7 +60,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="SDL.lib SDL_mixer.lib SDL_net.lib SDLmain.lib"
+				AdditionalDependencies="SDL2_mixer.lib SDL2_net.lib SDL2main.lib SDL2.lib"
 				OutputFile="$(OutDir)\chocolate-hexen-dbg.exe"
 				IgnoreAllDefaultLibraries="false"
 				IgnoreDefaultLibraryNames="msvcrt"
@@ -141,7 +141,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="SDL.lib SDL_mixer.lib SDL_net.lib SDLmain.lib"
+				AdditionalDependencies="SDL2_mixer.lib SDL2_net.lib SDL2main.lib SDL2.lib"
 				OutputFile="$(OutDir)\chocolate-hexen.exe"
 				LinkIncremental="0"
 				IgnoreDefaultLibraryNames="msvcrtd"
@@ -426,19 +426,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\src\hexen\i_sound.c"
-					>
-				</File>
-				<File
 					RelativePath="..\src\hexen\in_lude.c"
 					>
 				</File>
 				<File
 					RelativePath="..\src\hexen\info.c"
-					>
-				</File>
-				<File
-					RelativePath="..\src\hexen\m_misc.c"
 					>
 				</File>
 				<File
