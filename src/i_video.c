@@ -1020,33 +1020,67 @@ void I_EndRead(void)
 
 static void CreateUpscaledTexture(int w, int h)
 {
-    const int w_scale = (w / SCREENWIDTH) + 1;
-    const int h_scale = (h / SCREENHEIGHT) + 1;
-    int upscale;
-    static int upscale_old;
+    const int actualheight = aspect_ratio_correct ?
+                             SCREENHEIGHT_4_3 :
+                             SCREENHEIGHT;
+    int h_upscale, w_upscale;
+    static int h_upscale_old, w_upscale_old;
 
     // When the screen or window dimensions do not match the aspect ratio
-    // of the texture, the rendered area is scaled down to fit
+    // of the texture, the rendered area is scaled down to fit. Calculate
+    // the actual dimensions of the rendered area.
 
-    upscale = (w_scale < h_scale) ? w_scale : h_scale;
-
-    // Limit upscaling factor to 6 (1920x1200)
-
-    if (upscale < 2)
+    if (w * actualheight < h * SCREENWIDTH)
     {
-        upscale = 2;
+        // Tall window.
+
+        h = w * actualheight / SCREENWIDTH;
     }
-    else if (upscale > 6)
+    else
     {
-        upscale = 6;
+        // Wide window.
+
+        w = h * SCREENWIDTH / actualheight;
     }
 
-    if (upscale == upscale_old)
+    // If one screen dimension matches an integer multiple of the original
+    // resolution, there is no need to overscale in this direction.
+
+    h_upscale = h / SCREENHEIGHT;
+
+    if (!h || h % SCREENHEIGHT)
+    {
+        h_upscale++;
+    }
+
+    w_upscale = w / SCREENWIDTH;
+
+    if (!w || w % SCREENWIDTH)
+    {
+        w_upscale++;
+    }
+
+    // Limit maximum texture dimensions to 1600x1200.
+
+    if (h_upscale > 6)
+    {
+        h_upscale = 6;
+    }
+
+    if (w_upscale > 5)
+    {
+        w_upscale = 5;
+    }
+
+    // Create a new texture only if the upscale factors have actually changed.
+
+    if (h_upscale == h_upscale_old && w_upscale == w_upscale_old)
     {
         return;
     }
 
-    upscale_old = upscale;
+    h_upscale_old = h_upscale;
+    w_upscale_old = w_upscale;
 
     if (texture_upscaled)
     {
@@ -1062,7 +1096,8 @@ static void CreateUpscaledTexture(int w, int h)
     texture_upscaled = SDL_CreateTexture(renderer,
                                 SDL_PIXELFORMAT_ARGB8888,
                                 SDL_TEXTUREACCESS_TARGET,
-                                upscale*SCREENWIDTH, upscale*SCREENHEIGHT);
+                                w_upscale*SCREENWIDTH,
+                                h_upscale*SCREENHEIGHT);
 }
 
 //
