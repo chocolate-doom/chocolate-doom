@@ -716,70 +716,76 @@ static void CalibrateJoystick(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
 // GUI
 //
 
-static void AddJoystickControl(txt_table_t *table, char *label, int *var)
+static void AddJoystickControl(TXT_UNCAST_ARG(table), char *label, int *var)
 {
+    TXT_CAST_ARG(txt_table_t, table);
     txt_joystick_input_t *joy_input;
 
     joy_input = TXT_NewJoystickInput(var);
 
-    TXT_AddWidget(table, TXT_NewLabel(label));
-    TXT_AddWidget(table, joy_input);
+    TXT_AddWidgets(table,
+                   TXT_NewLabel(label),
+                   joy_input,
+                   TXT_TABLE_EMPTY,
+                   NULL);
 }
 
 void ConfigJoystick(void)
 {
     txt_window_t *window;
-    txt_table_t *button_table, *axis_table;
-    txt_table_t *joystick_table;
 
     window = TXT_NewWindow("Gamepad/Joystick configuration");
-
+    TXT_SetTableColumns(window, 6);
+    TXT_SetColumnWidths(window, 18, 10, 2, 14, 10, 0);
     TXT_SetWindowHelpURL(window, WINDOW_HELP_URL);
 
     TXT_AddWidgets(window,
-                   joystick_table = TXT_NewTable(2),
-                   TXT_NewSeparator("Axes"),
-                   axis_table = TXT_NewTable(2),
-                   TXT_NewSeparator("Buttons"),
-                   button_table = TXT_NewTable(4),
-                   NULL);
-
-    TXT_SetColumnWidths(joystick_table, 13, 40);
-
-    TXT_AddWidgets(joystick_table,
                    TXT_NewLabel("Controller"),
                    joystick_button = TXT_NewButton("zzzz"),
-                   NULL);
+                   TXT_TABLE_EOL,
 
-    TXT_SetColumnWidths(axis_table, 20, 15);
-
-    TXT_AddWidgets(axis_table,
+                   TXT_NewSeparator("Axes"),
                    TXT_NewLabel("Forward/backward"),
                    y_axis_widget = TXT_NewJoystickAxis(&joystick_y_axis,
                                                        &joystick_y_invert,
                                                        JOYSTICK_AXIS_VERTICAL),
+                   TXT_TABLE_OVERFLOW_RIGHT,
+                   TXT_TABLE_OVERFLOW_RIGHT,
+                   TXT_TABLE_EMPTY,
+                   TXT_TABLE_EMPTY,
+
                    TXT_NewLabel("Turn left/right"),
-                   x_axis_widget = TXT_NewJoystickAxis(&joystick_x_axis,
-                                                       &joystick_x_invert,
-                                                       JOYSTICK_AXIS_HORIZONTAL),
+                   x_axis_widget =
+                        TXT_NewJoystickAxis(&joystick_x_axis,
+                                            &joystick_x_invert,
+                                            JOYSTICK_AXIS_HORIZONTAL),
+                   TXT_TABLE_OVERFLOW_RIGHT,
+                   TXT_TABLE_OVERFLOW_RIGHT,
+                   TXT_TABLE_EMPTY,
+                   TXT_TABLE_EMPTY,
+
                    TXT_NewLabel("Strafe left/right"),
                    TXT_NewJoystickAxis(&joystick_strafe_axis,
                                        &joystick_strafe_invert,
                                         JOYSTICK_AXIS_HORIZONTAL),
+                   TXT_TABLE_OVERFLOW_RIGHT,
+                   TXT_TABLE_OVERFLOW_RIGHT,
+                   TXT_TABLE_EMPTY,
+                   TXT_TABLE_EMPTY,
+
+                   TXT_NewSeparator("Buttons"),
                    NULL);
 
-    TXT_SetColumnWidths(button_table, 16, 12, 14, 11);
+    AddJoystickControl(window, "Fire/Attack", &joybfire);
+    AddJoystickControl(window, "Strafe Left", &joybstrafeleft);
 
-    AddJoystickControl(button_table, "Fire/Attack", &joybfire);
-    AddJoystickControl(button_table, "Strafe Left", &joybstrafeleft);
+    AddJoystickControl(window, "Use", &joybuse);
+    AddJoystickControl(window, "Strafe Right", &joybstraferight);
 
-    AddJoystickControl(button_table, "Use", &joybuse);
-    AddJoystickControl(button_table, "Strafe Right", &joybstraferight);
+    AddJoystickControl(window, "Previous weapon", &joybprevweapon);
+    AddJoystickControl(window, "Strafe", &joybstrafe);
 
-    AddJoystickControl(button_table, "Previous weapon", &joybprevweapon);
-    AddJoystickControl(button_table, "Strafe", &joybstrafe);
-
-    AddJoystickControl(button_table, "Next weapon", &joybnextweapon);
+    AddJoystickControl(window, "Next weapon", &joybnextweapon);
 
     // High values of joybspeed are used to activate the "always run mode"
     // trick in Vanilla Doom.  If this has been enabled, not only is the
@@ -787,15 +793,15 @@ void ConfigJoystick(void)
 
     if (joybspeed < 20)
     {
-        AddJoystickControl(button_table, "Speed", &joybspeed);
+        AddJoystickControl(window, "Speed", &joybspeed);
     }
 
     if (gamemission == hexen || gamemission == strife)
     {
-        AddJoystickControl(button_table, "Jump", &joybjump);
+        AddJoystickControl(window, "Jump", &joybjump);
     }
 
-    AddJoystickControl(button_table, "Activate menu", &joybmenu);
+    AddJoystickControl(window, "Activate menu", &joybmenu);
 
     TXT_SignalConnect(joystick_button, "pressed", CalibrateJoystick, NULL);
     TXT_SetWindowAction(window, TXT_HORIZ_CENTER, TestConfigAction());

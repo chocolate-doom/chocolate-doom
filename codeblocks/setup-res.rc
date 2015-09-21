@@ -1,21 +1,21 @@
 1 ICON "../data/setup.ico"
 
 1 VERSIONINFO
-PRODUCTVERSION 2,1,0,0
-FILEVERSION 2,1,0,0
+PRODUCTVERSION 2,2,1,0
+FILEVERSION 2,2,1,0
 FILETYPE 1
 {
  BLOCK "StringFileInfo"
  {
   BLOCK "040904E4"
   {
-   VALUE "FileVersion", "2.1.0"
+   VALUE "FileVersion", "2.2.1"
    VALUE "FileDescription", "Chocolate Doom Setup"
    VALUE "InternalName", "chocolate-setup"
    VALUE "CompanyName", "Chocolate Doom"
    VALUE "LegalCopyright", "GNU General Public License"
    VALUE "ProductName", "Chocolate Doom Setup"
-   VALUE "ProductVersion", "2.1.0"
+   VALUE "ProductVersion", "2.2.1"
   }
  }
  BLOCK "VarFileInfo"

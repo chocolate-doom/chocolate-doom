@@ -367,7 +367,7 @@ void TXT_ConfigureJoystickAxis(txt_joystick_axis_t *joystick_axis,
     joystick_axis->joystick = SDL_JoystickOpen(joystick_index);
     if (joystick_axis->joystick == NULL)
     {
-        // TODO: OpenErrorWindow();
+        TXT_MessageBox(NULL, "Please configure a controller first!");
         return;
     }
 
@@ -461,7 +461,7 @@ static void TXT_JoystickAxisDrawer(TXT_UNCAST_ARG(joystick_axis))
 
     TXT_DrawString(buf);
 
-    for (i=strlen(buf); i<JOYSTICK_AXIS_WIDTH; ++i)
+    for (i = strlen(buf); i < joystick_axis->widget.w; ++i)
     {
         TXT_DrawString(" ");
     }

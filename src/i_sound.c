@@ -48,6 +48,11 @@ int snd_maxslicetime_ms = 28;
 
 char *snd_musiccmd = "";
 
+// Whether to vary the pitch of sound effects
+// Each game will set the default differently
+
+int snd_pitchshift = -1;
+
 // Low-level sound and music modules we are using
 
 static sound_module_t *sound_module;
@@ -68,7 +73,6 @@ extern music_module_t music_opl_module;
 
 extern opl_driver_ver_t opl_drv_ver;
 extern int opl_io_port;
-extern int opl_type;
 
 // For native music module:
 
@@ -309,12 +313,12 @@ void I_UpdateSoundParams(int channel, int vol, int sep)
     }
 }
 
-int I_StartSound(sfxinfo_t *sfxinfo, int channel, int vol, int sep)
+int I_StartSound(sfxinfo_t *sfxinfo, int channel, int vol, int sep, int pitch)
 {
     if (sound_module != NULL)
     {
         CheckVolumeSeparation(&vol, &sep);
-        return sound_module->StartSound(sfxinfo, channel, vol, sep);
+        return sound_module->StartSound(sfxinfo, channel, vol, sep, pitch);
     }
     else
     {
@@ -346,7 +350,7 @@ void I_PrecacheSounds(sfxinfo_t *sounds, int num_sounds)
 {
     if (sound_module != NULL && sound_module->CacheSounds != NULL)
     {
-	sound_module->CacheSounds(sounds, num_sounds);
+        sound_module->CacheSounds(sounds, num_sounds);
     }
 }
 
@@ -433,6 +437,7 @@ boolean I_MusicIsPlaying(void)
 
 void I_BindSoundVariables(void)
 {
+    extern char *snd_dmxoption;
     extern int use_libsamplerate;
     extern float libsamplerate_scale;
 
@@ -444,10 +449,11 @@ void I_BindSoundVariables(void)
     M_BindIntVariable("snd_mport",               &snd_mport);
     M_BindIntVariable("snd_maxslicetime_ms",     &snd_maxslicetime_ms);
     M_BindStringVariable("snd_musiccmd",         &snd_musiccmd);
+    M_BindStringVariable("snd_dmxoption",        &snd_dmxoption);
     M_BindIntVariable("snd_samplerate",          &snd_samplerate);
     M_BindIntVariable("snd_cachesize",           &snd_cachesize);
     M_BindIntVariable("opl_io_port",             &opl_io_port);
-    M_BindIntVariable("opl_type",                &opl_type);
+    M_BindIntVariable("snd_pitchshift",          &snd_pitchshift);
 
     M_BindStringVariable("timidity_cfg_path",    &timidity_cfg_path);
     M_BindStringVariable("gus_patch_path",       &gus_patch_path);

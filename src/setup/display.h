@@ -21,5 +21,6 @@ void BindDisplayVariables(void);
 
 extern int show_endoom;
 extern int graphical_startup;
+extern int png_screenshots;
 
 #endif /* #ifndef SETUP_DISPLAY_H */

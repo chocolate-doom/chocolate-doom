@@ -307,7 +307,7 @@ static const unsigned int volume_mapping_table[] = {
     124, 124, 125, 125, 126, 126, 127, 127
 };
 
-static opl_driver_ver_t opl_drv_ver = opl_v_new;
+static opl_driver_ver_t opl_drv_ver = opl_doom_1_9;
 static boolean music_initialized = false;
 
 //static boolean musicpaused = false;
@@ -349,8 +349,14 @@ static unsigned int last_perc_count;
 // Configuration file variable, containing the port number for the
 // adlib chip.
 
+char *snd_dmxoption = "";
 int opl_io_port = 0x388;
-int opl_type = 0;
+
+// If true, OPL sound channels are reversed to their correct arrangement
+// (as intended by the MIDI standard) rather than the backwards one
+// used by DMX due to a bug.
+
+static boolean opl_stereo_correct = false;
 
 // Load instrument table from GENMIDI lump:
 
@@ -470,7 +476,7 @@ static void ReleaseVoice(opl_voice_t *voice)
     *rover = voice;
     voice->next = NULL;
 
-    if (next != NULL && double_voice && opl_drv_ver == opl_v_old)
+    if (next != NULL && double_voice && opl_drv_ver != opl_doom_1_9)
     {
         VoiceKeyOff(next);
         ReleaseVoice(next);
@@ -770,10 +776,29 @@ static void ReplaceExistingVoice(void)
     ReleaseVoice(result);
 }
 
-// Alternate version of ReplaceExistingVoice() used when emulating old
-// versions of the DMX library used in Heretic and Hexen.
+// Alternate versions of ReplaceExistingVoice() used when emulating old
+// versions of the DMX library used in Doom 1.666, Heretic and Hexen.
 
-static void ReplaceExistingVoiceOld(opl_channel_data_t *channel)
+static void ReplaceExistingVoiceDoom1(void)
+{
+    opl_voice_t *rover;
+    opl_voice_t *result;
+
+    result = voice_alloced_list;
+
+    for (rover = voice_alloced_list; rover != NULL; rover = rover->next)
+    {
+        if (rover->channel > result->channel)
+        {
+            result = rover;
+        }
+    }
+
+    VoiceKeyOff(result);
+    ReleaseVoice(result);
+}
+
+static void ReplaceExistingVoiceDoom2(opl_channel_data_t *channel)
 {
     opl_voice_t *rover;
     opl_voice_t *result;
@@ -918,6 +943,11 @@ static void VoiceKeyOn(opl_channel_data_t *channel,
 {
     opl_voice_t *voice;
 
+    if (!opl_opl3mode && opl_drv_ver == opl_doom1_1_666)
+    {
+        instrument_voice = 0;
+    }
+
     // Find a voice to use for this new note.
 
     voice = GetFreeVoice();
@@ -962,7 +992,7 @@ static void KeyOnEvent(opl_track_data_t *track, midi_event_t *event)
 {
     genmidi_instr_t *instrument;
     opl_channel_data_t *channel;
-    unsigned int note, key, volume;
+    unsigned int note, key, volume, voicenum;
     boolean double_voice;
 
 /*
@@ -1009,43 +1039,66 @@ static void KeyOnEvent(opl_track_data_t *track, midi_event_t *event)
 
     double_voice = (SHORT(instrument->flags) & GENMIDI_FLAG_2VOICE) != 0;
 
-    if (opl_drv_ver == opl_v_old)
+    switch (opl_drv_ver)
     {
-        if (voice_alloced_num == num_opl_voices)
-        {
-            ReplaceExistingVoiceOld(channel);
-        }
-        if (voice_alloced_num == num_opl_voices - 1 && double_voice)
-        {
-            ReplaceExistingVoiceOld(channel);
-        }
+        case opl_doom1_1_666:
+            voicenum = double_voice + 1;
+            if (!opl_opl3mode)
+            {
+                voicenum = 1;
+            }
+            while (voice_alloced_num > num_opl_voices - voicenum)
+            {
+                ReplaceExistingVoiceDoom1();
+            }
 
-        // Find and program a voice for this instrument.  If this
-        // is a double voice instrument, we must do this twice.
+            // Find and program a voice for this instrument.  If this
+            // is a double voice instrument, we must do this twice.
 
-        if (double_voice)
-        {
-            VoiceKeyOn(channel, instrument, 1, note, key, volume);
-        }
+            if (double_voice)
+            {
+                VoiceKeyOn(channel, instrument, 1, note, key, volume);
+            }
 
-        VoiceKeyOn(channel, instrument, 0, note, key, volume);
-    }
-    else
-    {
-        if (voice_free_list == NULL)
-        {
-            ReplaceExistingVoice();
-        }
+            VoiceKeyOn(channel, instrument, 0, note, key, volume);
+            break;
+        case opl_doom2_1_666:
+            if (voice_alloced_num == num_opl_voices)
+            {
+                ReplaceExistingVoiceDoom2(channel);
+            }
+            if (voice_alloced_num == num_opl_voices - 1 && double_voice)
+            {
+                ReplaceExistingVoiceDoom2(channel);
+            }
 
-        // Find and program a voice for this instrument.  If this
-        // is a double voice instrument, we must do this twice.
+            // Find and program a voice for this instrument.  If this
+            // is a double voice instrument, we must do this twice.
 
-        VoiceKeyOn(channel, instrument, 0, note, key, volume);
+            if (double_voice)
+            {
+                VoiceKeyOn(channel, instrument, 1, note, key, volume);
+            }
 
-        if (double_voice)
-        {
-            VoiceKeyOn(channel, instrument, 1, note, key, volume);
-        }
+            VoiceKeyOn(channel, instrument, 0, note, key, volume);
+            break;
+        default:
+        case opl_doom_1_9:
+            if (voice_free_list == NULL)
+            {
+                ReplaceExistingVoice();
+            }
+
+            // Find and program a voice for this instrument.  If this
+            // is a double voice instrument, we must do this twice.
+
+            VoiceKeyOn(channel, instrument, 0, note, key, volume);
+
+            if (double_voice)
+            {
+                VoiceKeyOn(channel, instrument, 1, note, key, volume);
+            }
+            break;
     }
 }
 
@@ -1085,6 +1138,16 @@ static void SetChannelPan(opl_channel_data_t *channel, unsigned int pan)
 {
     unsigned int reg_pan;
     unsigned int i;
+
+    // The DMX library has the stereo channels backwards, maybe because
+    // Paul Radek had a Soundblaster card with the channels reversed, or
+    // perhaps it was just a bug in the OPL3 support that was never
+    // finished. By default we preserve this bug, but we also provide a
+    // secret DMXOPTION to fix it.
+    if (opl_stereo_correct)
+    {
+        pan = 144 - pan;
+    }
 
     if (opl_opl3mode)
     {
@@ -1650,18 +1713,27 @@ static void I_OPL_ShutdownMusic(void)
 
 static boolean I_OPL_InitMusic(void)
 {
-    int opl_chip_type;
+    char *dmxoption;
+    opl_init_result_t chip_type;
 
     OPL_SetSampleRate(snd_samplerate);
 
-    opl_chip_type = OPL_Init(opl_io_port);
-    if (!opl_chip_type)
+    chip_type = OPL_Init(opl_io_port);
+    if (chip_type == OPL_INIT_NONE)
     {
         printf("Dude.  The Adlib isn't responding.\n");
         return false;
     }
 
-    if (opl_chip_type == 2 && opl_type)
+    // The DMXOPTION variable must be set to enable OPL3 support.
+    // As an extension, we also allow it to be set from the config file.
+    dmxoption = getenv("DMXOPTION");
+    if (dmxoption == NULL)
+    {
+        dmxoption = snd_dmxoption != NULL ? snd_dmxoption : "";
+    }
+
+    if (chip_type == OPL_INIT_OPL3 && strstr(dmxoption, "-opl3") != NULL)
     {
         opl_opl3mode = 1;
         num_opl_voices = OPL_NUM_VOICES * 2;
@@ -1671,6 +1743,10 @@ static boolean I_OPL_InitMusic(void)
         opl_opl3mode = 0;
         num_opl_voices = OPL_NUM_VOICES;
     }
+
+    // Secret, undocumented DMXOPTION that reverses the stereo channels
+    // into their correct orientation.
+    opl_stereo_correct = strstr(dmxoption, "-reverse") != NULL;
 
     // Initialize all registers.
 

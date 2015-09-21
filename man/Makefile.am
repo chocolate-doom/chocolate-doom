@@ -1,4 +1,5 @@
 MANPAGE_GEN_FILES = environ.man           \
+                    iwad_paths.man        \
                     doom.template         \
                     heretic.template      \
                     hexen.template        \

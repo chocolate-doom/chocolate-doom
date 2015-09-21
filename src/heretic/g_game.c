@@ -102,7 +102,6 @@ player_t players[MAXPLAYERS];
 
 int consoleplayer;              // player taking events and displaying
 int displayplayer;              // view being displayed
-int gametic;
 int levelstarttic;              // gametic at level start
 int totalkills, totalitems, totalsecret;        // for intermission
 

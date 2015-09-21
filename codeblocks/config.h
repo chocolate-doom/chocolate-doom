@@ -9,13 +9,13 @@
 #define PACKAGE_NAME "Chocolate Doom"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "Chocolate Doom 2.1.0"
+#define PACKAGE_STRING "Chocolate Doom 2.2.1"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "chocolate-doom"
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "2.1.0"
+#define PACKAGE_VERSION "2.2.1"
 
 /* Change this when you create your awesome forked version */
 #define PROGRAM_PREFIX "chocolate-"
@@ -24,7 +24,7 @@
 #define STDC_HEADERS 1
 
 /* Version number of package */
-#define VERSION "2.1.0"
+#define VERSION "2.2.1"
 
 /* Define to 1 if your processor stores words with the most significant byte
    first (like Motorola and SPARC, unlike Intel and VAX). */

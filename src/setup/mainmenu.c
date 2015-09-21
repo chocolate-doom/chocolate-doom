@@ -91,6 +91,8 @@ static void SensibleDefaults(void)
     show_endoom = 0;
     dclick_use = 0;
     novert = 1;
+    snd_dmxoption = "-opl3 -reverse";
+    png_screenshots = 1;
 }
 
 static int MainMenuKeyPress(txt_window_t *window, int key, void *user_data)

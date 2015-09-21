@@ -48,7 +48,7 @@
 #define HU_TITLE2	(mapnames_commercial[gamemap-1])
 #define HU_TITLEP	(mapnames_commercial[gamemap-1 + 32])
 #define HU_TITLET	(mapnames_commercial[gamemap-1 + 64])
-#define HU_TITLE_CHEX   (mapnames[gamemap - 1])
+#define HU_TITLE_CHEX   (mapnames_chex[(gameepisode-1)*9+gamemap-1])
 #define HU_TITLEHEIGHT	1
 #define HU_TITLEX	0
 #define HU_TITLEY	(167 - SHORT(hu_font[0]->height))
@@ -151,6 +151,60 @@ char*	mapnames[] =	// DOOM shareware/registered/retail (Ultimate) names.
     HUSTR_E4M7,
     HUSTR_E4M8,
     HUSTR_E4M9,
+
+    "NEWLEVEL",
+    "NEWLEVEL",
+    "NEWLEVEL",
+    "NEWLEVEL",
+    "NEWLEVEL",
+    "NEWLEVEL",
+    "NEWLEVEL",
+    "NEWLEVEL",
+    "NEWLEVEL"
+};
+
+char*   mapnames_chex[] =   // Chex Quest names.
+{
+
+    HUSTR_E1M1,
+    HUSTR_E1M2,
+    HUSTR_E1M3,
+    HUSTR_E1M4,
+    HUSTR_E1M5,
+    HUSTR_E1M5,
+    HUSTR_E1M5,
+    HUSTR_E1M5,
+    HUSTR_E1M5,
+
+    HUSTR_E1M5,
+    HUSTR_E1M5,
+    HUSTR_E1M5,
+    HUSTR_E1M5,
+    HUSTR_E1M5,
+    HUSTR_E1M5,
+    HUSTR_E1M5,
+    HUSTR_E1M5,
+    HUSTR_E1M5,
+
+    HUSTR_E1M5,
+    HUSTR_E1M5,
+    HUSTR_E1M5,
+    HUSTR_E1M5,
+    HUSTR_E1M5,
+    HUSTR_E1M5,
+    HUSTR_E1M5,
+    HUSTR_E1M5,
+    HUSTR_E1M5,
+
+    HUSTR_E1M5,
+    HUSTR_E1M5,
+    HUSTR_E1M5,
+    HUSTR_E1M5,
+    HUSTR_E1M5,
+    HUSTR_E1M5,
+    HUSTR_E1M5,
+    HUSTR_E1M5,
+    HUSTR_E1M5,
 
     "NEWLEVEL",
     "NEWLEVEL",
@@ -351,10 +405,7 @@ void HU_Start(void)
          break;
     }
 
-    // Chex.exe always uses the episode 1 level title
-    // eg. E2M1 gives the title for E1M1
-
-    if (gameversion == exe_chex)
+    if (logical_gamemission == doom && gameversion == exe_chex)
     {
         s = HU_TITLE_CHEX;
     }

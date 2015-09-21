@@ -23,6 +23,15 @@
 
 typedef void (*opl_callback_t)(void *data);
 
+// Result from OPL_Init(), indicating what type of OPL chip was detected,
+// if any.
+typedef enum
+{
+    OPL_INIT_NONE,
+    OPL_INIT_OPL2,
+    OPL_INIT_OPL3,
+} opl_init_result_t;
+
 typedef enum
 {
     OPL_REGISTER_PORT = 0,
@@ -66,7 +75,7 @@ typedef enum
 
 // Initialize the OPL subsystem.
 
-int OPL_Init(unsigned int port_base);
+opl_init_result_t OPL_Init(unsigned int port_base);
 
 // Shut down the OPL subsystem.
 
@@ -99,7 +108,7 @@ void OPL_WriteRegister(int reg, int value);
 // Perform a detection sequence to determine that an
 // OPL chip is present.
 
-int OPL_Detect(void);
+opl_init_result_t OPL_Detect(void);
 
 // Initialize all registers, performed on startup.
 

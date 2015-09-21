@@ -51,7 +51,13 @@
 //
 
 #ifdef __GNUC__
+
+#ifdef __clang__
 #define PACKEDATTR __attribute__((packed))
+#else
+#define PACKEDATTR __attribute__((packed,gcc_struct))
+#endif
+
 #else
 #define PACKEDATTR
 #endif
@@ -66,7 +72,7 @@
 
 #include <inttypes.h>
 
-#ifdef __cplusplus
+#if defined(__cplusplus) || defined(__bool_true_false_are_defined)
 
 // Use builtin bool type with C++.
 

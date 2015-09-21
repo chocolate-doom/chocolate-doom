@@ -65,7 +65,7 @@ static void TXT_CheckBoxDrawer(TXT_UNCAST_ARG(checkbox))
     TXT_SetWidgetBG(checkbox);
     TXT_DrawString(checkbox->label);
 
-    for (i=strlen(checkbox->label); i < w-5; ++i)
+    for (i=strlen(checkbox->label); i < w-4; ++i)
     {
         TXT_DrawString(" ");
     }

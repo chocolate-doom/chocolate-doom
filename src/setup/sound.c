@@ -59,6 +59,13 @@ static char *musicmode_strings[] =
     "Native MIDI",
 };
 
+typedef enum
+{
+    OPLMODE_OPL2,
+    OPLMODE_OPL3,
+    NUM_OPLMODES,
+} oplmode_t;
+
 static char *opltype_strings[] =
 {
     "OPL2",
@@ -76,6 +83,8 @@ int opl_io_port = 0x388;
 int snd_cachesize = 64 * 1024 * 1024;
 int snd_maxslicetime_ms = 28;
 char *snd_musiccmd = "";
+int snd_pitchshift = 0;
+char *snd_dmxoption = "";
 
 static int numChannels = 8;
 static int sfxVolume = 8;
@@ -88,7 +97,6 @@ static float libsamplerate_scale = 0.65;
 static char *timidity_cfg_path = NULL;
 static char *gus_patch_path = NULL;
 static int gus_ram_kb = 1024;
-static int opl_type = 0;
 
 // DOS specific variables: these are unused but should be maintained
 // so that the config file can be shared between chocolate
@@ -103,6 +111,7 @@ static int snd_mport = 0;
 
 static int snd_sfxmode;
 static int snd_musicmode;
+static int snd_oplmode;
 
 static void UpdateSndDevices(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(data))
 {
@@ -134,6 +143,38 @@ static void UpdateSndDevices(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(data))
             snd_musicdevice = SNDDEVICE_GUS;
             break;
     }
+
+    switch (snd_oplmode)
+    {
+        default:
+        case OPLMODE_OPL2:
+            snd_dmxoption = "";
+            break;
+
+        case OPLMODE_OPL3:
+            snd_dmxoption = "-opl3";
+            break;
+    }
+}
+
+static txt_dropdown_list_t *OPLTypeSelector(void)
+{
+    txt_dropdown_list_t *result;
+
+    if (snd_dmxoption != NULL && strstr(snd_dmxoption, "-opl3") != NULL)
+    {
+        snd_oplmode = OPLMODE_OPL3;
+    }
+    else
+    {
+        snd_oplmode = OPLMODE_OPL2;
+    }
+
+    result = TXT_NewDropdownList(&snd_oplmode, opltype_strings, 2);
+
+    TXT_SignalConnect(result, "changed", UpdateSndDevices, NULL);
+
+    return result;
 }
 
 static void UpdateExtraTable(TXT_UNCAST_ARG(widget),
@@ -141,44 +182,47 @@ static void UpdateExtraTable(TXT_UNCAST_ARG(widget),
 {
     TXT_CAST_ARG(txt_table_t, extra_table);
 
+    TXT_ClearTable(extra_table);
+
     switch (snd_musicmode)
     {
-    case MUSICMODE_OPL:
-        TXT_InitTable(extra_table, 2);
-        TXT_SetColumnWidths(extra_table, 19, 4);
-        TXT_AddWidgets(extra_table,
-                        TXT_NewLabel("OPL type"),
-                        TXT_NewDropdownList(&opl_type, opltype_strings, 2),
-                        NULL);
-        break;
+        case MUSICMODE_OPL:
+            TXT_AddWidgets(extra_table,
+                           TXT_NewLabel("OPL type"),
+                           OPLTypeSelector(),
+                           NULL);
+            break;
 
-    case MUSICMODE_GUS:
-        TXT_InitTable(extra_table, 1);
-        TXT_AddWidgets(extra_table,
-                        TXT_NewLabel("GUS patch path:"),
-                        TXT_NewFileSelector(&gus_patch_path, 30,
-                                            "Select path to GUS patches",
-                                            TXT_DIRECTORY),
-                        NULL);
-        break;
+        case MUSICMODE_GUS:
+            TXT_AddWidgets(extra_table,
+                           TXT_NewLabel("GUS patch path:"),
+                           TXT_TABLE_OVERFLOW_RIGHT,
+                           TXT_NewFileSelector(&gus_patch_path, 34,
+                                               "Select path to GUS patches",
+                                               TXT_DIRECTORY),
+                           TXT_TABLE_OVERFLOW_RIGHT,
+                           NULL);
+            break;
 
-    case MUSICMODE_NATIVE:
-        TXT_InitTable(extra_table, 1);
-        TXT_AddWidgets(extra_table,
-                        TXT_NewLabel("Timidity configuration file:"),
-                        TXT_NewFileSelector(&timidity_cfg_path, 30,
-                                            "Select Timidity config file",
-                                            cfg_extension),
-                        NULL);
-        break;
+        case MUSICMODE_NATIVE:
+            TXT_AddWidgets(extra_table,
+                           TXT_NewLabel("Timidity configuration file:"),
+                           TXT_TABLE_OVERFLOW_RIGHT,
+                           TXT_NewFileSelector(&timidity_cfg_path, 34,
+                                               "Select Timidity config file",
+                                               cfg_extension),
+                           TXT_TABLE_OVERFLOW_RIGHT,
+                           NULL);
+            break;
+
+        default:
+            break;
     }
 }
 
 void ConfigSound(void)
 {
     txt_window_t *window;
-    txt_table_t *sfx_table;
-    txt_table_t *music_table;
     txt_table_t *extra_table;
     txt_dropdown_list_t *sfx_mode_control;
     txt_dropdown_list_t *music_mode_control;
@@ -233,20 +277,15 @@ void ConfigSound(void)
     // Build the window
 
     window = TXT_NewWindow("Sound configuration");
-
     TXT_SetWindowHelpURL(window, WINDOW_HELP_URL);
+    TXT_SetTableColumns(window, 2);
+    TXT_SetColumnWidths(window, 19, 15);
 
     TXT_SetWindowPosition(window, TXT_HORIZ_CENTER, TXT_VERT_TOP,
                                   TXT_SCREEN_W / 2, 5);
 
     TXT_AddWidgets(window,
-               TXT_NewSeparator("Sound effects"),
-               sfx_table = TXT_NewTable(2),
-               NULL);
-
-    TXT_SetColumnWidths(sfx_table, 19, 15);
-
-    TXT_AddWidgets(sfx_table,
+                   TXT_NewSeparator("Sound effects"),
                    TXT_NewLabel("Sound effects"),
                    sfx_mode_control = TXT_NewDropdownList(&snd_sfxmode,
                                                           sfxmode_strings,
@@ -257,33 +296,39 @@ void ConfigSound(void)
                    TXT_NewSpinControl(&sfxVolume, 0, 15),
                    NULL);
 
+    // Only show for games that implemented pitch shifting:
+    if (gamemission == doom || gamemission == heretic || gamemission == hexen)
+    {
+        TXT_AddWidgets(window,
+                       TXT_NewCheckBox("Pitch-shifted sounds",
+                                       &snd_pitchshift),
+                       TXT_TABLE_OVERFLOW_RIGHT,
+                       NULL);
+    }
+
     if (gamemission == strife)
     {
-        TXT_AddWidgets(sfx_table,
+        TXT_AddWidgets(window,
                        TXT_NewLabel("Voice volume"),
                        TXT_NewSpinControl(&voiceVolume, 0, 15),
+                       TXT_NewCheckBox("Show text with voices", &show_talk),
+                       TXT_TABLE_OVERFLOW_RIGHT,
                        NULL);
-        TXT_AddWidget(window,
-                      TXT_NewCheckBox("Show text with voices", &show_talk));
     }
 
     TXT_AddWidgets(window,
-               TXT_NewSeparator("Music"),
-               music_table = TXT_NewTable(2),
-               extra_table = TXT_NewTable(1),
-               NULL);
-
-    TXT_SetColumnWidths(music_table, 19, 15);
-
-    TXT_AddWidgets(music_table,
+                   TXT_NewSeparator("Music"),
                    TXT_NewLabel("Music"),
                    music_mode_control = TXT_NewDropdownList(&snd_musicmode,
                                                             musicmode_strings,
                                                             NUM_MUSICMODES),
                    TXT_NewLabel("Music volume"),
                    TXT_NewSpinControl(&musicVolume, 0, 15),
+                   extra_table = TXT_NewTable(2),
+                   TXT_TABLE_OVERFLOW_RIGHT,
                    NULL);
 
+    TXT_SetColumnWidths(extra_table, 19, 15);
 
     TXT_SignalConnect(sfx_mode_control, "changed", UpdateSndDevices, NULL);
     TXT_SignalConnect(music_mode_control, "changed", UpdateSndDevices, NULL);
@@ -316,10 +361,12 @@ void BindSoundVariables(void)
     M_BindIntVariable("snd_mport",                &snd_mport);
     M_BindIntVariable("snd_maxslicetime_ms",      &snd_maxslicetime_ms);
     M_BindStringVariable("snd_musiccmd",          &snd_musiccmd);
+    M_BindStringVariable("snd_dmxoption",         &snd_dmxoption);
 
     M_BindIntVariable("snd_cachesize",            &snd_cachesize);
     M_BindIntVariable("opl_io_port",              &opl_io_port);
-    M_BindIntVariable("opl_type",                 &opl_type);
+
+    M_BindIntVariable("snd_pitchshift",           &snd_pitchshift);
 
     if (gamemission == strife)
     {
@@ -329,6 +376,10 @@ void BindSoundVariables(void)
 
     timidity_cfg_path = M_StringDuplicate("");
     gus_patch_path = M_StringDuplicate("");
+
+    // All versions of Heretic and Hexen did pitch-shifting.
+    // Most versions of Doom did not and Strife never did.
+    snd_pitchshift = gamemission == heretic || gamemission == hexen;
 
     // Default sound volumes - different games use different values.
 

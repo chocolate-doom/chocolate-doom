@@ -67,8 +67,9 @@ static void MouseSetCallback(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(variable))
     }
 }
 
-static void AddMouseControl(txt_table_t *table, char *label, int *var)
+static void AddMouseControl(TXT_UNCAST_ARG(table), char *label, int *var)
 {
+    TXT_CAST_ARG(txt_table_t, table);
     txt_mouse_input_t *mouse_input;
 
     TXT_AddWidget(table, TXT_NewLabel(label));
@@ -92,7 +93,7 @@ static void ConfigExtraButtons(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
                    buttons_table = TXT_NewTable(2),
                    NULL);
 
-    TXT_SetColumnWidths(buttons_table, 29, 5);
+    TXT_SetColumnWidths(buttons_table, 24, 5);
 
     AddMouseControl(buttons_table, "Move backward", &mousebbackward);
     AddMouseControl(buttons_table, "Use", &mousebuse);
@@ -111,50 +112,44 @@ static void ConfigExtraButtons(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
 void ConfigMouse(void)
 {
     txt_window_t *window;
-    txt_table_t *motion_table;
-    txt_table_t *buttons_table;
 
     window = TXT_NewWindow("Mouse configuration");
 
+    TXT_SetTableColumns(window, 2);
+
+    TXT_SetWindowAction(window, TXT_HORIZ_CENTER, TestConfigAction());
     TXT_SetWindowHelpURL(window, WINDOW_HELP_URL);
 
     TXT_AddWidgets(window,
                    TXT_NewCheckBox("Enable mouse", &usemouse),
+                   TXT_TABLE_OVERFLOW_RIGHT,
                    TXT_NewInvertedCheckBox("Allow vertical mouse movement", 
                                            &novert),
+                   TXT_TABLE_OVERFLOW_RIGHT,
                    TXT_NewCheckBox("Grab mouse in windowed mode", 
                                    &grabmouse),
+                   TXT_TABLE_OVERFLOW_RIGHT,
                    TXT_NewCheckBox("Double click acts as \"use\"",
                                    &dclick_use),
+                   TXT_TABLE_OVERFLOW_RIGHT,
 
                    TXT_NewSeparator("Mouse motion"),
-                   motion_table = TXT_NewTable(2),
-    
-                   TXT_NewSeparator("Buttons"),
-                   buttons_table = TXT_NewTable(2),
-                   TXT_NewButton2("More controls...",
-                                  ConfigExtraButtons,
-                                  NULL),
-                   NULL);
-
-    TXT_SetColumnWidths(motion_table, 27, 5);
-
-    TXT_AddWidgets(motion_table,
                    TXT_NewLabel("Speed"),
                    TXT_NewSpinControl(&mouseSensitivity, 1, 256),
                    TXT_NewLabel("Acceleration"),
                    TXT_NewFloatSpinControl(&mouse_acceleration, 1.0, 5.0),
                    TXT_NewLabel("Acceleration threshold"),
                    TXT_NewSpinControl(&mouse_threshold, 0, 32),
+
+                   TXT_NewSeparator("Buttons"),
                    NULL);
 
-    TXT_SetColumnWidths(buttons_table, 27, 5);
+    AddMouseControl(window, "Fire/Attack", &mousebfire);
+    AddMouseControl(window, "Move forward", &mousebforward);
+    AddMouseControl(window, "Strafe on", &mousebstrafe);
 
-    AddMouseControl(buttons_table, "Fire/Attack", &mousebfire);
-    AddMouseControl(buttons_table, "Move forward", &mousebforward);
-    AddMouseControl(buttons_table, "Strafe on", &mousebstrafe);
-    
-    TXT_SetWindowAction(window, TXT_HORIZ_CENTER, TestConfigAction());
+    TXT_AddWidget(window,
+                  TXT_NewButton2("More controls...", ConfigExtraButtons, NULL));
 }
 
 void BindMouseVariables(void)

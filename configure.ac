@@ -1,11 +1,12 @@
-AC_INIT(Chocolate Doom, 2.1.0, fraggle@gmail.com, chocolate-doom)
+AC_INIT(Chocolate Doom, 2.2.1, fraggle@gmail.com, chocolate-doom)
 
 PACKAGE_SHORTNAME=${PACKAGE_NAME% Doom}
 PACKAGE_SHORTDESC="Conservative source port"
-PACKAGE_COPYRIGHT="Copyright (C) 1993-2013"
+PACKAGE_COPYRIGHT="Copyright (C) 1993-2015"
 PACKAGE_LICENSE="GNU General Public License, version 2"
 PACKAGE_MAINTAINER="Simon Howard"
 PACKAGE_URL="http://www.chocolate-doom.org/"
+PACKAGE_ISSUES="https://github.com/chocolate-doom/chocolate-doom/issues"
 
 AC_CONFIG_AUX_DIR(autotools)
 
@@ -103,7 +104,15 @@ AC_SDL_MAIN_WORKAROUND([
     AC_CHECK_LIB(amd64, amd64_iopl)
 ])
 
-AC_CHECK_TOOL(WINDRES, windres, )
+case $host in
+  *cygwin* | *mingw* )
+    AC_CHECK_TOOL(WINDRES, windres, )
+    ;;
+  *)
+    WINDRES=
+    ;;
+esac
+
 AC_CHECK_TOOL(STRIP, strip, )
 
 AM_CONDITIONAL(HAVE_WINDRES, test "$WINDRES" != "")
@@ -143,6 +152,7 @@ AC_SUBST(PACKAGE_COPYRIGHT)
 AC_SUBST(PACKAGE_LICENSE)
 AC_SUBST(PACKAGE_MAINTAINER)
 AC_SUBST(PACKAGE_URL)
+AC_SUBST(PACKAGE_ISSUES)
 
 dnl Shut up the datarootdir warnings.
 AC_DEFUN([AC_DATAROOTDIR_CHECKED])
@@ -160,11 +170,14 @@ pkg/osx/Info.plist
 rpm.spec
 data/Makefile
 src/Makefile
+src/doom.appdata.xml
 src/doom.desktop
 src/doom-screensaver.desktop
 src/doom/Makefile
+src/heretic.appdata.xml
 src/heretic.desktop
 src/heretic/Makefile
+src/hexen.appdata.xml
 src/hexen.desktop
 src/hexen/Makefile
 src/resource.rc
@@ -172,6 +185,7 @@ src/setup-res.rc
 src/setup/Makefile
 src/setup/setup.desktop
 src/setup/setup-manifest.xml
+src/strife.appdata.xml
 src/strife.desktop
 src/strife/Makefile
 textscreen/Makefile

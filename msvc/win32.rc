@@ -25,8 +25,8 @@
 #endif
 
 1 VERSIONINFO
-PRODUCTVERSION 2,1,0,0
-FILEVERSION 2,1,0,0
+PRODUCTVERSION 2,2,1,0
+FILEVERSION 2,2,1,0
 FILETYPE 1
 BEGIN
 	BLOCK "StringFileInfo"
@@ -34,12 +34,12 @@ BEGIN
 		BLOCK "040904E4"
 		BEGIN
 			VALUE "FileVersion", "1.0.0"
-			VALUE "FileDescription", "Chocolate Doom 2.1.0"
+			VALUE "FileDescription", "Chocolate Doom 2.2.1"
 			VALUE "InternalName", "chocolate-doom"
 			VALUE "CompanyName", "fraggle@gmail.com"
 			VALUE "LegalCopyright", "GNU General Public License"
 			VALUE "ProductName", "Chocolate Doom"
-			VALUE "ProductVersion", "2.1.0"
+			VALUE "ProductVersion", "2.2.1"
 		END
 	END
 	BLOCK "VarFileInfo"

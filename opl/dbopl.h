@@ -195,6 +195,7 @@ void DBOPL_InitTables( void );
 void Chip__Chip(Chip *self);
 void Chip__WriteReg(Chip *self, Bit32u reg, Bit8u val );
 void Chip__GenerateBlock2(Chip *self, Bitu total, Bit32s* output );
+void Chip__GenerateBlock3(Chip *self, Bitu total, Bit32s* output );
 
 // haleyjd 09/09/10: Not standard C.
 #ifdef _MSC_VER

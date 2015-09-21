@@ -62,7 +62,6 @@ boolean respawnparm;            // checkparm of -respawn
 boolean debugmode;              // checkparm of -debug
 boolean ravpic;                 // checkparm of -ravpic
 boolean cdrom;                  // true if cd-rom mode active
-boolean singletics;             // debug flag to cancel adaptiveness
 boolean noartiskip;             // whether shift-enter skips an artifact
 
 skill_t startskill;
@@ -1019,7 +1018,7 @@ void D_DoomMain(void)
 
         if (D_AddFile(file))
         {
-            M_StringCopy(demolumpname, lumpinfo[numlumps - 1].name,
+            M_StringCopy(demolumpname, lumpinfo[numlumps - 1]->name,
                          sizeof(demolumpname));
         }
         else
