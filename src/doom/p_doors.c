@@ -405,6 +405,12 @@ EV_VerticalDoor
     }
 
     // if the sector has an active thinker, use it
+
+    if (line->sidenum[side^1] == -1)
+    {
+        I_Error("EV_VerticalDoor: DR special type on 1-sided linedef");
+    }
+
     sec = sides[ line->sidenum[side^1]] .sector;
 
     if (sec->specialdata)

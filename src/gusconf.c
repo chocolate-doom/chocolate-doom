@@ -192,6 +192,7 @@ static char *ReadDMXConfig(void)
     data = Z_Malloc(len + 1, PU_STATIC, NULL);
     W_ReadLump(lumpnum, data);
 
+    data[len] = '\0';
     return data;
 }
 

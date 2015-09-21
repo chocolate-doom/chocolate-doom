@@ -140,6 +140,9 @@ static void BindMiscVariables(void)
 
     if (gamemission == strife)
     {
+        // Strife has a different default value than the other games
+        screenblocks = 10;
+
         M_BindStringVariable("back_flat",   &back_flat);
         M_BindStringVariable("nickname",    &nickname);
 

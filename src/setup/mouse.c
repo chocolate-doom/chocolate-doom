@@ -105,7 +105,7 @@ static void ConfigExtraButtons(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
     AddMouseControl(buttons_table, "Strafe left", &mousebstrafeleft);
     AddMouseControl(buttons_table, "Strafe right", &mousebstraferight);
 
-    if (gamemission == hexen)
+    if (gamemission == hexen || gamemission == strife)
     {
         AddMouseControl(buttons_table, "Jump", &mousebjump);
     }

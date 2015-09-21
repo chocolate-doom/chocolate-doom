@@ -1,3 +1,45 @@
+2.2.1 (2015-09-10):
+
+    Chocolate Doom has not seen a great deal of "stable" patch
+    releases in its history. While the development tree sees major new
+    features and changes, the purpose of this release, and hopefully
+    others to follow like it, is to repair some deficiencies that
+    existed in 2.2.0.
+
+    General:
+    * Preferences for the OS X launcher are now stored with a unique
+      name to not conflict with other applications. (thanks Xeriphas1994)
+    * Unix desktop entry files are now brought up to full desktop
+      entry specification compliance. (thanks chungy, Fabian)
+    * Unix AppData entries are now included, allowing software centers
+      to display detailed information about the engines. (thanks chungy)
+    * Partial XDG base directory specification compliance on Unix
+      systems now exist to search for IWAD paths.  One benefit is that
+      $HOME/.local/share/games/doom is now a valid location to store
+      and automatically find IWADs. (thanks chungy)
+
+    Build systems:
+    * The Microsoft Visual Studio build system was not fully
+      functional in 2.2.0 and has been fixed. (thanks Linguica)
+    * The autoconf build system checks for windres only for Windows
+      toolchains.  Some Linux distributions mistakingly include the
+      program in their native toolchains. (thanks Fabian)
+    * A compiler hint for packed structs has been added, which
+      otherwise broke the games when built under recent GCC releases
+      for Windows. (thanks Fabian)
+
+    Doom:
+    * The GOG.com releases of The Ultimate Doom, Doom II, and Final
+      Doom are now detected and supported on Windows. (thanks chungy)
+    * An integer overflow was used in spawn angle calculation,
+      undefined C behavior which broke with Clang optimization.
+      (thanks David Majnemer for insight)
+
+    Setup tool:
+    * The help URL for the level warp menu now points to the proper
+      wiki page, rather than the multiplayer page.
+    * The manifest has been updated for Windows 10 compatibility.
+      (thanks chungy)
 
 2.2.0 (2015-06-09):
 
