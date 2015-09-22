@@ -659,13 +659,13 @@ void R_DrawTLColumnLow (void)
     do
     {
 	*dest = tranmap[(*dest<<8)+dc_colormap[dc_source[frac>>FRACBITS]]];
-	*dest2 = tranmap[(*dest<<8)+dc_colormap[dc_source[frac>>FRACBITS]]];
+	*dest2 = tranmap[(*dest2<<8)+dc_colormap[dc_source[frac>>FRACBITS]]];
 	dest += SCREENWIDTH << hires;
 	dest2 += SCREENWIDTH << hires;
 	if (hires)
 	{
-	    *dest3 = tranmap[(*dest<<8)+dc_colormap[dc_source[frac>>FRACBITS]]];
-	    *dest4 = tranmap[(*dest<<8)+dc_colormap[dc_source[frac>>FRACBITS]]];
+	    *dest3 = tranmap[(*dest3<<8)+dc_colormap[dc_source[frac>>FRACBITS]]];
+	    *dest4 = tranmap[(*dest4<<8)+dc_colormap[dc_source[frac>>FRACBITS]]];
 	    dest3 += SCREENWIDTH << hires;
 	    dest4 += SCREENWIDTH << hires;
 	}
