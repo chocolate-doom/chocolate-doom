@@ -520,7 +520,7 @@ R_StoreWallRange
 {
     fixed_t		vtop;
     int			lightnum;
-    int64_t		dx, dy, dx1, dy1; // [crispy] fix long wall wobble
+    int64_t		dx, dy, dx1, dy1, dist; // [crispy] fix long wall wobble
 
     // [crispy] remove MAXDRAWSEGS Vanilla limit
     if (ds_p == &drawsegs[numdrawsegs])
@@ -562,7 +562,8 @@ R_StoreWallRange
     dy = curline->v2->py - curline->v1->py;
     dx1 = viewx - curline->v1->px;
     dy1 = viewy - curline->v1->py;
-    rw_distance = (fixed_t)((dy * dx1 - dx * dy1) / curline->length);
+    dist = (dy * dx1 - dx * dy1) / curline->length;
+    rw_distance = (fixed_t)BETWEEN(INT_MIN, INT_MAX, dist);
 		
 	
     ds_p->x1 = rw_x = start;

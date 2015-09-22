@@ -23,6 +23,16 @@
 
 #include "doomtype.h"
 
+#ifndef MIN
+#define MIN(a,b) (((a)<(b))?(a):(b))
+#endif
+#ifndef MAX
+#define MAX(a,b) (((a)>(b))?(a):(b))
+#endif
+#ifndef BETWEEN
+#define BETWEEN(l,u,x) (((l)>(x))?(l):((x)>(u))?(u):(x))
+#endif
+
 #define CRISPY_HUD 12
 #define CRISPY_CROSSHAIR "STCFN043"
 
