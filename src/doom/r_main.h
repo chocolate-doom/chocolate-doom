@@ -121,6 +121,11 @@ R_PointToAngle
   fixed_t	y );
 
 angle_t
+R_PointToAngleCrispy
+( fixed_t	x,
+  fixed_t	y );
+
+angle_t
 R_PointToAngle2
 ( fixed_t	x1,
   fixed_t	y1,
