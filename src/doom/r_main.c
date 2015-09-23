@@ -281,8 +281,9 @@ R_PointToAngle
     int64_t y_viewy = (int64_t)y - viewy;
     int64_t x_viewx = (int64_t)x - viewx;
 
-    // [crispy] the worst that could happen is -INT_MAX-INT_MAX = -2*INT_MAX
-    if (abs(x_viewx) > INT_MAX || abs(y_viewy) > INT_MAX)
+    // [crispy] the worst that could happen is e.g. INT_MIN-INT_MAX = 2*INT_MIN
+    if (x_viewx < INT_MIN || x_viewx > INT_MAX ||
+        y_viewy < INT_MIN || y_viewy > INT_MAX)
     {
 	// [crispy] preserving the angle by halfing the distance in both directions
 	x = x_viewx / 2;
