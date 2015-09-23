@@ -423,8 +423,8 @@ boolean R_CheckBBox (fixed_t*	bspcoord)
     y2 = bspcoord[checkcoord[boxpos][3]];
     
     // check clip list for an open space
-    angle1 = R_PointToAngle (x1, y1) - viewangle;
-    angle2 = R_PointToAngle (x2, y2) - viewangle;
+    angle1 = R_PointToAngleCrispy (x1, y1) - viewangle;
+    angle2 = R_PointToAngleCrispy (x2, y2) - viewangle;
 	
     span = angle1 - angle2;
 
