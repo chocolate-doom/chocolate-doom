@@ -38,7 +38,7 @@
 // which is looked up in the tantoangle[] table.  The +1 size is to handle
 // the case when x==y without additional checking.
 
-int SlopeDivVanilla(unsigned int num, unsigned int den)
+int SlopeDiv(unsigned int num, unsigned int den)
 {
     unsigned ans;
     
@@ -82,8 +82,6 @@ int SlopeDivCrispy(unsigned int num, unsigned int den)
 	}
     }
 }
-
-int (* SlopeDiv)(unsigned int num, unsigned int den) = SlopeDivVanilla;
 
 const int finetangent[4096] =
 {

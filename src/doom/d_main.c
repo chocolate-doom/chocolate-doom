@@ -217,9 +217,6 @@ void D_Display (void)
     if (nodrawers)
 	return;                    // for comparative timing / profiling
 		
-    // [crispy] catch SlopeDiv overflows
-    SlopeDiv = SlopeDivCrispy;
-
     redrawsbar = false;
     
     // change the view size if needed
@@ -346,9 +343,6 @@ void D_Display (void)
 	viewactivestate = false;
 	inhelpscreensstate = true;
     }
-
-    // [crispy] back to Vanilla SlopeDiv
-    SlopeDiv = SlopeDivVanilla;
 
     // [crispy] do not shade background and draw neither pause pic nor menu
     // when taking a clean screenshot
