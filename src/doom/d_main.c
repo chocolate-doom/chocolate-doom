@@ -199,9 +199,6 @@ boolean D_Display (void)
     boolean			wipe;
     boolean			redrawsbar;
 		
-    // [crispy] catch SlopeDiv overflows
-    SlopeDiv = SlopeDivCrispy;
-
     redrawsbar = false;
     
     // change the view size if needed
@@ -333,9 +330,6 @@ boolean D_Display (void)
     // menus go directly to the screen
     M_Drawer ();          // menu is drawn even on top of everything
     NetUpdate ();         // send out any new accumulation
-
-    // [crispy] back to Vanilla SlopeDiv
-    SlopeDiv = SlopeDivVanilla;
 
     return wipe;
 }

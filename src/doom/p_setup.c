@@ -349,8 +349,11 @@ void P_SegLengths (void)
     dx = li->v2->x - li->v1->x;
     dy = li->v2->y - li->v1->y;
     li->length = (uint32_t)(sqrt((double)dx*dx + (double)dy*dy)/2);
+
 	// [crispy] re-calculate angle used for rendering
-	li->pangle = R_PointToAngle2(li->v1->x, li->v1->y, li->v2->x, li->v2->y);
+	viewx = li->v1->x;
+	viewy = li->v1->y;
+	li->pangle = R_PointToAngleCrispy(li->v2->x, li->v2->y);
     }
 }
 

@@ -274,10 +274,14 @@ R_PointOnSegSide
 
 
 
+// [crispy] turned into a general R_PointToAngle() flavor
+// called with either slope_div = SlopeDivCrispy() from R_PointToAngleCrispy()
+// or slope_div = SlopeDiv() else
 angle_t
-R_PointToAngle
+R_PointToAngleSlope
 ( fixed_t	x,
-  fixed_t	y )
+  fixed_t	y,
+  int (*slope_div) (unsigned int num, unsigned int den))
 {	
     x -= viewx;
     y -= viewy;
@@ -295,12 +299,12 @@ R_PointToAngle
 	    if (x>y)
 	    {
 		// octant 0
-		return tantoangle[ SlopeDiv(y,x)];
+		return tantoangle[slope_div(y,x)];
 	    }
 	    else
 	    {
 		// octant 1
-		return ANG90-1-tantoangle[ SlopeDiv(x,y)];
+		return ANG90-1-tantoangle[slope_div(x,y)];
 	    }
 	}
 	else
@@ -311,12 +315,12 @@ R_PointToAngle
 	    if (x>y)
 	    {
 		// octant 8
-		return -tantoangle[SlopeDiv(y,x)];
+		return -tantoangle[slope_div(y,x)];
 	    }
 	    else
 	    {
 		// octant 7
-		return ANG270+tantoangle[ SlopeDiv(x,y)];
+		return ANG270+tantoangle[slope_div(x,y)];
 	    }
 	}
     }
@@ -331,12 +335,12 @@ R_PointToAngle
 	    if (x>y)
 	    {
 		// octant 3
-		return ANG180-1-tantoangle[ SlopeDiv(y,x)];
+		return ANG180-1-tantoangle[slope_div(y,x)];
 	    }
 	    else
 	    {
 		// octant 2
-		return ANG90+ tantoangle[ SlopeDiv(x,y)];
+		return ANG90+ tantoangle[slope_div(x,y)];
 	    }
 	}
 	else
@@ -347,18 +351,28 @@ R_PointToAngle
 	    if (x>y)
 	    {
 		// octant 4
-		return ANG180+tantoangle[ SlopeDiv(y,x)];
+		return ANG180+tantoangle[slope_div(y,x)];
 	    }
 	    else
 	    {
 		 // octant 5
-		return ANG270-1-tantoangle[ SlopeDiv(x,y)];
+		return ANG270-1-tantoangle[slope_div(x,y)];
 	    }
 	}
     }
     return 0;
 }
 
+angle_t
+R_PointToAngle
+( fixed_t	x,
+  fixed_t	y )
+{
+    return R_PointToAngleSlope (x, y, SlopeDiv);
+}
+
+// [crispy] overflow-safe R_PointToAngle() flavor
+// called only from R_CheckBBox(), R_AddLine() and P_SegLengths()
 angle_t
 R_PointToAngleCrispy
 ( fixed_t	x,
@@ -377,7 +391,7 @@ R_PointToAngleCrispy
 	y = y_viewy / 2 + viewy;
     }
 
-    return R_PointToAngle (x, y);
+    return R_PointToAngleSlope (x, y, SlopeDivCrispy);
 }
 
 angle_t
@@ -390,7 +404,8 @@ R_PointToAngle2
     viewx = x1;
     viewy = y1;
     
-    return R_PointToAngle (x2, y2);
+    // [crispy] R_PointToAngle2() is never called during rendering
+    return R_PointToAngleSlope (x2, y2, SlopeDiv);
 }
 
 
