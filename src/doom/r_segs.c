@@ -279,7 +279,10 @@ R_RenderMaskedSegRange
 
 		if (t + (int64_t) textureheight[texnum] * spryscale < 0 ||
 		    t > (int64_t) SCREENHEIGHT << FRACBITS*2)
+		{
+			spryscale += rw_scalestep; // [crispy] MBF had this in the for-loop iterator
 			continue; // skip if the texture is out of screen's range
+		}
 
 		sprtopscreen = (int64_t)(t >> FRACBITS); // [crispy] WiggleFix
 	    }
