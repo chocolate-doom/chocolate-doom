@@ -96,6 +96,9 @@ AC_SDL_MAIN_WORKAROUND([
     AC_CHECK_HEADERS([linux/kd.h dev/isa/spkrio.h dev/speaker/speaker.h])
     AC_CHECK_FUNCS(mmap ioperm)
 
+    # [crispy] use stdlib's qsort() function for sorting the vissprites[] array
+    AC_CHECK_FUNCS(qsort)
+
     # OpenBSD I/O i386 library for I/O port access.
     # (64 bit has the same thing with a different name!)
 
