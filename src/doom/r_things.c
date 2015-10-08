@@ -978,18 +978,29 @@ void R_DrawPlayerSprites (void)
 // [crispy] use stdlib's qsort() function for sorting the vissprites[] array
 static inline int cmp_vissprites (const void *a, const void *b)
 {
-    return (((const vissprite_t *)a)->scale -
-            ((const vissprite_t *)b)->scale);
+    const vissprite_t *vsa = (const vissprite_t *) a;
+    const vissprite_t *vsb = (const vissprite_t *) b;
+
+    const int ret = vsa->scale - vsb->scale;
+
+    return ret ? ret : vsa->next - vsb->next;
 }
 
 void R_SortVisSprites (void)
 {
     int count;
+    vissprite_t *ds;
 
     count = vissprite_p - vissprites;
 
     if (!count)
 	return;
+
+    // [crispy] maintain a stable sort for deliberately overlaid sprites
+    for (ds = vissprites; ds < vissprite_p; ds++)
+    {
+	ds->next = ds + 1;
+    }
 
     qsort(vissprites, count, sizeof(*vissprites), cmp_vissprites);
 }
@@ -1182,7 +1193,7 @@ void R_DrawMasked (void)
 	// draw all vissprites back to front
 #ifdef HAVE_QSORT
 	for (spr = vissprites;
-	     spr != vissprite_p;
+	     spr < vissprite_p;
 	     spr++)
 #else
 	for (spr = vsprsortedhead.next ;
