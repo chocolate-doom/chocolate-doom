@@ -2114,10 +2114,9 @@ void D_DoomMain (void)
     // [crispy] port level flipping feature over from Strawberry Doom
     {
         time_t curtime = time(NULL);
-        struct tm curtm = {0};
+        struct tm *curtm = localtime(&curtime);
 
-        if ((localtime_r(&curtime, &curtm) != NULL) &&
-            curtm.tm_mon == 3 && curtm.tm_mday == 1)
+        if (curtm && curtm->tm_mon == 3 && curtm->tm_mday == 1)
             crispy_fliplevels = true;
     }
 
