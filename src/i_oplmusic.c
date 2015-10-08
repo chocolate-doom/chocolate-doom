@@ -670,10 +670,9 @@ static void I_OPL_SetMusicVolume(int volume)
     {
         for (j = 0; j < MIDI_CHANNELS_PER_TRACK; ++j)
         {
-            if (j == 9)
+            if (j == 15)
             {
-                SetChannelVolume(&tracks[i].channels[j],
-                                 volume, false);
+                SetChannelVolume(&tracks[i].channels[j], volume, false);
             }
             else
             {
@@ -1401,23 +1400,26 @@ static void ProcessEvent(opl_track_data_t *track, midi_event_t *event)
 }
 
 static void ScheduleTrack(opl_track_data_t *track);
+static void InitChannel(opl_track_data_t *track, opl_channel_data_t *channel);
 
 // Restart a song from the beginning.
 
 static void RestartSong(void *unused)
 {
-    unsigned int i;
+    unsigned int i, j;
 
     running_tracks = num_tracks;
 
     start_music_volume = current_music_volume;
 
-    I_SetMusicVolume(current_music_volume);
-
     for (i = 0; i < num_tracks; ++i)
     {
         MIDI_RestartIterator(tracks[i].iter);
         ScheduleTrack(&tracks[i]);
+        for (j = 0; j < MIDI_CHANNELS_PER_TRACK; ++j)
+        {
+            InitChannel(&tracks[i], &tracks[i].channels[j]);
+        }
     }
 }
 
@@ -1489,7 +1491,11 @@ static void InitChannel(opl_track_data_t *track, opl_channel_data_t *channel)
 
     channel->instrument = &main_instrs[0];
     channel->volume = current_music_volume;
-    channel->volume_base = 127;
+    channel->volume_base = 100;
+    if (channel->volume > channel->volume_base)
+    {
+        channel->volume = channel->volume_base;
+    }
     channel->pan = 0x30;
     channel->bend = 0;
 }
