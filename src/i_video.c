@@ -2109,6 +2109,11 @@ void I_InitGraphics(void)
                    WindowBoxType(screen_mode, w, h),
                    screen_mode->width, screen_mode->height, w, h);
         }
+        // [crispy] always report used screen mode
+        else
+        {
+            printf("I_InitGraphics: Using %dx%d screen mode\n", w, h);
+        }
 
         SetVideoMode(screen_mode, w, h);
     }
