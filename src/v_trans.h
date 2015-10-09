@@ -52,4 +52,6 @@ extern char **crstr;
 
 extern byte *tranmap;
 
+void CrispyReplaceColor (char *str, const int cr, const char *col);
+
 #endif // __V_TRANS__

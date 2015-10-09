@@ -407,6 +407,25 @@ void HU_Init(void)
 	hu_font[i] = (patch_t *) W_CacheLumpName(buffer, PU_STATIC);
     }
 
+    // [crispy] colorize keycard and skull key messages
+    CrispyReplaceColor(GOTBLUECARD, CR_BLUE, " blue ");
+    CrispyReplaceColor(GOTBLUESKUL, CR_BLUE, " blue ");
+    CrispyReplaceColor(PD_BLUEO,    CR_BLUE, " blue ");
+    CrispyReplaceColor(PD_BLUEK,    CR_BLUE, " blue ");
+    CrispyReplaceColor(GOTREDCARD,  CR_RED,  " red ");
+    CrispyReplaceColor(GOTREDSKULL, CR_RED,  " red ");
+    CrispyReplaceColor(PD_REDO,     CR_RED,  " red ");
+    CrispyReplaceColor(PD_REDK,     CR_RED,  " red ");
+    CrispyReplaceColor(GOTYELWCARD, CR_GOLD, " yellow ");
+    CrispyReplaceColor(GOTYELWSKUL, CR_GOLD, " yellow ");
+    CrispyReplaceColor(PD_YELLOWO,  CR_GOLD, " yellow ");
+    CrispyReplaceColor(PD_YELLOWK,  CR_GOLD, " yellow ");
+
+    // [crispy] colorize multi-player messages
+    CrispyReplaceColor(HUSTR_PLRGREEN,  CR_GREEN, "Green: ");
+    CrispyReplaceColor(HUSTR_PLRINDIGO, CR_GRAY,  "Indigo: ");
+    CrispyReplaceColor(HUSTR_PLRBROWN,  CR_GOLD,  "Brown: ");
+    CrispyReplaceColor(HUSTR_PLRRED,    CR_RED,   "Red: ");
 }
 
 void HU_Stop(void)

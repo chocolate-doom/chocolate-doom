@@ -16,9 +16,12 @@
 // Color translation tables
 //
 
+#include <stdlib.h>
 #include <math.h>
 
 #include "doomtype.h"
+#include "deh_str.h"
+#include "m_misc.h"
 #include "v_trans.h"
 
 // [crispy] here used to be static color translation tables based on
@@ -245,4 +248,15 @@ byte V_Colorize (byte *playpal, int cr, byte source, boolean keepgray109)
     rgb.z *= 255.;
 
     return FindNearestColor(playpal, (int) rgb.x, (int) rgb.y, (int) rgb.z);
+}
+
+void CrispyReplaceColor (char *str, const int cr, const char *col)
+{
+    char *str_replace, col_replace[16];
+
+    M_snprintf(col_replace, sizeof(col_replace),
+               "%s%s%s", crstr[cr], col, crstr[CR_NONE]);
+    str_replace = M_StringReplace(str, col, col_replace);
+    DEH_AddStringReplacement(str, str_replace);
+    free(str_replace);
 }
