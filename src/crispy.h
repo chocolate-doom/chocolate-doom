@@ -35,6 +35,7 @@
 
 #define CRISPY_HUD 12
 #define CRISPY_CROSSHAIR "STCFN043"
+#define CRISPY_SLOPE(a) ((((a)->lookdir / MLOOKUNIT) << FRACBITS) / 173)
 
 #define singleplayer (!demorecording && !demoplayback && !netgame)
 

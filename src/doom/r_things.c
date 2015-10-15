@@ -740,7 +740,7 @@ static void R_DrawLSprite (void)
 
     crispy_crosshair |= CROSSHAIR_INTERCEPT; // [crispy] intercepts overflow guard
     P_LineLaser(viewplayer->mo, viewangle,
-                16*64*FRACUNIT, ((viewplayer->lookdir/MLOOKUNIT)<<FRACBITS)/173);
+                16*64*FRACUNIT, CRISPY_SLOPE(viewplayer));
     crispy_crosshair &= ~CROSSHAIR_INTERCEPT; // [crispy] intercepts overflow guard
 
     if (!laserspot->x &&
