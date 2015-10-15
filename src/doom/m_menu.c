@@ -477,12 +477,12 @@ static menuitem_t CrispnessMenu[]=
     {-1,"",0,'\0'},
     {1,"",	M_CrispyToggleUncapped,'u'},
     {1,"",	M_CrispyToggleColoredhud,'c'},
-    {1,"",	M_CrispyToggleTranslucency,'t'},
+    {1,"",	M_CrispyToggleTranslucency,'e'},
     {1,"",	M_CrispyToggleColoredblood,'e'},
     {1,"",	M_CrispyToggleColoredblood2,'f'},
     {1,"",	M_CrispyToggleFlipcorpses,'r'},
     {-1,"",0,'\0'},
-    {1,"",	M_Crispness2,'g'},
+    {1,"",	M_Crispness2,'n'},
 };
 
 static menu_t  Crispness1Def =
@@ -507,23 +507,23 @@ enum
     crispness_secretmessage,
     crispness_automapstats,
     crispness2_sep_goto2,
-    crispness2_goto3,
     crispness2_goto1,
+    crispness2_goto3,
     crispness2_end
 } crispness2_e;
 
 static menuitem_t Crispness2Menu[]=
 {
     {-1,"",0,'\0'},
-    {1,"",	M_CrispyToggleCrosshair,'l'},
-    {1,"",	M_CrispyToggleFreelook,'f'},
+    {1,"",	M_CrispyToggleCrosshair,'d'},
+    {1,"",	M_CrispyToggleFreelook,'a'},
     {1,"",	M_CrispyToggleCenterweapon,'c'},
-    {1,"",	M_CrispyTogglePitch,'p'},
+    {1,"",	M_CrispyTogglePitch,'w'},
     {1,"",	M_CrispyToggleSecretmessage,'s'},
-    {1,"",	M_CrispyToggleAutomapstats,'a'},
+    {1,"",	M_CrispyToggleAutomapstats,'s'},
     {-1,"",0,'\0'},
-    {1,"",	M_Crispness3,'g'},
-    {1,"",	M_Crispness1,'g'},
+    {1,"",	M_Crispness1,'p'},
+    {1,"",	M_Crispness3,'n'},
 };
 
 static menu_t  Crispness2Def =
@@ -539,8 +539,8 @@ static menu_t  Crispness2Def =
 enum
 {
     crispness_sep_physical,
-    crispness_jumping,
     crispness_freeaim,
+    crispness_jumping,
     crispness_overunder,
     crispness_recoil,
     crispness3_sep_goto1,
@@ -551,12 +551,12 @@ enum
 static menuitem_t Crispness3Menu[]=
 {
     {-1,"",0,'\0'},
-    {1,"",	M_CrispyToggleJumping,'j'},
     {1,"",	M_CrispyToggleFreeaim,'v'},
-    {1,"",	M_CrispyToggleOverunder,'o'},
-    {1,"",	M_CrispyToggleRecoil,'r'},
+    {1,"",	M_CrispyToggleJumping,'a'},
+    {1,"",	M_CrispyToggleOverunder,'w'},
+    {1,"",	M_CrispyToggleRecoil,'w'},
     {-1,"",0,'\0'},
-    {1,"",	M_Crispness2,'g'},
+    {1,"",	M_Crispness2,'p'},
 };
 
 static menu_t  Crispness3Def =
@@ -1453,7 +1453,7 @@ static void M_DrawCrispness2(void)
     M_DrawCrispnessMultiItem(crispness_crosshair, "Draw Crosshair", multiitem_crosshair, crispy_crosshair, true);
     M_DrawCrispnessMultiItem(crispness_freelook, "Allow Free Look", multiitem_freelook, crispy_freelook, true);
     M_DrawCrispnessItem(crispness_centerweapon, "Center Weapon when Firing", crispy_centerweapon, true);
-    M_DrawCrispnessItem(crispness_pitch, "Enable Weapon Recoil Pitch", crispy_pitch, true);
+    M_DrawCrispnessItem(crispness_pitch, "Weapon Recoil Pitch", crispy_pitch, true);
     M_DrawCrispnessItem(crispness_secretmessage, "Show Revealed Secrets", crispy_secretmessage, true);
     M_DrawCrispnessItem(crispness_automapstats, "Show Level Stats in Automap", crispy_automapstats, true);
 
@@ -1473,10 +1473,10 @@ static void M_DrawCrispness3(void)
 
     M_DrawCrispnessSeparator(crispness_sep_physical, "Physical");
 
-    M_DrawCrispnessMultiItem(crispness_jumping, "Allow Jumping", multiitem_jump, crispy_jump, singleplayer);
     M_DrawCrispnessMultiItem(crispness_freeaim, "Vertical Aiming", multiitem_freeaim, crispy_freeaim, singleplayer);
+    M_DrawCrispnessMultiItem(crispness_jumping, "Allow Jumping", multiitem_jump, crispy_jump, singleplayer);
     M_DrawCrispnessItem(crispness_overunder, "Walk over/under Monsters", crispy_overunder, singleplayer);
-    M_DrawCrispnessItem(crispness_recoil, "Enable Weapon Recoil Thrust", crispy_recoil, singleplayer);
+    M_DrawCrispnessItem(crispness_recoil, "Weapon Recoil Thrust", crispy_recoil, singleplayer);
 
     M_DrawCrispnessGoto(crispness3_goto2, "< Prev Page");
 
