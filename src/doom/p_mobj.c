@@ -1065,6 +1065,12 @@ P_SpawnPlayerMissile
 
     // see which target is to be aimed at
     an = source->angle;
+    if (singleplayer && (crispy_freeaim == FREEAIM_DIRECT))
+    {
+	slope = ((source->player->lookdir / MLOOKUNIT) << FRACBITS) / 173;
+    }
+    else
+    {
     slope = P_AimLineAttack (source, an, 16*64*FRACUNIT);
     
     if (!linetarget)
@@ -1081,11 +1087,12 @@ P_SpawnPlayerMissile
 	if (!linetarget)
 	{
 	    an = source->angle;
-	    if (singleplayer && crispy_freeaim)
+	    if (singleplayer && (crispy_freeaim == FREEAIM_BOTH))
                slope = ((source->player->lookdir / MLOOKUNIT) << FRACBITS) / 173;
 	    else
 	    slope = 0;
 	}
+    }
     }
 		
     x = source->x;

@@ -1228,6 +1228,12 @@ P_LineLaser
 
     laserspot->x = laserspot->y = laserspot->z = 0;
 
+    if (singleplayer && (crispy_freeaim == FREEAIM_DIRECT))
+    {
+	lslope = slope;
+    }
+    else
+    {
     lslope = P_AimLineAttack(t1, angle, distance);
 
     // [crispy] increase accuracy
@@ -1243,12 +1249,13 @@ P_LineLaser
 	    an -= 2<<26;
 	    lslope = P_AimLineAttack(t1, an, distance);
 
-	    if (!linetarget && crispy_freeaim)
+	    if (!linetarget && singleplayer && (crispy_freeaim == FREEAIM_BOTH))
 	    {
 		lslope = slope;
 	    }
 
 	}
+    }
     }
 
     // [crispy] don't aim at Spectres

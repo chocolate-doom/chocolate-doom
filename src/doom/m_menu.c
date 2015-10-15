@@ -1369,6 +1369,13 @@ static multiitem_t multiitem_crosshair[NUM_CROSSHAIRS] =
     {CROSSHAIR_PROJECTED, "projected"},
 };
 
+static multiitem_t multiitem_freeaim[NUM_FREEAIMS] =
+{
+    {FREEAIM_AUTO, "autoaim"},
+    {FREEAIM_DIRECT, "direct"},
+    {FREEAIM_BOTH, "both"},
+};
+
 static multiitem_t multiitem_freelook[NUM_FREELOOKS] =
 {
     {FREELOOK_OFF, "off"},
@@ -1467,7 +1474,7 @@ static void M_DrawCrispness3(void)
     M_DrawCrispnessSeparator(crispness_sep_physical, "Physical");
 
     M_DrawCrispnessMultiItem(crispness_jumping, "Allow Jumping", multiitem_jump, crispy_jump, singleplayer);
-    M_DrawCrispnessItem(crispness_freeaim, "Allow Vertical Aiming", crispy_freeaim, singleplayer);
+    M_DrawCrispnessMultiItem(crispness_freeaim, "Vertical Aiming", multiitem_freeaim, crispy_freeaim, singleplayer);
     M_DrawCrispnessItem(crispness_overunder, "Walk over/under Monsters", crispy_overunder, singleplayer);
     M_DrawCrispnessItem(crispness_recoil, "Enable Weapon Recoil Thrust", crispy_recoil, singleplayer);
 
@@ -1790,7 +1797,7 @@ static void M_CrispyToggleFreeaim(int choice)
     }
 
     choice = 0;
-    crispy_freeaim = !crispy_freeaim;
+    crispy_freeaim = (crispy_freeaim + 1) % NUM_FREEAIMS;
 }
 
 static void M_CrispyToggleFreelook(int choice)

@@ -648,6 +648,12 @@ void P_BulletSlope (mobj_t*	mo)
 {
     angle_t	an;
     
+    if (singleplayer && (crispy_freeaim == FREEAIM_DIRECT))
+    {
+	bulletslope = ((mo->player->lookdir / MLOOKUNIT) << FRACBITS) / 173;
+    }
+    else
+    {
     // see which target is to be aimed at
     an = mo->angle;
     bulletslope = P_AimLineAttack (mo, an, 16*64*FRACUNIT);
@@ -660,11 +666,12 @@ void P_BulletSlope (mobj_t*	mo)
 	{
 	    an -= 2<<26;
 	    bulletslope = P_AimLineAttack (mo, an, 16*64*FRACUNIT);
-	    if (!linetarget && singleplayer && crispy_freeaim)
+	    if (!linetarget && singleplayer && (crispy_freeaim == FREEAIM_BOTH))
 	    {
 		bulletslope = ((mo->player->lookdir / MLOOKUNIT) << FRACBITS) / 173;
 	    }
 	}
+    }
     }
 }
 

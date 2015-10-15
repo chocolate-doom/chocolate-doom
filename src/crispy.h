@@ -90,6 +90,14 @@ enum
 
 enum
 {
+    FREEAIM_AUTO,
+    FREEAIM_DIRECT,
+    FREEAIM_BOTH,
+    NUM_FREEAIMS
+};
+
+enum
+{
     FREELOOK_OFF,
     FREELOOK_SPRING,
     FREELOOK_LOCK,
