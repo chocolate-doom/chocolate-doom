@@ -1465,7 +1465,7 @@ void ST_drawWidgets(boolean refresh)
 	static patch_t *patch;
 	static short x, y;
 
-	if (!patch)
+	if (!patch && !x && !y)
 	{
 	    if (W_CheckNumForName(DEH_String("PSTRA0")) >= 0)
 	    {
@@ -1474,6 +1474,8 @@ void ST_drawWidgets(boolean refresh)
 		x = 23 - SHORT(patch->width)/2 + SHORT(patch->leftoffset);
 		y = 179 - SHORT(patch->height)/2 + SHORT(patch->topoffset);
 	    }
+	    else
+		x = y = SHRT_MAX;
 	}
 
 	if (patch)
