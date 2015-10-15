@@ -1259,7 +1259,7 @@ P_LineLaser
     }
 
     // [crispy] don't aim at Spectres
-    if (linetarget && !(linetarget->flags & MF_SHADOW))
+    if (linetarget && !(linetarget->flags & MF_SHADOW) && (crispy_freeaim != FREEAIM_DIRECT))
 	P_LineAttack(t1, angle, distance, aimslope, INT_MIN);
     else
 	// [crispy] double the auto aim distance
