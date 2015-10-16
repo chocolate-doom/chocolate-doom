@@ -841,7 +841,6 @@ void P_SpawnMapThing (mapthing_t* mthing)
     if (deathmatch && mobjinfo[i].flags & MF_NOTDMATCH)
 	return;
 		
-
     // don't spawn any monsters if -nomonsters
     if (nomonsters
 	&& ( i == MT_SKULL
@@ -861,12 +860,6 @@ void P_SpawnMapThing (mapthing_t* mthing)
     
     mobj = P_SpawnMobj (x,y,z, i);
     mobj->spawnpoint = *mthing;
-
-    // [crispy] count Lost Souls -- nope
-/*
-    if (i == MT_SKULL)
-	extrakills++;
-*/
 
     if (mobj->tics > 0)
 	mobj->tics = 1 + (P_Random () % mobj->tics);

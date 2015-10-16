@@ -1519,11 +1519,6 @@ A_PainShootSkull
     if (crispy_coloredblood2)
 	newmobj->flags |= MF_NOBLOOD;
 
-    // [crispy] count spawned Lost Souls -- nope
-/*
-    extrakills++;
-*/
-
     newmobj->target = actor->target;
     A_SkullAttack (newmobj);
 }
