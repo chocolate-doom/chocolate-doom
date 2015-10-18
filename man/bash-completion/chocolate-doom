@@ -1,0 +1,58 @@
+# bash completion for Chocolate Doom                       -*- shell-script -*-
+
+_chocolate_doom()
+{
+    local cur prev words cword
+    _init_completion || return
+
+    case $prev in
+        -config|-extraconfig)
+            _filedir cfg
+            ;;
+        -episode)
+            COMPREPLY=(1 2 3 4)
+            ;;
+        -file|-iwad|-aa|-af|-as|-merge|-nwtmerge)
+            _filedir wad
+            ;;
+        -loadgame)
+            COMPREPLY=(0 1 2 3 4 5)
+            ;;
+        -pack)
+            COMPREPLY=(doom2 tnt plutonia)
+            ;;
+        -skill)
+            COMPREPLY=(1 2 3 4 5)
+            ;;
+        -gameversion)
+            COMPREPLY=(1.9 ultimate final final2 hacx chex)
+            ;;
+        -setmen)
+            COMPREPLY=(dos622 dos71 dosbox)
+            ;;
+        -playdemo|-timedemo)
+            _filedir lmp
+            ;;
+        -deh)
+            _filedir bex deh
+            ;;
+    esac
+
+    if [[ $cur == -* ]]; then
+        COMPREPLY=( $( compgen -W '-1 -2 -3 -aa -af -altdeath -as -autojoin -avg
+        -cdrom -config -connect -deathmatch -dedicated -deh -dehlump -devparm
+        -donut -dumpsubstconfig -dup -episode -extraconfig -extratics -fast
+        -file -fullscreen -gameversion -geometry -grabmouse -height
+        -ignoreversion -iwad -left -loadgame -localsearch -longtics -maxdemo -mb
+        -merge -mmap -newsync -noblit -nocheats -nodeh -nodes -nodraw
+        -nograbmouse -nomonsters -nomouse -nomusic -nonovert -nosfx -nosound
+        -novert -nwtmerge -pack -playdemo -port -privateserver -query -record
+        -respawn -right -search -server -servername -setmem -skill -solo
+        -spechit -statdump -timedemo -timer -turbo -warp -width -window
+        -zonescan -zonezero ' -- "$cur" ) )
+    fi
+} &&
+
+complete -F _chocolate_doom chocolate-doom chocolate-heretic chocolate-hexen chocolate-strife
+
+# ex: ts=4 sw=4 et filetype=sh
