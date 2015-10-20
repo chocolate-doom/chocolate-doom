@@ -1209,6 +1209,22 @@ static void *I_SDL_RegisterSong(void *data, int len)
         playing_substitute = true;
         ReadLoopPoints(filename, &file_metadata);
     }
+    // [crispy] support MP3 music from lumps
+    else if (len > 3 && (!memcmp(data, "ID3", 3) || // [crispy] MP3 file with an ID3v2 tag
+             // [crispy] MP3 file without an ID3 tag or with an ID3v1 tag
+             ((((const char *)data)[0] & 0xff) == 0xff &&
+              (((const char *)data)[1] & 0xf0) == 0xf0 &&
+              (((const char *)data)[2] & 0xf0) != 0x00 &&
+              (((const char *)data)[2] & 0xf0) != 0xf0 &&
+              (((const char *)data)[2] & 0x0c) != 0x0c &&
+              (((const char *)data)[1] & 0x06) != 0x00)))
+    {
+        filename = M_TempFile("doom.mp3");
+        M_WriteFile(filename, data, len);
+
+        playing_substitute = true;
+        ReadLoopPoints(filename, &file_metadata);
+    }
     else
     {
 	// Assume a MUS file and try to convert
