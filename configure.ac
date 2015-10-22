@@ -80,7 +80,14 @@ AC_SDL_MAIN_WORKAROUND([
         [Build without libsamplerate @<:@default=check@:>@]),
     [],
     [
-        AC_CHECK_LIB(samplerate, src_new)
+        [with_libsamplerate=check]
+    ])
+    AS_IF([test "x$with_libsamplerate" != xno], [
+        AC_CHECK_LIB(samplerate, src_new, [], [
+            AS_IF([test "x$with_libsamplerate" != xcheck], [AC_MSG_FAILURE(
+                [--with-libsamplerate was given, but test for libsamplerate failed])
+            ])
+        ])
     ])
     # Check for libpng.
     AC_ARG_WITH([libpng],
@@ -88,8 +95,15 @@ AC_SDL_MAIN_WORKAROUND([
         [Build without libpng @<:@default=check@:>@]),
     [],
     [
+        [with_libpng=check]
+    ])
+    AS_IF([test "x$with_libpng" != xno], [
         AC_CHECK_LIB(z, zlibVersion)
-        AC_CHECK_LIB(png, png_get_io_ptr)
+        AC_CHECK_LIB(png, png_get_io_ptr, [], [
+            AS_IF([test "x$with_libpng" != xcheck], [AC_MSG_FAILURE(
+                [--with-libpng was given, but test for libpng failed])
+            ])
+        ])
     ])
     AC_CHECK_LIB(m, log)
 
