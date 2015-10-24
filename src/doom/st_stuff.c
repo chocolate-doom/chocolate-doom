@@ -1509,6 +1509,17 @@ void ST_Start (void)
     ST_createWidgets();
     st_stopped = false;
 
+    // [crispy] correctly color the status bar face background in multiplayer
+    // demos recorded by another player than player 1
+    if (netgame && consoleplayer)
+    {
+	char namebuf[8];
+
+	W_ReleaseLumpName("STFB0");
+
+	DEH_snprintf(namebuf, 7, "STFB%d", consoleplayer);
+	faceback = W_CacheLumpName(namebuf, PU_STATIC);
+    }
 }
 
 void ST_Stop (void)
