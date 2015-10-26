@@ -159,6 +159,7 @@ AC_DEFUN([AC_DATAROOTDIR_CHECKED])
 AC_OUTPUT([
 Makefile
 man/Makefile
+man/bash-completion/Makefile
 opl/Makefile
 opl/examples/Makefile
 pcsound/Makefile

@@ -1,0 +1,36 @@
+# bash completion for Chocolate Strife                     -*- shell-script -*-
+
+_chocolate_strife()
+{
+    local cur prev words cword
+    _init_completion || return
+
+    case $prev in
+        -config|-extraconfig)
+            _filedir cfg
+            ;;
+        -file|-iwad|-aa|-af|-as|-merge|-nwtmerge)
+            _filedir wad
+            ;;
+        -gameversion)
+            COMPREPLY=(1.2 1.31)
+            ;;
+        -setmen)
+            COMPREPLY=(dos622 dos71 dosbox)
+            ;;
+        -playdemo|-timedemo)
+            _filedir lmp
+            ;;
+        -deh)
+            _filedir seh
+            ;;
+    esac
+
+    if [[ $cur == -* ]]; then
+        COMPREPLY=( $( compgen -W '@content' -- "$cur" ) )
+    fi
+} &&
+
+complete -F _chocolate_strife chocolate-strife
+
+# ex: ts=4 sw=4 et filetype=sh

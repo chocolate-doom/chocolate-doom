@@ -1,3 +1,5 @@
+SUBDIRS = bash-completion
+
 MANPAGE_GEN_FILES = environ.man           \
                     iwad_paths.man        \
                     doom.template         \
