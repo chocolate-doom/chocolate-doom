@@ -1,0 +1,30 @@
+# bash completion for Chocolate Hexen                     -*- shell-script -*-
+
+_chocolate_hexen()
+{
+    local cur prev words cword
+    _init_completion || return
+
+    case $prev in
+        -config|-extraconfig)
+            _filedir cfg
+            ;;
+        -file|-iwad|-aa|-af|-as|-merge|-nwtmerge)
+            _filedir wad
+            ;;
+        -setmen)
+            COMPREPLY=(dos622 dos71 dosbox)
+            ;;
+        -playdemo|-timedemo)
+            _filedir lmp
+            ;;
+    esac
+
+    if [[ $cur == -* ]]; then
+        COMPREPLY=( $( compgen -W '@content' -- "$cur" ) )
+    fi
+} &&
+
+complete -F _chocolate_hexen chocolate-hexen
+
+# ex: ts=4 sw=4 et filetype=sh
