@@ -198,6 +198,14 @@ void P_LoadSegs (int lump)
 	ldef = &lines[linedef];
 	li->linedef = ldef;
 	side = SHORT(ml->side);
+
+        // e6y: check for wrong indexes
+        if ((unsigned)ldef->sidenum[side] >= (unsigned)numsides)
+        {
+            I_Error("P_LoadSegs: linedef %d for seg %d references a non-existent sidedef %d",
+                    linedef, i, (unsigned)ldef->sidenum[side]);
+        }
+
 	li->sidedef = &sides[ldef->sidenum[side]];
 	li->frontsector = sides[ldef->sidenum[side]].sector;
 
