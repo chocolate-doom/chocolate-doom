@@ -1,3 +1,5 @@
+bashcompletiondir=@bashcompletiondir@
+
 BASH_COMPLETION_TEMPLATES = \
     doom.template \
     heretic.template \
@@ -12,7 +14,7 @@ BASH_COMPLETION_SCRIPTLETS = \
     @PROGRAM_PREFIX@hexen \
     @PROGRAM_PREFIX@strife
 
-noinst_DATA = $(BASH_COMPLETION_SCRIPTLETS)
+bashcompletion_DATA = $(BASH_COMPLETION_SCRIPTLETS)
 CLEANFILES = $(BASH_COMPLETION_SCRIPTLETS)
 
 MANDIR = $(top_srcdir)/man
