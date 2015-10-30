@@ -9,6 +9,7 @@ PACKAGE_URL="http://www.chocolate-doom.org/"
 PACKAGE_ISSUES="https://github.com/chocolate-doom/chocolate-doom/issues"
 
 AC_CONFIG_AUX_DIR(autotools)
+m4_include([autotools/sdl.m4])
 
 orig_CFLAGS="$CFLAGS"
 
@@ -20,11 +21,11 @@ OPT_LEVEL=2
 
 # Engine room, we need more speed!
 
-AC_ARG_ENABLE(penis-extension, 
+AC_ARG_ENABLE(penis-extension,
 [  --enable-penis-extension   Enable counterproductive compiler optimisations ],
 [ OPT_LEVEL=3 ])
 
-# If this is gcc, we have some options we'd like to turn on.  Turn on 
+# If this is gcc, we have some options we'd like to turn on.  Turn on
 # optimisation and debugging symbols.
 
 if test "$GCC" = "yes"
@@ -37,10 +38,10 @@ dnl Search for SDL ...
 
 AM_PATH_SDL(1.1.3)
 
-# Add the SDL compiler flags to the default compiler flag variables. 
+# Add the SDL compiler flags to the default compiler flag variables.
 # It is important to do this now, before checking for headers and
 # library functions.  The reason being that on Windows, sdl-config
-# sets the -mno-cygwin compiler option in order to generate MinGW 
+# sets the -mno-cygwin compiler option in order to generate MinGW
 # executables.  If we don't do this now, we might end up discovering
 # header files that are not actually available to us when we come
 # to compile.

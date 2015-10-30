@@ -5,7 +5,9 @@ Makefile.in
 TAGS
 aclocal.m4
 autom4te.cache
-autotools
+autotools/missing
+autotools/depcomp
+autotools/install-sh
 bin
 config.h
 config.hin
