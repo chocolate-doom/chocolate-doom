@@ -101,6 +101,8 @@ static int fullscreen = 1;
 static int screen_width = 320;
 static int screen_height = 200;
 static int screen_bpp = 0;
+static int screenshot_width = 1600;
+static int screenshot_height = 1200;
 static int startup_delay = 1000;
 static int usegamma = 0;
 
@@ -712,6 +714,8 @@ void BindDisplayVariables(void)
     M_BindIntVariable("screen_width",              &screen_width);
     M_BindIntVariable("screen_height",             &screen_height);
     M_BindIntVariable("screen_bpp",                &screen_bpp);
+    M_BindIntVariable("screenshot_width",          &screenshot_width);
+    M_BindIntVariable("screenshot_height",         &screenshot_height);
     M_BindIntVariable("startup_delay",             &startup_delay);
     M_BindStringVariable("video_driver",           &video_driver);
     M_BindStringVariable("window_position",        &window_position);

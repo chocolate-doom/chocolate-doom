@@ -54,7 +54,7 @@ typedef struct
     // Function to call to draw the screen from the source buffer.
     // Return true if draw was successful.
 
-    boolean (*DrawScreen)(int x1, int y1, int x2, int y2);
+    boolean (*DrawScreen)(byte *dest_buf, int dest_pitch);
 
     // If true, this is a "poor quality" mode.  The autoadjust
     // code should always attempt to use a different mode to this
@@ -122,6 +122,11 @@ void I_BindVideoVariables(void);
 
 void I_InitWindowTitle(void);
 void I_InitWindowIcon(void);
+
+// called with a requested width and height, returns a screen_mode_t
+// that best matches
+
+screen_mode_t *I_FindScreenMode(int w, int h, int _fullscreen);
 
 // Called before processing any tics in a frame (just after displaying a frame).
 // Time consuming syncronous operations are performed here (joystick reading).

@@ -931,13 +931,13 @@ static void UpdateGrab(void)
 
 }
 
-// Update a small portion of the screen
+// Update the screen
 //
 // Does stretching and buffer blitting if neccessary
 //
 // Return true if blit was successful.
 
-static boolean BlitArea(int x1, int y1, int x2, int y2)
+static boolean Blit()
 {
     int x_offset, y_offset;
     boolean result;
@@ -954,12 +954,12 @@ static boolean BlitArea(int x1, int y1, int x2, int y2)
 
     if (SDL_LockSurface(screenbuffer) >= 0)
     {
-        I_InitScale(I_VideoBuffer,
-                    (byte *) screenbuffer->pixels
-                                + (y_offset * screenbuffer->pitch)
-                                + x_offset,
-                    screenbuffer->pitch);
-        result = screen_mode->DrawScreen(x1, y1, x2, y2);
+        result = screen_mode->DrawScreen(
+            (byte *) screenbuffer->pixels
+                        + (y_offset * screenbuffer->pitch)
+                        + x_offset,
+            screenbuffer->pitch);
+
       	SDL_UnlockSurface(screenbuffer);
     }
     else
@@ -968,28 +968,6 @@ static boolean BlitArea(int x1, int y1, int x2, int y2)
     }
 
     return result;
-}
-
-static void UpdateRect(int x1, int y1, int x2, int y2)
-{
-    int x1_scaled, x2_scaled, y1_scaled, y2_scaled;
-
-    // Do stretching and blitting
-
-    if (BlitArea(x1, y1, x2, y2))
-    {
-        // Update the area
-
-        x1_scaled = (x1 * screen_mode->width) / SCREENWIDTH;
-        y1_scaled = (y1 * screen_mode->height) / SCREENHEIGHT;
-        x2_scaled = (x2 * screen_mode->width) / SCREENWIDTH;
-        y2_scaled = (y2 * screen_mode->height) / SCREENHEIGHT;
-
-        SDL_UpdateRect(screen,
-                       x1_scaled, y1_scaled,
-                       x2_scaled - x1_scaled,
-                       y2_scaled - y1_scaled);
-    }
 }
 
 void I_BeginRead(void)
@@ -1016,8 +994,7 @@ void I_BeginRead(void)
         screenloc += SCREENWIDTH;
     }
 
-    UpdateRect(SCREENWIDTH - LOADING_DISK_W, SCREENHEIGHT - LOADING_DISK_H,
-               SCREENWIDTH, SCREENHEIGHT);
+    // TODO: draw the loading disk onto the screen
 }
 
 void I_EndRead(void)
@@ -1041,8 +1018,7 @@ void I_EndRead(void)
         screenloc += SCREENWIDTH;
     }
 
-    UpdateRect(SCREENWIDTH - LOADING_DISK_W, SCREENHEIGHT - LOADING_DISK_H,
-               SCREENWIDTH, SCREENHEIGHT);
+    // TODO: draw the loading disk onto the screen
 }
 
 //
@@ -1093,7 +1069,7 @@ void I_FinishUpdate (void)
 
     // draw to screen
 
-    BlitArea(0, 0, SCREENWIDTH, SCREENHEIGHT);
+    Blit();
 
     if (palette_to_set)
     {
@@ -1266,7 +1242,7 @@ static void GetScreenModes(screen_mode_t ***modes_list, int *num_modes)
 
 // Find which screen_mode_t to use for the given width and height.
 
-static screen_mode_t *I_FindScreenMode(int w, int h)
+screen_mode_t *I_FindScreenMode(int w, int h, int _fullscreen)
 {
     screen_mode_t **modes_list;
     screen_mode_t *best_mode;
@@ -1279,7 +1255,7 @@ static screen_mode_t *I_FindScreenMode(int w, int h)
     // ratio correction is turned on.  These modes have non-square
     // pixels.
 
-    if (fullscreen)
+    if (_fullscreen)
     {
         if (w == SCREENWIDTH && h == SCREENHEIGHT)
         {
@@ -1354,7 +1330,7 @@ static boolean AutoAdjustFullscreen(void)
 
         // What screen_mode_t would be used for this video mode?
 
-        screen_mode = I_FindScreenMode(modes[i]->w, modes[i]->h);
+        screen_mode = I_FindScreenMode(modes[i]->w, modes[i]->h, 1);
 
         // Never choose a screen mode that we cannot run in, or
         // is poor quality for fullscreen
@@ -1411,14 +1387,14 @@ static void AutoAdjustWindowed(void)
 
     // Find a screen_mode_t to fit within the current settings
 
-    best_mode = I_FindScreenMode(screen_width, screen_height);
+    best_mode = I_FindScreenMode(screen_width, screen_height, 0);
 
     if (best_mode == NULL)
     {
         // Nothing fits within the current settings.
         // Pick the closest to 320x200 possible.
 
-        best_mode = I_FindScreenMode(SCREENWIDTH, SCREENHEIGHT_4_3);
+        best_mode = I_FindScreenMode(SCREENWIDTH, SCREENHEIGHT_4_3, 0);
     }
 
     // Switch to the best mode if necessary.
@@ -1914,7 +1890,7 @@ static void SetVideoMode(screen_mode_t *mode, int w, int h)
 
     if (mode == NULL)
     {
-        mode = I_FindScreenMode(screen->w, screen->h);
+        mode = I_FindScreenMode(screen->w, screen->h, fullscreen);
 
         if (mode == NULL)
         {
@@ -1959,11 +1935,11 @@ static void ApplyWindowResize(unsigned int w, unsigned int h)
     // dimensions, falling back to the smallest mode possible if
     // none is found.
 
-    mode = I_FindScreenMode(w, h);
+    mode = I_FindScreenMode(w, h, fullscreen);
 
     if (mode == NULL)
     {
-        mode = I_FindScreenMode(SCREENWIDTH, SCREENHEIGHT);
+        mode = I_FindScreenMode(SCREENWIDTH, SCREENHEIGHT, fullscreen);
     }
 
     // Reset mode to resize window.
@@ -2046,7 +2022,7 @@ void I_InitGraphics(void)
         w = screen_width;
         h = screen_height;
 
-        screen_mode = I_FindScreenMode(w, h);
+        screen_mode = I_FindScreenMode(w, h, fullscreen);
 
         if (screen_mode == NULL)
         {
@@ -2116,6 +2092,9 @@ void I_InitGraphics(void)
                                                     PU_STATIC, NULL);
     }
 
+    // Ensure the scaler has the right video buffer to scale from
+    I_InitScale(I_VideoBuffer);
+
     V_RestoreBuffer();
 
     // Clear the screen to black.
@@ -2155,6 +2134,8 @@ void I_BindVideoVariables(void)
     M_BindIntVariable("startup_delay",             &startup_delay);
     M_BindIntVariable("screen_width",              &screen_width);
     M_BindIntVariable("screen_height",             &screen_height);
+    M_BindIntVariable("screenshot_width",          &screenshot_width);
+    M_BindIntVariable("screenshot_height",         &screenshot_height);
     M_BindIntVariable("screen_bpp",                &screen_bpp);
     M_BindIntVariable("grabmouse",                 &grabmouse);
     M_BindFloatVariable("mouse_acceleration",      &mouse_acceleration);
