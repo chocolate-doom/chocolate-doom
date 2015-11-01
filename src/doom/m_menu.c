@@ -1431,8 +1431,8 @@ static void M_DrawCrispness1(void)
     M_DrawCrispnessItem(crispness_uncapped, "Uncapped Framerate", crispy_uncapped, true);
     M_DrawCrispnessMultiItem(crispness_coloredhud, "Colorize HUD Elements", multiitem_coloredhud, crispy_coloredhud, true);
     M_DrawCrispnessMultiItem(crispness_translucency, "Enable Translucency", multiitem_translucency, crispy_translucency, true);
-    M_DrawCrispnessItem(crispness_coloredblood, "Enable Colored Blood", crispy_coloredblood, true);
-    M_DrawCrispnessItem(crispness_coloredblood2, "Fix Spectre and Lost Soul Blood", crispy_coloredblood2, true);
+    M_DrawCrispnessItem(crispness_coloredblood, "Enable Colored Blood", crispy_coloredblood & COLOREDBLOOD_COL, true);
+    M_DrawCrispnessItem(crispness_coloredblood2, "Fix Spectre and Lost Soul Blood", crispy_coloredblood & COLOREDBLOOD_FIX, true);
     M_DrawCrispnessItem(crispness_flipcorpses, "Randomly Mirrored Corpses", crispy_flipcorpses, true);
 
     M_DrawCrispnessGoto(crispness1_goto2, "Next Page >");
@@ -1761,13 +1761,13 @@ static void M_CrispyToggleCenterweapon(int choice)
 static void M_CrispyToggleColoredblood(int choice)
 {
     choice = 0;
-    crispy_coloredblood = !crispy_coloredblood;
+    crispy_coloredblood ^= COLOREDBLOOD_COL;
 }
 
 static void M_CrispyToggleColoredblood2(int choice)
 {
     choice = 0;
-    crispy_coloredblood2 = !crispy_coloredblood2;
+    crispy_coloredblood ^= COLOREDBLOOD_FIX;
 }
 
 static void M_CrispyToggleColoredhud(int choice)

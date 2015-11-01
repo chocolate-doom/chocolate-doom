@@ -54,7 +54,6 @@ extern boolean crispy_showfps;
 extern int crispy_automapstats;
 extern int crispy_centerweapon;
 extern int crispy_coloredblood;
-extern int crispy_coloredblood2;
 extern int crispy_coloredhud;
 extern int crispy_crosshair;
 extern int crispy_flipcorpses;
@@ -70,6 +69,13 @@ extern int crispy_translucency;
 extern int crispy_uncapped;
 
 extern int crispy_demowarp;
+
+enum
+{
+    COLOREDBLOOD_OFF,
+    COLOREDBLOOD_COL,
+    COLOREDBLOOD_FIX
+};
 
 enum
 {

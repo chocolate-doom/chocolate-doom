@@ -686,7 +686,7 @@ void R_ProjectSprite (mobj_t* thing)
     }	
 
     // [crispy] colored blood
-    if (crispy_coloredblood &&
+    if ((crispy_coloredblood & COLOREDBLOOD_COL) &&
         (thing->type == MT_BLOOD || thing->sprite == SPR_POL5) // [crispy] S_GIBS
         && thing->target)
     {

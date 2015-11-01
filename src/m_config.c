@@ -1790,14 +1790,6 @@ static default_t extra_defaults_list[] =
     //!
     // @game doom
     //
-    // Fix Spectre and Lost Soul Blood.
-    //
-
-    CONFIG_VARIABLE_INT(crispy_coloredblood2),
-
-    //!
-    // @game doom
-    //
     // Enable Mirrored Corpses.
     //
 
