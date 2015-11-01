@@ -1078,9 +1078,20 @@ void P_PlayerInSpecialSector (player_t* player)
 	// [crispy] show centered "Secret Revealed!" message
 	if (showMessages && crispy_secretmessage)
 	{
+	    static int sfx_id = -1;
+
+	    // [crispy] play DSSECRET if available
+	    if (sfx_id == -1)
+	    {
+		if (W_CheckNumForName("dssecret") != -1)
+		    sfx_id = sfx_secret;
+		else
+		    sfx_id = sfx_itmbk;
+	    }
+
 	    player->centermessage = HUSTR_SECRETFOUND;
 	    if (player == &players[consoleplayer])
-	        S_StartSound(NULL, sfx_itmbk);
+	        S_StartSound(NULL, sfx_id);
 	}
 	player->secretcount++;
 	sector->special = 0;

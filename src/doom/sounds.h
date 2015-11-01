@@ -221,6 +221,8 @@ typedef enum
     sfx_skesit,
     sfx_skeatk,
     sfx_radio,
+    // [crispy] play DSSECRET if available
+    sfx_secret,
     NUMSFX
 } sfxenum_t;
 
