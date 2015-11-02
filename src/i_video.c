@@ -171,6 +171,10 @@ int novert = 0;
 
 int png_screenshots = 0;
 
+// Display disk activity indicator.
+
+int show_diskicon = 1;
+
 // if true, I_VideoBuffer is screen->pixels
 
 static boolean native_surface;
@@ -955,7 +959,7 @@ void I_FinishUpdate (void)
 	    I_VideoBuffer[ (SCREENHEIGHT-1)*SCREENWIDTH + i] = 0x0;
     }
 
-    if (disk_indicator == disk_on)
+    if (show_diskicon && disk_indicator == disk_on)
     {
 	V_BeginRead();
     }
