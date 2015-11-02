@@ -1925,6 +1925,14 @@ void G_DoSaveGame (void)
 
     P_WriteSaveGameHeader(savedescription);
  
+    // [crispy] some logging when saving
+    {
+	const int time = leveltime / TICRATE;
+
+	fprintf(stderr, "G_DoSaveGame: Episode %d, Map %d, Skill %d, Time %d:%02d.\n",
+	        gameepisode, gamemap, gameskill, time/60, time%60);
+    }
+
     P_ArchivePlayers (); 
     P_ArchiveWorld (); 
     P_ArchiveThinkers (); 

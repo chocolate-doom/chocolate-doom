@@ -1419,14 +1419,6 @@ void P_WriteSaveGameHeader(char *description)
     saveg_write8((leveltime >> 16) & 0xff);
     saveg_write8((leveltime >> 8) & 0xff);
     saveg_write8(leveltime & 0xff);
-
-    // [crispy] some logging when saving
-    {
-	const int time = leveltime / TICRATE;
-
-	fprintf(stderr, "P_WriteSaveGameHeader: Episode %d, Map %d, Skill %d, Time %d:%02d.\n",
-	        gameepisode, gamemap, gameskill, time/60, time%60);
-    }
 }
 
 // 
