@@ -26,6 +26,7 @@
 
 #include "doomtype.h"
 
+#include "d_loop.h" // gametic
 #include "i_swap.h"
 #include "i_system.h"
 #include "i_video.h"
@@ -340,15 +341,32 @@ void W_ReadLump(lumpindex_t lump, void *dest)
 {
     int c;
     lumpinfo_t *l;
+    static int lasttic, readbytes;
+
+    // Only display the disk icon if more then this much bytes have been read
+    // during the previous tic.
+
+    const int threshold = 20*1024;
 
     if (lump >= numlumps)
     {
         I_Error ("W_ReadLump: %i >= numlumps", lump);
     }
 
+    if (gametic > lasttic)
+    {
+        lasttic = gametic;
+        readbytes = 0;
+    }
+
     l = lumpinfo[lump];
 
-    disk_indicator = disk_on;
+    readbytes += l->size;
+
+    if (readbytes >= threshold)
+    {
+        disk_indicator = disk_on;
+    }
 
     c = W_Read(l->wad_file, l->position, dest, l->size);
 
