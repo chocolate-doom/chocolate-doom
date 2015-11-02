@@ -151,6 +151,8 @@ extern int screen_height;
 extern int screen_bpp;
 extern int fullscreen;
 extern int aspect_ratio_correct;
+
 extern int show_diskicon;
+extern int diskicon_readbytes;
 
 #endif
