@@ -80,7 +80,14 @@ AC_SDL_MAIN_WORKAROUND([
         [Build without libsamplerate @<:@default=check@:>@]),
     [],
     [
-        AC_CHECK_LIB(samplerate, src_new)
+        [with_libsamplerate=check]
+    ])
+    AS_IF([test "x$with_libsamplerate" != xno], [
+        AC_CHECK_LIB(samplerate, src_new, [], [
+            AS_IF([test "x$with_libsamplerate" != xcheck], [AC_MSG_FAILURE(
+                [--with-libsamplerate was given, but test for libsamplerate failed])
+            ])
+        ])
     ])
     # Check for libpng.
     AC_ARG_WITH([libpng],
@@ -88,8 +95,15 @@ AC_SDL_MAIN_WORKAROUND([
         [Build without libpng @<:@default=check@:>@]),
     [],
     [
+        [with_libpng=check]
+    ])
+    AS_IF([test "x$with_libpng" != xno], [
         AC_CHECK_LIB(z, zlibVersion)
-        AC_CHECK_LIB(png, png_get_io_ptr)
+        AC_CHECK_LIB(png, png_get_io_ptr, [], [
+            AS_IF([test "x$with_libpng" != xcheck], [AC_MSG_FAILURE(
+                [--with-libpng was given, but test for libpng failed])
+            ])
+        ])
     ])
     AC_CHECK_LIB(m, log)
 
@@ -105,6 +119,13 @@ AC_SDL_MAIN_WORKAROUND([
     AC_CHECK_LIB(i386, i386_iopl)
     AC_CHECK_LIB(amd64, amd64_iopl)
 ])
+
+AC_ARG_WITH([bashcompletiondir],
+    AS_HELP_STRING([--with-bashcompletiondir=DIR], [Bash completion directory]),
+    [],
+    [AS_IF([$($PKG_CONFIG --exists bash-completion)],
+        [bashcompletiondir=$($PKG_CONFIG --variable=completionsdir bash-completion)],
+	[bashcompletiondir=${datadir}/bash-completion/completions])])
 
 case $host in
   *cygwin* | *mingw* )
@@ -156,12 +177,15 @@ AC_SUBST(PACKAGE_MAINTAINER)
 AC_SUBST(PACKAGE_URL)
 AC_SUBST(PACKAGE_ISSUES)
 
+AC_SUBST(bashcompletiondir)
+
 dnl Shut up the datarootdir warnings.
 AC_DEFUN([AC_DATAROOTDIR_CHECKED])
 
 AC_OUTPUT([
 Makefile
 man/Makefile
+man/bash-completion/Makefile
 opl/Makefile
 opl/examples/Makefile
 pcsound/Makefile

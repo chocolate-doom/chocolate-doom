@@ -30,6 +30,7 @@
 #include "i_system.h"
 #include "i_video.h"
 #include "m_misc.h"
+#include "v_diskicon.h"
 #include "z_zone.h"
 
 #include "w_wad.h"
@@ -366,7 +367,9 @@ void W_ReadLump(lumpindex_t lump, void *dest)
 
     l = lumpinfo[lump];
 
-    I_BeginRead();
+    diskicon_readbytes += l->size;
+
+    disk_indicator = disk_on;
 
     c = W_Read(l->wad_file, l->position, dest, l->size);
 
@@ -375,8 +378,6 @@ void W_ReadLump(lumpindex_t lump, void *dest)
         I_Error("W_ReadLump: only read %i of %i on lump %i",
                 c, l->size, lump);
     }
-
-    I_EndRead();
 }
 
 

@@ -106,6 +106,19 @@ class Category:
 
         return result
 
+    def completion_output(self):
+        result = ""
+
+        self.params.sort()
+
+        for p in self.params:
+            if p.should_show():
+                result += p.completion_output(0)
+
+        result = result.rstrip()
+
+        return result
+
     def manpage_output(self):
         result = ".SH " + self.description.upper() + "\n"
 
@@ -278,6 +291,12 @@ class Parameter:
 
         return result
 
+    def completion_output(self, w):
+
+        result = self.name + " "
+
+        return result
+
 # Read list of wiki pages
 
 def read_wikipages():
@@ -444,6 +463,15 @@ def plaintext_output(targets, template_file):
 
     print_template(template_file, content)
 
+def completion_output(targets, template_file):
+
+    content = ""
+
+    for t in targets:
+        content += t.completion_output() + "\n"
+
+    print_template(template_file, content)
+
 def usage():
     print("Usage: %s [-V] [-c tag] [-g game] ( -m | -w | -p ) <dir>..." \
             % sys.argv[0])
@@ -452,13 +480,14 @@ def usage():
     print("   -m :  Manpage output")
     print("   -w :  Wikitext output")
     print("   -p :  Plaintext output")
+    print("   -b :  Bash-Completion output")
     print("   -V :  Don't show Vanilla Doom options")
     print("   -g :  Only document options for specified game.")
     sys.exit(0)
 
 # Parse command line
 
-opts, args = getopt.getopt(sys.argv[1:], "m:wp:c:g:V")
+opts, args = getopt.getopt(sys.argv[1:], "m:wp:b:c:g:V")
 
 output_function = None
 template = None
@@ -473,6 +502,9 @@ for opt in opts:
         output_function = wiki_output
     elif opt[0] == "-p":
         output_function = plaintext_output
+        template = opt[1]
+    elif opt[0] == "-b":
+        output_function = completion_output
         template = opt[1]
     elif opt[0] == "-V":
         show_vanilla_options = False

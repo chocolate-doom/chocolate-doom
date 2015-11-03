@@ -41,6 +41,7 @@
 #include "w_main.h"
 #include "w_wad.h"
 #include "s_sound.h"
+#include "v_diskicon.h"
 #include "v_video.h"
 
 #include "f_finale.h"
@@ -250,7 +251,7 @@ void D_Display (void)
 	    R_RenderPlayerView (&players[displayplayer]);
 	    AM_Drawer ();
 	}
-	if (wipe || (scaledviewheight != (200 << hires) && fullscreen) )
+	if (wipe || (scaledviewheight != (200 << hires) && fullscreen) || disk_indicator == disk_dirty)
 	    redrawsbar = true;
 	if (inhelpscreensstate && !inhelpscreens)
 	    redrawsbar = true;              // just put away the help screen
@@ -465,6 +466,7 @@ void D_BindVariables(void)
     M_BindIntVariable("vanilla_savegame_limit", &vanilla_savegame_limit);
     M_BindIntVariable("vanilla_demo_limit",     &vanilla_demo_limit);
     M_BindIntVariable("show_endoom",            &show_endoom);
+    M_BindIntVariable("show_diskicon",          &show_diskicon);
 
     // Multiplayer chat macros
 
@@ -543,7 +545,7 @@ void D_DoomLoop (void)
     I_GraphicsCheckCommandLine();
     I_SetGrabMouseCallback(D_GrabMouseCallback);
     I_InitGraphics();
-    I_EnableLoadingDisk();
+    V_EnableLoadingDisk(ORIGWIDTH - LOADING_DISK_W, ORIGHEIGHT - LOADING_DISK_H);
 
     V_RestoreBuffer();
     R_ExecuteSetViewSize();
