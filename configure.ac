@@ -121,7 +121,7 @@ AC_SDL_MAIN_WORKAROUND([
 AC_ARG_WITH([bashcompletiondir],
     AS_HELP_STRING([--with-bashcompletiondir=DIR], [Bash completion directory]),
     [],
-    [AS_IF([$($PKG_CONFIG --exists bash-completion)],
+    [AS_IF([$($PKG_CONFIG --exists bash-completion 2> /dev/null)],
         [bashcompletiondir=$($PKG_CONFIG --variable=completionsdir bash-completion)],
 	[bashcompletiondir=${datadir}/bash-completion/completions])])
 
