@@ -1,4 +1,4 @@
-AC_INIT(Crispy Doom, 3.1, fabian@greffrath.com, crispy-doom)
+AC_INIT(Crispy Doom, 3.2, fabian@greffrath.com, crispy-doom)
 
 PACKAGE_SHORTNAME=${PACKAGE_NAME% Doom}
 PACKAGE_SHORTDESC="Limit-removing enhanced-resolution Doom source port"
