@@ -9,6 +9,7 @@ PACKAGE_URL="http://www.chocolate-doom.org/wiki/index.php/Crispy_Doom"
 PACKAGE_ISSUES="https://github.com/fabiangreffrath/crispy-doom/issues"
 
 AC_CONFIG_AUX_DIR(autotools)
+AC_CANONICAL_HOST
 
 orig_CFLAGS="$CFLAGS"
 
@@ -127,8 +128,8 @@ AC_ARG_WITH([bashcompletiondir],
         [bashcompletiondir=$($PKG_CONFIG --variable=completionsdir bash-completion)],
 	[bashcompletiondir=${datadir}/bash-completion/completions])])
 
-case $host in
-  *cygwin* | *mingw* )
+case "$host" in
+  *-*-mingw* | *-*-cygwin* | *-*-msvc* )
     AC_CHECK_TOOL(WINDRES, windres, )
     ;;
   *)
