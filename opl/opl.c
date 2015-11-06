@@ -27,7 +27,7 @@
 
 //#define OPL_DEBUG_TRACE
 
-#ifdef HAVE_IOPERM
+#if (defined(__i386__) || defined(__x86_64__)) && defined(HAVE_IOPERM)
 extern opl_driver_t opl_linux_driver;
 #endif
 #if defined(HAVE_LIBI386) || defined(HAVE_LIBAMD64)
@@ -40,7 +40,7 @@ extern opl_driver_t opl_sdl_driver;
 
 static opl_driver_t *drivers[] =
 {
-#ifdef HAVE_IOPERM
+#if (defined(__i386__) || defined(__x86_64__)) && defined(HAVE_IOPERM)
     &opl_linux_driver,
 #endif
 #if defined(HAVE_LIBI386) || defined(HAVE_LIBAMD64)
