@@ -62,7 +62,7 @@ void CompatibilitySettings(void)
                                    &crispy_coloredhud),
                    TXT_NewCheckBox("Enable Translucency",
                                    &crispy_translucency),
-                   TXT_NewCheckBox("Enable Colored Blood",
+                   TXT_NewCheckBox("Colored Blood and Corpses",
                                    &crispy_coloredblood),
                    TXT_NewCheckBox("Randomly Mirrored Corpses",
                                    &crispy_flipcorpses),

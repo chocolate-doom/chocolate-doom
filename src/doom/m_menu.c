@@ -1431,7 +1431,7 @@ static void M_DrawCrispness1(void)
     M_DrawCrispnessItem(crispness_uncapped, "Uncapped Framerate", crispy_uncapped, true);
     M_DrawCrispnessMultiItem(crispness_coloredhud, "Colorize HUD Elements", multiitem_coloredhud, crispy_coloredhud, true);
     M_DrawCrispnessMultiItem(crispness_translucency, "Enable Translucency", multiitem_translucency, crispy_translucency, true);
-    M_DrawCrispnessItem(crispness_coloredblood, "Enable Colored Blood", crispy_coloredblood & COLOREDBLOOD_COL, true);
+    M_DrawCrispnessItem(crispness_coloredblood, "Colored Blood and Corpses", crispy_coloredblood & COLOREDBLOOD_COL, true);
     M_DrawCrispnessItem(crispness_coloredblood2, "Fix Spectre and Lost Soul Blood", crispy_coloredblood & COLOREDBLOOD_FIX, true);
     M_DrawCrispnessItem(crispness_flipcorpses, "Randomly Mirrored Corpses", crispy_flipcorpses, true);
 
