@@ -355,6 +355,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\v_diskicon.c"
+				>
+			</File>
+			<File
 				RelativePath="..\src\v_video.c"
 				>
 			</File>
@@ -750,6 +754,10 @@
 			</File>
 			<File
 				RelativePath="..\src\tables.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\v_diskicon.h"
 				>
 			</File>
 			<File

@@ -421,7 +421,7 @@ cheatseq_t cheat_notarget = CHEAT("notarget", 0);
 cheatseq_t cheat_spechits = CHEAT("spechits", 0);
 cheatseq_t cheat_nomomentum = CHEAT("nomomentum", 0);
 cheatseq_t cheat_showfps = CHEAT("showfps", 0);
-static char msg[32];
+static char msg[ST_MSGWIDTH];
 
 //
 // STATUS BAR CODE
@@ -908,15 +908,12 @@ ST_Responder (event_t* ev)
       
       cht_GetParam(&cheat_clev, buf);
       
-      if (gamemission == pack_nerve)
-      {
-	epsd = 2;
-	map = (buf[0] - '0')*10 + buf[1] - '0';
-      }
-      else
       if (gamemode == commercial)
       {
-	epsd = 1;
+	if (gamemission == pack_nerve)
+	    epsd = 2;
+	else
+	epsd = 0;
 	map = (buf[0] - '0')*10 + buf[1] - '0';
       }
       else
@@ -940,50 +937,70 @@ ST_Responder (event_t* ev)
       }
 
       // Catch invalid maps.
-      if (epsd == 0) // [crispy] allow IDCLEV0x to work in Doom 1
-	epsd = gameepisode;
-      else
-      if (epsd < 1)
-	return false;
-
-      if ((map == 0) && (buf[0] - '0' == 0)) // [crispy] IDCLEV00 restarts current map
-	map = gamemap;
-      else
-      if ((map == 0) && crispy_havee1m10 && epsd == 1) // [crispy] support E1M10 "Sewers"
-	map = 10;
-      else
-      if (map < 1)
-	return false;
-
-      // Ohmygod - this is not going to work.
-      if ((gamemode == retail)
-	  && ((epsd > 4) || (map > 9)))
+      if (gamemode != commercial)
       {
-	if (!(crispy_havee1m10 && epsd == 1 && map == 10)) // [crispy] support E1M10 "Sewers"
-	return false;
+          // [crispy] allow IDCLEV0x to work in Doom 1
+          if (epsd == 0)
+          {
+              epsd = gameepisode;
+          }
+          if (epsd < 1)
+          {
+              return false;
+          }
+          if (epsd > 4)
+          {
+              return false;
+          }
+          if (epsd == 4 && gameversion < exe_ultimate)
+          {
+              return false;
+          }
+          // [crispy] IDCLEV00 restarts current map
+          if ((map == 0) && (buf[0] - '0' == 0))
+          {
+              map = gamemap;
+          }
+          // [crispy] support E1M10 "Sewers"
+          if ((map == 0) && crispy_havee1m10 && epsd == 1)
+          {
+              map = 10;
+          }
+          if (map < 1)
+          {
+              return false;
+          }
+          if (map > 9)
+          {
+              // [crispy] support E1M10 "Sewers"
+              if (!(crispy_havee1m10 && epsd == 1 && map == 10))
+              return false;
+          }
       }
-
-      if ((gamemode == registered)
-	  && ((epsd > 3) || (map > 9)))
-	return false;
-
-      if ((gamemode == shareware)
-	  && ((epsd > 1) || (map > 9)))
-	return false;
-
-      // The source release has this check as map > 34. However, Vanilla
-      // Doom allows IDCLEV up to MAP40 even though it normally crashes.
-      if ((gamemode == commercial && gamemission != pack_nerve && gamemission != pack_master)
-	&& (( epsd > 1) || (map > 40)))
-	return false;
-
-      if ((gamemission == pack_nerve)
-	&& (( epsd > 2) || (map > 9)))
-	return false;
-
-      if ((gamemission == pack_master)
-	&& (( epsd > 1) || (map > 21)))
-	return false;
+      else
+      {
+          // [crispy] IDCLEV00 restarts current map
+          if ((map == 0) && (buf[0] - '0' == 0))
+          {
+              map = gamemap;
+          }
+          if (map < 1)
+          {
+              return false;
+          }
+          if (map > 40)
+          {
+              return false;
+          }
+          if (map > 9 && gamemission == pack_nerve)
+          {
+              return false;
+          }
+          if (map > 21 && gamemission == pack_master)
+          {
+              return false;
+          }
+      }
 
       // So be it.
       plyr->message = DEH_String(STSTR_CLEV);
