@@ -1354,6 +1354,14 @@ typedef struct
 } multiitem_t;
 
 
+static multiitem_t multiitem_coloredblood[NUM_COLOREDBLOOD] =
+{
+    {COLOREDBLOOD_OFF, "off"},
+    {COLOREDBLOOD_BLOOD, "blood"},
+    {COLOREDBLOOD_CORPSE, "corpses"},
+    {COLOREDBLOOD_BOTH, "both"},
+};
+
 static multiitem_t multiitem_coloredhud[NUM_COLOREDHUD] =
 {
     {COLOREDHUD_OFF, "off"},
@@ -1431,7 +1439,7 @@ static void M_DrawCrispness1(void)
     M_DrawCrispnessItem(crispness_uncapped, "Uncapped Framerate", crispy_uncapped, true);
     M_DrawCrispnessMultiItem(crispness_coloredhud, "Colorize HUD Elements", multiitem_coloredhud, crispy_coloredhud, true);
     M_DrawCrispnessMultiItem(crispness_translucency, "Enable Translucency", multiitem_translucency, crispy_translucency, true);
-    M_DrawCrispnessItem(crispness_coloredblood, "Colored Blood and Corpses", crispy_coloredblood & COLOREDBLOOD_COL, true);
+    M_DrawCrispnessMultiItem(crispness_coloredblood, "Colored Blood and Corpses", multiitem_coloredblood, crispy_coloredblood & COLOREDBLOOD_BOTH, true);
     M_DrawCrispnessItem(crispness_coloredblood2, "Fix Spectre and Lost Soul Blood", crispy_coloredblood & COLOREDBLOOD_FIX, true);
     M_DrawCrispnessItem(crispness_flipcorpses, "Randomly Mirrored Corpses", crispy_flipcorpses, true);
 
@@ -1761,7 +1769,7 @@ static void M_CrispyToggleCenterweapon(int choice)
 static void M_CrispyToggleColoredblood(int choice)
 {
     choice = 0;
-    crispy_coloredblood ^= COLOREDBLOOD_COL;
+    crispy_coloredblood = (crispy_coloredblood + 1) % NUM_COLOREDBLOOD;
 }
 
 static void M_CrispyToggleColoredblood2(int choice)

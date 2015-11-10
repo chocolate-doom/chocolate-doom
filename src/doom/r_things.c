@@ -686,8 +686,8 @@ void R_ProjectSprite (mobj_t* thing)
     }	
 
     // [crispy] colored blood
-    if ((crispy_coloredblood & COLOREDBLOOD_COL) &&
-        (thing->type == MT_BLOOD || thing->sprite == SPR_POL5) // [crispy] S_GIBS
+    if ((((crispy_coloredblood & COLOREDBLOOD_BLOOD) && thing->type == MT_BLOOD) ||
+        ((crispy_coloredblood & COLOREDBLOOD_CORPSE) && thing->sprite == SPR_POL5)) // [crispy] S_GIBS
         && thing->target)
     {
 	// [crispy] Thorn Things in Hacx bleed green blood
