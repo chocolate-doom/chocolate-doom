@@ -32,7 +32,7 @@ static patch_t *disk;
 static int loading_disk_xoffs = 0;
 static int loading_disk_yoffs = 0;
 
-disk_indicator_e disk_indicator = false;
+disk_indicator_e disk_indicator = disk_off;
 
 void V_EnableLoadingDisk(int xoffs, int yoffs)
 {
