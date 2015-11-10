@@ -690,7 +690,7 @@ void HU_Drawer(void)
 	if (!crispy_automapoverlay || screenblocks < CRISPY_HUD - 1)
 	    HUlib_drawTextLine(&w_map, false);
 
-	// [crispy] count Lost Souls and spawned monsters
+	// [crispy] count spawned monsters
 	if (extrakills)
 	    M_snprintf(str, sizeof(str), "%sKills: %s%d/%d+%d", crstr[CR_RED], crstr[CR_GRAY],
 	            players[consoleplayer].killcount, totalkills, extrakills);

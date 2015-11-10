@@ -1860,7 +1860,9 @@ P_SetupLevel
     int		lumpnum;
     mapformat_t	crispy_mapformat;
 	
-    totalkills = totalitems = totalsecret = extrakills = wminfo.maxfrags = 0; // [crispy] count Lost Souls and spawned monsters
+    totalkills = totalitems = totalsecret = wminfo.maxfrags = 0;
+    // [crispy] count spawned monsters
+    extrakills = 0;
     wminfo.partime = 180;
     for (i=0 ; i<MAXPLAYERS ; i++)
     {

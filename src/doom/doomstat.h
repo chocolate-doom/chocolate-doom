@@ -174,7 +174,7 @@ extern  int	displayplayer;
 extern  int	totalkills;
 extern	int	totalitems;
 extern	int	totalsecret;
-extern	int	extrakills; // [crispy] count Lost Souls and spawned monsters
+extern	int	extrakills; // [crispy] count spawned monsters
 
 // Timer, for scores.
 extern  int	levelstarttic;	// gametic at level start

@@ -2207,7 +2207,7 @@ void D_DoomMain (void)
 	G_DeferedPlayDemo (demolumpname);
 	D_DoomLoop ();  // never returns
     }
-    crispy_demowarp = 0; // [crispy] nope
+    crispy_demowarp = 0; // [crispy] we don't play a demo, so don't skip maps
 	
     p = M_CheckParmWithArgs("-timedemo", 1);
     if (p)
