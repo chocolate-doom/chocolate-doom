@@ -577,6 +577,9 @@ P_SpawnMobj
     else 
 	mobj->z = z;
 
+    // [crispy] count map things
+    mobj->num = -1;
+
     // [AM] Do not interpolate on spawn.
     mobj->interp = false;
 
@@ -778,6 +781,8 @@ void P_SpawnMapThing (mapthing_t* mthing)
     fixed_t		x;
     fixed_t		y;
     fixed_t		z;
+    // [crispy] count map things
+    static int		counter;
 		
     // count deathmatch start positions
     if (mthing->type == 11)
@@ -872,6 +877,9 @@ void P_SpawnMapThing (mapthing_t* mthing)
     if (mthing->options & MTF_AMBUSH)
 	mobj->flags |= MF_AMBUSH;
 
+    // [crispy] count map things
+    mobj->num = counter++;
+
     // [crispy] Lost Souls bleed Puffs
     if ((crispy_coloredblood & COLOREDBLOOD_FIX) && i == MT_SKULL)
         mobj->flags |= MF_NOBLOOD;
@@ -883,6 +891,7 @@ void P_SpawnMapThing (mapthing_t* mthing)
          mobj->info->spawnstate == S_PLAY_XDIE9))
     {
         mobj->flags |= (mobj->lastlook << MF_TRANSSHIFT);
+        mobj->health += (mobj->lastlook + mobj->num) & 1;
     }
 }
 

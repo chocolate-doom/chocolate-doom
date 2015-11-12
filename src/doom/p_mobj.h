@@ -280,6 +280,9 @@ typedef struct mobj_s
     // Thing being chased/attacked for tracers.
     struct mobj_s*	tracer;	
     
+    // [crispy] count map things
+    int			num;
+
     // [AM] If true, ok to interpolate this tic.
     boolean             interp;
 

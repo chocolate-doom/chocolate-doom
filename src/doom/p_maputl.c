@@ -545,6 +545,9 @@ int		ptflags;
 
 static void InterceptsOverrun(int num_intercepts, intercept_t *intercept);
 
+// [crispy] show mapthing number in INTERCEPTS overflow warnings
+extern mobj_t* shootthing;
+
 //
 // PIT_AddLineIntercepts.
 // Looks for lines in the given block
@@ -608,7 +611,7 @@ PIT_AddLineIntercepts (line_t* ld)
 	    return false;
 	else
 	    // [crispy] print a warning
-	    fprintf(stderr, "PIT_AddLineIntercepts: Triggered INTERCEPTS overflow!\n");
+	    fprintf(stderr, "PIT_AddLineIntercepts: Triggered INTERCEPTS overflow by thing %d!\n", shootthing->num);
     }
     intercept_p++;
 
@@ -683,7 +686,7 @@ boolean PIT_AddThingIntercepts (mobj_t* thing)
 	    return false;
 	else
 	    // [crispy] print a warning
-	    fprintf(stderr, "PIT_AddThingIntercepts: Triggered INTERCEPTS overflow!\n");
+	    fprintf(stderr, "PIT_AddThingIntercepts: Triggered INTERCEPTS overflow by thing %d!\n", shootthing->num);
     }
     intercept_p++;
 

@@ -268,7 +268,7 @@ boolean PIT_CheckLine (line_t* ld)
         {
             // [crispy] print a warning
             if (numspechit == MAXSPECIALCROSS_ORIGINAL + 1)
-                fprintf(stderr, "PIT_CheckLine: Triggered SPECHITS overflow!\n");
+                fprintf(stderr, "PIT_CheckLine: Triggered SPECHITS overflow by thing %d!\n", tmthing->num);
             SpechitOverrun(ld);
         }
     }
