@@ -237,12 +237,12 @@ void P_LoadSegs (int lump)
             li->v2 = tmp;
 	}
 
-	li->angle = (SHORT(ml->angle))<<16;
+	li->angle = (SHORT(ml->angle))<<FRACBITS;
 
 	if (crispy_fliplevels)
             li->angle = -li->angle;
 
-//	li->offset = (SHORT(ml->offset))<<16; // [crispy] recalculated below
+//	li->offset = (SHORT(ml->offset))<<FRACBITS; // [crispy] recalculated below
 	linedef = (unsigned short)SHORT(ml->linedef); // [crispy] extended nodes
 	ldef = &lines[linedef];
 	li->linedef = ldef;
@@ -325,12 +325,12 @@ static void P_LoadSegs_DeePBSP (int lump)
 	    li->v2 = tmp;
 	}
 
-	li->angle = (SHORT(ml->angle))<<16;
+	li->angle = (SHORT(ml->angle))<<FRACBITS;
 
 	if (crispy_fliplevels)
 	    li->angle = -li->angle;
 
-//	li->offset = (SHORT(ml->offset))<<16; // [crispy] recalculated below
+//	li->offset = (SHORT(ml->offset))<<FRACBITS; // [crispy] recalculated below
 	linedef = (unsigned short)SHORT(ml->linedef);
 	ldef = &lines[linedef];
 	li->linedef = ldef;

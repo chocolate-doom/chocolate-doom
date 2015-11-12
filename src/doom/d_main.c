@@ -251,12 +251,12 @@ void D_Display (void)
 	    R_RenderPlayerView (&players[displayplayer]);
 	    AM_Drawer ();
 	}
-	if (wipe || (scaledviewheight != (200 << hires) && fullscreen) || disk_indicator == disk_dirty)
+	if (wipe || (scaledviewheight != SCREENHEIGHT && fullscreen) || disk_indicator == disk_dirty)
 	    redrawsbar = true;
 	if (inhelpscreensstate && !inhelpscreens)
 	    redrawsbar = true;              // just put away the help screen
-	ST_Drawer (scaledviewheight == (200 << hires), redrawsbar );
-	fullscreen = scaledviewheight == (200 << hires);
+	ST_Drawer (scaledviewheight == SCREENHEIGHT, redrawsbar );
+	fullscreen = scaledviewheight == SCREENHEIGHT;
 	break;
 
       case GS_INTERMISSION:
@@ -309,7 +309,7 @@ void D_Display (void)
     }
 
     // see if the border needs to be updated to the screen
-    if (gamestate == GS_LEVEL && (!automapactive || crispy_automapoverlay) && scaledviewwidth != (320 << hires))
+    if (gamestate == GS_LEVEL && (!automapactive || crispy_automapoverlay) && scaledviewwidth != SCREENWIDTH)
     {
 	if (menuactive || menuactivestate || !viewactivestate)
 	    borderdrawcount = 3;

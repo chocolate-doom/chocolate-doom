@@ -100,8 +100,8 @@
 
 // translates between frame-buffer and map distances
 // [crispy] fix int overflow that causes map and grid lines to disappear
-#define FTOM(x) (((int64_t)((x)<<16) * scale_ftom) >> FRACBITS)
-#define MTOF(x) ((((int64_t)(x) * scale_mtof) >> FRACBITS)>>16)
+#define FTOM(x) (((int64_t)((x)<<FRACBITS) * scale_ftom) >> FRACBITS)
+#define MTOF(x) ((((int64_t)(x) * scale_mtof) >> FRACBITS)>>FRACBITS)
 // translates between frame-buffer and map coordinates
 #define CXMTOF(x)  (f_x + MTOF((x)-m_x))
 #define CYMTOF(y)  (f_y + (f_h - MTOF((y)-m_y)))
@@ -212,7 +212,7 @@ static int 	leveljuststarted = 1; 	// kluge until AM_LevelInit() is called
 
 boolean    	automapactive = false;
 static int 	finit_width = SCREENWIDTH;
-static int 	finit_height = SCREENHEIGHT - (32 << hires);
+static int 	finit_height = SCREENHEIGHT - (ST_HEIGHT << hires);
 
 // location of window on screen
 static int 	f_x;

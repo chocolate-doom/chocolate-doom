@@ -26,6 +26,7 @@
 
 #define RESPONSE_FILE "/tmp/launcher.rsp"
 #define TEMP_SCRIPT "/tmp/tempscript.sh"
+#define WINDOW_TITLE PACKAGE_STRING " command prompt"
 
 static char *executable_path;
 
@@ -182,6 +183,9 @@ void OpenTerminalWindow(const char *doomwadpath)
     fprintf(stream, "DOOMWADPATH=\"%s\"\n", doomwadpath);
     fprintf(stream, "export DOOMWADPATH\n");
     fprintf(stream, "rm -f \"%s\"\n", TEMP_SCRIPT);
+
+    // Window title to something more interesting than "tempscript":
+    fprintf(stream, "echo -en \"\\033]0;%s\\a\"\n", WINDOW_TITLE);
 
     // Display a useful message:
 

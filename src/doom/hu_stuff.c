@@ -32,6 +32,7 @@
 #include "m_controls.h"
 #include "m_misc.h"
 #include "w_wad.h"
+#include "st_stuff.h" // [crispy] ST_HEIGHT
 
 #include "s_sound.h"
 
@@ -64,7 +65,7 @@
 #define HU_INPUTWIDTH	64
 #define HU_INPUTHEIGHT	1
 
-#define HU_COORDX	(320 - 8 * hu_font['A'-HU_FONTSTART]->width)
+#define HU_COORDX	(ORIGWIDTH - 8 * hu_font['A'-HU_FONTSTART]->width)
 
 
 char *chat_macros[10] =
@@ -645,7 +646,7 @@ static void HU_DrawCrosshair (void)
 
     dp_translucent = true;
 
-    V_DrawPatch(160-SHORT(patch->width/2), (screenblocks <= 10) ? 84 : 100, patch);
+    V_DrawPatch(ORIGWIDTH/2-SHORT(patch->width/2), (screenblocks <= 10) ? (ORIGHEIGHT-ST_HEIGHT)/2 : ORIGHEIGHT/2, patch);
 }
 
 void HU_Drawer(void)
@@ -675,7 +676,7 @@ void HU_Drawer(void)
     {
 	// [crispy] move map title to the bottom
 	if (crispy_automapoverlay && screenblocks >= CRISPY_HUD - 1)
-	    w_title.y = HU_TITLEY + 32; // [crispy] 32 == ST_HEIGHT
+	    w_title.y = HU_TITLEY + ST_HEIGHT;
 	else
 	    w_title.y = HU_TITLEY;
 

@@ -527,7 +527,7 @@ fixed_t R_ScaleFromGlobalAngle (angle_t visangle)
     num = FixedMul(projection,sineb)<<(detailshift && !hires);
     den = FixedMul(rw_distance,sinea);
 
-    if (den > num>>16)
+    if (den > num>>FRACBITS)
     {
 	scale = FixedDiv (num, den);
 
@@ -962,7 +962,7 @@ void R_SetupFrame (player_t* player)
     {
 	fixedcolormap =
 	    colormaps
-	    + player->fixedcolormap*256*sizeof(lighttable_t);
+	    + player->fixedcolormap*256;
 	
 	walllights = scalelightfixed;
 

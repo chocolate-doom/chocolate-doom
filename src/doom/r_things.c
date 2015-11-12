@@ -40,7 +40,7 @@
 
 
 #define MINZ				(FRACUNIT*4)
-#define BASEYCENTER			100
+#define BASEYCENTER			(ORIGHEIGHT/2)
 
 //void R_DrawColumn (void);
 //void R_DrawFuzzColumn (void);
@@ -855,7 +855,7 @@ void R_DrawPSprite (pspdef_t* psp, psprnum_t psprnum) // [crispy] differentiate 
     flip = (boolean)sprframe->flip[0];
     
     // calculate edges of the shape
-    tx = psp->sx-160*FRACUNIT;
+    tx = psp->sx-(ORIGWIDTH/2)*FRACUNIT;
 	
     tx -= spriteoffset[lump];	
     x1 = (centerxfrac + FixedMul (tx,pspritescale) ) >>FRACBITS;

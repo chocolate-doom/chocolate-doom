@@ -1163,8 +1163,8 @@ P_AimLineAttack
     shootz = t1->z + (t1->height>>1) + 8*FRACUNIT;
 
     // can't shoot outside view angles
-    topslope = 100*FRACUNIT/160;	
-    bottomslope = -100*FRACUNIT/160;
+    topslope = (SCREENHEIGHT/2)*FRACUNIT/(SCREENWIDTH/2);	
+    bottomslope = -(SCREENHEIGHT/2)*FRACUNIT/(SCREENWIDTH/2);
     
     attackrange = distance;
     linetarget = NULL;

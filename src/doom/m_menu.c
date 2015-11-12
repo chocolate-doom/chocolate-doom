@@ -1324,7 +1324,7 @@ static void M_DrawCrispnessHeader(char *item)
 
     M_snprintf(crispy_menu_text, sizeof(crispy_menu_text),
                "%s%s", crstr[CR_GOLD], item);
-    M_WriteText(160 - M_StringWidth(item) / 2, 20, crispy_menu_text);
+    M_WriteText(ORIGWIDTH/2 - M_StringWidth(item) / 2, 20, crispy_menu_text);
 }
 
 static void M_DrawCrispnessSeparator(int y, char *item)
@@ -2825,7 +2825,7 @@ void M_Drawer (void)
     if (messageToPrint)
     {
 	start = 0;
-	y = 100 - M_StringHeight(messageString) / 2;
+	y = ORIGHEIGHT/2 - M_StringHeight(messageString) / 2;
 	while (messageString[start] != '\0')
 	{
 	    int foundnewline = 0;
@@ -2853,7 +2853,7 @@ void M_Drawer (void)
                 start += strlen(string);
             }
 
-	    x = 160 - M_StringWidth(string) / 2;
+	    x = ORIGWIDTH/2 - M_StringWidth(string) / 2;
 	    M_WriteText(x > 0 ? x : 0, y, string); // [crispy] prevent negative x-coords
 	    y += SHORT(hu_font[0]->height);
 	}
