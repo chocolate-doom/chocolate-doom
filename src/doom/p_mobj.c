@@ -695,6 +695,8 @@ void P_RespawnSpecials (void)
 
 
 
+// [crispy] count map things
+int mapthingcounter = -1;
 
 //
 // P_SpawnPlayer
@@ -740,6 +742,9 @@ void P_SpawnPlayer (mapthing_t* mthing)
     mobj->player = p;
     mobj->health = p->health;
 
+    // [crispy] count map things
+    mobj->num = mapthingcounter;
+
     p->mo = mobj;
     p->playerstate = PST_LIVE;	
     p->refire = 0;
@@ -767,8 +772,6 @@ void P_SpawnPlayer (mapthing_t* mthing)
     }
 }
 
-// [crispy] count map things
-int mapthingcounter = -1;
 
 //
 // P_SpawnMapThing
