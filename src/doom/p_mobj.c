@@ -768,7 +768,7 @@ void P_SpawnPlayer (mapthing_t* mthing)
 }
 
 // [crispy] count map things
-int mapthingcounter = 0;
+int mapthingcounter = -1;
 
 //
 // P_SpawnMapThing
@@ -784,6 +784,9 @@ void P_SpawnMapThing (mapthing_t* mthing)
     fixed_t		y;
     fixed_t		z;
 		
+    // [crispy] count map things
+    mapthingcounter++;
+
     // count deathmatch start positions
     if (mthing->type == 11)
     {
@@ -878,7 +881,7 @@ void P_SpawnMapThing (mapthing_t* mthing)
 	mobj->flags |= MF_AMBUSH;
 
     // [crispy] count map things
-    mobj->num = mapthingcounter++;
+    mobj->num = mapthingcounter;
 
     // [crispy] Lost Souls bleed Puffs
     if ((crispy_coloredblood & COLOREDBLOOD_FIX) && i == MT_SKULL)

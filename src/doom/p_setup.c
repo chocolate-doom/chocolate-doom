@@ -935,7 +935,7 @@ void P_LoadThings (int lump)
     data = W_CacheLumpNum (lump,PU_STATIC);
     numthings = W_LumpLength (lump) / sizeof(mapthing_t);
     // [crispy] reset map thing counter
-    mapthingcounter = 0;
+    mapthingcounter = -1;
 	
     mt = (mapthing_t *)data;
     for (i=0 ; i<numthings ; i++, mt++)
