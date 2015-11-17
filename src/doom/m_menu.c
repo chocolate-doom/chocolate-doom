@@ -1303,7 +1303,7 @@ static void M_DrawCrispnessBackground(void)
 	int x, y;
 
 	src = W_CacheLumpName("FLOOR4_6" , PU_CACHE);
-	dest = (unsigned char *) Z_Malloc (SCREENWIDTH * SCREENHEIGHT, PU_STATIC, NULL);
+	dest = (unsigned char *) Z_Malloc (SCREENWIDTH * SCREENHEIGHT * sizeof(*dest), PU_STATIC, NULL);
 	sdest = dest;
 
 	for (y = 0; y < SCREENHEIGHT; y++)
@@ -1315,7 +1315,7 @@ static void M_DrawCrispnessBackground(void)
 	}
     }
 
-    memcpy(I_VideoBuffer, sdest, SCREENWIDTH * SCREENHEIGHT);
+    memcpy(I_VideoBuffer, sdest, SCREENWIDTH * SCREENHEIGHT * sizeof(*I_VideoBuffer));
 }
 
 static void M_DrawCrispnessHeader(char *item)
