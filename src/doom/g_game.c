@@ -506,15 +506,8 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
             kbdlookctrl += ticdup;
         }
         else
-        if (gamekeydown[key_lookcenter])
-        {
-            look = TOCENTER;
-            kbdlookctrl = 0;
-        }
-
         // [crispy] keyboard lookspring
-        if (crispy_freelook == FREELOOK_SPRING && kbdlookctrl &&
-            !gamekeydown[key_lookup] && !gamekeydown[key_lookdown])
+        if (gamekeydown[key_lookcenter] || (crispy_freelook == FREELOOK_SPRING && kbdlookctrl))
         {
             look = TOCENTER;
             kbdlookctrl = 0;
