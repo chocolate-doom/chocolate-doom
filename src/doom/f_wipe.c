@@ -67,7 +67,7 @@ wipe_initColorXForm
   int	height,
   int	ticks )
 {
-    memcpy(wipe_scr, wipe_scr_start, width*height);
+    memcpy(wipe_scr, wipe_scr_start, width*height*sizeof(*wipe_scr));
     return 0;
 }
 
@@ -138,7 +138,7 @@ wipe_initMelt
     int i, r;
     
     // copy start screen to main screen
-    memcpy(wipe_scr, wipe_scr_start, width*height);
+    memcpy(wipe_scr, wipe_scr_start, width*height*sizeof(*wipe_scr));
     
     // makes this wipe faster (in theory)
     // to have stuff in column-major format
@@ -234,7 +234,7 @@ wipe_StartScreen
   int	width,
   int	height )
 {
-    wipe_scr_start = Z_Malloc(SCREENWIDTH * SCREENHEIGHT, PU_STATIC, NULL);
+    wipe_scr_start = Z_Malloc(SCREENWIDTH * SCREENHEIGHT * sizeof(*wipe_scr_start), PU_STATIC, NULL);
     I_ReadScreen(wipe_scr_start);
     return 0;
 }
@@ -246,7 +246,7 @@ wipe_EndScreen
   int	width,
   int	height )
 {
-    wipe_scr_end = Z_Malloc(SCREENWIDTH * SCREENHEIGHT, PU_STATIC, NULL);
+    wipe_scr_end = Z_Malloc(SCREENWIDTH * SCREENHEIGHT * sizeof(*wipe_scr_end), PU_STATIC, NULL);
     I_ReadScreen(wipe_scr_end);
     V_DrawBlock(x, y, width, height, wipe_scr_start); // restore start scr.
     return 0;
