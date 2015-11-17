@@ -910,7 +910,7 @@ void AM_Ticker (void)
 //
 void AM_clearFB(int color)
 {
-    memset(fb, color, f_w*f_h);
+    memset(fb, color, f_w*f_h*sizeof(*fb));
 }
 
 
