@@ -664,13 +664,15 @@ void HU_Drawer(void)
     if (screenblocks > CRISPY_HUD && (!automapactive || crispy_automapoverlay))
 	dp_translucent = true;
 
+    dp_translation = cr[CR_GOLD];
+    HUlib_drawSText(&w_secret);
+
     V_ClearDPTranslation();
     HUlib_drawSText(&w_message);
     HUlib_drawIText(&w_chat);
 
     if (crispy_coloredhud & COLOREDHUD_TEXT)
 	dp_translation = cr[CR_GOLD];
-    HUlib_drawSText(&w_secret);
 
     if (automapactive)
     {
