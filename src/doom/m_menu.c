@@ -2085,7 +2085,7 @@ M_WriteText
 	if (c == '\x1b')
 	{
 	    c = *ch++;
-	    dp_translation = (crispy_coloredhud & COLOREDHUD_TEXT) ? cr[(int) (c - '0')] : NULL;
+	    dp_translation = cr[(int) (c - '0')];
 	    continue;
 	}
 		
