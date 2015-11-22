@@ -1768,8 +1768,11 @@ static void M_CrispyToggleCenterweapon(int choice)
 
 static void M_CrispyToggleColoredblood(int choice)
 {
+    // [crispy] preserve coloredblood_fix value when switching colored blood and corpses
+    const int coloredblood_fix = crispy_coloredblood & COLOREDBLOOD_FIX;
     choice = 0;
     crispy_coloredblood = (crispy_coloredblood + 1) % NUM_COLOREDBLOOD;
+    crispy_coloredblood |= coloredblood_fix;
 }
 
 static void M_CrispyToggleColoredblood2(int choice)
