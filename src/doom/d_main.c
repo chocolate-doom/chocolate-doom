@@ -1751,6 +1751,8 @@ void D_DoomMain (void)
 
     if (p)
     {
+	int merged;
+
 	if (M_StringEndsWith(myargv[p + 1], ".wad"))
 	{
 	    M_StringCopy(file, myargv[p + 1], sizeof(file));
@@ -1760,9 +1762,9 @@ void D_DoomMain (void)
 	    DEH_snprintf(file, sizeof(file), "%s.wad", myargv[p+1]);
 	}
 
-	if (W_MergeDump(file))
+	if ((merged = W_MergeDump(file)))
 	{
-	    printf("Merging into file %s.\n", file);
+	    printf("W_MergeDump: Merging %d lumps into file %s.\n", merged, file);
 	    I_Quit();
 	}
     }
