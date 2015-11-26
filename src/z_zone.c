@@ -564,7 +564,7 @@ void *crispy_realloc(void *ptr, size_t size)
 
     newp = realloc(ptr, size);
 
-    if (!newp)
+    if (!newp && size)
     {
 	I_Error ("crispy_realloc: failed on (re-)allocation of %i bytes", size);
     }
