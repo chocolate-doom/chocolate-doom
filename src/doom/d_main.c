@@ -1747,25 +1747,31 @@ void D_DoomMain (void)
     // merges PWADs into the main IWAD and writes the merged data into <file>
     //
 
-    p = M_CheckParmWithArgs ("-mergedump", 1);
+    p = M_CheckParm("-mergedump");
 
     if (p)
     {
-	int merged;
+	p = M_CheckParmWithArgs("-mergedump", 1);
 
-	if (M_StringEndsWith(myargv[p + 1], ".wad"))
+	if (p)
 	{
-	    M_StringCopy(file, myargv[p + 1], sizeof(file));
+	    int merged;
+
+	    if (M_StringEndsWith(myargv[p+1], ".wad"))
+	    {
+		M_StringCopy(file, myargv[p+1], sizeof(file));
+	    }
+	    else
+	    {
+		DEH_snprintf(file, sizeof(file), "%s.wad", myargv[p+1]);
+	    }
+
+	    merged = W_MergeDump(file);
+	    I_Error("W_MergeDump: Merged %d lumps into file '%s'.", merged, file);
 	}
 	else
 	{
-	    DEH_snprintf(file, sizeof(file), "%s.wad", myargv[p+1]);
-	}
-
-	if ((merged = W_MergeDump(file)))
-	{
-	    printf("W_MergeDump: Merging %d lumps into file %s.\n", merged, file);
-	    I_Quit();
+	    I_Error("W_MergeDump: The '-mergedump' parameter requires an argument.");
 	}
     }
 
