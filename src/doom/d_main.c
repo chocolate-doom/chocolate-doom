@@ -1683,7 +1683,6 @@ void D_DoomMain (void)
     if (!M_ParmExists("-nodeh") && !M_ParmExists("-noload"))
     {
 	int i;
-	char file[16];
 
 	for (i = 0; i < 10; i++)
 	{
@@ -1716,7 +1715,6 @@ void D_DoomMain (void)
     if (!M_ParmExists("-noload") && gamemode != shareware)
     {
 	int i;
-	char file[16];
 	extern void W_MergeFile(char *filename);
 
 	for (i = 0; i < 10; i++)
