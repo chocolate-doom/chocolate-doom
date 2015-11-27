@@ -736,13 +736,18 @@ int W_MergeDump (const char *file)
     directory_t *dir = NULL;
 
     // open file for writing
-    if (!(fp = fopen(file, "wb")))
-	I_Error("Failed writing to file %s!", file);
+    fp = fopen(file, "wb");
+    if (!fp)
+    {
+	I_Error("W_MergeDump: Failed writing to file '%s'!", file);
+    }
 
     // prepare directory
-    if (!(dir = malloc(numlumps * sizeof(*dir))))
-	I_Error("Failed allocating memory!");
-    memset(dir, 0, numlumps * sizeof(*dir));
+    dir = calloc(numlumps, sizeof(*dir));
+    if (!dir)
+    {
+	I_Error("W_MergeDump: Error allocating memory!");
+    }
 
     // write lumps to file, starting at offset 12
     fseek(fp, 12, SEEK_SET);
@@ -761,7 +766,7 @@ int W_MergeDump (const char *file)
 
     // write directory
     dir_p = ftell(fp);
-    fwrite(dir, sizeof(*dir), numlumps, fp);
+    fwrite(dir, sizeof(*dir), i, fp);
     free(dir);
 
     // write WAD header
