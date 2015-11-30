@@ -58,19 +58,22 @@
 #endif
 
 // Past distributions
-#ifndef VER_ID
-#define VER_ID "DVL"
-#endif
+//#ifndef VER_ID
+//#define VER_ID "DVL"
+//#endif
 //#define HEXEN_VERSIONTEXT "ID V1.2"
 //#define HEXEN_VERSIONTEXT "RETAIL STORE BETA"               // 9/26/95
 //#define HEXEN_VERSIONTEXT "DVL BETA 10 05 95" // Used for GT for testing
 //#define HEXEN_VERSIONTEXT "DVL BETA 10 07 95" // Just an update for Romero
 //#define HEXEN_VERSIONTEXT "FINAL 1.0 (10 13 95)" // Just an update for Romero
-#ifdef RANGECHECK
-#define HEXEN_VERSIONTEXT "Version 1.1 +R "__DATE__" ("VER_ID")"
-#else
-#define HEXEN_VERSIONTEXT "Version 1.1 "__DATE__" ("VER_ID")"
-#endif
+//#ifdef RANGECHECK
+//#define HEXEN_VERSIONTEXT "Version 1.1 +R "__DATE__" ("VER_ID")"
+//#else
+//#define HEXEN_VERSIONTEXT "Version 1.1 "__DATE__" ("VER_ID")"
+//#endif
+#define HEXEN_VERSIONTEXT ((gamemode == shareware) ? \
+                           "DEMO 10 16 95" : \
+                           "VERSION 1.1 MAR 22 1996 (BCP)")
 
 // all exterior data is defined here
 #include "xddefs.h"
