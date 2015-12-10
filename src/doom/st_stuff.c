@@ -26,6 +26,7 @@
 #include "i_system.h"
 #include "i_video.h"
 #include "z_zone.h"
+#include "m_argv.h" // [crispy] M_ParmExists()
 #include "m_misc.h"
 #include "m_random.h"
 #include "w_wad.h"
@@ -1931,7 +1932,8 @@ void ST_Stop (void)
 void ST_Init (void)
 {
     // [crispy] colorize the confusing 'behold' power-up menu
-    if (!strcmp(STSTR_BEHOLD, DEH_String(STSTR_BEHOLD)))
+    if (!strcmp(STSTR_BEHOLD, DEH_String(STSTR_BEHOLD)) &&
+        !M_ParmExists("-nodeh"))
     {
 	char str_behold[80];
 	M_snprintf(str_behold, sizeof(str_behold),
