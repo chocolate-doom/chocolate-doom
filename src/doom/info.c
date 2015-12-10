@@ -161,7 +161,8 @@ state_t	states[NUMSTATES] = {
     {SPR_SHT2,0,1,{A_Lower},S_DSGUNDOWN,0,0},	// S_DSGUNDOWN
     {SPR_SHT2,0,1,{A_Raise},S_DSGUNUP,0,0},	// S_DSGUNUP
     {SPR_SHT2,0,3,{NULL},S_DSGUN2,0,0},	// S_DSGUN1
-    {SPR_SHT2,0,7,{A_FireShotgun2},S_DSGUN3,0,0},	// S_DSGUN2
+    // [crispy] killough 9/5/98: make SSG lighting flash more uniform along super shotgun
+    {SPR_SHT2,0|32768,7,{A_FireShotgun2},S_DSGUN3,0,0},	// S_DSGUN2
     {SPR_SHT2,1,7,{NULL},S_DSGUN4,0,0},	// S_DSGUN3
     {SPR_SHT2,2,7,{A_CheckReload},S_DSGUN5,0,0},	// S_DSGUN4
     {SPR_SHT2,3,7,{A_OpenShotgun2},S_DSGUN6,0,0},	// S_DSGUN5
@@ -172,7 +173,9 @@ state_t	states[NUMSTATES] = {
     {SPR_SHT2,0,5,{A_ReFire},S_DSGUN,0,0},	// S_DSGUN10
     {SPR_SHT2,1,7,{NULL},S_DSNR2,0,0},	// S_DSNR1
     {SPR_SHT2,0,3,{NULL},S_DSGUNDOWN,0,0},	// S_DSNR2
-    {SPR_SHT2,32776,5,{A_Light1},S_DSGUNFLASH2,0,0},	// S_DSGUNFLASH1
+    // [crispy] killough 8/20/98: reduce first SSG flash frame one tic, to fix
+    // Doom II SSG flash bug, in which SSG raises before flash finishes
+    {SPR_SHT2,32776,5-1,{A_Light1},S_DSGUNFLASH2,0,0},	// S_DSGUNFLASH1
     {SPR_SHT2,32777,4,{A_Light2},S_LIGHTDONE,0,0},	// S_DSGUNFLASH2
     {SPR_CHGG,0,1,{A_WeaponReady},S_CHAIN,0,0},	// S_CHAIN
     {SPR_CHGG,0,1,{A_Lower},S_CHAINDOWN,0,0},	// S_CHAINDOWN
