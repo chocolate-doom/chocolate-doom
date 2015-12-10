@@ -279,7 +279,13 @@ void P_FireWeapon (player_t* player)
 
     // [crispy] center the weapon sprite horizontally
     if (crispy_centerweapon)
-	player->psprites[ps_weapon].sx = FRACUNIT;
+    {
+	// [crispy] do not override state's misc1 if set
+	if (!player->psprites[ps_weapon].state->misc1)
+	{
+	    player->psprites[ps_weapon].sx = FRACUNIT;
+	}
+    }
 }
 
 
