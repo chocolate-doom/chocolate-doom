@@ -61,7 +61,7 @@ int SlopeDiv(unsigned int num, unsigned int den)
     }
 }
 
-const int finetangent[4096] =
+const fixed_t finetangent[4096] =
 {
     -170910304,-56965752,-34178904,-24413316,-18988036,-15535599,-13145455,-11392683,
     -10052327,-8994149,-8137527,-7429880,-6835455,-6329090,-5892567,-5512368,
@@ -578,7 +578,7 @@ const int finetangent[4096] =
 };
 
 
-const int finesine[10240] =
+const fixed_t finesine[10240] =
 {
     25,75,125,175,226,276,326,376,
     427,477,527,578,628,678,728,779,
