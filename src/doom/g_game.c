@@ -1921,9 +1921,10 @@ void G_DoSaveGame (void)
     // [crispy] some logging when saving
     {
 	const int time = leveltime / TICRATE;
+	extern const char *skilltable[];
 
-	fprintf(stderr, "G_DoSaveGame: Episode %d, Map %d, Skill %d, Time %d:%02d.\n",
-	        gameepisode, gamemap, gameskill, time/60, time%60);
+	fprintf(stderr, "G_DoSaveGame: Episode %d, Map %d, Skill %s, Time %d:%02d.\n",
+	        gameepisode, gamemap, skilltable[BETWEEN(0,5,(int) gameskill+1)], time/60, time%60);
     }
 
     P_ArchivePlayers (); 

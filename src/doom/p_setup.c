@@ -1849,6 +1849,17 @@ static mapformat_t P_CheckMapFormat (int lumpnum)
     return format;
 }
 
+// [crispy] log game skill in plain text
+const char *skilltable[] =
+{
+    "No Items",
+    "Baby",
+    "Easy",
+    "Normal",
+    "Hard",
+    "Nightmare"
+};
+
 //
 // P_SetupLevel
 //
@@ -1943,8 +1954,8 @@ P_SetupLevel
 	extern int savedleveltime;
 	const int time = savedleveltime / TICRATE;
 
-	fprintf(stderr, "P_SetupLevel: %s (%s), Skill %d, Time %d:%02d, ",
-	    lumpname, lumpinfo[lumpnum]->wad_file->path, (int) skill, time/60, time%60);
+	fprintf(stderr, "P_SetupLevel: %s (%s), Skill %s, Time %d:%02d, ",
+	    lumpname, lumpinfo[lumpnum]->wad_file->path, skilltable[BETWEEN(0,5,(int) skill+1)], time/60, time%60);
     }
     // [crispy] check and log map and nodes format
     crispy_mapformat = P_CheckMapFormat(lumpnum);
