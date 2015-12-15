@@ -490,7 +490,7 @@ static int ST_cheat_spechits()
     boolean origcards[NUMCARDS];
     line_t dummy;
 
-    // temporarily give all keys
+    // [crispy] temporarily give all keys
     for (i = 0; i < NUMCARDS; i++)
     {
 	origcards[i] = plyr->cards[i];
@@ -501,15 +501,26 @@ static int ST_cheat_spechits()
     {
 	if (lines[i].special)
 	{
-	    // do not trigger level exit switches/lines or teleporters
+	    // [crispy] do not trigger level exit switches/lines or teleporters
 	    if (lines[i].special == 11 || lines[i].special == 51 ||
 	        lines[i].special == 52 || lines[i].special == 124 ||
 	        lines[i].special == 39 || lines[i].special == 97)
+	    {
 	        continue;
+	    }
 
-	    P_CrossSpecialLine (i, 0, plyr->mo);
-	    P_ShootSpecialLine (plyr->mo, &lines[i]);
-	    P_UseSpecialLine (plyr->mo, &lines[i], 0);
+	    // [crispy] special without tag --> DR linedef type
+	    // do not change door direction if it is already moving
+	    if (lines[i].tag == 0 &&
+	        lines[i].sidenum[1] != NO_INDEX &&
+	        sides[lines[i].sidenum[1]].sector->specialdata)
+	    {
+	        continue;
+	    }
+
+	    P_CrossSpecialLine(i, 0, plyr->mo);
+	    P_ShootSpecialLine(plyr->mo, &lines[i]);
+	    P_UseSpecialLine(plyr->mo, &lines[i], 0);
 
 	    speciallines++;
 	}
