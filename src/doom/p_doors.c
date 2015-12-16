@@ -421,7 +421,11 @@ EV_VerticalDoor
 	  case	28:
 	  case	117:
 	    if (door->direction == -1)
+	    {
 		door->direction = 1;	// go back up
+		// [crispy] play sound effect when the door is opened again while going down
+		S_StartSound(&door->sector->soundorg, line->special == 117 ? sfx_bdopn : sfx_doropn);
+	    }
 	    else
 	    {
 		if (!thing->player)
@@ -461,6 +465,8 @@ EV_VerticalDoor
 
                     door->direction = -1;
                 }
+                // [crispy] play sound effect when the door is closed manually
+                S_StartSound(&door->sector->soundorg, line->special == 117 ? sfx_bdcls : sfx_dorcls);
 	    }
 	    return;
 	}
