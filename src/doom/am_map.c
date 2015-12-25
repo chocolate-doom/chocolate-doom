@@ -99,8 +99,8 @@
 #define M_ZOOMOUT       ((int) (FRACUNIT/1.02))
 
 // translates between frame-buffer and map distances
-#define FTOM(x) FixedMul(((x)<<16),scale_ftom)
-#define MTOF(x) (FixedMul((x),scale_mtof)>>16)
+#define FTOM(x) FixedMul(((x)<<FRACBITS),scale_ftom)
+#define MTOF(x) (FixedMul((x),scale_mtof)>>FRACBITS)
 // translates between frame-buffer and map coordinates
 #define CXMTOF(x)  (f_x + MTOF((x)-m_x))
 #define CYMTOF(y)  (f_y + (f_h - MTOF((y)-m_y)))
@@ -199,7 +199,7 @@ static int 	leveljuststarted = 1; 	// kluge until AM_LevelInit() is called
 
 boolean    	automapactive = false;
 static int 	finit_width = SCREENWIDTH;
-static int 	finit_height = SCREENHEIGHT - 32;
+static int 	finit_height = SCREENHEIGHT - ST_HEIGHT;
 
 // location of window on screen
 static int 	f_x;
@@ -833,7 +833,7 @@ void AM_Ticker (void)
 //
 void AM_clearFB(int color)
 {
-    memset(fb, color, f_w*f_h);
+    memset(fb, color, f_w*f_h*sizeof(*fb));
 }
 
 

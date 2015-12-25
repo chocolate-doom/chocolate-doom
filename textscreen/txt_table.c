@@ -149,11 +149,8 @@ static void CalculateWidgetDimensions(txt_table_t *table,
                                       unsigned int *row_heights,
                                       unsigned int *w, unsigned int *h)
 {
-    txt_widget_t *widget;
     int cell_w, cell_h;
     int x1, y1;
-
-    widget = table->widgets[y * table->columns + x];
 
     // Find which cells this widget occupies.
     CellOverflowedSize(table, x, y, &cell_w, &cell_h);
