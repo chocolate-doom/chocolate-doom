@@ -568,7 +568,17 @@ static int GetTypedChar(SDL_Event *event)
     // Otherwise we should use the native key mapping.
     if (vanilla_keyboard_mapping)
     {
-        return TranslateKey(&event->key.keysym);
+        int result = TranslateKey(&event->key.keysym);
+
+        // If shift is held down, apply the original uppercase
+        // translation table used under DOS.
+        if ((SDL_GetModState() & KMOD_SHIFT) != 0
+         && result >= 0 && result < arrlen(shiftxform))
+        {
+            result = shiftxform[result];
+        }
+
+        return result;
     }
     else
     {
@@ -702,11 +712,6 @@ void I_GetEvent(void)
                 event.type = ev_keydown;
                 event.data1 = TranslateKey(&sdlevent.key.keysym);
                 event.data2 = GetTypedChar(&sdlevent);
-
-                // SDL2-TODO: Need to generate a parallel text input event
-                // here that can be used for typing text, eg. multiplayer
-                // chat and savegame names. This is only for the Vanilla
-                // case; we must use the shiftxform table.
 
                 if (event.data1 != 0)
                 {
