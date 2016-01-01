@@ -225,10 +225,6 @@ static grabmouse_callback_t grabmouse_callback = NULL;
 
 static boolean window_focused = true;
 
-// Empty mouse cursor
-
-static SDL_Cursor *cursors[2];
-
 // Window resize state.
 
 static boolean need_resize = false;
@@ -1258,21 +1254,6 @@ void I_CheckIsScreensaver(void)
     }
 }
 
-static void CreateCursors(void)
-{
-    static Uint8 empty_cursor_data = 0;
-
-    // Save the default cursor so it can be recalled later
-
-    cursors[1] = SDL_GetCursor();
-
-    // Create an empty cursor
-
-    cursors[0] = SDL_CreateCursor(&empty_cursor_data,
-                                  &empty_cursor_data,
-                                  1, 1, 0, 0);
-}
-
 static void SetSDLVideoDriver(void)
 {
     // Allow a default value for the SDL video driver to be specified
@@ -1511,8 +1492,6 @@ void I_InitGraphics(void)
     doompal = W_CacheLumpName(DEH_String("PLAYPAL"), PU_CACHE);
     I_SetPalette(doompal);
     SDL_SetPaletteColors(screenbuffer->format->palette, palette, 0, 256);
-
-    CreateCursors();
 
     // SDL2-TODO UpdateFocus();
     UpdateGrab();
