@@ -164,12 +164,7 @@ int show_diskicon = 1;
 // Only display the disk icon if more then this much bytes have been read
 // during the previous tic.
 
-static const int diskicon_threshold = 20*1024;
 int diskicon_readbytes = 0;
-
-// if true, I_VideoBuffer is screen->pixels
-
-static boolean native_surface;
 
 // Screen width and height, from configuration file.
 
@@ -226,11 +221,8 @@ static boolean noblit;
 
 static grabmouse_callback_t grabmouse_callback = NULL;
 
-// disk image data and background overwritten by the disk to be
-// restored by EndRead
+// Does the window currently have focus?
 
-static byte *disk_image = NULL;
-static byte *saved_background;
 static boolean window_focused = true;
 
 // Empty mouse cursor
