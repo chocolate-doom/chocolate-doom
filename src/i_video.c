@@ -39,7 +39,6 @@
 #include "i_swap.h"
 #include "i_timer.h"
 #include "i_video.h"
-#include "i_scale.h"
 #include "m_argv.h"
 #include "m_config.h"
 #include "m_misc.h"
@@ -92,39 +91,6 @@ static const char shiftxform[] =
     'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
     '{', '|', '}', '~', 127
 };
-
-#if 0 // obsolete software scaling routines
-
-// Non aspect ratio-corrected modes (direct multiples of 320x200)
-
-static screen_mode_t *screen_modes[] = {
-    &mode_scale_1x,
-    &mode_scale_2x,
-    &mode_scale_3x,
-    &mode_scale_4x,
-    &mode_scale_5x,
-};
-
-// Aspect ratio corrected modes (4:3 ratio)
-
-static screen_mode_t *screen_modes_corrected[] = {
-
-    // Vertically stretched modes (320x200 -> 320x240 and multiples)
-
-    &mode_stretch_1x,
-    &mode_stretch_2x,
-    &mode_stretch_3x,
-    &mode_stretch_4x,
-    &mode_stretch_5x,
-
-    // Horizontally squashed modes (320x200 -> 256x200 and multiples)
-
-    &mode_squash_1x,
-    &mode_squash_2x,
-    &mode_squash_3x,
-    &mode_squash_4x,
-};
-#endif
 
 // SDL video driver name
 
@@ -271,10 +237,6 @@ static boolean window_focused = true;
 
 static SDL_Cursor *cursors[2];
 
-// The screen mode and scale functions being used
-
-static screen_mode_t *screen_mode;
-
 // Window resize state.
 
 static boolean need_resize = false;
@@ -306,10 +268,6 @@ int mouse_threshold = 10;
 // Gamma correction level to use
 
 int usegamma = 0;
-
-#if 0 // obsolete software scaling routines
-static void ApplyWindowResize(unsigned int w, unsigned int h);
-#endif
 
 static boolean MouseShouldBeGrabbed()
 {
@@ -862,40 +820,6 @@ static void UpdateGrab(void)
 
 }
 
-#if 0 // obsolete software scaling routines
-// Update a small portion of the screen
-//
-// Does stretching and buffer blitting if neccessary
-//
-// Return true if blit was successful.
-
-static boolean BlitArea(int x1, int y1, int x2, int y2)
-{
-    int x_offset, y_offset;
-    boolean result;
-
-    x_offset = (screenbuffer->w - screen_mode->width) / 2;
-    y_offset = (screenbuffer->h - screen_mode->height) / 2;
-
-    if (SDL_LockSurface(screenbuffer) >= 0)
-    {
-        I_InitScale(I_VideoBuffer,
-                    (byte *) screenbuffer->pixels
-                                + (y_offset * screenbuffer->pitch)
-                                + x_offset,
-                    screenbuffer->pitch);
-        result = screen_mode->DrawScreen(x1, y1, x2, y2);
-      	SDL_UnlockSurface(screenbuffer);
-    }
-    else
-    {
-        result = false;
-    }
-
-    return result;
-}
-#endif
-
 static void CreateUpscaledTexture(int w, int h)
 {
     const int actualheight = aspect_ratio_correct ?
@@ -984,10 +908,6 @@ static void CreateUpscaledTexture(int w, int h)
 void I_FinishUpdate (void)
 {
     static int lasttic;
-#if 0 // obsolete software scaling routines
-    SDL_Rect dst_rect;
-    int screen_w, screen_h;
-#endif
     int tics;
     int i;
 
@@ -999,9 +919,6 @@ void I_FinishUpdate (void)
 
     if (need_resize && SDL_GetTicks() > last_resize_time + 1000/TICRATE)
     {
-#if 0 // obsolete software scaling reoutines
-        ApplyWindowResize(resize_w, resize_h);
-#endif
         CreateUpscaledTexture(resize_w, resize_h);
         screen_width = resize_w;
         screen_height = resize_h;
@@ -1035,32 +952,11 @@ void I_FinishUpdate (void)
 	    I_VideoBuffer[ (SCREENHEIGHT-1)*SCREENWIDTH + i] = 0x0;
     }
 
-#if 0 // obsolete software scaling routines
-    // draw to screen
-
-    BlitArea(0, 0, SCREENWIDTH, SCREENHEIGHT);
-#endif
-
     if (palette_to_set)
     {
         SDL_SetPaletteColors(screenbuffer->format->palette, palette, 0, 256);
         palette_to_set = false;
     }
-
-#if 0 // obsolete software scaling routines
-    // Blit from the fake 8-bit screen buffer to the real screen
-    // before doing a screen flip.
-
-    // Center the buffer within the full screen space.
-
-    SDL_GetWindowSize(screen, &screen_w, &screen_h);
-    dst_rect.x = (screen_w - screenbuffer->w) / 2;
-    dst_rect.y = (screen_h - screenbuffer->h) / 2;
-
-    SDL_BlitSurface(screenbuffer, NULL,
-                    SDL_GetWindowSurface(screen), &dst_rect);
-    SDL_UpdateWindowSurface(screen);
-#endif
 
     // Blit from the paletted 8-bit screen buffer to the intermediate
     // 32-bit RGBA buffer that we can load into the texture.
@@ -1188,230 +1084,6 @@ void I_InitWindowIcon(void)
     SDL_SetWindowIcon(screen, surface);
     SDL_FreeSurface(surface);
 }
-
-#if 0 // obsolete software scaling routines
-// Pick the modes list to use:
-
-static void GetScreenModes(screen_mode_t ***modes_list, int *num_modes)
-{
-    if (aspect_ratio_correct)
-    {
-        *modes_list = screen_modes_corrected;
-        *num_modes = arrlen(screen_modes_corrected);
-    }
-    else
-    {
-        *modes_list = screen_modes;
-        *num_modes = arrlen(screen_modes);
-    }
-}
-
-// Find which screen_mode_t to use for the given width and height.
-
-static screen_mode_t *I_FindScreenMode(int w, int h)
-{
-    screen_mode_t **modes_list;
-    screen_mode_t *best_mode;
-    int modes_list_length;
-    int num_pixels;
-    int best_num_pixels;
-    int i;
-
-    // Special case: 320x200 and 640x400 are available even if aspect 
-    // ratio correction is turned on.  These modes have non-square
-    // pixels.
-
-    if (fullscreen)
-    {
-        if (w == SCREENWIDTH && h == SCREENHEIGHT)
-        {
-            return &mode_scale_1x;
-        }
-        else if (w == SCREENWIDTH*2 && h == SCREENHEIGHT*2)
-        {
-            return &mode_scale_2x;
-        }
-    }
-
-    GetScreenModes(&modes_list, &modes_list_length);
-
-    // Find the biggest screen_mode_t in the list that fits within these 
-    // dimensions
-
-    best_mode = NULL;
-    best_num_pixels = 0;
-
-    for (i=0; i<modes_list_length; ++i) 
-    {
-        // Will this fit within the dimensions? If not, ignore.
-
-        if (modes_list[i]->width > w || modes_list[i]->height > h)
-        {
-            continue;
-        }
-
-        num_pixels = modes_list[i]->width * modes_list[i]->height;
-
-        if (num_pixels > best_num_pixels)
-        {
-            // This is a better mode than the current one
-
-            best_mode = modes_list[i];
-            best_num_pixels = num_pixels;
-        }
-    }
-
-    return best_mode;
-}
-
-// Adjust to an appropriate fullscreen mode.
-// Returns true if successful.
-
-static boolean AutoAdjustFullscreen(void)
-{
-    SDL_DisplayMode mode_info;
-    screen_mode_t *screen_mode;
-    int diff, best_diff, best_mode_index;
-    int display = 0;
-    int i;
-
-    // Find the best mode that matches the mode specified in the
-    // configuration file
-
-    best_mode_index = -1;
-    best_diff = INT_MAX;
-
-    for (i = 0; i < SDL_GetNumDisplayModes(display); ++i)
-    {
-        if (SDL_GetDisplayMode(display, i, &mode_info) != 0)
-        {
-            continue;
-        }
-
-        //printf("%ix%i?\n", w, h);
-
-        // What screen_mode_t would be used for this video mode?
-
-        screen_mode = I_FindScreenMode(mode_info.w, mode_info.h);
-
-        // Never choose a screen mode that we cannot run in, or
-        // is poor quality for fullscreen
-
-        if (screen_mode == NULL || screen_mode->poor_quality)
-        {
-        //    printf("\tUnsupported / poor quality\n");
-            continue;
-        }
-
-        // Do we have the exact mode?
-        // If so, no autoadjust needed
-
-        if (screen_width == mode_info.w && screen_height == mode_info.h)
-        {
-        //    printf("\tExact mode!\n");
-            return true;
-        }
-
-        // Is this mode better than the current mode?
-
-        diff = (screen_width - mode_info.w) * (screen_width - mode_info.w)
-             + (screen_height - mode_info.h) * (screen_height - mode_info.h);
-
-        if (diff < best_diff)
-        {
-        //    printf("\tA valid mode\n");
-            best_mode_index = i;
-            best_diff = diff;
-        }
-    }
-
-    if (best_mode_index < 0)
-    {
-        // Unable to find a valid mode!
-
-        return false;
-    }
-
-    SDL_GetDisplayMode(display, best_mode_index, &mode_info);
-
-    printf("I_InitGraphics: %ix%i mode not supported on this machine.\n",
-           screen_width, screen_height);
-
-    screen_width = mode_info.w;
-    screen_height = mode_info.h;
-
-    return true;
-}
-
-// Auto-adjust to a valid windowed mode.
-
-static void AutoAdjustWindowed(void)
-{
-    screen_mode_t *best_mode;
-
-    // Find a screen_mode_t to fit within the current settings
-
-    best_mode = I_FindScreenMode(screen_width, screen_height);
-
-    if (best_mode == NULL)
-    {
-        // Nothing fits within the current settings.
-        // Pick the closest to 320x200 possible.
-
-        best_mode = I_FindScreenMode(SCREENWIDTH, SCREENHEIGHT_4_3);
-    }
-
-    // Switch to the best mode if necessary.
-
-    if (best_mode->width != screen_width || best_mode->height != screen_height)
-    {
-        printf("I_InitGraphics: Cannot run at specified mode: %ix%i\n",
-               screen_width, screen_height);
-
-        screen_width = best_mode->width;
-        screen_height = best_mode->height;
-    }
-}
-
-// If the video mode set in the configuration file is not available,
-// try to choose a different mode.
-
-static void I_AutoAdjustSettings(void)
-{
-    int old_screen_w, old_screen_h;
-
-    old_screen_w = screen_width;
-    old_screen_h = screen_height;
-
-    // If we are running fullscreen, try to autoadjust to a valid fullscreen
-    // mode.  If this is impossible, switch to windowed.
-
-    if (fullscreen && !AutoAdjustFullscreen())
-    {
-        fullscreen = 0;
-    }
-
-    // If we are running windowed, pick a valid window size.
-
-    if (!fullscreen)
-    {
-        AutoAdjustWindowed();
-    }
-
-    // Have the settings changed?  Show a message.
-
-    if (screen_width != old_screen_w || screen_height != old_screen_h)
-    {
-        printf("I_InitGraphics: Auto-adjusted to %ix%i.\n",
-               screen_width, screen_height);
-
-        printf("NOTE: Your video settings have been adjusted.  "
-               "To disable this behavior,\n"
-               "set autoadjust_video_settings to 0 in your "
-               "configuration file.\n");
-    }
-}
-#endif
 
 // Set video size to a particular scale factor (1x, 2x, 3x, etc.)
 
@@ -1684,29 +1356,7 @@ static void SetWindowPositionVars(void)
     }
 }
 
-#if 0 // obsolete software scaling routines
-static char *WindowBoxType(screen_mode_t *mode, int w, int h)
-{
-    if (mode->width != w && mode->height != h) 
-    {
-        return "Windowboxed";
-    }
-    else if (mode->width == w) 
-    {
-        return "Letterboxed";
-    }
-    else if (mode->height == h)
-    {
-        return "Pillarboxed";
-    }
-    else
-    {
-        return "...";
-    }
-}
-#endif
-
-static void SetVideoMode(screen_mode_t *mode, int w, int h)
+static void SetVideoMode(int w, int h)
 {
     byte *doompal;
     int flags = 0;
@@ -1728,13 +1378,6 @@ static void SetVideoMode(screen_mode_t *mode, int w, int h)
     {
         SDL_DestroyWindow(screen);
         screen = NULL;
-    }
-
-    // Generate lookup tables before setting the video mode.
-
-    if (mode != NULL && mode->InitMode != NULL)
-    {
-        mode->InitMode(doompal);
     }
 
     // Set the video mode.
@@ -1814,32 +1457,6 @@ static void SetVideoMode(screen_mode_t *mode, int w, int h)
     SDL_RenderClear(renderer);
     SDL_RenderPresent(renderer);
 
-#if 0 // obsolete software scaling routines
-    // If mode was not set, it must be set now that we know the
-    // screen size.
-
-    if (mode == NULL)
-    {
-        int screen_w, screen_h;
-
-        SDL_GetWindowSize(screen, &screen_w, &screen_h);
-        mode = I_FindScreenMode(screen_w, screen_h);
-
-        if (mode == NULL)
-        {
-            I_Error("I_InitGraphics: Unable to find a screen mode small "
-                    "enough for %ix%i", screen_w, screen_h);
-        }
-
-        // Generate lookup tables before setting the video mode.
-
-        if (mode->InitMode != NULL)
-        {
-            mode->InitMode(doompal);
-        }
-    }
-#endif
-
     // Create the 8-bit paletted and the 32-bit RGBA screenbuffer surfaces.
 
     screenbuffer = SDL_CreateRGBSurface(0,
@@ -1870,39 +1487,7 @@ static void SetVideoMode(screen_mode_t *mode, int w, int h)
     // Initially create the upscaled texture for rendering to screen
 
     CreateUpscaledTexture(w, h);
-
-    // Save screen mode.
-
-    screen_mode = mode;
 }
-
-#if 0 // obsolete software scaling routines
-static void ApplyWindowResize(unsigned int w, unsigned int h)
-{
-    screen_mode_t *mode;
-
-    // Find the biggest screen mode that will fall within these
-    // dimensions, falling back to the smallest mode possible if
-    // none is found.
-
-    mode = I_FindScreenMode(w, h);
-
-    if (mode == NULL)
-    {
-        mode = I_FindScreenMode(SCREENWIDTH, SCREENHEIGHT);
-    }
-
-    // Reset mode to resize window.
-
-    printf("Resize to %ix%i\n", mode->width, mode->height);
-    SetVideoMode(mode, mode->width, mode->height);
-
-    // Save settings.
-
-    screen_width = mode->width;
-    screen_height = mode->height;
-}
-#endif
 
 void I_InitGraphics(void)
 {
@@ -1953,40 +1538,14 @@ void I_InitGraphics(void)
 
     if (screensaver_mode)
     {
-        SetVideoMode(NULL, 0, 0);
+        SetVideoMode(0, 0);
     }
     else
     {
-        int w, h;
-
-#if 0 // obsolete software scaling routines
-        if (autoadjust_video_settings)
-        {
-            I_AutoAdjustSettings();
-        }
-#endif
-
-        w = screen_width;
-        h = screen_height;
-
-#if 0 // obsolete software scaling routines
-        screen_mode = I_FindScreenMode(w, h);
-
-        if (screen_mode == NULL)
-        {
-            I_Error("I_InitGraphics: Unable to find a screen mode small "
-                    "enough for %ix%i", w, h);
-        }
-
-        if (w != screen_mode->width || h != screen_mode->height)
-        {
-            printf("I_InitGraphics: %s (%ix%i within %ix%i)\n",
-                   WindowBoxType(screen_mode, w, h),
-                   screen_mode->width, screen_mode->height, w, h);
-        }
-#endif
-
-        SetVideoMode(screen_mode, w, h);
+        // SDL2-TODO: sanity check screen_width/screen_height against
+        // screen modes listed as available by LibSDL, and auto-adjust
+        // when the selected mode is not available.
+        SetVideoMode(screen_width, screen_height);
     }
 
     // Start with a clear black screen

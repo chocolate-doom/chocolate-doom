@@ -65,7 +65,6 @@ deh_str.c            deh_str.h             \
 i_cdmus.c            i_cdmus.h             \
 i_endoom.c           i_endoom.h            \
 i_joystick.c         i_joystick.h          \
-i_scale.c            i_scale.h             \
                      i_swap.h              \
 i_sound.c            i_sound.h             \
 i_timer.c            i_timer.h             \
