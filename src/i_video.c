@@ -319,23 +319,7 @@ void I_DisplayFPSDots(boolean dots_on)
 
 static void SetShowCursor(boolean show)
 {
-    // On Windows, using SDL_ShowCursor() adds lag to the mouse input,
-    // so work around this by setting an invisible cursor instead. On
-    // other systems, it isn't possible to change the cursor, so this
-    // hack has to be Windows-only. (Thanks to entryway for this)
-
-#ifdef _WIN32
-    if (show)
-    {
-        SDL_SetCursor(cursors[1]);
-    }
-    else
-    {
-        SDL_SetCursor(cursors[0]);
-    }
-#else
     SDL_ShowCursor(show);
-#endif
 
     // When the cursor is hidden, grab the input.
 
@@ -690,23 +674,6 @@ void I_GetEvent(void)
     }
 }
 
-// Warp the mouse back to the middle of the screen
-
-static void CenterMouse(void)
-{
-    int screen_w, screen_h;
-
-    // Warp the the screen center
-
-    SDL_GetWindowSize(screen, &screen_w, &screen_h);
-    SDL_WarpMouseInWindow(screen, screen_w / 2, screen_h / 2);
-
-    // Clear any relative movement caused by warping
-
-    SDL_PumpEvents();
-    SDL_GetRelativeMouseState(NULL, NULL);
-}
-
 //
 // Read the change in mouse state to generate mouse motion events
 //
@@ -736,11 +703,6 @@ static void I_ReadMouse(void)
         }
         
         D_PostEvent(&ev);
-    }
-
-    if (MouseShouldBeGrabbed())
-    {
-        CenterMouse();
     }
 }
 
@@ -789,7 +751,6 @@ static void UpdateGrab(void)
     else if (grab && !currently_grabbed)
     {
         SetShowCursor(false);
-        CenterMouse();
     }
     else if (!grab && currently_grabbed)
     {
