@@ -17,7 +17,7 @@
 
 #include "config.h"
 
-#ifdef HAVE_IOPERM
+#if (defined(__i386__) || defined(__x86_64__)) && defined(HAVE_IOPERM)
 
 #include <stdio.h>
 #include <string.h>
@@ -99,5 +99,5 @@ opl_driver_t opl_linux_driver =
     OPL_Timer_AdjustCallbacks,
 };
 
-#endif /* #ifdef HAVE_IOPERM */
+#endif /* #if (defined(__i386__) || defined(__x86_64__)) && defined(HAVE_IOPERM) */
 

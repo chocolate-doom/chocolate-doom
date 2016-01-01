@@ -85,6 +85,7 @@ typedef struct
     // Volume level
 
     int volume;
+    int volume_base;
 
     // Pan
 
@@ -311,6 +312,7 @@ static opl_driver_ver_t opl_drv_ver = opl_doom_1_9;
 static boolean music_initialized = false;
 
 //static boolean musicpaused = false;
+static int start_music_volume;
 static int current_music_volume;
 
 // GENMIDI lump instrument data:
@@ -572,8 +574,7 @@ static void SetVoiceVolume(opl_voice_t *voice, unsigned int volume)
 
     // Multiply note volume and channel volume to get the actual volume.
 
-    midi_volume = 2 * (volume_mapping_table[(voice->channel->volume
-                  * current_music_volume) / 127] + 1);
+    midi_volume = 2 * (volume_mapping_table[voice->channel->volume] + 1);
 
     full_volume = (volume_mapping_table[voice->note_volume] * midi_volume)
                 >> 9;
@@ -645,11 +646,19 @@ static void InitVoices(void)
     }
 }
 
+static void SetChannelVolume(opl_channel_data_t *channel, unsigned int volume,
+                             boolean clip_start);
+
 // Set music volume (0 - 127)
 
 static void I_OPL_SetMusicVolume(int volume)
 {
-    unsigned int i;
+    unsigned int i, j;
+
+    if (current_music_volume == volume)
+    {
+        return;
+    }
 
     // Internal state variable.
 
@@ -657,11 +666,19 @@ static void I_OPL_SetMusicVolume(int volume)
 
     // Update the volume of all voices.
 
-    for (i = 0; i < num_opl_voices; ++i)
+    for (i = 0; i < num_tracks; ++i)
     {
-        if (voices[i].channel != NULL)
+        for (j = 0; j < MIDI_CHANNELS_PER_TRACK; ++j)
         {
-            SetVoiceVolume(&voices[i], voices[i].note_volume);
+            if (j == 15)
+            {
+                SetChannelVolume(&tracks[i].channels[j], volume, false);
+            }
+            else
+            {
+                SetChannelVolume(&tracks[i].channels[j],
+                                 tracks[i].channels[j].volume_base, false);
+            }
         }
     }
 }
@@ -1117,9 +1134,22 @@ static void ProgramChangeEvent(opl_track_data_t *track, midi_event_t *event)
     // channel, and change the instrument.
 }
 
-static void SetChannelVolume(opl_channel_data_t *channel, unsigned int volume)
+static void SetChannelVolume(opl_channel_data_t *channel, unsigned int volume,
+                             boolean clip_start)
 {
     unsigned int i;
+
+    channel->volume_base = volume;
+
+    if (volume > current_music_volume)
+    {
+        volume = current_music_volume;
+    }
+
+    if (clip_start && volume > start_music_volume)
+    {
+        volume = start_music_volume;
+    }
 
     channel->volume = volume;
 
@@ -1232,7 +1262,7 @@ static void ControllerEvent(opl_track_data_t *track, midi_event_t *event)
     switch (controller)
     {
         case MIDI_CONTROLLER_MAIN_VOLUME:
-            SetChannelVolume(channel, param);
+            SetChannelVolume(channel, param, true);
             break;
 
         case MIDI_CONTROLLER_PAN:
@@ -1370,19 +1400,26 @@ static void ProcessEvent(opl_track_data_t *track, midi_event_t *event)
 }
 
 static void ScheduleTrack(opl_track_data_t *track);
+static void InitChannel(opl_track_data_t *track, opl_channel_data_t *channel);
 
 // Restart a song from the beginning.
 
 static void RestartSong(void *unused)
 {
-    unsigned int i;
+    unsigned int i, j;
 
     running_tracks = num_tracks;
+
+    start_music_volume = current_music_volume;
 
     for (i = 0; i < num_tracks; ++i)
     {
         MIDI_RestartIterator(tracks[i].iter);
         ScheduleTrack(&tracks[i]);
+        for (j = 0; j < MIDI_CHANNELS_PER_TRACK; ++j)
+        {
+            InitChannel(&tracks[i], &tracks[i].channels[j]);
+        }
     }
 }
 
@@ -1453,7 +1490,12 @@ static void InitChannel(opl_track_data_t *track, opl_channel_data_t *channel)
     // TODO: Work out sensible defaults?
 
     channel->instrument = &main_instrs[0];
-    channel->volume = 127;
+    channel->volume = current_music_volume;
+    channel->volume_base = 100;
+    if (channel->volume > channel->volume_base)
+    {
+        channel->volume = channel->volume_base;
+    }
     channel->pan = 0x30;
     channel->bend = 0;
 }
@@ -1506,6 +1548,8 @@ static void I_OPL_PlaySong(void *handle, boolean looping)
     // TODO: this is wrong
 
     us_per_beat = 500 * 1000;
+
+    start_music_volume = current_music_volume;
 
     for (i = 0; i < num_tracks; ++i)
     {

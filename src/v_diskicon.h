@@ -13,40 +13,27 @@
 // GNU General Public License for more details.
 //
 // DESCRIPTION:
-//  Sky rendering. The DOOM sky is a texture map like any
-//  wall, wrapping around. A 1024 columns equal 360 degrees.
-//  The default sky map is 256 columns and repeats 4 times
-//  on a 320 screen?
-//  
+//	Disk load indicator.
 //
 
+#ifndef __V_DISKICON__
+#define __V_DISKICON__
 
+// Dimensions of the flashing "loading" disk icon
 
-// Needed for FRACUNIT.
-#include "m_fixed.h"
+#define LOADING_DISK_W 16
+#define LOADING_DISK_H 16
 
-// Needed for Flat retrieval.
-#include "r_data.h"
-
-
-#include "r_sky.h"
-
-//
-// sky mapping
-//
-int			skyflatnum;
-int			skytexture;
-int			skytexturemid;
-
-
-
-//
-// R_InitSkyMap
-// Called whenever the view size changes.
-//
-void R_InitSkyMap (void)
+typedef enum
 {
-  // skyflatnum = R_FlatNumForName ( SKYFLATNAME );
-    skytexturemid = SCREENHEIGHT/2*FRACUNIT;
-}
+    disk_off,
+    disk_on,
+    disk_dirty
+} disk_indicator_e;
 
+extern disk_indicator_e disk_indicator;
+
+extern void V_EnableLoadingDisk (int xoffs, int yoffs);
+extern void V_BeginRead (void);
+
+#endif

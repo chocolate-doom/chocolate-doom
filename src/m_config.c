@@ -840,6 +840,15 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(show_endoom),
 
     //!
+    // @game doom strife
+    //
+    // If non-zero, a disk activity indicator is displayed when data is read
+    // from disk. If zero, the disk activity indicator is not displayed.
+    //
+
+    CONFIG_VARIABLE_INT(show_diskicon),
+
+    //!
     // If non-zero, save screenshots in PNG format.
     //
 
