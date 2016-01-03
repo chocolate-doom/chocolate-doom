@@ -18,10 +18,6 @@
 
 
 #include "SDL.h"
-#include <stdlib.h>
-#include <ctype.h>
-#include <math.h>
-#include <string.h>
 
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
@@ -33,18 +29,15 @@
 #include "config.h"
 #include "deh_str.h"
 #include "doomtype.h"
-#include "doomkeys.h"
 #include "i_input.h"
 #include "i_joystick.h"
 #include "i_system.h"
-#include "i_swap.h"
 #include "i_timer.h"
 #include "i_video.h"
 #include "m_argv.h"
 #include "m_config.h"
 #include "m_misc.h"
 #include "tables.h"
-#include "v_diskicon.h"
 #include "v_video.h"
 #include "w_wad.h"
 #include "z_zone.h"
