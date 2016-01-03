@@ -107,7 +107,7 @@ static boolean IsValidAxis(int axis)
 
 void I_InitJoystick(void)
 {
-    if (!usejoystick)
+    if (!usejoystick || joystick_index < 0)
     {
         return;
     }
@@ -117,7 +117,7 @@ void I_InitJoystick(void)
         return;
     }
 
-    if (joystick_index < 0 || joystick_index >= SDL_NumJoysticks())
+    if (joystick_index >= SDL_NumJoysticks())
     {
         printf("I_InitJoystick: Invalid joystick ID: %i\n", joystick_index);
         SDL_QuitSubSystem(SDL_INIT_JOYSTICK);
