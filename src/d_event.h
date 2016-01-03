@@ -36,9 +36,14 @@ typedef enum
     //           pressed or released. This is the key as it appears
     //           on a US keyboard layout, and does not change with
     //           layout.
-    //    data2: ASCII version of the character that was pressed.
-    //           Changes with the keyboard layout; eg. if 'Z' is
+    // For ev_keydown only:
+    //    data2: ASCII representation of the key that was pressed that
+    //           changes with the keyboard layout; eg. if 'Z' is
     //           pressed on a German keyboard, data1='y',data2='z'.
+    //           Not affected by modifier keys.
+    //    data3: ASCII input, fully modified according to keyboard
+    //           layout and any modifier keys that are held down.
+    //           Only set if I_StartTextInput() has been called.
     ev_keydown,
     ev_keyup,
 
