@@ -56,6 +56,7 @@
 #include "p_dialog.h" // haleyjd [STRIFE]
 
 #include "i_endoom.h"
+#include "i_input.h"
 #include "i_joystick.h"
 #include "i_system.h"
 #include "i_timer.h"
@@ -1674,6 +1675,7 @@ void D_DoomMain (void)
     M_CreateSaveDirs(savegamedir);
 
     I_GraphicsCheckCommandLine();
+    I_InputCheckCommandLine();
 
     // haleyjd 20110206 [STRIFE] Startup the introduction sequence
     D_InitIntroSequence();

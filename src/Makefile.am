@@ -64,6 +64,7 @@ d_mode.c             d_mode.h              \
 deh_str.c            deh_str.h             \
 i_cdmus.c            i_cdmus.h             \
 i_endoom.c           i_endoom.h            \
+i_input.c            i_input.h             \
 i_joystick.c         i_joystick.h          \
                      i_swap.h              \
 i_sound.c            i_sound.h             \

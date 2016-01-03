@@ -54,6 +54,7 @@
 #include "p_saveg.h"
 
 #include "i_endoom.h"
+#include "i_input.h"
 #include "i_joystick.h"
 #include "i_system.h"
 #include "i_timer.h"
@@ -429,6 +430,7 @@ void D_DoomLoop (void)
 
     I_SetWindowTitle(gamedescription);
     I_GraphicsCheckCommandLine();
+    I_InputCheckCommandLine();
     I_SetGrabMouseCallback(D_GrabMouseCallback);
     I_InitGraphics();
     V_EnableLoadingDisk(SCREENWIDTH - LOADING_DISK_W, SCREENHEIGHT - LOADING_DISK_H);

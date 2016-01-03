@@ -32,6 +32,7 @@
 #include "deh_main.h"
 #include "d_iwad.h"
 #include "i_endoom.h"
+#include "i_input.h"
 #include "i_joystick.h"
 #include "i_sound.h"
 #include "i_system.h"
@@ -242,6 +243,7 @@ void D_DoomLoop(void)
         debugfile = fopen(filename, "w");
     }
     I_GraphicsCheckCommandLine();
+    I_InputCheckCommandLine();
     I_SetGrabMouseCallback(D_GrabMouseCallback);
     I_InitGraphics();
 

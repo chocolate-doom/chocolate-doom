@@ -31,6 +31,7 @@
 #include "d_mode.h"
 #include "m_misc.h"
 #include "s_sound.h"
+#include "i_input.h"
 #include "i_joystick.h"
 #include "i_system.h"
 #include "i_timer.h"
@@ -737,6 +738,7 @@ void H2_GameLoop(void)
     }
     I_SetWindowTitle(gamedescription);
     I_GraphicsCheckCommandLine();
+    I_InputCheckCommandLine();
     I_SetGrabMouseCallback(D_GrabMouseCallback);
     I_InitGraphics();
 

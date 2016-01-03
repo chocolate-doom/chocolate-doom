@@ -35,8 +35,6 @@
 
 #define SCREENHEIGHT_4_3 240
 
-#define MAX_MOUSE_BUTTONS 8
-
 typedef boolean (*grabmouse_callback_t)(void);
 
 // Called by D_DoomMain,
@@ -87,8 +85,6 @@ void I_EnableLoadingDisk(int xoffs, int yoffs);
 extern char *video_driver;
 extern boolean screenvisible;
 
-extern float mouse_acceleration;
-extern int mouse_threshold;
 extern int vanilla_keyboard_mapping;
 extern boolean screensaver_mode;
 extern int usegamma;
