@@ -29,6 +29,7 @@
 #include "d_main.h"
 #include "deh_main.h"
 
+#include "i_input.h"
 #include "i_swap.h"
 #include "i_system.h"
 #include "i_timer.h"
@@ -634,9 +635,16 @@ void M_DoSave(int slot)
 //
 void M_SaveSelect(int choice)
 {
+    int x, y;
+
     // we are going to be intercepting all chars
     saveStringEnter = 1;
-    
+
+    // We need to turn on text input:
+    x = LoadDef.x - 11;
+    y = LoadDef.y + choice * LINEHEIGHT - 4;
+    I_StartTextInput(x, y, x + 8 + 24 * 8 + 8, y + LINEHEIGHT - 2);
+
     saveSlot = choice;
     M_StringCopy(saveOldString,savegamestrings[choice], SAVESTRINGSIZE);
     if (!strcmp(savegamestrings[choice], EMPTYSTRING))
@@ -1577,27 +1585,38 @@ boolean M_Responder (event_t* ev)
 
           case KEY_ESCAPE:
             saveStringEnter = 0;
+            I_StopTextInput();
             M_StringCopy(savegamestrings[saveSlot], saveOldString,
                          SAVESTRINGSIZE);
             break;
 
 	  case KEY_ENTER:
 	    saveStringEnter = 0;
+            I_StopTextInput();
 	    if (savegamestrings[saveSlot][0])
 		M_DoSave(saveSlot);
 	    break;
 
 	  default:
-            // This is complicated.
+            // Savegame name entry. This is complicated.
             // Vanilla has a bug where the shift key is ignored when entering
             // a savegame name. If vanilla_keyboard_mapping is on, we want
-            // to emulate this bug by using 'data1'. But if it's turned off,
-            // it implies the user doesn't care about Vanilla emulation: just
-            // use the correct 'data2'.
+            // to emulate this bug by using ev->data1. But if it's turned off,
+            // it implies the user doesn't care about Vanilla emulation:
+            // instead, use ev->data3 which gives the fully-translated and
+            // modified key input.
 
+            if (ev->type != ev_keydown)
+            {
+                break;
+            }
             if (vanilla_keyboard_mapping)
             {
-                ch = key;
+                ch = ev->data1;
+            }
+            else
+            {
+                ch = ev->data3;
             }
 
             ch = toupper(ch);
@@ -1620,7 +1639,7 @@ boolean M_Responder (event_t* ev)
 	}
 	return true;
     }
-    
+
     // Take care of any messages that need input
     if (messageToPrint)
     {
