@@ -238,6 +238,7 @@ static void SetShowCursor(boolean show)
         // When the cursor is hidden, grab the input.
         // Relative mode implicitly hides the cursor.
         SDL_SetRelativeMouseMode(!show);
+        SDL_GetRelativeMouseState(NULL, NULL);
     }
 }
 
