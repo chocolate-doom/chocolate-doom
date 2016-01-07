@@ -512,7 +512,7 @@ static void CreateUpscaledTexture(int w, int h)
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
 
     texture_upscaled = SDL_CreateTexture(renderer,
-                                SDL_PIXELFORMAT_ARGB8888,
+                                SDL_GetWindowPixelFormat(screen),
                                 SDL_TEXTUREACCESS_TARGET,
                                 w_upscale*SCREENWIDTH,
                                 h_upscale*SCREENHEIGHT);
@@ -1059,7 +1059,7 @@ static void SetVideoMode(int w, int h)
     // is going to change frequently.
 
     texture = SDL_CreateTexture(renderer,
-                                SDL_PIXELFORMAT_ARGB8888,
+                                SDL_GetWindowPixelFormat(screen),
                                 SDL_TEXTUREACCESS_STREAMING,
                                 SCREENWIDTH, SCREENHEIGHT);
 
