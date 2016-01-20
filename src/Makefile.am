@@ -187,7 +187,7 @@ endif
 @PROGRAM_PREFIX@strife_LDADD = strife/libstrife.a $(EXTRA_LIBS)
 
 $(SETUP_BINARIES): @PROGRAM_PREFIX@setup$(EXEEXT)
-	cp $< $@
+	cp @PROGRAM_PREFIX@setup$(EXEEXT) $@
 
 # Source files needed for chocolate-setup:
 
@@ -273,13 +273,14 @@ CLEANFILES = $(execgames_SCRIPTS) $(app_DATA) $(screensaver_DATA)
 if HAVE_PYTHON
 
 icon.c : $(top_builddir)/data/doom8.ico
-	$(top_builddir)/data/convert-icon $< $@
+	$(top_builddir)/data/convert-icon $(top_builddir)/data/doom8.ico $@
 
 endif
 
 midiread : midifile.c
-	$(CC) -DTEST $(CFLAGS) @LDFLAGS@ $< -o $@
+	$(CC) -DTEST $(CFLAGS) @LDFLAGS@ midifile.c -o $@
 
-mus2mid : mus2mid.c memio.c z_native.c i_system.c m_argv.c m_misc.c
-	$(CC) -DSTANDALONE -I$(top_builddir) $(CFLAGS) @LDFLAGS@ $^ -o $@
+MUS2MID_SOURCES = mus2mid.c memio.c z_native.c i_system.c m_argv.c m_misc.c
+mus2mid : $(MUS2MID_SOURCES)
+	$(CC) -DSTANDALONE -I$(top_builddir) $(CFLAGS) @LDFLAGS@ $(MUS2MID_SOURCES) -o $@
 

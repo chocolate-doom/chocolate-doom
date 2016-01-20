@@ -30,7 +30,7 @@ static struct
     int episode;
     int map;
 } valid_modes[] = {
-    { pack_chex, shareware,  1, 5 },
+    { pack_chex, retail,     1, 5 },
     { doom,      shareware,  1, 9 },
     { doom,      registered, 3, 9 },
     { doom,      retail,     4, 9 },

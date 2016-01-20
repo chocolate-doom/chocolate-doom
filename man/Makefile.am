@@ -54,7 +54,7 @@ MANDIR = $(top_srcdir)/man
 DOCGEN = $(MANDIR)/docgen
 
 $(SETUP_MAN_PAGES): chocolate-setup.6
-	cp $< $@
+	cp chocolate-setup.6 $@
 
 @PROGRAM_PREFIX@doom.6: ../src $(MANPAGE_GEN_FILES)
 	$(DOCGEN) -g doom -m doom.template $(top_srcdir)/src $(top_srcdir)/src/doom > $@
