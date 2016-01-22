@@ -35,9 +35,7 @@
 
 // Defines for checking the endianness of the system.
 
-#if SDL_BYTEORDER == SYS_LIL_ENDIAN
-#define SYS_LITTLE_ENDIAN
-#elif SDL_BYTEORDER == SYS_BIG_ENDIAN
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
 #define SYS_BIG_ENDIAN
 #endif
 
