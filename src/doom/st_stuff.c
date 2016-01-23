@@ -1515,8 +1515,6 @@ void ST_Start (void)
     {
 	char namebuf[8];
 
-	W_ReleaseLumpName("STFB0");
-
 	DEH_snprintf(namebuf, 7, "STFB%d", consoleplayer);
 	faceback = W_CacheLumpName(namebuf, PU_STATIC);
     }
