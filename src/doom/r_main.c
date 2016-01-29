@@ -1001,8 +1001,7 @@ void R_RenderPlayerView (player_t* player)
     // [crispy] flashing HOM indicator
     V_DrawFilledBox(viewwindowx, viewwindowy,
         scaledviewwidth, scaledviewheight,
-        (crispy_flashinghom &&
-        ((gametic % 20) < 9)) ? 0xb0 : 0);
+        crispy_flashinghom ? (176 + (gametic % 16)) : 0);
 
     // check for new console commands.
     NetUpdate ();
