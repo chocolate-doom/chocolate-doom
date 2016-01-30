@@ -32,6 +32,7 @@
 #include "m_controls.h"
 #include "m_misc.h"
 #include "w_wad.h"
+#include "m_argv.h" // [crispy] M_ParmExists()
 #include "st_stuff.h" // [crispy] ST_HEIGHT
 
 #include "s_sound.h"
@@ -561,27 +562,38 @@ void HU_Start(void)
     // [crispy] explicitely display (episode and) map if the
     // map is from a PWAD or if the map title string has been dehacked
     {
-	char map[6], *wad;
+	char buf[8], *ptr;
 	extern char *iwadfile;
 
 	if (gamemode == commercial)
-	    M_snprintf(map, sizeof(map), "map%02d", gamemap);
+	    M_snprintf(buf, sizeof(buf), "map%02d", gamemap);
 	else
-	    M_snprintf(map, sizeof(map), "e%dm%d", gameepisode, gamemap);
+	    M_snprintf(buf, sizeof(buf), "e%dm%d", gameepisode, gamemap);
 
-	wad = lumpinfo[W_GetNumForName(map)]->wad_file->path;
+	ptr = lumpinfo[W_GetNumForName(buf)]->wad_file->path;
 
-	if (strcmp(s, DEH_String(s)) || (strcmp(wad, M_BaseName(iwadfile)) && !nervewadfile))
+	if (strcmp(s, DEH_String(s)) || (strcmp(ptr, M_BaseName(iwadfile)) && !nervewadfile))
 	{
 	    char *m;
 
-	    m = M_StringJoin(wad, ": ", crstr[CR_GRAY], map, NULL);
-	    wad = m; // [crispy] free() that, else *m leaks memory
+	    m = M_StringJoin(crstr[CR_GOLD], ptr, ": ", crstr[CR_GRAY], buf, NULL);
+	    ptr = m; // [crispy] free() that, else *m leaks memory
 
 	    while (*m)
 		HUlib_addCharToTextLine(&w_map, *(m++));
 
-	    free(wad);
+	    free(ptr);
+	}
+
+	// [crispy] print the map title in white from the first colon onward
+	if (!M_ParmExists("-nodeh"))
+	{
+	    M_snprintf(buf, sizeof(buf), "%s%s", ":", crstr[CR_GRAY]);
+
+	    ptr = M_StringReplace(DEH_String(s), ":", buf);
+	    DEH_AddStringReplacement(s, ptr);
+
+	    free(ptr);
 	}
     }
 
