@@ -1624,7 +1624,7 @@ void G_DoSaveGame (void)
 
     if (save_stream == NULL)
     {
-        return;
+        I_Error ("Error writing Savegame");
     }
 
     savegame_error = false;
