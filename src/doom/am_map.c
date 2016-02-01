@@ -66,7 +66,7 @@
 #define BACKGROUND	BLACK
 #define YOURCOLORS	WHITE
 #define YOURRANGE	0
-#define WALLCOLORS	(REDS + REDRANGE/2) // [crispy] a tad darker
+#define WALLCOLORS	32 // [crispy] desaturate
 #define WALLRANGE	REDRANGE
 #define TSWALLCOLORS	GRAYS
 #define TSWALLRANGE	GRAYSRANGE
