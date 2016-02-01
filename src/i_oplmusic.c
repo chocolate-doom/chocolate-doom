@@ -358,7 +358,7 @@ int opl_io_port = 0x388;
 // (as intended by the MIDI standard) rather than the backwards one
 // used by DMX due to a bug.
 
-static boolean opl_stereo_correct = true; // [crispy] unconditionally enable correctly reversed stereo
+static boolean opl_stereo_correct = false;
 
 // Load instrument table from GENMIDI lump:
 
@@ -1174,7 +1174,7 @@ static void SetChannelPan(opl_channel_data_t *channel, unsigned int pan)
     // perhaps it was just a bug in the OPL3 support that was never
     // finished. By default we preserve this bug, but we also provide a
     // secret DMXOPTION to fix it.
-    if (opl_stereo_correct)
+//    if (opl_stereo_correct) // [crispy] unconditionally enable correctly reversed stereo
     {
         pan = 144 - pan;
     }
@@ -1789,12 +1789,9 @@ static boolean I_OPL_InitMusic(void)
         num_opl_voices = OPL_NUM_VOICES;
     }
 
-    // [crispy] unconditionally enable correctly reversed stereo
-    /*
     // Secret, undocumented DMXOPTION that reverses the stereo channels
     // into their correct orientation.
     opl_stereo_correct = strstr(dmxoption, "-reverse") != NULL;
-    */
 
     // Initialize all registers.
 
