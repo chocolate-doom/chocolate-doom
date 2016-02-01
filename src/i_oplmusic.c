@@ -351,14 +351,14 @@ static unsigned int last_perc_count;
 // Configuration file variable, containing the port number for the
 // adlib chip.
 
-char *snd_dmxoption = "-opl3 -reverse"; // [crispy] default to OPL3 emulation and correctly reversed stereo
+char *snd_dmxoption = "-opl3"; // [crispy] default to OPL3 emulation
 int opl_io_port = 0x388;
 
 // If true, OPL sound channels are reversed to their correct arrangement
 // (as intended by the MIDI standard) rather than the backwards one
 // used by DMX due to a bug.
 
-static boolean opl_stereo_correct = false;
+static boolean opl_stereo_correct = true; // [crispy] unconditionally enable correctly reversed stereo
 
 // Load instrument table from GENMIDI lump:
 
@@ -1789,9 +1789,12 @@ static boolean I_OPL_InitMusic(void)
         num_opl_voices = OPL_NUM_VOICES;
     }
 
+    // [crispy] unconditionally enable correctly reversed stereo
+    /*
     // Secret, undocumented DMXOPTION that reverses the stereo channels
     // into their correct orientation.
     opl_stereo_correct = strstr(dmxoption, "-reverse") != NULL;
+    */
 
     // Initialize all registers.
 
