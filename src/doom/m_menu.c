@@ -59,6 +59,7 @@
 #include "m_menu.h"
 
 #include "v_trans.h" // [crispy] colored "invert mouse" message
+#include "r_sky.h" // [crispy] R_InitSkyMap()
 
 extern patch_t*		hu_font[HU_FONTSIZE];
 extern boolean		message_dontfuckwithme;
@@ -1752,6 +1753,7 @@ static void M_MouseLook(int choice)
     crispy_mouselook = !crispy_mouselook;
 
     players[consoleplayer].lookdir = 0;
+    R_InitSkyMap();
 }
 
 static void M_CrispyToggleAutomapstats(int choice)
@@ -1817,6 +1819,7 @@ static void M_CrispyToggleFreelook(int choice)
     crispy_freelook = (crispy_freelook + 1) % NUM_FREELOOKS;
 
     players[consoleplayer].lookdir = 0;
+    R_InitSkyMap();
 }
 
 static void M_CrispyToggleJumping(int choice)
@@ -1829,6 +1832,7 @@ static void M_CrispyToggleJumping(int choice)
 
     choice = 0;
     crispy_jump = (crispy_jump + 1) % NUM_JUMPS;
+    R_InitSkyMap();
 }
 
 static void M_CrispyToggleOverunder(int choice)
