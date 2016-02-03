@@ -1832,7 +1832,6 @@ static void M_CrispyToggleJumping(int choice)
 
     choice = 0;
     crispy_jump = (crispy_jump + 1) % NUM_JUMPS;
-    R_InitSkyMap();
 }
 
 static void M_CrispyToggleOverunder(int choice)
@@ -1851,6 +1850,7 @@ static void M_CrispyTogglePitch(int choice)
 {
     choice = 0;
     crispy_pitch = !crispy_pitch;
+    R_InitSkyMap();
 }
 
 static void M_CrispyToggleRecoil(int choice)
