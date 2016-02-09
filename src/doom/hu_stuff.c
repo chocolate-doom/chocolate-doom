@@ -627,9 +627,9 @@ static void HU_DemoProgressBar (void)
 
     i = SCREENWIDTH * (demo_p - demobuffer) / defdemosize;
 
-    if (i > SCREENWIDTH)
+    if (i > SCREENWIDTH - 1)
     {
-	i = SCREENWIDTH;
+	i = SCREENWIDTH - 1;
     }
 
     V_DrawHorizLine(0, SCREENHEIGHT - 3, i, 4); // [crispy] white
