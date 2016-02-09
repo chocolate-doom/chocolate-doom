@@ -2489,12 +2489,7 @@ void G_DoPlayDemo (void)
     demobuffer = demo_p = W_CacheLumpName (defdemoname, PU_STATIC); 
 
     // [crispy] demo progress bar
-    defdemosize = 0;
-    while (*demo_p++ != DEMOMARKER)
-    {
-	defdemosize++;
-    }
-    demo_p = demobuffer;
+    defdemosize = lumpinfo[W_GetNumForName(defdemoname)]->size;
 
     demoversion = *demo_p++;
 
