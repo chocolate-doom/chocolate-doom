@@ -2488,9 +2488,6 @@ void G_DoPlayDemo (void)
     gameaction = ga_nothing; 
     demobuffer = demo_p = W_CacheLumpName (defdemoname, PU_STATIC); 
 
-    // [crispy] demo progress bar
-    defdemosize = lumpinfo[W_GetNumForName(defdemoname)]->size;
-
     demoversion = *demo_p++;
 
     if (demoversion == G_VanillaVersionCode())
@@ -2543,6 +2540,28 @@ void G_DoPlayDemo (void)
 
     usergame = false; 
     demoplayback = true; 
+
+    // [crispy] demo progress bar
+    {
+	int i, numplayersingame = 0;
+	byte *demo_ptr = demo_p;
+	const int defdemolumpsize = lumpinfo[W_GetNumForName(defdemoname)]->size;
+
+	for (i = 0; i < MAXPLAYERS; i++)
+	{
+	    if (playeringame[i])
+	    {
+		numplayersingame++;
+	    }
+	}
+
+	while (*demo_ptr != DEMOMARKER && (demo_ptr - demobuffer) < defdemolumpsize)
+	{
+	    demo_ptr += numplayersingame * (longtics ? 5 : 4);
+	}
+
+	defdemosize = demo_ptr - demo_p;
+    }
 } 
 
 //
