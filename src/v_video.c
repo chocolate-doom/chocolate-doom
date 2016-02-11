@@ -742,6 +742,10 @@ void V_DrawHorizLine(int x, int y, int w, int c)
     uint8_t *buf;
     int x1;
 
+    // [crispy] prevent framebuffer overflows
+    if (x + w > SCREENWIDTH)
+	w = SCREENWIDTH - x;
+
     buf = I_VideoBuffer + SCREENWIDTH * y + x;
 
     for (x1 = 0; x1 < w; ++x1)
