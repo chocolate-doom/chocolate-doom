@@ -50,9 +50,21 @@ typedef struct
     opl_adjust_callbacks_func adjust_callbacks_func;
 } opl_driver_t;
 
+typedef void (*opl_core_init_func)(unsigned int rate);
+typedef void (*opl_core_write_func)(unsigned int reg, unsigned int data);
+typedef void (*opl_core_fill_buffer_func)(int16_t *buffer, unsigned int nsamples);
+
+typedef struct
+{
+    opl_core_init_func init_func;
+    opl_core_write_func write_func;
+    opl_core_fill_buffer_func fill_buffer_func;
+} opl_sdl_core_t;
+
 // Sample rate to use when doing software emulation.
 
 extern unsigned int opl_sample_rate;
+extern opl_core_t opl_emu;
 
 #endif /* #ifndef OPL_INTERNAL_H */
 

@@ -57,6 +57,7 @@ static opl_driver_t *driver = NULL;
 static int init_stage_reg_writes = 1;
 
 unsigned int opl_sample_rate = 22050;
+opl_core_t opl_emu = OPL_CORE_NUKED;
 
 //
 // Init/shutdown code.
@@ -179,9 +180,10 @@ void OPL_Shutdown(void)
 
 // Set the sample rate used for software OPL emulation.
 
-void OPL_SetSampleRate(unsigned int rate)
+void OPL_SetSampleRateAndCore(unsigned int rate, opl_core_t core)
 {
     opl_sample_rate = rate;
+    opl_emu = core;
 }
 
 void OPL_WritePort(opl_port_t port, unsigned int value)

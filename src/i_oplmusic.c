@@ -353,6 +353,7 @@ static unsigned int last_perc_count;
 
 char *snd_dmxoption = "";
 int opl_io_port = 0x388;
+int opl_core = OPL_CORE_NUKED;
 
 // If true, OPL sound channels are reversed to their correct arrangement
 // (as intended by the MIDI standard) rather than the backwards one
@@ -1760,7 +1761,7 @@ static boolean I_OPL_InitMusic(void)
     char *dmxoption;
     opl_init_result_t chip_type;
 
-    OPL_SetSampleRate(snd_samplerate);
+    OPL_SetSampleRateAndCore(snd_samplerate, (opl_core_t)opl_core);
 
     chip_type = OPL_Init(opl_io_port);
     if (chip_type == OPL_INIT_NONE)

@@ -13,6 +13,7 @@
  */
 
 #include <inttypes.h>
+#include "opl.h"
 
 //Use 8 handlers based on a small logatirmic wavetabe and an exponential table for volume
 #define WAVE_HANDLER	10
@@ -27,15 +28,6 @@
 typedef struct _Chip Chip;
 typedef struct _Operator Operator;
 typedef struct _Channel Channel;
-
-typedef uintptr_t       Bitu;
-typedef intptr_t        Bits;
-typedef uint32_t        Bit32u;
-typedef int32_t         Bit32s;
-typedef uint16_t        Bit16u;
-typedef int16_t         Bit16s;
-typedef uint8_t         Bit8u;
-typedef int8_t          Bit8s;
 
 #if (DBOPL_WAVE == WAVE_HANDLER)
 typedef Bits ( DB_FASTCALL *WaveHandler) ( Bitu i, Bitu volume );

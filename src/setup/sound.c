@@ -74,6 +74,19 @@ static char *opltype_strings[] =
     "OPL3"
 };
 
+typedef enum
+{
+    OPLCORE_NUKED,
+    OPLMODE_DBOPL,
+    NUM_OPLCORES,
+} oplcore_t;
+
+static char *oplcore_strings[] =
+{
+    "Nuked OPL",
+    "DOSBox DBOPL"
+};
+
 static char *cfg_extension[] = { "cfg", NULL };
 
 // Config file variables:
@@ -114,6 +127,7 @@ static int snd_mport = 0;
 static int snd_sfxmode;
 static int snd_musicmode;
 static int snd_oplmode;
+static int opl_core = OPLCORE_NUKED;
 
 static void UpdateSndDevices(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(data))
 {
@@ -195,6 +209,8 @@ static void UpdateExtraTable(TXT_UNCAST_ARG(widget),
             TXT_AddWidgets(extra_table,
                            TXT_NewLabel("OPL type"),
                            OPLTypeSelector(),
+                           TXT_NewLabel("OPL emulator"),
+                           TXT_NewDropdownList(&opl_core, oplcore_strings, 2),
                            NULL);
             break;
 
@@ -384,6 +400,7 @@ void BindSoundVariables(void)
 
     M_BindIntVariable("snd_cachesize",            &snd_cachesize);
     M_BindIntVariable("opl_io_port",              &opl_io_port);
+    M_BindIntVariable("opl_core",                 &opl_core);
 
     M_BindIntVariable("snd_pitchshift",           &snd_pitchshift);
 

@@ -73,6 +73,7 @@ extern music_module_t music_opl_module;
 
 extern opl_driver_ver_t opl_drv_ver;
 extern int opl_io_port;
+extern int opl_core;
 
 // For native music module:
 
@@ -453,6 +454,7 @@ void I_BindSoundVariables(void)
     M_BindIntVariable("snd_samplerate",          &snd_samplerate);
     M_BindIntVariable("snd_cachesize",           &snd_cachesize);
     M_BindIntVariable("opl_io_port",             &opl_io_port);
+    M_BindIntVariable("opl_core",                &opl_core);
     M_BindIntVariable("snd_pitchshift",          &snd_pitchshift);
 
     M_BindStringVariable("timidity_cfg_path",    &timidity_cfg_path);

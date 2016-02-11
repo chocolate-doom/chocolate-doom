@@ -21,6 +21,15 @@
 
 #include <inttypes.h>
 
+typedef uintptr_t       Bitu;
+typedef intptr_t        Bits;
+typedef uint32_t        Bit32u;
+typedef int32_t         Bit32s;
+typedef uint16_t        Bit16u;
+typedef int16_t         Bit16s;
+typedef uint8_t         Bit8u;
+typedef int8_t          Bit8s;
+
 typedef void (*opl_callback_t)(void *data);
 
 // Result from OPL_Init(), indicating what type of OPL chip was detected,
@@ -38,6 +47,12 @@ typedef enum
     OPL_DATA_PORT = 1,
     OPL_REGISTER_PORT_OPL3 = 2
 } opl_port_t;
+
+typedef enum
+{
+    OPL_CORE_NUKED,
+    OPL_CORE_DBOPL
+} opl_core_t;
 
 #define OPL_NUM_OPERATORS   21
 #define OPL_NUM_VOICES      9
@@ -81,9 +96,9 @@ opl_init_result_t OPL_Init(unsigned int port_base);
 
 void OPL_Shutdown(void);
 
-// Set the sample rate used for software emulation.
+// Set the sample rate and the core used for software emulation.
 
-void OPL_SetSampleRate(unsigned int rate);
+void OPL_SetSampleRateAndCore(unsigned int rate, opl_core_t core);
 
 // Write to one of the OPL I/O ports:
 
