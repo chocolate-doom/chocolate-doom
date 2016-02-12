@@ -16,11 +16,6 @@
 //	Random number LUT.
 //
 
-
-#include <time.h>
-
-#include "m_random.h"
-
 //
 // M_Random
 // Returns a 0-255 number
@@ -66,13 +61,5 @@ int M_Random (void)
 
 void M_ClearRandom (void)
 {
-    prndindex = 0;
-
-    // Seed the M_Random counter from the system time
-
-    rndindex = time(NULL) & 0xff;
+    rndindex = prndindex = 0;
 }
-
-
-
-
