@@ -131,6 +131,15 @@ enum
     NUM_TRANSLUCENCY
 };
 
+enum
+{
+    UNCAPPED_OFF,
+    UNCAPPED_ON,
+    UNCAPPED_60FPS,
+    UNCAPPED_70FPS,
+    NUM_UNCAPPED
+};
+
 void *crispy_realloc (void *ptr, size_t size);
 
 #endif

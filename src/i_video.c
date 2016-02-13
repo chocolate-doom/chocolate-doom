@@ -30,6 +30,8 @@
 
 #include "icon.c"
 
+#include "crispy.h"
+
 #include "config.h"
 #include "deh_str.h"
 #include "doomtype.h"
@@ -943,6 +945,7 @@ static boolean BlitArea(int x1, int y1, int x2, int y2)
 
 int crispy_fps = 0;
 boolean crispy_showfps = false;
+extern boolean singletics;
 
 //
 // I_FinishUpdate
@@ -974,6 +977,21 @@ void I_FinishUpdate (void)
 
     if (!(SDL_GetAppState() & SDL_APPACTIVE))
         return;
+
+    // [crispy] variable rendering framerate
+    if (crispy_uncapped > UNCAPPED_ON && !singletics)
+    {
+        static int halftics_old;
+        int halftics;
+        extern int GetAdjustedTimeN (const int N);
+
+        while ((halftics = GetAdjustedTimeN(40 + crispy_uncapped * 10)) == halftics_old)
+        {
+            I_Sleep(1);
+        }
+
+        halftics_old = halftics;
+    }
 
     // draws little dots on the bottom of the screen
 

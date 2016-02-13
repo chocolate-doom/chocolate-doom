@@ -1410,6 +1410,14 @@ static multiitem_t multiitem_translucency[NUM_TRANSLUCENCY] =
     {TRANSLUCENCY_BOTH, "both"},
 };
 
+static multiitem_t multiitem_uncapped[NUM_UNCAPPED] =
+{
+    {UNCAPPED_OFF, "35 fps"},
+    {UNCAPPED_ON, "uncapped"},
+    {UNCAPPED_60FPS, "60 fps"},
+    {UNCAPPED_70FPS, "70 fps"},
+};
+
 static void M_DrawCrispnessMultiItem(int y, char *item, multiitem_t *multiitem, int feat, boolean cond)
 {
     char crispy_menu_text[48];
@@ -1440,7 +1448,7 @@ static void M_DrawCrispness1(void)
 
     M_DrawCrispnessSeparator(crispness_sep_visual, "Visual");
 
-    M_DrawCrispnessItem(crispness_uncapped, "Uncapped Framerate", crispy_uncapped, true);
+    M_DrawCrispnessMultiItem(crispness_uncapped, "Rendering Framerate", multiitem_uncapped, crispy_uncapped, true);
     M_DrawCrispnessMultiItem(crispness_coloredhud, "Colorize HUD Elements", multiitem_coloredhud, crispy_coloredhud, true);
     M_DrawCrispnessMultiItem(crispness_translucency, "Enable Translucency", multiitem_translucency, crispy_translucency, true);
     M_DrawCrispnessMultiItem(crispness_coloredblood, "Colored Blood and Corpses", multiitem_coloredblood, crispy_coloredblood & COLOREDBLOOD_BOTH, true);
@@ -1883,7 +1891,7 @@ static void M_CrispyToggleTranslucency(int choice)
 static void M_CrispyToggleUncapped(int choice)
 {
     choice = 0;
-    crispy_uncapped = !crispy_uncapped;
+    crispy_uncapped = (crispy_uncapped + 1) % NUM_UNCAPPED;
 }
 
 void M_ChangeDetail(int choice)

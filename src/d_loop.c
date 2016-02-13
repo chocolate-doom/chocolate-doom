@@ -124,7 +124,8 @@ static int player_class;
 
 // 35 fps clock adjusted by offsetms milliseconds
 
-static int GetAdjustedTime(void)
+// [crispy] variable rendering framerate
+int GetAdjustedTimeN(const int N)
 {
     int time_ms;
 
@@ -138,7 +139,12 @@ static int GetAdjustedTime(void)
         time_ms += (offsetms / FRACUNIT);
     }
 
-    return (time_ms * TICRATE) / 1000;
+    return (time_ms * N) / 1000;
+}
+
+static int GetAdjustedTime(void)
+{
+    return GetAdjustedTimeN(TICRATE);
 }
 
 static boolean BuildNewTic(void)
