@@ -810,7 +810,8 @@ void M_LoadSelect(int choice)
 //
 void M_LoadGame (int choice)
 {
-    if (netgame)
+    // [crispy] not while recording a demo
+    if (netgame || demorecording)
     {
 	M_StartMessage(DEH_String(LOADNET),NULL,false);
 	return;
@@ -946,7 +947,8 @@ void M_QuickLoadResponse(int key)
 
 void M_QuickLoad(void)
 {
-    if (netgame)
+    // [crispy] not while recording a demo
+    if (netgame || demorecording)
     {
 	M_StartMessage(DEH_String(QLOADNET),NULL,false);
 	return;
@@ -1139,7 +1141,8 @@ void M_DrawNewGame(void)
 
 void M_NewGame(int choice)
 {
-    if (netgame && !demoplayback)
+    // [crispy] not while recording a demo
+    if ((netgame && !demoplayback) || demorecording)
     {
 	M_StartMessage(DEH_String(NEWGAME),NULL,false);
 	return;
