@@ -34,9 +34,9 @@ Please try to give as much information as possible:
 
 Chocolate Doom is always open to new feature requests; however, please
 be aware that the project is designed around a deliberately limited
-[philosophy](../PHILOSOPHY), and many features from other source ports
-will not be accepted. Here are a few common requests which are often
-rejected:
+[philosophy](../PHILOSOPHY), and many features common in other source
+ports will not be accepted. Here are a few common requests which are
+often rejected:
 
 * "High resolution" rendering (greater than 320x200 display).
 
@@ -46,9 +46,9 @@ rejected:
 * Ability to play "No Rest For The Living", the expansion pack which
   comes with the XBLA / BFG Edition of Doom.
 
-But if you're not sure whether your feature is in line with the
-project philosophy, don't worry - just ask!
-To make a feature request, just [file an issue on
+If you're not sure whether your feature is in line with the project
+philosophy, don't worry - just ask anyway!
+To make a feature request, [file an issue on
 GitHub](https://github.com/chocolate-doom/chocolate-doom/issues/new).
 
 ### Bug fixes / code submission
