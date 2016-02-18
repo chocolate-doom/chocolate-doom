@@ -80,8 +80,9 @@ following guidelines before opening a pull request:
   "textscreen: Change size of X".
 
 * If you're making a change related to a bug, reference the GitHub
-  issue number in the commit message, eg. "This is a partial fix for
-  #646". This will link your commit into the issue comments. If your
-  change is a fix for the bug, put the word "fixes" before the bug
-  number to automatically close the issue once your change is merged.
+  issue number in the commit message, eg. "This is a partial fix
+  for #646". This will link your commit into the issue comments. If
+  your change is a fix for the bug, put the word "fixes" before the
+  issue number to automatically close the issue once your change
+  is merged.
 
