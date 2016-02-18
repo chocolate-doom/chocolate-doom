@@ -71,3 +71,17 @@ following guidelines before opening a pull request:
   feature request first and ask before you start implementing your
   feature.
 
+* Follow the guidelines for [how to write a Git commit
+  message](http://chris.beams.io/posts/git-commit/). In short: the
+  first line should be a short summary; keep to an 80 column limit;
+  use the imperative mood ("fix bug X", rather than "fixed bug X" or
+  "fixing bug X"). If your change fixes a particular subsystem,
+  prefix the summary with that subsystem: eg. "doom: Fix bug X" or
+  "textscreen: Change size of X".
+
+* If you're making a change related to a bug, reference the GitHub
+  issue number in the commit message, eg. "This is a partial fix for
+  #646". This will link your commit into the issue comments. If your
+  change is a fix for the bug, put the word "fixes" before the bug
+  number to automatically close the issue once your change is merged.
+
