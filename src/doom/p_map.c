@@ -1197,8 +1197,8 @@ P_LineAttack
   int		damage )
 {
     // [crispy] smooth laser spot movement with uncapped framerate
-    const fixed_t t1x = (damage == INT_MIN ? viewx : t1->x);
-    const fixed_t t1y = (damage == INT_MIN ? viewy : t1->y);
+    const fixed_t t1x = (damage == INT_MIN) ? viewx : t1->x;
+    const fixed_t t1y = (damage == INT_MIN) ? viewy : t1->y;
     fixed_t	x2;
     fixed_t	y2;
 	
@@ -1207,7 +1207,7 @@ P_LineAttack
     la_damage = damage;
     x2 = t1x + (distance>>FRACBITS)*finecosine[angle];
     y2 = t1y + (distance>>FRACBITS)*finesine[angle];
-    shootz = t1->z + (t1->height>>1) + 8*FRACUNIT;
+    shootz = (damage == INT_MIN) ? viewz : t1->z + (t1->height>>1) + 8*FRACUNIT;
     attackrange = distance;
     aimslope = slope;
 		
