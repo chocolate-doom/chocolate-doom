@@ -34,90 +34,60 @@ then
         CFLAGS="-O$OPT_LEVEL -g $WARNINGS $orig_CFLAGS"
 fi
 
-dnl Search for SDL ...
-dnl SDL2-TODO: Use pkg-config?
+PKG_CHECK_MODULES(SDL, [sdl2 >= 2.0.0])
+PKG_CHECK_MODULES(SDLMIXER, [SDL2_mixer >= 2.0.0])
+PKG_CHECK_MODULES(SDLNET, [SDL2_net >= 2.0.0])
 
-AM_PATH_SDL2(2.0.2)
-
-# Add the SDL compiler flags to the default compiler flag variables. 
-# It is important to do this now, before checking for headers and
-# library functions.  The reason being that on Windows, sdl-config
-# sets the -mno-cygwin compiler option in order to generate MinGW 
-# executables.  If we don't do this now, we might end up discovering
-# header files that are not actually available to us when we come
-# to compile.
-
-CFLAGS="$CFLAGS $SDL_CFLAGS"
-LDFLAGS="$LDFLAGS $SDL_LIBS"
-
-# On some platforms, SDL renames main() to SDL_main() using a #define,
-# so that its own main, stored in the SDLmain library, can be run first.
-# Unfortunately, this causes problems for autoconf, which builds
-# test programs to probe the system.  All library/header/symbol checks
-# must be run in this block, that performs a workaround for the problem.
-
-AC_SDL_MAIN_WORKAROUND([
-
-    # Check for SDL_mixer.
-
-    AC_CHECK_LIB(SDL2_mixer,Mix_LoadMUS,[
-        SDLMIXER_LIBS="$SDLMIXER_LIBS -lSDL2_mixer"
-    ],[
-        echo "*** Could not find SDL2_mixer.  Please install it."
-        exit -1
-    ])
-
-    # Check for SDL_net.
-
-    AC_CHECK_LIB(SDL2_net,SDLNet_UDP_Send,[
-        SDLNET_LIBS="$SDLNET_LIBS -lSDL2_net"
-    ],[
-        echo "*** Could not find SDL2_net.  Please install it."
-        exit -1
-    ])
-
-    # Check for libsamplerate.
-    AC_ARG_WITH([libsamplerate],
-    AS_HELP_STRING([--without-libsamplerate],
-        [Build without libsamplerate @<:@default=check@:>@]),
-    [],
-    [
-        [with_libsamplerate=check]
-    ])
-    AS_IF([test "x$with_libsamplerate" != xno], [
-        AC_CHECK_LIB(samplerate, src_new, [], [
-            AS_IF([test "x$with_libsamplerate" != xcheck], [AC_MSG_FAILURE(
-                [--with-libsamplerate was given, but test for libsamplerate failed])
-            ])
-        ])
-    ])
-    # Check for libpng.
-    AC_ARG_WITH([libpng],
-    AS_HELP_STRING([--without-libpng],
-        [Build without libpng @<:@default=check@:>@]),
-    [],
-    [
-        [with_libpng=check]
-    ])
-    AS_IF([test "x$with_libpng" != xno], [
-        AC_CHECK_LIB(z, zlibVersion)
-        AC_CHECK_LIB(png, png_get_io_ptr, [], [
-            AS_IF([test "x$with_libpng" != xcheck], [AC_MSG_FAILURE(
-                [--with-libpng was given, but test for libpng failed])
-            ])
-        ])
-    ])
-    AC_CHECK_LIB(m, log)
-
-    AC_CHECK_HEADERS([linux/kd.h dev/isa/spkrio.h dev/speaker/speaker.h])
-    AC_CHECK_FUNCS(mmap ioperm)
-
-    # OpenBSD I/O i386 library for I/O port access.
-    # (64 bit has the same thing with a different name!)
-
-    AC_CHECK_LIB(i386, i386_iopl)
-    AC_CHECK_LIB(amd64, amd64_iopl)
+# Check for libsamplerate.
+AC_ARG_WITH([libsamplerate],
+AS_HELP_STRING([--without-libsamplerate],
+    [Build without libsamplerate @<:@default=check@:>@]),
+[],
+[
+    [with_libsamplerate=check]
 ])
+AS_IF([test "x$with_libsamplerate" != xno], [
+    PKG_CHECK_MODULES(SAMPLERATE, samplerate >= 0.1.8, [
+        AC_DEFINE([HAVE_LIBSAMPLERATE], [1], [libsamplerate installed])
+    ], [
+        AS_IF([test "x$with_libsamplerate" != xcheck], [AC_MSG_FAILURE(
+            [--with-libsamplerate was given, but test for libsamplerate failed])
+        ])
+    ])
+])
+
+# Check for libpng.
+AC_ARG_WITH([libpng],
+AS_HELP_STRING([--without-libpng],
+    [Build without libpng @<:@default=check@:>@]),
+[],
+[
+    [with_libpng=check]
+])
+AS_IF([test "x$with_libpng" != xno], [
+    PKG_CHECK_MODULES(PNG, libpng >= 1.6.10, [
+        AC_DEFINE([HAVE_LIBPNG], [1], [libpng installed])
+    ], [
+        AS_IF([test "x$with_libpng" != xcheck], [AC_MSG_FAILURE(
+            [--with-libpng was given, but test for libpng failed])
+        ])
+    ])
+])
+
+# TODO: We currently link everything against libraries that don't need it.
+# Use the specific library CFLAGS/LIBS variables instead of setting them here.
+CFLAGS="$CFLAGS $SDL_CFLAGS ${SAMPLERATE_CFLAGS:-} ${PNG_CFLAGS:-}"
+LDFLAGS="$LDFLAGS $SDL_LIBS ${SAMPLERATE_LIBS:-} ${PNG_LIBS:-}"
+AC_CHECK_LIB(m, log)
+
+AC_CHECK_HEADERS([linux/kd.h dev/isa/spkrio.h dev/speaker/speaker.h])
+AC_CHECK_FUNCS(mmap ioperm)
+
+# OpenBSD I/O i386 library for I/O port access.
+# (64 bit has the same thing with a different name!)
+
+AC_CHECK_LIB(i386, i386_iopl)
+AC_CHECK_LIB(amd64, amd64_iopl)
 
 AC_ARG_WITH([bashcompletiondir],
     AS_HELP_STRING([--with-bashcompletiondir=DIR], [Bash completion directory]),
