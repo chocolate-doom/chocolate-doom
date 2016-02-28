@@ -436,13 +436,22 @@ static void UpdateGrab(void)
 
 }
 
-static void CreateUpscaledTexture(int w, int h)
+static void CreateUpscaledTexture(void)
 {
     const int actualheight = aspect_ratio_correct ?
                              SCREENHEIGHT_4_3 :
                              SCREENHEIGHT;
+    int w, h;
     int h_upscale, w_upscale;
     static int h_upscale_old, w_upscale_old;
+
+    // Get the size of the renderer output. The units this gives us will be
+    // real world pixels, which are not necessarily equivalent to the screen's
+    // window size (because of highdpi).
+    if (SDL_GetRendererOutputSize(renderer, &w, &h) != 0)
+    {
+        I_Error("Failed to get renderer output size: %s", SDL_GetError());
+    }
 
     // When the screen or window dimensions do not match the aspect ratio
     // of the texture, the rendered area is scaled down to fit. Calculate
@@ -461,33 +470,34 @@ static void CreateUpscaledTexture(int w, int h)
         w = h * SCREENWIDTH / actualheight;
     }
 
+    // Pick texture size the next integer multiple of the screen dimensions.
     // If one screen dimension matches an integer multiple of the original
     // resolution, there is no need to overscale in this direction.
 
-    h_upscale = h / SCREENHEIGHT;
+    w_upscale = (w + SCREENWIDTH - 1) / SCREENWIDTH;
+    h_upscale = (h + SCREENHEIGHT - 1) / SCREENHEIGHT;
 
-    if (!h || h % SCREENHEIGHT)
+    // Minimum texture dimensions of 320x200.
+
+    if (w_upscale < 1)
     {
-        h_upscale++;
+        w_upscale = 1;
     }
-
-    w_upscale = w / SCREENWIDTH;
-
-    if (!w || w % SCREENWIDTH)
+    if (h_upscale < 1)
     {
-        w_upscale++;
+        h_upscale = 1;
     }
 
     // Limit maximum texture dimensions to 1600x1200.
-
-    if (h_upscale > 6)
-    {
-        h_upscale = 6;
-    }
+    // It's really diminishing returns at this point.
 
     if (w_upscale > 5)
     {
         w_upscale = 5;
+    }
+    if (h_upscale > 6)
+    {
+        h_upscale = 6;
     }
 
     // Create a new texture only if the upscale factors have actually changed.
@@ -535,7 +545,7 @@ void I_FinishUpdate (void)
 
     if (need_resize && SDL_GetTicks() > last_resize_time + 1000/TICRATE)
     {
-        CreateUpscaledTexture(resize_w, resize_h);
+        CreateUpscaledTexture();
         screen_width = resize_w;
         screen_height = resize_h;
         need_resize = false;
@@ -977,6 +987,10 @@ static void SetVideoMode(int w, int h)
         flags |= SDL_WINDOW_RESIZABLE;
     }
 
+    // Set the highdpi flag - this makes a big difference on Macs with
+    // retina displays, especially when using small window sizes.
+    flags |= SDL_WINDOW_ALLOW_HIGHDPI;
+
     // Create window and renderer contexts. We set the window title
     // later anyway and leave the window position "undefined". If "flags"
     // contains the fullscreen flag (see above), then w and h are ignored.
@@ -1065,7 +1079,7 @@ static void SetVideoMode(int w, int h)
 
     // Initially create the upscaled texture for rendering to screen
 
-    CreateUpscaledTexture(w, h);
+    CreateUpscaledTexture();
 }
 
 void I_InitGraphics(void)
