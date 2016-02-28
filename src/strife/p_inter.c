@@ -874,7 +874,8 @@ void P_KillMobj(mobj_t* source, mobj_t* target)
             P_SetMobjState(target, S_DISR_00);  // 373
         else
         {
-            if(target->health < -target->info->spawnhealth 
+            // haleyjd [STRIFE] 20160111: Rogue changed check from < to <=
+            if(target->health <= -target->info->spawnhealth 
                 && target->info->xdeathstate)
                 P_SetMobjState(target, target->info->xdeathstate);
             else
