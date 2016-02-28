@@ -152,7 +152,7 @@ static void AdvanceTime(unsigned int nsamples)
 
     SDL_UnlockMutex(callback_queue_mutex);
 }
-  
+
 // Call the OPL emulator code to fill the specified buffer.
 
 static void FillBuffer(int16_t *buffer, unsigned int nsamples)

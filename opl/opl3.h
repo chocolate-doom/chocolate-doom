@@ -114,7 +114,7 @@ struct _opl3_chip {
     Bit16s zeromod;
     Bit32s mixbuff[2];
     //OPL3L
-	Bit32s rateratio; 
+    Bit32s rateratio; 
     Bit32s samplecnt;
     Bit16s oldsamples[2];
     Bit16s samples[2];
