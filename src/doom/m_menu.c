@@ -1405,7 +1405,7 @@ static multiitem_t multiitem_jump[NUM_JUMPS] =
 static multiitem_t multiitem_translucency[NUM_TRANSLUCENCY] =
 {
     {TRANSLUCENCY_OFF, "off"},
-    {TRANSLUCENCY_MISSILE, "missiles"},
+    {TRANSLUCENCY_MISSILE, "projectiles"},
     {TRANSLUCENCY_ITEM, "items"},
     {TRANSLUCENCY_BOTH, "both"},
 };
