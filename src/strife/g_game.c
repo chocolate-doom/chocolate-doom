@@ -2328,7 +2328,8 @@ void G_DoPlayDemo (void)
                         "\n"
                         "*** You may need to upgrade your version "
                             "of Strife to v1.1 or later. ***\n"
-                        "    See: http://doomworld.com/files/patches.shtml\n"
+                        "    See: https://www.doomworld.com/classicdoom"
+                                  "/info/patches.php\n"
                         "    This appears to be %s.";
 
         I_Error(message, demoversion, STRIFE_VERSION,
