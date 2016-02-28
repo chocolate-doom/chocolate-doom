@@ -1600,7 +1600,7 @@ void D_DoomMain (void)
         printf(" WARNING: You are playing using one of the Freedoom IWAD\n"
                " files, which might not work in this port. See this page\n"
                " for more information on how to play using Freedoom:\n"
-               "   http://www.chocolate-doom.org/wiki/index.php/Freedoom\n");
+               "   https://www.chocolate-doom.org/wiki/index.php/Freedoom\n");
         I_PrintDivider();
     }
 
