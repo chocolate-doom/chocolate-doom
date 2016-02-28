@@ -388,11 +388,11 @@ static const envelope_sinfunc envelope_sin[8] = {
     OPL3_EnvelopeCalcSin7
 };
 
-void OPL3_EnvelopeGenOff(opl3_slot *slot);
-void OPL3_EnvelopeGenAttack(opl3_slot *slot);
-void OPL3_EnvelopeGenDecay(opl3_slot *slot);
-void OPL3_EnvelopeGenSustain(opl3_slot *slot);
-void OPL3_EnvelopeGenRelease(opl3_slot *slot);
+static void OPL3_EnvelopeGenOff(opl3_slot *slot);
+static void OPL3_EnvelopeGenAttack(opl3_slot *slot);
+static void OPL3_EnvelopeGenDecay(opl3_slot *slot);
+static void OPL3_EnvelopeGenSustain(opl3_slot *slot);
+static void OPL3_EnvelopeGenRelease(opl3_slot *slot);
 
 envelope_genfunc envelope_gen[5] = {
     OPL3_EnvelopeGenOff,
@@ -703,7 +703,7 @@ static void OPL3_SlotCalcFB(opl3_slot *slot)
 // Channel
 //
 
-void OPL3_ChannelSetupAlg(opl3_channel *channel);
+static void OPL3_ChannelSetupAlg(opl3_channel *channel);
 
 static void OPL3_ChannelUpdateRhythm(opl3_chip *chip, Bit8u data)
 {
