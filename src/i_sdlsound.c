@@ -1126,32 +1126,6 @@ static boolean I_SDL_InitSound(boolean _use_sfx_prefix)
     }
 #endif
 
-    // SDL_mixer version 1.2.8 and earlier has a bug in the Mix_SetPanning
-    // function that can cause the game to lock up.  If we're using an old
-    // version, we need to apply a workaround.  But the workaround has its
-    // own drawbacks ...
-
-    {
-        const SDL_version *mixer_version;
-        int v;
-
-        mixer_version = Mix_Linked_Version();
-        v = SDL_VERSIONNUM(mixer_version->major,
-                           mixer_version->minor,
-                           mixer_version->patch);
-
-        if (v <= SDL_VERSIONNUM(1, 2, 8))
-        {
-            setpanning_workaround = true;
-            fprintf(stderr, "\n"
-              "ATTENTION: You are using an old version of SDL_mixer!\n"
-              "           This version has a bug that may cause "
-                          "your sound to stutter.\n"
-              "           Please upgrade to a newer version!\n"
-              "\n");
-        }
-    }
-
     Mix_AllocateChannels(NUM_CHANNELS);
 
     SDL_PauseAudio(0);
