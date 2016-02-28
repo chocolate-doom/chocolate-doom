@@ -24,6 +24,8 @@
 	<string>@PACKAGE_VERSION@</string>
 	<key>CFBundleVersion</key>
 	<string>@PACKAGE_VERSION@</string>
+        <key>NSHighResolutionCapable</key>
+        <string>true</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 	<key>NSMainNibFile</key>

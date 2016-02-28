@@ -51,6 +51,7 @@ typedef struct
 SDL_Window *TXT_SDLWindow;
 static SDL_Surface *screenbuffer;
 static unsigned char *screendata;
+static SDL_Renderer *renderer;
 static int key_mapping = 1;
 
 static TxtSDLEventCallbackFunc event_callback;
@@ -59,8 +60,11 @@ static void *event_callback_data;
 static int modifier_state[TXT_NUM_MODIFIERS];
 
 // Font we are using:
+static const txt_font_t *font;
 
-static txt_font_t *font;
+// Dummy "font" that means to try highdpi rendering, or fallback to
+// main_font otherwise.
+static const txt_font_t highdpi_font = { NULL, 8, 16 };
 
 //#define TANGO
 
@@ -142,24 +146,28 @@ static int Win32_UseLargeFont(void)
 
 #endif
 
-static txt_font_t *FontForName(char *name)
+static const txt_font_t *FontForName(char *name)
 {
-    if (!strcmp(name, "small"))
+    int i;
+    struct {
+        char *name;
+        const txt_font_t *font;
+    } fonts[] = {
+        { "small", &small_font },
+        { "normal", &main_font },
+        { "large", &large_font },
+        { "normal-highdpi", &highdpi_font },
+        { NULL },
+    };
+
+    for (i = 0; fonts[i].name != NULL; ++i)
     {
-        return &small_font;
+        if (!strcmp(fonts[i].name, name))
+        {
+            return fonts[i].font;
+        }
     }
-    else if (!strcmp(name, "normal"))
-    {
-        return &main_font;
-    }
-    else if (!strcmp(name, "large"))
-    {
-        return &large_font;
-    }
-    else
-    {
-        return NULL;
-    }
+    return NULL;
 }
 
 //
@@ -175,9 +183,7 @@ static void ChooseFont(void)
     char *env;
 
     // Allow normal selection to be overridden from an environment variable:
-
     env = getenv("TEXTSCREEN_FONT");
-
     if (env != NULL)
     {
         font = FontForName(env);
@@ -191,10 +197,9 @@ static void ChooseFont(void)
     // Get desktop resolution.
     // If in doubt and we can't get a list, always prefer to
     // fall back to the normal font:
-
     if (!SDL_GetCurrentDisplayMode(0, &desktop_info))
     {
-        font = &main_font;
+        font = &highdpi_font;
         return;
     }
 
@@ -223,7 +228,10 @@ static void ChooseFont(void)
     // and using large_font if the result is >= 2.
     else
     {
-        font = &main_font;
+        // highdpi_font usually means main_font (the normal resolution
+        // version), but actually means "set the HIGHDPI flag and try
+        // to use large_font if we initialize successfully".
+        font = &highdpi_font;
     }
 }
 
@@ -235,6 +243,9 @@ static void ChooseFont(void)
 
 int TXT_Init(void)
 {
+    int window_w, window_h;
+    int flags = 0;
+
     if (SDL_Init(SDL_INIT_VIDEO) < 0)
     {
         return 0;
@@ -242,16 +253,46 @@ int TXT_Init(void)
 
     ChooseFont();
 
-    // Always create the screen at the native screen depth (bpp=0);
-    // some systems nowadays don't seem to support true 8-bit palettized
-    // screen modes very well and we end up with screwed up colors.
+    window_w = TXT_SCREEN_W * font->w;
+    window_h = TXT_SCREEN_H * font->h;
+
+    // If highdpi_font is selected, try to initialize high dpi rendering.
+    if (font == &highdpi_font)
+    {
+        flags |= SDL_WINDOW_ALLOW_HIGHDPI;
+    }
+
     TXT_SDLWindow =
         SDL_CreateWindow("", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-                         TXT_SCREEN_W * font->w, TXT_SCREEN_H * font->h,
-                         0);
+                         window_w, window_h, flags);
 
     if (TXT_SDLWindow == NULL)
         return 0;
+
+    renderer = SDL_CreateRenderer(TXT_SDLWindow, -1, 0);
+
+    // Special handling for OS X retina display. If we successfully set the
+    // highdpi flag, check the output size for the screen renderer. If we get
+    // the 2x doubled size we expect from a retina display, use the large font
+    // for drawing the screen.
+    if ((SDL_GetWindowFlags(TXT_SDLWindow) & SDL_WINDOW_ALLOW_HIGHDPI) != 0)
+    {
+        int render_w, render_h;
+
+        if (SDL_GetRendererOutputSize(renderer, &render_w, &render_h) == 0
+         && render_w == TXT_SCREEN_W * large_font.w
+         && render_h == TXT_SCREEN_H * large_font.h)
+        {
+            font = &large_font;
+        }
+    }
+
+    // Failed to initialize for high dpi (retina display) rendering? If so
+    // then use the normal resolution font instead.
+    if (font == &highdpi_font)
+    {
+        font = &main_font;
+    }
 
     // Instead, we draw everything into an intermediate 8-bit surface
     // the same dimensions as the screen. SDL then takes care of all the
@@ -380,6 +421,7 @@ static int LimitToRange(int val, int min, int max)
 
 void TXT_UpdateScreenArea(int x, int y, int w, int h)
 {
+    SDL_Texture *screentx;
     SDL_Rect rect;
     int x1, y1;
     int x_end;
@@ -407,9 +449,15 @@ void TXT_UpdateScreenArea(int x, int y, int w, int h)
 
     SDL_UnlockSurface(screenbuffer);
 
-    SDL_BlitSurface(screenbuffer, &rect,
-                    SDL_GetWindowSurface(TXT_SDLWindow), &rect);
-    SDL_UpdateWindowSurfaceRects(TXT_SDLWindow, &rect, 1);
+    // TODO: This is currently creating a new texture every time we render
+    // the screen; find a more efficient way to do it.
+    screentx = SDL_CreateTextureFromSurface(renderer, screenbuffer);
+
+    SDL_RenderClear(renderer);
+    SDL_RenderCopy(renderer, screentx, NULL, NULL);
+    SDL_RenderPresent(renderer);
+
+    SDL_DestroyTexture(screentx);
 }
 
 void TXT_UpdateScreen(void)
@@ -419,10 +467,16 @@ void TXT_UpdateScreen(void)
 
 void TXT_GetMousePosition(int *x, int *y)
 {
+    int window_w, window_h;
+
     SDL_GetMouseState(x, y);
 
-    *x /= font->w;
-    *y /= font->h;
+    // Translate mouse position from 'pixel' position into character position.
+    // Note that font->{w,h} are deliberately not used in this calculation, as
+    // that would break when using highdpi (OS X retina display).
+    SDL_GetWindowSize(TXT_SDLWindow, &window_w, &window_h);
+    *x = (*x * TXT_SCREEN_W) / window_w;
+    *y = (*y * TXT_SCREEN_H) / window_h;
 }
 
 //
