@@ -18,7 +18,7 @@ Timidity for MIDI playback, first download a sound font. An example of
 a good quality sound font is the eawpats font, which can be downloaded
 from the idgames archive as sounds/eawpats.zip:
 
-  http://www.doomworld.com/idgames/index.php?file=sounds/eawpats.zip
+  https://www.doomworld.com/idgames/sounds/eawpats
 
 Having installed a sound font, select "Native MIDI" in the sound
 configuration dialog in the setup tool, and use the "Timidity
@@ -39,7 +39,7 @@ Edition, these patches are included with its version of classic Doom,
 and are automatically detected. Otherwise, they can be downloaded
 from the idgames archive as music/dgguspat.zip:
 
-  http://www.doomworld.com/idgames/index.php?file=music/dgguspat.zip
+  https://www.doomworld.com/idgames/music/dgguspat
 
 Having downloaded the patches, select "GUS (emulated)" in the sound
 configuration dialog in the setup tool, and use the "GUS patch path"
