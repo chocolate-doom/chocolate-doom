@@ -288,7 +288,7 @@ void D_IdentifyVersion(void)
             "You are trying to use the Hexen v1.0 IWAD. This isn't\n"
             "supported by " PACKAGE_NAME ". Please upgrade to the v1.1\n"
             "IWAD file. See here for more information:\n"
-            "  http://www.doomworld.com/classicdoom/info/patches.php");
+            "  https://www.doomworld.com/classicdoom/info/patches.php");
     }
 }
 
