@@ -427,14 +427,14 @@ void D_DoomLoop (void)
 
     main_loop_started = true;
 
-    TryRunTics();
-
     I_SetWindowTitle(gamedescription);
     I_GraphicsCheckCommandLine();
     I_InputCheckCommandLine();
     I_SetGrabMouseCallback(D_GrabMouseCallback);
     I_InitGraphics();
     V_EnableLoadingDisk(SCREENWIDTH - LOADING_DISK_W, SCREENHEIGHT - LOADING_DISK_H);
+
+    TryRunTics();
 
     V_RestoreBuffer();
     R_ExecuteSetViewSize();
