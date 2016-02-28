@@ -21,21 +21,35 @@
 //      OPLx decapsulated(Matthew Gambrell, Olli Niemitalo):
 //          OPL2 ROMs.
 //
-// version: 1.6.2
+// version: 1.7
 //
 
 #ifndef OPL_OPL3_H
 #define OPL_OPL3_H
 
-#include "opl.h"
+#include <inttypes.h>
 
-typedef struct _opl_slot opl_slot;
-typedef struct _opl_channel opl_channel;
-typedef struct _opl_chip opl_chip;
+#define OPL_WRITEBUF_SIZE   1024
+#define OPL_WRITEBUF_DELAY  2
 
-struct _opl_slot {
-    opl_channel *channel;
-    opl_chip *chip;
+typedef uintptr_t       Bitu;
+typedef intptr_t        Bits;
+typedef uint64_t        Bit64u;
+typedef int64_t         Bit64s;
+typedef uint32_t        Bit32u;
+typedef int32_t         Bit32s;
+typedef uint16_t        Bit16u;
+typedef int16_t         Bit16s;
+typedef uint8_t         Bit8u;
+typedef int8_t          Bit8s;
+
+typedef struct _opl3_slot opl3_slot;
+typedef struct _opl3_channel opl3_channel;
+typedef struct _opl3_chip opl3_chip;
+
+struct _opl3_slot {
+    opl3_channel *channel;
+    opl3_chip *chip;
     Bit16s out;
     Bit16s fbmod;
     Bit16s *mod;
@@ -63,10 +77,10 @@ struct _opl_slot {
     Bit32u timer;
 };
 
-struct _opl_channel {
-    opl_slot *slots[2];
-    opl_channel *pair;
-    opl_chip *chip;
+struct _opl3_channel {
+    opl3_slot *slots[2];
+    opl3_channel *pair;
+    opl3_chip *chip;
     Bit16s *out[4];
     Bit8u chtype;
     Bit16u f_num;
@@ -78,9 +92,15 @@ struct _opl_channel {
     Bit16u cha, chb;
 };
 
-struct _opl_chip {
-    opl_channel channel[18];
-    opl_slot slot[36];
+typedef struct _opl3_writebuf {
+    Bit64u time;
+    Bit16u reg;
+    Bit8u data;
+} opl3_writebuf;
+
+struct _opl3_chip {
+    opl3_channel channel[18];
+    opl3_slot slot[36];
     Bit16u timer;
     Bit8u newm;
     Bit8u nts;
@@ -98,10 +118,18 @@ struct _opl_chip {
     Bit32s samplecnt;
     Bit16s oldsamples[2];
     Bit16s samples[2];
+
+    Bit64u writebuf_samplecnt;
+    Bit32u writebuf_cur;
+    Bit32u writebuf_last;
+    Bit64u writebuf_lasttime;
+    opl3_writebuf writebuf[OPL_WRITEBUF_SIZE];
 };
 
-
-void chip_reset(opl_chip *chip, Bit32u samplerate);
-void chip_write(opl_chip *chip, Bit16u reg, Bit8u v);
-void chip_update(opl_chip *chip, Bit16s* sndptr, Bit32u numsamples);
+void OPL3_Generate(opl3_chip *chip, Bit16s *buf);
+void OPL3_GenerateResampled(opl3_chip *chip, Bit16s *buf);
+void OPL3_Reset(opl3_chip *chip, Bit32u samplerate);
+void OPL3_WriteReg(opl3_chip *chip, Bit16u reg, Bit8u v);
+void OPL3_WriteRegBuffered(opl3_chip *chip, Bit16u reg, Bit8u v);
+void OPL3_GenerateStream(opl3_chip *chip, Bit16s *sndptr, Bit32u numsamples);
 #endif

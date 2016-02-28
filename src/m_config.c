@@ -839,13 +839,6 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT_HEX(opl_io_port),
 
     //!
-    // OPL emulator. A value of zero enables Nuked OPL core. A value of 1
-    // enables DOSBox DBOPL core.
-    //
-
-    CONFIG_VARIABLE_INT(opl_core),
-
-    //!
     // @game doom heretic strife
     //
     // If non-zero, the ENDOOM text screen is displayed when exiting the

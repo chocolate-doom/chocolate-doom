@@ -25,7 +25,6 @@
 #include "SDL.h"
 #include "SDL_mixer.h"
 
-#include "dbopl.h"
 #include "opl3.h"
 
 #include "opl.h"
@@ -71,8 +70,7 @@ static uint64_t pause_offset;
 
 // OPL software emulator structure.
 
-static Chip opl_dbopl_chip;
-static opl_chip opl_nuked_chip;
+static opl3_chip opl_chip;
 static int opl_opl3mode;
 
 // Temporary mixing buffer used by the mixing callback.
@@ -93,88 +91,6 @@ static opl_timer_t timer2 = { 3125, 0, 0, 0 };
 static int sdl_was_initialized = 0;
 static int mixing_freq, mixing_channels;
 static Uint16 mixing_format;
-
-// OPL cores.
-
-opl_sdl_core_t *opl_sdl_core = NULL;
-
-static void OPL_Nuked_Init(unsigned int rate)
-{
-    chip_reset(&opl_nuked_chip, rate);
-}
-
-static void OPL_Nuked_Write(unsigned int reg, unsigned int data)
-{
-    chip_write(&opl_nuked_chip, reg, data);
-}
-
-static void OPL_Nuked_Fill_Buffer(int16_t *buffer, unsigned int nsamples)
-{
-    chip_update(&opl_nuked_chip, (Bit16s*)buffer, nsamples);
-}
-
-opl_sdl_core_t opl_nuked_core =
-{
-    OPL_Nuked_Init,
-    OPL_Nuked_Write,
-    OPL_Nuked_Fill_Buffer
-};
-
-static void OPL_DBOPL_Init(unsigned int rate)
-{
-    DBOPL_InitTables();
-    Chip__Chip(&opl_dbopl_chip);
-    Chip__Setup(&opl_dbopl_chip, mixing_freq);
-}
-
-static void OPL_DBOPL_Write(unsigned int reg, unsigned int data)
-{
-    Chip__WriteReg(&opl_dbopl_chip, reg, data);
-}
-
-static void OPL_DBOPL_Fill_Buffer(int16_t *buffer, unsigned int nsamples)
-{
-    unsigned int i;
-
-    // This seems like a reasonable assumption.  mix_buffer is
-    // 1 second long, which should always be much longer than the
-    // SDL mix buffer.
-
-    assert(nsamples < mixing_freq);
-
-    if (opl_opl3mode)
-    {
-        Chip__GenerateBlock3(&opl_dbopl_chip, nsamples, mix_buffer);
-
-        // Mix into the destination buffer, doubling up into stereo.
-
-        for (i=0; i<nsamples; ++i)
-        {
-            buffer[i * 2] = (int16_t) mix_buffer[i * 2];
-            buffer[i * 2 + 1] = (int16_t) mix_buffer[i * 2 + 1];
-        }
-    }
-    else
-    {
-        Chip__GenerateBlock2(&opl_dbopl_chip, nsamples, mix_buffer);
-
-        // Mix into the destination buffer, doubling up into stereo.
-
-        for (i=0; i<nsamples; ++i)
-        {
-            buffer[i * 2] = (int16_t) mix_buffer[i];
-            buffer[i * 2 + 1] = (int16_t) mix_buffer[i];
-        }
-    }
-}
-
-opl_sdl_core_t opl_dbopl_core =
-{
-    OPL_DBOPL_Init,
-    OPL_DBOPL_Write,
-    OPL_DBOPL_Fill_Buffer
-};
-
 
 static int SDLIsInitialized(void)
 {
@@ -236,6 +152,21 @@ static void AdvanceTime(unsigned int nsamples)
 
     SDL_UnlockMutex(callback_queue_mutex);
 }
+  
+// Call the OPL emulator code to fill the specified buffer.
+
+static void FillBuffer(int16_t *buffer, unsigned int nsamples)
+{
+    unsigned int i;
+
+    // This seems like a reasonable assumption.  mix_buffer is
+    // 1 second long, which should always be much longer than the
+    // SDL mix buffer.
+
+    assert(nsamples < mixing_freq);
+
+    OPL3_GenerateStream(&opl_chip, buffer, nsamples);
+}
 
 // Callback function to fill a new sound buffer:
 
@@ -287,7 +218,7 @@ static void OPL_Mix_Callback(void *udata,
 
         // Add emulator output to buffer.
 
-        opl_sdl_core->fill_buffer_func(buffer + filled * 2, nsamples);
+        FillBuffer(buffer + filled * 2, nsamples);
         filled += nsamples;
 
         // Invoke callbacks for this point in time.
@@ -417,18 +348,7 @@ static int OPL_SDL_Init(unsigned int port_base)
 
     // Create the emulator structure:
 
-    switch (opl_emu)
-    {
-    case OPL_CORE_NUKED:
-    default:
-        opl_sdl_core = &opl_nuked_core;
-        break;
-    case OPL_CORE_DBOPL:
-        opl_sdl_core = &opl_dbopl_core;
-        break;
-    }
-
-    opl_sdl_core->init_func(mixing_freq);
+    OPL3_Reset(&opl_chip, mixing_freq);
     opl_opl3mode = 0;
 
     callback_mutex = SDL_CreateMutex();
@@ -520,7 +440,7 @@ static void WriteRegister(unsigned int reg_num, unsigned int value)
             opl_opl3mode = value & 0x01;
 
         default:
-            opl_sdl_core->write_func(reg_num, value);
+            OPL3_WriteRegBuffered(&opl_chip, reg_num, value);
             break;
     }
 }
