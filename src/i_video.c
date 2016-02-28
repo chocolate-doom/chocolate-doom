@@ -1113,15 +1113,6 @@ void I_InitGraphics(void)
         I_Error("Failed to initialize video: %s", SDL_GetError());
     }
 
-    // Warning to OS X users... though they might never see it :(
-#ifdef __MACOSX__
-    if (fullscreen)
-    {
-        printf("Some old versions of OS X might crash in fullscreen mode.\n"
-               "If this happens to you, switch back to windowed mode.\n");
-    }
-#endif
-
     //
     // Enter into graphics mode.
     //
