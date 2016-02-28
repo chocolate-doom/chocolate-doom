@@ -1205,13 +1205,4 @@ void I_BindVideoVariables(void)
     M_BindStringVariable("window_position",        &window_position);
     M_BindIntVariable("usegamma",                  &usegamma);
     M_BindIntVariable("png_screenshots",           &png_screenshots);
-
-    // Disable fullscreen by default on OS X, as there is an SDL bug
-    // where some old versions of OS X (<= Snow Leopard) crash.
-
-#ifdef __MACOSX__
-    fullscreen = 0;
-    screen_width = 800;
-    screen_height = 600;
-#endif
 }

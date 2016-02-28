@@ -504,13 +504,4 @@ void BindDisplayVariables(void)
     {
         M_BindIntVariable("graphical_startup",        &graphical_startup);
     }
-
-    // Disable fullscreen by default on OS X, as there is an SDL bug
-    // where some old versions of OS X (<= Snow Leopard) crash.
-
-#ifdef __MACOSX__
-    fullscreen = 0;
-    screen_width = 800;
-    screen_height = 600;
-#endif
 }
