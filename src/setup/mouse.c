@@ -25,7 +25,7 @@
 #include "mode.h"
 #include "mouse.h"
 
-#define WINDOW_HELP_URL "http://www.chocolate-doom.org/setup-mouse"
+#define WINDOW_HELP_URL "https://www.chocolate-doom.org/setup-mouse"
 
 static int usemouse = 1;
 

@@ -25,7 +25,7 @@
 #include "mode.h"
 #include "sound.h"
 
-#define WINDOW_HELP_URL "http://www.chocolate-doom.org/setup-sound"
+#define WINDOW_HELP_URL "https://www.chocolate-doom.org/setup-sound"
 
 typedef enum
 {

@@ -38,7 +38,7 @@
 #include "multiplayer.h"
 #include "sound.h"
 
-#define WINDOW_HELP_URL "http://www.chocolate-doom.org/setup"
+#define WINDOW_HELP_URL "https://www.chocolate-doom.org/setup"
 
 static const int cheat_sequence[] =
 {

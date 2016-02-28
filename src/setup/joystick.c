@@ -29,7 +29,7 @@
 #include "txt_joyaxis.h"
 #include "txt_joybinput.h"
 
-#define WINDOW_HELP_URL "http://www.chocolate-doom.org/setup-gamepad"
+#define WINDOW_HELP_URL "https://www.chocolate-doom.org/setup-gamepad"
 
 typedef struct
 {
