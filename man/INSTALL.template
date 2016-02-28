@@ -30,9 +30,9 @@ to be installed:
 
  * A C compiler (gcc is recommended)
  * make (GNU make is recommended)
- * LibSDL (see http://www.libsdl.org/)
- * SDL_mixer (see http://www.libsdl.org/projects/SDL_mixer/)
- * SDL_net (see http://www.libsdl.org/projects/SDL_net/)
+ * SDL2 (see http://www.libsdl.org/)
+ * SDL2_mixer (see http://www.libsdl.org/projects/SDL_mixer/)
+ * SDL2_net (see http://www.libsdl.org/projects/SDL_net/)
  * Python (optional)
 
 Follow the standard instructions for installing an autotools-based
@@ -268,7 +268,7 @@ how to set these up.
 
 #if !PRECOMPILED
 When compiling from source, be sure to compile and install Timidity
-before installing SDL_mixer.
+before installing SDL2_mixer.
 
 #endif
 # vim: tw=70

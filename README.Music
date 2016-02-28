@@ -13,7 +13,7 @@ dialog in the setup tool.
 == Timidity ==
 
 Timidity is a software-based MIDI synthesizer, and a version of it is
-included in the SDL_mixer library used by Chocolate Doom. To use
+included in the SDL2_mixer library used by Chocolate Doom. To use
 Timidity for MIDI playback, first download a sound font. An example of
 a good quality sound font is the eawpats font, which can be downloaded
 from the idgames archive as sounds/eawpats.zip:
