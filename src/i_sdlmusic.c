@@ -900,27 +900,6 @@ static boolean I_SDL_InitMusic(void)
 {
     int i;
 
-    // SDL_mixer prior to v1.2.11 has a bug that causes crashes
-    // with MIDI playback.  Print a warning message if we are
-    // using an old version.
-
-#ifdef __MACOSX__
-    {
-        const SDL_version *v = Mix_Linked_Version();
-
-        if (SDL_VERSIONNUM(v->major, v->minor, v->patch)
-          < SDL_VERSIONNUM(1, 2, 11))
-        {
-            printf("\n"
-               "                   *** WARNING ***\n"
-               "      You are using an old version of SDL_mixer.\n"
-               "      Music playback on this version may cause crashes\n"
-               "      under OS X and is disabled by default.\n"
-               "\n");
-        }
-    }
-#endif
-
     //!
     // @arg <output filename>
     //
