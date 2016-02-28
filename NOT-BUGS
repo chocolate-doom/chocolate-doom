@@ -18,7 +18,7 @@ the following:
     (read 106, should be 109)
 
     *** You may need to upgrade your version of Doom to v1.9. ***
-        See: http://doomworld.com/files/patches.shtml
+        See: https://www.doomworld.com/classicdoom/info/patches.php
         This appears to be v1.6/v1.666.
 
 This usually indicates that your IWAD file that you are using to play
@@ -130,9 +130,9 @@ this when trying to play an add-on level.  The level you are trying to
 play is too complex; it was most likely designed to work with a limit
 removing source port.
 
-More information can be found here:
+More information can be found here (archived link):
 
-    http://rome.ro/lee_killough/editing/visplane.shtml
+    https://archive.is/s6h7V
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
