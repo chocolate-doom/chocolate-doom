@@ -159,10 +159,6 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\opl\dbopl.c"
-				>
-			</File>
-			<File
 				RelativePath="..\opl\ioperm_sys.c"
 				>
 			</File>
@@ -194,6 +190,10 @@
 				RelativePath="..\opl\opl_win32.c"
 				>
 			</File>
+			<File
+				RelativePath="..\opl\opl3.c"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -222,6 +222,10 @@
 			</File>
 			<File
 				RelativePath="..\opl\opl_timer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\opl\opl3.h"
 				>
 			</File>
 		</Filter>

@@ -25,7 +25,7 @@
 #include "joystick.h"
 #include "keyboard.h"
 
-#define WINDOW_HELP_URL "http://www.chocolate-doom.org/setup-keyboard"
+#define WINDOW_HELP_URL "https://www.chocolate-doom.org/setup-keyboard"
 
 int vanilla_keyboard_mapping = 0;
 

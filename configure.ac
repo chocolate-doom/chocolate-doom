@@ -5,7 +5,7 @@ PACKAGE_SHORTDESC="Limit-removing enhanced-resolution Doom source port"
 PACKAGE_COPYRIGHT="Copyright (C) 1993-2015"
 PACKAGE_LICENSE="GNU General Public License, version 2"
 PACKAGE_MAINTAINER="Fabian Greffrath"
-PACKAGE_URL="http://www.chocolate-doom.org/wiki/index.php/Crispy_Doom"
+PACKAGE_URL="https://www.chocolate-doom.org/wiki/index.php/Crispy_Doom"
 PACKAGE_ISSUES="https://github.com/fabiangreffrath/crispy-doom/issues"
 
 AC_CONFIG_AUX_DIR(autotools)

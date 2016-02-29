@@ -34,10 +34,10 @@
 #include "net_io.h"
 #include "net_query.h"
 
-#define MULTI_START_HELP_URL "http://www.chocolate-doom.org/setup-multi-start"
-#define MULTI_JOIN_HELP_URL "http://www.chocolate-doom.org/setup-multi-join"
-#define MULTI_CONFIG_HELP_URL "http://www.chocolate-doom.org/setup-multi-config"
-#define LEVEL_WARP_HELP_URL "http://www.chocolate-doom.org/setup-level-warp"
+#define MULTI_START_HELP_URL "https://www.chocolate-doom.org/setup-multi-start"
+#define MULTI_JOIN_HELP_URL "https://www.chocolate-doom.org/setup-multi-join"
+#define MULTI_CONFIG_HELP_URL "https://www.chocolate-doom.org/setup-multi-config"
+#define LEVEL_WARP_HELP_URL "https://www.chocolate-doom.org/setup-level-warp"
 
 #define NUM_WADS 10
 #define NUM_EXTRA_PARAMS 10
