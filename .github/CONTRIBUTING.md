@@ -1,6 +1,11 @@
 Thanks for contributing to Chocolate Doom! Whatever your contribution,
 whether it's code or just a bug report, it's greatly appreciated.
 
+The project is governed by the
+[Contributor Covenant](http://contributor-covenant.org/version/1/4/)
+version 1.4. By contributing to the project you agree to abide by its
+terms. To report violations, please send an email to fraggle@gmail.com.
+
 ### Reporting bugs
 
 Before reporting a bug, it's worth checking if this really is a bug.
