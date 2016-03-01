@@ -1582,6 +1582,10 @@ void M_EndGameResponse(int key)
     if (key != key_menu_confirm)
 	return;
 		
+    // [crispy] killough 5/26/98: make endgame quit if recording or playing back demo
+    if (demorecording || singledemo)
+	G_CheckDemoStatus();
+
     // [crispy] clear quicksave slot
     quickSaveSlot = -1;
     currentMenu->lastOn = itemOn;
