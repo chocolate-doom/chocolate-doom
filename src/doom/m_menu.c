@@ -2927,9 +2927,10 @@ void M_Drawer (void)
 	if (name[0])
 	{
 	    // [crispy] shade unavailable menu items
-	    if ((currentMenu == &MainDef && i == savegame && !usergame) ||
-	        (currentMenu == &OptionsDef && i == endgame && !usergame) ||
-	        (currentMenu == &MainDef && i == loadgame && netgame))
+	    if ((currentMenu == &MainDef && i == savegame && (!usergame || gamestate != GS_LEVEL)) ||
+	        (currentMenu == &OptionsDef && i == endgame && (!usergame || netgame)) ||
+	        (currentMenu == &MainDef && i == loadgame && (netgame || demorecording)) ||
+	        (currentMenu == &MainDef && i == newgame && (demorecording || (netgame && !demoplayback))))
 	        dp_translation = cr[CR_DARK];
 
 	    if (currentMenu == &OptionsDef)
