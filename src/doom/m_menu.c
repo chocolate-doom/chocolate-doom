@@ -810,8 +810,13 @@ void M_LoadSelect(int choice)
 //
 void M_LoadGame (int choice)
 {
-    // [crispy] not while recording a demo
-    if (netgame || demorecording)
+    // [crispy] forbid New Game and (Quick) Load while recording a demo
+    if (demorecording)
+    {
+	return;
+    }
+
+    if (netgame)
     {
 	M_StartMessage(DEH_String(LOADNET),NULL,false);
 	return;
@@ -947,8 +952,7 @@ void M_QuickLoadResponse(int key)
 
 void M_QuickLoad(void)
 {
-    // [crispy] not while recording a demo
-    if (netgame || demorecording)
+    if (netgame)
     {
 	M_StartMessage(DEH_String(QLOADNET),NULL,false);
 	return;
@@ -1141,8 +1145,13 @@ void M_DrawNewGame(void)
 
 void M_NewGame(int choice)
 {
-    // [crispy] not while recording a demo
-    if ((netgame && !demoplayback) || demorecording)
+    // [crispy] forbid New Game and (Quick) Load while recording a demo
+    if (demorecording)
+    {
+	return;
+    }
+
+    if (netgame && !demoplayback)
     {
 	M_StartMessage(DEH_String(NEWGAME),NULL,false);
 	return;
@@ -2552,9 +2561,17 @@ boolean M_Responder (event_t* ev)
         }
         else if (key == key_menu_load)     // Load
         {
+	    // [crispy] forbid New Game and (Quick) Load while recording a demo
+	    if (demorecording)
+	    {
+		S_StartSound(NULL,sfx_oof);
+	    }
+	    else
+	    {
 	    M_StartControlPanel();
 	    S_StartSound(NULL,sfx_swtchn);
 	    M_LoadGame(0);
+	    }
 	    return true;
         }
         else if (key == key_menu_volume)   // Sound Volume
@@ -2591,8 +2608,16 @@ boolean M_Responder (event_t* ev)
         }
         else if (key == key_menu_qload)    // Quickload
         {
+	    // [crispy] forbid New Game and (Quick) Load while recording a demo
+	    if (demorecording)
+	    {
+		S_StartSound(NULL,sfx_oof);
+	    }
+	    else
+	    {
 	    S_StartSound(NULL,sfx_swtchn);
 	    M_QuickLoad();
+	    }
 	    return true;
         }
         else if (key == key_menu_quit)     // Quit DOOM
