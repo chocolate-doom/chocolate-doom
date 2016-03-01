@@ -1284,6 +1284,11 @@ M_StartMessage
     messageRoutine = routine;
     messageNeedsInput = input;
     menuactive = true;
+    // [crispy] entering menus while recording demos pauses the game
+    if (demorecording && !paused)
+    {
+        sendpause = true;
+    }
     return;
 }
 
