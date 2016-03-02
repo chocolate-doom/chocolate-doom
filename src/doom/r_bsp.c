@@ -545,6 +545,9 @@ void R_Subsector (int num)
     if (frontsector->interpfloorheight < viewz)
     {
 	floorplane = R_FindPlane(frontsector->interpfloorheight,
+				  // [crispy] add support for MBF sky tranfers
+				  frontsector->floorpic == skyflatnum &&
+				  frontsector->sky & PL_SKYFLAT ? frontsector->sky :
 				  frontsector->floorpic,
 				  frontsector->lightlevel);
     }
@@ -555,6 +558,9 @@ void R_Subsector (int num)
 	|| frontsector->ceilingpic == skyflatnum)
     {
 	ceilingplane = R_FindPlane(frontsector->interpceilingheight,
+				  // [crispy] add support for MBF sky tranfers
+				    frontsector->ceilingpic == skyflatnum &&
+				    frontsector->sky & PL_SKYFLAT ? frontsector->sky :
 				    frontsector->ceilingpic,
 				    frontsector->lightlevel);
     }
