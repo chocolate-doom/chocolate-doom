@@ -23,6 +23,9 @@
 #include "deh_main.h"
 #include "doomdef.h"
 #include "p_local.h"
+#include "i_swap.h" // [crispy] SHORT()
+#include "w_wad.h" // [crispy] W_CheckNumForName()
+#include "z_zone.h" // [crispy] Z_ChangeTag()
 
 #include "g_game.h"
 
@@ -39,7 +42,8 @@
 //
 // CHANGE THE TEXTURE OF A WALL SWITCH TO ITS OPPOSITE
 //
-switchlist_t alphSwitchList[] =
+// [crispy] add support for SWITCHES lumps
+switchlist_t alphSwitchList_vanilla[] =
 {
     // Doom shareware episode 1 switches
     {"SW1BRCOM",	"SW2BRCOM",	1},
@@ -90,8 +94,10 @@ switchlist_t alphSwitchList[] =
     {"\0",		"\0",		0}
 };
 
-int		switchlist[MAXSWITCHES * 2];
+// [crispy] remove MAXSWITCHES limit
+int		*switchlist;
 int		numswitches;
+static size_t	maxswitches;
 button_t        buttonlist[MAXBUTTONS];
 
 //
@@ -104,6 +110,20 @@ void P_InitSwitchList(void)
     int		index;
     int		episode;
 	
+    // [crispy] add support for SWITCHES lumps
+    switchlist_t *alphSwitchList;
+    boolean from_lump;
+
+    from_lump = (W_CheckNumForName("SWITCHES") != -1);
+    if (from_lump)
+    {
+	alphSwitchList = W_CacheLumpName("SWITCHES", PU_STATIC);
+    }
+    else
+    {
+	alphSwitchList = alphSwitchList_vanilla;
+    }
+
     episode = 1;
 
     if (gamemode == registered || gamemode == retail)
@@ -112,16 +132,28 @@ void P_InitSwitchList(void)
 	if ( gamemode == commercial )
 	    episode = 3;
 		
-    for (index = 0,i = 0;i < MAXSWITCHES;i++)
+    for (index = 0,i = 0;/*i < MAXSWITCHES*/;i++)
     {
-	if (!alphSwitchList[i].episode)
+	const short alphSwitchList_episode = from_lump ?
+	    SHORT(alphSwitchList[i].episode) :
+	    alphSwitchList[i].episode;
+
+	// [crispy] remove MAXSWITCHES limit
+	if (index + 1 >= maxswitches)
+	{
+	    size_t newmax = maxswitches ? 2 * maxswitches : MAXSWITCHES;
+	    switchlist = crispy_realloc(switchlist, newmax * sizeof(*switchlist));
+	    maxswitches = newmax;
+	}
+
+	if (!alphSwitchList_episode)
 	{
 	    numswitches = index/2;
 	    switchlist[index] = -1;
 	    break;
 	}
 		
-	if (alphSwitchList[i].episode <= episode)
+	if (alphSwitchList_episode <= episode)
 	{
 #if 0	// UNUSED - debug?
 	    int		value;
@@ -138,6 +170,11 @@ void P_InitSwitchList(void)
 	    switchlist[index++] = R_TextureNumForName(DEH_String(alphSwitchList[i].name1));
 	    switchlist[index++] = R_TextureNumForName(DEH_String(alphSwitchList[i].name2));
 	}
+    }
+
+    if (from_lump)
+    {
+	Z_ChangeTag(alphSwitchList, PU_CACHE);
     }
 }
 
