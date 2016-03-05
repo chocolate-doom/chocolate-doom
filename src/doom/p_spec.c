@@ -28,6 +28,7 @@
 
 #include "deh_main.h"
 #include "i_system.h"
+#include "i_swap.h" // [crispy] LONG()
 #include "z_zone.h"
 #include "m_argv.h"
 #include "m_misc.h"
@@ -66,19 +67,22 @@ typedef struct
 //
 //      source animation definition
 //
+// [crispy] change istexture type from int to char and
+// add PACKEDATTR for reading ANIMATED lumps from memory
 typedef struct
 {
-    int 	istexture;	// if false, it is a flat
+    char	istexture;	// if false, it is a flat
     char	endname[9];
     char	startname[9];
     int		speed;
-} animdef_t;
+} PACKEDATTR animdef_t;
 
 
 
 #define MAXANIMS                32
 
-extern anim_t	anims[MAXANIMS];
+// [crispy] remove MAXANIMS limit
+extern anim_t*	anims;
 extern anim_t*	lastanim;
 
 //
@@ -94,7 +98,8 @@ extern anim_t*	lastanim;
 //  and end entry, in the order found in
 //  the WAD file.
 //
-animdef_t		animdefs[] =
+// [crispy] add support for ANIMATED lumps
+animdef_t		animdefs_vanilla[] =
 {
     {false,	"NUKAGE3",	"NUKAGE1",	8},
     {false,	"FWATER4",	"FWATER1",	8},
@@ -127,8 +132,10 @@ animdef_t		animdefs[] =
     {-1,        "",             "",             0},
 };
 
-anim_t		anims[MAXANIMS];
+// [crispy] remove MAXANIMS limit
+anim_t*		anims;
 anim_t*		lastanim;
+static size_t	maxanims;
 
 
 //
@@ -146,11 +153,34 @@ void P_InitPicAnims (void)
     int		i;
 
     
+    // [crispy] add support for ANIMATED lumps
+    animdef_t *animdefs;
+    boolean from_lump;
+
+    from_lump = (W_CheckNumForName("ANIMATED") != -1);
+    if (from_lump)
+    {
+	animdefs = W_CacheLumpName("ANIMATED", PU_STATIC);
+    }
+    else
+    {
+	animdefs = animdefs_vanilla;
+    }
+
     //	Init animation
     lastanim = anims;
     for (i=0 ; animdefs[i].istexture != -1 ; i++)
     {
         char *startname, *endname;
+
+	// [crispy] remove MAXANIMS limit
+	if (lastanim >= anims + maxanims)
+	{
+	    size_t newmax = maxanims ? 2 * maxanims : MAXANIMS;
+	    anims = crispy_realloc(anims, newmax * sizeof(*anims));
+	    lastanim = anims + maxanims;
+	    maxanims = newmax;
+	}
 
         startname = DEH_String(animdefs[i].startname);
         endname = DEH_String(animdefs[i].endname);
@@ -180,10 +210,14 @@ void P_InitPicAnims (void)
 	    I_Error ("P_InitPicAnims: bad cycle from %s to %s",
 		     startname, endname);
 	
-	lastanim->speed = animdefs[i].speed;
+	lastanim->speed = from_lump ? LONG(animdefs[i].speed) : animdefs[i].speed;
 	lastanim++;
     }
 	
+    if (from_lump)
+    {
+	Z_ChangeTag(animdefs, PU_CACHE);
+    }
 }
 
 
