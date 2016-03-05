@@ -249,6 +249,59 @@ void T_MoveFloor(floormove_t* floor)
 
 }
 
+// [crispy] easter egg: homage to an old friend (thinker)
+void T_MoveGoobers (floormove_t *floor)
+{
+    result_e res1, res2;
+
+    res1 = T_MovePlane(floor->sector, 2 * FLOORSPEED, 0,
+                       true, 0, (floor->direction &  1) * 2 - 1);
+    res2 = T_MovePlane(floor->sector, 2 * FLOORSPEED, 128 * FRACUNIT,
+                       true, 1, (floor->direction >> 1) * 2 - 1);
+
+    if (!(leveltime & 7))
+    {
+	S_StartSound(&floor->sector->soundorg, sfx_stnmov);
+    }
+
+    if ((res1 & res2) == pastdest)
+    {
+	floor->sector->specialdata = NULL;
+	P_RemoveThinker(&floor->thinker);
+
+	S_StartSound(&floor->sector->soundorg, sfx_pstop);
+    }
+}
+
+// [crispy] easter egg: homage to an old friend
+void EV_DoGoobers (void)
+{
+    int i;
+
+    for (i = 0; i < numsectors; i++)
+    {
+	sector_t* sec;
+	floormove_t* floor;
+
+	sec = &sectors[i];
+
+	if (sec->specialdata)
+	{
+	    floor = sec->specialdata;
+	    P_RemoveThinker(&floor->thinker);
+	    sec->specialdata = NULL;
+	}
+
+	floor = Z_Malloc(sizeof(*floor), PU_LEVSPEC, 0);
+	P_AddThinker(&floor->thinker);
+	sec->specialdata = floor;
+	floor->thinker.function.acp1 = (actionf_p1) T_MoveGoobers;
+	floor->sector = sec;
+	floor->direction = (sec->floorheight < 0) |
+	                   (sec->ceilingheight < 128 * FRACUNIT) << 1;
+    }
+}
+
 //
 // HANDLE FLOOR TYPES
 //

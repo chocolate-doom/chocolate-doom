@@ -422,6 +422,7 @@ cheatseq_t cheat_notarget = CHEAT("notarget", 0);
 cheatseq_t cheat_spechits = CHEAT("spechits", 0);
 cheatseq_t cheat_nomomentum = CHEAT("nomomentum", 0);
 cheatseq_t cheat_showfps = CHEAT("showfps", 0);
+cheatseq_t cheat_goobers = CHEAT("goobers", 0);
 static char msg[ST_MSGWIDTH];
 
 //
@@ -809,6 +810,16 @@ ST_Responder (event_t* ev)
       else if (cht_CheckCheat(&cheat_showfps, ev->data2))
       {
 	crispy_showfps ^= 1;
+      }
+      // [crispy] implement Crispy Doom's "goobers" cheat, ne easter egg
+      else if (cht_CheckCheat(&cheat_goobers, ev->data2))
+      {
+	extern void EV_DoGoobers (void);
+
+	EV_DoGoobers();
+
+	M_snprintf(msg, sizeof(msg), "Get Psyched!");
+	plyr->message = msg;
       }
       // 'behold?' power-up cheats
       for (i=0;i<6;i++)
