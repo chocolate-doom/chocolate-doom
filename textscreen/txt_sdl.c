@@ -449,6 +449,8 @@ void TXT_UpdateScreenArea(int x, int y, int w, int h)
 
     SDL_UnlockSurface(screenbuffer);
 
+    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
+
     // TODO: This is currently creating a new texture every time we render
     // the screen; find a more efficient way to do it.
     screentx = SDL_CreateTextureFromSurface(renderer, screenbuffer);
