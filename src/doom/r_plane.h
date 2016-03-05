@@ -24,6 +24,7 @@
 #include "r_data.h"
 
 
+#define PL_SKYFLAT (0x80000000)
 
 // Visplane related.
 extern  int*		lastopening; // [crispy] 32-bit integer math

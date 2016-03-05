@@ -260,7 +260,8 @@ R_FindPlane
 {
     visplane_t*	check;
 	
-    if (picnum == skyflatnum)
+    // [crispy] add support for MBF sky tranfers
+    if (picnum == skyflatnum || picnum & PL_SKYFLAT)
     {
 	height = 0;			// all skys map together
 	lightlevel = 0;
@@ -437,8 +438,26 @@ void R_DrawPlanes (void)
 
 	
 	// sky flat
-	if (pl->picnum == skyflatnum)
+	// [crispy] add support for MBF sky tranfers
+	if (pl->picnum == skyflatnum || pl->picnum & PL_SKYFLAT)
 	{
+	    int texture;
+	    angle_t an = viewangle, flip;
+	    if (pl->picnum & PL_SKYFLAT)
+	    {
+		const line_t *l = &lines[pl->picnum & ~PL_SKYFLAT];
+		const side_t *s = *l->sidenum + sides;
+		texture = texturetranslation[s->toptexture];
+		dc_texturemid = s->rowoffset - 28*FRACUNIT;
+		flip = (l->special == 272) ? 0u : ~0u;
+		an += s->textureoffset;
+	    }
+	    else
+	    {
+		texture = skytexture;
+		dc_texturemid = skytexturemid;
+		flip = 0;
+	    }
 	    dc_iscale = pspriteiscale>>(detailshift && !hires);
 	    // [crispy] stretch sky
 	    if (crispy_stretchsky)
@@ -449,8 +468,8 @@ void R_DrawPlanes (void)
 	    // Because of this hack, sky is not affected
 	    //  by INVUL inverse mapping.
 	    dc_colormap = colormaps;
-	    dc_texturemid = skytexturemid;
-	    dc_texheight = textureheight[skytexture]>>FRACBITS; // [crispy] Tutti-Frutti fix
+//	    dc_texturemid = skytexturemid;
+	    dc_texheight = textureheight[texture]>>FRACBITS; // [crispy] Tutti-Frutti fix
 	    for (x=pl->minx ; x <= pl->maxx ; x++)
 	    {
 		dc_yl = pl->top[x];
@@ -458,9 +477,9 @@ void R_DrawPlanes (void)
 
 		if ((unsigned) dc_yl <= dc_yh) // [crispy] 32-bit integer math
 		{
-		    angle = (viewangle + xtoviewangle[x])>>ANGLETOSKYSHIFT;
+		    angle = ((an + xtoviewangle[x])^flip)>>ANGLETOSKYSHIFT;
 		    dc_x = x;
-		    dc_source = R_GetColumn(skytexture, angle, false);
+		    dc_source = R_GetColumn(texture, angle, false);
 		    colfunc ();
 		}
 	    }

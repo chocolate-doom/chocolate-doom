@@ -1545,6 +1545,20 @@ void P_SpawnSpecials (void)
 	    linespeciallist[numlinespecials] = &lines[i];
 	    numlinespecials++;
 	    break;
+
+	  // [crispy] add support for MBF sky tranfers
+	  case 271:
+	  case 272:
+	    {
+		int secnum;
+
+		secnum = -1;
+		while ((secnum = P_FindSectorFromLineTag(&lines[i],secnum)) >= 0)
+		{
+		    sectors[secnum].sky = i | PL_SKYFLAT;
+		}
+	    }
+	    break;
 	}
     }
 
