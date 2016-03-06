@@ -320,11 +320,10 @@ void AM_restoreScaleAndLoc(void)
 //
 void AM_addMark(void)
 {
-    markpoints[markpointnum].x = m_x + m_w/2;
-    markpoints[markpointnum].y = m_y + m_h/2;
+    markpoints[markpointnum].x = plr->mo->x; // 20160306 [STRIFE]: use player position
+    markpoints[markpointnum].y = plr->mo->y;
     //markpointnum = (markpointnum + 1) % AM_NUMMARKPOINTS;
     ++markpointnum; // haleyjd 20141101: [STRIFE] does not wrap around
-
 }
 
 //
