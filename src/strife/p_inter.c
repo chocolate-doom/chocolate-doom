@@ -488,13 +488,13 @@ void P_TouchSpecialThing(mobj_t* special, mobj_t* toucher)
         break;
 
     // missile
-    case SPR_ROKT:
+    case SPR_MSSL:
         if(!P_GiveAmmo(player, am_missiles, 1))
             return;
         break;
 
     // box of missiles
-    case SPR_MSSL:
+    case SPR_ROKT:
         if(!P_GiveAmmo(player, am_missiles, 5))
             return;
         break;
