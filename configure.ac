@@ -185,5 +185,6 @@ src/strife.desktop
 src/strife/Makefile
 textscreen/Makefile
 textscreen/examples/Makefile
+textscreen/fonts/Makefile
 ])
 

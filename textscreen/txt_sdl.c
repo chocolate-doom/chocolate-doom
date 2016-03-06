@@ -33,16 +33,17 @@
 
 typedef struct
 {
-    unsigned char *data;
+    char *name;
+    const uint8_t *data;
     unsigned int w;
     unsigned int h;
 } txt_font_t;
 
 // Fonts:
 
-#include "txt_font.h"
-#include "txt_largefont.h"
-#include "txt_smallfont.h"
+#include "fonts/small.h"
+#include "fonts/normal.h"
+#include "fonts/large.h"
 
 // Time between character blinks in ms
 
@@ -63,8 +64,8 @@ static int modifier_state[TXT_NUM_MODIFIERS];
 static const txt_font_t *font;
 
 // Dummy "font" that means to try highdpi rendering, or fallback to
-// main_font otherwise.
-static const txt_font_t highdpi_font = { NULL, 8, 16 };
+// normal_font otherwise.
+static const txt_font_t highdpi_font = { "normal-highdpi", NULL, 8, 16 };
 
 //#define TANGO
 
@@ -149,22 +150,20 @@ static int Win32_UseLargeFont(void)
 static const txt_font_t *FontForName(char *name)
 {
     int i;
-    struct {
-        char *name;
-        const txt_font_t *font;
-    } fonts[] = {
-        { "small", &small_font },
-        { "normal", &main_font },
-        { "large", &large_font },
-        { "normal-highdpi", &highdpi_font },
-        { NULL },
+    const txt_font_t *fonts[] =
+    {
+        &small_font,
+        &normal_font,
+        &large_font,
+        &highdpi_font,
+        NULL,
     };
 
-    for (i = 0; fonts[i].name != NULL; ++i)
+    for (i = 0; fonts[i]->name != NULL; ++i)
     {
-        if (!strcmp(fonts[i].name, name))
+        if (!strcmp(fonts[i]->name, name))
         {
-            return fonts[i].font;
+            return fonts[i];
         }
     }
     return NULL;
@@ -228,7 +227,7 @@ static void ChooseFont(void)
     // and using large_font if the result is >= 2.
     else
     {
-        // highdpi_font usually means main_font (the normal resolution
+        // highdpi_font usually means normal_font (the normal resolution
         // version), but actually means "set the HIGHDPI flag and try
         // to use large_font if we initialize successfully".
         font = &highdpi_font;
@@ -291,7 +290,7 @@ int TXT_Init(void)
     // then use the normal resolution font instead.
     if (font == &highdpi_font)
     {
-        font = &main_font;
+        font = &normal_font;
     }
 
     // Instead, we draw everything into an intermediate 8-bit surface
@@ -338,9 +337,9 @@ unsigned char *TXT_GetScreenData(void)
 static inline void UpdateCharacter(int x, int y)
 {
     unsigned char character;
-    unsigned char *p;
+    const uint8_t *p;
     unsigned char *s, *s1;
-    unsigned int bit, bytes;
+    unsigned int bit;
     int bg, fg;
     unsigned int x1, y1;
 
@@ -363,8 +362,8 @@ static inline void UpdateCharacter(int x, int y)
     }
 
     // How many bytes per line?
-    bytes = (font->w + 7) / 8;
-    p = &font->data[character * font->h * bytes];
+    p = &font->data[(character * font->w * font->h) / 8];
+    bit = 0;
 
     s = ((unsigned char *) screenbuffer->pixels)
       + (y * font->h * screenbuffer->pitch)
@@ -373,11 +372,10 @@ static inline void UpdateCharacter(int x, int y)
     for (y1=0; y1<font->h; ++y1)
     {
         s1 = s;
-        bit = 0;
 
         for (x1=0; x1<font->w; ++x1)
         {
-            if (*p & (1 << (7-bit)))
+            if (*p & (1 << bit))
             {
                 *s1++ = fg;
             }
@@ -392,11 +390,6 @@ static inline void UpdateCharacter(int x, int y)
                 ++p;
                 bit = 0;
             }
-        }
-
-        if (bit != 0)
-        {
-            ++p;
         }
 
         s += screenbuffer->pitch;
