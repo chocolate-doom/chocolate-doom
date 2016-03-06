@@ -852,9 +852,9 @@ void P_KillMobj(mobj_t* source, mobj_t* target)
             }
         }
 
-        target->flags &= ~MF_SOLID;
+        //target->flags &= ~MF_SOLID;
         target->player->playerstate = PST_DEAD;
-        target->player->mo->momz = 5*FRACUNIT;  // [STRIFE]: small hop!
+        target->player->mo->momz += 5*FRACUNIT;  // [STRIFE]: small hop!
         P_DropWeapon(target->player);
 
         if(target->player == &players[consoleplayer]
