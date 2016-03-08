@@ -71,7 +71,7 @@ typedef struct
 // add PACKEDATTR for reading ANIMATED lumps from memory
 typedef struct
 {
-    char	istexture;	// if false, it is a flat
+    signed char	istexture;	// if false, it is a flat
     char	endname[9];
     char	startname[9];
     int		speed;
