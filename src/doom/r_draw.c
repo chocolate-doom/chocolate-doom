@@ -25,6 +25,7 @@
 #include "deh_main.h"
 
 #include "i_system.h"
+#include "i_video.h"
 #include "z_zone.h"
 #include "w_wad.h"
 
@@ -60,7 +61,7 @@ int		scaledviewwidth;
 int		viewheight;
 int		viewwindowx;
 int		viewwindowy; 
-byte*		ylookup[MAXHEIGHT]; 
+byte*		ylookup[3][MAXHEIGHT]; 
 int		columnofs[MAXWIDTH]; 
 
 // Color tables for different players,
@@ -122,7 +123,7 @@ void R_DrawColumn (void)
     // Framebuffer destination address.
     // Use ylookup LUT to avoid multiply with ScreenWidth.
     // Use columnofs LUT for subwindows? 
-    dest = ylookup[dc_yl] + columnofs[dc_x];  
+    dest = ylookup[destscreen][dc_yl] + columnofs[dc_x];  
 
     // Determine scaling,
     //  which is the only mapping to be done.
@@ -233,8 +234,8 @@ void R_DrawColumnLow (void)
     // Blocky mode, need to multiply by 2.
     x = dc_x << 1;
     
-    dest = ylookup[dc_yl] + columnofs[x];
-    dest2 = ylookup[dc_yl] + columnofs[x+1];
+    dest = ylookup[destscreen][dc_yl] + columnofs[x];
+    dest2 = ylookup[destscreen][dc_yl] + columnofs[x+1];
     
     fracstep = dc_iscale; 
     frac = dc_texturemid + (dc_yl-centery)*fracstep;
@@ -310,7 +311,7 @@ void R_DrawFuzzColumn (void)
     }
 #endif
     
-    dest = ylookup[dc_yl] + columnofs[dc_x];
+    dest = ylookup[destscreen][dc_yl] + columnofs[dc_x];
 
     // Looks familiar.
     fracstep = dc_iscale; 
@@ -375,8 +376,8 @@ void R_DrawFuzzColumnLow (void)
     }
 #endif
     
-    dest = ylookup[dc_yl] + columnofs[x];
-    dest2 = ylookup[dc_yl] + columnofs[x+1];
+    dest = ylookup[destscreen][dc_yl] + columnofs[x];
+    dest2 = ylookup[destscreen][dc_yl] + columnofs[x+1];
 
     // Looks familiar.
     fracstep = dc_iscale; 
@@ -444,7 +445,7 @@ void R_DrawTranslatedColumn (void)
 #endif 
 
 
-    dest = ylookup[dc_yl] + columnofs[dc_x]; 
+    dest = ylookup[destscreen][dc_yl] + columnofs[dc_x];
 
     // Looks familiar.
     fracstep = dc_iscale; 
@@ -493,8 +494,8 @@ void R_DrawTranslatedColumnLow (void)
 #endif 
 
 
-    dest = ylookup[dc_yl] + columnofs[x]; 
-    dest2 = ylookup[dc_yl] + columnofs[x+1]; 
+    dest = ylookup[destscreen][dc_yl] + columnofs[x];
+    dest2 = ylookup[destscreen][dc_yl] + columnofs[x+1];
 
     // Looks familiar.
     fracstep = dc_iscale; 
@@ -617,7 +618,7 @@ void R_DrawSpan (void)
     step = ((ds_xstep << 10) & 0xffff0000)
          | ((ds_ystep >> 6)  & 0x0000ffff);
 
-    dest = ylookup[ds_y] + columnofs[ds_x1];
+    dest = ylookup[destscreen][ds_y] + columnofs[ds_x1];
 
     // We do not check for zero spans here?
     count = ds_x2 - ds_x1;
@@ -747,7 +748,7 @@ void R_DrawSpanLow (void)
     ds_x1 <<= 1;
     ds_x2 <<= 1;
 
-    dest = ylookup[ds_y] + columnofs[ds_x1];
+    dest = ylookup[destscreen][ds_y] + columnofs[ds_x1];
 
     do
     {
@@ -778,7 +779,7 @@ R_InitBuffer
 ( int		width,
   int		height ) 
 { 
-    int		i; 
+    int i, j; 
 
     // Handle resize,
     //  e.g. smaller view windows
@@ -796,9 +797,14 @@ R_InitBuffer
 	viewwindowy = (SCREENHEIGHT-SBARHEIGHT-height) >> 1; 
 
     // Preclaculate all row offsets.
-    for (i=0 ; i<height ; i++) 
-	ylookup[i] = I_VideoBuffer + (i+viewwindowy)*SCREENWIDTH; 
-} 
+    for (i = 0; i < 3; i++)
+    {
+        for (j = 0; j < height; j++)
+        {
+            ylookup[i][j] = screenpixels[i] + (j + viewwindowy)*SCREENWIDTH;
+        }
+    }
+}
  
  
 
@@ -928,7 +934,7 @@ R_VideoErase
 
     if (background_buffer != NULL)
     {
-        memcpy(I_VideoBuffer + ofs, background_buffer + ofs, count * sizeof(*I_VideoBuffer));
+        memcpy(destpixels + ofs, background_buffer + ofs, count * sizeof(*destpixels));
     }
 } 
 
@@ -969,7 +975,7 @@ void R_DrawViewBorder (void)
     } 
 
     // ? 
-    V_MarkRect (0,0,SCREENWIDTH, SCREENHEIGHT-SBARHEIGHT); 
+    //V_MarkRect (0,0,SCREENWIDTH, SCREENHEIGHT-SBARHEIGHT); 
 } 
  
  

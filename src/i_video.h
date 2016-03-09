@@ -40,7 +40,7 @@ typedef boolean (*grabmouse_callback_t)(void);
 // Called by D_DoomMain,
 // determines the hardware configuration
 // and sets up the video mode
-void I_InitGraphics (void);
+void I_InitGraphics (boolean use_mode_y);
 
 void I_GraphicsCheckCommandLine(void);
 
@@ -89,6 +89,9 @@ extern int vanilla_keyboard_mapping;
 extern boolean screensaver_mode;
 extern int usegamma;
 extern byte *I_VideoBuffer;
+extern int destscreen;
+extern byte *destpixels;
+extern byte *screenpixels[3];
 
 extern int screen_width;
 extern int screen_height;
