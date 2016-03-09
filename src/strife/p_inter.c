@@ -488,13 +488,13 @@ void P_TouchSpecialThing(mobj_t* special, mobj_t* toucher)
         break;
 
     // missile
-    case SPR_ROKT:
+    case SPR_MSSL:
         if(!P_GiveAmmo(player, am_missiles, 1))
             return;
         break;
 
     // box of missiles
-    case SPR_MSSL:
+    case SPR_ROKT:
         if(!P_GiveAmmo(player, am_missiles, 5))
             return;
         break;
@@ -852,9 +852,9 @@ void P_KillMobj(mobj_t* source, mobj_t* target)
             }
         }
 
-        target->flags &= ~MF_SOLID;
+        //target->flags &= ~MF_SOLID;
         target->player->playerstate = PST_DEAD;
-        target->player->mo->momz = 5*FRACUNIT;  // [STRIFE]: small hop!
+        target->player->mo->momz += 5*FRACUNIT;  // [STRIFE]: small hop!
         P_DropWeapon(target->player);
 
         if(target->player == &players[consoleplayer]
@@ -1352,7 +1352,7 @@ void P_DamageMobj(mobj_t* target, mobj_t* inflictor, mobj_t* source, int damage)
             if(target->player)
             {
                 target->player->cheats |= CF_ONFIRE;
-                target->player->powers[pw_communicator] = false;
+                target->player->powers[pw_invisibility] = false;
                 target->player->readyweapon = 0;
                 P_SetPsprite(target->player, ps_weapon, S_WAVE_00); // 02
                 P_SetPsprite(target->player, ps_flash, S_NULL);
