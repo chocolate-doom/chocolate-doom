@@ -443,7 +443,7 @@ void D_DoomLoop (void)
     }
 
     I_InitDiskFlash(SCREENWIDTH - LOADING_DISK_W,
-                    SCREENHEIGHT - LOADING_DISK_H-50, diskgraphic);
+                    SCREENHEIGHT - LOADING_DISK_H, diskgraphic);
 
     TryRunTics();
 
