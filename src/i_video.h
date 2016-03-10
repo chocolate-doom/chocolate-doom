@@ -35,6 +35,11 @@
 
 #define SCREENHEIGHT_4_3 240
 
+// Dimensions of the flashing "loading" disk icon
+
+#define LOADING_DISK_W 16
+#define LOADING_DISK_H 16
+
 typedef boolean (*grabmouse_callback_t)(void);
 
 // Called by D_DoomMain,
@@ -78,9 +83,11 @@ void I_StartFrame (void);
 
 void I_StartTic (void);
 
-// Enable the loading disk image displayed when reading from disk.
+void I_InitDiskFlash(int x, int y, char *graphic);
 
-void I_EnableLoadingDisk(int xoffs, int yoffs);
+void I_BeginRead(void);
+
+void I_EndRead(void);
 
 extern char *video_driver;
 extern boolean screenvisible;
@@ -91,7 +98,10 @@ extern int usegamma;
 extern byte *I_VideoBuffer;
 extern int destscreen;
 extern byte *destpixels;
+extern int currentscreen;
+extern byte *currentpixels;
 extern byte *screenpixels[3];
+extern byte *tempscreen;
 
 extern int screen_width;
 extern int screen_height;
@@ -99,6 +109,5 @@ extern int fullscreen;
 extern int aspect_ratio_correct;
 
 extern int show_diskicon;
-extern int diskicon_readbytes;
 
 #endif

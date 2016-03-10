@@ -901,7 +901,7 @@ void V_ScreenShot(char *format)
 #ifdef HAVE_LIBPNG
     if (png_screenshots)
     {
-    WritePNGfile(lbmname, I_VideoBuffer,
+    WritePNGfile(lbmname, currentpixels,
                  SCREENWIDTH, SCREENHEIGHT,
                  W_CacheLumpName (DEH_String("PLAYPAL"), PU_CACHE));
     }
@@ -909,7 +909,7 @@ void V_ScreenShot(char *format)
 #endif
     {
     // save the pcx file
-    WritePCXfile(lbmname, I_VideoBuffer,
+    WritePCXfile(lbmname, currentpixels,
                  SCREENWIDTH, SCREENHEIGHT,
                  W_CacheLumpName (DEH_String("PLAYPAL"), PU_CACHE));
     }

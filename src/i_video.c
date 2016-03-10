@@ -74,8 +74,12 @@ static SDL_Texture *texture = NULL;
 static SDL_Texture *texture_upscaled = NULL;
 int destscreen = 0;
 byte *destpixels = NULL;
+int currentscreen = 0;
 byte *currentpixels = NULL;
 byte *screenpixels[3] = { NULL, NULL, NULL };
+
+byte *tempscreen = NULL;
+
 static boolean mode_y = false;
 
 static SDL_Rect blit_rect = {
@@ -102,15 +106,6 @@ int usemouse = 1;
 // Save screenshots in PNG format.
 
 int png_screenshots = 0;
-
-// Display disk activity indicator.
-
-int show_diskicon = 1;
-
-// Only display the disk icon if more then this much bytes have been read
-// during the previous tic.
-
-int diskicon_readbytes = 0;
 
 // Screen width and height, from configuration file.
 
@@ -180,6 +175,13 @@ static unsigned int last_resize_time;
 // Gamma correction level to use
 
 int usegamma = 0;
+
+// Disk icon variables
+
+int show_diskicon = 1;
+
+static int diskicon_pos_x = 0;
+static int diskicon_pos_y = 0;
 
 static boolean MouseShouldBeGrabbed()
 {
@@ -395,7 +397,6 @@ void I_StartTic (void)
     I_UpdateJoystick();
 }
 
-
 //
 // I_UpdateBox
 //
@@ -412,7 +413,8 @@ void I_UpdateBox(int x, int y, int w, int h)
     {
         for (j = x; j < x + w; j++)
         {
-            destpixels[i * SCREENWIDTH + j] = I_VideoBuffer[i * SCREENWIDTH + j];
+            destpixels[i * SCREENWIDTH + j] =
+                I_VideoBuffer[i * SCREENWIDTH + j];
         }
     }
 }
@@ -436,6 +438,7 @@ void I_UpdateNoBlit (void)
         return;
 
     //Set current screen
+    currentscreen = destscreen;
     currentpixels = destpixels;
 
     // Update dirtybox size
@@ -626,6 +629,46 @@ static void CreateUpscaledTexture(void)
                                 h_upscale*SCREENHEIGHT);
 }
 
+void I_DrawScreen(int screen)
+{
+
+    if (palette_to_set)
+    {
+        SDL_SetPaletteColors(screenbuffer[0]->format->palette, palette, 0, 256);
+        SDL_SetPaletteColors(screenbuffer[1]->format->palette, palette, 0, 256);
+        SDL_SetPaletteColors(screenbuffer[2]->format->palette, palette, 0, 256);
+        palette_to_set = false;
+    }
+
+    // Blit from the paletted 8-bit screen buffer to the intermediate
+    // 32-bit RGBA buffer that we can load into the texture.
+
+    SDL_LowerBlit(screenbuffer[screen], &blit_rect, rgbabuffer, &blit_rect);
+
+    // Update the intermediate texture with the contents of the RGBA buffer.
+
+    SDL_UpdateTexture(texture, NULL, rgbabuffer->pixels, rgbabuffer->pitch);
+
+    // Make sure the pillarboxes are kept clear each frame.
+
+    SDL_RenderClear(renderer);
+
+    // Render this intermediate texture into the upscaled texture
+    // using "nearest" integer scaling.
+
+    SDL_SetRenderTarget(renderer, texture_upscaled);
+    SDL_RenderCopy(renderer, texture, NULL, NULL);
+
+    // Finally, render this upscaled texture to screen using linear scaling.
+
+    SDL_SetRenderTarget(renderer, NULL);
+    SDL_RenderCopy(renderer, texture_upscaled, NULL, NULL);
+
+    // Draw!
+
+    SDL_RenderPresent(renderer);
+}
+
 //
 // I_FinishUpdate
 //
@@ -676,41 +719,7 @@ void I_FinishUpdate (void)
         destpixels[ (SCREENHEIGHT-1)*SCREENWIDTH + i] = 0x0;
     }
 
-    if (palette_to_set)
-    {
-        SDL_SetPaletteColors(screenbuffer[0]->format->palette, palette, 0, 256);
-        SDL_SetPaletteColors(screenbuffer[1]->format->palette, palette, 0, 256);
-        SDL_SetPaletteColors(screenbuffer[2]->format->palette, palette, 0, 256);
-        palette_to_set = false;
-    }
-
-    // Blit from the paletted 8-bit screen buffer to the intermediate
-    // 32-bit RGBA buffer that we can load into the texture.
-
-    SDL_LowerBlit(screenbuffer[destscreen], &blit_rect, rgbabuffer, &blit_rect);
-
-    // Update the intermediate texture with the contents of the RGBA buffer.
-
-    SDL_UpdateTexture(texture, NULL, rgbabuffer->pixels, rgbabuffer->pitch);
-
-    // Make sure the pillarboxes are kept clear each frame.
-
-    SDL_RenderClear(renderer);
-
-    // Render this intermediate texture into the upscaled texture
-    // using "nearest" integer scaling.
-
-    SDL_SetRenderTarget(renderer, texture_upscaled);
-    SDL_RenderCopy(renderer, texture, NULL, NULL);
-
-    // Finally, render this upscaled texture to screen using linear scaling.
-
-    SDL_SetRenderTarget(renderer, NULL);
-    SDL_RenderCopy(renderer, texture_upscaled, NULL, NULL);
-
-    // Draw!
-
-    SDL_RenderPresent(renderer);
+    I_DrawScreen(destscreen);
 
     if (mode_y)
     {
@@ -1285,11 +1294,10 @@ void I_InitGraphics(boolean use_mode_y)
     // 32-bit RGBA screen buffer that gets loaded into a texture that gets
     // finally rendered into our window or full screen in I_FinishUpdate().
 
-    destscreen = 0;
+    currentscreen = destscreen = 0;
 
     if (mode_y)
     {
-
         currentpixels = destpixels = screenbuffer[destscreen]->pixels;
 
         for (i = 0; i < 3; i++)
@@ -1305,11 +1313,16 @@ void I_InitGraphics(boolean use_mode_y)
         currentpixels = destpixels = I_VideoBuffer = screenbuffer[0]->pixels;
     }
 
+    tempscreen = (byte*)Z_Malloc(SCREENWIDTH * SCREENHEIGHT,
+                                 PU_STATIC, NULL);
+
     V_RestoreBuffer();
 
     // Clear the screen to black.
 
     memset(I_VideoBuffer, 0, SCREENWIDTH * SCREENHEIGHT);
+
+    memset(tempscreen, 0, SCREENWIDTH * SCREENHEIGHT);
 
     // We need SDL to give us translated versions of keys as well
 
@@ -1330,6 +1343,100 @@ void I_InitGraphics(boolean use_mode_y)
     // Call I_ShutdownGraphics on quit
 
     I_AtExit(I_ShutdownGraphics, true);
+}
+
+void I_InitDiskFlash(int x, int y, char *graphic)
+{
+    void *pic;
+    byte *temp;
+
+    if (!show_diskicon || !mode_y)
+    {
+        return;
+    }
+
+    diskicon_pos_x = x;
+    diskicon_pos_y = y;
+
+    pic = W_CacheLumpName(graphic, PU_CACHE);
+
+    temp = destpixels;
+    destpixels = tempscreen;
+
+    V_DrawPatchDirect(SCREENWIDTH - LOADING_DISK_W,
+                      SCREENHEIGHT - LOADING_DISK_H, pic);
+
+    destpixels = temp;
+
+    W_ReleaseLumpName(graphic);
+}
+
+void I_BeginRead()
+{
+    int i;
+    byte *screenloc = currentpixels
+                    + diskicon_pos_y * SCREENWIDTH
+                    + diskicon_pos_x;
+
+    byte *backuploc = tempscreen
+                    + (SCREENHEIGHT - 2 * LOADING_DISK_H) * SCREENWIDTH
+                    + (SCREENWIDTH - LOADING_DISK_W);
+
+    byte *diskloc = tempscreen
+                    + (SCREENHEIGHT - LOADING_DISK_H) * SCREENWIDTH
+                    + (SCREENWIDTH - LOADING_DISK_W);
+
+    if (!show_diskicon || !mode_y || !initialized)
+    {
+        return;
+    }
+
+    for (i = 0; i < LOADING_DISK_H; i++)
+    {
+        memcpy(backuploc + i * SCREENWIDTH,
+               screenloc + i * SCREENWIDTH,
+               LOADING_DISK_W);
+    }
+
+    for (i = 0; i < LOADING_DISK_H; i++)
+    {
+        memcpy(screenloc + i * SCREENWIDTH,
+               diskloc + i * SCREENWIDTH,
+               LOADING_DISK_W);
+    }
+
+    if (currentscreen != destscreen)
+    {
+        I_DrawScreen(currentscreen);
+    }
+}
+
+void I_EndRead()
+{
+    int i;
+    byte *screenloc = currentpixels
+                    + diskicon_pos_y * SCREENWIDTH
+                    + diskicon_pos_x;
+
+    byte *backuploc = tempscreen
+                    + (SCREENHEIGHT - 2 * LOADING_DISK_H) * SCREENWIDTH
+                    + (SCREENWIDTH - LOADING_DISK_W);
+
+    if (!show_diskicon || !mode_y || !initialized)
+    {
+        return;
+    }
+
+    for (i = 0; i < LOADING_DISK_H; i++)
+    {
+        memcpy(screenloc + i * SCREENWIDTH,
+               backuploc + i * SCREENWIDTH,
+               LOADING_DISK_W);
+    }
+    if (currentscreen != destscreen)
+    {
+        I_DrawScreen(currentscreen);
+    }
 }
 
 // Bind all variables controlling video options into the configuration

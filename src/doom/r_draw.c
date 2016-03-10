@@ -68,12 +68,7 @@ int		columnofs[MAXWIDTH];
 //  translate a limited part to another
 //  (color ramps used for  suit colors).
 //
-byte		translations[3][256];	
- 
-// Backing buffer containing the bezel drawn around the screen and 
-// surrounding background.
-
-static byte *background_buffer = NULL;
+byte		translations[3][256];
 
 
 //
@@ -831,26 +826,11 @@ void R_FillBackScreen (void)
 
     char *name;
 
-    // If we are running full screen, there is no need to do any of this,
-    // and the background buffer can be freed if it was previously in use.
+    // If we are running full screen, there is no need to do any of this.
 
     if (scaledviewwidth == SCREENWIDTH)
     {
-        if (background_buffer != NULL)
-        {
-            Z_Free(background_buffer);
-            background_buffer = NULL;
-        }
-
-	return;
-    }
-
-    // Allocate the background buffer if necessary
-	
-    if (background_buffer == NULL)
-    {
-        background_buffer = Z_Malloc(SCREENWIDTH * (SCREENHEIGHT - SBARHEIGHT) * sizeof(*background_buffer),
-                                     PU_STATIC, NULL);
+        return;
     }
 
     if (gamemode == commercial)
@@ -859,7 +839,7 @@ void R_FillBackScreen (void)
 	name = name1;
     
     src = W_CacheLumpName(name, PU_CACHE); 
-    dest = background_buffer;
+    dest = tempscreen;
 	 
     for (y=0 ; y<SCREENHEIGHT-SBARHEIGHT ; y++) 
     { 
@@ -878,7 +858,7 @@ void R_FillBackScreen (void)
      
     // Draw screen and bezel; this is done to a separate screen buffer.
 
-    V_UseBuffer(background_buffer);
+    V_UseBuffer(tempscreen);
 
     patch = W_CacheLumpName(DEH_String("brdr_t"),PU_CACHE);
 
@@ -932,10 +912,7 @@ R_VideoErase
   //  a 32bit CPU, as GNU GCC/Linux libc did
   //  at one point.
 
-    if (background_buffer != NULL)
-    {
-        memcpy(destpixels + ofs, background_buffer + ofs, count * sizeof(*destpixels));
-    }
+    memcpy(destpixels + ofs, tempscreen + ofs, count * sizeof(*destpixels));
 } 
 
 

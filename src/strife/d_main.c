@@ -40,7 +40,6 @@
 #include "w_main.h"
 #include "w_wad.h"
 #include "s_sound.h"
-#include "v_diskicon.h"
 #include "v_video.h"
 
 #include "f_finale.h"
@@ -302,7 +301,7 @@ void D_Display (void)
     // see if the border needs to be updated to the screen
     if (gamestate == GS_LEVEL && !automapactive && scaledviewwidth != 320)
     {
-        if (menuactive || menuactivestate || !viewactivestate || disk_indicator == disk_dirty)
+        if (menuactive || menuactivestate || !viewactivestate)
         {
             borderdrawcount = 3;
             popupactivestate = false;
@@ -513,7 +512,7 @@ void D_DoomLoop (void)
         I_InitGraphics(true);
     }
 
-    V_EnableLoadingDisk(SCREENWIDTH - LOADING_DISK_W, 0);
+    I_InitDiskFlash(SCREENWIDTH - LOADING_DISK_W, 3, "STDISK");
     I_SetGrabMouseCallback(D_GrabMouseCallback);
 
     V_RestoreBuffer();
