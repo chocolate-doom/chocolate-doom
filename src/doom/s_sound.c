@@ -280,6 +280,17 @@ void S_Start(void)
         }
     }
 
+    // [crispy] do not change music if not changing map (preserves IDMUS choice)
+    {
+	static short prevmap;
+	const short curmap = (gameepisode << 8) + gamemap;
+
+	if (prevmap == curmap)
+	    return;
+
+	prevmap = curmap;
+    }
+
     S_ChangeMusic(mnum, true);
 }
 
