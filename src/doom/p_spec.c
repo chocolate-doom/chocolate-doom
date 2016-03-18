@@ -1190,7 +1190,15 @@ void P_UpdateSpecials (void)
 	    if (anim->istexture)
 		texturetranslation[i] = pic;
 	    else
+	    {
+		// [crispy] add support for SMMU swirling flats
+		if (anim->speed > 65535 || anim->numpics == 1)
+		{
+		    flattranslation[i] = -1;
+		}
+		else
 		flattranslation[i] = pic;
+	    }
 	}
     }
 
