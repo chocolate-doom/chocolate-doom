@@ -38,6 +38,8 @@ static struct
     { pack_tnt,  commercial, 1, 32 },
     { pack_plut, commercial, 1, 32 },
     { pack_hacx, commercial, 1, 32 },
+    { pack_nerve, commercial, 1, 9 },
+    { pack_master, commercial, 1, 21 },
     { heretic,   shareware,  1, 9 },
     { heretic,   registered, 3, 9 },
     { heretic,   retail,     5, 9 },
@@ -142,7 +144,8 @@ boolean D_ValidGameVersion(GameMission_t mission, GameVersion_t version)
     // All Doom variants can use the Doom versions.
 
     if (mission == doom2 || mission == pack_plut || mission == pack_tnt
-     || mission == pack_hacx || mission == pack_chex)
+     || mission == pack_hacx || mission == pack_chex
+     || mission == pack_nerve || mission == pack_master)
     {
         mission = doom;
     }
@@ -176,6 +179,8 @@ boolean D_IsEpisodeMap(GameMission_t mission)
         case pack_hacx:
         case pack_tnt:
         case pack_plut:
+        case pack_nerve:
+        case pack_master:
         case strife:
         default:
             return false;
