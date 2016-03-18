@@ -101,6 +101,11 @@
         [self->launcherManager addFileToCommandLine: fileName
                                forArgument: @"-merge"];
     }
+    else if (![extension caseInsensitiveCompare: @"lmp"])
+    {
+        [self->launcherManager addFileToCommandLine: fileName
+                               forArgument: @"-playdemo"];
+    }
     else if (![extension caseInsensitiveCompare: @"deh"])
     {
         [self->launcherManager addFileToCommandLine: fileName
