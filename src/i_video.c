@@ -1573,6 +1573,10 @@ void I_GraphicsCheckCommandLine(void)
     // windowed or fullscreen mode.
 
     i = M_CheckParmWithArgs("-geometry", 1);
+    if !(i > 0)
+    {
+    	i = M_CheckParmWithArgs("-geom", 1);
+    }
 
     if (i > 0)
     {
