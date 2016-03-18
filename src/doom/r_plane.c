@@ -449,6 +449,11 @@ void R_DrawPlanes (void)
 		const side_t *s = *l->sidenum + sides;
 		texture = texturetranslation[s->toptexture];
 		dc_texturemid = s->rowoffset - 28*FRACUNIT;
+		// [crispy] stretch sky
+		if (crispy_stretchsky)
+		{
+		    dc_texturemid = dc_texturemid * (textureheight[texture]>>FRACBITS) / 228;
+		}
 		flip = (l->special == 272) ? 0u : ~0u;
 		an += s->textureoffset;
 	    }
