@@ -20,6 +20,7 @@
 #ifndef __I_INPUT__
 #define __I_INPUT__
 
+#include "SDL.h"
 #include "doomtype.h"
 
 #define MAX_MOUSE_BUTTONS 8
@@ -30,6 +31,10 @@ extern int mouse_threshold;
 void I_BindInputVariables(void);
 void I_ReadMouse(void);
 void I_InputCheckCommandLine(void);
+
+// input handlers to be called from the main event loop
+void I_HandleKeyboardEvent(SDL_Event *sdlevent);
+void I_HandleMouseEvent(SDL_Event *sdlevent);
 
 // I_StartTextInput begins text input, activating the on-screen keyboard
 // (if one is used). The caller indicates that any entered text will be
