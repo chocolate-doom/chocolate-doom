@@ -27,7 +27,7 @@
 
 #define WINDOW_HELP_URL "http://www.chocolate-doom.org/setup-keyboard"
 
-int vanilla_keyboard_mapping = 1;
+int vanilla_keyboard_mapping = false;
 
 static int always_run = 0;
 
