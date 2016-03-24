@@ -920,7 +920,7 @@ static void NET_CL_SendSYN(net_connect_data_t *data)
     packet = NET_NewPacket(10);
     NET_WriteInt16(packet, NET_PACKET_TYPE_SYN);
     NET_WriteInt32(packet, NET_MAGIC_NUMBER);
-    NET_WriteString(packet, PACKAGE_STRING);
+    NET_WriteString(packet, NET_PACKAGE_STRING); // [crispy] declare netcode-compatibility with Chocolate Doom
     NET_WriteConnectData(packet, data);
     NET_WriteString(packet, net_player_name);
     NET_Conn_SendPacket(&client_connection, packet);
