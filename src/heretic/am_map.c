@@ -83,7 +83,11 @@ char *LevelNames[] = {
     "E5M6:  COLONNADE",
     "E5M7:  FOETID MANSE",
     "E5M8:  FIELD OF JUDGEMENT",
-    "E5M9:  SKEIN OF D'SPARIL"
+    "E5M9:  SKEIN OF D'SPARIL",
+    // EPISODE 6: unnamed
+    "E6M1:  ",
+    "E6M2:  ",
+    "E6M3:  ",
 };
 
 static int cheating = 0;
