@@ -403,7 +403,8 @@ R_MakeSpans
 }
 
 // [crispy] add support for SMMU swirling flats
-char *R_DistortedFlat (int flatnum)
+// adapted from smmu/r_ripple.c, by Simon Howard
+static char *R_DistortedFlat (int flatnum)
 {
     const int swirlfactor = 8192 / 64;
     const int swirlfactor2 = 8192 / 32;
