@@ -396,10 +396,11 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     }
 
     // [crispy] add quick 180° reverse
-    if (gamekeydown[key_reverse])
+    if (gamekeydown[key_reverse] || mousebuttons[mousebreverse])
     {
         cmd->angleturn += ANG180 >> FRACBITS;
         gamekeydown[key_reverse] = false;
+        mousebuttons[mousebreverse] = false;
     }
 
     // [crispy] toggle "always run"

@@ -51,7 +51,8 @@ static int *all_mouse_buttons[] = {
     &mousebjump,
     &mousebprevweapon,
     &mousebnextweapon,
-    &mousebmouselook // [crispy]
+    &mousebmouselook, // [crispy]
+    &mousebreverse // [crispy]
 };
 
 static void MouseSetCallback(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(variable))
@@ -114,6 +115,7 @@ static void ConfigExtraButtons(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
     AddMouseControl(buttons_table, "Next weapon", &mousebnextweapon);
     if (gamemission == doom) // [crispy]
     {
+        AddMouseControl(buttons_table, "Quick Reverse", &mousebreverse);
         AddMouseControl(buttons_table, "Free look [*]", &mousebmouselook);
         AddMouseControl(buttons_table, "Jump [*]", &mousebjump);
     }

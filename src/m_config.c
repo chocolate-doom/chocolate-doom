@@ -484,6 +484,14 @@ static default_t	doom_defaults_list[] =
     CONFIG_VARIABLE_INT(mouseb_mouselook),
 
     //!
+    // @game doom
+    //
+    // Quick 180° reverse.
+    //
+
+    CONFIG_VARIABLE_INT(mouseb_reverse),
+
+    //!
     // If non-zero, joystick input is enabled.
     //
 

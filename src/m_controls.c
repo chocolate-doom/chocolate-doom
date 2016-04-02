@@ -110,6 +110,7 @@ int mousebstraferight = -1;
 int mousebbackward = -1;
 int mousebuse = -1;
 int mousebmouselook = -1; // [crispy]
+int mousebreverse = -1; // [crispy]
 
 int mousebprevweapon = 4;
 int mousebnextweapon = 3;
@@ -264,6 +265,7 @@ void M_BindBaseControls(void)
     M_BindIntVariable("joyb_jump",          &joybjump); // [crispy]
 
     M_BindIntVariable("mouseb_mouselook",   &mousebmouselook); // [crispy]
+    M_BindIntVariable("mouseb_reverse",     &mousebreverse); // [crispy]
     M_BindIntVariable("key_reverse",        &key_reverse); // [crispy]
     M_BindIntVariable("key_toggleautorun",  &key_toggleautorun); // [crispy]
 }
