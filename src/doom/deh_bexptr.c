@@ -215,21 +215,22 @@ static void *DEH_BEXPtrStart(deh_context_t *context, char *line)
 static void DEH_BEXPtrParseLine(deh_context_t *context, char *line, void *tag)
 {
     state_t *state;
-    char *variable_name, *value;
+    char *variable_name, *value, frame_str[6];
     int frame_number, i;
 
     // parse "FRAME nn = mnemonic", where
     // variable_name = "FRAME nn" and value = "mnemonic"
     if (!DEH_ParseAssignment(line, &variable_name, &value))
     {
-	DEH_Warning(context, "Failed to parse assignment");
+	DEH_Warning(context, "Failed to parse assignment: %s", line);
 	return;
     }
 
     // parse "FRAME nn", where frame_number = "nn"
-    if (sscanf(variable_name, "FRAME %32d", &frame_number) != 1)
+    if (sscanf(variable_name, "%5s %32d", frame_str, &frame_number) != 2 ||
+        strcasecmp(frame_str, "FRAME"))
     {
-	DEH_Warning(context, "Failed to parse assignment");
+	DEH_Warning(context, "Failed to parse assignment: %s", variable_name);
 	return;
     }
 
