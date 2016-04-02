@@ -2234,6 +2234,12 @@ void G_ReadDemoTiccmd (ticcmd_t* cmd)
     }
 
     cmd->buttons = (unsigned char)*demo_p++; 
+
+    if (crispy_fliplevels)
+    {
+	cmd->sidemove *= (const signed char) -1;
+	cmd->angleturn *= (const short) -1;
+    }
 } 
 
 // Increase the size of the demo buffer to allow unlimited demos
@@ -2271,6 +2277,12 @@ static void IncreaseDemoBuffer(void)
 void G_WriteDemoTiccmd (ticcmd_t* cmd) 
 { 
     byte *demo_start;
+
+    if (crispy_fliplevels)
+    {
+	cmd->sidemove *= (const signed char) -1;
+	cmd->angleturn *= (const short) -1;
+    }
 
     if (gamekeydown[key_demo_quit])           // press q to end demo recording 
 	G_CheckDemoStatus (); 
