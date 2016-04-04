@@ -1168,16 +1168,6 @@ void I_InitGraphics(void)
 
     memset(I_VideoBuffer, 0, SCREENWIDTH * SCREENHEIGHT);
 
-    // We need SDL to give us translated versions of keys as well
-
-    // SDL2-TODO SDL_EnableUNICODE(1);
-
-    // Repeat key presses - this is what Vanilla Doom does
-    // Not sure about repeat rate - probably dependent on which DOS
-    // driver is used.  This is good enough though.
-
-    // SDL2-TODO SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
-
     // clear out any events waiting at the start and center the mouse
   
     while (SDL_PollEvent(&dummy));
