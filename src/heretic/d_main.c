@@ -245,7 +245,7 @@ void D_DoomLoop(void)
     I_GraphicsCheckCommandLine();
     I_InputCheckCommandLine();
     I_SetGrabMouseCallback(D_GrabMouseCallback);
-    I_InitGraphics();
+    I_InitGraphics(false);
 
     main_loop_started = true;
 

@@ -40,7 +40,6 @@
 #include "w_main.h"
 #include "w_wad.h"
 #include "s_sound.h"
-#include "v_diskicon.h"
 #include "v_video.h"
 
 #include "f_finale.h"
@@ -218,7 +217,7 @@ void D_Display (void)
 	    break;
 	if (automapactive)
 	    AM_Drawer ();
-	if (wipe || (viewheight != SCREENHEIGHT && fullscreen) || disk_indicator == disk_dirty)
+	if (wipe || (viewheight != SCREENHEIGHT && fullscreen))
 	    redrawsbar = true;
 	if (inhelpscreensstate && !inhelpscreens)
 	    redrawsbar = true;              // just put away the help screen
@@ -413,6 +412,7 @@ boolean D_GrabMouseCallback(void)
 //
 void D_DoomLoop (void)
 {
+    char *diskgraphic;
     if (bfgedition &&
         (demorecording || (gameaction == ga_playdemo) || netgame))
     {
@@ -431,8 +431,19 @@ void D_DoomLoop (void)
     I_GraphicsCheckCommandLine();
     I_InputCheckCommandLine();
     I_SetGrabMouseCallback(D_GrabMouseCallback);
-    I_InitGraphics();
-    V_EnableLoadingDisk(SCREENWIDTH - LOADING_DISK_W, SCREENHEIGHT - LOADING_DISK_H);
+    I_InitGraphics(true);
+
+    if (M_CheckParm("-cdrom"))
+    {
+        diskgraphic = "STCDDISK";
+    }
+    else
+    {
+        diskgraphic = "STDISK";
+    }
+
+    I_InitDiskFlash(SCREENWIDTH - LOADING_DISK_W,
+                    SCREENHEIGHT - LOADING_DISK_H, diskgraphic);
 
     TryRunTics();
 

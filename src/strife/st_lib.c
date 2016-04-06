@@ -173,13 +173,13 @@ STlib_drawNumPositive
 
     // in the special case of 0, you draw 0
     if (!num)
-        V_DrawPatch(x - w, n->y, n->p[ 0 ]);
+        V_DrawPatchDirect(x - w, n->y, n->p[ 0 ]);
 
     // draw the new number
     while (num && numdigits--)
     {
         x -= w;
-        V_DrawPatch(x, n->y, n->p[ num % 10 ]);
+        V_DrawPatchDirect(x, n->y, n->p[ num % 10 ]);
         num /= 10;
     }
 }

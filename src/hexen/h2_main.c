@@ -741,7 +741,7 @@ void H2_GameLoop(void)
     I_GraphicsCheckCommandLine();
     I_InputCheckCommandLine();
     I_SetGrabMouseCallback(D_GrabMouseCallback);
-    I_InitGraphics();
+    I_InitGraphics(false);
 
     while (1)
     {
