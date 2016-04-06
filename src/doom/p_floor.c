@@ -256,7 +256,7 @@ void T_MoveGoobers (floormove_t *floor)
 
     res1 = T_MovePlane(floor->sector, 2 * FLOORSPEED, 0,
                        true, 0, (floor->direction &  1) * 2 - 1);
-    res2 = T_MovePlane(floor->sector, 2 * FLOORSPEED, 128 * FRACUNIT,
+    res2 = T_MovePlane(floor->sector, 2 * FLOORSPEED, floor->floordestheight,
                        true, 1, (floor->direction >> 1) * 2 - 1);
 
     if (!(leveltime & 7))
@@ -297,8 +297,10 @@ void EV_DoGoobers (void)
 	sec->specialdata = floor;
 	floor->thinker.function.acp1 = (actionf_p1) T_MoveGoobers;
 	floor->sector = sec;
+	floor->floordestheight = (!sec->tag &&
+	    sec->interpceilingheight == sec->interpfloorheight) ? 0 : 128 * FRACUNIT;
 	floor->direction = (sec->floorheight < 0) |
-	                   (sec->ceilingheight < 128 * FRACUNIT) << 1;
+	                   (sec->ceilingheight < floor->floordestheight) << 1;
     }
 }
 
