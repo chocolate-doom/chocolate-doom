@@ -208,13 +208,6 @@ static void GenerateModesTable(TXT_UNCAST_ARG(widget),
     }
 }
 
-static void UpdateModeSeparator(TXT_UNCAST_ARG(widget),
-                                TXT_UNCAST_ARG(separator))
-{
-    TXT_CAST_ARG(txt_separator_t, separator);
-    TXT_SetSeparatorLabel(separator, "Window size");
-}
-
 static void AdvancedDisplayConfig(TXT_UNCAST_ARG(widget),
                                   TXT_UNCAST_ARG(modes_table))
 {
@@ -266,7 +259,6 @@ void ConfigDisplay(void)
 {
     txt_window_t *window;
     txt_table_t *modes_table;
-    txt_separator_t *modes_separator;
     txt_window_action_t *advanced_button;
     txt_checkbox_t *fs_checkbox;
     int num_columns;
@@ -296,18 +288,15 @@ void ConfigDisplay(void)
 
     // Build window:
 
-    TXT_AddWidget(window,
-                  fs_checkbox = TXT_NewCheckBox("Full screen", &fullscreen));
-
     TXT_AddWidgets(window,
-                   modes_separator = TXT_NewSeparator(""),
+                   TXT_NewSeparator("Window size"),
                    modes_table,
+                   TXT_NewSeparator("Options"),
+                   fs_checkbox = TXT_NewCheckBox("Full screen", &fullscreen),
                    NULL);
 
     TXT_SignalConnect(fs_checkbox, "changed",
                       GenerateModesTable, modes_table);
-    TXT_SignalConnect(fs_checkbox, "changed",
-                      UpdateModeSeparator, modes_separator);
 
     // How many rows high will the configuration window be?
     // Need to take into account number of fullscreen modes, and also
@@ -340,7 +329,6 @@ void ConfigDisplay(void)
                                   TXT_SCREEN_W / 2, window_y);
 
     GenerateModesTable(NULL, modes_table);
-    UpdateModeSeparator(NULL, modes_separator);
 
     // Button to open "advanced" window.
     // Need to pass a pointer to the modes table, as some of the options
