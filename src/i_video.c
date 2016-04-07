@@ -318,6 +318,12 @@ static void HandleWindowEvent(SDL_WindowEvent *event)
     }
 }
 
+static void I_ToggleFullScreen(void)
+{
+    Uint32 flags = SDL_GetWindowFlags(screen) & SDL_WINDOW_FULLSCREEN_DESKTOP;
+    SDL_SetWindowFullscreen(screen, flags ^ SDL_WINDOW_FULLSCREEN_DESKTOP);
+}
+
 void I_GetEvent(void)
 {
     extern void I_HandleKeyboardEvent(SDL_Event *sdlevent);
@@ -331,6 +337,14 @@ void I_GetEvent(void)
         switch (sdlevent.type)
         {
             case SDL_KEYDOWN:
+                if (sdlevent.key.keysym.scancode == SDL_SCANCODE_RETURN &&
+                    sdlevent.key.keysym.mod & (KMOD_LGUI | KMOD_RGUI))
+                {
+                    I_ToggleFullScreen();
+                    break;
+                }
+                // deliberate fall-though
+
             case SDL_KEYUP:
 		I_HandleKeyboardEvent(&sdlevent);
                 break;
