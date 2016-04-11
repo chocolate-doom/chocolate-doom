@@ -53,7 +53,6 @@ static screen_mode_t screen_modes_unscaled[] =
 
 static screen_mode_t screen_modes_scaled[] = 
 {
-    { 256,  200 },
     { 320,  240 },
     { 512,  400 },
     { 640,  480 },
@@ -62,6 +61,7 @@ static screen_mode_t screen_modes_scaled[] =
     { 1024, 800 },
     { 1280, 960 },
     { 1600, 1200 },
+    { 1920, 1440 },
     { 0, 0},
 };
 
