@@ -625,6 +625,9 @@ void P_RemoveMobj (mobj_t* mobj)
     // unlink from sector and block lists
     P_UnsetThingPosition (mobj);
     
+    // [crispy] removed map objects may finish their sounds
+    S_UnlinkSound(mobj);
+
     // stop any playing sound
     S_StopSound (mobj);
     
