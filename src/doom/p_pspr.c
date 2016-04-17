@@ -336,7 +336,9 @@ A_WeaponReady
     }
     
     if (player->readyweapon == wp_chainsaw
-	&& psp->state == &states[S_SAW])
+	&& psp->state == &states[S_SAW]
+	// [crispy] play the "saw up" sound to finish
+	&& !S_SoundIsPlaying(player->mo, sfx_sawup))
     {
 	S_StartSound (player->mo, sfx_sawidl);
     }
