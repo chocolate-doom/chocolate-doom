@@ -344,6 +344,30 @@ void S_UnlinkSound(mobj_t *origin)
     }
 }
 
+// [crispy] check if a specific sound is playing from a specific origin
+boolean S_SoundIsPlaying(mobj_t *origin, int sfx_id)
+{
+    int cnum;
+    const sfxinfo_t *sfx;
+
+    if (sfx_id < 1 || sfx_id > NUMSFX)
+    {
+        return false;
+    }
+
+    sfx = &S_sfx[sfx_id];
+
+    for (cnum=0 ; cnum<snd_channels ; cnum++)
+    {
+        if (channels[cnum].sfxinfo == sfx && channels[cnum].origin == origin)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 //
 // S_GetChannel :
 //   If none available, return -1.  Otherwise channel #.
