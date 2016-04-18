@@ -428,10 +428,11 @@ static uint32_t P_ThinkerToIndex (thinker_t* thinker)
     if (!thinker)
 	return 0;
 
-    for (th = thinkercap.next, i = 1; th != &thinkercap; th = th->next, i++)
+    for (th = thinkercap.next, i = 0; th != &thinkercap; th = th->next)
     {
 	if (th->function.acp1 == (actionf_p1) P_MobjThinker)
 	{
+	    i++;
 	    if (th == thinker)
 		return i;
 	}
@@ -449,10 +450,11 @@ static thinker_t* P_IndexToThinker (uint32_t index)
     if (!index)
 	return NULL;
 
-    for (th = thinkercap.next, i = 1; th != &thinkercap; th = th->next, i++)
+    for (th = thinkercap.next, i = 0; th != &thinkercap; th = th->next)
     {
 	if (th->function.acp1 == (actionf_p1) P_MobjThinker)
 	{
+	    i++;
 	    if (i == index)
 		return th;
 	}
