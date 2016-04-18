@@ -2287,6 +2287,14 @@ void G_DoPlayDemo (void)
     demobuffer = W_CacheLumpNum(lumpnum, PU_STATIC);
     demo_p = demobuffer;
 
+    // [crispy] ignore empty demo lumps
+    if (W_LumpLength(W_GetNumForName(defdemoname)) < 0xd)
+    {
+	demoplayback = true;
+	G_CheckDemoStatus();
+	return;
+    }
+
     demoversion = *demo_p++;
 
     if (demoversion >= 0 && demoversion <= 4)
