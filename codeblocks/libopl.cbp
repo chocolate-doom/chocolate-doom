@@ -41,10 +41,6 @@
 		<Linker>
 			<Add option="-lmingw32 -lSDLmain -lSDL -lSDL_mixer -mwindows" />
 		</Linker>
-		<Unit filename="..\opl\dbopl.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\opl\dbopl.h" />
 		<Unit filename="..\opl\ioperm_sys.c">
 			<Option compilerVar="CC" />
 		</Unit>
