@@ -1564,7 +1564,7 @@ void D_DoomMain (void)
     }
 
     // Check for -file in shareware
-    if (modifiedgame)
+    if (modifiedgame && !(gamevariant & freedoom))
     {
 	// These are the lumps that will be checked in IWAD,
 	// if any one is not present, execution will be aborted.
