@@ -117,9 +117,6 @@ boolean		advancedemo;
 // Store demo, do not accept any inputs
 boolean         storedemo;
 
-// "BFG Edition" version of doom2.wad does not include TITLEPIC.
-boolean         bfgedition;
-
 // If true, the main game loop has started.
 boolean         main_loop_started = false;
 
@@ -409,7 +406,7 @@ boolean D_GrabMouseCallback(void)
 //
 void D_DoomLoop (void)
 {
-    if (bfgedition &&
+    if (gamevariant & bfgedition &&
         (demorecording || (gameaction == ga_playdemo) || netgame))
     {
         printf(" WARNING: You are playing using one of the Doom Classic\n"
@@ -577,7 +574,7 @@ void D_DoAdvanceDemo (void)
 
     // The Doom 3: BFG Edition version of doom2.wad does not have a
     // TITLETPIC lump. Use INTERPIC instead as a workaround.
-    if (bfgedition && !strcasecmp(pagename, "TITLEPIC")
+    if (gamevariant & bfgedition && !strcasecmp(pagename, "TITLEPIC")
         && W_CheckNumForName("titlepic") < 0)
     {
         pagename = DEH_String("INTERPIC");
@@ -802,8 +799,9 @@ void D_IdentifyVersion(void)
 
 void D_SetGameDescription(void)
 {
-    boolean is_freedoom = W_CheckNumForName("FREEDOOM") >= 0,
-            is_freedm = W_CheckNumForName("FREEDM") >= 0;
+    gamevariant = W_CheckNumForName("FREEDOOM") >= 0 ?
+                  W_CheckNumForName("FREEDM") >= 0 ?
+                  freedoom & freedm : freedoom : vanilla;
 
     gamedescription = "Unknown";
 
@@ -811,7 +809,7 @@ void D_SetGameDescription(void)
     {
         // Doom 1.  But which version?
 
-        if (is_freedoom)
+        if (gamevariant & freedoom)
         {
             gamedescription = GetGameName("Freedoom: Phase 1");
         }
@@ -834,9 +832,9 @@ void D_SetGameDescription(void)
     {
         // Doom 2 of some kind.  But which mission?
 
-        if (is_freedoom)
+        if (gamevariant & freedoom)
         {
-            if (is_freedm)
+            if (gamevariant & freedm)
             {
                 gamedescription = GetGameName("FreeDM");
             }
@@ -1086,7 +1084,7 @@ static void D_Endoom(void)
 static void LoadIwadDeh(void)
 {
     // The Freedoom IWADs have DEHACKED lumps that must be loaded.
-    if (W_CheckNumForName("FREEDOOM") >= 0)
+    if (gamevariant & freedoom)
     {
         // Old versions of Freedoom (before 2014-09) did not have technically
         // valid DEHACKED lumps, so ignore errors and just continue if this
@@ -1408,7 +1406,7 @@ void D_DoomMain (void)
     if (W_CheckNumForName("dmenupic") >= 0)
     {
         printf("BFG Edition: Using workarounds as needed.\n");
-        bfgedition = true;
+        gamevariant = bfgedition;
 
         // BFG Edition changes the names of the secret levels to
         // censor the Wolfenstein references. It also has an extra
@@ -1595,7 +1593,7 @@ void D_DoomMain (void)
     // Freedoom's IWADs are Boom-compatible, which means they usually
     // don't work in Vanilla (though FreeDM is okay). Show a warning
     // message and give a link to the website.
-    if (W_CheckNumForName("FREEDOOM") >= 0 && W_CheckNumForName("FREEDM") < 0)
+    if (gamevariant & freedoom && !(gamevariant & freedm))
     {
         printf(" WARNING: You are playing using one of the Freedoom IWAD\n"
                " files, which might not work in this port. See this page\n"
