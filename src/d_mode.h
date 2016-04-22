@@ -78,10 +78,10 @@ typedef enum
 
 typedef enum
 {
-    vanilla    = 0, // Vanilla Doom
-    freedoom   = 1, // FreeDoom: Phase 1 + 2
-    freedm     = 2, // FreeDM
-    bfgedition = 4, // Doom Classic (Doom 3: BFG Edition)
+    vanilla,    // Vanilla Doom
+    freedoom,   // FreeDoom: Phase 1 + 2
+    freedm,     // FreeDM
+    bfgedition, // Doom Classic (Doom 3: BFG Edition)
 } GameVariant_t;
 
 // Skill level.
