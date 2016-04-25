@@ -1631,22 +1631,22 @@ void G_DoCompleted (void)
     if ( gamemode == commercial)
     {
 	if (secretexit)
+	    if (gamemap == 2 && crispy_havemap33 && singleplayer)
+	      wminfo.next = 32;
+	    else
 	    switch(gamemap)
 	    {
 	      case 15: wminfo.next = 30; break;
 	      case 31: wminfo.next = 31; break;
-	      case  2:
-	          if (crispy_havemap33 && singleplayer)
-	               wminfo.next = 32; break;
 	    }
 	else
+	    if (gamemap == 33 && crispy_havemap33 && singleplayer)
+	      wminfo.next = 2;
+	    else
 	    switch(gamemap)
 	    {
 	      case 31:
 	      case 32: wminfo.next = 15; break;
-	      case 33:
-	          if (crispy_havemap33 && singleplayer)
-	               wminfo.next =  2; break;
 	      default: wminfo.next = gamemap;
 	    }
     }
