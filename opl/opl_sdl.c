@@ -157,8 +157,6 @@ static void AdvanceTime(unsigned int nsamples)
 
 static void FillBuffer(int16_t *buffer, unsigned int nsamples)
 {
-    unsigned int i;
-
     // This seems like a reasonable assumption.  mix_buffer is
     // 1 second long, which should always be much longer than the
     // SDL mix buffer.
