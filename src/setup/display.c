@@ -246,11 +246,9 @@ static void AdvancedDisplayConfig(TXT_UNCAST_ARG(widget),
                                       &show_diskicon));
     }
 
-#ifdef HAVE_LIBPNG
     TXT_AddWidget(window,
                   TXT_NewCheckBox("Save screenshots in PNG format",
                                   &png_screenshots));
-#endif
 
     TXT_SignalConnect(ar_checkbox, "changed", GenerateModesTable, modes_table);
 }
