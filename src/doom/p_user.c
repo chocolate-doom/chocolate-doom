@@ -188,15 +188,12 @@ void P_MovePlayer (player_t* player)
         }
         else
         {
-            player->lookdir += MLOOKUNIT * 5 * look;
-
-            if (player->lookdir > LOOKDIRMAX * MLOOKUNIT)
-                player->lookdir = LOOKDIRMAX * MLOOKUNIT;
-            else
-            if (player->lookdir < -LOOKDIRMIN * MLOOKUNIT)
-                player->lookdir = -LOOKDIRMIN * MLOOKUNIT;
+            cmd->lookdir = MLOOKUNIT * 5 * look;
         }
     }
+    player->lookdir = BETWEEN(-LOOKDIRMIN * MLOOKUNIT,
+                              LOOKDIRMAX * MLOOKUNIT,
+                              player->lookdir + cmd->lookdir);
 }	
 
 
