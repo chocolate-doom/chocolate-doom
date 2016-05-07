@@ -53,6 +53,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\opl\opl.h" />
+		<Unit filename="..\opl\opl3.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\opl\opl3.h" />
 		<Unit filename="..\opl\opl_internal.h" />
 		<Unit filename="..\opl\opl_linux.c">
 			<Option compilerVar="CC" />

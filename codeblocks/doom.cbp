@@ -326,6 +326,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../src/i_endoom.h" />
+		<Unit filename="../src/i_input.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../src/i_input.h" />
 		<Unit filename="../src/i_joystick.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -339,10 +343,6 @@
 		<Unit filename="../src/i_pcsound.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="../src/i_scale.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../src/i_scale.h" />
 		<Unit filename="../src/i_sdlmusic.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -467,6 +467,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../src/tables.h" />
+		<Unit filename="../src/v_diskicon.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../src/v_diskicon.h" />
 		<Unit filename="../src/v_patch.h" />
 		<Unit filename="../src/v_video.c">
 			<Option compilerVar="CC" />
