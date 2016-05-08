@@ -911,8 +911,16 @@ static default_t extra_defaults_list[] =
 #endif
 
     //!
-    // Joystick number to use; '0' is the first joystick.  A negative
-    // value ('-1') indicates that no joystick is configured.
+    // SDL GUID string indicating the joystick to use. An empty string
+    // indicates that no joystick is configured.
+    //
+
+    CONFIG_VARIABLE_STRING(joystick_guid),
+
+    //!
+    // Index of SDL joystick to use; this is only used in the case where
+    // multiple identical joystick devices are connected which have the
+    // same GUID, to distinguish between devices.
     //
 
     CONFIG_VARIABLE_INT(joystick_index),
