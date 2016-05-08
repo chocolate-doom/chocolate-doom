@@ -563,8 +563,7 @@ static int OpenAllJoysticks(void)
     // SDL_JoystickOpen() all joysticks.
 
     num_joysticks = SDL_NumJoysticks();
-
-    all_joysticks = malloc(sizeof(SDL_Joystick *) * num_joysticks);
+    all_joysticks = calloc(num_joysticks, sizeof(SDL_Joystick *));
 
     result = 0;
 
@@ -625,6 +624,22 @@ static void CalibrateXAxis(void)
     TXT_ConfigureJoystickAxis(x_axis_widget, calibrate_button, NULL);
 }
 
+// TODO: Remove once we no longer use joystick_index in .cfg files.
+static int JoystickIDToIndex(int joy_id)
+{
+    SDL_Joystick *joystick = SDL_JoystickFromInstanceID(joy_id);
+    int i;
+
+    for (i = 0; i < SDL_NumJoysticks(); ++i)
+    {
+        if (joystick == all_joysticks[i])
+        {
+            return i;
+        }
+    }
+    return -1;
+}
+
 static int CalibrationEventCallback(SDL_Event *event, void *user_data)
 {
     if (event->type != SDL_JOYBUTTONDOWN)
@@ -636,8 +651,13 @@ static int CalibrationEventCallback(SDL_Event *event, void *user_data)
     // In the first "center" stage, we're just trying to work out which
     // joystick is being configured and which button the user is pressing.
     usejoystick = 1;
-    joystick_index = event->jbutton.which;
+    joystick_index = JoystickIDToIndex(event->jbutton.which);
     calibrate_button = event->jbutton.button;
+
+    if (joystick_index < 0)
+    {
+        return 0;
+    }
 
     // If the joystick is a known one, auto-load default
     // config for it. Otherwise, proceed with calibration.
