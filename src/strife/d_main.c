@@ -58,6 +58,7 @@
 #include "i_endoom.h"
 #include "i_input.h"
 #include "i_joystick.h"
+#include "i_log.h"
 #include "i_system.h"
 #include "i_timer.h"
 #include "i_video.h"
@@ -1305,6 +1306,8 @@ void D_DoomMain (void)
     int             p;
     char            file[256];
     char            demolumpname[9];
+
+    I_InitLog();
 
     I_AtExit(D_Endoom, false);
 

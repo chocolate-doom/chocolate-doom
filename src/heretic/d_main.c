@@ -34,6 +34,7 @@
 #include "i_endoom.h"
 #include "i_input.h"
 #include "i_joystick.h"
+#include "i_log.h"
 #include "i_sound.h"
 #include "i_system.h"
 #include "i_timer.h"
@@ -807,9 +808,11 @@ void D_DoomMain(void)
     char file[256];
     char demolumpname[9];
 
-    I_PrintBanner(PACKAGE_STRING);
+    I_InitLog();
 
     I_AtExit(D_Endoom, false);
+
+    I_PrintBanner(PACKAGE_STRING);
 
     //!
     // @vanilla
