@@ -51,7 +51,7 @@
 			<Add directory="../opl" />
 		</Compiler>
 		<Linker>
-			<Add option="-lmingw32 -lSDLmain -lSDL -lSDL_mixer -lSDL_net -mwindows" />
+			<Add option="-lmingw32 -lSDL2main -lSDL2 -lSDL2_mixer -lSDL2_net -lSDL2_image" />
 			<Add directory="../lib" />
 		</Linker>
 		<Unit filename="../src/d_event.c">
@@ -401,7 +401,6 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../src/m_misc.h" />
-		<Unit filename="../src/md5.h" />
 		<Unit filename="../src/memio.c">
 			<Option compilerVar="CC" />
 		</Unit>
