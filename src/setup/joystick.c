@@ -52,8 +52,9 @@ static int joystick_initted = 0;
 
 static int usejoystick = 0;
 
-// Joystick to use, as an SDL joystick index:
+// GUID and index of joystick to use.
 
+char *joystick_guid = "";
 int joystick_index = -1;
 
 // Calibration button. This is the button the user pressed at the
@@ -94,6 +95,7 @@ static txt_joystick_axis_t *y_axis_widget;
 
 static txt_window_t *calibration_window;
 static SDL_Joystick **all_joysticks = NULL;
+static int all_joysticks_len = 0;
 
 // Known controllers.
 // There are lots of game controllers on the market. Try to configure
@@ -529,25 +531,71 @@ static void UnInitJoystick(void)
     }
 }
 
-// Set the label showing the name of the currently selected joystick
-
-static void SetJoystickButtonLabel(void)
+// We identify joysticks using GUID where possible, but joystick_index
+// is used to distinguish between different devices. As the index can
+// change, UpdateJoystickIndex() checks to see if it is still valid and
+// updates it as appropriate.
+static void UpdateJoystickIndex(void)
 {
-    char *name;
+    SDL_JoystickGUID guid, dev_guid;
+    int i;
 
-    InitJoystick();
+    guid = SDL_JoystickGetGUIDFromString(joystick_guid);
 
-    name = "None set";
-
-    if (joystick_initted
-     && joystick_index >= 0 && joystick_index < SDL_NumJoysticks())
+    // Is joystick_index already correct?
+    if (joystick_index >= 0 && joystick_index < SDL_NumJoysticks())
     {
-        name = (char *) SDL_JoystickNameForIndex(joystick_index);
+        dev_guid = SDL_JoystickGetDeviceGUID(joystick_index);
+        if (!memcmp(&guid, &dev_guid, sizeof(SDL_JoystickGUID)))
+        {
+            return;
+        }
     }
 
-    TXT_SetButtonLabel(joystick_button, name);
+    // If index is not correct, look for the first device with the
+    // expected GUID. It may have moved to a different index.
+    for (i = 0; i < SDL_NumJoysticks(); ++i)
+    {
+        dev_guid = SDL_JoystickGetDeviceGUID(i);
+        if (!memcmp(&guid, &dev_guid, sizeof(SDL_JoystickGUID)))
+        {
+            joystick_index = i;
+            return;
+        }
+    }
 
-    UnInitJoystick();
+    // Not found; it's possible the device is disconnected. Do not
+    // reset joystick_guid or joystick_index in case they are
+    // reconnected later.
+}
+
+// Set the label showing the name of the currently selected joystick
+static void SetJoystickButtonLabel(void)
+{
+    SDL_JoystickGUID guid, dev_guid;
+    const char *name;
+
+    if (!usejoystick || !strcmp(joystick_guid, ""))
+    {
+        name = "None set";
+    }
+    else
+    {
+        name = "Not found (device disconnected?)";
+
+        // Use the device name if the GUID and index match.
+        if (joystick_index >= 0 && joystick_index < SDL_NumJoysticks())
+        {
+            guid = SDL_JoystickGetGUIDFromString(joystick_guid);
+            dev_guid = SDL_JoystickGetDeviceGUID(joystick_index);
+            if (!memcmp(&guid, &dev_guid, sizeof(SDL_JoystickGUID)))
+            {
+                name = SDL_JoystickNameForIndex(joystick_index);
+            }
+        }
+    }
+
+    TXT_SetButtonLabel(joystick_button, (char *) name);
 }
 
 // Try to open all joysticks visible to SDL.
@@ -555,19 +603,18 @@ static void SetJoystickButtonLabel(void)
 static int OpenAllJoysticks(void)
 {
     int i;
-    int num_joysticks;
     int result;
 
     InitJoystick();
 
     // SDL_JoystickOpen() all joysticks.
 
-    num_joysticks = SDL_NumJoysticks();
-    all_joysticks = calloc(num_joysticks, sizeof(SDL_Joystick *));
+    all_joysticks_len = SDL_NumJoysticks();
+    all_joysticks = calloc(all_joysticks_len, sizeof(SDL_Joystick *));
 
     result = 0;
 
-    for (i = 0; i < num_joysticks; ++i)
+    for (i = 0; i < all_joysticks_len; ++i)
     {
         all_joysticks[i] = SDL_JoystickOpen(i);
 
@@ -599,11 +646,8 @@ static int OpenAllJoysticks(void)
 static void CloseAllJoysticks(void)
 {
     int i;
-    int num_joysticks;
 
-    num_joysticks = SDL_NumJoysticks();
-
-    for (i = 0; i < num_joysticks; ++i)
+    for (i = 0; i < all_joysticks_len; ++i)
     {
         if (all_joysticks[i] != NULL)
         {
@@ -624,20 +668,34 @@ static void CalibrateXAxis(void)
     TXT_ConfigureJoystickAxis(x_axis_widget, calibrate_button, NULL);
 }
 
-// TODO: Remove once we no longer use joystick_index in .cfg files.
-static int JoystickIDToIndex(int joy_id)
+// Given the SDL_JoystickID instance ID from a button event, set the
+// joystick_guid and joystick_index config variables.
+static boolean SetJoystickGUID(SDL_JoystickID joy_id)
 {
-    SDL_Joystick *joystick = SDL_JoystickFromInstanceID(joy_id);
+    SDL_Joystick *joystick;
+    SDL_JoystickGUID guid;
     int i;
 
-    for (i = 0; i < SDL_NumJoysticks(); ++i)
+    joystick = SDL_JoystickFromInstanceID(joy_id);
+    if (joystick == NULL)
     {
-        if (joystick == all_joysticks[i])
+        return false;
+    }
+
+    guid = SDL_JoystickGetGUID(joystick);
+    joystick_guid = malloc(33);
+    SDL_JoystickGetGUIDString(guid, joystick_guid, 33);
+
+    for (i = 0; i < all_joysticks_len; ++i)
+    {
+        if (all_joysticks[i] == joystick)
         {
-            return i;
+            joystick_index = i;
+            return true;
         }
     }
-    return -1;
+
+    return false;
 }
 
 static int CalibrationEventCallback(SDL_Event *event, void *user_data)
@@ -647,17 +705,16 @@ static int CalibrationEventCallback(SDL_Event *event, void *user_data)
         return 0;
     }
 
+    if (!SetJoystickGUID(event->jbutton.which))
+    {
+        return 0;
+    }
+
     // At this point, we have a button press.
     // In the first "center" stage, we're just trying to work out which
     // joystick is being configured and which button the user is pressing.
     usejoystick = 1;
-    joystick_index = JoystickIDToIndex(event->jbutton.which);
     calibrate_button = event->jbutton.button;
-
-    if (joystick_index < 0)
-    {
-        return 0;
-    }
 
     // If the joystick is a known one, auto-load default
     // config for it. Otherwise, proceed with calibration.
@@ -693,9 +750,9 @@ static void NoJoystick(void)
 
 static void CalibrateWindowClosed(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
 {
-    CloseAllJoysticks();
     TXT_SDL_SetEventCallback(NULL, NULL);
     SetJoystickButtonLabel();
+    CloseAllJoysticks();
 }
 
 static void CalibrateJoystick(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
@@ -826,7 +883,10 @@ void ConfigJoystick(void)
     TXT_SignalConnect(joystick_button, "pressed", CalibrateJoystick, NULL);
     TXT_SetWindowAction(window, TXT_HORIZ_CENTER, TestConfigAction());
 
+    InitJoystick();
+    UpdateJoystickIndex();
     SetJoystickButtonLabel();
+    UnInitJoystick();
 }
 
 void BindJoystickVariables(void)
@@ -834,6 +894,7 @@ void BindJoystickVariables(void)
     int i;
 
     M_BindIntVariable("use_joystick",           &usejoystick);
+    M_BindStringVariable("joystick_guid",       &joystick_guid);
     M_BindIntVariable("joystick_index",         &joystick_index);
     M_BindIntVariable("joystick_x_axis",        &joystick_x_axis);
     M_BindIntVariable("joystick_y_axis",        &joystick_y_axis);
