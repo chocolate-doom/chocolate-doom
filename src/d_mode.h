@@ -76,6 +76,16 @@ typedef enum
     exe_strife_1_31  // Strife v1.31
 } GameVersion_t;
 
+// What IWAD variant are we using?
+
+typedef enum
+{
+    vanilla,    // Vanilla Doom
+    freedoom,   // FreeDoom: Phase 1 + 2
+    freedm,     // FreeDM
+    bfgedition, // Doom Classic (Doom 3: BFG Edition)
+} GameVariant_t;
+
 // Skill level.
 
 typedef enum

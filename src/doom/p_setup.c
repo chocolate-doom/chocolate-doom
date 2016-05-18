@@ -965,7 +965,7 @@ void P_LoadThings (int lump)
 	else
 	{
 	    // [crispy] BFG Edition MAP33 "Betray" still has Wolf SS
-	    if (bfgedition && singleplayer && mt->type == 84)
+	    if (gamevariant == bfgedition && singleplayer && mt->type == 84)
 	    {
 	        // [crispy] spawn Former Human instead
 	        mt->type = 3004;
