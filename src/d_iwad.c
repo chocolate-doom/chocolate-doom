@@ -177,6 +177,14 @@ static registry_value_t root_path_keys[] =
         SOFTWARE_KEY "\\GOG.com\\Games\\1435848742",
         "PATH",
     },
+
+    // Strife: Veteran Edition
+
+    {
+	HKEY_LOCAL_MACHINE,
+	SOFTWARE_KEY "\\GOG.com\\Games\\1432899949",
+	"PATH",
+    },
 };
 
 // Subdirectories of the above install path, where IWADs are installed.
