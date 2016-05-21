@@ -27,6 +27,7 @@
 #include "i_swap.h"
 #include "m_argv.h"
 #include "m_bbox.h"
+#include "m_misc.h" // [crispy] M_StringJoin()
 
 #include "g_game.h"
 
@@ -1953,9 +1954,24 @@ P_SetupLevel
     {
 	extern int savedleveltime;
 	const int time = savedleveltime / TICRATE;
+	char *rfn_str;
 
-	fprintf(stderr, "P_SetupLevel: %s (%s), Skill %s, Time %d:%02d, ",
-	    lumpname, lumpinfo[lumpnum]->wad_file->path, skilltable[BETWEEN(0,5,(int) skill+1)], time/60, time%60);
+	rfn_str = M_StringJoin(
+	    respawnparm || fastparm || nomonsters ? " (" : "",
+	    respawnparm ? "respawn" : "",
+	    respawnparm && (fastparm || nomonsters) ? ", " : "",
+	    fastparm ? "fast" : "",
+	    fastparm && nomonsters ? ", " : "",
+	    nomonsters ? "nomonsters" : "",
+	    respawnparm || fastparm || nomonsters ? ")" : "",
+	    NULL);
+
+	fprintf(stderr, "P_SetupLevel: %s (%s), Skill %s%s, Time %d:%02d, ",
+	    lumpname, lumpinfo[lumpnum]->wad_file->path,
+	    skilltable[BETWEEN(0,5,(int) skill+1)], rfn_str,
+	    time/60, time%60);
+
+	free(rfn_str);
     }
     // [crispy] check and log map and nodes format
     crispy_mapformat = P_CheckMapFormat(lumpnum);
