@@ -119,11 +119,11 @@ mapthing_t	playerstarts[MAXPLAYERS];
 
 typedef enum
 {
-    DOOMBSP = 0x000,
-    DEEPBSP = 0x001,
-    ZDBSPX  = 0x002,
-    ZDBSPZ  = 0x004,
-    HEXEN   = 0x100,
+    MAPF_DOOMBSP = 0x000,
+    MAPF_DEEPBSP = 0x001,
+    MAPF_ZDBSPX  = 0x002,
+    MAPF_ZDBSPZ  = 0x004,
+    MAPF_HEXEN   = 0x100,
 } mapformat_t;
 
 // [crispy] recalculate seg offsets
@@ -1814,7 +1814,7 @@ static mapformat_t P_CheckMapFormat (int lumpnum)
         !strncasecmp(lumpinfo[b]->name, "BEHAVIOR", 8))
     {
 	fprintf(stderr, "Hexen map format, ");
-	format |= HEXEN;
+	format |= MAPF_HEXEN;
     }
     else
 	fprintf(stderr, "Doom map format, ");
@@ -1827,19 +1827,19 @@ static mapformat_t P_CheckMapFormat (int lumpnum)
     if (!memcmp(nodes, "xNd4\0\0\0\0", 8))
     {
 	fprintf(stderr, "DeePBSP nodes.\n");
-	format |= DEEPBSP;
+	format |= MAPF_DEEPBSP;
     }
     else
     if (!memcmp(nodes, "XNOD", 4))
     {
 	fprintf(stderr, "uncompressed ZDBSP nodes.\n");
-	format |= ZDBSPX;
+	format |= MAPF_ZDBSPX;
     }
     else
     if (!memcmp(nodes, "ZNOD", 4))
     {
 	fprintf(stderr, "compressed ZDBSP nodes.\n");
-	format |= ZDBSPZ;
+	format |= MAPF_ZDBSPZ;
     }
     else
 	fprintf(stderr, "normal BSP nodes.\n");
@@ -1983,17 +1983,17 @@ P_SetupLevel
     P_LoadSectors (lumpnum+ML_SECTORS);
     P_LoadSideDefs (lumpnum+ML_SIDEDEFS);
 
-    if (crispy_mapformat & HEXEN)
+    if (crispy_mapformat & MAPF_HEXEN)
 	P_LoadLineDefs_Hexen (lumpnum+ML_LINEDEFS);
     else
     P_LoadLineDefs (lumpnum+ML_LINEDEFS);
     // [crispy] (re-)create BLOCKMAP if necessary
     if (crispy_createblockmap)
 	P_CreateBlockMap();
-    if (crispy_mapformat & (ZDBSPX | ZDBSPZ))
-	P_LoadNodes_ZDBSP (lumpnum+ML_NODES, crispy_mapformat & ZDBSPZ);
+    if (crispy_mapformat & (MAPF_ZDBSPX | MAPF_ZDBSPZ))
+	P_LoadNodes_ZDBSP (lumpnum+ML_NODES, crispy_mapformat & MAPF_ZDBSPZ);
     else
-    if (crispy_mapformat & DEEPBSP)
+    if (crispy_mapformat & MAPF_DEEPBSP)
     {
 	P_LoadSubsectors_DeePBSP (lumpnum+ML_SSECTORS);
 	P_LoadNodes_DeePBSP (lumpnum+ML_NODES);
@@ -2016,7 +2016,7 @@ P_SetupLevel
 
     bodyqueslot = 0;
     deathmatch_p = deathmatchstarts;
-    if (crispy_mapformat & HEXEN)
+    if (crispy_mapformat & MAPF_HEXEN)
 	P_LoadThings_Hexen (lumpnum+ML_THINGS);
     else
     P_LoadThings (lumpnum+ML_THINGS);
