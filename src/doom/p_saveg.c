@@ -1729,9 +1729,8 @@ void P_RestoreTargets (void)
 {
     mobj_t*	mo;
     thinker_t*	th;
-    uint32_t	i;
 
-    for (th = thinkercap.next, i = 1; th != &thinkercap; th = th->next, i++)
+    for (th = thinkercap.next; th != &thinkercap; th = th->next)
     {
 	if (th->function.acp1 == (actionf_p1) P_MobjThinker)
 	{
