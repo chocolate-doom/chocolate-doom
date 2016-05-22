@@ -301,7 +301,7 @@ void D_Display (void)
     // see if the border needs to be updated to the screen
     if (gamestate == GS_LEVEL && !automapactive && scaledviewwidth != 320)
     {
-        if (menuactive || menuactivestate || !viewactivestate || disk_indicator == disk_dirty)
+        if (menuactive || menuactivestate || !viewactivestate)
         {
             borderdrawcount = 3;
             popupactivestate = false;
