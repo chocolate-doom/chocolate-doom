@@ -86,8 +86,8 @@ static byte *DiskRegionPointer(void)
 {
     int x, y;
 
-    x = loading_disk_xoffs + SHORT(disk->leftoffset);
-    y = loading_disk_yoffs + SHORT(disk->topoffset);
+    x = loading_disk_xoffs - SHORT(disk->leftoffset);
+    y = loading_disk_yoffs - SHORT(disk->topoffset);
     return I_VideoBuffer + y * SCREENWIDTH + x;
 }
 
