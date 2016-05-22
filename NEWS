@@ -6,7 +6,7 @@ HEAD:
     * Added emulation for pitch-shifting as in early versions of Doom,
       Heretic, and Hexen. (thanks Jon)
     * Write out aspect-correct 1600×1200 PNGs. (thanks Jon)
-    * OPL emulation is more accurate. (thanks khokh2001)
+    * OPL emulation is more accurate. (thanks Nuke.YKT)
     * Futher emulation of DMX bugs with GUS cards. (thanks Nuke.YKT)
     * Emulation of the disk icon has returned. (thanks Fabian, Jon)
     * Checksum calculations were fixed on big endian systems, allowing
