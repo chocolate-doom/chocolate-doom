@@ -440,6 +440,9 @@ void HU_Start(void)
 
     int		i;
     char*	s;
+    // [crispy] string buffers for map title and WAD file name
+    char	buf[8], *ptr;
+    extern char	*iwadfile;
 
     if (headsupactive)
 	HU_Stop();
@@ -561,48 +564,39 @@ void HU_Start(void)
 
     // [crispy] explicitely display (episode and) map if the
     // map is from a PWAD or if the map title string has been dehacked
+    if (gamemode == commercial)
+	M_snprintf(buf, sizeof(buf), "map%02d", gamemap);
+    else
+	M_snprintf(buf, sizeof(buf), "e%dm%d", gameepisode, gamemap);
+
+    ptr = lumpinfo[W_GetNumForName(buf)]->wad_file->path;
+
+    if (strcmp(s, DEH_String(s)) || (strcmp(ptr, M_BaseName(iwadfile)) && !nervewadfile))
     {
-	char buf[8], *ptr;
-	extern char *iwadfile;
+	char *m;
 
-	if (gamemode == commercial)
-	    M_snprintf(buf, sizeof(buf), "map%02d", gamemap);
-	else
-	    M_snprintf(buf, sizeof(buf), "e%dm%d", gameepisode, gamemap);
+	m = M_StringJoin(crstr[CR_GOLD], ptr, ": ", crstr[CR_GRAY], buf, NULL);
+	ptr = m; // [crispy] free() that, else *m leaks memory
 
-	ptr = lumpinfo[W_GetNumForName(buf)]->wad_file->path;
+	while (*m)
+	    HUlib_addCharToTextLine(&w_map, *(m++));
 
-	if (strcmp(s, DEH_String(s)) || (strcmp(ptr, M_BaseName(iwadfile)) && !nervewadfile))
-	{
-	    char *m;
-
-	    m = M_StringJoin(crstr[CR_GOLD], ptr, ": ", crstr[CR_GRAY], buf, NULL);
-	    ptr = m; // [crispy] free() that, else *m leaks memory
-
-	    while (*m)
-		HUlib_addCharToTextLine(&w_map, *(m++));
-
-	    free(ptr);
-	}
-
-	// [crispy] print the map title in white from the first colon onward
-	if (!M_ParmExists("-nodeh"))
-	{
-	    M_snprintf(buf, sizeof(buf), "%s%s", ":", crstr[CR_GRAY]);
-
-	    ptr = M_StringReplace(DEH_String(s), ":", buf);
-	    DEH_AddStringReplacement(s, ptr);
-
-	    free(ptr);
-	}
+	free(ptr);
     }
 
     // dehacked substitution to get modified level name
 
     s = DEH_String(s);
     
+    // [crispy] print the map title in white from the first colon onward
+    M_snprintf(buf, sizeof(buf), "%s%s", ":", crstr[CR_GRAY]);
+    ptr = M_StringReplace(s, ":", buf);
+    s = ptr;
+
     while (*s)
 	HUlib_addCharToTextLine(&w_title, *(s++));
+
+    free(ptr);
 
     // create the chat widget
     HUlib_initIText(&w_chat,
