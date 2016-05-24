@@ -1317,9 +1317,19 @@ static void LoadNerveWad(void)
     if (gamemission != doom2)
         return;
 
-    if (gamevariant == bfgedition && !modifiedgame)
+    if ((i = W_GetNumForName("map01")),
+        !strcasecmp(lumpinfo[i]->wad_file->path, "nerve.wad") &&
+        (i = W_GetNumForName("map09")),
+        !strcasecmp(lumpinfo[i]->wad_file->path, "nerve.wad"))
     {
-
+	gamemission = pack_nerve;
+	DEH_AddStringReplacement ("TITLEPIC", "INTERPIC");
+    }
+    else
+    if (W_CheckNumForName("M_EPI1") != -1 &&
+        W_CheckNumForName("M_EPI2") != -1 &&
+        W_CheckNumForName("M_EPISOD") != -1)
+    {
         if (strrchr(iwadfile, DIR_SEPARATOR) != NULL)
         {
             char *dir;
@@ -1354,31 +1364,22 @@ static void LoadNerveWad(void)
             lumpinfo[W_GetNumForName(lumpname)]->name[0] = 'N';
         }
     }
-    else
-    {
-	i = W_GetNumForName("map01");
-	if (!strcasecmp(lumpinfo[i]->wad_file->path, "nerve.wad"))
-	{
-	    gamemission = pack_nerve;
-	    DEH_AddStringReplacement ("TITLEPIC", "INTERPIC");
-	}
-    }
 }
 
 // [crispy] support loading MASTERLEVELS.WAD alongside DOOM2.WAD
 static void LoadMasterlevelsWad(void)
 {
-    if (gamemission == doom2 && modifiedgame)
-    {
-	int i, j;
+    int i;
 
-	i = W_GetNumForName("map01");
-	j = W_GetNumForName("map21");
-	if (!strcasecmp(lumpinfo[i]->wad_file->path, "masterlevels.wad") &&
-	    !strcasecmp(lumpinfo[j]->wad_file->path, "masterlevels.wad"))
-	{
-	    gamemission = pack_master;
-	}
+    if (gamemission != doom2)
+        return;
+
+    if ((i = W_GetNumForName("map01")),
+        !strcasecmp(lumpinfo[i]->wad_file->path, "masterlevels.wad") &&
+        (i = W_GetNumForName("map21")),
+        !strcasecmp(lumpinfo[i]->wad_file->path, "masterlevels.wad"))
+    {
+	gamemission = pack_master;
     }
 }
 
