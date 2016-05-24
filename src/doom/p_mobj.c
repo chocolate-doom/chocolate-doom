@@ -44,12 +44,19 @@ void P_SpawnMapThing (mapthing_t*	mthing);
 //
 int test;
 
+// Use a heuristic approach to detect infinite state cycles: Count the number
+// of times the loop in P_SetMobjState() executes and exit with an error once
+// an arbitrary very large limit is reached.
+
+#define MOBJ_CYCLE_LIMIT 1000000
+
 boolean
 P_SetMobjState
 ( mobj_t*	mobj,
   statenum_t	state )
 {
     state_t*	st;
+    int	cycle_counter = 0;
 
     do
     {
@@ -72,6 +79,11 @@ P_SetMobjState
 	    st->action.acp1(mobj);	
 	
 	state = st->nextstate;
+
+	if (cycle_counter++ > MOBJ_CYCLE_LIMIT)
+	{
+	    I_Error("P_SetMobjState: Infinite state cycle detected!");
+	}
     } while (!mobj->tics);
 				
     return true;
