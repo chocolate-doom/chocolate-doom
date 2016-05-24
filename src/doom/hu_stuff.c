@@ -556,12 +556,6 @@ void HU_Start(void)
         s = HU_TITLE_CHEX;
     }
 
-    // [crispy] special-casing for E1M10 "Sewers" support
-    if (crispy_havee1m10 && gameepisode == 1 && gamemap == 10)
-    {
-	s = HUSTR_E1M10;
-    }
-
     // [crispy] explicitely display (episode and) map if the
     // map is from a PWAD or if the map title string has been dehacked
     if (gamemode == commercial)
@@ -570,6 +564,26 @@ void HU_Start(void)
 	M_snprintf(buf, sizeof(buf), "e%dm%d", gameepisode, gamemap);
 
     ptr = lumpinfo[W_GetNumForName(buf)]->wad_file->path;
+
+    if (gamemission == doom && gameepisode == 1)
+    {
+	// [crispy] add support for Romero's latest E1 additions
+	if (gamemap == 4 && !strcasecmp(ptr, "e1m4b.wad"))
+	{
+	    s = HUSTR_E1M4B;
+	}
+	else
+	if (gamemap == 8 && !strcasecmp(ptr, "e1m8b.wad"))
+	{
+	    s = HUSTR_E1M8B;
+	}
+	// [crispy] special-casing for E1M10 "Sewers" support
+	else
+	if (crispy_havee1m10 && gamemap == 10)
+	{
+	    s = HUSTR_E1M10;
+	}
+    }
 
     if (strcmp(s, DEH_String(s)) || (strcmp(ptr, M_BaseName(iwadfile)) && !nervewadfile))
     {

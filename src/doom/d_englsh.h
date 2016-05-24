@@ -146,6 +146,8 @@
 #define HUSTR_E1M8	"E1M8: Phobos Anomaly"
 #define HUSTR_E1M9	"E1M9: Military Base"
 #define HUSTR_E1M10	"E1M10: Sewers"
+#define HUSTR_E1M4B	"E1M4B: Phobos Mission Control"
+#define HUSTR_E1M8B	"E1M8B: Tech Gone Bad"
 
 #define HUSTR_E2M1	"E2M1: Deimos Anomaly"
 #define HUSTR_E2M2	"E2M2: Containment Area"
