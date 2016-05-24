@@ -375,6 +375,8 @@ void HU_Start(void)
 
     int		i;
     char*	s;
+    // [crispy] string buffers for map title and WAD file name
+    char	buf[8], *ptr;
 
     if (headsupactive)
 	HU_Stop();
@@ -419,6 +421,28 @@ void HU_Start(void)
     if (logical_gamemission == doom && gameversion == exe_chex)
     {
         s = HU_TITLE_CHEX;
+    }
+
+    // [crispy] explicitly display (episode and) map if the map is from a PWAD
+    if (gamemode == commercial)
+	M_snprintf(buf, sizeof(buf), "map%02d", gamemap);
+    else
+	M_snprintf(buf, sizeof(buf), "e%dm%d", gameepisode, gamemap);
+
+    ptr = M_BaseName(lumpinfo[W_GetNumForName(buf)]->wad_file->path);
+
+    if (gamemission == doom && gameepisode == 1)
+    {
+	// [crispy] add support for Romero's latest E1 additions
+	if (gamemap == 4 && !strcasecmp(ptr, "e1m4b.wad"))
+	{
+	    s = HUSTR_E1M4B;
+	}
+	else
+	if (gamemap == 8 && !strcasecmp(ptr, "e1m8b.wad"))
+	{
+	    s = HUSTR_E1M8B;
+	}
     }
 
     // dehacked substitution to get modified level name
