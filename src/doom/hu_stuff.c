@@ -435,6 +435,68 @@ void HU_Stop(void)
     headsupactive = false;
 }
 
+// [crispy] display names of single special levels in Automap
+// These are single, non-consecutive, (semi-)official levels
+// without their own music or par times and thus do not need
+// to be handled as distinct pack_* game missions.
+typedef struct
+{
+    GameMission_t mission;
+    int episode;
+    int map;
+    const char *wad;
+    char *name;
+} speciallevel_t;
+
+speciallevel_t speciallevels[] = {
+    // [crispy] Romero's latest E1 additions
+    {doom, 1, 8, "e1m8b.wad", HUSTR_E1M8B},
+    {doom, 1, 4, "e1m4b.wad", HUSTR_E1M4B},
+    // [crispy] E1M10 "Sewers" (Xbox Doom)
+    {doom, 1, 10, NULL, HUSTR_E1M10},
+    // [crispy] The Master Levels for Doom 2
+    {doom2, 0, 1, "attack.wad", MHUSTR_1},
+    {doom2, 0, 1, "canyon.wad", MHUSTR_2},
+    {doom2, 0, 1, "catwalk.wad", MHUSTR_3},
+    {doom2, 0, 1, "combine.wad", MHUSTR_4},
+    {doom2, 0, 1, "fistula.wad", MHUSTR_5},
+    {doom2, 0, 1, "garrison.wad", MHUSTR_6},
+    {doom2, 0, 1, "manor.wad", MHUSTR_7},
+    {doom2, 0, 1, "paradox.wad", MHUSTR_8},
+    {doom2, 0, 1, "subspace.wad", MHUSTR_9},
+    {doom2, 0, 1, "subterra.wad", MHUSTR_10},
+    {doom2, 0, 1, "ttrap.wad", MHUSTR_11},
+    {doom2, 0, 3, "virgil.wad", MHUSTR_12},
+    {doom2, 0, 5, "minos.wad", MHUSTR_13},
+    {doom2, 0, 7, "bloodsea.wad", MHUSTR_14},
+    {doom2, 0, 7, "mephisto.wad", MHUSTR_15},
+    {doom2, 0, 7, "nessus.wad", MHUSTR_16},
+    {doom2, 0, 8, "geryon.wad", MHUSTR_17},
+    {doom2, 0, 9, "vesperas.wad", MHUSTR_18},
+    {doom2, 0, 25, "blacktwr.wad", MHUSTR_19},
+    {doom2, 0, 31, "teeth.wad", MHUSTR_20},
+    {doom2, 0, 32, "teeth.wad", MHUSTR_21},
+};
+
+void HU_SetSpecialLevelName (const char *wad, char **name)
+{
+    int i;
+
+    for (i = 0; i < arrlen(speciallevels); i++)
+    {
+	const speciallevel_t speciallevel = speciallevels[i];
+
+	if (logical_gamemission == speciallevel.mission &&
+	    (!speciallevel.episode || gameepisode == speciallevel.episode) &&
+	    gamemap == speciallevel.map &&
+	    (!speciallevel.wad || !strcasecmp(wad, speciallevel.wad)))
+	{
+	    *name = speciallevel.name;
+	    break;
+	}
+    }
+}
+
 void HU_Start(void)
 {
 
@@ -565,25 +627,8 @@ void HU_Start(void)
 
     ptr = lumpinfo[W_GetNumForName(buf)]->wad_file->path;
 
-    if (gamemission == doom && gameepisode == 1)
-    {
-	// [crispy] add support for Romero's latest E1 additions
-	if (gamemap == 4 && !strcasecmp(ptr, "e1m4b.wad"))
-	{
-	    s = HUSTR_E1M4B;
-	}
-	else
-	if (gamemap == 8 && !strcasecmp(ptr, "e1m8b.wad"))
-	{
-	    s = HUSTR_E1M8B;
-	}
-	// [crispy] special-casing for E1M10 "Sewers" support
-	else
-	if (crispy_havee1m10 && gamemap == 10)
-	{
-	    s = HUSTR_E1M10;
-	}
-    }
+    // [crispy] display names of single special levels in Automap
+    HU_SetSpecialLevelName(ptr, &s);
 
     if (strcmp(s, DEH_String(s)) || (strcmp(ptr, M_BaseName(iwadfile)) && !nervewadfile))
     {
