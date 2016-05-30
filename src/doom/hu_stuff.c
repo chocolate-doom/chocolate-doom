@@ -448,7 +448,7 @@ typedef struct
     char *name;
 } speciallevel_t;
 
-speciallevel_t speciallevels[] = {
+static const speciallevel_t speciallevels[] = {
     // [crispy] Romero's latest E1 additions
     {doom, 1, 8, "e1m8b.wad", HUSTR_E1M8B},
     {doom, 1, 4, "e1m4b.wad", HUSTR_E1M4B},
@@ -478,7 +478,7 @@ speciallevel_t speciallevels[] = {
     {doom2, 0, 32, "teeth.wad", MHUSTR_21},
 };
 
-void HU_SetSpecialLevelName (const char *wad, char **name)
+static void HU_SetSpecialLevelName (const char *wad, char **name)
 {
     int i;
 
