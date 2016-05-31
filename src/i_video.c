@@ -264,20 +264,27 @@ void I_StartFrame (void)
 
 }
 
+// Returns base screen height - either SCREENHEIGHT_4_3 or SCREENHEIGHT,
+// dependent on aspect_ratio_correct value.
+static int EffectiveScreenHeight(void)
+{
+    if (aspect_ratio_correct)
+    {
+        return SCREENHEIGHT_4_3;
+    }
+    else
+    {
+        return SCREENHEIGHT;
+    }
+}
+
 // Adjust screen_width / screen_height variables to be an an aspect
 // ratio consistent with the aspect_ratio_correct variable.
 static void AdjustWindowSize(void)
 {
     int h;
 
-    if (aspect_ratio_correct)
-    {
-        h = SCREENHEIGHT_4_3;
-    }
-    else
-    {
-        h = SCREENHEIGHT;
-    }
+    h = EffectiveScreenHeight();
 
     if (screen_width * h <= screen_height * SCREENWIDTH)
     {
@@ -505,9 +512,7 @@ static void UpdateGrab(void)
 
 static void CreateUpscaledTexture(void)
 {
-    const int actualheight = aspect_ratio_correct ?
-                             SCREENHEIGHT_4_3 :
-                             SCREENHEIGHT;
+    const int actualheight = EffectiveScreenHeight();
     int w, h;
     int h_upscale, w_upscale;
     static int h_upscale_old, w_upscale_old;
@@ -780,23 +785,10 @@ void I_InitWindowIcon(void)
 
 static void SetScaleFactor(int factor)
 {
-    int w, h;
-
     // Pick 320x200 or 320x240, depending on aspect ratio correct
 
-    if (aspect_ratio_correct)
-    {
-        w = SCREENWIDTH;
-        h = SCREENHEIGHT_4_3;
-    }
-    else
-    {
-        w = SCREENWIDTH;
-        h = SCREENHEIGHT;
-    }
-
-    screen_width = w * factor;
-    screen_height = h * factor;
+    screen_width = factor * SCREENWIDTH;
+    screen_height = factor * EffectiveScreenHeight();
 }
 
 void I_GraphicsCheckCommandLine(void)
@@ -1063,6 +1055,8 @@ static void SetVideoMode(int w, int h)
                 w, h, SDL_GetError());
     }
 
+    SDL_SetWindowMinimumSize(screen, SCREENWIDTH, EffectiveScreenHeight());
+
     // If we are running fullscreen, the whole screen is our "window".
 
     if (fullscreen)
@@ -1096,7 +1090,7 @@ static void SetVideoMode(int w, int h)
 
     SDL_RenderSetLogicalSize(renderer,
                              SCREENWIDTH,
-                             aspect_ratio_correct ? SCREENHEIGHT_4_3 : SCREENHEIGHT);
+                             EffectiveScreenHeight());
 
     I_InitWindowTitle();
     I_InitWindowIcon();
