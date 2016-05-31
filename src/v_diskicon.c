@@ -27,14 +27,18 @@
 
 #include "v_diskicon.h"
 
+#define DISK_ICON_W 16
+#define DISK_ICON_H 16
+
 // Only display the disk icon if more then this much bytes have been read
 // during the previous tic.
 
 static const int diskicon_threshold = 20*1024;
 
-// disk image patch (either STDISK or STCDROM)
-
-static patch_t *disk;
+// Two buffers: disk_data contains the data representing the disk icon
+// (raw, not a patch_t) while saved_background is an equivalently-sized
+// buffer where we save the background data while the disk is on screen.
+static byte *disk_data;
 static byte *saved_background;
 
 static int loading_disk_xoffs = 0;
@@ -43,28 +47,6 @@ static int loading_disk_yoffs = 0;
 // Number of bytes read since the last call to V_DrawDiskIcon().
 static size_t recent_bytes_read = 0;
 static boolean disk_drawn;
-
-void V_EnableLoadingDisk(int xoffs, int yoffs)
-{
-    char *disk_name;
-
-    loading_disk_xoffs = xoffs;
-    loading_disk_yoffs = yoffs;
-
-    if (M_CheckParm("-cdrom") > 0)
-        disk_name = DEH_String("STCDROM");
-    else
-        disk_name = DEH_String("STDISK");
-
-    disk = W_CacheLumpName(disk_name, PU_STATIC);
-    saved_background = Z_Malloc(SHORT(disk->width) * SHORT(disk->height),
-                                PU_STATIC, NULL);
-}
-
-void V_BeginRead(size_t nbytes)
-{
-    recent_bytes_read += nbytes;
-}
 
 static void CopyRegion(byte *dest, int dest_pitch,
                        byte *src, int src_pitch,
@@ -82,26 +64,72 @@ static void CopyRegion(byte *dest, int dest_pitch,
     }
 }
 
+static void SaveDiskData(char *disk_lump, int xoffs, int yoffs)
+{
+    byte *tmpscreen;
+    patch_t *disk;
+
+    // Allocate a complete temporary screen where we'll draw the patch.
+    tmpscreen = Z_Malloc(SCREENWIDTH * SCREENHEIGHT, PU_STATIC, NULL);
+    memset(tmpscreen, 0, SCREENWIDTH * SCREENHEIGHT);
+    V_UseBuffer(tmpscreen);
+
+    // Buffer where we'll save the disk data.
+    disk_data = Z_Malloc(DISK_ICON_W * DISK_ICON_H, PU_STATIC, NULL);
+
+    // Draw the patch and save the result to disk_data.
+    disk = W_CacheLumpName(disk_lump, PU_STATIC);
+    V_DrawPatch(loading_disk_xoffs, loading_disk_yoffs, disk);
+    CopyRegion(disk_data, DISK_ICON_W,
+               tmpscreen + yoffs * SCREENWIDTH + xoffs, SCREENWIDTH,
+               DISK_ICON_W, DISK_ICON_H);
+    W_ReleaseLumpName(disk_lump);
+
+    V_RestoreBuffer();
+    Z_Free(tmpscreen);
+}
+
+void V_EnableLoadingDisk(int xoffs, int yoffs)
+{
+    char *disk_name;
+
+    loading_disk_xoffs = xoffs;
+    loading_disk_yoffs = yoffs;
+
+    if (M_CheckParm("-cdrom") > 0)
+        disk_name = DEH_String("STCDROM");
+    else
+        disk_name = DEH_String("STDISK");
+
+    saved_background = Z_Malloc(DISK_ICON_W * DISK_ICON_H, PU_STATIC, NULL);
+    SaveDiskData(disk_name, xoffs, yoffs);
+}
+
+void V_BeginRead(size_t nbytes)
+{
+    recent_bytes_read += nbytes;
+}
+
 static byte *DiskRegionPointer(void)
 {
-    int x, y;
-
-    x = loading_disk_xoffs - SHORT(disk->leftoffset);
-    y = loading_disk_yoffs - SHORT(disk->topoffset);
-    return I_VideoBuffer + y * SCREENWIDTH + x;
+    return I_VideoBuffer
+         + loading_disk_yoffs * SCREENWIDTH
+         + loading_disk_xoffs;
 }
 
 void V_DrawDiskIcon(void)
 {
-    if (disk != NULL && recent_bytes_read > diskicon_threshold)
+    if (disk_data != NULL && recent_bytes_read > diskicon_threshold)
     {
         // Save the background behind the disk before we draw it.
-        CopyRegion(saved_background, SHORT(disk->width),
+        CopyRegion(saved_background, DISK_ICON_W,
                    DiskRegionPointer(), SCREENWIDTH,
-                   SHORT(disk->width), SHORT(disk->height));
+                   DISK_ICON_W, DISK_ICON_H);
 
-        // Draw the disk to the screen
-        V_DrawPatch(loading_disk_xoffs, loading_disk_yoffs, disk);
+        // Write the disk to the screen buffer.
+        CopyRegion(DiskRegionPointer(), SCREENWIDTH,
+                   disk_data, DISK_ICON_W,
+                   DISK_ICON_W, DISK_ICON_H);
         disk_drawn = true;
     }
 
@@ -114,8 +142,8 @@ void V_RestoreDiskBackground(void)
     {
         // Restore the background.
         CopyRegion(DiskRegionPointer(), SCREENWIDTH,
-                   saved_background, SHORT(disk->width),
-                   SHORT(disk->width), SHORT(disk->height));
+                   saved_background, DISK_ICON_W,
+                   DISK_ICON_W, DISK_ICON_H);
 
         disk_drawn = false;
     }
