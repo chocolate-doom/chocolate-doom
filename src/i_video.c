@@ -169,8 +169,6 @@ static boolean window_focused = true;
 // Window resize state.
 
 static boolean need_resize = false;
-static unsigned int resize_w, resize_h;
-static unsigned int last_resize_time;
 
 // Gamma correction level to use
 
@@ -266,8 +264,37 @@ void I_StartFrame (void)
 
 }
 
+// Adjust screen_width / screen_height variables to be an an aspect
+// ratio consistent with the aspect_ratio_correct variable.
+static void AdjustWindowSize(void)
+{
+    int h;
+
+    if (aspect_ratio_correct)
+    {
+        h = SCREENHEIGHT_4_3;
+    }
+    else
+    {
+        h = SCREENHEIGHT;
+    }
+
+    if (screen_width * h <= screen_height * SCREENWIDTH)
+    {
+        // The +1 here stops us from repeatedly shrinking the screen size
+        // with each call.
+        screen_height = (screen_width + 1) * h / SCREENWIDTH;
+    }
+    else
+    {
+        screen_width = screen_height * SCREENWIDTH / h;
+    }
+}
+
 static void HandleWindowEvent(SDL_WindowEvent *event)
 {
+    int flags;
+
     switch (event->event)
     {
 #if 0 // SDL2-TODO
@@ -282,9 +309,13 @@ static void HandleWindowEvent(SDL_WindowEvent *event)
 
         case SDL_WINDOWEVENT_RESIZED:
             need_resize = true;
-            resize_w = event->data1;
-            resize_h = event->data2;
-            last_resize_time = SDL_GetTicks();
+            // When the window is resized (we're not in fullscreen mode),
+            // save the new window size.
+            flags = SDL_GetWindowFlags(screen);
+            if ((flags & SDL_WINDOW_FULLSCREEN_DESKTOP) == 0)
+            {
+                SDL_GetWindowSize(screen, &screen_width, &screen_height);
+            }
             break;
 
         // Don't render the screen when the window is minimized:
@@ -325,13 +356,26 @@ static boolean ToggleFullScreenKeyShortcut(SDL_Keysym *sym)
 #if defined(__MACOSX__)
     flags |= (KMOD_LGUI | KMOD_RGUI);
 #endif
-    return (sym->scancode == SDL_SCANCODE_RETURN && sym->mod & flags);
+    return sym->scancode == SDL_SCANCODE_RETURN && (sym->mod & flags) != 0;
 }
 
 static void I_ToggleFullScreen(void)
 {
-    Uint32 flags = SDL_GetWindowFlags(screen) & SDL_WINDOW_FULLSCREEN_DESKTOP;
-    SDL_SetWindowFullscreen(screen, flags ^ SDL_WINDOW_FULLSCREEN_DESKTOP);
+    unsigned int flags = 0;
+
+    fullscreen = !fullscreen;
+
+    if (fullscreen)
+    {
+        flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+    }
+    SDL_SetWindowFullscreen(screen, flags);
+
+    if (!fullscreen)
+    {
+        AdjustWindowSize();
+        SDL_SetWindowSize(screen, screen_width, screen_height);
+    }
 }
 
 void I_GetEvent(void)
@@ -566,11 +610,9 @@ void I_FinishUpdate (void)
     if (noblit)
         return;
 
-    if (need_resize && SDL_GetTicks() > last_resize_time + 1000/TICRATE)
+    if (need_resize)
     {
         CreateUpscaledTexture();
-        screen_width = resize_w;
-        screen_height = resize_h;
         need_resize = false;
         palette_to_set = true;
     }
@@ -992,9 +1034,13 @@ static void SetVideoMode(int w, int h)
         screen = NULL;
     }
 
-    // Set the video mode.
+    // In windowed mode, the window can be resized while the game is
+    // running.
+    flags = SDL_WINDOW_RESIZABLE;
 
-    flags = 0;
+    // Set the highdpi flag - this makes a big difference on Macs with
+    // retina displays, especially when using small window sizes.
+    flags |= SDL_WINDOW_ALLOW_HIGHDPI;
 
     if (fullscreen)
     {
@@ -1002,17 +1048,6 @@ static void SetVideoMode(int w, int h)
         // draw to the entire screen by scaling the texture appropriately".
         flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
     }
-    else
-    {
-        // In windowed mode, the window can be resized while the game is
-        // running.  This feature is disabled on OS X, as it adds an ugly
-        // scroll handle to the corner of the screen.
-        flags |= SDL_WINDOW_RESIZABLE;
-    }
-
-    // Set the highdpi flag - this makes a big difference on Macs with
-    // retina displays, especially when using small window sizes.
-    flags |= SDL_WINDOW_ALLOW_HIGHDPI;
 
     // Create window and renderer contexts. We set the window title
     // later anyway and leave the window position "undefined". If "flags"
@@ -1149,9 +1184,7 @@ void I_InitGraphics(void)
     }
     else
     {
-        // SDL2-TODO: sanity check screen_width/screen_height against
-        // screen modes listed as available by LibSDL, and auto-adjust
-        // when the selected mode is not available.
+        AdjustWindowSize();
         SetVideoMode(screen_width, screen_height);
     }
 
