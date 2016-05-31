@@ -697,14 +697,6 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(graphical_startup),
 
     //!
-    // If non-zero, video settings will be autoadjusted to a valid
-    // configuration when the screen_width and screen_height variables
-    // do not match any valid configuration.
-    //
-
-    CONFIG_VARIABLE_INT(autoadjust_video_settings),
-
-    //!
     // If non-zero, the game will run in full screen mode.  If zero,
     // the game will run in a window.
     //

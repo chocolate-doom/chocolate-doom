@@ -69,7 +69,6 @@ static int vidmode = 0;
 
 static char *video_driver = "";
 static char *window_position = "";
-static int autoadjust_video_settings = 1;
 static int aspect_ratio_correct = 1;
 static int fullscreen = 1;
 static int screen_width = 320;
@@ -340,7 +339,6 @@ void ConfigDisplay(void)
 
 void BindDisplayVariables(void)
 {
-    M_BindIntVariable("autoadjust_video_settings", &autoadjust_video_settings);
     M_BindIntVariable("aspect_ratio_correct",      &aspect_ratio_correct);
     M_BindIntVariable("fullscreen",                &fullscreen);
     M_BindIntVariable("screen_width",              &screen_width);

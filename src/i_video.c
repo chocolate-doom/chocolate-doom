@@ -112,11 +112,6 @@ int diskicon_readbytes = 0;
 int screen_width = SCREENWIDTH;
 int screen_height = SCREENHEIGHT;
 
-// Automatically adjust video settings if the selected mode is 
-// not a valid video mode.
-
-static int autoadjust_video_settings = 1;
-
 // Run in full screen mode?  (int type for config code)
 
 int fullscreen = true;
@@ -1239,7 +1234,6 @@ void I_InitGraphics(void)
 void I_BindVideoVariables(void)
 {
     M_BindIntVariable("use_mouse",                 &usemouse);
-    M_BindIntVariable("autoadjust_video_settings", &autoadjust_video_settings);
     M_BindIntVariable("fullscreen",                &fullscreen);
     M_BindIntVariable("aspect_ratio_correct",      &aspect_ratio_correct);
     M_BindIntVariable("startup_delay",             &startup_delay);
