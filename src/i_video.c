@@ -171,10 +171,6 @@ int novert = 0;
 
 int png_screenshots = 0;
 
-// Display disk activity indicator.
-
-int show_diskicon = 1;
-
 // if true, I_VideoBuffer is screen->pixels
 
 static boolean native_surface;

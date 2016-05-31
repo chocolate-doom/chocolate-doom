@@ -142,6 +142,7 @@ char		wadfile[1024];          // primary wad file
 char		mapdir[1024];           // directory of development maps
 
 int             show_endoom = 1;
+int             show_diskicon = 1;
 int             graphical_startup = 1;
 
 // If true, startup has completed and the main game loop has started.
@@ -511,7 +512,10 @@ void D_DoomLoop (void)
         I_InitGraphics();
     }
 
-    V_EnableLoadingDisk("STDISK", SCREENWIDTH - LOADING_DISK_W, 3);
+    if (show_diskicon)
+    {
+        V_EnableLoadingDisk("STDISK", SCREENWIDTH - LOADING_DISK_W, 3);
+    }
     I_SetGrabMouseCallback(D_GrabMouseCallback);
 
     V_RestoreBuffer();
