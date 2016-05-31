@@ -322,6 +322,11 @@ static void HandleWindowEvent(SDL_WindowEvent *event)
             if ((flags & SDL_WINDOW_FULLSCREEN_DESKTOP) == 0)
             {
                 SDL_GetWindowSize(screen, &screen_width, &screen_height);
+
+                // Adjust the window by resizing again so that the window
+                // is the right aspect ratio.
+                AdjustWindowSize();
+                SDL_SetWindowSize(screen, screen_width, screen_height);
             }
             break;
 
