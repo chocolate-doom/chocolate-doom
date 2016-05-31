@@ -408,6 +408,8 @@ boolean D_GrabMouseCallback(void)
 //
 void D_DoomLoop (void)
 {
+    char *disk_lump_name;
+
     if (gamevariant == bfgedition &&
         (demorecording || (gameaction == ga_playdemo) || netgame))
     {
@@ -428,7 +430,14 @@ void D_DoomLoop (void)
     I_GraphicsCheckCommandLine();
     I_SetGrabMouseCallback(D_GrabMouseCallback);
     I_InitGraphics();
-    V_EnableLoadingDisk(SCREENWIDTH - LOADING_DISK_W, SCREENHEIGHT - LOADING_DISK_H);
+
+    if (M_CheckParm("-cdrom") > 0)
+        disk_lump_name = DEH_String("STCDROM");
+    else
+        disk_lump_name = DEH_String("STDISK");
+    V_EnableLoadingDisk(disk_lump_name,
+                        SCREENWIDTH - LOADING_DISK_W,
+                        SCREENHEIGHT - LOADING_DISK_H);
 
     V_RestoreBuffer();
     R_ExecuteSetViewSize();

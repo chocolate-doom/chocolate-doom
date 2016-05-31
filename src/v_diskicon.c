@@ -89,20 +89,13 @@ static void SaveDiskData(char *disk_lump, int xoffs, int yoffs)
     Z_Free(tmpscreen);
 }
 
-void V_EnableLoadingDisk(int xoffs, int yoffs)
+void V_EnableLoadingDisk(char *lump_name, int xoffs, int yoffs)
 {
-    char *disk_name;
-
     loading_disk_xoffs = xoffs;
     loading_disk_yoffs = yoffs;
 
-    if (M_CheckParm("-cdrom") > 0)
-        disk_name = DEH_String("STCDROM");
-    else
-        disk_name = DEH_String("STDISK");
-
     saved_background = Z_Malloc(DISK_ICON_W * DISK_ICON_H, PU_STATIC, NULL);
-    SaveDiskData(disk_name, xoffs, yoffs);
+    SaveDiskData(lump_name, xoffs, yoffs);
 }
 
 void V_BeginRead(size_t nbytes)
