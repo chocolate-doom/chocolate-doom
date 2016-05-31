@@ -732,6 +732,21 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(window_height),
 
     //!
+    // Width for screen mode when running fullscreen.
+    // If this and fullscreen_height are both set to zero, we run
+    // fullscreen as a desktop window that covers the entire screen,
+    // rather than ever switching screen modes. It should usually
+    // be unnecessary to set this value.
+    //
+    CONFIG_VARIABLE_INT(fullscreen_width),
+
+    //!
+    // Height for screen mode when running fullscreen.
+    // See documentation for fullscreen_width.
+    //
+    CONFIG_VARIABLE_INT(fullscreen_height),
+
+    //!
     // If this is non-zero, the mouse will be "grabbed" when running
     // in windowed mode so that it can be used as an input device.
     // When running full screen, this has no effect.

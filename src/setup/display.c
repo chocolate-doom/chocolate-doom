@@ -71,8 +71,8 @@ static char *video_driver = "";
 static char *window_position = "";
 static int aspect_ratio_correct = 1;
 static int fullscreen = 1;
-static int window_width = 640;
-static int window_height = 480;
+static int fullscreen_width = 0, fullscreen_height = 0;
+static int window_width = 640, window_height = 480;
 static int startup_delay = 1000;
 static int usegamma = 0;
 
@@ -341,6 +341,8 @@ void BindDisplayVariables(void)
 {
     M_BindIntVariable("aspect_ratio_correct",      &aspect_ratio_correct);
     M_BindIntVariable("fullscreen",                &fullscreen);
+    M_BindIntVariable("fullscreen_width",          &fullscreen_width);
+    M_BindIntVariable("fullscreen_height",         &fullscreen_height);
     M_BindIntVariable("window_width",              &window_width);
     M_BindIntVariable("window_height",             &window_height);
     M_BindIntVariable("startup_delay",             &startup_delay);

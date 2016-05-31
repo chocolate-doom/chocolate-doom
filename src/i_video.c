@@ -112,6 +112,10 @@ int diskicon_readbytes = 0;
 int window_width = SCREENWIDTH * 2;
 int window_height = SCREENHEIGHT_4_3 * 2;
 
+// Fullscreen mode, 0x0 for SDL_WINDOW_FULLSCREEN_DESKTOP.
+
+int fullscreen_width = 0, fullscreen_height = 0;
+
 // Run in full screen mode?  (int type for config code)
 
 int fullscreen = true;
@@ -370,12 +374,21 @@ static void I_ToggleFullScreen(void)
 {
     unsigned int flags = 0;
 
+    // TODO: Consider implementing fullscreen toggle for SDL_WINDOW_FULLSCREEN
+    // (mode-changing) setup. This is hard because we have to shut down and
+    // restart again.
+    if (fullscreen_width != 0 || fullscreen_height != 0)
+    {
+        return;
+    }
+
     fullscreen = !fullscreen;
 
     if (fullscreen)
     {
         flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
     }
+
     SDL_SetWindowFullscreen(screen, flags);
 
     if (!fullscreen)
@@ -1005,6 +1018,7 @@ static void SetWindowPositionVars(void)
 static void SetVideoMode(void)
 {
     byte *doompal;
+    int w, h;
     int flags = 0;
 
     doompal = W_CacheLumpName(DEH_String("PLAYPAL"), PU_CACHE);
@@ -1026,6 +1040,9 @@ static void SetVideoMode(void)
         screen = NULL;
     }
 
+    w = window_width;
+    h = window_height;
+
     // In windowed mode, the window can be resized while the game is
     // running.
     flags = SDL_WINDOW_RESIZABLE;
@@ -1036,9 +1053,18 @@ static void SetVideoMode(void)
 
     if (fullscreen)
     {
-        // This flags means "Never change the screen resolution! Instead,
-        // draw to the entire screen by scaling the texture appropriately".
-        flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+        if (fullscreen_width == 0 && fullscreen_height == 0)
+        {
+            // This flags means "Never change the screen resolution! Instead,
+            // draw to the entire screen by scaling the texture appropriately".
+            flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+        }
+        else
+        {
+            w = fullscreen_width;
+            h = fullscreen_height;
+            flags |= SDL_WINDOW_FULLSCREEN;
+        }
     }
 
     // Create window and renderer contexts. We set the window title
@@ -1047,7 +1073,7 @@ static void SetVideoMode(void)
 
     screen = SDL_CreateWindow(NULL,
                               SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-                              window_width, window_height, flags);
+                              w, h, flags);
 
     if (screen == NULL)
     {
@@ -1215,6 +1241,8 @@ void I_BindVideoVariables(void)
     M_BindIntVariable("fullscreen",                &fullscreen);
     M_BindIntVariable("aspect_ratio_correct",      &aspect_ratio_correct);
     M_BindIntVariable("startup_delay",             &startup_delay);
+    M_BindIntVariable("fullscreen_width",          &fullscreen_width);
+    M_BindIntVariable("fullscreen_height",         &fullscreen_height);
     M_BindIntVariable("window_width",              &window_width);
     M_BindIntVariable("window_height",             &window_height);
     M_BindIntVariable("grabmouse",                 &grabmouse);
