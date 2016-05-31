@@ -71,8 +71,8 @@ static char *video_driver = "";
 static char *window_position = "";
 static int aspect_ratio_correct = 1;
 static int fullscreen = 1;
-static int screen_width = 320;
-static int screen_height = 200;
+static int window_width = 640;
+static int window_height = 480;
 static int startup_delay = 1000;
 static int usegamma = 0;
 
@@ -81,12 +81,12 @@ int show_endoom = 1;
 int show_diskicon = 1;
 int png_screenshots = 0;
 
-// These are the last screen width/height values that were chosen by the
+// These are the last window width/height values that were chosen by the
 // user.  These are used when finding the "nearest" mode, so when
 // changing the fullscreen / aspect ratio options, the setting does not
 // jump around.
 
-static int selected_screen_width = 0, selected_screen_height;
+static int selected_window_width = 0, selected_window_height;
 
 static int system_video_env_set;
 
@@ -126,13 +126,13 @@ static void ModeSelected(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(mode))
 {
     TXT_CAST_ARG(screen_mode_t, mode);
 
-    screen_width = mode->w;
-    screen_height = mode->h;
+    window_width = mode->w;
+    window_height = mode->h;
 
     // This is now the most recently selected screen width
 
-    selected_screen_width = screen_width;
-    selected_screen_height = screen_height;
+    selected_window_width = window_width;
+    selected_window_height = window_height;
 }
 
 static int FindBestMode(screen_mode_t *modes)
@@ -147,10 +147,10 @@ static int FindBestMode(screen_mode_t *modes)
 
     for (i=0; modes[i].w != 0; ++i)
     {
-        diff = (selected_screen_width - modes[i].w)
-                  * (selected_screen_width - modes[i].w) 
-             + (selected_screen_height - modes[i].h)
-                  * (selected_screen_height - modes[i].h);
+        diff = (selected_window_width - modes[i].w)
+                  * (selected_window_width - modes[i].w) 
+             + (selected_window_height - modes[i].h)
+                  * (selected_window_height - modes[i].h);
 
         if (best_mode == -1 || diff < best_mode_diff)
         {
@@ -202,8 +202,8 @@ static void GenerateModesTable(TXT_UNCAST_ARG(widget),
 
     if (vidmode > 0)
     {
-        screen_width = modes[vidmode].w;
-        screen_height = modes[vidmode].h;
+        window_width = modes[vidmode].w;
+        window_height = modes[vidmode].h;
     }
 }
 
@@ -264,10 +264,10 @@ void ConfigDisplay(void)
 
     // First time in? Initialise selected_screen_{width,height}
 
-    if (selected_screen_width == 0)
+    if (selected_window_width == 0)
     {
-        selected_screen_width = screen_width;
-        selected_screen_height = screen_height;
+        selected_window_width = window_width;
+        selected_window_height = window_height;
     }
 
     // Open the window
@@ -341,8 +341,8 @@ void BindDisplayVariables(void)
 {
     M_BindIntVariable("aspect_ratio_correct",      &aspect_ratio_correct);
     M_BindIntVariable("fullscreen",                &fullscreen);
-    M_BindIntVariable("screen_width",              &screen_width);
-    M_BindIntVariable("screen_height",             &screen_height);
+    M_BindIntVariable("window_width",              &window_width);
+    M_BindIntVariable("window_height",             &window_height);
     M_BindIntVariable("startup_delay",             &startup_delay);
     M_BindStringVariable("video_driver",           &video_driver);
     M_BindStringVariable("window_position",        &window_position);

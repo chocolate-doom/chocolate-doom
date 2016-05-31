@@ -720,22 +720,16 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(startup_delay),
 
     //!
-    // Screen width in pixels.  If running in full screen mode, this is
-    // the X dimension of the video mode to use.  If running in
-    // windowed mode, this is the width of the window in which the game
-    // will run.
+    // Window width when running in windowed mode.
     //
 
-    CONFIG_VARIABLE_INT(screen_width),
+    CONFIG_VARIABLE_INT(window_width),
 
     //!
-    // Screen height in pixels.  If running in full screen mode, this is
-    // the Y dimension of the video mode to use.  If running in
-    // windowed mode, this is the height of the window in which the game
-    // will run.
+    // Window height when running in windowed mode.
     //
 
-    CONFIG_VARIABLE_INT(screen_height),
+    CONFIG_VARIABLE_INT(window_height),
 
     //!
     // If this is non-zero, the mouse will be "grabbed" when running

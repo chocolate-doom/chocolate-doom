@@ -109,8 +109,8 @@ int diskicon_readbytes = 0;
 
 // Screen width and height, from configuration file.
 
-int screen_width = SCREENWIDTH;
-int screen_height = SCREENHEIGHT;
+int window_width = SCREENWIDTH * 2;
+int window_height = SCREENHEIGHT_4_3 * 2;
 
 // Run in full screen mode?  (int type for config code)
 
@@ -273,7 +273,7 @@ static int EffectiveScreenHeight(void)
     }
 }
 
-// Adjust screen_width / screen_height variables to be an an aspect
+// Adjust window_width / window_height variables to be an an aspect
 // ratio consistent with the aspect_ratio_correct variable.
 static void AdjustWindowSize(void)
 {
@@ -281,15 +281,15 @@ static void AdjustWindowSize(void)
 
     h = EffectiveScreenHeight();
 
-    if (screen_width * h <= screen_height * SCREENWIDTH)
+    if (window_width * h <= window_height * SCREENWIDTH)
     {
         // The +1 here stops us from repeatedly shrinking the screen size
         // with each call.
-        screen_height = (screen_width + 1) * h / SCREENWIDTH;
+        window_height = (window_width + 1) * h / SCREENWIDTH;
     }
     else
     {
-        screen_width = screen_height * SCREENWIDTH / h;
+        window_width = window_height * SCREENWIDTH / h;
     }
 }
 
@@ -316,12 +316,12 @@ static void HandleWindowEvent(SDL_WindowEvent *event)
             flags = SDL_GetWindowFlags(screen);
             if ((flags & SDL_WINDOW_FULLSCREEN_DESKTOP) == 0)
             {
-                SDL_GetWindowSize(screen, &screen_width, &screen_height);
+                SDL_GetWindowSize(screen, &window_width, &window_height);
 
                 // Adjust the window by resizing again so that the window
                 // is the right aspect ratio.
                 AdjustWindowSize();
-                SDL_SetWindowSize(screen, screen_width, screen_height);
+                SDL_SetWindowSize(screen, window_width, window_height);
             }
             break;
 
@@ -381,7 +381,7 @@ static void I_ToggleFullScreen(void)
     if (!fullscreen)
     {
         AdjustWindowSize();
-        SDL_SetWindowSize(screen, screen_width, screen_height);
+        SDL_SetWindowSize(screen, window_width, window_height);
     }
 }
 
@@ -787,8 +787,8 @@ static void SetScaleFactor(int factor)
 {
     // Pick 320x200 or 320x240, depending on aspect ratio correct
 
-    screen_width = factor * SCREENWIDTH;
-    screen_height = factor * EffectiveScreenHeight();
+    window_width = factor * SCREENWIDTH;
+    window_height = factor * EffectiveScreenHeight();
 }
 
 void I_GraphicsCheckCommandLine(void)
@@ -869,7 +869,7 @@ void I_GraphicsCheckCommandLine(void)
 
     if (i > 0)
     {
-        screen_width = atoi(myargv[i + 1]);
+        window_width = atoi(myargv[i + 1]);
     }
 
     //!
@@ -883,7 +883,7 @@ void I_GraphicsCheckCommandLine(void)
 
     if (i > 0)
     {
-        screen_height = atoi(myargv[i + 1]);
+        window_height = atoi(myargv[i + 1]);
     }
 
     //!
@@ -904,8 +904,8 @@ void I_GraphicsCheckCommandLine(void)
         s = sscanf(myargv[i + 1], "%ix%i%1c", &w, &h, &f);
         if (s == 2 || s == 3)
         {
-            screen_width = w;
-            screen_height = h;
+            window_width = w;
+            window_height = h;
 
             if (s == 3 && f == 'f')
             {
@@ -1002,7 +1002,7 @@ static void SetWindowPositionVars(void)
     }
 }
 
-static void SetVideoMode(int w, int h)
+static void SetVideoMode(void)
 {
     byte *doompal;
     int flags = 0;
@@ -1045,33 +1045,16 @@ static void SetVideoMode(int w, int h)
     // later anyway and leave the window position "undefined". If "flags"
     // contains the fullscreen flag (see above), then w and h are ignored.
 
-    screen = SDL_CreateWindow(NULL, SDL_WINDOWPOS_UNDEFINED,
-                                    SDL_WINDOWPOS_UNDEFINED,
-                                    w, h, flags);
+    screen = SDL_CreateWindow(NULL,
+                              SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+                              window_width, window_height, flags);
 
     if (screen == NULL)
     {
-        I_Error("Error creating window for video mode %ix%i: %s\n",
-                w, h, SDL_GetError());
+        I_Error("Error creating window for video startup: %s", SDL_GetError());
     }
 
     SDL_SetWindowMinimumSize(screen, SCREENWIDTH, EffectiveScreenHeight());
-
-    // If we are running fullscreen, the whole screen is our "window".
-
-    if (fullscreen)
-    {
-        SDL_DisplayMode mode;
-
-        // We do not change the video mode to run fullscreen but scale to fill
-        // the desktop that "screen" is assigned to. So, use desktop dimensions
-        // to calculate the size of the upscaled texture.
-
-        SDL_GetDesktopDisplayMode(SDL_GetWindowDisplayIndex(screen), &mode);
-
-        h = mode.h;
-        w = mode.w;
-    }
 
     // The SDL_RENDERER_TARGETTEXTURE flag is required to render the
     // intermediate texture into the upscaled texture.
@@ -1080,8 +1063,8 @@ static void SetVideoMode(int w, int h)
 
     if (renderer == NULL)
     {
-        I_Error("Error creating renderer for video mode %ix%i: %s\n",
-                w, h, SDL_GetError());
+        I_Error("Error creating renderer for screen window: %s",
+                SDL_GetError());
     }
 
     // Important: Set the "logical size" of the rendering context. At the same
@@ -1165,22 +1148,17 @@ void I_InitGraphics(void)
         I_Error("Failed to initialize video: %s", SDL_GetError());
     }
 
-    //
-    // Enter into graphics mode.
-    //
     // When in screensaver mode, run full screen and auto detect
     // screen dimensions (don't change video mode)
-    //
-
     if (screensaver_mode)
     {
-        SetVideoMode(0, 0);
+        fullscreen = true;
     }
-    else
-    {
-        AdjustWindowSize();
-        SetVideoMode(screen_width, screen_height);
-    }
+
+    // Create the game window; this may switch graphic modes depending
+    // on configuration.
+    AdjustWindowSize();
+    SetVideoMode();
 
     // Start with a clear black screen
     // (screen will be flipped after we set the palette)
@@ -1237,8 +1215,8 @@ void I_BindVideoVariables(void)
     M_BindIntVariable("fullscreen",                &fullscreen);
     M_BindIntVariable("aspect_ratio_correct",      &aspect_ratio_correct);
     M_BindIntVariable("startup_delay",             &startup_delay);
-    M_BindIntVariable("screen_width",              &screen_width);
-    M_BindIntVariable("screen_height",             &screen_height);
+    M_BindIntVariable("window_width",              &window_width);
+    M_BindIntVariable("window_height",             &window_height);
     M_BindIntVariable("grabmouse",                 &grabmouse);
     M_BindStringVariable("video_driver",           &video_driver);
     M_BindStringVariable("window_position",        &window_position);
