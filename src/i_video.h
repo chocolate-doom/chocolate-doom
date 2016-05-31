@@ -27,11 +27,7 @@
 #define SCREENWIDTH  320
 #define SCREENHEIGHT 200
 
-// Screen width used for "squash" scale functions
-
-#define SCREENWIDTH_4_3 256
-
-// Screen height used for "stretch" scale functions.
+// Screen height used when aspect_ratio_correct=true.
 
 #define SCREENHEIGHT_4_3 240
 
