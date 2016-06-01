@@ -287,9 +287,9 @@ static void AdjustWindowSize(void)
 
     if (window_width * h <= window_height * SCREENWIDTH)
     {
-        // The +1 here stops us from repeatedly shrinking the screen size
-        // with each call.
-        window_height = (window_width + 1) * h / SCREENWIDTH;
+        // We round up window_height if the ratio is not exact; this leaves
+        // the result stable.
+        window_height = (window_width * h + SCREENWIDTH - 1) / SCREENWIDTH;
     }
     else
     {
