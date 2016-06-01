@@ -802,6 +802,7 @@ static void SetScaleFactor(int factor)
 
     window_width = factor * SCREENWIDTH;
     window_height = factor * EffectiveScreenHeight();
+    fullscreen = false;
 }
 
 void I_GraphicsCheckCommandLine(void)
@@ -875,7 +876,7 @@ void I_GraphicsCheckCommandLine(void)
     // @category video
     // @arg <x>
     //
-    // Specify the screen width, in pixels.
+    // Specify the screen width, in pixels. Implies -window.
     //
 
     i = M_CheckParmWithArgs("-width", 1);
@@ -883,13 +884,16 @@ void I_GraphicsCheckCommandLine(void)
     if (i > 0)
     {
         window_width = atoi(myargv[i + 1]);
+        window_height = window_width * 2;
+        AdjustWindowSize();
+        fullscreen = false;
     }
 
     //!
     // @category video
     // @arg <y>
     //
-    // Specify the screen height, in pixels.
+    // Specify the screen height, in pixels. Implies -window.
     //
 
     i = M_CheckParmWithArgs("-height", 1);
@@ -897,44 +901,37 @@ void I_GraphicsCheckCommandLine(void)
     if (i > 0)
     {
         window_height = atoi(myargv[i + 1]);
+        window_width = window_height * 2;
+        AdjustWindowSize();
+        fullscreen = false;
     }
 
     //!
     // @category video
-    // @arg <WxY>[wf]
+    // @arg <WxY>
     //
-    // Specify the dimensions of the window or fullscreen mode.  An
-    // optional letter of w or f appended to the dimensions selects
-    // windowed or fullscreen mode.
+    // Specify the dimensions of the window. Implies -window.
+    //
 
     i = M_CheckParmWithArgs("-geometry", 1);
 
     if (i > 0)
     {
         int w, h, s;
-        char f;
 
-        s = sscanf(myargv[i + 1], "%ix%i%1c", &w, &h, &f);
-        if (s == 2 || s == 3)
+        s = sscanf(myargv[i + 1], "%ix%i", &w, &h);
+        if (s == 2)
         {
             window_width = w;
             window_height = h;
-
-            if (s == 3 && f == 'f')
-            {
-                fullscreen = true;
-            }
-            else if (s == 3 && f == 'w')
-            {
-                fullscreen = false;
-            }
+            fullscreen = false;
         }
     }
 
     //!
     // @category video
     //
-    // Don't scale up the screen.
+    // Don't scale up the screen. Implies -window.
     //
 
     if (M_CheckParm("-1")) 
@@ -945,7 +942,7 @@ void I_GraphicsCheckCommandLine(void)
     //!
     // @category video
     //
-    // Double up the screen to 2x its normal size.
+    // Double up the screen to 2x its normal size. Implies -window.
     //
 
     if (M_CheckParm("-2")) 
@@ -956,7 +953,7 @@ void I_GraphicsCheckCommandLine(void)
     //!
     // @category video
     //
-    // Double up the screen to 3x its normal size.
+    // Double up the screen to 3x its normal size. Implies -window.
     //
 
     if (M_CheckParm("-3")) 
