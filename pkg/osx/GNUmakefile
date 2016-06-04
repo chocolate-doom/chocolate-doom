@@ -129,7 +129,6 @@ LAUNCHER_OBJS= \
         AppController.o \
         Execute.o \
         IWADController.o \
-        IWADLocation.o \
         LauncherManager.o \
         main.o
 
