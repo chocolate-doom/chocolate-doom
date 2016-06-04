@@ -5,7 +5,7 @@ PACKAGE_SHORTDESC="Conservative source port"
 PACKAGE_COPYRIGHT="Copyright (C) 1993-2015"
 PACKAGE_LICENSE="GNU General Public License, version 2"
 PACKAGE_MAINTAINER="Simon Howard"
-PACKAGE_URL="http://www.chocolate-doom.org/"
+PACKAGE_URL="https://www.chocolate-doom.org/"
 PACKAGE_ISSUES="https://github.com/chocolate-doom/chocolate-doom/issues"
 
 AC_CONFIG_AUX_DIR(autotools)

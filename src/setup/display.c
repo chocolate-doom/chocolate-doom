@@ -28,7 +28,7 @@
 #include "display.h"
 #include "config.h"
 
-#define WINDOW_HELP_URL "http://www.chocolate-doom.org/setup-display"
+#define WINDOW_HELP_URL "https://www.chocolate-doom.org/setup-display"
 
 extern void RestartTextscreen(void);
 

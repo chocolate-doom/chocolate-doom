@@ -1,6 +1,4 @@
 
-gamesdir = $(prefix)/games
-
 AM_CFLAGS = @SDL_CFLAGS@                                           \
             @SDLMIXER_CFLAGS@                                      \
             -I$(top_srcdir)/textscreen -I$(top_srcdir)/src

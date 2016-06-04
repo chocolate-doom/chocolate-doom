@@ -1240,7 +1240,7 @@ void A_ReaverAttack(mobj_t* actor)
     {
         int     t          = P_Random();
         angle_t shootangle = actor->angle + ((t - P_Random()) << 20);
-        int     damage     = (P_Random() & 7) + 1;
+        int     damage     = 3*((P_Random() & 7) + 1);
 
         P_LineAttack(actor, shootangle, 2048*FRACUNIT, slope, damage);
         ++i;
@@ -2211,7 +2211,7 @@ void A_ProgrammerMelee(mobj_t* actor)
     A_FaceTarget(actor);
     if(P_CheckMeleeRange(actor))
     {
-        int damage = 8 * (P_Random() % 10 + 1);
+        int damage = 6 * (P_Random() % 10 + 1);
         
         S_StartSound(actor, sfx_mtalht);
         P_DamageMobj(actor->target, actor, actor, damage);
@@ -3177,7 +3177,10 @@ void A_TeleportBeacon(mobj_t* actor)
     // beacon no longer special
     actor->flags &= ~MF_SPECIAL;
 
-    // set color and flags
+    // 20160306: set rebel threshold
+    mobj->threshold = 100;
+
+    // set rebel color and flags
     mobj->flags |= ((actor->miscdata << MF_TRANSSHIFT) | MF_NODIALOG);
     mobj->target = NULL;
 

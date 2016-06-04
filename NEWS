@@ -1,3 +1,66 @@
+HEAD:
+
+    General:
+    * Bash completion scripts are included. (thanks Fabian)
+    * Support the *.lmp file format in the OS X launcher (thanks Jon)
+    * Added emulation for pitch-shifting as in early versions of Doom,
+      Heretic, and Hexen. (thanks Jon)
+    * Write out aspect-correct 1600×1200 PNGs. (thanks Jon)
+    * OPL emulation is more accurate. (thanks Nuke.YKT)
+    * Futher emulation of DMX bugs with GUS cards. (thanks Nuke.YKT)
+    * Emulation of the disk icon has returned. (thanks Fabian, Jon)
+    * Checksum calculations were fixed on big endian systems, allowing
+      multiplayer games to be played in mixed little/big-endian
+      environments. (thanks GhostlyDeath, njankowski)
+
+    Build systems:
+    * Improved compatibility with BSD Make. (thanks R.Rebello)
+    * “./configure --with-PACKAGE” checks were repaired to behave
+      logically, rather than disabling the feature. (thanks R.Rebello)
+    * Default to installing the games to ${bindir}, such as /usr/local/bin,
+      rather than /usr/local/games. (thanks chungy)
+    * Support Visual Studio 2015. (thanks Azarien)
+    * Allow SDL headers and libraries to exist in the Microsoft Visual
+      Studio project directory. (thanks Quasar)
+    * Repaired the CodeBlocks projects by removing non-existent files from
+      the project files (thanks krystalgamer)
+
+    Doom:
+    * Chex Quest's level warp cheat (LEESNYDER##) was changed to behave
+      like the original EXE. (thanks Nuke.YKT)
+    * Allow starting multiplayer Chex Quest games.
+    * Allow Freedoom: Phase 1 ≤ 0.10.1 to be loaded with mods, with
+      -gameversion older than ultimate. (thanks Fabian, chungy)
+    * Added safety checks against write failures when saving a game,
+      such as when the directory is read-only.  Try falling back to a
+      temporary directory and reporting an error instead.
+      (thanks terrorcide)
+    * Versions 1.666, 1.7, and 1.8 are emulated. (thanks Nuke.YKT)
+
+    Heretic:
+    * Added map names for Episode 6, fixing a crash after completing a
+      level in this episode. (thanks J.Benaim)
+
+    Hexen:
+    * The MRJONES cheat code returns an identical string as vanilla,
+      and enables fully reproducable builds. (thanks Fabian)
+    * Fixed an issue where the game crashed while killing the Wraithverge
+      in 64-bit builds. (thanks J.Benaim)
+
+    Strife:
+    * Support added for automatic loading of the IWAD from the GOG.com
+      release of Strife: Veteran Edition on Windows. (thanks chungy)
+    * Jumping can be bound to a mouse button. (thanks Gez)
+    * Gibbing logic was changed to match vanilla behavior. (thanks Quasar)
+    * Several constants differences from vanilla were fixed. (thanks
+      Nuke.YKT, Quasar)
+    * When using -iwad, voices.wad from the IWAD's directory is prefered
+      over auto-detected DOS/Steam/GOG.com installs. (thanks Quasar)
+
+    libtextscreen:
+    * Simplified the API for creating and managing tables and columns.
+    * Allow cycling through tables with tab key.
+
 2.2.1 (2015-09-10):
 
     Chocolate Doom has not seen a great deal of "stable" patch

@@ -65,6 +65,7 @@ following names:
    tnt.wad                     (Final Doom: TNT: Evilution)
    plutonia.wad                (Final Doom: Plutonia Experiment)
    chex.wad                    (Chex Quest)
+   freedm.wad                  (FreeDM)
 #endif
 #if HERETIC
    heretic1.wad                (Shareware Heretic)
@@ -81,7 +82,7 @@ following names:
 If you don't have a copy of a commercial version, you can download
 the shareware version of Doom (extract the file named doom1.wad):
 
- * http://www.doomworld.com/idgames/index.php?id=7053
+ * https://www.doomworld.com/idgames/idstuff/doom/win95/doom95
    (idstuff/doom/win95/doom95.zip in your nearest /idgames mirror)
 
 #endif
@@ -195,7 +196,7 @@ are needed:
  * The IWAD file 'chex.wad', from the Chex Quest CD.
 
  * The dehacked patch 'chex.deh', which can be found here:
-   http://www.doomworld.com/idgames/?id=15420
+   https://www.doomworld.com/idgames/utils/exe_edit/patches/chexdeh
    (utils/exe_edit/patches/chexdeh.zip in your nearest /idgames mirror)
 
 Copy these files into a directory together and use the '-iwad' command

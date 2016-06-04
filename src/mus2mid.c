@@ -403,7 +403,7 @@ static int GetMIDIChannel(int mus_channel, MEMFILE *midioutput)
 
             // First time using the channel, send an "all notes off"
             // event. This fixes "The D_DDTBLU disease" described here:
-            // http://www.doomworld.com/vb/source-ports/66802-the
+            // https://www.doomworld.com/vb/source-ports/66802-the
             WriteChangeController_Valueless(channel_map[mus_channel], 0x7b,
                                             midioutput);
         }
