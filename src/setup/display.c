@@ -183,9 +183,11 @@ static void GenerateModesTable(TXT_UNCAST_ARG(widget),
     }
 
     // Build the table
- 
+
     TXT_ClearTable(modes_table);
     TXT_SetColumnWidths(modes_table, 14, 14, 14, 14, 14);
+
+    TXT_AddWidget(modes_table, TXT_NewSeparator("Window size"));
 
     for (i=0; modes[i].w != 0; ++i)
     {
@@ -218,7 +220,7 @@ static void AdvancedDisplayConfig(TXT_UNCAST_ARG(widget),
 
     TXT_SetWindowHelpURL(window, WINDOW_HELP_URL);
 
-    TXT_SetColumnWidths(window, 35);
+    TXT_SetColumnWidths(window, 40);
 
     TXT_AddWidgets(window,
         ar_checkbox = TXT_NewCheckBox("Fix aspect ratio",
@@ -231,7 +233,8 @@ static void AdvancedDisplayConfig(TXT_UNCAST_ARG(widget),
             TXT_NewCheckBox("Show ENDOOM screen on exit",
                             &show_endoom)),
         TXT_NewCheckBox("Save screenshots in PNG format",
-                        &png_screenshots));
+                        &png_screenshots),
+        NULL);
 
     TXT_SignalConnect(ar_checkbox, "changed", GenerateModesTable, modes_table);
 }
@@ -265,16 +268,14 @@ void ConfigDisplay(void)
     // columns.  In extreme cases, the window is moved up slightly.
 
     num_columns = 3;
-    modes_table = TXT_NewTable(num_columns);
 
     // Build window:
 
     TXT_AddWidgets(window,
-                   TXT_NewSeparator("Window size"),
-                   modes_table,
-                   TXT_NewSeparator("Options"),
-                   fs_checkbox = TXT_NewCheckBox("Full screen", &fullscreen),
-                   NULL);
+        fs_checkbox = TXT_NewCheckBox("Full screen", &fullscreen),
+        TXT_NewConditional(&fullscreen, 0,
+            modes_table = TXT_NewTable(num_columns)),
+        NULL);
 
     TXT_SignalConnect(fs_checkbox, "changed",
                       GenerateModesTable, modes_table);
@@ -306,7 +307,7 @@ void ConfigDisplay(void)
     // fullscreen and windowed mode (which causes the window's
     // height to change).
 
-    TXT_SetWindowPosition(window, TXT_HORIZ_CENTER, TXT_VERT_TOP, 
+    TXT_SetWindowPosition(window, TXT_HORIZ_CENTER, TXT_VERT_TOP,
                                   TXT_SCREEN_W / 2, window_y);
 
     GenerateModesTable(NULL, modes_table);
