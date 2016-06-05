@@ -152,8 +152,8 @@ void ConfigSound(void)
         TXT_NewRadioButton("Disabled", &snd_musicdevice, SNDDEVICE_NONE),
 
         TXT_NewRadioButton("OPL (Adlib/Soundblaster)", &snd_musicdevice,
-                           SNDDEVICE_ADLIB),
-        TXT_NewConditional(&snd_musicdevice, SNDDEVICE_ADLIB,
+                           SNDDEVICE_SB),
+        TXT_NewConditional(&snd_musicdevice, SNDDEVICE_SB,
             TXT_NewHorizBox(
                 TXT_NewStrut(4, 0),
                 TXT_NewLabel("Chip type: "),
