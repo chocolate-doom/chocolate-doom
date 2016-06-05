@@ -35,11 +35,10 @@ extern void RestartTextscreen(void);
 typedef struct
 {
     int w, h;
-} screen_mode_t;
+} window_size_t;
 
-// List of aspect ratio-uncorrected modes
-
-static screen_mode_t screen_modes_unscaled[] = 
+// List of aspect ratio-uncorrected window sizes:
+static window_size_t window_sizes_unscaled[] =
 {
     { 320,  200 },
     { 640,  400 },
@@ -49,9 +48,8 @@ static screen_mode_t screen_modes_unscaled[] =
     { 0, 0},
 };
 
-// List of aspect ratio-corrected modes
-
-static screen_mode_t screen_modes_scaled[] = 
+// List of aspect ratio-corrected window sizes:
+static window_size_t window_sizes_scaled[] =
 {
     { 320,  240 },
     { 512,  400 },
@@ -64,8 +62,6 @@ static screen_mode_t screen_modes_scaled[] =
     { 1920, 1440 },
     { 0, 0},
 };
-
-static int vidmode = 0;
 
 static char *video_driver = "";
 static char *window_position = "";
@@ -81,13 +77,6 @@ int show_endoom = 1;
 int show_diskicon = 1;
 int png_screenshots = 0;
 
-// These are the last window width/height values that were chosen by the
-// user.  These are used when finding the "nearest" mode, so when
-// changing the fullscreen / aspect ratio options, the setting does not
-// jump around.
-
-static int selected_window_width = 0, selected_window_height;
-
 static int system_video_env_set;
 
 // Set the SDL_VIDEODRIVER environment variable
@@ -102,7 +91,7 @@ void SetDisplayDriver(void)
 
         first_time = 0;
     }
-    
+
     // Don't override the command line environment, if it has been set.
 
     if (system_video_env_set)
@@ -122,97 +111,75 @@ void SetDisplayDriver(void)
     }
 }
 
-static void ModeSelected(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(mode))
+static void WindowSizeSelected(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(size))
 {
-    TXT_CAST_ARG(screen_mode_t, mode);
+    TXT_CAST_ARG(window_size_t, size);
 
-    window_width = mode->w;
-    window_height = mode->h;
-
-    // This is now the most recently selected screen width
-
-    selected_window_width = window_width;
-    selected_window_height = window_height;
+    window_width = size->w;
+    window_height = size->h;
 }
 
-static int FindBestMode(screen_mode_t *modes)
+static txt_radiobutton_t *SizeSelectButton(window_size_t *size)
 {
-    int i;
-    int best_mode;
-    int best_mode_diff;
-    int diff;
-
-    best_mode = -1;
-    best_mode_diff = 0;
-
-    for (i=0; modes[i].w != 0; ++i)
-    {
-        diff = (selected_window_width - modes[i].w)
-                  * (selected_window_width - modes[i].w) 
-             + (selected_window_height - modes[i].h)
-                  * (selected_window_height - modes[i].h);
-
-        if (best_mode == -1 || diff < best_mode_diff)
-        {
-            best_mode_diff = diff;
-            best_mode = i;
-        }
-    }
-
-    return best_mode;
-}
-
-static void GenerateModesTable(TXT_UNCAST_ARG(widget),
-                               TXT_UNCAST_ARG(modes_table))
-{
-    TXT_CAST_ARG(txt_table_t, modes_table);
     char buf[15];
-    screen_mode_t *modes;
-    txt_radiobutton_t *rbutton;
+    txt_radiobutton_t *result;
+
+    M_snprintf(buf, sizeof(buf), "%ix%i", size->w, size->h);
+    result = TXT_NewRadioButton(buf, &window_width, size->w);
+    TXT_SignalConnect(result, "selected", WindowSizeSelected, size);
+
+    return result;
+}
+
+static void GenerateSizesTable(TXT_UNCAST_ARG(widget),
+                               TXT_UNCAST_ARG(sizes_table))
+{
+    TXT_CAST_ARG(txt_table_t, sizes_table);
+    window_size_t *sizes;
+    boolean have_size;
     int i;
 
-    // Pick which modes list to use
-
+    // Pick which window sizes list to use
     if (aspect_ratio_correct)
     {
-        modes = screen_modes_scaled;
+        sizes = window_sizes_scaled;
     }
     else
     {
-        modes = screen_modes_unscaled;
+        sizes = window_sizes_unscaled;
     }
 
     // Build the table
+    TXT_ClearTable(sizes_table);
+    TXT_SetColumnWidths(sizes_table, 14, 14, 14);
 
-    TXT_ClearTable(modes_table);
-    TXT_SetColumnWidths(modes_table, 14, 14, 14, 14, 14);
+    TXT_AddWidget(sizes_table, TXT_NewSeparator("Window size"));
 
-    TXT_AddWidget(modes_table, TXT_NewSeparator("Window size"));
+    have_size = false;
 
-    for (i=0; modes[i].w != 0; ++i)
+    for (i = 0; sizes[i].w != 0; ++i)
     {
-        M_snprintf(buf, sizeof(buf), "%ix%i", modes[i].w, modes[i].h);
-        rbutton = TXT_NewRadioButton(buf, &vidmode, i);
-        TXT_AddWidget(modes_table, rbutton);
-        TXT_SignalConnect(rbutton, "selected", ModeSelected, &modes[i]);
+        TXT_AddWidget(sizes_table, SizeSelectButton(&sizes[i]));
+        have_size = have_size || window_width == sizes[i].w;
     }
 
-    // Find the nearest mode in the list that matches the current
-    // settings
-
-    vidmode = FindBestMode(modes);
-
-    if (vidmode > 0)
+    // Windows can be any arbitrary size. We key off the width of the
+    // window in pixels. If the current size is not in the list of
+    // standard (integer multiply) sizes, create a special button to
+    // mean "the current window size".
+    if (!have_size)
     {
-        window_width = modes[vidmode].w;
-        window_height = modes[vidmode].h;
+        static window_size_t current_size;
+        current_size.w = window_width;
+        current_size.h = window_height;
+        TXT_AddWidget(sizes_table, SizeSelectButton(&current_size));
     }
 }
 
 static void AdvancedDisplayConfig(TXT_UNCAST_ARG(widget),
-                                  TXT_UNCAST_ARG(modes_table))
+                                  TXT_UNCAST_ARG(sizes_table))
 {
-    TXT_CAST_ARG(txt_table_t, modes_table);
+    TXT_CAST_ARG(txt_table_t, sizes_table);
     txt_window_t *window;
     txt_checkbox_t *ar_checkbox;
 
@@ -236,90 +203,42 @@ static void AdvancedDisplayConfig(TXT_UNCAST_ARG(widget),
                         &png_screenshots),
         NULL);
 
-    TXT_SignalConnect(ar_checkbox, "changed", GenerateModesTable, modes_table);
+    TXT_SignalConnect(ar_checkbox, "changed", GenerateSizesTable, sizes_table);
 }
 
 void ConfigDisplay(void)
 {
     txt_window_t *window;
-    txt_table_t *modes_table;
+    txt_table_t *sizes_table;
     txt_window_action_t *advanced_button;
-    txt_checkbox_t *fs_checkbox;
-    int num_columns;
-    int num_rows;
-    int window_y;
-
-    // First time in? Initialise selected_screen_{width,height}
-
-    if (selected_window_width == 0)
-    {
-        selected_window_width = window_width;
-        selected_window_height = window_height;
-    }
 
     // Open the window
-
     window = TXT_NewWindow("Display Configuration");
-
     TXT_SetWindowHelpURL(window, WINDOW_HELP_URL);
 
-    // Some machines can have lots of video modes.  This tries to
-    // keep a limit of six lines by increasing the number of
-    // columns.  In extreme cases, the window is moved up slightly.
-
-    num_columns = 3;
-
     // Build window:
-
     TXT_AddWidgets(window,
-        fs_checkbox = TXT_NewCheckBox("Full screen", &fullscreen),
+        TXT_NewCheckBox("Full screen", &fullscreen),
         TXT_NewConditional(&fullscreen, 0,
-            modes_table = TXT_NewTable(num_columns)),
+            sizes_table = TXT_NewTable(3)),
         NULL);
-
-    TXT_SignalConnect(fs_checkbox, "changed",
-                      GenerateModesTable, modes_table);
-
-    // How many rows high will the configuration window be?
-    // Need to take into account number of fullscreen modes, and also
-    // number of supported pixel depths.
-    // The windowed modes list is four rows, so take the maximum of
-    // windowed and fullscreen.
-
-    num_rows = (num_columns - 1) / num_columns;
-
-    if (num_rows < 4)
-    {
-        num_rows = 4;
-    }
-
-    if (num_rows < 14)
-    {
-        window_y = 8 - ((num_rows + 1) / 2);
-    }
-    else
-    {
-        window_y = 1;
-    }
 
     // The window is set at a fixed vertical position.  This keeps
     // the top of the window stationary when switching between
     // fullscreen and windowed mode (which causes the window's
     // height to change).
-
     TXT_SetWindowPosition(window, TXT_HORIZ_CENTER, TXT_VERT_TOP,
-                                  TXT_SCREEN_W / 2, window_y);
+                                  TXT_SCREEN_W / 2, 5);
 
-    GenerateModesTable(NULL, modes_table);
+    GenerateSizesTable(NULL, sizes_table);
 
     // Button to open "advanced" window.
-    // Need to pass a pointer to the modes table, as some of the options
+    // Need to pass a pointer to the window sizes table, as some of the options
     // in there trigger a rebuild of it.
-
     advanced_button = TXT_NewWindowAction('a', "Advanced");
     TXT_SetWindowAction(window, TXT_HORIZ_CENTER, advanced_button);
     TXT_SignalConnect(advanced_button, "pressed",
-                      AdvancedDisplayConfig, modes_table);
+                      AdvancedDisplayConfig, sizes_table);
 }
 
 void BindDisplayVariables(void)
