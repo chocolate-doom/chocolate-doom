@@ -3,9 +3,18 @@ language: c
 compiler: gcc
 
 # TODO: Remove old SDL library dependencies once sdl2-branch is merged.
-before_install:
-    - sudo apt-get update -qq
-    - sudo apt-get install -qq libsdl2-dev libsdl2-mixer-dev libsdl2-net-dev libsdl2-image-dev libsdl1.2-dev libsdl-mixer1.2-dev libsdl-net1.2-dev libsamplerate0-dev libpng-dev
+addons:
+    apt:
+        packages:
+        - libsdl2-dev
+        - libsdl2-mixer-dev
+        - libsdl2-net-dev
+        - libsdl2-image-dev
+        - libsamplerate0-dev
+        - libsdl1.2-dev
+        - libsdl-mixer1.2-dev
+        - libsdl-net1.2-dev
+        - libpng-dev
 
 script: ./autogen.sh && make
 
