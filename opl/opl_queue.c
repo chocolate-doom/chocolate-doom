@@ -210,7 +210,7 @@ void OPL_Queue_AdjustCallbacks(opl_callback_queue_t *queue,
     for (i = 0; i < queue->num_entries; ++i)
     {
         offset = queue->entries[i].time - time;
-        queue->entries[i].time = time + (uint64_t) (offset * factor);
+        queue->entries[i].time = time + (uint64_t) (offset / factor);
     }
 }
 
