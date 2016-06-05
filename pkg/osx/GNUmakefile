@@ -8,9 +8,7 @@ include ../config.make
 
 DOC_FILES += README.Strife NOT-BUGS
 
-# Build so that the package will work on older versions.
-
-export MACOSX_DEPLOYMENT_TARGET=10.4
+export MACOSX_DEPLOYMENT_TARGET=10.7
 
 STAGING_DIR=staging
 DMG=$(PACKAGE_TARNAME)-$(PACKAGE_VERSION).dmg

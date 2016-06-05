@@ -39,6 +39,7 @@
 #include "m_config.h"
 #include "m_misc.h"
 #include "tables.h"
+#include "v_diskicon.h"
 #include "v_video.h"
 #include "w_wad.h"
 #include "z_zone.h"
@@ -97,15 +98,6 @@ int usemouse = 1;
 // Save screenshots in PNG format.
 
 int png_screenshots = 0;
-
-// Display disk activity indicator.
-
-int show_diskicon = 1;
-
-// Only display the disk icon if more then this much bytes have been read
-// during the previous tic.
-
-int diskicon_readbytes = 0;
 
 // Screen width and height, from configuration file.
 
@@ -663,6 +655,9 @@ void I_FinishUpdate (void)
 	    I_VideoBuffer[ (SCREENHEIGHT-1)*SCREENWIDTH + i] = 0x0;
     }
 
+    // Draw disk icon before blit, if necessary.
+    V_DrawDiskIcon();
+
     if (palette_to_set)
     {
         SDL_SetPaletteColors(screenbuffer->format->palette, palette, 0, 256);
@@ -696,6 +691,9 @@ void I_FinishUpdate (void)
     // Draw!
 
     SDL_RenderPresent(renderer);
+
+    // Restore background and undo the disk indicator, if it was drawn.
+    V_RestoreDiskBackground();
 }
 
 

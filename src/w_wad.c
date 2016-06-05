@@ -348,9 +348,7 @@ void W_ReadLump(lumpindex_t lump, void *dest)
 
     l = lumpinfo[lump];
 
-    diskicon_readbytes += l->size;
-
-    disk_indicator = disk_on;
+    V_BeginRead(l->size);
 
     c = W_Read(l->wad_file, l->position, dest, l->size);
 

@@ -238,13 +238,6 @@ static void AdvancedDisplayConfig(TXT_UNCAST_ARG(widget),
                                       &show_endoom));
     }
 
-    if (gamemission == doom || gamemission == strife)
-    {
-        TXT_AddWidget(window,
-                      TXT_NewCheckBox("Show disk activity indicator",
-                                      &show_diskicon));
-    }
-
     TXT_AddWidget(window,
                   TXT_NewCheckBox("Save screenshots in PNG format",
                                   &png_screenshots));

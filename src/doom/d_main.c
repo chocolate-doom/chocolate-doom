@@ -126,6 +126,7 @@ char		wadfile[1024];		// primary wad file
 char		mapdir[1024];           // directory of development maps
 
 int             show_endoom = 1;
+int             show_diskicon = 1;
 
 
 void D_ConnectNetGame(void);
@@ -215,7 +216,7 @@ void D_Display (void)
 	    break;
 	if (automapactive)
 	    AM_Drawer ();
-	if (wipe || (viewheight != SCREENHEIGHT && fullscreen) || disk_indicator == disk_dirty)
+	if (wipe || (viewheight != SCREENHEIGHT && fullscreen))
 	    redrawsbar = true;
 	if (inhelpscreensstate && !inhelpscreens)
 	    redrawsbar = true;              // just put away the help screen
@@ -329,6 +330,27 @@ void D_Display (void)
     } while (!done);
 }
 
+static void EnableLoadingDisk(void)
+{
+    char *disk_lump_name;
+
+    if (show_diskicon)
+    {
+        if (M_CheckParm("-cdrom") > 0)
+        {
+            disk_lump_name = DEH_String("STCDROM");
+        }
+        else
+        {
+            disk_lump_name = DEH_String("STDISK");
+        }
+
+        V_EnableLoadingDisk(disk_lump_name,
+                            SCREENWIDTH - LOADING_DISK_W,
+                            SCREENHEIGHT - LOADING_DISK_H);
+    }
+}
+
 //
 // Add configuration file variable bindings.
 //
@@ -428,7 +450,7 @@ void D_DoomLoop (void)
     I_GraphicsCheckCommandLine();
     I_SetGrabMouseCallback(D_GrabMouseCallback);
     I_InitGraphics();
-    V_EnableLoadingDisk(SCREENWIDTH - LOADING_DISK_W, SCREENHEIGHT - LOADING_DISK_H);
+    EnableLoadingDisk();
 
     TryRunTics();
 

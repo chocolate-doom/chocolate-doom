@@ -143,6 +143,7 @@ char		wadfile[1024];          // primary wad file
 char		mapdir[1024];           // directory of development maps
 
 int             show_endoom = 1;
+int             show_diskicon = 1;
 int             graphical_startup = 1;
 
 // If true, startup has completed and the main game loop has started.
@@ -302,7 +303,7 @@ void D_Display (void)
     // see if the border needs to be updated to the screen
     if (gamestate == GS_LEVEL && !automapactive && scaledviewwidth != 320)
     {
-        if (menuactive || menuactivestate || !viewactivestate || disk_indicator == disk_dirty)
+        if (menuactive || menuactivestate || !viewactivestate)
         {
             borderdrawcount = 3;
             popupactivestate = false;
@@ -513,7 +514,10 @@ void D_DoomLoop (void)
         I_InitGraphics();
     }
 
-    V_EnableLoadingDisk(SCREENWIDTH - LOADING_DISK_W, 0);
+    if (show_diskicon)
+    {
+        V_EnableLoadingDisk("STDISK", SCREENWIDTH - LOADING_DISK_W, 3);
+    }
     I_SetGrabMouseCallback(D_GrabMouseCallback);
 
     V_RestoreBuffer();
