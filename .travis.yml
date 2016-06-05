@@ -20,6 +20,6 @@ script: ./autogen.sh && make
 
 branches:
     only:
-        master
-        sdl2-branch
+    - master
+    - sdl2-branch
 
