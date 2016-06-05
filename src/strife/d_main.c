@@ -1675,7 +1675,6 @@ void D_DoomMain (void)
     M_CreateSaveDirs(savegamedir);
 
     I_GraphicsCheckCommandLine();
-    I_InputCheckCommandLine();
 
     // haleyjd 20110206 [STRIFE] Startup the introduction sequence
     D_InitIntroSequence();

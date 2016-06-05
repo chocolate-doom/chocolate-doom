@@ -418,31 +418,6 @@ void I_ReadMouse(void)
     }
 }
 
-void I_InputCheckCommandLine(void)
-{
-    //!
-    // @category video
-    //
-    // Disable vertical mouse movement.
-    //
-
-    if (M_CheckParm("-novert"))
-    {
-        novert = true;
-    }
-
-    //!
-    // @category video
-    //
-    // Enable vertical mouse movement.
-    //
-
-    if (M_CheckParm("-nonovert"))
-    {
-        novert = false;
-    }
-}
-
 // Bind all variables controlling input options.
 void I_BindInputVariables(void)
 {

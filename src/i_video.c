@@ -129,9 +129,11 @@ int aspect_ratio_correct = true;
 
 static int startup_delay = 1000;
 
-// Grab the mouse? (int type for config code)
+// Grab the mouse? (int type for config code). nograbmouse_override allows
+// this to be temporarily disabled via the command line.
 
 static int grabmouse = true;
+static boolean nograbmouse_override = false;
 
 // The screen buffer; this is modified to draw things to the screen
 
@@ -198,7 +200,7 @@ static boolean MouseShouldBeGrabbed()
 
     // if we specify not to grab the mouse, never grab
 
-    if (!grabmouse)
+    if (nograbmouse_override || !grabmouse)
         return false;
 
     // Invoke the grabmouse callback function to determine whether
@@ -820,24 +822,10 @@ void I_GraphicsCheckCommandLine(void)
     //!
     // @category video 
     //
-    // Grab the mouse when running in windowed mode.
-    //
-
-    if (M_CheckParm("-grabmouse"))
-    {
-        grabmouse = true;
-    }
-
-    //!
-    // @category video 
-    //
     // Don't grab the mouse when running in windowed mode.
     //
 
-    if (M_CheckParm("-nograbmouse"))
-    {
-        grabmouse = false;
-    }
+    nograbmouse_override = M_ParmExists("-nograbmouse");
 
     // default to fullscreen mode, allow override with command line
     // nofullscreen because we love prboom

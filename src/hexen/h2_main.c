@@ -739,7 +739,6 @@ void H2_GameLoop(void)
     }
     I_SetWindowTitle(gamedescription);
     I_GraphicsCheckCommandLine();
-    I_InputCheckCommandLine();
     I_SetGrabMouseCallback(D_GrabMouseCallback);
     I_InitGraphics();
 

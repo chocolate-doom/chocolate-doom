@@ -243,7 +243,6 @@ void D_DoomLoop(void)
         debugfile = fopen(filename, "w");
     }
     I_GraphicsCheckCommandLine();
-    I_InputCheckCommandLine();
     I_SetGrabMouseCallback(D_GrabMouseCallback);
     I_InitGraphics();
 
