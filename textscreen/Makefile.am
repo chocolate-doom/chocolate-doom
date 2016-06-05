@@ -13,6 +13,7 @@ EXTRA_DIST=Doxyfile
 
 libtextscreen_a_SOURCES =                                 \
 	textscreen.h                                      \
+	txt_conditional.c        txt_conditional.h        \
 	txt_checkbox.c           txt_checkbox.h           \
 	txt_desktop.c            txt_desktop.h            \
 	txt_dropdown.c           txt_dropdown.h           \
