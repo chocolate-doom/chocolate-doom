@@ -672,24 +672,16 @@ static void CalibrateXAxis(void)
 // joystick_guid and joystick_index config variables.
 static boolean SetJoystickGUID(SDL_JoystickID joy_id)
 {
-    SDL_Joystick *joystick;
     SDL_JoystickGUID guid;
     int i;
 
-    joystick = SDL_JoystickFromInstanceID(joy_id);
-    if (joystick == NULL)
-    {
-        return false;
-    }
-
-    guid = SDL_JoystickGetGUID(joystick);
-    joystick_guid = malloc(33);
-    SDL_JoystickGetGUIDString(guid, joystick_guid, 33);
-
     for (i = 0; i < all_joysticks_len; ++i)
     {
-        if (all_joysticks[i] == joystick)
+        if (SDL_JoystickInstanceID(all_joysticks[i]) == joy_id)
         {
+            guid = SDL_JoystickGetGUID(all_joysticks[i]);
+            joystick_guid = malloc(33);
+            SDL_JoystickGetGUIDString(guid, joystick_guid, 33);
             joystick_index = i;
             return true;
         }
