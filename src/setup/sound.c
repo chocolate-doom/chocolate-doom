@@ -29,38 +29,6 @@
 
 typedef enum
 {
-    SFXMODE_DISABLED,
-    SFXMODE_DIGITAL,
-    SFXMODE_PCSPEAKER,
-    NUM_SFXMODES
-} sfxmode_t;
-
-static char *sfxmode_strings[] =
-{
-    "Disabled",
-    "Digital",
-    "PC speaker"
-};
-
-typedef enum
-{
-    MUSICMODE_DISABLED,
-    MUSICMODE_OPL,
-    MUSICMODE_GUS,
-    MUSICMODE_NATIVE,
-    NUM_MUSICMODES
-} musicmode_t;
-
-static char *musicmode_strings[] =
-{
-    "Disabled",
-    "OPL (Adlib/SB)",
-    "GUS (emulated)",
-    "Native MIDI",
-};
-
-typedef enum
-{
     OPLMODE_OPL2,
     OPLMODE_OPL3,
     NUM_OPLMODES,
@@ -107,43 +75,10 @@ static int snd_sbirq = 0;
 static int snd_sbdma = 0;
 static int snd_mport = 0;
 
-// GUI variables:
-
-static int snd_sfxmode;
-static int snd_musicmode;
 static int snd_oplmode;
 
 static void UpdateSndDevices(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(data))
 {
-    switch (snd_sfxmode)
-    {
-        case SFXMODE_DISABLED:
-            snd_sfxdevice = SNDDEVICE_NONE;
-            break;
-        case SFXMODE_PCSPEAKER:
-            snd_sfxdevice = SNDDEVICE_PCSPEAKER;
-            break;
-        case SFXMODE_DIGITAL:
-            snd_sfxdevice = SNDDEVICE_SB;
-            break;
-    }
-
-    switch (snd_musicmode)
-    {
-        case MUSICMODE_DISABLED:
-            snd_musicdevice = SNDDEVICE_NONE;
-            break;
-        case MUSICMODE_NATIVE:
-            snd_musicdevice = SNDDEVICE_GENMIDI;
-            break;
-        case MUSICMODE_OPL:
-            snd_musicdevice = SNDDEVICE_SB;
-            break;
-        case MUSICMODE_GUS:
-            snd_musicdevice = SNDDEVICE_GUS;
-            break;
-    }
-
     switch (snd_oplmode)
     {
         default:
@@ -177,166 +112,78 @@ static txt_dropdown_list_t *OPLTypeSelector(void)
     return result;
 }
 
-static void UpdateExtraTable(TXT_UNCAST_ARG(widget),
-                             TXT_UNCAST_ARG(extra_table))
-{
-    TXT_CAST_ARG(txt_table_t, extra_table);
-
-    TXT_ClearTable(extra_table);
-
-    switch (snd_musicmode)
-    {
-        case MUSICMODE_OPL:
-            TXT_AddWidgets(extra_table,
-                           TXT_NewLabel("OPL type"),
-                           OPLTypeSelector(),
-                           NULL);
-            break;
-
-        case MUSICMODE_GUS:
-            TXT_AddWidgets(extra_table,
-                           TXT_NewLabel("GUS patch path:"),
-                           TXT_TABLE_OVERFLOW_RIGHT,
-                           TXT_NewFileSelector(&gus_patch_path, 34,
-                                               "Select path to GUS patches",
-                                               TXT_DIRECTORY),
-                           TXT_TABLE_OVERFLOW_RIGHT,
-                           NULL);
-            break;
-
-        case MUSICMODE_NATIVE:
-            TXT_AddWidgets(extra_table,
-                           TXT_NewLabel("Timidity configuration file:"),
-                           TXT_TABLE_OVERFLOW_RIGHT,
-                           TXT_NewFileSelector(&timidity_cfg_path, 34,
-                                               "Select Timidity config file",
-                                               cfg_extension),
-                           TXT_TABLE_OVERFLOW_RIGHT,
-                           NULL);
-            break;
-
-        default:
-            break;
-    }
-}
-
 void ConfigSound(void)
 {
     txt_window_t *window;
-    txt_table_t *extra_table;
-    txt_dropdown_list_t *sfx_mode_control;
-    txt_dropdown_list_t *music_mode_control;
-    int num_sfx_modes;
-
-    // Work out what sfx mode we are currently using:
-
-    if (snd_sfxdevice == SNDDEVICE_PCSPEAKER)
-    {
-        snd_sfxmode = SFXMODE_PCSPEAKER;
-    }
-    else if (snd_sfxdevice >= SNDDEVICE_SB)
-    {
-        snd_sfxmode = SFXMODE_DIGITAL;
-    }
-    else
-    {
-        snd_sfxmode = SFXMODE_DISABLED;
-    }
-
-    // Is music enabled?
-
-    switch (snd_musicdevice)
-    {
-        case SNDDEVICE_GENMIDI:
-            snd_musicmode = MUSICMODE_NATIVE;
-            break;
-        case SNDDEVICE_SB:
-        case SNDDEVICE_ADLIB:
-        case SNDDEVICE_AWE32:
-            snd_musicmode = MUSICMODE_OPL;
-            break;
-        case SNDDEVICE_GUS:
-            snd_musicmode = MUSICMODE_GUS;
-            break;
-        default:
-            snd_musicmode = MUSICMODE_DISABLED;
-            break;
-    }
-
-    // Doom has PC speaker sound effects, but others do not:
-
-    if (gamemission == doom)
-    {
-        num_sfx_modes = NUM_SFXMODES;
-    }
-    else
-    {
-        num_sfx_modes = NUM_SFXMODES - 1;
-    }
 
     // Build the window
 
     window = TXT_NewWindow("Sound configuration");
     TXT_SetWindowHelpURL(window, WINDOW_HELP_URL);
-    TXT_SetTableColumns(window, 2);
-    TXT_SetColumnWidths(window, 19, 15);
-
-    TXT_SetWindowPosition(window, TXT_HORIZ_CENTER, TXT_VERT_TOP,
-                                  TXT_SCREEN_W / 2, 5);
 
     TXT_AddWidgets(window,
-                   TXT_NewSeparator("Sound effects"),
-                   TXT_NewLabel("Sound effects"),
-                   sfx_mode_control = TXT_NewDropdownList(&snd_sfxmode,
-                                                          sfxmode_strings,
-                                                          num_sfx_modes),
-                   TXT_NewLabel("Sound channels"),
-                   TXT_NewSpinControl(&numChannels, 1, 8),
-                   TXT_NewLabel("SFX volume"),
-                   TXT_NewSpinControl(&sfxVolume, 0, 15),
-                   NULL);
+        TXT_NewSeparator("Sound effects"),
+        TXT_NewRadioButton("Disabled", &snd_sfxdevice, SNDDEVICE_NONE),
+        TXT_NewRadioButton("PC speaker effects", &snd_sfxdevice,
+                           SNDDEVICE_PCSPEAKER),
+        TXT_NewRadioButton("Digital sound effects",
+                           &snd_sfxdevice,
+                           SNDDEVICE_SB),
+        NULL);
 
     // Only show for games that implemented pitch shifting:
     if (gamemission == doom || gamemission == heretic || gamemission == hexen)
     {
-        TXT_AddWidgets(window,
-                       TXT_NewCheckBox("Pitch-shifted sounds",
-                                       &snd_pitchshift),
-                       TXT_TABLE_OVERFLOW_RIGHT,
-                       NULL);
+        TXT_AddWidget(window,
+            TXT_NewHorizBox(
+                TXT_NewStrut(4, 0),
+                TXT_NewCheckBox("Pitch-shifted sounds", &snd_pitchshift),
+                NULL));
     }
 
     if (gamemission == strife)
     {
-        TXT_AddWidgets(window,
-                       TXT_NewLabel("Voice volume"),
-                       TXT_NewSpinControl(&voiceVolume, 0, 15),
-                       TXT_NewCheckBox("Show text with voices", &show_talk),
-                       TXT_TABLE_OVERFLOW_RIGHT,
-                       NULL);
+        TXT_AddWidget(window,
+            TXT_NewHorizBox(
+                TXT_NewStrut(4, 0),
+                TXT_NewCheckBox("Show text with voices", &show_talk),
+                NULL));
     }
 
     TXT_AddWidgets(window,
-                   TXT_NewSeparator("Music"),
-                   TXT_NewLabel("Music"),
-                   music_mode_control = TXT_NewDropdownList(&snd_musicmode,
-                                                            musicmode_strings,
-                                                            NUM_MUSICMODES),
-                   TXT_NewLabel("Music volume"),
-                   TXT_NewSpinControl(&musicVolume, 0, 15),
-                   extra_table = TXT_NewTable(2),
-                   TXT_TABLE_OVERFLOW_RIGHT,
-                   NULL);
+        TXT_NewSeparator("Music"),
+        TXT_NewRadioButton("Disabled", &snd_musicdevice, SNDDEVICE_NONE),
 
-    TXT_SetColumnWidths(extra_table, 19, 15);
+        TXT_NewRadioButton("OPL (Adlib/Soundblaster)", &snd_musicdevice,
+                           SNDDEVICE_ADLIB),
+        TXT_NewHorizBox(
+            TXT_NewStrut(4, 0),
+            TXT_NewLabel("Chip type: "),
+            OPLTypeSelector(),
+            NULL),
 
-    TXT_SignalConnect(sfx_mode_control, "changed", UpdateSndDevices, NULL);
-    TXT_SignalConnect(music_mode_control, "changed", UpdateSndDevices, NULL);
+        TXT_NewRadioButton("GUS (emulated)", &snd_musicdevice, SNDDEVICE_GUS),
+        TXT_NewHorizBox(
+            TXT_NewStrut(4, 0),
+            TXT_NewLabel("Path to patch files: "),
+            NULL),
+        TXT_NewHorizBox(
+            TXT_NewStrut(4, 0),
+            TXT_NewFileSelector(&gus_patch_path, 34,
+                                "Select path to GUS patches", TXT_DIRECTORY),
+            NULL),
 
-    // Update extra_table when the music mode is changed, and build it now.
-    TXT_SignalConnect(music_mode_control, "changed",
-                      UpdateExtraTable, extra_table);
-    UpdateExtraTable(music_mode_control, extra_table);
+        TXT_NewRadioButton("Native MIDI", &snd_musicdevice, SNDDEVICE_GENMIDI),
+        TXT_NewHorizBox(
+            TXT_NewStrut(4, 0),
+            TXT_NewLabel("Timidity configuration file: "),
+            NULL),
+        TXT_NewHorizBox(
+            TXT_NewStrut(4, 0),
+            TXT_NewFileSelector(&timidity_cfg_path, 34,
+                                "Select Timidity config file", cfg_extension),
+            NULL),
+        NULL);
 }
 
 void BindSoundVariables(void)
