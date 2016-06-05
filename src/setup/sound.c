@@ -121,6 +121,10 @@ void ConfigSound(void)
     window = TXT_NewWindow("Sound configuration");
     TXT_SetWindowHelpURL(window, WINDOW_HELP_URL);
 
+    TXT_SetColumnWidths(window, 40);
+    TXT_SetWindowPosition(window, TXT_HORIZ_CENTER, TXT_VERT_TOP,
+                                  TXT_SCREEN_W / 2, 3);
+
     TXT_AddWidgets(window,
         TXT_NewSeparator("Sound effects"),
         TXT_NewRadioButton("Disabled", &snd_sfxdevice, SNDDEVICE_NONE),
@@ -129,60 +133,59 @@ void ConfigSound(void)
         TXT_NewRadioButton("Digital sound effects",
                            &snd_sfxdevice,
                            SNDDEVICE_SB),
-        NULL);
+        TXT_If(gamemission == doom || gamemission == heretic
+            || gamemission == hexen,
+            TXT_NewConditional(&snd_sfxdevice, SNDDEVICE_SB,
+                TXT_NewHorizBox(
+                    TXT_NewStrut(4, 0),
+                    TXT_NewCheckBox("Pitch-shifted sounds", &snd_pitchshift),
+                    NULL))),
+        TXT_If(gamemission == strife,
+            TXT_NewConditional(&snd_sfxdevice, SNDDEVICE_SB,
+                TXT_NewHorizBox(
+                    TXT_NewStrut(4, 0),
+                    TXT_NewCheckBox("Show text with voices", &show_talk),
+                    NULL))),
 
-    // Only show for games that implemented pitch shifting:
-    if (gamemission == doom || gamemission == heretic || gamemission == hexen)
-    {
-        TXT_AddWidget(window,
-            TXT_NewHorizBox(
-                TXT_NewStrut(4, 0),
-                TXT_NewCheckBox("Pitch-shifted sounds", &snd_pitchshift),
-                NULL));
-    }
-
-    if (gamemission == strife)
-    {
-        TXT_AddWidget(window,
-            TXT_NewHorizBox(
-                TXT_NewStrut(4, 0),
-                TXT_NewCheckBox("Show text with voices", &show_talk),
-                NULL));
-    }
-
-    TXT_AddWidgets(window,
         TXT_NewSeparator("Music"),
         TXT_NewRadioButton("Disabled", &snd_musicdevice, SNDDEVICE_NONE),
 
         TXT_NewRadioButton("OPL (Adlib/Soundblaster)", &snd_musicdevice,
                            SNDDEVICE_ADLIB),
-        TXT_NewHorizBox(
-            TXT_NewStrut(4, 0),
-            TXT_NewLabel("Chip type: "),
-            OPLTypeSelector(),
-            NULL),
+        TXT_NewConditional(&snd_musicdevice, SNDDEVICE_ADLIB,
+            TXT_NewHorizBox(
+                TXT_NewStrut(4, 0),
+                TXT_NewLabel("Chip type: "),
+                OPLTypeSelector(),
+                NULL)),
 
         TXT_NewRadioButton("GUS (emulated)", &snd_musicdevice, SNDDEVICE_GUS),
-        TXT_NewHorizBox(
-            TXT_NewStrut(4, 0),
-            TXT_NewLabel("Path to patch files: "),
-            NULL),
-        TXT_NewHorizBox(
-            TXT_NewStrut(4, 0),
-            TXT_NewFileSelector(&gus_patch_path, 34,
-                                "Select path to GUS patches", TXT_DIRECTORY),
-            NULL),
+        TXT_NewConditional(&snd_musicdevice, SNDDEVICE_GUS,
+            TXT_NewHorizBox(
+                TXT_NewStrut(4, 0),
+                TXT_NewLabel("Path to patch files: "),
+                NULL)),
+        TXT_NewConditional(&snd_musicdevice, SNDDEVICE_GUS,
+            TXT_NewHorizBox(
+                TXT_NewStrut(4, 0),
+                TXT_NewFileSelector(&gus_patch_path, 34,
+                                    "Select path to GUS patches",
+                                    TXT_DIRECTORY),
+                NULL)),
 
         TXT_NewRadioButton("Native MIDI", &snd_musicdevice, SNDDEVICE_GENMIDI),
-        TXT_NewHorizBox(
-            TXT_NewStrut(4, 0),
-            TXT_NewLabel("Timidity configuration file: "),
-            NULL),
-        TXT_NewHorizBox(
-            TXT_NewStrut(4, 0),
-            TXT_NewFileSelector(&timidity_cfg_path, 34,
-                                "Select Timidity config file", cfg_extension),
-            NULL),
+        TXT_NewConditional(&snd_musicdevice, SNDDEVICE_GENMIDI,
+            TXT_NewHorizBox(
+                TXT_NewStrut(4, 0),
+                TXT_NewLabel("Timidity configuration file: "),
+                NULL)),
+        TXT_NewConditional(&snd_musicdevice, SNDDEVICE_GENMIDI,
+            TXT_NewHorizBox(
+                TXT_NewStrut(4, 0),
+                TXT_NewFileSelector(&timidity_cfg_path, 34,
+                                    "Select Timidity config file",
+                                    cfg_extension),
+                NULL)),
         NULL);
 }
 
