@@ -221,26 +221,17 @@ static void AdvancedDisplayConfig(TXT_UNCAST_ARG(widget),
     TXT_SetColumnWidths(window, 35);
 
     TXT_AddWidgets(window,
-                   ar_checkbox = TXT_NewCheckBox("Fix aspect ratio",
-                                                 &aspect_ratio_correct),
-                   NULL);
-
-    if (gamemission == heretic || gamemission == hexen || gamemission == strife)
-    {
-        TXT_AddWidget(window,
-                      TXT_NewCheckBox("Graphical startup", &graphical_startup));
-    }
-
-    if (gamemission == doom || gamemission == heretic || gamemission == strife)
-    {
-        TXT_AddWidget(window,
-                      TXT_NewCheckBox("Show ENDOOM screen on exit",
-                                      &show_endoom));
-    }
-
-    TXT_AddWidget(window,
-                  TXT_NewCheckBox("Save screenshots in PNG format",
-                                  &png_screenshots));
+        ar_checkbox = TXT_NewCheckBox("Fix aspect ratio",
+                                      &aspect_ratio_correct),
+        TXT_If(gamemission == heretic || gamemission == hexen
+            || gamemission == strife,
+            TXT_NewCheckBox("Graphical startup", &graphical_startup)),
+        TXT_If(gamemission == doom || gamemission == heretic
+            || gamemission == strife,
+            TXT_NewCheckBox("Show ENDOOM screen on exit",
+                            &show_endoom)),
+        TXT_NewCheckBox("Save screenshots in PNG format",
+                        &png_screenshots));
 
     TXT_SignalConnect(ar_checkbox, "changed", GenerateModesTable, modes_table);
 }
