@@ -22,6 +22,5 @@ PACKAGE_VERSION = @PACKAGE_VERSION@
 DOC_FILES = README        \
             README.Music  \
             COPYING       \
-            ChangeLog     \
             NEWS
 
