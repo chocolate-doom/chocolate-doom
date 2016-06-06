@@ -1,4 +1,6 @@
-To do:
+This is Chocolate Doom's "to do" list. Note that this is kind of an arbitrary
+and unstructured wish list of features and improvements. The bug tracker
+(http://chocolate-doom.org/bugs) has more feature requests.
 
 * Multiplayer:
   - Use UPnP to automatically configure port forwarding for NATted
@@ -14,15 +16,16 @@ To do:
   - Use size-specific types (eg. int32_t instead of int)
   - Don't make structure packing assumptions when loading levels.
   - Port to every OS and architecture under the sun
-
-Heretic/Hexen:
- * Frequency shifted sounds.
- * Check for endianness assumptions - mostly done now
- * Structure packing macros for structures read from disk
- * Merge r_draw.c to common version and delete duplicate
- * Heretic v1.2 emulation (if possible)
- * Hexen v1.0 emulation (if possible/necessary)
- * Screensaver mode
+  - Port to Emscripten and release a web-based version.
+* Video capture mode
+  - Real-time recording of gameplay
+  - Batch conversion of demos into videos
+* Heretic/Hexen/Strife:
+  - Merge r_draw.c to common version and delete duplicates
+  - Heretic v1.2 emulation (if possible)
+  - Hexen v1.0 emulation (if possible/necessary)
+  - Strife v1.2 emulation (for demo IWAD support)
+  - Screensaver mode
 
 Crazy pie in the sky ideas:
 
@@ -31,26 +34,6 @@ Crazy pie in the sky ideas:
 * Textscreen interface to the Compet-N database: menu driven system to
   automatically download and play speedruns.
 * DWANGO-like interface for finding players and setting up games.
-* Video capture mode?
-
-== OPL TODO list ==
-
-Needs research:
-
- * Strategy when no more voices are available is still wrong
- * Scale levels don't exactly match Vanilla (off-by-one?)
-
-Bad MIDIs:
-
- * doom2.wad MAP01
- * gothicdm MAP05
- * tnt.wad MAP30
- * Alien Vendetta (title screen, MAP01, etc)
-
-Other tasks:
-
- * Get a better software OPL emulator
- * DMXOPTIONS opl3/phase option support.
 
 # vim: tw=70
 
