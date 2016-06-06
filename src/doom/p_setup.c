@@ -1967,7 +1967,7 @@ P_SetupLevel
 	    NULL);
 
 	fprintf(stderr, "P_SetupLevel: %s (%s), Skill %s%s, Time %d:%02d, ",
-	    lumpname, lumpinfo[lumpnum]->wad_file->path,
+	    lumpname, lumpinfo[lumpnum]->wad_file->name,
 	    skilltable[BETWEEN(0,5,(int) skill+1)], rfn_str,
 	    time/60, time%60);
 

@@ -625,7 +625,7 @@ void HU_Start(void)
     else
 	M_snprintf(buf, sizeof(buf), "e%dm%d", gameepisode, gamemap);
 
-    ptr = lumpinfo[W_GetNumForName(buf)]->wad_file->path;
+    ptr = lumpinfo[W_GetNumForName(buf)]->wad_file->name;
 
     // [crispy] display names of single special levels in Automap
     HU_SetSpecialLevelName(ptr, &s);

@@ -1318,9 +1318,9 @@ static void LoadNerveWad(void)
         return;
 
     if ((i = W_GetNumForName("map01")),
-        !strcasecmp(lumpinfo[i]->wad_file->path, "nerve.wad") &&
+        !strcasecmp(lumpinfo[i]->wad_file->name, "nerve.wad") &&
         (i = W_GetNumForName("map09")),
-        !strcasecmp(lumpinfo[i]->wad_file->path, "nerve.wad"))
+        !strcasecmp(lumpinfo[i]->wad_file->name, "nerve.wad"))
     {
 	gamemission = pack_nerve;
 	DEH_AddStringReplacement ("TITLEPIC", "INTERPIC");
@@ -1375,9 +1375,9 @@ static void LoadMasterlevelsWad(void)
         return;
 
     if ((i = W_GetNumForName("map01")),
-        !strcasecmp(lumpinfo[i]->wad_file->path, "masterlevels.wad") &&
+        !strcasecmp(lumpinfo[i]->wad_file->name, "masterlevels.wad") &&
         (i = W_GetNumForName("map21")),
-        !strcasecmp(lumpinfo[i]->wad_file->path, "masterlevels.wad"))
+        !strcasecmp(lumpinfo[i]->wad_file->name, "masterlevels.wad"))
     {
 	gamemission = pack_master;
     }
