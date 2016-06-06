@@ -1115,7 +1115,7 @@ void R_InitColormaps (void)
 
 	// [crispy] check for status bar graphics replacements
 	i = W_CheckNumForName(DEH_String("sttnum0")); // [crispy] Status Bar '0'
-	keepgray = (i >= 0 && !strcmp(lumpinfo[i]->wad_file->name, M_BaseName(iwadfile)));
+	keepgray = (i >= 0 && lumpinfo[i]->wad_file->iwad);
 
 	// [crispy] CRMAX - 2: don't override the original GREN and BLUE2 Boom tables
 	for (i = 0; i < CRMAX - 2; i++)
