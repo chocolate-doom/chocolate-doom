@@ -60,6 +60,8 @@ struct _wad_file_s
 
     // [crispy] name of this file
     char *name;
+    // [crispy] indicate this is the IWAD
+    boolean iwad;
 };
 
 // Open the specified file. Returns a pointer to a new wad_file_t 

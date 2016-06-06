@@ -111,6 +111,8 @@ wad_file_t *W_AddFile (char *filename)
     filelump_t *filerover;
     lumpinfo_t *filelumps;
     int numfilelumps;
+    // [crispy] indicate this is the IWAD
+    extern char* iwadfile;
 
     // If the filename begins with a ~, it indicates that we should use the
     // reload hack.
@@ -142,6 +144,8 @@ wad_file_t *W_AddFile (char *filename)
 
     // [crispy] save the file name
     wad_file->name = M_BaseName(filename);
+    // [crispy] indicate this is the IWAD
+    wad_file->iwad = (filename == iwadfile);
 
     if (strcasecmp(filename+strlen(filename)-3 , "wad" ) )
     {
