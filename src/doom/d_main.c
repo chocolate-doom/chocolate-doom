@@ -1312,23 +1312,30 @@ static void LoadIwadDeh(void)
 // [crispy] support loading NERVE.WAD alongside DOOM2.WAD
 static void LoadNerveWad(void)
 {
-    int i;
+    int i, j, k;
 
     if (gamemission != doom2)
         return;
 
-    if ((i = W_GetNumForName("map01")),
+    if ((i = W_GetNumForName("map01")) != -1 &&
+        (j = W_GetNumForName("map09")) != -1 &&
         !strcasecmp(lumpinfo[i]->wad_file->name, "nerve.wad") &&
-        (i = W_GetNumForName("map09")),
-        !strcasecmp(lumpinfo[i]->wad_file->name, "nerve.wad"))
+        !strcasecmp(lumpinfo[j]->wad_file->name, "nerve.wad"))
     {
 	gamemission = pack_nerve;
 	DEH_AddStringReplacement ("TITLEPIC", "INTERPIC");
     }
     else
-    if (W_CheckNumForName("M_EPI1") != -1 &&
-        W_CheckNumForName("M_EPI2") != -1 &&
-        W_CheckNumForName("M_EPISOD") != -1)
+    // [crispy] The "New Game -> Which Expansion" menu is only shown if the
+    // menu graphics lumps are available and (a) if they are from the IWAD
+    // and that is the BFG Edition DOOM2.WAD or (b) if they are from a PWAD.
+    if ((i = W_CheckNumForName("M_EPI1")) != -1 &&
+        (j = W_CheckNumForName("M_EPI2")) != -1 &&
+        (k = W_CheckNumForName("M_EPISOD")) != -1 &&
+        (gamevariant == bfgedition ||
+        (!lumpinfo[i]->wad_file->iwad &&
+         !lumpinfo[j]->wad_file->iwad &&
+         !lumpinfo[k]->wad_file->iwad)))
     {
         if (strrchr(iwadfile, DIR_SEPARATOR) != NULL)
         {
