@@ -38,7 +38,7 @@ CODEBLOCKS_FILES=                              \
         codeblocks/setup-res.rc
 
 DOC_FILES=                              \
-        README                          \
+        README.md                       \
         README.Music                    \
         NEWS                            \
         PHILOSOPHY                      \

@@ -49,6 +49,9 @@ staging-%:
 		cp $(TOPLEVEL)/$$f $@/$$f.txt;       \
 	done
 	cp $(TOPLEVEL)/man/CMDLINE.$* $@/CMDLINE.txt
+
+	# Strip ".md" from the README name.
+	mv $@/README.md.txt $@/README.txt
 	
 	$(TOPLEVEL)/man/simplecpp -D_WIN32 -DPRECOMPILED  \
 	             -D$(shell echo $* | tr a-z A-Z)      \
