@@ -270,6 +270,8 @@ extern fixed_t		bmaporgx;
 extern fixed_t		bmaporgy;	// origin of block map
 extern mobj_t**		blocklinks;	// for thing chains
 
+// [crispy] pointers to the current map lump name and WAD file name
+char *maplumpname, *mapwadfilename;
 
 
 //

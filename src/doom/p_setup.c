@@ -1861,6 +1861,9 @@ const char *skilltable[] =
     "Nightmare"
 };
 
+// [crispy] pointers to the current map lump name and WAD file name
+char *maplumpname, *mapwadfilename;
+
 //
 // P_SetupLevel
 //
@@ -1947,6 +1950,10 @@ P_SetupLevel
     {
         lumpnum = W_GetSecondNumForName (lumpname);
     }
+
+    // [crispy] pointers to the current map lump name and WAD file name
+    maplumpname = lumpinfo[lumpnum]->name;
+    mapwadfilename = lumpinfo[lumpnum]->wad_file->name;
 
     leveltime = 0;
 	
