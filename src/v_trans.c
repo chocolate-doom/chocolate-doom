@@ -293,7 +293,7 @@ void CrispyReplaceColor (char *str, const int cr, const char *col)
 {
     char *str_replace, col_replace[16];
 
-    if (M_ParmExists("-nodeh"))
+    if (M_ParmExists("-nodeh") || strcmp(str, DEH_String(str)))
     {
 	return;
     }
