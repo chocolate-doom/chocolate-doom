@@ -45,8 +45,8 @@ staging-%:
 	   $@/$(PROGRAM_PREFIX)$*-setup.exe
 	$(STRIP) $@/*.exe
 	
-	for f in $(DOC_FILES); do                                    \
-		cp $(TOPLEVEL)/$$f $@/$(shell basename $$f .md).txt; \
+	for f in $(DOC_FILES); do                                \
+		cp $(TOPLEVEL)/$$f $@/$$(basename $$f .md).txt;  \
 	done
 	cp $(TOPLEVEL)/man/CMDLINE.$* $@/CMDLINE.txt
 	
