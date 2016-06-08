@@ -27,12 +27,12 @@ $(STRIFE_ZIP): staging-strife hook-strife
 # Special hooks to custom modify files for particular games.
 
 hook-doom: staging-doom
-	cp $(TOPLEVEL)/NOT-BUGS $</NOT-BUGS.txt
+	cp $(TOPLEVEL)/NOT-BUGS.md $</NOT-BUGS.txt
 
 # Chocolate Strife has its own custom README file:
 
 hook-strife: staging-strife
-	cp $(TOPLEVEL)/README.Strife $</README.txt
+	cp $(TOPLEVEL)/README.Strife.md $</README.txt
 
 # Build up a staging dir for a particular game.
 
@@ -45,13 +45,10 @@ staging-%:
 	   $@/$(PROGRAM_PREFIX)$*-setup.exe
 	$(STRIP) $@/*.exe
 	
-	for f in $(DOC_FILES); do                    \
-		cp $(TOPLEVEL)/$$f $@/$$f.txt;       \
+	for f in $(DOC_FILES); do                                    \
+		cp $(TOPLEVEL)/$$f $@/$(shell basename $$f .md).txt; \
 	done
 	cp $(TOPLEVEL)/man/CMDLINE.$* $@/CMDLINE.txt
-
-	# Strip ".md" from the README name.
-	mv $@/README.md.txt $@/README.txt
 	
 	$(TOPLEVEL)/man/simplecpp -D_WIN32 -DPRECOMPILED  \
 	             -D$(shell echo $* | tr a-z A-Z)      \

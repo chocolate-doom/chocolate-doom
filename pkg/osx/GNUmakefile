@@ -6,7 +6,7 @@
 
 include ../config.make
 
-DOC_FILES += README.Strife NOT-BUGS
+DOC_FILES += README.Strife.md NOT-BUGS.md
 
 export MACOSX_DEPLOYMENT_TARGET=10.7
 
@@ -72,7 +72,7 @@ $(STAGING_DIR): launcher $(TOPLEVEL_DOCS)
 	cp $(TOPLEVEL_DOCS) "$(APP_DOC_DIR)"
 
 	ln -s "$(APP_DOC_RELDIR)/COPYING" "$(STAGING_DIR)/Software License"
-	ln -s "$(APP_DOC_RELDIR)/README" "$(STAGING_DIR)/README"
+	ln -s "$(APP_DOC_RELDIR)/README.md" "$(STAGING_DIR)/README.md"
 	ln -s /Applications "$(STAGING_DIR)"
 
 	cp launcher "$(APP_BIN_DIR)"
