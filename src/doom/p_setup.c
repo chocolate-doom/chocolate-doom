@@ -1861,8 +1861,8 @@ const char *skilltable[] =
     "Nightmare"
 };
 
-// [crispy] pointers to the current map lump name and WAD file name
-char *maplumpname, *mapwadfilename;
+// [crispy] pointer to the current map lump info struct
+lumpinfo_t *maplumpinfo;
 
 //
 // P_SetupLevel
@@ -1951,9 +1951,8 @@ P_SetupLevel
         lumpnum = W_GetSecondNumForName (lumpname);
     }
 
-    // [crispy] pointers to the current map lump name and WAD file name
-    maplumpname = lumpinfo[lumpnum]->name;
-    mapwadfilename = lumpinfo[lumpnum]->wad_file->name;
+    // [crispy] pointer to the current map lump info struct
+    maplumpinfo = lumpinfo[lumpnum];
 
     leveltime = 0;
 	
@@ -1974,7 +1973,7 @@ P_SetupLevel
 	    NULL);
 
 	fprintf(stderr, "P_SetupLevel: %s (%s), Skill %s%s, Time %d:%02d, ",
-	    lumpname, lumpinfo[lumpnum]->wad_file->name,
+	    maplumpinfo->name, maplumpinfo->wad_file->name,
 	    skilltable[BETWEEN(0,5,(int) skill+1)], rfn_str,
 	    time/60, time%60);
 

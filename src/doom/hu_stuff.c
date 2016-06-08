@@ -34,6 +34,7 @@
 #include "w_wad.h"
 #include "m_argv.h" // [crispy] M_ParmExists()
 #include "st_stuff.h" // [crispy] ST_HEIGHT
+#include "p_local.h" // maplumpinfo
 
 #include "s_sound.h"
 
@@ -618,24 +619,17 @@ void HU_Start(void)
         s = HU_TITLE_CHEX;
     }
 
+    // [crispy] display names of single special levels in Automap
+    HU_SetSpecialLevelName(maplumpinfo->wad_file->name, &s);
+
     // [crispy] explicitely display (episode and) map if the
     // map is from a PWAD or if the map title string has been dehacked
-    if (gamemode == commercial)
-	M_snprintf(buf, sizeof(buf), "map%02d", gamemap);
-    else
-	M_snprintf(buf, sizeof(buf), "e%dm%d", gameepisode, gamemap);
-
-    ptr = lumpinfo[W_GetNumForName(buf)]->wad_file->name;
-
-    // [crispy] display names of single special levels in Automap
-    HU_SetSpecialLevelName(ptr, &s);
-
-    if (strcmp(s, DEH_String(s)) || (strcmp(ptr, M_BaseName(iwadfile)) && !nervewadfile))
+    if (strcmp(s, DEH_String(s)) || (!maplumpinfo->wad_file->iwad && (!nervewadfile || gamemission != pack_nerve)))
     {
 	char *m;
 
-	m = M_StringJoin(crstr[CR_GOLD], ptr, ": ", crstr[CR_GRAY], buf, NULL);
-	ptr = m; // [crispy] free() that, else *m leaks memory
+	ptr = M_StringJoin(crstr[CR_GOLD], maplumpinfo->wad_file->name, ": ", crstr[CR_GRAY], maplumpinfo->name, NULL);
+	m = ptr;
 
 	while (*m)
 	    HUlib_addCharToTextLine(&w_map, *(m++));

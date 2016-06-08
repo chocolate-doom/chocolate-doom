@@ -24,6 +24,8 @@
 #include "r_local.h"
 #endif
 
+#include "w_wad.h" // [crispy] lumpinfo_t
+
 #define TOCENTER                -8
 #define AFLAG_JUMP              0x80
 #define FLOATSPEED		(FRACUNIT*4)
@@ -270,8 +272,8 @@ extern fixed_t		bmaporgx;
 extern fixed_t		bmaporgy;	// origin of block map
 extern mobj_t**		blocklinks;	// for thing chains
 
-// [crispy] pointers to the current map lump name and WAD file name
-char *maplumpname, *mapwadfilename;
+// [crispy] pointer to the current map lump info struct
+lumpinfo_t *maplumpinfo;
 
 
 //
