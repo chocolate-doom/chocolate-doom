@@ -671,7 +671,7 @@ static void F_ArtScreenDrawer(void)
         switch (gameepisode)
         {
             case 1:
-                if (gamemode == retail)
+                if (gameversion >= exe_ultimate)
                 {
                     lumpname = "CREDIT";
                 }
