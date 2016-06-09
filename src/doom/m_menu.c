@@ -904,16 +904,7 @@ void M_Episode(int choice)
 	M_SetupNextMenu(&ReadDef1);
 	return;
     }
-#if 0
-    // Yet another hack...
-    if ( (gamemode == registered)
-	 && (choice > 2))
-    {
-      fprintf( stderr,
-	       "M_Episode: 4th episode requires UltimateDOOM\n");
-      choice = 0;
-    }
-#endif
+
     epi = choice;
     M_SetupNextMenu(&NewDef);
 }
