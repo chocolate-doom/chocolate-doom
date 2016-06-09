@@ -71,8 +71,9 @@ $(STAGING_DIR): launcher $(TOPLEVEL_DOCS)
 	mkdir -p "$(APP_DOC_DIR)"
 	cp $(TOPLEVEL_DOCS) "$(APP_DOC_DIR)"
 
+	mv "$(APP_DOC_DIR)/README.md" "$(APP_DOC_DIR)/README"
 	ln -s "$(APP_DOC_RELDIR)/COPYING" "$(STAGING_DIR)/Software License"
-	ln -s "$(APP_DOC_RELDIR)/README.md" "$(STAGING_DIR)/README.md"
+	ln -s "$(APP_DOC_RELDIR)/README" "$(STAGING_DIR)/README"
 	ln -s /Applications "$(STAGING_DIR)"
 
 	cp launcher "$(APP_BIN_DIR)"

@@ -42,7 +42,7 @@ make
 rm -rf $RPM_BUILD_ROOT
 
 %description
-%(sed -n "/==/ q; p " < README)
+%(sed -n "/##/ q; p " < README.md)
 
 See @PACKAGE_URL@ for more information.
 
@@ -65,7 +65,7 @@ Requires: libSDL-1.2.so.0, libSDL_mixer-1.2.so.0, libSDL_net-1.2.so.0
 /usr/share/applications/*
 
 %description -n @PROGRAM_PREFIX@heretic
-%(sed -n "/==/ q; p " < README)
+%(sed -n "/##/ q; p " < README.md)
 
 These are the Heretic binaries.
 
@@ -85,7 +85,7 @@ Group: Amusements/Games
 Requires: libSDL-1.2.so.0, libSDL_mixer-1.2.so.0, libSDL_net-1.2.so.0
 
 %description -n @PROGRAM_PREFIX@hexen
-%(sed -n "/==/ q; p " < README)
+%(sed -n "/##/ q; p " < README.md)
 
 These are the Hexen binaries.
 
@@ -105,7 +105,7 @@ Group: Amusements/Games
 Requires: libSDL-1.2.so.0, libSDL_mixer-1.2.so.0, libSDL_net-1.2.so.0
 
 %description -n @PROGRAM_PREFIX@strife
-%(sed -n "/==/ q; p " < README)
+%(sed -n "/##/ q; p " < README.md)
 
 These are the Strife binaries.
 

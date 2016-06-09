@@ -273,7 +273,7 @@
     fullscreen or windowed modes, eg. -geometry 640x480w or -geometry
     1024x768f. (thanks Mike Swanson)
 
- ### Doom
+### Doom
   * Minor workarounds were added to allow the BFG Edition IWADs to be
     used without crashing the game (thanks Fabian Greffrath).
   * GUS patch files included with the BFG Edition are now

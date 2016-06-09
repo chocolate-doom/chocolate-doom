@@ -11,7 +11,7 @@ terms. To report violations, please send an email to fraggle@gmail.com.
 Before reporting a bug, it's worth checking if this really is a bug.
 Chocolate Doom's mission is to reproduce the Vanilla (DOS) versions of
 the Doom engine games, bugs and all. Check out the
-[NOT-BUGS](../NOT-BUGS) file for a list of common issues which aren't
+[NOT-BUGS](../NOT-BUGS.md) file for a list of common issues which aren't
 really bugs at all. You might also try searching [the GitHub issues
 list](https://github.com/chocolate-doom/chocolate-doom/issues) to see
 if your bug has already been reported.
@@ -39,7 +39,7 @@ Please try to give as much information as possible:
 
 Chocolate Doom is always open to new feature requests; however, please
 be aware that the project is designed around a deliberately limited
-[philosophy](../PHILOSOPHY), and many features common in other source
+[philosophy](../PHILOSOPHY.md), and many features common in other source
 ports will not be accepted. Here are a few common requests which are
 often rejected:
 
@@ -68,7 +68,7 @@ following guidelines before opening a pull request:
   to license it under the GPL.
 
 * Please follow the coding style guidelines described in the
-  [HACKING](../HACKING) file.
+  [HACKING](../HACKING.md) file.
 
 * The guidelines given above in the "feature requests" section also
   apply here. New features which aren't in line with the project
