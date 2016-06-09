@@ -254,16 +254,6 @@ static void DEH_BEXPtrParseLine(deh_context_t *context, char *line, void *tag)
     DEH_Warning(context, "Invalid mnemonic '%s'", value);
 }
 
-static void DEH_BEXPtrSHA1Sum(sha1_context_t *context)
-{
-    int i;
-
-    for (i=0; i<NUMSTATES; ++i)
-    {
-        SHA1_UpdateInt32(context, CodePointerIndex(&states[i].action));
-    }
-}
-
 deh_section_t deh_section_bexptr =
 {
     "[CODEPTR]",
@@ -271,5 +261,5 @@ deh_section_t deh_section_bexptr =
     DEH_BEXPtrStart,
     DEH_BEXPtrParseLine,
     NULL,
-    DEH_BEXPtrSHA1Sum,
+    NULL,
 };
