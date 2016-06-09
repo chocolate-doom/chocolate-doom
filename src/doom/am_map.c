@@ -66,17 +66,17 @@
 #define BACKGROUND	BLACK
 #define YOURCOLORS	WHITE
 #define YOURRANGE	0
-#define WALLCOLORS	32 // [crispy] desaturate
+#define WALLCOLORS	23 // REDS // [crispy] red-brown
 #define WALLRANGE	REDRANGE
 #define TSWALLCOLORS	GRAYS
 #define TSWALLRANGE	GRAYSRANGE
-#define FDWALLCOLORS	BROWNS
+#define FDWALLCOLORS	55 // BROWNS // [crispy] lt brown
 #define FDWALLRANGE	BROWNRANGE
-#define CDWALLCOLORS	(YELLOWS + YELLOWRANGE) // [crispy] a tad darker
+#define CDWALLCOLORS	215 // YELLOWS // [crispy] orange
 #define CDWALLRANGE	YELLOWRANGE
 #define THINGCOLORS	GREENS
 #define THINGRANGE	GREENRANGE
-#define SECRETWALLCOLORS 252 // [crispy] purple
+#define SECRETWALLCOLORS 252 // WALLCOLORS // [crispy] purple
 #define SECRETWALLRANGE WALLRANGE
 #define GRIDCOLORS	(GRAYS + GRAYSRANGE/2)
 #define GRIDRANGE	0
