@@ -141,6 +141,8 @@ txt_conditional_t *TXT_NewConditional(int *var, int expected_value,
     conditional->expected_value = expected_value;
     conditional->child = child;
 
+    child->parent = &conditional->widget;
+
     return conditional;
 }
 
