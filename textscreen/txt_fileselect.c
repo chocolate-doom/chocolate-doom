@@ -23,6 +23,8 @@
 
 #include "txt_fileselect.h"
 #include "txt_inputbox.h"
+#include "txt_gui.h"
+#include "txt_io.h"
 #include "txt_main.h"
 #include "txt_widget.h"
 
@@ -587,11 +589,14 @@ static void TXT_FileSelectDrawer(TXT_UNCAST_ARG(fileselect))
     // Input box widget inherits all the properties of the
     // file selector.
 
-    fileselect->inputbox->widget.x = fileselect->widget.x;
+    fileselect->inputbox->widget.x = fileselect->widget.x + 2;
     fileselect->inputbox->widget.y = fileselect->widget.y;
-    fileselect->inputbox->widget.w = fileselect->widget.w;
+    fileselect->inputbox->widget.w = fileselect->widget.w - 2;
     fileselect->inputbox->widget.h = fileselect->widget.h;
 
+    // Triple bar symbol gives a distinguishing look to the file selector.
+    TXT_DrawString("\xf0 ");
+    TXT_BGColor(TXT_COLOR_BLACK, 0);
     TXT_DrawWidget(fileselect->inputbox);
 }
 
