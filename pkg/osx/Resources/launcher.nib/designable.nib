@@ -284,6 +284,7 @@
         </customObject>
         <customObject id="225" userLabel="IWADController" customClass="IWADController">
             <connections>
+                <outlet property="chex" destination="Lk6-np-Wql" id="xyzzy-12345"/>
                 <outlet property="configWindow" destination="227" id="265"/>
                 <outlet property="doom1" destination="AlQ-U8-wym" id="XjI-7B-upb"/>
                 <outlet property="doom2" destination="BpX-4L-Bf7" id="9tZ-Ld-Ave"/>
