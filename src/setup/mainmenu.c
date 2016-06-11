@@ -216,41 +216,28 @@ void MainMenu(void)
     TXT_SetWindowHelpURL(window, WINDOW_HELP_URL);
 
     TXT_AddWidgets(window,
-          TXT_NewButton2("Configure Display",
-                         (TxtWidgetSignalFunc) ConfigDisplay, NULL),
-          TXT_NewButton2("Configure Sound",
-                         (TxtWidgetSignalFunc) ConfigSound, NULL),
-          TXT_NewButton2("Configure Keyboard",
-                         (TxtWidgetSignalFunc) ConfigKeyboard, NULL),
-          TXT_NewButton2("Configure Mouse",
-                         (TxtWidgetSignalFunc) ConfigMouse, NULL),
-          TXT_NewButton2("Configure Gamepad/Joystick",
-                         (TxtWidgetSignalFunc) ConfigJoystick, NULL),
-          NULL);
-
-    // The compatibility window is only appropriate for Doom/Strife.
-
-    if (gamemission == doom || gamemission == strife)
-    {
-        txt_button_t *button;
-
-        button = TXT_NewButton2("Compatibility", 
-                                (TxtWidgetSignalFunc) CompatibilitySettings,
-                                NULL);
-
-        TXT_AddWidget(window, button);
-    }
-
-    TXT_AddWidgets(window,
-          GetLaunchButton(),
-          TXT_NewStrut(0, 1),
-          TXT_NewButton2("Start a Network Game", 
-                         (TxtWidgetSignalFunc) StartMultiGame, NULL),
-          TXT_NewButton2("Join a Network Game", 
-                         (TxtWidgetSignalFunc) JoinMultiGame, NULL),
-          TXT_NewButton2("Multiplayer Configuration", 
-                         (TxtWidgetSignalFunc) MultiplayerConfig, NULL),
-          NULL);
+        TXT_NewButton2("Configure Display",
+                       (TxtWidgetSignalFunc) ConfigDisplay, NULL),
+        TXT_NewButton2("Configure Sound",
+                       (TxtWidgetSignalFunc) ConfigSound, NULL),
+        TXT_NewButton2("Configure Keyboard",
+                       (TxtWidgetSignalFunc) ConfigKeyboard, NULL),
+        TXT_NewButton2("Configure Mouse",
+                       (TxtWidgetSignalFunc) ConfigMouse, NULL),
+        TXT_NewButton2("Configure Gamepad/Joystick",
+                       (TxtWidgetSignalFunc) ConfigJoystick, NULL),
+        TXT_If(gamemission == doom || gamemission == strife,
+            TXT_NewButton2("Compatibility",
+                           (TxtWidgetSignalFunc) CompatibilitySettings, NULL)),
+        GetLaunchButton(),
+        TXT_NewStrut(0, 1),
+        TXT_NewButton2("Start a Network Game",
+                       (TxtWidgetSignalFunc) StartMultiGame, NULL),
+        TXT_NewButton2("Join a Network Game",
+                       (TxtWidgetSignalFunc) JoinMultiGame, NULL),
+        TXT_NewButton2("Multiplayer Configuration",
+                       (TxtWidgetSignalFunc) MultiplayerConfig, NULL),
+        NULL);
 
     quit_action = TXT_NewWindowAction(KEY_ESCAPE, "Quit");
     warp_action = TXT_NewWindowAction(KEY_F2, "Warp");
