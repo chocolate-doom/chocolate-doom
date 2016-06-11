@@ -21,7 +21,7 @@
 //      OPLx decapsulated(Matthew Gambrell, Olli Niemitalo):
 //          OPL2 ROMs.
 //
-// version: 1.7
+// version: 1.7.2
 //
 
 #ifndef OPL_OPL3_H
