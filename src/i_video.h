@@ -161,7 +161,4 @@ extern int fullscreen;
 extern int aspect_ratio_correct;
 extern int novert;
 
-extern int show_diskicon;
-extern int diskicon_readbytes;
-
 #endif

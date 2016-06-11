@@ -1715,7 +1715,7 @@ static void WI_loadUnloadData(load_callback_t callback)
     {
         M_StringCopy(name, DEH_String("INTERPIC"), sizeof(name));
     }
-    else if (gamemode == retail && wbs->epsd == 3)
+    else if (gameversion >= exe_ultimate && wbs->epsd == 3)
     {
         M_StringCopy(name, DEH_String("INTERPIC"), sizeof(name));
     }
@@ -1811,7 +1811,7 @@ void WI_initVariables(wbstartstruct_t* wbstartstruct)
 #ifdef RANGECHECKING
     if (gamemode != commercial)
     {
-      if ( gamemode == retail )
+      if (gameversion >= exe_ultimate)
 	RNGCHECK(wbs->epsd, 0, 3);
       else
 	RNGCHECK(wbs->epsd, 0, 2);

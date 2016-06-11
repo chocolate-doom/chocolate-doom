@@ -142,6 +142,7 @@ char		wadfile[1024];          // primary wad file
 char		mapdir[1024];           // directory of development maps
 
 int             show_endoom = 0;
+int             show_diskicon = 1;
 int             graphical_startup = 0;
 
 // If true, startup has completed and the main game loop has started.
@@ -301,7 +302,7 @@ void D_Display (void)
     // see if the border needs to be updated to the screen
     if (gamestate == GS_LEVEL && !automapactive && scaledviewwidth != (320 << hires))
     {
-        if (menuactive || menuactivestate || !viewactivestate || disk_indicator == disk_dirty)
+        if (menuactive || menuactivestate || !viewactivestate)
         {
             borderdrawcount = 3;
             popupactivestate = false;
@@ -511,7 +512,10 @@ void D_DoomLoop (void)
         I_InitGraphics();
     }
 
-    V_EnableLoadingDisk(SCREENWIDTH - LOADING_DISK_W, 0);
+    if (show_diskicon)
+    {
+        V_EnableLoadingDisk("STDISK", SCREENWIDTH - LOADING_DISK_W, 3);
+    }
     I_SetGrabMouseCallback(D_GrabMouseCallback);
 
     V_RestoreBuffer();
@@ -830,49 +834,48 @@ void D_IdentifyVersion(void)
     // Load voices.wad 
     if(isregistered)
     {
-        char *name = D_FindWADByName("voices.wad");
+        char *name = NULL;
+        int p;
 
-        if(!name) // not found?
+        // If -iwad was used, check and see if voices.wad exists on the same
+        // filepath.
+        if((p = M_CheckParm("-iwad")) && p < myargc - 1)
         {
-            int p;
+            char   *iwad     = myargv[p + 1];
+            size_t  len      = strlen(iwad) + 1;
+            char   *iwadpath = Z_Malloc(len, PU_STATIC, NULL);
+            char   *voiceswad;
 
-            // haleyjd STRIFE-FIXME: Temporary?
-            // If -iwad was used, check and see if voices.wad exists on the
-            // same filepath.
-            if((p = M_CheckParm("-iwad")) && p < myargc - 1)
-            {
-                char   *iwad     = myargv[p + 1];
-                size_t  len      = strlen(iwad) + 1;
-                char   *iwadpath = Z_Malloc(len, PU_STATIC, NULL);
-                char   *voiceswad;
-                
-                // extract base path of IWAD parameter
-                M_GetFilePath(iwad, iwadpath, len);
-                
-                // concatenate with /voices.wad
-                voiceswad = M_SafeFilePath(iwadpath, "voices.wad");
-                Z_Free(iwadpath);
+            // extract base path of IWAD parameter
+            M_GetFilePath(iwad, iwadpath, len);
 
-                if(!M_FileExists(voiceswad))
-                {
-                    disable_voices = 1;
-                    Z_Free(voiceswad);
-                }
-                else
-                    name = voiceswad; // STRIFE-FIXME: memory leak!!
-            }
+            // concatenate with /voices.wad
+            voiceswad = M_SafeFilePath(iwadpath, "voices.wad");
+            Z_Free(iwadpath);
+
+            if(!M_FileExists(voiceswad))
+                Z_Free(voiceswad);
             else
-                disable_voices = 1;
+                name = voiceswad; // STRIFE-FIXME: memory leak!!
         }
 
-        if(disable_voices) // voices disabled?
+        // not found? try global search paths
+        if(!name)
+            name = D_FindWADByName("voices.wad");
+
+        // still not found? too bad.
+        if(!name)
         {
+            disable_voices = 1;
+
             if(devparm)
                  printf("Voices disabled\n");
-            return;
         }
-
-        D_AddFile(name);
+        else
+        {
+            // add it.
+            D_AddFile(name);
+        }
     }
 }
 

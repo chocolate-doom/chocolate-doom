@@ -38,7 +38,7 @@ static const iwad_t iwads[] =
     { "tnt.wad",      pack_tnt,  commercial, "Final Doom: TNT: Evilution" },
     { "doom.wad",     doom,      retail,     "Doom" },
     { "doom1.wad",    doom,      shareware,  "Doom Shareware" },
-    { "chex.wad",     pack_chex, shareware,  "Chex Quest" },
+    { "chex.wad",     pack_chex, retail,     "Chex Quest" },
     { "hacx.wad",     pack_hacx, commercial, "Hacx" },
     { "freedm.wad",   doom2,     commercial, "FreeDM" },
     { "freedoom2.wad", doom2,    commercial, "Freedoom: Phase 2" },
@@ -176,6 +176,14 @@ static registry_value_t root_path_keys[] =
         HKEY_LOCAL_MACHINE,
         SOFTWARE_KEY "\\GOG.com\\Games\\1435848742",
         "PATH",
+    },
+
+    // Strife: Veteran Edition
+
+    {
+	HKEY_LOCAL_MACHINE,
+	SOFTWARE_KEY "\\GOG.com\\Games\\1432899949",
+	"PATH",
     },
 };
 

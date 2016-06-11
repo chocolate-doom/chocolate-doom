@@ -174,16 +174,6 @@ int novert = 1;
 
 int png_screenshots = 1;
 
-// Display disk activity indicator.
-
-int show_diskicon = 1;
-
-// Only display the disk icon if more then this much bytes have been read
-// during the previous tic.
-
-static const int diskicon_threshold = 20*1024;
-int diskicon_readbytes = 0;
-
 // if true, I_VideoBuffer is screen->pixels
 
 static boolean native_surface;
@@ -1029,18 +1019,8 @@ void I_FinishUpdate (void)
 		}
 	}
 
-    if (show_diskicon && disk_indicator == disk_on)
-    {
-	if (diskicon_readbytes >= diskicon_threshold)
-	{
-	    V_BeginRead();
-	}
-    }
-    else if (disk_indicator == disk_dirty)
-    {
-	disk_indicator = disk_off;
-    }
-    diskicon_readbytes = 0;
+    // Draw disk icon before blit, if necessary.
+    V_DrawDiskIcon();
 
     // draw to screen
 
@@ -1076,6 +1056,9 @@ void I_FinishUpdate (void)
     }
 
     SDL_Flip(screen);
+
+    // Restore background and undo the disk indicator, if it was drawn.
+    V_RestoreDiskBackground();
 }
 
 

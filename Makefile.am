@@ -38,10 +38,10 @@ CODEBLOCKS_FILES=                              \
         codeblocks/setup-res.rc
 
 DOC_FILES=                              \
-        README                          \
-        README.Music                    \
-        NEWS                            \
-        PHILOSOPHY                      \
+        README.md                       \
+        README.Music.md                 \
+        NEWS.md                         \
+        PHILOSOPHY.md                   \
         ChangeLog
 
 EXTRA_DIST=                             \
@@ -49,15 +49,15 @@ EXTRA_DIST=                             \
         $(MSVC_FILES)                   \
         $(CODEBLOCKS_FILES)             \
         $(DOC_FILES)                    \
-        NOT-BUGS                        \
-        README.Strife                   \
+        NOT-BUGS.md                     \
+        README.Strife.md                \
         .lvimrc                         \
-        HACKING                         \
-        TODO                            \
+        HACKING.md                      \
+        TODO.md                         \
         rpm.spec
 
 doomdocsdir = ${docdir}/../${PROGRAM_PREFIX}doom
-doomdocs_DATA = $(DOC_FILES) NOT-BUGS
+doomdocs_DATA = $(DOC_FILES) NOT-BUGS.md
 
 hereticdocsdir = ${docdir}/../${PROGRAM_PREFIX}heretic
 hereticdocs_DATA = $(DOC_FILES)
@@ -66,7 +66,7 @@ hexendocsdir = ${docdir}/../${PROGRAM_PREFIX}hexen
 hexendocs_DATA = $(DOC_FILES)
 
 strifedocsdir = ${docdir}/../${PROGRAM_PREFIX}strife
-strifedocs_DATA = $(DOC_FILES) README.Strife
+strifedocs_DATA = $(DOC_FILES) README.Strife.md
 
 MAINTAINERCLEANFILES =  $(AUX_DIST_GEN)
 

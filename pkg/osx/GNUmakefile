@@ -6,11 +6,9 @@
 
 include ../config.make
 
-DOC_FILES += README.Strife NOT-BUGS
+DOC_FILES += README.Strife.md NOT-BUGS.md
 
-# Build so that the package will work on older versions.
-
-export MACOSX_DEPLOYMENT_TARGET=10.4
+export MACOSX_DEPLOYMENT_TARGET=10.7
 
 STAGING_DIR=staging
 DMG=$(PACKAGE_TARNAME)-$(PACKAGE_VERSION).dmg
@@ -73,6 +71,7 @@ $(STAGING_DIR): launcher $(TOPLEVEL_DOCS)
 	mkdir -p "$(APP_DOC_DIR)"
 	cp $(TOPLEVEL_DOCS) "$(APP_DOC_DIR)"
 
+	mv "$(APP_DOC_DIR)/README.md" "$(APP_DOC_DIR)/README"
 	ln -s "$(APP_DOC_RELDIR)/COPYING" "$(STAGING_DIR)/Software License"
 	ln -s "$(APP_DOC_RELDIR)/README" "$(STAGING_DIR)/README"
 	ln -s /Applications "$(STAGING_DIR)"
