@@ -1,6 +1,6 @@
-===============================================================================
+````````````````````````````````````````````````````````````````````````
 
-          Samuel 'Kaiser' Villarreal and James 'Quasar' Haley Present
+          Samuel ‘Kaiser’ Villarreal and James ‘Quasar’ Haley Present
 
            C      H      O      C      O      L      A      T      E
             ______________________________._________________________
@@ -10,17 +10,17 @@
           /_______  /  |____|    |____|_  /___|\___  /   /_______  /
                   \/                    \/         \/            \/
 
-===============================================================================
+````````````````````````````````````````````````````````````````````````
 
-* What is it? *
+## What is it?
 
 Chocolate Strife is the most accurate and complete recreation of Rogue
-Entertainment's "Strife: Quest for the Sigil." It was created through more than
-four years of reverse engineering effort with the blessings of the original
-programmers of the game.
+Entertainment’s “Strife: Quest for the Sigil.”  It was created through more
+than four years of reverse engineering effort with the blessings of the
+original programmers of the game.
 
 
-* Why? *
+## Why?
 
 The source code for Strife was lost, which means, unlike the code for all the
 other commercial DOOM-engine games, it cannot be released. The only access we
@@ -32,7 +32,7 @@ resulting Chocolate Doom-based executable is as close as possible to the
 original.
 
 
-* Is it Legal? *
+## Is it Legal?
 
 Chocolate Strife was originally reverse-engineered from the DOS Strife
 binaries. Although reverse engineering is legally a protected activity, this
@@ -45,9 +45,9 @@ Edition, along with its GPL-licensed source code, constitutes tacit approval
 for the legal status of Chocolate Strife by its current copyright holder.
 
 
-* Is it Perfect? *
+## Is it Perfect?
 
-Almost, but not entirely! That's where you come in. Help us by reporting any
+Almost, but not entirely! That’s where you come in. Help us by reporting any
 discrepancies you may notice between this executable and the vanilla DOS
 program!
 
@@ -60,16 +60,20 @@ for example by initializing pointers to NULL rather than using them without
 setting a value first.
 
 
-* What are some known problems? *
+## What are some known problems?
 
-- The demo version is *not* supported, and there are not any current plans
-  to support it in the future, due to the vast number of differences (the
-  demo version of Strife is based on a much earlier beta version of Rogue's
-  codebase). You should use a commercial Strife IWAD file, preferably of
-  version 1.2 or later.
+The demo version is *not* supported, and there are not any current plans to
+support it in the future, due to the vast number of differences (the demo
+version of Strife is based on an earlier version of Rogue’s
+codebase).
+
+The commercial Strife IWAD version 1.1 may run, but also exhibit issues.  Like
+the demo version, there are no current plans to fully support it.  Make sure
+your copy is updated to at least 1.2.  Strife: Veteran Edition already
+includes the required version.
 
 
-* How do I use it? *
+## How do I use it?
 
 From the Run box or a command line, issue a command to Chocolate Strife just
 like you would run Chocolate Doom. Most of the same command line parameters
@@ -82,27 +86,27 @@ redundant and unnecessary.
 
 Some new command-line parameters in Chocolate Strife include the following:
 
--nograph
-  Disables the graphical introduction sequence. -devparm implies this.
+  - -nograph
+    - Disables the graphical introduction sequence. -devparm implies this.
 
--novoice
-  Disables voices even if voices.wad can be found.
+  - -novoice
+    - Disables voices even if voices.wad can be found.
 
--work
-  Enables Rogue's playtesting mode. Automatic godmode, and pressing the
-  inventory drop key will toggle noclipping.
+  - -work
+    - Enables Rogue’s playtesting mode. Automatic godmode, and pressing the
+      inventory drop key will toggle noclipping.
 
--flip
-  Flips player gun graphics. This is buggy, however, because it does not
-  reverse the graphics' x offsets (this is an accurate emulation of the
-  vanilla engine's behavior).
+  - -flip
+    - Flips player gun graphics. This is buggy, however, because it does not
+      reverse the graphics’ x offsets (this is an accurate emulation of the
+      vanilla engine’s behavior).
 
--random
-  Randomizes the timing and location of item respawns in deathmatch, when
-  item respawning is enabled.
+  - -random
+    - Randomizes the timing and location of item respawns in deathmatch, when
+      item respawning is enabled.
 
 
-* Copyright *
+## Copyright
 
 This program is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
@@ -113,9 +117,8 @@ This program is distributed in the hope that it will be useful,but WITHOUT ANY
 WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
 A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 
-See the "COPYING" file for the full license text. The source code for this
+See the “COPYING” file for the full license text. The source code for this
 program is available from the same location where you downloaded this package.
 
 Aside from Chocolate Doom, portions of the code are derived from the Eternity
 Engine, Copyright 2011 Team Eternity, as published under the GNU GPL.
-

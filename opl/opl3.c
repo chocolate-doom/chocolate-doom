@@ -21,37 +21,7 @@
 //      OPLx decapsulated(Matthew Gambrell, Olli Niemitalo):
 //          OPL2 ROMs.
 //
-// version: 1.7
-//
-//  Changelog:
-//
-//  v1.1:
-//      Vibrato's sign fix.
-//  v1.2:
-//      Operator key fix.
-//      Corrected 4-operator mode.
-//      Corrected rhythm mode.
-//      Some small fixes.
-//  v1.2.1:
-//      Small envelope generator fix.
-//      Removed EX_Get function(not used)
-//  v1.3:
-//      Complete rewrite.
-//  v1.4:
-//      New envelope and waveform generator.
-//      Some small fixes.
-//  v1.4.1:
-//      Envelope generator rate calculation fix.
-//  v1.4.2:
-//      Version for ZDoom.
-//  v1.5:
-//      Optimizations.
-//  v1.6:
-//      Improved emulation output.
-//  v1.6.1:
-//      Simple YMF289(OPL3-L) emulation.
-//  v1.7:
-//      Version for Chocolate Doom.
+// version: 1.7.2
 //
 
 #include <stdio.h>
@@ -537,16 +507,13 @@ static void OPL3_EnvelopeKeyOn(opl3_slot *slot, Bit8u type)
     if (!slot->key)
     {
         slot->eg_gen = envelope_gen_num_attack;
-        if ((slot->eg_rate >> 2) != 0x0f)
-        {
-            slot->eg_gen = envelope_gen_num_attack;
-        }
-        else
+        OPL3_EnvelopeUpdateRate(slot);
+        if ((slot->eg_rate >> 2) == 0x0f)
         {
             slot->eg_gen = envelope_gen_num_decay;
+            OPL3_EnvelopeUpdateRate(slot);
             slot->eg_rout = 0x00;
         }
-        OPL3_EnvelopeUpdateRate(slot);
         slot->pg_phase = 0x00;
     }
     slot->key |= type;
@@ -683,7 +650,7 @@ static void OPL3_SlotGenerate(opl3_slot *slot)
 
 static void OPL3_SlotGenerateZM(opl3_slot *slot)
 {
-    OPL3_SlotGeneratePhase(slot, 0);
+    OPL3_SlotGeneratePhase(slot, (Bit16u)(slot->pg_phase >> 9));
 }
 
 static void OPL3_SlotCalcFB(opl3_slot *slot)
@@ -789,6 +756,8 @@ static void OPL3_ChannelUpdateRhythm(opl3_chip *chip, Bit8u data)
         {
             chip->channel[chnum].chtype = ch_2op;
             OPL3_ChannelSetupAlg(&chip->channel[chnum]);
+            OPL3_EnvelopeKeyOff(chip->channel[chnum].slots[0], egk_drum);
+            OPL3_EnvelopeKeyOff(chip->channel[chnum].slots[1], egk_drum);
         }
     }
 }
@@ -1084,7 +1053,7 @@ static void OPL3_GenerateRhythm1(opl3_chip *chip)
              | (((phase17 >> 2) ^ phase17) & 0x08)) ? 0x01 : 0x00;
     //hh
     phase = (phasebit << 9)
-          | (0x34 << ((phasebit ^ (chip->noise & 0x01) << 1)));
+          | (0x34 << ((phasebit ^ (chip->noise & 0x01)) << 1));
     OPL3_SlotGeneratePhase(channel7->slots[0], phase);
     //tt
     OPL3_SlotGenerateZM(channel8->slots[0]);

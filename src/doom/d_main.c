@@ -583,7 +583,7 @@ void D_DoAdvanceDemo (void)
 	{
 	    pagetic = 200;
 
-	    if ( gamemode == retail )
+	    if (gameversion >= exe_ultimate)
 	      pagename = DEH_String("CREDIT");
 	    else
 	      pagename = DEH_String("HELP2");

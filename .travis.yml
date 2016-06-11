@@ -21,7 +21,7 @@ addons:
         - libsdl-net1.2-dev
         - libpng-dev
 
-script: ./autogen.sh && make
+script: ./autogen.sh && make && make install DESTDIR=/tmp/whatever && make dist
 
 branches:
     only:

@@ -750,74 +750,9 @@ void M_QuickLoad(void)
 //
 void M_DrawReadThis1(void)
 {
-    char *lumpname = "CREDIT";
-    int skullx = 330, skully = 175;
-
     inhelpscreens = true;
-    
-    // Different versions of Doom 1.9 work differently
 
-    switch (gameversion)
-    {
-        case exe_doom_1_666:
-        case exe_doom_1_7:
-        case exe_doom_1_8:
-        case exe_doom_1_9:
-        case exe_hacx:
-
-            if (gamemode == commercial)
-            {
-                // Doom 2
-
-                lumpname = "HELP";
-
-                skullx = 330;
-                skully = 165;
-            }
-            else
-            {
-                // Doom 1
-                // HELP2 is the first screen shown in Doom 1
-                
-                lumpname = "HELP2";
-
-                skullx = 280;
-                skully = 185;
-            }
-            break;
-
-        case exe_ultimate:
-        case exe_chex:
-
-            // Ultimate Doom always displays "HELP1".
-
-            // Chex Quest version also uses "HELP1", even though it is based
-            // on Final Doom.
-
-            lumpname = "HELP1";
-
-            break;
-
-        case exe_final:
-        case exe_final2:
-
-            // Final Doom always displays "HELP".
-
-            lumpname = "HELP";
-
-            break;
-
-        default:
-            I_Error("Unhandled game version");
-            break;
-    }
-
-    lumpname = DEH_String(lumpname);
-    
-    V_DrawPatchDirect (0, 0, W_CacheLumpName(lumpname, PU_CACHE));
-
-    ReadDef1.x = skullx;
-    ReadDef1.y = skully;
+    V_DrawPatchDirect(0, 0, W_CacheLumpName(DEH_String("HELP2"), PU_CACHE));
 }
 
 
@@ -833,6 +768,13 @@ void M_DrawReadThis2(void)
     // gameversion == exe_doom_1_9 and gamemode == registered
 
     V_DrawPatchDirect(0, 0, W_CacheLumpName(DEH_String("HELP1"), PU_CACHE));
+}
+
+void M_DrawReadThisCommercial(void)
+{
+    inhelpscreens = true;
+
+    V_DrawPatchDirect(0, 0, W_CacheLumpName(DEH_String("HELP"), PU_CACHE));
 }
 
 
@@ -971,15 +913,6 @@ void M_Episode(int choice)
 	return;
     }
 
-    // Yet another hack...
-    if ( (gamemode == registered)
-	 && (choice > 2))
-    {
-      fprintf( stderr,
-	       "M_Episode: 4th episode requires UltimateDOOM\n");
-      choice = 0;
-    }
-	 
     epi = choice;
     M_SetupNextMenu(&NewDef);
 }
@@ -1082,20 +1015,8 @@ void M_ReadThis(int choice)
 
 void M_ReadThis2(int choice)
 {
-    // Doom 1.9 had two menus when playing Doom 1
-    // All others had only one
-
-    if (gameversion <= exe_doom_1_9 && gamemode != commercial)
-    {
-        choice = 0;
-        M_SetupNextMenu(&ReadDef2);
-    }
-    else
-    {
-        // Close the menu
-
-        M_FinishReadThis(0);
-    }
+    choice = 0;
+    M_SetupNextMenu(&ReadDef2);
 }
 
 void M_FinishReadThis(int choice)
@@ -1692,7 +1613,7 @@ boolean M_Responder (event_t* ev)
         {
 	    M_StartControlPanel ();
 
-	    if ( gamemode == retail )
+	    if (gameversion >= exe_ultimate)
 	      currentMenu = &ReadDef2;
 	    else
 	      currentMenu = &ReadDef1;
@@ -2107,25 +2028,29 @@ void M_Init (void)
     // Here we could catch other version dependencies,
     //  like HELP1/2, and four episodes.
 
-  
-    switch ( gamemode )
+    // The same hacks were used in the original Doom EXEs.
+
+    if (gameversion >= exe_ultimate)
     {
-      case commercial:
-        // Commercial has no "read this" entry.
-	MainMenu[readthis] = MainMenu[quitdoom];
-	MainDef.numitems--;
-	MainDef.y += 8;
-	NewDef.prevMenu = &MainDef;
-	break;
-      case shareware:
-	// Episode 2 and 3 are handled,
-	//  branching to an ad screen.
-      case registered:
-	break;
-      case retail:
-	// We are fine.
-      default:
-	break;
+        MainMenu[readthis].routine = M_ReadThis2;
+        ReadDef2.prevMenu = NULL;
+    }
+
+    if (gameversion >= exe_final && gameversion <= exe_final2)
+    {
+        ReadDef2.routine = M_DrawReadThisCommercial;
+    }
+
+    if (gamemode == commercial)
+    {
+        MainMenu[readthis] = MainMenu[quitdoom];
+        MainDef.numitems--;
+        MainDef.y += 8;
+        NewDef.prevMenu = &MainDef;
+        ReadDef1.routine = M_DrawReadThisCommercial;
+        ReadDef1.x = 330;
+        ReadDef1.y = 165;
+        ReadMenu1[rdthsempty1].routine = M_FinishReadThis;
     }
 
     // Versions of doom.exe before the Ultimate Doom release only had
@@ -2134,7 +2059,12 @@ void M_Init (void)
     // (should crash if missing).
     if (gameversion < exe_ultimate)
     {
-	EpiDef.numitems--;
+        EpiDef.numitems--;
+    }
+    // chex.exe shows only one episode.
+    else if (gameversion == exe_chex)
+    {
+        EpiDef.numitems = 1;
     }
 
     opldev = M_CheckParm("-opldev") > 0;
