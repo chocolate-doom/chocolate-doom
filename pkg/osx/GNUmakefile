@@ -95,8 +95,6 @@ $(STAGING_DIR): launcher $(TOPLEVEL_DOCS)
 	             < $(TOPLEVEL)/man/INSTALL.template       \
 	             > "$(APP_DOC_DIR)/INSTALL"
 
-	find $(STAGING_DIR) -name .svn -delete -exec rm -rf {} \; || true
-
 	mkdir -p "$(APP_BIN_DIR)/man/man5" "$(APP_BIN_DIR)/man/man6"
 	cp $(TOPLEVEL)/man/*.5 "$(APP_BIN_DIR)/man/man5"
 	cp $(TOPLEVEL)/man/*.6 "$(APP_BIN_DIR)/man/man6"
