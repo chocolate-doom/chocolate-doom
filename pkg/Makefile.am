@@ -10,7 +10,7 @@ osx/Resources/launcher.nib/keyedobjects.nib                             \
 osx/disk/dir.DS_Store                                                   \
 osx/disk/background.png                                                 \
 osx/GNUmakefile                                                         \
-osx/Info.plist.in       osx/Info-gnustep.plist.in                       \
+osx/Info.plist.in                                                       \
 osx/PkgInfo                                                             \
 osx/cp-with-libs                                                        \
 osx/dmgfix                                                              \

@@ -143,7 +143,6 @@ opl/examples/Makefile
 pcsound/Makefile
 pkg/Makefile
 pkg/config.make
-pkg/osx/Info-gnustep.plist
 pkg/osx/Info.plist
 rpm.spec
 data/Makefile
