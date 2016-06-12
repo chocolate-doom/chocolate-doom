@@ -18,7 +18,6 @@ osx/main.m                                                              \
 osx/AppController.m     osx/AppController.h                             \
 osx/Execute.m           osx/Execute.h                                   \
 osx/IWADController.m    osx/IWADController.h                            \
-osx/IWADLocation.m      osx/IWADLocation.h                              \
 osx/LauncherManager.m   osx/LauncherManager.h
 
 WIN32_FILES=                                                            \
