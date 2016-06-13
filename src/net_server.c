@@ -1345,6 +1345,7 @@ void NET_SV_SendQueryResponse(net_addr_t *addr)
     querydata.gamemission = sv_gamemission;
 
     //!
+    // @category net
     // @arg <name>
     //
     // When starting a network server, specify a name for the server.
@@ -1785,10 +1786,10 @@ static void UpdateMasterServer(void)
 void NET_SV_RegisterWithMaster(void)
 {
     //!
+    // @category net
+    //
     // When running a server, don't register with the global master server.
     // Implies -server.
-    //
-    // @category net
     //
 
     if (!M_CheckParm("-privateserver"))

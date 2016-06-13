@@ -813,6 +813,7 @@ void D_IdentifyVersion(void)
         // with Freedoom and get the right level names.
 
         //!
+        // @category compat
         // @arg <pack>
         //
         // Explicitly specify a Doom II "mission pack" to run as, instead of

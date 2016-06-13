@@ -922,7 +922,7 @@ static boolean I_SDL_InitMusic(void)
 #endif
 
     //!
-    // @arg <output filename>
+    // @arg <filename>
     //
     // Read all MIDI files from loaded WAD files, dump an example substitution
     // music config file to the specified filename and quit.

@@ -2219,12 +2219,13 @@ void G_DoPlayDemo (void)
 void G_TimeDemo (char* name) 
 {
     //!
-    // @vanilla 
+    // @category video
+    // @vanilla
     //
     // Disable rendering the screen entirely.
     //
 
-    nodrawers = M_CheckParm ("-nodraw"); 
+    nodrawers = M_CheckParm ("-nodraw");
 
     timingdemo = true; 
     singletics = true; 
