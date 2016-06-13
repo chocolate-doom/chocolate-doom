@@ -20,22 +20,22 @@ if HAVE_PYTHON
 GENERATED_MAN_PAGES =               \
            @PROGRAM_PREFIX@doom.6         \
            default.cfg.5            \
-           @PROGRAM_PREFIX@doom.cfg.5     \
-           @PROGRAM_PREFIX@heretic.6      \
-           heretic.cfg.5            \
-           @PROGRAM_PREFIX@heretic.cfg.5  \
-           @PROGRAM_PREFIX@hexen.6        \
-           hexen.cfg.5              \
-           @PROGRAM_PREFIX@hexen.cfg.5    \
-           @PROGRAM_PREFIX@strife.6       \
-           strife.cfg.5             \
-           @PROGRAM_PREFIX@strife.cfg.5
+           @PROGRAM_PREFIX@doom.cfg.5
+#          @PROGRAM_PREFIX@heretic.6      \
+#          heretic.cfg.5            \
+#          @PROGRAM_PREFIX@heretic.cfg.5  \
+#          @PROGRAM_PREFIX@hexen.6        \
+#          hexen.cfg.5              \
+#          @PROGRAM_PREFIX@hexen.cfg.5    \
+#          @PROGRAM_PREFIX@strife.6       \
+#          strife.cfg.5             \
+#          @PROGRAM_PREFIX@strife.cfg.5
 
 SETUP_MAN_PAGES =                          \
-           @PROGRAM_PREFIX@doom-setup.6    \
-           @PROGRAM_PREFIX@heretic-setup.6 \
-           @PROGRAM_PREFIX@hexen-setup.6   \
-           @PROGRAM_PREFIX@strife-setup.6
+           @PROGRAM_PREFIX@doom-setup.6
+#          @PROGRAM_PREFIX@heretic-setup.6 \
+#          @PROGRAM_PREFIX@hexen-setup.6   \
+#          @PROGRAM_PREFIX@strife-setup.6
 
 man_MANS = chocolate-server.6             \
            chocolate-setup.6              \
@@ -43,9 +43,9 @@ man_MANS = chocolate-server.6             \
            $(SETUP_MAN_PAGES)
 
 doomdocs_DATA    = INSTALL.doom    CMDLINE.doom
-hereticdocs_DATA = INSTALL.heretic CMDLINE.heretic
-hexendocs_DATA   = INSTALL.hexen   CMDLINE.hexen
-strifedocs_DATA  = INSTALL.strife  CMDLINE.strife
+#hereticdocs_DATA = INSTALL.heretic CMDLINE.heretic
+#hexendocs_DATA   = INSTALL.hexen   CMDLINE.hexen
+#strifedocs_DATA  = INSTALL.strife  CMDLINE.strife
 
 CLEANFILES = $(GENERATED_MAN_PAGES) $(SETUP_MAN_PAGES) \
              $(doomdocs_DATA) $(hereticdocs_DATA) \

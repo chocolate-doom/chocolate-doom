@@ -221,10 +221,10 @@ EXTRA_DIST =                        \
 
 appdatadir = $(prefix)/share/appdata
 appdata_DATA =                              \
-        @PROGRAM_PREFIX@doom.appdata.xml    \
-        @PROGRAM_PREFIX@heretic.appdata.xml \
-        @PROGRAM_PREFIX@hexen.appdata.xml   \
-        @PROGRAM_PREFIX@strife.appdata.xml
+        @PROGRAM_PREFIX@doom.appdata.xml
+#       @PROGRAM_PREFIX@heretic.appdata.xml \
+#       @PROGRAM_PREFIX@hexen.appdata.xml   \
+#       @PROGRAM_PREFIX@strife.appdata.xml
 
 @PROGRAM_PREFIX@doom.appdata.xml : doom.appdata.xml
 	cp doom.appdata.xml $@
@@ -240,10 +240,10 @@ appdata_DATA =                              \
 
 appdir = $(prefix)/share/applications
 app_DATA =                                 \
-           @PROGRAM_PREFIX@doom.desktop    \
-           @PROGRAM_PREFIX@heretic.desktop \
-           @PROGRAM_PREFIX@hexen.desktop   \
-           @PROGRAM_PREFIX@strife.desktop
+           @PROGRAM_PREFIX@doom.desktop
+#          @PROGRAM_PREFIX@heretic.desktop \
+#          @PROGRAM_PREFIX@hexen.desktop   \
+#          @PROGRAM_PREFIX@strife.desktop
 
 @PROGRAM_PREFIX@doom.desktop : doom.desktop
 	cp doom.desktop $@

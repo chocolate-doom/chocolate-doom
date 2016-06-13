@@ -59,14 +59,14 @@ EXTRA_DIST=                             \
 doomdocsdir = ${docdir}/../${PROGRAM_PREFIX}doom
 doomdocs_DATA = $(DOC_FILES) NOT-BUGS.md
 
-hereticdocsdir = ${docdir}/../${PROGRAM_PREFIX}heretic
-hereticdocs_DATA = $(DOC_FILES)
+#hereticdocsdir = ${docdir}/../${PROGRAM_PREFIX}heretic
+#hereticdocs_DATA = $(DOC_FILES)
 
-hexendocsdir = ${docdir}/../${PROGRAM_PREFIX}hexen
-hexendocs_DATA = $(DOC_FILES)
+#hexendocsdir = ${docdir}/../${PROGRAM_PREFIX}hexen
+#hexendocs_DATA = $(DOC_FILES)
 
-strifedocsdir = ${docdir}/../${PROGRAM_PREFIX}strife
-strifedocs_DATA = $(DOC_FILES) README.Strife.md
+#strifedocsdir = ${docdir}/../${PROGRAM_PREFIX}strife
+#strifedocs_DATA = $(DOC_FILES) README.Strife.md
 
 MAINTAINERCLEANFILES =  $(AUX_DIST_GEN)
 
