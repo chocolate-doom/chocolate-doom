@@ -222,6 +222,7 @@ static void S_StopChannel(int cnum)
 // Kills playing sounds at start of level,
 //  determines music if any, changes music.
 //
+static short prevmap;
 
 void S_Start(void)
 {
@@ -293,7 +294,6 @@ void S_Start(void)
 
     // [crispy] do not change music if not changing map (preserves IDMUS choice)
     {
-	static short prevmap;
 	const short curmap = (gameepisode << 8) + gamemap;
 
 	if (prevmap == curmap)
@@ -751,6 +751,11 @@ void S_ChangeMusic(int musicnum, int looping)
     musicinfo_t *music = NULL;
     char namebuf[9];
     void *handle;
+
+    if (gamestate != GS_LEVEL)
+    {
+	prevmap = 0;
+    }
 
     // [crispy] play no music if this is not the right map
     if (crispy_demowarp && (gamestate != GS_LEVEL || crispy_demowarp != gamemap))
