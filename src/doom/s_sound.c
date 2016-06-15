@@ -754,7 +754,7 @@ void S_ChangeMusic(int musicnum, int looping)
 
     if (gamestate != GS_LEVEL)
     {
-	prevmap = 0;
+	prevmap = -1;
     }
 
     // [crispy] play no music if this is not the right map
