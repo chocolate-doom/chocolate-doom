@@ -391,20 +391,20 @@ static void I_ToggleFullScreen(void)
         return;
     }
 
-fullscreen = !fullscreen;
+    fullscreen = !fullscreen;
 
-if (fullscreen)
-{
-    flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
-}
+    if (fullscreen)
+    {
+        flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+    }
 
-SDL_SetWindowFullscreen(screen, flags);
+    SDL_SetWindowFullscreen(screen, flags);
 
-if (!fullscreen)
-{
-    AdjustWindowSize();
-    SDL_SetWindowSize(screen, window_width, window_height);
-}
+    if (!fullscreen)
+    {
+        AdjustWindowSize();
+        SDL_SetWindowSize(screen, window_width, window_height);
+    }
 }
 
 void I_GetEvent(void)
@@ -419,48 +419,48 @@ void I_GetEvent(void)
     {
         switch (sdlevent.type)
         {
-        case SDL_KEYDOWN:
-            if (ToggleFullScreenKeyShortcut(&sdlevent.key.keysym))
-            {
-                I_ToggleFullScreen();
+            case SDL_KEYDOWN:
+                if (ToggleFullScreenKeyShortcut(&sdlevent.key.keysym))
+                {
+                    I_ToggleFullScreen();
+                    break;
+                }
+                // deliberate fall-though
+
+            case SDL_KEYUP:
+                I_HandleKeyboardEvent(&sdlevent);
                 break;
-            }
-            // deliberate fall-though
 
-        case SDL_KEYUP:
-            I_HandleKeyboardEvent(&sdlevent);
-            break;
+            case SDL_MOUSEBUTTONDOWN:
+            case SDL_MOUSEBUTTONUP:
+                if (usemouse && !nomouse && window_focused)
+                {
+                    I_HandleMouseEvent(&sdlevent);
+                }
+                break;
 
-        case SDL_MOUSEBUTTONDOWN:
-        case SDL_MOUSEBUTTONUP:
-            if (usemouse && !nomouse && window_focused)
-            {
-                I_HandleMouseEvent(&sdlevent);
-            }
-            break;
+            case SDL_QUIT:
+                if (screensaver_mode)
+                {
+                    I_Quit();
+                }
+                else
+                {
+                    event_t event;
+                    event.type = ev_quit;
+                    D_PostEvent(&event);
+                }
+                break;
 
-        case SDL_QUIT:
-            if (screensaver_mode)
-            {
-                I_Quit();
-            }
-            else
-            {
-                event_t event;
-                event.type = ev_quit;
-                D_PostEvent(&event);
-            }
-            break;
+            case SDL_WINDOWEVENT:
+                if (sdlevent.window.windowID == SDL_GetWindowID(screen))
+                {
+                    HandleWindowEvent(&sdlevent.window);
+                }
+                break;
 
-        case SDL_WINDOWEVENT:
-            if (sdlevent.window.windowID == SDL_GetWindowID(screen))
-            {
-                HandleWindowEvent(&sdlevent.window);
-            }
-            break;
-
-        default:
-            break;
+            default:
+                break;
         }
     }
 }
@@ -468,7 +468,7 @@ void I_GetEvent(void)
 //
 // I_StartTic
 //
-void I_StartTic(void)
+void I_StartTic (void)
 {
     if (!initialized)
     {
@@ -487,7 +487,7 @@ void I_StartTic(void)
 
 static void I_UpdateBox(int x, int y, int w, int h)
 {
-    int i, j;
+    int i;
     if (x < 0 || y< 0 || w <= 0 || h <= 0
      || x + w > SCREENWIDTH || y + h > SCREENHEIGHT)
     {
@@ -1106,12 +1106,8 @@ static void SetWindowPositionVars(void)
 
 static void SetVideoMode(void)
 {
-    byte *doompal;
     int w, h;
     int flags = 0;
-    int i;
-
-    doompal = W_CacheLumpName(DEH_String("PLAYPAL"), PU_CACHE);
 
     // If we are already running, we need to free the screenbuffer
     // surface before setting the new mode.
@@ -1308,7 +1304,7 @@ void I_InitGraphics(boolean use_mode_y)
     // 32-bit RGBA screen buffer that gets loaded into a texture that gets
     // finally rendered into our window or full screen in I_FinishUpdate().
 
-    currentscreen = destpixels = 0;
+    currentscreen = destscreen = 0;
     
     if (mode_y)
     {
