@@ -27,8 +27,8 @@
 
 // Read events from all input devices
 
-void D_ProcessEvents (void); 
-	
+void D_ProcessEvents (void);
+
 
 //
 // BASE LEVEL
@@ -41,7 +41,7 @@ void D_StartTitle (void);
 void D_QuitGame (void); // [STRIFE]
 
 void D_IntroTick(void); // [STRIFE]
- 
+
 //
 // GLOBAL VARIABLES
 //

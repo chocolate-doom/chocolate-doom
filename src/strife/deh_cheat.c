@@ -26,7 +26,7 @@
 #include "am_map.h"
 #include "st_stuff.h"
 
-typedef struct 
+typedef struct
 {
     char *name;
     cheatseq_t *seq;
@@ -58,7 +58,7 @@ static deh_cheat_t allcheats[] =
 static deh_cheat_t *FindCheatByName(char *name)
 {
     size_t i;
-    
+
     for (i=0; i<arrlen(allcheats); ++i)
     {
         if (!strcasecmp(allcheats[i].name, name))

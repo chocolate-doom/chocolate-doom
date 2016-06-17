@@ -140,7 +140,7 @@ static boolean CalibrateAxis(txt_joystick_axis_t *joystick_axis)
     int i;
 
     // Check all axes to find which axis has the largest value.  We test
-    // for one axis at a time, so eg. when we prompt to push the joystick 
+    // for one axis at a time, so eg. when we prompt to push the joystick
     // left, whichever axis has the largest value is the left axis.
 
     best_axis = 0;

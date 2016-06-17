@@ -1791,7 +1791,7 @@ void P_SpawnPuff(fixed_t x, fixed_t y, fixed_t z)
 void P_SpawnBlood (fixed_t x, fixed_t y, fixed_t z, int damage)
 {
 	mobj_t	*th;
-	
+
 	z += ((P_Random()-P_Random())<<10);
 	th = P_SpawnMobj (x,y,z, MT_BLOOD);
 	th->momz = FRACUNIT*2;
@@ -2291,7 +2291,7 @@ mobj_t *P_SpawnPlayerMissile(mobj_t * source, mobjtype_t type)
 
 //----------------------------------------------------------------------------
 //
-// P_SpawnPlayerMinotaur - 
+// P_SpawnPlayerMinotaur -
 //
 //      Special missile that has larger blocking than player
 //----------------------------------------------------------------------------

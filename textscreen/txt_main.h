@@ -18,7 +18,7 @@
 #ifndef TXT_MAIN_H
 #define TXT_MAIN_H
 
-// For the moment, txt_sdl.c is the only implementation of the base 
+// For the moment, txt_sdl.c is the only implementation of the base
 // text mode screen API:
 
 #include "txt_sdl.h"
@@ -120,7 +120,7 @@ int TXT_GetChar(void);
 // Read the current state of modifier keys that are held down.
 int TXT_GetModifierState(txt_modifier_t mod);
 
-// Provides a short description of a key code, placing into the 
+// Provides a short description of a key code, placing into the
 // provided buffer.
 void TXT_GetKeyDescription(int key, char *buf, size_t buf_len);
 

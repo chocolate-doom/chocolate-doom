@@ -45,7 +45,7 @@
 // fixed_t
 #include "m_fixed.h"
 
-// angle_t 
+// angle_t
 #include "tables.h"
 
 // events

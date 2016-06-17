@@ -15,7 +15,7 @@
 //
 //  * The client waiting screen when we are waiting for the server to
 //    start the game.
-//   
+//
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -269,10 +269,10 @@ static void CheckSHA1Sums(void)
     }
 
     correct_wad = memcmp(net_local_wad_sha1sum,
-                         net_client_wait_data.wad_sha1sum, 
+                         net_client_wait_data.wad_sha1sum,
                          sizeof(sha1_digest_t)) == 0;
     correct_deh = memcmp(net_local_deh_sha1sum,
-                         net_client_wait_data.deh_sha1sum, 
+                         net_client_wait_data.deh_sha1sum,
                          sizeof(sha1_digest_t)) == 0;
     same_freedoom = net_client_wait_data.is_freedoom == net_local_is_freedoom;
 
@@ -291,8 +291,8 @@ static void CheckSHA1Sums(void)
     if (!same_freedoom)
     {
         printf("Warning: Mixing Freedoom with non-Freedoom\n");
-        printf("Local: %i  Server: %i\n", 
-               net_local_is_freedoom, 
+        printf("Local: %i  Server: %i\n",
+               net_local_is_freedoom,
                net_client_wait_data.is_freedoom);
     }
 

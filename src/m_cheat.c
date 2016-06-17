@@ -36,32 +36,32 @@ cht_CheckCheat
 ( cheatseq_t*	cht,
   char		key )
 {
-    // if we make a short sequence on a cheat with parameters, this 
+    // if we make a short sequence on a cheat with parameters, this
     // will not work in vanilla doom.  behave the same.
 
     if (cht->parameter_chars > 0 && strlen(cht->sequence) < cht->sequence_len)
         return false;
-    
+
     if (cht->chars_read < strlen(cht->sequence))
     {
         // still reading characters from the cheat code
-        // and verifying.  reset back to the beginning 
+        // and verifying.  reset back to the beginning
         // if a key is wrong
 
         if (key == cht->sequence[cht->chars_read])
             ++cht->chars_read;
         else
             cht->chars_read = 0;
-        
+
         cht->param_chars_read = 0;
     }
     else if (cht->param_chars_read < cht->parameter_chars)
     {
-        // we have passed the end of the cheat sequence and are 
-        // entering parameters now 
-        
+        // we have passed the end of the cheat sequence and are
+        // entering parameters now
+
         cht->parameter_buf[cht->param_chars_read] = key;
-        
+
         ++cht->param_chars_read;
     }
 
@@ -72,7 +72,7 @@ cht_CheckCheat
 
         return true;
     }
-    
+
     // cheat not matched yet
 
     return false;

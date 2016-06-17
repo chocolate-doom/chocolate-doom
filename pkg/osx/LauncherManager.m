@@ -130,7 +130,7 @@ static NSString *GetNextArgument(NSString *commandLine, int *pos, int *arg_pos)
 }
 
 // Given the specified command line argument, find the index
-// to insert the new file within the command line.  Returns -1 if the 
+// to insert the new file within the command line.  Returns -1 if the
 // argument is not already within the arguments string.
 
 static int GetFileInsertIndex(NSString *commandLine, NSString *needle)

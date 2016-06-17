@@ -149,7 +149,7 @@ static int MapCmdIDs[] = {
     MCMD_CD_TITLETRACK
 };
 
-static int cd_NonLevelTracks[6];        // Non-level specific song cd track numbers 
+static int cd_NonLevelTracks[6];        // Non-level specific song cd track numbers
 
 // CODE --------------------------------------------------------------------
 
@@ -830,7 +830,7 @@ static void InitMapInfo(void)
         }
         SC_MustGetNumber();
         if (sc_Number < 1 || sc_Number > 99)
-        {                       // 
+        {                       //
             SC_ScriptError(NULL);
         }
         map = sc_Number;

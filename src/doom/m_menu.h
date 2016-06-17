@@ -14,7 +14,7 @@
 //
 // DESCRIPTION:
 //   Menu widget stuff, episode selection and such.
-//    
+//
 
 
 #ifndef __M_MENU__
@@ -58,4 +58,4 @@ extern int screenblocks;
 
 
 
-#endif    
+#endif

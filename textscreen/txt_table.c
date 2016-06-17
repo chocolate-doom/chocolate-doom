@@ -369,8 +369,8 @@ void TXT_AddWidgets(TXT_UNCAST_ARG(table), ...)
     va_start(args, TXT_UNCAST_ARG_NAME(table));
 
     // Keep adding widgets until a NULL is reached.
-   
-    for (;;) 
+
+    for (;;)
     {
         widget = va_arg(args, txt_widget_t *);
 
@@ -409,7 +409,7 @@ static int SelectableCell(txt_table_t *table, int x, int y)
 }
 
 // Tries to locate a selectable widget in the given row, returning
-// the column number of the first column available or -1 if none are 
+// the column number of the first column available or -1 if none are
 // available in the given row.
 //
 // Starts from start_col, then searches nearby columns.
@@ -705,7 +705,7 @@ static void TXT_TableLayout(TXT_UNCAST_ARG(table))
     CalcRowColSizes(table, row_heights, column_widths);
 
     // If this table only has one column, expand column size to fit
-    // the display width.  Ensures that separators reach the window edges 
+    // the display width.  Ensures that separators reach the window edges
     // when drawing windows.
 
     if (table->columns == 1)
@@ -884,7 +884,7 @@ void TXT_InitTable(txt_table_t *table, int columns)
     table->selected_x = 0;
     table->selected_y = 0;
 
-    // Add a strut for each column at the start of the table. 
+    // Add a strut for each column at the start of the table.
     // These are used by the TXT_SetColumnWidths function below:
     // the struts are created with widths of 0 each, but this
     // function changes them.
@@ -939,7 +939,7 @@ txt_table_t *TXT_NewHorizBox(TXT_UNCAST_ARG(first_widget), ...)
             ++num_args;
         }
     }
-    
+
     va_end(args);
 
     // Create the table.
@@ -968,7 +968,7 @@ txt_table_t *TXT_NewHorizBox(TXT_UNCAST_ARG(first_widget), ...)
             TXT_AddWidget(result, widget);
         }
     }
-    
+
     va_end(args);
 
     return result;

@@ -14,7 +14,7 @@
 //
 // DESCRIPTION:
 //
-//    
+//
 
 
 #ifndef __M_RANDOM__

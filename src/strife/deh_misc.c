@@ -24,7 +24,7 @@
 #include "deh_main.h"
 #include "deh_misc.h"
 
-// Dehacked: "Initial Health" 
+// Dehacked: "Initial Health"
 // This is the initial health a player has when starting anew.
 // See G_PlayerReborn in g_game.c
 
@@ -37,7 +37,7 @@ int deh_initial_health = DEH_DEFAULT_INITIAL_HEALTH;
 int deh_initial_bullets = DEH_DEFAULT_INITIAL_BULLETS;
 
 // Dehacked: "Max Health"
-// This is the maximum health that can be reached using medikits 
+// This is the maximum health that can be reached using medikits
 // alone.  See P_TouchSpecialThing in p_inter.c
 
 int deh_max_health = DEH_DEFAULT_MAX_HEALTH;
@@ -49,7 +49,7 @@ int deh_max_health = DEH_DEFAULT_MAX_HEALTH;
 int deh_max_armor = DEH_DEFAULT_MAX_ARMOR;
 
 // Dehacked: "Green Armor Class"
-// This is the armor class that is given when picking up the green 
+// This is the armor class that is given when picking up the green
 // armor or an armor helmet. See P_TouchSpecialThing in p_inter.c
 //
 // DOS dehacked only modifies the behavior of the green armor shirt,
@@ -58,7 +58,7 @@ int deh_max_armor = DEH_DEFAULT_MAX_ARMOR;
 int deh_green_armor_class = DEH_DEFAULT_GREEN_ARMOR_CLASS;
 
 // Dehacked: "Blue Armor Class"
-// This is the armor class that is given when picking up the blue 
+// This is the armor class that is given when picking up the blue
 // armor or a megasphere. See P_TouchSpecialThing in p_inter.c
 //
 // DOS dehacked only modifies the MegaArmor behavior and not
@@ -79,7 +79,7 @@ int deh_max_soulsphere = DEH_DEFAULT_MAX_SOULSPHERE;
 int deh_soulsphere_health = DEH_DEFAULT_SOULSPHERE_HEALTH;
 
 // Dehacked: "Megasphere health"
-// This is what the health is set to after picking up a 
+// This is what the health is set to after picking up a
 // megasphere.  See P_TouchSpecialThing in p_inter.c
 
 int deh_megasphere_health = DEH_DEFAULT_MEGASPHERE_HEALTH;
@@ -121,7 +121,7 @@ int deh_idkfa_armor_class = DEH_DEFAULT_IDKFA_ARMOR_CLASS;
 int deh_bfg_cells_per_shot = DEH_DEFAULT_BFG_CELLS_PER_SHOT;
 
 // Dehacked: "Monsters infight"
-// This controls whether monsters can harm other monsters of the same 
+// This controls whether monsters can harm other monsters of the same
 // species.  For example, whether an imp fireball will damage other
 // imps.  The value of this in dehacked patches is weird - '202' means
 // off, while '221' means on.
@@ -176,7 +176,7 @@ static void DEH_MiscParseLine(deh_context_t *context, char *line, void *tag)
     if (!strcasecmp(variable_name, "Monsters Infight"))
     {
         // See notes above.
- 
+
         if (ivalue == 202)
         {
             deh_species_infighting = 0;
@@ -187,7 +187,7 @@ static void DEH_MiscParseLine(deh_context_t *context, char *line, void *tag)
         }
         else
         {
-            DEH_Warning(context, 
+            DEH_Warning(context,
                         "Invalid value for 'Monsters Infight': %i", ivalue);
         }
 

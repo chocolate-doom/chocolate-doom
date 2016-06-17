@@ -53,7 +53,7 @@ static void TXT_LabelDrawer(TXT_UNCAST_ARG(label))
 
     for (y=0; y<label->h; ++y)
     {
-        // Calculate the amount to indent this line due to the align 
+        // Calculate the amount to indent this line due to the align
         // setting
 
         switch (label->widget.align)

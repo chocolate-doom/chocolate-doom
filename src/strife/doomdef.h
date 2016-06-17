@@ -48,7 +48,7 @@
 
 // The current state of the game: whether we are
 // playing, gazing at the intermission screen,
-// the game final animation, or a demo. 
+// the game final animation, or a demo.
 typedef enum
 {
     GS_LEVEL,
@@ -156,7 +156,7 @@ typedef enum
     wp_torpedo,
 
     NUMWEAPONS,
-    
+
     // No pending weapon change.
     wp_nochange
 
@@ -192,7 +192,7 @@ typedef enum
     pw_communicator,
     pw_targeter,
     NUMPOWERS
-    
+
 } powertype_t;
 
 // villsa [STRIFE]
@@ -270,7 +270,7 @@ enum
     QF_QUEST30 = (1 << tk_quest30),
     QF_QUEST31 = (1 << tk_quest31),
     QF_QUEST32 = (1 << tk_quest32), // Unused; BUG: Broken Coupling accidentally sets it.
-    
+
     QF_ALLQUESTS  = (QF_QUEST31 + (QF_QUEST31 - 1)) // does not include bit 32!
 };
 
@@ -285,7 +285,7 @@ typedef enum
     IRONTICS	= (80*TICRATE), // villsa [STRIFE] changed from 60 to 80
     PMUPTICS    = (80*TICRATE), // villsa [STRIFE]
     TARGTICS    = (160*TICRATE),// villsa [STRIFE]
-    
+
 } powerduration_t;
 
 #endif          // __DOOMDEF__

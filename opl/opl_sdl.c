@@ -306,7 +306,7 @@ static int OPL_SDL_Init(unsigned int port_base)
 
         SDL_PauseAudio(0);
 
-        // When this module shuts down, it has the responsibility to 
+        // When this module shuts down, it has the responsibility to
         // shut down SDL.
 
         sdl_was_initialized = 1;
@@ -332,7 +332,7 @@ static int OPL_SDL_Init(unsigned int port_base)
 
     if (mixing_format != AUDIO_S16SYS || mixing_channels != 2)
     {
-        fprintf(stderr, 
+        fprintf(stderr,
                 "OPL_SDL only supports native signed 16-bit LSB, "
                 "stereo format!\n");
 

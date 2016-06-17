@@ -298,7 +298,7 @@ void P_LineOpening(line_t * linedef)
 /*
 ===================
 =
-= P_UnsetThingPosition 
+= P_UnsetThingPosition
 =
 = Unlinks a thing from block map and sectors
 =
@@ -342,7 +342,7 @@ void P_UnsetThingPosition(mobj_t * thing)
 /*
 ===================
 =
-= P_SetThingPosition 
+= P_SetThingPosition
 =
 = Links a thing into both a block and a subsector based on it's x y
 = Sets thing->subsector properly
@@ -377,7 +377,7 @@ void P_SetThingPosition(mobj_t * thing)
 // link into blockmap
 //
     if (!(thing->flags & MF_NOBLOCKMAP))
-    {                           // inert things don't need to be in blockmap            
+    {                           // inert things don't need to be in blockmap
         blockx = (thing->x - bmaporgx) >> MAPBLOCKSHIFT;
         blocky = (thing->y - bmaporgy) >> MAPBLOCKSHIFT;
         if (blockx >= 0 && blockx < bmapwidth && blocky >= 0
@@ -625,7 +625,7 @@ boolean P_TraverseIntercepts(traverser_t func, fixed_t maxfrac)
             }
 
         if (dist > maxfrac)
-            return true;        // checked everything in range          
+            return true;        // checked everything in range
 #if 0
         {                       // don't check these yet, ther may be others inserted
             in = scan = intercepts;

@@ -80,7 +80,7 @@ typedef struct mapdialog_s
     char voice[MDLG_LUMPLEN];           // voice file to play
     char backpic[MDLG_LUMPLEN];         // backdrop pic for character, if any
     char text[MDLG_TEXTLEN];            // main message text
-    
+
     // options that this dialog gives the player
     mapdlgchoice_t choices[MDLG_MAXCHOICES];
 } mapdialog_t;

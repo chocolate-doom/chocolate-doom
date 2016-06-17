@@ -47,7 +47,7 @@
 // Distance tp origin when sounds should be maxed out.
 // This should relate to movement clipping resolution
 // (see BLOCKMAP handling).
-// In the source code release: (160*FRACUNIT).  Changed back to the 
+// In the source code release: (160*FRACUNIT).  Changed back to the
 // Vanilla value of 200 (why was this changed?)
 
 #define S_CLOSE_DIST (200 * FRACUNIT)
@@ -75,7 +75,7 @@ typedef struct
     int handle;
 
     int pitch;
-    
+
 } channel_t;
 
 // The set of channels available
@@ -87,7 +87,7 @@ static channel_t *channels;
 
 int sfxVolume = 8;
 
-// Maximum volume of music. 
+// Maximum volume of music.
 
 int musicVolume = 13;
 
@@ -106,7 +106,7 @@ static int snd_VoiceVolume;
 
 // Whether songs are mus_paused
 
-static boolean mus_paused;        
+static boolean mus_paused;
 
 // Music currently being played
 
@@ -135,7 +135,7 @@ int disable_voices = 0;
 // haleyjd 09/11/10: [STRIFE] Added voice volume
 //
 void S_Init(int sfxVolume, int musicVolume, int voiceVolume)
-{  
+{
     int i;
 
     I_SetOPLDriverVer(opl_doom_1_9);
@@ -203,7 +203,7 @@ static void S_StopChannel(int cnum)
                 break;
             }
         }
-        
+
         // degrade usefulness of sound data
 
         c->sfxinfo->usefulness--;
@@ -275,7 +275,7 @@ static int S_GetChannel(mobj_t *origin, sfxinfo_t *sfxinfo, boolean isvoice)
 {
     // channel number to use
     int                cnum;
-    
+
     channel_t*        c;
 
     // Find an open channel
@@ -284,7 +284,7 @@ static int S_GetChannel(mobj_t *origin, sfxinfo_t *sfxinfo, boolean isvoice)
         if (!channels[cnum].sfxinfo)
         {
             break;
-        } 
+        }
         else if (origin && channels[cnum].origin == origin &&
                  (isvoice || cnum != i_voicehandle)) // haleyjd
         {
@@ -314,7 +314,7 @@ static int S_GetChannel(mobj_t *origin, sfxinfo_t *sfxinfo, boolean isvoice)
 
         if (cnum == snd_channels)
         {
-            // FUCK!  No lower priority.  Sorry, Charlie.    
+            // FUCK!  No lower priority.  Sorry, Charlie.
             return -1;
         }
         else
@@ -359,13 +359,13 @@ static int S_AdjustSoundParams(mobj_t *listener, mobj_t *source,
 
     // From _GG1_ p.428. Appox. eucledian distance fast.
     approx_dist = adx + ady - ((adx < ady ? adx : ady)>>1);
-    
+
     // [STRIFE] removed gamemap == 8 hack
     if (approx_dist > S_CLIPPING_DIST)
     {
         return 0;
     }
-    
+
     // angle of source to listener
     angle = R_PointToAngle2(listener->x,
                             listener->y,
@@ -397,9 +397,9 @@ static int S_AdjustSoundParams(mobj_t *listener, mobj_t *source,
         // distance effect
         *vol = (snd_SfxVolume
                 * ((S_CLIPPING_DIST - approx_dist)>>FRACBITS))
-            / S_ATTENUATOR; 
+            / S_ATTENUATOR;
     }
-    
+
     return (*vol > 0);
 }
 
@@ -420,8 +420,8 @@ void S_StartSound(void *origin_p, int sfx_id)
     if (sfx_id < 1 || sfx_id > NUMSFX)
     {
         // [STRIFE]: BUG - Note: vanilla had some extremely buggy and dangerous
-        // code here that tried to print the sprite name of the object playing 
-        // the bad sound. Because it invokes multiple undefined behaviors and 
+        // code here that tried to print the sprite name of the object playing
+        // the bad sound. Because it invokes multiple undefined behaviors and
         // is of basically no consequence, it has deliberately not been ported.
         I_Error("Bad sfx #: %d", sfx_id);
     }
@@ -602,8 +602,8 @@ void I_StartVoice(const char *lumpname)
         S_StopChannel(i_voicehandle);
 
     // Vanilla STRIFE appears to have stopped any current voice without
-    // starting a new one if NULL was passed in here, though I cannot 
-    // find an explicit check for NULL in the assembly. Either way, it 
+    // starting a new one if NULL was passed in here, though I cannot
+    // find an explicit check for NULL in the assembly. Either way, it
     // didn't crash, so do a check now:
     if(lumpname == NULL)
         return;
@@ -619,7 +619,7 @@ void I_StartVoice(const char *lumpname)
         // get a channel for the voice
         i_voicehandle = S_GetChannel(NULL, &voice->sfx, true);
 
-        channels[i_voicehandle].handle 
+        channels[i_voicehandle].handle
             = I_StartSound(&voice->sfx, i_voicehandle, snd_VoiceVolume, NORM_SEP, NORM_PITCH);
     }
 }
@@ -723,7 +723,7 @@ void S_SetMusicVolume(int volume)
     {
         I_Error("Attempt to set music volume at %d",
                 volume);
-    }    
+    }
 
     I_SetMusicVolume(volume);
 }

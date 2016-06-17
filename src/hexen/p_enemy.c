@@ -1101,9 +1101,9 @@ void A_MinotaurFade2(mobj_t * actor)
 
 //----------------------------------------------------------------------------
 //
-// A_MinotaurRoam - 
+// A_MinotaurRoam -
 //
-// 
+//
 //----------------------------------------------------------------------------
 
 void A_MinotaurLook(mobj_t * actor);
@@ -1130,7 +1130,7 @@ static boolean CheckMinotaurAge(mobj_t *mo)
 
 void A_MinotaurRoam(mobj_t * actor)
 {
-    actor->flags &= ~MF_SHADOW; // In case pain caused him to 
+    actor->flags &= ~MF_SHADOW; // In case pain caused him to
     actor->flags &= ~MF_ALTSHADOW;      // skip his fade in.
 
     if (!CheckMinotaurAge(actor))
@@ -1248,7 +1248,7 @@ void A_MinotaurLook(mobj_t * actor)
 
 void A_MinotaurChase(mobj_t * actor)
 {
-    actor->flags &= ~MF_SHADOW; // In case pain caused him to 
+    actor->flags &= ~MF_SHADOW; // In case pain caused him to
     actor->flags &= ~MF_ALTSHADOW;      // skip his fade in.
 
     if (!CheckMinotaurAge(actor))
@@ -2112,7 +2112,7 @@ void A_SerpentChase(mobj_t * actor)
 //============================================================================
 //
 // A_SerpentRaiseHump
-// 
+//
 // Raises the hump above the surface by raising the floorclip level
 //============================================================================
 
@@ -2124,7 +2124,7 @@ void A_SerpentRaiseHump(mobj_t * actor)
 //============================================================================
 //
 // A_SerpentLowerHump
-// 
+//
 //============================================================================
 
 void A_SerpentLowerHump(mobj_t * actor)
@@ -2136,7 +2136,7 @@ void A_SerpentLowerHump(mobj_t * actor)
 //
 // A_SerpentHumpDecide
 //
-//              Decided whether to hump up, or if the mobj is a serpent leader, 
+//              Decided whether to hump up, or if the mobj is a serpent leader,
 //                      to missile attack
 //============================================================================
 
@@ -3285,8 +3285,8 @@ boolean A_SinkMobj(mobj_t * actor)
 
 //
 // A_RaiseMobj
-// Raise a mobj incrementally from the floor to 
-// 
+// Raise a mobj incrementally from the floor to
+//
 
 boolean A_RaiseMobj(mobj_t * actor)
 {
@@ -4067,7 +4067,7 @@ void A_SorcBallOrbit(mobj_t * actor)
             {
                 if (actor->special2.i-- <= 0)
                 {
-                    // Done rapid firing 
+                    // Done rapid firing
                     parent->args[3] = SORC_STOPPED;
                     // Back to orbit balls
                     if (parent->health > 0)
@@ -4379,7 +4379,7 @@ void A_SorcFX1Seek(mobj_t * actor)
 //              special1                current angle
 //              special2
 //              args[0]         0 = CW,  1 = CCW
-//              args[1]         
+//              args[1]
 //============================================================================
 
 // Split ball in two

@@ -901,7 +901,7 @@ static void StreamOutMobjSpecials(mobj_t *mobj)
 {
     unsigned int special1, special2;
     boolean corpse;
-    
+
     corpse = (mobj->flags & MF_CORPSE) != 0;
     special1 = mobj->special1.i;
     special2 = mobj->special2.i;

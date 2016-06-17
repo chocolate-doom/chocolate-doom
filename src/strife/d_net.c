@@ -61,7 +61,7 @@ static void PlayerQuitGame(player_t *player)
 
     // TODO: check if it is sensible to do this:
 
-    if (demorecording) 
+    if (demorecording)
     {
         G_CheckDemoStatus ();
     }
@@ -107,7 +107,7 @@ static loop_interface_t strife_loop_interface = {
 };
 
 
-// Load game settings from the specified structure and 
+// Load game settings from the specified structure and
 // set global variables.
 
 static void LoadGameSettings(net_gamesettings_t *settings)
@@ -181,7 +181,7 @@ static void InitConnectData(net_connect_data_t *connect_data)
         connect_data->drone = true;
     }
 
-    //! 
+    //!
     // @category net
     //
     // Run as the right screen in three screen mode.

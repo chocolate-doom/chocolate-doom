@@ -15,7 +15,7 @@
 //
 // DESCRIPTION:
 //	Movement/collision utility functions,
-//	as used by function in p_map.c. 
+//	as used by function in p_map.c.
 //	BLOCKMAP Iterator functions,
 //	and some PIT_* functions to use for iteration.
 //
@@ -275,12 +275,12 @@ P_InterceptVector
     v2y = (float)v2->y/FRACUNIT;
     v2dx = (float)v2->dx/FRACUNIT;
     v2dy = (float)v2->dy/FRACUNIT;
-	
+
     den = v1dy*v2dx - v1dx*v2dy;
 
     if (den == 0)
 	return 0;	// parallel
-    
+
     num = (v1x - v2x)*v1dy + (v2y - v1y)*v1dx;
     frac = num / den;
 
@@ -498,7 +498,7 @@ P_BlockLinesIterator
     {
         return true;
     }
-    
+
     offset = y*bmapwidth+x;
 
     offset = *(blockmap+offset);
@@ -700,9 +700,9 @@ boolean PIT_AddThingIntercepts (mobj_t* thing)
     intercept_p->frac = frac;
     intercept_p->isaline = false;
     intercept_p->d.thing = thing;
-    
+
     intercept_p++;
-    
+
     // haleyjd 20110204 [STRIFE]: As above, protection against intercepts
     // overflows, courtesy of Rogue Software.
     if(intercept_p <= &intercepts[MAXINTERCEPTS_ORIGINAL-2])
@@ -721,7 +721,7 @@ boolean PIT_AddThingIntercepts (mobj_t* thing)
 // for all lines.
 //
 // [STRIFE] Verified unmodified.
-// 
+//
 boolean
 P_TraverseIntercepts
 ( traverser_t	func,
@@ -776,7 +776,7 @@ extern fixed_t bulletslope;
 
 #if 0
 // Intercepts Overrun emulation, from PrBoom-plus.
-// Thanks to Andrey Budko (entryway) for researching this and his 
+// Thanks to Andrey Budko (entryway) for researching this and his
 // implementation of Intercepts Overrun emulation in PrBoom-plus
 // which this is based on.
 
@@ -892,7 +892,7 @@ static void InterceptsOverrun(int num_intercepts, intercept_t *intercept)
     // the values from the intercept structure.
     //
     // Note: the ->d.{thing,line} member should really have its
-    // address translated into the correct address value for 
+    // address translated into the correct address value for
     // Vanilla Doom.
 
     InterceptsMemoryOverrun(location, intercept->frac);
@@ -924,18 +924,18 @@ P_PathTraverse
     fixed_t yt1;
     fixed_t xt2;
     fixed_t yt2;
-    
+
     fixed_t xstep;
     fixed_t ystep;
-    
+
     fixed_t partial;
-    
+
     fixed_t xintercept;
     fixed_t yintercept;
-    
+
     int     mapx;
     int     mapy;
-    
+
     int     mapxstep;
     int     mapystep;
 
@@ -984,7 +984,7 @@ P_PathTraverse
         mapxstep = 0;
         partial = FRACUNIT;
         ystep = 256*FRACUNIT;
-    }	
+    }
 
     yintercept = (y1>>MAPBTOFRAC) + FixedMul (partial, ystep);
 
@@ -1006,7 +1006,7 @@ P_PathTraverse
         mapystep = 0;
         partial = FRACUNIT;
         xstep = 256*FRACUNIT;
-    }	
+    }
     xintercept = (x1>>MAPBTOFRAC) + FixedMul (partial, xstep);
 
     // Step through map blocks.

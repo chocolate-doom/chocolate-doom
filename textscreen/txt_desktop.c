@@ -150,11 +150,11 @@ static void DrawDesktopBackground(const char *title)
     unsigned char *p;
 
     screendata = TXT_GetScreenData();
-    
+
     // Fill the screen with gradient characters
 
     p = screendata;
-    
+
     for (i=0; i<TXT_SCREEN_W * TXT_SCREEN_H; ++i)
     {
         *p++ = 0xb1;

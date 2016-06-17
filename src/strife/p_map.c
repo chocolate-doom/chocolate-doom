@@ -41,7 +41,7 @@
 
 // Spechit overrun magic value.
 //
-// This is the value used by PrBoom-plus.  I think the value below is 
+// This is the value used by PrBoom-plus.  I think the value below is
 // actually better and works with more demos.  However, I think
 // it's better for the spechits emulation to be compatible with
 // PrBoom-plus, at least so that the big spechits emulation list
@@ -49,12 +49,12 @@
 
 #define DEFAULT_SPECHIT_MAGIC 0x01C09C98
 
-// This is from a post by myk on the Doomworld forums, 
+// This is from a post by myk on the Doomworld forums,
 // outputted from entryway's spechit_magic generator for
 // s205n546.lmp.  The _exact_ value of this isn't too
 // important; as long as it is in the right general
 // range, it will usually work.  Otherwise, we can use
-// the generator (hacked doom2.exe) and provide it 
+// the generator (hacked doom2.exe) and provide it
 // with -spechit.
 
 //#define DEFAULT_SPECHIT_MAGIC 0x84f968e8
@@ -81,7 +81,7 @@ line_t*     ceilingline;
 
 // haleyjd 20110203: [STRIFE] New global
 // "blockingline" tracks the linedef responsible for blocking motion of an mobj
-// for purposes of doing impact special activation by missiles. Suspiciously 
+// for purposes of doing impact special activation by missiles. Suspiciously
 // similar to the solution used by Raven in Heretic and Hexen.
 line_t     *blockingline;
 
@@ -90,10 +90,10 @@ line_t     *blockingline;
 
 // fraggle: I have increased the size of this buffer.  In the original Doom,
 // overrunning past this limit caused other bits of memory to be overwritten,
-// affecting demo playback.  However, in doing so, the limit was still 
+// affecting demo playback.  However, in doing so, the limit was still
 // exceeded.  So we have to support more than 8 specials.
 //
-// We keep the original limit, to detect what variables in memory were 
+// We keep the original limit, to detect what variables in memory were
 // overwritten (see SpechitOverrun())
 
 #define MAXSPECIALCROSS 		20
@@ -106,7 +106,7 @@ int		numspechit;
 
 //
 // TELEPORT MOVE
-// 
+//
 
 //
 // PIT_StompThing
@@ -160,9 +160,9 @@ boolean P_TeleportMove(mobj_t*  thing, fixed_t  x, fixed_t  y)
     int                 yh;
     int                 bx;
     int                 by;
-    
+
     subsector_t*        newsubsec;
-    
+
     // kill anything occupying the position
     tmthing = thing;
     tmflags = thing->flags;
@@ -177,7 +177,7 @@ boolean P_TeleportMove(mobj_t*  thing, fixed_t  x, fixed_t  y)
 
     newsubsec = R_PointInSubsector (x,y);
     ceilingline = NULL;
-    
+
     // The base floor/ceiling is from the subsector
     // that contains the point.
     // Any contacted lines the step closer together
@@ -187,7 +187,7 @@ boolean P_TeleportMove(mobj_t*  thing, fixed_t  x, fixed_t  y)
 
     validcount++;
     numspechit = 0;
-    
+
     // stomp on any things contacted
     xl = (tmbbox[BOXLEFT] - bmaporgx - MAXRADIUS)>>MAPBLOCKSHIFT;
     xh = (tmbbox[BOXRIGHT] - bmaporgx + MAXRADIUS)>>MAPBLOCKSHIFT;
@@ -198,7 +198,7 @@ boolean P_TeleportMove(mobj_t*  thing, fixed_t  x, fixed_t  y)
         for (by=yl ; by<=yh ; by++)
             if (!P_BlockThingsIterator(bx,by,PIT_StompThing))
                 return false;
-    
+
     // the move is ok,
     // so link the thing into its new position
     P_UnsetThingPosition (thing);
@@ -237,7 +237,7 @@ boolean PIT_CheckLine (line_t* ld)
         return true;
 
     // A line has been hit
-    
+
     // The moving thing's destination position will cross
     // the given line.
     // If this should not be allowed, return false.
@@ -246,7 +246,7 @@ boolean PIT_CheckLine (line_t* ld)
     // NOTE: specials are NOT sorted by order,
     // so two special lines that are only 8 pixels apart
     // could be crossed in either order.
-    
+
     if (!ld->backsector)
         return false;           // one sided line
 
@@ -268,7 +268,7 @@ boolean PIT_CheckLine (line_t* ld)
     }
 
     // set openrange, opentop, openbottom
-    P_LineOpening (ld);	
+    P_LineOpening (ld);
 
     // adjust floor / ceiling heights
     if (opentop < tmceilingz)
@@ -278,7 +278,7 @@ boolean PIT_CheckLine (line_t* ld)
     }
 
     if (openbottom > tmfloorz)
-        tmfloorz = openbottom;	
+        tmfloorz = openbottom;
 
     if (lowfloor < tmdropoffz)
         tmdropoffz = lowfloor;
@@ -321,7 +321,7 @@ boolean PIT_CheckThing (mobj_t* thing)
         || abs(thing->y - tmy) >= blockdist )
     {
         // didn't hit it
-        return true;	
+        return true;
     }
 
     // villsa [STRIFE] see if it went over / under
@@ -338,7 +338,7 @@ boolean PIT_CheckThing (mobj_t* thing)
     // missiles can hit other things
     if (tmthing->flags & MF_MISSILE)
     {
-        // villsa [STRIFE] code to check over/under clipping moved to the beginning of the 
+        // villsa [STRIFE] code to check over/under clipping moved to the beginning of the
         // function, so that it applies to everything.
 
         // villsa [STRIFE] updated to strife version
@@ -380,7 +380,7 @@ boolean PIT_CheckThing (mobj_t* thing)
         // don't traverse any more
         return false;
     }
-    
+
     // check for special pickup
     if (thing->flags & MF_SPECIAL)
     {
@@ -405,7 +405,7 @@ boolean PIT_CheckThing (mobj_t* thing)
 // P_CheckPosition
 // This is purely informative, nothing is modified
 // (except things picked up).
-// 
+//
 // in:
 //  a mobj_t (can be valid or invalid)
 //  a position to be checked
@@ -454,11 +454,11 @@ P_CheckPosition
     tmbbox[BOXLEFT] = x - tmthing->radius;
 
     newsubsec = R_PointInSubsector (x,y);
-    
+
     // [STRIFE] clear blockingline (see P_XYMovement, P_BlockLinesIterator)
     blockingline = NULL;
     ceilingline  = NULL;
-    
+
     // The base floor / ceiling is from the subsector
     // that contains the point.
     // Any contacted lines the step closer together
@@ -471,7 +471,7 @@ P_CheckPosition
 
     if ( tmflags & MF_NOCLIP )
         return true;
-    
+
     // Check things first, possibly picking things up.
     // The bounding box is extended by MAXRADIUS
     // because mobj_ts are grouped into mapblocks
@@ -486,7 +486,7 @@ P_CheckPosition
         for (by=yl ; by<=yh ; by++)
             if (!P_BlockThingsIterator(bx,by,PIT_CheckThing))
                 return false;
-    
+
     // check lines
     xl = (tmbbox[BOXLEFT] - bmaporgx)>>MAPBLOCKSHIFT;
     xh = (tmbbox[BOXRIGHT] - bmaporgx)>>MAPBLOCKSHIFT;
@@ -546,10 +546,10 @@ P_TryMove
 
         // haleyjd 20110204 [STRIFE]: dropoff height changed 24 -> 32
         if ( !(thing->flags&(MF_DROPOFF|MF_FLOAT))
-            && tmfloorz - tmdropoffz > 32*FRACUNIT ) 
+            && tmfloorz - tmdropoffz > 32*FRACUNIT )
             return false;       // don't stand over a dropoff
     }
-    
+
     // the move is ok,
     // so link the thing into its new position
     P_UnsetThingPosition (thing);
@@ -562,7 +562,7 @@ P_TryMove
     thing->y = y;
 
     P_SetThingPosition (thing);
-    
+
     // if any special lines were hit, do the effect
     if (! (thing->flags&MF_NOCLIP) ) // villsa [STRIFE] MF_TELEPORT not used
     {
@@ -771,8 +771,8 @@ void P_HitSlideLine (line_t* ld)
     movelen = P_AproxDistance (tmxmove, tmymove);
     newlen = FixedMul (movelen, finecosine[deltaangle]);
 
-    tmxmove = FixedMul (newlen, finecosine[lineangle]);	
-    tmymove = FixedMul (newlen, finesine[lineangle]);	
+    tmxmove = FixedMul (newlen, finecosine[lineangle]);
+    tmymove = FixedMul (newlen, finesine[lineangle]);
 }
 
 
@@ -855,7 +855,7 @@ void P_SlideMove (mobj_t* mo)
 
     slidemo = mo;
     hitcount = 0;
-    
+
 retry:
     if (++hitcount == 3)
         goto stairstep;     // don't loop forever
@@ -891,7 +891,7 @@ retry:
                      PT_ADDLINES, PTR_SlideTraverse );
     P_PathTraverse ( leadx, traily, leadx+mo->momx, traily+mo->momy,
                      PT_ADDLINES, PTR_SlideTraverse );
-    
+
     // move up to the wall
     if (bestslidefrac == FRACUNIT+1)
     {
@@ -912,7 +912,7 @@ stairstep:
         if (!P_TryMove (mo, mo->x+newx, mo->y+newy))
             goto stairstep;
     }
-    
+
     // Now continue along the wall.
     // First calculate remainder.
     bestslidefrac = FRACUNIT-(bestslidefrac+0x800);
@@ -946,7 +946,7 @@ mobj_t*		shootthing;
 
 // Height if not aiming up or down
 // ???: use slope for monsters?
-fixed_t		shootz;	
+fixed_t		shootz;
 
 int		la_damage;
 fixed_t		attackrange;
@@ -955,7 +955,7 @@ fixed_t		aimslope;
 
 // slopes to top and bottom of target
 extern fixed_t	topslope;
-extern fixed_t	bottomslope;	
+extern fixed_t	bottomslope;
 
 
 //
@@ -1145,9 +1145,9 @@ hitline:
             else
                 P_SpawnMobj(x, y, z, MT_STRIFEPUFF3);
         }
-        
+
         // don't go any farther
-        return false;	
+        return false;
     }
 
     // shoot a thing
@@ -1226,15 +1226,15 @@ P_AimLineAttack
 
     angle >>= ANGLETOFINESHIFT;
     shootthing = t1;
-    
+
     x2 = t1->x + (distance>>FRACBITS)*finecosine[angle];
     y2 = t1->y + (distance>>FRACBITS)*finesine[angle];
     shootz = t1->z + (t1->height>>1) + 8*FRACUNIT;
 
     // can't shoot outside view angles
-    topslope = 100*FRACUNIT/160;	
+    topslope = 100*FRACUNIT/160;
     bottomslope = -100*FRACUNIT/160;
-    
+
     attackrange = distance;
     linetarget = NULL;
 
@@ -1253,7 +1253,7 @@ P_AimLineAttack
 
     return 0;
 }
- 
+
 
 //
 // P_LineAttack
@@ -1294,7 +1294,7 @@ P_LineAttack
                    traverseflags,
                    PTR_ShootTraverse);
 }
- 
+
 
 
 //
@@ -1435,12 +1435,12 @@ P_RadiusAttack
 {
     int         x;
     int         y;
-    
+
     int         xl;
     int         xh;
     int         yl;
     int         yh;
-    
+
     fixed_t     dist;
 
     dist = (damage+MAXRADIUS)<<FRACBITS;
@@ -1533,7 +1533,7 @@ boolean PIT_ChangeSector (mobj_t*   thing)
         // assume it is bloody gibs or something
         return true;
     }
-    
+
     nofit = true;
 
     if (crushchange && !(leveltime&3) )
@@ -1591,7 +1591,7 @@ static void SpechitOverrun(line_t *ld)
 {
     static unsigned int baseaddr = 0;
     unsigned int addr;
-   
+
     if (baseaddr == 0)
     {
         int p;
@@ -1608,7 +1608,7 @@ static void SpechitOverrun(line_t *ld)
         //
 
         p = M_CheckParmWithArgs("-spechit", 1);
-        
+
         if (p > 0)
         {
             M_StrToInt(myargv[p+1], (int *) &baseaddr);
@@ -1618,24 +1618,24 @@ static void SpechitOverrun(line_t *ld)
             baseaddr = DEFAULT_SPECHIT_MAGIC;
         }
     }
-    
+
     // Calculate address used in doom2.exe
 
     addr = baseaddr + (ld - lines) * 0x3E;
 
     switch(numspechit)
     {
-        case 9: 
+        case 9:
         case 10:
         case 11:
         case 12:
             tmbbox[numspechit-9] = addr;
             break;
-        case 13: 
-            nofit = addr; // haleyjd 20110204: nofit/crushchange are in opposite 
+        case 13:
+            nofit = addr; // haleyjd 20110204: nofit/crushchange are in opposite
             break;        // order in the Strife binary.
-        case 14: 
-            crushchange = addr; 
+        case 14:
+            crushchange = addr;
             break;
         default:
             fprintf(stderr, "SpechitOverrun: Warning: unable to emulate"

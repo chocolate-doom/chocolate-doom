@@ -13,7 +13,7 @@
 //
 //
 // Dedicated server code.
-// 
+//
 
 #ifndef NET_DEDICATED_H
 #define NET_DEDICATED_H

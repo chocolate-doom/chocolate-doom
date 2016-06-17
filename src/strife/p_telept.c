@@ -39,7 +39,7 @@
 // TELEPORTATION
 //
 // haleyjd 09/22/10: [STRIFE] Modified to take a flags parameter to control
-// silent teleportation. Rogue also removed the check for missiles, and the 
+// silent teleportation. Rogue also removed the check for missiles, and the
 // z-set was replaced with one in P_TeleportMove.
 //
 int
@@ -102,7 +102,7 @@ EV_Teleport
                 if (!P_TeleportMove (thing, m->x, m->y))
                     return 0;
 
-                // fraggle: this was changed in final doom, 
+                // fraggle: this was changed in final doom,
                 // problem between normal doom2 1.9 and final doom
                 //
                 // Note that although chex.exe is based on Final Doom,
@@ -128,11 +128,11 @@ EV_Teleport
                     fog = P_SpawnMobj (oldx, oldy, oldz, MT_TFOG);
                 if(!(flags & TF_NOSRCSND))
                     S_StartSound (fog, sfx_telept);
-                
+
                 an = m->angle >> ANGLETOFINESHIFT;
-                
+
                 if(!(flags & TF_NODSTFOG))
-                    fog = P_SpawnMobj (m->x+20*finecosine[an], m->y+20*finesine[an], 
+                    fog = P_SpawnMobj (m->x+20*finecosine[an], m->y+20*finesine[an],
                                        thing->z, MT_TFOG);
                 if(!(flags & TF_NODSTSND))
                     S_StartSound (fog, sfx_telept);

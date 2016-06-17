@@ -70,12 +70,12 @@ P_SetMobjState
 
 	// Modified handling.
 	// Call action functions when the state is set
-	if (st->action.acp1)		
-	    st->action.acp1(mobj);	
-	
+	if (st->action.acp1)
+	    st->action.acp1(mobj);
+
 	state = st->nextstate;
     } while (!mobj->tics);
-				
+
     return true;
 }
 
@@ -113,7 +113,7 @@ void P_ExplodeMissile (mobj_t* mo)
 #define FRICTION        0xe800
 #define AIRFRICTION     0xfff0  // [STRIFE]
 
-void P_XYMovement (mobj_t* mo) 
+void P_XYMovement (mobj_t* mo)
 {
     fixed_t     ptryx;
     fixed_t     ptryy;
@@ -220,7 +220,7 @@ void P_XYMovement (mobj_t* mo)
                 mo->momx = mo->momy = 0;
         }
     } while (xmove || ymove);
-    
+
     // slow down
     if (player && player->cheats & CF_NOMOMENTUM)
     {
@@ -234,7 +234,7 @@ void P_XYMovement (mobj_t* mo)
         return;     // no friction for missiles ever
 
     // haleyjd 20110224: [STRIFE] players experience friction even in the air,
-    // although less than when on the ground. With this fix, the 1.2-and-up 
+    // although less than when on the ground. With this fix, the 1.2-and-up
     // IWAD demo is now in sync!
     if (mo->z > mo->floorz)
     {
@@ -305,7 +305,7 @@ void P_ZMovement (mobj_t* mo)
         mo->player->deltaviewheight
             = (VIEWHEIGHT - mo->player->viewheight)>>3;
     }
-    
+
     // adjust height
     // villsa [STRIFE] check for things standing on top of other things
     if(!P_CheckPositionZ(mo, mo->z + mo->momz))
@@ -336,7 +336,7 @@ void P_ZMovement (mobj_t* mo)
                 mo->z += FLOATSPEED;
         }
     }
-    
+
     // clip movement
     if (mo->z <= mo->floorz)
     {
@@ -439,7 +439,7 @@ void P_ZMovement (mobj_t* mo)
             }
         }
     }
-} 
+}
 
 
 
@@ -455,30 +455,30 @@ P_NightmareRespawn (mobj_t* mobj)
 {
     fixed_t      x;
     fixed_t      y;
-    fixed_t      z; 
+    fixed_t      z;
     mobj_t*      mo;
     mapthing_t*  mthing;
 
-    x = mobj->spawnpoint.x << FRACBITS; 
-    y = mobj->spawnpoint.y << FRACBITS; 
+    x = mobj->spawnpoint.x << FRACBITS;
+    y = mobj->spawnpoint.y << FRACBITS;
 
     // somthing is occupying it's position?
-    if (!P_CheckPosition (mobj, x, y) ) 
+    if (!P_CheckPosition (mobj, x, y) )
         return;	// no respwan
 
     // spawn a teleport fog at old spot
     // because of removal of the body?
     mo = P_SpawnMobj (mobj->x,
                       mobj->y,
-                      mobj->subsector->sector->floorheight , MT_TFOG); 
+                      mobj->subsector->sector->floorheight , MT_TFOG);
     // initiate teleport sound
     S_StartSound (mo, sfx_telept);
 
     // spawn a teleport fog at the new spot
-    //ss = R_PointInSubsector (x,y); 
+    //ss = R_PointInSubsector (x,y);
 
     // haleyjd [STRIFE]: Uses ONFLOORZ instead of ss->sector->floorheight
-    mo = P_SpawnMobj (x, y, ONFLOORZ , MT_TFOG); 
+    mo = P_SpawnMobj (x, y, ONFLOORZ , MT_TFOG);
 
     S_StartSound (mo, sfx_telept);
 
@@ -562,7 +562,7 @@ void P_MobjThinker (mobj_t* mobj)
 
     }
 
-    
+
     // cycle through states,
     // calling action functions at transitions
     if (mobj->tics != -1)
@@ -644,7 +644,7 @@ P_SpawnMobj
     // and a lot of other stuff using reactiontime as a counter.
     //if (gameskill != sk_nightmare)
     mobj->reactiontime = info->reactiontime;
-    
+
     mobj->lastlook = P_Random () % MAXPLAYERS;
     // do not set the state with P_SetMobjState,
     // because action routines can not be called yet
@@ -672,7 +672,7 @@ P_SpawnMobj
     }
     else if (z == ONCEILINGZ)
         mobj->z = mobj->ceilingz - mobj->info->height;
-    else 
+    else
         mobj->z = z;
 
     mobj->thinker.function.acp1 = (actionf_p1)P_MobjThinker;
@@ -725,10 +725,10 @@ void P_RemoveMobj (mobj_t* mobj)
 
     // unlink from sector and block lists
     P_UnsetThingPosition (mobj);
-    
+
     // stop any playing sound
     S_StopSound (mobj);
-    
+
     // free block
     P_RemoveThinker ((thinker_t*)mobj);
 }
@@ -746,11 +746,11 @@ void P_RespawnSpecials (void)
     fixed_t     x;
     fixed_t     y;
     fixed_t     z;
-    
-    subsector_t*    ss; 
+
+    subsector_t*    ss;
     mobj_t*         mo;
     mapthing_t*     mthing;
-    
+
     int         i;
 
     // only respawn items in deathmatch
@@ -767,12 +767,12 @@ void P_RespawnSpecials (void)
 
     mthing = &itemrespawnque[iquetail];
 
-    x = mthing->x << FRACBITS; 
-    y = mthing->y << FRACBITS; 
+    x = mthing->x << FRACBITS;
+    y = mthing->y << FRACBITS;
 
     // spawn a teleport fog at the new spot
-    ss = R_PointInSubsector (x,y); 
-    mo = P_SpawnMobj (x, y, ss->sector->floorheight , MT_IFOG); 
+    ss = R_PointInSubsector (x,y);
+    mo = P_SpawnMobj (x, y, ss->sector->floorheight , MT_IFOG);
     S_StartSound (mo, sfx_itmbk);
 
     // find which type to spawn
@@ -843,7 +843,7 @@ void P_SpawnPlayer(mapthing_t* mthing)
     mobj->health = p->health;
 
     p->mo               = mobj;
-    p->playerstate      = PST_LIVE;	
+    p->playerstate      = PST_LIVE;
     p->refire           = 0;
     p->message          = NULL;
     p->damagecount      = 0;
@@ -921,7 +921,7 @@ void P_SpawnMapThing (mapthing_t* mthing)
 
     if (mthing->type <= 0)
     {
-        // Thing type 0 is actually "player -1 start".  
+        // Thing type 0 is actually "player -1 start".
         // For some reason, Vanilla Doom accepts/ignores this.
 
         return;
@@ -971,7 +971,7 @@ void P_SpawnMapThing (mapthing_t* mthing)
     // villsa [STRIFE] Removed MT_SKULL
     if (nomonsters && (mobjinfo[i].flags & MF_COUNTKILL))
         return;
-    
+
     // spawn it
     x = mthing->x << FRACBITS;
     y = mthing->y << FRACBITS;
@@ -980,7 +980,7 @@ void P_SpawnMapThing (mapthing_t* mthing)
         z = ONCEILINGZ;
     else
         z = ONFLOORZ;
-    
+
     mobj = P_SpawnMobj (x,y,z, i);
     mobj->spawnpoint = *mthing;
 
@@ -1032,7 +1032,7 @@ P_SpawnPuff
 {
     mobj_t*	th;
     int t;
-    
+
     t = P_Random();
     z += ((t - P_Random()) << 10);
 
@@ -1065,7 +1065,7 @@ mobj_t* P_SpawnSparkPuff(fixed_t x, fixed_t y, fixed_t z)
 
 //
 // P_SpawnBlood
-// 
+//
 // [STRIFE] Modifications for:
 // * No spawn tics randomization
 // * Different damage ranges for state setting
@@ -1079,12 +1079,12 @@ P_SpawnBlood
 {
     mobj_t*     th;
     int temp;
-    
+
     temp = P_Random();
     z += (temp - P_Random()) << 10;
     th = P_SpawnMobj(x, y, z, MT_BLOOD_DEATH);
     th->momz = FRACUNIT*2;
-    
+
     // villsa [STRIFE]: removed tics randomization
 
     // villsa [STRIFE] different checks for damage range
@@ -1109,7 +1109,7 @@ P_SpawnBlood
 void P_CheckMissileSpawn (mobj_t* th)
 {
     // villsa [STRIFE] removed tics randomization
-    
+
     // move a little forward so an angle can
     // be computed if it immediately explodes
     th->x += (th->momx>>1);
@@ -1122,7 +1122,7 @@ void P_CheckMissileSpawn (mobj_t* th)
 
 // Certain functions assume that a mobj_t pointer is non-NULL,
 // causing a crash in some situations where it is NULL.  Vanilla
-// Doom did not crash because of the lack of proper memory 
+// Doom did not crash because of the lack of proper memory
 // protection. This function substitutes NULL pointers for
 // pointers to a dummy mobj, to avoid a crash.
 
@@ -1260,16 +1260,16 @@ mobj_t* P_SpawnPlayerMissile(mobj_t* source, mobjtype_t type)
 {
     mobj_t*	th;
     angle_t	an;
-    
+
     fixed_t	x;
     fixed_t	y;
     fixed_t	z;
     fixed_t	slope;
-    
+
     // see which target is to be aimed at
     an = source->angle;
     slope = P_AimLineAttack (source, an, 16*64*FRACUNIT);
-    
+
     if (!linetarget)
     {
         an += 1<<26;
@@ -1286,7 +1286,7 @@ mobj_t* P_SpawnPlayerMissile(mobj_t* source, mobjtype_t type)
             an = source->angle;
 
             // haleyjd 09/21/10: [STRIFE] Removed, for look up/down support.
-            //slope = 0; 
+            //slope = 0;
         }
     }
 
@@ -1296,7 +1296,7 @@ mobj_t* P_SpawnPlayerMissile(mobj_t* source, mobjtype_t type)
 
     x = source->x;
     y = source->y;
-    
+
     // villsa [STRIFE]
     if(!(source->flags & MF_FEETCLIPPED))
         z = source->z + 32*FRACUNIT;
@@ -1345,7 +1345,7 @@ mobj_t* P_SpawnMortar(mobj_t *source, mobjtype_t type)
     th->momy = FixedMul(th->info->speed, finesine[an]);
 
     P_CheckMissileSpawn(th);
-    
+
     slope = P_AimLineAttack(source, source->angle, 1024*FRACUNIT);
     th->momz = FixedMul(th->info->speed, slope);
 

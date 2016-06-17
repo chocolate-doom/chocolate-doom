@@ -14,7 +14,7 @@
 //
 // DESCRIPTION:
 //      Miscellaneous.
-//    
+//
 
 
 #ifndef __M_MISC__

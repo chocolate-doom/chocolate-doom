@@ -126,7 +126,7 @@ static const Bit16u exprom[256] = {
     0x3d4, 0x3da, 0x3df, 0x3e4, 0x3ea, 0x3ef, 0x3f5, 0x3fa
 };
 
-// 
+//
 // freq mult table multiplied by 2
 //
 // 1/2, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 12, 12, 15, 15
@@ -1390,7 +1390,7 @@ void OPL3_WriteRegBuffered(opl3_chip *chip, Bit16u reg, Bit8u v)
 void OPL3_GenerateStream(opl3_chip *chip, Bit16s *sndptr, Bit32u numsamples)
 {
     Bit32u i;
-	
+
     for(i = 0; i < numsamples; i++)
     {
         OPL3_GenerateResampled(chip, sndptr);

@@ -161,7 +161,7 @@ typedef struct rndmessage_s
     char *messages[MAXRNDMESSAGES];
 } rndmessage_t;
 
-static rndmessage_t rndMessages[] = 
+static rndmessage_t rndMessages[] =
 {
     // Peasants
     {
@@ -169,14 +169,14 @@ static rndmessage_t rndMessages[] =
         10,
         {
             "PLEASE DON'T HURT ME.",
-            
+
             "IF YOU'RE LOOKING TO HURT ME, I'M \n"
             "NOT REALLY WORTH THE EFFORT.",
-            
+
             "I DON'T KNOW ANYTHING.",
-            
+
             "GO AWAY OR I'LL CALL THE GUARDS!",
-            
+
             "I WISH SOMETIMES THAT ALL THESE \n"
             "REBELS WOULD JUST LEARN THEIR \n"
             "PLACE AND STOP THIS NONSENSE.",
@@ -362,12 +362,12 @@ static menuitem_t dialogmenuitems[] =
 
 static menu_t dialogmenu =
 {
-    NUMDIALOGMENUITEMS, 
-    NULL, 
-    dialogmenuitems, 
-    P_DialogDrawer, 
-    42, 
-    75, 
+    NUMDIALOGMENUITEMS,
+    NULL,
+    dialogmenuitems,
+    P_DialogDrawer,
+    42,
+    75,
     0
 };
 
@@ -388,11 +388,11 @@ static const char *dialogtext;
 //
 // P_ParseDialogLump
 //
-// haleyjd 09/02/10: This is an original function added to parse out the 
-// dialogs from the dialog lump rather than reading them raw from the lump 
+// haleyjd 09/02/10: This is an original function added to parse out the
+// dialogs from the dialog lump rather than reading them raw from the lump
 // pointer. This avoids problems with structure packing.
 //
-static void P_ParseDialogLump(byte *lump, mapdialog_t **dialogs, 
+static void P_ParseDialogLump(byte *lump, mapdialog_t **dialogs,
                               int numdialogs, int tag)
 {
     int i;
@@ -440,7 +440,7 @@ static void P_ParseDialogLump(byte *lump, mapdialog_t **dialogs,
 // P_DialogLoad
 //
 // [STRIFE] New function
-// haleyjd 09/02/10: Loads the dialog script for the current map. Also loads 
+// haleyjd 09/02/10: Loads the dialog script for the current map. Also loads
 // SCRIPT00 if it has not yet been loaded.
 //
 void P_DialogLoad(void)
@@ -456,7 +456,7 @@ void P_DialogLoad(void)
     {
         byte *leveldialogptr = W_CacheLumpNum(lumpnum, PU_STATIC);
         numleveldialogs = W_LumpLength(lumpnum) / ORIG_MAPDIALOG_SIZE;
-        P_ParseDialogLump(leveldialogptr, &leveldialogs, numleveldialogs, 
+        P_ParseDialogLump(leveldialogptr, &leveldialogs, numleveldialogs,
                           PU_LEVEL);
         Z_Free(leveldialogptr); // haleyjd: free the original lump
     }
@@ -466,9 +466,9 @@ void P_DialogLoad(void)
     {
         byte *script0ptr;
 
-        script0loaded = true; 
+        script0loaded = true;
         // BUG: Rogue should have used W_GetNumForName here...
-        lumpnum = W_CheckNumForName(DEH_String("script00")); 
+        lumpnum = W_CheckNumForName(DEH_String("script00"));
         script0ptr = W_CacheLumpNum(lumpnum, PU_STATIC);
         numscript0dialogs = W_LumpLength(lumpnum) / ORIG_MAPDIALOG_SIZE;
         P_ParseDialogLump(script0ptr, &script0dialogs, numscript0dialogs,
@@ -516,7 +516,7 @@ int P_PlayerHasItem(player_t *player, mobjtype_t type)
 // P_DialogFind
 //
 // [STRIFE] New function
-// haleyjd 09/03/10: Looks for a dialog definition matching the given 
+// haleyjd 09/03/10: Looks for a dialog definition matching the given
 // Script ID # for an mobj.
 //
 mapdialog_t *P_DialogFind(mobjtype_t type, int jumptoconv)
@@ -583,7 +583,7 @@ static const char *P_DialogGetMsg(const char *message)
         int i;
         const char *nameloc = message + 7;
 
-        // look for a match in rndMessages for the string starting 
+        // look for a match in rndMessages for the string starting
         // 7 chars after "RANDOM_"
         for(i = 0; i < numrndmessages; i++)
         {
@@ -634,7 +634,7 @@ boolean P_GiveInventoryItem(player_t *player, int sprnum, mobjtype_t type)
                 invtail = &player->inventory[player->numinventory - 1];
                 if(player->numinventory >= (curinv + 1))
                 {
-                    for(i = player->numinventory; i >= (curinv + 1); --i)    
+                    for(i = player->numinventory; i >= (curinv + 1); --i)
                     {
                         invtail[1].sprite   = invtail[0].sprite;
                         invtail[1].type     = invtail[0].type;
@@ -844,7 +844,7 @@ boolean P_GiveItemToPlayer(player_t *player, int sprnum, mobjtype_t type)
 
         if(!P_GiveWeapon(player, wp_rifle, false))
             return false;
-        
+
         sound = sfx_wpnup; // SHK-CHK!
         break;
 
@@ -934,7 +934,7 @@ boolean P_GiveItemToPlayer(player_t *player, int sprnum, mobjtype_t type)
             EV_DoDoor(&junk, vld_close);
             break;
 
-        case MT_TOKEN_DOOR3: // Door special 4 (or 3? :P ) 
+        case MT_TOKEN_DOOR3: // Door special 4 (or 3? :P )
             junk.tag = 224;
             EV_DoDoor(&junk, vld_close);
             break;
@@ -959,7 +959,7 @@ boolean P_GiveItemToPlayer(player_t *player, int sprnum, mobjtype_t type)
             if(gamemap == 10)
                 P_GiveItemToPlayer(player, SPR_TOKN, MT_TOKEN_QUEST17);
             break;
-        
+
         default: // The default is to just give it as an inventory item.
             P_GiveInventoryItem(player, sprnum, type);
             break;
@@ -1006,7 +1006,7 @@ static void P_TakeDialogItem(player_t *player, int type, int amount)
 
             // BUG: They should have stopped at j < numinventory. This
             // seems to implicitly assume that numinventory is always at
-            // least one less than the max # of slots, otherwise it 
+            // least one less than the max # of slots, otherwise it
             // pulls in data from the following player_t fields:
             // st_update, numinventory, inventorycursor, accuracy, stamina
             for(j = i + 1; j <= player->numinventory; j++)
@@ -1032,7 +1032,7 @@ static void P_TakeDialogItem(player_t *player, int type, int amount)
                     player->inventorycursor--;
             }
         } // end if
-        
+
         return; // done!
 
     } // end for
@@ -1085,7 +1085,7 @@ static void P_DialogDrawer(void)
         V_DrawPatchDirect(0, 0, patch);
     }
 
-    // if there's a valid background pic, delay drawing the rest of the menu 
+    // if there's a valid background pic, delay drawing the rest of the menu
     // for a while; otherwise, it will appear immediately
     if(dialogbgpiclumpnum == -1 || menupausetime <= gametic)
     {
@@ -1121,7 +1121,7 @@ static void P_DialogDrawer(void)
         {
             DEH_snprintf(choicetext, sizeof(choicetext),
                          "%d) %s", i + 1, currentdialog->choices[i].text);
-            
+
             // alternate text for items that need money
             if(currentdialog->choices[i].needamounts[0] > 0)
             {
@@ -1181,9 +1181,9 @@ void P_DialogDoChoice(int choice)
             P_SetMobjState(dialogtalker, dialogtalkerstates->yes);
 
         item = currentchoice->giveitem;
-        if(item < 0 || 
-           P_GiveItemToPlayer(dialogplayer, 
-                              states[mobjinfo[item].spawnstate].sprite, 
+        if(item < 0 ||
+           P_GiveItemToPlayer(dialogplayer,
+                              states[mobjinfo[item].spawnstate].sprite,
                               item))
         {
             // if successful, take needed items
@@ -1191,7 +1191,7 @@ void P_DialogDoChoice(int choice)
             // villsa 09/08/10: converted into for loop
             for(count = 0; count < MDLG_MAXITEMS; count++)
             {
-                P_TakeDialogItem(dialogplayer, 
+                P_TakeDialogItem(dialogplayer,
                                  currentchoice->needitems[count],
                                  currentchoice->needamounts[count]);
             }
@@ -1211,7 +1211,7 @@ void P_DialogDoChoice(int choice)
         if(dialogtalkerstates->no)
             P_SetMobjState(dialogtalker, dialogtalkerstates->no);
     }
-    
+
     if(choice != dialogmenu.numitems - 1)
     {
         int objective;

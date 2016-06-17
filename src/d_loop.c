@@ -365,7 +365,7 @@ void D_StartNetGame(net_gamesettings_t *settings,
         settings->new_sync = 0;
 
     // TODO: New sync code is not enabled by default because it's
-    // currently broken. 
+    // currently broken.
     //if (M_CheckParm("-oldsync") > 0)
     //    settings->new_sync = 0;
     //else

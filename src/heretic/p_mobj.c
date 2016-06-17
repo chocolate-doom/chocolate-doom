@@ -957,7 +957,7 @@ void P_RemoveMobj(mobj_t * mobj)
 =
 = P_SpawnPlayer
 =
-= Called when a player is spawned on the level 
+= Called when a player is spawned on the level
 = Most of the player structure stays unchanged between levels
 ============
 */
@@ -1001,7 +1001,7 @@ void P_SpawnPlayer(mapthing_t * mthing)
     p->extralight = 0;
     p->fixedcolormap = 0;
     p->viewheight = VIEWHEIGHT;
-    P_SetupPsprites(p);         // setup gun psprite        
+    P_SetupPsprites(p);         // setup gun psprite
     if (deathmatch)
     {                           // Give all keys in death match mode
         for (i = 0; i < NUMKEYS; i++)
@@ -1224,7 +1224,7 @@ void P_SpawnPuff(fixed_t x, fixed_t y, fixed_t z)
 void P_SpawnBlood (fixed_t x, fixed_t y, fixed_t z, int damage)
 {
 	mobj_t  *th;
-	
+
 	z += ((P_Random()-P_Random())<<10);
 	th = P_SpawnMobj (x,y,z, MT_BLOOD);
 	th->momz = FRACUNIT*2;

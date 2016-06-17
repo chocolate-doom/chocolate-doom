@@ -213,15 +213,15 @@ T_MovePlane
 void T_MoveFloor(floormove_t* floor)
 {
     result_e	res;
-	
+
     res = T_MovePlane(floor->sector,
 		      floor->speed,
 		      floor->floordestheight,
 		      floor->crush,0,floor->direction);
-    
+
     if (!(leveltime&7))
 	S_StartSound(&floor->sector->soundorg, sfx_stnmov);
-    
+
     if (res == pastdest)
     {
 	floor->sector->specialdata = NULL;
@@ -299,7 +299,7 @@ EV_DoFloor
             floor->direction = -1;
             floor->sector = sec;
             floor->speed = FLOORSPEED;
-            floor->floordestheight = 
+            floor->floordestheight =
                 P_FindHighestFloorSurrounding(sec);
             break;
 
@@ -307,7 +307,7 @@ EV_DoFloor
             floor->direction = -1;
             floor->sector = sec;
             floor->speed = FLOORSPEED;
-            floor->floordestheight = 
+            floor->floordestheight =
                 P_FindLowestFloorSurrounding(sec);
             break;
 
@@ -315,7 +315,7 @@ EV_DoFloor
             floor->direction = -1;
             floor->sector = sec;
             floor->speed = FLOORSPEED * 4;
-            floor->floordestheight = 
+            floor->floordestheight =
                 P_FindHighestFloorSurrounding(sec);
             //if (floor->floordestheight != sec->floorheight)
             //    floor->floordestheight += 8*FRACUNIT;
@@ -327,7 +327,7 @@ EV_DoFloor
             floor->direction = 1;
             floor->sector = sec;
             floor->speed = FLOORSPEED;
-            floor->floordestheight = 
+            floor->floordestheight =
                 P_FindLowestCeilingSurrounding(sec);
             if (floor->floordestheight > sec->ceilingheight)
                 floor->floordestheight = sec->ceilingheight;
@@ -339,7 +339,7 @@ EV_DoFloor
             floor->direction = 1;
             floor->sector = sec;
             floor->speed = FLOORSPEED*4;
-            floor->floordestheight = 
+            floor->floordestheight =
                 P_FindNextHighestFloor(sec,sec->floorheight);
             break;
 
@@ -347,7 +347,7 @@ EV_DoFloor
             floor->direction = 1;
             floor->sector = sec;
             floor->speed = FLOORSPEED;
-            floor->floordestheight = 
+            floor->floordestheight =
                 P_FindNextHighestFloor(sec,sec->floorheight);
             break;
 
@@ -355,7 +355,7 @@ EV_DoFloor
             floor->direction = 1;
             floor->sector = sec;
             floor->speed = FLOORSPEED;
-            floor->floordestheight = floor->sector->floorheight + 
+            floor->floordestheight = floor->sector->floorheight +
                 64 * FRACUNIT; // [STRIFE]
             break;
 
@@ -401,15 +401,15 @@ EV_DoFloor
                     {
                         side = getSide(secnum,i,0);
                         if (side->bottomtexture >= 0)
-                            if (textureheight[side->bottomtexture] < 
+                            if (textureheight[side->bottomtexture] <
                                 minsize)
-                                minsize = 
+                                minsize =
                                 textureheight[side->bottomtexture];
                         side = getSide(secnum,i,1);
                         if (side->bottomtexture >= 0)
-                            if (textureheight[side->bottomtexture] < 
+                            if (textureheight[side->bottomtexture] <
                                 minsize)
-                                minsize = 
+                                minsize =
                                 textureheight[side->bottomtexture];
                     }
                 }
@@ -422,7 +422,7 @@ EV_DoFloor
             floor->direction = -1;
             floor->sector = sec;
             floor->speed = FLOORSPEED;
-            floor->floordestheight = 
+            floor->floordestheight =
                 P_FindLowestFloorSurrounding(sec);
             floor->texture = sec->floorpic;
 
@@ -486,7 +486,7 @@ EV_BuildStairs
     floormove_t*        floor;
 
     // Either Watcom or Rogue moved the switch out of the loop below, probably
-    // because it was a loop invariant, and put the default values in the 
+    // because it was a loop invariant, and put the default values in the
     // initializers here. I cannot be bothered to figure it out without doing
     // this myself :P
     fixed_t             stairsize = 8*FRACUNIT;

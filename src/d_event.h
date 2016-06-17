@@ -14,7 +14,7 @@
 //
 // DESCRIPTION:
 //
-//    
+//
 
 
 #ifndef __D_EVENT__
@@ -67,7 +67,7 @@ typedef struct
     int data1, data2, data3, data4;
 } event_t;
 
- 
+
 //
 // Button/action code definitions.
 //
@@ -81,7 +81,7 @@ typedef enum
     // Flag: game events, not really buttons.
     BT_SPECIAL		= 128,
     BT_SPECIALMASK	= 3,
-    
+
     // Flag, weapon change pending.
     // If true, the next 3 bits hold weapon num.
     BT_CHANGE		= 4,
@@ -95,10 +95,10 @@ typedef enum
     BTS_SAVEGAME	= 2,
 
     // Savegame slot numbers
-    //  occupy the second byte of buttons.    
+    //  occupy the second byte of buttons.
     BTS_SAVEMASK	= (4+8+16),
     BTS_SAVESHIFT 	= 2,
-  
+
 } buttoncode_t;
 
 // villsa [STRIFE] Strife specific buttons
@@ -119,7 +119,7 @@ typedef enum
     BT2_JUMP            = 32,
     // Use medkit
     BT2_HEALTH          = 128,
-  
+
 } buttoncode2_t;
 
 

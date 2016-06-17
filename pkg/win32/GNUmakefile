@@ -44,12 +44,12 @@ staging-%:
 	cp $(TOPLEVEL)/src/$(PROGRAM_PREFIX)setup.exe \
 	   $@/$(PROGRAM_PREFIX)$*-setup.exe
 	$(STRIP) $@/*.exe
-	
+
 	for f in $(DOC_FILES); do                                \
 		cp $(TOPLEVEL)/$$f $@/$$(basename $$f .md).txt;  \
 	done
 	cp $(TOPLEVEL)/man/CMDLINE.$* $@/CMDLINE.txt
-	
+
 	$(TOPLEVEL)/man/simplecpp -D_WIN32 -DPRECOMPILED  \
 	             -D$(shell echo $* | tr a-z A-Z)      \
 	         < $(TOPLEVEL)/man/INSTALL.template       \

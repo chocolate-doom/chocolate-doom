@@ -735,7 +735,7 @@ void A_Chase(mobj_t * actor)
 
 //
 // check for melee attack
-//      
+//
     if (actor->info->meleestate && P_CheckMeleeRange(actor))
     {
         if (actor->info->attacksound)

@@ -34,7 +34,7 @@
 #endif
 
 void TXT_SetWindowAction(txt_window_t *window,
-                         txt_horiz_align_t position, 
+                         txt_horiz_align_t position,
                          txt_window_action_t *action)
 {
     if (window->actions[position] != NULL)
@@ -224,7 +224,7 @@ static void DrawActionArea(txt_window_t *window)
     }
 }
 
-static void CalcActionAreaSize(txt_window_t *window, 
+static void CalcActionAreaSize(txt_window_t *window,
                                unsigned int *w, unsigned int *h)
 {
     txt_widget_t *widget;
@@ -262,7 +262,7 @@ void TXT_LayoutWindow(txt_window_t *window)
     unsigned int actionarea_w, actionarea_h;
 
     // Calculate size of table
-    
+
     TXT_CalcWidgetSize(window);
 
     // Widgets area: add one character of padding on each side
@@ -270,14 +270,14 @@ void TXT_LayoutWindow(txt_window_t *window)
 
     // Calculate the size of the action area
     // Make window wide enough to action area
-  
+
     CalcActionAreaSize(window, &actionarea_w, &actionarea_h);
-    
+
     if (actionarea_w > widgets_w)
         widgets_w = actionarea_w;
 
     // Set the window size based on widgets_w
-   
+
     window->window_w = widgets_w + 2;
     window->window_h = widgets->h + 1;
 
@@ -295,7 +295,7 @@ void TXT_LayoutWindow(txt_window_t *window)
         window->window_h += actionarea_h + 1;
     }
 
-    // Use the x,y position as the centerpoint and find the location to 
+    // Use the x,y position as the centerpoint and find the location to
     // draw the window.
 
     CalcWindowPosition(window);
@@ -337,7 +337,7 @@ void TXT_DrawWindow(txt_window_t *window)
 
     // Draw the window
 
-    TXT_DrawWindowFrame(window->title, 
+    TXT_DrawWindowFrame(window->title,
                         window->window_x, window->window_y,
                         window->window_w, window->window_h);
 
@@ -353,7 +353,7 @@ void TXT_DrawWindow(txt_window_t *window)
     {
         // Separator for action area
 
-        TXT_DrawSeparator(window->window_x, widgets->y + widgets->h, 
+        TXT_DrawSeparator(window->window_x, widgets->y + widgets->h,
                           window->window_w);
 
         // Action area at the window bottom
@@ -395,7 +395,7 @@ static int MouseButtonPress(txt_window_t *window, int b)
     {
         // Mouse listener can eat button presses
 
-        if (window->mouse_listener(window, x, y, b, 
+        if (window->mouse_listener(window, x, y, b,
                                    window->mouse_listener_data))
         {
             return 1;
@@ -488,14 +488,14 @@ int TXT_WindowKeyPress(txt_window_t *window, int c)
     return 0;
 }
 
-void TXT_SetKeyListener(txt_window_t *window, TxtWindowKeyPress key_listener, 
+void TXT_SetKeyListener(txt_window_t *window, TxtWindowKeyPress key_listener,
                         void *user_data)
 {
     window->key_listener = key_listener;
     window->key_listener_data = user_data;
 }
 
-void TXT_SetMouseListener(txt_window_t *window, 
+void TXT_SetMouseListener(txt_window_t *window,
                           TxtWindowMousePress mouse_listener,
                           void *user_data)
 {
@@ -573,7 +573,7 @@ txt_window_t *TXT_MessageBox(char *title, char *message, ...)
     TXT_AddWidget(window, TXT_NewLabel(buf));
 
     TXT_SetWindowAction(window, TXT_HORIZ_LEFT, NULL);
-    TXT_SetWindowAction(window, TXT_HORIZ_CENTER, 
+    TXT_SetWindowAction(window, TXT_HORIZ_CENTER,
                         TXT_NewWindowEscapeAction(window));
     TXT_SetWindowAction(window, TXT_HORIZ_RIGHT, NULL);
 

@@ -37,7 +37,7 @@
 
 
 // in AM_map.c
-extern boolean		automapactive; 
+extern boolean		automapactive;
 
 
 
@@ -75,7 +75,7 @@ STlib_initNum
 }
 
 
-// 
+//
 // A fairly efficient way to draw a number
 //  based on differences from the old number.
 // Note: worth the trouble?
@@ -88,11 +88,11 @@ STlib_drawNum
 
     int		numdigits = n->width;
     int		num = *n->num;
-    
+
     int		w = SHORT(n->p[0]->width);
     int		h = SHORT(n->p[0]->height);
     int		x = n->x;
-    
+
     int		neg;
 
     n->oldnum = *n->num;
@@ -105,7 +105,7 @@ STlib_drawNum
 	    num = -9;
 	else if (numdigits == 3 && num < -99)
 	    num = -99;
-	
+
 	num = -num;
     }
 
@@ -176,7 +176,7 @@ STlib_updatePercent
 {
     if (refresh && *per->n.on)
 	V_DrawPatch(per->n.x, per->n.y, per->p);
-    
+
     STlib_updateNum(&per->n, refresh);
 }
 

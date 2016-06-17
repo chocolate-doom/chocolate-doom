@@ -12,7 +12,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// Emulates the IO functions in C stdio.h reading and writing to 
+// Emulates the IO functions in C stdio.h reading and writing to
 // memory.
 //
 
@@ -66,22 +66,22 @@ size_t mem_fread(void *buf, size_t size, size_t nmemb, MEMFILE *stream)
 	}
 
 	// Trying to read more bytes than we have left?
-	
+
 	items = nmemb;
 
-	if (items * size > stream->buflen - stream->position) 
+	if (items * size > stream->buflen - stream->position)
 	{
 		items = (stream->buflen - stream->position) / size;
 	}
-	
+
 	// Copy bytes to buffer
-	
+
 	memcpy(buf, stream->buf + stream->position, items * size);
 
 	// Update position
 
 	stream->position += items * size;
-	
+
 	return items;
 }
 
@@ -112,12 +112,12 @@ size_t mem_fwrite(const void *ptr, size_t size, size_t nmemb, MEMFILE *stream)
 	{
 		return -1;
 	}
-	
+
 	// More bytes than can fit in the buffer?
 	// If so, reallocate bigger.
 
 	bytes = size * nmemb;
-	
+
 	while (bytes > stream->alloced - stream->position)
 	{
 		unsigned char *newbuf;
@@ -130,7 +130,7 @@ size_t mem_fwrite(const void *ptr, size_t size, size_t nmemb, MEMFILE *stream)
 	}
 
 	// Copy into buffer
-	
+
 	memcpy(stream->buf + stream->position, ptr, bytes);
 	stream->position += bytes;
 
@@ -174,7 +174,7 @@ int mem_fseek(MEMFILE *stream, signed long position, mem_rel_t whence)
 		case MEM_SEEK_CUR:
 			newpos = (int) (stream->position + position);
 			break;
-			
+
 		case MEM_SEEK_END:
 			newpos = (int) (stream->buflen + position);
 			break;

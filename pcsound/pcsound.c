@@ -45,7 +45,7 @@ extern pcsound_driver_t pcsound_linux_driver;
 
 extern pcsound_driver_t pcsound_sdl_driver;
 
-static pcsound_driver_t *drivers[] = 
+static pcsound_driver_t *drivers[] =
 {
 #ifdef HAVE_LINUX_KD_H
     &pcsound_linux_driver,
@@ -110,14 +110,14 @@ int PCSound_Init(pcsound_callback_func callback_func)
 
         for (i=0; drivers[i] != NULL; ++i)
         {
-            if (drivers[i]->init_func(callback_func)) 
+            if (drivers[i]->init_func(callback_func))
             {
                 pcsound_driver = drivers[i];
                 break;
             }
         }
     }
-    
+
     if (pcsound_driver != NULL)
     {
         printf("Using PC sound driver: %s\n", pcsound_driver->name);

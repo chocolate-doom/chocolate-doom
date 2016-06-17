@@ -88,7 +88,7 @@ musicinfo_t S_music[] = {
 
 // Sound info
 
-    /* Macro for original heretic sfxinfo_t 
+    /* Macro for original heretic sfxinfo_t
 #define SOUND(name, priority, numchannels) \
     { name, NULL, priority, -1, NULL, 0, numchannels }
 #define SOUND_LINK(name, link_id, priority, numchannels) \

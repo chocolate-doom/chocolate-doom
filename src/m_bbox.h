@@ -14,7 +14,7 @@
 //
 // DESCRIPTION:
 //    Nil.
-//    
+//
 
 
 #ifndef __M_BBOX__

@@ -303,7 +303,7 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
          || joybuttons[joybspeed];
 
     // haleyjd: removed externdriver crap
-    
+
     forward = side = look = arti = flyheight = 0;
 
 //
@@ -393,7 +393,7 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
     }
 
     // haleyjd: removed externdriver crap
-    
+
     // Fly up/down/drop keys
     if (gamekeydown[key_flyup])
     {
@@ -480,9 +480,9 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
 
             if (gamekeydown[key])
             {
-                cmd->buttons |= BT_CHANGE; 
-                cmd->buttons |= i<<BT_WEAPONSHIFT; 
-                break; 
+                cmd->buttons |= BT_CHANGE;
+                cmd->buttons |= i<<BT_WEAPONSHIFT;
+                break;
             }
         }
     }
@@ -502,8 +502,8 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
 	forward -= forwardmove[speed];
     }
 
-    // Double click to use can be disabled 
-   
+    // Double click to use can be disabled
+
     if (dclick_use)
     {
 	//

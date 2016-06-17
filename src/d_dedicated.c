@@ -31,7 +31,7 @@ void NET_CL_Run(void)
 {
     // No client present :-)
     //
-    // This is here because the server code sometimes runs this 
+    // This is here because the server code sometimes runs this
     // to let the client do some processing if it needs to.
     // In a standalone dedicated server, we don't have a client.
 }

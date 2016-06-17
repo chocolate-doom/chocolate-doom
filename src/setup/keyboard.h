@@ -12,8 +12,8 @@
 // GNU General Public License for more details.
 //
 
-#ifndef SETUP_KEYBOARD_H 
-#define SETUP_KEYBOARD_H 
+#ifndef SETUP_KEYBOARD_H
+#define SETUP_KEYBOARD_H
 
 void ConfigKeyboard(void);
 void BindKeyboardVariables(void);

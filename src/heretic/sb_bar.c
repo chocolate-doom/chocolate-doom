@@ -176,7 +176,7 @@ static Cheat_t Cheats[] = {
     {CheatMassacreFunc,  &CheatMassacreSeq},
     {CheatIDKFAFunc,     &CheatIDKFASeq},
     {CheatIDDQDFunc,     &CheatIDDQDSeq},
-    {NULL,               NULL} 
+    {NULL,               NULL}
 };
 
 //---------------------------------------------------------------------------
@@ -1191,7 +1191,7 @@ static void CheatArtifact3Func(player_t * player, Cheat_t * cheat)
     {                           // All artifacts
         for (i = arti_none + 1; i < NUMARTIFACTS; i++)
         {
-            if (gamemode == shareware 
+            if (gamemode == shareware
              && (i == arti_superhealth || i == arti_teleport))
             {
                 continue;

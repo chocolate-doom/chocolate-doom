@@ -128,7 +128,7 @@ enum
     SLIDE_UNKNOWN     =   0, // Dunno what it's for, possibly unused
 
     // MAP03 - Macil's Programmer exposition
-    SLIDE_PROGRAMMER1 =   1, 
+    SLIDE_PROGRAMMER1 =   1,
     SLIDE_PROGRAMMER2,
     SLIDE_PROGRAMMER3,
     SLIDE_PROGRAMMER4, // Next state = -99
@@ -183,9 +183,9 @@ void F_StartFinale (void)
     // [STRIFE] Setup the slide show
     slideshow_panel = DEH_String("PANEL0");
 
-    // haleyjd 20111006: These two lines of code *are* in vanilla Strife; 
+    // haleyjd 20111006: These two lines of code *are* in vanilla Strife;
     // however, there, they were completely inconsequential due to the dirty
-    // rects system. No intervening V_MarkRect call means PANEL0 was never 
+    // rects system. No intervening V_MarkRect call means PANEL0 was never
     // drawn to the framebuffer. In Chocolate Strife, however, with no such
     // system in place, this only manages to fuck up the fade-out that is
     // supposed to happen at the beginning of all finales. So, don't do it!
@@ -200,7 +200,7 @@ void F_StartFinale (void)
         slideshow_state = SLIDE_PROGRAMMER1;
         break;
     case 9:  // Super hack for death of Programmer
-        slideshow_state = SLIDE_EXITHACK; 
+        slideshow_state = SLIDE_EXITHACK;
         break;
     case 10: // Macil's exposition on the Sigil
         slideshow_state = SLIDE_SIGIL1;
@@ -208,7 +208,7 @@ void F_StartFinale (void)
     case 29: // Endings
         if(!netgame)
         {
-            if(players[0].health <= 0)            // Bad ending 
+            if(players[0].health <= 0)            // Bad ending
                 slideshow_state = SLIDE_BADEND1;  // - Humanity goes extinct
             else
             {
@@ -216,7 +216,7 @@ void F_StartFinale (void)
                    (players[0].questflags & QF_QUEST27))   // Computer destroyed (wtf?!)
                 {
                     // Good ending - You get the hot babe.
-                    slideshow_state = SLIDE_GOODEND1; 
+                    slideshow_state = SLIDE_GOODEND1;
                 }
                 else
                 {
@@ -228,7 +228,7 @@ void F_StartFinale (void)
         break;
     case 34: // For the demo version ending
         slideshow_state = SLIDE_EXIT;
-        
+
         // haleyjd 20130301: Somebody noticed the demo levels were missing the
         // ending they used to have in the demo version EXE, I guess. But the
         // weird thing is, this will only trigger if you run with strife0.wad,
@@ -276,7 +276,7 @@ void F_WaitTicker(void)
     }
 }
 
-// 
+//
 // F_DoSlideShow
 //
 // [STRIFE] New function
@@ -439,15 +439,15 @@ static void F_DoSlideShow(void)
         if(gameversion != exe_strife_1_31)
             slideshow_state = SLIDE_CHOCO; // haleyjd: see below...
         break;
-    case SLIDE_CHOCO: 
+    case SLIDE_CHOCO:
         // haleyjd 09/14/10: This wouldn't be necessary except that Choco
         // doesn't support the V_MarkRect dirty rectangles system. This
         // just so happens to have hidden the fact that the ending
         // does a screenfade every ~19 seconds due to remaining stuck in
         // SLIDE_EXIT state above, UNLESS the menus were active - the
-        // V_MarkRect calls in the menu system cause it to be visible. 
+        // V_MarkRect calls in the menu system cause it to be visible.
         // This means that in order to get the same behavior as the vanilla
-        // EXE, I need different code. So, come to this state and only set 
+        // EXE, I need different code. So, come to this state and only set
         // wipegamestate if menuactive is true.
         finalecount = 0;
         finalestage = F_STAGE_ARTSCREEN;
@@ -489,7 +489,7 @@ void F_Ticker (void)
         if (i < MAXPLAYERS)
             finalecount = slideshow_tics; // [STRIFE]
     }
-    
+
     // advance animation
     finalecount++;
 
@@ -528,18 +528,18 @@ void F_TextWrite (void)
 {
     byte*	src;
     byte*	dest;
-    
+
     int		x,y,w;
     signed int	count;
     char*	ch;
     int		c;
     int		cx;
     int		cy;
-    
+
     // erase the entire screen to a tiled background
     src = W_CacheLumpName ( finaleflat , PU_CACHE);
     dest = I_VideoBuffer;
-	
+
     for (y=0 ; y<SCREENHEIGHT ; y++)
     {
 	for (x=0 ; x<SCREENWIDTH/64 ; x++)
@@ -555,12 +555,12 @@ void F_TextWrite (void)
     }
 
     V_MarkRect (0, 0, SCREENWIDTH, SCREENHEIGHT);
-    
+
     // draw some of the text onto the screen
     cx = 10;
     cy = 10;
     ch = finaletext;
-	
+
     count = ((signed int) finalecount - 10) / TEXTSPEED;
     if (count < 0)
 	count = 0;
@@ -575,21 +575,21 @@ void F_TextWrite (void)
 	    cy += 11;
 	    continue;
 	}
-		
+
 	c = toupper(c) - HU_FONTSTART;
 	if (c < 0 || c> HU_FONTSIZE)
 	{
 	    cx += 4;
 	    continue;
 	}
-		
+
 	w = SHORT (hu_font[c]->width);
 	if (cx+w > SCREENWIDTH)
 	    break;
 	V_DrawPatch(cx, cy, hu_font[c]);
 	cx+=w;
     }
-	
+
 }
 */
 
@@ -669,7 +669,7 @@ void F_StartCast (void)
 // [STRIFE] Heavily modified, but unused.
 // haleyjd 09/13/10: Yeah, I bothered translating this even though it isn't
 // going to be seen, in part because I hope some Strife port or another will
-// pick it up and finish it, adding it as the optional menu item it was 
+// pick it up and finish it, adding it as the optional menu item it was
 // meant to be, or just adding it as part of the ending sequence.
 //
 void F_CastTicker (void)
@@ -803,11 +803,11 @@ void F_CastPrint (char* text)
     int		cx;
     int		w;
     int		width;
-    
+
     // find width
     ch = text;
     width = 0;
-	
+
     while (ch)
     {
 	c = *ch++;
@@ -819,11 +819,11 @@ void F_CastPrint (char* text)
 	    width += 4;
 	    continue;
 	}
-		
+
 	w = SHORT (hu_font[c]->width);
 	width += w;
     }
-    
+
     // draw it
     cx = 160-width/2;
     ch = text;
@@ -838,12 +838,12 @@ void F_CastPrint (char* text)
 	    cx += 4;
 	    continue;
 	}
-		
+
 	w = SHORT (hu_font[c]->width);
 	V_DrawPatch(cx, 180, hu_font[c]);
 	cx+=w;
     }
-	
+
 }
 
 // haleyjd 09/13/10: [STRIFE] Unfortunately they removed whatever was
@@ -861,18 +861,18 @@ void F_CastDrawer (void)
     int			lump;
     boolean		flip;
     patch_t*		patch;
-    
+
     // erase the entire screen to a background
     V_DrawPatch (0, 0, W_CacheLumpName (DEH_String("BOSSBACK"), PU_CACHE));
 
     F_CastPrint (DEH_String(castorder[castnum].name));
-    
+
     // draw the current frame in the middle of the screen
     sprdef = &sprites[caststate->sprite];
     sprframe = &sprdef->spriteframes[ caststate->frame & FF_FRAMEMASK];
     lump = sprframe->lump[0];
     flip = (boolean)sprframe->flip[0];
-			
+
     patch = W_CacheLumpNum (lump+firstspritelump, PU_CACHE);
     if (flip)
 	V_DrawPatchFlipped(160, 170, patch);
@@ -899,7 +899,7 @@ F_DrawPatchCol
     byte*	dest;
     byte*	desttop;
     int		count;
-	
+
     column = (column_t *)((byte *)patch + LONG(patch->columnofs[col]));
     desttop = I_VideoBuffer + x;
 
@@ -909,7 +909,7 @@ F_DrawPatchCol
 	source = (byte *)column + 3;
 	dest = desttop + column->topdelta*SCREENWIDTH;
 	count = column->length;
-		
+
 	while (count--)
 	{
 	    *dest = *source++;
@@ -973,7 +973,7 @@ void F_DrawMap34End (void)
 static void F_ArtScreenDrawer(void)
 {
     char *lumpname;
-    
+
     if (gameepisode == 3)
     {
         F_BunnyScroll();

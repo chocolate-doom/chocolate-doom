@@ -44,7 +44,7 @@ typedef struct
 
     byte buttons2;
     int inventory;
-   
+
     // Heretic/Hexen specific:
 
     byte lookfly;               // look/fly up/down/centering

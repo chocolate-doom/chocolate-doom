@@ -256,7 +256,7 @@ static void PrintLevelName(FILE *stream, int episode, int level)
             break;
         default:
         case none:
-            fprintf(stream, "E%iM%i / MAP%02i\n", 
+            fprintf(stream, "E%iM%i / MAP%02i\n",
                     episode + 1, level + 1, level + 1);
             break;
     }

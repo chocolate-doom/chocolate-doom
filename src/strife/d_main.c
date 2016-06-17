@@ -169,7 +169,7 @@ void D_ProcessEvents (void)
 {
     event_t*    ev;
 
-    // haleyjd 08/22/2010: [STRIFE] there is no such thing as a "store demo" 
+    // haleyjd 08/22/2010: [STRIFE] there is no such thing as a "store demo"
     // version of Strife
 
     // IF STORE DEMO, DO NOT ACCEPT INPUT
@@ -224,7 +224,7 @@ void D_Display (void)
         return;                    // for comparative timing / profiling
 
     redrawsbar = false;
-    
+
     // change the view size if needed
     if (setsizeneeded)
     {
@@ -261,7 +261,7 @@ void D_Display (void)
         ST_Drawer (viewheight == 200, redrawsbar );
         fullscreen = viewheight == 200;
         break;
-      
+
      // haleyjd 08/23/2010: [STRIFE] No intermission
      /*
      case GS_INTERMISSION:
@@ -276,11 +276,11 @@ void D_Display (void)
     case GS_DEMOSCREEN:
         D_PageDrawer ();
         break;
-    
+
     default:
         break;
     }
-    
+
     // draw buffered stuff to screen
     I_UpdateNoBlit ();
 
@@ -331,7 +331,7 @@ void D_Display (void)
     if (gamestate == GS_LEVEL && gametic)
     {
         HU_Drawer ();
-        if(ST_DrawExternal()) 
+        if(ST_DrawExternal())
             popupactivestate = true;
         else if(popupactivestate)
         {
@@ -363,7 +363,7 @@ void D_Display (void)
         I_FinishUpdate ();              // page flip or blit buffer
         return;
     }
-    
+
     // wipe update
     wipe_EndScreen(0, 0, SCREENWIDTH, SCREENHEIGHT);
 
@@ -436,7 +436,7 @@ void D_BindVariables(void)
     M_BindIntVariable("mouse_sensitivity",      &mouseSensitivity);
     M_BindIntVariable("sfx_volume",             &sfxVolume);
     M_BindIntVariable("music_volume",           &musicVolume);
-    M_BindIntVariable("voice_volume",           &voiceVolume); 
+    M_BindIntVariable("voice_volume",           &voiceVolume);
     M_BindIntVariable("show_talk",              &dialogshowtext);
     M_BindIntVariable("screensize",             &screenblocks);
     M_BindIntVariable("snd_channels",           &snd_channels);
@@ -604,7 +604,7 @@ void D_DoAdvanceDemo (void)
     usergame = false;               // no save / end game here
     paused = false;
     gameaction = ga_nothing;
-    
+
     // villsa 09/12/10: [STRIFE] converted pagetics to ticrate
     switch (demosequence)
     {
@@ -650,26 +650,26 @@ void D_DoAdvanceDemo (void)
         break;
     case 1:
         pagetic = 7*TICRATE;              // The comet struck our planet without
-        gamestate = GS_DEMOSCREEN;        // warning.We lost our paradise in a 
+        gamestate = GS_DEMOSCREEN;        // warning.We lost our paradise in a
         pagename = DEH_String("PANEL1");  // single, violent stroke.
-        I_StartVoice(DEH_String("pro1")); 
+        I_StartVoice(DEH_String("pro1"));
         S_StartMusic(mus_intro);
         break;
     case 2:
-        pagetic = 9*TICRATE;              // The impact released a virus which 
-        gamestate = GS_DEMOSCREEN;        // swept through the land and killed 
-        pagename = DEH_String("PANEL2");  // millions. They turned out to be 
+        pagetic = 9*TICRATE;              // The impact released a virus which
+        gamestate = GS_DEMOSCREEN;        // swept through the land and killed
+        pagename = DEH_String("PANEL2");  // millions. They turned out to be
         I_StartVoice(DEH_String("pro2")); // the lucky ones...
         break;
     case 3:
-        pagetic = 12*TICRATE;             // For those that did not die became 
+        pagetic = 12*TICRATE;             // For those that did not die became
         gamestate = GS_DEMOSCREEN;        // mutations of humanity. Some became
         pagename = DEH_String("PANEL3");  // fanatics who heard the voice of a
-        I_StartVoice(DEH_String("pro3")); // malignant God in their heads, and 
+        I_StartVoice(DEH_String("pro3")); // malignant God in their heads, and
         break;                            // called themselves the Order.
     case 4:
         pagetic = 11*TICRATE;             // Those of us who were deaf to this
-        pagename = DEH_String("PANEL4");  // voice suffer horribly and are 
+        pagename = DEH_String("PANEL4");  // voice suffer horribly and are
         gamestate = GS_DEMOSCREEN;        // forced to serve these ruthless
         I_StartVoice(DEH_String("pro4")); // psychotics, who wield weapons more
         break;                            // powerful than anything we can muster.
@@ -682,8 +682,8 @@ void D_DoAdvanceDemo (void)
     case 6:                               // But there are whispers of discontent.
         pagetic = 16*TICRATE;             // If we organize, can we defeat our
         gamestate = GS_DEMOSCREEN;        // masters? Weapons are being stolen,
-        pagename = DEH_String("PANEL6");  // soldiers are being trained. A 
-        I_StartVoice(DEH_String("pro6")); // Movement is born! Born of lifelong 
+        pagename = DEH_String("PANEL6");  // soldiers are being trained. A
+        I_StartVoice(DEH_String("pro6")); // Movement is born! Born of lifelong
         break;                            // STRIFE!
     case 7: // titlepic again - unused...
         pagetic = 9*TICRATE;
@@ -767,25 +767,25 @@ static char *banners[] =
 //
 // Get game name: if the startup banner has been replaced, use that.
 // Otherwise, use the name given
-// 
+//
 
 static char *GetGameName(char *gamename)
 {
     size_t i;
     char *deh_sub;
-    
+
     for (i=0; i<arrlen(banners); ++i)
     {
         // Has the banner been replaced?
 
         deh_sub = DEH_String(banners[i]);
-        
+
         if (deh_sub != banners[i])
         {
             size_t gamename_size;
 
             // Has been replaced
-            // We need to expand via printf to include the Doom version 
+            // We need to expand via printf to include the Doom version
             // number
             // We also need to cut off spaces to get the basic name
 
@@ -815,12 +815,12 @@ static char *GetGameName(char *gamename)
 
 void D_IdentifyVersion(void)
 {
-    // gamemission is set up by the D_FindIWAD function.  But if 
-    // we specify '-iwad', we have to identify using 
+    // gamemission is set up by the D_FindIWAD function.  But if
+    // we specify '-iwad', we have to identify using
     // IdentifyIWADByName.  However, if the iwad does not match
-    // any known IWAD name, we may have a dilemma.  Try to 
+    // any known IWAD name, we may have a dilemma.  Try to
     // identify by its contents.
-    
+
     // STRIFE-TODO: some elaborate checks? for now we assume...
     // The logic in strife1.exe is simple:
     // * if strife1.wad is found, set isregistered = true
@@ -831,7 +831,7 @@ void D_IdentifyVersion(void)
     gamemission = strife;
     isregistered = true;
 
-    // Load voices.wad 
+    // Load voices.wad
     if(isregistered)
     {
         char *name = NULL;
@@ -905,7 +905,7 @@ void DoTimeBomb(void)
         I_Error("Data error! Corrupted WAD File!");
     serial_year = serialnum / 10000;
     serial_month = serialnum / 100 - 100 * serial_year;
-    if(date.year < serial_year || 
+    if(date.year < serial_year ||
        date.day < serialnum - 100 * serial_month - 10000 * serial_year &&
        date.month < serial_month)
        I_Error("Bad wadfile");
@@ -933,7 +933,7 @@ static boolean D_AddFile(char *filename)
 }
 
 // Copyright message banners
-// Some dehacked mods replace these.  These are only displayed if they are 
+// Some dehacked mods replace these.  These are only displayed if they are
 // replaced by dehacked.
 // haleyjd 08/22/2010: [STRIFE] altered to match strings from binary
 static char *copyright_banners[] =
@@ -980,7 +980,7 @@ void PrintDehackedBanners(void)
     }
 }
 
-static struct 
+static struct
 {
     char *description;
     char *cmdline;
@@ -998,7 +998,7 @@ static void InitGameVersion(void)
     int p;
     int i;
 
-    // haleyjd: we support emulating either the 1.2 or the 1.31 versions of 
+    // haleyjd: we support emulating either the 1.2 or the 1.31 versions of
     // Strife, which are the most significant. 1.2 is the most mature version
     // that still has the single saveslot restriction, whereas 1.31 is the
     // final revision. The differences between the two are barely worth
@@ -1024,7 +1024,7 @@ static void InitGameVersion(void)
             }
         }
 
-        if (gameversions[i].description == NULL) 
+        if (gameversions[i].description == NULL)
         {
             printf("Supported game versions:\n");
 
@@ -1096,8 +1096,8 @@ static void D_Endoom(void)
 boolean D_PatchClipCallback(patch_t *patch, int x, int y)
 {
     // note that offsets were already accounted for in V_DrawPatch
-    return (x >= 0 && y >= 0 
-            && x + SHORT(patch->width) <= SCREENWIDTH 
+    return (x >= 0 && y >= 0
+            && x + SHORT(patch->width) <= SCREENWIDTH
             && y + SHORT(patch->height) <= SCREENHEIGHT);
 }
 
@@ -1105,7 +1105,7 @@ boolean D_PatchClipCallback(patch_t *patch, int x, int y)
 // D_InitChocoStrife
 //
 // haleyjd 08/28/10: Take care of some Strife-specific initialization
-// that is necessitated by Chocolate Doom issues, such as setting global 
+// that is necessitated by Chocolate Doom issues, such as setting global
 // callbacks.
 //
 static void D_InitChocoStrife(void)
@@ -1227,7 +1227,7 @@ static void D_DrawIntroSequence(void)
 
     // BUG: (?) Due to this clip, the laser never even comes close to
     // touching the peasant; confirmed with vanilla. This MAY have been
-    // intentional, for effect, however, since no death frames are shown 
+    // intentional, for effect, however, since no death frames are shown
     // either... kind of a black-out death.
     if(laserpos > 200)
         laserpos = 200;
@@ -1261,7 +1261,7 @@ static void D_DrawIntroSequence(void)
 void D_IntroTick(void)
 {
     static boolean didsound = false; // haleyjd 20120209
-    
+
     if(devparm)
         return;
 
@@ -1269,9 +1269,9 @@ void D_IntroTick(void)
     if(introprogress >= MAXINTROPROGRESS)
     {
         D_IntroBackground(); // haleyjd: clear the bg anyway
-        
+
         // haleyjd 20120209: This isn't 100% true to vanilla because vanilla
-        // would play this sound a half-dozen times. BUT, in vanilla, for 
+        // would play this sound a half-dozen times. BUT, in vanilla, for
         // whatever reason, under DMX, playing the same sound multiple times
         // doesn't add up violently like it does under SDL_mixer. This means
         // that without this one-time limitation, the sound is far too loud.
@@ -1473,7 +1473,7 @@ void D_DoomMain (void)
 
     if (devparm)
         DEH_printf(D_DEVSTR);
-    
+
     // find which dir to use for config files
 
 #ifdef _WIN32
@@ -1500,7 +1500,7 @@ void D_DoomMain (void)
 
         M_SetConfigDir(NULL);
     }
-    
+
     //!
     // @arg <x>
     // @vanilla
@@ -1527,7 +1527,7 @@ void D_DoomMain (void)
         sidemove[0] = sidemove[0]*scale/100;
         sidemove[1] = sidemove[1]*scale/100;
     }
-    
+
     // init subsystems
     // DEH_printf("V_Init: allocate screens.\n"); [STRIFE] removed
     V_Init ();
@@ -1654,7 +1654,7 @@ void D_DoomMain (void)
     // Generate the WAD hash table.  Speed things up a bit.
 
     W_GenerateHashTable();
-    
+
     D_IdentifyVersion();
     InitGameVersion();
     D_SetGameDescription();
@@ -1706,16 +1706,16 @@ void D_DoomMain (void)
                                "version. You must buy the real game!"));
 
         // Check for fake IWAD with right name,
-        // but w/o all the lumps of the registered version. 
+        // but w/o all the lumps of the registered version.
         // STRIFE-FIXME: Needs to test isregistered variable
         if (gamemode == registered)
             for (i = 0; i < 3; i++)
                 if (W_CheckNumForName(name[i])<0)
                     I_Error(DEH_String("\nThis is not the registered version."));
     }
-    
+
     D_IntroTick(); // [STRIFE]
-    
+
     // get skill / episode / map from parms
     startskill = sk_easy; // [STRIFE]: inits to sk_easy
     startepisode = 1;
@@ -1757,7 +1757,7 @@ void D_DoomMain (void)
 
     timelimit = 0;
 
-    //! 
+    //!
     // @arg <n>
     // @category net
     // @vanilla
@@ -1835,7 +1835,7 @@ void D_DoomMain (void)
     //
 
     p = M_CheckParmWithArgs("-loadgame", 1);
-    
+
     if (p)
     {
         startloadgame = atoi(myargv[p+1]);
@@ -1888,7 +1888,7 @@ void D_DoomMain (void)
     // haleyjd 20110924: Moved S_Init up.
     D_IntroTick();
 
-    // haleyjd 20110220: This stuff was done in I_StartupSound in vanilla, but 
+    // haleyjd 20110220: This stuff was done in I_StartupSound in vanilla, but
     // we'll do it here instead so we don't have to modify the low-level shared
     // code with Strife-specific stuff.
 
@@ -1926,7 +1926,7 @@ void D_DoomMain (void)
     // haleyjd [STRIFE] -statcopy used to be here...
     D_IntroTick(); // [STRIFE]
 
-    // If Doom II without a MAP01 lump, this is a store demo.  
+    // If Doom II without a MAP01 lump, this is a store demo.
     // Moved this here so that MAP01 isn't constantly looked up
     // in the main loop.
     // haleyjd 08/23/2010: [STRIFE] There is no storedemo version of Strife

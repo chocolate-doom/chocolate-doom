@@ -12,7 +12,7 @@
 // GNU General Public License for more details.
 //
 
-#ifndef SETUP_DISPLAY_H 
+#ifndef SETUP_DISPLAY_H
 #define SETUP_DISPLAY_H
 
 void ConfigDisplay(void);

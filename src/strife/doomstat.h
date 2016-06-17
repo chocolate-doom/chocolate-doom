@@ -80,7 +80,7 @@ extern  int             startloadgame;
 
 extern  boolean		autostart;
 
-// Selected by user. 
+// Selected by user.
 extern  skill_t         gameskill;
 extern  int		gameepisode;
 extern  int		gamemap;
@@ -154,7 +154,7 @@ extern  int             testcontrols_mousespeed;
 extern  int	viewangleoffset;
 
 // Player taking events, and displaying.
-extern  int	consoleplayer;	
+extern  int	consoleplayer;
 extern  int	displayplayer;
 
 
@@ -189,7 +189,7 @@ extern  int     mouse_fire_countdown;   // villsa [STRIFE]
 extern boolean lowres_turn;
 
 // Quit after playing a demo from cmdline.
-extern  boolean		singledemo;	
+extern  boolean		singledemo;
 
 
 
@@ -230,7 +230,7 @@ extern  mapthing_t      riftSpots[MAXRIFTSPOTS];
 
 // Intermission stats.
 // Parameters for world map / intermission.
-extern  wbstartstruct_t		wminfo;	
+extern  wbstartstruct_t		wminfo;
 
 
 

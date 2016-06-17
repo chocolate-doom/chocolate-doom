@@ -54,7 +54,7 @@ install_with_deps() {
 
 	if [ -e "$dest_file" ]; then
 		return
-	fi	
+	fi
 
 	echo "Installing $bin_name..."
 
@@ -65,7 +65,7 @@ install_with_deps() {
 	# Copy libraries that this file depends on:
 
 	otool -L "$src_file" | tail -n +2 | sed 's/^.//; s/ (.*//' | while read; do
-		
+
 		# Don't copy system libraries
 
 		if is_sys_lib "$REPLY"; then

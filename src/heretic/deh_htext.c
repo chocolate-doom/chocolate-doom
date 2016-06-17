@@ -704,7 +704,7 @@ static boolean GetStringByOffset(unsigned int offset, char **result)
     return false;
 }
 
-// Given a string length, find the maximum length of a 
+// Given a string length, find the maximum length of a
 // string that can replace it.
 
 static int MaxStringLength(int len)
@@ -806,7 +806,7 @@ static void *DEH_TextStart(deh_context_t *context, char *line)
         DEH_Error(context, "Unknown string offset: %i", orig_offset);
     }
 
-    // Only allow string replacements that are possible in Vanilla Doom.  
+    // Only allow string replacements that are possible in Vanilla Doom.
     // Chocolate Doom is unforgiving!
 
     else if (!deh_allow_long_strings

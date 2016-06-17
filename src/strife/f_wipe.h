@@ -14,7 +14,7 @@
 //
 // DESCRIPTION:
 //	Mission start screen wipe/melt, special effects.
-//	
+//
 
 
 #ifndef __F_WIPE_H__
@@ -28,9 +28,9 @@ enum
 {
     // [STRIFE]: ColorXForm reimplemented as a proper crossfade
     wipe_ColorXForm,
-    
+
     // weird screen melt
-    wipe_Melt,	
+    wipe_Melt,
 
     wipe_NUMWIPES
 };
