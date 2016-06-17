@@ -187,7 +187,7 @@ void R_ClearPlanes(void)
 
 //
 // opening / clipping determination
-//      
+//
     for (i = 0; i < viewwidth; i++)
     {
         floorclip[i] = viewheight;

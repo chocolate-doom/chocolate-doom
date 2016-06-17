@@ -24,7 +24,7 @@
 #include "SDL.h"
 
 // Event callback function type: a function of this type can be used
-// to intercept events in the textscreen event processing loop.  
+// to intercept events in the textscreen event processing loop.
 // Returning 1 will cause the event to be eaten; the textscreen code
 // will not see it.
 

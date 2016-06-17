@@ -279,19 +279,19 @@ void R_DrawTranslatedAltTLColumn (void)
 {
 	int			count;
 	byte		*dest;
-	fixed_t		frac, fracstep;	
+	fixed_t		frac, fracstep;
 
 	count = dc_yh - dc_yl;
 	if (count < 0)
 		return;
-				
+
 #ifdef RANGECHECK
 	if ((unsigned)dc_x >= SCREENWIDTH || dc_yl < 0 || dc_yh >= SCREENHEIGHT)
 		I_Error ("R_DrawColumn: %i to %i at %i", dc_yl, dc_yh, dc_x);
 #endif
 
 	dest = ylookup[dc_yl] + columnofs[dc_x];
-	
+
 	fracstep = dc_iscale;
 	frac = dc_texturemid + (dc_yl-centery)*fracstep;
 

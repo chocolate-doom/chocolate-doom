@@ -750,7 +750,7 @@ boolean P_ExecuteLineSpecial(int special, byte * args, line_t * line,
         case 93:               // Poly Move Times 8 Override
             buttonSuccess = EV_MovePoly(line, args, true, true);
             break;
-        case 94:               // Build Pillar Crush 
+        case 94:               // Build Pillar Crush
             buttonSuccess = EV_BuildPillar(line, args, true);
             break;
         case 95:               // Lower Floor and Ceiling

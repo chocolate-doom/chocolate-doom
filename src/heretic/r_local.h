@@ -207,13 +207,13 @@ typedef struct vissprite_s
 
 extern visplane_t *floorplane, *ceilingplane;
 
-// Sprites are patches with a special naming convention so they can be 
-// recognized by R_InitSprites.  The sprite and frame specified by a 
+// Sprites are patches with a special naming convention so they can be
+// recognized by R_InitSprites.  The sprite and frame specified by a
 // thing_t is range checked at run time.
 // a sprite is a patch_t that is assumed to represent a three dimensional
-// object and may have multiple rotations pre drawn.  Horizontal flipping 
+// object and may have multiple rotations pre drawn.  Horizontal flipping
 // is used to save space. Some sprites will only have one picture used
-// for all views.  
+// for all views.
 
 typedef struct
 {

@@ -133,7 +133,7 @@ void P_InitSwitchList(void)
     int		i;
     int		index;
     int		episode;
-	
+
     episode = 1;
 
     if(isregistered)
@@ -142,7 +142,7 @@ void P_InitSwitchList(void)
     /*else
 	if ( gamemode == commercial )
 	    episode = 3;*/
-		
+
     for(index = 0, i = 0; i < MAXSWITCHES; i++)
     {
 	if(!alphSwitchList[i].episode)
@@ -151,7 +151,7 @@ void P_InitSwitchList(void)
 	    switchlist[index] = -1;
 	    break;
 	}
-		
+
 	if (alphSwitchList[i].episode <= episode)
 	{
 	    switchlist[index++] = R_TextureNumForName(DEH_String(alphSwitchList[i].name1));
@@ -168,16 +168,16 @@ void P_InitSwitchList(void)
 void P_StartButton(line_t* line, bwhere_e w, int texture, int time)
 {
     int		i;
-    
+
     // See if button is already pressed
     for(i = 0; i < MAXBUTTONS; i++)
     {
 	if(buttonlist[i].btimer && buttonlist[i].line == line)
             return;
     }
-    
 
-    
+
+
     for(i = 0; i < MAXBUTTONS; i++)
     {
 	if(!buttonlist[i].btimer)
@@ -190,7 +190,7 @@ void P_StartButton(line_t* line, bwhere_e w, int texture, int time)
 	    return;
 	}
     }
-    
+
     I_Error("P_StartButton: no button slots left!");
 }
 
@@ -461,7 +461,7 @@ boolean P_UseSpecialLine(mobj_t* thing, line_t* line, int side)
             return false;
         }
     }
-    
+
     // Switches that other things can activate.
     if (!thing->player)
     {
@@ -481,8 +481,8 @@ boolean P_UseSpecialLine(mobj_t* thing, line_t* line, int side)
             break;
         }
     }
-   
-    // do something  
+
+    // do something
     switch(line->special)
     {
         // MANUALS
@@ -684,7 +684,7 @@ boolean P_UseSpecialLine(mobj_t* thing, line_t* line, int side)
         if (EV_DoPlat(line, raiseAndChange, 32))
             P_ChangeSwitchTexture(line,1);
         break;
-   
+
     case 68:
         // Raise Plat to next highest floor and change texture - [STRIFE] Verified unmodified
         if (EV_DoPlat(line, raiseToNearestAndChange, 0))
@@ -744,7 +744,7 @@ boolean P_UseSpecialLine(mobj_t* thing, line_t* line, int side)
         if (EV_DoDoor (line,vld_blazeClose))
             P_ChangeSwitchTexture(line,0);
         break;
-    
+
     case 114:
         // Blazing Door Raise (faster than TURBO!) - [STRIFE] Verified unmodified
         if (EV_DoDoor (line,vld_blazeRaise))
@@ -786,7 +786,7 @@ boolean P_UseSpecialLine(mobj_t* thing, line_t* line, int side)
         if (EV_DoFloor(line,raiseFloorTurbo))
             P_ChangeSwitchTexture(line,0);
         break;
-    
+
     case 132:
         // Raise Floor Turbo - [STRIFE] Verified unmodified
         if (EV_DoFloor(line,raiseFloorTurbo))
@@ -1036,9 +1036,9 @@ boolean P_UseSpecialLine(mobj_t* thing, line_t* line, int side)
 
         P_ChangeSwitchTexture(line, 1);
         GiveVoiceObjective("voc70", "log70", 0);
-        
+
         // haleyjd: Strife used sprintf here, not a direct set.
-        DEH_snprintf(usemessage, sizeof(usemessage), 
+        DEH_snprintf(usemessage, sizeof(usemessage),
                      "Incoming Message from BlackBird...");
         thing->player->message = usemessage;
 
@@ -1050,7 +1050,7 @@ boolean P_UseSpecialLine(mobj_t* thing, line_t* line, int side)
         {
             // BUG: doesn't make sfx_oof sound like all other message-
             // giving door types. I highly doubt this was intentional.
-            DEH_snprintf(usemessage, sizeof(usemessage), 
+            DEH_snprintf(usemessage, sizeof(usemessage),
                          "That doesn't seem to work!");
             thing->player->message = usemessage;
         }

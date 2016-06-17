@@ -167,7 +167,7 @@ static void AddWADs(execute_context_t *exec)
 {
     int have_wads = 0;
     int i;
- 
+
     for (i=0; i<NUM_WADS; ++i)
     {
         if (wads[i] != NULL && strlen(wads[i]) > 0)
@@ -185,7 +185,7 @@ static void AddWADs(execute_context_t *exec)
 static void AddExtraParameters(execute_context_t *exec)
 {
     int i;
-    
+
     for (i=0; i<NUM_EXTRA_PARAMS; ++i)
     {
         if (extra_params[i] != NULL && strlen(extra_params[i]) > 0)
@@ -281,7 +281,7 @@ static void StartGame(int multiplayer)
     AddWADs(exec);
 
     TXT_Shutdown();
- 
+
     M_SaveDefaults();
     PassThroughArguments(exec);
 
@@ -456,7 +456,7 @@ static void LevelSelectDialog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(user_data))
 
             M_snprintf(buf, sizeof(buf), " MAP%02i ", l);
             button = TXT_NewButton(buf);
-            TXT_SignalConnect(button, "pressed", 
+            TXT_SignalConnect(button, "pressed",
                               SetMAPxyWarp, (void *) l);
             TXT_SignalConnect(button, "pressed",
                               CloseLevelSelectDialog, window);
@@ -592,7 +592,7 @@ static txt_widget_t *IWADSelector(void)
     {
         // Dropdown list allowing IWAD to be selected.
 
-        dropdown = TXT_NewDropdownList(&found_iwad_selected, 
+        dropdown = TXT_NewDropdownList(&found_iwad_selected,
                                        iwad_labels, num_iwads);
 
         TXT_SignalConnect(dropdown, "changed", IWADSelected, NULL);
@@ -654,14 +654,14 @@ static void OpenWadsWindow(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(user_data))
     }
 }
 
-static void OpenExtraParamsWindow(TXT_UNCAST_ARG(widget), 
+static void OpenExtraParamsWindow(TXT_UNCAST_ARG(widget),
                                   TXT_UNCAST_ARG(user_data))
 {
     txt_window_t *window;
     int i;
 
     window = TXT_NewWindow("Extra command line parameters");
-    
+
     for (i=0; i<NUM_EXTRA_PARAMS; ++i)
     {
         TXT_AddWidget(window, TXT_NewInputBox(&extra_params[i], 70));
@@ -836,7 +836,7 @@ static void DoJoinGame(void *unused1, void *unused2)
     AddWADs(exec);
 
     TXT_Shutdown();
-    
+
     M_SaveDefaults();
 
     PassThroughArguments(exec);
@@ -1040,7 +1040,7 @@ void JoinMultiGame(void)
 void SetChatMacroDefaults(void)
 {
     int i;
-    char *defaults[] = 
+    char *defaults[] =
     {
         HUSTR_CHATMACRO0,
         HUSTR_CHATMACRO1,
@@ -1053,7 +1053,7 @@ void SetChatMacroDefaults(void)
         HUSTR_CHATMACRO8,
         HUSTR_CHATMACRO9,
     };
-    
+
     // If the chat macros have not been set, initialize with defaults.
 
     for (i=0; i<10; ++i)

@@ -60,7 +60,7 @@ typedef struct thinker_s
     struct thinker_s*	prev;
     struct thinker_s*	next;
     think_t		function;
-    
+
 } thinker_t;
 
 

@@ -699,7 +699,7 @@ static void CalibrateJoystick(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
                    NULL);
 
     TXT_SetWindowAction(calibration_window, TXT_HORIZ_LEFT, NULL);
-    TXT_SetWindowAction(calibration_window, TXT_HORIZ_CENTER, 
+    TXT_SetWindowAction(calibration_window, TXT_HORIZ_CENTER,
                         TXT_NewWindowAbortAction(calibration_window));
     TXT_SetWindowAction(calibration_window, TXT_HORIZ_RIGHT, NULL);
 

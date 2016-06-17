@@ -500,7 +500,7 @@ static boolean ExpandSoundData_SRC(sfxinfo_t *sfxinfo,
 
     if (clipped > 0)
     {
-        fprintf(stderr, "Sound '%s': clipped %u samples (%0.2f %%)\n", 
+        fprintf(stderr, "Sound '%s': clipped %u samples (%0.2f %%)\n",
                         sfxinfo->name, clipped,
                         400.0 * clipped / chunk->alen);
     }
@@ -774,7 +774,7 @@ static boolean CacheSFX(sfxinfo_t *sfxinfo)
 #endif
 
     // don't need the original lump any more
-  
+
     W_ReleaseLumpNum(lumpnum);
 
     return true;
@@ -1161,7 +1161,7 @@ static boolean I_SDL_InitSound(boolean _use_sfx_prefix)
     return true;
 }
 
-static snddevice_t sound_sdl_devices[] = 
+static snddevice_t sound_sdl_devices[] =
 {
     SNDDEVICE_SB,
     SNDDEVICE_PAS,
@@ -1171,7 +1171,7 @@ static snddevice_t sound_sdl_devices[] =
     SNDDEVICE_AWE32,
 };
 
-sound_module_t sound_sdl_module = 
+sound_module_t sound_sdl_module =
 {
     sound_sdl_devices,
     arrlen(sound_sdl_devices),

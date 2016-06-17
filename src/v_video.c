@@ -57,43 +57,43 @@ byte *xlatab = NULL;
 
 static byte *dest_screen = NULL;
 
-int dirtybox[4]; 
+int dirtybox[4];
 
 // haleyjd 08/28/10: clipping callback function for patches.
 // This is needed for Chocolate Strife, which clips patches to the screen.
 static vpatchclipfunc_t patchclip_callback = NULL;
 
 //
-// V_MarkRect 
-// 
-void V_MarkRect(int x, int y, int width, int height) 
-{ 
-    // If we are temporarily using an alternate screen, do not 
+// V_MarkRect
+//
+void V_MarkRect(int x, int y, int width, int height)
+{
+    // If we are temporarily using an alternate screen, do not
     // affect the update box.
 
     if (dest_screen == I_VideoBuffer)
     {
-        M_AddToBox (dirtybox, x, y); 
-        M_AddToBox (dirtybox, x + width-1, y + height-1); 
+        M_AddToBox (dirtybox, x, y);
+        M_AddToBox (dirtybox, x + width-1, y + height-1);
     }
-} 
- 
+}
+
 
 //
-// V_CopyRect 
-// 
+// V_CopyRect
+//
 void V_CopyRect(int srcx, int srcy, byte *source,
                 int width, int height,
                 int destx, int desty)
-{ 
+{
     byte *src;
-    byte *dest; 
- 
-#ifdef RANGECHECK 
+    byte *dest;
+
+#ifdef RANGECHECK
     if (srcx < 0
      || srcx + width > SCREENWIDTH
      || srcy < 0
-     || srcy + height > SCREENHEIGHT 
+     || srcy + height > SCREENHEIGHT
      || destx < 0
      || destx + width > SCREENWIDTH
      || desty < 0
@@ -101,26 +101,26 @@ void V_CopyRect(int srcx, int srcy, byte *source,
     {
         I_Error ("Bad V_CopyRect");
     }
-#endif 
+#endif
 
-    V_MarkRect(destx, desty, width, height); 
- 
-    src = source + SCREENWIDTH * srcy + srcx; 
-    dest = dest_screen + SCREENWIDTH * desty + destx; 
+    V_MarkRect(destx, desty, width, height);
 
-    for ( ; height>0 ; height--) 
-    { 
+    src = source + SCREENWIDTH * srcy + srcx;
+    dest = dest_screen + SCREENWIDTH * desty + destx;
+
+    for ( ; height>0 ; height--)
+    {
         memcpy(dest, src, width * sizeof(*dest));
-        src += SCREENWIDTH; 
-        dest += SCREENWIDTH; 
-    } 
-} 
- 
+        src += SCREENWIDTH;
+        dest += SCREENWIDTH;
+    }
+}
+
 //
 // V_SetPatchClipCallback
 //
 // haleyjd 08/28/10: Added for Strife support.
-// By calling this function, you can setup runtime error checking for patch 
+// By calling this function, you can setup runtime error checking for patch
 // clipping. Strife never caused errors by drawing patches partway off-screen.
 // Some versions of vanilla DOOM also behaved differently than the default
 // implementation, so this could possibly be extended to those as well for
@@ -133,11 +133,11 @@ void V_SetPatchClipCallback(vpatchclipfunc_t func)
 
 //
 // V_DrawPatch
-// Masks a column based masked pic to the screen. 
+// Masks a column based masked pic to the screen.
 //
 
 void V_DrawPatch(int x, int y, patch_t *patch)
-{ 
+{
     int count;
     int col;
     column_t *column;
@@ -203,15 +203,15 @@ void V_DrawPatch(int x, int y, patch_t *patch)
 void V_DrawPatchFlipped(int x, int y, patch_t *patch)
 {
     int count;
-    int col; 
-    column_t *column; 
+    int col;
+    column_t *column;
     byte *desttop;
     byte *dest;
-    byte *source; 
-    int w; 
- 
-    y -= SHORT(patch->topoffset); 
-    x -= SHORT(patch->leftoffset); 
+    byte *source;
+    int w;
+
+    y -= SHORT(patch->topoffset);
+    x -= SHORT(patch->leftoffset);
 
     // haleyjd 08/28/10: Strife needs silent error checking here.
     if(patchclip_callback)
@@ -220,7 +220,7 @@ void V_DrawPatchFlipped(int x, int y, patch_t *patch)
             return;
     }
 
-#ifdef RANGECHECK 
+#ifdef RANGECHECK
     if (x < 0
      || x + SHORT(patch->width) > SCREENWIDTH
      || y < 0
@@ -262,13 +262,13 @@ void V_DrawPatchFlipped(int x, int y, patch_t *patch)
 
 //
 // V_DrawPatchDirect
-// Draws directly to the screen on the pc. 
+// Draws directly to the screen on the pc.
 //
 
 void V_DrawPatchDirect(int x, int y, patch_t *patch)
 {
-    V_DrawPatch(x, y, patch); 
-} 
+    V_DrawPatch(x, y, patch);
+}
 
 //
 // V_DrawTLPatch
@@ -287,7 +287,7 @@ void V_DrawTLPatch(int x, int y, patch_t * patch)
     x -= SHORT(patch->leftoffset);
 
     if (x < 0
-     || x + SHORT(patch->width) > SCREENWIDTH 
+     || x + SHORT(patch->width) > SCREENWIDTH
      || y < 0
      || y + SHORT(patch->height) > SCREENHEIGHT)
     {
@@ -500,11 +500,11 @@ void V_LoadXlaTable(void)
 // Draw a linear block of pixels into the view buffer.
 //
 
-void V_DrawBlock(int x, int y, int width, int height, byte *src) 
-{ 
-    byte *dest; 
- 
-#ifdef RANGECHECK 
+void V_DrawBlock(int x, int y, int width, int height, byte *src)
+{
+    byte *dest;
+
+#ifdef RANGECHECK
     if (x < 0
      || x + width >SCREENWIDTH
      || y < 0
@@ -512,19 +512,19 @@ void V_DrawBlock(int x, int y, int width, int height, byte *src)
     {
 	I_Error ("Bad V_DrawBlock");
     }
-#endif 
- 
-    V_MarkRect (x, y, width, height); 
- 
-    dest = dest_screen + y * SCREENWIDTH + x; 
+#endif
 
-    while (height--) 
-    { 
+    V_MarkRect (x, y, width, height);
+
+    dest = dest_screen + y * SCREENWIDTH + x;
+
+    while (height--)
+    {
 	memcpy (dest, src, width * sizeof(*dest));
-	src += width; 
-	dest += SCREENWIDTH; 
-    } 
-} 
+	src += width;
+	dest += SCREENWIDTH;
+    }
+}
 
 void V_DrawFilledBox(int x, int y, int w, int h, int c)
 {
@@ -585,7 +585,7 @@ void V_DrawBox(int x, int y, int w, int h, int c)
 // Draw a "raw" screen (lump containing raw data to blit directly
 // to the screen)
 //
- 
+
 void V_DrawRawScreen(byte *raw)
 {
     memcpy(dest_screen, raw, SCREENWIDTH * SCREENHEIGHT);
@@ -593,9 +593,9 @@ void V_DrawRawScreen(byte *raw)
 
 //
 // V_Init
-// 
-void V_Init (void) 
-{ 
+//
+void V_Init (void)
+{
     // no-op!
     // There used to be separate screens that could be drawn to; these are
     // now handled in the upper layers.
@@ -630,17 +630,17 @@ typedef struct
     unsigned short	ymin;
     unsigned short	xmax;
     unsigned short	ymax;
-    
+
     unsigned short	hres;
     unsigned short	vres;
 
     unsigned char	palette[48];
-    
+
     char		reserved;
     char		color_planes;
     unsigned short	bytes_per_line;
     unsigned short	palette_type;
-    
+
     char		filler[58];
     unsigned char	data;		// unbounded
 } PACKEDATTR pcx_t;
@@ -658,7 +658,7 @@ void WritePCXfile(char *filename, byte *data,
     int		length;
     pcx_t*	pcx;
     byte*	pack;
-	
+
     pcx = Z_Malloc (width*height*2+1000, PU_STATIC, NULL);
 
     pcx->manufacturer = 0x0a;		// PCX id
@@ -680,7 +680,7 @@ void WritePCXfile(char *filename, byte *data,
 
     // pack the image
     pack = &pcx->data;
-	
+
     for (i=0 ; i<width*height ; i++)
     {
 	if ( (*data & 0xc0) != 0xc0)
@@ -691,12 +691,12 @@ void WritePCXfile(char *filename, byte *data,
 	    *pack++ = *data++;
 	}
     }
-    
+
     // write the palette
     *pack++ = 0x0c;	// palette ID byte
     for (i=0 ; i<768 ; i++)
 	*pack++ = *palette++;
-    
+
     // write output file
     length = pack - (byte *)pcx;
     M_WriteFile (filename, pcx, length);
@@ -817,7 +817,7 @@ void V_ScreenShot(char *format)
     int i;
     char lbmname[16]; // haleyjd 20110213: BUG FIX - 12 is too small!
     char *ext;
-    
+
     // find a file name to save it to
 
 #ifdef HAVE_LIBPNG
@@ -926,7 +926,7 @@ void V_DrawMouseSpeedBox(int speed)
 
     linelen = (original_speed * redline_x) / mouse_threshold;
 
-    // Draw horizontal "thermometer" 
+    // Draw horizontal "thermometer"
 
     if (linelen > MOUSE_SPEED_BOX_WIDTH - 1)
     {

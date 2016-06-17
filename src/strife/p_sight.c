@@ -117,7 +117,7 @@ P_InterceptVector2
         return 0;
     //	I_Error ("P_InterceptVector: parallel");
 
-    num = FixedMul ( (v1->x - v2->x)>>8 ,v1->dy) + 
+    num = FixedMul ( (v1->x - v2->x)>>8 ,v1->dy) +
         FixedMul ( (v2->y - v1->y)>>8 , v1->dx);
     frac = FixedDiv (num , den);
 
@@ -157,7 +157,7 @@ boolean P_CrossSubsector (int num)
 #endif
 
     sub = &subsectors[num];
-    
+
     // check lines
     count = sub->numlines;
     seg = &segs[sub->firstline];
@@ -317,7 +317,7 @@ P_CheckSight
     int         pnum;
     int         bytenum;
     int         bitnum;
-    
+
     // First check for trivial rejection.
 
     // Determine subsector entries in REJECT table.
@@ -354,7 +354,7 @@ P_CheckSight
     strace.dy = t2->y - t1->y;
 
     // the head node is the last node output
-    return P_CrossBSPNode (numnodes-1);	
+    return P_CrossBSPNode (numnodes-1);
 }
 
 

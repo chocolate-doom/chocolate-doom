@@ -28,7 +28,7 @@
 #define HU_FONTEND      '_'     // the last font characters
 
 // Calculate # of glyphs in font.
-#define HU_FONTSIZE     (HU_FONTEND - HU_FONTSTART + 1)	
+#define HU_FONTSIZE     (HU_FONTEND - HU_FONTSTART + 1)
 
 #define HU_BROADCAST    9       // haleyjd [STRIFE] Changed 5 -> 9
 #define HU_CHANGENAME   10      // haleyjd [STRIFE] Special command

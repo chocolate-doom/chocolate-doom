@@ -140,7 +140,7 @@ static void QuitConfirm(void *unused1, void *unused2)
 
     window = TXT_NewWindow(NULL);
 
-    TXT_AddWidgets(window, 
+    TXT_AddWidgets(window,
                    label = TXT_NewLabel("Exiting setup.\nSave settings?"),
                    TXT_NewStrut(24, 0),
                    yes_button = TXT_NewButton2("  Yes  ", DoQuit, DoQuit),
@@ -153,7 +153,7 @@ static void QuitConfirm(void *unused1, void *unused2)
 
     // Only an "abort" button in the middle.
     TXT_SetWindowAction(window, TXT_HORIZ_LEFT, NULL);
-    TXT_SetWindowAction(window, TXT_HORIZ_CENTER, 
+    TXT_SetWindowAction(window, TXT_HORIZ_CENTER,
                         TXT_NewWindowAbortAction(window));
     TXT_SetWindowAction(window, TXT_HORIZ_RIGHT, NULL);
 }
@@ -161,7 +161,7 @@ static void QuitConfirm(void *unused1, void *unused2)
 static void LaunchDoom(void *unused1, void *unused2)
 {
     execute_context_t *exec;
-    
+
     // Save configuration first
 
     M_SaveDefaults();
@@ -234,7 +234,7 @@ void MainMenu(void)
     {
         txt_button_t *button;
 
-        button = TXT_NewButton2("Compatibility", 
+        button = TXT_NewButton2("Compatibility",
                                 (TxtWidgetSignalFunc) CompatibilitySettings,
                                 NULL);
 
@@ -244,11 +244,11 @@ void MainMenu(void)
     TXT_AddWidgets(window,
           GetLaunchButton(),
           TXT_NewStrut(0, 1),
-          TXT_NewButton2("Start a Network Game", 
+          TXT_NewButton2("Start a Network Game",
                          (TxtWidgetSignalFunc) StartMultiGame, NULL),
-          TXT_NewButton2("Join a Network Game", 
+          TXT_NewButton2("Join a Network Game",
                          (TxtWidgetSignalFunc) JoinMultiGame, NULL),
-          TXT_NewButton2("Multiplayer Configuration", 
+          TXT_NewButton2("Multiplayer Configuration",
                          (TxtWidgetSignalFunc) MultiplayerConfig, NULL),
           NULL);
 
@@ -289,11 +289,11 @@ static void SetIcon(void)
     int i;
 
     // Generate the mask
-  
+
     mask = malloc(setup_icon_w * setup_icon_h / 8);
     memset(mask, 0, setup_icon_w * setup_icon_h / 8);
 
-    for (i=0; i<setup_icon_w * setup_icon_h; ++i) 
+    for (i=0; i<setup_icon_w * setup_icon_h; ++i)
     {
         if (setup_icon_data[i * 3] != 0x00
          || setup_icon_data[i * 3 + 1] != 0x00
@@ -358,7 +358,7 @@ void RestartTextscreen(void)
     InitTextscreen();
 }
 
-// 
+//
 // Initialize and run the textscreen GUI.
 //
 

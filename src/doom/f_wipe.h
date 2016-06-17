@@ -14,7 +14,7 @@
 //
 // DESCRIPTION:
 //	Mission start screen wipe/melt, special effects.
-//	
+//
 
 
 #ifndef __F_WIPE_H__
@@ -28,9 +28,9 @@ enum
 {
     // simple gradual pixel change for 8-bit only
     wipe_ColorXForm,
-    
+
     // weird screen melt
-    wipe_Melt,	
+    wipe_Melt,
 
     wipe_NUMWIPES
 };

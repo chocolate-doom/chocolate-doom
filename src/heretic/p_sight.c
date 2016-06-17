@@ -159,7 +159,7 @@ boolean P_SightTraverseIntercepts(void)
 
 //
 // go through in order
-//      
+//
     in = 0;                     // shut up compiler warning
 
     while (count--)
@@ -346,7 +346,7 @@ boolean P_CheckSight(mobj_t * t1, mobj_t * t2)
 
 //
 // check precisely
-//              
+//
     sightzstart = t1->z + t1->height - (t1->height >> 2);
     topslope = (t2->z + t2->height) - sightzstart;
     bottomslope = (t2->z) - sightzstart;

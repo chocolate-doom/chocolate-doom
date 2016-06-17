@@ -61,7 +61,7 @@ static SDL_mutex *timer_mutex;
 static int CallbackWaiting(uint64_t *next_time)
 {
     // If paused, just wait in 50ms increments until unpaused.
-    // Update pause_offset so after we unpause, the callback 
+    // Update pause_offset so after we unpause, the callback
     // times will be right.
 
     if (opl_timer_paused)

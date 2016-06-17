@@ -37,7 +37,7 @@
 
 
 // in AM_map.c
-extern boolean		automapactive; 
+extern boolean		automapactive;
 
 
 
@@ -55,7 +55,7 @@ void STlib_init(void)
 }
 
 
-// 
+//
 // STlib_initNum
 //
 // haleyjd 09/01/10: [STRIFE]
@@ -77,7 +77,7 @@ STlib_initNum
 }
 
 
-// 
+//
 // STlib_drawNum
 //
 // A fairly efficient way to draw a number
@@ -145,7 +145,7 @@ STlib_drawNum
 }
 
 
-// 
+//
 // STlib_drawNumPositive
 //
 // haleyjd 09/01/10: [STRIFE] New function.
@@ -221,7 +221,7 @@ STlib_updatePercent
 {
     if (refresh && *per->n.on)
 	V_DrawPatch(per->n.x, per->n.y, per->p);
-    
+
     STlib_updateNum(&per->n, refresh);
 }
 

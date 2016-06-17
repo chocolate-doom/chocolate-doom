@@ -217,18 +217,18 @@ static void NET_CL_ExpandFullTiccmd(net_full_ticcmd_t *cmd, unsigned int seq,
         }
     }
 
-    //printf("latency: %i\tremote:%i\n", average_latency / FRACUNIT, 
+    //printf("latency: %i\tremote:%i\n", average_latency / FRACUNIT,
     //                                   cmd->latency);
 
     // Possibly adjust offsetms in d_net.c, try to make players all have
-    // the same lag.  Don't adjust in the first few tics of play, as 
+    // the same lag.  Don't adjust in the first few tics of play, as
     // we don't have an accurate value for average_latency yet.
 
     if (seq > TICRATE)
     {
         adjustment = (cmd->latency * FRACUNIT) - average_latency;
 
-        // Only adjust very slightly; the cumulative effect over 
+        // Only adjust very slightly; the cumulative effect over
         // multiple tics will sort it out.
 
         adjustment = adjustment / 100;
@@ -237,14 +237,14 @@ static void NET_CL_ExpandFullTiccmd(net_full_ticcmd_t *cmd, unsigned int seq,
     }
 
     // Expand tic diffs for all players
-    
+
     for (i=0; i<NET_MAXPLAYERS; ++i)
     {
         if (i == settings.consoleplayer && !drone)
         {
             continue;
         }
-        
+
         if (cmd->playeringame[i])
         {
             net_ticdiff_t *diff;
@@ -315,10 +315,10 @@ void NET_CL_StartGame(net_gamesettings_t *settings)
     // Start from a ticcmd of all zeros
 
     memset(&last_ticcmd, 0, sizeof(ticcmd_t));
-    
+
     // Send packet
 
-    packet = NET_Conn_NewReliable(&client_connection, 
+    packet = NET_Conn_NewReliable(&client_connection,
                                   NET_PACKET_TYPE_GAMESTART);
 
     NET_WriteSettings(packet, settings);
@@ -354,7 +354,7 @@ static void NET_CL_SendTics(int start, int end)
 
     if (start < 0)
         start = 0;
-    
+
     // Build a new packet to send to the server
 
     packet = NET_NewPacket(512);
@@ -379,11 +379,11 @@ static void NET_CL_SendTics(int start, int end)
 
         NET_WriteTiccmdDiff(packet, &sendobj->cmd, settings.lowres_turn);
     }
-    
+
     // Send the packet
 
     NET_Conn_SendPacket(&client_connection, packet);
-    
+
     // All done!
 
     NET_FreePacket(packet);
@@ -400,11 +400,11 @@ void NET_CL_SendTiccmd(ticcmd_t *ticcmd, int maketic)
     net_ticdiff_t diff;
     net_server_send_t *sendobj;
     int starttic, endtic;
-    
+
     // Calculate the difference to the last ticcmd
 
     NET_TiccmdDiff(&last_ticcmd, ticcmd, &diff);
-    
+
     // Store in the send queue
 
     sendobj = &send_queue[maketic % BACKUPTICS];
@@ -422,7 +422,7 @@ void NET_CL_SendTiccmd(ticcmd_t *ticcmd, int maketic)
 
     if (starttic < 0)
         starttic = 0;
-    
+
     NET_CL_SendTics(starttic, endtic);
 }
 
@@ -530,7 +530,7 @@ static void NET_CL_SendResendRequest(int start, int end)
     int i;
 
     //printf("CL: Send resend %i-%i\n", start, end);
-    
+
     packet = NET_NewPacket(64);
     NET_WriteInt16(packet, NET_PACKET_TYPE_GAMEDATA_RESEND);
     NET_WriteInt32(packet, start);
@@ -585,12 +585,12 @@ static void NET_CL_CheckResends(void)
         if (need_resend)
         {
             // Start a new run of resend tics?
- 
+
             if (resend_start < 0)
             {
                 resend_start = i;
             }
-            
+
             resend_end = i;
         }
         else
@@ -637,9 +637,9 @@ static void NET_CL_ParseGameData(net_packet_t *packet)
     int resend_start, resend_end;
     size_t i;
     int index;
-    
+
     // Read header
-    
+
     if (!NET_ReadInt8(packet, &seq)
      || !NET_ReadInt8(packet, &num_tics))
     {
@@ -680,7 +680,7 @@ static void NET_CL_ParseGameData(net_packet_t *packet)
         }
 
         // Store in the receive window
-        
+
         recvobj = &recvwindow[index];
 
         recvobj->active = true;
@@ -688,7 +688,7 @@ static void NET_CL_ParseGameData(net_packet_t *packet)
     }
 
     // Has this been received out of sequence, ie. have we not received
-    // all tics before the first tic in this packet?  If so, send a 
+    // all tics before the first tic in this packet?  If so, send a
     // resend request.
 
     //printf("CL: %p: %i\n", client, seq);
@@ -703,7 +703,7 @@ static void NET_CL_ParseGameData(net_packet_t *packet)
 
     index = resend_end - 1;
     resend_start = resend_end;
-    
+
     while (index >= 0)
     {
         recvobj = &recvwindow[index];
@@ -730,7 +730,7 @@ static void NET_CL_ParseGameData(net_packet_t *packet)
 
     if (resend_start < resend_end)
     {
-        NET_CL_SendResendRequest(recvwindow_start + resend_start, 
+        NET_CL_SendResendRequest(recvwindow_start + resend_start,
                                  recvwindow_start + resend_end - 1);
     }
 }
@@ -760,7 +760,7 @@ static void NET_CL_ParseResendRequest(net_packet_t *packet)
 
     //printf("requested resend %i-%i .. ", start, end);
 
-    // Check we have the tics being requested.  If not, reduce the 
+    // Check we have the tics being requested.  If not, reduce the
     // window of tics to only what we have.
 
     while (start <= end
@@ -769,7 +769,7 @@ static void NET_CL_ParseResendRequest(net_packet_t *packet)
     {
         ++start;
     }
-     
+
     while (start <= end
         && (!send_queue[end % BACKUPTICS].active
          || send_queue[end % BACKUPTICS].seq != end))
@@ -863,12 +863,12 @@ void NET_CL_Run(void)
 {
     net_addr_t *addr;
     net_packet_t *packet;
-    
+
     if (!net_client_connected)
     {
         return;
     }
-    
+
     while (NET_RecvPacket(client_context, &addr, &packet))
     {
         // only accept packets from the server
@@ -1042,7 +1042,7 @@ void NET_CL_Disconnect(void)
     {
         return;
     }
-    
+
     NET_Conn_Disconnect(&client_connection);
 
     start_time = I_GetTimeMS();
@@ -1076,7 +1076,7 @@ void NET_CL_Init(void)
     // Try to set from the USER and USERNAME environment variables
     // Otherwise, fallback to "Player"
 
-    if (net_player_name == NULL) 
+    if (net_player_name == NULL)
         net_player_name = getenv("USER");
     if (net_player_name == NULL)
         net_player_name = getenv("USERNAME");

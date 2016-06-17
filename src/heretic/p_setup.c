@@ -484,7 +484,7 @@ void P_GroupLines(void)
         }
     }
 
-// build line tables for each sector    
+// build line tables for each sector
     linebuffer = Z_Malloc(total * sizeof(line_t *), PU_LEVEL, 0);
     sector = sectors;
     for (i = 0; i < numsectors; i++, sector++)
@@ -573,7 +573,7 @@ void P_SetupLevel(int episode, int map, int playermask, skill_t skill)
 
     lumpnum = W_GetNumForName(lumpname);
 
-// note: most of this ordering is important     
+// note: most of this ordering is important
     P_LoadBlockMap(lumpnum + ML_BLOCKMAP);
     P_LoadVertexes(lumpnum + ML_VERTEXES);
     P_LoadSectors(lumpnum + ML_SECTORS);

@@ -46,7 +46,7 @@ static void NewLine(unsigned char *screendata)
 
         p = screendata + (TXT_SCREEN_H - 1) * 2 * TXT_SCREEN_W;
 
-        for (i=0; i<TXT_SCREEN_W; ++i) 
+        for (i=0; i<TXT_SCREEN_W; ++i)
         {
             *p++ = ' ';
             *p++ = fgcolor | (bgcolor << 4);
@@ -82,7 +82,7 @@ static void PutChar(unsigned char *screendata, int c)
 
             ++cur_x;
 
-            if (cur_x >= TXT_SCREEN_W) 
+            if (cur_x >= TXT_SCREEN_W)
             {
                 NewLine(screendata);
             }

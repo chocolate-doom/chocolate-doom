@@ -96,7 +96,7 @@ boolean P_GiveAmmo(player_t* player, ammotype_t ammo, int num)
     if(player->ammo[ammo] > player->maxammo[ammo])
         player->ammo[ammo] = player->maxammo[ammo];
 
-    // If non zero ammo, 
+    // If non zero ammo,
     // don't change up weapons,
     // player was lower on purpose.
     if(oldammo)
@@ -261,7 +261,7 @@ boolean P_GiveBody(player_t* player, int num)
         // [STRIFE] handle healing from the Front's medic
         // The amount the player's health will be set to scales up with stamina
         // increases.
-        // Ex 1: On the wimpiest skill level, -100 is sent in. This restores 
+        // Ex 1: On the wimpiest skill level, -100 is sent in. This restores
         //       full health no matter what your stamina.
         //       (100*100)/100 = 100
         //       (200*100)/100 = 200
@@ -329,7 +329,7 @@ boolean P_GiveCard(player_t* player, card_t card)
 {
     if (player->cards[card])
         return false;
-    
+
     // villsa [STRIFE] multiply by 2
     player->bonuscount = BONUSADD * 2;
     player->cards[card] = true;
@@ -588,7 +588,7 @@ void P_TouchSpecialThing(mobj_t* special, mobj_t* toucher)
             player->sigiltype = special->frame;
             return;
         }
-        
+
         if(netgame)
             player->sigiltype = 4;
 
@@ -690,7 +690,7 @@ void P_TouchSpecialThing(mobj_t* special, mobj_t* toucher)
             // haleyjd 09/21/10: Strife player still picks up keys that
             // he has already found. (break, not return)
             if(!P_GiveCard(player, special->type - MT_KEY_BASE))
-                break; 
+                break;
         }
         else
         {
@@ -705,7 +705,7 @@ void P_TouchSpecialThing(mobj_t* special, mobj_t* toucher)
     {
         if(special->info->name)
         {
-            DEH_snprintf(pickupmsg, sizeof(pickupmsg), 
+            DEH_snprintf(pickupmsg, sizeof(pickupmsg),
                          "You picked up the %s.", DEH_String(special->info->name));
         }
         else
@@ -723,8 +723,8 @@ void P_TouchSpecialThing(mobj_t* special, mobj_t* toucher)
     {
         // [STRIFE]: Award quest flag based on the thing's speed. Quest 8 was
         // apparently at some point given by the Broken Power Coupling, which is
-        // why they don't want to award it if you have Quest 6 (which is 
-        // acquired by destroying the Front's working power coupling). BUT, the 
+        // why they don't want to award it if you have Quest 6 (which is
+        // acquired by destroying the Front's working power coupling). BUT, the
         // broken coupling object's speed is NOT 8... it is 512*FRACUNIT. For
         // strict portability beyond the x86, we need to AND the operand by 31.
         if(special->info->speed != 8 || !(player->questflags & QF_QUEST6))
@@ -799,7 +799,7 @@ void P_KillMobj(mobj_t* source, mobj_t* target)
         // even those caused by other monsters
         players[0].killcount++;
     }
-    
+
     if(target->player)
     {
         // count environment kills against you
@@ -828,7 +828,7 @@ void P_KillMobj(mobj_t* source, mobj_t* target)
                 item = target->player->inventory[0].type;
                 if(item == MT_MONY_1)
                 {
-                    loot = P_SpawnMobj(target->x, target->y, 
+                    loot = P_SpawnMobj(target->x, target->y,
                                        target->z + (24*FRACUNIT), MT_MONY_25);
 
                     // [STRIFE] TODO - what the hell is it doing here?
@@ -839,7 +839,7 @@ void P_KillMobj(mobj_t* source, mobj_t* target)
                 }
                 else
                 {
-                    loot = P_SpawnMobj(target->x, target->y, 
+                    loot = P_SpawnMobj(target->x, target->y,
                                        target->z + (24*FRACUNIT), item);
                     amount = 1;
                 }
@@ -875,7 +875,7 @@ void P_KillMobj(mobj_t* source, mobj_t* target)
         else
         {
             // haleyjd [STRIFE] 20160111: Rogue changed check from < to <=
-            if(target->health <= -target->info->spawnhealth 
+            if(target->health <= -target->info->spawnhealth
                 && target->info->xdeathstate)
                 P_SetMobjState(target, target->info->xdeathstate);
             else
@@ -1118,7 +1118,7 @@ void P_DamageMobj(mobj_t* target, mobj_t* inflictor, mobj_t* source, int damage)
     if(inflictor)
     {
         // Fire damage inflictors
-        if(inflictor->type == MT_SFIREBALL || 
+        if(inflictor->type == MT_SFIREBALL ||
            inflictor->type == MT_C_FLAME   ||
            inflictor->type == MT_PFLAME)
         {
@@ -1258,8 +1258,8 @@ void P_DamageMobj(mobj_t* target, mobj_t* inflictor, mobj_t* source, int damage)
         // villsa [STRIFE] flame attacks don't damage player if wearing envirosuit
         if(player->powers[pw_ironfeet] && inflictor)
         {
-            if(inflictor->type == MT_SFIREBALL || 
-               inflictor->type == MT_C_FLAME   || 
+            if(inflictor->type == MT_SFIREBALL ||
+               inflictor->type == MT_C_FLAME   ||
                inflictor->type == MT_PFLAME)
             {
                 damage = 0;
@@ -1287,7 +1287,7 @@ void P_DamageMobj(mobj_t* target, mobj_t* inflictor, mobj_t* source, int damage)
             damage -= saved;
         }
         player->health -= damage;   // mirror mobj health here for Dave
-        
+
         // [STRIFE] haleyjd 20130302: bug fix - this is *not* capped here.
         //if(player->health < 0)
         //    player->health = 0;
@@ -1308,7 +1308,7 @@ void P_DamageMobj(mobj_t* target, mobj_t* inflictor, mobj_t* source, int damage)
             I_Tactile (40,10,40+temp*2);
     }
 
-    // do the damage	
+    // do the damage
     target->health -= damage;
 
     // villsa [STRIFE] auto use medkits
@@ -1331,9 +1331,9 @@ void P_DamageMobj(mobj_t* target, mobj_t* inflictor, mobj_t* source, int damage)
         {
             // villsa [STRIFE] disintegration death
             if(inflictor &&
-                (inflictor->type == MT_STRIFEPUFF3 || 
-                 inflictor->type == MT_L_LASER     || 
-                 inflictor->type == MT_TORPEDO     || 
+                (inflictor->type == MT_STRIFEPUFF3 ||
+                 inflictor->type == MT_L_LASER     ||
+                 inflictor->type == MT_TORPEDO     ||
                  inflictor->type == MT_TORPEDOSPREAD))
             {
                 S_StartSound(target, sfx_dsrptr);
@@ -1344,8 +1344,8 @@ void P_DamageMobj(mobj_t* target, mobj_t* inflictor, mobj_t* source, int damage)
         // villsa [STRIFE] flame death stuff
         if(!(target->flags & MF_NOBLOOD)
             && inflictor
-            && (inflictor->type == MT_SFIREBALL || 
-                inflictor->type == MT_C_FLAME   || 
+            && (inflictor->type == MT_SFIREBALL ||
+                inflictor->type == MT_C_FLAME   ||
                 inflictor->type == MT_PFLAME))
         {
             target->flags &= ~(MF_SHOOTABLE|MF_FLOAT|MF_SHADOW|MF_MVIS);
@@ -1363,7 +1363,7 @@ void P_DamageMobj(mobj_t* target, mobj_t* inflictor, mobj_t* source, int damage)
 
             return;
         }
-        
+
         P_KillMobj(source, target);
         return;
     }
@@ -1378,7 +1378,7 @@ void P_DamageMobj(mobj_t* target, mobj_t* inflictor, mobj_t* source, int damage)
     if(damage)
     {
         // villsa [STRIFE] removed unused skullfly flag
-        if(P_Random() < target->info->painchance) 
+        if(P_Random() < target->info->painchance)
         {
             target->flags |= MF_JUSTHIT;    // fight back!
             P_SetMobjState (target, target->info->painstate);

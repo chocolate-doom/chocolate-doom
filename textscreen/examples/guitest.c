@@ -24,7 +24,7 @@
 
 #include "textscreen.h"
 
-enum 
+enum
 {
     RADIO_VALUE_BADGER,
     RADIO_VALUE_MUSHROOM,
@@ -52,7 +52,7 @@ void PwnBox(TXT_UNCAST_ARG(widget), void *user_data)
 {
     txt_window_t *window;
     txt_window_action_t *close_button;
-    
+
     window = TXT_NewWindow("Pwned!");
     TXT_AddWidget(window, TXT_NewLabel(" BOOM! HEADSHOT! "));
 
@@ -66,7 +66,7 @@ void PwnBox(TXT_UNCAST_ARG(widget), void *user_data)
 void UpdateLabel(TXT_UNCAST_ARG(widget), void *user_data)
 {
     char buf[40];
-    
+
     TXT_StringCopy(buf, " Current value: ", sizeof(buf));
     if (cheesy)
     {
@@ -93,7 +93,7 @@ void SetupWindow(void)
     txt_label_t *toplabel;
     char buf[100];
     int i;
-    
+
     window = TXT_NewWindow("Window test");
 
     TXT_SetWindowHelpURL(window, "https://www.youtube.com/watch?v=dQw4w9WgXcQ");
@@ -174,9 +174,9 @@ void Window2(void)
     txt_scrollpane_t *scrollpane;
 
     window = TXT_NewWindow("Another test");
-    TXT_SetWindowPosition(window, 
-                          TXT_HORIZ_RIGHT, 
-                          TXT_VERT_TOP, 
+    TXT_SetWindowPosition(window,
+                          TXT_HORIZ_RIGHT,
+                          TXT_VERT_TOP,
                           TXT_SCREEN_W - 1, 1);
 
     TXT_AddWidgets(window,

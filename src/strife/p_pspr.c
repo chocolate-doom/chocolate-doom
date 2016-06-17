@@ -187,10 +187,10 @@ boolean P_CheckAmmo (player_t* player)
     else if (player->weaponowned[wp_wpgrenade] && player->ammo[am_wpgrenades])
         player->pendingweapon = wp_wpgrenade;
 
-    // BUG: This will *never* be selected for an automatic switch because the 
+    // BUG: This will *never* be selected for an automatic switch because the
     // normal Mauler is higher priority and uses less ammo.
     else if (player->weaponowned[wp_torpedo] && player->ammo[am_cell] >= 30)
-        player->pendingweapon = wp_torpedo; 
+        player->pendingweapon = wp_torpedo;
 
     else
         player->pendingweapon = wp_fist;
@@ -218,7 +218,7 @@ void P_FireWeapon (player_t* player)
     P_SetMobjState (player->mo, S_PLAY_05); // 292
     newstate = weaponinfo[player->readyweapon].atkstate;
     P_SetPsprite (player, ps_weapon, newstate);
-    
+
     // villsa [STRIFE] exclude these weapons from causing noise
     if(player->readyweapon > wp_elecbow && player->readyweapon != wp_poisonbow)
         P_NoiseAlert (player->mo, player->mo);
@@ -250,14 +250,14 @@ void A_WeaponReady( player_t* player, pspdef_t* psp)
 {
     statenum_t  newstate;
     int         angle;
-    
+
     // get out of attack state
     if (player->mo->state == &states[S_PLAY_05] || // 292
         player->mo->state == &states[S_PLAY_06])   // 293
     {
         P_SetMobjState (player->mo, S_PLAY_00); // 287
     }
-    
+
     // villsa [STRIFE] check for wp_flame instead of chainsaw
     // haleyjd 09/06/10: fixed state (00 rather than 01)
     if (player->readyweapon == wp_flame
@@ -265,7 +265,7 @@ void A_WeaponReady( player_t* player, pspdef_t* psp)
     {
         S_StartSound (player->mo, sfx_flidl);
     }
-    
+
     // check for change
     //  if player is dead, put the weapon away
     if (player->pendingweapon != wp_nochange || !player->health)
@@ -276,7 +276,7 @@ void A_WeaponReady( player_t* player, pspdef_t* psp)
         P_SetPsprite (player, ps_weapon, newstate);
         return;
     }
-    
+
     // check for fire
     //  the missile launcher and torpedo do not auto fire
     if (player->cmd.buttons & BT_ATTACK)
@@ -292,7 +292,7 @@ void A_WeaponReady( player_t* player, pspdef_t* psp)
     }
     else
         player->attackdown = false;
-    
+
     // bob the weapon based on movement speed
     angle = (128*leveltime)&FINEMASK;
     psp->sx = FRACUNIT + FixedMul (player->bob, finecosine[angle]);
@@ -311,10 +311,10 @@ void A_ReFire
 ( player_t*	player,
   pspdef_t*	psp )
 {
-    
+
     // check for fire
     //  (if a weaponchange is pending, let it go through instead)
-    if ( (player->cmd.buttons & BT_ATTACK) 
+    if ( (player->cmd.buttons & BT_ATTACK)
         && player->pendingweapon == wp_nochange
         && player->health)
     {
@@ -351,7 +351,7 @@ void
 A_Lower
 ( player_t*	player,
   pspdef_t*	psp )
-{	
+{
     psp->sy += LOWERSPEED;
 
     // Is already down.
@@ -366,7 +366,7 @@ A_Lower
         // don't bring weapon back up
         return;
     }
-    
+
     // The old weapon has been lowered off the screen,
     // so change the weapon and start raising it
     if (!player->health)
@@ -376,7 +376,7 @@ A_Lower
         return;
     }
 
-    player->readyweapon = player->pendingweapon; 
+    player->readyweapon = player->pendingweapon;
 
     P_BringUpWeapon (player);
 }
@@ -414,7 +414,7 @@ A_Raise
 void
 A_GunFlash
 ( player_t*	player,
-  pspdef_t*	psp ) 
+  pspdef_t*	psp )
 {
     P_SetMobjState (player->mo, S_PLAY_06);
     P_SetPsprite (player,ps_flash,weaponinfo[player->readyweapon].flashstate);
@@ -431,7 +431,7 @@ A_GunFlash
 // A_Punch
 //
 
-void A_Punch(player_t* player, pspdef_t* psp) 
+void A_Punch(player_t* player, pspdef_t* psp)
 {
     angle_t     angle;
     int         damage;
@@ -485,7 +485,7 @@ void A_Punch(player_t* player, pspdef_t* psp)
 //
 // villsa [STRIFE] new codepointer
 //
-void A_FireFlameThrower(player_t* player, pspdef_t* psp) 
+void A_FireFlameThrower(player_t* player, pspdef_t* psp)
 {
     mobj_t* mo;
     int t;
@@ -504,7 +504,7 @@ void A_FireFlameThrower(player_t* player, pspdef_t* psp)
 //
 // villsa [STRIFE] completly new compared to the original
 //
-void A_FireMissile(player_t* player, pspdef_t* psp) 
+void A_FireMissile(player_t* player, pspdef_t* psp)
 {
     angle_t an;
     int t;
@@ -648,7 +648,7 @@ fixed_t         bulletslope;
 void P_BulletSlope (mobj_t *mo)
 {
     angle_t	an;
-    
+
     // see which target is to be aimed at
     an = mo->angle;
     bulletslope = P_AimLineAttack (mo, an, 16*64*FRACUNIT);
@@ -796,14 +796,14 @@ void A_FireSigil(player_t* player, pspdef_t* pspr)
         if(linetarget)
         {
             // haleyjd 09/18/10: corrected z coordinate
-            mo = P_SpawnMobj(linetarget->x, linetarget->y, ONFLOORZ, 
+            mo = P_SpawnMobj(linetarget->x, linetarget->y, ONFLOORZ,
                              MT_SIGIL_A_GROUND);
             mo->tracer = linetarget;
         }
         else
         {
             an = player->mo->angle>>ANGLETOFINESHIFT;
-            mo = P_SpawnMobj(player->mo->x, player->mo->y, player->mo->z, 
+            mo = P_SpawnMobj(player->mo->x, player->mo->y, player->mo->z,
                              MT_SIGIL_A_GROUND);
             mo->momx += FixedMul((28*FRACUNIT), finecosine[an]);
             mo->momy += FixedMul((28*FRACUNIT), finesine[an]);
@@ -855,7 +855,7 @@ void A_FireSigil(player_t* player, pspdef_t* pspr)
         if(!linetarget)
         {
             an = (unsigned int)player->pitch >> ANGLETOFINESHIFT;
-            mo->momz += FixedMul(finesine[an], mo->info->speed); 
+            mo->momz += FixedMul(finesine[an], mo->info->speed);
         }
         break;
 
@@ -946,7 +946,7 @@ void A_MaulerSound(player_t *player, pspdef_t *psp)
 // P_SetupPsprites
 // Called at start of level for each player.
 //
-void P_SetupPsprites(player_t* player) 
+void P_SetupPsprites(player_t* player)
 {
     int	i;
 
@@ -966,7 +966,7 @@ void P_SetupPsprites(player_t* player)
 // P_MovePsprites
 // Called every tic by player thinking routine.
 //
-void P_MovePsprites (player_t* player) 
+void P_MovePsprites (player_t* player)
 {
     int		i;
     pspdef_t*	psp;
@@ -976,12 +976,12 @@ void P_MovePsprites (player_t* player)
     for(i = 0; i < NUMPSPRITES; i++, psp++)
     {
         // a null state means not active
-        if((state = psp->state))	
+        if((state = psp->state))
         {
             // drop tic count and possibly change state
 
             // a -1 tic count never changes
-            if(psp->tics != -1)	
+            if(psp->tics != -1)
             {
                 psp->tics--;
                 if(!psp->tics)
@@ -989,7 +989,7 @@ void P_MovePsprites (player_t* player)
             }
         }
     }
-    
+
     player->psprites[ps_flash].sx = player->psprites[ps_weapon].sx;
     player->psprites[ps_flash].sy = player->psprites[ps_weapon].sy;
 

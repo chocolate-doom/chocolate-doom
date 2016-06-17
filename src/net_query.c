@@ -724,12 +724,12 @@ static void NET_QueryPrintCallback(net_addr_t *addr,
 
     formatted_printf(5, "%4i", ping_time);
     formatted_printf(18, "%s: ", NET_AddrToString(addr));
-    formatted_printf(8, "%i/%i", data->num_players, 
+    formatted_printf(8, "%i/%i", data->num_players,
                                  data->max_players);
 
     if (data->gamemode != indetermined)
     {
-        printf("(%s) ", GameDescription(data->gamemode, 
+        printf("(%s) ", GameDescription(data->gamemode,
                                         data->gamemission));
     }
 

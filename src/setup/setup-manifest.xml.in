@@ -2,9 +2,9 @@
 
 <!-- Magic manifest file that should make Windows Vista/7 not
      attempt to gain elevated privileges for chocolate-setup.
-     
+
      Based on:
-     
+
      http://www.cygwin.com/ml/cygwin/2006-12/msg00580.html
   -->
 

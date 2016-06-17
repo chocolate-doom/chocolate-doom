@@ -139,7 +139,7 @@ static void ParseLine(gus_config_t *config, char *line)
             break;
         }
     }
-    
+
     if (i == config->count)
     {
         // DMX uses wrong patch name (we should use name of 'mapped_id'
@@ -253,7 +253,7 @@ static boolean WriteTimidityConfig(char *path, gus_config_t *config)
     }
 
     fprintf(fstream, "\ndrumset 0\n\n");
-    
+
     for (i = 128 + 35; i <= 128 + 81; ++i)
     {
         if (config->mapping[i] >= 0 && config->mapping[i] < MAX_INSTRUMENTS

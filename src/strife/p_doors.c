@@ -723,10 +723,10 @@ void EV_VerticalDoor(line_t* line, mobj_t* thing)
     {
         door = sec->specialdata;
         // [STRIFE] Adjusted to handle linetypes handled here by Strife.
-        // BUG: Not all door types are checked here. This means that certain 
+        // BUG: Not all door types are checked here. This means that certain
         // door lines are allowed to fall through and start a new thinker on the
-        // sector! This is why some doors can become jammed in Strife - stuck in 
-        // midair, or unable to be opened at all. Multiple thinkers will fight 
+        // sector! This is why some doors can become jammed in Strife - stuck in
+        // midair, or unable to be opened at all. Multiple thinkers will fight
         // over how to move the door. They should have added a default return if
         // they weren't going to handle this unconditionally...
         switch(line->special)
@@ -894,9 +894,9 @@ P_SpawnDoorRaiseIn5Mins
   int		secnum )
 {
     vldoor_t*	door;
-	
+
     door = Z_Malloc ( sizeof(*door), PU_LEVSPEC, 0);
-    
+
     P_AddThinker (&door->thinker);
 
     sec->specialdata = door;
@@ -1048,12 +1048,12 @@ void P_InitSlidingDoorFrames(void)
     int f4;
 
     memset(slideFrames, 0, sizeof(slideframe_t) * MAXSLIDEDOORS);
-	
+
     for(i = 0; i < MAXSLIDEDOORS; i++)
     {
 	if(!slideFrameNames[i].frame1[0])
 	    break;
-			
+
 	f1 = R_TextureNumForName(DEH_String(slideFrameNames[i].frame1));
 	f2 = R_TextureNumForName(DEH_String(slideFrameNames[i].frame2));
 	f3 = R_TextureNumForName(DEH_String(slideFrameNames[i].frame3));
@@ -1063,7 +1063,7 @@ void P_InitSlidingDoorFrames(void)
 	slideFrames[i].frames[1] = f2;
 	slideFrames[i].frames[2] = f3;
 	slideFrames[i].frames[3] = f4;
-		
+
 	f1 = R_TextureNumForName(DEH_String(slideFrameNames[i].frame5));
 	f2 = R_TextureNumForName(DEH_String(slideFrameNames[i].frame6));
 	f3 = R_TextureNumForName(DEH_String(slideFrameNames[i].frame7));
@@ -1089,14 +1089,14 @@ int P_FindSlidingDoorType(line_t* line)
 {
     int i;
     int val;
-	
+
     for(i = 0; i < MAXSLIDEDOORS-1; i++)
     {
         val = sides[line->sidenum[0]].toptexture;
 	if(val == slideFrames[i].frames[0])
 	    return i;
     }
-	
+
     return -1;
 }
 
@@ -1246,10 +1246,10 @@ int EV_RemoteSlidingDoor(line_t* line, mobj_t* thing)
     int             i;
     int             rtn;
     line_t*         secline;
-	
+
     secnum = -1;
     rtn = 0;
-    
+
     while((secnum = P_FindSectorFromLineTag(line,secnum)) >= 0)
     {
         sec = &sectors[secnum];

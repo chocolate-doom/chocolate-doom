@@ -46,7 +46,7 @@
 
 // The current state of the game: whether we are
 // playing, gazing at the intermission screen,
-// the game final animation, or a demo. 
+// the game final animation, or a demo.
 typedef enum
 {
     GS_LEVEL,
@@ -93,9 +93,9 @@ typedef enum
     it_blueskull,
     it_yellowskull,
     it_redskull,
-    
+
     NUMCARDS
-    
+
 } card_t;
 
 
@@ -116,7 +116,7 @@ typedef enum
     wp_supershotgun,
 
     NUMWEAPONS,
-    
+
     // No pending weapon change.
     wp_nochange
 
@@ -131,7 +131,7 @@ typedef enum
     am_cell,	// Plasma rifle, BFG.
     am_misl,	// Missile launcher.
     NUMAMMO,
-    am_noammo	// Unlimited for chainsaw / fist.	
+    am_noammo	// Unlimited for chainsaw / fist.
 
 } ammotype_t;
 
@@ -146,7 +146,7 @@ typedef enum
     pw_allmap,
     pw_infrared,
     NUMPOWERS
-    
+
 } powertype_t;
 
 
@@ -162,7 +162,7 @@ typedef enum
     INVISTICS	= (60*TICRATE),
     INFRATICS	= (120*TICRATE),
     IRONTICS	= (60*TICRATE)
-    
+
 } powerduration_t;
 
 #endif          // __DOOMDEF__

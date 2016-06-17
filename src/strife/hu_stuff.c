@@ -218,7 +218,7 @@ void HU_Start(void)
     // haleyjd 20120211: [STRIFE] not called here.
     //if (headsupactive)
     //    HU_Stop();
-    
+
     // haleyjd 20120211: [STRIFE] moved up
     // create the map title widget
     HUlib_initTextLine(&w_title,
@@ -233,7 +233,7 @@ void HU_Start(void)
 
     // dehacked substitution to get modified level name
     s = DEH_String(s);
-    
+
     while (*s)
         HUlib_addCharToTextLine(&w_title, *(s++));
 
@@ -264,7 +264,7 @@ void HU_Start(void)
 
         headsupactive = true;
 
-        // haleyjd 09/18/10: [STRIFE] nickname weirdness. 
+        // haleyjd 09/18/10: [STRIFE] nickname weirdness.
         if(nickname != player_names[consoleplayer])
         {
             if(nickname != NULL && *nickname)
@@ -361,7 +361,7 @@ void HU_addMessage(char *prefix, char *message)
 
     // Too big to fit?
     // BUG: doesn't consider by how much it's over.
-    if(width > 320) 
+    if(width > 320)
     {
         // backup a char... hell if I know why.
         --bufptr;
@@ -533,7 +533,7 @@ boolean HU_Responder(event_t *ev)
     unsigned char       c;
     int                 i;
     int                 numplayers;
-    
+
     static int          num_nobrainers = 0;
 
     numplayers = 0;

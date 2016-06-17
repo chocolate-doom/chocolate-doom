@@ -47,7 +47,7 @@ weaponinfo_t	weaponinfo[NUMWEAPONS] =
         S_PNCH_04,
         S_NULL,
         1
-    },	
+    },
     {
         // electric bow
         am_elecbolts,
@@ -57,7 +57,7 @@ weaponinfo_t	weaponinfo[NUMWEAPONS] =
         S_XBOW_03,
         S_NULL,
         1
-    },	
+    },
     {
         // rifle
         am_bullets,
@@ -147,7 +147,7 @@ weaponinfo_t	weaponinfo[NUMWEAPONS] =
         S_BLST_19,
         S_NULL,
         0
-    },	
+    },
 };
 
 

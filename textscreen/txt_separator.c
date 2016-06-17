@@ -53,7 +53,7 @@ static void TXT_SeparatorDrawer(TXT_UNCAST_ARG(separator))
     // to overlap the window borders.
 
     TXT_DrawSeparator(x-2, y, w + 4);
-    
+
     if (separator->label != NULL)
     {
         TXT_GotoXY(x, y);

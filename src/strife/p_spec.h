@@ -137,7 +137,7 @@ typedef struct
     int		count;
     int		maxlight;
     int		minlight;
-    
+
 } fireflicker_t;
 
 
@@ -151,7 +151,7 @@ typedef struct
     int		minlight;
     int		maxtime;
     int		mintime;
-    
+
 } lightflash_t;
 
 
@@ -165,7 +165,7 @@ typedef struct
     int		maxlight;
     int		darktime;
     int		brighttime;
-    
+
 } strobe_t;
 
 
@@ -253,10 +253,10 @@ typedef struct
  // 4 players, 4 buttons each at once, max.
 #define MAXBUTTONS		16
 
- // 1 second, in ticks. 
-#define BUTTONTIME      35             
+ // 1 second, in ticks.
+#define BUTTONTIME      35
 
-extern button_t	buttonlist[MAXBUTTONS]; 
+extern button_t	buttonlist[MAXBUTTONS];
 
 void
 P_ChangeSwitchTexture
@@ -308,7 +308,7 @@ typedef struct
     boolean	crush;
     int		tag;
     plattype_e	type;
-    
+
 } plat_t;
 
 
@@ -365,7 +365,7 @@ typedef struct
 
     // 1 = up, 0 = waiting at top, -1 = down
     int         direction;
-    
+
     // tics to wait at the top
     int         topwait;
     // (keep in case a door going down is reset)
@@ -377,7 +377,7 @@ typedef struct
 
     // villsa [STRIFE] new field - sound to play when closing
     int         closesound;
-    
+
 } vldoor_t;
 
 
@@ -462,7 +462,7 @@ typedef struct
     char    frame6[9];
     char    frame7[9];
     char    frame8[9];
-    
+
 } slidename_t;
 
 // villsa [STRIFE] no front/back frames
@@ -483,7 +483,7 @@ void T_SlidingDoor(slidedoor_t* door);
 #define SWAITTICS       4
 
 // how many diff. types of anims
-#define MAXSLIDEDOORS	8       // villsa [STRIFE] changed from 5 to 8                     
+#define MAXSLIDEDOORS	8       // villsa [STRIFE] changed from 5 to 8
 
 void P_InitSlidingDoorFrames(void);
 void EV_SlidingDoor(line_t* line, mobj_t* thing);
@@ -521,9 +521,9 @@ typedef struct
     int		direction;
 
     // ID
-    int		tag;                   
+    int		tag;
     int		olddirection;
-    
+
 } ceiling_t;
 
 
@@ -555,38 +555,38 @@ typedef enum
 {
     // lower floor to highest surrounding floor
     lowerFloor,
-    
+
     // lower floor to lowest surrounding floor
     lowerFloorToLowest,
-    
+
     // lower floor to highest surrounding floor VERY FAST
     turboLower,
-    
+
     // raise floor to lowest surrounding CEILING
     raiseFloor,
-    
+
     // raise floor to next highest surrounding floor
     raiseFloorToNearest,
 
     // raise floor to shortest height texture around it
     raiseToTexture,
-    
+
     // lower floor to lowest surrounding floor
     //  and change floorpic
     lowerAndChange,
-  
+
     raiseFloor64,          // [STRIFE] changed from 24 to 64
     raiseFloor24AndChange,
     raiseFloorCrush,
 
      // raise to next highest floor, turbo-speed
-    raiseFloorTurbo,       
+    raiseFloorTurbo,
     donutRaise,
     raiseFloor512,
 
     // [STRIFE] New floor type - used for the coolant reactor pit
     raiseFloor512AndChange
-    
+
 } floor_e;
 
 
@@ -624,7 +624,7 @@ typedef enum
     ok,
     crushed,
     pastdest
-    
+
 } result_e;
 
 result_e

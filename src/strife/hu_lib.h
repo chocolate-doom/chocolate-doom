@@ -38,14 +38,14 @@ typedef struct
     // left-justified position of scrolling text window
     int		x;
     int		y;
-    
+
     patch_t**	f;			// font
     int		sc;			// start character
     char	l[HU_MAXLINELENGTH+1];	// line of text
     int		len;		      	// current line length
 
     // whether this line needs to be udpated
-    int		needsupdate;	      
+    int		needsupdate;
 
 } hu_textline_t;
 
@@ -77,7 +77,7 @@ typedef struct
     int			lm;
 
     // pointer to boolean stating whether to update window
-    boolean*		on; 
+    boolean*		on;
     boolean		laston; // last value of *->on;
 
 } hu_itext_t;
@@ -131,7 +131,7 @@ HUlib_initSText
   boolean*	on );
 
 // add a new line
-void HUlib_addLineToSText(hu_stext_t* s);  
+void HUlib_addLineToSText(hu_stext_t* s);
 
 // ?
 void
@@ -144,7 +144,7 @@ HUlib_addMessageToSText
 void HUlib_drawSText(hu_stext_t* s);
 
 // erases all stext lines
-void HUlib_eraseSText(hu_stext_t* s); 
+void HUlib_eraseSText(hu_stext_t* s);
 
 // Input Text Line widget routines
 void
@@ -180,6 +180,6 @@ HUlib_keyInIText
 void HUlib_drawIText(hu_itext_t* it);
 
 // erases all itext lines
-void HUlib_eraseIText(hu_itext_t* it); 
+void HUlib_eraseIText(hu_itext_t* it);
 
 #endif

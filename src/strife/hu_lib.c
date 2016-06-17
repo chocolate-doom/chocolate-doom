@@ -104,7 +104,7 @@ void HUlib_init(void)
 
 //
 // HUlib_clearTextLine
-// 
+//
 // [STRIFE] Verified unmodified.
 //
 void HUlib_clearTextLine(hu_textline_t* t)
@@ -220,7 +220,7 @@ HUlib_drawTextLine
 // HUlib_eraseTextLine
 //
 // sorta called by HU_Erase and just better darn get things straight
-// 
+//
 // [STRIFE] Verified unmodified.
 //
 void HUlib_eraseTextLine(hu_textline_t* l)
@@ -435,11 +435,11 @@ HUlib_keyInIText
 {
     ch = toupper(ch);
 
-    if (ch >= ' ' && ch <= '_') 
+    if (ch >= ' ' && ch <= '_')
         HUlib_addCharToTextLine(&it->l, (char) ch);
-    else if (ch == KEY_BACKSPACE) 
+    else if (ch == KEY_BACKSPACE)
         HUlib_delCharFromIText(it);
-    else if (ch != KEY_ENTER) 
+    else if (ch != KEY_ENTER)
         return false; // did not eat key
 
     return true; // ate the key

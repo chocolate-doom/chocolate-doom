@@ -100,7 +100,7 @@ musicinfo_t S_music[] =
     MUSIC("ultima"),
     MUSIC("read_m"),
     MUSIC("dm2ttl"),
-    MUSIC("dm2int") 
+    MUSIC("dm2int")
 };
 
 

@@ -44,7 +44,7 @@ static void MapFile(posix_wad_file_t *wad, char *filename)
     int flags;
 
     // Mapped area can be read and written to.  Ideally
-    // this should be read-only, as none of the Doom code should 
+    // this should be read-only, as none of the Doom code should
     // change the WAD files after being read.  However, there may
     // be code lurking in the source that does.
 
@@ -56,7 +56,7 @@ static void MapFile(posix_wad_file_t *wad, char *filename)
     flags = MAP_PRIVATE;
 
     result = mmap(NULL, wad->wad.length,
-                  protection, flags, 
+                  protection, flags,
                   wad->handle, 0);
 
     wad->wad.mapped = result;
@@ -72,7 +72,7 @@ unsigned int GetFileLength(int handle)
 {
     return lseek(handle, 0, SEEK_END);
 }
-   
+
 static wad_file_t *W_POSIX_OpenFile(char *path)
 {
     posix_wad_file_t *result;
@@ -108,12 +108,12 @@ static void W_POSIX_CloseFile(wad_file_t *wad)
     // If mapped, unmap it.
 
     // Close the file
-  
+
     close(posix_wad->handle);
     Z_Free(posix_wad);
 }
 
-// Read data from the specified position in the file into the 
+// Read data from the specified position in the file into the
 // provided buffer.  Returns the number of bytes read.
 
 size_t W_POSIX_Read(wad_file_t *wad, unsigned int offset,
@@ -156,7 +156,7 @@ size_t W_POSIX_Read(wad_file_t *wad, unsigned int offset,
 }
 
 
-wad_file_class_t posix_wad_file = 
+wad_file_class_t posix_wad_file =
 {
     W_POSIX_OpenFile,
     W_POSIX_CloseFile,

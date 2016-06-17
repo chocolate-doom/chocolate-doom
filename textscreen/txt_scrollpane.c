@@ -414,7 +414,7 @@ static int TXT_ScrollPaneKeyPress(TXT_UNCAST_ARG(scrollpane), int key)
             ShowSelectedWidget(scrollpane);
         }
 
-        // If the child widget didn't use the keypress, we can see 
+        // If the child widget didn't use the keypress, we can see
         // if it can be interpreted as a scrolling command.
 
         if (result == 0)

@@ -320,7 +320,7 @@ boolean P_GiveWeapon(player_t *player, pclass_t class, weapontype_t weapon)
 		else
 		{
 			return P_GiveMana(player, MANA_2, 25);
-		}		
+		}
 	}
 	if(netgame && !deathmatch)
 	{ // Cooperative net-game
@@ -334,7 +334,7 @@ boolean P_GiveWeapon(player_t *player, pclass_t class, weapontype_t weapon)
 		{
 			P_GiveMana(player, MANA_1, 25);
 		}
-		else 
+		else
 		{
 			P_GiveMana(player, MANA_2, 25);
 		}
@@ -349,7 +349,7 @@ boolean P_GiveWeapon(player_t *player, pclass_t class, weapontype_t weapon)
 	{
 		gaveMana = P_GiveMana(player, MANA_1, 25);
 	}
-	else 
+	else
 	{
 		gaveMana = P_GiveMana(player, MANA_2, 25);
 	}

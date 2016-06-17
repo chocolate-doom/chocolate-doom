@@ -88,7 +88,7 @@ static int TXT_CheckBoxKeyPress(TXT_UNCAST_ARG(checkbox), int key)
         TXT_EmitSignal(checkbox, "changed");
         return 1;
     }
-    
+
     return 0;
 }
 

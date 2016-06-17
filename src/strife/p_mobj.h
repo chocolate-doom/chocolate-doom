@@ -90,7 +90,7 @@
 // things, but nothing can run into a missile).
 // Each block in the grid is 128*128 units, and knows about
 // every line_t that it contains a piece of, and every
-// interactable mobj_t that has its origin contained.  
+// interactable mobj_t that has its origin contained.
 //
 // A valid mobj_t is a mobj_t that has the proper subsector_t
 // filled in for its xy coordinates and is linked into the
@@ -234,7 +234,7 @@ typedef enum
 
 // Map Object definition.
 //
-// [STRIFE]: Amazingly, only one modification was made to mobj_t over DOOM 
+// [STRIFE]: Amazingly, only one modification was made to mobj_t over DOOM
 // 1.666, and that was the addition of the single-byte allegiance field for
 // tracking with which player friendly monsters are allied.
 //
@@ -261,7 +261,7 @@ typedef struct mobj_s
     // Links in blocks (if needed).
     struct mobj_s*      bnext;
     struct mobj_s*      bprev;
-    
+
     struct subsector_s* subsector;
 
     // The closest interval over all contacted Sectors.
@@ -282,7 +282,7 @@ typedef struct mobj_s
 
     mobjtype_t          type;
     mobjinfo_t*         info;   // &mobjinfo[mobj->type]
-    
+
     int                 tics;   // state tic counter
     state_t*            state;
     int                 flags;
@@ -298,7 +298,7 @@ typedef struct mobj_s
 
     // Reaction time: if non 0, don't attack yet.
     // Used by player to freeze a bit after teleporting.
-    int                 reactiontime;   
+    int                 reactiontime;
 
     // If >0, the target will be chased
     // no matter what (even if shot)
@@ -317,11 +317,11 @@ typedef struct mobj_s
     // Thing being chased/attacked for tracers.
     struct mobj_s*      tracer;
 
-    // [STRIFE] haleyjd 09/05/10: 
+    // [STRIFE] haleyjd 09/05/10:
     // * In multiplayer this stores allegiance, for friends and teleport beacons
     // * In single-player this tracks dialog state.
     byte                miscdata;
-    
+
 } mobj_t;
 
 // haleyjd [STRIFE] Exported

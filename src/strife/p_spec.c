@@ -63,7 +63,7 @@ typedef struct
     int		basepic;
     int		numpics;
     int		speed;
-    
+
 } anim_t;
 
 //
@@ -152,7 +152,7 @@ void P_InitPicAnims (void)
 {
     int		i;
 
-    
+
     //	Init animation
     lastanim = anims;
     for (i=0 ; animdefs[i].istexture != -1 ; i++)
@@ -166,7 +166,7 @@ void P_InitPicAnims (void)
         {
             // different episode ?
             if (R_CheckTextureNumForName(startname) == -1)
-                continue;	
+                continue;
 
             lastanim->picnum = R_TextureNumForName(endname);
             lastanim->basepic = R_TextureNumForName(startname);
@@ -333,10 +333,10 @@ getNextSector
 {
     if (!(line->flags & ML_TWOSIDED))
 	return NULL;
-		
+
     if (line->frontsector == sec)
 	return line->backsector;
-	
+
     return line->frontsector;
 }
 
@@ -352,7 +352,7 @@ fixed_t	P_FindLowestFloorSurrounding(sector_t* sec)
     line_t*		check;
     sector_t*		other;
     fixed_t		floor = sec->floorheight;
-	
+
     for (i=0 ;i < sec->linecount ; i++)
     {
 	check = sec->lines[i];
@@ -360,7 +360,7 @@ fixed_t	P_FindLowestFloorSurrounding(sector_t* sec)
 
 	if (!other)
 	    continue;
-	
+
 	if (other->floorheight < floor)
 	    floor = other->floorheight;
     }
@@ -379,15 +379,15 @@ fixed_t	P_FindHighestFloorSurrounding(sector_t *sec)
     line_t*		check;
     sector_t*		other;
     fixed_t		floor = -500*FRACUNIT;
-	
+
     for (i=0 ;i < sec->linecount ; i++)
     {
 	check = sec->lines[i];
 	other = getNextSector(check,sec);
-	
+
 	if (!other)
 	    continue;
-	
+
 	if (other->floorheight > floor)
 	    floor = other->floorheight;
     }
@@ -426,7 +426,7 @@ P_FindNextHighestFloor
 
         if (!other)
             continue;
-        
+
         if (other->floorheight > height)
         {
             // Emulation of memory (stack) overflow
@@ -444,16 +444,16 @@ P_FindNextHighestFloor
             heightlist[h++] = other->floorheight;
         }
     }
-    
+
     // Find lowest height in list
     if (!h)
     {
         return currentheight;
     }
-        
+
     min = heightlist[0];
-    
-    // Range checking? 
+
+    // Range checking?
     for (i = 1; i < h; i++)
     {
         if (heightlist[i] < min)
@@ -475,7 +475,7 @@ P_FindLowestCeilingSurrounding(sector_t* sec)
     line_t*		check;
     sector_t*		other;
     fixed_t		height = INT_MAX;
-	
+
     for (i=0 ;i < sec->linecount ; i++)
     {
 	check = sec->lines[i];
@@ -500,7 +500,7 @@ fixed_t	P_FindHighestCeilingSurrounding(sector_t* sec)
     line_t*	check;
     sector_t*	other;
     fixed_t	height = 0;
-	
+
     for (i=0 ;i < sec->linecount ; i++)
     {
 	check = sec->lines[i];
@@ -526,11 +526,11 @@ P_FindSectorFromLineTag
   int		start )
 {
     int	i;
-	
+
     for (i=start+1;i<numsectors;i++)
 	if (sectors[i].tag == line->tag)
 	    return i;
-    
+
     return -1;
 }
 
@@ -549,7 +549,7 @@ P_FindMinSurroundingLight
     int		min;
     line_t*	line;
     sector_t*	check;
-	
+
     min = max;
     for (i=0 ; i < sector->linecount ; i++)
     {
@@ -606,7 +606,7 @@ P_CrossSpecialLine
         // villsa [STRIFE] unused
         //   haleyjd: removed dead switch. Strife only excludes missiles and
         //   corpses, which is handled above.
- 
+
         ok = 0;
 
         // [STRIFE] Added several line types. Removed none.
@@ -630,7 +630,7 @@ P_CrossSpecialLine
             return;
     }
 
-    
+
     // Note: could use some const's here.
     switch (line->special)
     {
@@ -773,7 +773,7 @@ P_CrossSpecialLine
         if(!(thing->player->questflags & (1 << flag)))
             break;
         // fall-through:
-    case 38: 
+    case 38:
         // Lower Floor To Lowest - [STRIFE] Verified unmodified.
         EV_DoFloor( line, lowerFloorToLowest );
         line->special = 0;
@@ -829,7 +829,7 @@ P_CrossSpecialLine
 
     case 58:
         // [STRIFE] raiseFloor24 was modified into raiseFloor64
-        // Raise Floor 64 
+        // Raise Floor 64
         EV_DoFloor(line,raiseFloor64);
         line->special = 0;
         break;
@@ -928,13 +928,13 @@ P_CrossSpecialLine
         line->special = 0;
         break;
 
-    case 178: 
+    case 178:
         // haleyjd 09/24/10: [STRIFE] W1 Build Stairs Down 16
         EV_BuildStairs(line, buildDown16);
         line->special = 0;
         break;
 
-    case 179: 
+    case 179:
         // haleyjd 09/25/10: [STRIFE] W1 Ceiling Lower to Floor
         EV_DoCeiling(line, lowerToFloor);
         line->special = 0;
@@ -963,7 +963,7 @@ P_CrossSpecialLine
         break;
 
     case 188:
-        // haleyjd 09/21/10: [STRIFE] W1 Open Door if Quest 16 (Gate Mechanism 
+        // haleyjd 09/21/10: [STRIFE] W1 Open Door if Quest 16 (Gate Mechanism
         // Destroyed)
         if(!(thing->player->questflags & QF_QUEST16))
             break;
@@ -1100,7 +1100,7 @@ P_CrossSpecialLine
             I_StartVoice(DEH_String("voc128"));
         else
             I_StartVoice(DEH_String("voc130"));
-        
+
         line->special = 0;
         break;
 
@@ -1195,7 +1195,7 @@ P_CrossSpecialLine
         if(!(thing->player->questflags & (1 << flag)))
             break;
         // fall-through:
-    case 90: 
+    case 90:
         // Raise Door - [STRIFE] Verified unmodified.
         EV_DoDoor(line,vld_normal);
         break;
@@ -1301,8 +1301,8 @@ P_CrossSpecialLine
                     map = 10;
             }
 
-            DEH_snprintf(crosslinestr, sizeof(crosslinestr), 
-                         "Entering%s", 
+            DEH_snprintf(crosslinestr, sizeof(crosslinestr),
+                         "Entering%s",
                          DEH_String(mapnames[map - 1]) + 8);
             thing->player->message = crosslinestr;
 
@@ -1310,8 +1310,8 @@ P_CrossSpecialLine
             {
                 if(levelTimer && levelTimeCount != 0)
                 {
-                    DEH_snprintf(crosslinestr, sizeof(crosslinestr), 
-                                 "%d min left", 
+                    DEH_snprintf(crosslinestr, sizeof(crosslinestr),
+                                 "%d min left",
                                  (levelTimeCount/TICRATE)/60);
                     break;
                 }
@@ -1325,7 +1325,7 @@ P_CrossSpecialLine
 
                 // BUG: Here is the opening for a flaming player to cross past
                 // the exit line and hit a deathmatch switch ;) It's not so much
-                // that this is incorrect, as that they forgot to add such a 
+                // that this is incorrect, as that they forgot to add such a
                 // check to the other kind of exit lines too ;)
                 if(thing->player->health <= 0)
                     break;
@@ -1395,7 +1395,7 @@ P_CrossSpecialLine
         // haleyjd 09/21/10: [STRIFE] WR Teleport (Silent at Source)
         EV_Teleport(line, side, thing, TF_SRCSILENCE);
         break;
-        
+
         // haleyjd 09/21/10: Moved one-time-use lines up above with the others.
     }
 }
@@ -1481,7 +1481,7 @@ void P_PlayerInSpecialSector (player_t* player)
 
     // Falling, not all the way down yet?
     if (player->mo->z != sector->floorheight)
-        return;	
+        return;
 
     // Has hitten ground.
     switch (sector->special)
@@ -1492,7 +1492,7 @@ void P_PlayerInSpecialSector (player_t* player)
         if(!player->powers[pw_ironfeet])
             player->nukagecount += 2;
         break;
-    
+
     case 16:
         // [STRIFE] +4 to nukagecount
         if(!player->powers[pw_ironfeet])
@@ -1582,7 +1582,7 @@ void P_UpdateSpecials (void)
     {
         if(levelTimeCount) // [STRIFE] Does not allow to go negative
             levelTimeCount--;
-        
+
         /*
         // [STRIFE] Not done here. Exit lines check this manually instead.
         if (!levelTimeCount)
@@ -1603,7 +1603,7 @@ void P_UpdateSpecials (void)
         }
     }
 
-    
+
     //  ANIMATE LINE SPECIALS
     for (i = 0; i < numlinespecials; i++)
     {
@@ -1632,7 +1632,7 @@ void P_UpdateSpecials (void)
         }
     }
 
-    
+
     //  DO BUTTONS
     for (i = 0; i < MAXBUTTONS; i++)
         if (buttonlist[i].btimer)
@@ -1836,7 +1836,7 @@ int EV_DoDonut(line_t*	line)
 	    floor->texture = s3_floorpic;
 	    floor->newspecial = 0;
 	    floor->floordestheight = s3_floorheight;
-	    
+
 	    //	Spawn lowering donut-hole
 	    floor = Z_Malloc (sizeof(*floor), PU_LEVSPEC, 0);
 	    P_AddThinker (&floor->thinker);

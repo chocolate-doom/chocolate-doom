@@ -65,7 +65,7 @@
 #define ENDGAME	"are you sure you want\nto end the game?\n\n"PRESSYN
 
 // haleyjd 09/11/10: [STRIFE] No "to dos." on this
-#define DOSY		"(press y to quit)" 
+#define DOSY		"(press y to quit)"
 
 #define DETAILHI	"High detail"
 #define DETAILLO	"Low detail"
@@ -421,7 +421,7 @@
 "BLAZE THROUGH THIS ONE!\n"
 
 
-// after map 06	
+// after map 06
 
 #define P1TEXT  \
 "You gloat over the steaming carcass of the\n"\

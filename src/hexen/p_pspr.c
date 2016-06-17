@@ -511,7 +511,7 @@ void A_WeaponReady(player_t * player, pspdef_t * psp)
         return;
     }
 
-    // Check for fire. 
+    // Check for fire.
     if (player->cmd.buttons & BT_ATTACK)
     {
         player->attackdown = true;
@@ -1015,8 +1015,8 @@ void A_LightningZap(mobj_t * actor)
         }
     }
 /*
-	mo = P_SpawnMobj(actor->x+((P_Random()-128)*actor->radius/256), 
-		actor->y+((P_Random()-128)*actor->radius/256), 
+	mo = P_SpawnMobj(actor->x+((P_Random()-128)*actor->radius/256),
+		actor->y+((P_Random()-128)*actor->radius/256),
 		actor->z+deltaZ, MT_LIGHTNING_ZAP);
 	if(mo)
 	{
@@ -1028,7 +1028,7 @@ void A_LightningZap(mobj_t * actor)
 		{
 			mo->momz = 16*FRACUNIT;
 		}
-		else 
+		else
 		{
 			mo->momz = -16*FRACUNIT;
 		}
@@ -1756,7 +1756,7 @@ void A_CFlameAttack(player_t *player, pspdef_t *psp)
 			{
 				angle += ANG1*2;
 			}
-		}		
+		}
 	}
 	if(linetarget)
 	{
@@ -1775,7 +1775,7 @@ void A_CFlameAttack(player_t *player, pspdef_t *psp)
 			an = (i*ANG45)>>ANGLETOFINESHIFT;
 			an90 = (i*ANG45+ANG90)>>ANGLETOFINESHIFT;
 			mo = P_SpawnMobj(linetarget->x+FixedMul(dist, finecosine[an]),
-				linetarget->y+FixedMul(dist, finesine[an]), 
+				linetarget->y+FixedMul(dist, finesine[an]),
 				linetarget->z+5*FRACUNIT, MT_CIRCLEFLAME);
 			if(mo)
 			{
@@ -1786,13 +1786,13 @@ void A_CFlameAttack(player_t *player, pspdef_t *psp)
 				mo->tics -= P_Random()&3;
 			}
 			mo = P_SpawnMobj(linetarget->x-FixedMul(dist, finecosine[an]),
-				linetarget->y-FixedMul(dist, finesine[an]), 
+				linetarget->y-FixedMul(dist, finesine[an]),
 				linetarget->z+5*FRACUNIT, MT_CIRCLEFLAME);
 			if(mo)
 			{
 				mo->angle = ANG180+(an<<ANGLETOFINESHIFT);
 				mo->target = pmo;
-				mo->momx = mo->special1.i = FixedMul(-FLAMESPEED, 
+				mo->momx = mo->special1.i = FixedMul(-FLAMESPEED,
 					finecosine[an]);
 				mo->momy = mo->special2.i = FixedMul(-FLAMESPEED, finesine[an]);
 				mo->tics -= P_Random()&3;
@@ -1842,7 +1842,7 @@ void A_CHolyAttack3(mobj_t * actor)
 
 //============================================================================
 //
-// A_CHolyAttack2 
+// A_CHolyAttack2
 //
 //      Spawns the spirits
 //============================================================================

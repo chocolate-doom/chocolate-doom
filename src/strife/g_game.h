@@ -14,7 +14,7 @@
 //
 // DESCRIPTION:
 //   Duh.
-// 
+//
 
 
 #ifndef __G_GAME__

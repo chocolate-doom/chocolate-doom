@@ -319,7 +319,7 @@ void P_LoadACScripts(int lump)
     ActionCodeBase = (byte *) header;
     buffer = (int *) ((byte *) header + LONG(header->infoOffset));
 
-    ACScriptCount = LONG(*buffer); 
+    ACScriptCount = LONG(*buffer);
     ++buffer;
 
     if (ACScriptCount == 0)

@@ -32,12 +32,12 @@ static int SoundThread(void *unused)
 {
     int frequency;
     int duration;
-    
+
     while (sound_thread_running)
     {
         callback(&duration, &frequency);
 
-        if (frequency != 0) 
+        if (frequency != 0)
         {
             Beep(frequency, duration);
         }
@@ -46,8 +46,8 @@ static int SoundThread(void *unused)
             Sleep(duration);
         }
     }
-    
-    return 0;    
+
+    return 0;
 }
 
 static int PCSound_Win32_Init(pcsound_callback_func callback_func)
@@ -55,9 +55,9 @@ static int PCSound_Win32_Init(pcsound_callback_func callback_func)
     OSVERSIONINFO osvi;
     BOOL result;
 
-    // Temporarily disabled - the Windows scheduler is strange and 
+    // Temporarily disabled - the Windows scheduler is strange and
     // stupid.
-   
+
     return 0;
 
     // Find the OS version
@@ -81,7 +81,7 @@ static int PCSound_Win32_Init(pcsound_callback_func callback_func)
 
         return 0;
     }
-    
+
     // Start a thread to play sound.
 
     callback = callback_func;
@@ -98,7 +98,7 @@ static void PCSound_Win32_Shutdown(void)
     SDL_WaitThread(sound_thread_handle, NULL);
 }
 
-pcsound_driver_t pcsound_win32_driver = 
+pcsound_driver_t pcsound_win32_driver =
 {
     "Windows",
     PCSound_Win32_Init,

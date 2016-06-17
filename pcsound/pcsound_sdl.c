@@ -27,7 +27,7 @@
 #define MAX_SOUND_SLICE_TIME 70 /* ms */
 #define SQUARE_WAVE_AMP 0x2000
 
-// If true, we initialized SDL and have the responsibility to shut it 
+// If true, we initialized SDL and have the responsibility to shut it
 // down
 
 static int sdl_was_initialized = 0;
@@ -68,15 +68,15 @@ static void PCSound_Mix_Callback(void *udata, Uint8 *stream, int len)
 
     leftptr = (Sint16 *) stream;
     rightptr = ((Sint16 *) stream) + 1;
-    
+
     // Fill the output buffer
 
     for (i=0; i<nsamples; ++i)
     {
-        // Has this sound expired? If so, invoke the callback to get 
+        // Has this sound expired? If so, invoke the callback to get
         // the next frequency.
 
-        while (current_remaining == 0) 
+        while (current_remaining == 0)
         {
             oldfreq = current_freq;
 
@@ -97,24 +97,24 @@ static void PCSound_Mix_Callback(void *udata, Uint8 *stream, int len)
         }
 
         // Set the value for this sample.
-        
+
         if (current_freq == 0)
         {
             // Silence
 
             this_value = 0;
         }
-        else 
+        else
         {
             int frac;
 
             // Determine whether we are at a peak or trough in the current
-            // sound.  Multiply by 2 so that frac % 2 will give 0 or 1 
+            // sound.  Multiply by 2 so that frac % 2 will give 0 or 1
             // depending on whether we are at a peak or trough.
 
             frac = (phase_offset * current_freq * 2) / mixing_freq;
 
-            if ((frac % 2) == 0) 
+            if ((frac % 2) == 0)
             {
                 this_value = SQUARE_WAVE_AMP;
             }
@@ -210,7 +210,7 @@ static int PCSound_SDL_Init(pcsound_callback_func callback_func)
 
         SDL_PauseAudio(0);
 
-        // When this module shuts down, it has the responsibility to 
+        // When this module shuts down, it has the responsibility to
         // shut down SDL.
 
         sdl_was_initialized = 1;
@@ -224,7 +224,7 @@ static int PCSound_SDL_Init(pcsound_callback_func callback_func)
 
     if (mixing_format != AUDIO_S16SYS || mixing_channels != 2)
     {
-        fprintf(stderr, 
+        fprintf(stderr,
                 "PCSound_SDL only supports native signed 16-bit LSB, "
                 "stereo format!\n");
 
@@ -241,7 +241,7 @@ static int PCSound_SDL_Init(pcsound_callback_func callback_func)
     return 1;
 }
 
-pcsound_driver_t pcsound_sdl_driver = 
+pcsound_driver_t pcsound_sdl_driver =
 {
     "SDL",
     PCSound_SDL_Init,

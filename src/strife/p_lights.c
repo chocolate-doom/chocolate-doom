@@ -36,7 +36,7 @@
 //
 // T_FireFlicker
 //
-// [STRIFE] 
+// [STRIFE]
 // haleyjd 2011023: Changes to amount and duration of flicker
 //
 void T_FireFlicker (fireflicker_t* flick)
@@ -62,7 +62,7 @@ void T_FireFlicker (fireflicker_t* flick)
 //
 // P_SpawnFireFlicker
 //
-// [STRIFE] 
+// [STRIFE]
 // haleyjd 2011023: Changes to minimum light level and initial duration
 //
 void P_SpawnFireFlicker (sector_t*      sector)
@@ -71,7 +71,7 @@ void P_SpawnFireFlicker (sector_t*      sector)
 
     // Note that we are resetting sector attributes.
     // Nothing special about it during gameplay.
-    sector->special = 0; 
+    sector->special = 0;
 
     flick = Z_Malloc ( sizeof(*flick), PU_LEVSPEC, 0);
 
@@ -318,7 +318,7 @@ EV_LightTurnOn
     }
 }
 
-    
+
 //
 // Spawn glowing light
 //

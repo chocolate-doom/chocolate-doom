@@ -191,7 +191,7 @@ int EV_DoPlat(line_t* line, plattype_e type, int amount)
             plat->status = up;
 
             // NO MORE DAMAGE, IF APPLICABLE
-            sec->special = 0;		
+            sec->special = 0;
 
             S_StartSound(&sec->soundorg, sfx_stnmov);
             break;

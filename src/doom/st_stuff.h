@@ -58,7 +58,7 @@ typedef enum
 {
     AutomapState,
     FirstPersonState
-    
+
 } st_stateenum_t;
 
 
@@ -68,7 +68,7 @@ typedef enum
     StartChatState,
     WaitDestState,
     GetChatState
-    
+
 } st_chatstateenum_t;
 
 

@@ -48,7 +48,7 @@ enum
   ML_SSECTORS,		// SubSectors, list of LineSegs
   ML_NODES,		// BSP nodes
   ML_SECTORS,		// Sectors, from editing
-  ML_REJECT,		// LUT, sector-sector visibility	
+  ML_REJECT,		// LUT, sector-sector visibility
   ML_BLOCKMAP		// LUT, motion clipping, walls/grid element
 };
 
@@ -86,7 +86,7 @@ typedef struct
   short		special;
   short		tag;
   // sidenum[1] will be -1 if one sided
-  short		sidenum[2];		
+  short		sidenum[2];
 } PACKEDATTR maplinedef_t;
 
 
@@ -117,7 +117,7 @@ typedef struct
 #define ML_DONTPEGTOP		8
 
 // lower texture unpegged
-#define ML_DONTPEGBOTTOM	16	
+#define ML_DONTPEGBOTTOM	16
 
 // In AutoMap: don't map as two sided: IT'S A SECRET!
 #define ML_SECRET		32
@@ -151,7 +151,7 @@ typedef struct
 {
   short		numsegs;
   // Index of first one, segs are stored sequentially.
-  short		firstseg;	
+  short		firstseg;
 } PACKEDATTR mapsubsector_t;
 
 
@@ -161,7 +161,7 @@ typedef struct
 {
   short		v1;
   short		v2;
-  short		angle;		
+  short		angle;
   short		linedef;
   short		side;
   short		offset;

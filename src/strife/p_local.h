@@ -65,7 +65,7 @@
 //
 
 // both the head and tail of the thinker list
-extern	thinker_t	thinkercap;	
+extern	thinker_t	thinkercap;
 
 
 void P_InitThinkers (void);
@@ -154,7 +154,7 @@ typedef struct
     fixed_t	y;
     fixed_t	dx;
     fixed_t	dy;
-    
+
 } divline_t;
 
 typedef struct

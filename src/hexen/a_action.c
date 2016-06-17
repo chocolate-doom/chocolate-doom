@@ -1238,10 +1238,10 @@ void A_FlameCheck(mobj_t * actor)
 //===========================================================================
 // Bat Spawner Variables
 //      special1        frequency counter
-//      special2        
+//      special2
 //      args[0]         frequency of spawn (1=fastest, 10=slowest)
 //      args[1]         spread angle (0..255)
-//      args[2]         
+//      args[2]
 //      args[3]         duration of bats (in octics)
 //      args[4]         turn amount per move (in degrees)
 //

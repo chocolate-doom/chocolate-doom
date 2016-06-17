@@ -51,7 +51,7 @@ numbers from the statescr.txt source file.  The xyz origin point represents a
 point at the bottom middle of the sprite (between the feet of a biped).  This
 is the default origin position for patch_ts grabbed with lumpy.exe.  A walking
 creature will have its z equal to the floor it is standing on.
- 
+
 The sound code uses the x,y, and subsector fields to do stereo positioning of
 any sound effited by the mobj_t.
 
@@ -67,12 +67,12 @@ found with subsector->sector.  The sector links are only used by the rendering
 code,  the play simulation does not care about them at all.
 
 Any mobj_t that needs to be acted upon be something else in the play world
-(block movement, be shot, etc) will also need to be linked into the blockmap. 
+(block movement, be shot, etc) will also need to be linked into the blockmap.
 If the thing has the MF_NOBLOCK flag set, it will not use the block links. It
 can still interact with other things, but only as the instigator (missiles will
 run into other things, but nothing can run into a missile).   Each block in
 the grid is 128*128 units, and knows about every line_t that it contains a
-piece of, and every interactable mobj_t that has it's origin contained.  
+piece of, and every interactable mobj_t that has it's origin contained.
 
 A valid mobj_t is a mobj_t that has the proper subsector_t filled in for it's
 xy coordinates and is linked into the subsector's sector or has the MF_NOSECTOR
@@ -111,7 +111,7 @@ mobj_t *onmobj;                 //generic global onmobj...used for landing on po
 ===============================================================================
 
 					TELEPORT MOVE
- 
+
 ===============================================================================
 */
 
@@ -204,7 +204,7 @@ boolean P_TeleportMove(mobj_t * thing, fixed_t x, fixed_t y)
 
 //
 // the move is ok, so link the thing into its new position
-//      
+//
     P_UnsetThingPosition(thing);
 
     thing->floorz = tmfloorz;
@@ -221,7 +221,7 @@ boolean P_TeleportMove(mobj_t * thing, fixed_t x, fixed_t y)
 ===============================================================================
 
 					MOVEMENT ITERATOR FUNCTIONS
- 
+
 ===============================================================================
 */
 
@@ -480,7 +480,7 @@ boolean PIT_CheckOnmobjZ(mobj_t * thing)
 ===============================================================================
 
  						MOVEMENT CLIPPING
- 
+
 ===============================================================================
 */
 
@@ -1487,7 +1487,7 @@ boolean PTR_UseTraverse(intercept_t * in)
 = P_UseLines
 =
 = Looks for special lines in front of the player to activate
-================ 
+================
 */
 
 void P_UseLines(player_t * player)
@@ -1660,7 +1660,7 @@ boolean PIT_ChangeSector(mobj_t * thing)
         mo->momy = (P_Random() - P_Random()) << 12;
     }
 
-    return true;                // keep checking (crush other things)   
+    return true;                // keep checking (crush other things)
 }
 
 /*

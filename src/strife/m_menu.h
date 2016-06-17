@@ -14,7 +14,7 @@
 //
 // DESCRIPTION:
 //   Menu widget stuff, episode selection and such.
-//    
+//
 
 
 #ifndef __M_MENU__
@@ -32,16 +32,16 @@ typedef struct
 {
     // 0 = no cursor here, 1 = ok, 2 = arrows ok
     short	status;
-    
+
     char	name[10];
-    
+
     // choice = menu item #.
     // if status = 2,
     //   choice=0:leftarrow,1:rightarrow
     void	(*routine)(int choice);
-    
+
     // hotkey in menu
-    char	alphaKey;			
+    char	alphaKey;
 } menuitem_t;
 
 typedef struct menu_s
@@ -98,4 +98,4 @@ void M_LoadSelect(int choice);
 extern int detailLevel;
 extern int screenblocks;
 
-#endif    
+#endif

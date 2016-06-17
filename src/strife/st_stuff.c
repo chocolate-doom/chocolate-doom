@@ -127,7 +127,7 @@ static const int st_wforammo[NUMAMMO] = { 3,  3,  2,  3,   3,   2,   3   };
 // Dimensions given in characters.
 #define ST_MSGWIDTH             52
 
-// haleyjd 20100831: [STRIFE] 
+// haleyjd 20100831: [STRIFE]
 // * Removed faces.
 // haleyjd 20100901:
 // * Removed DOOM pre-beta cruft.
@@ -140,7 +140,7 @@ static const int st_wforammo[NUMAMMO] = { 3,  3,  2,  3,   3,   2,   3   };
 //byte                   *st_backing_screen;  - [STRIFE]: Unused.
 
 // main player in game
-static player_t*        plyr; 
+static player_t*        plyr;
 
 // ST_Start() has just been called
 static boolean          st_firsttime;
@@ -220,7 +220,7 @@ static patch_t*         invfontg[10];
 static patch_t*         invfonty[10];
 
 // [unused] 3 key-cards, 3 skulls -- [STRIFE] has a lot more keys than 3 :P
-//static patch_t*         keys[NUMCARDS]; 
+//static patch_t*         keys[NUMCARDS];
 
 // ready-weapon widget
 static st_number_t      w_ready; // haleyjd [STRIFE]: This is still used.
@@ -372,7 +372,7 @@ boolean ST_Responder(event_t* ev)
         if(inv->amount)
         {
             DEH_snprintf(st_msgbuf, sizeof(st_msgbuf), "%d %s",
-                         inv->amount, 
+                         inv->amount,
                          DEH_String(mobjinfo[inv->type].name));
             plyr->message = st_msgbuf;
         }
@@ -441,7 +441,7 @@ boolean ST_Responder(event_t* ev)
             }
         }
     }
-    
+
     if(ev->data1 == key_invleft) // inventory move left
     {
         if(plyr->inventorycursor > 0)
@@ -463,7 +463,7 @@ boolean ST_Responder(event_t* ev)
     {
         if(plyr->numinventory)
             plyr->inventorycursor = plyr->numinventory - 1;
-        else 
+        else
             plyr->inventorycursor = 0;
         return true;
     }
@@ -515,7 +515,7 @@ boolean ST_Responder(event_t* ev)
             plyr->st_update = true; // [STRIFE]
             plyr->message = DEH_String(STSTR_DQDON);
         }
-        else 
+        else
         {
             plyr->st_update = true;
             plyr->message = DEH_String(STSTR_DQDOFF);
@@ -530,7 +530,7 @@ boolean ST_Responder(event_t* ev)
         for (i = 0; i < NUMWEAPONS; i++)
             if(!isdemoversion || weaponinfo[i].availabledemo)
                 plyr->weaponowned[i] = true;
-        
+
         // Takes away the Sigil, even if you already had it...
         plyr->weaponowned[wp_sigil] = false;
 
@@ -596,7 +596,7 @@ boolean ST_Responder(event_t* ev)
         else
             plyr->message = DEH_String("STEALTH BOOTS OFF");
     }
-    
+
     for(i = 0; i < ST_PUMPUP_B + 3; ++i)
     {
         // [STRIFE]: Handle berserk, invisibility, and envirosuit
@@ -699,13 +699,13 @@ boolean ST_Responder(event_t* ev)
     {
         char            buf[3];
         int             spot;
-        
+
         cht_GetParam(&cheat_scoot, buf);
 
         spot = buf[0] - '0';
 
         // BUG: should be <= 9. Shouldn't do anything bad though...
-        if(spot <= 10) 
+        if(spot <= 10)
         {
             plyr->message = DEH_String("Spawning to spot");
             G_RiftCheat(spot);
@@ -728,7 +728,7 @@ boolean ST_Responder(event_t* ev)
         P_GiveItemToPlayer(plyr, SPR_HELT, MT_TOKEN_TOUGHNESS);
     }
 
-    // villsa [STRIFE] 
+    // villsa [STRIFE]
     // haleyjd 20110224: No sigil in demo version
     if(!isdemoversion && cht_CheckCheat(&cheat_lego, ev->data2))
     {
@@ -790,7 +790,7 @@ void ST_updateWidgets(void)
 //
 // haleyjd 09/01/10: [STRIFE]
 // * Removed st_clock and st_randomnumber.
-// * Merged ST_updateWidgets here. Wasn't inlined, as doesn't exist separately 
+// * Merged ST_updateWidgets here. Wasn't inlined, as doesn't exist separately
 //   in the binary as inlined functions normally do.
 //
 void ST_Ticker (void)
@@ -889,7 +889,7 @@ void ST_doPaletteStuff(void)
     // haleyjd 20100831: [STRIFE] Flash green when in nukage, not when has
     // an environment suit (a breathing sound is played to indicate that
     // instead).
-    else if ( plyr->nukagecount > 16*TICRATE || 
+    else if ( plyr->nukagecount > 16*TICRATE ||
               (plyr->nukagecount & 8))
         palette = RADIATIONPAL;
     else
@@ -906,7 +906,7 @@ void ST_doPaletteStuff(void)
 
 }
 
-/* 
+/*
 void ST_drawWidgets(boolean refresh)
 {
     haleyjd 09/01/10: [STRIFE] Removed
@@ -923,7 +923,7 @@ void ST_drawNumFontY(int x, int y, int num)
 {
     if(!num)
         V_DrawPatch(x, y, invfonty[0]);
-    
+
     while(num)
     {
         V_DrawPatch(x, y, invfonty[num % 10]);
@@ -1005,7 +1005,7 @@ void ST_doRefresh(void)
 
         // draw multiplayer armor backdrop if netgame
         // haleyjd 20131031: BUG - vanilla is accessing a NULL pointer here when
-        // playing back netdemos! It doesn't appear to draw anything, and there 
+        // playing back netdemos! It doesn't appear to draw anything, and there
         // is no apparent ill effect on gameplay, so the best we can do is check.
         if(netgame && stback)
             V_DrawPatch(ST_X, 173, stback);
@@ -1023,8 +1023,8 @@ void ST_doRefresh(void)
         }
 
         // Draw inventory bar
-        for(num_x = 68, icon_x = 48, i = firstinventory, numdrawn = 0; 
-            num_x < 278; 
+        for(num_x = 68, icon_x = 48, i = firstinventory, numdrawn = 0;
+            num_x < 278;
             num_x += 35, icon_x += 35, i++, numdrawn++)
         {
             int lumpnum;
@@ -1033,7 +1033,7 @@ void ST_doRefresh(void)
 
             if(plyr->numinventory <= numdrawn)
                 break;
-            
+
             DEH_snprintf(iconname, sizeof(iconname), "I_%s",
                          DEH_String(sprnames[plyr->inventory[i].sprite]));
 
@@ -1205,7 +1205,7 @@ static boolean ST_drawKeysPopup(void)
         int frags;
 
         // In deathmatch, the keys popup is replaced by a chart of frag counts
-        
+
         // first column
         y  = 64;
         yt = 66;
@@ -1270,7 +1270,7 @@ static boolean ST_drawKeysPopup(void)
                 st_displaypopup = false;
                 st_showkeys = false;
                 st_keypage = -1;
-                
+
                 return false;
             }
         }
@@ -1370,35 +1370,35 @@ boolean ST_DrawExternal(void)
 
          if(plyr->weaponowned[wp_elecbow])
          {
-             V_DrawPatchDirect(38, 86, 
+             V_DrawPatchDirect(38, 86,
                  W_CacheLumpName(DEH_String("CBOWA0"), PU_CACHE));
          }
          if(plyr->weaponowned[wp_rifle])
          {
-             V_DrawPatchDirect(40, 107, 
+             V_DrawPatchDirect(40, 107,
                  W_CacheLumpName(DEH_String("RIFLA0"), PU_CACHE));
          }
          if(plyr->weaponowned[wp_missile])
          {
-             V_DrawPatchDirect(39, 131, 
+             V_DrawPatchDirect(39, 131,
                  W_CacheLumpName(DEH_String("MMSLA0"), PU_CACHE));
          }
          if(plyr->weaponowned[wp_hegrenade])
          {
-             V_DrawPatchDirect(78, 87, 
+             V_DrawPatchDirect(78, 87,
                  W_CacheLumpName(DEH_String("GRNDA0"), PU_CACHE));
          }
          if(plyr->weaponowned[wp_flame])
          {
-             V_DrawPatchDirect(80, 117, 
+             V_DrawPatchDirect(80, 117,
                  W_CacheLumpName(DEH_String("FLAMA0"), PU_CACHE));
          }
          if(plyr->weaponowned[wp_mauler])
          {
-             V_DrawPatchDirect(75, 142, 
+             V_DrawPatchDirect(75, 142,
                  W_CacheLumpName(DEH_String("TRPDA0"), PU_CACHE));
          }
-         
+
          // haleyjd 20110213: draw ammo
          for(i = 0; i < NUMAMMO; i++)
          {
@@ -1411,7 +1411,7 @@ boolean ST_DrawExternal(void)
 
          if(plyr->powers[pw_communicator])
          {
-             V_DrawPatchDirect(280, 130, 
+             V_DrawPatchDirect(280, 130,
                  W_CacheLumpName(DEH_String("I_COMM"), PU_CACHE));
          }
     }
@@ -1419,7 +1419,7 @@ boolean ST_DrawExternal(void)
     return true;
 }
 
-typedef void (*load_callback_t)(char *lumpname, patch_t **variable); 
+typedef void (*load_callback_t)(char *lumpname, patch_t **variable);
 
 //
 // ST_loadUnloadGraphics
@@ -1463,12 +1463,12 @@ static void ST_loadUnloadGraphics(load_callback_t callback)
     callback(DEH_String("I_ARM2"), &invarmor[0]);
     callback(DEH_String("I_ARM1"), &invarmor[1]);
 
-    // haleyjd 20100919: [STRIFE] 
+    // haleyjd 20100919: [STRIFE]
     // * No face, but there is this patch, which appears behind the armor
     DEH_snprintf(namebuf, 9, "STBACK0%d", consoleplayer + 1);
     if(netgame)
         callback(namebuf, &stback);
-    
+
     // 20100901:
     // * Removed all unused DOOM stuff (arms, numbers, %, etc).
 
@@ -1553,7 +1553,7 @@ void ST_createWidgets(void)
                   ST_AMMOWIDTH);
 
     // the last weapon type
-    w_ready.data = plyr->readyweapon; 
+    w_ready.data = plyr->readyweapon;
 
     // health percentage
     STlib_initNum(&w_health,
@@ -1563,7 +1563,7 @@ void ST_createWidgets(void)
                   &plyr->health,
                   ST_HEALTHWIDTH);
 
-    // haleyjd 20100831: [STRIFE] 
+    // haleyjd 20100831: [STRIFE]
     // * No face.
     // 20100901:
     // * No arms, weaponsowned, frags, armor, keyboxes
@@ -1571,7 +1571,7 @@ void ST_createWidgets(void)
     // haleyjd 20110213: Ammo Widgets!!!
     for(i = 0; i < NUMAMMO; i++)
     {
-        STlib_initNum(&w_ammo[i], ST_POPUPAMMOX, st_yforammo[i], 
+        STlib_initNum(&w_ammo[i], ST_POPUPAMMOX, st_yforammo[i],
                       invfonty, &plyr->ammo[i], st_wforammo[i]);
 
         STlib_initNum(&w_maxammo[i], ST_POPUPMAXAMMOX, st_yforammo[i],

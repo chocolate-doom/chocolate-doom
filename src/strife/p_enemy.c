@@ -15,7 +15,7 @@
 // DESCRIPTION:
 //	Enemy thinking, AI.
 //	Action Pointer Functions
-//	that are associated with states/frames. 
+//	that are associated with states/frames.
 //
 
 #include <stdio.h>
@@ -66,7 +66,7 @@ typedef enum
     DI_SOUTHEAST,
     DI_NODIR,
     NUMDIRS
-    
+
 } dirtype_t;
 
 
@@ -118,34 +118,34 @@ P_RecursiveSound
     int		i;
     line_t*	check;
     sector_t*	other;
-	
+
     // wake up all monsters in this sector
     if (sec->validcount == validcount
 	&& sec->soundtraversed <= soundblocks+1)
     {
 	return;		// already flooded
     }
-    
+
     sec->validcount = validcount;
     sec->soundtraversed = soundblocks+1;
     sec->soundtarget = soundtarget;
-	
+
     for (i=0 ;i<sec->linecount ; i++)
     {
 	check = sec->lines[i];
 	if (! (check->flags & ML_TWOSIDED) )
 	    continue;
-	
+
 	P_LineOpening (check);
 
 	if (openrange <= 0)
 	    continue;	// closed door
-	
+
 	if ( sides[ check->sidenum[0] ].sector == sec)
 	    other = sides[ check->sidenum[1] ] .sector;
 	else
 	    other = sides[ check->sidenum[0] ].sector;
-	
+
 	if (check->flags & ML_SOUNDBLOCK)
 	{
 	    if (!soundblocks)
@@ -200,27 +200,27 @@ static void P_WakeUpThing(mobj_t* puncher, mobj_t* bystander)
 // with the punch dagger. Walks sector links.
 //
 void P_DoPunchAlert(mobj_t *puncher, mobj_t *punchee)
-{   
+{
    mobj_t *rover;
-   
+
    // don't bother with this crap if we're already on alert
    if(punchee->subsector->sector->soundtarget)
       return;
-      
+
    // gotta still be alive to call for help
    if(punchee->health <= 0)
       return;
-      
+
    // has to be something you can wake up and kill too
    if(!(punchee->flags & MF_COUNTKILL) || punchee->flags & MF_NODIALOG)
       return;
-   
+
    // make the punchee hurt - haleyjd 09/05/10: Fixed to use painstate.
    punchee->target = puncher;
-   P_SetMobjState(punchee, punchee->info->painstate); 
-   
+   P_SetMobjState(punchee, punchee->info->painstate);
+
    // wake up everybody nearby
-   
+
    // scan forward on sector list
    for(rover = punchee->snext; rover; rover = rover->snext)
    {
@@ -306,16 +306,16 @@ boolean P_CheckMissileRange(mobj_t* actor)
     // OPTIMIZE: get this from a global checksight
     dist = P_AproxDistance(actor->x-actor->target->x,
                            actor->y-actor->target->y) - 64*FRACUNIT;
-    
+
     if (!actor->info->meleestate)
         dist -= 128*FRACUNIT;       // no melee attack, so fire more
 
     dist >>= 16;
 
     // villsa [STRIFE] checks for acolytes
-    //  haleyjd 09/05/10: Repaired to match disassembly: Was including 
+    //  haleyjd 09/05/10: Repaired to match disassembly: Was including
     //  SHADOWGUARD in the wrong case, was missing MT_SENTINEL entirely.
-    //  Structure of ASM also indicates this was probably a switch 
+    //  Structure of ASM also indicates this was probably a switch
     //  statement turned into a cascading if/else by the compiler.
     switch(actor->type)
     {
@@ -336,7 +336,7 @@ boolean P_CheckMissileRange(mobj_t* actor)
     default:
         break;
     }
-    
+
     // villsa [STRIFE] changed to 150
     if (dist > 150)
         dist = 150;
@@ -377,7 +377,7 @@ boolean P_CheckRobotRange(mobj_t *actor)
 // returns false if the move is blocked.
 //
 // [STRIFE]
-// villsa/haleyjd 09/05/10: Modified for terrain types and 3D object 
+// villsa/haleyjd 09/05/10: Modified for terrain types and 3D object
 // clipping. Below constants are verified to be unmodified:
 //
 fixed_t	xspeed[8] = {FRACUNIT,47000,0,-47000,-FRACUNIT,-47000,0,47000};
@@ -454,10 +454,10 @@ boolean P_Move (mobj_t*	actor)
 
     // villsa [STRIFE] Removed pulling non-floating actors down to the ground.
     //  (haleyjd 09/05/10: Verified)
-    /*if (! (actor->flags & MF_FLOAT) )	
+    /*if (! (actor->flags & MF_FLOAT) )
           actor->z = actor->floorz;*/
 
-    return true; 
+    return true;
 }
 
 
@@ -495,12 +495,12 @@ void P_NewChaseDir(mobj_t* actor)
 {
     fixed_t	deltax;
     fixed_t	deltay;
-    
+
     dirtype_t	d[3];
-    
+
     int		tdir;
     dirtype_t	olddir;
-    
+
     dirtype_t	turnaround;
 
     // villsa [STRIFE] don't bomb out and instead set spawnstate
@@ -583,7 +583,7 @@ void P_NewChaseDir(mobj_t* actor)
     }
 
     // randomly determine direction of search
-    if (P_Random()&1) 	
+    if (P_Random()&1)
     {
         for ( tdir=DI_EAST;
               tdir<=DI_SOUTHEAST;
@@ -629,8 +629,8 @@ void P_NewChaseDir(mobj_t* actor)
 //
 // villsa [STRIFE] new function
 //
-// haleyjd: Almost identical to the tail-end of P_NewChaseDir, this function 
-// finds a purely random direction for an object to walk. Called from 
+// haleyjd: Almost identical to the tail-end of P_NewChaseDir, this function
+// finds a purely random direction for an object to walk. Called from
 // A_RandomWalk.
 //
 // Shockingly similar to the RandomWalk pointer in Eternity :)
@@ -659,7 +659,7 @@ void P_NewRandomDir(mobj_t* actor)
 
         // haleyjd 20110223: logic missing entirely:
         // failed all non-reversal directions? try reversing
-        if(dir > DI_SOUTHEAST) 
+        if(dir > DI_SOUTHEAST)
         {
             if(omovedir == DI_NODIR)
             {
@@ -746,7 +746,7 @@ P_LookForPlayers
         {
             // Rebels adopt the allied player's target if it is not of the same
             // allegiance. Other allies do it unconditionally.
-            if(master && master->target && 
+            if(master && master->target &&
                (master->target->type != MT_REBEL1 ||
                 master->target->miscdata != actor->miscdata))
             {
@@ -812,7 +812,7 @@ P_LookForPlayers
             || actor->lastlook == stop)
         {
             // done looking
-            return false;	
+            return false;
         }
 
         player = &players[actor->lastlook];
@@ -826,7 +826,7 @@ P_LookForPlayers
         if (!allaround)
         {
             an = R_PointToAngle2(actor->x,
-                                 actor->y, 
+                                 actor->y,
                                  player->mo->x,
                                  player->mo->y) - actor->angle;
 
@@ -889,7 +889,7 @@ void A_Look (mobj_t* actor)
 
     // haleyjd 09/05/10: This is bizarre, as Rogue keeps using the GIVEQUEST flag
     // as a parameter to control allaround look behavior. Did they just run out of
-    // flags, or what? 
+    // flags, or what?
     // STRIFE-TODO: Needs serious verification.
     if (!P_LookForPlayers(actor, (actor->flags & MF_GIVEQUEST) != 0))
         return;
@@ -1064,7 +1064,7 @@ void A_Chase (mobj_t*	actor)
         else
             actor->threshold = 0;
     }
-    
+
     // turn towards movement direction if not there yet
     if (actor->movedir < 8)
     {
@@ -1087,7 +1087,7 @@ void A_Chase (mobj_t*	actor)
         P_SetMobjState (actor, actor->info->spawnstate);
         return;
     }
-    
+
     // do not attack twice in a row
     if (actor->flags & MF_JUSTATTACKED)
     {
@@ -1097,7 +1097,7 @@ void A_Chase (mobj_t*	actor)
             P_NewChaseDir (actor);
         return;
     }
-    
+
     // check for melee attack
     if (actor->info->meleestate
         && P_CheckMeleeRange (actor))
@@ -1108,7 +1108,7 @@ void A_Chase (mobj_t*	actor)
         P_SetMobjState (actor, actor->info->meleestate);
         return;
     }
-    
+
     // check for missile attack
     if (actor->info->missilestate)
     {
@@ -1138,7 +1138,7 @@ nomissile:
         if (P_LookForPlayers(actor, true))
             return; // got a new target
     }
-    
+
     // chase towards player
     if (--actor->movecount<0
         || !P_Move (actor))
@@ -1266,7 +1266,7 @@ void A_BulletAttack(mobj_t* actor)
 
     S_StartSound(actor, sfx_rifle);
     A_FaceTarget(actor);
-    
+
     slope = P_AimLineAttack(actor, actor->angle, 2048*FRACUNIT);
     t = P_Random();
     shootangle = ((t - P_Random()) << 19) + actor->angle;
@@ -1290,7 +1290,7 @@ void A_CheckTargetVisible(mobj_t* actor)
     if(P_Random() >= 30)
     {
         mobj_t *target = actor->target;
-        
+
         if(!target || target->health <= 0 || !P_CheckSight(actor, target) ||
             P_Random() < 40)
         {
@@ -1552,7 +1552,7 @@ void A_CrusaderAttack(mobj_t* actor)
     }
     else
         P_SetMobjState(actor, actor->info->seestate);
-    
+
     actor->z -= (8*FRACUNIT);
 }
 
@@ -1596,7 +1596,7 @@ void A_CrusaderRight(mobj_t* actor)
 //
 void A_CheckTargetVisible2(mobj_t* actor)
 {
-    if(!actor->target || actor->target->health <= 0 || 
+    if(!actor->target || actor->target->health <= 0 ||
         !P_CheckSight(actor, actor->target))
     {
         P_SetMobjState(actor, actor->info->seestate);
@@ -1766,7 +1766,7 @@ void A_ProgrammerAttack(mobj_t* actor)
     if(!actor->target)
         return;
 
-    mo = P_SpawnMobj(actor->target->x, actor->target->y, ONFLOORZ, 
+    mo = P_SpawnMobj(actor->target->x, actor->target->y, ONFLOORZ,
                      MT_SIGIL_A_GROUND);
     mo->threshold = 25;
     mo->target = actor;
@@ -1828,7 +1828,7 @@ void A_SpectreEAttack(mobj_t* actor)
 
     if(!actor->target)
         return;
-    
+
     mo = P_SpawnMissile(actor, actor->target, MT_SIGIL_SE_SHOT);
     mo->health = -2;
 }
@@ -1853,7 +1853,7 @@ void A_SpectreCAttack(mobj_t* actor)
     mo->target = actor;
     mo->health = -2;
     mo->tracer = actor->target;
-    
+
     actor->angle -= ANG90;
     for(i = 0; i < 20; i++)
     {
@@ -2130,7 +2130,7 @@ void A_SpawnSparkPuff(mobj_t* actor)
 
 
 // haleyjd 09/05/10: [STRIFE] Removed:
-// A_PosAttack, A_SPosAttack, A_CPosAttack, A_CPosRefire, A_SpidRefire, 
+// A_PosAttack, A_SPosAttack, A_CPosAttack, A_CPosRefire, A_SpidRefire,
 // A_BspiAttack, A_TroopAttack, A_SargAttack, A_HeadAttack, A_CyberAttack,
 // A_BruisAttack, A_SkelMissile
 
@@ -2156,7 +2156,7 @@ void A_Tracer (mobj_t* actor)
     if(!dest || dest->health <= 0)
         return;
 
-    // change angle	
+    // change angle
     exact = R_PointToAngle2(actor->x, actor->y, dest->x, dest->y);
 
     if(exact != actor->angle)
@@ -2212,7 +2212,7 @@ void A_ProgrammerMelee(mobj_t* actor)
     if(P_CheckMeleeRange(actor))
     {
         int damage = 6 * (P_Random() % 10 + 1);
-        
+
         S_StartSound(actor, sfx_mtalht);
         P_DamageMobj(actor->target, actor, actor, damage);
     }
@@ -2220,15 +2220,15 @@ void A_ProgrammerMelee(mobj_t* actor)
 }
 
 // haleyjd 09/05/10: [STRIFE] Removed:
-// A_SkelWhoosh, A_SkelFist, PIT_VileCheck, A_VileChase, A_VileStart, 
+// A_SkelWhoosh, A_SkelFist, PIT_VileCheck, A_VileChase, A_VileStart,
 // A_StartFire, A_FireCrackle, A_Fire, A_VileTarget, A_VileAttack
-// A_FatRaise, A_FatAttack1, A_FatAttack2, A_FatAttack3, A_SkullAttack, 
+// A_FatRaise, A_FatAttack1, A_FatAttack2, A_FatAttack3, A_SkullAttack,
 // A_PainShootSkull, A_PainAttack, A_PainDie
 
 //
 // A_Scream
 //
-// villsa [STRIFE] 
+// villsa [STRIFE]
 // * Has no random death sounds, so play deathsound directly
 // * Full-volume roars for the Entity and Inquisitor.
 //
@@ -2265,7 +2265,7 @@ void A_XScream(mobj_t* actor)
 //
 // A_Pain
 //
-// villsa [STRIFE] 
+// villsa [STRIFE]
 // * Play random peasant sounds; otherwise play painsound directly
 //
 void A_Pain(mobj_t* actor)
@@ -2276,7 +2276,7 @@ void A_Pain(mobj_t* actor)
     {
         if(sound >= sfx_pespna && sound <= sfx_pespnd)
             sound = sfx_pespna + (P_Random() % 4);
-        
+
         S_StartSound(actor, sound);
     }
 }
@@ -2360,7 +2360,7 @@ void A_MerchantPain(mobj_t* actor)
 // haleyjd 09/05/10: Removed unused CheckBossEnd Choco routine.
 
 // haleyjd 09/05/10: [STRIFE] Removed:
-// A_Hoof, A_Metal, A_BabyMetal, A_OpenShotgun2, A_LoadShotgun2, 
+// A_Hoof, A_Metal, A_BabyMetal, A_OpenShotgun2, A_LoadShotgun2,
 // A_CloseShotgun2, A_BrainAwake, A_BrainPain, A_BrainScream, A_BrainExplode,
 // A_BrainDie, A_BrainSpit, A_SpawnSound, A_SpawnFly
 
@@ -2368,8 +2368,8 @@ void A_MerchantPain(mobj_t* actor)
 // A_ProgrammerDie
 //
 // villsa [STRIFE] new codepointer
-// 09/08/10: Action routine for the Programmer's grisly death. Spawns the 
-// separate mechanical base object and sends it flying off in some random 
+// 09/08/10: Action routine for the Programmer's grisly death. Spawns the
+// separate mechanical base object and sends it flying off in some random
 // direction.
 //
 void A_ProgrammerDie(mobj_t* actor)
@@ -2418,7 +2418,7 @@ void A_InqTossArm(mobj_t* actor)
 //
 // villsa [STRIFE] new codepointer (unused)
 // 09/08/10: Spawns Spectre A. Or would, if anything actually used this.
-// This is evidence that the Programmer's spectre, which appears in the 
+// This is evidence that the Programmer's spectre, which appears in the
 // Catacombs in the final version, was originally meant to be spawned
 // after his death.
 //
@@ -2450,7 +2450,7 @@ void A_SpawnSpectreB(mobj_t* actor)
 // villsa [STRIFE] new codepointer (unused)
 // 09/08/10: Action function to spawn the Oracle's spectre. Also
 // unused, because the Oracle's spectre is already present on the
-// map and is awakened on his death. Also left over from the 
+// map and is awakened on his death. Also left over from the
 // unreleased beta (and demo) versions.
 //
 void A_SpawnSpectreC(mobj_t* actor)
@@ -2553,7 +2553,7 @@ void A_EntityDeath(mobj_t* actor)
 
     // Subentity Two
     an = (actor->angle + ANG90) >> ANGLETOFINESHIFT;
-    subentity = P_SpawnMobj(FixedMul(finecosine[an], dist) + entity_pos_x, 
+    subentity = P_SpawnMobj(FixedMul(finecosine[an], dist) + entity_pos_x,
                             FixedMul(finesine[an],   dist) + entity_pos_y,
                             entity_pos_z, MT_SUBENTITY);
     subentity->target = actor->target;
@@ -2562,7 +2562,7 @@ void A_EntityDeath(mobj_t* actor)
 
     // Subentity Three
     an = (actor->angle - ANG90) >> ANGLETOFINESHIFT;
-    subentity = P_SpawnMobj(FixedMul(finecosine[an], dist) + entity_pos_x, 
+    subentity = P_SpawnMobj(FixedMul(finecosine[an], dist) + entity_pos_x,
                             FixedMul(finesine[an],   dist) + entity_pos_y,
                             entity_pos_z, MT_SUBENTITY);
     subentity->target = actor->target;
@@ -2642,7 +2642,7 @@ void A_CrystalExplode(mobj_t* actor)
 // [STRIFE] New static global - buffer used for various player messages.
 static char pmsgbuffer[80];
 
-// 
+//
 // P_FreePrisoners
 //
 // haleyjd 09/08/10: [STRIFE] New function
@@ -2976,10 +2976,10 @@ void A_BossDeath (mobj_t* actor)
         break;
 
     case MT_SPECTRE_C:
-        // Look for an MT_ORACLE - this is for in case the player awakened the 
-        // Oracle's spectre without killing the Oracle, which is possible by 
+        // Look for an MT_ORACLE - this is for in case the player awakened the
+        // Oracle's spectre without killing the Oracle, which is possible by
         // looking up to max and firing the Sigil at it. If this were not done,
-        // a serious sequence break possibility would arise where one could 
+        // a serious sequence break possibility would arise where one could
         // kill both the Oracle AND Macil, possibly throwing the game out of
         // sorts entirely. Too bad they thought of it ;)  However this also
         // causes a bug sometimes! The Oracle, in its death state, sets the
@@ -2997,9 +2997,9 @@ void A_BossDeath (mobj_t* actor)
             }
         }
         P_GiveItemToPlayer(&players[0], SPR_TOKN, MT_TOKEN_ORACLE);
-        
+
         // Bishop is dead? - verify.
-        if(players[0].questflags & QF_QUEST21) 
+        if(players[0].questflags & QF_QUEST21)
             P_GiveItemToPlayer(&players[0], SPR_TOKN, MT_TOKEN_QUEST22);
 
         // Macil is dead?
@@ -3258,7 +3258,7 @@ void A_ClaxonBlare(mobj_t* actor)
 
         // listen for more noise
         A_Listen(actor);
-        
+
         // If we heard something, stay on for a while,
         // otherwise return to spawnstate.
         if(actor->target)

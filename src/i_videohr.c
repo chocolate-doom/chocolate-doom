@@ -92,7 +92,7 @@ void I_SlamBlockHR(int x, int y, int w, int h, const byte *src)
     int i;
     int bit;
 
-    // Set up source pointers to read from source buffer - each 4-bit 
+    // Set up source pointers to read from source buffer - each 4-bit
     // pixel has its bits split into four sub-buffers
 
     for (i=0; i<4; ++i)
@@ -126,7 +126,7 @@ void I_SlamBlockHR(int x, int y, int w, int h, const byte *src)
 
             // Reassemble the pixel value
 
-            *dest = (srcbits[0] << 0) 
+            *dest = (srcbits[0] << 0)
                   | (srcbits[1] << 1)
                   | (srcbits[2] << 2)
                   | (srcbits[3] << 3);
@@ -198,7 +198,7 @@ void I_FadeToPaletteHR(const byte *palette)
 
         // Generate the fake palette
 
-        for (i=0; i<16 * 3; ++i) 
+        for (i=0; i<16 * 3; ++i)
         {
             tmppal[i] = (palette[i] * elapsed) / FADE_TIME;
         }

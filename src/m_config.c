@@ -40,7 +40,7 @@
 // DEFAULTS
 //
 
-// Location where all configuration data is stored - 
+// Location where all configuration data is stored -
 // default.cfg, savegames, etc.
 
 char *configdir;
@@ -50,7 +50,7 @@ char *configdir;
 static char *default_main_config;
 static char *default_extra_config;
 
-typedef enum 
+typedef enum
 {
     DEFAULT_INT,
     DEFAULT_INT_HEX,
@@ -79,7 +79,7 @@ typedef struct
     // If zero, we didn't read this value from a config file.
     int untranslated;
 
-    // The value we translated the scancode into when we read the 
+    // The value we translated the scancode into when we read the
     // config file on startup.  If the variable value is different from
     // this, it has been changed and needs to be converted; otherwise,
     // use the 'untranslated' value.
@@ -1593,7 +1593,7 @@ static default_t *SearchCollection(default_collection_t *collection, char *name)
 {
     int i;
 
-    for (i=0; i<collection->numdefaults; ++i) 
+    for (i=0; i<collection->numdefaults; ++i)
     {
         if (!strcmp(name, collection->defaults[i].name))
         {
@@ -1640,13 +1640,13 @@ static void SaveDefaultCollection(default_collection_t *collection)
     default_t *defaults;
     int i, v;
     FILE *f;
-	
+
     f = fopen (collection->filename, "w");
     if (!f)
 	return; // can't write the file, but don't complain
 
     defaults = collection->defaults;
-		
+
     for (i=0 ; i<collection->numdefaults ; i++)
     {
         int chars_written;
@@ -1667,14 +1667,14 @@ static void SaveDefaultCollection(default_collection_t *collection)
 
         // Print the value
 
-        switch (defaults[i].type) 
+        switch (defaults[i].type)
         {
             case DEFAULT_KEY:
 
                 // use the untranslated version if we can, to reduce
                 // the possibility of screwing up the user's config
                 // file
-                
+
                 v = *defaults[i].location.i;
 
                 if (v == KEY_RSHIFT)
@@ -1807,7 +1807,7 @@ static void LoadDefaultCollection(default_collection_t *collection)
 
     if (f == NULL)
     {
-        // File not opened, but don't complain. 
+        // File not opened, but don't complain.
         // It's probably just the first time they ran the game.
 
         return;
@@ -1906,7 +1906,7 @@ void M_SaveDefaultsAlternate(char *main, char *extra)
 void M_LoadDefaults (void)
 {
     int i;
- 
+
     // check for a custom default file
 
     //!
@@ -1944,7 +1944,7 @@ void M_LoadDefaults (void)
     if (i)
     {
         extra_defaults.filename = myargv[i+1];
-        printf("        extra configuration file: %s\n", 
+        printf("        extra configuration file: %s\n",
                extra_defaults.filename);
     }
     else
@@ -2120,7 +2120,7 @@ static char *GetDefaultConfigDir(void)
     }
 }
 
-// 
+//
 // SetConfigDir:
 //
 // Sets the location of the configuration directory, where configuration

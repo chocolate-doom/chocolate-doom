@@ -27,7 +27,7 @@
 
 #define MOUSE_INPUT_WIDTH 8
 
-static int MousePressCallback(txt_window_t *window, 
+static int MousePressCallback(txt_window_t *window,
                               int x, int y, int b,
                               TXT_UNCAST_ARG(mouse_input))
 {
@@ -105,9 +105,9 @@ static void TXT_MouseInputDrawer(TXT_UNCAST_ARG(mouse_input))
 
     TXT_SetWidgetBG(mouse_input);
     TXT_FGColor(TXT_COLOR_BRIGHT_WHITE);
-    
+
     TXT_DrawString(buf);
-    
+
     for (i=strlen(buf); i<MOUSE_INPUT_WIDTH; ++i)
     {
         TXT_DrawString(" ");

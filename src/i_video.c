@@ -184,7 +184,7 @@ int screen_height = SCREENHEIGHT;
 
 int screen_bpp = 0;
 
-// Automatically adjust video settings if the selected mode is 
+// Automatically adjust video settings if the selected mode is
 // not a valid video mode.
 
 static int autoadjust_video_settings = 1;
@@ -219,7 +219,7 @@ boolean screensaver_mode = false;
 
 boolean screenvisible;
 
-// If true, we display dots at the bottom of the screen to 
+// If true, we display dots at the bottom of the screen to
 // indicate FPS.
 
 static boolean display_fps_dots;
@@ -229,7 +229,7 @@ static boolean display_fps_dots;
 
 static boolean noblit;
 
-// Callback function to invoke to determine whether to grab the 
+// Callback function to invoke to determine whether to grab the
 // mouse pointer.
 
 static grabmouse_callback_t grabmouse_callback = NULL;
@@ -281,7 +281,7 @@ static void ApplyWindowResize(unsigned int w, unsigned int h);
 static boolean MouseShouldBeGrabbed()
 {
     // never grab the mouse when in screensaver mode
-   
+
     if (screensaver_mode)
         return false;
 
@@ -290,7 +290,7 @@ static boolean MouseShouldBeGrabbed()
     if (!window_focused)
         return false;
 
-    // always grab the mouse when full screen (dont want to 
+    // always grab the mouse when full screen (dont want to
     // see the mouse pointer)
 
     if (fullscreen)
@@ -343,7 +343,7 @@ static void UpdateFocus(void)
 
     state = SDL_GetAppState();
 
-    // We should have input (keyboard) focus and be visible 
+    // We should have input (keyboard) focus and be visible
     // (not minimized)
 
     window_focused = (state & SDL_APPINPUTFOCUS) && (state & SDL_APPACTIVE);
@@ -425,11 +425,11 @@ static int TranslateKey(SDL_keysym *sym)
       case SDLK_LSHIFT:
       case SDLK_RSHIFT:
 	return KEY_RSHIFT;
-	
+
       case SDLK_LCTRL:
       case SDLK_RCTRL:
 	return KEY_RCTRL;
-	
+
       case SDLK_LALT:
       case SDLK_RALT:
       case SDLK_LMETA:
@@ -580,9 +580,9 @@ static int GetTypedChar(SDL_Event *event)
     // This does not change depending on keyboard layout.
     // If you have a German keyboard, pressing 'z' will
     // give 'y', for example.  It is desirable to be able
-    // to fix this so that people with non-standard 
+    // to fix this so that people with non-standard
     // keyboard mappings can type properly.  If vanilla
-    // mode is disabled, use the properly translated 
+    // mode is disabled, use the properly translated
     // version.
 
     if (vanilla_keyboard_mapping)
@@ -630,7 +630,7 @@ static void UpdateShiftStatus(SDL_Event *event)
         return;
     }
 
-    if (event->key.keysym.sym == SDLK_LSHIFT 
+    if (event->key.keysym.sym == SDLK_LSHIFT
      || event->key.keysym.sym == SDLK_RSHIFT)
     {
         shiftdown += change;
@@ -643,16 +643,16 @@ void I_GetEvent(void)
     event_t event;
 
     // possibly not needed
-    
+
     SDL_PumpEvents();
 
     // put event-grabbing stuff in here
-    
+
     while (SDL_PollEvent(&sdlevent))
     {
         // ignore mouse events when the window is not focused
 
-        if (!window_focused 
+        if (!window_focused
          && (sdlevent.type == SDL_MOUSEMOTION
           || sdlevent.type == SDL_MOUSEBUTTONDOWN
           || sdlevent.type == SDL_MOUSEBUTTONUP))
@@ -668,7 +668,7 @@ void I_GetEvent(void)
         UpdateShiftStatus(&sdlevent);
 
         // process event
-        
+
         switch (sdlevent.type)
         {
             case SDL_KEYDOWN:
@@ -780,7 +780,7 @@ static void I_ReadMouse(void)
 
     SDL_GetRelativeMouseState(&x, &y);
 
-    if (x != 0 || y != 0) 
+    if (x != 0 || y != 0)
     {
         ev.type = ev_mouse;
         ev.data1 = mouse_button_state;
@@ -794,7 +794,7 @@ static void I_ReadMouse(void)
         {
             ev.data3 = 0;
         }
-        
+
         D_PostEvent(&ev);
     }
 
@@ -934,7 +934,7 @@ void I_FinishUpdate (void)
     UpdateGrab();
 
     // Don't update the screen if the window isn't visible.
-    // Not doing this breaks under Windows when we alt-tab away 
+    // Not doing this breaks under Windows when we alt-tab away
     // while fullscreen.
 
     if (!(SDL_GetAppState() & SDL_APPACTIVE))
@@ -1057,7 +1057,7 @@ int I_GetPaletteIndex(int r, int g, int b)
     return best;
 }
 
-// 
+//
 // Set the window title
 //
 
@@ -1067,7 +1067,7 @@ void I_SetWindowTitle(char *title)
 }
 
 //
-// Call the SDL function to set the window title, based on 
+// Call the SDL function to set the window title, based on
 // the title set with I_SetWindowTitle.
 //
 
@@ -1145,7 +1145,7 @@ static screen_mode_t *I_FindScreenMode(int w, int h)
     int best_num_pixels;
     int i;
 
-    // Special case: 320x200 and 640x400 are available even if aspect 
+    // Special case: 320x200 and 640x400 are available even if aspect
     // ratio correction is turned on.  These modes have non-square
     // pixels.
 
@@ -1163,13 +1163,13 @@ static screen_mode_t *I_FindScreenMode(int w, int h)
 
     GetScreenModes(&modes_list, &modes_list_length);
 
-    // Find the biggest screen_mode_t in the list that fits within these 
+    // Find the biggest screen_mode_t in the list that fits within these
     // dimensions
 
     best_mode = NULL;
     best_num_pixels = 0;
 
-    for (i=0; i<modes_list_length; ++i) 
+    for (i=0; i<modes_list_length; ++i)
     {
         // Will this fit within the dimensions? If not, ignore.
 
@@ -1439,7 +1439,7 @@ void I_GraphicsCheckCommandLine(void)
     noblit = M_CheckParm ("-noblit");
 
     //!
-    // @category video 
+    // @category video
     //
     // Grab the mouse when running in windowed mode.
     //
@@ -1450,7 +1450,7 @@ void I_GraphicsCheckCommandLine(void)
     }
 
     //!
-    // @category video 
+    // @category video
     //
     // Don't grab the mouse when running in windowed mode.
     //
@@ -1464,7 +1464,7 @@ void I_GraphicsCheckCommandLine(void)
     // nofullscreen because we love prboom
 
     //!
-    // @category video 
+    // @category video
     //
     // Run in a window.
     //
@@ -1475,7 +1475,7 @@ void I_GraphicsCheckCommandLine(void)
     }
 
     //!
-    // @category video 
+    // @category video
     //
     // Run in fullscreen mode.
     //
@@ -1486,7 +1486,7 @@ void I_GraphicsCheckCommandLine(void)
     }
 
     //!
-    // @category video 
+    // @category video
     //
     // Disable the mouse.
     //
@@ -1586,7 +1586,7 @@ void I_GraphicsCheckCommandLine(void)
     // Don't scale up the screen.
     //
 
-    if (M_CheckParm("-1")) 
+    if (M_CheckParm("-1"))
     {
         SetScaleFactor(1);
     }
@@ -1597,7 +1597,7 @@ void I_GraphicsCheckCommandLine(void)
     // Double up the screen to 2x its normal size.
     //
 
-    if (M_CheckParm("-2")) 
+    if (M_CheckParm("-2"))
     {
         SetScaleFactor(2);
     }
@@ -1608,7 +1608,7 @@ void I_GraphicsCheckCommandLine(void)
     // Double up the screen to 3x its normal size.
     //
 
-    if (M_CheckParm("-3")) 
+    if (M_CheckParm("-3"))
     {
         SetScaleFactor(3);
     }
@@ -1703,11 +1703,11 @@ static void SetWindowPositionVars(void)
 
 static char *WindowBoxType(screen_mode_t *mode, int w, int h)
 {
-    if (mode->width != w && mode->height != h) 
+    if (mode->width != w && mode->height != h)
     {
         return "Windowboxed";
     }
-    else if (mode->width == w) 
+    else if (mode->width == w)
     {
         return "Letterboxed";
     }
@@ -1854,7 +1854,7 @@ void I_InitGraphics(void)
     byte *doompal;
     char *env;
 
-    // Pass through the XSCREENSAVER_WINDOW environment variable to 
+    // Pass through the XSCREENSAVER_WINDOW environment variable to
     // SDL_WINDOWID, to embed the SDL window into the Xscreensaver
     // window.
 
@@ -1874,7 +1874,7 @@ void I_InitGraphics(void)
     SetSDLVideoDriver();
     SetWindowPositionVars();
 
-    if (SDL_Init(SDL_INIT_VIDEO) < 0) 
+    if (SDL_Init(SDL_INIT_VIDEO) < 0)
     {
         I_Error("Failed to initialize video: %s", SDL_GetError());
     }
@@ -1983,7 +1983,7 @@ void I_InitGraphics(void)
     }
     else
     {
-	I_VideoBuffer = (unsigned char *) Z_Malloc (SCREENWIDTH * SCREENHEIGHT, 
+	I_VideoBuffer = (unsigned char *) Z_Malloc (SCREENWIDTH * SCREENHEIGHT,
                                                     PU_STATIC, NULL);
     }
 
@@ -2004,7 +2004,7 @@ void I_InitGraphics(void)
     SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
 
     // clear out any events waiting at the start and center the mouse
-  
+
     while (SDL_PollEvent(&dummy));
 
     initialized = true;

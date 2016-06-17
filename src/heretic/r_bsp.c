@@ -345,7 +345,7 @@ boolean R_CheckBBox(fixed_t * bspcoord)
 
 //
 // check clip list for an open space
-//      
+//
     angle1 = R_PointToAngle(x1, y1) - viewangle;
     angle2 = R_PointToAngle(x2, y2) - viewangle;
 

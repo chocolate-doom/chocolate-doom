@@ -59,7 +59,7 @@ static int *shortcuts[] = { &key_menu_help, &key_menu_save, &key_menu_load,
                             &key_menu_volume, &key_menu_detail, &key_menu_qsave,
                             &key_menu_endgame, &key_menu_messages, &key_spy,
                             &key_menu_qload, &key_menu_quit, &key_menu_gamma,
-                            &key_menu_incscreen, &key_menu_decscreen, 
+                            &key_menu_incscreen, &key_menu_decscreen,
                             &key_menu_screenshot,
                             &key_message_refresh, &key_multi_msg,
                             &key_multi_msgplayer[0], &key_multi_msgplayer[1],
@@ -76,8 +76,8 @@ static void UpdateJoybSpeed(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(var))
     if (always_run)
     {
         /*
-         <Janizdreg> if you want to pick one for chocolate doom to use, 
-                     pick 29, since that is the most universal one that 
+         <Janizdreg> if you want to pick one for chocolate doom to use,
+                     pick 29, since that is the most universal one that
                      also works with heretic, hexen and strife =P
 
          NB. This choice also works with original, ultimate and final exes.

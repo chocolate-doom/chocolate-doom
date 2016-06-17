@@ -54,7 +54,7 @@ static char useinventorymsg[44];    // villsa [STRIFE]
 //
 
 // 16 pixels of bob
-#define MAXBOB	0x100000	
+#define MAXBOB	0x100000
 
 boolean		onground;
 
@@ -69,11 +69,11 @@ void
 P_Thrust
 ( player_t*	player,
   angle_t	angle,
-  fixed_t	move ) 
+  fixed_t	move )
 {
     angle >>= ANGLETOFINESHIFT;
-    
-    player->mo->momx += FixedMul(move,finecosine[angle]); 
+
+    player->mo->momx += FixedMul(move,finecosine[angle]);
     player->mo->momy += FixedMul(move,finesine[angle]);
 }
 
@@ -86,11 +86,11 @@ P_Thrust
 //
 // [STRIFE] Some odd adjustments, and terrain view height adjustment
 //
-void P_CalcHeight (player_t* player) 
+void P_CalcHeight (player_t* player)
 {
     int     angle;
     fixed_t bob;
-    
+
     // Regular movement bobbing
     // (needs to be calculated for gun swing
     // even if not on ground)
@@ -208,7 +208,7 @@ void P_MovePlayer (player_t* player)
     }
 
     // villsa [STRIFE] player walking state set
-    if ( (cmd->forwardmove || cmd->sidemove) 
+    if ( (cmd->forwardmove || cmd->sidemove)
         && player->mo->state == &states[S_PLAY_00] )
     {
         P_SetMobjState (player->mo, S_PLAY_01);
@@ -236,7 +236,7 @@ void P_MovePlayer (player_t* player)
             player->centerview = 0;
         }
     }
-    
+
     // villsa [STRIFE] look up action
     if (cmd->buttons2 & BT2_LOOKUP)
     {
@@ -867,7 +867,7 @@ boolean P_UseInventoryItem(player_t* player, int item)
 
         return true;
     }
-    
+
     return false;
 }
 

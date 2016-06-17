@@ -620,7 +620,7 @@ void P_PlayerThink(player_t * player)
         cmd->sidemove = 0;
         player->mo->flags &= ~MF_JUSTATTACKED;
     }
-// messageTics is above the rest of the counters so that messages will 
+// messageTics is above the rest of the counters so that messages will
 //              go away, even in death.
     player->messageTics--;      // Can go negative
     if (!player->messageTics || player->messageTics == -1)
@@ -668,7 +668,7 @@ void P_PlayerThink(player_t * player)
                 playerNum = P_GetPlayerNum(player);
                 if (player->class == PCLASS_FIGHTER)
                 {
-                    // The first type should be blue, and the 
+                    // The first type should be blue, and the
                     // third should be the Fighter's original gold color
                     if (playerNum == 0)
                     {
@@ -913,7 +913,7 @@ void P_PlayerThink(player_t * player)
 //                      player->fixedcolormap = 0;
 //              }
 //      }
-//      else 
+//      else
     if (player->powers[pw_infrared])
     {
         if (player->powers[pw_infrared] <= BLINKTHRESHOLD)

@@ -110,7 +110,7 @@
 // savegame slot numbers occupy the second byte of buttons
 
 // The top 3 bits of the artifact field in the ticcmd_t struct are used
-//              as additional flags 
+//              as additional flags
 #define AFLAG_MASK			0x3F
 #define AFLAG_SUICIDE		0x40
 #define AFLAG_JUMP			0x80

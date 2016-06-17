@@ -109,7 +109,7 @@ void ClearSlot(void)
 
         if(!strcmp(f->d_name, ".") || !strcmp(f->d_name, ".."))
             continue;
-        
+
         // haleyjd: use M_SafeFilePath, not sprintf
         filepath = M_SafeFilePath(savepath, f->d_name);
         remove(filepath);
@@ -351,7 +351,7 @@ int M_StringAlloc(char **str, int numstrs, size_t extra, const char *str1, ...)
     --numstrs;
 
     if(numstrs != 0)
-    {   
+    {
         va_start(args, str1);
 
         while(numstrs != 0)
@@ -381,14 +381,14 @@ int M_StringAlloc(char **str, int numstrs, size_t extra, const char *str1, ...)
 //
 // killough 11/98: rewritten
 //
-// [STRIFE] - haleyjd 20110210: Borrowed from Eternity and adapted to respect 
+// [STRIFE] - haleyjd 20110210: Borrowed from Eternity and adapted to respect
 // the DIR_SEPARATOR define used by Choco Doom. This routine originated in
 // BOOM.
 //
 void M_NormalizeSlashes(char *str)
 {
     char *p;
-   
+
     // Convert all slashes/backslashes to DIR_SEPARATOR
     for(p = str; *p; p++)
     {
@@ -475,7 +475,7 @@ char *M_MakeStrifeSaveDir(int slotnum, const char *extra)
     return tmpbuffer;
 }
 
-// 
+//
 // M_GetFilePath
 //
 // haleyjd: STRIFE-FIXME: Temporary?
@@ -515,9 +515,9 @@ char M_GetFilePath(const char *fn, char *dest, size_t len)
     if(!found_slash && *dest == '\0')
         *dest = '.';
 
-    // if a separator is not found, default to forward, because Windows 
+    // if a separator is not found, default to forward, because Windows
     // supports that too.
-    if(sepchar == '\0') 
+    if(sepchar == '\0')
         sepchar = '/';
 
     return sepchar;

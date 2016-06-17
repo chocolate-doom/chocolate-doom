@@ -37,11 +37,11 @@ typedef struct
     int		y;
 
     // max # of digits in number
-    int width;    
+    int width;
 
     // last number value
     int		oldnum;
-    
+
     // pointer to current value
     int*	num;
 
@@ -54,7 +54,7 @@ typedef struct
 
     // user data
     int data;
-    
+
 } st_number_t;
 
 
@@ -68,7 +68,7 @@ typedef struct
 
     // percent sign graphic
     patch_t*		p;
-    
+
 } st_percent_t;
 
 
@@ -92,10 +92,10 @@ typedef struct
 
     // list of icons
     patch_t**		p;
-    
+
     // user data
     int			data;
-    
+
 } st_multicon_t;
 
 
@@ -117,12 +117,12 @@ typedef struct
 
     // pointer to boolean
     //  stating whether to update icon
-    boolean*		on;  
+    boolean*		on;
 
 
     patch_t*		p;	// icon
     int			data;   // user data
-    
+
 } st_binicon_t;
 
 

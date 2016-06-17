@@ -35,14 +35,14 @@
 #define SAVEGAME_EOF 0x1d
 
 // haleyjd 09/28/10: [STRIFE] VERSIONSIZE == 8
-#define VERSIONSIZE 8 
+#define VERSIONSIZE 8
 
 FILE *save_stream;
 int savegamelength;
 boolean savegame_error;
 
 // Get the filename of a temporary file to write the savegame to.  After
-// the file has been successfully saved, it will be renamed to the 
+// the file has been successfully saved, it will be renamed to the
 // real file.
 
 char *P_TempSaveGameFile(void)
@@ -245,7 +245,7 @@ static void saveg_write_mapthing_t(mapthing_t *str)
 
 //
 // actionf_t
-// 
+//
 
 static void saveg_read_actionf_t(actionf_t *str)
 {
@@ -300,7 +300,7 @@ static void saveg_write_thinker_t(thinker_t *str)
 // mobj_t
 //
 // haleyjd 09/28/10: [STRIFE] Changed to match Strife binary mobj_t structure.
-// 
+//
 
 static void saveg_read_mobj_t(mobj_t *str)
 {
@@ -659,7 +659,7 @@ static void saveg_write_pspdef_t(pspdef_t *str)
 }
 
 //
-// inventory_t 
+// inventory_t
 //
 // haleyjd 09/28/10: [STRIFE] handle inventory input/output
 //
@@ -1590,8 +1590,8 @@ static void saveg_write_glow_t(glow_t *str)
 
 void P_WriteSaveGameHeader(char *description)
 {
-    char name[VERSIONSIZE]; 
-    int i; 
+    char name[VERSIONSIZE];
+    int i;
 
     /*
     [STRIFE] This is in the "NAME" file in a Strife save directory.
@@ -1601,14 +1601,14 @@ void P_WriteSaveGameHeader(char *description)
         saveg_write8(0);
     */
 
-    memset (name,0,sizeof(name)); 
+    memset (name,0,sizeof(name));
     M_snprintf(name, sizeof(name), "ver %i", STRIFE_VERSION);
 
     for (i=0; i<VERSIONSIZE; ++i)
         saveg_write8(name[i]);
 
     saveg_write8(gameskill);
-    
+
     // [STRIFE] This information is implicit in the file being loaded.
     //saveg_write8(gameepisode);
     //saveg_write8(gamemap);
@@ -1621,30 +1621,30 @@ void P_WriteSaveGameHeader(char *description)
     saveg_write8(leveltime & 0xff);
 }
 
-// 
+//
 // Read the header for a savegame
 //
 
 boolean P_ReadSaveGameHeader(void)
 {
-    int	 i; 
-    byte a, b, c; 
-    char vcheck[VERSIONSIZE]; 
+    int	 i;
+    byte a, b, c;
+    char vcheck[VERSIONSIZE];
     char read_vcheck[VERSIONSIZE];
 
-    // skip the description field 
+    // skip the description field
     /*
     for (i=0; i<SAVESTRINGSIZE; ++i)
         saveg_read8();
     */
-    
+
     for (i=0; i<VERSIONSIZE; ++i)
         read_vcheck[i] = saveg_read8();
 
     memset (vcheck,0,sizeof(vcheck));
     M_snprintf(vcheck, sizeof(vcheck), "ver %i", STRIFE_VERSION);
     if (strcmp(read_vcheck, vcheck) != 0)
-        return false;                       // bad version 
+        return false;                       // bad version
 
     gameskill = saveg_read8();
 
@@ -1655,18 +1655,18 @@ boolean P_ReadSaveGameHeader(void)
     for (i=0 ; i<MAXPLAYERS ; i++)
         playeringame[i] = saveg_read8();
 
-    // get the times 
+    // get the times
     a = saveg_read8();
     b = saveg_read8();
     c = saveg_read8();
-    leveltime = (a<<16) + (b<<8) + c; 
+    leveltime = (a<<16) + (b<<8) + c;
 
     return true;
 }
 
 //
 // Read the end of file marker.  Returns true if read successfully.
-// 
+//
 
 boolean P_ReadSaveGameEOF(void)
 {
@@ -1757,7 +1757,7 @@ void P_ArchiveWorld (void)
     sector_t*           sec;
     line_t*             li;
     side_t*             si;
-    
+
     // do sectors
     for (i=0, sec = sectors ; i<numsectors ; i++,sec++)
     {
@@ -1770,7 +1770,7 @@ void P_ArchiveWorld (void)
         //saveg_write16(sec->tag);                // needed? [STRIFE] not saved.
     }
 
-    
+
     // do lines
     for (i=0, li = lines ; i<numlines ; i++,li++)
     {
@@ -1806,7 +1806,7 @@ void P_UnArchiveWorld (void)
     sector_t*		sec;
     line_t*		li;
     side_t*		si;
-    
+
     // do sectors
     for (i=0, sec = sectors ; i<numsectors ; i++,sec++)
     {
@@ -1820,7 +1820,7 @@ void P_UnArchiveWorld (void)
         sec->specialdata = 0;
         sec->soundtarget = 0;
     }
-    
+
     // do lines
     for (i=0, li = lines ; i<numlines ; i++,li++)
     {
@@ -1878,9 +1878,9 @@ void P_ArchiveThinkers (void)
             continue;
         }
 
-        // haleyjd: This may seem mysterious but in the DOOM prebeta, 
-        // different types of things used different thinker functions. 
-        // Those would have all been handled here and this message is 
+        // haleyjd: This may seem mysterious but in the DOOM prebeta,
+        // different types of things used different thinker functions.
+        // Those would have all been handled here and this message is
         // probably a relic of that old system, not to mention the odd
         // name of this function, and use of an enumeration with only
         // two values in it.
@@ -1903,7 +1903,7 @@ void P_UnArchiveThinkers (void)
     thinker_t*          currentthinker;
     thinker_t*          next;
     mobj_t*             mobj;
-    
+
     // remove all the current thinkers
     currentthinker = thinkercap.next;
     while (currentthinker != &thinkercap)
@@ -1918,7 +1918,7 @@ void P_UnArchiveThinkers (void)
         currentthinker = next;
     }
     P_InitThinkers ();
-    
+
     // read in saved thinkers
     while (1)
     {
@@ -1938,7 +1938,7 @@ void P_UnArchiveThinkers (void)
             // they won't fall back asleep.
             //
             // BUG: As the player may not have been spawned yet, we could be
-            // setting monsters' targets to the mobj which was spawned by 
+            // setting monsters' targets to the mobj which was spawned by
             // P_SetupLevel and then removed just above. Due to a subtle glitch
             // in the DOOM engine whereby all things removed in this function
             // are leaked until the next time P_SetupLevel is called, this is a
