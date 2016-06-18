@@ -273,7 +273,7 @@ extern fixed_t		bmaporgy;	// origin of block map
 extern mobj_t**		blocklinks;	// for thing chains
 
 // [crispy] pointer to the current map lump info struct
-lumpinfo_t *maplumpinfo;
+extern lumpinfo_t *maplumpinfo;
 
 
 //

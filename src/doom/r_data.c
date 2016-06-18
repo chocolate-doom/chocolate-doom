@@ -1107,7 +1107,6 @@ void R_InitColormaps (void)
 	char c[3];
 	int i, j;
 	boolean keepgray = false;
-	extern char *iwadfile;
 	extern byte V_Colorize (byte *playpal, int cr, byte source, boolean keepgray109);
 
 	if (!crstr)

@@ -505,7 +505,6 @@ void HU_Start(void)
     char*	s;
     // [crispy] string buffers for map title and WAD file name
     char	buf[8], *ptr;
-    extern char	*iwadfile;
 
     if (headsupactive)
 	HU_Stop();

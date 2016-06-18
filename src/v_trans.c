@@ -18,6 +18,7 @@
 
 #include <stdlib.h>
 #include <math.h>
+#include <string.h> // [crispy] strcmp()
 
 #include "doomtype.h"
 #include "deh_str.h"

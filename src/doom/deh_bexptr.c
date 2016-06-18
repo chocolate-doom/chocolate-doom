@@ -185,21 +185,6 @@ static const bex_codeptr_t bex_codeptrtable[] = {
 
 extern actionf_t codeptrs[NUMSTATES];
 
-static int CodePointerIndex(actionf_t *ptr)
-{
-    int i;
-
-    for (i=0; i<NUMSTATES; ++i)
-    {
-        if (!memcmp(&codeptrs[i], ptr, sizeof(actionf_t)))
-        {
-            return i;
-        }
-    }
-
-    return -1;
-}
-
 static void *DEH_BEXPtrStart(deh_context_t *context, char *line)
 {
     char s[10];
