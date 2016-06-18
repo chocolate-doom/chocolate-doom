@@ -245,6 +245,7 @@ static void M_CrispyToggleCrosshair(int choice);
 static void M_CrispyToggleFlipcorpses(int choice);
 static void M_CrispyToggleFreeaim(int choice);
 static void M_CrispyToggleFreelook(int choice);
+static void M_CrispyToggleFullsounds(int choice);
 static void M_CrispyToggleJumping(int choice);
 static void M_CrispyToggleOverunder(int choice);
 static void M_CrispyTogglePitch(int choice);
@@ -468,6 +469,9 @@ enum
     crispness_coloredblood,
     crispness_coloredblood2,
     crispness_flipcorpses,
+    crispness1_sep_audible,
+    crispness_sep_audible,
+    crispness_fullsounds,
     crispness1_sep_goto2,
     crispness1_goto2,
     crispness1_end
@@ -482,6 +486,9 @@ static menuitem_t CrispnessMenu[]=
     {1,"",	M_CrispyToggleColoredblood,'e'},
     {1,"",	M_CrispyToggleColoredblood2,'f'},
     {1,"",	M_CrispyToggleFlipcorpses,'r'},
+    {-1,"",0,'\0'},
+    {-1,"",0,'\0'},
+    {1,"",	M_CrispyToggleFullsounds,'p'},
     {-1,"",0,'\0'},
     {1,"",	M_Crispness2,'n'},
 };
@@ -1397,6 +1404,9 @@ static void M_DrawCrispness1(void)
     M_DrawCrispnessItem(crispness_coloredblood2, "Fix Spectre and Lost Soul Blood", crispy_coloredblood & COLOREDBLOOD_FIX, true);
     M_DrawCrispnessItem(crispness_flipcorpses, "Randomly Mirrored Corpses", crispy_flipcorpses, true);
 
+    M_DrawCrispnessSeparator(crispness_sep_audible, "Audible");
+    M_DrawCrispnessItem(crispness_fullsounds, "Play sounds in full length", crispy_fullsounds, true);
+
     M_DrawCrispnessGoto(crispness1_goto2, "Next Page >");
 
     V_ClearDPTranslation();
@@ -1826,6 +1836,12 @@ static void M_CrispyToggleUncapped(int choice)
 {
     choice = 0;
     crispy_uncapped = (crispy_uncapped + 1) % NUM_UNCAPPED;
+}
+
+static void M_CrispyToggleFullsounds(int choice)
+{
+    choice = 0;
+    crispy_fullsounds = !crispy_fullsounds;
 }
 
 void M_ChangeDetail(int choice)

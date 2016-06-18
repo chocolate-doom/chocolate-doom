@@ -638,12 +638,15 @@ void P_RemoveMobj (mobj_t* mobj)
     P_UnsetThingPosition (mobj);
     
     // [crispy] removed map objects may finish their sounds
-    S_UnlinkSound(mobj);
-
-    /*
+    if (crispy_fullsounds)
+    {
+	S_UnlinkSound(mobj);
+    }
+    else
+    {
     // stop any playing sound
     S_StopSound (mobj);
-    */
+    }
     
     // free block
     P_RemoveThinker ((thinker_t*)mobj);

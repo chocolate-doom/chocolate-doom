@@ -36,6 +36,7 @@ int crispy_crosshair = 0;
 int crispy_flipcorpses = 0;
 int crispy_freeaim = 0;
 int crispy_freelook = 0;
+int crispy_fullsounds = 0;
 int crispy_jump = 0;
 int crispy_mouselook = 0;
 int crispy_overunder = 0;
@@ -124,6 +125,7 @@ void BindCompatibilityVariables(void)
         M_BindIntVariable("crispy_flipcorpses",     &crispy_flipcorpses);
         M_BindIntVariable("crispy_freeaim",         &crispy_freeaim);
         M_BindIntVariable("crispy_freelook",        &crispy_freelook);
+        M_BindIntVariable("crispy_fullsounds",      &crispy_fullsounds);
         M_BindIntVariable("crispy_jump",            &crispy_jump);
         M_BindIntVariable("crispy_mouselook",       &crispy_mouselook);
         M_BindIntVariable("crispy_overunder",       &crispy_overunder);
