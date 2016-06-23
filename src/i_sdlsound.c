@@ -89,6 +89,10 @@ int use_libsamplerate = 0;
 
 float libsamplerate_scale = 0.65f;
 
+// DWF 2016-05-29
+// Sound font file to use for MIDI playback if SDL was linked with FluidSynth.
+char *SDL_SF2_path = "";
+
 // Hook a sound into the linked list at the head.
 
 static void AllocatedSoundLink(allocated_sound_t *snd)
@@ -1094,6 +1098,22 @@ static boolean I_SDL_InitSound(boolean _use_sfx_prefix)
     {
         fprintf(stderr, "Unable to set up sound.\n");
         return false;
+    }
+
+    // DWF 2016-05-29
+    // Maybe load an SF2 sound font.  This is possible only if SDL was linked
+    // with FluidSynth.
+    if (strcmp(SDL_SF2_path,""))
+    {
+        if (Mix_Init(MIX_INIT_FLUIDSYNTH) == 0) {
+            fprintf (stderr, "Mix_Init FluidSynth failed\n");
+        }
+        if (Mix_SetSoundFonts(SDL_SF2_path) == 0)
+            fprintf (stderr, "Mix_SetSoundFonts failed for %s\n",
+                     SDL_SF2_path);
+        else
+            printf ("SDL/FluidSynth sound font loaded OK: %s\n",
+                     SDL_SF2_path);
     }
 
     if (Mix_OpenAudio(snd_samplerate, AUDIO_S16SYS, 2, GetSliceSize()) < 0)

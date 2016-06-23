@@ -75,6 +75,7 @@ static char *opltype_strings[] =
 };
 
 static char *cfg_extension[] = { "cfg", NULL };
+static char *SF2_extension[] = { "sf2", "SF2", NULL };
 
 // Config file variables:
 
@@ -99,6 +100,7 @@ static float libsamplerate_scale = 0.65;
 static char *timidity_cfg_path = NULL;
 static char *gus_patch_path = NULL;
 static int gus_ram_kb = 1024;
+static char *SDL_SF2_path = NULL;
 
 // DOS specific variables: these are unused but should be maintained
 // so that the config file can be shared between chocolate
@@ -216,6 +218,14 @@ static void UpdateExtraTable(TXT_UNCAST_ARG(widget),
                            TXT_NewFileSelector(&timidity_cfg_path, 34,
                                                "Select Timidity config file",
                                                cfg_extension),
+                           TXT_TABLE_OVERFLOW_RIGHT,
+                           NULL);
+            TXT_AddWidgets(extra_table,
+                           TXT_NewLabel("SDL/FluidSynth SF2 file:"),
+                           TXT_TABLE_OVERFLOW_RIGHT,
+                           TXT_NewFileSelector(&SDL_SF2_path, 34,
+                                               "Select SF2 file",
+                                               SF2_extension),
                            TXT_TABLE_OVERFLOW_RIGHT,
                            NULL);
             break;
@@ -373,6 +383,7 @@ void BindSoundVariables(void)
     M_BindIntVariable("gus_ram_kb",               &gus_ram_kb);
     M_BindStringVariable("gus_patch_path",        &gus_patch_path);
     M_BindStringVariable("timidity_cfg_path",     &timidity_cfg_path);
+    M_BindStringVariable("SDL_SF2_path",          &SDL_SF2_path);
 
     M_BindIntVariable("snd_sbport",               &snd_sbport);
     M_BindIntVariable("snd_sbirq",                &snd_sbirq);
@@ -395,6 +406,7 @@ void BindSoundVariables(void)
 
     timidity_cfg_path = M_StringDuplicate("");
     gus_patch_path = M_StringDuplicate("");
+    SDL_SF2_path = M_StringDuplicate("");
 
     // All versions of Heretic and Hexen did pitch-shifting.
     // Most versions of Doom did not and Strife never did.

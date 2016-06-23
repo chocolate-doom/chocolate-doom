@@ -77,6 +77,7 @@ extern int opl_io_port;
 // For native music module:
 
 extern char *timidity_cfg_path;
+extern char *SDL_SF2_path;
 
 // DOS-specific options: These are unused but should be maintained
 // so that the config file can be shared between chocolate
@@ -458,7 +459,11 @@ void I_BindSoundVariables(void)
     M_BindStringVariable("timidity_cfg_path",    &timidity_cfg_path);
     M_BindStringVariable("gus_patch_path",       &gus_patch_path);
     M_BindIntVariable("gus_ram_kb",              &gus_ram_kb);
+    M_BindStringVariable("SDL_SF2_path",         &SDL_SF2_path);
 
+    // DWF 2016-05-29
+    // FIXME: The ifdef here for FEATURE_SOUND is inconsistent with the one
+    // in m_config.c.
 #ifdef FEATURE_SOUND
     M_BindIntVariable("use_libsamplerate",       &use_libsamplerate);
     M_BindFloatVariable("libsamplerate_scale",   &libsamplerate_scale);
