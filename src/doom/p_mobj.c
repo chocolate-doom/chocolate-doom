@@ -546,6 +546,17 @@ P_SpawnMobj
   fixed_t	z,
   mobjtype_t	type )
 {
+	return P_SpawnMobjSafe(x, y, z, type, false);
+}
+
+mobj_t*
+P_SpawnMobjSafe
+( fixed_t	x,
+  fixed_t	y,
+  fixed_t	z,
+  mobjtype_t	type,
+  boolean safe )
+{
     mobj_t*	mobj;
     state_t*	st;
     mobjinfo_t*	info;
@@ -566,7 +577,7 @@ P_SpawnMobj
     if (gameskill != sk_nightmare)
 	mobj->reactiontime = info->reactiontime;
     
-    mobj->lastlook = P_Random () % MAXPLAYERS;
+    mobj->lastlook = safe ? 0 : P_Random () % MAXPLAYERS;
     // do not set the state with P_SetMobjState,
     // because action routines can not be called yet
     st = &states[info->spawnstate];
@@ -939,13 +950,29 @@ P_SpawnPuff
   fixed_t	y,
   fixed_t	z )
 {
+    return P_SpawnPuffSafe(x, y, z, false);
+}
+
+void
+P_SpawnPuffSafe
+( fixed_t	x,
+  fixed_t	y,
+  fixed_t	z,
+  boolean	safe )
+{
     mobj_t*	th;
 	
+    if (!safe)
+    {
     z += ((P_Random()-P_Random())<<10);
+    }
 
-    th = P_SpawnMobj (x,y,z, MT_PUFF);
+    th = P_SpawnMobjSafe (x,y,z, MT_PUFF, safe);
     th->momz = FRACUNIT;
+    if (!safe)
+    {
     th->tics -= P_Random()&3;
+    }
 
     if (th->tics < 1)
 	th->tics = 1;

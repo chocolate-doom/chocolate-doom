@@ -1062,8 +1062,8 @@ boolean PTR_ShootTraverse (intercept_t* in)
 	    
 	    // it's a sky hack wall
 	    if	(li->backsector && li->backsector->ceilingpic == skyflatnum)
-	      // [crispy] fix laser spot not appearing in outdoor areas
-	      if (la_damage > INT_MIN || li->backsector->ceilingheight < z)
+	      // [crispy] fix bullet puffs and laser spot not appearing in outdoor areas
+	      if (li->backsector->ceilingheight < z)
 		return false;		
 	}
 
@@ -1077,6 +1077,10 @@ boolean PTR_ShootTraverse (intercept_t* in)
 	}
 
 	// Spawn bullet puffs.
+	if (li->frontsector->ceilingpic == skyflatnum &&
+	    li->backsector && li->backsector->ceilingpic == skyflatnum)
+	    P_SpawnPuffSafe (x, y, z, true);
+	else
 	P_SpawnPuff (x,y,z);
 	
 	// don't go any farther
