@@ -1993,6 +1993,13 @@ int M_StringWidth(char* string)
 	
     for (i = 0;i < strlen(string);i++)
     {
+	// [crispy] correctly center colorized strings
+	if (string[i] == '\x1b')
+	{
+	    i++;
+	    continue;
+	}
+
 	c = toupper(string[i]) - HU_FONTSTART;
 	if (c < 0 || c >= HU_FONTSIZE)
 	    w += 4;
