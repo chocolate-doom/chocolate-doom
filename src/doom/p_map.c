@@ -998,6 +998,7 @@ boolean PTR_ShootTraverse (intercept_t* in)
 		
     if (in->isaline)
     {
+	boolean safe = false;
 	li = in->d.line;
 	
 	// [crispy] laser spot does not shoot any line
@@ -1062,9 +1063,13 @@ boolean PTR_ShootTraverse (intercept_t* in)
 	    
 	    // it's a sky hack wall
 	    if	(li->backsector && li->backsector->ceilingpic == skyflatnum)
+	    {
 	      // [crispy] fix bullet puffs and laser spot not appearing in outdoor areas
 	      if (li->backsector->ceilingheight < z)
 		return false;		
+	      else
+		safe = true;
+	    }
 	}
 
 	// [crispy] update laser spot position and return
@@ -1077,11 +1082,7 @@ boolean PTR_ShootTraverse (intercept_t* in)
 	}
 
 	// Spawn bullet puffs.
-	if (li->frontsector->ceilingpic == skyflatnum &&
-	    li->backsector && li->backsector->ceilingpic == skyflatnum)
-	    P_SpawnPuffSafe (x, y, z, true);
-	else
-	P_SpawnPuff (x,y,z);
+	P_SpawnPuffSafe (x, y, z, safe);
 	
 	// don't go any farther
 	return false;	

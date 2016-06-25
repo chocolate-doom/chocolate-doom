@@ -962,17 +962,11 @@ P_SpawnPuffSafe
 {
     mobj_t*	th;
 	
-    if (!safe)
-    {
-    z += ((P_Random()-P_Random())<<10);
-    }
+    z += safe ? 0 : ((P_Random()-P_Random())<<10);
 
     th = P_SpawnMobjSafe (x,y,z, MT_PUFF, safe);
     th->momz = FRACUNIT;
-    if (!safe)
-    {
-    th->tics -= P_Random()&3;
-    }
+    th->tics -= safe ? 0 : P_Random()&3;
 
     if (th->tics < 1)
 	th->tics = 1;
