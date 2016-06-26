@@ -27,6 +27,7 @@ typedef enum
     IWAD_HERETIC,
     IWAD_HEXEN,
     IWAD_STRIFE,
+    IWAD_FREEDM,
     NUM_IWAD_TYPES
 } IWAD;
 
@@ -39,7 +40,8 @@ static NSString *IWADLabels[NUM_IWAD_TYPES] =
     @"Chex Quest",
     @"Heretic",
     @"Hexen",
-    @"Strife"
+    @"Strife",
+    @"FreeDM",
 };
 
 static NSString *IWADFilenames[NUM_IWAD_TYPES + 1] =
@@ -52,6 +54,7 @@ static NSString *IWADFilenames[NUM_IWAD_TYPES + 1] =
     @"heretic.wad",
     @"hexen.wad",
     @"strife.wad",
+    @"freedm.wad",
     @"undefined"
 };
 
@@ -67,6 +70,7 @@ static NSString *IWADFilenames[NUM_IWAD_TYPES + 1] =
     iwadList[IWAD_HERETIC] = self->heretic;
     iwadList[IWAD_HEXEN] = self->hexen;
     iwadList[IWAD_STRIFE] = self->strife;
+    iwadList[IWAD_FREEDM] = self->freedm;
 }
 
 - (IWAD) getSelectedIWAD

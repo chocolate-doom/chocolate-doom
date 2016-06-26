@@ -28,6 +28,7 @@
     id doom2;
     id plutonia;
     id tnt;
+    id freedm;
 
     id heretic;
     id hexen;
