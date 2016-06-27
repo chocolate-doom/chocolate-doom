@@ -454,19 +454,27 @@ static const known_joystick_t known_joysticks[] =
         nes30_pro_controller,
     },
 
-    // 8Bitdo SFC30 SNES replica controller in bluetooth controller mode
-    // (hold R + Start on power on)
+    // 8Bitdo SFC30 SNES replica controller
+    // in default mode and in controller mode (Start+R)
+    // the latter suffixes "Joystick" to the name
     // http://www.8bitdo.com/sfc30/
     {
-        "8Bitdo SFC30 GamePad Joystick",
+        "8Bitdo SFC30 GamePad*",
         4, 16, 1,
+        sfc30_controller,
+    },
+
+    // As above, but as detected on RHEL Linux (odd extra axes)
+    {
+        "8Bitdo SFC30 GamePad*",
+        6, 16, 1,
         sfc30_controller,
     },
 
     // SNES30 colour variation of the above
     // http://www.8bitdo.com/snes30/
     {
-        "8Bitdo SNES30 GamePad Joystick",
+        "8Bitdo SNES30 GamePad*",
         4, 16, 1,
         sfc30_controller,
     },
@@ -474,9 +482,12 @@ static const known_joystick_t known_joysticks[] =
     // 8Bitdo SFC30 SNES replica controller in USB controller mode
     // tested with firmware V2.68 (Beta); latest stable V2.65 doesn't work on
     // OS X in USB controller mode
+    // Names seen so far:
+    //     'SFC30 Joystick' (OS X)
+    //     'SFC30              SFC30 Joystick' (Fedora 24; RHEL7)
     // XXX: there is probably a SNES30 variant of this too
     {
-        "SFC30 Joystick",
+        "SFC30 *",
         4, 12, 1,
         sfc30_controller,
     },
