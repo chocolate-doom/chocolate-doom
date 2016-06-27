@@ -340,6 +340,20 @@ static const joystick_config_t nes30_pro_controller[] =
     {NULL, 0},
 };
 
+// http://www.8bitdo.com/sfc30/ or http://www.8bitdo.com/snes30/
+static const joystick_config_t sfc30_controller[] =
+{
+    {"joystick_strafe_axis",   0},
+    {"joystick_y_axis",        1},
+    {"joystick_x_axis",        CREATE_BUTTON_AXIS(4,0)}, // Y-A
+    {"joyb_use",               6}, // L
+    {"joyb_fire",              7}, // R
+    {"joyb_prevweapon",        3}, // X
+    {"joyb_nextweapon",        1}, // B
+    {"joyb_menu_activate",    11}, // Start
+    {NULL, 0},
+};
+
 static const known_joystick_t known_joysticks[] =
 {
     {
@@ -438,6 +452,33 @@ static const known_joystick_t known_joysticks[] =
         "8Bitdo NES30 Pro",
         4, 16, 1,
         nes30_pro_controller,
+    },
+
+    // 8Bitdo SFC30 SNES replica controller in bluetooth controller mode
+    // (hold R + Start on power on)
+    // http://www.8bitdo.com/sfc30/
+    {
+        "8Bitdo SFC30 GamePad Joystick",
+        4, 16, 1,
+        sfc30_controller,
+    },
+
+    // SNES30 colour variation of the above
+    // http://www.8bitdo.com/snes30/
+    {
+        "8Bitdo SNES30 GamePad Joystick",
+        4, 16, 1,
+        sfc30_controller,
+    },
+
+    // 8Bitdo SFC30 SNES replica controller in USB controller mode
+    // tested with firmware V2.68 (Beta); latest stable V2.65 doesn't work on
+    // OS X in USB controller mode
+    // XXX: there is probably a SNES30 variant of this too
+    {
+        "SFC30 Joystick",
+        4, 12, 1,
+        sfc30_controller,
     },
 };
 
