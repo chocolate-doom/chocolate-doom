@@ -977,24 +977,24 @@ static void SetSDLVideoDriver(void)
     }
 }
 
-static void SetWindowPositionVars(void)
+static void GetWindowPosition(int *x, int *y)
 {
-    char buf[64];
-    int x, y;
+    // in windowed mode, the desired window position can be specified
+    // in the configuration file.
 
     if (window_position == NULL || !strcmp(window_position, ""))
     {
-        return;
+        *x = *y = SDL_WINDOWPOS_UNDEFINED;
     }
-
-    if (!strcmp(window_position, "center"))
+    else if (!strcmp(window_position, "center"))
     {
-        putenv("SDL_VIDEO_CENTERED=1");
+        *x = *y = SDL_WINDOWPOS_CENTERED;
     }
-    else if (sscanf(window_position, "%i,%i", &x, &y) == 2)
+    else if (sscanf(window_position, "%i,%i", x, y) != 2)
     {
-        M_snprintf(buf, sizeof(buf), "SDL_VIDEO_WINDOW_POS=%i,%i", x, y);
-        putenv(buf);
+        // invalid format: revert to default
+        fprintf(stderr, "GetWindowPosition: invalid window_position setting\n");
+        *x = *y = SDL_WINDOWPOS_UNDEFINED;
     }
 }
 
@@ -1002,6 +1002,7 @@ static void SetVideoMode(void)
 {
     byte *doompal;
     int w, h;
+    int x, y;
     int flags = 0;
 
     doompal = W_CacheLumpName(DEH_String("PLAYPAL"), PU_CACHE);
@@ -1025,6 +1026,8 @@ static void SetVideoMode(void)
 
     w = window_width;
     h = window_height;
+
+    GetWindowPosition(&x, &y);
 
     // In windowed mode, the window can be resized while the game is
     // running.
@@ -1054,9 +1057,7 @@ static void SetVideoMode(void)
     // later anyway and leave the window position "undefined". If "flags"
     // contains the fullscreen flag (see above), then w and h are ignored.
 
-    screen = SDL_CreateWindow(NULL,
-                              SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-                              w, h, flags);
+    screen = SDL_CreateWindow(NULL, x, y, w, h, flags);
 
     if (screen == NULL)
     {
@@ -1150,7 +1151,6 @@ void I_InitGraphics(void)
     }
 
     SetSDLVideoDriver();
-    SetWindowPositionVars();
 
     if (SDL_Init(SDL_INIT_VIDEO) < 0) 
     {
