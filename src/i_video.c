@@ -100,7 +100,7 @@ char *video_driver = "";
 
 // Window position:
 
-static char *window_position = "center";
+char *window_position = "center";
 
 // SDL display number on which to run.
 
@@ -1103,7 +1103,7 @@ static void CenterWindow(int *x, int *y, int w, int h)
     *y = bounds.y + SDL_max((bounds.h - h) / 2, 0);
 }
 
-static void GetWindowPosition(int *x, int *y, int w, int h)
+void I_GetWindowPosition(int *x, int *y, int w, int h)
 {
     // in fullscreen mode, the window "position" still matters, because
     // we use it to control which display we run fullscreen on.
@@ -1131,7 +1131,7 @@ static void GetWindowPosition(int *x, int *y, int w, int h)
     else if (sscanf(window_position, "%i,%i", x, y) != 2)
     {
         // invalid format: revert to default
-        fprintf(stderr, "GetWindowPosition: invalid window_position setting\n");
+        fprintf(stderr, "I_GetWindowPosition: invalid window_position setting\n");
         *x = *y = SDL_WINDOWPOS_UNDEFINED;
     }
 }
@@ -1172,7 +1172,7 @@ static void SetVideoMode(void)
         }
     }
 
-    GetWindowPosition(&x, &y, w, h);
+    I_GetWindowPosition(&x, &y, w, h);
 
     // Create window and renderer contexts. We set the window title
     // later anyway and leave the window position "undefined". If
