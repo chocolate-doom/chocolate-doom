@@ -128,6 +128,7 @@ int             displayplayer;          // view being displayed
 int             levelstarttic;          // gametic at level start 
 int             totalkills, totalitems, totalsecret;    // for intermission 
 int             extrakills;             // [crispy] count spawned monsters
+int             totalleveltimes;        // [crispy] CPhipps - total time for all completed levels
  
 char           *demoname;
 boolean         demorecording; 
@@ -1727,6 +1728,13 @@ void G_DoCompleted (void)
 		, sizeof(wminfo.plyr[i].frags)); 
     } 
  
+    // [crispy] CPhipps - total time for all completed levels
+    // cph - modified so that only whole seconds are added to the totalleveltimes
+    // value; so our total is compatible with the "naive" total of just adding
+    // the times in seconds shown for each level. Also means our total time
+    // will agree with Compet-n.
+    wminfo.totaltimes = (totalleveltimes += (leveltime - leveltime % TICRATE));
+
     gamestate = GS_INTERMISSION; 
     viewactive = false; 
     automapactive = false; 
@@ -1923,11 +1931,14 @@ void G_DoSaveGame (void)
 
     // [crispy] some logging when saving
     {
-	const int time = leveltime / TICRATE;
+	const int ltime = leveltime / TICRATE,
+	          ttime = (totalleveltimes + leveltime) / TICRATE;
 	extern const char *skilltable[];
 
-	fprintf(stderr, "G_DoSaveGame: Episode %d, Map %d, Skill %s, Time %d:%02d.\n",
-	        gameepisode, gamemap, skilltable[BETWEEN(0,5,(int) gameskill+1)], time/60, time%60);
+	fprintf(stderr, "G_DoSaveGame: Episode %d, Map %d, %s, Time %d:%02d:%02d, Total %d:%02d:%02d.\n",
+	        gameepisode, gamemap, skilltable[BETWEEN(0,5,(int) gameskill+1)],
+	        ltime/3600, (ltime%3600)/60, ltime%60,
+	        ttime/3600, (ttime%3600)/60, ttime%60);
     }
 
     P_ArchivePlayers ();
@@ -2146,6 +2157,9 @@ G_InitNew
     gameepisode = episode;
     gamemap = map;
     gameskill = skill;
+
+    // [crispy] CPhipps - total time for all completed levels
+    totalleveltimes = 0;
 
     viewactive = true;
 

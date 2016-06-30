@@ -1854,11 +1854,11 @@ static mapformat_t P_CheckMapFormat (int lumpnum)
 const char *skilltable[] =
 {
     "No Items",
-    "Baby",
-    "Easy",
-    "Normal",
-    "Hard",
-    "Nightmare"
+    "ITYTD",
+    "HNTR",
+    "HMP",
+    "UV",
+    "NM"
 };
 
 // [crispy] pointer to the current map lump info struct
@@ -1958,24 +1958,22 @@ P_SetupLevel
 	
     // [crispy] better logging
     {
-	extern int savedleveltime;
-	const int time = savedleveltime / TICRATE;
+	extern int savedleveltime, totalleveltimes;
+	const int ltime = savedleveltime / TICRATE,
+	          ttime = (totalleveltimes + savedleveltime) / TICRATE;
 	char *rfn_str;
 
 	rfn_str = M_StringJoin(
-	    respawnparm || fastparm || nomonsters ? " (" : "",
-	    respawnparm ? "respawn" : "",
-	    respawnparm && (fastparm || nomonsters) ? ", " : "",
-	    fastparm ? "fast" : "",
-	    fastparm && nomonsters ? ", " : "",
-	    nomonsters ? "nomonsters" : "",
-	    respawnparm || fastparm || nomonsters ? ")" : "",
+	    respawnparm ? " -respawn" : "",
+	    fastparm ? " -fast" : "",
+	    nomonsters ? " -nomonsters" : "",
 	    NULL);
 
-	fprintf(stderr, "P_SetupLevel: %s (%s), Skill %s%s, Time %d:%02d, ",
+	fprintf(stderr, "P_SetupLevel: %s (%s), %s%s, Time %d:%02d:%02d, Total %d:%02d:%02d, ",
 	    maplumpinfo->name, maplumpinfo->wad_file->name,
 	    skilltable[BETWEEN(0,5,(int) skill+1)], rfn_str,
-	    time/60, time%60);
+	    ltime/3600, (ltime%3600)/60, ltime%60,
+	    ttime/3600, (ttime%3600)/60, ttime%60);
 
 	free(rfn_str);
     }
