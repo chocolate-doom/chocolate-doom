@@ -418,6 +418,7 @@ void I_GetEvent(void)
 
             case SDL_MOUSEBUTTONDOWN:
             case SDL_MOUSEBUTTONUP:
+            case SDL_MOUSEWHEEL:
                 if (usemouse && !nomouse && window_focused)
                 {
                     I_HandleMouseEvent(&sdlevent);

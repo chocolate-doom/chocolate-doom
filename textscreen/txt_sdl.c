@@ -531,6 +531,30 @@ static int SDLButtonToTXTButton(int button)
     }
 }
 
+// Convert an SDL wheel motion to a textscreen button index.
+
+static int SDLWheelToTXTButton(SDL_MouseWheelEvent *wheel)
+{
+    int y = wheel->y;
+
+#if !(SDL_MAJOR_VERSION == 2 && SDL_MINOR_VERSION == 0 && SDL_PATCHLEVEL < 4)
+    // Ignore OS axis inversion (so up is always up)
+    if (wheel->direction == SDL_MOUSEWHEEL_FLIPPED)
+    {
+        y *= -1;
+    }
+#endif
+
+    if (y <= 0)
+    {
+        return TXT_MOUSE_SCROLLDOWN;
+    }
+    else
+    {
+        return TXT_MOUSE_SCROLLUP;
+    }
+}
+
 static int MouseHasMoved(void)
 {
     static int last_x = 0, last_y = 0;
@@ -614,6 +638,9 @@ signed int TXT_GetChar(void)
                     return SDLButtonToTXTButton(ev.button.button);
                 }
                 break;
+
+            case SDL_MOUSEWHEEL:
+                return SDLWheelToTXTButton(&ev.wheel);
 
             case SDL_KEYDOWN:
                 UpdateModifierState(&ev.key.keysym, 1);
