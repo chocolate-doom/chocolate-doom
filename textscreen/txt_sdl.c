@@ -535,17 +535,7 @@ static int SDLButtonToTXTButton(int button)
 
 static int SDLWheelToTXTButton(SDL_MouseWheelEvent *wheel)
 {
-    int y = wheel->y;
-
-#if !(SDL_MAJOR_VERSION == 2 && SDL_MINOR_VERSION == 0 && SDL_PATCHLEVEL < 4)
-    // Ignore OS axis inversion (so up is always up)
-    if (wheel->direction == SDL_MOUSEWHEEL_FLIPPED)
-    {
-        y *= -1;
-    }
-#endif
-
-    if (y <= 0)
+    if (wheel->y <= 0)
     {
         return TXT_MOUSE_SCROLLDOWN;
     }
