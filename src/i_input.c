@@ -355,6 +355,38 @@ static void UpdateMouseButtonState(unsigned int button, boolean on)
     D_PostEvent(&event);
 }
 
+static void MapMouseWheelToButtons(SDL_MouseWheelEvent *wheel)
+{
+    // SDL2 distinguishes button events from mouse wheel events.
+    // We want to treat the mouse wheel as two buttons, as per
+    // SDL1
+    event_t up, down;
+    int button;
+
+    if (wheel->y <= 0)
+    {   // scroll down
+        button = 4;
+    }
+    else
+    {   // scroll up
+        button = 3;
+    }
+
+    // post a button down event
+    mouse_button_state |= (1 << button);
+    down.type = ev_mouse;
+    down.data1 = mouse_button_state;
+    down.data2 = down.data3 = 0;
+    D_PostEvent(&down);
+
+    // post a button up event
+    mouse_button_state &= ~(1 << button);
+    up.type = ev_mouse;
+    up.data1 = mouse_button_state;
+    up.data2 = up.data3 = 0;
+    D_PostEvent(&up);
+}
+
 void I_HandleMouseEvent(SDL_Event *sdlevent)
 {
     switch (sdlevent->type)
@@ -365,6 +397,10 @@ void I_HandleMouseEvent(SDL_Event *sdlevent)
 
         case SDL_MOUSEBUTTONUP:
             UpdateMouseButtonState(sdlevent->button.button, false);
+            break;
+
+        case SDL_MOUSEWHEEL:
+            MapMouseWheelToButtons(&(sdlevent->wheel));
             break;
 
         default:
