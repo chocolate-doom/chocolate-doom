@@ -242,6 +242,8 @@ static int GetTypedChar(SDL_Keysym *sym)
 
 void I_HandleKeyboardEvent(SDL_Event *sdlevent)
 {
+    // XXX: passing pointers to event for access after this function
+    // has terminated is undefined behaviour
     event_t event;
 
     switch (sdlevent->type)
@@ -305,7 +307,7 @@ void I_StopTextInput(void)
 
 static void UpdateMouseButtonState(unsigned int button, boolean on)
 {
-    event_t event;
+    static event_t event;
 
     if (button < SDL_BUTTON_LEFT || button > MAX_MOUSE_BUTTONS)
     {
@@ -360,7 +362,7 @@ static void MapMouseWheelToButtons(SDL_MouseWheelEvent *wheel)
     // SDL2 distinguishes button events from mouse wheel events.
     // We want to treat the mouse wheel as two buttons, as per
     // SDL1
-    event_t up, down;
+    static event_t up, down;
     int button;
 
     if (wheel->y <= 0)
@@ -450,6 +452,8 @@ void I_ReadMouse(void)
             ev.data3 = 0;
         }
 
+        // XXX: undefined behaviour since event is scoped to
+        // this function
         D_PostEvent(&ev);
     }
 }
