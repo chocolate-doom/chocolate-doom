@@ -246,6 +246,7 @@ void R_DrawColumnLow (void)
     fixed_t		frac;
     fixed_t		fracstep;	 
     int                 x;
+    int			heightmask = dc_texheight - 1;
  
     count = dc_yh - dc_yl; 
 
@@ -274,15 +275,45 @@ void R_DrawColumnLow (void)
     fracstep = dc_iscale; 
     frac = dc_texturemid + (dc_yl-centery)*fracstep;
     
-    do 
+  // heightmask is the Tutti-Frutti fix -- killough
+  if (dc_texheight & heightmask) // not a power of 2 -- killough
+  {
+    heightmask++;
+    heightmask <<= FRACBITS;
+
+    if (frac < 0)
+	while ((frac += heightmask) < 0);
+    else
+	while (frac >= heightmask)
+	    frac -= heightmask;
+
+    do
     {
-	// Hack. Does not work corretly.
-	*dest2 = *dest = dc_colormap[dc_source[(frac>>FRACBITS)&127]];
+	*dest2 = *dest = dc_colormap[dc_source[frac>>FRACBITS]];
+
 	dest += SCREENWIDTH << hires;
 	dest2 += SCREENWIDTH << hires;
 	if (hires)
 	{
-	    *dest4 = *dest3 = dc_colormap[dc_source[(frac>>FRACBITS)&127]];
+	    *dest4 = *dest3 = dc_colormap[dc_source[frac>>FRACBITS]];
+	    dest3 += SCREENWIDTH << hires;
+	    dest4 += SCREENWIDTH << hires;
+	}
+	if ((frac += fracstep) >= heightmask)
+	    frac -= heightmask;
+    } while (count--);
+  }
+  else // texture height is a power of 2 -- killough
+  {
+    do 
+    {
+	// Hack. Does not work corretly.
+	*dest2 = *dest = dc_colormap[dc_source[(frac>>FRACBITS)&heightmask]];
+	dest += SCREENWIDTH << hires;
+	dest2 += SCREENWIDTH << hires;
+	if (hires)
+	{
+	    *dest4 = *dest3 = dc_colormap[dc_source[(frac>>FRACBITS)&heightmask]];
 	    dest3 += SCREENWIDTH << hires;
 	    dest4 += SCREENWIDTH << hires;
 	}
@@ -290,6 +321,7 @@ void R_DrawColumnLow (void)
 	frac += fracstep; 
 
     } while (count--);
+  }
 }
 
 
