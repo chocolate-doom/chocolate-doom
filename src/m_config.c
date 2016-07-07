@@ -900,6 +900,12 @@ static default_t extra_defaults_list[] =
 
     CONFIG_VARIABLE_STRING(window_position),
 
+    //!
+    // If non-zero, force the use of a software renderer. For use on
+    // systems lacking hardware acceleration.
+    //
+    CONFIG_VARIABLE_INT(force_software_renderer),
+
 #ifdef FEATURE_MULTIPLAYER
 
     //!

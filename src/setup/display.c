@@ -66,6 +66,7 @@ static window_size_t window_sizes_scaled[] =
 static char *video_driver = "";
 static char *window_position = "";
 static int aspect_ratio_correct = 1;
+static int force_software_renderer = 0;
 static int fullscreen = 1;
 static int fullscreen_width = 0, fullscreen_height = 0;
 static int window_width = 640, window_height = 480;
@@ -254,6 +255,7 @@ void BindDisplayVariables(void)
     M_BindStringVariable("window_position",        &window_position);
     M_BindIntVariable("usegamma",                  &usegamma);
     M_BindIntVariable("png_screenshots",           &png_screenshots);
+    M_BindIntVariable("force_software_renderer",   &force_software_renderer);
 
     if (gamemission == doom || gamemission == heretic
      || gamemission == strife)
