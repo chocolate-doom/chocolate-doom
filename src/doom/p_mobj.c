@@ -89,17 +89,35 @@ P_SetMobjState
     return true;
 }
 
+// [crispy] check if a given state is "safe", i.e. that no action pointer
+// is ever called for the duration of its sequence
+static boolean P_SafeState(statenum_t statenum)
+{
+    while (statenum != S_NULL)
+    {
+	const state_t *state = &states[statenum];
+
+	if (state->action.acp1)
+	{
+	    return false;
+	}
+
+	statenum = state->nextstate;
+    }
+
+    return true;
+}
 
 //
 // P_ExplodeMissile  
 //
-void P_ExplodeMissile (mobj_t* mo)
+void P_ExplodeMissileSafe (mobj_t* mo, boolean safe)
 {
     mo->momx = mo->momy = mo->momz = 0;
 
     P_SetMobjState (mo, mobjinfo[mo->type].deathstate);
 
-    mo->tics -= P_Random()&3;
+    mo->tics -= safe ? 0 : P_Random()&3;
 
     if (mo->tics < 1)
 	mo->tics = 1;
@@ -112,6 +130,10 @@ void P_ExplodeMissile (mobj_t* mo)
 	S_StartSound (mo, mo->info->deathsound);
 }
 
+void P_ExplodeMissile (mobj_t* mo)
+{
+    return P_ExplodeMissileSafe(mo, false);
+}
 
 //
 // P_XYMovement  
@@ -180,18 +202,27 @@ void P_XYMovement (mobj_t* mo)
 	    }
 	    else if (mo->flags & MF_MISSILE)
 	    {
+		boolean safe = false;
 		// explode a missile
 		if (ceilingline &&
 		    ceilingline->backsector &&
 		    ceilingline->backsector->ceilingpic == skyflatnum)
 		{
+		    if (mo->z > ceilingline->backsector->ceilingheight ||
+		        !P_SafeState(mobjinfo[mo->type].deathstate))
+		    {
 		    // Hack to prevent missiles exploding
 		    // against the sky.
 		    // Does not handle sky floors.
 		    P_RemoveMobj (mo);
 		    return;
+		    }
+		    else
+		    {
+			safe = true;
+		    }
 		}
-		P_ExplodeMissile (mo);
+		P_ExplodeMissileSafe (mo, safe);
 	    }
 	    else
 		mo->momx = mo->momy = 0;
