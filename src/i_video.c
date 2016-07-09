@@ -1004,6 +1004,8 @@ static void SetVideoMode(void)
     byte *doompal;
     int w, h;
     int x, y;
+    unsigned int rmask, gmask, bmask, amask;
+    int unused_bpp;
     int flags = 0;
 
     doompal = W_CacheLumpName(DEH_String("PLAYPAL"), PU_CACHE);
@@ -1103,9 +1105,13 @@ static void SetVideoMode(void)
                                         0, 0, 0, 0);
     SDL_FillRect(screenbuffer, NULL, 0);
 
+    // Format of rgbabuffer must match the screen pixel format because we
+    // import the surface data into the texture.
+    SDL_PixelFormatEnumToMasks(SDL_GetWindowPixelFormat(screen), &unused_bpp,
+                               &rmask, &gmask, &bmask, &amask);
     rgbabuffer = SDL_CreateRGBSurface(0,
                                       SCREENWIDTH, SCREENHEIGHT, 32,
-                                      0, 0, 0, 0);
+                                      rmask, gmask, bmask, amask);
     SDL_FillRect(rgbabuffer, NULL, 0);
 
     // Set the scaling quality for rendering the intermediate texture into
