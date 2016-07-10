@@ -55,7 +55,7 @@ static void CopyRegion(byte *dest, int dest_pitch,
     s = src; d = dest;
     for (y = 0; y < h; ++y)
     {
-        memcpy(d, s, w);
+        memcpy(d, s, w * sizeof(*d));
         s += src_pitch;
         d += dest_pitch;
     }
@@ -67,12 +67,12 @@ static void SaveDiskData(char *disk_lump, int xoffs, int yoffs)
     patch_t *disk;
 
     // Allocate a complete temporary screen where we'll draw the patch.
-    tmpscreen = Z_Malloc(SCREENWIDTH * SCREENHEIGHT, PU_STATIC, NULL);
-    memset(tmpscreen, 0, SCREENWIDTH * SCREENHEIGHT);
+    tmpscreen = Z_Malloc(SCREENWIDTH * SCREENHEIGHT * sizeof(*tmpscreen), PU_STATIC, NULL);
+    memset(tmpscreen, 0, SCREENWIDTH * SCREENHEIGHT * sizeof(*tmpscreen));
     V_UseBuffer(tmpscreen);
 
     // Buffer where we'll save the disk data.
-    disk_data = Z_Malloc(LOADING_DISK_W * LOADING_DISK_H, PU_STATIC, NULL);
+    disk_data = Z_Malloc(LOADING_DISK_W * LOADING_DISK_H * sizeof(*disk_data), PU_STATIC, NULL);
 
     // Draw the patch and save the result to disk_data.
     disk = W_CacheLumpName(disk_lump, PU_STATIC);
@@ -91,7 +91,7 @@ void V_EnableLoadingDisk(char *lump_name, int xoffs, int yoffs)
     loading_disk_xoffs = xoffs;
     loading_disk_yoffs = yoffs;
 
-    saved_background = Z_Malloc(LOADING_DISK_W * LOADING_DISK_H, PU_STATIC,
+    saved_background = Z_Malloc(LOADING_DISK_W * LOADING_DISK_H * sizeof(saved_background), PU_STATIC,
                                 NULL);
     SaveDiskData(lump_name, xoffs, yoffs);
 }
