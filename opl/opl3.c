@@ -21,7 +21,7 @@
 //      OPLx decapsulated(Matthew Gambrell, Olli Niemitalo):
 //          OPL2 ROMs.
 //
-// version: 1.7.2
+// version: 1.7.3
 //
 
 #include <stdio.h>
@@ -1184,14 +1184,14 @@ void OPL3_Generate(opl3_chip *chip, Bit16s *buf)
     if ((chip->timer & 0x3f) == 0x3f)
     {
         chip->tremolopos = (chip->tremolopos + 1) % 210;
-        if (chip->tremolopos < 105)
-        {
-            chip->tremolo = chip->tremolopos >> chip->tremoloshift;
-        }
-        else
-        {
-            chip->tremolo = (210 - chip->tremolopos) >> chip->tremoloshift;
-        }
+    }
+    if (chip->tremolopos < 105)
+    {
+        chip->tremolo = chip->tremolopos >> chip->tremoloshift;
+    }
+    else
+    {
+        chip->tremolo = (210 - chip->tremolopos) >> chip->tremoloshift;
     }
 
     if ((chip->timer & 0x3ff) == 0x3ff)
@@ -1268,6 +1268,8 @@ void OPL3_Reset(opl3_chip *chip, Bit32u samplerate)
     }
     chip->noise = 0x306600;
     chip->rateratio = (samplerate << RSM_FRAC) / 49716;
+    chip->tremoloshift = 4;
+    chip->vibshift = 1;
 }
 
 void OPL3_WriteReg(opl3_chip *chip, Bit16u reg, Bit8u v)
