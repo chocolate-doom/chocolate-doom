@@ -511,7 +511,7 @@ void D_DoomLoop (void)
     if (!showintro)
     {
         I_SetWindowTitle(gamedescription);
-        I_InitGraphics();
+        I_InitGraphics(true);
     }
 
     if (show_diskicon)
@@ -1175,7 +1175,7 @@ static void D_InitIntroSequence(void)
         // We have to be a little more courteous of the low-level code here.
         I_SetWindowTitle(gamedescription);
         I_SetGrabMouseCallback(D_StartupGrabCallback);
-        I_InitGraphics();
+        I_InitGraphics(true);
         V_RestoreBuffer(); // make the V_ routines work
 
         // Load all graphics

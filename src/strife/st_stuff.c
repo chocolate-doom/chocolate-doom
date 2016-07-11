@@ -941,7 +941,7 @@ void ST_drawNumFontY(int x, int y, int num)
 void ST_drawNumFontY2(int x, int y, int num)
 {
     if(!num)
-        V_DrawPatch(x, y, invfonty[0]);
+        V_DrawPatchDirect(x, y, invfonty[0]);
 
     if(num < 0)
         num = 0;

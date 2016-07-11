@@ -265,7 +265,58 @@ void V_DrawPatchFlipped(int x, int y, patch_t *patch)
 
 void V_DrawPatchDirect(int x, int y, patch_t *patch)
 {
-    V_DrawPatch(x, y, patch); 
+    int count;
+    int col;
+    column_t *column;
+    byte *desttop;
+    byte *dest;
+    byte *source;
+    int w;
+
+    y -= SHORT(patch->topoffset);
+    x -= SHORT(patch->leftoffset);
+
+    // haleyjd 08/28/10: Strife needs silent error checking here.
+    if(patchclip_callback)
+    {
+        if(!patchclip_callback(patch, x, y))
+            return;
+    }
+
+#ifdef RANGECHECK
+    if (x < 0
+     || x + SHORT(patch->width) > SCREENWIDTH
+     || y < 0
+     || y + SHORT(patch->height) > SCREENHEIGHT)
+    {
+        I_Error("Bad V_DrawPatchDirect");
+    }
+#endif
+
+    col = 0;
+    desttop = destpixels + y * SCREENWIDTH + x;
+
+    w = SHORT(patch->width);
+
+    for ( ; col<w ; x++, col++, desttop++)
+    {
+        column = (column_t *)((byte *)patch + LONG(patch->columnofs[col]));
+
+        // step through the posts in a column
+        while (column->topdelta != 0xff)
+        {
+            source = (byte *)column + 3;
+            dest = desttop + column->topdelta*SCREENWIDTH;
+            count = column->length;
+
+            while (count--)
+            {
+                *dest = *source++;
+                dest += SCREENWIDTH;
+            }
+            column = (column_t *)((byte *)column + column->length + 4);
+        }
+    }
 } 
 
 //
@@ -341,7 +392,7 @@ void V_DrawXlaPatch(int x, int y, patch_t * patch)
     }
 
     col = 0;
-    desttop = dest_screen + y * SCREENWIDTH + x;
+    desttop = destpixels + y * SCREENWIDTH + x;
 
     w = SHORT(patch->width);
     for(; col < w; x++, col++, desttop++)
@@ -745,7 +796,7 @@ void V_ScreenShot(char *format)
     else
     {
     // save the pcx file
-    WritePCXfile(lbmname, I_VideoBuffer,
+    WritePCXfile(lbmname, currentpixels,
                  SCREENWIDTH, SCREENHEIGHT,
                  W_CacheLumpName (DEH_String("PLAYPAL"), PU_CACHE));
     }

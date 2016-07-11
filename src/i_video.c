@@ -36,6 +36,7 @@
 #include "i_timer.h"
 #include "i_video.h"
 #include "m_argv.h"
+#include "m_bbox.h"
 #include "m_config.h"
 #include "m_misc.h"
 #include "tables.h"
@@ -73,8 +74,22 @@ static SDL_Surface *screenbuffer = NULL;
 static SDL_Surface *rgbabuffer = NULL;
 static SDL_Texture *texture = NULL;
 static SDL_Texture *texture_upscaled = NULL;
+int destscreen = 0;
+byte *destpixels = NULL;
+int currentscreen = 0;
+byte *currentpixels = NULL;
+byte *screenpixels[3] = { NULL, NULL, NULL };
+
+static boolean mode_y = false;
 
 static SDL_Rect blit_rect = {
+    0,
+    0,
+    SCREENWIDTH,
+    SCREENHEIGHT
+};
+
+static SDL_Rect page_rect = {
     0,
     0,
     SCREENWIDTH,
@@ -413,7 +428,7 @@ void I_GetEvent(void)
                 // deliberate fall-though
 
             case SDL_KEYUP:
-		I_HandleKeyboardEvent(&sdlevent);
+                I_HandleKeyboardEvent(&sdlevent);
                 break;
 
             case SDL_MOUSEBUTTONDOWN:
@@ -471,13 +486,98 @@ void I_StartTic (void)
     I_UpdateJoystick();
 }
 
+static void I_UpdateBox(int x, int y, int w, int h)
+{
+    int i;
+    if (x < 0 || y< 0 || w <= 0 || h <= 0
+     || x + w > SCREENWIDTH || y + h > SCREENHEIGHT)
+    {
+        I_Error("Bad I_UpdateBox (%i, %i, %i, %i)", x, y, w, h);
+    }
+
+    for (i = y; i < y + h; i++)
+    {
+        memcpy(&destpixels[i*SCREENWIDTH + x],
+               &I_VideoBuffer[i*SCREENWIDTH + x], w * sizeof(*destpixels));
+    }
+}
+
 
 //
 // I_UpdateNoBlit
 //
+static int olddirtybox[2][4];
 void I_UpdateNoBlit (void)
 {
-    // what is this?
+    int realdirtybox[4];
+    int x, y, w, h;
+
+    if (!initialized || noblit || !mode_y)
+    {
+        return;
+    }
+
+    //Set current screen
+    currentscreen = destscreen;
+    currentpixels = destpixels;
+    page_rect.y = currentscreen * SCREENHEIGHT;
+
+    // Update dirtybox size
+    realdirtybox[BOXTOP] = dirtybox[BOXTOP];
+    if (realdirtybox[BOXTOP] < olddirtybox[0][BOXTOP])
+    {
+        realdirtybox[BOXTOP] = olddirtybox[0][BOXTOP];
+    }
+    if (realdirtybox[BOXTOP] < olddirtybox[1][BOXTOP])
+    {
+        realdirtybox[BOXTOP] = olddirtybox[1][BOXTOP];
+    }
+
+    realdirtybox[BOXRIGHT] = dirtybox[BOXRIGHT];
+    if (realdirtybox[BOXRIGHT] < olddirtybox[0][BOXRIGHT])
+    {
+        realdirtybox[BOXRIGHT] = olddirtybox[0][BOXRIGHT];
+    }
+    if (realdirtybox[BOXRIGHT] < olddirtybox[1][BOXRIGHT])
+    {
+        realdirtybox[BOXRIGHT] = olddirtybox[1][BOXRIGHT];
+    }
+
+    realdirtybox[BOXBOTTOM] = dirtybox[BOXBOTTOM];
+    if (realdirtybox[BOXBOTTOM] > olddirtybox[0][BOXBOTTOM])
+    {
+        realdirtybox[BOXBOTTOM] = olddirtybox[0][BOXBOTTOM];
+    }
+    if (realdirtybox[BOXBOTTOM] > olddirtybox[1][BOXBOTTOM])
+    {
+        realdirtybox[BOXBOTTOM] = olddirtybox[1][BOXBOTTOM];
+    }
+
+    realdirtybox[BOXLEFT] = dirtybox[BOXLEFT];
+    if (realdirtybox[BOXLEFT] > olddirtybox[0][BOXLEFT])
+    {
+        realdirtybox[BOXLEFT] = olddirtybox[0][BOXLEFT];
+    }
+    if (realdirtybox[BOXLEFT] > olddirtybox[1][BOXLEFT])
+    {
+        realdirtybox[BOXLEFT] = olddirtybox[1][BOXLEFT];
+    }
+
+    // Leave current box for next update
+    memcpy(olddirtybox[0], olddirtybox[1], 4 * sizeof(int));
+    memcpy(olddirtybox[1], dirtybox, 4 * sizeof(int));
+
+    // Update screen
+    if (realdirtybox[BOXBOTTOM] <= realdirtybox[BOXTOP])
+    {
+        x = realdirtybox[BOXLEFT];
+        y = realdirtybox[BOXBOTTOM];
+        w = realdirtybox[BOXRIGHT] - realdirtybox[BOXLEFT] + 1;
+        h = realdirtybox[BOXTOP] - realdirtybox[BOXBOTTOM] + 1;
+        I_UpdateBox(x, y, w, h);
+    }
+    // Clear box
+    M_ClearBox(dirtybox);
 }
 
 static void UpdateGrab(void)
@@ -651,9 +751,9 @@ void I_FinishUpdate (void)
 	if (tics > 20) tics = 20;
 
 	for (i=0 ; i<tics*4 ; i+=4)
-	    I_VideoBuffer[ (SCREENHEIGHT-1)*SCREENWIDTH + i] = 0xff;
+        destpixels[ (SCREENHEIGHT-1)*SCREENWIDTH + i] = 0xff;
 	for ( ; i<20*4 ; i+=4)
-	    I_VideoBuffer[ (SCREENHEIGHT-1)*SCREENWIDTH + i] = 0x0;
+        destpixels[ (SCREENHEIGHT-1)*SCREENWIDTH + i] = 0x0;
     }
 
     // Draw disk icon before blit, if necessary.
@@ -665,10 +765,16 @@ void I_FinishUpdate (void)
         palette_to_set = false;
     }
 
+    if (mode_y)
+    {
+        destscreen = (destscreen + 1) % 3;
+        destpixels = screenpixels[destscreen];
+    }
+
     // Blit from the paletted 8-bit screen buffer to the intermediate
     // 32-bit RGBA buffer that we can load into the texture.
 
-    SDL_LowerBlit(screenbuffer, &blit_rect, rgbabuffer, &blit_rect);
+    SDL_LowerBlit(screenbuffer, &page_rect, rgbabuffer, &blit_rect);
 
     // Update the intermediate texture with the contents of the RGBA buffer.
 
@@ -703,7 +809,7 @@ void I_FinishUpdate (void)
 //
 void I_ReadScreen (byte* scr)
 {
-    memcpy(scr, I_VideoBuffer, SCREENWIDTH*SCREENHEIGHT*sizeof(*scr));
+    memcpy(scr, currentpixels, SCREENWIDTH*SCREENHEIGHT*sizeof(*scr));
 }
 
 
@@ -1001,14 +1107,11 @@ static void GetWindowPosition(int *x, int *y)
 
 static void SetVideoMode(void)
 {
-    byte *doompal;
     int w, h;
     int x, y;
     unsigned int rmask, gmask, bmask, amask;
     int unused_bpp;
     int flags = 0;
-
-    doompal = W_CacheLumpName(DEH_String("PLAYPAL"), PU_CACHE);
 
     // If we are already running, we need to free the screenbuffer
     // surface before setting the new mode.
@@ -1101,7 +1204,7 @@ static void SetVideoMode(void)
     // Create the 8-bit paletted and the 32-bit RGBA screenbuffer surfaces.
 
     screenbuffer = SDL_CreateRGBSurface(0,
-                                        SCREENWIDTH, SCREENHEIGHT, 8,
+                                        SCREENWIDTH, SCREENHEIGHT * 3, 8,
                                         0, 0, 0, 0);
     SDL_FillRect(screenbuffer, NULL, 0);
 
@@ -1134,11 +1237,14 @@ static void SetVideoMode(void)
     CreateUpscaledTexture();
 }
 
-void I_InitGraphics(void)
+void I_InitGraphics(boolean use_mode_y)
 {
     SDL_Event dummy;
     byte *doompal;
     char *env;
+    int i;
+
+    mode_y = use_mode_y;
 
     // Pass through the XSCREENSAVER_WINDOW environment variable to 
     // SDL_WINDOWID, to embed the SDL window into the Xscreensaver
@@ -1205,7 +1311,26 @@ void I_InitGraphics(void)
     // 32-bit RGBA screen buffer that gets loaded into a texture that gets
     // finally rendered into our window or full screen in I_FinishUpdate().
 
-    I_VideoBuffer = screenbuffer->pixels;
+    currentscreen = destscreen = 0;
+    
+    if (mode_y)
+    {
+        currentpixels = destpixels = screenbuffer->pixels;
+
+        for (i = 0; i < 3; i++)
+        {
+            screenpixels[i] = (byte*)screenbuffer->pixels
+                            + i * SCREENWIDTH * SCREENHEIGHT;
+        }
+
+        I_VideoBuffer = (byte*)Z_Malloc(SCREENWIDTH * SCREENHEIGHT,
+                                        PU_STATIC, NULL);
+    }
+    else
+    {
+        currentpixels = destpixels = I_VideoBuffer = screenbuffer->pixels;
+    }
+
     V_RestoreBuffer();
 
     // Clear the screen to black.
