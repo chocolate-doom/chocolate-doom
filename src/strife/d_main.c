@@ -1419,7 +1419,7 @@ static void D_DrawIntroSequence(void)
         for (i = 0; i < laserpos; i++)
         {
             D_SetCursorPosition(15 + i, 18);
-            D_DrawText("#", TXT_COLOR_BLUE, TXT_COLOR_GREEN);
+            D_DrawText("#", TXT_COLOR_GREEN, TXT_COLOR_BLUE);
         }
 
         I_Sleep(10);
