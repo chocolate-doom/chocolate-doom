@@ -1274,6 +1274,7 @@ static void D_InitIntroSequence(void)
     if (devparm || !graphical_startup || testcontrols)
     {
         using_text_startup = false;
+        showintro = false;
         return;
     }
 
@@ -1366,11 +1367,6 @@ static void D_DrawIntroSequence(void)
     int laserpos;
     int robotpos;
     int i;
-
-    if (devparm || !graphical_startup || testcontrols)
-    {
-        return;
-    }
 
     if (showintro)
     {
