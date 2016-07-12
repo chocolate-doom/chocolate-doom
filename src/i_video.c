@@ -19,6 +19,7 @@
 
 #include "SDL.h"
 #include "SDL_image.h"
+#include "SDL_opengl.h"
 
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
@@ -1147,6 +1148,23 @@ static void SetVideoMode(void)
     CreateUpscaledTexture();
 }
 
+static const char *hw_emu_warning = 
+"===========================================================================\n"
+"WARNING: it looks like you are using a software GL implementation.\n"
+"To improve performance, try setting force_software_renderer in your\n"
+"configuration file.\n"
+"===========================================================================\n";
+
+static void CheckGLVersion(void)
+{
+    const GLubyte* version = glGetString(GL_VERSION);
+
+    if (version && strstr((const char *)version, "Mesa"))
+    {
+        printf("%s", hw_emu_warning);
+    }
+}
+
 void I_InitGraphics(void)
 {
     SDL_Event dummy;
@@ -1188,6 +1206,10 @@ void I_InitGraphics(void)
     // on configuration.
     AdjustWindowSize();
     SetVideoMode();
+
+    // We might have poor performance if we are using an emulated
+    // HW accelerator. Check for Mesa and warn if we're using it.
+    CheckGLVersion();
 
     // Start with a clear black screen
     // (screen will be flipped after we set the palette)
