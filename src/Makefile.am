@@ -153,7 +153,8 @@ EXTRA_LIBS =                                               \
                @SDL_LIBS@                                  \
                @SDLMIXER_LIBS@                             \
                @SDLNET_LIBS@                               \
-               @SDLIMAGE_LIBS@
+               @SDLIMAGE_LIBS@                             \
+               @GL_LIBS@
 
 if HAVE_WINDRES
 @PROGRAM_PREFIX@doom_SOURCES=$(SOURCE_FILES_WITH_DEH) resource.rc
