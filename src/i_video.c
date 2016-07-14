@@ -19,6 +19,7 @@
 
 #include "SDL.h"
 #include "SDL_image.h"
+#include "SDL_opengl.h"
 
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
@@ -115,6 +116,11 @@ int fullscreen = true;
 // Aspect ratio correction mode
 
 int aspect_ratio_correct = true;
+
+// Force software rendering, for systems which lack effective hardware
+// acceleration
+
+int force_software_renderer = false;
 
 // Time to wait for the screen to settle on startup before starting the
 // game (ms)
@@ -1006,7 +1012,7 @@ static void SetVideoMode(void)
     int x, y;
     unsigned int rmask, gmask, bmask, amask;
     int unused_bpp;
-    int flags = 0;
+    int window_flags = 0, renderer_flags = 0;
 
     doompal = W_CacheLumpName(DEH_String("PLAYPAL"), PU_CACHE);
 
@@ -1034,33 +1040,35 @@ static void SetVideoMode(void)
 
     // In windowed mode, the window can be resized while the game is
     // running.
-    flags = SDL_WINDOW_RESIZABLE;
+    window_flags = SDL_WINDOW_RESIZABLE;
 
     // Set the highdpi flag - this makes a big difference on Macs with
     // retina displays, especially when using small window sizes.
-    flags |= SDL_WINDOW_ALLOW_HIGHDPI;
+    window_flags |= SDL_WINDOW_ALLOW_HIGHDPI;
 
     if (fullscreen)
     {
         if (fullscreen_width == 0 && fullscreen_height == 0)
         {
-            // This flags means "Never change the screen resolution! Instead,
-            // draw to the entire screen by scaling the texture appropriately".
-            flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+            // This window_flags means "Never change the screen resolution!
+            // Instead, draw to the entire screen by scaling the texture
+            // appropriately".
+            window_flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
         }
         else
         {
             w = fullscreen_width;
             h = fullscreen_height;
-            flags |= SDL_WINDOW_FULLSCREEN;
+            window_flags |= SDL_WINDOW_FULLSCREEN;
         }
     }
 
     // Create window and renderer contexts. We set the window title
-    // later anyway and leave the window position "undefined". If "flags"
-    // contains the fullscreen flag (see above), then w and h are ignored.
+    // later anyway and leave the window position "undefined". If
+    // "window_flags" contains the fullscreen flag (see above), then
+    // w and h are ignored.
 
-    screen = SDL_CreateWindow(NULL, x, y, w, h, flags);
+    screen = SDL_CreateWindow(NULL, x, y, w, h, window_flags);
 
     if (screen == NULL)
     {
@@ -1071,8 +1079,14 @@ static void SetVideoMode(void)
 
     // The SDL_RENDERER_TARGETTEXTURE flag is required to render the
     // intermediate texture into the upscaled texture.
+    renderer_flags = SDL_RENDERER_TARGETTEXTURE;
 
-    renderer = SDL_CreateRenderer(screen, -1, SDL_RENDERER_TARGETTEXTURE);
+    if (force_software_renderer)
+    {
+        renderer_flags |= SDL_RENDERER_SOFTWARE;
+    }
+
+    renderer = SDL_CreateRenderer(screen, -1, renderer_flags);
 
     if (renderer == NULL)
     {
@@ -1134,6 +1148,30 @@ static void SetVideoMode(void)
     CreateUpscaledTexture();
 }
 
+static const char *hw_emu_warning = 
+"===========================================================================\n"
+"WARNING: it looks like you are using a software GL implementation.\n"
+"To improve performance, try setting force_software_renderer in your\n"
+"configuration file.\n"
+"===========================================================================\n";
+
+static void CheckGLVersion(void)
+{
+    const char * version;
+    typedef const GLubyte* (APIENTRY * glStringFn_t)(GLenum);
+    glStringFn_t glfp = (glStringFn_t)SDL_GL_GetProcAddress("glGetString");
+
+    if (glfp)
+    {
+        version = (const char *)glfp(GL_VERSION);
+
+        if (version && strstr(version, "Mesa"))
+        {
+            printf("%s", hw_emu_warning);
+        }
+    }
+}
+
 void I_InitGraphics(void)
 {
     SDL_Event dummy;
@@ -1175,6 +1213,10 @@ void I_InitGraphics(void)
     // on configuration.
     AdjustWindowSize();
     SetVideoMode();
+
+    // We might have poor performance if we are using an emulated
+    // HW accelerator. Check for Mesa and warn if we're using it.
+    CheckGLVersion();
 
     // Start with a clear black screen
     // (screen will be flipped after we set the palette)
@@ -1233,6 +1275,7 @@ void I_BindVideoVariables(void)
     M_BindIntVariable("startup_delay",             &startup_delay);
     M_BindIntVariable("fullscreen_width",          &fullscreen_width);
     M_BindIntVariable("fullscreen_height",         &fullscreen_height);
+    M_BindIntVariable("force_software_renderer",   &force_software_renderer);
     M_BindIntVariable("window_width",              &window_width);
     M_BindIntVariable("window_height",             &window_height);
     M_BindIntVariable("grabmouse",                 &grabmouse);
