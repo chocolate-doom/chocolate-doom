@@ -38,14 +38,6 @@ PKG_CHECK_MODULES(SDL, [sdl2 >= 2.0.1])
 PKG_CHECK_MODULES(SDLMIXER, [SDL2_mixer >= 2.0.0])
 PKG_CHECK_MODULES(SDLNET, [SDL2_net >= 2.0.0])
 PKG_CHECK_MODULES(SDLIMAGE, [SDL2_image >= 2.0.0])
-PKG_CHECK_MODULES(GL, [gl >= 10.0.0])
-
-# Additional LDFLAGS for OS X are required for OpenGL
-case "$host" in
-  *-darwin*)
-    LDFLAGS="$LDFLAGS -framework OpenGL"
-    ;;
-esac
 
 # Check for libsamplerate.
 AC_ARG_WITH([libsamplerate],
