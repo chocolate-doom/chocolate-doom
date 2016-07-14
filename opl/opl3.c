@@ -21,7 +21,7 @@
 //      OPLx decapsulated(Matthew Gambrell, Olli Niemitalo):
 //          OPL2 ROMs.
 //
-// version: 1.7.3
+// version: 1.7.4
 //
 
 #include <stdio.h>
@@ -126,7 +126,7 @@ static const Bit16u exprom[256] = {
     0x3d4, 0x3da, 0x3df, 0x3e4, 0x3ea, 0x3ef, 0x3f5, 0x3fa
 };
 
-// 
+//
 // freq mult table multiplied by 2
 //
 // 1/2, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 12, 12, 15, 15
@@ -1201,9 +1201,13 @@ void OPL3_Generate(opl3_chip *chip, Bit16s *buf)
 
     chip->timer++;
 
-    while (chip->writebuf_cur != chip->writebuf_last
-        && chip->writebuf[chip->writebuf_cur].time <= chip->writebuf_samplecnt)
+    while (chip->writebuf[chip->writebuf_cur].time <= chip->writebuf_samplecnt)
     {
+        if (!(chip->writebuf[chip->writebuf_cur].reg & 0x200))
+        {
+            break;
+        }
+        chip->writebuf[chip->writebuf_cur].reg &= 0x1ff;
         OPL3_WriteReg(chip, chip->writebuf[chip->writebuf_cur].reg,
                       chip->writebuf[chip->writebuf_cur].data);
         chip->writebuf_cur = (chip->writebuf_cur + 1) % OPL_WRITEBUF_SIZE;
@@ -1374,8 +1378,18 @@ void OPL3_WriteReg(opl3_chip *chip, Bit16u reg, Bit8u v)
 void OPL3_WriteRegBuffered(opl3_chip *chip, Bit16u reg, Bit8u v)
 {
     Bit64u time1, time2;
-    chip->writebuf[chip->writebuf_last % OPL_WRITEBUF_SIZE].reg = reg;
-    chip->writebuf[chip->writebuf_last % OPL_WRITEBUF_SIZE].data = v;
+
+    if (chip->writebuf[chip->writebuf_last].reg & 0x200)
+    {
+        OPL3_WriteReg(chip, chip->writebuf[chip->writebuf_last].reg & 0x1ff,
+                      chip->writebuf[chip->writebuf_last].data);
+
+        chip->writebuf_cur = (chip->writebuf_last + 1) % OPL_WRITEBUF_SIZE;
+        chip->writebuf_samplecnt = chip->writebuf[chip->writebuf_last].time;
+    }
+
+    chip->writebuf[chip->writebuf_last].reg = reg | 0x200;
+    chip->writebuf[chip->writebuf_last].data = v;
     time1 = chip->writebuf_lasttime + OPL_WRITEBUF_DELAY;
     time2 = chip->writebuf_samplecnt;
 
@@ -1384,7 +1398,7 @@ void OPL3_WriteRegBuffered(opl3_chip *chip, Bit16u reg, Bit8u v)
         time1 = time2;
     }
 
-    chip->writebuf[chip->writebuf_last % OPL_WRITEBUF_SIZE].time = time1;
+    chip->writebuf[chip->writebuf_last].time = time1;
     chip->writebuf_lasttime = time1;
     chip->writebuf_last = (chip->writebuf_last + 1) % OPL_WRITEBUF_SIZE;
 }
@@ -1392,7 +1406,7 @@ void OPL3_WriteRegBuffered(opl3_chip *chip, Bit16u reg, Bit8u v)
 void OPL3_GenerateStream(opl3_chip *chip, Bit16s *sndptr, Bit32u numsamples)
 {
     Bit32u i;
-	
+
     for(i = 0; i < numsamples; i++)
     {
         OPL3_GenerateResampled(chip, sndptr);
