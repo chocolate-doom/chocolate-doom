@@ -25,6 +25,8 @@
 #include <errno.h>
 #include <assert.h>
 
+#include "SDL_filesystem.h"
+
 #include "config.h"
 
 #include "doomtype.h"
@@ -2101,30 +2103,17 @@ static char *GetDefaultConfigDir(void)
 {
 #if !defined(_WIN32) || defined(_WIN32_WCE)
 
-    // Configuration settings are stored in ~/.chocolate-doom/,
-    // except on Windows, where we behave like Vanilla Doom and
-    // save in the current directory.
+    // Configuration settings are stored in an OS-appropriate path
+    // determined by SDL.  On typical Unix systems, this might be
+    // ~/.local/share/chocolate-doom.  On Windows, we behave like
+    // Vanilla Doom and save in the current directory.
 
-    char *homedir;
     char *result;
 
-    homedir = getenv("HOME");
-
-    if (homedir != NULL)
-    {
-        // put all configuration in a config directory off the
-        // homedir
-
-        result = M_StringJoin(homedir, DIR_SEPARATOR_S,
-                              "." PACKAGE_TARNAME, DIR_SEPARATOR_S, NULL);
-
-        return result;
-    }
-    else
+    result = SDL_GetPrefPath("", PACKAGE_TARNAME);
+    return result;
 #endif /* #ifndef _WIN32 */
-    {
-        return M_StringDuplicate("");
-    }
+    return M_StringDuplicate("");
 }
 
 // 
@@ -2176,12 +2165,12 @@ char *M_GetSaveGameDir(char *iwadname)
     }
     else
     {
-        // ~/.chocolate-doom/savegames
+        // ~/.local/share/chocolate-doom/savegames
 
         topdir = M_StringJoin(configdir, "savegames", NULL);
         M_MakeDirectory(topdir);
 
-        // eg. ~/.chocolate-doom/savegames/doom2.wad/
+        // eg. ~/.local/share/chocolate-doom/savegames/doom2.wad/
 
         savegamedir = M_StringJoin(topdir, DIR_SEPARATOR_S, iwadname,
                                    DIR_SEPARATOR_S, NULL);

@@ -18,10 +18,10 @@ behavior.
 @include environ.man
 .SH FILES
 .TP
-\fB$HOME/.chocolate-doom/default.cfg\fR
+\fB$HOME/.local/share/chocolate-doom/default.cfg\fR
 The main configuration file for Chocolate Doom.  See \fBdefault.cfg\fR(5).
 .TP
-\fB$HOME/.chocolate-doom/chocolate-doom.cfg\fR
+\fB$HOME/.local/share/chocolate-doom/chocolate-doom.cfg\fR
 Extra configuration values that are specific to Chocolate Doom and not
 present in Vanilla Doom.  See \fBchocolate-doom.cfg\fR(5).
 .SH SEE ALSO
