@@ -21,16 +21,20 @@ MANDIR = $(top_srcdir)/man
 DOCGEN = $(MANDIR)/docgen
 
 @PROGRAM_PREFIX@doom: $(top_srcdir)/src $(DOCGEN) $(BASH_COMPLETION_TEMPLATES)
-	$(DOCGEN) -g doom -b doom.template $(top_srcdir)/src $(top_srcdir)/src/doom > $@
+	$(DOCGEN) -g doom -b $(MANDIR)/doom.template \
+                  $(top_srcdir)/src $(top_srcdir)/src/doom > $@
 
 @PROGRAM_PREFIX@heretic: $(top_srcdir)/src $(DOCGEN) $(BASH_COMPLETION_TEMPLATES)
-	$(DOCGEN) -g heretic -b heretic.template $(top_srcdir)/src $(top_srcdir)/src/heretic > $@
+	$(DOCGEN) -g heretic -b $(MANDIR)/heretic.template \
+                  $(top_srcdir)/src $(top_srcdir)/src/heretic > $@
 
 @PROGRAM_PREFIX@hexen: $(top_srcdir)/src $(DOCGEN) $(BASH_COMPLETION_TEMPLATES)
-	$(DOCGEN) -g hexen -b hexen.template $(top_srcdir)/src $(top_srcdir)/src/hexen > $@
+	$(DOCGEN) -g hexen -b $(MANDIR)/hexen.template \
+                  $(top_srcdir)/src $(top_srcdir)/src/hexen > $@
 
 @PROGRAM_PREFIX@strife: $(top_srcdir)/src $(DOCGEN) $(BASH_COMPLETION_TEMPLATES)
-	$(DOCGEN) -g strife -b strife.template $(top_srcdir)/src $(top_srcdir)/src/strife > $@
+	$(DOCGEN) -g strife -b $(MANDIR)/strife.template \
+                  $(top_srcdir)/src $(top_srcdir)/src/strife > $@
 
 EXTRA_DIST = \
     $(BASH_COMPLETION_TEMPLATES) \
