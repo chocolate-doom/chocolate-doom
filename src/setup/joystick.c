@@ -125,22 +125,32 @@ static SDL_Joystick **all_joysticks = NULL;
 // Always loaded before others, to get a known starting configuration.
 static const joystick_config_t empty_defaults[] =
 {
-    {"joystick_x_axis",        -1},
-    {"joystick_x_invert",      0},
-    {"joystick_y_axis",        -1},
-    {"joystick_y_invert",      0},
-    {"joystick_strafe_axis",   -1},
-    {"joystick_strafe_invert", 0},
-    {"joyb_fire",              -1},
-    {"joyb_use",               -1},
-    {"joyb_strafe",            -1},
-    {"joyb_speed",             -1},
-    {"joyb_strafeleft",        -1},
-    {"joyb_straferight",       -1},
-    {"joyb_prevweapon",        -1},
-    {"joyb_nextweapon",        -1},
-    {"joyb_jump",              -1},
-    {"joyb_menu_activate",     -1},
+    {"joystick_x_axis",            -1},
+    {"joystick_x_invert",          0},
+    {"joystick_y_axis",            -1},
+    {"joystick_y_invert",          0},
+    {"joystick_strafe_axis",       -1},
+    {"joystick_strafe_invert",     0},
+    {"joyb_fire",                  -1},
+    {"joyb_use",                   -1},
+    {"joyb_strafe",                -1},
+    {"joyb_speed",                 -1},
+    {"joyb_strafeleft",            -1},
+    {"joyb_straferight",           -1},
+    {"joyb_prevweapon",            -1},
+    {"joyb_nextweapon",            -1},
+    {"joyb_jump",                  -1},
+    {"joyb_menu_activate",         -1},
+    {"joystick_physical_button0",  0},
+    {"joystick_physical_button1",  1},
+    {"joystick_physical_button2",  2},
+    {"joystick_physical_button3",  3},
+    {"joystick_physical_button4",  4},
+    {"joystick_physical_button5",  5},
+    {"joystick_physical_button6",  6},
+    {"joystick_physical_button7",  7},
+    {"joystick_physical_button8",  8},
+    {"joystick_physical_button9",  9},
     {NULL, 0},
 };
 
@@ -313,6 +323,36 @@ static const joystick_config_t pc_gameport_controller[] =
     {NULL, 0},
 };
 
+// http://www.8bitdo.com/nes30pro/
+static const joystick_config_t nes30_pro_controller[] =
+{
+    {"joystick_x_axis",        CREATE_HAT_AXIS(0, HAT_AXIS_HORIZONTAL)},
+    {"joystick_y_axis",        CREATE_HAT_AXIS(0, HAT_AXIS_VERTICAL)},
+    {"joyb_fire",              4},  // Y
+    {"joyb_speed",             1},  // B
+    {"joyb_jump",              2},  // X
+    {"joyb_use",               0},  // A
+    {"joyb_strafeleft",        8},  // L1
+    {"joyb_straferight",       9}, // R1
+    {"joyb_prevweapon",        6},  // L2
+    {"joyb_nextweapon",        7},  // R2
+    {"joyb_menu_activate",     11}, // Start
+    {NULL, 0},
+};
+
+// http://www.8bitdo.com/sfc30/ or http://www.8bitdo.com/snes30/
+static const joystick_config_t sfc30_controller[] =
+{
+    {"joystick_strafe_axis",   0},
+    {"joystick_y_axis",        1},
+    {"joystick_x_axis",        CREATE_BUTTON_AXIS(4,0)}, // Y-A
+    {"joyb_use",               6}, // L
+    {"joyb_fire",              7}, // R
+    {"joyb_prevweapon",        3}, // X
+    {"joyb_nextweapon",        1}, // B
+    {"joyb_menu_activate",    11}, // Start
+    {NULL, 0},
+};
 
 static const known_joystick_t known_joysticks[] =
 {
@@ -404,6 +444,52 @@ static const known_joystick_t known_joysticks[] =
         "Gameport to USB Controller",
         2, 8, 1,
         pc_gameport_controller,
+    },
+
+    // 8Bitdo NES30 Pro, http://www.8bitdo.com/nes30pro/
+    // Probably some of their other controllers can use the same config.
+    {
+        "8Bitdo NES30 Pro",
+        4, 16, 1,
+        nes30_pro_controller,
+    },
+
+    // 8Bitdo SFC30 SNES replica controller
+    // in default mode and in controller mode (Start+R)
+    // the latter suffixes "Joystick" to the name
+    // http://www.8bitdo.com/sfc30/
+    {
+        "8Bitdo SFC30 GamePad*",
+        4, 16, 1,
+        sfc30_controller,
+    },
+
+    // As above, but as detected on RHEL Linux (odd extra axes)
+    {
+        "8Bitdo SFC30 GamePad*",
+        6, 16, 1,
+        sfc30_controller,
+    },
+
+    // SNES30 colour variation of the above
+    // http://www.8bitdo.com/snes30/
+    {
+        "8Bitdo SNES30 GamePad*",
+        4, 16, 1,
+        sfc30_controller,
+    },
+
+    // 8Bitdo SFC30 SNES replica controller in USB controller mode
+    // tested with firmware V2.68 (Beta); latest stable V2.65 doesn't work on
+    // OS X in USB controller mode
+    // Names seen so far:
+    //     'SFC30 Joystick' (OS X)
+    //     'SFC30              SFC30 Joystick' (Fedora 24; RHEL7)
+    // XXX: there is probably a SNES30 variant of this too
+    {
+        "SFC30 *",
+        4, 12, 1,
+        sfc30_controller,
     },
 };
 

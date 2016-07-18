@@ -70,6 +70,11 @@ following guidelines before opening a pull request:
 * Please follow the coding style guidelines described in the
   [HACKING](../HACKING.md) file.
 
+* Please don't make unnecessary changes which just change formatting
+  without any actual change to program logic. While being consistent
+  is nice, such changes destroy the ability to use the `git blame`
+  command to see when code was last changed.
+
 * The guidelines given above in the "feature requests" section also
   apply here. New features which aren't in line with the project
   philosophy are likely to be rejected. If you're not sure, open a

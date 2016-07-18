@@ -889,6 +889,7 @@ void WritePCXfile(char *filename, byte *data,
     pcx->hres = SHORT(width);
     pcx->vres = SHORT(height);
     memset (pcx->palette,0,sizeof(pcx->palette));
+    pcx->reserved = 0;                  // PCX spec: reserved byte must be zero
     pcx->color_planes = 1;		// chunky image
     pcx->bytes_per_line = SHORT(width);
     pcx->palette_type = SHORT(2);	// not a grey scale

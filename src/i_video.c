@@ -1494,12 +1494,13 @@ void I_GraphicsCheckCommandLine(void)
     int i;
 
     //!
+    // @category video
     // @vanilla
     //
     // Disable blitting the screen.
     //
 
-    noblit = M_CheckParm ("-noblit"); 
+    noblit = M_CheckParm ("-noblit");
 
     //!
     // @category video 

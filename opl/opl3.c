@@ -21,37 +21,7 @@
 //      OPLx decapsulated(Matthew Gambrell, Olli Niemitalo):
 //          OPL2 ROMs.
 //
-// version: 1.7
-//
-//  Changelog:
-//
-//  v1.1:
-//      Vibrato's sign fix.
-//  v1.2:
-//      Operator key fix.
-//      Corrected 4-operator mode.
-//      Corrected rhythm mode.
-//      Some small fixes.
-//  v1.2.1:
-//      Small envelope generator fix.
-//      Removed EX_Get function(not used)
-//  v1.3:
-//      Complete rewrite.
-//  v1.4:
-//      New envelope and waveform generator.
-//      Some small fixes.
-//  v1.4.1:
-//      Envelope generator rate calculation fix.
-//  v1.4.2:
-//      Version for ZDoom.
-//  v1.5:
-//      Optimizations.
-//  v1.6:
-//      Improved emulation output.
-//  v1.6.1:
-//      Simple YMF289(OPL3-L) emulation.
-//  v1.7:
-//      Version for Chocolate Doom.
+// version: 1.7.4
 //
 
 #include <stdio.h>
@@ -156,7 +126,7 @@ static const Bit16u exprom[256] = {
     0x3d4, 0x3da, 0x3df, 0x3e4, 0x3ea, 0x3ef, 0x3f5, 0x3fa
 };
 
-// 
+//
 // freq mult table multiplied by 2
 //
 // 1/2, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 12, 12, 15, 15
@@ -537,16 +507,13 @@ static void OPL3_EnvelopeKeyOn(opl3_slot *slot, Bit8u type)
     if (!slot->key)
     {
         slot->eg_gen = envelope_gen_num_attack;
-        if ((slot->eg_rate >> 2) != 0x0f)
-        {
-            slot->eg_gen = envelope_gen_num_attack;
-        }
-        else
+        OPL3_EnvelopeUpdateRate(slot);
+        if ((slot->eg_rate >> 2) == 0x0f)
         {
             slot->eg_gen = envelope_gen_num_decay;
+            OPL3_EnvelopeUpdateRate(slot);
             slot->eg_rout = 0x00;
         }
-        OPL3_EnvelopeUpdateRate(slot);
         slot->pg_phase = 0x00;
     }
     slot->key |= type;
@@ -683,7 +650,7 @@ static void OPL3_SlotGenerate(opl3_slot *slot)
 
 static void OPL3_SlotGenerateZM(opl3_slot *slot)
 {
-    OPL3_SlotGeneratePhase(slot, 0);
+    OPL3_SlotGeneratePhase(slot, (Bit16u)(slot->pg_phase >> 9));
 }
 
 static void OPL3_SlotCalcFB(opl3_slot *slot)
@@ -789,6 +756,8 @@ static void OPL3_ChannelUpdateRhythm(opl3_chip *chip, Bit8u data)
         {
             chip->channel[chnum].chtype = ch_2op;
             OPL3_ChannelSetupAlg(&chip->channel[chnum]);
+            OPL3_EnvelopeKeyOff(chip->channel[chnum].slots[0], egk_drum);
+            OPL3_EnvelopeKeyOff(chip->channel[chnum].slots[1], egk_drum);
         }
     }
 }
@@ -1084,7 +1053,7 @@ static void OPL3_GenerateRhythm1(opl3_chip *chip)
              | (((phase17 >> 2) ^ phase17) & 0x08)) ? 0x01 : 0x00;
     //hh
     phase = (phasebit << 9)
-          | (0x34 << ((phasebit ^ (chip->noise & 0x01) << 1)));
+          | (0x34 << ((phasebit ^ (chip->noise & 0x01)) << 1));
     OPL3_SlotGeneratePhase(channel7->slots[0], phase);
     //tt
     OPL3_SlotGenerateZM(channel8->slots[0]);
@@ -1215,14 +1184,14 @@ void OPL3_Generate(opl3_chip *chip, Bit16s *buf)
     if ((chip->timer & 0x3f) == 0x3f)
     {
         chip->tremolopos = (chip->tremolopos + 1) % 210;
-        if (chip->tremolopos < 105)
-        {
-            chip->tremolo = chip->tremolopos >> chip->tremoloshift;
-        }
-        else
-        {
-            chip->tremolo = (210 - chip->tremolopos) >> chip->tremoloshift;
-        }
+    }
+    if (chip->tremolopos < 105)
+    {
+        chip->tremolo = chip->tremolopos >> chip->tremoloshift;
+    }
+    else
+    {
+        chip->tremolo = (210 - chip->tremolopos) >> chip->tremoloshift;
     }
 
     if ((chip->timer & 0x3ff) == 0x3ff)
@@ -1232,9 +1201,13 @@ void OPL3_Generate(opl3_chip *chip, Bit16s *buf)
 
     chip->timer++;
 
-    while (chip->writebuf_cur != chip->writebuf_last
-        && chip->writebuf[chip->writebuf_cur].time <= chip->writebuf_samplecnt)
+    while (chip->writebuf[chip->writebuf_cur].time <= chip->writebuf_samplecnt)
     {
+        if (!(chip->writebuf[chip->writebuf_cur].reg & 0x200))
+        {
+            break;
+        }
+        chip->writebuf[chip->writebuf_cur].reg &= 0x1ff;
         OPL3_WriteReg(chip, chip->writebuf[chip->writebuf_cur].reg,
                       chip->writebuf[chip->writebuf_cur].data);
         chip->writebuf_cur = (chip->writebuf_cur + 1) % OPL_WRITEBUF_SIZE;
@@ -1299,6 +1272,8 @@ void OPL3_Reset(opl3_chip *chip, Bit32u samplerate)
     }
     chip->noise = 0x306600;
     chip->rateratio = (samplerate << RSM_FRAC) / 49716;
+    chip->tremoloshift = 4;
+    chip->vibshift = 1;
 }
 
 void OPL3_WriteReg(opl3_chip *chip, Bit16u reg, Bit8u v)
@@ -1403,8 +1378,18 @@ void OPL3_WriteReg(opl3_chip *chip, Bit16u reg, Bit8u v)
 void OPL3_WriteRegBuffered(opl3_chip *chip, Bit16u reg, Bit8u v)
 {
     Bit64u time1, time2;
-    chip->writebuf[chip->writebuf_last % OPL_WRITEBUF_SIZE].reg = reg;
-    chip->writebuf[chip->writebuf_last % OPL_WRITEBUF_SIZE].data = v;
+
+    if (chip->writebuf[chip->writebuf_last].reg & 0x200)
+    {
+        OPL3_WriteReg(chip, chip->writebuf[chip->writebuf_last].reg & 0x1ff,
+                      chip->writebuf[chip->writebuf_last].data);
+
+        chip->writebuf_cur = (chip->writebuf_last + 1) % OPL_WRITEBUF_SIZE;
+        chip->writebuf_samplecnt = chip->writebuf[chip->writebuf_last].time;
+    }
+
+    chip->writebuf[chip->writebuf_last].reg = reg | 0x200;
+    chip->writebuf[chip->writebuf_last].data = v;
     time1 = chip->writebuf_lasttime + OPL_WRITEBUF_DELAY;
     time2 = chip->writebuf_samplecnt;
 
@@ -1413,7 +1398,7 @@ void OPL3_WriteRegBuffered(opl3_chip *chip, Bit16u reg, Bit8u v)
         time1 = time2;
     }
 
-    chip->writebuf[chip->writebuf_last % OPL_WRITEBUF_SIZE].time = time1;
+    chip->writebuf[chip->writebuf_last].time = time1;
     chip->writebuf_lasttime = time1;
     chip->writebuf_last = (chip->writebuf_last + 1) % OPL_WRITEBUF_SIZE;
 }
@@ -1421,7 +1406,7 @@ void OPL3_WriteRegBuffered(opl3_chip *chip, Bit16u reg, Bit8u v)
 void OPL3_GenerateStream(opl3_chip *chip, Bit16s *sndptr, Bit32u numsamples)
 {
     Bit32u i;
-	
+
     for(i = 0; i < numsamples; i++)
     {
         OPL3_GenerateResampled(chip, sndptr);

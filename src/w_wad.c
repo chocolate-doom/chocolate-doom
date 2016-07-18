@@ -176,6 +176,7 @@ wad_file_t *W_AddFile (char *filename)
 	    // Homebrew levels?
 	    if (strncmp(header.identification,"PWAD",4))
 	    {
+		W_CloseFile(wad_file);
 		I_Error ("Wad file %s doesn't have IWAD "
 			 "or PWAD id\n", filename);
 	    }
@@ -184,6 +185,16 @@ wad_file_t *W_AddFile (char *filename)
 	}
 
 	header.numlumps = LONG(header.numlumps);
+
+         // Vanilla Doom doesn't like WADs with more than 4046 lumps
+         // https://www.doomworld.com/vb/post/1010985
+         if (!strncmp(header.identification,"PWAD",4) && header.numlumps > 4046)
+         {
+                 W_CloseFile(wad_file);
+                 I_Error ("Error: Vanilla limit for lumps in a WAD is 4046, "
+                          "PWAD %s has %d", filename, header.numlumps);
+         }
+
 	header.infotableofs = LONG(header.infotableofs);
 	length = header.numlumps*sizeof(filelump_t);
 	fileinfo = Z_Malloc(length, PU_STATIC, 0);
@@ -196,6 +207,7 @@ wad_file_t *W_AddFile (char *filename)
     filelumps = calloc(numfilelumps, sizeof(lumpinfo_t));
     if (filelumps == NULL)
     {
+        W_CloseFile(wad_file);
         I_Error("Failed to allocate array for lumps from new file.");
     }
 
@@ -204,6 +216,7 @@ wad_file_t *W_AddFile (char *filename)
     lumpinfo = realloc(lumpinfo, numlumps * sizeof(lumpinfo_t *));
     if (lumpinfo == NULL)
     {
+        W_CloseFile(wad_file);
         I_Error("Failed to increase lumpinfo[] array size.");
     }
 
