@@ -300,9 +300,7 @@ class Parameter:
 # Read list of wiki pages
 
 def read_wikipages():
-    f = open("wikipages")
-
-    try:
+    with open("wikipages") as f:
         for line in f:
             line = line.rstrip()
 
@@ -310,8 +308,6 @@ def read_wikipages():
 
             if not re.match('^\s*$', line):
                 wikipages.append(line)
-    finally:
-        f.close()
 
 # Add wiki page links
 
@@ -352,13 +348,11 @@ def add_parameter(param, line, config_file):
 
     raise Exception(param.text)
 
-def process_file(file):
+def process_file(filename):
 
     current_config_file = None
 
-    f = open(file)
-
-    try:
+    with open(filename) as f:
         param = None
         waiting_for_checkparm = False
 
@@ -405,8 +399,6 @@ def process_file(file):
                     # Start of a normal comment
                     param = Parameter()
                     waiting_for_checkparm = False
-    finally:
-        f.close()
 
 def process_files(path):
     # Process all C source files.
@@ -414,28 +406,25 @@ def process_files(path):
     if os.path.isdir(path):
         files = glob.glob(path + "/*.c")
 
-        for file in files:
-            process_file(file)
+        for filename in files:
+            process_file(filename)
     else:
         # Special case to allow a single file to be specified as a target
 
         process_file(path)
 
 def print_template(template_file, content):
-    f = open(template_file)
-
-    try:
+    with open(template_file) as f:
         for line in f:
             match = INCLUDE_STATEMENT_RE.search(line)
             if match:
                 filename = match.group(1)
+                filename = os.path.join(os.path.dirname(template_file),
+                                        filename)
                 print_template(filename, content)
             else:
                 line = line.replace("@content", content)
                 print(line.rstrip())
-
-    finally:
-        f.close()
 
 def manpage_output(targets, template_file): 
     
