@@ -126,11 +126,14 @@ int orbitTableY[256] = {
 void A_DripBlood(mobj_t *actor)
 {
 	mobj_t *mo;
+    int r;
 
-	mo = P_SpawnMobj(actor->x+((P_Random()-P_Random())<<11),
-		actor->y+((P_Random()-P_Random())<<11), actor->z, MT_BLOOD);
-	mo->momx = (P_Random()-P_Random())<<10;
-	mo->momy = (P_Random()-P_Random())<<10;
+    r = P_SubRandom();
+
+	mo = P_SpawnMobj(actor->x+(r<<11),
+		actor->y+(P_SubRandom()<<11), actor->z, MT_BLOOD);
+	mo->momx = P_SubRandom()<<10;
+	mo->momy = P_SubRandom()<<10;
 	mo->flags2 |= MF2_LOGRAV;
 }
 */
@@ -153,8 +156,8 @@ void A_PotteryExplode(mobj_t * actor)
         if (mo)
         {
             mo->momz = ((P_Random() & 7) + 5) * (3 * FRACUNIT / 4);
-            mo->momx = (P_Random() - P_Random()) << (FRACBITS - 6);
-            mo->momy = (P_Random() - P_Random()) << (FRACBITS - 6);
+            mo->momx = P_SubRandom() << (FRACBITS - 6);
+            mo->momy = P_SubRandom() << (FRACBITS - 6);
         }
     }
     S_StartSound(mo, SFX_POTTERY_EXPLODE);
@@ -265,8 +268,8 @@ void A_CorpseExplode(mobj_t * actor)
         if (mo)
         {
             mo->momz = ((P_Random() & 7) + 5) * (3 * FRACUNIT / 4);
-            mo->momx = (P_Random() - P_Random()) << (FRACBITS - 6);
-            mo->momy = (P_Random() - P_Random()) << (FRACBITS - 6);
+            mo->momx = P_SubRandom() << (FRACBITS - 6);
+            mo->momy = P_SubRandom() << (FRACBITS - 6);
         }
     }
     // Spawn a skull
@@ -275,8 +278,8 @@ void A_CorpseExplode(mobj_t * actor)
     if (mo)
     {
         mo->momz = ((P_Random() & 7) + 5) * (3 * FRACUNIT / 4);
-        mo->momx = (P_Random() - P_Random()) << (FRACBITS - 6);
-        mo->momy = (P_Random() - P_Random()) << (FRACBITS - 6);
+        mo->momx = P_SubRandom() << (FRACBITS - 6);
+        mo->momy = P_SubRandom() << (FRACBITS - 6);
         S_StartSound(mo, SFX_FIRED_DEATH);
     }
     P_RemoveMobj(actor);
@@ -300,8 +303,8 @@ void A_LeafSpawn(mobj_t * actor)
         // see ISO-IEC 9899-1999, [6.5.2.2.10]
         mobjtype_t type = MT_LEAF1 + (P_Random() & 1);
         fixed_t z = actor->z + (P_Random() << 14);
-        fixed_t y = actor->y + ((P_Random() - P_Random()) << 14);
-        fixed_t x = actor->x + ((P_Random() - P_Random()) << 14);
+        fixed_t y = actor->y + (P_SubRandom() << 14);
+        fixed_t x = actor->x + (P_SubRandom() << 14);
 
         mo = P_SpawnMobj(x, y, z, type);
         if (mo)
@@ -1040,8 +1043,8 @@ void P_SpawnDirt(mobj_t * actor, fixed_t radius)
     angle = P_Random() << 5;    // <<24 >>19
     x = actor->x + FixedMul(radius, finecosine[angle]);
     y = actor->y + FixedMul(radius, finesine[angle]);
-//      x = actor->x + ((P_Random()-P_Random())%radius)<<FRACBITS;
-//      y = actor->y + ((P_Random()-P_Random()<<FRACBITS)%radius);
+//      x = actor->x + (P_SubRandom()%radius)<<FRACBITS;
+//      y = actor->y + ((P_SubRandom()<<FRACBITS)%radius);
     z = actor->z + (P_Random() << 9) + FRACUNIT;
     switch (P_Random() % 6)
     {
@@ -1165,19 +1168,23 @@ void A_SoAExplode(mobj_t * actor)
 {
     mobj_t *mo;
     int i;
+    int r1,r2,r3;
 
     for (i = 0; i < 10; i++)
     {
-        mo = P_SpawnMobj(actor->x + ((P_Random() - 128) << 12),
-                         actor->y + ((P_Random() - 128) << 12),
-                         actor->z + (P_Random() * actor->height / 256),
+        r1 = P_Random();
+        r2 = P_Random();
+        r3 = P_Random();
+        mo = P_SpawnMobj(actor->x + ((r1 - 128) << 12),
+                         actor->y + ((r2 - 128) << 12),
+                         actor->z + (r3 * actor->height / 256),
                          MT_ZARMORCHUNK);
         P_SetMobjState(mo, mo->info->spawnstate + i);
         if (mo)
         {
             mo->momz = ((P_Random() & 7) + 5) * FRACUNIT;
-            mo->momx = (P_Random() - P_Random()) << (FRACBITS - 6);
-            mo->momy = (P_Random() - P_Random()) << (FRACBITS - 6);
+            mo->momx = P_SubRandom() << (FRACBITS - 6);
+            mo->momy = P_SubRandom() << (FRACBITS - 6);
         }
     }
     if (actor->args[0])
