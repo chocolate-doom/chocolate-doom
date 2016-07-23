@@ -55,6 +55,10 @@ static unsigned char *screendata;
 static SDL_Renderer *renderer;
 static int key_mapping = 1;
 
+// Dimensions of the screen image in screen coordinates (not pixels); this
+// is the value that was passed to SDL_CreateWindow().
+static int screen_image_w, screen_image_h;
+
 static TxtSDLEventCallbackFunc event_callback;
 static void *event_callback_data;
 
@@ -244,7 +248,6 @@ static void ChooseFont(void)
 
 int TXT_Init(void)
 {
-    int window_w, window_h;
     int flags = 0;
 
     if (SDL_Init(SDL_INIT_VIDEO) < 0)
@@ -254,8 +257,8 @@ int TXT_Init(void)
 
     ChooseFont();
 
-    window_w = TXT_SCREEN_W * font->w;
-    window_h = TXT_SCREEN_H * font->h;
+    screen_image_w = TXT_SCREEN_W * font->w;
+    screen_image_h = TXT_SCREEN_H * font->h;
 
     // If highdpi_font is selected, try to initialize high dpi rendering.
     if (font == &highdpi_font)
@@ -265,7 +268,7 @@ int TXT_Init(void)
 
     TXT_SDLWindow =
         SDL_CreateWindow("", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-                         window_w, window_h, flags);
+                         screen_image_w, screen_image_h, flags);
 
     if (TXT_SDLWindow == NULL)
         return 0;
@@ -281,10 +284,13 @@ int TXT_Init(void)
         int render_w, render_h;
 
         if (SDL_GetRendererOutputSize(renderer, &render_w, &render_h) == 0
-         && render_w == TXT_SCREEN_W * large_font.w
-         && render_h == TXT_SCREEN_H * large_font.h)
+         && render_w >= TXT_SCREEN_W * large_font.w
+         && render_h >= TXT_SCREEN_H * large_font.h)
         {
             font = &large_font;
+            // Note that we deliberately do not update screen_image_{w,h}
+            // since these are the dimensions of textscreen image in screen
+            // coordinates, not pixels.
         }
     }
 
@@ -411,6 +417,17 @@ static int LimitToRange(int val, int min, int max)
     }
 }
 
+static void GetDestRect(SDL_Rect *rect)
+{
+    int w, h;
+
+    SDL_GetRendererOutputSize(renderer, &w, &h);
+    rect->x = (w - screenbuffer->w) / 2;
+    rect->y = (h - screenbuffer->h) / 2;
+    rect->w = screenbuffer->w;
+    rect->h = screenbuffer->h;
+}
+
 void TXT_UpdateScreenArea(int x, int y, int w, int h)
 {
     SDL_Texture *screentx;
@@ -434,11 +451,6 @@ void TXT_UpdateScreenArea(int x, int y, int w, int h)
         }
     }
 
-    rect.x = x * font->w;
-    rect.y = y * font->h;
-    rect.w = (x_end - x) * font->w;
-    rect.h = (y_end - y) * font->h;
-
     SDL_UnlockSurface(screenbuffer);
 
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
@@ -448,7 +460,8 @@ void TXT_UpdateScreenArea(int x, int y, int w, int h)
     screentx = SDL_CreateTextureFromSurface(renderer, screenbuffer);
 
     SDL_RenderClear(renderer);
-    SDL_RenderCopy(renderer, screentx, NULL, NULL);
+    GetDestRect(&rect);
+    SDL_RenderCopy(renderer, screentx, NULL, &rect);
     SDL_RenderPresent(renderer);
 
     SDL_DestroyTexture(screentx);
@@ -462,15 +475,36 @@ void TXT_UpdateScreen(void)
 void TXT_GetMousePosition(int *x, int *y)
 {
     int window_w, window_h;
+    int origin_x, origin_y;
 
     SDL_GetMouseState(x, y);
 
     // Translate mouse position from 'pixel' position into character position.
-    // Note that font->{w,h} are deliberately not used in this calculation, as
-    // that would break when using highdpi (OS X retina display).
+    // We are working here in screen coordinates and not pixels, since this is
+    // what SDL_GetWindowSize() returns; we must calculate and subtract the
+    // origin position since we center the image within the window.
     SDL_GetWindowSize(TXT_SDLWindow, &window_w, &window_h);
-    *x = (*x * TXT_SCREEN_W) / window_w;
-    *y = (*y * TXT_SCREEN_H) / window_h;
+    origin_x = (window_w - screen_image_w) / 2;
+    origin_y = (window_h - screen_image_h) / 2;
+    *x = ((*x - origin_x) * TXT_SCREEN_W) / screen_image_w;
+    *y = ((*y - origin_y) * TXT_SCREEN_H) / screen_image_h;
+
+    if (*x < 0)
+    {
+        *x = 0;
+    }
+    else if (*x >= TXT_SCREEN_W)
+    {
+        *x = TXT_SCREEN_W - 1;
+    }
+    if (*y < 0)
+    {
+        *y = 0;
+    }
+    else if (*y >= TXT_SCREEN_H)
+    {
+        *y = TXT_SCREEN_H - 1;
+    }
 }
 
 //
