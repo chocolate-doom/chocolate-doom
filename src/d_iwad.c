@@ -154,19 +154,19 @@ static registry_value_t root_path_keys[] =
         "INSTALLPATH",
     },
 
-    // Ultimate Doom
-
-    {
-        HKEY_LOCAL_MACHINE,
-        SOFTWARE_KEY "\\GOG.com\\Games\\1435827232",
-        "PATH",
-    },
-
     // Doom II
 
     {
         HKEY_LOCAL_MACHINE,
         SOFTWARE_KEY "\\GOG.com\\Games\\1435848814",
+        "PATH",
+    },
+
+    // Ultimate Doom
+
+    {
+        HKEY_LOCAL_MACHINE,
+        SOFTWARE_KEY "\\GOG.com\\Games\\1435827232",
         "PATH",
     },
 
