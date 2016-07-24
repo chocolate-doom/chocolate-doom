@@ -421,7 +421,7 @@ void P_ChickenPlayerThink(player_t * player)
     pmo = player->mo;
     if (!(pmo->momx + pmo->momy) && P_Random() < 160)
     {                           // Twitch view angle
-        pmo->angle += (P_Random() - P_Random()) << 19;
+        pmo->angle += P_SubRandom() << 19;
     }
     if ((pmo->z <= pmo->floorz) && (P_Random() < 32))
     {                           // Jump and noise

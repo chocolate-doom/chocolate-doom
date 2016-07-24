@@ -1755,7 +1755,7 @@ void P_SpawnPuff(fixed_t x, fixed_t y, fixed_t z)
 {
     mobj_t *puff;
 
-    z += ((P_Random() - P_Random()) << 10);
+    z += (P_SubRandom() << 10);
     puff = P_SpawnMobj(x, y, z, PuffType);
     if (linetarget && puff->info->seesound)
     {                           // Hit thing sound
@@ -1792,7 +1792,7 @@ void P_SpawnBlood (fixed_t x, fixed_t y, fixed_t z, int damage)
 {
 	mobj_t	*th;
 	
-	z += ((P_Random()-P_Random())<<10);
+	z += (P_SubRandom()<<10);
 	th = P_SpawnMobj (x,y,z, MT_BLOOD);
 	th->momz = FRACUNIT*2;
 	th->tics -= P_Random()&3;
@@ -1816,8 +1816,8 @@ void P_BloodSplatter(fixed_t x, fixed_t y, fixed_t z, mobj_t * originator)
 
     mo = P_SpawnMobj(x, y, z, MT_BLOODSPLATTER);
     mo->target = originator;
-    mo->momx = (P_Random() - P_Random()) << 10;
-    mo->momy = (P_Random() - P_Random()) << 10;
+    mo->momx = P_SubRandom() << 10;
+    mo->momy = P_SubRandom() << 10;
     mo->momz = 3 * FRACUNIT;
 }
 
@@ -1847,9 +1847,9 @@ void P_RipperBlood(mobj_t * mo)
     mobj_t *th;
     fixed_t x, y, z;
 
-    x = mo->x + ((P_Random() - P_Random()) << 12);
-    y = mo->y + ((P_Random() - P_Random()) << 12);
-    z = mo->z + ((P_Random() - P_Random()) << 12);
+    x = mo->x + (P_SubRandom() << 12);
+    y = mo->y + (P_SubRandom() << 12);
+    z = mo->z + (P_SubRandom() << 12);
     th = P_SpawnMobj(x, y, z, MT_BLOOD);
 //      th->flags |= MF_NOGRAVITY;
     th->momx = mo->momx >> 1;
@@ -1935,8 +1935,8 @@ int P_HitFloor(mobj_t * thing)
             {
                 mo = P_SpawnMobj(thing->x, thing->y, ONFLOORZ, MT_SPLASH);
                 mo->target = thing;
-                mo->momx = (P_Random() - P_Random()) << 8;
-                mo->momy = (P_Random() - P_Random()) << 8;
+                mo->momx = P_SubRandom() << 8;
+                mo->momy = P_SubRandom() << 8;
                 mo->momz = 2 * FRACUNIT + (P_Random() << 8);
                 mo = P_SpawnMobj(thing->x, thing->y, ONFLOORZ, MT_SPLASHBASE);
                 if (thing->player)
@@ -1978,8 +1978,8 @@ int P_HitFloor(mobj_t * thing)
                 mo = P_SpawnMobj(thing->x, thing->y, ONFLOORZ,
                                  MT_SLUDGECHUNK);
                 mo->target = thing;
-                mo->momx = (P_Random() - P_Random()) << 8;
-                mo->momy = (P_Random() - P_Random()) << 8;
+                mo->momx = P_SubRandom() << 8;
+                mo->momy = P_SubRandom() << 8;
                 mo->momz = FRACUNIT + (P_Random() << 8);
                 mo = P_SpawnMobj(thing->x, thing->y, ONFLOORZ,
                                  MT_SLUDGESPLASH);
@@ -2066,7 +2066,7 @@ mobj_t *P_SpawnMissile(mobj_t * source, mobj_t * dest, mobjtype_t type)
     an = R_PointToAngle2(source->x, source->y, dest->x, dest->y);
     if (dest->flags & MF_SHADOW)
     {                           // Invisible target
-        an += (P_Random() - P_Random()) << 21;
+        an += P_SubRandom() << 21;
     }
     th->angle = an;
     an >>= ANGLETOFINESHIFT;
@@ -2108,7 +2108,7 @@ mobj_t *P_SpawnMissileXYZ(fixed_t x, fixed_t y, fixed_t z,
     an = R_PointToAngle2(source->x, source->y, dest->x, dest->y);
     if (dest->flags & MF_SHADOW)
     {                           // Invisible target
-        an += (P_Random() - P_Random()) << 21;
+        an += P_SubRandom() << 21;
     }
     th->angle = an;
     an >>= ANGLETOFINESHIFT;
@@ -2449,7 +2449,7 @@ mobj_t *P_SpawnKoraxMissile(fixed_t x, fixed_t y, fixed_t z,
     an = R_PointToAngle2(x, y, dest->x, dest->y);
     if (dest->flags & MF_SHADOW)
     {                           // Invisible target
-        an += (P_Random() - P_Random()) << 21;
+        an += P_SubRandom() << 21;
     }
     th->angle = an;
     an >>= ANGLETOFINESHIFT;
