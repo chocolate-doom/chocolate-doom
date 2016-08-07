@@ -1006,14 +1006,11 @@ static void GetWindowPosition(int *x, int *y)
 
 static void SetVideoMode(void)
 {
-    byte *doompal;
     int w, h;
     int x, y;
     unsigned int rmask, gmask, bmask, amask;
     int unused_bpp;
     int window_flags = 0, renderer_flags = 0;
-
-    doompal = W_CacheLumpName(DEH_String("PLAYPAL"), PU_CACHE);
 
     // If we are already running, we need to free the screenbuffer
     // surface before setting the new mode.
