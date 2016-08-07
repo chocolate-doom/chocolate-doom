@@ -576,13 +576,13 @@ static void CreateUpscaledTexture(void)
     // Limit maximum texture dimensions to 1600x1200.
     // It's really diminishing returns at this point.
 
-    if (w_upscale > 5)
+    if (w_upscale * SCREENWIDTH > 1600)
     {
-        w_upscale = 5;
+        w_upscale = 1600 / SCREENWIDTH;
     }
-    if (h_upscale > 6)
+    if (h_upscale * SCREENHEIGHT > 1200)
     {
-        h_upscale = 6;
+        h_upscale = 1200 / SCREENHEIGHT;
     }
 
     // Create a new texture only if the upscale factors have actually changed.
