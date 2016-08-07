@@ -523,7 +523,7 @@ static void UpdateGrab(void)
 
 }
 
-static void CreateUpscaledTexture(void)
+static void CreateUpscaledTexture(boolean force)
 {
     const int actualheight = EffectiveScreenHeight();
     int w, h;
@@ -587,7 +587,7 @@ static void CreateUpscaledTexture(void)
 
     // Create a new texture only if the upscale factors have actually changed.
 
-    if (h_upscale == h_upscale_old && w_upscale == w_upscale_old)
+    if (h_upscale == h_upscale_old && w_upscale == w_upscale_old && !force)
     {
         return;
     }
@@ -630,7 +630,7 @@ void I_FinishUpdate (void)
 
     if (need_resize)
     {
-        CreateUpscaledTexture();
+        CreateUpscaledTexture(false);
         need_resize = false;
         palette_to_set = true;
     }
@@ -1012,23 +1012,6 @@ static void SetVideoMode(void)
     int unused_bpp;
     int window_flags = 0, renderer_flags = 0;
 
-    // If we are already running, we need to free the screenbuffer
-    // surface before setting the new mode.
-
-    if (screenbuffer != NULL)
-    {
-        SDL_FreeSurface(screenbuffer);
-        screenbuffer = NULL;
-    }
-
-    // Close the current window.
-
-    if (screen != NULL)
-    {
-        SDL_DestroyWindow(screen);
-        screen = NULL;
-    }
-
     w = window_width;
     h = window_height;
 
@@ -1064,14 +1047,21 @@ static void SetVideoMode(void)
     // "window_flags" contains the fullscreen flag (see above), then
     // w and h are ignored.
 
-    screen = SDL_CreateWindow(NULL, x, y, w, h, window_flags);
-
     if (screen == NULL)
     {
-        I_Error("Error creating window for video startup: %s", SDL_GetError());
-    }
+        screen = SDL_CreateWindow(NULL, x, y, w, h, window_flags);
 
-    SDL_SetWindowMinimumSize(screen, SCREENWIDTH, EffectiveScreenHeight());
+        if (screen == NULL)
+        {
+            I_Error("Error creating window for video startup: %s",
+            SDL_GetError());
+        }
+
+        SDL_SetWindowMinimumSize(screen, SCREENWIDTH, EffectiveScreenHeight());
+
+        I_InitWindowTitle();
+        I_InitWindowIcon();
+    }
 
     // The SDL_RENDERER_TARGETTEXTURE flag is required to render the
     // intermediate texture into the upscaled texture.
@@ -1080,6 +1070,11 @@ static void SetVideoMode(void)
     if (force_software_renderer)
     {
         renderer_flags |= SDL_RENDERER_SOFTWARE;
+    }
+
+    if (renderer != NULL)
+    {
+        SDL_DestroyRenderer(renderer);
     }
 
     renderer = SDL_CreateRenderer(screen, -1, renderer_flags);
@@ -1098,9 +1093,6 @@ static void SetVideoMode(void)
                              SCREENWIDTH,
                              EffectiveScreenHeight());
 
-    I_InitWindowTitle();
-    I_InitWindowIcon();
-
     // Blank out the full screen area in case there is any junk in
     // the borders that won't otherwise be overwritten.
 
@@ -1110,19 +1102,30 @@ static void SetVideoMode(void)
 
     // Create the 8-bit paletted and the 32-bit RGBA screenbuffer surfaces.
 
-    screenbuffer = SDL_CreateRGBSurface(0,
-                                        SCREENWIDTH, SCREENHEIGHT, 8,
-                                        0, 0, 0, 0);
-    SDL_FillRect(screenbuffer, NULL, 0);
+    if (screenbuffer == NULL)
+    {
+        screenbuffer = SDL_CreateRGBSurface(0,
+                                            SCREENWIDTH, SCREENHEIGHT, 8,
+                                            0, 0, 0, 0);
+        SDL_FillRect(screenbuffer, NULL, 0);
+    }
 
     // Format of rgbabuffer must match the screen pixel format because we
     // import the surface data into the texture.
-    SDL_PixelFormatEnumToMasks(SDL_GetWindowPixelFormat(screen), &unused_bpp,
-                               &rmask, &gmask, &bmask, &amask);
-    rgbabuffer = SDL_CreateRGBSurface(0,
-                                      SCREENWIDTH, SCREENHEIGHT, 32,
-                                      rmask, gmask, bmask, amask);
-    SDL_FillRect(rgbabuffer, NULL, 0);
+    if (rgbabuffer == NULL)
+    {
+        SDL_PixelFormatEnumToMasks(SDL_GetWindowPixelFormat(screen), &unused_bpp,
+                                   &rmask, &gmask, &bmask, &amask);
+        rgbabuffer = SDL_CreateRGBSurface(0,
+                                          SCREENWIDTH, SCREENHEIGHT, 32,
+                                          rmask, gmask, bmask, amask);
+        SDL_FillRect(rgbabuffer, NULL, 0);
+    }
+
+    if (texture != NULL)
+    {
+        SDL_DestroyTexture(texture);
+    }
 
     // Set the scaling quality for rendering the intermediate texture into
     // the upscaled texture to "nearest", which is gritty and pixelated and
@@ -1141,7 +1144,7 @@ static void SetVideoMode(void)
 
     // Initially create the upscaled texture for rendering to screen
 
-    CreateUpscaledTexture();
+    CreateUpscaledTexture(true);
 }
 
 static const char *hw_emu_warning = 
