@@ -693,10 +693,12 @@ ST_Responder (event_t* ev)
       else if (cht_CheckCheat(&cheat_massacre, ev->data2))
       {
 	int killcount = ST_cheat_massacre();
+	const char const *monster = (gameversion == exe_chex) ? "Flemoid" : "Monster";
+	const char const *killed = (gameversion == exe_chex) ? "returned" : "killed";
 
-	M_snprintf(msg, sizeof(msg), "%s%d %sMonster%s Killed",
+	M_snprintf(msg, sizeof(msg), "%s%d %s%s%s %s",
 	           crstr[CR_GOLD],
-	           killcount, crstr[CR_NONE], (killcount == 1) ? "" : "s");
+	           killcount, crstr[CR_NONE], monster, (killcount == 1) ? "" : "s", killed);
 	plyr->message = msg;
       }
       // [crispy] implement Crispy Doom's "spechits" cheat

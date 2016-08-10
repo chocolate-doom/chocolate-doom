@@ -746,6 +746,8 @@ void HU_Drawer(void)
     if (automapactive && crispy_automapstats)
     {
 	int time = leveltime / TICRATE;
+	const char const *cr_stat = (gameversion == exe_chex) ? crstr[CR_GREEN] : crstr[CR_RED];
+	const char const *kills = (gameversion == exe_chex) ? "Flemoids: " : "Kills: ";
 
 	// [crispy] move obtrusive line out of player view
 	if (!crispy_automapoverlay || screenblocks < CRISPY_HUD - 1)
@@ -753,10 +755,10 @@ void HU_Drawer(void)
 
 	// [crispy] count spawned monsters
 	if (extrakills)
-	    M_snprintf(str, sizeof(str), "%sKills: %s%d/%d+%d", crstr[CR_RED], crstr[CR_GRAY],
+	    M_snprintf(str, sizeof(str), "%s%s%s%d/%d+%d", cr_stat, kills, crstr[CR_GRAY],
 	            players[consoleplayer].killcount, totalkills, extrakills);
 	else
-	    M_snprintf(str, sizeof(str), "%sKills: %s%d/%d", crstr[CR_RED], crstr[CR_GRAY],
+	    M_snprintf(str, sizeof(str), "%s%s%s%d/%d", cr_stat, kills, crstr[CR_GRAY],
 	            players[consoleplayer].killcount, totalkills);
 	HUlib_clearTextLine(&w_kills);
 	s = str;
@@ -764,7 +766,7 @@ void HU_Drawer(void)
 	    HUlib_addCharToTextLine(&w_kills, *(s++));
 	HUlib_drawTextLine(&w_kills, false);
 
-	M_snprintf(str, sizeof(str), "%sItems: %s%d/%d", crstr[CR_RED], crstr[CR_GRAY],
+	M_snprintf(str, sizeof(str), "%sItems: %s%d/%d", cr_stat, crstr[CR_GRAY],
 	        players[consoleplayer].itemcount, totalitems);
 	HUlib_clearTextLine(&w_items);
 	s = str;
@@ -772,7 +774,7 @@ void HU_Drawer(void)
 	    HUlib_addCharToTextLine(&w_items, *(s++));
 	HUlib_drawTextLine(&w_items, false);
 
-	M_snprintf(str, sizeof(str), "%sSecret: %s%d/%d", crstr[CR_RED], crstr[CR_GRAY],
+	M_snprintf(str, sizeof(str), "%sSecret: %s%d/%d", cr_stat, crstr[CR_GRAY],
 	        players[consoleplayer].secretcount, totalsecret);
 	HUlib_clearTextLine(&w_scrts);
 	s = str;
