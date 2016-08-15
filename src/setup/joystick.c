@@ -344,14 +344,16 @@ static const joystick_config_t nes30_pro_controller[] =
 // http://www.8bitdo.com/sfc30/ or http://www.8bitdo.com/snes30/
 static const joystick_config_t sfc30_controller[] =
 {
-    {"joystick_strafe_axis",   0},
+    {"joystick_x_axis",        0},
     {"joystick_y_axis",        1},
-    {"joystick_x_axis",        CREATE_BUTTON_AXIS(4,0)}, // Y-A
-    {"joyb_use",               6}, // L
-    {"joyb_fire",              7}, // R
-    {"joyb_prevweapon",        3}, // X
-    {"joyb_nextweapon",        1}, // B
+    {"joyb_fire",              4}, // Y
+    {"joyb_speed",             1}, // B
+    {"joyb_jump",              3}, // X
+    {"joyb_use",               0}, // A
+    {"joyb_strafeleft",        6}, // L
+    {"joyb_straferight",       7}, // R
     {"joyb_menu_activate",    11}, // Start
+    {"joyb_toggle_automap",   10}, // Select
     {NULL, 0},
 };
 
