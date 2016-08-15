@@ -56,6 +56,7 @@ static int *all_joystick_buttons[] =
     &joybnextweapon,
     &joybjump,
     &joybmenu,
+    &joybautomap,
 };
 
 static int PhysicalForVirtualButton(int vbutton)

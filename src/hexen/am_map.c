@@ -20,6 +20,7 @@
 #include "doomkeys.h"
 #include "i_video.h"
 #include "i_swap.h"
+#include "i_timer.h"
 #include "m_controls.h"
 #include "m_misc.h"
 #include "p_local.h"
@@ -421,8 +422,32 @@ boolean AM_Responder(event_t * ev)
     int rc;
     int key;
     static int bigstate = 0;
+    static int joywait = 0;
 
     key = ev->data1;
+
+    if (ev->type == ev_joystick && joybautomap >= 0
+        && (ev->data1 & (1 << joybautomap)) != 0 && joywait < I_GetTime())
+    {
+        joywait = I_GetTime() + 5;
+
+        if (!automapactive)
+        {
+            AM_Start ();
+            SB_state = -1;
+            viewactive = false;
+        }
+        else
+        {
+            bigstate = 0;
+            viewactive = true;
+            AM_Stop ();
+            SB_state = -1;
+        }
+
+        return true;
+    }
+
 
     rc = false;
     if (!automapactive)

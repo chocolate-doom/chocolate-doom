@@ -141,6 +141,7 @@ static const joystick_config_t empty_defaults[] =
     {"joyb_nextweapon",            -1},
     {"joyb_jump",                  -1},
     {"joyb_menu_activate",         -1},
+    {"joyb_toggle_automap",        -1},
     {"joystick_physical_button0",  0},
     {"joystick_physical_button1",  1},
     {"joystick_physical_button2",  2},
@@ -822,7 +823,7 @@ void ConfigJoystick(void)
 
     window = TXT_NewWindow("Gamepad/Joystick configuration");
     TXT_SetTableColumns(window, 6);
-    TXT_SetColumnWidths(window, 18, 10, 2, 14, 10, 0);
+    TXT_SetColumnWidths(window, 18, 10, 1, 15, 10, 0);
     TXT_SetWindowHelpURL(window, WINDOW_HELP_URL);
 
     TXT_AddWidgets(window,
@@ -888,6 +889,8 @@ void ConfigJoystick(void)
     }
 
     AddJoystickControl(window, "Activate menu", &joybmenu);
+
+    AddJoystickControl(window, "Toggle Automap", &joybautomap);
 
     TXT_SignalConnect(joystick_button, "pressed", CalibrateJoystick, NULL);
     TXT_SetWindowAction(window, TXT_HORIZ_CENTER, TestConfigAction());
