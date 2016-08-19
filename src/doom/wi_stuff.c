@@ -1494,10 +1494,11 @@ void WI_drawStats(void)
     if (sp_state > 8)
     {
 	const int ttime = wbs->totaltimes / TICRATE;
+	const boolean wide = (ttime > 61*59) || (SP_TIMEX + SHORT(total->width) >= ORIGWIDTH/4);
 
 	V_DrawPatch(SP_TIMEX, SP_TIMEY + 16, total);
 	// [crispy] choose x-position depending on width of time string
-	WI_drawTime((ttime <= 61*59 ? ORIGWIDTH/2 : ORIGWIDTH) - SP_TIMEX, SP_TIMEY + 16, ttime, false);
+	WI_drawTime((wide ? ORIGWIDTH : ORIGWIDTH/2) - SP_TIMEX, SP_TIMEY + 16, ttime, false);
     }
 }
 
