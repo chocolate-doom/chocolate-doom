@@ -162,19 +162,19 @@ static registry_value_t root_path_keys[] =
         "PATH",
     },
 
-    // Ultimate Doom
-
-    {
-        HKEY_LOCAL_MACHINE,
-        SOFTWARE_KEY "\\GOG.com\\Games\\1435827232",
-        "PATH",
-    },
-
     // Final Doom
 
     {
         HKEY_LOCAL_MACHINE,
         SOFTWARE_KEY "\\GOG.com\\Games\\1435848742",
+        "PATH",
+    },
+
+    // Ultimate Doom
+
+    {
+        HKEY_LOCAL_MACHINE,
+        SOFTWARE_KEY "\\GOG.com\\Games\\1435827232",
         "PATH",
     },
 
@@ -195,8 +195,8 @@ static char *root_path_subdirs[] =
     "Doom2",
     "Final Doom",
     "Ultimate Doom",
-    "TNT",
     "Plutonia",
+    "TNT",
 };
 
 // Location where Steam is installed
