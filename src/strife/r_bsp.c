@@ -77,8 +77,14 @@ typedef	struct
     
 } cliprange_t;
 
-
-#define MAXSEGS		32
+// We must expand MAXSEGS to the theoretical limit of the number of solidsegs
+// that can be generated in a scene by the DOOM engine. This was determined by
+// Lee Killough during BOOM development to be a function of the screensize.
+// The simplest thing we can do, other than fix this bug, is to let the game
+// render overage and then bomb out by detecting the overflow after the 
+// fact. -haleyjd
+//#define MAXSEGS		32
+#define MAXSEGS (SCREENWIDTH / 2 + 1)
 
 // newend is one past the last valid seg
 cliprange_t*	newend;
@@ -532,6 +538,10 @@ void R_Subsector (int num)
 	R_AddLine (line);
 	line++;
     }
+
+    // check for solidsegs overflow - extremely unsatisfactory!
+    if(newend > &solidsegs[32])
+        I_Error("R_Subsector: solidsegs overflow (vanilla may crash here)\n");
 }
 
 
