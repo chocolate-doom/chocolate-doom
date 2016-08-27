@@ -12,8 +12,10 @@ chocolate-heretic-setup
 chocolate-hexen-setup
 chocolate-strife-setup
 chocolate-setup
+*.cfg
 *.exe
 *.desktop
+*.txt
 *.appdata.xml
 tags
 TAGS
