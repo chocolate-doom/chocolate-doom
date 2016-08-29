@@ -163,6 +163,7 @@ extern int joybprevweapon;
 extern int joybnextweapon;
 
 extern int joybmenu;
+extern int joybautomap;
 
 extern int dclick_use;
 

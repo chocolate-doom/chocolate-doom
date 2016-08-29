@@ -141,6 +141,7 @@ static const joystick_config_t empty_defaults[] =
     {"joyb_nextweapon",            -1},
     {"joyb_jump",                  -1},
     {"joyb_menu_activate",         -1},
+    {"joyb_toggle_automap",        -1},
     {"joystick_physical_button0",  0},
     {"joystick_physical_button1",  1},
     {"joystick_physical_button2",  2},
@@ -343,14 +344,16 @@ static const joystick_config_t nes30_pro_controller[] =
 // http://www.8bitdo.com/sfc30/ or http://www.8bitdo.com/snes30/
 static const joystick_config_t sfc30_controller[] =
 {
-    {"joystick_strafe_axis",   0},
+    {"joystick_x_axis",        0},
     {"joystick_y_axis",        1},
-    {"joystick_x_axis",        CREATE_BUTTON_AXIS(4,0)}, // Y-A
-    {"joyb_use",               6}, // L
-    {"joyb_fire",              7}, // R
-    {"joyb_prevweapon",        3}, // X
-    {"joyb_nextweapon",        1}, // B
+    {"joyb_fire",              4}, // Y
+    {"joyb_speed",             1}, // B
+    {"joyb_jump",              3}, // X
+    {"joyb_use",               0}, // A
+    {"joyb_strafeleft",        6}, // L
+    {"joyb_straferight",       7}, // R
     {"joyb_menu_activate",    11}, // Start
+    {"joyb_toggle_automap",   10}, // Select
     {NULL, 0},
 };
 
@@ -822,7 +825,7 @@ void ConfigJoystick(void)
 
     window = TXT_NewWindow("Gamepad/Joystick configuration");
     TXT_SetTableColumns(window, 6);
-    TXT_SetColumnWidths(window, 18, 10, 2, 14, 10, 0);
+    TXT_SetColumnWidths(window, 18, 10, 1, 15, 10, 0);
     TXT_SetWindowHelpURL(window, WINDOW_HELP_URL);
 
     TXT_AddWidgets(window,
@@ -888,6 +891,8 @@ void ConfigJoystick(void)
     }
 
     AddJoystickControl(window, "Activate menu", &joybmenu);
+
+    AddJoystickControl(window, "Toggle Automap", &joybautomap);
 
     TXT_SignalConnect(joystick_button, "pressed", CalibrateJoystick, NULL);
     TXT_SetWindowAction(window, TXT_HORIZ_CENTER, TestConfigAction());

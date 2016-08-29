@@ -988,9 +988,9 @@ void P_TouchWhirlwind(mobj_t * target)
 {
     int randVal;
 
-    target->angle += (P_Random() - P_Random()) << 20;
-    target->momx += (P_Random() - P_Random()) << 10;
-    target->momy += (P_Random() - P_Random()) << 10;
+    target->angle += P_SubRandom() << 20;
+    target->momx += P_SubRandom() << 10;
+    target->momy += P_SubRandom() << 10;
     if (leveltime & 16 && !(target->flags2 & MF2_BOSS))
     {
         randVal = P_Random();

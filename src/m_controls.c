@@ -206,6 +206,7 @@ int joybprevweapon = -1;
 int joybnextweapon = -1;
 
 int joybmenu = -1;
+int joybautomap = -1;
 
 // Control whether if a mouse button is double clicked, it acts like 
 // "use" has been pressed
@@ -243,6 +244,7 @@ void M_BindBaseControls(void)
     M_BindIntVariable("joyb_speed",         &joybspeed);
 
     M_BindIntVariable("joyb_menu_activate", &joybmenu);
+    M_BindIntVariable("joyb_toggle_automap", &joybautomap);
 
     // Extra controls that are not in the Vanilla versions:
 

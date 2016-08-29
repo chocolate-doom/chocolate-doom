@@ -12,6 +12,12 @@
   * Checksum calculations were fixed on big endian systems, allowing
     multiplayer games to be played in mixed little/big-endian
     environments. (thanks GhostlyDeath, njankowski)
+  * The NES30, SNES30, and SFC30 gamepads are detected and configured
+    automatically by the Setup tool.  The automap can also be
+    configured to a joystick button. (thanks Jon)
+  * The vanilla limit of 4046 lumps per WAD is now enforced. (thanks
+    Jon, Quasar, Edward-san)
+  * Solidsegs overflow is emulated like in vanilla. (thanks Quasar)
 
 ### Build systems
   * Improved compatibility with BSD Make. (thanks R.Rebello)
@@ -31,6 +37,8 @@
   * Allow starting multiplayer Chex Quest games.
   * Allow Freedoom: Phase 1 ≤ 0.10.1 to be loaded with mods, with
     -gameversion older than ultimate. (thanks Fabian, chungy)
+  * The IWAD order preference for GOG.com installs matches vanilla
+    Final Doom: doom2, plutonia, tnt, doom. (thanks chungy)
   * Added safety checks against write failures when saving a game,
     such as when the directory is read-only.  Try falling back to a
     temporary directory and reporting an error instead.  (thanks

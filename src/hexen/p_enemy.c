@@ -820,7 +820,7 @@ void A_FaceTarget(mobj_t * actor)
                                    actor->target->y);
     if (actor->target->flags & MF_SHADOW)
     {                           // Target is a ghost
-        actor->angle += (P_Random() - P_Random()) << 21;
+        actor->angle += P_SubRandom() << 21;
     }
 }
 
@@ -1481,10 +1481,13 @@ void A_MinotaurAtk3(mobj_t * actor)
 void A_MntrFloorFire(mobj_t * actor)
 {
     mobj_t *mo;
+    int r;
+
+    r = P_SubRandom();
 
     actor->z = actor->floorz;
-    mo = P_SpawnMobj(actor->x + ((P_Random() - P_Random()) << 10),
-                     actor->y + ((P_Random() - P_Random()) << 10), ONFLOORZ,
+    mo = P_SpawnMobj(actor->x + (r << 10),
+                     actor->y + (P_SubRandom() << 10), ONFLOORZ,
                      MT_MNTRFX3);
     mo->target = actor->target;
     mo->momx = 1;               // Force block checking
@@ -1597,8 +1600,8 @@ void P_DropItem(mobj_t *source, mobjtype_t type, int special, int chance)
 	}
 	mo = P_SpawnMobj(source->x, source->y,
 		source->z+(source->height>>1), type);
-	mo->momx = (P_Random()-P_Random())<<8;
-	mo->momy = (P_Random()-P_Random())<<8;
+	mo->momx = P_SubRandom()<<8;
+	mo->momy = P_SubRandom()<<8;
 	mo->momz = FRACUNIT*5+(P_Random()<<10);
 	mo->flags2 |= MF2_DROPPED;
 	mo->health = special;
@@ -1773,8 +1776,8 @@ void A_SkullPop(mobj_t * actor)
     mo = P_SpawnMobj(actor->x, actor->y, actor->z + 48 * FRACUNIT,
                      MT_BLOODYSKULL);
     //mo->target = actor;
-    mo->momx = (P_Random() - P_Random()) << 9;
-    mo->momy = (P_Random() - P_Random()) << 9;
+    mo->momx = P_SubRandom() << 9;
+    mo->momy = P_SubRandom() << 9;
     mo->momz = FRACUNIT * 2 + (P_Random() << 6);
     // Attach player mobj to bloody skull
     player = actor->player;
@@ -2408,8 +2411,9 @@ void A_SerpentHeadPop(mobj_t * actor)
 void A_SerpentSpawnGibs(mobj_t * actor)
 {
     mobj_t *mo;
+    int r = P_Random();
 
-    mo = P_SpawnMobj(actor->x + ((P_Random() - 128) << 12),
+    mo = P_SpawnMobj(actor->x + ((r - 128) << 12),
                      actor->y + ((P_Random() - 128) << 12),
                      actor->floorz + FRACUNIT, MT_SERPENT_GIB1);
     if (mo)
@@ -2418,7 +2422,8 @@ void A_SerpentSpawnGibs(mobj_t * actor)
         mo->momy = (P_Random() - 128) << 6;
         mo->floorclip = 6 * FRACUNIT;
     }
-    mo = P_SpawnMobj(actor->x + ((P_Random() - 128) << 12),
+    r = P_Random();
+    mo = P_SpawnMobj(actor->x + ((r - 128) << 12),
                      actor->y + ((P_Random() - 128) << 12),
                      actor->floorz + FRACUNIT, MT_SERPENT_GIB2);
     if (mo)
@@ -2427,7 +2432,8 @@ void A_SerpentSpawnGibs(mobj_t * actor)
         mo->momy = (P_Random() - 128) << 6;
         mo->floorclip = 6 * FRACUNIT;
     }
-    mo = P_SpawnMobj(actor->x + ((P_Random() - 128) << 12),
+    r = P_Random();
+    mo = P_SpawnMobj(actor->x + ((r - 128) << 12),
                      actor->y + ((P_Random() - 128) << 12),
                      actor->floorz + FRACUNIT, MT_SERPENT_GIB3);
     if (mo)
@@ -2779,15 +2785,21 @@ void A_BishopPuff(mobj_t * actor)
 void A_BishopPainBlur(mobj_t * actor)
 {
     mobj_t *mo;
+    int r1,r2,r3;
 
     if (P_Random() < 64)
     {
         P_SetMobjState(actor, S_BISHOP_BLUR1);
         return;
     }
-    mo = P_SpawnMobj(actor->x + ((P_Random() - P_Random()) << 12), actor->y
-                     + ((P_Random() - P_Random()) << 12),
-                     actor->z + ((P_Random() - P_Random()) << 11),
+
+    r1 = P_SubRandom();
+    r2 = P_SubRandom();
+    r3 = P_SubRandom();
+
+    mo = P_SpawnMobj(actor->x + (r1 << 12), actor->y
+                     + (r2 << 12),
+                     actor->z + (r3 << 11),
                      MT_BISHOPPAINBLUR);
     if (mo)
     {
@@ -3027,14 +3039,18 @@ void A_DragonFX2(mobj_t * actor)
 {
     mobj_t *mo;
     int i;
+    int r1,r2,r3;
     int delay;
 
     delay = 16 + (P_Random() >> 3);
     for (i = 1 + (P_Random() & 3); i; i--)
     {
-        mo = P_SpawnMobj(actor->x + ((P_Random() - 128) << 14),
-                         actor->y + ((P_Random() - 128) << 14),
-                         actor->z + ((P_Random() - 128) << 12),
+        r1 = P_Random();
+        r2 = P_Random();
+        r3 = P_Random();
+        mo = P_SpawnMobj(actor->x + ((r1 - 128) << 14),
+                         actor->y + ((r2 - 128) << 14),
+                         actor->z + ((r3 - 128) << 12),
                          MT_DRAGON_FX2);
         if (mo)
         {
@@ -4764,7 +4780,8 @@ void A_CheckFloor(mobj_t * actor)
 
 void A_FreezeDeath(mobj_t * actor)
 {
-    actor->tics = 75 + P_Random() + P_Random();
+    int r = P_Random();
+    actor->tics = 75 + r + P_Random();
     actor->flags |= MF_SOLID | MF_SHOOTABLE | MF_NOBLOOD;
     actor->flags2 |= MF2_PUSHABLE | MF2_TELESTOMP | MF2_PASSMOBJ | MF2_SLIDE;
     actor->height <<= 2;
@@ -4832,6 +4849,7 @@ void A_IceCheckHeadDone(mobj_t * actor)
 void A_FreezeDeathChunks(mobj_t * actor)
 {
     int i;
+    int r1,r2,r3;
     mobj_t *mo;
 
     if (actor->momx || actor->momy || actor->momz)
@@ -4843,35 +4861,41 @@ void A_FreezeDeathChunks(mobj_t * actor)
 
     for (i = 12 + (P_Random() & 15); i >= 0; i--)
     {
+        r1 = P_Random();
+        r2 = P_Random();
+        r3 = P_Random();
         mo = P_SpawnMobj(actor->x +
-                         (((P_Random() - 128) * actor->radius) >> 7),
+                         (((r1 - 128) * actor->radius) >> 7),
                          actor->y +
-                         (((P_Random() - 128) * actor->radius) >> 7),
-                         actor->z + (P_Random() * actor->height / 255),
+                         (((r2 - 128) * actor->radius) >> 7),
+                         actor->z + (r3 * actor->height / 255),
                          MT_ICECHUNK);
         P_SetMobjState(mo, mo->info->spawnstate + (P_Random() % 3));
         if (mo)
         {
             mo->momz = FixedDiv(mo->z - actor->z, actor->height) << 2;
-            mo->momx = (P_Random() - P_Random()) << (FRACBITS - 7);
-            mo->momy = (P_Random() - P_Random()) << (FRACBITS - 7);
+            mo->momx = P_SubRandom() << (FRACBITS - 7);
+            mo->momy = P_SubRandom() << (FRACBITS - 7);
             A_IceSetTics(mo);   // set a random tic wait
         }
     }
     for (i = 12 + (P_Random() & 15); i >= 0; i--)
     {
+        r1 = P_Random();
+        r2 = P_Random();
+        r3 = P_Random();
         mo = P_SpawnMobj(actor->x +
-                         (((P_Random() - 128) * actor->radius) >> 7),
+                         (((r1 - 128) * actor->radius) >> 7),
                          actor->y +
-                         (((P_Random() - 128) * actor->radius) >> 7),
-                         actor->z + (P_Random() * actor->height / 255),
+                         (((r2 - 128) * actor->radius) >> 7),
+                         actor->z + (r3 * actor->height / 255),
                          MT_ICECHUNK);
         P_SetMobjState(mo, mo->info->spawnstate + (P_Random() % 3));
         if (mo)
         {
             mo->momz = FixedDiv(mo->z - actor->z, actor->height) << 2;
-            mo->momx = (P_Random() - P_Random()) << (FRACBITS - 7);
-            mo->momy = (P_Random() - P_Random()) << (FRACBITS - 7);
+            mo->momx = P_SubRandom() << (FRACBITS - 7);
+            mo->momy = P_SubRandom() << (FRACBITS - 7);
             A_IceSetTics(mo);   // set a random tic wait
         }
     }
@@ -4881,8 +4905,8 @@ void A_FreezeDeathChunks(mobj_t * actor)
                          MT_ICECHUNK);
         P_SetMobjState(mo, S_ICECHUNK_HEAD);
         mo->momz = FixedDiv(mo->z - actor->z, actor->height) << 2;
-        mo->momx = (P_Random() - P_Random()) << (FRACBITS - 7);
-        mo->momy = (P_Random() - P_Random()) << (FRACBITS - 7);
+        mo->momx = P_SubRandom() << (FRACBITS - 7);
+        mo->momy = P_SubRandom() << (FRACBITS - 7);
         mo->flags2 |= MF2_ICEDAMAGE;    // used to force blue palette
         mo->flags2 &= ~MF2_FLOORCLIP;
         mo->player = actor->player;

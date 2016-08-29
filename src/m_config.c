@@ -1113,6 +1113,12 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(joyb_menu_activate),
 
     //!
+    // Joystick virtual button to toggle the automap.
+    //
+
+    CONFIG_VARIABLE_INT(joyb_toggle_automap),
+
+    //!
     // Joystick virtual button that cycles to the previous weapon.
     //
 

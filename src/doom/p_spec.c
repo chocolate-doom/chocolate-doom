@@ -403,9 +403,9 @@ P_FindNextHighestFloor
             }
             else if (h == MAX_ADJOINING_SECTORS + 2)
             {
-                // Fatal overflow: game crashes at 22 textures
-                   fprintf(stderr, "P_FindNextHighestFloor: Sector with more than 22 adjoining sectors. "
-                        "Vanilla will crash here");
+                // Fatal overflow: game crashes at 22 sectors
+                fprintf(stderr, "Sector with more than 22 adjoining sectors. "
+                        "Vanilla will crash here\n");
             }
 
             heightlist[h++] = other->floorheight;

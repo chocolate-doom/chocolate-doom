@@ -19,6 +19,7 @@ stamp-h
 stamp-h.in
 stamp-h1
 tags
+\#*\#
 
 # These are the default patterns globally ignored by Subversion:
 *.o

@@ -21,12 +21,6 @@ AC_CHECK_PROG(HAVE_PYTHON, python, true, false)
 
 OPT_LEVEL=2
 
-# Engine room, we need more speed!
-
-AC_ARG_ENABLE(penis-extension, 
-[  --enable-penis-extension   Enable counterproductive compiler optimisations ],
-[ OPT_LEVEL=3 ])
-
 # If this is gcc, we have some options we'd like to turn on.  Turn on 
 # optimisation and debugging symbols.
 
