@@ -81,6 +81,8 @@ static SDL_Rect blit_rect = {
     SCREENHEIGHT
 };
 
+static uint32_t pixel_format;
+
 // palette
 
 static SDL_Color palette[256];
@@ -607,7 +609,7 @@ static void CreateUpscaledTexture(boolean force)
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
 
     texture_upscaled = SDL_CreateTexture(renderer,
-                                SDL_GetWindowPixelFormat(screen),
+                                pixel_format,
                                 SDL_TEXTUREACCESS_TARGET,
                                 w_upscale*SCREENWIDTH,
                                 h_upscale*SCREENHEIGHT);
@@ -1057,6 +1059,8 @@ static void SetVideoMode(void)
             SDL_GetError());
         }
 
+        pixel_format = SDL_GetWindowPixelFormat(screen);
+
         SDL_SetWindowMinimumSize(screen, SCREENWIDTH, EffectiveScreenHeight());
 
         I_InitWindowTitle();
@@ -1114,7 +1118,7 @@ static void SetVideoMode(void)
     // import the surface data into the texture.
     if (rgbabuffer == NULL)
     {
-        SDL_PixelFormatEnumToMasks(SDL_GetWindowPixelFormat(screen), &unused_bpp,
+        SDL_PixelFormatEnumToMasks(pixel_format, &unused_bpp,
                                    &rmask, &gmask, &bmask, &amask);
         rgbabuffer = SDL_CreateRGBSurface(0,
                                           SCREENWIDTH, SCREENHEIGHT, 32,
@@ -1138,7 +1142,7 @@ static void SetVideoMode(void)
     // is going to change frequently.
 
     texture = SDL_CreateTexture(renderer,
-                                SDL_GetWindowPixelFormat(screen),
+                                pixel_format,
                                 SDL_TEXTUREACCESS_STREAMING,
                                 SCREENWIDTH, SCREENHEIGHT);
 
