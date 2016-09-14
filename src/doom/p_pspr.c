@@ -286,16 +286,6 @@ void P_FireWeapon (player_t* player)
     newstate = weaponinfo[player->readyweapon].atkstate;
     P_SetPsprite (player, ps_weapon, newstate);
     P_NoiseAlert (player->mo, player->mo);
-
-    // [crispy] center the weapon sprite horizontally
-    if (crispy_centerweapon)
-    {
-	// [crispy] do not override state's misc1 if set
-	if (!player->psprites[ps_weapon].state->misc1)
-	{
-	    player->psprites[ps_weapon].sx = FRACUNIT;
-	}
-    }
 }
 
 

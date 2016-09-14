@@ -836,6 +836,7 @@ void R_DrawPSprite (pspdef_t* psp, psprnum_t psprnum) // [crispy] differentiate 
     boolean		flip;
     vissprite_t*	vis;
     vissprite_t		avis;
+    fixed_t		psp_sx;
     
     // decide which patch to use
 #ifdef RANGECHECK
@@ -853,9 +854,11 @@ void R_DrawPSprite (pspdef_t* psp, psprnum_t psprnum) // [crispy] differentiate 
 
     lump = sprframe->lump[0];
     flip = (boolean)sprframe->flip[0];
+    // [crispy] center the weapon sprite horizontally
+    psp_sx = (crispy_centerweapon && viewplayer->attackdown && !psp->state->misc1) ? FRACUNIT : psp->sx;
     
     // calculate edges of the shape
-    tx = psp->sx-(ORIGWIDTH/2)*FRACUNIT;
+    tx = psp_sx-(ORIGWIDTH/2)*FRACUNIT;
 	
     tx -= spriteoffset[lump];	
     x1 = (centerxfrac + FixedMul (tx,pspritescale) ) >>FRACBITS;
