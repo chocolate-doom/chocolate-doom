@@ -154,14 +154,6 @@ static registry_value_t root_path_keys[] =
         "INSTALLPATH",
     },
 
-    // Ultimate Doom
-
-    {
-        HKEY_LOCAL_MACHINE,
-        SOFTWARE_KEY "\\GOG.com\\Games\\1435827232",
-        "PATH",
-    },
-
     // Doom II
 
     {
@@ -175,6 +167,14 @@ static registry_value_t root_path_keys[] =
     {
         HKEY_LOCAL_MACHINE,
         SOFTWARE_KEY "\\GOG.com\\Games\\1435848742",
+        "PATH",
+    },
+
+    // Ultimate Doom
+
+    {
+        HKEY_LOCAL_MACHINE,
+        SOFTWARE_KEY "\\GOG.com\\Games\\1435827232",
         "PATH",
     },
 
@@ -195,8 +195,8 @@ static char *root_path_subdirs[] =
     "Doom2",
     "Final Doom",
     "Ultimate Doom",
-    "TNT",
     "Plutonia",
+    "TNT",
 };
 
 // Location where Steam is installed
@@ -256,13 +256,18 @@ static char *GetRegistryString(registry_value_t *reg_val)
     {
         // Allocate a buffer for the value and read the value
 
-        result = malloc(len);
+        result = malloc(len + 1);
 
         if (RegQueryValueEx(key, reg_val->value, NULL, &valtype,
                             (unsigned char *) result, &len) != ERROR_SUCCESS)
         {
             free(result);
             result = NULL;
+        }
+        else
+        {
+            // Ensure the value is null-terminated
+            result[len] = '\0';
         }
     }
 

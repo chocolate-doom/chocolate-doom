@@ -867,7 +867,7 @@ P_SpawnPuff
 {
     mobj_t*	th;
 	
-    z += ((P_Random()-P_Random())<<10);
+    z += (P_SubRandom() << 10);
 
     th = P_SpawnMobj (x,y,z, MT_PUFF);
     th->momz = FRACUNIT;
@@ -895,7 +895,7 @@ P_SpawnBlood
 {
     mobj_t*	th;
 	
-    z += ((P_Random()-P_Random())<<10);
+    z += (P_SubRandom() << 10);
     th = P_SpawnMobj (x,y,z, MT_BLOOD);
     th->momz = FRACUNIT*2;
     th->tics -= P_Random()&3;
@@ -980,7 +980,7 @@ P_SpawnMissile
 
     // fuzzy player
     if (dest->flags & MF_SHADOW)
-	an += (P_Random()-P_Random())<<20;	
+	an += P_SubRandom() << 20;
 
     th->angle = an;
     an >>= ANGLETOFINESHIFT;

@@ -2,6 +2,7 @@
 *.ncb
 *.suo
 *.user
+hexndata
 savegames
 strfsav*
 *.pcx

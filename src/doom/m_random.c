@@ -63,3 +63,10 @@ void M_ClearRandom (void)
 {
     rndindex = prndindex = 0;
 }
+
+// inspired by the same routine in Eternity, thanks haleyjd
+int P_SubRandom (void)
+{
+    int r = P_Random();
+    return r - P_Random();
+}

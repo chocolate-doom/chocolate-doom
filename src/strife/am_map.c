@@ -32,6 +32,7 @@
 #include "m_cheat.h"
 #include "m_controls.h"
 #include "i_system.h"
+#include "i_timer.h"
 
 // Needs access to LFB.
 #include "v_video.h"
@@ -579,10 +580,32 @@ AM_Responder
 
     int rc;
     static int bigstate=0;
+    static int joywait = 0;
     static char buffer[20];
     int key;
 
     rc = false;
+
+    if (ev->type == ev_joystick && joybautomap >= 0
+        && (ev->data1 & (1 << joybautomap)) != 0 && joywait < I_GetTime())
+    {
+        joywait = I_GetTime() + 5;
+
+        if (!automapactive)
+        {
+            AM_Start ();
+            viewactive = false;
+        }
+        else
+        {
+            bigstate = 0;
+            viewactive = true;
+            AM_Stop ();
+        }
+
+        return true;
+    }
+
 
     if (!automapactive)
     {

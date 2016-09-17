@@ -24,7 +24,6 @@
 #include "doomtype.h"
 
 
-
 // Returns a number from 0 to 255,
 // from a lookup table.
 int M_Random (void);
@@ -35,5 +34,7 @@ int P_Random (void);
 // Fix randoms for demos.
 void M_ClearRandom (void);
 
+// Defined version of P_Random() - P_Random()
+int P_SubRandom (void);
 
 #endif

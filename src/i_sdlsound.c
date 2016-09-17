@@ -341,6 +341,8 @@ static void ReleaseSoundOnChannel(int channel)
 {
     allocated_sound_t *snd = channels_playing[channel];
 
+    Mix_HaltChannel(channel);
+
     if (snd == NULL)
     {
         return;
@@ -983,8 +985,6 @@ static void I_SDL_StopSound(int handle)
     {
         return;
     }
-
-    Mix_HaltChannel(handle);
 
     // Sound data is no longer needed; release the
     // sound data being used for this channel
