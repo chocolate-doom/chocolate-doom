@@ -118,7 +118,7 @@ static screen_mode_t *screen_modes_corrected[] = {
     // Horizontally squashed modes (320x200 -> 256x200 and multiples)
 
     &mode_squash_1x,
-    &mode_squash_1p5x,
+    &mode_squash_1p5x, // [crispy]
     &mode_squash_2x,
     &mode_squash_3x,
     &mode_squash_4x,
@@ -168,11 +168,11 @@ static unsigned int mouse_button_state = 0;
 // motion.  Specified with the '-novert' command line parameter.
 // This is an int to allow saving to config file
 
-int novert = 1;
+int novert = 1; // [crispy]
 
 // Save screenshots in PNG format.
 
-int png_screenshots = 1;
+int png_screenshots = 1; // [crispy]
 
 // if true, I_VideoBuffer is screen->pixels
 
@@ -257,7 +257,7 @@ static unsigned int last_resize_time;
 // The sensible thing to do is to disable this if you have a non-US
 // keyboard.
 
-int vanilla_keyboard_mapping = 0;
+int vanilla_keyboard_mapping = false; // [crispy]
 
 // Is the shift key currently down?
 
@@ -810,9 +810,9 @@ static void I_ReadMouse(void)
         ev.data1 = mouse_button_state;
         ev.data2 = AccelerateMouse(x);
 
-        if (!novert || 1) // [crispy] moved to src/*/g_game.c
+        if (true || !novert) // [crispy] moved to src/*/g_game.c
         {
-            ev.data3 = -AccelerateMouseY(y);
+            ev.data3 = -AccelerateMouseY(y); // [crispy]
         }
         else
         {
@@ -933,6 +933,7 @@ static boolean BlitArea(int x1, int y1, int x2, int y2)
     return result;
 }
 
+// [crispy]
 int crispy_fps = 0;
 boolean crispy_showfps = false;
 extern boolean singletics;
@@ -998,7 +999,7 @@ void I_FinishUpdate (void)
 	    I_VideoBuffer[ (SCREENHEIGHT-1)*SCREENWIDTH + i] = 0x0;
     }
 
-	// [AM] Real FPS counter
+	// [crispy] [AM] Real FPS counter
 	if (crispy_showfps)
 	{
 		static int lastmili;
@@ -1219,7 +1220,7 @@ static screen_mode_t *I_FindScreenMode(int w, int h)
         {
             return &mode_scale_1x;
         }
-        else if (w == SCREENWIDTH*2 && h == SCREENHEIGHT*2 && !hires)
+        else if (w == SCREENWIDTH*2 && h == SCREENHEIGHT*2 && !hires) // [crispy]
         {
             return &mode_scale_2x;
         }

@@ -24,21 +24,21 @@
 
 // Screen width and height.
 
-#define hires 1
+#define hires 1 // [crispy]
 
-#define ORIGWIDTH  320
-#define ORIGHEIGHT 200
+#define ORIGWIDTH  320 // [crispy]
+#define ORIGHEIGHT 200 // [crispy]
 
-#define SCREENWIDTH  (ORIGWIDTH << hires)
-#define SCREENHEIGHT (ORIGHEIGHT << hires)
+#define SCREENWIDTH  (ORIGWIDTH << hires) // [crispy]
+#define SCREENHEIGHT (ORIGHEIGHT << hires) // [crispy]
 
 // Screen width used for "squash" scale functions
 
-#define SCREENWIDTH_4_3 (256 << hires)
+#define SCREENWIDTH_4_3 (256 << hires) // [crispy]
 
 // Screen height used for "stretch" scale functions.
 
-#define SCREENHEIGHT_4_3 (240 << hires)
+#define SCREENHEIGHT_4_3 (240 << hires) // [crispy]
 
 #define MAX_MOUSE_BUTTONS 8
 
@@ -146,9 +146,9 @@ extern boolean screenvisible;
 
 extern float mouse_acceleration;
 extern int mouse_threshold;
-extern float mouse_acceleration_y;
-extern int mouse_threshold_y;
-extern int mouse_y_invert;
+extern float mouse_acceleration_y; // [crispy]
+extern int mouse_threshold_y; // [crispy]
+extern int mouse_y_invert; // [crispy]
 extern int vanilla_keyboard_mapping;
 extern boolean screensaver_mode;
 extern int usegamma;
@@ -159,6 +159,6 @@ extern int screen_height;
 extern int screen_bpp;
 extern int fullscreen;
 extern int aspect_ratio_correct;
-extern int novert;
+extern int novert; // [crispy]
 
 #endif
