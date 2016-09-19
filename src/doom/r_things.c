@@ -603,9 +603,20 @@ void R_ProjectSprite (mobj_t* thing)
 	lump = sprframe->lump[0];
 	flip = (boolean)sprframe->flip[0];
     }
+
+    // [crispy] flip death sprites and corpses randomly
+    // except for Cyberdemons and Barrels which are too asymmetrical
+    if (((thing->type != MT_CYBORG && thing->type != MT_BARREL &&
+        thing->flags & MF_CORPSE) || (thing->info->spawnstate == S_PLAY_DIE7 ||
+         thing->info->spawnstate == S_PLAY_XDIE9)) &&
+        thing->health & 1)
+    {
+        flip = !!crispy_flipcorpses;
+    }
     
     // calculate edges of the shape
-    tx -= spriteoffset[lump];	
+    // [crispy] fix sprite offsets for mirrored sprites
+    tx -= flip ? spritewidth[lump] - spriteoffset[lump] : spriteoffset[lump];
     x1 = (centerxfrac + FixedMul (tx,xscale) ) >>FRACBITS;
 
     // off the right side?
@@ -632,16 +643,6 @@ void R_ProjectSprite (mobj_t* thing)
     vis->x1 = x1 < 0 ? 0 : x1;
     vis->x2 = x2 >= viewwidth ? viewwidth-1 : x2;	
     iscale = FixedDiv (FRACUNIT, xscale);
-
-    // [crispy] flip death sprites and corpses randomly
-    // except for Cyberdemons and Barrels which are too asymmetrical
-    if (((thing->type != MT_CYBORG && thing->type != MT_BARREL &&
-        thing->flags & MF_CORPSE) || (thing->info->spawnstate == S_PLAY_DIE7 ||
-         thing->info->spawnstate == S_PLAY_XDIE9)) &&
-        thing->health & 1)
-    {
-        flip = !!crispy_flipcorpses;
-    }
 
     if (flip)
     {
