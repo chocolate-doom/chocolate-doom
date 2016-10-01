@@ -494,6 +494,17 @@ P_FindSectorFromLineTag
 {
     int	i;
 	
+    // [crispy] linedefs without tags apply locally
+    if (!line->tag)
+    {
+    for (i=start+1;i<numsectors;i++)
+	if (&sectors[i] == line->backsector)
+	{
+	    fprintf(stderr, "P_FindSectorFromLineTag: Linedef %ld without tag applied to sector %d\n", line-lines, i);
+	    return i;
+	}
+    }
+    else
     for (i=start+1;i<numsectors;i++)
 	if (sectors[i].tag == line->tag)
 	    return i;
