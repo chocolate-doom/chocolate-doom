@@ -89,8 +89,10 @@ Other cards that apparently have OPL support but have not been tested:
 If you desperately want hardware OPL music, you may be able to find
 one of these cards for sale cheap on eBay.
 
-For the cards listed above with (*) next to them, OPL support is
-disabled by default and must be explictly enabled in software.
+For the cards listed above with (\*) next to them, OPL support is
+disabled by default and must be explictly enabled in software. See
+sections below for operating system-specific instructions on how you
+may be able to do this.
 
 If your machine is not a PC, you don’t have an OPL chip, and you will
 have to use the software OPL.
@@ -128,6 +130,11 @@ You can confirm that hardware OPL is working by checking for this
 message in stdout.txt:
 
     OPL_Init: Using driver 'Win32'.
+
+If you have a C-Media CMI8738, you may need to enable the `FM_EN`
+flag in Windows Device Manager to access hardware OPL output. See
+[this](http://www.vogons.org/viewtopic.php?f=46&t=36445) thread on
+vogons.org for some more information.
 
 ## Linux
 
