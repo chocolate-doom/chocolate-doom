@@ -1571,10 +1571,12 @@ void P_SpawnSpecials (void)
 	    {
 		int secnum;
 
-		secnum = -1;
-		while ((secnum = P_FindSectorFromLineTag(&lines[i],secnum)) >= 0)
+		for (secnum = 0; secnum < numsectors; secnum++)
 		{
-		    sectors[secnum].sky = i | PL_SKYFLAT;
+		    if (sectors[secnum].tag == lines[i].tag)
+		    {
+			sectors[secnum].sky = i | PL_SKYFLAT;
+		    }
 		}
 	    }
 	    break;
