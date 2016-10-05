@@ -48,8 +48,6 @@
 #endif
 
 void	P_SpawnMapThing (mapthing_t*	mthing);
-// [crispy] count map things
-extern int mapthingcounter;
 
 
 //
@@ -935,8 +933,6 @@ void P_LoadThings (int lump)
 
     data = W_CacheLumpNum (lump,PU_STATIC);
     numthings = W_LumpLength (lump) / sizeof(mapthing_t);
-    // [crispy] reset map thing counter
-    mapthingcounter = -1;
 	
     mt = (mapthing_t *)data;
     for (i=0 ; i<numthings ; i++, mt++)

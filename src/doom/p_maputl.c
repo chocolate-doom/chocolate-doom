@@ -611,7 +611,7 @@ PIT_AddLineIntercepts (line_t* ld)
 	    return false;
 	else
 	    // [crispy] print a warning
-	    fprintf(stderr, "PIT_AddLineIntercepts: Triggered INTERCEPTS overflow by thing %d!\n", shootthing->num);
+	    fprintf(stderr, "PIT_AddLineIntercepts: Triggered INTERCEPTS overflow!\n");
     }
     intercept_p++;
 
@@ -686,7 +686,7 @@ boolean PIT_AddThingIntercepts (mobj_t* thing)
 	    return false;
 	else
 	    // [crispy] print a warning
-	    fprintf(stderr, "PIT_AddThingIntercepts: Triggered INTERCEPTS overflow by thing %d!\n", shootthing->num);
+	    fprintf(stderr, "PIT_AddThingIntercepts: Triggered INTERCEPTS overflow!\n");
     }
     intercept_p++;
 
