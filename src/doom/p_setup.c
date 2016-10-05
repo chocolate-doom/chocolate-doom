@@ -1050,7 +1050,7 @@ void P_LoadLineDefs (int lump)
     line_t*		ld;
     vertex_t*		v1;
     vertex_t*		v2;
-    int warn; // [crispy] warn about unknown linedef types
+    int warn, warn2; // [crispy] warn about invalid linedefs
 	
     numlines = W_LumpLength (lump) / sizeof(maplinedef_t);
     lines = Z_Malloc (numlines*sizeof(line_t),PU_LEVEL,0);	
@@ -1059,7 +1059,7 @@ void P_LoadLineDefs (int lump)
 	
     mld = (maplinedef_t *)data;
     ld = lines;
-    warn = 0; // [crispy] warn about unknown linedef types
+    warn = warn2 = 0; // [crispy] warn about invalid linedefs
     for (i=0 ; i<numlines ; i++, mld++, ld++)
     {
 	ld->flags = (unsigned short)SHORT(mld->flags); // [crispy] extended nodes
@@ -1067,10 +1067,39 @@ void P_LoadLineDefs (int lump)
 	// [crispy] warn about unknown linedef types
 	if ((unsigned short) ld->special > 141)
 	{
-	    fprintf(stderr, "P_LoadLineDefs: Unknown special %d at line %d\n", ld->special, i);
+	    fprintf(stderr, "P_LoadLineDefs: Unknown special %d at line %d.\n", ld->special, i);
 	    warn++;
 	}
 	ld->tag = SHORT(mld->tag);
+	// [crispy] warn about special linedefs without tag
+	if (ld->special && !ld->tag)
+	{
+	    switch (ld->special)
+	    {
+		case 1:	// Vertical Door
+		case 26:	// Blue Door/Locked
+		case 27:	// Yellow Door /Locked
+		case 28:	// Red Door /Locked
+		case 31:	// Manual door open
+		case 32:	// Blue locked door open
+		case 33:	// Red locked door open
+		case 34:	// Yellow locked door open
+		case 117:	// Blazing door raise
+		case 118:	// Blazing door open
+		case 271:	// MBF sky transfers
+		case 272:
+		case 48:	// Scroll Wall Left
+		case 11:	// s1 Exit level
+		case 51:	// s1 Secret exit
+		case 52:	// w1 Exit level
+		case 124:	// w1 Secret exit
+		    break;
+		default:
+		    fprintf(stderr, "P_LoadLineDefs: Special linedef %d without tag.\n", i);
+		    warn2++;
+		    break;
+	    }
+	}
 	if (crispy_fliplevels)
 	{
 	    v1 = ld->v2 = &vertexes[(unsigned short)SHORT(mld->v2)]; // [crispy] extended nodes
@@ -1142,8 +1171,16 @@ void P_LoadLineDefs (int lump)
     // [crispy] warn about unknown linedef types
     if (warn)
     {
-	fprintf(stderr, "P_LoadLineDefs: Found %d line%s with unknown linedef type.\n"
-	                "THIS MAP MAY NOT WORK AS EXPECTED!\n", warn, (warn > 1) ? "s" : "");
+	fprintf(stderr, "P_LoadLineDefs: Found %d line%s with unknown linedef type.\n", warn, (warn > 1) ? "s" : "");
+    }
+    // [crispy] warn about special linedefs without tag
+    if (warn2)
+    {
+	fprintf(stderr, "P_LoadLineDefs: Found %d special linedef%s without tag.\n", warn2, (warn2 > 1) ? "s" : "");
+    }
+    if (warn || warn2)
+    {
+	fprintf(stderr, "THIS MAP MAY NOT WORK AS EXPECTED!\n");
     }
 
     W_ReleaseLumpNum(lump);
