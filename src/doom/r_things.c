@@ -606,12 +606,19 @@ void R_ProjectSprite (mobj_t* thing)
 
     // [crispy] flip death sprites and corpses randomly
     // except for Cyberdemons and Barrels which are too asymmetrical
-    if (((thing->type != MT_CYBORG && thing->type != MT_BARREL &&
-        thing->flags & MF_CORPSE) || (thing->info->spawnstate == S_PLAY_DIE7 ||
-         thing->info->spawnstate == S_PLAY_XDIE9)) &&
-        thing->health & 1)
+    if (crispy_flipcorpses)
     {
-        flip = !!crispy_flipcorpses;
+	if ((thing->flags & MF_CORPSE &&
+	    thing->type != MT_CYBORG &&
+	    thing->type != MT_BARREL) ||
+	    thing->info->spawnstate == S_PLAY_DIE7 ||
+	    thing->info->spawnstate == S_PLAY_XDIE9)
+	{
+	    if (thing->health & 1)
+	    {
+		flip = !flip;
+	    }
+	}
     }
     
     // calculate edges of the shape
