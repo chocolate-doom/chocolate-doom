@@ -944,8 +944,8 @@ void P_SpawnMapThing (mapthing_t* mthing)
         (mobj->info->spawnstate == S_PLAY_DIE7 ||
          mobj->info->spawnstate == S_PLAY_XDIE9))
     {
-        mobj->flags |= (mobj->lastlook << MF_TRANSSHIFT);
-        mobj->health += (mobj->lastlook + Crispy_Random()) & 1;
+        mobj->flags |= (Crispy_Random() & 3) << MF_TRANSSHIFT;
+        mobj->health -= Crispy_Random() & 1;
     }
 }
 

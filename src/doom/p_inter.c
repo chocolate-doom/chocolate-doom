@@ -734,7 +734,7 @@ P_KillMobj
     target->tics -= P_Random()&3;
 
     // [crispy] randomize corpse health
-    target->health -= target->tics & 1;
+    target->health -= Crispy_Random() & 1;
 
     if (target->tics < 1)
 	target->tics = 1;
