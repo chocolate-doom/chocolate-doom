@@ -89,33 +89,40 @@ P_SetMobjState
     return true;
 }
 
-// [crispy] check if a given state is "safe", i.e. that no action pointer
-// is ever called for the duration of its sequence
-static boolean P_SafeState(statenum_t statenum)
+// [crispy] return the latest "safe" state in a state sequence,
+// so that no action pointer is ever called
+static statenum_t P_LatestSafeState(statenum_t statenum)
 {
+    statenum_t safestate = S_NULL;
+
     while (statenum != S_NULL)
     {
 	const state_t *state = &states[statenum];
 
+	if (safestate == S_NULL)
+	{
+	    safestate = statenum;
+	}
+
 	if (state->action.acp1)
 	{
-	    return false;
+	    safestate = S_NULL;
 	}
 
 	statenum = state->nextstate;
     }
 
-    return true;
+    return safestate;
 }
 
 //
 // P_ExplodeMissile  
 //
-void P_ExplodeMissileSafe (mobj_t* mo, boolean safe)
+static void P_ExplodeMissileSafe (mobj_t* mo, boolean safe)
 {
     mo->momx = mo->momy = mo->momz = 0;
 
-    P_SetMobjState (mo, mobjinfo[mo->type].deathstate);
+    P_SetMobjState (mo, safe ? P_LatestSafeState(mobjinfo[mo->type].deathstate) : mobjinfo[mo->type].deathstate);
 
     mo->tics -= safe ? 0 : P_Random()&3;
 
@@ -208,8 +215,7 @@ void P_XYMovement (mobj_t* mo)
 		    ceilingline->backsector &&
 		    ceilingline->backsector->ceilingpic == skyflatnum)
 		{
-		    if (mo->z > ceilingline->backsector->ceilingheight ||
-		        !P_SafeState(mobjinfo[mo->type].deathstate))
+		    if (mo->z > ceilingline->backsector->ceilingheight)
 		    {
 		    // Hack to prevent missiles exploding
 		    // against the sky.
@@ -570,17 +576,7 @@ void P_MobjThinker (mobj_t* mobj)
 //
 // P_SpawnMobj
 //
-mobj_t*
-P_SpawnMobj
-( fixed_t	x,
-  fixed_t	y,
-  fixed_t	z,
-  mobjtype_t	type )
-{
-	return P_SpawnMobjSafe(x, y, z, type, false);
-}
-
-mobj_t*
+static mobj_t*
 P_SpawnMobjSafe
 ( fixed_t	x,
   fixed_t	y,
@@ -611,7 +607,7 @@ P_SpawnMobjSafe
     mobj->lastlook = safe ? 0 : P_Random () % MAXPLAYERS;
     // do not set the state with P_SetMobjState,
     // because action routines can not be called yet
-    st = &states[info->spawnstate];
+    st = &states[safe ? P_LatestSafeState(info->spawnstate) : info->spawnstate];
 
     mobj->state = st;
     mobj->tics = st->tics;
@@ -647,6 +643,15 @@ P_SpawnMobjSafe
     return mobj;
 }
 
+mobj_t*
+P_SpawnMobj
+( fixed_t	x,
+  fixed_t	y,
+  fixed_t	z,
+  mobjtype_t	type )
+{
+	return P_SpawnMobjSafe(x, y, z, type, false);
+}
 
 //
 // P_RemoveMobj
@@ -993,7 +998,7 @@ P_SpawnPuffSafe
 	
     // don't make punches spark on the wall
     if (attackrange == MELEERANGE)
-	P_SetMobjState (th, S_PUFF3);
+	P_SetMobjState (th, safe ? P_LatestSafeState(S_PUFF3) : S_PUFF3);
 }
 
 

@@ -126,7 +126,6 @@ mobj_t* P_SpawnMissile (mobj_t* source, mobj_t* dest, mobjtype_t type);
 void	P_SpawnPlayerMissile (mobj_t* source, mobjtype_t type);
 
 void	P_SpawnPuffSafe (fixed_t x, fixed_t y, fixed_t z, boolean safe);
-mobj_t *P_SpawnMobjSafe (fixed_t x, fixed_t y, fixed_t z, mobjtype_t type, boolean safe);
 
 //
 // P_ENEMY
