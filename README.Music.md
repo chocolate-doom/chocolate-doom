@@ -2,14 +2,14 @@ Doom has a memorable and atmospheric soundtrack. Like many games of
 the era, it is MIDI-based. Chocolate Doom includes a number of
 different options for music playback, detailed below.
 
-## Native MIDI playback
+# Native MIDI playback
 
 Most modern operating systems have some kind of built-in support for
 MIDI playback; some have very good quality MIDI playback (Mac OS X for
 example). To use this, choose “Native MIDI” in the sound configuration
 dialog in the setup tool.
 
-## Timidity
+# Timidity
 
 Timidity is a software-based MIDI synthesizer, and a version of it is
 included in the SDL_mixer library used by Chocolate Doom. To use
@@ -24,7 +24,7 @@ configuration dialog in the setup tool, and use the “Timidity
 configuration file” widget below to enter the path to the Timidity
 configuration file (normally named timidity.cfg).
 
-## Gravis Ultrasound (GUS)
+# Gravis Ultrasound (GUS)
 
 The Gravis Ultrasound (GUS) was a PC sound card popular in the ’90s,
 notable for having wavetable synthesis that provided MIDI playback
@@ -48,7 +48,7 @@ By default a GUS card with 1024KB is simulated; to simulate a 256KB,
 512KB or 768KB card instead, change the gus_ram_kb option in
 chocolate-doom.cfg.
 
-## OPL (Soundblaster / Adlib)
+# OPL (Soundblaster / Adlib)
 
 Most people playing Doom in the ’90s had Soundblaster-compatible sound
 cards, which used the Yamaha OPL series of chips for FM-based MIDI
@@ -62,7 +62,7 @@ emulator sounds exactly like a real (hardware) OPL chip, and a few
 cards do have real hardware OPL. If you have such a card, here’s how
 to configure Chocolate Doom to use it.
 
-# Sound cards with OPL chips
+## Sound cards with OPL chips
 
 If you have an ISA sound card, it almost certainly includes an OPL
 chip. Modern computers don’t have slots for ISA cards though, so you
@@ -89,13 +89,15 @@ Other cards that apparently have OPL support but have not been tested:
 If you desperately want hardware OPL music, you may be able to find
 one of these cards for sale cheap on eBay.
 
-For the cards listed above with (*) next to them, OPL support is
-disabled by default and must be explictly enabled in software.
+For the cards listed above with (\*) next to them, OPL support is
+disabled by default and must be explictly enabled in software. See
+sections below for operating system-specific instructions on how you
+may be able to do this.
 
 If your machine is not a PC, you don’t have an OPL chip, and you will
 have to use the software OPL.
 
-# Operating System support
+## Operating System support
 
 If you’re certain that you have a sound card with hardware OPL, you
 may need to take extra steps to configure your operating system to
@@ -103,7 +105,7 @@ allow access to it. To do hardware OPL, Chocolate Doom must access
 the chip directly, which is usually not possible in modern operating
 systems unless you are running as the superuser (root/Administrator).
 
-## Windows 9x
+### Windows 9x
 
 If you’re running Windows 95, 98 or Me, there is no need to configure
 anything. Windows allows direct access to the OPL chip. You can
@@ -112,7 +114,7 @@ stdout.txt:
 
     OPL_Init: Using driver 'Win32'.
 
-## Windows NT (including 2000, XP and later)
+### Windows NT (including 2000, XP and later)
 
 If you’re running an NT-based system, it is not possible to directly
 access the OPL chip, even when running as Administrator. Fortunately,
@@ -129,7 +131,12 @@ message in stdout.txt:
 
     OPL_Init: Using driver 'Win32'.
 
-## Linux
+If you have a C-Media CMI8738, you may need to enable the `FM_EN`
+flag in Windows Device Manager to access hardware OPL output. See
+[this](http://www.vogons.org/viewtopic.php?f=46&t=36445) thread on
+vogons.org for some more information.
+
+### Linux
 
 If you are using a system based on the Linux kernel, you can access
 the OPL chip directly, but you must be running as root. You can
@@ -145,7 +152,7 @@ the following to your /etc/modprobe.conf file to do this:
     options snd-ymfpci fm_port=0x388
     options snd-cmipci fm_port=0x388
 
-## OpenBSD/NetBSD
+### OpenBSD/NetBSD
 
 You must be running as root to access the hardware OPL directly. You
 can confirm that hardware OPL is working by checking for this message

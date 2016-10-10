@@ -592,6 +592,7 @@ static void AddIWADPath(char *path, char *suffix)
     free(path);
 }
 
+#ifndef _WIN32
 // Add standard directories where IWADs are located on Unix systems.
 // To respect the freedesktop.org specification we support overriding
 // using standard environment variables. See the XDG Base Directory
@@ -647,6 +648,7 @@ static void AddXdgDirs(void)
     // XDG_DATA_DIRS mechanism, through which it can be overridden.
     AddIWADPath(env, "/games/doom");
 }
+#endif
 
 //
 // Build a list of IWAD files

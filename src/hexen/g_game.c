@@ -1790,7 +1790,7 @@ void G_ReadDemoTiccmd(ticcmd_t * cmd)
 
 void G_WriteDemoTiccmd(ticcmd_t * cmd)
 {
-    if (gamekeydown['q'])       // press q to end demo recording
+    if (gamekeydown[key_demo_quit]) // press to end demo recording
         G_CheckDemoStatus();
     *demo_p++ = cmd->forwardmove;
     *demo_p++ = cmd->sidemove;
