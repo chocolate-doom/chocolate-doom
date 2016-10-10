@@ -452,7 +452,7 @@ static char *R_DistortedFlat (int flatnum)
 	swirltic = gametic;
     }
 
-    normalflat = W_CacheLumpNum(firstflat + flattranslation[flatnum], PU_STATIC);
+    normalflat = W_CacheLumpNum(firstflat + flatnum, PU_STATIC);
 
     for (i = 0; i < 4096; i++)
     {
