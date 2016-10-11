@@ -152,12 +152,10 @@ void P_InitPicAnims (void)
 {
     int		i;
 
-    
     // [crispy] add support for ANIMATED lumps
     animdef_t *animdefs;
-    boolean from_lump;
+    const boolean from_lump = (W_CheckNumForName("ANIMATED") != -1);
 
-    from_lump = (W_CheckNumForName("ANIMATED") != -1);
     if (from_lump)
     {
 	animdefs = W_CacheLumpName("ANIMATED", PU_STATIC);
@@ -166,7 +164,7 @@ void P_InitPicAnims (void)
     {
 	animdefs = animdefs_vanilla;
     }
-
+    
     //	Init animation
     lastanim = anims;
     for (i=0 ; animdefs[i].istexture != -1 ; i++)
