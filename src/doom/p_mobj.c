@@ -91,28 +91,30 @@ P_SetMobjState
 
 // [crispy] return the latest "safe" state in a state sequence,
 // so that no action pointer is ever called
-static statenum_t P_LatestSafeState(statenum_t statenum)
+static statenum_t P_LatestSafeState(statenum_t state)
 {
     statenum_t safestate = S_NULL;
+    static statenum_t laststate, lastsafestate;
 
-    while (statenum != S_NULL)
+    if (state == laststate)
     {
-	const state_t *state = &states[statenum];
+	return lastsafestate;
+    }
 
+    for (laststate = state; state != S_NULL; state = states[state].nextstate)
+    {
 	if (safestate == S_NULL)
 	{
-	    safestate = statenum;
+	    safestate = state;
 	}
 
-	if (state->action.acp1)
+	if (states[state].action.acp1)
 	{
 	    safestate = S_NULL;
 	}
-
-	statenum = state->nextstate;
     }
 
-    return safestate;
+    return lastsafestate = safestate;
 }
 
 //
