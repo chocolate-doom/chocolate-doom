@@ -746,8 +746,8 @@ void HU_Drawer(void)
     if (automapactive && crispy_automapstats)
     {
 	int time = leveltime / TICRATE;
-	const char const *cr_stat = (gameversion == exe_chex) ? crstr[CR_GREEN] : crstr[CR_RED];
-	const char const *kills = (gameversion == exe_chex) ? "Flemoids: " : "Kills: ";
+	const char *const cr_stat = (gameversion == exe_chex) ? crstr[CR_GREEN] : crstr[CR_RED];
+	const char *const kills = (gameversion == exe_chex) ? "Flemoids: " : "Kills: ";
 
 	// [crispy] move obtrusive line out of player view
 	if (!crispy_automapoverlay || screenblocks < CRISPY_HUD - 1)
