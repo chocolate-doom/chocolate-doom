@@ -527,6 +527,9 @@ extern boolean DebugSound;      // debug flag for displaying sound info
 extern int GetWeaponAmmo[NUMWEAPONS];
 
 extern boolean demorecording;
+extern boolean lowres_turn; // Truncate angleturn in ticcmds to nearest 256.
+                            // Used when recording Vanilla demos in netgames.
+extern boolean longtics;    // specifies 16-bit angleturn resolution in demos
 extern boolean demoplayback;
 extern int skytexture;
 

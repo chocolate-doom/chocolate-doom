@@ -110,6 +110,8 @@ int mouseSensitivity;
 
 char demoname[32];
 boolean demorecording;
+boolean longtics;
+boolean lowres_turn;
 boolean demoplayback;
 byte *demobuffer, *demo_p, *demoend;
 boolean singledemo;             // quit after playing a demo from cmdline
@@ -622,6 +624,14 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
             BT_SPECIAL | BTS_SAVEGAME | (savegameslot << BTS_SAVESHIFT);
     }
 
+    // low-res turning
+
+    if (lowres_turn)
+    {
+        // truncate angleturn to the nearest 256 boundary
+        // for recording demos with single byte values for turn
+        cmd->angleturn &= 0xff00;
+    }
 }
 
 
@@ -1630,7 +1640,19 @@ void G_ReadDemoTiccmd(ticcmd_t * cmd)
     }
     cmd->forwardmove = ((signed char) *demo_p++);
     cmd->sidemove = ((signed char) *demo_p++);
-    cmd->angleturn = ((unsigned char) *demo_p++) << 8;
+
+    // If this is a longtics demo, read back in higher resolution
+
+    if (longtics)
+    {
+        cmd->angleturn = *demo_p++;
+        cmd->angleturn |= (*demo_p++) << 8;
+    }
+    else
+    {
+        cmd->angleturn = ((unsigned char) *demo_p++) << 8;
+    }
+
     cmd->buttons = (unsigned char) *demo_p++;
     cmd->lookfly = (unsigned char) *demo_p++;
     cmd->arti = (unsigned char) *demo_p++;
@@ -1638,15 +1660,34 @@ void G_ReadDemoTiccmd(ticcmd_t * cmd)
 
 void G_WriteDemoTiccmd(ticcmd_t * cmd)
 {
+    byte *demo_start;
+
     if (gamekeydown[key_demo_quit]) // press to end demo recording
         G_CheckDemoStatus();
+
+    demo_start = demo_p;
+
     *demo_p++ = cmd->forwardmove;
     *demo_p++ = cmd->sidemove;
-    *demo_p++ = cmd->angleturn >> 8;
+
+    // If this is a longtics demo, record in higher resolution
+
+    if (longtics)
+    {
+        *demo_p++ = (cmd->angleturn & 0xff);
+        *demo_p++ = (cmd->angleturn >> 8) & 0xff;
+    }
+    else
+    {
+        *demo_p++ = cmd->angleturn >> 8;
+    }
+
     *demo_p++ = cmd->buttons;
     *demo_p++ = cmd->lookfly;
     *demo_p++ = cmd->arti;
-    demo_p -= 6;
+
+    // reset demo pointer back
+    demo_p = demo_start;
 
     if (demo_p > demoend - 16)
     {
@@ -1673,6 +1714,10 @@ void G_RecordDemo(skill_t skill, int numplayers, int episode, int map,
 {
     int i;
     int maxsize;
+
+    // If not recording a longtics demo, record in low res
+
+    lowres_turn = !longtics;
 
     G_InitNew(skill, episode, map);
     usergame = false;

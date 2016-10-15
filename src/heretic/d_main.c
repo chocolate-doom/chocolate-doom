@@ -1031,6 +1031,14 @@ void D_DoomMain(void)
         printf("Playing demo %s.\n", file);
     }
 
+    //!
+    // @category demo
+    //
+    // Record a high turning resolution demo.
+    //
+
+    longtics = M_CheckParm("-longtics") != 0;
+
     if (W_CheckNumForName(DEH_String("E2M1")) == -1)
     {
         gamemode = shareware;

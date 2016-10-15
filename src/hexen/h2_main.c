@@ -676,6 +676,14 @@ static void HandleArgs(void)
         ST_Message("Playing demo %s.\n", myargv[p+1]);
     }
 
+    //!
+    // @category demo
+    //
+    // Record a high turning resolution demo.
+    //
+
+    longtics = M_CheckParm("-longtics") != 0;
+
     if (M_ParmExists("-testcontrols"))
     {
         autostart = true;
