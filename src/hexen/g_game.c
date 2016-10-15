@@ -95,6 +95,7 @@ char demoname[32];
 boolean demorecording;
 boolean longtics;
 boolean lowres_turn;
+boolean shortticfix;        // properly calculates lowres turns like in doom
 boolean demoplayback;
 byte *demobuffer, *demo_p, *demoend;
 boolean singledemo;             // quit after playing a demo from cmdline
@@ -629,9 +630,29 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
 
     if (lowres_turn)
     {
-        // truncate angleturn to the nearest 256 boundary
-        // for recording demos with single byte values for turn
-        cmd->angleturn &= 0xff00;
+        if (shortticfix)
+        {
+            static signed short carry = 0;
+            signed short desired_angleturn;
+
+            desired_angleturn = cmd->angleturn + carry;
+
+            // round angleturn to the nearest 256 unit boundary
+            // for recording demos with single byte values for turn
+
+            cmd->angleturn = (desired_angleturn + 128) & 0xff00;
+
+            // Carry forward the error from the reduced resolution to the
+            // next tic, so that successive small movements can accumulate.
+
+            carry = desired_angleturn - cmd->angleturn;
+        }
+        else
+        {
+            // truncate angleturn to the nearest 256 boundary
+            // for recording demos with single byte values for turn
+            cmd->angleturn &= 0xff00;
+        }
     }
 }
 
@@ -1869,6 +1890,13 @@ void G_RecordDemo(skill_t skill, int numplayers, int episode, int map,
     int maxsize;
 
     // If not recording a longtics demo, record in low res
+
+    //!
+    // @category demo
+    //
+    // Smooths out low turning resolution when recording a demo.
+    //
+    shortticfix = M_CheckParm("-shortticfix") != 0;
 
     lowres_turn = !longtics;
 
