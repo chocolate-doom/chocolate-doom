@@ -1039,6 +1039,15 @@ void D_DoomMain(void)
 
     longtics = M_CheckParm("-longtics") != 0;
 
+    //!
+    // @category demo
+    //
+    // Demo records and plays back without automatically quitting
+    // after level exit.
+    //
+
+    demoextend = M_CheckParm("-demoextend");
+
     if (W_CheckNumForName(DEH_String("E2M1")) == -1)
     {
         gamemode = shareware;

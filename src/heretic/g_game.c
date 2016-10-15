@@ -114,6 +114,7 @@ boolean longtics;
 boolean lowres_turn;
 boolean shortticfix;        // properly calculates lowres turns like in doom
 boolean demoplayback;
+boolean demoextend;
 byte *demobuffer, *demo_p, *demoend;
 boolean singledemo;             // quit after playing a demo from cmdline
 
@@ -1322,7 +1323,7 @@ void G_DoReborn(int playernum)
 {
     int i;
 
-    if (G_CheckDemoStatus())
+    if (!demoextend && G_CheckDemoStatus()) // quit demo unless -demoextend
         return;
     if (!netgame)
         gameaction = ga_loadlevel;      // reload the level from scratch
@@ -1391,7 +1392,7 @@ void G_DoCompleted(void)
     static int afterSecret[5] = { 7, 5, 5, 5, 4 };
 
     gameaction = ga_nothing;
-    if (G_CheckDemoStatus())
+    if (!demoextend && G_CheckDemoStatus()) // quit demo unless -demoextend
     {
         return;
     }

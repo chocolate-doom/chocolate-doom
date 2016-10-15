@@ -684,6 +684,15 @@ static void HandleArgs(void)
 
     longtics = M_CheckParm("-longtics") != 0;
 
+    //!
+    // @category demo
+    //
+    // Demo records and plays back without automatically quitting
+    // after level exit.
+    //
+
+    demoextend = M_CheckParm("-demoextend");
+
     if (M_ParmExists("-testcontrols"))
     {
         autostart = true;

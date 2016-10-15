@@ -636,6 +636,7 @@ extern boolean lowres_turn; // Truncate angleturn in ticcmds to nearest 256.
                             // Used when recording Vanilla demos in netgames.
 extern boolean longtics;    // specifies 16-bit angleturn resolution in demos
 extern boolean demoplayback;
+extern boolean demoextend;      // allow demos to persist through exit/respawn
 extern int maxzone;             // Maximum chunk allocated for zone heap
 
 extern int Sky1Texture;

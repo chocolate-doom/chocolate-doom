@@ -97,6 +97,7 @@ boolean longtics;
 boolean lowres_turn;
 boolean shortticfix;        // properly calculates lowres turns like in doom
 boolean demoplayback;
+boolean demoextend;
 byte *demobuffer, *demo_p, *demoend;
 boolean singledemo;             // quit after playing a demo from cmdline
 
@@ -1325,7 +1326,7 @@ void G_DoReborn(int playernum)
     boolean foundSpot;
     int bestWeapon;
 
-    if (G_CheckDemoStatus())
+    if (!demoextend && G_CheckDemoStatus()) // quit demo unless -demoextend
     {
         return;
     }
@@ -1520,7 +1521,7 @@ void G_DoCompleted(void)
     int i;
 
     gameaction = ga_nothing;
-    if (G_CheckDemoStatus())
+    if (!demoextend && G_CheckDemoStatus()) // quit demo unless -demoextend
     {
         return;
     }
@@ -1771,10 +1772,14 @@ void G_InitNew(skill_t skill, int episode, int map)
     }
 
     // Set up a bunch of globals
-    usergame = true;            // will be set false if a demo
+    if (!demoextend) // this prevents map-loading from stopping the demo
+    {                // demoextend is set back to false only if starting a
+                     //  new game or loading a saved one during playback
+        demorecording = false;
+        demoplayback = false;
+        usergame = true;            // will be set false if a demo
+    }
     paused = false;
-    demorecording = false;
-    demoplayback = false;
     viewactive = true;
     gameepisode = episode;
     gamemap = map;
