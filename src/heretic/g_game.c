@@ -24,6 +24,7 @@
 #include "deh_str.h"
 #include "i_timer.h"
 #include "i_system.h"
+#include "m_argv.h"
 #include "m_controls.h"
 #include "m_misc.h"
 #include "m_random.h"
@@ -110,7 +111,7 @@ int mouseSensitivity;
 char demoname[32];
 boolean demorecording;
 boolean demoplayback;
-byte *demobuffer, *demo_p;
+byte *demobuffer, *demo_p, *demoend;
 boolean singledemo;             // quit after playing a demo from cmdline
 
 boolean precache = true;        // if true, load all graphics at start
@@ -1646,6 +1647,14 @@ void G_WriteDemoTiccmd(ticcmd_t * cmd)
     *demo_p++ = cmd->lookfly;
     *demo_p++ = cmd->arti;
     demo_p -= 6;
+
+    if (demo_p > demoend - 16)
+    {
+        // no more space
+        G_CheckDemoStatus();
+        return;
+    }
+
     G_ReadDemoTiccmd(cmd);      // make SURE it is exactly the same
 }
 
@@ -1663,12 +1672,29 @@ void G_RecordDemo(skill_t skill, int numplayers, int episode, int map,
                   char *name)
 {
     int i;
+    int maxsize;
 
     G_InitNew(skill, episode, map);
     usergame = false;
     M_StringCopy(demoname, name, sizeof(demoname));
     M_StringConcat(demoname, ".lmp", sizeof(demoname));
-    demobuffer = demo_p = Z_Malloc(0x20000, PU_STATIC, NULL);
+    maxsize = 0x20000;
+
+    //!
+    // @arg <size>
+    // @category demo
+    // @vanilla
+    //
+    // Specify the demo buffer size (KiB)
+    //
+
+    i = M_CheckParmWithArgs("-maxdemo", 1);
+    if (i)
+        maxsize = atoi(myargv[i + 1]) * 1024;
+    demobuffer = Z_Malloc(maxsize, PU_STATIC, NULL);
+    demoend = demobuffer + maxsize;
+
+    demo_p = demobuffer;
     *demo_p++ = skill;
     *demo_p++ = episode;
     *demo_p++ = map;
