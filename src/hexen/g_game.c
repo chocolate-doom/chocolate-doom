@@ -1325,7 +1325,8 @@ void G_DoReborn(int playernum)
     boolean foundSpot;
     int bestWeapon;
 
-    if (!demoextend && G_CheckDemoStatus()) // quit demo unless -demoextend
+    // quit demo unless -demoextend
+    if (!demoextend && G_CheckDemoStatus())
     {
         return;
     }
@@ -1520,7 +1521,9 @@ void G_DoCompleted(void)
     int i;
 
     gameaction = ga_nothing;
-    if (!demoextend && G_CheckDemoStatus()) // quit demo unless -demoextend
+
+    // quit demo unless -demoextend
+    if (!demoextend && G_CheckDemoStatus())
     {
         return;
     }
@@ -1771,9 +1774,11 @@ void G_InitNew(skill_t skill, int episode, int map)
     }
 
     // Set up a bunch of globals
-    if (!demoextend) // this prevents map-loading from stopping the demo
-    {                // demoextend is set back to false only if starting a
-                     //  new game or loading a saved one during playback
+    if (!demoextend)
+    {
+        // This prevents map-loading from interrupting a demo.
+        // demoextend is set back to false only if starting a new game or
+        // loading a saved one from the menu, and only during playback.
         demorecording = false;
         demoplayback = false;
         usergame = true;            // will be set false if a demo

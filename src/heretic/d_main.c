@@ -1037,7 +1037,7 @@ void D_DoomMain(void)
     // Record a high turning resolution demo.
     //
 
-    longtics = M_CheckParm("-longtics") != 0;
+    longtics = M_ParmExists("-longtics");
 
     //!
     // @category demo
@@ -1046,7 +1046,7 @@ void D_DoomMain(void)
     // after level exit.
     //
 
-    demoextend = M_CheckParm("-demoextend");
+    demoextend = M_ParmExists("-demoextend");
 
     if (W_CheckNumForName(DEH_String("E2M1")) == -1)
     {

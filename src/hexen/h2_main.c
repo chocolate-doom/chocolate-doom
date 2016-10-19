@@ -682,7 +682,7 @@ static void HandleArgs(void)
     // Record a high turning resolution demo.
     //
 
-    longtics = M_CheckParm("-longtics") != 0;
+    longtics = M_ParmExists("-longtics");
 
     //!
     // @category demo
@@ -691,7 +691,7 @@ static void HandleArgs(void)
     // after level exit.
     //
 
-    demoextend = M_CheckParm("-demoextend");
+    demoextend = M_ParmExists("-demoextend");
 
     if (M_ParmExists("-testcontrols"))
     {

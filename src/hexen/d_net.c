@@ -124,7 +124,7 @@ static void LoadGameSettings(net_gamesettings_t *settings)
     if (lowres_turn)
     {
         printf("NOTE: Turning resolution is reduced; this is probably "
-            "because there is a client recording a Vanilla demo.\n");
+               "because there is a client recording a Vanilla demo.\n");
     }
 
     for (i=0; i<maxplayers; ++i)
@@ -162,8 +162,8 @@ static void SaveGameSettings(net_gamesettings_t *settings)
     settings->respawn_monsters = respawnparm;
     settings->timelimit = 0;
 
-    settings->lowres_turn = M_CheckParm("-record") > 0
-                         && M_CheckParm("-longtics") == 0;
+    settings->lowres_turn = M_ParmExists("-record")
+                        && !M_ParmExists("-longtics");
 }
 
 static void InitConnectData(net_connect_data_t *connect_data)
