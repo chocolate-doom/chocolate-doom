@@ -627,8 +627,6 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
             BT_SPECIAL | BTS_SAVEGAME | (savegameslot << BTS_SAVESHIFT);
     }
 
-    // low-res turning
-
     if (lowres_turn)
     {
         if (shortticfix)

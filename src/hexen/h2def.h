@@ -632,12 +632,14 @@ extern player_t players[MAXPLAYERS];
 
 extern boolean DebugSound;      // debug flag for displaying sound info
 
-extern boolean lowres_turn; // Truncate angleturn in ticcmds to nearest 256.
-                            // Used when recording Vanilla demos in netgames.
-extern boolean longtics;    // specifies 16-bit angleturn resolution in demos
+extern boolean longtics;        // specify high resolution turning in demos
 extern boolean demoplayback;
 extern boolean demoextend;      // allow demos to persist through exit/respawn
 extern int maxzone;             // Maximum chunk allocated for zone heap
+
+// Truncate angleturn in ticcmds to nearest 256.
+// Used when recording Vanilla demos in netgames.
+extern boolean lowres_turn;
 
 extern int Sky1Texture;
 extern int Sky2Texture;
