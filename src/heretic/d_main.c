@@ -755,6 +755,10 @@ void D_BindVariables(void)
     M_BindMenuControls();
     M_BindMapControls();
 
+#ifdef FEATURE_MULTIPLAYER
+    NET_BindVariables();
+#endif
+
     M_BindIntVariable("mouse_sensitivity",      &mouseSensitivity);
     M_BindIntVariable("sfx_volume",             &snd_MaxVolume);
     M_BindIntVariable("music_volume",           &snd_MusicVolume);
