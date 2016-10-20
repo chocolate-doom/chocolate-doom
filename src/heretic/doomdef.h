@@ -527,7 +527,6 @@ extern boolean DebugSound;      // debug flag for displaying sound info
 extern int GetWeaponAmmo[NUMWEAPONS];
 
 extern boolean demorecording;
-extern boolean longtics;        // specify high resolution turning in demos
 extern boolean demoplayback;
 extern boolean demoextend;      // allow demos to persist through exit/respawn
 extern int skytexture;

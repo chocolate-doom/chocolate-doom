@@ -679,14 +679,6 @@ static void HandleArgs(void)
     //!
     // @category demo
     //
-    // Record or playback a demo with high resolution turning.
-    //
-
-    longtics = M_ParmExists("-longtics");
-
-    //!
-    // @category demo
-    //
     // Record or playback a demo without automatically quitting
     // after either level exit or player respawn.
     //
