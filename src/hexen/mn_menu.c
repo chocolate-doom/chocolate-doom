@@ -898,6 +898,7 @@ static void SCLoadGame(int option)
 {
     if (demoplayback)
     {
+        // deactivate playback, return control to player
         demoextend = false;
     }
     if (!SlotStatus[option])
@@ -1010,6 +1011,7 @@ static void SCSkill(int option)
 {
     if (demoplayback)
     {
+        // deactivate playback, return control to player
         demoextend = false;
     }
 

@@ -95,7 +95,7 @@ char demoname[32];
 boolean demorecording;
 boolean longtics;
 boolean lowres_turn;
-boolean shortticfix;        // properly calculates lowres turns like in doom
+boolean shortticfix;            // calculate lowres turning like doom
 boolean demoplayback;
 boolean demoextend;
 byte *demobuffer, *demo_p, *demoend;
@@ -1903,9 +1903,9 @@ void G_RecordDemo(skill_t skill, int numplayers, int episode, int map,
     //!
     // @category demo
     //
-    // Smooths out low turning resolution when recording a demo.
+    // Smooth out low resolution turning when recording a demo.
     //
-    shortticfix = M_CheckParm("-shortticfix") != 0;
+    shortticfix = M_ParmExists("-shortticfix");
 
     lowres_turn = !longtics;
 
