@@ -1811,6 +1811,9 @@ void G_InitNew(skill_t skill, int episode, int map)
 */
 
 #define DEMOMARKER      0x80
+#define DEMOHEADER_RESPAWN    0x20
+#define DEMOHEADER_LONGTICS   0x10
+#define DEMOHEADER_NOMONSTERS 0x02
 
 void G_ReadDemoTiccmd(ticcmd_t * cmd)
 {
@@ -1951,15 +1954,15 @@ void G_RecordDemo(skill_t skill, int numplayers, int episode, int map,
     *demo_p = 1; // assume player one exists
     if (respawnparm)
     {
-        *demo_p += 32;
+        *demo_p |= DEMOHEADER_RESPAWN;
     }
     if (longtics)
     {
-        *demo_p += 16;
+        *demo_p |= DEMOHEADER_LONGTICS;
     }
     if (nomonsters)
     {
-        *demo_p += 2;
+        *demo_p |= DEMOHEADER_NOMONSTERS;
     }
     demo_p++;
     *demo_p++ = PlayerClass[0];
@@ -2002,13 +2005,13 @@ void G_DoPlayDemo(void)
     map = *demo_p++;
 
     // Read special parameter bits: see G_RecordDemo() for details.
-    respawnparm = *demo_p & 32;
-    longtics    = *demo_p & 16;
-    nomonsters  = *demo_p & 2;
+    respawnparm = (*demo_p & DEMOHEADER_RESPAWN) != 0;
+    longtics    = (*demo_p & DEMOHEADER_LONGTICS) != 0;
+    nomonsters  = (*demo_p & DEMOHEADER_NOMONSTERS) != 0;
 
     for (i = 0; i < maxplayers; i++)
     {
-        playeringame[i] = *demo_p++;
+        playeringame[i] = (*demo_p++) != 0;
         PlayerClass[i] = *demo_p++;
     }
 
@@ -2042,13 +2045,13 @@ void G_TimeDemo(char *name)
     map = *demo_p++;
 
     // Read special parameter bits: see G_RecordDemo() for details.
-    respawnparm = *demo_p & 32;
-    longtics    = *demo_p & 16;
-    nomonsters  = *demo_p & 2;
+    respawnparm = (*demo_p & DEMOHEADER_RESPAWN) != 0;
+    longtics    = (*demo_p & DEMOHEADER_LONGTICS) != 0;
+    nomonsters  = (*demo_p & DEMOHEADER_NOMONSTERS) != 0;
 
     for (i = 0; i < maxplayers; i++)
     {
-        playeringame[i] = *demo_p++;
+        playeringame[i] = (*demo_p++) != 0;
         PlayerClass[i] = *demo_p++;
     }
 
