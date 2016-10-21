@@ -130,6 +130,7 @@ boolean MenuActive;
 int InfoType;
 int messageson = true;
 boolean mn_SuicideConsole;
+boolean demoextend; // from h2def.h
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -895,6 +896,11 @@ static void SCNetCheck2(int option)
 
 static void SCLoadGame(int option)
 {
+    if (demoplayback)
+    {
+        // deactivate playback, return control to player
+        demoextend = false;
+    }
     if (!SlotStatus[option])
     {                           // Don't try to load from an empty slot
         return;
@@ -1003,6 +1009,12 @@ static void SCClass(int option)
 
 static void SCSkill(int option)
 {
+    if (demoplayback)
+    {
+        // deactivate playback, return control to player
+        demoextend = false;
+    }
+
     PlayerClass[consoleplayer] = MenuPClass;
     G_DeferredNewGame(option);
     SB_SetClassData();

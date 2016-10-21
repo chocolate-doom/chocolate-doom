@@ -680,6 +680,15 @@ static void HandleArgs(void)
         ST_Message("Playing demo %s.\n", myargv[p+1]);
     }
 
+    //!
+    // @category demo
+    //
+    // Record or playback a demo without automatically quitting
+    // after either level exit or player respawn.
+    //
+
+    demoextend = M_ParmExists("-demoextend");
+
     if (M_ParmExists("-testcontrols"))
     {
         autostart = true;

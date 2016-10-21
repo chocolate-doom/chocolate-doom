@@ -24,6 +24,7 @@
 #include "deh_str.h"
 #include "i_timer.h"
 #include "i_system.h"
+#include "m_argv.h"
 #include "m_controls.h"
 #include "m_misc.h"
 #include "m_random.h"
@@ -109,8 +110,12 @@ int mouseSensitivity;
 
 char demoname[32];
 boolean demorecording;
+boolean longtics;               // specify high resolution turning in demos
+boolean lowres_turn;
+boolean shortticfix;            // calculate lowres turning like doom
 boolean demoplayback;
-byte *demobuffer, *demo_p;
+boolean demoextend;
+byte *demobuffer, *demo_p, *demoend;
 boolean singledemo;             // quit after playing a demo from cmdline
 
 boolean precache = true;        // if true, load all graphics at start
@@ -621,6 +626,32 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
             BT_SPECIAL | BTS_SAVEGAME | (savegameslot << BTS_SAVESHIFT);
     }
 
+    if (lowres_turn)
+    {
+        if (shortticfix)
+        {
+            static signed short carry = 0;
+            signed short desired_angleturn;
+
+            desired_angleturn = cmd->angleturn + carry;
+
+            // round angleturn to the nearest 256 unit boundary
+            // for recording demos with single byte values for turn
+
+            cmd->angleturn = (desired_angleturn + 128) & 0xff00;
+
+            // Carry forward the error from the reduced resolution to the
+            // next tic, so that successive small movements can accumulate.
+
+            carry = desired_angleturn - cmd->angleturn;
+        }
+        else
+        {
+            // truncate angleturn to the nearest 256 boundary
+            // for recording demos with single byte values for turn
+            cmd->angleturn &= 0xff00;
+        }
+    }
 }
 
 
@@ -647,7 +678,6 @@ void G_DoLoadLevel(void)
 
     P_SetupLevel(gameepisode, gamemap, 0, gameskill);
     displayplayer = consoleplayer;      // view the guy you are playing
-    starttime = I_GetTime();
     gameaction = ga_nothing;
     Z_CheckHeap();
 
@@ -1290,7 +1320,8 @@ void G_DoReborn(int playernum)
 {
     int i;
 
-    if (G_CheckDemoStatus())
+    // quit demo unless -demoextend
+    if (!demoextend && G_CheckDemoStatus())
         return;
     if (!netgame)
         gameaction = ga_loadlevel;      // reload the level from scratch
@@ -1359,7 +1390,9 @@ void G_DoCompleted(void)
     static int afterSecret[5] = { 7, 5, 5, 5, 4 };
 
     gameaction = ga_nothing;
-    if (G_CheckDemoStatus())
+
+    // quit demo unless -demoextend
+    if (!demoextend && G_CheckDemoStatus())
     {
         return;
     }
@@ -1619,6 +1652,9 @@ void G_InitNew(skill_t skill, int episode, int map)
 */
 
 #define DEMOMARKER      0x80
+#define DEMOHEADER_RESPAWN    0x20
+#define DEMOHEADER_LONGTICS   0x10
+#define DEMOHEADER_NOMONSTERS 0x02
 
 void G_ReadDemoTiccmd(ticcmd_t * cmd)
 {
@@ -1629,7 +1665,19 @@ void G_ReadDemoTiccmd(ticcmd_t * cmd)
     }
     cmd->forwardmove = ((signed char) *demo_p++);
     cmd->sidemove = ((signed char) *demo_p++);
-    cmd->angleturn = ((unsigned char) *demo_p++) << 8;
+
+    // If this is a longtics demo, read back in higher resolution
+
+    if (longtics)
+    {
+        cmd->angleturn = *demo_p++;
+        cmd->angleturn |= (*demo_p++) << 8;
+    }
+    else
+    {
+        cmd->angleturn = ((unsigned char) *demo_p++) << 8;
+    }
+
     cmd->buttons = (unsigned char) *demo_p++;
     cmd->lookfly = (unsigned char) *demo_p++;
     cmd->arti = (unsigned char) *demo_p++;
@@ -1637,15 +1685,42 @@ void G_ReadDemoTiccmd(ticcmd_t * cmd)
 
 void G_WriteDemoTiccmd(ticcmd_t * cmd)
 {
+    byte *demo_start;
+
     if (gamekeydown[key_demo_quit]) // press to end demo recording
         G_CheckDemoStatus();
+
+    demo_start = demo_p;
+
     *demo_p++ = cmd->forwardmove;
     *demo_p++ = cmd->sidemove;
-    *demo_p++ = cmd->angleturn >> 8;
+
+    // If this is a longtics demo, record in higher resolution
+
+    if (longtics)
+    {
+        *demo_p++ = (cmd->angleturn & 0xff);
+        *demo_p++ = (cmd->angleturn >> 8) & 0xff;
+    }
+    else
+    {
+        *demo_p++ = cmd->angleturn >> 8;
+    }
+
     *demo_p++ = cmd->buttons;
     *demo_p++ = cmd->lookfly;
     *demo_p++ = cmd->arti;
-    demo_p -= 6;
+
+    // reset demo pointer back
+    demo_p = demo_start;
+
+    if (demo_p > demoend - 16)
+    {
+        // no more space
+        G_CheckDemoStatus();
+        return;
+    }
+
     G_ReadDemoTiccmd(cmd);      // make SURE it is exactly the same
 }
 
@@ -1663,17 +1738,76 @@ void G_RecordDemo(skill_t skill, int numplayers, int episode, int map,
                   char *name)
 {
     int i;
+    int maxsize;
+
+    //!
+    // @category demo
+    //
+    // Record or playback a demo with high resolution turning.
+    //
+
+    longtics = M_ParmExists("-longtics");
+
+    // If not recording a longtics demo, record in low res
+
+    lowres_turn = !longtics;
+
+    //!
+    // @category demo
+    //
+    // Smooth out low resolution turning when recording a demo.
+    //
+
+    shortticfix = M_ParmExists("-shortticfix");
 
     G_InitNew(skill, episode, map);
     usergame = false;
     M_StringCopy(demoname, name, sizeof(demoname));
     M_StringConcat(demoname, ".lmp", sizeof(demoname));
-    demobuffer = demo_p = Z_Malloc(0x20000, PU_STATIC, NULL);
+    maxsize = 0x20000;
+
+    //!
+    // @arg <size>
+    // @category demo
+    // @vanilla
+    //
+    // Specify the demo buffer size (KiB)
+    //
+
+    i = M_CheckParmWithArgs("-maxdemo", 1);
+    if (i)
+        maxsize = atoi(myargv[i + 1]) * 1024;
+    demobuffer = Z_Malloc(maxsize, PU_STATIC, NULL);
+    demoend = demobuffer + maxsize;
+
+    demo_p = demobuffer;
     *demo_p++ = skill;
     *demo_p++ = episode;
     *demo_p++ = map;
 
-    for (i = 0; i < MAXPLAYERS; i++)
+    // Write special parameter bits onto player one byte.
+    // This aligns with vvHeretic demo usage:
+    //   0x20 = -respawn
+    //   0x10 = -longtics
+    //   0x02 = -nomonsters
+
+    *demo_p = 1; // assume player one exists
+    if (respawnparm)
+    {
+        *demo_p |= DEMOHEADER_RESPAWN;
+    }
+    if (longtics)
+    {
+        *demo_p |= DEMOHEADER_LONGTICS;
+    }
+    if (nomonsters)
+    {
+        *demo_p |= DEMOHEADER_NOMONSTERS;
+    }
+    demo_p++;
+    demo_p++;
+
+    for (i = 1; i < MAXPLAYERS; i++)
         *demo_p++ = playeringame[i];
 
     demorecording = true;
@@ -1707,8 +1841,13 @@ void G_DoPlayDemo(void)
     episode = *demo_p++;
     map = *demo_p++;
 
+    // Read special parameter bits: see G_RecordDemo() for details.
+    respawnparm = (*demo_p & DEMOHEADER_RESPAWN) != 0;
+    longtics    = (*demo_p & DEMOHEADER_LONGTICS) != 0;
+    nomonsters  = (*demo_p & DEMOHEADER_NOMONSTERS) != 0;
+
     for (i = 0; i < MAXPLAYERS; i++)
-        playeringame[i] = *demo_p++;
+        playeringame[i] = (*demo_p++) != 0;
 
     precache = false;           // don't spend a lot of time in loadlevel
     G_InitNew(skill, episode, map);
@@ -1736,12 +1875,19 @@ void G_TimeDemo(char *name)
     episode = *demo_p++;
     map = *demo_p++;
 
+    // Read special parameter bits: see G_RecordDemo() for details.
+    respawnparm = (*demo_p & DEMOHEADER_RESPAWN) != 0;
+    longtics    = (*demo_p & DEMOHEADER_LONGTICS) != 0;
+    nomonsters  = (*demo_p & DEMOHEADER_NOMONSTERS) != 0;
+
     for (i = 0; i < MAXPLAYERS; i++)
     {
-        playeringame[i] = *demo_p++;
+        playeringame[i] = (*demo_p++) != 0;
     }
 
     G_InitNew(skill, episode, map);
+    starttime = I_GetTime();
+
     usergame = false;
     demoplayback = true;
     timingdemo = true;
