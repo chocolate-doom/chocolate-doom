@@ -22,6 +22,9 @@
 
 #include <stdio.h>
 
+#define SAVEGAME_EOF 0x1d
+#define VERSIONSIZE 16
+
 // maximum size of a savegame description
 
 #define SAVESTRINGSIZE 24
