@@ -18,6 +18,10 @@
   * The vanilla limit of 4046 lumps per WAD is now enforced. (thanks
     Jon, Quasar, Edward-san)
   * Solidsegs overflow is emulated like in vanilla. (thanks Quasar)
+  * Heretic/Hexen demo support has expanded. "-demoextend" allows
+    demos to last longer than a single level; "-shortticfix" adjusts
+    low-resolution turning to match Doom's handling; "-maxdemo" and
+    "-longtics" support. (thanks CapnClever)
 
 ### Build systems
   * Improved compatibility with BSD Make. (thanks R.Rebello)
