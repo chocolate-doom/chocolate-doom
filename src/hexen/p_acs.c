@@ -56,6 +56,8 @@ typedef struct
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
+void CheckACSPresent(int number);
+
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
 static void StartOpenACS(int number, int infoIndex, int *address);
@@ -783,6 +785,23 @@ static int GetACSIndex(int number)
         }
     }
     return -1;
+}
+
+//==========================================================================
+//
+// CheckACSPresent
+//
+// Placing Korax in a PWAD without extra steps will result in a crash in
+// Vanilla because the relevant ACS scripts are not initialised
+//
+//==========================================================================
+
+void CheckACSPresent(int number)
+{
+    if (GetACSIndex(number) == -1)
+    {
+        I_Error("Required ACS script %d not initialised", number);
+    }
 }
 
 //==========================================================================

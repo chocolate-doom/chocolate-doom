@@ -1823,9 +1823,6 @@ void G_LoadGame (char* name)
     M_StringCopy(savename, name, sizeof(savename));
     gameaction = ga_loadgame; 
 } 
- 
-#define VERSIONSIZE		16 
-
 
 int savedleveltime = 0; // [crispy] moved here for level time logging
 void G_DoLoadGame (void) 

@@ -4970,6 +4970,7 @@ void A_KoraxChase(mobj_t * actor)
             P_Teleport(actor, spot->x, spot->y, spot->angle, true);
         }
 
+        CheckACSPresent(249);
         P_StartACS(249, 0, args, actor, NULL, 0);
         actor->special2.i = 1;    // Don't run again
 
@@ -5047,6 +5048,7 @@ void A_KoraxBonePop(mobj_t * actor)
     if (mo)
         KSpiritInit(mo, actor);
 
+    CheckACSPresent(255);
     P_StartACS(255, 0, args, actor, NULL, 0);   // Death script
 }
 
@@ -5164,18 +5166,23 @@ void A_KoraxCommand(mobj_t * actor)
     switch (P_Random() % numcommands)
     {
         case 0:
+            CheckACSPresent(250);
             P_StartACS(250, 0, args, actor, NULL, 0);
             break;
         case 1:
+            CheckACSPresent(251);
             P_StartACS(251, 0, args, actor, NULL, 0);
             break;
         case 2:
+            CheckACSPresent(252);
             P_StartACS(252, 0, args, actor, NULL, 0);
             break;
         case 3:
+            CheckACSPresent(253);
             P_StartACS(253, 0, args, actor, NULL, 0);
             break;
         case 4:
+            CheckACSPresent(254);
             P_StartACS(254, 0, args, actor, NULL, 0);
             break;
     }
