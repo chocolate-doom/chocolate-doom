@@ -41,6 +41,7 @@
 
 #include "p_setup.h"
 #include "p_saveg.h"
+#include "p_extsaveg.h"
 #include "p_tick.h"
 
 #include "d_main.h"
@@ -1856,6 +1857,8 @@ void G_DoLoadGame (void)
     leveltime = savedleveltime;
     savedleveltime = 0;
 
+    P_ReadExtendedSaveGameData();
+
     // dearchive all the modifications
     P_UnArchivePlayers (); 
     P_UnArchiveWorld (); 
@@ -1947,6 +1950,7 @@ void G_DoSaveGame (void)
     P_ArchiveSpecials ();
 
     P_WriteSaveGameEOF();
+    P_WriteExtendedSaveGameData();
 
     // [crispy] unconditionally disable savegame and demo limits
     /*
