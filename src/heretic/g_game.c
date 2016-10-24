@@ -1806,7 +1806,6 @@ void G_RecordDemo(skill_t skill, int numplayers, int episode, int map,
         *demo_p |= DEMOHEADER_NOMONSTERS;
     }
     demo_p++;
-    demo_p++;
 
     for (i = 1; i < MAXPLAYERS; i++)
         *demo_p++ = playeringame[i];
