@@ -31,6 +31,7 @@
 
 #ifdef _WIN32
 
+#include <string.h>
 #define strcasecmp stricmp
 #define strncasecmp strnicmp
 

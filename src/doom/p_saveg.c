@@ -33,9 +33,6 @@
 #include "m_misc.h"
 #include "r_state.h"
 
-#define SAVEGAME_EOF 0x1d
-#define VERSIONSIZE 16 
-
 FILE *save_stream;
 int savegamelength;
 boolean savegame_error;
