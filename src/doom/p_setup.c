@@ -1995,7 +1995,7 @@ P_SetupLevel
 	
     // [crispy] better logging
     {
-	extern int savedleveltime, totalleveltimes;
+	extern int savedleveltime;
 	const int ltime = savedleveltime / TICRATE,
 	          ttime = (totalleveltimes + savedleveltime) / TICRATE;
 	char *rfn_str;
