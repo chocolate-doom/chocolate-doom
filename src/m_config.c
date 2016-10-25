@@ -1833,6 +1833,14 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_INT(crispy_fullsounds),
+
+    //!
+    // @game doom
+    //
+    // Extended Savegames.
+    //
+
+    CONFIG_VARIABLE_INT(crispy_extsaveg),
 };
 
 static default_collection_t extra_defaults =

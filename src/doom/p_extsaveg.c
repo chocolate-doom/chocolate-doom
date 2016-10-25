@@ -18,12 +18,10 @@
 //
 
 /*
-	TODO 20161024:
-	- Conditionally write/read with crispy_extsaveg, defaulting to true
+	TODO 20161025:
 	- Handling of wadfilename != maplumpinfo->wad_file->name
 	- Automap markers?
 	- moving platforms stopped by linedef 54/89?
-	- respawn/fast/nomonsters/deathmatch/altdeath?
 	- spawn spots?
 	- fireflicker (sector type 17)?
 */
@@ -54,6 +52,35 @@ static void P_WriteWadFileName (const char *key)
 {
 	M_snprintf(line, sizeof(line), "%s %s\n", key, maplumpinfo->wad_file->name);
 	fprintf(save_stream, "%s", line);
+}
+
+// gameoptions
+
+static void P_WriteGameOptions (const char *key)
+{
+	int value;
+
+	value = (respawnparm ? 1 : 0) |
+	        (fastparm ? 2 : 0) |
+	        (nomonsters ? 4 : 0) |
+	        (deathmatch << 4);
+
+	M_snprintf(line, sizeof(line), "%s %d\n", key, value);
+	fprintf(save_stream, "%s", line);
+}
+
+static void P_ReadGameOptions (const char *key)
+{
+	int value;
+
+	if (sscanf(line, "%s %d", string, &value) == 2 &&
+	    !strncmp(string, key, sizeof(string)))
+	{
+		respawnparm = value & 1;
+		fastparm = (value >> 1) & 1;
+		nomonsters = (value >> 2) & 1;
+		deathmatch = (value >> 4) & 2;
+	}
 }
 
 // extrakills
@@ -125,30 +152,35 @@ static void P_ReadPlayersLookdir (const char *key)
 typedef struct
 {
 	const char *key;
+	const int pass;
 	void (* extsavegwritefn) (const char *key);
 	void (* extsavegreadfn) (const char *key);
 } extsavegdata_t;
 
 static const extsavegdata_t extsavegdata[] =
 {
-	{PACKAGE_TARNAME, P_WritePackageTarname, NULL},
-	{"wadfilename", P_WriteWadFileName, NULL},
-	{"extrakills", P_WriteExtraKills, P_ReadExtraKills},
-	{"totalleveltimes", P_WriteTotalLevelTimes, P_ReadTotalLevelTimes},
-	{"playerslookdir", P_WritePlayersLookdir, P_ReadPlayersLookdir},
+	{PACKAGE_TARNAME, 0, P_WritePackageTarname, NULL},
+	{"wadfilename", 0, P_WriteWadFileName, NULL},
+	{"gameoptions", 0, P_WriteGameOptions, P_ReadGameOptions},
+	{"extrakills", 1, P_WriteExtraKills, P_ReadExtraKills},
+	{"totalleveltimes", 1, P_WriteTotalLevelTimes, P_ReadTotalLevelTimes},
+	{"playerslookdir", 1, P_WritePlayersLookdir, P_ReadPlayersLookdir},
 };
 
 void P_WriteExtendedSaveGameData (void)
 {
 	int i;
 
-	for (i = 0; i < arrlen(extsavegdata); i++)
+	if (crispy_extsaveg)
 	{
-		extsavegdata[i].extsavegwritefn(extsavegdata[i].key);
+		for (i = 0; i < arrlen(extsavegdata); i++)
+		{
+			extsavegdata[i].extsavegwritefn(extsavegdata[i].key);
+		}
 	}
 }
 
-static void P_ReadKeyValuePairs (void)
+static void P_ReadKeyValuePairs (int pass)
 {
 	while (fgets(line, sizeof(line), save_stream))
 	{
@@ -158,8 +190,9 @@ static void P_ReadKeyValuePairs (void)
 
 			for (i = 1; i < arrlen(extsavegdata); i++)
 			{
-				if (!strncmp(string, extsavegdata[i].key, sizeof(string)) &&
-				    extsavegdata[i].extsavegreadfn)
+				if (extsavegdata[i].extsavegreadfn &&
+				    extsavegdata[i].pass == pass &&
+				    !strncmp(string, extsavegdata[i].key, sizeof(string)))
 				{
 					extsavegdata[i].extsavegreadfn(extsavegdata[i].key);
 				}
@@ -168,7 +201,7 @@ static void P_ReadKeyValuePairs (void)
 	}
 }
 
-void P_ReadExtendedSaveGameData (void)
+static void P_ReadFirstPass (void)
 {
 	long p, curpos, endpos;
 
@@ -198,11 +231,26 @@ void P_ReadExtendedSaveGameData (void)
 			if (sscanf(line, "%s", string) == 1 &&
 			    !strncmp(string, extsavegdata[0].key, sizeof(string)))
 			{
-				P_ReadKeyValuePairs();
+				P_ReadKeyValuePairs(0);
 				break;
 			}
 		}
 	}
 
 	fseek(save_stream, curpos, SEEK_SET);
+}
+
+void P_ReadExtendedSaveGameData (int pass)
+{
+	if (crispy_extsaveg)
+	{
+		if (pass)
+		{
+			P_ReadKeyValuePairs(pass);
+		}
+		else
+		{
+			P_ReadFirstPass();
+		}
+	}
 }

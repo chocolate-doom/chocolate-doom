@@ -56,6 +56,7 @@ extern int crispy_centerweapon;
 extern int crispy_coloredblood;
 extern int crispy_coloredhud;
 extern int crispy_crosshair;
+extern int crispy_extsaveg;
 extern int crispy_flipcorpses;
 extern int crispy_freeaim;
 extern int crispy_freelook;

@@ -1845,6 +1845,7 @@ void G_DoLoadGame (void)
         fclose(save_stream);
         return;
     }
+    P_ReadExtendedSaveGameData(0);
 
     savedleveltime = leveltime;
     
@@ -1853,8 +1854,6 @@ void G_DoLoadGame (void)
  
     leveltime = savedleveltime;
     savedleveltime = 0;
-
-    P_ReadExtendedSaveGameData();
 
     // dearchive all the modifications
     P_UnArchivePlayers (); 
@@ -1865,6 +1864,7 @@ void G_DoLoadGame (void)
  
     if (!P_ReadSaveGameEOF())
 	I_Error ("Bad savegame");
+    P_ReadExtendedSaveGameData(1);
 
     fclose(save_stream);
     

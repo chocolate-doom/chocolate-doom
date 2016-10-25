@@ -242,6 +242,7 @@ static void M_CrispyToggleColoredblood(int choice);
 static void M_CrispyToggleColoredblood2(int choice);
 static void M_CrispyToggleColoredhud(int choice);
 static void M_CrispyToggleCrosshair(int choice);
+static void M_CrispyToggleExtsaveg(int choice);
 static void M_CrispyToggleFlipcorpses(int choice);
 static void M_CrispyToggleFreeaim(int choice);
 static void M_CrispyToggleFreelook(int choice);
@@ -514,6 +515,7 @@ enum
     crispness_pitch,
     crispness_secretmessage,
     crispness_automapstats,
+    crispness_extsaveg,
     crispness2_sep_goto2,
     crispness2_goto1,
     crispness2_goto3,
@@ -529,6 +531,7 @@ static menuitem_t Crispness2Menu[]=
     {1,"",	M_CrispyTogglePitch,'w'},
     {1,"",	M_CrispyToggleSecretmessage,'s'},
     {1,"",	M_CrispyToggleAutomapstats,'s'},
+    {1,"",	M_CrispyToggleExtsaveg,'e'},
     {-1,"",0,'\0'},
     {1,"",	M_Crispness1,'p'},
     {1,"",	M_Crispness3,'n'},
@@ -1428,6 +1431,7 @@ static void M_DrawCrispness2(void)
     M_DrawCrispnessItem(crispness_pitch, "Weapon Recoil Pitch", crispy_pitch, true);
     M_DrawCrispnessItem(crispness_secretmessage, "Show Revealed Secrets", crispy_secretmessage, true);
     M_DrawCrispnessItem(crispness_automapstats, "Show Level Stats in Automap", crispy_automapstats, true);
+    M_DrawCrispnessItem(crispness_extsaveg, "Extended Savegames", crispy_extsaveg, true);
 
     M_DrawCrispnessGoto(crispness2_goto3, "Next Page >");
     M_DrawCrispnessGoto(crispness2_goto1, "< Prev Page");
@@ -1715,6 +1719,12 @@ static void M_CrispyToggleAutomapstats(int choice)
 {
     choice = 0;
     crispy_automapstats = !crispy_automapstats;
+}
+
+static void M_CrispyToggleExtsaveg(int choice)
+{
+    choice = 0;
+    crispy_extsaveg = !crispy_extsaveg;
 }
 
 static void M_CrispyToggleCenterweapon(int choice)

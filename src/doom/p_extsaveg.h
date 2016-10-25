@@ -21,6 +21,6 @@
 #define __P_EXTSAVEG__
 
 void P_WriteExtendedSaveGameData (void);
-void P_ReadExtendedSaveGameData (void);
+void P_ReadExtendedSaveGameData (int pass);
 
 #endif
