@@ -21,7 +21,6 @@
 	TODO 20161025:
 	- Handling of wadfilename != maplumpinfo->wad_file->name
 	- Automap markers?
-	- moving platforms stopped by linedef 54/89?
 	- spawn spots?
 	- fireflicker (sector type 17)?
 */
@@ -36,6 +35,7 @@
 #include "p_local.h"
 #include "p_extsaveg.h"
 #include "p_saveg.h"
+#include "z_zone.h"
 
 #define LINELENGTH 80
 
@@ -121,6 +121,96 @@ static void P_ReadTotalLevelTimes (const char *key)
 	}
 }
 
+// plats
+
+static void P_WritePlats (const char *key)
+{
+	thinker_t* th;
+
+	for (th = thinkercap.next; th != &thinkercap; th = th->next)
+	{
+		if (th->function.acv == (actionf_v)NULL)
+		{
+			int i;
+
+			for (i = 0; i < MAXPLATS; i++)
+			{
+				if (activeplats[i] == (plat_t *)th)
+				{
+					break;
+				}
+			}
+
+			if (i < MAXPLATS)
+			{
+				plat_t *plat = (plat_t *)th;
+
+				M_snprintf(line, sizeof(line), "%s %d %d %d %d %d %d %d %d %d %d %d\n",
+				           key,
+				           (int)(plat->sector - sectors),
+				           (int)plat->speed,
+				           (int)plat->low,
+				           (int)plat->high,
+				           (int)plat->wait,
+				           (int)plat->count,
+				           (int)plat->status,
+				           (int)plat->oldstatus,
+				           (int)plat->crush,
+				           (int)plat->tag,
+				           (int)plat->type);
+				fprintf(save_stream, "%s", line);
+			}
+
+			continue;
+		}
+	}
+}
+
+static void P_ReadPlats (const char *key)
+{
+	int sector, speed, low, high, wait, count, status, oldstatus, crush, tag, type;
+
+	if (sscanf(line, "%s %d %d %d %d %d %d %d %d %d %d %d",
+	           string,
+	           &sector,
+	           &speed,
+	           &low,
+	           &high,
+	           &wait,
+	           &count,
+	           &status,
+	           &oldstatus,
+	           &crush,
+	           &tag,
+	           &type) == 12 &&
+	    !strncmp(string, key, sizeof(string)))
+	{
+		plat_t *plat;
+
+		plat = Z_Malloc(sizeof(*plat), PU_LEVEL, NULL);
+
+		plat->sector = &sectors[sector];
+		plat->speed = speed;
+		plat->low = low;
+		plat->high = high;
+		plat->wait = wait;
+		plat->count = count;
+		plat->status = status;
+		plat->oldstatus = oldstatus;
+		plat->crush = crush;
+		plat->tag = tag;
+		plat->type = type;
+
+		plat->sector->specialdata = plat;
+
+		// [crispy] we only archive plats with plat->function.acv == NULL
+		plat->thinker.function.acv = (actionf_v)NULL;
+
+		P_AddThinker(&plat->thinker);
+		P_AddActivePlat(plat);
+	}
+}
+
 // players[]->lookdir
 
 static void P_WritePlayersLookdir (const char *key)
@@ -164,6 +254,7 @@ static const extsavegdata_t extsavegdata[] =
 	{"gameoptions", 0, P_WriteGameOptions, P_ReadGameOptions},
 	{"extrakills", 1, P_WriteExtraKills, P_ReadExtraKills},
 	{"totalleveltimes", 1, P_WriteTotalLevelTimes, P_ReadTotalLevelTimes},
+	{"plats", 1, P_WritePlats, P_ReadPlats},
 	{"playerslookdir", 1, P_WritePlayersLookdir, P_ReadPlayersLookdir},
 };
 
