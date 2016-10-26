@@ -22,7 +22,6 @@
 	- Handling of wadfilename != maplumpinfo->wad_file->name
 	- Automap markers?
 	- spawn spots?
-	- fireflicker (sector type 17)?
 */
 
 #include <stdio.h>
@@ -211,6 +210,57 @@ static void P_ReadPlats (const char *key)
 	}
 }
 
+// fireflicker
+extern void T_FireFlicker (fireflicker_t* flick);
+
+static void P_WriteFireFlicker (const char *key)
+{
+	thinker_t* th;
+
+	for (th = thinkercap.next; th != &thinkercap; th = th->next)
+	{
+		if (th->function.acp1 == (actionf_p1)T_FireFlicker)
+		{
+			fireflicker_t *flick = (fireflicker_t *)th;
+
+			M_snprintf(line, sizeof(line), "%s %d %d %d %d\n",
+			           key,
+			           (int)(flick->sector - sectors),
+			           (int)flick->count,
+			           (int)flick->maxlight,
+			           (int)flick->minlight);
+			fprintf(save_stream, "%s", line);
+		}
+	}
+}
+
+static void P_ReadFireFlicker (const char *key)
+{
+	int sector, count, maxlight, minlight;
+
+	if (sscanf(line, "%s %d %d %d %d\n",
+	           string,
+	           &sector,
+	           &count,
+	           &maxlight,
+	           &minlight) == 5 &&
+	    !strncmp(string, key, sizeof(string)))
+	{
+		fireflicker_t *flick;
+
+		flick = Z_Malloc(sizeof(*flick), PU_LEVEL, NULL);
+
+		flick->sector = &sectors[sector];
+		flick->count = count;
+		flick->maxlight = maxlight;
+		flick->minlight = minlight;
+
+		flick->thinker.function.acp1 = (actionf_p1)T_FireFlicker;
+
+		P_AddThinker(&flick->thinker);
+	}
+}
+
 // players[]->lookdir
 
 static void P_WritePlayersLookdir (const char *key)
@@ -255,6 +305,7 @@ static const extsavegdata_t extsavegdata[] =
 	{"extrakills", 1, P_WriteExtraKills, P_ReadExtraKills},
 	{"totalleveltimes", 1, P_WriteTotalLevelTimes, P_ReadTotalLevelTimes},
 	{"plats", 1, P_WritePlats, P_ReadPlats},
+	{"fireflicker", 1, P_WriteFireFlicker, P_ReadFireFlicker},
 	{"playerslookdir", 1, P_WritePlayersLookdir, P_ReadPlayersLookdir},
 };
 
