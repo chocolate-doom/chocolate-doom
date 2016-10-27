@@ -452,36 +452,40 @@ void ST_refreshBackground(void)
 
 }
 
-// [crispy] from boom202s/M_CHEAT.C:467-498
-static int ST_cheat_massacre()    // jff 2/01/98 kill all monsters
+// [crispy] adapted from boom202s/M_CHEAT.C:467-498
+static int ST_cheat_massacre()
 {
-  // jff 02/01/98 'em' cheat - kill all monsters
-  // partially taken from Chi's .46 port
-  //
-  // killough 2/7/98: cleaned up code and changed to use dprintf;
-  // fixed lost soul bug (LSs left behind when PEs are killed)
+    int killcount = 0;
+    thinker_t *th;
+    extern int numbraintargets;
+    extern void A_PainDie(mobj_t *);
 
-  int killcount=0;
-  thinker_t *currentthinker=&thinkercap;
-  extern void A_PainDie(mobj_t *);
+    for (th = thinkercap.next; th != &thinkercap; th = th->next)
+    {
+	if (th->function.acp1 == (actionf_p1)P_MobjThinker)
+	{
+	    const mobj_t *mo = (mobj_t *)th;
 
-  while ((currentthinker=currentthinker->next)!=&thinkercap)
-    if (currentthinker->function.acp1 == (actionf_p1) P_MobjThinker &&
-        (((mobj_t *) currentthinker)->flags & MF_COUNTKILL ||
-         ((mobj_t *) currentthinker)->type == MT_SKULL))
-      { // killough 3/6/98: kill even if PE is dead
-        if (((mobj_t *) currentthinker)->health > 0)
-          {
-            killcount++;
-            P_DamageMobj((mobj_t *)currentthinker, NULL, NULL, 10000);
-          }
-        if (((mobj_t *) currentthinker)->type == MT_PAIN)
-          {
-            A_PainDie((mobj_t *) currentthinker);    // killough 2/8/98
-            P_SetMobjState ((mobj_t *) currentthinker, S_PAIN_DIE6);
-          }
-      }
-  return (killcount);
+	    if (mo->flags & MF_COUNTKILL || mo->type == MT_SKULL))
+	    {
+		if (mo->health > 0)
+		{
+		    P_DamageMobj(mo, NULL, NULL, 10000);
+		    killcount++;
+		}
+		if (mo->type == MT_PAIN)
+		{
+		    A_PainDie(mo);
+		    P_SetMobjState(mo, S_PAIN_DIE6);
+		}
+	    }
+	}
+    }
+
+    // [crispy] disable brain spitters
+    numbraintargets = INT_MIN;
+
+    return killcount;
 }
 
 // [crispy] trigger all special lines available on the map
