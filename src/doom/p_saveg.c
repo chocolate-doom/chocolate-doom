@@ -1793,6 +1793,17 @@ void P_ArchiveSpecials (void)
 		saveg_write_pad();
                 saveg_write_ceiling_t((ceiling_t *) th);
 	    }
+	    // [crispy] save plats in statis
+	    for (i = 0; i < MAXPLATS; i++)
+		if (activeplats[i] == (plat_t *)th)
+		    break;
+
+	    if (i < MAXPLATS)
+	    {
+		saveg_write8(tc_plat);
+		saveg_write_pad();
+		saveg_write_plat_t((plat_t *)th);
+	    }
 	    continue;
 	}
 			
