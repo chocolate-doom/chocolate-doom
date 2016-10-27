@@ -464,9 +464,9 @@ static int ST_cheat_massacre()
     {
 	if (th->function.acp1 == (actionf_p1)P_MobjThinker)
 	{
-	    const mobj_t *mo = (mobj_t *)th;
+	    mobj_t *mo = (mobj_t *)th;
 
-	    if (mo->flags & MF_COUNTKILL || mo->type == MT_SKULL))
+	    if (mo->flags & MF_COUNTKILL || mo->type == MT_SKULL)
 	    {
 		if (mo->health > 0)
 		{
