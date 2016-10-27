@@ -341,7 +341,7 @@ static const extsavegdata_t extsavegdata[] =
 {
 	{PACKAGE_TARNAME, 0, P_WritePackageTarname, NULL},
 	{"wadfilename", 0, P_WriteWadFileName, NULL},
-	{"gameoptions", 0, P_WriteGameOptions, P_ReadGameOptions},
+	{"gameoptions", -1, P_WriteGameOptions, P_ReadGameOptions},
 	{"extrakills", 1, P_WriteExtraKills, P_ReadExtraKills},
 	{"totalleveltimes", 1, P_WriteTotalLevelTimes, P_ReadTotalLevelTimes},
 	{"plats", -1, P_WritePlats, P_ReadPlats}, // [crispy] disabled, solved in the regular P_ArchiveSpecials()
