@@ -304,7 +304,7 @@ static const extsavegdata_t extsavegdata[] =
 	{"gameoptions", 0, P_WriteGameOptions, P_ReadGameOptions},
 	{"extrakills", 1, P_WriteExtraKills, P_ReadExtraKills},
 	{"totalleveltimes", 1, P_WriteTotalLevelTimes, P_ReadTotalLevelTimes},
-	{"plats", 1, P_WritePlats, P_ReadPlats},
+	{"plats", -1, P_WritePlats, P_ReadPlats}, // [crispy] disabled, solved in the regular P_ArchiveSpecials()
 	{"fireflicker", 1, P_WriteFireFlicker, P_ReadFireFlicker},
 	{"playerslookdir", 1, P_WritePlayersLookdir, P_ReadPlayersLookdir},
 };
