@@ -1695,7 +1695,7 @@ void AM_Drawer (void)
 }
 
 // [crispy] extended savegames
-void AM_GetMarkPoints (int *n, int64_t *p)
+void AM_GetMarkPoints (int *n, long *p)
 {
 	int i;
 
@@ -1703,12 +1703,12 @@ void AM_GetMarkPoints (int *n, int64_t *p)
 
 	for (i = 0; i < AM_NUMMARKPOINTS; i++)
 	{
-		*p++ = markpoints[i].x;
-		*p++ = (markpoints[i].x == -1) ? 0 : markpoints[i].y;
+		*p++ = (long)markpoints[i].x;
+		*p++ = (markpoints[i].x == -1L) ? 0L : (long)markpoints[i].y;
 	}
 }
 
-void AM_SetMarkPoints (int n, int64_t *p)
+void AM_SetMarkPoints (int n, long *p)
 {
 	int i;
 
@@ -1720,7 +1720,7 @@ void AM_SetMarkPoints (int n, int64_t *p)
 
 	for (i = 0; i < AM_NUMMARKPOINTS; i++)
 	{
-		markpoints[i].x = *p++;
-		markpoints[i].y = *p++;
+		markpoints[i].x = (int64_t)*p++;
+		markpoints[i].y = (int64_t)*p++;
 	}
 }

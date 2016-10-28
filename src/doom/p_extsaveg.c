@@ -20,8 +20,7 @@
 /*
 	TODO 20161025:
 	- Handling of wadfilename != maplumpinfo->wad_file->name
-	- Automap markers?
-	- spawn spots?
+	- getline() pendant
 */
 
 #include <stdio.h>
@@ -46,6 +45,8 @@ static void P_WritePackageTarname (const char *key)
 	M_snprintf(line, sizeof(line), "%s %s\n", key, PACKAGE_VERSION);
 	fprintf(save_stream, "%s", line);
 }
+
+// maplumpinfo->wad_file->name
 
 static void P_WriteWadFileName (const char *key)
 {
@@ -210,7 +211,8 @@ static void P_ReadPlats (const char *key)
 	}
 }
 
-// fireflicker
+// T_FireFlicker()
+
 extern void T_FireFlicker (fireflicker_t* flick);
 
 static void P_WriteFireFlicker (const char *key)
@@ -289,25 +291,26 @@ static void P_ReadPlayersLookdir (const char *key)
 	}
 }
 
-// markpoints
-extern void AM_GetMarkPoints (int *n, int64_t *p);
-extern void AM_SetMarkPoints (int n, int64_t *p);
+// markpoints[]
+
+extern void AM_GetMarkPoints (int *n, long *p);
+extern void AM_SetMarkPoints (int n, long *p);
 
 static void P_WriteMarkPoints (const char *key)
 {
 	int n;
-	int64_t p[20];
+	long p[20];
 
-	AM_GetMarkPoints(&n, &p[0]);
+	AM_GetMarkPoints(&n, p);
 
 	if (p[0] != -1)
 	{
 		M_snprintf(line, sizeof(line), "%s %d %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld\n",
 		           key, n,
-		           (long)p[0], (long)p[1], (long)p[2], (long)p[3], (long)p[4],
-		           (long)p[5], (long)p[6], (long)p[7], (long)p[8], (long)p[9],
-		           (long)p[10], (long)p[11], (long)p[12], (long)p[13], (long)p[14],
-		           (long)p[15], (long)p[16], (long)p[17], (long)p[18], (long)p[19]);
+		           p[0], p[1], p[2], p[3], p[4],
+		           p[5], p[6], p[7], p[8], p[9],
+		           p[10], p[11], p[12], p[13], p[14],
+		           p[15], p[16], p[17], p[18], p[19]);
 		fprintf(save_stream, "%s", line);
 	}
 }
@@ -315,24 +318,24 @@ static void P_WriteMarkPoints (const char *key)
 static void P_ReadMarkPoints (const char *key)
 {
 	int n;
-	int64_t p[20];
+	long p[20];
 
 	if (sscanf(line, "%s %d %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld\n",
 	           string, &n,
-		           (long *)&p[0], (long *)&p[1], (long *)&p[2], (long *)&p[3], (long *)&p[4],
-		           (long *)&p[5], (long *)&p[6], (long *)&p[7], (long *)&p[8], (long *)&p[9],
-		           (long *)&p[10], (long *)&p[11], (long *)&p[12], (long *)&p[13], (long *)&p[14],
-		           (long *)&p[15], (long *)&p[16], (long *)&p[17], (long *)&p[18], (long *)&p[19]) == 22 &&
+	           &p[0], &p[1], &p[2], &p[3], &p[4],
+	           &p[5], &p[6], &p[7], &p[8], &p[9],
+	           &p[10], &p[11], &p[12], &p[13], &p[14],
+	           &p[15], &p[16], &p[17], &p[18], &p[19]) == 22 &&
 	    !strncmp(string, key, sizeof(string)))
 	{
-		AM_SetMarkPoints(n, &p[0]);
+		AM_SetMarkPoints(n, p);
 	}
 }
 
 typedef struct
 {
 	const char *key;
-	const int pass;
+	const int pass; // [crispy] 0 = first pass; 1 = second pass; -1 = disabled
 	void (* extsavegwritefn) (const char *key);
 	void (* extsavegreadfn) (const char *key);
 } extsavegdata_t;
