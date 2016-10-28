@@ -483,7 +483,7 @@ static int ST_cheat_massacre()
     }
 
     // [crispy] disable brain spitters
-    numbraintargets = INT_MIN;
+    numbraintargets = -1;
 
     return killcount;
 }

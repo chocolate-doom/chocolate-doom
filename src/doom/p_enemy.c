@@ -1898,7 +1898,7 @@ void A_BrainAwake (mobj_t* mo)
 
     // [crispy] no spawn spots available
     if (numbraintargets == 0)
-	numbraintargets = INT_MIN;
+	numbraintargets = -1;
 }
 
 
@@ -1979,7 +1979,7 @@ void A_BrainSpit (mobj_t*	mo)
 	A_BrainAwake(NULL);
 
     // [crispy] still no spawn spots available
-    if (numbraintargets == INT_MIN)
+    if (numbraintargets == -1)
 	return;
 
     // shoot a cube at current target

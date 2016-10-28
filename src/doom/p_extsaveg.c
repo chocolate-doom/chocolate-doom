@@ -36,10 +36,10 @@
 #include "p_saveg.h"
 #include "z_zone.h"
 
-#define LINELENGTH 80
+#define LINELENGTH 160
 
 static char line[LINELENGTH];
-static char string[LINELENGTH];
+static char string[LINELENGTH/2];
 
 static void P_WritePackageTarname (const char *key)
 {
@@ -289,6 +289,46 @@ static void P_ReadPlayersLookdir (const char *key)
 	}
 }
 
+// markpoints
+extern void AM_GetMarkPoints (int *n, int64_t *p);
+extern void AM_SetMarkPoints (int n, int64_t *p);
+
+static void P_WriteMarkPoints (const char *key)
+{
+	int n;
+	int64_t p[20];
+
+	AM_GetMarkPoints(&n, &p[0]);
+
+	if (p[0] != -1)
+	{
+		M_snprintf(line, sizeof(line), "%s %d %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld\n",
+		           key, n,
+		           p[0], p[1], p[2], p[3], p[4],
+		           p[5], p[6], p[7], p[8], p[9],
+		           p[10], p[11], p[12], p[13], p[14],
+		           p[15], p[16], p[17], p[18], p[19]);
+		fprintf(save_stream, "%s", line);
+	}
+}
+
+static void P_ReadMarkPoints (const char *key)
+{
+	int n;
+	int64_t p[20];
+
+	if (sscanf(line, "%s %d %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld\n",
+	           string, &n,
+		           &p[0], &p[1], &p[2], &p[3], &p[4],
+		           &p[5], &p[6], &p[7], &p[8], &p[9],
+		           &p[10], &p[11], &p[12], &p[13], &p[14],
+		           &p[15], &p[16], &p[17], &p[18], &p[19]) == 22 &&
+	    !strncmp(string, key, sizeof(string)))
+	{
+		AM_SetMarkPoints(n, &p[0]);
+	}
+}
+
 typedef struct
 {
 	const char *key;
@@ -301,11 +341,12 @@ static const extsavegdata_t extsavegdata[] =
 {
 	{PACKAGE_TARNAME, 0, P_WritePackageTarname, NULL},
 	{"wadfilename", 0, P_WriteWadFileName, NULL},
-	{"gameoptions", 0, P_WriteGameOptions, P_ReadGameOptions},
+	{"gameoptions", -1, P_WriteGameOptions, P_ReadGameOptions},
 	{"extrakills", 1, P_WriteExtraKills, P_ReadExtraKills},
 	{"totalleveltimes", 1, P_WriteTotalLevelTimes, P_ReadTotalLevelTimes},
 	{"plats", -1, P_WritePlats, P_ReadPlats}, // [crispy] disabled, solved in the regular P_ArchiveSpecials()
 	{"fireflicker", 1, P_WriteFireFlicker, P_ReadFireFlicker},
+	{"markpoints", 1, P_WriteMarkPoints, P_ReadMarkPoints},
 	{"playerslookdir", 1, P_WritePlayersLookdir, P_ReadPlayersLookdir},
 };
 
