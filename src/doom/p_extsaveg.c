@@ -18,7 +18,7 @@
 //
 
 /*
-	TODO 20161025:
+	TODO 20161028:
 	- Handling of wadfilename != maplumpinfo->wad_file->name
 	- getline() pendant
 */
@@ -43,7 +43,7 @@ static char string[LINELENGTH/2];
 static void P_WritePackageTarname (const char *key)
 {
 	M_snprintf(line, sizeof(line), "%s %s\n", key, PACKAGE_VERSION);
-	fprintf(save_stream, "%s", line);
+	fputs(line, save_stream);
 }
 
 // maplumpinfo->wad_file->name
@@ -51,7 +51,7 @@ static void P_WritePackageTarname (const char *key)
 static void P_WriteWadFileName (const char *key)
 {
 	M_snprintf(line, sizeof(line), "%s %s\n", key, maplumpinfo->wad_file->name);
-	fprintf(save_stream, "%s", line);
+	fputs(line, save_stream);
 }
 
 // gameoptions
@@ -66,7 +66,7 @@ static void P_WriteGameOptions (const char *key)
 	        (deathmatch << 4);
 
 	M_snprintf(line, sizeof(line), "%s %d\n", key, value);
-	fprintf(save_stream, "%s", line);
+	fputs(line, save_stream);
 }
 
 static void P_ReadGameOptions (const char *key)
@@ -88,7 +88,7 @@ static void P_ReadGameOptions (const char *key)
 static void P_WriteExtraKills (const char *key)
 {
 	M_snprintf(line, sizeof(line), "%s %d\n", key, extrakills);
-	fprintf(save_stream, "%s", line);
+	fputs(line, save_stream);
 }
 
 static void P_ReadExtraKills (const char *key)
@@ -107,7 +107,7 @@ static void P_ReadExtraKills (const char *key)
 static void P_WriteTotalLevelTimes (const char *key)
 {
 	M_snprintf(line, sizeof(line), "%s %d\n", key, totalleveltimes);
-	fprintf(save_stream, "%s", line);
+	fputs(line, save_stream);
 }
 
 static void P_ReadTotalLevelTimes (const char *key)
@@ -158,7 +158,7 @@ static void P_WritePlats (const char *key)
 				           (int)plat->crush,
 				           (int)plat->tag,
 				           (int)plat->type);
-				fprintf(save_stream, "%s", line);
+				fputs(line, save_stream);
 			}
 
 			continue;
@@ -231,7 +231,7 @@ static void P_WriteFireFlicker (const char *key)
 			           (int)flick->count,
 			           (int)flick->maxlight,
 			           (int)flick->minlight);
-			fprintf(save_stream, "%s", line);
+			fputs(line, save_stream);
 		}
 	}
 }
@@ -274,7 +274,7 @@ static void P_WritePlayersLookdir (const char *key)
 		if (playeringame[i] && players[i].lookdir)
 		{
 			M_snprintf(line, sizeof(line), "%s %d %d\n", key, i, players[i].lookdir);
-			fprintf(save_stream, "%s", line);
+			fputs(line, save_stream);
 		}
 	}
 }
@@ -311,7 +311,7 @@ static void P_WriteMarkPoints (const char *key)
 		           p[5], p[6], p[7], p[8], p[9],
 		           p[10], p[11], p[12], p[13], p[14],
 		           p[15], p[16], p[17], p[18], p[19]);
-		fprintf(save_stream, "%s", line);
+		fputs(line, save_stream);
 	}
 }
 
