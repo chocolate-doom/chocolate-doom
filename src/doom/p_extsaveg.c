@@ -304,10 +304,10 @@ static void P_WriteMarkPoints (const char *key)
 	{
 		M_snprintf(line, sizeof(line), "%s %d %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld\n",
 		           key, n,
-		           p[0], p[1], p[2], p[3], p[4],
-		           p[5], p[6], p[7], p[8], p[9],
-		           p[10], p[11], p[12], p[13], p[14],
-		           p[15], p[16], p[17], p[18], p[19]);
+		           (long)p[0], (long)p[1], (long)p[2], (long)p[3], (long)p[4],
+		           (long)p[5], (long)p[6], (long)p[7], (long)p[8], (long)p[9],
+		           (long)p[10], (long)p[11], (long)p[12], (long)p[13], (long)p[14],
+		           (long)p[15], (long)p[16], (long)p[17], (long)p[18], (long)p[19]);
 		fprintf(save_stream, "%s", line);
 	}
 }
@@ -319,10 +319,10 @@ static void P_ReadMarkPoints (const char *key)
 
 	if (sscanf(line, "%s %d %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld\n",
 	           string, &n,
-		           &p[0], &p[1], &p[2], &p[3], &p[4],
-		           &p[5], &p[6], &p[7], &p[8], &p[9],
-		           &p[10], &p[11], &p[12], &p[13], &p[14],
-		           &p[15], &p[16], &p[17], &p[18], &p[19]) == 22 &&
+		           (long *)&p[0], (long *)&p[1], (long *)&p[2], (long *)&p[3], (long *)&p[4],
+		           (long *)&p[5], (long *)&p[6], (long *)&p[7], (long *)&p[8], (long *)&p[9],
+		           (long *)&p[10], (long *)&p[11], (long *)&p[12], (long *)&p[13], (long *)&p[14],
+		           (long *)&p[15], (long *)&p[16], (long *)&p[17], (long *)&p[18], (long *)&p[19]) == 22 &&
 	    !strncmp(string, key, sizeof(string)))
 	{
 		AM_SetMarkPoints(n, &p[0]);
