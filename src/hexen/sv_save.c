@@ -142,6 +142,8 @@ static void SV_WritePtr(void *ptr);
 
 char *SavePath = DEFAULT_SAVEPATH;
 
+int vanilla_savegame_limit = 1;
+
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static int MobjCount;
@@ -3270,8 +3272,11 @@ static void CopyFile(char *source_name, char *dest_name)
     // in memory: Chocolate Hexen should force an allocation error here
     // whenever it's appropriate.
 
-    buffer = Z_Malloc(file_length, PU_STATIC, NULL);
-    Z_Free(buffer);
+    if (vanilla_savegame_limit)
+    {
+        buffer = Z_Malloc(file_length, PU_STATIC, NULL);
+        Z_Free(buffer);
+    }
 
     write_handle = fopen(dest_name, "wb");
     if (write_handle == NULL)
