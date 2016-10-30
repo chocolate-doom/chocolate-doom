@@ -20,7 +20,10 @@
 #ifndef __P_EXTSAVEG__
 #define __P_EXTSAVEG__
 
-void P_WriteExtendedSaveGameData (void);
-void P_ReadExtendedSaveGameData (int pass);
+extern char *savewadfilename;
+
+extern void P_WriteExtendedSaveGameData (void);
+extern void P_ReadExtendedSaveGameData (void);
+extern void M_ForceLoadGame (void);
 
 #endif

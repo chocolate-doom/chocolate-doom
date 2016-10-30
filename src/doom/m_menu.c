@@ -48,6 +48,8 @@
 #include "m_argv.h"
 #include "m_controls.h"
 #include "p_saveg.h"
+#include "p_extsaveg.h" // [crispy] savewadfilename
+#include "p_local.h" // [crispy] struct maplumpinfo
 
 #include "s_sound.h"
 
@@ -3029,3 +3031,32 @@ void M_Init (void)
     opldev = M_CheckParm("-opldev") > 0;
 }
 
+static char *extsavegwarning;
+
+static void M_ForceLoadGameResponse(int key)
+{
+	free(extsavegwarning);
+	free(savewadfilename);
+
+	if (key != key_menu_confirm)
+	{
+		M_EndGameResponse(key_menu_confirm);
+		savewadfilename = NULL;
+		return;
+	}
+
+	savewadfilename = maplumpinfo->wad_file->name;
+	gameaction = ga_loadgame;
+}
+
+void M_ForceLoadGame()
+{
+	extsavegwarning =
+	M_StringJoin("This savegame requires the file\n\n",
+	             crstr[CR_GOLD], savewadfilename, crstr[CR_NONE],
+	             "\n\nto restore ",
+	             crstr[CR_GOLD], maplumpinfo->name, crstr[CR_NONE],
+	             ".\n\nContinue?", NULL);
+
+	M_StartMessage(extsavegwarning, M_ForceLoadGameResponse, true);
+}

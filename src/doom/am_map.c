@@ -1704,7 +1704,7 @@ void AM_GetMarkPoints (int *n, long *p)
 	for (i = 0; i < AM_NUMMARKPOINTS; i++)
 	{
 		*p++ = (long)markpoints[i].x;
-		*p++ = (markpoints[i].x == -1L) ? 0L : (long)markpoints[i].y;
+		*p++ = (markpoints[i].x == -1) ? 0L : (long)markpoints[i].y;
 	}
 }
 

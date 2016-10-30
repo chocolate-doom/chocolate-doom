@@ -1845,12 +1845,31 @@ void G_DoLoadGame (void)
         fclose(save_stream);
         return;
     }
-    P_ReadExtendedSaveGameData(0);
 
     savedleveltime = leveltime;
     
     // load a base level 
     G_InitNew (gameskill, gameepisode, gamemap); 
+    if (crispy_extsaveg)
+    {
+        P_ReadExtendedSaveGameData();
+    }
+    if (savewadfilename)
+    {
+        // [crispy] strings are not equal
+        if (strcmp(savewadfilename, maplumpinfo->wad_file->name))
+        {
+            M_ForceLoadGame();
+            return;
+        }
+        else
+        // [crispy] strings are equal, but not identical
+        if (savewadfilename != maplumpinfo->wad_file->name)
+        {
+            free(savewadfilename);
+        }
+    }
+    savewadfilename = NULL;
  
     leveltime = savedleveltime;
     savedleveltime = 0;
@@ -1864,7 +1883,6 @@ void G_DoLoadGame (void)
  
     if (!P_ReadSaveGameEOF())
 	I_Error ("Bad savegame");
-    P_ReadExtendedSaveGameData(1);
 
     fclose(save_stream);
     
@@ -1947,7 +1965,10 @@ void G_DoSaveGame (void)
     P_ArchiveSpecials ();
 
     P_WriteSaveGameEOF();
-    P_WriteExtendedSaveGameData();
+    if (crispy_extsaveg)
+    {
+        P_WriteExtendedSaveGameData();
+    }
 
     // [crispy] unconditionally disable savegame and demo limits
     /*

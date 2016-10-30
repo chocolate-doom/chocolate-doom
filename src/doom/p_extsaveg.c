@@ -17,12 +17,6 @@
 //	[crispy] Archiving: Extended SaveGame I/O.
 //
 
-/*
-	TODO 20161028:
-	- Handling of wadfilename != maplumpinfo->wad_file->name
-	- getline() pendant
-*/
-
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -35,10 +29,8 @@
 #include "p_saveg.h"
 #include "z_zone.h"
 
-#define LINELENGTH 160
-
-static char line[LINELENGTH];
-static char string[LINELENGTH/2];
+static char line[260];
+static char string[80];
 
 static void P_WritePackageTarname (const char *key)
 {
@@ -48,38 +40,26 @@ static void P_WritePackageTarname (const char *key)
 
 // maplumpinfo->wad_file->name
 
+char *savewadfilename = NULL;
+
 static void P_WriteWadFileName (const char *key)
 {
 	M_snprintf(line, sizeof(line), "%s %s\n", key, maplumpinfo->wad_file->name);
 	fputs(line, save_stream);
 }
 
-// gameoptions
-
-static void P_WriteGameOptions (const char *key)
+static void P_ReadWadFileName (const char *key)
 {
-	int value;
-
-	value = (respawnparm ? 1 : 0) |
-	        (fastparm ? 2 : 0) |
-	        (nomonsters ? 4 : 0) |
-	        (deathmatch << 4);
-
-	M_snprintf(line, sizeof(line), "%s %d\n", key, value);
-	fputs(line, save_stream);
-}
-
-static void P_ReadGameOptions (const char *key)
-{
-	int value;
-
-	if (sscanf(line, "%s %d", string, &value) == 2 &&
-	    !strncmp(string, key, sizeof(string)))
+	if (!savewadfilename)
 	{
-		respawnparm = value & 1;
-		fastparm = (value >> 1) & 1;
-		nomonsters = (value >> 2) & 1;
-		deathmatch = (value >> 4) & 2;
+		if (sscanf(line, "%s", string) == 1 &&
+			!strncmp(string, key, sizeof(string)))
+		{
+			if (sscanf(line, "%*s %s", string) == 1)
+			{
+				savewadfilename = strdup(string);
+			}
+		}
 	}
 }
 
@@ -118,96 +98,6 @@ static void P_ReadTotalLevelTimes (const char *key)
 	    !strncmp(string, key, sizeof(string)))
 	{
 		totalleveltimes = value;
-	}
-}
-
-// plats
-
-static void P_WritePlats (const char *key)
-{
-	thinker_t* th;
-
-	for (th = thinkercap.next; th != &thinkercap; th = th->next)
-	{
-		if (th->function.acv == (actionf_v)NULL)
-		{
-			int i;
-
-			for (i = 0; i < MAXPLATS; i++)
-			{
-				if (activeplats[i] == (plat_t *)th)
-				{
-					break;
-				}
-			}
-
-			if (i < MAXPLATS)
-			{
-				plat_t *plat = (plat_t *)th;
-
-				M_snprintf(line, sizeof(line), "%s %d %d %d %d %d %d %d %d %d %d %d\n",
-				           key,
-				           (int)(plat->sector - sectors),
-				           (int)plat->speed,
-				           (int)plat->low,
-				           (int)plat->high,
-				           (int)plat->wait,
-				           (int)plat->count,
-				           (int)plat->status,
-				           (int)plat->oldstatus,
-				           (int)plat->crush,
-				           (int)plat->tag,
-				           (int)plat->type);
-				fputs(line, save_stream);
-			}
-
-			continue;
-		}
-	}
-}
-
-static void P_ReadPlats (const char *key)
-{
-	int sector, speed, low, high, wait, count, status, oldstatus, crush, tag, type;
-
-	if (sscanf(line, "%s %d %d %d %d %d %d %d %d %d %d %d",
-	           string,
-	           &sector,
-	           &speed,
-	           &low,
-	           &high,
-	           &wait,
-	           &count,
-	           &status,
-	           &oldstatus,
-	           &crush,
-	           &tag,
-	           &type) == 12 &&
-	    !strncmp(string, key, sizeof(string)))
-	{
-		plat_t *plat;
-
-		plat = Z_Malloc(sizeof(*plat), PU_LEVEL, NULL);
-
-		plat->sector = &sectors[sector];
-		plat->speed = speed;
-		plat->low = low;
-		plat->high = high;
-		plat->wait = wait;
-		plat->count = count;
-		plat->status = status;
-		plat->oldstatus = oldstatus;
-		plat->crush = crush;
-		plat->tag = tag;
-		plat->type = type;
-
-		plat->sector->specialdata = plat;
-
-		// [crispy] we only archive plats with plat->function.acv == NULL
-		plat->thinker.function.acv = (actionf_v)NULL;
-
-		P_AddThinker(&plat->thinker);
-		P_AddActivePlat(plat);
 	}
 }
 
@@ -263,34 +153,6 @@ static void P_ReadFireFlicker (const char *key)
 	}
 }
 
-// players[]->lookdir
-
-static void P_WritePlayersLookdir (const char *key)
-{
-	int i;
-
-	for (i = 0; i < MAXPLAYERS; i++)
-	{
-		if (playeringame[i] && players[i].lookdir)
-		{
-			M_snprintf(line, sizeof(line), "%s %d %d\n", key, i, players[i].lookdir);
-			fputs(line, save_stream);
-		}
-	}
-}
-
-static void P_ReadPlayersLookdir (const char *key)
-{
-	int i, value;
-
-	if (sscanf(line, "%s %d %d", string, &i, &value) == 3 &&
-	    !strncmp(string, key, sizeof(string)) &&
-	    i < MAXPLAYERS)
-	{
-		players[i].lookdir = value;
-	}
-}
-
 // markpoints[]
 
 extern void AM_GetMarkPoints (int *n, long *p);
@@ -332,41 +194,63 @@ static void P_ReadMarkPoints (const char *key)
 	}
 }
 
+// players[]->lookdir
+
+static void P_WritePlayersLookdir (const char *key)
+{
+	int i;
+
+	for (i = 0; i < MAXPLAYERS; i++)
+	{
+		if (playeringame[i] && players[i].lookdir)
+		{
+			M_snprintf(line, sizeof(line), "%s %d %d\n", key, i, players[i].lookdir);
+			fputs(line, save_stream);
+		}
+	}
+}
+
+static void P_ReadPlayersLookdir (const char *key)
+{
+	int i, value;
+
+	if (sscanf(line, "%s %d %d", string, &i, &value) == 3 &&
+	    !strncmp(string, key, sizeof(string)) &&
+	    i < MAXPLAYERS)
+	{
+		players[i].lookdir = value;
+	}
+}
+
 typedef struct
 {
 	const char *key;
-	const int pass; // [crispy] 0 = first pass; 1 = second pass; -1 = disabled
 	void (* extsavegwritefn) (const char *key);
 	void (* extsavegreadfn) (const char *key);
 } extsavegdata_t;
 
 static const extsavegdata_t extsavegdata[] =
 {
-	{PACKAGE_TARNAME, 0, P_WritePackageTarname, NULL},
-	{"wadfilename", 0, P_WriteWadFileName, NULL},
-	{"gameoptions", -1, P_WriteGameOptions, P_ReadGameOptions},
-	{"extrakills", 1, P_WriteExtraKills, P_ReadExtraKills},
-	{"totalleveltimes", 1, P_WriteTotalLevelTimes, P_ReadTotalLevelTimes},
-	{"plats", -1, P_WritePlats, P_ReadPlats}, // [crispy] disabled, solved in the regular P_ArchiveSpecials()
-	{"fireflicker", 1, P_WriteFireFlicker, P_ReadFireFlicker},
-	{"markpoints", 1, P_WriteMarkPoints, P_ReadMarkPoints},
-	{"playerslookdir", 1, P_WritePlayersLookdir, P_ReadPlayersLookdir},
+	{PACKAGE_TARNAME, P_WritePackageTarname, NULL},
+	{"wadfilename", P_WriteWadFileName, P_ReadWadFileName},
+	{"extrakills", P_WriteExtraKills, P_ReadExtraKills},
+	{"totalleveltimes", P_WriteTotalLevelTimes, P_ReadTotalLevelTimes},
+	{"fireflicker", P_WriteFireFlicker, P_ReadFireFlicker},
+	{"markpoints", P_WriteMarkPoints, P_ReadMarkPoints},
+	{"playerslookdir", P_WritePlayersLookdir, P_ReadPlayersLookdir},
 };
 
 void P_WriteExtendedSaveGameData (void)
 {
 	int i;
 
-	if (crispy_extsaveg)
+	for (i = 0; i < arrlen(extsavegdata); i++)
 	{
-		for (i = 0; i < arrlen(extsavegdata); i++)
-		{
-			extsavegdata[i].extsavegwritefn(extsavegdata[i].key);
-		}
+		extsavegdata[i].extsavegwritefn(extsavegdata[i].key);
 	}
 }
 
-static void P_ReadKeyValuePairs (int pass)
+static void P_ReadKeyValuePairs (void)
 {
 	while (fgets(line, sizeof(line), save_stream))
 	{
@@ -377,7 +261,6 @@ static void P_ReadKeyValuePairs (int pass)
 			for (i = 1; i < arrlen(extsavegdata); i++)
 			{
 				if (extsavegdata[i].extsavegreadfn &&
-				    extsavegdata[i].pass == pass &&
 				    !strncmp(string, extsavegdata[i].key, sizeof(string)))
 				{
 					extsavegdata[i].extsavegreadfn(extsavegdata[i].key);
@@ -387,7 +270,7 @@ static void P_ReadKeyValuePairs (int pass)
 	}
 }
 
-static void P_ReadFirstPass (void)
+void P_ReadExtendedSaveGameData (void)
 {
 	long p, curpos, endpos;
 
@@ -417,26 +300,11 @@ static void P_ReadFirstPass (void)
 			if (sscanf(line, "%s", string) == 1 &&
 			    !strncmp(string, extsavegdata[0].key, sizeof(string)))
 			{
-				P_ReadKeyValuePairs(0);
+				P_ReadKeyValuePairs();
 				break;
 			}
 		}
 	}
 
 	fseek(save_stream, curpos, SEEK_SET);
-}
-
-void P_ReadExtendedSaveGameData (int pass)
-{
-	if (crispy_extsaveg)
-	{
-		if (pass)
-		{
-			P_ReadKeyValuePairs(pass);
-		}
-		else
-		{
-			P_ReadFirstPass();
-		}
-	}
 }
