@@ -25,11 +25,7 @@
 #include "p_local.h"
 #include "v_video.h"
 
-#define SVG_RAM 0
-#define SVG_FILE 1
-
 static FILE *SaveGameFP;
-static byte *savebuffer, *save_p;
 
 int vanilla_savegame_limit = 1;
 

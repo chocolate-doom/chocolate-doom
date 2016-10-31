@@ -2027,7 +2027,7 @@ void SV_LoadGame(int slot)
 {
     int i;
     char fileName[100];
-    char version_text[16];
+    char version_text[HXS_VERSION_TEXT_LENGTH];
     player_t playerBackup[MAXPLAYERS];
     mobj_t *mobj;
 
@@ -2049,11 +2049,11 @@ void SV_LoadGame(int slot)
 
     // Check the version text
 
-    for (i = 0; i < 16; ++i)
+    for (i = 0; i < sizeof(version_text); ++i)
     {
         version_text[i] = SV_ReadByte();
     }
-    if (strcmp(version_text, HXS_VERSION_TEXT) != 0)
+    if (strncmp(version_text, HXS_VERSION_TEXT, HXS_VERSION_TEXT_LENGTH) != 0)
     {                           // Bad version
         return;
     }
@@ -3262,7 +3262,7 @@ static void CopyFile(char *source_name, char *dest_name)
     read_handle = fopen(source_name, "rb");
     if (read_handle == NULL)
     {
-	    I_Error ("Couldn't read file %s", source_name);
+        I_Error ("Couldn't read file %s", source_name);
     }
     file_length = file_remaining = M_FileLength(read_handle);
 
@@ -3281,7 +3281,7 @@ static void CopyFile(char *source_name, char *dest_name)
     write_handle = fopen(dest_name, "wb");
     if (write_handle == NULL)
     {
-	    I_Error ("Couldn't read file %s", dest_name);
+        I_Error ("Couldn't read file %s", dest_name);
     }
 
     buffer = Z_Malloc (BUFFER_CHUNK_SIZE, PU_STATIC, NULL);
@@ -3297,12 +3297,12 @@ static void CopyFile(char *source_name, char *dest_name)
         read_count = fread(buffer, 1, buf_count, read_handle);
         if (read_count < buf_count)
         {
-	        I_Error ("Couldn't read file %s", source_name);
+            I_Error ("Couldn't read file %s", source_name);
         }
         write_count = fwrite(buffer, 1, buf_count, write_handle);
         if (read_count < buf_count)
         {
-	        I_Error ("Couldn't read file %s", dest_name);
+            I_Error ("Couldn't read file %s", dest_name);
         }
 
         file_remaining -= buf_count;

@@ -52,14 +52,14 @@
 ### Heretic
   * Added map names for Episode 6, fixing a crash after completing a
     level in this episode. (thanks J.Benaim)
-  * Add unlimited demo/savegame support. (thanks CapnClever)
+  * Added unlimited demo/savegame support. (thanks CapnClever)
 
 ### Hexen
   * The MRJONES cheat code returns an identical string as vanilla, and
     enables fully reproducable builds. (thanks Fabian)
   * Fixed an issue where the game crashed while killing the
     Wraithverge in 64-bit builds. (thanks J.Benaim)
-  * Add unlimited demo/savegame support. (thanks CapnClever)
+  * Added unlimited demo/savegame support. (thanks CapnClever)
 
 ### Strife
   * Support added for automatic loading of the IWAD from the GOG.com
