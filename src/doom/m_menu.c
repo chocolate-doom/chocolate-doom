@@ -3031,8 +3031,8 @@ void M_Init (void)
     opldev = M_CheckParm("-opldev") > 0;
 }
 
+// [crispy] extended savegames
 static char *extsavegwarning;
-
 static void M_ForceLoadGameResponse(int key)
 {
 	free(extsavegwarning);

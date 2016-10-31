@@ -1850,10 +1850,12 @@ void G_DoLoadGame (void)
     
     // load a base level 
     G_InitNew (gameskill, gameepisode, gamemap); 
+    // [crispy] read extended savegame data
     if (crispy_extsaveg)
     {
         P_ReadExtendedSaveGameData();
     }
+    // [crispy] check if WAD file is valid to restore saved map
     if (savewadfilename)
     {
         // [crispy] strings are not equal
@@ -1965,6 +1967,7 @@ void G_DoSaveGame (void)
     P_ArchiveSpecials ();
 
     P_WriteSaveGameEOF();
+    // [crispy] write extended savegame data
     if (crispy_extsaveg)
     {
         P_WriteExtendedSaveGameData();
