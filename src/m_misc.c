@@ -240,7 +240,7 @@ char *M_BaseName(char *path)
     src = path + strlen(path) - 1;
 
     // back up until a \ or the start
-    while (src != path && *(src - 1) != DIR_SEPARATOR)
+    while (src != path && *(src - 1) != '\\' && *(src - 1) != '/')
     {
 	src--;
     }
@@ -259,7 +259,7 @@ char *M_DirName(char *path)
 
     while (src != res)
     {
-	if (*src == DIR_SEPARATOR)
+	if (*src == '\\' || *src == '/')
 	{
 	    *src = '\0';
 	    return res;
