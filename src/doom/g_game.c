@@ -1862,6 +1862,7 @@ void G_DoLoadGame (void)
         if (strcmp(savewadfilename, maplumpinfo->wad_file->name))
         {
             M_ForceLoadGame();
+            fclose(save_stream);
             return;
         }
         else
