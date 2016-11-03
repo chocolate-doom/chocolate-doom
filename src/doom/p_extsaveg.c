@@ -67,8 +67,11 @@ static void P_ReadWadFileName (const char *key)
 
 static void P_WriteExtraKills (const char *key)
 {
-	M_snprintf(line, sizeof(line), "%s %d\n", key, extrakills);
-	fputs(line, save_stream);
+	if (extrakills)
+	{
+		M_snprintf(line, sizeof(line), "%s %d\n", key, extrakills);
+		fputs(line, save_stream);
+	}
 }
 
 static void P_ReadExtraKills (const char *key)
@@ -86,8 +89,11 @@ static void P_ReadExtraKills (const char *key)
 
 static void P_WriteTotalLevelTimes (const char *key)
 {
-	M_snprintf(line, sizeof(line), "%s %d\n", key, totalleveltimes);
-	fputs(line, save_stream);
+	if (totalleveltimes)
+	{
+		M_snprintf(line, sizeof(line), "%s %d\n", key, totalleveltimes);
+		fputs(line, save_stream);
+	}
 }
 
 static void P_ReadTotalLevelTimes (const char *key)
