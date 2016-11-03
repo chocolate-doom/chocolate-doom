@@ -177,7 +177,7 @@ extern	int	extrakills; // [crispy] count spawned monsters
 // Timer, for scores.
 extern  int	levelstarttic;	// gametic at level start
 extern  int	leveltime;	// tics in game play for par
-extern  int	totalleveltimes;
+extern  int	totalleveltimes; // [crispy] CPhipps - total time for all completed levels
 
 
 
