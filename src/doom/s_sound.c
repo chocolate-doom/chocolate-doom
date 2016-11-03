@@ -534,6 +534,11 @@ void S_StartSound(void *origin_p, int sfx_id)
     origin = (mobj_t *) origin_p;
     volume = snd_SfxVolume;
 
+    // [crispy] make non-fatal
+    if (sfx_id == sfx_None)
+    {
+        return;
+    }
     // check for bogus sound #
     if (sfx_id < 1 || sfx_id > NUMSFX)
     {
