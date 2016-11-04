@@ -733,8 +733,12 @@ P_KillMobj
 	P_SetMobjState (target, target->info->deathstate);
     target->tics -= P_Random()&3;
 
-    // [crispy] randomize corpse health
-    target->health -= Crispy_Random() & 1;
+    // [crispy] randomly flip corpse, blood and death animation sprites
+    // except for Cyberdemons and Barrels which are too asymmetrical
+    if (target->type != MT_CYBORG && target->type != MT_BARREL)
+    {
+	target->flipsprite = Crispy_Random() & 1;
+    }
 
     if (target->tics < 1)
 	target->tics = 1;

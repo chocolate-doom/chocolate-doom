@@ -949,7 +949,7 @@ void P_SpawnMapThing (mapthing_t* mthing)
     if (mobj->info->spawnstate == S_PLAY_DIE7 ||
         mobj->info->spawnstate == S_PLAY_XDIE9)
     {
-	mobj->health -= Crispy_Random() & 1;
+	mobj->flipsprite = Crispy_Random() & 1;
 	// [crispy] randomly colorize space marine corpse objects
 	if (!netgame &&
 	    crispy_coloredblood & COLOREDBLOOD_CORPSE)
@@ -1001,6 +1001,9 @@ P_SpawnPuffSafe
     // don't make punches spark on the wall
     if (attackrange == MELEERANGE)
 	P_SetMobjState (th, safe ? P_LatestSafeState(S_PUFF3) : S_PUFF3);
+
+    // [crispy] randomly flip corpse, blood and death animation sprites
+    th->flipsprite = Crispy_Random() & 1;
 }
 
 
@@ -1036,6 +1039,9 @@ P_SpawnBlood
 	P_SetMobjState (th,S_BLOOD2);
     else if (damage < 9)
 	P_SetMobjState (th,S_BLOOD3);
+
+    // [crispy] randomly flip corpse, blood and death animation sprites
+    th->flipsprite = Crispy_Random() & 1;
 }
 
 

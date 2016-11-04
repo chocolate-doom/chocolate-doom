@@ -280,6 +280,9 @@ typedef struct mobj_s
     // Thing being chased/attacked for tracers.
     struct mobj_s*	tracer;	
     
+    // [crispy] randomly flip corpse, blood and death animation sprites
+    boolean             flipsprite;
+
     // [AM] If true, ok to interpolate this tic.
     boolean             interp;
 
