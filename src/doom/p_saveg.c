@@ -296,6 +296,18 @@ static void saveg_write_thinker_t(thinker_t *str)
 // mobj_t
 //
 
+// [crispy] encode sprite flipping in thing health value
+static inline boolean crispy_flippablesprite (mobj_t *thing)
+{
+	return ((thing->flags & MF_CORPSE &&
+	        thing->type != MT_CYBORG &&
+	        thing->type != MT_BARREL) ||
+	        thing->type == MT_BLOOD ||
+	        thing->type == MT_PUFF ||
+	        thing->info->spawnstate == S_PLAY_DIE7 ||
+	        thing->info->spawnstate == S_PLAY_XDIE9);
+}
+
 static void saveg_read_mobj_t(mobj_t *str)
 {
     int pl;
@@ -414,6 +426,9 @@ static void saveg_read_mobj_t(mobj_t *str)
 
     // struct mobj_s* tracer;
     str->tracer = saveg_readp();
+
+    // [crispy] encode sprite flipping in thing health value
+    str->flipsprite = crispy_flippablesprite(str) && (str->health & 1);
 }
 
 // [crispy] enumerate all thinker pointers
@@ -539,6 +554,14 @@ static void saveg_write_mobj_t(mobj_t *str)
     // int flags;
     saveg_write32(str->flags);
 
+    // [crispy] encode sprite flipping in thing health value
+    if (crispy_flippablesprite(str))
+    {
+        if ((str->health & 1) ^ str->flipsprite)
+        {
+            str->health--;
+        }
+    }
     // int health;
     saveg_write32(str->health);
 
