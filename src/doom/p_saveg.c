@@ -77,7 +77,7 @@ char *P_SaveGameFile(int slot)
 
 static byte saveg_read8(void)
 {
-    byte result;
+    byte result = -1;
 
     if (fread(&result, 1, 1, save_stream) < 1)
     {
