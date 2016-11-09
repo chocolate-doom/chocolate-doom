@@ -226,31 +226,9 @@ void MainMenu(void)
                          (TxtWidgetSignalFunc) ConfigMouse, NULL),
           TXT_NewButton2("Configure Gamepad/Joystick",
                          (TxtWidgetSignalFunc) ConfigJoystick, NULL),
+          TXT_NewButton2(gamemission == doom ? "Crispness" : "Compatibility",
+                         (TxtWidgetSignalFunc) CompatibilitySettings, NULL),
           NULL);
-
-    // The compatibility window is only appropriate for Doom/Strife.
-
-    if (gamemission == doom)
-    {
-        txt_button_t *button;
-
-        button = TXT_NewButton2("Crispness",
-                                (TxtWidgetSignalFunc) CompatibilitySettings,
-                                NULL);
-
-        TXT_AddWidget(window, button);
-    }
-    else
-    if (gamemission == strife)
-    {
-        txt_button_t *button;
-
-        button = TXT_NewButton2("Compatibility", 
-                                (TxtWidgetSignalFunc) CompatibilitySettings,
-                                NULL);
-
-        TXT_AddWidget(window, button);
-    }
 
     TXT_AddWidgets(window,
           GetLaunchButton(),

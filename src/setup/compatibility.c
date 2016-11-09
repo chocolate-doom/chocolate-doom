@@ -111,13 +111,9 @@ void CompatibilitySettings(void)
 
 void BindCompatibilityVariables(void)
 {
-    if (gamemission == doom || gamemission == strife)
+    // [crispy]
+    if (gamemission == doom)
     {
-        M_BindIntVariable("vanilla_savegame_limit", &vanilla_savegame_limit);
-        M_BindIntVariable("vanilla_demo_limit",     &vanilla_demo_limit);
-        // [crispy]
-        if (gamemission == doom)
-        {
         M_BindIntVariable("crispy_automapstats",    &crispy_automapstats);
         M_BindIntVariable("crispy_centerweapon",    &crispy_centerweapon);
         M_BindIntVariable("crispy_coloredblood",    &crispy_coloredblood);
@@ -136,7 +132,11 @@ void BindCompatibilityVariables(void)
         M_BindIntVariable("crispy_secretmessage",   &crispy_secretmessage);
         M_BindIntVariable("crispy_translucency",    &crispy_translucency);
         M_BindIntVariable("crispy_uncapped",        &crispy_uncapped);
-        }
+    }
+    else
+    {
+    M_BindIntVariable("vanilla_savegame_limit", &vanilla_savegame_limit);
+    M_BindIntVariable("vanilla_demo_limit",     &vanilla_demo_limit);
     }
 }
 
