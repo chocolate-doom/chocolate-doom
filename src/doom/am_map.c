@@ -1700,11 +1700,16 @@ void AM_GetMarkPoints (int *n, long *p)
 	int i;
 
 	*n = markpointnum;
+	*p = -1L;
 
-	for (i = 0; i < AM_NUMMARKPOINTS; i++)
+	// [crispy] prevent saving markpoints from previous map
+	if (lastlevel == gamemap && lastepisode == gameepisode)
 	{
-		*p++ = (long)markpoints[i].x;
-		*p++ = (markpoints[i].x == -1) ? 0L : (long)markpoints[i].y;
+		for (i = 0; i < AM_NUMMARKPOINTS; i++)
+		{
+			*p++ = (long)markpoints[i].x;
+			*p++ = (markpoints[i].x == -1) ? 0L : (long)markpoints[i].y;
+		}
 	}
 }
 
