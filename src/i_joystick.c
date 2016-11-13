@@ -68,7 +68,7 @@ static int joystick_strafe_invert = 0;
 // Virtual to physical button joystick button mapping. By default this
 // is a straight mapping.
 static int joystick_physical_buttons[NUM_VIRTUAL_BUTTONS] = {
-    0, 1, 2, 3, 4, 5, 6, 7, 8, 9
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
 };
 
 void I_ShutdownJoystick(void)
