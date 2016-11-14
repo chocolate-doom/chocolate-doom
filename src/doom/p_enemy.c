@@ -175,7 +175,7 @@ boolean P_CheckMeleeRange (mobj_t*	actor)
     pl = actor->target;
     dist = P_AproxDistance (pl->x-actor->x, pl->y-actor->y);
 
-    if (dist >= MELEERANGE-20*FRACUNIT+pl->info->radius)
+    if (dist >= (gameversion == exe_doom_1_2) ? MELEERANGE : MELEERANGE-20*FRACUNIT+pl->info->radius)
 	return false;
 	
     if (! P_CheckSight (actor, actor->target) )
@@ -665,6 +665,12 @@ void A_Chase (mobj_t*	actor)
     // modify target threshold
     if  (actor->threshold)
     {
+        if (gameversion == exe_doom_1_2)
+        {
+            actor->threshold--;
+        }
+        else
+        {
 	if (!actor->target
 	    || actor->target->health <= 0)
 	{
@@ -672,6 +678,7 @@ void A_Chase (mobj_t*	actor)
 	}
 	else
 	    actor->threshold--;
+        }
     }
     
     // turn towards movement direction if not there yet
@@ -925,6 +932,12 @@ void A_SargAttack (mobj_t* actor)
 	return;
 		
     A_FaceTarget (actor);
+    if (gameversion == exe_doom_1_2)
+    {
+      damage = ((P_Random()%10)+1)*4;
+      P_LineAttack(actor, actor->angle, MELEERANGE, 0, damage);
+      return;
+    }
     if (P_CheckMeleeRange (actor))
     {
 	damage = ((P_Random()%10)+1)*4;

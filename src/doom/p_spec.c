@@ -368,7 +368,7 @@ P_FindNextHighestFloor
     // Find lowest height in list
     if (!h)
     {
-        return currentheight;
+        return (gameversion < exe_doom_1_666 ? 0 : currentheight);
     }
         
     min = heightlist[0];
@@ -508,6 +508,13 @@ P_CrossSpecialLine
     int		ok;
 
     line = &lines[linenum];
+
+    if (gameversion == exe_doom_1_2 &&
+        line->special > 98 &&
+        line->special != 104)
+    {
+         return;
+    }
     
     //	Triggers that other things can activate
     if (!thing->player)

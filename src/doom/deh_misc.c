@@ -19,6 +19,7 @@
 #include <string.h>
 
 #include "doomtype.h"
+#include "doomstat.h"
 #include "deh_defs.h"
 #include "deh_io.h"
 #include "deh_main.h"
@@ -154,6 +155,12 @@ static struct
 
 static void *DEH_MiscStart(deh_context_t *context, char *line)
 {
+    if (gameversion == exe_doom_1_2)
+    {
+        deh_max_health = 199;
+        deh_max_soulsphere = 199;
+    }
+
     return NULL;
 }
 

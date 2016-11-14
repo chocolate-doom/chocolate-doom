@@ -953,6 +953,7 @@ static struct
     char *cmdline;
     GameVersion_t version;
 } gameversions[] = {
+    {"Doom 1.2",             "1.2",        exe_doom_1_2},
     {"Doom 1.666",           "1.666",      exe_doom_1_666},
     {"Doom 1.7/1.7a",        "1.7",        exe_doom_1_7},
     {"Doom 1.8",             "1.8",        exe_doom_1_8},

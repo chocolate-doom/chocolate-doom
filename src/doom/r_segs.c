@@ -110,7 +110,7 @@ R_RenderMaskedSegRange
     curline = ds->curline;
     frontsector = curline->frontsector;
     backsector = curline->backsector;
-    texnum = texturetranslation[curline->sidedef->midtexture];
+    texnum = (gameversion > exe_doom_1_2) ? texturetranslation[curline->sidedef->midtexture] : curline->sidedef->midtexture;
 	
     lightnum = (frontsector->lightlevel >> LIGHTSEGSHIFT)+extralight;
 
