@@ -708,7 +708,7 @@ static void BuildIWADDirList(void)
 
 char *D_FindWADByName(char *name)
 {
-    char *path;
+    char *path, *up_name = NULL;
     int i;
     
     // Absolute path?
@@ -717,6 +717,18 @@ char *D_FindWADByName(char *name)
     {
         return name;
     }
+
+#ifndef _WIN32
+    // try again with upper-case file name
+
+    up_name = M_StringDuplicate(name);
+    M_ForceUppercase(up_name);
+
+    if (M_FileExists(up_name))
+    {
+        return up_name;
+    }
+#endif
 
     BuildIWADDirList();
 
@@ -739,11 +751,28 @@ char *D_FindWADByName(char *name)
 
         if (M_FileExists(path))
         {
+            free(up_name);
             return path;
         }
 
         free(path);
+
+#ifndef _WIN32
+        // try again with upper-case file name
+
+        path = M_StringJoin(iwad_dirs[i], DIR_SEPARATOR_S, up_name, NULL);
+
+        if (M_FileExists(path))
+        {
+            free(up_name);
+            return path;
+        }
+
+        free(path);
+#endif
     }
+
+    free(up_name);
 
     // File not found
 
