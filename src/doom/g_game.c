@@ -2072,23 +2072,29 @@ void G_BeginRecording (void)
 	
     // Save the right version code for this demo
  
-    if (longtics)
+    if (gameversion > exe_doom_1_2)
     {
-        *demo_p++ = DOOM_191_VERSION;
-    }
-    else
-    {
-        *demo_p++ = G_VanillaVersionCode();
+        if (longtics)
+        {
+            *demo_p++ = DOOM_191_VERSION;
+        }
+        else
+        {
+            *demo_p++ = G_VanillaVersionCode();
+        }
     }
 
     *demo_p++ = gameskill; 
     *demo_p++ = gameepisode; 
     *demo_p++ = gamemap; 
-    *demo_p++ = deathmatch; 
-    *demo_p++ = respawnparm;
-    *demo_p++ = fastparm;
-    *demo_p++ = nomonsters;
-    *demo_p++ = consoleplayer;
+    if (gameversion > exe_doom_1_2)
+    {
+        *demo_p++ = deathmatch;
+        *demo_p++ = respawnparm;
+        *demo_p++ = fastparm;
+        *demo_p++ = nomonsters;
+        *demo_p++ = consoleplayer;
+    }
 	 
     for (i=0 ; i<MAXPLAYERS ; i++) 
 	*demo_p++ = playeringame[i]; 		 
@@ -2157,38 +2163,56 @@ void G_DoPlayDemo (void)
 
     demoversion = *demo_p++;
 
-    if (demoversion == G_VanillaVersionCode())
+    if (gameversion > exe_doom_1_2)
     {
-        longtics = false;
-    }
-    else if (demoversion == DOOM_191_VERSION)
-    {
-        // demo recorded with cph's modified "v1.91" doom exe
-        longtics = true;
+        if (demoversion == G_VanillaVersionCode())
+        {
+            longtics = false;
+        }
+        else if (demoversion == DOOM_191_VERSION)
+        {
+            // demo recorded with cph's modified "v1.91" doom exe
+            longtics = true;
+        }
+        else
+        {
+            char *message = "Demo is from a different game version!\n"
+                            "(read %i, should be %i)\n"
+                            "\n"
+                            "*** You may need to upgrade your version "
+                                "of Doom to v1.9. ***\n"
+                            "    See: https://www.doomworld.com/classicdoom"
+                                      "/info/patches.php\n"
+                            "    This appears to be %s.";
+
+            I_Error(message, demoversion, G_VanillaVersionCode(),
+                             DemoVersionDescription(demoversion));
+        }
+
+        skill = *demo_p++;
     }
     else
     {
-        char *message = "Demo is from a different game version!\n"
-                        "(read %i, should be %i)\n"
-                        "\n"
-                        "*** You may need to upgrade your version "
-                            "of Doom to v1.9. ***\n"
-                        "    See: https://www.doomworld.com/classicdoom"
-                                  "/info/patches.php\n"
-                        "    This appears to be %s.";
-
-        I_Error(message, demoversion, G_VanillaVersionCode(),
-                         DemoVersionDescription(demoversion));
+        longtics = false;
+        skill = demoversion;
     }
     
-    skill = *demo_p++; 
     episode = *demo_p++; 
     map = *demo_p++; 
-    deathmatch = *demo_p++;
-    respawnparm = *demo_p++;
-    fastparm = *demo_p++;
-    nomonsters = *demo_p++;
-    consoleplayer = *demo_p++;
+    if (gameversion > exe_doom_1_2)
+    {
+        deathmatch = *demo_p++;
+        respawnparm = *demo_p++;
+        fastparm = *demo_p++;
+        nomonsters = *demo_p++;
+        consoleplayer = *demo_p++;
+    }
+    else
+    {
+        respawnparm = M_CheckParm ("-respawn");
+        fastparm = M_CheckParm ("-fast");
+        nomonsters = M_CheckParm ("-nomonsters");
+    }
 	
     for (i=0 ; i<MAXPLAYERS ; i++) 
 	playeringame[i] = *demo_p++; 
