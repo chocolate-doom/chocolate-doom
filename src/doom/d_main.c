@@ -1205,6 +1205,13 @@ static void LoadIwadDeh(void)
             I_Error("Failed to load chex.deh needed for emulating chex.exe.");
         }
     }
+
+    if (gameversion == exe_doom_1_2)
+    {
+        extern void P_SetSkullCountkillFlag (boolean set);
+
+        P_SetSkullCountkillFlag(true);
+    }
 }
 
 static void G_CheckDemoStatusAtExit (void)

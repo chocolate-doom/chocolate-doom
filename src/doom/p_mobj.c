@@ -1059,3 +1059,14 @@ P_SpawnPlayerMissile
     P_CheckMissileSpawn (th);
 }
 
+void P_SetSkullCountkillFlag (boolean set)
+{
+    if (set)
+    {
+        mobjinfo[MT_SKULL].flags |= (MF_COUNTKILL);
+    }
+    else
+    {
+        mobjinfo[MT_SKULL].flags &= ~(MF_COUNTKILL);
+    }
+}
