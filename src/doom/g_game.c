@@ -2209,9 +2209,28 @@ void G_DoPlayDemo (void)
     }
     else
     {
+        size_t lumpsize;
+
+        deathmatch = 0;
         respawnparm = M_CheckParm ("-respawn");
         fastparm = M_CheckParm ("-fast");
         nomonsters = M_CheckParm ("-nomonsters");
+        consoleplayer = 0;
+
+        lumpsize =  lumpinfo[W_GetNumForName(defdemoname)]->size;
+
+        if (*(demobuffer + lumpsize - 1) == DEMOMARKER)
+        {
+            // file size test;
+            // DOOM_old and HERETIC don't use maps>9;
+            // 2 at 4,6 means playerclass=mage -> not DOOM_old or HERETIC;
+            if ((lumpsize >= 8 && (lumpsize - 8) % 4 != 0) ||
+                (map > 9) ||
+                (lumpsize >= 6 && (*(demobuffer + 4) == 2 || *(demobuffer + 6) == 2)))
+            {
+                I_Error("Unrecognised demo format.");
+            }
+        }
     }
 	
     for (i=0 ; i<MAXPLAYERS ; i++) 
