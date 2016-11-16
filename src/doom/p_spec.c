@@ -368,6 +368,10 @@ P_FindNextHighestFloor
     // Find lowest height in list
     if (!h)
     {
+        /* cph - my guess at doom v1.2 - 1.4beta compatibility here.
+         * If there are no higher neighbouring sectors, Heretic just returned
+         * heightlist[0] (local variable), i.e. noise off the stack. 0 is right for
+         * RETURN01 E1M2, so let's take that. */
         return (gameversion < exe_doom_1_666 ? 0 : currentheight);
     }
         
@@ -509,11 +513,15 @@ P_CrossSpecialLine
 
     line = &lines[linenum];
 
-    if (gameversion == exe_doom_1_2 &&
-        line->special > 98 &&
-        line->special != 104)
+    // e6y: Improved doom 1.2 compatibility:
+    // Doom 1.2 has no support for these linedef actions:
+    // 100, 105, 106, 107, 108, 109, 110, 119, 120, 121, 124, 125, 126, 128, 129, 130, 141
+    if (gameversion == exe_doom_1_2)
     {
-         return;
+        if (line->special > 98 && line->special != 104)
+        {
+             return;
+        }
     }
     
     //	Triggers that other things can activate

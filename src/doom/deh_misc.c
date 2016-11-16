@@ -159,6 +159,8 @@ static void *DEH_MiscStart(deh_context_t *context, char *line)
     {
         deh_max_health = 199;
         deh_max_soulsphere = 199;
+        // there was no megasphere back then, but this seems consistent
+        deh_megasphere_health = 199;
     }
 
     return NULL;

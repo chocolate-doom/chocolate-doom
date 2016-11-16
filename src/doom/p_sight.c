@@ -292,7 +292,8 @@ boolean P_CrossBSPNode (int bspnum)
     return P_CrossBSPNode (bsp->children[side^1]);
 }
 
-// imported from heretic/p_sight.c:
+// Improved doom 1.2 compatibility:
+// restored original P_CheckSight (copy-pasted from heretic sources)
 
 /*
 ==============

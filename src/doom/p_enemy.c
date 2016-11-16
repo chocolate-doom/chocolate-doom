@@ -175,6 +175,8 @@ boolean P_CheckMeleeRange (mobj_t*	actor)
     pl = actor->target;
     dist = P_AproxDistance (pl->x-actor->x, pl->y-actor->y);
 
+    // Improved doom 1.2 compatibility:
+    // 1.2 does not use radius of actor in P_CheckMeleeRange
     if (dist >= (gameversion == exe_doom_1_2) ? MELEERANGE : MELEERANGE-20*FRACUNIT+pl->info->radius)
 	return false;
 	
@@ -665,6 +667,7 @@ void A_Chase (mobj_t*	actor)
     // modify target threshold
     if  (actor->threshold)
     {
+        // Improved doom 1.2 compatibility: Fixed A_Chase.
         if (gameversion == exe_doom_1_2)
         {
             actor->threshold--;
@@ -932,12 +935,14 @@ void A_SargAttack (mobj_t* actor)
 	return;
 		
     A_FaceTarget (actor);
+    // Improved doom 1.2 compatibility:
+    // 1.2 uses completely different A_SargAttack
     if (gameversion == exe_doom_1_2)
     {
       damage = ((P_Random()%10)+1)*4;
       P_LineAttack(actor, actor->angle, MELEERANGE, 0, damage);
-      return;
     }
+    else
     if (P_CheckMeleeRange (actor))
     {
 	damage = ((P_Random()%10)+1)*4;

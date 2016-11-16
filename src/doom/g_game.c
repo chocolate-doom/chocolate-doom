@@ -2212,13 +2212,23 @@ void G_DoPlayDemo (void)
         size_t lumpsize;
 
         deathmatch = 0;
+        consoleplayer = 0;
+
+        // e6y
+        // Ability to force -nomonsters and -respawn for playback of 1.2 demos.
+        // Demos recorded with Doom.exe 1.2 did not contain any information
+        // about whether these parameters had been used. In order to play them
+        // back, you should add them to the command-line for playback.
+        // There is no more desynch on mesh.lmp @ mesh.wad
+        // prboom -iwad doom.wad -file mesh.wad -playdemo mesh.lmp -nomonsters
+        // http://www.doomworld.com/idgames/index.php?id=13976
         respawnparm = M_CheckParm ("-respawn");
         fastparm = M_CheckParm ("-fast");
         nomonsters = M_CheckParm ("-nomonsters");
-        consoleplayer = 0;
 
         lumpsize =  lumpinfo[W_GetNumForName(defdemoname)]->size;
 
+        // e6y: detection of more unsupported demo formats
         if (*(demobuffer + lumpsize - 1) == DEMOMARKER)
         {
             // file size test;
