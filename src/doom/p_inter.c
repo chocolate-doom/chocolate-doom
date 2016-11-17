@@ -662,6 +662,10 @@ P_TouchSpecialThing
 	player->itemcount++;
     P_RemoveMobj (special);
     player->bonuscount += BONUSADD;
+    if (gameversion <= exe_doom_1_2 && sound == sfx_getpow)
+    {
+        sound = sfx_itemup;
+    }
     if (player == &players[consoleplayer])
 	S_StartSound (NULL, sound);
 }
