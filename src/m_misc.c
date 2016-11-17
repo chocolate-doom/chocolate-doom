@@ -83,6 +83,82 @@ boolean M_FileExists(char *filename)
     }
 }
 
+char *M_FileCaseExists(char *path)
+{
+    char *filename, *filename_orig, *p;
+
+    // 0: try the actual path
+    if (M_FileExists(path))
+    {
+        return path;
+    }
+
+    // find the file name in the path string
+    filename = path + strlen(path) - 1;
+
+    while (filename != path && *(filename - 1) != DIR_SEPARATOR)
+    {
+        filename--;
+    }
+
+    // back up the original file name
+    filename_orig = M_StringDuplicate(filename);
+
+    // 1: try with the file name in all-upper case
+    for (p = filename; *p != '\0'; ++p)
+    {
+        *p = toupper(*p);
+    }
+
+    if (M_FileExists(path))
+    {
+        free(filename_orig);
+        return path;
+    }
+
+    // 2: try with the file name in all-lower case
+    for (p = filename; *p != '\0'; ++p)
+    {
+        *p = tolower(*p);
+    }
+
+    if (M_FileExists(path))
+    {
+        free(filename_orig);
+        return path;
+    }
+
+    // 3. try mixed case: upper case base name, lower case extension
+    for (p = filename; *p != '.'; ++p)
+    {
+        *p = toupper(*p);
+    }
+
+    if (M_FileExists(path))
+    {
+        free(filename_orig);
+        return path;
+    }
+
+    // 4. try mixed case: upper case first letter, lower case else
+    for (p = filename; *p != '.'; ++p)
+    {
+        *p = tolower(*p);
+    }
+    *filename = toupper(*filename);
+
+    if (M_FileExists(path))
+    {
+        free(filename_orig);
+        return path;
+    }
+
+    // 5. still no luck :(
+    M_StringCopy(filename, filename_orig, strlen(filename) + 1);
+    free(filename_orig);
+    return NULL;
+}
+
 //
 // Determine the length of an open file.
 //
