@@ -547,7 +547,7 @@ extern int leveltime;           // tics in game play for par
 
 extern ticcmd_t *netcmds;
 
-#define SAVEGAMESIZE 0x30000
+#define SAVEGAMESIZE 0x30000*16
 #define SAVESTRINGSIZE 24
 
 extern mapthing_t *deathmatch_p;
