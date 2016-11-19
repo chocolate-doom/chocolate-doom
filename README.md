@@ -4,7 +4,7 @@ Hey guys, here's my extremely simple hack of Chocolate Doom to raise the limits 
 
 Lemon Doom is provided with no warranty whatsoever. If you find a bug, it should almost certainly be filed with the main Chocolate Doom fork, as my changes to the code were about as minimal as it gets. I don't know how to compile this on Windows, but I can help Linux users. Compiling Lemon Doom on Debian/Ubuntu systems is as simple as running the following commands:
 
-...
+```
 sudo apt-get install git
 sudo apt-get install build-essential automake
 sudo apt-get build-dep chocolate-doom
@@ -14,4 +14,4 @@ autoreconf -vif
 ./configure
 make
 sudo make install
-...
+```
