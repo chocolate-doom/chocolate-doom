@@ -22,7 +22,7 @@
 // Number of "virtual" joystick buttons defined in configuration files.
 // This needs to be at least as large as the number of different key
 // bindings supported by the higher-level game code (joyb* variables).
-#define NUM_VIRTUAL_BUTTONS 10
+#define NUM_VIRTUAL_BUTTONS 11
 
 // If this bit is set in a configuration file axis value, the axis is
 // not actually a joystick axis, but instead is a "button axis". This

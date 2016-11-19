@@ -25,12 +25,9 @@
 #include "p_local.h"
 #include "v_video.h"
 
-#define SVG_RAM 0
-#define SVG_FILE 1
-
 static FILE *SaveGameFP;
-static int SaveGameType;
-static byte *savebuffer, *save_p;
+
+int vanilla_savegame_limit = 1;
 
 
 //==========================================================================
@@ -63,13 +60,11 @@ char *SV_Filename(int slot)
 
 void SV_Open(char *fileName)
 {
-    SaveGameType = SVG_FILE;
     SaveGameFP = fopen(fileName, "wb");
 }
 
 void SV_OpenRead(char *filename)
 {
-    SaveGameType = SVG_FILE;
     SaveGameFP = fopen(filename, "rb");
 }
 
@@ -81,23 +76,16 @@ void SV_OpenRead(char *filename)
 
 void SV_Close(char *fileName)
 {
-    int length;
-
     SV_WriteByte(SAVE_GAME_TERMINATOR);
-    if (SaveGameType == SVG_RAM)
+
+    // Enforce the same savegame size limit as in Vanilla Heretic
+
+    if (vanilla_savegame_limit && ftell(SaveGameFP) > SAVEGAMESIZE)
     {
-        length = save_p - savebuffer;
-        if (length > SAVEGAMESIZE)
-        {
-            I_Error("Savegame buffer overrun");
-        }
-        M_WriteFile(fileName, savebuffer, length);
-        Z_Free(savebuffer);
+        I_Error("Savegame buffer overrun");
     }
-    else
-    {                           // SVG_FILE
-        fclose(SaveGameFP);
-    }
+
+    fclose(SaveGameFP);
 }
 
 //==========================================================================
@@ -108,15 +96,7 @@ void SV_Close(char *fileName)
 
 void SV_Write(void *buffer, int size)
 {
-    if (SaveGameType == SVG_RAM)
-    {
-        memcpy(save_p, buffer, size);
-        save_p += size;
-    }
-    else
-    {                           // SVG_FILE
-        fwrite(buffer, size, 1, SaveGameFP);
-    }
+    fwrite(buffer, size, 1, SaveGameFP);
 }
 
 void SV_WriteByte(byte val)
@@ -151,15 +131,7 @@ void SV_WritePtr(void *ptr)
 
 void SV_Read(void *buffer, int size)
 {
-    if (SaveGameType == SVG_RAM)
-    {
-        memcpy(buffer, save_p, size);
-        save_p += size;
-    }
-    else
-    {                           // SVG_FILE
-        fread(buffer, size, 1, SaveGameFP);
-    }
+    fread(buffer, size, 1, SaveGameFP);
 }
 
 byte SV_ReadByte(void)
