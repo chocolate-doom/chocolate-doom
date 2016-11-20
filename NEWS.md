@@ -48,6 +48,8 @@
     temporary directory and reporting an error instead.  (thanks
     terrorcide)
   * Versions 1.666, 1.7, and 1.8 are emulated. (thanks Nuke.YKT)
+  * Map33 intermission screen and map33-map35 automap names are
+    emulated. (thanks CapnClever)
 
 ### Heretic
   * Added map names for Episode 6, fixing a crash after completing a

@@ -430,7 +430,8 @@ void WI_drawLF(void)
     }
     else if (wbs->last == NUMCMAPS)
     {
-        // MAP33 - nothing is displayed!
+        // MAP33 - draw "Finished!" only
+        V_DrawPatch((SCREENWIDTH - SHORT(finished->width)) / 2, y, finished);
     }
     else if (wbs->last > NUMCMAPS)
     {
@@ -1472,8 +1473,13 @@ void WI_drawStats(void)
 
     if (wbs->epsd < 3)
     {
-	V_DrawPatch(SCREENWIDTH/2 + SP_TIMEX, SP_TIMEY, par);
-	WI_drawTime(SCREENWIDTH - SP_TIMEX, SP_TIMEY, cnt_par);
+        V_DrawPatch(SCREENWIDTH/2 + SP_TIMEX, SP_TIMEY, par);
+
+        // Emulation: don't draw partime value if map33
+        if (gamemode != commercial || wbs->last != NUMCMAPS)
+        {
+            WI_drawTime(SCREENWIDTH - SP_TIMEX, SP_TIMEY, cnt_par);
+        }
     }
 
 }

@@ -335,6 +335,12 @@ char *mapnames_commercial[] =
     THUSTR_30,
     THUSTR_31,
     THUSTR_32
+
+    // Emulation: TNT maps 33-35 can be warped to and played if they exist
+    // so include blank names instead of spilling over
+    "",
+    "",
+    ""
 };
 
 void HU_Init(void)
@@ -393,6 +399,11 @@ void HU_Start(void)
 	break;
       case doom2:
 	 s = HU_TITLE2;
+         // Pre-Final Doom compatibility: map33-map35 names don't spill over
+         if (gameversion <= exe_doom_1_9 && gamemap >= 33)
+         {
+             s = "";
+         }
 	 break;
       case pack_plut:
 	s = HU_TITLEP;
