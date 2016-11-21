@@ -85,77 +85,67 @@ boolean M_FileExists(char *filename)
 
 char *M_FileCaseExists(char *path)
 {
-    char *filename, *filename_orig, *p;
+    char *path_dup, *filename, *ext;
 
-    // 0: try the actual path
+    // 0: actual path
     if (M_FileExists(path))
     {
         return path;
     }
 
-    // find the file name in the path string
-    filename = path + strlen(path) - 1;
+    path_dup = M_StringDuplicate(path);
 
-    while (filename != path && *(filename - 1) != DIR_SEPARATOR)
+    filename = strrchr(path_dup, DIR_SEPARATOR);
+    if (filename != NULL)
     {
-        filename--;
+        filename++;
+    }
+    else
+    {
+        filename = path_dup;
     }
 
-    // back up the original file name
-    filename_orig = M_StringDuplicate(filename);
+    // 1: lowercase filename, e.g. doom2.wad
+    M_ForceLowercase(filename);
 
-    // 1: try with the file name in all-upper case
-    for (p = filename; *p != '\0'; ++p)
+    if (M_FileExists(path_dup))
     {
-        *p = toupper(*p);
+        return path_dup;
     }
 
-    if (M_FileExists(path))
+    // 2: uppercase filename, e.g. DOOM2.WAD
+    M_ForceUppercase(filename);
+
+    if (M_FileExists(path_dup))
     {
-        free(filename_orig);
-        return path;
+        return path_dup;
     }
 
-    // 2: try with the file name in all-lower case
-    for (p = filename; *p != '\0'; ++p)
+    // 3. uppercase basename with lowercase extension, e.g. DOOM2.wad
+    ext = strrchr(path_dup, '.');
+    if (ext != NULL && ext > filename)
     {
-        *p = tolower(*p);
+        M_ForceLowercase(ext + 1);
+
+        if (M_FileExists(path_dup))
+        {
+            return path_dup;
+        }
     }
 
-    if (M_FileExists(path))
+    // 4. lowercase filename with uppercase first letter, e.g. Doom2.wad
+    if (strlen(filename) > 1)
     {
-        free(filename_orig);
-        return path;
+        M_ForceLowercase(filename + 1);
+
+        if (M_FileExists(path_dup))
+        {
+            return path_dup;
+        }
     }
 
-    // 3. try mixed case: upper case base name, lower case extension
-    for (p = filename; *p != '.'; ++p)
-    {
-        *p = toupper(*p);
-    }
-
-    if (M_FileExists(path))
-    {
-        free(filename_orig);
-        return path;
-    }
-
-    // 4. try mixed case: upper case first letter, lower case else
-    for (p = filename; *p != '.'; ++p)
-    {
-        *p = tolower(*p);
-    }
-    *filename = toupper(*filename);
-
-    if (M_FileExists(path))
-    {
-        free(filename_orig);
-        return path;
-    }
-
-    // 5. still no luck :(
-    M_StringCopy(filename, filename_orig, strlen(filename) + 1);
-    free(filename_orig);
+    // 5. no luck
+    free(path_dup);
     return NULL;
 }
 
@@ -323,6 +313,16 @@ void M_ForceUppercase(char *text)
     for (p = text; *p != '\0'; ++p)
     {
         *p = toupper(*p);
+    }
+}
+
+void M_ForceLowercase(char *text)
+{
+    char *p;
+
+    for (p = text; *p != '\0'; ++p)
+    {
+        *p = tolower(*p);
     }
 }
 
