@@ -201,7 +201,7 @@ R_RenderMaskedSegRange
 int heightbits = HEIGHTBITS;
 fixed_t heightunit = HEIGHTUNIT;
 
-void R_SetHeightFracBits(int bits)
+void R_SetHeightFracBits(void)
 {
     // Moire error emulation
     if (gameversion <= exe_doom_1_2)
