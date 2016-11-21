@@ -194,17 +194,25 @@ R_RenderMaskedSegRange
 //  textures.
 // CALLED: CORE LOOPING ROUTINE.
 //
-//#define HEIGHTBITS		12
-//#define HEIGHTUNIT		(1<<HEIGHTBITS)
+#define HEIGHTBITS		12
+#define HEIGHTUNIT		(1<<HEIGHTBITS)
 
 // Doom 1.2 uses 16.16 fixed point numbers here
-int HEIGHTBITS = 16;
-fixed_t HEIGHTUNIT = (1 << 16);
+int heightbits = HEIGHTBITS;
+fixed_t heightunit = HEIGHTUNIT;
 
-void R_SetHeighFracBits(int bits)
+void R_SetHeightFracBits(int bits)
 {
-    HEIGHTBITS = bits;
-    HEIGHTUNIT = 1 << bits;
+    // Moire error emulation
+    if (gameversion <= exe_doom_1_2)
+    {
+        heightbits = 16;
+    }
+    else
+    {
+        heightbits = 12;
+    }
+    heightunit = (1 << heightbits);
 }
 
 void R_RenderSegLoop (void)
@@ -221,7 +229,7 @@ void R_RenderSegLoop (void)
     for ( ; rw_x < rw_stopx ; rw_x++)
     {
 	// mark floor / ceiling areas
-	yl = (topfrac+HEIGHTUNIT-1)>>HEIGHTBITS;
+	yl = (topfrac+heightunit-1)>>heightbits;
 
 	// no space above wall?
 	if (yl < ceilingclip[rw_x]+1)
@@ -242,7 +250,7 @@ void R_RenderSegLoop (void)
 	    }
 	}
 		
-	yh = bottomfrac>>HEIGHTBITS;
+	yh = bottomfrac>>heightbits;
 
 	if (yh >= floorclip[rw_x])
 	    yh = floorclip[rw_x]-1;
@@ -302,7 +310,7 @@ void R_RenderSegLoop (void)
 	    if (toptexture)
 	    {
 		// top wall
-		mid = pixhigh>>HEIGHTBITS;
+		mid = pixhigh>>heightbits;
 		pixhigh += pixhighstep;
 
 		if (mid >= floorclip[rw_x])
@@ -330,7 +338,7 @@ void R_RenderSegLoop (void)
 	    if (bottomtexture)
 	    {
 		// bottom wall
-		mid = (pixlow+HEIGHTUNIT-1)>>HEIGHTBITS;
+		mid = (pixlow+heightunit-1)>>heightbits;
 		pixlow += pixlowstep;
 
 		// no space above wall?
@@ -389,7 +397,7 @@ R_StoreWallRange
     angle_t		distangle, offsetangle;
     fixed_t		vtop;
     int			lightnum;
-    int                 heightshift = FRACBITS - HEIGHTBITS;
+    int                 heightshift = FRACBITS - heightbits;
 
     // don't overflow and crash
     if (ds_p == &drawsegs[MAXDRAWSEGS])

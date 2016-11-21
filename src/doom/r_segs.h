@@ -21,7 +21,7 @@
 #define __R_SEGS__
 
 
-void R_SetHeighFracBits(int bits);
+void R_SetHeightFracBits(void);
 
 void
 R_RenderMaskedSegRange

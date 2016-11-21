@@ -783,15 +783,7 @@ void R_Init (void)
     R_InitSkyMap ();
     R_InitTranslationTables ();
     printf (".");
-    // Moire error emulation
-    if(gameversion <= exe_doom_1_2)
-    {
-        R_SetHeighFracBits(16);
-    }
-    else
-    {
-        R_SetHeighFracBits(12);
-    }
+    R_SetHeightFracBits();
 	
     framecount = 0;
 }
