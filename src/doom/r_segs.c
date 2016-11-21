@@ -195,7 +195,25 @@ R_RenderMaskedSegRange
 // CALLED: CORE LOOPING ROUTINE.
 //
 #define HEIGHTBITS		12
-#define HEIGHTUNIT		(1<<HEIGHTBITS)
+#define HEIGHTBITS_DOOM12       16
+
+// Doom 1.2 uses 16.16 fixed point numbers here
+int heightbits = HEIGHTBITS;
+fixed_t heightunit = 1 << HEIGHTBITS;
+
+void R_SetHeightFracBits(void)
+{
+    // Moire error emulation
+    if (gameversion <= exe_doom_1_2)
+    {
+        heightbits = HEIGHTBITS_DOOM12;
+    }
+    else
+    {
+        heightbits = HEIGHTBITS;
+    }
+    heightunit = 1 << heightbits;
+}
 
 void R_RenderSegLoop (void)
 {
@@ -211,7 +229,7 @@ void R_RenderSegLoop (void)
     for ( ; rw_x < rw_stopx ; rw_x++)
     {
 	// mark floor / ceiling areas
-	yl = (topfrac+HEIGHTUNIT-1)>>HEIGHTBITS;
+	yl = (topfrac+heightunit-1)>>heightbits;
 
 	// no space above wall?
 	if (yl < ceilingclip[rw_x]+1)
@@ -232,7 +250,7 @@ void R_RenderSegLoop (void)
 	    }
 	}
 		
-	yh = bottomfrac>>HEIGHTBITS;
+	yh = bottomfrac>>heightbits;
 
 	if (yh >= floorclip[rw_x])
 	    yh = floorclip[rw_x]-1;
@@ -292,7 +310,7 @@ void R_RenderSegLoop (void)
 	    if (toptexture)
 	    {
 		// top wall
-		mid = pixhigh>>HEIGHTBITS;
+		mid = pixhigh>>heightbits;
 		pixhigh += pixhighstep;
 
 		if (mid >= floorclip[rw_x])
@@ -320,7 +338,7 @@ void R_RenderSegLoop (void)
 	    if (bottomtexture)
 	    {
 		// bottom wall
-		mid = (pixlow+HEIGHTUNIT-1)>>HEIGHTBITS;
+		mid = (pixlow+heightunit-1)>>heightbits;
 		pixlow += pixlowstep;
 
 		// no space above wall?
@@ -379,6 +397,7 @@ R_StoreWallRange
     angle_t		distangle, offsetangle;
     fixed_t		vtop;
     int			lightnum;
+    int                 heightshift = FRACBITS - heightbits;
 
     // don't overflow and crash
     if (ds_p == &drawsegs[MAXDRAWSEGS])
@@ -675,29 +694,29 @@ R_StoreWallRange
 
     
     // calculate incremental stepping values for texture edges
-    worldtop >>= 4;
-    worldbottom >>= 4;
+    worldtop >>= heightshift;
+    worldbottom >>= heightshift;
 	
     topstep = -FixedMul (rw_scalestep, worldtop);
-    topfrac = (centeryfrac>>4) - FixedMul (worldtop, rw_scale);
+    topfrac = (centeryfrac>>heightshift) - FixedMul (worldtop, rw_scale);
 
     bottomstep = -FixedMul (rw_scalestep,worldbottom);
-    bottomfrac = (centeryfrac>>4) - FixedMul (worldbottom, rw_scale);
+    bottomfrac = (centeryfrac>>heightshift) - FixedMul (worldbottom, rw_scale);
 	
     if (backsector)
     {	
-	worldhigh >>= 4;
-	worldlow >>= 4;
+	worldhigh >>= heightshift;
+	worldlow >>= heightshift;
 
 	if (worldhigh < worldtop)
 	{
-	    pixhigh = (centeryfrac>>4) - FixedMul (worldhigh, rw_scale);
+	    pixhigh = (centeryfrac>>heightshift) - FixedMul (worldhigh, rw_scale);
 	    pixhighstep = -FixedMul (rw_scalestep,worldhigh);
 	}
 	
 	if (worldlow > worldbottom)
 	{
-	    pixlow = (centeryfrac>>4) - FixedMul (worldlow, rw_scale);
+	    pixlow = (centeryfrac>>heightshift) - FixedMul (worldlow, rw_scale);
 	    pixlowstep = -FixedMul (rw_scalestep,worldlow);
 	}
     }

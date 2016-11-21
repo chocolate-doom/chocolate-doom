@@ -27,6 +27,7 @@
 
 
 #include "doomdef.h"
+#include "doomstat.h"
 #include "d_loop.h"
 
 #include "m_bbox.h"
@@ -782,6 +783,7 @@ void R_Init (void)
     R_InitSkyMap ();
     R_InitTranslationTables ();
     printf (".");
+    R_SetHeightFracBits();
 	
     framecount = 0;
 }

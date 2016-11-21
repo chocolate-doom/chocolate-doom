@@ -625,6 +625,51 @@ void WI_drawAnimatedBack(void)
 //
 
 int
+WI_drawNum12
+( int		x,
+  int		y,
+  int		n,
+  int		digits )
+{
+
+    int fontwidth = SHORT(num[0]->width);
+    int numdigits = digits;
+    int divider;
+    int digit;
+
+    if (digits < 0)
+    {
+        digits = 0;
+    }
+
+    if (n < 0)
+    {
+        return -1;
+    }
+
+    divider = 1;
+
+    while (true)
+    {
+        if (n / divider == 0 && divider != 1 && (!numdigits || !digits))
+        {
+            return x;
+        }
+        
+        digit = (n / divider) % 10;
+        divider *= 10;
+
+        x -= fontwidth;
+        V_DrawPatch(x, y, num[digit]);
+        if (numdigits)
+        {
+            numdigits--;
+        }
+    }
+}
+
+
+int
 WI_drawNum
 ( int		x,
   int		y,
@@ -635,6 +680,11 @@ WI_drawNum
     int		fontwidth = SHORT(num[0]->width);
     int		neg;
     int		temp;
+
+    if (gameversion <= exe_doom_1_2)
+    {
+        return WI_drawNum12(x, y, n, digits);
+    }
 
     if (digits < 0)
     {
@@ -1607,7 +1657,10 @@ static void WI_loadUnloadData(load_callback_t callback)
     }
 
     // More hacks on minus sign.
-    callback(DEH_String("WIMINUS"), &wiminus);
+    if (gameversion > exe_doom_1_2)
+    {
+        callback(DEH_String("WIMINUS"), &wiminus);
+    }
 
     for (i=0;i<10;i++)
     {

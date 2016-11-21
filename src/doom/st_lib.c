@@ -22,6 +22,7 @@
 
 #include "deh_main.h"
 #include "doomdef.h"
+#include "doomstat.h"
 
 #include "z_zone.h"
 #include "v_video.h"
@@ -50,7 +51,10 @@ patch_t*		sttminus;
 
 void STlib_init(void)
 {
-    sttminus = (patch_t *) W_CacheLumpName(DEH_String("STTMINUS"), PU_STATIC);
+    if (gameversion > exe_doom_1_2)
+    {
+        sttminus = (patch_t *)W_CacheLumpName(DEH_String("STTMINUS"), PU_STATIC);
+    }
 }
 
 
@@ -81,6 +85,80 @@ STlib_initNum
 // Note: worth the trouble?
 //
 void
+STlib_drawNum_v12
+( st_number_t*	n,
+  boolean	refresh )
+{
+    int numdigits = n->width;
+    int num = *n->num;
+    int oldnum = n->oldnum;
+
+    int w = SHORT(n->p[0]->width);
+    int h = SHORT(n->p[0]->height);
+    int x = n->x;
+
+    int stopflag1 = oldnum < 0;
+    int stopflag2 = num < 0;
+
+    int digit1, digit2;
+
+    while (numdigits--)
+    {
+        if (!stopflag1 && !refresh)
+        {
+            digit1 = oldnum % 10;
+        }
+        else
+        {
+            digit1 = -1;
+        }
+
+        if (!stopflag2)
+        {
+            digit2 = num % 10;
+        }
+        else
+        {
+            digit2 = -1;
+        }
+
+        x -= w;
+
+        if (digit1 != digit2)
+        {
+            V_CopyRect(x, n->y - ST_Y, st_backing_screen, w, h, x, n->y);
+            
+            if (digit2 >= 0)
+            {
+                V_DrawPatch(x, n->y, n->p[digit2]);
+            }
+        }
+
+        if (!stopflag1)
+        {
+            oldnum /= 10;
+        }
+
+        if (!stopflag2)
+        {
+            num /= 10;
+        }
+
+        if (!oldnum)
+        {
+            stopflag1 = 1;
+        }
+
+        if (!num)
+        {
+            stopflag2 = 1;
+        }
+    }
+
+    n->oldnum = *n->num;
+}
+
+void
 STlib_drawNum
 ( st_number_t*	n,
   boolean	refresh )
@@ -94,6 +172,12 @@ STlib_drawNum
     int		x = n->x;
     
     int		neg;
+
+    if (gameversion <= exe_doom_1_2)
+    {
+        STlib_drawNum_v12(n, refresh);
+        return;
+    }
 
     n->oldnum = *n->num;
 
