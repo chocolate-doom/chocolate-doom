@@ -195,24 +195,24 @@ R_RenderMaskedSegRange
 // CALLED: CORE LOOPING ROUTINE.
 //
 #define HEIGHTBITS		12
-#define HEIGHTUNIT		(1<<HEIGHTBITS)
+#define HEIGHTBITS_DOOM12       16
 
 // Doom 1.2 uses 16.16 fixed point numbers here
 int heightbits = HEIGHTBITS;
-fixed_t heightunit = HEIGHTUNIT;
+fixed_t heightunit = 1 << HEIGHTBITS;
 
 void R_SetHeightFracBits(void)
 {
     // Moire error emulation
     if (gameversion <= exe_doom_1_2)
     {
-        heightbits = 16;
+        heightbits = HEIGHTBITS_DOOM12;
     }
     else
     {
-        heightbits = 12;
+        heightbits = HEIGHTBITS;
     }
-    heightunit = (1 << heightbits);
+    heightunit = 1 << heightbits;
 }
 
 void R_RenderSegLoop (void)
