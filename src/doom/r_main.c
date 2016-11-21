@@ -27,6 +27,7 @@
 
 
 #include "doomdef.h"
+#include "doomstat.h"
 #include "d_loop.h"
 
 #include "m_bbox.h"
@@ -782,6 +783,15 @@ void R_Init (void)
     R_InitSkyMap ();
     R_InitTranslationTables ();
     printf (".");
+    // Moire error emulation
+    if(gameversion <= exe_doom_1_2)
+    {
+        R_SetHeighFracBits(16);
+    }
+    else
+    {
+        R_SetHeighFracBits(12);
+    }
 	
     framecount = 0;
 }

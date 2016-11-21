@@ -194,8 +194,18 @@ R_RenderMaskedSegRange
 //  textures.
 // CALLED: CORE LOOPING ROUTINE.
 //
-#define HEIGHTBITS		12
-#define HEIGHTUNIT		(1<<HEIGHTBITS)
+//#define HEIGHTBITS		12
+//#define HEIGHTUNIT		(1<<HEIGHTBITS)
+
+// Doom 1.2 uses 16.16 fixed point numbers here
+int HEIGHTBITS = 16;
+fixed_t HEIGHTUNIT = (1 << 16);
+
+void R_SetHeighFracBits(int bits)
+{
+    HEIGHTBITS = bits;
+    HEIGHTUNIT = 1 << bits;
+}
 
 void R_RenderSegLoop (void)
 {
@@ -379,6 +389,7 @@ R_StoreWallRange
     angle_t		distangle, offsetangle;
     fixed_t		vtop;
     int			lightnum;
+    int                 heightshift = FRACBITS - HEIGHTBITS;
 
     // don't overflow and crash
     if (ds_p == &drawsegs[MAXDRAWSEGS])
@@ -675,29 +686,29 @@ R_StoreWallRange
 
     
     // calculate incremental stepping values for texture edges
-    worldtop >>= 4;
-    worldbottom >>= 4;
+    worldtop >>= heightshift;
+    worldbottom >>= heightshift;
 	
     topstep = -FixedMul (rw_scalestep, worldtop);
-    topfrac = (centeryfrac>>4) - FixedMul (worldtop, rw_scale);
+    topfrac = (centeryfrac>>heightshift) - FixedMul (worldtop, rw_scale);
 
     bottomstep = -FixedMul (rw_scalestep,worldbottom);
-    bottomfrac = (centeryfrac>>4) - FixedMul (worldbottom, rw_scale);
+    bottomfrac = (centeryfrac>>heightshift) - FixedMul (worldbottom, rw_scale);
 	
     if (backsector)
     {	
-	worldhigh >>= 4;
-	worldlow >>= 4;
+	worldhigh >>= heightshift;
+	worldlow >>= heightshift;
 
 	if (worldhigh < worldtop)
 	{
-	    pixhigh = (centeryfrac>>4) - FixedMul (worldhigh, rw_scale);
+	    pixhigh = (centeryfrac>>heightshift) - FixedMul (worldhigh, rw_scale);
 	    pixhighstep = -FixedMul (rw_scalestep,worldhigh);
 	}
 	
 	if (worldlow > worldbottom)
 	{
-	    pixlow = (centeryfrac>>4) - FixedMul (worldlow, rw_scale);
+	    pixlow = (centeryfrac>>heightshift) - FixedMul (worldlow, rw_scale);
 	    pixlowstep = -FixedMul (rw_scalestep,worldlow);
 	}
     }
