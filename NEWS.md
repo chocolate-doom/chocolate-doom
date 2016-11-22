@@ -60,6 +60,9 @@
   * Fixed an issue where the game crashed while killing the
     Wraithverge in 64-bit builds. (thanks J.Benaim)
   * Added unlimited demo/savegame support. (thanks CapnClever)
+  * Mouse buttons for strafe left/right and move backward, as well as
+    'Double click acts as "use"' mouse option, now function properly.
+    (thanks CapnClever)
 
 ### Strife
   * Support added for automatic loading of the IWAD from the GOG.com

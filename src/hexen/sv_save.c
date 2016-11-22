@@ -3257,7 +3257,7 @@ static void CopyFile(char *source_name, char *dest_name)
     byte *buffer;
     int file_length, file_remaining;
     FILE *read_handle, *write_handle;
-    int buf_count, read_count, write_count;
+    int buf_count, read_count;
 
     read_handle = fopen(source_name, "rb");
     if (read_handle == NULL)
@@ -3299,7 +3299,7 @@ static void CopyFile(char *source_name, char *dest_name)
         {
             I_Error ("Couldn't read file %s", source_name);
         }
-        write_count = fwrite(buffer, 1, buf_count, write_handle);
+
         if (read_count < buf_count)
         {
             I_Error ("Couldn't read file %s", dest_name);

@@ -1885,9 +1885,11 @@ void G_DoPlayDemo(void)
     map = *demo_p++;
 
     // Read special parameter bits: see G_RecordDemo() for details.
-    respawnparm = (*demo_p & DEMOHEADER_RESPAWN) != 0;
-    longtics    = (*demo_p & DEMOHEADER_LONGTICS) != 0;
-    nomonsters  = (*demo_p & DEMOHEADER_NOMONSTERS) != 0;
+    longtics = (*demo_p & DEMOHEADER_LONGTICS) != 0;
+
+    // don't overwrite arguments from the command line
+    respawnparm |= (*demo_p & DEMOHEADER_RESPAWN) != 0;
+    nomonsters  |= (*demo_p & DEMOHEADER_NOMONSTERS) != 0;
 
     for (i = 0; i < MAXPLAYERS; i++)
         playeringame[i] = (*demo_p++) != 0;
@@ -1919,9 +1921,11 @@ void G_TimeDemo(char *name)
     map = *demo_p++;
 
     // Read special parameter bits: see G_RecordDemo() for details.
-    respawnparm = (*demo_p & DEMOHEADER_RESPAWN) != 0;
-    longtics    = (*demo_p & DEMOHEADER_LONGTICS) != 0;
-    nomonsters  = (*demo_p & DEMOHEADER_NOMONSTERS) != 0;
+    longtics = (*demo_p & DEMOHEADER_LONGTICS) != 0;
+
+    // don't overwrite arguments from the command line
+    respawnparm |= (*demo_p & DEMOHEADER_RESPAWN) != 0;
+    nomonsters  |= (*demo_p & DEMOHEADER_NOMONSTERS) != 0;
 
     for (i = 0; i < MAXPLAYERS; i++)
     {
