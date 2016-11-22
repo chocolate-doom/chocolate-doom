@@ -382,13 +382,13 @@ P_TouchSpecialThing
 	
       case SPR_BON2:
 	player->armorpoints++;		// can go over 100%
-        // e6y
-        // Doom 1.2 does not do check of armor points on overflow.
-        // If you set the "IDKFA Armor" to MAX_INT (DWORD at 0x00064B5A -> FFFFFF7F)
-        // and pick up one or more armor bonuses, your armor becomes negative
-        // and you will die after reception of any damage since this moment.
-        // It happens because the taken health damage depends from armor points
-        // if they are present and becomes equal to very large value in this case
+        // e6y: Doom 1.2 does not do check of armor points on overflow.
+        // If you set the "IDKFA Armor" to MAX_INT (DWORD at 0x00064B5A
+        // -> FFFFFF7F) and pick up one or more armor bonuses, your armor
+        // becomes negative and you will die after reception of any damage
+        // since this moment. It happens because the taken health damage
+        // depends from armor points if they are present and becomes equal to
+        // very large value in this case
 	if (player->armorpoints > deh_max_armor && gameversion > exe_doom_1_2)
 	    player->armorpoints = deh_max_armor;
         // deh_green_armor_class only applies to the green armor shirt;
@@ -917,7 +917,8 @@ P_DamageMobj
 			
     target->reactiontime = 0;		// we're awake now...	
 
-    //e6y: Monsters could commit suicide in Doom v1.2 if they damaged themselves by exploding a barrel
+    // e6y: Monsters could commit suicide in Doom v1.2 if they damaged
+    // themselves by exploding a barrel
     if ( (!target->threshold || target->type == MT_VILE)
 	 && source && (source != target || gameversion == exe_doom_1_2)
 	 && source->type != MT_VILE)

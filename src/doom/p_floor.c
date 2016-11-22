@@ -302,10 +302,12 @@ EV_DoFloor
 	    floor->floordestheight = 
 		P_FindHighestFloorSurrounding(sec);
 	    // Improved doom 1.2 compatibility:
-	    // Fixed linedef actions 36 and 98 (Floor lower to 8 about Higher Floor).
+	    // Fixed linedef actions 36 and 98
+	    // (Floor lower to 8 about Higher Floor).
 	    // There is no more desynch on WP2-33.LMP @ WADPAK2.WAD
 	    // (http://doomedsda.us/1082col215.html)
-	    if (floor->floordestheight != sec->floorheight || gameversion == exe_doom_1_2)
+	    if (floor->floordestheight != sec->floorheight ||
+	        gameversion == exe_doom_1_2)
 		floor->floordestheight += 8*FRACUNIT;
 	    break;
 

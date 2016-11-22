@@ -111,7 +111,9 @@ R_RenderMaskedSegRange
     frontsector = curline->frontsector;
     backsector = curline->backsector;
     // cph 2001/11/25 - middle textures did not animate in v1.2
-    texnum = (gameversion > exe_doom_1_2) ? texturetranslation[curline->sidedef->midtexture] : curline->sidedef->midtexture;
+    texnum = (gameversion > exe_doom_1_2) ?
+             texturetranslation[curline->sidedef->midtexture] :
+             curline->sidedef->midtexture;
 	
     lightnum = (frontsector->lightlevel >> LIGHTSEGSHIFT)+extralight;
 
