@@ -83,6 +83,9 @@ boolean M_FileExists(char *filename)
     }
 }
 
+// Check if a file exists by probing for common case variation of its filename.
+// Returns a newly allocated string that the caller is responsible for freeing.
+
 char *M_FileCaseExists(char *path)
 {
     char *path_dup, *filename, *ext;
@@ -315,6 +318,14 @@ void M_ForceUppercase(char *text)
         *p = toupper(*p);
     }
 }
+
+//---------------------------------------------------------------------------
+//
+// PROC M_ForceLowercase
+//
+// Change string to lowercase.
+//
+//---------------------------------------------------------------------------
 
 void M_ForceLowercase(char *text)
 {

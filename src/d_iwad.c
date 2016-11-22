@@ -465,7 +465,7 @@ static char *CheckDirectoryHasIWAD(char *dir, char *iwadname)
     // IWAD file if the path comes from DOOMWADDIR or DOOMWADPATH.
 
     probe = M_FileCaseExists(dir);
-    if (DirIsFile(dir, iwadname) && (probe != NULL))
+    if (DirIsFile(dir, iwadname) && probe != NULL)
     {
         return M_StringDuplicate(probe);
     }
@@ -734,7 +734,7 @@ char *D_FindWADByName(char *name)
         // file.
 
         probe = M_FileCaseExists(iwad_dirs[i]);
-        if (DirIsFile(iwad_dirs[i], name) && (probe != NULL))
+        if (DirIsFile(iwad_dirs[i], name) && probe != NULL)
         {
             return M_StringDuplicate(probe);
         }
