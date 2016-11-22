@@ -467,7 +467,7 @@ static char *CheckDirectoryHasIWAD(char *dir, char *iwadname)
     probe = M_FileCaseExists(dir);
     if (DirIsFile(dir, iwadname) && probe != NULL)
     {
-        return M_StringDuplicate(probe);
+        return probe;
     }
 
     // Construct the full path to the IWAD if it is located in
@@ -736,7 +736,7 @@ char *D_FindWADByName(char *name)
         probe = M_FileCaseExists(iwad_dirs[i]);
         if (DirIsFile(iwad_dirs[i], name) && probe != NULL)
         {
-            return M_StringDuplicate(probe);
+            return probe;
         }
 
         // Construct a string for the full path

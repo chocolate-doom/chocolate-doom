@@ -90,13 +90,13 @@ char *M_FileCaseExists(char *path)
 {
     char *path_dup, *filename, *ext;
 
-    // 0: actual path
-    if (M_FileExists(path))
-    {
-        return path;
-    }
-
     path_dup = M_StringDuplicate(path);
+
+    // 0: actual path
+    if (M_FileExists(path_dup))
+    {
+        return path_dup;
+    }
 
     filename = strrchr(path_dup, DIR_SEPARATOR);
     if (filename != NULL)
