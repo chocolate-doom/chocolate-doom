@@ -464,7 +464,8 @@ static char *CheckDirectoryHasIWAD(char *dir, char *iwadname)
     // As a special case, the "directory" may refer directly to an
     // IWAD file if the path comes from DOOMWADDIR or DOOMWADPATH.
 
-    if (DirIsFile(dir, iwadname) && (probe = M_FileCaseExists(dir)))
+    probe = M_FileCaseExists(dir);
+    if (DirIsFile(dir, iwadname) && (probe != NULL))
     {
         return M_StringDuplicate(probe);
     }
@@ -481,7 +482,8 @@ static char *CheckDirectoryHasIWAD(char *dir, char *iwadname)
         filename = M_StringJoin(dir, DIR_SEPARATOR_S, iwadname, NULL);
     }
 
-    if ((probe = M_FileCaseExists(filename)))
+    probe = M_FileCaseExists(filename);
+    if (probe != NULL)
     {
         return probe;
     }
@@ -715,7 +717,8 @@ char *D_FindWADByName(char *name)
     
     // Absolute path?
 
-    if ((probe = M_FileCaseExists(name)))
+    probe = M_FileCaseExists(name);
+    if (probe != NULL)
     {
         return probe;
     }
@@ -730,7 +733,8 @@ char *D_FindWADByName(char *name)
         // the "directory" may actually refer directly to an IWAD
         // file.
 
-        if (DirIsFile(iwad_dirs[i], name) && (probe = M_FileCaseExists(iwad_dirs[i])))
+        probe = M_FileCaseExists(iwad_dirs[i]);
+        if (DirIsFile(iwad_dirs[i], name) && (probe != NULL))
         {
             return M_StringDuplicate(probe);
         }
@@ -739,7 +743,8 @@ char *D_FindWADByName(char *name)
 
         path = M_StringJoin(iwad_dirs[i], DIR_SEPARATOR_S, name, NULL);
 
-        if ((probe = M_FileCaseExists(path)))
+        probe = M_FileCaseExists(path);
+        if (probe != NULL)
         {
             return probe;
         }
