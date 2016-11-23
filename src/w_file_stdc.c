@@ -48,6 +48,7 @@ static wad_file_t *W_StdC_OpenFile(char *path)
     result->wad.file_class = &stdc_wad_file;
     result->wad.mapped = NULL;
     result->wad.length = M_FileLength(fstream);
+    result->wad.path = M_StringDuplicate(path);
     result->fstream = fstream;
 
     return &result->wad;
