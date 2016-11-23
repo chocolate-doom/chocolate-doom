@@ -115,7 +115,7 @@ boolean PIT_StompThing (mobj_t* thing)
 	return true;
     
     // monsters don't stomp things except on boss level
-    if ( !tmthing->player && gamemap != 30)
+    if (!tmthing->player && (gamemap != 30 || gameversion <= exe_doom_1_6))
 	return false;	
 		
     P_DamageMobj (thing, tmthing, tmthing, 10000);

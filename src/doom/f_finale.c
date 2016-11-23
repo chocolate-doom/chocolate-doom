@@ -114,7 +114,7 @@ void F_StartFinale (void)
     viewactive = false;
     automapactive = false;
 
-    if (logical_gamemission == doom)
+    if (logical_gamemission == doom || gameversion <= exe_doom_1_6)
     {
         S_ChangeMusic(mus_victor, true);
     }
@@ -128,6 +128,7 @@ void F_StartFinale (void)
     for (i=0; i<arrlen(textscreens); ++i)
     {
         textscreen_t *screen = &textscreens[i];
+        GameMission_t mission = logical_gamemission;
 
         // Hack for Chex Quest
 
@@ -136,8 +137,15 @@ void F_StartFinale (void)
             screen->level = 5;
         }
 
-        if (logical_gamemission == screen->mission
-         && (logical_gamemission != doom || gameepisode == screen->episode)
+        // Hack for Doom 2 beta
+
+        if (gameversion <= exe_doom_1_6)
+        {
+            mission = doom;
+        }
+
+        if (mission == screen->mission
+         && (mission != doom || gameepisode == screen->episode)
          && gamemap == screen->level)
         {
             finaletext = screen->text;
@@ -174,7 +182,7 @@ void F_Ticker (void)
     size_t		i;
     
     // check for skipping
-    if ( (gamemode == commercial)
+    if ( (gamemode == commercial && gameversion >= exe_doom_1_666)
       && ( finalecount > 50) )
     {
       // go on to the next level
@@ -200,7 +208,7 @@ void F_Ticker (void)
 	return;
     }
 	
-    if ( gamemode == commercial)
+    if ( gamemode == commercial && gameversion >= exe_doom_1_666)
 	return;
 		
     if (finalestage == F_STAGE_TEXT

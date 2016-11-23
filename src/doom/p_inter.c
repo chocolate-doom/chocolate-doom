@@ -355,6 +355,18 @@ P_TouchSpecialThing
     if (toucher->health <= 0)
 	return;
 
+    // Catch missing things.
+
+    switch (special->sprite)
+    {
+    case SPR_MEGA:
+        if (gameversion <= exe_doom_1_6)
+        {
+            special->sprite = NUMSPRITES;
+        }
+        break;
+    }
+
     // Identify by sprite.
     switch (special->sprite)
     {
@@ -820,7 +832,7 @@ P_DamageMobj
     // inflict thrust and push the victim out of reach,
     // thus kick away unless using the chainsaw.
     if (inflictor
-	&& !(target->flags & MF_NOCLIP)
+	&& (!(target->flags & MF_NOCLIP) || gameversion <= exe_doom_1_6)
 	&& (!source
 	    || !source->player
 	    || source->player->readyweapon != wp_chainsaw))

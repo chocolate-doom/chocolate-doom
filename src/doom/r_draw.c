@@ -847,7 +847,7 @@ void R_FillBackScreen (void)
                                      PU_STATIC, NULL);
     }
 
-    if (gamemode == commercial)
+    if (gamemode == commercial && gameversion >= exe_doom_1_666)
 	name = name2;
     else
 	name = name1;

@@ -83,8 +83,12 @@ void T_PlatRaise(plat_t* plat)
 		    P_RemoveActivePlat(plat);
 		    break;
 		    
-		  case raiseAndChange:
 		  case raiseToNearestAndChange:
+                    if (gameversion <= exe_doom_1_6)
+                    {
+                        break;
+                    }
+		  case raiseAndChange:
 		    P_RemoveActivePlat(plat);
 		    break;
 		    

@@ -856,8 +856,9 @@ void M_NewGame(int choice)
     }
 	
     // Chex Quest disabled the episode select screen, as did Doom II.
-
-    if (gamemode == commercial || gameversion == exe_chex)
+    
+    if ((gamemode == commercial && gameversion >= exe_doom_1_666)
+     || gameversion == exe_chex)
 	M_SetupNextMenu(&NewDef);
     else
 	M_SetupNextMenu(&EpiDef);
@@ -1055,7 +1056,7 @@ void M_QuitResponse(int key)
 	return;
     if (!netgame)
     {
-	if (gamemode == commercial)
+	if (gamemode == commercial && gameversion >= exe_doom_1_666)
 	    S_StartSound(NULL,quitsounds2[(gametic>>2)&7]);
 	else
 	    S_StartSound(NULL,quitsounds[(gametic>>2)&7]);
@@ -1068,8 +1069,8 @@ void M_QuitResponse(int key)
 static char *M_SelectEndMessage(void)
 {
     char **endmsg;
-
-    if (logical_gamemission == doom)
+    
+    if (logical_gamemission == doom || gameversion <= exe_doom_1_6)
     {
         // Doom 1
 
@@ -1081,8 +1082,8 @@ static char *M_SelectEndMessage(void)
         
         endmsg = doom2_endmsg;
     }
-
-    return endmsg[gametic % NUM_QUITMESSAGES];
+    
+    return endmsg[(gametic >> 2) % NUM_QUITMESSAGES];
 }
 
 
@@ -2021,8 +2022,8 @@ void M_Init (void)
     {
         ReadDef2.routine = M_DrawReadThisCommercial;
     }
-
-    if (gamemode == commercial)
+    
+    if (gamemode == commercial && gameversion >= exe_doom_1_666)
     {
         MainMenu[readthis] = MainMenu[quitdoom];
         MainDef.numitems--;

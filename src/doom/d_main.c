@@ -34,6 +34,7 @@
 #include "doomfeatures.h"
 #include "sounds.h"
 
+#include "d_compat.h"
 #include "d_iwad.h"
 
 #include "z_zone.h"
@@ -335,7 +336,7 @@ static void EnableLoadingDisk(void)
 
     if (show_diskicon)
     {
-        if (M_CheckParm("-cdrom") > 0)
+        if (M_CheckParm("-cdrom") > 0 && gameversion >= exe_doom_1_666)
         {
             disk_lump_name = DEH_String("STCDROM");
         }
@@ -547,13 +548,13 @@ void D_DoAdvanceDemo (void)
     switch (demosequence)
     {
       case 0:
-	if ( gamemode == commercial )
+	if (gamemode == commercial && gameversion >= exe_doom_1_666)
 	    pagetic = TICRATE * 11;
 	else
 	    pagetic = 170;
 	gamestate = GS_DEMOSCREEN;
 	pagename = DEH_String("TITLEPIC");
-	if ( gamemode == commercial )
+	if (gamemode == commercial && gameversion >= exe_doom_1_666)
 	  S_StartMusic(mus_dm2ttl);
 	else
 	  S_StartMusic (mus_intro);
@@ -571,7 +572,7 @@ void D_DoAdvanceDemo (void)
 	break;
       case 4:
 	gamestate = GS_DEMOSCREEN;
-	if ( gamemode == commercial)
+	if (gamemode == commercial && gameversion >= exe_doom_1_666)
 	{
 	    pagetic = TICRATE * 11;
 	    pagename = DEH_String("TITLEPIC");
@@ -632,6 +633,10 @@ static char *banners[] =
     "                         "
     "DOOM 2: Hell on Earth v%i.%i66"
     "                          ",
+    // doom2.wad v1.7a
+    "                         "
+    "DOOM 2: Hell on Earth v%i.%ia"
+    "                          ",
     // doom1.wad
     "                            "
     "DOOM Shareware Startup v%i.%i"
@@ -647,7 +652,7 @@ static char *banners[] =
     // Doom v1.666
     "                          "
     "DOOM System Startup v%i.%i66"
-    "                          "
+    "                          ",
     // doom.wad (Ultimate DOOM)
     "                         "
     "The Ultimate DOOM Startup v%i.%i"
@@ -954,6 +959,7 @@ static struct
     GameVersion_t version;
 } gameversions[] = {
     {"Doom 1.2",             "1.2",        exe_doom_1_2},
+    {"Doom 1.6",             "1.6",        exe_doom_1_6},
     {"Doom 1.666",           "1.666",      exe_doom_1_666},
     {"Doom 1.7/1.7a",        "1.7",        exe_doom_1_7},
     {"Doom 1.8",             "1.8",        exe_doom_1_8},
@@ -1038,7 +1044,7 @@ static void InitGameVersion(void)
             for (i = 1; i <= 3; ++i)
             {
                 M_snprintf(demolumpname, 6, "demo%i", i);
-                if (W_CheckNumForName(demolumpname) > 0)
+                if (W_CheckNumForName(demolumpname) >= 0)
                 {
                     demolump = W_CacheLumpName(demolumpname, PU_STATIC);
                     demoversion = demolump[0];
@@ -1047,7 +1053,18 @@ static void InitGameVersion(void)
                     switch (demoversion)
                     {
                         case 106:
-                            gameversion = exe_doom_1_666;
+                            // Doom 1.6 detection:
+                            if (W_CheckNumForName("bal3a0") >= 0
+                             && W_CheckNumForName("bal4a0") >= 0
+                             && W_CheckNumForName("bal5a0") >= 0
+                             && W_CheckNumForName("bal6a0") >= 0)
+                            {
+                                gameversion = exe_doom_1_6;
+                            }
+                            else
+                            {
+                                gameversion = exe_doom_1_666;
+                            }
                             break;
                         case 107:
                             gameversion = exe_doom_1_7;
@@ -1367,8 +1384,8 @@ void D_DoomMain (void)
     // Save configuration data and savegames in c:\doomdata,
     // allowing play from CD.
     //
-
-    if (M_ParmExists("-cdrom"))
+    
+    if (M_ParmExists("-cdrom") && gameversion >= exe_doom_1_666)
     {
         printf(D_CDROM);
 
@@ -1513,6 +1530,9 @@ void D_DoomMain (void)
         DEH_AddStringReplacement("M_GDLOW", "M_MSGOFF");
     }
 
+    // Apply hacks to emulate older EXEs.
+    D_Compat_Init();
+
 #ifdef FEATURE_DEHACKED
     // Load Dehacked patches specified on the command line with -deh.
     // Note that there's a very careful and deliberate ordering to how
@@ -1624,7 +1644,7 @@ void D_DoomMain (void)
 
 #ifdef _WIN32
     // In -cdrom mode, we write savegames to c:\doomdata as well as configs.
-    if (M_ParmExists("-cdrom"))
+    if (M_ParmExists("-cdrom") && gameversion >= exe_doom_1_666)
     {
         savegamedir = configdir;
     }
@@ -1645,6 +1665,10 @@ void D_DoomMain (void)
 	    "e3m1","e3m3","e3m3","e3m4","e3m5","e3m6","e3m7","e3m8","e3m9",
 	    "dphoof","bfgga0","heada1","cybra1","spida1d1"
 	};
+        char name2[5][8] =
+        {
+            "fatti5","map20","keena0","vileg1","skelg1"
+        };
 	int i;
 	
 	if ( gamemode == shareware)
@@ -1657,6 +1681,17 @@ void D_DoomMain (void)
 	    for (i = 0;i < 23; i++)
 		if (W_CheckNumForName(name[i])<0)
 		    I_Error(DEH_String("\nThis is not the registered version."));
+
+        if (gamemode == commercial && gameversion == exe_doom_1_6)
+        {
+            for (i = 0; i < 5; i++)
+            {
+                if (W_CheckNumForName(name2[i]) < 0)
+                {
+                    I_Error(DEH_String("\nThis is not the DOOM 2 wadfile."));
+                }
+            }
+        }
     }
 
     if (W_CheckNumForName("SS_START") >= 0
@@ -1860,7 +1895,8 @@ void D_DoomMain (void)
     // Moved this here so that MAP01 isn't constantly looked up
     // in the main loop.
 
-    if (gamemode == commercial && W_CheckNumForName("map01") < 0)
+    if (gamemode == commercial && W_CheckNumForName("map01") < 0
+     && gameversion >= exe_doom_1_666)
         storedemo = true;
 
     if (M_CheckParmWithArgs("-statdump", 1))

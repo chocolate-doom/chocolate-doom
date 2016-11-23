@@ -479,7 +479,8 @@ ST_Responder (event_t* ev)
 	  plyr->message = DEH_String(STSTR_DQDOFF);
       }
       // 'fa' cheat for killer fucking arsenal
-      else if (cht_CheckCheat(&cheat_ammonokey, ev->data2))
+      else if (cht_CheckCheat(&cheat_ammonokey, ev->data2)
+            && gameversion >= exe_doom_1_666)
       {
 	plyr->armorpoints = deh_idfa_armor;
 	plyr->armortype = deh_idfa_armor_class;
@@ -510,7 +511,8 @@ ST_Responder (event_t* ev)
 	plyr->message = DEH_String(STSTR_KFAADDED);
       }
       // 'mus' cheat for changing music
-      else if (cht_CheckCheat(&cheat_mus, ev->data2))
+      else if (cht_CheckCheat(&cheat_mus, ev->data2)
+            && gameversion >= exe_doom_1_666)
       {
 	
 	char	buf[3];

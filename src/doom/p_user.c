@@ -288,7 +288,7 @@ void P_PlayerThink (player_t* player)
 	    newweapon = wp_chainsaw;
 	}
 	
-	if ( (gamemode == commercial)
+	if ( (gamemode == commercial || gameversion <= exe_doom_1_6)
 	    && newweapon == wp_shotgun 
 	    && player->weaponowned[wp_supershotgun]
 	    && player->readyweapon != wp_supershotgun)
@@ -302,9 +302,12 @@ void P_PlayerThink (player_t* player)
 	{
 	    // Do not go to plasma or BFG in shareware,
 	    //  even if cheated.
-	    if ((newweapon != wp_plasma
+	    if (((newweapon != wp_plasma
 		 && newweapon != wp_bfg)
-		|| (gamemode != shareware) )
+		|| (gamemode != shareware))
+                && (gameversion >= exe_doom_1_666
+                 || newweapon != wp_supershotgun
+                 || gamemode == commercial))
 	    {
 		player->pendingweapon = newweapon;
 	    }

@@ -20,6 +20,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "d_compat.h"
+
 #include "dstrings.h"
 #include "deh_main.h"
 #include "i_system.h"
@@ -321,7 +323,7 @@ static void saveg_read_mobj_t(mobj_t *str)
     str->angle = saveg_read32();
 
     // spritenum_t sprite;
-    str->sprite = saveg_read_enum();
+    str->sprite = D_Compat_SpriteToNew(saveg_read_enum());
 
     // int frame;
     str->frame = saveg_read32();
@@ -360,7 +362,7 @@ static void saveg_read_mobj_t(mobj_t *str)
     str->validcount = saveg_read32();
 
     // mobjtype_t type;
-    str->type = saveg_read_enum();
+    str->type = D_Compat_MobjToNew(saveg_read_enum());
 
     // mobjinfo_t* info;
     str->info = saveg_readp();
@@ -369,7 +371,7 @@ static void saveg_read_mobj_t(mobj_t *str)
     str->tics = saveg_read32();
 
     // state_t* state;
-    str->state = &states[saveg_read32()];
+    str->state = &states[D_Compat_StateToNew(saveg_read32())];
 
     // int flags;
     str->flags = saveg_read32();
@@ -439,7 +441,7 @@ static void saveg_write_mobj_t(mobj_t *str)
     saveg_write32(str->angle);
 
     // spritenum_t sprite;
-    saveg_write_enum(str->sprite);
+    saveg_write_enum(D_Compat_SpriteToOld(str->sprite));
 
     // int frame;
     saveg_write32(str->frame);
@@ -478,7 +480,7 @@ static void saveg_write_mobj_t(mobj_t *str)
     saveg_write32(str->validcount);
 
     // mobjtype_t type;
-    saveg_write_enum(str->type);
+    saveg_write_enum(D_Compat_MobjToOld(str->type));
 
     // mobjinfo_t* info;
     saveg_writep(str->info);
@@ -487,7 +489,7 @@ static void saveg_write_mobj_t(mobj_t *str)
     saveg_write32(str->tics);
 
     // state_t* state;
-    saveg_write32(str->state - states);
+    saveg_write32(D_Compat_StateToOld(str->state - states));
 
     // int flags;
     saveg_write32(str->flags);
@@ -588,7 +590,7 @@ static void saveg_read_pspdef_t(pspdef_t *str)
     int state;
 
     // state_t* state;
-    state = saveg_read32();
+    state = D_Compat_StateToNew(saveg_read32());
 
     if (state > 0)
     {
@@ -611,15 +613,19 @@ static void saveg_read_pspdef_t(pspdef_t *str)
 
 static void saveg_write_pspdef_t(pspdef_t *str)
 {
+    int state = 0;
+
     // state_t* state;
     if (str->state)
     {
-        saveg_write32(str->state - states);
+        state = str->state - states;
     }
     else
     {
-        saveg_write32(0);
+        state = 0;
     }
+
+    saveg_write32(D_Compat_StateToOld(state));
 
     // int tics;
     saveg_write32(str->tics);

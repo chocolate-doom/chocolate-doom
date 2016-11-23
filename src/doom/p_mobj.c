@@ -18,6 +18,8 @@
 
 #include <stdio.h>
 
+#include "d_compat.h"
+
 #include "i_system.h"
 #include "z_zone.h"
 #include "m_random.h"
@@ -349,7 +351,7 @@ void P_ZMovement (mobj_t* mo)
             mo->momz = -mo->momz;
 
 	if ( (mo->flags & MF_MISSILE)
-	     && !(mo->flags & MF_NOCLIP) )
+	     && (!(mo->flags & MF_NOCLIP) || gameversion <= exe_doom_1_6) )
 	{
 	    P_ExplodeMissile (mo);
 	    return;
@@ -378,7 +380,7 @@ void P_ZMovement (mobj_t* mo)
 	}
 	
 	if ( (mo->flags & MF_MISSILE)
-	     && !(mo->flags & MF_NOCLIP) )
+	     && (!(mo->flags & MF_NOCLIP) || gameversion <= exe_doom_1_6) )
 	{
 	    P_ExplodeMissile (mo);
 	    return;
@@ -803,7 +805,7 @@ void P_SpawnMapThing (mapthing_t* mthing)
 	
     // find which type to spawn
     for (i=0 ; i< NUMMOBJTYPES ; i++)
-	if (mthing->type == mobjinfo[i].doomednum)
+	if (mthing->type == mobjinfo[i].doomednum && D_Compat_MobjExists(i))
 	    break;
 	
     if (i==NUMMOBJTYPES)
@@ -817,7 +819,7 @@ void P_SpawnMapThing (mapthing_t* mthing)
 		
     // don't spawn any monsters if -nomonsters
     if (nomonsters
-	&& ( i == MT_SKULL
+	&& ( (i == MT_SKULL && gameversion >= exe_doom_1_666)
 	     || (mobjinfo[i].flags & MF_COUNTKILL)) )
     {
 	return;

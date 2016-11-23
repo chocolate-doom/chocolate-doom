@@ -1013,7 +1013,23 @@ void A_SkelMissile (mobj_t* actor)
     A_FaceTarget (actor);
     actor->z += 16*FRACUNIT;	// so missile spawns higher
     mo = P_SpawnMissile (actor, actor->target, MT_TRACER);
-    actor->z -= 16*FRACUNIT;	// back to normal
+    
+    if (gameversion <= exe_doom_1_6)
+    {
+        actor->z += 16 * FRACUNIT;	// back to normal?
+        if (P_Random() & 1)
+        {
+            mo->angle += ANG45;
+        }
+        else
+        {
+            mo->angle -= ANG45;
+        }
+    }
+    else
+    {
+        actor->z -= 16 * FRACUNIT;	// back to normal
+    }
 
     mo->x += mo->momx;
     mo->y += mo->momy;
@@ -1114,7 +1130,14 @@ void A_SkelFist (mobj_t*	actor)
     if (P_CheckMeleeRange (actor))
     {
 	damage = ((P_Random()%10)+1)*6;
-	S_StartSound (actor, sfx_skepch);
+        if (gameversion <= exe_doom_1_6)
+        {
+            S_StartSound(actor, sfx_punch);
+        }
+        else
+        {
+            S_StartSound(actor, sfx_skepch);
+        }
 	P_DamageMobj (actor->target, actor, actor, damage);
     }
 }
@@ -1236,7 +1259,14 @@ void A_VileChase (mobj_t* actor)
 //
 void A_VileStart (mobj_t* actor)
 {
-    S_StartSound (actor, sfx_vilatk);
+    if (gameversion <= exe_doom_1_6)
+    {
+        S_StartSound(actor, sfx_bfg);
+    }
+    else
+    {
+        S_StartSound(actor, sfx_vilatk);
+    }
 }
 
 
@@ -1338,9 +1368,12 @@ void A_VileAttack (mobj_t* actor)
     if (!fire)
 	return;
 		
-    // move the fire between the vile and the player
-    fire->x = actor->target->x - FixedMul (24*FRACUNIT, finecosine[an]);
-    fire->y = actor->target->y - FixedMul (24*FRACUNIT, finesine[an]);	
+    if (gameversion >= exe_doom_1_666)
+    {
+        // move the fire between the vile and the player
+        fire->x = actor->target->x - FixedMul(24 * FRACUNIT, finecosine[an]);
+        fire->y = actor->target->y - FixedMul(24 * FRACUNIT, finesine[an]);
+    }	
     P_RadiusAttack (fire, actor, 70 );
 }
 
@@ -1358,7 +1391,14 @@ void A_VileAttack (mobj_t* actor)
 void A_FatRaise (mobj_t *actor)
 {
     A_FaceTarget (actor);
-    S_StartSound (actor, sfx_manatk);
+    if (gameversion <= exe_doom_1_6)
+    {
+        S_StartSound(actor, sfx_brssit);
+    }
+    else
+    {
+        S_StartSound(actor, sfx_manatk);
+    }
 }
 
 
@@ -1493,6 +1533,10 @@ A_PainShootSkull
     if (count > 20)
 	return;
 
+    if (gameversion <= exe_doom_1_6)
+    {
+        A_FaceTarget(actor);
+    }
 
     // okay, there's playe for another one
     an = angle >> ANGLETOFINESHIFT;
@@ -1529,7 +1573,10 @@ void A_PainAttack (mobj_t* actor)
     if (!actor->target)
 	return;
 
-    A_FaceTarget (actor);
+    if (gameversion >= exe_doom_1_666)
+    {
+        A_FaceTarget(actor);
+    }
     A_PainShootSkull (actor, actor->angle);
 }
 
@@ -1679,7 +1726,7 @@ void A_BossDeath (mobj_t* mo)
     line_t	junk;
     int		i;
 		
-    if ( gamemode == commercial)
+    if (gamemode == commercial && gameversion >= exe_doom_1_666)
     {
 	if (gamemap != 7)
 	    return;
@@ -1722,7 +1769,7 @@ void A_BossDeath (mobj_t* mo)
     }
 	
     // victory!
-    if ( gamemode == commercial)
+    if (gamemode == commercial && gameversion >= exe_doom_1_666)
     {
 	if (gamemap == 7)
 	{

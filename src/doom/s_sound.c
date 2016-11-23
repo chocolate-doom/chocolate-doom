@@ -229,8 +229,8 @@ void S_Start(void)
 
     // start new music for the level
     mus_paused = 0;
-
-    if (gamemode == commercial)
+    
+    if (gamemode == commercial && gameversion >= exe_doom_1_666)
     {
         mnum = mus_runnin + gamemap - 1;
     }
@@ -667,7 +667,8 @@ void S_ChangeMusic(int musicnum, int looping)
         musicnum = mus_introa;
     }
 
-    if (musicnum <= mus_None || musicnum >= NUMMUSIC)
+    if (musicnum <= mus_None || musicnum >= NUMMUSIC
+     || (gameversion <= exe_doom_1_6 && musicnum >= mus_runnin))
     {
         I_Error("Bad music number %d", musicnum);
     }

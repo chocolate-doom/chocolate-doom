@@ -358,7 +358,7 @@ void P_LoadThings (int lump)
 	spawn = true;
 
 	// Do not spawn cool, new monsters if !commercial
-	if (gamemode != commercial)
+	if (gamemode != commercial && gameversion >= exe_doom_1_666)
 	{
 	    switch (SHORT(mt->type))
 	    {
