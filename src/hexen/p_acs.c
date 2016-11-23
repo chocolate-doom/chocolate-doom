@@ -56,8 +56,6 @@ typedef struct
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
-void CheckACSPresent(int number);
-
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
 static void StartOpenACS(int number, int infoIndex, int *address);

@@ -682,6 +682,9 @@ extern boolean autostart;
 extern boolean testcontrols;
 extern int testcontrols_mousespeed;
 
+extern int vanilla_savegame_limit;
+extern int vanilla_demo_limit;
+
 /*
 ===============================================================================
 

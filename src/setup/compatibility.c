@@ -45,10 +45,7 @@ void CompatibilitySettings(void)
 
 void BindCompatibilityVariables(void)
 {
-    if (gamemission == doom || gamemission == strife)
-    {
-        M_BindIntVariable("vanilla_savegame_limit", &vanilla_savegame_limit);
-        M_BindIntVariable("vanilla_demo_limit",     &vanilla_demo_limit);
-    }
+    M_BindIntVariable("vanilla_savegame_limit", &vanilla_savegame_limit);
+    M_BindIntVariable("vanilla_demo_limit",     &vanilla_demo_limit);
 }
 
