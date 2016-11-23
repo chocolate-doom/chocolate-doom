@@ -1317,6 +1317,14 @@ int cpars[32] =
     240,150,180,150,150,300,330,420,300,180,	// 21-30
     120,30					// 31-32
 };
+// Doom II Beta Par Times
+int cpars_beta[32] =
+{
+    30,75,120,90,165,180,180,30,165,0,          //  1-10
+    90,90,90,120,90,360,240,30,170,0,           // 11-20
+    90,45,90,150,90,90,165,30,135,1835884871,   // 21-30    
+    1868767329,1667592818                       // 31-32
+};
  
 
 //
@@ -1336,7 +1344,7 @@ void G_SecretExitLevel (void)
 { 
     // IF NO WOLF3D LEVELS, NO SECRET EXIT!
     if ( (gamemode == commercial)
-      && (W_CheckNumForName("map31")<0))
+      && (W_CheckNumForName("map31")<0) && gameversion >= exe_doom_1_666)
 	secretexit = false;
     else
 	secretexit = true; 
@@ -1356,50 +1364,53 @@ void G_DoCompleted (void)
     if (automapactive) 
 	AM_Stop (); 
 	
-    if (gamemode != commercial)
+    if (gameversion >= exe_doom_1_666)
     {
-        // Chex Quest ends after 5 levels, rather than 8.
+        if (gamemode != commercial)
+        {
+            // Chex Quest ends after 5 levels, rather than 8.
 
-        if (gameversion == exe_chex)
-        {
-            if (gamemap == 5)
+            if (gameversion == exe_chex)
             {
-                gameaction = ga_victory;
-                return;
+                if (gamemap == 5)
+                {
+                    gameaction = ga_victory;
+                    return;
+                }
             }
-        }
-        else
-        {
-            switch(gamemap)
+            else
             {
-              case 8:
-                gameaction = ga_victory;
-                return;
-              case 9: 
-                for (i=0 ; i<MAXPLAYERS ; i++) 
-                    players[i].didsecret = true; 
-                break;
+                switch(gamemap)
+                {
+                  case 8:
+                    gameaction = ga_victory;
+                    return;
+                  case 9: 
+                    for (i=0 ; i<MAXPLAYERS ; i++) 
+                        players[i].didsecret = true; 
+                    break;
+                }
             }
         }
     }
+    else
+    {
+        if ((gamemap == 8)
+         && (gamemode != commercial))
+        {
+            // victory 
+            gameaction = ga_victory;
+            return;
+        }
 
-//#if 0  Hmmm - why?
-    if ( (gamemap == 8)
-	 && (gamemode != commercial) ) 
-    {
-	// victory 
-	gameaction = ga_victory; 
-	return; 
-    } 
-	 
-    if ( (gamemap == 9)
-	 && (gamemode != commercial) ) 
-    {
-	// exit secret level 
-	for (i=0 ; i<MAXPLAYERS ; i++) 
-	    players[i].didsecret = true; 
-    } 
-//#endif
+        if ((gamemap == 9)
+         && (gamemode != commercial))
+        {
+            // exit secret level 
+            for (i = 0; i < MAXPLAYERS; i++)
+                players[i].didsecret = true;
+        }
+    }
     
 	 
     wminfo.didsecret = players[consoleplayer].didsecret; 
@@ -1407,7 +1418,7 @@ void G_DoCompleted (void)
     wminfo.last = gamemap -1;
     
     // wminfo.next is 0 biased, unlike gamemap
-    if ( gamemode == commercial)
+    if (gamemode == commercial && gameversion >= exe_doom_1_666)
     {
 	if (secretexit)
 	    switch(gamemap)
@@ -1459,7 +1470,17 @@ void G_DoCompleted (void)
     // overflows into the cpars array. It's necessary to emulate this
     // for statcheck regression testing.
     if (gamemode == commercial)
-	wminfo.partime = TICRATE*cpars[gamemap-1];
+    {
+        if (gameversion <= exe_doom_1_6)
+        {
+            wminfo.partime = TICRATE *
+                             cpars_beta[10 * (gameepisode - 1) + gamemap - 1];
+        }
+        else
+        {
+            wminfo.partime = TICRATE*cpars[gamemap - 1];
+        }
+    }
     else if (gameepisode < 4)
 	wminfo.partime = TICRATE*pars[gameepisode][gamemap];
     else
@@ -1498,7 +1519,7 @@ void G_WorldDone (void)
     if (secretexit) 
 	players[consoleplayer].didsecret = true; 
 
-    if ( gamemode == commercial )
+    if (gamemode == commercial && gameversion >= exe_doom_1_666)
     {
 	switch (gamemap)
 	{
@@ -1848,7 +1869,7 @@ G_InitNew
     // restore from a saved game.  This was fixed before the Doom
     // source release, but this IS the way Vanilla DOS Doom behaves.
 
-    if (gamemode == commercial)
+    if (gamemode == commercial && gameversion >= exe_doom_1_666)
     {
         if (gamemap < 12)
             skytexturename = "SKY1";
@@ -2040,6 +2061,7 @@ int G_VanillaVersionCode(void)
     {
         case exe_doom_1_2:
             I_Error("Doom 1.2 does not have a version code!");
+        case exe_doom_1_6:
         case exe_doom_1_666:
             return 106;
         case exe_doom_1_7:

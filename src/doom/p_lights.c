@@ -25,6 +25,7 @@
 #include "doomdef.h"
 #include "p_local.h"
 
+#include "doomstat.h"
 
 // State.
 #include "r_state.h"
@@ -73,7 +74,11 @@ void P_SpawnFireFlicker (sector_t*	sector)
     flick->thinker.function.acp1 = (actionf_p1) T_FireFlicker;
     flick->sector = sector;
     flick->maxlight = sector->lightlevel;
-    flick->minlight = P_FindMinSurroundingLight(sector,sector->lightlevel)+16;
+    flick->minlight = P_FindMinSurroundingLight(sector,sector->lightlevel);
+    if (gameversion >= exe_doom_1_666)
+    {
+        flick->minlight += 16;
+    }
     flick->count = 4;
 }
 

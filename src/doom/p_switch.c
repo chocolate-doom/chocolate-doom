@@ -82,10 +82,10 @@ switchlist_t alphSwitchList[] =
     {"SW1BRIK",	"SW2BRIK",	3},
     {"SW1MOD1",	"SW2MOD1",	3},
     {"SW1ZIM",		"SW2ZIM",	3},
-    {"SW1STON6",	"SW2STON6",	3},
-    {"SW1TEK",		"SW2TEK",	3},
-    {"SW1MARB",	"SW2MARB",	3},
-    {"SW1SKULL",	"SW2SKULL",	3},
+    {"SW1STON6",	"SW2STON6",	4},
+    {"SW1TEK",		"SW2TEK",	4},
+    {"SW1MARB",	"SW2MARB",	4},
+    {"SW1SKULL",	"SW2SKULL",	4},
 	
     {"\0",		"\0",		0}
 };
@@ -110,8 +110,17 @@ void P_InitSwitchList(void)
 	episode = 2;
     else
 	if ( gamemode == commercial )
-	    episode = 3;
-		
+        {
+            switch (gameversion)
+            {
+            case exe_doom_1_6:
+                episode = 3;
+                break;
+            default:
+                episode = 4;
+                break;
+            }
+	}	
     for (index = 0,i = 0;i < MAXSWITCHES;i++)
     {
 	if (!alphSwitchList[i].episode)
@@ -154,15 +163,18 @@ P_StartButton
 {
     int		i;
     
-    // See if button is already pressed
-    for (i = 0;i < MAXBUTTONS;i++)
+    if (gameversion >= exe_doom_1_666)
     {
-	if (buttonlist[i].btimer
-	    && buttonlist[i].line == line)
-	{
-	    
-	    return;
-	}
+        // See if button is already pressed
+        for (i = 0; i < MAXBUTTONS; i++)
+        {
+            if (buttonlist[i].btimer
+                && buttonlist[i].line == line)
+            {
+
+                return;
+            }
+        }
     }
     
 
@@ -500,6 +512,10 @@ P_UseSpecialLine
 	
       case 140:
 	// Raise Floor 512
+        if (gameversion <= exe_doom_1_6)
+        {
+            break;
+        }
 	if (EV_DoFloor(line,raiseFloor512))
 	    P_ChangeSwitchTexture(line,0);
 	break;
@@ -631,12 +647,20 @@ P_UseSpecialLine
 	
       case 138:
 	// Light Turn On
+        if (gameversion <= exe_doom_1_6)
+        {
+            break;
+        }
 	EV_LightTurnOn(line,255);
 	P_ChangeSwitchTexture(line,1);
 	break;
 	
       case 139:
 	// Light Turn Off
+        if (gameversion <= exe_doom_1_6)
+        {
+            break;
+        }
 	EV_LightTurnOn(line,35);
 	P_ChangeSwitchTexture(line,1);
 	break;

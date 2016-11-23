@@ -711,7 +711,14 @@ A_FireShotgun2
     int		damage;
 		
 	
-    S_StartSound (player->mo, sfx_dshtgn);
+    if (gameversion <= exe_doom_1_666)
+    {
+        S_StartSound(player->mo, sfx_shotgn);
+    }
+    else
+    {
+        S_StartSound(player->mo, sfx_dshtgn);
+    }
     P_SetMobjState (player->mo, S_PLAY_ATK2);
 
     DecreaseAmmo(player, weaponinfo[player->readyweapon].ammo, 2);

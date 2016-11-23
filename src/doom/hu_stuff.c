@@ -410,6 +410,15 @@ void HU_Start(void)
         s = HU_TITLE_CHEX;
     }
 
+    if (gameversion <= exe_doom_1_6)
+    {
+        s = HU_TITLE;
+        if (gameepisode * 9 + gamemap > 3 * 9 + 9)
+        {
+            s = "NEWLEVEL";
+        }
+    }
+
     // dehacked substitution to get modified level name
 
     s = DEH_String(s);
@@ -508,7 +517,7 @@ void HU_Ticker(void)
 			    message_nottobefuckedwith = true;
 			    message_on = true;
 			    message_counter = HU_MSGTIMEOUT;
-			    if ( gamemode == commercial )
+			    if (gamemode == commercial && gameversion >= exe_doom_1_666)
 			      S_StartSound(0, sfx_radio);
 			    else
 			      S_StartSound(0, sfx_tink);

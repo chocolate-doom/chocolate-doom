@@ -22,6 +22,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "d_compat.h";
 
 #include "deh_main.h"
 #include "doomdef.h"
@@ -496,15 +497,16 @@ void R_ProjectSprite (mobj_t* thing)
     
     // decide which patch to use for sprite relative to player
 #ifdef RANGECHECK
-    if ((unsigned int) thing->sprite >= (unsigned int) numsprites)
+    if ((unsigned int) thing->sprite >= (unsigned int) numsprites
+     || !D_Compat_SpriteExists(thing->sprite))
 	I_Error ("R_ProjectSprite: invalid sprite number %i ",
-		 thing->sprite);
+		 D_Compat_SpriteToOld(thing->sprite));
 #endif
     sprdef = &sprites[thing->sprite];
 #ifdef RANGECHECK
     if ( (thing->frame&FF_FRAMEMASK) >= sprdef->numframes )
 	I_Error ("R_ProjectSprite: invalid sprite frame %i : %i ",
-		 thing->sprite, thing->frame);
+		 D_Compat_SpriteToOld(thing->sprite), thing->frame);
 #endif
     sprframe = &sprdef->spriteframes[ thing->frame & FF_FRAMEMASK];
 
@@ -649,15 +651,16 @@ void R_DrawPSprite (pspdef_t* psp)
     
     // decide which patch to use
 #ifdef RANGECHECK
-    if ( (unsigned)psp->state->sprite >= (unsigned int) numsprites)
+    if ( (unsigned)psp->state->sprite >= (unsigned int) numsprites
+     || !D_Compat_SpriteExists(psp->state->sprite))
 	I_Error ("R_ProjectSprite: invalid sprite number %i ",
-		 psp->state->sprite);
+		 D_Compat_SpriteToOld(psp->state->sprite));
 #endif
     sprdef = &sprites[psp->state->sprite];
 #ifdef RANGECHECK
     if ( (psp->state->frame & FF_FRAMEMASK)  >= sprdef->numframes)
 	I_Error ("R_ProjectSprite: invalid sprite frame %i : %i ",
-		 psp->state->sprite, psp->state->frame);
+		 D_Compat_SpriteToOld(psp->state->sprite), psp->state->frame);
 #endif
     sprframe = &sprdef->spriteframes[ psp->state->frame & FF_FRAMEMASK ];
 

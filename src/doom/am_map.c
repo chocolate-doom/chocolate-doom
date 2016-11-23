@@ -32,6 +32,7 @@
 #include "m_controls.h"
 #include "m_misc.h"
 #include "i_system.h"
+#include "i_swap.h"
 #include "i_timer.h"
 
 // Needs access to LFB.
@@ -1339,10 +1340,16 @@ void AM_drawMarks(void)
     {
 	if (markpoints[i].x != -1)
 	{
-	    //      w = SHORT(marknums[i]->width);
-	    //      h = SHORT(marknums[i]->height);
-	    w = 5; // because something's wrong with the wad, i guess
-	    h = 6; // because something's wrong with the wad, i guess
+            if (gameversion <= exe_doom_1_6)
+            {
+                w = SHORT(marknums[i]->width);
+                h = SHORT(marknums[i]->height);
+            }
+            else
+            {
+                w = 5; // because something's wrong with the wad, i guess
+                h = 6; // because something's wrong with the wad, i guess
+            }
 	    fx = CXMTOF(markpoints[i].x);
 	    fy = CYMTOF(markpoints[i].y);
 	    if (fx >= f_x && fx <= f_w - w && fy >= f_y && fy <= f_h - h)

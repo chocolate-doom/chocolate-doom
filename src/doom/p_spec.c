@@ -71,6 +71,7 @@ typedef struct
     char	endname[9];
     char	startname[9];
     int		speed;
+    GameVersion_t version;
 } animdef_t;
 
 
@@ -95,35 +96,35 @@ extern anim_t*	lastanim;
 //
 animdef_t		animdefs[] =
 {
-    {false,	"NUKAGE3",	"NUKAGE1",	8},
-    {false,	"FWATER4",	"FWATER1",	8},
-    {false,	"SWATER4",	"SWATER1", 	8},
-    {false,	"LAVA4",	"LAVA1",	8},
-    {false,	"BLOOD3",	"BLOOD1",	8},
+    {false, "NUKAGE3",  "NUKAGE1",  8,  exe_doom_1_2},
+    {false, "FWATER4",  "FWATER1",  8,  exe_doom_1_2},
+    {false, "SWATER4",  "SWATER1",  8,  exe_doom_1_2},
+    {false, "LAVA4",    "LAVA1",    8,  exe_doom_1_2},
+    {false, "BLOOD3",   "BLOOD1",   8,  exe_doom_1_2},
 
     // DOOM II flat animations.
-    {false,	"RROCK08",	"RROCK05",	8},		
-    {false,	"SLIME04",	"SLIME01",	8},
-    {false,	"SLIME08",	"SLIME05",	8},
-    {false,	"SLIME12",	"SLIME09",	8},
+    {false, "RROCK08",  "RROCK05",  8,  exe_doom_1_666},		
+    {false, "SLIME04",  "SLIME01",  8,  exe_doom_1_666},
+    {false, "SLIME08",  "SLIME05",  8,  exe_doom_1_666},
+    {false, "SLIME12",  "SLIME09",  8,  exe_doom_1_666},
 
-    {true,	"BLODGR4",	"BLODGR1",	8},
-    {true,	"SLADRIP3",	"SLADRIP1",	8},
+    {true,  "BLODGR4",  "BLODGR1",  8,  exe_doom_1_6},
+    {true,  "SLADRIP3", "SLADRIP1", 8,  exe_doom_1_6},
 
-    {true,	"BLODRIP4",	"BLODRIP1",	8},
-    {true,	"FIREWALL",	"FIREWALA",	8},
-    {true,	"GSTFONT3",	"GSTFONT1",	8},
-    {true,	"FIRELAVA",	"FIRELAV3",	8},
-    {true,	"FIREMAG3",	"FIREMAG1",	8},
-    {true,	"FIREBLU2",	"FIREBLU1",	8},
-    {true,	"ROCKRED3",	"ROCKRED1",	8},
+    {true,  "BLODRIP4", "BLODRIP1", 8,  exe_doom_1_6},
+    {true,  "FIREWALL", "FIREWALA", 8,  exe_doom_1_6},
+    {true,  "GSTFONT3", "GSTFONT1", 8,  exe_doom_1_6},
+    {true,  "FIRELAVA", "FIRELAV3", 8,  exe_doom_1_6},
+    {true,  "FIREMAG3", "FIREMAG1", 8,  exe_doom_1_6},
+    {true,  "FIREBLU2", "FIREBLU1", 8,  exe_doom_1_6},
+    {true,  "ROCKRED3", "ROCKRED1", 8,  exe_doom_1_6},
 
-    {true,	"BFALL4",	"BFALL1",	8},
-    {true,	"SFALL4",	"SFALL1",	8},
-    {true,	"WFALL4",	"WFALL1",	8},
-    {true,	"DBRAIN4",	"DBRAIN1",	8},
+    {true,  "BFALL4",   "BFALL1",   8,  exe_doom_1_666},
+    {true,  "SFALL4",   "SFALL1",   8,  exe_doom_1_666},
+    {true,  "WFALL4",   "WFALL1",   8,  exe_doom_1_666},
+    {true,  "DBRAIN4",  "DBRAIN1",  8,  exe_doom_1_666},
 	
-    {-1,        "",             "",             0},
+    {-1,    "",         "",         0,  exe_doom_1_2},
 };
 
 anim_t		anims[MAXANIMS];
@@ -150,6 +151,11 @@ void P_InitPicAnims (void)
     for (i=0 ; animdefs[i].istexture != -1 ; i++)
     {
         char *startname, *endname;
+
+        if (animdefs[i].version > gameversion)
+        {
+            continue;
+        }
 
         startname = DEH_String(animdefs[i].startname);
         endname = DEH_String(animdefs[i].endname);
@@ -784,6 +790,10 @@ P_CrossSpecialLine
 	
       case 124:
 	// Secret EXIT
+        if (gameversion <= exe_doom_1_6)
+        {
+            break;
+        }
 	G_SecretExitLevel ();
 	break;
 		
@@ -804,6 +814,10 @@ P_CrossSpecialLine
 	
       case 141:
 	// Silent Ceiling Crush & Raise
+        if (gameversion <= exe_doom_1_6)
+        {
+            break;
+        }
 	EV_DoCeiling(line,silentCrushAndRaise);
 	line->special = 0;
 	break;
@@ -1114,7 +1128,7 @@ void P_UpdateSpecials (void)
 
     
     //	LEVEL TIMER
-    if (levelTimer == true)
+    if (levelTimer == true && gameversion >= exe_doom_1_666)
     {
 	levelTimeCount--;
 	if (!levelTimeCount)
@@ -1391,16 +1405,19 @@ void P_SpawnSpecials (void)
     sector_t*	sector;
     int		i;
 
-    // See if -TIMER was specified.
+    if (gameversion >= exe_doom_1_666)
+    {
+        // See if -TIMER was specified.
 
-    if (timelimit > 0 && deathmatch)
-    {
-        levelTimer = true;
-        levelTimeCount = timelimit * 60 * TICRATE;
-    }
-    else
-    {
-	levelTimer = false;
+        if (timelimit > 0 && deathmatch)
+        {
+            levelTimer = true;
+            levelTimeCount = timelimit * 60 * TICRATE;
+        }
+        else
+        {
+            levelTimer = false;
+        }
     }
 
     //	Init special SECTORs.

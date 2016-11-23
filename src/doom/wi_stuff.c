@@ -401,7 +401,17 @@ static patch_t *background;
 // slam background
 void WI_slamBackground(void)
 {
+    int i;
+
     V_DrawPatch(0, 0, background);
+    if (gamemode == commercial && gameversion == exe_doom_1_6)
+    {
+        // darken the background image
+        for (i = 0; i < SCREENHEIGHT * SCREENWIDTH; i++)
+        {
+            I_VideoBuffer[i] = colormaps[256 * 25 + I_VideoBuffer[i]];
+        }
+    }
 }
 
 // The ticker is used to detect keys
@@ -1569,7 +1579,7 @@ void WI_Ticker(void)
     if (bcnt == 1)
     {
 	// intermission music
-  	if ( gamemode == commercial )
+  	if (gamemode == commercial && gameversion >= exe_doom_1_666)
 	  S_ChangeMusic(mus_dm2int, true);
 	else
 	  S_ChangeMusic(mus_inter, true); 
@@ -1611,7 +1621,14 @@ static void WI_loadUnloadData(load_callback_t callback)
     {
 	for (i=0 ; i<NUMCMAPS ; i++)
 	{
-	    DEH_snprintf(name, 9, "CWILV%2.2d", i);
+            if (gameversion <= exe_doom_1_6)
+            {
+                DEH_snprintf(name, 9, "WILV%d%d", wbs->epsd % 3, i % 9);
+            }
+            else
+            {
+                DEH_snprintf(name, 9, "CWILV%2.2d", i);
+            }
             callback(name, &lnames[i]);
 	}
     }
@@ -1738,7 +1755,14 @@ static void WI_loadUnloadData(load_callback_t callback)
 
     if (gamemode == commercial)
     {
-        M_StringCopy(name, DEH_String("INTERPIC"), sizeof(name));
+        if (gameversion >= exe_doom_1_666)
+        {
+            M_StringCopy(name, DEH_String("INTERPIC"), sizeof(name));
+        }
+        else
+        {
+            M_StringCopy(name, DEH_String("TITLEPIC"), sizeof(name));
+        }
     }
     else if (gameversion >= exe_ultimate && wbs->epsd == 3)
     {
@@ -1763,7 +1787,14 @@ void WI_loadData(void)
 {
     if (gamemode == commercial)
     {
-	NUMCMAPS = 32;
+        if (gameversion <= exe_doom_1_6)
+        {
+            NUMCMAPS = 40;
+        }
+        else
+        {
+            NUMCMAPS = 32;
+        }
 	lnames = (patch_t **) Z_Malloc(sizeof(patch_t*) * NUMCMAPS,
 				       PU_STATIC, NULL);
     }
