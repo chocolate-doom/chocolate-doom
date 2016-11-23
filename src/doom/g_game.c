@@ -2236,12 +2236,11 @@ void G_DoPlayDemo (void)
         deathmatch = 0;
         consoleplayer = 0;
 
-        // e6y
-        // Ability to force -nomonsters and -respawn for playback of 1.2 demos.
-        // Demos recorded with Doom.exe 1.2 did not contain any information
-        // about whether these parameters had been used. In order to play them
-        // back, you should add them to the command-line for playback.
-        // There is no more desynch on mesh.lmp @ mesh.wad
+        // e6y: Ability to force -nomonsters and -respawn for playback of 1.2
+        // demos. Demos recorded with Doom.exe 1.2 did not contain any
+        // information about whether these parameters had been used. In order
+        // to play them back, you should add them to the command-line for
+        // playback. There is no more desynch on mesh.lmp @ mesh.wad
         // prboom -iwad doom.wad -file mesh.wad -playdemo mesh.lmp -nomonsters
         // http://www.doomworld.com/idgames/index.php?id=13976
         respawnparm = M_CheckParm ("-respawn");

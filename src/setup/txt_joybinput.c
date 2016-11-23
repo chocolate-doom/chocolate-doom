@@ -44,7 +44,7 @@ extern int joystick_physical_buttons[NUM_VIRTUAL_BUTTONS];
 // button that the user wants to use for firing. We do this so that
 // the menus work (the game code is hard coded to interpret
 // button #0 = select menu item, button #1 = go back to previous menu).
-static int *all_joystick_buttons[] =
+static int *all_joystick_buttons[NUM_VIRTUAL_BUTTONS] =
 {
     &joybfire,
     &joybuse,
@@ -72,7 +72,7 @@ static int PhysicalForVirtualButton(int vbutton)
 }
 
 // Get the virtual button number for the given variable, ie. the
-// variable's index in all_joystick_buttons[].
+// variable's index in all_joystick_buttons[NUM_VIRTUAL_BUTTONS].
 static int VirtualButtonForVariable(int *variable)
 {
     int i;
@@ -91,7 +91,7 @@ static int VirtualButtonForVariable(int *variable)
 
 // Rearrange joystick button configuration to be in "canonical" form:
 // each joyb* variable should have a value equal to its index in
-// all_joystick_buttons[] above.
+// all_joystick_buttons[NUM_VIRTUAL_BUTTONS] above.
 static void CanonicalizeButtons(void)
 {
     int new_mapping[NUM_VIRTUAL_BUTTONS];

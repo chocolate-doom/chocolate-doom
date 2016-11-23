@@ -1317,11 +1317,11 @@ boolean PIT_ChangeSector (mobj_t*	thing)
     {
 	P_SetMobjState (thing, S_GIBS);
 
-	// Improved doom 1.2 compatibility:
-	// PIT_ChangeSector this time. Doom 1.2 does not clear MF_SOLID flag for gibs
+	// Improved doom 1.2 compatibility: PIT_ChangeSector this time.
+	// Doom 1.2 does not clear MF_SOLID flag for gibs
 	if (gameversion > exe_doom_1_2)
 	{
-	thing->flags &= ~MF_SOLID;
+	    thing->flags &= ~MF_SOLID;
 	}
 	thing->height = 0;
 	thing->radius = 0;
