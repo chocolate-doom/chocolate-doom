@@ -28,9 +28,12 @@ of compatibility:
  * DOS Heretic 1.3.
  * DOS Hexen 1.1.
  * DOS Strife 1.31.
+ * DOS Chex Quest.
 
-“Vanilla” does not include ports (either official or unofficial), such
-as console ports, Doom 95 or Doom 3: BFG Edition.
+Compatibility with older versions of the DOS binaries is also a
+secondary goal (though not pre-release versions). Other ports (either
+official or unofficial) are out of scope: this includes console ports,
+non-DOS ports, Doom 95 and Doom 3: BFG Edition.
 
 # Compatibility
 
