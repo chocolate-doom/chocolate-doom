@@ -35,7 +35,7 @@ long M_FileLength(FILE *handle);
 boolean M_StrToInt(const char *str, int *result);
 void M_ExtractFileBase(char *path, char *dest);
 char *M_BaseName(char *path);
-char *M_DirName(char *path);
+char *M_DirName(const char *path);
 void M_ForceUppercase(char *text);
 void M_ForceLowercase(char *text);
 char *M_StrCaseStr(char *haystack, char *needle);
