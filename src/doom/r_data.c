@@ -775,8 +775,8 @@ void R_InitTextures (void)
 	for (j = 0; j < numpnameslumps; j++)
 	{
 	    // [crispy] both point to the same WAD file name string?
-	    if (lumpinfo[texturelumps[i].lumpnum]->wad_file->name ==
-	        lumpinfo[pnameslumps[j].lumpnum]->wad_file->name)
+	    if (lumpinfo[texturelumps[i].lumpnum]->wad_file->basename ==
+	        lumpinfo[pnameslumps[j].lumpnum]->wad_file->basename)
 	    {
 		texturelumps[i].pnamesoffset = pnameslumps[j].summappatches;
 		break;

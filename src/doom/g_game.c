@@ -1859,7 +1859,7 @@ void G_DoLoadGame (void)
     if (savewadfilename)
     {
         // [crispy] strings are not equal
-        if (strcmp(savewadfilename, maplumpinfo->wad_file->name))
+        if (strcmp(savewadfilename, maplumpinfo->wad_file->basename))
         {
             M_ForceLoadGame();
             fclose(save_stream);
@@ -1867,7 +1867,7 @@ void G_DoLoadGame (void)
         }
         else
         // [crispy] strings are equal, but not identical
-        if (savewadfilename != maplumpinfo->wad_file->name)
+        if (savewadfilename != maplumpinfo->wad_file->basename)
         {
             free(savewadfilename);
         }

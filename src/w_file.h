@@ -52,10 +52,10 @@ struct _wad_file_s
     unsigned int length;
 
     // File's location on disk.
-    const char *path;
+    char *path; // [crispy] un-const
 
     // [crispy] name of this file
-    char *name;
+    char *basename;
     // [crispy] indicate this is the IWAD
     boolean iwad;
 };

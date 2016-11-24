@@ -2007,7 +2007,7 @@ P_SetupLevel
 	    NULL);
 
 	fprintf(stderr, "P_SetupLevel: %s (%s), %s%s, Time %d:%02d:%02d, Total %d:%02d:%02d, ",
-	    maplumpinfo->name, maplumpinfo->wad_file->name,
+	    maplumpinfo->name, maplumpinfo->wad_file->basename,
 	    skilltable[BETWEEN(0,5,(int) skill+1)], rfn_str,
 	    ltime/3600, (ltime%3600)/60, ltime%60,
 	    ttime/3600, (ttime%3600)/60, ttime%60);

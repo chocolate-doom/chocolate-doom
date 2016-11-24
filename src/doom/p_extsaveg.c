@@ -38,13 +38,13 @@ static void P_WritePackageTarname (const char *key)
 	fputs(line, save_stream);
 }
 
-// maplumpinfo->wad_file->name
+// maplumpinfo->wad_file->basename
 
 char *savewadfilename = NULL;
 
 static void P_WriteWadFileName (const char *key)
 {
-	M_snprintf(line, sizeof(line), "%s %s\n", key, maplumpinfo->wad_file->name);
+	M_snprintf(line, sizeof(line), "%s %s\n", key, maplumpinfo->wad_file->basename);
 	fputs(line, save_stream);
 }
 

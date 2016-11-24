@@ -143,7 +143,7 @@ wad_file_t *W_AddFile (char *filename)
     }
 
     // [crispy] save the file name
-    wad_file->name = M_BaseName(filename);
+    wad_file->basename = M_BaseName(wad_file->path);
     // [crispy] indicate this is the IWAD
     wad_file->iwad = (filename == iwadfile);
 
