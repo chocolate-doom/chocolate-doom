@@ -1,82 +1,81 @@
 ## HEAD
 
 ### General
-  * Bash completion scripts are included. (thanks Fabian)
-  * Support the *.lmp file format in the OS X launcher (thanks Jon)
-  * Added emulation for pitch-shifting as in early versions of Doom,
-    Heretic, and Hexen. (thanks Jon)
-  * Write out aspect-correct 1600×1200 PNGs. (thanks Jon)
-  * OPL emulation is more accurate. (thanks Nuke.YKT)
-  * Futher emulation of DMX bugs with GUS cards. (thanks Nuke.YKT)
-  * Emulation of the disk icon has returned. (thanks Fabian, Jon)
-  * Checksum calculations were fixed on big endian systems, allowing
+  * Bash completion scripts are included (thanks Fabian)
+  * The OS X launcher now supports the .lmp file format (thanks Jon)
+  * Pitch-shifting from early versions of Doom, Heretic, and Hexen.
+    is now supported (thanks Jon)
+  * Aspect ratio-corrected 1600×1200 PNGs are now written (thanks Jon)
+  * OPL emulation is more accurate (thanks Nuke.YKT)
+  * DMX bugs with GUS cards are now better emulated (thanks Nuke.YKT)
+  * The disk activity floppy disk icon is now shown (thanks Fabian, Jon)
+  * Checksum calculations are fixed on big endian systems, allowing
     multiplayer games to be played in mixed little/big-endian
-    environments. (thanks GhostlyDeath, njankowski)
+    environments (thanks GhostlyDeath, njankowski)
   * The NES30, SNES30, and SFC30 gamepads are detected and configured
-    automatically by the Setup tool.  The automap can also be
-    configured to a joystick button. (thanks Jon)
-  * The vanilla limit of 4046 lumps per WAD is now enforced. (thanks
+    automatically by the Setup tool. The automap can also be configured
+    to a joystick button (thanks Jon)
+  * The vanilla limit of 4046 lumps per WAD is now enforced (thanks
     Jon, Quasar, Edward-san)
-  * Solidsegs overflow is emulated like in vanilla. (thanks Quasar)
+  * Solidsegs overflow is emulated like in vanilla (thanks Quasar)
   * Heretic/Hexen demo support has expanded. "-demoextend" allows
     demos to last longer than a single level; "-shortticfix" adjusts
     low-resolution turning to match Doom's handling; "-maxdemo" and
-    "-longtics" support. (thanks CapnClever)
+    "-longtics" support (thanks CapnClever)
 
 ### Build systems
-  * Improved compatibility with BSD Make. (thanks R.Rebello)
+  * There is better compatibility with BSD Make (thanks R.Rebello)
   * “./configure --with-PACKAGE” checks were repaired to behave
-    logically, rather than disabling the feature. (thanks R.Rebello)
-  * Default to installing the games to ${bindir}, such as
-    /usr/local/bin, rather than /usr/local/games. (thanks chungy)
-  * Support Visual Studio 2015. (thanks Azarien)
-  * Allow SDL headers and libraries to exist in the Microsoft Visual
-    Studio project directory. (thanks Quasar)
-  * Repaired the CodeBlocks projects by removing non-existent files
+    logically, rather than disabling the feature (thanks R.Rebello)
+  * Games are now installed to ${bindir} by default, eg.
+    /usr/local/bin, rather than /usr/local/games (thanks chungy)
+  * Visual Studio 2015 is now supported (thanks Azarien)
+  * SDL headers and libraries can now exist in the Microsoft Visual
+    Studio project directory (thanks Quasar)
+  * CodeBlocks projects were repaired by removing non-existent files
     from the project files (thanks krystalgamer)
 
 ### Doom
-  * Chex Quest’s level warp cheat (LEESNYDER##) was changed to behave
-    like the original EXE. (thanks Nuke.YKT)
-  * Allow starting multiplayer Chex Quest games.
-  * Allow Freedoom: Phase 1 ≤ 0.10.1 to be loaded with mods, with
-    -gameversion older than ultimate. (thanks Fabian, chungy)
+  * Chex Quest’s level warp cheat (LEESNYDER##) now behaves more like
+    like the original EXE (thanks Nuke.YKT)
+  * It's now possible to start multiplayer Chex Quest games.
+  * Freedoom: Phase 1 <= 0.10.1 can now be loaded with mods, with
+    -gameversion older than ultimate (thanks Fabian, chungy)
   * The IWAD order preference for GOG.com installs matches vanilla
-    Final Doom: doom2, plutonia, tnt, doom. (thanks chungy)
-  * Added safety checks against write failures when saving a game,
-    such as when the directory is read-only.  Try falling back to a
-    temporary directory and reporting an error instead.  (thanks
+    Final Doom: doom2, plutonia, tnt, doom (thanks chungy)
+  * There are better safety checks against write failures when saving
+    a game, such as when the directory is read-only (thanks
     terrorcide)
-  * Versions 1.666, 1.7, and 1.8 are emulated. (thanks Nuke.YKT)
+  * Versions 1.666, 1.7, and 1.8 are emulated (thanks Nuke.YKT)
 
 ### Heretic
-  * Added map names for Episode 6, fixing a crash after completing a
-    level in this episode. (thanks J.Benaim)
-  * Added unlimited demo/savegame support. (thanks CapnClever)
+  * Map names were added for Episode 6, fixing a crash after completing
+    a level in this episode (thanks J.Benaim)
+  * Support for unlimited demo/savegames was added (thanks CapnClever)
 
 ### Hexen
-  * The MRJONES cheat code returns an identical string as vanilla, and
-    enables fully reproducable builds. (thanks Fabian)
-  * Fixed an issue where the game crashed while killing the
-    Wraithverge in 64-bit builds. (thanks J.Benaim)
-  * Added unlimited demo/savegame support. (thanks CapnClever)
-  * Mouse buttons for strafe left/right and move backward, as well as
-    'Double click acts as "use"' mouse option, now function properly.
-    (thanks CapnClever)
+  * The MRJONES cheat code returns an identical string to vanilla, and
+    enables fully reproducible builds (thanks Fabian)
+  * An issue was fixed where the game crashed while killing the
+    Wraithverge in 64-bit builds (thanks J.Benaim)
+  * Support for unlimited demo/savegames was added (thanks CapnClever)
+  * Mouse buttons for strafe left/right and move backward were added,
+    as well as a "Double click acts as use" mouse option (thanks
+    CapnClever)
 
 ### Strife
-  * Support added for automatic loading of the IWAD from the GOG.com
-    release of Strife: Veteran Edition on Windows. (thanks chungy)
-  * Jumping can be bound to a mouse button. (thanks Gez)
-  * Gibbing logic was changed to match vanilla behavior. (thanks Quasar)
-  * Several constants differences from vanilla were fixed. (thanks
+  * Support was added for automatic loading of the IWAD from the GOG.com
+    release of Strife: Veteran Edition on Windows (thanks chungy)
+  * Jumping can now be bound to a mouse button (thanks Gez)
+  * Gibbing logic was changed to match vanilla behavior (thanks Quasar)
+  * Several constants differences from vanilla were fixed (thanks
     Nuke.YKT, Quasar)
   * When using -iwad, voices.wad from the IWAD’s directory is prefered
-    over auto-detected DOS/Steam/GOG.com installs. (thanks Quasar)
+    over auto-detected DOS/Steam/GOG.com installs (thanks Quasar)
 
 ### libtextscreen
-  * Simplified the API for creating and managing tables and columns.
-  * Allow cycling through tables with tab key.
+  * The API for creating and managing tables and columns was simplified.
+  * It's now possible to cycle through tables with the tab key.
 
 ## 2.2.1 (2015-09-10)
 
