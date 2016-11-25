@@ -3299,10 +3299,11 @@ static void CopyFile(char *source_name, char *dest_name)
         {
             I_Error ("Couldn't read file %s", source_name);
         }
+
         write_count = fwrite(buffer, 1, buf_count, write_handle);
-        if (read_count < buf_count)
+        if (write_count < buf_count)
         {
-            I_Error ("Couldn't read file %s", dest_name);
+            I_Error ("Couldn't write to file %s", dest_name);
         }
 
         file_remaining -= buf_count;
