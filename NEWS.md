@@ -18,10 +18,9 @@
   * The vanilla limit of 4046 lumps per WAD is now enforced (thanks
     Jon, Quasar, Edward-san)
   * Solidsegs overflow is emulated like in vanilla (thanks Quasar)
-  * Heretic/Hexen demo support has expanded. "-demoextend" allows
-    demos to last longer than a single level; "-shortticfix" adjusts
-    low-resolution turning to match Doom's handling; "-maxdemo" and
-    "-longtics" support (thanks CapnClever)
+  * Multiple capitalizations are now tried when searching for WAD files,
+    for convenience when running on case sensitive filesystems (thanks
+    Fabian).
 
 ### Build systems
   * There is better compatibility with BSD Make (thanks R.Rebello)
@@ -47,11 +46,17 @@
     a game, such as when the directory is read-only (thanks
     terrorcide)
   * Versions 1.666, 1.7, and 1.8 are emulated (thanks Nuke.YKT)
+  * Crashes are now handled more gracefully when a linedef references
+    nonexistent sidedefs (thanks Fabian)
 
 ### Heretic
   * Map names were added for Episode 6, fixing a crash after completing
     a level in this episode (thanks J.Benaim)
   * Support for unlimited demo/savegames was added (thanks CapnClever)
+  * Demo support is expanded: "-demoextend" allows demos to last longer
+    than a single level; "-shortticfix" adjusts low-resolution turning
+    to match Doom's handling, and there is now "-maxdemo" and "-longtics"
+    support (thanks CapnClever)
 
 ### Hexen
   * The MRJONES cheat code returns an identical string to vanilla, and
@@ -62,6 +67,10 @@
   * Mouse buttons for strafe left/right and move backward were added,
     as well as a "Double click acts as use" mouse option (thanks
     CapnClever)
+  * Demo support is expanded: "-demoextend" allows demos to last longer
+    than a single level; "-shortticfix" adjusts low-resolution turning
+    to match Doom's handling, and there is now "-maxdemo" and "-longtics"
+    support (thanks CapnClever)
 
 ### Strife
   * Support was added for automatic loading of the IWAD from the GOG.com
@@ -76,6 +85,7 @@
 ### libtextscreen
   * The API for creating and managing tables and columns was simplified.
   * It's now possible to cycle through tables with the tab key.
+  * Windows can now have multiple columns.
 
 ## 2.2.1 (2015-09-10)
 
