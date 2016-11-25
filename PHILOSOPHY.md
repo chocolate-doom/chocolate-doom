@@ -152,6 +152,17 @@ situations where changes are considered acceptable:
       -regdev used by id internally for development; these have been
       removed.
 
+ 8. Expansions to the vanilla demo formats are allowed, to make
+    recording and playback of vanilla gameplay more convenient, with
+    the following restrictions:
+
+    - Such expansions are not supported in WAD files (they are not
+      an editing feature for WAD authors to use).
+    - Support for these features can be completely disabled using the
+      -strictdemos command line argument.
+    - A warning is shown to the user on the console (stdout) when a
+      demo using one of these features is recorded or played back.
+
 A good litmus test of when it’s acceptable to break from Vanilla
 behavior is to ask the question: “Although this is Vanilla behavior,
 is there anyone who would want this?”
