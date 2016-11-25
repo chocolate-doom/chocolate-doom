@@ -331,7 +331,7 @@ char *M_DirName(const char *path)
     path_dup = M_StringDuplicate(path);
     ptr = path_dup + strlen(path_dup) - 1;
 
-    while (ptr != path_dup)
+    while (ptr > path_dup)
     {
         if (*ptr == '\\' || *ptr == '/')
         {
