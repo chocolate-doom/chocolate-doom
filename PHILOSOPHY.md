@@ -28,9 +28,12 @@ of compatibility:
  * DOS Heretic 1.3.
  * DOS Hexen 1.1.
  * DOS Strife 1.31.
+ * DOS Chex Quest.
 
-“Vanilla” does not include ports (either official or unofficial), such
-as console ports, Doom 95 or Doom 3: BFG Edition.
+Compatibility with older versions of the DOS binaries is also a
+secondary goal (though not pre-release versions). Other ports (either
+official or unofficial) are out of scope: this includes console ports,
+non-DOS ports, Doom 95 and Doom 3: BFG Edition.
 
 # Compatibility
 
@@ -148,6 +151,17 @@ situations where changes are considered acceptable:
     - Vanilla Doom has command line options named -comdev, -shdev and
       -regdev used by id internally for development; these have been
       removed.
+
+ 8. Expansions to the vanilla demo formats are allowed, to make
+    recording and playback of vanilla gameplay more convenient, with
+    the following restrictions:
+
+    - Such expansions are not supported in WAD files (they are not
+      an editing feature for WAD authors to use).
+    - Support for these features can be completely disabled using the
+      -strictdemos command line argument.
+    - A warning is shown to the user on the console (stdout) when a
+      demo using one of these features is recorded or played back.
 
 A good litmus test of when it’s acceptable to break from Vanilla
 behavior is to ask the question: “Although this is Vanilla behavior,

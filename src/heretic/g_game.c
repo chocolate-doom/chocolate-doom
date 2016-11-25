@@ -1873,23 +1873,49 @@ void G_DeferedPlayDemo(char *name)
     gameaction = ga_playdemo;
 }
 
+// Returns true if the given lump number corresponds to data from a .lmp
+// file, as opposed to a WAD.
+static boolean IsDemoFile(int lumpnum)
+{
+    char *lower;
+    boolean result;
+
+    lower = M_StringDuplicate(lumpinfo[lumpnum]->wad_file->path);
+    M_ForceLowercase(lower);
+    result = M_StringEndsWith(lower, ".lmp");
+    free(lower);
+
+    return result;
+}
+
 void G_DoPlayDemo(void)
 {
     skill_t skill;
-    int i, episode, map;
+    int i, lumpnum, episode, map;
 
     gameaction = ga_nothing;
-    demobuffer = demo_p = W_CacheLumpName(defdemoname, PU_STATIC);
+    lumpnum = W_GetNumForName(defdemoname);
+    demobuffer = W_CacheLumpNum(lumpnum, PU_STATIC);
+    demo_p = demobuffer;
     skill = *demo_p++;
     episode = *demo_p++;
     map = *demo_p++;
 
-    // Read special parameter bits: see G_RecordDemo() for details.
-    longtics = (*demo_p & DEMOHEADER_LONGTICS) != 0;
+    // vvHeretic allows extra options to be stored in the upper bits of
+    // the player 1 present byte. However, only recognize these bits if
+    // they are in a demo file being played manually by the user; we
+    // ignore them (as is Vanilla behavior) if they are inside a WAD file.
+    // These extra bits are a convenience feature for demo playback, not
+    // an editing extension for WAD authors.
+    if (IsDemoFile(lumpnum))
+    {
+        // Read special parameter bits: see G_RecordDemo() for details.
+        longtics = (*demo_p & DEMOHEADER_LONGTICS) != 0;
 
-    // don't overwrite arguments from the command line
-    respawnparm |= (*demo_p & DEMOHEADER_RESPAWN) != 0;
-    nomonsters  |= (*demo_p & DEMOHEADER_NOMONSTERS) != 0;
+        // don't overwrite arguments from the command line
+        respawnparm |= (*demo_p & DEMOHEADER_RESPAWN) != 0;
+        nomonsters |= (*demo_p & DEMOHEADER_NOMONSTERS) != 0;
+    }
 
     for (i = 0; i < MAXPLAYERS; i++)
         playeringame[i] = (*demo_p++) != 0;
@@ -1921,9 +1947,11 @@ void G_TimeDemo(char *name)
     map = *demo_p++;
 
     // Read special parameter bits: see G_RecordDemo() for details.
-    respawnparm = (*demo_p & DEMOHEADER_RESPAWN) != 0;
-    longtics    = (*demo_p & DEMOHEADER_LONGTICS) != 0;
-    nomonsters  = (*demo_p & DEMOHEADER_NOMONSTERS) != 0;
+    longtics = (*demo_p & DEMOHEADER_LONGTICS) != 0;
+
+    // don't overwrite arguments from the command line
+    respawnparm |= (*demo_p & DEMOHEADER_RESPAWN) != 0;
+    nomonsters  |= (*demo_p & DEMOHEADER_NOMONSTERS) != 0;
 
     for (i = 0; i < MAXPLAYERS; i++)
     {
