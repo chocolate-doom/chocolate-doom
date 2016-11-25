@@ -1,4 +1,5 @@
-AC_INIT(Chocolate Doom, 2.2.1, fraggle@gmail.com, chocolate-doom)
+AC_INIT(Chocolate Doom, 2.2.1, chocolate-doom-dev-list@chocolate-doom.org,
+        chocolate-doom)
 
 PACKAGE_SHORTNAME=${PACKAGE_NAME% Doom}
 PACKAGE_SHORTDESC="Conservative source port"
