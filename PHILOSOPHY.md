@@ -71,7 +71,7 @@ treated as such. Some examples are:
 
  * The novert setting, which reproduces the functionality of
    novert.exe.
- * The -deh parameter, which loads Dehacked patches like dehacked.exe
+ * The `-deh` parameter, which loads Dehacked patches like dehacked.exe
    does under DOS. Chocolate Doom imposes the same limitations that
    Vanilla Dehacked does.
 
@@ -148,9 +148,9 @@ situations where changes are considered acceptable:
 
     - The startup messages in Chocolate Doom are not identical to
       Vanilla Doom and are not necessarily in the same order.
-    - Vanilla Doom has command line options named -comdev, -shdev and
-      -regdev used by id internally for development; these have been
-      removed.
+    - Vanilla Doom has command line options named `-comdev`, `-shdev`
+      and `-regdev` used by id internally for development; these have
+      been removed.
 
  8. Expansions to the vanilla demo formats are allowed, to make
     recording and playback of vanilla gameplay more convenient, with
@@ -159,7 +159,7 @@ situations where changes are considered acceptable:
     - Such expansions are not supported in WAD files (they are not
       an editing feature for WAD authors to use).
     - Support for these features can be completely disabled using the
-      -strictdemos command line argument.
+      `-strictdemos` command line argument.
     - A warning is shown to the user on the console (stdout) when a
       demo using one of these features is recorded or played back.
 
