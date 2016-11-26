@@ -3056,7 +3056,9 @@ void M_ForceLoadGame()
 	             crstr[CR_GOLD], savewadfilename, crstr[CR_NONE],
 	             "\n\nto restore ",
 	             crstr[CR_GOLD], maplumpinfo->name, crstr[CR_NONE],
-	             ".\n\nContinue?", NULL);
+	             ".\n\n\nContinue to restore from\n\n",
+	             crstr[CR_GOLD], maplumpinfo->wad_file->basename, crstr[CR_NONE],
+	             "?", NULL);
 
 	M_StartMessage(extsavegwarning, M_ForceLoadGameResponse, true);
 }
