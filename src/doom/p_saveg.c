@@ -304,8 +304,8 @@ static inline boolean crispy_flippablesprite (mobj_t *thing)
 	        thing->type != MT_BARREL) ||
 	        thing->type == MT_BLOOD ||
 	        thing->type == MT_PUFF ||
-	        thing->info->spawnstate == S_PLAY_DIE7 ||
-	        thing->info->spawnstate == S_PLAY_XDIE9);
+	        mobjinfo[thing->type].spawnstate == S_PLAY_DIE7 ||
+	        mobjinfo[thing->type].spawnstate == S_PLAY_XDIE9);
 }
 
 static void saveg_read_mobj_t(mobj_t *str)
