@@ -3052,13 +3052,12 @@ static void M_ForceLoadGameResponse(int key)
 void M_ForceLoadGame()
 {
 	extsavegwarning =
-	M_StringJoin("This savegame requires the file\n\n",
-	             crstr[CR_GOLD], savewadfilename, crstr[CR_NONE],
-	             "\n\nto restore ",
-	             crstr[CR_GOLD], maplumpinfo->name, crstr[CR_NONE],
-	             ".\n\n\nContinue to restore from\n\n",
-	             crstr[CR_GOLD], maplumpinfo->wad_file->basename, crstr[CR_NONE],
-	             "?", NULL);
+	M_StringJoin("This savegame requires the file\n",
+	             crstr[CR_GOLD], savewadfilename, crstr[CR_NONE], "\n",
+	             "to restore ", crstr[CR_GOLD], maplumpinfo->name, crstr[CR_NONE], ".\n\n",
+	             "Continue to restore from\n",
+	             crstr[CR_GOLD], maplumpinfo->wad_file->basename, crstr[CR_NONE], "?\n\n",
+	             PRESSYN, NULL);
 
 	M_StartMessage(extsavegwarning, M_ForceLoadGameResponse, true);
 }
