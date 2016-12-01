@@ -1438,19 +1438,6 @@ void D_DoomMain (void)
     D_IdentifyVersion();
     InitGameVersion();
 
-    //!
-    // @category mod
-    //
-    // Disable automatic loading of Dehacked patches for certain
-    // IWAD files.
-    //
-    if (!M_ParmExists("-nodeh"))
-    {
-        // Some IWADs have dehacked patches that need to be loaded for
-        // them to be played properly.
-        LoadIwadDeh();
-    }
-
     // Check which IWAD variant we are using.
 
     if (W_CheckNumForName("FREEDOOM") >= 0)
@@ -1467,6 +1454,19 @@ void D_DoomMain (void)
     else if (W_CheckNumForName("DMENUPIC") >= 0)
     {
         gamevariant = bfgedition;
+    }
+
+    //!
+    // @category mod
+    //
+    // Disable automatic loading of Dehacked patches for certain
+    // IWAD files.
+    //
+    if (!M_ParmExists("-nodeh"))
+    {
+        // Some IWADs have dehacked patches that need to be loaded for
+        // them to be played properly.
+        LoadIwadDeh();
     }
 
     // Doom 3: BFG Edition includes modified versions of the classic

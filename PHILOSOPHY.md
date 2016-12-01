@@ -28,9 +28,12 @@ of compatibility:
  * DOS Heretic 1.3.
  * DOS Hexen 1.1.
  * DOS Strife 1.31.
+ * DOS Chex Quest.
 
-“Vanilla” does not include ports (either official or unofficial), such
-as console ports, Doom 95 or Doom 3: BFG Edition.
+Compatibility with older versions of the DOS binaries is also a
+secondary goal (though not pre-release versions). Other ports (either
+official or unofficial) are out of scope: this includes console ports,
+non-DOS ports, Doom 95 and Doom 3: BFG Edition.
 
 # Compatibility
 
@@ -46,7 +49,7 @@ different ways. Examples are:
    Chocolate Doom as a faithful substitute.
  * Demo compatibility: Doom was one of the first games to develop a
    ‘speedrunning’ community, and thousands of recordings of Doom
-   gameplay (.lmp demo files) exist in the Compet-N archive. Chocolate
+   gameplay (`.lmp` demo files) exist in the Compet-N archive. Chocolate
    Doom aims for the highest standard of demo compatibility with
    Vanilla Doom, a goal that is often complicated by obscure behavior
    that can be difficult to reproduce.
@@ -67,8 +70,8 @@ These are considered part of the Vanilla experience and ought to be
 treated as such. Some examples are:
 
  * The novert setting, which reproduces the functionality of
-   novert.exe.
- * The -deh parameter, which loads Dehacked patches like dehacked.exe
+   `novert.exe`.
+ * The `-deh` parameter, which loads Dehacked patches like dehacked.exe
    does under DOS. Chocolate Doom imposes the same limitations that
    Vanilla Dehacked does.
 
@@ -97,8 +100,8 @@ situations where changes are considered acceptable:
  3. Supporting obsolete technology is not a goal: it’s considered
     acceptable that Chocolate Doom does not support every type of
     hardware from 1993. However, Chocolate Doom should aim to recreate
-    the functionality in a modern way. Examples of technology that
-    isn’t supported are:
+    the functionality in a modern way. Examples of technologies that
+    aren’t supported are:
 
     - No support for IPX networks, but TCP/IP is supported instead.
     - No support for dial-up/serial connections; modern operating
@@ -111,9 +114,9 @@ situations where changes are considered acceptable:
     - There are new key bindings for actions that can’t be rebound with
       Vanilla Doom, because it’s useful for portability to machines
       that don’t have a full keyboard.
-    - There are additional mouse and joystick key bindings that let you
-      perform actions with them that can only be done with the keyboard
-      in Vanilla Doom.
+    - There are additional mouse and joystick button bindings that let
+      you perform actions with them that can only be done with the
+      keyboard in Vanilla Doom.
     - Chocolate Doom includes some hacks to support the Doom 3: BFG
       Edition IWAD files. The assumption is that being able to at least
       play is better than nothing, even if it’s not Vanilla behavior.
@@ -145,9 +148,20 @@ situations where changes are considered acceptable:
 
     - The startup messages in Chocolate Doom are not identical to
       Vanilla Doom and are not necessarily in the same order.
-    - Vanilla Doom has command line options named -comdev, -shdev and
-      -regdev used by id internally for development; these have been
-      removed.
+    - Vanilla Doom has command line options named `-comdev`, `-shdev`
+      and `-regdev` used by id internally for development; these have
+      been removed.
+
+ 8. Expansions to the vanilla demo formats are allowed, to make
+    recording and playback of vanilla gameplay more convenient, with
+    the following restrictions:
+
+    - Such expansions are not supported in WAD files (they are not
+      an editing feature for WAD authors to use).
+    - Support for these features can be completely disabled using the
+      `-strictdemos` command line argument.
+    - A warning is shown to the user on the console (stdout) when a
+      demo using one of these features is recorded or played back.
 
 A good litmus test of when it’s acceptable to break from Vanilla
 behavior is to ask the question: “Although this is Vanilla behavior,

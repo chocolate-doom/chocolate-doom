@@ -312,13 +312,13 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
     {
         forward -= forwardmove[pClass][speed];
     }
-    if (gamekeydown[key_straferight] || joystrafemove > 0
-     || joybuttons[joybstraferight])
+    if (gamekeydown[key_straferight] || mousebuttons[mousebstraferight]
+     || joystrafemove > 0 || joybuttons[joybstraferight])
     {
         side += sidemove[pClass][speed];
     }
-    if (gamekeydown[key_strafeleft] || joystrafemove < 0
-     || joybuttons[joybstrafeleft])
+    if (gamekeydown[key_strafeleft] || mousebuttons[mousebstrafeleft]
+     || joystrafemove < 0 || joybuttons[joybstrafeleft])
     {
         side -= sidemove[pClass][speed];
     }
@@ -504,57 +504,66 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
     {
         forward += forwardmove[pClass][speed];
     }
-
-//
-// forward double click
-//
-    if (mousebuttons[mousebforward] != dclickstate && dclicktime > 1)
+    if (mousebuttons[mousebbackward])
     {
-        dclickstate = mousebuttons[mousebforward];
-        if (dclickstate)
-            dclicks++;
-        if (dclicks == 2)
-        {
-            cmd->buttons |= BT_USE;
-            dclicks = 0;
-        }
-        else
-            dclicktime = 0;
-    }
-    else
-    {
-        dclicktime += ticdup;
-        if (dclicktime > 20)
-        {
-            dclicks = 0;
-            dclickstate = 0;
-        }
+        forward -= forwardmove[pClass][speed];
     }
 
-//
-// strafe double click
-//
-    bstrafe = mousebuttons[mousebstrafe] || joybuttons[joybstrafe];
-    if (bstrafe != dclickstate2 && dclicktime2 > 1)
+    // Double click to use can be disabled
+
+    if (dclick_use)
     {
-        dclickstate2 = bstrafe;
-        if (dclickstate2)
-            dclicks2++;
-        if (dclicks2 == 2)
+        //
+        // forward double click
+        //
+        if (mousebuttons[mousebforward] != dclickstate && dclicktime > 1)
         {
-            cmd->buttons |= BT_USE;
-            dclicks2 = 0;
+            dclickstate = mousebuttons[mousebforward];
+            if (dclickstate)
+                dclicks++;
+            if (dclicks == 2)
+            {
+                cmd->buttons |= BT_USE;
+                dclicks = 0;
+            }
+            else
+                dclicktime = 0;
         }
         else
-            dclicktime2 = 0;
-    }
-    else
-    {
-        dclicktime2 += ticdup;
-        if (dclicktime2 > 20)
         {
-            dclicks2 = 0;
-            dclickstate2 = 0;
+            dclicktime += ticdup;
+            if (dclicktime > 20)
+            {
+                dclicks = 0;
+                dclickstate = 0;
+            }
+        }
+
+        //
+        // strafe double click
+        //
+        bstrafe = mousebuttons[mousebstrafe] || joybuttons[joybstrafe];
+        if (bstrafe != dclickstate2 && dclicktime2 > 1)
+        {
+            dclickstate2 = bstrafe;
+            if (dclickstate2)
+                dclicks2++;
+            if (dclicks2 == 2)
+            {
+                cmd->buttons |= BT_USE;
+                dclicks2 = 0;
+            }
+            else
+                dclicktime2 = 0;
+        }
+        else
+        {
+            dclicktime2 += ticdup;
+            if (dclicktime2 > 20)
+            {
+                dclicks2 = 0;
+                dclickstate2 = 0;
+            }
         }
     }
 
@@ -1949,7 +1958,8 @@ void G_RecordDemo(skill_t skill, int numplayers, int episode, int map,
     // Record or playback a demo with high resolution turning.
     //
 
-    longtics = M_ParmExists("-longtics");
+    longtics = D_NonVanillaRecord(M_ParmExists("-longtics"),
+                                  "vvHeretic longtics demo");
 
     // If not recording a longtics demo, record in low res
 
@@ -1996,7 +2006,7 @@ void G_RecordDemo(skill_t skill, int numplayers, int episode, int map,
     //   0x02 = -nomonsters
 
     *demo_p = 1; // assume player one exists
-    if (respawnparm)
+    if (D_NonVanillaRecord(respawnparm, "vvHeretic -respawn header flag"))
     {
         *demo_p |= DEMOHEADER_RESPAWN;
     }
@@ -2004,7 +2014,7 @@ void G_RecordDemo(skill_t skill, int numplayers, int episode, int map,
     {
         *demo_p |= DEMOHEADER_LONGTICS;
     }
-    if (nomonsters)
+    if (D_NonVanillaRecord(nomonsters, "vvHeretic -nomonsters header flag"))
     {
         *demo_p |= DEMOHEADER_NOMONSTERS;
     }
@@ -2040,20 +2050,36 @@ void G_DeferedPlayDemo(char *name)
 void G_DoPlayDemo(void)
 {
     skill_t skill;
-    int i, episode, map;
+    int i, lumpnum, episode, map;
 
     gameaction = ga_nothing;
-    demobuffer = demo_p = W_CacheLumpName(defdemoname, PU_STATIC);
+    lumpnum = W_GetNumForName(defdemoname);
+    demobuffer = W_CacheLumpNum(lumpnum, PU_STATIC);
+    demo_p = demobuffer;
     skill = *demo_p++;
     episode = *demo_p++;
     map = *demo_p++;
 
-    // Read special parameter bits: see G_RecordDemo() for details.
-    longtics = (*demo_p & DEMOHEADER_LONGTICS) != 0;
-
-    // don't overwrite arguments from the command line
-    respawnparm |= (*demo_p & DEMOHEADER_RESPAWN) != 0;
-    nomonsters  |= (*demo_p & DEMOHEADER_NOMONSTERS) != 0;
+    // When recording we store some extra options inside the upper bits
+    // of the player 1 present byte. However, this is a non-vanilla extension.
+    // Note references to vvHeretic here; these are the extensions used by
+    // vvHeretic, which we're just reusing for Hexen demos too. There is no
+    // vvHexen.
+    if (D_NonVanillaPlayback((*demo_p & DEMOHEADER_LONGTICS) != 0,
+                             lumpnum, "vvHeretic longtics demo"))
+    {
+        longtics = true;
+    }
+    if (D_NonVanillaPlayback((*demo_p & DEMOHEADER_RESPAWN) != 0,
+                             lumpnum, "vvHeretic -respawn header flag"))
+    {
+        respawnparm = true;
+    }
+    if (D_NonVanillaPlayback((*demo_p & DEMOHEADER_NOMONSTERS) != 0,
+                             lumpnum, "vvHeretic -nomonsters header flag"))
+    {
+        nomonsters = true;
+    }
 
     for (i = 0; i < maxplayers; i++)
     {
@@ -2091,9 +2117,11 @@ void G_TimeDemo(char *name)
     map = *demo_p++;
 
     // Read special parameter bits: see G_RecordDemo() for details.
-    respawnparm = (*demo_p & DEMOHEADER_RESPAWN) != 0;
-    longtics    = (*demo_p & DEMOHEADER_LONGTICS) != 0;
-    nomonsters  = (*demo_p & DEMOHEADER_NOMONSTERS) != 0;
+    longtics = (*demo_p & DEMOHEADER_LONGTICS) != 0;
+
+    // don't overwrite arguments from the command line
+    respawnparm |= (*demo_p & DEMOHEADER_RESPAWN) != 0;
+    nomonsters  |= (*demo_p & DEMOHEADER_NOMONSTERS) != 0;
 
     for (i = 0; i < maxplayers; i++)
     {
