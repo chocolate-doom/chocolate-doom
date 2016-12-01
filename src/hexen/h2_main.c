@@ -184,14 +184,30 @@ static void D_SetDefaultSavePath(void)
 {
     SavePath = M_GetSaveGameDir("hexen.wad");
 
-    // If we are not using a savegame path (probably because we are on
-    // Windows and not using a config dir), behave like Vanilla Hexen
-    // and use hexndata/:
-
     if (!strcmp(SavePath, ""))
     {
-        SavePath = malloc(10);
-	M_snprintf(SavePath, 10, "hexndata%c", DIR_SEPARATOR);
+        // only get hexen.cfg path if one is not already found
+
+        if (!strcmp(SavePathConfig, ""))
+        {
+            // If we are not using a savegame path (probably because we are on
+            // Windows and not using a config dir), behave like Vanilla Hexen
+            // and use hexndata/:
+
+            SavePath = malloc(10);
+	    M_snprintf(SavePath, 10, "hexndata%c", DIR_SEPARATOR);
+        }
+        else
+        {
+            SavePath = M_StringDuplicate(SavePathConfig);
+        }
+    }
+
+    // only set hexen.cfg path if using default handling
+
+    if (!M_ParmExists("-savedir") && !M_ParmExists("-cdrom"))
+    {
+        SavePathConfig = SavePath;
     }
 }
 
@@ -375,33 +391,12 @@ void D_DoomMain(void)
         M_SetConfigDir(NULL);
     }
 
-    D_SetDefaultSavePath();
     M_SetConfigFilenames("hexen.cfg", PROGRAM_PREFIX "hexen.cfg");
     M_LoadDefaults();
-    SavePath = SavePathConfig;
+
+    D_SetDefaultSavePath();
 
     I_AtExit(M_SaveDefaults, false);
-
-    //!
-    // @arg <directory>
-    //
-    // Specify a path from which to load and save games. If the directory
-    // does not exist then it will automatically be created.
-    // NOTE TO WINDOWS USERS: Do not end a path with a backslash ("\") if it
-    // requires quote-wrapping (e.g., "C:\pa th\") as this will be
-    // misinterpreted by the command line.
-    //
-
-    p = M_CheckParmWithArgs("-savedir", 1);
-    if (p)
-    {
-        SavePath = myargv[p + 1];
-
-        // add separator at end just in case
-        SavePath = M_StringJoin(SavePath, DIR_SEPARATOR_S, NULL);
-
-        printf("Save directory changed to %s.\n", SavePath);
-    }
 
     // Now that the savedir is loaded, make sure it exists
     CreateSavePath();
