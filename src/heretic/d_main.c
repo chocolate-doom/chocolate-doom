@@ -1068,6 +1068,31 @@ void D_DoomMain(void)
 
     savegamedir = M_GetSaveGameDir("heretic.wad");
 
+    //!
+    // @arg <directory>
+    //
+    // Specify a path from which to load and save games. If the directory
+    // does not exist then it will automatically be created.
+    // NOTE TO WINDOWS USERS: Do not end a path with a backslash ("\") if it
+    // requires quote-wrapping (e.g., "C:\pa th\") as this will be
+    // misinterpreted by the command line.
+    //
+
+    p = M_CheckParmWithArgs("-savedir", 1);
+    if (p)
+    {
+        savegamedir = myargv[p + 1];
+        if (!M_FileExists(savegamedir))
+        {
+            M_MakeDirectory(savegamedir);
+        }
+
+        // add separator at end just in case
+        savegamedir = M_StringJoin(savegamedir, DIR_SEPARATOR_S, NULL);
+
+        printf("Save directory changed to %s.\n", savegamedir);
+    }
+
     I_PrintStartupBanner(gamedescription);
 
     if (M_ParmExists("-testcontrols"))

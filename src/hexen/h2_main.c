@@ -120,6 +120,7 @@ static int WarpMap;
 static int demosequence;
 static int pagetic;
 static char *pagename;
+static char *SavePathConfig;
 
 // CODE --------------------------------------------------------------------
 
@@ -164,7 +165,7 @@ void D_BindVariables(void)
     M_BindIntVariable("vanilla_savegame_limit", &vanilla_savegame_limit);
     M_BindIntVariable("vanilla_demo_limit",     &vanilla_demo_limit);
 
-    M_BindStringVariable("savedir", &SavePath);
+    M_BindStringVariable("savedir", &SavePathConfig);
 
     // Multiplayer chat macros
 
@@ -377,11 +378,32 @@ void D_DoomMain(void)
     D_SetDefaultSavePath();
     M_SetConfigFilenames("hexen.cfg", PROGRAM_PREFIX "hexen.cfg");
     M_LoadDefaults();
+    SavePath = SavePathConfig;
 
     I_AtExit(M_SaveDefaults, false);
 
+    //!
+    // @arg <directory>
+    //
+    // Specify a path from which to load and save games. If the directory
+    // does not exist then it will automatically be created.
+    // NOTE TO WINDOWS USERS: Do not end a path with a backslash ("\") if it
+    // requires quote-wrapping (e.g., "C:\pa th\") as this will be
+    // misinterpreted by the command line.
+    //
 
-    // Now that the savedir is loaded from .CFG, make sure it exists
+    p = M_CheckParmWithArgs("-savedir", 1);
+    if (p)
+    {
+        SavePath = myargv[p + 1];
+
+        // add separator at end just in case
+        SavePath = M_StringJoin(SavePath, DIR_SEPARATOR_S, NULL);
+
+        printf("Save directory changed to %s.\n", SavePath);
+    }
+
+    // Now that the savedir is loaded, make sure it exists
     CreateSavePath();
 
     ST_Message("Z_Init: Init zone memory allocation daemon.\n");

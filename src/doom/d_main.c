@@ -1614,6 +1614,31 @@ void D_DoomMain (void)
     // we've finished loading Dehacked patches.
     D_SetGameDescription();
 
+    //!
+    // @arg <directory>
+    //
+    // Specify a path from which to load and save games. If the directory
+    // does not exist then it will automatically be created.
+    // NOTE TO WINDOWS USERS: Do not end a path with a backslash ("\") if it
+    // requires quote-wrapping (e.g., "C:\pa th\") as this will be
+    // misinterpreted by the command line.
+    //
+
+    p = M_CheckParmWithArgs("-savedir", 1);
+    if (p)
+    {
+        savegamedir = myargv[p + 1];
+        if (!M_FileExists(savegamedir))
+        {
+            M_MakeDirectory(savegamedir);
+        }
+
+        // add separator at end just in case
+        savegamedir = M_StringJoin(savegamedir, DIR_SEPARATOR_S, NULL);
+
+        printf("Save directory changed to %s.\n", savegamedir);
+    }
+    else
 #ifdef _WIN32
     // In -cdrom mode, we write savegames to c:\doomdata as well as configs.
     if (M_ParmExists("-cdrom"))
