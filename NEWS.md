@@ -21,6 +21,8 @@
   * Multiple capitalizations are now tried when searching for WAD files,
     for convenience when running on case sensitive filesystems (thanks
     Fabian).
+  * New parameter -savedir allows users to specify a directory from
+    which to load and save games. (thanks CapnClever)
 
 ### Build systems
   * There is better compatibility with BSD Make (thanks R.Rebello)
