@@ -845,8 +845,8 @@ void A_DripBlood(mobj_t * actor)
     r1 = P_SubRandom();
     r2 = P_SubRandom();
 
-    mo = P_SpawnMobj(actor->x + (r1 << 11),
-                     actor->y + (r2 << 11), actor->z,
+    mo = P_SpawnMobj(actor->x + (r2 << 11),
+                     actor->y + (r1 << 11), actor->z,
                      MT_BLOOD);
     mo->momx = P_SubRandom() << 10;
     mo->momy = P_SubRandom() << 10;
@@ -920,9 +920,9 @@ void A_BeastPuff(mobj_t * actor)
         r1 = P_SubRandom();
         r2 = P_SubRandom();
         r3 = P_SubRandom();
-        P_SpawnMobj(actor->x + (r1 << 10),
+        P_SpawnMobj(actor->x + (r3 << 10),
                     actor->y + (r2 << 10),
-                    actor->z + (r3 << 10), MT_PUFFY);
+                    actor->z + (r1 << 10), MT_PUFFY);
     }
 }
 
@@ -1769,8 +1769,8 @@ void A_MntrFloorFire(mobj_t * actor)
     r2 = P_SubRandom();
 
     actor->z = actor->floorz;
-    mo = P_SpawnMobj(actor->x + (r1 << 10),
-                     actor->y + (r2 << 10), ONFLOORZ,
+    mo = P_SpawnMobj(actor->x + (r2 << 10),
+                     actor->y + (r1 << 10), ONFLOORZ,
                      MT_MNTRFX3);
     mo->target = actor->target;
     mo->momx = 1;               // Force block checking
@@ -2419,8 +2419,8 @@ void A_SpawnTeleGlitter(mobj_t * actor)
     int r;
 
     r = P_Random();
-    mo = P_SpawnMobj(actor->x + ((r & 31) - 16) * FRACUNIT,
-                     actor->y + ((P_Random() & 31) - 16) * FRACUNIT,
+    mo = P_SpawnMobj(actor->x + ((P_Random() & 31) - 16) * FRACUNIT,
+                     actor->y + ((r & 31) - 16) * FRACUNIT,
                      actor->subsector->sector->floorheight, MT_TELEGLITTER);
     mo->momz = FRACUNIT / 4;
 }
@@ -2437,8 +2437,8 @@ void A_SpawnTeleGlitter2(mobj_t * actor)
     int r;
 
     r = P_Random();
-    mo = P_SpawnMobj(actor->x + ((r & 31) - 16) * FRACUNIT,
-                     actor->y + ((P_Random() & 31) - 16) * FRACUNIT,
+    mo = P_SpawnMobj(actor->x + ((P_Random() & 31) - 16) * FRACUNIT,
+                     actor->y + ((r & 31) - 16) * FRACUNIT,
                      actor->subsector->sector->floorheight, MT_TELEGLITTER2);
     mo->momz = FRACUNIT / 4;
 }
