@@ -1175,9 +1175,9 @@ void A_SoAExplode(mobj_t * actor)
         r1 = P_Random();
         r2 = P_Random();
         r3 = P_Random();
-        mo = P_SpawnMobj(actor->x + ((r1 - 128) << 12),
+        mo = P_SpawnMobj(actor->x + ((r3 - 128) << 12),
                          actor->y + ((r2 - 128) << 12),
-                         actor->z + (r3 * actor->height / 256),
+                         actor->z + (r1 * actor->height / 256),
                          MT_ZARMORCHUNK);
         P_SetMobjState(mo, mo->info->spawnstate + i);
         if (mo)
