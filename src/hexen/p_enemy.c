@@ -1481,13 +1481,14 @@ void A_MinotaurAtk3(mobj_t * actor)
 void A_MntrFloorFire(mobj_t * actor)
 {
     mobj_t *mo;
-    int r;
+    int r1, r2;
 
-    r = P_SubRandom();
+    r1 = P_SubRandom();
+    r2 = P_SubRandom();
 
     actor->z = actor->floorz;
-    mo = P_SpawnMobj(actor->x + (P_SubRandom() << 10),
-                     actor->y + (r << 10), ONFLOORZ,
+    mo = P_SpawnMobj(actor->x + (r2 << 10),
+                     actor->y + (r1 << 10), ONFLOORZ,
                      MT_MNTRFX3);
     mo->target = actor->target;
     mo->momx = 1;               // Force block checking
@@ -2411,10 +2412,12 @@ void A_SerpentHeadPop(mobj_t * actor)
 void A_SerpentSpawnGibs(mobj_t * actor)
 {
     mobj_t *mo;
-    int r = P_Random();
+    int r1, r2;
 
-    mo = P_SpawnMobj(actor->x + ((P_Random() - 128) << 12),
-                     actor->y + ((r - 128) << 12),
+    r1 = P_Random();
+    r2 = P_Random();
+    mo = P_SpawnMobj(actor->x + ((r2 - 128) << 12),
+                     actor->y + ((r1 - 128) << 12),
                      actor->floorz + FRACUNIT, MT_SERPENT_GIB1);
     if (mo)
     {
@@ -2422,9 +2425,10 @@ void A_SerpentSpawnGibs(mobj_t * actor)
         mo->momy = (P_Random() - 128) << 6;
         mo->floorclip = 6 * FRACUNIT;
     }
-    r = P_Random();
-    mo = P_SpawnMobj(actor->x + ((P_Random() - 128) << 12),
-                     actor->y + ((r - 128) << 12),
+    r1 = P_Random();
+    r2 = P_Random();
+    mo = P_SpawnMobj(actor->x + ((r2 - 128) << 12),
+                     actor->y + ((r1 - 128) << 12),
                      actor->floorz + FRACUNIT, MT_SERPENT_GIB2);
     if (mo)
     {
@@ -2432,9 +2436,10 @@ void A_SerpentSpawnGibs(mobj_t * actor)
         mo->momy = (P_Random() - 128) << 6;
         mo->floorclip = 6 * FRACUNIT;
     }
-    r = P_Random();
-    mo = P_SpawnMobj(actor->x + ((P_Random() - 128) << 12),
-                     actor->y + ((r - 128) << 12),
+    r1 = P_Random();
+    r2 = P_Random();
+    mo = P_SpawnMobj(actor->x + ((r2 - 128) << 12),
+                     actor->y + ((r1 - 128) << 12),
                      actor->floorz + FRACUNIT, MT_SERPENT_GIB3);
     if (mo)
     {

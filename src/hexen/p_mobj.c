@@ -1830,10 +1830,12 @@ void P_BloodSplatter(fixed_t x, fixed_t y, fixed_t z, mobj_t * originator)
 void P_BloodSplatter2(fixed_t x, fixed_t y, fixed_t z, mobj_t * originator)
 {
     mobj_t *mo;
-    int r = P_Random();
+    int r1, r2;
 
-    mo = P_SpawnMobj(x + ((P_Random() - 128) << 11),
-                     y + ((r - 128) << 11), z, MT_AXEBLOOD);
+    r1 = P_Random();
+    r2 = P_Random();
+    mo = P_SpawnMobj(x + ((r2 - 128) << 11),
+                     y + ((r1 - 128) << 11), z, MT_AXEBLOOD);
     mo->target = originator;
 }
 
