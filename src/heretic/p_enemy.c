@@ -2416,11 +2416,12 @@ void A_ESound(mobj_t * mo)
 void A_SpawnTeleGlitter(mobj_t * actor)
 {
     mobj_t *mo;
-    int r;
+    int r1, r2;
 
-    r = P_Random();
-    mo = P_SpawnMobj(actor->x + ((P_Random() & 31) - 16) * FRACUNIT,
-                     actor->y + ((r & 31) - 16) * FRACUNIT,
+    r1 = P_Random();
+    r2 = P_Random();
+    mo = P_SpawnMobj(actor->x + ((r2 & 31) - 16) * FRACUNIT,
+                     actor->y + ((r1 & 31) - 16) * FRACUNIT,
                      actor->subsector->sector->floorheight, MT_TELEGLITTER);
     mo->momz = FRACUNIT / 4;
 }
@@ -2434,11 +2435,12 @@ void A_SpawnTeleGlitter(mobj_t * actor)
 void A_SpawnTeleGlitter2(mobj_t * actor)
 {
     mobj_t *mo;
-    int r;
+    int r1, r2;
 
-    r = P_Random();
-    mo = P_SpawnMobj(actor->x + ((P_Random() & 31) - 16) * FRACUNIT,
-                     actor->y + ((r & 31) - 16) * FRACUNIT,
+    r1 = P_Random();
+    r2 = P_Random();
+    mo = P_SpawnMobj(actor->x + ((r2 & 31) - 16) * FRACUNIT,
+                     actor->y + ((r1 & 31) - 16) * FRACUNIT,
                      actor->subsector->sector->floorheight, MT_TELEGLITTER2);
     mo->momz = FRACUNIT / 4;
 }
