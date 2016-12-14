@@ -242,10 +242,9 @@ void S_Start(void)
     // start new music for the level
     mus_paused = 0;
 
-    if (gamemode == commercial &&
-        (gameepisode == 2 || gamemission == pack_nerve))
+    if (gamemode == commercial)
     {
-        int nmus[]=
+        const int nmus[] =
         {
             mus_messag,
             mus_ddtblu,
@@ -258,11 +257,12 @@ void S_Start(void)
             mus_ddtbl2,
         };
 
-        mnum = nmus[gamemap-1];
-    }
-    else
-    if (gamemode == commercial)
-    {
+        if ((gameepisode == 2 || gamemission == pack_nerve) &&
+            gamemap <= arrlen(nmus))
+        {
+            mnum = nmus[gamemap - 1];
+        }
+        else
         mnum = mus_runnin + gamemap - 1;
     }
     else
