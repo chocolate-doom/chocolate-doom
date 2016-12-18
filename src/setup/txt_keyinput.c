@@ -33,7 +33,7 @@ static int KeyPressCallback(txt_window_t *window, int key,
 
     if (key != KEY_ESCAPE)
     {
-        // Got the key press.  Save to the variable and close the window.
+        // Got the key press. Save to the variable and close the window.
 
         *key_input->variable = key;
 
@@ -44,9 +44,8 @@ static int KeyPressCallback(txt_window_t *window, int key,
 
         TXT_CloseWindow(window);
 
-        // Re-enable key mappings now that we have the key
-
-        TXT_EnableKeyMapping(1);
+        // Return to normal input mode now that we have the key.
+        TXT_SetInputMode(TXT_INPUT_NORMAL);
 
         return 1;
     }
@@ -74,9 +73,8 @@ static void OpenPromptWindow(txt_key_input_t *key_input)
 
     TXT_SetKeyListener(window, KeyPressCallback, key_input);
 
-    // Disable key mappings while we prompt for the key press
-
-    TXT_EnableKeyMapping(0);
+    // Switch to raw input mode while we're grabbing the key.
+    TXT_SetInputMode(TXT_INPUT_RAW);
 
     // Grab input while reading the key.  On Windows Mobile
     // handheld devices, the hardware keypresses are only

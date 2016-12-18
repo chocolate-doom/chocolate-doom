@@ -98,6 +98,25 @@ typedef enum
     TXT_NUM_MODIFIERS
 } txt_modifier_t;
 
+// Due to the way the SDL API works, we provide different ways of configuring
+// how we read input events, each of which is useful in different scenarios.
+typedef enum
+{
+    // "Localized" output that takes software keyboard layout into account,
+    // but key shifting has no effect.
+    TXT_INPUT_NORMAL,
+
+    // "Raw" input; the keys correspond to physical keyboard layout and
+    // software keyboard layout has no effect.
+    TXT_INPUT_RAW,
+
+    // Used for full text input. Events are fully shifted and localized.
+    // However, not all keyboard keys will generate input.
+    // Setting this mode may activate the on-screen keyboard, depending on
+    // device and OS.
+    TXT_INPUT_TEXT,
+} txt_input_mode_t;
+
 // Initialize the screen
 // Returns 1 if successful, 0 if failed.
 int TXT_Init(void);
@@ -131,9 +150,8 @@ void TXT_GetMousePosition(int *x, int *y);
 // Optional timeout in ms (timeout == 0 : sleep forever)
 void TXT_Sleep(int timeout);
 
-// Controls whether keys are returned from TXT_GetChar based on keyboard
-// mapping, or raw key code.
-void TXT_EnableKeyMapping(int enable);
+// Change mode for text input.
+void TXT_SetInputMode(txt_input_mode_t mode);
 
 // Set the window title of the window containing the text mode screen
 void TXT_SetWindowTitle(char *title);

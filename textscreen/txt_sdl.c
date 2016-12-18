@@ -53,7 +53,9 @@ SDL_Window *TXT_SDLWindow;
 static SDL_Surface *screenbuffer;
 static unsigned char *screendata;
 static SDL_Renderer *renderer;
-static int key_mapping = 1;
+
+// Current input mode.
+static txt_input_mode_t input_mode = TXT_INPUT_NORMAL;
 
 // Dimensions of the screen image in screen coordinates (not pixels); this
 // is the value that was passed to SDL_CreateWindow().
@@ -514,10 +516,8 @@ void TXT_GetMousePosition(int *x, int *y)
 // XXX: duplicate from doomtype.h
 #define arrlen(array) (sizeof(array) / sizeof(*array))
 
-static int TranslateKey(SDL_Keysym *sym)
+static int TranslateScancode(SDL_Scancode scancode)
 {
-    int scancode = sym->scancode;
-
     switch (scancode)
     {
         case SDL_SCANCODE_LCTRL:
@@ -535,7 +535,7 @@ static int TranslateKey(SDL_Keysym *sym)
             return KEY_RALT;
 
         default:
-            if (scancode >= 0 && scancode < arrlen(scancode_translate_table))
+            if (scancode < arrlen(scancode_translate_table))
             {
                 return scancode_translate_table[scancode];
             }
@@ -543,6 +543,25 @@ static int TranslateKey(SDL_Keysym *sym)
             {
                 return 0;
             }
+    }
+}
+
+static int TranslateKeysym(SDL_Keysym *sym)
+{
+    int translated;
+
+    // We cheat here and make use of TranslateScancode. The range of keys
+    // associated with printable characters is pretty contiguous, so if it's
+    // inside that range we want the localized version of the key instead.
+    translated = TranslateScancode(sym->scancode);
+
+    if (translated >= 0x20 && translated < 0x7f)
+    {
+        return sym->sym;
+    }
+    else
+    {
+        return translated;
     }
 }
 
@@ -669,10 +688,35 @@ signed int TXT_GetChar(void)
             case SDL_KEYDOWN:
                 UpdateModifierState(&ev.key.keysym, 1);
 
-                return TranslateKey(&ev.key.keysym);
+                switch (input_mode)
+                {
+                    case TXT_INPUT_RAW:
+                        return TranslateScancode(ev.key.keysym.scancode);
+                    case TXT_INPUT_NORMAL:
+                        return TranslateKeysym(&ev.key.keysym);
+                    case TXT_INPUT_TEXT:
+                        // We ignore key inputs in this mode, except for a
+                        // few special cases needed during text input:
+                        if (ev.key.keysym.sym == SDLK_ESCAPE
+                         || ev.key.keysym.sym == SDLK_BACKSPACE
+                         || ev.key.keysym.sym == SDLK_RETURN)
+                        {
+                            return TranslateKeysym(&ev.key.keysym);
+                        }
+                        break;
+                }
+                break;
 
             case SDL_KEYUP:
                 UpdateModifierState(&ev.key.keysym, 0);
+                break;
+
+            case SDL_TEXTINPUT:
+                if (input_mode == TXT_INPUT_TEXT)
+                {
+                    // TODO: Support input of more than just the first char.
+                    return ev.text.text[0];
+                }
                 break;
 
             case SDL_QUIT:
@@ -871,9 +915,18 @@ void TXT_Sleep(int timeout)
     }
 }
 
-void TXT_EnableKeyMapping(int enable)
+void TXT_SetInputMode(txt_input_mode_t mode)
 {
-    key_mapping = enable;
+    if (mode == TXT_INPUT_TEXT && !SDL_IsTextInputActive())
+    {
+        SDL_StartTextInput();
+    }
+    else if (SDL_IsTextInputActive() && mode != TXT_INPUT_TEXT)
+    {
+        SDL_StopTextInput();
+    }
+
+    input_mode = mode;
 }
 
 void TXT_SetWindowTitle(char *title)

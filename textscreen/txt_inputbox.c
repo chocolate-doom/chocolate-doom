@@ -64,7 +64,19 @@ static void StartEditing(txt_inputbox_t *inputbox)
         SetBufferFromValue(inputbox);
     }
 
+    // Switch to text input mode so we get shifted input.
+    TXT_SetInputMode(TXT_INPUT_TEXT);
     inputbox->editing = 1;
+}
+
+static void StopEditing(txt_inputbox_t *inputbox)
+{
+    if (inputbox->editing)
+    {
+        // Switch back to normal input mode.
+        TXT_SetInputMode(TXT_INPUT_NORMAL);
+        inputbox->editing = 0;
+    }
 }
 
 static void FinishEditing(txt_inputbox_t *inputbox)
@@ -88,7 +100,7 @@ static void FinishEditing(txt_inputbox_t *inputbox)
 
     TXT_EmitSignal(&inputbox->widget, "changed");
 
-    inputbox->editing = 0;
+    StopEditing(inputbox);
 }
 
 static void TXT_InputBoxSizeCalc(TXT_UNCAST_ARG(inputbox))
@@ -164,6 +176,7 @@ static void TXT_InputBoxDestructor(TXT_UNCAST_ARG(inputbox))
 {
     TXT_CAST_ARG(txt_inputbox_t, inputbox);
 
+    StopEditing(inputbox);
     free(inputbox->buffer);
 }
 
@@ -227,7 +240,7 @@ static int TXT_InputBoxKeyPress(TXT_UNCAST_ARG(inputbox), int key)
 
     if (key == KEY_ESCAPE)
     {
-        inputbox->editing = 0;
+        StopEditing(inputbox);
     }
 
     if (key == KEY_BACKSPACE)
