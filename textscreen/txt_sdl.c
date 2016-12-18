@@ -26,6 +26,7 @@
 
 #include "txt_main.h"
 #include "txt_sdl.h"
+#include "txt_utf8.h"
 
 #if defined(_MSC_VER) && !defined(__cplusplus)
 #define inline __inline
@@ -668,8 +669,9 @@ signed int TXT_GetChar(void)
             case SDL_TEXTINPUT:
                 if (input_mode == TXT_INPUT_TEXT)
                 {
-                    // TODO: Support input of more than just the first char.
-                    return ev.text.text[0];
+                    // TODO: Support input of more than just the first char?
+                    const char *p = ev.text.text;
+                    return TXT_DecodeUTF8(&p);
                 }
                 break;
 
