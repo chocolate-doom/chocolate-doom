@@ -64,8 +64,6 @@ static int screen_image_w, screen_image_h;
 static TxtSDLEventCallbackFunc event_callback;
 static void *event_callback_data;
 
-static int modifier_state[TXT_NUM_MODIFIERS];
-
 // Font we are using:
 static const txt_font_t *font;
 
@@ -616,44 +614,6 @@ static int MouseHasMoved(void)
     }
 }
 
-// Examine a key press/release and update the modifier key state
-// if necessary.
-
-static void UpdateModifierState(SDL_Keysym *sym, int pressed)
-{
-    txt_modifier_t mod;
-
-    switch (sym->sym)
-    {
-        case SDLK_LSHIFT:
-        case SDLK_RSHIFT:
-            mod = TXT_MOD_SHIFT;
-            break;
-
-        case SDLK_LCTRL:
-        case SDLK_RCTRL:
-            mod = TXT_MOD_CTRL;
-            break;
-
-        case SDLK_LALT:
-        case SDLK_RALT:
-            mod = TXT_MOD_ALT;
-            break;
-
-        default:
-            return;
-    }
-
-    if (pressed)
-    {
-        ++modifier_state[mod];
-    }
-    else
-    {
-        --modifier_state[mod];
-    }
-}
-
 signed int TXT_GetChar(void)
 {
     SDL_Event ev;
@@ -686,8 +646,6 @@ signed int TXT_GetChar(void)
                 return SDLWheelToTXTButton(&ev.wheel);
 
             case SDL_KEYDOWN:
-                UpdateModifierState(&ev.key.keysym, 1);
-
                 switch (input_mode)
                 {
                     case TXT_INPUT_RAW:
@@ -705,10 +663,6 @@ signed int TXT_GetChar(void)
                         }
                         break;
                 }
-                break;
-
-            case SDL_KEYUP:
-                UpdateModifierState(&ev.key.keysym, 0);
                 break;
 
             case SDL_TEXTINPUT:
@@ -739,12 +693,21 @@ signed int TXT_GetChar(void)
 
 int TXT_GetModifierState(txt_modifier_t mod)
 {
-    if (mod < TXT_NUM_MODIFIERS)
-    {
-        return modifier_state[mod] > 0;
-    }
+    SDL_Keymod state;
 
-    return 0;
+    state = SDL_GetModState();
+
+    switch (mod)
+    {
+        case TXT_MOD_SHIFT:
+            return (state & KMOD_SHIFT) != 0;
+        case TXT_MOD_CTRL:
+            return (state & KMOD_CTRL) != 0;
+        case TXT_MOD_ALT:
+            return (state & KMOD_ALT) != 0;
+        default:
+            return 0;
+    }
 }
 
 static const char *SpecialKeyName(int key)
