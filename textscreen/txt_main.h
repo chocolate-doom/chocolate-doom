@@ -139,8 +139,11 @@ int TXT_GetChar(void);
 // Read the current state of modifier keys that are held down.
 int TXT_GetModifierState(txt_modifier_t mod);
 
-// Provides a short description of a key code, placing into the 
-// provided buffer.
+// Provides a short description of a key code, placing into the provided
+// buffer. Note that the key is assumed to represent a physical key on the
+// keyboard (like that returned by TXT_INPUT_RAW), and the resulting string
+// takes keyboard layout into consideration. For example,
+// TXT_GetKeyDescription('q') on a French keyboard returns "A".
 void TXT_GetKeyDescription(int key, char *buf, size_t buf_len);
 
 // Retrieve the current position of the mouse
