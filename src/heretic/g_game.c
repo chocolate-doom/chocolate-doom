@@ -1791,7 +1791,8 @@ void G_RecordDemo(skill_t skill, int numplayers, int episode, int map,
     // Record or playback a demo with high resolution turning.
     //
 
-    longtics = M_ParmExists("-longtics");
+    longtics = D_NonVanillaRecord(M_ParmExists("-longtics"),
+                                  "vvHeretic longtics demo");
 
     // If not recording a longtics demo, record in low res
 
@@ -1837,7 +1838,7 @@ void G_RecordDemo(skill_t skill, int numplayers, int episode, int map,
     //   0x02 = -nomonsters
 
     *demo_p = 1; // assume player one exists
-    if (respawnparm)
+    if (D_NonVanillaRecord(respawnparm, "vvHeretic -respawn header flag"))
     {
         *demo_p |= DEMOHEADER_RESPAWN;
     }
@@ -1845,7 +1846,7 @@ void G_RecordDemo(skill_t skill, int numplayers, int episode, int map,
     {
         *demo_p |= DEMOHEADER_LONGTICS;
     }
-    if (nomonsters)
+    if (D_NonVanillaRecord(nomonsters, "vvHeretic -nomonsters header flag"))
     {
         *demo_p |= DEMOHEADER_NOMONSTERS;
     }
@@ -1874,21 +1875,6 @@ void G_DeferedPlayDemo(char *name)
     gameaction = ga_playdemo;
 }
 
-// Returns true if the given lump number corresponds to data from a .lmp
-// file, as opposed to a WAD.
-static boolean IsDemoFile(int lumpnum)
-{
-    char *lower;
-    boolean result;
-
-    lower = M_StringDuplicate(lumpinfo[lumpnum]->wad_file->path);
-    M_ForceLowercase(lower);
-    result = M_StringEndsWith(lower, ".lmp");
-    free(lower);
-
-    return result;
-}
-
 void G_DoPlayDemo(void)
 {
     skill_t skill;
@@ -1903,19 +1889,21 @@ void G_DoPlayDemo(void)
     map = *demo_p++;
 
     // vvHeretic allows extra options to be stored in the upper bits of
-    // the player 1 present byte. However, only recognize these bits if
-    // they are in a demo file being played manually by the user; we
-    // ignore them (as is Vanilla behavior) if they are inside a WAD file.
-    // These extra bits are a convenience feature for demo playback, not
-    // an editing extension for WAD authors.
-    if (IsDemoFile(lumpnum))
+    // the player 1 present byte. However, this is a non-vanilla extension.
+    if (D_NonVanillaPlayback((*demo_p & DEMOHEADER_LONGTICS) != 0,
+                             lumpnum, "vvHeretic longtics demo"))
     {
-        // Read special parameter bits: see G_RecordDemo() for details.
-        longtics = (*demo_p & DEMOHEADER_LONGTICS) != 0;
-
-        // don't overwrite arguments from the command line
-        respawnparm |= (*demo_p & DEMOHEADER_RESPAWN) != 0;
-        nomonsters |= (*demo_p & DEMOHEADER_NOMONSTERS) != 0;
+        longtics = true;
+    }
+    if (D_NonVanillaPlayback((*demo_p & DEMOHEADER_RESPAWN) != 0,
+                             lumpnum, "vvHeretic -respawn header flag"))
+    {
+        respawnparm = true;
+    }
+    if (D_NonVanillaPlayback((*demo_p & DEMOHEADER_NOMONSTERS) != 0,
+                             lumpnum, "vvHeretic -nomonsters header flag"))
+    {
+        nomonsters = true;
     }
 
     for (i = 0; i < MAXPLAYERS; i++)
