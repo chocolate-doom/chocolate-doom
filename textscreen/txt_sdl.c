@@ -671,7 +671,10 @@ signed int TXT_GetChar(void)
                 {
                     // TODO: Support input of more than just the first char?
                     const char *p = ev.text.text;
-                    return TXT_DecodeUTF8(&p);
+                    int result = TXT_DecodeUTF8(&p);
+                    // 0-127 is ASCII, but we map non-ASCII Unicode chars into
+                    // a higher range to avoid conflicts with special keys.
+                    return TXT_UNICODE_TO_KEY(result);
                 }
                 break;
 

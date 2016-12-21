@@ -61,6 +61,11 @@
         ( (x) < 128 ? (x) :                                               \
           (x) >= TXT_UNICODE_BASE ? ((x) - TXT_UNICODE_BASE + 128) : 0 )
 
+// Convert a Unicode character to a key value:
+
+#define TXT_UNICODE_TO_KEY(u)                                            \
+        ( (u) < 128 ? (u) : ((u) - 128 + TXT_UNICODE_BASE) )
+
 // Screen size
 
 #define TXT_SCREEN_W 80
