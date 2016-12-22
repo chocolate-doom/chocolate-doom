@@ -101,4 +101,4 @@ chocolate-doom -merge aoddoom1.wad -deh aoddoom1.deh  (Army of Darkness Doom)
    file for more information.
 
  * Please send any feedback, questions or suggestions to
-   fraggle@gmail.com. Thanks!
+   chocolate-doom-dev-list@chocolate-doom.org. Thanks!

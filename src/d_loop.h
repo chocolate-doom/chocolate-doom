@@ -77,5 +77,12 @@ void D_StartNetGame(net_gamesettings_t *settings,
 extern boolean singletics;
 extern int gametic, ticdup;
 
+// Check if it is permitted to record a demo with a non-vanilla feature.
+boolean D_NonVanillaRecord(boolean conditional, char *feature);
+
+// Check if it is permitted to play back a demo with a non-vanilla feature.
+boolean D_NonVanillaPlayback(boolean conditional, int lumpnum,
+                             char *feature);
+
 #endif
 

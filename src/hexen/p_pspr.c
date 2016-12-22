@@ -868,9 +868,9 @@ void A_FSwordFlames(mobj_t * actor)
         r1 = P_Random();
         r2 = P_Random();
         r3 = P_Random();
-        P_SpawnMobj(actor->x + ((r1 - 128) << 12), actor->y
+        P_SpawnMobj(actor->x + ((r3 - 128) << 12), actor->y
                     + ((r2 - 128) << 12),
-                    actor->z + ((r3 - 128) << 11), MT_FSWORD_FLAME);
+                    actor->z + ((r1 - 128) << 11), MT_FSWORD_FLAME);
     }
 }
 
@@ -1003,8 +1003,8 @@ void A_LightningZap(mobj_t * actor)
     }
     r1 = P_Random();
     r2 = P_Random();
-    mo = P_SpawnMobj(actor->x + ((r1 - 128) * actor->radius / 256),
-                     actor->y + ((r2 - 128) * actor->radius / 256),
+    mo = P_SpawnMobj(actor->x + ((r2 - 128) * actor->radius / 256),
+                     actor->y + ((r1 - 128) * actor->radius / 256),
                      actor->z + deltaZ, MT_LIGHTNING_ZAP);
     if (mo)
     {

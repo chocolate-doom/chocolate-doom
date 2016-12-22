@@ -831,3 +831,85 @@ void D_RegisterLoopCallbacks(loop_interface_t *i)
 {
     loop_interface = i;
 }
+
+// TODO: Move nonvanilla demo functions into a dedicated file.
+#include "m_misc.h"
+#include "w_wad.h"
+
+static boolean StrictDemos(void)
+{
+    //!
+    // @category demo
+    //
+    // When recording or playing back demos, disable any extensions
+    // of the vanilla demo format - record demos as vanilla would do,
+    // and play back demos as vanilla would do.
+    //
+    return M_ParmExists("-strictdemos");
+}
+
+// If the provided conditional value is true, we're trying to record
+// a demo file that will include a non-vanilla extension. The function
+// will return true if the conditional is true and it's allowed to use
+// this extension (no extensions are allowed if -strictdemos is given
+// on the command line). A warning is shown on the console using the
+// provided string describing the non-vanilla expansion.
+boolean D_NonVanillaRecord(boolean conditional, char *feature)
+{
+    if (!conditional || StrictDemos())
+    {
+        return false;
+    }
+
+    printf("Warning: Recording a demo file with a non-vanilla extension "
+           "(%s). Use -strictdemos to disable this extension.\n",
+           feature);
+
+    return true;
+}
+
+// Returns true if the given lump number corresponds to data from a .lmp
+// file, as opposed to a WAD.
+static boolean IsDemoFile(int lumpnum)
+{
+    char *lower;
+    boolean result;
+
+    lower = M_StringDuplicate(lumpinfo[lumpnum]->wad_file->path);
+    M_ForceLowercase(lower);
+    result = M_StringEndsWith(lower, ".lmp");
+    free(lower);
+
+    return result;
+}
+
+// If the provided conditional value is true, we're trying to play back
+// a demo that includes a non-vanilla extension. We return true if the
+// conditional is true and it's allowed to use this extension, checking
+// that:
+//  - The -strictdemos command line argument is not provided.
+//  - The given lumpnum identifying the demo to play back identifies a
+//    demo that comes from a .lmp file, not a .wad file.
+//  - Before proceeding, a warning is shown to the user on the console.
+boolean D_NonVanillaPlayback(boolean conditional, int lumpnum,
+                             char *feature)
+{
+    if (!conditional || StrictDemos())
+    {
+        return false;
+    }
+
+    if (!IsDemoFile(lumpnum))
+    {
+        printf("Warning: WAD contains demo with a non-vanilla extension "
+               "(%s)\n", feature);
+        return false;
+    }
+
+    printf("Warning: Playing back a demo file with a non-vanilla extension "
+           "(%s). Use -strictdemos to disable this extension.\n",
+           feature);
+
+    return true;
+}
+
