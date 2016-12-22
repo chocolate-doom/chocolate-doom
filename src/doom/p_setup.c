@@ -383,7 +383,7 @@ void P_SegLengths (void)
 	li = &segs[i];
 	dx = li->v2->px - li->v1->px;
 	dy = li->v2->py - li->v1->py;
-	li->length = (int64_t)sqrt((double)dx*dx + (double)dy*dy);
+	li->length = (uint32_t)(sqrt((double)dx*dx + (double)dy*dy)/2);
 
 	// [crispy] re-calculate angle used for rendering
 	viewx = li->v1->px;
