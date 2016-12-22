@@ -518,6 +518,7 @@ R_StoreWallRange
     fixed_t		vtop;
     int			lightnum;
     int64_t		dx, dy, dx1, dy1, dist; // [crispy] fix long wall wobble
+    const int32_t	len = curline->length;
 
     // [crispy] remove MAXDRAWSEGS Vanilla limit
     if (ds_p == &drawsegs[numdrawsegs])
@@ -549,11 +550,12 @@ R_StoreWallRange
     // [crispy] fix long wall wobble
     // thank you very much Linguica, e6y and kb1
     // http://www.doomworld.com/vb/post/1340718
-    dx = (int64_t)curline->v2->x - curline->v1->x;
-    dy = (int64_t)curline->v2->y - curline->v1->y;
-    dx1 = (int64_t)viewx - curline->v1->x;
-    dy1 = (int64_t)viewy - curline->v1->y;
-    dist = (dy * dx1 - dx * dy1) / curline->length;
+    // shift right to avoid possibility of int64 overflow in rw_distance calculation
+    dx = ((int64_t)curline->v2->x - curline->v1->x) >> 1;
+    dy = ((int64_t)curline->v2->y - curline->v1->y) >> 1;
+    dx1 = ((int64_t)viewx - curline->v1->x) >> 1;
+    dy1 = ((int64_t)viewy - curline->v1->y) >> 1;
+    dist = ((dy * dx1 - dx * dy1) / len) << 1;
     rw_distance = (fixed_t)BETWEEN(INT_MIN, INT_MAX, dist);
 		
 	
@@ -771,7 +773,7 @@ R_StoreWallRange
     {
 	
 	// [crispy] fix long wall wobble
-	rw_offset = (fixed_t)((dx*dx1 + dy*dy1) / curline->length);
+	rw_offset = (fixed_t)(((dx*dx1 + dy*dy1) / len) << 1);
 	rw_offset += sidedef->textureoffset + curline->offset;
 	rw_centerangle = ANG90 + viewangle - rw_normalangle;
 	

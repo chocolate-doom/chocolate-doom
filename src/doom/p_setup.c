@@ -344,7 +344,7 @@ void P_SegLengths (void)
     li = &segs[i];
     dx = li->v2->x - li->v1->x;
     dy = li->v2->y - li->v1->y;
-    li->length = (int64_t)sqrt((double)dx*dx + (double)dy*dy);
+    li->length = (uint32_t)(sqrt((double)dx*dx + (double)dy*dy)/2);
     }
 }
 
