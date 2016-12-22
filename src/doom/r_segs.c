@@ -518,7 +518,7 @@ R_StoreWallRange
     fixed_t		vtop;
     int			lightnum;
     int64_t		dx, dy, dx1, dy1, dist; // [crispy] fix long wall wobble
-    const int32_t	len = curline->length;
+    const uint32_t	len = curline->length;
 
     // [crispy] remove MAXDRAWSEGS Vanilla limit
     if (ds_p == &drawsegs[numdrawsegs])
