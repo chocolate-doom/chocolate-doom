@@ -1,4 +1,4 @@
-AC_INIT(Chocolate Doom, 2.2.1, chocolate-doom-dev-list@chocolate-doom.org,
+AC_INIT(Chocolate Doom, 2.3.0, chocolate-doom-dev-list@chocolate-doom.org,
         chocolate-doom)
 
 PACKAGE_SHORTNAME=${PACKAGE_NAME% Doom}

@@ -1,4 +1,4 @@
-## HEAD
+## 2.3.0 (2016-12-29)
 
 ### General
   * Bash completion scripts are included (thanks Fabian)
@@ -21,6 +21,9 @@
   * Multiple capitalizations are now tried when searching for WAD files,
     for convenience when running on case sensitive filesystems (thanks
     Fabian).
+  * A new command line argument, `-strictdemos`, was added, to allow
+    more careful control over demo format extensions. Such extensions
+    are now forbidden in WAD files and warning messages are shown.
 
 ### Build systems
   * There is better compatibility with BSD Make (thanks R.Rebello)
