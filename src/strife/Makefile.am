@@ -1,4 +1,6 @@
-AM_CFLAGS = -I$(top_srcdir)/src @SDL_CFLAGS@ @SDLMIXER_CFLAGS@ @SDLNET_CFLAGS@
+AM_CFLAGS=-I$(top_srcdir)/src                           \
+          -I$(top_srcdir)/textscreen                    \
+          @SDL_CFLAGS@ @SDLMIXER_CFLAGS@ @SDLNET_CFLAGS@
 
 noinst_LIBRARIES=libstrife.a
 
