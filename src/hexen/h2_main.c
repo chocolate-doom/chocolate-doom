@@ -195,7 +195,7 @@ static void D_SetDefaultSavePath(void)
             // and use hexndata/:
 
             SavePath = malloc(10);
-	    M_snprintf(SavePath, 10, "hexndata%c", DIR_SEPARATOR);
+            M_snprintf(SavePath, 10, "hexndata%c", DIR_SEPARATOR);
         }
         else
         {
