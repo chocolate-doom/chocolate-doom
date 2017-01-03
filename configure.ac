@@ -13,6 +13,7 @@ AC_CONFIG_AUX_DIR(autotools)
 AC_CANONICAL_HOST
 
 orig_CFLAGS="$CFLAGS"
+orig_LDFLAGS="$LDFLAGS"
 
 AC_PROG_CC
 AC_PROG_RANLIB
@@ -27,6 +28,11 @@ if test "$GCC" = "yes"
 then
         WARNINGS="-Wall -Wdeclaration-after-statement -Wredundant-decls"
         CFLAGS="-O$OPT_LEVEL -g $WARNINGS $orig_CFLAGS"
+        case "$host" in
+          *-*-mingw*)
+            LDFLAGS="-static-libgcc $orig_LDFLAGS"
+            ;;
+        esac
 fi
 
 dnl Search for SDL ...
