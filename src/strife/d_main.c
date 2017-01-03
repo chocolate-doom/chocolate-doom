@@ -936,6 +936,7 @@ static void InitTitleString(void)
                                            );
         break;
     case exe_strife_1_31:
+    default:
         DEH_snprintf(title, sizeof(title), "                      "
                                            "STRIFE:  Quest for the Sigil v1.31"
                                            "                                 "
