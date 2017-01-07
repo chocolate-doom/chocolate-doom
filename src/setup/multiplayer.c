@@ -340,7 +340,7 @@ static void UpdateSkillButton(void)
             {
                 skillbutton->values = hexen_fighter_skills;
             }
-            else if (character_class == 2)
+            else if (character_class == 1)
             {
                 skillbutton->values = hexen_cleric_skills;
             }
