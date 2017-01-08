@@ -691,12 +691,20 @@ static default_collection_t doom_defaults =
 static default_t extra_defaults_list[] =
 {
     //!
-    // @game heretic hexen strife
-    //
-    // If non-zero, display the graphical startup screen.
+    // Name of the SDL video driver to use.  If this is an empty string,
+    // the default video driver is used.
     //
 
-    CONFIG_VARIABLE_INT(graphical_startup),
+    CONFIG_VARIABLE_STRING(video_driver),
+
+    //!
+    // Position of the window on the screen when running in windowed
+    // mode. Accepted values are: "" (empty string) - don't care,
+    // "center" - place window at center of screen, "x,y" - place
+    // window at the specified coordinates.
+    //
+
+    CONFIG_VARIABLE_STRING(window_position),
 
     //!
     // If non-zero, the game will run in full screen mode.  If zero,
@@ -711,15 +719,6 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_INT(aspect_ratio_correct),
-
-    //!
-    // Number of milliseconds to wait on startup after the video mode
-    // has been set, before the game will start.  This allows the
-    // screen to settle on some monitors that do not display an image
-    // for a brief interval after changing video modes.
-    //
-
-    CONFIG_VARIABLE_INT(startup_delay),
 
     //!
     // Window width when running in windowed mode.
@@ -740,13 +739,215 @@ static default_t extra_defaults_list[] =
     // rather than ever switching screen modes. It should usually
     // be unnecessary to set this value.
     //
+
     CONFIG_VARIABLE_INT(fullscreen_width),
 
     //!
     // Height for screen mode when running fullscreen.
     // See documentation for fullscreen_width.
     //
+
     CONFIG_VARIABLE_INT(fullscreen_height),
+
+    //!
+    // If non-zero, force the use of a software renderer. For use on
+    // systems lacking hardware acceleration.
+    //
+
+    CONFIG_VARIABLE_INT(force_software_renderer),
+
+    //!
+    // Number of milliseconds to wait on startup after the video mode
+    // has been set, before the game will start.  This allows the
+    // screen to settle on some monitors that do not display an image
+    // for a brief interval after changing video modes.
+    //
+
+    CONFIG_VARIABLE_INT(startup_delay),
+
+    //!
+    // @game heretic hexen strife
+    //
+    // If non-zero, display the graphical startup screen.
+    //
+
+    CONFIG_VARIABLE_INT(graphical_startup),
+
+    //!
+    // @game doom heretic strife
+    //
+    // If non-zero, the ENDOOM text screen is displayed when exiting the
+    // game. If zero, the ENDOOM screen is not displayed.
+    //
+
+    CONFIG_VARIABLE_INT(show_endoom),
+
+    //!
+    // @game doom strife
+    //
+    // If non-zero, a disk activity indicator is displayed when data is read
+    // from disk. If zero, the disk activity indicator is not displayed.
+    //
+
+    CONFIG_VARIABLE_INT(show_diskicon),
+
+    //!
+    // If non-zero, save screenshots in PNG format. If zero, screenshots are
+    // saved in PCX format, as Vanilla Doom does.
+    //
+
+    CONFIG_VARIABLE_INT(png_screenshots),
+
+    //!
+    // Sound output sample rate, in Hz.  Typical values to use are
+    // 11025, 22050, 44100 and 48000.
+    //
+
+    CONFIG_VARIABLE_INT(snd_samplerate),
+
+    //!
+    // Maximum number of bytes to allocate for caching converted sound
+    // effects in memory. If set to zero, there is no limit applied.
+    //
+
+    CONFIG_VARIABLE_INT(snd_cachesize),
+
+    //!
+    // Maximum size of the output sound buffer size in milliseconds.
+    // Sound output is generated periodically in slices. Higher values
+    // might be more efficient but will introduce latency to the
+    // sound output. The default is 28ms (one slice per tic with the
+    // 35fps timer).
+    //
+
+    CONFIG_VARIABLE_INT(snd_maxslicetime_ms),
+
+    //!
+    // If non-zero, sound effects will have their pitch varied up or
+    // down by a random amount during play. If zero, sound effects
+    // play back at their default pitch.
+    //
+
+    CONFIG_VARIABLE_INT(snd_pitchshift),
+
+    //!
+    // External command to invoke to perform MIDI playback. If set to
+    // the empty string, SDL_mixer's internal MIDI playback is used.
+    // This only has any effect when snd_musicdevice is set to General
+    // MIDI output.
+    //
+
+    CONFIG_VARIABLE_STRING(snd_musiccmd),
+
+    //!
+    // Value to set for the DMXOPTION environment variable. If this contains
+    // "-opl3", output for an OPL3 chip is generated when in OPL MIDI
+    // playback mode.
+    //
+
+    CONFIG_VARIABLE_STRING(snd_dmxoption),
+
+    //!
+    // The I/O port to use to access the OPL chip.  Only relevant when
+    // using native OPL music playback.
+    //
+
+    CONFIG_VARIABLE_INT_HEX(opl_io_port),
+
+#ifdef FEATURE_SOUND
+
+    //!
+    // Controls whether libsamplerate support is used for performing
+    // sample rate conversions of sound effects.  Support for this
+    // must be compiled into the program.
+    //
+    // If zero, libsamplerate support is disabled.  If non-zero,
+    // libsamplerate is enabled. Increasing values roughly correspond
+    // to higher quality conversion; the higher the quality, the
+    // slower the conversion process.  Linear conversion = 1;
+    // Zero order hold = 2; Fast Sinc filter = 3; Medium quality
+    // Sinc filter = 4; High quality Sinc filter = 5.
+    //
+
+    CONFIG_VARIABLE_INT(use_libsamplerate),
+
+    //!
+    // Scaling factor used by libsamplerate. This is used when converting
+    // sounds internally back into integer form; normally it should not
+    // be necessary to change it from the default value. The only time
+    // it might be needed is if a PWAD file is loaded that contains very
+    // loud sounds, in which case the conversion may cause sound clipping
+    // and the scale factor should be reduced. The lower the value, the
+    // quieter the sound effects become, so it should be set as high as is
+    // possible without clipping occurring.
+
+    CONFIG_VARIABLE_FLOAT(libsamplerate_scale),
+
+    //!
+    // Full path to a Timidity configuration file to use for MIDI
+    // playback. The file will be evaluated from the directory where
+    // it is evaluated, so there is no need to add "dir" commands
+    // into it.
+    //
+
+    CONFIG_VARIABLE_STRING(timidity_cfg_path),
+
+    //!
+    // Path to GUS patch files to use when operating in GUS emulation
+    // mode.
+    //
+
+    CONFIG_VARIABLE_STRING(gus_patch_path),
+
+    //!
+    // Number of kilobytes of RAM to use in GUS emulation mode. Valid
+    // values are 256, 512, 768 or 1024.
+    //
+
+    CONFIG_VARIABLE_INT(gus_ram_kb),
+
+#endif
+
+    //!
+    // @game doom strife
+    //
+    // If non-zero, the Vanilla savegame limit is enforced; if the
+    // savegame exceeds 180224 bytes in size, the game will exit with
+    // an error.  If this has a value of zero, there is no limit to
+    // the size of savegames.
+    //
+
+    CONFIG_VARIABLE_INT(vanilla_savegame_limit),
+
+    //!
+    // @game doom strife
+    //
+    // If non-zero, the Vanilla demo size limit is enforced; the game
+    // exits with an error when a demo exceeds the demo size limit
+    // (128KiB by default).  If this has a value of zero, there is no
+    // limit to the size of demos.
+    //
+
+    CONFIG_VARIABLE_INT(vanilla_demo_limit),
+
+    //!
+    // If non-zero, the game behaves like Vanilla Doom, always assuming
+    // an American keyboard mapping.  If this has a value of zero, the
+    // native keyboard mapping of the keyboard is used.
+    //
+
+    CONFIG_VARIABLE_INT(vanilla_keyboard_mapping),
+
+#ifdef FEATURE_MULTIPLAYER
+
+    //!
+    // Name to use in network games for identification.  This is only
+    // used on the "waiting" screen while waiting for the game to start.
+    //
+
+    CONFIG_VARIABLE_STRING(player_name),
+
+#endif
 
     //!
     // If this is non-zero, the mouse will be "grabbed" when running
@@ -781,143 +982,47 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(mouse_threshold),
 
     //!
-    // Sound output sample rate, in Hz.  Typical values to use are
-    // 11025, 22050, 44100 and 48000.
+    // Mouse button to strafe left.
     //
 
-    CONFIG_VARIABLE_INT(snd_samplerate),
+    CONFIG_VARIABLE_INT(mouseb_strafeleft),
 
     //!
-    // Maximum number of bytes to allocate for caching converted sound
-    // effects in memory. If set to zero, there is no limit applied.
+    // Mouse button to strafe right.
     //
 
-    CONFIG_VARIABLE_INT(snd_cachesize),
+    CONFIG_VARIABLE_INT(mouseb_straferight),
 
     //!
-    // Maximum size of the output sound buffer size in milliseconds.
-    // Sound output is generated periodically in slices. Higher values
-    // might be more efficient but will introduce latency to the
-    // sound output. The default is 28ms (one slice per tic with the
-    // 35fps timer).
+    // Mouse button to "use" an object, eg. a door or switch.
+    //
 
-    CONFIG_VARIABLE_INT(snd_maxslicetime_ms),
+    CONFIG_VARIABLE_INT(mouseb_use),
 
     //!
-    // If non-zero, sound effects will have their pitch varied up or
-    // down by a random amount during play. If zero, sound effects
-    // play back at their default pitch. The default is zero.
+    // Mouse button to move backwards.
     //
 
-    CONFIG_VARIABLE_INT(snd_pitchshift),
+    CONFIG_VARIABLE_INT(mouseb_backward),
 
     //!
-    // External command to invoke to perform MIDI playback. If set to
-    // the empty string, SDL_mixer's internal MIDI playback is used.
-    // This only has any effect when snd_musicdevice is set to General
-    // MIDI output.
+    // Mouse button to cycle to the previous weapon.
+    //
 
-    CONFIG_VARIABLE_STRING(snd_musiccmd),
+    CONFIG_VARIABLE_INT(mouseb_prevweapon),
 
     //!
-    // Value to set for the DMXOPTION environment variable. If this contains
-    // "-opl3", output for an OPL3 chip is generated when in OPL MIDI
-    // playback mode.
+    // Mouse button to cycle to the next weapon.
     //
-    CONFIG_VARIABLE_STRING(snd_dmxoption),
+
+    CONFIG_VARIABLE_INT(mouseb_nextweapon),
 
     //!
-    // The I/O port to use to access the OPL chip.  Only relevant when
-    // using native OPL music playback.
+    // If non-zero, double-clicking a mouse button acts like pressing
+    // the "use" key to use an object in-game, eg. a door or switch.
     //
 
-    CONFIG_VARIABLE_INT_HEX(opl_io_port),
-
-    //!
-    // @game doom heretic strife
-    //
-    // If non-zero, the ENDOOM text screen is displayed when exiting the
-    // game. If zero, the ENDOOM screen is not displayed.
-    //
-
-    CONFIG_VARIABLE_INT(show_endoom),
-
-    //!
-    // @game doom strife
-    //
-    // If non-zero, a disk activity indicator is displayed when data is read
-    // from disk. If zero, the disk activity indicator is not displayed.
-    //
-
-    CONFIG_VARIABLE_INT(show_diskicon),
-
-    //!
-    // If non-zero, save screenshots in PNG format.
-    //
-
-    CONFIG_VARIABLE_INT(png_screenshots),
-
-    //!
-    // @game doom strife
-    //
-    // If non-zero, the Vanilla savegame limit is enforced; if the
-    // savegame exceeds 180224 bytes in size, the game will exit with
-    // an error.  If this has a value of zero, there is no limit to
-    // the size of savegames.
-    //
-
-    CONFIG_VARIABLE_INT(vanilla_savegame_limit),
-
-    //!
-    // @game doom strife
-    //
-    // If non-zero, the Vanilla demo size limit is enforced; the game
-    // exits with an error when a demo exceeds the demo size limit
-    // (128KiB by default).  If this has a value of zero, there is no
-    // limit to the size of demos.
-    //
-
-    CONFIG_VARIABLE_INT(vanilla_demo_limit),
-
-    //!
-    // If non-zero, the game behaves like Vanilla Doom, always assuming
-    // an American keyboard mapping.  If this has a value of zero, the
-    // native keyboard mapping of the keyboard is used.
-    //
-
-    CONFIG_VARIABLE_INT(vanilla_keyboard_mapping),
-
-    //!
-    // Name of the SDL video driver to use.  If this is an empty string,
-    // the default video driver is used.
-    //
-
-    CONFIG_VARIABLE_STRING(video_driver),
-
-    //!
-    // Position of the window on the screen when running in windowed
-    // mode. Accepted values are: "" (empty string) - don't care,
-    // "center" - place window at center of screen, "x,y" - place
-    // window at the specified coordinates.
-
-    CONFIG_VARIABLE_STRING(window_position),
-
-    //!
-    // If non-zero, force the use of a software renderer. For use on
-    // systems lacking hardware acceleration.
-    //
-    CONFIG_VARIABLE_INT(force_software_renderer),
-
-#ifdef FEATURE_MULTIPLAYER
-
-    //!
-    // Name to use in network games for identification.  This is only
-    // used on the "waiting" screen while waiting for the game to start.
-    //
-
-    CONFIG_VARIABLE_STRING(player_name),
-
-#endif
+    CONFIG_VARIABLE_INT(dclick_use),
 
     //!
     // SDL GUID string indicating the joystick to use. An empty string
@@ -1083,103 +1188,6 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_INT(joyb_nextweapon),
-
-    //!
-    // Mouse button to strafe left.
-    //
-
-    CONFIG_VARIABLE_INT(mouseb_strafeleft),
-
-    //!
-    // Mouse button to strafe right.
-    //
-
-    CONFIG_VARIABLE_INT(mouseb_straferight),
-
-    //!
-    // Mouse button to "use" an object, eg. a door or switch.
-    //
-
-    CONFIG_VARIABLE_INT(mouseb_use),
-
-    //!
-    // Mouse button to move backwards.
-    //
-
-    CONFIG_VARIABLE_INT(mouseb_backward),
-
-    //!
-    // Mouse button to cycle to the previous weapon.
-    //
-
-    CONFIG_VARIABLE_INT(mouseb_prevweapon),
-
-    //!
-    // Mouse button to cycle to the next weapon.
-    //
-
-    CONFIG_VARIABLE_INT(mouseb_nextweapon),
-
-    //!
-    // If non-zero, double-clicking a mouse button acts like pressing
-    // the "use" key to use an object in-game, eg. a door or switch.
-    //
-
-    CONFIG_VARIABLE_INT(dclick_use),
-
-#ifdef FEATURE_SOUND
-
-    //!
-    // Controls whether libsamplerate support is used for performing
-    // sample rate conversions of sound effects.  Support for this
-    // must be compiled into the program.
-    //
-    // If zero, libsamplerate support is disabled.  If non-zero,
-    // libsamplerate is enabled. Increasing values roughly correspond
-    // to higher quality conversion; the higher the quality, the
-    // slower the conversion process.  Linear conversion = 1;
-    // Zero order hold = 2; Fast Sinc filter = 3; Medium quality
-    // Sinc filter = 4; High quality Sinc filter = 5.
-    //
-
-    CONFIG_VARIABLE_INT(use_libsamplerate),
-
-    //!
-    // Scaling factor used by libsamplerate. This is used when converting
-    // sounds internally back into integer form; normally it should not
-    // be necessary to change it from the default value. The only time
-    // it might be needed is if a PWAD file is loaded that contains very
-    // loud sounds, in which case the conversion may cause sound clipping
-    // and the scale factor should be reduced. The lower the value, the
-    // quieter the sound effects become, so it should be set as high as is
-    // possible without clipping occurring.
-
-    CONFIG_VARIABLE_FLOAT(libsamplerate_scale),
-
-    //!
-    // Full path to a Timidity configuration file to use for MIDI
-    // playback. The file will be evaluated from the directory where
-    // it is evaluated, so there is no need to add "dir" commands
-    // into it.
-    //
-
-    CONFIG_VARIABLE_STRING(timidity_cfg_path),
-
-    //!
-    // Path to GUS patch files to use when operating in GUS emulation
-    // mode.
-    //
-
-    CONFIG_VARIABLE_STRING(gus_patch_path),
-
-    //!
-    // Number of kilobytes of RAM to use in GUS emulation mode. Valid
-    // values are 256, 512, 768 or 1024.
-    //
-
-    CONFIG_VARIABLE_INT(gus_ram_kb),
-
-#endif
 
     //!
     // Key to pause or unpause the game.
