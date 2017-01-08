@@ -714,6 +714,14 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(fullscreen),
 
     //!
+    // Index of the display on which the game should run. This has no
+    // effect if running in windowed mode (fullscreen=0) and
+    // window_position is not set to "center".
+    //
+
+    CONFIG_VARIABLE_INT(video_display),
+
+    //!
     // If non-zero, the screen will be stretched vertically to display
     // correctly on a square pixel video mode.
     //

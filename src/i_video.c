@@ -44,14 +44,6 @@
 #include "w_wad.h"
 #include "z_zone.h"
 
-// SDL video driver name
-
-char *video_driver = "";
-
-// Window position:
-
-static char *window_position = "";
-
 // These are (1) the window (or the full screen) that our game is rendered to
 // and (2) the renderer that scales the texture (see below) into this window.
 
@@ -100,6 +92,18 @@ int usemouse = 1;
 // Save screenshots in PNG format.
 
 int png_screenshots = 0;
+
+// SDL video driver name
+
+char *video_driver = "";
+
+// Window position:
+
+static char *window_position = "center";
+
+// SDL display number on which to run.
+
+int video_display = 0;
 
 // Screen width and height, from configuration file.
 
@@ -986,8 +990,46 @@ static void SetSDLVideoDriver(void)
     }
 }
 
-static void GetWindowPosition(int *x, int *y)
+// Check the display bounds of the display referred to by 'video_display' and
+// set x and y to a location that places the window in the center of that
+// display.
+static void CenterWindow(int *x, int *y, int w, int h)
 {
+    SDL_Rect bounds;
+
+    // Check that video_display corresponds to a display that really exists,
+    // and if it doesn't, reset it.
+    if (video_display < 0 || video_display >= SDL_GetNumVideoDisplays())
+    {
+        fprintf(stderr,
+                "CenterWindow: We were configured to run on display #%d, but "
+                "it no longer exists (max %d). Moving to display 0.\n",
+                video_display, SDL_GetNumVideoDisplays() - 1);
+        video_display = 0;
+    }
+
+    if (SDL_GetDisplayBounds(video_display, &bounds) < 0)
+    {
+        fprintf(stderr, "CenterWindow: Failed to read display bounds "
+                        "for display #%d!\n", video_display);
+        return;
+    }
+
+    *x = bounds.x + SDL_max((bounds.w - w) / 2, 0);
+    *y = bounds.y + SDL_max((bounds.h - h) / 2, 0);
+}
+
+static void GetWindowPosition(int *x, int *y, int w, int h)
+{
+    // in fullscreen mode, the window "position" still matters, because
+    // we use it to control which display we run fullscreen on.
+
+    if (fullscreen)
+    {
+        CenterWindow(x, y, w, h);
+        return;
+    }
+
     // in windowed mode, the desired window position can be specified
     // in the configuration file.
 
@@ -997,7 +1039,10 @@ static void GetWindowPosition(int *x, int *y)
     }
     else if (!strcmp(window_position, "center"))
     {
-        *x = *y = SDL_WINDOWPOS_CENTERED;
+        // Note: SDL has a SDL_WINDOWPOS_CENTER, but this is useless for our
+        // purposes, since we also want to control which display we appear on.
+        // So we have to do this ourselves.
+        CenterWindow(x, y, w, h);
     }
     else if (sscanf(window_position, "%i,%i", x, y) != 2)
     {
@@ -1017,8 +1062,6 @@ static void SetVideoMode(void)
 
     w = window_width;
     h = window_height;
-
-    GetWindowPosition(&x, &y);
 
     // In windowed mode, the window can be resized while the game is
     // running.
@@ -1044,6 +1087,8 @@ static void SetVideoMode(void)
             window_flags |= SDL_WINDOW_FULLSCREEN;
         }
     }
+
+    GetWindowPosition(&x, &y, w, h);
 
     // Create window and renderer contexts. We set the window title
     // later anyway and leave the window position "undefined". If
@@ -1275,6 +1320,7 @@ void I_BindVideoVariables(void)
 {
     M_BindIntVariable("use_mouse",                 &usemouse);
     M_BindIntVariable("fullscreen",                &fullscreen);
+    M_BindIntVariable("video_display",             &video_display);
     M_BindIntVariable("aspect_ratio_correct",      &aspect_ratio_correct);
     M_BindIntVariable("startup_delay",             &startup_delay);
     M_BindIntVariable("fullscreen_width",          &fullscreen_width);
