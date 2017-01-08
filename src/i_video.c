@@ -304,7 +304,7 @@ static void AdjustWindowSize(void)
 
 static void HandleWindowEvent(SDL_WindowEvent *event)
 {
-    int flags;
+    int i, flags;
 
     switch (event->event)
     {
@@ -359,6 +359,19 @@ static void HandleWindowEvent(SDL_WindowEvent *event)
         case SDL_WINDOWEVENT_LEAVE:
         case SDL_WINDOWEVENT_FOCUS_LOST:
             window_focused = false;
+            break;
+
+        // We want to save the user's preferred monitor to use for running the
+        // game, so that next time we're run we start on the same display. So
+        // every time the window is moved, find which display we're now on and
+        // update the video_display config variable.
+
+        case SDL_WINDOWEVENT_MOVED:
+            i = SDL_GetWindowDisplayIndex(screen);
+            if (i >= 0)
+            {
+                video_display = i;
+            }
             break;
 
         default:
