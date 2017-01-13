@@ -227,7 +227,7 @@ extern	patch_t *hu_font[HU_FONTSIZE];
 void F_TextWrite (void)
 {
     byte*	src;
-    byte*	dest;
+    pixel_t*	dest;
     
     int		x,y,w;
     signed int	count;
@@ -576,8 +576,8 @@ F_DrawPatchCol
 {
     column_t*	column;
     byte*	source;
-    byte*	dest;
-    byte*	desttop;
+    pixel_t*	dest;
+    pixel_t*	desttop;
     int		count;
 	
     column = (column_t *)((byte *)patch + LONG(patch->columnofs[col]));
