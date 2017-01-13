@@ -98,6 +98,8 @@ typedef enum
 #endif
 
 typedef uint8_t byte;
+typedef uint8_t pixel_t;
+typedef int16_t dpixel_t;
 
 #include <limits.h>
 

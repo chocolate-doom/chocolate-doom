@@ -112,7 +112,7 @@ int I_GetPaletteIndex(int r, int g, int b);
 void I_UpdateNoBlit (void);
 void I_FinishUpdate (void);
 
-void I_ReadScreen (byte* scr);
+void I_ReadScreen (pixel_t* scr);
 
 void I_BeginRead (void);
 
@@ -152,7 +152,7 @@ extern int mouse_y_invert; // [crispy]
 extern int vanilla_keyboard_mapping;
 extern boolean screensaver_mode;
 extern int usegamma;
-extern byte *I_VideoBuffer;
+extern pixel_t *I_VideoBuffer;
 
 extern int screen_width;
 extern int screen_height;

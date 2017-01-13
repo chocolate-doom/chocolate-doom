@@ -266,7 +266,7 @@ extern int screenblocks; // [crispy] for the Crispy HUD
 #define ST_MAPHEIGHT		1
 
 // graphics are drawn to a backing screen and blitted to the real screen
-byte                   *st_backing_screen;
+pixel_t			*st_backing_screen;
 	    
 // main player in game
 static player_t*	plyr; 
@@ -2077,6 +2077,6 @@ void ST_Init (void)
     }
 
     ST_loadData();
-    st_backing_screen = (byte *) Z_Malloc((ST_WIDTH << hires) * (ST_HEIGHT << hires) * sizeof(*st_backing_screen), PU_STATIC, 0);
+    st_backing_screen = (pixel_t *) Z_Malloc((ST_WIDTH << hires) * (ST_HEIGHT << hires) * sizeof(*st_backing_screen), PU_STATIC, 0);
 }
 

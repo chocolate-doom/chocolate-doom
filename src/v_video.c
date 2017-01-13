@@ -58,7 +58,7 @@ byte *xlatab = NULL;
 
 // The screen buffer that the v_video.c code draws to.
 
-static byte *dest_screen = NULL;
+static pixel_t *dest_screen = NULL;
 
 int dirtybox[4]; 
 
@@ -85,12 +85,12 @@ void V_MarkRect(int x, int y, int width, int height)
 //
 // V_CopyRect 
 // 
-void V_CopyRect(int srcx, int srcy, byte *source,
+void V_CopyRect(int srcx, int srcy, pixel_t *source,
                 int width, int height,
                 int destx, int desty)
 { 
-    byte *src;
-    byte *dest; 
+    pixel_t *src;
+    pixel_t *dest;
  
     srcx <<= hires;
     srcy <<= hires;
@@ -172,8 +172,8 @@ static void V_DrawPatchCrispy(int x, int y, patch_t *patch, int r)
     int count;
     int col;
     column_t *column;
-    byte *desttop;
-    byte *dest;
+    pixel_t *desttop;
+    pixel_t *dest;
     byte *source;
     byte *desttop2, *dest2;
     int w, f;
@@ -316,8 +316,8 @@ void V_DrawPatchFlipped(int x, int y, patch_t *patch)
     int count;
     int col; 
     column_t *column; 
-    byte *desttop;
-    byte *dest;
+    pixel_t *desttop;
+    pixel_t *dest;
     byte *source; 
     int w, f;
  
@@ -437,7 +437,8 @@ void V_DrawTLPatch(int x, int y, patch_t * patch)
 {
     int count, col;
     column_t *column;
-    byte *desttop, *dest, *source;
+    pixel_t *desttop, *dest;
+    byte *source;
     int w, f;
 
     y -= SHORT(patch->topoffset);
@@ -495,7 +496,8 @@ void V_DrawXlaPatch(int x, int y, patch_t * patch)
 {
     int count, col;
     column_t *column;
-    byte *desttop, *dest, *source;
+    pixel_t *desttop, *dest;
+    byte *source;
     int w, f;
 
     y -= SHORT(patch->topoffset);
@@ -552,7 +554,8 @@ void V_DrawAltTLPatch(int x, int y, patch_t * patch)
 {
     int count, col;
     column_t *column;
-    byte *desttop, *dest, *source;
+    pixel_t *desttop, *dest;
+    byte *source;
     int w, f;
 
     y -= SHORT(patch->topoffset);
@@ -610,8 +613,9 @@ void V_DrawShadowedPatch(int x, int y, patch_t *patch)
 {
     int count, col;
     column_t *column;
-    byte *desttop, *dest, *source;
-    byte *desttop2, *dest2;
+    pixel_t *desttop, *dest;
+    byte *source;
+    pixel_t *desttop2, *dest2;
     int w, f;
 
     y -= SHORT(patch->topoffset);
@@ -691,9 +695,9 @@ void V_LoadXlaTable(void)
 // Draw a linear block of pixels into the view buffer.
 //
 
-void V_DrawBlock(int x, int y, int width, int height, byte *src) 
+void V_DrawBlock(int x, int y, int width, int height, pixel_t *src)
 { 
-    byte *dest; 
+    pixel_t *dest;
  
 #ifdef RANGECHECK 
     if (x < 0
@@ -848,7 +852,7 @@ void V_Init (void)
 
 // Set the buffer that the code draws to.
 
-void V_UseBuffer(byte *buffer)
+void V_UseBuffer(pixel_t *buffer)
 {
     dest_screen = buffer;
 }
