@@ -23,7 +23,7 @@ ifndef GNUSTEP_MAKEFILES
 $(DMG) : tmp.dmg
 	rm -f $@
 	./dmgfix "$(realpath tmp.dmg)" "$(PACKAGE_STRING)" "$(PACKAGE_NAME).app"
-	hdiutil convert -format UDZO -o $@ tmp.dmg
+	hdiutil convert -format UDBZ -o $@ tmp.dmg
 	rm -f tmp.dmg
 
 tmp.dmg : $(STAGING_DIR)
