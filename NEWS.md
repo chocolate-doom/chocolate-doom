@@ -1,3 +1,9 @@
+## HEAD
+
+### General
+  * A new parameter -savedir allows users to specify a directory from
+    which to load and save games. (thanks CapnClever)
+
 ## 2.3.0 (2016-12-29)
 
 ### General
