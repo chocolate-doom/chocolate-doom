@@ -140,7 +140,7 @@ static boolean nograbmouse_override = false;
 
 // The screen buffer; this is modified to draw things to the screen
 
-byte *I_VideoBuffer = NULL;
+pixel_t *I_VideoBuffer = NULL;
 
 // If true, game is running as a screensaver
 
@@ -725,7 +725,7 @@ void I_FinishUpdate (void)
 //
 // I_ReadScreen
 //
-void I_ReadScreen (byte* scr)
+void I_ReadScreen (pixel_t* scr)
 {
     memcpy(scr, I_VideoBuffer, SCREENWIDTH*SCREENHEIGHT*sizeof(*scr));
 }
