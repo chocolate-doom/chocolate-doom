@@ -1,0 +1,116 @@
+#!/usr/bin/env python
+#
+# Copy a Windows executable file, along with any dependencies that it also
+# needs.
+
+import argparse
+import os
+import re
+import shutil
+import sys
+import subprocess
+
+DLL_NAME_RE = re.compile('\s+DLL Name: (.*\.dll)')
+
+# DLLs that are bundled with Windows, and we don't need to copy.
+# Thanks to Martin Preisler; this is from mingw-bundledlls.
+WIN32_DLLS = [
+	"advapi32.dll", "kernel32.dll", "msvcrt.dll", "ole32.dll",
+        "user32.dll", "ws2_32.dll", "comdlg32.dll", "gdi32.dll", "imm32.dll",
+        "oleaut32.dll", "shell32.dll", "winmm.dll", "winspool.drv",
+        "wldap32.dll", "ntdll.dll", "d3d9.dll", "mpr.dll", "crypt32.dll",
+        "dnsapi.dll", "shlwapi.dll", "version.dll", "iphlpapi.dll",
+        "msimg32.dll", "setupapi.dll",
+]
+
+parser = argparse.ArgumentParser(description='Copy EXE with DLLs.')
+parser.add_argument('--objdump', type=str, default='objdump',
+                    help='name of objdump binary to invoke')
+parser.add_argument('--path', type=str, nargs='*',
+                    help='list of paths to check for binaries')
+parser.add_argument('source', type=str, nargs=1,
+                    help='path to binary to copy')
+parser.add_argument('destination', type=str, nargs=1,
+                    help='destination to copy binary')
+
+def file_dependencies(filename, objdump):
+	"""Get the direct DLL dependencies of the given file.
+
+	The DLLs depended on by the given file are determined by invoking
+	the provided objdump binary. DLLs which are part of the standard
+	Win32 API are excluded from the result.
+
+	Args:
+	  filename: Path to a file to query.
+	  objdump: Name of objdump binary to invoke.
+	Returns:
+	  List of filenames (not fully qualified paths).
+	"""
+	cmd = subprocess.Popen([objdump, '-p', filename],
+	                       stdout=subprocess.PIPE)
+	try:
+		result = []
+		for line in cmd.stdout:
+			m = DLL_NAME_RE.match(line)
+			if m:
+				dll = m.group(1)
+				if dll.lower() not in WIN32_DLLS:
+					result.append(dll)
+
+		return result
+	finally:
+		cmd.wait()
+		assert cmd.returncode == 0, (
+			'%s invocation for %s exited with %d' % (
+				objdump, filename, cmd.returncode))
+
+def find_dll(filename, dll_paths):
+	"""Search the given list of paths for a DLL with the given name."""
+	for path in dll_paths:
+		full_path = os.path.join(path, filename)
+		if os.path.exists(full_path):
+			return full_path
+
+	raise IOError('DLL file %s not found in path: %s' % (
+		filename, dll_paths))
+
+def all_dependencies(filename, objdump, dll_paths):
+	"""Recursively find all dependencies of the given executable file.
+
+	Args:
+	  filename: Executable file to examine.
+	  objdump: Command to invoke to find dependencies.
+	  dll_paths: List of directories to search for DLL files.
+	Returns:
+	  Tuple containing:
+	    List containing the file and all its DLL dependencies.
+	    Set of filenames of missing DLLs.
+	"""
+	result, missing = [], set()
+	to_process = {filename}
+	while len(to_process) > 0:
+		filename = to_process.pop()
+		result.append(filename)
+		for dll in file_dependencies(filename, objdump):
+			try:
+				dll = find_dll(dll, dll_paths)
+				if dll not in result:
+					to_process |= {dll}
+			except IOError as e:
+				missing |= {dll}
+
+	return result, missing
+
+args = parser.parse_args()
+
+all_files, missing = all_dependencies(args.source[0], args.objdump, args.path)
+
+# Copy all files to the destination.
+for filename in all_files:
+	shutil.copy(filename, args.destination[0])
+
+if missing:
+	sys.stderr.write("Missing DLLs not found in path %s:\n" % args.path)
+	for filename in missing:
+		sys.stderr.write("\t%s\n" % filename)
+
