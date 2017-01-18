@@ -231,9 +231,6 @@ void I_DisplayFPSDots(boolean dots_on)
     display_fps_dots = dots_on;
 }
 
-// Show or hide the mouse cursor. We have to use different techniques
-// depending on the OS.
-
 static void SetShowCursor(boolean show)
 {
     if (!screensaver_mode)
@@ -351,12 +348,10 @@ static void HandleWindowEvent(SDL_WindowEvent *event)
         // is removed if we lose focus (such as a popup window appearing),
         // and we dont move the mouse around if we aren't focused either.
 
-        case SDL_WINDOWEVENT_ENTER:
         case SDL_WINDOWEVENT_FOCUS_GAINED:
             window_focused = true;
             break;
 
-        case SDL_WINDOWEVENT_LEAVE:
         case SDL_WINDOWEVENT_FOCUS_LOST:
             window_focused = false;
             break;
