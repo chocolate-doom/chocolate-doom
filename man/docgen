@@ -432,7 +432,7 @@ def print_template(template_file, content):
                 print_template(filename, content)
             else:
                 line = line.replace("@content", content)
-                sys.stdout.buffer.write(line.rstrip().encode('UTF-8'))
+                sys.stdout.buffer.write(line.rstrip().encode('UTF-8') + b'\n')
 
     finally:
         f.close()
@@ -452,7 +452,7 @@ def wiki_output(targets, template):
     read_wikipages()
 
     for t in targets:
-        sys.stdout.buffer.write(t.wiki_output().encode('UTF-8'))
+        sys.stdout.buffer.write(t.wiki_output().encode('UTF-8') + b'\n')
 
 def plaintext_output(targets, template_file):
 
