@@ -76,7 +76,7 @@ def parse_stream(stream):
 		raise Exception("Mismatched #if in '%s'" % stream.name)
 
 def parse_file(filename):
-	f = open(filename)
+	f = open(filename, encoding='UTF-8')
 
 	try:
 		parse_stream(f)

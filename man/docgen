@@ -300,7 +300,7 @@ class Parameter:
 # Read list of wiki pages
 
 def read_wikipages():
-    f = open("wikipages")
+    f = open("wikipages", encoding='UTF-8')
 
     try:
         for line in f:
@@ -356,7 +356,7 @@ def process_file(file):
 
     current_config_file = None
 
-    f = open(file)
+    f = open(file, encoding='UTF-8')
 
     try:
         param = None
@@ -422,7 +422,7 @@ def process_files(path):
         process_file(path)
 
 def print_template(template_file, content):
-    f = open(template_file)
+    f = open(template_file, encoding='UTF-8')
 
     try:
         for line in f:
@@ -432,7 +432,7 @@ def print_template(template_file, content):
                 print_template(filename, content)
             else:
                 line = line.replace("@content", content)
-                print(line.rstrip())
+                sys.stdout.buffer.write(line.rstrip().encode('UTF-8'))
 
     finally:
         f.close()
@@ -452,7 +452,7 @@ def wiki_output(targets, template):
     read_wikipages()
 
     for t in targets:
-        print(t.wiki_output())
+        sys.stdout.buffer.write(t.wiki_output().encode('UTF-8'))
 
 def plaintext_output(targets, template_file):
 
