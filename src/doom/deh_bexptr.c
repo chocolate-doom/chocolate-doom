@@ -101,8 +101,8 @@ extern void A_SpawnFly();
 extern void A_BrainExplode();
 
 typedef struct {
-    char *mnemonic;
-    actionf_t pointer;
+    const char *mnemonic;
+    const actionf_t pointer;
 } bex_codeptr_t;
 
 static const bex_codeptr_t bex_codeptrtable[] = {

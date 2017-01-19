@@ -26,7 +26,7 @@
 #include "dstrings.h"
 
 typedef struct {
-    char *macro;
+    const char *macro;
     char *string;
 } bex_string_t;
 
