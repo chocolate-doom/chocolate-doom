@@ -2534,6 +2534,7 @@ void G_DoPlayDemo (void)
     skill_t skill;
     int i, lumpnum, episode, map;
     int demoversion;
+    int lumplength; // [crispy]
 
     lumpnum = W_GetNumForName(defdemoname);
     gameaction = ga_nothing;
@@ -2541,7 +2542,8 @@ void G_DoPlayDemo (void)
     demo_p = demobuffer;
 
     // [crispy] ignore empty demo lumps
-    if (W_LumpLength(W_GetNumForName(defdemoname)) < 0xd)
+    lumplength = W_LumpLength(lumpnum);
+    if (lumplength < 0xd)
     {
 	demoplayback = true;
 	G_CheckDemoStatus();
@@ -2606,7 +2608,6 @@ void G_DoPlayDemo (void)
     {
 	int i, numplayersingame = 0;
 	byte *demo_ptr = demo_p;
-	const int defdemolumpsize = lumpinfo[W_GetNumForName(defdemoname)]->size;
 
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
@@ -2616,7 +2617,7 @@ void G_DoPlayDemo (void)
 	    }
 	}
 
-	while (*demo_ptr != DEMOMARKER && (demo_ptr - demobuffer) < defdemolumpsize)
+	while (*demo_ptr != DEMOMARKER && (demo_ptr - demobuffer) < lumplength)
 	{
 	    demo_ptr += numplayersingame * (longtics ? 5 : 4);
 	}
