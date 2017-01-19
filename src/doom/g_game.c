@@ -2597,7 +2597,16 @@ void G_DoPlayDemo (void)
 
     // don't spend a lot of time in loadlevel 
     precache = false;
+    // [crispy] support playing demos from savegames
+    if (startloadgame >= 0)
+    {
+	M_StringCopy(savename, P_SaveGameFile(startloadgame), sizeof(savename));
+	G_DoLoadGame();
+    }
+    else
+    {
     G_InitNew (skill, episode, map); 
+    }
     precache = true; 
     starttime = I_GetTime (); 
 
