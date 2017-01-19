@@ -189,7 +189,7 @@ static void *DEH_BEXPtrStart(deh_context_t *context, char *line)
 {
     char s[10];
 
-    if (sscanf(line, "%9s", s) == 0 || strncmp("[CODEPTR]", s, sizeof(s)))
+    if (sscanf(line, "%9s", s) == 0 || strcmp("[CODEPTR]", s))
     {
 	DEH_Warning(context, "Parse error on section start");
     }
@@ -229,7 +229,7 @@ static void DEH_BEXPtrParseLine(deh_context_t *context, char *line, void *tag)
 
     for (i = 0; i < arrlen(bex_codeptrtable); i++)
     {
-	if (!strcmp(bex_codeptrtable[i].mnemonic, value))
+	if (!strcasecmp(bex_codeptrtable[i].mnemonic, value))
 	{
 	    state->action = bex_codeptrtable[i].pointer;
 	    return;
