@@ -95,7 +95,6 @@ fixed_t		bmaporgx;
 fixed_t		bmaporgy;
 // for thing chains
 mobj_t**	blocklinks;		
-boolean		crispy_createblockmap = false;
 
 
 // REJECT
@@ -1507,7 +1506,7 @@ static void P_CreateBlockMap(void)
 //
 // P_LoadBlockMap
 //
-void P_LoadBlockMap (int lump)
+boolean P_LoadBlockMap (int lump)
 {
     int i;
     int count;
@@ -1520,9 +1519,8 @@ void P_LoadBlockMap (int lump)
         (lumplen = W_LumpLength(lump)) < 8 ||
         (count = lumplen / 2) >= 0x10000)
     {
-	crispy_createblockmap = true;
 	fprintf(stderr, "P_LoadBlockMap: (Re-)creating BLOCKMAP.\n");
-	return;
+	return true;
     }
 	
     // [crispy] remove BLOCKMAP limit
@@ -1582,6 +1580,9 @@ void P_LoadBlockMap (int lump)
     count = sizeof(*blocklinks) * bmapwidth * bmapheight;
     blocklinks = Z_Malloc(count, PU_LEVEL, 0);
     memset(blocklinks, 0, count);
+
+    // [crispy] (re-)create BLOCKMAP if necessary
+    return false;
 }
 
 
@@ -1914,6 +1915,7 @@ P_SetupLevel
     int		i;
     char	lumpname[9];
     int		lumpnum;
+    boolean	crispy_createblockmap;
     mapformat_t	crispy_mapformat;
 	
     totalkills = totalitems = totalsecret = wminfo.maxfrags = 0;
@@ -2017,10 +2019,9 @@ P_SetupLevel
     }
     // [crispy] check and log map and nodes format
     crispy_mapformat = P_CheckMapFormat(lumpnum);
-    crispy_createblockmap = false;
 
     // note: most of this ordering is important	
-    P_LoadBlockMap (lumpnum+ML_BLOCKMAP);
+    crispy_createblockmap = P_LoadBlockMap (lumpnum+ML_BLOCKMAP); // [crispy] (re-)create BLOCKMAP if necessary
     P_LoadVertexes (lumpnum+ML_VERTEXES);
     P_LoadSectors (lumpnum+ML_SECTORS);
     P_LoadSideDefs (lumpnum+ML_SIDEDEFS);
