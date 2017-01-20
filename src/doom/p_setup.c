@@ -1520,7 +1520,7 @@ boolean P_LoadBlockMap (int lump)
         (count = lumplen / 2) >= 0x10000)
     {
 	fprintf(stderr, "P_LoadBlockMap: (Re-)creating BLOCKMAP.\n");
-	return true;
+	return false;
     }
 	
     // [crispy] remove BLOCKMAP limit
@@ -1582,7 +1582,7 @@ boolean P_LoadBlockMap (int lump)
     memset(blocklinks, 0, count);
 
     // [crispy] (re-)create BLOCKMAP if necessary
-    return false;
+    return true;
 }
 
 
@@ -1915,7 +1915,7 @@ P_SetupLevel
     int		i;
     char	lumpname[9];
     int		lumpnum;
-    boolean	crispy_createblockmap;
+    boolean	crispy_validblockmap;
     mapformat_t	crispy_mapformat;
 	
     totalkills = totalitems = totalsecret = wminfo.maxfrags = 0;
@@ -2021,7 +2021,7 @@ P_SetupLevel
     crispy_mapformat = P_CheckMapFormat(lumpnum);
 
     // note: most of this ordering is important	
-    crispy_createblockmap = P_LoadBlockMap (lumpnum+ML_BLOCKMAP); // [crispy] (re-)create BLOCKMAP if necessary
+    crispy_validblockmap = P_LoadBlockMap (lumpnum+ML_BLOCKMAP); // [crispy] (re-)create BLOCKMAP if necessary
     P_LoadVertexes (lumpnum+ML_VERTEXES);
     P_LoadSectors (lumpnum+ML_SECTORS);
     P_LoadSideDefs (lumpnum+ML_SIDEDEFS);
@@ -2031,7 +2031,7 @@ P_SetupLevel
     else
     P_LoadLineDefs (lumpnum+ML_LINEDEFS);
     // [crispy] (re-)create BLOCKMAP if necessary
-    if (crispy_createblockmap)
+    if (!crispy_validblockmap)
 	P_CreateBlockMap();
     if (crispy_mapformat & (MFMT_ZDBSPX | MFMT_ZDBSPZ))
 	P_LoadNodes_ZDBSP (lumpnum+ML_NODES, crispy_mapformat & MFMT_ZDBSPZ);
