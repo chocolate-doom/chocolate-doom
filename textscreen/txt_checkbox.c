@@ -21,6 +21,7 @@
 #include "txt_gui.h"
 #include "txt_io.h"
 #include "txt_main.h"
+#include "txt_utf8.h"
 #include "txt_window.h"
 
 static void TXT_CheckBoxSizeCalc(TXT_UNCAST_ARG(checkbox))
@@ -29,7 +30,7 @@ static void TXT_CheckBoxSizeCalc(TXT_UNCAST_ARG(checkbox))
 
     // Minimum width is the string length + right-side space for padding
 
-    checkbox->widget.w = strlen(checkbox->label) + 5;
+    checkbox->widget.w = TXT_UTF8_Strlen(checkbox->label) + 5;
     checkbox->widget.h = 1;
 }
 
@@ -63,9 +64,9 @@ static void TXT_CheckBoxDrawer(TXT_UNCAST_ARG(checkbox))
 
     TXT_RestoreColors(&colors);
     TXT_SetWidgetBG(checkbox);
-    TXT_DrawString(checkbox->label);
+    TXT_DrawUTF8String(checkbox->label);
 
-    for (i=strlen(checkbox->label); i < w-4; ++i)
+    for (i = TXT_UTF8_Strlen(checkbox->label); i < w-4; ++i)
     {
         TXT_DrawString(" ");
     }

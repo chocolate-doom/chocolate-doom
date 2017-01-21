@@ -24,6 +24,7 @@
 #include "txt_gui.h"
 #include "txt_io.h"
 #include "txt_main.h"
+#include "txt_utf8.h"
 #include "txt_window.h"
 
 // Generate the format string to be used for displaying floats
@@ -143,6 +144,7 @@ static void TXT_SpinControlDrawer(TXT_UNCAST_ARG(spincontrol))
     unsigned int i;
     unsigned int padding;
     txt_saved_colors_t colors;
+    int bw;
     int focused;
 
     focused = spincontrol->widget.focused;
@@ -172,7 +174,8 @@ static void TXT_SpinControlDrawer(TXT_UNCAST_ARG(spincontrol))
 
     i = 0;
 
-    padding = spincontrol->widget.w - strlen(spincontrol->buffer) - 4;
+    bw = TXT_UTF8_Strlen(spincontrol->buffer);
+    padding = spincontrol->widget.w - bw - 4;
 
     while (i < padding)
     {
@@ -180,8 +183,8 @@ static void TXT_SpinControlDrawer(TXT_UNCAST_ARG(spincontrol))
         ++i;
     }
 
-    TXT_DrawString(spincontrol->buffer);
-    i += strlen(spincontrol->buffer);
+    TXT_DrawUTF8String(spincontrol->buffer);
+    i += bw;
 
     while (i < spincontrol->widget.w - 4)
     {
@@ -203,7 +206,8 @@ static void TXT_SpinControlDestructor(TXT_UNCAST_ARG(spincontrol))
 
 static void AddCharacter(txt_spincontrol_t *spincontrol, int key)
 {
-    if (strlen(spincontrol->buffer) < SpinControlWidth(spincontrol))
+    if (TXT_UTF8_Strlen(spincontrol->buffer) < SpinControlWidth(spincontrol)
+     && strlen(spincontrol->buffer) < spincontrol->buffer_len - 2)
     {
         spincontrol->buffer[strlen(spincontrol->buffer) + 1] = '\0';
         spincontrol->buffer[strlen(spincontrol->buffer)] = key;
@@ -212,7 +216,7 @@ static void AddCharacter(txt_spincontrol_t *spincontrol, int key)
 
 static void Backspace(txt_spincontrol_t *spincontrol)
 {
-    if (strlen(spincontrol->buffer) > 0)
+    if (TXT_UTF8_Strlen(spincontrol->buffer) > 0)
     {
         spincontrol->buffer[strlen(spincontrol->buffer) - 1] = '\0';
     }

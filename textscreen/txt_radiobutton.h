@@ -54,7 +54,8 @@ struct txt_radiobutton_s
 /**
  * Create a new radio button widget.
  *
- * @param label          The label to display next to the radio button.
+ * @param label          The label to display next to the radio button
+ *                       (UTF-8 format).
  * @param variable       Pointer to the variable tracking whether this
  *                       radio button is selected.
  * @param value          If the variable is equal to this value, the
@@ -68,7 +69,7 @@ txt_radiobutton_t *TXT_NewRadioButton(char *label, int *variable, int value);
  * Set the label on a radio button.
  *
  * @param radiobutton    The radio button.
- * @param value          The new label.
+ * @param value          The new label (UTF-8 format).
  */
 
 void TXT_SetRadioButtonLabel(txt_radiobutton_t *radiobutton, char *value);

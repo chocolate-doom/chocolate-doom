@@ -49,7 +49,7 @@ struct txt_checkbox_s
 /**
  * Create a new checkbox.
  *
- * @param label         The label for the new checkbox.
+ * @param label         The label for the new checkbox (UTF-8 format).
  * @param variable      Pointer to the variable containing this checkbox's
  *                      value.
  * @return              Pointer to the new checkbox.
@@ -63,7 +63,7 @@ txt_checkbox_t *TXT_NewCheckBox(char *label, int *variable);
  * An inverted checkbox displays the opposite of a normal checkbox;
  * where it would be checked, it appears unchecked, and vice-versa.
  *
- * @param label         The label for the new checkbox.
+ * @param label         The label for the new checkbox (UTF-8 format).
  * @param variable      Pointer to the variable containing this checkbox's
  *                      value.
  * @return              Pointer to the new checkbox.

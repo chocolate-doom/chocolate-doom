@@ -92,7 +92,7 @@ void TXT_DrawDesktopBackground(const char *title)
     TXT_BGColor(TXT_COLOR_GREY, 0);
 
     TXT_DrawString(" ");
-    TXT_DrawString(title);
+    TXT_DrawUTF8String(title);
 }
 
 void TXT_DrawShadow(int x, int y, int w, int h)
@@ -167,8 +167,8 @@ void TXT_DrawWindowFrame(const char *title, int x, int y, int w, int h)
             TXT_DrawString(" ");
         }
     
-        TXT_GotoXY(x + (w - strlen(title)) / 2, y + 1);
-        TXT_DrawString(title);
+        TXT_GotoXY(x + (w - TXT_UTF8_Strlen(title)) / 2, y + 1);
+        TXT_DrawUTF8String(title);
     }
 
     // Draw the window's shadow.
