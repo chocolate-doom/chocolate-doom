@@ -548,7 +548,6 @@ static void P_LoadNodes_ZDBSP (int lump, boolean compressed)
 {
     byte *data;
     unsigned int i;
-    int len;
 #ifdef HAVE_LIBZ
     byte *output;
 #endif
@@ -560,13 +559,13 @@ static void P_LoadNodes_ZDBSP (int lump, boolean compressed)
     vertex_t *newvertarray = NULL;
 
     data = W_CacheLumpNum(lump, PU_LEVEL);
-    len =  W_LumpLength(lump);
 
     // 0. Uncompress nodes lump (or simply skip header)
 
     if (compressed)
     {
 #ifdef HAVE_LIBZ
+	const int len =  W_LumpLength(lump);
 	int outlen, err;
 	z_stream *zstream;
 
