@@ -22,6 +22,7 @@
 #include "txt_gui.h"
 #include "txt_io.h"
 #include "txt_label.h"
+#include "txt_utf8.h"
 #include "txt_window.h"
 
 #define KEY_INPUT_WIDTH 8
@@ -113,10 +114,10 @@ static void TXT_KeyInputDrawer(TXT_UNCAST_ARG(key_input))
 
     TXT_SetWidgetBG(key_input);
     TXT_FGColor(TXT_COLOR_BRIGHT_WHITE);
-    
-    TXT_DrawString(buf);
-    
-    for (i=strlen(buf); i<KEY_INPUT_WIDTH; ++i)
+
+    TXT_DrawUTF8String(buf);
+
+    for (i = TXT_UTF8_Strlen(buf); i < KEY_INPUT_WIDTH; ++i)
     {
         TXT_DrawString(" ");
     }
