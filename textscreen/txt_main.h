@@ -149,6 +149,8 @@ int TXT_GetModifierState(txt_modifier_t mod);
 // keyboard (like that returned by TXT_INPUT_RAW), and the resulting string
 // takes keyboard layout into consideration. For example,
 // TXT_GetKeyDescription('q') on a French keyboard returns "A".
+// The contents of the filled buffer will be in UTF8 format, but will never
+// contain characters which can't be shown on the screen.
 void TXT_GetKeyDescription(int key, char *buf, size_t buf_len);
 
 // Retrieve the current position of the mouse
