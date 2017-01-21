@@ -141,6 +141,11 @@ void TXT_UpdateScreen(void);
 // Read a character from the keyboard
 int TXT_GetChar(void);
 
+// Given a Unicode character, get a character that can be used to represent
+// it on the code page being displayed on the screen. If the character cannot
+// be represented, this returns -1.
+int TXT_UnicodeCharacter(unsigned int c);
+
 // Read the current state of modifier keys that are held down.
 int TXT_GetModifierState(txt_modifier_t mod);
 

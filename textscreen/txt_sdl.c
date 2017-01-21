@@ -45,6 +45,7 @@ typedef struct
 #include "fonts/small.h"
 #include "fonts/normal.h"
 #include "fonts/large.h"
+#include "fonts/codepage.h"
 
 // Time between character blinks in ms
 
@@ -72,6 +73,7 @@ static const txt_font_t *font;
 // normal_font otherwise.
 static const txt_font_t highdpi_font = { "normal-highdpi", NULL, 8, 16 };
 
+static const short code_page_to_unicode[] = CODE_PAGE_TO_UNICODE;
 static const int scancode_translate_table[] = SCANCODE_TO_KEYS_ARRAY;
 
 //#define TANGO
@@ -715,35 +717,22 @@ int TXT_GetModifierState(txt_modifier_t mod)
     }
 }
 
-// Unicode characters we allow in key names because they're in the
-// CP437 extended ASCII range.
-static const short unicode_whitelist[] = {
-    0x00c7, 0x00fc, 0x00e9, 0x00e2, 0x00e4, 0x00e0, 0x00e5, 0x00e7,
-    0x00ea, 0x00eb, 0x00e8, 0x00ef, 0x00ee, 0x00ec, 0x00c4, 0x00c5,
-    0x00c9, 0x00e6, 0x00c6, 0x00f4, 0x00f6, 0x00f2, 0x00fb, 0x00f9,
-    0x00ff, 0x00d6, 0x00dc, 0x00f1, 0x00e1, 0x00ed, 0x00f3, 0x00fa,
-    0x03b1, 0x00df, 0x0393, 0x03c0, 0x03a3, 0x03c3, 0x00b5, 0x03c4,
-    0x03a6, 0x0398, 0x03a9, 0x03b4, 0x03c6, 0x03b5, 0x2229, 0x00d1,
-};
-
-static int PrintableChar(int c)
+int TXT_UnicodeCharacter(unsigned int c)
 {
     unsigned int i;
 
-    if (c < 0x80)
-    {
-        return 1;
-    }
+    // Check the code page mapping to see if this character maps
+    // to anything.
 
-    for (i = 0; i < arrlen(unicode_whitelist); ++i)
+    for (i = 0; i < arrlen(code_page_to_unicode); ++i)
     {
-        if (unicode_whitelist[i] == c)
+        if (code_page_to_unicode[i] == c)
         {
-            return 1;
+            return i;
         }
     }
 
-    return 0;
+    return -1;
 }
 
 // Returns true if the given UTF8 key name is printable to the screen.
@@ -756,7 +745,7 @@ static int PrintableName(const char *s)
     while (*p != '\0')
     {
         c = TXT_DecodeUTF8(&p);
-        if (!PrintableChar(c))
+        if (TXT_UnicodeCharacter(c) < 0)
         {
             return 0;
         }

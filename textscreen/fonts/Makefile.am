@@ -1,4 +1,4 @@
-FONT_HDRS = small.h normal.h large.h
+FONT_HDRS = small.h normal.h large.h codepage.h
 EXTRA_DIST = small.png normal.png large.png convert-font $(FONT_HDRS)
 
 noinst_DATA = $(FONT_HDRS)
