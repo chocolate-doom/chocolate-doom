@@ -30,6 +30,7 @@
 #include "txt_io.h"
 #include "txt_label.h"
 #include "txt_sdl.h"
+#include "txt_utf8.h"
 #include "txt_window.h"
 
 #define JOYSTICK_INPUT_WIDTH 10
@@ -264,9 +265,9 @@ static void TXT_JoystickInputDrawer(TXT_UNCAST_ARG(joystick_input))
     TXT_SetWidgetBG(joystick_input);
     TXT_FGColor(TXT_COLOR_BRIGHT_WHITE);
 
-    TXT_DrawString(buf);
+    TXT_DrawUTF8String(buf);
 
-    for (i=strlen(buf); i<JOYSTICK_INPUT_WIDTH; ++i)
+    for (i = TXT_UTF8_Strlen(buf); i < JOYSTICK_INPUT_WIDTH; ++i)
     {
         TXT_DrawString(" ");
     }

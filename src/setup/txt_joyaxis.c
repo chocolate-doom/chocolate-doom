@@ -28,6 +28,7 @@
 #include "txt_gui.h"
 #include "txt_io.h"
 #include "txt_joyaxis.h"
+#include "txt_utf8.h"
 
 #define JOYSTICK_AXIS_WIDTH 20
 
@@ -458,9 +459,9 @@ static void TXT_JoystickAxisDrawer(TXT_UNCAST_ARG(joystick_axis))
     TXT_SetWidgetBG(joystick_axis);
     TXT_FGColor(TXT_COLOR_BRIGHT_WHITE);
 
-    TXT_DrawString(buf);
+    TXT_DrawUTF8String(buf);
 
-    for (i = strlen(buf); i < joystick_axis->widget.w; ++i)
+    for (i = TXT_UTF8_Strlen(buf); i < joystick_axis->widget.w; ++i)
     {
         TXT_DrawString(" ");
     }

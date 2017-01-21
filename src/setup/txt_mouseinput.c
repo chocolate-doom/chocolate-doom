@@ -23,6 +23,7 @@
 #include "txt_gui.h"
 #include "txt_io.h"
 #include "txt_label.h"
+#include "txt_utf8.h"
 #include "txt_window.h"
 
 #define MOUSE_INPUT_WIDTH 8
@@ -106,9 +107,9 @@ static void TXT_MouseInputDrawer(TXT_UNCAST_ARG(mouse_input))
     TXT_SetWidgetBG(mouse_input);
     TXT_FGColor(TXT_COLOR_BRIGHT_WHITE);
     
-    TXT_DrawString(buf);
+    TXT_DrawUTF8String(buf);
     
-    for (i=strlen(buf); i<MOUSE_INPUT_WIDTH; ++i)
+    for (i = TXT_UTF8_Strlen(buf); i < MOUSE_INPUT_WIDTH; ++i)
     {
         TXT_DrawString(" ");
     }
