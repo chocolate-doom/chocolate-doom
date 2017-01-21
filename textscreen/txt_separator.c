@@ -61,7 +61,7 @@ static void TXT_SeparatorDrawer(TXT_UNCAST_ARG(separator))
 
         TXT_FGColor(TXT_COLOR_BRIGHT_GREEN);
         TXT_DrawString(" ");
-        TXT_DrawUTF8String(separator->label);
+        TXT_DrawString(separator->label);
         TXT_DrawString(" ");
     }
 }

@@ -51,7 +51,7 @@ static void TXT_RadioButtonDrawer(TXT_UNCAST_ARG(radiobutton))
 
     if (*radiobutton->variable == radiobutton->value)
     {
-        TXT_DrawString("\x07");
+        TXT_DrawCodePageString("\x07");
     }
     else
     {
@@ -65,7 +65,7 @@ static void TXT_RadioButtonDrawer(TXT_UNCAST_ARG(radiobutton))
     TXT_RestoreColors(&colors);
     TXT_SetWidgetBG(radiobutton);
 
-    TXT_DrawUTF8String(radiobutton->label);
+    TXT_DrawString(radiobutton->label);
 
     for (i=TXT_UTF8_Strlen(radiobutton->label); i < w-5; ++i)
     {

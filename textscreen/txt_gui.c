@@ -92,7 +92,7 @@ void TXT_DrawDesktopBackground(const char *title)
     TXT_BGColor(TXT_COLOR_GREY, 0);
 
     TXT_DrawString(" ");
-    TXT_DrawUTF8String(title);
+    TXT_DrawString(title);
 }
 
 void TXT_DrawShadow(int x, int y, int w, int h)
@@ -168,7 +168,7 @@ void TXT_DrawWindowFrame(const char *title, int x, int y, int w, int h)
         }
     
         TXT_GotoXY(x + (w - TXT_UTF8_Strlen(title)) / 2, y + 1);
-        TXT_DrawUTF8String(title);
+        TXT_DrawString(title);
     }
 
     // Draw the window's shadow.
@@ -224,7 +224,9 @@ void TXT_DrawSeparator(int x, int y, int w)
     TXT_RestoreColors(&colors);
 }
 
-void TXT_DrawString(const char *s)
+// Alternative to TXT_DrawString() where the argument is a "code page
+// string" - characters are in native code page format and not UTF-8.
+void TXT_DrawCodePageString(const char *s)
 {
     int x, y;
     int x1;
@@ -278,7 +280,7 @@ static void PutUnicodeChar(unsigned int c)
     }
 }
 
-void TXT_DrawUTF8String(const char *s)
+void TXT_DrawString(const char *s)
 {
     int x, y;
     int x1;

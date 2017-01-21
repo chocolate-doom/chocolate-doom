@@ -42,7 +42,7 @@ static void TXT_ButtonDrawer(TXT_UNCAST_ARG(button))
 
     TXT_SetWidgetBG(button);
 
-    TXT_DrawUTF8String(button->label);
+    TXT_DrawString(button->label);
 
     for (i = TXT_UTF8_Strlen(button->label); i < w; ++i)
     {

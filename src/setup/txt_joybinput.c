@@ -265,7 +265,7 @@ static void TXT_JoystickInputDrawer(TXT_UNCAST_ARG(joystick_input))
     TXT_SetWidgetBG(joystick_input);
     TXT_FGColor(TXT_COLOR_BRIGHT_WHITE);
 
-    TXT_DrawUTF8String(buf);
+    TXT_DrawString(buf);
 
     for (i = TXT_UTF8_Strlen(buf); i < JOYSTICK_INPUT_WIDTH; ++i)
     {

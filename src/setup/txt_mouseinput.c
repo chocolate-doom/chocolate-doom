@@ -107,7 +107,7 @@ static void TXT_MouseInputDrawer(TXT_UNCAST_ARG(mouse_input))
     TXT_SetWidgetBG(mouse_input);
     TXT_FGColor(TXT_COLOR_BRIGHT_WHITE);
     
-    TXT_DrawUTF8String(buf);
+    TXT_DrawString(buf);
     
     for (i = TXT_UTF8_Strlen(buf); i < MOUSE_INPUT_WIDTH; ++i)
     {

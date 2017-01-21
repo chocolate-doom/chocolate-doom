@@ -152,7 +152,7 @@ static void TXT_SpinControlDrawer(TXT_UNCAST_ARG(spincontrol))
     TXT_SaveColors(&colors);
 
     TXT_FGColor(TXT_COLOR_BRIGHT_CYAN);
-    TXT_DrawString("\x1b ");
+    TXT_DrawCodePageString("\x1b ");
 
     TXT_RestoreColors(&colors);
 
@@ -183,7 +183,7 @@ static void TXT_SpinControlDrawer(TXT_UNCAST_ARG(spincontrol))
         ++i;
     }
 
-    TXT_DrawUTF8String(spincontrol->buffer);
+    TXT_DrawString(spincontrol->buffer);
     i += bw;
 
     while (i < spincontrol->widget.w - 4)
@@ -194,7 +194,7 @@ static void TXT_SpinControlDrawer(TXT_UNCAST_ARG(spincontrol))
 
     TXT_RestoreColors(&colors);
     TXT_FGColor(TXT_COLOR_BRIGHT_CYAN);
-    TXT_DrawString(" \x1a");
+    TXT_DrawCodePageString(" \x1a");
 }
 
 static void TXT_SpinControlDestructor(TXT_UNCAST_ARG(spincontrol))

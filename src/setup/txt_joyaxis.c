@@ -459,7 +459,7 @@ static void TXT_JoystickAxisDrawer(TXT_UNCAST_ARG(joystick_axis))
     TXT_SetWidgetBG(joystick_axis);
     TXT_FGColor(TXT_COLOR_BRIGHT_WHITE);
 
-    TXT_DrawUTF8String(buf);
+    TXT_DrawString(buf);
 
     for (i = TXT_UTF8_Strlen(buf); i < joystick_axis->widget.w; ++i)
     {

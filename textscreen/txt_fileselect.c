@@ -595,7 +595,7 @@ static void TXT_FileSelectDrawer(TXT_UNCAST_ARG(fileselect))
     fileselect->inputbox->widget.h = fileselect->widget.h;
 
     // Triple bar symbol gives a distinguishing look to the file selector.
-    TXT_DrawString("\xf0 ");
+    TXT_DrawCodePageString("\xf0 ");
     TXT_BGColor(TXT_COLOR_BLACK, 0);
     TXT_DrawWidget(fileselect->inputbox);
 }

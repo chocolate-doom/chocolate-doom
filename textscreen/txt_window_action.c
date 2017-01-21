@@ -54,12 +54,12 @@ static void TXT_WindowActionDrawer(TXT_UNCAST_ARG(action))
 
     TXT_DrawString(" ");
     TXT_FGColor(TXT_COLOR_BRIGHT_GREEN);
-    TXT_DrawUTF8String(buf);
+    TXT_DrawString(buf);
     TXT_FGColor(TXT_COLOR_BRIGHT_CYAN);
     TXT_DrawString("=");
 
     TXT_FGColor(TXT_COLOR_BRIGHT_WHITE);
-    TXT_DrawUTF8String(action->label);
+    TXT_DrawString(action->label);
     TXT_DrawString(" ");
 }
 

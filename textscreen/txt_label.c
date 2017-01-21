@@ -82,7 +82,7 @@ static void TXT_LabelDrawer(TXT_UNCAST_ARG(label))
 
         // The string itself
 
-        TXT_DrawUTF8String(label->lines[y]);
+        TXT_DrawString(label->lines[y]);
         x += sw;
 
         // Gap at the end

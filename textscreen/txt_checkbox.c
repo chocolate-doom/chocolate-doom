@@ -51,7 +51,7 @@ static void TXT_CheckBoxDrawer(TXT_UNCAST_ARG(checkbox))
 
     if ((*checkbox->variable != 0) ^ checkbox->inverted)
     {
-        TXT_DrawString("\x07");
+        TXT_DrawCodePageString("\x07");
     }
     else
     {
@@ -64,7 +64,7 @@ static void TXT_CheckBoxDrawer(TXT_UNCAST_ARG(checkbox))
 
     TXT_RestoreColors(&colors);
     TXT_SetWidgetBG(checkbox);
-    TXT_DrawUTF8String(checkbox->label);
+    TXT_DrawString(checkbox->label);
 
     for (i = TXT_UTF8_Strlen(checkbox->label); i < w-4; ++i)
     {

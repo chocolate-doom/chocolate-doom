@@ -239,7 +239,7 @@ static void TXT_DropdownListDrawer(TXT_UNCAST_ARG(list))
 
     // Draw the string and fill to the end with spaces
 
-    TXT_DrawUTF8String(str);
+    TXT_DrawString(str);
 
     for (i = TXT_UTF8_Strlen(str); i < list->widget.w; ++i)
     {
