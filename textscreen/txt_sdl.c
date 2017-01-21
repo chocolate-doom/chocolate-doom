@@ -73,14 +73,19 @@ static const txt_font_t *font;
 // normal_font otherwise.
 static const txt_font_t highdpi_font = { "normal-highdpi", NULL, 8, 16 };
 
-static const short code_page_to_unicode[] = CODE_PAGE_TO_UNICODE;
+// Mapping from SDL keyboard scancode to internal key code.
 static const int scancode_translate_table[] = SCANCODE_TO_KEYS_ARRAY;
 
-//#define TANGO
+// String names of keys. This is a fallback; we usually use the SDL API.
+static const struct {
+    int key;
+    const char *name;
+} key_names[] = KEY_NAMES_ARRAY;
 
-#ifndef TANGO
+// Unicode key mapping; see codepage.h.
+static const short code_page_to_unicode[] = CODE_PAGE_TO_UNICODE;
 
-static SDL_Color ega_colors[] = 
+static SDL_Color ega_colors[] =
 {
     {0x00, 0x00, 0x00, 0xff},          // 0: Black
     {0x00, 0x00, 0xa8, 0xff},          // 1: Blue
@@ -99,34 +104,6 @@ static SDL_Color ega_colors[] =
     {0xfe, 0xfe, 0x54, 0xff},          // 14: Yellow
     {0xfe, 0xfe, 0xfe, 0xff},          // 15: Bright white
 };
-
-#else
-
-// Colors that fit the Tango desktop guidelines: see
-// http://tango.freedesktop.org/ also
-// http://uwstopia.nl/blog/2006/07/tango-terminal
-
-static SDL_Color ega_colors[] = 
-{
-    {0x2e, 0x34, 0x36, 0xff},          // 0: Black
-    {0x34, 0x65, 0xa4, 0xff},          // 1: Blue
-    {0x4e, 0x9a, 0x06, 0xff},          // 2: Green
-    {0x06, 0x98, 0x9a, 0xff},          // 3: Cyan
-    {0xcc, 0x00, 0x00, 0xff},          // 4: Red
-    {0x75, 0x50, 0x7b, 0xff},          // 5: Magenta
-    {0xc4, 0xa0, 0x00, 0xff},          // 6: Brown
-    {0xd3, 0xd7, 0xcf, 0xff},          // 7: Grey
-    {0x55, 0x57, 0x53, 0xff},          // 8: Dark grey
-    {0x72, 0x9f, 0xcf, 0xff},          // 9: Bright blue
-    {0x8a, 0xe2, 0x34, 0xff},          // 10: Bright green
-    {0x34, 0xe2, 0xe2, 0xff},          // 11: Bright cyan
-    {0xef, 0x29, 0x29, 0xff},          // 12: Bright red
-    {0x34, 0xe2, 0xe2, 0xff},          // 13: Bright magenta
-    {0xfc, 0xe9, 0x4f, 0xff},          // 14: Yellow
-    {0xee, 0xee, 0xec, 0xff},          // 15: Bright white
-};
-
-#endif
 
 #ifdef _WIN32
 
@@ -318,12 +295,6 @@ int TXT_Init(void)
 
     screendata = malloc(TXT_SCREEN_W * TXT_SCREEN_H * 2);
     memset(screendata, 0, TXT_SCREEN_W * TXT_SCREEN_H * 2);
-
-    // Ignore all mouse motion events
-//    SDL_EventState(SDL_MOUSEMOTION, SDL_IGNORE);
-
-    // Repeat key presses so we can hold down arrows to scroll down the
-    // menu, for example. This is what setup.exe does.
 
     return 1;
 }
@@ -753,11 +724,6 @@ static int PrintableName(const char *s)
 
     return 1;
 }
-
-static const struct {
-    int key;
-    const char *name;
-} key_names[] = KEY_NAMES_ARRAY;
 
 static const char *NameForKey(int key)
 {
