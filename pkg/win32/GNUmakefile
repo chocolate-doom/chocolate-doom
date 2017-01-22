@@ -38,11 +38,12 @@ hook-strife: staging-strife
 
 staging-%:
 	mkdir $@
-	cp $(TOPLEVEL)/src/$(PROGRAM_PREFIX)$*.exe    \
-	   $(DLL_FILES)                               \
-	   $@/
-	cp $(TOPLEVEL)/src/$(PROGRAM_PREFIX)setup.exe \
-	   $@/$(PROGRAM_PREFIX)$*-setup.exe
+	./cp-with-libs --ldflags="$(LDFLAGS)" \
+	               $(TOPLEVEL)/src/$(PROGRAM_PREFIX)$*.exe $@
+	./cp-with-libs --ldflags="$(LDFLAGS)" \
+	               $(TOPLEVEL)/src/$(PROGRAM_PREFIX)setup.exe \
+	               $@/$(PROGRAM_PREFIX)$*-setup.exe
+
 	$(STRIP) $@/*.exe
 	
 	for f in $(DOC_FILES); do                                \

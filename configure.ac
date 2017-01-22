@@ -100,6 +100,7 @@ case "$host" in
     ;;
 esac
 
+AC_CHECK_TOOL(OBJDUMP, objdump, )
 AC_CHECK_TOOL(STRIP, strip, )
 
 AM_CONDITIONAL(HAVE_WINDRES, test "$WINDRES" != "")
