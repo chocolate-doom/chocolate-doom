@@ -71,7 +71,7 @@ def file_dependencies(filename, objdump):
 	try:
 		result = []
 		for line in cmd.stdout:
-			m = DLL_NAME_RE.match(line)
+			m = DLL_NAME_RE.match(line.decode())
 			if m:
 				dll = m.group(1)
 				if dll.lower() not in WIN32_DLLS:
