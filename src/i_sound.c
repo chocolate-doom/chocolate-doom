@@ -21,7 +21,6 @@
 #include "SDL_mixer.h"
 
 #include "config.h"
-#include "doomfeatures.h"
 #include "doomtype.h"
 
 #include "gusconf.h"
@@ -91,10 +90,8 @@ static int snd_mport = 0;
 
 static sound_module_t *sound_modules[] = 
 {
-#ifdef FEATURE_SOUND
     &sound_sdl_module,
     &sound_pcsound_module,
-#endif
     NULL,
 };
 
@@ -102,10 +99,8 @@ static sound_module_t *sound_modules[] =
 
 static music_module_t *music_modules[] =
 {
-#ifdef FEATURE_SOUND
     &music_sdl_module,
     &music_opl_module,
-#endif
     NULL,
 };
 
@@ -459,9 +454,7 @@ void I_BindSoundVariables(void)
     M_BindStringVariable("gus_patch_path",       &gus_patch_path);
     M_BindIntVariable("gus_ram_kb",              &gus_ram_kb);
 
-#ifdef FEATURE_SOUND
     M_BindIntVariable("use_libsamplerate",       &use_libsamplerate);
     M_BindFloatVariable("libsamplerate_scale",   &libsamplerate_scale);
-#endif
 }
 

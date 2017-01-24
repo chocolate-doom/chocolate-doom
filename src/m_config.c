@@ -31,7 +31,6 @@
 
 #include "doomtype.h"
 #include "doomkeys.h"
-#include "doomfeatures.h"
 #include "i_system.h"
 #include "m_argv.h"
 #include "m_misc.h"
@@ -862,8 +861,6 @@ static default_t extra_defaults_list[] =
 
     CONFIG_VARIABLE_INT_HEX(opl_io_port),
 
-#ifdef FEATURE_SOUND
-
     //!
     // Controls whether libsamplerate support is used for performing
     // sample rate conversions of sound effects.  Support for this
@@ -914,8 +911,6 @@ static default_t extra_defaults_list[] =
 
     CONFIG_VARIABLE_INT(gus_ram_kb),
 
-#endif
-
     //!
     // @game doom strife
     //
@@ -946,16 +941,12 @@ static default_t extra_defaults_list[] =
 
     CONFIG_VARIABLE_INT(vanilla_keyboard_mapping),
 
-#ifdef FEATURE_MULTIPLAYER
-
     //!
     // Name to use in network games for identification.  This is only
     // used on the "waiting" screen while waiting for the game to start.
     //
 
     CONFIG_VARIABLE_STRING(player_name),
-
-#endif
 
     //!
     // If this is non-zero, the mouse will be "grabbed" when running

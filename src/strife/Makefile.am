@@ -4,8 +4,17 @@ AM_CFLAGS=-I$(top_srcdir)/src                           \
 
 noinst_LIBRARIES=libstrife.a
 
-SOURCE_FILES=                   \
+libstrife_a_SOURCES =           \
 am_map.c           am_map.h     \
+deh_ammo.c                      \
+deh_cheat.c                     \
+deh_strife.c                    \
+deh_frame.c                     \
+deh_misc.c         deh_misc.h   \
+deh_ptr.c                       \
+deh_sound.c                     \
+deh_thing.c                     \
+deh_weapon.c                    \
                    d_englsh.h   \
 d_items.c          d_items.h    \
 d_main.c           d_main.h     \
@@ -63,18 +72,4 @@ sounds.c           sounds.h     \
 st_lib.c           st_lib.h     \
 st_stuff.c         st_stuff.h   \
 wi_stuff.c         wi_stuff.h
-
-FEATURE_DEHACKED_SOURCE_FILES =            \
-deh_ammo.c                                 \
-deh_cheat.c                                \
-deh_strife.c                               \
-deh_frame.c                                \
-deh_misc.c           deh_misc.h            \
-deh_ptr.c                                  \
-deh_sound.c                                \
-deh_thing.c                                \
-deh_weapon.c
-
-libstrife_a_SOURCES = $(SOURCE_FILES)                   \
-                      $(FEATURE_DEHACKED_SOURCE_FILES)
 

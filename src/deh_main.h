@@ -19,7 +19,6 @@
 #define DEH_MAIN_H
 
 #include "doomtype.h"
-#include "doomfeatures.h"
 #include "deh_str.h"
 #include "sha1.h"
 

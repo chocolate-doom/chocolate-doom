@@ -19,8 +19,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "doomfeatures.h"
-
 #include "txt_main.h"
 #include "txt_io.h"
 
@@ -757,9 +755,7 @@ void D_BindVariables(void)
     M_BindMenuControls();
     M_BindMapControls();
 
-#ifdef FEATURE_MULTIPLAYER
     NET_BindVariables();
-#endif
 
     M_BindIntVariable("mouse_sensitivity",      &mouseSensitivity);
     M_BindIntVariable("sfx_volume",             &snd_MaxVolume);
@@ -975,10 +971,8 @@ void D_DoomMain(void)
     D_AddFile(iwadfile);
     W_CheckCorrectIWAD(heretic);
 
-#ifdef FEATURE_DEHACKED
     // Load dehacked patches specified on the command line.
     DEH_ParseCommandLine();
-#endif
 
     // Load PWAD files.
     W_ParseCommandLine();
@@ -1084,10 +1078,8 @@ void D_DoomMain(void)
     I_InitSound(false);
     I_InitMusic();
 
-#ifdef FEATURE_MULTIPLAYER
     tprintf("NET_Init: Init network subsystem.\n", 1);
     NET_Init ();
-#endif
 
     D_ConnectNetGame();
 

@@ -17,7 +17,6 @@
 #include <string.h>
 
 #include "doomtype.h"
-#include "doomfeatures.h"
 
 #include "textscreen.h"
 
@@ -1137,9 +1136,7 @@ void BindMultiplayerVariables(void)
     char buf[15];
     int i;
 
-#ifdef FEATURE_MULTIPLAYER
     M_BindStringVariable("player_name", &net_player_name);
-#endif
 
     for (i=0; i<10; ++i)
     {

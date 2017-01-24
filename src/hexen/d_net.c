@@ -19,8 +19,6 @@
 
 #include <stdlib.h>
 
-#include "doomfeatures.h"
-
 #include "m_argv.h"
 #include "i_system.h"
 #include "i_timer.h"

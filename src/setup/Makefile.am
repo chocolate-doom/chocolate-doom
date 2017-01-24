@@ -5,7 +5,7 @@ AM_CFLAGS = @SDL_CFLAGS@                                           \
 
 noinst_LIBRARIES = libsetup.a
 
-SOURCE_FILES =                                  \
+libsetup_a_SOURCES =                            \
     compatibility.c   compatibility.h           \
     display.c         display.h                 \
     joystick.c        joystick.h                \
@@ -20,8 +20,6 @@ SOURCE_FILES =                                  \
     txt_joybinput.c   txt_joybinput.h           \
     txt_keyinput.c    txt_keyinput.h            \
     txt_mouseinput.c  txt_mouseinput.h
-
-libsetup_a_SOURCES = $(SOURCE_FILES)
 
 EXTRA_DIST=                                     \
     setup_icon.c

@@ -23,7 +23,6 @@
 #include <time.h>
 
 #include "config.h"
-#include "doomfeatures.h"
 
 #include "h2def.h"
 #include "ct_chat.h"
@@ -153,9 +152,7 @@ void D_BindVariables(void)
     key_multi_msgplayer[6] = CT_KEY_PLAYER7;
     key_multi_msgplayer[7] = CT_KEY_PLAYER8;
 
-#ifdef FEATURE_MULTIPLAYER
     NET_BindVariables();
-#endif
 
     M_BindIntVariable("graphical_startup",      &graphical_startup);
     M_BindIntVariable("mouse_sensitivity",      &mouseSensitivity);
@@ -448,10 +445,8 @@ void D_DoomMain(void)
     I_InitSound(false);
     I_InitMusic();
 
-#ifdef FEATURE_MULTIPLAYER
     ST_Message("NET_Init: Init networking subsystem.\n");
     NET_Init();
-#endif
     D_ConnectNetGame();
 
     S_Init();
