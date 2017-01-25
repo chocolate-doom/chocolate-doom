@@ -162,12 +162,9 @@ void ConfigSound(void)
 
         TXT_NewRadioButton("GUS (emulated)", &snd_musicdevice, SNDDEVICE_GUS),
         TXT_NewConditional(&snd_musicdevice, SNDDEVICE_GUS,
-            TXT_NewHorizBox(
+            TXT_MakeTable(2,
                 TXT_NewStrut(4, 0),
                 TXT_NewLabel("Path to patch files: "),
-                NULL)),
-        TXT_NewConditional(&snd_musicdevice, SNDDEVICE_GUS,
-            TXT_NewHorizBox(
                 TXT_NewStrut(4, 0),
                 TXT_NewFileSelector(&gus_patch_path, 34,
                                     "Select path to GUS patches",
@@ -176,12 +173,9 @@ void ConfigSound(void)
 
         TXT_NewRadioButton("Native MIDI", &snd_musicdevice, SNDDEVICE_GENMIDI),
         TXT_NewConditional(&snd_musicdevice, SNDDEVICE_GENMIDI,
-            TXT_NewHorizBox(
+            TXT_MakeTable(2,
                 TXT_NewStrut(4, 0),
                 TXT_NewLabel("Timidity configuration file: "),
-                NULL)),
-        TXT_NewConditional(&snd_musicdevice, SNDDEVICE_GENMIDI,
-            TXT_NewHorizBox(
                 TXT_NewStrut(4, 0),
                 TXT_NewFileSelector(&timidity_cfg_path, 34,
                                     "Select Timidity config file",
