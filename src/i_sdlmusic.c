@@ -111,6 +111,7 @@ static boolean sdl_was_initialized = false;
 static boolean musicpaused = false;
 static int current_music_volume;
 
+char *music_pack_path = "";
 char *timidity_cfg_path = "";
 
 static char *temp_timidity_cfg = NULL;
@@ -672,7 +673,14 @@ static void LoadSubstituteConfigs(void)
     char *path;
     unsigned int i;
 
-    if (!strcmp(configdir, ""))
+    // We can configure the path to music packs using the music_pack_path
+    // configuration variable. Otherwise we use the current directory, or
+    // $configdir/music to look for .cfg files.
+    if (strcmp(music_pack_path, "") != 0)
+    {
+        musicdir = M_StringJoin(music_pack_path, DIR_SEPARATOR_S, NULL);
+    }
+    else if (!strcmp(configdir, ""))
     {
         musicdir = M_StringDuplicate("");
     }

@@ -889,6 +889,15 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_FLOAT(libsamplerate_scale),
 
     //!
+    // Full path to a directory containing configuration files for
+    // substitute music packs. These packs contain high quality renderings
+    // of game music to be played instead of using the system's built-in
+    // MIDI playback.
+    //
+
+    CONFIG_VARIABLE_STRING(music_pack_path),
+
+    //!
     // Full path to a Timidity configuration file to use for MIDI
     // playback. The file will be evaluated from the directory where
     // it is evaluated, so there is no need to add "dir" commands
