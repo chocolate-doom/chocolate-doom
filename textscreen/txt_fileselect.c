@@ -329,6 +329,7 @@ char *TXT_SelectFile(char *window_title, char **extensions)
 
 #define APPLESCRIPT_WRAPPER \
     "tell application (path to frontmost application as text)\n" \
+    "    activate\n" \
     "    set theFile to (%s)\n" \
     "    copy POSIX path of theFile to stdout\n" \
     "end tell\n"
