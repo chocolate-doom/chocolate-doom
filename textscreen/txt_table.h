@@ -101,6 +101,18 @@ void TXT_InitTable(txt_table_t *table, int columns);
 txt_table_t *TXT_NewTable(int columns);
 
 /**
+ * Create a new table and populate it with provided widgets.
+ *
+ * The arguments to this function are variable. Each argument must be a
+ * pointer to a widget, and the list is terminated with a NULL.
+ *
+ * @param columns       The number of columns in the new table.
+ * @return              Pointer to the new table structure.
+ */
+
+txt_table_t *TXT_MakeTable(int columns, TXT_UNCAST_ARG(first_widget), ...);
+
+/**
  * Create a table containing the specified widgets packed horizontally,
  * from left to right.
  *
