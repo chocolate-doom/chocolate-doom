@@ -1456,14 +1456,17 @@ boolean PIT_ChangeSector (mobj_t*	thing)
     // crunch bodies to giblets
     if (thing->health <= 0)
     {
-	// [crispy] connect giblet object with the crushed monster
-	thing->target = thing;
-
-	P_SetMobjState (thing, S_GIBS);
+	// [crispy] no blood, no giblets
+	// S_GIBS should be a "safe" state, and so is S_NULL
+	// TODO: Add a check for DEHACKED states
+	P_SetMobjState (thing, (thing->flags & MF_NOBLOOD) ? S_NULL : S_GIBS);
 
 	thing->flags &= ~MF_SOLID;
 	thing->height = 0;
 	thing->radius = 0;
+
+	// [crispy] connect giblet object with the crushed monster
+	thing->target = thing;
 
 	// keep checking
 	return true;		
@@ -1493,12 +1496,21 @@ boolean PIT_ChangeSector (mobj_t*	thing)
 	// spray blood in a random direction
 	mo = P_SpawnMobj (thing->x,
 			  thing->y,
-			  thing->z + thing->height/2, MT_BLOOD);
-	// [crispy] connect blood object with the monster that bleeds it
-	mo->target = thing;
+			  // [crispy] Lost Souls and Barrels bleed Puffs
+			  thing->z + thing->height/2, (thing->flags & MF_NOBLOOD) ? MT_PUFF : MT_BLOOD);
 	
 	mo->momx = P_SubRandom() << 12;
 	mo->momy = P_SubRandom() << 12;
+
+	// [crispy] connect blood object with the monster that bleeds it
+	mo->target = thing;
+
+	// [crispy] Spectres bleed spectre blood
+	if (crispy_coloredblood & COLOREDBLOOD_FIX)
+	    mo->flags |= (thing->flags & MF_SHADOW);
+
+	// [crispy] randomly flip blood sprites
+	mo->flipsprite = Crispy_Random() & 1;
     }
 
     // keep checking (crush other things)	

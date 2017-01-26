@@ -1025,12 +1025,6 @@ P_SpawnBlood
     th = P_SpawnMobj (x,y,z, MT_BLOOD);
     th->momz = FRACUNIT*2;
     th->tics -= P_Random()&3;
-    // [crispy] connect blood object with the monster that bleeds it
-    th->target = target;
-
-    // [crispy] Spectres bleed spectre blood
-    if ((crispy_coloredblood & COLOREDBLOOD_FIX) && target->flags & MF_SHADOW)
-	th->flags |= MF_SHADOW;
 
     if (th->tics < 1)
 	th->tics = 1;
@@ -1039,6 +1033,13 @@ P_SpawnBlood
 	P_SetMobjState (th,S_BLOOD2);
     else if (damage < 9)
 	P_SetMobjState (th,S_BLOOD3);
+
+    // [crispy] connect blood object with the monster that bleeds it
+    th->target = target;
+
+    // [crispy] Spectres bleed spectre blood
+    if (crispy_coloredblood & COLOREDBLOOD_FIX)
+	th->flags |= (target->flags & MF_SHADOW);
 
     // [crispy] randomly flip corpse, blood and death animation sprites
     th->flipsprite = Crispy_Random() & 1;
