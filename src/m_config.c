@@ -2429,11 +2429,41 @@ char *M_GetSaveGameDir(char *iwadname)
 {
     char *savegamedir;
     char *topdir;
+    int p;
 
+    //!
+    // @arg <directory>
+    //
+    // Specify a path from which to load and save games. If the directory
+    // does not exist then it will automatically be created.
+    //
+
+    p = M_CheckParmWithArgs("-savedir", 1);
+    if (p)
+    {
+        savegamedir = myargv[p + 1];
+        if (!M_FileExists(savegamedir))
+        {
+            M_MakeDirectory(savegamedir);
+        }
+
+        // add separator at end just in case
+        savegamedir = M_StringJoin(savegamedir, DIR_SEPARATOR_S, NULL);
+
+        printf("Save directory changed to %s.\n", savegamedir);
+    }
+#ifdef _WIN32
+    // In -cdrom mode, we write savegames to a specific directory
+    // in addition to configs.
+
+    else if (M_ParmExists("-cdrom"))
+    {
+        savegamedir = configdir;
+    }
+#endif
     // If not "doing" a configuration directory (Windows), don't "do"
     // a savegame directory, either.
-
-    if (!strcmp(configdir, ""))
+    else if (!strcmp(configdir, ""))
     {
 	savegamedir = M_StringDuplicate("");
     }

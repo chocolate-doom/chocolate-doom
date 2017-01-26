@@ -3,13 +3,13 @@ AC_INIT(Crispy Doom, 3.5, fabian@greffrath.com,
 
 PACKAGE_SHORTNAME=${PACKAGE_NAME% Doom}
 PACKAGE_SHORTDESC="Limit-removing enhanced-resolution Doom source port"
-PACKAGE_COPYRIGHT="Copyright (C) 1993-2015"
+PACKAGE_COPYRIGHT="Copyright (C) 1993-2017"
 PACKAGE_LICENSE="GNU General Public License, version 2"
 PACKAGE_MAINTAINER="Fabian Greffrath"
 PACKAGE_URL="https://www.chocolate-doom.org/wiki/index.php/Crispy_Doom"
 PACKAGE_ISSUES="https://github.com/fabiangreffrath/crispy-doom/issues"
 
-AC_DEFINE([NET_PACKAGE_STRING], ["Chocolate Doom 2.2.1"], [declare netcode-compatibility with Chocolate Doom])
+AC_DEFINE([NET_PACKAGE_STRING], ["Chocolate Doom 2.3.0"], [declare netcode-compatibility with Chocolate Doom])
 
 AC_CONFIG_AUX_DIR(autotools)
 AC_CANONICAL_HOST

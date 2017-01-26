@@ -120,6 +120,7 @@ static int WarpMap;
 static int demosequence;
 static int pagetic;
 static char *pagename;
+static char *SavePathConfig;
 
 // CODE --------------------------------------------------------------------
 
@@ -164,7 +165,7 @@ void D_BindVariables(void)
     M_BindIntVariable("vanilla_savegame_limit", &vanilla_savegame_limit);
     M_BindIntVariable("vanilla_demo_limit",     &vanilla_demo_limit);
 
-    M_BindStringVariable("savedir", &SavePath);
+    M_BindStringVariable("savedir", &SavePathConfig);
 
     // Multiplayer chat macros
 
@@ -183,14 +184,30 @@ static void D_SetDefaultSavePath(void)
 {
     SavePath = M_GetSaveGameDir("hexen.wad");
 
-    // If we are not using a savegame path (probably because we are on
-    // Windows and not using a config dir), behave like Vanilla Hexen
-    // and use hexndata/:
-
     if (!strcmp(SavePath, ""))
     {
-        SavePath = malloc(10);
-	M_snprintf(SavePath, 10, "hexndata%c", DIR_SEPARATOR);
+        // only get hexen.cfg path if one is not already found
+
+        if (!strcmp(SavePathConfig, ""))
+        {
+            // If we are not using a savegame path (probably because we are on
+            // Windows and not using a config dir), behave like Vanilla Hexen
+            // and use hexndata/:
+
+            SavePath = malloc(10);
+            M_snprintf(SavePath, 10, "hexndata%c", DIR_SEPARATOR);
+        }
+        else
+        {
+            SavePath = M_StringDuplicate(SavePathConfig);
+        }
+    }
+
+    // only set hexen.cfg path if using default handling
+
+    if (!M_ParmExists("-savedir") && !M_ParmExists("-cdrom"))
+    {
+        SavePathConfig = SavePath;
     }
 }
 
@@ -374,14 +391,14 @@ void D_DoomMain(void)
         M_SetConfigDir(NULL);
     }
 
-    D_SetDefaultSavePath();
     M_SetConfigFilenames("hexen.cfg", PROGRAM_PREFIX "hexen.cfg");
     M_LoadDefaults();
 
+    D_SetDefaultSavePath();
+
     I_AtExit(M_SaveDefaults, false);
 
-
-    // Now that the savedir is loaded from .CFG, make sure it exists
+    // Now that the savedir is loaded, make sure it exists
     CreateSavePath();
 
     ST_Message("Z_Init: Init zone memory allocation daemon.\n");
