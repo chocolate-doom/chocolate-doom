@@ -35,7 +35,7 @@ static int mouse_threshold = 10;
 static int mouseSensitivity_y = 5; // [crispy]
 static float mouse_acceleration_y = 1.0; // [crispy]
 static int mouse_threshold_y = 0; // [crispy]
-static int mouse_y_invert = 0; // [crispy]
+static int crispy_mouselook = 0; // [crispy]
 static int grabmouse = 1;
 
 int novert = 1;
@@ -116,7 +116,7 @@ static void ConfigExtraButtons(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
     if (gamemission == doom) // [crispy]
     {
         AddMouseControl(buttons_table, "Quick Reverse", &mousebreverse);
-        AddMouseControl(buttons_table, "Free look [*]", &mousebmouselook);
+        AddMouseControl(buttons_table, "Mouse Look [*]", &mousebmouselook);
         AddMouseControl(buttons_table, "Jump [*]", &mousebjump);
     }
 }
@@ -160,8 +160,8 @@ void ConfigMouse(void)
                    TXT_NewFloatSpinControl(&mouse_acceleration_y, 1.0, 5.0),
                    TXT_NewLabel("Acceleration threshold (v)"),
                    TXT_NewSpinControl(&mouse_threshold_y, 0, 32),
-                   TXT_NewCheckBox("Invert Vertical Axis",
-                                   &mouse_y_invert),
+                   TXT_NewCheckBox("Permanent Mouse Look",
+                                   &crispy_mouselook),
                    TXT_TABLE_OVERFLOW_RIGHT,
 
                    TXT_NewSeparator("Buttons"),
@@ -215,6 +215,6 @@ void BindMouseVariables(void)
     M_BindIntVariable("mouse_sensitivity_y",     &mouseSensitivity_y);
     M_BindIntVariable("mouse_threshold_y",       &mouse_threshold_y);
     M_BindFloatVariable("mouse_acceleration_y",  &mouse_acceleration_y);
-    M_BindIntVariable("mouse_y_invert",          &mouse_y_invert);
+    M_BindIntVariable("crispy_mouselook",        &crispy_mouselook);
     }
 }
