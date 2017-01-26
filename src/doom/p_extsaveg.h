@@ -23,7 +23,7 @@
 extern char *savewadfilename;
 
 extern void P_WriteExtendedSaveGameData (void);
-extern void P_ReadExtendedSaveGameData (void);
+extern void P_ReadExtendedSaveGameData (int pass);
 extern void M_ForceLoadGame (void);
 
 #endif

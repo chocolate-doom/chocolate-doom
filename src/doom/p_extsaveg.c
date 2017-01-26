@@ -233,17 +233,18 @@ typedef struct
 	const char *key;
 	void (* extsavegwritefn) (const char *key);
 	void (* extsavegreadfn) (const char *key);
+	const int pass;
 } extsavegdata_t;
 
 static const extsavegdata_t extsavegdata[] =
 {
-	{PACKAGE_TARNAME, P_WritePackageTarname, NULL},
-	{"wadfilename", P_WriteWadFileName, P_ReadWadFileName},
-	{"extrakills", P_WriteExtraKills, P_ReadExtraKills},
-	{"totalleveltimes", P_WriteTotalLevelTimes, P_ReadTotalLevelTimes},
-	{"fireflicker", P_WriteFireFlicker, P_ReadFireFlicker},
-	{"markpoints", P_WriteMarkPoints, P_ReadMarkPoints},
-	{"playerslookdir", P_WritePlayersLookdir, P_ReadPlayersLookdir},
+	{PACKAGE_TARNAME, P_WritePackageTarname, NULL, 0},
+	{"wadfilename", P_WriteWadFileName, P_ReadWadFileName, 0},
+	{"extrakills", P_WriteExtraKills, P_ReadExtraKills, 1},
+	{"totalleveltimes", P_WriteTotalLevelTimes, P_ReadTotalLevelTimes, 1},
+	{"fireflicker", P_WriteFireFlicker, P_ReadFireFlicker, 1},
+	{"markpoints", P_WriteMarkPoints, P_ReadMarkPoints, 1},
+	{"playerslookdir", P_WritePlayersLookdir, P_ReadPlayersLookdir, 1},
 };
 
 void P_WriteExtendedSaveGameData (void)
@@ -256,7 +257,7 @@ void P_WriteExtendedSaveGameData (void)
 	}
 }
 
-static void P_ReadKeyValuePairs (void)
+static void P_ReadKeyValuePairs (int pass)
 {
 	while (fgets(line, sizeof(line), save_stream))
 	{
@@ -267,6 +268,7 @@ static void P_ReadKeyValuePairs (void)
 			for (i = 1; i < arrlen(extsavegdata); i++)
 			{
 				if (extsavegdata[i].extsavegreadfn &&
+				    extsavegdata[i].pass == pass &&
 				    !strncmp(string, extsavegdata[i].key, sizeof(string)))
 				{
 					extsavegdata[i].extsavegreadfn(extsavegdata[i].key);
@@ -276,9 +278,16 @@ static void P_ReadKeyValuePairs (void)
 	}
 }
 
-void P_ReadExtendedSaveGameData (void)
+void P_ReadExtendedSaveGameData (int pass)
 {
 	long p, curpos, endpos;
+
+	// [crispy] two-pass reading of extended savegame data
+	if (pass == 1)
+	{
+		P_ReadKeyValuePairs(pass);
+		return;
+	}
 
 	curpos = ftell(save_stream);
 
@@ -306,7 +315,7 @@ void P_ReadExtendedSaveGameData (void)
 			if (sscanf(line, "%s", string) == 1 &&
 			    !strncmp(string, extsavegdata[0].key, sizeof(string)))
 			{
-				P_ReadKeyValuePairs();
+				P_ReadKeyValuePairs(pass);
 				break;
 			}
 		}

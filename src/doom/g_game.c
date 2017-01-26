@@ -1853,7 +1853,7 @@ void G_DoLoadGame (void)
     // [crispy] read extended savegame data
     if (crispy_extsaveg)
     {
-        P_ReadExtendedSaveGameData();
+        P_ReadExtendedSaveGameData(0);
     }
     // [crispy] check if WAD file is valid to restore saved map
     if (savewadfilename)
@@ -1886,6 +1886,12 @@ void G_DoLoadGame (void)
  
     if (!P_ReadSaveGameEOF())
 	I_Error ("Bad savegame");
+
+    // [crispy] read more extended savegame data
+    if (crispy_extsaveg)
+    {
+        P_ReadExtendedSaveGameData(1);
+    }
 
     fclose(save_stream);
     
