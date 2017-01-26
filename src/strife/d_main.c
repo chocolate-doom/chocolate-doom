@@ -148,7 +148,6 @@ int             show_endoom = 0;
 int             show_diskicon = 1;
 int             graphical_startup = 0;
 static boolean  using_text_startup;
->>>>>>> e392bd160a51b8174450370393693d2b7fe8717e
 
 // If true, startup has completed and the main game loop has started.
 
