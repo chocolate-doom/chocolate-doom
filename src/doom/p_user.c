@@ -451,7 +451,8 @@ void P_PlayerThink (player_t* player)
 	    || (player->powers[pw_invulnerability]&8) )
 	    player->fixedcolormap = INVERSECOLORMAP;
 	else
-	    player->fixedcolormap = 0;
+	    // [crispy] Visor effect when Invulnerability is fading out
+	    player->fixedcolormap = player->powers[pw_infrared] ? 1 : 0;
     }
     else if (player->powers[pw_infrared])	
     {
