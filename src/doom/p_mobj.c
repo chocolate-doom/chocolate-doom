@@ -126,7 +126,7 @@ static void P_ExplodeMissileSafe (mobj_t* mo, boolean safe)
 
     P_SetMobjState (mo, safe ? P_LatestSafeState(mobjinfo[mo->type].deathstate) : mobjinfo[mo->type].deathstate);
 
-    mo->tics -= (safe ? Crispy_Random() : P_Random())&3;
+    mo->tics -= safe ? Crispy_Random()&3 : P_Random()&3;
 
     if (mo->tics < 1)
 	mo->tics = 1;
@@ -606,7 +606,7 @@ P_SpawnMobjSafe
     if (gameskill != sk_nightmare)
 	mobj->reactiontime = info->reactiontime;
     
-    mobj->lastlook = (safe ? Crispy_Random() : P_Random ()) % MAXPLAYERS;
+    mobj->lastlook = safe ? Crispy_Random () % MAXPLAYERS : P_Random () % MAXPLAYERS;
     // do not set the state with P_SetMobjState,
     // because action routines can not be called yet
     st = &states[safe ? P_LatestSafeState(info->spawnstate) : info->spawnstate];
@@ -989,11 +989,11 @@ P_SpawnPuffSafe
 {
     mobj_t*	th;
 	
-    z += (safe ? (Crispy_Random() - Crispy_Random()) : P_SubRandom()) << 10;
+    z += safe ? (Crispy_SubRandom() << 10) : (P_SubRandom() << 10);
 
     th = P_SpawnMobjSafe (x,y,z, MT_PUFF, safe);
     th->momz = FRACUNIT;
-    th->tics -= (safe ? Crispy_Random() : P_Random())&3;
+    th->tics -= safe ? Crispy_Random()&3 : P_Random()&3;
 
     if (th->tics < 1)
 	th->tics = 1;

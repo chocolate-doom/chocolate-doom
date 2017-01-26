@@ -79,3 +79,9 @@ int P_SubRandom (void)
     int r = P_Random();
     return r - P_Random();
 }
+
+int Crispy_SubRandom (void)
+{
+    int r = Crispy_SubRandom();
+    return r - Crispy_SubRandom();
+}
