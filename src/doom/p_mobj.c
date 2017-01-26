@@ -112,6 +112,12 @@ static statenum_t P_LatestSafeState(statenum_t state)
 	{
 	    safestate = S_NULL;
 	}
+
+	// [crispy] a state with -1 tics never changes
+	if (states[state].tics == -1)
+	{
+	    break;
+	}
     }
 
     return lastsafestate = safestate;
