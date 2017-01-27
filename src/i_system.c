@@ -28,6 +28,8 @@
 #include <windows.h>
 #else
 #include <unistd.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 #endif
 
 #include "SDL.h"
@@ -257,13 +259,21 @@ void I_Quit (void)
 }
 
 #if !defined(_WIN32) && !defined(__MACOSX__)
-#define ZENITY_BINARY "/usr/bin/zenity"
 
 // returns non-zero if zenity is available
 
 static int ZenityAvailable(void)
 {
-    return system(ZENITY_BINARY " --help >/dev/null 2>&1") == 0;
+    int pid;
+    int wstatus;
+    pid = fork();
+    if(pid == 0)
+    {
+	close(1); // hide help output
+        exit(execlp("zenity","zenity","--help", (char *)NULL));
+    }
+    wait(&wstatus);
+    return pid > 0 && WIFEXITED(wstatus) && 0 == WEXITSTATUS(wstatus);
 }
 
 // Open a native error box with a message using zenity
@@ -280,7 +290,7 @@ static int ZenityErrorBox(char *message)
     pid = fork();
     if(pid == 0) // child
     {
-        exit(execl(ZENITY_BINARY, ZENITY_BINARY, "--error", "--text", message, (char *)NULL));
+        exit(execlp("zenity", "zenity", "--error", "--text", message, (char *)NULL));
     }
     return pid > 0;
 }
