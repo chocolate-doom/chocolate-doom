@@ -31,18 +31,16 @@ void CompatibilitySettings(void)
 {
     txt_window_t *window;
 
-    window = TXT_NewWindow(gamemission == doom ? "Crispness" : "Compatibility");
-
-    TXT_SetWindowHelpURL(window, WINDOW_HELP_URL);
-
     if (gamemission == doom)
     {
-    TXT_AddWidgets(window,
-                   TXT_NewLabel("Please refer to the in-game Crispness menu."),
-                   NULL);
+        TXT_MessageBox(NULL, "Please refer to the in-game Crispness menu.");
     }
     else
     {
+    window = TXT_NewWindow("Compatibility");
+
+    TXT_SetWindowHelpURL(window, WINDOW_HELP_URL);
+
     TXT_AddWidgets(window,
                    TXT_NewCheckBox("Vanilla savegame limit",
                                    &vanilla_savegame_limit),
