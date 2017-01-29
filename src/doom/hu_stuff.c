@@ -812,7 +812,7 @@ void HU_Drawer(void)
 	HUlib_drawTextLine(&w_coordy, false);
 
 	M_snprintf(str, sizeof(str), "%sA: %s%-5d", crstr[CR_GREEN], crstr[CR_GRAY],
-	        (players[consoleplayer].mo->angle)*(uint64_t)360/UINT32_MAX);
+	        (players[consoleplayer].mo->angle)/ANG1);
 	HUlib_clearTextLine(&w_coorda);
 	s = str;
 	while (*s)
