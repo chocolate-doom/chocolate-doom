@@ -764,7 +764,7 @@ void M_DrawLoad(void)
 	M_DrawSaveLoadBorder(LoadDef.x,LoadDef.y+LINEHEIGHT*i);
 
 	// [crispy] shade empty savegame slots
-	if (!strncmp(savegamestrings[i], EMPTYSTRING, strlen(EMPTYSTRING)))
+	if (!LoadMenu[i].status)
 	    dp_translation = cr[CR_DARK];
 
 	M_WriteText(LoadDef.x,LoadDef.y+LINEHEIGHT*i,savegamestrings[i]);
@@ -2727,6 +2727,17 @@ boolean M_Responder (event_t* ev)
 	}
 	return true;
     }
+    else if (key == key_menu_del)
+    {
+	if (currentMenu == &LoadDef || currentMenu == &SaveDef)
+	{
+	    if (LoadMenu[itemOn].status)
+	    {
+		M_ConfirmDeleteGame();
+		return true;
+	    }
+	}
+    }
 
     // Keyboard shortcut?
     // Vanilla Doom has a weird behavior where it jumps to the scroll bars
@@ -3032,10 +3043,16 @@ void M_Init (void)
 }
 
 // [crispy] extended savegames
-static char *extsavegwarning;
-static void M_ForceLoadGameResponse(int key)
+static char *savegwarning;
+static void M_FreeSavegWarning (int key)
 {
-	free(extsavegwarning);
+	key = 0;
+	free(savegwarning);
+}
+
+static void M_ForceLoadGameResponse (int key)
+{
+	free(savegwarning);
 	free(savewadfilename);
 
 	if (key != key_menu_confirm)
@@ -3049,9 +3066,9 @@ static void M_ForceLoadGameResponse(int key)
 	gameaction = ga_loadgame;
 }
 
-void M_ForceLoadGame()
+void M_ForceLoadGame (void)
 {
-	extsavegwarning =
+	savegwarning =
 	M_StringJoin("This savegame requires the file\n",
 	             crstr[CR_GOLD], savewadfilename, crstr[CR_NONE], "\n",
 	             "to restore ", crstr[CR_GOLD], maplumpinfo->name, crstr[CR_NONE], ".\n\n",
@@ -3059,5 +3076,39 @@ void M_ForceLoadGame()
 	             crstr[CR_GOLD], maplumpinfo->wad_file->basename, crstr[CR_NONE], "?\n\n",
 	             PRESSYN, NULL);
 
-	M_StartMessage(extsavegwarning, M_ForceLoadGameResponse, true);
+	M_StartMessage(savegwarning, M_ForceLoadGameResponse, true);
+}
+
+static void M_ConfirmDeleteGameResponse (int key)
+{
+	free(savegwarning);
+
+	if (key == key_menu_confirm)
+	{
+		char name[256];
+
+		M_StringCopy(name, P_SaveGameFile(itemOn), sizeof(name));
+		if (remove(name))
+		{
+			savegwarning =
+			M_StringJoin("Could not delete savegame file\n",
+			             crstr[CR_GOLD], name, crstr[CR_NONE], "!\n\n",
+			             PRESSKEY, NULL);
+
+			M_StartMessage(savegwarning, M_FreeSavegWarning, false);
+		}
+
+//		S_StartSound(NULL,sfx_swtchn);
+		M_ReadSaveStrings();
+	}
+}
+
+void M_ConfirmDeleteGame (void)
+{
+	savegwarning =
+	M_StringJoin("Are you sure you want to delete savegame\n",
+	             crstr[CR_GOLD], savegamestrings[itemOn], crstr[CR_NONE], "?\n\n",
+	             PRESSYN, NULL);
+
+	M_StartMessage(savegwarning, M_ConfirmDeleteGameResponse, true);
 }
