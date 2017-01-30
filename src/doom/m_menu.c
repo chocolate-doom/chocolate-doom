@@ -2462,11 +2462,15 @@ boolean M_Responder (event_t* ev)
 	}
 
 	menuactive = messageLastMenuActive;
-	messageToPrint = 0;
 	if (messageRoutine)
 	    messageRoutine(key);
 
+	// [crispy] stay in menu
+	if (messageToPrint < 2)
+	{
 	menuactive = false;
+	}
+	messageToPrint = 0; // [crispy] moved here
 	S_StartSound(NULL,sfx_swtchx);
 	return true;
     }
@@ -2733,8 +2737,13 @@ boolean M_Responder (event_t* ev)
 	{
 	    if (LoadMenu[itemOn].status)
 	    {
+		currentMenu->lastOn = itemOn;
 		M_ConfirmDeleteGame();
 		return true;
+	    }
+	    else
+	    {
+		S_StartSound(NULL,sfx_oof);
 	    }
 	}
     }
@@ -2843,6 +2852,11 @@ void M_Drawer (void)
     // Horiz. & Vertically center string and print it.
     if (messageToPrint)
     {
+	if (messageToPrint == 2)
+	{
+	    M_DrawCrispnessBackground();
+	}
+
 	start = 0;
 	y = ORIGHEIGHT/2 - M_StringHeight(messageString) / 2;
 	while (messageString[start] != '\0')
@@ -3059,6 +3073,9 @@ static void M_ForceLoadGameResponse (int key)
 	{
 		M_EndGameResponse(key_menu_confirm);
 		savewadfilename = NULL;
+
+		M_StartControlPanel();
+		M_LoadGame(0);
 		return;
 	}
 
@@ -3077,6 +3094,8 @@ void M_ForceLoadGame (void)
 	             PRESSYN, NULL);
 
 	M_StartMessage(savegwarning, M_ForceLoadGameResponse, true);
+	messageToPrint = 2;
+	S_StartSound(NULL,sfx_swtchn);
 }
 
 static void M_ConfirmDeleteGameResponse (int key)
@@ -3091,24 +3110,25 @@ static void M_ConfirmDeleteGameResponse (int key)
 		if (remove(name))
 		{
 			savegwarning =
-			M_StringJoin("Could not delete savegame file\n",
-			             crstr[CR_GOLD], name, crstr[CR_NONE], "!\n\n",
+			M_StringJoin("Could not delete savegame\n",
+			             crstr[CR_GOLD], M_BaseName(name), crstr[CR_NONE], "!\n\n",
 			             PRESSKEY, NULL);
 
 			M_StartMessage(savegwarning, M_FreeSavegWarning, false);
+			messageToPrint = 2;
 		}
-
-//		S_StartSound(NULL,sfx_swtchn);
-		M_ReadSaveStrings();
+		M_LoadGame(0);
 	}
 }
 
 void M_ConfirmDeleteGame (void)
 {
 	savegwarning =
-	M_StringJoin("Are you sure you want to delete savegame\n",
+	M_StringJoin("delete savegame\n",
 	             crstr[CR_GOLD], savegamestrings[itemOn], crstr[CR_NONE], "?\n\n",
 	             PRESSYN, NULL);
 
 	M_StartMessage(savegwarning, M_ConfirmDeleteGameResponse, true);
+	messageToPrint = 2;
+	S_StartSound(NULL,sfx_swtchn);
 }
