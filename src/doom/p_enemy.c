@@ -996,7 +996,7 @@ void A_BruisAttack (mobj_t* actor)
 	return;
 		
     // [crispy] face the enemy
-    A_FaceTarget (actor);
+//  A_FaceTarget (actor);
     if (P_CheckMeleeRange (actor))
     {
 	S_StartSound (actor, sfx_claw);
