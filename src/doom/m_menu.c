@@ -3076,6 +3076,7 @@ static void M_ForceLoadGameResponse(int key)
 		M_EndGameResponse(key_menu_confirm);
 		savewadfilename = NULL;
 
+		// [crispy] reload Load Game menu
 		M_StartControlPanel();
 		M_LoadGame(0);
 		return;
