@@ -2731,6 +2731,23 @@ boolean M_Responder (event_t* ev)
 	}
 	return true;
     }
+    // [crispy] delete a savegame
+    else if (key == key_menu_del)
+    {
+	if (currentMenu == &LoadDef || currentMenu == &SaveDef)
+	{
+	    if (LoadMenu[itemOn].status)
+	    {
+		currentMenu->lastOn = itemOn;
+		M_ConfirmDeleteGame();
+		return true;
+	    }
+	    else
+	    {
+		S_StartSound(NULL,sfx_oof);
+	    }
+	}
+    }
 
     // Keyboard shortcut?
     // Vanilla Doom has a weird behavior where it jumps to the scroll bars
@@ -3042,10 +3059,16 @@ void M_Init (void)
 }
 
 // [crispy] extended savegames
-static char *extsavegwarning;
+static char *savegwarning;
+static void M_FreeSavegWarning (int key)
+{
+	key = 0;
+	free(savegwarning);
+}
+
 static void M_ForceLoadGameResponse(int key)
 {
-	free(extsavegwarning);
+	free(savegwarning);
 	free(savewadfilename);
 
 	if (key != key_menu_confirm)
@@ -3065,7 +3088,7 @@ static void M_ForceLoadGameResponse(int key)
 
 void M_ForceLoadGame()
 {
-	extsavegwarning =
+	savegwarning =
 	M_StringJoin("This savegame requires the file\n",
 	             crstr[CR_GOLD], savewadfilename, crstr[CR_NONE], "\n",
 	             "to restore ", crstr[CR_GOLD], maplumpinfo->name, crstr[CR_NONE], " .\n\n",
@@ -3073,7 +3096,42 @@ void M_ForceLoadGame()
 	             crstr[CR_GOLD], maplumpinfo->wad_file->basename, crstr[CR_NONE], " ?\n\n",
 	             PRESSYN, NULL);
 
-	M_StartMessage(extsavegwarning, M_ForceLoadGameResponse, true);
+	M_StartMessage(savegwarning, M_ForceLoadGameResponse, true);
+	messageToPrint = 2;
+	S_StartSound(NULL,sfx_swtchn);
+}
+
+static void M_ConfirmDeleteGameResponse (int key)
+{
+	free(savegwarning);
+
+	if (key == key_menu_confirm)
+	{
+		char name[256];
+
+		M_StringCopy(name, P_SaveGameFile(itemOn), sizeof(name));
+		if (remove(name))
+		{
+			savegwarning =
+			M_StringJoin("Could not delete savegame\n\n",
+			             crstr[CR_GOLD], M_BaseName(name), crstr[CR_NONE], " !\n\n",
+			             PRESSKEY, NULL);
+
+			M_StartMessage(savegwarning, M_FreeSavegWarning, false);
+			messageToPrint = 2;
+		}
+		M_ReadSaveStrings();
+	}
+}
+
+void M_ConfirmDeleteGame ()
+{
+	savegwarning =
+	M_StringJoin("delete savegame\n\n",
+	             crstr[CR_GOLD], savegamestrings[itemOn], crstr[CR_NONE], " ?\n\n",
+	             PRESSYN, NULL);
+
+	M_StartMessage(savegwarning, M_ConfirmDeleteGameResponse, true);
 	messageToPrint = 2;
 	S_StartSound(NULL,sfx_swtchn);
 }

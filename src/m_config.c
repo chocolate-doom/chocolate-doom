@@ -1403,6 +1403,12 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_KEY(key_menu_cleanscreenshot),
 
     //!
+    // Key to delete a savegame.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_del),
+
+    //!
     // Key to toggle the map view.
     //
 
