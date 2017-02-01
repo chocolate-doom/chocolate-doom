@@ -764,7 +764,7 @@ void M_DrawLoad(void)
 	M_DrawSaveLoadBorder(LoadDef.x,LoadDef.y+LINEHEIGHT*i);
 
 	// [crispy] shade empty savegame slots
-	if (!strncmp(savegamestrings[i], EMPTYSTRING, strlen(EMPTYSTRING)))
+	if (!LoadMenu[i].status)
 	    dp_translation = cr[CR_DARK];
 
 	M_WriteText(LoadDef.x,LoadDef.y+LINEHEIGHT*i,savegamestrings[i]);
@@ -2462,11 +2462,15 @@ boolean M_Responder (event_t* ev)
 	}
 
 	menuactive = messageLastMenuActive;
-	messageToPrint = 0;
 	if (messageRoutine)
 	    messageRoutine(key);
 
+	// [crispy] stay in menu
+	if (messageToPrint < 2)
+	{
 	menuactive = false;
+	}
+	messageToPrint = 0; // [crispy] moved here
 	S_StartSound(NULL,sfx_swtchx);
 	return true;
     }
@@ -2832,6 +2836,12 @@ void M_Drawer (void)
     // Horiz. & Vertically center string and print it.
     if (messageToPrint)
     {
+	// [crispy] draw a background for important questions
+	if (messageToPrint == 2)
+	{
+	    M_DrawCrispnessBackground();
+	}
+
 	start = 0;
 	y = ORIGHEIGHT/2 - M_StringHeight(messageString) / 2;
 	while (messageString[start] != '\0')
@@ -3042,6 +3052,10 @@ static void M_ForceLoadGameResponse(int key)
 	{
 		M_EndGameResponse(key_menu_confirm);
 		savewadfilename = NULL;
+
+		// [crispy] reload Load Game menu
+		M_StartControlPanel();
+		M_LoadGame(0);
 		return;
 	}
 
@@ -3054,10 +3068,12 @@ void M_ForceLoadGame()
 	extsavegwarning =
 	M_StringJoin("This savegame requires the file\n",
 	             crstr[CR_GOLD], savewadfilename, crstr[CR_NONE], "\n",
-	             "to restore ", crstr[CR_GOLD], maplumpinfo->name, crstr[CR_NONE], ".\n\n",
+	             "to restore ", crstr[CR_GOLD], maplumpinfo->name, crstr[CR_NONE], " .\n\n",
 	             "Continue to restore from\n",
-	             crstr[CR_GOLD], maplumpinfo->wad_file->basename, crstr[CR_NONE], "?\n\n",
+	             crstr[CR_GOLD], maplumpinfo->wad_file->basename, crstr[CR_NONE], " ?\n\n",
 	             PRESSYN, NULL);
 
 	M_StartMessage(extsavegwarning, M_ForceLoadGameResponse, true);
+	messageToPrint = 2;
+	S_StartSound(NULL,sfx_swtchn);
 }
