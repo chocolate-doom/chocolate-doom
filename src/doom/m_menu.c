@@ -3060,12 +3060,6 @@ void M_Init (void)
 
 // [crispy] extended savegames
 static char *savegwarning;
-static void M_FreeSavegWarning (int key)
-{
-	key = 0;
-	free(savegwarning);
-}
-
 static void M_ForceLoadGameResponse(int key)
 {
 	free(savegwarning);
@@ -3110,16 +3104,8 @@ static void M_ConfirmDeleteGameResponse (int key)
 		char name[256];
 
 		M_StringCopy(name, P_SaveGameFile(itemOn), sizeof(name));
-		if (remove(name))
-		{
-			savegwarning =
-			M_StringJoin("Could not delete savegame\n\n",
-			             crstr[CR_GOLD], M_BaseName(name), crstr[CR_NONE], " !\n\n",
-			             PRESSKEY, NULL);
+		remove(name);
 
-			M_StartMessage(savegwarning, M_FreeSavegWarning, false);
-			messageToPrint = 2;
-		}
 		M_ReadSaveStrings();
 	}
 }
