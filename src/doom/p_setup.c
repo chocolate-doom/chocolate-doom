@@ -374,12 +374,13 @@ static void P_LoadSegs_DeePBSP (int lump)
 void P_SegLengths (void)
 {
     int i;
-    seg_t *li;
-    int64_t dx, dy;
+    const int rightangle = abs(finesine[(ANG60/2) >> ANGLETOFINESHIFT]);
 
     for (i = 0; i < numsegs; i++)
     {
-	li = &segs[i];
+	seg_t *const li = &segs[i];
+	int64_t dx, dy;
+
 	dx = li->v2->px - li->v1->px;
 	dy = li->v2->py - li->v1->py;
 	li->length = (uint32_t)(sqrt((double)dx*dx + (double)dy*dy)/2);
@@ -388,6 +389,15 @@ void P_SegLengths (void)
 	viewx = li->v1->px;
 	viewy = li->v1->py;
 	li->pangle = R_PointToAngleCrispy(li->v2->px, li->v2->py);
+
+	// [crispy] smoother fake contrast
+	if (abs(finesine[li->pangle >> ANGLETOFINESHIFT]) < rightangle)
+	    li->fakecontrast = -1;
+	else
+	if (abs(finecosine[li->pangle >> ANGLETOFINESHIFT]) < rightangle)
+	    li->fakecontrast = 1;
+	else
+	    li->fakecontrast = 0;
     }
 }
 

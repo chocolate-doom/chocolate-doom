@@ -811,10 +811,14 @@ R_StoreWallRange
 	{
 	    lightnum = (frontsector->lightlevel >> LIGHTSEGSHIFT)+extralight;
 
+	    // [crispy] smoother fake contrast
+	    lightnum += curline->fakecontrast;
+/*
 	    if (curline->v1->y == curline->v2->y)
 		lightnum--;
 	    else if (curline->v1->x == curline->v2->x)
 		lightnum++;
+*/
 
 	    if (lightnum < 0)		
 		walllights = scalelight[0];
