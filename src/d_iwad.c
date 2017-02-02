@@ -650,6 +650,11 @@ static void AddXdgDirs(void)
     // source ports is /usr/share/games/doom - we support this through the
     // XDG_DATA_DIRS mechanism, through which it can be overridden.
     AddIWADPath(env, "/games/doom");
+
+    // The convention set by RBDOOM-3-BFG is to install Doom 3: BFG
+    // Edition into this directory, under which includes the Doom
+    // Classic WADs.
+    AddIWADPath(env, "/games/doom3bfg/base/wads");
 }
 #endif
 
