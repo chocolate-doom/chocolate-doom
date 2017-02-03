@@ -226,12 +226,14 @@ void ConfigDisplay(void)
             sizes_table = TXT_NewTable(3)),
         NULL);
 
+    TXT_SetColumnWidths(window, 42);
+
     // The window is set at a fixed vertical position.  This keeps
     // the top of the window stationary when switching between
     // fullscreen and windowed mode (which causes the window's
     // height to change).
     TXT_SetWindowPosition(window, TXT_HORIZ_CENTER, TXT_VERT_TOP,
-                                  TXT_SCREEN_W / 2, 5);
+                                  TXT_SCREEN_W / 2, 6);
 
     GenerateSizesTable(NULL, sizes_table);
 
