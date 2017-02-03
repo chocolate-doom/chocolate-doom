@@ -1336,7 +1336,7 @@ void P_LoadSideDefs (int lump)
 }
 
 // [crispy] taken from mbfsrc/P_SETUP.C:547-707, slightly adapted
-static void P_CreateBlockMap(void)
+static void P_CreateBlockMap2(void)
 {
   register int i;
   fixed_t minx = INT_MAX, miny = INT_MAX, maxx = INT_MIN, maxy = INT_MIN;
@@ -2041,7 +2041,7 @@ P_SetupLevel
     P_LoadLineDefs (lumpnum+ML_LINEDEFS);
     // [crispy] (re-)create BLOCKMAP if necessary
     if (!crispy_validblockmap)
-	P_CreateBlockMap();
+	SaveBlocks();
     if (crispy_mapformat & (MFMT_ZDBSPX | MFMT_ZDBSPZ))
 	P_LoadNodes_ZDBSP (lumpnum+ML_NODES, crispy_mapformat & MFMT_ZDBSPZ);
     else
@@ -2060,6 +2060,22 @@ P_SetupLevel
 
     P_GroupLines ();
     P_LoadReject (lumpnum+ML_REJECT);
+
+printf("%d %d %d %d\n", bmaporgx, bmaporgy, bmapwidth, bmapheight);
+{
+	int i;
+	for (i = 0; i < bmapwidth*bmapheight; i++)
+	{
+		int offset = blockmap[i] + 1;
+
+		while (blockmaplump[offset] != -1)
+		{
+			printf("Block %d Lines %d\n", i, blockmaplump[offset++]);
+		}
+	}
+}
+exit(1);
+
 
     // [crispy] remove slime trails
     P_RemoveSlimeTrails();
