@@ -139,24 +139,16 @@ R_MapPlane
 // adapted from prboom-plus/src/r_plane.c:191-239, translated to fixed-point math
 
     if (!(dy = abs(centery - y)))
+    {
 	return;
+    }
 
-    distance = FixedMul(planeheight, yslope[y]);
-    dx = x1 - centerx;
-
-    ds_xstep = FixedMul(viewsin, planeheight) / dy;
-    ds_ystep = FixedMul(viewcos, planeheight) / dy;
-
-    ds_xfrac =  viewx + FixedMul(viewcos, distance) + dx * ds_xstep;
-    ds_yfrac = -viewy - FixedMul(viewsin, distance) + dx * ds_ystep;
-
-/*
     if (planeheight != cachedheight[y])
     {
 	cachedheight[y] = planeheight;
 	distance = cacheddistance[y] = FixedMul (planeheight, yslope[y]);
-	ds_xstep = cachedxstep[y] = FixedMul (distance,basexscale);
-	ds_ystep = cachedystep[y] = FixedMul (distance,baseyscale);
+	ds_xstep = cachedxstep[y] = FixedMul (viewsin, planeheight) / dy;
+	ds_ystep = cachedystep[y] = FixedMul (viewcos, planeheight) / dy;
     }
     else
     {
@@ -164,12 +156,11 @@ R_MapPlane
 	ds_xstep = cachedxstep[y];
 	ds_ystep = cachedystep[y];
     }
-	
-    length = FixedMul (distance,distscale[x1]);
-    angle = (viewangle + xtoviewangle[x1])>>ANGLETOFINESHIFT;
-    ds_xfrac = viewx + FixedMul(finecosine[angle], length);
-    ds_yfrac = -viewy - FixedMul(finesine[angle], length);
-*/
+
+    dx = x1 - centerx;
+
+    ds_xfrac = viewx + FixedMul(viewcos, distance) + dx * ds_xstep;
+    ds_yfrac = -viewy - FixedMul(viewsin, distance) + dx * ds_ystep;
 
     if (fixedcolormap)
 	ds_colormap = fixedcolormap;
