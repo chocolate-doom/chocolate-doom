@@ -122,6 +122,10 @@ int fullscreen = true;
 
 int aspect_ratio_correct = true;
 
+// Force integer scales for resolution-independent rendering
+
+int integer_scaling = false;
+
 // Force software rendering, for systems which lack effective hardware
 // acceleration
 
@@ -1151,6 +1155,12 @@ static void SetVideoMode(void)
                              SCREENWIDTH,
                              EffectiveScreenHeight());
 
+    // Force integer scales for resolution-independent rendering.
+
+#if SDL_VERSION_ATLEAST(2, 0, 5)
+    SDL_RenderSetIntegerScale(renderer, integer_scaling);
+#endif
+
     // Blank out the full screen area in case there is any junk in
     // the borders that won't otherwise be overwritten.
 
@@ -1330,6 +1340,7 @@ void I_BindVideoVariables(void)
     M_BindIntVariable("fullscreen",                &fullscreen);
     M_BindIntVariable("video_display",             &video_display);
     M_BindIntVariable("aspect_ratio_correct",      &aspect_ratio_correct);
+    M_BindIntVariable("integer_scaling",           &integer_scaling);
     M_BindIntVariable("startup_delay",             &startup_delay);
     M_BindIntVariable("fullscreen_width",          &fullscreen_width);
     M_BindIntVariable("fullscreen_height",         &fullscreen_height);
