@@ -2140,14 +2140,6 @@ void D_DoomMain (void)
         testcontrols = true;
     }
 
-    // [crispy] enable flashing HOM indicator
-    p = M_CheckParm("-flashinghom");
-
-    if (p > 0)
-    {
-        crispy_flashinghom = true;
-    }
-
     // [crispy] port level flipping feature over from Strawberry Doom
     {
         time_t curtime = time(NULL);
