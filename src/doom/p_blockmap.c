@@ -25,15 +25,25 @@ static int datalist[0x10000], *data_p;
 
 static fixed_t xl, xh, yl, yh;
 
+static int j, k;
+
 static int P_PointOnSide (vertex_t *p, line_t *l)
 {
-	fixed_t dx,dy;
+	fixed_t dx, dy;
 	fixed_t left, right;
 	fixed_t a, b, c, d;
+if (j == 7&& k == 200) 
+{
+	puts("!pos!");
+}
 
 	if (!l->dx)
 	{
-		if (p->x > l->v1->x-2 && p->x < l->v1->x+2)
+if (j == 7&& k == 200) 
+{
+	puts("!dx!");
+}
+		if (p->x > l->v1->x - 2*FRACUNIT && p->x < l->v1->x + 2*FRACUNIT)
 		{
 			return -1;
 		}
@@ -48,7 +58,11 @@ static int P_PointOnSide (vertex_t *p, line_t *l)
 
 	if (!l->dy)
 	{
-		if (p->y > l->v1->y-2 && p->y < l->v1->y+2)
+if (j == 7&& k == 200) 
+{
+	puts("!dy!");
+}
+		if (p->y > l->v1->y - 2*FRACUNIT && p->y < l->v1->y + 2*FRACUNIT)
 		{
 			return -1;
 		}
@@ -65,8 +79,12 @@ static int P_PointOnSide (vertex_t *p, line_t *l)
 	dy = l->v1->y - p->y;
 	a = FixedMul(l->dx, l->dx) + FixedMul(l->dy, l->dy);
 	b = 2 * (FixedMul(l->dx, dx) + FixedMul(l->dy, dy));
-	c = FixedMul(dx, dx) + FixedMul(dy, dy) - 2 * 2; // 2 unit radius
+	c = FixedMul(dx, dx) + FixedMul(dy, dy) - 2 * 2*FRACUNIT; // 2 unit radius
 	d = FixedMul(b, b) - 4 * FixedMul(a, c);
+if (j == 7&& k == 200) 
+{
+	printf("*** %d %d %d %d\n", a>>FRACBITS, b>>FRACBITS, c>>FRACBITS, d>>FRACBITS);
+}
 
 	if (d > 0)
 	{
@@ -77,10 +95,14 @@ static int P_PointOnSide (vertex_t *p, line_t *l)
 	dx = p->x - l->v1->x;
 	dy = p->y - l->v1->y;
 
-	left = FixedMul(l->dy, dx);
-	right = FixedMul(dy, l->dx);
+	left = FixedMul(l->dy>>FRACBITS, dx);
+	right = FixedMul(dy, l->dx>>FRACBITS);
+if (j == 7&& k == 200) 
+{
+	printf("*** %d %d\n", left>>FRACBITS, right>>FRACBITS);
+}
 
-	if (abs(left-right) < FRACUNIT/2) // allow slop
+	if (abs(left-right) < FRACUNIT>>8) // allow slop
 	{
 		// on line
 		return -1;
@@ -134,11 +156,20 @@ static boolean LineContact (line_t *wl)
 		lyh = p1->y;
 	}
 
+if (j == 7&& wl-lines == 200) 
+{
+	printf("%d %d\n%d %d\n%d %d\n%d %d\n", lxl >>FRACBITS, xh>>FRACBITS , lxh>>FRACBITS ,xl >>FRACBITS, lyl>>FRACBITS , yh >>FRACBITS, lyh >>FRACBITS, yl>>FRACBITS);
+}
+
 	// no bbox intersections
 	if (lxl >= xh || lxh < xl || lyl >= yh || lyh < yl)
 	{
 		return false;
 	}
+if (j == 7&& wl-lines == 200) 
+{
+	puts("hier!");
+}
 
 	if (FixedDiv(ld.dy, ld.dx) > 0)
 	{
@@ -147,6 +178,10 @@ static boolean LineContact (line_t *wl)
 		pt1.y = yh;
 		pt2.x = xh;
 		pt2.y = yl;
+if (j == 7&& wl-lines == 200) 
+{
+	puts("pos!");
+}
 	}
 	else
 	{
@@ -155,6 +190,10 @@ static boolean LineContact (line_t *wl)
 		pt1.y = yh;
 		pt2.x = xl;
 		pt2.y = yl;
+if (j == 7&& wl-lines == 200) 
+{
+	puts("neg!");
+}
 	}
 
 	s1 = P_PointOnSide(&pt1, &ld);
@@ -180,7 +219,7 @@ static void GenerateBlockList (int x, int y)
 
 	for (i = 0; i < numlines; i++, wl++)
 	{
-if (i=200) {printf ("%d %d %d %d\n%d %d %d %d", wl->v1->x, wl->v2->x, wl->v1->y, wl->v2->y, xl, xh, yl, yh);exit(1);}
+k=wl-lines;
 		// vertical
 		if (wl->v1->x == wl->v2->x)
 		{
@@ -287,6 +326,7 @@ void SaveBlocks (void)
 			len = data_p - datalist;
 			*pointer_p++ = len;
 			GenerateBlockList(x, y);
+			j++;
 		}
 	}
 

@@ -2074,7 +2074,7 @@ printf("%d %d %d %d\n", bmaporgx, bmaporgy, bmapwidth, bmapheight);
 		}
 	}
 }
-exit(1);
+//exit(1);
 
 
     // [crispy] remove slime trails
