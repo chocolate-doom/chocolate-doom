@@ -764,6 +764,14 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(force_software_renderer),
 
     //!
+    // Maximum number of pixels to use for intermediate scaling buffer.
+    // More pixels mean that the screen can be rendered more precisely,
+    // but there are diminishing returns on quality. The default limits
+    // to a 1600x1200 buffer.
+
+    CONFIG_VARIABLE_INT(max_scaling_buffer_pixels),
+
+    //!
     // Number of milliseconds to wait on startup after the video mode
     // has been set, before the game will start.  This allows the
     // screen to settle on some monitors that do not display an image

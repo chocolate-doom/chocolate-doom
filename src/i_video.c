@@ -114,6 +114,10 @@ int window_height = SCREENHEIGHT_4_3 * 2;
 
 int fullscreen_width = 0, fullscreen_height = 0;
 
+// Maximum number of pixels to use for intermediate scale buffer.
+
+static int max_scaling_buffer_pixels = 1600 * 1200;
+
 // Run in full screen mode?  (int type for config code)
 
 int fullscreen = true;
@@ -587,16 +591,29 @@ static void CreateUpscaledTexture(boolean force)
         h_upscale = 1;
     }
 
-    // Limit maximum texture dimensions to 1600x1200.
-    // It's really diminishing returns at this point.
+    // We limit the amount of texture memory used for the intermediate buffer.
+    // By default we limit to 1600x1200, which gives pretty good results, but
+    // we allow the user to override this and use more if they want to use
+    // even more (or less, if their graphics card can't handle it).
 
-    if (w_upscale * SCREENWIDTH > 1600)
+    if (max_scaling_buffer_pixels < SCREENWIDTH * SCREENHEIGHT)
     {
-        w_upscale = 1600 / SCREENWIDTH;
+        I_Error("CreateUpscaledTexture: max_scaling_buffer_pixels too small "
+                "to create a texture buffer: %d < %d",
+                max_scaling_buffer_pixels, SCREENWIDTH * SCREENHEIGHT);
     }
-    if (h_upscale * SCREENHEIGHT > 1200)
+
+    while (w_upscale * h_upscale * SCREENWIDTH * SCREENHEIGHT
+           > max_scaling_buffer_pixels)
     {
-        h_upscale = 1200 / SCREENHEIGHT;
+        if (w_upscale > h_upscale)
+        {
+            --w_upscale;
+        }
+        else
+        {
+            --h_upscale;
+        }
     }
 
     // Create a new texture only if the upscale factors have actually changed.
@@ -1334,6 +1351,7 @@ void I_BindVideoVariables(void)
     M_BindIntVariable("fullscreen_width",          &fullscreen_width);
     M_BindIntVariable("fullscreen_height",         &fullscreen_height);
     M_BindIntVariable("force_software_renderer",   &force_software_renderer);
+    M_BindIntVariable("max_scaling_buffer_pixels", &max_scaling_buffer_pixels);
     M_BindIntVariable("window_width",              &window_width);
     M_BindIntVariable("window_height",             &window_height);
     M_BindIntVariable("grabmouse",                 &grabmouse);
