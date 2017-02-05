@@ -116,7 +116,7 @@ int fullscreen_width = 0, fullscreen_height = 0;
 
 // Maximum number of pixels to use for intermediate scale buffer.
 
-static int max_scaling_buffer_pixels = 1600 * 1200;
+static int max_scaling_buffer_pixels = 16000000;
 
 // Run in full screen mode?  (int type for config code)
 

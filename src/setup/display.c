@@ -71,7 +71,7 @@ static int fullscreen = 1;
 static int fullscreen_width = 0, fullscreen_height = 0;
 static int window_width = 640, window_height = 480;
 static int startup_delay = 1000;
-static int max_scaling_buffer_pixels = 1600 * 1200;
+static int max_scaling_buffer_pixels = 16000000;
 static int usegamma = 0;
 
 int graphical_startup = 1;

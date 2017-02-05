@@ -766,8 +766,8 @@ static default_t extra_defaults_list[] =
     //!
     // Maximum number of pixels to use for intermediate scaling buffer.
     // More pixels mean that the screen can be rendered more precisely,
-    // but there are diminishing returns on quality. The default limits
-    // to a 1600x1200 buffer.
+    // but there are diminishing returns on quality. The default limits to
+    // 16,000,000 pixels, which is enough to cover 4K monitor standards.
 
     CONFIG_VARIABLE_INT(max_scaling_buffer_pixels),
 
