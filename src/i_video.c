@@ -538,7 +538,72 @@ static void UpdateGrab(void)
     }
 
     currently_grabbed = grab;
+}
 
+static void LimitTextureSize(int *w_upscale, int *h_upscale)
+{
+    SDL_RendererInfo rinfo;
+    int orig_w, orig_h;
+
+    orig_w = *w_upscale;
+    orig_h = *h_upscale;
+
+    // Query renderer and limit to maximum texture dimensions of hardware:
+    if (SDL_GetRendererInfo(renderer, &rinfo) != 0)
+    {
+        I_Error("CreateUpscaledTexture: SDL_GetRendererInfo() call failed: %s",
+                SDL_GetError());
+    }
+
+    while (*w_upscale * SCREENWIDTH > rinfo.max_texture_width)
+    {
+        --*w_upscale;
+    }
+    while (*h_upscale * SCREENHEIGHT > rinfo.max_texture_height)
+    {
+        --*h_upscale;
+    }
+
+    if (*w_upscale < 1 || *h_upscale < 1)
+    {
+        I_Error("CreateUpscaledTexture: Can't create a texture big enough for "
+                "the whole screen! Maximum texture size %dx%d",
+                rinfo.max_texture_width, rinfo.max_texture_height);
+    }
+
+    // We limit the amount of texture memory used for the intermediate buffer.
+    // By default we limit to 1600x1200, which gives pretty good results, but
+    // we allow the user to override this and use more if they want to use
+    // even more (or less, if their graphics card can't handle it).
+
+    if (max_scaling_buffer_pixels < SCREENWIDTH * SCREENHEIGHT)
+    {
+        I_Error("CreateUpscaledTexture: max_scaling_buffer_pixels too small "
+                "to create a texture buffer: %d < %d",
+                max_scaling_buffer_pixels, SCREENWIDTH * SCREENHEIGHT);
+    }
+
+    while (*w_upscale * *h_upscale * SCREENWIDTH * SCREENHEIGHT
+           > max_scaling_buffer_pixels)
+    {
+        if (*w_upscale > *h_upscale)
+        {
+            --*w_upscale;
+        }
+        else
+        {
+            --*h_upscale;
+        }
+    }
+
+    if (*w_upscale != orig_w || *h_upscale != orig_h)
+    {
+        printf("CreateUpscaledTexture: Limited texture size to %dx%d "
+               "(max %d pixels, max texture size %dx%d)\n",
+               *w_upscale * SCREENWIDTH, *h_upscale * SCREENHEIGHT,
+               max_scaling_buffer_pixels,
+               rinfo.max_texture_width, rinfo.max_texture_height);
+    }
 }
 
 static void CreateUpscaledTexture(boolean force)
@@ -591,30 +656,7 @@ static void CreateUpscaledTexture(boolean force)
         h_upscale = 1;
     }
 
-    // We limit the amount of texture memory used for the intermediate buffer.
-    // By default we limit to 1600x1200, which gives pretty good results, but
-    // we allow the user to override this and use more if they want to use
-    // even more (or less, if their graphics card can't handle it).
-
-    if (max_scaling_buffer_pixels < SCREENWIDTH * SCREENHEIGHT)
-    {
-        I_Error("CreateUpscaledTexture: max_scaling_buffer_pixels too small "
-                "to create a texture buffer: %d < %d",
-                max_scaling_buffer_pixels, SCREENWIDTH * SCREENHEIGHT);
-    }
-
-    while (w_upscale * h_upscale * SCREENWIDTH * SCREENHEIGHT
-           > max_scaling_buffer_pixels)
-    {
-        if (w_upscale > h_upscale)
-        {
-            --w_upscale;
-        }
-        else
-        {
-            --h_upscale;
-        }
-    }
+    LimitTextureSize(&w_upscale, &h_upscale);
 
     // Create a new texture only if the upscale factors have actually changed.
 
