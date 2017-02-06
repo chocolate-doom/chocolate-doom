@@ -7,9 +7,9 @@
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output="../bin/chocolate-strife-dbg.exe" prefix_auto="0" extension_auto="0" />
+				<Option output="../bin/crispy-strife-dbg.exe" prefix_auto="0" extension_auto="0" />
 				<Option working_dir="../bin" />
-				<Option object_output="../obj/chocolate-strife/dbg" />
+				<Option object_output="../obj/crispy-strife/dbg" />
 				<Option type="0" />
 				<Option compiler="gcc" />
 				<Option projectLinkerOptionsRelation="2" />
@@ -22,9 +22,9 @@
 				</Linker>
 			</Target>
 			<Target title="Release">
-				<Option output="../bin/chocolate-strife.exe" prefix_auto="0" extension_auto="0" />
+				<Option output="../bin/crispy-strife.exe" prefix_auto="0" extension_auto="0" />
 				<Option working_dir="../bin" />
-				<Option object_output="../obj/chocolate-strife/rel" />
+				<Option object_output="../obj/crispy-strife/rel" />
 				<Option type="0" />
 				<Option compiler="gcc" />
 				<Option projectLinkerOptionsRelation="2" />

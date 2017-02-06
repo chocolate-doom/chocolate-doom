@@ -7,9 +7,9 @@
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output="..\bin\chocolate-server-dbg.exe" prefix_auto="0" extension_auto="0" />
-				<Option working_dir="..\bin" />
-				<Option object_output="..\obj\chocolate-server\dbg" />
+				<Option output="../bin/crispy-server-dbg.exe" prefix_auto="0" extension_auto="0" />
+				<Option working_dir="../bin" />
+				<Option object_output="../obj/crispy-server/dbg" />
 				<Option type="0" />
 				<Option compiler="gcc" />
 				<Compiler>
@@ -18,9 +18,9 @@
 				</Compiler>
 			</Target>
 			<Target title="Release">
-				<Option output="..\bin\chocolate-server.exe" prefix_auto="0" extension_auto="0" />
-				<Option working_dir="..\bin" />
-				<Option object_output="..\obj\chocolate-server\rel" />
+				<Option output="../bin/crispy-server.exe" prefix_auto="0" extension_auto="0" />
+				<Option working_dir="../bin" />
+				<Option object_output="../obj/crispy-server/rel" />
 				<Option type="0" />
 				<Option compiler="gcc" />
 				<Compiler>
@@ -36,74 +36,74 @@
 		</VirtualTargets>
 		<Compiler>
 			<Add directory="." />
-			<Add directory="..\src" />
-			<Add directory="..\textscreen" />
+			<Add directory="../src" />
+			<Add directory="../textscreen" />
 		</Compiler>
 		<Linker>
 			<Add option="-lmingw32 -lSDLmain -lSDL -lSDL_net -mwindows" />
 		</Linker>
-		<Unit filename="..\src\d_dedicated.c">
+		<Unit filename="../src/d_dedicated.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\src\d_mode.c">
+		<Unit filename="../src/d_mode.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\src\d_mode.h" />
-		<Unit filename="..\src\i_main.c">
+		<Unit filename="../src/d_mode.h" />
+		<Unit filename="../src/i_main.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\src\i_system.c">
+		<Unit filename="../src/i_system.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\src\i_system.h" />
-		<Unit filename="..\src\i_timer.c">
+		<Unit filename="../src/i_system.h" />
+		<Unit filename="../src/i_timer.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\src\i_timer.h" />
-		<Unit filename="..\src\m_argv.c">
+		<Unit filename="../src/i_timer.h" />
+		<Unit filename="../src/m_argv.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\src\m_argv.h" />
-		<Unit filename="..\src\m_misc.c">
+		<Unit filename="../src/m_argv.h" />
+		<Unit filename="../src/m_misc.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\src\m_misc.h" />
-		<Unit filename="..\src\net_common.c">
+		<Unit filename="../src/m_misc.h" />
+		<Unit filename="../src/net_common.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\src\net_common.h" />
-		<Unit filename="..\src\net_dedicated.c">
+		<Unit filename="../src/net_common.h" />
+		<Unit filename="../src/net_dedicated.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\src\net_dedicated.h" />
-		<Unit filename="..\src\net_io.c">
+		<Unit filename="../src/net_dedicated.h" />
+		<Unit filename="../src/net_io.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\src\net_io.h" />
-		<Unit filename="..\src\net_packet.c">
+		<Unit filename="../src/net_io.h" />
+		<Unit filename="../src/net_packet.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\src\net_packet.h" />
-		<Unit filename="..\src\net_query.c">
+		<Unit filename="../src/net_packet.h" />
+		<Unit filename="../src/net_query.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\src\net_query.h" />
-		<Unit filename="..\src\net_sdl.c">
+		<Unit filename="../src/net_query.h" />
+		<Unit filename="../src/net_sdl.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\src\net_sdl.h" />
-		<Unit filename="..\src\net_server.c">
+		<Unit filename="../src/net_sdl.h" />
+		<Unit filename="../src/net_server.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\src\net_server.h" />
-		<Unit filename="..\src\net_structrw.c">
+		<Unit filename="../src/net_server.h" />
+		<Unit filename="../src/net_structrw.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\src\net_structrw.h" />
-		<Unit filename="..\src\z_native.c">
+		<Unit filename="../src/net_structrw.h" />
+		<Unit filename="../src/z_native.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\src\z_zone.h" />
+		<Unit filename="../src/z_zone.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />

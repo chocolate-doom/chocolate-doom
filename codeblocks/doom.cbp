@@ -7,9 +7,9 @@
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output="../bin/chocolate-doom-dbg.exe" prefix_auto="0" extension_auto="0" />
+				<Option output="../bin/crispy-doom-dbg.exe" prefix_auto="0" extension_auto="0" />
 				<Option working_dir="../bin" />
-				<Option object_output="../obj/chocolate-doom/dbg" />
+				<Option object_output="../obj/crispy-doom/dbg" />
 				<Option type="0" />
 				<Option compiler="gcc" />
 				<Option projectLinkerOptionsRelation="2" />
@@ -22,9 +22,9 @@
 				</Linker>
 			</Target>
 			<Target title="Release">
-				<Option output="../bin/chocolate-doom.exe" prefix_auto="0" extension_auto="0" />
+				<Option output="../bin/crispy-doom.exe" prefix_auto="0" extension_auto="0" />
 				<Option working_dir="../bin" />
-				<Option object_output="../obj/chocolate-doom/rel" />
+				<Option object_output="../obj/crispy-doom/rel" />
 				<Option type="0" />
 				<Option compiler="gcc" />
 				<Option projectLinkerOptionsRelation="2" />
@@ -107,11 +107,19 @@
 		<Unit filename="../src/doom/d_net.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="../src/doom/d_net.h" />
 		<Unit filename="../src/doom/d_player.h" />
 		<Unit filename="../src/doom/d_textur.h" />
 		<Unit filename="../src/doom/d_think.h" />
 		<Unit filename="../src/doom/deh_ammo.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../src/doom/deh_bexincl.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../src/doom/deh_bexpars.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../src/doom/deh_bexptr.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../src/doom/deh_bexstr.c">
@@ -196,6 +204,10 @@
 		<Unit filename="../src/doom/p_enemy.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="../src/doom/p_extsaveg.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../src/doom/p_extsaveg.h" />
 		<Unit filename="../src/doom/p_floor.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -467,7 +479,15 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../src/tables.h" />
+		<Unit filename="../src/v_diskicon.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../src/v_diskicon.h" />
 		<Unit filename="../src/v_patch.h" />
+		<Unit filename="../src/v_trans.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../src/v_trans.h" />
 		<Unit filename="../src/v_video.c">
 			<Option compilerVar="CC" />
 		</Unit>
