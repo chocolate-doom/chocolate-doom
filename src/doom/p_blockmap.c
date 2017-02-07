@@ -31,8 +31,8 @@ static fixed_t xl, xh, yl, yh;
 // [crispy] adapted from doombsp/BUILDBSP.M:23-76
 static int P_PointOnSide (vertex_t *p, line_t *l)
 {
-	int64_t dx, dy, ldx, ldy;
-	int64_t left, right;
+	int dx, dy, ldx, ldy;
+	int left, right;
 	int64_t a, b, c, d;
 
 	// [crispy] dead code, only diagonal lines here
@@ -339,7 +339,7 @@ void P_CreateBlockMap (void)
 		}
 	}
 
-	fprintf(stderr, "P_CreateBlockMap: (%d, %d) = %d (%3.1f%%)\n",
+	fprintf(stderr, "P_CreateBlockMap: (%d, %d) = %ld (%3.1f%%)\n",
 	        bmapwidth, bmapheight,
 	        (data_p - datalist) * sizeof(*blockmaplump),
 	        100.f * (data_p - datalist) / (data_p + 2 * compress - datalist));
