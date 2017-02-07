@@ -51,6 +51,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../textscreen/txt_checkbox.h" />
+		<Unit filename="../textscreen/txt_conditional.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../textscreen/txt_conditional.h" />
 		<Unit filename="../textscreen/txt_desktop.c">
 			<Option compilerVar="CC" />
 		</Unit>
