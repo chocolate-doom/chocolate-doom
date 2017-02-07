@@ -322,17 +322,16 @@ void P_CreateBlockMap (void)
 	{
 		for (x = 0; x < bmapwidth; x++)
 		{
+			*pointer_p++ = data_p - datalist;
+
 			// [crispy] detect empty blocks to compress BLOCKMAP
 			if (!GenerateBlockList(x, y))
 			{
-				*pointer_p++ = empty_block;
+				// [crispy] one step back, point offset to empty block, restore
+				pointer_p--; *pointer_p++ = empty_block;
 
 				// [crispy] two steps back: 0 and -1
 				data_p--; data_p--;
-			}
-			else
-			{
-				*pointer_p++ = data_p - datalist;
 			}
 		}
 	}
