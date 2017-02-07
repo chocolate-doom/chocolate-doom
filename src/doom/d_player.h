@@ -166,11 +166,11 @@ typedef struct player_s
 
     // [crispy] additional fields for crispy features
     char*	centermessage;
-    int	lookdir;
+    int	lookdir, oldlookdir;
     boolean	centering;
     unsigned int	jumpTics;
     boolean	mapcoords;
-    fixed_t	recoilpitch;
+    fixed_t	recoilpitch, oldrecoilpitch;
 } player_t;
 
 
