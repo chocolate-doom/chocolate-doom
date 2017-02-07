@@ -21,10 +21,14 @@
 #include "p_local.h"
 #include "z_zone.h"
 
-static int datalist[0x10000], *data_p;
+#define BLOCKMAPSIZE 0x10000
+
+static int *datalist, *data_p, *pointer_p;
+static size_t datalist_size;
 
 static fixed_t xl, xh, yl, yh;
 
+// [crispy] adapted from doombsp/BUILDBSP.M:23-76
 static int P_PointOnSide (vertex_t *p, line_t *l)
 {
 	int64_t dx, dy, ldx, ldy;
@@ -100,6 +104,7 @@ static int P_PointOnSide (vertex_t *p, line_t *l)
 	return 1;
 }
 
+// [crispy] adapted from doombsp/SAVEBLCK.M
 static boolean LineContact (line_t *wl)
 {
 	vertex_t *p1, *p2, pt1, pt2, pd;
@@ -167,12 +172,30 @@ static boolean LineContact (line_t *wl)
 	return s1 != s2;
 }
 
+// [crispy] remove BLOCKMAP limit
+static void AddLineToBlockList (int i)
+{
+	const size_t data_pos = data_p - datalist;
+
+	if (data_pos == datalist_size)
+	{
+		const size_t pointer_pos = pointer_p - datalist;
+
+		datalist = crispy_realloc(datalist, (datalist_size = 2 * datalist_size) * sizeof(*datalist));
+
+		data_p = datalist + data_pos;
+		pointer_p = datalist + pointer_pos;
+	}
+
+	*data_p++ = i;
+}
+
 static void GenerateBlockList (int x, int y)
 {
 	line_t *wl;
 	int i;
 
-	*data_p++ = 0;
+	AddLineToBlockList(0);
 
 	xl = bmaporgx + x * MAPBLOCKSIZE;
 	xh = xl + MAPBLOCKSIZE;
@@ -200,7 +223,7 @@ static void GenerateBlockList (int x, int y)
 					continue;
 			}
 
-			*data_p++ = i;
+			AddLineToBlockList(i);
 			continue;
 		}
 
@@ -221,25 +244,26 @@ static void GenerateBlockList (int x, int y)
 					continue;
 			}
 
-			*data_p++ = i;
+			AddLineToBlockList(i);
 			continue;
 		}
 
 		// diagonal
 		if (LineContact(wl))
 		{
-			*data_p++ = i;
+			AddLineToBlockList(i);
 		}
 	}
 
 	// end of list marker
-	*data_p++ = -1;
+	AddLineToBlockList(-1);
 }
 
+// [crispy] adapted from doombsp/SAVEBLCK.M:SaveBlocks()
 void P_CreateBlockMap (void)
 {
-	int x ,y, len;
-	int *pointer_p;
+	int x ,y;
+	int numblocks;
 
 	{
 		int i;
@@ -263,6 +287,7 @@ void P_CreateBlockMap (void)
 				maxy = vy;
 		}
 
+		// [crispy] doombsp/DRAWING.M:175-178
 		minx -= 8; miny -= 8;
 		maxx += 8; maxy += 8;
 
@@ -272,35 +297,37 @@ void P_CreateBlockMap (void)
 		bmapheight = ((maxy - miny) + MAPBLOCKUNITS) / MAPBLOCKUNITS;
 	}
 
+	// [crispy] remove BLOCKMAP limit
+	numblocks = bmapwidth * bmapheight;
+	datalist_size = ((numblocks + 4) / BLOCKMAPSIZE + 1) * BLOCKMAPSIZE;
+	datalist = crispy_realloc(datalist, datalist_size * sizeof(*datalist));
+
+	// [crispy] pointer to the offsets
 	pointer_p = datalist;
 	*pointer_p++ = bmaporgx;
 	*pointer_p++ = bmaporgy;
 	*pointer_p++ = bmapwidth;
 	*pointer_p++ = bmapheight;
 
-	data_p = pointer_p + bmapwidth * bmapheight;
+	// [crispy] pointer to the blocklists
+	data_p = pointer_p + numblocks;
 
 	for (y = 0; y < bmapheight; y++)
 	{
 		for (x = 0; x < bmapwidth; x++)
 		{
-			len = data_p - datalist;
-			*pointer_p++ = len;
+			*pointer_p++ = data_p - datalist;
 			GenerateBlockList(x, y);
 		}
 	}
 
-	len = sizeof(datalist) * (data_p - datalist);
-
-	fprintf(stderr, "P_CreateBlockMap: (%i, %i) = %i\n", bmapwidth, bmapheight, len);
+	blockmaplump = Z_Malloc((data_p - datalist) * sizeof(*blockmaplump), PU_LEVEL, 0);
+	memcpy(blockmaplump, datalist, (data_p - datalist) * sizeof(*blockmaplump));
+	free(datalist); datalist = NULL;
 
 	// [crispy] copied over from P_LoadBlockMap()
-	{
-		const int count = sizeof(*blocklinks) * bmapwidth * bmapheight;
-		blocklinks = Z_Malloc(count, PU_LEVEL, 0);
-		memset(blocklinks, 0, count);
-	}
+	blocklinks = Z_Malloc(numblocks * sizeof(*blocklinks), PU_LEVEL, 0);
+	memset(blocklinks, 0, numblocks * sizeof(*blocklinks));
 
-	blockmaplump = datalist;
 	blockmap = blockmaplump + 4;
 }
