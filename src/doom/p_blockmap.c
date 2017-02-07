@@ -175,16 +175,14 @@ static boolean LineContact (line_t *wl)
 // [crispy] remove BLOCKMAP limit
 static void AddLineToBlockList (int i)
 {
-	const size_t data_pos = data_p - datalist;
-
-	if (data_pos == datalist_size)
+	if (data_p - datalist == datalist_size)
 	{
-		const size_t pointer_pos = pointer_p - datalist;
+		const int *const datalist_old = datalist;
 
 		datalist = crispy_realloc(datalist, (datalist_size = 2 * datalist_size) * sizeof(*datalist));
 
-		data_p = datalist + data_pos;
-		pointer_p = datalist + pointer_pos;
+		data_p = datalist + (data_p - datalist_old);
+		pointer_p = datalist + (pointer_p - datalist_old);
 	}
 
 	*data_p++ = i;
