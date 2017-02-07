@@ -173,7 +173,7 @@ static boolean LineContact (line_t *wl)
 }
 
 // [crispy] remove BLOCKMAP limit
-static void AddLineToBlockList (int i)
+static int AddLineToBlockList (int i)
 {
 	if (data_p - datalist == datalist_size)
 	{
@@ -186,24 +186,25 @@ static void AddLineToBlockList (int i)
 	}
 
 	*data_p++ = i;
+
+	return i > 0;
 }
 
-static void GenerateBlockList (int x, int y)
+static int GenerateBlockList (int x, int y)
 {
-	line_t *wl;
-	int i;
+	int i, count;
 
-	AddLineToBlockList(0);
+	count = AddLineToBlockList(0);
 
 	xl = bmaporgx + x * MAPBLOCKSIZE;
 	xh = xl + MAPBLOCKSIZE;
 	yl = bmaporgy + y * MAPBLOCKSIZE;
 	yh = yl + MAPBLOCKSIZE;
 
-	wl = lines;
-
-	for (i = 0; i < numlines; i++, wl++)
+	for (i = 0; i < numlines; i++)
 	{
+		line_t *const wl = &lines[i];
+
 		// vertical
 		if (wl->v1->x == wl->v2->x)
 		{
@@ -221,7 +222,7 @@ static void GenerateBlockList (int x, int y)
 					continue;
 			}
 
-			AddLineToBlockList(i);
+			count += AddLineToBlockList(i);
 			continue;
 		}
 
@@ -242,26 +243,28 @@ static void GenerateBlockList (int x, int y)
 					continue;
 			}
 
-			AddLineToBlockList(i);
+			count += AddLineToBlockList(i);
 			continue;
 		}
 
 		// diagonal
 		if (LineContact(wl))
 		{
-			AddLineToBlockList(i);
+			count += AddLineToBlockList(i);
 		}
 	}
 
 	// end of list marker
-	AddLineToBlockList(-1);
+	count += AddLineToBlockList(-1);
+
+	return count;
 }
 
 // [crispy] adapted from doombsp/SAVEBLCK.M:SaveBlocks()
 void P_CreateBlockMap (void)
 {
 	int x ,y;
-	int numblocks;
+	int numblocks, empty_block;
 
 	{
 		int i;
@@ -297,7 +300,7 @@ void P_CreateBlockMap (void)
 
 	// [crispy] remove BLOCKMAP limit
 	numblocks = bmapwidth * bmapheight;
-	datalist_size = ((numblocks + 4) / BLOCKMAPSIZE + 1) * BLOCKMAPSIZE;
+	datalist_size = ((numblocks + 6) / BLOCKMAPSIZE + 1) * BLOCKMAPSIZE; // [crispy] 6 = 4 (header) + 2 (empty block)
 	datalist = crispy_realloc(datalist, datalist_size * sizeof(*datalist));
 
 	// [crispy] pointer to the offsets
@@ -310,12 +313,27 @@ void P_CreateBlockMap (void)
 	// [crispy] pointer to the blocklists
 	data_p = pointer_p + numblocks;
 
+	// [crispy] detect empty blocks to compress BLOCKMAP
+	empty_block = data_p - datalist;
+	*data_p++ = 0;
+	*data_p++ = -1;
+
 	for (y = 0; y < bmapheight; y++)
 	{
 		for (x = 0; x < bmapwidth; x++)
 		{
-			*pointer_p++ = data_p - datalist;
-			GenerateBlockList(x, y);
+			// [crispy] detect empty blocks to compress BLOCKMAP
+			if (!GenerateBlockList(x, y))
+			{
+				*pointer_p++ = empty_block;
+
+				// [crispy] two steps back: 0 and -1
+				data_p--; data_p--;
+			}
+			else
+			{
+				*pointer_p++ = data_p - datalist;
+			}
 		}
 	}
 
