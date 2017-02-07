@@ -23,7 +23,7 @@
 
 #define BLOCKMAPSIZE 0x10000
 
-static int *datalist, *data_p, *pointer_p;
+static int32_t *datalist, *data_p, *pointer_p;
 static size_t datalist_size;
 
 static fixed_t xl, xh, yl, yh;
@@ -177,7 +177,7 @@ static int AddLineToBlockList (int i)
 {
 	if (data_p - datalist == datalist_size)
 	{
-		const int *const datalist_old = datalist;
+		const int32_t *const datalist_old = datalist;
 
 		datalist = crispy_realloc(datalist, (datalist_size = 2 * datalist_size) * sizeof(*datalist));
 
@@ -268,12 +268,12 @@ void P_CreateBlockMap (void)
 
 	{
 		int i;
-		fixed_t minx = INT_MAX, miny = INT_MAX, maxx = INT_MIN, maxy = INT_MIN;
+		int minx = INT_MAX, miny = INT_MAX, maxx = INT_MIN, maxy = INT_MIN;
 
 		for (i = 0; i < numvertexes; i++)
 		{
 			const vertex_t *const v = &vertexes[i];
-			const fixed_t vx = v->x >> FRACBITS, vy = v->y >> FRACBITS;
+			const int vx = v->x >> FRACBITS, vy = v->y >> FRACBITS;
 
 			if (vx < minx)
 				minx = vx;
@@ -342,7 +342,7 @@ void P_CreateBlockMap (void)
 	fprintf(stderr, "P_CreateBlockMap: (%d, %d) = %d (%3.1f%%)\n",
 	        bmapwidth, bmapheight,
 	        (data_p - datalist) * sizeof(*blockmaplump),
-	        100.f * (data_p - datalist)/(data_p + 2 * compress - datalist));
+	        100.f * (data_p - datalist) / (data_p + 2 * compress - datalist));
 
 	blockmaplump = Z_Malloc((data_p - datalist) * sizeof(*blockmaplump), PU_LEVEL, 0);
 	memcpy(blockmaplump, datalist, (data_p - datalist) * sizeof(*blockmaplump));
