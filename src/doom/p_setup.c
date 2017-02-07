@@ -1352,7 +1352,6 @@ boolean P_LoadBlockMap (int lump)
         (lumplen = W_LumpLength(lump)) < 8 ||
         (count = lumplen / 2) >= 0x10000)
     {
-	fprintf(stderr, "P_LoadBlockMap: (Re-)creating BLOCKMAP.\n");
 	return false;
     }
 	

@@ -264,7 +264,7 @@ static int GenerateBlockList (int x, int y)
 void P_CreateBlockMap (void)
 {
 	int x ,y;
-	int numblocks, empty_block;
+	int numblocks, empty_block, compress;
 
 	{
 		int i;
@@ -317,6 +317,7 @@ void P_CreateBlockMap (void)
 	empty_block = data_p - datalist;
 	*data_p++ = 0;
 	*data_p++ = -1;
+	compress = 0;
 
 	for (y = 0; y < bmapheight; y++)
 	{
@@ -332,9 +333,16 @@ void P_CreateBlockMap (void)
 
 				// [crispy] two steps back: 0 and -1
 				data_p--; data_p--;
+
+				compress++;
 			}
 		}
 	}
+
+	fprintf(stderr, "P_CreateBlockMap: (%d, %d) = %d (%3.1f%%)\n",
+	        bmapwidth, bmapheight,
+	        (data_p - datalist) * sizeof(*blockmaplump),
+	        100.f * (data_p - datalist)/(data_p + 2 * compress - datalist));
 
 	blockmaplump = Z_Malloc((data_p - datalist) * sizeof(*blockmaplump), PU_LEVEL, 0);
 	memcpy(blockmaplump, datalist, (data_p - datalist) * sizeof(*blockmaplump));
