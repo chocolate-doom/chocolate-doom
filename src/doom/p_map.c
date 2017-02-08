@@ -310,8 +310,6 @@ boolean PIT_CheckThing (mobj_t* thing)
 	{
 	    if (tmthing->z > thing->z + thing->height)
 	    {
-		tmfloorz = thing->z + thing->height;
-		thing->ceilingz = tmthing->z;
 		return true;
 	    }
 	}
