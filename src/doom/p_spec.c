@@ -493,7 +493,7 @@ P_FindSectorFromLineTag
     int	i;
 	
     // [crispy] linedefs without tags apply locally
-    if (singleplayer && !line->tag)
+    if (false && !line->tag)
     {
     for (i=start+1;i<numsectors;i++)
 	if (&sectors[i] == line->backsector)
