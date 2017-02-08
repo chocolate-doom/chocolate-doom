@@ -305,6 +305,17 @@ boolean PIT_CheckThing (mobj_t* thing)
     // check for skulls slamming into things
     if (tmthing->flags & MF_SKULLFLY)
     {
+	// [crispy] check if attacking skull flies over player
+	if (singleplayer && crispy_overunder && thing->player)
+	{
+	    if (tmthing->z > thing->z + thing->height)
+	    {
+		tmfloorz = thing->z + thing->height;
+		thing->ceilingz = tmthing->z;
+		return true;
+	    }
+	}
+
 	damage = ((P_Random()%8)+1)*tmthing->info->damage;
 	
 	P_DamageMobj (thing, tmthing, tmthing, damage);
