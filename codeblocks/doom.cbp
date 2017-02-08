@@ -195,6 +195,9 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../src/doom/m_random.h" />
+		<Unit filename="../src/doom/p_blockmap.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="../src/doom/p_ceilng.c">
 			<Option compilerVar="CC" />
 		</Unit>
