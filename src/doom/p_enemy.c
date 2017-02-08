@@ -2085,3 +2085,72 @@ void A_PlayerScream (mobj_t* mo)
     
     S_StartSound (mo, sound);
 }
+
+// [crispy] additional BOOM and MBF states, sprites and code pointers
+
+// killough 11/98: kill an object
+void A_Die(mobj_t *actor)
+{
+  P_DamageMobj(actor, NULL, NULL, actor->health);
+}
+
+//
+// A_Detonate
+// killough 8/9/98: same as A_Explode, except that the damage is variable
+//
+
+void A_Detonate(mobj_t *mo)
+{
+  P_RadiusAttack(mo, mo->target, mo->info->damage);
+}
+
+//
+// killough 9/98: a mushroom explosion effect, sorta :)
+// Original idea: Linguica
+//
+
+void A_Mushroom(mobj_t *actor)
+{
+  int i, j, n = actor->info->damage;
+
+  // Mushroom parameters are part of code pointer's state
+  fixed_t misc1 = actor->state->misc1 ? actor->state->misc1 : FRACUNIT*4;
+  fixed_t misc2 = actor->state->misc2 ? actor->state->misc2 : FRACUNIT/2;
+
+  A_Explode(actor);               // make normal explosion
+
+  for (i = -n; i <= n; i += 8)    // launch mushroom cloud
+    for (j = -n; j <= n; j += 8)
+      {
+	mobj_t target = *actor, *mo;
+	target.x += i << FRACBITS;    // Aim in many directions from source
+	target.y += j << FRACBITS;
+	target.z += P_AproxDistance(i,j) * misc1;           // Aim fairly high
+	mo = P_SpawnMissile(actor, &target, MT_FATSHOT);    // Launch fireball
+	mo->momx = FixedMul(mo->momx, misc2);
+	mo->momy = FixedMul(mo->momy, misc2);               // Slow down a bit
+	mo->momz = FixedMul(mo->momz, misc2);
+	mo->flags &= ~MF_NOGRAVITY;   // Make debris fall under gravity
+      }
+}
+
+//
+// A_BetaSkullAttack()
+// killough 10/98: this emulates the beta version's lost soul attacks
+//
+
+void A_BetaSkullAttack(mobj_t *actor)
+{
+  int damage;
+  if (!actor->target || actor->target->type == MT_SKULL)
+    return;
+  S_StartSound(actor, actor->info->attacksound);
+  A_FaceTarget(actor);
+  damage = (P_Random(/* pr_skullfly */)%8+1)*actor->info->damage;
+  P_DamageMobj(actor->target, actor, actor, damage);
+}
+
+void A_Stop(mobj_t *actor)
+{
+  actor->momx = actor->momy = actor->momz = 0;
+}
