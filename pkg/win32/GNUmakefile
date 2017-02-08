@@ -44,7 +44,7 @@ staging-%:
 	               $(TOPLEVEL)/src/$(PROGRAM_PREFIX)setup.exe \
 	               $@/$(PROGRAM_PREFIX)$*-setup.exe
 
-	$(STRIP) $@/*.exe
+	$(STRIP) $@/*.exe $@/*.dll
 	
 	for f in $(DOC_FILES); do                                \
 		cp $(TOPLEVEL)/$$f $@/$$(basename $$f .md).txt;  \
