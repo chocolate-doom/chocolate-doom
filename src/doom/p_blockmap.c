@@ -339,14 +339,18 @@ void P_CreateBlockMap (void)
 		}
 	}
 
-	fprintf(stderr, "P_CreateBlockMap: (%d, %d) = %ld (%3.1f%%)\n",
-	        bmapwidth, bmapheight,
-	        (data_p - datalist) * sizeof(*blockmaplump),
-	        100.f * (data_p - datalist) / (data_p + 2 * compress - datalist));
+	{
+		const long blockmapsize = data_p - datalist;
 
-	blockmaplump = Z_Malloc((data_p - datalist) * sizeof(*blockmaplump), PU_LEVEL, 0);
-	memcpy(blockmaplump, datalist, (data_p - datalist) * sizeof(*blockmaplump));
-	free(datalist); datalist = NULL;
+		fprintf(stderr, "P_CreateBlockMap: (%d, %d) = %ld (%3.1f%%)\n",
+			bmapwidth, bmapheight,
+			blockmapsize * sizeof(*blockmaplump),
+			100.f * blockmapsize / (blockmapsize + 2 * compress));
+
+		blockmaplump = Z_Malloc(blockmapsize * sizeof(*blockmaplump), PU_LEVEL, 0);
+		memcpy(blockmaplump, datalist, blockmapsize * sizeof(*blockmaplump));
+		free(datalist); datalist = NULL;
+	}
 
 	// [crispy] copied over from P_LoadBlockMap()
 	blocklinks = Z_Malloc(numblocks * sizeof(*blocklinks), PU_LEVEL, 0);
