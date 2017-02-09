@@ -1,6 +1,12 @@
 ## HEAD
 
 ### General
+  * A new parameter -savedir allows users to specify a directory from
+    which to load and save games. (thanks CapnClever)
+
+## 2.3.0 (2016-12-29)
+
+### General
   * Bash completion scripts are included (thanks Fabian)
   * The OS X launcher now supports the .lmp file format (thanks Jon)
   * Pitch-shifting from early versions of Doom, Heretic, and Hexen.
@@ -21,6 +27,9 @@
   * Multiple capitalizations are now tried when searching for WAD files,
     for convenience when running on case sensitive filesystems (thanks
     Fabian).
+  * A new command line argument, `-strictdemos`, was added, to allow
+    more careful control over demo format extensions. Such extensions
+    are now forbidden in WAD files and warning messages are shown.
 
 ### Build systems
   * There is better compatibility with BSD Make (thanks R.Rebello)

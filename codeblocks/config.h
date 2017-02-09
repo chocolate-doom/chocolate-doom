@@ -10,6 +10,7 @@
 
 /* Define to the full name and version of this package. */
 #define PACKAGE_STRING "Lemon Doom 0.1"
+#define PACKAGE_STRING "Chocolate Doom 2.3.0"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "lemon-doom"
@@ -24,7 +25,7 @@
 #define STDC_HEADERS 1
 
 /* Version number of package */
-#define VERSION "0.1"
+#define VERSION "2.3.0"
 
 /* Define to 1 if your processor stores words with the most significant byte
    first (like Motorola and SPARC, unlike Intel and VAX). */

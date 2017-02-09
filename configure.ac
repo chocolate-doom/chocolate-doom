@@ -2,7 +2,7 @@ AC_INIT(Lemon Doom, 0.1, aynrandjuggalo@gmail.com, lemon-doom)
 
 PACKAGE_SHORTNAME=${PACKAGE_NAME% Doom}
 PACKAGE_SHORTDESC="Limit-raising clone of Chocolate Doom"
-PACKAGE_COPYRIGHT="Copyright (C) 1993-2015"
+PACKAGE_COPYRIGHT="Copyright (C) 1993-2017"
 PACKAGE_LICENSE="GNU General Public License, version 2"
 PACKAGE_MAINTAINER="Mike DeRuiter"
 PACKAGE_URL=""
