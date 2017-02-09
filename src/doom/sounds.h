@@ -221,6 +221,12 @@ typedef enum
     sfx_skesit,
     sfx_skeatk,
     sfx_radio,
+    // [crispy] additional BOOM and MBF states, sprites and code pointers
+    sfx_dgsit,
+    sfx_dgatk,
+    sfx_dgact,
+    sfx_dgdth,
+    sfx_dgpain,
     // [crispy] play DSSECRET if available
     sfx_secret,
     NUMSFX

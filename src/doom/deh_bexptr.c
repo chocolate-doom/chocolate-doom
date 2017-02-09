@@ -99,6 +99,13 @@ extern void A_BrainSpit();
 extern void A_SpawnSound();
 extern void A_SpawnFly();
 extern void A_BrainExplode();
+// [crispy] additional BOOM and MBF states, sprites and code pointers
+extern void A_Stop();
+extern void A_Die();
+extern void A_FireOldBFG();
+extern void A_Detonate();
+extern void A_Mushroom();
+extern void A_BetaSkullAttack();
 
 typedef struct {
     const char *mnemonic;
@@ -180,6 +187,13 @@ static const bex_codeptr_t bex_codeptrtable[] = {
     {"SpawnSound", {A_SpawnSound}},
     {"SpawnFly", {A_SpawnFly}},
     {"BrainExplode", {A_BrainExplode}},
+    // [crispy] additional BOOM and MBF states, sprites and code pointers
+    {"Stop", {A_Stop}},
+    {"Die", {A_Die}},
+    {"FireOldBFG", {A_FireOldBFG}},
+    {"Detonate", {A_Detonate}},
+    {"Mushroom", {A_Mushroom}},
+    {"BetaSkullAttack", {A_BetaSkullAttack}},
     {"NULL", {NULL}},
 };
 

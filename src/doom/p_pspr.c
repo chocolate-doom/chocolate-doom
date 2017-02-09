@@ -57,10 +57,9 @@ static const int recoil_values[][2] = {
 
 // [crispy] add weapon recoil
 // adapted from prboom-plus/src/p_pspr.c:484-495 (A_FireSomething ())
+extern void P_Thrust (player_t* player, angle_t angle, fixed_t move);
 void A_Recoil (player_t* player)
 {
-    extern void P_Thrust (player_t* player, angle_t angle, fixed_t move);
-
     if (singleplayer && crispy_recoil && !(player->mo->flags & MF_NOCLIP))
 	P_Thrust(player, ANG180 + player->mo->angle, 2048 * recoil_values[player->readyweapon][0]);
 
@@ -949,4 +948,69 @@ void P_MovePsprites (player_t* player)
     player->psprites[ps_flash].sy = player->psprites[ps_weapon].sy;
 }
 
+// [crispy] additional BOOM and MBF states, sprites and code pointers
+
+//
+// A_FireOldBFG
+//
+// This function emulates Doom's Pre-Beta BFG
+// By Lee Killough 6/6/98, 7/11/98, 7/19/98, 8/20/98
+//
+// This code may not be used in other mods without appropriate credit given.
+// Code leeches will be telefragged.
+
+void A_FireOldBFG(player_t *player, pspdef_t *psp)
+{
+  int type = MT_PLASMA1;
+  extern void P_CheckMissileSpawn (mobj_t* th);
+
+  if (crispy_recoil && !(player->mo->flags & MF_NOCLIP))
+    P_Thrust(player, ANG180 + player->mo->angle,
+	     512*recoil_values[wp_plasma][0]);
+
+  player->ammo[weaponinfo[player->readyweapon].ammo]--;
+
+  player->extralight = 2;
+
+  do
+    {
+      mobj_t *th, *mo = player->mo;
+      angle_t an = mo->angle;
+      angle_t an1 = ((P_Random(/* pr_bfg */)&127) - 64) * (ANG90/768) + an;
+      angle_t an2 = ((P_Random(/* pr_bfg */)&127) - 64) * (ANG90/640) + ANG90;
+/*
+      extern int autoaim;
+
+      if (autoaim || !beta_emulation)
+	{
+	  // killough 8/2/98: make autoaiming prefer enemies
+	  int mask = MF_FRIEND;
+	  fixed_t slope;
+	  do
+	    {
+	      slope = P_AimLineAttack(mo, an, 16*64*FRACUNIT, mask);
+	      if (!linetarget)
+		slope = P_AimLineAttack(mo, an += 1<<26, 16*64*FRACUNIT, mask);
+	      if (!linetarget)
+		slope = P_AimLineAttack(mo, an -= 2<<26, 16*64*FRACUNIT, mask);
+	      if (!linetarget)
+		slope = 0, an = mo->angle;
+	    }
+	  while (mask && (mask=0, !linetarget));     // killough 8/2/98
+	  an1 += an - mo->angle;
+	  an2 += tantoangle[slope >> DBITS];
+	}
+*/
+      th = P_SpawnMobj(mo->x, mo->y,
+		       mo->z + 62*FRACUNIT - player->psprites[ps_weapon].sy,
+		       type);
+//    P_SetTarget(&th->target, mo);
+      th->angle = an1;
+      th->momx = finecosine[an1>>ANGLETOFINESHIFT] * 25;
+      th->momy = finesine[an1>>ANGLETOFINESHIFT] * 25;
+      th->momz = finetangent[an2>>ANGLETOFINESHIFT] * 25;
+      P_CheckMissileSpawn(th);
+    }
+  while ((type != MT_PLASMA2) && (type = MT_PLASMA2)); //killough: obfuscated!
+}
 
