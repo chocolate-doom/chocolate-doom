@@ -28,6 +28,7 @@
 #   CONFIG_VARIABLE_INT(my_variable,       c_variable),
 #
 
+import io
 import sys
 import os
 import re
@@ -35,6 +36,14 @@ import glob
 import getopt
 
 INCLUDE_STATEMENT_RE = re.compile("@include\s+(\S+)")
+
+# Use appropriate stdout function for Python 2 or 3
+
+def stdout(buf):
+    if sys.version_info.major < 3:
+        sys.stdout.write(buf)
+    else:
+        sys.stdout.buffer.write(buf)
 
 # Find the maximum width of a list of parameters (for plain text output)
 
@@ -300,7 +309,7 @@ class Parameter:
 # Read list of wiki pages
 
 def read_wikipages():
-    f = open("wikipages")
+    f = io.open("wikipages", encoding='UTF-8')
 
     try:
         for line in f:
@@ -356,7 +365,7 @@ def process_file(file):
 
     current_config_file = None
 
-    f = open(file)
+    f = io.open(file, encoding='UTF-8')
 
     try:
         param = None
@@ -422,7 +431,7 @@ def process_files(path):
         process_file(path)
 
 def print_template(template_file, content):
-    f = open(template_file)
+    f = io.open(template_file, encoding='UTF-8')
 
     try:
         for line in f:
@@ -432,7 +441,7 @@ def print_template(template_file, content):
                 print_template(filename, content)
             else:
                 line = line.replace("@content", content)
-                print(line.rstrip())
+                stdout(line.rstrip().encode('UTF-8') + b'\n')
 
     finally:
         f.close()
@@ -452,7 +461,7 @@ def wiki_output(targets, template):
     read_wikipages()
 
     for t in targets:
-        print(t.wiki_output())
+        stdout(t.wiki_output().encode('UTF-8') + b'\n')
 
 def plaintext_output(targets, template_file):
 

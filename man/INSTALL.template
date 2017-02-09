@@ -117,9 +117,9 @@ From the command line it is possible to combine these files into a
 single large file, using a command similar to the following:
 
 #if _WIN32
-   copy doom_se.1+doom_se.2+doom_se.3+doom_se.4+doom_se.5 doom_se.lha
+   copy doom_se.1+doom_se.2+doom_se.3+doom_se.4+doom_se.5 doom_se.lzh
 #else
-   cat doom_se.1 doom_se.2 doom_se.3 doom_se.4 doom_se.5 > doom_se.lha
+   cat doom_se.1 doom_se.2 doom_se.3 doom_se.4 doom_se.5 > doom_se.lzh
 #endif
 
 The resulting file is an LHA archive file, and it can be extracted
