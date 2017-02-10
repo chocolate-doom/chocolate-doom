@@ -582,6 +582,11 @@ void R_ProjectSprite (mobj_t* thing)
 		 thing->sprite);
 #endif
     sprdef = &sprites[thing->sprite];
+    // [crispy] the TNT1 sprite is not supposed to be rendered anyway
+    if (!sprdef->numframes && thing->sprite == SPR_TNT1)
+    {
+	return;
+    }
 #ifdef RANGECHECK
     if ( (thing->frame&FF_FRAMEMASK) >= sprdef->numframes )
 	I_Error ("R_ProjectSprite: invalid sprite frame %i : %i ",
@@ -842,6 +847,11 @@ void R_DrawPSprite (pspdef_t* psp, psprnum_t psprnum) // [crispy] differentiate 
 		 psp->state->sprite);
 #endif
     sprdef = &sprites[psp->state->sprite];
+    // [crispy] the TNT1 sprite is not supposed to be rendered anyway
+    if (!sprdef->numframes && psp->state->sprite == SPR_TNT1)
+    {
+	return;
+    }
 #ifdef RANGECHECK
     if ( (psp->state->frame & FF_FRAMEMASK)  >= sprdef->numframes)
 	I_Error ("R_ProjectSprite: invalid sprite frame %i : %i ",
