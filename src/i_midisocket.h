@@ -15,26 +15,26 @@
 //     Client Interface to RPC Midi Server
 //
 
-#ifndef I_MIDIRPC_H__
-#define I_MIDIRPC_H__
+#ifndef __I_MIDISOCKET__
+#define __I_MIDISOCKET__
 
-#ifdef EE_FEATURE_MIDIRPC
+#if _WIN32
 
-bool I_MidiRPCInitServer();
-bool I_MidiRPCInitClient();
-void I_MidiRPCClientShutDown();
-bool I_MidiRPCReady();
+#include "doomtype.h"
 
-bool I_MidiRPCRegisterSong(void *data, int size);
-bool I_MidiRPCPlaySong(bool looping);
-bool I_MidiRPCStopSong();
-bool I_MidiRPCSetVolume(int volume);
-bool I_MidiRPCPauseSong();
-bool I_MidiRPCResumeSong();
+boolean I_MidiSocketInitServer();
+boolean I_MidiSocketInitClient();
+void I_MidiSocketClientShutDown();
+boolean I_MidiSocketReady();
+
+boolean I_MidiSocketRegisterSong(const char *filename);
+boolean I_MidiSocketPlaySong(boolean looping);
+boolean I_MidiSocketStopSong();
+boolean I_MidiSocketSetVolume(int volume);
+boolean I_MidiSocketPauseSong();
+boolean I_MidiSocketResumeSong();
 
 #endif
 
 #endif
-
-// EOF
 

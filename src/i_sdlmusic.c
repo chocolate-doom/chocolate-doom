@@ -25,6 +25,8 @@
 #include "SDL.h"
 #include "SDL_mixer.h"
 
+#include "i_midisocket.h"
+
 #include "config.h"
 #include "doomtype.h"
 #include "memio.h"
@@ -972,6 +974,10 @@ static boolean I_SDL_InitMusic(void)
         LoadSubstituteConfigs();
     }
 
+#if WIN32
+    I_MidiSocketInitServer();
+#endif
+
     return music_initialized;
 }
 
@@ -993,7 +999,11 @@ static void UpdateMusicVolume(void)
         vol = (current_music_volume * MIX_MAX_VOLUME) / 127;
     }
 
+#if WIN32
+    I_MidiSocketSetVolume(vol);
+#else
     Mix_VolumeMusic(vol);
+#endif
 }
 
 // Set music volume (0 - 127)
@@ -1044,7 +1054,11 @@ static void I_SDL_PlaySong(void *handle, boolean looping)
         SDL_UnlockAudio();
     }
 
+#if _WIN32
+    I_MidiSocketPlaySong(loops);
+#else
     Mix_PlayMusic(current_track_music, loops);
+#endif
 }
 
 static void I_SDL_PauseSong(void)
@@ -1078,7 +1092,12 @@ static void I_SDL_StopSong(void)
         return;
     }
 
+#if _WIN32
+    I_MidiSocketStopSong();
+#else
     Mix_HaltMusic();
+#endif
+
     playing_substitute = false;
     current_track_music = NULL;
 }
@@ -1189,7 +1208,11 @@ static void *I_SDL_RegisterSong(void *data, int len)
     // by now, but Mix_SetMusicCMD() only works with Mix_LoadMUS(), so
     // we have to generate a temporary file.
 
+#ifdef _WIN32
+    music = (Mix_Music*)I_MidiSocketRegisterSong(filename);
+#else
     music = Mix_LoadMUS(filename);
+#endif
 
     if (music == NULL)
     {
