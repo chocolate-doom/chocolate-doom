@@ -379,7 +379,8 @@ static int S_AdjustSoundParams(mobj_t *listener, mobj_t *source,
     // From _GG1_ p.428. Appox. eucledian distance fast.
     approx_dist = adx + ady - ((adx < ady ? adx : ady)>>1);
 
-    if (gamemap != 8 && approx_dist > S_CLIPPING_DIST)
+    // [crispy] proper sound clipping in non-Doom1 MAP08
+    if ((gamemap != 8 || gamemode == commercial) && approx_dist > S_CLIPPING_DIST)
     {
         return 0;
     }
