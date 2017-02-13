@@ -17,6 +17,8 @@
 
 #include "buffer.h"
 
+#include <stdlib.h>
+
 //
 // Create a new buffer.
 //
@@ -33,7 +35,7 @@ buffer_t *NewBuffer()
 //
 // Free a buffer.
 //
-void DeleteBuffer(buffer_t* buf)
+void DeleteBuffer(buffer_t *buf)
 {
     free(buf);
 }
@@ -54,6 +56,7 @@ boolean Buffer_Push(buffer_t *buf, const void *data, int len)
 {
     if (len <= 0)
     {
+        // Do nothing, successfully.
         return true;
     }
 
@@ -90,12 +93,14 @@ void Buffer_Shift(buffer_t *buf, int len)
 {
     if (len <= 0)
     {
+        // Do nothing.
         return;
     }
 
     ptrdiff_t max_shift = buf->data_end - buf->data;
     if (len >= max_shift)
     {
+        // If the operation would clear the buffer, just zero everything.
         Buffer_Clear(buf);
     }
     else
