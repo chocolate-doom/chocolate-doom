@@ -33,13 +33,13 @@
 #pragma pack(push, 1)
 #endif
 
-typedef struct
+typedef PACKEDPREFIX struct
 {
     byte chunk_id[4];
     unsigned int chunk_size;
 } PACKEDATTR chunk_header_t;
 
-typedef struct
+typedef PACKEDPREFIX struct
 {
     chunk_header_t chunk_header;
     unsigned short format_type;

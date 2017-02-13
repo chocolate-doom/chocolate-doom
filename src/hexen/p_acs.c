@@ -45,7 +45,7 @@
 
 // TYPES -------------------------------------------------------------------
 
-typedef struct
+typedef PACKEDPREFIX struct
 {
     int marker;
     int infoOffset;

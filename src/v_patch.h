@@ -37,7 +37,7 @@ typedef struct
 } PACKEDATTR patch_t;
 
 // posts are runs of non masked source pixels
-typedef struct
+typedef PACKEDPREFIX struct
 {
     byte		topdelta;	// -1 is the last post in a column
     byte		length; 	// length data bytes follows

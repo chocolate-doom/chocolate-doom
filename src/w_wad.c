@@ -35,7 +35,7 @@
 
 #include "w_wad.h"
 
-typedef struct
+typedef PACKEDPREFIX struct
 {
     // Should be "IWAD" or "PWAD".
     char		identification[4];
@@ -44,7 +44,7 @@ typedef struct
 } PACKEDATTR wadinfo_t;
 
 
-typedef struct
+typedef PACKEDPREFIX struct
 {
     int			filepos;
     int			size;

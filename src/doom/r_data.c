@@ -56,7 +56,7 @@
 // into the rectangular texture space using origin
 // and possibly other attributes.
 //
-typedef struct
+typedef PACKEDPREFIX struct
 {
     short	originx;
     short	originy;
@@ -71,7 +71,7 @@ typedef struct
 // A DOOM wall texture is a list of patches
 // which are to be combined in a predefined order.
 //
-typedef struct
+typedef PACKEDPREFIX struct
 {
     char		name[8];
     int			masked;	

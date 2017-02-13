@@ -63,7 +63,13 @@
 #define PACKEDATTR
 #endif
 
-// C99 integer types; with gcc we just use this.  Other compilers 
+#ifdef __WATCOMC__
+#define PACKEDPREFIX _Packed
+#else
+#define PACKEDPREFIX
+#endif
+
+// C99 integer types; with gcc we just use this.  Other compilers
 // should add conditional statements that define the C99 types.
 
 // What is really wanted here is stdint.h; however, some old versions

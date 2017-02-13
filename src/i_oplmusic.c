@@ -46,7 +46,7 @@
 
 #define PERCUSSION_LOG_LEN 16
 
-typedef struct
+typedef PACKEDPREFIX struct
 {
     byte tremolo;
     byte attack;
@@ -56,7 +56,7 @@ typedef struct
     byte level;
 } PACKEDATTR genmidi_op_t;
 
-typedef struct
+typedef PACKEDPREFIX struct
 {
     genmidi_op_t modulator;
     byte feedback;
@@ -65,7 +65,7 @@ typedef struct
     short base_note_offset;
 } PACKEDATTR genmidi_voice_t;
 
-typedef struct
+typedef PACKEDPREFIX struct
 {
     unsigned short flags;
     byte fine_tuning;

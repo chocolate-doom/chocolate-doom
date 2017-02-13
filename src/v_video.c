@@ -619,7 +619,7 @@ void V_RestoreBuffer(void)
 // SCREEN SHOTS
 //
 
-typedef struct
+typedef PACKEDPREFIX struct
 {
     char		manufacturer;
     char		version;

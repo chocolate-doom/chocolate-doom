@@ -48,12 +48,12 @@ enum
 };
 
 
-typedef struct
+typedef PACKEDPREFIX struct
 {
     short x, y;
 } PACKEDATTR mapvertex_t;
 
-typedef struct
+typedef PACKEDPREFIX struct
 {
     short textureoffset;
     short rowoffset;
@@ -61,7 +61,7 @@ typedef struct
     short sector;               // on viewer's side
 } PACKEDATTR mapsidedef_t;
 
-typedef struct
+typedef PACKEDPREFIX struct
 {
     short v1, v2;
     short flags;
@@ -88,7 +88,7 @@ typedef struct
 #define	ML_MAPPED			256     // set if allready drawn in automap
 
 
-typedef struct
+typedef PACKEDPREFIX struct
 {
     short floorheight, ceilingheight;
     char floorpic[8], ceilingpic[8];
@@ -96,13 +96,13 @@ typedef struct
     short special, tag;
 } PACKEDATTR mapsector_t;
 
-typedef struct
+typedef PACKEDPREFIX struct
 {
     short numsegs;
     short firstseg;             // segs are stored sequentially
 } PACKEDATTR mapsubsector_t;
 
-typedef struct
+typedef PACKEDPREFIX struct
 {
     short v1, v2;
     short angle;
@@ -111,14 +111,14 @@ typedef struct
 } PACKEDATTR mapseg_t;
 
 #define	NF_SUBSECTOR	0x8000
-typedef struct
+typedef PACKEDPREFIX struct
 {
     short x, y, dx, dy;         // partition line
     short bbox[2][4];           // bounding box for each child
     unsigned short children[2]; // if NF_SUBSECTOR its a subsector
 } PACKEDATTR mapnode_t;
 
-typedef struct
+typedef PACKEDPREFIX struct
 {
     short x, y;
     short angle;
@@ -139,7 +139,7 @@ typedef struct
 ===============================================================================
 */
 
-typedef struct
+typedef PACKEDPREFIX struct
 {
     short originx;
     short originy;
@@ -148,7 +148,7 @@ typedef struct
     short colormap;
 } PACKEDATTR mappatch_t;
 
-typedef struct
+typedef PACKEDPREFIX struct
 {
     char name[8];
     boolean masked;

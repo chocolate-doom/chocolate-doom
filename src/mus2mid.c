@@ -53,7 +53,7 @@ typedef enum
 } midievent;
 
 // Structure to hold MUS file header
-typedef struct
+typedef PACKEDPREFIX struct
 {
     byte id[4];
     unsigned short scorelength;

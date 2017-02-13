@@ -44,13 +44,13 @@ enum
     ML_BEHAVIOR
 };
 
-typedef struct
+typedef PACKEDPREFIX struct
 {
     short x;
     short y;
 } PACKEDATTR mapvertex_t;
 
-typedef struct
+typedef PACKEDPREFIX struct
 {
     short textureoffset;
     short rowoffset;
@@ -60,7 +60,7 @@ typedef struct
     short sector;               // on viewer's side
 } PACKEDATTR mapsidedef_t;
 
-typedef struct
+typedef PACKEDPREFIX struct
 {
     short v1;
     short v2;
@@ -96,7 +96,7 @@ typedef struct
 #define SPAC_PUSH		4       // when player/monster pushes line
 #define SPAC_PCROSS		5       // when projectile crosses line
 
-typedef struct
+typedef PACKEDPREFIX struct
 {
     short floorheight;
     short ceilingheight;
@@ -107,13 +107,13 @@ typedef struct
     short tag;
 } PACKEDATTR mapsector_t;
 
-typedef struct
+typedef PACKEDPREFIX struct
 {
     short numsegs;
     short firstseg;             // segs are stored sequentially
 } PACKEDATTR mapsubsector_t;
 
-typedef struct
+typedef PACKEDPREFIX struct
 {
     short v1;
     short v2;
@@ -124,14 +124,14 @@ typedef struct
 } PACKEDATTR mapseg_t;
 
 #define	NF_SUBSECTOR	0x8000
-typedef struct
+typedef PACKEDPREFIX struct
 {
     short x, y, dx, dy;         // partition line
     short bbox[2][4];           // bounding box for each child
     unsigned short children[2]; // if NF_SUBSECTOR its a subsector
 } PACKEDATTR mapnode_t;
 
-typedef struct
+typedef PACKEDPREFIX struct
 {
     short tid;
     short x;
@@ -166,7 +166,7 @@ typedef struct
 //
 //--------------------------------------------------------------------------
 
-typedef struct
+typedef PACKEDPREFIX struct
 {
     short originx;
     short originy;
@@ -175,7 +175,7 @@ typedef struct
     short colormap;
 } PACKEDATTR mappatch_t;
 
-typedef struct
+typedef PACKEDPREFIX struct
 {
     char name[8];
     boolean masked;
