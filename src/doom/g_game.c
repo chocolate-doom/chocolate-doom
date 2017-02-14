@@ -425,6 +425,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
             crstr[CR_GREEN],
             (joybspeed >= MAX_JOY_BUTTONS) ? "ON" : "OFF");
         players[consoleplayer].message = autorunmsg;
+        S_StartSound(NULL, sfx_swtchn);
 
         gamekeydown[key_toggleautorun] = false;
     }
