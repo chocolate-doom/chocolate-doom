@@ -103,6 +103,10 @@ fixed_t         offsetms;
 
 static boolean  new_sync = true;
 
+// Enforce pistol start if -pistolstart is set
+
+extern boolean  pistolstart;
+
 // Callback functions for loop code.
 
 static loop_interface_t *loop_interface = NULL;
@@ -432,6 +436,7 @@ void D_StartNetGame(net_gamesettings_t *settings,
 
     ticdup = settings->ticdup;
     new_sync = settings->new_sync;
+    pistolstart = settings->pistolstart;
 
     // TODO: Message disabled until we fix new_sync.
     //if (!new_sync)

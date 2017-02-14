@@ -603,6 +603,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
 void G_DoLoadLevel (void) 
 { 
     int             i; 
+    extern int      pistolstart;
 
     // Set the sky map.
     // First thing, we have a dummy sky texture name,
@@ -651,7 +652,15 @@ void G_DoLoadLevel (void)
 	    players[i].playerstate = PST_REBORN; 
 	memset (players[i].frags,0,sizeof(players[i].frags)); 
     } 
-		 
+	
+    if (pistolstart && !demorecording && !demoplayback)
+    {
+        for (i = 0; i < MAXPLAYERS; i++)
+        {
+            G_PlayerReborn(i);
+        }
+    }
+
     P_SetupLevel (gameepisode, gamemap, 0, gameskill);    
     displayplayer = consoleplayer;		// view the guy you are playing    
     gameaction = ga_nothing; 
