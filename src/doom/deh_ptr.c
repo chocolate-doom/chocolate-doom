@@ -49,8 +49,22 @@ static void DEH_PointerInit(void)
     
     // Initialize list of dehacked pointers
 
-    for (i=0; i<NUMSTATES; ++i)
+    for (i=0; i<EXTRASTATES; ++i)
         codeptrs[i] = states[i].action;
+
+    // [BH] Initialize extra dehacked states
+    for (; i < NUMSTATES; i++)
+    {
+	states[i].sprite = SPR_TNT1;
+	states[i].frame = 0;
+	states[i].tics = -1;
+	states[i].action.acv = (actionf_v) NULL;
+	states[i].nextstate = i;
+	states[i].misc1 = 0;
+	states[i].misc2 = 0;
+//	states[i].dehacked = false;
+	codeptrs[i] = states[i].action;
+    }
 }
 
 static void *DEH_PointerStart(deh_context_t *context, char *line)
