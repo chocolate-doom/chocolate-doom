@@ -106,6 +106,14 @@ extern void A_FireOldBFG();
 extern void A_Detonate();
 extern void A_Mushroom();
 extern void A_BetaSkullAttack();
+// [crispy] more MBF code pointers
+extern void A_Spawn();
+extern void A_Turn();
+extern void A_Face();
+extern void A_Scratch();
+extern void A_PlaySound();
+extern void A_RandomJump();
+extern void A_LineEffect();
 
 typedef struct {
     const char *mnemonic;
@@ -194,6 +202,14 @@ static const bex_codeptr_t bex_codeptrtable[] = {
     {"Detonate", {A_Detonate}},
     {"Mushroom", {A_Mushroom}},
     {"BetaSkullAttack", {A_BetaSkullAttack}},
+    // [crispy] more MBF code pointers
+    {"Spawn", {A_Spawn}},
+    {"Turn", {A_Turn}},
+    {"Face", {A_Face}},
+    {"Scratch", {A_Scratch}},
+    {"PlaySound", {A_PlaySound}},
+    {"RandomJump", {A_RandomJump}},
+    {"LineEffect", {A_LineEffect}},
     {"NULL", {NULL}},
 };
 

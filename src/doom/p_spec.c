@@ -563,10 +563,20 @@ P_CrossSpecialLine
   int		side,
   mobj_t*	thing )
 {
-    line_t*	line;
+    return P_CrossSpecialLinePtr(&lines[linenum], side, thing);
+}
+
+// [crispy] more MBF code pointers
+void
+P_CrossSpecialLinePtr
+( line_t*	line,
+  int		side,
+  mobj_t*	thing )
+{
+//  line_t*	line;
     int		ok;
 
-    line = &lines[linenum];
+//  line = &lines[linenum];
     
     //	Triggers that other things can activate
     if (!thing->player)

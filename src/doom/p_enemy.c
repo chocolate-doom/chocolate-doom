@@ -2154,3 +2154,75 @@ void A_Stop(mobj_t *actor)
 {
   actor->momx = actor->momy = actor->momz = 0;
 }
+
+//
+// killough 11/98
+//
+// The following were inspired by Len Pitre
+//
+// A small set of highly-sought-after code pointers
+//
+
+void A_Spawn(mobj_t *mo)
+{
+  if (mo->state->misc1)
+    {
+/*    mobj_t *newmobj = */ P_SpawnMobj(mo->x, mo->y,
+				    (mo->state->misc2 << FRACBITS) + mo->z,
+				    mo->state->misc1 - 1);
+//    newmobj->flags = (newmobj->flags & ~MF_FRIEND) | (mo->flags & MF_FRIEND);
+
+    }
+}
+
+void A_Turn(mobj_t *mo)
+{
+  mo->angle += (angle_t)(((uint64_t) mo->state->misc1 << 32) / 360);
+}
+
+void A_Face(mobj_t *mo)
+{
+  mo->angle = (angle_t)(((uint64_t) mo->state->misc1 << 32) / 360);
+}
+
+void A_Scratch(mobj_t *mo)
+{
+  mo->target && (A_FaceTarget(mo), P_CheckMeleeRange(mo)) ?
+    mo->state->misc2 ? S_StartSound(mo, mo->state->misc2) : (void) 0,
+    P_DamageMobj(mo->target, mo, mo, mo->state->misc1) : (void) 0;
+}
+
+void A_PlaySound(mobj_t *mo)
+{
+  S_StartSound(mo->state->misc2 ? NULL : mo, mo->state->misc1);
+}
+
+void A_RandomJump(mobj_t *mo)
+{
+  if (Crispy_Random() /* P_Random(pr_randomjump) */ < mo->state->misc2)
+    P_SetMobjState(mo, mo->state->misc1);
+}
+
+//
+// This allows linedef effects to be activated inside deh frames.
+//
+
+void A_LineEffect(mobj_t *mo)
+{
+//if (!(mo->intflags & MIF_LINEDONE))                // Unless already used up
+    {
+      line_t junk = *lines;                          // Fake linedef set to 1st
+      if ((junk.special = (short)mo->state->misc1))  // Linedef type
+	{
+	  player_t player, *oldplayer = mo->player;  // Remember player status
+	  mo->player = &player;                      // Fake player
+	  player.health = 100;                       // Alive player
+	  junk.tag = (short)mo->state->misc2;        // Sector tag for linedef
+	  if (!P_UseSpecialLine(mo, &junk, 0))       // Try using it
+	    P_CrossSpecialLinePtr(&junk, 0, mo);     // Try crossing it
+//	  if (!junk.special)                         // If type cleared,
+//	    mo->intflags |= MIF_LINEDONE;            // no more for this thing
+	  mo->player = oldplayer;                    // Restore player status
+	}
+    }
+}

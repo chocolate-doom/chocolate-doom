@@ -62,6 +62,13 @@ P_CrossSpecialLine
   int		side,
   mobj_t*	thing );
 
+// [crispy] more MBF code pointers
+void
+P_CrossSpecialLinePtr
+( line_t*	line,
+  int		side,
+  mobj_t*	thing );
+
 void    P_PlayerInSpecialSector (player_t* player);
 
 int
