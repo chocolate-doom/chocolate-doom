@@ -121,22 +121,125 @@ void Buffer_Clear(buffer_t *buf)
 }
 
 //
-// Create a new buffer reader
+// Create a new buffer reader.
+//
+// WARNING: This reader will invalidate if the underlying buffer changes.
+//          Use it, then delete it before you touch the underlying buffer again.
 //
 buffer_reader_t *NewReader(buffer_t* buffer)
 {
     buffer_reader_t *reader = malloc(sizeof(buffer_reader_t));
 
     reader->buffer = buffer;
-    reader->pos = 0;
+    reader->pos = buffer->data;
 
     return reader;
 }
 
 //
-// Delete a buffer reader
+// Delete a buffer reader.
 //
 void DeleteReader(buffer_reader_t *reader)
 {
     free(reader);
+}
+
+//
+// Count the number of bytes read thus far.
+//
+int Reader_BytesRead(buffer_reader_t *reader)
+{
+    return reader->pos - reader->buffer->data;
+}
+
+//
+// Read an unsigned byte from a buffer.
+//
+boolean Reader_ReadInt8(buffer_reader_t *reader, uint8_t *out)
+{
+    byte *data, *data_end;
+    int len = Buffer_Data(reader->buffer, &data);
+
+    data_end = data + len;
+
+    if (data_end - reader->pos < 1)
+    {
+        return false;
+    }
+
+    *out = (uint8_t)*reader->pos;
+    reader->pos += 1;
+
+    return true;
+}
+
+//
+// Read an unsigned short from a buffer.
+//
+boolean Reader_ReadInt16(buffer_reader_t *reader, uint16_t *out)
+{
+    byte *data, *data_end, *dp;
+    int len = Buffer_Data(reader->buffer, &data);
+
+    data_end = data + len;
+    dp = reader->pos;
+
+    if (data_end - reader->pos < 2)
+    {
+        return false;
+    }
+
+    *out = (uint16_t)((dp[0] << 8) | dp[1]);
+    reader->pos += 2;
+
+    return true;
+}
+
+//
+// Read an unsigned int from a buffer.
+//
+boolean Reader_ReadInt32(buffer_reader_t *reader, uint32_t *out)
+{
+    byte *data, *data_end, *dp;
+    int len = Buffer_Data(reader->buffer, &data);
+
+    data_end = data + len;
+    dp = reader->pos;
+
+    if (data_end - reader->pos < 4)
+    {
+        return false;
+    }
+
+    *out = (uint32_t)((dp[0] << 24) | (dp[1] << 16) | (dp[2] << 8) | dp[3]);
+    reader->pos += 4;
+
+    return true;
+}
+
+//
+// Read a string from a buffer.
+//
+char *Reader_ReadString(buffer_reader_t *reader)
+{
+    byte *data, *data_start, *data_end, *dp;
+    int len = Buffer_Data(reader->buffer, &data);
+
+    data_start = reader->pos;
+    data_end = data + len;
+    dp = reader->pos;
+
+    while (dp < data_end && *dp != '\0')
+    {
+        dp++;
+    }
+
+    if (dp >= data_end)
+    {
+        // Didn't see a null terminator, not a complete string.
+        return NULL;
+    }
+
+    reader->pos = dp + 1;
+    return (char*)data_start;
 }
