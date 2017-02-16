@@ -752,11 +752,12 @@ void M_ReadSaveStrings(void)
 //
 // M_LoadGame & Cie.
 //
+static int LoadDef_x = 72, LoadDef_y = 28;
 void M_DrawLoad(void)
 {
     int             i;
 	
-    V_DrawPatchDirect(72, 28, 
+    V_DrawPatchDirect(LoadDef_x, LoadDef_y,
                       W_CacheLumpName(DEH_String("M_LOADG"), PU_CACHE));
 
     for (i = 0;i < load_end; i++)
@@ -842,11 +843,12 @@ void M_LoadGame (int choice)
 //
 //  M_SaveGame & Cie.
 //
+static int SaveDef_x = 72, SaveDef_y = 28;
 void M_DrawSave(void)
 {
     int             i;
 	
-    V_DrawPatchDirect(72, 28, W_CacheLumpName(DEH_String("M_SAVEG"), PU_CACHE));
+    V_DrawPatchDirect(SaveDef_x, SaveDef_y, W_CacheLumpName(DEH_String("M_SAVEG"), PU_CACHE));
     for (i = 0;i < load_end; i++)
     {
 	M_DrawSaveLoadBorder(LoadDef.x,LoadDef.y+LINEHEIGHT*i);
@@ -3053,6 +3055,32 @@ void M_Init (void)
     else if (gameversion == exe_chex)
     {
         EpiDef.numitems = 1;
+    }
+
+    {
+	const patch_t *patchl, *patchs;
+	int captionheight, vstep;
+
+	patchl = W_CacheLumpName("M_LOADG", PU_CACHE);
+	patchs = W_CacheLumpName("M_SAVEG", PU_CACHE);
+
+	captionheight = MAX(SHORT(patchl->height), SHORT(patchs->height));
+
+	vstep = ORIGHEIGHT - 32; // [crispy] ST_HEIGHT
+	vstep -= captionheight;
+	vstep -= load_end * LINEHEIGHT - 7;
+	vstep /= 3;
+
+	LoadDef_x = (ORIGWIDTH - SHORT(patchl->width)) / 2 + SHORT(patchl->leftoffset);
+	SaveDef_x = (ORIGWIDTH - SHORT(patchs->width)) / 2 + SHORT(patchs->leftoffset);
+	LoadDef.x = SaveDef.x = (ORIGWIDTH - 26 * 8) / 2 + 8;
+
+	if (vstep > 0)
+	{
+		LoadDef_y = vstep + captionheight - SHORT(patchl->height);
+		SaveDef_y = vstep + captionheight - SHORT(patchs->height);
+		LoadDef.y = SaveDef.y = vstep + captionheight + vstep;
+	}
     }
 
     opldev = M_CheckParm("-opldev") > 0;
