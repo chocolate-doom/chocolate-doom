@@ -740,6 +740,10 @@ void I_FinishUpdate (void)
     if (palette_to_set)
     {
         SDL_SetPaletteColors(screenbuffer->format->palette, palette, 0, 256);
+        // "flash" the pillars/letterboxes with palette changes, emulating
+        // VGA "porch" behaviour (GitHub issue #832)
+        SDL_SetRenderDrawColor(renderer, palette[0].r, palette[0].g,
+            palette[0].b, SDL_ALPHA_OPAQUE);
         palette_to_set = false;
     }
 
