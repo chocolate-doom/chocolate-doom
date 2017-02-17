@@ -3029,6 +3029,8 @@ void M_Init (void)
     if (gameversion >= exe_final && gameversion <= exe_final2)
     {
         ReadDef2.routine = M_DrawReadThisCommercial;
+        // [crispy] rearrange Skull in Final Doom HELP screen
+        ReadDef2.y -= 10;
     }
 
     if (gamemode == commercial)
@@ -3057,29 +3059,31 @@ void M_Init (void)
         EpiDef.numitems = 1;
     }
 
+    // [crispy] rearrange Load Game and Save Game menus
     {
-	const patch_t *patchl, *patchs;
-	int captionheight, vstep;
+	const patch_t *patchl, *patchs, *patchm;
+	short captionheight, vstep;
 
 	patchl = W_CacheLumpName("M_LOADG", PU_CACHE);
 	patchs = W_CacheLumpName("M_SAVEG", PU_CACHE);
+	patchm = W_CacheLumpName("M_LSLEFT", PU_CACHE);
+
+	LoadDef_x = (ORIGWIDTH - SHORT(patchl->width)) / 2 + SHORT(patchl->leftoffset);
+	SaveDef_x = (ORIGWIDTH - SHORT(patchs->width)) / 2 + SHORT(patchs->leftoffset);
+	LoadDef.x = SaveDef.x = (ORIGWIDTH - 24 * 8) / 2 + SHORT(patchm->leftoffset); // [crispy] see M_DrawSaveLoadBorder()
 
 	captionheight = MAX(SHORT(patchl->height), SHORT(patchs->height));
 
 	vstep = ORIGHEIGHT - 32; // [crispy] ST_HEIGHT
 	vstep -= captionheight;
-	vstep -= load_end * LINEHEIGHT - 7;
+	vstep -= (load_end - 1) * LINEHEIGHT + SHORT(patchm->height);
 	vstep /= 3;
-
-	LoadDef_x = (ORIGWIDTH - SHORT(patchl->width)) / 2 + SHORT(patchl->leftoffset);
-	SaveDef_x = (ORIGWIDTH - SHORT(patchs->width)) / 2 + SHORT(patchs->leftoffset);
-	LoadDef.x = SaveDef.x = (ORIGWIDTH - 26 * 8) / 2 + 8;
 
 	if (vstep > 0)
 	{
-		LoadDef_y = vstep + captionheight - SHORT(patchl->height);
-		SaveDef_y = vstep + captionheight - SHORT(patchs->height);
-		LoadDef.y = SaveDef.y = vstep + captionheight + vstep;
+		LoadDef_y = vstep + captionheight - SHORT(patchl->height) + SHORT(patchl->topoffset);
+		SaveDef_y = vstep + captionheight - SHORT(patchs->height) + SHORT(patchs->topoffset);
+		LoadDef.y = SaveDef.y = vstep + captionheight + vstep + SHORT(patchm->topoffset) - 7; // [crispy] see M_DrawSaveLoadBorder()
 	}
     }
 
