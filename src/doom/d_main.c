@@ -154,7 +154,6 @@ boolean         crispy_fliplevels = false;
 boolean         crispy_havee1m10 = false;
 boolean         crispy_havemap33 = false;
 boolean         crispy_havessg = false;
-boolean         crispy_nwtmerge = false;
 
 int             crispy_demowarp = 0;
 char            *nervewadfile = NULL;
@@ -2009,12 +2008,6 @@ void D_DoomMain (void)
     {
         DEH_AddStringReplacement(PHUSTR_1, "level 33: betray");
     }
-
-    // [crispy] check for NWT-style merging
-    crispy_nwtmerge =
-	M_CheckParmWithArgs("-nwtmerge", 1) ||
-	M_CheckParmWithArgs("-af", 1) ||
-	M_CheckParmWithArgs("-aa", 1);
 
 #ifdef FEATURE_MULTIPLAYER
     printf ("NET_Init: Init network subsystem.\n");

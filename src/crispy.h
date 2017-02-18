@@ -46,7 +46,6 @@ extern boolean crispy_fliplevels;
 extern boolean crispy_havee1m10;
 extern boolean crispy_havemap33;
 extern boolean crispy_havessg;
-extern boolean crispy_nwtmerge;
 extern boolean crispy_showfps;
 
 #define crispy_stretchsky (crispy_freelook || crispy_mouselook || crispy_pitch)
