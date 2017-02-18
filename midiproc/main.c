@@ -300,21 +300,21 @@ boolean ParseCommand(buffer_reader_t *reader, uint16_t command)
 {
     switch (command)
     {
-    case NET_MIDISOCKET_PACKET_TYPE_PREPARE_NEW_SONG:
+    case NET_MIDIPIPE_PACKET_TYPE_PREPARE_NEW_SONG:
         return MidiPipe_PrepareNewSong();
-    case NET_MIDISOCKET_PACKET_TYPE_SET_FILENAME:
+    case NET_MIDIPIPE_PACKET_TYPE_SET_FILENAME:
         return MidiPipe_SetFilename(reader);
-    case NET_MIDISOCKET_PACKET_TYPE_PLAY_SONG:
+    case NET_MIDIPIPE_PACKET_TYPE_PLAY_SONG:
         return MidiPipe_PlaySong(reader);
-    case NET_MIDISOCKET_PACKET_TYPE_STOP_SONG:
+    case NET_MIDIPIPE_PACKET_TYPE_STOP_SONG:
         return MidiPipe_StopSong();
-    case NET_MIDISOCKET_PACKET_TYPE_CHANGE_VOLUME:
+    case NET_MIDIPIPE_PACKET_TYPE_CHANGE_VOLUME:
         return MidiPipe_ChangeVolume(reader);
-    case NET_MIDISOCKET_PACKET_TYPE_PAUSE_SONG:
+    case NET_MIDIPIPE_PACKET_TYPE_PAUSE_SONG:
         return MidiPipe_PauseSong();
-    case NET_MIDISOCKET_PACKET_TYPE_RESUME_SONG:
+    case NET_MIDIPIPE_PACKET_TYPE_RESUME_SONG:
         return MidiPipe_ResumeSong();
-    case NET_MIDISOCKET_PACKET_TYPE_STOP_SERVER:
+    case NET_MIDIPIPE_PACKET_TYPE_STOP_SERVER:
         return MidiPipe_StopServer();
     default:
         return false;
