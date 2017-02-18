@@ -23,17 +23,17 @@
 
 #include "doomtype.h"
 
-boolean I_MidiSocketInitServer();
-boolean I_MidiSocketInitClient();
-void I_MidiSocketClientShutDown();
-boolean I_MidiSocketReady();
+boolean I_MidiPipeInitServer();
+boolean I_MidiPipeInitClient();
+void I_MidiPipeClientShutDown();
+boolean I_MidiPipeReady();
 
-boolean I_MidiSocketRegisterSong(const char *filename);
-boolean I_MidiSocketPlaySong(boolean looping);
-boolean I_MidiSocketStopSong();
-boolean I_MidiSocketSetVolume(int volume);
-boolean I_MidiSocketPauseSong();
-boolean I_MidiSocketResumeSong();
+boolean I_MidiPipeRegisterSong(const char *filename);
+boolean I_MidiPipePlaySong(boolean looping);
+boolean I_MidiPipeStopSong();
+boolean I_MidiPipeSetVolume(int volume);
+boolean I_MidiPipePauseSong();
+boolean I_MidiPipeResumeSong();
 
 #endif
 
