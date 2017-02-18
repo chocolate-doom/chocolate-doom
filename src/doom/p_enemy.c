@@ -1857,7 +1857,7 @@ A_CloseShotgun2
 
 mobj_t**		braintargets = NULL;
 int		numbraintargets = 0; // [crispy] initialize
-int		braintargeton = 0;
+int		braintargeton = -1; // [crispy] initialize
 static int	maxbraintargets; // [crispy] remove braintargets limit
 
 void A_BrainAwake (mobj_t* mo)
@@ -1867,7 +1867,11 @@ void A_BrainAwake (mobj_t* mo)
 	
     // find all the target spots
     numbraintargets = 0;
+    // [crispy] initialize, but allow overriding from savegame
+    if (braintargeton == -1)
+    {
     braintargeton = 0;
+    }
 	
     thinker = thinkercap.next;
     for (thinker = thinkercap.next ;
@@ -1897,6 +1901,13 @@ void A_BrainAwake (mobj_t* mo)
     }
 	
     S_StartSound (NULL,sfx_bossit);
+
+    // [crispy] prevent braintarget overflow
+    // (e.g. in two subsequent maps featuring a brain spitter)
+    if (braintargeton >= numbraintargets)
+    {
+	braintargeton = 0;
+    }
 
     // [crispy] no spawn spots available
     if (numbraintargets == 0)

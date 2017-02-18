@@ -53,7 +53,7 @@ static void P_ReadWadFileName (const char *key)
 	if (!savewadfilename)
 	{
 		if (sscanf(line, "%s", string) == 1 &&
-			!strncmp(string, key, sizeof(string)))
+		    !strncmp(string, key, sizeof(string)))
 		{
 			if (sscanf(line, "%*s %s", string) == 1)
 			{
@@ -159,6 +159,44 @@ static void P_ReadFireFlicker (const char *key)
 	}
 }
 
+// numbraintargets, braintargeton
+
+extern int numbraintargets, braintargeton;
+
+static void P_WriteBrainTarget (const char *key)
+{
+	thinker_t *th;
+
+	for (th = thinkercap.next; th != &thinkercap; th = th->next)
+	{
+		if (th->function.acp1 == (actionf_p1)P_MobjThinker)
+		{
+			mobj_t *mo = (mobj_t *)th;
+
+			if (mo->state == &states[S_BRAINEYE1])
+			{
+				M_snprintf(line, sizeof(line), "%s %d %d\n",
+				           key,
+				           numbraintargets,
+				           braintargeton);
+				fputs(line, save_stream);
+			}
+		}
+	}
+}
+
+static void P_ReadBrainTarget (const char *key)
+{
+	int numtargets, targeton;
+
+	if (sscanf(line, "%s %d %d", string, &numtargets, &targeton) == 3 &&
+	    !strncmp(string, key, sizeof(string)))
+	{
+		numbraintargets = 0; // [crispy] force A_BrainAwake()
+		braintargeton = targeton;
+	}
+}
+
 // markpoints[]
 
 extern void AM_GetMarkPoints (int *n, long *p);
@@ -243,6 +281,7 @@ static const extsavegdata_t extsavegdata[] =
 	{"extrakills", P_WriteExtraKills, P_ReadExtraKills, 1},
 	{"totalleveltimes", P_WriteTotalLevelTimes, P_ReadTotalLevelTimes, 1},
 	{"fireflicker", P_WriteFireFlicker, P_ReadFireFlicker, 1},
+	{"braintarget", P_WriteBrainTarget, P_ReadBrainTarget, 1},
 	{"markpoints", P_WriteMarkPoints, P_ReadMarkPoints, 1},
 	{"playerslookdir", P_WritePlayersLookdir, P_ReadPlayersLookdir, 1},
 };
