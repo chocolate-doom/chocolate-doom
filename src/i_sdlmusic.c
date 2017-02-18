@@ -25,7 +25,7 @@
 #include "SDL.h"
 #include "SDL_mixer.h"
 
-#include "i_midisocket.h"
+#include "i_midipipe.h"
 
 #include "config.h"
 #include "doomtype.h"
@@ -975,7 +975,7 @@ static boolean I_SDL_InitMusic(void)
     }
 
 #if WIN32
-    I_MidiSocketInitServer();
+    I_MidiPipeInitServer();
 #endif
 
     return music_initialized;
@@ -1000,7 +1000,7 @@ static void UpdateMusicVolume(void)
     }
 
 #if WIN32
-    I_MidiSocketSetVolume(vol);
+    I_MidiPipeSetVolume(vol);
 #else
     Mix_VolumeMusic(vol);
 #endif
@@ -1055,7 +1055,7 @@ static void I_SDL_PlaySong(void *handle, boolean looping)
     }
 
 #if _WIN32
-    I_MidiSocketPlaySong(loops);
+    I_MidiPipePlaySong(loops);
 #else
     Mix_PlayMusic(current_track_music, loops);
 #endif
@@ -1093,7 +1093,7 @@ static void I_SDL_StopSong(void)
     }
 
 #if _WIN32
-    I_MidiSocketStopSong();
+    I_MidiPipeStopSong();
 #else
     Mix_HaltMusic();
 #endif
@@ -1209,7 +1209,7 @@ static void *I_SDL_RegisterSong(void *data, int len)
     // we have to generate a temporary file.
 
 #ifdef _WIN32
-    music = (Mix_Music*)I_MidiSocketRegisterSong(filename);
+    music = (Mix_Music*)I_MidiPipeRegisterSong(filename);
 #else
     music = Mix_LoadMUS(filename);
 #endif

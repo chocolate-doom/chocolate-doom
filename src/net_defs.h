@@ -142,6 +142,17 @@ typedef enum
     NET_MASTER_PACKET_TYPE_SIGN_END_RESPONSE,
 } net_master_packet_type_t;
 
+typedef enum {
+    NET_MIDIPIPE_PACKET_TYPE_PREPARE_NEW_SONG,
+    NET_MIDIPIPE_PACKET_TYPE_SET_FILENAME,
+    NET_MIDIPIPE_PACKET_TYPE_PLAY_SONG,
+    NET_MIDIPIPE_PACKET_TYPE_STOP_SONG,
+    NET_MIDIPIPE_PACKET_TYPE_CHANGE_VOLUME,
+    NET_MIDIPIPE_PACKET_TYPE_PAUSE_SONG,
+    NET_MIDIPIPE_PACKET_TYPE_RESUME_SONG,
+    NET_MIDIPIPE_PACKET_TYPE_STOP_SERVER
+} net_midipipe_packet_type_t;
+
 // Settings specified when the client connects to the server.
 
 typedef struct
