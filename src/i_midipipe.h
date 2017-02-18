@@ -21,19 +21,16 @@
 
 #if _WIN32
 
+#include "SDL_mixer.h"
+
 #include "doomtype.h"
 
-boolean I_MidiPipeInitServer();
-boolean I_MidiPipeInitClient();
-void I_MidiPipeClientShutDown();
-boolean I_MidiPipeReady();
+Mix_Music *I_MidiPipe_RegisterSong(const char *filename);
+void I_MidiPipe_SetVolume(int vol);
+void I_MidiPipe_PlaySong(int loops);
+void I_MidiPipe_StopSong();
 
-boolean I_MidiPipeRegisterSong(const char *filename);
-boolean I_MidiPipePlaySong(boolean looping);
-boolean I_MidiPipeStopSong();
-boolean I_MidiPipeSetVolume(int volume);
-boolean I_MidiPipePauseSong();
-boolean I_MidiPipeResumeSong();
+boolean I_MidiPipe_InitServer();
 
 #endif
 

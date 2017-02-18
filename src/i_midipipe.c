@@ -20,11 +20,11 @@
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#include <SDL_net.h>
 
 #include "i_midipipe.h"
 
 #include "config.h"
+#include "i_timer.h"
 #include "m_misc.h"
 #include "net_packet.h"
 
@@ -39,6 +39,8 @@
 // Data
 //
 
+#define MIDIPIPE_MAX_WAIT 500 // Max amount of ms to wait for expected data.
+
 static HANDLE  midi_process_in_reader;  // Input stream for midi process.
 static HANDLE  midi_process_in_writer;
 static HANDLE  midi_process_out_reader; // Output stream for midi process.
@@ -49,220 +51,203 @@ static boolean client_init = false; // if true, client was bound
 
 //=============================================================================
 //
-// RPC Wrappers
+// Private functions
 //
 
 //
-// CHECK_RPC_STATUS
+// WritePipe
 //
-// If either server or client initialization failed, we don't try to make any
-// RPC calls.
+// Writes packet data to the subprocess' standard in.
 //
-#define CHECK_RPC_STATUS() \
-    if(!server_init) \
-        return false
-
-#define MIDIRPC_MAXTRIES 50 // This number * 10 is the amount of time you can try to wait for.
-
-static boolean I_MidiPipeWrite(void *data, int len)
+static boolean WritePipe(net_packet_t *packet)
 {
-    DWORD written;
-    if (WriteFile(midi_process_in_writer, data, len, &written, NULL))
-    {
-        return true;
-    }
-    else
+    BOOL ok = WriteFile(midi_process_in_writer, packet->data, packet->len,
+        NULL, NULL);
+
+    if (!ok)
     {
         return false;
     }
-}
 
-static boolean I_MidiPipeWaitForServer()
-{
-    int tries = 0;
-    while(false) // TODO: Is there some way to tell if the server is listening?
-    {
-        I_Sleep(10);
-        if (++tries >= MIDIRPC_MAXTRIES)
-        {
-            return false;
-        }
-    }
     return true;
 }
 
 //
-// I_MidiPipeRegisterSong
+// ExpectPipe
 //
-// Prepare the RPC MIDI engine to receive new song data, and transmit the song
-// filename to the server process.
+// Expect the contents of a packet off of the subprocess' stdout.  If the
+// response is unexpected, or doesn't arrive within a specific amuont of time,
+// assume the subprocess is in an unknown state.
 //
-boolean I_MidiPipeRegisterSong(const char *filename)
+static boolean ExpectPipe(net_packet_t *packet)
 {
-    BOOL wok;
-    net_packet_t *packet;
+    BOOL ok;
+    CHAR pipe_buffer[8192];
+    DWORD pipe_buffer_read = 0;
 
-    CHECK_RPC_STATUS();
+    if (packet->len > sizeof(pipe_buffer))
+    {
+        // The size of the packet we're expecting is larger than our buffer
+        // size, so bail out now.
+        return false;
+    }
+
+    int start = I_GetTimeMS();
+
+    do
+    {
+        // Wait until we see exactly the amount of data we expect on the pipe.
+        ok = PeekNamedPipe(midi_process_out_reader, NULL, 0, NULL,
+            &pipe_buffer_read, NULL);
+        if (!ok)
+        {
+            goto fail;
+        }
+        else if (pipe_buffer_read < packet->len)
+        {
+            I_Sleep(1);
+            continue;
+        }
+
+        // Read precisely the number of bytes we're expecting, and no more.
+        ok = ReadFile(midi_process_out_reader, pipe_buffer, packet->len,
+            &pipe_buffer_read, NULL);
+        if (!ok || pipe_buffer_read != packet->len)
+        {
+            goto fail;
+        }
+
+        // Compare our data buffer to the packet.
+        if (memcmp(packet->data, pipe_buffer, packet->len) != 0)
+        {
+            goto fail;
+        }
+
+        return true;
+
+        // Continue looping as long as we don't exceed our maximum wait time.
+    } while (start + MIDIPIPE_MAX_WAIT > I_GetTimeMS());
+fail:
+
+    // TODO: Deal with the wedged process.
+    return false;
+}
+
+//=============================================================================
+//
+// Protocol Commands
+//
+
+//
+// I_MidiPipe_RegisterSong
+//
+// Tells the MIDI subprocess to load a specific filename for playing.  This
+// function blocks until there is an acknowledgement from the server.
+//
+Mix_Music *I_MidiPipe_RegisterSong(const char *filename)
+{
+    boolean ok;
+    net_packet_t *packet;
 
     packet = NET_NewPacket(64);
-    NET_WriteInt16(packet, NET_MIDIPIPE_PACKET_TYPE_PREPARE_NEW_SONG);
-    NET_WriteInt16(packet, NET_MIDIPIPE_PACKET_TYPE_SET_FILENAME);
+    NET_WriteInt16(packet, NET_MIDIPIPE_PACKET_TYPE_REGISTER_SONG);
     NET_WriteString(packet, filename);
-    wok = WriteFile(midi_process_in_writer, packet->data, packet->len,
-        NULL, NULL);
+    ok = WritePipe(packet);
     NET_FreePacket(packet);
 
-    if (!wok)
+    if (!ok)
     {
-        DEBUGOUT("I_MidiPipeRegisterSong failed");
+        DEBUGOUT("I_MidiPipe_RegisterSong failed");
         return false;
     }
 
-    DEBUGOUT("I_MidiPipeRegisterSong succeeded");
+    packet = NET_NewPacket(2);
+    NET_WriteInt16(packet, NET_MIDIPIPE_PACKET_TYPE_REGISTER_SONG_ACK);
+    ok = ExpectPipe(packet);
+    NET_FreePacket(packet);
+
+    if (!ok)
+    {
+        DEBUGOUT("I_MidiPipe_RegisterSong ack failed");
+        return false;
+    }
+
+    DEBUGOUT("I_MidiPipe_RegisterSong succeeded");
     return true;
 }
 
 //
-// I_MidiPipePlaySong
+// I_MidiPipe_SetVolume
 //
-// Tell the RPC server to start playing a song.
+// Tells the MIDI subprocess to set a specific volume for the song.
 //
-boolean I_MidiPipePlaySong(boolean looping)
+void I_MidiPipe_SetVolume(int vol)
 {
-    BOOL wok;
+    boolean ok;
     net_packet_t *packet;
 
-    CHECK_RPC_STATUS();
+    packet = NET_NewPacket(6);
+    NET_WriteInt16(packet, NET_MIDIPIPE_PACKET_TYPE_SET_VOLUME);
+    NET_WriteInt32(packet, vol);
+    ok = WritePipe(packet);
+    NET_FreePacket(packet);
 
-    packet = NET_NewPacket(3);
+    if (!ok)
+    {
+        DEBUGOUT("I_MidiPipe_SetVolume failed");
+        return;
+    }
+
+    DEBUGOUT("I_MidiPipe_SetVolume succeeded");
+}
+
+//
+// I_MidiPipe_PlaySong
+//
+// Tells the MIDI subprocess to play the currently loaded song.
+//
+void I_MidiPipe_PlaySong(int loops)
+{
+    boolean ok;
+    net_packet_t *packet;
+
+    packet = NET_NewPacket(6);
     NET_WriteInt16(packet, NET_MIDIPIPE_PACKET_TYPE_PLAY_SONG);
-    NET_WriteInt8(packet, looping);
-    wok = WriteFile(midi_process_in_writer, packet->data, packet->len,
-        NULL, NULL);
+    NET_WriteInt32(packet, loops);
+    ok = WritePipe(packet);
     NET_FreePacket(packet);
 
-    if (!wok)
+    if (!ok)
     {
-        DEBUGOUT("I_MidiPipePlaySong failed");
-        return false;
+        DEBUGOUT("I_MidiPipe_PlaySong failed");
+        return;
     }
 
-    DEBUGOUT("I_MidiPipePlaySong succeeded");
-    return true;
+    DEBUGOUT("I_MidiPipe_PlaySong succeeded");
 }
 
-// 
-// I_MidiPipeStopSong
 //
-// Tell the RPC server to stop any currently playing song.
+// I_MidiPipe_StopSong
 //
-boolean I_MidiPipeStopSong()
+// Tells the MIDI subprocess to stop playing the currently loaded song.
+//
+void I_MidiPipe_StopSong()
 {
-    BOOL wok;
+    boolean ok;
     net_packet_t *packet;
-
-    CHECK_RPC_STATUS();
 
     packet = NET_NewPacket(2);
     NET_WriteInt16(packet, NET_MIDIPIPE_PACKET_TYPE_STOP_SONG);
-    wok = WriteFile(midi_process_in_writer, packet->data, packet->len,
-        NULL, NULL);
+    ok = WritePipe(packet);
     NET_FreePacket(packet);
 
-    if (!wok)
+    if (!ok)
     {
-        DEBUGOUT("I_MidiPipeStopSong failed");
-        return false;
+        DEBUGOUT("I_MidiPipe_StopSong failed");
+        return;
     }
 
-    DEBUGOUT("I_MidiPipeStopSong succeeded");
-    return true;
-}
-
-//
-// I_MidiPipeSetVolume
-//
-// Change the volume level of music played by the RPC midi server.
-//
-boolean I_MidiPipeSetVolume(int volume)
-{
-    BOOL wok;
-    net_packet_t *packet;
-
-    CHECK_RPC_STATUS();
-
-    packet = NET_NewPacket(6);
-    NET_WriteInt16(packet, NET_MIDIPIPE_PACKET_TYPE_CHANGE_VOLUME);
-    NET_WriteInt32(packet, volume);
-    wok = WriteFile(midi_process_in_writer, packet->data, packet->len,
-        NULL, NULL);
-    NET_FreePacket(packet);
-
-    if (!wok)
-    {
-        DEBUGOUT("I_MidiPipeSetVolume failed");
-        return false;
-    }
-
-    DEBUGOUT("I_MidiPipeSetVolume succeeded");
-    return true;
-}
-
-//
-// I_MidiPipePauseSong
-//
-// Pause the music being played by the server. In actuality, due to SDL_mixer
-// limitations, this just temporarily sets the volume to zero.
-//
-boolean I_MidiPipePauseSong()
-{
-    BOOL wok;
-    net_packet_t *packet;
-
-    CHECK_RPC_STATUS();
-
-    packet = NET_NewPacket(2);
-    NET_WriteInt16(packet, NET_MIDIPIPE_PACKET_TYPE_PAUSE_SONG);
-    wok = WriteFile(midi_process_in_writer, packet->data, packet->len,
-        NULL, NULL);
-    NET_FreePacket(packet);
-
-    if (!wok)
-    {
-        DEBUGOUT("I_MidiPipePauseSong failed");
-        return false;
-    }
-
-    DEBUGOUT("I_MidiPipePauseSong succeeded");
-    return true;
-}
-
-//
-// I_MidiPipeResumeSong
-//
-// Resume a song after having paused it.
-//
-boolean I_MidiPipeResumeSong()
-{
-    BOOL wok;
-    net_packet_t *packet;
-
-    CHECK_RPC_STATUS();
-
-    packet = NET_NewPacket(2);
-    NET_WriteInt16(packet, NET_MIDIPIPE_PACKET_TYPE_RESUME_SONG);
-    wok = WriteFile(midi_process_in_writer, packet->data, packet->len,
-        NULL, NULL);
-    NET_FreePacket(packet);
-
-    if (!wok)
-    {
-        DEBUGOUT("I_MidiPipeResumeSong failed");
-        return false;
-    }
-
-    DEBUGOUT("I_MidiPipeResumeSong succeeded");
-   return true;
+    DEBUGOUT("I_MidiPipe_StopSong succeeded");
 }
 
 //=============================================================================
@@ -275,7 +260,7 @@ boolean I_MidiPipeResumeSong()
 //
 // Start up the MIDI server.
 //
-boolean I_MidiPipeInitServer()
+boolean I_MidiPipe_InitServer()
 {
     struct stat sbuf;
     char filename[MAX_PATH+1];
@@ -359,61 +344,6 @@ boolean I_MidiPipeInitServer()
     }
 
     return ok;
-}
-
-//
-// I_MidiPipeInitClient
-//
-// Ensure that we can actually communicate with the subprocess.
-//
-boolean I_MidiPipeInitClient()
-{
-    client_init = true;
-    return true;
-}
-
-//
-// I_MidiPipeClientShutDown
-//
-// Shutdown the RPC Client
-//
-/* void I_MidiPipeClientShutDown()
-{
-    // stop the server
-    if(server_init)
-    {
-        net_packet_t *packet;
-        packet = NET_NewPacket(2);
-        NET_WriteInt16(packet, NET_MIDIPIPE_PACKET_TYPE_STOP_SERVER);
-        int len = SDLNet_TCP_Send(midi_socket, packet->data, packet->len);
-        NET_FreePacket(packet);
-        if (len < packet->len)
-        {
-            DEBUGOUT("Problem encountered when stopping RPC server");
-        }
-
-        server_init = false;
-    }
-
-    if (midi_socket)
-    {
-        SDLNet_TCP_Close(midi_socket);
-        midi_socket = NULL;
-    }
-
-    client_init = false;
-} */
-
-//
-// I_MidiPipeReady
-//
-// Returns true if both server and client initialized successfully.
-//
-boolean I_MidiPipeReady()
-{
-    CHECK_RPC_STATUS();
-
-    return true;
 }
 
 #endif

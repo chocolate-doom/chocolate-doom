@@ -43,93 +43,48 @@ static buffer_t *midi_buffer;      // Data from client.
 
 // Currently playing music track
 static Mix_Music *music = NULL;
-static char *filename = NULL;
-
-static void UnregisterSong();
 
 //=============================================================================
 //
 // SDL_mixer Interface
 //
 
-//
-// RegisterSong
-//
-static void RegisterSong(char* filename)
+static boolean RegisterSong(const char *filename)
 {
-    if (music)
-    {
-        UnregisterSong();
-    }
+    fprintf(stderr, "%s %s\n", __FUNCTION__, filename);
 
     music = Mix_LoadMUS(filename);
-}
+    fprintf(stderr, "<-- %p\n", music);
 
-//
-// StartSong
-//
-static void StartSong(boolean loop)
-{
-    if (music)
+    if (music == NULL)
     {
-        Mix_PlayMusic(music, loop ? -1 : 0);
+        fprintf(stderr, "Error loading midi: %s\n", Mix_GetError());
+
+        return false;
     }
+
+    return true;
 }
 
-//
-// SetVolume
-//
-static void SetVolume(int volume)
+static void SetVolume(int vol)
 {
-    Mix_VolumeMusic((volume * 128) / 15);
+    fprintf(stderr, "%s %d\n", __FUNCTION__, vol);
+
+    Mix_VolumeMusic(vol);
 }
 
-static int paused_midi_volume;
-
-//
-// PauseSong
-//
-static void PauseSong()
+static void PlaySong(int loops)
 {
-    paused_midi_volume = Mix_VolumeMusic(-1);
-    Mix_VolumeMusic(0);
+    fprintf(stderr, "%s %d\n", __FUNCTION__, loops);
+
+    Mix_PlayMusic(music, loops);
 }
 
-//
-// ResumeSong
-//
-static void ResumeSong()
-{
-    Mix_VolumeMusic(paused_midi_volume);
-}
-
-//
-// StopSong
-//
 static void StopSong()
 {
-    if (music)
-    {
-        Mix_HaltMusic();
-    }
-}
+    fprintf(stderr, "%s\n", __FUNCTION__);
 
-//
-// UnregisterSong
-//
-static void UnregisterSong()
-{
-    if (!music)
-    {
-        return;
-    }
-
-    StopSong();
-    Mix_FreeMusic(music);
-    free(filename);
-
-    filename = NULL;
-    music = NULL;
+    Mix_HaltMusic();
 }
 
 //
@@ -144,150 +99,62 @@ static void ShutdownSDL()
 
 //=============================================================================
 //
-// RPC Server Interface
+// Pipe Server Interface
 //
 
-//
-// MidiPipe_PrepareNewSong
-//
-// Prepare the engine to receive new song data from the RPC client.
-//
-boolean MidiPipe_PrepareNewSong()
+static boolean MidiPipe_RegisterSong(buffer_reader_t *reader)
 {
-    // Stop anything currently playing and free it.
-    UnregisterSong();
-
-    fprintf(stderr, "%s\n", __FUNCTION__);
-    return true;
-}
-
-//
-// MidiPipe_AddChunk
-//
-// Set the filename of the song.
-//
-boolean MidiPipe_SetFilename(buffer_reader_t *reader)
-{
-    free(filename);
-    filename = NULL;
-
-    char* file = Reader_ReadString(reader);
-    if (file == NULL)
-    {
-        return false;
-    }
-
-    int size = Reader_BytesRead(reader) - 2;
-    if (size <= 0)
-    {
-        return false;
-    }
-
-    filename = malloc(size);
+    char *filename = Reader_ReadString(reader);
     if (filename == NULL)
     {
         return false;
     }
 
-    memcpy(filename, file, size);
+    RegisterSong(filename);
 
-    fprintf(stderr, "%s\n", __FUNCTION__);
+    unsigned int i = NET_MIDIPIPE_PACKET_TYPE_REGISTER_SONG_ACK;
+    CHAR buffer[2];
+    buffer[0] = (i >> 8) & 0xff;
+    buffer[1] = i & 0xff;
+
+    BOOL ok = WriteFile(midi_process_out, buffer, sizeof(buffer),
+        NULL, NULL);
+
     return true;
 }
 
-//
-// MidiPipe_PlaySong
-//
-// Start playing the song.
-//
-boolean MidiPipe_PlaySong(buffer_reader_t *reader)
+boolean MidiPipe_SetVolume(buffer_reader_t *reader)
 {
-    uint8_t looping;
-
-    if (!Reader_ReadInt8(reader, &looping))
+    int vol;
+    boolean ok = Reader_ReadInt32(reader, &vol);
+    if (!ok)
     {
         return false;
     }
 
-    RegisterSong(filename);
-    StartSong((boolean)looping);
+    SetVolume(vol);
 
-    fprintf(stderr, "%s\n", __FUNCTION__);
     return true;
 }
 
-//
-// MidiPipe_StopSong
-//
-// Stop the song.
-//
-boolean MidiPipe_StopSong()
+boolean MidiPipe_PlaySong(buffer_reader_t *reader)
+{
+    int loops;
+    boolean ok = Reader_ReadInt32(reader, &loops);
+    if (!ok)
+    {
+        return false;
+    }
+
+    PlaySong(loops);
+
+    return true;
+}
+
+boolean MidiPipe_StopSong(buffer_reader_t *reader)
 {
     StopSong();
 
-    fprintf(stderr, "%s\n", __FUNCTION__);
-    return true;
-}
-
-//
-// MidiPipe_ChangeVolume
-//
-// Set playback volume level.
-//
-boolean MidiPipe_ChangeVolume(buffer_reader_t *reader)
-{
-    int volume;
-
-    if (!Reader_ReadInt32(reader, &volume))
-    {
-        return false;
-    }
-
-    SetVolume(volume);
-
-    fprintf(stderr, "%s\n", __FUNCTION__);
-    return true;
-}
-
-//
-// MidiPipe_PauseSong
-//
-// Pause the song.
-//
-boolean MidiPipe_PauseSong()
-{
-    PauseSong();
-
-    fprintf(stderr, "%s\n", __FUNCTION__);
-    return true;
-}
-
-//
-// MidiPipe_ResumeSong
-//
-// Resume after pausing.
-//
-boolean MidiPipe_ResumeSong()
-{
-    ResumeSong();
-
-    fprintf(stderr, "%s\n", __FUNCTION__);
-    return true;
-}
-
-//
-// MidiPipe_StopServer
-//
-// Stops the RPC server so the program can shutdown.
-//
-boolean MidiPipe_StopServer()
-{
-    // Local shutdown tasks
-    ShutdownSDL();
-    free(filename);
-    filename = NULL;
-
-    fprintf(stderr, "%s\n", __FUNCTION__);
     return true;
 }
 
@@ -296,26 +163,21 @@ boolean MidiPipe_StopServer()
 // Server Implementation
 //
 
+//
+// Parses a command and directs to the proper read function.
+//
 boolean ParseCommand(buffer_reader_t *reader, uint16_t command)
 {
     switch (command)
     {
-    case NET_MIDIPIPE_PACKET_TYPE_PREPARE_NEW_SONG:
-        return MidiPipe_PrepareNewSong();
-    case NET_MIDIPIPE_PACKET_TYPE_SET_FILENAME:
-        return MidiPipe_SetFilename(reader);
+    case NET_MIDIPIPE_PACKET_TYPE_REGISTER_SONG:
+        return MidiPipe_RegisterSong(reader);
+    case NET_MIDIPIPE_PACKET_TYPE_SET_VOLUME:
+        return MidiPipe_SetVolume(reader);
     case NET_MIDIPIPE_PACKET_TYPE_PLAY_SONG:
         return MidiPipe_PlaySong(reader);
     case NET_MIDIPIPE_PACKET_TYPE_STOP_SONG:
-        return MidiPipe_StopSong();
-    case NET_MIDIPIPE_PACKET_TYPE_CHANGE_VOLUME:
-        return MidiPipe_ChangeVolume(reader);
-    case NET_MIDIPIPE_PACKET_TYPE_PAUSE_SONG:
-        return MidiPipe_PauseSong();
-    case NET_MIDIPIPE_PACKET_TYPE_RESUME_SONG:
-        return MidiPipe_ResumeSong();
-    case NET_MIDIPIPE_PACKET_TYPE_STOP_SERVER:
-        return MidiPipe_StopServer();
+        return MidiPipe_StopSong(reader);
     default:
         return false;
     }
@@ -365,7 +227,6 @@ boolean ListenForever()
     boolean ok = false;
     buffer_t *buffer = NewBuffer();
 
-    fprintf(stderr, "%s\n", "In theory we should be reading...");
     for (;;)
     {
         // Wait until we see some data on the pipe.
@@ -382,7 +243,6 @@ boolean ListenForever()
         }
 
         // Read data off the pipe and add it to the buffer.
-        fprintf(stderr, "%s\n", "ReadFile");
         wok = ReadFile(midi_process_in, pipe_buffer, sizeof(pipe_buffer),
             &pipe_buffer_read, NULL);
         if (!wok)
@@ -390,14 +250,12 @@ boolean ListenForever()
             return false;
         }
 
-        fprintf(stderr, "%s\n", "Buffer_Push");
         ok = Buffer_Push(buffer, pipe_buffer, pipe_buffer_read);
         if (!ok)
         {
             return false;
         }
 
-        fprintf(stderr, "%s\n", "ParseMessage");
         do
         {
             // Read messages off the buffer until we can't anymore.

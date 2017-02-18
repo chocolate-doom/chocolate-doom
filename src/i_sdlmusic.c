@@ -975,7 +975,7 @@ static boolean I_SDL_InitMusic(void)
     }
 
 #if WIN32
-    I_MidiPipeInitServer();
+    I_MidiPipe_InitServer();
 #endif
 
     return music_initialized;
@@ -1000,7 +1000,7 @@ static void UpdateMusicVolume(void)
     }
 
 #if WIN32
-    I_MidiPipeSetVolume(vol);
+    I_MidiPipe_SetVolume(vol);
 #else
     Mix_VolumeMusic(vol);
 #endif
@@ -1055,7 +1055,7 @@ static void I_SDL_PlaySong(void *handle, boolean looping)
     }
 
 #if _WIN32
-    I_MidiPipePlaySong(loops);
+    I_MidiPipe_PlaySong(loops);
 #else
     Mix_PlayMusic(current_track_music, loops);
 #endif
@@ -1093,7 +1093,7 @@ static void I_SDL_StopSong(void)
     }
 
 #if _WIN32
-    I_MidiPipeStopSong();
+    I_MidiPipe_StopSong();
 #else
     Mix_HaltMusic();
 #endif
@@ -1116,7 +1116,9 @@ static void I_SDL_UnRegisterSong(void *handle)
         return;
     }
 
+#ifndef _WIN32
     Mix_FreeMusic(music);
+#endif
 }
 
 // Determine whether memory block is a .mid file 
@@ -1209,7 +1211,7 @@ static void *I_SDL_RegisterSong(void *data, int len)
     // we have to generate a temporary file.
 
 #ifdef _WIN32
-    music = (Mix_Music*)I_MidiPipeRegisterSong(filename);
+    music = I_MidiPipe_RegisterSong(filename);
 #else
     music = Mix_LoadMUS(filename);
 #endif
