@@ -1054,7 +1054,7 @@ static void I_SDL_PlaySong(void *handle, boolean looping)
         SDL_UnlockAudio();
     }
 
-#if _WIN32
+#if defined(_WIN32)
     I_MidiPipe_PlaySong(loops);
 #else
     Mix_PlayMusic(current_track_music, loops);
@@ -1092,7 +1092,7 @@ static void I_SDL_StopSong(void)
         return;
     }
 
-#if _WIN32
+#if defined(_WIN32)
     I_MidiPipe_StopSong();
 #else
     Mix_HaltMusic();
@@ -1116,7 +1116,7 @@ static void I_SDL_UnRegisterSong(void *handle)
         return;
     }
 
-#ifndef _WIN32
+#if !defined(_WIN32)
     Mix_FreeMusic(music);
 #endif
 }
@@ -1210,7 +1210,7 @@ static void *I_SDL_RegisterSong(void *data, int len)
     // by now, but Mix_SetMusicCMD() only works with Mix_LoadMUS(), so
     // we have to generate a temporary file.
 
-#ifdef _WIN32
+#if defined(_WIN32)
     music = I_MidiPipe_RegisterSong(filename);
 #else
     music = Mix_LoadMUS(filename);
