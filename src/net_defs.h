@@ -148,6 +148,7 @@ typedef enum {
     NET_MIDIPIPE_PACKET_TYPE_SET_VOLUME,
     NET_MIDIPIPE_PACKET_TYPE_PLAY_SONG,
     NET_MIDIPIPE_PACKET_TYPE_STOP_SONG,
+    NET_MIDIPIPE_PACKET_TYPE_SHUTDOWN
 } net_midipipe_packet_type_t;
 
 // Settings specified when the client connects to the server.

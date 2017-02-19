@@ -25,10 +25,11 @@
 
 #include "doomtype.h"
 
-Mix_Music *I_MidiPipe_RegisterSong(const char *filename);
+boolean I_MidiPipe_RegisterSong(const char *filename);
 void I_MidiPipe_SetVolume(int vol);
 void I_MidiPipe_PlaySong(int loops);
 void I_MidiPipe_StopSong();
+void I_MidiPipe_ShutdownServer();
 
 boolean I_MidiPipe_InitServer();
 

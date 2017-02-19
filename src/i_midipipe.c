@@ -47,7 +47,6 @@ static HANDLE  midi_process_out_reader; // Output stream for midi process.
 static HANDLE  midi_process_out_writer;
 
 static boolean server_init = false; // if true, server was started
-static boolean client_init = false; // if true, client was bound
 
 //=============================================================================
 //
@@ -144,7 +143,7 @@ fail:
 // Tells the MIDI subprocess to load a specific filename for playing.  This
 // function blocks until there is an acknowledgement from the server.
 //
-Mix_Music *I_MidiPipe_RegisterSong(const char *filename)
+boolean I_MidiPipe_RegisterSong(const char *filename)
 {
     boolean ok;
     net_packet_t *packet;
@@ -248,6 +247,32 @@ void I_MidiPipe_StopSong()
     }
 
     DEBUGOUT("I_MidiPipe_StopSong succeeded");
+}
+
+//
+// I_MidiPipe_StopSong
+//
+// Tells the MIDI subprocess to shutdown.
+//
+void I_MidiPipe_ShutdownServer()
+{
+    boolean ok;
+    net_packet_t *packet;
+
+    packet = NET_NewPacket(2);
+    NET_WriteInt16(packet, NET_MIDIPIPE_PACKET_TYPE_SHUTDOWN);
+    ok = WritePipe(packet);
+    NET_FreePacket(packet);
+
+    server_init = false;
+
+    if (!ok)
+    {
+        DEBUGOUT("I_MidiPipe_ShutdownServer failed");
+        return;
+    }
+
+    DEBUGOUT("I_MidiPipe_ShutdownServer succeeded");
 }
 
 //=============================================================================

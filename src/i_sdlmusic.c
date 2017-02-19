@@ -133,6 +133,9 @@ static Mix_Music *current_track_music = NULL;
 // If true, the currently playing track is being played on loop.
 static boolean current_track_loop;
 
+// If true, the current track is being handled via midiproc.
+static boolean using_midiproc;
+
 // Given a time string (for LOOP_START/LOOP_END), parse it and return
 // the time (in # samples since start of track) it represents.
 static unsigned int ParseVorbisTime(unsigned int samplerate_hz, char *value)
@@ -878,6 +881,9 @@ static void I_SDL_ShutdownMusic(void)
 {
     if (music_initialized)
     {
+#if defined(_WIN32)
+        I_MidiPipe_ShutdownServer();
+#endif
         Mix_HaltMusic();
         music_initialized = false;
 
@@ -974,7 +980,8 @@ static boolean I_SDL_InitMusic(void)
         LoadSubstituteConfigs();
     }
 
-#if WIN32
+#if defined(_WIN32)
+    // [AM] Start up midiproc to handle playing MIDI music.
     I_MidiPipe_InitServer();
 #endif
 
@@ -999,11 +1006,10 @@ static void UpdateMusicVolume(void)
         vol = (current_music_volume * MIX_MAX_VOLUME) / 127;
     }
 
-#if WIN32
+#if defined(_WIN32)
     I_MidiPipe_SetVolume(vol);
-#else
-    Mix_VolumeMusic(vol);
 #endif
+    Mix_VolumeMusic(vol);
 }
 
 // Set music volume (0 - 127)
@@ -1027,7 +1033,7 @@ static void I_SDL_PlaySong(void *handle, boolean looping)
         return;
     }
 
-    if (handle == NULL)
+    if (handle == NULL && !using_midiproc)
     {
         return;
     }
@@ -1055,7 +1061,14 @@ static void I_SDL_PlaySong(void *handle, boolean looping)
     }
 
 #if defined(_WIN32)
-    I_MidiPipe_PlaySong(loops);
+    if (using_midiproc)
+    {
+        I_MidiPipe_PlaySong(loops);
+    }
+    else
+    {
+        Mix_PlayMusic(current_track_music, loops);
+    }
 #else
     Mix_PlayMusic(current_track_music, loops);
 #endif
@@ -1093,7 +1106,15 @@ static void I_SDL_StopSong(void)
     }
 
 #if defined(_WIN32)
-    I_MidiPipe_StopSong();
+    if (using_midiproc)
+    {
+        I_MidiPipe_StopSong();
+        using_midiproc = false;
+    }
+    else
+    {
+        Mix_HaltMusic();
+    }
 #else
     Mix_HaltMusic();
 #endif
@@ -1116,9 +1137,7 @@ static void I_SDL_UnRegisterSong(void *handle)
         return;
     }
 
-#if !defined(_WIN32)
     Mix_FreeMusic(music);
-#endif
 }
 
 // Determine whether memory block is a .mid file 
@@ -1182,6 +1201,9 @@ static void *I_SDL_RegisterSong(void *data, int len)
         }
         else
         {
+            // [AM] Substitute music never uses midiproc.
+            using_midiproc = false;
+
             // Read loop point metadata from the file so that we know where
             // to loop the music.
             playing_substitute = true;
@@ -1211,17 +1233,39 @@ static void *I_SDL_RegisterSong(void *data, int len)
     // we have to generate a temporary file.
 
 #if defined(_WIN32)
-    music = I_MidiPipe_RegisterSong(filename);
+    // [AM] If we do not have an external music command defined, play
+    //      music with midiproc.exe.
+    if (strlen(snd_musiccmd) == 0)
+    {
+        music = NULL;
+        if (I_MidiPipe_RegisterSong(filename))
+        {
+            using_midiproc = true;
+        }
+        else
+        {
+            fprintf(stderr, "Error loading midi: %s\n",
+                "Could not communicate with midiproc.");
+        }
+    }
+    else
+    {
+        using_midiproc = false;
+        music = Mix_LoadMUS(filename);
+        if (music == NULL)
+        {
+            // Failed to load
+            fprintf(stderr, "Error loading midi: %s\n", Mix_GetError());
+        }
+    }
 #else
     music = Mix_LoadMUS(filename);
-#endif
-
     if (music == NULL)
     {
         // Failed to load
-
         fprintf(stderr, "Error loading midi: %s\n", Mix_GetError());
     }
+#endif
 
     // Remove the temporary MIDI file; however, when using an external
     // MIDI program we can't delete the file. Otherwise, the program

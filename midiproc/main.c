@@ -41,8 +41,37 @@ static HANDLE    midi_process_in;  // Standard In.
 static HANDLE    midi_process_out; // Standard Out.
 static buffer_t *midi_buffer;      // Data from client.
 
-// Currently playing music track
-static Mix_Music *music = NULL;
+// Currently playing music track.
+static Mix_Music *music  = NULL;
+
+//=============================================================================
+//
+// Private functions
+//
+
+//
+// Unregisters the currently playing song.  This is never called from the
+// protocol, we simply do this before playing a new song.
+//
+static void UnregisterSong()
+{
+    if (music == NULL)
+    {
+        return;
+    }
+
+    Mix_FreeMusic(music);
+}
+
+//
+// Bookkeeping stuff we need to do when we're shutting off the subprocess.
+//
+static void ShutdownSDL(void)
+{
+    UnregisterSong();
+    Mix_CloseAudio();
+    SDL_Quit();
+}
 
 //=============================================================================
 //
@@ -53,6 +82,7 @@ static boolean RegisterSong(const char *filename)
 {
     fprintf(stderr, "%s %s\n", __FUNCTION__, filename);
 
+    UnregisterSong();
     music = Mix_LoadMUS(filename);
     fprintf(stderr, "<-- %p\n", music);
 
@@ -76,8 +106,19 @@ static void SetVolume(int vol)
 static void PlaySong(int loops)
 {
     fprintf(stderr, "%s %d\n", __FUNCTION__, loops);
+    fprintf(stderr, "%s %d\n", "Playing at volume", Mix_VolumeMusic(-1));
 
     Mix_PlayMusic(music, loops);
+
+    // [AM] BUG: In my testing, setting the volume of a MIDI track while there
+    //      is no song playing appears to be a no-op.  This can happen when
+    //      you're mixing midiproc with vanilla SDL_Mixer, such as when you
+    //      are alternating between a digital music pack (in the parent
+    //      process) and MIDI (in this process).
+    //
+    //      To work around this bug, we set the volume to itself after the MIDI
+    //      has started playing.
+    Mix_VolumeMusic(Mix_VolumeMusic(-1));
 }
 
 static void StopSong()
@@ -85,16 +126,6 @@ static void StopSong()
     fprintf(stderr, "%s\n", __FUNCTION__);
 
     Mix_HaltMusic();
-}
-
-//
-// ShutdownSDL
-//
-static void ShutdownSDL()
-{
-    UnregisterSong();
-    Mix_CloseAudio();
-    SDL_Quit();
 }
 
 //=============================================================================
@@ -151,11 +182,16 @@ boolean MidiPipe_PlaySong(buffer_reader_t *reader)
     return true;
 }
 
-boolean MidiPipe_StopSong(buffer_reader_t *reader)
+boolean MidiPipe_StopSong()
 {
     StopSong();
 
     return true;
+}
+
+boolean MidiPipe_Shutdown()
+{
+    exit(EXIT_SUCCESS);
 }
 
 //=============================================================================
@@ -177,7 +213,9 @@ boolean ParseCommand(buffer_reader_t *reader, uint16_t command)
     case NET_MIDIPIPE_PACKET_TYPE_PLAY_SONG:
         return MidiPipe_PlaySong(reader);
     case NET_MIDIPIPE_PACKET_TYPE_STOP_SONG:
-        return MidiPipe_StopSong(reader);
+        return MidiPipe_StopSong();
+    case NET_MIDIPIPE_PACKET_TYPE_SHUTDOWN:
+        return MidiPipe_Shutdown(reader);
     default:
         return false;
     }
@@ -287,6 +325,8 @@ boolean InitSDL()
     {
         return false;
     }
+
+    atexit(ShutdownSDL);
 
     return true;
 }
