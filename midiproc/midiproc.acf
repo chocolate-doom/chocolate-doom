@@ -1,7 +1,0 @@
-[
-   implicit_handle(handle_t hMidiRPCBinding)
-]
-
-interface MidiRPC
-{
-}
