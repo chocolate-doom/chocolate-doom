@@ -143,12 +143,14 @@ static boolean MidiPipe_RegisterSong(buffer_reader_t *reader)
 
     RegisterSong(filename);
 
+    // FIXME: We should probably have a function for writing Int16's into
+    //        buffers, as opposed to simply winging it.
     unsigned int i = NET_MIDIPIPE_PACKET_TYPE_REGISTER_SONG_ACK;
     CHAR buffer[2];
     buffer[0] = (i >> 8) & 0xff;
     buffer[1] = i & 0xff;
 
-    BOOL ok = WriteFile(midi_process_out, buffer, sizeof(buffer),
+    WriteFile(midi_process_out, buffer, sizeof(buffer),
         NULL, NULL);
 
     return true;
@@ -157,7 +159,7 @@ static boolean MidiPipe_RegisterSong(buffer_reader_t *reader)
 boolean MidiPipe_SetVolume(buffer_reader_t *reader)
 {
     int vol;
-    boolean ok = Reader_ReadInt32(reader, &vol);
+    boolean ok = Reader_ReadInt32(reader, (uint32_t*)&vol);
     if (!ok)
     {
         return false;
@@ -171,7 +173,7 @@ boolean MidiPipe_SetVolume(buffer_reader_t *reader)
 boolean MidiPipe_PlaySong(buffer_reader_t *reader)
 {
     int loops;
-    boolean ok = Reader_ReadInt32(reader, &loops);
+    boolean ok = Reader_ReadInt32(reader, (uint32_t*)&loops);
     if (!ok)
     {
         return false;
@@ -215,7 +217,7 @@ boolean ParseCommand(buffer_reader_t *reader, uint16_t command)
     case NET_MIDIPIPE_PACKET_TYPE_STOP_SONG:
         return MidiPipe_StopSong();
     case NET_MIDIPIPE_PACKET_TYPE_SHUTDOWN:
-        return MidiPipe_Shutdown(reader);
+        return MidiPipe_Shutdown();
     default:
         return false;
     }
@@ -272,7 +274,7 @@ boolean ListenForever()
             &pipe_buffer_read, NULL);
         if (!wok)
         {
-            return false;
+            break;
         }
         else if (pipe_buffer_read == 0)
         {
@@ -285,13 +287,13 @@ boolean ListenForever()
             &pipe_buffer_read, NULL);
         if (!wok)
         {
-            return false;
+            break;
         }
 
         ok = Buffer_Push(buffer, pipe_buffer, pipe_buffer_read);
         if (!ok)
         {
-            return false;
+            break;
         }
 
         do
