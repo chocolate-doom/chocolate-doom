@@ -728,6 +728,12 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(aspect_ratio_correct),
 
     //!
+    // If non-zero, forces integer scales for resolution-independent rendering.
+    //
+
+    CONFIG_VARIABLE_INT(integer_scaling),
+
+    //!
     // Window width when running in windowed mode.
     //
 
