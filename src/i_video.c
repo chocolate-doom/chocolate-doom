@@ -1199,6 +1199,9 @@ static void SetVideoMode(void)
     // The SDL_RENDERER_TARGETTEXTURE flag is required to render the
     // intermediate texture into the upscaled texture.
     renderer_flags = SDL_RENDERER_TARGETTEXTURE;
+	
+    // Turn on vsync
+    renderer_flags |= SDL_RENDERER_PRESENTVSYNC;
 
     if (force_software_renderer)
     {
