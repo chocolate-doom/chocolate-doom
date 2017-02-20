@@ -130,6 +130,10 @@ int aspect_ratio_correct = true;
 
 int integer_scaling = false;
 
+// VGA Porch palette change emulation
+
+int vga_porch_flash = false;
+
 // Force software rendering, for systems which lack effective hardware
 // acceleration
 
@@ -745,6 +749,14 @@ void I_FinishUpdate (void)
     {
         SDL_SetPaletteColors(screenbuffer->format->palette, palette, 0, 256);
         palette_to_set = false;
+
+        if (vga_porch_flash)
+        {
+            // "flash" the pillars/letterboxes with palette changes, emulating
+            // VGA "porch" behaviour (GitHub issue #832)
+            SDL_SetRenderDrawColor(renderer, palette[0].r, palette[0].g,
+                palette[0].b, SDL_ALPHA_OPAQUE);
+        }
     }
 
     // Blit from the paletted 8-bit screen buffer to the intermediate
@@ -1400,6 +1412,7 @@ void I_BindVideoVariables(void)
     M_BindIntVariable("video_display",             &video_display);
     M_BindIntVariable("aspect_ratio_correct",      &aspect_ratio_correct);
     M_BindIntVariable("integer_scaling",           &integer_scaling);
+    M_BindIntVariable("vga_porch_flash",           &vga_porch_flash);
     M_BindIntVariable("startup_delay",             &startup_delay);
     M_BindIntVariable("fullscreen_width",          &fullscreen_width);
     M_BindIntVariable("fullscreen_height",         &fullscreen_height);

@@ -67,6 +67,7 @@ static char *video_driver = "";
 static char *window_position = "";
 static int aspect_ratio_correct = 1;
 static int integer_scaling = 0;
+static int vga_porch_flash = 0;
 static int force_software_renderer = 0;
 static int fullscreen = 1;
 static int fullscreen_width = 0, fullscreen_height = 0;
@@ -209,6 +210,8 @@ static void AdvancedDisplayConfig(TXT_UNCAST_ARG(widget),
         TXT_NewCheckBox("Save screenshots in PNG format",
                         &png_screenshots),
 #endif
+        TXT_NewCheckBox("Flash borders (VGA porch emulation)",
+                        &vga_porch_flash),
         NULL);
 
     TXT_SignalConnect(ar_checkbox, "changed", GenerateSizesTable, sizes_table);
@@ -265,6 +268,7 @@ void BindDisplayVariables(void)
     M_BindStringVariable("window_position",        &window_position);
     M_BindIntVariable("usegamma",                  &usegamma);
     M_BindIntVariable("png_screenshots",           &png_screenshots);
+    M_BindIntVariable("vga_porch_flash",           &vga_porch_flash);
     M_BindIntVariable("force_software_renderer",   &force_software_renderer);
     M_BindIntVariable("max_scaling_buffer_pixels", &max_scaling_buffer_pixels);
 
