@@ -180,6 +180,9 @@ static void P_WriteBrainTarget (const char *key)
 				           numbraintargets,
 				           braintargeton);
 				fputs(line, save_stream);
+
+				// [crispy] return after the first brain spitter is found
+				return;
 			}
 		}
 	}
