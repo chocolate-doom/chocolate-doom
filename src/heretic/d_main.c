@@ -458,7 +458,7 @@ void wadprintf(void)
         return;
     }
     // haleyjd FIXME: convert to textscreen code?
-#ifdef __WATCOMC__
+#if 0
     _settextposition(23, 2);
     _setbkcolor(1);
     _settextcolor(0);
@@ -660,7 +660,7 @@ char tmsg[300];
 void tprintf(char *msg, int initflag)
 {
     // haleyjd FIXME: convert to textscreen code?
-#ifdef __WATCOMC__
+#if 0
     char temp[80];
     int start;
     int add;
