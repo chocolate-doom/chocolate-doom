@@ -3064,9 +3064,9 @@ void M_Init (void)
 	const patch_t *patchl, *patchs, *patchm;
 	short captionheight, vstep;
 
-	patchl = W_CacheLumpName("M_LOADG", PU_CACHE);
-	patchs = W_CacheLumpName("M_SAVEG", PU_CACHE);
-	patchm = W_CacheLumpName("M_LSLEFT", PU_CACHE);
+	patchl = W_CacheLumpName(DEH_String("M_LOADG"), PU_CACHE);
+	patchs = W_CacheLumpName(DEH_String("M_SAVEG"), PU_CACHE);
+	patchm = W_CacheLumpName(DEH_String("M_LSLEFT"), PU_CACHE);
 
 	LoadDef_x = (ORIGWIDTH - SHORT(patchl->width)) / 2 + SHORT(patchl->leftoffset);
 	SaveDef_x = (ORIGWIDTH - SHORT(patchs->width)) / 2 + SHORT(patchs->leftoffset);
