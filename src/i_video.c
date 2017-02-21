@@ -28,6 +28,7 @@
 #include "icon.c"
 
 #include "config.h"
+#include "d_loop.h"
 #include "deh_str.h"
 #include "doomtype.h"
 #include "i_input.h"
@@ -1200,8 +1201,11 @@ static void SetVideoMode(void)
     // intermediate texture into the upscaled texture.
     renderer_flags = SDL_RENDERER_TARGETTEXTURE;
 	
-    // Turn on vsync
-    renderer_flags |= SDL_RENDERER_PRESENTVSYNC;
+    // Turn on vsync if we aren't in a -timedemo
+    if (!singletics)
+    {
+        renderer_flags |= SDL_RENDERER_PRESENTVSYNC;
+    }
 
     if (force_software_renderer)
     {
