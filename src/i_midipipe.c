@@ -24,6 +24,7 @@
 #include "i_midipipe.h"
 
 #include "config.h"
+#include "i_sound.h"
 #include "i_timer.h"
 #include "m_misc.h"
 #include "net_packet.h"
@@ -33,6 +34,19 @@
 #else
 #define DEBUGOUT(s)
 #endif
+
+//=============================================================================
+//
+// Public Data
+//
+
+// True if the midi proces was initialized at least once and has not been
+// explicitly shut down.  This remains true if the server is momentarily
+// unreachable.
+boolean midi_server_initialized;
+
+// True if the current track is being handled via the MIDI server.
+boolean midi_server_registered;
 
 //=============================================================================
 //
@@ -46,12 +60,33 @@ static HANDLE  midi_process_in_writer;
 static HANDLE  midi_process_out_reader; // Output stream for midi process.
 static HANDLE  midi_process_out_writer;
 
-static boolean server_init = false; // if true, server was started
-
 //=============================================================================
 //
 // Private functions
 //
+
+//
+// UsingNativeMidi
+//
+// Enumerate all music decoders and return true if NATIVEMIDI is one of them.
+//
+// If this is the case, using the MIDI server is probably necessary.  If not,
+// we're likely using Timidity and thus don't need to start the server.
+//
+static boolean UsingNativeMidi()
+{
+    int decoders = Mix_GetNumMusicDecoders();
+
+    for (int i = 0;i < decoders;i++)
+    {
+        if (strcmp(Mix_GetMusicDecoder(i), "NATIVEMIDI") == 0)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
 
 //
 // WritePipe
@@ -171,6 +206,8 @@ boolean I_MidiPipe_RegisterSong(const char *filename)
         return false;
     }
 
+    midi_server_registered = true;
+
     DEBUGOUT("I_MidiPipe_RegisterSong succeeded");
     return true;
 }
@@ -240,6 +277,8 @@ void I_MidiPipe_StopSong()
     ok = WritePipe(packet);
     NET_FreePacket(packet);
 
+    midi_server_registered = false;
+
     if (!ok)
     {
         DEBUGOUT("I_MidiPipe_StopSong failed");
@@ -264,7 +303,7 @@ void I_MidiPipe_ShutdownServer()
     ok = WritePipe(packet);
     NET_FreePacket(packet);
 
-    server_init = false;
+    midi_server_initialized = false;
 
     if (!ok)
     {
@@ -288,7 +327,14 @@ void I_MidiPipe_ShutdownServer()
 boolean I_MidiPipe_InitServer()
 {
     struct stat sbuf;
-    char filename[MAX_PATH+1];
+    char filename[MAX_PATH + 1];
+
+    if (!UsingNativeMidi() || strlen(snd_musiccmd) > 0)
+    {
+        // If we're not using native MIDI, or if we're playing music through
+        // an exteranl program, we don't need to start the server.
+        return false;
+    }
 
     memset(filename, 0, sizeof(filename));
     size_t filename_len = GetModuleFileName(NULL, filename, MAX_PATH);
@@ -361,7 +407,7 @@ boolean I_MidiPipe_InitServer()
     if (ok)
     {
         DEBUGOUT("midiproc started");
-        server_init = true;
+        midi_server_initialized = true;
     }
     else
     {

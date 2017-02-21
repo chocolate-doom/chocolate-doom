@@ -133,9 +133,6 @@ static Mix_Music *current_track_music = NULL;
 // If true, the currently playing track is being played on loop.
 static boolean current_track_loop;
 
-// If true, the current track is being handled via midiproc.
-static boolean using_midiproc;
-
 // Given a time string (for LOOP_START/LOOP_END), parse it and return
 // the time (in # samples since start of track) it represents.
 static unsigned int ParseVorbisTime(unsigned int samplerate_hz, char *value)
@@ -1033,7 +1030,7 @@ static void I_SDL_PlaySong(void *handle, boolean looping)
         return;
     }
 
-    if (handle == NULL && !using_midiproc)
+    if (handle == NULL && !midi_server_registered)
     {
         return;
     }
@@ -1061,7 +1058,7 @@ static void I_SDL_PlaySong(void *handle, boolean looping)
     }
 
 #if defined(_WIN32)
-    if (using_midiproc)
+    if (midi_server_registered)
     {
         I_MidiPipe_PlaySong(loops);
     }
@@ -1106,10 +1103,9 @@ static void I_SDL_StopSong(void)
     }
 
 #if defined(_WIN32)
-    if (using_midiproc)
+    if (midi_server_registered)
     {
         I_MidiPipe_StopSong();
-        using_midiproc = false;
     }
     else
     {
@@ -1201,9 +1197,6 @@ static void *I_SDL_RegisterSong(void *data, int len)
         }
         else
         {
-            // [AM] Substitute music never uses midiproc.
-            using_midiproc = false;
-
             // Read loop point metadata from the file so that we know where
             // to loop the music.
             playing_substitute = true;
@@ -1234,15 +1227,11 @@ static void *I_SDL_RegisterSong(void *data, int len)
 
 #if defined(_WIN32)
     // [AM] If we do not have an external music command defined, play
-    //      music with midiproc.exe.
-    if (strlen(snd_musiccmd) == 0)
+    //      music with the MIDI server.
+    if (midi_server_initialized)
     {
         music = NULL;
-        if (I_MidiPipe_RegisterSong(filename))
-        {
-            using_midiproc = true;
-        }
-        else
+        if (!I_MidiPipe_RegisterSong(filename))
         {
             fprintf(stderr, "Error loading midi: %s\n",
                 "Could not communicate with midiproc.");
@@ -1250,7 +1239,6 @@ static void *I_SDL_RegisterSong(void *data, int len)
     }
     else
     {
-        using_midiproc = false;
         music = Mix_LoadMUS(filename);
         if (music == NULL)
         {
