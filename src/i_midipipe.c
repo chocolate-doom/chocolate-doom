@@ -440,6 +440,12 @@ boolean I_MidiPipe_InitServer()
         goto fail;
     }
 
+    // Since the server has these handles, we don't need them anymore.
+    CloseHandle(midi_process_in_reader);
+    midi_process_in_reader = NULL;
+    CloseHandle(midi_process_out_writer);
+    midi_process_out_writer = NULL;
+
     midi_server_initialized = true;
     return true;
 
