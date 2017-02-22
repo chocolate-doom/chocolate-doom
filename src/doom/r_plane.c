@@ -462,6 +462,8 @@ static inline int R_FlatTranslation (unsigned int picnum)
 
 	return (picnum < numflats) ? flattranslation[picnum] :
 	       (firstflat + picnum < numlumps) ? picnum :
+	       // [crispy] the most reasonable safe default,
+	       // it's already too late to return "skyflatnum" at this point
 	       0;
 }
 

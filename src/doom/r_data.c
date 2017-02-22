@@ -1272,8 +1272,15 @@ void R_PrecacheLevel (void)
 
     for (i=0 ; i<numsectors ; i++)
     {
+	// [crispy] add overflow guard for the flatpresent[] array
+	if (sectors[i].floorpic < numflats)
+	{
 	flatpresent[sectors[i].floorpic] = 1;
+	}
+	if (sectors[i].ceilingpic < numflats)
+	{
 	flatpresent[sectors[i].ceilingpic] = 1;
+	}
     }
 	
     flatmemory = 0;
