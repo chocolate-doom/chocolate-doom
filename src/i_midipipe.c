@@ -189,7 +189,7 @@ static boolean ExpectPipe(net_packet_t *packet)
         return true;
 
         // Continue looping as long as we don't exceed our maximum wait time.
-    } while (start + MIDIPIPE_MAX_WAIT > I_GetTimeMS());
+    } while (I_GetTimeMS() - start <= MIDIPIPE_MAX_WAIT);
 
 fail:
     // TODO: Deal with the wedged process?
