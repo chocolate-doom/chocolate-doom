@@ -104,12 +104,14 @@ void
 R_InstallSpriteLump
 ( int		lump,
   unsigned	frame,
-  unsigned	rotation,
+  char		rot,
   boolean	flipped )
 {
     int		r;
+    // [crispy] support 16 sprite rotations
+    unsigned rotation = (rot >= 'A') ? rot - 'A' + 10 : (rot >= '0') ? rot - '0' : 17;
 	
-    if (frame >= 29 || rotation > 8)
+    if (frame >= 29 || rotation > 16) // [crispy] support 16 sprite rotations
 	I_Error("R_InstallSpriteLump: "
 		"Bad frame characters in lump %i", lump);
 	
@@ -128,7 +130,7 @@ R_InstallSpriteLump
 		     "and a rot=0 lump", spritename, 'A'+frame);
 			
 	sprtemp[frame].rotate = false;
-	for (r=0 ; r<8 ; r++)
+	for (r=0 ; r<16 ; r++) // [crispy] support 16 sprite rotations
 	{
 	    sprtemp[frame].lump[r] = lump - firstspritelump;
 	    sprtemp[frame].flip[r] = (byte)flipped;
@@ -215,7 +217,7 @@ void R_InitSpriteDefs (char** namelist)
 	    if (!strncasecmp(lumpinfo[l]->name, spritename, 4))
 	    {
 		frame = lumpinfo[l]->name[4] - 'A';
-		rotation = lumpinfo[l]->name[5] - '0';
+		rotation = lumpinfo[l]->name[5];
 
 		if (modifiedgame)
 		    patched = W_GetNumForName (lumpinfo[l]->name);
@@ -227,7 +229,7 @@ void R_InitSpriteDefs (char** namelist)
 		if (lumpinfo[l]->name[6])
 		{
 		    frame = lumpinfo[l]->name[6] - 'A';
-		    rotation = lumpinfo[l]->name[7] - '0';
+		    rotation = lumpinfo[l]->name[7];
 		    R_InstallSpriteLump (l, frame, rotation, true);
 		}
 	    }
@@ -248,8 +250,9 @@ void R_InitSpriteDefs (char** namelist)
 	    {
 	      case -1:
 		// no rotations were found for that frame at all
-		I_Error ("R_InitSprites: No patches found "
-			 "for %s frame %c", spritename, frame+'A');
+		// [crispy] make non-fatal
+		fprintf (stderr, "R_InitSprites: No patches found "
+			 "for %s frame %c\n", spritename, frame+'A');
 		break;
 		
 	      case 0:
@@ -263,6 +266,16 @@ void R_InitSpriteDefs (char** namelist)
 			I_Error ("R_InitSprites: Sprite %s frame %c "
 				 "is missing rotations",
 				 spritename, frame+'A');
+
+		// [crispy] support 16 sprite rotations
+		sprtemp[frame].rotate = 2;
+		for ( ; rotation<16 ; rotation++)
+		    if (sprtemp[frame].lump[rotation] == -1)
+		    {
+			sprtemp[frame].rotate = 1;
+			break;
+		    }
+
 		break;
 	    }
 	}
@@ -598,7 +611,16 @@ void R_ProjectSprite (mobj_t* thing)
     {
 	// choose a different rotation based on player view
 	ang = R_PointToAngle (interpx, interpy);
+	// [crispy] support 16 sprite rotations
+	if (sprframe->rotate == 2)
+	{
+	rot = (ang-interpangle+(unsigned)(ANG45/4)*17);
+	rot = (rot>>29) + ((rot>>25)&8);
+	}
+	else
+	{
 	rot = (ang-interpangle+(unsigned)(ANG45/2)*9)>>29;
+	}
 	lump = sprframe->lump[rot];
 	flip = (boolean)sprframe->flip[rot];
     }
