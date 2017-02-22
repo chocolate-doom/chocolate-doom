@@ -15,6 +15,8 @@
 //     A simple buffer and reader implementation.
 //
 
+#ifdef _WIN32
+
 #include "buffer.h"
 
 #include <stdlib.h>
@@ -243,3 +245,5 @@ char *Reader_ReadString(buffer_reader_t *reader)
     reader->pos = dp + 1;
     return (char*)data_start;
 }
+
+#endif // #ifdef _WIN32
