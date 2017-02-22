@@ -66,6 +66,35 @@ static HANDLE  midi_process_out_writer;
 //
 
 //
+// FreePipes
+//
+// Free all pipes in use by this module.
+//
+static void FreePipes()
+{
+    if (midi_process_in_reader != NULL)
+    {
+        CloseHandle(midi_process_in_reader);
+        midi_process_in_reader = NULL;
+    }
+    if (midi_process_in_writer != NULL)
+    {
+        CloseHandle(midi_process_in_writer);
+        midi_process_in_writer = NULL;
+    }
+    if (midi_process_out_reader != NULL)
+    {
+        CloseHandle(midi_process_out_reader);
+        midi_process_in_reader = NULL;
+    }
+    if (midi_process_out_writer != NULL)
+    {
+        CloseHandle(midi_process_out_writer);
+        midi_process_out_writer = NULL;
+    }
+}
+
+//
 // UsingNativeMidi
 //
 // Enumerate all music decoders and return true if NATIVEMIDI is one of them.
@@ -161,9 +190,9 @@ static boolean ExpectPipe(net_packet_t *packet)
 
         // Continue looping as long as we don't exceed our maximum wait time.
     } while (start + MIDIPIPE_MAX_WAIT > I_GetTimeMS());
-fail:
 
-    // TODO: Deal with the wedged process.
+fail:
+    // TODO: Deal with the wedged process?
     return false;
 }
 
@@ -289,7 +318,7 @@ void I_MidiPipe_StopSong()
 }
 
 //
-// I_MidiPipe_StopSong
+// I_MidiPipe_ShutdownServer
 //
 // Tells the MIDI subprocess to shutdown.
 //
@@ -302,6 +331,8 @@ void I_MidiPipe_ShutdownServer()
     NET_WriteInt16(packet, NET_MIDIPIPE_PACKET_TYPE_SHUTDOWN);
     ok = WritePipe(packet);
     NET_FreePacket(packet);
+
+    FreePipes();
 
     midi_server_initialized = false;
 
@@ -328,6 +359,8 @@ boolean I_MidiPipe_InitServer()
 {
     struct stat sbuf;
     char filename[MAX_PATH + 1];
+    char *module = NULL;
+    char *cmdline = NULL;
 
     if (!UsingNativeMidi() || strlen(snd_musiccmd) > 0)
     {
@@ -340,17 +373,15 @@ boolean I_MidiPipe_InitServer()
     size_t filename_len = GetModuleFileName(NULL, filename, MAX_PATH);
 
     // Remove filespec
-    // TODO: Move this to m_misc
+    // TODO: Move this to m_misc?
     char *fp = &filename[filename_len];
     while (filename <= fp && *fp != DIR_SEPARATOR)
     {
         fp--;
     }
     *(fp + 1) = '\0';
-    char* module = M_StringJoin(filename, PROGRAM_PREFIX "midiproc.exe", NULL);
-    char* cmdline = M_StringJoin(module, " \"" PACKAGE_STRING "\"", NULL);
-    DEBUGOUT(module);
-    DEBUGOUT(cmdline);
+    module = M_StringJoin(filename, PROGRAM_PREFIX "midiproc.exe", NULL);
+    cmdline = M_StringJoin(module, " \"" PACKAGE_STRING "\"", NULL);
 
     // Look for executable file
     if(stat(module, &sbuf))
@@ -401,20 +432,23 @@ boolean I_MidiPipe_InitServer()
     startup_info.hStdOutput = midi_process_out_writer;
     startup_info.dwFlags = STARTF_USESTDHANDLES;
 
-    boolean ok = CreateProcess(TEXT(module), TEXT(cmdline), NULL, NULL, TRUE,
+    BOOL ok = CreateProcess(TEXT(module), TEXT(cmdline), NULL, NULL, TRUE,
         CREATE_NEW_CONSOLE, NULL, NULL, &startup_info, &proc_info);
 
-    if (ok)
+    if (!ok)
     {
-        DEBUGOUT("midiproc started");
-        midi_server_initialized = true;
-    }
-    else
-    {
-        DEBUGOUT("failed to start midiproc");
+        goto fail;
     }
 
-    return ok;
+    midi_server_initialized = true;
+    return true;
+
+fail:
+    FreePipes();
+    free(cmdline);
+    free(module);
+
+    return false;
 }
 
 #endif

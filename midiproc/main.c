@@ -50,6 +50,23 @@ static Mix_Music *music  = NULL;
 //
 
 //
+// Cleanly close our in-use pipes.
+//
+static void FreePipes(void)
+{
+    if (midi_process_in != NULL)
+    {
+        CloseHandle(midi_process_in);
+        midi_process_in = NULL;
+    }
+    if (midi_process_out != NULL)
+    {
+        CloseHandle(midi_process_out);
+        midi_process_out = NULL;
+    }
+}
+
+//
 // Unregisters the currently playing song.  This is never called from the
 // protocol, we simply do this before playing a new song.
 //
@@ -64,7 +81,7 @@ static void UnregisterSong()
 }
 
 //
-// Bookkeeping stuff we need to do when we're shutting off the subprocess.
+// Cleanly shut down SDL.
 //
 static void ShutdownSDL(void)
 {
@@ -343,16 +360,23 @@ boolean InitPipes()
     midi_process_in = GetStdHandle(STD_INPUT_HANDLE);
     if (midi_process_in == INVALID_HANDLE_VALUE)
     {
-        return false;
+        goto fail;
     }
 
     midi_process_out = GetStdHandle(STD_OUTPUT_HANDLE);
     if (midi_process_out == INVALID_HANDLE_VALUE)
     {
-        return false;
+        goto fail;
     }
 
+    atexit(FreePipes);
+
     return true;
+
+fail:
+    FreePipes();
+
+    return false;
 }
 
 //
