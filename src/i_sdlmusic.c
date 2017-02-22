@@ -1030,7 +1030,11 @@ static void I_SDL_PlaySong(void *handle, boolean looping)
         return;
     }
 
+#if defined(_WIN32)
     if (handle == NULL && !midi_server_registered)
+#else
+    if (handle == NULL)
+#endif
     {
         return;
     }
