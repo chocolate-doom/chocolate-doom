@@ -25,6 +25,8 @@
 #include <win_opendir.h>
 #elif defined(__GNUC__) || defined(POSIX)
 #include <dirent.h>
+#elif defined(__WATCOMC__)
+#include <direct.h>
 #else
 #error Need an include for dirent.h!
 #endif
