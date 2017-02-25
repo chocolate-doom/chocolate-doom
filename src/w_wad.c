@@ -35,21 +35,21 @@
 
 #include "w_wad.h"
 
-typedef struct
+typedef PACKED_STRUCT (
 {
     // Should be "IWAD" or "PWAD".
     char		identification[4];
     int			numlumps;
     int			infotableofs;
-} PACKEDATTR wadinfo_t;
+}) wadinfo_t;
 
 
-typedef struct
+typedef PACKED_STRUCT (
 {
     int			filepos;
     int			size;
     char		name[8];
-} PACKEDATTR filelump_t;
+}) filelump_t;
 
 //
 // GLOBALS

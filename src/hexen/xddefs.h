@@ -44,13 +44,13 @@ enum
     ML_BEHAVIOR
 };
 
-typedef struct
+typedef PACKED_STRUCT (
 {
     short x;
     short y;
-} PACKEDATTR mapvertex_t;
+})  mapvertex_t;
 
-typedef struct
+typedef PACKED_STRUCT (
 {
     short textureoffset;
     short rowoffset;
@@ -58,9 +58,9 @@ typedef struct
     char bottomtexture[8];
     char midtexture[8];
     short sector;               // on viewer's side
-} PACKEDATTR mapsidedef_t;
+}) mapsidedef_t;
 
-typedef struct
+typedef PACKED_STRUCT (
 {
     short v1;
     short v2;
@@ -72,7 +72,7 @@ typedef struct
     byte arg4;
     byte arg5;
     short sidenum[2];           // sidenum[1] will be -1 if one sided
-} PACKEDATTR maplinedef_t;
+}) maplinedef_t;
 
 #define	ML_BLOCKING			0x0001
 #define	ML_BLOCKMONSTERS	0x0002
@@ -96,7 +96,7 @@ typedef struct
 #define SPAC_PUSH		4       // when player/monster pushes line
 #define SPAC_PCROSS		5       // when projectile crosses line
 
-typedef struct
+typedef PACKED_STRUCT (
 {
     short floorheight;
     short ceilingheight;
@@ -105,15 +105,15 @@ typedef struct
     short lightlevel;
     short special;
     short tag;
-} PACKEDATTR mapsector_t;
+}) mapsector_t;
 
-typedef struct
+typedef PACKED_STRUCT (
 {
     short numsegs;
     short firstseg;             // segs are stored sequentially
-} PACKEDATTR mapsubsector_t;
+}) mapsubsector_t;
 
-typedef struct
+typedef PACKED_STRUCT (
 {
     short v1;
     short v2;
@@ -121,17 +121,17 @@ typedef struct
     short linedef;
     short side;
     short offset;
-} PACKEDATTR mapseg_t;
+}) mapseg_t;
 
 #define	NF_SUBSECTOR	0x8000
-typedef struct
+typedef PACKED_STRUCT (
 {
     short x, y, dx, dy;         // partition line
     short bbox[2][4];           // bounding box for each child
     unsigned short children[2]; // if NF_SUBSECTOR its a subsector
-} PACKEDATTR mapnode_t;
+}) mapnode_t;
 
-typedef struct
+typedef PACKED_STRUCT (
 {
     short tid;
     short x;
@@ -146,7 +146,7 @@ typedef struct
     byte arg3;
     byte arg4;
     byte arg5;
-} PACKEDATTR mapthing_t;
+}) mapthing_t;
 
 #define MTF_EASY		1
 #define MTF_NORMAL		2
@@ -166,16 +166,16 @@ typedef struct
 //
 //--------------------------------------------------------------------------
 
-typedef struct
+typedef PACKED_STRUCT (
 {
     short originx;
     short originy;
     short patch;
     short stepdir;
     short colormap;
-} PACKEDATTR mappatch_t;
+}) mappatch_t;
 
-typedef struct
+typedef PACKED_STRUCT (
 {
     char name[8];
     boolean masked;
@@ -184,6 +184,6 @@ typedef struct
     int obsolete;
     short patchcount;
     mappatch_t patches[1];
-} PACKEDATTR maptexture_t;
+}) maptexture_t;
 
 #endif // __XDDEFS__

@@ -33,19 +33,19 @@
 #pragma pack(push, 1)
 #endif
 
-typedef struct
+typedef PACKED_STRUCT (
 {
     byte chunk_id[4];
     unsigned int chunk_size;
-} PACKEDATTR chunk_header_t;
+}) chunk_header_t;
 
-typedef struct
+typedef PACKED_STRUCT (
 {
     chunk_header_t chunk_header;
     unsigned short format_type;
     unsigned short num_tracks;
     unsigned short time_division;
-} PACKEDATTR midi_header_t;
+}) midi_header_t;
 
 // haleyjd 09/09/10: packing off.
 #ifdef _MSC_VER

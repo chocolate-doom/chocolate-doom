@@ -48,26 +48,26 @@ enum
 };
 
 
-typedef struct
+typedef PACKED_STRUCT (
 {
     short x, y;
-} PACKEDATTR mapvertex_t;
+}) mapvertex_t;
 
-typedef struct
+typedef PACKED_STRUCT (
 {
     short textureoffset;
     short rowoffset;
     char toptexture[8], bottomtexture[8], midtexture[8];
     short sector;               // on viewer's side
-} PACKEDATTR mapsidedef_t;
+}) mapsidedef_t;
 
-typedef struct
+typedef PACKED_STRUCT (
 {
     short v1, v2;
     short flags;
     short special, tag;
     short sidenum[2];           // sidenum[1] will be -1 if one sided
-} PACKEDATTR maplinedef_t;
+}) maplinedef_t;
 
 #define	ML_BLOCKING			1
 #define	ML_BLOCKMONSTERS	2
@@ -88,43 +88,43 @@ typedef struct
 #define	ML_MAPPED			256     // set if allready drawn in automap
 
 
-typedef struct
+typedef PACKED_STRUCT (
 {
     short floorheight, ceilingheight;
     char floorpic[8], ceilingpic[8];
     short lightlevel;
     short special, tag;
-} PACKEDATTR mapsector_t;
+}) mapsector_t;
 
-typedef struct
+typedef PACKED_STRUCT (
 {
     short numsegs;
     short firstseg;             // segs are stored sequentially
-} PACKEDATTR mapsubsector_t;
+}) mapsubsector_t;
 
-typedef struct
+typedef PACKED_STRUCT (
 {
     short v1, v2;
     short angle;
     short linedef, side;
     short offset;
-} PACKEDATTR mapseg_t;
+}) mapseg_t;
 
 #define	NF_SUBSECTOR	0x8000
-typedef struct
+typedef PACKED_STRUCT (
 {
     short x, y, dx, dy;         // partition line
     short bbox[2][4];           // bounding box for each child
     unsigned short children[2]; // if NF_SUBSECTOR its a subsector
-} PACKEDATTR mapnode_t;
+}) mapnode_t;
 
-typedef struct
+typedef PACKED_STRUCT (
 {
     short x, y;
     short angle;
     short type;
     short options;
-} PACKEDATTR mapthing_t;
+}) mapthing_t;
 
 #define	MTF_EASY		1
 #define	MTF_NORMAL		2
@@ -139,16 +139,16 @@ typedef struct
 ===============================================================================
 */
 
-typedef struct
+typedef PACKED_STRUCT (
 {
     short originx;
     short originy;
     short patch;
     short stepdir;
     short colormap;
-} PACKEDATTR mappatch_t;
+}) mappatch_t;
 
-typedef struct
+typedef PACKED_STRUCT (
 {
     char name[8];
     boolean masked;
@@ -157,7 +157,7 @@ typedef struct
     int obsolete;
     short patchcount;
     mappatch_t patches[1];
-} PACKEDATTR maptexture_t;
+}) maptexture_t;
 
 
 /*

@@ -673,7 +673,7 @@ void V_RestoreBuffer(void)
 // SCREEN SHOTS
 //
 
-typedef struct
+typedef PACKED_STRUCT (
 {
     char		manufacturer;
     char		version;
@@ -697,7 +697,7 @@ typedef struct
     
     char		filler[58];
     unsigned char	data;		// unbounded
-} PACKEDATTR pcx_t;
+}) pcx_t;
 
 
 //
