@@ -44,8 +44,8 @@ staging-%:
 	               $(TOPLEVEL)/src/$(PROGRAM_PREFIX)setup.exe \
 	               $@/$(PROGRAM_PREFIX)$*-setup.exe
 	./cp-with-libs --ldflags="$(LDFLAGS)" \
-	               $(TOPLEVEL)/midiproc/midiproc.exe \
-	               $@/midiproc.exe
+	               $(TOPLEVEL)/midiproc/$(PROGRAM_PREFIX)midiproc.exe \
+	               $@/$(PROGRAM_PREFIX)midiproc.exe
 
 	$(STRIP) $@/*.exe $@/*.dll
 
