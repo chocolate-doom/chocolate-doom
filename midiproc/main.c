@@ -41,7 +41,6 @@
 
 static HANDLE    midi_process_in;  // Standard In.
 static HANDLE    midi_process_out; // Standard Out.
-static buffer_t *midi_buffer;      // Data from client.
 
 // Currently playing music track.
 static Mix_Music *music  = NULL;
@@ -154,6 +153,9 @@ static void StopSong()
 
 static boolean MidiPipe_RegisterSong(buffer_reader_t *reader)
 {
+    unsigned int i;
+    CHAR buffer[2];
+
     char *filename = Reader_ReadString(reader);
     if (filename == NULL)
     {
@@ -164,8 +166,7 @@ static boolean MidiPipe_RegisterSong(buffer_reader_t *reader)
 
     // FIXME: We should probably have a function for writing Int16's into
     //        buffers, as opposed to simply winging it.
-    unsigned int i = NET_MIDIPIPE_PACKET_TYPE_REGISTER_SONG_ACK;
-    CHAR buffer[2];
+    i = NET_MIDIPIPE_PACKET_TYPE_REGISTER_SONG_ACK;
     buffer[0] = (i >> 8) & 0xff;
     buffer[1] = i & 0xff;
 
@@ -247,6 +248,7 @@ boolean ParseCommand(buffer_reader_t *reader, uint16_t command)
 //
 boolean ParseMessage(buffer_t *buf)
 {
+    int bytes_read;
     uint16_t command;
     buffer_reader_t *reader = NewReader(buf);
 
@@ -264,7 +266,7 @@ boolean ParseMessage(buffer_t *buf)
 
     // We parsed a complete message!  We can now safely shift
     // the prior message off the front of the buffer.
-    int bytes_read = Reader_BytesRead(reader);
+    bytes_read = Reader_BytesRead(reader);
     DeleteReader(reader);
     Buffer_Shift(buf, bytes_read);
 

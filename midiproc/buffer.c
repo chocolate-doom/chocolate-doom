@@ -56,14 +56,16 @@ int Buffer_Data(buffer_t *buf, byte **data)
 //
 boolean Buffer_Push(buffer_t *buf, const void *data, int len)
 {
+    ptrdiff_t space_begin, space_end;
+
     if (len <= 0)
     {
         // Do nothing, successfully.
         return true;
     }
 
-    ptrdiff_t space_begin = buf->data - buf->buffer;
-    ptrdiff_t space_end = buf->buffer_end - buf->data_end;
+    space_begin = buf->data - buf->buffer;
+    space_end = buf->buffer_end - buf->data_end;
 
     if (len > space_end)
     {
@@ -93,13 +95,15 @@ boolean Buffer_Push(buffer_t *buf, const void *data, int len)
 //
 void Buffer_Shift(buffer_t *buf, int len)
 {
+    ptrdiff_t max_shift;
+
     if (len <= 0)
     {
         // Do nothing.
         return;
     }
 
-    ptrdiff_t max_shift = buf->data_end - buf->data;
+    max_shift = buf->data_end - buf->data;
     if (len >= max_shift)
     {
         // If the operation would clear the buffer, just zero everything.
