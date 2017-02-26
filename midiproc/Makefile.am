@@ -3,9 +3,9 @@ AM_CFLAGS=-I$(top_srcdir)/src @SDLMIXER_CFLAGS@
 
 if HAVE_WINDRES
 
-noinst_PROGRAMS = midiproc
+noinst_PROGRAMS = @PROGRAM_PREFIX@midiproc
 
-midiproc_LDADD = @SDLMIXER_LIBS@
-midiproc_SOURCES = buffer.c buffer.h main.c
+@PROGRAM_PREFIX@midiproc_LDADD = @SDLMIXER_LIBS@
+@PROGRAM_PREFIX@midiproc_SOURCES = buffer.c buffer.h main.c
 
 endif
