@@ -147,6 +147,7 @@ static boolean WritePipe(net_packet_t *packet)
 //
 static boolean ExpectPipe(net_packet_t *packet)
 {
+    int start;
     BOOL ok;
     CHAR pipe_buffer[8192];
     DWORD pipe_buffer_read = 0;
@@ -158,7 +159,7 @@ static boolean ExpectPipe(net_packet_t *packet)
         return false;
     }
 
-    int start = I_GetTimeMS();
+    start = I_GetTimeMS();
 
     do
     {
@@ -210,7 +211,7 @@ fail:
 // Tells the MIDI subprocess to load a specific filename for playing.  This
 // function blocks until there is an acknowledgement from the server.
 //
-boolean I_MidiPipe_RegisterSong(const char *filename)
+boolean I_MidiPipe_RegisterSong(char *filename)
 {
     boolean ok;
     net_packet_t *packet;
@@ -360,10 +361,16 @@ void I_MidiPipe_ShutdownServer()
 //
 boolean I_MidiPipe_InitServer()
 {
+    size_t filename_len;
     struct stat sbuf;
     char filename[MAX_PATH + 1];
+    char *fp = NULL;
     char *module = NULL;
     char *cmdline = NULL;
+    SECURITY_ATTRIBUTES sec_attrs;
+    PROCESS_INFORMATION proc_info;
+    STARTUPINFO startup_info;
+    BOOL ok;
 
     if (!UsingNativeMidi() || strlen(snd_musiccmd) > 0)
     {
@@ -373,11 +380,11 @@ boolean I_MidiPipe_InitServer()
     }
 
     memset(filename, 0, sizeof(filename));
-    size_t filename_len = GetModuleFileName(NULL, filename, MAX_PATH);
+    filename_len = GetModuleFileName(NULL, filename, MAX_PATH);
 
     // Remove filespec
     // TODO: Move this to m_misc?
-    char *fp = &filename[filename_len];
+    fp = &filename[filename_len];
     while (filename <= fp && *fp != DIR_SEPARATOR)
     {
         fp--;
@@ -394,7 +401,6 @@ boolean I_MidiPipe_InitServer()
     }
 
     // Set up pipes
-    SECURITY_ATTRIBUTES sec_attrs;
     memset(&sec_attrs, 0, sizeof(SECURITY_ATTRIBUTES));
     sec_attrs.nLength = sizeof(SECURITY_ATTRIBUTES);
     sec_attrs.bInheritHandle = TRUE;
@@ -425,17 +431,14 @@ boolean I_MidiPipe_InitServer()
     }
 
     // Launch the subprocess
-    PROCESS_INFORMATION proc_info;
     memset(&proc_info, 0, sizeof(proc_info));
-
-    STARTUPINFO startup_info;
     memset(&startup_info, 0, sizeof(startup_info));
     startup_info.cb = sizeof(startup_info);
     startup_info.hStdInput = midi_process_in_reader;
     startup_info.hStdOutput = midi_process_out_writer;
     startup_info.dwFlags = STARTF_USESTDHANDLES;
 
-    BOOL ok = CreateProcess(TEXT(module), TEXT(cmdline), NULL, NULL, TRUE,
+    ok = CreateProcess(TEXT(module), TEXT(cmdline), NULL, NULL, TRUE,
         CREATE_NEW_CONSOLE, NULL, NULL, &startup_info, &proc_info);
 
     if (!ok)
