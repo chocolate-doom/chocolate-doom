@@ -1818,7 +1818,7 @@ P_SetupLevel
 
     lumpnum = W_GetNumForName (lumpname);
 	
-    if (nervewadfile && gamemission != pack_nerve)
+    if (nervewadfile && gamemission != pack_nerve && map <= 9)
     {
         lumpnum = W_GetSecondNumForName (lumpname);
     }
