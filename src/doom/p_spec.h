@@ -211,13 +211,13 @@ void    P_SpawnGlowingLight(sector_t* sector);
 // P_SWITCH
 //
 // [crispy] add PACKEDATTR for reading SWITCHES lumps from memory
-typedef struct
+typedef PACKED_STRUCT (
 {
     char	name1[9];
     char	name2[9];
     short	episode;
     
-} PACKEDATTR switchlist_t;
+}) switchlist_t;
 
 
 typedef enum
