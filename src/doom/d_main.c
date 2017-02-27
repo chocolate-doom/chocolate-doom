@@ -722,7 +722,8 @@ void D_DoAdvanceDemo (void)
     if (gamevariant == bfgedition && !strcasecmp(pagename, "TITLEPIC")
         && W_CheckNumForName("titlepic") < 0)
     {
-        pagename = DEH_String("INTERPIC");
+        // [crispy] use DMENUPIC instead of TITLEPIC, it's awesome
+        pagename = DEH_String("DMENUPIC");
     }
 }
 
