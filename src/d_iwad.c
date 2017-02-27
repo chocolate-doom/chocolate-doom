@@ -231,6 +231,9 @@ static char *steam_install_subdirs[] =
 #define STEAM_BFG_GUS_PATCHES \
     "steamapps\\common\\DOOM 3 BFG Edition\\base\\classicmusic\\instruments"
 
+#define STEAM_LIBRARY_FOLDERS \
+    "steamapps\\libraryfolders.vdf"
+
 static char *GetRegistryString(registry_value_t *reg_val)
 {
     HKEY key;
@@ -345,11 +348,97 @@ static void CheckInstallRootPaths(void)
 
 // Check for Doom downloaded via Steam
 
+#define MAX_STEAM_LIBRARIES 16
+
+static char *steam_libraries[MAX_STEAM_LIBRARIES];
+static int num_steam_libraries = 0;
+
+static void AddSteamLibraryDir(char *dir)
+{
+    if (num_steam_libraries < MAX_STEAM_LIBRARIES)
+    {
+        steam_libraries[num_steam_libraries] = M_StringReplace(dir, "\\\\",
+                                                               "\\");
+        ++num_steam_libraries;
+    }
+}
+
+static void CheckSteamLibrary(long library_file_size, char *library_file_buffer)
+{
+    long i, start;
+    boolean key, key_valid, value;
+    char* buffer;
+    start = -1;
+    key = true;
+    value = false;
+    key_valid = true;
+
+    for (i=0;i<library_file_size; ++i)
+    {
+        if (library_file_buffer[i] == '"')
+        {
+            if (start == -1)
+            {
+                start = i;
+            }
+            else
+            {
+                //Reuse the file buffer
+                library_file_buffer[i] = '\0';
+                buffer = &library_file_buffer[start+1];
+
+                //This is the file header, does not count as a key
+                if (!strcmp(buffer, "LibraryFolders"))
+                {
+                    key = true;
+                    key_valid = true;
+                    value = false;
+                }
+                else
+                {
+                    //found a value with a valid key
+                    if (value && key_valid)
+                    {
+                        AddSteamLibraryDir(buffer);
+                    }
+
+                    if (key)
+                    {
+                        key = false;
+                        value = true;
+                    }
+                    else if (value)
+                    {
+                        key = true;
+                        key_valid = true;
+                        value = false;
+                    }
+                }
+
+                start = -1;
+            }
+        }
+        else if (start > -1 && key)
+        {
+            //Keys for libraries are always numeric
+            if (library_file_buffer[i] < '0' || library_file_buffer[i] > '9')
+            {
+                key_valid = false;
+            }
+        }
+    }
+}
+
 static void CheckSteamEdition(void)
 {
     char *install_path;
+    char *library_path;
     char *subpath;
-    size_t i;
+    char *probe;
+    FILE *library_file;
+    char *library_file_buffer;
+    long library_file_size;
+    size_t i, j;
 
     install_path = GetRegistryString(&steam_install_location);
 
@@ -358,15 +447,53 @@ static void CheckSteamEdition(void)
         return;
     }
 
-    for (i=0; i<arrlen(steam_install_subdirs); ++i)
-    {
-        subpath = M_StringJoin(install_path, DIR_SEPARATOR_S,
-                               steam_install_subdirs[i], NULL);
+    AddSteamLibraryDir(install_path);
 
-        AddIWADDir(subpath);
+    library_path = M_StringJoin(install_path, DIR_SEPARATOR_S,
+                                STEAM_LIBRARY_FOLDERS, NULL);
+
+    probe = M_FileCaseExists(library_path);
+
+    if (probe != NULL)
+    {
+        library_file = fopen(probe, "rb");
+
+        if (library_file != NULL)
+        {
+            library_file_size = M_FileLength(library_file);
+        }
+        else
+        {
+            library_file_size = 0;
+        }
+
+        if (library_file_size > 0)
+        {
+            library_file_buffer = malloc(library_file_size + 1);
+            fread(library_file_buffer, 1, library_file_size, library_file);
+            fclose(library_file);
+            library_file_buffer[library_file_size] = '\0';
+            CheckSteamLibrary(library_file_size, library_file_buffer);
+        }
+    }
+
+    for (j=0; j<num_steam_libraries; ++j)
+    {
+        for (i=0; i<arrlen(steam_install_subdirs); ++i)
+        {
+            subpath = M_StringJoin(steam_libraries[j], DIR_SEPARATOR_S,
+                                   steam_install_subdirs[i], NULL);
+
+            AddIWADDir(subpath);
+        }
     }
 
     free(install_path);
+
+    if(library_file_size > 0)
+    {
+        free(library_file_buffer);
+    }
 }
 
 // The BFG edition ships with a full set of GUS patches. If we find them,
