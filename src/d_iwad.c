@@ -363,70 +363,175 @@ static void AddSteamLibraryDir(char *dir)
     }
 }
 
-static void CheckSteamLibrary(long library_file_size, char *library_file_buffer)
-{
-    long i, start;
-    boolean key, key_valid, value;
-    char* buffer;
-    start = -1;
-    key = true;
-    value = false;
-    key_valid = true;
+//Read whole of libraryfolders.vdf as string
+//silently fail is something goes wrong reading the file
 
-    for (i=0;i<library_file_size; ++i)
+static char *GetSteamLibText(char *library_path)
+{
+    char *library_file_buffer;
+    size_t library_file_size;
+    size_t count;
+    char *probe;
+    FILE *library_file;
+
+    probe = M_FileCaseExists(library_path);
+
+    if (probe == NULL)
     {
-        if (library_file_buffer[i] == '"')
+        return NULL;
+    }
+
+    library_file = fopen(probe, "rb");
+
+    if (library_file == NULL)
+    {
+        return NULL;
+    }
+
+    library_file_size = M_FileLength(library_file);
+    library_file_buffer = malloc(library_file_size + 1);
+    count = fread(library_file_buffer, 1, library_file_size, library_file);
+    fclose(library_file);
+
+    if (library_file_size != count)
+    {
+        return NULL;
+    }
+
+    library_file_buffer[library_file_size] = '\0';
+    return library_file_buffer;
+}
+
+static char *GetNextSteamLibToken(char **lib_file_buffer)
+{
+    char *buffer;
+    char *token;
+    size_t i, buff_size;
+    boolean success;
+
+    token = NULL;               //a token is anything between "'s'
+    success = false;            //we want to avoid an incomplete token
+                                //so we use this instead of NULL check
+    buffer = *lib_file_buffer;
+    buff_size = strlen(buffer);
+
+    for (i=0; i<buff_size; ++i)
+    {
+        if (buffer[i] == '"')
         {
-            if (start == -1)
+            //first " is the start of the token
+            if (token == NULL)
             {
-                start = i;
+                //skip the " itself
+                token = &buffer[i+1];
             }
+            //second " is the end of the token
             else
             {
-                //Reuse the file buffer
-                library_file_buffer[i] = '\0';
-                buffer = &library_file_buffer[start+1];
-
-                //This is the file header, does not count as a key
-                if (!strcmp(buffer, "LibraryFolders"))
-                {
-                    key = true;
-                    key_valid = true;
-                    value = false;
-                }
-                else
-                {
-                    //found a value with a valid key
-                    if (value && key_valid)
-                    {
-                        AddSteamLibraryDir(buffer);
-                    }
-
-                    if (key)
-                    {
-                        key = false;
-                        value = true;
-                    }
-                    else if (value)
-                    {
-                        key = true;
-                        key_valid = true;
-                        value = false;
-                    }
-                }
-
-                start = -1;
+                //convert last " to \0 to avoid allocating more strings
+                buffer[i] = '\0';
+                success = true;
+                break;
             }
         }
-        else if (start > -1 && key)
+    }
+
+    if(success)
+    {
+        //move lib_file_buffer ahead of last token
+        *lib_file_buffer = &buffer[i+1];
+        return token;
+    }
+    else
+    {
+        return NULL;
+    }
+}
+
+static boolean IsValidSteamLibKey(char* key)
+{
+    size_t i;
+    for (i=0; i<strlen(key); ++i)
+    {
+        if (!isdigit(key[i]))
         {
-            //Keys for libraries are always numeric
-            if (library_file_buffer[i] < '0' || library_file_buffer[i] > '9')
+            return false;
+        }
+    }
+
+    return true;
+}
+
+static char *GetSteamNextLibPath(char **lib_file_buffer)
+{
+    boolean key, key_valid;
+    char *token;
+    key = key_valid = true;
+
+    for (;;)
+    {
+        token = GetNextSteamLibToken(lib_file_buffer);
+
+        if (token == NULL)
+        {
+            return NULL;
+        }
+
+        //file always starts with this line before key/value pairs
+        if (!strcmp(token, "LibraryFolders"))
+        {
+            key = true;
+            key_valid = false;
+        }
+        else
+        {
+            if (!key && key_valid)
             {
+                return token;
+            }
+
+            if (key)
+            {
+                key = false;
+                key_valid = IsValidSteamLibKey(token);
+            }
+            else //value
+            {
+                key = true;
                 key_valid = false;
             }
         }
     }
+}
+
+static void CheckSteamLibraries(char *lib_file_path)
+{
+    char *library_file_buffer;
+    char *buffer;
+    char *library_path;
+
+    library_file_buffer = buffer = GetSteamLibText(lib_file_path);
+
+    if (library_file_buffer == NULL)
+    {
+        return;
+    }
+
+    for (;;)
+    {
+        library_path = GetSteamNextLibPath(&buffer);
+
+        if (library_path != NULL)
+        {
+            AddSteamLibraryDir(library_path);
+        }
+        else
+        {
+            break;
+        }
+    }
+
+    free(library_file_buffer);
 }
 
 static void CheckSteamEdition(void)
@@ -434,10 +539,6 @@ static void CheckSteamEdition(void)
     char *install_path;
     char *library_path;
     char *subpath;
-    char *probe;
-    FILE *library_file;
-    char *library_file_buffer;
-    long library_file_size;
     size_t i, j;
 
     install_path = GetRegistryString(&steam_install_location);
@@ -452,30 +553,7 @@ static void CheckSteamEdition(void)
     library_path = M_StringJoin(install_path, DIR_SEPARATOR_S,
                                 STEAM_LIBRARY_FOLDERS, NULL);
 
-    probe = M_FileCaseExists(library_path);
-
-    if (probe != NULL)
-    {
-        library_file = fopen(probe, "rb");
-
-        if (library_file != NULL)
-        {
-            library_file_size = M_FileLength(library_file);
-        }
-        else
-        {
-            library_file_size = 0;
-        }
-
-        if (library_file_size > 0)
-        {
-            library_file_buffer = malloc(library_file_size + 1);
-            fread(library_file_buffer, 1, library_file_size, library_file);
-            fclose(library_file);
-            library_file_buffer[library_file_size] = '\0';
-            CheckSteamLibrary(library_file_size, library_file_buffer);
-        }
-    }
+    CheckSteamLibraries(library_path);
 
     for (j=0; j<num_steam_libraries; ++j)
     {
@@ -489,11 +567,6 @@ static void CheckSteamEdition(void)
     }
 
     free(install_path);
-
-    if(library_file_size > 0)
-    {
-        free(library_file_buffer);
-    }
 }
 
 // The BFG edition ships with a full set of GUS patches. If we find them,
