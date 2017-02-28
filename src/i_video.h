@@ -94,4 +94,7 @@ extern int integer_scaling;
 extern int vga_porch_flash;
 extern int force_software_renderer;
 
+extern char *window_position;
+void I_GetWindowPosition(int *x, int *y, int w, int h);
+
 #endif

@@ -21,6 +21,7 @@
 
 #include "doomtype.h"
 #include "i_timer.h"
+#include "i_video.h"
 
 // Palette fade-in takes two seconds
 
@@ -35,15 +36,18 @@ static char *window_title = "";
 
 boolean I_SetVideoModeHR(void)
 {
+    int x, y;
+
     if (SDL_Init(SDL_INIT_VIDEO) < 0)
     {
         return false;
     }
 
+    I_GetWindowPosition(&x, &y, HR_SCREENWIDTH, HR_SCREENHEIGHT);
+
     // Create screen surface at the native desktop pixel depth (bpp=0),
     // as we cannot trust true 8-bit to reliably work nowadays.
-    hr_screen = SDL_CreateWindow(window_title,
-        SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+    hr_screen = SDL_CreateWindow(window_title, x, y,
         HR_SCREENWIDTH, HR_SCREENHEIGHT,
         0);
 
