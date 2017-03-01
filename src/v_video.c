@@ -1061,7 +1061,7 @@ void V_ScreenShot(char *format)
         ext = "pcx";
     }
 
-    for (i=0; i<=99; i++)
+    for (i=0; i<=9999; i++) // [crispy] increase screenshot filename limit
     {
         M_snprintf(lbmname, sizeof(lbmname), format, i, ext);
 
@@ -1071,7 +1071,7 @@ void V_ScreenShot(char *format)
         }
     }
 
-    if (i == 100)
+    if (i == 10000) // [crispy] increase screenshot filename limit
     {
         I_Error ("V_ScreenShot: Couldn't create a PCX");
     }
