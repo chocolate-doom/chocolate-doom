@@ -849,7 +849,16 @@ void V_ScreenShot(char *format)
 
     if (i == 100)
     {
-        I_Error ("V_ScreenShot: Couldn't create a PCX");
+#ifdef HAVE_LIBPNG
+        if (png_screenshots)
+        {
+            I_Error ("V_ScreenShot: Couldn't create a PNG");
+        }
+        else
+#endif
+        {
+            I_Error ("V_ScreenShot: Couldn't create a PCX");
+        }
     }
 
 #ifdef HAVE_LIBPNG
