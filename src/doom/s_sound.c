@@ -667,6 +667,12 @@ void S_ChangeMusic(int musicnum, int looping)
         musicnum = mus_introa;
     }
 
+    // [crispy] prevent music number overflows
+    if (musicnum >= NUMMUSIC)
+    {
+        musicnum = mus_runnin + (musicnum % (NUMMUSIC - mus_runnin));
+    }
+
     if (musicnum <= mus_None || musicnum >= NUMMUSIC)
     {
         I_Error("Bad music number %d", musicnum);
