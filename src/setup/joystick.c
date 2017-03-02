@@ -344,6 +344,7 @@ static const joystick_config_t nes30_pro_controller[] =
 };
 
 // http://www.8bitdo.com/sfc30/ or http://www.8bitdo.com/snes30/
+// and http://www.8bitdo.com/nes30/
 static const joystick_config_t sfc30_controller[] =
 {
     {"joystick_x_axis",        0},
@@ -495,6 +496,15 @@ static const known_joystick_t known_joysticks[] =
         "SFC30 *",
         4, 12, 1,
         sfc30_controller,
+    },
+
+    // NES30 (not pro), tested in default and "hold R whilst turning on"
+    // mode, with whatever firmware it came with out of the box. Latter
+    // mode puts " Joystick" suffix on the name string
+    {
+        "8Bitdo NES30 GamePad*",
+        4, 16, 1,
+        sfc30_controller, // identical to SFC30
     },
 };
 
