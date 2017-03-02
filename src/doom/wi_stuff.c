@@ -428,7 +428,7 @@ void WI_drawLF(void)
 
         V_DrawPatch((ORIGWIDTH - SHORT(finished->width)) / 2, y, finished);
     }
-    else if (wbs->last == NUMCMAPS)
+    else if (wbs->last >= NUMCMAPS) // [crispy] prevent crashes with maps > 33
     {
         // MAP33 - nothing is displayed!
     }
@@ -452,6 +452,12 @@ void WI_drawLF(void)
 void WI_drawEL(void)
 {
     int y = WI_TITLEY;
+
+    // [crispy] prevent crashes with maps > 33
+    if (wbs->last >= NUMCMAPS)
+    {
+	return;
+    }
 
     // draw "Entering"
     V_DrawPatch((ORIGWIDTH - SHORT(entering->width))/2,
