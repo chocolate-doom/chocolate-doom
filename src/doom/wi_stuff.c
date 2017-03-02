@@ -434,7 +434,7 @@ void WI_drawLF(void)
 
         V_DrawPatch((SCREENWIDTH - SHORT(finished->width)) / 2, y, finished);
     }
-    else if (wbs->last == NUMCMAPS)
+    else if (wbs->last >= NUMCMAPS) // [crispy] prevent crashes with maps > 33
     {
         // MAP33 - nothing is displayed!
     }
