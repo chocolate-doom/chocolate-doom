@@ -344,7 +344,7 @@ static const joystick_config_t nes30_pro_controller[] =
 };
 
 // http://www.8bitdo.com/sfc30/ or http://www.8bitdo.com/snes30/
-// and http://www.8bitdo.com/nes30/
+// and http://www.nes30.com/ and http://www.fc30.com/
 static const joystick_config_t sfc30_controller[] =
 {
     {"joystick_x_axis",        0},
@@ -504,6 +504,25 @@ static const known_joystick_t known_joysticks[] =
     {
         "8Bitdo NES30 GamePad*",
         4, 16, 1,
+        sfc30_controller, // identical to SFC30
+    },
+    // FC30 variant of the above
+    {
+        "8Bitdo FC30 GamePad*",
+        4, 16, 1,
+        sfc30_controller, // identical to SFC30
+    },
+
+    // NES30 in USB mode
+    {
+        "NES30*",
+        4, 12, 1,
+        sfc30_controller, // identical to SFC30
+    },
+    // FC30 variant of the above
+    {
+        "FC30*",
+        4, 12, 1,
         sfc30_controller, // identical to SFC30
     },
 };
