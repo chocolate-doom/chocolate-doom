@@ -889,6 +889,9 @@ P_DamageMobj
 	    damage -= saved;
 	}
 	player->health -= damage; 	// mirror mobj health here for Dave
+	// [crispy] comment out the block after to allow for negative player health values
+	if (player->health < -99)
+	    player->health = -99;
 	if (player->health < 0)
 	    player->health = 0;
 	
