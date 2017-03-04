@@ -779,7 +779,7 @@ void S_ChangeMusic(int musicnum, int looping)
     // [crispy] prevent music number overflows
     if (musicnum >= NUMMUSIC)
     {
-        musicnum = mus_runnin + (musicnum % NUMMUSIC);
+        musicnum = mus_runnin + ((musicnum - mus_runnin) % NUMMUSIC);
     }
 
     if (musicnum <= mus_None || musicnum >= NUMMUSIC)
