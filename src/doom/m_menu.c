@@ -513,8 +513,8 @@ enum
 {
     crispness_sep_tactical,
     crispness_crosshair,
-    crispness_neghealth,
     crispness_freelook,
+    crispness_neghealth,
     crispness_centerweapon,
     crispness_pitch,
     crispness_secretmessage,
@@ -1441,7 +1441,7 @@ static void M_DrawCrispness2(void)
 
     M_DrawCrispnessMultiItem(crispness_crosshair, "Draw Crosshair", multiitem_crosshair, crispy_crosshair, true);
     M_DrawCrispnessMultiItem(crispness_freelook, "Allow Free Look", multiitem_freelook, crispy_freelook, true);
-    M_DrawCrispnessMultiItem(crispness_neghealth, "Show Negative Health", multiitem_neghealth, crispy_neghealth, true);
+    M_DrawCrispnessMultiItem(crispness_neghealth, "Negative Player Health", multiitem_neghealth, crispy_neghealth, true);
     M_DrawCrispnessItem(crispness_centerweapon, "Center Weapon when Firing", crispy_centerweapon, true);
     M_DrawCrispnessItem(crispness_pitch, "Weapon Recoil Pitch", crispy_pitch, true);
     M_DrawCrispnessItem(crispness_secretmessage, "Show Revealed Secrets", crispy_secretmessage, true);
