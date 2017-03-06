@@ -250,6 +250,7 @@ static void M_CrispyToggleFreeaim(int choice);
 static void M_CrispyToggleFreelook(int choice);
 static void M_CrispyToggleFullsounds(int choice);
 static void M_CrispyToggleJumping(int choice);
+static void M_CrispyToggleNeghealth(int choice);
 static void M_CrispyToggleOverunder(int choice);
 static void M_CrispyTogglePitch(int choice);
 static void M_CrispyToggleRecoil(int choice);
@@ -512,6 +513,7 @@ enum
 {
     crispness_sep_tactical,
     crispness_crosshair,
+    crispness_neghealth,
     crispness_freelook,
     crispness_centerweapon,
     crispness_pitch,
@@ -529,6 +531,7 @@ static menuitem_t Crispness2Menu[]=
     {-1,"",0,'\0'},
     {1,"",	M_CrispyToggleCrosshair,'d'},
     {1,"",	M_CrispyToggleFreelook,'a'},
+    {1,"",	M_CrispyToggleNeghealth,'n'},
     {1,"",	M_CrispyToggleCenterweapon,'c'},
     {1,"",	M_CrispyTogglePitch,'w'},
     {1,"",	M_CrispyToggleSecretmessage,'s'},
@@ -1358,6 +1361,13 @@ static multiitem_t multiitem_jump[NUM_JUMPS] =
     {JUMP_HIGH, "high"},
 };
 
+static multiitem_t multiitem_neghealth[NUM_NEGHEALTHS] =
+{
+    {NEGHEALTH_OFF, "off"},
+    {NEGHEALTH_DM, "deathmatch"},
+    {NEGHEALTH_ON, "always"},
+};
+
 static multiitem_t multiitem_translucency[NUM_TRANSLUCENCY] =
 {
     {TRANSLUCENCY_OFF, "off"},
@@ -1431,6 +1441,7 @@ static void M_DrawCrispness2(void)
 
     M_DrawCrispnessMultiItem(crispness_crosshair, "Draw Crosshair", multiitem_crosshair, crispy_crosshair, true);
     M_DrawCrispnessMultiItem(crispness_freelook, "Allow Free Look", multiitem_freelook, crispy_freelook, true);
+    M_DrawCrispnessMultiItem(crispness_neghealth, "Show Negative Health", multiitem_neghealth, crispy_neghealth, true);
     M_DrawCrispnessItem(crispness_centerweapon, "Center Weapon when Firing", crispy_centerweapon, true);
     M_DrawCrispnessItem(crispness_pitch, "Weapon Recoil Pitch", crispy_pitch, true);
     M_DrawCrispnessItem(crispness_secretmessage, "Show Revealed Secrets", crispy_secretmessage, true);
@@ -1789,6 +1800,12 @@ static void M_CrispyToggleFreelook(int choice)
 
     players[consoleplayer].lookdir = 0;
     R_InitSkyMap();
+}
+
+static void M_CrispyToggleNeghealth(int choice)
+{
+    choice = 0;
+    crispy_neghealth = (crispy_neghealth + 1) % NUM_NEGHEALTHS;
 }
 
 static void M_CrispyToggleJumping(int choice)

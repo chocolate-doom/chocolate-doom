@@ -62,6 +62,7 @@ extern int crispy_freelook;
 extern int crispy_fullsounds;
 extern int crispy_jump;
 extern int crispy_mouselook;
+extern int crispy_neghealth;
 extern int crispy_overunder;
 extern int crispy_pitch;
 extern int crispy_recoil;
@@ -121,6 +122,14 @@ enum
     JUMP_LOW,
     JUMP_HIGH,
     NUM_JUMPS
+};
+
+enum
+{
+    NEGHEALTH_OFF,
+    NEGHEALTH_DM,
+    NEGHEALTH_ON,
+    NUM_NEGHEALTHS
 };
 
 enum

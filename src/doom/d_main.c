@@ -141,6 +141,7 @@ int             crispy_freelook = 0;
 int             crispy_fullsounds = 0;
 int             crispy_jump = 0;
 int             crispy_mouselook = 0;
+int             crispy_neghealth = 0;
 int             crispy_overunder = 0;
 int             crispy_pitch = 0;
 int             crispy_recoil = 0;
@@ -512,6 +513,7 @@ void D_BindVariables(void)
     M_BindIntVariable("crispy_fullsounds",      &crispy_fullsounds);
     M_BindIntVariable("crispy_jump",            &crispy_jump);
     M_BindIntVariable("crispy_mouselook",       &crispy_mouselook);
+    M_BindIntVariable("crispy_neghealth",       &crispy_neghealth);
     M_BindIntVariable("crispy_overunder",       &crispy_overunder);
     M_BindIntVariable("crispy_pitch",           &crispy_pitch);
     M_BindIntVariable("crispy_recoil",          &crispy_recoil);

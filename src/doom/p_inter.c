@@ -889,10 +889,10 @@ P_DamageMobj
 	    damage -= saved;
 	}
 	player->health -= damage; 	// mirror mobj health here for Dave
-	// [crispy] enable negative player health values in deathmatch games
+	// [crispy] negative player health
 	if (player->health < -99)
 	    player->health = -99;
-	if (!deathmatch)
+	if (!(crispy_neghealth == NEGHEALTH_ON || (deathmatch && crispy_neghealth == NEGHEALTH_DM)))
 	{
 	if (player->health < 0)
 	    player->health = 0;

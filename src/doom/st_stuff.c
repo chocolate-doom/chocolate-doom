@@ -1085,7 +1085,7 @@ void ST_updateFaceWidget(void)
     if (priority < 10)
     {
 	// dead
-	// [crispy] enable negative player health values in deathmatch games
+	// [crispy] negative player health
 	if (plyr->health <= 0)
 	{
 	    priority = 9;
