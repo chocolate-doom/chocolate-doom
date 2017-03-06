@@ -1,6 +1,6 @@
-# bash completion for Chocolate Strife                     -*- shell-script -*-
+# bash completion for @PACKAGE_SHORTNAME@ Strife             -*- shell-script -*-
 
-_chocolate_strife()
+_@PROGRAM_SPREFIX@_strife()
 {
     local cur prev words cword
     _init_completion || return
@@ -43,6 +43,6 @@ _chocolate_strife()
     fi
 } &&
 
-complete -F _chocolate_strife chocolate-strife
+complete -F _@PROGRAM_SPREFIX@_strife @PROGRAM_PREFIX@strife
 
 # ex: ts=4 sw=4 et filetype=sh
