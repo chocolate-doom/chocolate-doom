@@ -1904,7 +1904,7 @@ void G_DoLoadGame (void)
 
     // [crispy] if the player is dead in this savegame,
     // do not consider it for reload
-    if (!players[consoleplayer].health)
+    if (players[consoleplayer].health <= 0)
 	G_ClearSavename();
 } 
  
