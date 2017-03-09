@@ -367,6 +367,7 @@ boolean I_MidiPipe_InitServer()
     char *fp = NULL;
     char *module = NULL;
     char *cmdline = NULL;
+    char snd_samplerate_buf[8];
     SECURITY_ATTRIBUTES sec_attrs;
     PROCESS_INFORMATION proc_info;
     STARTUPINFO startup_info;
@@ -391,7 +392,12 @@ boolean I_MidiPipe_InitServer()
     }
     *(fp + 1) = '\0';
     module = M_StringJoin(filename, PROGRAM_PREFIX "midiproc.exe", NULL);
-    cmdline = M_StringJoin(module, " \"" PACKAGE_STRING "\"", NULL);
+
+    // Add package string and current sample rate value to command line
+    M_snprintf(snd_samplerate_buf, sizeof(snd_samplerate_buf),
+        "%d", snd_samplerate);
+    cmdline = M_StringJoin(module, " \"" PACKAGE_STRING "\"", " ",
+        snd_samplerate_buf, NULL);
 
     // Look for executable file
     if(stat(module, &sbuf))

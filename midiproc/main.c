@@ -42,6 +42,9 @@
 static HANDLE    midi_process_in;  // Standard In.
 static HANDLE    midi_process_out; // Standard Out.
 
+// Sound sample rate to use for digital output (Hz)
+static int snd_samplerate = 0;
+
 // Currently playing music track.
 static Mix_Music *music  = NULL;
 
@@ -335,7 +338,7 @@ boolean InitSDL()
         return false;
     }
 
-    if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
+    if (Mix_OpenAudio(snd_samplerate, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
     {
         return false;
     }
@@ -382,7 +385,7 @@ fail:
 int main(int argc, char *argv[])
 {
     // Make sure we're not launching this process by itself.
-    if (argc < 2)
+    if (argc < 3)
     {
         MessageBox(NULL, TEXT("This program is tasked with playing Native ")
             TEXT("MIDI music, and is intended to be launched by ")
@@ -402,6 +405,14 @@ int main(int argc, char *argv[])
             TEXT(PACKAGE_STRING), MB_OK | MB_ICONASTERISK);
 
         return EXIT_FAILURE;
+    }
+
+    // Parse out the sample rate - if we can't, default to 44100.
+    snd_samplerate = strtol(argv[2], NULL, 10);
+    if (snd_samplerate == LONG_MAX || snd_samplerate == LONG_MIN ||
+        snd_samplerate == 0)
+    {
+        snd_samplerate = 44100;
     }
 
     if (!InitPipes())
