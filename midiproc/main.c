@@ -98,16 +98,11 @@ static void ShutdownSDL(void)
 
 static boolean RegisterSong(const char *filename)
 {
-    fprintf(stderr, "%s %s\n", __FUNCTION__, filename);
-
     UnregisterSong();
     music = Mix_LoadMUS(filename);
-    fprintf(stderr, "<-- %p\n", music);
 
     if (music == NULL)
     {
-        fprintf(stderr, "Error loading midi: %s\n", Mix_GetError());
-
         return false;
     }
 
@@ -116,16 +111,11 @@ static boolean RegisterSong(const char *filename)
 
 static void SetVolume(int vol)
 {
-    fprintf(stderr, "%s %d\n", __FUNCTION__, vol);
-
     Mix_VolumeMusic(vol);
 }
 
 static void PlaySong(int loops)
 {
-    fprintf(stderr, "%s %d\n", __FUNCTION__, loops);
-    fprintf(stderr, "%s %d\n", "Playing at volume", Mix_VolumeMusic(-1));
-
     Mix_PlayMusic(music, loops);
 
     // [AM] BUG: In my testing, setting the volume of a MIDI track while there
@@ -141,8 +131,6 @@ static void PlaySong(int loops)
 
 static void StopSong()
 {
-    fprintf(stderr, "%s\n", __FUNCTION__);
-
     Mix_HaltMusic();
 }
 

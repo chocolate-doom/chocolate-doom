@@ -436,7 +436,7 @@ boolean I_MidiPipe_InitServer()
     startup_info.dwFlags = STARTF_USESTDHANDLES;
 
     BOOL ok = CreateProcess(TEXT(module), TEXT(cmdline), NULL, NULL, TRUE,
-        CREATE_NEW_CONSOLE, NULL, NULL, &startup_info, &proc_info);
+        0, NULL, NULL, &startup_info, &proc_info);
 
     if (!ok)
     {
