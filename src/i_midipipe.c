@@ -13,7 +13,7 @@
 // GNU General Public License for more details.
 //
 // DESCRIPTION:
-//     Client Interface to RPC Midi Server
+//     Client Interface to Midi Server
 //
 
 #if _WIN32

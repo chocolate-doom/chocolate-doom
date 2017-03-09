@@ -13,11 +13,11 @@
 // GNU General Public License for more details.
 //
 // DESCRIPTION:
-//     Client Interface to RPC Midi Server
+//     Client Interface to Midi Server
 //
 
-#ifndef __I_MIDISOCKET__
-#define __I_MIDISOCKET__
+#ifndef __I_MIDIPIPE__
+#define __I_MIDIPIPE__
 
 #if _WIN32
 

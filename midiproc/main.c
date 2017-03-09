@@ -14,9 +14,9 @@
 //
 // DESCRIPTION:
 //
-// Win32/SDL_mixer MIDI RPC Server
+// Win32/SDL_mixer MIDI Server
 //
-// Uses RPC to communicate with Doom. This allows this separate process to
+// Uses pipes to communicate with Doom. This allows this separate process to
 // have its own independent volume control even under Windows Vista and up's 
 // broken, stupid, completely useless mixer model that can't assign separate
 // volumes to different devices for the same process.
@@ -267,6 +267,9 @@ fail:
     return false;
 }
 
+//
+// The main pipe "listening" loop
+//
 boolean ListenForever()
 {
     BOOL wok = FALSE;
