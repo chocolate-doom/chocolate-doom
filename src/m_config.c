@@ -1754,6 +1754,14 @@ static default_t extra_defaults_list[] =
     //!
     // @game doom
     //
+    // Crosshair type.
+    //
+
+    CONFIG_VARIABLE_INT(crispy_crosshairtype),
+
+    //!
+    // @game doom
+    //
     // Enable jumping.
     //
 

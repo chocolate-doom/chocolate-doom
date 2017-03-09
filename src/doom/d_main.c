@@ -134,6 +134,7 @@ int             crispy_centerweapon = 0;
 int             crispy_coloredblood = 0;
 int             crispy_coloredhud = 0;
 int             crispy_crosshair = 0;
+int             crispy_crosshairtype = 0;
 int             crispy_extsaveg = 1;
 int             crispy_flipcorpses = 0;
 int             crispy_freeaim = 0;
@@ -506,6 +507,7 @@ void D_BindVariables(void)
     M_BindIntVariable("crispy_coloredblood",    &crispy_coloredblood);
     M_BindIntVariable("crispy_coloredhud",      &crispy_coloredhud);
     M_BindIntVariable("crispy_crosshair",       &crispy_crosshair);
+    M_BindIntVariable("crispy_crosshairtype",   &crispy_crosshairtype);
     M_BindIntVariable("crispy_extsaveg",        &crispy_extsaveg);
     M_BindIntVariable("crispy_flipcorpses",     &crispy_flipcorpses);
     M_BindIntVariable("crispy_freeaim",         &crispy_freeaim);

@@ -34,7 +34,6 @@
 #endif
 
 #define CRISPY_HUD 12
-#define CRISPY_CROSSHAIR "STCFN043"
 #define CRISPY_SLOPE(a) ((((a)->lookdir / MLOOKUNIT) << FRACBITS) / 173)
 
 #define singleplayer (!demorecording && !demoplayback && !netgame)
@@ -55,6 +54,7 @@ extern int crispy_centerweapon;
 extern int crispy_coloredblood;
 extern int crispy_coloredhud;
 extern int crispy_crosshair;
+extern int crispy_crosshairtype;
 extern int crispy_extsaveg;
 extern int crispy_flipcorpses;
 extern int crispy_freeaim;

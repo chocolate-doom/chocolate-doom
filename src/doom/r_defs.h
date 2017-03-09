@@ -485,5 +485,11 @@ typedef struct
     fixed_t x, y, z;
 } laserspot_t;
 
+typedef struct
+{
+	char c;
+	int l;
+} laserpatch_t;
+extern laserpatch_t *laserpatch;
 
 #endif

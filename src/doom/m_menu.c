@@ -244,6 +244,7 @@ static void M_CrispyToggleColoredblood(int choice);
 static void M_CrispyToggleColoredblood2(int choice);
 static void M_CrispyToggleColoredhud(int choice);
 static void M_CrispyToggleCrosshair(int choice);
+static void M_CrispyToggleCrosshairtype(int choice);
 static void M_CrispyToggleExtsaveg(int choice);
 static void M_CrispyToggleFlipcorpses(int choice);
 static void M_CrispyToggleFreeaim(int choice);
@@ -513,6 +514,7 @@ enum
 {
     crispness_sep_tactical,
     crispness_crosshair,
+    crispness_crosshairtype,
     crispness_freelook,
     crispness_neghealth,
     crispness_centerweapon,
@@ -530,6 +532,7 @@ static menuitem_t Crispness2Menu[]=
 {
     {-1,"",0,'\0'},
     {1,"",	M_CrispyToggleCrosshair,'d'},
+    {1,"",	M_CrispyToggleCrosshairtype,'c'},
     {1,"",	M_CrispyToggleFreelook,'a'},
     {1,"",	M_CrispyToggleNeghealth,'n'},
     {1,"",	M_CrispyToggleCenterweapon,'c'},
@@ -1395,6 +1398,19 @@ static void M_DrawCrispnessMultiItem(int y, char *item, multiitem_t *multiitem, 
     M_WriteText(currentMenu->x, currentMenu->y + CRISPY_LINEHEIGHT * y, crispy_menu_text);
 }
 
+static void M_DrawCrispnessCrosshairItem(int y, char *item, int feat, boolean cond)
+{
+    char crosshair_item[2] = {0}, crispy_menu_text[48];
+
+    crosshair_item[0] = laserpatch[feat].c;
+
+    M_snprintf(crispy_menu_text, sizeof(crispy_menu_text),
+               "%s%s: %s%s",
+               cond ? crstr[CR_NONE] : crstr[CR_DARK], item,
+               cond ? crstr[CR_NONE] : crstr[CR_DARK], crosshair_item);
+    M_WriteText(currentMenu->x, currentMenu->y + CRISPY_LINEHEIGHT * y, crispy_menu_text);
+}
+
 static void M_DrawCrispnessGoto(int y, char *item)
 {
     char crispy_menu_text[48];
@@ -1440,6 +1456,7 @@ static void M_DrawCrispness2(void)
     M_DrawCrispnessSeparator(crispness_sep_tactical, "Tactical");
 
     M_DrawCrispnessMultiItem(crispness_crosshair, "Draw Crosshair", multiitem_crosshair, crispy_crosshair, true);
+    M_DrawCrispnessCrosshairItem(crispness_crosshairtype, "Crosshair Type", crispy_crosshairtype, crispy_crosshair);
     M_DrawCrispnessMultiItem(crispness_freelook, "Allow Free Look", multiitem_freelook, crispy_freelook, true);
     M_DrawCrispnessMultiItem(crispness_neghealth, "Negative Player Health", multiitem_neghealth, crispy_neghealth, true);
     M_DrawCrispnessItem(crispness_centerweapon, "Center Weapon when Firing", crispy_centerweapon, true);
@@ -1773,6 +1790,17 @@ static void M_CrispyToggleCrosshair(int choice)
 {
     choice = 0;
     crispy_crosshair = (crispy_crosshair + 1) % NUM_CROSSHAIRS;
+}
+
+static void M_CrispyToggleCrosshairtype(int choice)
+{
+    choice = 0;
+    crispy_crosshairtype = crispy_crosshairtype + 1;
+
+    if (laserpatch[crispy_crosshairtype].c == ' ')
+    {
+	crispy_crosshairtype = 0;
+    }
 }
 
 static void M_CrispyToggleFlipcorpses(int choice)

@@ -62,6 +62,18 @@ typedef struct
 laserspot_t laserspot_m = {0, 0, 0};
 laserspot_t *laserspot = &laserspot_m;
 
+// [crispy] extendable, but the last char element must be ' '
+laserpatch_t laserpatch_m[] = {
+	{'+', 0},
+	{'-', 0},
+	{'.', 0},
+	{'O', 0},
+	{'X', 0},
+	{'^', 0},
+	{' ', 0},
+};
+laserpatch_t *laserpatch = laserpatch_m;
+
 //
 // Sprite rotation 0 is facing the viewer,
 //  rotation 1 is one angle turn CLOCKWISE around the axis.
@@ -752,15 +764,14 @@ static void R_DrawLSprite (void)
 
     extern void	P_LineLaser (mobj_t* t1, angle_t angle, fixed_t distance, fixed_t slope);
 
-    if (viewplayer->readyweapon == wp_fist ||
-        viewplayer->readyweapon == wp_chainsaw ||
-        viewplayer->playerstate > PST_LIVE)
+    if (weaponinfo[viewplayer->readyweapon].ammo == am_noammo ||
+        viewplayer->playerstate != PST_LIVE)
 	return;
 
-    if (!lump)
+    if (lump != laserpatch[crispy_crosshairtype].l)
     {
-	lump = W_GetNumForName(CRISPY_CROSSHAIR);
-	patch = W_CacheLumpNum(lump, PU_CACHE);
+	lump = laserpatch[crispy_crosshairtype].l;
+	patch = W_CacheLumpNum(lump, PU_STATIC);
     }
 
     crispy_crosshair |= CROSSHAIR_INTERCEPT; // [crispy] intercepts overflow guard
