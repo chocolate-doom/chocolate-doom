@@ -65,10 +65,10 @@ laserspot_t *laserspot = &laserspot_m;
 // [crispy] extendable, but the last char element must be ' ',
 // keep in sync with multiitem_t multiitem_crosshairtype[] in m_menu.c
 laserpatch_t laserpatch_m[] = {
-	{'+', 0},
-	{'^', 0},
-	{'.', 0},
-	{' ', 0},
+	{'+', 0, 0},
+	{'^', 0, +3},
+	{'.', 0, -2},
+	{' ', 0, 0},
 };
 laserpatch_t *laserpatch = laserpatch_m;
 
@@ -804,7 +804,7 @@ static void R_DrawLSprite (void)
     vis->colormap = fixedcolormap ? fixedcolormap : colormaps; // [crispy] always full brightness
 //  vis->mobjflags |= MF_TRANSLUCENT;
     vis->xiscale = FixedDiv (FRACUNIT, xscale);
-    vis->texturemid = laserspot->z - viewz;
+    vis->texturemid = laserspot->z - viewz + laserpatch[crispy_crosshairtype].o;
     vis->scale = xscale<<(detailshift && !hires);
 
     tx -= SHORT(patch->width/2)<<FRACBITS;
