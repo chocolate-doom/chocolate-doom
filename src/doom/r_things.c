@@ -804,7 +804,7 @@ static void R_DrawLSprite (void)
     vis->colormap = fixedcolormap ? fixedcolormap : colormaps; // [crispy] always full brightness
 //  vis->mobjflags |= MF_TRANSLUCENT;
     vis->xiscale = FixedDiv (FRACUNIT, xscale);
-    vis->texturemid = laserspot->z - viewz + laserpatch[crispy_crosshairtype].o;
+    vis->texturemid = laserspot->z - viewz;
     vis->scale = xscale<<(detailshift && !hires);
 
     tx -= SHORT(patch->width/2)<<FRACBITS;
