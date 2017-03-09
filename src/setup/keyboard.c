@@ -56,7 +56,7 @@ static int *controls[] = { &key_left, &key_right, &key_up, &key_down,
 
 static int *menu_nav[] = { &key_menu_activate, &key_menu_up, &key_menu_down,
                            &key_menu_left, &key_menu_right, &key_menu_back,
-                           &key_menu_forward, NULL };
+                           &key_menu_forward, &key_menu_del, NULL };
 
 static int *shortcuts[] = { &key_menu_help, &key_menu_save, &key_menu_load,
                             &key_menu_volume, &key_menu_detail, &key_menu_qsave,
@@ -64,8 +64,7 @@ static int *shortcuts[] = { &key_menu_help, &key_menu_save, &key_menu_load,
                             &key_menu_qload, &key_menu_quit, &key_menu_gamma,
                             &key_menu_nextlevel, &key_menu_reloadlevel,
                             &key_menu_incscreen, &key_menu_decscreen, 
-                            &key_menu_screenshot,
-                            &key_menu_cleanscreenshot, &key_menu_del,
+                            &key_menu_screenshot, &key_menu_cleanscreenshot,
                             &key_message_refresh, &key_multi_msg,
                             &key_multi_msgplayer[0], &key_multi_msgplayer[1],
                             &key_multi_msgplayer[2], &key_multi_msgplayer[3] };
@@ -329,6 +328,7 @@ static void OtherKeysDialog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
     AddKeyControl(table, "Activate menu item",    &key_menu_forward);
     AddKeyControl(table, "Confirm action",        &key_menu_confirm);
     AddKeyControl(table, "Cancel action",         &key_menu_abort);
+    AddKeyControl(table, "Delete savegame",       &key_menu_del);
 
     AddSectionLabel(table, "Shortcut keys", true);
 
@@ -352,7 +352,6 @@ static void OtherKeysDialog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
     AddKeyControl(table, "Decrease screen size",  &key_menu_decscreen);
     AddKeyControl(table, "Save a screenshot",     &key_menu_screenshot);
     AddKeyControl(table, "Save a clean screenshot",&key_menu_cleanscreenshot);
-    AddKeyControl(table, "Delete savegame",       &key_menu_del);
 
     AddKeyControl(table, "Display last message",  &key_message_refresh);
     AddKeyControl(table, "Finish recording demo", &key_demo_quit);
