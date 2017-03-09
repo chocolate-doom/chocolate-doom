@@ -62,14 +62,12 @@ typedef struct
 laserspot_t laserspot_m = {0, 0, 0};
 laserspot_t *laserspot = &laserspot_m;
 
-// [crispy] extendable, but the last char element must be ' '
+// [crispy] extendable, but the last char element must be ' ',
+// keep in sync with multiitem_t multiitem_crosshairtype[] in m_menu.c
 laserpatch_t laserpatch_m[] = {
 	{'+', 0},
-	{'-', 0},
-	{'.', 0},
-	{'O', 0},
-	{'X', 0},
 	{'^', 0},
+	{'.', 0},
 	{' ', 0},
 };
 laserpatch_t *laserpatch = laserpatch_m;

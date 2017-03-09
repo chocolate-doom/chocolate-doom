@@ -1343,6 +1343,14 @@ static multiitem_t multiitem_crosshair[NUM_CROSSHAIRS] =
     {CROSSHAIR_PROJECTED, "projected"},
 };
 
+static multiitem_t multiitem_crosshairtype[] =
+{
+    {-1, ""},
+    {0, "cross"},
+    {1, "angle"},
+    {2, "dot"},
+};
+
 static multiitem_t multiitem_freeaim[NUM_FREEAIMS] =
 {
     {FREEAIM_AUTO, "autoaim"},
@@ -1398,19 +1406,6 @@ static void M_DrawCrispnessMultiItem(int y, char *item, multiitem_t *multiitem, 
     M_WriteText(currentMenu->x, currentMenu->y + CRISPY_LINEHEIGHT * y, crispy_menu_text);
 }
 
-static void M_DrawCrispnessCrosshairItem(int y, char *item, int feat, boolean cond)
-{
-    char crosshair_item[2] = {0}, crispy_menu_text[48];
-
-    crosshair_item[0] = laserpatch[feat].c;
-
-    M_snprintf(crispy_menu_text, sizeof(crispy_menu_text),
-               "%s%s: %s%s",
-               cond ? crstr[CR_NONE] : crstr[CR_DARK], item,
-               cond ? crstr[CR_NONE] : crstr[CR_DARK], crosshair_item);
-    M_WriteText(currentMenu->x, currentMenu->y + CRISPY_LINEHEIGHT * y, crispy_menu_text);
-}
-
 static void M_DrawCrispnessGoto(int y, char *item)
 {
     char crispy_menu_text[48];
@@ -1456,7 +1451,7 @@ static void M_DrawCrispness2(void)
     M_DrawCrispnessSeparator(crispness_sep_tactical, "Tactical");
 
     M_DrawCrispnessMultiItem(crispness_crosshair, "Draw Crosshair", multiitem_crosshair, crispy_crosshair, true);
-    M_DrawCrispnessCrosshairItem(crispness_crosshairtype, "Crosshair Type", crispy_crosshairtype, crispy_crosshair);
+    M_DrawCrispnessMultiItem(crispness_crosshairtype, "Crosshair Type", multiitem_crosshairtype, crispy_crosshairtype + 1, crispy_crosshair);
     M_DrawCrispnessMultiItem(crispness_freelook, "Allow Free Look", multiitem_freelook, crispy_freelook, true);
     M_DrawCrispnessMultiItem(crispness_neghealth, "Negative Player Health", multiitem_neghealth, crispy_neghealth, true);
     M_DrawCrispnessItem(crispness_centerweapon, "Center Weapon when Firing", crispy_centerweapon, true);
@@ -1794,6 +1789,12 @@ static void M_CrispyToggleCrosshair(int choice)
 
 static void M_CrispyToggleCrosshairtype(int choice)
 {
+    if (!crispy_crosshair)
+    {
+	S_StartSound(NULL,sfx_oof);
+	return;
+    }
+
     choice = 0;
     crispy_crosshairtype = crispy_crosshairtype + 1;
 

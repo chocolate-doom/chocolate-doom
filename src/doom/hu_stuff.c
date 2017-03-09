@@ -410,6 +410,7 @@ void HU_Init(void)
 	hu_font[i] = (patch_t *) W_CacheLumpName(buffer, PU_STATIC);
     }
 
+    // [crispy] initialize the crosshair types
     for (i = 0; laserpatch[i].c != ' '; i++)
     {
 	DEH_snprintf(buffer, 9, "STCFN%.3d", toupper(laserpatch[i].c));
