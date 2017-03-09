@@ -535,6 +535,15 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
 	|| joybuttons[joybfire]) 
 	cmd->buttons |= BT_ATTACK; 
  
+    if (players[consoleplayer].playerstate == PST_DEAD)
+    {
+	if (gamekeydown[key_respawn])
+	{
+		cmd->buttons |= BT_USE;
+		dclicks = 0;
+	}
+    }
+    else
     if (gamekeydown[key_use]
      || joybuttons[joybuse]
      || mousebuttons[mousebuse])

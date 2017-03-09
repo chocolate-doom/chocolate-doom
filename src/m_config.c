@@ -1706,6 +1706,13 @@ static default_t extra_defaults_list[] =
 
     //!
     // @game doom
+    // Respawn player.
+    //
+
+    CONFIG_VARIABLE_KEY(key_respawn),
+
+    //!
+    // @game doom
     // Invert vertical mouse movement.
     //
 
