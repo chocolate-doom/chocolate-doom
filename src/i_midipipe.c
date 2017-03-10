@@ -127,8 +127,9 @@ static boolean UsingNativeMidi()
 //
 static boolean WritePipe(net_packet_t *packet)
 {
+    DWORD bytes_written;
     BOOL ok = WriteFile(midi_process_in_writer, packet->data, packet->len,
-        NULL, NULL);
+        &bytes_written, NULL);
 
     if (!ok)
     {
