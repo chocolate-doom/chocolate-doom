@@ -201,6 +201,23 @@ fail:
     return false;
 }
 
+//
+// RemoveFileSpec
+//
+// A reimplementation of PathRemoveFileSpec that doesn't bring in Shlwapi
+//
+void RemoveFileSpec(TCHAR *path, size_t size)
+{
+    TCHAR *fp = NULL;
+
+    fp = &path[size];
+    while (path <= fp && *fp != DIR_SEPARATOR)
+    {
+        fp--;
+    }
+    *(fp + 1) = '\0';
+}
+
 //=============================================================================
 //
 // Protocol Commands
@@ -362,10 +379,8 @@ void I_MidiPipe_ShutdownServer()
 //
 boolean I_MidiPipe_InitServer()
 {
-    size_t filename_len;
-    struct stat sbuf;
-    char filename[MAX_PATH + 1];
-    char *fp = NULL;
+    TCHAR dirname[MAX_PATH + 1];
+    DWORD dirname_len;
     char *module = NULL;
     char *cmdline = NULL;
     char snd_samplerate_buf[8];
@@ -381,31 +396,24 @@ boolean I_MidiPipe_InitServer()
         return false;
     }
 
-    memset(filename, 0, sizeof(filename));
-    filename_len = GetModuleFileName(NULL, filename, MAX_PATH);
-
-    // Remove filespec
-    // TODO: Move this to m_misc?
-    fp = &filename[filename_len];
-    while (filename <= fp && *fp != DIR_SEPARATOR)
+    // Get directory name
+    memset(dirname, 0, sizeof(dirname));
+    dirname_len = GetModuleFileName(NULL, dirname, MAX_PATH);
+    if (dirname_len == 0)
     {
-        fp--;
+        return false;
     }
-    *(fp + 1) = '\0';
-    module = M_StringJoin(filename, PROGRAM_PREFIX "midiproc.exe", NULL);
+    RemoveFileSpec(dirname, dirname_len);
 
-    // Add package string and current sample rate value to command line
+    // Define the module.
+    module = PROGRAM_PREFIX "midiproc.exe";
+
+    // Define the command line.  Version and Sample Rate follow the
+    // executable name.
     M_snprintf(snd_samplerate_buf, sizeof(snd_samplerate_buf),
         "%d", snd_samplerate);
     cmdline = M_StringJoin(module, " \"" PACKAGE_STRING "\"", " ",
         snd_samplerate_buf, NULL);
-
-    // Look for executable file
-    if(stat(module, &sbuf))
-    {
-        DEBUGOUT("Could not find midiproc");
-        return false;
-    }
 
     // Set up pipes
     memset(&sec_attrs, 0, sizeof(SECURITY_ATTRIBUTES));
@@ -446,7 +454,7 @@ boolean I_MidiPipe_InitServer()
     startup_info.dwFlags = STARTF_USESTDHANDLES;
 
     ok = CreateProcess(TEXT(module), TEXT(cmdline), NULL, NULL, TRUE,
-        0, NULL, NULL, &startup_info, &proc_info);
+        0, NULL, dirname, &startup_info, &proc_info);
 
     if (!ok)
     {
@@ -465,7 +473,6 @@ boolean I_MidiPipe_InitServer()
 fail:
     FreePipes();
     free(cmdline);
-    free(module);
 
     return false;
 }
