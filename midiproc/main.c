@@ -146,6 +146,7 @@ static boolean MidiPipe_RegisterSong(buffer_reader_t *reader)
 {
     unsigned int i;
     CHAR buffer[2];
+    DWORD bytes_written;
 
     char *filename = Reader_ReadString(reader);
     if (filename == NULL)
@@ -161,7 +162,6 @@ static boolean MidiPipe_RegisterSong(buffer_reader_t *reader)
     buffer[0] = (i >> 8) & 0xff;
     buffer[1] = i & 0xff;
 
-    DWORD bytes_written;
     WriteFile(midi_process_out, buffer, sizeof(buffer),
         &bytes_written, NULL);
 
