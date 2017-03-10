@@ -710,8 +710,12 @@ static void HU_DrawCrosshair (void)
 
     dp_translucent = true;
 
-    V_DrawPatch((ORIGWIDTH - SHORT(patch->width)) / 2,
-                (ORIGHEIGHT - (screenblocks <= 10 ? ST_HEIGHT : 0)) / 2 + laserpatch[crispy_crosshairtype].o,
+    V_DrawPatch(ORIGWIDTH/2 -
+                SHORT(patch->width)/2 +
+                SHORT(patch->leftoffset),
+                (screenblocks <= 10) ? (ORIGHEIGHT-ST_HEIGHT)/2 : ORIGHEIGHT/2 -
+                SHORT(patch->height)/2 +
+                SHORT(patch->topoffset),
                 patch);
 }
 
