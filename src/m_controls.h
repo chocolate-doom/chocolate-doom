@@ -36,7 +36,6 @@ extern int key_speed;
 
 extern int key_jump;
 extern int key_toggleautorun;
-extern int key_respawn;
  
 extern int key_flyup;
 extern int key_flydown;
