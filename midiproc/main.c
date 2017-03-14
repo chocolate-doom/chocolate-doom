@@ -28,16 +28,17 @@
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 #include "SDL.h"
 #include "SDL_mixer.h"
 
 #include "buffer.h"
+#include "proto.h"
 
 #include "config.h"
 #include "doomtype.h"
-#include "net_defs.h"
 
 static HANDLE    midi_process_in;  // Standard In.
 static HANDLE    midi_process_out; // Standard Out.
@@ -158,7 +159,7 @@ static boolean MidiPipe_RegisterSong(buffer_reader_t *reader)
 
     // FIXME: We should probably have a function for writing Int16's into
     //        buffers, as opposed to simply winging it.
-    i = NET_MIDIPIPE_PACKET_TYPE_REGISTER_SONG_ACK;
+    i = MIDIPIPE_PACKET_TYPE_REGISTER_SONG_ACK;
     buffer[0] = (i >> 8) & 0xff;
     buffer[1] = i & 0xff;
 
@@ -220,15 +221,15 @@ boolean ParseCommand(buffer_reader_t *reader, uint16_t command)
 {
     switch (command)
     {
-    case NET_MIDIPIPE_PACKET_TYPE_REGISTER_SONG:
+    case MIDIPIPE_PACKET_TYPE_REGISTER_SONG:
         return MidiPipe_RegisterSong(reader);
-    case NET_MIDIPIPE_PACKET_TYPE_SET_VOLUME:
+    case MIDIPIPE_PACKET_TYPE_SET_VOLUME:
         return MidiPipe_SetVolume(reader);
-    case NET_MIDIPIPE_PACKET_TYPE_PLAY_SONG:
+    case MIDIPIPE_PACKET_TYPE_PLAY_SONG:
         return MidiPipe_PlaySong(reader);
-    case NET_MIDIPIPE_PACKET_TYPE_STOP_SONG:
+    case MIDIPIPE_PACKET_TYPE_STOP_SONG:
         return MidiPipe_StopSong();
-    case NET_MIDIPIPE_PACKET_TYPE_SHUTDOWN:
+    case MIDIPIPE_PACKET_TYPE_SHUTDOWN:
         return MidiPipe_Shutdown();
     default:
         return false;
@@ -400,12 +401,12 @@ int main(int argc, char *argv[])
     if (strcmp(PACKAGE_STRING, argv[1]) != 0)
     {
         char message[1024];
-        snprintf(message, sizeof(message),
-                 "It appears that the version of %s and %smidiproc are out of "
-                 " sync.  Please reinstall %s.\r\n\r\n"
-                 "Server Version: %s\r\nClient Version: %s",
-                 PACKAGE_NAME, PROGRAM_PREFIX, PACKAGE_NAME,
-                 PACKAGE_STRING, argv[1]);
+        _snprintf(message, sizeof(message),
+                  "It appears that the version of %s and %smidiproc are out "
+                  "of sync.  Please reinstall %s.\r\n\r\n"
+                  "Server Version: %s\r\nClient Version: %s",
+                  PACKAGE_NAME, PROGRAM_PREFIX, PACKAGE_NAME,
+                  PACKAGE_STRING, argv[1]);
         message[sizeof(message) - 1] = '\0';
 
         MessageBox(NULL, TEXT(message),

@@ -32,6 +32,8 @@
 #include "m_misc.h"
 #include "net_packet.h"
 
+#include "../midiproc/proto.h"
+
 #if defined(_DEBUG)
 #define DEBUGOUT(s) puts(s)
 #else
@@ -230,7 +232,7 @@ boolean I_MidiPipe_RegisterSong(char *filename)
     net_packet_t *packet;
 
     packet = NET_NewPacket(64);
-    NET_WriteInt16(packet, NET_MIDIPIPE_PACKET_TYPE_REGISTER_SONG);
+    NET_WriteInt16(packet, MIDIPIPE_PACKET_TYPE_REGISTER_SONG);
     NET_WriteString(packet, filename);
     ok = WritePipe(packet);
     NET_FreePacket(packet);
@@ -242,7 +244,7 @@ boolean I_MidiPipe_RegisterSong(char *filename)
     }
 
     packet = NET_NewPacket(2);
-    NET_WriteInt16(packet, NET_MIDIPIPE_PACKET_TYPE_REGISTER_SONG_ACK);
+    NET_WriteInt16(packet, MIDIPIPE_PACKET_TYPE_REGISTER_SONG_ACK);
     ok = ExpectPipe(packet);
     NET_FreePacket(packet);
 
@@ -269,7 +271,7 @@ void I_MidiPipe_SetVolume(int vol)
     net_packet_t *packet;
 
     packet = NET_NewPacket(6);
-    NET_WriteInt16(packet, NET_MIDIPIPE_PACKET_TYPE_SET_VOLUME);
+    NET_WriteInt16(packet, MIDIPIPE_PACKET_TYPE_SET_VOLUME);
     NET_WriteInt32(packet, vol);
     ok = WritePipe(packet);
     NET_FreePacket(packet);
@@ -294,7 +296,7 @@ void I_MidiPipe_PlaySong(int loops)
     net_packet_t *packet;
 
     packet = NET_NewPacket(6);
-    NET_WriteInt16(packet, NET_MIDIPIPE_PACKET_TYPE_PLAY_SONG);
+    NET_WriteInt16(packet, MIDIPIPE_PACKET_TYPE_PLAY_SONG);
     NET_WriteInt32(packet, loops);
     ok = WritePipe(packet);
     NET_FreePacket(packet);
@@ -319,7 +321,7 @@ void I_MidiPipe_StopSong()
     net_packet_t *packet;
 
     packet = NET_NewPacket(2);
-    NET_WriteInt16(packet, NET_MIDIPIPE_PACKET_TYPE_STOP_SONG);
+    NET_WriteInt16(packet, MIDIPIPE_PACKET_TYPE_STOP_SONG);
     ok = WritePipe(packet);
     NET_FreePacket(packet);
 
@@ -345,7 +347,7 @@ void I_MidiPipe_ShutdownServer()
     net_packet_t *packet;
 
     packet = NET_NewPacket(2);
-    NET_WriteInt16(packet, NET_MIDIPIPE_PACKET_TYPE_SHUTDOWN);
+    NET_WriteInt16(packet, MIDIPIPE_PACKET_TYPE_SHUTDOWN);
     ok = WritePipe(packet);
     NET_FreePacket(packet);
 
