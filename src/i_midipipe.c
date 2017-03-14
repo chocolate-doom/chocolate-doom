@@ -107,9 +107,10 @@ static void FreePipes()
 //
 static boolean UsingNativeMidi()
 {
+    int i;
     int decoders = Mix_GetNumMusicDecoders();
 
-    for (int i = 0;i < decoders;i++)
+    for (i = 0; i < decoders; i++)
     {
         if (strcmp(Mix_GetMusicDecoder(i), "NATIVEMIDI") == 0)
         {
@@ -129,14 +130,9 @@ static boolean WritePipe(net_packet_t *packet)
 {
     DWORD bytes_written;
     BOOL ok = WriteFile(midi_process_in_writer, packet->data, packet->len,
-        &bytes_written, NULL);
+                        &bytes_written, NULL);
 
-    if (!ok)
-    {
-        return false;
-    }
-
-    return true;
+    return ok;
 }
 
 //
@@ -166,10 +162,10 @@ static boolean ExpectPipe(net_packet_t *packet)
     {
         // Wait until we see exactly the amount of data we expect on the pipe.
         ok = PeekNamedPipe(midi_process_out_reader, NULL, 0, NULL,
-            &pipe_buffer_read, NULL);
+                           &pipe_buffer_read, NULL);
         if (!ok)
         {
-            goto fail;
+            break;
         }
         else if (pipe_buffer_read < packet->len)
         {
@@ -179,16 +175,16 @@ static boolean ExpectPipe(net_packet_t *packet)
 
         // Read precisely the number of bytes we're expecting, and no more.
         ok = ReadFile(midi_process_out_reader, pipe_buffer, packet->len,
-            &pipe_buffer_read, NULL);
+                      &pipe_buffer_read, NULL);
         if (!ok || pipe_buffer_read != packet->len)
         {
-            goto fail;
+            break;
         }
 
         // Compare our data buffer to the packet.
         if (memcmp(packet->data, pipe_buffer, packet->len) != 0)
         {
-            goto fail;
+            break;
         }
 
         return true;
@@ -196,7 +192,6 @@ static boolean ExpectPipe(net_packet_t *packet)
         // Continue looping as long as we don't exceed our maximum wait time.
     } while (I_GetTimeMS() - start <= MIDIPIPE_MAX_WAIT);
 
-fail:
     // TODO: Deal with the wedged process?
     return false;
 }
@@ -411,9 +406,9 @@ boolean I_MidiPipe_InitServer()
     // Define the command line.  Version and Sample Rate follow the
     // executable name.
     M_snprintf(snd_samplerate_buf, sizeof(snd_samplerate_buf),
-        "%d", snd_samplerate);
+               "%d", snd_samplerate);
     cmdline = M_StringJoin(module, " \"" PACKAGE_STRING "\"", " ",
-        snd_samplerate_buf, NULL);
+                           snd_samplerate_buf, NULL);
 
     // Set up pipes
     memset(&sec_attrs, 0, sizeof(SECURITY_ATTRIBUTES));
@@ -454,11 +449,14 @@ boolean I_MidiPipe_InitServer()
     startup_info.dwFlags = STARTF_USESTDHANDLES;
 
     ok = CreateProcess(TEXT(module), TEXT(cmdline), NULL, NULL, TRUE,
-        0, NULL, dirname, &startup_info, &proc_info);
+                       0, NULL, dirname, &startup_info, &proc_info);
 
     if (!ok)
     {
-        goto fail;
+        FreePipes();
+        free(cmdline);
+
+        return false;
     }
 
     // Since the server has these handles, we don't need them anymore.
@@ -469,12 +467,6 @@ boolean I_MidiPipe_InitServer()
 
     midi_server_initialized = true;
     return true;
-
-fail:
-    FreePipes();
-    free(cmdline);
-
-    return false;
 }
 
 #endif

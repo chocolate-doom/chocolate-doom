@@ -163,7 +163,7 @@ static boolean MidiPipe_RegisterSong(buffer_reader_t *reader)
     buffer[1] = i & 0xff;
 
     WriteFile(midi_process_out, buffer, sizeof(buffer),
-        &bytes_written, NULL);
+              &bytes_written, NULL);
 
     return true;
 }
@@ -287,7 +287,7 @@ boolean ListenForever()
     {
         // Wait until we see some data on the pipe.
         wok = PeekNamedPipe(midi_process_in, NULL, 0, NULL,
-            &pipe_buffer_read, NULL);
+                            &pipe_buffer_read, NULL);
         if (!wok)
         {
             break;
@@ -300,7 +300,7 @@ boolean ListenForever()
 
         // Read data off the pipe and add it to the buffer.
         wok = ReadFile(midi_process_in, pipe_buffer, sizeof(pipe_buffer),
-            &pipe_buffer_read, NULL);
+                       &pipe_buffer_read, NULL);
         if (!wok)
         {
             break;
@@ -389,9 +389,9 @@ int main(int argc, char *argv[])
     if (argc < 3)
     {
         MessageBox(NULL, TEXT("This program is tasked with playing Native ")
-            TEXT("MIDI music, and is intended to be launched by ")
-            TEXT(PACKAGE_NAME) TEXT("."),
-            TEXT(PACKAGE_STRING), MB_OK | MB_ICONASTERISK);
+                   TEXT("MIDI music, and is intended to be launched by ")
+                   TEXT(PACKAGE_NAME) TEXT("."),
+                   TEXT(PACKAGE_STRING), MB_OK | MB_ICONASTERISK);
 
         return EXIT_FAILURE;
     }
@@ -401,15 +401,15 @@ int main(int argc, char *argv[])
     {
         char message[1024];
         snprintf(message, sizeof(message),
-            "It appears that the version of %s and %smidiproc are out of "
-            " sync.  Please reinstall %s.\r\n\r\n"
-            "Server Version: %s\r\nClient Version: %s",
-            PACKAGE_NAME, PROGRAM_PREFIX, PACKAGE_NAME,
-            PACKAGE_STRING, argv[1]);
+                 "It appears that the version of %s and %smidiproc are out of "
+                 " sync.  Please reinstall %s.\r\n\r\n"
+                 "Server Version: %s\r\nClient Version: %s",
+                 PACKAGE_NAME, PROGRAM_PREFIX, PACKAGE_NAME,
+                 PACKAGE_STRING, argv[1]);
         message[sizeof(message) - 1] = '\0';
 
         MessageBox(NULL, TEXT(message),
-            TEXT(PACKAGE_STRING), MB_OK | MB_ICONASTERISK);
+                   TEXT(PACKAGE_STRING), MB_OK | MB_ICONASTERISK);
 
         return EXIT_FAILURE;
     }
