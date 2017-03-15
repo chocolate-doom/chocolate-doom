@@ -55,6 +55,22 @@ static Mix_Music *music  = NULL;
 //
 
 //
+// Write an unsigned integer into a simple CHAR buffer.
+//
+static boolean WriteInt16(CHAR *out, size_t osize, unsigned int in)
+{
+    if (osize < 2)
+    {
+        return false;
+    }
+
+    out[0] = (in >> 8) & 0xff;
+    out[1] = in & 0xff;
+
+    return true;
+}
+
+//
 // Cleanly close our in-use pipes.
 //
 static void FreePipes(void)
@@ -145,7 +161,6 @@ static void StopSong()
 
 static boolean MidiPipe_RegisterSong(buffer_reader_t *reader)
 {
-    unsigned int i;
     CHAR buffer[2];
     DWORD bytes_written;
 
@@ -157,11 +172,11 @@ static boolean MidiPipe_RegisterSong(buffer_reader_t *reader)
 
     RegisterSong(filename);
 
-    // FIXME: We should probably have a function for writing Int16's into
-    //        buffers, as opposed to simply winging it.
-    i = MIDIPIPE_PACKET_TYPE_REGISTER_SONG_ACK;
-    buffer[0] = (i >> 8) & 0xff;
-    buffer[1] = i & 0xff;
+    if (!WriteInt16(buffer, sizeof(buffer),
+                    MIDIPIPE_PACKET_TYPE_REGISTER_SONG_ACK))
+    {
+        return false;
+    }
 
     WriteFile(midi_process_out, buffer, sizeof(buffer),
               &bytes_written, NULL);
