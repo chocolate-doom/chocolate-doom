@@ -749,6 +749,19 @@ void S_SetMusicVolume(int volume)
                 volume);
     }
 
+    // [JN] Исправлен баг, при котором музыка
+    // продолжала играть при нулевой громкости
+    if (musicVolume == 0)
+    {
+        I_PauseSong();
+        mus_paused = true;
+    }
+    else
+    {
+        I_ResumeSong();
+        mus_paused = false;
+    }
+
     I_SetMusicVolume(volume);
 }
 
