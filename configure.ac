@@ -141,10 +141,11 @@ m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
 WINDOWS_RC_VERSION=`echo $PACKAGE_VERSION | sed 's/-.*//; s/\./, /g; s/$/, 0/'`
 
-PROGRAM_PREFIX=${PACKAGE_SHORTNAME,}-
-
 dnl Without a hyphen. This is used for the bash-completion scripts.
-PROGRAM_SPREFIX=${PACKAGE_SHORTNAME,}
+PROGRAM_SPREFIX=$(echo $PACKAGE_SHORTNAME | tr A-Z a-z)
+
+dnl With a hyphen, used almost everywhere else.
+PROGRAM_PREFIX=${PROGRAM_SPREFIX}-
 
 AC_SUBST(PROGRAM_PREFIX)
 AC_DEFINE_UNQUOTED(PROGRAM_PREFIX, "$PROGRAM_PREFIX",
