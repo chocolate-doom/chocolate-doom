@@ -16,6 +16,9 @@
 //
 
 
+// Define this to print to the console all joystick events
+// #define DEBUG_SDL_JOYSTICK_EVENTS
+
 #include "SDL.h"
 #include "SDL_joystick.h"
 
@@ -115,6 +118,7 @@ static int DeviceIndex(void)
     // GUID identifies a class of device rather than a specific device.
     // Check if joystick_index has the expected GUID, as this can act
     // as a tie-breaker in case there are multiple identical devices.
+    printf("I_InitJoystick: Number of joysticks is %d.\n", SDL_NumJoysticks());
     if (joystick_index >= 0 && joystick_index < SDL_NumJoysticks())
     {
         dev_guid = SDL_JoystickGetDeviceGUID(joystick_index);
@@ -191,7 +195,11 @@ void I_InitJoystick(void)
 
     // Initialized okay!
 
-    printf("I_InitJoystick: %s\n", SDL_JoystickName(joystick));
+    printf("I_InitJoystick: Using joystick '%s'\n", SDL_JoystickName(joystick));
+    printf("I_InitJoystick: Axes    %i\n", SDL_JoystickNumAxes(joystick));
+    printf("I_InitJoystick: Buttons %i\n", SDL_JoystickNumButtons(joystick));
+    printf("I_InitJoystick: Hats    %i\n", SDL_JoystickNumHats(joystick));
+    printf("I_InitJoystick: Balls   %i\n", SDL_JoystickNumBalls(joystick));
 
     I_AtExit(I_ShutdownJoystick, true);
 }
@@ -291,6 +299,9 @@ static int GetAxisState(int axis, int invert)
 
     if (IS_BUTTON_AXIS(axis))
     {
+#ifdef DEBUG_SDL_JOYSTICK_EVENTS
+        printf("GetAxisState: axis %i is button axis\n", axis);
+#endif
         if (SDL_JoystickGetButton(joystick, BUTTON_AXIS_NEG(axis)))
         {
             result -= 32767;
@@ -305,6 +316,9 @@ static int GetAxisState(int axis, int invert)
         int direction = HAT_AXIS_DIRECTION(axis);
         int hatval = SDL_JoystickGetHat(joystick, HAT_AXIS_HAT(axis));
 
+#ifdef DEBUG_SDL_JOYSTICK_EVENTS
+        printf("GetAxisState: axis %i is hat axis\n", axis);
+#endif
         if (direction == HAT_AXIS_HORIZONTAL)
         {
             if ((hatval & SDL_HAT_LEFT) != 0)
@@ -330,6 +344,9 @@ static int GetAxisState(int axis, int invert)
     }
     else
     {
+#ifdef DEBUG_SDL_JOYSTICK_EVENTS
+        printf("GetAxisState: axis %i is normal axis\n", axis);
+#endif
         result = SDL_JoystickGetAxis(joystick, axis);
 
         if (result < DEAD_ZONE && result > -DEAD_ZONE)
@@ -343,11 +360,19 @@ static int GetAxisState(int axis, int invert)
         result = -result;
     }
 
+#ifdef DEBUG_SDL_JOYSTICK_EVENTS
+    printf("GetAxisState: axis %i | invert %i | result %i\n", axis, invert, result);
+#endif
+    
     return result;
 }
 
 void I_UpdateJoystick(void)
 {
+#ifdef DEBUG_SDL_JOYSTICK_EVENTS
+    printf("I_UpdateJoystick: called\n");
+#endif
+
     if (joystick != NULL)
     {
         event_t ev;
@@ -365,7 +390,8 @@ void I_UpdateJoystick(void)
 void I_BindJoystickVariables(void)
 {
     int i;
-
+    
+    printf("I_BindJoystickVariables: binding joystick variables\n");
     M_BindIntVariable("use_joystick",          &usejoystick);
     M_BindStringVariable("joystick_guid",      &joystick_guid);
     M_BindIntVariable("joystick_index",        &joystick_index);
