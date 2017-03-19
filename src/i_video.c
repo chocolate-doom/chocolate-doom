@@ -564,11 +564,13 @@ static void LimitTextureSize(int *w_upscale, int *h_upscale)
                 SDL_GetError());
     }
 
-    while (*w_upscale * SCREENWIDTH > rinfo.max_texture_width)
+    while (rinfo.max_texture_width > 0 &&
+           *w_upscale * SCREENWIDTH > rinfo.max_texture_width)
     {
         --*w_upscale;
     }
-    while (*h_upscale * SCREENHEIGHT > rinfo.max_texture_height)
+    while (rinfo.max_texture_height > 0 &&
+           *h_upscale * SCREENHEIGHT > rinfo.max_texture_height)
     {
         --*h_upscale;
     }
@@ -1143,6 +1145,7 @@ static void SetVideoMode(void)
     unsigned int rmask, gmask, bmask, amask;
     int unused_bpp;
     int window_flags = 0, renderer_flags = 0;
+    SDL_DisplayMode mode;
 
     w = window_width;
     h = window_height;
@@ -1201,8 +1204,14 @@ static void SetVideoMode(void)
     // intermediate texture into the upscaled texture.
     renderer_flags = SDL_RENDERER_TARGETTEXTURE;
 	
+    if (SDL_GetCurrentDisplayMode(video_display, &mode) != 0)
+    {
+        I_Error("Could not get display mode for video display #%d: %s",
+        video_display, SDL_GetError());
+    }
+
     // Turn on vsync if we aren't in a -timedemo
-    if (!singletics)
+    if (!singletics && mode.refresh_rate > 0)
     {
         renderer_flags |= SDL_RENDERER_PRESENTVSYNC;
     }
