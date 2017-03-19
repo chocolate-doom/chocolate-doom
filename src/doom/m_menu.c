@@ -934,6 +934,8 @@ void M_QuickSaveResponse(int key)
 
 void M_QuickSave(void)
 {
+    char *savegamestring;
+
     if (!usergame)
     {
 	S_StartSound(NULL,sfx_oof);
@@ -951,7 +953,13 @@ void M_QuickSave(void)
 	quickSaveSlot = -2;	// means to pick a slot now
 	return;
     }
-    DEH_snprintf(tempstring, 80, QSPROMPT, savegamestrings[quickSaveSlot]);
+    // [crispy] print savegame name in golden letters
+    savegamestring = M_StringJoin(crstr[CR_GOLD],
+                                  savegamestrings[quickSaveSlot],
+                                  crstr[CR_NONE],
+                                  NULL);
+    DEH_snprintf(tempstring, 80, QSPROMPT, savegamestring);
+    free(savegamestring);
     M_StartMessage(tempstring,M_QuickSaveResponse,true);
 }
 
@@ -972,6 +980,8 @@ void M_QuickLoadResponse(int key)
 
 void M_QuickLoad(void)
 {
+    char *savegamestring;
+
     if (netgame)
     {
 	M_StartMessage(DEH_String(QLOADNET),NULL,false);
@@ -987,7 +997,13 @@ void M_QuickLoad(void)
 	quickSaveSlot = -2;
 	return;
     }
-    DEH_snprintf(tempstring, 80, QLPROMPT, savegamestrings[quickSaveSlot]);
+    // [crispy] print savegame name in golden letters
+    savegamestring = M_StringJoin(crstr[CR_GOLD],
+                                  savegamestrings[quickSaveSlot],
+                                  crstr[CR_NONE],
+                                  NULL);
+    DEH_snprintf(tempstring, 80, QLPROMPT, savegamestring);
+    free(savegamestring);
     M_StartMessage(tempstring,M_QuickLoadResponse,true);
 }
 
