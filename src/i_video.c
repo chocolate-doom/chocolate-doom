@@ -564,18 +564,17 @@ static void LimitTextureSize(int *w_upscale, int *h_upscale)
                 SDL_GetError());
     }
 
-    while (rinfo.max_texture_width > 0 &&
-           *w_upscale * SCREENWIDTH > rinfo.max_texture_width)
+    while (*w_upscale * SCREENWIDTH > rinfo.max_texture_width)
     {
         --*w_upscale;
     }
-    while (rinfo.max_texture_height > 0 &&
-           *h_upscale * SCREENHEIGHT > rinfo.max_texture_height)
+    while (*h_upscale * SCREENHEIGHT > rinfo.max_texture_height)
     {
         --*h_upscale;
     }
 
-    if (*w_upscale < 1 || *h_upscale < 1)
+    if ((*w_upscale < 1 && rinfo.max_texture_width > 0) ||
+        (*h_upscale < 1 && rinfo.max_texture_height > 0))
     {
         I_Error("CreateUpscaledTexture: Can't create a texture big enough for "
                 "the whole screen! Maximum texture size %dx%d",
