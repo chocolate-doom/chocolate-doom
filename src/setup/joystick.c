@@ -564,6 +564,7 @@ static const known_joystick_t *GetJoystickType(int index)
          && known_joysticks[i].buttons == buttons
          && known_joysticks[i].hats == hats)
         {
+            printf("Found known joystick %s\n", known_joysticks[i].name);
             return &known_joysticks[i];
         }
     }

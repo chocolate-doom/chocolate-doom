@@ -150,12 +150,13 @@ static boolean CalibrateAxis(txt_joystick_axis_t *joystick_axis)
 
     for (i = 0; i < SDL_JoystickNumAxes(joystick_axis->joystick); ++i)
     {
-       //if (bad_axis[i])
-       //{
-       //    continue;
-       //}
-
         axis_value = SDL_JoystickGetAxis(joystick_axis->joystick, i);
+
+        if (joystick_axis->bad_axis[i])
+        {
+            printf("CalibrateAxis() Ignoring bad axis #%i\n", i);
+            continue;
+        }
 
         if (abs(axis_value) > best_value)
         {
@@ -173,6 +174,8 @@ static boolean CalibrateAxis(txt_joystick_axis_t *joystick_axis)
 
         *joystick_axis->axis = best_axis;
         *joystick_axis->invert = best_invert;
+        printf("CalibrateAxis() Selected axis #%i\n", best_axis);
+
         return true;
     }
 
