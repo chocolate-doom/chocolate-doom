@@ -1460,11 +1460,6 @@ boolean M_Responder (event_t* ev)
             M_snprintf(savestring, SAVESTRINGSIZE - 1, "JOYSTICK SLOT %i", saveSlot);
             saveCharIndex = strlen(savestring);
             memcpy(savegamestrings[saveSlot], savestring, SAVESTRINGSIZE);
-
-            // Simulate a KEY_ENTER press. Wait a log time to generate another
-            // keypress.
-            key = KEY_ENTER;
-            joywait = I_GetTime() + 15;
         }
     }
     else
