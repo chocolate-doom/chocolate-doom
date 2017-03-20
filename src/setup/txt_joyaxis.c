@@ -154,7 +154,6 @@ static boolean CalibrateAxis(txt_joystick_axis_t *joystick_axis)
 
         if (joystick_axis->bad_axis[i])
         {
-            printf("CalibrateAxis() Ignoring bad axis #%i\n", i);
             continue;
         }
 
