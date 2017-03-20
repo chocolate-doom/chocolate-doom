@@ -1396,6 +1396,8 @@ boolean M_Responder (event_t* ev)
 	
     if (ev->type == ev_joystick && joywait < I_GetTime())
     {
+        // Simulate key presses from joyticks events to interact with the menu.
+
 	if (ev->data3 < 0)
 	{
 	    key = key_menu_up;
@@ -1432,6 +1434,20 @@ boolean M_Responder (event_t* ev)
         {
             key = key_menu_activate;
 	    joywait = I_GetTime() + 5;
+        }
+
+        // Simulate a 'Y' keypress when Doom show a Y/N dialog with Fire button.
+        if (messageToPrint && messageNeedsInput && joybmenu >= 0 && ev->data1&1)
+        {
+            key = key_menu_confirm;
+            joywait = I_GetTime() + 5;
+        }
+
+        // Simulate a 'N' keypress when Doom show a Y/N dialog with Use button.
+        if (messageToPrint && messageNeedsInput && joybmenu >= 0 && ev->data1&2)
+        {
+            key = key_menu_abort;
+            joywait = I_GetTime() + 5;
         }
     }
     else
