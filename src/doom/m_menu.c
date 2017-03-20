@@ -1396,7 +1396,7 @@ boolean M_Responder (event_t* ev)
 	
     if (ev->type == ev_joystick && joywait < I_GetTime())
     {
-        // Simulate key presses from joyticks events to interact with the menu.
+        // Simulate key presses from joystick events to interact with the menu.
 
 	if (ev->data3 < 0)
 	{
