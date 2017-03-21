@@ -112,6 +112,7 @@ char gammamsg[5][26] =
 int			saveStringEnter;              
 int             	saveSlot;	// which slot to save in
 int			saveCharIndex;	// which char we're editing
+static boolean          joypadSave = false; // was the save action initiated by joypad?
 // old save description before edit
 char			saveOldString[SAVESTRINGSIZE];  
 
@@ -631,6 +632,17 @@ void M_DoSave(int slot)
 }
 
 //
+// Generate a default save slot name when the user saves to
+// an empty slot via the joypad.
+//
+static void SetDefaultSaveName(int slot)
+{
+    M_snprintf(savegamestrings[itemOn], SAVESTRINGSIZE - 1,
+               "JOYSTICK SLOT %i", itemOn + 1);
+    joypadSave = false;
+}
+
+//
 // User wants to save. Start string input for M_Responder
 //
 void M_SaveSelect(int choice)
@@ -648,7 +660,14 @@ void M_SaveSelect(int choice)
     saveSlot = choice;
     M_StringCopy(saveOldString,savegamestrings[choice], SAVESTRINGSIZE);
     if (!strcmp(savegamestrings[choice], EMPTYSTRING))
-	savegamestrings[choice][0] = 0;
+    {
+        savegamestrings[choice][0] = 0;
+
+        if (joypadSave)
+        {
+            SetDefaultSaveName(choice);
+        }
+    }
     saveCharIndex = strlen(savegamestrings[choice]);
 }
 
@@ -1430,8 +1449,19 @@ boolean M_Responder (event_t* ev)
             {
                 key = key_menu_confirm;
             }
+            // Simulate pressing "Enter" when we are supplying a save slot name
+            else if (saveStringEnter)
+            {
+                key = KEY_ENTER;
+                // XXX: fire action bleeding into game
+            }
             else
             {
+                // if selecting a save slot via joypad, set a flag
+                if (currentMenu == &SaveDef)
+                {
+                    joypadSave = true;
+                }
                 key = key_menu_forward;
             }
             joywait = I_GetTime() + 5;
@@ -1442,6 +1472,11 @@ boolean M_Responder (event_t* ev)
             if (messageToPrint && messageNeedsInput)
             {
                 key = key_menu_abort;
+            }
+            // If user was entering a save name, back out
+            else if (saveStringEnter)
+            {
+                key = KEY_ESCAPE;
             }
             else
             {
