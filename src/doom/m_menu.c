@@ -1419,34 +1419,39 @@ boolean M_Responder (event_t* ev)
 	    key = key_menu_right;
 	    joywait = I_GetTime() + 2;
 	}
-		
-	if (ev->data1&1)
-	{
-	    key = key_menu_forward;
-	    joywait = I_GetTime() + 5;
-	}
-	if (ev->data1&2)
-	{
-	    key = key_menu_back;
-	    joywait = I_GetTime() + 5;
-	}
-        if (joybmenu >= 0 && (ev->data1 & (1 << joybmenu)) != 0)
-        {
-            key = key_menu_activate;
-	    joywait = I_GetTime() + 5;
-        }
 
-        // Simulate a 'Y' keypress when Doom show a Y/N dialog with Fire button.
-        if (messageToPrint && messageNeedsInput && joybmenu >= 0 && ev->data1&1)
+#define JOY_BUTTON_MAPPED(x) ((x) >= 0)
+#define JOY_BUTTON_PRESSED(x) (JOY_BUTTON_MAPPED(x) && (ev->data1 & (1 << (x))) != 0)
+
+        if (JOY_BUTTON_PRESSED(joybfire))
         {
-            key = key_menu_confirm;
+            // Simulate a 'Y' keypress when Doom show a Y/N dialog with Fire button.
+            if (messageToPrint && messageNeedsInput)
+            {
+                key = key_menu_confirm;
+            }
+            else
+            {
+                key = key_menu_forward;
+            }
             joywait = I_GetTime() + 5;
         }
-
-        // Simulate a 'N' keypress when Doom show a Y/N dialog with Use button.
-        if (messageToPrint && messageNeedsInput && joybmenu >= 0 && ev->data1&2)
+        if (JOY_BUTTON_PRESSED(joybuse))
         {
-            key = key_menu_abort;
+            // Simulate a 'N' keypress when Doom show a Y/N dialog with Use button.
+            if (messageToPrint && messageNeedsInput)
+            {
+                key = key_menu_abort;
+            }
+            else
+            {
+                key = key_menu_back;
+            }
+            joywait = I_GetTime() + 5;
+        }
+        if (JOY_BUTTON_PRESSED(joybmenu))
+        {
+            key = key_menu_activate;
             joywait = I_GetTime() + 5;
         }
     }
