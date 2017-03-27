@@ -239,6 +239,25 @@ void F_Ticker (void)
 #include "hu_stuff.h"
 extern	patch_t *hu_font[HU_FONTSIZE];
 
+// [crispy] add line breaks for lines exceeding screenwidth
+static inline boolean F_AddLineBreak (char *c)
+{
+    while (c-- > finaletext)
+    {
+	if (*c == '\n')
+	{
+	    return false;
+	}
+	else
+	if (*c == ' ')
+	{
+	    *c = '\n';
+	    return true;
+	}
+    }
+
+    return false;
+}
 
 void F_TextWrite (void)
 {
@@ -301,7 +320,15 @@ void F_TextWrite (void)
 		
 	w = SHORT (hu_font[c]->width);
 	if (cx+w > ORIGWIDTH)
+	{
+	    // [crispy] add line breaks for lines exceeding screenwidth
+	    if (F_AddLineBreak(ch))
+	    {
+		continue;
+	    }
+	    else
 	    break;
+	}
 	V_DrawPatch(cx, cy, hu_font[c]);
 	cx+=w;
     }
