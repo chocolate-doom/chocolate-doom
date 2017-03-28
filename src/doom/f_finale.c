@@ -329,6 +329,12 @@ void F_TextWrite (void)
 	    else
 	    break;
 	}
+	// [cispy] prevent text from being drawn off-screen vertically
+	w = SHORT (hu_font[c]->height);
+	if (cy+w > ORIGHEIGHT)
+	{
+	    break;
+	}
 	V_DrawPatch(cx, cy, hu_font[c]);
 	cx+=w;
     }
