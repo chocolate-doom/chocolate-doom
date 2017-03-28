@@ -191,6 +191,9 @@ static boolean need_resize = false;
 
 int usegamma = 0;
 
+// Joystick/gamepad hysteresis
+unsigned int joywait = 0;
+
 static boolean MouseShouldBeGrabbed()
 {
     // never grab the mouse when in screensaver mode
@@ -500,7 +503,10 @@ void I_StartTic (void)
         I_ReadMouse();
     }
 
-    I_UpdateJoystick();
+    if (joywait < I_GetTime())
+    {
+        I_UpdateJoystick();
+    }
 }
 
 

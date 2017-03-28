@@ -1366,7 +1366,6 @@ boolean M_Responder (event_t* ev)
     int             ch;
     int             key;
     int             i;
-    static  int     joywait = 0;
     static  int     mousewait = 0;
     static  int     mousey = 0;
     static  int     lasty = 0;
@@ -1413,7 +1412,7 @@ boolean M_Responder (event_t* ev)
     ch = 0;
     key = -1;
 	
-    if (ev->type == ev_joystick && joywait < I_GetTime())
+    if (ev->type == ev_joystick)
     {
         // Simulate key presses from joystick events to interact with the menu.
 
@@ -1453,7 +1452,6 @@ boolean M_Responder (event_t* ev)
             else if (saveStringEnter)
             {
                 key = KEY_ENTER;
-                // XXX: fire action bleeding into game
             }
             else
             {
