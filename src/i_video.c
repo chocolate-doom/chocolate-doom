@@ -1082,17 +1082,6 @@ static void CenterWindow(int *x, int *y, int w, int h)
 {
     SDL_Rect bounds;
 
-    // Check that video_display corresponds to a display that really exists,
-    // and if it doesn't, reset it.
-    if (video_display < 0 || video_display >= SDL_GetNumVideoDisplays())
-    {
-        fprintf(stderr,
-                "CenterWindow: We were configured to run on display #%d, but "
-                "it no longer exists (max %d). Moving to display 0.\n",
-                video_display, SDL_GetNumVideoDisplays() - 1);
-        video_display = 0;
-    }
-
     if (SDL_GetDisplayBounds(video_display, &bounds) < 0)
     {
         fprintf(stderr, "CenterWindow: Failed to read display bounds "
@@ -1106,6 +1095,17 @@ static void CenterWindow(int *x, int *y, int w, int h)
 
 void I_GetWindowPosition(int *x, int *y, int w, int h)
 {
+    // Check that video_display corresponds to a display that really exists,
+    // and if it doesn't, reset it.
+    if (video_display < 0 || video_display >= SDL_GetNumVideoDisplays())
+    {
+        fprintf(stderr,
+                "I_GetWindowPosition: We were configured to run on display #%d, "
+                "but it no longer exists (max %d). Moving to display 0.\n",
+                video_display, SDL_GetNumVideoDisplays() - 1);
+        video_display = 0;
+    }
+
     // in fullscreen mode, the window "position" still matters, because
     // we use it to control which display we run fullscreen on.
 
