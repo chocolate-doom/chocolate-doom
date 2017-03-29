@@ -326,20 +326,21 @@ static const joystick_config_t pc_gameport_controller[] =
     {NULL, 0},
 };
 
-// http://www.8bitdo.com/nes30pro/
+// http://www.8bitdo.com/nes30pro/ and http://www.8bitdo.com/fc30pro/
 static const joystick_config_t nes30_pro_controller[] =
 {
     {"joystick_x_axis",        CREATE_HAT_AXIS(0, HAT_AXIS_HORIZONTAL)},
     {"joystick_y_axis",        CREATE_HAT_AXIS(0, HAT_AXIS_VERTICAL)},
     {"joyb_fire",              4},  // Y
     {"joyb_speed",             1},  // B
-    {"joyb_jump",              2},  // X
+    {"joyb_jump",              3},  // X
     {"joyb_use",               0},  // A
-    {"joyb_strafeleft",        8},  // L1
-    {"joyb_straferight",       9}, // R1
-    {"joyb_prevweapon",        6},  // L2
-    {"joyb_nextweapon",        7},  // R2
+    {"joyb_strafeleft",        6},  // L1
+    {"joyb_straferight",       7}, // R1
+    {"joyb_prevweapon",        8},  // L2
+    {"joyb_nextweapon",        9},  // R2
     {"joyb_menu_activate",     11}, // Start
+    {"joyb_toggle_automap",    10}, // Select
     {NULL, 0},
 };
 
@@ -453,9 +454,23 @@ static const known_joystick_t known_joysticks[] =
     },
 
     // 8Bitdo NES30 Pro, http://www.8bitdo.com/nes30pro/
-    // Probably some of their other controllers can use the same config.
     {
         "8Bitdo NES30 Pro",
+        4, 16, 1,
+        nes30_pro_controller,
+    },
+
+    // 8Bitdo FC30 Pro, http://8bitdo.cn/fc30pro/
+    // variant of the above, connected over USB
+    {
+        "8Bitdo FC30 Pro",
+        4, 15, 1,
+        nes30_pro_controller,
+    },
+
+    // the above, connected over bluetooth
+    {
+        "8Bitdo FC30 Pro",
         4, 16, 1,
         nes30_pro_controller,
     },
