@@ -468,6 +468,13 @@ static const known_joystick_t known_joysticks[] =
         nes30_pro_controller,
     },
 
+    // the above, via USB on Linux/Raspbian (odd values)
+    {
+        "8Bitdo FC30 Pro*",
+        6, 15, 1,
+        nes30_pro_controller,
+    },
+
     // the above, connected over bluetooth
     {
         "8Bitdo FC30 Pro",
