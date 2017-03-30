@@ -289,6 +289,33 @@ void S_Start(void)
         else
         {
             mnum = spmus[gamemap-1];
+
+            // [crispy] support dedicated music tracks for the 4th episode
+            {
+                int sp_mnum;
+                musicinfo_t *music;
+
+                sp_mnum = mus_e1m1 + 3*9 + gamemap-1;
+                music = &S_music[sp_mnum];
+
+                if (!music->lumpnum)
+                {
+                    char namebuf[9];
+
+                    M_snprintf(namebuf, sizeof(namebuf), "d_%s", DEH_String(music->name));
+                    music->lumpnum = W_CheckNumForName(namebuf);
+
+                    if (music->lumpnum == -1)
+                    {
+                        music->lumpnum = 0;
+                    }
+                }
+
+                if (music->lumpnum)
+                {
+                    mnum = sp_mnum;
+                }
+            }
         }
     }
 
