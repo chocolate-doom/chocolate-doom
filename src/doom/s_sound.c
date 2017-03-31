@@ -304,14 +304,9 @@ void S_Start(void)
 
                     M_snprintf(namebuf, sizeof(namebuf), "d_%s", DEH_String(music->name));
                     music->lumpnum = W_CheckNumForName(namebuf);
-
-                    if (music->lumpnum == -1)
-                    {
-                        music->lumpnum = 0;
-                    }
                 }
 
-                if (music->lumpnum)
+                if (music->lumpnum > 0)
                 {
                     mnum = sp_mnum;
                 }
