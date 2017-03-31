@@ -769,6 +769,9 @@ ST_Responder (event_t* ev)
 	  else
 	    S_ChangeMusic(musnum, 1);
 	}
+
+      // [crispy] eat key press, i.e. don't change weapon upon music change
+      return true;
       }
       // [crispy] allow both idspispopd and idclip cheats in all gamemissions
       else if ( ( /* logical_gamemission == doom
