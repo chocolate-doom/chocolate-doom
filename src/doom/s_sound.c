@@ -165,8 +165,8 @@ void S_Init(int sfxVolume, int musicVolume)
 
     I_AtExit(S_Shutdown, true);
 
-    // [crispy] initialize dedicated music tracks for the 5th episode
-    for (i = mus_e5m1; i <= mus_e5m9; i++)
+    // [crispy] initialize dedicated music tracks for the 4th episode
+    for (i = mus_e4m1; i <= mus_e5m9; i++)
     {
         musicinfo_t *const music = &S_music[i];
         char namebuf[9];
@@ -271,21 +271,9 @@ void S_Start(void)
 
             // [crispy] support dedicated music tracks for the 4th episode
             {
-                int sp_mnum;
-                musicinfo_t *music;
+                const int sp_mnum = mus_e1m1 + 3 * 9 + gamemap - 1;
 
-                sp_mnum = mus_e1m1 + 3*9 + gamemap-1;
-                music = &S_music[sp_mnum];
-
-                if (!music->lumpnum)
-                {
-                    char namebuf[9];
-
-                    M_snprintf(namebuf, sizeof(namebuf), "d_%s", DEH_String(music->name));
-                    music->lumpnum = W_CheckNumForName(namebuf);
-                }
-
-                if (music->lumpnum > 0)
+                if (S_music[sp_mnum].lumpnum > 0)
                 {
                     mnum = sp_mnum;
                 }
