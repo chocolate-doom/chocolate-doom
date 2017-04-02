@@ -46,11 +46,11 @@
 static const int recoil_values[][2] = {
   {10,   0}, // wp_fist
   {10,   4}, // wp_pistol
-  {30,  12}, // wp_shotgun
+  {30,   8}, // wp_shotgun
   {10,   4}, // wp_chaingun
   {100, 16}, // wp_missile
-  {20,   8}, // wp_plasma
-  {100, 16}, // wp_bfg
+  {20,   4}, // wp_plasma
+  {100, 20}, // wp_bfg
   {0,   -2}, // wp_chainsaw
   {80,  16}, // wp_supershotgun
 };
@@ -64,7 +64,7 @@ void A_Recoil (player_t* player)
 	P_Thrust(player, ANG180 + player->mo->angle, 2048 * recoil_values[player->readyweapon][0]);
 
     if (crispy_pitch)
-	player->recoilpitch = recoil_values[player->readyweapon][1]<<FRACBITS;
+	player->recoilpitch = recoil_values[player->readyweapon][1];
 }
 
 

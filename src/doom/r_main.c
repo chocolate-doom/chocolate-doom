@@ -927,7 +927,7 @@ void R_SetupFrame (player_t* player)
         viewangle = R_InterpolateAngle(player->mo->oldangle, player->mo->angle, fractionaltic) + viewangleoffset;
 
         pitch = (player->oldlookdir + (player->lookdir - player->oldlookdir) * FIXED2DOUBLE(fractionaltic)) / MLOOKUNIT
-                + ((player->oldrecoilpitch + FixedMul(player->recoilpitch - player->oldrecoilpitch, fractionaltic)) >> FRACBITS);
+                + (player->oldrecoilpitch + FixedMul(player->recoilpitch - player->oldrecoilpitch, fractionaltic));
     }
     else
     {
@@ -937,7 +937,7 @@ void R_SetupFrame (player_t* player)
         viewangle = player->mo->angle + viewangleoffset;
 
         // [crispy] pitch is actual lookdir and weapon pitch
-        pitch = player->lookdir / MLOOKUNIT + (player->recoilpitch >> FRACBITS);
+        pitch = player->lookdir / MLOOKUNIT + player->recoilpitch;
     }
 
     extralight = player->extralight;
