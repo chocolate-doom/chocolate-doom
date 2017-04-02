@@ -316,7 +316,7 @@ static void saveg_read_mobj_t(mobj_t *str)
     saveg_read_thinker_t(&str->thinker);
 
     // fixed_t x;
-    str->x = saveg_read32();
+    str->x = crispy_fliplevels ? -saveg_read32() : saveg_read32();
 
     // fixed_t y;
     str->y = saveg_read32();
@@ -331,7 +331,7 @@ static void saveg_read_mobj_t(mobj_t *str)
     str->sprev = saveg_readp();
 
     // angle_t angle;
-    str->angle = saveg_read32();
+    str->angle = crispy_fliplevels ? (ANG180 - saveg_read32()) : saveg_read32();
 
     // spritenum_t sprite;
     str->sprite = saveg_read_enum();
@@ -361,7 +361,7 @@ static void saveg_read_mobj_t(mobj_t *str)
     str->height = saveg_read32();
 
     // fixed_t momx;
-    str->momx = saveg_read32();
+    str->momx = crispy_fliplevels ? -saveg_read32() : saveg_read32();
 
     // fixed_t momy;
     str->momy = saveg_read32();
@@ -483,7 +483,7 @@ static void saveg_write_mobj_t(mobj_t *str)
     saveg_write_thinker_t(&str->thinker);
 
     // fixed_t x;
-    saveg_write32(str->x);
+    saveg_write32(crispy_fliplevels ? -str->x : str->x);
 
     // fixed_t y;
     saveg_write32(str->y);
@@ -498,7 +498,7 @@ static void saveg_write_mobj_t(mobj_t *str)
     saveg_writep(str->sprev);
 
     // angle_t angle;
-    saveg_write32(str->angle);
+    saveg_write32(crispy_fliplevels ? (ANG180 - str->angle) : str->angle);
 
     // spritenum_t sprite;
     saveg_write_enum(str->sprite);
@@ -528,7 +528,7 @@ static void saveg_write_mobj_t(mobj_t *str)
     saveg_write32(str->height);
 
     // fixed_t momx;
-    saveg_write32(str->momx);
+    saveg_write32(crispy_fliplevels ? -str->momx : str->momx);
 
     // fixed_t momy;
     saveg_write32(str->momy);
