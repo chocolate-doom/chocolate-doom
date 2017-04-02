@@ -496,6 +496,15 @@ static const known_joystick_t known_joysticks[] =
         nes30_pro_controller,
     },
 
+    // 8bitdo NES30 Pro, in joystick mode (R1+Power), swaps the D-Pad
+    // and analog stick inputs.  Only applicable over Bluetooth. On USB,
+    // this mode registers the device as an Xbox 360 pad.
+    {
+        "8Bitdo NES30 Pro Joystick",
+        6, 16, 1,
+        nes30_pro_controller,
+    },
+
     // 8Bitdo SFC30 SNES replica controller
     // in default mode and in controller mode (Start+R)
     // the latter suffixes "Joystick" to the name
