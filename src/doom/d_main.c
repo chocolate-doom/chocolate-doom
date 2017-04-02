@@ -1560,6 +1560,17 @@ void D_DoomMain (void)
     if (M_CheckParm ("-altdeath"))
 	deathmatch = 2;
 
+    //!
+    // @category net
+    // @vanilla
+    //
+    // Start a deathmatch 3.0 game.  Weapons stay in place and
+    // all items respawn after 30 seconds.
+    //
+
+    if (M_CheckParm ("-dm3"))
+	deathmatch = 3;
+
     if (devparm)
 	DEH_printf(D_DEVSTR);
     
