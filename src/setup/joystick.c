@@ -460,40 +460,11 @@ static const known_joystick_t known_joysticks[] =
         nes30_pro_controller,
     },
 
-    // 8Bitdo FC30 Pro, http://8bitdo.cn/fc30pro/
-    // variant of the above, connected over USB
-    {
-        "8Bitdo FC30 Pro",
-        4, 15, 1,
-        nes30_pro_controller,
-    },
-
-    // the above, via USB on Linux/Raspbian (odd values)
-    {
-        "8Bitdo FC30 Pro*",
-        6, 15, 1,
-        nes30_pro_controller,
-    },
-
     // the above, NES variant, via USB on Linux/Raspbian (odd values)
     {
         "8Bitdo NES30 Pro*",
         6, 15, 1,
         nes30_pro_controller,
-    },
-
-    // the above, connected over bluetooth
-    {
-        "8Bitdo FC30 Pro",
-        4, 16, 1,
-        nes30_pro_controller,
-    },
-
-    // yet another variant, Linux/bluetooth
-    {
-        "8Bitdo FC30 Pro",
-	6, 16, 1,
-	nes30_pro_controller,
     },
 
     // the above, NES variant, connected over bluetooth
@@ -509,6 +480,45 @@ static const known_joystick_t known_joysticks[] =
     {
         "8Bitdo NES30 Pro Joystick",
         6, 16, 1,
+        nes30_pro_controller,
+    },
+
+    // variant of the above, via USB on Mac
+    // Note: untested, but theorized to exist based on us comparing
+    // a NES30 Pro tested on Linux with a FC30 Pro tested with Mac & Linux
+    {
+        "8Bitdo NES30 Pro",
+        4, 15, 1,
+        nes30_pro_controller,
+    },
+
+
+    // 8Bitdo FC30 Pro, http://8bitdo.cn/fc30pro/
+    // connected over bluetooth
+    {
+        "8Bitdo FC30 Pro",
+        4, 16, 1,
+        nes30_pro_controller,
+    },
+
+    // variant of the above, via USB on Linux/Raspbian
+    {
+        "8Bitdo FC30 Pro*",
+        6, 15, 1,
+        nes30_pro_controller,
+    },
+
+    // variant of the above, Linux/bluetooth
+    {
+        "8Bitdo FC30 Pro",
+	6, 16, 1,
+	nes30_pro_controller,
+    },
+
+    // variant of the above, via USB on Mac
+    {
+        "8Bitdo FC30 Pro",
+        4, 15, 1,
         nes30_pro_controller,
     },
 
