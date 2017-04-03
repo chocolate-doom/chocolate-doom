@@ -727,7 +727,8 @@ void P_RespawnSpecials (void)
     int			i;
 
     // only respawn items in deathmatch
-    if (deathmatch != 2)
+    // AX: deathmatch 3 is a Crispy-specific change
+    if (deathmatch != 2 && deathmatch != 3)
 	return;	// 
 
     // nothing left to respawn?
