@@ -87,7 +87,7 @@ int novert = 0;
 // The sensible thing to do is to disable this if you have a non-US
 // keyboard.
 
-int vanilla_keyboard_mapping = true;
+int vanilla_keyboard_mapping = false;
 
 // Mouse acceleration
 //
