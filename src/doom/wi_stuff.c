@@ -1471,6 +1471,66 @@ void WI_updateStats(void)
 
 }
 
+// [crispy] conditionally draw par times on intermission screen
+static boolean WI_drawParTime (void)
+{
+	extern int bex_pars[4][10], bex_cpars[32];
+	extern lumpinfo_t *maplumpinfo;
+
+	boolean result = true;
+
+	// [crispy] PWADs have no par times (including The Master Levels)
+	if (!maplumpinfo->wad_file->iwad)
+	{
+		result = false;
+	}
+
+	if (gamemode == commercial)
+	{
+		// [crispy] IWAD: Final Doom has no par times
+		if (gamemission == pack_tnt || gamemission == pack_plut)
+		{
+			result = false;
+		}
+
+		// [crispy] PWAD: NRFTL has par times (for singleplayer games)
+		if (gamemission == pack_nerve && singleplayer)
+		{
+			result = true;
+		}
+
+		// [crispy] IWAD/PWAD: BEX patch provided par times
+		if (bex_cpars[wbs->last])
+		{
+			result = true;
+		}
+	}
+	else
+	{
+		// [crispy] IWAD: Episode 4 has no par times
+		// (but we have for singleplayer games)
+		if (wbs->epsd >= 4 && !singleplayer)
+		{
+			result = false;
+		}
+
+		// [crispy] IWAD/PWAD: BEX patch provided par times for Episode 4
+		// (disguised as par times for Doom II MAP02 to MAP10)
+		if (wbs->epsd >= 4 && bex_cpars[wbs->last + 1])
+		{
+			result = true;
+		}
+
+		// [crispy] PWAD: BEX patch provided par times for Episodes 1-3
+		if (wbs->epsd < 4 && bex_pars[wbs->epsd + 1][wbs->last + 1])
+		{
+			result = true;
+		}
+	}
+
+	return result;
+}
+
 void WI_drawStats(void)
 {
     // line height
@@ -1497,7 +1557,8 @@ void WI_drawStats(void)
     V_DrawPatch(SP_TIMEX, SP_TIMEY, timepatch);
     WI_drawTime(ORIGWIDTH/2 - SP_TIMEX, SP_TIMEY, cnt_time, true);
 
-    if (wbs->epsd < 4)
+    // [crispy] conditionally draw par times on intermission screen
+    if (WI_drawParTime())
     {
 	V_DrawPatch(ORIGWIDTH/2 + SP_TIMEX, SP_TIMEY, par);
 	WI_drawTime(ORIGWIDTH - SP_TIMEX, SP_TIMEY, cnt_par, true);
