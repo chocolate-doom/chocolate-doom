@@ -206,13 +206,13 @@ static void saveg_writep(void *p)
 static void saveg_read_mapthing_t(mapthing_t *str)
 {
     // short x;
-    str->x = saveg_read16();
+    str->x = crispy_fliplevels ? -saveg_read16() : saveg_read16();
 
     // short y;
     str->y = saveg_read16();
 
     // short angle;
-    str->angle = saveg_read16();
+    str->angle = crispy_fliplevels ? (180 - saveg_read16()) : saveg_read16();
 
     // short type;
     str->type = saveg_read16();
@@ -224,13 +224,13 @@ static void saveg_read_mapthing_t(mapthing_t *str)
 static void saveg_write_mapthing_t(mapthing_t *str)
 {
     // short x;
-    saveg_write16(str->x);
+    saveg_write16(crispy_fliplevels ? -str->x : str->x);
 
     // short y;
     saveg_write16(str->y);
 
     // short angle;
-    saveg_write16(str->angle);
+    saveg_write16(crispy_fliplevels ? (180 - str->angle) : str->angle);
 
     // short type;
     saveg_write16(str->type);
