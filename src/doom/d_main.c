@@ -2001,11 +2001,11 @@ void D_DoomMain (void)
     (
         gamemode == commercial ||
         (
-            W_CheckNumForName("sht2a0")   != -1 && // [crispy] wielding/firing sprite sequence
-            W_CheckNumForName("dsdshtgn") != -1 && // [crispy] firing sound
-            W_CheckNumForName("dsdbopn")  != -1 && // [crispy] opening sound
-            W_CheckNumForName("dsdbload") != -1 && // [crispy] reloading sound
-            W_CheckNumForName("dsdbcls")  != -1    // [crispy] closing sound
+            W_CheckNumForName("sht2a0")         != -1 && // [crispy] wielding/firing sprite sequence
+            I_GetSfxLumpNum(&S_sfx[sfx_dshtgn]) != -1 && // [crispy] firing sound
+            I_GetSfxLumpNum(&S_sfx[sfx_dbopn])  != -1 && // [crispy] opening sound
+            I_GetSfxLumpNum(&S_sfx[sfx_dbload]) != -1 && // [crispy] reloading sound
+            I_GetSfxLumpNum(&S_sfx[sfx_dbcls])  != -1    // [crispy] closing sound
         )
     );
 

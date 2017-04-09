@@ -886,7 +886,8 @@ static int I_SDL_GetSfxLumpNum(sfxinfo_t *sfx)
 
     GetSfxLumpName(sfx, namebuf, sizeof(namebuf));
 
-    return W_GetNumForName(namebuf);
+     // [crispy] make missing sounds non-fatal
+    return W_CheckNumForName(namebuf);
 }
 
 static void I_SDL_UpdateSoundParams(int handle, int vol, int sep)

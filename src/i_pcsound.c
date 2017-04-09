@@ -253,7 +253,8 @@ static int I_PCS_GetSfxLumpNum(sfxinfo_t* sfx)
         M_StringCopy(namebuf, DEH_String(sfx->name), sizeof(namebuf));
     }
 
-    return W_GetNumForName(namebuf);
+     // [crispy] make missing sounds non-fatal
+    return W_CheckNumForName(namebuf);
 }
 
 
