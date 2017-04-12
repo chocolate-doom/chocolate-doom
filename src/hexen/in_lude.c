@@ -403,7 +403,7 @@ void IN_Drawer(void)
         return;
     }
     UpdateState |= I_FULLSCRN;
-    memcpy(I_VideoBuffer, (byte *) patchINTERPIC, SCREENWIDTH * SCREENHEIGHT);
+    V_CopyScaledBuffer(I_VideoBuffer, (byte *) patchINTERPIC, ORIGWIDTH * ORIGHEIGHT);
 
     if (gametype == SINGLE)
     {
