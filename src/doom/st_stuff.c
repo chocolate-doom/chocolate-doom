@@ -1090,6 +1090,8 @@ void ST_updateFaceWidget(void)
     // [crispy] fix status bar face hysteresis
     int		painoffset;
     static int	faceindex;
+    // [crispy] no evil grin or rampage face in god mode
+    const boolean invul = (plyr->cheats & CF_GODMODE) || plyr->powers[pw_invulnerability];
 
     painoffset = ST_calcPainOffset();
 
@@ -1121,7 +1123,8 @@ void ST_updateFaceWidget(void)
 		    oldweaponsowned[i] = plyr->weaponowned[i];
 		}
 	    }
-	    if (doevilgrin) 
+	    // [crispy] no evil grin in god mode
+	    if (doevilgrin && !invul)
 	    {
 		// evil grin if just picked up weapon
 		priority = 8;
@@ -1219,7 +1222,8 @@ void ST_updateFaceWidget(void)
 	{
 	    if (lastattackdown==-1)
 		lastattackdown = ST_RAMPAGEDELAY;
-	    else if (!--lastattackdown)
+	    // [crispy] no rampage face in god mode
+	    else if (!--lastattackdown && !invul)
 	    {
 		priority = 5;
 		faceindex = ST_RAMPAGEOFFSET;
@@ -1235,8 +1239,7 @@ void ST_updateFaceWidget(void)
     if (priority < 5)
     {
 	// invulnerability
-	if ((plyr->cheats & CF_GODMODE)
-	    || plyr->powers[pw_invulnerability])
+	if (invul)
 	{
 	    priority = 4;
 
