@@ -1569,7 +1569,14 @@ void ST_drawWidgets(boolean refresh)
 		sprframe = &sprdef->spriteframes[state->frame & FF_FRAMEMASK];
 		patch = W_CacheLumpNum(sprframe->lump[0] + firstspritelump, PU_CACHE);
 
-		V_DrawPatch(ST_HEALTHX - ST_TALLNUMWIDTH, ST_HEALTHY + tallnum[0]->height, patch);
+		if (plyr->mo->flags & MF_TRANSLATION)
+		{
+			dp_translation = translationtables - 256 +
+			                 ((plyr->mo->flags & MF_TRANSLATION) >> (MF_TRANSSHIFT - 8));
+		}
+
+		V_DrawPatch(73, 186, patch);
+		V_ClearDPTranslation();
 
 		gibbed = true;
 	}
