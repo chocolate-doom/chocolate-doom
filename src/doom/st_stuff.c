@@ -1514,6 +1514,7 @@ static byte* ST_WidgetColor(int i)
 void ST_drawWidgets(boolean refresh)
 {
     int		i;
+    boolean gibbed = false;
 
     // used by w_arms[] widgets
     st_armson = st_statusbaron && !deathmatch;
@@ -1525,28 +1526,50 @@ void ST_drawWidgets(boolean refresh)
     STlib_updateNum(&w_ready, refresh);
     V_ClearDPTranslation();
 
-    // [crispy] draw berserk pack instead of no ammo if appropriate
-    if (screenblocks >= CRISPY_HUD && (!automapactive || crispy_automapoverlay) &&
-        plyr->readyweapon == wp_fist && plyr->powers[pw_strength])
+    // [crispy] draw "special widgets" in the Crispy HUD
+    if (screenblocks >= CRISPY_HUD && (!automapactive || crispy_automapoverlay))
     {
-	static patch_t *patch;
-	static short x, y;
-
-	if (!patch && !x && !y)
+	// [crispy] draw berserk pack instead of no ammo if appropriate
+	if (plyr->readyweapon == wp_fist && plyr->powers[pw_strength])
 	{
-	    if (W_CheckNumForName(DEH_String("PSTRA0")) >= 0)
-	    {
-		patch = W_CacheLumpName(DEH_String("PSTRA0"), PU_STATIC);
-		// [crispy] (23,179) is the center of the Ammo widget
-		x = 23 - SHORT(patch->width)/2 + SHORT(patch->leftoffset);
-		y = 179 - SHORT(patch->height)/2 + SHORT(patch->topoffset);
-	    }
-	    else
-		x = y = SHRT_MAX;
+		static patch_t *patch;
+
+		if (!patch)
+		{
+			const int lump = W_CheckNumForName(DEH_String("PSTRA0"));
+
+			if (lump >= 0)
+			{
+				patch = W_CacheLumpNum(lump, PU_STATIC);
+			}
+		}
+
+		if (patch)
+		{
+			// [crispy] (23,179) is the center of the Ammo widget
+			V_DrawPatch(23 - SHORT(patch->width)/2 + SHORT(patch->leftoffset),
+			            179 - SHORT(patch->height)/2 + SHORT(patch->topoffset),
+			            patch);
+		}
 	}
 
-	if (patch)
-	    V_DrawPatch(x, y, patch);
+	// [crispy] draw the gibbed death state frames in the Health widget
+	// in sync with the actual player sprite
+	if (plyr->mo->state - states >= mobjinfo[plyr->mo->type].xdeathstate)
+	{
+		state_t const *state = plyr->mo->state;
+		spritedef_t *sprdef;
+		spriteframe_t *sprframe;
+		patch_t *patch;
+
+		sprdef = &sprites[state->sprite];
+		sprframe = &sprdef->spriteframes[state->frame & FF_FRAMEMASK];
+		patch = W_CacheLumpNum(sprframe->lump[0] + firstspritelump, PU_CACHE);
+
+		V_DrawPatch(ST_HEALTHX - ST_TALLNUMWIDTH, ST_HEALTHY + tallnum[0]->height, patch);
+
+		gibbed = true;
+	}
    }
 
     for (i=0;i<4;i++)
@@ -1555,8 +1578,11 @@ void ST_drawWidgets(boolean refresh)
 	STlib_updateNum(&w_maxammo[i], refresh);
     }
 
+    if (!gibbed)
+    {
     dp_translation = ST_WidgetColor(hudcolor_health);
     STlib_updatePercent(&w_health, refresh || screenblocks >= CRISPY_HUD);
+    }
     dp_translation = ST_WidgetColor(hudcolor_armor);
     STlib_updatePercent(&w_armor, refresh || screenblocks >= CRISPY_HUD);
     V_ClearDPTranslation();
