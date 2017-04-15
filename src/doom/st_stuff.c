@@ -1545,6 +1545,11 @@ void ST_drawWidgets(boolean refresh)
 			{
 				patch = W_CacheLumpNum(lump, PU_STATIC);
 			}
+			// [crispy] should you ever play with the IDBEHOLDS cheat and the Shareware version...
+			else
+			{
+				patch = W_CacheLumpName("MEDIA0", PU_STATIC);
+			}
 		}
 
 		if (patch)
