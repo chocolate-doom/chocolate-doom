@@ -60,11 +60,19 @@ static const int recoil_values[][2] = {
 extern void P_Thrust (player_t* player, angle_t angle, fixed_t move);
 void A_Recoil (player_t* player)
 {
-    if (singleplayer && crispy_recoil && !(player->mo->flags & MF_NOCLIP))
-	P_Thrust(player, ANG180 + player->mo->angle, 2048 * recoil_values[player->readyweapon][0]);
+	if (player)
+	{
 
-    if (crispy_pitch)
-	player->recoilpitch = recoil_values[player->readyweapon][1];
+		if (singleplayer && crispy_recoil && !(player->mo->flags & MF_NOCLIP))
+		{
+			P_Thrust(player, ANG180 + player->mo->angle, 2048 * recoil_values[player->readyweapon][0]);
+		}
+
+		if (crispy_pitch)
+		{
+			player->recoilpitch = recoil_values[player->readyweapon][1];
+		}
+	}
 }
 
 
