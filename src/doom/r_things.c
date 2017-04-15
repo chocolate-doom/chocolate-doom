@@ -869,7 +869,7 @@ void R_DrawPSprite (pspdef_t* psp, psprnum_t psprnum) // [crispy] differentiate 
     boolean		flip;
     vissprite_t*	vis;
     vissprite_t		avis;
-    fixed_t		psp_sx;
+    fixed_t		psp_sx = psp->sx, psp_sy = psp->sy;
     
     // decide which patch to use
 #ifdef RANGECHECK
@@ -892,9 +892,19 @@ void R_DrawPSprite (pspdef_t* psp, psprnum_t psprnum) // [crispy] differentiate 
 
     lump = sprframe->lump[0];
     flip = (boolean)sprframe->flip[0];
-    // [crispy] center the weapon sprite horizontally
-    psp_sx = (crispy_centerweapon && viewplayer->attackdown && !psp->state->misc1) ? FRACUNIT : psp->sx;
     
+    // [crispy] center the weapon sprite horizontally and vertically
+    if (crispy_centerweapon && viewplayer->attackdown)
+    {
+        if (!psp->state->misc1)
+        {
+            psp_sx = FRACUNIT;
+        }
+        if (!psp->state->misc2)
+        {
+            psp_sy = 32*FRACUNIT; // [crispy] WEAPONTOP
+        }
+    }
     // calculate edges of the shape
     tx = psp_sx-(ORIGWIDTH/2)*FRACUNIT;
 	
@@ -917,7 +927,7 @@ void R_DrawPSprite (pspdef_t* psp, psprnum_t psprnum) // [crispy] differentiate 
     vis->translation = NULL; // [crispy] no color translation
     vis->mobjflags = 0;
     // [crispy] weapons drawn 1 pixel too high when player is idle
-    vis->texturemid = (BASEYCENTER<<FRACBITS)+FRACUNIT/4-(psp->sy-spritetopoffset[lump]);
+    vis->texturemid = (BASEYCENTER<<FRACBITS)+FRACUNIT/4-(psp_sy-spritetopoffset[lump]);
     vis->x1 = x1 < 0 ? 0 : x1;
     vis->x2 = x2 >= viewwidth ? viewwidth-1 : x2;	
     vis->scale = pspritescale<<(detailshift && !hires);
