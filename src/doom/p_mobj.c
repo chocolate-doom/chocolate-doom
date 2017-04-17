@@ -582,6 +582,19 @@ void P_MobjThinker (mobj_t* mobj)
 	P_NightmareRespawn (mobj);
     }
 
+    if (mobj->player)
+    {
+	const player_t *const player = mobj->player;
+
+	if (player->so != (sobj_t *) player->mo)
+	{
+	    sobj_t *const so = mobj->player->so;
+
+	    so->x = mobj->x;
+	    so->y = mobj->y;
+	    so->z = mobj->z;
+	}
+    }
 }
 
 
@@ -826,6 +839,8 @@ void P_SpawnPlayer (mapthing_t* mthing)
     p->extralight = 0;
     p->fixedcolormap = 0;
     p->viewheight = VIEWHEIGHT;
+
+    p->so = crispy_fullsounds ? &muzzles[mthing->type - 1] : (sobj_t *) mobj;
 
     // setup gun psprite
     P_SetupPsprites (p);

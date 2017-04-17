@@ -296,5 +296,15 @@ typedef struct mobj_s
 } mobj_t;
 
 
+// [crispy] "sound objects" hold the coordinates of removed map objects
+typedef struct
+{
+    thinker_t dummy;
+    fixed_t x;
+    fixed_t y;
+    fixed_t z;
+} sobj_t;
+
+extern sobj_t muzzles[MAXPLAYERS];
 
 #endif

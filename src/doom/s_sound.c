@@ -77,15 +77,6 @@ typedef struct
 
 } channel_t;
 
-// [crispy] "sound objects" hold the coordinates of removed map objects
-typedef struct
-{
-    thinker_t dummy;
-    fixed_t x;
-    fixed_t y;
-    fixed_t z;
-} sobj_t;
-
 // The set of channels available
 
 static channel_t *channels;

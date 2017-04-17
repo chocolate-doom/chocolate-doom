@@ -894,13 +894,15 @@ void R_DrawPSprite (pspdef_t* psp, psprnum_t psprnum) // [crispy] differentiate 
     flip = (boolean)sprframe->flip[0];
     
     // [crispy] center the weapon sprite horizontally and vertically
-    if (crispy_centerweapon && viewplayer->attackdown)
+    if (crispy_centerweapon && viewplayer->attackdown && !psp->state->misc1)
     {
-        if (!psp->state->misc1)
-        {
-            psp_sx = FRACUNIT;
-        }
-        if (!psp->state->misc2)
+        const int state = viewplayer->psprites[ps_weapon].state - states;
+        const weaponinfo_t *const winfo = &weaponinfo[viewplayer->readyweapon];
+
+        psp_sx = FRACUNIT;
+
+        // [crispy] don't center vertically during lowering and raising states
+        if (state != winfo->downstate && state != winfo->upstate)
         {
             psp_sy = 32*FRACUNIT; // [crispy] WEAPONTOP
         }
