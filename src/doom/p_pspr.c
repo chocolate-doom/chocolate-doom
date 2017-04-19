@@ -335,7 +335,7 @@ A_WeaponReady
     if (player->readyweapon == wp_chainsaw
 	&& psp->state == &states[S_SAW])
     {
-	S_StartSound (&player->so, sfx_sawidl); // [crispy] weapon sound source
+	S_StartSound (player->so, sfx_sawidl); // [crispy] weapon sound source
     }
     
     // check for change
@@ -525,7 +525,7 @@ A_Punch
     // turn to face target
     if (linetarget)
     {
-	S_StartSound (&player->so, sfx_punch); // [crispy] weapon sound source
+	S_StartSound (player->so, sfx_punch); // [crispy] weapon sound source
 	player->mo->angle = R_PointToAngle2 (player->mo->x,
 					     player->mo->y,
 					     linetarget->x,
@@ -558,10 +558,10 @@ A_Saw
 
     if (!linetarget)
     {
-	S_StartSound (&player->so, sfx_sawful); // [crispy] weapon sound source
+	S_StartSound (player->so, sfx_sawful); // [crispy] weapon sound source
 	return;
     }
-    S_StartSound (&player->so, sfx_sawhit); // [crispy] weapon sound source
+    S_StartSound (player->so, sfx_sawhit); // [crispy] weapon sound source
 	
     // turn to face target
     angle = R_PointToAngle2 (player->mo->x, player->mo->y,
@@ -718,7 +718,7 @@ A_FirePistol
 ( player_t*	player,
   pspdef_t*	psp ) 
 {
-    S_StartSound (&player->so, sfx_pistol); // [crispy] weapon sound source
+    S_StartSound (player->so, sfx_pistol); // [crispy] weapon sound source
 
     P_SetMobjState (player->mo, S_PLAY_ATK2);
     DecreaseAmmo(player, weaponinfo[player->readyweapon].ammo, 1);
@@ -744,7 +744,7 @@ A_FireShotgun
 {
     int		i;
 	
-    S_StartSound (&player->so, sfx_shotgn); // [crispy] weapon sound source
+    S_StartSound (player->so, sfx_shotgn); // [crispy] weapon sound source
     P_SetMobjState (player->mo, S_PLAY_ATK2);
 
     DecreaseAmmo(player, weaponinfo[player->readyweapon].ammo, 1);
@@ -776,7 +776,7 @@ A_FireShotgun2
     int		damage;
 		
 	
-    S_StartSound (&player->so, sfx_dshtgn); // [crispy] weapon sound source
+    S_StartSound (player->so, sfx_dshtgn); // [crispy] weapon sound source
     P_SetMobjState (player->mo, S_PLAY_ATK2);
 
     DecreaseAmmo(player, weaponinfo[player->readyweapon].ammo, 2);
@@ -810,7 +810,7 @@ A_FireCGun
 ( player_t*	player,
   pspdef_t*	psp ) 
 {
-    S_StartSound (&player->so, sfx_pistol); // [crispy] weapon sound source
+    S_StartSound (player->so, sfx_pistol); // [crispy] weapon sound source
 
     if (!player->ammo[weaponinfo[player->readyweapon].ammo])
 	return;

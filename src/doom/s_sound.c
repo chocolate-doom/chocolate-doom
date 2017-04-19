@@ -580,7 +580,7 @@ void S_StartSound(void *origin_p, int sfx_id)
 
     // Check to see if it is audible,
     //  and if not, modify the params
-    if (origin && origin != players[consoleplayer].mo && origin != (mobj_t *) &players[consoleplayer].so) // [crispy] weapon sound source
+    if (origin && origin != players[consoleplayer].mo && origin != players[consoleplayer].so) // [crispy] weapon sound source
     {
         rc = S_AdjustSoundParams(players[consoleplayer].mo,
                                  origin,
@@ -706,7 +706,7 @@ void S_UpdateSounds(mobj_t *listener)
 
                 // check non-local sounds for distance clipping
                 //  or modify their params
-                if (c->origin && listener != c->origin && c->origin != (mobj_t *) &players[consoleplayer].so) // [crispy] weapon sound source
+                if (c->origin && listener != c->origin && c->origin != players[consoleplayer].so) // [crispy] weapon sound source
                 {
                     audible = S_AdjustSoundParams(listener,
                                                   c->origin,

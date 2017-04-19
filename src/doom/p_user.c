@@ -281,7 +281,10 @@ void P_PlayerThink (player_t* player)
     player->oldrecoilpitch = player->recoilpitch;
 
     // [crispy] update weapon sound source coordinates
-    memcpy(&player->so, player->mo, sizeof(degenmobj_t));
+    if (player->so != player->mo)
+    {
+	memcpy(player->so, player->mo, sizeof(degenmobj_t));
+    }
 
     // fixme: do this in the cheat code
     if (player->cheats & CF_NOCLIP)
