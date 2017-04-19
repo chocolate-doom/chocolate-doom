@@ -39,6 +39,7 @@
 
 #include "net_defs.h"
 
+#include "r_defs.h" // [crispy] degenmobj_t
 
 
 
@@ -171,6 +172,7 @@ typedef struct player_s
     unsigned int	jumpTics;
     boolean	mapcoords;
     fixed_t	recoilpitch, oldrecoilpitch;
+    degenmobj_t	so;
 } player_t;
 
 
