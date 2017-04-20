@@ -74,6 +74,14 @@ extern int crispy_demowarp;
 
 enum
 {
+    CENTERWEAPON_OFF,
+    CENTERWEAPON_CENTER,
+    CENTERWEAPON_BOB,
+    NUM_CENTERWEAPON,
+};
+
+enum
+{
     COLOREDBLOOD_OFF,
     COLOREDBLOOD_BLOOD,
     COLOREDBLOOD_CORPSE,

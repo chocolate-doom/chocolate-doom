@@ -1335,6 +1335,12 @@ typedef struct
     char *name;
 } multiitem_t;
 
+static multiitem_t multiitem_centerweapon[NUM_CENTERWEAPON] =
+{
+    {CENTERWEAPON_OFF, "normal"},
+    {CENTERWEAPON_CENTER, "centered"},
+    {CENTERWEAPON_BOB, "bobbing"},
+};
 
 static multiitem_t multiitem_coloredblood[NUM_COLOREDBLOOD] =
 {
@@ -1470,7 +1476,7 @@ static void M_DrawCrispness2(void)
     M_DrawCrispnessMultiItem(crispness_crosshairtype, "Crosshair Type", multiitem_crosshairtype, crispy_crosshairtype + 1, crispy_crosshair);
     M_DrawCrispnessMultiItem(crispness_freelook, "Allow Free Look", multiitem_freelook, crispy_freelook, true);
     M_DrawCrispnessMultiItem(crispness_neghealth, "Negative Player Health", multiitem_neghealth, crispy_neghealth, true);
-    M_DrawCrispnessItem(crispness_centerweapon, "Center Weapon when Firing", crispy_centerweapon, true);
+    M_DrawCrispnessMultiItem(crispness_centerweapon, "Weapon Firing Position", multiitem_centerweapon, crispy_centerweapon, true);
     M_DrawCrispnessItem(crispness_pitch, "Weapon Recoil Pitch", crispy_pitch, true);
     M_DrawCrispnessItem(crispness_secretmessage, "Show Revealed Secrets", crispy_secretmessage, true);
     M_DrawCrispnessItem(crispness_automapstats, "Show Level Stats in Automap", crispy_automapstats, true);
@@ -1773,7 +1779,7 @@ static void M_CrispyToggleExtsaveg(int choice)
 static void M_CrispyToggleCenterweapon(int choice)
 {
     choice = 0;
-    crispy_centerweapon = !crispy_centerweapon;
+    crispy_centerweapon = (crispy_centerweapon + 1) % NUM_CENTERWEAPON;
 }
 
 static void M_CrispyToggleColoredblood(int choice)

@@ -854,6 +854,31 @@ void R_AddSprites (sector_t* sec)
 	R_ProjectSprite (thing);
 }
 
+// [crispy] apply bobbing (or centering) to the player's weapon sprite
+static inline void R_ApplyWeaponBob (fixed_t *sx, boolean bobx, fixed_t *sy, boolean boby)
+{
+	const angle_t angle = (128 * leveltime) & FINEMASK;
+
+	if (sx)
+	{
+		*sx = FRACUNIT;
+
+		if (bobx)
+		{
+			 *sx += FixedMul(viewplayer->bob, finecosine[angle]);
+		}
+	}
+
+	if (sy)
+	{
+		*sy = 32 * FRACUNIT; // [crispy] WEAPONTOP
+
+		if (boby)
+		{
+			*sy += FixedMul(viewplayer->bob, finesine[angle & (FINEANGLES / 2 - 1)]);
+		}
+	}
+}
 
 //
 // R_DrawPSprite
@@ -870,6 +895,7 @@ void R_DrawPSprite (pspdef_t* psp, psprnum_t psprnum) // [crispy] differentiate 
     vissprite_t*	vis;
     vissprite_t		avis;
     fixed_t		psp_sx = psp->sx, psp_sy = psp->sy;
+    const int state = viewplayer->psprites[ps_weapon].state - states;
     
     // decide which patch to use
 #ifdef RANGECHECK
@@ -893,18 +919,23 @@ void R_DrawPSprite (pspdef_t* psp, psprnum_t psprnum) // [crispy] differentiate 
     lump = sprframe->lump[0];
     flip = (boolean)sprframe->flip[0];
     
+    // [crispy] smoothen Chainsaw idle animation
+    if (state == S_SAW || state == S_SAWB)
+    {
+        R_ApplyWeaponBob(&psp_sx, true, &psp_sy, true);
+    }
+    else
     // [crispy] center the weapon sprite horizontally and vertically
     if (crispy_centerweapon && viewplayer->attackdown && !psp->state->misc1)
     {
-        const int state = viewplayer->psprites[ps_weapon].state - states;
         const weaponinfo_t *const winfo = &weaponinfo[viewplayer->readyweapon];
 
-        psp_sx = FRACUNIT;
+        R_ApplyWeaponBob(&psp_sx, crispy_centerweapon == CENTERWEAPON_BOB, NULL, false);
 
         // [crispy] don't center vertically during lowering and raising states
         if (state != winfo->downstate && state != winfo->upstate)
         {
-            psp_sy = 32*FRACUNIT; // [crispy] WEAPONTOP
+            R_ApplyWeaponBob(NULL, false, &psp_sy, crispy_centerweapon == CENTERWEAPON_BOB);
         }
     }
     // calculate edges of the shape
