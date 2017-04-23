@@ -1436,13 +1436,12 @@ static byte* ST_WidgetColor(int i)
             {
                 int ammo =  plyr->ammo[weaponinfo[plyr->readyweapon].ammo];
                 int fullammo = maxammo[weaponinfo[plyr->readyweapon].ammo];
-                int ammopct = 100 * ammo / fullammo;
 
-                if (ammopct < 25)
+                if (ammo < fullammo/4)
                     return cr[CR_RED];
-                else if (ammopct < 50)
+                else if (ammo < fullammo/2)
                     return cr[CR_GOLD];
-                else if (ammopct <= 100)
+                else if (ammo <= fullammo)
                     return cr[CR_GREEN];
                 else
                     return cr[CR_BLUE];
