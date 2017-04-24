@@ -146,15 +146,17 @@ m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
 WINDOWS_RC_VERSION=`echo $PACKAGE_VERSION | sed 's/-.*//; s/\./, /g; s/$/, 0, 0/'`
 
-# This controls the prefix added to the start of program names.  For example,
-# if this is changed to "lemon-", the programs generated will be named
-# lemon-doom, lemon-heretic, etc.
+dnl Without a hyphen. This is used for the bash-completion scripts.
+PROGRAM_SPREFIX=$(echo $PACKAGE_SHORTNAME | tr A-Z a-z)
+PROGRAM_SPREFIX=crispy
 
-PROGRAM_PREFIX=crispy-
+dnl With a hyphen, used almost everywhere else.
+PROGRAM_PREFIX=${PROGRAM_SPREFIX}-
 
 AC_SUBST(PROGRAM_PREFIX)
 AC_DEFINE_UNQUOTED(PROGRAM_PREFIX, "$PROGRAM_PREFIX",
                    Change this when you create your awesome forked version)
+AC_SUBST(PROGRAM_SPREFIX)
 
 AM_CONFIG_HEADER(config.h:config.hin)
 
@@ -184,6 +186,10 @@ AC_OUTPUT([
 Makefile
 man/Makefile
 man/bash-completion/Makefile
+man/bash-completion/doom.template
+man/bash-completion/heretic.template
+man/bash-completion/hexen.template
+man/bash-completion/strife.template
 opl/Makefile
 opl/examples/Makefile
 pcsound/Makefile
