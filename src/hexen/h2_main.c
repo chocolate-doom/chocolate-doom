@@ -187,7 +187,7 @@ static void D_SetDefaultSavePath(void)
     {
         // only get hexen.cfg path if one is not already found
 
-        if (!strcmp(SavePathConfig, ""))
+        if (SavePathConfig == NULL || !strcmp(SavePathConfig, ""))
         {
             // If we are not using a savegame path (probably because we are on
             // Windows and not using a config dir), behave like Vanilla Hexen
