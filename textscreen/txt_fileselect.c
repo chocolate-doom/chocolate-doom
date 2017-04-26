@@ -562,7 +562,7 @@ char *TXT_SelectFile(char *window_title, char **extensions)
         return NULL;
     }
 
-    argv = calloc(4 + NumExtensions(extensions), sizeof(char *));
+    argv = calloc(5 + NumExtensions(extensions), sizeof(char *));
     argv[0] = ZENITY_BINARY;
     argv[1] = "--file-selection";
     argc = 2;
@@ -595,6 +595,9 @@ char *TXT_SelectFile(char *window_title, char **extensions)
                 free(newext);
             }
         }
+
+        argv[argc] = strdup("--file-filter=*.* | *.*");
+        ++argc;
     }
 
     argv[argc] = NULL;
