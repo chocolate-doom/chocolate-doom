@@ -1,0 +1,27 @@
+1 ICON "@CMAKE_CURRENT_SOURCE_DIR@/data/setup.ico"
+
+CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST "@CMAKE_CURRENT_BINARY_DIR@/src/setup/setup-manifest.xml"
+
+1 VERSIONINFO
+PRODUCTVERSION @WINDOWS_RC_VERSION@
+FILEVERSION @WINDOWS_RC_VERSION@
+FILETYPE 1
+{
+ BLOCK "StringFileInfo"
+ {
+  BLOCK "040904E4"
+  {
+   VALUE "FileVersion", "@PROJECT_VERSION@"
+   VALUE "FileDescription", "@PROJECT_NAME@ @PROJECT_VERSION@ Setup"
+   VALUE "InternalName", "@PROGRAM_PREFIX@doom"
+   VALUE "CompanyName", "@PROJECT_BUGREPORT@"
+   VALUE "LegalCopyright", "@PROJECT_COPYRIGHT@. Licensed under @PROJECT_LICENSE@"
+   VALUE "ProductName", "@PROJECT_NAME@ Setup"
+   VALUE "ProductVersion", "@PROJECT_VERSION@"
+  }
+ }
+ BLOCK "VarFileInfo"
+ {
+  VALUE "Translation", 0x409, 1252
+ }
+}
