@@ -512,40 +512,42 @@ int TXT_CanSelectFiles(void)
     return ZenityAvailable();
 }
 
-/*
- * ExpandExtension
- * given an extension (like wad)
- * return a pointer to a string that is a case-insensitive
- * pattern representation (like [Ww][Aa][Dd])
- */
-static char * ExpandExtension(char *orig)
+//
+// ExpandExtension
+// given an extension (like wad)
+// return a pointer to a string that is a case-insensitive
+// pattern representation (like [Ww][Aa][Dd])
+//
+static char *ExpandExtension(char *orig)
 {
-    int oldlen,newlen, i;
-    char *c,*newext = NULL;
+    int oldlen, newlen, i;
+    char *c, *newext = NULL;
 
     oldlen = strlen(orig);
-    newlen = oldlen * 4; // pathalogical case: 'w' => '[Ww]'
-    newext = (char *)malloc(newlen+1);
-    if (newext)
+    newlen = oldlen * 4; // pathological case: 'w' => '[Ww]'
+    newext = malloc(newlen+1);
+
+    if (newext == NULL)
     {
-        c = newext;
-        for (i = 0; i < oldlen; ++i)
-        {
-            if (isalpha(orig[i]))
-            {
-                *c++ = '[';
-                *c++ = tolower(orig[i]);
-                *c++ = toupper(orig[i]);
-                *c++ = ']';
-            }
-            else
-            {
-                *c++ = orig[i];
-            }
-        }
-        *c = 0;
+        return NULL;
     }
 
+    c = newext;
+    for (i = 0; i < oldlen; ++i)
+    {
+        if (isalpha(orig[i]))
+        {
+            *c++ = '[';
+            *c++ = tolower(orig[i]);
+            *c++ = toupper(orig[i]);
+            *c++ = ']';
+        }
+        else
+        {
+            *c++ = orig[i];
+        }
+    }
+    *c = '\0';
     return newext;
 }
 
