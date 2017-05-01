@@ -933,7 +933,8 @@ void R_DrawPSprite (pspdef_t* psp, psprnum_t psprnum) // [crispy] differentiate 
         R_ApplyWeaponBob(&psp_sx, crispy_centerweapon == CENTERWEAPON_BOB, NULL, false);
 
         // [crispy] don't center vertically during lowering and raising states
-        if (state != winfo->downstate && state != winfo->upstate)
+        if (crispy_centerweapon >= CENTERWEAPON_CENTER &&
+            state != winfo->downstate && state != winfo->upstate)
         {
             R_ApplyWeaponBob(NULL, false, &psp_sy, crispy_centerweapon == CENTERWEAPON_BOB);
         }

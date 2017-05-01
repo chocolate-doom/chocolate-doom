@@ -1338,6 +1338,7 @@ typedef struct
 static multiitem_t multiitem_centerweapon[NUM_CENTERWEAPON] =
 {
     {CENTERWEAPON_OFF, "normal"},
+    {CENTERWEAPON_CENTERH, "h-centered"},
     {CENTERWEAPON_CENTER, "centered"},
     {CENTERWEAPON_BOB, "bobbing"},
 };
