@@ -512,6 +512,45 @@ int TXT_CanSelectFiles(void)
     return ZenityAvailable();
 }
 
+//
+// ExpandExtension
+// given an extension (like wad)
+// return a pointer to a string that is a case-insensitive
+// pattern representation (like [Ww][Aa][Dd])
+//
+static char *ExpandExtension(char *orig)
+{
+    int oldlen, newlen, i;
+    char *c, *newext = NULL;
+
+    oldlen = strlen(orig);
+    newlen = oldlen * 4; // pathological case: 'w' => '[Ww]'
+    newext = malloc(newlen+1);
+
+    if (newext == NULL)
+    {
+        return NULL;
+    }
+
+    c = newext;
+    for (i = 0; i < oldlen; ++i)
+    {
+        if (isalpha(orig[i]))
+        {
+            *c++ = '[';
+            *c++ = tolower(orig[i]);
+            *c++ = toupper(orig[i]);
+            *c++ = ']';
+        }
+        else
+        {
+            *c++ = orig[i];
+        }
+    }
+    *c = '\0';
+    return newext;
+}
+
 char *TXT_SelectFile(char *window_title, char **extensions)
 {
     unsigned int i;
@@ -525,7 +564,7 @@ char *TXT_SelectFile(char *window_title, char **extensions)
         return NULL;
     }
 
-    argv = calloc(4 + NumExtensions(extensions), sizeof(char *));
+    argv = calloc(5 + NumExtensions(extensions), sizeof(char *));
     argv[0] = ZENITY_BINARY;
     argv[1] = "--file-selection";
     argc = 2;
@@ -547,12 +586,20 @@ char *TXT_SelectFile(char *window_title, char **extensions)
     {
         for (i = 0; extensions[i] != NULL; ++i)
         {
-            len = 30 + strlen(extensions[i]) * 2;
-            argv[argc] = malloc(len);
-            TXT_snprintf(argv[argc], len, "--file-filter=.%s | *.%s",
-                         extensions[i], extensions[i]);
-            ++argc;
+            char * newext = ExpandExtension(extensions[i]);
+            if (newext)
+            {
+                len = 30 + strlen(extensions[i]) + strlen(newext);
+                argv[argc] = malloc(len);
+                TXT_snprintf(argv[argc], len, "--file-filter=.%s | *.%s",
+                             extensions[i], newext);
+                ++argc;
+                free(newext);
+            }
         }
+
+        argv[argc] = strdup("--file-filter=*.* | *.*");
+        ++argc;
     }
 
     argv[argc] = NULL;
