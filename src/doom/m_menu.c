@@ -1337,9 +1337,9 @@ typedef struct
 
 static multiitem_t multiitem_centerweapon[NUM_CENTERWEAPON] =
 {
-    {CENTERWEAPON_OFF, "normal"},
-    {CENTERWEAPON_CENTERH, "h-centered"},
-    {CENTERWEAPON_CENTER, "centered"},
+    {CENTERWEAPON_OFF, "off"},
+    {CENTERWEAPON_HOR, "horizontal"},
+    {CENTERWEAPON_HORVER, "full"},
     {CENTERWEAPON_BOB, "bobbing"},
 };
 
@@ -1477,7 +1477,7 @@ static void M_DrawCrispness2(void)
     M_DrawCrispnessMultiItem(crispness_crosshairtype, "Crosshair Type", multiitem_crosshairtype, crispy_crosshairtype + 1, crispy_crosshair);
     M_DrawCrispnessMultiItem(crispness_freelook, "Allow Free Look", multiitem_freelook, crispy_freelook, true);
     M_DrawCrispnessMultiItem(crispness_neghealth, "Negative Player Health", multiitem_neghealth, crispy_neghealth, true);
-    M_DrawCrispnessMultiItem(crispness_centerweapon, "Weapon Firing Position", multiitem_centerweapon, crispy_centerweapon, true);
+    M_DrawCrispnessMultiItem(crispness_centerweapon, "Weapon Attack Centering", multiitem_centerweapon, crispy_centerweapon, true);
     M_DrawCrispnessItem(crispness_pitch, "Weapon Recoil Pitch", crispy_pitch, true);
     M_DrawCrispnessItem(crispness_secretmessage, "Show Revealed Secrets", crispy_secretmessage, true);
     M_DrawCrispnessItem(crispness_automapstats, "Show Level Stats in Automap", crispy_automapstats, true);
