@@ -586,6 +586,12 @@ void V_DrawShadowedPatch(int x, int y, patch_t *patch)
     byte *desttop2, *dest2;
     int w, f;
 
+    // [crispy] four different rendering functions
+    const byte (* drawpatchpx) (const byte dest, const byte source) =
+        (!dp_translucent ?
+        (!dp_translation ? drawpatchpx00 : drawpatchpx01) :
+        (!dp_translation ? drawpatchpx10 : drawpatchpx11));
+
     y -= SHORT(patch->topoffset);
     x -= SHORT(patch->leftoffset);
 
@@ -617,18 +623,57 @@ void V_DrawShadowedPatch(int x, int y, patch_t *patch)
             dest2 = desttop2 + column->topdelta * (SCREENWIDTH << hires) + (x * hires) + f;
             count = column->length;
 
+            // [crispy] prevent framebuffer overflows
+            {
+                int tmpy = y + column->topdelta;
+
+                // [crispy] too far left
+                if (x < 0)
+                {
+                    continue;
+                }
+
+                // [crispy] too far right / width
+                if (x >= ORIGWIDTH)
+                {
+                    break;
+                }
+
+                // [crispy] too high
+                while (tmpy < 0)
+                {
+                    count--;
+                    source++;
+                    dest += (SCREENWIDTH << hires);
+                    dest2 += (SCREENWIDTH << hires);
+                    tmpy++;
+                }
+
+                // [crispy] too low / height
+                while (tmpy + count > ORIGHEIGHT)
+                {
+                    count--;
+                }
+
+                // [crispy] nothing left to draw?
+                if (count < 1)
+                {
+                    continue;
+                }
+            }
+
             while (count--)
             {
                 if (hires)
                 {
                     *dest2 = tinttable[((*dest2) << 8)];
                     dest2 += SCREENWIDTH;
-                    *dest = *source;
+                    *dest = drawpatchpx(*dest, *source);
                     dest += SCREENWIDTH;
                 }
                 *dest2 = tinttable[((*dest2) << 8)];
                 dest2 += SCREENWIDTH;
-                *dest = *source++;
+                *dest = drawpatchpx(*dest, *source++);
                 dest += SCREENWIDTH;
 
             }
