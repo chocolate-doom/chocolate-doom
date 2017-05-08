@@ -167,7 +167,7 @@ static const inline byte drawpatchpx10 (const byte dest, const byte source)
 static const inline byte drawpatchpx11 (const byte dest, const byte source)
 {return tranmap[(dest<<8)+dp_translation[source]];}
 
-void V_DrawPatch(int x, int y, patch_t *patch)
+static void V_DrawPatchCrispy(int x, int y, patch_t *patch, int r)
 { 
     int count;
     int col;
@@ -175,6 +175,7 @@ void V_DrawPatch(int x, int y, patch_t *patch)
     byte *desttop;
     byte *dest;
     byte *source;
+    byte *desttop2, *dest2;
     int w, f;
 
     // [crispy] four different rendering functions
@@ -207,10 +208,11 @@ void V_DrawPatch(int x, int y, patch_t *patch)
 
     col = 0;
     desttop = dest_screen + (y << hires) * SCREENWIDTH + x;
+    desttop2 = dest_screen + ((y + r) << hires) * SCREENWIDTH + x + r;
 
     w = SHORT(patch->width);
 
-    for ( ; col<w ; x++, col++, desttop++)
+    for ( ; col<w ; x++, col++, desttop++, desttop2++)
     {
         column = (column_t *)((byte *)patch + LONG(patch->columnofs[col]));
 
@@ -221,6 +223,7 @@ void V_DrawPatch(int x, int y, patch_t *patch)
           {
             source = (byte *)column + 3;
             dest = desttop + column->topdelta*(SCREENWIDTH << hires) + (x * hires) + f;
+            dest2 = desttop2 + column->topdelta * (SCREENWIDTH << hires) + (x * hires) + f;
             count = column->length;
 
             // [crispy] prevent framebuffer overflows
@@ -265,8 +268,18 @@ void V_DrawPatch(int x, int y, patch_t *patch)
             {
                 if (hires)
                 {
+                    if (r)
+                    {
+                        *dest2 = tinttable[*dest2];
+                        dest2 += SCREENWIDTH;
+                    }
                     *dest = drawpatchpx(*dest, *source);
                     dest += SCREENWIDTH;
+                }
+                if (r)
+                {
+                    *dest2 = tinttable[*dest2];
+                    dest2 += SCREENWIDTH;
                 }
                 *dest = drawpatchpx(*dest, *source++);
                 dest += SCREENWIDTH;
@@ -275,6 +288,21 @@ void V_DrawPatch(int x, int y, patch_t *patch)
             column = (column_t *)((byte *)column + column->length + 4);
         }
     }
+}
+
+void V_DrawPatch(int x, int y, patch_t *patch)
+{
+    return V_DrawPatchCrispy(x, y, patch, 0);
+}
+
+void V_DrawPatchShadow1(int x, int y, patch_t *patch)
+{
+    return V_DrawPatchCrispy(x, y, patch, 1);
+}
+
+void V_DrawPatchShadow2(int x, int y, patch_t *patch)
+{
+    return V_DrawPatchCrispy(x, y, patch, 2);
 }
 
 //
@@ -586,12 +614,6 @@ void V_DrawShadowedPatch(int x, int y, patch_t *patch)
     byte *desttop2, *dest2;
     int w, f;
 
-    // [crispy] four different rendering functions
-    const byte (* drawpatchpx) (const byte dest, const byte source) =
-        (!dp_translucent ?
-        (!dp_translation ? drawpatchpx00 : drawpatchpx01) :
-        (!dp_translation ? drawpatchpx10 : drawpatchpx11));
-
     y -= SHORT(patch->topoffset);
     x -= SHORT(patch->leftoffset);
 
@@ -623,57 +645,18 @@ void V_DrawShadowedPatch(int x, int y, patch_t *patch)
             dest2 = desttop2 + column->topdelta * (SCREENWIDTH << hires) + (x * hires) + f;
             count = column->length;
 
-            // [crispy] prevent framebuffer overflows
-            {
-                int tmpy = y + column->topdelta;
-
-                // [crispy] too far left
-                if (x < 0)
-                {
-                    continue;
-                }
-
-                // [crispy] too far right / width
-                if (x >= ORIGWIDTH)
-                {
-                    break;
-                }
-
-                // [crispy] too high
-                while (tmpy < 0)
-                {
-                    count--;
-                    source++;
-                    dest += (SCREENWIDTH << hires);
-                    dest2 += (SCREENWIDTH << hires);
-                    tmpy++;
-                }
-
-                // [crispy] too low / height
-                while (tmpy + count > ORIGHEIGHT)
-                {
-                    count--;
-                }
-
-                // [crispy] nothing left to draw?
-                if (count < 1)
-                {
-                    continue;
-                }
-            }
-
             while (count--)
             {
                 if (hires)
                 {
                     *dest2 = tinttable[((*dest2) << 8)];
                     dest2 += SCREENWIDTH;
-                    *dest = drawpatchpx(*dest, *source);
+                    *dest = *source;
                     dest += SCREENWIDTH;
                 }
                 *dest2 = tinttable[((*dest2) << 8)];
                 dest2 += SCREENWIDTH;
-                *dest = drawpatchpx(*dest, *source++);
+                *dest = *source++;
                 dest += SCREENWIDTH;
 
             }
