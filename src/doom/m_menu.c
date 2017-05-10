@@ -1279,6 +1279,8 @@ static void M_DrawCrispnessBackground(void)
 {
     static byte *sdest;
 
+    inhelpscreens = true;
+
     if (!sdest)
     {
 	byte *src, *dest;
