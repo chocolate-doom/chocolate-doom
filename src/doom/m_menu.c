@@ -2164,7 +2164,14 @@ M_WriteText
 	w = SHORT (hu_font[c]->width);
 	if (cx+w > ORIGWIDTH)
 	    break;
-	V_DrawPatchShadow1(cx, cy, hu_font[c]);
+	if (currentMenu == &LoadDef || currentMenu == &SaveDef)
+	{
+	V_DrawPatchDirect(cx, cy, hu_font[c]);
+	}
+	else
+	{
+	    V_DrawPatchShadow1(cx, cy, hu_font[c]);
+	}
 	cx+=w;
     }
 }
