@@ -206,7 +206,6 @@ void D_Display (void)
     static  boolean		fullscreen = false;
     static  gamestate_t		oldgamestate = -1;
     static  int			borderdrawcount;
-    static  char		menushade; // [crispy] shade menu background
     int				nowtime;
     int				tics;
     int				wipestart;
@@ -353,33 +352,6 @@ void D_Display (void)
 	return;
     }
 
-    // [crispy] shade background when a menu is active or the game is paused
-    if (paused || menuactive)
-    {
-	static int firsttic;
-
-	if (!automapactive || crispy_automapoverlay)
-	{
-	    for (y = 0; y < SCREENWIDTH * SCREENHEIGHT; y++)
-	    {
-		I_VideoBuffer[y] = colormaps[menushade * 256 + I_VideoBuffer[y]];
-	    }
-	}
-
-	if (menushade < 16 && gametic != firsttic)
-	{
-	    menushade += ticdup;
-	    firsttic = gametic;
-	}
-
-	// [crispy] force redraw of status bar and border
-	viewactivestate = false;
-	inhelpscreensstate = true;
-    }
-    else
-    if (menushade)
-	menushade = 0;
-
     // draw pause pic
     if (paused)
     {
@@ -387,7 +359,7 @@ void D_Display (void)
 	    y = 4;
 	else
 	    y = (viewwindowy >> hires)+4;
-	V_DrawPatchDirect((viewwindowx >> hires) + ((scaledviewwidth >> hires) - 68) / 2, y,
+	V_DrawPatchShadow2((viewwindowx >> hires) + ((scaledviewwidth >> hires) - 68) / 2, y,
                           W_CacheLumpName (DEH_String("M_PAUSE"), PU_CACHE));
     }
 

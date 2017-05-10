@@ -1130,6 +1130,12 @@ void R_InitColormaps (void)
 
 	Z_ChangeTag(playpal, PU_CACHE);
     }
+
+    // [crispy] initialize tinttable for V_DrawPatchShadow2
+    {
+	extern byte *tinttable;
+	tinttable = cr[CR_DARK];
+    }
 }
 
 
