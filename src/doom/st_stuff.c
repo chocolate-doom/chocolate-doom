@@ -1562,7 +1562,7 @@ void ST_drawWidgets(boolean refresh)
 
 	// [crispy] draw the gibbed death state frames in the Health widget
 	// in sync with the actual player sprite
-	if (plyr->mo->state - states >= mobjinfo[plyr->mo->type].xdeathstate)
+	if (plyr->health <= 0 && plyr->mo->state - states >= mobjinfo[plyr->mo->type].xdeathstate)
 	{
 		state_t const *state = plyr->mo->state;
 		spritedef_t *sprdef;
