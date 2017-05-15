@@ -159,6 +159,47 @@ static void P_ReadFireFlicker (const char *key)
 	}
 }
 
+// buttonlist[]
+
+extern void P_StartButton (line_t *line, bwhere_e w, int texture, int time);
+
+static void P_WriteButton (const char *key)
+{
+	int i;
+
+	for (i = 0; i < MAXBUTTONS; i++)
+	{
+		button_t *button = &buttonlist[i];
+
+		if (button->btimer)
+		{
+			M_snprintf(line, sizeof(line), "%s %d %d %d %d\n",
+			           key,
+			           (int)(button->line - lines),
+			           (int)button->where,
+			           (int)button->btexture,
+			           (int)button->btimer);
+			fputs(line, save_stream);
+		}
+	}
+}
+
+static void P_ReadButton (const char *key)
+{
+	int linedef, where, btexture, btimer;
+
+	if (sscanf(line, "%s %d %d %d %d\n",
+	           string,
+	           &linedef,
+	           &where,
+	           &btexture,
+	           &btimer) == 5 &&
+	    !strncmp(string, key, sizeof(string)))
+	{
+		P_StartButton(&lines[linedef], where, btexture, btimer);
+	}
+}
+
 // numbraintargets, braintargeton
 
 extern int numbraintargets, braintargeton;
@@ -284,6 +325,7 @@ static const extsavegdata_t extsavegdata[] =
 	{"extrakills", P_WriteExtraKills, P_ReadExtraKills, 1},
 	{"totalleveltimes", P_WriteTotalLevelTimes, P_ReadTotalLevelTimes, 1},
 	{"fireflicker", P_WriteFireFlicker, P_ReadFireFlicker, 1},
+	{"button", P_WriteButton, P_ReadButton, 1},
 	{"braintarget", P_WriteBrainTarget, P_ReadBrainTarget, 1},
 	{"markpoints", P_WriteMarkPoints, P_ReadMarkPoints, 1},
 	{"playerslookdir", P_WritePlayersLookdir, P_ReadPlayersLookdir, 1},
