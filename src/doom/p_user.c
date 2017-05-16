@@ -191,7 +191,7 @@ void P_MovePlayer (player_t* player)
             cmd->lookdir = MLOOKUNIT * 5 * look;
         }
     }
-    if (!menuactive)
+    if (!menuactive && !demoplayback)
     {
 	player->lookdir = BETWEEN(-LOOKDIRMIN * MLOOKUNIT,
 	                          LOOKDIRMAX * MLOOKUNIT,
