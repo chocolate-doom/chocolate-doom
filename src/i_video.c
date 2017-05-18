@@ -188,6 +188,7 @@ static boolean window_focused = true;
 // Window resize state.
 
 static boolean need_resize = false;
+static unsigned int last_resize_time;
 
 // Gamma correction level to use
 
@@ -342,10 +343,7 @@ static void HandleWindowEvent(SDL_WindowEvent *event)
             {
                 SDL_GetWindowSize(screen, &window_width, &window_height);
 
-                // Adjust the window by resizing again so that the window
-                // is the right aspect ratio.
-                AdjustWindowSize();
-                SDL_SetWindowSize(screen, window_width, window_height);
+                last_resize_time = SDL_GetTicks();
             }
             break;
 
@@ -719,8 +717,13 @@ void I_FinishUpdate (void)
     if (noblit)
         return;
 
-    if (need_resize)
+    if (need_resize && SDL_GetTicks() > last_resize_time + 500)
     {
+        // Adjust the window by resizing again so that the window
+        // is the right aspect ratio.
+        AdjustWindowSize();
+        SDL_SetWindowSize(screen, window_width, window_height);
+
         CreateUpscaledTexture(false);
         need_resize = false;
         palette_to_set = true;
