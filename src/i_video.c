@@ -19,6 +19,7 @@
 
 #include "SDL.h"
 #include "SDL_opengl.h"
+#include "SDL_syswm.h"
 
 #ifdef _WIN32
 #ifndef WIN32_LEAN_AND_MEAN
@@ -189,6 +190,10 @@ static boolean window_focused = true;
 
 static boolean need_resize = false;
 
+// Allow the window to resize itself to match the right aspect ratio.
+
+static boolean self_resize = true;
+
 // Gamma correction level to use
 
 int usegamma = 0;
@@ -342,10 +347,13 @@ static void HandleWindowEvent(SDL_WindowEvent *event)
             {
                 SDL_GetWindowSize(screen, &window_width, &window_height);
 
-                // Adjust the window by resizing again so that the window
-                // is the right aspect ratio.
-                AdjustWindowSize();
-                SDL_SetWindowSize(screen, window_width, window_height);
+                if (self_resize)
+                {
+                    // Adjust the window by resizing again so that the window
+                    // is the right aspect ratio.
+                    AdjustWindowSize();
+                    SDL_SetWindowSize(screen, window_width, window_height);
+                }
             }
             break;
 
@@ -1153,6 +1161,7 @@ static void SetVideoMode(void)
     int unused_bpp;
     int window_flags = 0, renderer_flags = 0;
     SDL_DisplayMode mode;
+    SDL_SysWMinfo wminfo;
 
     w = window_width;
     h = window_height;
@@ -1205,6 +1214,26 @@ static void SetVideoMode(void)
 
         I_InitWindowTitle();
         I_InitWindowIcon();
+    }
+
+    // Some display servers support composing or tiled window managers
+    // which are known to cause problems with self-resizing windows.
+
+    if (SDL_GetWindowWMInfo(screen, &wminfo))
+    {
+        switch(wminfo.subsystem)
+        {
+            case SDL_SYSWM_X11:
+#if SDL_VERSION_ATLEAST(2, 0, 2)
+            case SDL_SYSWM_WAYLAND:
+            case SDL_SYSWM_MIR:
+#endif
+                self_resize = false;
+                break;
+            default:
+                self_resize = true;
+                break;
+        }
     }
 
     // The SDL_RENDERER_TARGETTEXTURE flag is required to render the
