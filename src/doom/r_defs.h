@@ -428,7 +428,7 @@ typedef struct
     // If false use 0 for any position.
     // Note: as eight entries are available,
     //  we might as well insert the same name eight times.
-    boolean	rotate;
+    int	rotate; // [crispy] we use a value of 2 for 16 sprite rotations
 
     // Lump to use for view angles 0-7.
     short	lump[16]; // [crispy] support 16 sprite rotations
