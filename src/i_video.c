@@ -709,24 +709,31 @@ void I_FinishUpdate (void)
     if (noblit)
         return;
 
-    if (need_resize && SDL_GetTicks() > last_resize_time + 500)
+    if (need_resize)
     {
-        int flags;
-        // When the window is resized (we're not in fullscreen mode),
-        // save the new window size.
-        flags = SDL_GetWindowFlags(screen);
-        if ((flags & SDL_WINDOW_FULLSCREEN_DESKTOP) == 0)
+        if (SDL_GetTicks() > last_resize_time + 500)
         {
-            SDL_GetWindowSize(screen, &window_width, &window_height);
+            int flags;
+            // When the window is resized (we're not in fullscreen mode),
+            // save the new window size.
+            flags = SDL_GetWindowFlags(screen);
+            if ((flags & SDL_WINDOW_FULLSCREEN_DESKTOP) == 0)
+            {
+                SDL_GetWindowSize(screen, &window_width, &window_height);
 
-            // Adjust the window by resizing again so that the window
-            // is the right aspect ratio.
-            AdjustWindowSize();
-            SDL_SetWindowSize(screen, window_width, window_height);
+                // Adjust the window by resizing again so that the window
+                // is the right aspect ratio.
+                AdjustWindowSize();
+                SDL_SetWindowSize(screen, window_width, window_height);
+            }
+            CreateUpscaledTexture(false);
+            need_resize = false;
+            palette_to_set = true;
         }
-        CreateUpscaledTexture(false);
-        need_resize = false;
-        palette_to_set = true;
+        else
+        {
+            return;
+        }
     }
 
     UpdateGrab();
