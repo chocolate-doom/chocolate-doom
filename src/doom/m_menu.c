@@ -1372,7 +1372,7 @@ static multiitem_t multiitem_crosshairtype[] =
 {
     {-1, ""},
     {0, "cross"},
-    {1, "angle"},
+    {1, "chevron"},
     {2, "dot"},
 };
 

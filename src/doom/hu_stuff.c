@@ -713,8 +713,8 @@ static void HU_DrawCrosshair (void)
     V_DrawPatch(ORIGWIDTH/2 -
                 SHORT(patch->width)/2 +
                 SHORT(patch->leftoffset),
-                (screenblocks <= 10) ? (ORIGHEIGHT-ST_HEIGHT)/2 : ORIGHEIGHT/2 -
-                SHORT(patch->height)/2 +
+                ((screenblocks <= 10) ? (ORIGHEIGHT-ST_HEIGHT)/2 : ORIGHEIGHT/2) -
+                ((crispy_crosshairtype == 1) ? 0 : SHORT(patch->height)/2) +
                 SHORT(patch->topoffset),
                 patch);
 }
