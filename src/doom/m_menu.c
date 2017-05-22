@@ -1823,7 +1823,7 @@ static void M_CrispyToggleCrosshairtype(int choice)
     choice = 0;
     crispy_crosshairtype = crispy_crosshairtype + 1;
 
-    if (laserpatch[crispy_crosshairtype].c == ' ')
+    if (!laserpatch[crispy_crosshairtype].c)
     {
 	crispy_crosshairtype = 0;
     }

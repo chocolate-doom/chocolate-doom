@@ -488,7 +488,8 @@ typedef struct
 typedef struct
 {
 	char c;
-	int l;
+	char a[9];
+	int l, w, h;
 } laserpatch_t;
 extern laserpatch_t *laserpatch;
 

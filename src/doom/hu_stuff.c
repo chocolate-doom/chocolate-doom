@@ -411,10 +411,35 @@ void HU_Init(void)
     }
 
     // [crispy] initialize the crosshair types
-    for (i = 0; laserpatch[i].c != ' '; i++)
+    for (i = 0; laserpatch[i].c; i++)
     {
-	DEH_snprintf(buffer, 9, "STCFN%.3d", toupper(laserpatch[i].c));
-	laserpatch[i].l = W_GetNumForName(buffer);
+	patch_t *patch = NULL;
+
+	// [crispy] check for alternative crosshair patches from e.g. prboom-plus.wad first
+	if ((laserpatch[i].l = W_CheckNumForName(laserpatch[i].a)) == -1)
+	{
+		DEH_snprintf(buffer, 9, "STCFN%.3d", toupper(laserpatch[i].c));
+		laserpatch[i].l = W_GetNumForName(buffer);
+
+		patch = W_CacheLumpNum(laserpatch[i].l, PU_CACHE);
+
+		laserpatch[i].w -= SHORT(patch->leftoffset);
+		laserpatch[i].h -= SHORT(patch->topoffset);
+
+		// [crispy] special-case the chevron crosshair type
+		if (toupper(laserpatch[i].c) == '^')
+		{
+			laserpatch[i].h -= SHORT(patch->height)/2;
+		}
+	}
+
+	if (!patch)
+	{
+		patch = W_CacheLumpNum(laserpatch[i].l, PU_CACHE);
+	}
+
+	laserpatch[i].w += SHORT(patch->width)/2;
+	laserpatch[i].h += SHORT(patch->height)/2;
     }
 
     // [crispy] colorize keycard and skull key messages
@@ -711,12 +736,12 @@ static void HU_DrawCrosshair (void)
     dp_translucent = true;
 
     V_DrawPatch(ORIGWIDTH/2 -
-                SHORT(patch->width)/2 +
-                SHORT(patch->leftoffset),
+                laserpatch[crispy_crosshairtype].w,
                 ((screenblocks <= 10) ? (ORIGHEIGHT-ST_HEIGHT)/2 : ORIGHEIGHT/2) -
-                ((crispy_crosshairtype == 1) ? 0 : SHORT(patch->height)/2) +
-                SHORT(patch->topoffset),
+                laserpatch[crispy_crosshairtype].h,
                 patch);
+
+//  V_DrawHorizLine(0, (screenblocks <= 10) ? (SCREENHEIGHT/2-ST_HEIGHT) : (SCREENHEIGHT/2), SCREENWIDTH, 128);
 }
 
 void HU_Drawer(void)
