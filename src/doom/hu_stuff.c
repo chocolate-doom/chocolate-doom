@@ -416,12 +416,12 @@ void HU_Init(void)
 	patch_t *patch = NULL;
 
 	// [crispy] check for alternative crosshair patches from e.g. prboom-plus.wad first
-	if ((laserpatch[i].l = W_CheckNumForName(laserpatch[i].a)) == -1)
+//	if ((laserpatch[i].l = W_CheckNumForName(laserpatch[i].a)) == -1)
 	{
 		DEH_snprintf(buffer, 9, "STCFN%.3d", toupper(laserpatch[i].c));
 		laserpatch[i].l = W_GetNumForName(buffer);
 
-		patch = W_CacheLumpNum(laserpatch[i].l, PU_CACHE);
+		patch = W_CacheLumpNum(laserpatch[i].l, PU_STATIC);
 
 		laserpatch[i].w -= SHORT(patch->leftoffset);
 		laserpatch[i].h -= SHORT(patch->topoffset);
@@ -435,7 +435,7 @@ void HU_Init(void)
 
 	if (!patch)
 	{
-		patch = W_CacheLumpNum(laserpatch[i].l, PU_CACHE);
+		patch = W_CacheLumpNum(laserpatch[i].l, PU_STATIC);
 	}
 
 	laserpatch[i].w += SHORT(patch->width)/2;
