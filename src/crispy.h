@@ -46,8 +46,7 @@ extern boolean crispy_havee1m10;
 extern boolean crispy_havemap33;
 extern boolean crispy_havessg;
 extern boolean crispy_showfps;
-
-#define crispy_stretchsky (crispy_freelook || crispy_mouselook || crispy_pitch)
+extern boolean crispy_stretchsky;
 
 extern int crispy_automapstats;
 extern int crispy_centerweapon;
