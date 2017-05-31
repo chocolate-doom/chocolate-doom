@@ -188,6 +188,8 @@ static boolean window_focused = true;
 // Window resize state.
 
 static boolean need_resize = false;
+static unsigned int last_resize_time;
+#define RESIZE_DELAY 500
 
 // Gamma correction level to use
 
@@ -319,7 +321,7 @@ static void AdjustWindowSize(void)
 
 static void HandleWindowEvent(SDL_WindowEvent *event)
 {
-    int i, flags;
+    int i;
 
     switch (event->event)
     {
@@ -335,18 +337,7 @@ static void HandleWindowEvent(SDL_WindowEvent *event)
 
         case SDL_WINDOWEVENT_RESIZED:
             need_resize = true;
-            // When the window is resized (we're not in fullscreen mode),
-            // save the new window size.
-            flags = SDL_GetWindowFlags(screen);
-            if ((flags & SDL_WINDOW_FULLSCREEN_DESKTOP) == 0)
-            {
-                SDL_GetWindowSize(screen, &window_width, &window_height);
-
-                // Adjust the window by resizing again so that the window
-                // is the right aspect ratio.
-                AdjustWindowSize();
-                SDL_SetWindowSize(screen, window_width, window_height);
-            }
+            last_resize_time = SDL_GetTicks();
             break;
 
         // Don't render the screen when the window is minimized:
@@ -721,9 +712,29 @@ void I_FinishUpdate (void)
 
     if (need_resize)
     {
-        CreateUpscaledTexture(false);
-        need_resize = false;
-        palette_to_set = true;
+        if (SDL_GetTicks() > last_resize_time + RESIZE_DELAY)
+        {
+            int flags;
+            // When the window is resized (we're not in fullscreen mode),
+            // save the new window size.
+            flags = SDL_GetWindowFlags(screen);
+            if ((flags & SDL_WINDOW_FULLSCREEN_DESKTOP) == 0)
+            {
+                SDL_GetWindowSize(screen, &window_width, &window_height);
+
+                // Adjust the window by resizing again so that the window
+                // is the right aspect ratio.
+                AdjustWindowSize();
+                SDL_SetWindowSize(screen, window_width, window_height);
+            }
+            CreateUpscaledTexture(false);
+            need_resize = false;
+            palette_to_set = true;
+        }
+        else
+        {
+            return;
+        }
     }
 
     UpdateGrab();
