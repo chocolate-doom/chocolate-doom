@@ -189,6 +189,7 @@ static boolean window_focused = true;
 
 static boolean need_resize = false;
 static unsigned int last_resize_time;
+#define RESIZE_DELAY 500
 
 // Gamma correction level to use
 
@@ -711,7 +712,7 @@ void I_FinishUpdate (void)
 
     if (need_resize)
     {
-        if (SDL_GetTicks() > last_resize_time + 500)
+        if (SDL_GetTicks() > last_resize_time + RESIZE_DELAY)
         {
             int flags;
             // When the window is resized (we're not in fullscreen mode),
