@@ -1487,6 +1487,18 @@ boolean M_Responder (event_t* ev)
             key = key_menu_activate;
             joywait = I_GetTime() + 5;
         }
+
+        // Fill-in the savegame name if user press Fire on the joystick
+        if (saveStringEnter && joybmenu >= 0 && ev->data1&1)
+        {
+            // Create a savegame string
+            char savestring[SAVESTRINGSIZE];
+
+            memset(savestring, 0, SAVESTRINGSIZE);
+            M_snprintf(savestring, SAVESTRINGSIZE - 1, "JOYSTICK SLOT %i", saveSlot);
+            saveCharIndex = strlen(savestring);
+            memcpy(savegamestrings[saveSlot], savestring, SAVESTRINGSIZE);
+        }
     }
     else
     {
