@@ -898,8 +898,7 @@ static boolean D_AddFile(char *filename)
 }
 
 // Copyright message banners
-// Some dehacked mods replace these.  These are only displayed if they are 
-// replaced by dehacked.
+// Some dehacked mods replace these.
 
 static char *copyright_banners[] =
 {
@@ -925,19 +924,30 @@ static char *copyright_banners[] =
 void PrintDehackedBanners(void)
 {
     size_t i;
+    char *deh_s;
 
-    for (i=0; i<arrlen(copyright_banners); ++i)
+    deh_s = DEH_String(copyright_banners[0]);
+
+    if (modifiedgame || deh_s != copyright_banners[0])
     {
-        char *deh_s;
+        printf("%s", deh_s);
 
+        // Make sure the modified banner always ends in a newline character.
+        // If it doesn't, add a newline.  This fixes av.wad.
+        if (deh_s[strlen(deh_s) - 1] != '\n')
+        {
+            printf("\n");
+        }
+        getchar();
+    }
+
+    for (i=1; i<arrlen(copyright_banners); ++i)
+    {
         deh_s = DEH_String(copyright_banners[i]);
 
         if (deh_s != copyright_banners[i])
         {
             printf("%s", deh_s);
-
-            // Make sure the modified banner always ends in a newline character.
-            // If it doesn't, add a newline.  This fixes av.wad.
 
             if (deh_s[strlen(deh_s) - 1] != '\n')
             {
