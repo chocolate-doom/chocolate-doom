@@ -37,6 +37,7 @@
 #include "doomstat.h"
 #include "r_state.h"
 #include "m_controls.h" // [crispy] key_*
+#include "m_random.h" // [crispy] Crispy_Random()
 
 typedef enum
 {
@@ -105,6 +106,8 @@ void	F_StartCast (void);
 void	F_CastTicker (void);
 boolean F_CastResponder (event_t *ev);
 void	F_CastDrawer (void);
+
+extern void A_RandomJump();
 
 //
 // F_StartFinale
@@ -435,9 +438,17 @@ void F_CastTicker (void)
     else
     {
 	// just advance to next state in animation
-	if (caststate == &states[S_PLAY_ATK1])
+	if (!castdeath && caststate == &states[S_PLAY_ATK1])
 	    goto stopattack;	// Oh, gross hack!
+	// [crispy] Allow A_RandomJump() in deaths in cast sequence
+	if (caststate->action.acp1 == A_RandomJump && Crispy_Random() < caststate->misc2)
+	{
+	    st = caststate->misc1;
+	}
+	else
+	{
 	st = caststate->nextstate;
+	}
 	caststate = &states[st];
 	castframes++;
 	
@@ -477,7 +488,7 @@ void F_CastTicker (void)
 	    S_StartSound (NULL, sfx);
     }
 	
-    if (castframes == 12)
+    if (!castdeath && castframes == 12)
     {
 	// go into attack frame
 	castattacking = true;
@@ -511,7 +522,27 @@ void F_CastTicker (void)
 	
     casttics = caststate->tics;
     if (casttics == -1)
+    {
+	// [crispy] Allow A_RandomJump() in deaths in cast sequence
+	if (caststate->action.acp1 == A_RandomJump)
+	{
+	    if (Crispy_Random() < caststate->misc2)
+	    {
+		caststate = &states[caststate->misc1];
+	    }
+	    else
+	    {
+		caststate = &states[caststate->nextstate];
+	    }
+
+	    casttics = caststate->tics;
+	}
+
+	if (casttics == -1)
+	{
 	casttics = 15;
+	}
+    }
 }
 
 
@@ -567,6 +598,19 @@ boolean F_CastResponder (event_t* ev)
     else
     caststate = &states[mobjinfo[castorder[castnum].type].deathstate];
     casttics = caststate->tics;
+    // [crispy] Allow A_RandomJump() in deaths in cast sequence
+    if (casttics == -1 && caststate->action.acp1 == A_RandomJump)
+    {
+        if (Crispy_Random() < caststate->misc2)
+        {
+            caststate = &states [caststate->misc1];
+        }
+        else
+        {
+            caststate = &states [caststate->nextstate];
+        }
+        casttics = caststate->tics;
+    }
     castframes = 0;
     castattacking = false;
     if (xdeath && mobjinfo[castorder[castnum].type].xdeathstate)
@@ -649,6 +693,11 @@ void F_CastDrawer (void)
     
     // draw the current frame in the middle of the screen
     sprdef = &sprites[caststate->sprite];
+    // [crispy] the TNT1 sprite is not supposed to be rendered anyway
+    if (!sprdef->numframes && caststate->sprite == SPR_TNT1)
+    {
+	return;
+    }
     sprframe = &sprdef->spriteframes[ caststate->frame & FF_FRAMEMASK];
     lump = sprframe->lump[castangle]; // [crispy] turnable cast
     flip = (boolean)sprframe->flip[castangle]; // [crispy] turnable cast
