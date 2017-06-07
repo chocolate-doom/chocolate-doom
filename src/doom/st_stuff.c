@@ -1513,6 +1513,36 @@ static byte* ST_WidgetColor(int i)
     return NULL;
 }
 
+// [crispy] draw the gibbed death state frames in the Health widget
+// in sync with the actual player sprite
+static inline void ST_DrawGibbedPlayerSprites (void)
+{
+	state_t const *state = plyr->mo->state;
+	spritedef_t *sprdef;
+	spriteframe_t *sprframe;
+	patch_t *patch;
+
+	sprdef = &sprites[state->sprite];
+
+	// [crispy] the TNT1 sprite is not supposed to be rendered anyway
+	if (!sprdef->numframes && plyr->mo->sprite == SPR_TNT1)
+	{
+		return;
+	}
+
+	sprframe = &sprdef->spriteframes[state->frame & FF_FRAMEMASK];
+	patch = W_CacheLumpNum(sprframe->lump[0] + firstspritelump, PU_CACHE);
+
+	if (plyr->mo->flags & MF_TRANSLATION)
+	{
+		dp_translation = translationtables - 256 +
+		                 ((plyr->mo->flags & MF_TRANSLATION) >> (MF_TRANSSHIFT - 8));
+	}
+
+	V_DrawPatch(73, 186, patch);
+	V_ClearDPTranslation();
+}
+
 void ST_drawWidgets(boolean refresh)
 {
     int		i;
@@ -1564,24 +1594,7 @@ void ST_drawWidgets(boolean refresh)
 	// in sync with the actual player sprite
 	if (plyr->health <= 0 && plyr->mo->state - states >= mobjinfo[plyr->mo->type].xdeathstate)
 	{
-		state_t const *state = plyr->mo->state;
-		spritedef_t *sprdef;
-		spriteframe_t *sprframe;
-		patch_t *patch;
-
-		sprdef = &sprites[state->sprite];
-		sprframe = &sprdef->spriteframes[state->frame & FF_FRAMEMASK];
-		patch = W_CacheLumpNum(sprframe->lump[0] + firstspritelump, PU_CACHE);
-
-		if (plyr->mo->flags & MF_TRANSLATION)
-		{
-			dp_translation = translationtables - 256 +
-			                 ((plyr->mo->flags & MF_TRANSLATION) >> (MF_TRANSSHIFT - 8));
-		}
-
-		V_DrawPatch(73, 186, patch);
-		V_ClearDPTranslation();
-
+		ST_DrawGibbedPlayerSprites();
 		gibbed = true;
 	}
    }
