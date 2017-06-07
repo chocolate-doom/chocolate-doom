@@ -2208,10 +2208,34 @@ void A_PlaySound(mobj_t *mo)
   S_StartSound(mo->state->misc2 ? NULL : mo, mo->state->misc1);
 }
 
-void A_RandomJump(mobj_t *mo)
+void A_RandomJump(void *thing, pspdef_t *psp)
 {
-  if (Crispy_Random() /* P_Random(pr_randomjump) */ < mo->state->misc2)
-    P_SetMobjState(mo, mo->state->misc1);
+	int i;
+	player_t *player = thing;
+	mobj_t *mo = thing;
+
+	// [crispy] first, try to apply to weapon states for all possible players
+	// (there aren't that many possibilities after all)
+	for (i = 0; i < MAXPLAYERS; i++)
+	{
+		if (player == &players[i] && psp)
+		{
+			if (Crispy_Random() < psp->state->misc2)
+			{
+				extern void P_SetPsprite (player_t *player, int position, statenum_t stnum);
+
+				P_SetPsprite(player, psp - &player->psprites[0], psp->state->misc1);
+			}
+
+			return;
+		}
+	}
+
+	// [crispy] second, apply to map object states
+	if (Crispy_Random() < mo->state->misc2)
+	{
+		P_SetMobjState(mo, mo->state->misc1);
+	}
 }
 
 //
