@@ -1841,6 +1841,10 @@ int savedleveltime = 0; // [crispy] moved here for level time logging
 void G_DoLoadGame (void) 
 { 
 	 
+    // [crispy] loaded game must always be single player.
+    // Needed for ability to use a further game loading, as well as
+    // cheat codes and other single player only specifics.
+    netgame = false;
     gameaction = ga_nothing; 
 	 
     save_stream = fopen(savename, "rb");
