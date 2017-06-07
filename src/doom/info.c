@@ -45,7 +45,9 @@ char *sprnames[] = {
     "COL5","TBLU","TGRN","TRED","SMBT","SMGT","SMRT","HDB1","HDB2","HDB3",
     "HDB4","HDB5","HDB6","POB1","POB2","BRS1","TLMP","TLP2",
     // [crispy] additional BOOM and MBF states, sprites and code pointers
-    "TNT1","DOGS","PLS1","PLS2","BON3","BON4"
+    "TNT1","DOGS","PLS1","PLS2","BON3","BON4",
+    // [BH] blood splats, [crispy] unused
+    "BLD2",
     // [BH] 100 extra sprite names to use in dehacked patches
     "SP00", "SP01", "SP02", "SP03", "SP04", "SP05", "SP06", "SP07", "SP08", "SP09",
     "SP10", "SP11", "SP12", "SP13", "SP14", "SP15", "SP16", "SP17", "SP18", "SP19",

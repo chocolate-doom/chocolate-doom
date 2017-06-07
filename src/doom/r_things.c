@@ -135,9 +135,10 @@ R_InstallSpriteLump
 	    I_Error ("R_InitSprites: Sprite %s frame %c has "
 		     "multip rot=0 lump", spritename, 'A'+frame);
 
+	// [crispy] make non-fatal
 	if (sprtemp[frame].rotate == true)
-	    I_Error ("R_InitSprites: Sprite %s frame %c has rotations "
-		     "and a rot=0 lump", spritename, 'A'+frame);
+	    fprintf (stderr, "R_InitSprites: Sprite %s frame %c has rotations "
+		     "and a rot=0 lump\n", spritename, 'A'+frame);
 			
 	sprtemp[frame].rotate = false;
 	for (r=0 ; r<16 ; r++) // [crispy] support 16 sprite rotations

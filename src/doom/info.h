@@ -171,6 +171,8 @@ typedef enum
     SPR_PLS2,
     SPR_BON3,
     SPR_BON4,
+    // [BH] blood splats, [crispy] unused
+    SPR_BLD2,
     // [BH] 100 extra sprite names to use in dehacked patches
     SPR_SP00, SPR_SP01, SPR_SP02, SPR_SP03, SPR_SP04, SPR_SP05, SPR_SP06, SPR_SP07, SPR_SP08, SPR_SP09,
     SPR_SP10, SPR_SP11, SPR_SP12, SPR_SP13, SPR_SP14, SPR_SP15, SPR_SP16, SPR_SP17, SPR_SP18, SPR_SP19,
