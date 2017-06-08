@@ -517,7 +517,7 @@ void R_DrawPlanes (void)
 		// [crispy] stretch sky
 		if (crispy_stretchsky)
 		{
-		    dc_texturemid = dc_texturemid * (textureheight[texture]>>FRACBITS) / 228;
+		    dc_texturemid = dc_texturemid * (textureheight[texture]>>FRACBITS) / SKYSTRETCH_HEIGHT;
 		}
 		flip = (l->special == 272) ? 0u : ~0u;
 		an += s->textureoffset;
@@ -529,9 +529,6 @@ void R_DrawPlanes (void)
 		flip = 0;
 	    }
 	    dc_iscale = pspriteiscale>>(detailshift && !hires);
-	    // [crispy] stretch sky
-	    if (crispy_stretchsky)
-	        dc_iscale = dc_iscale * 128 / 228;
 	    
 	    // Sky is allways drawn full bright,
 	    //  i.e. colormaps[0] is used.
@@ -540,6 +537,9 @@ void R_DrawPlanes (void)
 	    dc_colormap = colormaps;
 //	    dc_texturemid = skytexturemid;
 	    dc_texheight = textureheight[texture]>>FRACBITS; // [crispy] Tutti-Frutti fix
+	    // [crispy] stretch sky
+	    if (crispy_stretchsky)
+	        dc_iscale = dc_iscale * dc_texheight / SKYSTRETCH_HEIGHT;
 	    for (x=pl->minx ; x <= pl->maxx ; x++)
 	    {
 		dc_yl = pl->top[x];

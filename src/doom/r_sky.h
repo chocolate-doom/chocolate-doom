@@ -28,6 +28,9 @@
 // The sky map is 256*128*4 maps.
 #define ANGLETOSKYSHIFT		22
 
+// [crispy] stretch sky
+#define SKYSTRETCH_HEIGHT 228
+
 extern  int		skytexture;
 extern int		skytexturemid;
 

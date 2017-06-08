@@ -786,6 +786,8 @@ void R_ExecuteSetViewSize (void)
     // psprite scales
     pspritescale = FRACUNIT*viewwidth/ORIGWIDTH;
     pspriteiscale = FRACUNIT*ORIGWIDTH/viewwidth;
+    // [crispy] sky texture scales
+    R_InitSkyMap();
     
     // thing clipping
     for (i=0 ; i<viewwidth ; i++)
