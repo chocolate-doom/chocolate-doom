@@ -126,7 +126,8 @@ int             consoleplayer;          // player taking events and displaying
 int             displayplayer;          // view being displayed 
 int             levelstarttic;          // gametic at level start 
 int             totalkills, totalitems, totalsecret;    // for intermission 
- 
+int             demostarttic;           // [crispy] fix revenant internal demo bug
+
 char           *demoname;
 boolean         demorecording; 
 boolean         longtics;               // cph's doom 1.91 longtics hack
@@ -1907,6 +1908,8 @@ G_InitNew
     gamemap = map;
     gameskill = skill;
 
+    demostarttic = 0; // [crispy] fix revenant internal demo bug
+
     viewactive = true;
 
     // Set the sky to use.
@@ -2296,6 +2299,7 @@ void G_DoPlayDemo (void)
     G_InitNew (skill, episode, map); 
     precache = true; 
     starttime = I_GetTime (); 
+    demostarttic = gametic; // [crispy] fix revenant internal demo bug
 
     usergame = false; 
     demoplayback = true; 

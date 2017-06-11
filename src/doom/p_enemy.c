@@ -1010,8 +1010,9 @@ void A_Tracer (mobj_t* actor)
     fixed_t	slope;
     mobj_t*	dest;
     mobj_t*	th;
+    extern int demostarttic;
 		
-    if (gametic & 3)
+    if ((gametic  - demostarttic) & 3) // [crispy] fix revenant internal demo bug
 	return;
     
     // spawn a puff of smoke behind the rocket		
