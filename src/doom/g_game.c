@@ -130,7 +130,8 @@ int             levelstarttic;          // gametic at level start
 int             totalkills, totalitems, totalsecret;    // for intermission 
 int             extrakills;             // [crispy] count spawned monsters
 int             totalleveltimes;        // [crispy] CPhipps - total time for all completed levels
- 
+int             demostarttic;           // [crispy] fix revenant internal demo bug
+
 char           *demoname;
 boolean         demorecording; 
 boolean         longtics;               // cph's doom 1.91 longtics hack
@@ -2218,6 +2219,7 @@ G_InitNew
 
     // [crispy] CPhipps - total time for all completed levels
     totalleveltimes = 0;
+    demostarttic = 0; // [crispy] fix revenant internal demo bug
 
     viewactive = true;
 
@@ -2641,6 +2643,7 @@ void G_DoPlayDemo (void)
     }
     precache = true; 
     starttime = I_GetTime (); 
+    demostarttic = gametic; // [crispy] fix revenant internal demo bug
 
     usergame = false; 
     demoplayback = true; 
