@@ -35,7 +35,7 @@
 // sky mapping
 //
 int			skyflatnum;
-int			skytexture;
+int			skytexture = -1; // [crispy] initialize
 int			skytexturemid;
 
 boolean crispy_stretchsky; // [crispy] stretch sky
@@ -49,6 +49,10 @@ void R_InitSkyMap (void)
 {
   // skyflatnum = R_FlatNumForName ( SKYFLATNAME );
     // [crispy] stretch sky
+    if (skytexture == -1)
+    {
+        return;
+    }
     if ((crispy_stretchsky = crispy_freelook || crispy_mouselook || crispy_pitch))
     {
         skytexturemid = -28*FRACUNIT * (textureheight[skytexture] >> FRACBITS) / SKYSTRETCH_HEIGHT;
