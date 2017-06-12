@@ -636,7 +636,11 @@ void D_DoAdvanceDemo (void)
     // However! There is an alternate version of Final Doom that
     // includes a fixed executable.
 
+    // [crispy] get rid of this demo sequence breaking bug
+    /*
     if (gameversion == exe_ultimate || gameversion == exe_final)
+    */
+    if (W_CheckNumForName(DEH_String("demo4")) >= 0)
       demosequence = (demosequence+1)%7;
     else
       demosequence = (demosequence+1)%6;
