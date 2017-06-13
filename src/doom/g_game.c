@@ -131,7 +131,7 @@ int             totalkills, totalitems, totalsecret;    // for intermission
 int             extrakills;             // [crispy] count spawned monsters
 int             totalleveltimes;        // [crispy] CPhipps - total time for all completed levels
 int             demostarttic;           // [crispy] fix revenant internal demo bug
-
+ 
 char           *demoname;
 boolean         demorecording; 
 boolean         longtics;               // cph's doom 1.91 longtics hack
