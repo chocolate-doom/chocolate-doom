@@ -2166,7 +2166,7 @@ M_WriteText
 	w = SHORT (hu_font[c]->width);
 	if (cx+w > ORIGWIDTH)
 	    break;
-	if (currentMenu == &LoadDef || currentMenu == &SaveDef)
+	if (!messageToPrint && (currentMenu == &LoadDef || currentMenu == &SaveDef))
 	{
 	V_DrawPatchDirect(cx, cy, hu_font[c]);
 	}
