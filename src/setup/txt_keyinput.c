@@ -27,8 +27,6 @@
 
 #define KEY_INPUT_WIDTH 8
 
-extern SDL_Window *TXT_SDLWindow;
-
 static int KeyPressCallback(txt_window_t *window, int key, 
                             TXT_UNCAST_ARG(key_input))
 {
@@ -58,11 +56,6 @@ static int KeyPressCallback(txt_window_t *window, int key,
     }
 }
 
-static void ReleaseGrab(TXT_UNCAST_ARG(window), TXT_UNCAST_ARG(unused))
-{
-    SDL_SetWindowGrab(TXT_SDLWindow, SDL_FALSE);
-}
-
 static void OpenPromptWindow(txt_key_input_t *key_input)
 {
     txt_window_t *window;
@@ -77,13 +70,6 @@ static void OpenPromptWindow(txt_key_input_t *key_input)
 
     // Switch to raw input mode while we're grabbing the key.
     TXT_SetInputMode(TXT_INPUT_RAW);
-
-    // Grab input while reading the key.  On Windows Mobile
-    // handheld devices, the hardware keypresses are only
-    // detected when input is grabbed.
-
-    SDL_SetWindowGrab(TXT_SDLWindow, SDL_TRUE);
-    TXT_SignalConnect(window, "closed", ReleaseGrab, NULL);
 }
 
 static void TXT_KeyInputSizeCalc(TXT_UNCAST_ARG(key_input))

@@ -890,6 +890,19 @@ void TXT_SetInputMode(txt_input_mode_t mode)
         SDL_StopTextInput();
     }
 
+    // On Windows Mobile handheld devices, the hardware keypresses
+    // are only detected when input is grabbed. In some other
+    // environments, this enables us to get key events for special
+    // keys like "Print Screen"
+    if (mode == TXT_INPUT_RAW)
+    {
+        SDL_SetWindowGrab(TXT_SDLWindow, SDL_TRUE);
+    }
+    else
+    {
+        SDL_SetWindowGrab(TXT_SDLWindow, SDL_FALSE);
+    }
+
     input_mode = mode;
 }
 
