@@ -27,6 +27,8 @@
 
 #define KEY_INPUT_WIDTH 8
 
+extern SDL_Window *TXT_SDLWindow;
+
 static int KeyPressCallback(txt_window_t *window, int key, 
                             TXT_UNCAST_ARG(key_input))
 {
@@ -58,8 +60,7 @@ static int KeyPressCallback(txt_window_t *window, int key,
 
 static void ReleaseGrab(TXT_UNCAST_ARG(window), TXT_UNCAST_ARG(unused))
 {
-    // SDL2-TODO: Needed?
-    // SDL_WM_GrabInput(SDL_GRAB_OFF);
+    SDL_SetWindowGrab(TXT_SDLWindow, SDL_FALSE);
 }
 
 static void OpenPromptWindow(txt_key_input_t *key_input)
@@ -81,8 +82,7 @@ static void OpenPromptWindow(txt_key_input_t *key_input)
     // handheld devices, the hardware keypresses are only
     // detected when input is grabbed.
 
-    // SDL2-TODO: Needed?
-    //SDL_WM_GrabInput(SDL_GRAB_ON);
+    SDL_SetWindowGrab(TXT_SDLWindow, SDL_TRUE);
     TXT_SignalConnect(window, "closed", ReleaseGrab, NULL);
 }
 

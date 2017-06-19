@@ -1306,6 +1306,12 @@ static void SetVideoMode(void)
 
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");
 
+    //
+    // This enables us to receive key press events for "special" keys like
+    // "Print Screen" which might be bound to actions (see GH issue #765)
+    //
+    SDL_SetHint(SDL_HINT_GRAB_KEYBOARD, "1");
+
     // Create the intermediate texture that the RGBA surface gets loaded into.
     // The SDL_TEXTUREACCESS_STREAMING flag means that this texture's content
     // is going to change frequently.

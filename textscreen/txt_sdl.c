@@ -429,6 +429,9 @@ void TXT_UpdateScreenArea(int x, int y, int w, int h)
 
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
 
+    // to enable catching key events for special keys like Print Screen (GH #765)
+    SDL_SetHint(SDL_HINT_GRAB_KEYBOARD, "1");
+
     // TODO: This is currently creating a new texture every time we render
     // the screen; find a more efficient way to do it.
     screentx = SDL_CreateTextureFromSurface(renderer, screenbuffer);
