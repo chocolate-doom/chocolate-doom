@@ -539,6 +539,7 @@ void TXT_OpenURL(char *url)
     {
         fprintf(stderr,
                 "xdg-utils is not installed. Can't open this URL:\n%s\n", url);
+        free(cmd);
         return;
     }
 
