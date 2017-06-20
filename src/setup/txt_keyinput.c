@@ -56,12 +56,6 @@ static int KeyPressCallback(txt_window_t *window, int key,
     }
 }
 
-static void ReleaseGrab(TXT_UNCAST_ARG(window), TXT_UNCAST_ARG(unused))
-{
-    // SDL2-TODO: Needed?
-    // SDL_WM_GrabInput(SDL_GRAB_OFF);
-}
-
 static void OpenPromptWindow(txt_key_input_t *key_input)
 {
     txt_window_t *window;
@@ -76,14 +70,6 @@ static void OpenPromptWindow(txt_key_input_t *key_input)
 
     // Switch to raw input mode while we're grabbing the key.
     TXT_SetInputMode(TXT_INPUT_RAW);
-
-    // Grab input while reading the key.  On Windows Mobile
-    // handheld devices, the hardware keypresses are only
-    // detected when input is grabbed.
-
-    // SDL2-TODO: Needed?
-    //SDL_WM_GrabInput(SDL_GRAB_ON);
-    TXT_SignalConnect(window, "closed", ReleaseGrab, NULL);
 }
 
 static void TXT_KeyInputSizeCalc(TXT_UNCAST_ARG(key_input))

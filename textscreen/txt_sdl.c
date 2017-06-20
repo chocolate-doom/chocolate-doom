@@ -429,6 +429,9 @@ void TXT_UpdateScreenArea(int x, int y, int w, int h)
 
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
 
+    // to enable catching key events for special keys like Print Screen (GH #765)
+    SDL_SetHint(SDL_HINT_GRAB_KEYBOARD, "1");
+
     // TODO: This is currently creating a new texture every time we render
     // the screen; find a more efficient way to do it.
     screentx = SDL_CreateTextureFromSurface(renderer, screenbuffer);
@@ -885,6 +888,19 @@ void TXT_SetInputMode(txt_input_mode_t mode)
     else if (SDL_IsTextInputActive() && mode != TXT_INPUT_TEXT)
     {
         SDL_StopTextInput();
+    }
+
+    // On Windows Mobile handheld devices, the hardware keypresses
+    // are only detected when input is grabbed. In some other
+    // environments, this enables us to get key events for special
+    // keys like "Print Screen"
+    if (mode == TXT_INPUT_RAW)
+    {
+        SDL_SetWindowGrab(TXT_SDLWindow, SDL_TRUE);
+    }
+    else
+    {
+        SDL_SetWindowGrab(TXT_SDLWindow, SDL_FALSE);
     }
 
     input_mode = mode;
