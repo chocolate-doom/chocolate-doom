@@ -39,7 +39,6 @@
 #define singleplayer (!demorecording && !demoplayback && !netgame)
 
 extern boolean crispy_automapoverlay;
-extern boolean crispy_cleanscreenshot;
 extern boolean crispy_flashinghom;
 extern boolean crispy_fliplevels;
 extern boolean crispy_havee1m10;
@@ -69,6 +68,7 @@ extern int crispy_secretmessage;
 extern int crispy_translucency;
 extern int crispy_uncapped;
 
+extern int crispy_cleanscreenshot;
 extern int crispy_demowarp;
 
 enum

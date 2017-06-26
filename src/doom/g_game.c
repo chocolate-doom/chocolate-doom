@@ -1068,7 +1068,7 @@ void G_Ticker (void)
 	        extern void D_Display (void);
 
 	        D_Display();
-	        crispy_cleanscreenshot = false;
+	        crispy_cleanscreenshot = 0;
 	    }
 	    V_ScreenShot("DOOM%04i.%s"); // [crispy] increase screenshot filename limit
             players[consoleplayer].message = DEH_String("screen shot");

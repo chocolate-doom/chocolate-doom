@@ -344,8 +344,7 @@ void D_Display (void)
 	inhelpscreensstate = true;
     }
 
-    // [crispy] do not shade background and draw neither pause pic nor menu
-    // when taking a clean screenshot
+    // [crispy] draw neither pause pic nor menu when taking a clean screenshot
     if (crispy_cleanscreenshot)
     {
 	I_FinishUpdate ();              // page flip or blit buffer

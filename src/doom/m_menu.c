@@ -133,7 +133,7 @@ char	endstring[160];
 
 static boolean opldev;
 
-boolean crispy_cleanscreenshot = false;
+int crispy_cleanscreenshot = 0;
 extern boolean speedkeydown (void);
 
 //
@@ -2560,7 +2560,7 @@ boolean M_Responder (event_t* ev)
     // [crispy] take screen shot without weapons and HUD
     if (key != 0 && key == key_menu_cleanscreenshot)
     {
-	crispy_cleanscreenshot = true;
+	crispy_cleanscreenshot = (screenblocks > 10) ? 2 : 1;
 	key = key_menu_screenshot;
     }
 
