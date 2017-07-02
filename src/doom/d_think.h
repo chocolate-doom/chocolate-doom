@@ -35,12 +35,14 @@
 typedef  void (*actionf_v)();
 typedef  void (*actionf_p1)( void* );
 typedef  void (*actionf_p2)( void*, void* );
+typedef  void (*actionf_p3)( void*, void*, void* ); // [crispy] let pspr action pointers get called from mobj states
 
 typedef union
 {
   actionf_v	acv;
   actionf_p1	acp1;
   actionf_p2	acp2;
+  actionf_p3	acp3; // [crispy] let pspr action pointers get called from mobj states
 
 } actionf_t;
 

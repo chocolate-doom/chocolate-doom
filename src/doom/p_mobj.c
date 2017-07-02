@@ -75,8 +75,8 @@ P_SetMobjState
 
 	// Modified handling.
 	// Call action functions when the state is set
-	if (st->action.acp1)		
-	    st->action.acp1(mobj);	
+	if (st->action.acp3)
+	    st->action.acp3(mobj, NULL, NULL); // [crispy] let pspr action pointers get called from mobj states
 	
 	state = st->nextstate;
 

@@ -1660,7 +1660,7 @@ void ST_Drawer (boolean fullscreen, boolean refresh)
     st_statusbaron = (!fullscreen) || (automapactive && !crispy_automapoverlay) || screenblocks >= CRISPY_HUD;
     st_firsttime = st_firsttime || refresh;
 
-    if (crispy_cleanscreenshot && screenblocks >= CRISPY_HUD)
+    if (crispy_cleanscreenshot == 2)
         return;
 
     // Do red-/gold-shifts from damage/items

@@ -1,21 +1,21 @@
 1 ICON "../data/doom.ico"
 
 1 VERSIONINFO
-PRODUCTVERSION 4,0
-FILEVERSION 4,0
+PRODUCTVERSION 4,1
+FILEVERSION 4,1
 FILETYPE 1
 {
  BLOCK "StringFileInfo"
  {
   BLOCK "040904E4"
   {
-   VALUE "FileVersion", "4.0"
-   VALUE "FileDescription", "4.0"
+   VALUE "FileVersion", "4.1"
+   VALUE "FileDescription", "4.1"
    VALUE "InternalName", "Crispy Doom"
    VALUE "CompanyName", "Crispy Doom"
    VALUE "LegalCopyright", "GNU General Public License"
    VALUE "ProductName", "Crispy Doom"
-   VALUE "ProductVersion", "4.0"
+   VALUE "ProductVersion", "4.1"
   }
  }
  BLOCK "VarFileInfo"

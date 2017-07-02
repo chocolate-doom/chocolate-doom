@@ -1826,32 +1826,39 @@ void A_BabyMetal (mobj_t* mo)
 
 void
 A_OpenShotgun2
-( player_t*	player,
+( mobj_t*	mobj,
+  player_t*	player,
   pspdef_t*	psp )
 {
+    if (!player) return; // [crispy] let pspr action pointers get called from mobj states
     S_StartSound (player->mo, sfx_dbopn);
 }
 
 void
 A_LoadShotgun2
-( player_t*	player,
+( mobj_t*	mobj,
+  player_t*	player,
   pspdef_t*	psp )
 {
+    if (!player) return; // [crispy] let pspr action pointers get called from mobj states
     S_StartSound (player->mo, sfx_dbload);
 }
 
 void
 A_ReFire
-( player_t*	player,
+( mobj_t*	mobj,
+  player_t*	player,
   pspdef_t*	psp );
 
 void
 A_CloseShotgun2
-( player_t*	player,
+( mobj_t*	mobj,
+  player_t*	player,
   pspdef_t*	psp )
 {
+    if (!player) return; // [crispy] let pspr action pointers get called from mobj states
     S_StartSound (player->mo, sfx_dbcls);
-    A_ReFire(player,psp);
+    A_ReFire(NULL,player,psp); // [crispy] let pspr action pointers get called from mobj states
 }
 
 
@@ -2209,33 +2216,27 @@ void A_PlaySound(mobj_t *mo)
   S_StartSound(mo->state->misc2 ? NULL : mo, mo->state->misc1);
 }
 
-void A_RandomJump(void *thing, pspdef_t *psp)
+// [crispy] this is pretty much the only action pointer that makes sense for both mobj and pspr states
+void A_RandomJump(mobj_t *mo, player_t *player, pspdef_t *psp)
 {
-	int i;
-	player_t *player = thing;
-	mobj_t *mo = thing;
-
-	// [crispy] first, try to apply to weapon states for all possible players
-	// (there aren't that many possibilities after all)
-	for (i = 0; i < MAXPLAYERS; i++)
+	// [crispy] first, try to apply to pspr states
+	if (player && psp)
 	{
-		if (player == &players[i] && psp)
+		if (Crispy_Random() < psp->state->misc2)
 		{
-			if (Crispy_Random() < psp->state->misc2)
-			{
-				extern void P_SetPsprite (player_t *player, int position, statenum_t stnum);
+			extern void P_SetPsprite (player_t *player, int position, statenum_t stnum);
 
-				P_SetPsprite(player, psp - &player->psprites[0], psp->state->misc1);
-			}
-
-			return;
+			P_SetPsprite(player, psp - &player->psprites[0], psp->state->misc1);
 		}
 	}
-
-	// [crispy] second, apply to map object states
-	if (Crispy_Random() < mo->state->misc2)
+	else
+	// [crispy] second, apply to mobj states
+	if (mo)
 	{
-		P_SetMobjState(mo, mo->state->misc1);
+		if (Crispy_Random() < mo->state->misc2)
+		{
+			P_SetMobjState(mo, mo->state->misc1);
+		}
 	}
 }
 
