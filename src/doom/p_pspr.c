@@ -594,6 +594,11 @@ static void DecreaseAmmo(player_t *player, int ammonum, int amount)
     if (ammonum < NUMAMMO)
     {
         player->ammo[ammonum] -= amount;
+        // [crispy] never allow less than zero ammo
+        if (player->ammo[ammonum] < 0)
+        {
+            player->ammo[ammonum] = 0;
+        }
     }
     else
     {
