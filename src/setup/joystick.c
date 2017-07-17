@@ -326,24 +326,26 @@ static const joystick_config_t pc_gameport_controller[] =
     {NULL, 0},
 };
 
-// http://www.8bitdo.com/nes30pro/
+// http://www.8bitdo.com/nes30pro/ and http://www.8bitdo.com/fc30pro/
 static const joystick_config_t nes30_pro_controller[] =
 {
     {"joystick_x_axis",        CREATE_HAT_AXIS(0, HAT_AXIS_HORIZONTAL)},
     {"joystick_y_axis",        CREATE_HAT_AXIS(0, HAT_AXIS_VERTICAL)},
     {"joyb_fire",              4},  // Y
     {"joyb_speed",             1},  // B
-    {"joyb_jump",              2},  // X
+    {"joyb_jump",              3},  // X
     {"joyb_use",               0},  // A
-    {"joyb_strafeleft",        8},  // L1
-    {"joyb_straferight",       9}, // R1
-    {"joyb_prevweapon",        6},  // L2
-    {"joyb_nextweapon",        7},  // R2
+    {"joyb_strafeleft",        6},  // L1
+    {"joyb_straferight",       7}, // R1
+    {"joyb_prevweapon",        8},  // L2
+    {"joyb_nextweapon",        9},  // R2
     {"joyb_menu_activate",     11}, // Start
+    {"joyb_toggle_automap",    10}, // Select
     {NULL, 0},
 };
 
 // http://www.8bitdo.com/sfc30/ or http://www.8bitdo.com/snes30/
+// and http://www.nes30.com/ and http://www.fc30.com/
 static const joystick_config_t sfc30_controller[] =
 {
     {"joystick_x_axis",        0},
@@ -452,10 +454,71 @@ static const known_joystick_t known_joysticks[] =
     },
 
     // 8Bitdo NES30 Pro, http://www.8bitdo.com/nes30pro/
-    // Probably some of their other controllers can use the same config.
     {
         "8Bitdo NES30 Pro",
         4, 16, 1,
+        nes30_pro_controller,
+    },
+
+    // the above, NES variant, via USB on Linux/Raspbian (odd values)
+    {
+        "8Bitdo NES30 Pro*",
+        6, 15, 1,
+        nes30_pro_controller,
+    },
+
+    // the above, NES variant, connected over bluetooth
+    {
+        "8Bitdo NES30 Pro",
+        6, 16, 1,
+        nes30_pro_controller,
+    },
+
+    // 8bitdo NES30 Pro, in joystick mode (R1+Power), swaps the D-Pad
+    // and analog stick inputs.  Only applicable over Bluetooth. On USB,
+    // this mode registers the device as an Xbox 360 pad.
+    {
+        "8Bitdo NES30 Pro Joystick",
+        6, 16, 1,
+        nes30_pro_controller,
+    },
+
+    // variant of the above, via USB on Mac
+    // Note: untested, but theorized to exist based on us comparing
+    // a NES30 Pro tested on Linux with a FC30 Pro tested with Mac & Linux
+    {
+        "8Bitdo NES30 Pro",
+        4, 15, 1,
+        nes30_pro_controller,
+    },
+
+
+    // 8Bitdo FC30 Pro, http://8bitdo.cn/fc30pro/
+    // connected over bluetooth
+    {
+        "8Bitdo FC30 Pro",
+        4, 16, 1,
+        nes30_pro_controller,
+    },
+
+    // variant of the above, via USB on Linux/Raspbian
+    {
+        "8Bitdo FC30 Pro*",
+        6, 15, 1,
+        nes30_pro_controller,
+    },
+
+    // variant of the above, Linux/bluetooth
+    {
+        "8Bitdo FC30 Pro",
+	6, 16, 1,
+	nes30_pro_controller,
+    },
+
+    // variant of the above, via USB on Mac
+    {
+        "8Bitdo FC30 Pro",
+        4, 15, 1,
         nes30_pro_controller,
     },
 
@@ -495,6 +558,34 @@ static const known_joystick_t known_joysticks[] =
         "SFC30 *",
         4, 12, 1,
         sfc30_controller,
+    },
+
+    // NES30 (not pro), tested in default and "hold R whilst turning on"
+    // mode, with whatever firmware it came with out of the box. Latter
+    // mode puts " Joystick" suffix on the name string
+    {
+        "8Bitdo NES30 GamePad*",
+        4, 16, 1,
+        sfc30_controller, // identical to SFC30
+    },
+    // FC30 variant of the above
+    {
+        "8Bitdo FC30 GamePad*",
+        4, 16, 1,
+        sfc30_controller, // identical to SFC30
+    },
+
+    // NES30 in USB mode
+    {
+        "NES30*",
+        4, 12, 1,
+        sfc30_controller, // identical to SFC30
+    },
+    // FC30 variant of the above
+    {
+        "FC30*",
+        4, 12, 1,
+        sfc30_controller, // identical to SFC30
     },
 };
 

@@ -1,6 +1,6 @@
-# bash completion for Chocolate Hexen                     -*- shell-script -*-
+# bash completion for @PACKAGE_SHORTNAME@ Hexen              -*- shell-script -*-
 
-_chocolate_hexen()
+_@PROGRAM_SPREFIX@_hexen()
 {
     local cur prev words cword
     _init_completion || return
@@ -37,6 +37,6 @@ _chocolate_hexen()
     fi
 } &&
 
-complete -F _chocolate_hexen chocolate-hexen
+complete -F _@PROGRAM_SPREFIX@_hexen @PROGRAM_PREFIX@hexen
 
 # ex: ts=4 sw=4 et filetype=sh

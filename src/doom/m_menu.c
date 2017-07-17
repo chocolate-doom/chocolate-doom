@@ -112,6 +112,7 @@ char gammamsg[5][26] =
 int			saveStringEnter;              
 int             	saveSlot;	// which slot to save in
 int			saveCharIndex;	// which char we're editing
+static boolean          joypadSave = false; // was the save action initiated by joypad?
 // old save description before edit
 char			saveOldString[SAVESTRINGSIZE];  
 
@@ -631,6 +632,17 @@ void M_DoSave(int slot)
 }
 
 //
+// Generate a default save slot name when the user saves to
+// an empty slot via the joypad.
+//
+static void SetDefaultSaveName(int slot)
+{
+    M_snprintf(savegamestrings[itemOn], SAVESTRINGSIZE - 1,
+               "JOYSTICK SLOT %i", itemOn + 1);
+    joypadSave = false;
+}
+
+//
 // User wants to save. Start string input for M_Responder
 //
 void M_SaveSelect(int choice)
@@ -648,7 +660,14 @@ void M_SaveSelect(int choice)
     saveSlot = choice;
     M_StringCopy(saveOldString,savegamestrings[choice], SAVESTRINGSIZE);
     if (!strcmp(savegamestrings[choice], EMPTYSTRING))
-	savegamestrings[choice][0] = 0;
+    {
+        savegamestrings[choice][0] = 0;
+
+        if (joypadSave)
+        {
+            SetDefaultSaveName(choice);
+        }
+    }
     saveCharIndex = strlen(savegamestrings[choice]);
 }
 
@@ -1347,7 +1366,6 @@ boolean M_Responder (event_t* ev)
     int             ch;
     int             key;
     int             i;
-    static  int     joywait = 0;
     static  int     mousewait = 0;
     static  int     mousey = 0;
     static  int     lasty = 0;
@@ -1394,8 +1412,10 @@ boolean M_Responder (event_t* ev)
     ch = 0;
     key = -1;
 	
-    if (ev->type == ev_joystick && joywait < I_GetTime())
+    if (ev->type == ev_joystick)
     {
+        // Simulate key presses from joystick events to interact with the menu.
+
 	if (ev->data3 < 0)
 	{
 	    key = key_menu_up;
@@ -1417,21 +1437,55 @@ boolean M_Responder (event_t* ev)
 	    key = key_menu_right;
 	    joywait = I_GetTime() + 2;
 	}
-		
-	if (ev->data1&1)
-	{
-	    key = key_menu_forward;
-	    joywait = I_GetTime() + 5;
-	}
-	if (ev->data1&2)
-	{
-	    key = key_menu_back;
-	    joywait = I_GetTime() + 5;
-	}
-        if (joybmenu >= 0 && (ev->data1 & (1 << joybmenu)) != 0)
+
+#define JOY_BUTTON_MAPPED(x) ((x) >= 0)
+#define JOY_BUTTON_PRESSED(x) (JOY_BUTTON_MAPPED(x) && (ev->data1 & (1 << (x))) != 0)
+
+        if (JOY_BUTTON_PRESSED(joybfire))
+        {
+            // Simulate a 'Y' keypress when Doom show a Y/N dialog with Fire button.
+            if (messageToPrint && messageNeedsInput)
+            {
+                key = key_menu_confirm;
+            }
+            // Simulate pressing "Enter" when we are supplying a save slot name
+            else if (saveStringEnter)
+            {
+                key = KEY_ENTER;
+            }
+            else
+            {
+                // if selecting a save slot via joypad, set a flag
+                if (currentMenu == &SaveDef)
+                {
+                    joypadSave = true;
+                }
+                key = key_menu_forward;
+            }
+            joywait = I_GetTime() + 5;
+        }
+        if (JOY_BUTTON_PRESSED(joybuse))
+        {
+            // Simulate a 'N' keypress when Doom show a Y/N dialog with Use button.
+            if (messageToPrint && messageNeedsInput)
+            {
+                key = key_menu_abort;
+            }
+            // If user was entering a save name, back out
+            else if (saveStringEnter)
+            {
+                key = KEY_ESCAPE;
+            }
+            else
+            {
+                key = key_menu_back;
+            }
+            joywait = I_GetTime() + 5;
+        }
+        if (JOY_BUTTON_PRESSED(joybmenu))
         {
             key = key_menu_activate;
-	    joywait = I_GetTime() + 5;
+            joywait = I_GetTime() + 5;
         }
     }
     else

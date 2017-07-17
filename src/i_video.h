@@ -90,6 +90,14 @@ extern int screen_width;
 extern int screen_height;
 extern int fullscreen;
 extern int aspect_ratio_correct;
+extern int integer_scaling;
+extern int vga_porch_flash;
 extern int force_software_renderer;
+
+extern char *window_position;
+void I_GetWindowPosition(int *x, int *y, int w, int h);
+
+// Joystic/gamepad hysteresis
+extern unsigned int joywait;
 
 #endif

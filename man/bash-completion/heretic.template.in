@@ -1,6 +1,6 @@
-# bash completion for Chocolate Doom                       -*- shell-script -*-
+# bash completion for @PACKAGE_SHORTNAME@ Heretic            -*- shell-script -*-
 
-_chocolate_doom()
+_@PROGRAM_SPREFIX@_heretic()
 {
     local cur prev words cword
     _init_completion || return
@@ -25,16 +25,13 @@ _chocolate_doom()
             _filedir lmp
             ;;
         -deh)
-            _filedir '@(bex|deh)'
+            _filedir hhe
             ;;
     esac
 
     case $prev in
-        -pack)
-            COMPREPLY=(doom2 tnt plutonia)
-            ;;
-        -gameversion)
-            COMPREPLY=(1.9 ultimate final final2 hacx chex)
+        -hhever)
+            COMPREPLY=(1.0 1.2 1.3)
             ;;
         -setmem)
             COMPREPLY=(dos622 dos71 dosbox)
@@ -46,6 +43,6 @@ _chocolate_doom()
     fi
 } &&
 
-complete -F _chocolate_doom chocolate-doom
+complete -F _@PROGRAM_SPREFIX@_heretic @PROGRAM_PREFIX@heretic
 
 # ex: ts=4 sw=4 et filetype=sh

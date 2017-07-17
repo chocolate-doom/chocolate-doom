@@ -456,15 +456,6 @@ void wadprintf(void)
     {
         return;
     }
-    // haleyjd FIXME: convert to textscreen code?
-#ifdef __WATCOMC__
-    _settextposition(23, 2);
-    _setbkcolor(1);
-    _settextcolor(0);
-    _outtext(exrnwads);
-    _settextposition(24, 2);
-    _outtext(exrnwads2);
-#endif
 }
 
 boolean D_AddFile(char *file)
@@ -550,41 +541,6 @@ void DrawThermo(void)
         return;
     }
 
-#if 0
-    progress = (98 * thermCurrent) / thermMax;
-    screen = (char *) 0xb8000 + (THERM_Y * 160 + THERM_X * 2);
-    for (i = 0; i < progress / 2; i++)
-    {
-        switch (i)
-        {
-            case 4:
-            case 9:
-            case 14:
-            case 19:
-            case 29:
-            case 34:
-            case 39:
-            case 44:
-                *screen++ = 0xb3;
-                *screen++ = (THERMCOLOR << 4) + 15;
-                break;
-            case 24:
-                *screen++ = 0xba;
-                *screen++ = (THERMCOLOR << 4) + 15;
-                break;
-            default:
-                *screen++ = 0xdb;
-                *screen++ = 0x40 + THERMCOLOR;
-                break;
-        }
-    }
-    if (progress & 1)
-    {
-        *screen++ = 0xdd;
-        *screen++ = 0x40 + THERMCOLOR;
-    }
-#else
-
     // No progress? Don't update the screen.
 
     progress = (50 * thermCurrent) / thermMax + 2;
@@ -607,7 +563,6 @@ void DrawThermo(void)
     }
 
     TXT_UpdateScreen();
-#endif
 }
 
 void initStartup(void)
@@ -658,39 +613,7 @@ static void finishStartup(void)
 char tmsg[300];
 void tprintf(char *msg, int initflag)
 {
-    // haleyjd FIXME: convert to textscreen code?
-#ifdef __WATCOMC__
-    char temp[80];
-    int start;
-    int add;
-    int i;
-
-    if (initflag)
-        tmsg[0] = 0;
-    M_StringConcat(tmsg, msg, sizeof(tmsg));
-    blitStartup();
-    DrawThermo();
-    _setbkcolor(4);
-    _settextcolor(15);
-    for (add = start = i = 0; i <= strlen(tmsg); i++)
-        if ((tmsg[i] == '\n') || (!tmsg[i]))
-        {
-            memset(temp, 0, 80);
-            M_StringCopy(temp, tmsg + start, sizeof(temp));
-            if (i - start < sizeof(temp))
-            {
-                temp[i - start] = '\0';
-            }
-            _settextposition(MSG_Y + add, 40 - strlen(temp) / 2);
-            _outtext(temp);
-            start = i + 1;
-            add++;
-        }
-    _settextposition(25, 1);
-    drawstatus();
-#else
     printf("%s", msg);
-#endif
 }
 
 // haleyjd: moved up, removed WATCOMC code

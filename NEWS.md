@@ -43,6 +43,8 @@
   * There is no longer a soft dependency on Zenity on Unix systems; the
     SDL API is now used to display error dialogs.
   * Joysticks are identified more precisely using GUID now.
+  * A new parameter -savedir allows users to specify a directory from
+    which to load and save games. (thanks CapnClever)
 
 ### Hexen
   * The CD audio option for music playback has been removed; the CD
@@ -59,12 +61,6 @@
   * Handling of code pages was cleaned up, so it is easier to change the
     code to work with a different code page now.
   * Lots of the UI code was changed to use UTF-8 strings.
-
-## HEAD
-
-### General
-  * A new parameter -savedir allows users to specify a directory from
-    which to load and save games. (thanks CapnClever)
 
 ## 2.3.0 (2016-12-29)
 
