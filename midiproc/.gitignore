@@ -1,0 +1,6 @@
+Makefile.in
+Makefile
+*.exe
+.deps
+tags
+TAGS

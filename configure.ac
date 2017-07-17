@@ -156,6 +156,7 @@ man/bash-completion/doom.template
 man/bash-completion/heretic.template
 man/bash-completion/hexen.template
 man/bash-completion/strife.template
+midiproc/Makefile
 opl/Makefile
 opl/examples/Makefile
 pcsound/Makefile
