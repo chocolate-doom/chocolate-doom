@@ -461,7 +461,6 @@ void I_BindSoundVariables(void)
     M_BindIntVariable("gus_ram_kb",              &gus_ram_kb);
     M_BindStringVariable("SDL_SF2_path",         &SDL_SF2_path);
 
-    // DWF 2016-05-29
     // FIXME: The ifdef here for FEATURE_SOUND is inconsistent with the one
     // in m_config.c.
 #ifdef FEATURE_SOUND

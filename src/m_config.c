@@ -1105,7 +1105,6 @@ static default_t extra_defaults_list[] =
 
     CONFIG_VARIABLE_INT(dclick_use),
 
-    // DWF 2016-05-29
     // FIXME: The ifdef here for FEATURE_SOUND is inconsistent with the one
     // in i_sound.c.
 #ifdef FEATURE_SOUND
