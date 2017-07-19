@@ -666,6 +666,9 @@ ST_Responder (event_t* ev)
 	for (i=0;i<NUMAMMO;i++)
 	  plyr->ammo[i] = plyr->maxammo[i];
 	
+	// [crispy] trigger evil grin now
+	plyr->bonuscount += 2;
+
 	plyr->message = DEH_String(STSTR_FAADDED);
       }
       // 'kfa' cheat for key full ammo
@@ -691,6 +694,9 @@ ST_Responder (event_t* ev)
 	for (i=0;i<NUMCARDS;i++)
 	  plyr->cards[i] = true;
 	
+	// [crispy] trigger evil grin now
+	plyr->bonuscount += 2;
+
 	plyr->message = DEH_String(STSTR_KFAADDED);
       }
       // [crispy] implement Boom's "tntem" cheat
@@ -887,22 +893,33 @@ ST_Responder (event_t* ev)
 	if (w == wp_fist)
 	{
 	    if (!plyr->powers[pw_strength])
+	    {
 		P_GivePower(plyr, pw_strength);
+		S_StartSound(NULL, sfx_getpow);
+	    }
 	    else
+	    {
 		plyr->powers[pw_strength] = 0;
+	    }
+
 	    M_snprintf(msg, sizeof(msg), DEH_String(STSTR_BEHOLDX));
 	}
 	else
 	{
-	    if ((plyr->weaponowned[w] = !plyr->weaponowned[w]))
-		M_snprintf(msg, sizeof(msg), "Weapon %s%d%s Added",
-		           crstr[CR_GOLD],
-		           w + 1, crstr[CR_NONE]);
+	    if (!plyr->weaponowned[w])
+	    {
+		extern boolean P_GiveWeapon (player_t* player, weapontype_t weapon, boolean dropped);
+
+		P_GiveWeapon(plyr, w, false);
+		S_StartSound(NULL, sfx_wpnup);
+
+		// [crispy] trigger evil grin now
+		plyr->bonuscount += 2;
+	    }
 	    else
 	    {
-		M_snprintf(msg, sizeof(msg), "Weapon %s%d%s Removed",
-		           crstr[CR_GOLD],
-		           w + 1, crstr[CR_NONE]);
+		// [crispy] no reason for evil grin
+		oldweaponsowned[w] = plyr->weaponowned[w] = false;
 
 		// [crispy] removed current weapon, select another one
 		if (w == plyr->readyweapon)
@@ -912,6 +929,10 @@ ST_Responder (event_t* ev)
 		    P_CheckAmmo(plyr);
 		}
 	    }
+
+	    M_snprintf(msg, sizeof(msg), "Weapon %s%d%s %s",
+	               crstr[CR_GOLD], w + 1, crstr[CR_NONE],
+	               plyr->weaponowned[w] ? "added" : "removed");
 	}
 	plyr->message = msg;
       }
