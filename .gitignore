@@ -24,6 +24,10 @@ DOOM*.png
 HTIC*.png
 HEXEN*.png
 STRIFE*.png
+DOOM*.pcx
+HTIC*.pcx
+HEXEN*.pcx
+STRIFE*.pcx
 
 # These are the default patterns globally ignored by Subversion:
 *.o
