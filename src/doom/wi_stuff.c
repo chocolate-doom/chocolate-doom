@@ -417,6 +417,12 @@ void WI_drawLF(void)
 {
     int y = WI_TITLEY;
 
+    // [crispy] prevent crashes with maps > 33
+    if ((unsigned)wbs->last >= NUMCMAPS)
+    {
+	return;
+    }
+
     if (gamemode != commercial || wbs->last < NUMCMAPS)
     {
         // draw <LevelName> 
@@ -454,7 +460,7 @@ void WI_drawEL(void)
     int y = WI_TITLEY;
 
     // [crispy] prevent crashes with maps > 33
-    if (wbs->last >= NUMCMAPS)
+    if ((unsigned)wbs->last >= NUMCMAPS)
     {
 	return;
     }
