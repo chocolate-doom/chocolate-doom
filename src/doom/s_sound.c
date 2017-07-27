@@ -789,10 +789,21 @@ void S_ChangeMusic(int musicnum, int looping)
         musicnum = mus_introa;
     }
 
-    // [crispy] prevent music number overflows
-    if (musicnum >= NUMMUSIC)
+    // [crispy] prevent music number under- and overflows
+    if (musicnum <= mus_None || (gamemode == commercial && musicnum < mus_runnin) ||
+        musicnum >= NUMMUSIC || (gamemode != commercial && musicnum >= mus_runnin) ||
+        S_music[musicnum].lumpnum == -1)
     {
-        musicnum = mus_runnin + (musicnum % (NUMMUSIC - mus_runnin));
+        const unsigned int umusicnum = (unsigned int) musicnum;
+
+        if (gamemode == commercial)
+        {
+            musicnum = mus_runnin + (umusicnum % (NUMMUSIC - mus_runnin));
+        }
+        else
+        {
+            musicnum = mus_e1m1 + (umusicnum % (mus_e4m1 - mus_e1m1));
+        }
     }
 
     if (musicnum <= mus_None || musicnum >= NUMMUSIC)
