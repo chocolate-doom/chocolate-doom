@@ -674,8 +674,8 @@ void WritePCXfile(char *filename, byte *data,
     pcx->ymin = 0;
     pcx->xmax = SHORT(width-1);
     pcx->ymax = SHORT(height-1);
-    pcx->hres = SHORT(width);
-    pcx->vres = SHORT(height);
+    pcx->hres = SHORT(1);
+    pcx->vres = SHORT(1);
     memset (pcx->palette,0,sizeof(pcx->palette));
     pcx->reserved = 0;                  // PCX spec: reserved byte must be zero
     pcx->color_planes = 1;		// chunky image
