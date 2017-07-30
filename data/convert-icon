@@ -23,8 +23,13 @@ import re
 try:
         import Image
 except ImportError:
-        print("WARNING: Could not update %s.  Please install the Python Imaging library." % sys.argv[2])
-        sys.exit(0)
+        try:
+                from PIL import Image
+        except ImportError:
+                print("WARNING: Could not update %s.  "
+                      "Please install the Python Imaging library or Pillow."
+                      % sys.argv[2])
+                sys.exit(0)
 
 
 def convert_image(filename, output_filename):

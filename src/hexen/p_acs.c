@@ -45,12 +45,12 @@
 
 // TYPES -------------------------------------------------------------------
 
-typedef struct
+typedef PACKED_STRUCT (
 {
     int marker;
     int infoOffset;
     int code;
-} PACKEDATTR acsHeader_t;
+}) acsHeader_t;
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
