@@ -1,24 +1,25 @@
 
 /* Name of package */
-#define PACKAGE "chocolate-doom"
+#define PACKAGE "lemon-doom"
 
 /* Define to the address where bug reports for this package should be sent. */
-#define PACKAGE_BUGREPORT "fraggle@gmail.com"
+#define PACKAGE_BUGREPORT "aynrandjuggalo@gmail.com"
 
 /* Define to the full name of this package. */
-#define PACKAGE_NAME "Chocolate Doom"
+#define PACKAGE_NAME "Lemon Doom"
 
 /* Define to the full name and version of this package. */
+#define PACKAGE_STRING "Lemon Doom 0.1"
 #define PACKAGE_STRING "Chocolate Doom 2.3.0"
 
 /* Define to the one symbol short name of this package. */
-#define PACKAGE_TARNAME "chocolate-doom"
+#define PACKAGE_TARNAME "lemon-doom"
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "2.3.0"
+#define PACKAGE_VERSION "0.1"
 
 /* Change this when you create your awesome forked version */
-#define PROGRAM_PREFIX "chocolate-"
+#define PROGRAM_PREFIX "lemon-"
 
 /* Define to 1 if you have the ANSI C header files. */
 #define STDC_HEADERS 1

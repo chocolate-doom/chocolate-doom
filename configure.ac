@@ -1,13 +1,12 @@
-AC_INIT(Chocolate Doom, 2.3.0, chocolate-doom-dev-list@chocolate-doom.org,
-        chocolate-doom)
+AC_INIT(Lemon Doom, 0.1, aynrandjuggalo@gmail.com, lemon-doom)
 
 PACKAGE_SHORTNAME=${PACKAGE_NAME% Doom}
-PACKAGE_SHORTDESC="Conservative source port"
+PACKAGE_SHORTDESC="Limit-raising clone of Chocolate Doom"
 PACKAGE_COPYRIGHT="Copyright (C) 1993-2017"
 PACKAGE_LICENSE="GNU General Public License, version 2"
-PACKAGE_MAINTAINER="Simon Howard"
-PACKAGE_URL="https://www.chocolate-doom.org/"
-PACKAGE_ISSUES="https://github.com/chocolate-doom/chocolate-doom/issues"
+PACKAGE_MAINTAINER="Mike DeRuiter"
+PACKAGE_URL=""
+PACKAGE_ISSUES="https://github.com/aynrandjuggalo1/lemon-doom/issues"
 
 AC_CONFIG_AUX_DIR(autotools)
 AC_CANONICAL_HOST
@@ -144,8 +143,7 @@ WINDOWS_RC_VERSION=`echo $PACKAGE_VERSION | sed 's/-.*//; s/\./, /g; s/$/, 0/'`
 dnl Without a hyphen. This is used for the bash-completion scripts.
 PROGRAM_SPREFIX=$(echo $PACKAGE_SHORTNAME | tr A-Z a-z)
 
-dnl With a hyphen, used almost everywhere else.
-PROGRAM_PREFIX=${PROGRAM_SPREFIX}-
+PROGRAM_PREFIX=lemon-
 
 AC_SUBST(PROGRAM_PREFIX)
 AC_DEFINE_UNQUOTED(PROGRAM_PREFIX, "$PROGRAM_PREFIX",
