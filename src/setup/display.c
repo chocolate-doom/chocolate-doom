@@ -67,7 +67,9 @@ static screen_mode_t screen_modes_unscaled[] =
 //  { 960,  600 }, // hires
     { 1280, 800 },
 //  { 1600, 1000 }, // hires
-    { 1920, 1200 }, // hires
+    { 1920, 1200 }, // hires * 3
+    { 2560, 1600 }, // hires * 4
+    { 3200, 2000 }, // hires * 5
     { 0, 0},
 };
 
@@ -84,6 +86,9 @@ static screen_mode_t screen_modes_scaled[] =
     { 1024, 800 },
     { 1280, 960 },
     { 1600, 1200 },
+    { 1920, 1440 }, // hires * 3
+    { 2560, 1920 }, // hires * 4
+    { 3200, 2400 }, // hires * 5
     { 0, 0},
 };
 
