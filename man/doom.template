@@ -18,10 +18,10 @@ behavior.
 @include environ.man
 .SH FILES
 .TP
-\fB$HOME/.chocolate-doom/default.cfg\fR
+\fB$HOME/.local/share/chocolate-doom/default.cfg\fR
 The main configuration file for Chocolate Doom.  See \fBdefault.cfg\fR(5).
 .TP
-\fB$HOME/.chocolate-doom/chocolate-doom.cfg\fR
+\fB$HOME/.local/share/chocolate-doom/chocolate-doom.cfg\fR
 Extra configuration values that are specific to Chocolate Doom and not
 present in Vanilla Doom.  See \fBchocolate-doom.cfg\fR(5).
 .SH SEE ALSO
@@ -35,7 +35,7 @@ Chocolate Doom is written and maintained by Simon Howard.  It is based on
 the LinuxDoom source code, released by Id Software.
 .SH COPYRIGHT
 Copyright \(co id Software Inc.
-Copyright \(co 2005-2013 Simon Howard.
+Copyright \(co 2005-2016 Simon Howard.
 .br
 This is free software.  You may redistribute copies of it under the terms of
 the GNU General Public License <http://www.gnu.org/licenses/gpl.html>.

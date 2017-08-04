@@ -1,0 +1,104 @@
+#!/usr/bin/env python
+#
+# Copyright(C) 2016 Simon Howard
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+#
+# Converts images into libtextscreen fonts.
+#
+
+import sys
+import os
+import re
+
+GRID_COLUMNS = 16
+GRID_ROWS = 16
+
+try:
+    import Image
+except ImportError:
+    try:
+        from PIL import Image
+    except ImportError:
+        print("WARNING: Could not update %s. "
+              "Please install the Python Imaging library or Pillow."
+              % sys.argv[3])
+        sys.exit(0)
+
+
+def generate_font_data(filename):
+    """Read font data from the given file.
+
+    Args:
+      filename: Image file to read.
+    Returns:
+      Tuple containing:
+          (width, height) dimensions of each font character.
+          Array of byte data for font.
+    """
+    im = Image.open(filename)
+    width, height = im.size
+    assert (width % GRID_COLUMNS) == 0
+    assert (height % GRID_ROWS) == 0
+
+    char_w, char_h = width // GRID_COLUMNS, height // GRID_ROWS
+    font_data_len = (width * height) // 8
+    font_data = [0] * font_data_len
+
+    for y in range(height):
+        for x in range(width):
+            px = im.getpixel((x, y))
+            if px > (127, 127, 127):
+                char_x, char_y = x // char_w, y // char_h
+                x1, y1 = x % char_w, y % char_h
+                bit_index = (
+                    (char_y * GRID_COLUMNS + char_x) * (char_w * char_h) +
+                    (y1 * char_w) + x1)
+                font_data[bit_index // 8] |= 1 << (bit_index % 8)
+
+    return (char_w, char_h), font_data
+
+def convert_image(font_prefix, filename, output_filename):
+    """Convert the given image to a text output file.
+
+    Args:
+      font_prefix: Prefix string to attach to constants.
+      filename: Input image file to read.
+      output_filename: Header file to write.
+    """
+    dimensions, data = generate_font_data(filename)
+
+    with open(output_filename, "w") as outfile:
+        outfile.write("/* Font data generated from %s; do not edit.\n"
+                      "   Please see textscreen/fonts/README for copyright\n"
+                      "   information. */\n\n" % filename)
+        outfile.write("static const uint8_t %s_font_data[] =\n{\n" %
+                      font_prefix)
+        for index, b in enumerate(data):
+            if (index % 8) == 0:
+                outfile.write("    ")
+            outfile.write("0x%02x," % b)
+            if ((index + 1) % 8) == 0:
+                outfile.write("\n")
+            else:
+                outfile.write(" ")
+        outfile.write("};\n")
+
+        outfile.write("\n")
+        outfile.write("static const txt_font_t %s_font =\n{\n" % font_prefix)
+        outfile.write("    \"%s\", %s_font_data, %d, %d,\n" % (
+                          font_prefix, font_prefix,
+                          dimensions[0], dimensions[1]))
+        outfile.write("};\n")
+
+convert_image(sys.argv[1], sys.argv[2], sys.argv[3])
+

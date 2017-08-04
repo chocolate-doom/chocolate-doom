@@ -10,7 +10,7 @@ osx/Resources/launcher.nib/keyedobjects.nib                             \
 osx/disk/dir.DS_Store                                                   \
 osx/disk/background.png                                                 \
 osx/GNUmakefile                                                         \
-osx/Info.plist.in       osx/Info-gnustep.plist.in                       \
+osx/Info.plist.in                                                       \
 osx/PkgInfo                                                             \
 osx/cp-with-libs                                                        \
 osx/dmgfix                                                              \
@@ -18,11 +18,11 @@ osx/main.m                                                              \
 osx/AppController.m     osx/AppController.h                             \
 osx/Execute.m           osx/Execute.h                                   \
 osx/IWADController.m    osx/IWADController.h                            \
-osx/IWADLocation.m      osx/IWADLocation.h                              \
 osx/LauncherManager.m   osx/LauncherManager.h
 
 WIN32_FILES=                                                            \
 win32/GNUmakefile                                                       \
+win32/cp-with-libs                                                      \
 win32/README
 
 EXTRA_DIST=$(OSX_FILES) $(WIN32_FILES)

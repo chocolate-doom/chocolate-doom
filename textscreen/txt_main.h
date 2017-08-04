@@ -61,6 +61,11 @@
         ( (x) < 128 ? (x) :                                               \
           (x) >= TXT_UNICODE_BASE ? ((x) - TXT_UNICODE_BASE + 128) : 0 )
 
+// Convert a Unicode character to a key value:
+
+#define TXT_UNICODE_TO_KEY(u)                                            \
+        ( (u) < 128 ? (u) : ((u) - 128 + TXT_UNICODE_BASE) )
+
 // Screen size
 
 #define TXT_SCREEN_W 80
@@ -98,6 +103,25 @@ typedef enum
     TXT_NUM_MODIFIERS
 } txt_modifier_t;
 
+// Due to the way the SDL API works, we provide different ways of configuring
+// how we read input events, each of which is useful in different scenarios.
+typedef enum
+{
+    // "Localized" output that takes software keyboard layout into account,
+    // but key shifting has no effect.
+    TXT_INPUT_NORMAL,
+
+    // "Raw" input; the keys correspond to physical keyboard layout and
+    // software keyboard layout has no effect.
+    TXT_INPUT_RAW,
+
+    // Used for full text input. Events are fully shifted and localized.
+    // However, not all keyboard keys will generate input.
+    // Setting this mode may activate the on-screen keyboard, depending on
+    // device and OS.
+    TXT_INPUT_TEXT,
+} txt_input_mode_t;
+
 // Initialize the screen
 // Returns 1 if successful, 0 if failed.
 int TXT_Init(void);
@@ -117,11 +141,21 @@ void TXT_UpdateScreen(void);
 // Read a character from the keyboard
 int TXT_GetChar(void);
 
+// Given a Unicode character, get a character that can be used to represent
+// it on the code page being displayed on the screen. If the character cannot
+// be represented, this returns -1.
+int TXT_UnicodeCharacter(unsigned int c);
+
 // Read the current state of modifier keys that are held down.
 int TXT_GetModifierState(txt_modifier_t mod);
 
-// Provides a short description of a key code, placing into the 
-// provided buffer.
+// Provides a short description of a key code, placing into the provided
+// buffer. Note that the key is assumed to represent a physical key on the
+// keyboard (like that returned by TXT_INPUT_RAW), and the resulting string
+// takes keyboard layout into consideration. For example,
+// TXT_GetKeyDescription('q') on a French keyboard returns "A".
+// The contents of the filled buffer will be in UTF-8 format, but will never
+// contain characters which can't be shown on the screen.
 void TXT_GetKeyDescription(int key, char *buf, size_t buf_len);
 
 // Retrieve the current position of the mouse
@@ -131,9 +165,8 @@ void TXT_GetMousePosition(int *x, int *y);
 // Optional timeout in ms (timeout == 0 : sleep forever)
 void TXT_Sleep(int timeout);
 
-// Controls whether keys are returned from TXT_GetChar based on keyboard
-// mapping, or raw key code.
-void TXT_EnableKeyMapping(int enable);
+// Change mode for text input.
+void TXT_SetInputMode(txt_input_mode_t mode);
 
 // Set the window title of the window containing the text mode screen
 void TXT_SetWindowTitle(char *title);

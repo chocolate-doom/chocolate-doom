@@ -28,6 +28,7 @@
 #include "doomtype.h"
 
 #include "deh_str.h"
+#include "i_input.h"
 #include "i_swap.h"
 #include "i_video.h"
 #include "m_bbox.h"
@@ -55,7 +56,7 @@ byte *xlatab = NULL;
 
 // The screen buffer that the v_video.c code draws to.
 
-static byte *dest_screen = NULL;
+static pixel_t *dest_screen = NULL;
 
 int dirtybox[4]; 
 
@@ -82,12 +83,12 @@ void V_MarkRect(int x, int y, int width, int height)
 //
 // V_CopyRect 
 // 
-void V_CopyRect(int srcx, int srcy, byte *source,
+void V_CopyRect(int srcx, int srcy, pixel_t *source,
                 int width, int height,
                 int destx, int desty)
 { 
-    byte *src;
-    byte *dest; 
+    pixel_t *src;
+    pixel_t *dest;
  
 #ifdef RANGECHECK 
     if (srcx < 0
@@ -141,8 +142,8 @@ void V_DrawPatch(int x, int y, patch_t *patch)
     int count;
     int col;
     column_t *column;
-    byte *desttop;
-    byte *dest;
+    pixel_t *desttop;
+    pixel_t *dest;
     byte *source;
     int w;
 
@@ -205,8 +206,8 @@ void V_DrawPatchFlipped(int x, int y, patch_t *patch)
     int count;
     int col; 
     column_t *column; 
-    byte *desttop;
-    byte *dest;
+    pixel_t *desttop;
+    pixel_t *dest;
     byte *source; 
     int w; 
  
@@ -280,7 +281,8 @@ void V_DrawTLPatch(int x, int y, patch_t * patch)
 {
     int count, col;
     column_t *column;
-    byte *desttop, *dest, *source;
+    pixel_t *desttop, *dest;
+    byte *source;
     int w;
 
     y -= SHORT(patch->topoffset);
@@ -330,7 +332,8 @@ void V_DrawXlaPatch(int x, int y, patch_t * patch)
 {
     int count, col;
     column_t *column;
-    byte *desttop, *dest, *source;
+    pixel_t *desttop, *dest;
+    byte *source;
     int w;
 
     y -= SHORT(patch->topoffset);
@@ -379,7 +382,8 @@ void V_DrawAltTLPatch(int x, int y, patch_t * patch)
 {
     int count, col;
     column_t *column;
-    byte *desttop, *dest, *source;
+    pixel_t *desttop, *dest;
+    byte *source;
     int w;
 
     y -= SHORT(patch->topoffset);
@@ -429,8 +433,9 @@ void V_DrawShadowedPatch(int x, int y, patch_t *patch)
 {
     int count, col;
     column_t *column;
-    byte *desttop, *dest, *source;
-    byte *desttop2, *dest2;
+    pixel_t *desttop, *dest;
+    byte *source;
+    pixel_t *desttop2, *dest2;
     int w;
 
     y -= SHORT(patch->topoffset);
@@ -500,9 +505,9 @@ void V_LoadXlaTable(void)
 // Draw a linear block of pixels into the view buffer.
 //
 
-void V_DrawBlock(int x, int y, int width, int height, byte *src) 
+void V_DrawBlock(int x, int y, int width, int height, pixel_t *src)
 { 
-    byte *dest; 
+    pixel_t *dest;
  
 #ifdef RANGECHECK 
     if (x < 0
@@ -603,7 +608,7 @@ void V_Init (void)
 
 // Set the buffer that the code draws to.
 
-void V_UseBuffer(byte *buffer)
+void V_UseBuffer(pixel_t *buffer)
 {
     dest_screen = buffer;
 }
@@ -669,8 +674,8 @@ void WritePCXfile(char *filename, byte *data,
     pcx->ymin = 0;
     pcx->xmax = SHORT(width-1);
     pcx->ymax = SHORT(height-1);
-    pcx->hres = SHORT(width);
-    pcx->vres = SHORT(height);
+    pcx->hres = SHORT(1);
+    pcx->vres = SHORT(1);
     memset (pcx->palette,0,sizeof(pcx->palette));
     pcx->reserved = 0;                  // PCX spec: reserved byte must be zero
     pcx->color_planes = 1;		// chunky image
@@ -844,7 +849,16 @@ void V_ScreenShot(char *format)
 
     if (i == 100)
     {
-        I_Error ("V_ScreenShot: Couldn't create a PCX");
+#ifdef HAVE_LIBPNG
+        if (png_screenshots)
+        {
+            I_Error ("V_ScreenShot: Couldn't create a PNG");
+        }
+        else
+#endif
+        {
+            I_Error ("V_ScreenShot: Couldn't create a PCX");
+        }
     }
 
 #ifdef HAVE_LIBPNG

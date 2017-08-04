@@ -22,6 +22,7 @@
 #include "txt_gui.h"
 #include "txt_io.h"
 #include "txt_label.h"
+#include "txt_utf8.h"
 #include "txt_window.h"
 
 #define KEY_INPUT_WIDTH 8
@@ -33,7 +34,7 @@ static int KeyPressCallback(txt_window_t *window, int key,
 
     if (key != KEY_ESCAPE)
     {
-        // Got the key press.  Save to the variable and close the window.
+        // Got the key press. Save to the variable and close the window.
 
         *key_input->variable = key;
 
@@ -44,9 +45,8 @@ static int KeyPressCallback(txt_window_t *window, int key,
 
         TXT_CloseWindow(window);
 
-        // Re-enable key mappings now that we have the key
-
-        TXT_EnableKeyMapping(1);
+        // Return to normal input mode now that we have the key.
+        TXT_SetInputMode(TXT_INPUT_NORMAL);
 
         return 1;
     }
@@ -58,7 +58,8 @@ static int KeyPressCallback(txt_window_t *window, int key,
 
 static void ReleaseGrab(TXT_UNCAST_ARG(window), TXT_UNCAST_ARG(unused))
 {
-    SDL_WM_GrabInput(SDL_GRAB_OFF);
+    // SDL2-TODO: Needed?
+    // SDL_WM_GrabInput(SDL_GRAB_OFF);
 }
 
 static void OpenPromptWindow(txt_key_input_t *key_input)
@@ -73,15 +74,15 @@ static void OpenPromptWindow(txt_key_input_t *key_input)
 
     TXT_SetKeyListener(window, KeyPressCallback, key_input);
 
-    // Disable key mappings while we prompt for the key press
-
-    TXT_EnableKeyMapping(0);
+    // Switch to raw input mode while we're grabbing the key.
+    TXT_SetInputMode(TXT_INPUT_RAW);
 
     // Grab input while reading the key.  On Windows Mobile
     // handheld devices, the hardware keypresses are only
     // detected when input is grabbed.
 
-    SDL_WM_GrabInput(SDL_GRAB_ON);
+    // SDL2-TODO: Needed?
+    //SDL_WM_GrabInput(SDL_GRAB_ON);
     TXT_SignalConnect(window, "closed", ReleaseGrab, NULL);
 }
 
@@ -113,10 +114,10 @@ static void TXT_KeyInputDrawer(TXT_UNCAST_ARG(key_input))
 
     TXT_SetWidgetBG(key_input);
     TXT_FGColor(TXT_COLOR_BRIGHT_WHITE);
-    
+
     TXT_DrawString(buf);
-    
-    for (i=strlen(buf); i<KEY_INPUT_WIDTH; ++i)
+
+    for (i = TXT_UTF8_Strlen(buf); i < KEY_INPUT_WIDTH; ++i)
     {
         TXT_DrawString(" ");
     }

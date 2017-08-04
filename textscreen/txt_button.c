@@ -21,13 +21,14 @@
 #include "txt_gui.h"
 #include "txt_io.h"
 #include "txt_main.h"
+#include "txt_utf8.h"
 #include "txt_window.h"
 
 static void TXT_ButtonSizeCalc(TXT_UNCAST_ARG(button))
 {
     TXT_CAST_ARG(txt_button_t, button);
 
-    button->widget.w = strlen(button->label);
+    button->widget.w = TXT_UTF8_Strlen(button->label);
     button->widget.h = 1;
 }
 
@@ -43,7 +44,7 @@ static void TXT_ButtonDrawer(TXT_UNCAST_ARG(button))
 
     TXT_DrawString(button->label);
 
-    for (i=strlen(button->label); i < w; ++i)
+    for (i = TXT_UTF8_Strlen(button->label); i < w; ++i)
     {
         TXT_DrawString(" ");
     }

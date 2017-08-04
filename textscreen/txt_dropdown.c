@@ -22,9 +22,10 @@
 #include "txt_gui.h"
 #include "txt_io.h"
 #include "txt_main.h"
+#include "txt_utf8.h"
 #include "txt_window.h"
 
-typedef struct 
+typedef struct
 {
     txt_window_t *window;
     txt_dropdown_list_t *list;
@@ -196,7 +197,7 @@ static int DropdownListWidth(txt_dropdown_list_t *list)
 
     for (i=0; i<list->num_values; ++i)
     {
-        int w = strlen(list->values[i]);
+        int w = TXT_UTF8_Strlen(list->values[i]);
         if (w > result) 
         {
             result = w;
@@ -240,7 +241,7 @@ static void TXT_DropdownListDrawer(TXT_UNCAST_ARG(list))
 
     TXT_DrawString(str);
 
-    for (i=strlen(str); i<list->widget.w; ++i) 
+    for (i = TXT_UTF8_Strlen(str); i < list->widget.w; ++i)
     {
         TXT_DrawString(" ");
     }

@@ -21,7 +21,6 @@
 #include "SDL_mixer.h"
 
 #include "config.h"
-#include "doomfeatures.h"
 #include "doomtype.h"
 
 #include "gusconf.h"
@@ -76,6 +75,7 @@ extern int opl_io_port;
 
 // For native music module:
 
+extern char *music_pack_path;
 extern char *timidity_cfg_path;
 
 // DOS-specific options: These are unused but should be maintained
@@ -91,10 +91,8 @@ static int snd_mport = 0;
 
 static sound_module_t *sound_modules[] = 
 {
-#ifdef FEATURE_SOUND
     &sound_sdl_module,
     &sound_pcsound_module,
-#endif
     NULL,
 };
 
@@ -102,10 +100,8 @@ static sound_module_t *sound_modules[] =
 
 static music_module_t *music_modules[] =
 {
-#ifdef FEATURE_SOUND
     &music_sdl_module,
     &music_opl_module,
-#endif
     NULL,
 };
 
@@ -455,29 +451,12 @@ void I_BindSoundVariables(void)
     M_BindIntVariable("opl_io_port",             &opl_io_port);
     M_BindIntVariable("snd_pitchshift",          &snd_pitchshift);
 
+    M_BindStringVariable("music_pack_path",      &music_pack_path);
     M_BindStringVariable("timidity_cfg_path",    &timidity_cfg_path);
     M_BindStringVariable("gus_patch_path",       &gus_patch_path);
     M_BindIntVariable("gus_ram_kb",              &gus_ram_kb);
 
-#ifdef FEATURE_SOUND
     M_BindIntVariable("use_libsamplerate",       &use_libsamplerate);
     M_BindFloatVariable("libsamplerate_scale",   &libsamplerate_scale);
-#endif
-
-    // Before SDL_mixer version 1.2.11, MIDI music caused the game
-    // to crash when it looped.  If this is an old SDL_mixer version,
-    // disable MIDI.
-
-#ifdef __MACOSX__
-    {
-        const SDL_version *v = Mix_Linked_Version();
-
-        if (SDL_VERSIONNUM(v->major, v->minor, v->patch)
-          < SDL_VERSIONNUM(1, 2, 11))
-        {
-            snd_musicdevice = SNDDEVICE_NONE;
-        }
-    }
-#endif
 }
 

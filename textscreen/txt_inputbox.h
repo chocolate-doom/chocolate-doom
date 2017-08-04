@@ -49,10 +49,11 @@ struct txt_inputbox_s
  *
  * @param value         Pointer to a string variable that contains
  *                      a pointer to the current value of the
- *                      input box.  The value should be allocated
+ *                      input box. The value should be allocated
  *                      dynamically; when the string is changed it
  *                      will be freed and the variable set to point
- *                      to the new string value.
+ *                      to the new string value. String will be in
+ *                      UTF-8 format.
  * @param size          Width of the input box, in characters.
  * @return              Pointer to the new input box widget.
  */

@@ -19,8 +19,6 @@
 
 #include <stdlib.h>
 
-#include "doomfeatures.h"
-
 #include "d_main.h"
 #include "m_argv.h"
 #include "m_menu.h"

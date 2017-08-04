@@ -38,18 +38,22 @@ hook-strife: staging-strife
 
 staging-%:
 	mkdir $@
-	cp $(TOPLEVEL)/src/$(PROGRAM_PREFIX)$*.exe    \
-	   $(DLL_FILES)                               \
-	   $@/
-	cp $(TOPLEVEL)/src/$(PROGRAM_PREFIX)setup.exe \
-	   $@/$(PROGRAM_PREFIX)$*-setup.exe
-	$(STRIP) $@/*.exe
-	
+	./cp-with-libs --ldflags="$(LDFLAGS)" \
+	               $(TOPLEVEL)/src/$(PROGRAM_PREFIX)$*.exe $@
+	./cp-with-libs --ldflags="$(LDFLAGS)" \
+	               $(TOPLEVEL)/src/$(PROGRAM_PREFIX)setup.exe \
+	               $@/$(PROGRAM_PREFIX)$*-setup.exe
+	./cp-with-libs --ldflags="$(LDFLAGS)" \
+	               $(TOPLEVEL)/midiproc/$(PROGRAM_PREFIX)midiproc.exe \
+	               $@/$(PROGRAM_PREFIX)midiproc.exe
+
+	$(STRIP) $@/*.exe $@/*.dll
+
 	for f in $(DOC_FILES); do                                \
 		cp $(TOPLEVEL)/$$f $@/$$(basename $$f .md).txt;  \
 	done
 	cp $(TOPLEVEL)/man/CMDLINE.$* $@/CMDLINE.txt
-	
+
 	$(TOPLEVEL)/man/simplecpp -D_WIN32 -DPRECOMPILED  \
 	             -D$(shell echo $* | tr a-z A-Z)      \
 	         < $(TOPLEVEL)/man/INSTALL.template       \
@@ -58,4 +62,3 @@ staging-%:
 clean:
 	rm -f $(ZIPS)
 	rm -rf staging-*
-

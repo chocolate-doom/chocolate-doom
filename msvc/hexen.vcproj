@@ -60,7 +60,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="SDL.lib SDL_mixer.lib SDL_net.lib SDLmain.lib"
+				AdditionalDependencies="SDL2_mixer.lib SDL2_net.lib SDL2main.lib SDL2.lib"
 				OutputFile="$(OutDir)\chocolate-hexen-dbg.exe"
 				IgnoreAllDefaultLibraries="false"
 				IgnoreDefaultLibraryNames="msvcrt"
@@ -142,7 +142,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="SDL.lib SDL_mixer.lib SDL_net.lib SDLmain.lib"
+				AdditionalDependencies="SDL2_mixer.lib SDL2_net.lib SDL2main.lib SDL2.lib"
 				OutputFile="$(OutDir)\chocolate-hexen.exe"
 				LinkIncremental="0"
 				IgnoreDefaultLibraryNames="msvcrtd"

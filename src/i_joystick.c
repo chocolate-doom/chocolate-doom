@@ -44,8 +44,8 @@ static SDL_Joystick *joystick = NULL;
 
 static int usejoystick = 0;
 
-// Joystick to use, as an SDL joystick index:
-
+// SDL GUID and index of the joystick to use.
+static char *joystick_guid = "";
 static int joystick_index = -1;
 
 // Which joystick axis to use for horizontal movement, and whether to
@@ -105,9 +105,45 @@ static boolean IsValidAxis(int axis)
     return axis < num_axes;
 }
 
+static int DeviceIndex(void)
+{
+    SDL_JoystickGUID guid, dev_guid;
+    int i;
+
+    guid = SDL_JoystickGetGUIDFromString(joystick_guid);
+
+    // GUID identifies a class of device rather than a specific device.
+    // Check if joystick_index has the expected GUID, as this can act
+    // as a tie-breaker in case there are multiple identical devices.
+    if (joystick_index >= 0 && joystick_index < SDL_NumJoysticks())
+    {
+        dev_guid = SDL_JoystickGetDeviceGUID(joystick_index);
+        if (!memcmp(&guid, &dev_guid, sizeof(SDL_JoystickGUID)))
+        {
+            return joystick_index;
+        }
+    }
+
+    // Check all devices to look for one with the expected GUID.
+    for (i = 0; i < SDL_NumJoysticks(); ++i)
+    {
+        dev_guid = SDL_JoystickGetDeviceGUID(i);
+        if (!memcmp(&guid, &dev_guid, sizeof(SDL_JoystickGUID)))
+        {
+            printf("I_InitJoystick: Joystick moved to index %d.\n", i);
+            return i;
+        }
+    }
+
+    // No joystick found with the expected GUID.
+    return -1;
+}
+
 void I_InitJoystick(void)
 {
-    if (!usejoystick || joystick_index < 0)
+    int index;
+
+    if (!usejoystick || !strcmp(joystick_guid, ""))
     {
         return;
     }
@@ -117,21 +153,24 @@ void I_InitJoystick(void)
         return;
     }
 
-    if (joystick_index >= SDL_NumJoysticks())
+    index = DeviceIndex();
+
+    if (index < 0)
     {
-        printf("I_InitJoystick: Invalid joystick ID: %i\n", joystick_index);
+        printf("I_InitJoystick: Couldn't find joystick with GUID \"%s\": "
+               "device not found or not connected?\n",
+               joystick_guid);
         SDL_QuitSubSystem(SDL_INIT_JOYSTICK);
         return;
     }
 
     // Open the joystick
 
-    joystick = SDL_JoystickOpen(joystick_index);
+    joystick = SDL_JoystickOpen(index);
 
     if (joystick == NULL)
     {
-        printf("I_InitJoystick: Failed to open joystick #%i\n",
-               joystick_index);
+        printf("I_InitJoystick: Failed to open joystick #%i\n", index);
         SDL_QuitSubSystem(SDL_INIT_JOYSTICK);
         return;
     }
@@ -140,9 +179,8 @@ void I_InitJoystick(void)
      || !IsValidAxis(joystick_y_axis)
      || !IsValidAxis(joystick_strafe_axis))
     {
-        printf("I_InitJoystick: Invalid joystick axis for joystick #%i "
-               "(run joystick setup again)\n",
-               joystick_index);
+        printf("I_InitJoystick: Invalid joystick axis for configured joystick "
+               "(run joystick setup again)\n");
 
         SDL_JoystickClose(joystick);
         joystick = NULL;
@@ -153,7 +191,7 @@ void I_InitJoystick(void)
 
     // Initialized okay!
 
-    printf("I_InitJoystick: %s\n", SDL_JoystickName(joystick_index));
+    printf("I_InitJoystick: %s\n", SDL_JoystickName(joystick));
 
     I_AtExit(I_ShutdownJoystick, true);
 }
@@ -329,6 +367,7 @@ void I_BindJoystickVariables(void)
     int i;
 
     M_BindIntVariable("use_joystick",          &usejoystick);
+    M_BindStringVariable("joystick_guid",      &joystick_guid);
     M_BindIntVariable("joystick_index",        &joystick_index);
     M_BindIntVariable("joystick_x_axis",       &joystick_x_axis);
     M_BindIntVariable("joystick_y_axis",       &joystick_y_axis);

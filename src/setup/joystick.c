@@ -52,8 +52,9 @@ static int joystick_initted = 0;
 
 static int usejoystick = 0;
 
-// Joystick to use, as an SDL joystick index:
+// GUID and index of joystick to use.
 
+char *joystick_guid = "";
 int joystick_index = -1;
 
 // Calibration button. This is the button the user pressed at the
@@ -94,6 +95,7 @@ static txt_joystick_axis_t *y_axis_widget;
 
 static txt_window_t *calibration_window;
 static SDL_Joystick **all_joysticks = NULL;
+static int all_joysticks_len = 0;
 
 // Known controllers.
 // There are lots of game controllers on the market. Try to configure
@@ -324,24 +326,26 @@ static const joystick_config_t pc_gameport_controller[] =
     {NULL, 0},
 };
 
-// http://www.8bitdo.com/nes30pro/
+// http://www.8bitdo.com/nes30pro/ and http://www.8bitdo.com/fc30pro/
 static const joystick_config_t nes30_pro_controller[] =
 {
     {"joystick_x_axis",        CREATE_HAT_AXIS(0, HAT_AXIS_HORIZONTAL)},
     {"joystick_y_axis",        CREATE_HAT_AXIS(0, HAT_AXIS_VERTICAL)},
     {"joyb_fire",              4},  // Y
     {"joyb_speed",             1},  // B
-    {"joyb_jump",              2},  // X
+    {"joyb_jump",              3},  // X
     {"joyb_use",               0},  // A
-    {"joyb_strafeleft",        8},  // L1
-    {"joyb_straferight",       9}, // R1
-    {"joyb_prevweapon",        6},  // L2
-    {"joyb_nextweapon",        7},  // R2
+    {"joyb_strafeleft",        6},  // L1
+    {"joyb_straferight",       7}, // R1
+    {"joyb_prevweapon",        8},  // L2
+    {"joyb_nextweapon",        9},  // R2
     {"joyb_menu_activate",     11}, // Start
+    {"joyb_toggle_automap",    10}, // Select
     {NULL, 0},
 };
 
 // http://www.8bitdo.com/sfc30/ or http://www.8bitdo.com/snes30/
+// and http://www.nes30.com/ and http://www.fc30.com/
 static const joystick_config_t sfc30_controller[] =
 {
     {"joystick_x_axis",        0},
@@ -450,10 +454,71 @@ static const known_joystick_t known_joysticks[] =
     },
 
     // 8Bitdo NES30 Pro, http://www.8bitdo.com/nes30pro/
-    // Probably some of their other controllers can use the same config.
     {
         "8Bitdo NES30 Pro",
         4, 16, 1,
+        nes30_pro_controller,
+    },
+
+    // the above, NES variant, via USB on Linux/Raspbian (odd values)
+    {
+        "8Bitdo NES30 Pro*",
+        6, 15, 1,
+        nes30_pro_controller,
+    },
+
+    // the above, NES variant, connected over bluetooth
+    {
+        "8Bitdo NES30 Pro",
+        6, 16, 1,
+        nes30_pro_controller,
+    },
+
+    // 8bitdo NES30 Pro, in joystick mode (R1+Power), swaps the D-Pad
+    // and analog stick inputs.  Only applicable over Bluetooth. On USB,
+    // this mode registers the device as an Xbox 360 pad.
+    {
+        "8Bitdo NES30 Pro Joystick",
+        6, 16, 1,
+        nes30_pro_controller,
+    },
+
+    // variant of the above, via USB on Mac
+    // Note: untested, but theorized to exist based on us comparing
+    // a NES30 Pro tested on Linux with a FC30 Pro tested with Mac & Linux
+    {
+        "8Bitdo NES30 Pro",
+        4, 15, 1,
+        nes30_pro_controller,
+    },
+
+
+    // 8Bitdo FC30 Pro, http://8bitdo.cn/fc30pro/
+    // connected over bluetooth
+    {
+        "8Bitdo FC30 Pro",
+        4, 16, 1,
+        nes30_pro_controller,
+    },
+
+    // variant of the above, via USB on Linux/Raspbian
+    {
+        "8Bitdo FC30 Pro*",
+        6, 15, 1,
+        nes30_pro_controller,
+    },
+
+    // variant of the above, Linux/bluetooth
+    {
+        "8Bitdo FC30 Pro",
+	6, 16, 1,
+	nes30_pro_controller,
+    },
+
+    // variant of the above, via USB on Mac
+    {
+        "8Bitdo FC30 Pro",
+        4, 15, 1,
         nes30_pro_controller,
     },
 
@@ -494,6 +559,34 @@ static const known_joystick_t known_joysticks[] =
         4, 12, 1,
         sfc30_controller,
     },
+
+    // NES30 (not pro), tested in default and "hold R whilst turning on"
+    // mode, with whatever firmware it came with out of the box. Latter
+    // mode puts " Joystick" suffix on the name string
+    {
+        "8Bitdo NES30 GamePad*",
+        4, 16, 1,
+        sfc30_controller, // identical to SFC30
+    },
+    // FC30 variant of the above
+    {
+        "8Bitdo FC30 GamePad*",
+        4, 16, 1,
+        sfc30_controller, // identical to SFC30
+    },
+
+    // NES30 in USB mode
+    {
+        "NES30*",
+        4, 12, 1,
+        sfc30_controller, // identical to SFC30
+    },
+    // FC30 variant of the above
+    {
+        "FC30*",
+        4, 12, 1,
+        sfc30_controller, // identical to SFC30
+    },
 };
 
 static const known_joystick_t *GetJoystickType(int index)
@@ -504,7 +597,7 @@ static const known_joystick_t *GetJoystickType(int index)
     int i;
 
     joystick = all_joysticks[index];
-    name = SDL_JoystickName(index);
+    name = SDL_JoystickName(joystick);
     axes = SDL_JoystickNumAxes(joystick);
     buttons = SDL_JoystickNumButtons(joystick);
     hats = SDL_JoystickNumHats(joystick);
@@ -618,25 +711,71 @@ static void UnInitJoystick(void)
     }
 }
 
-// Set the label showing the name of the currently selected joystick
-
-static void SetJoystickButtonLabel(void)
+// We identify joysticks using GUID where possible, but joystick_index
+// is used to distinguish between different devices. As the index can
+// change, UpdateJoystickIndex() checks to see if it is still valid and
+// updates it as appropriate.
+static void UpdateJoystickIndex(void)
 {
-    char *name;
+    SDL_JoystickGUID guid, dev_guid;
+    int i;
 
-    InitJoystick();
+    guid = SDL_JoystickGetGUIDFromString(joystick_guid);
 
-    name = "None set";
-
-    if (joystick_initted
-     && joystick_index >= 0 && joystick_index < SDL_NumJoysticks())
+    // Is joystick_index already correct?
+    if (joystick_index >= 0 && joystick_index < SDL_NumJoysticks())
     {
-        name = (char *) SDL_JoystickName(joystick_index);
+        dev_guid = SDL_JoystickGetDeviceGUID(joystick_index);
+        if (!memcmp(&guid, &dev_guid, sizeof(SDL_JoystickGUID)))
+        {
+            return;
+        }
     }
 
-    TXT_SetButtonLabel(joystick_button, name);
+    // If index is not correct, look for the first device with the
+    // expected GUID. It may have moved to a different index.
+    for (i = 0; i < SDL_NumJoysticks(); ++i)
+    {
+        dev_guid = SDL_JoystickGetDeviceGUID(i);
+        if (!memcmp(&guid, &dev_guid, sizeof(SDL_JoystickGUID)))
+        {
+            joystick_index = i;
+            return;
+        }
+    }
 
-    UnInitJoystick();
+    // Not found; it's possible the device is disconnected. Do not
+    // reset joystick_guid or joystick_index in case they are
+    // reconnected later.
+}
+
+// Set the label showing the name of the currently selected joystick
+static void SetJoystickButtonLabel(void)
+{
+    SDL_JoystickGUID guid, dev_guid;
+    const char *name;
+
+    if (!usejoystick || !strcmp(joystick_guid, ""))
+    {
+        name = "None set";
+    }
+    else
+    {
+        name = "Not found (device disconnected?)";
+
+        // Use the device name if the GUID and index match.
+        if (joystick_index >= 0 && joystick_index < SDL_NumJoysticks())
+        {
+            guid = SDL_JoystickGetGUIDFromString(joystick_guid);
+            dev_guid = SDL_JoystickGetDeviceGUID(joystick_index);
+            if (!memcmp(&guid, &dev_guid, sizeof(SDL_JoystickGUID)))
+            {
+                name = SDL_JoystickNameForIndex(joystick_index);
+            }
+        }
+    }
+
+    TXT_SetButtonLabel(joystick_button, (char *) name);
 }
 
 // Try to open all joysticks visible to SDL.
@@ -644,20 +783,18 @@ static void SetJoystickButtonLabel(void)
 static int OpenAllJoysticks(void)
 {
     int i;
-    int num_joysticks;
     int result;
 
     InitJoystick();
 
     // SDL_JoystickOpen() all joysticks.
 
-    num_joysticks = SDL_NumJoysticks();
-
-    all_joysticks = malloc(sizeof(SDL_Joystick *) * num_joysticks);
+    all_joysticks_len = SDL_NumJoysticks();
+    all_joysticks = calloc(all_joysticks_len, sizeof(SDL_Joystick *));
 
     result = 0;
 
-    for (i = 0; i < num_joysticks; ++i)
+    for (i = 0; i < all_joysticks_len; ++i)
     {
         all_joysticks[i] = SDL_JoystickOpen(i);
 
@@ -689,11 +826,8 @@ static int OpenAllJoysticks(void)
 static void CloseAllJoysticks(void)
 {
     int i;
-    int num_joysticks;
 
-    num_joysticks = SDL_NumJoysticks();
-
-    for (i = 0; i < num_joysticks; ++i)
+    for (i = 0; i < all_joysticks_len; ++i)
     {
         if (all_joysticks[i] != NULL)
         {
@@ -714,9 +848,36 @@ static void CalibrateXAxis(void)
     TXT_ConfigureJoystickAxis(x_axis_widget, calibrate_button, NULL);
 }
 
+// Given the SDL_JoystickID instance ID from a button event, set the
+// joystick_guid and joystick_index config variables.
+static boolean SetJoystickGUID(SDL_JoystickID joy_id)
+{
+    SDL_JoystickGUID guid;
+    int i;
+
+    for (i = 0; i < all_joysticks_len; ++i)
+    {
+        if (SDL_JoystickInstanceID(all_joysticks[i]) == joy_id)
+        {
+            guid = SDL_JoystickGetGUID(all_joysticks[i]);
+            joystick_guid = malloc(33);
+            SDL_JoystickGetGUIDString(guid, joystick_guid, 33);
+            joystick_index = i;
+            return true;
+        }
+    }
+
+    return false;
+}
+
 static int CalibrationEventCallback(SDL_Event *event, void *user_data)
 {
     if (event->type != SDL_JOYBUTTONDOWN)
+    {
+        return 0;
+    }
+
+    if (!SetJoystickGUID(event->jbutton.which))
     {
         return 0;
     }
@@ -725,7 +886,6 @@ static int CalibrationEventCallback(SDL_Event *event, void *user_data)
     // In the first "center" stage, we're just trying to work out which
     // joystick is being configured and which button the user is pressing.
     usejoystick = 1;
-    joystick_index = event->jbutton.which;
     calibrate_button = event->jbutton.button;
 
     // If the joystick is a known one, auto-load default
@@ -762,9 +922,9 @@ static void NoJoystick(void)
 
 static void CalibrateWindowClosed(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
 {
-    CloseAllJoysticks();
     TXT_SDL_SetEventCallback(NULL, NULL);
     SetJoystickButtonLabel();
+    CloseAllJoysticks();
 }
 
 static void CalibrateJoystick(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
@@ -897,7 +1057,10 @@ void ConfigJoystick(void)
     TXT_SignalConnect(joystick_button, "pressed", CalibrateJoystick, NULL);
     TXT_SetWindowAction(window, TXT_HORIZ_CENTER, TestConfigAction());
 
+    InitJoystick();
+    UpdateJoystickIndex();
     SetJoystickButtonLabel();
+    UnInitJoystick();
 }
 
 void BindJoystickVariables(void)
@@ -905,6 +1068,7 @@ void BindJoystickVariables(void)
     int i;
 
     M_BindIntVariable("use_joystick",           &usejoystick);
+    M_BindStringVariable("joystick_guid",       &joystick_guid);
     M_BindIntVariable("joystick_index",         &joystick_index);
     M_BindIntVariable("joystick_x_axis",        &joystick_x_axis);
     M_BindIntVariable("joystick_y_axis",        &joystick_y_axis);

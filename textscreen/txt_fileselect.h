@@ -56,7 +56,7 @@ char *TXT_SelectFile(char *prompt, char **extensions);
  * Create a new txt_fileselect_t widget.
  *
  * @param variable    Pointer to a char * variable in which the selected
- *                    file should be stored.
+ *                    file should be stored (UTF-8 format).
  * @param size        Width of the file selector widget in characters.
  * @param prompt      Pointer to a string containing a prompt to display
  *                    in the file selection window.

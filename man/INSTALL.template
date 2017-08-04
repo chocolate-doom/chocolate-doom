@@ -30,9 +30,9 @@ to be installed:
 
  * A C compiler (gcc is recommended)
  * make (GNU make is recommended)
- * LibSDL (see http://www.libsdl.org/)
- * SDL_mixer (see http://www.libsdl.org/projects/SDL_mixer/)
- * SDL_net (see http://www.libsdl.org/projects/SDL_net/)
+ * SDL2 (see http://www.libsdl.org/)
+ * SDL2_mixer (see http://www.libsdl.org/projects/SDL_mixer/)
+ * SDL2_net (see http://www.libsdl.org/projects/SDL_net/)
  * Python (optional)
 
 Follow the standard instructions for installing an autotools-based
@@ -186,6 +186,20 @@ do one of the following:
 #endif
 
 #if DOOM
+== Playing with Freedoom ==
+
+Freedoom is an open content project to create a Doom engine-based game
+that is entirely free software. The website can be found here:
+
+  https://freedoom.github.io/
+
+The main Freedoom IWAD files are not currently compatible with
+LONG_GAME_NAME. However, you can play using FreeDM, the
+deathmatch spinoff project. If you want to play single player games,
+you'll need to download additional fan-made WAD files to use in
+conjunction with it. Check out the Chocolate Doom wiki's page on
+Freedoom for some suggestions.
+
 == Playing with Chex Quest ==
 
 Chex Quest is a game based on Doom with some minor modifications that
@@ -269,7 +283,7 @@ how to set these up.
 
 #if !PRECOMPILED
 When compiling from source, be sure to compile and install Timidity
-before installing SDL_mixer.
+before installing SDL2_mixer.
 
 #endif
 # vim: tw=70

@@ -12,7 +12,7 @@ dialog in the setup tool.
 # Timidity
 
 Timidity is a software-based MIDI synthesizer, and a version of it is
-included in the SDL_mixer library used by Chocolate Doom. To use
+included in the SDL2_mixer library used by Chocolate Doom. To use
 Timidity for MIDI playback, first download a sound font. An example of
 a good quality sound font is the eawpats font, which can be downloaded
 from the idgames archive as sounds/eawpats.zip:
@@ -105,20 +105,11 @@ allow access to it. To do hardware OPL, Chocolate Doom must access
 the chip directly, which is usually not possible in modern operating
 systems unless you are running as the superuser (root/Administrator).
 
-### Windows 9x
+### Microsoft Windows
 
-If you’re running Windows 95, 98 or Me, there is no need to configure
-anything. Windows allows direct access to the OPL chip. You can
-confirm that hardware OPL is working by checking for this message in
-stdout.txt:
-
-    OPL_Init: Using driver 'Win32'.
-
-### Windows NT (including 2000, XP and later)
-
-If you’re running an NT-based system, it is not possible to directly
-access the OPL chip, even when running as Administrator. Fortunately,
-it is possible to use the “ioperm.sys” driver developed for Cygwin:
+On modern Windows systems it is not possible to directly access the
+OPL chip, even when running as Administrator. Fortunately, it is
+possible to use the “ioperm.sys” driver developed for Cygwin:
 
   http://openwince.sourceforge.net/ioperm/
 

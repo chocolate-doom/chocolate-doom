@@ -20,6 +20,14 @@ stamp-h.in
 stamp-h1
 tags
 \#*\#
+DOOM*.png
+HTIC*.png
+HEXEN*.png
+STRIFE*.png
+DOOM*.pcx
+HTIC*.pcx
+HEXEN*.pcx
+STRIFE*.pcx
 
 # These are the default patterns globally ignored by Subversion:
 *.o
@@ -37,3 +45,9 @@ tags
 .#*
 .*.swp
 .DS_store
+
+# Ignore GNU Global tags and html files
+GPATH
+GRTAGS
+GTAGS
+/HTML/
