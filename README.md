@@ -84,7 +84,7 @@ chocolate-doom -merge aoddoom1.wad -deh aoddoom1.deh  (Army of Darkness Doom)
    you may have regarding the port!
 
  * Chocolate Doom is not perfect. Although it aims to accurately
-   emulate reproduce the DOS executables, some behavior can be very
+   emulate and reproduce the DOS executables, some behavior can be very
    difficult to reproduce. Because of the nature of the project, you
    may also encounter Vanilla Doom bugs; these are intentionally
    present; see the NOT-BUGS file for more information.
