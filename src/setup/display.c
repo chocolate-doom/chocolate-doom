@@ -196,9 +196,6 @@ static void AdvancedDisplayConfig(TXT_UNCAST_ARG(widget),
     TXT_AddWidgets(window,
         ar_checkbox = TXT_NewCheckBox("Fix aspect ratio",
                                       &aspect_ratio_correct),
-#if SDL_VERSION_ATLEAST(2, 0, 5)
-        TXT_NewCheckBox("Integer scaling", &integer_scaling),
-#endif
         TXT_If(gamemission == heretic || gamemission == hexen
             || gamemission == strife,
             TXT_NewCheckBox("Graphical startup", &graphical_startup)),
@@ -210,8 +207,6 @@ static void AdvancedDisplayConfig(TXT_UNCAST_ARG(widget),
         TXT_NewCheckBox("Save screenshots in PNG format",
                         &png_screenshots),
 #endif
-        TXT_NewCheckBox("Flash borders (VGA porch emulation)",
-                        &vga_porch_flash),
         NULL);
 
     TXT_SignalConnect(ar_checkbox, "changed", GenerateSizesTable, sizes_table);
