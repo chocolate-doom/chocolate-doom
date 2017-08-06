@@ -1482,7 +1482,6 @@ void D_DoomMain (void)
         // secret level (MAP33). In Vanilla Doom (meaning the DOS
         // version), MAP33 overflows into the Plutonia level names
         // array, so HUSTR_33 is actually PHUSTR_1.
-
         DEH_AddStringReplacement(HUSTR_31, "level 31: idkfa");
         DEH_AddStringReplacement(HUSTR_32, "level 32: keen");
         DEH_AddStringReplacement(PHUSTR_1, "level 33: betray");
@@ -1496,9 +1495,14 @@ void D_DoomMain (void)
         // The end result is that M_GDHIGH is too wide and causes the game
         // to crash. As a workaround to get a minimum level of support for
         // the BFG edition IWADs, use the "ON"/"OFF" graphics instead.
-
         DEH_AddStringReplacement("M_GDHIGH", "M_MSGON");
         DEH_AddStringReplacement("M_GDLOW", "M_MSGOFF");
+
+        // The BFG edition's "Screen Size:" graphic has also been changed
+        // to say "Gamepad:". Fortunately, it (along with the original
+        // Doom IWADs) has an unused graphic that says "Display". So we
+        // can swap this in instead, and it kind of makes sense.
+        DEH_AddStringReplacement("M_SCRNSZ", "M_DISP");
     }
 
     // Load Dehacked patches specified on the command line with -deh.
