@@ -48,6 +48,49 @@
 #include "w_wad.h"
 #include "z_zone.h"
 
+#ifndef STRINGTRACKSZ
+#define STRINGTRACKSZ 128
+#endif
+
+typedef struct {
+    char *p[STRINGTRACKSZ];
+    size_t pidx;
+} m_stringtrack;
+
+static m_stringtrack *M_StringTrack()
+{
+    static m_stringtrack *ms = NULL;
+    if (!ms)
+        ms = calloc(1, sizeof(m_stringtrack));
+
+    return ms;
+}
+
+void M_FreeStrings(int shutdown)
+{
+    size_t i;
+    m_stringtrack *ms = M_StringTrack();
+
+    for (i = 0; i < STRINGTRACKSZ; i ++)
+        free(ms->p[i]);
+
+    if (shutdown)
+        free(ms);
+}
+
+static void M_AddString(char *p)
+{
+    m_stringtrack *ms = M_StringTrack();
+
+    if (ms->pidx == STRINGTRACKSZ) {
+        M_FreeStrings(0);
+        ms->pidx = 0;
+    }
+
+    ms->p[ms->pidx] = p;
+    ms->pidx++;
+}
+
 //
 // Create a directory
 //
@@ -388,6 +431,7 @@ char *M_StringDuplicate(const char *orig)
                 strlen(orig));
     }
 
+    M_AddString(result);
     return result;
 }
 
@@ -451,6 +495,7 @@ char *M_StringReplace(const char *haystack, const char *needle,
 
     *dst = '\0';
 
+    M_AddString(result);
     return result;
 }
 

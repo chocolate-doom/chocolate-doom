@@ -21,6 +21,7 @@
 #include "config.h"
 #include "doomtype.h"
 #include "i_video.h"
+#include "m_misc.h"
 
 #include "txt_main.h"
 
@@ -75,5 +76,7 @@ void I_Endoom(byte *endoom_data)
     // Shut down text mode screen
 
     TXT_Shutdown();
+
+    M_FreeStrings(1);
 }
 
