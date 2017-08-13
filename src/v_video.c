@@ -736,9 +736,17 @@ void WritePNGfile(char *filename, byte *data,
     int width, height;
     byte *rowbuf;
 
-    // scale up to accommodate aspect ratio correction
-    width = inwidth * 5;
-    height = inheight * 6;
+    if (aspect_ratio_correct)
+    {
+        // scale up to accommodate aspect ratio correction
+        width = inwidth * 5;
+        height = inheight * 6;
+    }
+    else
+    {
+        width = inwidth;
+        height = inheight;
+    }
 
     handle = fopen(filename, "wb");
     if (!handle)
@@ -792,17 +800,32 @@ void WritePNGfile(char *filename, byte *data,
 
     if (rowbuf)
     {
-        for (i = 0; i < SCREENHEIGHT; i++)
+        if (aspect_ratio_correct)
         {
-            // expand the row 5x
-            for (j = 0; j < SCREENWIDTH; j++)
+            for (i = 0; i < SCREENHEIGHT; i++)
             {
-                memset(rowbuf + j * 5, *(data + i*SCREENWIDTH + j), 5);
-            }
+                // expand the row 5x
+                for (j = 0; j < SCREENWIDTH; j++)
+                {
+                    memset(rowbuf + j * 5, *(data + i*SCREENWIDTH + j), 5);
+                }
 
-            // write the row 6 times
-            for (j = 0; j < 6; j++)
+                // write the row 6 times
+                for (j = 0; j < 6; j++)
+                {
+                    png_write_row(ppng, rowbuf);
+                }
+            }
+        }
+        else
+        {
+            for (i = 0; i < SCREENHEIGHT; i++)
             {
+                for (j = 0; j < SCREENWIDTH; j++)
+                {
+                    memset(rowbuf + j, *(data + i*SCREENWIDTH + j), 1);
+                }
+
                 png_write_row(ppng, rowbuf);
             }
         }
