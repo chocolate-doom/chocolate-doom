@@ -187,6 +187,7 @@ static void NET_Query_SendMasterQuery(net_addr_t *addr)
 static query_target_t *GetTargetForAddr(net_addr_t *addr, boolean create)
 {
     query_target_t *target;
+    query_target_t *new_targets;
     int i;
 
     for (i=0; i<num_targets; ++i)
@@ -202,7 +203,12 @@ static query_target_t *GetTargetForAddr(net_addr_t *addr, boolean create)
         return NULL;
     }
 
-    targets = realloc(targets, sizeof(query_target_t) * (num_targets + 1));
+    new_targets = realloc(targets, sizeof(query_target_t) * (num_targets + 1));
+    if (!new_targets)
+    {
+        I_Error("Out of memory");
+    }
+    targets = new_targets;
 
     target = &targets[num_targets];
     target->type = QUERY_TARGET_SERVER;

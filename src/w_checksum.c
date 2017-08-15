@@ -32,6 +32,7 @@ static int GetFileNumber(wad_file_t *handle)
 {
     int i;
     int result;
+    wad_file_t **new_open_wadfiles;
 
     for (i = 0; i < num_open_wadfiles; ++i)
     {
@@ -44,8 +45,13 @@ static int GetFileNumber(wad_file_t *handle)
     // Not found in list.  This is a new file we haven't seen yet.
     // Allocate another slot for this file.
 
-    open_wadfiles = realloc(open_wadfiles,
+    new_open_wadfiles = realloc(open_wadfiles,
                             sizeof(wad_file_t *) * (num_open_wadfiles + 1));
+    if (!new_open_wadfiles)
+    {
+        I_Error("Out of memory");
+    }
+    open_wadfiles = new_open_wadfiles;
     open_wadfiles[num_open_wadfiles] = handle;
 
     result = num_open_wadfiles;

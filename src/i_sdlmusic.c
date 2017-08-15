@@ -470,9 +470,16 @@ static char *GetSubstituteMusicFile(void *data, size_t data_len)
 
 static void AddSubstituteMusic(subst_music_t *subst)
 {
+    subst_music_t *new_subst_music;
+
     ++subst_music_len;
-    subst_music =
+    new_subst_music =
         realloc(subst_music, sizeof(subst_music_t) * subst_music_len);
+    if (!new_subst_music)
+    {
+        I_Error("Out of memory");
+    }
+    subst_music = new_subst_music;
     memcpy(&subst_music[subst_music_len - 1], subst, sizeof(subst_music_t));
 }
 
