@@ -202,7 +202,7 @@ static query_target_t *GetTargetForAddr(net_addr_t *addr, boolean create)
         return NULL;
     }
 
-    targets = realloc(targets, sizeof(query_target_t) * (num_targets + 1));
+    targets = I_Realloc(targets, sizeof(query_target_t) * (num_targets + 1));
 
     target = &targets[num_targets];
     target->type = QUERY_TARGET_SERVER;
