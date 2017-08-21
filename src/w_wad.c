@@ -206,7 +206,7 @@ wad_file_t *W_AddFile (char *filename)
 
     startlump = numlumps;
     numlumps += numfilelumps;
-    lumpinfo = realloc(lumpinfo, numlumps * sizeof(lumpinfo_t *));
+    lumpinfo = I_Realloc(lumpinfo, numlumps * sizeof(lumpinfo_t *));
     if (lumpinfo == NULL)
     {
         W_CloseFile(wad_file);
