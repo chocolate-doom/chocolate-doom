@@ -139,6 +139,7 @@ Unsafe function   |   Safer alternative
 `strcat()`        |  `M_StringConcat()`
 `strncat()`       |  `M_StringConcat()`
 `strdup()`        |  `M_StringDuplicate()`
+`realloc()`       |  `I_Realloc()`
 
 Lots of the code includes calls to DEH_String() to simulate string
 replacement by the Dehacked tool. Be careful when using Dehacked
