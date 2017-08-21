@@ -459,12 +459,6 @@ static boolean ReadTrack(midi_track_t *track, FILE *stream)
 
         new_events = I_Realloc(track->events, 
                              sizeof(midi_event_t) * (track->num_events + 1));
-
-        if (new_events == NULL)
-        {
-            return false;
-        }
-
         track->events = new_events;
 
         // Read the next event:
