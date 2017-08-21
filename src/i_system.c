@@ -324,6 +324,28 @@ void I_Error (char *error, ...)
 }
 
 //
+// I_Realloc
+//
+
+void *I_Realloc(void *ptr, size_t size)
+{
+    void *new_ptr;
+
+    new_ptr = realloc(ptr, size);
+
+    if (size != 0 && new_ptr == NULL)
+    {
+        I_Error ("I_Realloc: failed on reallocation of %i bytes", size);
+    }
+    else
+    {
+        ptr = new_ptr;
+    }
+
+    return ptr;
+}
+
+//
 // Read Access Violation emulation.
 //
 // From PrBoom+, by entryway.
