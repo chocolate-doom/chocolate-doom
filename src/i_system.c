@@ -337,12 +337,8 @@ void *I_Realloc(void *ptr, size_t size)
     {
         I_Error ("I_Realloc: failed on reallocation of %i bytes", size);
     }
-    else
-    {
-        ptr = new_ptr;
-    }
 
-    return ptr;
+    return new_ptr;
 }
 
 //
