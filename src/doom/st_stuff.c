@@ -416,12 +416,16 @@ cheatseq_t cheat_mypos = CHEAT("idmypos", 0);
 
 // [crispy] new cheats
 cheatseq_t cheat_weapon = CHEAT("tntweap", 1);
-cheatseq_t cheat_massacre = CHEAT("tntem", 0);
+cheatseq_t cheat_massacre = CHEAT("tntem", 0); // [crispy] PrBoom+
+cheatseq_t cheat_massacre2 = CHEAT("killem", 0); // [crispy] MBF
+cheatseq_t cheat_massacre3 = CHEAT("fhhall", 0); // [crispy] Doom95
 cheatseq_t cheat_hom = CHEAT("tnthom", 0);
-cheatseq_t cheat_notarget = CHEAT("notarget", 0);
+cheatseq_t cheat_notarget = CHEAT("notarget", 0); // [crispy] PrBoom+
+cheatseq_t cheat_notarget2 = CHEAT("fhshh", 0); // [crispy] Doom95
 cheatseq_t cheat_spechits = CHEAT("spechits", 0);
 cheatseq_t cheat_nomomentum = CHEAT("nomomentum", 0);
 cheatseq_t cheat_showfps = CHEAT("showfps", 0);
+cheatseq_t cheat_showfps2 = CHEAT("idrate", 0); // [crispy] PrBoom+
 cheatseq_t cheat_goobers = CHEAT("goobers", 0);
 static char msg[ST_MSGWIDTH];
 
@@ -700,7 +704,9 @@ ST_Responder (event_t* ev)
 	plyr->message = DEH_String(STSTR_KFAADDED);
       }
       // [crispy] implement Boom's "tntem" cheat
-      else if (cht_CheckCheat(&cheat_massacre, ev->data2))
+      else if (cht_CheckCheat(&cheat_massacre, ev->data2) ||
+               cht_CheckCheat(&cheat_massacre2, ev->data2) ||
+               cht_CheckCheat(&cheat_massacre3, ev->data2))
       {
 	int killcount = ST_cheat_massacre();
 	const char *const monster = (gameversion == exe_chex) ? "Flemoid" : "Monster";
@@ -797,7 +803,8 @@ ST_Responder (event_t* ev)
 	  plyr->message = DEH_String(STSTR_NCOFF);
       }
       // [crispy] implement PrBoom+'s "notarget" cheat
-      else if (cht_CheckCheat(&cheat_notarget, ev->data2))
+      else if (cht_CheckCheat(&cheat_notarget, ev->data2) ||
+               cht_CheckCheat(&cheat_notarget2, ev->data2))
       {
 	thinker_t *currentthinker=&thinkercap;
 
@@ -830,7 +837,8 @@ ST_Responder (event_t* ev)
 	plyr->message = msg;
       }
       // [crispy] implement Crispy Doom's "showfps" cheat, ne debug aid
-      else if (cht_CheckCheat(&cheat_showfps, ev->data2))
+      else if (cht_CheckCheat(&cheat_showfps, ev->data2) ||
+               cht_CheckCheat(&cheat_showfps2, ev->data2))
       {
 	crispy_showfps ^= 1;
       }
