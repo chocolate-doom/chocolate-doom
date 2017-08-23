@@ -469,7 +469,7 @@ static void AddSubstituteMusic(subst_music_t *subst)
 {
     ++subst_music_len;
     subst_music =
-        realloc(subst_music, sizeof(subst_music_t) * subst_music_len);
+        I_Realloc(subst_music, sizeof(subst_music_t) * subst_music_len);
     memcpy(&subst_music[subst_music_len - 1], subst, sizeof(subst_music_t));
 }
 
