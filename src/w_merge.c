@@ -23,7 +23,7 @@
 #include <string.h>
 #include <ctype.h>
 
-#include "crispy.h" // [crispy] crispy_realloc()
+#include "crispy.h" // [crispy] I_Realloc()
 #include "doomtype.h"
 #include "i_system.h"
 #include "m_misc.h"
@@ -758,7 +758,7 @@ int W_MergeDump (const char *file)
 	memcpy(dir[i].name, lumpinfo[i]->name, 8);
 
 	// avoid flooding Doom's Zone Memory
-	lump_p = crispy_realloc(lump_p, lumpinfo[i]->size);
+	lump_p = I_Realloc(lump_p, lumpinfo[i]->size);
 	W_ReadLump(i, lump_p);
 	fwrite(lump_p, 1, lumpinfo[i]->size, fp);
     }

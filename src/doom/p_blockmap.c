@@ -71,6 +71,7 @@ Id Software
 // GNU General Public License for more details.
 
 #include <stdlib.h>
+#include "i_system.h"
 #include "p_local.h"
 #include "z_zone.h"
 
@@ -232,7 +233,7 @@ static int AddLineToBlockList (int i)
 	{
 		const int32_t *const datalist_old = datalist;
 
-		datalist = crispy_realloc(datalist, (datalist_size = 2 * datalist_size) * sizeof(*datalist));
+		datalist = I_Realloc(datalist, (datalist_size = 2 * datalist_size) * sizeof(*datalist));
 
 		data_p = datalist + (data_p - datalist_old);
 		pointer_p = datalist + (pointer_p - datalist_old);
@@ -354,7 +355,7 @@ void P_CreateBlockMap (void)
 	// [crispy] remove BLOCKMAP limit
 	numblocks = bmapwidth * bmapheight;
 	datalist_size = ((numblocks + 6) / BLOCKMAPSIZE + 1) * BLOCKMAPSIZE; // [crispy] 6 = 4 (header) + 2 (empty block)
-	datalist = crispy_realloc(datalist, datalist_size * sizeof(*datalist));
+	datalist = I_Realloc(datalist, datalist_size * sizeof(*datalist));
 
 	// [crispy] pointer to the offsets
 	pointer_p = datalist;

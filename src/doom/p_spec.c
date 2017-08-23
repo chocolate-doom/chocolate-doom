@@ -175,7 +175,7 @@ void P_InitPicAnims (void)
 	if (lastanim >= anims + maxanims)
 	{
 	    size_t newmax = maxanims ? 2 * maxanims : MAXANIMS;
-	    anims = crispy_realloc(anims, newmax * sizeof(*anims));
+	    anims = I_Realloc(anims, newmax * sizeof(*anims));
 	    lastanim = anims + maxanims;
 	    maxanims = newmax;
 	}
@@ -381,7 +381,7 @@ P_FindNextHighestFloor
 	{
 	    heightlist_size = heightlist_size ? 2 * heightlist_size : MAX_ADJOINING_SECTORS;
 	} while (sec->linecount > heightlist_size);
-	heightlist = crispy_realloc(heightlist, heightlist_size * sizeof(*heightlist));
+	heightlist = I_Realloc(heightlist, heightlist_size * sizeof(*heightlist));
     }
 
     for (i=0, h=0; i < sec->linecount; i++)

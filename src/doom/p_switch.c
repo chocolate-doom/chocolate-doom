@@ -142,7 +142,7 @@ void P_InitSwitchList(void)
 	if (index + 1 >= maxswitches)
 	{
 	    size_t newmax = maxswitches ? 2 * maxswitches : MAXSWITCHES;
-	    switchlist = crispy_realloc(switchlist, newmax * sizeof(*switchlist));
+	    switchlist = I_Realloc(switchlist, newmax * sizeof(*switchlist));
 	    maxswitches = newmax;
 	}
 
