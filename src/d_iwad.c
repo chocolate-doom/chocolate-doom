@@ -162,6 +162,14 @@ static registry_value_t root_path_keys[] =
         "PATH",
     },
 
+    // Doom 3: BFG Edition
+
+    {
+        HKEY_LOCAL_MACHINE,
+        SOFTWARE_KEY "\\GOG.com\\Games\\1135892318",
+        "PATH",
+    },
+
     // Final Doom
 
     {
@@ -181,9 +189,9 @@ static registry_value_t root_path_keys[] =
     // Strife: Veteran Edition
 
     {
-	HKEY_LOCAL_MACHINE,
-	SOFTWARE_KEY "\\GOG.com\\Games\\1432899949",
-	"PATH",
+        HKEY_LOCAL_MACHINE,
+        SOFTWARE_KEY "\\GOG.com\\Games\\1432899949",
+        "PATH",
     },
 };
 
@@ -197,6 +205,7 @@ static char *root_path_subdirs[] =
     "Ultimate Doom",
     "Plutonia",
     "TNT",
+    "base\\wads",
 };
 
 // Location where Steam is installed
