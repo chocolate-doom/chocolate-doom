@@ -5,9 +5,9 @@ execgamesdir = ${bindir}
 
 execgames_PROGRAMS = @PROGRAM_PREFIX@doom     \
                      @PROGRAM_PREFIX@server
-#                    @PROGRAM_PREFIX@heretic  \
-#                    @PROGRAM_PREFIX@hexen    \
-#                    @PROGRAM_PREFIX@strife
+EXTRA_PROGRAMS =     @PROGRAM_PREFIX@heretic  \
+                     @PROGRAM_PREFIX@hexen    \
+                     @PROGRAM_PREFIX@strife
 
 noinst_PROGRAMS = @PROGRAM_PREFIX@setup
 
@@ -162,29 +162,29 @@ endif
 
 @PROGRAM_PREFIX@doom_LDADD = doom/libdoom.a $(EXTRA_LIBS)
 
-#if HAVE_WINDRES
-#@PROGRAM_PREFIX@heretic_SOURCES=$(SOURCE_FILES_WITH_DEH) resource.rc
-#else
-#@PROGRAM_PREFIX@heretic_SOURCES=$(SOURCE_FILES_WITH_DEH)
-#endif
+if HAVE_WINDRES
+@PROGRAM_PREFIX@heretic_SOURCES=$(SOURCE_FILES_WITH_DEH) resource.rc
+else
+@PROGRAM_PREFIX@heretic_SOURCES=$(SOURCE_FILES_WITH_DEH)
+endif
 
-#@PROGRAM_PREFIX@heretic_LDADD = heretic/libheretic.a $(EXTRA_LIBS)
+@PROGRAM_PREFIX@heretic_LDADD = heretic/libheretic.a $(EXTRA_LIBS)
 
-#if HAVE_WINDRES
-#@PROGRAM_PREFIX@hexen_SOURCES=$(SOURCE_FILES) resource.rc
-#else
-#@PROGRAM_PREFIX@hexen_SOURCES=$(SOURCE_FILES)
-#endif
+if HAVE_WINDRES
+@PROGRAM_PREFIX@hexen_SOURCES=$(SOURCE_FILES) resource.rc
+else
+@PROGRAM_PREFIX@hexen_SOURCES=$(SOURCE_FILES)
+endif
 
-#@PROGRAM_PREFIX@hexen_LDADD = hexen/libhexen.a $(EXTRA_LIBS)
+@PROGRAM_PREFIX@hexen_LDADD = hexen/libhexen.a $(EXTRA_LIBS)
 
-#if HAVE_WINDRES
-#@PROGRAM_PREFIX@strife_SOURCES=$(SOURCE_FILES_WITH_DEH) resource.rc
-#else
-#@PROGRAM_PREFIX@strife_SOURCES=$(SOURCE_FILES_WITH_DEH)
-#endif
+if HAVE_WINDRES
+@PROGRAM_PREFIX@strife_SOURCES=$(SOURCE_FILES_WITH_DEH) resource.rc
+else
+@PROGRAM_PREFIX@strife_SOURCES=$(SOURCE_FILES_WITH_DEH)
+endif
 
-#@PROGRAM_PREFIX@strife_LDADD = strife/libstrife.a $(EXTRA_LIBS)
+@PROGRAM_PREFIX@strife_LDADD = strife/libstrife.a $(EXTRA_LIBS)
 
 $(SETUP_BINARIES): @PROGRAM_PREFIX@setup$(EXEEXT)
 	cp @PROGRAM_PREFIX@setup$(EXEEXT) $@
