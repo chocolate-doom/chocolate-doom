@@ -782,6 +782,13 @@ void P_RespawnSpecials (void)
             break;
     }
 
+    if (i >= NUMMOBJTYPES)
+    {
+        I_Error("P_RespawnSpecials: Failed to find mobj type with doomednum "
+                "%d when respawning thing. This would cause a buffer overrun "
+                "in vanilla Strife.", mthing->type);
+    }
+
     // spawn it
     if (mobjinfo[i].flags & MF_SPAWNCEILING)
         z = ONCEILINGZ;
