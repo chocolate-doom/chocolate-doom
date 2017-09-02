@@ -16,7 +16,7 @@ addons:
         - libsdl2-image-dev
         - libsamplerate0-dev
 
-script: ./autogen.sh && make && make install DESTDIR=/tmp/whatever && make dist
+script: ./.travis.sh
 
 branches:
     only:
