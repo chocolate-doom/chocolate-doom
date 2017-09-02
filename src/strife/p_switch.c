@@ -117,7 +117,6 @@ switchlist_t alphSwitchList[] =
     { "SWITE03",    "SWITE04",      2,  sfx_None    },
     { "SWTELP01",   "SWTELP02",     2,  sfx_None    },
     { "BRNSCN01",   "BRNSCN05",     2,  sfx_firxpl  },
-    { "\0",         "\0",           0,  sfx_None    }
 };
 
 int		switchlist[MAXSWITCHES * 2];
@@ -130,34 +129,35 @@ button_t        buttonlist[MAXBUTTONS];
 //
 void P_InitSwitchList(void)
 {
-    int		i;
-    int		index;
-    int		episode;
-	
-    episode = 1;
+    int i, slindex, episode;
 
-    if(isregistered)
-        episode = 2;
-    // villsa [STRIFE] unused
-    /*else
-	if ( gamemode == commercial )
-	    episode = 3;*/
-		
-    for(index = 0, i = 0; i < MAXSWITCHES; i++)
+    // Note that this is called "episode" here but it's actually something
+    // quite different. As we progress from Shareware->Registered->Doom II
+    // we support more switch textures.
+    if (isregistered)
     {
-	if(!alphSwitchList[i].episode)
-	{
-	    numswitches = index/2;
-	    switchlist[index] = -1;
-	    break;
-	}
-		
+        episode = 2;
+    }
+    else
+    {
+        episode = 1;
+    }
+
+    slindex = 0;
+
+    for (i = 0; i < arrlen(alphSwitchList); i++)
+    {
 	if (alphSwitchList[i].episode <= episode)
 	{
-	    switchlist[index++] = R_TextureNumForName(DEH_String(alphSwitchList[i].name1));
-	    switchlist[index++] = R_TextureNumForName(DEH_String(alphSwitchList[i].name2));
+	    switchlist[slindex++] =
+                R_TextureNumForName(DEH_String(alphSwitchList[i].name1));
+	    switchlist[slindex++] =
+                R_TextureNumForName(DEH_String(alphSwitchList[i].name2));
 	}
     }
+
+    numswitches = slindex / 2;
+    switchlist[slindex] = -1;
 }
 
 

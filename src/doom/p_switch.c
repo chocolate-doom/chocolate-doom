@@ -61,7 +61,7 @@ switchlist_t alphSwitchList[] =
     {"SW1STON2",	"SW2STON2",	1},
     {"SW1STONE",	"SW2STONE",	1},
     {"SW1STRTN",	"SW2STRTN",	1},
-    
+
     // Doom registered episodes 2&3 switches
     {"SW1BLUE",	"SW2BLUE",	2},
     {"SW1CMT",		"SW2CMT",	2},
@@ -73,7 +73,7 @@ switchlist_t alphSwitchList[] =
     {"SW1SKIN",	"SW2SKIN",	2},
     {"SW1VINE",	"SW2VINE",	2},
     {"SW1WOOD",	"SW2WOOD",	2},
-    
+
     // Doom II switches
     {"SW1PANEL",	"SW2PANEL",	3},
     {"SW1ROCK",	"SW2ROCK",	3},
@@ -86,8 +86,6 @@ switchlist_t alphSwitchList[] =
     {"SW1TEK",		"SW2TEK",	3},
     {"SW1MARB",	"SW2MARB",	3},
     {"SW1SKULL",	"SW2SKULL",	3},
-	
-    {"\0",		"\0",		0}
 };
 
 int		switchlist[MAXSWITCHES * 2];
@@ -100,45 +98,40 @@ button_t        buttonlist[MAXBUTTONS];
 //
 void P_InitSwitchList(void)
 {
-    int		i;
-    int		index;
-    int		episode;
-	
-    episode = 1;
+    int i, slindex, episode;
 
-    if (gamemode == registered || gamemode == retail)
-	episode = 2;
-    else
-	if ( gamemode == commercial )
-	    episode = 3;
-		
-    for (index = 0,i = 0;i < MAXSWITCHES;i++)
+    // Note that this is called "episode" here but it's actually something
+    // quite different. As we progress from Shareware->Registered->Doom II
+    // we support more switch textures.
+    switch (gamemode)
     {
-	if (!alphSwitchList[i].episode)
-	{
-	    numswitches = index/2;
-	    switchlist[index] = -1;
-	    break;
-	}
-		
+        case registered:
+        case retail:
+            episode = 2;
+            break;
+        case commercial:
+            episode = 3;
+            break;
+        default:
+            episode = 1;
+            break;
+    }
+
+    slindex = 0;
+
+    for (i = 0; i < arrlen(alphSwitchList); i++)
+    {
 	if (alphSwitchList[i].episode <= episode)
 	{
-#if 0	// UNUSED - debug?
-	    int		value;
-			
-	    if (R_CheckTextureNumForName(alphSwitchList[i].name1) < 0)
-	    {
-		I_Error("Can't find switch texture '%s'!",
-			alphSwitchList[i].name1);
-		continue;
-	    }
-	    
-	    value = R_TextureNumForName(alphSwitchList[i].name1);
-#endif
-	    switchlist[index++] = R_TextureNumForName(DEH_String(alphSwitchList[i].name1));
-	    switchlist[index++] = R_TextureNumForName(DEH_String(alphSwitchList[i].name2));
+	    switchlist[slindex++] =
+                R_TextureNumForName(DEH_String(alphSwitchList[i].name1));
+	    switchlist[slindex++] =
+                R_TextureNumForName(DEH_String(alphSwitchList[i].name2));
 	}
     }
+
+    numswitches = slindex / 2;
+    switchlist[slindex] = -1;
 }
 
 
