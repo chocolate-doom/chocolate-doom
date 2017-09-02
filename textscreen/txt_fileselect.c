@@ -101,7 +101,12 @@ static char *ExecReadOutput(char **argv)
         }
         else
         {
-            result = realloc(result, result_len + bytes + 1);
+            char *new_result = realloc(result, result_len + bytes + 1);
+            if (new_result == NULL)
+            {
+                break;
+            }
+            result = new_result;
             memcpy(result + result_len, buf, bytes);
             result_len += bytes;
             result[result_len] = '\0';
