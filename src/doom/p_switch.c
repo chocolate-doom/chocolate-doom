@@ -65,7 +65,7 @@ switchlist_t alphSwitchList_vanilla[] =
     {"SW1STON2",	"SW2STON2",	1},
     {"SW1STONE",	"SW2STONE",	1},
     {"SW1STRTN",	"SW2STRTN",	1},
-    
+
     // Doom registered episodes 2&3 switches
     {"SW1BLUE",	"SW2BLUE",	2},
     {"SW1CMT",		"SW2CMT",	2},
@@ -77,7 +77,7 @@ switchlist_t alphSwitchList_vanilla[] =
     {"SW1SKIN",	"SW2SKIN",	2},
     {"SW1VINE",	"SW2VINE",	2},
     {"SW1WOOD",	"SW2WOOD",	2},
-    
+
     // Doom II switches
     {"SW1PANEL",	"SW2PANEL",	3},
     {"SW1ROCK",	"SW2ROCK",	3},
@@ -90,8 +90,6 @@ switchlist_t alphSwitchList_vanilla[] =
     {"SW1TEK",		"SW2TEK",	3},
     {"SW1MARB",	"SW2MARB",	3},
     {"SW1SKULL",	"SW2SKULL",	3},
-	
-    {"\0",		"\0",		0}
 };
 
 // [crispy] remove MAXSWITCHES limit
@@ -106,10 +104,8 @@ button_t        buttonlist[MAXBUTTONS];
 //
 void P_InitSwitchList(void)
 {
-    int		i;
-    int		index;
-    int		episode;
-	
+    int i, slindex, episode;
+
     // [crispy] add support for SWITCHES lumps
     switchlist_t *alphSwitchList;
     boolean from_lump;
@@ -124,53 +120,56 @@ void P_InitSwitchList(void)
 	alphSwitchList = alphSwitchList_vanilla;
     }
 
-    episode = 1;
+    // Note that this is called "episode" here but it's actually something
+    // quite different. As we progress from Shareware->Registered->Doom II
+    // we support more switch textures.
+    switch (gamemode)
+    {
+        case registered:
+        case retail:
+            episode = 2;
+            break;
+        case commercial:
+            episode = 3;
+            break;
+        default:
+            episode = 1;
+            break;
+    }
 
-    if (gamemode == registered || gamemode == retail)
-	episode = 2;
-    else
-	if ( gamemode == commercial )
-	    episode = 3;
-		
-    for (index = 0,i = 0;/*i < MAXSWITCHES*/;i++)
+    slindex = 0;
+
+    for (i = 0; /* i < arrlen(alphSwitchList) */; i++)
     {
 	const short alphSwitchList_episode = from_lump ?
 	    SHORT(alphSwitchList[i].episode) :
 	    alphSwitchList[i].episode;
 
+	// [crispy] add support for SWITCHES lumps
+	if (!alphSwitchList_episode || (!from_lump && i >= arrlen(alphSwitchList_vanilla)))
+	{
+	    break;
+	}
+
 	// [crispy] remove MAXSWITCHES limit
-	if (index + 1 >= maxswitches)
+	if (slindex + 1 >= maxswitches)
 	{
 	    size_t newmax = maxswitches ? 2 * maxswitches : MAXSWITCHES;
 	    switchlist = I_Realloc(switchlist, newmax * sizeof(*switchlist));
 	    maxswitches = newmax;
 	}
 
-	if (!alphSwitchList_episode)
-	{
-	    numswitches = index/2;
-	    switchlist[index] = -1;
-	    break;
-	}
-		
 	if (alphSwitchList_episode <= episode)
 	{
-#if 0	// UNUSED - debug?
-	    int		value;
-			
-	    if (R_CheckTextureNumForName(alphSwitchList[i].name1) < 0)
-	    {
-		I_Error("Can't find switch texture '%s'!",
-			alphSwitchList[i].name1);
-		continue;
-	    }
-	    
-	    value = R_TextureNumForName(alphSwitchList[i].name1);
-#endif
-	    switchlist[index++] = R_TextureNumForName(DEH_String(alphSwitchList[i].name1));
-	    switchlist[index++] = R_TextureNumForName(DEH_String(alphSwitchList[i].name2));
+	    switchlist[slindex++] =
+                R_TextureNumForName(DEH_String(alphSwitchList[i].name1));
+	    switchlist[slindex++] =
+                R_TextureNumForName(DEH_String(alphSwitchList[i].name2));
 	}
     }
+
+    numswitches = slindex / 2;
+    switchlist[slindex] = -1;
 
     if (from_lump)
     {
