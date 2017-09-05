@@ -83,7 +83,6 @@ switchlist_t alphSwitchList[] = {
     {"SW1VINE", "SW2VINE", 2},
     {"SW1WOOD", "SW2WOOD", 2},
 #endif
-    {"\0", "\0", 0}
 };
 
 int switchlist[MAXSWITCHES * 2];
