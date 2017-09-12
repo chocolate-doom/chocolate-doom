@@ -44,7 +44,6 @@ extern boolean crispy_fliplevels;
 extern boolean crispy_havee1m10;
 extern boolean crispy_havemap33;
 extern boolean crispy_havessg;
-extern boolean crispy_showfps;
 extern boolean crispy_stretchsky;
 
 extern int crispy_automapstats;

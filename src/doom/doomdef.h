@@ -147,7 +147,10 @@ typedef enum
     pw_ironfeet,
     pw_allmap,
     pw_infrared,
-    NUMPOWERS
+    NUMPOWERS,
+    // [crispy] showfps and mapcoords are now "powers"
+    pw_showfps,
+    pw_mapcoords
     
 } powertype_t;
 

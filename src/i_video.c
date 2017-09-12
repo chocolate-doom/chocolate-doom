@@ -935,7 +935,6 @@ static boolean BlitArea(int x1, int y1, int x2, int y2)
 
 // [crispy]
 int crispy_fps = 0;
-boolean crispy_showfps = false;
 extern boolean singletics;
 
 //
@@ -1000,7 +999,6 @@ void I_FinishUpdate (void)
     }
 
 	// [crispy] [AM] Real FPS counter
-	if (crispy_showfps)
 	{
 		static int lastmili;
 		static int fpscount;

@@ -840,7 +840,7 @@ ST_Responder (event_t* ev)
       else if (cht_CheckCheat(&cheat_showfps, ev->data2) ||
                cht_CheckCheat(&cheat_showfps2, ev->data2))
       {
-	crispy_showfps ^= 1;
+	plyr->powers[pw_showfps] ^= 1;
       }
       // [crispy] implement Crispy Doom's "goobers" cheat, ne easter egg
       else if (cht_CheckCheat(&cheat_goobers, ev->data2))
@@ -964,7 +964,7 @@ ST_Responder (event_t* ev)
                    players[consoleplayer].mo->y);
         plyr->message = buf;
 */
-        plyr->mapcoords ^= 1;
+        plyr->powers[pw_mapcoords] ^= 1;
       }
     }
     

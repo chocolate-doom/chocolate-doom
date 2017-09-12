@@ -1102,17 +1102,17 @@ void P_PlayerInSpecialSector (player_t* player)
     {
       case 5:
 	// HELLSLIME DAMAGE
-	if (!player->powers[pw_ironfeet])
-	    // [crispy] no nukage damage with NOCLIP cheat
-	    if (!(leveltime&0x1f) && !(player->mo->flags & MF_NOCLIP))
+	// [crispy] no nukage damage with NOCLIP cheat
+	if (!player->powers[pw_ironfeet] && !(player->mo->flags & MF_NOCLIP))
+	    if (!(leveltime&0x1f))
 		P_DamageMobj (player->mo, NULL, NULL, 10);
 	break;
 	
       case 7:
 	// NUKAGE DAMAGE
-	if (!player->powers[pw_ironfeet])
-	    // [crispy] no nukage damage with NOCLIP cheat
-	    if (!(leveltime&0x1f) && !(player->mo->flags & MF_NOCLIP))
+	// [crispy] no nukage damage with NOCLIP cheat
+	if (!player->powers[pw_ironfeet] && !(player->mo->flags & MF_NOCLIP))
+	    if (!(leveltime&0x1f))
 		P_DamageMobj (player->mo, NULL, NULL, 5);
 	break;
 	
@@ -1120,11 +1120,11 @@ void P_PlayerInSpecialSector (player_t* player)
 	// SUPER HELLSLIME DAMAGE
       case 4:
 	// STROBE HURT
-	if (!player->powers[pw_ironfeet]
-	    || (P_Random()<5) )
+	// [crispy] no nukage damage with NOCLIP cheat
+	if ((!player->powers[pw_ironfeet]
+	    || (P_Random()<5) ) && !(player->mo->flags & MF_NOCLIP))
 	{
-	    // [crispy] no nukage damage with NOCLIP cheat
-	    if (!(leveltime&0x1f) && !(player->mo->flags & MF_NOCLIP))
+	    if (!(leveltime&0x1f))
 		P_DamageMobj (player->mo, NULL, NULL, 20);
 	}
 	break;

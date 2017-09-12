@@ -102,7 +102,7 @@ typedef struct player_s
     int			armortype;	
 
     // Power ups. invinc and invis are tic counters.
-    int			powers[NUMPOWERS];
+    int			powers[NUMPOWERS + 3]; // [crispy] showfps and mapcoords are now "powers"
     boolean		cards[NUMCARDS];
     boolean		backpack;
     
@@ -169,7 +169,6 @@ typedef struct player_s
     int	lookdir, oldlookdir;
     boolean	centering;
     unsigned int	jumpTics;
-    boolean	mapcoords;
     fixed_t	recoilpitch, oldrecoilpitch;
     mobj_t	*so;
 } player_t;
