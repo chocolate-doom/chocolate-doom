@@ -3168,6 +3168,39 @@ void M_Init (void)
 	}
     }
 
+    // [crispy] remove DOS reference from the game quit confirmation dialogs
+    if (!M_ParmExists("-nodeh"))
+    {
+	char *string, *replace;
+
+	// [crispy] "i wouldn't leave if i were you.\ndos is much worse."
+	string = doom1_endmsg[3];
+	if (!strcmp(string, DEH_String(string)))
+	{
+		replace = M_StringReplace(string, "dos", "your desktop");
+		DEH_AddStringReplacement(string, replace);
+		free(replace);
+	}
+
+	// [crispy] "you're trying to say you like dos\nbetter than me, right?"
+	string = doom1_endmsg[4];
+	if (!strcmp(string, DEH_String(string)))
+	{
+		replace = M_StringReplace(string, "dos\n", "your\ndesktop ");
+		DEH_AddStringReplacement(string, replace);
+		free(replace);
+	}
+
+	// [crispy] "don't go now, there's a \ndimensional shambler waiting\nat the dos prompt!"
+	string = doom2_endmsg[2];
+	if (!strcmp(string, DEH_String(string)))
+	{
+		replace = M_StringReplace(string, "dos", "command");
+		DEH_AddStringReplacement(string, replace);
+		free(replace);
+	}
+    }
+
     opldev = M_CheckParm("-opldev") > 0;
 }
 
