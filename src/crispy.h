@@ -67,6 +67,7 @@ extern int crispy_secretmessage;
 extern int crispy_translucency;
 extern int crispy_uncapped;
 
+extern int crispy_screenshotmsg;
 extern int crispy_cleanscreenshot;
 extern int crispy_demowarp;
 

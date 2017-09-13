@@ -158,7 +158,7 @@ void HUlib_eraseTextLine(hu_textline_t* l)
     // (because of a recent change back from the automap)
 
     if (!automapactive &&
-	viewwindowx && (l->needsupdate || crispy_cleanscreenshot))
+	viewwindowx && (l->needsupdate || crispy_cleanscreenshot || crispy_screenshotmsg == 4))
     {
 	lh = (SHORT(l->f[0]->height) + 1) << hires;
 	for (y=(l->y << hires),yoffset=y*SCREENWIDTH ; y<(l->y << hires)+lh ; y++,yoffset+=SCREENWIDTH)

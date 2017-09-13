@@ -759,6 +759,9 @@ void HU_Drawer(void)
     HUlib_drawSText(&w_secret);
 
     V_ClearDPTranslation();
+    if (crispy_screenshotmsg == 4)
+	HUlib_eraseSText(&w_message);
+    else
     HUlib_drawSText(&w_message);
     HUlib_drawIText(&w_chat);
 
@@ -903,6 +906,7 @@ void HU_Ticker(void)
     {
 	message_on = false;
 	message_nottobefuckedwith = false;
+	crispy_screenshotmsg >>= 1;
     }
 
     if (secret_counter && !--secret_counter)
@@ -932,6 +936,7 @@ void HU_Ticker(void)
 	    message_counter = HU_MSGTIMEOUT;
 	    message_nottobefuckedwith = message_dontfuckwithme;
 	    message_dontfuckwithme = 0;
+	    crispy_screenshotmsg >>= 1;
 	}
 
     } // else message_on = false;

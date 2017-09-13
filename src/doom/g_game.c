@@ -1063,15 +1063,17 @@ void G_Ticker (void)
 	    break; 
 	  case ga_screenshot: 
 	    // [crispy] redraw view without weapons and HUD
-	    if (crispy_cleanscreenshot)
+	    if (crispy_cleanscreenshot || crispy_screenshotmsg == 1)
 	    {
 	        extern void D_Display (void);
 
+	        crispy_screenshotmsg = 4;
 	        D_Display();
 	        crispy_cleanscreenshot = 0;
 	    }
 	    V_ScreenShot("DOOM%04i.%s"); // [crispy] increase screenshot filename limit
             players[consoleplayer].message = DEH_String("screen shot");
+	    crispy_screenshotmsg = 2;
 	    gameaction = ga_nothing; 
 	    break; 
 	  case ga_nothing: 

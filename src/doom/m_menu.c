@@ -133,6 +133,7 @@ char	endstring[160];
 
 static boolean opldev;
 
+int crispy_screenshotmsg = 0;
 int crispy_cleanscreenshot = 0;
 extern boolean speedkeydown (void);
 
