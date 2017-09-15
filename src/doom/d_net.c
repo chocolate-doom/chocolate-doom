@@ -160,9 +160,9 @@ static void SaveGameSettings(net_gamesettings_t *settings)
     settings->keepkeys = keepkeys;
     settings->doublespawn = doublespawn;
 
-    settings->lowres_turn = (M_CheckParm("-record") > 0
-                          && M_CheckParm("-longtics") == 0)
-                          || M_CheckParm("-shorttics") > 0;
+    settings->lowres_turn = (M_ParmExists("-record")
+                         && !M_ParmExists("-longtics"))
+                          || M_ParmExists("-shorttics");
 }
 
 static void InitConnectData(net_connect_data_t *connect_data)
@@ -205,9 +205,9 @@ static void InitConnectData(net_connect_data_t *connect_data)
 
     // Are we recording a demo? Possibly set lowres turn mode
 
-    connect_data->lowres_turn = (M_CheckParm("-record") > 0
-                              && M_CheckParm("-longtics") == 0)
-                              || M_CheckParm("-shorttics") > 0;
+    connect_data->lowres_turn = (M_ParmExists("-record")
+                             && !M_ParmExists("-longtics"))
+                              || M_ParmExists("-shorttics");
 
     // Read checksums of our WAD directory and dehacked information
 
