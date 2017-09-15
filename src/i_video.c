@@ -580,10 +580,11 @@ static void LimitTextureSize(int *w_upscale, int *h_upscale)
                 rinfo.max_texture_width, rinfo.max_texture_height);
     }
 
-    // We limit the amount of texture memory used for the intermediate buffer.
-    // By default we limit to 1600x1200, which gives pretty good results, but
-    // we allow the user to override this and use more if they want to use
-    // even more (or less, if their graphics card can't handle it).
+    // We limit the amount of texture memory used for the intermediate buffer,
+    // since beyond a certain point there are diminishing returns. Also,
+    // depending on the hardware there may be performance problems with very
+    // huge textures, so the user can use this to reduce the maximum texture
+    // size if desired.
 
     if (max_scaling_buffer_pixels < SCREENWIDTH * SCREENHEIGHT)
     {
