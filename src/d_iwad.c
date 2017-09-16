@@ -348,18 +348,17 @@ static void CheckInstallRootPaths(void)
 
 // Check for Doom downloaded via Steam
 
-#define MAX_STEAM_LIBRARIES 16
-
-static char *steam_libraries[MAX_STEAM_LIBRARIES];
-static int num_steam_libraries = 0;
-
 static void AddSteamLibraryDir(char *dir)
 {
-    if (num_steam_libraries < MAX_STEAM_LIBRARIES)
+    char *subpath;
+    size_t i;
+
+    for (i=0; i<arrlen(steam_install_subdirs); ++i)
     {
-        steam_libraries[num_steam_libraries] = M_StringReplace(dir, "\\\\",
-                                                               "\\");
-        ++num_steam_libraries;
+        subpath = M_StringJoin(dir, DIR_SEPARATOR_S, steam_install_subdirs[i],
+                               NULL);
+
+        AddIWADDir(subpath);
     }
 }
 
@@ -395,6 +394,7 @@ static char *GetSteamLibText(char *library_path)
 
     if (library_file_size != count)
     {
+        free(library_file_buffer);
         return NULL;
     }
 
@@ -402,34 +402,60 @@ static char *GetSteamLibText(char *library_path)
     return library_file_buffer;
 }
 
+//Retrieve tokens from file in Valve Data File (VDF) format
+
 static char *GetNextSteamLibToken(char **lib_file_buffer)
 {
-    char *buffer;
-    char *token;
-    size_t i, buff_size;
-    boolean success;
+    char c, *buffer, *token;
+    size_t i, j, buff_size, token_size;
+    boolean success, quote;
 
-    token = NULL;               //a token is anything between "'s'
-    success = false;            //we want to avoid an incomplete token
-                                //so we use this instead of NULL check
+    token = NULL;  //In VDF a token is anything surrounded by white space.
+                   //Token may or may not be in double quotes.
+                   //Special characters can be escaped with a back slash.
+
+    success = false;
     buffer = *lib_file_buffer;
     buff_size = strlen(buffer);
 
     for (i=0; i<buff_size; ++i)
     {
-        if (buffer[i] == '"')
+        c = buffer[i];
+
+        //{ and } are control characters in VDF used to indicate subkeys.
+        //If we treat } as white space and allow { to be treated as a regular
+        //token, then we can ignore the concept of subkeys in a VDF file.
+        //This allows us to treat a VDF file as key value pairs.
+
+        if (isspace(c) || c == '}')
         {
-            //first " is the start of the token
-            if (token == NULL)
+            continue;
+        }
+
+        quote = c == '"';
+        token = &buffer[i++];
+        break;
+    }
+
+    for (; i<buff_size; ++i)
+    {
+        c = buffer[i];
+
+        if (quote)
+        {
+            if (c == '\\')
             {
-                //skip the " itself
-                token = &buffer[i+1];
+                ++i; //next character is escaped, skip it
             }
-            //second " is the end of the token
-            else
+            else if (c == '"')
             {
-                //convert last " to \0 to avoid allocating more strings
-                buffer[i] = '\0';
+                quote = false;
+            }
+        }
+        else
+        {
+            if (isspace(c) || c == '}')
+            {
                 success = true;
                 break;
             }
@@ -438,8 +464,35 @@ static char *GetNextSteamLibToken(char **lib_file_buffer)
 
     if(success)
     {
-        //move lib_file_buffer ahead of last token
-        *lib_file_buffer = &buffer[i+1];
+        quote = token[0] == '"';
+        token_size = &buffer[i] - token;
+        *lib_file_buffer += i + 1; //move lib_file_buffer ahead of last token
+
+        //remove escape characters and quotes from token
+        for (i=0, j=0; i<token_size; ++i, ++j)
+        {
+            if (quote && (j == 0 || j == token_size - 1) && token[j] == '"')
+            {
+                ++j;
+            }
+
+            if (token[j] == '\\' && (token[j-1] != '\\' || j == 0))
+            {
+                ++j;
+            }
+
+            if (j >= token_size)
+            {
+                token[i] = '\0';
+            }
+            else
+            {
+                token[i] = token[j];
+            }
+        }
+
+        token[token_size] = '\0';
+
         return token;
     }
     else
@@ -464,42 +517,22 @@ static boolean IsValidSteamLibKey(char* key)
 
 static char *GetSteamNextLibPath(char **lib_file_buffer)
 {
-    boolean key, key_valid;
-    char *token;
-    key = key_valid = true;
+    char *keyToken;
+    char *valueToken;
 
     for (;;)
     {
-        token = GetNextSteamLibToken(lib_file_buffer);
+        keyToken = GetNextSteamLibToken(lib_file_buffer);
+        valueToken = GetNextSteamLibToken(lib_file_buffer);
 
-        if (token == NULL)
+        if (keyToken == NULL || valueToken == NULL)
         {
             return NULL;
         }
 
-        //file always starts with this line before key/value pairs
-        if (!strcmp(token, "LibraryFolders"))
+        if (IsValidSteamLibKey(keyToken))
         {
-            key = true;
-            key_valid = false;
-        }
-        else
-        {
-            if (!key && key_valid)
-            {
-                return token;
-            }
-
-            if (key)
-            {
-                key = false;
-                key_valid = IsValidSteamLibKey(token);
-            }
-            else //value
-            {
-                key = true;
-                key_valid = false;
-            }
+            return valueToken;
         }
     }
 }
@@ -538,8 +571,6 @@ static void CheckSteamEdition(void)
 {
     char *install_path;
     char *library_path;
-    char *subpath;
-    size_t i, j;
 
     install_path = GetRegistryString(&steam_install_location);
 
@@ -555,17 +586,7 @@ static void CheckSteamEdition(void)
 
     CheckSteamLibraries(library_path);
 
-    for (j=0; j<num_steam_libraries; ++j)
-    {
-        for (i=0; i<arrlen(steam_install_subdirs); ++i)
-        {
-            subpath = M_StringJoin(steam_libraries[j], DIR_SEPARATOR_S,
-                                   steam_install_subdirs[i], NULL);
-
-            AddIWADDir(subpath);
-        }
-    }
-
+    free(library_path);
     free(install_path);
 }
 
