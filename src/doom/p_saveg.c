@@ -432,7 +432,7 @@ static void saveg_read_mobj_t(mobj_t *str)
 }
 
 // [crispy] enumerate all thinker pointers
-static uint32_t P_ThinkerToIndex (thinker_t* thinker)
+uint32_t P_ThinkerToIndex (thinker_t* thinker)
 {
     thinker_t*	th;
     uint32_t	i;
@@ -454,7 +454,7 @@ static uint32_t P_ThinkerToIndex (thinker_t* thinker)
 }
 
 // [crispy] replace indizes with corresponding pointers
-static thinker_t* P_IndexToThinker (uint32_t index)
+thinker_t* P_IndexToThinker (uint32_t index)
 {
     thinker_t*	th;
     uint32_t	i;

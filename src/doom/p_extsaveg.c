@@ -159,6 +159,40 @@ static void P_ReadFireFlicker (const char *key)
 	}
 }
 
+// sector->soundtarget
+
+static void P_WriteSoundTarget (const char *key)
+{
+	int i;
+	sector_t *sector;
+
+	for (i = 0, sector = sectors; i < numsectors; i++, sector++)
+	{
+		if (sector->soundtarget)
+		{
+			M_snprintf(line, sizeof(line), "%s %d %d\n",
+			           key,
+			           i,
+			           P_ThinkerToIndex((thinker_t *) sector->soundtarget));
+			fputs(line, save_stream);
+		}
+	}
+}
+
+static void P_ReadSoundTarget (const char *key)
+{
+	int sector, target;
+
+	if (sscanf(line, "%s %d %d\n",
+	           string,
+	           &sector,
+	           &target) == 3 &&
+	    !strncmp(string, key, sizeof(string)))
+	{
+		sectors[sector].soundtarget = (mobj_t *) P_IndexToThinker(target);
+	}
+}
+
 // buttonlist[]
 
 extern void P_StartButton (line_t *line, bwhere_e w, int texture, int time);
@@ -325,6 +359,7 @@ static const extsavegdata_t extsavegdata[] =
 	{"extrakills", P_WriteExtraKills, P_ReadExtraKills, 1},
 	{"totalleveltimes", P_WriteTotalLevelTimes, P_ReadTotalLevelTimes, 1},
 	{"fireflicker", P_WriteFireFlicker, P_ReadFireFlicker, 1},
+	{"soundtarget", P_WriteSoundTarget, P_ReadSoundTarget, 1},
 	{"button", P_WriteButton, P_ReadButton, 1},
 	{"braintarget", P_WriteBrainTarget, P_ReadBrainTarget, 1},
 	{"markpoints", P_WriteMarkPoints, P_ReadMarkPoints, 1},
