@@ -168,6 +168,20 @@ endif
 $(SETUP_BINARIES): @PROGRAM_PREFIX@setup$(EXEEXT)
 	cp @PROGRAM_PREFIX@setup$(EXEEXT) $@
 
+# Make "make" aware of convenience libraries in subdirectories
+
+doom/libdoom.a:
+	$(MAKE) -C doom
+
+heretic/libheretic.a:
+	$(MAKE) -C heretic
+
+hexen/libhexen.a:
+	$(MAKE) -C hexen
+
+strife/libstrife.a:
+	$(MAKE) -C strife
+
 # Source files needed for chocolate-setup:
 
 SETUP_FILES=                               \
