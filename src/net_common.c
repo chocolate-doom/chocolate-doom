@@ -537,9 +537,8 @@ void NET_WriteProtocol(net_packet_t *packet, net_protocol_t protocol)
 // no recognized protocols are read, NET_PROTOCOL_UNKNOWN is returned.
 net_protocol_t NET_ReadProtocolList(net_packet_t *packet)
 {
-    net_protocol_t result, p;
+    net_protocol_t result;
     unsigned int num_protocols;
-    char *name;
     int i;
 
     if (!NET_ReadInt8(packet, &num_protocols))
@@ -551,6 +550,9 @@ net_protocol_t NET_ReadProtocolList(net_packet_t *packet)
 
     for (i = 0; i < num_protocols; ++i)
     {
+        net_protocol_t p;
+        char *name;
+
         name = NET_ReadString(packet);
         if (name == NULL)
         {
