@@ -110,7 +110,11 @@ struct _net_addr_s
 
 // Supported protocols. If you're developing a fork of Chocolate
 // Doom, you can add your own entry to this list while maintaining
-// compatibility with Chocolate Doom servers.
+// compatibility with Chocolate Doom servers. Higher-numbered enum values
+// will be preferred when negotiating a protocol for the client and server
+// to use, so the order matters.
+// NOTE: The values in this enum do not have any special value outside of
+// the program they're compiled in. What matters is the string representation.
 typedef enum
 {
     // Protocol introduced with Chocolate Doom v3.0. Each compatibility-
