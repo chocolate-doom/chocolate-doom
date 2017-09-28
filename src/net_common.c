@@ -35,10 +35,12 @@
 
 #define KEEPALIVE_PERIOD 1
 
+// String names for the enum values in net_protocol_t, which are what is
+// sent over the wire. Every enum value must have an entry in this list.
 static struct
 {
     net_protocol_t protocol;
-    char *name;
+    const char *name;
 } protocol_names[] = {
     {NET_PROTOCOL_CHOCOLATE_DOOM_0, "CHOCOLATE_DOOM_0"},
 };
@@ -480,7 +482,7 @@ boolean NET_ValidGameSettings(GameMode_t mode, GameMission_t mission,
     return true;
 }
 
-static net_protocol_t ParseProtocolName(char *name)
+static net_protocol_t ParseProtocolName(const char *name)
 {
     int i;
 
@@ -500,7 +502,7 @@ static net_protocol_t ParseProtocolName(char *name)
 // protocol.
 net_protocol_t NET_ReadProtocol(net_packet_t *packet)
 {
-    char *name;
+    const char *name;
 
     name = NET_ReadString(packet);
     if (name == NULL)
@@ -551,7 +553,7 @@ net_protocol_t NET_ReadProtocolList(net_packet_t *packet)
     for (i = 0; i < num_protocols; ++i)
     {
         net_protocol_t p;
-        char *name;
+        const char *name;
 
         name = NET_ReadString(packet);
         if (name == NULL)

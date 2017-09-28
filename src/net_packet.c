@@ -302,7 +302,7 @@ void NET_WriteInt32(net_packet_t *packet, unsigned int i)
     packet->len += 4;
 }
 
-void NET_WriteString(net_packet_t *packet, char *string)
+void NET_WriteString(net_packet_t *packet, const char *string)
 {
     byte *p;
     size_t string_size;
