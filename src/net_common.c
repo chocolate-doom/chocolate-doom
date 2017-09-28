@@ -484,7 +484,7 @@ static net_protocol_t ParseProtocolName(char *name)
 {
     int i;
 
-    for (i = 0; arrlen(protocol_names); ++i)
+    for (i = 0; i < arrlen(protocol_names); ++i)
     {
         if (!strcmp(protocol_names[i].name, name))
         {
