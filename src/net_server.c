@@ -213,7 +213,7 @@ static void NET_SV_BroadcastMessage(char *s, ...)
     va_start(args, s);
     M_vsnprintf(buf, sizeof(buf), s, args);
     va_end(args);
-    
+
     for (i=0; i<MAXNETNODES; ++i)
     {
         if (ClientConnected(&clients[i]))
@@ -222,7 +222,7 @@ static void NET_SV_BroadcastMessage(char *s, ...)
         }
     }
 
-    NET_SafePuts(buf);
+    printf("%s\n", buf);
 }
 
 

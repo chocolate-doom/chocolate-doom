@@ -132,7 +132,7 @@ static void NET_Conn_ParseReject(net_connection_t *conn, net_packet_t *packet)
 {
     char *msg;
 
-    msg = NET_ReadString(packet);
+    msg = NET_ReadSafeString(packet);
 
     if (msg == NULL)
     {
@@ -146,8 +146,7 @@ static void NET_Conn_ParseReject(net_connection_t *conn, net_packet_t *packet)
         conn->state = NET_CONN_STATE_DISCONNECTED;
         conn->disconnect_reason = NET_DISCONNECT_REMOTE;
 
-        printf("Rejected by server: ");
-        NET_SafePuts(msg);
+        printf("Rejected by server: %s\n", msg);
     }
 }
 

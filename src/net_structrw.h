@@ -43,8 +43,6 @@ void NET_WriteSHA1Sum(net_packet_t *packet, sha1_digest_t digest);
 void NET_WriteWaitData(net_packet_t *packet, net_waitdata_t *data);
 boolean NET_ReadWaitData(net_packet_t *packet, net_waitdata_t *data);
 
-void NET_SafePuts(char *msg);
-
 boolean NET_ReadPRNGSeed(net_packet_t *packet, prng_seed_t seed);
 void NET_WritePRNGSeed(net_packet_t *packet, prng_seed_t seed);
 

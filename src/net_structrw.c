@@ -17,7 +17,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
 
 #include "doomtype.h"
 #include "m_misc.h"
@@ -122,7 +121,7 @@ boolean NET_ReadQueryData(net_packet_t *packet, net_querydata_t *query)
 {
     boolean result;
 
-    query->version = NET_ReadString(packet);
+    query->version = NET_ReadSafeString(packet);
 
     result = query->version != NULL
           && NET_ReadInt8(packet, (unsigned int *) &query->server_state)
@@ -133,7 +132,7 @@ boolean NET_ReadQueryData(net_packet_t *packet, net_querydata_t *query)
     
     if (result)
     {
-        query->description = NET_ReadString(packet);
+        query->description = NET_ReadSafeString(packet);
 
         return query->description != NULL;
     }   
@@ -551,22 +550,3 @@ void NET_WritePRNGSeed(net_packet_t *packet, prng_seed_t seed)
     NET_WriteBlob(packet, seed, sizeof(prng_seed_t));
 }
 
-// "Safe" version of puts, for displaying messages received from the
-// network.
-
-void NET_SafePuts(char *s)
-{
-    char *p;
-
-    // Do not do a straight "puts" of the string, as this could be
-    // dangerous (sending control codes to terminals can do all
-    // kinds of things)
-
-    for (p=s; *p; ++p)
-    {
-        if (isprint(*p) || *p == '\n')
-            putchar(*p);
-    }
-
-    putchar('\n');
-}

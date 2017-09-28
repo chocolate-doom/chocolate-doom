@@ -433,7 +433,7 @@ static void NET_CL_ParseSYN(net_packet_t *packet)
     net_protocol_t protocol;
     char *server_version;
 
-    server_version = NET_ReadString(packet);
+    server_version = NET_ReadSafeString(packet);
     if (server_version == NULL)
     {
         return;
@@ -830,16 +830,14 @@ static void NET_CL_ParseConsoleMessage(net_packet_t *packet)
 {
     char *msg;
 
-    msg = NET_ReadString(packet);
+    msg = NET_ReadSafeString(packet);
 
     if (msg == NULL)
     {
         return;
     }
 
-    printf("Message from server: ");
-
-    NET_SafePuts(msg);
+    printf("Message from server:\n%s\n", msg);
 }
 
 // parse a received packet
