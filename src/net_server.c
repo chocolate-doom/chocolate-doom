@@ -213,7 +213,7 @@ static void NET_SV_BroadcastMessage(char *s, ...)
     va_start(args, s);
     M_vsnprintf(buf, sizeof(buf), s, args);
     va_end(args);
-    
+
     for (i=0; i<MAXNETNODES; ++i)
     {
         if (ClientConnected(&clients[i]))
@@ -222,7 +222,7 @@ static void NET_SV_BroadcastMessage(char *s, ...)
         }
     }
 
-    NET_SafePuts(buf);
+    printf("%s\n", buf);
 }
 
 
@@ -555,16 +555,14 @@ static void NET_SV_SendReject(net_addr_t *addr, char *msg)
     NET_FreePacket(packet);
 }
 
-static void NET_SV_InitNewClient(net_client_t *client, 
-                                 net_addr_t *addr,
-                                 char *player_name)
+static void NET_SV_InitNewClient(net_client_t *client, net_addr_t *addr,
+                                 net_protocol_t protocol)
 {
     client->active = true;
     client->connect_time = I_GetTimeMS();
-    NET_Conn_InitServer(&client->connection, addr);
+    NET_Conn_InitServer(&client->connection, addr, protocol);
     client->addr = addr;
     client->last_send_time = -1;
-    client->name = M_StringDuplicate(player_name);
 
     // init the ticcmd send queue
 
@@ -580,99 +578,121 @@ static void NET_SV_InitNewClient(net_client_t *client,
 
 // parse a SYN from a client(initiating a connection)
 
-static void NET_SV_ParseSYN(net_packet_t *packet, 
-                            net_client_t *client,
+static void NET_SV_ParseSYN(net_packet_t *packet, net_client_t *client,
                             net_addr_t *addr)
 {
     unsigned int magic;
     net_connect_data_t data;
+    net_packet_t *reply;
+    net_protocol_t protocol;
     char *player_name;
     char *client_version;
+    int num_players;
     int i;
 
-    // read the magic number
-
+    // Read the magic number and check it is the expected one.
     if (!NET_ReadInt32(packet, &magic))
     {
         return;
     }
 
-    if (magic != NET_MAGIC_NUMBER)
+    switch (magic)
     {
-        // invalid magic number
+        case NET_MAGIC_NUMBER:
+            break;
 
-        return;
+        case NET_OLD_MAGIC_NUMBER:
+            NET_SV_SendReject(addr,
+                "You are using an old client version that is not supported by "
+                "this server. This server is running " PACKAGE_STRING ".");
+            return;
+
+        default:
+            return;
     }
 
-    // Check the client version is the same as the server
-
+    // Read the client version string. We actually now only use this when
+    // sending a reject message, as we only reject if we can't negotiate a
+    // common protocol (below).
     client_version = NET_ReadString(packet);
-
     if (client_version == NULL)
     {
         return;
     }
 
-    if (strcmp(client_version, PACKAGE_STRING) != 0)
+    // Read the client's list of accepted protocols. Net play between forks
+    // of Chocolate Doom is accepted provided that they can negotiate a
+    // common accepted protocol.
+    protocol = NET_ReadProtocolList(packet);
+    if (protocol == NET_PROTOCOL_UNKNOWN)
     {
-        //!
-        // @category net
-        //
-        // When running a netgame server, ignore version mismatches between
-        // the server and the client. Using this option may cause game
-        // desyncs to occur, or differences in protocol may mean the netgame
-        // will simply not function at all.
-        //
+        char reject_msg[256];
 
-        if (M_CheckParm("-ignoreversion") == 0)
-        {
-            NET_SV_SendReject(addr,
-                "Different " PACKAGE_NAME " versions cannot play a net game!\n"
-                "Version mismatch: server version is: " PACKAGE_STRING);
-            return;
-        }
+        M_snprintf(reject_msg, sizeof(reject_msg),
+            "Version mismatch: server version is: " PACKAGE_STRING "; "
+            "client is: %s. No common compatible protocol could be "
+            "negotiated.", client_version);
+        NET_SV_SendReject(addr, reject_msg);
+        return;
     }
 
-    // read the game mode and mission
-
-    if (!NET_ReadConnectData(packet, &data))
+    // Read connect data, and check that the game mode/mission are valid
+    // and the max_players value is in a sensible range.
+    if (!NET_ReadConnectData(packet, &data)
+     || !D_ValidGameMode(data.gamemission, data.gamemode)
+     || data.max_players > NET_MAXPLAYERS)
     {
         return;
     }
 
-    if (!D_ValidGameMode(data.gamemission, data.gamemode))
-    {
-        return;
-    }
-
-    // Check max_players value. This must be in a sensible range.
-
-    if (data.max_players > NET_MAXPLAYERS)
-    {
-        return;
-    }
-
-    // read the player's name
-
+    // Read the player's name
     player_name = NET_ReadString(packet);
-
     if (player_name == NULL)
     {
         return;
     }
 
-    // received a valid SYN
+    // At this point we have received a valid SYN.
 
-    // not accepting new connections?
-
+    // Not accepting new connections?
     if (server_state != SERVER_WAITING_LAUNCH)
     {
-        NET_SV_SendReject(addr, "Server is not currently accepting connections");
+        NET_SV_SendReject(addr,
+                          "Server is not currently accepting connections");
         return;
     }
 
-    // allocate a client slot if there isn't one already
+    // Before accepting a new client, check that there is a slot free.
+    NET_SV_AssignPlayers();
+    num_players = NET_SV_NumPlayers();
 
+    if ((!data.drone && num_players >= NET_SV_MaxPlayers())
+     || NET_SV_NumClients() >= MAXNETNODES)
+    {
+        NET_SV_SendReject(addr, "Server is full!");
+        return;
+    }
+
+    // TODO: Add server option to allow rejecting clients which set
+    // lowres_turn.  This is potentially desirable as the presence of such
+    // clients affects turning resolution.
+
+    // Adopt the game mode and mission of the first connecting client:
+    if (num_players == 0 && !data.drone)
+    {
+        sv_gamemode = data.gamemode;
+        sv_gamemission = data.gamemission;
+    }
+
+    // Check the connecting client is playing the same game as all
+    // the other clients
+    if (data.gamemode != sv_gamemode || data.gamemission != sv_gamemission)
+    {
+        NET_SV_SendReject(addr, "You are playing the wrong game!");
+        return;
+    }
+
+    // Allocate a client slot if there isn't one already
     if (client == NULL)
     {
         // find a slot, or return if none found
@@ -702,67 +722,30 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
         }
     }
 
-    // New client?
-
-    if (!client->active)
+    // Client already connected?
+    if (client->active)
     {
-        int num_players;
-
-        // Before accepting a new client, check that there is a slot
-        // free
-
-        NET_SV_AssignPlayers();
-        num_players = NET_SV_NumPlayers();
-
-        if ((!data.drone && num_players >= NET_SV_MaxPlayers())
-         || NET_SV_NumClients() >= MAXNETNODES)
-        {
-            NET_SV_SendReject(addr, "Server is full!");
-            return;
-        }
-
-        // TODO: Add server option to allow rejecting clients which
-        // set lowres_turn.  This is potentially desirable as the 
-        // presence of such clients affects turning resolution.
-
-        // Adopt the game mode and mission of the first connecting client
-
-        if (num_players == 0 && !data.drone)
-        {
-            sv_gamemode = data.gamemode;
-            sv_gamemission = data.gamemission;
-        }
-
-        // Save the SHA1 checksums
-
-        memcpy(client->wad_sha1sum, data.wad_sha1sum, sizeof(sha1_digest_t));
-        memcpy(client->deh_sha1sum, data.deh_sha1sum, sizeof(sha1_digest_t));
-        client->is_freedoom = data.is_freedoom;
-        client->max_players = data.max_players;
-
-        // Check the connecting client is playing the same game as all
-        // the other clients
-
-        if (data.gamemode != sv_gamemode || data.gamemission != sv_gamemission)
-        {
-            NET_SV_SendReject(addr, "You are playing the wrong game!");
-            return;
-        }
-
-        // Activate, initialize connection
-
-        NET_SV_InitNewClient(client, addr, player_name);
-
-        client->recording_lowres = data.lowres_turn;
-        client->drone = data.drone;
-        client->player_class = data.player_class;
+        return;
     }
 
-    if (client->connection.state == NET_CONN_STATE_WAITING_ACK)
-    {
-        // force an acknowledgement
-        client->connection.last_send_time = -1;
-    }
+    // Activate, initialize connection
+    NET_SV_InitNewClient(client, addr, protocol);
+
+    // Save the SHA1 checksums and other details.
+    memcpy(client->wad_sha1sum, data.wad_sha1sum, sizeof(sha1_digest_t));
+    memcpy(client->deh_sha1sum, data.deh_sha1sum, sizeof(sha1_digest_t));
+    client->is_freedoom = data.is_freedoom;
+    client->max_players = data.max_players;
+    client->name = M_StringDuplicate(player_name);
+    client->recording_lowres = data.lowres_turn;
+    client->drone = data.drone;
+    client->player_class = data.player_class;
+
+    // Send a reply back to the client, indicating a successful connection
+    // and specifying the protocol that will be used for communications.
+    reply = NET_Conn_NewReliable(&client->connection, NET_PACKET_TYPE_SYN);
+    NET_WriteString(reply, PACKAGE_STRING);
+    NET_WriteProtocol(reply, protocol);
 }
 
 // Parse a launch packet. This is sent by the key player when the "start"

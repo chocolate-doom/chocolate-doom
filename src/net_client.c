@@ -426,6 +426,41 @@ void NET_CL_SendTiccmd(ticcmd_t *ticcmd, int maketic)
     NET_CL_SendTics(starttic, endtic);
 }
 
+// Parse a SYN packet received back from the server indicating a successful
+// connection attempt.
+static void NET_CL_ParseSYN(net_packet_t *packet)
+{
+    net_protocol_t protocol;
+    char *server_version;
+
+    server_version = NET_ReadSafeString(packet);
+    if (server_version == NULL)
+    {
+        return;
+    }
+
+    protocol = NET_ReadProtocol(packet);
+    if (protocol == NET_PROTOCOL_UNKNOWN)
+    {
+        return;
+    }
+
+    // We are now successfully connected.
+    client_connection.state = NET_CONN_STATE_CONNECTED;
+    client_connection.protocol = protocol;
+
+    // Even though we have negotiated a compatible protocol, the game may still
+    // desync. Chocolate Doom's philosophy makes this unlikely, but if we're
+    // playing with a forked version, or even against a different version that
+    // fixes a compatibility issue, we may still have problems.
+    if (strcmp(server_version, PACKAGE_STRING) != 0)
+    {
+        fprintf(stderr, "NET_CL_ParseSYN: This is '%s', but the server is "
+                "'%s'. It is possible that this mismatch may cause the game "
+                "to desync.\n", PACKAGE_STRING, server_version);
+    }
+}
+
 // data received while we are waiting for the game to start
 
 static void NET_CL_ParseWaitingData(net_packet_t *packet)
@@ -795,16 +830,14 @@ static void NET_CL_ParseConsoleMessage(net_packet_t *packet)
 {
     char *msg;
 
-    msg = NET_ReadString(packet);
+    msg = NET_ReadSafeString(packet);
 
     if (msg == NULL)
     {
         return;
     }
 
-    printf("Message from server: ");
-
-    NET_SafePuts(msg);
+    printf("Message from server:\n%s\n", msg);
 }
 
 // parse a received packet
@@ -826,6 +859,10 @@ static void NET_CL_ParsePacket(net_packet_t *packet)
     {
         switch (packet_type)
         {
+            case NET_PACKET_TYPE_SYN:
+                NET_CL_ParseSYN(packet);
+                break;
+
             case NET_PACKET_TYPE_WAITING_DATA:
                 NET_CL_ParseWaitingData(packet);
                 break;
@@ -921,14 +958,14 @@ static void NET_CL_SendSYN(net_connect_data_t *data)
     NET_WriteInt16(packet, NET_PACKET_TYPE_SYN);
     NET_WriteInt32(packet, NET_MAGIC_NUMBER);
     NET_WriteString(packet, PACKAGE_STRING);
+    NET_WriteProtocolList(packet);
     NET_WriteConnectData(packet, data);
     NET_WriteString(packet, net_player_name);
     NET_Conn_SendPacket(&client_connection, packet);
     NET_FreePacket(packet);
 }
 
-// connect to a server
-
+// Connect to a server
 boolean NET_CL_Connect(net_addr_t *addr, net_connect_data_t *data)
 {
     int start_time;
@@ -959,7 +996,7 @@ boolean NET_CL_Connect(net_addr_t *addr, net_connect_data_t *data)
 
     // Initialize connection
 
-    NET_Conn_InitClient(&client_connection, addr);
+    NET_Conn_InitClient(&client_connection, addr, NET_PROTOCOL_UNKNOWN);
 
     // try to connect
 

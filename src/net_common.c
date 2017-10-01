@@ -19,6 +19,7 @@
 
 #include "doomtype.h"
 #include "d_mode.h"
+#include "i_system.h"
 #include "i_timer.h"
 
 #include "net_common.h"
@@ -34,9 +35,19 @@
 
 #define KEEPALIVE_PERIOD 1
 
+// String names for the enum values in net_protocol_t, which are what is
+// sent over the wire. Every enum value must have an entry in this list.
+static struct
+{
+    net_protocol_t protocol;
+    const char *name;
+} protocol_names[] = {
+    {NET_PROTOCOL_CHOCOLATE_DOOM_0, "CHOCOLATE_DOOM_0"},
+};
+
 // reliable packet that is guaranteed to reach its destination
 
-struct net_reliable_packet_s 
+struct net_reliable_packet_s
 {
     net_packet_t *packet;
     int last_send_time;
@@ -44,11 +55,13 @@ struct net_reliable_packet_s
     net_reliable_packet_t *next;
 };
 
-static void NET_Conn_Init(net_connection_t *conn, net_addr_t *addr)
+static void NET_Conn_Init(net_connection_t *conn, net_addr_t *addr,
+                          net_protocol_t protocol)
 {
     conn->last_send_time = -1;
     conn->num_retries = 0;
     conn->addr = addr;
+    conn->protocol = protocol;
     conn->reliable_packets = NULL;
     conn->reliable_send_seq = 0;
     conn->reliable_recv_seq = 0;
@@ -56,18 +69,20 @@ static void NET_Conn_Init(net_connection_t *conn, net_addr_t *addr)
 
 // Initialize as a client connection
 
-void NET_Conn_InitClient(net_connection_t *conn, net_addr_t *addr)
+void NET_Conn_InitClient(net_connection_t *conn, net_addr_t *addr,
+                         net_protocol_t protocol)
 {
-    NET_Conn_Init(conn, addr);
+    NET_Conn_Init(conn, addr, protocol);
     conn->state = NET_CONN_STATE_CONNECTING;
 }
 
 // Initialize as a server connection
 
-void NET_Conn_InitServer(net_connection_t *conn, net_addr_t *addr)
+void NET_Conn_InitServer(net_connection_t *conn, net_addr_t *addr,
+                         net_protocol_t protocol)
 {
-    NET_Conn_Init(conn, addr);
-    conn->state = NET_CONN_STATE_WAITING_ACK;
+    NET_Conn_Init(conn, addr, protocol);
+    conn->state = NET_CONN_STATE_CONNECTED;
 }
 
 // Send a packet to a connection
@@ -78,38 +93,6 @@ void NET_Conn_SendPacket(net_connection_t *conn, net_packet_t *packet)
 {
     conn->keepalive_send_time = I_GetTimeMS();
     NET_SendPacket(conn->addr, packet);
-}
-
-// parse an ACK packet from a client
-
-static void NET_Conn_ParseACK(net_connection_t *conn, net_packet_t *packet)
-{
-    net_packet_t *reply;
-
-    if (conn->state == NET_CONN_STATE_CONNECTING)
-    {
-        // We are a client
-
-        // received a response from the server to our SYN
-
-        conn->state = NET_CONN_STATE_CONNECTED;
-
-        // We must send an ACK reply to the server's ACK
-
-        reply = NET_NewPacket(10);
-        NET_WriteInt16(reply, NET_PACKET_TYPE_ACK);
-        NET_Conn_SendPacket(conn, reply);
-        NET_FreePacket(reply);
-    }
-    
-    if (conn->state == NET_CONN_STATE_WAITING_ACK)
-    {
-        // We are a server
-
-        // Client is connected
-        
-        conn->state = NET_CONN_STATE_CONNECTED;
-    }
 }
 
 static void NET_Conn_ParseDisconnect(net_connection_t *conn, net_packet_t *packet)
@@ -151,7 +134,7 @@ static void NET_Conn_ParseReject(net_connection_t *conn, net_packet_t *packet)
 {
     char *msg;
 
-    msg = NET_ReadString(packet);
+    msg = NET_ReadSafeString(packet);
 
     if (msg == NULL)
     {
@@ -165,8 +148,7 @@ static void NET_Conn_ParseReject(net_connection_t *conn, net_packet_t *packet)
         conn->state = NET_CONN_STATE_DISCONNECTED;
         conn->disconnect_reason = NET_DISCONNECT_REMOTE;
 
-        printf("Rejected by server: ");
-        NET_SafePuts(msg);
+        printf("Rejected by server: %s\n", msg);
     }
 }
 
@@ -282,9 +264,6 @@ boolean NET_Conn_Packet(net_connection_t *conn, net_packet_t *packet,
     
     switch (*packet_type)
     {
-        case NET_PACKET_TYPE_ACK:
-            NET_Conn_ParseACK(conn, packet);
-            break;
         case NET_PACKET_TYPE_DISCONNECT:
             NET_Conn_ParseDisconnect(conn, packet);
             break;
@@ -368,35 +347,6 @@ void NET_Conn_Run(net_connection_t *conn)
 
             NET_Conn_SendPacket(conn, conn->reliable_packets->packet);
             conn->reliable_packets->last_send_time = nowtime;
-        }
-    }
-    else if (conn->state == NET_CONN_STATE_WAITING_ACK)
-    {
-        if (conn->last_send_time < 0
-         || nowtime - conn->last_send_time > 1000)
-        {
-            // it has been a second since the last ACK was sent, and 
-            // still no reply.
-
-            if (conn->num_retries < MAX_RETRIES)
-            {
-                // send another ACK
-
-                packet = NET_NewPacket(10);
-                NET_WriteInt16(packet, NET_PACKET_TYPE_ACK);
-                NET_Conn_SendPacket(conn, packet);
-                NET_FreePacket(packet);
-                conn->last_send_time = nowtime;
-
-                ++conn->num_retries;
-            }
-            else 
-            {
-                // no more retries allowed.
-
-                conn->state = NET_CONN_STATE_DISCONNECTED;
-                conn->disconnect_reason = NET_DISCONNECT_TIMEOUT;
-            }
         }
     }
     else if (conn->state == NET_CONN_STATE_DISCONNECTING)
@@ -530,5 +480,108 @@ boolean NET_ValidGameSettings(GameMode_t mode, GameMission_t mission,
         return false;
 
     return true;
+}
+
+static net_protocol_t ParseProtocolName(const char *name)
+{
+    int i;
+
+    for (i = 0; i < arrlen(protocol_names); ++i)
+    {
+        if (!strcmp(protocol_names[i].name, name))
+        {
+            return protocol_names[i].protocol;
+        }
+    }
+
+    return NET_PROTOCOL_UNKNOWN;
+}
+
+// NET_ReadProtocol reads a single string-format protocol name from the given
+// packet, returning NET_PROTOCOL_UNKNOWN if the string describes an unknown
+// protocol.
+net_protocol_t NET_ReadProtocol(net_packet_t *packet)
+{
+    const char *name;
+
+    name = NET_ReadString(packet);
+    if (name == NULL)
+    {
+        return NET_PROTOCOL_UNKNOWN;
+    }
+
+    return ParseProtocolName(name);
+}
+
+// NET_WriteProtocol writes a single string-format protocol name to a packet.
+void NET_WriteProtocol(net_packet_t *packet, net_protocol_t protocol)
+{
+    int i;
+
+    for (i = 0; i < arrlen(protocol_names); ++i)
+    {
+        if (protocol_names[i].protocol == protocol)
+        {
+            NET_WriteString(packet, protocol_names[i].name);
+            return;
+        }
+    }
+
+    // If you add an entry to the net_protocol_t enum, a corresponding entry
+    // must be added to the protocol_names list.
+    I_Error("NET_WriteProtocol: protocol %d missing from protocol_names "
+            "list; please add it.", protocol);
+}
+
+// NET_ReadProtocolList reads a list of string-format protocol names from
+// the given packet, returning a single protocol number. The protocol that is
+// returned is the last protocol in the list that is a supported protocol. If
+// no recognized protocols are read, NET_PROTOCOL_UNKNOWN is returned.
+net_protocol_t NET_ReadProtocolList(net_packet_t *packet)
+{
+    net_protocol_t result;
+    unsigned int num_protocols;
+    int i;
+
+    if (!NET_ReadInt8(packet, &num_protocols))
+    {
+        return NET_PROTOCOL_UNKNOWN;
+    }
+
+    result = NET_PROTOCOL_UNKNOWN;
+
+    for (i = 0; i < num_protocols; ++i)
+    {
+        net_protocol_t p;
+        const char *name;
+
+        name = NET_ReadString(packet);
+        if (name == NULL)
+        {
+            return NET_PROTOCOL_UNKNOWN;
+        }
+
+        p = ParseProtocolName(name);
+        if (p != NET_PROTOCOL_UNKNOWN)
+        {
+            result = p;
+        }
+    }
+
+    return result;
+}
+
+// NET_WriteProtocolList writes a list of string-format protocol names into
+// the given packet, all the supported protocols in the net_protocol_t enum.
+void NET_WriteProtocolList(net_packet_t *packet)
+{
+    int i;
+
+    NET_WriteInt8(packet, NET_NUM_PROTOCOLS);
+
+    for (i = 0; i < NET_NUM_PROTOCOLS; ++i)
+    {
+        NET_WriteProtocol(packet, i);
+    }
 }
 

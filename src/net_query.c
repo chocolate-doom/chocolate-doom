@@ -738,7 +738,7 @@ static void NET_QueryPrintCallback(net_addr_t *addr,
         printf("(game running) ");
     }
 
-    NET_SafePuts(data->description);
+    printf("%s\n", data->description);
 }
 
 void NET_LANQuery(void)
