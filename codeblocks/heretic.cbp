@@ -7,9 +7,9 @@
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output="../bin/crispy-heretic-dbg.exe" prefix_auto="0" extension_auto="0" />
+				<Option output="../bin/chocolate-heretic-dbg.exe" prefix_auto="0" extension_auto="0" />
 				<Option working_dir="../bin" />
-				<Option object_output="../obj/crispy-heretic/dbg" />
+				<Option object_output="../obj/chocolate-heretic/dbg" />
 				<Option type="0" />
 				<Option compiler="gcc" />
 				<Option projectLinkerOptionsRelation="2" />
@@ -22,9 +22,9 @@
 				</Linker>
 			</Target>
 			<Target title="Release">
-				<Option output="../bin/crispy-heretic.exe" prefix_auto="0" extension_auto="0" />
+				<Option output="../bin/chocolate-heretic.exe" prefix_auto="0" extension_auto="0" />
 				<Option working_dir="../bin" />
-				<Option object_output="../obj/crispy-heretic/rel" />
+				<Option object_output="../obj/chocolate-heretic/rel" />
 				<Option type="0" />
 				<Option compiler="gcc" />
 				<Option projectLinkerOptionsRelation="2" />
@@ -52,7 +52,7 @@
 			<Add directory="../opl" />
 		</Compiler>
 		<Linker>
-			<Add option="-lmingw32 -lSDL2main -lSDL2 -lSDL2_mixer -lSDL2_net -lSDL2_image" />
+			<Add option="-lmingw32 -lSDLmain -lSDL -lSDL_mixer -lSDL_net -mwindows" />
 			<Add directory="../lib" />
 		</Linker>
 		<Unit filename="../src/d_event.c">
@@ -194,9 +194,6 @@
 		<Unit filename="../src/heretic/p_pspr.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="../src/heretic/p_saveg.c">
-			<Option compilerVar="CC" />
-		</Unit>
 		<Unit filename="../src/heretic/p_setup.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -260,10 +257,6 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../src/i_endoom.h" />
-		<Unit filename="../src/i_input.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../src/i_input.h" />
 		<Unit filename="../src/i_joystick.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -277,6 +270,10 @@
 		<Unit filename="../src/i_pcsound.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="../src/i_scale.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../src/i_scale.h" />
 		<Unit filename="../src/i_sdlmusic.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -335,6 +332,7 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../src/m_misc.h" />
+		<Unit filename="../src/md5.h" />
 		<Unit filename="../src/memio.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -400,10 +398,6 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../src/tables.h" />
-		<Unit filename="../src/v_diskicon.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../src/v_diskicon.h" />
 		<Unit filename="../src/v_patch.h" />
 		<Unit filename="../src/v_video.c">
 			<Option compilerVar="CC" />

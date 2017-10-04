@@ -1,49 +1,21 @@
-<<<<<<< HEAD
 1 ICON "../data/doom.ico"
 
 1 VERSIONINFO
-PRODUCTVERSION 4,1
-FILEVERSION 4,1
+PRODUCTVERSION 2,3,0,0
+FILEVERSION 2,3,0,0
 FILETYPE 1
 {
  BLOCK "StringFileInfo"
  {
   BLOCK "040904E4"
   {
-   VALUE "FileVersion", "4.1"
-   VALUE "FileDescription", "4.1"
-   VALUE "InternalName", "Crispy Doom"
-   VALUE "CompanyName", "Crispy Doom"
-   VALUE "LegalCopyright", "GNU General Public License"
-   VALUE "ProductName", "Crispy Doom"
-   VALUE "ProductVersion", "4.1"
-  }
- }
- BLOCK "VarFileInfo"
- {
-  VALUE "Translation", 0x409, 1252
- }
-}
-
-=======
-1 ICON "../data/doom.ico"
-
-1 VERSIONINFO
-PRODUCTVERSION 3,0,0,0
-FILEVERSION 3,0,0,0
-FILETYPE 1
-{
- BLOCK "StringFileInfo"
- {
-  BLOCK "040904E4"
-  {
-   VALUE "FileVersion", "3.0.0-beta1"
-   VALUE "FileDescription", "3.0.0-beta1"
+   VALUE "FileVersion", "2.3.0"
+   VALUE "FileDescription", "2.3.0"
    VALUE "InternalName", "Chocolate Doom"
    VALUE "CompanyName", "Chocolate Doom"
    VALUE "LegalCopyright", "GNU General Public License"
    VALUE "ProductName", "Chocolate Doom"
-   VALUE "ProductVersion", "3.0.0-beta1"
+   VALUE "ProductVersion", "2.3.0"
   }
  }
  BLOCK "VarFileInfo"
@@ -52,4 +24,3 @@ FILETYPE 1
  }
 }
 
->>>>>>> upstream/sdl2-branch
