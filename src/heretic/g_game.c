@@ -22,6 +22,7 @@
 #include "doomdef.h"
 #include "doomkeys.h"
 #include "deh_str.h"
+#include "i_input.h"
 #include "i_timer.h"
 #include "i_system.h"
 #include "m_argv.h"

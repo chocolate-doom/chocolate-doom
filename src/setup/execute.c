@@ -137,6 +137,8 @@ void AddCmdLineParameter(execute_context_t *context, char *s, ...)
 
     vfprintf(context->stream, s, args);
     fprintf(context->stream, "\n");
+
+    va_end(args);
 }
 
 #if defined(_WIN32)

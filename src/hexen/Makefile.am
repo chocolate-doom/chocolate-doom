@@ -2,7 +2,7 @@ AM_CFLAGS=-I$(top_srcdir)/src @SDL_CFLAGS@ @SDLMIXER_CFLAGS@ @SDLNET_CFLAGS@
 
 noinst_LIBRARIES=libhexen.a
 
-SOURCE_FILES=                         \
+libhexen_a_SOURCES =                  \
 a_action.c                            \
                     am_data.h         \
 am_map.c            am_map.h          \
@@ -58,4 +58,3 @@ sv_save.c                             \
                     textdefs.h        \
                     xddefs.h
 
-libhexen_a_SOURCES=$(SOURCE_FILES)

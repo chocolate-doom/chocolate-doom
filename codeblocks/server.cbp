@@ -7,9 +7,15 @@
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
+<<<<<<< HEAD
 				<Option output="../bin/crispy-server-dbg.exe" prefix_auto="0" extension_auto="0" />
 				<Option working_dir="../bin" />
 				<Option object_output="../obj/crispy-server/dbg" />
+=======
+				<Option output="../bin/chocolate-server-dbg.exe" prefix_auto="0" extension_auto="0" />
+				<Option working_dir="../bin" />
+				<Option object_output="../obj/chocolate-server/dbg" />
+>>>>>>> upstream/sdl2-branch
 				<Option type="0" />
 				<Option compiler="gcc" />
 				<Compiler>
@@ -18,9 +24,15 @@
 				</Compiler>
 			</Target>
 			<Target title="Release">
+<<<<<<< HEAD
 				<Option output="../bin/crispy-server.exe" prefix_auto="0" extension_auto="0" />
 				<Option working_dir="../bin" />
 				<Option object_output="../obj/crispy-server/rel" />
+=======
+				<Option output="../bin/chocolate-server.exe" prefix_auto="0" extension_auto="0" />
+				<Option working_dir="../bin" />
+				<Option object_output="../obj/chocolate-server/rel" />
+>>>>>>> upstream/sdl2-branch
 				<Option type="0" />
 				<Option compiler="gcc" />
 				<Compiler>
@@ -40,7 +52,7 @@
 			<Add directory="../textscreen" />
 		</Compiler>
 		<Linker>
-			<Add option="-lmingw32 -lSDLmain -lSDL -lSDL_net -mwindows" />
+			<Add option="-lmingw32 -lSDL2main -lSDL2 -lSDL2_net" />
 		</Linker>
 		<Unit filename="../src/d_dedicated.c">
 			<Option compilerVar="CC" />

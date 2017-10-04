@@ -73,21 +73,18 @@ static int PCSound_Win32_Init(pcsound_callback_func callback_func)
 
     // Beep() ignores its arguments on win9x, so this driver will
     // not work there.
-
     if (osvi.dwPlatformId != VER_PLATFORM_WIN32_NT)
     {
-        // TODO: Use _out() to write directly to the PC speaker on
-        // win9x: See PC/winsound.c in the Python standard library.
-
         return 0;
     }
-    
+
     // Start a thread to play sound.
 
     callback = callback_func;
     sound_thread_running = 1;
 
-    sound_thread_handle = SDL_CreateThread(SoundThread, NULL);
+    sound_thread_handle =
+        SDL_CreateThread(SoundThread, "PC speaker thread", NULL);
 
     return 1;
 }

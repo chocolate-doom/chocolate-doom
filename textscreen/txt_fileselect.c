@@ -23,6 +23,8 @@
 
 #include "txt_fileselect.h"
 #include "txt_inputbox.h"
+#include "txt_gui.h"
+#include "txt_io.h"
 #include "txt_main.h"
 #include "txt_widget.h"
 
@@ -99,7 +101,12 @@ static char *ExecReadOutput(char **argv)
         }
         else
         {
-            result = realloc(result, result_len + bytes + 1);
+            char *new_result = realloc(result, result_len + bytes + 1);
+            if (new_result == NULL)
+            {
+                break;
+            }
+            result = new_result;
             memcpy(result + result_len, buf, bytes);
             result_len += bytes;
             result[result_len] = '\0';
@@ -327,6 +334,7 @@ char *TXT_SelectFile(char *window_title, char **extensions)
 
 #define APPLESCRIPT_WRAPPER \
     "tell application (path to frontmost application as text)\n" \
+    "    activate\n" \
     "    set theFile to (%s)\n" \
     "    copy POSIX path of theFile to stdout\n" \
     "end tell\n"
@@ -509,6 +517,45 @@ int TXT_CanSelectFiles(void)
     return ZenityAvailable();
 }
 
+//
+// ExpandExtension
+// given an extension (like wad)
+// return a pointer to a string that is a case-insensitive
+// pattern representation (like [Ww][Aa][Dd])
+//
+static char *ExpandExtension(char *orig)
+{
+    int oldlen, newlen, i;
+    char *c, *newext = NULL;
+
+    oldlen = strlen(orig);
+    newlen = oldlen * 4; // pathological case: 'w' => '[Ww]'
+    newext = malloc(newlen+1);
+
+    if (newext == NULL)
+    {
+        return NULL;
+    }
+
+    c = newext;
+    for (i = 0; i < oldlen; ++i)
+    {
+        if (isalpha(orig[i]))
+        {
+            *c++ = '[';
+            *c++ = tolower(orig[i]);
+            *c++ = toupper(orig[i]);
+            *c++ = ']';
+        }
+        else
+        {
+            *c++ = orig[i];
+        }
+    }
+    *c = '\0';
+    return newext;
+}
+
 char *TXT_SelectFile(char *window_title, char **extensions)
 {
     unsigned int i;
@@ -522,7 +569,7 @@ char *TXT_SelectFile(char *window_title, char **extensions)
         return NULL;
     }
 
-    argv = calloc(4 + NumExtensions(extensions), sizeof(char *));
+    argv = calloc(5 + NumExtensions(extensions), sizeof(char *));
     argv[0] = ZENITY_BINARY;
     argv[1] = "--file-selection";
     argc = 2;
@@ -544,12 +591,20 @@ char *TXT_SelectFile(char *window_title, char **extensions)
     {
         for (i = 0; extensions[i] != NULL; ++i)
         {
-            len = 30 + strlen(extensions[i]) * 2;
-            argv[argc] = malloc(len);
-            TXT_snprintf(argv[argc], len, "--file-filter=.%s | *.%s",
-                         extensions[i], extensions[i]);
-            ++argc;
+            char * newext = ExpandExtension(extensions[i]);
+            if (newext)
+            {
+                len = 30 + strlen(extensions[i]) + strlen(newext);
+                argv[argc] = malloc(len);
+                TXT_snprintf(argv[argc], len, "--file-filter=.%s | *.%s",
+                             extensions[i], newext);
+                ++argc;
+                free(newext);
+            }
         }
+
+        argv[argc] = strdup("--file-filter=*.* | *.*");
+        ++argc;
     }
 
     argv[argc] = NULL;
@@ -587,11 +642,14 @@ static void TXT_FileSelectDrawer(TXT_UNCAST_ARG(fileselect))
     // Input box widget inherits all the properties of the
     // file selector.
 
-    fileselect->inputbox->widget.x = fileselect->widget.x;
+    fileselect->inputbox->widget.x = fileselect->widget.x + 2;
     fileselect->inputbox->widget.y = fileselect->widget.y;
-    fileselect->inputbox->widget.w = fileselect->widget.w;
+    fileselect->inputbox->widget.w = fileselect->widget.w - 2;
     fileselect->inputbox->widget.h = fileselect->widget.h;
 
+    // Triple bar symbol gives a distinguishing look to the file selector.
+    TXT_DrawCodePageString("\xf0 ");
+    TXT_BGColor(TXT_COLOR_BLACK, 0);
     TXT_DrawWidget(fileselect->inputbox);
 }
 

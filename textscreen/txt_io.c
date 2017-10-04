@@ -54,12 +54,34 @@ static void NewLine(unsigned char *screendata)
     }
 }
 
-static void PutChar(unsigned char *screendata, int c)
+static void PutSymbol(unsigned char *screendata, int c)
 {
     unsigned char *p;
 
     p = screendata + cur_y * TXT_SCREEN_W * 2 +  cur_x * 2;
 
+    // Add a new character to the buffer
+
+    p[0] = c;
+    p[1] = fgcolor | (bgcolor << 4);
+
+    ++cur_x;
+
+    if (cur_x >= TXT_SCREEN_W)
+    {
+        NewLine(screendata);
+    }
+}
+
+// "Blind" version of TXT_PutChar() below which doesn't do any interpretation
+// of control signals. Just write a particular symbol to the screen buffer.
+void TXT_PutSymbol(int c)
+{
+    PutSymbol(TXT_GetScreenData(), c);
+}
+
+static void PutChar(unsigned char *screendata, int c)
+{
     switch (c)
     {
         case '\n':
@@ -74,30 +96,14 @@ static void PutChar(unsigned char *screendata, int c)
             break;
 
         default:
-
-            // Add a new character to the buffer
-
-            p[0] = c;
-            p[1] = fgcolor | (bgcolor << 4);
-
-            ++cur_x;
-
-            if (cur_x >= TXT_SCREEN_W) 
-            {
-                NewLine(screendata);
-            }
-
+            PutSymbol(screendata, c);
             break;
     }
 }
 
 void TXT_PutChar(int c)
 {
-    unsigned char *screen;
-
-    screen = TXT_GetScreenData();
-
-    PutChar(screen, c);
+    PutChar(TXT_GetScreenData(), c);
 }
 
 void TXT_Puts(const char *s)

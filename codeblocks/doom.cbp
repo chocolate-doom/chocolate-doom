@@ -51,7 +51,7 @@
 			<Add directory="../opl" />
 		</Compiler>
 		<Linker>
-			<Add option="-lmingw32 -lSDLmain -lSDL -lSDL_mixer -lSDL_net -mwindows" />
+			<Add option="-lmingw32 -lSDL2main -lSDL2 -lSDL2_mixer -lSDL2_net -lSDL2_image" />
 			<Add directory="../lib" />
 		</Linker>
 		<Unit filename="../src/d_event.c">
@@ -341,6 +341,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../src/i_endoom.h" />
+		<Unit filename="../src/i_input.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../src/i_input.h" />
 		<Unit filename="../src/i_joystick.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -354,10 +358,6 @@
 		<Unit filename="../src/i_pcsound.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="../src/i_scale.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../src/i_scale.h" />
 		<Unit filename="../src/i_sdlmusic.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -416,7 +416,6 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../src/m_misc.h" />
-		<Unit filename="../src/md5.h" />
 		<Unit filename="../src/memio.c">
 			<Option compilerVar="CC" />
 		</Unit>

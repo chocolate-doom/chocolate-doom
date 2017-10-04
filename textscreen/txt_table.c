@@ -906,6 +906,37 @@ txt_table_t *TXT_NewTable(int columns)
     return table;
 }
 
+// Alternative to TXT_NewTable() that allows a list of widgets to be
+// provided in its arguments.
+txt_table_t *TXT_MakeTable(int columns, TXT_UNCAST_ARG(first_widget), ...)
+{
+    TXT_CAST_ARG(txt_widget_t, first_widget);
+    txt_table_t *table;
+    va_list args;
+
+    table = TXT_NewTable(columns);
+    TXT_AddWidget(table, first_widget);
+
+    va_start(args, TXT_UNCAST_ARG_NAME(first_widget));
+
+    for (;;)
+    {
+        txt_widget_t *widget;
+        widget = va_arg(args, txt_widget_t *);
+
+        if (widget == NULL)
+        {
+            break;
+        }
+
+        TXT_AddWidget(table, widget);
+    }
+
+    va_end(args);
+
+    return table;
+}
+
 // Create a horizontal table from a list of widgets.
 
 txt_table_t *TXT_NewHorizBox(TXT_UNCAST_ARG(first_widget), ...)

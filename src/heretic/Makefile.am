@@ -5,10 +5,17 @@ AM_CFLAGS=-I$(top_srcdir)/src                           \
 
 noinst_LIBRARIES=libheretic.a
 
-SOURCE_FILES=                                        \
+libheretic_a_SOURCES =                               \
                        am_data.h                     \
 am_map.c               am_map.h                      \
 ct_chat.c              ct_chat.h                     \
+deh_ammo.c                                           \
+deh_frame.c                                          \
+deh_htext.c                                          \
+deh_htic.c             deh_htic.h                    \
+deh_sound.c                                          \
+deh_thing.c                                          \
+deh_weapon.c                                         \
 d_main.c                                             \
 d_net.c                                              \
                        doomdata.h                    \
@@ -52,16 +59,4 @@ r_things.c                                           \
 sb_bar.c                                             \
 sounds.c               sounds.h                      \
 s_sound.c              s_sound.h
-
-FEATURE_DEHACKED_SOURCE_FILES =            \
-deh_ammo.c                                 \
-deh_frame.c                                \
-deh_htext.c                                \
-deh_htic.c             deh_htic.h          \
-deh_sound.c                                \
-deh_thing.c                                \
-deh_weapon.c
-
-libheretic_a_SOURCES=$(SOURCE_FILES)                  \
-                     $(FEATURE_DEHACKED_SOURCE_FILES)
 

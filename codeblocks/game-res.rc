@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 1 ICON "../data/doom.ico"
 
 1 VERSIONINFO
@@ -24,3 +25,31 @@ FILETYPE 1
  }
 }
 
+=======
+1 ICON "../data/doom.ico"
+
+1 VERSIONINFO
+PRODUCTVERSION 3,0,0,0
+FILEVERSION 3,0,0,0
+FILETYPE 1
+{
+ BLOCK "StringFileInfo"
+ {
+  BLOCK "040904E4"
+  {
+   VALUE "FileVersion", "3.0.0-beta1"
+   VALUE "FileDescription", "3.0.0-beta1"
+   VALUE "InternalName", "Chocolate Doom"
+   VALUE "CompanyName", "Chocolate Doom"
+   VALUE "LegalCopyright", "GNU General Public License"
+   VALUE "ProductName", "Chocolate Doom"
+   VALUE "ProductVersion", "3.0.0-beta1"
+  }
+ }
+ BLOCK "VarFileInfo"
+ {
+  VALUE "Translation", 0x409, 1252
+ }
+}
+
+>>>>>>> upstream/sdl2-branch

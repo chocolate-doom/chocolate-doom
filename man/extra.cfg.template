@@ -12,7 +12,9 @@ contains configuration options that are specific to Chocolate Doom
 only.
 .PP
 \fIchocolate-doom.cfg\fR is normally stored in the user's home directory,
-as \fI~/.chocolate-doom/chocolate-doom.cfg\fR.
+as \fI~/.local/share/chocolate-doom/chocolate-doom.cfg\fR.  The path can be
+overridden using the \fBXDG_DATA_HOME\fR environment variable (see the XDG
+Base Directory Specification).
 .PP
 The \fBchocolate-setup\fR(6) tool provides a simple to use front-end
 for editing \fIchocolate-doom.cfg\fR.

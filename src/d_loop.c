@@ -19,8 +19,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "doomfeatures.h"
-
 #include "d_event.h"
 #include "d_loop.h"
 #include "d_ticcmd.h"
@@ -191,14 +189,11 @@ static boolean BuildNewTic(void)
     memset(&cmd, 0, sizeof(ticcmd_t));
     loop_interface->BuildTiccmd(&cmd, maketic);
 
-#ifdef FEATURE_MULTIPLAYER
-
     if (net_client_connected)
     {
         NET_CL_SendTiccmd(&cmd, maketic);
     }
 
-#endif
     ticdata[maketic % BACKUPTICS].cmds[localplayer] = cmd;
     ticdata[maketic % BACKUPTICS].ingame[localplayer] = true;
 
@@ -226,14 +221,10 @@ void NetUpdate (void)
     if (singletics)
         return;
 
-#ifdef FEATURE_MULTIPLAYER
-
     // Run network subsystems
 
     NET_CL_Run();
     NET_SV_Run();
-
-#endif
 
     // check time
     nowtime = GetAdjustedTime() / ticdup;
@@ -460,8 +451,6 @@ boolean D_InitNetGame(net_connect_data_t *connect_data)
 
     player_class = connect_data->player_class;
 
-#ifdef FEATURE_MULTIPLAYER
-
     //!
     // @category net
     //
@@ -543,7 +532,6 @@ boolean D_InitNetGame(net_connect_data_t *connect_data)
 
         result = true;
     }
-#endif
 
     return result;
 }
@@ -556,10 +544,8 @@ boolean D_InitNetGame(net_connect_data_t *connect_data)
 //
 void D_QuitNetGame (void)
 {
-#ifdef FEATURE_MULTIPLAYER
     NET_SV_Shutdown();
     NET_CL_Disconnect();
-#endif
 }
 
 static int GetLowTic(void)
@@ -568,7 +554,6 @@ static int GetLowTic(void)
 
     lowtic = maketic;
 
-#ifdef FEATURE_MULTIPLAYER
     if (net_client_connected)
     {
         if (drone || recvtic < lowtic)
@@ -576,7 +561,6 @@ static int GetLowTic(void)
             lowtic = recvtic;
         }
     }
-#endif
 
     return lowtic;
 }

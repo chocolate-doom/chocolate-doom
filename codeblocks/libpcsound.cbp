@@ -39,7 +39,7 @@
 			<Add directory="../src" />
 		</Compiler>
 		<Linker>
-			<Add option="-lmingw32 -lSDLmain -lSDL -lSDL_mixer -mwindows" />
+			<Add option="-lmingw32 -lSDL2main -lSDL2 -lSDL2_mixer" />
 		</Linker>
 		<Unit filename="../pcsound/pcsound.c">
 			<Option compilerVar="CC" />

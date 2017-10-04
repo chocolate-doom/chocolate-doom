@@ -22,6 +22,7 @@
 #include "deh_str.h"
 #include "doomdef.h"
 #include "doomkeys.h"
+#include "i_input.h"
 #include "i_system.h"
 #include "i_swap.h"
 #include "m_controls.h"
@@ -847,7 +848,15 @@ static boolean SCSaveGame(int option)
 
     if (!FileMenuKeySteal)
     {
+        int x, y;
+
         FileMenuKeySteal = true;
+        // We need to activate the text input interface to type the save
+        // game name:
+        x = SaveMenu.x + 1;
+        y = SaveMenu.y + 1 + option * ITEM_HEIGHT;
+        I_StartTextInput(x, y, x + 190, y + ITEM_HEIGHT - 2);
+
         M_StringCopy(oldSlotText, SlotText[option], sizeof(oldSlotText));
         ptr = SlotText[option];
         while (*ptr)
@@ -865,6 +874,7 @@ static boolean SCSaveGame(int option)
     {
         G_SaveGame(option, SlotText[option]);
         FileMenuKeySteal = false;
+        I_StopTextInput();
         MN_DeactivateMenu();
     }
     BorderNeedRefresh = true;
@@ -1503,7 +1513,12 @@ boolean MN_Responder(event_t * event)
         return (false);
     }
     else
-    {                           // Editing file names
+    {
+        // Editing file names
+        // When typing a savegame name, we use the fully shifted and
+        // translated input value from event->data3.
+        charTyped = event->data3;
+
         textBuffer = &SlotText[currentSlot][slotptr];
         if (key == KEY_BACKSPACE)
         {
@@ -1605,6 +1620,10 @@ void MN_DeactivateMenu(void)
         CurrentMenu->oldItPos = CurrentItPos;
     }
     MenuActive = false;
+    if (FileMenuKeySteal)
+    {
+        I_StopTextInput();
+    }
     if (!netgame)
     {
         paused = false;

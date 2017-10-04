@@ -48,7 +48,7 @@ struct txt_window_action_s
  *
  * @param key           The keyboard key that triggers this action.
  * @param label         Label to display for this action in the tray
- *                      at the bottom of the window.
+ *                      at the bottom of the window (UTF-8 format).
  * @return              Pointer to the new window action widget.
  */
 

@@ -19,10 +19,10 @@ behavior.
 @include environ.man
 .SH FILES
 .TP
-\fB$HOME/.chocolate-doom/hexen.cfg\fR
+\fB$HOME/.local/share/chocolate-doom/hexen.cfg\fR
 The main configuration file for Chocolate Hexen.  See \fBhexen.cfg\fR(5).
 .TP
-\fB$HOME/.chocolate-doom/chocolate-hexen.cfg\fR
+\fB$HOME/.local/share/chocolate-doom/chocolate-hexen.cfg\fR
 Extra configuration values that are specific to Chocolate Hexen and not
 present in Vanilla Hexen.  See \fBchocolate-hexen.cfg\fR(5).
 .SH SEE ALSO

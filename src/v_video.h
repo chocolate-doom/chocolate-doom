@@ -69,7 +69,10 @@ void V_DrawPatchShadow2(int x, int y, patch_t *patch);
 // Draw a linear block of pixels into the view buffer.
 
 void V_DrawBlock(int x, int y, int width, int height, pixel_t *src);
+<<<<<<< HEAD
 void V_DrawScaledBlock(int x, int y, int width, int height, byte *src);
+=======
+>>>>>>> upstream/sdl2-branch
 
 void V_MarkRect(int x, int y, int width, int height);
 

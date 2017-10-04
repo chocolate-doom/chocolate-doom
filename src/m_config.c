@@ -25,11 +25,12 @@
 #include <errno.h>
 #include <assert.h>
 
+#include "SDL_filesystem.h"
+
 #include "config.h"
 
 #include "doomtype.h"
 #include "doomkeys.h"
-#include "doomfeatures.h"
 #include "i_system.h"
 #include "m_argv.h"
 #include "m_misc.h"
@@ -735,20 +736,20 @@ static default_collection_t doom_defaults =
 static default_t extra_defaults_list[] =
 {
     //!
-    // @game heretic hexen strife
-    //
-    // If non-zero, display the graphical startup screen.
+    // Name of the SDL video driver to use.  If this is an empty string,
+    // the default video driver is used.
     //
 
-    CONFIG_VARIABLE_INT(graphical_startup),
+    CONFIG_VARIABLE_STRING(video_driver),
 
     //!
-    // If non-zero, video settings will be autoadjusted to a valid
-    // configuration when the screen_width and screen_height variables
-    // do not match any valid configuration.
+    // Position of the window on the screen when running in windowed
+    // mode. Accepted values are: "" (empty string) - don't care,
+    // "center" - place window at center of screen, "x,y" - place
+    // window at the specified coordinates.
     //
 
-    CONFIG_VARIABLE_INT(autoadjust_video_settings),
+    CONFIG_VARIABLE_STRING(window_position),
 
     //!
     // If non-zero, the game will run in full screen mode.  If zero,
@@ -758,11 +759,75 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(fullscreen),
 
     //!
+    // Index of the display on which the game should run. This has no
+    // effect if running in windowed mode (fullscreen=0) and
+    // window_position is not set to "center".
+    //
+
+    CONFIG_VARIABLE_INT(video_display),
+
+    //!
     // If non-zero, the screen will be stretched vertically to display
     // correctly on a square pixel video mode.
     //
 
     CONFIG_VARIABLE_INT(aspect_ratio_correct),
+
+    //!
+    // If non-zero, forces integer scales for resolution-independent rendering.
+    //
+
+    CONFIG_VARIABLE_INT(integer_scaling),
+
+    // If non-zero, any pillar/letter boxes drawn around the game area
+    // will "flash" when the game palette changes, simulating the VGA
+    // "porch"
+
+    CONFIG_VARIABLE_INT(vga_porch_flash),
+
+    //!
+    // Window width when running in windowed mode.
+    //
+
+    CONFIG_VARIABLE_INT(window_width),
+
+    //!
+    // Window height when running in windowed mode.
+    //
+
+    CONFIG_VARIABLE_INT(window_height),
+
+    //!
+    // Width for screen mode when running fullscreen.
+    // If this and fullscreen_height are both set to zero, we run
+    // fullscreen as a desktop window that covers the entire screen,
+    // rather than ever switching screen modes. It should usually
+    // be unnecessary to set this value.
+    //
+
+    CONFIG_VARIABLE_INT(fullscreen_width),
+
+    //!
+    // Height for screen mode when running fullscreen.
+    // See documentation for fullscreen_width.
+    //
+
+    CONFIG_VARIABLE_INT(fullscreen_height),
+
+    //!
+    // If non-zero, force the use of a software renderer. For use on
+    // systems lacking hardware acceleration.
+    //
+
+    CONFIG_VARIABLE_INT(force_software_renderer),
+
+    //!
+    // Maximum number of pixels to use for intermediate scaling buffer.
+    // More pixels mean that the screen can be rendered more precisely,
+    // but there are diminishing returns on quality. The default limits to
+    // 16,000,000 pixels, which is enough to cover 4K monitor standards.
+
+    CONFIG_VARIABLE_INT(max_scaling_buffer_pixels),
 
     //!
     // Number of milliseconds to wait on startup after the video mode
@@ -774,62 +839,37 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(startup_delay),
 
     //!
-    // Screen width in pixels.  If running in full screen mode, this is
-    // the X dimension of the video mode to use.  If running in
-    // windowed mode, this is the width of the window in which the game
-    // will run.
+    // @game heretic hexen strife
+    //
+    // If non-zero, display the graphical startup screen.
     //
 
-    CONFIG_VARIABLE_INT(screen_width),
+    CONFIG_VARIABLE_INT(graphical_startup),
 
     //!
-    // Screen height in pixels.  If running in full screen mode, this is
-    // the Y dimension of the video mode to use.  If running in
-    // windowed mode, this is the height of the window in which the game
-    // will run.
+    // @game doom heretic strife
+    //
+    // If non-zero, the ENDOOM text screen is displayed when exiting the
+    // game. If zero, the ENDOOM screen is not displayed.
     //
 
-    CONFIG_VARIABLE_INT(screen_height),
+    CONFIG_VARIABLE_INT(show_endoom),
 
     //!
-    // Color depth of the screen, in bits.
-    // If this is set to zero, the color depth will be automatically set
-    // on startup to the machine's default/native color depth.
+    // @game doom strife
+    //
+    // If non-zero, a disk activity indicator is displayed when data is read
+    // from disk. If zero, the disk activity indicator is not displayed.
     //
 
-    CONFIG_VARIABLE_INT(screen_bpp),
+    CONFIG_VARIABLE_INT(show_diskicon),
 
     //!
-    // If this is non-zero, the mouse will be "grabbed" when running
-    // in windowed mode so that it can be used as an input device.
-    // When running full screen, this has no effect.
+    // If non-zero, save screenshots in PNG format. If zero, screenshots are
+    // saved in PCX format, as Vanilla Doom does.
     //
 
-    CONFIG_VARIABLE_INT(grabmouse),
-
-    //!
-    // If non-zero, all vertical mouse movement is ignored.  This
-    // emulates the behavior of the "novert" tool available under DOS
-    // that performs the same function.
-    //
-
-    CONFIG_VARIABLE_INT(novert),
-
-    //!
-    // Mouse acceleration factor.  When the speed of mouse movement
-    // exceeds the threshold value (mouse_threshold), the speed is
-    // multiplied by this value.
-    //
-
-    CONFIG_VARIABLE_FLOAT(mouse_acceleration),
-
-    //!
-    // Mouse acceleration threshold.  When the speed of mouse movement
-    // exceeds this threshold value, the speed is multiplied by an
-    // acceleration factor (mouse_acceleration).
-    //
-
-    CONFIG_VARIABLE_INT(mouse_threshold),
+    CONFIG_VARIABLE_INT(png_screenshots),
 
     //!
     // Vertical mouse acceleration factor.  When the speed of mouse movement
@@ -867,13 +907,14 @@ static default_t extra_defaults_list[] =
     // might be more efficient but will introduce latency to the
     // sound output. The default is 28ms (one slice per tic with the
     // 35fps timer).
+    //
 
     CONFIG_VARIABLE_INT(snd_maxslicetime_ms),
 
     //!
     // If non-zero, sound effects will have their pitch varied up or
     // down by a random amount during play. If zero, sound effects
-    // play back at their default pitch. The default is zero.
+    // play back at their default pitch.
     //
 
     CONFIG_VARIABLE_INT(snd_pitchshift),
@@ -883,6 +924,7 @@ static default_t extra_defaults_list[] =
     // the empty string, SDL_mixer's internal MIDI playback is used.
     // This only has any effect when snd_musicdevice is set to General
     // MIDI output.
+    //
 
     CONFIG_VARIABLE_STRING(snd_musiccmd),
 
@@ -891,6 +933,7 @@ static default_t extra_defaults_list[] =
     // "-opl3", output for an OPL3 chip is generated when in OPL MIDI
     // playback mode.
     //
+
     CONFIG_VARIABLE_STRING(snd_dmxoption),
 
     //!
@@ -901,28 +944,63 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT_HEX(opl_io_port),
 
     //!
-    // @game doom heretic strife
+    // Controls whether libsamplerate support is used for performing
+    // sample rate conversions of sound effects.  Support for this
+    // must be compiled into the program.
     //
-    // If non-zero, the ENDOOM text screen is displayed when exiting the
-    // game. If zero, the ENDOOM screen is not displayed.
-    //
-
-    CONFIG_VARIABLE_INT(show_endoom),
-
-    //!
-    // @game doom strife
-    //
-    // If non-zero, a disk activity indicator is displayed when data is read
-    // from disk. If zero, the disk activity indicator is not displayed.
+    // If zero, libsamplerate support is disabled.  If non-zero,
+    // libsamplerate is enabled. Increasing values roughly correspond
+    // to higher quality conversion; the higher the quality, the
+    // slower the conversion process.  Linear conversion = 1;
+    // Zero order hold = 2; Fast Sinc filter = 3; Medium quality
+    // Sinc filter = 4; High quality Sinc filter = 5.
     //
 
-    CONFIG_VARIABLE_INT(show_diskicon),
+    CONFIG_VARIABLE_INT(use_libsamplerate),
 
     //!
-    // If non-zero, save screenshots in PNG format.
+    // Scaling factor used by libsamplerate. This is used when converting
+    // sounds internally back into integer form; normally it should not
+    // be necessary to change it from the default value. The only time
+    // it might be needed is if a PWAD file is loaded that contains very
+    // loud sounds, in which case the conversion may cause sound clipping
+    // and the scale factor should be reduced. The lower the value, the
+    // quieter the sound effects become, so it should be set as high as is
+    // possible without clipping occurring.
+
+    CONFIG_VARIABLE_FLOAT(libsamplerate_scale),
+
+    //!
+    // Full path to a directory containing configuration files for
+    // substitute music packs. These packs contain high quality renderings
+    // of game music to be played instead of using the system's built-in
+    // MIDI playback.
     //
 
-    CONFIG_VARIABLE_INT(png_screenshots),
+    CONFIG_VARIABLE_STRING(music_pack_path),
+
+    //!
+    // Full path to a Timidity configuration file to use for MIDI
+    // playback. The file will be evaluated from the directory where
+    // it is evaluated, so there is no need to add "dir" commands
+    // into it.
+    //
+
+    CONFIG_VARIABLE_STRING(timidity_cfg_path),
+
+    //!
+    // Path to GUS patch files to use when operating in GUS emulation
+    // mode.
+    //
+
+    CONFIG_VARIABLE_STRING(gus_patch_path),
+
+    //!
+    // Number of kilobytes of RAM to use in GUS emulation mode. Valid
+    // values are 256, 512, 768 or 1024.
+    //
+
+    CONFIG_VARIABLE_INT(gus_ram_kb),
 
     //!
     // @game doom strife
@@ -955,34 +1033,98 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(vanilla_keyboard_mapping),
 
     //!
-    // Name of the SDL video driver to use.  If this is an empty string,
-    // the default video driver is used.
-    //
-
-    CONFIG_VARIABLE_STRING(video_driver),
-
-    //!
-    // Position of the window on the screen when running in windowed
-    // mode. Accepted values are: "" (empty string) - don't care,
-    // "center" - place window at center of screen, "x,y" - place
-    // window at the specified coordinates.
-
-    CONFIG_VARIABLE_STRING(window_position),
-
-#ifdef FEATURE_MULTIPLAYER
-
-    //!
     // Name to use in network games for identification.  This is only
     // used on the "waiting" screen while waiting for the game to start.
     //
 
     CONFIG_VARIABLE_STRING(player_name),
 
-#endif
+    //!
+    // If this is non-zero, the mouse will be "grabbed" when running
+    // in windowed mode so that it can be used as an input device.
+    // When running full screen, this has no effect.
+    //
+
+    CONFIG_VARIABLE_INT(grabmouse),
 
     //!
-    // Joystick number to use; '0' is the first joystick.  A negative
-    // value ('-1') indicates that no joystick is configured.
+    // If non-zero, all vertical mouse movement is ignored.  This
+    // emulates the behavior of the "novert" tool available under DOS
+    // that performs the same function.
+    //
+
+    CONFIG_VARIABLE_INT(novert),
+
+    //!
+    // Mouse acceleration factor.  When the speed of mouse movement
+    // exceeds the threshold value (mouse_threshold), the speed is
+    // multiplied by this value.
+    //
+
+    CONFIG_VARIABLE_FLOAT(mouse_acceleration),
+
+    //!
+    // Mouse acceleration threshold.  When the speed of mouse movement
+    // exceeds this threshold value, the speed is multiplied by an
+    // acceleration factor (mouse_acceleration).
+    //
+
+    CONFIG_VARIABLE_INT(mouse_threshold),
+
+    //!
+    // Mouse button to strafe left.
+    //
+
+    CONFIG_VARIABLE_INT(mouseb_strafeleft),
+
+    //!
+    // Mouse button to strafe right.
+    //
+
+    CONFIG_VARIABLE_INT(mouseb_straferight),
+
+    //!
+    // Mouse button to "use" an object, eg. a door or switch.
+    //
+
+    CONFIG_VARIABLE_INT(mouseb_use),
+
+    //!
+    // Mouse button to move backwards.
+    //
+
+    CONFIG_VARIABLE_INT(mouseb_backward),
+
+    //!
+    // Mouse button to cycle to the previous weapon.
+    //
+
+    CONFIG_VARIABLE_INT(mouseb_prevweapon),
+
+    //!
+    // Mouse button to cycle to the next weapon.
+    //
+
+    CONFIG_VARIABLE_INT(mouseb_nextweapon),
+
+    //!
+    // If non-zero, double-clicking a mouse button acts like pressing
+    // the "use" key to use an object in-game, eg. a door or switch.
+    //
+
+    CONFIG_VARIABLE_INT(dclick_use),
+
+    //!
+    // SDL GUID string indicating the joystick to use. An empty string
+    // indicates that no joystick is configured.
+    //
+
+    CONFIG_VARIABLE_STRING(joystick_guid),
+
+    //!
+    // Index of SDL joystick to use; this is only used in the case where
+    // multiple identical joystick devices are connected which have the
+    // same GUID, to distinguish between devices.
     //
 
     CONFIG_VARIABLE_INT(joystick_index),
@@ -1136,103 +1278,6 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_INT(joyb_nextweapon),
-
-    //!
-    // Mouse button to strafe left.
-    //
-
-    CONFIG_VARIABLE_INT(mouseb_strafeleft),
-
-    //!
-    // Mouse button to strafe right.
-    //
-
-    CONFIG_VARIABLE_INT(mouseb_straferight),
-
-    //!
-    // Mouse button to "use" an object, eg. a door or switch.
-    //
-
-    CONFIG_VARIABLE_INT(mouseb_use),
-
-    //!
-    // Mouse button to move backwards.
-    //
-
-    CONFIG_VARIABLE_INT(mouseb_backward),
-
-    //!
-    // Mouse button to cycle to the previous weapon.
-    //
-
-    CONFIG_VARIABLE_INT(mouseb_prevweapon),
-
-    //!
-    // Mouse button to cycle to the next weapon.
-    //
-
-    CONFIG_VARIABLE_INT(mouseb_nextweapon),
-
-    //!
-    // If non-zero, double-clicking a mouse button acts like pressing
-    // the "use" key to use an object in-game, eg. a door or switch.
-    //
-
-    CONFIG_VARIABLE_INT(dclick_use),
-
-#ifdef FEATURE_SOUND
-
-    //!
-    // Controls whether libsamplerate support is used for performing
-    // sample rate conversions of sound effects.  Support for this
-    // must be compiled into the program.
-    //
-    // If zero, libsamplerate support is disabled.  If non-zero,
-    // libsamplerate is enabled. Increasing values roughly correspond
-    // to higher quality conversion; the higher the quality, the
-    // slower the conversion process.  Linear conversion = 1;
-    // Zero order hold = 2; Fast Sinc filter = 3; Medium quality
-    // Sinc filter = 4; High quality Sinc filter = 5.
-    //
-
-    CONFIG_VARIABLE_INT(use_libsamplerate),
-
-    //!
-    // Scaling factor used by libsamplerate. This is used when converting
-    // sounds internally back into integer form; normally it should not
-    // be necessary to change it from the default value. The only time
-    // it might be needed is if a PWAD file is loaded that contains very
-    // loud sounds, in which case the conversion may cause sound clipping
-    // and the scale factor should be reduced. The lower the value, the
-    // quieter the sound effects become, so it should be set as high as is
-    // possible without clipping occurring.
-
-    CONFIG_VARIABLE_FLOAT(libsamplerate_scale),
-
-    //!
-    // Full path to a Timidity configuration file to use for MIDI
-    // playback. The file will be evaluated from the directory where
-    // it is evaluated, so there is no need to add "dir" commands
-    // into it.
-    //
-
-    CONFIG_VARIABLE_STRING(timidity_cfg_path),
-
-    //!
-    // Path to GUS patch files to use when operating in GUS emulation
-    // mode.
-    //
-
-    CONFIG_VARIABLE_STRING(gus_patch_path),
-
-    //!
-    // Number of kilobytes of RAM to use in GUS emulation mode. Valid
-    // values are 256, 512, 768 or 1024.
-    //
-
-    CONFIG_VARIABLE_INT(gus_ram_kb),
-
-#endif
 
     //!
     // Key to pause or unpause the game.
@@ -2386,30 +2431,17 @@ static char *GetDefaultConfigDir(void)
 {
 #if !defined(_WIN32) || defined(_WIN32_WCE)
 
-    // Configuration settings are stored in ~/.chocolate-doom/,
-    // except on Windows, where we behave like Vanilla Doom and
-    // save in the current directory.
+    // Configuration settings are stored in an OS-appropriate path
+    // determined by SDL.  On typical Unix systems, this might be
+    // ~/.local/share/chocolate-doom.  On Windows, we behave like
+    // Vanilla Doom and save in the current directory.
 
-    char *homedir;
     char *result;
 
-    homedir = getenv("HOME");
-
-    if (homedir != NULL)
-    {
-        // put all configuration in a config directory off the
-        // homedir
-
-        result = M_StringJoin(homedir, DIR_SEPARATOR_S,
-                              "." PACKAGE_TARNAME, DIR_SEPARATOR_S, NULL);
-
-        return result;
-    }
-    else
+    result = SDL_GetPrefPath("", PACKAGE_TARNAME);
+    return result;
 #endif /* #ifndef _WIN32 */
-    {
-        return M_StringDuplicate("");
-    }
+    return M_StringDuplicate("");
 }
 
 // 
@@ -2491,12 +2523,12 @@ char *M_GetSaveGameDir(char *iwadname)
     }
     else
     {
-        // ~/.chocolate-doom/savegames
+        // ~/.local/share/chocolate-doom/savegames
 
         topdir = M_StringJoin(configdir, "savegames", NULL);
         M_MakeDirectory(topdir);
 
-        // eg. ~/.chocolate-doom/savegames/doom2.wad/
+        // eg. ~/.local/share/chocolate-doom/savegames/doom2.wad/
 
         savegamedir = M_StringJoin(topdir, DIR_SEPARATOR_S, iwadname,
                                    DIR_SEPARATOR_S, NULL);

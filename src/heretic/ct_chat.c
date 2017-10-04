@@ -24,6 +24,7 @@
 #include "doomkeys.h"
 
 #include "deh_str.h"
+#include "i_input.h"
 #include "m_controls.h"
 #include "m_misc.h"
 #include "p_local.h"
@@ -115,6 +116,7 @@ void CT_Init(void)
 void CT_Stop(void)
 {
     chatmodeon = false;
+    I_StopTextInput();
     return;
 }
 
@@ -191,6 +193,7 @@ boolean CT_Responder(event_t * ev)
         }
         CT_queueChatChar(sendto);
         chatmodeon = true;
+        I_StartTextInput(25, 10, SCREENWIDTH, 18);
         return true;
     }
     else
@@ -232,9 +235,9 @@ boolean CT_Responder(event_t * ev)
             CT_queueChatChar(KEY_BACKSPACE);
             return true;
         }
-        else if (ValidChatChar(ev->data2))
+        else if (ValidChatChar(ev->data3))
         {
-            CT_queueChatChar(toupper(ev->data2));
+            CT_queueChatChar(toupper(ev->data3));
             return true;
         }
     }

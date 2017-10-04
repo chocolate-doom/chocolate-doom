@@ -106,6 +106,7 @@ void P_InitSwitchList(void)
 {
     int i, slindex, episode;
 
+<<<<<<< HEAD
     // [crispy] add support for SWITCHES lumps
     switchlist_t *alphSwitchList;
     boolean from_lump;
@@ -157,6 +158,35 @@ void P_InitSwitchList(void)
 	    size_t newmax = maxswitches ? 2 * maxswitches : MAXSWITCHES;
 	    switchlist = I_Realloc(switchlist, newmax * sizeof(*switchlist));
 	    maxswitches = newmax;
+=======
+    // Note that this is called "episode" here but it's actually something
+    // quite different. As we progress from Shareware->Registered->Doom II
+    // we support more switch textures.
+    switch (gamemode)
+    {
+        case registered:
+        case retail:
+            episode = 2;
+            break;
+        case commercial:
+            episode = 3;
+            break;
+        default:
+            episode = 1;
+            break;
+    }
+
+    slindex = 0;
+
+    for (i = 0; i < arrlen(alphSwitchList); i++)
+    {
+	if (alphSwitchList[i].episode <= episode)
+	{
+	    switchlist[slindex++] =
+                R_TextureNumForName(DEH_String(alphSwitchList[i].name1));
+	    switchlist[slindex++] =
+                R_TextureNumForName(DEH_String(alphSwitchList[i].name2));
+>>>>>>> upstream/sdl2-branch
 	}
 
 	if (alphSwitchList_episode <= episode)
@@ -175,6 +205,9 @@ void P_InitSwitchList(void)
     {
 	Z_ChangeTag(alphSwitchList, PU_CACHE);
     }
+
+    numswitches = slindex / 2;
+    switchlist[slindex] = -1;
 }
 
 

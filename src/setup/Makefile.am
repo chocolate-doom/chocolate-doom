@@ -5,7 +5,7 @@ AM_CFLAGS = @SDL_CFLAGS@                                           \
 
 noinst_LIBRARIES = libsetup.a
 
-SOURCE_FILES =                                  \
+libsetup_a_SOURCES =                            \
     compatibility.c   compatibility.h           \
     display.c         display.h                 \
     joystick.c        joystick.h                \
@@ -21,8 +21,6 @@ SOURCE_FILES =                                  \
     txt_keyinput.c    txt_keyinput.h            \
     txt_mouseinput.c  txt_mouseinput.h
 
-libsetup_a_SOURCES = $(SOURCE_FILES)
-
 EXTRA_DIST=                                     \
     setup_icon.c
 
@@ -36,8 +34,8 @@ CLEANFILES = $(app_DATA)
 
 if HAVE_PYTHON
 
-setup_icon.c : $(top_builddir)/data/setup8.ico
-	$(top_builddir)/data/convert-icon $(top_builddir)/data/setup8.ico $@
+setup_icon.c : $(top_builddir)/data/setup.png
+	$(top_builddir)/data/convert-icon $(top_builddir)/data/setup.png $@
 
 endif
 

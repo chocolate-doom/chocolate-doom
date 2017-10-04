@@ -31,7 +31,6 @@
 #include "doomstat.h"
 
 #include "dstrings.h"
-#include "doomfeatures.h"
 #include "sounds.h"
 
 #include "txt_main.h"
@@ -59,6 +58,7 @@
 #include "p_dialog.h" // haleyjd [STRIFE]
 
 #include "i_endoom.h"
+#include "i_input.h"
 #include "i_joystick.h"
 #include "i_system.h"
 #include "i_timer.h"
@@ -402,6 +402,7 @@ void D_BindVariables(void)
 
     M_ApplyPlatformDefaults();
 
+    I_BindInputVariables();
     I_BindVideoVariables();
     I_BindJoystickVariables();
     I_BindSoundVariables();
@@ -423,9 +424,7 @@ void D_BindVariables(void)
     key_multi_msgplayer[6] = '7';
     key_multi_msgplayer[7] = '8';
 
-#ifdef FEATURE_MULTIPLAYER
     NET_BindVariables();
-#endif
 
     // haleyjd 08/29/10: [STRIFE]
     // * Added voice volume
@@ -1515,7 +1514,6 @@ void D_DoomMain (void)
     //DEH_printf("Z_Init: Init zone memory allocation daemon. \n"); [STRIFE] removed
     Z_Init ();
 
-#ifdef FEATURE_MULTIPLAYER
     //!
     // @category net
     //
@@ -1571,8 +1569,6 @@ void D_DoomMain (void)
         NET_LANQuery();
         exit(0);
     }
-
-#endif
 
     //!
     // @vanilla
@@ -1731,10 +1727,8 @@ void D_DoomMain (void)
     D_AddFile(iwadfile);
     W_CheckCorrectIWAD(strife);
 
-#ifdef FEATURE_DEHACKED
     // Load dehacked patches specified on the command line.
     DEH_ParseCommandLine();
-#endif
 
     // Load PWAD files.
     modifiedgame = W_ParseCommandLine();
@@ -1835,11 +1829,9 @@ void D_DoomMain (void)
     I_InitSound(true);
     I_InitMusic();
 
-#ifdef FEATURE_MULTIPLAYER
     if(devparm) // [STRIFE]
         printf ("NET_Init: Init network subsystem.\n");
     NET_Init();
-#endif
     D_ConnectNetGame();
 
     // haleyjd 20110210: Create Strife hub save folders

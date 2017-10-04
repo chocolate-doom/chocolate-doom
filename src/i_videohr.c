@@ -21,6 +21,7 @@
 
 #include "doomtype.h"
 #include "i_timer.h"
+#include "i_video.h"
 
 // Palette fade-in takes two seconds
 
@@ -29,22 +30,26 @@
 #define HR_SCREENWIDTH 640
 #define HR_SCREENHEIGHT 480
 
-static SDL_Surface *hr_screen = NULL;
+static SDL_Window *hr_screen = NULL;
 static SDL_Surface *hr_surface = NULL;
 static char *window_title = "";
 
 boolean I_SetVideoModeHR(void)
 {
+    int x, y;
+
     if (SDL_Init(SDL_INIT_VIDEO) < 0)
     {
         return false;
     }
 
-    SDL_WM_SetCaption(window_title,  NULL);
+    I_GetWindowPosition(&x, &y, HR_SCREENWIDTH, HR_SCREENHEIGHT);
 
     // Create screen surface at the native desktop pixel depth (bpp=0),
     // as we cannot trust true 8-bit to reliably work nowadays.
-    hr_screen = SDL_SetVideoMode(HR_SCREENWIDTH, HR_SCREENHEIGHT, 0, 0);
+    hr_screen = SDL_CreateWindow(window_title, x, y,
+        HR_SCREENWIDTH, HR_SCREENHEIGHT,
+        0);
 
     if (hr_screen == NULL)
     {
@@ -145,8 +150,9 @@ void I_SlamBlockHR(int x, int y, int w, int h, const byte *src)
     blit_rect.y = y;
     blit_rect.w = w;
     blit_rect.h = h;
-    SDL_BlitSurface(hr_surface, &blit_rect, hr_screen, &blit_rect);
-    SDL_UpdateRects(hr_screen, 1, &blit_rect);
+    SDL_BlitSurface(hr_surface, &blit_rect,
+                    SDL_GetWindowSurface(hr_screen), &blit_rect);
+    SDL_UpdateWindowSurfaceRects(hr_screen, &blit_rect, 1);
 }
 
 void I_SlamHR(const byte *buffer)
@@ -173,9 +179,10 @@ void I_SetPaletteHR(const byte *palette)
     }
 
     // After setting colors, update the screen.
-    SDL_SetColors(hr_surface, sdlpal, 0, 16);
-    SDL_BlitSurface(hr_surface, &screen_rect, hr_screen, &screen_rect);
-    SDL_UpdateRects(hr_screen, 1, &screen_rect);
+    SDL_SetPaletteColors(hr_surface->format->palette, sdlpal, 0, 16);
+    SDL_BlitSurface(hr_surface, &screen_rect,
+                    SDL_GetWindowSurface(hr_screen), &screen_rect);
+    SDL_UpdateWindowSurfaceRects(hr_screen, &screen_rect, 1);
 }
 
 void I_FadeToPaletteHR(const byte *palette)
@@ -204,7 +211,7 @@ void I_FadeToPaletteHR(const byte *palette)
         }
 
         I_SetPaletteHR(tmppal);
-        SDL_Flip(hr_surface);
+        SDL_UpdateWindowSurface(hr_screen);
 
         // Sleep a bit
 

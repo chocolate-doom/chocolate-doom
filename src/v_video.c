@@ -28,6 +28,7 @@
 #include "doomtype.h"
 
 #include "deh_str.h"
+#include "i_input.h"
 #include "i_swap.h"
 #include "i_video.h"
 #include "m_bbox.h"
@@ -439,7 +440,11 @@ void V_DrawTLPatch(int x, int y, patch_t * patch)
     column_t *column;
     pixel_t *desttop, *dest;
     byte *source;
+<<<<<<< HEAD
     int w, f;
+=======
+    int w;
+>>>>>>> upstream/sdl2-branch
 
     y -= SHORT(patch->topoffset);
     x -= SHORT(patch->leftoffset);
@@ -498,7 +503,11 @@ void V_DrawXlaPatch(int x, int y, patch_t * patch)
     column_t *column;
     pixel_t *desttop, *dest;
     byte *source;
+<<<<<<< HEAD
     int w, f;
+=======
+    int w;
+>>>>>>> upstream/sdl2-branch
 
     y -= SHORT(patch->topoffset);
     x -= SHORT(patch->leftoffset);
@@ -556,7 +565,11 @@ void V_DrawAltTLPatch(int x, int y, patch_t * patch)
     column_t *column;
     pixel_t *desttop, *dest;
     byte *source;
+<<<<<<< HEAD
     int w, f;
+=======
+    int w;
+>>>>>>> upstream/sdl2-branch
 
     y -= SHORT(patch->topoffset);
     x -= SHORT(patch->leftoffset);
@@ -616,7 +629,11 @@ void V_DrawShadowedPatch(int x, int y, patch_t *patch)
     pixel_t *desttop, *dest;
     byte *source;
     pixel_t *desttop2, *dest2;
+<<<<<<< HEAD
     int w, f;
+=======
+    int w;
+>>>>>>> upstream/sdl2-branch
 
     y -= SHORT(patch->topoffset);
     x -= SHORT(patch->leftoffset);
@@ -918,8 +935,8 @@ void WritePCXfile(char *filename, byte *data,
     pcx->ymin = 0;
     pcx->xmax = SHORT(width-1);
     pcx->ymax = SHORT(height-1);
-    pcx->hres = SHORT(width);
-    pcx->vres = SHORT(height);
+    pcx->hres = SHORT(1);
+    pcx->vres = SHORT(1);
     memset (pcx->palette,0,sizeof(pcx->palette));
     pcx->reserved = 0;                  // PCX spec: reserved byte must be zero
     pcx->color_planes = 1;		// chunky image
@@ -980,6 +997,7 @@ void WritePNGfile(char *filename, byte *data,
     int width, height;
     byte *rowbuf;
 
+<<<<<<< HEAD
     // [crispy] screenshots are actual reproductions of the screen content
     extern void I_GetVideobuffer (byte **buffer, int *w, int *h);
     I_GetVideobuffer(&rowbuf, &width, &height); // [crispy] recycle "rowbuf" pointer
@@ -988,6 +1006,19 @@ void WritePNGfile(char *filename, byte *data,
     width = inwidth * 5;
     height = inheight * 6;
 */
+=======
+    if (aspect_ratio_correct)
+    {
+        // scale up to accommodate aspect ratio correction
+        width = inwidth * 5;
+        height = inheight * 6;
+    }
+    else
+    {
+        width = inwidth;
+        height = inheight;
+    }
+>>>>>>> upstream/sdl2-branch
 
     handle = fopen(filename, "wb");
     if (!handle)
@@ -999,12 +1030,14 @@ void WritePNGfile(char *filename, byte *data,
                                    error_fn, warning_fn);
     if (!ppng)
     {
+        fclose(handle);
         return;
     }
 
     pinfo = png_create_info_struct(ppng);
     if (!pinfo)
     {
+        fclose(handle);
         png_destroy_write_struct(&ppng, NULL);
         return;
     }
@@ -1018,6 +1051,7 @@ void WritePNGfile(char *filename, byte *data,
     pcolor = malloc(sizeof(*pcolor) * 256);
     if (!pcolor)
     {
+        fclose(handle);
         png_destroy_write_struct(&ppng, &pinfo);
         return;
     }
@@ -1044,17 +1078,32 @@ void WritePNGfile(char *filename, byte *data,
 
     if (rowbuf)
     {
-        for (i = 0; i < SCREENHEIGHT; i++)
+        if (aspect_ratio_correct)
         {
-            // expand the row 5x
-            for (j = 0; j < SCREENWIDTH; j++)
+            for (i = 0; i < SCREENHEIGHT; i++)
             {
-                memset(rowbuf + j * 5, *(data + i*SCREENWIDTH + j), 5);
-            }
+                // expand the row 5x
+                for (j = 0; j < SCREENWIDTH; j++)
+                {
+                    memset(rowbuf + j * 5, *(data + i*SCREENWIDTH + j), 5);
+                }
 
-            // write the row 6 times
-            for (j = 0; j < 6; j++)
+                // write the row 6 times
+                for (j = 0; j < 6; j++)
+                {
+                    png_write_row(ppng, rowbuf);
+                }
+            }
+        }
+        else
+        {
+            for (i = 0; i < SCREENHEIGHT; i++)
             {
+                for (j = 0; j < SCREENWIDTH; j++)
+                {
+                    memset(rowbuf + j, *(data + i*SCREENWIDTH + j), 1);
+                }
+
                 png_write_row(ppng, rowbuf);
             }
         }
@@ -1105,7 +1154,16 @@ void V_ScreenShot(char *format)
 
     if (i == 10000) // [crispy] increase screenshot filename limit
     {
-        I_Error ("V_ScreenShot: Couldn't create a PCX");
+#ifdef HAVE_LIBPNG
+        if (png_screenshots)
+        {
+            I_Error ("V_ScreenShot: Couldn't create a PNG");
+        }
+        else
+#endif
+        {
+            I_Error ("V_ScreenShot: Couldn't create a PCX");
+        }
     }
 
 #ifdef HAVE_LIBPNG

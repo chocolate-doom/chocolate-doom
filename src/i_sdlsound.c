@@ -56,8 +56,6 @@ struct allocated_sound_s
     allocated_sound_t *prev, *next;
 };
 
-static boolean setpanning_workaround = false;
-
 static boolean sound_initialized = false;
 
 static allocated_sound_t *channels_playing[NUM_CHANNELS];
@@ -907,16 +905,6 @@ static void I_SDL_UpdateSoundParams(int handle, int vol, int sep)
     if (right < 0) right = 0;
     else if (right > 255) right = 255;
 
-    // SDL_mixer version 1.2.8 and earlier has a bug in the Mix_SetPanning
-    // function.  A workaround is to call Mix_UnregisterAllEffects for
-    // the channel before calling it.  This is undesirable as it may lead
-    // to the channel volumes resetting briefly.
-
-    if (setpanning_workaround)
-    {
-        Mix_UnregisterAllEffects(handle);
-    }
-
     Mix_SetPanning(handle, left, right);
 }
 
@@ -1131,32 +1119,6 @@ static boolean I_SDL_InitSound(boolean _use_sfx_prefix)
                         use_libsamplerate);
     }
 #endif
-
-    // SDL_mixer version 1.2.8 and earlier has a bug in the Mix_SetPanning
-    // function that can cause the game to lock up.  If we're using an old
-    // version, we need to apply a workaround.  But the workaround has its
-    // own drawbacks ...
-
-    {
-        const SDL_version *mixer_version;
-        int v;
-
-        mixer_version = Mix_Linked_Version();
-        v = SDL_VERSIONNUM(mixer_version->major,
-                           mixer_version->minor,
-                           mixer_version->patch);
-
-        if (v <= SDL_VERSIONNUM(1, 2, 8))
-        {
-            setpanning_workaround = true;
-            fprintf(stderr, "\n"
-              "ATTENTION: You are using an old version of SDL_mixer!\n"
-              "           This version has a bug that may cause "
-                          "your sound to stutter.\n"
-              "           Please upgrade to a newer version!\n"
-              "\n");
-        }
-    }
 
     Mix_AllocateChannels(NUM_CHANNELS);
 

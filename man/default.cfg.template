@@ -11,7 +11,9 @@ Extra Chocolate Doom-specific options are stored in a separate
 configuration file, \fBchocolate-doom.cfg\fR.
 .PP
 \fIdefault.cfg\fR is normally stored in the user's home directory,
-in \fI~/.chocolate-doom/default.cfg\fR.
+as \fI~/.local/share/chocolate-doom/default.cfg\fR.  The path can be
+overridden using the \fBXDG_DATA_HOME\fR environment variable (see the XDG
+Base Directory Specification).
 .PP
 The \fBchocolate-setup\fR(6) tool provides a simple to use front-end
 for editing \fIdefault.cfg\fR.

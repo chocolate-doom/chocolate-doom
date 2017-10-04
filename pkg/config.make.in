@@ -6,7 +6,9 @@
 # Tools needed:
 
 CC = @CC@
+OBJDUMP = @OBJDUMP@
 STRIP = @STRIP@
+LDFLAGS = @LDFLAGS@
 
 # Package name and version number:
 

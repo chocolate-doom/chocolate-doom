@@ -317,7 +317,7 @@ def read_wikipages():
 
             line = re.sub('\#.*$', '', line)
 
-            if not re.match('^\s*$', line):
+            if not re.match(r'^\s*$', line):
                 wikipages.append(line)
     finally:
         f.close()
@@ -361,11 +361,11 @@ def add_parameter(param, line, config_file):
 
     raise Exception(param.text)
 
-def process_file(file):
+def process_file(filename):
 
     current_config_file = None
 
-    f = io.open(file, encoding='UTF-8')
+    f = io.open(filename, encoding='UTF-8')
 
     try:
         param = None
@@ -423,8 +423,8 @@ def process_files(path):
     if os.path.isdir(path):
         files = glob.glob(path + "/*.c")
 
-        for file in files:
-            process_file(file)
+        for filename in files:
+            process_file(filename)
     else:
         # Special case to allow a single file to be specified as a target
 
@@ -438,16 +438,17 @@ def print_template(template_file, content):
             match = INCLUDE_STATEMENT_RE.search(line)
             if match:
                 filename = match.group(1)
+                filename = os.path.join(os.path.dirname(template_file),
+                                        filename)
                 print_template(filename, content)
             else:
                 line = line.replace("@content", content)
                 stdout(line.rstrip().encode('UTF-8') + b'\n')
-
     finally:
         f.close()
 
-def manpage_output(targets, template_file): 
-    
+def manpage_output(targets, template_file):
+
     content = ""
 
     for t in targets:
