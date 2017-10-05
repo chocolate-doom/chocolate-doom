@@ -49,93 +49,8 @@
 #include "w_wad.h"
 #include "z_zone.h"
 
-<<<<<<< HEAD
-// Lookup table for mapping ASCII characters to their equivalent when
-// shift is pressed on an American layout keyboard:
-
-static const char shiftxform[] =
-{
-    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
-    11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-    21, 22, 23, 24, 25, 26, 27, 28, 29, 30,
-    31, ' ', '!', '"', '#', '$', '%', '&',
-    '"', // shift-'
-    '(', ')', '*', '+',
-    '<', // shift-,
-    '_', // shift--
-    '>', // shift-.
-    '?', // shift-/
-    ')', // shift-0
-    '!', // shift-1
-    '@', // shift-2
-    '#', // shift-3
-    '$', // shift-4
-    '%', // shift-5
-    '^', // shift-6
-    '&', // shift-7
-    '*', // shift-8
-    '(', // shift-9
-    ':',
-    ':', // shift-;
-    '<',
-    '+', // shift-=
-    '>', '?', '@',
-    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',
-    'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
-    '[', // shift-[
-    '!', // shift-backslash - OH MY GOD DOES WATCOM SUCK
-    ']', // shift-]
-    '"', '_',
-    '\'', // shift-`
-    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',
-    'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
-    '{', '|', '}', '~', 127
-};
-
-// Non aspect ratio-corrected modes (direct multiples of 320x200)
-
-static screen_mode_t *screen_modes[] = {
-    &mode_scale_1x,
-    &mode_scale_2x,
-    &mode_scale_3x,
-    &mode_scale_4x,
-    &mode_scale_5x,
-};
-
-// Aspect ratio corrected modes (4:3 ratio)
-
-static screen_mode_t *screen_modes_corrected[] = {
-
-    // Vertically stretched modes (320x200 -> 320x240 and multiples)
-
-    &mode_stretch_1x,
-    &mode_stretch_2x,
-    &mode_stretch_3x,
-    &mode_stretch_4x,
-    &mode_stretch_5x,
-
-    // Horizontally squashed modes (320x200 -> 256x200 and multiples)
-
-    &mode_squash_1x,
-    &mode_squash_1p5x, // [crispy]
-    &mode_squash_2x,
-    &mode_squash_3x,
-    &mode_squash_4x,
-};
-
-// SDL video driver name
-
-char *video_driver = "";
-
-// Window position:
-
-static char *window_position = "";
-
-// SDL surface for the screen.
-=======
 // These are (1) the window (or the full screen) that our game is rendered to
 // and (2) the renderer that scales the texture (see below) into this window.
->>>>>>> upstream/sdl2-branch
 
 static SDL_Window *screen;
 static SDL_Renderer *renderer;
@@ -181,23 +96,15 @@ int usemouse = 1;
 
 // Save screenshots in PNG format.
 
-int png_screenshots = 0;
+int png_screenshots = 1; // [crispy]
 
 // SDL video driver name
 
-<<<<<<< HEAD
-int novert = 1; // [crispy]
-=======
 char *video_driver = "";
->>>>>>> upstream/sdl2-branch
 
 // Window position:
 
-<<<<<<< HEAD
-int png_screenshots = 1; // [crispy]
-=======
 char *window_position = "center";
->>>>>>> upstream/sdl2-branch
 
 // SDL display number on which to run.
 
@@ -284,37 +191,7 @@ static boolean window_focused = true;
 
 static boolean need_resize = false;
 static unsigned int last_resize_time;
-<<<<<<< HEAD
-
-// If true, keyboard mapping is ignored, like in Vanilla Doom.
-// The sensible thing to do is to disable this if you have a non-US
-// keyboard.
-
-int vanilla_keyboard_mapping = false; // [crispy]
-
-// Is the shift key currently down?
-
-static int shiftdown = 0;
-
-// Mouse acceleration
-//
-// This emulates some of the behavior of DOS mouse drivers by increasing
-// the speed when the mouse is moved fast.
-//
-// The mouse input values are input directly to the game, but when
-// the values exceed the value of mouse_threshold, they are multiplied
-// by mouse_acceleration to increase the speed.
-
-float mouse_acceleration = 2.0;
-int mouse_threshold = 10;
-=======
 #define RESIZE_DELAY 500
->>>>>>> upstream/sdl2-branch
-
-// [crispy]
-float mouse_acceleration_y = 1.0;
-int mouse_threshold_y = 0;
-int mouse_y_invert = 0;
 
 // Gamma correction level to use
 
@@ -465,27 +342,7 @@ static void HandleWindowEvent(SDL_WindowEvent *event)
             last_resize_time = SDL_GetTicks();
             break;
 
-<<<<<<< HEAD
-// [crispy]
-static int AccelerateMouseY(int val)
-{
-    if (val < 0)
-        return -AccelerateMouseY(-val);
-
-    if (val > mouse_threshold_y)
-    {
-        return (int)((val - mouse_threshold_y) * mouse_acceleration_y + mouse_threshold_y);
-    }
-    else
-    {
-        return val;
-    }
-}
-
-// Get the equivalent ASCII (Unicode?) character for a keypress.
-=======
         // Don't render the screen when the window is minimized:
->>>>>>> upstream/sdl2-branch
 
         case SDL_WINDOWEVENT_MINIMIZED:
             screenvisible = false;
@@ -624,60 +481,6 @@ void I_GetEvent(void)
     }
 }
 
-<<<<<<< HEAD
-// Warp the mouse back to the middle of the screen
-
-static void CenterMouse(void)
-{
-    // Warp the the screen center
-
-    SDL_WarpMouse(screen->w / 2, screen->h / 2);
-
-    // Clear any relative movement caused by warping
-
-    SDL_PumpEvents();
-    SDL_GetRelativeMouseState(NULL, NULL);
-}
-
-//
-// Read the change in mouse state to generate mouse motion events
-//
-// This is to combine all mouse movement for a tic into one mouse
-// motion event.
-
-static void I_ReadMouse(void)
-{
-    int x, y;
-    event_t ev;
-
-    SDL_GetRelativeMouseState(&x, &y);
-
-    if (x != 0 || y != 0) 
-    {
-        ev.type = ev_mouse;
-        ev.data1 = mouse_button_state;
-        ev.data2 = AccelerateMouse(x);
-
-        if (true || !novert) // [crispy] moved to src/*/g_game.c
-        {
-            ev.data3 = -AccelerateMouseY(y); // [crispy]
-        }
-        else
-        {
-            ev.data3 = 0;
-        }
-        
-        D_PostEvent(&ev);
-    }
-
-    if (MouseShouldBeGrabbed())
-    {
-        CenterMouse();
-    }
-}
-
-=======
->>>>>>> upstream/sdl2-branch
 //
 // I_StartTic
 //
@@ -815,18 +618,7 @@ static void LimitTextureSize(int *w_upscale, int *h_upscale)
     }
 }
 
-<<<<<<< HEAD
-// [crispy]
-int crispy_fps = 0;
-extern boolean singletics;
-
-//
-// I_FinishUpdate
-//
-void I_FinishUpdate (void)
-=======
 static void CreateUpscaledTexture(boolean force)
->>>>>>> upstream/sdl2-branch
 {
     const int actualheight = EffectiveScreenHeight();
     int w, h;
@@ -865,26 +657,7 @@ static void CreateUpscaledTexture(boolean force)
     w_upscale = (w + SCREENWIDTH - 1) / SCREENWIDTH;
     h_upscale = (h + SCREENHEIGHT - 1) / SCREENHEIGHT;
 
-<<<<<<< HEAD
-    // [crispy] variable rendering framerate
-    if (crispy_uncapped > UNCAPPED_ON && !singletics)
-    {
-        static int halftics_old;
-        int halftics;
-        extern int GetAdjustedTimeN (const int N);
-
-        while ((halftics = GetAdjustedTimeN(40 + crispy_uncapped * 10)) == halftics_old)
-        {
-            I_Sleep(1);
-        }
-
-        halftics_old = halftics;
-    }
-
-    // draws little dots on the bottom of the screen
-=======
     // Minimum texture dimensions of 320x200.
->>>>>>> upstream/sdl2-branch
 
     if (w_upscale < 1)
     {
@@ -925,6 +698,8 @@ static void CreateUpscaledTexture(boolean force)
                                 h_upscale*SCREENHEIGHT);
 }
 
+// [crispy]
+int crispy_fps = 0;
 //
 // I_FinishUpdate
 //
@@ -1158,294 +933,6 @@ void I_InitWindowIcon(void)
 
     SDL_SetWindowIcon(screen, surface);
     SDL_FreeSurface(surface);
-<<<<<<< HEAD
-    free(mask);
-}
-
-// Pick the modes list to use:
-
-static void GetScreenModes(screen_mode_t ***modes_list, int *num_modes)
-{
-    if (aspect_ratio_correct)
-    {
-        *modes_list = screen_modes_corrected;
-        *num_modes = arrlen(screen_modes_corrected);
-    }
-    else
-    {
-        *modes_list = screen_modes;
-        *num_modes = arrlen(screen_modes);
-    }
-}
-
-// Find which screen_mode_t to use for the given width and height.
-
-static screen_mode_t *I_FindScreenMode(int w, int h)
-{
-    screen_mode_t **modes_list;
-    screen_mode_t *best_mode;
-    int modes_list_length;
-    int num_pixels;
-    int best_num_pixels;
-    int i;
-
-    // Special case: 320x200 and 640x400 are available even if aspect 
-    // ratio correction is turned on.  These modes have non-square
-    // pixels.
-
-    if (fullscreen)
-    {
-        if (w == SCREENWIDTH && h == SCREENHEIGHT)
-        {
-            return &mode_scale_1x;
-        }
-        else if (w == SCREENWIDTH*2 && h == SCREENHEIGHT*2 && !hires) // [crispy]
-        {
-            return &mode_scale_2x;
-        }
-    }
-
-    GetScreenModes(&modes_list, &modes_list_length);
-
-    // Find the biggest screen_mode_t in the list that fits within these 
-    // dimensions
-
-    best_mode = NULL;
-    best_num_pixels = 0;
-
-    for (i=0; i<modes_list_length; ++i) 
-    {
-        // Will this fit within the dimensions? If not, ignore.
-
-        if (modes_list[i]->width > w || modes_list[i]->height > h)
-        {
-            continue;
-        }
-
-        num_pixels = modes_list[i]->width * modes_list[i]->height;
-
-        if (num_pixels > best_num_pixels)
-        {
-            // This is a better mode than the current one
-
-            best_mode = modes_list[i];
-            best_num_pixels = num_pixels;
-        }
-    }
-
-    return best_mode;
-}
-
-// Adjust to an appropriate fullscreen mode.
-// Returns true if successful.
-
-static boolean AutoAdjustFullscreen(void)
-{
-    SDL_Rect **modes;
-    SDL_Rect *best_mode;
-    screen_mode_t *screen_mode;
-    int diff, best_diff;
-    int i;
-
-    modes = SDL_ListModes(NULL, SDL_FULLSCREEN);
-
-    // No fullscreen modes available at all?
-
-    if (modes == NULL || modes == (SDL_Rect **) -1 || *modes == NULL)
-    {
-        return false;
-    }
-
-    // Find the best mode that matches the mode specified in the
-    // configuration file
-
-    best_mode = NULL;
-    best_diff = INT_MAX;
-
-    for (i=0; modes[i] != NULL; ++i)
-    {
-        //printf("%ix%i?\n", modes[i]->w, modes[i]->h);
-
-        // What screen_mode_t would be used for this video mode?
-
-        screen_mode = I_FindScreenMode(modes[i]->w, modes[i]->h);
-
-        // Never choose a screen mode that we cannot run in, or
-        // is poor quality for fullscreen
-
-        if (screen_mode == NULL || screen_mode->poor_quality)
-        {
-        //    printf("\tUnsupported / poor quality\n");
-            continue;
-        }
-
-        // Do we have the exact mode?
-        // If so, no autoadjust needed
-
-        if (screen_width == modes[i]->w && screen_height == modes[i]->h)
-        {
-        //    printf("\tExact mode!\n");
-            return true;
-        }
-
-        // Is this mode better than the current mode?
-
-        diff = (screen_width - modes[i]->w) * (screen_width - modes[i]->w)
-             + (screen_height - modes[i]->h) * (screen_height - modes[i]->h);
-
-        if (diff < best_diff)
-        {
-        //    printf("\tA valid mode\n");
-            best_mode = modes[i];
-            best_diff = diff;
-        }
-    }
-
-    if (best_mode == NULL)
-    {
-        // Unable to find a valid mode!
-
-        return false;
-    }
-
-    printf("I_InitGraphics: %ix%i mode not supported on this machine.\n",
-           screen_width, screen_height);
-
-    screen_width = best_mode->w;
-    screen_height = best_mode->h;
-
-    return true;
-}
-
-// Auto-adjust to a valid windowed mode.
-
-static void AutoAdjustWindowed(void)
-{
-    screen_mode_t *best_mode;
-
-    // Find a screen_mode_t to fit within the current settings
-
-    best_mode = I_FindScreenMode(screen_width, screen_height);
-
-    if (best_mode == NULL)
-    {
-        // Nothing fits within the current settings.
-        // Pick the closest to 320x200 possible.
-
-        best_mode = I_FindScreenMode(SCREENWIDTH, SCREENHEIGHT_4_3);
-    }
-
-    // Switch to the best mode if necessary.
-
-    if (best_mode->width != screen_width || best_mode->height != screen_height)
-    {
-        printf("I_InitGraphics: Cannot run at specified mode: %ix%i\n",
-               screen_width, screen_height);
-
-        screen_width = best_mode->width;
-        screen_height = best_mode->height;
-    }
-}
-
-// Auto-adjust to a valid color depth.
-
-static void AutoAdjustColorDepth(void)
-{
-    SDL_Rect **modes;
-    SDL_PixelFormat format;
-    const SDL_VideoInfo *info;
-    int flags;
-
-    // If screen_bpp=0, we should use the current (default) pixel depth.
-    // Fetch it from SDL.
-
-    if (screen_bpp == 0)
-    {
-        info = SDL_GetVideoInfo();
-
-        if (info != NULL && info->vfmt != NULL)
-        {
-            screen_bpp = info->vfmt->BitsPerPixel;
-        }
-    }
-
-    if (fullscreen)
-    {
-        flags = SDL_FULLSCREEN;
-    }
-    else
-    {
-        flags = 0;
-    }
-
-    format.BitsPerPixel = screen_bpp;
-    format.BytesPerPixel = (screen_bpp + 7) / 8;
-
-    // Are any screen modes supported at the configured color depth?
-
-    modes = SDL_ListModes(&format, flags);
-
-    // If not, we must autoadjust to something sensible.
-
-    if (modes == NULL)
-    {
-        printf("I_InitGraphics: %ibpp color depth not supported.\n",
-               screen_bpp);
-
-        info = SDL_GetVideoInfo();
-
-        if (info != NULL && info->vfmt != NULL)
-        {
-            screen_bpp = info->vfmt->BitsPerPixel;
-        }
-    }
-}
-
-// If the video mode set in the configuration file is not available,
-// try to choose a different mode.
-
-static void I_AutoAdjustSettings(void)
-{
-    int old_screen_w, old_screen_h, old_screen_bpp;
-
-    old_screen_w = screen_width;
-    old_screen_h = screen_height;
-    old_screen_bpp = screen_bpp;
-
-    // Possibly adjust color depth.
-
-    AutoAdjustColorDepth();
-
-    // If we are running fullscreen, try to autoadjust to a valid fullscreen
-    // mode.  If this is impossible, switch to windowed.
-
-    if (fullscreen && !AutoAdjustFullscreen())
-    {
-        fullscreen = 0;
-    }
-
-    // If we are running windowed, pick a valid window size.
-
-    if (!fullscreen)
-    {
-        AutoAdjustWindowed();
-    }
-
-    // Have the settings changed?  Show a message.
-
-    if (screen_width != old_screen_w || screen_height != old_screen_h
-     || screen_bpp != old_screen_bpp)
-    {
-        printf("I_InitGraphics: Auto-adjusted to %ix%ix%ibpp.\n",
-               screen_width, screen_height, screen_bpp);
-
-        printf("NOTE: Your video settings have been adjusted.  "
-               "To disable this behavior,\n"
-               "set autoadjust_video_settings to 0 in your "
-               "configuration file.\n");
-    }
-=======
->>>>>>> upstream/sdl2-branch
 }
 
 // Set video size to a particular scale factor (1x, 2x, 3x, etc.)
@@ -1927,37 +1414,9 @@ void I_InitGraphics(void)
     AdjustWindowSize();
     SetVideoMode();
 
-<<<<<<< HEAD
-        w = screen_width;
-        h = screen_height;
-
-        screen_mode = I_FindScreenMode(w, h);
-
-        if (screen_mode == NULL)
-        {
-            I_Error("I_InitGraphics: Unable to find a screen mode small "
-                    "enough for %ix%i", w, h);
-        }
-
-        if (w != screen_mode->width || h != screen_mode->height)
-        {
-            printf("I_InitGraphics: %s (%ix%i within %ix%i)\n",
-                   WindowBoxType(screen_mode, w, h),
-                   screen_mode->width, screen_mode->height, w, h);
-        }
-        // [crispy] always report used screen mode
-        else
-        {
-            printf("I_InitGraphics: Using %dx%d screen mode\n", w, h);
-        }
-
-        SetVideoMode(screen_mode, w, h);
-    }
-=======
     // We might have poor performance if we are using an emulated
     // HW accelerator. Check for Mesa and warn if we're using it.
     CheckGLVersion();
->>>>>>> upstream/sdl2-branch
 
     // Start with a clear black screen
     // (screen will be flipped after we set the palette)
@@ -1995,20 +1454,6 @@ void I_InitGraphics(void)
 
     memset(I_VideoBuffer, 0, SCREENWIDTH * SCREENHEIGHT);
 
-<<<<<<< HEAD
-    // We need SDL to give us translated versions of keys as well
-
-    SDL_EnableUNICODE(1);
-
-    // Repeat key presses - this is what Vanilla Doom does
-    // Not sure about repeat rate - probably dependent on which DOS
-    // driver is used.  This is good enough though.
-
-    // [crispy] fix "holding ESC causes the menu to flicker on and off repeatedly"
-    //SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
-
-=======
->>>>>>> upstream/sdl2-branch
     // clear out any events waiting at the start and center the mouse
   
     while (SDL_PollEvent(&dummy));
@@ -2038,14 +1483,6 @@ void I_BindVideoVariables(void)
     M_BindIntVariable("window_width",              &window_width);
     M_BindIntVariable("window_height",             &window_height);
     M_BindIntVariable("grabmouse",                 &grabmouse);
-<<<<<<< HEAD
-    M_BindFloatVariable("mouse_acceleration",      &mouse_acceleration);
-    M_BindFloatVariable("mouse_acceleration_y",    &mouse_acceleration_y); // [crispy]
-    M_BindIntVariable("mouse_threshold",           &mouse_threshold);
-    M_BindIntVariable("mouse_threshold_y",         &mouse_threshold_y); // [crispy]
-    M_BindIntVariable("mouse_y_invert",            &mouse_y_invert); // [crispy]
-=======
->>>>>>> upstream/sdl2-branch
     M_BindStringVariable("video_driver",           &video_driver);
     M_BindStringVariable("window_position",        &window_position);
     M_BindIntVariable("usegamma",                  &usegamma);

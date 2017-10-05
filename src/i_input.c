@@ -81,13 +81,13 @@ static unsigned int mouse_button_state = 0;
 // Disallow mouse and joystick movement to cause forward/backward
 // motion.  Specified with the '-novert' command line parameter.
 // This is an int to allow saving to config file
-int novert = 0;
+int novert = 1; // [crispy]
 
 // If true, keyboard mapping is ignored, like in Vanilla Doom.
 // The sensible thing to do is to disable this if you have a non-US
 // keyboard.
 
-int vanilla_keyboard_mapping = true;
+int vanilla_keyboard_mapping = false; // [crispy]
 
 // Mouse acceleration
 //
@@ -99,6 +99,10 @@ int vanilla_keyboard_mapping = true;
 // by mouse_acceleration to increase the speed.
 float mouse_acceleration = 2.0;
 int mouse_threshold = 10;
+// [crispy]
+float mouse_acceleration_y = 1.0;
+int mouse_threshold_y = 0;
+int mouse_y_invert = 0;
 
 // Translates the SDL key to a value of the type found in doomkeys.h
 static int TranslateKey(SDL_Keysym *sym)
@@ -425,6 +429,22 @@ static int AccelerateMouse(int val)
     }
 }
 
+// [crispy]
+static int AccelerateMouseY(int val)
+{
+    if (val < 0)
+        return -AccelerateMouseY(-val);
+
+    if (val > mouse_threshold_y)
+    {
+        return (int)((val - mouse_threshold_y) * mouse_acceleration_y + mouse_threshold_y);
+    }
+    else
+    {
+        return val;
+    }
+}
+
 //
 // Read the change in mouse state to generate mouse motion events
 //
@@ -443,9 +463,9 @@ void I_ReadMouse(void)
         ev.data1 = mouse_button_state;
         ev.data2 = AccelerateMouse(x);
 
-        if (!novert)
+        if (true || !novert) // [crispy] moved to src/*/g_game.c
         {
-            ev.data3 = -AccelerateMouse(y);
+            ev.data3 = -AccelerateMouseY(y); // [crispy]
         }
         else
         {
@@ -465,4 +485,7 @@ void I_BindInputVariables(void)
     M_BindIntVariable("mouse_threshold",           &mouse_threshold);
     M_BindIntVariable("vanilla_keyboard_mapping",  &vanilla_keyboard_mapping);
     M_BindIntVariable("novert",                    &novert);
+    M_BindFloatVariable("mouse_acceleration_y",    &mouse_acceleration_y); // [crispy]
+    M_BindIntVariable("mouse_threshold_y",         &mouse_threshold_y); // [crispy]
+    M_BindIntVariable("mouse_y_invert",            &mouse_y_invert); // [crispy]
 }
