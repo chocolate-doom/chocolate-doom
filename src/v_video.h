@@ -69,10 +69,7 @@ void V_DrawPatchShadow2(int x, int y, patch_t *patch);
 // Draw a linear block of pixels into the view buffer.
 
 void V_DrawBlock(int x, int y, int width, int height, pixel_t *src);
-<<<<<<< HEAD
 void V_DrawScaledBlock(int x, int y, int width, int height, byte *src);
-=======
->>>>>>> upstream/sdl2-branch
 
 void V_MarkRect(int x, int y, int width, int height);
 
@@ -113,7 +110,7 @@ void V_LoadXlaTable(void);
 
 void V_DrawMouseSpeedBox(int speed);
 
-static inline void V_ClearDPTranslation(void)
+static inline void V_ClearDPTranslation(void) // [crispy] TODO macro
 {
     if (dp_translation)
 	dp_translation = NULL;
