@@ -1,20 +1,13 @@
-<<<<<<< HEAD
-AC_INIT(Crispy Doom, 4.3, fabian@greffrath.com,
-        crispy-doom)
-=======
-AC_INIT(Chocolate Doom, 3.0.0-beta1,
-        chocolate-doom-dev-list@chocolate-doom.org, chocolate-doom)
->>>>>>> upstream/sdl2-branch
+AC_INIT(Crispy Doom, 5.0-beta1,
+        fabian@greffrath.com, crispy-doom)
 
 PACKAGE_SHORTNAME=${PACKAGE_NAME% Doom}
 PACKAGE_SHORTDESC="Limit-removing enhanced-resolution Doom source port"
 PACKAGE_COPYRIGHT="Copyright (C) 1993-2017"
 PACKAGE_LICENSE="GNU General Public License, version 2"
 PACKAGE_MAINTAINER="Fabian Greffrath"
-PACKAGE_URL="https://www.chocolate-doom.org/wiki/index.php/Crispy_Doom"
+PACKAGE_URL="http://fabiangreffrath.github.io/crispy-doom"
 PACKAGE_ISSUES="https://github.com/fabiangreffrath/crispy-doom/issues"
-
-AC_DEFINE([NET_PACKAGE_STRING], ["Chocolate Doom 2.3.0"], [declare netcode-compatibility with Chocolate Doom])
 
 AC_CONFIG_AUX_DIR(autotools)
 AC_CANONICAL_HOST
@@ -82,16 +75,11 @@ CFLAGS="$CFLAGS $SDL_CFLAGS ${SAMPLERATE_CFLAGS:-} ${PNG_CFLAGS:-}"
 LDFLAGS="$LDFLAGS $SDL_LIBS ${SAMPLERATE_LIBS:-} ${PNG_LIBS:-}"
 AC_CHECK_LIB(m, log)
 
-<<<<<<< HEAD
-    # [crispy] use stdlib's qsort() function for sorting the vissprites[] array
-    AC_CHECK_FUNCS(qsort)
+# [crispy] use stdlib's qsort() function for sorting the vissprites[] array
+AC_CHECK_FUNCS(qsort)
 
-    # OpenBSD I/O i386 library for I/O port access.
-    # (64 bit has the same thing with a different name!)
-=======
 AC_CHECK_HEADERS([linux/kd.h dev/isa/spkrio.h dev/speaker/speaker.h])
 AC_CHECK_FUNCS(mmap ioperm)
->>>>>>> upstream/sdl2-branch
 
 # OpenBSD I/O i386 library for I/O port access.
 # (64 bit has the same thing with a different name!)
