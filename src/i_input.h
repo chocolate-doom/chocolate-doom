@@ -26,6 +26,10 @@
 
 extern float mouse_acceleration;
 extern int mouse_threshold;
+extern float mouse_acceleration_y; // [crispy]
+extern int mouse_threshold_y; // [crispy]
+extern int mouse_y_invert; // [crispy]
+extern int novert; // [crispy]
 
 void I_BindInputVariables(void);
 void I_ReadMouse(void);
