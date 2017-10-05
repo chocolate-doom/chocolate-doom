@@ -239,15 +239,10 @@ void R_DrawColumn (void)
 void R_DrawColumnLow (void) 
 { 
     int			count; 
-<<<<<<< HEAD
     pixel_t*		dest; 
     pixel_t*		dest2;
     pixel_t*		dest3;
     pixel_t*		dest4;
-=======
-    pixel_t*		dest;
-    pixel_t*		dest2;
->>>>>>> upstream/sdl2-branch
     fixed_t		frac;
     fixed_t		fracstep;	 
     int                 x;
@@ -421,15 +416,10 @@ void R_DrawFuzzColumn (void)
 void R_DrawFuzzColumnLow (void) 
 { 
     int			count; 
-<<<<<<< HEAD
     pixel_t*		dest; 
     pixel_t*		dest2; 
     pixel_t*		dest3;
     pixel_t*		dest4;
-=======
-    pixel_t*		dest;
-    pixel_t*		dest2;
->>>>>>> upstream/sdl2-branch
     fixed_t		frac;
     fixed_t		fracstep;	 
     int x;
@@ -563,15 +553,10 @@ void R_DrawTranslatedColumn (void)
 void R_DrawTranslatedColumnLow (void) 
 { 
     int			count; 
-<<<<<<< HEAD
     pixel_t*		dest; 
     pixel_t*		dest2; 
     pixel_t*		dest3;
     pixel_t*		dest4;
-=======
-    pixel_t*		dest;
-    pixel_t*		dest2;
->>>>>>> upstream/sdl2-branch
     fixed_t		frac;
     fixed_t		fracstep;	 
     int                 x;
@@ -790,11 +775,7 @@ int			dscount;
 // Draws the actual span.
 void R_DrawSpan (void) 
 { 
-<<<<<<< HEAD
 //  unsigned int position, step;
-=======
-    unsigned int position, step;
->>>>>>> upstream/sdl2-branch
     pixel_t *dest;
     int count;
     int spot;
@@ -930,11 +911,7 @@ void R_DrawSpanLow (void)
 {
 //  unsigned int position, step;
     unsigned int xtemp, ytemp;
-<<<<<<< HEAD
     pixel_t *dest, *dest2;
-=======
-    pixel_t *dest;
->>>>>>> upstream/sdl2-branch
     int count;
     int spot;
 
