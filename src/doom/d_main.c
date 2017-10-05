@@ -1969,7 +1969,6 @@ void D_DoomMain (void)
     I_InitSound(true);
     I_InitMusic();
 
-<<<<<<< HEAD
     // [crispy] check for SSG resources
     crispy_havessg =
     (
@@ -1999,9 +1998,6 @@ void D_DoomMain (void)
         DEH_AddStringReplacement(PHUSTR_1, "level 33: betray");
     }
 
-#ifdef FEATURE_MULTIPLAYER
-=======
->>>>>>> upstream/sdl2-branch
     printf ("NET_Init: Init network subsystem.\n");
     NET_Init ();
 
