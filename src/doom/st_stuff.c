@@ -2077,10 +2077,6 @@ void ST_Init (void)
     }
 
     ST_loadData();
-<<<<<<< HEAD
     st_backing_screen = (pixel_t *) Z_Malloc((ST_WIDTH << hires) * (ST_HEIGHT << hires) * sizeof(*st_backing_screen), PU_STATIC, 0);
-=======
-    st_backing_screen = (pixel_t *) Z_Malloc(ST_WIDTH * ST_HEIGHT * sizeof(*st_backing_screen), PU_STATIC, 0);
->>>>>>> upstream/sdl2-branch
 }
 
