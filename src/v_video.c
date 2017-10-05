@@ -440,11 +440,7 @@ void V_DrawTLPatch(int x, int y, patch_t * patch)
     column_t *column;
     pixel_t *desttop, *dest;
     byte *source;
-<<<<<<< HEAD
     int w, f;
-=======
-    int w;
->>>>>>> upstream/sdl2-branch
 
     y -= SHORT(patch->topoffset);
     x -= SHORT(patch->leftoffset);
@@ -503,11 +499,7 @@ void V_DrawXlaPatch(int x, int y, patch_t * patch)
     column_t *column;
     pixel_t *desttop, *dest;
     byte *source;
-<<<<<<< HEAD
     int w, f;
-=======
-    int w;
->>>>>>> upstream/sdl2-branch
 
     y -= SHORT(patch->topoffset);
     x -= SHORT(patch->leftoffset);
@@ -565,11 +557,7 @@ void V_DrawAltTLPatch(int x, int y, patch_t * patch)
     column_t *column;
     pixel_t *desttop, *dest;
     byte *source;
-<<<<<<< HEAD
     int w, f;
-=======
-    int w;
->>>>>>> upstream/sdl2-branch
 
     y -= SHORT(patch->topoffset);
     x -= SHORT(patch->leftoffset);
@@ -629,11 +617,7 @@ void V_DrawShadowedPatch(int x, int y, patch_t *patch)
     pixel_t *desttop, *dest;
     byte *source;
     pixel_t *desttop2, *dest2;
-<<<<<<< HEAD
     int w, f;
-=======
-    int w;
->>>>>>> upstream/sdl2-branch
 
     y -= SHORT(patch->topoffset);
     x -= SHORT(patch->leftoffset);
@@ -997,16 +981,6 @@ void WritePNGfile(char *filename, byte *data,
     int width, height;
     byte *rowbuf;
 
-<<<<<<< HEAD
-    // [crispy] screenshots are actual reproductions of the screen content
-    extern void I_GetVideobuffer (byte **buffer, int *w, int *h);
-    I_GetVideobuffer(&rowbuf, &width, &height); // [crispy] recycle "rowbuf" pointer
-/*
-    // scale up to accommodate aspect ratio correction
-    width = inwidth * 5;
-    height = inheight * 6;
-*/
-=======
     if (aspect_ratio_correct)
     {
         // scale up to accommodate aspect ratio correction
@@ -1018,7 +992,6 @@ void WritePNGfile(char *filename, byte *data,
         width = inwidth;
         height = inheight;
     }
->>>>>>> upstream/sdl2-branch
 
     handle = fopen(filename, "wb");
     if (!handle)
@@ -1068,12 +1041,6 @@ void WritePNGfile(char *filename, byte *data,
 
     png_write_info(ppng, pinfo);
 
-    // [crispy] screenshots are actual reproductions of the screen content
-    for (i = j = 0; i < height; i++) // [crispy] unused variable ‘j’
-    {
-        png_write_row(ppng, rowbuf + i*width);
-    }
-/*
     rowbuf = malloc(width);
 
     if (rowbuf)
@@ -1110,7 +1077,6 @@ void WritePNGfile(char *filename, byte *data,
 
         free(rowbuf);
     }
-*/
 
     png_write_end(ppng, pinfo);
     png_destroy_write_struct(&ppng, &pinfo);
