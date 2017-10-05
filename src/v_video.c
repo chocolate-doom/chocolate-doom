@@ -841,6 +841,7 @@ void V_DrawRawScreen(byte *raw)
 {
     V_CopyScaledBuffer(dest_screen, raw, ORIGWIDTH * ORIGHEIGHT);
 }
+
 //
 // V_Init
 // 
