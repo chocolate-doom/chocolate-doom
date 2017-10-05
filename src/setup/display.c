@@ -42,9 +42,9 @@ static window_size_t window_sizes_unscaled[] =
 {
 //  { 320,  200 }, // hires
     { 640,  400 },
-//  { 960,  600 }, // hires
+    { 960,  600 },
     { 1280, 800 },
-//  { 1600, 1000 }, // hires
+    { 1600, 1000 },
     { 1920, 1200 }, // hires * 3
     { 2560, 1600 }, // hires * 4
     { 3200, 2000 }, // hires * 5
@@ -54,26 +54,17 @@ static window_size_t window_sizes_unscaled[] =
 // List of aspect ratio-corrected window sizes:
 static window_size_t window_sizes_scaled[] =
 {
-<<<<<<< HEAD
-//  { 256,  200 }, // hires
 //  { 320,  240 }, // hires
-=======
-    { 320,  240 },
->>>>>>> upstream/sdl2-branch
-    { 512,  400 },
+//  { 512,  400 }, // hires
     { 640,  480 },
     { 800,  600 },
-//  { 960,  720 }, // hires
+    { 960,  720 },
     { 1024, 800 },
     { 1280, 960 },
     { 1600, 1200 },
-<<<<<<< HEAD
-    { 1920, 1440 }, // hires * 3
+    { 1920, 1440 },
     { 2560, 1920 }, // hires * 4
     { 3200, 2400 }, // hires * 5
-=======
-    { 1920, 1440 },
->>>>>>> upstream/sdl2-branch
     { 0, 0},
 };
 
@@ -84,22 +75,16 @@ static int integer_scaling = 0;
 static int vga_porch_flash = 0;
 static int force_software_renderer = 0;
 static int fullscreen = 1;
-<<<<<<< HEAD
-static int screen_width = 640;
-static int screen_height = 400;
-static int screen_bpp = 0;
-=======
 static int fullscreen_width = 0, fullscreen_height = 0;
 static int window_width = 640, window_height = 480;
->>>>>>> upstream/sdl2-branch
 static int startup_delay = 1000;
 static int max_scaling_buffer_pixels = 16000000;
 static int usegamma = 0;
 
-int graphical_startup = 0;
-int show_endoom = 0;
+int graphical_startup = 0; // [crispy]
+int show_endoom = 0; // [crispy]
 int show_diskicon = 1;
-int png_screenshots = 1;
+int png_screenshots = 1; // [crispy]
 
 static int system_video_env_set;
 
@@ -145,176 +130,8 @@ static void WindowSizeSelected(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(size))
 
 static txt_radiobutton_t *SizeSelectButton(window_size_t *size)
 {
-<<<<<<< HEAD
-    unsigned int num_depths = sizeof(pixel_depths) / sizeof(*pixel_depths);
-    unsigned int i;
-
-    // Search pixel_depths, find the bpp that corresponds to screen_bpp,
-    // then set selected_bpp to match.
-
-    for (i = 0; i < num_depths; ++i)
-    {
-        if (pixel_depths[i].bpp == screen_bpp)
-        {
-            selected_bpp = GetSupportedBPPIndex(pixel_depths[i].description);
-
-            if (selected_bpp >= 0)
-            {
-                return 1;
-            }
-        }
-    }
-
-    return 0;
-}
-
-static void SetSelectedBPP(void)
-{
-    const SDL_VideoInfo *info;
-
-    if (TrySetSelectedBPP())
-    {
-        return;
-    }
-
-    // screen_bpp does not match any supported pixel depth.  Query SDL
-    // to find out what it recommends using.
-
-    info = SDL_GetVideoInfo();
-
-    if (info != NULL && info->vfmt != NULL)
-    {
-        screen_bpp = info->vfmt->BitsPerPixel;
-    }
-
-    // Try again.
-
-    if (!TrySetSelectedBPP())
-    {
-        // Give up and just use the first in the list.
-
-        selected_bpp = 0;
-        screen_bpp = GetSelectedBPP();
-    }
-}
-
-static void ModeSelected(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(mode))
-{
-    TXT_CAST_ARG(screen_mode_t, mode);
-
-    screen_width = mode->w;
-    screen_height = mode->h;
-
-    // This is now the most recently selected screen width
-
-    selected_screen_width = screen_width;
-    selected_screen_height = screen_height;
-}
-
-static int GoodFullscreenMode(screen_mode_t *mode)
-{
-    int w, h;
-
-    w = mode->w;
-    h = mode->h;
-
-    // 320x200 and 640x400 are always good (special case)
-
-    if ((w == 320 && h == 200 && 0) || (w == 640 && h == 400)) // hires
-    {
-        return 1;
-    }
-
-    // Special case: 320x240 letterboxed mode is okay (but not aspect
-    // ratio corrected 320x240)
-
-    if (w == 640 && h == 480 && !aspect_ratio_correct) // hires
-    {
-        return 1;
-    }
-
-    // Ignore all modes less than 640x480
-
-    return w >= 640 && h >= 480;
-}
-
-// Build screen_modes_fullscreen
-
-static void BuildFullscreenModesList(void)
-{
-    SDL_PixelFormat format;
-    SDL_Rect **modes;
-    screen_mode_t *m1;
-    screen_mode_t *m2;
-    screen_mode_t m;
-    int num_modes;
-    int i;
-
-    // Free the existing modes list, if one exists
-
-    if (screen_modes_fullscreen != NULL)
-    {
-        free(screen_modes_fullscreen);
-    }
-
-    // Get a list of fullscreen modes and find out how many
-    // modes are in the list.
-
-    format.BitsPerPixel = screen_bpp;
-    format.BytesPerPixel = (screen_bpp + 7) / 8;
-
-    modes = SDL_ListModes(&format, SDL_FULLSCREEN);
-
-    if (modes == NULL || modes == (SDL_Rect **) -1)
-    {
-        num_modes = 0;
-    }
-    else
-    {
-        for (num_modes=0; modes[num_modes] != NULL; ++num_modes);
-    }
-
-    // Build the screen_modes_fullscreen array
-
-    screen_modes_fullscreen = malloc(sizeof(screen_mode_t) * (num_modes + 1));
-
-    for (i=0; i<num_modes; ++i)
-    {
-        screen_modes_fullscreen[i].w = modes[i]->w;
-        screen_modes_fullscreen[i].h = modes[i]->h;
-    }
-
-    screen_modes_fullscreen[i].w = 0;
-    screen_modes_fullscreen[i].h = 0;
-
-    // Reverse the order of the modes list (smallest modes first)
-
-    for (i=0; i<num_modes / 2; ++i)
-    {
-        m1 = &screen_modes_fullscreen[i];
-        m2 = &screen_modes_fullscreen[num_modes - 1 - i];
-
-        memcpy(&m, m1, sizeof(screen_mode_t));
-        memcpy(m1, m2, sizeof(screen_mode_t));
-        memcpy(m2, &m, sizeof(screen_mode_t));
-    }
-
-    num_screen_modes_fullscreen = num_modes;
-}
-
-static int FindBestMode(screen_mode_t *modes)
-{
-    int i;
-    int best_mode;
-    int best_mode_diff;
-    int diff;
-
-    best_mode = -1;
-    best_mode_diff = 0;
-=======
     char buf[15];
     txt_radiobutton_t *result;
->>>>>>> upstream/sdl2-branch
 
     M_snprintf(buf, sizeof(buf), "%ix%i", size->w, size->h);
     result = TXT_NewRadioButton(buf, &window_width, size->w);
@@ -342,34 +159,8 @@ static void GenerateSizesTable(TXT_UNCAST_ARG(widget),
     }
 
     // Build the table
-<<<<<<< HEAD
- 
-    TXT_ClearTable(modes_table);
-    TXT_SetColumnWidths(modes_table, 14, 14, 14, 14, 14);
-
-    for (i=0; modes[i].w != 0; ++i) 
-    {
-        // Skip bad fullscreen modes
-
-        if (fullscreen && !GoodFullscreenMode(&modes[i]))
-        {
-            continue;
-        }
-
-        if (modes[i].w < 640 || modes[i].h < 400) // hires
-        {
-            continue;
-        }
-
-        M_snprintf(buf, sizeof(buf), "%ix%i", modes[i].w, modes[i].h);
-        rbutton = TXT_NewRadioButton(buf, &vidmode, i);
-        TXT_AddWidget(modes_table, rbutton);
-        TXT_SignalConnect(rbutton, "selected", ModeSelected, &modes[i]);
-    }
-=======
     TXT_ClearTable(sizes_table);
     TXT_SetColumnWidths(sizes_table, 14, 14, 14);
->>>>>>> upstream/sdl2-branch
 
     TXT_AddWidget(sizes_table, TXT_NewSeparator("Window size"));
 
