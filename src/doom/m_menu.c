@@ -905,18 +905,15 @@ void M_SaveSelect(int choice)
 
     // we are going to be intercepting all chars
     saveStringEnter = 1;
-<<<<<<< HEAD
-    
+
     // [crispy] load the last game you saved
     LoadDef.lastOn = choice;
-=======
 
     // We need to turn on text input:
     x = LoadDef.x - 11;
     y = LoadDef.y + choice * LINEHEIGHT - 4;
     I_StartTextInput(x, y, x + 8 + 24 * 8 + 8, y + LINEHEIGHT - 2);
 
->>>>>>> upstream/sdl2-branch
     saveSlot = choice;
     M_StringCopy(saveOldString,savegamestrings[choice], SAVESTRINGSIZE);
     if (!strcmp(savegamestrings[choice], EMPTYSTRING))
