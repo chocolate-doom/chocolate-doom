@@ -32,15 +32,7 @@
 #define SCREENWIDTH  (ORIGWIDTH << hires) // [crispy]
 #define SCREENHEIGHT (ORIGHEIGHT << hires) // [crispy]
 
-<<<<<<< HEAD
-// Screen width used for "squash" scale functions
-
-#define SCREENWIDTH_4_3 (256 << hires) // [crispy]
-
-// Screen height used for "stretch" scale functions.
-=======
 // Screen height used when aspect_ratio_correct=true.
->>>>>>> upstream/sdl2-branch
 
 #define SCREENHEIGHT_4_3 (240 << hires) // [crispy]
 
@@ -94,14 +86,6 @@ void I_EnableLoadingDisk(int xoffs, int yoffs);
 extern char *video_driver;
 extern boolean screenvisible;
 
-<<<<<<< HEAD
-extern float mouse_acceleration;
-extern int mouse_threshold;
-extern float mouse_acceleration_y; // [crispy]
-extern int mouse_threshold_y; // [crispy]
-extern int mouse_y_invert; // [crispy]
-=======
->>>>>>> upstream/sdl2-branch
 extern int vanilla_keyboard_mapping;
 extern boolean screensaver_mode;
 extern int usegamma;
@@ -111,9 +95,6 @@ extern int screen_width;
 extern int screen_height;
 extern int fullscreen;
 extern int aspect_ratio_correct;
-<<<<<<< HEAD
-extern int novert; // [crispy]
-=======
 extern int integer_scaling;
 extern int vga_porch_flash;
 extern int force_software_renderer;
@@ -123,6 +104,5 @@ void I_GetWindowPosition(int *x, int *y, int w, int h);
 
 // Joystic/gamepad hysteresis
 extern unsigned int joywait;
->>>>>>> upstream/sdl2-branch
 
 #endif
