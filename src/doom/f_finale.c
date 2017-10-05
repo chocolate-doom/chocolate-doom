@@ -723,11 +723,7 @@ F_DrawPatchCol
     byte*	source;
     pixel_t*	dest;
     pixel_t*	desttop;
-<<<<<<< HEAD
     int		count, f;
-=======
-    int		count;
->>>>>>> upstream/sdl2-branch
 	
     column = (column_t *)((byte *)patch + LONG(patch->columnofs[col]));
     desttop = I_VideoBuffer + x;
