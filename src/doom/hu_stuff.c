@@ -45,7 +45,7 @@
 #include "dstrings.h"
 #include "sounds.h"
 
-#include "v_video.h" // [crispy] V_ClearDPTranslation()
+#include "v_video.h" // [crispy] V_DrawPatch() et al.
 #include "v_trans.h" // [crispy] colored kills/items/secret/etc. messages
 
 //
@@ -759,7 +759,7 @@ void HU_Drawer(void)
     dp_translation = cr[CR_GOLD];
     HUlib_drawSText(&w_secret);
 
-    V_ClearDPTranslation();
+    dp_translation = NULL;
     if (crispy_screenshotmsg == 4)
 	HUlib_eraseSText(&w_message);
     else
@@ -869,7 +869,7 @@ void HU_Drawer(void)
 	HUlib_drawTextLine(&w_fps, false);
     }
 
-    V_ClearDPTranslation();
+    dp_translation = NULL;
 
     if (crispy_crosshair == CROSSHAIR_STATIC)
 	HU_DrawCrosshair();

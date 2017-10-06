@@ -1569,7 +1569,7 @@ static inline void ST_DrawGibbedPlayerSprites (void)
 	}
 
 	V_DrawPatch(73, 186, patch);
-	V_ClearDPTranslation();
+	dp_translation = NULL;
 }
 
 void ST_drawWidgets(boolean refresh)
@@ -1585,7 +1585,7 @@ void ST_drawWidgets(boolean refresh)
 
     dp_translation = ST_WidgetColor(hudcolor_ammo);
     STlib_updateNum(&w_ready, refresh);
-    V_ClearDPTranslation();
+    dp_translation = NULL;
 
     // [crispy] draw "special widgets" in the Crispy HUD
     if (screenblocks >= CRISPY_HUD && (!automapactive || crispy_automapoverlay))
@@ -1641,7 +1641,7 @@ void ST_drawWidgets(boolean refresh)
     }
     dp_translation = ST_WidgetColor(hudcolor_armor);
     STlib_updatePercent(&w_armor, refresh || screenblocks >= CRISPY_HUD);
-    V_ClearDPTranslation();
+    dp_translation = NULL;
 
     if (screenblocks < CRISPY_HUD || (automapactive && !crispy_automapoverlay))
     {
@@ -1661,7 +1661,7 @@ void ST_drawWidgets(boolean refresh)
 
     dp_translation = ST_WidgetColor(hudcolor_frags);
     STlib_updateNum(&w_frags, refresh || screenblocks >= CRISPY_HUD);
-    V_ClearDPTranslation();
+    dp_translation = NULL;
 }
 
 void ST_doRefresh(void)

@@ -779,7 +779,7 @@ void M_DrawLoad(void)
 
 	M_WriteText(LoadDef.x,LoadDef.y+LINEHEIGHT*i,savegamestrings[i]);
 
-	V_ClearDPTranslation();
+	dp_translation = NULL;
     }
 }
 
@@ -1302,7 +1302,7 @@ static void M_DrawMouse(void)
     M_WriteText(MouseDef.x, MouseDef.y + LINEHEIGHT * mouse_look + 6,
                 mouse_menu_text);
 
-    V_ClearDPTranslation();
+    dp_translation = NULL;
 }
 
 // [crispy] crispness menu
@@ -1492,7 +1492,7 @@ static void M_DrawCrispness1(void)
 
     M_DrawCrispnessGoto(crispness1_goto2, "Next Page >");
 
-    V_ClearDPTranslation();
+    dp_translation = NULL;
 }
 
 static void M_DrawCrispness2(void)
@@ -1518,7 +1518,7 @@ static void M_DrawCrispness2(void)
     M_DrawCrispnessGoto(crispness2_goto3, "Next Page >");
     M_DrawCrispnessGoto(crispness2_goto1, "< Prev Page");
 
-    V_ClearDPTranslation();
+    dp_translation = NULL;
 }
 
 static void M_DrawCrispness3(void)
@@ -1538,7 +1538,7 @@ static void M_DrawCrispness3(void)
 
     M_DrawCrispnessGoto(crispness3_goto2, "< Prev Page");
 
-    V_ClearDPTranslation();
+    dp_translation = NULL;
 }
 
 void M_Options(int choice)
@@ -2044,7 +2044,7 @@ M_DrawThermo
     V_DrawPatchDirect((x + 8) + thermDot * 8, y,
 		      W_CacheLumpName(DEH_String("M_THERMO"), PU_CACHE));
 
-    V_ClearDPTranslation();
+    dp_translation = NULL;
 }
 
 
@@ -3091,7 +3091,7 @@ void M_Drawer (void)
 	    else
 	    V_DrawPatchShadow2 (x, y, W_CacheLumpName(name, PU_CACHE));
 
-	    V_ClearDPTranslation();
+	    dp_translation = NULL;
 	}
 	y += LINEHEIGHT;
     }
@@ -3103,7 +3103,7 @@ void M_Drawer (void)
 	char item[4];
 	M_snprintf(item, sizeof(item), "%s>", whichSkull ? crstr[CR_NONE] : crstr[CR_DARK]);
 	M_WriteText(currentMenu->x - 8, currentMenu->y + CRISPY_LINEHEIGHT * itemOn, item);
-	V_ClearDPTranslation();
+	dp_translation = NULL;
     }
     else
     V_DrawPatchDirect(x + SKULLXOFF, currentMenu->y - 5 + itemOn*LINEHEIGHT,
