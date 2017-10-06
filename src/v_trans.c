@@ -22,6 +22,7 @@
 
 #include "doomtype.h"
 #include "deh_str.h"
+#include "i_video.h" // [crispy] I_GetPaletteIndex()
 #include "m_argv.h" // [crispy] M_ParmExists()
 #include "m_misc.h"
 #include "v_trans.h"
@@ -233,41 +234,6 @@ static void rgb_to_hsv(vect *rgb, vect *hsv)
     hsv->z = v;
 }
 
-// Search through the given palette, finding the nearest color that matches
-// the given color.
-
-int FindNearestColor(byte *palette, int r, int g, int b)
-{
-    byte *col;
-    int best;
-    int best_diff;
-    int diff;
-    int i;
-
-    best = 0;
-    best_diff = INT_MAX;
-
-    for (i=0; i<256; ++i)
-    {
-        col = palette + i * 3;
-        diff = (r - col[0]) * (r - col[0])
-             + (g - col[1]) * (g - col[1])
-             + (b - col[2]) * (b - col[2]);
-
-        if (diff == 0)
-        {
-            return i;
-        }
-        else if (diff < best_diff)
-        {
-            best = i;
-            best_diff = diff;
-        }
-    }
-
-    return best;
-}
-
 byte V_Colorize (byte *playpal, int cr, byte source, boolean keepgray109)
 {
     vect rgb, hsv;
@@ -321,7 +287,7 @@ byte V_Colorize (byte *playpal, int cr, byte source, boolean keepgray109)
     rgb.y *= 255.;
     rgb.z *= 255.;
 
-    return FindNearestColor(playpal, (int) rgb.x, (int) rgb.y, (int) rgb.z);
+    return I_GetPaletteIndex((int) rgb.x, (int) rgb.y, (int) rgb.z);
 }
 
 void CrispyReplaceColor (char *str, const int cr, const char *col)

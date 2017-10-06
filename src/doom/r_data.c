@@ -1025,7 +1025,6 @@ void R_InitTranMap()
 	{
 	    byte *fg, *bg, blend[3], *tp = tranmap;
 	    int i, j, btmp;
-	    extern int FindNearestColor(byte *palette, int rgb_r, int rgb_g, int rgb_b);
 
 	    // [crispy] background color
 	    for (i = 0; i < 256; i++)
@@ -1052,7 +1051,7 @@ void R_InitTranMap()
 		    blend[g] = (tran_filter_pct * fg[g] + (100 - tran_filter_pct) * bg[g]) / (100 + btmp);
 		    blend[b] = (tran_filter_pct * fg[b] + (100 - tran_filter_pct) * bg[b]) / 100;
 
-		    *tp++ = FindNearestColor(playpal, blend[r], blend[g], blend[b]);
+		    *tp++ = I_GetPaletteIndex(blend[r], blend[g], blend[b]);
 		}
 	    }
 
