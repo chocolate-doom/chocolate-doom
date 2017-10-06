@@ -1181,7 +1181,7 @@ void I_GetWindowPosition(int *x, int *y, int w, int h)
     }
 }
 
-static void SetVideoMode(void)
+void SetVideoMode(void) // [crispy] un-static
 {
     int w, h;
     int x, y;

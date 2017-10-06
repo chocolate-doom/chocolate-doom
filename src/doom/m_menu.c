@@ -1951,6 +1951,14 @@ static void M_CrispyToggleUncapped(int choice)
 {
     choice = 0;
     crispy_uncapped = (crispy_uncapped + 1) % NUM_UNCAPPED;
+
+    // [crispy] restart renderer if vsync is toggled (UNCAPPED_OFF has vsync),
+    // i.e. UNCAPPED_OFF -> UNCAPPED_ON and UNCAPPED_ON -> UNCAPPED_VSYNC
+    if (crispy_uncapped)
+    {
+	extern void SetVideoMode (void);
+	SetVideoMode();
+    }
 }
 
 static void M_CrispyToggleFullsounds(int choice)
