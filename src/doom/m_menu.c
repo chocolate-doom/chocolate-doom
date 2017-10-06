@@ -3253,12 +3253,13 @@ void M_Init (void)
     if (!M_ParmExists("-nodeh"))
     {
 	char *string, *replace;
+	extern const char *crispy_platform;
 
 	// [crispy] "i wouldn't leave if i were you.\ndos is much worse."
 	string = doom1_endmsg[3];
 	if (!strcmp(string, DEH_String(string)))
 	{
-		replace = M_StringReplace(string, "dos", "your desktop");
+		replace = M_StringReplace(string, "dos", crispy_platform);
 		DEH_AddStringReplacement(string, replace);
 		free(replace);
 	}
@@ -3267,7 +3268,7 @@ void M_Init (void)
 	string = doom1_endmsg[4];
 	if (!strcmp(string, DEH_String(string)))
 	{
-		replace = M_StringReplace(string, "dos\n", "your\ndesktop ");
+		replace = M_StringReplace(string, "dos", crispy_platform);
 		DEH_AddStringReplacement(string, replace);
 		free(replace);
 	}
