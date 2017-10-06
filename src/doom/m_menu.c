@@ -1447,8 +1447,7 @@ static multiitem_t multiitem_uncapped[NUM_UNCAPPED] =
 {
     {UNCAPPED_OFF, "35 fps"},
     {UNCAPPED_ON, "uncapped"},
-    {UNCAPPED_60FPS, "60 fps"},
-    {UNCAPPED_70FPS, "70 fps"},
+    {UNCAPPED_VSYNC, "vsync"},
 };
 
 static void M_DrawCrispnessMultiItem(int y, char *item, multiitem_t *multiitem, int feat, boolean cond)
