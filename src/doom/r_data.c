@@ -1026,6 +1026,7 @@ void R_InitTranMap()
 	    byte *fg, *bg, blend[3], *tp = tranmap;
 	    int i, j, btmp;
 
+	    I_SetPalette(playpal);
 	    // [crispy] background color
 	    for (i = 0; i < 256; i++)
 	    {
@@ -1116,6 +1117,7 @@ void R_InitColormaps (void)
 	keepgray = (i >= 0 && lumpinfo[i]->wad_file->iwad);
 
 	// [crispy] CRMAX - 2: don't override the original GREN and BLUE2 Boom tables
+	I_SetPalette(playpal);
 	for (i = 0; i < CRMAX - 2; i++)
 	{
 	    for (j = 0; j < 256; j++)
