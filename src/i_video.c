@@ -1378,9 +1378,6 @@ void I_InitGraphics(void)
     byte *doompal;
     char *env;
 
-    // [crispy] disable special lock-key behavior
-    putenv("SDL_DISABLE_LOCK_KEYS=1");
-
     // Pass through the XSCREENSAVER_WINDOW environment variable to 
     // SDL_WINDOWID, to embed the SDL window into the Xscreensaver
     // window.
