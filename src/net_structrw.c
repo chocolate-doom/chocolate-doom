@@ -130,27 +130,30 @@ boolean NET_ReadSettings(net_packet_t *packet, net_gamesettings_t *settings)
 
 boolean NET_ReadQueryData(net_packet_t *packet, net_querydata_t *query)
 {
-    boolean result;
+    boolean success;
 
     query->version = NET_ReadSafeString(packet);
 
-    result = query->version != NULL
+    success = query->version != NULL
           && NET_ReadInt8(packet, (unsigned int *) &query->server_state)
           && NET_ReadInt8(packet, (unsigned int *) &query->num_players)
           && NET_ReadInt8(packet, (unsigned int *) &query->max_players)
           && NET_ReadInt8(packet, (unsigned int *) &query->gamemode)
           && NET_ReadInt8(packet, (unsigned int *) &query->gamemission);
-    
-    if (result)
-    {
-        query->description = NET_ReadSafeString(packet);
 
-        return query->description != NULL;
-    }   
-    else
+    if (!success)
     {
         return false;
-    } 
+    }
+
+    query->description = NET_ReadSafeString(packet);
+
+    // We read the list of protocols supported by the server. However,
+    // old versions of Chocolate Doom do not support this field; it is
+    // okay if it cannot be successfully read.
+    query->protocol = NET_ReadProtocolList(packet);
+
+    return query->description != NULL;
 }
 
 void NET_WriteQueryData(net_packet_t *packet, net_querydata_t *query)
@@ -162,9 +165,13 @@ void NET_WriteQueryData(net_packet_t *packet, net_querydata_t *query)
     NET_WriteInt8(packet, query->gamemode);
     NET_WriteInt8(packet, query->gamemission);
     NET_WriteString(packet, query->description);
+
+    // Write a list of all supported protocols. Note that the query->protocol
+    // field is ignored here; it is only used when receiving.
+    NET_WriteProtocolList(packet);
 }
 
-void NET_WriteTiccmdDiff(net_packet_t *packet, net_ticdiff_t *diff, 
+void NET_WriteTiccmdDiff(net_packet_t *packet, net_ticdiff_t *diff,
                          boolean lowres_turn)
 {
     // Header
