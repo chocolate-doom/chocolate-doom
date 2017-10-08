@@ -19,9 +19,20 @@
 #include <string.h>
 
 #include "doomtype.h"
+#include "i_system.h"
 #include "m_misc.h"
 #include "net_packet.h"
 #include "net_structrw.h"
+
+// String names for the enum values in net_protocol_t, which are what is
+// sent over the wire. Every enum value must have an entry in this list.
+static struct
+{
+    net_protocol_t protocol;
+    const char *name;
+} protocol_names[] = {
+    {NET_PROTOCOL_CHOCOLATE_DOOM_0, "CHOCOLATE_DOOM_0"},
+};
 
 void NET_WriteConnectData(net_packet_t *packet, net_connect_data_t *data)
 {
@@ -548,5 +559,111 @@ boolean NET_ReadPRNGSeed(net_packet_t *packet, prng_seed_t seed)
 void NET_WritePRNGSeed(net_packet_t *packet, prng_seed_t seed)
 {
     NET_WriteBlob(packet, seed, sizeof(prng_seed_t));
+}
+
+static net_protocol_t ParseProtocolName(const char *name)
+{
+    int i;
+
+    for (i = 0; i < arrlen(protocol_names); ++i)
+    {
+        if (!strcmp(protocol_names[i].name, name))
+        {
+            return protocol_names[i].protocol;
+        }
+    }
+
+    return NET_PROTOCOL_UNKNOWN;
+}
+
+// NET_ReadProtocol reads a single string-format protocol name from the given
+// packet, returning NET_PROTOCOL_UNKNOWN if the string describes an unknown
+// protocol.
+net_protocol_t NET_ReadProtocol(net_packet_t *packet)
+{
+    const char *name;
+
+    name = NET_ReadString(packet);
+    if (name == NULL)
+    {
+        return NET_PROTOCOL_UNKNOWN;
+    }
+
+    return ParseProtocolName(name);
+}
+
+// NET_WriteProtocol writes a single string-format protocol name to a packet.
+void NET_WriteProtocol(net_packet_t *packet, net_protocol_t protocol)
+{
+    int i;
+
+    for (i = 0; i < arrlen(protocol_names); ++i)
+    {
+        if (protocol_names[i].protocol == protocol)
+        {
+            NET_WriteString(packet, protocol_names[i].name);
+            return;
+        }
+    }
+
+    // If you add an entry to the net_protocol_t enum, a corresponding entry
+    // must be added to the protocol_names list.
+    I_Error("NET_WriteProtocol: protocol %d missing from protocol_names "
+            "list; please add it.", protocol);
+}
+
+// NET_ReadProtocolList reads a list of string-format protocol names from
+// the given packet, returning a single protocol number. The protocol that is
+// returned is the last protocol in the list that is a supported protocol. If
+// no recognized protocols are read, NET_PROTOCOL_UNKNOWN is returned.
+net_protocol_t NET_ReadProtocolList(net_packet_t *packet)
+{
+    net_protocol_t result;
+    unsigned int num_protocols;
+    int i;
+
+    if (!NET_ReadInt8(packet, &num_protocols))
+    {
+        return NET_PROTOCOL_UNKNOWN;
+    }
+
+    result = NET_PROTOCOL_UNKNOWN;
+
+    for (i = 0; i < num_protocols; ++i)
+    {
+        net_protocol_t p;
+        const char *name;
+
+        name = NET_ReadString(packet);
+        if (name == NULL)
+        {
+            return NET_PROTOCOL_UNKNOWN;
+        }
+
+        p = ParseProtocolName(name);
+        if (p != NET_PROTOCOL_UNKNOWN)
+        {
+            result = p;
+        }
+    }
+
+    return result;
+}
+
+// NET_WriteProtocolList writes a list of string-format protocol names into
+// the given packet, all the supported protocols in the net_protocol_t enum.
+// This is slightly different to other functions in this file, in that there
+// is nothing the caller can "choose" to write; the built-in list of all
+// protocols is always sent.
+void NET_WriteProtocolList(net_packet_t *packet)
+{
+    int i;
+
+    NET_WriteInt8(packet, NET_NUM_PROTOCOLS);
+
+    for (i = 0; i < NET_NUM_PROTOCOLS; ++i)
+    {
+        NET_WriteProtocol(packet, i);
+    }
 }
 

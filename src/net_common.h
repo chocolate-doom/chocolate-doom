@@ -93,12 +93,6 @@ void NET_Conn_Disconnect(net_connection_t *conn);
 void NET_Conn_Run(net_connection_t *conn);
 net_packet_t *NET_Conn_NewReliable(net_connection_t *conn, int packet_type);
 
-// Protocol list exchange.
-net_protocol_t NET_ReadProtocol(net_packet_t *packet);
-void NET_WriteProtocol(net_packet_t *packet, net_protocol_t protocol);
-net_protocol_t NET_ReadProtocolList(net_packet_t *packet);
-void NET_WriteProtocolList(net_packet_t *packet);
-
 // Other miscellaneous common functions
 unsigned int NET_ExpandTicNum(unsigned int relative, unsigned int b);
 boolean NET_ValidGameSettings(GameMode_t mode, GameMission_t mission,
