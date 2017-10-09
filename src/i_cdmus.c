@@ -28,7 +28,11 @@ int cd_Error;
 
 int I_CDMusInit(void)
 {
-    return 0;
+    fprintf(stderr,
+        "I_CDMusInit: CD music playback is no longer supported! "
+        "Please use digital music packs instead:\n"
+        "https://www.chocolate-doom.org/wiki/index.php/Digital_music_packs\n");
+    return -1;
 }
 
 // We cannot print status messages inline during startup, they must

@@ -249,6 +249,7 @@ typedef struct
     int gamemode;
     int gamemission;
     char *description;
+    net_protocol_t protocol;
 } net_querydata_t;
 
 // Data sent by the server while waiting for the game to start.
