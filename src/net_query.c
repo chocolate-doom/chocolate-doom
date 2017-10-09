@@ -698,7 +698,7 @@ static void PrintHeader(void)
 
     putchar('\n');
     formatted_printf(5, "Ping");
-    formatted_printf(22, "Address");
+    formatted_printf(18, "Address");
     formatted_printf(8, "Players");
     puts("Description");
 
@@ -724,8 +724,8 @@ static void NET_QueryPrintCallback(net_addr_t *addr,
 
     formatted_printf(5, "%4i", ping_time);
     formatted_printf(22, "%s", NET_AddrToString(addr));
-    formatted_printf(8, "%i/%i", data->num_players, 
-                                 data->max_players);
+    formatted_printf(4, "%i/%i ", data->num_players,
+                                  data->max_players);
 
     if (data->gamemode != indetermined)
     {
