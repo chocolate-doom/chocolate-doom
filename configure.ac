@@ -77,6 +77,7 @@ AC_CHECK_LIB(m, log)
 
 AC_CHECK_HEADERS([linux/kd.h dev/isa/spkrio.h dev/speaker/speaker.h])
 AC_CHECK_FUNCS(mmap ioperm)
+AC_CHECK_DECLS([strcasecmp, strncasecmp], [], [], [[#include <strings.h>]])
 
 # OpenBSD I/O i386 library for I/O port access.
 # (64 bit has the same thing with a different name!)
