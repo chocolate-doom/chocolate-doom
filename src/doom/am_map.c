@@ -33,6 +33,7 @@
 #include "m_misc.h"
 #include "i_system.h"
 #include "i_timer.h"
+#include "i_video.h"
 
 // Needs access to LFB.
 #include "v_video.h"
@@ -644,14 +645,13 @@ AM_Responder
 
     int rc;
     static int bigstate=0;
-    static int joywait = 0;
     static char buffer[20];
     int key;
 
     rc = false;
 
     if (ev->type == ev_joystick && joybautomap >= 0
-        && (ev->data1 & (1 << joybautomap)) != 0 && joywait < I_GetTime())
+        && (ev->data1 & (1 << joybautomap)) != 0)
     {
         joywait = I_GetTime() + 5;
 

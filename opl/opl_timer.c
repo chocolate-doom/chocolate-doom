@@ -184,7 +184,7 @@ int OPL_Timer_StartThread(void)
     opl_timer_paused = 0;
     pause_offset = 0;
 
-    timer_thread = SDL_CreateThread(ThreadFunction, NULL);
+    timer_thread = SDL_CreateThread(ThreadFunction, "OPL timer thread", NULL);
 
     if (timer_thread == NULL)
     {

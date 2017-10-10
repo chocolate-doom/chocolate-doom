@@ -98,20 +98,43 @@ struct _net_addr_s
     void *handle;
 };
 
-// magic number sent when connecting to check this is a valid client
+// Magic number sent when connecting to check this is a valid client
+#define NET_MAGIC_NUMBER     1454104972U
 
-#define NET_MAGIC_NUMBER 3436803284U
+// Old magic number used by Chocolate Doom versions before v3.0:
+#define NET_OLD_MAGIC_NUMBER 3436803284U
 
 // header field value indicating that the packet is a reliable packet
 
 #define NET_RELIABLE_PACKET (1 << 15)
+
+// Supported protocols. If you're developing a fork of Chocolate
+// Doom, you can add your own entry to this list while maintaining
+// compatibility with Chocolate Doom servers. Higher-numbered enum values
+// will be preferred when negotiating a protocol for the client and server
+// to use, so the order matters.
+// NOTE: The values in this enum do not have any special value outside of
+// the program they're compiled in. What matters is the string representation.
+typedef enum
+{
+    // Protocol introduced with Chocolate Doom v3.0. Each compatibility-
+    // breaking change to the network protocol will produce a new protocol
+    // number in this enum.
+    NET_PROTOCOL_CHOCOLATE_DOOM_0,
+
+    // Add your own protocol here; be sure to add a name for it to the list
+    // in net_common.c too.
+
+    NET_NUM_PROTOCOLS,
+    NET_PROTOCOL_UNKNOWN,
+} net_protocol_t;
 
 // packet types
 
 typedef enum
 {
     NET_PACKET_TYPE_SYN,
-    NET_PACKET_TYPE_ACK,
+    NET_PACKET_TYPE_ACK, // deprecated
     NET_PACKET_TYPE_REJECTED,
     NET_PACKET_TYPE_KEEPALIVE,
     NET_PACKET_TYPE_WAITING_DATA,
@@ -226,6 +249,7 @@ typedef struct
     int gamemode;
     int gamemission;
     char *description;
+    net_protocol_t protocol;
 } net_querydata_t;
 
 // Data sent by the server while waiting for the game to start.

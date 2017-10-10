@@ -7,21 +7,21 @@ compiler: gcc
 sudo: required
 dist: trusty
 
-# TODO: Remove old SDL library dependencies once sdl2-branch is merged.
+env:
+    - ANALYZE=false
+    - ANALYZE=true
+
 addons:
     apt:
         packages:
+        - cppcheck
         - libsdl2-dev
         - libsdl2-mixer-dev
         - libsdl2-net-dev
         - libsdl2-image-dev
         - libsamplerate0-dev
-        - libsdl1.2-dev
-        - libsdl-mixer1.2-dev
-        - libsdl-net1.2-dev
-        - libpng-dev
 
-script: ./autogen.sh && make && make install DESTDIR=/tmp/whatever && make dist
+script: ./.travis.sh
 
 branches:
     only:

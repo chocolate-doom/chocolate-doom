@@ -1,8 +1,4 @@
-
 # Makefile for building the OS X launcher program and DMG package.
-# It is also possible to build and run the launcher under Unix
-# systems using GNUstep, although this is only here for development
-# and debugging purposes.
 
 include ../config.make
 
@@ -15,8 +11,6 @@ DMG=$(PACKAGE_TARNAME)-$(PACKAGE_VERSION).dmg
 
 TOPLEVEL=../..
 TOPLEVEL_DOCS=$(patsubst %,../../%,$(DOC_FILES))
-
-ifndef GNUSTEP_MAKEFILES
 
 # DMG file containing package:
 
@@ -32,27 +26,13 @@ tmp.dmg : $(STAGING_DIR)
 	                   -hfs-openfolder $(STAGING_DIR) $(STAGING_DIR) \
 			   -o tmp.dmg
 
-endif
-
 # Staging dir build for package:
 
 APP_DIR=$(STAGING_DIR)/$(PACKAGE_NAME).app
 
-# OS X and GNUstep apps have a slightly different internal structure:
-# OS X apps have their files within a containing "Contents" directory
-# that does not exist in GNUstep apps.  Similarly, the binaries are
-# installed at the top level, rather than in a "MacOS" directory.
-# Finally, we must install a different Info.plist file.
-
-ifdef GNUSTEP_MAKEFILES
-APP_TOP_DIR=$(APP_DIR)
-APP_BIN_DIR=$(APP_DIR)
-SRC_INFO_PLIST=Info-gnustep.plist
-else
 APP_TOP_DIR=$(APP_DIR)/Contents
 APP_BIN_DIR=$(APP_DIR)/Contents/MacOS
 SRC_INFO_PLIST=Info.plist
-endif
 
 APP_DOC_DIR=$(APP_BIN_DIR)/Documentation
 APP_DOC_RELDIR=$(patsubst $(STAGING_DIR)/%,%,$(APP_DOC_DIR))
@@ -95,8 +75,6 @@ $(STAGING_DIR): launcher $(TOPLEVEL_DOCS)
 	             < $(TOPLEVEL)/man/INSTALL.template       \
 	             > "$(APP_DOC_DIR)/INSTALL"
 
-	find $(STAGING_DIR) -name .svn -delete -exec rm -rf {} \; || true
-
 	mkdir -p "$(APP_BIN_DIR)/man/man5" "$(APP_BIN_DIR)/man/man6"
 	cp $(TOPLEVEL)/man/*.5 "$(APP_BIN_DIR)/man/man5"
 	cp $(TOPLEVEL)/man/*.6 "$(APP_BIN_DIR)/man/man6"
@@ -112,23 +90,13 @@ clean : launcher_clean
 	rm -rf $(STAGING_DIR)
 
 # Launcher build:
-
 CFLAGS = -Wall -I$(TOPLEVEL)
-
-# Are we building using gs_make?
-
-ifdef GNUSTEP_MAKEFILES
-CFLAGS += $(shell gnustep-config --objc-flags)
-LDFLAGS = $(shell gnustep-config --gui-libs)
-else
 LDFLAGS = -framework Cocoa
-endif
 
 LAUNCHER_OBJS= \
         AppController.o \
         Execute.o \
         IWADController.o \
-        IWADLocation.o \
         LauncherManager.o \
         main.o
 

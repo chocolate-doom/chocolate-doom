@@ -36,7 +36,7 @@ on run argv
         -- window options:
 
         set bgfile to file "background.png" of theDisk
-        set the bounds of win to {200, 200, 717, 536}
+        set the bounds of win to {200, 200, 717, 545}
         set icon size of icon view options of win to 96
         set background picture of icon view options of win to bgfile
         set toolbar visible of win to false
@@ -48,10 +48,10 @@ on run argv
 
         -- icon positions:
 
-        set position of file "README" of theDisk to {120, 250}
-        set position of file "Software License" of theDisk to {380, 250}
-        set position of file appName of theDisk to {70, 110}
-        set position of file "Applications" of theDisk to {450, 110}
+        set position of file "README" of theDisk to {110, 220}
+        set position of file "Software License" of theDisk to {400, 220}
+        set position of file appName of theDisk to {110, 80}
+        set position of file "Applications" of theDisk to {400, 80}
 
         eject theDisk
     end tell

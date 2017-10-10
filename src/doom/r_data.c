@@ -1025,8 +1025,8 @@ void R_InitTranMap()
 	{
 	    byte *fg, *bg, blend[3], *tp = tranmap;
 	    int i, j, btmp;
-	    extern int FindNearestColor(byte *palette, int rgb_r, int rgb_g, int rgb_b);
 
+	    I_SetPalette(playpal);
 	    // [crispy] background color
 	    for (i = 0; i < 256; i++)
 	    {
@@ -1052,7 +1052,7 @@ void R_InitTranMap()
 		    blend[g] = (tran_filter_pct * fg[g] + (100 - tran_filter_pct) * bg[g]) / (100 + btmp);
 		    blend[b] = (tran_filter_pct * fg[b] + (100 - tran_filter_pct) * bg[b]) / 100;
 
-		    *tp++ = FindNearestColor(playpal, blend[r], blend[g], blend[b]);
+		    *tp++ = I_GetPaletteIndex(blend[r], blend[g], blend[b]);
 		}
 	    }
 
@@ -1117,6 +1117,7 @@ void R_InitColormaps (void)
 	keepgray = (i >= 0 && lumpinfo[i]->wad_file->iwad);
 
 	// [crispy] CRMAX - 2: don't override the original GREN and BLUE2 Boom tables
+	I_SetPalette(playpal);
 	for (i = 0; i < CRMAX - 2; i++)
 	{
 	    for (j = 0; j < 256; j++)

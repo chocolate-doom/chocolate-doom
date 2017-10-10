@@ -41,7 +41,7 @@ struct txt_button_s
 /**
  * Create a new button widget.
  *
- * @param label        The label to use on the new button.
+ * @param label        The label to use on the new button (UTF-8 format).
  * @return             Pointer to the new button widget.
  */
 
@@ -51,7 +51,7 @@ txt_button_t *TXT_NewButton(char *label);
  * Create a new button widget, binding the "pressed" signal to a
  * specified callback function.
  *
- * @param label        The label to use on the new button.
+ * @param label        The label to use on the new button (UTF-8 format).
  * @param func         The callback function to invoke.
  * @param user_data    User-specified pointer to pass to the callback.
  * @return             Pointer to the new button widget.
@@ -64,7 +64,7 @@ txt_button_t *TXT_NewButton2(char *label, TxtWidgetSignalFunc func,
  * Change the label used on a button.
  *
  * @param button       The button.
- * @param label        The new label.
+ * @param label        The new label (UTF-8 format).
  */
 
 void TXT_SetButtonLabel(txt_button_t *button, char *label);

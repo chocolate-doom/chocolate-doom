@@ -32,7 +32,6 @@
 #include "doomstat.h"
 
 #include "dstrings.h"
-#include "doomfeatures.h"
 #include "sounds.h"
 
 #include "d_iwad.h"
@@ -55,6 +54,7 @@
 #include "p_saveg.h"
 
 #include "i_endoom.h"
+#include "i_input.h"
 #include "i_joystick.h"
 #include "i_system.h"
 #include "i_timer.h"
@@ -429,6 +429,7 @@ void D_BindVariables(void)
 
     M_ApplyPlatformDefaults();
 
+    I_BindInputVariables();
     I_BindVideoVariables();
     I_BindJoystickVariables();
     I_BindSoundVariables();
@@ -444,9 +445,7 @@ void D_BindVariables(void)
     key_multi_msgplayer[2] = HUSTR_KEYBROWN;
     key_multi_msgplayer[3] = HUSTR_KEYRED;
 
-#ifdef FEATURE_MULTIPLAYER
     NET_BindVariables();
-#endif
 
     M_BindIntVariable("mouse_sensitivity",      &mouseSensitivity);
     M_BindIntVariable("mouse_sensitivity_y",    &mouseSensitivity_y); // [crispy]
@@ -537,13 +536,13 @@ void D_DoomLoop (void)
 
     main_loop_started = true;
 
-    TryRunTics();
-
     I_SetWindowTitle(gamedescription);
     I_GraphicsCheckCommandLine();
     I_SetGrabMouseCallback(D_GrabMouseCallback);
     I_InitGraphics();
     EnableLoadingDisk();
+
+    TryRunTics();
 
     V_RestoreBuffer();
     R_ExecuteSetViewSize();
@@ -1420,7 +1419,6 @@ void D_DoomMain (void)
     DEH_printf("Z_Init: Init zone memory allocation daemon. \n");
     Z_Init ();
 
-#ifdef FEATURE_MULTIPLAYER
     //!
     // @category net
     //
@@ -1476,8 +1474,6 @@ void D_DoomMain (void)
         NET_LANQuery();
         exit(0);
     }
-
-#endif
 
     //!
     // @vanilla
@@ -1687,7 +1683,6 @@ void D_DoomMain (void)
         // secret level (MAP33). In Vanilla Doom (meaning the DOS
         // version), MAP33 overflows into the Plutonia level names
         // array, so HUSTR_33 is actually PHUSTR_1.
-
         DEH_AddStringReplacement(HUSTR_31, "level 31: idkfa");
         DEH_AddStringReplacement(HUSTR_32, "level 32: keen");
         DEH_AddStringReplacement(PHUSTR_1, "level 33: betray");
@@ -1701,12 +1696,16 @@ void D_DoomMain (void)
         // The end result is that M_GDHIGH is too wide and causes the game
         // to crash. As a workaround to get a minimum level of support for
         // the BFG edition IWADs, use the "ON"/"OFF" graphics instead.
-
         DEH_AddStringReplacement("M_GDHIGH", "M_MSGON");
         DEH_AddStringReplacement("M_GDLOW", "M_MSGOFF");
+
+        // The BFG edition's "Screen Size:" graphic has also been changed
+        // to say "Gamepad:". Fortunately, it (along with the original
+        // Doom IWADs) has an unused graphic that says "Display". So we
+        // can swap this in instead, and it kind of makes sense.
+        DEH_AddStringReplacement("M_SCRNSZ", "M_DISP");
     }
 
-#ifdef FEATURE_DEHACKED
     // Load Dehacked patches specified on the command line with -deh.
     // Note that there's a very careful and deliberate ordering to how
     // Dehacked patches are loaded. The order we use is:
@@ -1741,7 +1740,6 @@ void D_DoomMain (void)
     //  2. Command line dehacked patches specified with -deh.
     //  3. PWAD dehacked patches in DEHACKED lumps.
     DEH_ParseCommandLine();
-#endif
 
     // [crispy] PWAD files in the config directory following
     // the preload?.wad naming scheme are preloaded at game startup
@@ -2000,10 +1998,8 @@ void D_DoomMain (void)
         DEH_AddStringReplacement(PHUSTR_1, "level 33: betray");
     }
 
-#ifdef FEATURE_MULTIPLAYER
     printf ("NET_Init: Init network subsystem.\n");
     NET_Init ();
-#endif
 
     // Initial netgame startup. Connect to server etc.
     D_ConnectNetGame();

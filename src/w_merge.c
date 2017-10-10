@@ -23,7 +23,6 @@
 #include <string.h>
 #include <ctype.h>
 
-#include "crispy.h" // [crispy] I_Realloc()
 #include "doomtype.h"
 #include "i_system.h"
 #include "m_misc.h"

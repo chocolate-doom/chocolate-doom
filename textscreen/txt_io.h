@@ -26,6 +26,7 @@ typedef struct
     int fgcolor;
 } txt_saved_colors_t;
 
+void TXT_PutSymbol(int c);
 void TXT_PutChar(int c);
 void TXT_Puts(const char *s);
 void TXT_GotoXY(int x, int y);

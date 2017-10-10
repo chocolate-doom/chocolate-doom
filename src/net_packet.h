@@ -33,12 +33,13 @@ boolean NET_ReadSInt16(net_packet_t *packet, signed int *data);
 boolean NET_ReadSInt32(net_packet_t *packet, signed int *data);
 
 char *NET_ReadString(net_packet_t *packet);
+char *NET_ReadSafeString(net_packet_t *packet);
 
 void NET_WriteInt8(net_packet_t *packet, unsigned int i);
 void NET_WriteInt16(net_packet_t *packet, unsigned int i);
 void NET_WriteInt32(net_packet_t *packet, unsigned int i);
 
-void NET_WriteString(net_packet_t *packet, char *string);
+void NET_WriteString(net_packet_t *packet, const char *string);
 
 #endif /* #ifndef NET_PACKET_H */
 

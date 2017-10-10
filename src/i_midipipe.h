@@ -1,5 +1,6 @@
 //
-// Copyright(C) 2005-2014 Simon Howard
+// Copyright(C) 2013 James Haley et al.
+// Copyright(C) 2017 Alex Mayfield
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -12,29 +13,30 @@
 // GNU General Public License for more details.
 //
 // DESCRIPTION:
-//     List of features which can be enabled/disabled to slim down the
-//     program.
+//     Client Interface to Midi Server
 //
 
-#ifndef DOOM_FEATURES_H
-#define DOOM_FEATURES_H
+#ifndef __I_MIDIPIPE__
+#define __I_MIDIPIPE__
 
-// Enables wad merging (the '-merge' command line parameter)
+#if _WIN32
 
-#define FEATURE_WAD_MERGE 1
+#include "SDL_mixer.h"
 
-// Enables dehacked support ('-deh')
+#include "doomtype.h"
 
-#define FEATURE_DEHACKED 1
+extern boolean midi_server_initialized;
+extern boolean midi_server_registered;
 
-// Enables multiplayer support (network games)
+boolean I_MidiPipe_RegisterSong(char *filename);
+void I_MidiPipe_SetVolume(int vol);
+void I_MidiPipe_PlaySong(int loops);
+void I_MidiPipe_StopSong();
+void I_MidiPipe_ShutdownServer();
 
-#define FEATURE_MULTIPLAYER 1
+boolean I_MidiPipe_InitServer();
 
-// Enables sound output
+#endif
 
-#define FEATURE_SOUND 1
-
-#endif /* #ifndef DOOM_FEATURES_H */
-
+#endif
 

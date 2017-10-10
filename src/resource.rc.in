@@ -1,5 +1,7 @@
 1 ICON "@top_srcdir@/data/doom.ico"
 
+#include <winuser.h>
+
 CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST "@top_srcdir@/src/manifest.xml"
 
 1 VERSIONINFO

@@ -1,0 +1,38 @@
+
+This directory contains the fonts used by libtextscreen:
+
+ * normal.png is the standard DOS font, from the DOSbox project.
+   Copyright (C) 2002-2004  The DOSBox Team
+
+ * small.png contains a miniature, half-size font for low-resolution
+   displays. This is based on the Atari-Small font by Tom Fine. The
+   original font was standard ASCII only; this has been extended to the
+   full Extended ASCII range with scaled-down versions of the full-size
+   DOS font. Original copyright notice:
+
+     Copyright (c) 1999, Thomas A. Fine
+
+     License to copy, modify, and distribute for both commercial and
+     non-commercial use is herby granted, provided this notice
+     is preserved.
+
+     Email to my last name at head.cfa.harvard.edu
+     http://hea-www.harvard.edu/~fine/
+
+ * large.png is a scaled-up version of normal.png with extra detail
+   added; this is for use on modern high-resolution ("retina") displays.
+
+All modifications and enhancements to the above fonts are:
+
+  Copyright (C) 2005-2016 Simon Howard
+
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 2 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+

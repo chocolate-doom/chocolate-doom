@@ -29,6 +29,7 @@
 #include "d_main.h"
 #include "deh_main.h"
 
+#include "i_input.h"
 #include "i_swap.h"
 #include "i_system.h"
 #include "i_timer.h"
@@ -116,6 +117,7 @@ char gammamsg[5][26] =
 int			saveStringEnter;              
 int             	saveSlot;	// which slot to save in
 int			saveCharIndex;	// which char we're editing
+static boolean          joypadSave = false; // was the save action initiated by joypad?
 // old save description before edit
 char			saveOldString[SAVESTRINGSIZE];  
 
@@ -777,7 +779,7 @@ void M_DrawLoad(void)
 
 	M_WriteText(LoadDef.x,LoadDef.y+LINEHEIGHT*i,savegamestrings[i]);
 
-	V_ClearDPTranslation();
+	dp_translation = NULL;
     }
 }
 
@@ -884,19 +886,45 @@ void M_DoSave(int slot)
 }
 
 //
+// Generate a default save slot name when the user saves to
+// an empty slot via the joypad.
+//
+static void SetDefaultSaveName(int slot)
+{
+    M_snprintf(savegamestrings[itemOn], SAVESTRINGSIZE - 1,
+               "JOYSTICK SLOT %i", itemOn + 1);
+    joypadSave = false;
+}
+
+//
 // User wants to save. Start string input for M_Responder
 //
 void M_SaveSelect(int choice)
 {
+    int x, y;
+
     // we are going to be intercepting all chars
     saveStringEnter = 1;
-    
+
     // [crispy] load the last game you saved
     LoadDef.lastOn = choice;
+
+    // We need to turn on text input:
+    x = LoadDef.x - 11;
+    y = LoadDef.y + choice * LINEHEIGHT - 4;
+    I_StartTextInput(x, y, x + 8 + 24 * 8 + 8, y + LINEHEIGHT - 2);
+
     saveSlot = choice;
     M_StringCopy(saveOldString,savegamestrings[choice], SAVESTRINGSIZE);
     if (!strcmp(savegamestrings[choice], EMPTYSTRING))
-	savegamestrings[choice][0] = 0;
+    {
+        savegamestrings[choice][0] = 0;
+
+        if (joypadSave)
+        {
+            SetDefaultSaveName(choice);
+        }
+    }
     saveCharIndex = strlen(savegamestrings[choice]);
 }
 
@@ -1274,7 +1302,7 @@ static void M_DrawMouse(void)
     M_WriteText(MouseDef.x, MouseDef.y + LINEHEIGHT * mouse_look + 6,
                 mouse_menu_text);
 
-    V_ClearDPTranslation();
+    dp_translation = NULL;
 }
 
 // [crispy] crispness menu
@@ -1419,8 +1447,7 @@ static multiitem_t multiitem_uncapped[NUM_UNCAPPED] =
 {
     {UNCAPPED_OFF, "35 fps"},
     {UNCAPPED_ON, "uncapped"},
-    {UNCAPPED_60FPS, "60 fps"},
-    {UNCAPPED_70FPS, "70 fps"},
+    {UNCAPPED_VSYNC, "vsync"},
 };
 
 static void M_DrawCrispnessMultiItem(int y, char *item, multiitem_t *multiitem, int feat, boolean cond)
@@ -1465,7 +1492,7 @@ static void M_DrawCrispness1(void)
 
     M_DrawCrispnessGoto(crispness1_goto2, "Next Page >");
 
-    V_ClearDPTranslation();
+    dp_translation = NULL;
 }
 
 static void M_DrawCrispness2(void)
@@ -1491,7 +1518,7 @@ static void M_DrawCrispness2(void)
     M_DrawCrispnessGoto(crispness2_goto3, "Next Page >");
     M_DrawCrispnessGoto(crispness2_goto1, "< Prev Page");
 
-    V_ClearDPTranslation();
+    dp_translation = NULL;
 }
 
 static void M_DrawCrispness3(void)
@@ -1511,7 +1538,7 @@ static void M_DrawCrispness3(void)
 
     M_DrawCrispnessGoto(crispness3_goto2, "< Prev Page");
 
-    V_ClearDPTranslation();
+    dp_translation = NULL;
 }
 
 void M_Options(int choice)
@@ -1924,6 +1951,14 @@ static void M_CrispyToggleUncapped(int choice)
 {
     choice = 0;
     crispy_uncapped = (crispy_uncapped + 1) % NUM_UNCAPPED;
+
+    // [crispy] restart renderer if vsync is toggled (UNCAPPED_OFF has vsync),
+    // i.e. UNCAPPED_OFF -> UNCAPPED_ON and UNCAPPED_ON -> UNCAPPED_VSYNC
+    if (crispy_uncapped)
+    {
+	extern void SetVideoMode (void);
+	SetVideoMode();
+    }
 }
 
 static void M_CrispyToggleFullsounds(int choice)
@@ -2017,7 +2052,7 @@ M_DrawThermo
     V_DrawPatchDirect((x + 8) + thermDot * 8, y,
 		      W_CacheLumpName(DEH_String("M_THERMO"), PU_CACHE));
 
-    V_ClearDPTranslation();
+    dp_translation = NULL;
 }
 
 
@@ -2316,7 +2351,6 @@ boolean M_Responder (event_t* ev)
     int             ch;
     int             key;
     int             i;
-    static  int     joywait = 0;
     static  int     mousewait = 0;
     static  int     mousey = 0;
     static  int     lasty = 0;
@@ -2363,8 +2397,10 @@ boolean M_Responder (event_t* ev)
     ch = 0;
     key = -1;
 	
-    if (ev->type == ev_joystick && joywait < I_GetTime())
+    if (ev->type == ev_joystick)
     {
+        // Simulate key presses from joystick events to interact with the menu.
+
 	if (ev->data3 < 0)
 	{
 	    key = key_menu_up;
@@ -2386,21 +2422,55 @@ boolean M_Responder (event_t* ev)
 	    key = key_menu_right;
 	    joywait = I_GetTime() + 2;
 	}
-		
-	if (ev->data1&1)
-	{
-	    key = key_menu_forward;
-	    joywait = I_GetTime() + 5;
-	}
-	if (ev->data1&2)
-	{
-	    key = key_menu_back;
-	    joywait = I_GetTime() + 5;
-	}
-        if (joybmenu >= 0 && (ev->data1 & (1 << joybmenu)) != 0)
+
+#define JOY_BUTTON_MAPPED(x) ((x) >= 0)
+#define JOY_BUTTON_PRESSED(x) (JOY_BUTTON_MAPPED(x) && (ev->data1 & (1 << (x))) != 0)
+
+        if (JOY_BUTTON_PRESSED(joybfire))
+        {
+            // Simulate a 'Y' keypress when Doom show a Y/N dialog with Fire button.
+            if (messageToPrint && messageNeedsInput)
+            {
+                key = key_menu_confirm;
+            }
+            // Simulate pressing "Enter" when we are supplying a save slot name
+            else if (saveStringEnter)
+            {
+                key = KEY_ENTER;
+            }
+            else
+            {
+                // if selecting a save slot via joypad, set a flag
+                if (currentMenu == &SaveDef)
+                {
+                    joypadSave = true;
+                }
+                key = key_menu_forward;
+            }
+            joywait = I_GetTime() + 5;
+        }
+        if (JOY_BUTTON_PRESSED(joybuse))
+        {
+            // Simulate a 'N' keypress when Doom show a Y/N dialog with Use button.
+            if (messageToPrint && messageNeedsInput)
+            {
+                key = key_menu_abort;
+            }
+            // If user was entering a save name, back out
+            else if (saveStringEnter)
+            {
+                key = KEY_ESCAPE;
+            }
+            else
+            {
+                key = key_menu_back;
+            }
+            joywait = I_GetTime() + 5;
+        }
+        if (JOY_BUTTON_PRESSED(joybmenu))
         {
             key = key_menu_activate;
-	    joywait = I_GetTime() + 5;
+            joywait = I_GetTime() + 5;
         }
     }
     else
@@ -2488,27 +2558,38 @@ boolean M_Responder (event_t* ev)
 
           case KEY_ESCAPE:
             saveStringEnter = 0;
+            I_StopTextInput();
             M_StringCopy(savegamestrings[saveSlot], saveOldString,
                          SAVESTRINGSIZE);
             break;
 
 	  case KEY_ENTER:
 	    saveStringEnter = 0;
+            I_StopTextInput();
 	    if (savegamestrings[saveSlot][0])
 		M_DoSave(saveSlot);
 	    break;
 
 	  default:
-            // This is complicated.
+            // Savegame name entry. This is complicated.
             // Vanilla has a bug where the shift key is ignored when entering
             // a savegame name. If vanilla_keyboard_mapping is on, we want
-            // to emulate this bug by using 'data1'. But if it's turned off,
-            // it implies the user doesn't care about Vanilla emulation: just
-            // use the correct 'data2'.
+            // to emulate this bug by using ev->data1. But if it's turned off,
+            // it implies the user doesn't care about Vanilla emulation:
+            // instead, use ev->data3 which gives the fully-translated and
+            // modified key input.
 
+            if (ev->type != ev_keydown)
+            {
+                break;
+            }
             if (vanilla_keyboard_mapping)
             {
-                ch = key;
+                ch = ev->data1;
+            }
+            else
+            {
+                ch = ev->data3;
             }
 
             ch = toupper(ch);
@@ -2531,7 +2612,7 @@ boolean M_Responder (event_t* ev)
 	}
 	return true;
     }
-    
+
     // Take care of any messages that need input
     if (messageToPrint)
     {
@@ -3018,7 +3099,7 @@ void M_Drawer (void)
 	    else
 	    V_DrawPatchShadow2 (x, y, W_CacheLumpName(name, PU_CACHE));
 
-	    V_ClearDPTranslation();
+	    dp_translation = NULL;
 	}
 	y += LINEHEIGHT;
     }
@@ -3030,7 +3111,7 @@ void M_Drawer (void)
 	char item[4];
 	M_snprintf(item, sizeof(item), "%s>", whichSkull ? crstr[CR_NONE] : crstr[CR_DARK]);
 	M_WriteText(currentMenu->x - 8, currentMenu->y + CRISPY_LINEHEIGHT * itemOn, item);
-	V_ClearDPTranslation();
+	dp_translation = NULL;
     }
     else
     V_DrawPatchDirect(x + SKULLXOFF, currentMenu->y - 5 + itemOn*LINEHEIGHT,
@@ -3172,12 +3253,13 @@ void M_Init (void)
     if (!M_ParmExists("-nodeh"))
     {
 	char *string, *replace;
+	extern const char *crispy_platform;
 
 	// [crispy] "i wouldn't leave if i were you.\ndos is much worse."
 	string = doom1_endmsg[3];
 	if (!strcmp(string, DEH_String(string)))
 	{
-		replace = M_StringReplace(string, "dos", "your desktop");
+		replace = M_StringReplace(string, "dos", crispy_platform);
 		DEH_AddStringReplacement(string, replace);
 		free(replace);
 	}
@@ -3186,7 +3268,7 @@ void M_Init (void)
 	string = doom1_endmsg[4];
 	if (!strcmp(string, DEH_String(string)))
 	{
-		replace = M_StringReplace(string, "dos\n", "your\ndesktop ");
+		replace = M_StringReplace(string, "dos", crispy_platform);
 		DEH_AddStringReplacement(string, replace);
 		free(replace);
 	}

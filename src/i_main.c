@@ -31,6 +31,7 @@
 // Not a globally visible function, just included for source reference,
 // calls all startup code, parses command line options.
 //
+const char *crispy_platform;
 
 void D_DoomMain (void);
 
@@ -40,6 +41,8 @@ int main(int argc, char **argv)
 
     myargc = argc;
     myargv = argv;
+
+    crispy_platform = SDL_GetPlatform();
 
     M_FindResponseFile();
 

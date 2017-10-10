@@ -18,6 +18,7 @@
 #include "doomdef.h"
 #include "i_system.h"
 #include "m_bbox.h"
+#include "i_system.h"
 #include "r_local.h"
 
 seg_t *curline;

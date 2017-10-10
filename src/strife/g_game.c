@@ -34,6 +34,7 @@
 #include "m_misc.h"
 #include "m_saves.h" // STRIFE
 #include "m_random.h"
+#include "i_input.h"
 #include "i_system.h"
 #include "i_timer.h"
 #include "i_video.h"

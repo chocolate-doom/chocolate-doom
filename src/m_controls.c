@@ -112,8 +112,8 @@ int mousebuse = -1;
 int mousebmouselook = -1; // [crispy]
 int mousebreverse = -1; // [crispy]
 
-int mousebprevweapon = 4;
-int mousebnextweapon = 3;
+int mousebprevweapon = 4; // [crispy]
+int mousebnextweapon = 3; // [crispy]
 
 
 int key_message_refresh = KEY_ENTER;

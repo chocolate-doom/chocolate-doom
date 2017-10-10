@@ -36,7 +36,7 @@ int TXT_WindowKeyPress(txt_window_t *window, int c);
 /**
  * Set the title displayed at the top of the screen.
  *
- * @param title         The title to display.
+ * @param title         The title to display (UTF-8 format).
  */
 
 void TXT_SetDesktopTitle(char *title);

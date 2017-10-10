@@ -186,7 +186,7 @@ STlib_updatePercent
     if (refresh && *per->n.on)
 	V_DrawPatch(per->n.x, per->n.y, per->p);
 
-    V_ClearDPTranslation();
+    dp_translation = NULL;
 }
 
 

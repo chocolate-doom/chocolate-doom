@@ -22,10 +22,10 @@ behavior.
 
 .SH FILES
 .TP
-\fB$HOME/.chocolate-doom/strife.cfg\fR
+\fB$HOME/.local/share/chocolate-doom/strife.cfg\fR
 The main configuration file for Chocolate Strife.  See \fBstrife.cfg\fR(5).
 .TP
-\fB$HOME/.chocolate-doom/chocolate-strife.cfg\fR
+\fB$HOME/.local/share/chocolate-doom/chocolate-strife.cfg\fR
 Extra configuration values that are specific to Chocolate Strife and not
 present in Vanilla Strife.  See \fBchocolate-strife.cfg\fR(5).
 .SH SEE ALSO

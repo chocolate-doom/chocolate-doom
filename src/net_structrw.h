@@ -43,9 +43,13 @@ void NET_WriteSHA1Sum(net_packet_t *packet, sha1_digest_t digest);
 void NET_WriteWaitData(net_packet_t *packet, net_waitdata_t *data);
 boolean NET_ReadWaitData(net_packet_t *packet, net_waitdata_t *data);
 
-void NET_SafePuts(char *msg);
-
 boolean NET_ReadPRNGSeed(net_packet_t *packet, prng_seed_t seed);
 void NET_WritePRNGSeed(net_packet_t *packet, prng_seed_t seed);
+
+// Protocol list exchange.
+net_protocol_t NET_ReadProtocol(net_packet_t *packet);
+void NET_WriteProtocol(net_packet_t *packet, net_protocol_t protocol);
+net_protocol_t NET_ReadProtocolList(net_packet_t *packet);
+void NET_WriteProtocolList(net_packet_t *packet);
 
 #endif /* #ifndef NET_STRUCTRW_H */

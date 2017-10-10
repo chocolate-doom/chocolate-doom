@@ -2,8 +2,21 @@ AM_CFLAGS = -I$(top_srcdir)/src @SDL_CFLAGS@ @SDLMIXER_CFLAGS@ @SDLNET_CFLAGS@
 
 noinst_LIBRARIES=libdoom.a
 
-SOURCE_FILES=                   \
+libdoom_a_SOURCES =             \
 am_map.c           am_map.h     \
+deh_ammo.c                      \
+deh_bexstr.c                    \
+deh_bexincl.c                   \
+deh_bexpars.c                   \
+deh_bexptr.c                    \
+deh_cheat.c                     \
+deh_doom.c                      \
+deh_frame.c                     \
+deh_misc.c         deh_misc.h   \
+deh_ptr.c                       \
+deh_sound.c                     \
+deh_thing.c                     \
+deh_weapon.c                    \
                    d_englsh.h   \
 d_items.c          d_items.h    \
 d_main.c           d_main.h     \
@@ -62,22 +75,4 @@ statdump.c         statdump.h   \
 st_lib.c           st_lib.h     \
 st_stuff.c         st_stuff.h   \
 wi_stuff.c         wi_stuff.h
-
-FEATURE_DEHACKED_SOURCE_FILES =            \
-deh_ammo.c                                 \
-deh_bexincl.c                              \
-deh_bexpars.c                              \
-deh_bexptr.c                               \
-deh_bexstr.c                               \
-deh_cheat.c                                \
-deh_doom.c                                 \
-deh_frame.c                                \
-deh_misc.c           deh_misc.h            \
-deh_ptr.c                                  \
-deh_sound.c                                \
-deh_thing.c                                \
-deh_weapon.c
-
-libdoom_a_SOURCES = $(SOURCE_FILES)                   \
-                    $(FEATURE_DEHACKED_SOURCE_FILES)
 

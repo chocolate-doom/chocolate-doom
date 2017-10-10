@@ -15,6 +15,7 @@
 //      Network packet manipulation (net_packet_t)
 //
 
+#include <ctype.h>
 #include <string.h>
 #include "m_misc.h"
 #include "net_packet.h"
@@ -202,6 +203,37 @@ char *NET_ReadString(net_packet_t *packet)
     return start;
 }
 
+// Read a string from the packet, but (potentially) modify it to strip
+// out any unprintable characters which could be malicious control codes.
+// Note that this may modify the original packet contents.
+char *NET_ReadSafeString(net_packet_t *packet)
+{
+    char *r, *w, *result;
+
+    result = NET_ReadString(packet);
+    if (result == NULL)
+    {
+        return NULL;
+    }
+
+    // w is always <= r, so we never produce a longer string than the original.
+    w = result;
+    for (r = result; *r != '\0'; ++r)
+    {
+        // TODO: This is a very naive way of producing a safe string; only
+        // ASCII characters are allowed. Probably this should really support
+        // UTF-8 characters as well.
+        if (isprint(*r) || *r == '\n')
+        {
+            *w = *r;
+            ++w;
+        }
+    }
+    *w = '\0';
+
+    return result;
+}
+
 // Dynamically increases the size of a packet
 
 static void NET_IncreasePacket(net_packet_t *packet)
@@ -270,7 +302,7 @@ void NET_WriteInt32(net_packet_t *packet, unsigned int i)
     packet->len += 4;
 }
 
-void NET_WriteString(net_packet_t *packet, char *string)
+void NET_WriteString(net_packet_t *packet, const char *string)
 {
     byte *p;
     size_t string_size;

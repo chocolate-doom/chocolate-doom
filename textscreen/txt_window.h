@@ -94,7 +94,8 @@ struct txt_window_s
 /**
  * Open a new window.
  *
- * @param title        Title to display in the titlebar of the new window.
+ * @param title        Title to display in the titlebar of the new window
+ *                     (UTF-8 format).
  * @return             Pointer to a new @ref txt_window_t structure
  *                     representing the new window.
  */
@@ -191,8 +192,8 @@ void TXT_SetMouseListener(txt_window_t *window,
 /**
  * Open a window displaying a message.
  *
- * @param title           Title of the window.
- * @param message         The message to display in the window.
+ * @param title           Title of the window (UTF-8 format).
+ * @param message         The message to display in the window (UTF-8 format).
  * @return                The new window.
  */
 

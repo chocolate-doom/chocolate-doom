@@ -28,6 +28,7 @@
 #include "txt_gui.h"
 #include "txt_io.h"
 #include "txt_joyaxis.h"
+#include "txt_utf8.h"
 
 #define JOYSTICK_AXIS_WIDTH 20
 
@@ -149,12 +150,12 @@ static boolean CalibrateAxis(txt_joystick_axis_t *joystick_axis)
 
     for (i = 0; i < SDL_JoystickNumAxes(joystick_axis->joystick); ++i)
     {
-       //if (bad_axis[i])
-       //{
-       //    continue;
-       //}
-
         axis_value = SDL_JoystickGetAxis(joystick_axis->joystick, i);
+
+        if (joystick_axis->bad_axis[i])
+        {
+            continue;
+        }
 
         if (abs(axis_value) > best_value)
         {
@@ -286,7 +287,6 @@ static int EventCallback(SDL_Event *event, TXT_UNCAST_ARG(joystick_axis))
     // joystick is being configured and which button the user is pressing.
     if (joystick_axis->config_stage == CONFIG_CENTER)
     {
-        joystick_index = event->jbutton.which;
         joystick_axis->config_button = event->jbutton.button;
         IdentifyBadAxes(joystick_axis);
 
@@ -300,7 +300,7 @@ static int EventCallback(SDL_Event *event, TXT_UNCAST_ARG(joystick_axis))
     // In subsequent stages, the user is asked to push in a specific
     // direction and press the button. They must push the same button
     // as they did before; this is necessary to support button axes.
-    if (event->jbutton.which == joystick_index
+    if (event->jbutton.which == SDL_JoystickInstanceID(joystick_axis->joystick)
      && event->jbutton.button == joystick_axis->config_button)
     {
         switch (joystick_axis->config_stage)
@@ -461,7 +461,7 @@ static void TXT_JoystickAxisDrawer(TXT_UNCAST_ARG(joystick_axis))
 
     TXT_DrawString(buf);
 
-    for (i = strlen(buf); i < joystick_axis->widget.w; ++i)
+    for (i = TXT_UTF8_Strlen(buf); i < joystick_axis->widget.w; ++i)
     {
         TXT_DrawString(" ");
     }

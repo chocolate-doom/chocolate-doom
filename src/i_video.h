@@ -32,67 +32,9 @@
 #define SCREENWIDTH  (ORIGWIDTH << hires) // [crispy]
 #define SCREENHEIGHT (ORIGHEIGHT << hires) // [crispy]
 
-// Screen width used for "squash" scale functions
-
-#define SCREENWIDTH_4_3 (256 << hires) // [crispy]
-
-// Screen height used for "stretch" scale functions.
+// Screen height used when aspect_ratio_correct=true.
 
 #define SCREENHEIGHT_4_3 (240 << hires) // [crispy]
-
-#define MAX_MOUSE_BUTTONS 8
-
-typedef struct
-{
-    // Screen width and height
-
-    int width;
-    int height;
-
-    // Initialisation function to call when using this mode.
-    // Called with a pointer to the Doom palette.
-    //
-    // If NULL, no init function is called.
-
-    void (*InitMode)(byte *palette);
-    
-    // Function to call to draw the screen from the source buffer.
-    // Return true if draw was successful.
-
-    boolean (*DrawScreen)(int x1, int y1, int x2, int y2);
-
-    // If true, this is a "poor quality" mode.  The autoadjust
-    // code should always attempt to use a different mode to this
-    // mode in fullscreen.
-    //
-    // Some notes about what "poor quality" means in this context:
-    //
-    // The aspect ratio correction works by scaling up to the larger
-    // screen size and then drawing pixels on the edges between the
-    // "virtual" pixels so that an authentic blocky look-and-feel is
-    // achieved.
-    //
-    // For a mode like 640x480, you can imagine the grid of the
-    // "original" pixels spaced out, with extra "blurry" pixels added
-    // in the space between them to fill it out. However, when you're
-    // running at a resolution like 320x240, this is not the case. In
-    // the small screen case, every single pixel has to be a blurry
-    // interpolation of two pixels from the original image.
-    //
-    // If you run in 320x240 and put your face up close to the screen
-    // you can see this: it's particularly visible in the small yellow
-    // status bar numbers for example. Overall it still looks "okay"
-    // but there's an obvious - albeit small - deterioration in
-    // quality.
-    //
-    // Once you get to 640x480, all the original pixels are there at
-    // least once and it's okay (the higher the resolution, the more
-    // accurate it is). When I first wrote the code I was expecting
-    // that even higher resolutions would be needed before it would
-    // look acceptable, but it turned out to be okay even at 640x480.
-
-    boolean poor_quality;
-} screen_mode_t;
 
 typedef boolean (*grabmouse_callback_t)(void);
 
@@ -144,11 +86,6 @@ void I_EnableLoadingDisk(int xoffs, int yoffs);
 extern char *video_driver;
 extern boolean screenvisible;
 
-extern float mouse_acceleration;
-extern int mouse_threshold;
-extern float mouse_acceleration_y; // [crispy]
-extern int mouse_threshold_y; // [crispy]
-extern int mouse_y_invert; // [crispy]
 extern int vanilla_keyboard_mapping;
 extern boolean screensaver_mode;
 extern int usegamma;
@@ -156,9 +93,16 @@ extern pixel_t *I_VideoBuffer;
 
 extern int screen_width;
 extern int screen_height;
-extern int screen_bpp;
 extern int fullscreen;
 extern int aspect_ratio_correct;
-extern int novert; // [crispy]
+extern int integer_scaling;
+extern int vga_porch_flash;
+extern int force_software_renderer;
+
+extern char *window_position;
+void I_GetWindowPosition(int *x, int *y, int w, int h);
+
+// Joystic/gamepad hysteresis
+extern unsigned int joywait;
 
 #endif

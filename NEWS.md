@@ -1,8 +1,66 @@
-## HEAD
+## 3.0.0 (????-??-??)
+
+  Chocolate Doom 3.0 is a new major revision. The main change is that
+  the codebase has been ported to SDL 2.0. This brings a number of
+  benefits, although there have also been some other minor changes (all
+  listed below).
+
+  Huge thanks go to the entire Chocolate Doom team for working on the
+  port to SDL2, and to all the testers who have found and reported bugs
+  during its development.
 
 ### General
+  * All screen scaling is now performed in hardware, meaning that the
+    game can run in arbitrary window sizes in high quality. It can also
+    scale to very large resolutions sizes without using large amounts of
+    CPU or suffering degraded performance (thanks Fabian).
+  * It is now possible to switch between windowed and full screen modes
+    while the game is running by pressing alt + enter (thanks Jon)
+  * Windows binaries now ship with several previously-optional DLLs.
+    This means it is now possible to take PNG screenshots and to use
+    digital music packs (FLAC/Ogg Vorbis formats).
+  * The game now remembers your preferred monitor and will start on the
+    same monitor you were using the last time you played. Windows appear
+    centered on the screen.
+  * The OS X launcher was tweaked somewhat, and now uses proper path
+    controls for choosing files. FreeDM was added as an IWAD.
+  * Configuration files on Mac OS X and Unix are now stored in locations
+    compliant with the XDG standard (thanks chungy):
+    - On Unix: `~/.local/share/chocolate-doom/`
+    - On OS X: `~/Library/Application Support/chocolate-doom/`
+  * Icons when the game is running are now a higher resolution.
+  * Keyboard input is improved and uses the new SDL input API; on
+    systems with on-screen keyboards, this should activate the on-screen
+    keyboard when it is appropriate.
+  * Several command line options were removed that were judged to be
+    useless: `-grabmouse`, `-novert` and `-nonovert`. The mouse grabbing
+    and novert settings can still be configured in the setup tool.
+  * There is no longer any option in the setup tool to specify a screen
+    resolution, since in full screen mode the game just runs at the
+    desktop resolution without changing screen modes. If necessary, the
+    config file options `fullscreen_width` and `fullscreen_height` can
+    be used to explicitly set a screen resolution.
+  * There is no longer a soft dependency on Zenity on Unix systems; the
+    SDL API is now used to display error dialogs.
+  * Joysticks are identified more precisely using GUID now.
   * A new parameter -savedir allows users to specify a directory from
     which to load and save games. (thanks CapnClever)
+
+### Hexen
+  * The CD audio option for music playback has been removed; the CD
+    playback API has been removed from SDL 2.0. However, it is possible
+    to use digital music packs as an alternative.
+
+### libtextscreen
+  * On OS X on machines with retina displays, text screens are rendered
+    using a high detail font.
+  * File selector widgets now look more visually distinctive.
+  * There is now a convenience widget for conditionally hiding widgets.
+  * Font handling was restructured to be based around PNG format fonts
+    which are converted during the build and can be more easily edited.
+  * Handling of code pages was cleaned up, so it is easier to change the
+    code to work with a different code page now.
+  * Lots of the UI code was changed to use UTF-8 strings.
 
 ## 2.3.0 (2016-12-29)
 

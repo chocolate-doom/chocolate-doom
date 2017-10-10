@@ -89,5 +89,65 @@
 #define KEYP_EQUALS     KEY_EQUALS
 #define KEYP_ENTER      KEY_ENTER
 
+#define SCANCODE_TO_KEYS_ARRAY {                                            \
+    0,   0,   0,   0,   'a',                                  /* 0-9 */     \
+    'b', 'c', 'd', 'e', 'f',                                                \
+    'g', 'h', 'i', 'j', 'k',                                  /* 10-19 */   \
+    'l', 'm', 'n', 'o', 'p',                                                \
+    'q', 'r', 's', 't', 'u',                                  /* 20-29 */   \
+    'v', 'w', 'x', 'y', 'z',                                                \
+    '1', '2', '3', '4', '5',                                  /* 30-39 */   \
+    '6', '7', '8', '9', '0',                                                \
+    KEY_ENTER, KEY_ESCAPE, KEY_BACKSPACE, KEY_TAB, ' ',       /* 40-49 */   \
+    KEY_MINUS, KEY_EQUALS, '[', ']', '\\',                                  \
+    0,   ';', '\'', '`', ',',                                 /* 50-59 */   \
+    '.', '/', KEY_CAPSLOCK, KEY_F1, KEY_F2,                                 \
+    KEY_F3, KEY_F4, KEY_F5, KEY_F6, KEY_F7,                   /* 60-69 */   \
+    KEY_F8, KEY_F9, KEY_F10, KEY_F11, KEY_F12,                              \
+    KEY_PRTSCR, KEY_SCRLCK, KEY_PAUSE, KEY_INS, KEY_HOME,     /* 70-79 */   \
+    KEY_PGUP, KEY_DEL, KEY_END, KEY_PGDN, KEY_RIGHTARROW,                   \
+    KEY_LEFTARROW, KEY_DOWNARROW, KEY_UPARROW,                /* 80-89 */   \
+    KEY_NUMLOCK, KEYP_DIVIDE,                                               \
+    KEYP_MULTIPLY, KEYP_MINUS, KEYP_PLUS, KEYP_ENTER, KEYP_1,               \
+    KEYP_2, KEYP_3, KEYP_4, KEYP_5, KEYP_6,                   /* 90-99 */   \
+    KEYP_7, KEYP_8, KEYP_9, KEYP_0, KEYP_PERIOD,                            \
+    0, 0, 0, KEYP_EQUALS,                                     /* 100-103 */ \
+}
+
+// Default names for keys, to use in English or as fallback.
+#define KEY_NAMES_ARRAY {                                            \
+    { KEY_BACKSPACE,  "BACKSP" },   { KEY_TAB,        "TAB" },       \
+    { KEY_INS,        "INS" },      { KEY_DEL,        "DEL" },       \
+    { KEY_PGUP,       "PGUP" },     { KEY_PGDN,       "PGDN" },      \
+    { KEY_ENTER,      "ENTER" },    { KEY_ESCAPE,     "ESC" },       \
+    { KEY_F1,         "F1" },       { KEY_F2,         "F2" },        \
+    { KEY_F3,         "F3" },       { KEY_F4,         "F4" },        \
+    { KEY_F5,         "F5" },       { KEY_F6,         "F6" },        \
+    { KEY_F7,         "F7" },       { KEY_F8,         "F8" },        \
+    { KEY_F9,         "F9" },       { KEY_F10,        "F10" },       \
+    { KEY_F11,        "F11" },      { KEY_F12,        "F12" },       \
+    { KEY_HOME,       "HOME" },     { KEY_END,        "END" },       \
+    { KEY_MINUS,      "-" },        { KEY_EQUALS,     "=" },         \
+    { KEY_NUMLOCK,    "NUMLCK" },   { KEY_SCRLCK,     "SCRLCK" },    \
+    { KEY_PAUSE,      "PAUSE" },    { KEY_PRTSCR,     "PRTSC" },     \
+    { KEY_UPARROW,    "UP" },       { KEY_DOWNARROW,  "DOWN" },      \
+    { KEY_LEFTARROW,  "LEFT" },     { KEY_RIGHTARROW, "RIGHT" },     \
+    { KEY_RALT,       "ALT" },      { KEY_LALT,       "ALT" },       \
+    { KEY_RSHIFT,     "SHIFT" },    { KEY_CAPSLOCK,   "CAPS" },      \
+    { KEY_RCTRL,      "CTRL" },     { ' ',            "SPACE" },     \
+    { 'a', "A" },   { 'b', "B" },   { 'c', "C" },   { 'd', "D" },    \
+    { 'e', "E" },   { 'f', "F" },   { 'g', "G" },   { 'h', "H" },    \
+    { 'i', "I" },   { 'j', "J" },   { 'k', "K" },   { 'l', "L" },    \
+    { 'm', "M" },   { 'n', "N" },   { 'o', "O" },   { 'p', "P" },    \
+    { 'q', "Q" },   { 'r', "R" },   { 's', "S" },   { 't', "T" },    \
+    { 'u', "U" },   { 'v', "V" },   { 'w', "W" },   { 'x', "X" },    \
+    { 'y', "Y" },   { 'z', "Z" },   { '0', "0" },   { '1', "1" },    \
+    { '2', "2" },   { '3', "3" },   { '4', "4" },   { '5', "5" },    \
+    { '6', "6" },   { '7', "7" },   { '8', "8" },   { '9', "9" },    \
+    { '[', "[" },   { ']', "]" },   { ';', ";" },   { '`', "`" },    \
+    { ',', "," },   { '.', "." },   { '/', "/" },   { '\\', "\\" },  \
+    { '\'', "\'" },                                                  \
+}
+
 #endif          // __DOOMKEYS__
 

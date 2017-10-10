@@ -22,6 +22,7 @@
 
 #include "doomtype.h"
 #include "deh_str.h"
+#include "i_video.h" // [crispy] I_GetPaletteIndex()
 #include "m_argv.h" // [crispy] M_ParmExists()
 #include "m_misc.h"
 #include "v_trans.h"
@@ -236,7 +237,6 @@ static void rgb_to_hsv(vect *rgb, vect *hsv)
 byte V_Colorize (byte *playpal, int cr, byte source, boolean keepgray109)
 {
     vect rgb, hsv;
-    extern int FindNearestColor(byte *palette, int r, int g, int b);
 
     // [crispy] preserve gray drop shadow in IWAD status bar numbers
     if (cr == CR_NONE || (keepgray109 && source == 109))
@@ -287,7 +287,7 @@ byte V_Colorize (byte *playpal, int cr, byte source, boolean keepgray109)
     rgb.y *= 255.;
     rgb.z *= 255.;
 
-    return FindNearestColor(playpal, (int) rgb.x, (int) rgb.y, (int) rgb.z);
+    return I_GetPaletteIndex((int) rgb.x, (int) rgb.y, (int) rgb.z);
 }
 
 void CrispyReplaceColor (char *str, const int cr, const char *col)
