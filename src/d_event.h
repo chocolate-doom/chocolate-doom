@@ -72,7 +72,7 @@ typedef struct
     evtype_t type;
 
     // Event-specific data; see the descriptions given above.
-    int data1, data2, data3, data4;
+    int data1, data2, data3, data4, data5;
 } event_t;
 
  
