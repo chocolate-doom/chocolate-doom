@@ -40,7 +40,7 @@
 			<Add directory="../src" />
 		</Compiler>
 		<Linker>
-			<Add option="-lmingw32 -lSDLmain -lSDL -mwindows" />
+			<Add option="-lmingw32 -lSDL2main -lSDL2 -mwindows" />
 		</Linker>
 		<Unit filename="../textscreen/textscreen.h" />
 		<Unit filename="../textscreen/txt_button.c">
@@ -51,6 +51,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../textscreen/txt_checkbox.h" />
+		<Unit filename="../textscreen/txt_conditional.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../textscreen/txt_conditional.h" />
 		<Unit filename="../textscreen/txt_desktop.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -63,7 +67,6 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../textscreen/txt_fileselect.h" />
-		<Unit filename="../textscreen/txt_font.h" />
 		<Unit filename="../textscreen/txt_gui.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -80,7 +83,6 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../textscreen/txt_label.h" />
-		<Unit filename="../textscreen/txt_largefont.h" />
 		<Unit filename="../textscreen/txt_main.h" />
 		<Unit filename="../textscreen/txt_radiobutton.c">
 			<Option compilerVar="CC" />
@@ -98,7 +100,6 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../textscreen/txt_separator.h" />
-		<Unit filename="../textscreen/txt_smallfont.h" />
 		<Unit filename="../textscreen/txt_spinctrl.c">
 			<Option compilerVar="CC" />
 		</Unit>

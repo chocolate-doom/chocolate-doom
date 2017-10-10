@@ -7,9 +7,9 @@
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output="../bin/chocolate-doom-dbg.exe" prefix_auto="0" extension_auto="0" />
+				<Option output="../bin/crispy-doom-dbg.exe" prefix_auto="0" extension_auto="0" />
 				<Option working_dir="../bin" />
-				<Option object_output="../obj/chocolate-doom/dbg" />
+				<Option object_output="../obj/crispy-doom/dbg" />
 				<Option type="0" />
 				<Option compiler="gcc" />
 				<Option projectLinkerOptionsRelation="2" />
@@ -22,9 +22,9 @@
 				</Linker>
 			</Target>
 			<Target title="Release">
-				<Option output="../bin/chocolate-doom.exe" prefix_auto="0" extension_auto="0" />
+				<Option output="../bin/crispy-doom.exe" prefix_auto="0" extension_auto="0" />
 				<Option working_dir="../bin" />
-				<Option object_output="../obj/chocolate-doom/rel" />
+				<Option object_output="../obj/crispy-doom/rel" />
 				<Option type="0" />
 				<Option compiler="gcc" />
 				<Option projectLinkerOptionsRelation="2" />
@@ -41,7 +41,7 @@
 			<Add alias="All" targets="Debug;Release;" />
 		</VirtualTargets>
 		<Compiler>
-			<Add option='-DPROGRAM_PREFIX=&quot;\&quot;chocolate-\&quot;&quot;' />
+			<Add option='-DPROGRAM_PREFIX=&quot;\&quot;crispy-\&quot;&quot;' />
 			<Add option='-DD_CDROM=&quot;\&quot;CD-ROM Version: default.cfg from c:\\doomdata\n\&quot;&quot;' />
 			<Add directory="." />
 			<Add directory="../src" />
@@ -51,7 +51,7 @@
 			<Add directory="../opl" />
 		</Compiler>
 		<Linker>
-			<Add option="-lmingw32 -lSDLmain -lSDL -lSDL_mixer -lSDL_net -mwindows" />
+			<Add option="-lmingw32 -lSDL2main -lSDL2 -lSDL2_mixer -lSDL2_net -mwindows" />
 			<Add directory="../lib" />
 		</Linker>
 		<Unit filename="../src/d_event.c">
@@ -112,6 +112,15 @@
 		<Unit filename="../src/doom/d_textur.h" />
 		<Unit filename="../src/doom/d_think.h" />
 		<Unit filename="../src/doom/deh_ammo.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../src/doom/deh_bexincl.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../src/doom/deh_bexpars.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../src/doom/deh_bexptr.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../src/doom/deh_bexstr.c">
@@ -187,6 +196,9 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../src/doom/m_random.h" />
+		<Unit filename="../src/doom/p_blockmap.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="../src/doom/p_ceilng.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -196,6 +208,10 @@
 		<Unit filename="../src/doom/p_enemy.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="../src/doom/p_extsaveg.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../src/doom/p_extsaveg.h" />
 		<Unit filename="../src/doom/p_floor.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -326,6 +342,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../src/i_endoom.h" />
+		<Unit filename="../src/i_input.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../src/i_input.h" />
 		<Unit filename="../src/i_joystick.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -333,16 +353,16 @@
 		<Unit filename="../src/i_main.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="../src/i_midipipe.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../src/i_midipipe.h" />
 		<Unit filename="../src/i_oplmusic.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../src/i_pcsound.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="../src/i_scale.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../src/i_scale.h" />
 		<Unit filename="../src/i_sdlmusic.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -467,7 +487,15 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../src/tables.h" />
+		<Unit filename="../src/v_diskicon.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../src/v_diskicon.h" />
 		<Unit filename="../src/v_patch.h" />
+		<Unit filename="../src/v_trans.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../src/v_trans.h" />
 		<Unit filename="../src/v_video.c">
 			<Option compilerVar="CC" />
 		</Unit>

@@ -16,7 +16,7 @@
 			<Depends filename="libopl.cbp" />
 			<Depends filename="libpcsound.cbp" />
 		</Project>
-		<Project filename="strife.cbp" active="1">
+		<Project filename="strife.cbp">
 			<Depends filename="libtextscreen.cbp" />
 			<Depends filename="libopl.cbp" />
 			<Depends filename="libpcsound.cbp" />
