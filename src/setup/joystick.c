@@ -1044,9 +1044,7 @@ void ConfigJoystick(void)
                    NULL);
     }
 
-    TXT_AddWidgets(window,
-               TXT_NewSeparator("Buttons"),
-               NULL);
+    TXT_AddWidget(window, TXT_NewSeparator("Buttons"));
 
     AddJoystickControl(window, "Fire/Attack", &joybfire);
     AddJoystickControl(window, "Strafe Left", &joybstrafeleft);

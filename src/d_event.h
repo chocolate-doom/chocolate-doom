@@ -59,6 +59,7 @@ typedef enum
     //    data2: X axis mouse movement (turn).
     //    data3: Y axis mouse movement (forward/backward).
     //    data4: Third axis mouse movement (strafe).
+    //    data5: Fourth axis mouse movement (look)
     ev_joystick,
 
     // Quit event. Triggered when the user clicks the "close" button
