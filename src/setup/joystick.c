@@ -1030,7 +1030,7 @@ void ConfigJoystick(void)
                    TXT_TABLE_EMPTY,
                    NULL);
 
-    if (gamemission >= heretic) // heretic, hexen, strife
+    if (gamemission == heretic || gamemission == hexen || gamemission == strife)
     {
         TXT_AddWidgets(window,
                    TXT_NewLabel("Look up/down"),
