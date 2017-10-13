@@ -1105,6 +1105,19 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(joystick_strafe_invert),
 
     //!
+    // Joystick axis to use to for looking up and down.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_look_axis),
+
+    //!
+    // If non-zero, movement on the joystick axis used for looking
+    // is inverted.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_look_invert),
+
+    //!
     // The physical joystick button that corresponds to joystick
     // virtual button #0.
     //

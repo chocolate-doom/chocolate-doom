@@ -65,6 +65,11 @@ static int joystick_y_invert = 0;
 static int joystick_strafe_axis = -1;
 static int joystick_strafe_invert = 0;
 
+// Which joystick axis to use for looking?
+
+static int joystick_look_axis = -1;
+static int joystick_look_invert = 0;
+
 // Virtual to physical button joystick button mapping. By default this
 // is a straight mapping.
 static int joystick_physical_buttons[NUM_VIRTUAL_BUTTONS] = {
@@ -177,7 +182,8 @@ void I_InitJoystick(void)
 
     if (!IsValidAxis(joystick_x_axis)
      || !IsValidAxis(joystick_y_axis)
-     || !IsValidAxis(joystick_strafe_axis))
+     || !IsValidAxis(joystick_strafe_axis)
+     || !IsValidAxis(joystick_look_axis))
     {
         printf("I_InitJoystick: Invalid joystick axis for configured joystick "
                "(run joystick setup again)\n");
@@ -218,6 +224,14 @@ static boolean IsAxisButton(int physbutton)
     {
         if (physbutton == BUTTON_AXIS_NEG(joystick_strafe_axis)
          || physbutton == BUTTON_AXIS_POS(joystick_strafe_axis))
+        {
+            return true;
+        }
+    }
+    if (IS_BUTTON_AXIS(joystick_look_axis))
+    {
+        if (physbutton == BUTTON_AXIS_NEG(joystick_look_axis)
+         || physbutton == BUTTON_AXIS_POS(joystick_look_axis))
         {
             return true;
         }
@@ -357,6 +371,7 @@ void I_UpdateJoystick(void)
         ev.data2 = GetAxisState(joystick_x_axis, joystick_x_invert);
         ev.data3 = GetAxisState(joystick_y_axis, joystick_y_invert);
         ev.data4 = GetAxisState(joystick_strafe_axis, joystick_strafe_invert);
+        ev.data5 = GetAxisState(joystick_look_axis, joystick_look_invert);
 
         D_PostEvent(&ev);
     }
@@ -375,6 +390,8 @@ void I_BindJoystickVariables(void)
     M_BindIntVariable("joystick_x_invert",     &joystick_x_invert);
     M_BindIntVariable("joystick_y_invert",     &joystick_y_invert);
     M_BindIntVariable("joystick_strafe_invert",&joystick_strafe_invert);
+    M_BindIntVariable("joystick_look_axis",    &joystick_look_axis);
+    M_BindIntVariable("joystick_look_invert",  &joystick_look_invert);
 
     for (i = 0; i < NUM_VIRTUAL_BUTTONS; ++i)
     {

@@ -80,6 +80,11 @@ static int joystick_y_invert = 0;
 static int joystick_strafe_axis = -1;
 static int joystick_strafe_invert = 0;
 
+// Look axis.
+
+static int joystick_look_axis = -1;
+static int joystick_look_invert = 0;
+
 // Virtual to physical mapping.
 int joystick_physical_buttons[NUM_VIRTUAL_BUTTONS] = {
     0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
@@ -133,6 +138,8 @@ static const joystick_config_t empty_defaults[] =
     {"joystick_y_invert",          0},
     {"joystick_strafe_axis",       -1},
     {"joystick_strafe_invert",     0},
+    {"joystick_look_axis",         -1},
+    {"joystick_look_invert",       0},
     {"joyb_fire",                  -1},
     {"joyb_use",                   -1},
     {"joyb_strafe",                -1},
@@ -1021,9 +1028,23 @@ void ConfigJoystick(void)
                    TXT_TABLE_OVERFLOW_RIGHT,
                    TXT_TABLE_EMPTY,
                    TXT_TABLE_EMPTY,
-
-                   TXT_NewSeparator("Buttons"),
                    NULL);
+
+    if (gamemission == heretic || gamemission == hexen || gamemission == strife)
+    {
+        TXT_AddWidgets(window,
+                   TXT_NewLabel("Look up/down"),
+                   TXT_NewJoystickAxis(&joystick_look_axis,
+                                       &joystick_look_invert,
+                                        JOYSTICK_AXIS_VERTICAL),
+                   TXT_TABLE_OVERFLOW_RIGHT,
+                   TXT_TABLE_OVERFLOW_RIGHT,
+                   TXT_TABLE_EMPTY,
+                   TXT_TABLE_EMPTY,
+                   NULL);
+    }
+
+    TXT_AddWidget(window, TXT_NewSeparator("Buttons"));
 
     AddJoystickControl(window, "Fire/Attack", &joybfire);
     AddJoystickControl(window, "Strafe Left", &joybstrafeleft);
@@ -1076,6 +1097,8 @@ void BindJoystickVariables(void)
     M_BindIntVariable("joystick_x_invert",      &joystick_x_invert);
     M_BindIntVariable("joystick_y_invert",      &joystick_y_invert);
     M_BindIntVariable("joystick_strafe_invert", &joystick_strafe_invert);
+    M_BindIntVariable("joystick_look_axis",   &joystick_look_axis);
+    M_BindIntVariable("joystick_look_invert", &joystick_look_invert);
 
     for (i = 0; i < NUM_VIRTUAL_BUTTONS; ++i)
     {
