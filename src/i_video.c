@@ -1525,11 +1525,11 @@ void I_RenderReadPixels(byte **data, int *w, int *h, int *p)
 {
 	SDL_Rect rect;
 	SDL_PixelFormat *format;
-	const int actualheight = EffectiveScreenHeight();
 	int temp;
 	uint32_t png_format;
 	byte *pixels;
 
+	// [crispy] adjust cropping rectangle if necessary
 	rect.x = rect.y = 0;
 	SDL_GetRendererOutputSize(renderer, &rect.w, &rect.h);
 	if (rect.w * actualheight > rect.h * SCREENWIDTH)
@@ -1546,14 +1546,16 @@ void I_RenderReadPixels(byte **data, int *w, int *h, int *p)
 		rect.y = (temp - rect.h) / 2;
 	}
 
+	// [crispy] native PNG pixel format
 #if SDL_BYTEORDER == SDL_LIL_ENDIAN
 	png_format = SDL_PIXELFORMAT_ABGR8888;
 #else
 	png_format = SDL_PIXELFORMAT_RGBA8888;
 #endif
 	format = SDL_AllocFormat(png_format);
-	temp = rect.w * format->BytesPerPixel;
+	temp = rect.w * format->BytesPerPixel; // [crispy] pitch
 
+	// [crispy] allocate memory for screenshot image
 	pixels = malloc(rect.h * temp);
 	SDL_RenderReadPixels(renderer, &rect, format->format, pixels, temp);
 
