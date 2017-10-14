@@ -1552,14 +1552,15 @@ void I_RenderReadPixels(byte **data, int *w, int *h, int *p)
 	png_format = SDL_PIXELFORMAT_RGBA8888;
 #endif
 	format = SDL_AllocFormat(png_format);
+	temp = rect.w * format->BytesPerPixel;
 
-	pixels = malloc(rect.h * rect.w * format->BytesPerPixel);
-	SDL_RenderReadPixels(renderer, &rect, format->format, pixels, rect.w * format->BytesPerPixel);
+	pixels = malloc(rect.h * temp);
+	SDL_RenderReadPixels(renderer, &rect, format->format, pixels, temp);
 
 	*data = pixels;
 	*w = rect.w;
 	*h = rect.h;
-	*p = rect.w * format->BytesPerPixel;
+	*p = temp;
 
 	SDL_FreeFormat(format);
 }
