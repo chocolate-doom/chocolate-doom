@@ -128,6 +128,7 @@ int fullscreen = true;
 // Aspect ratio correction mode
 
 int aspect_ratio_correct = true;
+static int actualheight;
 
 // Force integer scales for resolution-independent rendering
 
@@ -285,37 +286,19 @@ void I_StartFrame (void)
 
 }
 
-// Returns base screen height - either SCREENHEIGHT_4_3 or SCREENHEIGHT,
-// dependent on aspect_ratio_correct value.
-static int EffectiveScreenHeight(void)
-{
-    if (aspect_ratio_correct)
-    {
-        return SCREENHEIGHT_4_3;
-    }
-    else
-    {
-        return SCREENHEIGHT;
-    }
-}
-
 // Adjust window_width / window_height variables to be an an aspect
 // ratio consistent with the aspect_ratio_correct variable.
 static void AdjustWindowSize(void)
 {
-    int h;
-
-    h = EffectiveScreenHeight();
-
-    if (window_width * h <= window_height * SCREENWIDTH)
+    if (window_width * actualheight <= window_height * SCREENWIDTH)
     {
         // We round up window_height if the ratio is not exact; this leaves
         // the result stable.
-        window_height = (window_width * h + SCREENWIDTH - 1) / SCREENWIDTH;
+        window_height = (window_width * actualheight + SCREENWIDTH - 1) / SCREENWIDTH;
     }
     else
     {
-        window_width = window_height * SCREENWIDTH / h;
+        window_width = window_height * SCREENWIDTH / actualheight;
     }
 }
 
@@ -618,7 +601,6 @@ static void LimitTextureSize(int *w_upscale, int *h_upscale)
 
 static void CreateUpscaledTexture(boolean force)
 {
-    const int actualheight = EffectiveScreenHeight();
     int w, h;
     int h_upscale, w_upscale;
     static int h_upscale_old, w_upscale_old;
@@ -918,7 +900,7 @@ static void SetScaleFactor(int factor)
     // Pick 320x200 or 320x240, depending on aspect ratio correct
 
     window_width = factor * SCREENWIDTH;
-    window_height = factor * EffectiveScreenHeight();
+    window_height = factor * actualheight;
     fullscreen = false;
 }
 
@@ -1213,7 +1195,7 @@ static void SetVideoMode(void)
 
         pixel_format = SDL_GetWindowPixelFormat(screen);
 
-        SDL_SetWindowMinimumSize(screen, SCREENWIDTH, EffectiveScreenHeight());
+        SDL_SetWindowMinimumSize(screen, SCREENWIDTH, actualheight);
 
         I_InitWindowTitle();
         I_InitWindowIcon();
@@ -1259,7 +1241,7 @@ static void SetVideoMode(void)
 
     SDL_RenderSetLogicalSize(renderer,
                              SCREENWIDTH,
-                             EffectiveScreenHeight());
+                             actualheight);
 
     // Force integer scales for resolution-independent rendering.
 
@@ -1380,6 +1362,17 @@ void I_InitGraphics(void)
     if (screensaver_mode)
     {
         fullscreen = true;
+    }
+
+    // Set base screen height - either SCREENHEIGHT_4_3 or SCREENHEIGHT,
+    // dependent on aspect_ratio_correct value.
+    if (aspect_ratio_correct)
+    {
+        actualheight = SCREENHEIGHT_4_3;
+    }
+    else
+    {
+        actualheight = SCREENHEIGHT;
     }
 
     // Create the game window; this may switch graphic modes depending
