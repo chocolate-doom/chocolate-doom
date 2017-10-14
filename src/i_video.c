@@ -1521,6 +1521,49 @@ void I_InitGraphics(void)
     I_AtExit(I_ShutdownGraphics, true);
 }
 
+void I_RenderReadPixels(byte **data, int *w, int *h, int *p)
+{
+	SDL_Rect rect;
+	SDL_PixelFormat *format;
+	const int actualheight = EffectiveScreenHeight();
+	int temp;
+	uint32_t png_format;
+	byte *pixels;
+
+	rect.x = rect.y = 0;
+	SDL_GetRendererOutputSize(renderer, &rect.w, &rect.h);
+	if (rect.w * actualheight > rect.h * SCREENWIDTH)
+	{
+		temp = rect.w;
+		rect.w = rect.h * SCREENWIDTH / actualheight;
+		rect.x = (temp - rect.w) / 2;
+	}
+	else
+	if (rect.h * SCREENWIDTH > rect.w * actualheight)
+	{
+		temp = rect.h;
+		rect.h = rect.w * actualheight / SCREENWIDTH;
+		rect.y = (temp - rect.h) / 2;
+	}
+
+#if SDL_BYTEORDER == SDL_LIL_ENDIAN
+	png_format = SDL_PIXELFORMAT_ABGR8888;
+#else
+	png_format = SDL_PIXELFORMAT_RGBA8888;
+#endif
+	format = SDL_AllocFormat(png_format);
+
+	pixels = malloc(rect.h * rect.w * format->BytesPerPixel);
+	SDL_RenderReadPixels(renderer, &rect, format->format, pixels, rect.w * format->BytesPerPixel);
+
+	*data = pixels;
+	*w = rect.w;
+	*h = rect.h;
+	*p = rect.w * format->BytesPerPixel;
+
+	SDL_FreeFormat(format);
+}
+
 // Bind all variables controlling video options into the configuration
 // file system.
 void I_BindVideoVariables(void)
