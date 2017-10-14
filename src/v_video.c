@@ -976,12 +976,14 @@ void WritePNGfile(char *filename, byte *data,
 {
     png_structp ppng;
     png_infop pinfo;
-    png_colorp pcolor;
+//  png_colorp pcolor;
     FILE *handle;
     int i, j;
-    int w_factor, h_factor;
+//  int w_factor, h_factor;
     byte *rowbuf;
+    extern void I_RenderReadPixels(byte **data, int *w, int *h, int *p);
 
+/*
     if (aspect_ratio_correct)
     {
         // scale up to accommodate aspect ratio correction
@@ -996,6 +998,7 @@ void WritePNGfile(char *filename, byte *data,
         w_factor = 1;
         h_factor = 1;
     }
+*/
 
     handle = fopen(filename, "wb");
     if (!handle)
@@ -1021,6 +1024,13 @@ void WritePNGfile(char *filename, byte *data,
 
     png_init_io(ppng, handle);
 
+    I_RenderReadPixels(&data, &width, &height, &j);
+    rowbuf = data;
+
+    png_set_IHDR(ppng, pinfo, width, height,
+                 8, PNG_COLOR_TYPE_RGB_ALPHA, PNG_INTERLACE_NONE,
+                 PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
+/*
     png_set_IHDR(ppng, pinfo, width, height,
                  8, PNG_COLOR_TYPE_PALETTE, PNG_INTERLACE_NONE,
                  PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
@@ -1042,9 +1052,11 @@ void WritePNGfile(char *filename, byte *data,
 
     png_set_PLTE(ppng, pinfo, pcolor, 256);
     free(pcolor);
+*/
 
     png_write_info(ppng, pinfo);
 
+/*
     rowbuf = malloc(width);
 
     if (rowbuf)
@@ -1066,6 +1078,14 @@ void WritePNGfile(char *filename, byte *data,
 
         free(rowbuf);
     }
+*/
+
+    for (i = 0; i < height; i++)
+    {
+        png_write_row(ppng, rowbuf);
+        rowbuf += j;
+    }
+    free(data);
 
     png_write_end(ppng, pinfo);
     png_destroy_write_struct(&ppng, &pinfo);
