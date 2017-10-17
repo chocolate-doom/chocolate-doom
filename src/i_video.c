@@ -1391,8 +1391,6 @@ void I_InitGraphics(void)
         fullscreen = true;
     }
 
-    // Set base screen height - either SCREENHEIGHT_4_3 or SCREENHEIGHT,
-    // dependent on aspect_ratio_correct value.
     if (aspect_ratio_correct)
     {
         actualheight = SCREENHEIGHT_4_3;
