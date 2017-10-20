@@ -154,7 +154,7 @@ typedef struct
 #define MAXINTERCEPTS_ORIGINAL 128
 #define MAXINTERCEPTS          (MAXINTERCEPTS_ORIGINAL + 61)
 
-extern intercept_t	intercepts[MAXINTERCEPTS];
+//extern intercept_t	intercepts[MAXINTERCEPTS]; // [crispy] remove INTERCEPTS limit
 extern intercept_t*	intercept_p;
 
 typedef boolean (*traverser_t) (intercept_t *in);
