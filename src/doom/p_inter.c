@@ -707,6 +707,8 @@ P_KillMobj
 	P_DropWeapon (target->player);
 	// [crispy] center view when dying
 	target->player->centering = true;
+	// [JN] & [crispy] Reset the yellow bonus palette when the player dies
+	target->player->bonuscount = 0;
 
 	if (target->player == &players[consoleplayer]
 	    && automapactive)
