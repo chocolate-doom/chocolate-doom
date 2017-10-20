@@ -323,7 +323,7 @@ static patch_t*		tallpercent;
 static patch_t*		shortnum[10];
 
 // 3 key-cards, 3 skulls
-static patch_t*		keys[NUMCARDS]; 
+static patch_t*		keys[NUMCARDS+3]; // [crispy] support combined card and skull keys
 
 // face status patches
 static patch_t*		faces[ST_NUMFACES];
@@ -1343,7 +1343,7 @@ void ST_updateWidgets(void)
 	keyboxes[i] = plyr->cards[i] ? i : -1;
 
 	if (plyr->cards[i+3])
-	    keyboxes[i] = i+3;
+	    keyboxes[i] = (keyboxes[i] == -1) ? i+3 : i+6; // [crispy] support combined card and skull keys
     }
 
     // refresh everything if this is him coming back to life
@@ -1826,8 +1826,23 @@ void ST_loadGraphics(void)
 
 void ST_loadData(void)
 {
+    int i;
+
     lu_palette = W_GetNumForName (DEH_String("PLAYPAL"));
     ST_loadGraphics();
+
+    // [crispy] support combined card and skull keys (if provided by PWAD)
+    // i.e. only for display in the status bar
+    for (i = NUMCARDS; i < NUMCARDS+3; i++)
+    {
+	char lumpname[9];
+	int lumpnum;
+
+	DEH_snprintf(lumpname, 9, "STKEYS%d", i);
+	lumpnum = W_CheckNumForName(lumpname);
+
+	keys[i] = (lumpnum != -1) ? W_CacheLumpNum(lumpnum, PU_STATIC) : keys[i-3];
+    }
 }
 
 static void ST_unloadCallback(char *lumpname, patch_t **variable)
