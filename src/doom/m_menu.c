@@ -261,6 +261,7 @@ static void M_CrispyToggleRecoil(int choice);
 static void M_CrispyToggleSecretmessage(int choice);
 static void M_CrispyToggleTranslucency(int choice);
 static void M_CrispyToggleUncapped(int choice);
+static void M_CrispyToggleSmoothScaling(int choice);
 static void M_Crispness(int choice);
 static void M_Crispness1(int choice);
 static void M_Crispness2(int choice);
@@ -472,6 +473,7 @@ enum
 {
     crispness_sep_visual,
     crispness_uncapped,
+    crispness_smoothscaling,
     crispness_coloredhud,
     crispness_translucency,
     crispness_coloredblood,
@@ -489,6 +491,7 @@ static menuitem_t CrispnessMenu[]=
 {
     {-1,"",0,'\0'},
     {1,"",	M_CrispyToggleUncapped,'u'},
+    {1,"",	M_CrispyToggleSmoothScaling,'s'},
     {1,"",	M_CrispyToggleColoredhud,'c'},
     {1,"",	M_CrispyToggleTranslucency,'e'},
     {1,"",	M_CrispyToggleColoredblood,'e'},
@@ -1481,6 +1484,7 @@ static void M_DrawCrispness1(void)
     M_DrawCrispnessSeparator(crispness_sep_visual, "Visual");
 
     M_DrawCrispnessMultiItem(crispness_uncapped, "Rendering Framerate", multiitem_uncapped, crispy_uncapped, true);
+    M_DrawCrispnessItem(crispness_smoothscaling, "Smooth Scaling", crispy_smoothscaling, true);
     M_DrawCrispnessMultiItem(crispness_coloredhud, "Colorize HUD Elements", multiitem_coloredhud, crispy_coloredhud, true);
     M_DrawCrispnessMultiItem(crispness_translucency, "Enable Translucency", multiitem_translucency, crispy_translucency, true);
     M_DrawCrispnessMultiItem(crispness_coloredblood, "Colored Blood and Corpses", multiitem_coloredblood, crispy_coloredblood & COLOREDBLOOD_BOTH, true);
@@ -1959,6 +1963,12 @@ static void M_CrispyToggleUncapped(int choice)
 	extern void SetVideoMode (void);
 	SetVideoMode();
     }
+}
+
+static void M_CrispyToggleSmoothScaling(int choice)
+{
+    choice = 0;
+    crispy_smoothscaling = !crispy_smoothscaling;
 }
 
 static void M_CrispyToggleFullsounds(int choice)

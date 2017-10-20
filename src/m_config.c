@@ -1905,6 +1905,15 @@ static default_t extra_defaults_list[] =
 
     CONFIG_VARIABLE_INT(crispy_uncapped),
 
+
+    //!
+    // @game doom
+    //
+    // Smooth Scaling.
+    //
+
+    CONFIG_VARIABLE_INT(crispy_smoothscaling),
+
     //!
     // @game doom
     //
