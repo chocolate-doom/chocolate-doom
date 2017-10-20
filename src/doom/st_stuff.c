@@ -427,6 +427,7 @@ cheatseq_t cheat_nomomentum = CHEAT("nomomentum", 0);
 cheatseq_t cheat_showfps = CHEAT("showfps", 0);
 cheatseq_t cheat_showfps2 = CHEAT("idrate", 0); // [crispy] PrBoom+
 cheatseq_t cheat_goobers = CHEAT("goobers", 0);
+cheatseq_t cheat_version = CHEAT("version", 0); // [crispy] Russian Doom
 static char msg[ST_MSGWIDTH];
 
 //
@@ -965,6 +966,20 @@ ST_Responder (event_t* ev)
         plyr->message = buf;
 */
         plyr->powers[pw_mapcoords] ^= 1;
+      }
+      // [crispy] Show engine version, build date and SDL version
+      else if (cht_CheckCheat(&cheat_version, ev->data2))
+      {
+        extern char *crispy_sdlversion;
+#ifndef BUILD_DATE
+#define BUILD_DATE __DATE__
+#endif
+        M_snprintf(msg, sizeof(msg), "%s (%s%s%s) SDL%s",
+                   PACKAGE_STRING,
+                   crstr[CR_GOLD], BUILD_DATE, crstr[CR_NONE],
+                   crispy_sdlversion);
+#undef BUILD_DATE
+        plyr->message = msg;
       }
     }
     
