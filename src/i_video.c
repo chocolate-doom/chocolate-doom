@@ -682,6 +682,7 @@ static void CreateUpscaledTexture(boolean force)
 
 // [crispy]
 int crispy_fps = 0;
+int crispy_smoothscaling = 1;
 //
 // I_FinishUpdate
 //
@@ -800,6 +801,8 @@ void I_FinishUpdate (void)
 
     SDL_RenderClear(renderer);
 
+    if (crispy_smoothscaling)
+    {
     // Render this intermediate texture into the upscaled texture
     // using "nearest" integer scaling.
 
@@ -810,6 +813,12 @@ void I_FinishUpdate (void)
 
     SDL_SetRenderTarget(renderer, NULL);
     SDL_RenderCopy(renderer, texture_upscaled, NULL, NULL);
+    }
+    else
+    {
+	SDL_SetRenderTarget(renderer, NULL);
+	SDL_RenderCopy(renderer, texture, NULL, NULL);
+    }
 
     // Draw!
 

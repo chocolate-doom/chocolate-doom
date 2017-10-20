@@ -64,6 +64,7 @@ extern int crispy_overunder;
 extern int crispy_pitch;
 extern int crispy_recoil;
 extern int crispy_secretmessage;
+extern int crispy_smoothscaling;
 extern int crispy_translucency;
 extern int crispy_uncapped;
 
