@@ -862,7 +862,7 @@ void R_AddSprites (sector_t* sec)
 }
 
 // [crispy] apply bobbing (or centering) to the player's weapon sprite
-static inline void R_ApplyWeaponBob (fixed_t *sx, boolean bobx, fixed_t *sy, boolean boby)
+static inline void R_ApplyWeaponBob (fixed_t *sx, boolean bobx, fixed_t *sy, boolean boby, int div)
 {
 	const angle_t angle = (128 * leveltime) & FINEMASK;
 
@@ -872,7 +872,7 @@ static inline void R_ApplyWeaponBob (fixed_t *sx, boolean bobx, fixed_t *sy, boo
 
 		if (bobx)
 		{
-			 *sx += FixedMul(viewplayer->bob, finecosine[angle]);
+			 *sx += FixedMul(viewplayer->bob, finecosine[angle]) / div;
 		}
 	}
 
@@ -882,7 +882,7 @@ static inline void R_ApplyWeaponBob (fixed_t *sx, boolean bobx, fixed_t *sy, boo
 
 		if (boby)
 		{
-			*sy += FixedMul(viewplayer->bob, finesine[angle & (FINEANGLES / 2 - 1)]);
+			*sy += FixedMul(viewplayer->bob, finesine[angle & (FINEANGLES / 2 - 1)]) / div;
 		}
 	}
 }
@@ -929,7 +929,7 @@ void R_DrawPSprite (pspdef_t* psp, psprnum_t psprnum) // [crispy] differentiate 
     // [crispy] smoothen Chainsaw idle animation
     if (state == S_SAW || state == S_SAWB)
     {
-        R_ApplyWeaponBob(&psp_sx, true, &psp_sy, true);
+        R_ApplyWeaponBob(&psp_sx, true, &psp_sy, true, 1);
     }
     else
     // [crispy] center the weapon sprite horizontally and vertically
@@ -937,13 +937,17 @@ void R_DrawPSprite (pspdef_t* psp, psprnum_t psprnum) // [crispy] differentiate 
     {
         const weaponinfo_t *const winfo = &weaponinfo[viewplayer->readyweapon];
 
-        R_ApplyWeaponBob(&psp_sx, crispy_centerweapon == CENTERWEAPON_BOB, NULL, false);
+        R_ApplyWeaponBob(&psp_sx, crispy_centerweapon >= CENTERWEAPON_BOB,
+                         NULL, false,
+                         crispy_centerweapon / CENTERWEAPON_BOB2 + 1);
 
         // [crispy] don't center vertically during lowering and raising states
         if (crispy_centerweapon >= CENTERWEAPON_HORVER &&
             state != winfo->downstate && state != winfo->upstate)
         {
-            R_ApplyWeaponBob(NULL, false, &psp_sy, crispy_centerweapon == CENTERWEAPON_BOB);
+            R_ApplyWeaponBob(NULL, false,
+                             &psp_sy, crispy_centerweapon >= CENTERWEAPON_BOB,
+                             crispy_centerweapon / CENTERWEAPON_BOB2 + 1);
         }
     }
     // calculate edges of the shape

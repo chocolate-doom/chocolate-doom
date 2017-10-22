@@ -1377,6 +1377,7 @@ static multiitem_t multiitem_centerweapon[NUM_CENTERWEAPON] =
     {CENTERWEAPON_HOR, "horizontal"},
     {CENTERWEAPON_HORVER, "centered"},
     {CENTERWEAPON_BOB, "bobbing"},
+    {CENTERWEAPON_BOB2, "bobbing/2"},
 };
 
 static multiitem_t multiitem_coloredblood[NUM_COLOREDBLOOD] =
