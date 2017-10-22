@@ -1726,6 +1726,7 @@ void D_DoomMain (void)
         DEH_printf("W_Init: Init WADfiles.\n");
     D_AddFile(iwadfile);
     W_CheckCorrectIWAD(strife);
+    D_IdentifyVersion();
 
     // Load dehacked patches specified on the command line.
     DEH_ParseCommandLine();
@@ -1815,8 +1816,7 @@ void D_DoomMain (void)
     // Generate the WAD hash table.  Speed things up a bit.
 
     W_GenerateHashTable();
-    
-    D_IdentifyVersion();
+
     InitGameVersion();
     InitTitleString();
     D_SetGameDescription();
