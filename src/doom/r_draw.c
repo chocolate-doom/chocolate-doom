@@ -360,6 +360,7 @@ void R_DrawFuzzColumn (void)
     pixel_t*		dest;
     fixed_t		frac;
     fixed_t		fracstep;	 
+    boolean		cutoff = false;
 
     // Adjust borders. Low... 
     if (!dc_yl) 
@@ -367,7 +368,10 @@ void R_DrawFuzzColumn (void)
 
     // .. and high.
     if (dc_yh == viewheight-1) 
+    {
 	dc_yh = viewheight - 2; 
+	cutoff = true;
+    }
 		 
     count = dc_yh - dc_yl; 
 
@@ -409,6 +413,13 @@ void R_DrawFuzzColumn (void)
 
 	frac += fracstep; 
     } while (count--); 
+
+    // [crispy] if the line at the bottom had to be cut off,
+    // draw one extra line using only pixels of that line and the one above
+    if (cutoff)
+    {
+	*dest = colormaps[6*256+dest[(fuzzoffset[fuzzpos]-FUZZOFF)/2]];
+    }
 } 
 
 // low detail mode version
@@ -423,6 +434,7 @@ void R_DrawFuzzColumnLow (void)
     fixed_t		frac;
     fixed_t		fracstep;	 
     int x;
+    boolean		cutoff = false;
 
     // Adjust borders. Low... 
     if (!dc_yl) 
@@ -430,7 +442,10 @@ void R_DrawFuzzColumnLow (void)
 
     // .. and high.
     if (dc_yh == viewheight-1) 
+    {
 	dc_yh = viewheight - 2; 
+	cutoff = true;
+    }
 		 
     count = dc_yh - dc_yl; 
 
@@ -488,6 +503,19 @@ void R_DrawFuzzColumnLow (void)
 
 	frac += fracstep; 
     } while (count--); 
+
+    // [crispy] if the line at the bottom had to be cut off,
+    // draw one extra line using only pixels of that line and the one above
+    if (cutoff)
+    {
+	*dest = colormaps[6*256+dest[(fuzzoffset[fuzzpos]-FUZZOFF)/2]];
+	*dest2 = colormaps[6*256+dest2[(fuzzoffset[fuzzpos]-FUZZOFF)/2]];
+	if (hires)
+	{
+	    *dest3 = *dest;
+	    *dest4 = *dest2;
+	}
+    }
 } 
  
   
