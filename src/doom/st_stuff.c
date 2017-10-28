@@ -1418,7 +1418,7 @@ void ST_doPaletteStuff(void)
 	palette += STARTREDPALS;
     }
 
-    else if (plyr->bonuscount)
+    else if (plyr->bonuscount && plyr->health > 0) // [crispy] never show the yellow bonus palette for a dead player
     {
 	palette = (plyr->bonuscount+7)>>3;
 
