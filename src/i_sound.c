@@ -185,6 +185,7 @@ static void InitMusicModule(void)
 // Sets channels, SFX and music volume,
 //  allocates channel buffer, sets S_sfx lookup.
 //
+static boolean monosfx;
 
 void I_InitSound(boolean use_sfx_prefix)
 {  
@@ -213,6 +214,14 @@ void I_InitSound(boolean use_sfx_prefix)
     //
 
     nomusic = M_CheckParm("-nomusic") > 0;
+
+    //!
+    // @vanilla
+    //
+    // [crispy] Play all sound effects in mono.
+    //
+
+    monosfx = M_CheckParm("-monosfx") > 0;
 
     // Initialize the sound and music subsystems.
 
@@ -281,6 +290,12 @@ void I_UpdateSound(void)
 
 static void CheckVolumeSeparation(int *vol, int *sep)
 {
+    // [crispy] Play all sound effects in mono.
+    if (monosfx)
+    {
+        *sep = 128; // [crispy] NORM_SEP
+    }
+    else
     if (*sep < 0)
     {
         *sep = 0;
