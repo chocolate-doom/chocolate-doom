@@ -631,11 +631,15 @@ static boolean ExpandSoundData_SDL(sfxinfo_t *sfxinfo,
                           AUDIO_U8, 1, samplerate,
                           mixer_format, mixer_channels, mixer_freq))
     {
-        convertor.buf = chunk->abuf;
         convertor.len = length;
+        convertor.buf = malloc(convertor.len * convertor.len_mult);
+        assert(convertor.buf != NULL);
         memcpy(convertor.buf, data, length);
 
         SDL_ConvertAudio(&convertor);
+
+        memcpy(chunk->abuf, convertor.buf, chunk->alen);
+        free(convertor.buf);
     }
     else
     {
