@@ -937,8 +937,21 @@ static void QueryResponseCallback(net_addr_t *addr,
     }
 
     M_snprintf(ping_time_str, sizeof(ping_time_str), "%ims", ping_time);
-    M_StringCopy(description, querydata->description,
-                 sizeof(description));
+
+    // Build description from server name field. Because there is limited
+    // space, we only include the player count if there are already players
+    // connected to the server.
+    if (querydata->num_players > 0)
+    {
+        M_snprintf(description, sizeof(description), "(%d/%d) ",
+                   querydata->num_players, querydata->max_players);
+    }
+    else
+    {
+        M_StringCopy(description, "", sizeof(description));
+    }
+
+    M_StringConcat(description, querydata->description, sizeof(description));
 
     TXT_AddWidgets(results_table,
                    TXT_NewLabel(ping_time_str),
@@ -996,7 +1009,7 @@ static void FindInternetServer(TXT_UNCAST_ARG(widget),
                                TXT_UNCAST_ARG(user_data))
 {
     NET_StartMasterQuery();
-    ServerQueryWindow("Find internet server");
+    ServerQueryWindow("Find Internet server");
 }
 
 static void FindLANServer(TXT_UNCAST_ARG(widget),

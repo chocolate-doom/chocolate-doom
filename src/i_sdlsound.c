@@ -634,11 +634,15 @@ static boolean ExpandSoundData_SDL(sfxinfo_t *sfxinfo,
                           AUDIO_U8, 1, samplerate,
                           mixer_format, mixer_channels, mixer_freq))
     {
-        convertor.buf = chunk->abuf;
         convertor.len = length;
+        convertor.buf = malloc(convertor.len * convertor.len_mult);
+        assert(convertor.buf != NULL);
         memcpy(convertor.buf, data, length);
 
         SDL_ConvertAudio(&convertor);
+
+        memcpy(chunk->abuf, convertor.buf, chunk->alen);
+        free(convertor.buf);
     }
     else
     {
@@ -1075,10 +1079,21 @@ static boolean I_SDL_InitSound(boolean _use_sfx_prefix)
 {
     int i;
 
+    // SDL 2.0.6 has a bug that makes it unusable.
+    if (SDL_COMPILEDVERSION == SDL_VERSIONNUM(2, 0, 6))
+    {
+        I_Error(
+            "I_SDL_InitSound: "
+            "You are trying to launch with SDL 2.0.6 which has a known bug "
+            "that makes the game crash. Please either downgrade to "
+            "SDL 2.0.5 or upgrade to 2.0.7. See the following bug for some "
+            "additional context:\n"
+            "<https://github.com/chocolate-doom/chocolate-doom/issues/945>");
+    }
+
     use_sfx_prefix = _use_sfx_prefix;
 
     // No sounds yet
-
     for (i=0; i<NUM_CHANNELS; ++i)
     {
         channels_playing[i] = NULL;
