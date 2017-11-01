@@ -330,7 +330,7 @@ static int		cnt_par;
 static int		cnt_pause;
 
 // # of commercial levels
-static int		NUMCMAPS; 
+static int		NUMCMAPS = 32;
 
 
 //
