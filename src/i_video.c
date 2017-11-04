@@ -1256,6 +1256,7 @@ void SetVideoMode(void) // [crispy] un-static
     if (force_software_renderer)
     {
         renderer_flags |= SDL_RENDERER_SOFTWARE;
+        renderer_flags &= ~SDL_RENDERER_PRESENTVSYNC;
     }
 
     if (renderer != NULL)
