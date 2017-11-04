@@ -1483,7 +1483,7 @@ static void M_DrawCrispness1(void)
 
     M_DrawCrispnessSeparator(crispness_sep_visual, "Visual");
 
-    M_DrawCrispnessMultiItem(crispness_uncapped, "Rendering Framerate", multiitem_uncapped, crispy_uncapped, true);
+    M_DrawCrispnessMultiItem(crispness_uncapped, "Rendering Framerate", multiitem_uncapped, crispy_uncapped, !force_software_renderer);
     M_DrawCrispnessItem(crispness_smoothscaling, "Smooth Scaling", crispy_smoothscaling, true);
     M_DrawCrispnessMultiItem(crispness_coloredhud, "Colorize HUD Elements", multiitem_coloredhud, crispy_coloredhud, true);
     M_DrawCrispnessMultiItem(crispness_translucency, "Enable Translucency", multiitem_translucency, crispy_translucency, true);
@@ -1954,6 +1954,13 @@ static void M_CrispyToggleTranslucency(int choice)
 static void M_CrispyToggleUncapped(int choice)
 {
     choice = 0;
+
+    if (force_software_renderer)
+    {
+	S_StartSound(NULL,sfx_oof);
+	return;
+    }
+
     crispy_uncapped = (crispy_uncapped + 1) % NUM_UNCAPPED;
 
     // [crispy] restart renderer if vsync is toggled (UNCAPPED_OFF has vsync),

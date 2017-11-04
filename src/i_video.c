@@ -1257,6 +1257,7 @@ void SetVideoMode(void) // [crispy] un-static
     {
         renderer_flags |= SDL_RENDERER_SOFTWARE;
         renderer_flags &= ~SDL_RENDERER_PRESENTVSYNC;
+        crispy_uncapped = UNCAPPED_OFF;
     }
 
     if (renderer != NULL)
