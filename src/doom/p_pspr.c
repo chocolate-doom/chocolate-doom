@@ -63,7 +63,7 @@ void A_Recoil (player_t* player)
 	if (player)
 	{
 
-		if (singleplayer && crispy_recoil && !(player->mo->flags & MF_NOCLIP))
+		if (crispy_singleplayer && crispy_recoil && !(player->mo->flags & MF_NOCLIP))
 		{
 			P_Thrust(player, ANG180 + player->mo->angle, 2048 * recoil_values[player->readyweapon][0]);
 		}
@@ -688,7 +688,7 @@ void P_BulletSlope (mobj_t*	mo)
 {
     angle_t	an;
     
-    if (singleplayer && (crispy_freeaim == FREEAIM_DIRECT))
+    if (crispy_singleplayer && (crispy_freeaim == FREEAIM_DIRECT))
     {
 	bulletslope = CRISPY_SLOPE(mo->player);
     }
@@ -706,7 +706,7 @@ void P_BulletSlope (mobj_t*	mo)
 	{
 	    an -= 2<<26;
 	    bulletslope = P_AimLineAttack (mo, an, 16*64*FRACUNIT);
-	    if (!linetarget && singleplayer && (crispy_freeaim == FREEAIM_BOTH))
+	    if (!linetarget && crispy_singleplayer && (crispy_freeaim == FREEAIM_BOTH))
 	    {
 		bulletslope = CRISPY_SLOPE(mo->player);
 	    }

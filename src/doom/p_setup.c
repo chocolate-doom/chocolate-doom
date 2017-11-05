@@ -972,7 +972,7 @@ void P_LoadThings (int lump)
 	    break;
 
 	// [crispy] minor fixes to prevent users from getting stuck in levels with mapping errors
-	if (singleplayer)
+	if (crispy_singleplayer)
 	{
 	    // [crispy] spawn Former Human instead of Wolf SS in BFG Edition
 	    if (gamevariant == bfgedition && mt->type == 84)

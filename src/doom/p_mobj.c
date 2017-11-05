@@ -1186,7 +1186,7 @@ P_SpawnPlayerMissile
 
     // see which target is to be aimed at
     an = source->angle;
-    if (singleplayer && (crispy_freeaim == FREEAIM_DIRECT))
+    if (crispy_singleplayer && (crispy_freeaim == FREEAIM_DIRECT))
     {
 	slope = CRISPY_SLOPE(source->player);
     }
@@ -1208,7 +1208,7 @@ P_SpawnPlayerMissile
 	if (!linetarget)
 	{
 	    an = source->angle;
-	    if (singleplayer && (crispy_freeaim == FREEAIM_BOTH))
+	    if (crispy_singleplayer && (crispy_freeaim == FREEAIM_BOTH))
                slope = CRISPY_SLOPE(source->player);
 	    else
 	    slope = 0;

@@ -186,7 +186,7 @@ boolean P_CheckMeleeRange (mobj_t*	actor)
 	return false;
 							
     // [crispy] height check for melee attacks (from Hexen)
-    if (singleplayer && crispy_overunder && pl->player)
+    if (crispy_singleplayer && crispy_overunder && pl->player)
     {
 	// [crispy] Target is higher than the attacker
 	if (pl->z > actor->z + actor->height)
@@ -1712,7 +1712,7 @@ void A_BossDeath (mobj_t* mo)
     {
 	if (gamemap != 7 &&
 	// [crispy] Master Levels in PC slot 7
-	!(singleplayer && gamemission == pack_master && (gamemap == 14 || gamemap == 15 || gamemap == 16)))
+	!(crispy_singleplayer && gamemission == pack_master && (gamemap == 14 || gamemap == 15 || gamemap == 16)))
 	    return;
 		
 	if ((mo->type != MT_FATSO)
@@ -1757,7 +1757,7 @@ void A_BossDeath (mobj_t* mo)
     {
 	if (gamemap == 7 ||
 	// [crispy] Master Levels in PC slot 7
-	(singleplayer && gamemission == pack_master && (gamemap == 14 || gamemap == 15 || gamemap == 16)))
+	(crispy_singleplayer && gamemission == pack_master && (gamemap == 14 || gamemap == 15 || gamemap == 16)))
 	{
 	    if (mo->type == MT_FATSO)
 	    {

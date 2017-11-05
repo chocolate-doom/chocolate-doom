@@ -1536,10 +1536,10 @@ static void M_DrawCrispness3(void)
 
     M_DrawCrispnessSeparator(crispness_sep_physical, "Physical");
 
-    M_DrawCrispnessMultiItem(crispness_freeaim, "Vertical Aiming", multiitem_freeaim, crispy_freeaim, singleplayer);
-    M_DrawCrispnessMultiItem(crispness_jumping, "Allow Jumping", multiitem_jump, crispy_jump, singleplayer);
-    M_DrawCrispnessItem(crispness_overunder, "Walk over/under Monsters", crispy_overunder, singleplayer);
-    M_DrawCrispnessItem(crispness_recoil, "Weapon Recoil Thrust", crispy_recoil, singleplayer);
+    M_DrawCrispnessMultiItem(crispness_freeaim, "Vertical Aiming", multiitem_freeaim, crispy_freeaim, crispy_singleplayer);
+    M_DrawCrispnessMultiItem(crispness_jumping, "Allow Jumping", multiitem_jump, crispy_jump, crispy_singleplayer);
+    M_DrawCrispnessItem(crispness_overunder, "Walk over/under Monsters", crispy_overunder, crispy_singleplayer);
+    M_DrawCrispnessItem(crispness_recoil, "Weapon Recoil Thrust", crispy_recoil, crispy_singleplayer);
 
     M_DrawCrispnessGoto(crispness3_goto2, "< Prev Page");
 
@@ -1872,7 +1872,7 @@ static void M_CrispyToggleFlipcorpses(int choice)
 
 static void M_CrispyToggleFreeaim(int choice)
 {
-    if (!singleplayer)
+    if (!crispy_singleplayer)
     {
 	S_StartSound(NULL,sfx_oof);
 	return;
@@ -1899,7 +1899,7 @@ static void M_CrispyToggleNeghealth(int choice)
 
 static void M_CrispyToggleJumping(int choice)
 {
-    if (!singleplayer)
+    if (!crispy_singleplayer)
     {
 	S_StartSound(NULL,sfx_oof);
 	return;
@@ -1911,7 +1911,7 @@ static void M_CrispyToggleJumping(int choice)
 
 static void M_CrispyToggleOverunder(int choice)
 {
-    if (!singleplayer)
+    if (!crispy_singleplayer)
     {
 	S_StartSound(NULL,sfx_oof);
 	return;
@@ -1930,7 +1930,7 @@ static void M_CrispyTogglePitch(int choice)
 
 static void M_CrispyToggleRecoil(int choice)
 {
-    if (!singleplayer)
+    if (!crispy_singleplayer)
     {
 	S_StartSound(NULL,sfx_oof);
 	return;

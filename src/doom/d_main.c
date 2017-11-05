@@ -156,6 +156,7 @@ boolean         crispy_fliplevels = false;
 boolean         crispy_havee1m10 = false;
 boolean         crispy_havemap33 = false;
 boolean         crispy_havessg = false;
+boolean         crispy_singleplayer = true;
 
 int             crispy_demowarp = 0;
 char            *nervewadfile = NULL;
@@ -624,6 +625,8 @@ void D_DoAdvanceDemo (void)
     usergame = false;               // no save / end game here
     paused = false;
     gameaction = ga_nothing;
+    crispy_singleplayer = !demorecording && !demoplayback && !netgame;
+
 
     // The Ultimate Doom executable changed the demo sequence to add
     // a DEMO4 demo.  Final Doom was based on Ultimate, so also

@@ -522,7 +522,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     }
 
     // [crispy] jump keys
-    if (crispy_jump && singleplayer)
+    if (crispy_jump && crispy_singleplayer)
     {
         if (gamekeydown[key_jump] || mousebuttons[mousebjump]
             || joybuttons[joybjump])
@@ -807,6 +807,7 @@ void G_DoLoadLevel (void)
 	memset (players[i].frags,0,sizeof(players[i].frags)); 
     } 
 		 
+    crispy_singleplayer = !demorecording && !demoplayback && !netgame;
     P_SetupLevel (gameepisode, gamemap, 0, gameskill);    
     displayplayer = consoleplayer;		// view the guy you are playing    
     gameaction = ga_nothing; 
@@ -1449,7 +1450,7 @@ void G_DoReborn (int playernum)
 	// [crispy] if the player dies and the game has been loaded or saved
 	// in the mean time, reload that savegame instead of restarting the level
 	// when "Run" is pressed upon resurrection
-	if (singleplayer && *savename && speedkeydown())
+	if (crispy_singleplayer && *savename && speedkeydown())
 	gameaction = ga_loadgame;
 	else
 	{
@@ -1623,7 +1624,7 @@ void G_DoCompleted (void)
     wminfo.last = gamemap -1;
     
     // wminfo.next is 0 biased, unlike gamemap
-    if ( gamemission == pack_nerve && singleplayer )
+    if ( gamemission == pack_nerve && crispy_singleplayer )
     {
 	if (secretexit)
 	    switch(gamemap)
@@ -1638,7 +1639,7 @@ void G_DoCompleted (void)
 	    }
     }
     else
-    if ( gamemission == pack_master && singleplayer )
+    if ( gamemission == pack_master && crispy_singleplayer )
     {
 	wminfo.next = gamemap;
     }
@@ -1646,7 +1647,7 @@ void G_DoCompleted (void)
     if ( gamemode == commercial)
     {
 	if (secretexit)
-	    if (gamemap == 2 && crispy_havemap33 && singleplayer)
+	    if (gamemap == 2 && crispy_havemap33 && crispy_singleplayer)
 	      wminfo.next = 32;
 	    else
 	    switch(gamemap)
@@ -1655,7 +1656,7 @@ void G_DoCompleted (void)
 	      case 31: wminfo.next = 31; break;
 	    }
 	else
-	    if (gamemap == 33 && crispy_havemap33 && singleplayer)
+	    if (gamemap == 33 && crispy_havemap33 && crispy_singleplayer)
 	      wminfo.next = 2;
 	    else
 	    switch(gamemap)
@@ -1669,7 +1670,7 @@ void G_DoCompleted (void)
     {
 	if (secretexit) 
 	{
-	    if (crispy_havee1m10 && singleplayer && gameepisode == 1 && gamemap == 1)
+	    if (crispy_havee1m10 && crispy_singleplayer && gameepisode == 1 && gamemap == 1)
 	    wminfo.next = 9; // [crispy] go to secret level E1M10 "Sewers"
 	    else
 	    wminfo.next = 8; 	// go to secret level 
@@ -1694,7 +1695,7 @@ void G_DoCompleted (void)
 	    }                
 	} 
 	else
-	if (crispy_havee1m10 && singleplayer && gameepisode == 1 && gamemap == 10)
+	if (crispy_havee1m10 && crispy_singleplayer && gameepisode == 1 && gamemap == 10)
 	    wminfo.next = 1; // [crispy] returning from secret level E1M10 "Sewers"
 	else 
 	    wminfo.next = gamemap;          // go to next level 
@@ -1712,7 +1713,7 @@ void G_DoCompleted (void)
 	// [crispy] par time for inofficial maps sucks
 	wminfo.partime = INT_MAX;
     else
-    if (gamemission == pack_nerve && singleplayer)
+    if (gamemission == pack_nerve && crispy_singleplayer)
 	wminfo.partime = TICRATE*npars[gamemap-1];
     else
     if (gamemode == commercial)
@@ -1731,7 +1732,7 @@ void G_DoCompleted (void)
 	else
 	wminfo.partime = TICRATE*pars[gameepisode][gamemap];
     }
-    else if (gameepisode == 4 && singleplayer)
+    else if (gameepisode == 4 && crispy_singleplayer)
 	wminfo.partime = TICRATE*e4pars[gamemap];
     else
         wminfo.partime = TICRATE*cpars[gamemap];
@@ -1779,7 +1780,7 @@ void G_WorldDone (void)
       if (!crispy_havee1m10 || gameepisode != 1 || gamemap != 1)
 	players[consoleplayer].didsecret = true; 
 
-    if ( gamemission == pack_nerve && singleplayer )
+    if ( gamemission == pack_nerve && crispy_singleplayer )
     {
 	switch (gamemap)
 	{
@@ -1789,7 +1790,7 @@ void G_WorldDone (void)
 	}
     }
     else
-    if ( gamemission == pack_master && singleplayer )
+    if ( gamemission == pack_master && crispy_singleplayer )
     {
 	switch (gamemap)
 	{
@@ -2652,6 +2653,7 @@ void G_DoPlayDemo (void)
 
     usergame = false; 
     demoplayback = true; 
+    crispy_singleplayer = !demorecording && !demoplayback && !netgame;
 
     // [crispy] demo progress bar
     {

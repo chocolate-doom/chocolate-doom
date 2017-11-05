@@ -849,7 +849,7 @@ void WI_drawShowNextLoc(void)
 	    WI_drawOnLnode(wbs->next, yah); 
     }
 
-    if (singleplayer && (
+    if (crispy_singleplayer && (
         (gamemission == pack_nerve && wbs->last == 7) ||
         (gamemission == pack_master && wbs->last == 19 && !secretexit) ||
         (gamemission == pack_master && wbs->last == 20)))
@@ -1500,7 +1500,7 @@ static boolean WI_drawParTime (void)
 		}
 
 		// [crispy] PWAD: NRFTL has par times (for singleplayer games)
-		if (gamemission == pack_nerve && singleplayer)
+		if (gamemission == pack_nerve && crispy_singleplayer)
 		{
 			result = true;
 		}
@@ -1515,7 +1515,7 @@ static boolean WI_drawParTime (void)
 	{
 		// [crispy] IWAD: Episode 4 has no par times
 		// (but we have for singleplayer games)
-		if (wbs->epsd >= 4 && !singleplayer)
+		if (wbs->epsd >= 4 && !crispy_singleplayer)
 		{
 			result = false;
 		}

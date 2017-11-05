@@ -306,7 +306,7 @@ boolean PIT_CheckThing (mobj_t* thing)
     if (tmthing->flags & MF_SKULLFLY)
     {
 	// [crispy] check if attacking skull flies over player
-	if (singleplayer && crispy_overunder && thing->player)
+	if (crispy_singleplayer && crispy_overunder && thing->player)
 	{
 	    if (tmthing->z > thing->z + thing->height)
 	    {
@@ -384,7 +384,7 @@ boolean PIT_CheckThing (mobj_t* thing)
     }
 
     // [crispy] a solid hanging body will allow sufficiently small things underneath it
-    if (singleplayer && crispy_overunder &&
+    if (crispy_singleplayer && crispy_overunder &&
         (thing->flags & (MF_SOLID | MF_SPAWNCEILING)) == (MF_SOLID | MF_SPAWNCEILING) &&
         tmthing->z + tmthing->height <= thing->z)
     {
@@ -393,7 +393,7 @@ boolean PIT_CheckThing (mobj_t* thing)
     }
 
     // [crispy] allow players to walk over/under shootable objects
-    if (singleplayer && crispy_overunder &&
+    if (crispy_singleplayer && crispy_overunder &&
         tmthing->player && thing->flags & MF_SHOOTABLE)
     {
         if (tmthing->z >= thing->z + thing->height)
@@ -1245,7 +1245,7 @@ P_LineLaser
 
     laserspot->x = laserspot->y = laserspot->z = 0;
 
-    if (singleplayer && (crispy_freeaim == FREEAIM_DIRECT))
+    if (crispy_singleplayer && (crispy_freeaim == FREEAIM_DIRECT))
     {
 	lslope = slope;
     }
@@ -1266,7 +1266,7 @@ P_LineLaser
 	    an -= 2<<26;
 	    lslope = P_AimLineAttack(t1, an, distance);
 
-	    if (!linetarget && singleplayer && (crispy_freeaim == FREEAIM_BOTH))
+	    if (!linetarget && crispy_singleplayer && (crispy_freeaim == FREEAIM_BOTH))
 	    {
 		lslope = slope;
 	    }
