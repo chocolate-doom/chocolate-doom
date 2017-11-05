@@ -735,6 +735,12 @@ ST_Responder (event_t* ev)
         // in the Ultimate Doom executable so that it would work for
         // the Doom 1 music as well.
 
+	// [crispy] restart current music if IDMUS00 is entered
+	if (buf[0] == '0' && buf[1] == '0')
+	{
+	  S_ChangeMusic(0, 2);
+	}
+	else
 	if (gamemode == commercial || gameversion < exe_ultimate)
 	{
 	  musnum = mus_runnin + (buf[0]-'0')*10 + buf[1]-'0' - 1;

@@ -779,6 +779,12 @@ void S_ChangeMusic(int musicnum, int looping)
     if (crispy_demowarp && (gamestate != GS_LEVEL || crispy_demowarp != gamemap))
 	return;
 
+    // [crispy] restart current music if IDMUS00 is entered
+    if (looping == 2)
+    {
+	music = mus_playing;
+    }
+
     // The Doom IWAD file has two versions of the intro music: d_intro
     // and d_introa.  The latter is used for OPL playback.
 
@@ -817,11 +823,13 @@ void S_ChangeMusic(int musicnum, int looping)
     }
     else
     {
+      if (!music) // [crispy] restart current music if IDMUS00 is entered
         music = &S_music[musicnum];
     }
 
     if (mus_playing == music)
     {
+      if (looping != 2) // [crispy] restart current music if IDMUS00 is entered
         return;
     }
 
