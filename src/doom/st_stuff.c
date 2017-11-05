@@ -807,25 +807,44 @@ ST_Responder (event_t* ev)
       else if (cht_CheckCheat(&cheat_notarget, ev->data2) ||
                cht_CheckCheat(&cheat_notarget2, ev->data2))
       {
-	thinker_t *currentthinker=&thinkercap;
-
 	plyr->cheats ^= CF_NOTARGET;
+
+	if (plyr->cheats & CF_NOTARGET)
+	{
+		int i;
+		thinker_t *th;
+
+		// [crispy] let mobjs forget their target and tracer
+		for (th = thinkercap.next; th != &thinkercap; th = th->next)
+		{
+			if (th->function.acp1 == (actionf_p1)P_MobjThinker)
+			{
+				mobj_t *const mo = (mobj_t *)th;
+
+				if (mo->target && mo->target->player)
+				{
+					mo->target = NULL;
+				}
+
+				if (mo->tracer && mo->tracer->player)
+				{
+					mo->tracer = NULL;
+				}
+			}
+		}
+		// [crispy] let sectors forget their soundtarget
+		for (i = 0; i < numsectors; i++)
+		{
+			sector_t *const sector = &sectors[i];
+
+			sector->soundtarget = NULL;
+		}
+	}
 
 	M_snprintf(msg, sizeof(msg), "Notarget Mode %s%s",
 	           crstr[CR_GREEN],
 	           (plyr->cheats & CF_NOTARGET) ? "ON" : "OFF");
 	plyr->message = msg;
-
-	// [crispy] forget about current target
-	while ((currentthinker=currentthinker->next) != &thinkercap)
-	{
-	    if (currentthinker->function.acp1 == (actionf_p1)P_MobjThinker &&
-	        (((mobj_t *)currentthinker)->flags & MF_COUNTKILL ||
-	        ((mobj_t *)currentthinker)->type == MT_SKULL))
-	    {
-		((mobj_t *)currentthinker)->target = ((mobj_t *)currentthinker)->tracer = NULL;
-	    }
-	}
       }
       // [crispy] implement "nomomentum" cheat, ne debug aid -- pretty useless, though
       else if (cht_CheckCheat(&cheat_nomomentum, ev->data2))
