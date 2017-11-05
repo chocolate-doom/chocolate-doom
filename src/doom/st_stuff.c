@@ -430,6 +430,22 @@ cheatseq_t cheat_goobers = CHEAT("goobers", 0);
 cheatseq_t cheat_version = CHEAT("version", 0); // [crispy] Russian Doom
 static char msg[ST_MSGWIDTH];
 
+// [crispy] restrict cheat usage
+static inline int cht_CheckCheatSP (cheatseq_t *cht, char key)
+{
+	if (!cht_CheckCheat(cht, key))
+	{
+		return false;
+	}
+	else
+	if (!crispy_singleplayer)
+	{
+		plyr->message = "Cheater!";
+		return false;
+	}
+	return true;
+}
+
 //
 // STATUS BAR CODE
 //
@@ -614,7 +630,7 @@ ST_Responder (event_t* ev)
     if (!netgame && gameskill != sk_nightmare)
     {
       // 'dqd' cheat for toggleable god mode
-      if (cht_CheckCheat(&cheat_god, ev->data2))
+      if (cht_CheckCheatSP(&cheat_god, ev->data2))
       {
 	// [crispy] dead players are first respawned at the current position
 	mapthing_t mt = {0};
@@ -652,7 +668,7 @@ ST_Responder (event_t* ev)
 	    return true;
       }
       // 'fa' cheat for killer fucking arsenal
-      else if (cht_CheckCheat(&cheat_ammonokey, ev->data2))
+      else if (cht_CheckCheatSP(&cheat_ammonokey, ev->data2))
       {
 	plyr->armorpoints = deh_idfa_armor;
 	plyr->armortype = deh_idfa_armor_class;
@@ -677,7 +693,7 @@ ST_Responder (event_t* ev)
 	plyr->message = DEH_String(STSTR_FAADDED);
       }
       // 'kfa' cheat for key full ammo
-      else if (cht_CheckCheat(&cheat_ammo, ev->data2))
+      else if (cht_CheckCheatSP(&cheat_ammo, ev->data2))
       {
 	plyr->armorpoints = deh_idkfa_armor;
 	plyr->armortype = deh_idkfa_armor_class;
@@ -705,9 +721,9 @@ ST_Responder (event_t* ev)
 	plyr->message = DEH_String(STSTR_KFAADDED);
       }
       // [crispy] implement Boom's "tntem" cheat
-      else if (cht_CheckCheat(&cheat_massacre, ev->data2) ||
-               cht_CheckCheat(&cheat_massacre2, ev->data2) ||
-               cht_CheckCheat(&cheat_massacre3, ev->data2))
+      else if (cht_CheckCheatSP(&cheat_massacre, ev->data2) ||
+               cht_CheckCheatSP(&cheat_massacre2, ev->data2) ||
+               cht_CheckCheatSP(&cheat_massacre3, ev->data2))
       {
 	int killcount = ST_cheat_massacre();
 	const char *const monster = (gameversion == exe_chex) ? "Flemoid" : "Monster";
@@ -719,7 +735,7 @@ ST_Responder (event_t* ev)
 	plyr->message = msg;
       }
       // [crispy] implement Crispy Doom's "spechits" cheat
-      else if (cht_CheckCheat(&cheat_spechits, ev->data2))
+      else if (cht_CheckCheatSP(&cheat_spechits, ev->data2))
       {
 	int triggeredlines = ST_cheat_spechits();
 
@@ -788,9 +804,9 @@ ST_Responder (event_t* ev)
       }
       // [crispy] allow both idspispopd and idclip cheats in all gamemissions
       else if ( ( /* logical_gamemission == doom
-                 && */ cht_CheckCheat(&cheat_noclip, ev->data2))
+                 && */ cht_CheckCheatSP(&cheat_noclip, ev->data2))
              || ( /* logical_gamemission != doom
-                 && */ cht_CheckCheat(&cheat_commercial_noclip,ev->data2)))
+                 && */ cht_CheckCheatSP(&cheat_commercial_noclip,ev->data2)))
       {	
         // Noclip cheat.
         // For Doom 1, use the idspipsopd cheat; for all others, use
@@ -804,8 +820,8 @@ ST_Responder (event_t* ev)
 	  plyr->message = DEH_String(STSTR_NCOFF);
       }
       // [crispy] implement PrBoom+'s "notarget" cheat
-      else if (cht_CheckCheat(&cheat_notarget, ev->data2) ||
-               cht_CheckCheat(&cheat_notarget2, ev->data2))
+      else if (cht_CheckCheatSP(&cheat_notarget, ev->data2) ||
+               cht_CheckCheatSP(&cheat_notarget2, ev->data2))
       {
 	plyr->cheats ^= CF_NOTARGET;
 
@@ -847,7 +863,7 @@ ST_Responder (event_t* ev)
 	plyr->message = msg;
       }
       // [crispy] implement "nomomentum" cheat, ne debug aid -- pretty useless, though
-      else if (cht_CheckCheat(&cheat_nomomentum, ev->data2))
+      else if (cht_CheckCheatSP(&cheat_nomomentum, ev->data2))
       {
 	plyr->cheats ^= CF_NOMOMENTUM;
 
@@ -863,7 +879,7 @@ ST_Responder (event_t* ev)
 	plyr->powers[pw_showfps] ^= 1;
       }
       // [crispy] implement Crispy Doom's "goobers" cheat, ne easter egg
-      else if (cht_CheckCheat(&cheat_goobers, ev->data2))
+      else if (cht_CheckCheatSP(&cheat_goobers, ev->data2))
       {
 	extern void EV_DoGoobers (void);
 
@@ -875,7 +891,7 @@ ST_Responder (event_t* ev)
       // 'behold?' power-up cheats
       for (i=0;i<6;i++)
       {
-	if (cht_CheckCheat(&cheat_powerup[i], ev->data2))
+	if (i < 4 ? cht_CheckCheatSP(&cheat_powerup[i], ev->data2) : cht_CheckCheat(&cheat_powerup[i], ev->data2))
 	{
 	  if (!plyr->powers[i])
 	    P_GivePower( plyr, i);
@@ -888,7 +904,7 @@ ST_Responder (event_t* ev)
 	}
       }
       // [crispy] idbehold0
-      if (cht_CheckCheat(&cheat_powerup[7], ev->data2))
+      if (cht_CheckCheatSP(&cheat_powerup[7], ev->data2))
       {
 	memset(plyr->powers, 0, sizeof(plyr->powers));
 	plyr->message = DEH_String(STSTR_BEHOLDX);
@@ -900,7 +916,7 @@ ST_Responder (event_t* ev)
 	plyr->message = DEH_String(STSTR_BEHOLD);
       }
       // [crispy] implement Boom's "tntweap?" weapon cheats
-      else if (cht_CheckCheat(&cheat_weapon, ev->data2))
+      else if (cht_CheckCheatSP(&cheat_weapon, ev->data2))
       {
 	char		buf[2];
 	int		w;
@@ -965,7 +981,7 @@ ST_Responder (event_t* ev)
 	plyr->message = msg;
       }
       // 'choppers' invulnerability & chainsaw
-      else if (cht_CheckCheat(&cheat_choppers, ev->data2))
+      else if (cht_CheckCheatSP(&cheat_choppers, ev->data2))
       {
 	plyr->weaponowned[wp_chainsaw] = true;
 	plyr->powers[pw_invulnerability] = true;
@@ -1003,7 +1019,7 @@ ST_Responder (event_t* ev)
     }
     
     // 'clev' change-level cheat
-    if (!netgame && cht_CheckCheat(&cheat_clev, ev->data2))
+    if (!netgame && !menuactive && cht_CheckCheatSP(&cheat_clev, ev->data2)) // [crispy] restrict cheat usage
     {
       char		buf[3];
       int		epsd;
