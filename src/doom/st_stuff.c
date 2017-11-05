@@ -323,7 +323,7 @@ static patch_t*		tallpercent;
 static patch_t*		shortnum[10];
 
 // 3 key-cards, 3 skulls
-static patch_t*		keys[NUMCARDS]; 
+static patch_t*		keys[NUMCARDS+3]; // [crispy] support combined card and skull keys
 
 // face status patches
 static patch_t*		faces[ST_NUMFACES];
@@ -427,6 +427,7 @@ cheatseq_t cheat_nomomentum = CHEAT("nomomentum", 0);
 cheatseq_t cheat_showfps = CHEAT("showfps", 0);
 cheatseq_t cheat_showfps2 = CHEAT("idrate", 0); // [crispy] PrBoom+
 cheatseq_t cheat_goobers = CHEAT("goobers", 0);
+cheatseq_t cheat_version = CHEAT("version", 0); // [crispy] Russian Doom
 static char msg[ST_MSGWIDTH];
 
 //
@@ -966,6 +967,20 @@ ST_Responder (event_t* ev)
 */
         plyr->powers[pw_mapcoords] ^= 1;
       }
+      // [crispy] Show engine version, build date and SDL version
+      else if (cht_CheckCheat(&cheat_version, ev->data2))
+      {
+        extern char *crispy_sdlversion;
+#ifndef BUILD_DATE
+#define BUILD_DATE __DATE__
+#endif
+        M_snprintf(msg, sizeof(msg), "%s (%s%s%s) SDL%s",
+                   PACKAGE_STRING,
+                   crstr[CR_GOLD], BUILD_DATE, crstr[CR_NONE],
+                   crispy_sdlversion);
+#undef BUILD_DATE
+        plyr->message = msg;
+      }
     }
     
     // 'clev' change-level cheat
@@ -1328,7 +1343,7 @@ void ST_updateWidgets(void)
 	keyboxes[i] = plyr->cards[i] ? i : -1;
 
 	if (plyr->cards[i+3])
-	    keyboxes[i] = i+3;
+	    keyboxes[i] = (keyboxes[i] == -1) ? i+3 : i+6; // [crispy] support combined card and skull keys
     }
 
     // refresh everything if this is him coming back to life
@@ -1403,7 +1418,7 @@ void ST_doPaletteStuff(void)
 	palette += STARTREDPALS;
     }
 
-    else if (plyr->bonuscount)
+    else if (plyr->bonuscount && plyr->health > 0) // [crispy] never show the yellow bonus palette for a dead player
     {
 	palette = (plyr->bonuscount+7)>>3;
 
@@ -1811,8 +1826,23 @@ void ST_loadGraphics(void)
 
 void ST_loadData(void)
 {
+    int i;
+
     lu_palette = W_GetNumForName (DEH_String("PLAYPAL"));
     ST_loadGraphics();
+
+    // [crispy] support combined card and skull keys (if provided by PWAD)
+    // i.e. only for display in the status bar
+    for (i = NUMCARDS; i < NUMCARDS+3; i++)
+    {
+	char lumpname[9];
+	int lumpnum;
+
+	DEH_snprintf(lumpname, 9, "STKEYS%d", i);
+	lumpnum = W_CheckNumForName(lumpname);
+
+	keys[i] = (lumpnum != -1) ? W_CacheLumpNum(lumpnum, PU_STATIC) : keys[i-3];
+    }
 }
 
 static void ST_unloadCallback(char *lumpname, patch_t **variable)

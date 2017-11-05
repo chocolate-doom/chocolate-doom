@@ -25,6 +25,7 @@
 #include "doomtype.h"
 #include "i_system.h"
 #include "m_argv.h"
+#include "m_misc.h" // [crispy] M_snprintf()
 
 //
 // D_DoomMain()
@@ -32,6 +33,7 @@
 // calls all startup code, parses command line options.
 //
 const char *crispy_platform;
+const char *crispy_sdlversion;
 
 void D_DoomMain (void);
 
@@ -43,6 +45,13 @@ int main(int argc, char **argv)
     myargv = argv;
 
     crispy_platform = SDL_GetPlatform();
+    {
+        char buf[16];
+        SDL_version version;
+        SDL_GetVersion(&version);
+        M_snprintf(buf, sizeof(buf), "%d.%d.%d", version.major, version.minor, version.patch);
+        crispy_sdlversion = M_StringDuplicate(buf);
+    }
 
     M_FindResponseFile();
 

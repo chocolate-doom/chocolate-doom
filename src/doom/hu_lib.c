@@ -100,10 +100,12 @@ HUlib_drawTextLine
     int			i;
     int			w;
     int			x;
+    int			y;
     unsigned char	c;
 
     // draw the new stuff
     x = l->x;
+    y = l->y; // [crispy] support line breaks
     for (i=0;i<l->len;i++)
     {
 	c = toupper(l->l[i]);
@@ -119,6 +121,13 @@ HUlib_drawTextLine
 	    }
 	}
 	else
+	// [crispy] support line breaks
+	if (c == '\n')
+	{
+	    x = l->x;
+	    y += SHORT(l->f[0]->height) + 1;
+	}
+	else
 	if (c != ' '
 	    && c >= l->sc
 	    && c <= '_')
@@ -126,7 +135,7 @@ HUlib_drawTextLine
 	    w = SHORT(l->f[c - l->sc]->width);
 	    if (x+w > ORIGWIDTH)
 		break;
-	    V_DrawPatchDirect(x, l->y, l->f[c - l->sc]);
+	    V_DrawPatchDirect(x, y, l->f[c - l->sc]);
 	    x += w;
 	}
 	else
@@ -141,7 +150,7 @@ HUlib_drawTextLine
     if (drawcursor
 	&& x + SHORT(l->f['_' - l->sc]->width) <= ORIGWIDTH)
     {
-	V_DrawPatchDirect(x, l->y, l->f['_' - l->sc]);
+	V_DrawPatchDirect(x, y, l->f['_' - l->sc]);
     }
 }
 
@@ -161,6 +170,16 @@ void HUlib_eraseTextLine(hu_textline_t* l)
 	viewwindowx && (l->needsupdate || crispy_cleanscreenshot || crispy_screenshotmsg == 4))
     {
 	lh = (SHORT(l->f[0]->height) + 1) << hires;
+	// [crispy] support line breaks
+	yoffset = 1;
+	for (y = 0; y < l->len; y++)
+	{
+	    if (l->l[y] == '\n')
+	    {
+		yoffset++;
+	    }
+	}
+	lh *= yoffset;
 	for (y=(l->y << hires),yoffset=y*SCREENWIDTH ; y<(l->y << hires)+lh ; y++,yoffset+=SCREENWIDTH)
 	{
 	    if (y < viewwindowy || y >= viewwindowy + scaledviewheight)

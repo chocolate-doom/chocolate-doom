@@ -215,7 +215,6 @@ void I_InitSound(boolean use_sfx_prefix)
 
     nomusic = M_CheckParm("-nomusic") > 0;
 
-
     //!
     // @vanilla
     //

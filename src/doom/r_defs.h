@@ -79,6 +79,7 @@ typedef struct
     boolean	moved;
 } vertex_t;
 
+
 // Forward of LineDefs, for Sectors.
 struct line_s;
 
