@@ -785,7 +785,13 @@ void S_ChangeMusic(int musicnum, int looping)
     if (musicnum == mus_intro && (snd_musicdevice == SNDDEVICE_ADLIB
                                || snd_musicdevice == SNDDEVICE_SB))
     {
+        const int intro = W_GetNumForName("D_INTRO"),
+                  introa = W_GetNumForName("D_INTROA");
+        // [crispy] if D_INTRO is from a PWAD, and D_INTROA is from a different WAD file, play the former
+        if (lumpinfo[intro]->wad_file->iwad || (lumpinfo[intro]->wad_file == lumpinfo[introa]->wad_file))
+        {
         musicnum = mus_introa;
+        }
     }
 
     // [crispy] prevent music number under- and overflows
