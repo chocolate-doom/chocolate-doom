@@ -2179,8 +2179,13 @@ void G_DoPlayDemo (void)
                                   "/info/patches.php\n"
                         "    This appears to be %s.";
 
-        I_Error(message, demoversion, G_VanillaVersionCode(),
+        // [crispy] make non-fatal
+        fprintf(stderr, message, demoversion, G_VanillaVersionCode(),
                          DemoVersionDescription(demoversion));
+	fprintf(stderr, "\n");
+	demoplayback = true;
+	G_CheckDemoStatus();
+	return;
     }
 
     skill = *demo_p++; 
