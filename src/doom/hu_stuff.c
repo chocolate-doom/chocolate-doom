@@ -756,8 +756,11 @@ void HU_Drawer(void)
     if (screenblocks > CRISPY_HUD && (!automapactive || crispy_automapoverlay))
 	dp_translucent = true;
 
-    dp_translation = cr[CR_GOLD];
-    HUlib_drawSText(&w_secret);
+    if (secret_on && !menuactive)
+    {
+	dp_translation = cr[CR_GOLD];
+	HUlib_drawSText(&w_secret);
+    }
 
     dp_translation = NULL;
     if (crispy_screenshotmsg == 4)
