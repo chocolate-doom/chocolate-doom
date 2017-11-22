@@ -567,10 +567,10 @@ R_StoreWallRange
     // thank you very much Linguica, e6y and kb1
     // http://www.doomworld.com/vb/post/1340718
     // shift right to avoid possibility of int64 overflow in rw_distance calculation
-    dx = ((int64_t)curline->v2->px - curline->v1->px) >> 1;
-    dy = ((int64_t)curline->v2->py - curline->v1->py) >> 1;
-    dx1 = ((int64_t)viewx - curline->v1->px) >> 1;
-    dy1 = ((int64_t)viewy - curline->v1->py) >> 1;
+    dx = ((int64_t)curline->v2->r_x - curline->v1->r_x) >> 1;
+    dy = ((int64_t)curline->v2->r_y - curline->v1->r_y) >> 1;
+    dx1 = ((int64_t)viewx - curline->v1->r_x) >> 1;
+    dy1 = ((int64_t)viewy - curline->v1->r_y) >> 1;
     dist = ((dy * dx1 - dx * dy1) / len) << 1;
     rw_distance = (fixed_t)BETWEEN(INT_MIN, INT_MAX, dist);
 		

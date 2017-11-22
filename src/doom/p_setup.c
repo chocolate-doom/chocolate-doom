@@ -173,9 +173,9 @@ void P_LoadVertexes (int lump)
 	if (crispy_fliplevels)
 	    li->x = -li->x;
 
-	// [crispy] initialize pseudovertexes with actual vertex coordinates
-	li->px = li->x;
-	li->py = li->y;
+	// [crispy] initialize vertex coordinates *only* used in rendering
+	li->r_x = li->x;
+	li->r_y = li->y;
 	li->moved = false;
     }
 
@@ -381,14 +381,14 @@ void P_SegLengths (void)
 	seg_t *const li = &segs[i];
 	int64_t dx, dy;
 
-	dx = li->v2->px - li->v1->px;
-	dy = li->v2->py - li->v1->py;
+	dx = li->v2->r_x - li->v1->r_x;
+	dy = li->v2->r_y - li->v1->r_y;
 	li->length = (uint32_t)(sqrt((double)dx*dx + (double)dy*dy)/2);
 
 	// [crispy] re-calculate angle used for rendering
-	viewx = li->v1->px;
-	viewy = li->v1->py;
-	li->pangle = R_PointToAngleCrispy(li->v2->px, li->v2->py);
+	viewx = li->v1->r_x;
+	viewy = li->v1->r_y;
+	li->pangle = R_PointToAngleCrispy(li->v2->r_x, li->v2->r_y);
 
 	// [crispy] smoother fake contrast -- disabled :(
 //	if (abs(finesine[li->pangle >> ANGLETOFINESHIFT]) < rightangle)
@@ -753,17 +753,17 @@ static void P_LoadNodes_ZDBSP (int lump, boolean compressed)
 
     for (i = 0; i < newVerts; i++)
     {
-	newvertarray[i + orgVerts].px =
+	newvertarray[i + orgVerts].r_x =
 	newvertarray[i + orgVerts].x = *((unsigned int*)data);
 	data += sizeof(newvertarray[0].x);
 
 	if (crispy_fliplevels)
 	{
-	    newvertarray[i + orgVerts].px =
+	    newvertarray[i + orgVerts].r_x =
 	    newvertarray[i + orgVerts].x = -newvertarray[i + orgVerts].x;
 	}
 
-	newvertarray[i + orgVerts].py =
+	newvertarray[i + orgVerts].r_y =
 	newvertarray[i + orgVerts].y = *((unsigned int*)data);
 	data += sizeof(newvertarray[0].y);
     }
@@ -1542,7 +1542,7 @@ void P_GroupLines (void)
 // [crispy] remove slime trails
 // mostly taken from Lee Killough's implementation in mbfsrc/P_SETUP.C:849-924,
 // with the exception that not the actual vertex coordinates are modified,
-// but pseudovertexes which are dummies that are *only* used in rendering,
+// but separate coordinates that are *only* used in rendering,
 // i.e. r_bsp.c:R_AddLine()
 
 static void P_RemoveSlimeTrails(void)
@@ -1574,15 +1574,15 @@ static void P_RemoveSlimeTrails(void)
 			int64_t s = dx2 + dy2;
 
 			// [crispy] MBF actually overrides v->x and v->y here
-			v->px = (fixed_t)((dx2 * v->x + dy2 * l->v1->x + dxy * (v->y - l->v1->y)) / s);
-			v->py = (fixed_t)((dy2 * v->y + dx2 * l->v1->y + dxy * (v->x - l->v1->x)) / s);
+			v->r_x = (fixed_t)((dx2 * v->x + dy2 * l->v1->x + dxy * (v->y - l->v1->y)) / s);
+			v->r_y = (fixed_t)((dy2 * v->y + dx2 * l->v1->y + dxy * (v->x - l->v1->x)) / s);
 
 			// [crispy] wait a minute... moved more than 8 map units?
 			// maybe that's a linguortal then, back to the original coordinates
-			if (abs(v->px - v->x) > 8*FRACUNIT || abs(v->py - v->y) > 8*FRACUNIT)
+			if (abs(v->r_x - v->x) > 8*FRACUNIT || abs(v->r_y - v->y) > 8*FRACUNIT)
 			{
-			    v->px = v->x;
-			    v->py = v->y;
+			    v->r_x = v->x;
+			    v->r_y = v->y;
 			}
 		    }
 		}
