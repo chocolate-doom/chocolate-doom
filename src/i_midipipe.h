@@ -36,6 +36,12 @@ void I_MidiPipe_ShutdownServer();
 
 boolean I_MidiPipe_InitServer();
 
+#else
+
+#include "doomtype.h"
+
+static const boolean midi_server_registered = false;
+
 #endif
 
 #endif
