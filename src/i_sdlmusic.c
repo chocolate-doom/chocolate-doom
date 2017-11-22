@@ -1030,11 +1030,7 @@ static void I_SDL_PlaySong(void *handle, boolean looping)
         return;
     }
 
-#if defined(_WIN32)
     if (handle == NULL && !midi_server_registered)
-#else
-    if (handle == NULL)
-#endif
     {
         return;
     }
@@ -1067,12 +1063,10 @@ static void I_SDL_PlaySong(void *handle, boolean looping)
         I_MidiPipe_PlaySong(loops);
     }
     else
+#endif
     {
         Mix_PlayMusic(current_track_music, loops);
     }
-#else
-    Mix_PlayMusic(current_track_music, loops);
-#endif
 }
 
 static void I_SDL_PauseSong(void)
@@ -1112,12 +1106,10 @@ static void I_SDL_StopSong(void)
         I_MidiPipe_StopSong();
     }
     else
+#endif
     {
         Mix_HaltMusic();
     }
-#else
-    Mix_HaltMusic();
-#endif
 
     playing_substitute = false;
     current_track_music = NULL;
@@ -1242,6 +1234,7 @@ static void *I_SDL_RegisterSong(void *data, int len)
         }
     }
     else
+#endif
     {
         music = Mix_LoadMUS(filename);
         if (music == NULL)
@@ -1250,14 +1243,6 @@ static void *I_SDL_RegisterSong(void *data, int len)
             fprintf(stderr, "Error loading midi: %s\n", Mix_GetError());
         }
     }
-#else
-    music = Mix_LoadMUS(filename);
-    if (music == NULL)
-    {
-        // Failed to load
-        fprintf(stderr, "Error loading midi: %s\n", Mix_GetError());
-    }
-#endif
 
     // Remove the temporary MIDI file; however, when using an external
     // MIDI program we can't delete the file. Otherwise, the program
