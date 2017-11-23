@@ -170,7 +170,10 @@ static boolean MidiPipe_RegisterSong(buffer_reader_t *reader)
         return false;
     }
 
-    RegisterSong(filename);
+    if (!RegisterSong(filename))
+    {
+        return false;
+    }
 
     if (!WriteInt16(buffer, sizeof(buffer),
                     MIDIPIPE_PACKET_TYPE_REGISTER_SONG_ACK))
