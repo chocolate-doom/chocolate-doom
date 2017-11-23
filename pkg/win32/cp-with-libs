@@ -37,7 +37,7 @@ WIN32_DLLS = {
         "oleaut32.dll", "shell32.dll", "winmm.dll", "winspool.drv",
         "wldap32.dll", "ntdll.dll", "d3d9.dll", "mpr.dll", "crypt32.dll",
         "dnsapi.dll", "shlwapi.dll", "version.dll", "iphlpapi.dll",
-        "msimg32.dll", "setupapi.dll",
+        "msimg32.dll", "setupapi.dll", "dsound.dll",
 }
 
 parser = argparse.ArgumentParser(description='Copy EXE with DLLs.')
