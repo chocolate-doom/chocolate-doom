@@ -1204,10 +1204,15 @@ static void *I_SDL_RegisterSong(void *data, int len)
     // MUS files begin with "MUS"
     // Reject anything which doesnt have this signature
 
-    filename = M_TempFile("doom.mid");
+    filename = M_TempFile("doom"); // [crispy] generic filename
 
-    // [crispy] remove MID file size limit
-    if (IsMid(data, len) /* && len < MAXMIDLENGTH */)
+    // [crispy] Reverse Choco's logic from "if (MIDI)" to "if (not MUS)"
+    // MUS is the only format that requires conversion,
+    // let SDL_Mixer figure out the others
+/*
+    if (IsMid(data, len) && len < MAXMIDLENGTH)
+*/
+    if (len < 4 || memcmp(data, MUS_HEADER_MAGIC, 4))
     {
         M_WriteFile(filename, data, len);
     }
@@ -1242,27 +1247,6 @@ static void *I_SDL_RegisterSong(void *data, int len)
         {
             // Failed to load
             fprintf(stderr, "Error loading midi: %s\n", Mix_GetError());
-        }
-    }
-
-    // [crispy] neither MID nor MUS, try again with a generic file name
-    // and let SDL_mixer figure out the actual file type
-    if (music == NULL && !midi_server_registered)
-    {
-        remove(filename);
-        free(filename);
-
-        filename = M_TempFile("doom");
-        M_WriteFile(filename, data, len);
-
-        playing_substitute = true;
-        ReadLoopPoints(filename, &file_metadata);
-
-        music = Mix_LoadMUS(filename);
-        if (music == NULL)
-        {
-            // Failed to load
-            fprintf(stderr, "Error loading music: %s\n", Mix_GetError());
         }
     }
 
