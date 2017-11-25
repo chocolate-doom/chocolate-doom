@@ -48,10 +48,10 @@
 // True if the midi proces was initialized at least once and has not been
 // explicitly shut down.  This remains true if the server is momentarily
 // unreachable.
-boolean midi_server_initialized;
+boolean midi_server_initialized = false;
 
 // True if the current track is being handled via the MIDI server.
-boolean midi_server_registered;
+boolean midi_server_registered = false;
 
 //=============================================================================
 //
@@ -236,6 +236,8 @@ boolean I_MidiPipe_RegisterSong(char *filename)
     NET_WriteString(packet, filename);
     ok = WritePipe(packet);
     NET_FreePacket(packet);
+
+    midi_server_registered = false;
 
     if (!ok)
     {
