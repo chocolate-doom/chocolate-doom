@@ -561,7 +561,7 @@ R_StoreWallRange
         return;
 
     // calculate rw_distance for scale calculation
-    rw_normalangle = curline->pangle + ANG90; // [crispy] use re-calculated angle
+    rw_normalangle = curline->r_angle + ANG90; // [crispy] use re-calculated angle
     
     // [crispy] fix long wall wobble
     // thank you very much Linguica, e6y and kb1

@@ -388,14 +388,14 @@ void P_SegLengths (void)
 	// [crispy] re-calculate angle used for rendering
 	viewx = li->v1->r_x;
 	viewy = li->v1->r_y;
-	li->pangle = R_PointToAngleCrispy(li->v2->r_x, li->v2->r_y);
+	li->r_angle = R_PointToAngleCrispy(li->v2->r_x, li->v2->r_y);
 
 	// [crispy] smoother fake contrast -- disabled :(
-//	if (abs(finesine[li->pangle >> ANGLETOFINESHIFT]) < rightangle)
+//	if (abs(finesine[li->r_angle >> ANGLETOFINESHIFT]) < rightangle)
 	if (!dy)
 	    li->fakecontrast = -1;
 	else
-//	if (abs(finecosine[li->pangle >> ANGLETOFINESHIFT]) < rightangle)
+//	if (abs(finecosine[li->r_angle >> ANGLETOFINESHIFT]) < rightangle)
 	if (!dx)
 	    li->fakecontrast = 1;
 	else
