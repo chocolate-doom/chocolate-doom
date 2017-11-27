@@ -481,7 +481,7 @@ enum
     crispness_flipcorpses,
     crispness1_sep_audible,
     crispness_sep_audible,
-    crispness_fullsounds,
+    crispness_soundfull,
     crispness1_sep_goto2,
     crispness1_goto2,
     crispness1_end
@@ -1493,7 +1493,7 @@ static void M_DrawCrispness1(void)
     M_DrawCrispnessItem(crispness_flipcorpses, "Randomly Mirrored Corpses", crispy_flipcorpses, true);
 
     M_DrawCrispnessSeparator(crispness_sep_audible, "Audible");
-    M_DrawCrispnessItem(crispness_fullsounds, "Play sounds in full length", crispy_fullsounds, true);
+    M_DrawCrispnessItem(crispness_soundfull, "Play sounds in full length", crispy_soundfull, true);
 
     M_DrawCrispnessGoto(crispness1_goto2, "Next Page >");
 
@@ -1982,7 +1982,7 @@ static void M_CrispyToggleSmoothScaling(int choice)
 static void M_CrispyToggleFullsounds(int choice)
 {
     choice = 0;
-    crispy_fullsounds = !crispy_fullsounds;
+    crispy_soundfull = !crispy_soundfull;
 }
 
 void M_ChangeDetail(int choice)

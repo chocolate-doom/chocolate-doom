@@ -700,7 +700,7 @@ void P_RemoveMobj (mobj_t* mobj)
     P_UnsetThingPosition (mobj);
     
     // [crispy] removed map objects may finish their sounds
-    if (crispy_fullsounds)
+    if (crispy_soundfull)
     {
 	S_UnlinkSound(mobj);
     }
@@ -843,7 +843,7 @@ void P_SpawnPlayer (mapthing_t* mthing)
     p->viewheight = VIEWHEIGHT;
 
     // [crispy] weapon sound source
-    p->so = crispy_fullsounds ? (mobj_t *) &muzzles[mthing->type-1] : p->mo;
+    p->so = crispy_soundfull ? (mobj_t *) &muzzles[mthing->type-1] : p->mo;
 
     // setup gun psprite
     P_SetupPsprites (p);

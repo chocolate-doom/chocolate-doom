@@ -1920,7 +1920,7 @@ static default_t extra_defaults_list[] =
     // Play sounds in full length.
     //
 
-    CONFIG_VARIABLE_INT(crispy_fullsounds),
+    CONFIG_VARIABLE_INT(crispy_soundfull),
 
     //!
     // @game doom
