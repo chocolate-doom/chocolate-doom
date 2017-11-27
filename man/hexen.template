@@ -1,8 +1,8 @@
-.TH chocolate\-hexen 6
+.TH @PROGRAM_SPREFIX@\-hexen 6
 .SH NAME
-chocolate\-hexen \- historically compatible Hexen engine
+@PROGRAM_SPREFIX@\-hexen \- historically compatible Hexen engine
 .SH SYNOPSIS
-.B chocolate\-hexen
+.B @PROGRAM_SPREFIX@\-hexen
 [\fIOPTIONS\fR]
 .SH DESCRIPTION
 .PP
@@ -19,17 +19,17 @@ behavior.
 @include environ.man
 .SH FILES
 .TP
-\fB$HOME/.local/share/chocolate-doom/hexen.cfg\fR
+\fB$HOME/.local/share/@PROGRAM_SPREFIX@\-doom/hexen.cfg\fR
 The main configuration file for Chocolate Hexen.  See \fBhexen.cfg\fR(5).
 .TP
-\fB$HOME/.local/share/chocolate-doom/chocolate-hexen.cfg\fR
+\fB$HOME/.local/share/@PROGRAM_SPREFIX@\-doom/@PROGRAM_SPREFIX@\-hexen.cfg\fR
 Extra configuration values that are specific to Chocolate Hexen and not
-present in Vanilla Hexen.  See \fBchocolate-hexen.cfg\fR(5).
+present in Vanilla Hexen.  See \fB@PROGRAM_SPREFIX@\-hexen.cfg\fR(5).
 .SH SEE ALSO
-\fBchocolate-doom\fR(6),
-\fBchocolate-heretic\fR(6),
-\fBchocolate-server\fR(6),
-\fBchocolate-setup\fR(6)
+\fB@PROGRAM_SPREFIX@\-doom\fR(6),
+\fB@PROGRAM_SPREFIX@\-heretic\fR(6),
+\fB@PROGRAM_SPREFIX@\-server\fR(6),
+\fB@PROGRAM_SPREFIX@\-setup\fR(6)
 .SH AUTHOR
 Chocolate Hexen is part of the Chocolate Doom project, written and
 maintained by Simon Howard. It is based on the Hexen source code,

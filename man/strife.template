@@ -1,8 +1,8 @@
-.TH chocolate\-strife 6
+.TH @PROGRAM_SPREFIX@\-strife 6
 .SH NAME
-chocolate\-strife \- historically compatible strife engine
+@PROGRAM_SPREFIX@\-strife \- historically compatible Strife engine
 .SH SYNOPSIS
-.B chocolate\-strife
+.B @PROGRAM_SPREFIX@\-strife
 [\fIOPTIONS\fR]
 .SH DESCRIPTION
 .PP
@@ -22,16 +22,16 @@ behavior.
 
 .SH FILES
 .TP
-\fB$HOME/.local/share/chocolate-doom/strife.cfg\fR
+\fB$HOME/.local/share/@PROGRAM_SPREFIX@\-doom/strife.cfg\fR
 The main configuration file for Chocolate Strife.  See \fBstrife.cfg\fR(5).
 .TP
-\fB$HOME/.local/share/chocolate-doom/chocolate-strife.cfg\fR
+\fB$HOME/.local/share/@PROGRAM_SPREFIX@\-doom/@PROGRAM_SPREFIX@\-strife.cfg\fR
 Extra configuration values that are specific to Chocolate Strife and not
-present in Vanilla Strife.  See \fBchocolate-strife.cfg\fR(5).
+present in Vanilla Strife.  See \fB@PROGRAM_SPREFIX@\-strife.cfg\fR(5).
 .SH SEE ALSO
-\fBchocolate-doom\fR(6),
-\fBchocolate-server\fR(6),
-\fBchocolate-setup\fR(6)
+\fB@PROGRAM_SPREFIX@\-doom\fR(6),
+\fB@PROGRAM_SPREFIX@\-server\fR(6),
+\fB@PROGRAM_SPREFIX@\-setup\fR(6)
 
 .SH HISTORY
 The source code for Strife was lost, which means, unlike the code for all the

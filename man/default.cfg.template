@@ -1,21 +1,21 @@
 .TH default.cfg 5
 .SH NAME
-default.cfg \- Chocolate Doom configuration file
+default.cfg \- @PACKAGE_NAME@ configuration file
 .SH DESCRIPTION
 .PP
 \fIdefault.cfg\fR
-is the configuration file for \fBchocolate-doom\fR(6).  The configuration
+is the configuration file for \fB@PROGRAM_SPREFIX@\-doom\fR(6).  The configuration
 options stored in the file are the same as those stored in the
 original DOS Vanilla Doom. 
-Extra Chocolate Doom-specific options are stored in a separate 
-configuration file, \fBchocolate-doom.cfg\fR.
+Extra @PACKAGE_NAME@-specific options are stored in a separate 
+configuration file, \fB@PROGRAM_SPREFIX@\-doom.cfg\fR.
 .PP
 \fIdefault.cfg\fR is normally stored in the user's home directory,
-as \fI~/.local/share/chocolate-doom/default.cfg\fR.  The path can be
+as \fI~/.local/share/@PROGRAM_SPREFIX@\-doom/default.cfg\fR.  The path can be
 overridden using the \fBXDG_DATA_HOME\fR environment variable (see the XDG
 Base Directory Specification).
 .PP
-The \fBchocolate-setup\fR(6) tool provides a simple to use front-end
+The \fB@PROGRAM_SPREFIX@\-setup\fR(6) tool provides a simple to use front-end
 for editing \fIdefault.cfg\fR.
 .br
 .SH FILE FORMAT
@@ -49,7 +49,7 @@ indicating "false" and a non-zero value indicating "true".
 @content
 
 .SH SEE ALSO
-\fBchocolate-doom\fR(6),
-\fBchocolate-doom.cfg\fR(5),
-\fBchocolate-setup\fR(6)
+\fB@PROGRAM_SPREFIX@\-doom\fR(6),
+\fB@PROGRAM_SPREFIX@\-doom.cfg\fR(5),
+\fB@PROGRAM_SPREFIX@\-setup\fR(6)
 
