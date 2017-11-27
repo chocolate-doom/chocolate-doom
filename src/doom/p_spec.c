@@ -1262,7 +1262,7 @@ void P_UpdateSpecials (void)
 		// and always play second sound on single-sided linedefs.
 		if (crispy_soundfix)
 		{
-			if(!buttonlist[i].line->backsector || !buttonlist[i].line->backsector->specialdata))
+			if (!buttonlist[i].line->backsector || !buttonlist[i].line->backsector->specialdata)
 			{
 				S_StartSound(buttonlist[i].soundorg,sfx_swtchn);
 			}
