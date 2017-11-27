@@ -25,9 +25,9 @@ Load configuration from the specified file, instead of default.cfg.
 \fB-extraconfig <file>\fR
 Load extra configuration from the specified file, instead of @PROGRAM_SPREFIX@\-doom.cfg. 
 .SH SEE ALSO
-\fB@CHOCOLATE_SPREFIX@\-doom\fR(6),
+\fB@PROGRAM_SPREFIX@\-doom\fR(6),
 \fBdefault.cfg\fR(5),
-\fB@CHOCOLATE_SPREFIX@\-doom.cfg\fR(5)
+\fB@PROGRAM_SPREFIX@\-doom.cfg\fR(5)
 .SH AUTHOR
 Chocolate Doom is written and maintained by Simon Howard.
 .PP

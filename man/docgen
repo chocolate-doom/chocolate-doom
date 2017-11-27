@@ -430,7 +430,7 @@ def process_files(path):
 
         process_file(path)
 
-def print_template(template_file, program_prefix, package_name, content):
+def print_template(template_file, program_prefix, package_name, package_shortname, content):
     f = io.open(template_file, encoding='UTF-8')
 
     try:
@@ -440,16 +440,18 @@ def print_template(template_file, program_prefix, package_name, content):
                 filename = match.group(1)
                 filename = os.path.join(os.path.dirname(template_file),
                                         filename)
-                print_template(filename, program_prefix, package_name, content)
+                print_template(filename, program_prefix, package_name, package_shortname, content)
             else:
                 line = line.replace("@content", content)
                 line = line.replace("@PROGRAM_SPREFIX@", program_prefix)
-                line = line.replace("@PACKAGE_SHORTNAME@", package_name)
+                line = line.replace("@PACKAGE_NAME@", package_name)
+                if package_shortname:
+                    line = line.replace("@PACKAGE_SHORTNAME@", package_shortname)
                 stdout(line.rstrip().encode('UTF-8') + b'\n')
     finally:
         f.close()
 
-def manpage_output(targets, program_prefix, package_name, template_file):
+def manpage_output(targets, program_prefix, package_name, package_shortname, template_file):
 
     content = ""
 
@@ -458,7 +460,7 @@ def manpage_output(targets, program_prefix, package_name, template_file):
 
     content = content.replace("-", "\\-")
 
-    print_template(template_file, program_prefix, package_name, content)
+    print_template(template_file, program_prefix, package_name, package_shortname, content)
 
 def wiki_output(targets, template):
     read_wikipages()
@@ -466,30 +468,31 @@ def wiki_output(targets, template):
     for t in targets:
         stdout(t.wiki_output().encode('UTF-8') + b'\n')
 
-def plaintext_output(targets, program_prefix, package_name, template_file):
+def plaintext_output(targets, program_prefix, package_name, package_shortname, template_file):
 
     content = ""
 
     for t in targets:
         content += t.plaintext_output() + "\n"
 
-    print_template(template_file, program_prefix, package_name, content)
+    print_template(template_file, program_prefix, package_name, package_shortname, content)
 
-def completion_output(targets, program_prefix, package_name, template_file):
+def completion_output(targets, program_prefix, package_name, package_shortname, template_file):
 
     content = ""
 
     for t in targets:
         content += t.completion_output() + "\n"
 
-    print_template(template_file, program_prefix, package_name, content)
+    print_template(template_file, program_prefix, package_name, package_shortname, content)
 
 def usage():
-    print("Usage: %s [-V] [-c tag] [-g game] -n name ( -m | -w | -p ) <dir>..." \
+    print("Usage: %s [-V] [-c tag] [-g game] -n program_name -s package_name [ -z shortname ] ( -m | -w | -p ) <dir>..." \
             % sys.argv[0])
     print("   -c :  Provide documentation for the specified configuration file")
     print("         (matches the given tag name in the source file)")
     print("   -s :  Package name (for substitution)")
+    print("   -z :  Package short-name (for substitution)")
     print("   -n :  Program name (for substitution)")
     print("   -m :  Manpage output")
     print("   -w :  Wikitext output")
@@ -501,7 +504,7 @@ def usage():
 
 # Parse command line
 
-opts, args = getopt.getopt(sys.argv[1:], "n:s:m:wp:b:c:g:V")
+opts, args = getopt.getopt(sys.argv[1:], "n:s:z:m:wp:b:c:g:V")
 
 output_function = None
 template = None
@@ -509,12 +512,15 @@ doc_config_file = None
 match_game = None
 program_prefix = None
 package_name = None
+package_shortname = None
 
 for opt in opts:
     if opt[0] == "-n":
         program_prefix = opt[1]
     if opt[0] == "-s":
         package_name = opt[1]
+    if opt[0] == "-z":
+        package_shortname = opt[1]
     if opt[0] == "-m":
         output_function = manpage_output
         template = opt[1]
@@ -556,5 +562,5 @@ else:
 
     # Generate the output
 
-    output_function(documentation_targets, program_prefix, package_name, template)
+    output_function(documentation_targets, program_prefix, package_name, package_shortname, template)
 

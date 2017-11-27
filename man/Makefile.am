@@ -30,6 +30,7 @@ GENERATED_MAN_PAGES =               \
            @PROGRAM_PREFIX@strife.6       \
            strife.cfg.5             \
            @PROGRAM_PREFIX@strife.cfg.5   \
+           @PROGRAM_PREFIX@setup.6  \
            @PROGRAM_PREFIX@server.6
 
 SETUP_MAN_PAGES =                          \
@@ -38,8 +39,7 @@ SETUP_MAN_PAGES =                          \
            @PROGRAM_PREFIX@hexen-setup.6   \
            @PROGRAM_PREFIX@strife-setup.6
 
-man_MANS = chocolate-setup.6              \
-           $(GENERATED_MAN_PAGES)         \
+man_MANS = $(GENERATED_MAN_PAGES)         \
            $(SETUP_MAN_PAGES)
 
 doomdocs_DATA    = INSTALL.doom    CMDLINE.doom
@@ -51,10 +51,10 @@ CLEANFILES = $(GENERATED_MAN_PAGES) $(SETUP_MAN_PAGES) \
              $(doomdocs_DATA) $(hereticdocs_DATA) \
              $(hexendocs_DATA) $(strifedocs_DATA)
 DOCGEN = $(srcdir)/docgen
-DOCGEN_COMMON_ARGS = -n "@PROGRAM_SPREFIX@" -s "@PACKAGE_NAME@"
+DOCGEN_COMMON_ARGS = -n "@PROGRAM_SPREFIX@" -s "@PACKAGE_NAME@" -z "@PACKAGE_SHORTNAME@"
 
-$(SETUP_MAN_PAGES): chocolate-setup.6
-	cp $(srcdir)/chocolate-setup.6 $@
+$(SETUP_MAN_PAGES): @PROGRAM_PREFIX@setup.6
+	cp $(srcdir)/@PROGRAM_PREFIX@setup.6 $@
 
 @PROGRAM_PREFIX@doom.6: $(top_srcdir)/src $(MANPAGE_GEN_FILES)
 	$(DOCGEN) $(DOCGEN_COMMON_ARGS) \
@@ -136,6 +136,11 @@ INSTALL.hexen: INSTALL.template
 @PROGRAM_PREFIX@server.6: $(top_srcdir)/src $(MANPAGE_GEN_FILES)
 	$(DOCGEN) $(DOCGEN_COMMON_ARGS) \
                   -g server -m $(srcdir)/server.template \
+                  $(top_srcdir)/src > $@
+
+@PROGRAM_PREFIX@setup.6: $(top_srcdir)/src $(MANPAGE_GEN_FILES)
+	$(DOCGEN) $(DOCGEN_COMMON_ARGS) \
+                  -g setup -m $(srcdir)/setup.template \
                   $(top_srcdir)/src > $@
 
 strife.cfg.5: $(top_srcdir)/src default.cfg.template
