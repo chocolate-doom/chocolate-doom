@@ -146,7 +146,7 @@ int             crispy_overunder = 0;
 int             crispy_pitch = 0;
 int             crispy_recoil = 0;
 int             crispy_secretmessage = 0;
-int             crispy_soundfix = 0;
+int             crispy_soundfix = 1;
 int             crispy_soundfull = 0;
 int             crispy_translucency = 0;
 
