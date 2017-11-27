@@ -461,7 +461,7 @@ static int S_AdjustSoundParams(mobj_t *listener, mobj_t *source,
     approx_dist = adx + ady - ((adx < ady ? adx : ady)>>1);
 
     // [crispy] proper sound clipping in non-Doom1 MAP08
-    if ((gamemap != 8 || gamemode == commercial) && approx_dist > S_CLIPPING_DIST)
+    if ((gamemap != 8 || (crispy_soundfix && gamemode == commercial)) && approx_dist > S_CLIPPING_DIST)
     {
         return 0;
     }
@@ -492,7 +492,7 @@ static int S_AdjustSoundParams(mobj_t *listener, mobj_t *source,
         *vol = snd_SfxVolume;
     }
     // [crispy] proper sound clipping in non-Doom1 MAP08
-    else if (gamemap == 8 && gamemode != commercial)
+    else if (gamemap == 8 && (gamemode != commercial || !crispy_soundfix))
     {
         if (approx_dist > S_CLIPPING_DIST)
         {
@@ -512,7 +512,7 @@ static int S_AdjustSoundParams(mobj_t *listener, mobj_t *source,
     }
 
     // [JN] Zero SFX volume means there must not be *any* sounds at all.
-    return (*vol > 0 && snd_SfxVolume);
+    return (*vol > 0 && (snd_SfxVolume || !crispy_soundfix));
 }
 
 // clamp supplied integer to the range 0 <= x <= 255.

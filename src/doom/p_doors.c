@@ -121,7 +121,8 @@ void T_VerticalDoor (vldoor_t* door)
 		door->sector->specialdata = NULL;
 		P_RemoveThinker (&door->thinker);  // unlink and free
 		// [crispy] fix "fast doors make two closing sounds"
-		//S_StartSound(&door->sector->soundorg, sfx_bdcls);
+		if (!crispy_soundfix)
+		S_StartSound(&door->sector->soundorg, sfx_bdcls);
 		break;
 		
 	      case vld_normal:
@@ -149,9 +150,12 @@ void T_VerticalDoor (vldoor_t* door)
 		
 	      // [crispy] fix "fast doors reopening with wrong sound"
 	      case vld_blazeRaise:
+		if (crispy_soundfix)
+		{
 		door->direction = 1;
 		S_StartSound(&door->sector->soundorg, sfx_bdopn);
 		break;
+		}
 
 	      default:
 		door->direction = 1;
@@ -424,6 +428,7 @@ EV_VerticalDoor
 	    {
 		door->direction = 1;	// go back up
 		// [crispy] play sound effect when the door is opened again while going down
+		if (crispy_soundfix)
 		S_StartSound(&door->sector->soundorg, line->special == 117 ? sfx_bdopn : sfx_doropn);
 	    }
 	    else
@@ -466,6 +471,7 @@ EV_VerticalDoor
                     door->direction = -1;
                 }
                 // [crispy] play sound effect when the door is closed manually
+                if (crispy_soundfix)
                 S_StartSound(&door->sector->soundorg, line->special == 117 ? sfx_bdcls : sfx_dorcls);
 	    }
 	    return;
