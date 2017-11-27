@@ -362,10 +362,13 @@ static void I_SDL_UnRegisterSong(void *handle)
 
 // Determine whether memory block is a .mid file 
 
+// [crispy] Reverse Choco's logic from "if (MIDI)" to "if (not MUS)"
+/*
 static boolean IsMid(byte *mem, int len)
 {
     return len > 4 && !memcmp(mem, "MThd", 4);
 }
+*/
 
 static boolean ConvertMus(byte *musdata, int len, const char *filename)
 {
