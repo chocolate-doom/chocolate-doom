@@ -1257,7 +1257,18 @@ void P_UpdateSpecials (void)
 			buttonlist[i].btexture;
 		    break;
 		}
+		// [crispy] & [JN] Logically proper sound behavior.
+		// Do not play second "sfx_swtchn" on two-sided linedefs that attached to special sectors,
+		// and always play second sound on single-sided linedefs.
+		if (crispy_soundfix &&
+		    (!buttonlist[i].line->backsector || !buttonlist[i].line->backsector->specialdata))
+		{
+			S_StartSound(buttonlist[i].soundorg,sfx_swtchn);
+		}
+		else
+		{
 		S_StartSound(&buttonlist[i].soundorg,sfx_swtchn);
+		}
 		memset(&buttonlist[i],0,sizeof(button_t));
 	    }
 	}

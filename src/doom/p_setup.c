@@ -1157,6 +1157,10 @@ void P_LoadLineDefs (int lump)
 	    ld->bbox[BOXTOP] = v1->y;
 	}
 
+	// [crispy] calculate sound origin of line to be its midpoint
+	ld->soundorg.x = ld->bbox[BOXLEFT] / 2 + ld->bbox[BOXRIGHT] / 2;
+	ld->soundorg.y = ld->bbox[BOXTOP] / 2 + ld->bbox[BOXBOTTOM] / 2;
+
 	ld->sidenum[0] = SHORT(mld->sidenum[0]);
 	ld->sidenum[1] = SHORT(mld->sidenum[1]);
 
@@ -1277,6 +1281,11 @@ static void P_LoadLineDefs_Hexen (int lump)
 	    ld->bbox[BOXBOTTOM] = v2->y;
 	    ld->bbox[BOXTOP] = v1->y;
 	}
+
+	// [crispy] calculate sound origin of line to be its midpoint
+	ld->soundorg.x = ld->bbox[BOXLEFT] / 2 + ld->bbox[BOXRIGHT] / 2;
+	ld->soundorg.y = ld->bbox[BOXTOP] / 2 + ld->bbox[BOXBOTTOM] / 2;
+
 	ld->sidenum[0] = SHORT(mld->sidenum[0]);
 	ld->sidenum[1] = SHORT(mld->sidenum[1]);
 

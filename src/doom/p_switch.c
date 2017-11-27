@@ -211,7 +211,7 @@ P_StartButton
 	    buttonlist[i].where = w;
 	    buttonlist[i].btexture = texture;
 	    buttonlist[i].btimer = time;
-	    buttonlist[i].soundorg = &line->frontsector->soundorg;
+	    buttonlist[i].soundorg = crispy_soundfix ? &line->soundorg : &line->frontsector->soundorg; // [crispy] corrected sound source
 	    return;
 	}
     }
@@ -255,7 +255,7 @@ P_ChangeSwitchTexture
     {
 	if (switchlist[i] == texTop)
 	{
-	    S_StartSound(buttonlist->soundorg,sound);
+	    S_StartSound(crispy_soundfix ? &line->soundorg : buttonlist->soundorg,sound); // [crispy] corrected sound source
 	    sides[line->sidenum[0]].toptexture = switchlist[i^1];
 
 	    if (useAgain)
@@ -267,7 +267,7 @@ P_ChangeSwitchTexture
 	{
 	    if (switchlist[i] == texMid)
 	    {
-		S_StartSound(buttonlist->soundorg,sound);
+		S_StartSound(crispy_soundfix ? &line->soundorg : buttonlist->soundorg,sound); // [crispy] corrected sound source
 		sides[line->sidenum[0]].midtexture = switchlist[i^1];
 
 		if (useAgain)
@@ -279,7 +279,7 @@ P_ChangeSwitchTexture
 	    {
 		if (switchlist[i] == texBot)
 		{
-		    S_StartSound(buttonlist->soundorg,sound);
+		    S_StartSound(crispy_soundfix ? &line->soundorg : buttonlist->soundorg,sound); // [crispy] corrected sound source
 		    sides[line->sidenum[0]].bottomtexture = switchlist[i^1];
 
 		    if (useAgain)

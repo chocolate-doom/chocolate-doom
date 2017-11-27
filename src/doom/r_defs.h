@@ -239,6 +239,9 @@ typedef struct line_s
 
     // thinker_t for reversable actions
     void*	specialdata;		
+
+    // [crispy] calculate sound origin of line to be its midpoint
+    degenmobj_t	soundorg;
 } line_t;
 
 
