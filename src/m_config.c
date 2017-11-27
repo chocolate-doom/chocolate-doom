@@ -1917,6 +1917,14 @@ static default_t extra_defaults_list[] =
     //!
     // @game doom
     //
+    // Misc. sound fixes.
+    //
+
+    CONFIG_VARIABLE_INT(crispy_soundfix),
+
+    //!
+    // @game doom
+    //
     // Play sounds in full length.
     //
 

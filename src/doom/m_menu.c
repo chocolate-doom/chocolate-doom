@@ -259,6 +259,7 @@ static void M_CrispyToggleOverunder(int choice);
 static void M_CrispyTogglePitch(int choice);
 static void M_CrispyToggleRecoil(int choice);
 static void M_CrispyToggleSecretmessage(int choice);
+static void M_CrispyToggleSoundfixes(int choice);
 static void M_CrispyToggleTranslucency(int choice);
 static void M_CrispyToggleUncapped(int choice);
 static void M_CrispyToggleSmoothScaling(int choice);
@@ -482,6 +483,7 @@ enum
     crispness1_sep_audible,
     crispness_sep_audible,
     crispness_soundfull,
+    crispness_soundfix,
     crispness1_sep_goto2,
     crispness1_goto2,
     crispness1_end
@@ -500,6 +502,7 @@ static menuitem_t CrispnessMenu[]=
     {-1,"",0,'\0'},
     {-1,"",0,'\0'},
     {1,"",	M_CrispyToggleFullsounds,'p'},
+    {1,"",	M_CrispyToggleSoundfixes,'m'},
     {-1,"",0,'\0'},
     {1,"",	M_Crispness2,'n'},
 };
@@ -1494,6 +1497,7 @@ static void M_DrawCrispness1(void)
 
     M_DrawCrispnessSeparator(crispness_sep_audible, "Audible");
     M_DrawCrispnessItem(crispness_soundfull, "Play sounds in full length", crispy_soundfull, true);
+    M_DrawCrispnessItem(crispness_soundfix, "Misc. Sound Fixes", crispy_soundfix, true);
 
     M_DrawCrispnessGoto(crispness1_goto2, "Next Page >");
 
@@ -1983,6 +1987,12 @@ static void M_CrispyToggleFullsounds(int choice)
 {
     choice = 0;
     crispy_soundfull = !crispy_soundfull;
+}
+
+static void M_CrispyToggleSoundfixes(int choice)
+{
+    choice = 0;
+    crispy_soundfix = !crispy_soundfix;
 }
 
 void M_ChangeDetail(int choice)

@@ -139,7 +139,6 @@ int             crispy_extsaveg = 1;
 int             crispy_flipcorpses = 0;
 int             crispy_freeaim = 0;
 int             crispy_freelook = 0;
-int             crispy_soundfull = 0;
 int             crispy_jump = 0;
 int             crispy_mouselook = 0;
 int             crispy_neghealth = 0;
@@ -147,6 +146,8 @@ int             crispy_overunder = 0;
 int             crispy_pitch = 0;
 int             crispy_recoil = 0;
 int             crispy_secretmessage = 0;
+int             crispy_soundfix = 0;
+int             crispy_soundfull = 0;
 int             crispy_translucency = 0;
 
 // [crispy] in-game switches
@@ -483,7 +484,6 @@ void D_BindVariables(void)
     M_BindIntVariable("crispy_flipcorpses",     &crispy_flipcorpses);
     M_BindIntVariable("crispy_freeaim",         &crispy_freeaim);
     M_BindIntVariable("crispy_freelook",        &crispy_freelook);
-    M_BindIntVariable("crispy_soundfull",      &crispy_soundfull);
     M_BindIntVariable("crispy_jump",            &crispy_jump);
     M_BindIntVariable("crispy_mouselook",       &crispy_mouselook);
     M_BindIntVariable("crispy_neghealth",       &crispy_neghealth);
@@ -491,6 +491,8 @@ void D_BindVariables(void)
     M_BindIntVariable("crispy_pitch",           &crispy_pitch);
     M_BindIntVariable("crispy_recoil",          &crispy_recoil);
     M_BindIntVariable("crispy_secretmessage",   &crispy_secretmessage);
+    M_BindIntVariable("crispy_soundfix",        &crispy_soundfix);
+    M_BindIntVariable("crispy_soundfull",       &crispy_soundfull);
     M_BindIntVariable("crispy_translucency",    &crispy_translucency);
     M_BindIntVariable("crispy_uncapped",        &crispy_uncapped);
 }

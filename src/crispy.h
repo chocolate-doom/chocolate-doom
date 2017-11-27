@@ -55,7 +55,6 @@ extern int crispy_extsaveg;
 extern int crispy_flipcorpses;
 extern int crispy_freeaim;
 extern int crispy_freelook;
-extern int crispy_soundfull;
 extern int crispy_jump;
 extern int crispy_mouselook;
 extern int crispy_neghealth;
@@ -64,6 +63,8 @@ extern int crispy_pitch;
 extern int crispy_recoil;
 extern int crispy_secretmessage;
 extern int crispy_smoothscaling;
+extern int crispy_soundfix;
+extern int crispy_soundfull;
 extern int crispy_translucency;
 extern int crispy_uncapped;
 
