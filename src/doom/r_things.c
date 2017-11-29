@@ -950,6 +950,8 @@ void R_DrawPSprite (pspdef_t* psp, psprnum_t psprnum) // [crispy] differentiate 
                              crispy->centerweapon / CENTERWEAPON_BOB2 + 1);
         }
     }
+    // [crispy] squat down weapon sprite a bit after hitting the ground
+    psp_sy += abs(viewplayer->psp_dy);
     // calculate edges of the shape
     tx = psp_sx-(ORIGWIDTH/2)*FRACUNIT;
 	

@@ -171,6 +171,8 @@ typedef struct player_s
     unsigned int	jumpTics;
     fixed_t	recoilpitch, oldrecoilpitch;
     mobj_t	*so;
+    // [crispy] squat down weapon sprite a bit after hitting the ground
+    fixed_t	psp_dy, psp_dy_max;
 } player_t;
 
 

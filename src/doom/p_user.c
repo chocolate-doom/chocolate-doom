@@ -127,6 +127,21 @@ void P_CalcHeight (player_t* player)
 	    if (!player->deltaviewheight)
 		player->deltaviewheight = 1;
 	}
+	// [crispy] squat down weapon sprite a bit after hitting the ground
+	if (player->psp_dy_max)
+	{
+		player->psp_dy -= FRACUNIT;
+
+		if (player->psp_dy < player->psp_dy_max)
+		{
+			player->psp_dy = -player->psp_dy;
+		}
+
+		if (player->psp_dy == 0)
+		{
+			player->psp_dy_max = 0;
+		}
+	}
     }
     player->viewz = player->mo->z + player->viewheight + bob;
 
@@ -368,6 +383,8 @@ void P_PlayerThink (player_t* player)
             // [crispy] Hexen sets 9; Strife adds 8
             player->mo->momz = (7 + crispy->jump) * FRACUNIT;
             player->jumpTics = 18;
+            // [crispy] squat down weapon sprite a bit
+            player->psp_dy_max = -player->mo->momz>>2;
         }
     }
 
