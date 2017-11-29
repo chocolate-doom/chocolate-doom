@@ -383,7 +383,7 @@ void P_ZMovement (mobj_t* mo)
 		// and utter appropriate sound.
 		mo->player->deltaviewheight = mo->momz>>3;
 		// [crispy] center view if not using permanent mouselook
-		if (!crispy_mouselook)
+		if (!crispy->mouselook)
 		    mo->player->centering = true;
 		// [crispy] dead men don't say "oof"
 		if (mo->health > 0)
@@ -700,7 +700,7 @@ void P_RemoveMobj (mobj_t* mobj)
     P_UnsetThingPosition (mobj);
     
     // [crispy] removed map objects may finish their sounds
-    if (crispy_soundfull)
+    if (crispy->soundfull)
     {
 	S_UnlinkSound(mobj);
     }
@@ -843,7 +843,7 @@ void P_SpawnPlayer (mapthing_t* mthing)
     p->viewheight = VIEWHEIGHT;
 
     // [crispy] weapon sound source
-    p->so = crispy_soundfull ? (mobj_t *) &muzzles[mthing->type-1] : p->mo;
+    p->so = crispy->soundfull ? (mobj_t *) &muzzles[mthing->type-1] : p->mo;
 
     // setup gun psprite
     P_SetupPsprites (p);
@@ -971,7 +971,7 @@ void P_SpawnMapThing (mapthing_t* mthing)
 	mobj->flags |= MF_AMBUSH;
 
     // [crispy] Lost Souls bleed Puffs
-    if ((crispy_coloredblood & COLOREDBLOOD_FIX) && i == MT_SKULL)
+    if ((crispy->coloredblood & COLOREDBLOOD_FIX) && i == MT_SKULL)
         mobj->flags |= MF_NOBLOOD;
 
     // [crispy] randomly flip space marine corpse objects
@@ -981,7 +981,7 @@ void P_SpawnMapThing (mapthing_t* mthing)
 	mobj->flipsprite = Crispy_Random() & 1;
 	// [crispy] randomly colorize space marine corpse objects
 	if (!netgame &&
-	    crispy_coloredblood & COLOREDBLOOD_CORPSE)
+	    crispy->coloredblood & COLOREDBLOOD_CORPSE)
 	{
 	    mobj->flags |= (Crispy_Random() & 3) << MF_TRANSSHIFT;
 	}
@@ -1067,7 +1067,7 @@ P_SpawnBlood
     th->target = target;
 
     // [crispy] Spectres bleed spectre blood
-    if (crispy_coloredblood & COLOREDBLOOD_FIX)
+    if (crispy->coloredblood & COLOREDBLOOD_FIX)
 	th->flags |= (target->flags & MF_SHADOW);
 
     // [crispy] randomly flip corpse, blood and death animation sprites
@@ -1186,7 +1186,7 @@ P_SpawnPlayerMissile
 
     // see which target is to be aimed at
     an = source->angle;
-    if (crispy_singleplayer && (crispy_freeaim == FREEAIM_DIRECT))
+    if (critical->freeaim == FREEAIM_DIRECT)
     {
 	slope = CRISPY_SLOPE(source->player);
     }
@@ -1208,7 +1208,7 @@ P_SpawnPlayerMissile
 	if (!linetarget)
 	{
 	    an = source->angle;
-	    if (crispy_singleplayer && (crispy_freeaim == FREEAIM_BOTH))
+	    if (critical->freeaim == FREEAIM_BOTH)
                slope = CRISPY_SLOPE(source->player);
 	    else
 	    slope = 0;

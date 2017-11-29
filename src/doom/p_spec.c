@@ -494,7 +494,7 @@ P_FindSectorFromLineTag
 	
     // [crispy] linedefs without tags apply locally
 /*
-    if (crispy_singleplayer && !line->tag)
+    if (crispy->singleplayer && !line->tag)
     {
     for (i=start+1;i<numsectors;i++)
 	if (&sectors[i] == line->backsector)
@@ -1132,7 +1132,7 @@ void P_PlayerInSpecialSector (player_t* player)
       case 9:
 	// SECRET SECTOR
 	// [crispy] show centered "Secret Revealed!" message
-	if (showMessages && crispy_secretmessage)
+	if (showMessages && crispy->secretmessage)
 	{
 	    int sfx_id;
 
@@ -1260,7 +1260,7 @@ void P_UpdateSpecials (void)
 		// [crispy] & [JN] Logically proper sound behavior.
 		// Do not play second "sfx_swtchn" on two-sided linedefs that attached to special sectors,
 		// and always play second sound on single-sided linedefs.
-		if (crispy_soundfix)
+		if (crispy->soundfix)
 		{
 			if (!buttonlist[i].line->backsector || !buttonlist[i].line->backsector->specialdata)
 			{

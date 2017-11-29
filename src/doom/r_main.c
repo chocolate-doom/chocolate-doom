@@ -907,10 +907,10 @@ void R_SetupFrame (player_t* player)
     // [AM] Interpolate the player camera if the feature is enabled.
 
     // Figure out how far into the current tic we're in as a fixed_t
-    if (crispy_uncapped)
+    if (crispy->uncapped)
         fractionaltic = I_GetTimeMS() * TICRATE % 1000 * FRACUNIT / 1000;
 
-    if (crispy_uncapped &&
+    if (crispy->uncapped &&
         // Don't interpolate on the first tic of a level,
         // otherwise oldviewz might be garbage.
         leveltime > 1 &&
@@ -996,7 +996,7 @@ void R_RenderPlayerView (player_t* player)
     R_ClearDrawSegs ();
     R_ClearPlanes ();
     R_ClearSprites ();
-    if (automapactive && !crispy_automapoverlay)
+    if (automapactive && !crispy->automapoverlay)
     {
         R_RenderBSPNode (numnodes-1);
         return;
@@ -1005,7 +1005,7 @@ void R_RenderPlayerView (player_t* player)
     // [crispy] flashing HOM indicator
     V_DrawFilledBox(viewwindowx, viewwindowy,
         scaledviewwidth, scaledviewheight,
-        crispy_flashinghom ? (176 + (gametic % 16)) : 0);
+        crispy->flashinghom ? (176 + (gametic % 16)) : 0);
 
     // check for new console commands.
     NetUpdate ();

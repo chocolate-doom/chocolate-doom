@@ -438,7 +438,7 @@ static inline int cht_CheckCheatSP (cheatseq_t *cht, char key)
 		return false;
 	}
 	else
-	if (!crispy_singleplayer)
+	if (!crispy->singleplayer)
 	{
 		plyr->message = "Cheater!";
 		return false;
@@ -942,7 +942,7 @@ ST_Responder (event_t* ev)
 	if (w < 0 || w >= NUMWEAPONS)
 	    return false;
 
-	if (w == wp_supershotgun && !crispy_havessg)
+	if (w == wp_supershotgun && !crispy->havessg)
 	    return false;
 
 	if ((w == wp_bfg || w == wp_plasma) && gamemode == shareware)
@@ -1008,24 +1008,23 @@ ST_Responder (event_t* ev)
     // [crispy] implement Boom's "tnthom" cheat
     else if (cht_CheckCheat(&cheat_hom, ev->data2))
     {
-	crispy_flashinghom = !crispy_flashinghom;
+	crispy->flashinghom = !crispy->flashinghom;
 
 	M_snprintf(msg, sizeof(msg), "HOM Detection %s%s",
 	           crstr[CR_GREEN],
-	           (crispy_flashinghom) ? "ON" : "OFF");
+	           (crispy->flashinghom) ? "ON" : "OFF");
 	plyr->message = msg;
     }
     // [crispy] Show engine version, build date and SDL version
     else if (cht_CheckCheat(&cheat_version, ev->data2))
     {
-      extern char *crispy_sdlversion;
 #ifndef BUILD_DATE
 #define BUILD_DATE __DATE__
 #endif
       M_snprintf(msg, sizeof(msg), "%s (%s%s%s) SDL%s",
                  PACKAGE_STRING,
                  crstr[CR_GOLD], BUILD_DATE, crstr[CR_NONE],
-                 crispy_sdlversion);
+                 crispy->sdlversion);
 #undef BUILD_DATE
       plyr->message = msg;
     }
@@ -1093,7 +1092,7 @@ ST_Responder (event_t* ev)
               map = gamemap;
           }
           // [crispy] support E1M10 "Sewers"
-          if ((map == 0) && crispy_havee1m10 && epsd == 1)
+          if ((map == 0) && crispy->havee1m10 && epsd == 1)
           {
               map = 10;
           }
@@ -1104,7 +1103,7 @@ ST_Responder (event_t* ev)
           if (map > 9)
           {
               // [crispy] support E1M10 "Sewers"
-              if (!(crispy_havee1m10 && epsd == 1 && map == 10))
+              if (!(crispy->havee1m10 && epsd == 1 && map == 10))
               return false;
           }
       }
@@ -1512,7 +1511,7 @@ enum
 // [crispy] return ammo/health/armor widget color
 static byte* ST_WidgetColor(int i)
 {
-    if (!(crispy_coloredhud & COLOREDHUD_BAR))
+    if (!(crispy->coloredhud & COLOREDHUD_BAR))
         return NULL;
 
     switch (i)
@@ -1650,7 +1649,7 @@ void ST_drawWidgets(boolean refresh)
     dp_translation = NULL;
 
     // [crispy] draw "special widgets" in the Crispy HUD
-    if (screenblocks >= CRISPY_HUD && (!automapactive || crispy_automapoverlay))
+    if (screenblocks >= CRISPY_HUD && (!automapactive || crispy->automapoverlay))
     {
 	// [crispy] draw berserk pack instead of no ammo if appropriate
 	if (plyr->readyweapon == wp_fist && plyr->powers[pw_strength])
@@ -1705,7 +1704,7 @@ void ST_drawWidgets(boolean refresh)
     STlib_updatePercent(&w_armor, refresh || screenblocks >= CRISPY_HUD);
     dp_translation = NULL;
 
-    if (screenblocks < CRISPY_HUD || (automapactive && !crispy_automapoverlay))
+    if (screenblocks < CRISPY_HUD || (automapactive && !crispy->automapoverlay))
     {
     STlib_updateBinIcon(&w_armsbg, refresh);
     }
@@ -1713,7 +1712,7 @@ void ST_drawWidgets(boolean refresh)
     for (i=0;i<6;i++)
 	STlib_updateMultIcon(&w_arms[i], refresh || screenblocks >= CRISPY_HUD);
 
-    if (screenblocks < CRISPY_HUD || (automapactive && !crispy_automapoverlay))
+    if (screenblocks < CRISPY_HUD || (automapactive && !crispy->automapoverlay))
     {
     STlib_updateMultIcon(&w_faces, refresh);
     }
@@ -1748,17 +1747,17 @@ void ST_diffDraw(void)
 void ST_Drawer (boolean fullscreen, boolean refresh)
 {
   
-    st_statusbaron = (!fullscreen) || (automapactive && !crispy_automapoverlay) || screenblocks >= CRISPY_HUD;
+    st_statusbaron = (!fullscreen) || (automapactive && !crispy->automapoverlay) || screenblocks >= CRISPY_HUD;
     st_firsttime = st_firsttime || refresh;
 
-    if (crispy_cleanscreenshot == 2)
+    if (crispy->cleanscreenshot == 2)
         return;
 
     // Do red-/gold-shifts from damage/items
     ST_doPaletteStuff();
 
     // [crispy] translucent HUD
-    if (screenblocks > CRISPY_HUD && !(automapactive && !crispy_automapoverlay))
+    if (screenblocks > CRISPY_HUD && !(automapactive && !crispy->automapoverlay))
 	dp_translucent = true;
 
     // If just after ST_Start(), refresh all

@@ -367,7 +367,7 @@ void AM_addMark(void)
 {
     // [crispy] keep the map static in overlay mode
     // if not following the player
-    if (!(!followplayer && crispy_automapoverlay))
+    if (!(!followplayer && crispy->automapoverlay))
     {
     markpoints[markpointnum].x = m_x + m_w/2;
     markpoints[markpointnum].y = m_y + m_h/2;
@@ -688,22 +688,22 @@ AM_Responder
         {
             // [crispy] keep the map static in overlay mode
             // if not following the player
-            if (!followplayer && !crispy_automapoverlay) m_paninc.x = FTOM(F_PANINC);
+            if (!followplayer && !crispy->automapoverlay) m_paninc.x = FTOM(F_PANINC);
             else rc = false;
         }
         else if (key == key_map_west)     // pan left
         {
-            if (!followplayer && !crispy_automapoverlay) m_paninc.x = -FTOM(F_PANINC);
+            if (!followplayer && !crispy->automapoverlay) m_paninc.x = -FTOM(F_PANINC);
             else rc = false;
         }
         else if (key == key_map_north)    // pan up
         {
-            if (!followplayer && !crispy_automapoverlay) m_paninc.y = FTOM(F_PANINC);
+            if (!followplayer && !crispy->automapoverlay) m_paninc.y = FTOM(F_PANINC);
             else rc = false;
         }
         else if (key == key_map_south)    // pan down
         {
-            if (!followplayer && !crispy_automapoverlay) m_paninc.y = -FTOM(F_PANINC);
+            if (!followplayer && !crispy->automapoverlay) m_paninc.y = -FTOM(F_PANINC);
             else rc = false;
         }
         else if (key == key_map_zoomout)  // zoom out
@@ -767,8 +767,8 @@ AM_Responder
             extern boolean inhelpscreens;
             inhelpscreens = true;
 
-            crispy_automapoverlay = !crispy_automapoverlay;
-            if (crispy_automapoverlay)
+            crispy->automapoverlay = !crispy->automapoverlay;
+            if (crispy->automapoverlay)
                 plr->message = DEH_String(AMSTR_OVERLAYON);
             else
                 plr->message = DEH_String(AMSTR_OVERLAYOFF);
@@ -922,7 +922,7 @@ void AM_Ticker (void)
 	mapcenter.y = m_y + m_h / 2;
 	// [crispy] keep the map static in overlay mode
 	// if not following the player
-	if (!(!followplayer && crispy_automapoverlay))
+	if (!(!followplayer && crispy->automapoverlay))
 	mapangle = ANG90 - viewangle;
     }
 }
@@ -1678,7 +1678,7 @@ void AM_Drawer (void)
 {
     if (!automapactive) return;
 
-    if (!crispy_automapoverlay)
+    if (!crispy->automapoverlay)
     AM_clearFB(BACKGROUND);
     if (grid)
 	AM_drawGrid(GRIDCOLORS);

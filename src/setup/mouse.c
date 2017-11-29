@@ -14,6 +14,7 @@
 
 #include <stdlib.h>
 
+#include "crispy.h"
 #include "textscreen.h"
 #include "doomtype.h"
 #include "m_config.h"
@@ -35,7 +36,6 @@ static int mouse_threshold = 10;
 static int mouseSensitivity_y = 5; // [crispy]
 static float mouse_acceleration_y = 1.0; // [crispy]
 static int mouse_threshold_y = 0; // [crispy]
-static int crispy_mouselook = 0; // [crispy]
 static int grabmouse = 1;
 
 int novert = 1;
@@ -161,7 +161,7 @@ void ConfigMouse(void)
                    TXT_NewLabel("Acceleration threshold (v)"),
                    TXT_NewSpinControl(&mouse_threshold_y, 0, 32),
                    TXT_NewCheckBox("Permanent Mouse Look",
-                                   &crispy_mouselook),
+                                   &crispy->mouselook),
                    TXT_TABLE_OVERFLOW_RIGHT,
 
                    TXT_NewSeparator("Buttons"),
@@ -215,6 +215,6 @@ void BindMouseVariables(void)
     M_BindIntVariable("mouse_sensitivity_y",     &mouseSensitivity_y);
     M_BindIntVariable("mouse_threshold_y",       &mouse_threshold_y);
     M_BindFloatVariable("mouse_acceleration_y",  &mouse_acceleration_y);
-    M_BindIntVariable("crispy_mouselook",        &crispy_mouselook);
+    M_BindIntVariable("crispy_mouselook",        &crispy->mouselook);
     }
 }

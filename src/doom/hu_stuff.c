@@ -724,18 +724,18 @@ static void HU_DrawCrosshair (void)
         secret_on)
 	return;
 
-    if (lump != laserpatch[crispy_crosshairtype].l)
+    if (lump != laserpatch[crispy->crosshairtype].l)
     {
-	lump = laserpatch[crispy_crosshairtype].l;
+	lump = laserpatch[crispy->crosshairtype].l;
 	patch = W_CacheLumpNum(lump, PU_STATIC);
     }
 
     dp_translucent = true;
 
     V_DrawPatch(ORIGWIDTH/2 -
-                laserpatch[crispy_crosshairtype].w,
+                laserpatch[crispy->crosshairtype].w,
                 ((screenblocks <= 10) ? (ORIGHEIGHT-ST_HEIGHT)/2 : ORIGHEIGHT/2) -
-                laserpatch[crispy_crosshairtype].h,
+                laserpatch[crispy->crosshairtype].h,
                 patch);
 
 //  V_DrawHorizLine(0, (screenblocks <= 10) ? (SCREENHEIGHT/2-ST_HEIGHT) : (SCREENHEIGHT/2), SCREENWIDTH, 128);
@@ -746,14 +746,14 @@ void HU_Drawer(void)
 
     static char str[32], *s;
 
-    if (crispy_cleanscreenshot)
+    if (crispy->cleanscreenshot)
     {
 	HU_Erase();
 	return;
     }
 
     // [crispy] translucent messages for translucent HUD
-    if (screenblocks > CRISPY_HUD && (!automapactive || crispy_automapoverlay))
+    if (screenblocks > CRISPY_HUD && (!automapactive || crispy->automapoverlay))
 	dp_translucent = true;
 
     if (secret_on && !menuactive)
@@ -763,19 +763,19 @@ void HU_Drawer(void)
     }
 
     dp_translation = NULL;
-    if (crispy_screenshotmsg == 4)
+    if (crispy->screenshotmsg == 4)
 	HUlib_eraseSText(&w_message);
     else
     HUlib_drawSText(&w_message);
     HUlib_drawIText(&w_chat);
 
-    if (crispy_coloredhud & COLOREDHUD_TEXT)
+    if (crispy->coloredhud & COLOREDHUD_TEXT)
 	dp_translation = cr[CR_GOLD];
 
     if (automapactive)
     {
 	// [crispy] move map title to the bottom
-	if (crispy_automapoverlay && screenblocks >= CRISPY_HUD - 1)
+	if (crispy->automapoverlay && screenblocks >= CRISPY_HUD - 1)
 	    w_title.y = HU_TITLEY + ST_HEIGHT;
 	else
 	    w_title.y = HU_TITLEY;
@@ -783,14 +783,14 @@ void HU_Drawer(void)
 	HUlib_drawTextLine(&w_title, false);
     }
 
-    if (automapactive && crispy_automapstats)
+    if (automapactive && crispy->automapstats)
     {
 	int time = leveltime / TICRATE;
 	const char *const cr_stat = (gameversion == exe_chex) ? crstr[CR_GREEN] : crstr[CR_RED];
 	const char *const kills = (gameversion == exe_chex) ? "Flemoids: " : "Kills: ";
 
 	// [crispy] move obtrusive line out of player view
-	if (!crispy_automapoverlay || screenblocks < CRISPY_HUD - 1)
+	if (!crispy->automapoverlay || screenblocks < CRISPY_HUD - 1)
 	    HUlib_drawTextLine(&w_map, false);
 
 	// [crispy] count spawned monsters
@@ -833,7 +833,7 @@ void HU_Drawer(void)
 
     // [crispy] show map coordinates in upper right corner
     // if either automap stats or IDMYPOS cheat are enabled
-    if ((automapactive && crispy_automapstats) || plr->powers[pw_mapcoords])
+    if ((automapactive && crispy->automapstats) || plr->powers[pw_mapcoords])
     {
 	M_snprintf(str, sizeof(str), "%sX: %s%-5d", crstr[CR_GREEN], crstr[CR_GRAY],
 	        (plr->mo->x)>>FRACBITS);
@@ -862,9 +862,7 @@ void HU_Drawer(void)
 
     if (plr->powers[pw_showfps])
     {
-	extern int crispy_fps;
-
-	M_snprintf(str, sizeof(str), "%s%-4d %sFPS", crstr[CR_GRAY], crispy_fps, crstr[CR_GREEN]);
+	M_snprintf(str, sizeof(str), "%s%-4d %sFPS", crstr[CR_GRAY], crispy->fps, crstr[CR_GREEN]);
 	HUlib_clearTextLine(&w_fps);
 	s = str;
 	while (*s)
@@ -874,7 +872,7 @@ void HU_Drawer(void)
 
     dp_translation = NULL;
 
-    if (crispy_crosshair == CROSSHAIR_STATIC)
+    if (crispy->crosshair == CROSSHAIR_STATIC)
 	HU_DrawCrosshair();
 
     if (dp_translucent)
@@ -910,7 +908,7 @@ void HU_Ticker(void)
     {
 	message_on = false;
 	message_nottobefuckedwith = false;
-	crispy_screenshotmsg >>= 1;
+	crispy->screenshotmsg >>= 1;
     }
 
     if (secret_counter && !--secret_counter)
@@ -940,7 +938,7 @@ void HU_Ticker(void)
 	    message_counter = HU_MSGTIMEOUT;
 	    message_nottobefuckedwith = message_dontfuckwithme;
 	    message_dontfuckwithme = 0;
-	    crispy_screenshotmsg >>= 1;
+	    crispy->screenshotmsg >>= 1;
 	}
 
     } // else message_on = false;

@@ -128,38 +128,6 @@ char		mapdir[1024];           // directory of development maps
 int             show_endoom = 0; // [crispy] disable
 int             show_diskicon = 1;
 
-// [crispy] "crispness" config variables
-int             crispy_automapstats = 0;
-int             crispy_centerweapon = 0;
-int             crispy_coloredblood = 0;
-int             crispy_coloredhud = 0;
-int             crispy_crosshair = 0;
-int             crispy_crosshairtype = 0;
-int             crispy_extsaveg = 1;
-int             crispy_flipcorpses = 0;
-int             crispy_freeaim = 0;
-int             crispy_freelook = 0;
-int             crispy_jump = 0;
-int             crispy_mouselook = 0;
-int             crispy_neghealth = 0;
-int             crispy_overunder = 0;
-int             crispy_pitch = 0;
-int             crispy_recoil = 0;
-int             crispy_secretmessage = 0;
-int             crispy_soundfix = 1;
-int             crispy_soundfull = 0;
-int             crispy_translucency = 0;
-
-// [crispy] in-game switches
-boolean         crispy_automapoverlay = false;
-boolean         crispy_flashinghom = false;
-boolean         crispy_fliplevels = false;
-boolean         crispy_havee1m10 = false;
-boolean         crispy_havemap33 = false;
-boolean         crispy_havessg = false;
-boolean         crispy_singleplayer = true;
-
-int             crispy_demowarp = 0;
 char            *nervewadfile = NULL;
 
 void D_ConnectNetGame(void);
@@ -247,7 +215,7 @@ void D_Display (void)
       case GS_LEVEL:
 	if (!gametic)
 	    break;
-	if (automapactive && !crispy_automapoverlay)
+	if (automapactive && !crispy->automapoverlay)
 	{
 	    // [crispy] update automap while playing
 	    R_RenderPlayerView (&players[displayplayer]);
@@ -278,7 +246,7 @@ void D_Display (void)
     I_UpdateNoBlit ();
     
     // draw the view directly
-    if (gamestate == GS_LEVEL && (!automapactive || crispy_automapoverlay) && gametic)
+    if (gamestate == GS_LEVEL && (!automapactive || crispy->automapoverlay) && gametic)
     {
 	R_RenderPlayerView (&players[displayplayer]);
 
@@ -289,7 +257,7 @@ void D_Display (void)
 
     // [crispy] in automap overlay mode,
     // the HUD is drawn on top of everything else
-    if (gamestate == GS_LEVEL && gametic && !(automapactive && crispy_automapoverlay))
+    if (gamestate == GS_LEVEL && gametic && !(automapactive && crispy->automapoverlay))
 	HU_Drawer ();
     
     // clean up border stuff
@@ -305,13 +273,13 @@ void D_Display (void)
 
     // [crispy] in automap overlay mode,
     // draw the automap beneath the bezel
-    if (automapactive && crispy_automapoverlay)
+    if (automapactive && crispy->automapoverlay)
     {
 	AM_Drawer ();
     }
 
     // see if the border needs to be updated to the screen
-    if (gamestate == GS_LEVEL && (!automapactive || crispy_automapoverlay) && scaledviewwidth != SCREENWIDTH)
+    if (gamestate == GS_LEVEL && (!automapactive || crispy->automapoverlay) && scaledviewwidth != SCREENWIDTH)
     {
 	if (menuactive || menuactivestate || !viewactivestate)
 	    borderdrawcount = 3;
@@ -337,7 +305,7 @@ void D_Display (void)
     
     // [crispy] in automap overlay mode,
     // draw the HUD on top of everything else
-    if (automapactive && crispy_automapoverlay)
+    if (automapactive && crispy->automapoverlay)
     {
 	HU_Drawer ();
 
@@ -347,7 +315,7 @@ void D_Display (void)
     }
 
     // [crispy] draw neither pause pic nor menu when taking a clean screenshot
-    if (crispy_cleanscreenshot)
+    if (crispy->cleanscreenshot)
     {
 	I_FinishUpdate ();              // page flip or blit buffer
 	return;
@@ -356,7 +324,7 @@ void D_Display (void)
     // draw pause pic
     if (paused)
     {
-	if (automapactive && !crispy_automapoverlay)
+	if (automapactive && !crispy->automapoverlay)
 	    y = 4;
 	else
 	    y = (viewwindowy >> hires)+4;
@@ -474,27 +442,27 @@ void D_BindVariables(void)
     }
 
     // [crispy] bind "crispness" config variables
-    M_BindIntVariable("crispy_automapstats",    &crispy_automapstats);
-    M_BindIntVariable("crispy_centerweapon",    &crispy_centerweapon);
-    M_BindIntVariable("crispy_coloredblood",    &crispy_coloredblood);
-    M_BindIntVariable("crispy_coloredhud",      &crispy_coloredhud);
-    M_BindIntVariable("crispy_crosshair",       &crispy_crosshair);
-    M_BindIntVariable("crispy_crosshairtype",   &crispy_crosshairtype);
-    M_BindIntVariable("crispy_extsaveg",        &crispy_extsaveg);
-    M_BindIntVariable("crispy_flipcorpses",     &crispy_flipcorpses);
-    M_BindIntVariable("crispy_freeaim",         &crispy_freeaim);
-    M_BindIntVariable("crispy_freelook",        &crispy_freelook);
-    M_BindIntVariable("crispy_jump",            &crispy_jump);
-    M_BindIntVariable("crispy_mouselook",       &crispy_mouselook);
-    M_BindIntVariable("crispy_neghealth",       &crispy_neghealth);
-    M_BindIntVariable("crispy_overunder",       &crispy_overunder);
-    M_BindIntVariable("crispy_pitch",           &crispy_pitch);
-    M_BindIntVariable("crispy_recoil",          &crispy_recoil);
-    M_BindIntVariable("crispy_secretmessage",   &crispy_secretmessage);
-    M_BindIntVariable("crispy_soundfix",        &crispy_soundfix);
-    M_BindIntVariable("crispy_soundfull",       &crispy_soundfull);
-    M_BindIntVariable("crispy_translucency",    &crispy_translucency);
-    M_BindIntVariable("crispy_uncapped",        &crispy_uncapped);
+    M_BindIntVariable("crispy_automapstats",    &crispy->automapstats);
+    M_BindIntVariable("crispy_centerweapon",    &crispy->centerweapon);
+    M_BindIntVariable("crispy_coloredblood",    &crispy->coloredblood);
+    M_BindIntVariable("crispy_coloredhud",      &crispy->coloredhud);
+    M_BindIntVariable("crispy_crosshair",       &crispy->crosshair);
+    M_BindIntVariable("crispy_crosshairtype",   &crispy->crosshairtype);
+    M_BindIntVariable("crispy_extsaveg",        &crispy->extsaveg);
+    M_BindIntVariable("crispy_flipcorpses",     &crispy->flipcorpses);
+    M_BindIntVariable("crispy_freeaim",         &crispy->freeaim);
+    M_BindIntVariable("crispy_freelook",        &crispy->freelook);
+    M_BindIntVariable("crispy_jump",            &crispy->jump);
+    M_BindIntVariable("crispy_mouselook",       &crispy->mouselook);
+    M_BindIntVariable("crispy_neghealth",       &crispy->neghealth);
+    M_BindIntVariable("crispy_overunder",       &crispy->overunder);
+    M_BindIntVariable("crispy_pitch",           &crispy->pitch);
+    M_BindIntVariable("crispy_recoil",          &crispy->recoil);
+    M_BindIntVariable("crispy_secretmessage",   &crispy->secretmessage);
+    M_BindIntVariable("crispy_soundfix",        &crispy->soundfix);
+    M_BindIntVariable("crispy_soundfull",       &crispy->soundfull);
+    M_BindIntVariable("crispy_translucency",    &crispy->translucency);
+    M_BindIntVariable("crispy_uncapped",        &crispy->uncapped);
 }
 
 //
@@ -599,7 +567,7 @@ void D_PageTicker (void)
 //
 void D_PageDrawer (void)
 {
-    if (crispy_fliplevels)
+    if (crispy->fliplevels)
     V_DrawPatchFlipped (0, 0, W_CacheLumpName(pagename, PU_CACHE));
     else
     V_DrawPatch (0, 0, W_CacheLumpName(pagename, PU_CACHE));
@@ -627,7 +595,8 @@ void D_DoAdvanceDemo (void)
     usergame = false;               // no save / end game here
     paused = false;
     gameaction = ga_nothing;
-    crispy_singleplayer = !demorecording && !demoplayback && !netgame;
+    // [crispy] update the "singleplayer" variable
+    CheckCrispySingleplayer
 
 
     // The Ultimate Doom executable changed the demo sequence to add
@@ -1975,7 +1944,7 @@ void D_DoomMain (void)
     I_InitMusic();
 
     // [crispy] check for SSG resources
-    crispy_havessg =
+    crispy->havessg =
     (
         gamemode == commercial ||
         (
@@ -1988,17 +1957,17 @@ void D_DoomMain (void)
     );
 
     // [crispy] check for presence of E1M10
-    crispy_havee1m10 = (gamemode == retail) &&
+    crispy->havee1m10 = (gamemode == retail) &&
                        (W_CheckNumForName("e1m10") != -1) &&
                        (W_CheckNumForName("sewers") != -1);
 
     // [crispy] check for presence of MAP33
-    crispy_havemap33 = (gamemode == commercial) &&
+    crispy->havemap33 = (gamemode == commercial) &&
                        (W_CheckNumForName("map33") != -1) &&
                        (W_CheckNumForName("cwilv32") != -1);
 
     // [crispy] change level name for MAP33 if not already changed
-    if (crispy_havemap33 && !strcmp(PHUSTR_1, DEH_String(PHUSTR_1)))
+    if (crispy->havemap33 && !strcmp(PHUSTR_1, DEH_String(PHUSTR_1)))
     {
         DEH_AddStringReplacement(PHUSTR_1, "level 33: betray");
     }
@@ -2109,7 +2078,7 @@ void D_DoomMain (void)
         }
         autostart = true;
         // [crispy] if used with -playdemo, fast-forward demo up to the desired map
-        crispy_demowarp = startmap;
+        crispy->demowarp = startmap;
     }
 
     // Undocumented:
@@ -2131,14 +2100,14 @@ void D_DoomMain (void)
         struct tm *curtm = localtime(&curtime);
 
         if (curtm && curtm->tm_mon == 3 && curtm->tm_mday == 1)
-            crispy_fliplevels = true;
+            crispy->fliplevels = true;
     }
 
     p = M_CheckParm("-fliplevels");
 
     if (p > 0)
     {
-        crispy_fliplevels = !crispy_fliplevels;
+        crispy->fliplevels = !crispy->fliplevels;
     }
 
     // Check for load game parameter
@@ -2223,7 +2192,7 @@ void D_DoomMain (void)
 	G_DeferedPlayDemo (demolumpname);
 	D_DoomLoop ();  // never returns
     }
-    crispy_demowarp = 0; // [crispy] we don't play a demo, so don't skip maps
+    crispy->demowarp = 0; // [crispy] we don't play a demo, so don't skip maps
 	
     p = M_CheckParmWithArgs("-timedemo", 1);
     if (p)

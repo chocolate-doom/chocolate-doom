@@ -17,6 +17,7 @@
 //
 
 #include "config.h"
+#include "crispy.h"
 
 #include <stdio.h>
 
@@ -32,8 +33,6 @@
 // Not a globally visible function, just included for source reference,
 // calls all startup code, parses command line options.
 //
-const char *crispy_platform;
-const char *crispy_sdlversion;
 
 void D_DoomMain (void);
 
@@ -44,13 +43,13 @@ int main(int argc, char **argv)
     myargc = argc;
     myargv = argv;
 
-    crispy_platform = SDL_GetPlatform();
+    crispy->platform = SDL_GetPlatform();
     {
         char buf[16];
         SDL_version version;
         SDL_GetVersion(&version);
         M_snprintf(buf, sizeof(buf), "%d.%d.%d", version.major, version.minor, version.patch);
-        crispy_sdlversion = M_StringDuplicate(buf);
+        crispy->sdlversion = M_StringDuplicate(buf);
     }
 
     M_FindResponseFile();

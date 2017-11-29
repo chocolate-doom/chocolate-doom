@@ -472,11 +472,11 @@ R_DrawVisSprite
 	dc_translation = vis->translation;
     }
     // [crispy] translucent sprites
-    else if (crispy_translucency && vis->mobjflags & MF_TRANSLUCENT)
+    else if (crispy->translucency && vis->mobjflags & MF_TRANSLUCENT)
     {
 	if (!(vis->mobjflags & (MF_NOGRAVITY | MF_COUNTITEM)) ||
-	    (vis->mobjflags & MF_NOGRAVITY && crispy_translucency & TRANSLUCENCY_MISSILE) ||
-	    (vis->mobjflags & MF_COUNTITEM && crispy_translucency & TRANSLUCENCY_ITEM))
+	    (vis->mobjflags & MF_NOGRAVITY && crispy->translucency & TRANSLUCENCY_MISSILE) ||
+	    (vis->mobjflags & MF_COUNTITEM && crispy->translucency & TRANSLUCENCY_ITEM))
 	{
 	    colfunc = tlcolfunc;
 	}
@@ -556,7 +556,7 @@ void R_ProjectSprite (mobj_t* thing)
 
     // [AM] Interpolate between current and last position,
     //      if prudent.
-    if (crispy_uncapped &&
+    if (crispy->uncapped &&
         // Don't interpolate if the mobj did something
         // that would necessitate turning it off for a tic.
         thing->interp == true &&
@@ -649,7 +649,7 @@ void R_ProjectSprite (mobj_t* thing)
     }
 
     // [crispy] randomly flip corpse, blood and death animation sprites
-    if (crispy_flipcorpses)
+    if (crispy->flipcorpses)
     {
 	flip = flip ^ thing->flipsprite;
     }
@@ -728,8 +728,8 @@ void R_ProjectSprite (mobj_t* thing)
     }	
 
     // [crispy] colored blood
-    if ((((crispy_coloredblood & COLOREDBLOOD_BLOOD) && thing->type == MT_BLOOD) ||
-        ((crispy_coloredblood & COLOREDBLOOD_CORPSE) && thing->sprite == SPR_POL5)) // [crispy] S_GIBS
+    if ((((crispy->coloredblood & COLOREDBLOOD_BLOOD) && thing->type == MT_BLOOD) ||
+        ((crispy->coloredblood & COLOREDBLOOD_CORPSE) && thing->sprite == SPR_POL5)) // [crispy] S_GIBS
         && thing->target)
     {
 	// [crispy] Thorn Things in Hacx bleed green blood
@@ -773,16 +773,16 @@ static void R_DrawLSprite (void)
         viewplayer->playerstate != PST_LIVE)
 	return;
 
-    if (lump != laserpatch[crispy_crosshairtype].l)
+    if (lump != laserpatch[crispy->crosshairtype].l)
     {
-	lump = laserpatch[crispy_crosshairtype].l;
+	lump = laserpatch[crispy->crosshairtype].l;
 	patch = W_CacheLumpNum(lump, PU_STATIC);
     }
 
-    crispy_crosshair |= CROSSHAIR_INTERCEPT; // [crispy] intercepts overflow guard
+    crispy->crosshair |= CROSSHAIR_INTERCEPT; // [crispy] intercepts overflow guard
     P_LineLaser(viewplayer->mo, viewangle,
                 16*64*FRACUNIT, CRISPY_SLOPE(viewplayer));
-    crispy_crosshair &= ~CROSSHAIR_INTERCEPT; // [crispy] intercepts overflow guard
+    crispy->crosshair &= ~CROSSHAIR_INTERCEPT; // [crispy] intercepts overflow guard
 
     if (!laserspot->x &&
         !laserspot->y &&
@@ -933,21 +933,21 @@ void R_DrawPSprite (pspdef_t* psp, psprnum_t psprnum) // [crispy] differentiate 
     }
     else
     // [crispy] center the weapon sprite horizontally and vertically
-    if (crispy_centerweapon && viewplayer->attackdown && !psp->state->misc1)
+    if (crispy->centerweapon && viewplayer->attackdown && !psp->state->misc1)
     {
         const weaponinfo_t *const winfo = &weaponinfo[viewplayer->readyweapon];
 
-        R_ApplyWeaponBob(&psp_sx, crispy_centerweapon >= CENTERWEAPON_BOB,
+        R_ApplyWeaponBob(&psp_sx, crispy->centerweapon >= CENTERWEAPON_BOB,
                          NULL, false,
-                         crispy_centerweapon / CENTERWEAPON_BOB2 + 1);
+                         crispy->centerweapon / CENTERWEAPON_BOB2 + 1);
 
         // [crispy] don't center vertically during lowering and raising states
-        if (crispy_centerweapon >= CENTERWEAPON_HORVER &&
+        if (crispy->centerweapon >= CENTERWEAPON_HORVER &&
             state != winfo->downstate && state != winfo->upstate)
         {
             R_ApplyWeaponBob(NULL, false,
-                             &psp_sy, crispy_centerweapon >= CENTERWEAPON_BOB,
-                             crispy_centerweapon / CENTERWEAPON_BOB2 + 1);
+                             &psp_sy, crispy->centerweapon >= CENTERWEAPON_BOB,
+                             crispy->centerweapon / CENTERWEAPON_BOB2 + 1);
         }
     }
     // calculate edges of the shape
@@ -1052,7 +1052,7 @@ void R_DrawPlayerSprites (void)
     mfloorclip = screenheightarray;
     mceilingclip = negonearray;
     
-    if (crispy_crosshair == CROSSHAIR_PROJECTED)
+    if (crispy->crosshair == CROSSHAIR_PROJECTED)
 	R_DrawLSprite();
 
     // add all active psprites
@@ -1308,7 +1308,7 @@ void R_DrawMasked (void)
 	if (ds->maskedtexturecol)
 	    R_RenderMaskedSegRange (ds, ds->x1, ds->x2);
     
-    if (crispy_cleanscreenshot == 2)
+    if (crispy->cleanscreenshot == 2)
         return;
 
     // draw the psprites on top of everything

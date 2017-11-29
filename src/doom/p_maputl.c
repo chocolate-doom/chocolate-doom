@@ -624,7 +624,7 @@ PIT_AddLineIntercepts (line_t* ld)
     // [crispy] intercepts overflow guard
     if (intercept_p - intercepts == MAXINTERCEPTS_ORIGINAL + 1)
     {
-	if (crispy_crosshair & CROSSHAIR_INTERCEPT)
+	if (crispy->crosshair & CROSSHAIR_INTERCEPT)
 	    return false;
 	else
 	    // [crispy] print a warning
@@ -700,7 +700,7 @@ boolean PIT_AddThingIntercepts (mobj_t* thing)
     // [crispy] intercepts overflow guard
     if (intercept_p - intercepts == MAXINTERCEPTS_ORIGINAL + 1)
     {
-	if (crispy_crosshair & CROSSHAIR_INTERCEPT)
+	if (crispy->crosshair & CROSSHAIR_INTERCEPT)
 	    return false;
 	else
 	    // [crispy] print a warning

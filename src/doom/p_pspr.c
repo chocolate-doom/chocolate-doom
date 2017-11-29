@@ -63,12 +63,12 @@ void A_Recoil (player_t* player)
 	if (player)
 	{
 
-		if (crispy_singleplayer && crispy_recoil && !(player->mo->flags & MF_NOCLIP))
+		if (critical->recoil && !(player->mo->flags & MF_NOCLIP))
 		{
 			P_Thrust(player, ANG180 + player->mo->angle, 2048 * recoil_values[player->readyweapon][0]);
 		}
 
-		if (crispy_pitch)
+		if (crispy->pitch)
 		{
 			player->recoilpitch = recoil_values[player->readyweapon][1];
 		}
@@ -173,7 +173,7 @@ void P_BringUpWeapon (player_t* player)
     if (player->pendingweapon == wp_fist && player->powers[pw_strength])
     {
 	// [crispy] ...only if not playing already
-	if (player == &players[consoleplayer] && !S_SoundIsPlaying(NULL, sfx_getpow) && crispy_soundfix)
+	if (player == &players[consoleplayer] && !S_SoundIsPlaying(NULL, sfx_getpow) && crispy->soundfix)
 	{
 	    S_StartSound (NULL, sfx_getpow);
 	}
@@ -229,7 +229,7 @@ boolean P_CheckAmmo (player_t* player)
 	}
 	else if (player->weaponowned[wp_supershotgun] 
 		 && player->ammo[am_shell]>2
-		 && (crispy_havessg) )
+		 && (crispy->havessg) )
 	{
 	    player->pendingweapon = wp_supershotgun;
 	}
@@ -688,7 +688,7 @@ void P_BulletSlope (mobj_t*	mo)
 {
     angle_t	an;
     
-    if (crispy_singleplayer && (crispy_freeaim == FREEAIM_DIRECT))
+    if (critical->freeaim == FREEAIM_DIRECT)
     {
 	bulletslope = CRISPY_SLOPE(mo->player);
     }
@@ -706,7 +706,7 @@ void P_BulletSlope (mobj_t*	mo)
 	{
 	    an -= 2<<26;
 	    bulletslope = P_AimLineAttack (mo, an, 16*64*FRACUNIT);
-	    if (!linetarget && crispy_singleplayer && (crispy_freeaim == FREEAIM_BOTH))
+	    if (!linetarget && critical->freeaim == FREEAIM_BOTH)
 	    {
 		bulletslope = CRISPY_SLOPE(mo->player);
 	    }
@@ -1011,7 +1011,7 @@ void A_FireOldBFG(mobj_t *mo, player_t *player, pspdef_t *psp)
   extern void P_CheckMissileSpawn (mobj_t* th);
 
   if (!player) return; // [crispy] let pspr action pointers get called from mobj states
-  if (crispy_recoil && !(player->mo->flags & MF_NOCLIP))
+  if (crispy->recoil && !(player->mo->flags & MF_NOCLIP))
     P_Thrust(player, ANG180 + player->mo->angle,
 	     512*recoil_values[wp_plasma][0]);
 

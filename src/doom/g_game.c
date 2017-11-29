@@ -254,7 +254,7 @@ static boolean WeaponSelectable(weapontype_t weapon)
 {
     // Can't select the super shotgun in Doom 1.
 
-    if (weapon == wp_supershotgun && !crispy_havessg)
+    if (weapon == wp_supershotgun && !crispy->havessg)
     {
         return false;
     }
@@ -497,7 +497,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     }
 
     // [crispy] look up/down/center keys
-    if (crispy_freelook)
+    if (crispy->freelook)
     {
         static unsigned int kbdlookctrl = 0;
 
@@ -514,7 +514,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
         }
         else
         // [crispy] keyboard lookspring
-        if (gamekeydown[key_lookcenter] || (crispy_freelook == FREELOOK_SPRING && kbdlookctrl))
+        if (gamekeydown[key_lookcenter] || (crispy->freelook == FREELOOK_SPRING && kbdlookctrl))
         {
             look = TOCENTER;
             kbdlookctrl = 0;
@@ -522,7 +522,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     }
 
     // [crispy] jump keys
-    if (crispy_jump && crispy_singleplayer)
+    if (critical->jump)
     {
         if (gamekeydown[key_jump] || mousebuttons[mousebjump]
             || joybuttons[joybjump])
@@ -641,8 +641,8 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     }
 
     // [crispy] mouse look
-    if ((crispy_freelook && mousebuttons[mousebmouselook]) ||
-         crispy_mouselook)
+    if ((crispy->freelook && mousebuttons[mousebmouselook]) ||
+         crispy->mouselook)
     {
         cmd->lookdir = mouse_y_invert ? -mousey : mousey;
     }
@@ -653,7 +653,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     }
 
     // [crispy] single click on mouse look button centers view
-    if (crispy_freelook)
+    if (crispy->freelook)
     {
         static unsigned int mbmlookctrl = 0;
 
@@ -666,7 +666,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
         // [crispy] released
         if (mbmlookctrl)
         {
-            if (crispy_freelook == FREELOOK_SPRING || mbmlookctrl < 6) // [crispy] short click
+            if (crispy->freelook == FREELOOK_SPRING || mbmlookctrl < 6) // [crispy] short click
             {
                 look = TOCENTER;
             }
@@ -807,7 +807,8 @@ void G_DoLoadLevel (void)
 	memset (players[i].frags,0,sizeof(players[i].frags)); 
     } 
 		 
-    crispy_singleplayer = !demorecording && !demoplayback && !netgame;
+    // [crispy] update the "singleplayer" variable
+    CheckCrispySingleplayer
     P_SetupLevel (gameepisode, gamemap, 0, gameskill);    
     displayplayer = consoleplayer;		// view the guy you are playing    
     gameaction = ga_nothing; 
@@ -1067,17 +1068,17 @@ void G_Ticker (void)
 	    break; 
 	  case ga_screenshot: 
 	    // [crispy] redraw view without weapons and HUD
-	    if (crispy_cleanscreenshot || crispy_screenshotmsg == 1)
+	    if (crispy->cleanscreenshot || crispy->screenshotmsg == 1)
 	    {
 	        extern void D_Display (void);
 
-	        crispy_screenshotmsg = 4;
+	        crispy->screenshotmsg = 4;
 	        D_Display();
-	        crispy_cleanscreenshot = 0;
+	        crispy->cleanscreenshot = 0;
 	    }
 	    V_ScreenShot("DOOM%04i.%s"); // [crispy] increase screenshot filename limit
             players[consoleplayer].message = DEH_String("screen shot");
-	    crispy_screenshotmsg = 2;
+	    crispy->screenshotmsg = 2;
 	    gameaction = ga_nothing; 
 	    break; 
 	  case ga_nothing: 
@@ -1450,7 +1451,7 @@ void G_DoReborn (int playernum)
 	// [crispy] if the player dies and the game has been loaded or saved
 	// in the mean time, reload that savegame instead of restarting the level
 	// when "Run" is pressed upon resurrection
-	if (crispy_singleplayer && *savename && speedkeydown())
+	if (crispy->singleplayer && *savename && speedkeydown())
 	gameaction = ga_loadgame;
 	else
 	{
@@ -1624,7 +1625,7 @@ void G_DoCompleted (void)
     wminfo.last = gamemap -1;
     
     // wminfo.next is 0 biased, unlike gamemap
-    if ( gamemission == pack_nerve && crispy_singleplayer )
+    if ( gamemission == pack_nerve && crispy->singleplayer )
     {
 	if (secretexit)
 	    switch(gamemap)
@@ -1639,7 +1640,7 @@ void G_DoCompleted (void)
 	    }
     }
     else
-    if ( gamemission == pack_master && crispy_singleplayer )
+    if ( gamemission == pack_master && crispy->singleplayer )
     {
 	wminfo.next = gamemap;
     }
@@ -1647,7 +1648,7 @@ void G_DoCompleted (void)
     if ( gamemode == commercial)
     {
 	if (secretexit)
-	    if (gamemap == 2 && crispy_havemap33 && crispy_singleplayer)
+	    if (gamemap == 2 && critical->havemap33)
 	      wminfo.next = 32;
 	    else
 	    switch(gamemap)
@@ -1656,7 +1657,7 @@ void G_DoCompleted (void)
 	      case 31: wminfo.next = 31; break;
 	    }
 	else
-	    if (gamemap == 33 && crispy_havemap33 && crispy_singleplayer)
+	    if (gamemap == 33 && critical->havemap33)
 	      wminfo.next = 2;
 	    else
 	    switch(gamemap)
@@ -1670,7 +1671,7 @@ void G_DoCompleted (void)
     {
 	if (secretexit) 
 	{
-	    if (crispy_havee1m10 && crispy_singleplayer && gameepisode == 1 && gamemap == 1)
+	    if (critical->havee1m10 && gameepisode == 1 && gamemap == 1)
 	    wminfo.next = 9; // [crispy] go to secret level E1M10 "Sewers"
 	    else
 	    wminfo.next = 8; 	// go to secret level 
@@ -1695,7 +1696,7 @@ void G_DoCompleted (void)
 	    }                
 	} 
 	else
-	if (crispy_havee1m10 && crispy_singleplayer && gameepisode == 1 && gamemap == 10)
+	if (critical->havee1m10 && gameepisode == 1 && gamemap == 10)
 	    wminfo.next = 1; // [crispy] returning from secret level E1M10 "Sewers"
 	else 
 	    wminfo.next = gamemap;          // go to next level 
@@ -1709,11 +1710,11 @@ void G_DoCompleted (void)
     // Set par time. Doom episode 4 doesn't have a par time, so this
     // overflows into the cpars array. It's necessary to emulate this
     // for statcheck regression testing.
-    if (gamemap == 33 || (crispy_havee1m10 && gameepisode == 1 && gamemap == 10))
+    if (gamemap == 33 || (crispy->havee1m10 && gameepisode == 1 && gamemap == 10))
 	// [crispy] par time for inofficial maps sucks
 	wminfo.partime = INT_MAX;
     else
-    if (gamemission == pack_nerve && crispy_singleplayer)
+    if (gamemission == pack_nerve && crispy->singleplayer)
 	wminfo.partime = TICRATE*npars[gamemap-1];
     else
     if (gamemode == commercial)
@@ -1732,7 +1733,7 @@ void G_DoCompleted (void)
 	else
 	wminfo.partime = TICRATE*pars[gameepisode][gamemap];
     }
-    else if (gameepisode == 4 && crispy_singleplayer)
+    else if (gameepisode == 4 && crispy->singleplayer)
 	wminfo.partime = TICRATE*e4pars[gamemap];
     else
         wminfo.partime = TICRATE*cpars[gamemap];
@@ -1777,10 +1778,10 @@ void G_WorldDone (void)
     if (secretexit) 
       // [crispy] special-casing for E1M10 "Sewers" support
       // i.e. avoid drawing the splat for E1M9 already
-      if (!crispy_havee1m10 || gameepisode != 1 || gamemap != 1)
+      if (!crispy->havee1m10 || gameepisode != 1 || gamemap != 1)
 	players[consoleplayer].didsecret = true; 
 
-    if ( gamemission == pack_nerve && crispy_singleplayer )
+    if ( gamemission == pack_nerve && crispy->singleplayer )
     {
 	switch (gamemap)
 	{
@@ -1790,7 +1791,7 @@ void G_WorldDone (void)
 	}
     }
     else
-    if ( gamemission == pack_master && crispy_singleplayer )
+    if ( gamemission == pack_master && crispy->singleplayer )
     {
 	switch (gamemap)
 	{
@@ -1879,7 +1880,7 @@ void G_DoLoadGame (void)
     // load a base level 
     G_InitNew (gameskill, gameepisode, gamemap); 
     // [crispy] read extended savegame data
-    if (crispy_extsaveg)
+    if (crispy->extsaveg)
     {
         P_ReadExtendedSaveGameData(0);
     }
@@ -1916,7 +1917,7 @@ void G_DoLoadGame (void)
 	I_Error ("Bad savegame");
 
     // [crispy] read more extended savegame data
-    if (crispy_extsaveg)
+    if (crispy->extsaveg)
     {
         P_ReadExtendedSaveGameData(1);
     }
@@ -2003,7 +2004,7 @@ void G_DoSaveGame (void)
 
     P_WriteSaveGameEOF();
     // [crispy] write extended savegame data
-    if (crispy_extsaveg)
+    if (crispy->extsaveg)
     {
         P_WriteExtendedSaveGameData();
     }
@@ -2173,7 +2174,7 @@ G_InitNew
 	 && ( gamemode != commercial) )
     {
       // [crispy] support E1M10 "Sewers"
-      if (!crispy_havee1m10 || episode != 1)
+      if (!crispy->havee1m10 || episode != 1)
       map = 9;
       else
       map = 10;
@@ -2308,7 +2309,7 @@ void G_ReadDemoTiccmd (ticcmd_t* cmd)
 
     cmd->buttons = (unsigned char)*demo_p++; 
 
-    if (crispy_fliplevels)
+    if (crispy->fliplevels)
     {
 	cmd->sidemove *= (const signed char) -1;
 	cmd->angleturn *= (const short) -1;
@@ -2351,7 +2352,7 @@ void G_WriteDemoTiccmd (ticcmd_t* cmd)
 { 
     byte *demo_start;
 
-    if (crispy_fliplevels)
+    if (crispy->fliplevels)
     {
 	cmd->sidemove *= (const signed char) -1;
 	cmd->angleturn *= (const short) -1;
@@ -2521,7 +2522,7 @@ void G_DeferedPlayDemo (char* name)
     gameaction = ga_playdemo; 
 
     // [crispy] fast-forward demo up to the desired map
-    if (crispy_demowarp)
+    if (crispy->demowarp)
     {
 	nodrawers = true;
 	singletics = true;
@@ -2664,7 +2665,8 @@ void G_DoPlayDemo (void)
 
     usergame = false; 
     demoplayback = true; 
-    crispy_singleplayer = !demorecording && !demoplayback && !netgame;
+    // [crispy] update the "singleplayer" variable
+    CheckCrispySingleplayer
 
     // [crispy] demo progress bar
     {

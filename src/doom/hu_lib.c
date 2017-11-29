@@ -116,7 +116,7 @@ HUlib_drawTextLine
 	    {
 		if (l->l[i] >= '0' && l->l[i] <= '0' + CRMAX - 1)
 		{
-		    dp_translation = (crispy_coloredhud & COLOREDHUD_TEXT) ? cr[(int) (l->l[i] - '0')] : NULL;
+		    dp_translation = (crispy->coloredhud & COLOREDHUD_TEXT) ? cr[(int) (l->l[i] - '0')] : NULL;
 		}
 	    }
 	}
@@ -167,7 +167,7 @@ void HUlib_eraseTextLine(hu_textline_t* l)
     // (because of a recent change back from the automap)
 
     if (!automapactive &&
-	viewwindowx && (l->needsupdate || crispy_cleanscreenshot || crispy_screenshotmsg == 4))
+	viewwindowx && (l->needsupdate || crispy->cleanscreenshot || crispy->screenshotmsg == 4))
     {
 	lh = (SHORT(l->f[0]->height) + 1) << hires;
 	// [crispy] support line breaks

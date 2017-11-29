@@ -515,7 +515,7 @@ void R_DrawPlanes (void)
 		texture = texturetranslation[s->toptexture];
 		dc_texturemid = s->rowoffset - 28*FRACUNIT;
 		// [crispy] stretch sky
-		if (crispy_stretchsky)
+		if (crispy->stretchsky)
 		{
 		    dc_texturemid = dc_texturemid * (textureheight[texture]>>FRACBITS) / SKYSTRETCH_HEIGHT;
 		}
@@ -538,7 +538,7 @@ void R_DrawPlanes (void)
 //	    dc_texturemid = skytexturemid;
 	    dc_texheight = textureheight[texture]>>FRACBITS; // [crispy] Tutti-Frutti fix
 	    // [crispy] stretch sky
-	    if (crispy_stretchsky)
+	    if (crispy->stretchsky)
 	        dc_iscale = dc_iscale * dc_texheight / SKYSTRETCH_HEIGHT;
 	    for (x=pl->minx ; x <= pl->maxx ; x++)
 	    {

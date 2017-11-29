@@ -121,7 +121,7 @@ void T_VerticalDoor (vldoor_t* door)
 		door->sector->specialdata = NULL;
 		P_RemoveThinker (&door->thinker);  // unlink and free
 		// [crispy] fix "fast doors make two closing sounds"
-		if (!crispy_soundfix)
+		if (!crispy->soundfix)
 		S_StartSound(&door->sector->soundorg, sfx_bdcls);
 		break;
 		
@@ -150,7 +150,7 @@ void T_VerticalDoor (vldoor_t* door)
 		
 	      // [crispy] fix "fast doors reopening with wrong sound"
 	      case vld_blazeRaise:
-		if (crispy_soundfix)
+		if (crispy->soundfix)
 		{
 		door->direction = 1;
 		S_StartSound(&door->sector->soundorg, sfx_bdopn);
@@ -225,7 +225,7 @@ EV_DoLockedDoor
 	if (!p->cards[it_bluecard] && !p->cards[it_blueskull])
 	{
 	    p->message = DEH_String(PD_BLUEO);
-	    S_StartSound(crispy_soundfix ? p->mo : NULL,sfx_oof);
+	    S_StartSound(crispy->soundfix ? p->mo : NULL,sfx_oof);
 	    return 0;
 	}
 	break;
@@ -237,7 +237,7 @@ EV_DoLockedDoor
 	if (!p->cards[it_redcard] && !p->cards[it_redskull])
 	{
 	    p->message = DEH_String(PD_REDO);
-	    S_StartSound(crispy_soundfix ? p->mo : NULL,sfx_oof);
+	    S_StartSound(crispy->soundfix ? p->mo : NULL,sfx_oof);
 	    return 0;
 	}
 	break;
@@ -250,7 +250,7 @@ EV_DoLockedDoor
 	    !p->cards[it_yellowskull])
 	{
 	    p->message = DEH_String(PD_YELLOWO);
-	    S_StartSound(crispy_soundfix ? p->mo : NULL,sfx_oof);
+	    S_StartSound(crispy->soundfix ? p->mo : NULL,sfx_oof);
 	    return 0;
 	}
 	break;	
@@ -370,7 +370,7 @@ EV_VerticalDoor
 	if (!player->cards[it_bluecard] && !player->cards[it_blueskull])
 	{
 	    player->message = DEH_String(PD_BLUEK);
-	    S_StartSound(crispy_soundfix ? player->mo : NULL,sfx_oof);
+	    S_StartSound(crispy->soundfix ? player->mo : NULL,sfx_oof);
 	    return;
 	}
 	break;
@@ -384,7 +384,7 @@ EV_VerticalDoor
 	    !player->cards[it_yellowskull])
 	{
 	    player->message = DEH_String(PD_YELLOWK);
-	    S_StartSound(crispy_soundfix ? player->mo : NULL,sfx_oof);
+	    S_StartSound(crispy->soundfix ? player->mo : NULL,sfx_oof);
 	    return;
 	}
 	break;
@@ -397,7 +397,7 @@ EV_VerticalDoor
 	if (!player->cards[it_redcard] && !player->cards[it_redskull])
 	{
 	    player->message = DEH_String(PD_REDK);
-	    S_StartSound(crispy_soundfix ? player->mo : NULL,sfx_oof);
+	    S_StartSound(crispy->soundfix ? player->mo : NULL,sfx_oof);
 	    return;
 	}
 	break;
@@ -428,7 +428,7 @@ EV_VerticalDoor
 	    {
 		door->direction = 1;	// go back up
 		// [crispy] play sound effect when the door is opened again while going down
-		if (crispy_soundfix)
+		if (crispy->soundfix)
 		S_StartSound(&door->sector->soundorg, line->special == 117 ? sfx_bdopn : sfx_doropn);
 	    }
 	    else
@@ -471,7 +471,7 @@ EV_VerticalDoor
                     door->direction = -1;
                 }
                 // [crispy] play sound effect when the door is closed manually
-                if (crispy_soundfix)
+                if (crispy->soundfix)
                 S_StartSound(&door->sector->soundorg, line->special == 117 ? sfx_bdcls : sfx_dorcls);
 	    }
 	    return;

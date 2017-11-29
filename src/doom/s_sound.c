@@ -461,7 +461,7 @@ static int S_AdjustSoundParams(mobj_t *listener, mobj_t *source,
     approx_dist = adx + ady - ((adx < ady ? adx : ady)>>1);
 
     // [crispy] proper sound clipping in non-Doom1 MAP08
-    if ((gamemap != 8 || (crispy_soundfix && gamemode == commercial)) && approx_dist > S_CLIPPING_DIST)
+    if ((gamemap != 8 || (crispy->soundfix && gamemode == commercial)) && approx_dist > S_CLIPPING_DIST)
     {
         return 0;
     }
@@ -492,7 +492,7 @@ static int S_AdjustSoundParams(mobj_t *listener, mobj_t *source,
         *vol = snd_SfxVolume;
     }
     // [crispy] proper sound clipping in non-Doom1 MAP08
-    else if (gamemap == 8 && (gamemode != commercial || !crispy_soundfix))
+    else if (gamemap == 8 && (gamemode != commercial || !crispy->soundfix))
     {
         if (approx_dist > S_CLIPPING_DIST)
         {
@@ -512,7 +512,7 @@ static int S_AdjustSoundParams(mobj_t *listener, mobj_t *source,
     }
 
     // [JN] Zero SFX volume means there must not be *any* sounds at all.
-    return (*vol > 0 && (snd_SfxVolume || !crispy_soundfix));
+    return (*vol > 0 && (snd_SfxVolume || !crispy->soundfix));
 }
 
 // clamp supplied integer to the range 0 <= x <= 255.
@@ -541,7 +541,7 @@ void S_StartSound(void *origin_p, int sfx_id)
     int volume;
 
     // [crispy] play no sounds
-    if (crispy_demowarp)
+    if (crispy->demowarp)
 	return;
 
     origin = (mobj_t *) origin_p;
@@ -776,7 +776,7 @@ void S_ChangeMusic(int musicnum, int looping)
     }
 
     // [crispy] play no music if this is not the right map
-    if (crispy_demowarp && (gamestate != GS_LEVEL || crispy_demowarp != gamemap))
+    if (crispy->demowarp && (gamestate != GS_LEVEL || crispy->demowarp != gamemap))
 	return;
 
     // [crispy] restart current music if IDMUS00 is entered

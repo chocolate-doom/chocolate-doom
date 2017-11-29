@@ -158,14 +158,14 @@ void P_MovePlayer (player_t* player)
 	P_Thrust (player, player->mo->angle, cmd->forwardmove*2048);
     else
     // [crispy] in-air movement is only possible with jumping enabled
-    if (cmd->forwardmove && crispy_singleplayer && crispy_jump)
+    if (cmd->forwardmove && critical->jump)
         P_Thrust (player, player->mo->angle, FRACUNIT >> 8);
     
     if (cmd->sidemove && onground)
 	P_Thrust (player, player->mo->angle-ANG90, cmd->sidemove*2048);
     else
     // [crispy] in-air movement is only possible with jumping enabled
-    if (cmd->sidemove && crispy_singleplayer && crispy_jump)
+    if (cmd->sidemove && critical->jump)
             P_Thrust(player, player->mo->angle, FRACUNIT >> 8);
 
     if ( (cmd->forwardmove || cmd->sidemove) 
@@ -366,7 +366,7 @@ void P_PlayerThink (player_t* player)
         if ((cmd->arti & AFLAG_JUMP) && onground && !player->jumpTics)
         {
             // [crispy] Hexen sets 9; Strife adds 8
-            player->mo->momz = (7 + crispy_jump) * FRACUNIT;
+            player->mo->momz = (7 + crispy->jump) * FRACUNIT;
             player->jumpTics = 18;
         }
     }
@@ -392,7 +392,7 @@ void P_PlayerThink (player_t* player)
 	    newweapon = wp_chainsaw;
 	}
 	
-	if ( (crispy_havessg)
+	if ( (crispy->havessg)
 	    && newweapon == wp_shotgun 
 	    && player->weaponowned[wp_supershotgun]
 	    && player->readyweapon != wp_supershotgun)

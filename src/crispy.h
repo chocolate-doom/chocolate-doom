@@ -1,7 +1,7 @@
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005-2014 Simon Howard
-// Copyright(C) 2014 Fabian Greffrath
+// Copyright(C) 2014-2017 Fabian Greffrath
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -36,41 +36,56 @@
 #define CRISPY_HUD 12
 #define CRISPY_SLOPE(a) ((((a)->lookdir / MLOOKUNIT) << FRACBITS) / 173)
 
-extern boolean crispy_automapoverlay;
-extern boolean crispy_flashinghom;
-extern boolean crispy_fliplevels;
-extern boolean crispy_havee1m10;
-extern boolean crispy_havemap33;
-extern boolean crispy_havessg;
-extern boolean crispy_singleplayer;
-extern boolean crispy_stretchsky;
+typedef struct
+{
+	// [crispy] "crispness" config variables
+	int automapstats;
+	int centerweapon;
+	int coloredblood;
+	int coloredhud;
+	int crosshair;
+	int crosshairtype;
+	int extsaveg;
+	int flipcorpses;
+	int freeaim;
+	int freelook;
+	int jump;
+	int mouselook;
+	int neghealth;
+	int overunder;
+	int pitch;
+	int recoil;
+	int secretmessage;
+	int smoothscaling;
+	int soundfix;
+	int soundfull;
+	int translucency;
+	int uncapped;
 
-extern int crispy_automapstats;
-extern int crispy_centerweapon;
-extern int crispy_coloredblood;
-extern int crispy_coloredhud;
-extern int crispy_crosshair;
-extern int crispy_crosshairtype;
-extern int crispy_extsaveg;
-extern int crispy_flipcorpses;
-extern int crispy_freeaim;
-extern int crispy_freelook;
-extern int crispy_jump;
-extern int crispy_mouselook;
-extern int crispy_neghealth;
-extern int crispy_overunder;
-extern int crispy_pitch;
-extern int crispy_recoil;
-extern int crispy_secretmessage;
-extern int crispy_smoothscaling;
-extern int crispy_soundfix;
-extern int crispy_soundfull;
-extern int crispy_translucency;
-extern int crispy_uncapped;
+	// [crispy] in-game switches and variables
+	int screenshotmsg;
+	int cleanscreenshot;
+	int demowarp;
+	int fps;
 
-extern int crispy_screenshotmsg;
-extern int crispy_cleanscreenshot;
-extern int crispy_demowarp;
+	boolean automapoverlay;
+	boolean flashinghom;
+	boolean fliplevels;
+	boolean havee1m10;
+	boolean havemap33;
+	boolean havessg;
+	boolean singleplayer;
+	boolean stretchsky;
+
+	const char *sdlversion;
+	const char *platform;
+} crispy_t;
+
+extern crispy_t *const crispy;
+extern crispy_t *const critical;
+
+extern void CheckCrispySingleplayerFn (int singleplayer);
+#define CheckCrispySingleplayer {CheckCrispySingleplayerFn(!demorecording && !demoplayback && !netgame);}
 
 enum
 {

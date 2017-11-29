@@ -306,7 +306,7 @@ boolean PIT_CheckThing (mobj_t* thing)
     if (tmthing->flags & MF_SKULLFLY)
     {
 	// [crispy] check if attacking skull flies over player
-	if (crispy_singleplayer && crispy_overunder && thing->player)
+	if (critical->overunder && thing->player)
 	{
 	    if (tmthing->z > thing->z + thing->height)
 	    {
@@ -384,7 +384,7 @@ boolean PIT_CheckThing (mobj_t* thing)
     }
 
     // [crispy] a solid hanging body will allow sufficiently small things underneath it
-    if (crispy_singleplayer && crispy_overunder &&
+    if (critical->overunder &&
         (thing->flags & (MF_SOLID | MF_SPAWNCEILING)) == (MF_SOLID | MF_SPAWNCEILING) &&
         tmthing->z + tmthing->height <= thing->z)
     {
@@ -393,7 +393,7 @@ boolean PIT_CheckThing (mobj_t* thing)
     }
 
     // [crispy] allow players to walk over/under shootable objects
-    if (crispy_singleplayer && crispy_overunder &&
+    if (critical->overunder &&
         tmthing->player && thing->flags & MF_SHOOTABLE)
     {
         if (tmthing->z >= thing->z + thing->height)
@@ -1245,7 +1245,7 @@ P_LineLaser
 
     laserspot->x = laserspot->y = laserspot->z = 0;
 
-    if (crispy_singleplayer && (crispy_freeaim == FREEAIM_DIRECT))
+    if (critical->freeaim == FREEAIM_DIRECT)
     {
 	lslope = slope;
     }
@@ -1266,7 +1266,7 @@ P_LineLaser
 	    an -= 2<<26;
 	    lslope = P_AimLineAttack(t1, an, distance);
 
-	    if (!linetarget && crispy_singleplayer && (crispy_freeaim == FREEAIM_BOTH))
+	    if (!linetarget && critical->freeaim == FREEAIM_BOTH)
 	    {
 		lslope = slope;
 	    }
@@ -1276,7 +1276,7 @@ P_LineLaser
     }
 
     // [crispy] don't aim at Spectres
-    if (linetarget && !(linetarget->flags & MF_SHADOW) && (crispy_freeaim != FREEAIM_DIRECT))
+    if (linetarget && !(linetarget->flags & MF_SHADOW) && (crispy->freeaim != FREEAIM_DIRECT))
 	P_LineAttack(t1, angle, distance, aimslope, INT_MIN);
     else
 	// [crispy] double the auto aim distance
@@ -1515,7 +1515,7 @@ boolean PIT_ChangeSector (mobj_t*	thing)
 	mo->target = thing;
 
 	// [crispy] Spectres bleed spectre blood
-	if (crispy_coloredblood & COLOREDBLOOD_FIX)
+	if (crispy->coloredblood & COLOREDBLOOD_FIX)
 	    mo->flags |= (thing->flags & MF_SHADOW);
 
 	// [crispy] randomly flip blood sprites

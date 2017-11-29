@@ -681,8 +681,6 @@ static void CreateUpscaledTexture(boolean force)
 }
 
 // [crispy]
-int crispy_fps = 0;
-int crispy_smoothscaling = 1;
 //
 // I_FinishUpdate
 //
@@ -765,7 +763,7 @@ void I_FinishUpdate (void)
 		// Update FPS counter every second
 		if (mili >= 1000)
 		{
-			crispy_fps = (fpscount * 1000) / mili;
+			crispy->fps = (fpscount * 1000) / mili;
 			fpscount = 0;
 			lastmili = i;
 		}
@@ -801,7 +799,7 @@ void I_FinishUpdate (void)
 
     SDL_RenderClear(renderer);
 
-    if (crispy_smoothscaling)
+    if (crispy->smoothscaling)
     {
     // Render this intermediate texture into the upscaled texture
     // using "nearest" integer scaling.
@@ -1247,7 +1245,7 @@ void SetVideoMode(void) // [crispy] un-static
     // Turn on vsync if we aren't in a -timedemo
     if (!singletics && mode.refresh_rate > 0)
     {
-      if (crispy_uncapped != UNCAPPED_ON) // [crispy] uncapped vsync
+      if (crispy->uncapped != UNCAPPED_ON) // [crispy] uncapped vsync
       {
         renderer_flags |= SDL_RENDERER_PRESENTVSYNC;
       }
@@ -1257,7 +1255,7 @@ void SetVideoMode(void) // [crispy] un-static
     {
         renderer_flags |= SDL_RENDERER_SOFTWARE;
         renderer_flags &= ~SDL_RENDERER_PRESENTVSYNC;
-        crispy_uncapped = UNCAPPED_OFF;
+        crispy->uncapped = UNCAPPED_OFF;
     }
 
     if (renderer != NULL)

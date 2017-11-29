@@ -186,7 +186,7 @@ boolean P_CheckMeleeRange (mobj_t*	actor)
 	return false;
 							
     // [crispy] height check for melee attacks (from Hexen)
-    if (crispy_singleplayer && crispy_overunder && pl->player)
+    if (critical->overunder && pl->player)
     {
 	// [crispy] Target is higher than the attacker
 	if (pl->z > actor->z + actor->height)
@@ -1541,7 +1541,7 @@ A_PainShootSkull
     }
 		
     // [crispy] Lost Souls bleed Puffs
-    if (crispy_coloredblood & COLOREDBLOOD_FIX)
+    if (crispy->coloredblood & COLOREDBLOOD_FIX)
 	newmobj->flags |= MF_NOBLOOD;
 
     newmobj->target = actor->target;
@@ -1712,7 +1712,7 @@ void A_BossDeath (mobj_t* mo)
     {
 	if (gamemap != 7 &&
 	// [crispy] Master Levels in PC slot 7
-	!(crispy_singleplayer && gamemission == pack_master && (gamemap == 14 || gamemap == 15 || gamemap == 16)))
+	!(crispy->singleplayer && gamemission == pack_master && (gamemap == 14 || gamemap == 15 || gamemap == 16)))
 	    return;
 		
 	if ((mo->type != MT_FATSO)
@@ -1757,7 +1757,7 @@ void A_BossDeath (mobj_t* mo)
     {
 	if (gamemap == 7 ||
 	// [crispy] Master Levels in PC slot 7
-	(crispy_singleplayer && gamemission == pack_master && (gamemap == 14 || gamemap == 15 || gamemap == 16)))
+	(crispy->singleplayer && gamemission == pack_master && (gamemap == 14 || gamemap == 15 || gamemap == 16)))
 	{
 	    if (mo->type == MT_FATSO)
 	    {

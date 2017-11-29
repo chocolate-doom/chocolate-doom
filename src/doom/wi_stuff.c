@@ -841,7 +841,7 @@ void WI_drawShowNextLoc(void)
 	// [crispy] the splat for E1M10 "Sewers" is drawn only once,
 	// i.e. now, when returning from the level
 	// (and this is not going to change)
-	if (crispy_havee1m10 && wbs->epsd == 0 && wbs->last == 9)
+	if (crispy->havee1m10 && wbs->epsd == 0 && wbs->last == 9)
 	    WI_drawOnLnode(9, splat);
 
 	// draw flashing ptr
@@ -849,7 +849,7 @@ void WI_drawShowNextLoc(void)
 	    WI_drawOnLnode(wbs->next, yah); 
     }
 
-    if (crispy_singleplayer && (
+    if (crispy->singleplayer && (
         (gamemission == pack_nerve && wbs->last == 7) ||
         (gamemission == pack_master && wbs->last == 19 && !secretexit) ||
         (gamemission == pack_master && wbs->last == 20)))
@@ -1500,7 +1500,7 @@ static boolean WI_drawParTime (void)
 		}
 
 		// [crispy] PWAD: NRFTL has par times (for singleplayer games)
-		if (gamemission == pack_nerve && crispy_singleplayer)
+		if (gamemission == pack_nerve && crispy->singleplayer)
 		{
 			result = true;
 		}
@@ -1515,7 +1515,7 @@ static boolean WI_drawParTime (void)
 	{
 		// [crispy] IWAD: Episode 4 has no par times
 		// (but we have for singleplayer games)
-		if (wbs->epsd >= 4 && !crispy_singleplayer)
+		if (wbs->epsd >= 4 && !crispy->singleplayer)
 		{
 			result = false;
 		}
@@ -1686,7 +1686,7 @@ static void WI_loadUnloadData(load_callback_t callback)
             callback(name, &lnames[i]);
 	}
 	// [crispy] special-casing for E1M10 "Sewers" support
-	if (crispy_havee1m10)
+	if (crispy->havee1m10)
 	{
 	    DEH_snprintf(name, 9, "SEWERS");
 	    callback(name, &lnames[i]);
@@ -1829,14 +1829,14 @@ void WI_loadData(void)
 {
     if (gamemode == commercial)
     {
-	NUMCMAPS = (crispy_havemap33) ? 33 : 32;
+	NUMCMAPS = (crispy->havemap33) ? 33 : 32;
 	lnames = (patch_t **) Z_Malloc(sizeof(patch_t*) * NUMCMAPS,
 				       PU_STATIC, NULL);
     }
     else
     {
 	// [crispy] support E1M10 "Sewers"
-	int nummaps = crispy_havee1m10 ? NUMMAPS + 1 : NUMMAPS;
+	int nummaps = crispy->havee1m10 ? NUMMAPS + 1 : NUMMAPS;
 	lnames = (patch_t **) Z_Malloc(sizeof(patch_t*) * nummaps,
 				       PU_STATIC, NULL);
     }

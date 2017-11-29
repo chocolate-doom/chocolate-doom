@@ -16,6 +16,7 @@
 
 #include <stdlib.h>
 
+#include "crispy.h"
 #include "m_config.h"
 #include "textscreen.h"
 #include "mode.h"
@@ -26,30 +27,6 @@
 
 int vanilla_savegame_limit = 0;
 int vanilla_demo_limit = 0;
-
-// [crispy]
-int crispy_automapstats = 0;
-int crispy_centerweapon = 0;
-int crispy_coloredblood = 0;
-int crispy_coloredhud = 0;
-int crispy_crosshair = 0;
-int crispy_crosshairtype = 0;
-int crispy_extsaveg = 1;
-int crispy_flipcorpses = 0;
-int crispy_freeaim = 0;
-int crispy_freelook = 0;
-int crispy_jump = 0;
-int crispy_mouselook = 0;
-int crispy_neghealth = 0;
-int crispy_overunder = 0;
-int crispy_pitch = 0;
-int crispy_recoil = 0;
-int crispy_secretmessage = 0;
-int crispy_smoothscaling = 1;
-int crispy_soundfix = 1;
-int crispy_soundfull = 0;
-int crispy_translucency = 0;
-int crispy_uncapped = 0;
 
 void CompatibilitySettings(void)
 {
@@ -80,27 +57,27 @@ void BindCompatibilityVariables(void)
     // [crispy]
     if (gamemission == doom)
     {
-        M_BindIntVariable("crispy_automapstats",    &crispy_automapstats);
-        M_BindIntVariable("crispy_centerweapon",    &crispy_centerweapon);
-        M_BindIntVariable("crispy_coloredblood",    &crispy_coloredblood);
-        M_BindIntVariable("crispy_coloredhud",      &crispy_coloredhud);
-        M_BindIntVariable("crispy_crosshair",       &crispy_crosshair);
-        M_BindIntVariable("crispy_crosshairtype",   &crispy_crosshairtype);
-        M_BindIntVariable("crispy_extsaveg",        &crispy_extsaveg);
-        M_BindIntVariable("crispy_flipcorpses",     &crispy_flipcorpses);
-        M_BindIntVariable("crispy_freeaim",         &crispy_freeaim);
-        M_BindIntVariable("crispy_freelook",        &crispy_freelook);
-        M_BindIntVariable("crispy_jump",            &crispy_jump);
-        M_BindIntVariable("crispy_mouselook",       &crispy_mouselook);
-        M_BindIntVariable("crispy_neghealth",       &crispy_neghealth);
-        M_BindIntVariable("crispy_overunder",       &crispy_overunder);
-        M_BindIntVariable("crispy_pitch",           &crispy_pitch);
-        M_BindIntVariable("crispy_recoil",          &crispy_recoil);
-        M_BindIntVariable("crispy_secretmessage",   &crispy_secretmessage);
-        M_BindIntVariable("crispy_soundfix",        &crispy_soundfix);
-        M_BindIntVariable("crispy_soundfull",       &crispy_soundfull);
-        M_BindIntVariable("crispy_translucency",    &crispy_translucency);
-        M_BindIntVariable("crispy_uncapped",        &crispy_uncapped);
+        M_BindIntVariable("crispy_automapstats",    &crispy->automapstats);
+        M_BindIntVariable("crispy_centerweapon",    &crispy->centerweapon);
+        M_BindIntVariable("crispy_coloredblood",    &crispy->coloredblood);
+        M_BindIntVariable("crispy_coloredhud",      &crispy->coloredhud);
+        M_BindIntVariable("crispy_crosshair",       &crispy->crosshair);
+        M_BindIntVariable("crispy_crosshairtype",   &crispy->crosshairtype);
+        M_BindIntVariable("crispy_extsaveg",        &crispy->extsaveg);
+        M_BindIntVariable("crispy_flipcorpses",     &crispy->flipcorpses);
+        M_BindIntVariable("crispy_freeaim",         &crispy->freeaim);
+        M_BindIntVariable("crispy_freelook",        &crispy->freelook);
+        M_BindIntVariable("crispy_jump",            &crispy->jump);
+        M_BindIntVariable("crispy_mouselook",       &crispy->mouselook);
+        M_BindIntVariable("crispy_neghealth",       &crispy->neghealth);
+        M_BindIntVariable("crispy_overunder",       &crispy->overunder);
+        M_BindIntVariable("crispy_pitch",           &crispy->pitch);
+        M_BindIntVariable("crispy_recoil",          &crispy->recoil);
+        M_BindIntVariable("crispy_secretmessage",   &crispy->secretmessage);
+        M_BindIntVariable("crispy_soundfix",        &crispy->soundfix);
+        M_BindIntVariable("crispy_soundfull",       &crispy->soundfull);
+        M_BindIntVariable("crispy_translucency",    &crispy->translucency);
+        M_BindIntVariable("crispy_uncapped",        &crispy->uncapped);
     }
     else
     {
