@@ -88,6 +88,22 @@ void P_CalcHeight (player_t* player)
     if (player->bob>MAXBOB)
 	player->bob = MAXBOB;
 
+    // [crispy] squat down weapon sprite a bit after hitting the ground
+    if (crispy->weaponsquad && player->psp_dy_max)
+    {
+	player->psp_dy -= FRACUNIT;
+
+	if (player->psp_dy < player->psp_dy_max)
+	{
+		player->psp_dy = -player->psp_dy;
+	}
+
+	if (player->psp_dy == 0)
+	{
+		player->psp_dy_max = 0;
+	}
+    }
+
     if ((player->cheats & CF_NOMOMENTUM) || !onground)
     {
 	player->viewz = player->mo->z + VIEWHEIGHT;
@@ -126,21 +142,6 @@ void P_CalcHeight (player_t* player)
 	    player->deltaviewheight += FRACUNIT/4;
 	    if (!player->deltaviewheight)
 		player->deltaviewheight = 1;
-	}
-	// [crispy] squat down weapon sprite a bit after hitting the ground
-	if (crispy->weaponsquad && player->psp_dy_max)
-	{
-		player->psp_dy -= FRACUNIT;
-
-		if (player->psp_dy < player->psp_dy_max)
-		{
-			player->psp_dy = -player->psp_dy;
-		}
-
-		if (player->psp_dy == 0)
-		{
-			player->psp_dy_max = 0;
-		}
 	}
     }
     player->viewz = player->mo->z + player->viewheight + bob;
