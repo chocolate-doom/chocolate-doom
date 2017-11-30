@@ -388,7 +388,7 @@ void P_ZMovement (mobj_t* mo)
 		if (!crispy->mouselook)
 		    mo->player->centering = true;
 		// [crispy] dead men don't say "oof"
-		if (mo->health > 0)
+		if (mo->health > 0 || !crispy->soundfix)
 		{
 		S_StartSound (mo, sfx_oof);
 		}
