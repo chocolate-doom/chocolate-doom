@@ -30,7 +30,6 @@ GENERATED_MAN_PAGES =               \
            @PROGRAM_PREFIX@strife.6       \
            strife.cfg.5             \
            @PROGRAM_PREFIX@strife.cfg.5   \
-           @PROGRAM_PREFIX@setup.6  \
            @PROGRAM_PREFIX@server.6
 
 SETUP_MAN_PAGES =                          \
@@ -52,9 +51,6 @@ CLEANFILES = $(GENERATED_MAN_PAGES) $(SETUP_MAN_PAGES) \
              $(hexendocs_DATA) $(strifedocs_DATA)
 DOCGEN = $(srcdir)/docgen
 DOCGEN_COMMON_ARGS = -n "@PROGRAM_SPREFIX@" -s "@PACKAGE_NAME@" -z "@PACKAGE_SHORTNAME@"
-
-$(SETUP_MAN_PAGES): @PROGRAM_PREFIX@setup.6
-	cp $(srcdir)/@PROGRAM_PREFIX@setup.6 $@
 
 @PROGRAM_PREFIX@doom.6: $(top_srcdir)/src $(MANPAGE_GEN_FILES)
 	$(DOCGEN) $(DOCGEN_COMMON_ARGS) \
@@ -145,9 +141,10 @@ INSTALL.hexen: INSTALL.template
                   -g server -m $(srcdir)/server.template \
                   $(top_srcdir)/src > $@
 
-@PROGRAM_PREFIX@setup.6: $(top_srcdir)/src $(MANPAGE_GEN_FILES)
+$(SETUP_MAN_PAGES): $(top_srcdir)/src $(MANPAGE_GEN_FILES)
 	$(DOCGEN) $(DOCGEN_COMMON_ARGS) \
-                  -g setup -m $(srcdir)/setup.template \
+                  -g $(patsubst @PROGRAM_PREFIX@%-setup.6,%,$@) \
+                  -m $(srcdir)/setup.template \
                   $(top_srcdir)/src > $@
 
 strife.cfg.5: $(top_srcdir)/src default.cfg.template

@@ -1,33 +1,33 @@
-.TH @PROGRAM_SPREFIX@\-setup 6
+.TH @PROGRAM_SPREFIX@\-@GAME@-setup 6
 .SH NAME
-@PROGRAM_SPREFIX@\-setup \- configuration tool for @PROGRAM_SPREFIX@\-doom
+@PROGRAM_SPREFIX@\-@GAME@-setup \- configuration tool for @PROGRAM_SPREFIX@\-@GAME@
 .SH SYNOPSIS
-.B @PROGRAM_SPREFIX@\-setup
+.B @PROGRAM_SPREFIX@\-@GAME@-setup
 [OPTIONS]
 .SH DESCRIPTION
 .PP
-@PACKAGE_NAME@ is a modern Doom engine designed to behave
-as similar to the original Doom game as is possible.
+@PACKAGE_SHORTNAME@ @GAME_UPPER@ is a modern @GAME_UPPER@ engine designed to behave
+as similar to the original @GAME_UPPER@ game as is possible.
 .PP
-.B @PROGRAM_SPREFIX@\-setup
-is a tool for configuring @PACKAGE_NAME@. It provides a menu\-based
+.B @PROGRAM_SPREFIX@\-@GAME@-setup
+is a tool for configuring @PACKAGE_SHORTNAME@ @GAME_UPPER@. It provides a menu\-based
 interface for the display, joystick, keyboard, mouse, sound and
 compatibility settings.
 .PP
-.B @PROGRAM_SPREFIX@\-setup
+.B @PROGRAM_SPREFIX@\-@GAME@-setup
 can also be used to start and join network games.
 .PP
 .SH OPTIONS
 .TP
 \fB-config <file>\fR
-Load configuration from the specified file, instead of default.cfg. 
+Load configuration from the specified file, instead of @CFGFILE@.
 .TP
 \fB-extraconfig <file>\fR
-Load extra configuration from the specified file, instead of @PROGRAM_SPREFIX@\-doom.cfg. 
+Load extra configuration from the specified file, instead of @PROGRAM_SPREFIX@\-@GAME@.cfg. 
 .SH SEE ALSO
-\fB@PROGRAM_SPREFIX@\-doom\fR(6),
+\fB@PROGRAM_SPREFIX@\-@GAME@\fR(6),
 \fBdefault.cfg\fR(5),
-\fB@PROGRAM_SPREFIX@\-doom.cfg\fR(5)
+\fB@PROGRAM_SPREFIX@\-@GAME@.cfg\fR(5)
 .SH AUTHOR
 Chocolate Doom is written and maintained by Simon Howard.
 .PP
