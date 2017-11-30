@@ -30,6 +30,7 @@
 				<Option projectLinkerOptionsRelation="2" />
 				<Compiler>
 					<Add option="-O2" />
+					<Add option="-Wall" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -193,6 +194,9 @@
 		<Unit filename="../src/heretic/p_pspr.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="../src/heretic/p_saveg.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="../src/heretic/p_setup.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -256,6 +260,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../src/i_endoom.h" />
+		<Unit filename="../src/i_input.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../src/i_input.h" />
 		<Unit filename="../src/i_joystick.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -263,6 +271,10 @@
 		<Unit filename="../src/i_main.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="../src/i_midipipe.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../src/i_midipipe.h" />
 		<Unit filename="../src/i_oplmusic.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -392,6 +404,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../src/tables.h" />
+		<Unit filename="../src/v_diskicon.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../src/v_diskicon.h" />
 		<Unit filename="../src/v_patch.h" />
 		<Unit filename="../src/v_video.c">
 			<Option compilerVar="CC" />
