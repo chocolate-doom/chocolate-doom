@@ -1945,6 +1945,14 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_INT(crispy_neghealth),
+
+    //!
+    // @game doom
+    //
+    // Squad down weapon on impact.
+    //
+
+    CONFIG_VARIABLE_INT(crispy_weaponsquad),
 };
 
 static default_collection_t extra_defaults =

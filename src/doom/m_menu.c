@@ -255,6 +255,7 @@ static void M_CrispyToggleJumping(int choice);
 static void M_CrispyToggleNeghealth(int choice);
 static void M_CrispyToggleOverunder(int choice);
 static void M_CrispyTogglePitch(int choice);
+static void M_CrispyToggleWeaponSquad(int choice);
 static void M_CrispyToggleRecoil(int choice);
 static void M_CrispyToggleSecretmessage(int choice);
 static void M_CrispyToggleSoundfixes(int choice);
@@ -526,6 +527,7 @@ enum
     crispness_neghealth,
     crispness_centerweapon,
     crispness_pitch,
+    crispness_weaponsquad,
     crispness_secretmessage,
     crispness_automapstats,
     crispness_extsaveg,
@@ -544,6 +546,7 @@ static menuitem_t Crispness2Menu[]=
     {1,"",	M_CrispyToggleNeghealth,'n'},
     {1,"",	M_CrispyToggleCenterweapon,'c'},
     {1,"",	M_CrispyTogglePitch,'w'},
+    {1,"",	M_CrispyToggleWeaponSquad,'w'},
     {1,"",	M_CrispyToggleSecretmessage,'s'},
     {1,"",	M_CrispyToggleAutomapstats,'s'},
     {1,"",	M_CrispyToggleExtsaveg,'e'},
@@ -1510,6 +1513,7 @@ static void M_DrawCrispness2(void)
     M_DrawCrispnessMultiItem(crispness_neghealth, "Negative Player Health", multiitem_neghealth, crispy->neghealth, true);
     M_DrawCrispnessMultiItem(crispness_centerweapon, "Weapon Attack Alignment", multiitem_centerweapon, crispy->centerweapon, true);
     M_DrawCrispnessItem(crispness_pitch, "Weapon Recoil Pitch", crispy->pitch, true);
+    M_DrawCrispnessItem(crispness_weaponsquad, "Squad down weapon on impact", crispy->weaponsquad, true);
     M_DrawCrispnessItem(crispness_secretmessage, "Show Revealed Secrets", crispy->secretmessage, true);
     M_DrawCrispnessItem(crispness_automapstats, "Show Level Stats in Automap", crispy->automapstats, true);
     M_DrawCrispnessItem(crispness_extsaveg, "Extended Savegames", crispy->extsaveg, true);
@@ -1929,6 +1933,12 @@ static void M_CrispyTogglePitch(int choice)
     choice = 0;
     crispy->pitch = !crispy->pitch;
     R_InitSkyMap();
+}
+
+static void M_CrispyToggleWeaponSquad(int choice)
+{
+    choice = 0;
+    crispy->weaponsquad = !crispy->weaponsquad;
 }
 
 static void M_CrispyToggleRecoil(int choice)

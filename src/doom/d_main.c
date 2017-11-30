@@ -463,6 +463,7 @@ void D_BindVariables(void)
     M_BindIntVariable("crispy_soundfull",       &crispy->soundfull);
     M_BindIntVariable("crispy_translucency",    &crispy->translucency);
     M_BindIntVariable("crispy_uncapped",        &crispy->uncapped);
+    M_BindIntVariable("crispy_weaponsquad",     &crispy->weaponsquad);
 }
 
 //
