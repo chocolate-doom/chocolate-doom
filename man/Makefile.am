@@ -77,8 +77,10 @@ CMDLINE.doom : CMDLINE.template $(top_srcdir)/src $(top_srcdir)/src/doom
                   $(top_srcdir)/src/ $(top_srcdir)/src/doom/ > $@
 
 INSTALL.doom: INSTALL.template
-	$(srcdir)/simplecpp -DDOOM -DPRECOMPILED < $(srcdir)/INSTALL.template > $@
-
+	$(srcdir)/simplecpp -DDOOM \
+            -D LONG_GAME_NAME="@PACKAGE_SHORTNAME@ Doom" \
+            -D LONG_EXE_NAME="@PROGRAM_PREFIX@doom" \
+            -DPRECOMPILED < $(srcdir)/INSTALL.template > $@
 
 @PROGRAM_PREFIX@heretic.6: $(top_srcdir)/src $(MANPAGE_GEN_FILES) heretic.template
 	$(DOCGEN) $(DOCGEN_COMMON_ARGS) \
@@ -101,7 +103,10 @@ CMDLINE.heretic : CMDLINE.template $(top_srcdir)/src $(top_srcdir)/src/heretic
                   $(top_srcdir)/src/ $(top_srcdir)/src/heretic/ > $@
 
 INSTALL.heretic: INSTALL.template
-	$(srcdir)/simplecpp -DHERETIC -DPRECOMPILED < $(srcdir)/INSTALL.template > $@
+	$(srcdir)/simplecpp -DHERETIC \
+            -D LONG_GAME_NAME="@PACKAGE_SHORTNAME@ Heretic" \
+            -D LONG_EXE_NAME="@PROGRAM_PREFIX@heretic" \
+            -DPRECOMPILED < $(srcdir)/INSTALL.template > $@
 
 
 @PROGRAM_PREFIX@hexen.6: $(top_srcdir)/src $(MANPAGE_GEN_FILES)
@@ -125,8 +130,10 @@ CMDLINE.hexen : CMDLINE.template $(top_srcdir)/src $(top_srcdir)/src/hexen
                   $(top_srcdir)/src/ $(top_srcdir)/src/hexen/ > $@
 
 INSTALL.hexen: INSTALL.template
-	$(srcdir)/simplecpp -DHEXEN -DPRECOMPILED < $(srcdir)/INSTALL.template > $@
-
+	$(srcdir)/simplecpp -DHEXEN \
+            -D LONG_GAME_NAME="@PACKAGE_SHORTNAME@ Hexen" \
+            -D LONG_EXE_NAME="@PROGRAM_PREFIX@hexen" \
+            -DPRECOMPILED < $(srcdir)/INSTALL.template > $@
 
 @PROGRAM_PREFIX@strife.6: $(top_srcdir)/src $(MANPAGE_GEN_FILES)
 	$(DOCGEN) $(DOCGEN_COMMON_ARGS) \
@@ -159,7 +166,10 @@ CMDLINE.strife : CMDLINE.template $(top_srcdir)/src $(top_srcdir)/src/strife
                   $(top_srcdir)/src/ $(top_srcdir)/src/strife/ > $@
 
 INSTALL.strife: INSTALL.template
-	$(srcdir)/simplecpp -DSTRIFE -DPRECOMPILED < $(srcdir)/INSTALL.template > $@
+	$(srcdir)/simplecpp -DSTRIFE  \
+            -DLONG_EXE_NAME="@PROGRAM_PREFIX@strife" \
+            -DLONG_GAME_NAME="@PACKAGE_SHORTNAME@ Strife" \
+            -DPRECOMPILED < $(srcdir)/INSTALL.template > $@
 
 
 INSTALL: INSTALL.template
