@@ -430,7 +430,7 @@ def process_files(path):
 
         process_file(path)
 
-def print_template(template_file, program_prefix, package_name, package_shortname, content):
+def print_template(template_file, substs, content):
     f = io.open(template_file, encoding='UTF-8')
 
     try:
@@ -440,18 +440,16 @@ def print_template(template_file, program_prefix, package_name, package_shortnam
                 filename = match.group(1)
                 filename = os.path.join(os.path.dirname(template_file),
                                         filename)
-                print_template(filename, program_prefix, package_name, package_shortname, content)
+                print_template(filename, substs, content)
             else:
                 line = line.replace("@content", content)
-                line = line.replace("@PROGRAM_SPREFIX@", program_prefix)
-                line = line.replace("@PACKAGE_NAME@", package_name)
-                if package_shortname:
-                    line = line.replace("@PACKAGE_SHORTNAME@", package_shortname)
+                for k,v in substs.items():
+                    line = line.replace(k,v)
                 stdout(line.rstrip().encode('UTF-8') + b'\n')
     finally:
         f.close()
 
-def manpage_output(targets, program_prefix, package_name, package_shortname, template_file):
+def manpage_output(targets, substs, template_file):
 
     content = ""
 
@@ -460,7 +458,7 @@ def manpage_output(targets, program_prefix, package_name, package_shortname, tem
 
     content = content.replace("-", "\\-")
 
-    print_template(template_file, program_prefix, package_name, package_shortname, content)
+    print_template(template_file, substs, content)
 
 def wiki_output(targets, template):
     read_wikipages()
@@ -468,23 +466,23 @@ def wiki_output(targets, template):
     for t in targets:
         stdout(t.wiki_output().encode('UTF-8') + b'\n')
 
-def plaintext_output(targets, program_prefix, package_name, package_shortname, template_file):
+def plaintext_output(targets, substs, template_file):
 
     content = ""
 
     for t in targets:
         content += t.plaintext_output() + "\n"
 
-    print_template(template_file, program_prefix, package_name, package_shortname, content)
+    print_template(template_file, substs, content)
 
-def completion_output(targets, program_prefix, package_name, package_shortname, template_file):
+def completion_output(targets, substs, template_file):
 
     content = ""
 
     for t in targets:
         content += t.completion_output() + "\n"
 
-    print_template(template_file, program_prefix, package_name, package_shortname, content)
+    print_template(template_file, substs, content)
 
 def usage():
     print("Usage: %s [-V] [-c tag] [-g game] -n program_name -s package_name [ -z shortname ] ( -m | -w | -p ) <dir>..." \
@@ -510,17 +508,15 @@ output_function = None
 template = None
 doc_config_file = None
 match_game = None
-program_prefix = None
-package_name = None
-package_shortname = None
+substs = {}
 
 for opt in opts:
     if opt[0] == "-n":
-        program_prefix = opt[1]
+        substs["@PROGRAM_SPREFIX@"] = opt[1]
     if opt[0] == "-s":
-        package_name = opt[1]
+        substs["@PACKAGE_NAME@"] = opt[1]
     if opt[0] == "-z":
-        package_shortname = opt[1]
+        substs["@PACKAGE_SHORTNAME@"] = opt[1]
     if opt[0] == "-m":
         output_function = manpage_output
         template = opt[1]
@@ -538,6 +534,12 @@ for opt in opts:
         doc_config_file = opt[1]
     elif opt[0] == "-g":
         match_game = opt[1]
+        substs["@GAME@"] = opt[1]
+        substs["@GAME_UPPER@"] = opt[1].title()
+        if "doom" == opt[1]:
+            substs["@CFGFILE@"] = "default.cfg"
+        else:
+            substs["@CFGFILE@"] = opt[1] + ".cfg"
 
 if output_function == None or len(args) < 1:
     usage()
@@ -562,5 +564,5 @@ else:
 
     # Generate the output
 
-    output_function(documentation_targets, program_prefix, package_name, package_shortname, template)
+    output_function(documentation_targets, substs, template)
 
