@@ -86,6 +86,11 @@ void P_LoadVertexes(int lump)
     {
         li->x = SHORT(ml->x) << FRACBITS;
         li->y = SHORT(ml->y) << FRACBITS;
+
+        // [crispy] initialize pseudovertexes with actual vertex coordinates
+        li->px = li->x;
+        li->py = li->y;
+        li->moved = false;
     }
 
     W_ReleaseLumpNum(lump);
@@ -530,6 +535,49 @@ void P_GroupLines(void)
 
 //=============================================================================
 
+// [crispy] remove slime trails
+// mostly taken from Lee Killough's implementation in mbfsrc/P_SETUP.C:849-924,
+// with the exception that not the actual vertex coordinates are modified,
+// but pseudovertexes which are dummies that are *only* used in rendering,
+// i.e. r_bsp.c:R_AddLine()
+
+static void P_RemoveSlimeTrails(void)
+{
+    int i;
+
+    for (i = 0; i < numsegs; i++)
+    {
+        const line_t *l = segs[i].linedef;
+        vertex_t *v = segs[i].v1;
+
+        // [crispy] ignore exactly vertical or horizontal linedefs
+        if (l->dx && l->dy)
+        {
+            do
+            {
+                if (!v->moved) // [crispy] vertex wasn't already moved
+                {
+                    v->moved = true; // [crispy] ignore endpoints of linedefs
+                    if (v != l->v1 && v != l->v2)
+                    {
+                        // [crispy] move the vertex towards the linedef
+                        // by projecting it using the law of cosines
+                        int64_t dx2 = (l->dx >> FRACBITS) * (l->dx >> FRACBITS);
+                        int64_t dy2 = (l->dy >> FRACBITS) * (l->dy >> FRACBITS);
+                        int64_t dxy = (l->dx >> FRACBITS) * (l->dy >> FRACBITS);
+                        int64_t s = dx2 + dy2;
+                        int x0 = v->x, y0 = v->y, x1 = l->v1->x, y1 = l->v1->y;
+
+                        // [crispy] MBF actually overrides v->x and v->y here
+                        v->px = (fixed_t)((dx2 * x0 + dy2 * x1 + dxy * (y0 - y1)) / s);
+                        v->py = (fixed_t)((dy2 * y0 + dx2 * y1 + dxy * (x0 - x1)) / s);
+                    }
+                }
+            // [crispy] if v doesn't point to the second vertex of the seg already, point it there
+            } while ((v != segs[i].v2) && (v = segs[i].v2));
+        }
+    }
+}
 
 /*
 =================
@@ -586,6 +634,9 @@ void P_SetupLevel(int episode, int map, int playermask, skill_t skill)
 
     rejectmatrix = W_CacheLumpNum(lumpnum + ML_REJECT, PU_LEVEL);
     P_GroupLines();
+
+    // [crispy] remove slime trails
+    P_RemoveSlimeTrails();
 
     bodyqueslot = 0;
     deathmatch_p = deathmatchstarts;
