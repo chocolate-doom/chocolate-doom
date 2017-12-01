@@ -157,12 +157,12 @@ typedef struct
     int lightlevel;
     int special;
     int minx, maxx;
-    unsigned short pad1;                  // leave pads for [minx-1]/[maxx+1]
-    unsigned short top[SCREENWIDTH];
-    unsigned short pad2;
-    unsigned short pad3;
-    unsigned short bottom[SCREENWIDTH];
-    unsigned short pad4;
+    unsigned int pad1;                    // [crispy] hires / 32-bit integer math
+    unsigned int top[SCREENWIDTH];        // [crispy] hires / 32-bit integer math
+    unsigned int pad2;                    // [crispy] hires / 32-bit integer math
+    unsigned int pad3;                    // [crispy] hires / 32-bit integer math
+    unsigned int bottom[SCREENWIDTH];     // [crispy] hires / 32-bit integer math
+    unsigned int pad4;                    // [crispy] hires / 32-bit integer math
 } visplane_t;
 
 typedef struct drawseg_s
@@ -174,9 +174,9 @@ typedef struct drawseg_s
     fixed_t bsilheight;         // don't clip sprites above this
     fixed_t tsilheight;         // don't clip sprites below this
 // pointers to lists for sprite clipping
-    short *sprtopclip;          // adjusted so [x1] is first value
-    short *sprbottomclip;       // adjusted so [x1] is first value
-    short *maskedtexturecol;    // adjusted so [x1] is first value
+    int *sprtopclip;            // [crispy] 32-bit integer math
+    int *sprbottomclip;         // [crispy] 32-bit integer math
+    int *maskedtexturecol;      // [crispy] 32-bit integer math
 } drawseg_t;
 
 #define	SIL_NONE	0
@@ -353,10 +353,10 @@ extern planefunction_t floorfunc, ceilingfunc;
 
 extern int skyflatnum;
 
-extern short openings[MAXOPENINGS], *lastopening;
+extern int *lastopening;    // [crispy] 32-bit integer math
 
-extern short floorclip[SCREENWIDTH];
-extern short ceilingclip[SCREENWIDTH];
+extern int floorclip[SCREENWIDTH];   // [crispy] 32-bit integer math
+extern int ceilingclip[SCREENWIDTH]; // [crispy] 32-bit integer math
 
 extern fixed_t yslope[SCREENHEIGHT];
 extern fixed_t distscale[SCREENWIDTH];
@@ -364,7 +364,7 @@ extern fixed_t distscale[SCREENWIDTH];
 void R_InitPlanes(void);
 void R_ClearPlanes(void);
 void R_MapPlane(int y, int x1, int x2);
-void R_MakeSpans(int x, int t1, int b1, int t2, int b2);
+void R_MakeSpans(int x, unsigned int t1, unsigned int b1, unsigned int t2, unsigned int b2); // [crispy] 32-bit integer math
 void R_DrawPlanes(void);
 
 visplane_t *R_FindPlane(fixed_t height, int picnum, int lightlevel,
@@ -407,12 +407,12 @@ extern vissprite_t *vissprites, *vissprite_p;
 extern vissprite_t vsprsortedhead;
 
 // constant arrays used for psprite clipping and initializing clipping
-extern short negonearray[SCREENWIDTH];
-extern short screenheightarray[SCREENWIDTH];
+extern int negonearray[SCREENWIDTH];       // [crispy] 32-bit integer math
+extern int screenheightarray[SCREENWIDTH]; // [crispy] 32-bit integer math
 
 // vars for R_DrawMaskedColumn
-extern short *mfloorclip;
-extern short *mceilingclip;
+extern int *mfloorclip;   // [crispy] 32-bit integer math
+extern int *mceilingclip; // [crispy] 32-bit integer math
 extern fixed_t spryscale;
 extern fixed_t sprtopscreen;
 extern fixed_t sprbotscreen;
