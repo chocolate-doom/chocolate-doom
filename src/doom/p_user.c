@@ -89,7 +89,7 @@ void P_CalcHeight (player_t* player)
 	player->bob = MAXBOB;
 
     // [crispy] squat down weapon sprite a bit after hitting the ground
-    if (crispy->weaponsquad && player->psp_dy_max)
+    if (crispy->weaponsquat && player->psp_dy_max)
     {
 	player->psp_dy -= FRACUNIT;
 

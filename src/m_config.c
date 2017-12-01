@@ -1949,10 +1949,10 @@ static default_t extra_defaults_list[] =
     //!
     // @game doom
     //
-    // Squad down weapon on impact.
+    // Squat down weapon on impact.
     //
 
-    CONFIG_VARIABLE_INT(crispy_weaponsquad),
+    CONFIG_VARIABLE_INT(crispy_weaponsquat),
 };
 
 static default_collection_t extra_defaults =

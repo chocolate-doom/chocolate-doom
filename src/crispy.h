@@ -61,7 +61,7 @@ typedef struct
 	int soundfull;
 	int translucency;
 	int uncapped;
-	int weaponsquad;
+	int weaponsquat;
 
 	// [crispy] in-game switches and variables
 	int screenshotmsg;
