@@ -9,13 +9,13 @@ FILETYPE 1
  {
   BLOCK "040904E4"
   {
-   VALUE "FileVersion", "5.0-beta1"
+   VALUE "FileVersion", "5.0"
    VALUE "FileDescription", "Crispy Doom Setup"
    VALUE "InternalName", "crispy-setup"
    VALUE "CompanyName", "Crispy Doom"
    VALUE "LegalCopyright", "GNU General Public License"
    VALUE "ProductName", "Crispy Doom Setup"
-   VALUE "ProductVersion", "5.0-beta1"
+   VALUE "ProductVersion", "5.0"
   }
  }
  BLOCK "VarFileInfo"
