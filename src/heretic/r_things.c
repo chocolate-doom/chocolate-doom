@@ -45,8 +45,8 @@ fixed_t pspritescale, pspriteiscale;
 lighttable_t **spritelights;
 
 // constant arrays used for psprite clipping and initializing clipping
-short negonearray[SCREENWIDTH];
-short screenheightarray[SCREENWIDTH];
+int negonearray[SCREENWIDTH];       // [crispy] 32-bit integer math
+int screenheightarray[SCREENWIDTH]; // [crispy] 32-bit integer math
 
 /*
 ===============================================================================
@@ -335,8 +335,8 @@ vissprite_t *R_NewVisSprite(void)
 ================
 */
 
-short *mfloorclip;
-short *mceilingclip;
+int *mfloorclip;   // [crispy] 32-bit integer math
+int *mceilingclip; // [crispy] 32-bit integer math
 fixed_t spryscale;
 fixed_t sprtopscreen;
 fixed_t sprbotscreen;
@@ -898,7 +898,7 @@ void R_SortVisSprites(void)
 void R_DrawSprite(vissprite_t * spr)
 {
     drawseg_t *ds;
-    short clipbot[SCREENWIDTH], cliptop[SCREENWIDTH];
+    int clipbot[SCREENWIDTH], cliptop[SCREENWIDTH]; // [crispy] 32-bit integer math
     int x, r1, r2;
     fixed_t scale, lowscale;
     int silhouette;
