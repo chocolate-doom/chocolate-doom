@@ -123,6 +123,7 @@ static boolean RegisterSong(const char *filename)
 
     // Remove the temporary MIDI file
     remove(filename);
+    free(filename);
 
     if (music == NULL)
     {
