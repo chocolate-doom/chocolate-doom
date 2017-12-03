@@ -1251,16 +1251,16 @@ static void *I_SDL_RegisterSong(void *data, int len)
             // Failed to load
             fprintf(stderr, "Error loading midi: %s\n", Mix_GetError());
         }
-    }
 
-    // Remove the temporary MIDI file; however, when using an external
-    // MIDI program we can't delete the file. Otherwise, the program
-    // won't find the file to play. This means we leave a mess on
-    // disk :(
+        // Remove the temporary MIDI file; however, when using an external
+        // MIDI program we can't delete the file. Otherwise, the program
+        // won't find the file to play. This means we leave a mess on
+        // disk :(
 
-    if (strlen(snd_musiccmd) == 0)
-    {
-        remove(filename);
+        if (strlen(snd_musiccmd) == 0)
+        {
+            remove(filename);
+        }
     }
 
     free(filename);

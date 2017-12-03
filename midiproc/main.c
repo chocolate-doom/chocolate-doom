@@ -121,6 +121,9 @@ static boolean RegisterSong(const char *filename)
     UnregisterSong();
     music = Mix_LoadMUS(filename);
 
+    // Remove the temporary MIDI file
+    remove(filename);
+
     if (music == NULL)
     {
         return false;
