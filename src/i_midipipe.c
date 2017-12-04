@@ -58,7 +58,7 @@ boolean midi_server_registered = false;
 // Data
 //
 
-#define MIDIPIPE_MAX_WAIT 5000 // Max amount of ms to wait for expected data.
+#define MIDIPIPE_MAX_WAIT 500*24 // Max amount of ms to wait for expected data.
 
 static HANDLE  midi_process_in_reader;  // Input stream for midi process.
 static HANDLE  midi_process_in_writer;
@@ -236,6 +236,7 @@ boolean I_MidiPipe_RegisterSong(char *filename)
     NET_WriteString(packet, filename);
     ok = WritePipe(packet);
     NET_FreePacket(packet);
+    free(filename);
 
     midi_server_registered = false;
 
