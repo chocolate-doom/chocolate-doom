@@ -1261,9 +1261,9 @@ static void *I_SDL_RegisterSong(void *data, int len)
         {
             remove(filename);
         }
-
-        free(filename);
     }
+
+    free(filename);
 
     return music;
 }

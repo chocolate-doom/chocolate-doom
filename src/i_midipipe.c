@@ -236,7 +236,6 @@ boolean I_MidiPipe_RegisterSong(char *filename)
     NET_WriteString(packet, filename);
     ok = WritePipe(packet);
     NET_FreePacket(packet);
-    free(filename);
 
     midi_server_registered = false;
 
@@ -328,13 +327,24 @@ void I_MidiPipe_StopSong()
     ok = WritePipe(packet);
     NET_FreePacket(packet);
 
-    midi_server_registered = false;
-
     if (!ok)
     {
         DEBUGOUT("I_MidiPipe_StopSong failed");
         return;
     }
+
+    packet = NET_NewPacket(2);
+    NET_WriteInt16(packet, MIDIPIPE_PACKET_TYPE_STOP_SONG_ACK);
+    ok = ExpectPipe(packet);
+    NET_FreePacket(packet);
+
+    if (!ok)
+    {
+        DEBUGOUT("I_MidiPipe_StopSong ack failed");
+        return;
+    }
+
+    midi_server_registered = false;
 
     DEBUGOUT("I_MidiPipe_StopSong succeeded");
 }
