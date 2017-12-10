@@ -156,7 +156,6 @@ static void PlaySong(int loops)
 static void StopSong()
 {
     Mix_HaltMusic();
-    UnregisterSong();
 }
 
 //=============================================================================
@@ -222,19 +221,8 @@ boolean MidiPipe_PlaySong(buffer_reader_t *reader)
 
 boolean MidiPipe_StopSong()
 {
-    CHAR buffer[2];
-    DWORD bytes_written;
-
     StopSong();
-
-    if (!WriteInt16(buffer, sizeof(buffer),
-                    MIDIPIPE_PACKET_TYPE_STOP_SONG_ACK))
-    {
-        return false;
-    }
-
-    WriteFile(midi_process_out, buffer, sizeof(buffer),
-              &bytes_written, NULL);
+    UnregisterSong();
 
     return true;
 }
