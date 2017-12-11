@@ -58,7 +58,7 @@ boolean midi_server_registered = false;
 // Data
 //
 
-#define MIDIPIPE_MAX_WAIT 500 // Max amount of ms to wait for expected data.
+#define MIDIPIPE_MAX_WAIT 1000 // Max amount of ms to wait for expected data.
 
 static HANDLE  midi_process_in_reader;  // Input stream for midi process.
 static HANDLE  midi_process_in_writer;

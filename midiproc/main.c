@@ -99,6 +99,7 @@ static void UnregisterSong()
     }
 
     Mix_FreeMusic(music);
+    music = NULL;
 }
 
 //
@@ -120,6 +121,9 @@ static boolean RegisterSong(const char *filename)
 {
     UnregisterSong();
     music = Mix_LoadMUS(filename);
+
+    // Remove the temporary MIDI file
+    remove(filename);
 
     if (music == NULL)
     {
@@ -218,6 +222,7 @@ boolean MidiPipe_PlaySong(buffer_reader_t *reader)
 boolean MidiPipe_StopSong()
 {
     StopSong();
+    UnregisterSong();
 
     return true;
 }
