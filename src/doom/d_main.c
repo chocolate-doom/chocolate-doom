@@ -2096,6 +2096,7 @@ void D_DoomMain (void)
     }
 
     // [crispy] port level flipping feature over from Strawberry Doom
+#ifdef ENABLE_APRIL_1ST_JOKE
     {
         time_t curtime = time(NULL);
         struct tm *curtm = localtime(&curtime);
@@ -2103,6 +2104,7 @@ void D_DoomMain (void)
         if (curtm && curtm->tm_mon == 3 && curtm->tm_mday == 1)
             crispy->fliplevels = true;
     }
+#endif
 
     p = M_CheckParm("-fliplevels");
 
