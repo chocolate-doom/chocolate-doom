@@ -33,6 +33,9 @@ PKG_CHECK_MODULES(SDL, [sdl2 >= 2.0.1])
 PKG_CHECK_MODULES(SDLMIXER, [SDL2_mixer >= 2.0.0])
 PKG_CHECK_MODULES(SDLNET, [SDL2_net >= 2.0.0])
 
+# [Crispy] Check for zlib.
+PKG_CHECK_MODULES(LIBZ, zlib, AC_DEFINE([HAVE_LIBZ], [1], [zlib installed]))
+
 # Check for libsamplerate.
 AC_ARG_WITH([libsamplerate],
 AS_HELP_STRING([--without-libsamplerate],
