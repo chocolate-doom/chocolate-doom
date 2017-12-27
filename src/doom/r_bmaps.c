@@ -1,0 +1,258 @@
+//
+// Copyright(C) 1993-1996 Id Software, Inc.
+// Copyright(C) 2005-2014 Simon Howard
+// Copyright(C) 2013-2017 Brad Harding
+// Copyright(C) 2017 Fabian Greffrath
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// DESCRIPTION:
+//	Brightmaps for wall textures
+//	Adapted from doomretro/src/r_data.c:97-209
+//
+
+#include "doomtype.h"
+#include "doomstat.h"
+
+static byte nobrightmap[256] = {0};
+
+static byte notgray[256] =
+{
+	0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1,
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+};
+
+static byte notgrayorbrown[256] =
+{
+	0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1,
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+};
+
+static byte redonly[256] =
+{
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1,
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+};
+
+static byte greenonly1[256] =
+{
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+};
+
+static byte greenonly2[256] =
+{
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+};
+
+static byte greenonly3[256] =
+{
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+};
+
+enum
+{
+	DOOM1AND2,
+	DOOM1ONLY,
+	DOOM2ONLY,
+};
+
+static const struct
+{
+	const char *const texture;
+	const int game;
+	byte *colormask;
+} fullbright[] = {
+	{"COMP2",    DOOM1AND2, notgrayorbrown},
+	{"COMPSTA1", DOOM1AND2, notgray},
+	{"COMPSTA2", DOOM1AND2, notgray},
+	{"COMPUTE1", DOOM1AND2, notgrayorbrown},
+	{"COMPUTE2", DOOM1AND2, notgrayorbrown},
+	{"COMPUTE3", DOOM1AND2, notgrayorbrown},
+	{"EXITSIGN", DOOM1AND2, notgray},
+	{"EXITSTON", DOOM1AND2, notgray},
+	{"M_TEC",    DOOM2ONLY, greenonly2},
+	{"PLANET1",  DOOM1AND2, notgray},
+	{"PNK4EXIT", DOOM2ONLY, redonly},
+	{"SILVER2",  DOOM1AND2, notgray},
+	{"SILVER3",  DOOM1AND2, notgrayorbrown},
+	{"SLAD2",    DOOM2ONLY, notgrayorbrown},
+	{"SLAD3",    DOOM2ONLY, notgrayorbrown},
+	{"SLAD4",    DOOM2ONLY, notgrayorbrown},
+	{"SLAD5",    DOOM2ONLY, notgrayorbrown},
+	{"SLAD6",    DOOM2ONLY, notgrayorbrown},
+	{"SLAD7",    DOOM2ONLY, notgrayorbrown},
+	{"SLAD8",    DOOM2ONLY, notgrayorbrown},
+	{"SLAD9",    DOOM2ONLY, notgrayorbrown},
+	{"SLAD10",   DOOM2ONLY, notgrayorbrown},
+	{"SLAD11",   DOOM2ONLY, notgrayorbrown},
+	{"SLADRIP1", DOOM2ONLY, notgrayorbrown},
+	{"SLADRIP3", DOOM2ONLY, notgrayorbrown},
+	{"SLADSKUL", DOOM1AND2, redonly},
+	{"SW1BRCOM", DOOM1AND2, redonly},
+	{"SW1BRIK",  DOOM1AND2, redonly},
+	{"SW1BRN1",  DOOM2ONLY, redonly},
+	{"SW1COMM",  DOOM1AND2, redonly},
+	{"SW1DIRT",  DOOM1AND2, redonly},
+	{"SW1MET2",  DOOM1AND2, redonly},
+	{"SW1STARG", DOOM2ONLY, redonly},
+	{"SW1STON1", DOOM1AND2, redonly},
+	{"SW1STON2", DOOM2ONLY, redonly},
+	{"SW1STONE", DOOM1AND2, redonly},
+	{"SW1STRTN", DOOM1AND2, redonly},
+	{"SW2BLUE",  DOOM1AND2, redonly},
+	{"SW2BRCOM", DOOM1AND2, greenonly2},
+	{"SW2BRIK",  DOOM1AND2, greenonly1},
+	{"SW2BRN1",  DOOM1AND2, greenonly1},
+	{"SW2BRN2",  DOOM1AND2, greenonly1},
+	{"SW2BRNGN", DOOM1AND2, greenonly2},
+	{"SW2COMM",  DOOM1AND2, greenonly1},
+	{"SW2COMP",  DOOM1AND2, redonly},
+	{"SW2DIRT",  DOOM1AND2, greenonly1},
+	{"SW2EXIT",  DOOM1AND2, notgray},
+	{"SW2GRAY",  DOOM1AND2, notgray},
+	{"SW2GRAY1", DOOM1AND2, notgray},
+	{"SW2GSTON", DOOM1AND2, redonly},
+	{"SW2MARB",  DOOM2ONLY, redonly},
+	{"SW2MET2",  DOOM1AND2, greenonly1},
+	{"SW2METAL", DOOM1AND2, greenonly3},
+	{"SW2MOD1",  DOOM1AND2, notgrayorbrown},
+	{"SW2PANEL", DOOM1AND2, redonly},
+	{"SW2ROCK",  DOOM1AND2, redonly},
+	{"SW2SLAD",  DOOM1AND2, redonly},
+	{"SW2STARG", DOOM2ONLY, greenonly1},
+	{"SW2STON1", DOOM1AND2, greenonly1},
+	{"SW2STON2", DOOM1ONLY, redonly},
+	{"SW2STON2", DOOM2ONLY, greenonly1},
+	{"SW2STON6", DOOM1AND2, redonly},
+	{"SW2STONE", DOOM1AND2, greenonly1},
+	{"SW2STRTN", DOOM1AND2, greenonly1},
+	{"SW2TEK",   DOOM1AND2, greenonly1},
+	{"SW2VINE",  DOOM1AND2, greenonly1},
+	{"SW2WOOD",  DOOM1AND2, redonly},
+	{"SW2ZIM",   DOOM1AND2, redonly},
+	{"WOOD4",    DOOM1AND2, redonly},
+	{"WOODGARG", DOOM1AND2, redonly},
+	{"WOODSKUL", DOOM1AND2, redonly},
+	{"ZELDOOR",  DOOM1AND2, redonly},
+};
+
+byte *R_BrightmapForTexName (const char *texname)
+{
+	int i;
+
+	if (texname)
+	{
+		for (i = 0; i < arrlen(fullbright); i++)
+		{
+			if ((gamemission == doom && fullbright[i].game == DOOM2ONLY) ||
+			    (gamemission != doom && fullbright[i].game == DOOM1ONLY))
+			{
+				continue;
+			}
+
+			if (!strncasecmp(fullbright[i].texture, texname, 8))
+			{
+				return fullbright[i].colormask;
+			}
+		}
+	}
+
+	return nobrightmap;
+}
+
+byte *dc_brightmap;

@@ -37,6 +37,7 @@
 
 #include "v_trans.h" // [crispy] colored blood sprites
 #include "p_local.h" // [crispy] MLOOKUNIT
+#include "r_bmaps.h" // [crispy] R_BrightmapForTexName()
 
 
 #define MINZ				(FRACUNIT*4)
@@ -452,9 +453,11 @@ R_DrawVisSprite
 	
     patch = W_CacheLumpNum (vis->patch+firstspritelump, PU_CACHE);
 
-    dc_colormap = vis->colormap;
+    // [crispy] no brightmaps for sprites
+    dc_colormap[0] = dc_colormap[1] = vis->colormap;
+    dc_brightmap = R_BrightmapForTexName(NULL);
     
-    if (!dc_colormap)
+    if (!dc_colormap[0])
     {
 	// NULL colormap = shadow draw
 	colfunc = fuzzcolfunc;
