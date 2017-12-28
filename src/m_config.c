@@ -1953,6 +1953,14 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_INT(crispy_weaponsquat),
+
+    //!
+    // @game doom
+    //
+    // Extended Automap.
+    //
+
+    CONFIG_VARIABLE_INT(crispy_extautomap),
 };
 
 static default_collection_t extra_defaults =

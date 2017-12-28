@@ -24,6 +24,7 @@
 // [crispy] "regular" config variables
 static crispy_t crispy_s = {
 	0,
+	.extautomap = 1,
 	.extsaveg = 1,
 	.smoothscaling = 1,
 	.soundfix = 1,

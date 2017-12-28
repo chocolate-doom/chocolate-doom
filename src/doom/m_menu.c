@@ -246,6 +246,7 @@ static void M_CrispyToggleColoredblood2(int choice);
 static void M_CrispyToggleColoredhud(int choice);
 static void M_CrispyToggleCrosshair(int choice);
 static void M_CrispyToggleCrosshairtype(int choice);
+static void M_CrispyToggleExtAutomap(int choice);
 static void M_CrispyToggleExtsaveg(int choice);
 static void M_CrispyToggleFlipcorpses(int choice);
 static void M_CrispyToggleFreeaim(int choice);
@@ -528,8 +529,6 @@ enum
     crispness_centerweapon,
     crispness_pitch,
     crispness_weaponsquat,
-    crispness_secretmessage,
-    crispness_automapstats,
     crispness_extsaveg,
     crispness2_sep_goto,
     crispness2_goto1,
@@ -547,8 +546,6 @@ static menuitem_t Crispness2Menu[]=
     {1,"",	M_CrispyToggleCenterweapon,'c'},
     {1,"",	M_CrispyTogglePitch,'w'},
     {1,"",	M_CrispyToggleWeaponSquat,'w'},
-    {1,"",	M_CrispyToggleSecretmessage,'s'},
-    {1,"",	M_CrispyToggleAutomapstats,'s'},
     {1,"",	M_CrispyToggleExtsaveg,'e'},
     {-1,"",0,'\0'},
     {1,"",	M_Crispness1,'p'},
@@ -567,6 +564,11 @@ static menu_t  Crispness2Def =
 
 enum
 {
+    crispness_sep_navigational,
+    crispness_extautomap,
+    crispness_automapstats,
+    crispness_secretmessage,
+    crispness3_sep_physical,
     crispness_sep_physical,
     crispness_freeaim,
     crispness_jumping,
@@ -579,6 +581,11 @@ enum
 
 static menuitem_t Crispness3Menu[]=
 {
+    {-1,"",0,'\0'},
+    {1,"",	M_CrispyToggleExtAutomap,'e'},
+    {1,"",	M_CrispyToggleAutomapstats,'s'},
+    {1,"",	M_CrispyToggleSecretmessage,'s'},
+    {-1,"",0,'\0'},
     {-1,"",0,'\0'},
     {1,"",	M_CrispyToggleFreeaim,'v'},
     {1,"",	M_CrispyToggleJumping,'a'},
@@ -1514,8 +1521,6 @@ static void M_DrawCrispness2(void)
     M_DrawCrispnessMultiItem(crispness_centerweapon, "Weapon Attack Alignment", multiitem_centerweapon, crispy->centerweapon, true);
     M_DrawCrispnessItem(crispness_pitch, "Weapon Recoil Pitch", crispy->pitch, true);
     M_DrawCrispnessItem(crispness_weaponsquat, "Squat down weapon on impact", crispy->weaponsquat, true);
-    M_DrawCrispnessItem(crispness_secretmessage, "Show Revealed Secrets", crispy->secretmessage, true);
-    M_DrawCrispnessItem(crispness_automapstats, "Show Level Stats in Automap", crispy->automapstats, true);
     M_DrawCrispnessItem(crispness_extsaveg, "Extended Savegames", crispy->extsaveg, true);
 
     M_DrawCrispnessGoto(crispness2_goto3, "Next Page >");
@@ -1531,6 +1536,12 @@ static void M_DrawCrispness3(void)
     M_DrawCrispnessBackground();
 
     M_DrawCrispnessHeader("Crispness 3/3");
+
+    M_DrawCrispnessSeparator(crispness_sep_navigational, "Navigational");
+
+    M_DrawCrispnessItem(crispness_extautomap, "Extended Automap colors", crispy->extautomap, true);
+    M_DrawCrispnessItem(crispness_automapstats, "Show Level Stats in Automap", crispy->automapstats, true);
+    M_DrawCrispnessItem(crispness_secretmessage, "Show Revealed Secrets", crispy->secretmessage, true);
 
     M_DrawCrispnessSeparator(crispness_sep_physical, "Physical");
 
@@ -1798,6 +1809,12 @@ static void M_MouseLook(int choice)
 
     players[consoleplayer].lookdir = 0;
     R_InitSkyMap();
+}
+
+static void M_CrispyToggleExtAutomap(int choice)
+{
+    choice = 0;
+    crispy->extautomap = !crispy->extautomap;
 }
 
 static void M_CrispyToggleAutomapstats(int choice)

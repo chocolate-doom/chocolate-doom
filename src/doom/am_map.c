@@ -68,17 +68,17 @@
 #define BACKGROUND	BLACK
 #define YOURCOLORS	WHITE
 #define YOURRANGE	0
-#define WALLCOLORS	23 // REDS // [crispy] red-brown
+#define WALLCOLORS	(crispy->extautomap ? 23 : REDS) // [crispy] red-brown
 #define WALLRANGE	REDRANGE
 #define TSWALLCOLORS	GRAYS
 #define TSWALLRANGE	GRAYSRANGE
-#define FDWALLCOLORS	55 // BROWNS // [crispy] lt brown
+#define FDWALLCOLORS	(crispy->extautomap ? 55 : BROWNS) // [crispy] lt brown
 #define FDWALLRANGE	BROWNRANGE
-#define CDWALLCOLORS	215 // YELLOWS // [crispy] orange
+#define CDWALLCOLORS	(crispy->extautomap ? 215 : YELLOWS) // [crispy] orange
 #define CDWALLRANGE	YELLOWRANGE
 #define THINGCOLORS	GREENS
 #define THINGRANGE	GREENRANGE
-#define SECRETWALLCOLORS 252 // WALLCOLORS // [crispy] purple
+#define SECRETWALLCOLORS (crispy->extautomap ? 252 : WALLCOLORS) // [crispy] purple
 #define SECRETWALLRANGE WALLRANGE
 #define GRIDCOLORS	(GRAYS + GRAYSRANGE/2)
 #define GRIDRANGE	0
@@ -1256,6 +1256,8 @@ void AM_drawGrid(int color)
 // [crispy] keyed linedefs (PR, P1, SR, S1)
 static keycolor_t AM_DoorColor(int type)
 {
+  if (crispy->extautomap)
+  {
     switch (type)
     {
 	case 26:
@@ -1273,9 +1275,9 @@ static keycolor_t AM_DoorColor(int type)
 	case 134:
 	case 135:
 	    return red_key;
-	default:
-	    return no_key;
     }
+  }
+  return no_key;
 }
 
 void AM_drawWalls(void)
@@ -1324,10 +1326,11 @@ void AM_drawWalls(void)
 	    }
 	    // [crispy] draw exit lines in white (no Boom exit lines 197, 198)
 	    // NB: Choco does not have this at all, Boom/PrBoom+ have this disabled by default
-	    if (lines[i].special == 11 ||
+	    if (crispy->extautomap && (
+	        lines[i].special == 11 ||
 	        lines[i].special == 51 ||
 	        lines[i].special == 52 ||
-	        lines[i].special == 124)
+	        lines[i].special == 124))
 	    {
 		AM_drawMline(&l, WHITE);
 		continue;
@@ -1335,7 +1338,8 @@ void AM_drawWalls(void)
 	    if (!lines[i].backsector)
 	    {
 		// [crispy] draw 1S secret sector boundaries in purple
-		if (cheating && (lines[i].frontsector->special == 9))
+		if (crispy->extautomap &&
+		    cheating && (lines[i].frontsector->special == 9))
 		    AM_drawMline(&l, SECRETWALLCOLORS);
 		else
 		AM_drawMline(&l, WALLCOLORS+lightlev);
@@ -1346,19 +1350,19 @@ void AM_drawWalls(void)
 		// and also WR teleporters 97 if they are not secret
 		// (no monsters-only teleporters 125, 126; no Boom teleporters)
 		if (lines[i].special == 39 ||
-		    (!(lines[i].flags & ML_SECRET) && lines[i].special == 97))
+		    (crispy->extautomap && !(lines[i].flags & ML_SECRET) && lines[i].special == 97))
 		{ // teleporters
-		    AM_drawMline(&l, GREENS+GREENRANGE/2);
+		    AM_drawMline(&l, crispy->extautomap ? (GREENS+GREENRANGE/2) : (WALLCOLORS+WALLRANGE/2));
 		}
 		else if (lines[i].flags & ML_SECRET) // secret door
 		{
 		    // [crispy] NB: Choco has this check, but (SECRETWALLCOLORS == WALLCOLORS)
 		    // Boom/PrBoom+ does not have this check at all
-		    if (0 && cheating) AM_drawMline(&l, SECRETWALLCOLORS + lightlev);
+		    if (false && cheating) AM_drawMline(&l, SECRETWALLCOLORS + lightlev);
 		    else AM_drawMline(&l, WALLCOLORS+lightlev);
 		}
 		// [crispy] draw 2S secret sector boundaries in purple
-		else if (cheating &&
+		else if (crispy->extautomap && cheating &&
 		    (lines[i].backsector->special == 9 ||
 		    lines[i].frontsector->special == 9))
 		{
@@ -1570,6 +1574,8 @@ AM_drawThings
 		AM_rotatePoint(&pt);
 	    }
 
+	  if (crispy->extautomap)
+	  {
 	    // [crispy] skull keys and key cards
 	    switch (t->info->doomednum)
 	    {
@@ -1617,6 +1623,13 @@ AM_drawThings
 		 colors+lightlev,
 		 pt.x, pt.y);
 	    }
+	  }
+	  else
+	  {
+	    AM_drawLineCharacter
+		(thintriangle_guy, arrlen(thintriangle_guy),
+		 16<<FRACBITS, t->angle, colors+lightlev, t->x, t->y);
+	  }
 	    t = t->snext;
 	}
     }

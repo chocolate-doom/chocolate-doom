@@ -45,6 +45,7 @@ typedef struct
 	int coloredhud;
 	int crosshair;
 	int crosshairtype;
+	int extautomap;
 	int extsaveg;
 	int flipcorpses;
 	int freeaim;
