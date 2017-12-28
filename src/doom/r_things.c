@@ -453,9 +453,10 @@ R_DrawVisSprite
 	
     patch = W_CacheLumpNum (vis->patch+firstspritelump, PU_CACHE);
 
-    // [crispy] no brightmaps for sprites
-    dc_colormap[0] = dc_colormap[1] = vis->colormap;
-    dc_brightmap = R_BrightmapForTexName(NULL);
+    // [crispy] brightmaps for select sprites
+    dc_colormap[0] = vis->colormap[0];
+    dc_colormap[1] = vis->colormap[1];
+    dc_brightmap = vis->brightmap;
     
     if (!dc_colormap[0])
     {
@@ -706,17 +707,17 @@ void R_ProjectSprite (mobj_t* thing)
     if (thing->flags & MF_SHADOW)
     {
 	// shadow draw
-	vis->colormap = NULL;
+	vis->colormap[0] = vis->colormap[1] = NULL;
     }
     else if (fixedcolormap)
     {
 	// fixed map
-	vis->colormap = fixedcolormap;
+	vis->colormap[0] = vis->colormap[1] = fixedcolormap;
     }
     else if (thing->frame & FF_FULLBRIGHT)
     {
 	// full bright
-	vis->colormap = colormaps;
+	vis->colormap[0] = vis->colormap[1] = colormaps;
     }
     
     else
@@ -727,8 +728,11 @@ void R_ProjectSprite (mobj_t* thing)
 	if (index >= MAXLIGHTSCALE) 
 	    index = MAXLIGHTSCALE-1;
 
-	vis->colormap = spritelights[index];
+	// [crispy] brightmaps for select sprites
+	vis->colormap[0] = spritelights[index];
+	vis->colormap[1] = spritelights[MAXLIGHTSCALE-1];
     }	
+    vis->brightmap = R_BrightmapForThingType(thing->type);
 
     // [crispy] colored blood
     if ((((crispy->coloredblood & COLOREDBLOOD_BLOOD) && thing->type == MT_BLOOD) ||
@@ -811,7 +815,8 @@ static void R_DrawLSprite (void)
     vis = R_NewVisSprite();
     memset(vis, 0, sizeof(*vis)); // [crispy] set all fields to NULL, except ...
     vis->patch = lump - firstspritelump; // [crispy] not a sprite patch
-    vis->colormap = fixedcolormap ? fixedcolormap : colormaps; // [crispy] always full brightness
+    vis->colormap[0] = vis->colormap[1] = fixedcolormap ? fixedcolormap : colormaps; // [crispy] always full brightness
+    vis->brightmap = R_BrightmapForThingType(-1);
 //  vis->mobjflags |= MF_TRANSLUCENT;
     vis->xiscale = FixedDiv (FRACUNIT, xscale);
     vis->texturemid = laserspot->z - viewz;
@@ -1005,23 +1010,24 @@ void R_DrawPSprite (pspdef_t* psp, psprnum_t psprnum) // [crispy] differentiate 
 	|| viewplayer->powers[pw_invisibility] & 8)
     {
 	// shadow draw
-	vis->colormap = NULL;
+	vis->colormap[0] = vis->colormap[1] = NULL;
     }
     else if (fixedcolormap)
     {
 	// fixed color
-	vis->colormap = fixedcolormap;
+	vis->colormap[0] = vis->colormap[1] = fixedcolormap;
     }
     else if (psp->state->frame & FF_FULLBRIGHT)
     {
 	// full bright
-	vis->colormap = colormaps;
+	vis->colormap[0] = vis->colormap[1] = colormaps;
     }
     else
     {
 	// local light
-	vis->colormap = spritelights[MAXLIGHTSCALE-1];
+	vis->colormap[0] = vis->colormap[1] = spritelights[MAXLIGHTSCALE-1];
     }
+    vis->brightmap = R_BrightmapForThingType(-1);
 	
     // [crispy] translucent gun flash sprites
     if (psprnum == ps_flash)

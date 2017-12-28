@@ -144,6 +144,26 @@ static byte greenonly3[256] =
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 };
 
+static byte goldonly[256] =
+{
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+};
+
 enum
 {
 	DOOM1AND2,
@@ -210,7 +230,7 @@ static const struct
 	{"SW2MARB",  DOOM2ONLY, redonly},
 	{"SW2MET2",  DOOM1AND2, greenonly1},
 	{"SW2METAL", DOOM1AND2, greenonly3},
-	{"SW2MOD1",  DOOM1AND2, notgrayorbrown},
+	{"SW2MOD1",  DOOM1AND2, greenonly1 /*notgrayorbrown*/},
 	{"SW2PANEL", DOOM1AND2, redonly},
 	{"SW2ROCK",  DOOM1AND2, redonly},
 	{"SW2SLAD",  DOOM1AND2, redonly},
@@ -248,6 +268,41 @@ byte *R_BrightmapForTexName (const char *texname)
 			if (!strncasecmp(fullbright[i].texture, texname, 8))
 			{
 				return fullbright[i].colormask;
+			}
+		}
+	}
+
+	return nobrightmap;
+}
+
+// [crispy] adapted from russian-doom/src/doom/r_things.c:617-639
+byte *R_BrightmapForThingType (const int type)
+{
+	if (type > 0)
+	{
+		switch (type)
+		{
+			// Armor Bonus
+			case MT_MISC3:
+			// Cell Charge
+			case MT_MISC20:
+			{
+				return greenonly1;
+				break;
+			}
+			// Cell Charge Pack
+			case MT_MISC21:
+			{
+				return goldonly;
+				break;
+			}
+			// BFG9000
+			case MT_MISC25:
+			// Plasmagun
+			case MT_MISC28:
+			{
+				return redonly;
+				break;
 			}
 		}
 	}
