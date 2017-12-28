@@ -443,6 +443,7 @@ void D_BindVariables(void)
 
     // [crispy] bind "crispness" config variables
     M_BindIntVariable("crispy_automapstats",    &crispy->automapstats);
+    M_BindIntVariable("crispy_brightmaps",      &crispy->brightmaps);
     M_BindIntVariable("crispy_centerweapon",    &crispy->centerweapon);
     M_BindIntVariable("crispy_coloredblood",    &crispy->coloredblood);
     M_BindIntVariable("crispy_coloredhud",      &crispy->coloredhud);

@@ -278,7 +278,7 @@ byte *R_BrightmapForTexName (const char *texname)
 // [crispy] adapted from russian-doom/src/doom/r_things.c:617-639
 byte *R_BrightmapForThingType (const int type)
 {
-	if (type > 0)
+	if ((crispy->brightmaps & BRIGHTMAPS_SPRITES) && type > 0)
 	{
 		switch (type)
 		{
