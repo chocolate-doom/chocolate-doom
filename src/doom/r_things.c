@@ -730,7 +730,7 @@ void R_ProjectSprite (mobj_t* thing)
 
 	// [crispy] brightmaps for select sprites
 	vis->colormap[0] = spritelights[index];
-	vis->colormap[1] = spritelights[MAXLIGHTSCALE-1];
+	vis->colormap[1] = scalelight[LIGHTLEVELS-1][MAXLIGHTSCALE-1];
     }	
     vis->brightmap = R_BrightmapForThingType(thing->type);
 
