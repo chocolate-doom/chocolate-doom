@@ -26,6 +26,7 @@ extern byte *nobrightmap;
 
 extern byte *R_BrightmapForTexName (const char *texname);
 extern byte *R_BrightmapForThingType (const int type);
+extern byte *R_BrightmapForFlatNum (const int type);
 
 extern byte **texturebrightmap;
 

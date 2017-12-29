@@ -164,7 +164,7 @@ R_MapPlane
     ds_yfrac = -viewy - FixedMul(viewsin, distance) + dx * ds_ystep;
 
     if (fixedcolormap)
-	ds_colormap = fixedcolormap;
+	ds_colormap[0] = ds_colormap[1] = fixedcolormap;
     else
     {
 	index = distance >> LIGHTZSHIFT;
@@ -172,7 +172,8 @@ R_MapPlane
 	if (index >= MAXLIGHTZ )
 	    index = MAXLIGHTZ-1;
 
-	ds_colormap = planezlight[index];
+	ds_colormap[0] = planezlight[index];
+	ds_colormap[1] = zlight[LIGHTLEVELS-1][MAXLIGHTZ-1];
     }
 	
     ds_y = y;
@@ -563,6 +564,7 @@ void R_DrawPlanes (void)
         lumpnum = firstflat + (swirling ? pl->picnum : R_FlatTranslation(pl->picnum));
 	// [crispy] add support for SMMU swirling flats
 	ds_source = swirling ? R_DistortedFlat(lumpnum) : W_CacheLumpNum(lumpnum, PU_STATIC);
+	ds_brightmap = R_BrightmapForFlatNum(lumpnum-firstflat);
 	
 	planeheight = abs(pl->height-viewz);
 	light = (pl->lightlevel >> LIGHTSEGSHIFT)+extralight;

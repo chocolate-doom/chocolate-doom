@@ -21,6 +21,7 @@
 
 #include "doomtype.h"
 #include "doomstat.h"
+#include "r_data.h"
 
 static byte nobrightmap[256] = {0};
 
@@ -323,6 +324,30 @@ byte *R_BrightmapForThingType (const int type)
 				return redonly;
 				break;
 			}
+		}
+	}
+
+	return nobrightmap;
+}
+
+byte *R_BrightmapForFlatNum (const int num)
+{
+	static int bmapflatnum1, bmapflatnum2, bmapflatnum3;
+
+	if (crispy->brightmaps & BRIGHTMAPS_TEXTURES)
+	{
+		if (!bmapflatnum1 && !bmapflatnum2 && !bmapflatnum3)
+		{
+			bmapflatnum1 = R_FlatNumForName("CONS1_1");
+			bmapflatnum2 = R_FlatNumForName("CONS1_5");
+			bmapflatnum3 = R_FlatNumForName("CONS1_7");
+		}
+
+		if (num == bmapflatnum1 ||
+		    num == bmapflatnum2 ||
+		    num == bmapflatnum3)
+		{
+			return notgrayorbrown;
 		}
 	}
 

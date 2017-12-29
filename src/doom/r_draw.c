@@ -793,7 +793,8 @@ int			ds_y;
 int			ds_x1; 
 int			ds_x2;
 
-lighttable_t*		ds_colormap; 
+lighttable_t*		ds_colormap[2];
+byte*			ds_brightmap;
 
 fixed_t			ds_xfrac; 
 fixed_t			ds_yfrac; 
@@ -848,6 +849,7 @@ void R_DrawSpan (void)
 
     do
     {
+	byte source;
 	// Calculate current texture index in u,v.
         // [crispy] fix flats getting more distorted the closer they are to the right
         ytemp = (ds_yfrac >> 10) & 0x0fc0;
@@ -856,7 +858,8 @@ void R_DrawSpan (void)
 
 	// Lookup pixel from flat texture tile,
 	//  re-index using light/colormap.
-	*dest++ = ds_colormap[ds_source[spot]];
+	source = ds_source[spot];
+	*dest++ = ds_colormap[ds_brightmap[source]][source];
 
 //      position += step;
         ds_xfrac += ds_xstep;
@@ -981,6 +984,7 @@ void R_DrawSpanLow (void)
 
     do
     {
+	byte source;
 	// Calculate current texture index in u,v.
         // [crispy] fix flats getting more distorted the closer they are to the right
         ytemp = (ds_yfrac >> 10) & 0x0fc0;
@@ -989,12 +993,13 @@ void R_DrawSpanLow (void)
 
 	// Lowres/blocky mode does it twice,
 	//  while scale is adjusted appropriately.
-	*dest++ = ds_colormap[ds_source[spot]];
-	*dest++ = ds_colormap[ds_source[spot]];
+	source = ds_source[spot];
+	*dest++ = ds_colormap[ds_brightmap[source]][source];
+	*dest++ = ds_colormap[ds_brightmap[source]][source];
 	if (hires)
 	{
-	    *dest2++ = ds_colormap[ds_source[spot]];
-	    *dest2++ = ds_colormap[ds_source[spot]];
+	    *dest2++ = ds_colormap[ds_brightmap[source]][source];
+	    *dest2++ = ds_colormap[ds_brightmap[source]][source];
 	}
 
 //	position += step;
