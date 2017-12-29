@@ -144,7 +144,7 @@ static byte greenonly3[256] =
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 };
 
-static byte goldonly[256] =
+static byte yellowonly[256] =
 {
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -160,8 +160,8 @@ static byte goldonly[256] =
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0,
 };
 
 enum
@@ -177,6 +177,7 @@ static const struct
 	const int game;
 	byte *colormask;
 } fullbright[] = {
+	// [crispy] Common textures
 	{"COMP2",    DOOM1AND2, notgrayorbrown},
 	{"COMPSTA1", DOOM1AND2, notgray},
 	{"COMPSTA2", DOOM1AND2, notgray},
@@ -184,24 +185,10 @@ static const struct
 	{"COMPUTE2", DOOM1AND2, notgrayorbrown},
 	{"COMPUTE3", DOOM1AND2, notgrayorbrown},
 	{"EXITSIGN", DOOM1AND2, notgray},
-	{"EXITSTON", DOOM1AND2, notgray},
-	{"M_TEC",    DOOM2ONLY, greenonly2},
+	{"EXITSTON", DOOM1AND2, redonly},
 	{"PLANET1",  DOOM1AND2, notgray},
-	{"PNK4EXIT", DOOM2ONLY, redonly},
 	{"SILVER2",  DOOM1AND2, notgray},
 	{"SILVER3",  DOOM1AND2, notgrayorbrown},
-	{"SLAD2",    DOOM2ONLY, notgrayorbrown},
-	{"SLAD3",    DOOM2ONLY, notgrayorbrown},
-	{"SLAD4",    DOOM2ONLY, notgrayorbrown},
-	{"SLAD5",    DOOM2ONLY, notgrayorbrown},
-	{"SLAD6",    DOOM2ONLY, notgrayorbrown},
-	{"SLAD7",    DOOM2ONLY, notgrayorbrown},
-	{"SLAD8",    DOOM2ONLY, notgrayorbrown},
-	{"SLAD9",    DOOM2ONLY, notgrayorbrown},
-	{"SLAD10",   DOOM2ONLY, notgrayorbrown},
-	{"SLAD11",   DOOM2ONLY, notgrayorbrown},
-	{"SLADRIP1", DOOM2ONLY, notgrayorbrown},
-	{"SLADRIP3", DOOM2ONLY, notgrayorbrown},
 	{"SLADSKUL", DOOM1AND2, redonly},
 	{"SW1BRCOM", DOOM1AND2, redonly},
 	{"SW1BRIK",  DOOM1AND2, redonly},
@@ -234,10 +221,11 @@ static const struct
 	{"SW2PANEL", DOOM1AND2, redonly},
 	{"SW2ROCK",  DOOM1AND2, redonly},
 	{"SW2SLAD",  DOOM1AND2, redonly},
-	{"SW2STARG", DOOM2ONLY, greenonly1},
-	{"SW2STON1", DOOM1AND2, greenonly1},
+	{"SW2STARG", DOOM2ONLY, greenonly2},
+	{"SW2STON1", DOOM1AND2, greenonly3},
+	// [crispy] beware!
 	{"SW2STON2", DOOM1ONLY, redonly},
-	{"SW2STON2", DOOM2ONLY, greenonly1},
+	{"SW2STON2", DOOM2ONLY, greenonly2},
 	{"SW2STON6", DOOM1AND2, redonly},
 	{"SW2STONE", DOOM1AND2, greenonly2},
 	{"SW2STRTN", DOOM1AND2, greenonly1},
@@ -248,7 +236,38 @@ static const struct
 	{"WOOD4",    DOOM1AND2, redonly},
 	{"WOODGARG", DOOM1AND2, redonly},
 	{"WOODSKUL", DOOM1AND2, redonly},
-	{"ZELDOOR",  DOOM1AND2, redonly},
+//	{"ZELDOOR",  DOOM1AND2, redonly},
+	{"LITEBLU1", DOOM1AND2, notgray},
+	{"LITEBLU2", DOOM1AND2, notgray},
+	{"SPCDOOR3", DOOM2ONLY, greenonly1},
+	{"PIPEWAL1", DOOM2ONLY, greenonly1},
+	{"TEKLITE2", DOOM2ONLY, greenonly1},
+	{"TEKBRON2", DOOM2ONLY, yellowonly},
+//	{"SW2SKULL", DOOM2ONLY, greenonly2},
+	// [crispy] Final Doom textures
+	// TNT - Evilution exclusive
+	{"PNK4EXIT", DOOM2ONLY, redonly},
+	{"SLAD2",    DOOM2ONLY, notgrayorbrown},
+	{"SLAD3",    DOOM2ONLY, notgrayorbrown},
+	{"SLAD4",    DOOM2ONLY, notgrayorbrown},
+	{"SLAD5",    DOOM2ONLY, notgrayorbrown},
+	{"SLAD6",    DOOM2ONLY, notgrayorbrown},
+	{"SLAD7",    DOOM2ONLY, notgrayorbrown},
+	{"SLAD8",    DOOM2ONLY, notgrayorbrown},
+	{"SLAD9",    DOOM2ONLY, notgrayorbrown},
+	{"SLAD10",   DOOM2ONLY, notgrayorbrown},
+	{"SLAD11",   DOOM2ONLY, notgrayorbrown},
+	{"SLADRIP1", DOOM2ONLY, notgrayorbrown},
+	{"SLADRIP3", DOOM2ONLY, notgrayorbrown},
+	{"M_TEC",    DOOM2ONLY, greenonly2},
+	{"LITERED2", DOOM2ONLY, redonly},
+	{"BTNTMETL", DOOM2ONLY, notgrayorbrown},
+	{"BTNTSLVR", DOOM2ONLY, notgrayorbrown},
+	{"LITEYEL2", DOOM2ONLY, yellowonly},
+	{"LITEYEL3", DOOM2ONLY, yellowonly},
+	{"YELMETAL", DOOM2ONLY, yellowonly},
+	// Plutonia exclusive
+//	{"SW2SKULL", DOOM2ONLY, redonly},
 };
 
 byte *R_BrightmapForTexName (const char *texname)
@@ -293,7 +312,7 @@ byte *R_BrightmapForThingType (const int type)
 			// Cell Charge Pack
 			case MT_MISC21:
 			{
-				return goldonly;
+				return yellowonly;
 				break;
 			}
 			// BFG9000
