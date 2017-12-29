@@ -329,4 +329,4 @@ byte *R_BrightmapForThingType (const int type)
 	return nobrightmap;
 }
 
-byte *dc_brightmap;
+byte *dc_brightmap = nobrightmap;

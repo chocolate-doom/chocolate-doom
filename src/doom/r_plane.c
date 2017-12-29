@@ -535,9 +535,8 @@ void R_DrawPlanes (void)
 	    //  i.e. colormaps[0] is used.
 	    // Because of this hack, sky is not affected
 	    //  by INVUL inverse mapping.
-	    dc_colormap[0] = dc_colormap[1] = colormaps;
 	    // [crispy] no brightmaps for sky
-	    dc_brightmap = R_BrightmapForTexName(NULL);
+	    dc_colormap[0] = dc_colormap[1] = colormaps;
 //	    dc_texturemid = skytexturemid;
 	    dc_texheight = textureheight[texture]>>FRACBITS; // [crispy] Tutti-Frutti fix
 	    // [crispy] stretch sky
