@@ -31,6 +31,7 @@
 
 #include "r_local.h"
 #include "r_sky.h"
+#include "r_bmaps.h" // [crispy] brightmaps
 
 
 // OPTIMIZE: closed two sided lines as single sided
@@ -247,7 +248,7 @@ R_RenderMaskedSegRange
     dc_texturemid += curline->sidedef->rowoffset;
 			
     if (fixedcolormap)
-	dc_colormap = fixedcolormap;
+	dc_colormap[0] = dc_colormap[1] = fixedcolormap;
     
     // draw the columns
     for (dc_x = x1 ; dc_x <= x2 ; dc_x++)
@@ -262,7 +263,10 @@ R_RenderMaskedSegRange
 		if (index >=  MAXLIGHTSCALE )
 		    index = MAXLIGHTSCALE-1;
 
-		dc_colormap = walllights[index];
+		// [crispy] optional brightmaps
+		dc_colormap[0] = walllights[index];
+		dc_colormap[1] = (crispy->brightmaps & BRIGHTMAPS_TEXTURES) ? scalelight[LIGHTLEVELS-1][MAXLIGHTSCALE-1] : dc_colormap[0];
+		dc_brightmap = texturebrightmap[texnum];
 	    }
 			
 	    // [crispy] apply Killough's int64 sprtopscreen overflow fix
@@ -385,7 +389,9 @@ void R_RenderSegLoop (void)
 	    if (index >=  MAXLIGHTSCALE )
 		index = MAXLIGHTSCALE-1;
 
-	    dc_colormap = walllights[index];
+	    // [crispy] optional brightmaps
+	    dc_colormap[0] = walllights[index];
+	    dc_colormap[1] = (crispy->brightmaps & BRIGHTMAPS_TEXTURES) ? scalelight[LIGHTLEVELS-1][MAXLIGHTSCALE-1] : dc_colormap[0];
 	    dc_x = rw_x;
 	    dc_iscale = 0xffffffffu / (unsigned)rw_scale;
 	}
@@ -405,6 +411,7 @@ void R_RenderSegLoop (void)
 	    dc_texturemid = rw_midtexturemid;
 	    dc_source = R_GetColumn(midtexture,texturecolumn,true);
 	    dc_texheight = textureheight[midtexture]>>FRACBITS; // [crispy] Tutti-Frutti fix
+	    dc_brightmap = texturebrightmap[midtexture];
 	    colfunc ();
 	    ceilingclip[rw_x] = viewheight;
 	    floorclip[rw_x] = -1;
@@ -428,6 +435,7 @@ void R_RenderSegLoop (void)
 		    dc_texturemid = rw_toptexturemid;
 		    dc_source = R_GetColumn(toptexture,texturecolumn,true);
 		    dc_texheight = textureheight[toptexture]>>FRACBITS; // [crispy] Tutti-Frutti fix
+		    dc_brightmap = texturebrightmap[toptexture];
 		    colfunc ();
 		    ceilingclip[rw_x] = mid;
 		}
@@ -459,6 +467,7 @@ void R_RenderSegLoop (void)
 		    dc_source = R_GetColumn(bottomtexture,
 					    texturecolumn,true);
 		    dc_texheight = textureheight[bottomtexture]>>FRACBITS; // [crispy] Tutti-Frutti fix
+		    dc_brightmap = texturebrightmap[bottomtexture];
 		    colfunc ();
 		    floorclip[rw_x] = mid;
 		}

@@ -240,6 +240,7 @@ void M_StopMessage(void);
 void M_ClearMenus (void);
 
 static void M_CrispyToggleAutomapstats(int choice);
+static void M_CrispyToggleBrightmaps(int choice);
 static void M_CrispyToggleCenterweapon(int choice);
 static void M_CrispyToggleColoredblood(int choice);
 static void M_CrispyToggleColoredblood2(int choice);
@@ -477,6 +478,7 @@ enum
     crispness_smoothscaling,
     crispness_coloredhud,
     crispness_translucency,
+    crispness_brightmaps,
     crispness_coloredblood,
     crispness_coloredblood2,
     crispness_flipcorpses,
@@ -496,6 +498,7 @@ static menuitem_t Crispness1Menu[]=
     {1,"",	M_CrispyToggleSmoothScaling,'s'},
     {1,"",	M_CrispyToggleColoredhud,'c'},
     {1,"",	M_CrispyToggleTranslucency,'e'},
+    {1,"",	M_CrispyToggleBrightmaps,'b'},
     {1,"",	M_CrispyToggleColoredblood,'e'},
     {1,"",	M_CrispyToggleColoredblood2,'f'},
     {1,"",	M_CrispyToggleFlipcorpses,'r'},
@@ -1378,6 +1381,14 @@ typedef struct
     char *name;
 } multiitem_t;
 
+static multiitem_t multiitem_brightmaps[NUM_BRIGHTMAPS] =
+{
+    {BRIGHTMAPS_OFF, "off"},
+    {BRIGHTMAPS_TEXTURES, "textures"},
+    {BRIGHTMAPS_SPRITES, "sprites"},
+    {BRIGHTMAPS_BOTH, "both"},
+};
+
 static multiitem_t multiitem_centerweapon[NUM_CENTERWEAPON] =
 {
     {CENTERWEAPON_OFF, "off"},
@@ -1491,6 +1502,7 @@ static void M_DrawCrispness1(void)
     M_DrawCrispnessItem(crispness_smoothscaling, "Smooth Scaling", crispy->smoothscaling, true);
     M_DrawCrispnessMultiItem(crispness_coloredhud, "Colorize HUD Elements", multiitem_coloredhud, crispy->coloredhud, true);
     M_DrawCrispnessMultiItem(crispness_translucency, "Enable Translucency", multiitem_translucency, crispy->translucency, true);
+    M_DrawCrispnessMultiItem(crispness_brightmaps, "Apply Brightmaps", multiitem_brightmaps, crispy->brightmaps, true);
     M_DrawCrispnessMultiItem(crispness_coloredblood, "Colored Blood and Corpses", multiitem_coloredblood, crispy->coloredblood & COLOREDBLOOD_BOTH, true);
     M_DrawCrispnessItem(crispness_coloredblood2, "Fix Spectre and Lost Soul Blood", crispy->coloredblood & COLOREDBLOOD_FIX, true);
     M_DrawCrispnessItem(crispness_flipcorpses, "Randomly Mirrored Corpses", crispy->flipcorpses, true);
@@ -1833,6 +1845,12 @@ static void M_CrispyToggleCenterweapon(int choice)
 {
     choice = 0;
     crispy->centerweapon = (crispy->centerweapon + 1) % NUM_CENTERWEAPON;
+}
+
+static void M_CrispyToggleBrightmaps(int choice)
+{
+    choice = 0;
+    crispy->brightmaps = (crispy->brightmaps + 1) % NUM_BRIGHTMAPS;
 }
 
 static void M_CrispyToggleColoredblood(int choice)

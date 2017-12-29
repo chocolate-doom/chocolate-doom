@@ -38,6 +38,7 @@
 
 #include "r_data.h"
 #include "v_trans.h" // [crispy] tranmap, CRMAX
+#include "r_bmaps.h" // [crispy] R_BrightmapForTexName()
 
 //
 // Graphics.
@@ -152,6 +153,7 @@ short**			texturecolumnlump;
 unsigned**		texturecolumnofs; // killough 4/9/98: make 32-bit
 unsigned**		texturecolumnofs2; // [crispy] original column offsets for single-patched textures
 byte**			texturecomposite;
+byte**			texturebrightmap; // [crispy] brightmaps
 
 // for global animation
 int*		flattranslation;
@@ -802,6 +804,7 @@ void R_InitTextures (void)
     texturecompositesize = Z_Malloc (numtextures * sizeof(*texturecompositesize), PU_STATIC, 0);
     texturewidthmask = Z_Malloc (numtextures * sizeof(*texturewidthmask), PU_STATIC, 0);
     textureheight = Z_Malloc (numtextures * sizeof(*textureheight), PU_STATIC, 0);
+    texturebrightmap = Z_Malloc (numtextures * sizeof(*texturebrightmap), PU_STATIC, 0);
 
     totalwidth = 0;
     
@@ -857,6 +860,9 @@ void R_InitTextures (void)
 	memcpy (texture->name, mtexture->name, sizeof(texture->name));
 	mpatch = &mtexture->patches[0];
 	patch = &texture->patches[0];
+
+	// [crispy] initialize brightmaps
+	texturebrightmap[i] = R_BrightmapForTexName(texture->name);
 
 	for (j=0 ; j<texture->patchcount ; j++, mpatch++, patch++)
 	{

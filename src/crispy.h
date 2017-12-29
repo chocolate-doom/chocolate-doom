@@ -40,6 +40,7 @@ typedef struct
 {
 	// [crispy] "crispness" config variables
 	int automapstats;
+	int brightmaps;
 	int centerweapon;
 	int coloredblood;
 	int coloredhud;
@@ -88,6 +89,15 @@ extern crispy_t *const critical;
 
 extern void CheckCrispySingleplayerFn (int singleplayer);
 #define CheckCrispySingleplayer {CheckCrispySingleplayerFn(!demorecording && !demoplayback && !netgame);}
+
+enum
+{
+    BRIGHTMAPS_OFF,
+    BRIGHTMAPS_TEXTURES,
+    BRIGHTMAPS_SPRITES,
+    BRIGHTMAPS_BOTH,
+    NUM_BRIGHTMAPS,
+};
 
 enum
 {

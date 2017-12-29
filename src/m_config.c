@@ -1961,6 +1961,14 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_INT(crispy_extautomap),
+
+    //!
+    // @game doom
+    //
+    // Apply brightmaps to select textures and sprites.
+    //
+
+    CONFIG_VARIABLE_INT(crispy_brightmaps),
 };
 
 static default_collection_t extra_defaults =
