@@ -9,13 +9,13 @@ FILETYPE 1
  {
   BLOCK "040904E4"
   {
-   VALUE "FileVersion", "3.0.0-beta1"
+   VALUE "FileVersion", "3.0.0"
    VALUE "FileDescription", "Chocolate Doom Setup"
    VALUE "InternalName", "chocolate-setup"
    VALUE "CompanyName", "Chocolate Doom"
    VALUE "LegalCopyright", "GNU General Public License"
    VALUE "ProductName", "Chocolate Doom Setup"
-   VALUE "ProductVersion", "3.0.0-beta1"
+   VALUE "ProductVersion", "3.0.0"
   }
  }
  BLOCK "VarFileInfo"
