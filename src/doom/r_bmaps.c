@@ -296,30 +296,30 @@ byte *R_BrightmapForTexName (const char *texname)
 }
 
 // [crispy] adapted from russian-doom/src/doom/r_things.c:617-639
-byte *R_BrightmapForThingType (const int type)
+byte *R_BrightmapForSprite (const int type)
 {
 	if ((crispy->brightmaps & BRIGHTMAPS_SPRITES) && type > 0)
 	{
 		switch (type)
 		{
 			// Armor Bonus
-			case MT_MISC3:
+			case SPR_BON2:
 			// Cell Charge
-			case MT_MISC20:
+			case SPR_CELL:
 			{
 				return greenonly1;
 				break;
 			}
 			// Cell Charge Pack
-			case MT_MISC21:
+			case SPR_CELP:
 			{
 				return yellowonly;
 				break;
 			}
 			// BFG9000
-			case MT_MISC25:
+			case SPR_BFUG:
 			// Plasmagun
-			case MT_MISC28:
+			case SPR_PLAS:
 			{
 				return redonly;
 				break;
