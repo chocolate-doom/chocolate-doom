@@ -816,7 +816,7 @@ static void R_DrawLSprite (void)
     memset(vis, 0, sizeof(*vis)); // [crispy] set all fields to NULL, except ...
     vis->patch = lump - firstspritelump; // [crispy] not a sprite patch
     vis->colormap[0] = vis->colormap[1] = fixedcolormap ? fixedcolormap : colormaps; // [crispy] always full brightness
-    vis->brightmap = R_BrightmapForSprite(-1);
+    vis->brightmap = dc_brightmap;
 //  vis->mobjflags |= MF_TRANSLUCENT;
     vis->xiscale = FixedDiv (FRACUNIT, xscale);
     vis->texturemid = laserspot->z - viewz;
@@ -1027,7 +1027,7 @@ void R_DrawPSprite (pspdef_t* psp, psprnum_t psprnum) // [crispy] differentiate 
 	// local light
 	vis->colormap[0] = vis->colormap[1] = spritelights[MAXLIGHTSCALE-1];
     }
-    vis->brightmap = R_BrightmapForSprite(-1);
+    vis->brightmap = dc_brightmap;
 	
     // [crispy] translucent gun flash sprites
     if (psprnum == ps_flash)
