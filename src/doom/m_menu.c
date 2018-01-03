@@ -1383,9 +1383,9 @@ typedef struct
 
 static multiitem_t multiitem_brightmaps[NUM_BRIGHTMAPS] =
 {
-    {BRIGHTMAPS_OFF, "off"},
-    {BRIGHTMAPS_TEXTURES, "textures"},
-    {BRIGHTMAPS_SPRITES, "sprites"},
+    {BRIGHTMAPS_OFF, "none"},
+    {BRIGHTMAPS_TEXTURES, "walls"},
+    {BRIGHTMAPS_SPRITES, "items"},
     {BRIGHTMAPS_BOTH, "both"},
 };
 
@@ -1502,7 +1502,7 @@ static void M_DrawCrispness1(void)
     M_DrawCrispnessItem(crispness_smoothscaling, "Smooth Scaling", crispy->smoothscaling, true);
     M_DrawCrispnessMultiItem(crispness_coloredhud, "Colorize HUD Elements", multiitem_coloredhud, crispy->coloredhud, true);
     M_DrawCrispnessMultiItem(crispness_translucency, "Enable Translucency", multiitem_translucency, crispy->translucency, true);
-    M_DrawCrispnessMultiItem(crispness_brightmaps, "Apply Brightmaps", multiitem_brightmaps, crispy->brightmaps, true);
+    M_DrawCrispnessMultiItem(crispness_brightmaps, "Apply Brightmaps to", multiitem_brightmaps, crispy->brightmaps, true);
     M_DrawCrispnessMultiItem(crispness_coloredblood, "Colored Blood and Corpses", multiitem_coloredblood, crispy->coloredblood & COLOREDBLOOD_BOTH, true);
     M_DrawCrispnessItem(crispness_coloredblood2, "Fix Spectre and Lost Soul Blood", crispy->coloredblood & COLOREDBLOOD_FIX, true);
     M_DrawCrispnessItem(crispness_flipcorpses, "Randomly Mirrored Corpses", crispy->flipcorpses, true);
