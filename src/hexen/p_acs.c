@@ -900,6 +900,15 @@ static int ReadMapVar(void)
     return var;
 }
 
+static int ReadWorldVar(void)
+{
+    int var = ReadCodeImmediate();
+    ACSAssert(var >= 0, "negative world variable: %d < 0", var);
+    ACSAssert(var < MAX_ACS_WORLD_VARS,
+              "invalid world variable: %d >= %d", var, MAX_ACS_WORLD_VARS);
+    return var;
+}
+
 //==========================================================================
 //
 // P-Code Commands
@@ -1185,8 +1194,7 @@ static int CmdAssignMapVar(void)
 
 static int CmdAssignWorldVar(void)
 {
-    WorldVars[LONG(*PCodePtr)] = Pop();
-    ++PCodePtr;
+    WorldVars[ReadWorldVar()] = Pop();
     return SCRIPT_CONTINUE;
 }
 
@@ -1204,8 +1212,7 @@ static int CmdPushMapVar(void)
 
 static int CmdPushWorldVar(void)
 {
-    Push(WorldVars[LONG(*PCodePtr)]);
-    ++PCodePtr;
+    Push(WorldVars[ReadWorldVar()]);
     return SCRIPT_CONTINUE;
 }
 
@@ -1223,8 +1230,7 @@ static int CmdAddMapVar(void)
 
 static int CmdAddWorldVar(void)
 {
-    WorldVars[LONG(*PCodePtr)] += Pop();
-    ++PCodePtr;
+    WorldVars[ReadWorldVar()] += Pop();
     return SCRIPT_CONTINUE;
 }
 
@@ -1242,8 +1248,7 @@ static int CmdSubMapVar(void)
 
 static int CmdSubWorldVar(void)
 {
-    WorldVars[LONG(*PCodePtr)] -= Pop();
-    ++PCodePtr;
+    WorldVars[ReadWorldVar()] -= Pop();
     return SCRIPT_CONTINUE;
 }
 
@@ -1261,8 +1266,7 @@ static int CmdMulMapVar(void)
 
 static int CmdMulWorldVar(void)
 {
-    WorldVars[LONG(*PCodePtr)] *= Pop();
-    ++PCodePtr;
+    WorldVars[ReadWorldVar()] *= Pop();
     return SCRIPT_CONTINUE;
 }
 
@@ -1280,8 +1284,7 @@ static int CmdDivMapVar(void)
 
 static int CmdDivWorldVar(void)
 {
-    WorldVars[LONG(*PCodePtr)] /= Pop();
-    ++PCodePtr;
+    WorldVars[ReadWorldVar()] /= Pop();
     return SCRIPT_CONTINUE;
 }
 
@@ -1299,8 +1302,7 @@ static int CmdModMapVar(void)
 
 static int CmdModWorldVar(void)
 {
-    WorldVars[LONG(*PCodePtr)] %= Pop();
-    ++PCodePtr;
+    WorldVars[ReadWorldVar()] %= Pop();
     return SCRIPT_CONTINUE;
 }
 
@@ -1318,8 +1320,7 @@ static int CmdIncMapVar(void)
 
 static int CmdIncWorldVar(void)
 {
-    ++WorldVars[LONG(*PCodePtr)];
-    ++PCodePtr;
+    ++WorldVars[ReadWorldVar()];
     return SCRIPT_CONTINUE;
 }
 
@@ -1337,8 +1338,7 @@ static int CmdDecMapVar(void)
 
 static int CmdDecWorldVar(void)
 {
-    --WorldVars[LONG(*PCodePtr)];
-    ++PCodePtr;
+    --WorldVars[ReadWorldVar()];
     return SCRIPT_CONTINUE;
 }
 
