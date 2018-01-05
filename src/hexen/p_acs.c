@@ -1817,11 +1817,12 @@ static int CmdPrintNumber(void)
 
 static int CmdPrintCharacter(void)
 {
-    char *bufferEnd;
+    char tempStr[2];
 
-    bufferEnd = PrintBuffer + strlen(PrintBuffer);
-    *bufferEnd++ = Pop();
-    *bufferEnd = 0;
+    tempStr[0] = Pop();
+    tempStr[1] = '\0';
+    M_StringConcat(PrintBuffer, tempStr, sizeof(PrintBuffer));
+
     return SCRIPT_CONTINUE;
 }
 
