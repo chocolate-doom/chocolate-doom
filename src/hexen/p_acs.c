@@ -176,6 +176,7 @@ static void ThingCount(int type, int tid);
 
 int ACScriptCount;
 byte *ActionCodeBase;
+static int ActionCodeSize;
 acsInfo_t *ACSInfo;
 int MapVars[MAX_ACS_MAP_VARS];
 int WorldVars[MAX_ACS_WORLD_VARS];
@@ -326,6 +327,23 @@ static void ACSAssert(int condition, char *fmt, ...)
 
 //==========================================================================
 //
+// ValidateLumpOffset
+//
+// Check that the given offset is a valid location inside the loaded ACS
+// lump and does not point outside it.
+//
+//==========================================================================
+
+static int ValidateLumpOffset(int offset, char *where)
+{
+    ACSAssert(offset >= 0, "negative lump offset in %s", where);
+    ACSAssert(offset < ActionCodeSize, "invalid lump offset in %s: %d >= %d",
+              where, offset, ActionCodeSize);
+    return offset;
+}
+
+//==========================================================================
+//
 // P_LoadACScripts
 //
 //==========================================================================
@@ -339,9 +357,10 @@ void P_LoadACScripts(int lump)
 
     header = W_CacheLumpNum(lump, PU_LEVEL);
     ActionCodeBase = (byte *) header;
+    ActionCodeSize = W_LumpLength(lump);
     buffer = (int *) ((byte *) header + LONG(header->infoOffset));
 
-    ACScriptCount = LONG(*buffer); 
+    ACScriptCount = LONG(*buffer);
     ++buffer;
 
     if (ACScriptCount == 0)
@@ -356,7 +375,9 @@ void P_LoadACScripts(int lump)
         info->number = LONG(*buffer);
         ++buffer;
 
-        info->address = (int *) ((byte *) ActionCodeBase + LONG(*buffer));
+        info->address = (int *) (
+            (byte *) ActionCodeBase +
+            ValidateLumpOffset(LONG(*buffer), "script header"));
         ++buffer;
 
         info->argCount = LONG(*buffer);
@@ -390,7 +411,8 @@ void P_LoadACScripts(int lump)
 
     for (i=0; i<ACStringCount; ++i)
     {
-        ACStrings[i] = (char *) ActionCodeBase + LONG(buffer[i]);
+        ACStrings[i] = (char *) ActionCodeBase +
+                       ValidateLumpOffset(LONG(buffer[i]), "string header");
     }
 
     memset(MapVars, 0, sizeof(MapVars));
@@ -1374,7 +1396,10 @@ static int CmdDecWorldVar(void)
 
 static int CmdGoto(void)
 {
-    PCodePtr = (int *) (ActionCodeBase + ReadCodeImmediate());
+    int offset;
+
+    offset = ValidateLumpOffset(ReadCodeImmediate(), "CmdGoto parameter");
+    PCodePtr = (int *) (ActionCodeBase + offset);
     return SCRIPT_CONTINUE;
 }
 
@@ -1382,7 +1407,7 @@ static int CmdIfGoto(void)
 {
     int offset;
 
-    offset = ReadCodeImmediate();
+    offset = ValidateLumpOffset(ReadCodeImmediate(), "CmdIfGoto parameter");
 
     if (Pop() != 0)
     {
@@ -1668,7 +1693,7 @@ static int CmdIfNotGoto(void)
 {
     int offset;
 
-    offset = ReadCodeImmediate();
+    offset = ValidateLumpOffset(ReadCodeImmediate(), "CmdIfNotGoto parameter");
 
     if (Pop() == 0)
     {
@@ -1712,7 +1737,7 @@ static int CmdCaseGoto(void)
     int offset;
 
     value = ReadCodeImmediate();
-    offset = ReadCodeImmediate();
+    offset = ValidateLumpOffset(ReadCodeImmediate(), "CmdCaseGoto parameter");
 
     if (Top() == value)
     {
