@@ -39,9 +39,6 @@
 #define TEXTURE_TOP 0
 #define TEXTURE_MIDDLE 1
 #define TEXTURE_BOTTOM 2
-#define S_DROP ACScript->stackPtr--
-#define S_POP ACScript->stack[--ACScript->stackPtr]
-#define S_PUSH(x) ACScript->stack[ACScript->stackPtr++] = x
 
 // TYPES -------------------------------------------------------------------
 
@@ -301,6 +298,31 @@ static int (*PCodeCmds[]) (void) =
 };
 
 // CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+// ACSAssert
+//
+// Check that the given condition evaluates to true. If it does not, exit
+// with an I_Error() printing the given message.
+//
+//==========================================================================
+
+static void ACSAssert(int condition, char *fmt, ...)
+{
+    char buf[128];
+    va_list args;
+
+    if (condition)
+    {
+        return;
+    }
+
+    va_start(args, fmt);
+    M_vsnprintf(buf, sizeof(buf), fmt, args);
+    va_end(args);
+    I_Error("ACS assertation failure: %s", buf);
+}
 
 //==========================================================================
 //
@@ -810,6 +832,9 @@ void CheckACSPresent(int number)
 
 static void Push(int value)
 {
+    ACSAssert(ACScript->stackPtr < ACS_STACK_DEPTH,
+              "maximum stack depth exceeded: %d >= %d",
+              ACScript->stackPtr, ACS_STACK_DEPTH);
     ACScript->stack[ACScript->stackPtr++] = value;
 }
 
@@ -821,6 +846,7 @@ static void Push(int value)
 
 static int Pop(void)
 {
+    ACSAssert(ACScript->stackPtr > 0, "pop of empty stack");
     return ACScript->stack[--ACScript->stackPtr];
 }
 
@@ -832,6 +858,7 @@ static int Pop(void)
 
 static int Top(void)
 {
+    ACSAssert(ACScript->stackPtr > 0, "read from top of empty stack");
     return ACScript->stack[ACScript->stackPtr - 1];
 }
 
@@ -843,6 +870,7 @@ static int Top(void)
 
 static void Drop(void)
 {
+    ACSAssert(ACScript->stackPtr > 0, "drop on empty stack");
     ACScript->stackPtr--;
 }
 
