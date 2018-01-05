@@ -891,6 +891,15 @@ static int ReadScriptVar(void)
     return var;
 }
 
+static int ReadMapVar(void)
+{
+    int var = ReadCodeImmediate();
+    ACSAssert(var >= 0, "negative map variable: %d < 0", var);
+    ACSAssert(var < MAX_ACS_MAP_VARS,
+              "invalid map variable: %d >= %d", var, MAX_ACS_MAP_VARS);
+    return var;
+}
+
 //==========================================================================
 //
 // P-Code Commands
@@ -1170,8 +1179,7 @@ static int CmdAssignScriptVar(void)
 
 static int CmdAssignMapVar(void)
 {
-    MapVars[LONG(*PCodePtr)] = Pop();
-    ++PCodePtr;
+    MapVars[ReadMapVar()] = Pop();
     return SCRIPT_CONTINUE;
 }
 
@@ -1190,8 +1198,7 @@ static int CmdPushScriptVar(void)
 
 static int CmdPushMapVar(void)
 {
-    Push(MapVars[LONG(*PCodePtr)]);
-    ++PCodePtr;
+    Push(MapVars[ReadMapVar()]);
     return SCRIPT_CONTINUE;
 }
 
@@ -1210,8 +1217,7 @@ static int CmdAddScriptVar(void)
 
 static int CmdAddMapVar(void)
 {
-    MapVars[LONG(*PCodePtr)] += Pop();
-    ++PCodePtr;
+    MapVars[ReadMapVar()] += Pop();
     return SCRIPT_CONTINUE;
 }
 
@@ -1230,8 +1236,7 @@ static int CmdSubScriptVar(void)
 
 static int CmdSubMapVar(void)
 {
-    MapVars[LONG(*PCodePtr)] -= Pop();
-    ++PCodePtr;
+    MapVars[ReadMapVar()] -= Pop();
     return SCRIPT_CONTINUE;
 }
 
@@ -1250,8 +1255,7 @@ static int CmdMulScriptVar(void)
 
 static int CmdMulMapVar(void)
 {
-    MapVars[LONG(*PCodePtr)] *= Pop();
-    ++PCodePtr;
+    MapVars[ReadMapVar()] *= Pop();
     return SCRIPT_CONTINUE;
 }
 
@@ -1270,8 +1274,7 @@ static int CmdDivScriptVar(void)
 
 static int CmdDivMapVar(void)
 {
-    MapVars[LONG(*PCodePtr)] /= Pop();
-    ++PCodePtr;
+    MapVars[ReadMapVar()] /= Pop();
     return SCRIPT_CONTINUE;
 }
 
@@ -1290,8 +1293,7 @@ static int CmdModScriptVar(void)
 
 static int CmdModMapVar(void)
 {
-    MapVars[LONG(*PCodePtr)] %= Pop();
-    ++PCodePtr;
+    MapVars[ReadMapVar()] %= Pop();
     return SCRIPT_CONTINUE;
 }
 
@@ -1310,8 +1312,7 @@ static int CmdIncScriptVar(void)
 
 static int CmdIncMapVar(void)
 {
-    ++MapVars[LONG(*PCodePtr)];
-    ++PCodePtr;
+    ++MapVars[ReadMapVar()];
     return SCRIPT_CONTINUE;
 }
 
@@ -1330,8 +1331,7 @@ static int CmdDecScriptVar(void)
 
 static int CmdDecMapVar(void)
 {
-    --MapVars[LONG(*PCodePtr)];
-    ++PCodePtr;
+    --MapVars[ReadMapVar()];
     return SCRIPT_CONTINUE;
 }
 
