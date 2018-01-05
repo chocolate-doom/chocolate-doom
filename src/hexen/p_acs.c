@@ -55,7 +55,7 @@ typedef PACKED_STRUCT (
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
-static void StartOpenACS(int number, int infoIndex, int *address);
+static void StartOpenACS(int number, int infoIndex, int offset);
 static void ScriptFinished(int number);
 static boolean TagBusy(int tag);
 static boolean AddToACSStore(int map, int number, byte * args);
@@ -185,7 +185,7 @@ acsstore_t ACSStore[MAX_ACS_STORE + 1]; // +1 for termination marker
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static acs_t *ACScript;
-static int *PCodePtr;
+static unsigned int PCodeOffset;
 static byte SpecArgs[8];
 static int ACStringCount;
 static char **ACStrings;
@@ -344,6 +344,29 @@ static int ValidateLumpOffset(int offset, char *where)
 
 //==========================================================================
 //
+// ReadCodeInt
+//
+// Read a 32-bit value from the loaded ACS lump at the location pointed to
+// by PCodeOffset, advancing PCodeOffset to the next value in the process.
+//
+//==========================================================================
+
+static int ReadCodeInt(void)
+{
+    int result;
+    int *ptr;
+
+    ValidateLumpOffset(PCodeOffset + 3, "ReadCodeInt");
+
+    ptr = (int *) (ActionCodeBase + PCodeOffset);
+    result = LONG(*ptr);
+    PCodeOffset += 4;
+
+    return result;
+}
+
+//==========================================================================
+//
 // P_LoadACScripts
 //
 //==========================================================================
@@ -375,9 +398,7 @@ void P_LoadACScripts(int lump)
         info->number = LONG(*buffer);
         ++buffer;
 
-        info->address = (int *) (
-            (byte *) ActionCodeBase +
-            ValidateLumpOffset(LONG(*buffer), "script header"));
+        info->offset = ValidateLumpOffset(LONG(*buffer), "script header");
         ++buffer;
 
         info->argCount = LONG(*buffer);
@@ -396,7 +417,7 @@ void P_LoadACScripts(int lump)
         if (info->number >= OPEN_SCRIPTS_BASE)
         {                       // Auto-activate
             info->number -= OPEN_SCRIPTS_BASE;
-            StartOpenACS(info->number, i, info->address);
+            StartOpenACS(info->number, i, info->offset);
             info->state = ASTE_RUNNING;
         }
         else
@@ -424,7 +445,7 @@ void P_LoadACScripts(int lump)
 //
 //==========================================================================
 
-static void StartOpenACS(int number, int infoIndex, int *address)
+static void StartOpenACS(int number, int infoIndex, int offset)
 {
     acs_t *script;
 
@@ -436,7 +457,7 @@ static void StartOpenACS(int number, int infoIndex, int *address)
     script->delayCount = 35;
 
     script->infoIndex = infoIndex;
-    script->ip = address;
+    script->ip = offset;
     script->thinker.function = T_InterpretACS;
     P_AddThinker(&script->thinker);
 }
@@ -517,7 +538,7 @@ boolean P_StartACS(int number, int map, byte * args, mobj_t * activator,
     script->activator = activator;
     script->line = line;
     script->side = side;
-    script->ip = ACSInfo[infoIndex].address;
+    script->ip = ACSInfo[infoIndex].offset;
     script->thinker.function = T_InterpretACS;
     for (i = 0; i < MAX_SCRIPT_ARGS && i < ACSInfo[infoIndex].argCount; i++)
     {
@@ -697,17 +718,15 @@ void T_InterpretACS(acs_t * script)
         return;
     }
     ACScript = script;
-    PCodePtr = ACScript->ip;
+    PCodeOffset = ACScript->ip;
 
     do
     {
-        cmd = LONG(*PCodePtr);
-        ++PCodePtr;
-
-        action = PCodeCmds[cmd] ();
+        cmd = ReadCodeInt();
+        action = PCodeCmds[cmd]();
     } while (action == SCRIPT_CONTINUE);
 
-    ACScript->ip = PCodePtr;
+    ACScript->ip = PCodeOffset;
 
     if (action == SCRIPT_TERMINATE)
     {
@@ -898,25 +917,6 @@ static void Drop(void)
 
 //==========================================================================
 //
-// ReadCodeImmediate
-//
-// Some instructions take "immediate" parameters which are stored in the
-// bytecode immediately following the instruction. This function should be
-// used to read them.
-//
-//==========================================================================
-
-static int ReadCodeImmediate(void)
-{
-    int result;
-    // TODO: Add bounds checking
-    result = LONG(*PCodePtr);
-    ++PCodePtr;
-    return result;
-}
-
-//==========================================================================
-//
 // ReadScriptVar
 //
 // Read a script variable index as an immediate value, validating the
@@ -926,7 +926,7 @@ static int ReadCodeImmediate(void)
 
 static int ReadScriptVar(void)
 {
-    int var = ReadCodeImmediate();
+    int var = ReadCodeInt();
     ACSAssert(var >= 0, "negative script variable: %d < 0", var);
     ACSAssert(var < MAX_ACS_SCRIPT_VARS,
               "invalid script variable: %d >= %d", var, MAX_ACS_SCRIPT_VARS);
@@ -944,7 +944,7 @@ static int ReadScriptVar(void)
 
 static int ReadMapVar(void)
 {
-    int var = ReadCodeImmediate();
+    int var = ReadCodeInt();
     ACSAssert(var >= 0, "negative map variable: %d < 0", var);
     ACSAssert(var < MAX_ACS_MAP_VARS,
               "invalid map variable: %d >= %d", var, MAX_ACS_MAP_VARS);
@@ -962,7 +962,7 @@ static int ReadMapVar(void)
 
 static int ReadWorldVar(void)
 {
-    int var = ReadCodeImmediate();
+    int var = ReadCodeInt();
     ACSAssert(var >= 0, "negative world variable: %d < 0", var);
     ACSAssert(var < MAX_ACS_WORLD_VARS,
               "invalid world variable: %d >= %d", var, MAX_ACS_WORLD_VARS);
@@ -1011,7 +1011,7 @@ static int CmdSuspend(void)
 
 static int CmdPushNumber(void)
 {
-    Push(ReadCodeImmediate());
+    Push(ReadCodeInt());
     return SCRIPT_CONTINUE;
 }
 
@@ -1019,7 +1019,7 @@ static int CmdLSpec1(void)
 {
     int special;
 
-    special = ReadCodeImmediate();
+    special = ReadCodeInt();
     SpecArgs[0] = Pop();
     P_ExecuteLineSpecial(special, SpecArgs, ACScript->line,
                          ACScript->side, ACScript->activator);
@@ -1030,7 +1030,7 @@ static int CmdLSpec2(void)
 {
     int special;
 
-    special = ReadCodeImmediate();
+    special = ReadCodeInt();
     SpecArgs[1] = Pop();
     SpecArgs[0] = Pop();
     P_ExecuteLineSpecial(special, SpecArgs, ACScript->line,
@@ -1042,7 +1042,7 @@ static int CmdLSpec3(void)
 {
     int special;
 
-    special = ReadCodeImmediate();
+    special = ReadCodeInt();
     SpecArgs[2] = Pop();
     SpecArgs[1] = Pop();
     SpecArgs[0] = Pop();
@@ -1055,7 +1055,7 @@ static int CmdLSpec4(void)
 {
     int special;
 
-    special = ReadCodeImmediate();
+    special = ReadCodeInt();
     SpecArgs[3] = Pop();
     SpecArgs[2] = Pop();
     SpecArgs[1] = Pop();
@@ -1069,7 +1069,7 @@ static int CmdLSpec5(void)
 {
     int special;
 
-    special = ReadCodeImmediate();
+    special = ReadCodeInt();
     SpecArgs[4] = Pop();
     SpecArgs[3] = Pop();
     SpecArgs[2] = Pop();
@@ -1084,8 +1084,8 @@ static int CmdLSpec1Direct(void)
 {
     int special;
 
-    special = ReadCodeImmediate();
-    SpecArgs[0] = ReadCodeImmediate();
+    special = ReadCodeInt();
+    SpecArgs[0] = ReadCodeInt();
     P_ExecuteLineSpecial(special, SpecArgs, ACScript->line,
                          ACScript->side, ACScript->activator);
     return SCRIPT_CONTINUE;
@@ -1095,9 +1095,9 @@ static int CmdLSpec2Direct(void)
 {
     int special;
 
-    special = ReadCodeImmediate();
-    SpecArgs[0] = ReadCodeImmediate();
-    SpecArgs[1] = ReadCodeImmediate();
+    special = ReadCodeInt();
+    SpecArgs[0] = ReadCodeInt();
+    SpecArgs[1] = ReadCodeInt();
     P_ExecuteLineSpecial(special, SpecArgs, ACScript->line,
                          ACScript->side, ACScript->activator);
     return SCRIPT_CONTINUE;
@@ -1107,10 +1107,10 @@ static int CmdLSpec3Direct(void)
 {
     int special;
 
-    special = ReadCodeImmediate();
-    SpecArgs[0] = ReadCodeImmediate();
-    SpecArgs[1] = ReadCodeImmediate();
-    SpecArgs[2] = ReadCodeImmediate();
+    special = ReadCodeInt();
+    SpecArgs[0] = ReadCodeInt();
+    SpecArgs[1] = ReadCodeInt();
+    SpecArgs[2] = ReadCodeInt();
     P_ExecuteLineSpecial(special, SpecArgs, ACScript->line,
                          ACScript->side, ACScript->activator);
     return SCRIPT_CONTINUE;
@@ -1120,11 +1120,11 @@ static int CmdLSpec4Direct(void)
 {
     int special;
 
-    special = ReadCodeImmediate();
-    SpecArgs[0] = ReadCodeImmediate();
-    SpecArgs[1] = ReadCodeImmediate();
-    SpecArgs[2] = ReadCodeImmediate();
-    SpecArgs[3] = ReadCodeImmediate();
+    special = ReadCodeInt();
+    SpecArgs[0] = ReadCodeInt();
+    SpecArgs[1] = ReadCodeInt();
+    SpecArgs[2] = ReadCodeInt();
+    SpecArgs[3] = ReadCodeInt();
     P_ExecuteLineSpecial(special, SpecArgs, ACScript->line,
                          ACScript->side, ACScript->activator);
     return SCRIPT_CONTINUE;
@@ -1134,12 +1134,12 @@ static int CmdLSpec5Direct(void)
 {
     int special;
 
-    special = ReadCodeImmediate();
-    SpecArgs[0] = ReadCodeImmediate();
-    SpecArgs[1] = ReadCodeImmediate();
-    SpecArgs[2] = ReadCodeImmediate();
-    SpecArgs[3] = ReadCodeImmediate();
-    SpecArgs[4] = ReadCodeImmediate();
+    special = ReadCodeInt();
+    SpecArgs[0] = ReadCodeInt();
+    SpecArgs[1] = ReadCodeInt();
+    SpecArgs[2] = ReadCodeInt();
+    SpecArgs[3] = ReadCodeInt();
+    SpecArgs[4] = ReadCodeInt();
     P_ExecuteLineSpecial(special, SpecArgs, ACScript->line,
                          ACScript->side, ACScript->activator);
     return SCRIPT_CONTINUE;
@@ -1396,10 +1396,7 @@ static int CmdDecWorldVar(void)
 
 static int CmdGoto(void)
 {
-    int offset;
-
-    offset = ValidateLumpOffset(ReadCodeImmediate(), "CmdGoto parameter");
-    PCodePtr = (int *) (ActionCodeBase + offset);
+    PCodeOffset = ValidateLumpOffset(ReadCodeInt(), "CmdGoto parameter");
     return SCRIPT_CONTINUE;
 }
 
@@ -1407,11 +1404,11 @@ static int CmdIfGoto(void)
 {
     int offset;
 
-    offset = ValidateLumpOffset(ReadCodeImmediate(), "CmdIfGoto parameter");
+    offset = ValidateLumpOffset(ReadCodeInt(), "CmdIfGoto parameter");
 
     if (Pop() != 0)
     {
-        PCodePtr = (int *) (ActionCodeBase + offset);
+        PCodeOffset = offset;
     }
     return SCRIPT_CONTINUE;
 }
@@ -1430,7 +1427,7 @@ static int CmdDelay(void)
 
 static int CmdDelayDirect(void)
 {
-    ACScript->delayCount = ReadCodeImmediate();
+    ACScript->delayCount = ReadCodeInt();
     return SCRIPT_STOP;
 }
 
@@ -1450,8 +1447,8 @@ static int CmdRandomDirect(void)
     int low;
     int high;
 
-    low = ReadCodeImmediate();
-    high = ReadCodeImmediate();
+    low = ReadCodeInt();
+    high = ReadCodeInt();
     Push(low + (P_Random() % (high - low + 1)));
     return SCRIPT_CONTINUE;
 }
@@ -1469,8 +1466,8 @@ static int CmdThingCountDirect(void)
 {
     int type;
 
-    type = ReadCodeImmediate();
-    ThingCount(type, ReadCodeImmediate());
+    type = ReadCodeInt();
+    ThingCount(type, ReadCodeInt());
     return SCRIPT_CONTINUE;
 }
 
@@ -1540,7 +1537,7 @@ static int CmdTagWait(void)
 
 static int CmdTagWaitDirect(void)
 {
-    ACSInfo[ACScript->infoIndex].waitValue = ReadCodeImmediate();
+    ACSInfo[ACScript->infoIndex].waitValue = ReadCodeInt();
     ACSInfo[ACScript->infoIndex].state = ASTE_WAITINGFORTAG;
     return SCRIPT_STOP;
 }
@@ -1554,7 +1551,7 @@ static int CmdPolyWait(void)
 
 static int CmdPolyWaitDirect(void)
 {
-    ACSInfo[ACScript->infoIndex].waitValue = ReadCodeImmediate();
+    ACSInfo[ACScript->infoIndex].waitValue = ReadCodeInt();
     ACSInfo[ACScript->infoIndex].state = ASTE_WAITINGFORPOLY;
     return SCRIPT_STOP;
 }
@@ -1581,8 +1578,8 @@ static int CmdChangeFloorDirect(void)
     int flat;
     int sectorIndex;
 
-    tag = ReadCodeImmediate();
-    flat = R_FlatNumForName(StringLookup(ReadCodeImmediate()));
+    tag = ReadCodeInt();
+    flat = R_FlatNumForName(StringLookup(ReadCodeInt()));
     sectorIndex = -1;
     while ((sectorIndex = P_FindSectorFromTag(tag, sectorIndex)) >= 0)
     {
@@ -1613,8 +1610,8 @@ static int CmdChangeCeilingDirect(void)
     int flat;
     int sectorIndex;
 
-    tag = ReadCodeImmediate();
-    flat = R_FlatNumForName(StringLookup(ReadCodeImmediate()));
+    tag = ReadCodeInt();
+    flat = R_FlatNumForName(StringLookup(ReadCodeInt()));
     sectorIndex = -1;
     while ((sectorIndex = P_FindSectorFromTag(tag, sectorIndex)) >= 0)
     {
@@ -1625,7 +1622,7 @@ static int CmdChangeCeilingDirect(void)
 
 static int CmdRestart(void)
 {
-    PCodePtr = ACSInfo[ACScript->infoIndex].address;
+    PCodeOffset = ACSInfo[ACScript->infoIndex].offset;
     return SCRIPT_CONTINUE;
 }
 
@@ -1693,11 +1690,11 @@ static int CmdIfNotGoto(void)
 {
     int offset;
 
-    offset = ValidateLumpOffset(ReadCodeImmediate(), "CmdIfNotGoto parameter");
+    offset = ValidateLumpOffset(ReadCodeInt(), "CmdIfNotGoto parameter");
 
     if (Pop() == 0)
     {
-        PCodePtr = (int *) (ActionCodeBase + offset);
+        PCodeOffset = offset;
     }
     return SCRIPT_CONTINUE;
 }
@@ -1717,7 +1714,7 @@ static int CmdScriptWait(void)
 
 static int CmdScriptWaitDirect(void)
 {
-    ACSInfo[ACScript->infoIndex].waitValue = ReadCodeImmediate();
+    ACSInfo[ACScript->infoIndex].waitValue = ReadCodeInt();
     ACSInfo[ACScript->infoIndex].state = ASTE_WAITINGFORSCRIPT;
     return SCRIPT_STOP;
 }
@@ -1736,12 +1733,12 @@ static int CmdCaseGoto(void)
     int value;
     int offset;
 
-    value = ReadCodeImmediate();
-    offset = ValidateLumpOffset(ReadCodeImmediate(), "CmdCaseGoto parameter");
+    value = ReadCodeInt();
+    offset = ValidateLumpOffset(ReadCodeInt(), "CmdCaseGoto parameter");
 
     if (Top() == value)
     {
-        PCodePtr = (int *) (ActionCodeBase + offset);
+        PCodeOffset = offset;
         Drop();
     }
 

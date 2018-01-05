@@ -1593,8 +1593,7 @@ static void StreamIn_acs_t(acs_t *str)
     }
 
     // int *ip;
-    i = SV_ReadLong();
-    str->ip = (int *) (ActionCodeBase + i);
+    str->ip = SV_ReadLong();
 }
 
 static void StreamOut_acs_t(acs_t *str)
@@ -1645,7 +1644,7 @@ static void StreamOut_acs_t(acs_t *str)
     }
 
     // int *ip;
-    SV_WriteLong((byte *) str->ip - ActionCodeBase);
+    SV_WriteLong(str->ip);
 }
 
 
