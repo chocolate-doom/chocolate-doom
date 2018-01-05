@@ -184,6 +184,7 @@ acsstore_t ACSStore[MAX_ACS_STORE + 1]; // +1 for termination marker
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
+static char EvalContext[64];
 static acs_t *ACScript;
 static unsigned int PCodeOffset;
 static byte SpecArgs[8];
@@ -322,7 +323,7 @@ static void ACSAssert(int condition, char *fmt, ...)
     va_start(args, fmt);
     M_vsnprintf(buf, sizeof(buf), fmt, args);
     va_end(args);
-    I_Error("ACS assertation failure: %s", buf);
+    I_Error("ACS assertation failure: in %s: %s", EvalContext, buf);
 }
 
 //==========================================================================
@@ -361,6 +362,7 @@ static int ReadCodeInt(void)
 static int ReadScriptVar(void)
 {
     int var = ReadCodeInt();
+    ACSAssert(0, "testing error messages");
     ACSAssert(var >= 0, "negative script variable: %d < 0", var);
     ACSAssert(var < MAX_ACS_SCRIPT_VARS,
               "invalid script variable: %d >= %d", var, MAX_ACS_SCRIPT_VARS);
@@ -453,6 +455,9 @@ void P_LoadACScripts(int lump)
 
     ActionCodeBase = W_CacheLumpNum(lump, PU_LEVEL);
     ActionCodeSize = W_LumpLength(lump);
+
+    M_snprintf(EvalContext, sizeof(EvalContext),
+               "header parsing of lump #%d", lump);
 
     header = (acsHeader_t *) ActionCodeBase;
     PCodeOffset = LONG(header->infoOffset);
@@ -792,7 +797,11 @@ void T_InterpretACS(acs_t * script)
 
     do
     {
+        M_snprintf(EvalContext, sizeof(EvalContext), "script %d @0x%x",
+                   ACSInfo[script->infoIndex].number, PCodeOffset);
         cmd = ReadCodeInt();
+        M_snprintf(EvalContext, sizeof(EvalContext), "script %d @0x%x, cmd=%d",
+                   ACSInfo[script->infoIndex].number, PCodeOffset, cmd);
         ACSAssert(cmd >= 0, "negative ACS instruction %d", cmd);
         ACSAssert(cmd < arrlen(PCodeCmds),
                   "invalid ACS instruction %d (maybe this WAD is designed "
