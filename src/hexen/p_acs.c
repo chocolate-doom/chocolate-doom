@@ -874,13 +874,33 @@ static void Drop(void)
     ACScript->stackPtr--;
 }
 
+//==========================================================================
+//
+// ReadCodeImmediate
+//
+// Some instructions take "immediate" parameters which are stored in the
+// bytecode immediately following the instruction. This function should be
+// used to read them.
+//
+//==========================================================================
+
 static int ReadCodeImmediate(void)
 {
     int result;
+    // TODO: Add bounds checking
     result = *PCodePtr;
     ++PCodePtr;
     return result;
 }
+
+//==========================================================================
+//
+// ReadScriptVar
+//
+// Read a script variable index as an immediate value, validating the
+// result is a valid script variable number.
+//
+//==========================================================================
 
 static int ReadScriptVar(void)
 {
@@ -891,6 +911,15 @@ static int ReadScriptVar(void)
     return var;
 }
 
+//==========================================================================
+//
+// ReadMapVar
+//
+// Read a map variable index as an immediate value, validating the
+// result is a valid map variable number.
+//
+//==========================================================================
+
 static int ReadMapVar(void)
 {
     int var = ReadCodeImmediate();
@@ -900,6 +929,15 @@ static int ReadMapVar(void)
     return var;
 }
 
+//==========================================================================
+//
+// ReadWorldVar
+//
+// Read a world variable index as an immediate value, validating the
+// result is a valid world variable number.
+//
+//==========================================================================
+
 static int ReadWorldVar(void)
 {
     int var = ReadCodeImmediate();
@@ -908,6 +946,15 @@ static int ReadWorldVar(void)
               "invalid world variable: %d >= %d", var, MAX_ACS_WORLD_VARS);
     return var;
 }
+
+//==========================================================================
+//
+// StringLookup
+//
+// Look up the given string in the strings table by index, validating that
+// it is a valid string index.
+//
+//==========================================================================
 
 static char *StringLookup(int string_index)
 {
