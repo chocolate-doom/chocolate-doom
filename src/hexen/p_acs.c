@@ -327,23 +327,6 @@ static void ACSAssert(int condition, char *fmt, ...)
 
 //==========================================================================
 //
-// ValidateLumpOffset
-//
-// Check that the given offset is a valid location inside the loaded ACS
-// lump and does not point outside it.
-//
-//==========================================================================
-
-static int ValidateLumpOffset(int offset, char *where)
-{
-    ACSAssert(offset >= 0, "negative lump offset in %s", where);
-    ACSAssert(offset < ActionCodeSize, "invalid lump offset in %s: %d >= %d",
-              where, offset, ActionCodeSize);
-    return offset;
-}
-
-//==========================================================================
-//
 // ReadCodeInt
 //
 // Read a 32-bit value from the loaded ACS lump at the location pointed to
@@ -356,13 +339,104 @@ static int ReadCodeInt(void)
     int result;
     int *ptr;
 
-    ValidateLumpOffset(PCodeOffset + 3, "ReadCodeInt");
+    ACSAssert(PCodeOffset + 3 < ActionCodeSize,
+              "unexpectedly reached end of ACS lump");
 
     ptr = (int *) (ActionCodeBase + PCodeOffset);
     result = LONG(*ptr);
     PCodeOffset += 4;
 
     return result;
+}
+
+//==========================================================================
+//
+// ReadScriptVar
+//
+// Read a script variable index as an immediate value, validating the
+// result is a valid script variable number.
+//
+//==========================================================================
+
+static int ReadScriptVar(void)
+{
+    int var = ReadCodeInt();
+    ACSAssert(var >= 0, "negative script variable: %d < 0", var);
+    ACSAssert(var < MAX_ACS_SCRIPT_VARS,
+              "invalid script variable: %d >= %d", var, MAX_ACS_SCRIPT_VARS);
+    return var;
+}
+
+//==========================================================================
+//
+// ReadMapVar
+//
+// Read a map variable index as an immediate value, validating the
+// result is a valid map variable number.
+//
+//==========================================================================
+
+static int ReadMapVar(void)
+{
+    int var = ReadCodeInt();
+    ACSAssert(var >= 0, "negative map variable: %d < 0", var);
+    ACSAssert(var < MAX_ACS_MAP_VARS,
+              "invalid map variable: %d >= %d", var, MAX_ACS_MAP_VARS);
+    return var;
+}
+
+//==========================================================================
+//
+// ReadWorldVar
+//
+// Read a world variable index as an immediate value, validating the
+// result is a valid world variable number.
+//
+//==========================================================================
+
+static int ReadWorldVar(void)
+{
+    int var = ReadCodeInt();
+    ACSAssert(var >= 0, "negative world variable: %d < 0", var);
+    ACSAssert(var < MAX_ACS_WORLD_VARS,
+              "invalid world variable: %d >= %d", var, MAX_ACS_WORLD_VARS);
+    return var;
+}
+
+//==========================================================================
+//
+// StringLookup
+//
+// Look up the given string in the strings table by index, validating that
+// it is a valid string index.
+//
+//==========================================================================
+
+static char *StringLookup(int string_index)
+{
+    ACSAssert(string_index >= 0,
+              "negative string index: %d < 0", string_index);
+    ACSAssert(string_index < ACStringCount,
+              "invalid string index: %d >= %d", string_index, ACStringCount);
+    return ACStrings[string_index];
+}
+
+//==========================================================================
+//
+// ReadOffset
+//
+// Read a lump offset value, validating that it is an offset within the
+// range of the lump.
+//
+//==========================================================================
+
+static int ReadOffset(void)
+{
+    int offset = ReadCodeInt();
+    ACSAssert(offset >= 0, "negative lump offset %d", offset);
+    ACSAssert(offset < ActionCodeSize, "invalid lump offset: %d >= %d",
+              offset, ActionCodeSize);
+    return offset;
 }
 
 //==========================================================================
@@ -395,7 +469,7 @@ void P_LoadACScripts(int lump)
     for (i = 0, info = ACSInfo; i < ACScriptCount; i++, info++)
     {
         info->number = ReadCodeInt();
-        info->offset = ValidateLumpOffset(ReadCodeInt(), "script header");
+        info->offset = ReadOffset();
         info->argCount = ReadCodeInt();
 
         if (info->argCount > MAX_SCRIPT_ARGS)
@@ -426,8 +500,7 @@ void P_LoadACScripts(int lump)
 
     for (i=0; i<ACStringCount; ++i)
     {
-        ACStrings[i] = (char *) ActionCodeBase +
-                       ValidateLumpOffset(ReadCodeInt(), "string header");
+        ACStrings[i] = (char *) ActionCodeBase + ReadOffset();
     }
 
     memset(MapVars, 0, sizeof(MapVars));
@@ -916,78 +989,6 @@ static void Drop(void)
 
 //==========================================================================
 //
-// ReadScriptVar
-//
-// Read a script variable index as an immediate value, validating the
-// result is a valid script variable number.
-//
-//==========================================================================
-
-static int ReadScriptVar(void)
-{
-    int var = ReadCodeInt();
-    ACSAssert(var >= 0, "negative script variable: %d < 0", var);
-    ACSAssert(var < MAX_ACS_SCRIPT_VARS,
-              "invalid script variable: %d >= %d", var, MAX_ACS_SCRIPT_VARS);
-    return var;
-}
-
-//==========================================================================
-//
-// ReadMapVar
-//
-// Read a map variable index as an immediate value, validating the
-// result is a valid map variable number.
-//
-//==========================================================================
-
-static int ReadMapVar(void)
-{
-    int var = ReadCodeInt();
-    ACSAssert(var >= 0, "negative map variable: %d < 0", var);
-    ACSAssert(var < MAX_ACS_MAP_VARS,
-              "invalid map variable: %d >= %d", var, MAX_ACS_MAP_VARS);
-    return var;
-}
-
-//==========================================================================
-//
-// ReadWorldVar
-//
-// Read a world variable index as an immediate value, validating the
-// result is a valid world variable number.
-//
-//==========================================================================
-
-static int ReadWorldVar(void)
-{
-    int var = ReadCodeInt();
-    ACSAssert(var >= 0, "negative world variable: %d < 0", var);
-    ACSAssert(var < MAX_ACS_WORLD_VARS,
-              "invalid world variable: %d >= %d", var, MAX_ACS_WORLD_VARS);
-    return var;
-}
-
-//==========================================================================
-//
-// StringLookup
-//
-// Look up the given string in the strings table by index, validating that
-// it is a valid string index.
-//
-//==========================================================================
-
-static char *StringLookup(int string_index)
-{
-    ACSAssert(string_index >= 0,
-              "negative string index: %d < 0", string_index);
-    ACSAssert(string_index < ACStringCount,
-              "invalid string index: %d >= %d", string_index, ACStringCount);
-    return ACStrings[string_index];
-}
-
-//==========================================================================
-//
 // P-Code Commands
 //
 //==========================================================================
@@ -1395,7 +1396,7 @@ static int CmdDecWorldVar(void)
 
 static int CmdGoto(void)
 {
-    PCodeOffset = ValidateLumpOffset(ReadCodeInt(), "CmdGoto parameter");
+    PCodeOffset = ReadOffset();
     return SCRIPT_CONTINUE;
 }
 
@@ -1403,7 +1404,7 @@ static int CmdIfGoto(void)
 {
     int offset;
 
-    offset = ValidateLumpOffset(ReadCodeInt(), "CmdIfGoto parameter");
+    offset = ReadOffset();
 
     if (Pop() != 0)
     {
@@ -1689,7 +1690,7 @@ static int CmdIfNotGoto(void)
 {
     int offset;
 
-    offset = ValidateLumpOffset(ReadCodeInt(), "CmdIfNotGoto parameter");
+    offset = ReadOffset();
 
     if (Pop() == 0)
     {
@@ -1733,7 +1734,7 @@ static int CmdCaseGoto(void)
     int offset;
 
     value = ReadCodeInt();
-    offset = ValidateLumpOffset(ReadCodeInt(), "CmdCaseGoto parameter");
+    offset = ReadOffset();
 
     if (Top() == value)
     {
