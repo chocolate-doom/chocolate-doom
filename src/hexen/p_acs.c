@@ -717,6 +717,11 @@ void T_InterpretACS(acs_t * script)
     do
     {
         cmd = ReadCodeInt();
+        ACSAssert(cmd >= 0, "negative ACS instruction %d", cmd);
+        ACSAssert(cmd < arrlen(PCodeCmds),
+                  "invalid ACS instruction %d (maybe this WAD is designed "
+                  "for an advanced source port and is not vanilla "
+                  "compatible)", cmd);
         action = PCodeCmds[cmd]();
     } while (action == SCRIPT_CONTINUE);
 
