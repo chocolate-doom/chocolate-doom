@@ -909,6 +909,15 @@ static int ReadWorldVar(void)
     return var;
 }
 
+static char *StringLookup(int string_index)
+{
+    ACSAssert(string_index >= 0,
+              "negative string index: %d < 0", string_index);
+    ACSAssert(string_index < ACStringCount,
+              "invalid string index: %d >= %d", string_index, ACStringCount);
+    return ACStrings[string_index];
+}
+
 //==========================================================================
 //
 // P-Code Commands
@@ -1517,7 +1526,7 @@ static int CmdChangeFloor(void)
     int flat;
     int sectorIndex;
 
-    flat = R_FlatNumForName(ACStrings[Pop()]);
+    flat = R_FlatNumForName(StringLookup(Pop()));
     tag = Pop();
     sectorIndex = -1;
     while ((sectorIndex = P_FindSectorFromTag(tag, sectorIndex)) >= 0)
@@ -1535,7 +1544,7 @@ static int CmdChangeFloorDirect(void)
 
     tag = LONG(*PCodePtr);
     ++PCodePtr;
-    flat = R_FlatNumForName(ACStrings[LONG(*PCodePtr)]);
+    flat = R_FlatNumForName(StringLookup(LONG(*PCodePtr)));
     ++PCodePtr;
     sectorIndex = -1;
     while ((sectorIndex = P_FindSectorFromTag(tag, sectorIndex)) >= 0)
@@ -1551,7 +1560,7 @@ static int CmdChangeCeiling(void)
     int flat;
     int sectorIndex;
 
-    flat = R_FlatNumForName(ACStrings[Pop()]);
+    flat = R_FlatNumForName(StringLookup(Pop()));
     tag = Pop();
     sectorIndex = -1;
     while ((sectorIndex = P_FindSectorFromTag(tag, sectorIndex)) >= 0)
@@ -1569,7 +1578,7 @@ static int CmdChangeCeilingDirect(void)
 
     tag = LONG(*PCodePtr);
     ++PCodePtr;
-    flat = R_FlatNumForName(ACStrings[LONG(*PCodePtr)]);
+    flat = R_FlatNumForName(StringLookup(LONG(*PCodePtr)));
     ++PCodePtr;
     sectorIndex = -1;
     while ((sectorIndex = P_FindSectorFromTag(tag, sectorIndex)) >= 0)
@@ -1746,7 +1755,7 @@ static int CmdEndPrintBold(void)
 
 static int CmdPrintString(void)
 {
-    M_StringConcat(PrintBuffer, ACStrings[Pop()], sizeof(PrintBuffer));
+    M_StringConcat(PrintBuffer, StringLookup(Pop()), sizeof(PrintBuffer));
     return SCRIPT_CONTINUE;
 }
 
@@ -1826,7 +1835,7 @@ static int CmdSectorSound(void)
         mobj = (mobj_t *) & ACScript->line->frontsector->soundorg;
     }
     volume = Pop();
-    S_StartSoundAtVolume(mobj, S_GetSoundID(ACStrings[Pop()]), volume);
+    S_StartSoundAtVolume(mobj, S_GetSoundID(StringLookup(Pop())), volume);
     return SCRIPT_CONTINUE;
 }
 
@@ -1839,7 +1848,7 @@ static int CmdThingSound(void)
     int searcher;
 
     volume = Pop();
-    sound = S_GetSoundID(ACStrings[Pop()]);
+    sound = S_GetSoundID(StringLookup(Pop()));
     tid = Pop();
     searcher = -1;
     while ((mobj = P_FindMobjFromTID(tid, &searcher)) != NULL)
@@ -1854,7 +1863,7 @@ static int CmdAmbientSound(void)
     int volume;
 
     volume = Pop();
-    S_StartSoundAtVolume(NULL, S_GetSoundID(ACStrings[Pop()]), volume);
+    S_StartSoundAtVolume(NULL, S_GetSoundID(StringLookup(Pop())), volume);
     return SCRIPT_CONTINUE;
 }
 
@@ -1867,7 +1876,7 @@ static int CmdSoundSequence(void)
     {
         mobj = (mobj_t *) & ACScript->line->frontsector->soundorg;
     }
-    SN_StartSequenceName(mobj, ACStrings[Pop()]);
+    SN_StartSequenceName(mobj, StringLookup(Pop()));
     return SCRIPT_CONTINUE;
 }
 
@@ -1880,7 +1889,7 @@ static int CmdSetLineTexture(void)
     int texture;
     int searcher;
 
-    texture = R_TextureNumForName(ACStrings[Pop()]);
+    texture = R_TextureNumForName(StringLookup(Pop()));
     position = Pop();
     side = Pop();
     lineTag = Pop();
