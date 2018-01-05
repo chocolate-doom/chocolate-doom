@@ -374,17 +374,16 @@ static int ReadCodeInt(void)
 void P_LoadACScripts(int lump)
 {
     int i;
-    int *buffer;
     acsHeader_t *header;
     acsInfo_t *info;
 
-    header = W_CacheLumpNum(lump, PU_LEVEL);
-    ActionCodeBase = (byte *) header;
+    ActionCodeBase = W_CacheLumpNum(lump, PU_LEVEL);
     ActionCodeSize = W_LumpLength(lump);
-    buffer = (int *) ((byte *) header + LONG(header->infoOffset));
 
-    ACScriptCount = LONG(*buffer);
-    ++buffer;
+    header = (acsHeader_t *) ActionCodeBase;
+    PCodeOffset = LONG(header->infoOffset);
+
+    ACScriptCount = ReadCodeInt();
 
     if (ACScriptCount == 0)
     {                           // Empty behavior lump
@@ -395,14 +394,9 @@ void P_LoadACScripts(int lump)
     memset(ACSInfo, 0, ACScriptCount * sizeof(acsInfo_t));
     for (i = 0, info = ACSInfo; i < ACScriptCount; i++, info++)
     {
-        info->number = LONG(*buffer);
-        ++buffer;
-
-        info->offset = ValidateLumpOffset(LONG(*buffer), "script header");
-        ++buffer;
-
-        info->argCount = LONG(*buffer);
-        ++buffer;
+        info->number = ReadCodeInt();
+        info->offset = ValidateLumpOffset(ReadCodeInt(), "script header");
+        info->argCount = ReadCodeInt();
 
         if (info->argCount > MAX_SCRIPT_ARGS)
         {
@@ -425,15 +419,15 @@ void P_LoadACScripts(int lump)
             info->state = ASTE_INACTIVE;
         }
     }
-    ACStringCount = LONG(*buffer);
-    ++buffer;
 
+    ACStringCount = ReadCodeInt();
+    ACSAssert(ACStringCount >= 0, "negative string count %d", ACStringCount);
     ACStrings = Z_Malloc(ACStringCount * sizeof(char *), PU_LEVEL, NULL);
 
     for (i=0; i<ACStringCount; ++i)
     {
         ACStrings[i] = (char *) ActionCodeBase +
-                       ValidateLumpOffset(LONG(buffer[i]), "string header");
+                       ValidateLumpOffset(ReadCodeInt(), "string header");
     }
 
     memset(MapVars, 0, sizeof(MapVars));
