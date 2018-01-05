@@ -447,7 +447,7 @@ static int ReadOffset(void)
 
 void P_LoadACScripts(int lump)
 {
-    int i;
+    int i, offset;
     acsHeader_t *header;
     acsInfo_t *info;
 
@@ -500,7 +500,10 @@ void P_LoadACScripts(int lump)
 
     for (i=0; i<ACStringCount; ++i)
     {
-        ACStrings[i] = (char *) ActionCodeBase + ReadOffset();
+        offset = ReadOffset();
+        ACStrings[i] = (char *) ActionCodeBase + offset;
+        ACSAssert(memchr(ACStrings[i], '\0', ActionCodeSize - offset) != NULL,
+                  "string %d missing terminating NUL", i);
     }
 
     memset(MapVars, 0, sizeof(MapVars));
