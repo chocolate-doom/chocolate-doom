@@ -874,6 +874,23 @@ static void Drop(void)
     ACScript->stackPtr--;
 }
 
+static int ReadCodeImmediate(void)
+{
+    int result;
+    result = *PCodePtr;
+    ++PCodePtr;
+    return result;
+}
+
+static int ReadScriptVar(void)
+{
+    int var = ReadCodeImmediate();
+    ACSAssert(var >= 0, "negative script variable: %d < 0", var);
+    ACSAssert(var < MAX_ACS_SCRIPT_VARS,
+              "invalid script variable: %d >= %d", var, MAX_ACS_SCRIPT_VARS);
+    return var;
+}
+
 //==========================================================================
 //
 // P-Code Commands
@@ -1147,8 +1164,7 @@ static int CmdGE(void)
 
 static int CmdAssignScriptVar(void)
 {
-    ACScript->vars[LONG(*PCodePtr)] = Pop();
-    ++PCodePtr;
+    ACScript->vars[ReadScriptVar()] = Pop();
     return SCRIPT_CONTINUE;
 }
 
@@ -1168,8 +1184,7 @@ static int CmdAssignWorldVar(void)
 
 static int CmdPushScriptVar(void)
 {
-    Push(ACScript->vars[LONG(*PCodePtr)]);
-    ++PCodePtr;
+    Push(ACScript->vars[ReadScriptVar()]);
     return SCRIPT_CONTINUE;
 }
 
@@ -1189,8 +1204,7 @@ static int CmdPushWorldVar(void)
 
 static int CmdAddScriptVar(void)
 {
-    ACScript->vars[LONG(*PCodePtr)] += Pop();
-    ++PCodePtr;
+    ACScript->vars[ReadScriptVar()] += Pop();
     return SCRIPT_CONTINUE;
 }
 
@@ -1210,8 +1224,7 @@ static int CmdAddWorldVar(void)
 
 static int CmdSubScriptVar(void)
 {
-    ACScript->vars[LONG(*PCodePtr)] -= Pop();
-    ++PCodePtr;
+    ACScript->vars[ReadScriptVar()] -= Pop();
     return SCRIPT_CONTINUE;
 }
 
@@ -1231,8 +1244,7 @@ static int CmdSubWorldVar(void)
 
 static int CmdMulScriptVar(void)
 {
-    ACScript->vars[LONG(*PCodePtr)] *= Pop();
-    ++PCodePtr;
+    ACScript->vars[ReadScriptVar()] *= Pop();
     return SCRIPT_CONTINUE;
 }
 
@@ -1252,8 +1264,7 @@ static int CmdMulWorldVar(void)
 
 static int CmdDivScriptVar(void)
 {
-    ACScript->vars[LONG(*PCodePtr)] /= Pop();
-    ++PCodePtr;
+    ACScript->vars[ReadScriptVar()] /= Pop();
     return SCRIPT_CONTINUE;
 }
 
@@ -1273,8 +1284,7 @@ static int CmdDivWorldVar(void)
 
 static int CmdModScriptVar(void)
 {
-    ACScript->vars[LONG(*PCodePtr)] %= Pop();
-    ++PCodePtr;
+    ACScript->vars[ReadScriptVar()] %= Pop();
     return SCRIPT_CONTINUE;
 }
 
@@ -1294,8 +1304,7 @@ static int CmdModWorldVar(void)
 
 static int CmdIncScriptVar(void)
 {
-    ++ACScript->vars[LONG(*PCodePtr)];
-    ++PCodePtr;
+    ++ACScript->vars[ReadScriptVar()];
     return SCRIPT_CONTINUE;
 }
 
@@ -1315,8 +1324,7 @@ static int CmdIncWorldVar(void)
 
 static int CmdDecScriptVar(void)
 {
-    --ACScript->vars[LONG(*PCodePtr)];
-    ++PCodePtr;
+    --ACScript->vars[ReadScriptVar()];
     return SCRIPT_CONTINUE;
 }
 
