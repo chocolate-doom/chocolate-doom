@@ -131,7 +131,7 @@ void SV_WritePtr(void *ptr)
 
 void SV_Read(void *buffer, int size)
 {
-    fread(buffer, size, 1, SaveGameFP);
+    fread(buffer, 1, size, SaveGameFP);
 }
 
 byte SV_ReadByte(void)

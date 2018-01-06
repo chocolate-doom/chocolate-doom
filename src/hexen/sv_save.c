@@ -3372,7 +3372,7 @@ static void SV_Close(void)
 
 static void SV_Read(void *buffer, int size)
 {
-    fread(buffer, size, 1, SavingFP);
+    fread(buffer, 1, size, SavingFP);
 }
 
 static byte SV_ReadByte(void)
