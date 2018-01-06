@@ -61,7 +61,7 @@ Requires: libSDL-1.2.so.0, libSDL_mixer-1.2.so.0, libSDL_net-1.2.so.0
 /usr/games/@PROGRAM_PREFIX@doom
 /usr/games/@PROGRAM_PREFIX@server
 /usr/games/@PROGRAM_PREFIX@doom-setup
-/usr/share/icons/*
+/usr/share/icons/hicolor/128x128/apps/*
 /usr/share/applications/*
 
 %description -n @PROGRAM_PREFIX@heretic
