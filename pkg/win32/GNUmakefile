@@ -16,7 +16,7 @@ DLL_FILES=$(TOPLEVEL)/src/SDL.dll                      \
 all: $(ZIPS)
 
 $(ZIPS):
-	unix2dos $</*.txt
+	unix2dos --add-bom $</*.txt
 	zip -j -r $@ $</*
 
 $(DOOM_ZIP): staging-doom hook-doom
