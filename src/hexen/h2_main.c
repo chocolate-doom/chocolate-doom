@@ -32,6 +32,7 @@
 #include "s_sound.h"
 #include "i_input.h"
 #include "i_joystick.h"
+#include "i_log.h"
 #include "i_system.h"
 #include "i_timer.h"
 #include "m_argv.h"
@@ -349,6 +350,8 @@ void D_DoomMain(void)
 {
     GameMission_t gamemission;
     int p;
+
+    I_InitLog();
 
     I_AtExit(D_HexenQuitMessage, false);
     startepisode = 1;

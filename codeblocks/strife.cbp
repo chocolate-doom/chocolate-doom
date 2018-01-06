@@ -115,6 +115,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../src/i_joystick.h" />
+		<Unit filename="../src/i_log.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../src/i_log.h" />
 		<Unit filename="../src/i_main.c">
 			<Option compilerVar="CC" />
 		</Unit>
