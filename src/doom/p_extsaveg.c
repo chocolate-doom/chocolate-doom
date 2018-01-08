@@ -29,12 +29,14 @@
 #include "p_saveg.h"
 #include "z_zone.h"
 
-static char line[260];
-static char string[80];
+#define MAX_LINE_LEN 260
+#define MAX_STRING_LEN 80
+
+static char *line, *string;
 
 static void P_WritePackageTarname (const char *key)
 {
-	M_snprintf(line, sizeof(line), "%s %s\n", key, PACKAGE_VERSION);
+	M_snprintf(line, MAX_LINE_LEN, "%s %s\n", key, PACKAGE_VERSION);
 	fputs(line, save_stream);
 }
 
@@ -44,7 +46,7 @@ char *savewadfilename = NULL;
 
 static void P_WriteWadFileName (const char *key)
 {
-	M_snprintf(line, sizeof(line), "%s %s\n", key, maplumpinfo->wad_file->basename);
+	M_snprintf(line, MAX_LINE_LEN, "%s %s\n", key, maplumpinfo->wad_file->basename);
 	fputs(line, save_stream);
 }
 
@@ -53,7 +55,7 @@ static void P_ReadWadFileName (const char *key)
 	if (!savewadfilename)
 	{
 		if (sscanf(line, "%s", string) == 1 &&
-		    !strncmp(string, key, sizeof(string)))
+		    !strncmp(string, key, MAX_STRING_LEN))
 		{
 			if (sscanf(line, "%*s %s", string) == 1)
 			{
@@ -69,7 +71,7 @@ static void P_WriteExtraKills (const char *key)
 {
 	if (extrakills)
 	{
-		M_snprintf(line, sizeof(line), "%s %d\n", key, extrakills);
+		M_snprintf(line, MAX_LINE_LEN, "%s %d\n", key, extrakills);
 		fputs(line, save_stream);
 	}
 }
@@ -79,7 +81,7 @@ static void P_ReadExtraKills (const char *key)
 	int value;
 
 	if (sscanf(line, "%s %d", string, &value) == 2 &&
-	    !strncmp(string, key, sizeof(string)))
+	    !strncmp(string, key, MAX_STRING_LEN))
 	{
 		extrakills = value;
 	}
@@ -91,7 +93,7 @@ static void P_WriteTotalLevelTimes (const char *key)
 {
 	if (totalleveltimes)
 	{
-		M_snprintf(line, sizeof(line), "%s %d\n", key, totalleveltimes);
+		M_snprintf(line, MAX_LINE_LEN, "%s %d\n", key, totalleveltimes);
 		fputs(line, save_stream);
 	}
 }
@@ -101,7 +103,7 @@ static void P_ReadTotalLevelTimes (const char *key)
 	int value;
 
 	if (sscanf(line, "%s %d", string, &value) == 2 &&
-	    !strncmp(string, key, sizeof(string)))
+	    !strncmp(string, key, MAX_STRING_LEN))
 	{
 		totalleveltimes = value;
 	}
@@ -121,7 +123,7 @@ static void P_WriteFireFlicker (const char *key)
 		{
 			fireflicker_t *flick = (fireflicker_t *)th;
 
-			M_snprintf(line, sizeof(line), "%s %d %d %d %d\n",
+			M_snprintf(line, MAX_LINE_LEN, "%s %d %d %d %d\n",
 			           key,
 			           (int)(flick->sector - sectors),
 			           (int)flick->count,
@@ -142,7 +144,7 @@ static void P_ReadFireFlicker (const char *key)
 	           &count,
 	           &maxlight,
 	           &minlight) == 5 &&
-	    !strncmp(string, key, sizeof(string)))
+	    !strncmp(string, key, MAX_STRING_LEN))
 	{
 		fireflicker_t *flick;
 
@@ -170,7 +172,7 @@ static void P_WriteSoundTarget (const char *key)
 	{
 		if (sector->soundtarget)
 		{
-			M_snprintf(line, sizeof(line), "%s %d %d\n",
+			M_snprintf(line, MAX_LINE_LEN, "%s %d %d\n",
 			           key,
 			           i,
 			           P_ThinkerToIndex((thinker_t *) sector->soundtarget));
@@ -187,7 +189,7 @@ static void P_ReadSoundTarget (const char *key)
 	           string,
 	           &sector,
 	           &target) == 3 &&
-	    !strncmp(string, key, sizeof(string)))
+	    !strncmp(string, key, MAX_STRING_LEN))
 	{
 		sectors[sector].soundtarget = (mobj_t *) P_IndexToThinker(target);
 	}
@@ -207,7 +209,7 @@ static void P_WriteButton (const char *key)
 
 		if (button->btimer)
 		{
-			M_snprintf(line, sizeof(line), "%s %d %d %d %d\n",
+			M_snprintf(line, MAX_LINE_LEN, "%s %d %d %d %d\n",
 			           key,
 			           (int)(button->line - lines),
 			           (int)button->where,
@@ -228,7 +230,7 @@ static void P_ReadButton (const char *key)
 	           &where,
 	           &btexture,
 	           &btimer) == 5 &&
-	    !strncmp(string, key, sizeof(string)))
+	    !strncmp(string, key, MAX_STRING_LEN))
 	{
 		P_StartButton(&lines[linedef], where, btexture, btimer);
 	}
@@ -250,7 +252,7 @@ static void P_WriteBrainTarget (const char *key)
 
 			if (mo->state == &states[S_BRAINEYE1])
 			{
-				M_snprintf(line, sizeof(line), "%s %d %d\n",
+				M_snprintf(line, MAX_LINE_LEN, "%s %d %d\n",
 				           key,
 				           numbraintargets,
 				           braintargeton);
@@ -268,7 +270,7 @@ static void P_ReadBrainTarget (const char *key)
 	int numtargets, targeton;
 
 	if (sscanf(line, "%s %d %d", string, &numtargets, &targeton) == 3 &&
-	    !strncmp(string, key, sizeof(string)))
+	    !strncmp(string, key, MAX_STRING_LEN))
 	{
 		numbraintargets = 0; // [crispy] force A_BrainAwake()
 		braintargeton = targeton;
@@ -289,7 +291,7 @@ static void P_WriteMarkPoints (const char *key)
 
 	if (p[0] != -1)
 	{
-		M_snprintf(line, sizeof(line), "%s %d %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld\n",
+		M_snprintf(line, MAX_LINE_LEN, "%s %d %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld\n",
 		           key, n,
 		           p[0], p[1], p[2], p[3], p[4],
 		           p[5], p[6], p[7], p[8], p[9],
@@ -310,7 +312,7 @@ static void P_ReadMarkPoints (const char *key)
 	           &p[5], &p[6], &p[7], &p[8], &p[9],
 	           &p[10], &p[11], &p[12], &p[13], &p[14],
 	           &p[15], &p[16], &p[17], &p[18], &p[19]) == 22 &&
-	    !strncmp(string, key, sizeof(string)))
+	    !strncmp(string, key, MAX_STRING_LEN))
 	{
 		AM_SetMarkPoints(n, p);
 	}
@@ -326,7 +328,7 @@ static void P_WritePlayersLookdir (const char *key)
 	{
 		if (playeringame[i] && players[i].lookdir)
 		{
-			M_snprintf(line, sizeof(line), "%s %d %d\n", key, i, players[i].lookdir);
+			M_snprintf(line, MAX_LINE_LEN, "%s %d %d\n", key, i, players[i].lookdir);
 			fputs(line, save_stream);
 		}
 	}
@@ -337,7 +339,7 @@ static void P_ReadPlayersLookdir (const char *key)
 	int i, value;
 
 	if (sscanf(line, "%s %d %d", string, &i, &value) == 3 &&
-	    !strncmp(string, key, sizeof(string)) &&
+	    !strncmp(string, key, MAX_STRING_LEN) &&
 	    i < MAXPLAYERS)
 	{
 		players[i].lookdir = value;
@@ -370,15 +372,19 @@ void P_WriteExtendedSaveGameData (void)
 {
 	int i;
 
+	line = malloc(MAX_LINE_LEN);
+
 	for (i = 0; i < arrlen(extsavegdata); i++)
 	{
 		extsavegdata[i].extsavegwritefn(extsavegdata[i].key);
 	}
+
+	free(line);
 }
 
 static void P_ReadKeyValuePairs (int pass)
 {
-	while (fgets(line, sizeof(line), save_stream))
+	while (fgets(line, MAX_LINE_LEN, save_stream))
 	{
 		if (sscanf(line, "%s", string) == 1)
 		{
@@ -388,7 +394,7 @@ static void P_ReadKeyValuePairs (int pass)
 			{
 				if (extsavegdata[i].extsavegreadfn &&
 				    extsavegdata[i].pass == pass &&
-				    !strncmp(string, extsavegdata[i].key, sizeof(string)))
+				    !strncmp(string, extsavegdata[i].key, MAX_STRING_LEN))
 				{
 					extsavegdata[i].extsavegreadfn(extsavegdata[i].key);
 				}
@@ -401,10 +407,17 @@ void P_ReadExtendedSaveGameData (int pass)
 {
 	long p, curpos, endpos;
 
+	line = malloc(MAX_LINE_LEN);
+	string = malloc(MAX_STRING_LEN);
+
 	// [crispy] two-pass reading of extended savegame data
 	if (pass == 1)
 	{
 		P_ReadKeyValuePairs(pass);
+
+		free(line);
+		free(string);
+
 		return;
 	}
 
@@ -426,19 +439,22 @@ void P_ReadExtendedSaveGameData (int pass)
 
 		if (curbyte == SAVEGAME_EOF)
 		{
-			if (!fgets(line, sizeof(line), save_stream))
+			if (!fgets(line, MAX_LINE_LEN, save_stream))
 			{
 				continue;
 			}
 
 			if (sscanf(line, "%s", string) == 1 &&
-			    !strncmp(string, extsavegdata[0].key, sizeof(string)))
+			    !strncmp(string, extsavegdata[0].key, MAX_STRING_LEN))
 			{
 				P_ReadKeyValuePairs(pass);
 				break;
 			}
 		}
 	}
+
+	free(line);
+	free(string);
 
 	fseek(save_stream, curpos, SEEK_SET);
 }
