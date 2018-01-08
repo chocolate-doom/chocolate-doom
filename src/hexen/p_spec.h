@@ -507,7 +507,7 @@ typedef struct acsInfo_s acsInfo_t;
 struct acsInfo_s
 {
     int number;
-    int *address;
+    int offset;
     int argCount;
     aste_t state;
     int waitValue;
@@ -525,7 +525,7 @@ struct acs_s
     int stack[ACS_STACK_DEPTH];
     int stackPtr;
     int vars[MAX_ACS_SCRIPT_VARS];
-    int *ip;
+    int ip;
 };
 
 typedef struct

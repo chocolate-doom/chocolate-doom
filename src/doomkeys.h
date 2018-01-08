@@ -70,12 +70,12 @@
 #define KEY_INS         (0x80+0x52)
 #define KEY_DEL         (0x80+0x53)
 
-#define KEYP_0          0
+#define KEYP_0          KEY_INS
 #define KEYP_1          KEY_END
 #define KEYP_2          KEY_DOWNARROW
 #define KEYP_3          KEY_PGDN
 #define KEYP_4          KEY_LEFTARROW
-#define KEYP_5          '5'
+#define KEYP_5          (0x80+0x4c)
 #define KEYP_6          KEY_RIGHTARROW
 #define KEYP_7          KEY_HOME
 #define KEYP_8          KEY_UPARROW
@@ -134,7 +134,8 @@
     { KEY_LEFTARROW,  "LEFT" },     { KEY_RIGHTARROW, "RIGHT" },     \
     { KEY_RALT,       "ALT" },      { KEY_LALT,       "ALT" },       \
     { KEY_RSHIFT,     "SHIFT" },    { KEY_CAPSLOCK,   "CAPS" },      \
-    { KEY_RCTRL,      "CTRL" },     { ' ',            "SPACE" },     \
+    { KEY_RCTRL,      "CTRL" },     { KEYP_5,         "NUM5" },      \
+    { ' ',            "SPACE" },                                     \
     { 'a', "A" },   { 'b', "B" },   { 'c', "C" },   { 'd', "D" },    \
     { 'e', "E" },   { 'f', "F" },   { 'g', "G" },   { 'h', "H" },    \
     { 'i', "I" },   { 'j', "J" },   { 'k', "K" },   { 'l', "L" },    \

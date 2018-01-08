@@ -1,4 +1,4 @@
-## 3.0.0 (????-??-??)
+## 3.0.0 (2017-12-30)
 
   Chocolate Doom 3.0 is a new major revision. The main change is that
   the codebase has been ported to SDL 2.0. This brings a number of
@@ -32,6 +32,9 @@
   * Keyboard input is improved and uses the new SDL input API; on
     systems with on-screen keyboards, this should activate the on-screen
     keyboard when it is appropriate.
+  * Menu navigation with the joystick is now much more practical, and
+    it's possible to bind a joystick axis to look up/down in games which
+    support it (thanks Jon, Wintermute0110).
   * Several command line options were removed that were judged to be
     useless: `-grabmouse`, `-novert` and `-nonovert`. The mouse grabbing
     and novert settings can still be configured in the setup tool.
@@ -43,13 +46,27 @@
   * There is no longer a soft dependency on Zenity on Unix systems; the
     SDL API is now used to display error dialogs.
   * Joysticks are identified more precisely using GUID now.
-  * A new parameter -savedir allows users to specify a directory from
+  * A new parameter, `-savedir` allows users to specify a directory from
     which to load and save games. (thanks CapnClever)
+  * The midiproc code from Eternity Engine has been imported, improving
+    native MIDI playback on Windows and fixing a long-standing bug with
+    music volume adjustment (thanks AlexMax, Quasar).
+  * VGA "porch" emulation was added (thanks Jon).
+  * The codebase now compiles with OpenWatcom (thanks Stephen Finniss).
+
+### Doom
+  * The GOG install of Doom 3: BFG Edition is now detected (thanks chungy)
+  * A `-shorttics` command line parameter was added that simulates
+    recording a vanilla demo without actually recording a demo.
 
 ### Hexen
   * The CD audio option for music playback has been removed; the CD
     playback API has been removed from SDL 2.0. However, it is possible
     to use digital music packs as an alternative.
+
+### Strife
+  * `voices.wad` is now correctly loaded before PWADs (thanks
+    @Catoptromancy)
 
 ### libtextscreen
   * On OS X on machines with retina displays, text screens are rendered
@@ -61,6 +78,8 @@
   * Handling of code pages was cleaned up, so it is easier to change the
     code to work with a different code page now.
   * Lots of the UI code was changed to use UTF-8 strings.
+  * File extensions when using the Zenity file selector are now case
+    insensitive (thanks Jon).
 
 ## 2.3.0 (2016-12-29)
 
