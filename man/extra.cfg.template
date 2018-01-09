@@ -1,23 +1,23 @@
-.TH chocolate-doom.cfg 5
+.TH @PROGRAM_SPREFIX@\-doom.cfg 5
 .SH NAME
-chocolate-doom.cfg \- Chocolate Doom configuration file
+@PROGRAM_SPREFIX@\-doom.cfg \- @PACKAGE_NAME@ configuration file
 .SH DESCRIPTION
 .PP
-\fIchocolate-doom.cfg\fR
-is a configuration file for \fBchocolate-doom\fR(6).  This file acts
+\fI@PROGRAM_SPREFIX@\-doom.cfg\fR
+is a configuration file for \fB@PROGRAM_SPREFIX@\-doom\fR(6).  This file acts
 as an auxiliary configuration file; the main configuration options
 are stored in \fBdefault.cfg\fR, which contains the same configuration
-options as Vanilla Doom (for compatibility).  \fIchocolate-doom.cfg\fR
-contains configuration options that are specific to Chocolate Doom
+options as Vanilla Doom (for compatibility).  \fI@PROGRAM_SPREFIX@\-doom.cfg\fR
+contains configuration options that are specific to @PACKAGE_NAME@
 only.
 .PP
-\fIchocolate-doom.cfg\fR is normally stored in the user's home directory,
-as \fI~/.local/share/chocolate-doom/chocolate-doom.cfg\fR.  The path can be
+\fI@PROGRAM_SPREFIX@\-doom.cfg\fR is normally stored in the user's home directory,
+as \fI~/.local/share/@PROGRAM_SPREFIX@\-doom/@PROGRAM_SPREFIX@\-doom.cfg\fR.  The path can be
 overridden using the \fBXDG_DATA_HOME\fR environment variable (see the XDG
 Base Directory Specification).
 .PP
-The \fBchocolate-setup\fR(6) tool provides a simple to use front-end
-for editing \fIchocolate-doom.cfg\fR.
+The \fB@PROGRAM_SPREFIX@\-setup\fR(6) tool provides a simple to use front-end
+for editing \fI@PROGRAM_SPREFIX@\-doom.cfg\fR.
 .SH FILE FORMAT
 .PP
 The file format is the same as that used for \fBdefault.cfg\fR(5).
@@ -26,7 +26,7 @@ The file format is the same as that used for \fBdefault.cfg\fR(5).
 @content
 
 .SH SEE ALSO
-\fBchocolate-doom\fR(6),
+\fB@PROGRAM_SPREFIX@\-doom\fR(6),
 \fBdefault.cfg\fR(5),
-\fBchocolate-setup\fR(6)
+\fB@PROGRAM_SPREFIX@\-setup\fR(6)
 

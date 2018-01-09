@@ -1,18 +1,10 @@
 #ifdef DOOM
-#define LONG_GAME_NAME Chocolate Doom
-#define LONG_EXE_NAME  chocolate-doom
 #define DEFAULT_IWAD   doom2.wad
 #elif HERETIC
-#define LONG_GAME_NAME Chocolate Heretic
-#define LONG_EXE_NAME  chocolate-heretic
 #define DEFAULT_IWAD   heretic.wad
 #elif HEXEN
-#define LONG_GAME_NAME Chocolate Hexen
-#define LONG_EXE_NAME  chocolate-hexen
 #define DEFAULT_IWAD   hexen.wad
 #elif STRIFE
-#define LONG_GAME_NAME Chocolate Strife
-#define LONG_EXE_NAME  chocolate-strife
 #define DEFAULT_IWAD   strife1.wad
 #endif
 
