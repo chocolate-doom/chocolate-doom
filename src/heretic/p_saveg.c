@@ -131,7 +131,12 @@ void SV_WritePtr(void *ptr)
 
 void SV_Read(void *buffer, int size)
 {
-    fread(buffer, 1, size, SaveGameFP);
+    int retval = fread(buffer, 1, size, SaveGameFP);
+    if (retval != size)
+    {
+        I_Error("Incomplete read in SV_Read: Expected %d, got %d bytes",
+            size, retval);
+    }
 }
 
 byte SV_ReadByte(void)
