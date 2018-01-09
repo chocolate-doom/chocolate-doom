@@ -168,8 +168,6 @@ static byte yellowonly[256] =
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0,
 };
 
-// [crispy] TODO
-/*
 static byte redandgreen[256] =
 {
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -189,7 +187,6 @@ static byte redandgreen[256] =
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 };
-*/
 
 // [crispy] Chex Quest's "locked" door switches
 
@@ -431,6 +428,42 @@ static const fullbright_t fullbright_chex[] = {
 	{"WOODSKUL", DOOM1AND2, chexredgreen},
 };
 
+static const fullbright_t fullbright_hacx[] = {
+//	{"BFALL1",   DOOM2ONLY, redandgreen},
+//	{"BFALL2",   DOOM2ONLY, redandgreen},
+//	{"BFALL3",   DOOM2ONLY, redandgreen},
+//	{"BFALL4",   DOOM2ONLY, redandgreen},
+	{"BRNSMALR", DOOM2ONLY, greenonly1},
+	{"DOORRED",  DOOM2ONLY, redandgreen},
+	{"SLADWALL", DOOM2ONLY, chexred},
+//	{"SW1BRCOM", DOOM2ONLY, redonly},
+//	{"SW1BRN1",  DOOM2ONLY, redandgreen},
+	{"SW1BRN2",  DOOM2ONLY, notgrayorbrown},
+	{"SW1BRNGN", DOOM2ONLY, notgrayorbrown},
+//	{"SW1BROWN", DOOM2ONLY, notgrayorbrown},
+//	{"SW2BRCOM", DOOM2ONLY, greenonly1},
+//	{"SW2BRN1",  DOOM2ONLY, redandgreen},
+	{"SW2BRN2",  DOOM2ONLY, notgrayorbrown},
+//	{"SW2BROWN", DOOM2ONLY, notgrayorbrown},
+	{"COMPSPAN", DOOM2ONLY, greenonly1},
+	{"COMPSTA1", DOOM2ONLY, notgrayorbrown},
+//	{"COMPSTA2", DOOM2ONLY, notgrayorbrown},
+	{"HD5",      DOOM2ONLY, redandgreen},
+//	{"HD8",      DOOM2ONLY, redandgreen},
+//	{"HD9",      DOOM2ONLY, redandgreen},
+	{"BLAKWAL2", DOOM2ONLY, redandgreen},
+	{"CEMENT7",  DOOM2ONLY, greenonly1},
+	{"ROCK4",    DOOM2ONLY, redonly},
+//	{"SLOPPY1",  DOOM2ONLY, notgrayorbrown},
+//	{"SPCDOOR4", DOOM2ONLY, notgrayorbrown},
+	{"ZZZFACE1", DOOM2ONLY, greenonly1},
+	{"ZZZFACE2", DOOM2ONLY, redandgreen},
+	{"HW166",    DOOM2ONLY, redandgreen},
+	{"HW510",    DOOM2ONLY, notgrayorbrown},
+	{"HW511",    DOOM2ONLY, notgrayorbrown},
+	{"HW512",    DOOM2ONLY, notgrayorbrown},
+};
+
 static byte *R_BrightmapForTexName_Doom (const char *texname)
 {
 	int i;
@@ -479,8 +512,20 @@ static byte *R_BrightmapForTexName_Chex (const char *texname)
 	return nobrightmap;
 }
 
-static byte *R_BrightmapForTexName_None (const char *texname)
+static byte *R_BrightmapForTexName_Hacx (const char *texname)
 {
+	int i;
+
+	for (i = 0; i < arrlen(fullbright_hacx); i++)
+	{
+		const fullbright_t *fullbright = &fullbright_hacx[i];
+
+		if (!strncasecmp(fullbright->texture, texname, 8))
+		{
+			return fullbright->colormask;
+		}
+	}
+
 	return nobrightmap;
 }
 
@@ -551,24 +596,95 @@ static byte *R_BrightmapForSprite_Chex (const int type)
 	return nobrightmap;
 }
 
-static byte *R_BrightmapForSprite_None (const int type)
+static byte *R_BrightmapForSprite_Hacx (const int type)
 {
+	if (crispy->brightmaps & BRIGHTMAPS_SPRITES)
+	{
+		switch (type)
+		{
+			// Chainsaw
+			case SPR_CSAW:
+			// Plasmagun
+			case SPR_PLAS:
+			// Cell Charge
+			case SPR_CELL:
+			// Cell Charge Pack
+			case SPR_CELP:
+			{
+				return redonly;
+				break;
+			}
+			// Rocket launcher
+			case SPR_LAUN:
+			// Medikit
+			case SPR_MEDI:
+			{
+				return redandgreen;
+				break;
+			}
+			// Rocket
+			case SPR_ROCK:
+			// Box of rockets
+			case SPR_BROK:
+			{
+				return greenonly1;
+				break;
+			}
+			// Health Bonus
+			case SPR_BON1:
+			// Stimpack
+			case SPR_STIM:
+			{
+				return notgrayorbrown;
+				break;
+			}
+		}
+	}
+
 	return nobrightmap;
 }
 
 // [crispy] brightmaps for flats
 
-static int bmapflatnum1, bmapflatnum2, bmapflatnum3;
+static int bmapflatnum[12];
 
 static byte *R_BrightmapForFlatNum_Doom (const int num)
 {
 	if (crispy->brightmaps & BRIGHTMAPS_TEXTURES)
 	{
-		if (num == bmapflatnum1 ||
-		    num == bmapflatnum2 ||
-		    num == bmapflatnum3)
+		if (num == bmapflatnum[0] ||
+		    num == bmapflatnum[1] ||
+		    num == bmapflatnum[2])
 		{
 			return notgrayorbrown;
+		}
+	}
+
+	return nobrightmap;
+}
+
+static byte *R_BrightmapForFlatNum_Hacx (const int num)
+{
+	if (crispy->brightmaps & BRIGHTMAPS_TEXTURES)
+	{
+		if (num == bmapflatnum[0] ||
+		    num == bmapflatnum[1] ||
+		    num == bmapflatnum[2] ||
+		    num == bmapflatnum[3] ||
+		    num == bmapflatnum[4] ||
+		    num == bmapflatnum[5] ||
+		    num == bmapflatnum[9] ||
+		    num == bmapflatnum[10] ||
+		    num == bmapflatnum[11])
+		{
+			return notgrayorbrown;
+		}
+
+		if (num == bmapflatnum[6] ||
+		    num == bmapflatnum[7] ||
+		    num == bmapflatnum[8])
+		{
+			return greenonly1;
 		}
 	}
 
@@ -588,11 +704,29 @@ byte *(*R_BrightmapForFlatNum) (const int type);
 
 void R_InitBrightmaps (int pass)
 {
-	if (gameversion == exe_hacx && !pass)
+	if (gameversion == exe_hacx)
 	{
-		R_BrightmapForTexName = R_BrightmapForTexName_None;
-		R_BrightmapForSprite = R_BrightmapForSprite_None;
-		R_BrightmapForFlatNum = R_BrightmapForFlatNum_None;
+		if (pass)
+		{
+			bmapflatnum[0] = R_FlatNumForName("FLOOR1_1");
+			bmapflatnum[1] = R_FlatNumForName("FLOOR1_7");
+			bmapflatnum[2] = R_FlatNumForName("FLOOR3_3");
+			bmapflatnum[3] = R_FlatNumForName("NUKAGE1");
+			bmapflatnum[4] = R_FlatNumForName("NUKAGE2");
+			bmapflatnum[5] = R_FlatNumForName("NUKAGE3");
+			bmapflatnum[6] = R_FlatNumForName("BLOOD1");
+			bmapflatnum[7] = R_FlatNumForName("BLOOD2");
+			bmapflatnum[8] = R_FlatNumForName("BLOOD2");
+			bmapflatnum[9] = R_FlatNumForName("SLIME13");
+			bmapflatnum[10] = R_FlatNumForName("SLIME14");
+			bmapflatnum[11] = R_FlatNumForName("SLIME15");
+		}
+		else
+		{
+			R_BrightmapForTexName = R_BrightmapForTexName_Hacx;
+			R_BrightmapForSprite = R_BrightmapForSprite_Hacx;
+			R_BrightmapForFlatNum = R_BrightmapForFlatNum_Hacx;
+		}
 	}
 	else
 	if (gameversion == exe_chex && !pass)
@@ -615,9 +749,9 @@ void R_InitBrightmaps (int pass)
 		if (pass)
 		{
 			// [crispy] only three select brightmapped flats
-			bmapflatnum1 = R_FlatNumForName("CONS1_1");
-			bmapflatnum2 = R_FlatNumForName("CONS1_5");
-			bmapflatnum3 = R_FlatNumForName("CONS1_7");
+			bmapflatnum[0] = R_FlatNumForName("CONS1_1");
+			bmapflatnum[1] = R_FlatNumForName("CONS1_5");
+			bmapflatnum[2] = R_FlatNumForName("CONS1_7");
 		}
 		else
 		{
