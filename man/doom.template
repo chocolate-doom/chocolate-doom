@@ -6,7 +6,7 @@
 [\fIOPTIONS\fR]
 .SH DESCRIPTION
 .PP
-@PACKAGE_NAME@ is a port of Id Software's 1993 game "Doom" that is designed
+@PACKAGE_SHORTNAME@ Doom is a port of Id Software's 1993 game "Doom" that is designed
 to behave as similar to the original DOS version of Doom as is possible.
 .br
 @content
