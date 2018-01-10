@@ -1394,6 +1394,8 @@ typedef enum {
     MT_PLASMA2,
     MT_SCEPTRE,
     MT_BIBLE,
+    // [crispy] support MUSINFO lump (dynamic music changing)
+    MT_MUSICSOURCE,
     // [BH] 100 extra mobjs to use in dehacked patches
     MT_EXTRA00 = 150, MT_EXTRA01, MT_EXTRA02, MT_EXTRA03, MT_EXTRA04,
     MT_EXTRA05, MT_EXTRA06, MT_EXTRA07, MT_EXTRA08, MT_EXTRA09,

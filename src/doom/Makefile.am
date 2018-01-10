@@ -71,6 +71,7 @@ r_segs.c           r_segs.h     \
 r_sky.c            r_sky.h      \
                    r_state.h    \
 r_things.c         r_things.h   \
+s_musinfo.c        s_musinfo.h  \
 s_sound.c          s_sound.h    \
 sounds.c           sounds.h     \
 statdump.c         statdump.h   \

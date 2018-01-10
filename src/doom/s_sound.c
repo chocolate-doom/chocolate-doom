@@ -28,6 +28,7 @@
 
 #include "sounds.h"
 #include "s_sound.h"
+#include "s_musinfo.h" // [crispy] struct musinfo
 
 #include "m_misc.h"
 #include "m_random.h"
@@ -311,6 +312,10 @@ void S_Start(void)
 
 	prevmap = curmap;
     }
+
+    // [crispy] MUSINFO value 0 is reserved for the map's default music
+    memset(&musinfo, 0, sizeof(musinfo));
+    musinfo.items[0] = mnum;
 
     S_ChangeMusic(mnum, true);
 }

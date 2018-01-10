@@ -20,6 +20,7 @@
 
 #include "z_zone.h"
 #include "p_local.h"
+#include "s_musinfo.h" // [crispy] T_MAPMusic()
 
 #include "doomstat.h"
 
@@ -114,6 +115,9 @@ void P_RunThinkers (void)
 	}
 	currentthinker = nextthinker;
     }
+
+    // [crispy] support MUSINFO lump (dynamic music changing)
+    T_MusInfo();
 }
 
 
