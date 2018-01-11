@@ -1025,9 +1025,10 @@ void R_DrawPSprite (pspdef_t* psp, psprnum_t psprnum) // [crispy] differentiate 
     else
     {
 	// local light
-	vis->colormap[0] = vis->colormap[1] = spritelights[MAXLIGHTSCALE-1];
+	vis->colormap[0] = spritelights[MAXLIGHTSCALE-1];
+	vis->colormap[1] = scalelight[LIGHTLEVELS-1][MAXLIGHTSCALE-1];
     }
-    vis->brightmap = dc_brightmap;
+    vis->brightmap = R_BrightmapForState(state);
 	
     // [crispy] translucent gun flash sprites
     if (psprnum == ps_flash)

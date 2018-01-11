@@ -34,12 +34,12 @@ BEGIN
 		BLOCK "040904E4"
 		BEGIN
 			VALUE "FileVersion", "1.0.0"
-			VALUE "FileDescription", "Chocolate Doom 3.0.0-beta1"
+			VALUE "FileDescription", "Chocolate Doom 3.0.0"
 			VALUE "InternalName", "chocolate-doom"
 			VALUE "CompanyName", "fraggle@gmail.com"
 			VALUE "LegalCopyright", "GNU General Public License"
 			VALUE "ProductName", "Chocolate Doom"
-			VALUE "ProductVersion", "3.0.0-beta1"
+			VALUE "ProductVersion", "3.0.0"
 		END
 	END
 	BLOCK "VarFileInfo"

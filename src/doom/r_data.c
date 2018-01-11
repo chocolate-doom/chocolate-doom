@@ -1155,10 +1155,11 @@ void R_InitColormaps (void)
 //
 void R_InitData (void)
 {
-    R_InitBrightmaps ();
+    R_InitBrightmaps (0);
     R_InitTextures ();
     printf (".");
     R_InitFlats ();
+    R_InitBrightmaps (1);
     printf (".");
     R_InitSpriteLumps ();
     printf (".");
