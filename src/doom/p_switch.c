@@ -90,6 +90,9 @@ switchlist_t alphSwitchList_vanilla[] =
     {"SW1TEK",		"SW2TEK",	3},
     {"SW1MARB",	"SW2MARB",	3},
     {"SW1SKULL",	"SW2SKULL",	3},
+
+    // [crispy] SWITCHES lumps are supposed to end like this
+    {"\0",		"\0",		0}
 };
 
 // [crispy] remove MAXSWITCHES limit
@@ -110,8 +113,7 @@ void P_InitSwitchList(void)
     switchlist_t *alphSwitchList;
     boolean from_lump;
 
-    from_lump = (W_CheckNumForName("SWITCHES") != -1);
-    if (from_lump)
+    if ((from_lump = (W_CheckNumForName("SWITCHES") != -1)))
     {
 	alphSwitchList = W_CacheLumpName("SWITCHES", PU_STATIC);
     }
@@ -139,17 +141,11 @@ void P_InitSwitchList(void)
 
     slindex = 0;
 
-    for (i = 0; /* i < arrlen(alphSwitchList) */; i++)
+    for (i = 0; alphSwitchList[i].episode; i++)
     {
 	const short alphSwitchList_episode = from_lump ?
 	    SHORT(alphSwitchList[i].episode) :
 	    alphSwitchList[i].episode;
-
-	// [crispy] add support for SWITCHES lumps
-	if (!alphSwitchList_episode || (!from_lump && i >= arrlen(alphSwitchList_vanilla)))
-	{
-	    break;
-	}
 
 	// [crispy] remove MAXSWITCHES limit
 	if (slindex + 1 >= maxswitches)
@@ -171,6 +167,7 @@ void P_InitSwitchList(void)
     numswitches = slindex / 2;
     switchlist[slindex] = -1;
 
+    // [crispy] add support for SWITCHES lumps
     if (from_lump)
     {
 	Z_ChangeTag(alphSwitchList, PU_CACHE);
