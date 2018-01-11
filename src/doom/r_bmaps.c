@@ -254,6 +254,26 @@ static byte chexredgreen[256] =
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 };
 
+static byte hacxlightning[256] =
+{
+	0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+	1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+};
+
 byte *dc_brightmap = nobrightmap;
 
 // [crispy] brightmaps for textures
@@ -696,17 +716,76 @@ static byte *R_BrightmapForFlatNum_None (const int num)
 	return nobrightmap;
 }
 
+// [crispy] brightmaps for states
+
+static byte *R_BrightmapForState_Doom (const int state)
+{
+	if (crispy->brightmaps & BRIGHTMAPS_SPRITES)
+	{
+		switch (state)
+		{
+			case S_BFG1:
+			case S_BFG2:
+			case S_BFG3:
+			case S_BFG4:
+			{
+				return redonly;
+				break;
+			}
+		}
+	}
+
+	return nobrightmap;
+}
+
+static byte *R_BrightmapForState_Hacx (const int state)
+{
+	if (crispy->brightmaps & BRIGHTMAPS_SPRITES)
+	{
+		switch (state)
+		{
+			case S_SAW2:
+			case S_SAW3:
+			{
+				return hacxlightning;
+				break;
+			}
+			case S_MISSILE:
+			{
+				return redandgreen;
+				break;
+			}
+			case S_SAW:
+			case S_SAWB:
+			case S_PLASMA:
+			case S_PLASMA2:
+			{
+				return redonly;
+				break;
+			}
+		}
+	}
+
+	return nobrightmap;
+}
+
+static byte *R_BrightmapForState_None (const int state)
+{
+	return nobrightmap;
+}
+
 // [crispy] initialize brightmaps
 
 byte *(*R_BrightmapForTexName) (const char *texname);
 byte *(*R_BrightmapForSprite) (const int type);
-byte *(*R_BrightmapForFlatNum) (const int type);
+byte *(*R_BrightmapForFlatNum) (const int num);
+byte *(*R_BrightmapForState) (const int state);
 
-void R_InitBrightmaps (int pass)
+void R_InitBrightmaps (int flats)
 {
 	if (gameversion == exe_hacx)
 	{
-		if (pass)
+		if (flats)
 		{
 			bmapflatnum[0] = R_FlatNumForName("FLOOR1_1");
 			bmapflatnum[1] = R_FlatNumForName("FLOOR1_7");
@@ -726,27 +805,32 @@ void R_InitBrightmaps (int pass)
 			R_BrightmapForTexName = R_BrightmapForTexName_Hacx;
 			R_BrightmapForSprite = R_BrightmapForSprite_Hacx;
 			R_BrightmapForFlatNum = R_BrightmapForFlatNum_Hacx;
+			R_BrightmapForState = R_BrightmapForState_Hacx;
 		}
 	}
 	else
-	if (gameversion == exe_chex && !pass)
+	if (gameversion == exe_chex)
 	{
-		int lump;
-
-		// [crispy] detect Chex Quest 2
-		lump = W_CheckNumForName("INTERPIC");
-		if (!strcasecmp(lumpinfo[lump]->wad_file->basename, "chex2.wad"))
+		if (!flats)
 		{
-			chex2 = true;
-		}
+			int lump;
 
-		R_BrightmapForTexName = R_BrightmapForTexName_Chex;
-		R_BrightmapForSprite = R_BrightmapForSprite_Chex;
-		R_BrightmapForFlatNum = R_BrightmapForFlatNum_None;
+			// [crispy] detect Chex Quest 2
+			lump = W_CheckNumForName("INTERPIC");
+			if (!strcasecmp(lumpinfo[lump]->wad_file->basename, "chex2.wad"))
+			{
+				chex2 = true;
+			}
+
+			R_BrightmapForTexName = R_BrightmapForTexName_Chex;
+			R_BrightmapForSprite = R_BrightmapForSprite_Chex;
+			R_BrightmapForFlatNum = R_BrightmapForFlatNum_None;
+			R_BrightmapForState = R_BrightmapForState_None;
+		}
 	}
 	else
 	{
-		if (pass)
+		if (flats)
 		{
 			// [crispy] only three select brightmapped flats
 			bmapflatnum[0] = R_FlatNumForName("CONS1_1");
@@ -758,6 +842,7 @@ void R_InitBrightmaps (int pass)
 			R_BrightmapForTexName = R_BrightmapForTexName_Doom;
 			R_BrightmapForSprite = R_BrightmapForSprite_Doom;
 			R_BrightmapForFlatNum = R_BrightmapForFlatNum_Doom;
+			R_BrightmapForState = R_BrightmapForState_Doom;
 		}
 	}
 }
