@@ -27,6 +27,8 @@
 #include "p_local.h"
 #include "p_extsaveg.h"
 #include "p_saveg.h"
+#include "s_sound.h"
+#include "s_musinfo.h"
 #include "z_zone.h"
 
 #define MAX_LINE_LEN 260
@@ -347,6 +349,38 @@ static void P_ReadPlayersLookdir (const char *key)
 	}
 }
 
+// musinfo.current_item
+
+static void P_WriteMusInfo (const char *key)
+{
+	if (musinfo.current_item >= 0)
+	{
+		char *lump;
+
+		lump = lumpinfo[musinfo.current_item]->name;
+
+		M_snprintf(line, MAX_LINE_LEN, "%s %s\n", key, lump);
+		fputs(line, save_stream);
+	}
+}
+
+static void P_ReadMusInfo (const char *key)
+{
+	char lump[9] = {0};
+
+	if (sscanf(line, "%s %s", string, lump) == 2 &&
+	    !strncmp(string, key, MAX_STRING_LEN))
+	{
+		int i;
+
+		if ((i = W_CheckNumForName(lump)) >= 0)
+		{
+			musinfo.current_item = i;
+			S_ChangeMusInfoMusic(i, true);
+		}
+	}
+}
+
 typedef struct
 {
 	const char *key;
@@ -367,6 +401,7 @@ static const extsavegdata_t extsavegdata[] =
 	{"braintarget", P_WriteBrainTarget, P_ReadBrainTarget, 1},
 	{"markpoints", P_WriteMarkPoints, P_ReadMarkPoints, 1},
 	{"playerslookdir", P_WritePlayersLookdir, P_ReadPlayersLookdir, 1},
+	{"musinfo", P_WriteMusInfo, P_ReadMusInfo, 1},
 };
 
 void P_WriteExtendedSaveGameData (void)

@@ -28,6 +28,7 @@
 
 #include "sounds.h"
 #include "s_sound.h"
+#include "s_musinfo.h" // [crispy] struct musinfo
 
 #include "m_misc.h"
 #include "m_random.h"
@@ -311,6 +312,10 @@ void S_Start(void)
 
 	prevmap = curmap;
     }
+
+    // [crispy] MUSINFO value 0 is reserved for the map's default music
+    memset(&musinfo, 0, sizeof(musinfo));
+    musinfo.items[0] = -1;
 
     S_ChangeMusic(mnum, true);
 }
@@ -774,6 +779,7 @@ void S_ChangeMusic(int musicnum, int looping)
     {
 	prevmap = -1;
     }
+    musinfo.current_item = -1;
 
     // [crispy] play no music if this is not the right map
     if (crispy->demowarp && (gamestate != GS_LEVEL || crispy->demowarp != gamemap))
@@ -850,6 +856,55 @@ void S_ChangeMusic(int musicnum, int looping)
     I_PlaySong(handle, looping);
 
     mus_playing = music;
+
+    // [crispy] MUSINFO value 0 is reserved for the map's default music
+    if (musinfo.items[0] == -1)
+    {
+	musinfo.items[0] = music->lumpnum;
+	S_music[mus_musinfo].lumpnum = -1;
+    }
+}
+
+// [crispy] adapted from prboom-plus/src/s_sound.c:552-590
+
+void S_ChangeMusInfoMusic (int lumpnum, int looping)
+{
+    musicinfo_t *music;
+
+    // [crispy] restarting the map plays the original music
+    prevmap = -1;
+
+    // [crispy] play no music if this is not the right map
+    if (crispy->demowarp && (gamestate != GS_LEVEL || crispy->demowarp != gamemap))
+    {
+	musinfo.current_item = lumpnum;
+	return;
+    }
+
+    if (mus_playing && mus_playing->lumpnum == lumpnum)
+    {
+	return;
+    }
+
+    music = &S_music[mus_musinfo];
+
+    if (music->lumpnum == lumpnum)
+    {
+	return;
+    }
+
+    S_StopMusic();
+
+    music->lumpnum = lumpnum;
+
+    music->data = W_CacheLumpNum(music->lumpnum, PU_STATIC);
+    music->handle = I_RegisterSong(music->data, W_LumpLength(music->lumpnum));
+
+    I_PlaySong(music->handle, looping);
+
+    mus_playing = music;
+
+    musinfo.current_item = lumpnum;
 }
 
 boolean S_MusicPlaying(void)

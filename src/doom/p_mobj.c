@@ -30,6 +30,7 @@
 #include "hu_stuff.h"
 
 #include "s_sound.h"
+#include "s_musinfo.h" // [crispy] S_ParseMusInfo()
 
 #include "doomstat.h"
 
@@ -508,12 +509,28 @@ P_NightmareRespawn (mobj_t* mobj)
     P_RemoveMobj (mobj);
 }
 
+// [crispy] support MUSINFO lump (dynamic music changing)
+static inline void MusInfoThinker (mobj_t *thing)
+{
+	if (musinfo.mapthing != thing &&
+	    thing->subsector->sector == players[displayplayer].mo->subsector->sector)
+	{
+		musinfo.lastmapthing = musinfo.mapthing;
+		musinfo.mapthing = thing;
+		musinfo.tics = 30;
+	}
+}
 
 //
 // P_MobjThinker
 //
 void P_MobjThinker (mobj_t* mobj)
 {
+    // [crispy] support MUSINFO lump (dynamic music changing)
+    if (mobj->type == MT_MUSICSOURCE)
+    {
+	return MusInfoThinker(mobj);
+    }
     // [crispy] suppress interpolation of player missiles for the first tic
     if (mobj->interp == -1)
     {
@@ -878,6 +895,7 @@ void P_SpawnMapThing (mapthing_t* mthing)
     fixed_t		x;
     fixed_t		y;
     fixed_t		z;
+    int			musid = 0;
 		
     // count deathmatch start positions
     if (mthing->type == 11)
@@ -923,6 +941,13 @@ void P_SpawnMapThing (mapthing_t* mthing)
     if (!(mthing->options & bit) )
 	return;
 	
+    // [crispy] support MUSINFO lump (dynamic music changing)
+    if (mthing->type >= 14100 && mthing->type <= 14164)
+    {
+	musid = mthing->type - 14100;
+	mthing->type = mobjinfo[MT_MUSICSOURCE].doomednum;
+    }
+
     // find which type to spawn
     for (i=0 ; i< NUMMOBJTYPES ; i++)
 	if (mthing->type == mobjinfo[i].doomednum)
@@ -971,6 +996,12 @@ void P_SpawnMapThing (mapthing_t* mthing)
     mobj->angle = ANG45 * (mthing->angle/45);
     if (mthing->options & MTF_AMBUSH)
 	mobj->flags |= MF_AMBUSH;
+
+    // [crispy] support MUSINFO lump (dynamic music changing)
+    if (i == MT_MUSICSOURCE)
+    {
+	mobj->health = 1000 + musid;
+    }
 
     // [crispy] Lost Souls bleed Puffs
     if ((crispy->coloredblood & COLOREDBLOOD_FIX) && i == MT_SKULL)
