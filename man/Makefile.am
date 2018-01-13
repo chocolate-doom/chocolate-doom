@@ -20,7 +20,7 @@ if HAVE_PYTHON
 GENERATED_MAN_PAGES =               \
            @PROGRAM_PREFIX@doom.6         \
            default.cfg.5            \
-           @PROGRAM_PREFIX@doom.cfg.5     \
+           @PROGRAM_PREFIX@doom.cfg.5     
 #          @PROGRAM_PREFIX@heretic.6      \
 #          heretic.cfg.5            \
 #          @PROGRAM_PREFIX@heretic.cfg.5  \
