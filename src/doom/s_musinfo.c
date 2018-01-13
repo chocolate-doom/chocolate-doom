@@ -268,29 +268,6 @@ static void CheckOpen(void)
     }
 }
 
-// [crispy] returns the music number for a given song name
-
-static int S_CheckMusNumForName (const char *name)
-{
-	int m;
-
-	if (strlen(name) > 2)
-	{
-		// [crispy] omit the "S_" prefix
-		const char *const s_name = name + 2;
-
-		for (m = mus_None + 1; m < NUMMUSIC; m++)
-		{
-			if (!strncasecmp(S_music[m].name, s_name, 6))
-			{
-				return m;
-			}
-		}
-	}
-
-	return -1;
-}
-
 // [crispy] adapted from prboom-plus/src/s_advsound.c:54-159
 
 musinfo_t musinfo = {0};
@@ -304,7 +281,7 @@ void S_ParseMusInfo (const char *mapid)
 {
   if (W_CheckNumForName("MUSINFO") != -1)
   {
-    int num, musnum;
+    int num, lumpnum;
     int inMap = false;
 
     SC_OpenLump("MUSINFO");
@@ -330,11 +307,11 @@ void S_ParseMusInfo (const char *mapid)
         {
           if (SC_GetString())
           {
-            musnum = S_CheckMusNumForName(sc_String);
+            lumpnum = W_CheckNumForName(sc_String);
 
-            if (musnum >= 0)
+            if (lumpnum >= 0)
             {
-              musinfo.items[num] = musnum;
+              musinfo.items[num] = lumpnum;
             }
             else
             {
@@ -368,17 +345,16 @@ void T_MusInfo (void)
   {
     if (!musinfo.tics && musinfo.lastmapthing != musinfo.mapthing)
     {
-      // [crispy] encode music number in mapthing health
-      const int arraypt = musinfo.mapthing->health - 1000;
+      // [crispy] encode music lump number in mapthing health
+      int arraypt = musinfo.mapthing->health - 1000;
 
       if (arraypt >= 0 && arraypt < MAX_MUS_ENTRIES)
       {
-        // [crispy] store music number (instead of lump number)
-        const int musnum = musinfo.items[arraypt];
+        int lumpnum = musinfo.items[arraypt];
 
-        if (musnum > mus_None && musnum < NUMMUSIC)
+        if (lumpnum >= 0 && lumpnum < numlumps)
         {
-          S_ChangeMusic(musnum, true);
+          S_ChangeMusInfoMusic(lumpnum, true);
         }
       }
 
