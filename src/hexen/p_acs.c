@@ -323,7 +323,7 @@ static void ACSAssert(int condition, char *fmt, ...)
     va_start(args, fmt);
     M_vsnprintf(buf, sizeof(buf), fmt, args);
     va_end(args);
-    I_Error("ACS assertation failure: in %s: %s", EvalContext, buf);
+    I_Error("ACS assertion failure: in %s: %s", EvalContext, buf);
 }
 
 //==========================================================================

@@ -19,21 +19,26 @@ CLEANFILES = $(BASH_COMPLETION_SCRIPTLETS)
 
 MANDIR = $(top_srcdir)/man
 DOCGEN = $(MANDIR)/docgen
+DOCGEN_COMMON_ARGS = -n "@PROGRAM_SPREFIX@" -s "@PACKAGE_NAME@"
 
 @PROGRAM_PREFIX@doom: $(top_srcdir)/src $(DOCGEN) $(BASH_COMPLETION_TEMPLATES)
-	$(DOCGEN) -g doom -b $(MANDIR)/doom.template \
+	$(DOCGEN) $(DOCGEN_COMMON_ARGS) \
+                  -g doom -b $(MANDIR)/doom.template \
                   $(top_srcdir)/src $(top_srcdir)/src/doom > $@
 
 @PROGRAM_PREFIX@heretic: $(top_srcdir)/src $(DOCGEN) $(BASH_COMPLETION_TEMPLATES)
-	$(DOCGEN) -g heretic -b $(MANDIR)/heretic.template \
+	$(DOCGEN) $(DOCGEN_COMMON_ARGS) \
+                  -g heretic -b $(MANDIR)/heretic.template \
                   $(top_srcdir)/src $(top_srcdir)/src/heretic > $@
 
 @PROGRAM_PREFIX@hexen: $(top_srcdir)/src $(DOCGEN) $(BASH_COMPLETION_TEMPLATES)
-	$(DOCGEN) -g hexen -b $(MANDIR)/hexen.template \
+	$(DOCGEN) $(DOCGEN_COMMON_ARGS) \
+                  -g hexen -b $(MANDIR)/hexen.template \
                   $(top_srcdir)/src $(top_srcdir)/src/hexen > $@
 
 @PROGRAM_PREFIX@strife: $(top_srcdir)/src $(DOCGEN) $(BASH_COMPLETION_TEMPLATES)
-	$(DOCGEN) -g strife -b $(MANDIR)/strife.template \
+	$(DOCGEN) $(DOCGEN_COMMON_ARGS) \
+                  -g strife -b $(MANDIR)/strife.template \
                   $(top_srcdir)/src $(top_srcdir)/src/strife > $@
 
 EXTRA_DIST = \

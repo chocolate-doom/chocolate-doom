@@ -1,12 +1,12 @@
-.TH chocolate\-heretic 6
+.TH @PROGRAM_SPREFIX@\-heretic 6
 .SH NAME
-chocolate\-heretic \- historically compatible Heretic engine
+@PROGRAM_SPREFIX@\-heretic \- historically compatible Heretic engine
 .SH SYNOPSIS
-.B chocolate\-heretic
+.B @PROGRAM_SPREFIX@\-heretic
 [\fIOPTIONS\fR]
 .SH DESCRIPTION
 .PP
-Chocolate Heretic is a port of Raven Software's 1994 game "Heretic" that
+@PACKAGE_SHORTNAME@ Heretic is a port of Raven Software's 1994 game "Heretic" that
 aims to behave as similar to the original DOS version of Heretic as
 possible.
 .br
@@ -14,22 +14,22 @@ possible.
 .SH IWAD SEARCH PATHS
 @include iwad_paths.man
 .SH ENVIRONMENT
-This section describes environment variables that control Chocolate Heretic's
+This section describes environment variables that control @PACKAGE_SHORTNAME@ Heretic's
 behavior.
 @include environ.man
 .SH FILES
 .TP
-\fB$HOME/.local/share/chocolate-doom/heretic.cfg\fR
-The main configuration file for Chocolate Heretic.  See \fBheretic.cfg\fR(5).
+\fB$HOME/.local/share/@PROGRAM_SPREFIX@\-doom/heretic.cfg\fR
+The main configuration file for @PACKAGE_SHORTNAME@ Heretic.  See \fBheretic.cfg\fR(5).
 .TP
-\fB$HOME/.local/share/chocolate-doom/chocolate-heretic.cfg\fR
-Extra configuration values that are specific to Chocolate Heretic and not
-present in Vanilla Heretic. See \fBchocolate-heretic.cfg\fR(5).
+\fB$HOME/.local/share/@PROGRAM_SPREFIX@\-doom/@PROGRAM_SPREFIX@\-heretic.cfg\fR
+Extra configuration values that are specific to @PACKAGE_SHORTNAME@ Heretic and not
+present in Vanilla Heretic. See \fB@PROGRAM_SPREFIX@\-heretic.cfg\fR(5).
 .SH SEE ALSO
-\fBchocolate-doom\fR(6),
-\fBchocolate-hexen\fR(6),
-\fBchocolate-server\fR(6),
-\fBchocolate-setup\fR(6)
+\fB@PROGRAM_SPREFIX@\-doom\fR(6),
+\fB@PROGRAM_SPREFIX@\-hexen\fR(6),
+\fB@PROGRAM_SPREFIX@\-server\fR(6),
+\fB@PROGRAM_SPREFIX@\-setup\fR(6)
 .SH AUTHOR
 Chocolate Heretic is part of the Chocolate Doom project, written and
 maintained by Simon Howard. It is based on the Heretic source code,
