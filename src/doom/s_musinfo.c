@@ -312,16 +312,17 @@ void S_ParseMusInfo (const char *mapid)
             if (lumpnum >= 0)
             {
               musinfo.items[num] = lumpnum;
+//            printf("S_ParseMusInfo: (%d) %s\n", num, sc_String);
             }
             else
             {
-              fprintf(stderr, "S_ParseMusInfo: Unknown MUS lump %s", sc_String);
+              fprintf(stderr, "S_ParseMusInfo: Unknown MUS lump %s\n", sc_String);
             }
           }
         }
         else
         {
-          fprintf(stderr, "S_ParseMusInfo: Number not in range 1 to %d", MAX_MUS_ENTRIES - 1);
+          fprintf(stderr, "S_ParseMusInfo: Number not in range 1 to %d\n", MAX_MUS_ENTRIES - 1);
         }
       }
     }
