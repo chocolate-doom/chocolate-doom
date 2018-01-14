@@ -517,7 +517,7 @@ static inline void MusInfoThinker (mobj_t *thing)
 	{
 		musinfo.lastmapthing = musinfo.mapthing;
 		musinfo.mapthing = thing;
-		musinfo.tics = 30;
+		musinfo.tics = leveltime ? 30 : 0;
 	}
 }
 
