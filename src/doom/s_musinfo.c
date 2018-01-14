@@ -353,7 +353,7 @@ void T_MusInfo (void)
       {
         int lumpnum = musinfo.items[arraypt];
 
-        if (lumpnum >= 0 && lumpnum < numlumps)
+        if (lumpnum > 0 && lumpnum < numlumps)
         {
           S_ChangeMusInfoMusic(lumpnum, true);
         }
