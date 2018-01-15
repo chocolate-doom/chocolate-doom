@@ -38,6 +38,7 @@ CODEBLOCKS_FILES=                              \
         codeblocks/setup-res.rc
 
 DOC_FILES=                              \
+        COPYING.md                      \
         README.md                       \
         README.Music.md                 \
         NEWS.md                         \
