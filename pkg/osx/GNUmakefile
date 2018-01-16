@@ -73,6 +73,8 @@ $(STAGING_DIR): launcher $(TOPLEVEL_DOCS)
 
 	$(TOPLEVEL)/man/simplecpp -DPRECOMPILED -D__MACOSX__  \
 	                -DDOOM -DHERETIC -DHEXEN -DSTRIFE     \
+	                -DLONG_GAME_NAME="$(PACKAGE_NAME)" \
+	                -DLONG_EXE_NAME="$(PROGRAM_PREFIX)doom" \
 	             < $(TOPLEVEL)/man/INSTALL.template       \
 	             > "$(APP_DOC_DIR)/INSTALL"
 

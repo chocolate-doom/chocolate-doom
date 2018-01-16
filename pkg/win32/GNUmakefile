@@ -56,6 +56,8 @@ staging-%:
 
 	$(TOPLEVEL)/man/simplecpp -D_WIN32 -DPRECOMPILED  \
 	             -D$(shell echo $* | tr a-z A-Z)      \
+	             -DLONG_GAME_NAME="$(PACKAGE_NAME)"   \
+	             -DLONG_EXE_NAME="$(PROGRAM_PREFIX)doom" \
 	         < $(TOPLEVEL)/man/INSTALL.template       \
 	         > $@/INSTALL.txt
 
