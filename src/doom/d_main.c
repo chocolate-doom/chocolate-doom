@@ -600,7 +600,7 @@ void D_DoAdvanceDemo (void)
     paused = false;
     gameaction = ga_nothing;
     // [crispy] update the "singleplayer" variable
-    CheckCrispySingleplayer
+    CheckCrispySingleplayer(!demorecording && !demoplayback && !netgame);
 
 
     // The Ultimate Doom executable changed the demo sequence to add

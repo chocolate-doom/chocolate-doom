@@ -36,7 +36,7 @@ static crispy_t critical_s = {0};
 crispy_t *const critical = &critical_s;
 
 // [crispy] update the "singleplayer" variable and the "critical" struct
-void CheckCrispySingleplayerFn (int singleplayer)
+void CheckCrispySingleplayer (boolean singleplayer)
 {
 	if ((crispy->singleplayer = singleplayer))
 	{

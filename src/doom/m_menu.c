@@ -1915,7 +1915,7 @@ static void M_CrispyToggleFreeaim(int choice)
     crispy->freeaim = (crispy->freeaim + 1) % NUM_FREEAIMS;
 
     // [crispy] update the "critical" struct
-    CheckCrispySingleplayer
+    CheckCrispySingleplayer(!demorecording && !demoplayback && !netgame);
 }
 
 static void M_CrispyToggleFreelook(int choice)
@@ -1945,7 +1945,7 @@ static void M_CrispyToggleJumping(int choice)
     crispy->jump = (crispy->jump + 1) % NUM_JUMPS;
 
     // [crispy] update the "critical" struct
-    CheckCrispySingleplayer
+    CheckCrispySingleplayer(!demorecording && !demoplayback && !netgame);
 }
 
 static void M_CrispyToggleOverunder(int choice)
@@ -1960,7 +1960,7 @@ static void M_CrispyToggleOverunder(int choice)
     crispy->overunder = !crispy->overunder;
 
     // [crispy] update the "critical" struct
-    CheckCrispySingleplayer
+    CheckCrispySingleplayer(!demorecording && !demoplayback && !netgame);
 }
 
 static void M_CrispyTogglePitch(int choice)
@@ -1988,7 +1988,7 @@ static void M_CrispyToggleRecoil(int choice)
     crispy->recoil = !crispy->recoil;
 
     // [crispy] update the "critical" struct
-    CheckCrispySingleplayer
+    CheckCrispySingleplayer(!demorecording && !demoplayback && !netgame);
 }
 
 static void M_CrispyToggleSecretmessage(int choice)

@@ -808,7 +808,7 @@ void G_DoLoadLevel (void)
     } 
 		 
     // [crispy] update the "singleplayer" variable
-    CheckCrispySingleplayer
+    CheckCrispySingleplayer(!demorecording && !demoplayback && !netgame);
     P_SetupLevel (gameepisode, gamemap, 0, gameskill);    
     displayplayer = consoleplayer;		// view the guy you are playing    
     gameaction = ga_nothing; 
@@ -2666,7 +2666,7 @@ void G_DoPlayDemo (void)
     usergame = false; 
     demoplayback = true; 
     // [crispy] update the "singleplayer" variable
-    CheckCrispySingleplayer
+    CheckCrispySingleplayer(!demorecording && !demoplayback && !netgame);
 
     // [crispy] demo progress bar
     {

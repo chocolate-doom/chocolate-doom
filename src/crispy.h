@@ -84,8 +84,7 @@ typedef struct
 extern crispy_t *const crispy;
 extern crispy_t *const critical;
 
-extern void CheckCrispySingleplayerFn (int singleplayer);
-#define CheckCrispySingleplayer {CheckCrispySingleplayerFn(!demorecording && !demoplayback && !netgame);}
+extern void CheckCrispySingleplayer (boolean singleplayer);
 
 enum
 {
