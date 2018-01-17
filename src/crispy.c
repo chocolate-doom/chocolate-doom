@@ -33,17 +33,17 @@ crispy_t *const crispy = &crispy_s;
 
 // [crispy] "critical" config variables
 static crispy_t critical_s = {0};
-crispy_t *const critical = &critical_s;
+crispy_t *critical = &critical_s;
 
 // [crispy] update the "singleplayer" variable and the "critical" struct
 void CheckCrispySingleplayer (boolean singleplayer)
 {
 	if ((crispy->singleplayer = singleplayer))
 	{
-		memcpy(critical, crispy, sizeof(critical_s));
+		critical = &crispy_s;
 	}
 	else
 	{
-		memset(critical, 0, sizeof(critical_s));
+		critical = &critical_s;
 	}
 }

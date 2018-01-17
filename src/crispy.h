@@ -82,7 +82,7 @@ typedef struct
 } crispy_t;
 
 extern crispy_t *const crispy;
-extern crispy_t *const critical;
+extern crispy_t *critical;
 
 extern void CheckCrispySingleplayer (boolean singleplayer);
 
