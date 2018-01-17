@@ -34,7 +34,6 @@
 #endif
 
 #define CRISPY_HUD 12
-#define CRISPY_SLOPE(a) ((((a)->lookdir / MLOOKUNIT) << FRACBITS) / 173)
 
 typedef struct
 {

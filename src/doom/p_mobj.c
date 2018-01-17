@@ -1221,7 +1221,7 @@ P_SpawnPlayerMissile
     an = source->angle;
     if (critical->freeaim == FREEAIM_DIRECT)
     {
-	slope = CRISPY_SLOPE(source->player);
+	slope = PLAYER_SLOPE(source->player);
     }
     else
     {
@@ -1242,7 +1242,7 @@ P_SpawnPlayerMissile
 	{
 	    an = source->angle;
 	    if (critical->freeaim == FREEAIM_BOTH)
-               slope = CRISPY_SLOPE(source->player);
+               slope = PLAYER_SLOPE(source->player);
 	    else
 	    slope = 0;
 	}

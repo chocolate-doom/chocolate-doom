@@ -692,7 +692,7 @@ void P_BulletSlope (mobj_t*	mo)
     
     if (critical->freeaim == FREEAIM_DIRECT)
     {
-	bulletslope = CRISPY_SLOPE(mo->player);
+	bulletslope = PLAYER_SLOPE(mo->player);
     }
     else
     {
@@ -710,7 +710,7 @@ void P_BulletSlope (mobj_t*	mo)
 	    bulletslope = P_AimLineAttack (mo, an, 16*64*FRACUNIT);
 	    if (!linetarget && critical->freeaim == FREEAIM_BOTH)
 	    {
-		bulletslope = CRISPY_SLOPE(mo->player);
+		bulletslope = PLAYER_SLOPE(mo->player);
 	    }
 	}
     }
