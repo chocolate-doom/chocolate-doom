@@ -33,8 +33,6 @@
 #define BETWEEN(l,u,x) (((l)>(x))?(l):((x)>(u))?(u):(x))
 #endif
 
-#define CRISPY_HUD 12
-
 typedef struct
 {
 	// [crispy] "crispness" config variables
