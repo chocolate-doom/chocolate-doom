@@ -1243,7 +1243,7 @@ P_LineLaser
 {
     fixed_t	lslope;
 
-    laserspot->x = laserspot->y = laserspot->z = 0;
+    memset(laserspot, 0, sizeof(*laserspot));
 
     if (critical->freeaim == FREEAIM_DIRECT)
     {
