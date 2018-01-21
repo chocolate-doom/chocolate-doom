@@ -41,6 +41,7 @@ static char *opltype_strings[] =
 };
 
 static char *cfg_extension[] = { "cfg", NULL };
+static char *sf2_extension[] = { "sf2", "SF2", NULL };
 
 // Config file variables:
 
@@ -64,6 +65,7 @@ static float libsamplerate_scale = 0.65;
 
 static char *music_pack_path = NULL;
 static char *timidity_cfg_path = NULL;
+static char *sdl_sf2_path = NULL;
 static char *gus_patch_path = NULL;
 static int gus_ram_kb = 1024;
 
@@ -182,6 +184,12 @@ void ConfigSound(void)
                                     "Select Timidity config file",
                                     cfg_extension),
                 TXT_NewStrut(4, 0),
+                TXT_NewLabel("SF2 sound font file: "),
+                TXT_NewStrut(4, 0),
+                TXT_NewFileSelector(&sdl_sf2_path, 34,
+                                    "Select SF2 file",
+                                    sf2_extension),
+                TXT_NewStrut(4, 0),
                 TXT_NewLabel("Digital music pack directory: "),
                 TXT_NewStrut(4, 0),
                 TXT_NewFileSelector(&music_pack_path, 34,
@@ -208,6 +216,7 @@ void BindSoundVariables(void)
     M_BindStringVariable("gus_patch_path",        &gus_patch_path);
     M_BindStringVariable("music_pack_path",     &music_pack_path);
     M_BindStringVariable("timidity_cfg_path",     &timidity_cfg_path);
+    M_BindStringVariable("sdl_sf2_path",          &sdl_sf2_path);
 
     M_BindIntVariable("snd_sbport",               &snd_sbport);
     M_BindIntVariable("snd_sbirq",                &snd_sbirq);
@@ -231,6 +240,7 @@ void BindSoundVariables(void)
     music_pack_path = M_StringDuplicate("");
     timidity_cfg_path = M_StringDuplicate("");
     gus_patch_path = M_StringDuplicate("");
+    sdl_sf2_path = M_StringDuplicate("");
 
     // All versions of Heretic and Hexen did pitch-shifting.
     // Most versions of Doom did not and Strife never did.
