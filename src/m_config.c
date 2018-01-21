@@ -927,6 +927,13 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_STRING(timidity_cfg_path),
 
     //!
+    // Full path to a SF2 sound font file to use for MIDI playback. This
+    // works only if SDL was built with FluidSynth enabled.
+    //
+
+    CONFIG_VARIABLE_STRING(sdl_sf2_path),
+
+    //!
     // Path to GUS patch files to use when operating in GUS emulation
     // mode.
     //
