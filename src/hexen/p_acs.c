@@ -362,7 +362,6 @@ static int ReadCodeInt(void)
 static int ReadScriptVar(void)
 {
     int var = ReadCodeInt();
-    ACSAssert(0, "testing error messages");
     ACSAssert(var >= 0, "negative script variable: %d < 0", var);
     ACSAssert(var < MAX_ACS_SCRIPT_VARS,
               "invalid script variable: %d >= %d", var, MAX_ACS_SCRIPT_VARS);
