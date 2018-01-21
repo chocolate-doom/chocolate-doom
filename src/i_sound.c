@@ -77,6 +77,7 @@ extern int opl_io_port;
 
 extern char *music_pack_path;
 extern char *timidity_cfg_path;
+extern char *sdl_sf2_path;
 
 // DOS-specific options: These are unused but should be maintained
 // so that the config file can be shared between chocolate
@@ -453,6 +454,7 @@ void I_BindSoundVariables(void)
 
     M_BindStringVariable("music_pack_path",      &music_pack_path);
     M_BindStringVariable("timidity_cfg_path",    &timidity_cfg_path);
+    M_BindStringVariable("sdl_sf2_path",         &sdl_sf2_path);
     M_BindStringVariable("gus_patch_path",       &gus_patch_path);
     M_BindIntVariable("gus_ram_kb",              &gus_ram_kb);
 
