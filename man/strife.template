@@ -62,7 +62,7 @@ behavior of Vanilla Strife.  Help us by reporting any discrepancies you
 might notice between this executable and the vanilla DOS program.
 
 However, do *not* report any glitch that you can replicate in the vanilla EXE
-as a bug. The point of @PACKAGE_SHORTNAME Strife, like Chocolate Doom before it, is to
+as a bug. The point of @PACKAGE_SHORTNAME@ Strife, like Chocolate Doom before it, is to
 be as bug-compatible with the original game as possible. Also be aware that
 some glitches are impossible to compatibly recreate, and wherever this is the
 case, @PACKAGE_SHORTNAME@ Strife has erred on the side of not crashing the program,

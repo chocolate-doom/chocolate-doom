@@ -74,8 +74,8 @@ CMDLINE.doom : CMDLINE.template $(top_srcdir)/src $(top_srcdir)/src/doom
 
 INSTALL.doom: INSTALL.template
 	$(srcdir)/simplecpp -DDOOM \
-            -D LONG_GAME_NAME="@PACKAGE_SHORTNAME@ Doom" \
-            -D LONG_EXE_NAME="@PROGRAM_PREFIX@doom" \
+            -DLONG_GAME_NAME="@PACKAGE_SHORTNAME@ Doom" \
+            -DLONG_EXE_NAME="@PROGRAM_PREFIX@doom" \
             -DPRECOMPILED < $(srcdir)/INSTALL.template > $@
 
 @PROGRAM_PREFIX@heretic.6: $(top_srcdir)/src $(MANPAGE_GEN_FILES) heretic.template
@@ -100,8 +100,8 @@ CMDLINE.heretic : CMDLINE.template $(top_srcdir)/src $(top_srcdir)/src/heretic
 
 INSTALL.heretic: INSTALL.template
 	$(srcdir)/simplecpp -DHERETIC \
-            -D LONG_GAME_NAME="@PACKAGE_SHORTNAME@ Heretic" \
-            -D LONG_EXE_NAME="@PROGRAM_PREFIX@heretic" \
+            -DLONG_GAME_NAME="@PACKAGE_SHORTNAME@ Heretic" \
+            -DLONG_EXE_NAME="@PROGRAM_PREFIX@heretic" \
             -DPRECOMPILED < $(srcdir)/INSTALL.template > $@
 
 
@@ -127,8 +127,8 @@ CMDLINE.hexen : CMDLINE.template $(top_srcdir)/src $(top_srcdir)/src/hexen
 
 INSTALL.hexen: INSTALL.template
 	$(srcdir)/simplecpp -DHEXEN \
-            -D LONG_GAME_NAME="@PACKAGE_SHORTNAME@ Hexen" \
-            -D LONG_EXE_NAME="@PROGRAM_PREFIX@hexen" \
+            -DLONG_GAME_NAME="@PACKAGE_SHORTNAME@ Hexen" \
+            -DLONG_EXE_NAME="@PROGRAM_PREFIX@hexen" \
             -DPRECOMPILED < $(srcdir)/INSTALL.template > $@
 
 @PROGRAM_PREFIX@strife.6: $(top_srcdir)/src $(MANPAGE_GEN_FILES)
@@ -171,7 +171,9 @@ INSTALL.strife: INSTALL.template
 
 INSTALL: INSTALL.template
 	$(srcdir)//simplecpp -DDOOM -DHERETIC -DHEXEN -DSTRIFE \
-	            -DPRECOMPILED < $(srcdir)/INSTALL.template > $@
+            -DLONG_GAME_NAME="@PACKAGE_SHORTNAME@ Doom" \
+            -DLONG_EXE_NAME="@PROGRAM_PREFIX@doom" \
+            -DPRECOMPILED < $(srcdir)/INSTALL.template > $@
 
 endif
 
