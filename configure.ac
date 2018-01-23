@@ -7,6 +7,7 @@ PACKAGE_COPYRIGHT="Copyright (C) 1993-2017"
 PACKAGE_LICENSE="GNU General Public License, version 2"
 PACKAGE_MAINTAINER="Simon Howard"
 PACKAGE_URL="https://www.chocolate-doom.org/"
+PACKAGE_RDNS="org.chocolate_doom"
 PACKAGE_ISSUES="https://github.com/chocolate-doom/chocolate-doom/issues"
 
 AC_CONFIG_AUX_DIR(autotools)
@@ -142,6 +143,7 @@ AC_SUBST(PACKAGE_COPYRIGHT)
 AC_SUBST(PACKAGE_LICENSE)
 AC_SUBST(PACKAGE_MAINTAINER)
 AC_SUBST(PACKAGE_URL)
+AC_SUBST(PACKAGE_RDNS)
 AC_SUBST(PACKAGE_ISSUES)
 
 AC_SUBST(bashcompletiondir)
