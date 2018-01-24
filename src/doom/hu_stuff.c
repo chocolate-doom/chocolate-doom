@@ -880,7 +880,10 @@ void HU_Drawer(void)
 
     // [crispy] demo progress bar
     if (demoplayback)
+    {
 	HU_DemoProgressBar();
+	CN_DrawTimer();
+    }
 }
 
 void HU_Erase(void)

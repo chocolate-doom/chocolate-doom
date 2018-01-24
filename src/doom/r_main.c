@@ -830,6 +830,7 @@ void R_ExecuteSetViewSize (void)
 	    scalelight[i][j] = colormaps + level*256;
 	}
     }
+    CN_UpdateTimerLocation(1);
 }
 
 
