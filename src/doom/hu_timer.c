@@ -6,6 +6,7 @@
 #include "i_system.h"
 #include "i_video.h"
 #include "m_misc.h"
+#include "v_trans.h"
 
 #include "r_main.h"
 
@@ -14,12 +15,11 @@
 #define TFONTCOLON 10
 #define TFONTDOT 11
 #define TFONTCHARS 12
-#define INITIAL_CHARS 8
 #define BORDER_H 5
 #define BORDER_V 3
 
-static int timer_x, timer_y;			// final calculated position
-static int timer_width = TFONTWIDTH*INITIAL_CHARS + BORDER_H;		// and size
+static int timer_x, timer_y; // final calculated position
+static int timer_width; // and size
 static const int timer_height = TFONTHEIGHT + BORDER_V;
 
 static const byte timerfont[TFONTWIDTH*TFONTHEIGHT*TFONTCHARS] =
@@ -60,7 +60,6 @@ static const int cn_timer_offset_x = -1;
 static const int cn_timer_offset_y = 0;
 static const int cn_timer_color_index = 168;
 static const int cn_timer_shadow_index = 0;
-static const int cn_timer_bg_colormap = 16;
 
 static void CN_DrawTimerCharacter (int x, int y, char c)
 {
@@ -105,17 +104,15 @@ static void CN_DrawTimerCharacter (int x, int y, char c)
 static void CN_DimBox (void)
 {
     int i, j;
-    const byte *cmap;
     byte *screenp;
 
-    cmap = colormaps + cn_timer_bg_colormap*256;
     screenp = I_VideoBuffer + timer_y*SCREENWIDTH + timer_x;
 
     for (i=0; i<timer_height; i++)
     {
 	for (j=0; j<timer_width; j++)
 	{
-	    *screenp = cmap[*screenp];
+	    *screenp = cr[CR_DARK][*screenp];
 	    screenp++;
 	}
 	screenp += SCREENWIDTH - timer_width;
@@ -168,7 +165,7 @@ void CN_DrawTimer (void)
 {
     char buffer[16];
     int i, l, mins, x, y;
-    static int lastsize = 0;
+    static int lastsize;
 
     mins = leveltime / TICRATE / 60;
     l = M_snprintf (buffer, 16, "%02i:%05.2f", mins,
@@ -182,10 +179,7 @@ void CN_DrawTimer (void)
 	lastsize = l;
     }
 
-    if (cn_timer_bg_colormap)
-    {
-	CN_DimBox();
-    }
+    CN_DimBox();
 
     x = timer_x+3;
     y = timer_y+2;
