@@ -9,9 +9,6 @@
 
 #include "r_main.h"
 
-static int timer_x, timer_y;			// final calculated position
-static int timer_width, timer_height;		// and size
-
 #define TFONTWIDTH 5
 #define TFONTHEIGHT 6
 #define TFONTCOLON 10
@@ -20,6 +17,10 @@ static int timer_width, timer_height;		// and size
 #define INITIAL_CHARS 8
 #define BORDER_H 5
 #define BORDER_V 3
+
+static int timer_x, timer_y;			// final calculated position
+static int timer_width = TFONTWIDTH*INITIAL_CHARS + BORDER_H;		// and size
+static const int timer_height = TFONTHEIGHT + BORDER_V;
 
 static const byte timerfont[TFONTWIDTH*TFONTHEIGHT*TFONTCHARS] =
 {
@@ -55,12 +56,11 @@ static const byte timerfont[TFONTWIDTH*TFONTHEIGHT*TFONTCHARS] =
 	0x02,0x02,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x02,0x00,
 };
 
-const int cn_timer_enabled = 1;
-const int cn_timer_offset_x = -1;
-const int cn_timer_offset_y = 0;
-const int cn_timer_color_index = 168;
-const int cn_timer_shadow_index = 0;
-const int cn_timer_bg_colormap = 16;
+static const int cn_timer_offset_x = -1;
+static const int cn_timer_offset_y = 0;
+static const int cn_timer_color_index = 168;
+static const int cn_timer_shadow_index = 0;
+static const int cn_timer_bg_colormap = 16;
 
 static void CN_DrawTimerCharacter (int x, int y, char c)
 {
@@ -102,28 +102,28 @@ static void CN_DrawTimerCharacter (int x, int y, char c)
 }
 
 // dims a rectangular area of the screen using COLORMAP
-static void CN_DimBox (int x, int y, int w, int h, int cm)
+static void CN_DimBox (void)
 {
     int i, j;
     const byte *cmap;
     byte *screenp;
 
-    cmap = colormaps + cm*256;
-    screenp = I_VideoBuffer + y*SCREENWIDTH + x;
+    cmap = colormaps + cn_timer_bg_colormap*256;
+    screenp = I_VideoBuffer + timer_y*SCREENWIDTH + timer_x;
 
-    for (i=0; i<h; i++)
+    for (i=0; i<timer_height; i++)
     {
-	for (j=0; j<w; j++)
+	for (j=0; j<timer_width; j++)
 	{
 	    *screenp = cmap[*screenp];
 	    screenp++;
 	}
-	screenp += SCREENWIDTH - w;
+	screenp += SCREENWIDTH - timer_width;
     }
 }
 
 // needs to be called on startup and every time screen size changes
-void CN_UpdateTimerLocation(int anchor)
+void CN_UpdateTimerLocation (const int anchor)
 {
     int x, y, w, h;
 
@@ -166,7 +166,7 @@ void CN_UpdateTimerLocation(int anchor)
 
 void CN_DrawTimer (void)
 {
-    static char buffer[16];
+    char buffer[16];
     int i, l, mins, x, y;
     static int lastsize = 0;
 
@@ -174,7 +174,7 @@ void CN_DrawTimer (void)
     l = M_snprintf (buffer, 16, "%02i:%05.2f", mins,
                   (float)(leveltime % (60*TICRATE)) / TICRATE);
 
-    if (l > INITIAL_CHARS && lastsize != l)
+    if (l != lastsize)
     {
 	timer_width = TFONTWIDTH*l + BORDER_H;
 	CN_UpdateTimerLocation(1);
@@ -184,8 +184,7 @@ void CN_DrawTimer (void)
 
     if (cn_timer_bg_colormap)
     {
-	CN_DimBox (timer_x, timer_y, timer_width, timer_height,
-	  cn_timer_bg_colormap);
+	CN_DimBox();
     }
 
     x = timer_x+3;
@@ -196,12 +195,4 @@ void CN_DrawTimer (void)
 	CN_DrawTimerCharacter(x, y, buffer[i]);
 	x += TFONTWIDTH;
     }
-}
-
-// call on startup and map change
-void CN_ResetTimer (void)
-{
-    timer_width = TFONTWIDTH*INITIAL_CHARS + BORDER_H;
-    timer_height = TFONTHEIGHT + BORDER_V;
-    CN_UpdateTimerLocation(1);
 }

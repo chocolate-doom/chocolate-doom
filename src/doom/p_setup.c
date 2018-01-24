@@ -1841,7 +1841,6 @@ P_SetupLevel
     maplumpinfo = lumpinfo[lumpnum];
 
     leveltime = 0;
-    CN_ResetTimer();
 	
     // [crispy] better logging
     {
