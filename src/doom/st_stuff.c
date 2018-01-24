@@ -62,7 +62,6 @@
 
 #include "v_trans.h" // [crispy] colored cheat messages
 
-extern boolean inhelpscreens; // [crispy] prevent palette changes
 extern int screenblocks; // [crispy] for the Crispy HUD
 
 //
@@ -1439,6 +1438,7 @@ void ST_doPaletteStuff(void)
     byte*	pal;
     int		cnt;
     int		bzc;
+    extern	boolean inhelpscreens; // [crispy] prevent palette changes
 
     cnt = plyr->damagecount;
 
@@ -1491,10 +1491,13 @@ void ST_doPaletteStuff(void)
     {
         palette = RADIATIONPAL;
     }
+
+    // [crispy] prevent palette changes when in help screen or Crispness menu
     if (inhelpscreens)
     {
-        palette = 0;
+	palette = 0;
     }
+
     if (palette != st_palette)
     {
 	st_palette = palette;
