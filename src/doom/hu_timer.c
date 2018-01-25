@@ -164,29 +164,28 @@ void CN_UpdateTimerLocation (const int anchor)
 void CN_DrawTimer (void)
 {
     char buffer[16];
-    int i, l, mins, x, y;
+    int i, size, mins, x;
     static int lastsize;
 
     mins = leveltime / TICRATE / 60;
-    l = M_snprintf (buffer, 16, "%02i:%05.2f", mins,
+    size = M_snprintf (buffer, 16, "%02i:%05.2f", mins,
                   (float)(leveltime % (60*TICRATE)) / TICRATE);
 
-    if (l != lastsize)
+    if (size != lastsize)
     {
 	timer_width = TFONTWIDTH*l + BORDER_H;
 	CN_UpdateTimerLocation(1);
 
-	lastsize = l;
+	lastsize = size;
     }
 
     CN_DimBox();
 
     x = timer_x+3;
-    y = timer_y+2;
 
-    for (i=0; i<strlen(buffer); i++)
+    for (i=0; i<size; i++)
     {
-	CN_DrawTimerCharacter(x, y, buffer[i]);
+	CN_DrawTimerCharacter(x, timer_y+2, buffer[i]);
 	x += TFONTWIDTH;
     }
 }
