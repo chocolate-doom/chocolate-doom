@@ -1,23 +1,26 @@
 //
-// CNDOOM timers
+// Copyright(C) 1993-1996 Id Software, Inc.
+// Copyright(C) 2005-2014 Simon Howard
+// Copyright(C) 2018 Fabian Greffrath
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// DESCRIPTION:
+//	CNDOOM timers
 //
 
-#ifndef __CN_TIMER_H__
-#define __CN_TIMER_H__
+#ifndef __HU_TIMER__
+#define __HU_TIMER__
 
-// [cndoom] new configuration variables for timer (see m_config.c)
-extern int cn_timer_offset_x;
-extern int cn_timer_offset_y;
-extern int cn_timer_color_index;
-extern int cn_timer_shadow_index;
-extern int cn_timer_bg_colormap;
-extern int cn_timer_enabled;
-
-extern void CN_DrawTimer (void);
-extern void CN_UpdateTimerLocation(int anchor);
-extern void CN_ResetTimer (void);
-extern void CN_DrawIntermissionTime (int x, int y, int time);
-extern void CN_DrawTotalTime (void);
+extern void HU_UpdateTimerLocation (const int window);
+extern void HU_DrawTimer (void);
 
 #endif
-

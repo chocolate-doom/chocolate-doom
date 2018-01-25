@@ -34,6 +34,7 @@
 #include "m_menu.h"
 
 #include "p_local.h" // [crispy] MLOOKUNIT
+#include "hu_timer.h" // [crispy] HU_UpdateTimerLocation()
 #include "r_local.h"
 #include "r_sky.h"
 
@@ -830,7 +831,7 @@ void R_ExecuteSetViewSize (void)
 	    scalelight[i][j] = colormaps + level*256;
 	}
     }
-    CN_UpdateTimerLocation(1);
+    HU_UpdateTimerLocation(1);
 }
 
 

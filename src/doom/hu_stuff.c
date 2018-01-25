@@ -36,6 +36,7 @@
 #include "m_argv.h" // [crispy] M_ParmExists()
 #include "st_stuff.h" // [crispy] ST_HEIGHT
 #include "p_local.h" // maplumpinfo
+#include "hu_timer.h" // [crispy] HU_DrawTimer()
 
 #include "s_sound.h"
 
@@ -882,7 +883,7 @@ void HU_Drawer(void)
     if (demoplayback)
     {
 	HU_DemoProgressBar();
-	CN_DrawTimer();
+	HU_DrawTimer();
     }
 }
 
