@@ -2283,6 +2283,7 @@ G_InitNew
 // 
 #define DEMOMARKER		0x80
 
+int	defdemotics; // [crispy] demo progress bar
 
 void G_ReadDemoTiccmd (ticcmd_t* cmd) 
 { 
@@ -2314,6 +2315,8 @@ void G_ReadDemoTiccmd (ticcmd_t* cmd)
 	cmd->sidemove *= (const signed char) -1;
 	cmd->angleturn *= (const short) -1;
     }
+
+    defdemotics--;
 } 
 
 // Increase the size of the demo buffer to allow unlimited demos
@@ -2681,9 +2684,12 @@ void G_DoPlayDemo (void)
 	    }
 	}
 
+	defdemotics = 0;
+
 	while (*demo_ptr != DEMOMARKER && (demo_ptr - demobuffer) < lumplength)
 	{
 	    demo_ptr += numplayersingame * (longtics ? 5 : 4);
+	    defdemotics++;
 	}
 
 	defdemosize = demo_ptr - demo_p;

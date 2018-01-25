@@ -882,8 +882,9 @@ void HU_Drawer(void)
     // [crispy] demo progress bar
     if (demoplayback)
     {
+	extern int defdemotics;
 	HU_DemoProgressBar();
-	HU_DrawTimer();
+	HU_DrawTimer(defdemotics);
     }
 }
 

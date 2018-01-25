@@ -21,6 +21,6 @@
 #define __HU_TIMER__
 
 extern void HU_UpdateTimerLocation (const int window);
-extern void HU_DrawTimer (void);
+extern void HU_DrawTimer (const int time);
 
 #endif
