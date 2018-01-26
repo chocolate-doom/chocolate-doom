@@ -23,6 +23,6 @@ PACKAGE_VERSION = @PACKAGE_VERSION@
 
 DOC_FILES = README.md        \
             README.Music.md  \
-            COPYING          \
+            COPYING.md       \
             NEWS.md
 

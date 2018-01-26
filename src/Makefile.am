@@ -214,7 +214,7 @@ EXTRA_DIST =                        \
         doom-screensaver.desktop.in \
         manifest.xml
 
-appdatadir = $(prefix)/share/appdata
+appdatadir = $(prefix)/share/metainfo
 appdata_DATA =                              \
         @PROGRAM_PREFIX@doom.appdata.xml
 #       @PROGRAM_PREFIX@heretic.appdata.xml \

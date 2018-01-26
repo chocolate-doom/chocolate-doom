@@ -22,9 +22,9 @@ to be installed:
 
  * A C compiler (gcc is recommended)
  * make (GNU make is recommended)
- * SDL2 (see http://www.libsdl.org/)
- * SDL2_mixer (see http://www.libsdl.org/projects/SDL_mixer/)
- * SDL2_net (see http://www.libsdl.org/projects/SDL_net/)
+ * SDL2 (see https://www.libsdl.org/)
+ * SDL2_mixer (see https://www.libsdl.org/projects/SDL_mixer/)
+ * SDL2_net (see https://www.libsdl.org/projects/SDL_net/)
  * Python (optional)
 
 Follow the standard instructions for installing an autotools-based
@@ -241,18 +241,18 @@ Upgrade patches are available that will update your game to the latest
 version, the following sites have the patches:
 
 #if DOOM
-  http://www.doom2.net/doom2/utils.html
-  ftp://ftp.idsoftware.com/idstuff/doom
-  ftp://ftp.idsoftware.com/idstuff/doom2
+  <http://www.doom2.net/doom2/utils.html>
+  <http://www.gamers.org/pub/idgames/idstuff/doom>
+  <http://www.gamers.org/pub/idgames/idstuff/doom2>
 #elif HERETIC
-  ftp://ftp.idsoftware.com/idstuff/heretic
+  <http://www.gamers.org/pub/idgames/idstuff/heretic>
 #elif HEXEN
-  ftp://ftp.idsoftware.com/idstuff/hexen
+  <http://www.gamers.org/pub/idgames/idstuff/hexen>
 #elif STRIFE
-  ftp://ftp.fu-berlin.de/pc/games/idgames/roguestuff
+  <http://www.gamers.org/pub/idgames/roguestuff>
 #endif
 
-Please see http://doomwiki.org/wiki/Game_patch for more information.
+Please see <http://doomwiki.org/wiki/Game_patch> for more information.
 
 #if _WIN32
 As the patches are binary patches that run as DOS executables, on
