@@ -649,8 +649,15 @@ static boolean ReadSubstituteConfig(char *filename)
 
     while (!feof(fs))
     {
+        char *retval;
         M_StringCopy(line, "", sizeof(line));
-        fgets(line, sizeof(line), fs);
+        retval = fgets(line, sizeof(line), fs);
+
+        if (retval == NULL)
+        {
+            fprintf(stderr, "%s:%i: Unexpected end of file\n", filename, linenum);
+            break;
+        }
 
         error = ParseSubstituteLine(filename, line);
 

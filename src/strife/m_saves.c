@@ -293,8 +293,12 @@ void M_ReadMisObj(void)
 
     if((f = fopen(srcpath, "rb")))
     {
-        fread(mission_objective, 1, OBJECTIVE_LEN, f);
+        int retval = fread(mission_objective, 1, OBJECTIVE_LEN, f);
         fclose(f);
+        if (retval != OBJECTIVE_LEN)
+        {
+            I_Error("M_ReadMisObj: error while reading mission objective");
+        }
     }
 
     Z_Free(srcpath);
