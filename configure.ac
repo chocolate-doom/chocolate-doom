@@ -7,7 +7,7 @@ PACKAGE_COPYRIGHT="Copyright (C) 1993-2017"
 PACKAGE_LICENSE="GNU General Public License, version 2"
 PACKAGE_MAINTAINER="Fabian Greffrath"
 PACKAGE_URL="http://fabiangreffrath.github.io/crispy-doom"
-PACKAGE_RDNS="org.chocolate_doom"
+PACKAGE_RDNS="io.github.fabiangreffrath"
 PACKAGE_ISSUES="https://github.com/fabiangreffrath/crispy-doom/issues"
 
 AC_CONFIG_AUX_DIR(autotools)
