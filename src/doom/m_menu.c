@@ -247,8 +247,11 @@ static void M_CrispyToggleColoredblood2(int choice);
 static void M_CrispyToggleColoredhud(int choice);
 static void M_CrispyToggleCrosshair(int choice);
 static void M_CrispyToggleCrosshairtype(int choice);
+static void M_CrispyToggleDemoTimer(int choice);
+static void M_CrispyToggleDemoTimerDir(int choice);
+static void M_CrispyToggleDemoBar(int choice);
 static void M_CrispyToggleExtAutomap(int choice);
-static void M_CrispyToggleExtsaveg(int choice);
+//static void M_CrispyToggleExtsaveg(int choice);
 static void M_CrispyToggleFlipcorpses(int choice);
 static void M_CrispyToggleFreeaim(int choice);
 static void M_CrispyToggleFreelook(int choice);
@@ -532,7 +535,12 @@ enum
     crispness_centerweapon,
     crispness_pitch,
     crispness_weaponsquat,
-    crispness_extsaveg,
+//  crispness_extsaveg,
+    crispness2_sep_navigational,
+    crispness_sep_navigational,
+    crispness_extautomap,
+    crispness_automapstats,
+    crispness_secretmessage,
     crispness2_sep_goto,
     crispness2_goto1,
     crispness2_goto3,
@@ -549,7 +557,12 @@ static menuitem_t Crispness2Menu[]=
     {1,"",	M_CrispyToggleCenterweapon,'c'},
     {1,"",	M_CrispyTogglePitch,'w'},
     {1,"",	M_CrispyToggleWeaponSquat,'w'},
-    {1,"",	M_CrispyToggleExtsaveg,'e'},
+//  {1,"",	M_CrispyToggleExtsaveg,'e'},
+    {-1,"",0,'\0'},
+    {-1,"",0,'\0'},
+    {1,"",	M_CrispyToggleExtAutomap,'e'},
+    {1,"",	M_CrispyToggleAutomapstats,'s'},
+    {1,"",	M_CrispyToggleSecretmessage,'s'},
     {-1,"",0,'\0'},
     {1,"",	M_Crispness1,'p'},
     {1,"",	M_Crispness3,'n'},
@@ -567,16 +580,16 @@ static menu_t  Crispness2Def =
 
 enum
 {
-    crispness_sep_navigational,
-    crispness_extautomap,
-    crispness_automapstats,
-    crispness_secretmessage,
-    crispness3_sep_physical,
     crispness_sep_physical,
     crispness_freeaim,
     crispness_jumping,
     crispness_overunder,
     crispness_recoil,
+    crispness3_sep_demos,
+    crispness_sep_demos,
+    crispness_demotimer,
+    crispness_demotimerdir,
+    crispness_demobar,
     crispness3_sep_goto,
     crispness3_goto2,
     crispness3_end
@@ -585,15 +598,15 @@ enum
 static menuitem_t Crispness3Menu[]=
 {
     {-1,"",0,'\0'},
-    {1,"",	M_CrispyToggleExtAutomap,'e'},
-    {1,"",	M_CrispyToggleAutomapstats,'s'},
-    {1,"",	M_CrispyToggleSecretmessage,'s'},
-    {-1,"",0,'\0'},
-    {-1,"",0,'\0'},
     {1,"",	M_CrispyToggleFreeaim,'v'},
     {1,"",	M_CrispyToggleJumping,'a'},
     {1,"",	M_CrispyToggleOverunder,'w'},
     {1,"",	M_CrispyToggleRecoil,'w'},
+    {-1,"",0,'\0'},
+    {-1,"",0,'\0'},
+    {1,"",	M_CrispyToggleDemoTimer,'v'},
+    {1,"",	M_CrispyToggleDemoTimerDir,'a'},
+    {1,"",	M_CrispyToggleDemoBar,'w'},
     {-1,"",0,'\0'},
     {1,"",	M_Crispness2,'p'},
 };
@@ -1436,6 +1449,21 @@ static multiitem_t multiitem_freeaim[NUM_FREEAIMS] =
     {FREEAIM_BOTH, "both"},
 };
 
+static multiitem_t multiitem_demotimer[NUM_DEMOTIMERS] =
+{
+    {DEMOTIMER_OFF, "off"},
+    {DEMOTIMER_RECORD, "recording"},
+    {DEMOTIMER_PLAYBACK, "playback"},
+    {DEMOTIMER_BOTH, "both"},
+};
+
+static multiitem_t multiitem_demotimerdir[] =
+{
+    {0, ""},
+    {1, "forward"},
+    {2, "backward"},
+};
+
 static multiitem_t multiitem_freelook[NUM_FREELOOKS] =
 {
     {FREELOOK_OFF, "off"},
@@ -1533,7 +1561,13 @@ static void M_DrawCrispness2(void)
     M_DrawCrispnessMultiItem(crispness_centerweapon, "Weapon Attack Alignment", multiitem_centerweapon, crispy->centerweapon, true);
     M_DrawCrispnessItem(crispness_pitch, "Weapon Recoil Pitch", crispy->pitch, true);
     M_DrawCrispnessItem(crispness_weaponsquat, "Squat down weapon on impact", crispy->weaponsquat, true);
-    M_DrawCrispnessItem(crispness_extsaveg, "Extended Savegames", crispy->extsaveg, true);
+//  M_DrawCrispnessItem(crispness_extsaveg, "Extended Savegames", crispy->extsaveg, true);
+
+    M_DrawCrispnessSeparator(crispness_sep_navigational, "Navigational");
+
+    M_DrawCrispnessItem(crispness_extautomap, "Extended Automap colors", crispy->extautomap, true);
+    M_DrawCrispnessItem(crispness_automapstats, "Show Level Stats in Automap", crispy->automapstats, true);
+    M_DrawCrispnessItem(crispness_secretmessage, "Show Revealed Secrets", crispy->secretmessage, true);
 
     M_DrawCrispnessGoto(crispness2_goto3, "Next Page >");
     M_DrawCrispnessGoto(crispness2_goto1, "< Prev Page");
@@ -1549,18 +1583,18 @@ static void M_DrawCrispness3(void)
 
     M_DrawCrispnessHeader("Crispness 3/3");
 
-    M_DrawCrispnessSeparator(crispness_sep_navigational, "Navigational");
-
-    M_DrawCrispnessItem(crispness_extautomap, "Extended Automap colors", crispy->extautomap, true);
-    M_DrawCrispnessItem(crispness_automapstats, "Show Level Stats in Automap", crispy->automapstats, true);
-    M_DrawCrispnessItem(crispness_secretmessage, "Show Revealed Secrets", crispy->secretmessage, true);
-
     M_DrawCrispnessSeparator(crispness_sep_physical, "Physical");
 
     M_DrawCrispnessMultiItem(crispness_freeaim, "Vertical Aiming", multiitem_freeaim, crispy->freeaim, crispy->singleplayer);
     M_DrawCrispnessMultiItem(crispness_jumping, "Allow Jumping", multiitem_jump, crispy->jump, crispy->singleplayer);
     M_DrawCrispnessItem(crispness_overunder, "Walk over/under Monsters", crispy->overunder, crispy->singleplayer);
     M_DrawCrispnessItem(crispness_recoil, "Weapon Recoil Thrust", crispy->recoil, crispy->singleplayer);
+
+    M_DrawCrispnessSeparator(crispness_sep_demos, "Demos");
+
+    M_DrawCrispnessMultiItem(crispness_demotimer, "Show Demo Timer", multiitem_demotimer, crispy->demotimer, true);
+    M_DrawCrispnessMultiItem(crispness_demotimerdir, "Playback Timer Direction", multiitem_demotimerdir, crispy->demotimerdir + 1, crispy->demotimer & DEMOTIMER_PLAYBACK);
+    M_DrawCrispnessItem(crispness_demobar, "Show Demo Progress Bar", crispy->demobar, true);
 
     M_DrawCrispnessGoto(crispness3_goto2, "< Prev Page");
 
@@ -1835,11 +1869,13 @@ static void M_CrispyToggleAutomapstats(int choice)
     crispy->automapstats = !crispy->automapstats;
 }
 
+/*
 static void M_CrispyToggleExtsaveg(int choice)
 {
     choice = 0;
     crispy->extsaveg = !crispy->extsaveg;
 }
+*/
 
 static void M_CrispyToggleCenterweapon(int choice)
 {
@@ -1895,6 +1931,30 @@ static void M_CrispyToggleCrosshairtype(int choice)
     {
 	crispy->crosshairtype = 0;
     }
+}
+
+static void M_CrispyToggleDemoTimer(int choice)
+{
+    choice = 0;
+    crispy->demotimer = (crispy->demotimer + 1) % NUM_DEMOTIMERS;
+}
+
+static void M_CrispyToggleDemoTimerDir(int choice)
+{
+    if (!(crispy->demotimer & DEMOTIMER_PLAYBACK))
+    {
+	S_StartSound(NULL,sfx_oof);
+	return;
+    }
+
+    choice = 0;
+    crispy->demotimerdir = !crispy->demotimerdir;
+}
+
+static void M_CrispyToggleDemoBar(int choice)
+{
+    choice = 0;
+    crispy->demobar = !crispy->demobar;
 }
 
 static void M_CrispyToggleFlipcorpses(int choice)

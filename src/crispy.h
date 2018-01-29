@@ -43,6 +43,9 @@ typedef struct
 	int coloredhud;
 	int crosshair;
 	int crosshairtype;
+	int demotimer;
+	int demotimerdir;
+	int demobar;
 	int extautomap;
 	int extsaveg;
 	int flipcorpses;
@@ -131,6 +134,15 @@ enum
     CROSSHAIR_PROJECTED,
     NUM_CROSSHAIRS,
     CROSSHAIR_INTERCEPT = 0x10
+};
+
+enum
+{
+    DEMOTIMER_OFF,
+    DEMOTIMER_RECORD,
+    DEMOTIMER_PLAYBACK,
+    DEMOTIMER_BOTH,
+    NUM_DEMOTIMERS
 };
 
 enum
