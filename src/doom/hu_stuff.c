@@ -878,9 +878,26 @@ void HU_Drawer(void)
     if (dp_translucent)
 	dp_translucent = false;
 
-    // [crispy] demo progress bar
+    // [crispy] demo progress bar and timer widget
     if (demoplayback)
-	HU_DemoProgressBar();
+    {
+	if (crispy->demobar)
+	{
+		HU_DemoProgressBar();
+	}
+	if (crispy->demotimer & DEMOTIMER_PLAYBACK)
+	{
+		ST_DrawDemoTimer(crispy->demotimerdir ? defdemotics : leveltime);
+	}
+    }
+    else
+    if (demorecording)
+    {
+	if (crispy->demotimer & DEMOTIMER_RECORD)
+	{
+		ST_DrawDemoTimer(leveltime);
+	}
+    }
 }
 
 void HU_Erase(void)

@@ -2163,3 +2163,34 @@ void ST_Init (void)
     st_backing_screen = (pixel_t *) Z_Malloc((ST_WIDTH << hires) * (ST_HEIGHT << hires) * sizeof(*st_backing_screen), PU_STATIC, 0);
 }
 
+// [crispy] Demo Timer widget
+void ST_DrawDemoTimer (const int time)
+{
+	char buffer[16];
+	const int secs = time / TICRATE;
+	const int w = shortnum[0]->width;
+	int n, x;
+
+	n = M_snprintf(buffer, sizeof(buffer), "%02i %02i %02i",
+	               secs / 60, secs % 60, time % TICRATE);
+
+	x = (viewwindowx >> hires) + (scaledviewwidth >> hires);
+
+	// [crispy] draw the Demo Timer widget with gray numbers
+	dp_translation = cr[CR_GRAY];
+
+	while (n-- > 0)
+	{
+		const int c = buffer[n] - '0';
+
+		x -= w;
+
+		if (c >= 0 && c <= 9)
+		{
+			V_DrawPatch(x, viewwindowy >> hires, shortnum[c]);
+		}
+	}
+
+	dp_translation = NULL;
+}
+

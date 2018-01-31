@@ -33,6 +33,10 @@
 
 #define CRISPY_HUD 12
 
+// [crispy] Demo Timer widget
+extern void ST_DrawDemoTimer (const int time);
+extern int defdemotics;
+
 //
 // STATUS BAR
 //
