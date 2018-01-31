@@ -36,7 +36,6 @@
 #include "m_argv.h" // [crispy] M_ParmExists()
 #include "st_stuff.h" // [crispy] ST_HEIGHT
 #include "p_local.h" // maplumpinfo
-#include "hu_timer.h" // [crispy] HU_DrawTimer()
 
 #include "s_sound.h"
 
@@ -879,7 +878,7 @@ void HU_Drawer(void)
     if (dp_translucent)
 	dp_translucent = false;
 
-    // [crispy] demo progress bar
+    // [crispy] demo progress bar and timer widget
     if (demoplayback)
     {
 	if (crispy->demobar)
@@ -888,8 +887,7 @@ void HU_Drawer(void)
 	}
 	if (crispy->demotimer & DEMOTIMER_PLAYBACK)
 	{
-		extern int defdemotics;
-		HU_DrawTimer(crispy->demotimerdir ? defdemotics : leveltime);
+		ST_DrawDemoTimer(crispy->demotimerdir ? defdemotics : leveltime);
 	}
     }
     else
@@ -897,7 +895,7 @@ void HU_Drawer(void)
     {
 	if (crispy->demotimer & DEMOTIMER_RECORD)
 	{
-		HU_DrawTimer(leveltime);
+		ST_DrawDemoTimer(leveltime);
 	}
     }
 }
