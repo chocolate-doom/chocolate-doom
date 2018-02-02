@@ -696,11 +696,7 @@ void HU_Start(void)
 // [crispy] print a bar indicating demo progress at the bottom of the screen
 static void HU_DemoProgressBar (void)
 {
-    int i;
-    extern char *demo_p, *demobuffer;
-    extern int defdemosize;
-
-    i = SCREENWIDTH * (demo_p - demobuffer) / defdemosize;
+    const int i = SCREENWIDTH * defdemotics / deftotaldemotics;
 
 //  V_DrawHorizLine(0, SCREENHEIGHT - 3, i, 4); // [crispy] white
     V_DrawHorizLine(0, SCREENHEIGHT - 2, i, 0); // [crispy] black
@@ -887,7 +883,7 @@ void HU_Drawer(void)
 	}
 	if (crispy->demotimer & DEMOTIMER_PLAYBACK)
 	{
-		ST_DrawDemoTimer(crispy->demotimerdir ? defdemotics : leveltime);
+		ST_DrawDemoTimer(crispy->demotimerdir ? (deftotaldemotics - defdemotics) : defdemotics);
 	}
     }
     else
@@ -895,7 +891,7 @@ void HU_Drawer(void)
     {
 	if (crispy->demotimer & DEMOTIMER_RECORD)
 	{
-		ST_DrawDemoTimer(leveltime);
+		ST_DrawDemoTimer(defdemotics);
 	}
     }
 }

@@ -2283,7 +2283,8 @@ G_InitNew
 // 
 #define DEMOMARKER		0x80
 
-int	defdemotics; // [crispy] demo progress bar
+// [crispy] demo progress bar and timer widget
+int defdemotics = 0, deftotaldemotics;
 
 void G_ReadDemoTiccmd (ticcmd_t* cmd) 
 { 
@@ -2316,7 +2317,10 @@ void G_ReadDemoTiccmd (ticcmd_t* cmd)
 	cmd->angleturn *= (const short) -1;
     }
 
-    defdemotics--;
+    // [crispy] increase demo tics counter
+    // applies to both recording and playback,
+    // because G_WriteDemoTiccmd() calls G_ReadDemoTiccmd() once
+    defdemotics++;
 } 
 
 // Increase the size of the demo buffer to allow unlimited demos
@@ -2517,7 +2521,6 @@ void G_BeginRecording (void)
 //
 
 char*	defdemoname; 
-int	defdemosize; // [crispy] demo progress bar
  
 void G_DeferedPlayDemo (char* name) 
 { 
@@ -2684,15 +2687,13 @@ void G_DoPlayDemo (void)
 	    }
 	}
 
-	defdemotics = 0;
+	deftotaldemotics = defdemotics = 0;
 
 	while (*demo_ptr != DEMOMARKER && (demo_ptr - demobuffer) < lumplength)
 	{
 	    demo_ptr += numplayersingame * (longtics ? 5 : 4);
-	    defdemotics++;
+	    deftotaldemotics++;
 	}
-
-	defdemosize = demo_ptr - demo_p;
     }
 } 
 
