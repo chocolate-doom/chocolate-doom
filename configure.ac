@@ -126,6 +126,12 @@ esac
 AC_CHECK_TOOL(OBJDUMP, objdump, )
 AC_CHECK_TOOL(STRIP, strip, )
 
+AC_ARG_ENABLE([werror], AS_HELP_STRING([--enable-werror], [Treat warnings as errors]))
+
+AS_IF([test "x$enable_werror" = "xyes"], [
+        CFLAGS="$CFLAGS -Werror"
+])
+
 AM_CONDITIONAL(HAVE_WINDRES, test "$WINDRES" != "")
 AM_CONDITIONAL(HAVE_PYTHON, $HAVE_PYTHON)
 
