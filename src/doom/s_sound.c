@@ -315,7 +315,6 @@ void S_Start(void)
 
     // [crispy] MUSINFO value 0 is reserved for the map's default music
     memset(&musinfo, 0, sizeof(musinfo));
-    musinfo.items[0] = -1;
 
     S_ChangeMusic(mnum, true);
 }
@@ -858,7 +857,7 @@ void S_ChangeMusic(int musicnum, int looping)
     mus_playing = music;
 
     // [crispy] MUSINFO value 0 is reserved for the map's default music
-    if (musinfo.items[0] == -1)
+    if (!musinfo.items[0])
     {
 	musinfo.items[0] = music->lumpnum;
 	S_music[mus_musinfo].lumpnum = -1;

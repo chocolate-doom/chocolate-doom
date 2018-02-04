@@ -309,7 +309,7 @@ void S_ParseMusInfo (const char *mapid)
           {
             lumpnum = W_CheckNumForName(sc_String);
 
-            if (lumpnum >= 0)
+            if (lumpnum > 0)
             {
               musinfo.items[num] = lumpnum;
 //            printf("S_ParseMusInfo: (%d) %s\n", num, sc_String);
