@@ -772,6 +772,7 @@ void M_ReadSaveStrings(void)
 
     for (i = 0;i < load_end;i++)
     {
+        int retval;
         M_StringCopy(name, P_SaveGameFile(i), sizeof(name));
 
 	handle = fopen(name, "rb");
@@ -781,9 +782,9 @@ void M_ReadSaveStrings(void)
             LoadMenu[i].status = 0;
             continue;
         }
-	fread(&savegamestrings[i], 1, SAVESTRINGSIZE, handle);
+        retval = fread(&savegamestrings[i], 1, SAVESTRINGSIZE, handle);
 	fclose(handle);
-	LoadMenu[i].status = 1;
+        LoadMenu[i].status = retval == SAVESTRINGSIZE;
     }
 }
 

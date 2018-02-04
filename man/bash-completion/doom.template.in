@@ -34,7 +34,7 @@ _@PROGRAM_SPREFIX@_doom()
             COMPREPLY=(doom2 tnt plutonia)
             ;;
         -gameversion)
-            COMPREPLY=(1.9 ultimate final final2 hacx chex)
+            COMPREPLY=(1.666 1.7 1.8 1.9 ultimate final final2 hacx chex)
             ;;
         -setmem)
             COMPREPLY=(dos622 dos71 dosbox)

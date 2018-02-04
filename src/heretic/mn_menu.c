@@ -642,6 +642,7 @@ void MN_LoadSlotText(void)
 
     for (i = 0; i < 6; i++)
     {
+        int retval;
         filename = SV_Filename(i);
         fp = fopen(filename, "rb+");
 	free(filename);
@@ -652,9 +653,9 @@ void MN_LoadSlotText(void)
             SlotStatus[i] = 0;
             continue;
         }
-        fread(&SlotText[i], SLOTTEXTLEN, 1, fp);
+        retval = fread(&SlotText[i], 1, SLOTTEXTLEN, fp);
         fclose(fp);
-        SlotStatus[i] = 1;
+        SlotStatus[i] = retval == SLOTTEXTLEN;
     }
     slottextloaded = true;
 }

@@ -31,8 +31,11 @@ Please try to give as much information as possible:
   you're using.
 
 * Please say which game you're playing (Doom 1, Doom 2, Heretic,
-  Hexen, Strife, etc.) and list any add-on WADs you're using. Please
-  mention if you have any special configuration you think may be
+  Hexen, Strife, etc.) and if you're using any fan-made WADs or mods,
+  please say which mods (and where they can be downloaded!). It helps
+  to give the full command line you're using to start the game.
+
+* Please mention if you have any special configuration you think may be
   relevant, too.
 
 ### Feature requests
