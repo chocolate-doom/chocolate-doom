@@ -1682,8 +1682,11 @@ void AM_drawCrosshair(int color)
 	AM_drawFline(&h, color);
 	AM_drawFline(&v, color);
     }
+// [crispy] do not draw the useless dot on the player arrow
+/*
     else
     fb[(f_w*(f_h+1))/2] = color; // single point for now
+*/
 
 }
 
