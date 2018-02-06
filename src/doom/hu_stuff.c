@@ -393,6 +393,22 @@ char *mapnames_commercial[] =
     MHUSTR_21
 };
 
+static void CrispyReplaceColor (char *str, const int cr, const char *col)
+{
+    char *str_replace, col_replace[16];
+
+    if (strcmp(str, DEH_String(str)))
+    {
+	return;
+    }
+
+    M_snprintf(col_replace, sizeof(col_replace),
+               "%s%s%s", crstr[cr], col, crstr[CR_NONE]);
+    str_replace = M_StringReplace(str, col, col_replace);
+    DEH_AddStringReplacement(str, str_replace);
+    free(str_replace);
+}
+
 void HU_Init(void)
 {
 
@@ -440,25 +456,28 @@ void HU_Init(void)
 	laserpatch[i].h += SHORT(patch->height)/2;
     }
 
-    // [crispy] colorize keycard and skull key messages
-    CrispyReplaceColor(GOTBLUECARD, CR_BLUE, " blue ");
-    CrispyReplaceColor(GOTBLUESKUL, CR_BLUE, " blue ");
-    CrispyReplaceColor(PD_BLUEO,    CR_BLUE, " blue ");
-    CrispyReplaceColor(PD_BLUEK,    CR_BLUE, " blue ");
-    CrispyReplaceColor(GOTREDCARD,  CR_RED,  " red ");
-    CrispyReplaceColor(GOTREDSKULL, CR_RED,  " red ");
-    CrispyReplaceColor(PD_REDO,     CR_RED,  " red ");
-    CrispyReplaceColor(PD_REDK,     CR_RED,  " red ");
-    CrispyReplaceColor(GOTYELWCARD, CR_GOLD, " yellow ");
-    CrispyReplaceColor(GOTYELWSKUL, CR_GOLD, " yellow ");
-    CrispyReplaceColor(PD_YELLOWO,  CR_GOLD, " yellow ");
-    CrispyReplaceColor(PD_YELLOWK,  CR_GOLD, " yellow ");
+    if (!M_ParmExists("-nodeh"))
+    {
+	// [crispy] colorize keycard and skull key messages
+	CrispyReplaceColor(GOTBLUECARD, CR_BLUE, " blue ");
+	CrispyReplaceColor(GOTBLUESKUL, CR_BLUE, " blue ");
+	CrispyReplaceColor(PD_BLUEO,    CR_BLUE, " blue ");
+	CrispyReplaceColor(PD_BLUEK,    CR_BLUE, " blue ");
+	CrispyReplaceColor(GOTREDCARD,  CR_RED,  " red ");
+	CrispyReplaceColor(GOTREDSKULL, CR_RED,  " red ");
+	CrispyReplaceColor(PD_REDO,     CR_RED,  " red ");
+	CrispyReplaceColor(PD_REDK,     CR_RED,  " red ");
+	CrispyReplaceColor(GOTYELWCARD, CR_GOLD, " yellow ");
+	CrispyReplaceColor(GOTYELWSKUL, CR_GOLD, " yellow ");
+	CrispyReplaceColor(PD_YELLOWO,  CR_GOLD, " yellow ");
+	CrispyReplaceColor(PD_YELLOWK,  CR_GOLD, " yellow ");
 
-    // [crispy] colorize multi-player messages
-    CrispyReplaceColor(HUSTR_PLRGREEN,  CR_GREEN, "Green: ");
-    CrispyReplaceColor(HUSTR_PLRINDIGO, CR_GRAY,  "Indigo: ");
-    CrispyReplaceColor(HUSTR_PLRBROWN,  CR_GOLD,  "Brown: ");
-    CrispyReplaceColor(HUSTR_PLRRED,    CR_RED,   "Red: ");
+	// [crispy] colorize multi-player messages
+	CrispyReplaceColor(HUSTR_PLRGREEN,  CR_GREEN, "Green: ");
+	CrispyReplaceColor(HUSTR_PLRINDIGO, CR_GRAY,  "Indigo: ");
+	CrispyReplaceColor(HUSTR_PLRBROWN,  CR_GOLD,  "Brown: ");
+	CrispyReplaceColor(HUSTR_PLRRED,    CR_RED,   "Red: ");
+    }
 }
 
 void HU_Stop(void)
