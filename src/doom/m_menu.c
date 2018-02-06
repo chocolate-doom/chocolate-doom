@@ -1525,9 +1525,9 @@ static void M_DrawCrispness1(void)
     M_DrawCrispnessMultiItem(crispness_coloredhud, "Colorize HUD Elements", multiitem_coloredhud, crispy->coloredhud, true);
     M_DrawCrispnessMultiItem(crispness_translucency, "Enable Translucency", multiitem_translucency, crispy->translucency, true);
     M_DrawCrispnessMultiItem(crispness_brightmaps, "Apply Brightmaps to", multiitem_brightmaps, crispy->brightmaps, true);
-    M_DrawCrispnessMultiItem(crispness_coloredblood, "Colored Blood and Corpses", multiitem_coloredblood, crispy->coloredblood & COLOREDBLOOD_BOTH, true);
-    M_DrawCrispnessItem(crispness_coloredblood2, "Fix Spectre and Lost Soul Blood", crispy->coloredblood & COLOREDBLOOD_FIX, true);
-    M_DrawCrispnessItem(crispness_flipcorpses, "Randomly Mirrored Corpses", crispy->flipcorpses, true);
+    M_DrawCrispnessMultiItem(crispness_coloredblood, "Colored Blood and Corpses", multiitem_coloredblood, crispy->coloredblood & COLOREDBLOOD_BOTH, gameversion != exe_chex);
+    M_DrawCrispnessItem(crispness_coloredblood2, "Fix Spectre and Lost Soul Blood", crispy->coloredblood & COLOREDBLOOD_FIX, gameversion != exe_chex);
+    M_DrawCrispnessItem(crispness_flipcorpses, "Randomly Mirrored Corpses", crispy->flipcorpses, gameversion != exe_chex);
 
     M_DrawCrispnessSeparator(crispness_sep_audible, "Audible");
     M_DrawCrispnessItem(crispness_soundfull, "Play sounds in full length", crispy->soundfull, true);
@@ -1887,6 +1887,13 @@ static void M_CrispyToggleColoredblood(int choice)
 {
     // [crispy] preserve coloredblood_fix value when switching colored blood and corpses
     const int coloredblood_fix = crispy->coloredblood & COLOREDBLOOD_FIX;
+
+    if (gameversion == exe_chex)
+    {
+	S_StartSound(NULL,sfx_oof);
+	return;
+    }
+
     choice = 0;
     crispy->coloredblood = (crispy->coloredblood + 1) % NUM_COLOREDBLOOD;
     crispy->coloredblood |= coloredblood_fix;
@@ -1894,6 +1901,12 @@ static void M_CrispyToggleColoredblood(int choice)
 
 static void M_CrispyToggleColoredblood2(int choice)
 {
+    if (gameversion == exe_chex)
+    {
+	S_StartSound(NULL,sfx_oof);
+	return;
+    }
+
     choice = 0;
     crispy->coloredblood ^= COLOREDBLOOD_FIX;
 }
@@ -1953,6 +1966,12 @@ static void M_CrispyToggleDemoBar(int choice)
 
 static void M_CrispyToggleFlipcorpses(int choice)
 {
+    if (gameversion == exe_chex)
+    {
+	S_StartSound(NULL,sfx_oof);
+	return;
+    }
+
     choice = 0;
     crispy->flipcorpses = !crispy->flipcorpses;
 }
@@ -2420,7 +2439,7 @@ static int G_GotoNextLevel(void)
       if (gamemode == registered)
         doom_next[2][7] = 11;
 
-      if (gamemission == pack_chex)
+      if (gameversion == exe_chex)
       {
         doom_next[0][2] = 14;
         doom_next[0][4] = 11;
@@ -3015,9 +3034,6 @@ boolean M_Responder (event_t* ev)
 	currentMenu->lastOn = itemOn;
 	if (currentMenu->prevMenu)
 	{
-	    if (nervewadfile && currentMenu == &NewDef)
-	        currentMenu->prevMenu = &ExpDef;
-
 	    currentMenu = currentMenu->prevMenu;
 	    itemOn = currentMenu->lastOn;
 	    S_StartSound(NULL,sfx_swtchn);
@@ -3329,7 +3345,7 @@ void M_Init (void)
         MainMenu[readthis] = MainMenu[quitdoom];
         MainDef.numitems--;
         MainDef.y += 8;
-        NewDef.prevMenu = &MainDef;
+        NewDef.prevMenu = nervewadfile ? &ExpDef : &MainDef;
         ReadDef1.routine = M_DrawReadThisCommercial;
         ReadDef1.x = 330;
         ReadDef1.y = 165;
@@ -3348,6 +3364,8 @@ void M_Init (void)
     else if (gameversion == exe_chex)
     {
         EpiDef.numitems = 1;
+        // [crispy] never show the Episode menu
+        NewDef.prevMenu = &MainDef;
     }
 
     // [crispy] rearrange Load Game and Save Game menus
