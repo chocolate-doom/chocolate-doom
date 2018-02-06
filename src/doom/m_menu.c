@@ -1339,29 +1339,22 @@ static void M_DrawMouse(void)
 // [crispy] crispness menu
 static void M_DrawCrispnessBackground(void)
 {
-    static byte *sdest;
-
-    inhelpscreens = true;
-
-    if (!sdest)
-    {
-	byte *src, *dest;
+	const byte *src;
+	pixel_t *dest;
 	int x, y;
 
-	src = W_CacheLumpName("FLOOR4_6" , PU_CACHE);
-	dest = (unsigned char *) Z_Malloc (SCREENWIDTH * SCREENHEIGHT * sizeof(*dest), PU_STATIC, NULL);
-	sdest = dest;
+	src = W_CacheLumpName("FLOOR4_6", PU_CACHE);
+	dest = I_VideoBuffer;
 
 	for (y = 0; y < SCREENHEIGHT; y++)
 	{
-	    for (x = 0; x < SCREENWIDTH; x++)
-	    {
-		*dest++ = src[(y & 63) * 64 + (x & 63)];
-	    }
+		for (x = 0; x < SCREENWIDTH; x++)
+		{
+			*dest++ = src[(y & 63) * 64 + (x & 63)];
+		}
 	}
-    }
 
-    memcpy(I_VideoBuffer, sdest, SCREENWIDTH * SCREENHEIGHT * sizeof(*I_VideoBuffer));
+	inhelpscreens = true;
 }
 
 static char crispy_menu_text[48];
