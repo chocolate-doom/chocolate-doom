@@ -2178,6 +2178,7 @@ void ST_DrawDemoTimer (const int time)
 
 	// [crispy] draw the Demo Timer widget with gray numbers
 	dp_translation = cr[CR_GRAY];
+	dp_translucent = true;
 
 	while (n-- > 0)
 	{
@@ -2192,5 +2193,6 @@ void ST_DrawDemoTimer (const int time)
 	}
 
 	dp_translation = NULL;
+	dp_translucent = false;
 }
 
