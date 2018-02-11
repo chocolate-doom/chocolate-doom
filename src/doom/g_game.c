@@ -1804,7 +1804,7 @@ void G_WorldDone (void)
 	}
     }
     else
-    if ( gamemode == commercial && gamemission != pack_nerve && gamemission != pack_master )
+    if ( gamemode == commercial )
     {
 	switch (gamemap)
 	{

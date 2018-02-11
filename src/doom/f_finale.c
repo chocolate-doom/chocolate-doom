@@ -149,6 +149,15 @@ void F_StartFinale (void)
             screen->level = 21;
         }
 
+        // [crispy] During demo recording/playback or network games
+        // these two packs behave like any other ordinary PWAD
+        if (!crispy->singleplayer &&
+            (gamemission == pack_nerve || gamemission == pack_master)
+            && screen->mission == doom2)
+        {
+            screen->mission = gamemission;
+        }
+
         if (logical_gamemission == screen->mission
          && (logical_gamemission != doom || gameepisode == screen->episode)
          && gamemap == screen->level)
