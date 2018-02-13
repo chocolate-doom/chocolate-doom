@@ -20,10 +20,12 @@
 
 #include <stdio.h>
 
+#include "doomtype.h"
+
 // Used to do dehacked text substitutions throughout the program
 
 char *DEH_String(char *s);
-void DEH_printf(char *fmt, ...);
+void DEH_printf(char *fmt, ...) PRINTF_ATTR(1, 2);
 void DEH_fprintf(FILE *fstream, char *fmt, ...);
 void DEH_snprintf(char *buffer, size_t len, char *fmt, ...);
 void DEH_AddStringReplacement(char *from_text, char *to_text);
