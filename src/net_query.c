@@ -642,6 +642,7 @@ int NET_StartMasterQuery(void)
 
 // -----------------------------------------------------------------------
 
+static void formatted_printf(int wide, char *s, ...) PRINTF_ATTR(2, 3);
 static void formatted_printf(int wide, char *s, ...)
 {
     va_list args;
