@@ -27,7 +27,7 @@
 char *DEH_String(char *s);
 void DEH_printf(char *fmt, ...) PRINTF_ATTR(1, 2);
 void DEH_fprintf(FILE *fstream, char *fmt, ...) PRINTF_ATTR(2, 3);
-void DEH_snprintf(char *buffer, size_t len, char *fmt, ...);
+void DEH_snprintf(char *buffer, size_t len, char *fmt, ...) PRINTF_ATTR(3, 4);
 void DEH_AddStringReplacement(char *from_text, char *to_text);
 
 
