@@ -65,8 +65,11 @@
 #define PACKEDATTR __attribute__((packed))
 #endif
 
+#define PRINTF_ATTR(fmt, first) __attribute__((format(printf, fmt, first)))
+
 #else
 #define PACKEDATTR
+#define PRINTF_ATTR(fmt, first)
 #endif
 
 #ifdef __WATCOMC__
