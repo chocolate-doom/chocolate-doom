@@ -189,7 +189,7 @@ static void AddExtraParameters(execute_context_t *exec)
     {
         if (extra_params[i] != NULL && strlen(extra_params[i]) > 0)
         {
-            AddCmdLineParameter(exec, extra_params[i]);
+            AddCmdLineParameter(exec, "%s", extra_params[i]);
         }
     }
 }
