@@ -1628,7 +1628,7 @@ void G_DoLoadGame (void)
 
     if (save_stream == NULL)
     {
-        return;
+        I_Error ("Could not load savegame");
     }
 
     savegame_error = false;

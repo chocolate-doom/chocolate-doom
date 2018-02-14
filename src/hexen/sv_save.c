@@ -3344,6 +3344,11 @@ static boolean ExistingFile(char *name)
 static void SV_OpenRead(char *fileName)
 {
     SavingFP = fopen(fileName, "rb");
+
+    if (SavingFP == NULL)
+    {
+        I_Error ("Could not load savegame");
+    }
 }
 
 static void SV_OpenWrite(char *fileName)

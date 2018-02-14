@@ -66,6 +66,11 @@ void SV_Open(char *fileName)
 void SV_OpenRead(char *filename)
 {
     SaveGameFP = fopen(filename, "rb");
+
+    if (SaveGameFP == NULL)
+    {
+        I_Error ("Could not load savegame");
+    }
 }
 
 //==========================================================================
