@@ -69,7 +69,7 @@ void SV_OpenRead(char *filename)
 
     if (SaveGameFP == NULL)
     {
-        I_Error ("Could not load savegame");
+        I_Error("Could not load savegame %s", filename);
     }
 }
 
