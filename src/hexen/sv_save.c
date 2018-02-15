@@ -3238,6 +3238,10 @@ static void CopySaveSlot(int sourceSlot, int destSlot)
                    "%shex%d.hxs", SavePath, destSlot);
         CopyFile(sourceName, destName);
     }
+    else
+    {
+        I_Error("Could not load savegame %s", sourceName);
+    }
 }
 
 //==========================================================================
@@ -3343,6 +3347,12 @@ static boolean ExistingFile(char *name)
 static void SV_OpenRead(char *fileName)
 {
     SavingFP = fopen(fileName, "rb");
+
+    // Should never happen, only if hex6.hxs cannot ever be created.
+    if (SavingFP == NULL)
+    {
+        I_Error("Could not load savegame %s", fileName);
+    }
 }
 
 static void SV_OpenWrite(char *fileName)
