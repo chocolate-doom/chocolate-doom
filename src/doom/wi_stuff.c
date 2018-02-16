@@ -1668,6 +1668,11 @@ static void WI_loadUnloadData(load_callback_t callback)
 	    DEH_snprintf(name, 9, "NWILV%2.2d", i);
             callback(name, &lnames[i]);
 	}
+	for ( ; i<NUMCMAPS ; i++)
+	{
+	    DEH_snprintf(name, 9, "CWILV%2.2d", i);
+            callback(name, &lnames[i]);
+	}
     }
     else
     if (gamemode == commercial)
