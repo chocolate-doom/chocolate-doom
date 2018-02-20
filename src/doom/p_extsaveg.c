@@ -353,7 +353,7 @@ static void P_ReadPlayersLookdir (const char *key)
 
 static void P_WriteMusInfo (const char *key)
 {
-	if (musinfo.current_item >= 0)
+	if (musinfo.current_item > 0)
 	{
 		char *lump;
 
@@ -373,7 +373,7 @@ static void P_ReadMusInfo (const char *key)
 	{
 		int i;
 
-		if ((i = W_CheckNumForName(lump)) >= 0)
+		if ((i = W_CheckNumForName(lump)) > 0)
 		{
 			musinfo.current_item = i;
 			S_ChangeMusInfoMusic(i, true);
