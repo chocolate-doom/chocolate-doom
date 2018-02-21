@@ -81,7 +81,7 @@ void V_CopyScaledBuffer(byte *dest, byte *src, size_t size);
 
 // Draw a raw screen lump
 
-void V_DrawRawScreen(byte *raw);
+void V_DrawRawScreen(pixel_t *raw);
 
 // Temporarily switch to using a different buffer to draw graphics, etc.
 

@@ -430,7 +430,7 @@ char *M_StringDuplicate(const char *orig)
 
     if (result == NULL)
     {
-        I_Error("Failed to duplicate string (length %i)\n",
+        I_Error("Failed to duplicate string (length %" PRIuPTR ")\n",
                 strlen(orig));
     }
 

@@ -17,6 +17,8 @@
 #ifndef STSTART_H
 #define STSTART_H
 
+#include "doomtype.h"
+
 // HEADER FILES ------------------------------------------------------------
 
 // MACROS ------------------------------------------------------------------
@@ -26,8 +28,8 @@
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 extern void ST_Init(void);
 extern void ST_Done(void);
-extern void ST_Message(char *message, ...);
-extern void ST_RealMessage(char *message, ...);
+extern void ST_Message(char *message, ...) PRINTF_ATTR(1, 2);
+extern void ST_RealMessage(char *message, ...) PRINTF_ATTR(1, 2);
 extern void ST_Progress(void);
 extern void ST_NetProgress(void);
 extern void ST_NetDone(void);

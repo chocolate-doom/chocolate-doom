@@ -189,7 +189,7 @@ static void AddExtraParameters(execute_context_t *exec)
     {
         if (extra_params[i] != NULL && strlen(extra_params[i]) > 0)
         {
-            AddCmdLineParameter(exec, extra_params[i]);
+            AddCmdLineParameter(exec, "%s", extra_params[i]);
         }
     }
 }
@@ -425,7 +425,8 @@ static void LevelSelectDialog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(user_data))
                     continue;
                 }
 
-                M_snprintf(buf, sizeof(buf), " E%iM%i ", x, y);
+                M_snprintf(buf, sizeof(buf),
+                           " E%" PRIiPTR "M%" PRIiPTR " ", x, y);
                 button = TXT_NewButton(buf);
                 TXT_SignalConnect(button, "pressed",
                                   SetExMyWarp, (void *) (x * 10 + y));
@@ -457,7 +458,7 @@ static void LevelSelectDialog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(user_data))
                 continue;
             }
 
-            M_snprintf(buf, sizeof(buf), " MAP%02i ", l);
+            M_snprintf(buf, sizeof(buf), " MAP%02" PRIiPTR " ", l);
             button = TXT_NewButton(buf);
             TXT_SignalConnect(button, "pressed", 
                               SetMAPxyWarp, (void *) l);

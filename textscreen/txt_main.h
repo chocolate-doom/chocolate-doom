@@ -122,6 +122,17 @@ typedef enum
     TXT_INPUT_TEXT,
 } txt_input_mode_t;
 
+
+#ifdef __GNUC__
+
+#define PRINTF_ATTR(fmt, first) __attribute__((format(printf, fmt, first)))
+
+#else  // __GNUC__
+
+#define PRINTF_ATTR(fmt, first)
+
+#endif  // __GNUC__
+
 // Initialize the screen
 // Returns 1 if successful, 0 if failed.
 int TXT_Init(void);
@@ -181,7 +192,7 @@ void TXT_StringConcat(char *dest, const char *src, size_t dest_len);
 int TXT_vsnprintf(char *buf, size_t buf_len, const char *s, va_list args);
 
 // Safe version of snprintf().
-int TXT_snprintf(char *buf, size_t buf_len, const char *s, ...);
+int TXT_snprintf(char *buf, size_t buf_len, const char *s, ...) PRINTF_ATTR(3, 4);
 
 #endif /* #ifndef TXT_MAIN_H */
 

@@ -752,7 +752,7 @@ void V_DrawScaledBlock(int x, int y, int width, int height, byte *src)
 
 void V_DrawFilledBox(int x, int y, int w, int h, int c)
 {
-    uint8_t *buf, *buf1;
+    pixel_t *buf, *buf1;
     int x1, y1;
 
     buf = I_VideoBuffer + SCREENWIDTH * y + x;
@@ -772,7 +772,7 @@ void V_DrawFilledBox(int x, int y, int w, int h, int c)
 
 void V_DrawHorizLine(int x, int y, int w, int c)
 {
-    uint8_t *buf;
+    pixel_t *buf;
     int x1;
 
     // [crispy] prevent framebuffer overflows
@@ -789,7 +789,7 @@ void V_DrawHorizLine(int x, int y, int w, int c)
 
 void V_DrawVertLine(int x, int y, int h, int c)
 {
-    uint8_t *buf;
+    pixel_t *buf;
     int y1;
 
     buf = I_VideoBuffer + SCREENWIDTH * y + x;
@@ -837,7 +837,7 @@ void V_CopyScaledBuffer(byte *dest, byte *src, size_t size)
     }
 }
  
-void V_DrawRawScreen(byte *raw)
+void V_DrawRawScreen(pixel_t *raw)
 {
     V_CopyScaledBuffer(dest_screen, raw, ORIGWIDTH * ORIGHEIGHT);
 }
