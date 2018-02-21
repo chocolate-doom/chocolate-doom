@@ -1084,7 +1084,7 @@ boolean PTR_ShootTraverse (intercept_t* in)
 	// [crispy] check if the pullet puff's z-coordinate is below of above
 	// its spawning sector's floor or ceiling, respectively, and move its
 	// coordinates to the point where the trajectory hits the plane
-	if (shootthing->player)
+	if (aimslope)
 	{
 		const int lineside = P_PointOnLineSide(x, y, li);
 		int side;
