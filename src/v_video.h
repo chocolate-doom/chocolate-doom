@@ -75,7 +75,7 @@ void V_DrawBox(int x, int y, int w, int h, int c);
 
 // Draw a raw screen lump
 
-void V_DrawRawScreen(byte *raw);
+void V_DrawRawScreen(pixel_t *raw);
 
 // Temporarily switch to using a different buffer to draw graphics, etc.
 

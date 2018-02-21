@@ -533,7 +533,7 @@ void V_DrawBlock(int x, int y, int width, int height, pixel_t *src)
 
 void V_DrawFilledBox(int x, int y, int w, int h, int c)
 {
-    uint8_t *buf, *buf1;
+    pixel_t *buf, *buf1;
     int x1, y1;
 
     buf = I_VideoBuffer + SCREENWIDTH * y + x;
@@ -553,7 +553,7 @@ void V_DrawFilledBox(int x, int y, int w, int h, int c)
 
 void V_DrawHorizLine(int x, int y, int w, int c)
 {
-    uint8_t *buf;
+    pixel_t *buf;
     int x1;
 
     buf = I_VideoBuffer + SCREENWIDTH * y + x;
@@ -566,7 +566,7 @@ void V_DrawHorizLine(int x, int y, int w, int c)
 
 void V_DrawVertLine(int x, int y, int h, int c)
 {
-    uint8_t *buf;
+    pixel_t *buf;
     int y1;
 
     buf = I_VideoBuffer + SCREENWIDTH * y + x;
@@ -591,9 +591,9 @@ void V_DrawBox(int x, int y, int w, int h, int c)
 // to the screen)
 //
  
-void V_DrawRawScreen(byte *raw)
+void V_DrawRawScreen(pixel_t *raw)
 {
-    memcpy(dest_screen, raw, SCREENWIDTH * SCREENHEIGHT);
+    memcpy(dest_screen, raw, SCREENWIDTH * SCREENHEIGHT * sizeof(*dest_screen));
 }
 
 //
