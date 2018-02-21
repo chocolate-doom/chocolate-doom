@@ -241,6 +241,14 @@ void D_Display (void)
 	D_PageDrawer ();
 	break;
     }
+
+    // [crispy] demo progress bar
+    if (demoplayback && crispy->demobar)
+    {
+	extern void HU_DemoProgressBar (void);
+
+	HU_DemoProgressBar();
+    }
     
     // draw buffered stuff to screen
     I_UpdateNoBlit ();
