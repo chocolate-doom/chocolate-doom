@@ -1074,6 +1074,7 @@ void G_Ticker (void)
 
 	        crispy->screenshotmsg = 4;
 	        D_Display();
+	        I_FinishUpdate();
 	        crispy->cleanscreenshot = 0;
 	    }
 	    V_ScreenShot("DOOM%04i.%s"); // [crispy] increase screenshot filename limit
