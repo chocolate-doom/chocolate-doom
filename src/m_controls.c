@@ -196,7 +196,7 @@ int key_menu_reloadlevel = 0; // [crispy]
 int joybfire = 0;
 int joybstrafe = 1;
 int joybuse = 3;
-int joybspeed = 29;
+int joybspeed = 2;
 
 int joybstrafeleft = -1;
 int joybstraferight = -1;
