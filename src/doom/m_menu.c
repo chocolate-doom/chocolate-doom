@@ -2791,11 +2791,10 @@ boolean M_Responder (event_t* ev)
     if (key != 0 && key == key_menu_cleanscreenshot)
     {
 	crispy->cleanscreenshot = (screenblocks > 10) ? 2 : 1;
-	key = key_menu_screenshot;
     }
 
     if ((devparm && key == key_menu_help) ||
-        (key != 0 && key == key_menu_screenshot))
+        (key != 0 && (key == key_menu_screenshot || key == key_menu_cleanscreenshot)))
     {
 	G_ScreenShot ();
 	return true;
@@ -2918,12 +2917,12 @@ boolean M_Responder (event_t* ev)
 	}
         // [crispy] those two can be considered as shortcuts for the IDCLEV cheat
         // and should be treated as such, i.e. add "if (!netgame)"
-        else if (!netgame && key == key_menu_reloadlevel)
+        else if (!netgame && key != 0 && key == key_menu_reloadlevel)
         {
 	    if (G_ReloadLevel())
 		return true;
         }
-        else if (!netgame && key == key_menu_nextlevel)
+        else if (!netgame && key != 0 && key == key_menu_nextlevel)
         {
 	    if (G_GotoNextLevel())
 		return true;
