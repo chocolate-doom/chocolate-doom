@@ -92,7 +92,7 @@ static void UpdateJoybSpeed(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(var))
     }
     else
     {
-        joybspeed = 0;
+        joybspeed = 2;
     }
 }
 
