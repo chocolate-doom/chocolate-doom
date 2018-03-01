@@ -157,7 +157,7 @@ byte *I_ZoneBase (int *size)
     return zonemem;
 }
 
-void I_PrintBanner(char *msg)
+void I_PrintBanner(const char *msg)
 {
     int i;
     int spaces = 35 - (strlen(msg) / 2);
