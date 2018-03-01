@@ -165,7 +165,7 @@ static void DEH_AddToHashtable(deh_substitution_t *sub)
     ++hash_table_entries;
 }
 
-void DEH_AddStringReplacement(char *from_text, char *to_text)
+void DEH_AddStringReplacement(const char *from_text, const char *to_text)
 {
     deh_substitution_t *sub;
     size_t len;
