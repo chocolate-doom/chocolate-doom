@@ -75,6 +75,9 @@ void I_InitTimer(void)
 {
     // initialize timer
 
+#if SDL_VERSION_ATLEAST(2, 0, 5)
+    SDL_SetHint(SDL_HINT_WINDOWS_DISABLE_THREAD_NAMING, "1");
+#endif
     SDL_Init(SDL_INIT_TIMER);
 }
 
