@@ -52,7 +52,7 @@ static unsigned int strhash(const char *s)
     return h;
 }
 
-static deh_substitution_t *SubstitutionForString(char *s)
+static deh_substitution_t *SubstitutionForString(const char *s)
 {
     int entry;
 
