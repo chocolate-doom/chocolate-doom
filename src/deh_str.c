@@ -251,7 +251,7 @@ static format_arg_t FormatArgumentType(char c)
 // Given the specified string, get the type of the first format
 // string encountered.
 
-static format_arg_t NextFormatArgument(char **str)
+static format_arg_t NextFormatArgument(const char **str)
 {
     format_arg_t argtype;
 
@@ -326,10 +326,10 @@ static boolean ValidArgumentReplacement(format_arg_t original,
 
 // Return true if the specified string contains no format arguments.
 
-static boolean ValidFormatReplacement(char *original, char *replacement)
+static boolean ValidFormatReplacement(const char *original, const char *replacement)
 {
-    char *rover1;
-    char *rover2;
+    const char *rover1;
+    const char *rover2;
     int argtype1, argtype2;
 
     // Check each argument in turn and compare types.
