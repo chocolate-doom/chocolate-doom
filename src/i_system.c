@@ -180,7 +180,7 @@ void I_PrintDivider(void)
     putchar('\n');
 }
 
-void I_PrintStartupBanner(char *gamedescription)
+void I_PrintStartupBanner(const char *gamedescription)
 {
     I_PrintDivider();
     I_PrintBanner(gamedescription);
