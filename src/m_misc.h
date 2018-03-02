@@ -36,7 +36,7 @@ boolean M_StrToInt(const char *str, int *result);
 void M_ExtractFileBase(const char *path, char *dest);
 void M_ForceUppercase(char *text);
 void M_ForceLowercase(char *text);
-char *M_StrCaseStr(char *haystack, char *needle);
+const char *M_StrCaseStr(const char *haystack, const char *needle);
 char *M_StringDuplicate(const char *orig);
 boolean M_StringCopy(char *dest, const char *src, size_t dest_size);
 boolean M_StringConcat(char *dest, const char *src, size_t dest_size);
