@@ -233,7 +233,7 @@ int M_ReadFile(const char *name, byte **buffer)
 //
 // The returned value must be freed with Z_Free after use.
 
-char *M_TempFile(char *s)
+char *M_TempFile(const char *s)
 {
     char *tempdir;
 
