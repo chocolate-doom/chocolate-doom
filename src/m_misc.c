@@ -264,10 +264,10 @@ boolean M_StrToInt(const char *str, int *result)
         || sscanf(str, " %d", result) == 1;
 }
 
-void M_ExtractFileBase(char *path, char *dest)
+void M_ExtractFileBase(const char *path, char *dest)
 {
-    char *src;
-    char *filename;
+    const char *src;
+    const char *filename;
     int length;
 
     src = path + strlen(path) - 1;
