@@ -30,7 +30,7 @@ int M_ReadFile(const char *name, byte **buffer);
 void M_MakeDirectory(const char *dir);
 char *M_TempFile(const char *s);
 boolean M_FileExists(const char *file);
-char *M_FileCaseExists(char *file);
+char *M_FileCaseExists(const char *file);
 long M_FileLength(FILE *handle);
 boolean M_StrToInt(const char *str, int *result);
 void M_ExtractFileBase(char *path, char *dest);

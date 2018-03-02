@@ -86,7 +86,7 @@ boolean M_FileExists(const char *filename)
 // Check if a file exists by probing for common case variation of its filename.
 // Returns a newly allocated string that the caller is responsible for freeing.
 
-char *M_FileCaseExists(char *path)
+char *M_FileCaseExists(const char *path)
 {
     char *path_dup, *filename, *ext;
 
