@@ -890,7 +890,7 @@ void TXT_SetInputMode(txt_input_mode_t mode)
     input_mode = mode;
 }
 
-void TXT_SetWindowTitle(char *title)
+void TXT_SetWindowTitle(const char *title)
 {
     SDL_SetWindowTitle(TXT_SDLWindow, title);
 }
