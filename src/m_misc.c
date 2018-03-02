@@ -52,7 +52,7 @@
 // Create a directory
 //
 
-void M_MakeDirectory(char *path)
+void M_MakeDirectory(const char *path)
 {
 #ifdef _WIN32
     mkdir(path);
