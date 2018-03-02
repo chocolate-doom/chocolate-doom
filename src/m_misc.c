@@ -202,7 +202,7 @@ boolean M_WriteFile(const char *name, void *source, int length)
 // M_ReadFile
 //
 
-int M_ReadFile(char *name, byte **buffer)
+int M_ReadFile(const char *name, byte **buffer)
 {
     FILE *handle;
     int	count, length;
