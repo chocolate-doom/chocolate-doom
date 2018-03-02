@@ -483,13 +483,6 @@ typedef struct
 
 } visplane_t;
 
-
-// [crispy] map-coordinates of the laser vision spot
-typedef struct
-{
-    fixed_t x, y, z;
-} laserspot_t;
-
 typedef struct
 {
 	char c;
@@ -497,5 +490,7 @@ typedef struct
 	int l, w, h;
 } laserpatch_t;
 extern laserpatch_t *laserpatch;
+
+
 
 #endif

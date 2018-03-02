@@ -60,12 +60,12 @@ typedef struct
 } maskdraw_t;
 
 
-laserspot_t laserspot_m = {0, 0, 0};
-laserspot_t *laserspot = &laserspot_m;
+static degenmobj_t laserspot_m = {0};
+degenmobj_t *laserspot = &laserspot_m;
 
 // [crispy] extendable, but the last char element must be zero,
 // keep in sync with multiitem_t multiitem_crosshairtype[] in m_menu.c
-laserpatch_t laserpatch_m[] = {
+static laserpatch_t laserpatch_m[] = {
 	{'+', "cross1", 0, 0, 0},
 	{'^', "cross2", 0, 0, 0},
 	{'.', "cross3", 0, 0, 0},
@@ -791,9 +791,7 @@ static void R_DrawLSprite (void)
                 16*64*FRACUNIT, PLAYER_SLOPE(viewplayer));
     crispy->crosshair &= ~CROSSHAIR_INTERCEPT; // [crispy] intercepts overflow guard
 
-    if (!laserspot->x &&
-        !laserspot->y &&
-        !laserspot->z)
+    if (!laserspot->thinker.function.acv)
 	return;
 
     tz = FixedMul(laserspot->x - viewx, viewcos) +
