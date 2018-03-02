@@ -34,7 +34,7 @@
 
 typedef struct
 {
-    char *name;
+    const char *name;
     const uint8_t *data;
     unsigned int w;
     unsigned int h;
