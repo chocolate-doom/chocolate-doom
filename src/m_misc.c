@@ -63,7 +63,7 @@ void M_MakeDirectory(const char *path)
 
 // Check if a file exists
 
-boolean M_FileExists(char *filename)
+boolean M_FileExists(const char *filename)
 {
     FILE *fstream;
 
