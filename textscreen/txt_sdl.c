@@ -518,7 +518,7 @@ static int TranslateScancode(SDL_Scancode scancode)
     }
 }
 
-static int TranslateKeysym(SDL_Keysym *sym)
+static int TranslateKeysym(const SDL_Keysym *sym)
 {
     int translated;
 
