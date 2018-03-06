@@ -556,7 +556,7 @@ static char *ExpandExtension(const char *orig)
     return newext;
 }
 
-char *TXT_SelectFile(char *window_title, char **extensions)
+char *TXT_SelectFile(const char *window_title, char **extensions)
 {
     unsigned int i;
     size_t len;
