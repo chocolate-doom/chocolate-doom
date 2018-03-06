@@ -45,7 +45,7 @@ struct txt_button_s
  * @return             Pointer to the new button widget.
  */
 
-txt_button_t *TXT_NewButton(char *label);
+txt_button_t *TXT_NewButton(const char *label);
 
 /**
  * Create a new button widget, binding the "pressed" signal to a

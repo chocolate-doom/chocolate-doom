@@ -99,7 +99,7 @@ void TXT_SetButtonLabel(txt_button_t *button, const char *label)
     button->label = strdup(label);
 }
 
-txt_button_t *TXT_NewButton(char *label)
+txt_button_t *TXT_NewButton(const char *label)
 {
     txt_button_t *button;
 
