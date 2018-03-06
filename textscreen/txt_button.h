@@ -57,7 +57,7 @@ txt_button_t *TXT_NewButton(const char *label);
  * @return             Pointer to the new button widget.
  */
 
-txt_button_t *TXT_NewButton2(char *label, TxtWidgetSignalFunc func,
+txt_button_t *TXT_NewButton2(const char *label, TxtWidgetSignalFunc func,
                              void *user_data);
 
 /**
