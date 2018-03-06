@@ -93,7 +93,7 @@ txt_widget_class_t txt_button_class =
     NULL,
 };
 
-void TXT_SetButtonLabel(txt_button_t *button, char *label)
+void TXT_SetButtonLabel(txt_button_t *button, const char *label)
 {
     free(button->label);
     button->label = strdup(label);
