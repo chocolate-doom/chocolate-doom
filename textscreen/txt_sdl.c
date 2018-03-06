@@ -558,7 +558,7 @@ static int SDLButtonToTXTButton(int button)
 
 // Convert an SDL wheel motion to a textscreen button index.
 
-static int SDLWheelToTXTButton(SDL_MouseWheelEvent *wheel)
+static int SDLWheelToTXTButton(const SDL_MouseWheelEvent *wheel)
 {
     if (wheel->y <= 0)
     {
