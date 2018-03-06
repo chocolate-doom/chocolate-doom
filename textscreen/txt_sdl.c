@@ -133,7 +133,7 @@ static int Win32_UseLargeFont(void)
 
 #endif
 
-static const txt_font_t *FontForName(char *name)
+static const txt_font_t *FontForName(const char *name)
 {
     int i;
     const txt_font_t *fonts[] =
