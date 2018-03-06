@@ -100,7 +100,7 @@ struct txt_window_s
  *                     representing the new window.
  */
 
-txt_window_t *TXT_NewWindow(char *title);
+txt_window_t *TXT_NewWindow(const char *title);
 
 /**
  * Close a window.

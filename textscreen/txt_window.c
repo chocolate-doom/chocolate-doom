@@ -52,7 +52,7 @@ void TXT_SetWindowAction(txt_window_t *window,
     }
 }
 
-txt_window_t *TXT_NewWindow(char *title)
+txt_window_t *TXT_NewWindow(const char *title)
 {
     int i;
 
