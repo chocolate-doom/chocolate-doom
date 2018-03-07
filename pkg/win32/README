@@ -1,4 +1,2 @@
-
-Makefile to build Windows packages.  Requires zip and unix2dos cygwin
+Makefile to build Windows packages.  Requires zip and unix2dos
 packages to be installed.
-
