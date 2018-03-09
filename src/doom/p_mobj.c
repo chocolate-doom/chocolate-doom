@@ -938,6 +938,13 @@ void P_SpawnMapThing (mapthing_t* mthing)
     else
 	bit = 1<<(gameskill-1);
 
+    // [crispy] warn about mapthings without any skill tag set
+    if (!(mthing->options & (MTF_EASY|MTF_NORMAL|MTF_HARD)))
+    {
+	fprintf(stderr, "P_SpawnMapThing: Mapthing type %i without any skill tag at (%i, %i)\n",
+	       mthing->type, mthing->x, mthing->y);
+    }
+
     if (!(mthing->options & bit) )
 	return;
 	
