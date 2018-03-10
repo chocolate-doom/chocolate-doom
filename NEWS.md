@@ -33,7 +33,7 @@
     systems with on-screen keyboards, this should activate the on-screen
     keyboard when it is appropriate.
   * Menu navigation with the joystick is now much more practical, and
-    it's possible to bind a joystick axis to look up/down in games which
+    it’s possible to bind a joystick axis to look up/down in games which
     support it (thanks Jon, Wintermute0110).
   * Several command line options were removed that were judged to be
     useless: `-grabmouse`, `-novert` and `-nonovert`. The mouse grabbing
@@ -51,7 +51,7 @@
   * The midiproc code from Eternity Engine has been imported, improving
     native MIDI playback on Windows and fixing a long-standing bug with
     music volume adjustment (thanks AlexMax, Quasar).
-  * VGA "porch" emulation was added (thanks Jon).
+  * VGA “porch” emulation was added (thanks Jon).
   * The codebase now compiles with OpenWatcom (thanks Stephen Finniss).
 
 ### Doom
@@ -110,7 +110,7 @@
 
 ### Build systems
   * There is better compatibility with BSD Make (thanks R.Rebello)
-  * “./configure --with-PACKAGE” checks were repaired to behave
+  * `./configure --with-PACKAGE` checks were repaired to behave
     logically, rather than disabling the feature (thanks R.Rebello)
   * Games are now installed to ${bindir} by default, eg.
     /usr/local/bin, rather than /usr/local/games (thanks chungy)
@@ -123,7 +123,7 @@
 ### Doom
   * Chex Quest’s level warp cheat (LEESNYDER##) now behaves more like
     like the original EXE (thanks Nuke.YKT)
-  * It's now possible to start multiplayer Chex Quest games.
+  * It’s now possible to start multiplayer Chex Quest games.
   * Freedoom: Phase 1 <= 0.10.1 can now be loaded with mods, with
     -gameversion older than ultimate (thanks Fabian, chungy)
   * The IWAD order preference for GOG.com installs matches vanilla
@@ -139,9 +139,9 @@
   * Map names were added for Episode 6, fixing a crash after completing
     a level in this episode (thanks J.Benaim)
   * Support for unlimited demo/savegames was added (thanks CapnClever)
-  * Demo support is expanded: "-demoextend" allows demos to last longer
-    than a single level; "-shortticfix" adjusts low-resolution turning
-    to match Doom's handling, and there is now "-maxdemo" and "-longtics"
+  * Demo support is expanded: `-demoextend` allows demos to last longer
+    than a single level; `-shortticfix` adjusts low-resolution turning
+    to match Doom’s handling, and there is now `-maxdemo` and `-longtics`
     support (thanks CapnClever)
 
 ### Hexen
@@ -151,11 +151,11 @@
     Wraithverge in 64-bit builds (thanks J.Benaim)
   * Support for unlimited demo/savegames was added (thanks CapnClever)
   * Mouse buttons for strafe left/right and move backward were added,
-    as well as a "Double click acts as use" mouse option (thanks
+    as well as a “Double click acts as use” mouse option (thanks
     CapnClever)
-  * Demo support is expanded: "-demoextend" allows demos to last longer
-    than a single level; "-shortticfix" adjusts low-resolution turning
-    to match Doom's handling, and there is now "-maxdemo" and "-longtics"
+  * Demo support is expanded: `-demoextend` allows demos to last longer
+    than a single level; `-shortticfix` adjusts low-resolution turning
+    to match Doom’s handling, and there is now `-maxdemo` and `-longtics`
     support (thanks CapnClever)
 
 ### Strife
@@ -170,7 +170,7 @@
 
 ### libtextscreen
   * The API for creating and managing tables and columns was simplified.
-  * It's now possible to cycle through tables with the tab key.
+  * It’s now possible to cycle through tables with the tab key.
   * Windows can now have multiple columns.
 
 ## 2.2.1 (2015-09-10)
