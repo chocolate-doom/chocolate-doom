@@ -1,3 +1,29 @@
+## HEAD
+
+### General
+  * The 0 and 5 keys on the number pad can now be bound independently
+    of any other keyboard key.  (thanks BlooD2ool)
+  * Man page generation has been reworked to use autoconf macro
+    substitution, making it eaiser for downstream forks to change the
+    project name.  (thanks Jon)
+  * Several functions have been hardened against incomplete reads and
+    error conditions, and made safer.  (thanks turol)
+  * We now print a meaningful error message when a savegame cannot be
+    loaded.  (thanks Zodomaniac, chungy)
+  * Fixed an exception thrown by the Windows kernel when debugging with
+    GDB.  (thanks AXDOOMER)
+
+### Build systems
+  * Microsoft Visual Studio files have been removed due to technical
+    limitations of the software preventing cross-version
+    compatibility, difficult dependency management, as well as being
+    unmaintained in general, resulting in a very difficult process to
+    get up to speed using this IDE and Chocolate Doom.
+
+### Hexen
+  * ACS code has been hardened against potential security
+    vulnerabilities.
+
 ## 3.0.0 (2017-12-30)
 
   Chocolate Doom 3.0 is a new major revision. The main change is that
