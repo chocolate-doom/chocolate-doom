@@ -98,7 +98,7 @@ txt_widget_class_t txt_separator_class =
     NULL,
 };
 
-txt_separator_t *TXT_NewSeparator(char *label)
+txt_separator_t *TXT_NewSeparator(const char *label)
 {
     txt_separator_t *separator;
 
