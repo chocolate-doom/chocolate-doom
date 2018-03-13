@@ -59,7 +59,7 @@ txt_separator_t *TXT_NewSeparator(char *label);
  * @param label         The new label (UTF-8 format).
  */
 
-void TXT_SetSeparatorLabel(txt_separator_t *separator, char *label);
+void TXT_SetSeparatorLabel(txt_separator_t *separator, const char *label);
 
 #endif /* #ifndef TXT_SEPARATOR_H */
 
