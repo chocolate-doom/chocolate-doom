@@ -131,7 +131,7 @@ void TXT_SetLabel(txt_label_t *label, char *value)
 
     label->h = 1;
 
-    for (p = value; *p != '\0'; ++p)
+    for (p = label->label; *p != '\0'; ++p)
     {
         if (*p == '\n')
         {
