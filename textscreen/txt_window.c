@@ -566,7 +566,7 @@ void TXT_OpenWindowHelpURL(txt_window_t *window)
     }
 }
 
-txt_window_t *TXT_MessageBox(char *title, const char *message, ...)
+txt_window_t *TXT_MessageBox(const char *title, const char *message, ...)
 {
     txt_window_t *window;
     char buf[256];
