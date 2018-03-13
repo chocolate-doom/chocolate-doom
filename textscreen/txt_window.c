@@ -508,7 +508,7 @@ void TXT_SetWindowFocus(txt_window_t *window, int focused)
     TXT_SetWidgetFocus(window, focused);
 }
 
-void TXT_SetWindowHelpURL(txt_window_t *window, char *help_url)
+void TXT_SetWindowHelpURL(txt_window_t *window, const char *help_url)
 {
     window->help_url = help_url;
 }

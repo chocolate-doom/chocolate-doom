@@ -207,7 +207,7 @@ txt_window_t *TXT_MessageBox(const char *title, const char *message, ...);
  *                        window, or NULL to set no help for this window.
  */
 
-void TXT_SetWindowHelpURL(txt_window_t *window, char *help_url);
+void TXT_SetWindowHelpURL(txt_window_t *window, const char *help_url);
 
 /**
  * Open the help URL for the given window, if one is set.
