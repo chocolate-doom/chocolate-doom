@@ -88,7 +88,7 @@ struct txt_window_s
 
     // URL of a webpage with help about this window. If set, a help key
     // indicator is shown while this window is active.
-    char *help_url;
+    const char *help_url;
 };
 
 /**
