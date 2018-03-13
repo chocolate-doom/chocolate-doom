@@ -72,7 +72,7 @@ txt_radiobutton_t *TXT_NewRadioButton(char *label, int *variable, int value);
  * @param value          The new label (UTF-8 format).
  */
 
-void TXT_SetRadioButtonLabel(txt_radiobutton_t *radiobutton, char *value);
+void TXT_SetRadioButtonLabel(txt_radiobutton_t *radiobutton, const char *value);
 
 #endif /* #ifndef TXT_RADIOBUTTON_H */
 
