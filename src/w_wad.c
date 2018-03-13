@@ -307,7 +307,7 @@ lumpindex_t W_CheckNumForName(const char *name)
 // W_GetNumForName
 // Calls W_CheckNumForName, but bombs out if not found.
 //
-lumpindex_t W_GetNumForName(char* name)
+lumpindex_t W_GetNumForName(const char *name)
 {
     lumpindex_t i;
 
