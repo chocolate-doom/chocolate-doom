@@ -113,7 +113,7 @@ txt_widget_class_t txt_label_class =
     NULL,
 };
 
-void TXT_SetLabel(txt_label_t *label, char *value)
+void TXT_SetLabel(txt_label_t *label, const char *value)
 {
     char *p;
     unsigned int y;

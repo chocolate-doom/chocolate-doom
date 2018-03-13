@@ -58,7 +58,7 @@ txt_label_t *TXT_NewLabel(char *label);
  * @param value         The string to display (UTF-8 format).
  */
 
-void TXT_SetLabel(txt_label_t *label, char *value);
+void TXT_SetLabel(txt_label_t *label, const char *value);
 
 /**
  * Set the background color of a label widget.
