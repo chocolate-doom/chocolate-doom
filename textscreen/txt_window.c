@@ -515,14 +515,14 @@ void TXT_SetWindowHelpURL(txt_window_t *window, char *help_url)
 
 #ifdef _WIN32
 
-void TXT_OpenURL(char *url)
+void TXT_OpenURL(const char *url)
 {
     ShellExecute(NULL, "open", url, NULL, NULL, SW_SHOWNORMAL);
 }
 
 #else
 
-void TXT_OpenURL(char *url)
+void TXT_OpenURL(const char *url)
 {
     char *cmd;
     size_t cmd_len;
