@@ -197,7 +197,7 @@ void TXT_SetMouseListener(txt_window_t *window,
  * @return                The new window.
  */
 
-txt_window_t *TXT_MessageBox(char *title, char *message, ...);
+txt_window_t *TXT_MessageBox(char *title, const char *message, ...);
 
 /**
  * Set the help URL for the given window.
