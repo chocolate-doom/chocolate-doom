@@ -168,7 +168,7 @@ void TXT_SetLabel(txt_label_t *label, const char *value)
     }
 }
 
-txt_label_t *TXT_NewLabel(char *text)
+txt_label_t *TXT_NewLabel(const char *text)
 {
     txt_label_t *label;
 
