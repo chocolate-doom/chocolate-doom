@@ -1178,7 +1178,12 @@ int R_FlatNumForName (char* name)
     int		i;
     char	namet[9];
 
+    i = W_CheckRangeNumForName (name, lastflat, firstflat);
+
+    if (i == -1)
+    {
     i = W_CheckNumForName (name);
+    }
 
     if (i == -1)
     {

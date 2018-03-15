@@ -1834,7 +1834,7 @@ P_SetupLevel
 	
     if (nervewadfile && gamemission != pack_nerve && map <= 9)
     {
-        lumpnum = W_GetSecondNumForName (lumpname);
+        lumpnum = W_CheckRangeNumForName (lumpname, lumpnum - 1, 0);
     }
 
     // [crispy] pointer to the current map lump info struct

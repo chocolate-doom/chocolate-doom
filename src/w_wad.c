@@ -329,21 +329,19 @@ lumpindex_t W_GetNumForName(char* name)
     return i;
 }
 
-lumpindex_t W_GetSecondNumForName (char* name)
+lumpindex_t W_CheckRangeNumForName(char *name, int from, int to)
 {
-    lumpindex_t	i, j;
+    lumpindex_t i;
 
-    i = W_GetNumForName (name);
-
-    for (j = i - 1; j >= 0; j--)
+    for (i = from; i >= to; i--)
     {
-        if (!strncasecmp(lumpinfo[j]->name, name, 8))
+        if (!strncasecmp(lumpinfo[i]->name, name, 8))
         {
-            return j;
+            return i;
         }
     }
 
-    return i;
+    return -1;
 }
 
 //
