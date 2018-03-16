@@ -1611,15 +1611,27 @@ void P_UnArchiveWorld (void)
     // do sectors
     for (i=0, sec = sectors ; i<numsectors ; i++,sec++)
     {
+	// [crispy] add overflow guard for the flattranslation[] array
+	short floorpic, ceilingpic;
+	extern int numflats;
 	sec->floorheight = saveg_read16() << FRACBITS;
 	sec->ceilingheight = saveg_read16() << FRACBITS;
-	sec->floorpic = saveg_read16();
-	sec->ceilingpic = saveg_read16();
+	floorpic = saveg_read16();
+	ceilingpic = saveg_read16();
 	sec->lightlevel = saveg_read16();
 	sec->special = saveg_read16();		// needed?
 	sec->tag = saveg_read16();		// needed?
 	sec->specialdata = 0;
 	sec->soundtarget = 0;
+	// [crispy] add overflow guard for the flattranslation[] array
+	if (floorpic >= 0 && floorpic < numflats)
+	{
+	    sec->floorpic = floorpic;
+	}
+	if (ceilingpic >= 0 && ceilingpic < numflats)
+	{
+	    sec->ceilingpic = ceilingpic;
+	}
     }
     
     // do lines
