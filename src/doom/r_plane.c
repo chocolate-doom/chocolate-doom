@@ -457,17 +457,6 @@ static char *R_DistortedFlat (int flatnum)
     return distortedflat;
 }
 
-// [crispy] overflow guard for the flattranslation[] array
-static inline int R_FlatTranslation (unsigned int picnum)
-{
-	extern int numflats;
-
-	return (picnum < numflats) ? flattranslation[picnum] :
-	       (firstflat + picnum < numlumps) ? picnum :
-	       // [crispy] the most reasonable safe default,
-	       // it's already too late to return "skyflatnum" at this point
-	       0;
-}
 
 //
 // R_DrawPlanes
@@ -559,9 +548,9 @@ void R_DrawPlanes (void)
 	    continue;
 	}
 	
-	swirling = (R_FlatTranslation(pl->picnum) == -1);
+	swirling = (flattranslation[pl->picnum] == -1);
 	// regular flat
-        lumpnum = firstflat + (swirling ? pl->picnum : R_FlatTranslation(pl->picnum));
+        lumpnum = firstflat + (swirling ? pl->picnum : flattranslation[pl->picnum]);
 	// [crispy] add support for SMMU swirling flats
 	ds_source = swirling ? R_DistortedFlat(lumpnum) : W_CacheLumpNum(lumpnum, PU_STATIC);
 	ds_brightmap = R_BrightmapForFlatNum(lumpnum-firstflat);

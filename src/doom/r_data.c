@@ -1182,11 +1182,6 @@ int R_FlatNumForName (char* name)
 
     if (i == -1)
     {
-    i = W_CheckNumForName (name);
-    }
-
-    if (i == -1)
-    {
 	namet[8] = 0;
 	memcpy (namet, name,8);
 	// [crispy] make non-fatal
