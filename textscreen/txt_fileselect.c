@@ -155,7 +155,7 @@ int TXT_CanSelectFiles(void)
     return 0;
 }
 
-char *TXT_SelectFile(char *window_title, char **extensions)
+char *TXT_SelectFile(const char *window_title, char **extensions)
 {
     return NULL;
 }
