@@ -45,7 +45,7 @@ struct txt_button_s
  * @return             Pointer to the new button widget.
  */
 
-txt_button_t *TXT_NewButton(char *label);
+txt_button_t *TXT_NewButton(const char *label);
 
 /**
  * Create a new button widget, binding the "pressed" signal to a
@@ -57,7 +57,7 @@ txt_button_t *TXT_NewButton(char *label);
  * @return             Pointer to the new button widget.
  */
 
-txt_button_t *TXT_NewButton2(char *label, TxtWidgetSignalFunc func,
+txt_button_t *TXT_NewButton2(const char *label, TxtWidgetSignalFunc func,
                              void *user_data);
 
 /**
@@ -67,7 +67,7 @@ txt_button_t *TXT_NewButton2(char *label, TxtWidgetSignalFunc func,
  * @param label        The new label (UTF-8 format).
  */
 
-void TXT_SetButtonLabel(txt_button_t *button, char *label);
+void TXT_SetButtonLabel(txt_button_t *button, const char *label);
 
 #endif /* #ifndef TXT_BUTTON_H */
 

@@ -56,20 +56,20 @@ extern unsigned int numlumps;
 wad_file_t *W_AddFile(char *filename);
 void W_Reload(void);
 
-lumpindex_t W_CheckNumForName(char *name);
-lumpindex_t W_GetNumForName(char *name);
+lumpindex_t W_CheckNumForName(const char *name);
+lumpindex_t W_GetNumForName(const char *name);
 
 int W_LumpLength(lumpindex_t lump);
 void W_ReadLump(lumpindex_t lump, void *dest);
 
 void *W_CacheLumpNum(lumpindex_t lump, int tag);
-void *W_CacheLumpName(char *name, int tag);
+void *W_CacheLumpName(const char *name, int tag);
 
 void W_GenerateHashTable(void);
 
 extern unsigned int W_LumpNameHash(const char *s);
 
 void W_ReleaseLumpNum(lumpindex_t lump);
-void W_ReleaseLumpName(char *name);
+void W_ReleaseLumpName(const char *name);
 
 #endif

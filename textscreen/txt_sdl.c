@@ -34,7 +34,7 @@
 
 typedef struct
 {
-    char *name;
+    const char *name;
     const uint8_t *data;
     unsigned int w;
     unsigned int h;
@@ -133,7 +133,7 @@ static int Win32_UseLargeFont(void)
 
 #endif
 
-static const txt_font_t *FontForName(char *name)
+static const txt_font_t *FontForName(const char *name)
 {
     int i;
     const txt_font_t *fonts[] =
@@ -518,7 +518,7 @@ static int TranslateScancode(SDL_Scancode scancode)
     }
 }
 
-static int TranslateKeysym(SDL_Keysym *sym)
+static int TranslateKeysym(const SDL_Keysym *sym)
 {
     int translated;
 
@@ -558,7 +558,7 @@ static int SDLButtonToTXTButton(int button)
 
 // Convert an SDL wheel motion to a textscreen button index.
 
-static int SDLWheelToTXTButton(SDL_MouseWheelEvent *wheel)
+static int SDLWheelToTXTButton(const SDL_MouseWheelEvent *wheel)
 {
     if (wheel->y <= 0)
     {
@@ -890,7 +890,7 @@ void TXT_SetInputMode(txt_input_mode_t mode)
     input_mode = mode;
 }
 
-void TXT_SetWindowTitle(char *title)
+void TXT_SetWindowTitle(const char *title)
 {
     SDL_SetWindowTitle(TXT_SDLWindow, title);
 }

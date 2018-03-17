@@ -73,7 +73,7 @@ static void TXT_SeparatorDestructor(TXT_UNCAST_ARG(separator))
     free(separator->label);
 }
 
-void TXT_SetSeparatorLabel(txt_separator_t *separator, char *label)
+void TXT_SetSeparatorLabel(txt_separator_t *separator, const char *label)
 {
     free(separator->label);
 
@@ -98,7 +98,7 @@ txt_widget_class_t txt_separator_class =
     NULL,
 };
 
-txt_separator_t *TXT_NewSeparator(char *label)
+txt_separator_t *TXT_NewSeparator(const char *label)
 {
     txt_separator_t *separator;
 

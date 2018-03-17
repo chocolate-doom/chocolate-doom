@@ -517,7 +517,7 @@ int TXT_CanSelectFiles(void)
 // return a pointer to a string that is a case-insensitive
 // pattern representation (like [Ww][Aa][Dd])
 //
-static char *ExpandExtension(char *orig)
+static char *ExpandExtension(const char *orig)
 {
     int oldlen, newlen, i;
     char *c, *newext = NULL;
@@ -550,7 +550,7 @@ static char *ExpandExtension(char *orig)
     return newext;
 }
 
-char *TXT_SelectFile(char *window_title, char **extensions)
+char *TXT_SelectFile(const char *window_title, char **extensions)
 {
     unsigned int i;
     size_t len;
