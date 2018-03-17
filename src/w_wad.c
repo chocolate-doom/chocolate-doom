@@ -329,7 +329,7 @@ lumpindex_t W_GetNumForName(const char *name)
     return i;
 }
 
-lumpindex_t W_CheckRangeNumForName(const char *name, int from, int to)
+lumpindex_t W_CheckNumForNameFromTo(const char *name, int from, int to)
 {
     lumpindex_t i;
 

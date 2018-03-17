@@ -58,7 +58,7 @@ void W_Reload(void);
 
 lumpindex_t W_CheckNumForName(const char *name);
 lumpindex_t W_GetNumForName(const char *name);
-lumpindex_t W_CheckRangeNumForName(const char *name, int from, int to);
+lumpindex_t W_CheckNumForNameFromTo(const char *name, int from, int to);
 
 int W_LumpLength(lumpindex_t lump);
 void W_ReadLump(lumpindex_t lump, void *dest);
