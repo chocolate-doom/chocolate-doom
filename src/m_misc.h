@@ -25,20 +25,20 @@
 
 #include "doomtype.h"
 
-boolean M_WriteFile(char *name, void *source, int length);
-int M_ReadFile(char *name, byte **buffer);
-void M_MakeDirectory(char *dir);
-char *M_TempFile(char *s);
-boolean M_FileExists(char *file);
-char *M_FileCaseExists(char *file);
+boolean M_WriteFile(const char *name, void *source, int length);
+int M_ReadFile(const char *name, byte **buffer);
+void M_MakeDirectory(const char *dir);
+char *M_TempFile(const char *s);
+boolean M_FileExists(const char *file);
+char *M_FileCaseExists(const char *file);
 long M_FileLength(FILE *handle);
 boolean M_StrToInt(const char *str, int *result);
-void M_ExtractFileBase(char *path, char *dest);
+void M_ExtractFileBase(const char *path, char *dest);
 char *M_BaseName(char *path);
 char *M_DirName(const char *path);
 void M_ForceUppercase(char *text);
 void M_ForceLowercase(char *text);
-char *M_StrCaseStr(char *haystack, char *needle);
+const char *M_StrCaseStr(const char *haystack, const char *needle);
 char *M_StringDuplicate(const char *orig);
 boolean M_StringCopy(char *dest, const char *src, size_t dest_size);
 boolean M_StringConcat(char *dest, const char *src, size_t dest_size);

@@ -1,5 +1,0 @@
-Project and header files for building with Microsoft Visual C++.  Please
-note that the MSVC project files are not officially supported; the 
-canonical way to build Chocolate Doom under Windows is using
-MingW + MSYS.
-

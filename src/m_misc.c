@@ -52,7 +52,7 @@
 // Create a directory
 //
 
-void M_MakeDirectory(char *path)
+void M_MakeDirectory(const char *path)
 {
 #ifdef _WIN32
     mkdir(path);
@@ -63,7 +63,7 @@ void M_MakeDirectory(char *path)
 
 // Check if a file exists
 
-boolean M_FileExists(char *filename)
+boolean M_FileExists(const char *filename)
 {
     FILE *fstream;
 
@@ -86,7 +86,7 @@ boolean M_FileExists(char *filename)
 // Check if a file exists by probing for common case variation of its filename.
 // Returns a newly allocated string that the caller is responsible for freeing.
 
-char *M_FileCaseExists(char *path)
+char *M_FileCaseExists(const char *path)
 {
     char *path_dup, *filename, *ext;
 
@@ -178,7 +178,7 @@ long M_FileLength(FILE *handle)
 // M_WriteFile
 //
 
-boolean M_WriteFile(char *name, void *source, int length)
+boolean M_WriteFile(const char *name, void *source, int length)
 {
     FILE *handle;
     int	count;
@@ -202,7 +202,7 @@ boolean M_WriteFile(char *name, void *source, int length)
 // M_ReadFile
 //
 
-int M_ReadFile(char *name, byte **buffer)
+int M_ReadFile(const char *name, byte **buffer)
 {
     FILE *handle;
     int	count, length;
@@ -233,7 +233,7 @@ int M_ReadFile(char *name, byte **buffer)
 //
 // The returned value must be freed with Z_Free after use.
 
-char *M_TempFile(char *s)
+char *M_TempFile(const char *s)
 {
     char *tempdir;
 
@@ -264,10 +264,10 @@ boolean M_StrToInt(const char *str, int *result)
         || sscanf(str, " %d", result) == 1;
 }
 
-void M_ExtractFileBase(char *path, char *dest)
+void M_ExtractFileBase(const char *path, char *dest)
 {
-    char *src;
-    char *filename;
+    const char *src;
+    const char *filename;
     int length;
 
     src = path + strlen(path) - 1;
@@ -389,7 +389,7 @@ void M_ForceLowercase(char *text)
 // Case-insensitive version of strstr()
 //
 
-char *M_StrCaseStr(char *haystack, char *needle)
+const char *M_StrCaseStr(const char *haystack, const char *needle)
 {
     unsigned int haystack_len;
     unsigned int needle_len;

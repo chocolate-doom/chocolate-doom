@@ -113,7 +113,7 @@ txt_widget_class_t txt_label_class =
     NULL,
 };
 
-void TXT_SetLabel(txt_label_t *label, char *value)
+void TXT_SetLabel(txt_label_t *label, const char *value)
 {
     char *p;
     unsigned int y;
@@ -131,7 +131,7 @@ void TXT_SetLabel(txt_label_t *label, char *value)
 
     label->h = 1;
 
-    for (p = value; *p != '\0'; ++p)
+    for (p = label->label; *p != '\0'; ++p)
     {
         if (*p == '\n')
         {
@@ -168,7 +168,7 @@ void TXT_SetLabel(txt_label_t *label, char *value)
     }
 }
 
-txt_label_t *TXT_NewLabel(char *text)
+txt_label_t *TXT_NewLabel(const char *text)
 {
     txt_label_t *label;
 

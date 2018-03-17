@@ -1571,6 +1571,7 @@ void D_DoomMain (void)
     }
 
     //!
+    // @category game
     // @vanilla
     //
     // Disable monsters.
@@ -1579,6 +1580,7 @@ void D_DoomMain (void)
     nomonsters = M_CheckParm ("-nomonsters");
 
     //!
+    // @category obscure
     // @vanilla
     //
     // Set Rogue playtesting mode (godmode, noclip toggled by backspace)
@@ -1587,6 +1589,7 @@ void D_DoomMain (void)
     workparm = M_CheckParm ("-work");
 
     //!
+    // @category obscure
     // @vanilla
     //
     // Flip player gun sprites (broken).
@@ -1595,6 +1598,7 @@ void D_DoomMain (void)
     flipparm = M_CheckParm ("-flip");
 
     //!
+    // @category game
     // @vanilla
     //
     // Respawn monsters after they are killed.
@@ -1603,6 +1607,7 @@ void D_DoomMain (void)
     respawnparm = M_CheckParm ("-respawn");
 
     //!
+    // @category game
     // @vanilla
     //
     // Items respawn at random locations
@@ -1611,6 +1616,7 @@ void D_DoomMain (void)
     randomparm = M_CheckParm ("-random");
 
     //!
+    // @category game
     // @vanilla
     //
     // Monsters move faster.
@@ -1647,6 +1653,7 @@ void D_DoomMain (void)
 #ifdef _WIN32
 
     //!
+    // @category obscure
     // @platform windows
     // @vanilla
     //
@@ -1670,6 +1677,7 @@ void D_DoomMain (void)
     }
     
     //!
+    // @category game
     // @arg <x>
     // @vanilla
     //
@@ -1884,6 +1892,7 @@ void D_DoomMain (void)
     autostart = false;
 
     //!
+    // @category game
     // @arg <skill>
     // @vanilla
     //
@@ -1901,6 +1910,7 @@ void D_DoomMain (void)
 
     // [STRIFE] no such thing in Strife
     //
+    // // @category game
     // // @arg <n>
     // // @vanilla
     // //
@@ -1949,6 +1959,7 @@ void D_DoomMain (void)
     }
 
     //!
+    // @category game
     // @arg x
     // @vanilla
     //
@@ -1989,6 +2000,7 @@ void D_DoomMain (void)
     // can override it or send the load slot to other players.
 
     //!
+    // @category game
     // @arg <s>
     // @vanilla
     //

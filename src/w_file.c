@@ -52,6 +52,8 @@ wad_file_t *W_OpenFile(char *path)
     int i;
 
     //!
+    // @category obscure
+    //
     // Use the OS's virtual memory subsystem to map WAD files
     // directly into memory.
     //

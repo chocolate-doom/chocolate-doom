@@ -331,13 +331,7 @@ char *TXT_SelectFile(char *window_title, char **extensions)
 // an Objective C dependency. This is rather silly.
 
 // Printf format string for the "wrapper" portion of the AppleScript:
-
-#define APPLESCRIPT_WRAPPER \
-    "tell application (path to frontmost application as text)\n" \
-    "    activate\n" \
-    "    set theFile to (%s)\n" \
-    "    copy POSIX path of theFile to stdout\n" \
-    "end tell\n"
+#define APPLESCRIPT_WRAPPER "copy POSIX path of (%s) to stdout"
 
 static char *EscapedString(char *s)
 {
@@ -523,7 +517,7 @@ int TXT_CanSelectFiles(void)
 // return a pointer to a string that is a case-insensitive
 // pattern representation (like [Ww][Aa][Dd])
 //
-static char *ExpandExtension(char *orig)
+static char *ExpandExtension(const char *orig)
 {
     int oldlen, newlen, i;
     char *c, *newext = NULL;
@@ -556,7 +550,7 @@ static char *ExpandExtension(char *orig)
     return newext;
 }
 
-char *TXT_SelectFile(char *window_title, char **extensions)
+char *TXT_SelectFile(const char *window_title, char **extensions)
 {
     unsigned int i;
     size_t len;

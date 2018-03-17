@@ -35,6 +35,7 @@ import re
 import glob
 import getopt
 
+TEXT_WRAP_WIDTH = 78
 INCLUDE_STATEMENT_RE = re.compile("@include\s+(\S+)")
 
 # Use appropriate stdout function for Python 2 or 3
@@ -157,14 +158,16 @@ class Category:
 
         return result
 
-categories = {
-    None:      Category("General options"),
-    "video":   Category("Display options"),
-    "demo":    Category("Demo options"),
-    "net":     Category("Networking options"),
-    "mod":     Category("Dehacked and WAD merging"),
-    "compat":  Category("Compatibility"),
-}
+categories = (
+    (None,      Category("General options")),
+    ("game",    Category("Game start options")),
+    ("video",   Category("Display options")),
+    ("net",     Category("Networking options")),
+    ("mod",     Category("Dehacked and WAD merging")),
+    ("demo",    Category("Demo options")),
+    ("compat",  Category("Compatibility")),
+    ("obscure", Category("Obscure and less-used options")),
+)
 
 wikipages = []
 config_files = {}
@@ -259,46 +262,38 @@ class Parameter:
 
         return result
 
-    def plaintext_output(self, w):
-
+    def plaintext_output(self, indent):
         # Build the first line, with the argument on
-
-        line = "  " + self.name
+        start = "  " + self.name
         if self.args:
-            line += " " + self.args
+            start += " " + self.args
 
         # pad up to the plaintext width
-
-        line += " " * (w - len(line))
+        start += " " * (indent - len(start))
 
         # Build the description text
-
         description = self.text
-
         if self.platform:
             description += " (%s only)" % self.platform
-
         description += self._games_only_text()
 
         # Build the complete text for the argument
         # Split the description into words and add a word at a time
-
         result = ""
-        for word in re.split('\s+', description):
+        words = [word for word in re.split('\s+', description) if word]
+        maxlen = TEXT_WRAP_WIDTH - indent
+        outlines = [[]]
+        for word in words:
+            linelen = sum(len(w) + 1 for w in outlines[-1])
+            if linelen + len(word) > maxlen:
+                outlines.append([])
+            outlines[-1].append(word)
 
-            # Break onto the next line?
+        linesep = "\n" + " " * indent
 
-            if len(line) + len(word) + 1 > 75:
-                result += line + "\n"
-                line = " " * w
-
-            # Add another word
-
-            line += word + " "
-
-        result += line + "\n\n"
-
-        return result
+        return (start +
+                linesep.join(" ".join(line) for line in outlines) +
+                "\n\n")
 
     def completion_output(self, w):
 
@@ -347,7 +342,8 @@ def add_parameter(param, line, config_file):
 
     if match:
         param.name = match.group(3)
-        categories[param.category].add_param(param)
+        category = dict(categories)[param.category]
+        category.add_param(param)
         return
 
     # Documenting a configuration file variable?
@@ -550,19 +546,11 @@ else:
         process_files(path)
 
     # Build a list of things to document
-
-    documentation_targets = []
-
     if doc_config_file:
-        documentation_targets.append(config_files[doc_config_file])
+        documentation_targets = [config_files[doc_config_file]]
     else:
-        documentation_targets.append(categories[None])
-
-        for c in categories:
-            if c != None:
-                documentation_targets.append(categories[c])
+        documentation_targets = [c for _, c in categories]
 
     # Generate the output
-
     output_function(documentation_targets, substs, template)
 

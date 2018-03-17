@@ -1465,6 +1465,7 @@ void D_DoomMain (void)
     }
 
     //!
+    // @category game
     // @vanilla
     //
     // Disable monsters.
@@ -1473,6 +1474,7 @@ void D_DoomMain (void)
     nomonsters = M_CheckParm ("-nomonsters");
 
     //!
+    // @category game
     // @vanilla
     //
     // Monsters respawn after being killed.
@@ -1481,6 +1483,7 @@ void D_DoomMain (void)
     respawnparm = M_CheckParm ("-respawn");
 
     //!
+    // @category game
     // @vanilla
     //
     // Monsters move faster.
@@ -1488,10 +1491,10 @@ void D_DoomMain (void)
 
     fastparm = M_CheckParm ("-fast");
 
-    //! 
+    //!
     // @vanilla
     //
-    // Developer mode.  F1 saves a screenshot in the current working
+    // Developer mode. F1 saves a screenshot in the current working
     // directory.
     //
 
@@ -1539,6 +1542,7 @@ void D_DoomMain (void)
 #ifdef _WIN32
 
     //!
+    // @category obscure
     // @platform windows
     // @vanilla
     //
@@ -1561,6 +1565,7 @@ void D_DoomMain (void)
     }
 
     //!
+    // @category game
     // @arg <x>
     // @vanilla
     //
@@ -2000,6 +2005,7 @@ void D_DoomMain (void)
     autostart = false;
 
     //!
+    // @category game
     // @arg <skill>
     // @vanilla
     //
@@ -2016,6 +2022,7 @@ void D_DoomMain (void)
     }
 
     //!
+    // @category game
     // @arg <n>
     // @vanilla
     //
@@ -2063,6 +2070,7 @@ void D_DoomMain (void)
     }
 
     //!
+    // @category game
     // @arg [<x> <y> | <xy>]
     // @vanilla
     //
@@ -2132,6 +2140,7 @@ void D_DoomMain (void)
     // can override it or send the load slot to other players.
 
     //!
+    // @category game
     // @arg <s>
     // @vanilla
     //

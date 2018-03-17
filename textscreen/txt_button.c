@@ -93,13 +93,13 @@ txt_widget_class_t txt_button_class =
     NULL,
 };
 
-void TXT_SetButtonLabel(txt_button_t *button, char *label)
+void TXT_SetButtonLabel(txt_button_t *button, const char *label)
 {
     free(button->label);
     button->label = strdup(label);
 }
 
-txt_button_t *TXT_NewButton(char *label)
+txt_button_t *TXT_NewButton(const char *label)
 {
     txt_button_t *button;
 
@@ -113,7 +113,7 @@ txt_button_t *TXT_NewButton(char *label)
 
 // Button with a callback set automatically
 
-txt_button_t *TXT_NewButton2(char *label, TxtWidgetSignalFunc func,
+txt_button_t *TXT_NewButton2(const char *label, TxtWidgetSignalFunc func,
                              void *user_data)
 {
     txt_button_t *button;

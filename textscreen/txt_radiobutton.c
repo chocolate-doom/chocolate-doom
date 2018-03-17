@@ -121,7 +121,7 @@ txt_widget_class_t txt_radiobutton_class =
     NULL,
 };
 
-txt_radiobutton_t *TXT_NewRadioButton(char *label, int *variable, int value)
+txt_radiobutton_t *TXT_NewRadioButton(const char *label, int *variable, int value)
 {
     txt_radiobutton_t *radiobutton;
 
@@ -135,7 +135,7 @@ txt_radiobutton_t *TXT_NewRadioButton(char *label, int *variable, int value)
     return radiobutton;
 }
 
-void TXT_SetRadioButtonLabel(txt_radiobutton_t *radiobutton, char *value)
+void TXT_SetRadioButtonLabel(txt_radiobutton_t *radiobutton, const char *value)
 {
     free(radiobutton->label);
     radiobutton->label = strdup(value);

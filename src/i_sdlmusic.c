@@ -921,6 +921,7 @@ static boolean I_SDL_InitMusic(void)
     int i;
 
     //!
+    // @category obscure
     // @arg <filename>
     //
     // Read all MIDI files from loaded WAD files, dump an example substitution

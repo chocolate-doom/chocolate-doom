@@ -50,7 +50,7 @@ int TXT_CanSelectFiles(void);
  *                    to select directories.
  */
 
-char *TXT_SelectFile(char *prompt, char **extensions);
+char *TXT_SelectFile(const char *prompt, char **extensions);
 
 /**
  * Create a new txt_fileselect_t widget.
