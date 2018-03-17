@@ -331,13 +331,7 @@ char *TXT_SelectFile(char *window_title, char **extensions)
 // an Objective C dependency. This is rather silly.
 
 // Printf format string for the "wrapper" portion of the AppleScript:
-
-#define APPLESCRIPT_WRAPPER \
-    "tell application (path to frontmost application as text)\n" \
-    "    activate\n" \
-    "    set theFile to (%s)\n" \
-    "    copy POSIX path of theFile to stdout\n" \
-    "end tell\n"
+#define APPLESCRIPT_WRAPPER "copy POSIX path of (%s) to stdout"
 
 static char *EscapedString(char *s)
 {
