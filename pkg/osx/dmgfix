@@ -29,17 +29,25 @@ on run argv
         --activate
         open dmgFile
         delay 1
-        set win to the front Finder window
         set theDisk to disk diskName
-        set the target of win to theDisk
+        open POSIX file "/"
 
         -- window options:
 
         set bgfile to file "background.png" of theDisk
-        set the bounds of win to {200, 200, 717, 545}
-        set icon size of icon view options of win to 96
-        set background picture of icon view options of win to bgfile
-        set toolbar visible of win to false
+        set win to the front Finder window
+        tell win
+            set target to theDisk
+            set current view to icon view
+            set sidebar width to 0
+            set toolbar visible to false
+            set statusbar visible to false
+            set bounds to {200, 200, 717, 545}
+        end tell
+        tell icon view options of win
+            set icon size to 96
+            set background picture to bgfile
+        end tell
 
         -- hide background file:
 
