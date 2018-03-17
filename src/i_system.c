@@ -305,6 +305,10 @@ void I_Error (char *error, ...)
         entry = entry->next;
     }
 
+    //!
+    // If specified, don't show a GUI for error messages when the
+    // game exits with an error.
+    //
     exit_gui_popup = !M_ParmExists("-nogui");
 
     // Pop up a GUI dialog box to show the error message, if the
