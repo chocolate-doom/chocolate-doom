@@ -19,7 +19,7 @@ if HAVE_PYTHON
 
 if HAVE_WINDRES
 
-WIN32="-D_WIN32"
+WIN32=-D_WIN32
 
 endif
 
