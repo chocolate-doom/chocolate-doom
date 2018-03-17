@@ -737,6 +737,7 @@ void D_DoomMain(void)
     I_AtExit(D_Endoom, false);
 
     //!
+    // @category game
     // @vanilla
     //
     // Disable monsters.
@@ -745,6 +746,7 @@ void D_DoomMain(void)
     nomonsters = M_ParmExists("-nomonsters");
 
     //!
+    // @category game
     // @vanilla
     //
     // Monsters respawn after being killed.
@@ -761,6 +763,7 @@ void D_DoomMain(void)
     ravpic = M_ParmExists("-ravpic");
 
     //!
+    // @category obscure
     // @vanilla
     //
     // Allow artifacts to be used when the run key is held down.
@@ -791,6 +794,7 @@ void D_DoomMain(void)
     }
 
     //!
+    // @category game
     // @arg <skill>
     // @vanilla
     //
@@ -806,6 +810,7 @@ void D_DoomMain(void)
     }
 
     //!
+    // @category game
     // @arg <n>
     // @vanilla
     //
@@ -821,6 +826,7 @@ void D_DoomMain(void)
     }
 
     //!
+    // @category game
     // @arg <x> <y>
     // @vanilla
     //
@@ -848,6 +854,7 @@ void D_DoomMain(void)
 #ifdef _WIN32
 
     //!
+    // @category obscure
     // @platform windows
     // @vanilla
     //
@@ -1102,6 +1109,7 @@ void D_DoomMain(void)
     }
 
     //!
+    // @category game
     // @arg <s>
     // @vanilla
     //

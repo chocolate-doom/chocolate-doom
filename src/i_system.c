@@ -131,6 +131,7 @@ byte *I_ZoneBase (int *size)
     int p;
 
     //!
+    // @category obscure
     // @arg <mb>
     //
     // Specify the heap size, in MiB (default 16).
@@ -306,6 +307,8 @@ void I_Error (char *error, ...)
     }
 
     //!
+    // @category obscure
+    //
     // If specified, don't show a GUI window for error messages when the
     // game exits with an error.
     //

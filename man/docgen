@@ -157,14 +157,16 @@ class Category:
 
         return result
 
-categories = {
-    None:      Category("General options"),
-    "video":   Category("Display options"),
-    "demo":    Category("Demo options"),
-    "net":     Category("Networking options"),
-    "mod":     Category("Dehacked and WAD merging"),
-    "compat":  Category("Compatibility"),
-}
+categories = (
+    (None,      Category("General options")),
+    ("game",    Category("Game start options")),
+    ("video",   Category("Display options")),
+    ("net",     Category("Networking options")),
+    ("mod",     Category("Dehacked and WAD merging")),
+    ("demo",    Category("Demo options")),
+    ("compat",  Category("Compatibility")),
+    ("obscure", Category("Obscure and less-used options")),
+)
 
 wikipages = []
 config_files = {}
@@ -347,7 +349,8 @@ def add_parameter(param, line, config_file):
 
     if match:
         param.name = match.group(3)
-        categories[param.category].add_param(param)
+        category = dict(categories)[param.category]
+        category.add_param(param)
         return
 
     # Documenting a configuration file variable?
@@ -550,19 +553,11 @@ else:
         process_files(path)
 
     # Build a list of things to document
-
-    documentation_targets = []
-
     if doc_config_file:
-        documentation_targets.append(config_files[doc_config_file])
+        documentation_targets = [config_files[doc_config_file]]
     else:
-        documentation_targets.append(categories[None])
-
-        for c in categories:
-            if c != None:
-                documentation_targets.append(categories[c])
+        documentation_targets = [c for _, c in categories]
 
     # Generate the output
-
     output_function(documentation_targets, substs, template)
 

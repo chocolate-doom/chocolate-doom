@@ -371,6 +371,7 @@ void D_DoomMain(void)
 #ifdef _WIN32
 
     //!
+    // @category obscure
     // @platform windows
     // @vanilla
     //
@@ -486,6 +487,14 @@ void D_DoomMain(void)
 
     CheckRecordFrom();
 
+    //!
+    // @arg <x>
+    // @category demo
+    // @vanilla
+    //
+    // Record a demo named x.lmp.
+    //
+
     p = M_CheckParm("-record");
     if (p && p < myargc - 1)
     {
@@ -509,6 +518,7 @@ void D_DoomMain(void)
     }
 
     //!
+    // @category game
     // @arg <s>
     // @vanilla
     //
@@ -549,6 +559,7 @@ static void HandleArgs(void)
     int p;
 
     //!
+    // @category game
     // @vanilla
     //
     // Disable monsters.
@@ -557,6 +568,7 @@ static void HandleArgs(void)
     nomonsters = M_ParmExists("-nomonsters");
 
     //!
+    // @category game
     // @vanilla
     //
     // Monsters respawn after being killed.
@@ -583,6 +595,7 @@ static void HandleArgs(void)
     ravpic = M_ParmExists("-ravpic");
 
     //!
+    // @category obscure
     // @vanilla
     //
     // Don't allow artifacts to be used when the run key is held down.
@@ -608,6 +621,7 @@ static void HandleArgs(void)
     W_ParseCommandLine();
 
     //!
+    // @category obscure
     // @vanilla
     // @arg <path>
     //
@@ -623,6 +637,7 @@ static void HandleArgs(void)
     }
 
     //!
+    // @category game
     // @arg <skill>
     // @vanilla
     //
@@ -722,6 +737,14 @@ static void WarpCheck(void)
 {
     int p;
     int map;
+
+    //!
+    // @category game
+    // @arg x
+    // @vanilla
+    //
+    // Start a game immediately, warping to MAPx.
+    //
 
     p = M_CheckParm("-warp");
     if (p && p < myargc - 1)
@@ -1044,6 +1067,14 @@ static void CheckRecordFrom(void)
 {
     int p;
 
+    //!
+    // @vanilla
+    // @category demo
+    // @arg <savenum> <demofile>
+    //
+    // Record a demo, loading from the given filename. Equivalent
+    // to -loadgame <savenum> -record <demofile>.
+    //
     p = M_CheckParm("-recordfrom");
     if (!p || p > myargc - 2)
     {                           // Bad args
