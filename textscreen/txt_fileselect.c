@@ -463,12 +463,20 @@ int TXT_CanSelectFiles(void)
     return 1;
 }
 
-char *TXT_SelectFile(char *window_title, char **extensions)
+char *TXT_SelectFile(const char *window_title, char **extensions)
 {
     char *argv[4];
     char *result, *applescript;
 
-    applescript = GenerateAppleScript(window_title, extensions);
+    // We need to create a temporary copy of window_title because GenerateApple-
+    // Script works with non-const string.
+    char *window_title_copy = strdup(window_title);
+    if (!window_title_copy)
+    {
+        return NULL;
+    }
+
+    applescript = GenerateAppleScript(window_title_copy, extensions);
 
     argv[0] = "/usr/bin/osascript";
     argv[1] = "-e";
@@ -478,6 +486,7 @@ char *TXT_SelectFile(char *window_title, char **extensions)
     result = ExecReadOutput(argv);
 
     free(applescript);
+    free(window_title_copy);
 
     return result;
 }
