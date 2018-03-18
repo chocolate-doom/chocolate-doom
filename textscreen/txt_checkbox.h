@@ -55,7 +55,7 @@ struct txt_checkbox_s
  * @return              Pointer to the new checkbox.
  */
 
-txt_checkbox_t *TXT_NewCheckBox(char *label, int *variable);
+txt_checkbox_t *TXT_NewCheckBox(const char *label, int *variable);
 
 /**
  * Create a new inverted checkbox.
@@ -69,7 +69,7 @@ txt_checkbox_t *TXT_NewCheckBox(char *label, int *variable);
  * @return              Pointer to the new checkbox.
  */
 
-txt_checkbox_t *TXT_NewInvertedCheckBox(char *label, int *variable);
+txt_checkbox_t *TXT_NewInvertedCheckBox(const char *label, int *variable);
 
 #endif /* #ifndef TXT_CHECKBOX_H */
 

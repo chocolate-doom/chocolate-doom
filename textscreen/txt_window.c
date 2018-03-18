@@ -52,7 +52,7 @@ void TXT_SetWindowAction(txt_window_t *window,
     }
 }
 
-txt_window_t *TXT_NewWindow(char *title)
+txt_window_t *TXT_NewWindow(const char *title)
 {
     int i;
 
@@ -508,21 +508,21 @@ void TXT_SetWindowFocus(txt_window_t *window, int focused)
     TXT_SetWidgetFocus(window, focused);
 }
 
-void TXT_SetWindowHelpURL(txt_window_t *window, char *help_url)
+void TXT_SetWindowHelpURL(txt_window_t *window, const char *help_url)
 {
     window->help_url = help_url;
 }
 
 #ifdef _WIN32
 
-void TXT_OpenURL(char *url)
+void TXT_OpenURL(const char *url)
 {
     ShellExecute(NULL, "open", url, NULL, NULL, SW_SHOWNORMAL);
 }
 
 #else
 
-void TXT_OpenURL(char *url)
+void TXT_OpenURL(const char *url)
 {
     char *cmd;
     size_t cmd_len;
@@ -566,7 +566,7 @@ void TXT_OpenWindowHelpURL(txt_window_t *window)
     }
 }
 
-txt_window_t *TXT_MessageBox(char *title, char *message, ...)
+txt_window_t *TXT_MessageBox(const char *title, const char *message, ...)
 {
     txt_window_t *window;
     char buf[256];

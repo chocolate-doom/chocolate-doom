@@ -158,7 +158,7 @@ byte *I_ZoneBase (int *size)
     return zonemem;
 }
 
-void I_PrintBanner(char *msg)
+void I_PrintBanner(const char *msg)
 {
     int i;
     int spaces = 35 - (strlen(msg) / 2);
@@ -181,7 +181,7 @@ void I_PrintDivider(void)
     putchar('\n');
 }
 
-void I_PrintStartupBanner(char *gamedescription)
+void I_PrintStartupBanner(const char *gamedescription)
 {
     I_PrintDivider();
     I_PrintBanner(gamedescription);
@@ -261,7 +261,7 @@ void I_Quit (void)
 
 static boolean already_quitting = false;
 
-void I_Error (char *error, ...)
+void I_Error (const char *error, ...)
 {
     char msgbuf[512];
     va_list argptr;
