@@ -30,7 +30,10 @@ enum
     RADIO_VALUE_MUSHROOM,
     RADIO_VALUE_SNAKE,
 };
-char *extensions[] = { "wad", "lmp", "txt", NULL };
+
+// also put some crazy extensions to test the escape function. a"b"c"""dd
+char *extensions[] = { "wad", "lmp", "txt", "a\"b\"c\"\"\"dd", "",
+     "\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"", NULL };
 char *radio_values[] = { "Badger", "Mushroom", "Snake" };
 char *textbox_value = NULL;
 int numbox_value = 0;
