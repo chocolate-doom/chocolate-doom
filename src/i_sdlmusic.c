@@ -378,7 +378,7 @@ static void ReadLoopPoints(char *filename, file_metadata_t *metadata)
     metadata->start_time = 0;
     metadata->end_time = -1;
 
-    fs = fopen(filename, "r");
+    fs = fopen(filename, "rb");
 
     if (fs == NULL)
     {
