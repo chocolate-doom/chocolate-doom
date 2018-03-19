@@ -17,6 +17,12 @@ strifedocsdir = ${docdir}/../${PROGRAM_PREFIX}strife
 
 if HAVE_PYTHON
 
+if HAVE_WINDRES
+
+WIN32=-D_WIN32
+
+endif
+
 GENERATED_MAN_PAGES =               \
            @PROGRAM_PREFIX@doom.6         \
            default.cfg.5            \
@@ -73,7 +79,7 @@ CMDLINE.doom : CMDLINE.template $(top_srcdir)/src $(top_srcdir)/src/doom
                   $(top_srcdir)/src/ $(top_srcdir)/src/doom/ > $@
 
 INSTALL.doom: INSTALL.template
-	$(srcdir)/simplecpp -DDOOM \
+	$(srcdir)/simplecpp -DDOOM $(WIN32) \
             -DLONG_GAME_NAME="@PACKAGE_SHORTNAME@ Doom" \
             -DLONG_EXE_NAME="@PROGRAM_PREFIX@doom" \
             -DPRECOMPILED < $(srcdir)/INSTALL.template > $@
@@ -99,7 +105,7 @@ CMDLINE.heretic : CMDLINE.template $(top_srcdir)/src $(top_srcdir)/src/heretic
                   $(top_srcdir)/src/ $(top_srcdir)/src/heretic/ > $@
 
 INSTALL.heretic: INSTALL.template
-	$(srcdir)/simplecpp -DHERETIC \
+	$(srcdir)/simplecpp -DHERETIC $(WIN32) \
             -DLONG_GAME_NAME="@PACKAGE_SHORTNAME@ Heretic" \
             -DLONG_EXE_NAME="@PROGRAM_PREFIX@heretic" \
             -DPRECOMPILED < $(srcdir)/INSTALL.template > $@
@@ -126,7 +132,7 @@ CMDLINE.hexen : CMDLINE.template $(top_srcdir)/src $(top_srcdir)/src/hexen
                   $(top_srcdir)/src/ $(top_srcdir)/src/hexen/ > $@
 
 INSTALL.hexen: INSTALL.template
-	$(srcdir)/simplecpp -DHEXEN \
+	$(srcdir)/simplecpp -DHEXEN $(WIN32) \
             -DLONG_GAME_NAME="@PACKAGE_SHORTNAME@ Hexen" \
             -DLONG_EXE_NAME="@PROGRAM_PREFIX@hexen" \
             -DPRECOMPILED < $(srcdir)/INSTALL.template > $@
@@ -163,7 +169,7 @@ CMDLINE.strife : CMDLINE.template $(top_srcdir)/src $(top_srcdir)/src/strife
                   $(top_srcdir)/src/ $(top_srcdir)/src/strife/ > $@
 
 INSTALL.strife: INSTALL.template
-	$(srcdir)/simplecpp -DSTRIFE  \
+	$(srcdir)/simplecpp -DSTRIFE $(WIN32) \
             -DLONG_EXE_NAME="@PROGRAM_PREFIX@strife" \
             -DLONG_GAME_NAME="@PACKAGE_SHORTNAME@ Strife" \
             -DPRECOMPILED < $(srcdir)/INSTALL.template > $@

@@ -53,11 +53,7 @@ staging-%:
 		cp $(TOPLEVEL)/$$f $@/$$(basename $$f .md).txt;  \
 	done
 	cp $(TOPLEVEL)/man/CMDLINE.$* $@/CMDLINE.txt
-
-	$(TOPLEVEL)/man/simplecpp -D_WIN32 -DPRECOMPILED  \
-	             -D$(shell echo $* | tr a-z A-Z)      \
-	         < $(TOPLEVEL)/man/INSTALL.template       \
-	         > $@/INSTALL.txt
+	cp $(TOPLEVEL)/man/INSTALL.$* $@/INSTALL.txt
 
 clean:
 	rm -f $(ZIPS)
