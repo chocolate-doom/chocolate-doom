@@ -174,9 +174,9 @@ void P_BringUpWeapon (player_t* player)
     if (player->pendingweapon == wp_fist && player->powers[pw_strength])
     {
 	// [crispy] ...only if not playing already
-	if (player == &players[consoleplayer] && !S_SoundIsPlaying(NULL, sfx_getpow))
+	if (player == &players[consoleplayer])
 	{
-	    S_StartSound (NULL, sfx_getpow);
+	    S_StartSoundOnce (NULL, sfx_getpow);
 	}
     }
 #endif

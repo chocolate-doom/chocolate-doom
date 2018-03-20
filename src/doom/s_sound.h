@@ -52,11 +52,11 @@ void S_Start(void);
 //
 
 void S_StartSound(void *origin, int sound_id);
+void S_StartSoundOnce(void *origin, int sound_id);
 
 // Stop sound for thing at <origin>
 void S_StopSound(mobj_t *origin);
 void S_UnlinkSound(mobj_t *origin);
-boolean S_SoundIsPlaying(mobj_t *origin, int sfx_id);
 
 
 // Start music using <music_id> from sounds.h
