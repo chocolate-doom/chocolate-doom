@@ -282,7 +282,7 @@ static char *SelectDirectory(char *window_title)
     return result;
 }
 
-char *TXT_SelectFile(char *window_title, char **extensions)
+char *TXT_SelectFile(const char *window_title, char **extensions)
 {
     OPENFILENAME fm;
     char selected[MAX_PATH] = "";
