@@ -99,7 +99,8 @@ switchlist_t alphSwitchList_vanilla[] =
 int		*switchlist;
 int		numswitches;
 static size_t	maxswitches;
-button_t        buttonlist[MAXBUTTONS];
+button_t        *buttonlist = NULL; // [crispy] remove MAXBUTTONS limit
+int		maxbuttons = 0; // [crispy] remove MAXBUTTONS limit
 
 //
 // P_InitSwitchList
@@ -188,7 +189,7 @@ P_StartButton
     int		i;
     
     // See if button is already pressed
-    for (i = 0;i < MAXBUTTONS;i++)
+    for (i = 0;i < maxbuttons;i++)
     {
 	if (buttonlist[i].btimer
 	    && buttonlist[i].line == line)
@@ -200,7 +201,7 @@ P_StartButton
     
 
     
-    for (i = 0;i < MAXBUTTONS;i++)
+    for (i = 0;i < maxbuttons;i++)
     {
 	if (!buttonlist[i].btimer)
 	{
@@ -213,6 +214,11 @@ P_StartButton
 	}
     }
     
+    // [crispy] remove MAXBUTTONS limit
+    maxbuttons = maxbuttons ? 2 * maxbuttons : MAXBUTTONS;
+    buttonlist = I_Realloc(buttonlist, sizeof(*buttonlist) * maxbuttons);
+    return P_StartButton(line, w, texture, time);
+
     I_Error("P_StartButton: no button slots left!");
 }
 

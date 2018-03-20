@@ -205,7 +205,7 @@ static void P_WriteButton (const char *key)
 {
 	int i;
 
-	for (i = 0; i < MAXBUTTONS; i++)
+	for (i = 0; i < maxbuttons; i++)
 	{
 		button_t *button = &buttonlist[i];
 
