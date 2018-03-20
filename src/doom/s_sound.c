@@ -749,17 +749,15 @@ void S_SetMusicVolume(int volume)
                 volume);
     }
 
-    // [JN] Исправлен баг, при котором музыка
-    // продолжала играть при нулевой громкости
-    if (musicVolume == 0)
+    // [crispy] [JN] Fixed bug when music was hearable with zero volume
+    if (!musicVolume)
     {
-        I_PauseSong();
-        mus_paused = true;
+        S_PauseSound();
     }
     else
+    if (!paused)
     {
-        I_ResumeSong();
-        mus_paused = false;
+        S_ResumeSound();
     }
 
     I_SetMusicVolume(volume);

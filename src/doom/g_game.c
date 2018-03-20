@@ -1159,6 +1159,8 @@ void G_Ticker (void)
 		    if (paused) 
 			S_PauseSound (); 
 		    else 
+		    // [crispy] Fixed bug when music was hearable with zero volume
+		    if (musicVolume)
 			S_ResumeSound (); 
 		    break; 
 					 
