@@ -282,7 +282,7 @@ static char *SelectDirectory(char *window_title)
     return result;
 }
 
-char *TXT_SelectFile(char *window_title, char **extensions)
+char *TXT_SelectFile(const char *window_title, char **extensions)
 {
     OPENFILENAME fm;
     char selected[MAX_PATH] = "";
@@ -621,8 +621,8 @@ char *TXT_SelectFile(const char *window_title, char **extensions)
     }
 
     argv = calloc(5 + NumExtensions(extensions), sizeof(char *));
-    argv[0] = ZENITY_BINARY;
-    argv[1] = "--file-selection";
+    argv[0] = strdup(ZENITY_BINARY);
+    argv[1] = strdup("--file-selection");
     argc = 2;
 
     if (window_title != NULL)
@@ -662,7 +662,7 @@ char *TXT_SelectFile(const char *window_title, char **extensions)
 
     result = ExecReadOutput(argv);
 
-    for (i = 2; i < argc; ++i)
+    for (i = 0; i < argc; ++i)
     {
         free(argv[i]);
     }
