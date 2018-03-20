@@ -215,9 +215,13 @@ P_StartButton
     }
     
     // [crispy] remove MAXBUTTONS limit
-    maxbuttons = maxbuttons ? 2 * maxbuttons : MAXBUTTONS;
-    buttonlist = I_Realloc(buttonlist, sizeof(*buttonlist) * maxbuttons);
-    return P_StartButton(line, w, texture, time);
+    {
+	const int maxbuttons_old = maxbuttons;
+	maxbuttons = maxbuttons ? 2 * maxbuttons : MAXBUTTONS;
+	buttonlist = I_Realloc(buttonlist, sizeof(*buttonlist) * maxbuttons);
+	memset(buttonlist + maxbuttons_old, 0, sizeof(*buttonlist) * (maxbuttons - maxbuttons_old));
+	return P_StartButton(line, w, texture, time);
+    }
 
     I_Error("P_StartButton: no button slots left!");
 }
