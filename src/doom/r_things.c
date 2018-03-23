@@ -60,7 +60,7 @@ typedef struct
 } maskdraw_t;
 
 
-static degenmobj_t laserspot_m = {0};
+static degenmobj_t laserspot_m = {{0}};
 degenmobj_t *laserspot = &laserspot_m;
 
 // [crispy] extendable, but the last char element must be zero,
