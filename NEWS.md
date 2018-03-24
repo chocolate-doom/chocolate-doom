@@ -12,6 +12,9 @@
     loaded.  (thanks Zodomaniac, chungy)
   * Fixed an exception thrown by the Windows kernel when debugging with
     GDB.  (thanks AXDOOMER)
+  * With aspect ratio correction disabled, the game can scale to any
+    arbitrary size and remove all black borders in full screen mode.
+    (thanks chungy)
 
 ### Build systems
   * Microsoft Visual Studio files have been removed due to technical
