@@ -1456,15 +1456,30 @@ void G_DoCompleted (void)
     wminfo.maxsecret = totalsecret; 
     wminfo.maxfrags = 0; 
 
-    // Set par time. Doom episode 4 doesn't have a par time, so this
-    // overflows into the cpars array. It's necessary to emulate this
-    // for statcheck regression testing.
+    // Set par time. Exceptions are added for purposes of
+    // statcheck regression testing.
     if (gamemode == commercial)
-	wminfo.partime = TICRATE*cpars[gamemap-1];
+    {
+        // map33 has no official time: initialize to zero
+        if (gamemap == 33)
+        {
+            wminfo.partime = 0;
+        }
+        else
+        {
+            wminfo.partime = TICRATE*cpars[gamemap-1];
+        }
+    }
+    // Doom episode 4 doesn't have a par time, so this
+    // overflows into the cpars array.
     else if (gameepisode < 4)
-	wminfo.partime = TICRATE*pars[gameepisode][gamemap];
+    {
+        wminfo.partime = TICRATE*pars[gameepisode][gamemap];
+    }
     else
+    {
         wminfo.partime = TICRATE*cpars[gamemap];
+    }
 
     wminfo.pnum = consoleplayer; 
  

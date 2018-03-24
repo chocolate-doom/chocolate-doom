@@ -20,6 +20,10 @@
     unmaintained in general, resulting in a very difficult process to
     get up to speed using this IDE and Chocolate Doom.
 
+### Doom
+  * Map33 intermission screen and map33-map35 automap names are
+    emulated. (thanks CapnClever)
+
 ### Hexen
   * ACS code has been hardened against potential security
     vulnerabilities.
