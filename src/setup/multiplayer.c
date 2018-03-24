@@ -69,7 +69,7 @@ static int found_iwad_selected = -1;
 
 static char *iwadfile;
 
-static char *wad_extensions[] = { "wad", "lmp", "deh", NULL };
+static const char *wad_extensions[] = { "wad", "lmp", "deh", NULL };
 
 static char *doom_skills[] =
 {

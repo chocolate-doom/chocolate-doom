@@ -40,7 +40,7 @@ static char *opltype_strings[] =
     "OPL3"
 };
 
-static char *cfg_extension[] = { "cfg", NULL };
+static const char *cfg_extension[] = { "cfg", NULL };
 
 // Config file variables:
 

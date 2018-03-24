@@ -33,12 +33,12 @@ struct txt_fileselect_s {
     txt_inputbox_t *inputbox;
     int size;
     char *prompt;
-    char **extensions;
+    const char **extensions;
 };
 
 // Dummy value to select a directory.
 
-char *TXT_DIRECTORY[] = { "__directory__", NULL };
+const char *TXT_DIRECTORY[] = { "__directory__", NULL };
 
 #ifndef _WIN32
 
@@ -155,7 +155,7 @@ int TXT_CanSelectFiles(void)
     return 0;
 }
 
-char *TXT_SelectFile(const char *window_title, char **extensions)
+char *TXT_SelectFile(const char *window_title, const char **extensions)
 {
     return NULL;
 }
@@ -210,7 +210,7 @@ static int InitLibraries(void)
 
 // Generate the "filter" string from the list of extensions.
 
-static char *GenerateFilterString(char **extensions)
+static char *GenerateFilterString(const char **extensions)
 {
     unsigned int result_len = 1;
     unsigned int i;
@@ -282,7 +282,7 @@ static char *SelectDirectory(char *window_title)
     return result;
 }
 
-char *TXT_SelectFile(const char *window_title, char **extensions)
+char *TXT_SelectFile(const char *window_title, const char **extensions)
 {
     OPENFILENAME fm;
     char selected[MAX_PATH] = "";
@@ -374,7 +374,7 @@ static char *CreateEscapedString(const char *original)
 
 // Build list of extensions, like: {"wad","lmp","txt"}
 
-static char *CreateExtensionsList(char **extensions)
+static char *CreateExtensionsList(const char **extensions)
 {
     char *result, *escaped;
     unsigned int result_len;
@@ -420,7 +420,7 @@ static char *CreateExtensionsList(char **extensions)
     return result;
 }
 
-static char *GenerateSelector(const char *const window_title, char **extensions)
+static char *GenerateSelector(const char *const window_title, const char **extensions)
 {
     const char *chooser;
     char *ext_list = NULL;
@@ -486,7 +486,7 @@ static char *GenerateSelector(const char *const window_title, char **extensions)
     return result;
 }
 
-static char *GenerateAppleScript(const char *window_title, char **extensions)
+static char *GenerateAppleScript(const char *window_title, const char **extensions)
 {
     char *selector, *result;
     size_t result_len;
@@ -516,7 +516,7 @@ int TXT_CanSelectFiles(void)
     return 1;
 }
 
-char *TXT_SelectFile(const char *window_title, char **extensions)
+char *TXT_SelectFile(const char *window_title, const char **extensions)
 {
     char *argv[4];
     char *result, *applescript;
@@ -546,7 +546,7 @@ char *TXT_SelectFile(const char *window_title, char **extensions)
 
 #define ZENITY_BINARY "/usr/bin/zenity"
 
-static unsigned int NumExtensions(char **extensions)
+static unsigned int NumExtensions(const char **extensions)
 {
     unsigned int result = 0;
 
@@ -607,7 +607,7 @@ static char *ExpandExtension(const char *orig)
     return newext;
 }
 
-char *TXT_SelectFile(const char *window_title, char **extensions)
+char *TXT_SelectFile(const char *window_title, const char **extensions)
 {
     unsigned int i;
     size_t len;
@@ -808,7 +808,7 @@ static void InputBoxChanged(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(fileselect))
 }
 
 txt_fileselect_t *TXT_NewFileSelector(char **variable, int size,
-                                      char *prompt, char **extensions)
+                                      char *prompt, const char **extensions)
 {
     txt_fileselect_t *fileselect;
 
