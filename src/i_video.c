@@ -290,15 +290,18 @@ void I_StartFrame (void)
 // ratio consistent with the aspect_ratio_correct variable.
 static void AdjustWindowSize(void)
 {
-    if (window_width * actualheight <= window_height * SCREENWIDTH)
+    if (aspect_ratio_correct || integer_scaling)
     {
-        // We round up window_height if the ratio is not exact; this leaves
-        // the result stable.
-        window_height = (window_width * actualheight + SCREENWIDTH - 1) / SCREENWIDTH;
-    }
-    else
-    {
-        window_width = window_height * SCREENWIDTH / actualheight;
+        if (window_width * actualheight <= window_height * SCREENWIDTH)
+        {
+            // We round up window_height if the ratio is not exact; this leaves
+            // the result stable.
+            window_height = (window_width * actualheight + SCREENWIDTH - 1) / SCREENWIDTH;
+        }
+        else
+        {
+            window_width = window_height * SCREENWIDTH / actualheight;
+        }
     }
 }
 
@@ -1240,9 +1243,12 @@ static void SetVideoMode(void)
     // time this also defines the aspect ratio that is preserved while scaling
     // and stretching the texture into the window.
 
-    SDL_RenderSetLogicalSize(renderer,
-                             SCREENWIDTH,
-                             actualheight);
+    if (aspect_ratio_correct || integer_scaling)
+    {
+        SDL_RenderSetLogicalSize(renderer,
+                                 SCREENWIDTH,
+                                 actualheight);
+    }
 
     // Force integer scales for resolution-independent rendering.
 
