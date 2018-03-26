@@ -99,8 +99,8 @@ switchlist_t alphSwitchList_vanilla[] =
 int		*switchlist;
 int		numswitches;
 static size_t	maxswitches;
-button_t        *buttonlist = NULL; // [crispy] remove MAXBUTTONS limit
-int		maxbuttons = 0; // [crispy] remove MAXBUTTONS limit
+button_t        *buttonlist; // [crispy] remove MAXBUTTONS limit
+int		maxbuttons; // [crispy] remove MAXBUTTONS limit
 
 //
 // P_InitSwitchList
@@ -173,6 +173,10 @@ void P_InitSwitchList(void)
     {
 	Z_ChangeTag(alphSwitchList, PU_CACHE);
     }
+
+    // [crispy] pre-allocate some memory for the buttonlist[] array
+    buttonlist = I_Realloc(NULL, sizeof(*buttonlist) * (maxbuttons = MAXBUTTONS));
+    memset(buttonlist, 0, sizeof(*buttonlist) * maxbuttons);
 }
 
 
@@ -216,10 +220,9 @@ P_StartButton
     
     // [crispy] remove MAXBUTTONS limit
     {
-	const int maxbuttons_old = maxbuttons;
-	maxbuttons = maxbuttons ? 2 * maxbuttons : MAXBUTTONS;
+	maxbuttons = 2 * maxbuttons;
 	buttonlist = I_Realloc(buttonlist, sizeof(*buttonlist) * maxbuttons);
-	memset(buttonlist + maxbuttons_old, 0, sizeof(*buttonlist) * (maxbuttons - maxbuttons_old));
+	memset(buttonlist + maxbuttons/2, 0, sizeof(*buttonlist) * maxbuttons/2);
 	return P_StartButton(line, w, texture, time);
     }
 
