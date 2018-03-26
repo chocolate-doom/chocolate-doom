@@ -1264,12 +1264,12 @@ void P_UpdateSpecials (void)
 		{
 			if (!buttonlist[i].line->backsector || !buttonlist[i].line->backsector->specialdata)
 			{
-				S_StartSound(buttonlist[i].soundorg,sfx_swtchn);
+				S_StartSoundOnce(buttonlist[i].soundorg,sfx_swtchn);
 			}
 		}
 		else
 		{
-		S_StartSound(&buttonlist[i].soundorg,sfx_swtchn);
+		S_StartSoundOnce(&buttonlist[i].soundorg,sfx_swtchn);
 		}
 		memset(&buttonlist[i],0,sizeof(button_t));
 	    }
