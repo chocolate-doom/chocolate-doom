@@ -304,7 +304,7 @@ static const unsigned int volume_mapping_table[] = {
 static opl_driver_ver_t opl_drv_ver = opl_doom_1_9;
 static boolean music_initialized = false;
 
-//static boolean musicpaused = false;
+static boolean musicpaused = false; // [crispy] track music pause state
 static int start_music_volume;
 static int current_music_volume;
 
@@ -634,11 +634,15 @@ static void SetChannelVolume(opl_channel_data_t *channel, unsigned int volume,
 
 // Set music volume (0 - 127)
 
+static void I_OPL_PauseSong(void);
+static void I_OPL_ResumeSong(void);
+
 static void I_OPL_SetMusicVolume(int volume)
 {
     unsigned int i;
 
-    if (current_music_volume == volume)
+    // [crispy] special-case zero music volume as this means mute
+    if (volume && current_music_volume == volume)
     {
         return;
     }
@@ -660,6 +664,22 @@ static void I_OPL_SetMusicVolume(int volume)
             SetChannelVolume(&channels[i], channels[i].volume_base, false);
         }
     }
+
+    // [crispy] if not already paused ...
+    if (!musicpaused)
+    {
+        // [crispy] ... zero music volume means mute ...
+        if (volume == 0)
+        {
+            I_OPL_PauseSong();
+            // [crispy] ... but muted in turn does not mean paused
+            musicpaused = false;
+        }
+        else
+        {
+            I_OPL_ResumeSong();
+        }
+}
 }
 
 static void VoiceKeyOff(opl_voice_t *voice)
@@ -1537,6 +1557,9 @@ static void I_OPL_PauseSong(void)
             VoiceKeyOff(&voices[i]);
         }
     }
+
+    // [crispy] track music pause state
+    musicpaused = true;
 }
 
 static void I_OPL_ResumeSong(void)
@@ -1546,7 +1569,14 @@ static void I_OPL_ResumeSong(void)
         return;
     }
 
+    // [crispy] do not resume if music is muted
+    if (current_music_volume)
+    {
     OPL_SetPaused(0);
+    }
+
+    // [crispy] track music pause state
+    musicpaused = false;
 }
 
 static void I_OPL_StopSong(void)
