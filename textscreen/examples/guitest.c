@@ -34,7 +34,7 @@ enum
 // also put some crazy extensions to test the escape function. a"b"c"""dd
 const char *extensions[] = { "wad", "lmp", "txt", "a\"b\"c\"\"\"dd", "",
      "\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"", NULL };
-char *radio_values[] = { "Badger", "Mushroom", "Snake" };
+const char *radio_values[] = { "Badger", "Mushroom", "Snake" };
 char *textbox_value = NULL;
 int numbox_value = 0;
 int radiobutton_value;
