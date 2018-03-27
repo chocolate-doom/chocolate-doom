@@ -88,7 +88,7 @@ void CloseWindow(TXT_UNCAST_ARG(button), void *user_data)
 
 void UnicodeWindow(TXT_UNCAST_ARG(widget), void *user_data)
 {
-    static char *strings[] = {
+    static const char *strings[] = {
         "lunedì", "martedì", "mercoledì", "giovedì",
         "venerdì", "sabato", "domenica",
     };

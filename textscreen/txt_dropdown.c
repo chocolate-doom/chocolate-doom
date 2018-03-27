@@ -288,7 +288,7 @@ txt_widget_class_t txt_dropdown_list_class =
     NULL,
 };
 
-txt_dropdown_list_t *TXT_NewDropdownList(int *variable, char **values, 
+txt_dropdown_list_t *TXT_NewDropdownList(int *variable, const char **values,
                                          int num_values)
 {
     txt_dropdown_list_t *list;
