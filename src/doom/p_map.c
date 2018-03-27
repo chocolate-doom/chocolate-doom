@@ -633,6 +633,11 @@ boolean P_ThingHeightClip (mobj_t* thing)
     {
 	// walking monsters rise and fall with the floor
 	thing->z = thing->floorz;
+	// [crispy] update player's viewz on sector move
+	if (thing->player)
+	{
+	    thing->player->viewz = thing->z + thing->player->viewheight;
+	}
     }
     else
     {
