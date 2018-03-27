@@ -81,7 +81,7 @@ void Operator(TXT_UNCAST_ARG(button), TXT_UNCAST_ARG(op))
     starting_input = 1;
 }
 
-void AddOperatorButton(txt_table_t *table, char *label, operator_t op)
+void AddOperatorButton(txt_table_t *table, const char *label, operator_t op)
 {
     char buf[10];
     operator_t *op_copy;
