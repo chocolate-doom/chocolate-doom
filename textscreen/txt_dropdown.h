@@ -43,7 +43,7 @@ struct txt_dropdown_list_s
 {
     txt_widget_t widget;
     int *variable;
-    char **values;
+    const char **values;
     int num_values;
 };
 
@@ -62,7 +62,7 @@ struct txt_dropdown_list_s
  */
 
 txt_dropdown_list_t *TXT_NewDropdownList(int *variable, 
-                                         char **values, int num_values);
+                                         const char **values, int num_values);
 
 #endif /* #ifndef TXT_DROPDOWN_H */
 

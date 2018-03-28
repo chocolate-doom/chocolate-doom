@@ -59,7 +59,7 @@ static const iwad_t fallback_iwads[] = {
 // Array of IWADs found to be installed
 
 static const iwad_t **found_iwads;
-static char **iwad_labels;
+static const char **iwad_labels;
 
 // Index of the currently selected IWAD
 
@@ -71,49 +71,49 @@ static char *iwadfile;
 
 static const char *wad_extensions[] = { "wad", "lmp", "deh", NULL };
 
-static char *doom_skills[] =
+static const char *doom_skills[] =
 {
     "I'm too young to die.", "Hey, not too rough.", "Hurt me plenty.",
     "Ultra-Violence.", "NIGHTMARE!",
 };
 
-static char *chex_skills[] =
+static const char *chex_skills[] =
 {
     "Easy does it", "Not so sticky", "Gobs of goo", "Extreme ooze",
     "SUPER SLIMEY!"
 };
 
-static char *heretic_skills[] =
+static const char *heretic_skills[] =
 {
     "Thou needeth a wet-nurse", "Yellowbellies-R-us", "Bringest them oneth",
     "Thou art a smite-meister", "Black plague possesses thee"
 };
 
-static char *hexen_fighter_skills[] =
+static const char *hexen_fighter_skills[] =
 {
     "Squire", "Knight", "Warrior", "Berserker", "Titan"
 };
 
-static char *hexen_cleric_skills[] =
+static const char *hexen_cleric_skills[] =
 {
     "Altar boy", "Acolyte", "Priest", "Cardinal", "Pope"
 };
 
-static char *hexen_mage_skills[] =
+static const char *hexen_mage_skills[] =
 {
     "Apprentice", "Enchanter", "Sorceror", "Warlock", "Archimage"
 };
 
-static char *strife_skills[] =
+static const char *strife_skills[] =
 {
     "Training", "Rookie", "Veteran", "Elite", "Bloodbath"
 };
 
-static char *character_classes[] = { "Fighter", "Cleric", "Mage" };
+static const char *character_classes[] = { "Fighter", "Cleric", "Mage" };
 
-static char *gamemodes[] = { "Co-operative", "Deathmatch", "Deathmatch 2.0" };
+static const char *gamemodes[] = { "Co-operative", "Deathmatch", "Deathmatch 2.0" };
 
-static char *strife_gamemodes[] =
+static const char *strife_gamemodes[] =
 {
     "Normal deathmatch",
     "Items respawn", // (altdeath)

@@ -32,7 +32,7 @@ struct txt_fileselect_s {
     txt_widget_t widget;
     txt_inputbox_t *inputbox;
     int size;
-    char *prompt;
+    const char *prompt;
     const char **extensions;
 };
 
@@ -808,7 +808,7 @@ static void InputBoxChanged(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(fileselect))
 }
 
 txt_fileselect_t *TXT_NewFileSelector(char **variable, int size,
-                                      char *prompt, const char **extensions)
+                                      const char *prompt, const char **extensions)
 {
     txt_fileselect_t *fileselect;
 
