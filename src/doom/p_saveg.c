@@ -1654,8 +1654,9 @@ void P_UnArchiveThinkers (void)
             mobj->tracer = NULL;
 	    P_SetThingPosition (mobj);
 	    mobj->info = &mobjinfo[mobj->type];
-	    mobj->floorz = mobj->subsector->sector->floorheight;
-	    mobj->ceilingz = mobj->subsector->sector->ceilingheight;
+	    // [crispy] killough 2/28/98: Fix for falling down into a wall after savegame loaded
+//	    mobj->floorz = mobj->subsector->sector->floorheight;
+//	    mobj->ceilingz = mobj->subsector->sector->ceilingheight;
 	    mobj->thinker.function.acp1 = (actionf_p1)P_MobjThinker;
 	    P_AddThinker (&mobj->thinker);
 	    break;
