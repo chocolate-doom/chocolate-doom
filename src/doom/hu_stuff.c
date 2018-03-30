@@ -55,8 +55,8 @@
 #define HU_TITLE2	(mapnames_commercial[gamemap-1])
 #define HU_TITLEP	(mapnames_commercial[gamemap-1 + 32])
 #define HU_TITLET	(mapnames_commercial[gamemap-1 + 64])
-#define HU_TITLEN	(mapnames_commercial[gamemap-1 + 96])
-#define HU_TITLEM	(mapnames_commercial[gamemap-1 + 105])
+#define HU_TITLEN	(mapnames_commercial[gamemap-1 + 96 + 3])
+#define HU_TITLEM	(mapnames_commercial[gamemap-1 + 105 + 3])
 #define HU_TITLE_CHEX   (mapnames_chex[(gameepisode-1)*9+gamemap-1])
 #define HU_TITLEHEIGHT	1
 #define HU_TITLEX	0
@@ -360,6 +360,12 @@ char *mapnames_commercial[] =
     THUSTR_31,
     THUSTR_32,
 
+    // Emulation: TNT maps 33-35 can be warped to and played if they exist
+    // so include blank names instead of spilling over
+    "",
+    "",
+    ""
+    ,
     NHUSTR_1,
     NHUSTR_2,
     NHUSTR_3,
@@ -637,6 +643,11 @@ void HU_Start(void)
 	break;
       case doom2:
 	 s = HU_TITLE2;
+         // Pre-Final Doom compatibility: map33-map35 names don't spill over
+         if (gameversion <= exe_doom_1_9 && gamemap >= 33 && false) // [crispy] disable
+         {
+             s = "";
+         }
 	 break;
       case pack_plut:
 	s = HU_TITLEP;

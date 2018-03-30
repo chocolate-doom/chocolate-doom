@@ -1708,36 +1708,57 @@ void G_DoCompleted (void)
     wminfo.maxsecret = totalsecret; 
     wminfo.maxfrags = 0; 
 
-    // Set par time. Doom episode 4 doesn't have a par time, so this
-    // overflows into the cpars array. It's necessary to emulate this
-    // for statcheck regression testing.
     if (gamemap == 33 || (crispy->havee1m10 && gameepisode == 1 && gamemap == 10))
-	// [crispy] par time for inofficial maps sucks
-	wminfo.partime = INT_MAX;
+    {
+        // [crispy] par time for inofficial maps sucks
+        wminfo.partime = INT_MAX;
+    }
     else
     if (gamemission == pack_nerve && crispy->singleplayer)
-	wminfo.partime = TICRATE*npars[gamemap-1];
+    {
+        wminfo.partime = TICRATE*npars[gamemap-1];
+    }
     else
+    // Set par time. Exceptions are added for purposes of
+    // statcheck regression testing.
     if (gamemode == commercial)
     {
-	// [crispy] support [PARS] sections in BEX files
-	if (bex_cpars[gamemap-1])
-	    wminfo.partime = TICRATE*bex_cpars[gamemap-1];
-	else
-	wminfo.partime = TICRATE*cpars[gamemap-1];
+        // map33 has no official time: initialize to zero
+        if (gamemap == 33 && false) // [crispy] disable
+        {
+            wminfo.partime = 0;
+        }
+        else
+        // [crispy] support [PARS] sections in BEX files
+        if (bex_cpars[gamemap-1])
+        {
+            wminfo.partime = TICRATE*bex_cpars[gamemap-1];
+        }
+        else
+        {
+            wminfo.partime = TICRATE*cpars[gamemap-1];
+        }
     }
+    // Doom episode 4 doesn't have a par time, so this
+    // overflows into the cpars array.
     else if (gameepisode < 4)
     {
-	// [crispy] support [PARS] sections in BEX files
-	if (bex_pars[gameepisode][gamemap])
-	    wminfo.partime = TICRATE*bex_pars[gameepisode][gamemap];
-	else
-	wminfo.partime = TICRATE*pars[gameepisode][gamemap];
+        // [crispy] support [PARS] sections in BEX files
+        if (bex_pars[gameepisode][gamemap])
+        {
+            wminfo.partime = TICRATE*bex_pars[gameepisode][gamemap];
+        }
+        else
+        wminfo.partime = TICRATE*pars[gameepisode][gamemap];
     }
     else if (gameepisode == 4 && crispy->singleplayer)
-	wminfo.partime = TICRATE*e4pars[gamemap];
+    {
+        wminfo.partime = TICRATE*e4pars[gamemap];
+    }
     else
+    {
         wminfo.partime = TICRATE*cpars[gamemap];
+    }
 
     wminfo.pnum = consoleplayer; 
  

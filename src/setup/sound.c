@@ -34,13 +34,13 @@ typedef enum
     NUM_OPLMODES,
 } oplmode_t;
 
-static char *opltype_strings[] =
+static const char *opltype_strings[] =
 {
     "OPL2",
     "OPL3"
 };
 
-static char *cfg_extension[] = { "cfg", NULL };
+static const char *cfg_extension[] = { "cfg", NULL };
 
 // Config file variables:
 

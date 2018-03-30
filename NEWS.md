@@ -12,6 +12,9 @@
     loaded.  (thanks Zodomaniac, chungy)
   * Fixed an exception thrown by the Windows kernel when debugging with
     GDB.  (thanks AXDOOMER)
+  * With aspect ratio correction disabled, the game can scale to any
+    arbitrary size and remove all black borders in full screen mode.
+    (thanks chungy)
 
 ### Build systems
   * Microsoft Visual Studio files have been removed due to technical
@@ -19,6 +22,10 @@
     compatibility, difficult dependency management, as well as being
     unmaintained in general, resulting in a very difficult process to
     get up to speed using this IDE and Chocolate Doom.
+
+### Doom
+  * Map33 intermission screen and map33-map35 automap names are
+    emulated. (thanks CapnClever)
 
 ### Hexen
   * ACS code has been hardened against potential security

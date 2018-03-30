@@ -199,7 +199,7 @@ static void AdvancedDisplayConfig(TXT_UNCAST_ARG(widget),
     TXT_SetColumnWidths(window, 40);
 
     TXT_AddWidgets(window,
-        ar_checkbox = TXT_NewCheckBox("Fix aspect ratio",
+        ar_checkbox = TXT_NewCheckBox("Force correct aspect ratio",
                                       &aspect_ratio_correct),
         TXT_If(gamemission == heretic || gamemission == hexen
             || gamemission == strife,
