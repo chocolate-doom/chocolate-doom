@@ -83,7 +83,7 @@ static deh_context_t *DEH_NewContext(void)
 // Open a dehacked file for reading
 // Returns NULL if open failed
 
-deh_context_t *DEH_OpenFile(char *filename)
+deh_context_t *DEH_OpenFile(const char *filename)
 {
     FILE *fstream;
     deh_context_t *context;
