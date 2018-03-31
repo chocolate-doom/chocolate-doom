@@ -68,7 +68,7 @@ static int sprite_frames_alloced;
 //
 // Returns -1 if not found
 
-static int FindInList(searchlist_t *list, char *name)
+static int FindInList(searchlist_t *list, const char *name)
 {
     int i;
 
