@@ -40,7 +40,7 @@ char**		myargv;
 // or 0 if not present
 //
 
-int M_CheckParmWithArgs(char *check, int num_args)
+int M_CheckParmWithArgs(const char *check, int num_args)
 {
     int i;
 
