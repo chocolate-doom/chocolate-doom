@@ -706,6 +706,16 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_STRING(window_position),
 
     //!
+    //
+    // Scaling filter to use, accepted values are "nearest" (default)
+    // and "linear" - nearest gives a crisper display, but linear
+    // might produce more pleasing results at low resolutions
+    // (sub-640x480).
+    //
+
+    CONFIG_VARIABLE_STRING(scaling_filter),
+
+    //!
     // If non-zero, the game will run in full screen mode.  If zero,
     // the game will run in a window.
     //

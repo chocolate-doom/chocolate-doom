@@ -86,6 +86,7 @@ extern boolean screensaver_mode;
 extern int usegamma;
 extern pixel_t *I_VideoBuffer;
 
+extern char *scaling_filter;
 extern int screen_width;
 extern int screen_height;
 extern int fullscreen;

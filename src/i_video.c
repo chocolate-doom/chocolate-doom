@@ -104,6 +104,10 @@ char *video_driver = "";
 
 char *window_position = "center";
 
+// Scaling filter applied
+
+char *scaling_filter = "nearest";
+
 // SDL display number on which to run.
 
 int video_display = 0;
@@ -1290,11 +1294,20 @@ static void SetVideoMode(void)
         SDL_DestroyTexture(texture);
     }
 
-    // Set the scaling quality for rendering the intermediate texture into
-    // the upscaled texture to "nearest", which is gritty and pixelated and
-    // resembles software scaling pretty well.
+    // Set the scaling quality for rendering and immediate texture.
+    // Defaults to "nearest", which is gritty and pixelated and resembles
+    // software scaling pretty well.  "linear" can be set as an alternative,
+    // which may give better results at low resolutions.
 
-    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");
+    if (!strcmp(scaling_filter, "linear"))
+    {
+        SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
+    }
+    else
+    {
+        scaling_filter = "nearest";
+        SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");
+    }
 
     // Create the intermediate texture that the RGBA surface gets loaded into.
     // The SDL_TEXTUREACCESS_STREAMING flag means that this texture's content
@@ -1456,6 +1469,7 @@ void I_BindVideoVariables(void)
     M_BindIntVariable("grabmouse",                 &grabmouse);
     M_BindStringVariable("video_driver",           &video_driver);
     M_BindStringVariable("window_position",        &window_position);
+    M_BindStringVariable("scaling_filter",         &scaling_filter);
     M_BindIntVariable("usegamma",                  &usegamma);
     M_BindIntVariable("png_screenshots",           &png_screenshots);
 }
