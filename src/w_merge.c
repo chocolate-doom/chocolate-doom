@@ -82,8 +82,8 @@ static int FindInList(searchlist_t *list, const char *name)
 }
 
 static boolean SetupList(searchlist_t *list, searchlist_t *src_list,
-                         char *startname, char *endname,
-                         char *startname2, char *endname2)
+                         const char *startname, const char *endname,
+                         const char *startname2, const char *endname2)
 {
     int startlump, endlump;
 
