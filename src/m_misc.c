@@ -236,7 +236,7 @@ int M_ReadFile(const char *name, byte **buffer)
 
 char *M_TempFile(const char *s)
 {
-    char *tempdir;
+    const char *tempdir;
 
 #ifdef _WIN32
 
