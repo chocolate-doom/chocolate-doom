@@ -448,7 +448,7 @@ static void CheckDOSDefaults(void)
 // Returns true if the specified path is a path to a file
 // of the specified name.
 
-static boolean DirIsFile(char *path, char *filename)
+static boolean DirIsFile(const char *path, char *filename)
 {
     size_t path_len;
     size_t filename_len;
