@@ -61,7 +61,7 @@ static void CopyRegion(pixel_t *dest, int dest_pitch,
     }
 }
 
-static void SaveDiskData(char *disk_lump, int xoffs, int yoffs)
+static void SaveDiskData(const char *disk_lump, int xoffs, int yoffs)
 {
     pixel_t *tmpscreen;
     patch_t *disk;
