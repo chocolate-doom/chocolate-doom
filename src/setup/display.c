@@ -65,7 +65,6 @@ static window_size_t window_sizes_scaled[] =
 
 static char *video_driver = "";
 static char *window_position = "";
-static char *scaling_filter = "nearest";
 static int aspect_ratio_correct = 1;
 static int integer_scaling = 0;
 static int vga_porch_flash = 0;
@@ -262,7 +261,6 @@ void BindDisplayVariables(void)
     M_BindIntVariable("startup_delay",             &startup_delay);
     M_BindStringVariable("video_driver",           &video_driver);
     M_BindStringVariable("window_position",        &window_position);
-    M_BindStringVariable("scaling_filter",         &scaling_filter);
     M_BindIntVariable("usegamma",                  &usegamma);
     M_BindIntVariable("png_screenshots",           &png_screenshots);
     M_BindIntVariable("vga_porch_flash",           &vga_porch_flash);
