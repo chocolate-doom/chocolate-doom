@@ -1482,18 +1482,35 @@ void I_RenderReadPixels(byte **data, int *w, int *h, int *p)
 	// [crispy] adjust cropping rectangle if necessary
 	rect.x = rect.y = 0;
 	SDL_GetRendererOutputSize(renderer, &rect.w, &rect.h);
-	if (rect.w * actualheight > rect.h * SCREENWIDTH)
+	if (aspect_ratio_correct || integer_scaling)
 	{
-		temp = rect.w;
-		rect.w = rect.h * SCREENWIDTH / actualheight;
-		rect.x = (temp - rect.w) / 2;
-	}
-	else
-	if (rect.h * SCREENWIDTH > rect.w * actualheight)
-	{
-		temp = rect.h;
-		rect.h = rect.w * actualheight / SCREENWIDTH;
-		rect.y = (temp - rect.h) / 2;
+		if (integer_scaling)
+		{
+			int temp1, temp2, scale;
+			temp1 = rect.w;
+			temp2 = rect.h;
+			scale = MIN(rect.w / SCREENWIDTH, rect.h / actualheight);
+
+			rect.w = SCREENWIDTH * scale;
+			rect.h = actualheight * scale;
+
+			rect.x = (temp1 - rect.w) / 2;
+			rect.y = (temp2 - rect.h) / 2;
+		}
+		else
+		if (rect.w * actualheight > rect.h * SCREENWIDTH)
+		{
+			temp = rect.w;
+			rect.w = rect.h * SCREENWIDTH / actualheight;
+			rect.x = (temp - rect.w) / 2;
+		}
+		else
+		if (rect.h * SCREENWIDTH > rect.w * actualheight)
+		{
+			temp = rect.h;
+			rect.h = rect.w * actualheight / SCREENWIDTH;
+			rect.y = (temp - rect.h) / 2;
+		}
 	}
 
 	// [crispy] native PNG pixel format
