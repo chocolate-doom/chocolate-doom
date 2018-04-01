@@ -636,7 +636,14 @@ boolean P_ThingHeightClip (mobj_t* thing)
 	// [crispy] update player's viewz on sector move
 	if (thing->player)
 	{
-	    thing->player->viewz = thing->z + thing->player->viewheight;
+	    player_t *const player = thing->player;
+
+	    player->viewz = player->mo->z + player->viewheight;
+
+	    if (player->viewz > player->mo->ceilingz - 4*FRACUNIT)
+	    {
+		player->viewz = player->mo->ceilingz - 4*FRACUNIT;
+	    }
 	}
     }
     else
