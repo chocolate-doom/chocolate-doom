@@ -417,10 +417,12 @@ void WI_drawLF(void)
 {
     int y = WI_TITLEY;
 
-    // [crispy] prevent crashes with maps > 33
-    if ((unsigned)wbs->last >= NUMCMAPS)
+    // [crispy] prevent crashes with maps without map title graphics lump
+    if ((gamemode == commercial && (unsigned)wbs->last >= NUMCMAPS) ||
+        (gamemode != commercial && (unsigned)wbs->last >= (crispy->havee1m10 ? NUMMAPS + 1 : NUMMAPS)))
     {
-	return;
+        V_DrawPatch((SCREENWIDTH - SHORT(finished->width)) / 2, y, finished);
+        return;
     }
 
     if (gamemode != commercial || wbs->last < NUMCMAPS)
@@ -460,10 +462,11 @@ void WI_drawEL(void)
 {
     int y = WI_TITLEY;
 
-    // [crispy] prevent crashes with maps > 33
-    if ((unsigned)wbs->last >= NUMCMAPS)
+    // [crispy] prevent crashes with maps without map title graphics lump
+    if ((gamemode == commercial && (unsigned)wbs->next >= NUMCMAPS) ||
+        (gamemode != commercial && (unsigned)wbs->next >= (crispy->havee1m10 ? NUMMAPS + 1 : NUMMAPS)))
     {
-	return;
+        return;
     }
 
     // draw "Entering"
