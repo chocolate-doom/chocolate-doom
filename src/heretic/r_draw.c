@@ -50,6 +50,7 @@ int dc_yl;
 int dc_yh;
 fixed_t dc_iscale;
 fixed_t dc_texturemid;
+int dc_texheight;
 byte *dc_source;                // first pixel in a column (possibly virtual)
 
 int dccount;                    // just for profiling
@@ -59,6 +60,7 @@ void R_DrawColumn(void)
     int count;
     byte *dest;
     fixed_t frac, fracstep;
+    int heightmask = dc_texheight - 1;
 
     count = dc_yh - dc_yl;
     if (count < 0)
@@ -74,13 +76,35 @@ void R_DrawColumn(void)
     fracstep = dc_iscale;
     frac = dc_texturemid + (dc_yl - centery) * fracstep;
 
+  if (dc_texheight & heightmask) // not a power of 2 -- killough
+  {
+    heightmask++;
+    heightmask <<= FRACBITS;
+
+    if (frac < 0)
+	while ((frac += heightmask) < 0);
+    else
+	while (frac >= heightmask)
+	    frac -= heightmask;
+
     do
     {
-        *dest = dc_colormap[dc_source[(frac >> FRACBITS) & 127]];
+	*dest = dc_colormap[dc_source[frac>>FRACBITS]];
+	dest += SCREENWIDTH;
+	if ((frac += fracstep) >= heightmask)
+	    frac -= heightmask;
+    } while (count--);
+  }
+  else // texture height is a power of 2 -- killough
+  {
+    do
+    {
+        *dest = dc_colormap[dc_source[(frac >> FRACBITS) & heightmask]];
         dest += SCREENWIDTH;
         frac += fracstep;
     }
     while (count--);
+  }
 }
 
 void R_DrawColumnLow(void)
