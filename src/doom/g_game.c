@@ -2113,7 +2113,7 @@ void G_BeginRecording (void)
 // G_PlayDemo 
 //
 
-char*	defdemoname; 
+const char *defdemoname;
  
 void G_DeferedPlayDemo (char* name) 
 { 
