@@ -331,7 +331,7 @@ void D_Display (void)
 
 static void EnableLoadingDisk(void)
 {
-    char *disk_lump_name;
+    const char *disk_lump_name;
 
     if (show_diskicon)
     {
