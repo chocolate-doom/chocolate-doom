@@ -669,7 +669,7 @@ static char *banners[] =
 static char *GetGameName(char *gamename)
 {
     size_t i;
-    char *deh_sub;
+    const char *deh_sub;
     
     for (i=0; i<arrlen(banners); ++i)
     {
