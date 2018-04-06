@@ -168,6 +168,8 @@ static const inline byte drawpatchpx10 (const byte dest, const byte source)
 static const inline byte drawpatchpx11 (const byte dest, const byte source)
 {return tranmap[(dest<<8)+dp_translation[source]];}
 
+static fixed_t dx, dxi, dy, dyi;
+
 static void V_DrawPatchCrispy(int x, int y, patch_t *patch, int r)
 { 
     int count;
@@ -177,7 +179,7 @@ static void V_DrawPatchCrispy(int x, int y, patch_t *patch, int r)
     pixel_t *dest;
     byte *source;
     byte *desttop2, *dest2;
-    int w, f;
+    int w;
 
     // [crispy] four different rendering functions
     const byte (* drawpatchpx) (const byte dest, const byte source) =
@@ -208,84 +210,41 @@ static void V_DrawPatchCrispy(int x, int y, patch_t *patch, int r)
     V_MarkRect(x, y, SHORT(patch->width), SHORT(patch->height));
 
     col = 0;
-    desttop = dest_screen + (y << hires) * SCREENWIDTH + x;
-    desttop2 = dest_screen + ((y + r) << hires) * SCREENWIDTH + x + r;
+    desttop = dest_screen + ((y * dy) >> FRACBITS) * SCREENWIDTH + ((x * dx) >> FRACBITS);
+    desttop2 = dest_screen + (((y + r) * dy) >> FRACBITS) * SCREENWIDTH + (((x + r) * dx) >> FRACBITS);
 
     w = SHORT(patch->width);
 
-    for ( ; col<w ; x++, col++, desttop++, desttop2++)
+    for ( ; col<w << FRACBITS ; x++, col+=dxi, desttop++, desttop2++)
     {
-        column = (column_t *)((byte *)patch + LONG(patch->columnofs[col]));
+        column = (column_t *)((byte *)patch + LONG(patch->columnofs[col >> FRACBITS]));
 
         // step through the posts in a column
         while (column->topdelta != 0xff)
         {
-          for (f = 0; f <= hires; f++)
-          {
+            const int height = ((y + column->topdelta + column->length) * dy) >> FRACBITS;
+            int srccol = 0;
             source = (byte *)column + 3;
-            dest = desttop + column->topdelta*(SCREENWIDTH << hires) + (x * hires) + f;
-            dest2 = desttop2 + column->topdelta * (SCREENWIDTH << hires) + (x * hires) + f;
-            count = column->length;
-
-            // [crispy] prevent framebuffer overflows
-            {
-                int tmpy = y + column->topdelta;
-
-                // [crispy] too far left
-                if (x < 0)
-                {
-                    continue;
-                }
-
-                // [crispy] too far right / width
-                if (x >= ORIGWIDTH)
-                {
-                    break;
-                }
-
-                // [crispy] too high
-                while (tmpy < 0)
-                {
-                    count--;
-                    source++;
-                    dest += (SCREENWIDTH << hires);
-                    tmpy++;
-                }
-
-                // [crispy] too low / height
-                while (tmpy + count > ORIGHEIGHT)
-                {
-                    count--;
-                }
-
-                // [crispy] nothing left to draw?
-                if (count < 1)
-                {
-                    continue;
-                }
-            }
+            dest = desttop + ((column->topdelta * dy) >> FRACBITS)*SCREENWIDTH;
+            dest2 = desttop2 + ((column->topdelta * dy) >> FRACBITS)*SCREENWIDTH;
+            count = (column->length * dy) >> FRACBITS;
 
             while (count--)
             {
-                if (hires)
-                {
-                    if (r)
-                    {
-                        *dest2 = tinttable[*dest2];
-                        dest2 += SCREENWIDTH;
-                    }
-                    *dest = drawpatchpx(*dest, *source);
-                    dest += SCREENWIDTH;
-                }
                 if (r)
                 {
                     *dest2 = tinttable[*dest2];
                     dest2 += SCREENWIDTH;
                 }
-                *dest = drawpatchpx(*dest, *source++);
+
+                // [crispy] prevent framebuffer overflows
+                if (height > count)
+                {
+                    *dest = drawpatchpx(*dest, source[srccol >> FRACBITS]);
+                }
+                srccol += dyi;
                 dest += SCREENWIDTH;
             }
-          }
             column = (column_t *)((byte *)column + column->length + 4);
         }
     }
@@ -320,7 +279,7 @@ void V_DrawPatchFlipped(int x, int y, patch_t *patch)
     pixel_t *desttop;
     pixel_t *dest;
     byte *source; 
-    int w, f;
+    int w; 
  
     y -= SHORT(patch->topoffset); 
     x -= SHORT(patch->leftoffset); 
@@ -345,72 +304,33 @@ void V_DrawPatchFlipped(int x, int y, patch_t *patch)
     V_MarkRect (x, y, SHORT(patch->width), SHORT(patch->height));
 
     col = 0;
-    desttop = dest_screen + (y << hires) * SCREENWIDTH + x;
+    desttop = dest_screen + ((y * dy) >> FRACBITS) * SCREENWIDTH + ((x * dx) >> FRACBITS);
 
     w = SHORT(patch->width);
 
-    for ( ; col<w ; x++, col++, desttop++)
+    for ( ; col<w << FRACBITS ; x++, col+=dxi, desttop++)
     {
-        column = (column_t *)((byte *)patch + LONG(patch->columnofs[w-1-col]));
+        column = (column_t *)((byte *)patch + LONG(patch->columnofs[w-1-(col >> FRACBITS)]));
 
         // step through the posts in a column
         while (column->topdelta != 0xff )
         {
-          for (f = 0; f <= hires; f++)
-          {
+            const int height = ((y + column->topdelta + column->length) * dy) >> FRACBITS;
+            int srccol = 0;
             source = (byte *)column + 3;
-            dest = desttop + column->topdelta*(SCREENWIDTH << hires) + (x * hires) + f;
-            count = column->length;
-
-            // [crispy] prevent framebuffer overflows
-            {
-                int tmpy = y + column->topdelta;
-
-                // [crispy] too far left
-                if (x < 0)
-                {
-                    continue;
-                }
-
-                // [crispy] too far right / width
-                if (x >= ORIGWIDTH)
-                {
-                    break;
-                }
-
-                // [crispy] too high
-                while (tmpy < 0)
-                {
-                    count--;
-                    source++;
-                    dest += (SCREENWIDTH << hires);
-                    tmpy++;
-                }
-
-                // [crispy] too low / height
-                while (tmpy + count > ORIGHEIGHT)
-                {
-                    count--;
-                }
-
-                // [crispy] nothing left to draw?
-                if (count < 1)
-                {
-                    continue;
-                }
-            }
+            dest = desttop + ((column->topdelta * dy) >> FRACBITS)*SCREENWIDTH;
+            count = (column->length * dy) >> FRACBITS;
 
             while (count--)
             {
-                if (hires)
+                // [crispy] prevent framebuffer overflows
+                if (height > count)
                 {
-                    *dest = *source;
-                    dest += SCREENWIDTH;
+                    *dest = source[srccol >> FRACBITS];
                 }
-                *dest = *source++;
+                srccol += dyi;
                 dest += SCREENWIDTH;
             }
-          }
             column = (column_t *)((byte *)column + column->length + 4);
         }
     }
@@ -440,7 +360,7 @@ void V_DrawTLPatch(int x, int y, patch_t * patch)
     column_t *column;
     pixel_t *desttop, *dest;
     byte *source;
-    int w, f;
+    int w;
 
     y -= SHORT(patch->topoffset);
     x -= SHORT(patch->leftoffset);
@@ -454,34 +374,28 @@ void V_DrawTLPatch(int x, int y, patch_t * patch)
     }
 
     col = 0;
-    desttop = dest_screen + (y << hires) * SCREENWIDTH + x;
+    desttop = dest_screen + ((y * dy) >> FRACBITS) * SCREENWIDTH + ((x * dx) >> FRACBITS);
 
     w = SHORT(patch->width);
-    for (; col < w; x++, col++, desttop++)
+    for (; col < w << FRACBITS; x++, col+=dxi, desttop++)
     {
-        column = (column_t *) ((byte *) patch + LONG(patch->columnofs[col]));
+        column = (column_t *) ((byte *) patch + LONG(patch->columnofs[col >> FRACBITS]));
 
         // step through the posts in a column
 
         while (column->topdelta != 0xff)
         {
-          for (f = 0; f <= hires; f++)
-          {
+            int srccol = 0;
             source = (byte *) column + 3;
-            dest = desttop + column->topdelta * (SCREENWIDTH << hires) + (x * hires) + f;
-            count = column->length;
+            dest = desttop + ((column->topdelta * dy) >> FRACBITS) * SCREENWIDTH;
+            count = (column->length * dy) >> FRACBITS;
 
             while (count--)
             {
-                if (hires)
-                {
-                    *dest = tinttable[((*dest) << 8) + *source];
-                    dest += SCREENWIDTH;
-                }
-                *dest = tinttable[((*dest) << 8) + *source++];
+                *dest = tinttable[((*dest) << 8) + source[srccol >> FRACBITS]];
+                srccol += dyi;
                 dest += SCREENWIDTH;
             }
-          }
             column = (column_t *) ((byte *) column + column->length + 4);
         }
     }
@@ -499,7 +413,7 @@ void V_DrawXlaPatch(int x, int y, patch_t * patch)
     column_t *column;
     pixel_t *desttop, *dest;
     byte *source;
-    int w, f;
+    int w;
 
     y -= SHORT(patch->topoffset);
     x -= SHORT(patch->leftoffset);
@@ -511,35 +425,28 @@ void V_DrawXlaPatch(int x, int y, patch_t * patch)
     }
 
     col = 0;
-    desttop = dest_screen + (y << hires) * SCREENWIDTH + x;
+    desttop = dest_screen + ((y * dy) >> FRACBITS) * SCREENWIDTH + ((x * dx) >> FRACBITS);
 
     w = SHORT(patch->width);
-    for(; col < w; x++, col++, desttop++)
+    for(; col < w << FRACBITS; x++, col+=dxi, desttop++)
     {
-        column = (column_t *) ((byte *) patch + LONG(patch->columnofs[col]));
+        column = (column_t *) ((byte *) patch + LONG(patch->columnofs[col >> FRACBITS]));
 
         // step through the posts in a column
 
         while(column->topdelta != 0xff)
         {
-          for (f = 0; f <= hires; f++)
-          {
+            int srccol = 0;
             source = (byte *) column + 3;
-            dest = desttop + column->topdelta * (SCREENWIDTH << hires) + (x * hires) + f;
-            count = column->length;
+            dest = desttop + ((column->topdelta * dy) >> FRACBITS) * SCREENWIDTH;
+            count = (column->length * dy) >> FRACBITS;
 
             while(count--)
             {
-                if (hires)
-                {
-                    *dest = xlatab[*dest + ((*source) << 8)];
-                    dest += SCREENWIDTH;
-                }
-                *dest = xlatab[*dest + ((*source) << 8)];
-                source++;
+                *dest = xlatab[*dest + (source[srccol >> FRACBITS] << 8)];
+                srccol += dyi;
                 dest += SCREENWIDTH;
             }
-          }
             column = (column_t *) ((byte *) column + column->length + 4);
         }
     }
@@ -557,7 +464,7 @@ void V_DrawAltTLPatch(int x, int y, patch_t * patch)
     column_t *column;
     pixel_t *desttop, *dest;
     byte *source;
-    int w, f;
+    int w;
 
     y -= SHORT(patch->topoffset);
     x -= SHORT(patch->leftoffset);
@@ -571,34 +478,28 @@ void V_DrawAltTLPatch(int x, int y, patch_t * patch)
     }
 
     col = 0;
-    desttop = dest_screen + (y << hires) * SCREENWIDTH + x;
+    desttop = dest_screen + ((y * dy) >> FRACBITS) * SCREENWIDTH + ((x * dx) >> FRACBITS);
 
     w = SHORT(patch->width);
-    for (; col < w; x++, col++, desttop++)
+    for (; col < w << FRACBITS; x++, col+=dxi, desttop++)
     {
-        column = (column_t *) ((byte *) patch + LONG(patch->columnofs[col]));
+        column = (column_t *) ((byte *) patch + LONG(patch->columnofs[col >> FRACBITS]));
 
         // step through the posts in a column
 
         while (column->topdelta != 0xff)
         {
-          for (f = 0; f <= hires; f++)
-          {
+            int srccol = 0;
             source = (byte *) column + 3;
-            dest = desttop + column->topdelta * (SCREENWIDTH << hires) + (x * hires) + f;
-            count = column->length;
+            dest = desttop + ((column->topdelta * dy) >> FRACBITS) * SCREENWIDTH;
+            count = (column->length * dy) >> FRACBITS;
 
             while (count--)
             {
-                if (hires)
-                {
-                    *dest = tinttable[((*dest) << 8) + *source];
-                    dest += SCREENWIDTH;
-                }
-                *dest = tinttable[((*dest) << 8) + *source++];
+                *dest = tinttable[((*dest) << 8) + source[srccol >> FRACBITS]];
+                srccol += dyi;
                 dest += SCREENWIDTH;
             }
-          }
             column = (column_t *) ((byte *) column + column->length + 4);
         }
     }
@@ -617,7 +518,7 @@ void V_DrawShadowedPatch(int x, int y, patch_t *patch)
     pixel_t *desttop, *dest;
     byte *source;
     pixel_t *desttop2, *dest2;
-    int w, f;
+    int w;
 
     y -= SHORT(patch->topoffset);
     x -= SHORT(patch->leftoffset);
@@ -631,41 +532,33 @@ void V_DrawShadowedPatch(int x, int y, patch_t *patch)
     }
 
     col = 0;
-    desttop = dest_screen + (y << hires) * SCREENWIDTH + x;
-    desttop2 = dest_screen + ((y + 2) << hires) * SCREENWIDTH + x + 2;
+    desttop = dest_screen + ((y * dy) >> FRACBITS) * SCREENWIDTH + ((x * dx) >> FRACBITS);
+    desttop2 = dest_screen + (((y + 2) * dy) >> FRACBITS) * SCREENWIDTH + (((x + 2) * dx) >> FRACBITS);
 
     w = SHORT(patch->width);
-    for (; col < w; x++, col++, desttop++, desttop2++)
+    for (; col < w << FRACBITS; x++, col+=dxi, desttop++, desttop2++)
     {
-        column = (column_t *) ((byte *) patch + LONG(patch->columnofs[col]));
+        column = (column_t *) ((byte *) patch + LONG(patch->columnofs[col >> FRACBITS]));
 
         // step through the posts in a column
 
         while (column->topdelta != 0xff)
         {
-          for (f = 0; f <= hires; f++)
-          {
+            int srccol = 0;
             source = (byte *) column + 3;
-            dest = desttop + column->topdelta * (SCREENWIDTH << hires) + (x * hires) + f;
-            dest2 = desttop2 + column->topdelta * (SCREENWIDTH << hires) + (x * hires) + f;
-            count = column->length;
+            dest = desttop + ((column->topdelta * dy) >> FRACBITS) * SCREENWIDTH;
+            dest2 = desttop2 + ((column->topdelta * dy) >> FRACBITS) * SCREENWIDTH;
+            count = (column->length * dy) >> FRACBITS;
 
             while (count--)
             {
-                if (hires)
-                {
-                    *dest2 = tinttable[((*dest2) << 8)];
-                    dest2 += SCREENWIDTH;
-                    *dest = *source;
-                    dest += SCREENWIDTH;
-                }
                 *dest2 = tinttable[((*dest2) << 8)];
                 dest2 += SCREENWIDTH;
-                *dest = *source++;
+                *dest = source[srccol >> FRACBITS];
+                srccol += dyi;
                 dest += SCREENWIDTH;
 
             }
-          }
             column = (column_t *) ((byte *) column + column->length + 4);
         }
     }
@@ -847,6 +740,14 @@ void V_DrawRawScreen(pixel_t *raw)
 // 
 void V_Init (void) 
 { 
+    // [crispy] initialize resolution-agnostic patch drawing
+    if (SCREENWIDTH && SCREENHEIGHT)
+    {
+        dx = (SCREENWIDTH << FRACBITS) / ORIGWIDTH;
+        dxi = (ORIGWIDTH << FRACBITS) / SCREENWIDTH;
+        dy = (SCREENHEIGHT << FRACBITS) / ORIGHEIGHT;
+        dyi = (ORIGHEIGHT << FRACBITS) / SCREENHEIGHT;
+    }
     // no-op!
     // There used to be separate screens that could be drawn to; these are
     // now handled in the upper layers.
