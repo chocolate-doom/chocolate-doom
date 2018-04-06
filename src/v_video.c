@@ -217,16 +217,26 @@ static void V_DrawPatchCrispy(int x, int y, patch_t *patch, int r)
 
     for ( ; col<w << FRACBITS ; x++, col+=dxi, desttop++, desttop2++)
     {
+        int top = -1;
         column = (column_t *)((byte *)patch + LONG(patch->columnofs[col >> FRACBITS]));
 
         // step through the posts in a column
         while (column->topdelta != 0xff)
         {
-            const int height = ((y + column->topdelta + column->length) * dy) >> FRACBITS;
-            int srccol = 0;
+            int height, srccol = 0;
+            // [crispy] support for DeePsea tall patches
+            if (column->topdelta <= top)
+            {
+                top += column->topdelta;
+            }
+            else
+            {
+                top = column->topdelta;
+            }
+            height = ((y + top + column->length) * dy) >> FRACBITS;
             source = (byte *)column + 3;
-            dest = desttop + ((column->topdelta * dy) >> FRACBITS)*SCREENWIDTH;
-            dest2 = desttop2 + ((column->topdelta * dy) >> FRACBITS)*SCREENWIDTH;
+            dest = desttop + ((top * dy) >> FRACBITS)*SCREENWIDTH;
+            dest2 = desttop2 + ((top * dy) >> FRACBITS)*SCREENWIDTH;
             count = (column->length * dy) >> FRACBITS;
 
             while (count--)
@@ -338,15 +348,25 @@ void V_DrawPatchFlipped(int x, int y, patch_t *patch)
 
     for ( ; col<w << FRACBITS ; x++, col+=dxi, desttop++)
     {
+        int top = -1;
         column = (column_t *)((byte *)patch + LONG(patch->columnofs[w-1-(col >> FRACBITS)]));
 
         // step through the posts in a column
         while (column->topdelta != 0xff )
         {
-            const int height = ((y + column->topdelta + column->length) * dy) >> FRACBITS;
-            int srccol = 0;
+            int height, srccol = 0;
+            // [crispy] support for DeePsea tall patches
+            if (column->topdelta <= top)
+            {
+                top += column->topdelta;
+            }
+            else
+            {
+                top = column->topdelta;
+            }
+            height = ((y + top + column->length) * dy) >> FRACBITS;
             source = (byte *)column + 3;
-            dest = desttop + ((column->topdelta * dy) >> FRACBITS)*SCREENWIDTH;
+            dest = desttop + ((top * dy) >> FRACBITS)*SCREENWIDTH;
             count = (column->length * dy) >> FRACBITS;
 
             while (count--)
