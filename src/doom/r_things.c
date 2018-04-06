@@ -87,8 +87,8 @@ lighttable_t**	spritelights;
 
 // constant arrays
 //  used for psprite clipping and initializing clipping
-int		negonearray[SCREENWIDTH]; // [crispy] 32-bit integer math
-int		screenheightarray[SCREENWIDTH]; // [crispy] 32-bit integer math
+int		negonearray[MAXWIDTH]; // [crispy] 32-bit integer math
+int		screenheightarray[MAXWIDTH]; // [crispy] 32-bit integer math
 
 
 //

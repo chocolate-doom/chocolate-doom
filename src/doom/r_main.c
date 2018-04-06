@@ -101,7 +101,7 @@ int			viewangletox[FINEANGLES/2];
 // The xtoviewangleangle[] table maps a screen pixel
 // to the lowest viewangle that maps back to x ranges
 // from clipangle to -clipangle.
-angle_t			xtoviewangle[SCREENWIDTH+1];
+angle_t			xtoviewangle[MAXWIDTH+1];
 
 lighttable_t*		scalelight[LIGHTLEVELS][MAXLIGHTSCALE];
 lighttable_t*		scalelightfixed[MAXLIGHTSCALE];

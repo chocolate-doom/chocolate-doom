@@ -49,6 +49,9 @@
 #include "w_wad.h"
 #include "z_zone.h"
 
+int hires = 1;
+int SCREENWIDTH, SCREENHEIGHT, SCREENHEIGHT_4_3;
+
 // These are (1) the window (or the full screen) that our game is rendered to
 // and (2) the renderer that scales the texture (see below) into this window.
 
@@ -74,8 +77,8 @@ static SDL_Texture *texture_upscaled = NULL;
 static SDL_Rect blit_rect = {
     0,
     0,
-    SCREENWIDTH,
-    SCREENHEIGHT
+    MAXWIDTH,
+    MAXHEIGHT
 };
 
 static uint32_t pixel_format;
@@ -112,8 +115,8 @@ int video_display = 0;
 
 // Screen width and height, from configuration file.
 
-int window_width = SCREENWIDTH; // hires
-int window_height = SCREENHEIGHT_4_3; // hires
+int window_width = MAXWIDTH; // hires
+int window_height = MAXHEIGHT_4_3; // hires
 
 // Fullscreen mode, 0x0 for SDL_WINDOW_FULLSCREEN_DESKTOP.
 
@@ -683,7 +686,6 @@ static void CreateUpscaledTexture(boolean force)
                                 h_upscale*SCREENHEIGHT);
 }
 
-// [crispy]
 //
 // I_FinishUpdate
 //
@@ -1405,6 +1407,25 @@ void I_InitGraphics(void)
     {
         fullscreen = true;
     }
+
+    // [crispy] run-time variable high-resolution rendering
+    if (hires)
+    {
+        SCREENWIDTH = MAXWIDTH;
+        SCREENHEIGHT = MAXHEIGHT;
+        SCREENHEIGHT_4_3 = MAXHEIGHT_4_3;
+    }
+    else
+    {
+        SCREENWIDTH = ORIGWIDTH;
+        SCREENHEIGHT = ORIGHEIGHT;
+        SCREENHEIGHT_4_3 = ORIGHEIGHT_4_3;
+    }
+    blit_rect.w = SCREENWIDTH;
+    blit_rect.h = SCREENHEIGHT;
+
+    // [crispy] (re-)initialize resolution-agnostic patch drawing
+    V_Init();
 
     if (aspect_ratio_correct)
     {

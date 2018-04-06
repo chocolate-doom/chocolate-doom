@@ -51,7 +51,7 @@ visplane_t*		ceilingplane;
 static int		numvisplanes;
 
 // ?
-#define MAXOPENINGS	SCREENWIDTH*64*4
+#define MAXOPENINGS	MAXWIDTH*64*4
 int			openings[MAXOPENINGS]; // [crispy] 32-bit integer math
 int*			lastopening; // [crispy] 32-bit integer math
 
@@ -61,15 +61,15 @@ int*			lastopening; // [crispy] 32-bit integer math
 //  floorclip starts out SCREENHEIGHT
 //  ceilingclip starts out -1
 //
-int			floorclip[SCREENWIDTH]; // [crispy] 32-bit integer math
-int			ceilingclip[SCREENWIDTH]; // [crispy] 32-bit integer math
+int			floorclip[MAXWIDTH]; // [crispy] 32-bit integer math
+int			ceilingclip[MAXWIDTH]; // [crispy] 32-bit integer math
 
 //
 // spanstart holds the start of a plane span
 // initialized to 0 at start
 //
-int			spanstart[SCREENHEIGHT];
-int			spanstop[SCREENHEIGHT];
+int			spanstart[MAXHEIGHT];
+int			spanstop[MAXHEIGHT];
 
 //
 // texture mapping
@@ -78,15 +78,15 @@ lighttable_t**		planezlight;
 fixed_t			planeheight;
 
 fixed_t*			yslope;
-fixed_t			yslopes[LOOKDIRS][SCREENHEIGHT];
-fixed_t			distscale[SCREENWIDTH];
+fixed_t			yslopes[LOOKDIRS][MAXHEIGHT];
+fixed_t			distscale[MAXWIDTH];
 fixed_t			basexscale;
 fixed_t			baseyscale;
 
-fixed_t			cachedheight[SCREENHEIGHT];
-fixed_t			cacheddistance[SCREENHEIGHT];
-fixed_t			cachedxstep[SCREENHEIGHT];
-fixed_t			cachedystep[SCREENHEIGHT];
+fixed_t			cachedheight[MAXHEIGHT];
+fixed_t			cacheddistance[MAXHEIGHT];
+fixed_t			cachedxstep[MAXHEIGHT];
+fixed_t			cachedystep[MAXHEIGHT];
 
 
 

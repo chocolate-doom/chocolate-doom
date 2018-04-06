@@ -474,11 +474,11 @@ typedef struct
   unsigned int		pad1; // [crispy] hires / 32-bit integer math
   // Here lies the rub for all
   //  dynamic resize/change of resolution.
-  unsigned int		top[SCREENWIDTH]; // [crispy] hires / 32-bit integer math
+  unsigned int		top[MAXWIDTH]; // [crispy] hires / 32-bit integer math
   unsigned int		pad2; // [crispy] hires / 32-bit integer math
   unsigned int		pad3; // [crispy] hires / 32-bit integer math
   // See above.
-  unsigned int		bottom[SCREENWIDTH]; // [crispy] hires / 32-bit integer math
+  unsigned int		bottom[MAXWIDTH]; // [crispy] hires / 32-bit integer math
   unsigned int		pad4; // [crispy] hires / 32-bit integer math
 
 } visplane_t;

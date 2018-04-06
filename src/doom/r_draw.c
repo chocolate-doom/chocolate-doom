@@ -38,8 +38,8 @@
 
 
 // ?
-#define MAXWIDTH			1120
-#define MAXHEIGHT			832
+//#define MAXWIDTH			1120
+//#define MAXHEIGHT			832
 
 // status bar height at bottom of screen
 #define SBARHEIGHT		(32 << hires)
@@ -337,7 +337,7 @@ void R_DrawColumnLow (void)
 // Spectre/Invisibility.
 //
 #define FUZZTABLE		50 
-#define FUZZOFF	(SCREENWIDTH)
+#define FUZZOFF	(1)
 
 
 int	fuzzoffset[FUZZTABLE] =
@@ -411,7 +411,7 @@ void R_DrawFuzzColumn (void)
 	//  a pixel that is either one column
 	//  left or right of the current one.
 	// Add index from colormap to index.
-	*dest = colormaps[6*256+dest[fuzzoffset[fuzzpos]]]; 
+	*dest = colormaps[6*256+dest[SCREENWIDTH*fuzzoffset[fuzzpos]]]; 
 
 	// Clamp table lookup index.
 	if (++fuzzpos == FUZZTABLE) 
@@ -426,7 +426,7 @@ void R_DrawFuzzColumn (void)
     // draw one extra line using only pixels of that line and the one above
     if (cutoff)
     {
-	*dest = colormaps[6*256+dest[(fuzzoffset[fuzzpos]-FUZZOFF)/2]];
+	*dest = colormaps[6*256+dest[(SCREENWIDTH*fuzzoffset[fuzzpos]-FUZZOFF)/2]];
     }
 } 
 
@@ -492,12 +492,12 @@ void R_DrawFuzzColumnLow (void)
 	//  a pixel that is either one column
 	//  left or right of the current one.
 	// Add index from colormap to index.
-	*dest = colormaps[6*256+dest[fuzzoffset[fuzzpos]]]; 
-	*dest2 = colormaps[6*256+dest2[fuzzoffset[fuzzpos]]]; 
+	*dest = colormaps[6*256+dest[SCREENWIDTH*fuzzoffset[fuzzpos]]]; 
+	*dest2 = colormaps[6*256+dest2[SCREENWIDTH*fuzzoffset[fuzzpos]]]; 
 	if (hires)
 	{
-	    *dest3 = colormaps[6*256+dest[fuzzoffset[fuzzpos]]];
-	    *dest4 = colormaps[6*256+dest2[fuzzoffset[fuzzpos]]];
+	    *dest3 = colormaps[6*256+dest[SCREENWIDTH*fuzzoffset[fuzzpos]]];
+	    *dest4 = colormaps[6*256+dest2[SCREENWIDTH*fuzzoffset[fuzzpos]]];
 	    dest3 += SCREENWIDTH << hires;
 	    dest4 += SCREENWIDTH << hires;
 	}
@@ -516,8 +516,8 @@ void R_DrawFuzzColumnLow (void)
     // draw one extra line using only pixels of that line and the one above
     if (cutoff)
     {
-	*dest = colormaps[6*256+dest[(fuzzoffset[fuzzpos]-FUZZOFF)/2]];
-	*dest2 = colormaps[6*256+dest2[(fuzzoffset[fuzzpos]-FUZZOFF)/2]];
+	*dest = colormaps[6*256+dest[(SCREENWIDTH*fuzzoffset[fuzzpos]-FUZZOFF)/2]];
+	*dest2 = colormaps[6*256+dest2[(SCREENWIDTH*fuzzoffset[fuzzpos]-FUZZOFF)/2]];
 	if (hires)
 	{
 	    *dest3 = *dest;
