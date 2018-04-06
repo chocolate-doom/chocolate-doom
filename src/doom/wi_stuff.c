@@ -401,7 +401,7 @@ static patch_t *background;
 // slam background
 void WI_slamBackground(void)
 {
-    V_DrawPatch(0, 0, background);
+    V_DrawPatchFullScreen(background, false);
 }
 
 // The ticker is used to detect keys

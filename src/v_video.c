@@ -265,6 +265,34 @@ void V_DrawPatchShadow2(int x, int y, patch_t *patch)
     return V_DrawPatchCrispy(x, y, patch, 2);
 }
 
+void V_DrawPatchFullScreen(patch_t *patch, boolean flipped)
+{
+    const short width = SHORT(patch->width);
+    const short height = SHORT(patch->height);
+
+    dx = (SCREENWIDTH << FRACBITS) / width;
+    dxi = (width << FRACBITS) / SCREENWIDTH;
+    dy = (SCREENHEIGHT << FRACBITS) / height;
+    dyi = (height << FRACBITS) / SCREENHEIGHT;
+
+    patch->leftoffset = 0;
+    patch->topoffset = 0;
+
+    if (flipped)
+    {
+        V_DrawPatchFlipped(0, 0, patch);
+    }
+    else
+    {
+        V_DrawPatch(0, 0, patch);
+    }
+
+    dx = (SCREENWIDTH << FRACBITS) / ORIGWIDTH;
+    dxi = (ORIGWIDTH << FRACBITS) / SCREENWIDTH;
+    dy = (SCREENHEIGHT << FRACBITS) / ORIGHEIGHT;
+    dyi = (ORIGHEIGHT << FRACBITS) / SCREENHEIGHT;
+}
+
 //
 // V_DrawPatchFlipped
 // Masks a column based masked pic to the screen.

@@ -582,10 +582,7 @@ void D_PageTicker (void)
 //
 void D_PageDrawer (void)
 {
-    if (crispy->fliplevels)
-    V_DrawPatchFlipped (0, 0, W_CacheLumpName(pagename, PU_CACHE));
-    else
-    V_DrawPatch (0, 0, W_CacheLumpName(pagename, PU_CACHE));
+    V_DrawPatchFullScreen (W_CacheLumpName(pagename, PU_CACHE), crispy->fliplevels);
 }
 
 

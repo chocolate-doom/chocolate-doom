@@ -696,7 +696,7 @@ void F_CastDrawer (void)
     patch_t*		patch;
     
     // erase the entire screen to a background
-    V_DrawPatch (0, 0, W_CacheLumpName (DEH_String("BOSSBACK"), PU_CACHE));
+    V_DrawPatchFullScreen (W_CacheLumpName (DEH_String("BOSSBACK"), PU_CACHE), false);
 
     F_CastPrint (DEH_String(castorder[castnum].name));
     
@@ -855,7 +855,7 @@ static void F_ArtScreenDrawer(void)
 
         lumpname = DEH_String(lumpname);
 
-        V_DrawPatch (0, 0W_CacheLumpName(lumpname, PU_CACHE));
+        V_DrawPatchFullScreen (W_CacheLumpName(lumpname, PU_CACHE), false);
     }
 }
 
