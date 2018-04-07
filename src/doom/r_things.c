@@ -398,15 +398,25 @@ void R_DrawMaskedColumn (column_t* column)
     int64_t	topscreen; // [crispy] WiggleFix
     int64_t 	bottomscreen; // [crispy] WiggleFix
     fixed_t	basetexturemid;
+    int		top = -1;
 	
     basetexturemid = dc_texturemid;
     dc_texheight = 0; // [crispy] Tutti-Frutti fix
 	
     for ( ; column->topdelta != 0xff ; ) 
     {
+	// [crispy] support for DeePsea tall patches
+	if (column->topdelta <= top)
+	{
+		top += column->topdelta;
+	}
+	else
+	{
+		top = column->topdelta;
+	}
 	// calculate unclipped screen coordinates
 	//  for post
-	topscreen = sprtopscreen + spryscale*column->topdelta;
+	topscreen = sprtopscreen + spryscale*top;
 	bottomscreen = topscreen + spryscale*column->length;
 
 	dc_yl = (int)((topscreen+FRACUNIT-1)>>FRACBITS); // [crispy] WiggleFix
@@ -420,8 +430,8 @@ void R_DrawMaskedColumn (column_t* column)
 	if (dc_yl <= dc_yh)
 	{
 	    dc_source = (byte *)column + 3;
-	    dc_texturemid = basetexturemid - (column->topdelta<<FRACBITS);
-	    // dc_source = (byte *)column + 3 - column->topdelta;
+	    dc_texturemid = basetexturemid - (top<<FRACBITS);
+	    // dc_source = (byte *)column + 3 - top;
 
 	    // Drawn by either R_DrawColumn
 	    //  or (SHADOW) R_DrawFuzzColumn.

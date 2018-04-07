@@ -203,12 +203,22 @@ R_DrawColumnInCache
     int		count;
     int		position;
     byte*	source;
+    int		top = -1;
 
     while (patch->topdelta != 0xff)
     {
+	// [crispy] support for DeePsea tall patches
+	if (patch->topdelta <= top)
+	{
+		top += patch->topdelta;
+	}
+	else
+	{
+		top = patch->topdelta;
+	}
 	source = (byte *)patch + 3;
 	count = patch->length;
-	position = originy + patch->topdelta;
+	position = originy + top;
 
 	if (position < 0)
 	{
