@@ -1554,7 +1554,7 @@ static void M_DrawCrispness2(void)
     M_DrawCrispnessMultiItem(crispness_neghealth, "Negative Player Health", multiitem_neghealth, crispy->neghealth, true);
     M_DrawCrispnessMultiItem(crispness_centerweapon, "Weapon Attack Alignment", multiitem_centerweapon, crispy->centerweapon, true);
     M_DrawCrispnessItem(crispness_pitch, "Weapon Recoil Pitch", crispy->pitch, true);
-    M_DrawCrispnessItem(crispness_weaponsquat, "Squat down weapon on impact", crispy->weaponsquat, true);
+    M_DrawCrispnessItem(crispness_weaponsquat, "Squat weapon down on impact", crispy->weaponsquat, true);
 //  M_DrawCrispnessItem(crispness_extsaveg, "Extended Savegames", crispy->extsaveg, true);
 
     M_DrawCrispnessSeparator(crispness_sep_navigational, "Navigational");
