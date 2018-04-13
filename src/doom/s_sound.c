@@ -107,6 +107,18 @@ static musicinfo_t *mus_playing = NULL;
 
 int snd_channels = 8;
 
+// [crispy] variable number of sound channels
+static inline void update_snd_channels (void)
+{
+	if (crispy->sndchannels == 2)
+		snd_channels = 32;
+	else
+	if (crispy->sndchannels == 1)
+		snd_channels = 16;
+	else
+		snd_channels = 8;
+}
+
 //
 // Initializes sound stuff, including volume
 // Sets channels, SFX and music volume,
@@ -141,8 +153,10 @@ void S_Init(int sfxVolume, int musicVolume)
     // Allocating the internal channels for mixing
     // (the maximum numer of sounds rendered
     // simultaneously) within zone memory.
-    channels = Z_Malloc(snd_channels*sizeof(channel_t), PU_STATIC, 0);
-    sobjs = Z_Malloc(snd_channels*sizeof(degenmobj_t), PU_STATIC, 0);
+    // [crispy] variable number of sound channels
+    update_snd_channels();
+    channels = I_Realloc(NULL, snd_channels*sizeof(channel_t));
+    sobjs = I_Realloc(NULL, snd_channels*sizeof(degenmobj_t));
 
     // Free all channels for use
     for (i=0 ; i<snd_channels ; i++)
@@ -921,3 +935,25 @@ void S_StopMusic(void)
     }
 }
 
+// [crispy] variable number of sound channels
+void S_UpdateSndChannels (void)
+{
+	int i;
+
+	for (i = 0; i < snd_channels; i++)
+	{
+		if (channels[i].sfxinfo)
+		{
+			S_StopChannel(i);
+		}
+	}
+
+	update_snd_channels();
+	channels = I_Realloc(channels, snd_channels * sizeof(channel_t));
+	sobjs = I_Realloc(sobjs, snd_channels * sizeof(degenmobj_t));
+
+	for (i = 0; i < snd_channels; i++)
+	{
+		channels[i].sfxinfo = 0;
+	}
+}
