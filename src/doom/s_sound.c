@@ -108,15 +108,11 @@ static musicinfo_t *mus_playing = NULL;
 int snd_channels = 8;
 
 // [crispy] variable number of sound channels
-static inline void update_snd_channels (void)
+static inline int update_snd_channels (void)
 {
-	if (crispy->sndchannels == 2)
-		snd_channels = 32;
-	else
-	if (crispy->sndchannels == 1)
-		snd_channels = 16;
-	else
-		snd_channels = 8;
+	return (crispy->sndchannels == 2) ? 32 :
+	       (crispy->sndchannels == 1) ? 16 :
+	       8;
 }
 
 //
@@ -154,7 +150,7 @@ void S_Init(int sfxVolume, int musicVolume)
     // (the maximum numer of sounds rendered
     // simultaneously) within zone memory.
     // [crispy] variable number of sound channels
-    update_snd_channels();
+    snd_channels = update_snd_channels();
     channels = I_Realloc(NULL, snd_channels*sizeof(channel_t));
     sobjs = I_Realloc(NULL, snd_channels*sizeof(degenmobj_t));
 
@@ -948,7 +944,7 @@ void S_UpdateSndChannels (void)
 		}
 	}
 
-	update_snd_channels();
+	snd_channels = update_snd_channels();
 	channels = I_Realloc(channels, snd_channels * sizeof(channel_t));
 	sobjs = I_Realloc(sobjs, snd_channels * sizeof(degenmobj_t));
 
