@@ -115,6 +115,7 @@ boolean longtics;               // specify high resolution turning in demos
 boolean lowres_turn;
 boolean shortticfix;            // calculate lowres turning like doom
 boolean demoplayback;
+boolean netdemo;
 boolean demoextend;
 byte *demobuffer, *demo_p, *demoend;
 boolean singledemo;             // quit after playing a demo from cmdline
@@ -995,7 +996,7 @@ void G_Ticker(void)
             if (demorecording)
                 G_WriteDemoTiccmd(cmd);
 
-            if (netgame && !(gametic % ticdup))
+            if (netgame && !netdemo && !(gametic % ticdup))
             {
                 if (gametic > BACKUPTICS
                     && consistancy[i][buf] != cmd->consistancy)
@@ -1881,6 +1882,14 @@ void G_DoPlayDemo(void)
 {
     skill_t skill;
     int i, lumpnum, episode, map;
+
+    //!
+    // @category demo
+    // Allow playback of multiplayer demos in network mode without crashing by 
+    // disabling network consistency checks during demo playback
+    // 
+
+    netdemo = M_ParmExists("-netdemo");
 
     gameaction = ga_nothing;
     lumpnum = W_GetNumForName(defdemoname);
