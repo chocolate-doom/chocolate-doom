@@ -794,6 +794,16 @@ boolean G_Responder(event_t * ev)
         }
         while (!playeringame[displayplayer]
                && displayplayer != consoleplayer);
+
+        if (demoplayback)
+        {                       // Show current display player's statusbar
+            extern patch_t *PatchLIFEGEM;
+            consoleplayer = displayplayer;
+            PatchLIFEGEM = W_CacheLumpNum(W_GetNumForName(DEH_String("LIFEGEM0")) 
+                                          + consoleplayer, PU_STATIC);
+            SB_state = -1;      // refresh the status bar
+        }
+        
         return (true);
     }
 
