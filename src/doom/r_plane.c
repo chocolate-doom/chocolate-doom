@@ -555,7 +555,7 @@ void R_DrawPlanes (void)
 	ds_brightmap = R_BrightmapForFlatNum(lumpnum-firstflat);
 	
 	planeheight = abs(pl->height-viewz);
-	light = (pl->lightlevel >> LIGHTSEGSHIFT)+extralight;
+	light = (pl->lightlevel >> LIGHTSEGSHIFT)+(extralight * LIGHTBRIGHT);
 
 	if (light >= LIGHTLEVELS)
 	    light = LIGHTLEVELS-1;

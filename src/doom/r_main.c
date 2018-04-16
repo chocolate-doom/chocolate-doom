@@ -103,13 +103,16 @@ int			viewangletox[FINEANGLES/2];
 // from clipangle to -clipangle.
 angle_t			xtoviewangle[MAXWIDTH+1];
 
-lighttable_t*		scalelight[LIGHTLEVELS][MAXLIGHTSCALE];
+lighttable_t*		scalelight[MAXLIGHTLEVELS][MAXLIGHTSCALE];
 lighttable_t*		scalelightfixed[MAXLIGHTSCALE];
-lighttable_t*		zlight[LIGHTLEVELS][MAXLIGHTZ];
+lighttable_t*		zlight[MAXLIGHTLEVELS][MAXLIGHTZ];
 
 // bumped light from gun blasts
 int			extralight;			
 
+int LIGHTLEVELS;
+int LIGHTSEGSHIFT;
+int LIGHTBRIGHT;
 
 
 void (*colfunc) (void);
@@ -681,11 +684,24 @@ void R_InitLightTables (void)
     int		startmap; 	
     int		scale;
     
+    if (crispy->smoothlight)
+    {
+	LIGHTLEVELS = 32;
+	LIGHTSEGSHIFT = 3;
+	LIGHTBRIGHT = 2;
+    }
+    else
+    {
+	LIGHTLEVELS = 16;
+	LIGHTSEGSHIFT = 4;
+	LIGHTBRIGHT = 1;
+    }
+
     // Calculate the light levels to use
     //  for each level / distance combination.
     for (i=0 ; i< LIGHTLEVELS ; i++)
     {
-	startmap = ((LIGHTLEVELS-1-i)*2)*NUMCOLORMAPS/LIGHTLEVELS;
+	startmap = ((LIGHTLEVELS-LIGHTBRIGHT-i)*2)*NUMCOLORMAPS/LIGHTLEVELS;
 	for (j=0 ; j<MAXLIGHTZ ; j++)
 	{
 	    scale = FixedDiv ((ORIGWIDTH/2*FRACUNIT), (j+1)<<LIGHTZSHIFT);
@@ -816,7 +832,7 @@ void R_ExecuteSetViewSize (void)
     //  for each level / scale combination.
     for (i=0 ; i< LIGHTLEVELS ; i++)
     {
-	startmap = ((LIGHTLEVELS-1-i)*2)*NUMCOLORMAPS/LIGHTLEVELS;
+	startmap = ((LIGHTLEVELS-LIGHTBRIGHT-i)*2)*NUMCOLORMAPS/LIGHTLEVELS;
 	for (j=0 ; j<MAXLIGHTSCALE ; j++)
 	{
 	    level = startmap - j*SCREENWIDTH/(viewwidth<<detailshift)/DISTMAP;

@@ -863,7 +863,7 @@ void R_AddSprites (sector_t* sec)
     // Well, now it will be done.
     sec->validcount = validcount;
 	
-    lightnum = (sec->lightlevel >> LIGHTSEGSHIFT)+extralight;
+    lightnum = (sec->lightlevel >> LIGHTSEGSHIFT)+(extralight * LIGHTBRIGHT);
 
     if (lightnum < 0)		
 	spritelights = scalelight[0];
@@ -1059,7 +1059,7 @@ void R_DrawPlayerSprites (void)
     // get light level
     lightnum =
 	(viewplayer->mo->subsector->sector->lightlevel >> LIGHTSEGSHIFT) 
-	+extralight;
+	+(extralight * LIGHTBRIGHT);
 
     if (lightnum < 0)		
 	spritelights = scalelight[0];

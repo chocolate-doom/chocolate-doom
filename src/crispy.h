@@ -58,6 +58,7 @@ typedef struct
 	int pitch;
 	int recoil;
 	int secretmessage;
+	int smoothlight;
 	int smoothscaling;
 	int sndchannels;
 	int soundfix;
