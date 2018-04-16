@@ -979,13 +979,19 @@ void P_LoadThings (int lump)
 	// [crispy] minor fixes to prevent users from getting stuck in levels with mapping errors
 	if (crispy->singleplayer)
 	{
+	    int lump;
+
 	    // [crispy] spawn Former Human instead of Wolf SS in BFG Edition
-	    if (gamevariant == bfgedition && mt->type == 84)
+	    lump = W_CheckNumForName("SSWVA1");
+	    if (gamevariant == bfgedition && mt->type == 84 &&
+	        (lump < 0 || lumpinfo[lump]->wad_file->iwad))
 	    {
 	        mt->type = 3004;
 	    }
 	    // [crispy] TNT MAP31 has a yellow key that is erroneously marked as multi-player only
-	    if (gamemission == pack_tnt && gamemap == 31 && mt->type == 6)
+	    lump = W_CheckNumForName("MAP31");
+	    if (gamemission == pack_tnt && gamemap == 31 && mt->type == 6 &&
+	        (lump < 0 || lumpinfo[lump]->wad_file->iwad))
 	    {
 	        mt->options &= ~16;
 	    }
