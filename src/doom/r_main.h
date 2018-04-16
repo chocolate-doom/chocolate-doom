@@ -65,8 +65,8 @@ extern int LIGHTBRIGHT;
 
 #define MAXLIGHTSCALE		48
 #define LIGHTSCALESHIFT		12
-#define MAXLIGHTZ	       128
-#define LIGHTZSHIFT		20
+#define MAXLIGHTZ	       1024
+#define LIGHTZSHIFT		17
 
 extern lighttable_t*	scalelight[MAXLIGHTLEVELS][MAXLIGHTSCALE];
 extern lighttable_t*	scalelightfixed[MAXLIGHTSCALE];

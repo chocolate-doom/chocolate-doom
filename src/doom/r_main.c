@@ -684,7 +684,7 @@ void R_InitLightTables (void)
     int		startmap; 	
     int		scale;
     
-    if (crispy->smoothlight)
+    if (1||crispy->smoothlight)
     {
 	LIGHTLEVELS = 32;
 	LIGHTSEGSHIFT = 3;

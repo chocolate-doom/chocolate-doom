@@ -247,9 +247,9 @@ static void M_CrispyToggleColoredblood2(int choice);
 static void M_CrispyToggleColoredhud(int choice);
 static void M_CrispyToggleCrosshair(int choice);
 static void M_CrispyToggleCrosshairtype(int choice);
+static void M_CrispyToggleDemoBar(int choice);
 static void M_CrispyToggleDemoTimer(int choice);
 static void M_CrispyToggleDemoTimerDir(int choice);
-static void M_CrispyToggleDemoBar(int choice);
 static void M_CrispyToggleExtAutomap(int choice);
 //static void M_CrispyToggleExtsaveg(int choice);
 static void M_CrispyToggleFlipcorpses(int choice);
@@ -260,13 +260,13 @@ static void M_CrispyToggleJumping(int choice);
 static void M_CrispyToggleNeghealth(int choice);
 static void M_CrispyToggleOverunder(int choice);
 static void M_CrispyTogglePitch(int choice);
-static void M_CrispyToggleWeaponSquat(int choice);
 static void M_CrispyToggleRecoil(int choice);
 static void M_CrispyToggleSecretmessage(int choice);
+static void M_CrispyToggleSmoothScaling(int choice);
 static void M_CrispyToggleSoundfixes(int choice);
 static void M_CrispyToggleTranslucency(int choice);
 static void M_CrispyToggleUncapped(int choice);
-static void M_CrispyToggleSmoothScaling(int choice);
+static void M_CrispyToggleWeaponSquat(int choice);
 static void M_CrispnessX(int choice);
 static void M_Crispness1(int choice);
 static void M_Crispness2(int choice);
@@ -1851,36 +1851,22 @@ static void M_MouseLook(int choice)
     R_InitSkyMap();
 }
 
-static void M_CrispyToggleExtAutomap(int choice)
-{
-    choice = 0;
-    crispy->extautomap = !crispy->extautomap;
-}
-
 static void M_CrispyToggleAutomapstats(int choice)
 {
     choice = 0;
     crispy->automapstats = !crispy->automapstats;
 }
 
-/*
-static void M_CrispyToggleExtsaveg(int choice)
+static void M_CrispyToggleBrightmaps(int choice)
 {
     choice = 0;
-    crispy->extsaveg = !crispy->extsaveg;
+    crispy->brightmaps = (crispy->brightmaps + 1) % NUM_BRIGHTMAPS;
 }
-*/
 
 static void M_CrispyToggleCenterweapon(int choice)
 {
     choice = 0;
     crispy->centerweapon = (crispy->centerweapon + 1) % NUM_CENTERWEAPON;
-}
-
-static void M_CrispyToggleBrightmaps(int choice)
-{
-    choice = 0;
-    crispy->brightmaps = (crispy->brightmaps + 1) % NUM_BRIGHTMAPS;
 }
 
 static void M_CrispyToggleColoredblood(int choice)
@@ -1940,6 +1926,12 @@ static void M_CrispyToggleCrosshairtype(int choice)
     }
 }
 
+static void M_CrispyToggleDemoBar(int choice)
+{
+    choice = 0;
+    crispy->demobar = !crispy->demobar;
+}
+
 static void M_CrispyToggleDemoTimer(int choice)
 {
     choice = 0;
@@ -1958,11 +1950,19 @@ static void M_CrispyToggleDemoTimerDir(int choice)
     crispy->demotimerdir = !crispy->demotimerdir;
 }
 
-static void M_CrispyToggleDemoBar(int choice)
+static void M_CrispyToggleExtAutomap(int choice)
 {
     choice = 0;
-    crispy->demobar = !crispy->demobar;
+    crispy->extautomap = !crispy->extautomap;
 }
+
+/*
+static void M_CrispyToggleExtsaveg(int choice)
+{
+    choice = 0;
+    crispy->extsaveg = !crispy->extsaveg;
+}
+*/
 
 static void M_CrispyToggleFlipcorpses(int choice)
 {
@@ -2000,10 +2000,10 @@ static void M_CrispyToggleFreelook(int choice)
     R_InitSkyMap();
 }
 
-static void M_CrispyToggleNeghealth(int choice)
+static void M_CrispyToggleFullsounds(int choice)
 {
     choice = 0;
-    crispy->neghealth = (crispy->neghealth + 1) % NUM_NEGHEALTHS;
+    crispy->soundfull = !crispy->soundfull;
 }
 
 static void M_CrispyToggleJumping(int choice)
@@ -2019,6 +2019,12 @@ static void M_CrispyToggleJumping(int choice)
 
     // [crispy] update the "critical" struct
     CheckCrispySingleplayer(!demorecording && !demoplayback && !netgame);
+}
+
+static void M_CrispyToggleNeghealth(int choice)
+{
+    choice = 0;
+    crispy->neghealth = (crispy->neghealth + 1) % NUM_NEGHEALTHS;
 }
 
 static void M_CrispyToggleOverunder(int choice)
@@ -2043,12 +2049,6 @@ static void M_CrispyTogglePitch(int choice)
     R_InitSkyMap();
 }
 
-static void M_CrispyToggleWeaponSquat(int choice)
-{
-    choice = 0;
-    crispy->weaponsquat = !crispy->weaponsquat;
-}
-
 static void M_CrispyToggleRecoil(int choice)
 {
     if (!crispy->singleplayer)
@@ -2068,6 +2068,18 @@ static void M_CrispyToggleSecretmessage(int choice)
 {
     choice = 0;
     crispy->secretmessage = !crispy->secretmessage;
+}
+
+static void M_CrispyToggleSmoothScaling(int choice)
+{
+    choice = 0;
+    crispy->smoothscaling = !crispy->smoothscaling;
+}
+
+static void M_CrispyToggleSoundfixes(int choice)
+{
+    choice = 0;
+    crispy->soundfix = !crispy->soundfix;
 }
 
 static void M_CrispyToggleTranslucency(int choice)
@@ -2097,22 +2109,10 @@ static void M_CrispyToggleUncapped(int choice)
     }
 }
 
-static void M_CrispyToggleSmoothScaling(int choice)
+static void M_CrispyToggleWeaponSquat(int choice)
 {
     choice = 0;
-    crispy->smoothscaling = !crispy->smoothscaling;
-}
-
-static void M_CrispyToggleFullsounds(int choice)
-{
-    choice = 0;
-    crispy->soundfull = !crispy->soundfull;
-}
-
-static void M_CrispyToggleSoundfixes(int choice)
-{
-    choice = 0;
-    crispy->soundfix = !crispy->soundfix;
+    crispy->weaponsquat = !crispy->weaponsquat;
 }
 
 void M_ChangeDetail(int choice)
