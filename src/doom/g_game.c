@@ -2605,6 +2605,10 @@ void G_DoPlayDemo (void)
     int demoversion;
     int lumplength; // [crispy]
 
+    // [crispy] inform P_SetupLevel() about demoplayback
+    demoplayback = true;
+    CheckCrispySingleplayer(!demorecording && !demoplayback && !netgame);
+
     lumpnum = W_GetNumForName(defdemoname);
     gameaction = ga_nothing;
     demobuffer = W_CacheLumpNum(lumpnum, PU_STATIC);
@@ -2614,7 +2618,6 @@ void G_DoPlayDemo (void)
     lumplength = W_LumpLength(lumpnum);
     if (lumplength < 0xd)
     {
-	demoplayback = true;
 	G_CheckDemoStatus();
 	return;
     }
@@ -2650,7 +2653,6 @@ void G_DoPlayDemo (void)
         fprintf(stderr, message, demoversion, G_VanillaVersionCode(),
                          DemoVersionDescription(demoversion));
 	fprintf(stderr, "\n");
-	demoplayback = true;
 	G_CheckDemoStatus();
 	return;
         }
