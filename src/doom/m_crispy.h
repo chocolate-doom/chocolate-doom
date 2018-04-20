@@ -26,111 +26,20 @@ typedef struct
     char *name;
 } multiitem_t;
 
-multiitem_t multiitem_brightmaps[NUM_BRIGHTMAPS] =
-{
-    {BRIGHTMAPS_OFF, "none"},
-    {BRIGHTMAPS_TEXTURES, "walls"},
-    {BRIGHTMAPS_SPRITES, "items"},
-    {BRIGHTMAPS_BOTH, "both"},
-};
-
-multiitem_t multiitem_centerweapon[NUM_CENTERWEAPON] =
-{
-    {CENTERWEAPON_OFF, "off"},
-    {CENTERWEAPON_HOR, "horizontal"},
-    {CENTERWEAPON_HORVER, "centered"},
-    {CENTERWEAPON_BOB, "bobbing"},
-    {CENTERWEAPON_BOB2, "bobbing/2"},
-};
-
-multiitem_t multiitem_coloredblood[NUM_COLOREDBLOOD] =
-{
-    {COLOREDBLOOD_OFF, "off"},
-    {COLOREDBLOOD_BLOOD, "blood"},
-    {COLOREDBLOOD_CORPSE, "corpses"},
-    {COLOREDBLOOD_BOTH, "both"},
-};
-
-multiitem_t multiitem_coloredhud[NUM_COLOREDHUD] =
-{
-    {COLOREDHUD_OFF, "off"},
-    {COLOREDHUD_BAR, "status bar"},
-    {COLOREDHUD_TEXT, "hud texts"},
-    {COLOREDHUD_BOTH, "both"},
-};
-
-multiitem_t multiitem_crosshair[NUM_CROSSHAIRS] =
-{
-    {CROSSHAIR_OFF, "off"},
-    {CROSSHAIR_STATIC, "static"},
-    {CROSSHAIR_PROJECTED, "projected"},
-};
-
-multiitem_t multiitem_crosshairtype[] =
-{
-    {-1, ""},
-    {0, "cross"},
-    {1, "chevron"},
-    {2, "dot"},
-};
-
-multiitem_t multiitem_freeaim[NUM_FREEAIMS] =
-{
-    {FREEAIM_AUTO, "autoaim"},
-    {FREEAIM_DIRECT, "direct"},
-    {FREEAIM_BOTH, "both"},
-};
-
-multiitem_t multiitem_demotimer[NUM_DEMOTIMERS] =
-{
-    {DEMOTIMER_OFF, "off"},
-    {DEMOTIMER_RECORD, "recording"},
-    {DEMOTIMER_PLAYBACK, "playback"},
-    {DEMOTIMER_BOTH, "both"},
-};
-
-multiitem_t multiitem_demotimerdir[] =
-{
-    {0, ""},
-    {1, "forward"},
-    {2, "backward"},
-};
-
-multiitem_t multiitem_freelook[NUM_FREELOOKS] =
-{
-    {FREELOOK_OFF, "off"},
-    {FREELOOK_SPRING, "spring"},
-    {FREELOOK_LOCK, "lock"},
-};
-
-multiitem_t multiitem_jump[NUM_JUMPS] =
-{
-    {JUMP_OFF, "off"},
-    {JUMP_LOW, "low"},
-    {JUMP_HIGH, "high"},
-};
-
-multiitem_t multiitem_neghealth[NUM_NEGHEALTHS] =
-{
-    {NEGHEALTH_OFF, "off"},
-    {NEGHEALTH_DM, "deathmatch"},
-    {NEGHEALTH_ON, "always"},
-};
-
-multiitem_t multiitem_translucency[NUM_TRANSLUCENCY] =
-{
-    {TRANSLUCENCY_OFF, "off"},
-    {TRANSLUCENCY_MISSILE, "projectiles"},
-    {TRANSLUCENCY_ITEM, "items"},
-    {TRANSLUCENCY_BOTH, "both"},
-};
-
-multiitem_t multiitem_uncapped[NUM_UNCAPPED] =
-{
-    {UNCAPPED_OFF, "35 fps"},
-    {UNCAPPED_ON, "uncapped"},
-    {UNCAPPED_VSYNC, "vsync"},
-};
+extern multiitem_t multiitem_brightmaps[NUM_BRIGHTMAPS];
+extern multiitem_t multiitem_centerweapon[NUM_CENTERWEAPON];
+extern multiitem_t multiitem_coloredblood[NUM_COLOREDBLOOD];
+extern multiitem_t multiitem_coloredhud[NUM_COLOREDHUD];
+extern multiitem_t multiitem_crosshair[NUM_CROSSHAIRS];
+extern multiitem_t multiitem_crosshairtype[];
+extern multiitem_t multiitem_freeaim[NUM_FREEAIMS];
+extern multiitem_t multiitem_demotimer[NUM_DEMOTIMERS];
+extern multiitem_t multiitem_demotimerdir[];
+extern multiitem_t multiitem_freelook[NUM_FREELOOKS];
+extern multiitem_t multiitem_jump[NUM_JUMPS];
+extern multiitem_t multiitem_neghealth[NUM_NEGHEALTHS];
+extern multiitem_t multiitem_translucency[NUM_TRANSLUCENCY];
+extern multiitem_t multiitem_uncapped[NUM_UNCAPPED];
 
 extern void M_CrispyToggleAutomapstats(int choice);
 extern void M_CrispyToggleBrightmaps(int choice);
