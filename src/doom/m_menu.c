@@ -60,9 +60,9 @@
 #include "sounds.h"
 
 #include "m_menu.h"
+#include "m_crispy.h" // [crispy] Crispness menu
 
 #include "v_trans.h" // [crispy] colored "invert mouse" message
-#include "r_sky.h" // [crispy] R_InitSkyMap()
 
 extern patch_t*		hu_font[HU_FONTSIZE];
 extern boolean		message_dontfuckwithme;
@@ -73,7 +73,7 @@ extern boolean		chat_on;		// in heads-up code
 // defaulted values
 //
 int			mouseSensitivity = 5;
-int			mouseSensitivity_y = 5;
+int			mouseSensitivity_y = 5; // [crispy] mouse sensitivity menu
 
 // Show messages has default, 0 = off, 1 = on
 int			showMessages = 1;
@@ -126,7 +126,7 @@ boolean			menuactive;
 
 #define SKULLXOFF		-32
 #define LINEHEIGHT		16
-#define CRISPY_LINEHEIGHT	10
+#define CRISPY_LINEHEIGHT	10 // [crispy] Crispness menu
 
 extern boolean		sendpause;
 char			savegamestrings[10][SAVESTRINGSIZE];
@@ -198,15 +198,14 @@ void M_QuitDOOM(int choice);
 
 void M_ChangeMessages(int choice);
 void M_ChangeSensitivity(int choice);
-static void M_ChangeSensitivity_y(int choice);
-static void M_MouseInvert(int choice);
-static void M_MouseLook(int choice);
+static void M_ChangeSensitivity_y(int choice); // [crispy] mouse sensitivity menu
+static void M_MouseInvert(int choice); // [crispy] mouse sensitivity menu
 void M_SfxVol(int choice);
 void M_MusicVol(int choice);
 void M_ChangeDetail(int choice);
 void M_SizeDisplay(int choice);
 void M_StartGame(int choice);
-static void M_Mouse(int choice);
+static void M_Mouse(int choice); // [crispy] mouse sensitivity menu
 void M_Sound(int choice);
 
 void M_FinishReadThis(int choice);
@@ -222,7 +221,7 @@ void M_DrawReadThis2(void);
 void M_DrawNewGame(void);
 void M_DrawEpisode(void);
 void M_DrawOptions(void);
-static void M_DrawMouse(void);
+static void M_DrawMouse(void); // [crispy] mouse sensitivity menu
 void M_DrawSound(void);
 void M_DrawLoad(void);
 void M_DrawSave(void);
@@ -239,34 +238,7 @@ void M_StartMessage(char *string,void *routine,boolean input);
 void M_StopMessage(void);
 void M_ClearMenus (void);
 
-static void M_CrispyToggleAutomapstats(int choice);
-static void M_CrispyToggleBrightmaps(int choice);
-static void M_CrispyToggleCenterweapon(int choice);
-static void M_CrispyToggleColoredblood(int choice);
-static void M_CrispyToggleColoredblood2(int choice);
-static void M_CrispyToggleColoredhud(int choice);
-static void M_CrispyToggleCrosshair(int choice);
-static void M_CrispyToggleCrosshairtype(int choice);
-static void M_CrispyToggleDemoBar(int choice);
-static void M_CrispyToggleDemoTimer(int choice);
-static void M_CrispyToggleDemoTimerDir(int choice);
-static void M_CrispyToggleExtAutomap(int choice);
-//static void M_CrispyToggleExtsaveg(int choice);
-static void M_CrispyToggleFlipcorpses(int choice);
-static void M_CrispyToggleFreeaim(int choice);
-static void M_CrispyToggleFreelook(int choice);
-static void M_CrispyToggleFullsounds(int choice);
-static void M_CrispyToggleJumping(int choice);
-static void M_CrispyToggleNeghealth(int choice);
-static void M_CrispyToggleOverunder(int choice);
-static void M_CrispyTogglePitch(int choice);
-static void M_CrispyToggleRecoil(int choice);
-static void M_CrispyToggleSecretmessage(int choice);
-static void M_CrispyToggleSmoothScaling(int choice);
-static void M_CrispyToggleSoundfixes(int choice);
-static void M_CrispyToggleTranslucency(int choice);
-static void M_CrispyToggleUncapped(int choice);
-static void M_CrispyToggleWeaponSquat(int choice);
+// [crispy] Crispness menu
 static void M_CrispnessX(int choice);
 static void M_Crispness1(int choice);
 static void M_Crispness2(int choice);
@@ -415,7 +387,7 @@ enum
     option_empty1,
     mousesens,
     soundvol,
-    crispness, // [crispy] crispness menu
+    crispness, // [crispy] Crispness menu
     opt_end
 } options_e;
 
@@ -428,7 +400,7 @@ menuitem_t OptionsMenu[]=
     {-1,"",0,'\0'},
     {1,"M_MSENS",	M_Mouse,'m', "Mouse Sensitivity"}, // [crispy] mouse sensitivity menu
     {1,"M_SVOL",	M_Sound,'s', "Sound Volume"},
-    {1,"M_CRISPY",	M_CrispnessX,'c', "Crispness"} // [crispy] crispness menu
+    {1,"M_CRISPY",	M_CrispnessX,'c', "Crispness"} // [crispy] Crispness menu
 };
 
 menu_t  OptionsDef =
@@ -460,7 +432,7 @@ static menuitem_t MouseMenu[]=
     {2,"",	M_ChangeSensitivity_y,'v'},
     {-1,"",0,'\0'},
     {1,"",	M_MouseInvert,'i'},
-    {1,"",	M_MouseLook,'l'},
+    {1,"",	M_CrispyToggleMouseLook,'l'},
 };
 
 static menu_t  MouseDef =
@@ -473,7 +445,7 @@ static menu_t  MouseDef =
     0
 };
 
-// [crispy] crispness menu
+// [crispy] Crispness menu
 enum
 {
     crispness_sep_visual,
@@ -1336,7 +1308,7 @@ static void M_DrawMouse(void)
     dp_translation = NULL;
 }
 
-// [crispy] crispness menu
+// [crispy] Crispness menu
 static void M_DrawCrispnessBackground(void)
 {
 	const byte *src;
@@ -1381,118 +1353,6 @@ static void M_DrawCrispnessItem(int y, char *item, int feat, boolean cond)
                cond && feat ? "On" : "Off");
     M_WriteText(currentMenu->x, currentMenu->y + CRISPY_LINEHEIGHT * y, crispy_menu_text);
 }
-
-typedef struct
-{
-    int value;
-    char *name;
-} multiitem_t;
-
-static multiitem_t multiitem_brightmaps[NUM_BRIGHTMAPS] =
-{
-    {BRIGHTMAPS_OFF, "none"},
-    {BRIGHTMAPS_TEXTURES, "walls"},
-    {BRIGHTMAPS_SPRITES, "items"},
-    {BRIGHTMAPS_BOTH, "both"},
-};
-
-static multiitem_t multiitem_centerweapon[NUM_CENTERWEAPON] =
-{
-    {CENTERWEAPON_OFF, "off"},
-    {CENTERWEAPON_HOR, "horizontal"},
-    {CENTERWEAPON_HORVER, "centered"},
-    {CENTERWEAPON_BOB, "bobbing"},
-    {CENTERWEAPON_BOB2, "bobbing/2"},
-};
-
-static multiitem_t multiitem_coloredblood[NUM_COLOREDBLOOD] =
-{
-    {COLOREDBLOOD_OFF, "off"},
-    {COLOREDBLOOD_BLOOD, "blood"},
-    {COLOREDBLOOD_CORPSE, "corpses"},
-    {COLOREDBLOOD_BOTH, "both"},
-};
-
-static multiitem_t multiitem_coloredhud[NUM_COLOREDHUD] =
-{
-    {COLOREDHUD_OFF, "off"},
-    {COLOREDHUD_BAR, "status bar"},
-    {COLOREDHUD_TEXT, "hud texts"},
-    {COLOREDHUD_BOTH, "both"},
-};
-
-static multiitem_t multiitem_crosshair[NUM_CROSSHAIRS] =
-{
-    {CROSSHAIR_OFF, "off"},
-    {CROSSHAIR_STATIC, "static"},
-    {CROSSHAIR_PROJECTED, "projected"},
-};
-
-static multiitem_t multiitem_crosshairtype[] =
-{
-    {-1, ""},
-    {0, "cross"},
-    {1, "chevron"},
-    {2, "dot"},
-};
-
-static multiitem_t multiitem_freeaim[NUM_FREEAIMS] =
-{
-    {FREEAIM_AUTO, "autoaim"},
-    {FREEAIM_DIRECT, "direct"},
-    {FREEAIM_BOTH, "both"},
-};
-
-static multiitem_t multiitem_demotimer[NUM_DEMOTIMERS] =
-{
-    {DEMOTIMER_OFF, "off"},
-    {DEMOTIMER_RECORD, "recording"},
-    {DEMOTIMER_PLAYBACK, "playback"},
-    {DEMOTIMER_BOTH, "both"},
-};
-
-static multiitem_t multiitem_demotimerdir[] =
-{
-    {0, ""},
-    {1, "forward"},
-    {2, "backward"},
-};
-
-static multiitem_t multiitem_freelook[NUM_FREELOOKS] =
-{
-    {FREELOOK_OFF, "off"},
-    {FREELOOK_SPRING, "spring"},
-    {FREELOOK_LOCK, "lock"},
-};
-
-static multiitem_t multiitem_jump[NUM_JUMPS] =
-{
-    {JUMP_OFF, "off"},
-    {JUMP_LOW, "low"},
-    {JUMP_HIGH, "high"},
-};
-
-static multiitem_t multiitem_neghealth[NUM_NEGHEALTHS] =
-{
-    {NEGHEALTH_OFF, "off"},
-    {NEGHEALTH_DM, "deathmatch"},
-    {NEGHEALTH_ON, "always"},
-};
-
-static multiitem_t multiitem_translucency[NUM_TRANSLUCENCY] =
-{
-    {TRANSLUCENCY_OFF, "off"},
-    {TRANSLUCENCY_MISSILE, "projectiles"},
-    {TRANSLUCENCY_ITEM, "items"},
-    {TRANSLUCENCY_BOTH, "both"},
-};
-
-static multiitem_t multiitem_uncapped[NUM_UNCAPPED] =
-{
-    {UNCAPPED_OFF, "35 fps"},
-    {UNCAPPED_ON, "uncapped"},
-    {UNCAPPED_VSYNC, "vsync"},
-};
 
 static void M_DrawCrispnessMultiItem(int y, char *item, multiitem_t *multiitem, int feat, boolean cond)
 {
@@ -1842,278 +1702,6 @@ static void M_MouseInvert(int choice)
     mouse_y_invert = !mouse_y_invert;
 }
 
-static void M_MouseLook(int choice)
-{
-    choice = 0;
-    crispy->mouselook = !crispy->mouselook;
-
-    players[consoleplayer].lookdir = 0;
-    R_InitSkyMap();
-}
-
-static void M_CrispyToggleAutomapstats(int choice)
-{
-    choice = 0;
-    crispy->automapstats = !crispy->automapstats;
-}
-
-static void M_CrispyToggleBrightmaps(int choice)
-{
-    choice = 0;
-    crispy->brightmaps = (crispy->brightmaps + 1) % NUM_BRIGHTMAPS;
-}
-
-static void M_CrispyToggleCenterweapon(int choice)
-{
-    choice = 0;
-    crispy->centerweapon = (crispy->centerweapon + 1) % NUM_CENTERWEAPON;
-}
-
-static void M_CrispyToggleColoredblood(int choice)
-{
-    // [crispy] preserve coloredblood_fix value when switching colored blood and corpses
-    const int coloredblood_fix = crispy->coloredblood & COLOREDBLOOD_FIX;
-
-    if (gameversion == exe_chex)
-    {
-	S_StartSound(NULL,sfx_oof);
-	return;
-    }
-
-    choice = 0;
-    crispy->coloredblood = (crispy->coloredblood + 1) % NUM_COLOREDBLOOD;
-    crispy->coloredblood |= coloredblood_fix;
-}
-
-static void M_CrispyToggleColoredblood2(int choice)
-{
-    if (gameversion == exe_chex)
-    {
-	S_StartSound(NULL,sfx_oof);
-	return;
-    }
-
-    choice = 0;
-    crispy->coloredblood ^= COLOREDBLOOD_FIX;
-}
-
-static void M_CrispyToggleColoredhud(int choice)
-{
-    choice = 0;
-    crispy->coloredhud = (crispy->coloredhud + 1) % NUM_COLOREDHUD;
-}
-
-static void M_CrispyToggleCrosshair(int choice)
-{
-    choice = 0;
-    crispy->crosshair = (crispy->crosshair + 1) % NUM_CROSSHAIRS;
-}
-
-static void M_CrispyToggleCrosshairtype(int choice)
-{
-    if (!crispy->crosshair)
-    {
-	S_StartSound(NULL,sfx_oof);
-	return;
-    }
-
-    choice = 0;
-    crispy->crosshairtype = crispy->crosshairtype + 1;
-
-    if (!laserpatch[crispy->crosshairtype].c)
-    {
-	crispy->crosshairtype = 0;
-    }
-}
-
-static void M_CrispyToggleDemoBar(int choice)
-{
-    choice = 0;
-    crispy->demobar = !crispy->demobar;
-}
-
-static void M_CrispyToggleDemoTimer(int choice)
-{
-    choice = 0;
-    crispy->demotimer = (crispy->demotimer + 1) % NUM_DEMOTIMERS;
-}
-
-static void M_CrispyToggleDemoTimerDir(int choice)
-{
-    if (!(crispy->demotimer & DEMOTIMER_PLAYBACK))
-    {
-	S_StartSound(NULL,sfx_oof);
-	return;
-    }
-
-    choice = 0;
-    crispy->demotimerdir = !crispy->demotimerdir;
-}
-
-static void M_CrispyToggleExtAutomap(int choice)
-{
-    choice = 0;
-    crispy->extautomap = !crispy->extautomap;
-}
-
-/*
-static void M_CrispyToggleExtsaveg(int choice)
-{
-    choice = 0;
-    crispy->extsaveg = !crispy->extsaveg;
-}
-*/
-
-static void M_CrispyToggleFlipcorpses(int choice)
-{
-    if (gameversion == exe_chex)
-    {
-	S_StartSound(NULL,sfx_oof);
-	return;
-    }
-
-    choice = 0;
-    crispy->flipcorpses = !crispy->flipcorpses;
-}
-
-static void M_CrispyToggleFreeaim(int choice)
-{
-    if (!crispy->singleplayer)
-    {
-	S_StartSound(NULL,sfx_oof);
-	return;
-    }
-
-    choice = 0;
-    crispy->freeaim = (crispy->freeaim + 1) % NUM_FREEAIMS;
-
-    // [crispy] update the "critical" struct
-    CheckCrispySingleplayer(!demorecording && !demoplayback && !netgame);
-}
-
-static void M_CrispyToggleFreelook(int choice)
-{
-    choice = 0;
-    crispy->freelook = (crispy->freelook + 1) % NUM_FREELOOKS;
-
-    players[consoleplayer].lookdir = 0;
-    R_InitSkyMap();
-}
-
-static void M_CrispyToggleFullsounds(int choice)
-{
-    choice = 0;
-    crispy->soundfull = !crispy->soundfull;
-}
-
-static void M_CrispyToggleJumping(int choice)
-{
-    if (!crispy->singleplayer)
-    {
-	S_StartSound(NULL,sfx_oof);
-	return;
-    }
-
-    choice = 0;
-    crispy->jump = (crispy->jump + 1) % NUM_JUMPS;
-
-    // [crispy] update the "critical" struct
-    CheckCrispySingleplayer(!demorecording && !demoplayback && !netgame);
-}
-
-static void M_CrispyToggleNeghealth(int choice)
-{
-    choice = 0;
-    crispy->neghealth = (crispy->neghealth + 1) % NUM_NEGHEALTHS;
-}
-
-static void M_CrispyToggleOverunder(int choice)
-{
-    if (!crispy->singleplayer)
-    {
-	S_StartSound(NULL,sfx_oof);
-	return;
-    }
-
-    choice = 0;
-    crispy->overunder = !crispy->overunder;
-
-    // [crispy] update the "critical" struct
-    CheckCrispySingleplayer(!demorecording && !demoplayback && !netgame);
-}
-
-static void M_CrispyTogglePitch(int choice)
-{
-    choice = 0;
-    crispy->pitch = !crispy->pitch;
-    R_InitSkyMap();
-}
-
-static void M_CrispyToggleRecoil(int choice)
-{
-    if (!crispy->singleplayer)
-    {
-	S_StartSound(NULL,sfx_oof);
-	return;
-    }
-
-    choice = 0;
-    crispy->recoil = !crispy->recoil;
-
-    // [crispy] update the "critical" struct
-    CheckCrispySingleplayer(!demorecording && !demoplayback && !netgame);
-}
-
-static void M_CrispyToggleSecretmessage(int choice)
-{
-    choice = 0;
-    crispy->secretmessage = !crispy->secretmessage;
-}
-
-static void M_CrispyToggleSmoothScaling(int choice)
-{
-    choice = 0;
-    crispy->smoothscaling = !crispy->smoothscaling;
-}
-
-static void M_CrispyToggleSoundfixes(int choice)
-{
-    choice = 0;
-    crispy->soundfix = !crispy->soundfix;
-}
-
-static void M_CrispyToggleTranslucency(int choice)
-{
-    choice = 0;
-    crispy->translucency = (crispy->translucency + 1) % NUM_TRANSLUCENCY;
-}
-
-static void M_CrispyToggleUncapped(int choice)
-{
-    choice = 0;
-
-    if (force_software_renderer)
-    {
-	S_StartSound(NULL,sfx_oof);
-	return;
-    }
-
-    crispy->uncapped = (crispy->uncapped + 1) % NUM_UNCAPPED;
-
-    // [crispy] restart renderer if vsync is toggled (UNCAPPED_OFF has vsync),
-    // i.e. UNCAPPED_OFF -> UNCAPPED_ON and UNCAPPED_ON -> UNCAPPED_VSYNC
-    if (crispy->uncapped)
-    {
-	extern void SetVideoMode (void);
-	SetVideoMode();
-    }
-}
-
-static void M_CrispyToggleWeaponSquat(int choice)
-{
-    choice = 0;
-    crispy->weaponsquat = !crispy->weaponsquat;
-}
 
 void M_ChangeDetail(int choice)
 {
