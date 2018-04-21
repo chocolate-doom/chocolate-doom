@@ -688,7 +688,15 @@ static void NET_SV_ParseSYN(net_packet_t *packet, net_client_t *client,
     // the other clients
     if (data.gamemode != sv_gamemode || data.gamemission != sv_gamemission)
     {
-        NET_SV_SendReject(addr, "You are playing the wrong game!");
+        char msg[128];
+        M_snprintf(msg, sizeof(msg),
+                   "Game mismatch: server is %s (%s), client is %s (%s)",
+                   D_GameMissionString(sv_gamemission),
+                   D_GameModeString(sv_gamemode),
+                   D_GameMissionString(data.gamemission),
+                   D_GameModeString(data.gamemode));
+
+        NET_SV_SendReject(addr, msg);
         return;
     }
 

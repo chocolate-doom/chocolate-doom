@@ -210,3 +210,20 @@ const char *D_GameMissionString(GameMission_t mission)
     }
 }
 
+const char *D_GameModeString(GameMode_t mode)
+{
+    switch (mode)
+    {
+        case shareware:
+            return "shareware";
+        case registered:
+            return "registered";
+        case commercial:
+            return "commercial";
+        case retail:
+            return "retail";
+        case indetermined:
+            return "indetermined";
+    }
+}
+
