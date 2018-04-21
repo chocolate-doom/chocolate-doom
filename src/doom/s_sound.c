@@ -501,8 +501,7 @@ static int S_AdjustSoundParams(mobj_t *listener, mobj_t *source,
             / S_ATTENUATOR;
     }
 
-    // [JN] Zero SFX volume means there must not be *any* sounds at all.
-    return (*vol > 0 && (snd_SfxVolume || !crispy->soundfix));
+    return (*vol > 0);
 }
 
 // clamp supplied integer to the range 0 <= x <= 255.
@@ -537,8 +536,8 @@ void S_StartSound(void *origin_p, int sfx_id)
     origin = (mobj_t *) origin_p;
     volume = snd_SfxVolume;
 
-    // [crispy] make non-fatal
-    if (sfx_id == sfx_None)
+    // [crispy] make non-fatal, consider zero volume
+    if (sfx_id == sfx_None || !snd_SfxVolume)
     {
         return;
     }
