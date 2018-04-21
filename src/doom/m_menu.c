@@ -1352,13 +1352,13 @@ static void M_DrawMouse(void)
 }
 
 // [crispy] Crispness menu
+#include "m_background.h"
 static void M_DrawCrispnessBackground(void)
 {
-	const byte *src;
+	const byte *const src = crispness_background;
 	pixel_t *dest;
 	int x, y;
 
-	src = W_CacheLumpName("FLOOR4_6", PU_CACHE);
 	dest = I_VideoBuffer;
 
 	for (y = 0; y < SCREENHEIGHT; y++)
