@@ -223,7 +223,8 @@ const char *D_GameModeString(GameMode_t mode)
         case retail:
             return "retail";
         case indetermined:
-            return "indetermined";
+        default:
+            return "unknown";
     }
 }
 
