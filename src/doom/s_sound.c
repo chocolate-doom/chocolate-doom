@@ -251,6 +251,7 @@ void S_Start(void)
     }
 
     // start new music for the level
+    if (musicVolume) // [crispy] do not reset pause state at zero music volume
     mus_paused = 0;
 
     if (gamemode == commercial)
