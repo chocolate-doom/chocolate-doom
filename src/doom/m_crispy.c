@@ -375,6 +375,27 @@ void M_CrispyToggleSmoothScaling(int choice)
     crispy->smoothscaling = !crispy->smoothscaling;
 }
 
+void M_CrispyToggleSmoothLighting(int choice)
+{
+    extern void R_InitLightTables (void);
+    extern void R_ExecuteSetViewSize (void);
+    extern void P_SegLengths (boolean contrast_only);
+
+    choice = 0;
+    crispy->smoothlight = !crispy->smoothlight;
+
+    // [crispy] stop rendering for a while ...
+    nodrawers = true;
+    // [crispy] re-calculate the zlight[][] array
+    R_InitLightTables();
+    // [crispy] re-calculate the scalelight[][] array
+    R_ExecuteSetViewSize();
+    // [crispy] re-calculate fake contrast
+    P_SegLengths(true);
+    // [crispy] ... continue rendering
+    nodrawers = false;
+}
+
 void M_CrispyToggleSndChannels(int choice)
 {
     extern void S_UpdateSndChannels (void);
@@ -389,6 +410,12 @@ void M_CrispyToggleSoundfixes(int choice)
 {
     choice = 0;
     crispy->soundfix = !crispy->soundfix;
+}
+
+void M_CrispyToggleSoundMono(int choice)
+{
+    choice = 0;
+    crispy->soundmono = !crispy->soundmono;
 }
 
 void M_CrispyToggleTranslucency(int choice)

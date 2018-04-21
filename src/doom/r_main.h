@@ -58,19 +58,18 @@ extern int		loopcount;
 
 // Lighting constants.
 // Now why not 32 levels here?
-#define MAXLIGHTLEVELS	        32
+// [crispy] parameterized for smooth diminishing lighting
 extern int LIGHTLEVELS;
 extern int LIGHTSEGSHIFT;
 extern int LIGHTBRIGHT;
+extern int MAXLIGHTSCALE;
+extern int LIGHTSCALESHIFT;
+extern int MAXLIGHTZ;
+extern int LIGHTZSHIFT;
 
-#define MAXLIGHTSCALE		48
-#define LIGHTSCALESHIFT		12
-#define MAXLIGHTZ	       1024
-#define LIGHTZSHIFT		17
-
-extern lighttable_t*	scalelight[MAXLIGHTLEVELS][MAXLIGHTSCALE];
-extern lighttable_t*	scalelightfixed[MAXLIGHTSCALE];
-extern lighttable_t*	zlight[MAXLIGHTLEVELS][MAXLIGHTZ];
+extern lighttable_t***	scalelight;
+extern lighttable_t**	scalelightfixed;
+extern lighttable_t***	zlight;
 
 extern int		extralight;
 extern lighttable_t*	fixedcolormap;

@@ -33,6 +33,7 @@
 #include "m_bbox.h"
 #include "m_menu.h"
 
+#include "i_system.h" // [crispy] I_Realloc()
 #include "p_local.h" // [crispy] MLOOKUNIT
 #include "r_local.h"
 #include "r_sky.h"
@@ -103,16 +104,22 @@ int			viewangletox[FINEANGLES/2];
 // from clipangle to -clipangle.
 angle_t			xtoviewangle[MAXWIDTH+1];
 
-lighttable_t*		scalelight[MAXLIGHTLEVELS][MAXLIGHTSCALE];
-lighttable_t*		scalelightfixed[MAXLIGHTSCALE];
-lighttable_t*		zlight[MAXLIGHTLEVELS][MAXLIGHTZ];
+// [crispy] parameterized for smooth diminishing lighting
+lighttable_t***		scalelight = NULL;
+lighttable_t**		scalelightfixed = NULL;
+lighttable_t***		zlight = NULL;
 
 // bumped light from gun blasts
 int			extralight;			
 
+// [crispy] parameterized for smooth diminishing lighting
 int LIGHTLEVELS;
 int LIGHTSEGSHIFT;
 int LIGHTBRIGHT;
+int MAXLIGHTSCALE;
+int LIGHTSCALESHIFT;
+int MAXLIGHTZ;
+int LIGHTZSHIFT;
 
 
 void (*colfunc) (void);
@@ -684,23 +691,61 @@ void R_InitLightTables (void)
     int		startmap; 	
     int		scale;
     
-    if (1||crispy->smoothlight)
+    if (scalelight)
+    {
+	for (i = 0; i < LIGHTLEVELS; i++)
+	{
+		free(scalelight[i]);
+	}
+	free(scalelight);
+    }
+
+    if (scalelightfixed)
+    {
+	free(scalelightfixed);
+    }
+
+    if (zlight)
+    {
+	for (i = 0; i < LIGHTLEVELS; i++)
+	{
+		free(zlight[i]);
+	}
+	free(zlight);
+    }
+
+   // [crispy] smooth diminishing lighting
+    if (crispy->smoothlight)
     {
 	LIGHTLEVELS = 32;
 	LIGHTSEGSHIFT = 3;
 	LIGHTBRIGHT = 2;
+	MAXLIGHTSCALE = 48;
+	LIGHTSCALESHIFT = 12;
+	MAXLIGHTZ = 1024;
+	LIGHTZSHIFT = 17;
     }
     else
     {
 	LIGHTLEVELS = 16;
 	LIGHTSEGSHIFT = 4;
 	LIGHTBRIGHT = 1;
+	MAXLIGHTSCALE = 48;
+	LIGHTSCALESHIFT = 12;
+	MAXLIGHTZ = 128;
+	LIGHTZSHIFT = 20;
     }
+
+    scalelight = malloc(LIGHTLEVELS * sizeof(*scalelight));
+    scalelightfixed = malloc(MAXLIGHTSCALE * sizeof(*scalelightfixed));
+    zlight = malloc(LIGHTLEVELS * sizeof(*zlight));
 
     // Calculate the light levels to use
     //  for each level / distance combination.
     for (i=0 ; i< LIGHTLEVELS ; i++)
     {
+	zlight[i] = malloc(MAXLIGHTZ * sizeof(**zlight));
+
 	startmap = ((LIGHTLEVELS-LIGHTBRIGHT-i)*2)*NUMCOLORMAPS/LIGHTLEVELS;
 	for (j=0 ; j<MAXLIGHTZ ; j++)
 	{
@@ -832,6 +877,8 @@ void R_ExecuteSetViewSize (void)
     //  for each level / scale combination.
     for (i=0 ; i< LIGHTLEVELS ; i++)
     {
+	scalelight[i] = malloc(MAXLIGHTSCALE * sizeof(**scalelight));
+
 	startmap = ((LIGHTLEVELS-LIGHTBRIGHT-i)*2)*NUMCOLORMAPS/LIGHTLEVELS;
 	for (j=0 ; j<MAXLIGHTSCALE ; j++)
 	{

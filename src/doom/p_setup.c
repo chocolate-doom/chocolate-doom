@@ -284,7 +284,7 @@ void P_LoadSegs (int lump)
 }
 
 // [crispy] fix long wall wobble
-void P_SegLengths (void)
+void P_SegLengths (boolean contrast_only)
 {
     int i;
     const int rightangle = abs(finesine[(ANG60/2) >> ANGLETOFINESHIFT]);
@@ -296,12 +296,16 @@ void P_SegLengths (void)
 
 	dx = li->v2->r_x - li->v1->r_x;
 	dy = li->v2->r_y - li->v1->r_y;
-	li->length = (uint32_t)(sqrt((double)dx*dx + (double)dy*dy)/2);
 
-	// [crispy] re-calculate angle used for rendering
-	viewx = li->v1->r_x;
-	viewy = li->v1->r_y;
-	li->r_angle = R_PointToAngleCrispy(li->v2->r_x, li->v2->r_y);
+	if (!contrast_only)
+	{
+		li->length = (uint32_t)(sqrt((double)dx*dx + (double)dy*dy)/2);
+
+		// [crispy] re-calculate angle used for rendering
+		viewx = li->v1->r_x;
+		viewy = li->v1->r_y;
+		li->r_angle = R_PointToAngleCrispy(li->v2->r_x, li->v2->r_y);
+	}
 
 	// [crispy] smoother fake contrast
 	if (!dy)
@@ -1236,7 +1240,7 @@ P_SetupLevel
     // [crispy] remove slime trails
     P_RemoveSlimeTrails();
     // [crispy] fix long wall wobble
-    P_SegLengths();
+    P_SegLengths(false);
 
     bodyqueslot = 0;
     deathmatch_p = deathmatchstarts;

@@ -64,6 +64,7 @@ typedef struct
 	int sndchannels;
 	int soundfix;
 	int soundfull;
+	int soundmono;
 	int translucency;
 	int uncapped;
 	int weaponsquat;

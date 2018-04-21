@@ -1956,6 +1956,14 @@ static default_t extra_defaults_list[] =
     //!
     // @game doom
     //
+    // Smooth Diminishing Lighting.
+    //
+
+    CONFIG_VARIABLE_INT(crispy_smoothlight),
+
+    //!
+    // @game doom
+    //
     // Smooth Scaling.
     //
 
@@ -1984,6 +1992,14 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_INT(crispy_soundfull),
+
+    //!
+    // @game doom
+    //
+    // Mono sound effects.
+    //
+
+    CONFIG_VARIABLE_INT(crispy_soundmono),
 
     //!
     // @game doom

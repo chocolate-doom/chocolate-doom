@@ -459,6 +459,7 @@ enum
     crispness_sep_visual,
     crispness_coloredhud,
     crispness_translucency,
+    crispness_smoothlight,
     crispness_brightmaps,
     crispness_coloredblood,
     crispness_coloredblood2,
@@ -479,6 +480,7 @@ static menuitem_t Crispness1Menu[]=
     {-1,"",0,'\0'},
     {1,"",	M_CrispyToggleColoredhud,'c'},
     {1,"",	M_CrispyToggleTranslucency,'e'},
+    {1,"",	M_CrispyToggleSmoothLighting,'s'},
     {1,"",	M_CrispyToggleBrightmaps,'b'},
     {1,"",	M_CrispyToggleColoredblood,'e'},
     {1,"",	M_CrispyToggleColoredblood2,'f'},
@@ -505,6 +507,7 @@ enum
     crispness_soundfull,
     crispness_soundfix,
     crispness_sndchannels,
+    crispness_soundmono,
     crispness_sep_audible_,
 
     crispness_sep_navigational,
@@ -524,6 +527,7 @@ static menuitem_t Crispness2Menu[]=
     {1,"",	M_CrispyToggleFullsounds,'p'},
     {1,"",	M_CrispyToggleSoundfixes,'m'},
     {1,"",	M_CrispyToggleSndChannels,'s'},
+    {1,"",	M_CrispyToggleSoundMono,'m'},
     {-1,"",0,'\0'},
     {-1,"",0,'\0'},
     {1,"",	M_CrispyToggleExtAutomap,'e'},
@@ -1425,6 +1429,7 @@ static void M_DrawCrispness1(void)
     M_DrawCrispnessSeparator(crispness_sep_visual, "Visual");
     M_DrawCrispnessMultiItem(crispness_coloredhud, "Colorize HUD Elements", multiitem_coloredhud, crispy->coloredhud, true);
     M_DrawCrispnessMultiItem(crispness_translucency, "Enable Translucency", multiitem_translucency, crispy->translucency, true);
+    M_DrawCrispnessItem(crispness_smoothlight, "Smooth Diminishing Lighting", crispy->smoothlight, true);
     M_DrawCrispnessMultiItem(crispness_brightmaps, "Apply Brightmaps to", multiitem_brightmaps, crispy->brightmaps, true);
     M_DrawCrispnessMultiItem(crispness_coloredblood, "Colored Blood and Corpses", multiitem_coloredblood, crispy->coloredblood & COLOREDBLOOD_BOTH, gameversion != exe_chex);
     M_DrawCrispnessItem(crispness_coloredblood2, "Fix Spectre and Lost Soul Blood", crispy->coloredblood & COLOREDBLOOD_FIX, gameversion != exe_chex);
@@ -1447,6 +1452,7 @@ static void M_DrawCrispness2(void)
     M_DrawCrispnessItem(crispness_soundfull, "Play sounds in full length", crispy->soundfull, true);
     M_DrawCrispnessItem(crispness_soundfix, "Misc. Sound Fixes", crispy->soundfix, true);
     M_DrawCrispnessMultiItem(crispness_sndchannels, "Sound Channels", multiitem_sndchannels, crispy->sndchannels, true);
+    M_DrawCrispnessItem(crispness_soundmono, "Mono SFX", crispy->soundmono, true);
 
     M_DrawCrispnessSeparator(crispness_sep_navigational, "Navigational");
     M_DrawCrispnessItem(crispness_extautomap, "Extended Automap colors", crispy->extautomap, true);
