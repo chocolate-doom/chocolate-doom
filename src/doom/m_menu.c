@@ -504,6 +504,7 @@ enum
     crispness_sep_audible,
     crispness_soundfull,
     crispness_soundfix,
+    crispness_sndchannels,
     crispness_sep_audible_,
 
     crispness_sep_navigational,
@@ -522,6 +523,7 @@ static menuitem_t Crispness2Menu[]=
     {-1,"",0,'\0'},
     {1,"",	M_CrispyToggleFullsounds,'p'},
     {1,"",	M_CrispyToggleSoundfixes,'m'},
+    {1,"",	M_CrispyToggleSndChannels,'s'},
     {-1,"",0,'\0'},
     {-1,"",0,'\0'},
     {1,"",	M_CrispyToggleExtAutomap,'e'},
@@ -1444,6 +1446,7 @@ static void M_DrawCrispness2(void)
     M_DrawCrispnessSeparator(crispness_sep_audible, "Audible");
     M_DrawCrispnessItem(crispness_soundfull, "Play sounds in full length", crispy->soundfull, true);
     M_DrawCrispnessItem(crispness_soundfix, "Misc. Sound Fixes", crispy->soundfix, true);
+    M_DrawCrispnessMultiItem(crispness_sndchannels, "Sound Channels", multiitem_sndchannels, crispy->sndchannels, true);
 
     M_DrawCrispnessSeparator(crispness_sep_navigational, "Navigational");
     M_DrawCrispnessItem(crispness_extautomap, "Extended Automap colors", crispy->extautomap, true);

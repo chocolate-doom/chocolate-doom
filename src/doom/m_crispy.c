@@ -123,6 +123,13 @@ multiitem_t multiitem_translucency[NUM_TRANSLUCENCY] =
     {TRANSLUCENCY_BOTH, "both"},
 };
 
+multiitem_t multiitem_sndchannels[NUM_SNDCHANNELS] =
+{
+    {SNDCHANNELS_8, "8"},
+    {SNDCHANNELS_16, "16"},
+    {SNDCHANNELS_32, "32"},
+};
+
 multiitem_t multiitem_uncapped[NUM_UNCAPPED] =
 {
     {UNCAPPED_OFF, "35 fps"},
@@ -366,6 +373,16 @@ void M_CrispyToggleSmoothScaling(int choice)
 {
     choice = 0;
     crispy->smoothscaling = !crispy->smoothscaling;
+}
+
+void M_CrispyToggleSndChannels(int choice)
+{
+    extern void S_UpdateSndChannels (void);
+
+    choice = 0;
+    crispy->sndchannels = (crispy->sndchannels + 1) % NUM_SNDCHANNELS;
+
+    S_UpdateSndChannels();
 }
 
 void M_CrispyToggleSoundfixes(int choice)

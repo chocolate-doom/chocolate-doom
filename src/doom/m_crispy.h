@@ -38,6 +38,7 @@ extern multiitem_t multiitem_demotimerdir[];
 extern multiitem_t multiitem_freelook[NUM_FREELOOKS];
 extern multiitem_t multiitem_jump[NUM_JUMPS];
 extern multiitem_t multiitem_neghealth[NUM_NEGHEALTHS];
+extern multiitem_t multiitem_sndchannels[NUM_SNDCHANNELS];
 extern multiitem_t multiitem_translucency[NUM_TRANSLUCENCY];
 extern multiitem_t multiitem_uncapped[NUM_UNCAPPED];
 
@@ -67,6 +68,7 @@ extern void M_CrispyTogglePitch(int choice);
 extern void M_CrispyToggleRecoil(int choice);
 extern void M_CrispyToggleSecretmessage(int choice);
 extern void M_CrispyToggleSmoothScaling(int choice);
+extern void M_CrispyToggleSndChannels(int choice);
 extern void M_CrispyToggleSoundfixes(int choice);
 extern void M_CrispyToggleTranslucency(int choice);
 extern void M_CrispyToggleUncapped(int choice);
