@@ -37,6 +37,7 @@ void NET_BindVariables(void);
 extern boolean net_client_connected;
 extern boolean net_client_received_wait_data;
 extern net_waitdata_t net_client_wait_data;
+extern char *net_client_reject_reason;
 extern boolean net_waiting_for_launch;
 extern char *net_player_name;
 
