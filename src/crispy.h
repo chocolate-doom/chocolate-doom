@@ -51,6 +51,7 @@ typedef struct
 	int flipcorpses;
 	int freeaim;
 	int freelook;
+	int hires;
 	int jump;
 	int mouselook;
 	int neghealth;

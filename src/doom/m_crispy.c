@@ -283,6 +283,12 @@ void M_CrispyToggleFullsounds(int choice)
     crispy->soundfull = !crispy->soundfull;
 }
 
+void M_CrispyToggleHires(int choice)
+{
+    choice = 0;
+    crispy->hires = !crispy->hires;
+}
+
 void M_CrispyToggleJumping(int choice)
 {
     if (!crispy->singleplayer)

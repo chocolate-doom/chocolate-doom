@@ -1409,7 +1409,7 @@ void I_InitGraphics(void)
     }
 
     // [crispy] run-time variable high-resolution rendering
-    if (hires)
+    if ((hires = crispy->hires))
     {
         SCREENWIDTH = MAXWIDTH;
         SCREENHEIGHT = MAXHEIGHT;

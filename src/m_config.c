@@ -1892,6 +1892,14 @@ static default_t extra_defaults_list[] =
     //!
     // @game doom
     //
+    // High Resolution Rendering.
+    //
+
+    CONFIG_VARIABLE_INT(crispy_hires),
+
+    //!
+    // @game doom
+    //
     // Enable jumping.
     //
 

@@ -243,9 +243,11 @@ static void M_CrispnessX(int choice);
 static void M_Crispness1(int choice);
 static void M_Crispness2(int choice);
 static void M_Crispness3(int choice);
+static void M_Crispness4(int choice);
 static void M_DrawCrispness1(void);
 static void M_DrawCrispness2(void);
 static void M_DrawCrispness3(void);
+static void M_DrawCrispness4(void);
 
 
 
@@ -448,20 +450,21 @@ static menu_t  MouseDef =
 // [crispy] Crispness menu
 enum
 {
-    crispness_sep_visual,
+    crispness_sep_rendering,
+    crispness_hires,
     crispness_uncapped,
     crispness_smoothscaling,
+    crispness_sep_rendering_,
+
+    crispness_sep_visual,
     crispness_coloredhud,
     crispness_translucency,
     crispness_brightmaps,
     crispness_coloredblood,
     crispness_coloredblood2,
     crispness_flipcorpses,
-    crispness1_sep_audible,
-    crispness_sep_audible,
-    crispness_soundfull,
-    crispness_soundfix,
-    crispness1_sep_goto,
+    crispness_sep_visual_,
+
     crispness1_goto2,
     crispness1_end
 } crispness1_e;
@@ -469,18 +472,17 @@ enum
 static menuitem_t Crispness1Menu[]=
 {
     {-1,"",0,'\0'},
+    {1,"",	M_CrispyToggleHires,'h'},
     {1,"",	M_CrispyToggleUncapped,'u'},
     {1,"",	M_CrispyToggleSmoothScaling,'s'},
+    {-1,"",0,'\0'},
+    {-1,"",0,'\0'},
     {1,"",	M_CrispyToggleColoredhud,'c'},
     {1,"",	M_CrispyToggleTranslucency,'e'},
     {1,"",	M_CrispyToggleBrightmaps,'b'},
     {1,"",	M_CrispyToggleColoredblood,'e'},
     {1,"",	M_CrispyToggleColoredblood2,'f'},
     {1,"",	M_CrispyToggleFlipcorpses,'r'},
-    {-1,"",0,'\0'},
-    {-1,"",0,'\0'},
-    {1,"",	M_CrispyToggleFullsounds,'p'},
-    {1,"",	M_CrispyToggleSoundfixes,'m'},
     {-1,"",0,'\0'},
     {1,"",	M_Crispness2,'n'},
 };
@@ -499,45 +501,35 @@ static menu_t *CrispnessXDef = &Crispness1Def;
 
 enum
 {
-    crispness_sep_tactical,
-    crispness_crosshair,
-    crispness_crosshairtype,
-    crispness_freelook,
-    crispness_neghealth,
-    crispness_centerweapon,
-    crispness_pitch,
-    crispness_weaponsquat,
-//  crispness_extsaveg,
-    crispness2_sep_navigational,
+    crispness_sep_audible,
+    crispness_soundfull,
+    crispness_soundfix,
+    crispness_sep_audible_,
+
     crispness_sep_navigational,
     crispness_extautomap,
     crispness_automapstats,
     crispness_secretmessage,
-    crispness2_sep_goto,
-    crispness2_goto1,
+    crispness_sep_navigational_,
+
     crispness2_goto3,
+    crispness2_goto1,
     crispness2_end
 } crispness2_e;
 
 static menuitem_t Crispness2Menu[]=
 {
     {-1,"",0,'\0'},
-    {1,"",	M_CrispyToggleCrosshair,'d'},
-    {1,"",	M_CrispyToggleCrosshairtype,'c'},
-    {1,"",	M_CrispyToggleFreelook,'a'},
-    {1,"",	M_CrispyToggleNeghealth,'n'},
-    {1,"",	M_CrispyToggleCenterweapon,'c'},
-    {1,"",	M_CrispyTogglePitch,'w'},
-    {1,"",	M_CrispyToggleWeaponSquat,'w'},
-//  {1,"",	M_CrispyToggleExtsaveg,'e'},
+    {1,"",	M_CrispyToggleFullsounds,'p'},
+    {1,"",	M_CrispyToggleSoundfixes,'m'},
     {-1,"",0,'\0'},
     {-1,"",0,'\0'},
     {1,"",	M_CrispyToggleExtAutomap,'e'},
     {1,"",	M_CrispyToggleAutomapstats,'s'},
     {1,"",	M_CrispyToggleSecretmessage,'s'},
     {-1,"",0,'\0'},
-    {1,"",	M_Crispness1,'p'},
-    {1,"",	M_Crispness3,'n'},
+    {1,"",	M_Crispness3,'p'},
+    {1,"",	M_Crispness1,'n'},
 };
 
 static menu_t  Crispness2Def =
@@ -552,22 +544,67 @@ static menu_t  Crispness2Def =
 
 enum
 {
-    crispness_sep_physical,
-    crispness_freeaim,
-    crispness_jumping,
-    crispness_overunder,
-    crispness_recoil,
-    crispness3_sep_demos,
-    crispness_sep_demos,
-    crispness_demotimer,
-    crispness_demotimerdir,
-    crispness_demobar,
-    crispness3_sep_goto,
+    crispness_sep_tactical,
+    crispness_crosshair,
+    crispness_crosshairtype,
+    crispness_freelook,
+    crispness_neghealth,
+    crispness_centerweapon,
+    crispness_pitch,
+    crispness_weaponsquat,
+    crispness_sep_tactical_,
+
+    crispness3_goto4,
     crispness3_goto2,
     crispness3_end
 } crispness3_e;
 
 static menuitem_t Crispness3Menu[]=
+{
+    {-1,"",0,'\0'},
+    {1,"",	M_CrispyToggleCrosshair,'d'},
+    {1,"",	M_CrispyToggleCrosshairtype,'c'},
+    {1,"",	M_CrispyToggleFreelook,'a'},
+    {1,"",	M_CrispyToggleNeghealth,'n'},
+    {1,"",	M_CrispyToggleCenterweapon,'c'},
+    {1,"",	M_CrispyTogglePitch,'w'},
+    {1,"",	M_CrispyToggleWeaponSquat,'w'},
+    {-1,"",0,'\0'},
+    {1,"",	M_Crispness4,'p'},
+    {1,"",	M_Crispness2,'p'},
+};
+
+static menu_t  Crispness3Def =
+{
+    crispness3_end,
+    &Crispness2Def,
+    Crispness3Menu,
+    M_DrawCrispness3,
+    48,36,
+    1
+};
+
+enum
+{
+    crispness_sep_physical,
+    crispness_freeaim,
+    crispness_jumping,
+    crispness_overunder,
+    crispness_recoil,
+    crispness_sep_physical_,
+
+    crispness_sep_demos,
+    crispness_demotimer,
+    crispness_demotimerdir,
+    crispness_demobar,
+    crispness_sep_demos_,
+
+    crispness4_goto3,
+    crispness4_end
+} crispness4_e;
+
+
+static menuitem_t Crispness4Menu[]=
 {
     {-1,"",0,'\0'},
     {1,"",	M_CrispyToggleFreeaim,'v'},
@@ -580,15 +617,15 @@ static menuitem_t Crispness3Menu[]=
     {1,"",	M_CrispyToggleDemoTimerDir,'a'},
     {1,"",	M_CrispyToggleDemoBar,'w'},
     {-1,"",0,'\0'},
-    {1,"",	M_Crispness2,'p'},
+    {1,"",	M_Crispness3,'p'},
 };
 
-static menu_t  Crispness3Def =
+static menu_t  Crispness4Def =
 {
-    crispness3_end,
-    &Crispness2Def,
-    Crispness3Menu,
-    M_DrawCrispness3,
+    crispness4_end,
+    &Crispness3Def,
+    Crispness4Menu,
+    M_DrawCrispness4,
     48,36,
     1
 };
@@ -1378,20 +1415,18 @@ static void M_DrawCrispness1(void)
 
     M_DrawCrispnessHeader("Crispness 1/3");
 
-    M_DrawCrispnessSeparator(crispness_sep_visual, "Visual");
-
+    M_DrawCrispnessSeparator(crispness_sep_rendering, "Rendering");
+    M_DrawCrispnessItem(crispness_hires, "High Resolution Rendering", crispy->hires, true);
     M_DrawCrispnessMultiItem(crispness_uncapped, "Rendering Framerate", multiitem_uncapped, crispy->uncapped, !force_software_renderer);
-    M_DrawCrispnessItem(crispness_smoothscaling, "Smooth Scaling", crispy->smoothscaling, true);
+    M_DrawCrispnessItem(crispness_smoothscaling, "Smooth Pixel Scaling", crispy->smoothscaling, true);
+
+    M_DrawCrispnessSeparator(crispness_sep_visual, "Visual");
     M_DrawCrispnessMultiItem(crispness_coloredhud, "Colorize HUD Elements", multiitem_coloredhud, crispy->coloredhud, true);
     M_DrawCrispnessMultiItem(crispness_translucency, "Enable Translucency", multiitem_translucency, crispy->translucency, true);
     M_DrawCrispnessMultiItem(crispness_brightmaps, "Apply Brightmaps to", multiitem_brightmaps, crispy->brightmaps, true);
     M_DrawCrispnessMultiItem(crispness_coloredblood, "Colored Blood and Corpses", multiitem_coloredblood, crispy->coloredblood & COLOREDBLOOD_BOTH, gameversion != exe_chex);
     M_DrawCrispnessItem(crispness_coloredblood2, "Fix Spectre and Lost Soul Blood", crispy->coloredblood & COLOREDBLOOD_FIX, gameversion != exe_chex);
     M_DrawCrispnessItem(crispness_flipcorpses, "Randomly Mirrored Corpses", crispy->flipcorpses, gameversion != exe_chex);
-
-    M_DrawCrispnessSeparator(crispness_sep_audible, "Audible");
-    M_DrawCrispnessItem(crispness_soundfull, "Play sounds in full length", crispy->soundfull, true);
-    M_DrawCrispnessItem(crispness_soundfix, "Misc. Sound Fixes", crispy->soundfix, true);
 
     M_DrawCrispnessGoto(crispness1_goto2, "Next Page >");
 
@@ -1406,19 +1441,11 @@ static void M_DrawCrispness2(void)
 
     M_DrawCrispnessHeader("Crispness 2/3");
 
-    M_DrawCrispnessSeparator(crispness_sep_tactical, "Tactical");
-
-    M_DrawCrispnessMultiItem(crispness_crosshair, "Draw Crosshair", multiitem_crosshair, crispy->crosshair, true);
-    M_DrawCrispnessMultiItem(crispness_crosshairtype, "Crosshair Type", multiitem_crosshairtype, crispy->crosshairtype + 1, crispy->crosshair);
-    M_DrawCrispnessMultiItem(crispness_freelook, "Allow Free Look", multiitem_freelook, crispy->freelook, true);
-    M_DrawCrispnessMultiItem(crispness_neghealth, "Negative Player Health", multiitem_neghealth, crispy->neghealth, true);
-    M_DrawCrispnessMultiItem(crispness_centerweapon, "Weapon Attack Alignment", multiitem_centerweapon, crispy->centerweapon, true);
-    M_DrawCrispnessItem(crispness_pitch, "Weapon Recoil Pitch", crispy->pitch, true);
-    M_DrawCrispnessItem(crispness_weaponsquat, "Squat weapon down on impact", crispy->weaponsquat, true);
-//  M_DrawCrispnessItem(crispness_extsaveg, "Extended Savegames", crispy->extsaveg, true);
+    M_DrawCrispnessSeparator(crispness_sep_audible, "Audible");
+    M_DrawCrispnessItem(crispness_soundfull, "Play sounds in full length", crispy->soundfull, true);
+    M_DrawCrispnessItem(crispness_soundfix, "Misc. Sound Fixes", crispy->soundfix, true);
 
     M_DrawCrispnessSeparator(crispness_sep_navigational, "Navigational");
-
     M_DrawCrispnessItem(crispness_extautomap, "Extended Automap colors", crispy->extautomap, true);
     M_DrawCrispnessItem(crispness_automapstats, "Show Level Stats in Automap", crispy->automapstats, true);
     M_DrawCrispnessItem(crispness_secretmessage, "Show Revealed Secrets", crispy->secretmessage, true);
@@ -1435,7 +1462,32 @@ static void M_DrawCrispness3(void)
 
     M_DrawCrispnessBackground();
 
-    M_DrawCrispnessHeader("Crispness 3/3");
+    M_DrawCrispnessHeader("Crispness 3/4");
+
+   M_DrawCrispnessSeparator(crispness_sep_tactical, "Tactical");
+
+    M_DrawCrispnessMultiItem(crispness_crosshair, "Draw Crosshair", multiitem_crosshair, crispy->crosshair, true);
+    M_DrawCrispnessMultiItem(crispness_crosshairtype, "Crosshair Type", multiitem_crosshairtype, crispy->crosshairtype + 1, crispy->crosshair);
+    M_DrawCrispnessMultiItem(crispness_freelook, "Allow Free Look", multiitem_freelook, crispy->freelook, true);
+    M_DrawCrispnessMultiItem(crispness_neghealth, "Negative Player Health", multiitem_neghealth, crispy->neghealth, true);
+    M_DrawCrispnessMultiItem(crispness_centerweapon, "Weapon Attack Alignment", multiitem_centerweapon, crispy->centerweapon, true);
+    M_DrawCrispnessItem(crispness_pitch, "Weapon Recoil Pitch", crispy->pitch, true);
+    M_DrawCrispnessItem(crispness_weaponsquat, "Squat weapon down on impact", crispy->weaponsquat, true);
+//  M_DrawCrispnessItem(crispness_extsaveg, "Extended Savegames", crispy->extsaveg, true);
+
+    M_DrawCrispnessGoto(crispness3_goto4, "Next Page >");
+    M_DrawCrispnessGoto(crispness3_goto2, "< Prev Page");
+
+    dp_translation = NULL;
+}
+
+static void M_DrawCrispness4(void)
+{
+    CrispnessXDef = &Crispness4Def;
+
+    M_DrawCrispnessBackground();
+
+    M_DrawCrispnessHeader("Crispness 4/4");
 
     M_DrawCrispnessSeparator(crispness_sep_physical, "Physical");
 
@@ -1450,7 +1502,7 @@ static void M_DrawCrispness3(void)
     M_DrawCrispnessMultiItem(crispness_demotimerdir, "Playback Timer Direction", multiitem_demotimerdir, crispy->demotimerdir + 1, crispy->demotimer & DEMOTIMER_PLAYBACK);
     M_DrawCrispnessItem(crispness_demobar, "Show Demo Progress Bar", crispy->demobar, true);
 
-    M_DrawCrispnessGoto(crispness3_goto2, "< Prev Page");
+    M_DrawCrispnessGoto(crispness4_goto3, "< Prev Page");
 
     dp_translation = NULL;
 }
@@ -1496,6 +1548,11 @@ static void M_Crispness2(int choice)
 static void M_Crispness3(int choice)
 {
     M_SetupNextMenu(&Crispness3Def);
+}
+
+static void M_Crispness4(int choice)
+{
+    M_SetupNextMenu(&Crispness4Def);
 }
 
 
