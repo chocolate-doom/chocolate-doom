@@ -1419,7 +1419,7 @@ static void M_DrawCrispness1(void)
 
     M_DrawCrispnessBackground();
 
-    M_DrawCrispnessHeader("Crispness 1/3");
+    M_DrawCrispnessHeader("Crispness 1/4");
 
     M_DrawCrispnessSeparator(crispness_sep_rendering, "Rendering");
     M_DrawCrispnessItem(crispness_hires, "High Resolution Rendering", crispy->hires, true);
@@ -1446,7 +1446,7 @@ static void M_DrawCrispness2(void)
 
     M_DrawCrispnessBackground();
 
-    M_DrawCrispnessHeader("Crispness 2/3");
+    M_DrawCrispnessHeader("Crispness 2/4");
 
     M_DrawCrispnessSeparator(crispness_sep_audible, "Audible");
     M_DrawCrispnessItem(crispness_soundfull, "Play sounds in full length", crispy->soundfull, true);
