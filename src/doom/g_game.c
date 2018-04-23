@@ -1177,6 +1177,10 @@ void G_Ticker (void)
 		    savegameslot =  
 			(players[i].cmd.buttons & BTS_SAVEMASK)>>BTS_SAVESHIFT; 
 		    gameaction = ga_savegame; 
+		    // [crispy] un-pause immediately after saving
+		    // (impossible to send save and pause specials within the same tic)
+		    if (demorecording && paused)
+			sendpause = true;
 		    break; 
 		} 
 	    } 
