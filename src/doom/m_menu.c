@@ -220,7 +220,7 @@ void M_DrawSelCell(menu_t *menu,int item);
 void M_WriteText(int x, int y, char *string);
 int  M_StringWidth(char *string);
 int  M_StringHeight(const char *string);
-void M_StartMessage(char *string,void *routine,boolean input);
+void M_StartMessage(const char *string, void *routine, boolean input);
 void M_StopMessage(void);
 void M_ClearMenus (void);
 
@@ -1236,7 +1236,7 @@ M_DrawSelCell
 
 void
 M_StartMessage
-( char*		string,
+( const char	*string,
   void*		routine,
   boolean	input )
 {
