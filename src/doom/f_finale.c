@@ -231,7 +231,7 @@ void F_TextWrite (void)
     
     int		x,y,w;
     signed int	count;
-    char*	ch;
+    const char *ch;
     int		c;
     int		cx;
     int		cy;
