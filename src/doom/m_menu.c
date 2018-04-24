@@ -1948,7 +1948,7 @@ void M_Drawer (void)
     unsigned int	i;
     unsigned int	max;
     char		string[80];
-    char               *name;
+    const char          *name;
     int			start;
 
     inhelpscreens = false;
