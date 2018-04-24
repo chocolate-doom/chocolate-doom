@@ -220,7 +220,6 @@ void M_WriteText(int x, int y, char *string);
 int  M_StringWidth(char *string);
 int  M_StringHeight(const char *string);
 void M_StartMessage(const char *string, void *routine, boolean input);
-void M_StopMessage(void);
 void M_ClearMenus (void);
 
 
@@ -1247,14 +1246,6 @@ M_StartMessage
     menuactive = true;
     return;
 }
-
-
-void M_StopMessage(void)
-{
-    menuactive = messageLastMenuActive;
-    messageToPrint = 0;
-}
-
 
 
 //
