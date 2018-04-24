@@ -219,7 +219,7 @@ void M_DrawEmptyCell(menu_t *menu,int item);
 void M_DrawSelCell(menu_t *menu,int item);
 void M_WriteText(int x, int y, char *string);
 int  M_StringWidth(char *string);
-int  M_StringHeight(char *string);
+int  M_StringHeight(const char *string);
 void M_StartMessage(char *string,void *routine,boolean input);
 void M_StopMessage(void);
 void M_ClearMenus (void);
@@ -1284,7 +1284,7 @@ int M_StringWidth(char* string)
 //
 //      Find string height from hu_font chars
 //
-int M_StringHeight(char* string)
+int M_StringHeight(const char* string)
 {
     size_t             i;
     int             h;
