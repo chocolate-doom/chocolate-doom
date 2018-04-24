@@ -1552,7 +1552,7 @@ void WI_Ticker(void)
 
 }
 
-typedef void (*load_callback_t)(char *lumpname, patch_t **variable);
+typedef void (*load_callback_t)(const char *lumpname, patch_t **variable);
 
 // Common load/unload function.  Iterates over all the graphics
 // lumps to be loaded/unloaded into memory.
@@ -1707,7 +1707,7 @@ static void WI_loadUnloadData(load_callback_t callback)
     callback(name, &background);
 }
 
-static void WI_loadCallback(char *name, patch_t **variable)
+static void WI_loadCallback(const char *name, patch_t **variable)
 {
     *variable = W_CacheLumpName(name, PU_STATIC);
 }
@@ -1738,7 +1738,7 @@ void WI_loadData(void)
     bstar = W_CacheLumpName(DEH_String("STFDEAD0"), PU_STATIC);
 }
 
-static void WI_unloadCallback(char *name, patch_t **variable)
+static void WI_unloadCallback(const char *name, patch_t **variable)
 {
     W_ReleaseLumpName(name);
     *variable = NULL;
