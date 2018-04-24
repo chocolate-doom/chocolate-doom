@@ -772,7 +772,7 @@ int R_CheckTextureNumForName(const char *name)
 // Calls R_CheckTextureNumForName,
 //  aborts with error message.
 //
-int	R_TextureNumForName (char* name)
+int R_TextureNumForName(const char *name)
 {
     int		i;
 	
