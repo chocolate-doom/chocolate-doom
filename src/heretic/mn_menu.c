@@ -416,7 +416,7 @@ void MN_DrTextB(const char *text, int x, int y)
 //
 //---------------------------------------------------------------------------
 
-int MN_TextBWidth(char *text)
+int MN_TextBWidth(const char *text)
 {
     char c;
     int width;
