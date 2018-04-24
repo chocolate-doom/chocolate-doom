@@ -87,7 +87,7 @@ int			quickSaveSlot;
  // 1 = message to be printed
 int			messageToPrint;
 // ...and here is the message string!
-char*			messageString;
+const char		*messageString;
 
 // message x & y
 int			messx;
