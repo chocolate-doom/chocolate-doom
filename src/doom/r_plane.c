@@ -519,7 +519,7 @@ void R_DrawPlanes (void)
 		dc_texturemid = skytexturemid;
 		flip = 0;
 	    }
-	    dc_iscale = pspriteiscale>>(detailshift && !hires);
+	    dc_iscale = pspriteiscale>>detailshift;
 	    
 	    // Sky is allways drawn full bright,
 	    //  i.e. colormaps[0] is used.

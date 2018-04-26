@@ -258,7 +258,7 @@ R_RenderMaskedSegRange
 	{
 	    if (!fixedcolormap)
 	    {
-		index = spryscale>>(LIGHTSCALESHIFT - (detailshift && hires) + hires);
+		index = spryscale>>(LIGHTSCALESHIFT + hires);
 
 		if (index >=  MAXLIGHTSCALE )
 		    index = MAXLIGHTSCALE-1;
@@ -382,7 +382,7 @@ void R_RenderSegLoop (void)
 	    texturecolumn = rw_offset-FixedMul(finetangent[angle],rw_distance);
 	    texturecolumn >>= FRACBITS;
 	    // calculate lighting
-	    index = rw_scale>>(LIGHTSCALESHIFT - (detailshift && hires) + hires);
+	    index = rw_scale>>(LIGHTSCALESHIFT + hires);
 
 	    if (index >=  MAXLIGHTSCALE )
 		index = MAXLIGHTSCALE-1;
@@ -502,7 +502,7 @@ fixed_t R_ScaleFromGlobalAngle (angle_t visangle)
     int		anglea = ANG90 + (visangle - viewangle);
     int		angleb = ANG90 + (visangle - rw_normalangle);
     int		den = FixedMul(rw_distance, finesine[anglea >> ANGLETOFINESHIFT]);
-    fixed_t	num = FixedMul(projection, finesine[angleb >> ANGLETOFINESHIFT])<<(detailshift && !hires);
+    fixed_t	num = FixedMul(projection, finesine[angleb >> ANGLETOFINESHIFT])<<detailshift;
     fixed_t 	scale;
 
     if (den > (num >> 16))

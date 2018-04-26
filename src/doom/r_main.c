@@ -534,7 +534,7 @@ fixed_t R_ScaleFromGlobalAngle (angle_t visangle)
     // both sines are allways positive
     sinea = finesine[anglea>>ANGLETOFINESHIFT];	
     sineb = finesine[angleb>>ANGLETOFINESHIFT];
-    num = FixedMul(projection,sineb)<<(detailshift && !hires);
+    num = FixedMul(projection,sineb)<<detailshift;
     den = FixedMul(rw_distance,sinea);
 
     if (den > num>>FRACBITS)
@@ -805,17 +805,16 @@ void R_ExecuteSetViewSize (void)
     if (setblocks >= 11) // [crispy] Crispy HUD
     {
 	scaledviewwidth = SCREENWIDTH;
-	scaledviewheight = SCREENHEIGHT;
+	viewheight = SCREENHEIGHT;
     }
     else
     {
 	scaledviewwidth = (setblocks*32)<<hires;
-	scaledviewheight = ((setblocks*168/10)&~7)<<hires;
+	viewheight = ((setblocks*168/10)&~7)<<hires;
     }
     
     detailshift = setdetail;
     viewwidth = scaledviewwidth>>detailshift;
-    viewheight = scaledviewheight>>(detailshift && hires);
 	
     centery = viewheight/2;
     centerx = viewwidth/2;
@@ -840,7 +839,7 @@ void R_ExecuteSetViewSize (void)
 	spanfunc = R_DrawSpanLow;
     }
 
-    R_InitBuffer (scaledviewwidth, scaledviewheight);
+    R_InitBuffer (scaledviewwidth, viewheight);
 	
     R_InitTextureMapping ();
     
@@ -857,10 +856,10 @@ void R_ExecuteSetViewSize (void)
     {
 	// [crispy] re-generate lookup-table for yslope[] (free look)
 	// whenever "detailshift" or "screenblocks" change
-	const fixed_t num = (viewwidth<<(detailshift && !hires))/2*FRACUNIT;
+	const fixed_t num = (viewwidth<<detailshift)/2*FRACUNIT;
 	for (j = 0; j < LOOKDIRS; j++)
 	{
-	dy = ((i-(viewheight/2 + ((j-LOOKDIRMIN) << (hires && !detailshift)) * (screenblocks < 11 ? screenblocks : 11) / 10))<<FRACBITS)+FRACUNIT/2;
+	dy = ((i-(viewheight/2 + ((j-LOOKDIRMIN) << hires) * (screenblocks < 11 ? screenblocks : 11) / 10))<<FRACBITS)+FRACUNIT/2;
 	dy = abs(dy);
 	yslopes[j][i] = FixedDiv (num, dy);
 	}
@@ -1012,7 +1011,7 @@ void R_SetupFrame (player_t* player)
 	pitch = -LOOKDIRMIN;
 
     // apply new yslope[] whenever "lookdir", "detailshift" or "screenblocks" change
-    tempCentery = viewheight/2 + (pitch << (hires && !detailshift)) * (screenblocks < 11 ? screenblocks : 11) / 10;
+    tempCentery = viewheight/2 + (pitch << hires) * (screenblocks < 11 ? screenblocks : 11) / 10;
     if (centery != tempCentery)
     {
         centery = tempCentery;
@@ -1067,7 +1066,7 @@ void R_RenderPlayerView (player_t* player)
     
     // [crispy] flashing HOM indicator
     V_DrawFilledBox(viewwindowx, viewwindowy,
-        scaledviewwidth, scaledviewheight,
+        scaledviewwidth, viewheight,
         crispy->flashinghom ? (176 + (gametic % 16)) : 0);
 
     // check for new console commands.

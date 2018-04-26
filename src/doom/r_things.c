@@ -496,7 +496,7 @@ R_DrawVisSprite
 	}
     }
 	
-    dc_iscale = abs(vis->xiscale)>>(detailshift && !hires);
+    dc_iscale = abs(vis->xiscale)>>detailshift;
     dc_texturemid = vis->texturemid;
     frac = vis->startfrac;
     spryscale = vis->scale;
@@ -688,7 +688,7 @@ void R_ProjectSprite (mobj_t* thing)
     vis = R_NewVisSprite ();
     vis->translation = NULL; // [crispy] no color translation
     vis->mobjflags = thing->flags;
-    vis->scale = xscale<<(detailshift && !hires);
+    vis->scale = xscale<<detailshift;
     vis->gx = interpx;
     vis->gy = interpy;
     vis->gz = interpz;
@@ -828,7 +828,7 @@ static void R_DrawLSprite (void)
 //  vis->mobjflags |= MF_TRANSLUCENT;
     vis->xiscale = FixedDiv (FRACUNIT, xscale);
     vis->texturemid = laserspot->z - viewz;
-    vis->scale = xscale<<(detailshift && !hires);
+    vis->scale = xscale<<detailshift;
 
     tx -= SHORT(patch->width/2)<<FRACBITS;
     vis->x1 =  (centerxfrac + FixedMul(tx, xscale))>>FRACBITS;
@@ -993,7 +993,7 @@ void R_DrawPSprite (pspdef_t* psp, psprnum_t psprnum) // [crispy] differentiate 
     vis->texturemid = (BASEYCENTER<<FRACBITS)+FRACUNIT/4-(psp_sy-spritetopoffset[lump]);
     vis->x1 = x1 < 0 ? 0 : x1;
     vis->x2 = x2 >= viewwidth ? viewwidth-1 : x2;	
-    vis->scale = pspritescale<<(detailshift && !hires);
+    vis->scale = pspritescale<<detailshift;
     
     if (flip)
     {
