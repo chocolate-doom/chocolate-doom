@@ -69,6 +69,11 @@
 #define GAMMALVL2	"Gamma correction level 2"
 #define GAMMALVL3	"Gamma correction level 3"
 #define GAMMALVL4	"Gamma correction level 4"
+// [crispy] intermediate gamma levels
+#define GAMMALVL05	"Gamma correction level 0.5"
+#define GAMMALVL15	"Gamma correction level 1.5"
+#define GAMMALVL25	"Gamma correction level 2.5"
+#define GAMMALVL35	"Gamma correction level 3.5"
 #define EMPTYSTRING	"empty slot"
 
 //

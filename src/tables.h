@@ -57,6 +57,8 @@ extern const fixed_t finetangent[FINEANGLES/2];
 
 // Gamma correction tables.
 extern const byte gammatable[5][256];
+// [crispy] intermediate gamma levels
+extern byte **gamma2table;
 
 // Binary Angle Measument, BAM.
 

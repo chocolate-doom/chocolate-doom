@@ -853,9 +853,10 @@ void I_SetPalette (byte *doompalette)
         // Zero out the bottom two bits of each channel - the PC VGA
         // controller only supports 6 bits of accuracy.
 
-        palette[i].r = gammatable[usegamma][*doompalette++] & ~3;
-        palette[i].g = gammatable[usegamma][*doompalette++] & ~3;
-        palette[i].b = gammatable[usegamma][*doompalette++] & ~3;
+        // [crispy] intermediate gamma levels
+        palette[i].r = gamma2table[usegamma][*doompalette++] & ~3;
+        palette[i].g = gamma2table[usegamma][*doompalette++] & ~3;
+        palette[i].b = gamma2table[usegamma][*doompalette++] & ~3;
     }
 
     palette_to_set = true;
