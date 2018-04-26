@@ -2147,6 +2147,8 @@ const angle_t tantoangle[2049] =
     536870912
 };
 
+// [crispy] intermediate gamma levels
+byte **gamma2table = NULL;
 // Now where did these came from?
 const byte gammatable[5][256] =
 {

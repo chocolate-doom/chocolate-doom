@@ -850,7 +850,7 @@ typedef PACKED_STRUCT (
 // WritePCXfile
 //
 
-void WritePCXfile(char *filename, byte *data,
+void WritePCXfile(char *filename, pixel_t *data,
                   int width, int height,
                   byte *palette)
 {
@@ -919,7 +919,7 @@ static void warning_fn(png_structp p, png_const_charp s)
     printf("libpng warning: %s\n", s);
 }
 
-void WritePNGfile(char *filename, byte *data,
+void WritePNGfile(char *filename, pixel_t *data,
                   int width, int height,
                   byte *palette)
 {
@@ -1046,11 +1046,11 @@ void WritePNGfile(char *filename, byte *data,
 // V_ScreenShot
 //
 
-void V_ScreenShot(char *format)
+void V_ScreenShot(const char *format)
 {
     int i;
     char lbmname[16]; // haleyjd 20110213: BUG FIX - 12 is too small!
-    char *ext;
+    const char *ext;
     
     // find a file name to save it to
 

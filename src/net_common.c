@@ -46,6 +46,9 @@ struct net_reliable_packet_s
     net_reliable_packet_t *next;
 };
 
+// Why did the server reject us?
+char *net_client_reject_reason = NULL;
+
 static void NET_Conn_Init(net_connection_t *conn, net_addr_t *addr,
                           net_protocol_t protocol)
 {
@@ -139,7 +142,8 @@ static void NET_Conn_ParseReject(net_connection_t *conn, net_packet_t *packet)
         conn->state = NET_CONN_STATE_DISCONNECTED;
         conn->disconnect_reason = NET_DISCONNECT_REMOTE;
 
-        printf("Rejected by server: %s\n", msg);
+        free(net_client_reject_reason);
+        net_client_reject_reason = strdup(msg);
     }
 }
 

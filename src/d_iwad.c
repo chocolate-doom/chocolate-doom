@@ -448,7 +448,7 @@ static void CheckDOSDefaults(void)
 // Returns true if the specified path is a path to a file
 // of the specified name.
 
-static boolean DirIsFile(char *path, char *filename)
+static boolean DirIsFile(const char *path, const char *filename)
 {
     size_t path_len;
     size_t filename_len;
@@ -723,7 +723,7 @@ static void BuildIWADDirList(void)
 // Searches WAD search paths for an WAD with a specific filename.
 // 
 
-char *D_FindWADByName(char *name)
+char *D_FindWADByName(const char *name)
 {
     char *path;
     char *probe;

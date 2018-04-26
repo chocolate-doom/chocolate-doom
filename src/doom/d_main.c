@@ -378,7 +378,7 @@ void D_Display (void)
 
 static void EnableLoadingDisk(void)
 {
-    char *disk_lump_name;
+    const char *disk_lump_name;
 
     if (show_diskicon)
     {
@@ -566,7 +566,7 @@ void D_DoomLoop (void)
 //
 int             demosequence;
 int             pagetic;
-char                    *pagename;
+const char                    *pagename;
 
 
 //
@@ -760,7 +760,7 @@ static char *banners[] =
 static char *GetGameName(char *gamename)
 {
     size_t i;
-    char *deh_sub;
+    const char *deh_sub;
     
     for (i=0; i<arrlen(banners); ++i)
     {
@@ -1026,7 +1026,7 @@ void PrintDehackedBanners(void)
 
     for (i=0; i<arrlen(copyright_banners); ++i)
     {
-        char *deh_s;
+        const char *deh_s;
 
         deh_s = DEH_String(copyright_banners[i]);
 
