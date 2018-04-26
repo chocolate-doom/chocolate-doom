@@ -1200,8 +1200,8 @@ void R_InitData (void)
     printf (".");
     R_InitSpriteLumps ();
     printf (".");
-    R_InitTranMap(); // [crispy] prints a mark itself
     R_InitColormaps ();
+    R_InitTranMap(); // [crispy] prints a mark itself
 }
 
 
