@@ -87,7 +87,7 @@ struct midi_file_s
 // Check the header of a chunk:
 
 static boolean CheckChunkHeader(chunk_header_t *chunk,
-                                char *expected_id)
+                                const char *expected_id)
 {
     boolean result;
     

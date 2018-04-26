@@ -32,7 +32,7 @@
 
 static SDL_Window *hr_screen = NULL;
 static SDL_Surface *hr_surface = NULL;
-static char *window_title = "";
+static const char *window_title = "";
 
 boolean I_SetVideoModeHR(void)
 {
@@ -64,7 +64,7 @@ boolean I_SetVideoModeHR(void)
     return true;
 }
 
-void I_SetWindowTitleHR(char *title)
+void I_SetWindowTitleHR(const char *title)
 {
     window_title = title;
 }

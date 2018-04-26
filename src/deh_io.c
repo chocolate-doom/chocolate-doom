@@ -87,7 +87,7 @@ static deh_context_t *DEH_NewContext(void)
 // Open a dehacked file for reading
 // Returns NULL if open failed
 
-deh_context_t *DEH_OpenFile(char *filename)
+deh_context_t *DEH_OpenFile(const char *filename)
 {
     FILE *fstream;
     deh_context_t *context;
@@ -342,7 +342,7 @@ char *DEH_ReadLine(deh_context_t *context, boolean extended)
     return context->readbuffer;
 }
 
-void DEH_Warning(deh_context_t *context, char *msg, ...)
+void DEH_Warning(deh_context_t *context, const char *msg, ...)
 {
     va_list args;
 
@@ -355,7 +355,7 @@ void DEH_Warning(deh_context_t *context, char *msg, ...)
     va_end(args);
 }
 
-void DEH_Error(deh_context_t *context, char *msg, ...)
+void DEH_Error(deh_context_t *context, const char *msg, ...)
 {
     va_list args;
 

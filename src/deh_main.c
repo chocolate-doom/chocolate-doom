@@ -401,7 +401,7 @@ static void DEH_ParseContext(deh_context_t *context)
 
 // Parses a dehacked file
 
-int DEH_LoadFile(char *filename)
+int DEH_LoadFile(const char *filename)
 {
     deh_context_t *context;
 

@@ -1347,30 +1347,6 @@ void SetVideoMode(void) // [crispy] un-static
     CreateUpscaledTexture(true);
 }
 
-static const char *hw_emu_warning = 
-"===========================================================================\n"
-"WARNING: it looks like you are using a software GL implementation.\n"
-"To improve performance, try setting force_software_renderer in your\n"
-"configuration file.\n"
-"===========================================================================\n";
-
-static void CheckGLVersion(void)
-{
-    const char * version;
-    typedef const GLubyte* (APIENTRY * glStringFn_t)(GLenum);
-    glStringFn_t glfp = (glStringFn_t)SDL_GL_GetProcAddress("glGetString");
-
-    if (glfp)
-    {
-        version = (const char *)glfp(GL_VERSION);
-
-        if (version && strstr(version, "Mesa"))
-        {
-            printf("%s", hw_emu_warning);
-        }
-    }
-}
-
 void I_InitGraphics(void)
 {
     SDL_Event dummy;
@@ -1440,10 +1416,6 @@ void I_InitGraphics(void)
     // on configuration.
     AdjustWindowSize();
     SetVideoMode();
-
-    // We might have poor performance if we are using an emulated
-    // HW accelerator. Check for Mesa and warn if we're using it.
-    CheckGLVersion();
 
     // Start with a clear black screen
     // (screen will be flipped after we set the palette)

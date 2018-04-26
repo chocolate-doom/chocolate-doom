@@ -30,7 +30,7 @@
 #define DEH_VANILLA_NUMSFX 107
 
 void DEH_ParseCommandLine(void);
-int DEH_LoadFile(char *filename);
+int DEH_LoadFile(const char *filename);
 int DEH_LoadLump(int lumpnum, boolean allow_long, boolean allow_error);
 int DEH_LoadLumpByName(char *name, boolean allow_long, boolean allow_error);
 

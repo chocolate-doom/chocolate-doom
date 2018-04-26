@@ -199,7 +199,7 @@ boolean W_ParseCommandLine(void)
 static const struct
 {
     GameMission_t mission;
-    char *lumpname;
+    const char *lumpname;
 } unique_lumps[] = {
     { doom,    "POSSA1" },
     { heretic, "IMPXA1" },
