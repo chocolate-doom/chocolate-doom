@@ -1007,7 +1007,7 @@ void R_DrawPSprite (pspdef_t* psp, psprnum_t psprnum) // [crispy] differentiate 
     }
     
     // [crispy] free look
-    vis->texturemid += FixedMul(((centery - viewheight / 2) << FRACBITS), vis->xiscale);
+    vis->texturemid += FixedMul(((centery - viewheight / 2) << FRACBITS), vis->xiscale) >> detailshift;
 
     if (vis->x1 > x1)
 	vis->startfrac += vis->xiscale*(vis->x1-x1);
