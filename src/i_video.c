@@ -844,6 +844,8 @@ void I_ReadScreen (pixel_t* scr)
 //
 // I_SetPalette
 //
+// [crispy] intermediate gamma levels
+byte **gamma2table = NULL;
 void I_SetPalette (byte *doompalette)
 {
     int i;
