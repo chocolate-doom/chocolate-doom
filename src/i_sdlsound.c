@@ -729,7 +729,7 @@ static boolean CacheSFX(sfxinfo_t *sfxinfo)
     lumplen = W_LumpLength(lumpnum);
 
     // Check the header, and ensure this is a valid sound
-/*
+
     if (lumplen < 8
      || data[0] != 0x03 || data[1] != 0x00)
     {
@@ -737,7 +737,7 @@ static boolean CacheSFX(sfxinfo_t *sfxinfo)
 
         return false;
     }
-*/
+
     // 16 bit sample rate field, 32 bit length field
 
     samplerate = (data[3] << 8) | data[2];
