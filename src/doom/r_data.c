@@ -1160,7 +1160,6 @@ void R_InitColormaps (void)
 	keepgray = (i >= 0 && lumpinfo[i]->wad_file->iwad);
 
 	// [crispy] CRMAX - 2: don't override the original GREN and BLUE2 Boom tables
-	I_SetPalette(playpal);
 	for (i = 0; i < CRMAX - 2; i++)
 	{
 	    for (j = 0; j < 256; j++)

@@ -16,15 +16,9 @@
 // Color translation tables
 //
 
-#include <stdlib.h>
 #include <math.h>
-#include <string.h> // [crispy] strcmp()
 
 #include "doomtype.h"
-#include "deh_str.h"
-#include "i_video.h" // [crispy] I_GetPaletteIndex()
-#include "m_argv.h" // [crispy] M_ParmExists()
-#include "m_misc.h"
 #include "v_trans.h"
 
 // [crispy] here used to be static color translation tables based on
@@ -234,6 +228,35 @@ static void rgb_to_hsv(vect *rgb, vect *hsv)
     hsv->z = v;
 }
 
+// [crispy] copied over from i_video.c
+static int I_GetPaletteIndex2(byte *palette, int r, int g, int b)
+{
+    int best, best_diff, diff;
+    int i;
+
+    best = 0; best_diff = INT_MAX;
+
+    for (i = 0; i < 256; ++i)
+    {
+        diff = (r - palette[3 * i + 0]) * (r - palette[3 * i + 0])
+             + (g - palette[3 * i + 1]) * (g - palette[3 * i + 1])
+             + (b - palette[3 * i + 2]) * (b - palette[3 * i + 2]);
+
+        if (diff < best_diff)
+        {
+            best = i;
+            best_diff = diff;
+        }
+
+        if (diff == 0)
+        {
+            break;
+        }
+    }
+
+    return best;
+}
+
 byte V_Colorize (byte *playpal, int cr, byte source, boolean keepgray109)
 {
     vect rgb, hsv;
@@ -287,5 +310,5 @@ byte V_Colorize (byte *playpal, int cr, byte source, boolean keepgray109)
     rgb.y *= 255.;
     rgb.z *= 255.;
 
-    return I_GetPaletteIndex((int) rgb.x, (int) rgb.y, (int) rgb.z);
+    return I_GetPaletteIndex2(playpal, (int) rgb.x, (int) rgb.y, (int) rgb.z);
 }
