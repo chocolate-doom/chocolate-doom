@@ -1205,7 +1205,7 @@ state_t	states[NUMSTATES] = {
 
 mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
 
-    {		// MT_PLAYER
+    {		// MT_PLAYER	"OUR HERO"
 	-1,		// doomednum
 	S_PLAY,		// spawnstate
 	100,		// spawnhealth
@@ -1231,7 +1231,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
 	S_NULL		// raisestate
     },
 
-    {		// MT_POSSESSED
+    {		// MT_POSSESSED	"ZOMBIEMAN"
 	3004,		// doomednum
 	S_POSS_STND,		// spawnstate
 	20,		// spawnhealth
@@ -1257,7 +1257,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
 	S_POSS_RAISE1		// raisestate
     },
 
-    {		// MT_SHOTGUY
+    {		// MT_SHOTGUY	"SHOTGUN GUY"
 	9,		// doomednum
 	S_SPOS_STND,		// spawnstate
 	30,		// spawnhealth
@@ -1283,7 +1283,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
 	S_SPOS_RAISE1		// raisestate
     },
 
-    {		// MT_VILE
+    {		// MT_VILE	"ARCH-VILE"
 	64,		// doomednum
 	S_VILE_STND,		// spawnstate
 	700,		// spawnhealth
@@ -1335,7 +1335,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
 	S_NULL		// raisestate
     },
 
-    {		// MT_UNDEAD
+    {		// MT_UNDEAD	"REVENANT"
 	66,		// doomednum
 	S_SKEL_STND,		// spawnstate
 	300,		// spawnhealth
@@ -1413,7 +1413,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
 	S_NULL		// raisestate
     },
 
-    {		// MT_FATSO
+    {		// MT_FATSO	"MANCUBUS"
 	67,		// doomednum
 	S_FATT_STND,		// spawnstate
 	600,		// spawnhealth
@@ -1465,7 +1465,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
 	S_NULL		// raisestate
     },
 
-    {		// MT_CHAINGUY
+    {		// MT_CHAINGUY	"HEAVY WEAPON DUDE"
 	65,		// doomednum
 	S_CPOS_STND,		// spawnstate
 	70,		// spawnhealth
@@ -1491,7 +1491,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
 	S_CPOS_RAISE1		// raisestate
     },
 
-    {		// MT_TROOP
+    {		// MT_TROOP	"IMP"
 	3001,		// doomednum
 	S_TROO_STND,		// spawnstate
 	60,		// spawnhealth
@@ -1517,7 +1517,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
 	S_TROO_RAISE1		// raisestate
     },
 
-    {		// MT_SERGEANT
+    {		// MT_SERGEANT	"DEMON"
 	3002,		// doomednum
 	S_SARG_STND,		// spawnstate
 	150,		// spawnhealth
@@ -1569,7 +1569,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
 	S_SARG_RAISE1		// raisestate
     },
 
-    {		// MT_HEAD
+    {		// MT_HEAD	"CACODEMON"
 	3005,		// doomednum
 	S_HEAD_STND,		// spawnstate
 	400,		// spawnhealth
@@ -1595,7 +1595,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
 	S_HEAD_RAISE1		// raisestate
     },
 
-    {		// MT_BRUISER
+    {		// MT_BRUISER	"BARON OF HELL"
 	3003,		// doomednum
 	S_BOSS_STND,		// spawnstate
 	1000,		// spawnhealth
@@ -1647,7 +1647,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
 	S_NULL		// raisestate
     },
 
-    {		// MT_KNIGHT
+    {		// MT_KNIGHT	"HELL KNIGHT"
 	69,		// doomednum
 	S_BOS2_STND,		// spawnstate
 	500,		// spawnhealth
@@ -1673,7 +1673,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
 	S_BOS2_RAISE1		// raisestate
     },
 
-    {		// MT_SKULL
+    {		// MT_SKULL	"LOST SOUL"
 	3006,		// doomednum
 	S_SKULL_STND,		// spawnstate
 	100,		// spawnhealth
@@ -1699,7 +1699,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
 	S_NULL		// raisestate
     },
 
-    {		// MT_SPIDER
+    {		// MT_SPIDER	"THE SPIDER MASTERMIND"
 	7,		// doomednum
 	S_SPID_STND,		// spawnstate
 	3000,		// spawnhealth
@@ -1725,7 +1725,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
 	S_NULL		// raisestate
     },
 
-    {		// MT_BABY
+    {		// MT_BABY	"ARACHNOTRON"
 	68,		// doomednum
 	S_BSPI_STND,		// spawnstate
 	500,		// spawnhealth
@@ -1751,7 +1751,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
 	S_BSPI_RAISE1		// raisestate
     },
 
-    {		// MT_CYBORG
+    {		// MT_CYBORG	"THE CYBERDEMON"
 	16,		// doomednum
 	S_CYBER_STND,		// spawnstate
 	4000,		// spawnhealth
@@ -1777,7 +1777,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
 	S_NULL		// raisestate
     },
 
-    {		// MT_PAIN
+    {		// MT_PAIN	"PAIN ELEMENTAL"
 	71,		// doomednum
 	S_PAIN_STND,		// spawnstate
 	400,		// spawnhealth
