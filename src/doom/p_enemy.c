@@ -1231,9 +1231,6 @@ void A_VileChase (mobj_t* actor)
 		    corpsehit->health = info->spawnhealth;
 		    corpsehit->target = NULL;
 
-		    // [crispy] unflip sprite
-		    corpsehit->flipsprite = 0;
-
 		    // [crispy] count resurrected monsters
 		    extrakills++;
 

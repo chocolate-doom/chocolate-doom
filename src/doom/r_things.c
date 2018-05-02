@@ -663,9 +663,12 @@ void R_ProjectSprite (mobj_t* thing)
     }
 
     // [crispy] randomly flip corpse, blood and death animation sprites
-    if (crispy->flipcorpses)
+    if (crispy->flipcorpses &&
+        (thing->flags & MF_FLIPPABLE) &&
+        !(thing->flags & MF_SHOOTABLE) &&
+        (thing->health & 1))
     {
-	flip = flip ^ thing->flipsprite;
+	flip = !flip;
     }
     
     // calculate edges of the shape

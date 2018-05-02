@@ -1554,9 +1554,6 @@ boolean PIT_ChangeSector (mobj_t*	thing)
 	// [crispy] Spectres bleed spectre blood
 	if (crispy->coloredblood & COLOREDBLOOD_FIX)
 	    mo->flags |= (thing->flags & MF_SHADOW);
-
-	// [crispy] randomly flip blood sprites
-	mo->flipsprite = Crispy_Random() & 1;
     }
 
     // keep checking (crush other things)	

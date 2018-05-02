@@ -664,6 +664,12 @@ P_SpawnMobjSafe
     else 
 	mobj->z = z;
 
+    // [crispy] randomly flip corpse, blood and death animation sprites
+    if (mobj->flags & MF_FLIPPABLE && !(mobj->flags & MF_SHOOTABLE))
+    {
+	mobj->health = (mobj->health & (int)~1) - (Crispy_Random() & 1);
+    }
+    
     // [AM] Do not interpolate on spawn.
     mobj->interp = false;
 
@@ -1014,12 +1020,10 @@ void P_SpawnMapThing (mapthing_t* mthing)
     if ((crispy->coloredblood & COLOREDBLOOD_FIX) && i == MT_SKULL)
         mobj->flags |= MF_NOBLOOD;
 
-    // [crispy] randomly flip space marine corpse objects
+    // [crispy] randomly colorize space marine corpse objects
     if (mobj->info->spawnstate == S_PLAY_DIE7 ||
         mobj->info->spawnstate == S_PLAY_XDIE9)
     {
-	mobj->flipsprite = Crispy_Random() & 1;
-	// [crispy] randomly colorize space marine corpse objects
 	if (!netgame &&
 	    crispy->coloredblood & COLOREDBLOOD_CORPSE)
 	{
@@ -1070,9 +1074,6 @@ P_SpawnPuffSafe
     // don't make punches spark on the wall
     if (attackrange == MELEERANGE)
 	P_SetMobjState (th, safe ? P_LatestSafeState(S_PUFF3) : S_PUFF3);
-
-    // [crispy] randomly flip corpse, blood and death animation sprites
-    th->flipsprite = Crispy_Random() & 1;
 }
 
 
@@ -1109,9 +1110,6 @@ P_SpawnBlood
     // [crispy] Spectres bleed spectre blood
     if (crispy->coloredblood & COLOREDBLOOD_FIX)
 	th->flags |= (target->flags & MF_SHADOW);
-
-    // [crispy] randomly flip corpse, blood and death animation sprites
-    th->flipsprite = Crispy_Random() & 1;
 }
 
 

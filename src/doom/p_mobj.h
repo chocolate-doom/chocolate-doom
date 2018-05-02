@@ -194,6 +194,9 @@ typedef enum
     // Hmm ???.
     MF_TRANSSHIFT	= 26,
 
+    // [crispy] randomly flip corpse, blood and death animation sprites
+    MF_FLIPPABLE        = 0x40000000,
+
     // [crispy] translucent sprite
     MF_TRANSLUCENT      = 0x80000000
 
@@ -280,9 +283,6 @@ typedef struct mobj_s
     // Thing being chased/attacked for tracers.
     struct mobj_s*	tracer;	
     
-    // [crispy] randomly flip corpse, blood and death animation sprites
-    boolean             flipsprite;
-
     // [AM] If true, ok to interpolate this tic.
     int                 interp;
 
