@@ -1,0 +1,3 @@
+#cmakedefine PACKAGE_NAME "@PACKAGE_NAME@"
+#cmakedefine PACKAGE_STRING "@PACKAGE_STRING@"
+#cmakedefine PROGRAM_PREFIX "@PROGRAM_PREFIX@"
