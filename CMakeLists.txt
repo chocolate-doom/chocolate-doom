@@ -21,7 +21,6 @@ set(PROGRAM_PREFIX "${PROGRAM_SPREFIX}-")
 
 configure_file(config.cmake.h config.h)
 
-add_subdirectory(midiproc)
-add_subdirectory(opl)
-add_subdirectory(pcsound)
-add_subdirectory(textscreen)
+foreach(SUBDIR textscreen midiproc opl pcsound src)
+    add_subdirectory("${SUBDIR}")
+endforeach()
