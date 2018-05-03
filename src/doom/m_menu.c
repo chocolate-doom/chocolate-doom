@@ -244,11 +244,9 @@ void M_StopMessage(void);
 void M_ClearMenus (void);
 
 // [crispy] Crispness menu
-static void M_CrispnessX(int choice);
-static void M_Crispness1(int choice);
-static void M_Crispness2(int choice);
-static void M_Crispness3(int choice);
-static void M_Crispness4(int choice);
+static void M_CrispnessCur(int choice);
+static void M_CrispnessNext(int choice);
+static void M_CrispnessPrev(int choice);
 static void M_DrawCrispness1(void);
 static void M_DrawCrispness2(void);
 static void M_DrawCrispness3(void);
@@ -407,7 +405,7 @@ menuitem_t OptionsMenu[]=
     {-1,"",0,'\0'},
     {1,"M_MSENS",	M_Mouse,'m', "Mouse Sensitivity"}, // [crispy] mouse sensitivity menu
     {1,"M_SVOL",	M_Sound,'s', "Sound Volume"},
-    {1,"M_CRISPY",	M_CrispnessX,'c', "Crispness"} // [crispy] Crispness menu
+    {1,"M_CRISPY",	M_CrispnessCur,'c', "Crispness"} // [crispy] Crispness menu
 };
 
 menu_t  OptionsDef =
@@ -471,7 +469,8 @@ enum
     crispness_flipcorpses,
     crispness_sep_visual_,
 
-    crispness1_goto2,
+    crispness1_next,
+    crispness1_prev,
     crispness1_end
 } crispness1_e;
 
@@ -491,7 +490,8 @@ static menuitem_t Crispness1Menu[]=
     {1,"",	M_CrispyToggleColoredblood2,'f'},
     {1,"",	M_CrispyToggleFlipcorpses,'r'},
     {-1,"",0,'\0'},
-    {1,"",	M_Crispness2,'n'},
+    {1,"",	M_CrispnessNext,'n'},
+    {1,"",	M_CrispnessPrev,'p'},
 };
 
 static menu_t  Crispness1Def =
@@ -503,8 +503,6 @@ static menu_t  Crispness1Def =
     48,36,
     1
 };
-
-static menu_t *CrispnessXDef = &Crispness1Def;
 
 enum
 {
@@ -521,8 +519,8 @@ enum
     crispness_secretmessage,
     crispness_sep_navigational_,
 
-    crispness2_goto3,
-    crispness2_goto1,
+    crispness2_next,
+    crispness2_prev,
     crispness2_end
 } crispness2_e;
 
@@ -539,14 +537,14 @@ static menuitem_t Crispness2Menu[]=
     {1,"",	M_CrispyToggleAutomapstats,'s'},
     {1,"",	M_CrispyToggleSecretmessage,'s'},
     {-1,"",0,'\0'},
-    {1,"",	M_Crispness3,'p'},
-    {1,"",	M_Crispness1,'n'},
+    {1,"",	M_CrispnessNext,'n'},
+    {1,"",	M_CrispnessPrev,'p'},
 };
 
 static menu_t  Crispness2Def =
 {
     crispness2_end,
-    &Crispness1Def,
+    &OptionsDef,
     Crispness2Menu,
     M_DrawCrispness2,
     48,36,
@@ -565,8 +563,8 @@ enum
     crispness_weaponsquat,
     crispness_sep_tactical_,
 
-    crispness3_goto4,
-    crispness3_goto2,
+    crispness3_next,
+    crispness3_prev,
     crispness3_end
 } crispness3_e;
 
@@ -581,14 +579,14 @@ static menuitem_t Crispness3Menu[]=
     {1,"",	M_CrispyTogglePitch,'w'},
     {1,"",	M_CrispyToggleWeaponSquat,'w'},
     {-1,"",0,'\0'},
-    {1,"",	M_Crispness4,'p'},
-    {1,"",	M_Crispness2,'p'},
+    {1,"",	M_CrispnessNext,'n'},
+    {1,"",	M_CrispnessPrev,'p'},
 };
 
 static menu_t  Crispness3Def =
 {
     crispness3_end,
-    &Crispness2Def,
+    &OptionsDef,
     Crispness3Menu,
     M_DrawCrispness3,
     48,36,
@@ -610,7 +608,8 @@ enum
     crispness_demobar,
     crispness_sep_demos_,
 
-    crispness4_goto3,
+    crispness4_next,
+    crispness4_prev,
     crispness4_end
 } crispness4_e;
 
@@ -628,18 +627,29 @@ static menuitem_t Crispness4Menu[]=
     {1,"",	M_CrispyToggleDemoTimerDir,'a'},
     {1,"",	M_CrispyToggleDemoBar,'w'},
     {-1,"",0,'\0'},
-    {1,"",	M_Crispness3,'p'},
+    {1,"",	M_CrispnessNext,'n'},
+    {1,"",	M_CrispnessPrev,'p'},
 };
 
 static menu_t  Crispness4Def =
 {
     crispness4_end,
-    &Crispness3Def,
+    &OptionsDef,
     Crispness4Menu,
     M_DrawCrispness4,
     48,36,
     1
 };
+
+static menu_t *CrispnessMenus[] =
+{
+	&Crispness1Def,
+	&Crispness2Def,
+	&Crispness3Def,
+	&Crispness4Def,
+};
+
+static int crispness_cur;
 
 //
 // Read This! MENU 1 & 2
@@ -1420,8 +1430,6 @@ static void M_DrawCrispnessGoto(int y, char *item)
 
 static void M_DrawCrispness1(void)
 {
-    CrispnessXDef = &Crispness1Def;
-
     M_DrawCrispnessBackground();
 
     M_DrawCrispnessHeader("Crispness 1/4");
@@ -1440,15 +1448,14 @@ static void M_DrawCrispness1(void)
     M_DrawCrispnessItem(crispness_coloredblood2, "Fix Spectre and Lost Soul Blood", crispy->coloredblood & COLOREDBLOOD_FIX, gameversion != exe_chex);
     M_DrawCrispnessItem(crispness_flipcorpses, "Randomly Mirrored Corpses", crispy->flipcorpses, gameversion != exe_chex);
 
-    M_DrawCrispnessGoto(crispness1_goto2, "Next Page >");
+    M_DrawCrispnessGoto(crispness1_next, "Next Page >");
+    M_DrawCrispnessGoto(crispness1_prev, "< Last Page");
 
     dp_translation = NULL;
 }
 
 static void M_DrawCrispness2(void)
 {
-    CrispnessXDef = &Crispness2Def;
-
     M_DrawCrispnessBackground();
 
     M_DrawCrispnessHeader("Crispness 2/4");
@@ -1464,16 +1471,14 @@ static void M_DrawCrispness2(void)
     M_DrawCrispnessItem(crispness_automapstats, "Show Level Stats in Automap", crispy->automapstats, true);
     M_DrawCrispnessItem(crispness_secretmessage, "Show Revealed Secrets", crispy->secretmessage, true);
 
-    M_DrawCrispnessGoto(crispness2_goto3, "Next Page >");
-    M_DrawCrispnessGoto(crispness2_goto1, "< Prev Page");
+    M_DrawCrispnessGoto(crispness2_next, "Next Page >");
+    M_DrawCrispnessGoto(crispness2_prev, "< Prev Page");
 
     dp_translation = NULL;
 }
 
 static void M_DrawCrispness3(void)
 {
-    CrispnessXDef = &Crispness3Def;
-
     M_DrawCrispnessBackground();
 
     M_DrawCrispnessHeader("Crispness 3/4");
@@ -1489,16 +1494,14 @@ static void M_DrawCrispness3(void)
     M_DrawCrispnessItem(crispness_weaponsquat, "Squat weapon down on impact", crispy->weaponsquat, true);
 //  M_DrawCrispnessItem(crispness_extsaveg, "Extended Savegames", crispy->extsaveg, true);
 
-    M_DrawCrispnessGoto(crispness3_goto4, "Next Page >");
-    M_DrawCrispnessGoto(crispness3_goto2, "< Prev Page");
+    M_DrawCrispnessGoto(crispness3_next, "Next Page >");
+    M_DrawCrispnessGoto(crispness3_prev, "< Prev Page");
 
     dp_translation = NULL;
 }
 
 static void M_DrawCrispness4(void)
 {
-    CrispnessXDef = &Crispness4Def;
-
     M_DrawCrispnessBackground();
 
     M_DrawCrispnessHeader("Crispness 4/4");
@@ -1516,7 +1519,8 @@ static void M_DrawCrispness4(void)
     M_DrawCrispnessMultiItem(crispness_demotimerdir, "Playback Timer Direction", multiitem_demotimerdir, crispy->demotimerdir + 1, crispy->demotimer & DEMOTIMER_PLAYBACK);
     M_DrawCrispnessItem(crispness_demobar, "Show Demo Progress Bar", crispy->demobar, true);
 
-    M_DrawCrispnessGoto(crispness4_goto3, "< Prev Page");
+    M_DrawCrispnessGoto(crispness4_next, "First Page >");
+    M_DrawCrispnessGoto(crispness4_prev, "< Prev Page");
 
     dp_translation = NULL;
 }
@@ -1544,29 +1548,29 @@ static void M_Mouse(int choice)
     M_SetupNextMenu(&MouseDef);
 }
 
-static void M_CrispnessX(int choice)
+static void M_CrispnessCur(int choice)
 {
-    M_SetupNextMenu(CrispnessXDef);
+    M_SetupNextMenu(CrispnessMenus[crispness_cur]);
 }
 
-static void M_Crispness1(int choice)
+static void M_CrispnessNext(int choice)
 {
-    M_SetupNextMenu(&Crispness1Def);
+    if (++crispness_cur > arrlen(CrispnessMenus) - 1)
+    {
+	crispness_cur = 0;
+    }
+
+    M_CrispnessCur(0);
 }
 
-static void M_Crispness2(int choice)
+static void M_CrispnessPrev(int choice)
 {
-    M_SetupNextMenu(&Crispness2Def);
-}
+    if (--crispness_cur < 0)
+    {
+	crispness_cur = arrlen(CrispnessMenus) - 1;
+    }
 
-static void M_Crispness3(int choice)
-{
-    M_SetupNextMenu(&Crispness3Def);
-}
-
-static void M_Crispness4(int choice)
-{
-    M_SetupNextMenu(&Crispness4Def);
+    M_CrispnessCur(0);
 }
 
 
@@ -2715,6 +2719,23 @@ boolean M_Responder (event_t* ev)
 	    }
 	}
     }
+    // [crispy] next/prev Crispness menu
+    else if (key == KEY_PGUP)
+    {
+	if (currentMenu == CrispnessMenus[crispness_cur])
+	{
+	    M_CrispnessPrev(0);
+	    return true;
+	}
+    }
+    else if (key == KEY_PGDN)
+    {
+	if (currentMenu == CrispnessMenus[crispness_cur])
+	{
+	    M_CrispnessNext(0);
+	    return true;
+	}
+    }
 
     // Keyboard shortcut?
     // Vanilla Doom has a weird behavior where it jumps to the scroll bars
@@ -2909,7 +2930,7 @@ void M_Drawer (void)
 
     
     // DRAW SKULL
-    if (currentMenu == CrispnessXDef)
+    if (currentMenu == CrispnessMenus[crispness_cur])
     {
 	char item[4];
 	M_snprintf(item, sizeof(item), "%s>", whichSkull ? crstr[CR_NONE] : crstr[CR_DARK]);
