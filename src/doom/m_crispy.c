@@ -41,14 +41,6 @@ multiitem_t multiitem_centerweapon[NUM_CENTERWEAPON] =
     {CENTERWEAPON_BOB2, "bobbing/2"},
 };
 
-multiitem_t multiitem_coloredblood[NUM_COLOREDBLOOD] =
-{
-    {COLOREDBLOOD_OFF, "off"},
-    {COLOREDBLOOD_BLOOD, "blood"},
-    {COLOREDBLOOD_CORPSE, "corpses"},
-    {COLOREDBLOOD_BOTH, "both"},
-};
-
 multiitem_t multiitem_coloredhud[NUM_COLOREDHUD] =
 {
     {COLOREDHUD_OFF, "off"},
@@ -157,9 +149,6 @@ void M_CrispyToggleCenterweapon(int choice)
 
 void M_CrispyToggleColoredblood(int choice)
 {
-    // [crispy] preserve coloredblood_fix value when switching colored blood and corpses
-    const int coloredblood_fix = crispy->coloredblood & COLOREDBLOOD_FIX;
-
     if (gameversion == exe_chex)
     {
 	S_StartSound(NULL,sfx_oof);
@@ -167,20 +156,7 @@ void M_CrispyToggleColoredblood(int choice)
     }
 
     choice = 0;
-    crispy->coloredblood = (crispy->coloredblood + 1) % NUM_COLOREDBLOOD;
-    crispy->coloredblood |= coloredblood_fix;
-}
-
-void M_CrispyToggleColoredblood2(int choice)
-{
-    if (gameversion == exe_chex)
-    {
-	S_StartSound(NULL,sfx_oof);
-	return;
-    }
-
-    choice = 0;
-    crispy->coloredblood ^= COLOREDBLOOD_FIX;
+    crispy->coloredblood = !crispy->coloredblood;
 }
 
 void M_CrispyToggleColoredhud(int choice)

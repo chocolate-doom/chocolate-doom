@@ -28,7 +28,6 @@ typedef struct
 
 extern multiitem_t multiitem_brightmaps[NUM_BRIGHTMAPS];
 extern multiitem_t multiitem_centerweapon[NUM_CENTERWEAPON];
-extern multiitem_t multiitem_coloredblood[NUM_COLOREDBLOOD];
 extern multiitem_t multiitem_coloredhud[NUM_COLOREDHUD];
 extern multiitem_t multiitem_crosshair[NUM_CROSSHAIRS];
 extern multiitem_t multiitem_crosshairtype[];
@@ -46,7 +45,6 @@ extern void M_CrispyToggleAutomapstats(int choice);
 extern void M_CrispyToggleBrightmaps(int choice);
 extern void M_CrispyToggleCenterweapon(int choice);
 extern void M_CrispyToggleColoredblood(int choice);
-extern void M_CrispyToggleColoredblood2(int choice);
 extern void M_CrispyToggleColoredhud(int choice);
 extern void M_CrispyToggleCrosshair(int choice);
 extern void M_CrispyToggleCrosshairtype(int choice);

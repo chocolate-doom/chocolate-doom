@@ -748,9 +748,9 @@ void R_ProjectSprite (mobj_t* thing)
     vis->brightmap = R_BrightmapForSprite(thing->sprite);
 
     // [crispy] colored blood
-    if ((((crispy->coloredblood & COLOREDBLOOD_BLOOD) && thing->type == MT_BLOOD) ||
-        ((crispy->coloredblood & COLOREDBLOOD_CORPSE) && thing->sprite == SPR_POL5)) // [crispy] S_GIBS
-        && thing->target)
+    if (crispy->coloredblood &&
+        (thing->type == MT_BLOOD || thing->state - states == S_GIBS) &&
+        thing->target)
     {
 	// [crispy] Thorn Things in Hacx bleed green blood
 	if (gamemission == pack_hacx)

@@ -465,7 +465,6 @@ enum
     crispness_smoothlight,
     crispness_brightmaps,
     crispness_coloredblood,
-    crispness_coloredblood2,
     crispness_flipcorpses,
     crispness_sep_visual_,
 
@@ -486,8 +485,7 @@ static menuitem_t Crispness1Menu[]=
     {1,"",	M_CrispyToggleTranslucency,'e'},
     {1,"",	M_CrispyToggleSmoothLighting,'s'},
     {1,"",	M_CrispyToggleBrightmaps,'b'},
-    {1,"",	M_CrispyToggleColoredblood,'e'},
-    {1,"",	M_CrispyToggleColoredblood2,'f'},
+    {1,"",	M_CrispyToggleColoredblood,'c'},
     {1,"",	M_CrispyToggleFlipcorpses,'r'},
     {-1,"",0,'\0'},
     {1,"",	M_CrispnessNext,'n'},
@@ -1444,8 +1442,7 @@ static void M_DrawCrispness1(void)
     M_DrawCrispnessMultiItem(crispness_translucency, "Enable Translucency", multiitem_translucency, crispy->translucency, true);
     M_DrawCrispnessItem(crispness_smoothlight, "Smooth Diminishing Lighting", crispy->smoothlight, true);
     M_DrawCrispnessMultiItem(crispness_brightmaps, "Apply Brightmaps to", multiitem_brightmaps, crispy->brightmaps, true);
-    M_DrawCrispnessMultiItem(crispness_coloredblood, "Colored Blood and Corpses", multiitem_coloredblood, crispy->coloredblood & COLOREDBLOOD_BOTH, gameversion != exe_chex);
-    M_DrawCrispnessItem(crispness_coloredblood2, "Fix Spectre and Lost Soul Blood", crispy->coloredblood & COLOREDBLOOD_FIX, gameversion != exe_chex);
+    M_DrawCrispnessItem(crispness_coloredblood, "Colored Blood and Corpses", crispy->coloredblood, gameversion != exe_chex);
     M_DrawCrispnessItem(crispness_flipcorpses, "Randomly Mirrored Corpses", crispy->flipcorpses, gameversion != exe_chex);
 
     M_DrawCrispnessGoto(crispness1_next, "Next Page >");
