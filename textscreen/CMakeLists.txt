@@ -22,5 +22,7 @@ add_library(textscreen
             txt_widget.c        txt_widget.h
             txt_window.c        txt_window.h
             txt_window_action.c txt_window_action.h)
-target_include_directories(textscreen PRIVATE "../src/")
+target_include_directories(textscreen
+                           INTERFACE "."
+                           PRIVATE "../src/")
 target_link_libraries(textscreen SDL2::SDL2)
