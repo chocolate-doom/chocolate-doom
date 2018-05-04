@@ -36,7 +36,6 @@ extern multiitem_t multiitem_demotimer[NUM_DEMOTIMERS];
 extern multiitem_t multiitem_demotimerdir[];
 extern multiitem_t multiitem_freelook[NUM_FREELOOKS];
 extern multiitem_t multiitem_jump[NUM_JUMPS];
-extern multiitem_t multiitem_neghealth[NUM_NEGHEALTHS];
 extern multiitem_t multiitem_sndchannels[NUM_SNDCHANNELS];
 extern multiitem_t multiitem_translucency[NUM_TRANSLUCENCY];
 extern multiitem_t multiitem_uncapped[NUM_UNCAPPED];

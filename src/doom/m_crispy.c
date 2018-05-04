@@ -101,13 +101,6 @@ multiitem_t multiitem_jump[NUM_JUMPS] =
     {JUMP_HIGH, "high"},
 };
 
-multiitem_t multiitem_neghealth[NUM_NEGHEALTHS] =
-{
-    {NEGHEALTH_OFF, "off"},
-    {NEGHEALTH_DM, "deathmatch"},
-    {NEGHEALTH_ON, "always"},
-};
-
 multiitem_t multiitem_translucency[NUM_TRANSLUCENCY] =
 {
     {TRANSLUCENCY_OFF, "off"},
@@ -324,7 +317,7 @@ void M_CrispyToggleMouseLook(int choice)
 void M_CrispyToggleNeghealth(int choice)
 {
     choice = 0;
-    crispy->neghealth = (crispy->neghealth + 1) % NUM_NEGHEALTHS;
+    crispy->neghealth = !crispy->neghealth;
 }
 
 void M_CrispyToggleOverunder(int choice)

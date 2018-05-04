@@ -165,14 +165,6 @@ enum
 
 enum
 {
-    NEGHEALTH_OFF,
-    NEGHEALTH_DM,
-    NEGHEALTH_ON,
-    NUM_NEGHEALTHS
-};
-
-enum
-{
     SNDCHANNELS_8,
     SNDCHANNELS_16,
     SNDCHANNELS_32,

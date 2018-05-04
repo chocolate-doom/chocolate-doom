@@ -895,7 +895,7 @@ P_DamageMobj
 	// [crispy] negative player health
 	if (player->health < -99)
 	    player->health = -99;
-	if (!(crispy->neghealth == NEGHEALTH_ON || (deathmatch && crispy->neghealth == NEGHEALTH_DM)))
+	if (!crispy->neghealth)
 	{
 	if (player->health < 0)
 	    player->health = 0;
