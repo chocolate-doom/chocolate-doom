@@ -26,15 +26,23 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 # Currently works with the following generators:
+# - Unix Makefiles
+# - Ninja
 # - Visual Studio
 
 # Cache variable that allows you to point CMake at a directory containing
 # an extracted development library.
 set(SDL2_DIR "${SDL2_DIR}" CACHE PATH "Location of SDL2 library directory")
 
+# Use pkg-config to find library locations in *NIX environments.
+find_package(PkgConfig QUIET)
+if(PKG_CONFIG_FOUND)
+    pkg_search_module(PC_SDL2 QUIET sdl2)
+endif()
+
 # Find the include directory.
 find_path(SDL2_INCLUDE_DIR "SDL_version.h"
-          PATHS "${SDL2_DIR}/include")
+    HINTS "${SDL2_DIR}/include" ${PC_SDL2_INCLUDE_DIRS})
 
 # Find the version.  Taken and modified from CMake's FindSDL.cmake.
 if(SDL2_INCLUDE_DIR AND EXISTS "${SDL2_INCLUDE_DIR}/SDL_version.h")
@@ -56,14 +64,14 @@ endif()
 # Find the SDL2 and SDL2main libraries
 if(CMAKE_SIZEOF_VOID_P STREQUAL 8)
     find_library(SDL2_LIBRARY "SDL2"
-                 PATHS "${SDL2_DIR}/lib/x64")
+        HINTS "${SDL2_DIR}/lib/x64" ${PC_SDL2_LIBRARY_DIRS})
     find_library(SDL2_MAIN_LIBRARY "SDL2main"
-                 PATHS "${SDL2_DIR}/lib/x64")
+        HINTS "${SDL2_DIR}/lib/x64" ${PC_SDL2_LIBRARY_DIRS})
 else()
     find_library(SDL2_LIBRARY "SDL2"
-                 PATHS "${SDL2_DIR}/lib/x86")
+        HINTS "${SDL2_DIR}/lib/x86" ${PC_SDL2_LIBRARY_DIRS})
     find_library(SDL2_MAIN_LIBRARY "SDL2main"
-                 PATHS "${SDL2_DIR}/lib/x86")
+        HINTS "${SDL2_DIR}/lib/x86" ${PC_SDL2_LIBRARY_DIRS})
 endif()
 set(SDL2_LIBRARIES "${SDL2_MAIN_LIBRARY}" "${SDL2_LIBRARY}")
 
@@ -78,6 +86,7 @@ if(SDL2_FOUND)
     # SDL2 imported target.
     add_library(SDL2::SDL2 UNKNOWN IMPORTED)
     set_target_properties(SDL2::SDL2 PROPERTIES
+                          INTERFACE_COMPILE_OPTIONS "${PC_SDL2_CFLAGS_OTHER}"
                           INTERFACE_INCLUDE_DIRECTORIES "${SDL2_INCLUDE_DIR}"
                           IMPORTED_LOCATION "${SDL2_LIBRARY}")
 
