@@ -18,6 +18,7 @@
 //
 
 #include "doomstat.h"
+#include "p_local.h" // [crispy] thinkercap
 #include "s_sound.h"
 #include "r_defs.h" // [crispy] laserpatch
 #include "r_sky.h" // [crispy] R_InitSkyMap()
@@ -149,6 +150,8 @@ void M_CrispyToggleCenterweapon(int choice)
 
 void M_CrispyToggleColoredblood(int choice)
 {
+    thinker_t *th;
+
     if (gameversion == exe_chex)
     {
 	S_StartSound(NULL,sfx_oof);
@@ -157,6 +160,28 @@ void M_CrispyToggleColoredblood(int choice)
 
     choice = 0;
     crispy->coloredblood = !crispy->coloredblood;
+
+    // [crispy] switch NOBLOOD flag for Lost Souls
+    for (th = thinkercap.next; th != &thinkercap; th = th->next)
+    {
+	if (th->function.acp1 == (actionf_p1)P_MobjThinker)
+	{
+		mobj_t *mobj = (mobj_t *)th;
+
+		if (mobj->type == MT_SKULL)
+		{
+			if (crispy->coloredblood)
+			{
+				mobj->flags |= MF_NOBLOOD;
+			}
+			else
+			{
+				mobj->flags &= ~MF_NOBLOOD;
+			}
+		}
+	}
+    }
+
 }
 
 void M_CrispyToggleColoredhud(int choice)
