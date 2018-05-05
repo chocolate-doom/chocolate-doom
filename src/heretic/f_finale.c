@@ -298,7 +298,7 @@ void F_DrawUnderwater(void)
 {
     static boolean underwawa = false;
     extern boolean askforquit;
-    char *lumpname;
+    const char *lumpname;
     byte *palette;
 
     // The underwater screen has its own palette, which is rather annoying.
