@@ -121,7 +121,7 @@ void SV_WriteLong(unsigned int val)
     SV_Write(&val, sizeof(int));
 }
 
-void SV_WritePtr(void *ptr)
+void SV_WritePtr(const void *ptr)
 {
     long val = (long) ptr;
 
