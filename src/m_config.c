@@ -44,7 +44,7 @@
 // Location where all configuration data is stored - 
 // default.cfg, savegames, etc.
 
-char *configdir;
+const char *configdir;
 
 // Default filenames for configuration files.
 
