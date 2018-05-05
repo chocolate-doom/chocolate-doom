@@ -1869,7 +1869,7 @@ void G_RecordDemo(skill_t skill, int numplayers, int episode, int map,
 ===================
 */
 
-const char *defdemoname;
+static const char *defdemoname;
 
 void G_DeferedPlayDemo(char *name)
 {
