@@ -269,9 +269,9 @@ void D_DoomLoop(void)
 ===============================================================================
 */
 
-int demosequence;
-int pagetic;
-const char *pagename;
+static int demosequence;
+static int pagetic;
+static const char *pagename;
 
 
 /*
