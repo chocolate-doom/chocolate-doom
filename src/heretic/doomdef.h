@@ -754,7 +754,7 @@ void R_SetViewSize(int blocks, int detail);
 int R_FlatNumForName(char *name);
 
 int R_TextureNumForName(char *name);
-int R_CheckTextureNumForName(char *name);
+int R_CheckTextureNumForName(const char *name);
 // called by P_Ticker for switches and animations
 // returns the texture number for the texture name
 
