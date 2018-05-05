@@ -521,7 +521,7 @@ void drawstatus(void)
     }
 }
 
-void status(const char *string)
+static void status(const char *string)
 {
     if (using_graphical_startup)
     {
