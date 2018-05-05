@@ -488,7 +488,7 @@ char smsg[80];                  // status bar line
 
 static int startup_line = STARTUP_WINDOW_Y;
 
-void hprintf(char *string)
+void hprintf(const char *string)
 {
     if (using_graphical_startup)
     {
