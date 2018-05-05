@@ -31,7 +31,7 @@ int finalecount;
 #define TEXTWAIT        250
 
 char *finaletext;
-char *finaleflat;
+const char *finaleflat;
 
 int FontABaseLump;
 
