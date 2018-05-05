@@ -30,7 +30,7 @@ int finalecount;
 #define TEXTSPEED       3
 #define TEXTWAIT        250
 
-char *finaletext;
+const char *finaletext;
 const char *finaleflat;
 
 int FontABaseLump;
