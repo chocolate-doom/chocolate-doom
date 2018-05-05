@@ -24,16 +24,16 @@
 #include "s_sound.h"
 #include "v_video.h"
 
-int finalestage;                // 0 = text, 1 = art screen
-int finalecount;
+static int finalestage;                // 0 = text, 1 = art screen
+static int finalecount;
 
 #define TEXTSPEED       3
 #define TEXTWAIT        250
 
-const char *finaletext;
-const char *finaleflat;
+static const char *finaletext;
+static const char *finaleflat;
 
-int FontABaseLump;
+static int FontABaseLump;
 
 extern boolean automapactive;
 extern boolean viewactive;
