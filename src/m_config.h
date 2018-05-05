@@ -25,7 +25,7 @@
 void M_LoadDefaults(void);
 void M_SaveDefaults(void);
 void M_SaveDefaultsAlternate(char *main, char *extra);
-void M_SetConfigDir(char *dir);
+void M_SetConfigDir(const char *dir);
 void M_BindIntVariable(char *name, int *variable);
 void M_BindFloatVariable(char *name, float *variable);
 void M_BindStringVariable(char *name, char **variable);
