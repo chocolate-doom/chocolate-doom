@@ -453,7 +453,7 @@ typedef struct player_s
     int refire;                 // refired shots are less accurate
 
     int killcount, itemcount, secretcount;      // for intermission
-    char *message;              // hint messages
+    const char *message;        // hint messages
     int messageTics;            // counter for showing messages
     int damagecount, bonuscount;        // for screen flashing
     int flamecount;             // for flame thrower duration
