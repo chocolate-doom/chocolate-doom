@@ -575,7 +575,7 @@ void R_ProjectSprite (mobj_t* thing)
         // that would necessitate turning it off for a tic.
         thing->interp == true &&
         // Don't interpolate during a paused state.
-        !paused && (!menuactive || demoplayback))
+        !paused && (!menuactive || demoplayback || netgame))
     {
         interpx = thing->oldx + FixedMul(thing->x - thing->oldx, fractionaltic);
         interpy = thing->oldy + FixedMul(thing->y - thing->oldy, fractionaltic);
