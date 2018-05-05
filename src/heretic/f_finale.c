@@ -156,7 +156,7 @@ void F_TextWrite(void)
     byte *src, *dest;
     int x, y;
     int count;
-    char *ch;
+    const char *ch;
     int c;
     int cx, cy;
     patch_t *w;
