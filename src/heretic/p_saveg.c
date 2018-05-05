@@ -123,7 +123,7 @@ void SV_WriteLong(unsigned int val)
 
 void SV_WritePtr(void *ptr)
 {
-    long val = (long) ptr;
+    long val = (long)(intptr_t) ptr;
 
     SV_WriteLong(val & 0xffffffff);
 }
