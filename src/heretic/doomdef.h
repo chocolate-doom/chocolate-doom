@@ -588,7 +588,7 @@ extern int vanilla_demo_limit;
 void D_DoomMain(void);
 void IncThermo(void);
 void InitThermo(int max);
-void tprintf(char *string, int initflag);
+void tprintf(const char *string, int initflag);
 // not a globally visible function, just included for source reference
 // calls all startup code
 // parses command line options
