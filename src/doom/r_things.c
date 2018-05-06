@@ -777,6 +777,48 @@ void R_ProjectSprite (mobj_t* thing)
     }
 }
 
+extern void P_LineLaser (mobj_t* t1, angle_t angle, fixed_t distance, fixed_t slope);
+
+byte *R_LaserspotColor (void)
+{
+	if (crispy->crosshairtarget)
+	{
+		// [crispy] the projected crosshair code calls P_LineLaser() itself
+		if (crispy->crosshair == CROSSHAIR_STATIC)
+		{
+			crispy->crosshair |= CROSSHAIR_INTERCEPT; // [crispy] intercepts overflow guard
+			P_LineLaser(viewplayer->mo, viewangle,
+			            16*64*FRACUNIT, PLAYER_SLOPE(viewplayer));
+			crispy->crosshair &= ~CROSSHAIR_INTERCEPT; // [crispy] intercepts overflow guard
+		}
+		if (linetarget)
+		{
+			return cr[CR_GRAY];
+		}
+	}
+
+	// [crispy] keep in sync with st_stuff.c:ST_WidgetColor(hudcolor_health)
+	if (crispy->crosshairhealth)
+	{
+		const int health = viewplayer->health;
+
+		// [crispy] Invulnerability powerup and God Mode cheat turn Health values gray
+		if (viewplayer->cheats & CF_GODMODE ||
+		    viewplayer->powers[pw_invulnerability])
+			return cr[CR_GRAY];
+		else if (health < 25)
+			return cr[CR_RED];
+		else if (health < 50)
+			return cr[CR_GOLD];
+		else if (health <= 100)
+			return cr[CR_GREEN];
+		else
+			return cr[CR_BLUE];
+	}
+
+	return NULL;
+}
+
 // [crispy] generate a vissprite for the laser spot
 static void R_DrawLSprite (void)
 {
@@ -786,8 +828,6 @@ static void R_DrawLSprite (void)
 
     static int		lump;
     static patch_t*	patch;
-
-    extern void	P_LineLaser (mobj_t* t1, angle_t angle, fixed_t distance, fixed_t slope);
 
     if (weaponinfo[viewplayer->readyweapon].ammo == am_noammo ||
         viewplayer->playerstate != PST_LIVE)
@@ -828,6 +868,7 @@ static void R_DrawLSprite (void)
     vis->patch = lump - firstspritelump; // [crispy] not a sprite patch
     vis->colormap[0] = vis->colormap[1] = fixedcolormap ? fixedcolormap : colormaps; // [crispy] always full brightness
     vis->brightmap = dc_brightmap;
+    vis->translation = R_LaserspotColor();
 //  vis->mobjflags |= MF_TRANSLUCENT;
     vis->xiscale = FixedDiv (FRACUNIT, xscale);
     vis->texturemid = laserspot->z - viewz;

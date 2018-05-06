@@ -174,7 +174,6 @@ void M_CrispyToggleColoredblood(int choice)
 		}
 	}
     }
-
 }
 
 void M_CrispyToggleColoredhud(int choice)
@@ -187,6 +186,18 @@ void M_CrispyToggleCrosshair(int choice)
 {
     choice = 0;
     crispy->crosshair = (crispy->crosshair + 1) % NUM_CROSSHAIRS;
+}
+
+void M_CrispyToggleCrosshairHealth(int choice)
+{
+    choice = 0;
+    crispy->crosshairhealth = !crispy->crosshairhealth;
+}
+
+void M_CrispyToggleCrosshairTarget(int choice)
+{
+    choice = 0;
+    crispy->crosshairtarget = !crispy->crosshairtarget;
 }
 
 void M_CrispyToggleCrosshairtype(int choice)

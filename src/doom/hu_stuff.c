@@ -741,6 +741,7 @@ static void HU_DrawCrosshair (void)
 {
     static int		lump;
     static patch_t*	patch;
+    extern byte *R_LaserspotColor (void);
 
     if (weaponinfo[plr->readyweapon].ammo == am_noammo ||
         plr->playerstate != PST_LIVE ||
@@ -757,6 +758,7 @@ static void HU_DrawCrosshair (void)
     }
 
     dp_translucent = true;
+    dp_translation = R_LaserspotColor();
 
     V_DrawPatch(ORIGWIDTH/2 -
                 laserpatch[crispy->crosshairtype].w,
@@ -896,10 +898,10 @@ void HU_Drawer(void)
 	HUlib_drawTextLine(&w_fps, false);
     }
 
-    dp_translation = NULL;
-
     if (crispy->crosshair == CROSSHAIR_STATIC)
 	HU_DrawCrosshair();
+
+    dp_translation = NULL;
 
     if (dp_translucent)
 	dp_translucent = false;

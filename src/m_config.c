@@ -1820,6 +1820,22 @@ static default_t extra_defaults_list[] =
     //!
     // @game doom
     //
+    // Crosshair Color indicates Health.
+    //
+
+    CONFIG_VARIABLE_INT(crispy_crosshairhealth),
+
+    //!
+    // @game doom
+    //
+    // Highlight Crosshair on target.
+    //
+
+    CONFIG_VARIABLE_INT(crispy_crosshairtarget),
+
+    //!
+    // @game doom
+    //
     // Crosshair type.
     //
 

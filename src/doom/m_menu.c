@@ -546,8 +546,6 @@ static menu_t  Crispness2Def =
 enum
 {
     crispness_sep_tactical,
-    crispness_crosshair,
-    crispness_crosshairtype,
     crispness_freelook,
     crispness_mouselook,
     crispness_neghealth,
@@ -555,6 +553,13 @@ enum
     crispness_pitch,
     crispness_weaponsquat,
     crispness_sep_tactical_,
+
+    crispness_sep_crosshair,
+    crispness_crosshair,
+    crispness_crosshairtype,
+    crispness_crosshairhealth,
+    crispness_crosshairtarget,
+    crispness_sep_crosshair_,
 
     crispness3_next,
     crispness3_prev,
@@ -564,14 +569,18 @@ enum
 static menuitem_t Crispness3Menu[]=
 {
     {-1,"",0,'\0'},
-    {1,"",	M_CrispyToggleCrosshair,'d'},
-    {1,"",	M_CrispyToggleCrosshairtype,'c'},
     {1,"",	M_CrispyToggleFreelook,'a'},
     {1,"",	M_CrispyToggleMouseLook,'p'},
     {1,"",	M_CrispyToggleNeghealth,'n'},
     {1,"",	M_CrispyToggleCenterweapon,'c'},
     {1,"",	M_CrispyTogglePitch,'w'},
     {1,"",	M_CrispyToggleWeaponSquat,'w'},
+    {-1,"",0,'\0'},
+    {-1,"",0,'\0'},
+    {1,"",	M_CrispyToggleCrosshair,'d'},
+    {1,"",	M_CrispyToggleCrosshairtype,'c'},
+    {1,"",	M_CrispyToggleCrosshairHealth,'c'},
+    {1,"",	M_CrispyToggleCrosshairTarget,'h'},
     {-1,"",0,'\0'},
     {1,"",	M_CrispnessNext,'n'},
     {1,"",	M_CrispnessPrev,'p'},
@@ -1469,10 +1478,8 @@ static void M_DrawCrispness3(void)
 
     M_DrawCrispnessHeader("Crispness 3/4");
 
-   M_DrawCrispnessSeparator(crispness_sep_tactical, "Tactical");
+    M_DrawCrispnessSeparator(crispness_sep_tactical, "Tactical");
 
-    M_DrawCrispnessMultiItem(crispness_crosshair, "Draw Crosshair", multiitem_crosshair, crispy->crosshair, true);
-    M_DrawCrispnessMultiItem(crispness_crosshairtype, "Crosshair Type", multiitem_crosshairtype, crispy->crosshairtype + 1, crispy->crosshair);
     M_DrawCrispnessMultiItem(crispness_freelook, "Allow Free Look", multiitem_freelook, crispy->freelook, true);
     M_DrawCrispnessItem(crispness_mouselook, "Permanent Mouse Look", crispy->mouselook, true);
     M_DrawCrispnessItem(crispness_neghealth, "Negative Player Health", crispy->neghealth, true);
@@ -1480,6 +1487,13 @@ static void M_DrawCrispness3(void)
     M_DrawCrispnessItem(crispness_pitch, "Weapon Recoil Pitch", crispy->pitch, true);
     M_DrawCrispnessItem(crispness_weaponsquat, "Squat weapon down on impact", crispy->weaponsquat, true);
 //  M_DrawCrispnessItem(crispness_extsaveg, "Extended Savegames", crispy->extsaveg, true);
+
+    M_DrawCrispnessSeparator(crispness_sep_crosshair, "Crosshair");
+
+    M_DrawCrispnessMultiItem(crispness_crosshair, "Draw Crosshair", multiitem_crosshair, crispy->crosshair, true);
+    M_DrawCrispnessMultiItem(crispness_crosshairtype, "Crosshair Shape", multiitem_crosshairtype, crispy->crosshairtype + 1, crispy->crosshair);
+    M_DrawCrispnessItem(crispness_crosshairhealth, "Color indicates Health", crispy->crosshairhealth, crispy->crosshair);
+    M_DrawCrispnessItem(crispness_crosshairtarget, "Highlight on target", crispy->crosshairtarget, crispy->crosshair);
 
     M_DrawCrispnessGoto(crispness3_next, "Next Page >");
     M_DrawCrispnessGoto(crispness3_prev, "< Prev Page");

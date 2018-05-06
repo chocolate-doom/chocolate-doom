@@ -1312,12 +1312,15 @@ P_LineLaser
     }
     }
 
-    // [crispy] don't aim at Spectres
-    if (linetarget && !(linetarget->flags & MF_SHADOW) && (crispy->freeaim != FREEAIM_DIRECT))
-	P_LineAttack(t1, angle, distance, aimslope, INT_MIN);
-    else
-	// [crispy] double the auto aim distance
-	P_LineAttack(t1, angle, 2*distance, lslope, INT_MIN);
+    if ((crispy->crosshair & ~CROSSHAIR_INTERCEPT) == CROSSHAIR_PROJECTED)
+    {
+	// [crispy] don't aim at Spectres
+	if (linetarget && !(linetarget->flags & MF_SHADOW) && (crispy->freeaim != FREEAIM_DIRECT))
+		P_LineAttack(t1, angle, distance, aimslope, INT_MIN);
+	else
+		// [crispy] double the auto aim distance
+		P_LineAttack(t1, angle, 2*distance, lslope, INT_MIN);
+    }
 }
 
 

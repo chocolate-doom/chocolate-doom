@@ -46,6 +46,8 @@ extern void M_CrispyToggleCenterweapon(int choice);
 extern void M_CrispyToggleColoredblood(int choice);
 extern void M_CrispyToggleColoredhud(int choice);
 extern void M_CrispyToggleCrosshair(int choice);
+extern void M_CrispyToggleCrosshairHealth(int choice);
+extern void M_CrispyToggleCrosshairTarget(int choice);
 extern void M_CrispyToggleCrosshairtype(int choice);
 extern void M_CrispyToggleDemoBar(int choice);
 extern void M_CrispyToggleDemoTimer(int choice);

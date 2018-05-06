@@ -42,6 +42,8 @@ typedef struct
 	int coloredblood;
 	int coloredhud;
 	int crosshair;
+	int crosshairhealth;
+	int crosshairtarget;
 	int crosshairtype;
 	int demotimer;
 	int demotimerdir;
