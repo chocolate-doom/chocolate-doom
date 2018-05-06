@@ -38,6 +38,9 @@ Variables should be named like this: `my_variable_name`, not like this:
 `MyVariableName`.  In pointer variable declarations, place the `*` next
 to the variable name, not the type.
 
+When casting variables from one type to another, put a space after the
+last closing brace.
+
 When using an if, do, while, or for statement, always use the { } braces
 even when they are not necessary.  For example, do this:
 

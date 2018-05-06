@@ -169,7 +169,7 @@ void P_InitPicAnims (void)
     lastanim = anims;
     for (i=0 ; animdefs[i].istexture != -1 ; i++)
     {
-        char *startname, *endname;
+        const char *startname, *endname;
 
 	// [crispy] remove MAXANIMS limit
 	if (lastanim >= anims + maxanims)

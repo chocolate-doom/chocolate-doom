@@ -92,7 +92,7 @@ int			quickSaveSlot;
  // 1 = message to be printed
 int			messageToPrint;
 // ...and here is the message string!
-char*			messageString;
+const char		*messageString;
 
 // message x & y
 int			messx;
@@ -189,59 +189,55 @@ menu_t*	currentMenu;
 //
 // PROTOTYPES
 //
-void M_NewGame(int choice);
-void M_Episode(int choice);
-static void M_Expansion(int choice);
-void M_ChooseSkill(int choice);
-void M_LoadGame(int choice);
-void M_SaveGame(int choice);
-void M_Options(int choice);
-void M_EndGame(int choice);
-void M_ReadThis(int choice);
-void M_ReadThis2(int choice);
-void M_QuitDOOM(int choice);
+static void M_NewGame(int choice);
+static void M_Episode(int choice);
+static void M_Expansion(int choice); // [crispy] NRFTL
+static void M_ChooseSkill(int choice);
+static void M_LoadGame(int choice);
+static void M_SaveGame(int choice);
+static void M_Options(int choice);
+static void M_EndGame(int choice);
+static void M_ReadThis(int choice);
+static void M_ReadThis2(int choice);
+static void M_QuitDOOM(int choice);
 
-void M_ChangeMessages(int choice);
-void M_ChangeSensitivity(int choice);
+static void M_ChangeMessages(int choice);
+static void M_ChangeSensitivity(int choice);
 static void M_ChangeSensitivity_y(int choice); // [crispy] mouse sensitivity menu
 static void M_MouseInvert(int choice); // [crispy] mouse sensitivity menu
-void M_SfxVol(int choice);
-void M_MusicVol(int choice);
-void M_ChangeDetail(int choice);
-void M_SizeDisplay(int choice);
-void M_StartGame(int choice);
+static void M_SfxVol(int choice);
+static void M_MusicVol(int choice);
+static void M_ChangeDetail(int choice);
+static void M_SizeDisplay(int choice);
 static void M_Mouse(int choice); // [crispy] mouse sensitivity menu
-void M_Sound(int choice);
+static void M_Sound(int choice);
 
-void M_FinishReadThis(int choice);
-void M_LoadSelect(int choice);
-void M_SaveSelect(int choice);
-void M_ReadSaveStrings(void);
-void M_QuickSave(void);
-void M_QuickLoad(void);
+static void M_FinishReadThis(int choice);
+static void M_LoadSelect(int choice);
+static void M_SaveSelect(int choice);
+static void M_ReadSaveStrings(void);
+static void M_QuickSave(void);
+static void M_QuickLoad(void);
 
-void M_DrawMainMenu(void);
-void M_DrawReadThis1(void);
-void M_DrawReadThis2(void);
-void M_DrawNewGame(void);
-void M_DrawEpisode(void);
-void M_DrawOptions(void);
+static void M_DrawMainMenu(void);
+static void M_DrawReadThis1(void);
+static void M_DrawReadThis2(void);
+static void M_DrawNewGame(void);
+static void M_DrawEpisode(void);
+static void M_DrawOptions(void);
 static void M_DrawMouse(void); // [crispy] mouse sensitivity menu
-void M_DrawSound(void);
-void M_DrawLoad(void);
-void M_DrawSave(void);
+static void M_DrawSound(void);
+static void M_DrawLoad(void);
+static void M_DrawSave(void);
 
-void M_DrawSaveLoadBorder(int x,int y);
-void M_SetupNextMenu(menu_t *menudef);
-void M_DrawThermo(int x,int y,int thermWidth,int thermDot);
-void M_DrawEmptyCell(menu_t *menu,int item);
-void M_DrawSelCell(menu_t *menu,int item);
-void M_WriteText(int x, int y, char *string);
-int  M_StringWidth(char *string);
-int  M_StringHeight(char *string);
-void M_StartMessage(char *string,void *routine,boolean input);
-void M_StopMessage(void);
-void M_ClearMenus (void);
+static void M_DrawSaveLoadBorder(int x,int y);
+static void M_SetupNextMenu(menu_t *menudef);
+static void M_DrawThermo(int x,int y,int thermWidth,int thermDot);
+static void M_WriteText(int x, int y, char *string);
+static int  M_StringWidth(char *string);
+static int  M_StringHeight(const char *string);
+static void M_StartMessage(const char *string, void *routine, boolean input);
+static void M_ClearMenus (void);
 
 // [crispy] Crispness menu
 static void M_CrispnessCur(int choice);
@@ -1864,29 +1860,9 @@ M_DrawThermo
 }
 
 
-
-void
-M_DrawEmptyCell
-( menu_t*	menu,
-  int		item )
-{
-    V_DrawPatchDirect(menu->x - 10, menu->y + item * LINEHEIGHT - 1, 
-                      W_CacheLumpName(DEH_String("M_CELL1"), PU_CACHE));
-}
-
-void
-M_DrawSelCell
-( menu_t*	menu,
-  int		item )
-{
-    V_DrawPatchDirect(menu->x - 10, menu->y + item * LINEHEIGHT - 1,
-                      W_CacheLumpName(DEH_String("M_CELL2"), PU_CACHE));
-}
-
-
 void
 M_StartMessage
-( char*		string,
+( const char	*string,
   void*		routine,
   boolean	input )
 {
@@ -1903,14 +1879,6 @@ M_StartMessage
     }
     return;
 }
-
-
-void M_StopMessage(void)
-{
-    menuactive = messageLastMenuActive;
-    messageToPrint = 0;
-}
-
 
 
 //
@@ -1946,7 +1914,7 @@ int M_StringWidth(char* string)
 //
 //      Find string height from hu_font chars
 //
-int M_StringHeight(char* string)
+int M_StringHeight(const char* string)
 {
     size_t             i;
     int             h;
@@ -2830,7 +2798,7 @@ void M_Drawer (void)
     unsigned int	i;
     unsigned int	max;
     char		string[80];
-    char               *name;
+    const char          *name;
     int			start;
 
     inhelpscreens = false;

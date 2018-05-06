@@ -278,7 +278,7 @@ void F_TextWrite (void)
     
     int		x,y,w;
     signed int	count;
-    char*	ch;
+    char *ch; // [crispy] un-const
     int		c;
     int		cx;
     int		cy;
@@ -632,9 +632,9 @@ boolean F_CastResponder (event_t* ev)
 }
 
 
-void F_CastPrint (char* text)
+void F_CastPrint (const char *text)
 {
-    char*	ch;
+    const char *ch;
     int		c;
     int		cx;
     int		w;

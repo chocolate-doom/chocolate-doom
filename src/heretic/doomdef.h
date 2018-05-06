@@ -818,10 +818,10 @@ void MN_DeactivateMenu(void);
 boolean MN_Responder(event_t * event);
 void MN_Ticker(void);
 void MN_Drawer(void);
-void MN_DrTextA(char *text, int x, int y);
-int MN_TextAWidth(char *text);
-void MN_DrTextB(char *text, int x, int y);
-int MN_TextBWidth(char *text);
+void MN_DrTextA(const char *text, int x, int y);
+int MN_TextAWidth(const char *text);
+void MN_DrTextB(const char *text, int x, int y);
+int MN_TextBWidth(const char *text);
 
 #include "sounds.h"
 

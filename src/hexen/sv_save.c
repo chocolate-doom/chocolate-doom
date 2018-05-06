@@ -3452,6 +3452,6 @@ static void SV_WritePtr(void *val)
     // nowadays they might be larger. Whatever value we write here isn't
     // going to be much use when we reload the game.
 
-    ptr = (long) val;
+    ptr = (long)(intptr_t) val;
     SV_WriteLong((unsigned int) (ptr & 0xffffffff));
 }
