@@ -422,7 +422,6 @@ enum
     mouse_vert,
     mouse_empty2,
     mouse_invert,
-    mouse_look,
     mouse_end
 } mouse_e;
 
@@ -433,7 +432,6 @@ static menuitem_t MouseMenu[]=
     {2,"",	M_ChangeSensitivity_y,'v'},
     {-1,"",0,'\0'},
     {1,"",	M_MouseInvert,'i'},
-    {1,"",	M_CrispyToggleMouseLook,'l'},
 };
 
 static menu_t  MouseDef =
@@ -551,6 +549,7 @@ enum
     crispness_crosshair,
     crispness_crosshairtype,
     crispness_freelook,
+    crispness_mouselook,
     crispness_neghealth,
     crispness_centerweapon,
     crispness_pitch,
@@ -568,6 +567,7 @@ static menuitem_t Crispness3Menu[]=
     {1,"",	M_CrispyToggleCrosshair,'d'},
     {1,"",	M_CrispyToggleCrosshairtype,'c'},
     {1,"",	M_CrispyToggleFreelook,'a'},
+    {1,"",	M_CrispyToggleMouseLook,'p'},
     {1,"",	M_CrispyToggleNeghealth,'n'},
     {1,"",	M_CrispyToggleCenterweapon,'c'},
     {1,"",	M_CrispyTogglePitch,'w'},
@@ -1350,13 +1350,6 @@ static void M_DrawMouse(void)
     M_WriteText(MouseDef.x, MouseDef.y + LINEHEIGHT * mouse_invert + 6,
                 mouse_menu_text);
 
-    M_snprintf(mouse_menu_text, sizeof(mouse_menu_text),
-               "%sPermanent Mouse Look: %s%s", crstr[CR_NONE],
-               crispy->mouselook ? crstr[CR_GREEN] : crstr[CR_DARK],
-               crispy->mouselook ? "On" : "Off");
-    M_WriteText(MouseDef.x, MouseDef.y + LINEHEIGHT * mouse_look + 6,
-                mouse_menu_text);
-
     dp_translation = NULL;
 }
 
@@ -1481,6 +1474,7 @@ static void M_DrawCrispness3(void)
     M_DrawCrispnessMultiItem(crispness_crosshair, "Draw Crosshair", multiitem_crosshair, crispy->crosshair, true);
     M_DrawCrispnessMultiItem(crispness_crosshairtype, "Crosshair Type", multiitem_crosshairtype, crispy->crosshairtype + 1, crispy->crosshair);
     M_DrawCrispnessMultiItem(crispness_freelook, "Allow Free Look", multiitem_freelook, crispy->freelook, true);
+    M_DrawCrispnessItem(crispness_mouselook, "Permanent Mouse Look", crispy->mouselook, true);
     M_DrawCrispnessItem(crispness_neghealth, "Negative Player Health", crispy->neghealth, true);
     M_DrawCrispnessMultiItem(crispness_centerweapon, "Weapon Attack Alignment", multiitem_centerweapon, crispy->centerweapon, true);
     M_DrawCrispnessItem(crispness_pitch, "Weapon Recoil Pitch", crispy->pitch, true);
