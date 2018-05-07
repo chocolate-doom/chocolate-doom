@@ -2698,7 +2698,7 @@ boolean M_Responder (event_t* ev)
 	if (currentMenu == CrispnessMenus[crispness_cur])
 	{
 	    M_CrispnessPrev(0);
-	    S_StartSound(NULL,sfx_pistol);
+	    S_StartSound(NULL,sfx_swtchn);
 	    return true;
 	}
     }
@@ -2707,7 +2707,7 @@ boolean M_Responder (event_t* ev)
 	if (currentMenu == CrispnessMenus[crispness_cur])
 	{
 	    M_CrispnessNext(0);
-	    S_StartSound(NULL,sfx_pistol);
+	    S_StartSound(NULL,sfx_swtchn);
 	    return true;
 	}
     }
