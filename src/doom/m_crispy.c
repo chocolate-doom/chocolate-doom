@@ -59,7 +59,7 @@ multiitem_t multiitem_crosshair[NUM_CROSSHAIRS] =
 
 multiitem_t multiitem_crosshairtype[] =
 {
-    {-1, ""},
+    {-1, "none"},
     {0, "cross"},
     {1, "chevron"},
     {2, "dot"},
@@ -82,7 +82,7 @@ multiitem_t multiitem_demotimer[NUM_DEMOTIMERS] =
 
 multiitem_t multiitem_demotimerdir[] =
 {
-    {0, ""},
+    {0, "none"},
     {1, "forward"},
     {2, "backward"},
 };
