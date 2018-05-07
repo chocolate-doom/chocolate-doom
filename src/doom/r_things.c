@@ -786,10 +786,8 @@ byte *R_LaserspotColor (void)
 		// [crispy] the projected crosshair code calls P_LineLaser() itself
 		if (crispy->crosshair == CROSSHAIR_STATIC)
 		{
-			crispy->crosshair |= CROSSHAIR_INTERCEPT; // [crispy] intercepts overflow guard
 			P_LineLaser(viewplayer->mo, viewangle,
 			            16*64*FRACUNIT, PLAYER_SLOPE(viewplayer));
-			crispy->crosshair &= ~CROSSHAIR_INTERCEPT; // [crispy] intercepts overflow guard
 		}
 		if (linetarget)
 		{
@@ -839,10 +837,8 @@ static void R_DrawLSprite (void)
 	patch = W_CacheLumpNum(lump, PU_STATIC);
     }
 
-    crispy->crosshair |= CROSSHAIR_INTERCEPT; // [crispy] intercepts overflow guard
     P_LineLaser(viewplayer->mo, viewangle,
                 16*64*FRACUNIT, PLAYER_SLOPE(viewplayer));
-    crispy->crosshair &= ~CROSSHAIR_INTERCEPT; // [crispy] intercepts overflow guard
 
     if (!laserspot->thinker.function.acv)
 	return;

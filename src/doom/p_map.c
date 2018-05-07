@@ -1282,14 +1282,18 @@ P_LineLaser
 
     laserspot->thinker.function.acv = (actionf_v) (0);
 
+    // [crispy] intercepts overflow guard
+    crispy->crosshair |= CROSSHAIR_INTERCEPT;
+
+    // [crispy] set the linetarget pointer
+    lslope = P_AimLineAttack(t1, angle, distance);
+
     if (critical->freeaim == FREEAIM_DIRECT)
     {
 	lslope = slope;
     }
     else
     {
-    lslope = P_AimLineAttack(t1, angle, distance);
-
     // [crispy] increase accuracy
     if (!linetarget)
     {
@@ -1321,6 +1325,9 @@ P_LineLaser
 		// [crispy] double the auto aim distance
 		P_LineAttack(t1, angle, 2*distance, lslope, INT_MIN);
     }
+
+    // [crispy] intercepts overflow guard
+    crispy->crosshair &= ~CROSSHAIR_INTERCEPT;
 }
 
 
