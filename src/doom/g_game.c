@@ -913,6 +913,9 @@ boolean G_Responder (event_t* ev)
 	    (ev->type == ev_joystick && ev->data1) ) 
 	{ 
 	    M_StartControlPanel (); 
+	    // [crispy] play a sound if the menu is activated with a different key than ESC
+	    if (crispy->soundfix)
+		S_StartSound(NULL,sfx_swtchn);
 	    return true; 
 	} 
 	return false; 
