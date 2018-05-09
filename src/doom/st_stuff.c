@@ -63,6 +63,7 @@
 #include "v_trans.h" // [crispy] colored cheat messages
 
 extern int screenblocks; // [crispy] for the Crispy HUD
+extern boolean inhelpscreens; // [crispy] prevent palette changes
 
 //
 // STATUS BAR DATA
@@ -1442,7 +1443,6 @@ void ST_doPaletteStuff(void)
     byte*	pal;
     int		cnt;
     int		bzc;
-    extern	boolean inhelpscreens; // [crispy] prevent palette changes
 
     cnt = plyr->damagecount;
 
@@ -1759,7 +1759,8 @@ void ST_Drawer (boolean fullscreen, boolean refresh)
 {
   
     st_statusbaron = (!fullscreen) || (automapactive && !crispy->automapoverlay) || screenblocks >= CRISPY_HUD;
-    st_firsttime = st_firsttime || refresh;
+    // [crispy] immediately redraw status bar after help screens have been shown
+    st_firsttime = st_firsttime || refresh || inhelpscreens;
 
     if (crispy->cleanscreenshot == 2)
         return;
