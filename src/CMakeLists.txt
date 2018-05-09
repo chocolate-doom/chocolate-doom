@@ -107,8 +107,17 @@ set(SOURCE_FILES_WITH_DEH ${SOURCE_FILES} ${DEHACKED_SOURCE_FILES})
 
 set(EXTRA_LIBS textscreen pcsound opl SDL2::SDL2main SDL2::SDL2 SDL2::mixer SDL2::net)
 
-add_executable("${PROGRAM_PREFIX}doom" ${SOURCE_FILES_WITH_DEH})
+if(WIN32)
+    add_executable("${PROGRAM_PREFIX}doom" ${SOURCE_FILES_WITH_DEH} "${CMAKE_CURRENT_BINARY_DIR}/resource.rc")
+else()
+    add_executable("${PROGRAM_PREFIX}doom" ${SOURCE_FILES_WITH_DEH})
+endif()
 
 target_include_directories("${PROGRAM_PREFIX}doom"
                            PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/../")
 target_link_libraries("${PROGRAM_PREFIX}doom" doom ${EXTRA_LIBS})
+
+if(MSVC)
+    set_target_properties("${PROGRAM_PREFIX}doom" PROPERTIES
+                          LINK_FLAGS "/MANIFEST:NO")
+endif()
