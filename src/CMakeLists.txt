@@ -121,3 +121,74 @@ if(MSVC)
     set_target_properties("${PROGRAM_PREFIX}doom" PROPERTIES
                           LINK_FLAGS "/MANIFEST:NO")
 endif()
+
+if(WIN32)
+    add_executable("${PROGRAM_PREFIX}heretic" ${SOURCE_FILES_WITH_DEH} "${CMAKE_CURRENT_BINARY_DIR}/resource.rc")
+else()
+    add_executable("${PROGRAM_PREFIX}heretic" ${SOURCE_FILES_WITH_DEH})
+endif()
+
+target_include_directories("${PROGRAM_PREFIX}heretic"
+                           PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/../")
+target_link_libraries("${PROGRAM_PREFIX}heretic" heretic ${EXTRA_LIBS})
+
+if(MSVC)
+    set_target_properties("${PROGRAM_PREFIX}heretic" PROPERTIES
+                          LINK_FLAGS "/MANIFEST:NO")
+endif()
+
+if(WIN32)
+    add_executable("${PROGRAM_PREFIX}hexen" ${SOURCE_FILES} "${CMAKE_CURRENT_BINARY_DIR}/resource.rc")
+else()
+    add_executable("${PROGRAM_PREFIX}hexen" ${SOURCE_FILES})
+endif()
+
+target_include_directories("${PROGRAM_PREFIX}hexen"
+                           PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/../")
+target_link_libraries("${PROGRAM_PREFIX}hexen" hexen ${EXTRA_LIBS})
+
+if(MSVC)
+    set_target_properties("${PROGRAM_PREFIX}hexen" PROPERTIES
+                          LINK_FLAGS "/MANIFEST:NO")
+endif()
+
+if(WIN32)
+    add_executable("${PROGRAM_PREFIX}strife" ${SOURCE_FILES_WITH_DEH} "${CMAKE_CURRENT_BINARY_DIR}/resource.rc")
+else()
+    add_executable("${PROGRAM_PREFIX}strife" ${SOURCE_FILES_WITH_DEH})
+endif()
+
+target_include_directories("${PROGRAM_PREFIX}strife"
+                           PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/../")
+target_link_libraries("${PROGRAM_PREFIX}strife" strife ${EXTRA_LIBS})
+
+if(MSVC)
+    set_target_properties("${PROGRAM_PREFIX}strife" PROPERTIES
+                          LINK_FLAGS "/MANIFEST:NO")
+endif()
+
+# Source files needed for chocolate-setup:
+
+set(SETUP_FILES
+    deh_str.c           deh_str.h
+    d_mode.c            d_mode.h
+    d_iwad.c            d_iwad.h
+    i_timer.c           i_timer.h
+    m_config.c          m_config.h
+    m_controls.c        m_controls.h
+    net_io.c            net_io.h
+    net_packet.c        net_packet.h
+    net_sdl.c           net_sdl.h
+    net_query.c         net_query.h
+    net_structrw.c      net_structrw.h
+    z_native.c          z_zone.h)
+
+#if(WIN32)
+    #add_executable("${PROGRAM_PREFIX}setup" ${SETUP_FILES} ${COMMON_SOURCE_FILES} "${CMAKE_CURRENT_BINARY_DIR}/setup-res.rc")
+#else()
+    add_executable("${PROGRAM_PREFIX}setup" ${SETUP_FILES} ${COMMON_SOURCE_FILES})
+#endif()
+
+target_include_directories("${PROGRAM_PREFIX}setup"
+                           PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/../")
+target_link_libraries("${PROGRAM_PREFIX}setup" setup textscreen SDL2::SDL2main SDL2::SDL2 SDL2::mixer SDL2::net)
