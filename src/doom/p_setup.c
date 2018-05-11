@@ -822,6 +822,12 @@ void P_LoadThings (int lump)
     data = W_CacheLumpNum (lump,PU_STATIC);
     numthings = W_LumpLength (lump) / sizeof(mapthing_t);
 	
+    // [crispy] warn about missing thing
+    if (!data || !numthings)
+    {
+	I_Error("P_LoadThings: No things in map!");
+    }
+
     mt = (mapthing_t *)data;
     for (i=0 ; i<numthings ; i++, mt++)
     {
