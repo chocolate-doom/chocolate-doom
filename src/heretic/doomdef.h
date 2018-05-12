@@ -453,7 +453,7 @@ typedef struct player_s
     int refire;                 // refired shots are less accurate
 
     int killcount, itemcount, secretcount;      // for intermission
-    char *message;              // hint messages
+    const char *message;        // hint messages
     int messageTics;            // counter for showing messages
     int damagecount, bonuscount;        // for screen flashing
     int flamecount;             // for flame thrower duration
@@ -588,7 +588,7 @@ extern int vanilla_demo_limit;
 void D_DoomMain(void);
 void IncThermo(void);
 void InitThermo(int max);
-void tprintf(char *string, int initflag);
+void tprintf(const char *string, int initflag);
 // not a globally visible function, just included for source reference
 // calls all startup code
 // parses command line options
@@ -651,7 +651,7 @@ void G_DeferedInitNew(skill_t skill, int episode, int map);
 // can be called by the startup code or M_Responder
 // a normal game starts at map 1, but a warp test can start elsewhere
 
-void G_DeferedPlayDemo(char *demo);
+void G_DeferedPlayDemo(const char *demo);
 
 void G_LoadGame(char *name);
 // can be called by the startup code or M_Responder
@@ -753,8 +753,8 @@ void R_SetViewSize(int blocks, int detail);
 
 int R_FlatNumForName(char *name);
 
-int R_TextureNumForName(char *name);
-int R_CheckTextureNumForName(char *name);
+int R_TextureNumForName(const char *name);
+int R_CheckTextureNumForName(const char *name);
 // called by P_Ticker for switches and animations
 // returns the texture number for the texture name
 
