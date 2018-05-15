@@ -1152,7 +1152,7 @@ void P_DialogDoChoice(int choice)
 {
     int i = 0, nextdialog = 0;
     boolean candochoice = true;
-    char *message = NULL;
+    const char *message = NULL;
     mapdlgchoice_t *currentchoice;
 
     if(choice == -1)
