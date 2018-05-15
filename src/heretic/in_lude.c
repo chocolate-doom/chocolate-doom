@@ -60,7 +60,7 @@ void IN_DrawCoopStats(void);
 void IN_DrawDMStats(void);
 void IN_DrawNumber(int val, int x, int y, int digits);
 void IN_DrawTime(int x, int y, int h, int m, int s);
-void IN_DrTextB(char *text, int x, int y);
+void IN_DrTextB(const char *text, int x, int y);
 
 static boolean skipintermission;
 static int interstate = 0;
@@ -1047,7 +1047,7 @@ void IN_DrawNumber(int val, int x, int y, int digits)
 //
 //========================================================================
 
-void IN_DrTextB(char *text, int x, int y)
+void IN_DrTextB(const char *text, int x, int y)
 {
     char c;
     patch_t *p;
