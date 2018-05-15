@@ -3149,3 +3149,11 @@ void M_ConfirmDeleteGame ()
 	messageToPrint = 2;
 	S_StartSound(NULL,sfx_swtchn);
 }
+
+// [crispy] indicate game version mismatch
+void M_LoadGameVerMismatch ()
+{
+	M_StartMessage("Game Version Mismatch\n\n"PRESSKEY, NULL, false);
+	messageToPrint = 2;
+	S_StartSound(NULL,sfx_swtchn);
+}

@@ -1902,6 +1902,9 @@ void G_DoLoadGame (void)
 
     if (!P_ReadSaveGameHeader())
     {
+        // [crispy] indicate game version mismatch
+        extern void M_LoadGameVerMismatch ();
+        M_LoadGameVerMismatch();
         fclose(save_stream);
         return;
     }
