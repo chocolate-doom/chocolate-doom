@@ -206,7 +206,7 @@ void M_SetupNextMenu(menu_t *menudef);
 void M_DrawThermo(int x,int y,int thermWidth,int thermDot);
 void M_DrawEmptyCell(menu_t *menu,int item);
 void M_DrawSelCell(menu_t *menu,int item);
-int  M_StringWidth(char *string);
+int  M_StringWidth(const char *string);
 int  M_StringHeight(const char *string);
 void M_StartMessage(char *string,void *routine,boolean input);
 void M_StopMessage(void);
@@ -1488,7 +1488,7 @@ void M_StopMessage(void)
 //
 // Find string width from hu_font chars
 //
-int M_StringWidth(char* string)
+int M_StringWidth(const char *string)
 {
     size_t             i;
     int             w = 0;
