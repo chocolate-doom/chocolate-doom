@@ -726,6 +726,8 @@ void P_LoadSideDefs (int lump)
 	sd->bottomtexture = R_TextureNumForName(msd->bottomtexture);
 	sd->midtexture = R_TextureNumForName(msd->midtexture);
 	sd->sector = &sectors[SHORT(msd->sector)];
+	// [crispy] smooth texture scrolling
+	sd->basetextureoffset = sd->textureoffset;
     }
 
     W_ReleaseLumpNum(lump);
