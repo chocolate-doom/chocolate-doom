@@ -313,7 +313,7 @@ void HU_Erase(void)
 //
 //  Fastcall Registers:   edx          ebx
 //      Temp Registers:   esi          edi
-void HU_addMessage(char *prefix, char *message)
+void HU_addMessage(const char *prefix, char *message)
 {
     char  c;         // eax
     int   width = 0; // edx
