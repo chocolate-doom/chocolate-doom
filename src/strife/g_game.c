@@ -2259,7 +2259,7 @@ void G_BeginRecording (void)
 // G_PlayDemo 
 //
 
-char*	defdemoname; 
+const char	*defdemoname;
  
 //
 // G_DeferedPlayDemo
