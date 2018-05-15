@@ -571,7 +571,7 @@ void R_InitData(void)
 ================
 */
 
-int R_FlatNumForName(char *name)
+int R_FlatNumForName(const char *name)
 {
     int i;
     char namet[9];
