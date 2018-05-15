@@ -1232,6 +1232,13 @@ void P_UpdateSpecials (void)
 	    sides[line->sidenum[0]].textureoffset =
 	    sides[line->sidenum[0]].basetextureoffset;
 	    break;
+	  case 85:
+	    // [JN] (Boom) Scroll Texture Right
+	    // [crispy] smooth texture scrolling
+	    sides[line->sidenum[0]].basetextureoffset -= FRACUNIT;
+	    sides[line->sidenum[0]].textureoffset =
+	    sides[line->sidenum[0]].basetextureoffset;
+	    break;
 	}
     }
 
@@ -1289,13 +1296,17 @@ void R_InterpolateTextureOffsets (void)
 
 		for (i = 0; i < numlinespecials; i++)
 		{
-			const line_t *line = linespeciallist[i];
+			const line_t *const line = linespeciallist[i];
+			side_t *const side = &sides[line->sidenum[0]];
 
 			if (line->special == 48)
 			{
-				side_t *const side = &sides[line->sidenum[0]];
-
 				side->textureoffset = side->basetextureoffset + fractionaltic;
+			}
+			else
+			if (line->special == 85)
+			{
+				side->textureoffset = side->basetextureoffset - fractionaltic;
 			}
 		}
 	}
