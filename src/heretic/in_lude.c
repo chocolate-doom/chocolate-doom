@@ -44,21 +44,21 @@ boolean intermission;
 
 // Private functions
 
-void IN_WaitStop(void);
-void IN_Stop(void);
-void IN_LoadPics(void);
-void IN_UnloadPics(void);
-void IN_CheckForSkip(void);
-void IN_InitStats(void);
-void IN_DrawOldLevel(void);
-void IN_DrawYAH(void);
-void IN_DrawStatBack(void);
-void IN_DrawSingleStats(void);
-void IN_DrawCoopStats(void);
-void IN_DrawDMStats(void);
-void IN_DrawNumber(int val, int x, int y, int digits);
-void IN_DrawTime(int x, int y, int h, int m, int s);
-void IN_DrTextB(const char *text, int x, int y);
+static void IN_WaitStop(void);
+static void IN_Stop(void);
+static void IN_LoadPics(void);
+static void IN_UnloadPics(void);
+static void IN_CheckForSkip(void);
+static void IN_InitStats(void);
+static void IN_DrawOldLevel(void);
+static void IN_DrawYAH(void);
+static void IN_DrawStatBack(void);
+static void IN_DrawSingleStats(void);
+static void IN_DrawCoopStats(void);
+static void IN_DrawDMStats(void);
+static void IN_DrawNumber(int val, int x, int y, int digits);
+static void IN_DrawTime(int x, int y, int h, int m, int s);
+static void IN_DrTextB(const char *text, int x, int y);
 
 static boolean skipintermission;
 static int interstate = 0;
