@@ -741,7 +741,7 @@ void R_InitData (void)
 // R_FlatNumForName
 // Retrieval, get a flat number for a flat name.
 //
-int R_FlatNumForName (char* name)
+int R_FlatNumForName(const char *name)
 {
     int		i;
     char	namet[9];
