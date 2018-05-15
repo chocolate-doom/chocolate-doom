@@ -465,7 +465,7 @@ static boolean DirIsFile(const char *path, const char *filename)
 // file, returning the full path to the IWAD if found, or NULL
 // if not found.
 
-static char *CheckDirectoryHasIWAD(const char *dir, char *iwadname)
+static char *CheckDirectoryHasIWAD(const char *dir, const char *iwadname)
 {
     char *filename; 
     char *probe;
