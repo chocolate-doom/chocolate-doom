@@ -309,7 +309,7 @@ void HUlib_addLineToSText(hu_stext_t* s)
 void
 HUlib_addMessageToSText
 ( hu_stext_t*	s,
-  char*		prefix,
+  const char	*prefix,
   char*		msg )
 {
     HUlib_addLineToSText(s);
