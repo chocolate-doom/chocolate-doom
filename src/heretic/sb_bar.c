@@ -919,7 +919,7 @@ void DrawInventoryBar(void)
 
 void DrawFullScreenStuff(void)
 {
-    char *patch;
+    const char *patch;
     int i;
     int x;
     int temp;
