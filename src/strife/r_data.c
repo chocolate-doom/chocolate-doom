@@ -765,7 +765,7 @@ int R_FlatNumForName (char* name)
 // Check whether texture is available.
 // Filter out NoTexture indicator.
 //
-int	R_CheckTextureNumForName (char *name)
+int	R_CheckTextureNumForName(const char *name)
 {
     texture_t *texture;
     int key;
