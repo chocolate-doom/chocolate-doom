@@ -615,7 +615,7 @@ static void DrawLoadMenu(void)
 
 static void DrawSaveMenu(void)
 {
-    char *title;
+    const char *title;
 
     title = DEH_String("SAVE GAME");
 
