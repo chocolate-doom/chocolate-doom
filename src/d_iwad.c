@@ -492,12 +492,11 @@ static char *CheckDirectoryHasIWAD(const char *dir, const char *iwadname)
     }
 
     probe = M_FileCaseExists(filename);
+    free(filename);
     if (probe != NULL)
     {
         return probe;
     }
-
-    free(filename);
 
     return NULL;
 }
