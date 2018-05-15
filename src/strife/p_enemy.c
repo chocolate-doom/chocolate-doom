@@ -2691,7 +2691,7 @@ void P_DestroyConverter(void)
 //
 void A_QuestMsg(mobj_t* actor)
 {
-    char* name;
+    const char *name;
     int quest;
     int i;
 
