@@ -208,7 +208,7 @@ void M_DrawEmptyCell(menu_t *menu,int item);
 void M_DrawSelCell(menu_t *menu,int item);
 int  M_StringWidth(const char *string);
 int  M_StringHeight(const char *string);
-void M_StartMessage(char *string,void *routine,boolean input);
+void M_StartMessage(const char *string,void *routine,boolean input);
 void M_StopMessage(void);
 
 
@@ -1462,7 +1462,7 @@ M_DrawSelCell
 
 void
 M_StartMessage
-( char*		string,
+( const char	*string,
   void*		routine,
   boolean	input )
 {
