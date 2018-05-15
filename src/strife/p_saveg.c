@@ -189,7 +189,7 @@ static void *saveg_readp(void)
     return (void *) (intptr_t) saveg_read32();
 }
 
-static void saveg_writep(void *p)
+static void saveg_writep(const void *p)
 {
     saveg_write32((intptr_t) p);
 }
