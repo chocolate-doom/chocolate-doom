@@ -595,7 +595,7 @@ static void DrawFilesMenu(void)
 
 static void DrawLoadMenu(void)
 {
-    char *title;
+    const char *title;
 
     title = DEH_String("LOAD GAME");
 
