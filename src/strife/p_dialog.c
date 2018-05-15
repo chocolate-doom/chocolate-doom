@@ -375,7 +375,7 @@ static menu_t dialogmenu =
 static int dialogbgpiclumpnum;
 
 // Name of current speaking character.
-static char *dialogname;
+static const char *dialogname;
 
 // Current dialog text.
 static const char *dialogtext;
