@@ -388,7 +388,7 @@ static char *FormatStringReplacement(char *s)
 void DEH_printf(char *fmt, ...)
 {
     va_list args;
-    char *repl;
+    const char *repl;
 
     repl = FormatStringReplacement(fmt);
 
