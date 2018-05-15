@@ -885,7 +885,7 @@ void DrawMainBar(void)
 
 void DrawInventoryBar(void)
 {
-    char *patch;
+    const char *patch;
     int i;
     int x;
 
