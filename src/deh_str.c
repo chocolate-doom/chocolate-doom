@@ -366,7 +366,7 @@ static boolean ValidFormatReplacement(const char *original, const char *replacem
 
 // Get replacement format string, checking arguments.
 
-static char *FormatStringReplacement(char *s)
+static const char *FormatStringReplacement(char *s)
 {
     char *repl;
 
