@@ -420,7 +420,7 @@ void DEH_fprintf(FILE *fstream, char *fmt, ...)
 void DEH_snprintf(char *buffer, size_t len, char *fmt, ...)
 {
     va_list args;
-    char *repl;
+    const char *repl;
 
     repl = FormatStringReplacement(fmt);
 
