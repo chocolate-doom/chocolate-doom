@@ -1261,7 +1261,7 @@ void P_DialogStart(player_t *player)
     int i = 0;
     int pic;
     int rnd = 0;
-    char* byetext;
+    const char *byetext;
     int jumptoconv;
 
     if(menuactive || netgame)
