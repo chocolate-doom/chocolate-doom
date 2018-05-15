@@ -291,7 +291,7 @@ void IN_InitStats(void)
     }
 }
 
-static void IN_LoadUnloadPics(void (*callback)(char *lumpname,
+static void IN_LoadUnloadPics(void (*callback)(const char *lumpname,
                                                int lumpnum,
                                                patch_t **ptr))
 {
@@ -333,7 +333,7 @@ static void IN_LoadUnloadPics(void (*callback)(char *lumpname,
 //
 //========================================================================
 
-static void LoadLumpCallback(char *lumpname, int lumpnum, patch_t **ptr)
+static void LoadLumpCallback(const char *lumpname, int lumpnum, patch_t **ptr)
 {
     if (lumpname != NULL)
     {
@@ -360,7 +360,7 @@ void IN_LoadPics(void)
 //
 //========================================================================
 
-static void UnloadLumpCallback(char *lumpname, int lumpnum, patch_t **ptr)
+static void UnloadLumpCallback(const char *lumpname, int lumpnum, patch_t **ptr)
 {
     if (lumpname != NULL)
     {
