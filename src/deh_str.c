@@ -404,7 +404,7 @@ void DEH_printf(char *fmt, ...)
 void DEH_fprintf(FILE *fstream, char *fmt, ...)
 {
     va_list args;
-    char *repl;
+    const char *repl;
 
     repl = FormatStringReplacement(fmt);
 
