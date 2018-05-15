@@ -2266,7 +2266,7 @@ const char	*defdemoname;
 //
 // [STRIFE] Verified unmodified
 //
-void G_DeferedPlayDemo (char* name) 
+void G_DeferedPlayDemo(const char *name)
 { 
     defdemoname = name; 
     gameaction = ga_playdemo; 
