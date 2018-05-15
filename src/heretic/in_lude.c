@@ -50,7 +50,6 @@ void IN_LoadPics(void);
 void IN_UnloadPics(void);
 void IN_CheckForSkip(void);
 void IN_InitStats(void);
-void IN_InitDeathmatchStats(void);
 void IN_InitNetgameStats(void);
 void IN_DrawOldLevel(void);
 void IN_DrawYAH(void);
