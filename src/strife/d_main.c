@@ -553,7 +553,7 @@ void D_DoomLoop (void)
 //
 int             demosequence;
 int             pagetic;
-char                    *pagename;
+const char      *pagename;
 
 
 //
