@@ -1432,7 +1432,7 @@ static void M_DrawCrispness1(void)
 
     M_DrawCrispnessSeparator(crispness_sep_rendering, "Rendering");
     M_DrawCrispnessItem(crispness_hires, "High Resolution Rendering", crispy->hires, true);
-    M_DrawCrispnessMultiItem(crispness_uncapped, "Rendering Framerate", multiitem_uncapped, crispy->uncapped, !force_software_renderer);
+    M_DrawCrispnessMultiItem(crispness_uncapped, "Uncapped Framerate", multiitem_uncapped, crispy->uncapped, !force_software_renderer);
     M_DrawCrispnessItem(crispness_smoothscaling, "Smooth Pixel Scaling", crispy->smoothscaling, true);
 
     M_DrawCrispnessSeparator(crispness_sep_visual, "Visual");

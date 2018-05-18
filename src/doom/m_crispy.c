@@ -118,9 +118,9 @@ multiitem_t multiitem_sndchannels[NUM_SNDCHANNELS] =
 
 multiitem_t multiitem_uncapped[NUM_UNCAPPED] =
 {
-    {UNCAPPED_OFF, "35 fps"},
-    {UNCAPPED_ON, "uncapped"},
-    {UNCAPPED_VSYNC, "vsync"},
+    {UNCAPPED_OFF, "off"}, // "35 fps"},
+    {UNCAPPED_ON, "on w/o vsync"}, // "uncapped"},
+    {UNCAPPED_VSYNC, "on"}, // "vsync"},
 };
 
 void M_CrispyToggleAutomapstats(int choice)
@@ -431,6 +431,8 @@ void M_CrispyToggleTranslucency(int choice)
 
 void M_CrispyToggleUncapped(int choice)
 {
+    const int crispy_uncapped_old = crispy->uncapped;
+
     choice = 0;
 
     if (force_software_renderer)
@@ -439,11 +441,11 @@ void M_CrispyToggleUncapped(int choice)
 	return;
     }
 
-    crispy->uncapped = (crispy->uncapped + 1) % NUM_UNCAPPED;
+    crispy->uncapped = crispy_uncapped_old ? UNCAPPED_OFF : UNCAPPED_VSYNC;
 
     // [crispy] restart renderer if vsync is toggled (UNCAPPED_OFF has vsync),
     // i.e. UNCAPPED_OFF -> UNCAPPED_ON and UNCAPPED_ON -> UNCAPPED_VSYNC
-    if (crispy->uncapped)
+    if (crispy_uncapped_old == UNCAPPED_ON || crispy->uncapped == UNCAPPED_ON)
     {
 	extern void SetVideoMode (void);
 	SetVideoMode();
