@@ -26,8 +26,8 @@
 #include "dstrings.h"
 
 typedef struct {
-    char *macro;
-    char *string;
+    const char *macro;
+    const char *string;
 } bex_string_t;
 
 // mnemonic keys table
