@@ -30,7 +30,7 @@ typedef void (*deh_sha1_hash_t)(sha1_context_t *context);
 
 struct deh_section_s
 {
-    char *name;
+    const char *name;
 
     // Called on startup to initialize code
 
