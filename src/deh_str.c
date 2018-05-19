@@ -417,7 +417,7 @@ void DEH_fprintf(FILE *fstream, const char *fmt, ...)
 
 // snprintf(), performing a replacement on the format string.
 
-void DEH_snprintf(char *buffer, size_t len, char *fmt, ...)
+void DEH_snprintf(char *buffer, size_t len, const char *fmt, ...)
 {
     va_list args;
     const char *repl;
