@@ -401,7 +401,7 @@ void DEH_printf(const char *fmt, ...)
 
 // fprintf(), performing a replacement on the format string.
 
-void DEH_fprintf(FILE *fstream, char *fmt, ...)
+void DEH_fprintf(FILE *fstream, const char *fmt, ...)
 {
     va_list args;
     const char *repl;
