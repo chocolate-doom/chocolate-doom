@@ -385,7 +385,7 @@ static const char *FormatStringReplacement(const char *s)
 
 // printf(), performing a replacement on the format string.
 
-void DEH_printf(char *fmt, ...)
+void DEH_printf(const char *fmt, ...)
 {
     va_list args;
     const char *repl;
