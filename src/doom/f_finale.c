@@ -94,8 +94,8 @@ static textscreen_t textscreens[] =
     { pack_plut, 1, 31, "RROCK19",   P6TEXT},
 };
 
-char*	finaletext;
-char*	finaleflat;
+const char *finaletext;
+const char *finaleflat;
 
 void	F_StartCast (void);
 void	F_CastTicker (void);
@@ -660,7 +660,7 @@ void F_BunnyScroll (void)
 
 static void F_ArtScreenDrawer(void)
 {
-    char *lumpname;
+    const char *lumpname;
     
     if (gameepisode == 3)
     {

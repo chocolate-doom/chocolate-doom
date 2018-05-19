@@ -370,7 +370,7 @@ void HU_Start(void)
 {
 
     int		i;
-    char*	s;
+    const char *s;
 
     if (headsupactive)
 	HU_Stop();

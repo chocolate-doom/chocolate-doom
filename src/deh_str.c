@@ -80,7 +80,7 @@ static deh_substitution_t *SubstitutionForString(const char *s)
 // Look up a string to see if it has been replaced with something else
 // This will be used throughout the program to substitute text
 
-char *DEH_String(char *s)
+const char *DEH_String(const char *s)
 {
     deh_substitution_t *subst;
 
@@ -368,7 +368,7 @@ static boolean ValidFormatReplacement(const char *original, const char *replacem
 
 static const char *FormatStringReplacement(char *s)
 {
-    char *repl;
+    const char *repl;
 
     repl = DEH_String(s);
 
