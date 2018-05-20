@@ -1,8 +1,0 @@
-Makefile.in
-Makefile
-.deps
-guitest
-calculator
-*.exe
-tags
-TAGS

@@ -1,8 +1,0 @@
-[Desktop Entry]
-Name=@PACKAGE_SHORTNAME@ Setup
-Exec=@PROGRAM_PREFIX@setup
-Icon=@PROGRAM_PREFIX@setup
-Type=Application
-Comment=Setup tool for @PACKAGE_SHORTNAME@
-Categories=Settings;
-Keywords=first;person;shooter;doom;heretic;hexen;strife;vanilla;
