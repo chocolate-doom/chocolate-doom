@@ -1,104 +1,42 @@
-# Chocolate Doom
+# Chocolate-Doom-Installer
 
-Chocolate Doom aims to accurately reproduce the original DOS version of
-Doom and other games based on the Doom engine in a form that can be
-run on modern computers.
+A unofficial installer for installing Chocolate Doom. Official project can be found here: [https://github.com/chocolate-doom/chocolate-doom](https://github.com/chocolate-doom/chocolate-doom)
 
-Originally, Chocolate Doom was only a Doom source port. The project
-now includes ports of Heretic and Hexen, and Strife.
 
-Chocolate Doom’s aims are:
+Seperate repository for this branch can be found here: [https://github.com/CamGenius/Chocolate-Doom-Installer](https://github.com/CamGenius/Chocolate-Doom-Installer)
 
- * To always be 100% Free and Open Source software.
- * Portability to as many different operating systems as possible.
- * Accurate reproduction of the original DOS versions of the games,
-   including bugs.
- * Compatibility with the DOS demo, configuration and savegame files.
- * To provide an accurate retro “feel” (display and input should
-   behave the same).
+Pre-Compiled installer can be found here: [https://github.com/CamGenius/Chocolate-Doom-Installer/releases](https://github.com/CamGenius/Chocolate-Doom-Installer/releases)
 
-More information about the philosophy and design behind Chocolate Doom
-can be found in the PHILOSOPHY file distributed with the source code.
+## Features
 
-## Setting up gameplay
+- Admin rights are not required
+- No registry edits made
+- Completely uninstalls everything
+- Adds start menu shortcuts
 
-For instructions on how to set up Chocolate Doom for play, see the
-INSTALL file.
+## Compiling from Source
 
-## Configuration File
+1. Make sure you are on a windows computer running Windows 2000 or newer.
+2. Download Chocolate Doom from here: [https://github.com/chocolate-doom/chocolate-doom/releases](https://github.com/chocolate-doom/chocolate-doom/releases) and select &quot;chocolate-doom-3.0.0-win32.zip&quot; then extract it.
+3. Download this repository and extract it.
+4. Your file tree must look like this for it to work:
+* C:
+* ---- Chocolate Doom Installer
+    + doom.ico
+    + setup.ico
+    + INSTALL.BAT
+    + UNINSTALL.BAT
+    + Chocolate Doom Installer.sed
+    + ---- chocolate-doom-3.0.0-win32
+        + (Chocolate Doom Files)
 
-Chocolate Doom is compatible with the DOS Doom configuration file
-(normally named `default.cfg`). Existing configuration files for DOS
-Doom should therefore simply work out of the box. However, Chocolate
-Doom also provides some extra settings. These are stored in a
-separate file named `chocolate-doom.cfg`.
+5. In the windows search bar search for &quot;iexpress&quot; or &quot;iexpress.exe&quot; and right click and select &quot;Run as Administrator&quot;.
+6. Select &quot;Open existing Self Extraction Directive file:&quot; and browse to &quot;Chocolate Doom Installer.sed&quot; located at &quot;C:\Chocolate Doom Installer\Chocolate Doom Installer.sed&quot;. If you get an error when you click next about not finding a file go back to step 4 and double check your file structure.
+7. To compile just click &quot;Create Package&quot; click next then next again. The exe will be located at &quot;C:\Chocolate Doom Installer\Chocolate Doom Installer.exe&quot;.
+8. (Optional) If you want to change the installer click &quot;Modify Self Extraction Directive file&quot; then click next to change it.
+9. (Optional) If you want to change the installer icon use Resource Hacker found here: [http://www.angusj.com/resourcehacker/](http://www.angusj.com/resourcehacker/)
 
-The configuration can be edited using the chocolate-setup tool.
+## Known Bugs
 
-## Command line options
+- If you use the UNINSTALL.BAT found under &quot;Documents\My Games\Chocolate Doom\UNINSTALL.BAT&quot; the folder Chocolate Doom won&#39;t be deleted. Using the uninstall shortcut found under the start menu works fine however.
 
-Chocolate Doom supports a number of command line parameters, including
-some extras that were not originally suported by the DOS versions. For
-binary distributions, see the CMDLINE file included with your
-download; more information is also available on the Chocolate Doom
-website.
-
-## Playing TCs
-
-With Vanilla Doom there is no way to include sprites in PWAD files.
-Chocolate Doom’s ‘-file’ command line option behaves exactly the same
-as Vanilla Doom, and trying to play TCs by adding the WAD files using
-‘-file’ will not work.
-
-Many Total Conversions (TCs) are distributed as a PWAD file which must
-be merged into the main IWAD. Typically a copy of DEUSF.EXE is
-included which performs this merge. Chocolate Doom includes a new
-option, ‘-merge’, which will simulate this merge. Essentially, the
-WAD directory is merged in memory, removing the need to modify the
-IWAD on disk.
-
-To play TCs using Chocolate Doom, run like this:
-
-```
-chocolate-doom -merge thetc.wad
-```
-
-Here are some examples:
-
-```
-chocolate-doom -merge batman.wad -deh batman.deh vbatman.deh  (Batman Doom)
-chocolate-doom -merge aoddoom1.wad -deh aoddoom1.deh  (Army of Darkness Doom)
-```
-
-## Other information
-
- * Chocolate Doom includes a number of different options for music
-   playback. See the README.Music file for more details.
-
- * More information, including information about how to play various
-   classic TCs, is available on the Chocolate Doom website:
-
-     https://www.chocolate-doom.org/
-
-   You are encouraged to sign up and contribute any useful information
-   you may have regarding the port!
-
- * Chocolate Doom is not perfect. Although it aims to accurately
-   emulate and reproduce the DOS executables, some behavior can be very
-   difficult to reproduce. Because of the nature of the project, you
-   may also encounter Vanilla Doom bugs; these are intentionally
-   present; see the NOT-BUGS file for more information.
-
-   New bug reports can be submitted to the issue tracker on Github:
-
-     https://github.com/chocolate-doom/chocolate-doom/issues
-
- * Source code patches are welcome, but please follow the style
-   guidelines - see the file named HACKING included with the source
-   distribution.
-
- * Chocolate Doom is distributed under the GNU GPL. See the COPYING
-   file for more information.
-
- * Please send any feedback, questions or suggestions to
-   chocolate-doom-dev-list@chocolate-doom.org. Thanks!

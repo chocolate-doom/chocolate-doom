@@ -1,2 +1,0 @@
-Makefile to build Windows packages.  Requires zip and unix2dos
-packages to be installed.

@@ -1,8 +1,0 @@
-[Desktop Entry]
-Name=@PACKAGE_SHORTNAME@ Strife
-Exec=@PROGRAM_PREFIX@strife
-Icon=@PROGRAM_PREFIX@doom
-Type=Application
-Comment=@PACKAGE_SHORTDESC@
-Categories=Game;ActionGame;
-Keywords=first;person;shooter;doom;vanilla;
