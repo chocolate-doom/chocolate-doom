@@ -5,6 +5,7 @@ project("Chocolate Doom" VERSION 3.0.0 LANGUAGES C)
 
 # Autotools variables
 set(top_srcdir ${CMAKE_CURRENT_SOURCE_DIR})
+set(top_builddir ${CMAKE_CURRENT_BINARY_DIR})
 
 # AC_INIT variables
 set(PACKAGE_NAME "${PROJECT_NAME}")
@@ -36,6 +37,8 @@ set(PROGRAM_PREFIX "${PROGRAM_SPREFIX}-")
 configure_file(config.h.cin config.h)
 
 configure_file(src/resource.rc.in src/resource.rc)
+configure_file(src/setup-res.rc.in src/setup-res.rc)
+configure_file(src/setup/setup-manifest.xml.in src/setup/setup-manifest.xml)
 
 foreach(SUBDIR textscreen midiproc opl pcsound src)
     add_subdirectory("${SUBDIR}")

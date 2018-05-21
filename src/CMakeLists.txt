@@ -183,12 +183,17 @@ set(SETUP_FILES
     net_structrw.c      net_structrw.h
     z_native.c          z_zone.h)
 
-#if(WIN32)
-    #add_executable("${PROGRAM_PREFIX}setup" ${SETUP_FILES} ${COMMON_SOURCE_FILES} "${CMAKE_CURRENT_BINARY_DIR}/setup-res.rc")
-#else()
+if(WIN32)
+    add_executable("${PROGRAM_PREFIX}setup" ${SETUP_FILES} ${COMMON_SOURCE_FILES} "${CMAKE_CURRENT_BINARY_DIR}/setup-res.rc")
+else()
     add_executable("${PROGRAM_PREFIX}setup" ${SETUP_FILES} ${COMMON_SOURCE_FILES})
-#endif()
+endif()
 
 target_include_directories("${PROGRAM_PREFIX}setup"
                            PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/../")
 target_link_libraries("${PROGRAM_PREFIX}setup" setup textscreen SDL2::SDL2main SDL2::SDL2 SDL2::mixer SDL2::net)
+
+if(MSVC)
+    set_target_properties("${PROGRAM_PREFIX}setup" PROPERTIES
+                          LINK_FLAGS "/MANIFEST:NO")
+endif()
