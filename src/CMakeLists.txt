@@ -26,7 +26,7 @@ set(DEDSERV_FILES
     net_structrw.c       net_structrw.h
     z_native.c           z_zone.h)
 
-add_executable("${PROGRAM_PREFIX}server" ${COMMON_SOURCE_FILES} ${DEDSERV_FILES})
+add_executable("${PROGRAM_PREFIX}server" WIN32 ${COMMON_SOURCE_FILES} ${DEDSERV_FILES})
 target_include_directories("${PROGRAM_PREFIX}server"
                            PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/../")
 target_link_libraries("${PROGRAM_PREFIX}server" SDL2::SDL2main SDL2::net)
@@ -108,7 +108,7 @@ set(SOURCE_FILES_WITH_DEH ${SOURCE_FILES} ${DEHACKED_SOURCE_FILES})
 set(EXTRA_LIBS textscreen pcsound opl SDL2::SDL2main SDL2::SDL2 SDL2::mixer SDL2::net)
 
 if(WIN32)
-    add_executable("${PROGRAM_PREFIX}doom" ${SOURCE_FILES_WITH_DEH} "${CMAKE_CURRENT_BINARY_DIR}/resource.rc")
+    add_executable("${PROGRAM_PREFIX}doom" WIN32 ${SOURCE_FILES_WITH_DEH} "${CMAKE_CURRENT_BINARY_DIR}/resource.rc")
 else()
     add_executable("${PROGRAM_PREFIX}doom" ${SOURCE_FILES_WITH_DEH})
 endif()
@@ -123,7 +123,7 @@ if(MSVC)
 endif()
 
 if(WIN32)
-    add_executable("${PROGRAM_PREFIX}heretic" ${SOURCE_FILES_WITH_DEH} "${CMAKE_CURRENT_BINARY_DIR}/resource.rc")
+    add_executable("${PROGRAM_PREFIX}heretic" WIN32 ${SOURCE_FILES_WITH_DEH} "${CMAKE_CURRENT_BINARY_DIR}/resource.rc")
 else()
     add_executable("${PROGRAM_PREFIX}heretic" ${SOURCE_FILES_WITH_DEH})
 endif()
@@ -138,7 +138,7 @@ if(MSVC)
 endif()
 
 if(WIN32)
-    add_executable("${PROGRAM_PREFIX}hexen" ${SOURCE_FILES} "${CMAKE_CURRENT_BINARY_DIR}/resource.rc")
+    add_executable("${PROGRAM_PREFIX}hexen" WIN32 ${SOURCE_FILES} "${CMAKE_CURRENT_BINARY_DIR}/resource.rc")
 else()
     add_executable("${PROGRAM_PREFIX}hexen" ${SOURCE_FILES})
 endif()
@@ -153,7 +153,7 @@ if(MSVC)
 endif()
 
 if(WIN32)
-    add_executable("${PROGRAM_PREFIX}strife" ${SOURCE_FILES_WITH_DEH} "${CMAKE_CURRENT_BINARY_DIR}/resource.rc")
+    add_executable("${PROGRAM_PREFIX}strife" WIN32 ${SOURCE_FILES_WITH_DEH} "${CMAKE_CURRENT_BINARY_DIR}/resource.rc")
 else()
     add_executable("${PROGRAM_PREFIX}strife" ${SOURCE_FILES_WITH_DEH})
 endif()
@@ -184,7 +184,7 @@ set(SETUP_FILES
     z_native.c          z_zone.h)
 
 if(WIN32)
-    add_executable("${PROGRAM_PREFIX}setup" ${SETUP_FILES} ${COMMON_SOURCE_FILES} "${CMAKE_CURRENT_BINARY_DIR}/setup-res.rc")
+    add_executable("${PROGRAM_PREFIX}setup" WIN32 ${SETUP_FILES} ${COMMON_SOURCE_FILES} "${CMAKE_CURRENT_BINARY_DIR}/setup-res.rc")
 else()
     add_executable("${PROGRAM_PREFIX}setup" ${SETUP_FILES} ${COMMON_SOURCE_FILES})
 endif()
