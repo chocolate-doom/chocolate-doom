@@ -119,8 +119,8 @@ multiitem_t multiitem_sndchannels[NUM_SNDCHANNELS] =
 multiitem_t multiitem_uncapped[NUM_UNCAPPED] =
 {
     {UNCAPPED_OFF, "off"}, // "35 fps"},
-    {UNCAPPED_ON, "on w/o vsync"}, // "uncapped"},
-    {UNCAPPED_VSYNC, "on"}, // "vsync"},
+    {UNCAPPED_ON, "on"}, // "uncapped"},
+    {UNCAPPED_VSYNC, "on+vsync"}, // "vsync"},
 };
 
 void M_CrispyToggleAutomapstats(int choice)
