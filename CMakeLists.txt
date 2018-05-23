@@ -18,6 +18,13 @@ string(REGEX REPLACE " Doom$" "" PACKAGE_SHORTNAME "${PACKAGE_NAME}")
 set(PACKAGE_COPYRIGHT "Copyright (C) 1993-2017")
 set(PACKAGE_LICENSE "GNU General Public License, version 2")
 
+# Any settings that should apply to all targets in this directory and all
+# subdirectories should go here.  Use judiciously.
+if(MSVC)
+    add_definitions("/D_CRT_SECURE_NO_WARNINGS" "/D_CRT_SECURE_NO_DEPRECATE"
+                    "/D_CRT_NONSTDC_NO_DEPRECATE")
+endif()
+
 find_package(SDL2 2.0.1)
 find_package(SDL2_mixer 2.0.0)
 find_package(SDL2_net 2.0.0)
