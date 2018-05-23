@@ -671,6 +671,12 @@ void G_DoLoadLevel(void)
 {
     int i;
 
+    if (paused)
+    {
+        paused = false;
+        S_ResumeSound();
+    }
+
     levelstarttic = gametic;    // for time calculation
     gamestate = GS_LEVEL;
     for (i = 0; i < MAXPLAYERS; i++)

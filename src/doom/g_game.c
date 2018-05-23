@@ -605,6 +605,12 @@ void G_DoLoadLevel (void)
 { 
     int             i; 
 
+    if (paused)
+    {
+	paused = false;
+	S_ResumeSound ();
+    }
+
     // Set the sky map.
     // First thing, we have a dummy sky texture name,
     //  a flat. The data is in the WAD only because
