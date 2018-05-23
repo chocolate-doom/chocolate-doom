@@ -410,7 +410,7 @@ void R_DrawFuzzColumn (void)
     // draw one extra line using only pixels of that line and the one above
     if (cutoff)
     {
-	*dest = colormaps[6*256+dest[(SCREENWIDTH*fuzzoffset[fuzzpos]-FUZZOFF)/2]];
+	*dest = colormaps[6*256+dest[SCREENWIDTH*(fuzzoffset[fuzzpos]-FUZZOFF)/2]];
     }
 } 
 
@@ -489,8 +489,8 @@ void R_DrawFuzzColumnLow (void)
     // draw one extra line using only pixels of that line and the one above
     if (cutoff)
     {
-	*dest = colormaps[6*256+dest[(SCREENWIDTH*fuzzoffset[fuzzpos]-FUZZOFF)/2]];
-	*dest2 = colormaps[6*256+dest2[(SCREENWIDTH*fuzzoffset[fuzzpos]-FUZZOFF)/2]];
+	*dest = colormaps[6*256+dest[SCREENWIDTH*(fuzzoffset[fuzzpos]-FUZZOFF)/2]];
+	*dest2 = colormaps[6*256+dest2[SCREENWIDTH*(fuzzoffset[fuzzpos]-FUZZOFF)/2]];
     }
 } 
  
