@@ -605,6 +605,7 @@ void P_LoadLineDefs (int lump)
 		case 271:	// MBF sky transfers
 		case 272:
 		case 48:	// Scroll Wall Left
+		case 85:	// [crispy] [JN] (Boom) Scroll Texture Right
 		case 11:	// s1 Exit level
 		case 51:	// s1 Secret exit
 		case 52:	// w1 Exit level

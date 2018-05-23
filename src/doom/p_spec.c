@@ -1608,6 +1608,7 @@ void P_SpawnSpecials (void)
 	switch(lines[i].special)
 	{
 	  case 48:
+	  case 85: // [crispy] [JN] (Boom) Scroll Texture Right
             if (numlinespecials >= MAXLINEANIMS)
             {
                 I_Error("Too many scrolling wall linedefs! "
