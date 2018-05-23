@@ -482,7 +482,7 @@ void I_StartTic (void)
 
     I_GetEvent();
 
-    if (usemouse && !nomouse)
+    if (usemouse && !nomouse && window_focused)
     {
         I_ReadMouse();
     }

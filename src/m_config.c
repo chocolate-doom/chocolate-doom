@@ -44,7 +44,7 @@
 // Location where all configuration data is stored - 
 // default.cfg, savegames, etc.
 
-char *configdir;
+const char *configdir;
 
 // Default filenames for configuration files.
 
@@ -2576,7 +2576,7 @@ static char *GetDefaultConfigDir(void)
 // files are stored - default.cfg, chocolate-doom.cfg, savegames, etc.
 //
 
-void M_SetConfigDir(char *dir)
+void M_SetConfigDir(const char *dir)
 {
     // Use the directory that was passed, or find the default.
 

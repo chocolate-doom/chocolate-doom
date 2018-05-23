@@ -366,7 +366,7 @@ static boolean ValidFormatReplacement(const char *original, const char *replacem
 
 // Get replacement format string, checking arguments.
 
-static char *FormatStringReplacement(char *s)
+static const char *FormatStringReplacement(char *s)
 {
     char *repl;
 
@@ -388,7 +388,7 @@ static char *FormatStringReplacement(char *s)
 void DEH_printf(char *fmt, ...)
 {
     va_list args;
-    char *repl;
+    const char *repl;
 
     repl = FormatStringReplacement(fmt);
 
@@ -404,7 +404,7 @@ void DEH_printf(char *fmt, ...)
 void DEH_fprintf(FILE *fstream, char *fmt, ...)
 {
     va_list args;
-    char *repl;
+    const char *repl;
 
     repl = FormatStringReplacement(fmt);
 
@@ -420,7 +420,7 @@ void DEH_fprintf(FILE *fstream, char *fmt, ...)
 void DEH_snprintf(char *buffer, size_t len, char *fmt, ...)
 {
     va_list args;
-    char *repl;
+    const char *repl;
 
     repl = FormatStringReplacement(fmt);
 

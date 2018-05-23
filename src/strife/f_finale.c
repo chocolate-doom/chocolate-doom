@@ -60,7 +60,7 @@ finalestage_t finalestage;
 unsigned int finalecount;
 
 // haleyjd 09/12/10: [STRIFE] Slideshow variables
-char         *slideshow_panel;
+const char   *slideshow_panel;
 unsigned int  slideshow_tics;
 int           slideshow_state;
 

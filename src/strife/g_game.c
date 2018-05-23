@@ -2260,14 +2260,14 @@ void G_BeginRecording (void)
 // G_PlayDemo 
 //
 
-char*	defdemoname; 
+const char	*defdemoname;
  
 //
 // G_DeferedPlayDemo
 //
 // [STRIFE] Verified unmodified
 //
-void G_DeferedPlayDemo (char* name) 
+void G_DeferedPlayDemo(const char *name)
 { 
     defdemoname = name; 
     gameaction = ga_playdemo; 

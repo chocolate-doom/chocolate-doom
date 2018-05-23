@@ -472,8 +472,8 @@ void MN_Drawer(void)
     int x;
     int y;
     MenuItem_t *item;
-    char *message;
-    char *selName;
+    const char *message;
+    const char *selName;
 
     if (MenuActive == false)
     {
@@ -595,7 +595,7 @@ static void DrawFilesMenu(void)
 
 static void DrawLoadMenu(void)
 {
-    char *title;
+    const char *title;
 
     title = DEH_String("LOAD GAME");
 
@@ -615,7 +615,7 @@ static void DrawLoadMenu(void)
 
 static void DrawSaveMenu(void)
 {
-    char *title;
+    const char *title;
 
     title = DEH_String("SAVE GAME");
 

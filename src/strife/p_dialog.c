@@ -375,7 +375,7 @@ static menu_t dialogmenu =
 static int dialogbgpiclumpnum;
 
 // Name of current speaking character.
-static char *dialogname;
+static const char *dialogname;
 
 // Current dialog text.
 static const char *dialogtext;
@@ -1152,7 +1152,7 @@ void P_DialogDoChoice(int choice)
 {
     int i = 0, nextdialog = 0;
     boolean candochoice = true;
-    char *message = NULL;
+    const char *message = NULL;
     mapdlgchoice_t *currentchoice;
 
     if(choice == -1)
@@ -1261,7 +1261,7 @@ void P_DialogStart(player_t *player)
     int i = 0;
     int pic;
     int rnd = 0;
-    char* byetext;
+    const char *byetext;
     int jumptoconv;
 
     if(menuactive || netgame)
