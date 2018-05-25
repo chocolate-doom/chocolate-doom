@@ -1086,6 +1086,8 @@ void R_RenderPlayerView (player_t* player)
     // Check for new console commands.
     NetUpdate ();
     
+    // [crispy] draw fuzz effect independent of rendering frame rate
+    R_SetFuzzPosDraw();
     R_DrawMasked ();
 
     // Check for new console commands.

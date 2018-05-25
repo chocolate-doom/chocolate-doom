@@ -337,6 +337,16 @@ int	fuzzoffset[FUZZTABLE] =
 
 int	fuzzpos = 0; 
 
+// [crispy] draw fuzz effect independent of rendering frame rate
+static int fuzzpos_tic;
+void R_SetFuzzPosTic (void)
+{
+	fuzzpos_tic = fuzzpos;
+}
+void R_SetFuzzPosDraw (void)
+{
+	fuzzpos = fuzzpos_tic;
+}
 
 //
 // Framebuffer postprocessing.
