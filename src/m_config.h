@@ -30,7 +30,7 @@ void M_BindIntVariable(char *name, int *variable);
 void M_BindFloatVariable(char *name, float *variable);
 void M_BindStringVariable(char *name, char **variable);
 boolean M_SetVariable(char *name, char *value);
-int M_GetIntVariable(char *name);
+int M_GetIntVariable(const char *name);
 const char *M_GetStringVariable(const char *name);
 float M_GetFloatVariable(const char *name);
 void M_SetConfigFilenames(const char *main_config, const char *extra_config);

@@ -2113,7 +2113,7 @@ boolean M_SetVariable(char *name, char *value)
 
 // Get the value of a variable.
 
-int M_GetIntVariable(char *name)
+int M_GetIntVariable(const char *name)
 {
     default_t *variable;
 
