@@ -823,7 +823,7 @@ static boolean StrictDemos(void)
 // this extension (no extensions are allowed if -strictdemos is given
 // on the command line). A warning is shown on the console using the
 // provided string describing the non-vanilla expansion.
-boolean D_NonVanillaRecord(boolean conditional, char *feature)
+boolean D_NonVanillaRecord(boolean conditional, const char *feature)
 {
     if (!conditional || StrictDemos())
     {
