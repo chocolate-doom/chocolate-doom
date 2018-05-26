@@ -1949,7 +1949,7 @@ void M_SaveDefaults (void)
 // Save defaults to alternate filenames
 //
 
-void M_SaveDefaultsAlternate(char *main, char *extra)
+void M_SaveDefaultsAlternate(const char *main, const char *extra)
 {
     const char *orig_main;
     const char *orig_extra;
