@@ -2143,7 +2143,7 @@ const char *M_GetStringVariable(char *name)
     return *variable->location.s;
 }
 
-float M_GetFloatVariable(char *name)
+float M_GetFloatVariable(const char *name)
 {
     default_t *variable;
 

@@ -32,7 +32,7 @@ void M_BindStringVariable(char *name, char **variable);
 boolean M_SetVariable(char *name, char *value);
 int M_GetIntVariable(char *name);
 const char *M_GetStringVariable(char *name);
-float M_GetFloatVariable(char *name);
+float M_GetFloatVariable(const char *name);
 void M_SetConfigFilenames(const char *main_config, const char *extra_config);
 char *M_GetSaveGameDir(const char *iwadname);
 
