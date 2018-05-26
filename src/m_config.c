@@ -2030,7 +2030,7 @@ void M_LoadDefaults (void)
 
 // Get a configuration file variable by its name
 
-static default_t *GetDefaultForName(char *name)
+static default_t *GetDefaultForName(const char *name)
 {
     default_t *result;
 
