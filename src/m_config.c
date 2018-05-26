@@ -63,7 +63,7 @@ typedef enum
 typedef struct
 {
     // Name of the variable
-    char *name;
+    const char *name;
 
     // Pointer to the location in memory of the variable
     union {
