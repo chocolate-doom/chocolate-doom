@@ -1660,7 +1660,7 @@ static default_collection_t extra_defaults =
 
 // Search a collection for a variable
 
-static default_t *SearchCollection(default_collection_t *collection, char *name)
+static default_t *SearchCollection(default_collection_t *collection, const char *name)
 {
     int i;
 
