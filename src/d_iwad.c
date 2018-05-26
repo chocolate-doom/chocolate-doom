@@ -890,7 +890,7 @@ const iwad_t **D_FindAllIWADs(int mask)
 // Get the IWAD name used for savegames.
 //
 
-char *D_SaveGameIWADName(GameMission_t gamemission)
+const char *D_SaveGameIWADName(GameMission_t gamemission)
 {
     size_t i;
 
