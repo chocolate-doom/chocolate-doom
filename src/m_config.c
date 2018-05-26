@@ -2057,7 +2057,7 @@ static default_t *GetDefaultForName(const char *name)
 // Bind a variable to a given configuration file variable, by name.
 //
 
-void M_BindIntVariable(char *name, int *location)
+void M_BindIntVariable(const char *name, int *location)
 {
     default_t *variable;
 
