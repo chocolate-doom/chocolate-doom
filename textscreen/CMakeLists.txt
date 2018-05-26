@@ -25,4 +25,4 @@ add_library(textscreen
 target_include_directories(textscreen
                            INTERFACE "."
                            PRIVATE "../src/")
-target_link_libraries(textscreen SDL2::SDL2)
+target_link_libraries(textscreen m SDL2::SDL2)
