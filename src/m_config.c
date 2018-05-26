@@ -2070,7 +2070,7 @@ void M_BindIntVariable(char *name, int *location)
     variable->bound = true;
 }
 
-void M_BindFloatVariable(char *name, float *location)
+void M_BindFloatVariable(const char *name, float *location)
 {
     default_t *variable;
 
