@@ -2246,7 +2246,7 @@ char *M_GetSaveGameDir(char *iwadname)
 
     else if (M_ParmExists("-cdrom"))
     {
-        savegamedir = configdir;
+        savegamedir = M_StringDuplicate(configdir);
     }
 #endif
     // If not "doing" a configuration directory (Windows), don't "do"

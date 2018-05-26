@@ -214,7 +214,7 @@ void HU_Stop(void)
 void HU_Start(void)
 {
     int         i;
-    char*       s;
+    const char *s;
 
     // haleyjd 20120211: [STRIFE] not called here.
     //if (headsupactive)
