@@ -1929,7 +1929,7 @@ static void LoadDefaultCollection(default_collection_t *collection)
 
 // Set the default filenames to use for configuration files.
 
-void M_SetConfigFilenames(char *main_config, char *extra_config)
+void M_SetConfigFilenames(const char *main_config, char *extra_config)
 {
     default_main_config = main_config;
     default_extra_config = extra_config;
