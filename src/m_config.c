@@ -2213,7 +2213,7 @@ void M_SetConfigDir(const char *dir)
 // Creates the directory as necessary.
 //
 
-char *M_GetSaveGameDir(char *iwadname)
+char *M_GetSaveGameDir(const char *iwadname)
 {
     char *savegamedir;
     char *topdir;
