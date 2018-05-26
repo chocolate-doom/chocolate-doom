@@ -861,7 +861,7 @@ static boolean IsDemoFile(int lumpnum)
 //    demo that comes from a .lmp file, not a .wad file.
 //  - Before proceeding, a warning is shown to the user on the console.
 boolean D_NonVanillaPlayback(boolean conditional, int lumpnum,
-                             char *feature)
+                             const char *feature)
 {
     if (!conditional || StrictDemos())
     {

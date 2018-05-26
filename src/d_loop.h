@@ -82,7 +82,7 @@ boolean D_NonVanillaRecord(boolean conditional, const char *feature);
 
 // Check if it is permitted to play back a demo with a non-vanilla feature.
 boolean D_NonVanillaPlayback(boolean conditional, int lumpnum,
-                             char *feature);
+                             const char *feature);
 
 #endif
 
