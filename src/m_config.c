@@ -48,7 +48,7 @@ const char *configdir;
 
 // Default filenames for configuration files.
 
-static char *default_main_config;
+static const char *default_main_config;
 static char *default_extra_config;
 
 typedef enum 
