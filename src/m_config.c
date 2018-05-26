@@ -2128,7 +2128,7 @@ int M_GetIntVariable(char *name)
     return *variable->location.i;
 }
 
-const char *M_GetStringVariable(char *name)
+const char *M_GetStringVariable(const char *name)
 {
     default_t *variable;
 
