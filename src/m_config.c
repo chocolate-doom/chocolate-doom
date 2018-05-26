@@ -95,7 +95,7 @@ typedef struct
 {
     default_t *defaults;
     int numdefaults;
-    char *filename;
+    const char *filename;
 } default_collection_t;
 
 #define CONFIG_VARIABLE_GENERIC(name, type) \
@@ -1951,8 +1951,8 @@ void M_SaveDefaults (void)
 
 void M_SaveDefaultsAlternate(char *main, char *extra)
 {
-    char *orig_main;
-    char *orig_extra;
+    const char *orig_main;
+    const char *orig_extra;
 
     // Temporarily change the filenames
 
