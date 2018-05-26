@@ -504,7 +504,7 @@ static char *CheckDirectoryHasIWAD(const char *dir, const char *iwadname)
 // Search a directory to try to find an IWAD
 // Returns the location of the IWAD if found, otherwise NULL.
 
-static char *SearchDirectoryForIWAD(char *dir, int mask, GameMission_t *mission)
+static char *SearchDirectoryForIWAD(const char *dir, int mask, GameMission_t *mission)
 {
     char *filename;
     size_t i;
