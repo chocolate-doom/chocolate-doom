@@ -1823,7 +1823,7 @@ static int ParseIntParameter(const char *strparm)
     return parm;
 }
 
-static void SetVariable(default_t *def, char *value)
+static void SetVariable(default_t *def, const char *value)
 {
     int intparm;
 
