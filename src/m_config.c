@@ -1811,7 +1811,7 @@ static void SaveDefaultCollection(default_collection_t *collection)
 
 // Parses integer values in the configuration file
 
-static int ParseIntParameter(char *strparm)
+static int ParseIntParameter(const char *strparm)
 {
     int parm;
 
