@@ -571,7 +571,7 @@ static GameMission_t IdentifyIWADByName(char *name, int mask)
 // Add IWAD directories parsed from splitting a path string containing
 // paths separated by PATH_SEPARATOR. 'suffix' is a string to concatenate
 // to the end of the paths before adding them.
-static void AddIWADPath(char *path, char *suffix)
+static void AddIWADPath(const char *path, char *suffix)
 {
     char *left, *p, *dup_path;
 
