@@ -862,7 +862,7 @@ int I_GetPaletteIndex(int r, int g, int b)
 // Set the window title
 //
 
-void I_SetWindowTitle(char *title)
+void I_SetWindowTitle(const char *title)
 {
     window_title = title;
 }
