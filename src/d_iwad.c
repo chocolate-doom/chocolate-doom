@@ -573,12 +573,12 @@ static GameMission_t IdentifyIWADByName(char *name, int mask)
 // to the end of the paths before adding them.
 static void AddIWADPath(char *path, char *suffix)
 {
-    char *left, *p;
+    char *left, *p, *dup_path;
 
-    path = M_StringDuplicate(path);
+    dup_path = M_StringDuplicate(path);
 
     // Split into individual dirs within the list.
-    left = path;
+    left = dup_path;
 
     for (;;)
     {
@@ -600,7 +600,7 @@ static void AddIWADPath(char *path, char *suffix)
 
     AddIWADDir(M_StringJoin(left, suffix, NULL));
 
-    free(path);
+    free(dup_path);
 }
 
 #ifndef _WIN32
