@@ -55,7 +55,7 @@ static SDL_Renderer *renderer;
 
 // Window title
 
-static char *window_title = "";
+static const char *window_title = "";
 
 // These are (1) the 320x200x8 paletted buffer that we draw to (i.e. the one
 // that holds I_VideoBuffer), (2) the 320x200x32 RGBA intermediate buffer that
