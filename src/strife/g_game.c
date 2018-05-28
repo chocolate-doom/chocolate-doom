@@ -671,6 +671,12 @@ void G_DoLoadLevel (void)
 { 
     int             i; 
 
+    if (paused) 
+    { 
+        paused = false; 
+        S_ResumeSound (); 
+    } 
+
     // haleyjd 10/03/10: [STRIFE] This is not done here.
     //skyflatnum = R_FlatNumForName(DEH_String(SKYFLATNAME));
 
