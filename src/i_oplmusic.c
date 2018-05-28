@@ -1511,6 +1511,12 @@ static void I_OPL_PlaySong(void *handle, boolean looping)
     {
         InitChannel(&channels[i]);
     }
+
+    // If the music was previously paused, it needs to be unpaused; playing
+    // a new song implies that we turn off pause. This matches vanilla
+    // behavior of the DMX library, and some of the higher-level code in
+    // s_sound.c relies on this.
+    OPL_SetPaused(0);
 }
 
 static void I_OPL_PauseSong(void)
