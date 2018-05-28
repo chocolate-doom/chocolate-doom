@@ -320,10 +320,16 @@ def read_wikipages():
 # Add wiki page links
 
 def add_wiki_links(text):
+    def replace_name(m):
+        linktext = m.group(1)
+        if linktext == pagename:
+            return '[[%s]]' % pagename
+        else:
+            return '[[%s|%s]]' % (pagename, linktext)
+
     for pagename in wikipages:
-        page_re = re.compile('(%s)' % pagename, re.IGNORECASE)
-    #   text = page_re.sub("SHOES", text)
-        text = page_re.sub('[[\\1]]', text)
+        text = re.sub(r'\b(%s)\b' % re.escape(pagename), replace_name,
+                      text, count=0, flags=re.IGNORECASE)
 
     return text
 
