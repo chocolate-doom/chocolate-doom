@@ -456,7 +456,7 @@ def manpage_output(targets, substs, template_file):
 
     print_template(template_file, substs, content)
 
-def wiki_output(targets, template):
+def wiki_output(targets, _, template):
     read_wikipages()
 
     for t in targets:
