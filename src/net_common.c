@@ -59,6 +59,7 @@ static void NET_Conn_Init(net_connection_t *conn, net_addr_t *addr,
     conn->reliable_packets = NULL;
     conn->reliable_send_seq = 0;
     conn->reliable_recv_seq = 0;
+    conn->keepalive_recv_time = I_GetTimeMS();
 }
 
 // Initialize as a client connection
