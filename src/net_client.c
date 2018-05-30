@@ -449,8 +449,6 @@ static void NET_CL_ParseSYN(net_packet_t *packet)
     client_connection.state = NET_CONN_STATE_CONNECTED;
     client_connection.protocol = protocol;
 
-    printf("CL: successful connection to server\n");
-
     // Even though we have negotiated a compatible protocol, the game may still
     // desync. Chocolate Doom's philosophy makes this unlikely, but if we're
     // playing with a forked version, or even against a different version that
