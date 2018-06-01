@@ -30,10 +30,6 @@
 # - Ninja
 # - Visual Studio
 
-# Cache variable that allows you to point CMake at a directory containing
-# an extracted development library.
-set(SAMPLERATE_DIR "${SAMPLERATE_DIR}" CACHE PATH "Location of samplerate library directory")
-
 # Use pkg-config to find library locations in *NIX environments.
 find_package(PkgConfig QUIET)
 if(PKG_CONFIG_FOUND)
