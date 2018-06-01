@@ -467,6 +467,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../src/tables.h" />
+		<Unit filename="../src/v_diskicon.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../src/v_diskicon.h" />
 		<Unit filename="../src/v_patch.h" />
 		<Unit filename="../src/v_video.c">
 			<Option compilerVar="CC" />
