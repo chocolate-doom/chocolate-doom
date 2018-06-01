@@ -53,7 +53,7 @@ void I_ReadScreen (pixel_t* scr);
 
 void I_BeginRead (void);
 
-void I_SetWindowTitle(char *title);
+void I_SetWindowTitle(const char *title);
 
 void I_CheckIsScreensaver(void);
 void I_SetGrabMouseCallback(grabmouse_callback_t func);
