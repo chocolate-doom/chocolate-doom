@@ -28,7 +28,7 @@
 # Currently works with the following generators:
 # - Unix Makefiles
 # - Ninja
-# - Visual Studio (TODO)
+# - Visual Studio
 
 # Cache variable that allows you to point CMake at a directory containing
 # an extracted development library.
