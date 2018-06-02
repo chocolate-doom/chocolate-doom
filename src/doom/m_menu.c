@@ -1071,7 +1071,7 @@ static char *M_SelectEndMessage(void)
     boolean rude;
 
     // [crispy] enable the original rude quit messages
-    rude = gametic % (2 * NUM_QUITMESSAGES) > NUM_QUITMESSAGES;
+    rude = gametic % (2 * NUM_QUITMESSAGES) >= NUM_QUITMESSAGES;
 
     if (logical_gamemission == doom)
     {
