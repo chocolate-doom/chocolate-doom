@@ -36,7 +36,6 @@
 
 extern char *doom1_endmsg[];
 extern char *doom2_endmsg[];
-extern char *rude_endmsg[];
 
 
 #endif
