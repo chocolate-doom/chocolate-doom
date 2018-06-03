@@ -46,9 +46,9 @@ endif()
 
 find_package(m)
 
-include(CheckFunctionExists)
-check_function_exists(strcasecmp HAVE_DECL_STRCASECMP)
-check_function_exists(strncasecmp HAVE_DECL_STRNCASECMP)
+include(CheckSymbolExists)
+check_symbol_exists(strcasecmp "strings.h" HAVE_DECL_STRCASECMP)
+check_symbol_exists(strncasecmp "strings.h" HAVE_DECL_STRNCASECMP)
 
 set(WINDOWS_RC_VERSION "${PROJECT_VERSION_MAJOR}, ${PROJECT_VERSION_MINOR}, ${PROJECT_VERSION_PATCH}, 0")
 
