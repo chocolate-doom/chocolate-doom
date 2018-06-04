@@ -37,6 +37,7 @@
 #include "doomstat.h"
 #include "r_state.h"
 #include "m_controls.h" // [crispy] key_*
+#include "m_misc.h" // [crispy] M_StringDuplicate()
 #include "m_random.h" // [crispy] Crispy_Random()
 
 typedef enum
@@ -99,8 +100,9 @@ static textscreen_t textscreens[] =
     { pack_master, 1, 20, "SLIME16",   M1TEXT},
 };
 
-char*	finaletext;
-char*	finaleflat;
+const char *finaletext;
+const char *finaleflat;
+static char *finaletext_rw;
 
 void	F_StartCast (void);
 void	F_CastTicker (void);
@@ -171,6 +173,12 @@ void F_StartFinale (void)
   
     finaletext = DEH_String(finaletext);
     finaleflat = DEH_String(finaleflat);
+    // [crispy] do the "char* vs. const char*" dance
+    if (finaletext_rw)
+    {
+	free(finaletext_rw);
+    }
+    finaletext_rw = M_StringDuplicate(finaletext);
     
     finalestage = F_STAGE_TEXT;
     finalecount = 0;
@@ -254,7 +262,7 @@ extern	patch_t *hu_font[HU_FONTSIZE];
 // [crispy] add line breaks for lines exceeding screenwidth
 static inline boolean F_AddLineBreak (char *c)
 {
-    while (c-- > finaletext)
+    while (c-- > finaletext_rw)
     {
 	if (*c == '\n')
 	{
@@ -306,7 +314,7 @@ void F_TextWrite (void)
     // draw some of the text onto the screen
     cx = 10;
     cy = 10;
-    ch = finaletext;
+    ch = finaletext_rw;
 	
     count = ((signed int) finalecount - 10) / TEXTSPEED;
     if (count < 0)
@@ -823,7 +831,7 @@ void F_BunnyScroll (void)
 
 static void F_ArtScreenDrawer(void)
 {
-    char *lumpname;
+    const char *lumpname;
     
     if (gameepisode == 3)
     {

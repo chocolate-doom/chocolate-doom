@@ -1015,7 +1015,7 @@ boolean P_UseSpecialLine(mobj_t* thing, line_t* line, int side)
             P_GiveItemToPlayer(thing->player, SPR_TOKN, MT_TOKEN_NEW_ACCURACY);
             P_ChangeSwitchTexture(line, 0);
             DEH_snprintf(usemessage, sizeof(usemessage),
-                DEH_String("Congratulations! You have completed the training area."));
+                "Congratulations! You have completed the training area.");
             thing->player->message = usemessage;
         }
         break;

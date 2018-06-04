@@ -504,7 +504,7 @@ static char *CheckDirectoryHasIWAD(const char *dir, const char *iwadname)
 // Search a directory to try to find an IWAD
 // Returns the location of the IWAD if found, otherwise NULL.
 
-static char *SearchDirectoryForIWAD(char *dir, int mask, GameMission_t *mission)
+static char *SearchDirectoryForIWAD(const char *dir, int mask, GameMission_t *mission)
 {
     char *filename;
     size_t i;
@@ -571,14 +571,14 @@ static GameMission_t IdentifyIWADByName(char *name, int mask)
 // Add IWAD directories parsed from splitting a path string containing
 // paths separated by PATH_SEPARATOR. 'suffix' is a string to concatenate
 // to the end of the paths before adding them.
-static void AddIWADPath(char *path, char *suffix)
+static void AddIWADPath(const char *path, const char *suffix)
 {
-    char *left, *p;
+    char *left, *p, *dup_path;
 
-    path = M_StringDuplicate(path);
+    dup_path = M_StringDuplicate(path);
 
     // Split into individual dirs within the list.
-    left = path;
+    left = dup_path;
 
     for (;;)
     {
@@ -600,7 +600,7 @@ static void AddIWADPath(char *path, char *suffix)
 
     AddIWADDir(M_StringJoin(left, suffix, NULL));
 
-    free(path);
+    free(dup_path);
 }
 
 #ifndef _WIN32
@@ -890,7 +890,7 @@ const iwad_t **D_FindAllIWADs(int mask)
 // Get the IWAD name used for savegames.
 //
 
-char *D_SaveGameIWADName(GameMission_t gamemission)
+const char *D_SaveGameIWADName(GameMission_t gamemission)
 {
     size_t i;
 

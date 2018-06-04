@@ -1935,7 +1935,7 @@ G_InitNew
 ( skill_t       skill,
   int           map ) 
 { 
-    char *skytexturename;
+    const char *skytexturename;
     int             i; 
 
     if (paused) 

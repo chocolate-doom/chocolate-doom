@@ -78,6 +78,10 @@ CMDLINE.doom : CMDLINE.template $(top_srcdir)/src $(top_srcdir)/src/doom
                   -p $(srcdir)/CMDLINE.template \
                   $(top_srcdir)/src/ $(top_srcdir)/src/doom/ > $@
 
+CMDLINE.doom.wikitext : $(top_srcdir)/src $(top_srcdir)/src/doom
+	$(DOCGEN) $(DOCGEN_COMMON_ARGS) \
+                  -w $(top_srcdir)/src/ $(top_srcdir)/src/doom/ > $@
+
 INSTALL.doom: INSTALL.template
 	$(srcdir)/simplecpp -DDOOM $(WIN32) \
             -DLONG_GAME_NAME="@PACKAGE_SHORTNAME@ Doom" \

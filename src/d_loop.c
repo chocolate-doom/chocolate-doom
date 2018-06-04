@@ -831,7 +831,7 @@ static boolean StrictDemos(void)
 // this extension (no extensions are allowed if -strictdemos is given
 // on the command line). A warning is shown on the console using the
 // provided string describing the non-vanilla expansion.
-boolean D_NonVanillaRecord(boolean conditional, char *feature)
+boolean D_NonVanillaRecord(boolean conditional, const char *feature)
 {
     if (!conditional || StrictDemos())
     {
@@ -869,7 +869,7 @@ static boolean IsDemoFile(int lumpnum)
 //    demo that comes from a .lmp file, not a .wad file.
 //  - Before proceeding, a warning is shown to the user on the console.
 boolean D_NonVanillaPlayback(boolean conditional, int lumpnum,
-                             char *feature)
+                             const char *feature)
 {
     if (!conditional || StrictDemos())
     {

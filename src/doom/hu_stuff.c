@@ -501,7 +501,7 @@ typedef struct
     int episode;
     int map;
     const char *wad;
-    char *name;
+    const char *name;
 } speciallevel_t;
 
 static const speciallevel_t speciallevels[] = {
@@ -534,7 +534,7 @@ static const speciallevel_t speciallevels[] = {
     {doom2, 0, 32, "teeth.wad", MHUSTR_21},
 };
 
-static void HU_SetSpecialLevelName (const char *wad, char **name)
+static void HU_SetSpecialLevelName (const char *wad, const char **name)
 {
     int i;
 
@@ -557,7 +557,7 @@ void HU_Start(void)
 {
 
     int		i;
-    char*	s;
+    const char *s;
     // [crispy] string buffers for map title and WAD file name
     char	buf[8], *ptr;
 

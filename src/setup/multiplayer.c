@@ -67,7 +67,7 @@ static int found_iwad_selected = -1;
 
 // Filename to pass to '-iwad'.
 
-static char *iwadfile;
+static const char *iwadfile;
 
 static const char *wad_extensions[] = { "wad", "lmp", "deh", NULL };
 

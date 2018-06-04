@@ -770,7 +770,7 @@ void G_DoLoadLevel (void)
     if ((gamemode == commercial)
      && (gameversion == exe_final2 || gameversion == exe_chex || true))
     {
-        char *skytexturename;
+        const char *skytexturename;
 
         if (gamemap < 12)
         {
@@ -2133,7 +2133,7 @@ G_InitNew
   int		episode,
   int		map )
 {
-    char *skytexturename;
+    const char *skytexturename;
     int             i;
     // [crispy] make sure "fast" parameters are really only applied once
     static boolean fast_applied;

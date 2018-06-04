@@ -80,7 +80,7 @@ static deh_substitution_t *SubstitutionForString(const char *s)
 // Look up a string to see if it has been replaced with something else
 // This will be used throughout the program to substitute text
 
-char *DEH_String(char *s)
+const char *DEH_String(const char *s)
 {
     deh_substitution_t *subst;
 
@@ -366,9 +366,9 @@ static boolean ValidFormatReplacement(const char *original, const char *replacem
 
 // Get replacement format string, checking arguments.
 
-static const char *FormatStringReplacement(char *s)
+static const char *FormatStringReplacement(const char *s)
 {
-    char *repl;
+    const char *repl;
 
     repl = DEH_String(s);
 
@@ -385,7 +385,7 @@ static const char *FormatStringReplacement(char *s)
 
 // printf(), performing a replacement on the format string.
 
-void DEH_printf(char *fmt, ...)
+void DEH_printf(const char *fmt, ...)
 {
     va_list args;
     const char *repl;
@@ -401,7 +401,7 @@ void DEH_printf(char *fmt, ...)
 
 // fprintf(), performing a replacement on the format string.
 
-void DEH_fprintf(FILE *fstream, char *fmt, ...)
+void DEH_fprintf(FILE *fstream, const char *fmt, ...)
 {
     va_list args;
     const char *repl;
@@ -417,7 +417,7 @@ void DEH_fprintf(FILE *fstream, char *fmt, ...)
 
 // snprintf(), performing a replacement on the format string.
 
-void DEH_snprintf(char *buffer, size_t len, char *fmt, ...)
+void DEH_snprintf(char *buffer, size_t len, const char *fmt, ...)
 {
     va_list args;
     const char *repl;

@@ -484,7 +484,7 @@ int DEH_LoadLump(int lumpnum, boolean allow_long, boolean allow_error)
     return 1;
 }
 
-int DEH_LoadLumpByName(char *name, boolean allow_long, boolean allow_error)
+int DEH_LoadLumpByName(const char *name, boolean allow_long, boolean allow_error)
 {
     int lumpnum;
 

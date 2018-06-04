@@ -48,8 +48,8 @@ const char *configdir;
 
 // Default filenames for configuration files.
 
-static char *default_main_config;
-static char *default_extra_config;
+static const char *default_main_config;
+static const char *default_extra_config;
 
 typedef enum 
 {
@@ -63,7 +63,7 @@ typedef enum
 typedef struct
 {
     // Name of the variable
-    char *name;
+    const char *name;
 
     // Pointer to the location in memory of the variable
     union {
@@ -95,7 +95,7 @@ typedef struct
 {
     default_t *defaults;
     int numdefaults;
-    char *filename;
+    const char *filename;
 } default_collection_t;
 
 #define CONFIG_VARIABLE_GENERIC(name, type) \
@@ -2051,7 +2051,7 @@ static default_collection_t extra_defaults =
 
 // Search a collection for a variable
 
-static default_t *SearchCollection(default_collection_t *collection, char *name)
+static default_t *SearchCollection(default_collection_t *collection, const char *name)
 {
     int i;
 
@@ -2202,7 +2202,7 @@ static void SaveDefaultCollection(default_collection_t *collection)
 
 // Parses integer values in the configuration file
 
-static int ParseIntParameter(char *strparm)
+static int ParseIntParameter(const char *strparm)
 {
     int parm;
 
@@ -2214,7 +2214,7 @@ static int ParseIntParameter(char *strparm)
     return parm;
 }
 
-static void SetVariable(default_t *def, char *value)
+static void SetVariable(default_t *def, const char *value)
 {
     int intparm;
 
@@ -2320,7 +2320,7 @@ static void LoadDefaultCollection(default_collection_t *collection)
 
 // Set the default filenames to use for configuration files.
 
-void M_SetConfigFilenames(char *main_config, char *extra_config)
+void M_SetConfigFilenames(const char *main_config, const char *extra_config)
 {
     default_main_config = main_config;
     default_extra_config = extra_config;
@@ -2340,10 +2340,10 @@ void M_SaveDefaults (void)
 // Save defaults to alternate filenames
 //
 
-void M_SaveDefaultsAlternate(char *main, char *extra)
+void M_SaveDefaultsAlternate(const char *main, const char *extra)
 {
-    char *orig_main;
-    char *orig_extra;
+    const char *orig_main;
+    const char *orig_extra;
 
     // Temporarily change the filenames
 
@@ -2421,7 +2421,7 @@ void M_LoadDefaults (void)
 
 // Get a configuration file variable by its name
 
-static default_t *GetDefaultForName(char *name)
+static default_t *GetDefaultForName(const char *name)
 {
     default_t *result;
 
@@ -2448,7 +2448,7 @@ static default_t *GetDefaultForName(char *name)
 // Bind a variable to a given configuration file variable, by name.
 //
 
-void M_BindIntVariable(char *name, int *location)
+void M_BindIntVariable(const char *name, int *location)
 {
     default_t *variable;
 
@@ -2461,7 +2461,7 @@ void M_BindIntVariable(char *name, int *location)
     variable->bound = true;
 }
 
-void M_BindFloatVariable(char *name, float *location)
+void M_BindFloatVariable(const char *name, float *location)
 {
     default_t *variable;
 
@@ -2472,7 +2472,7 @@ void M_BindFloatVariable(char *name, float *location)
     variable->bound = true;
 }
 
-void M_BindStringVariable(char *name, char **location)
+void M_BindStringVariable(const char *name, char **location)
 {
     default_t *variable;
 
@@ -2486,7 +2486,7 @@ void M_BindStringVariable(char *name, char **location)
 // Set the value of a particular variable; an API function for other
 // parts of the program to assign values to config variables by name.
 
-boolean M_SetVariable(char *name, char *value)
+boolean M_SetVariable(const char *name, const char *value)
 {
     default_t *variable;
 
@@ -2504,7 +2504,7 @@ boolean M_SetVariable(char *name, char *value)
 
 // Get the value of a variable.
 
-int M_GetIntVariable(char *name)
+int M_GetIntVariable(const char *name)
 {
     default_t *variable;
 
@@ -2519,7 +2519,7 @@ int M_GetIntVariable(char *name)
     return *variable->location.i;
 }
 
-const char *M_GetStringVariable(char *name)
+const char *M_GetStringVariable(const char *name)
 {
     default_t *variable;
 
@@ -2534,7 +2534,7 @@ const char *M_GetStringVariable(char *name)
     return *variable->location.s;
 }
 
-float M_GetFloatVariable(char *name)
+float M_GetFloatVariable(const char *name)
 {
     default_t *variable;
 
@@ -2604,7 +2604,7 @@ void M_SetConfigDir(const char *dir)
 // Creates the directory as necessary.
 //
 
-char *M_GetSaveGameDir(char *iwadname)
+char *M_GetSaveGameDir(const char *iwadname)
 {
     char *savegamedir;
     char *topdir;
@@ -2637,7 +2637,7 @@ char *M_GetSaveGameDir(char *iwadname)
 
     else if (M_ParmExists("-cdrom"))
     {
-        savegamedir = configdir;
+        savegamedir = M_StringDuplicate(configdir);
     }
 #endif
     // If not "doing" a configuration directory (Windows), don't "do"

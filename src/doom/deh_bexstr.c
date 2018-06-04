@@ -27,7 +27,7 @@
 
 typedef struct {
     const char *macro;
-    char *string;
+    const char *string;
 } bex_string_t;
 
 // mnemonic keys table
