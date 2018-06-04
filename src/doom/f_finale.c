@@ -177,6 +177,7 @@ void F_StartFinale (void)
     if (finaletext_rw)
     {
 	free(finaletext_rw);
+	finaletext_rw = NULL;
     }
     finaletext_rw = M_StringDuplicate(finaletext);
     
