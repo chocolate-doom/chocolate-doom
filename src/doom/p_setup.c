@@ -565,7 +565,7 @@ static void P_LoadNodes_ZDBSP (int lump, boolean compressed)
     if (compressed)
     {
 #ifdef HAVE_LIBZ
-	const int len =  W_LumpLength(lump);
+	int len =  W_LumpLength(lump);
 	int outlen, err;
 	z_stream *zstream;
 
