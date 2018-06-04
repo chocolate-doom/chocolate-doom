@@ -46,6 +46,10 @@ void 	R_DrawColumnLow (void);
 void 	R_DrawFuzzColumn (void);
 void 	R_DrawFuzzColumnLow (void);
 
+// [crispy] draw fuzz effect independent of rendering frame rate
+void R_SetFuzzPosTic (void);
+void R_SetFuzzPosDraw (void);
+
 // Draw with color translation tables,
 //  for player sprite rendering,
 //  Green/Red/Blue/Indigo shirts.

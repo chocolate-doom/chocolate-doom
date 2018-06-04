@@ -1284,6 +1284,9 @@ void P_UpdateSpecials (void)
 		memset(&buttonlist[i],0,sizeof(button_t));
 	    }
 	}
+
+    // [crispy] draw fuzz effect independent of rendering frame rate
+    R_SetFuzzPosTic();
 }
 
 // [crispy] smooth texture scrolling
