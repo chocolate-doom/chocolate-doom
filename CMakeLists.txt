@@ -50,7 +50,8 @@ include(CheckSymbolExists)
 check_symbol_exists(strcasecmp "strings.h" HAVE_DECL_STRCASECMP)
 check_symbol_exists(strncasecmp "strings.h" HAVE_DECL_STRNCASECMP)
 
-set(WINDOWS_RC_VERSION "${PROJECT_VERSION_MAJOR}, ${PROJECT_VERSION_MINOR}, ${PROJECT_VERSION_PATCH}, 0")
+string(CONCAT WINDOWS_RC_VERSION "${PROJECT_VERSION_MAJOR}, "
+    "${PROJECT_VERSION_MINOR}, ${PROJECT_VERSION_PATCH}, 0")
 
 # Without a hyphen. This is used for the bash-completion scripts.
 string(TOLOWER "${PACKAGE_SHORTNAME}" PROGRAM_SPREFIX)
@@ -58,7 +59,7 @@ string(TOLOWER "${PACKAGE_SHORTNAME}" PROGRAM_SPREFIX)
 # With a hyphen, used almost everywhere else.
 set(PROGRAM_PREFIX "${PROGRAM_SPREFIX}-")
 
-configure_file(config.h.cin config.h)
+configure_file(cmake/config.h.cin config.h)
 
 configure_file(src/resource.rc.in src/resource.rc)
 configure_file(src/setup-res.rc.in src/setup-res.rc)
