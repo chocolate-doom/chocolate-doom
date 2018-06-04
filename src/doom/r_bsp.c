@@ -23,8 +23,6 @@
 
 #include "m_bbox.h"
 
-#include "i_system.h"
-
 #include "r_main.h"
 #include "r_plane.h"
 #include "r_things.h"
@@ -541,8 +539,8 @@ void R_Subsector (int num)
     }
 
     // check for solidsegs overflow - extremely unsatisfactory!
-    if(newend > &solidsegs[32])
-        I_Error("R_Subsector: solidsegs overflow (vanilla may crash here)\n");
+  /*if(newend > &solidsegs[32])
+        printf("R_Subsector: solidsegs overflow (vanilla may crash here)\n");*/
 }
 
 
