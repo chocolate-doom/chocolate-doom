@@ -1223,6 +1223,9 @@ void D_DoomMain (void)
 
     I_AtExit(D_Endoom, false);
 
+    freopen("CONOUT$","w",stdout);
+    freopen("CONOUT$","w",stderr);
+
     // print banner
 
     I_PrintBanner(PACKAGE_STRING);
