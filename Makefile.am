@@ -2,6 +2,15 @@ AUX_DIST_GEN =                          \
         $(ac_aux_dir)/install-sh        \
         $(ac_aux_dir)/missing
 
+CMAKE_FILES=                                   \
+        CMakeLists.txt                         \
+        cmake/FindSDL2.cmake                   \
+        cmake/FindSDL2_mixer.cmake             \
+        cmake/FindSDL2_net.cmake               \
+        cmake/Findm.cmake                      \
+        cmake/Findsamplerate.cmake             \
+        cmake/config.h.cin
+
 CODEBLOCKS_FILES=                              \
         codeblocks/chocolate.workspace         \
         codeblocks/config.h                    \
@@ -28,6 +37,7 @@ DOC_FILES=                              \
 
 EXTRA_DIST=                             \
         $(AUX_DIST_GEN)                 \
+        $(CMAKE_FILES)                  \
         $(CODEBLOCKS_FILES)             \
         $(DOC_FILES)                    \
         NOT-BUGS.md                     \
@@ -35,7 +45,9 @@ EXTRA_DIST=                             \
         .lvimrc                         \
         HACKING.md                      \
         TODO.md                         \
-        rpm.spec
+        rpm.spec                        \
+        win32/win_opendir.c             \
+        win32/win_opendir.h
 
 doomdocsdir = ${docdir}/../${PROGRAM_PREFIX}doom
 doomdocs_DATA = $(DOC_FILES) NOT-BUGS.md
@@ -64,4 +76,3 @@ INSTALL : man/INSTALL.template man/simplecpp
 	                < man/INSTALL.template > $@
 
 endif
-

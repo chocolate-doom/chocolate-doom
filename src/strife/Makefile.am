@@ -2,6 +2,8 @@ AM_CFLAGS=-I$(top_srcdir)/src                           \
           -I$(top_srcdir)/textscreen                    \
           @SDL_CFLAGS@ @SDLMIXER_CFLAGS@ @SDLNET_CFLAGS@
 
+EXTRA_DIST = CMakeLists.txt
+
 noinst_LIBRARIES=libstrife.a
 
 libstrife_a_SOURCES =           \
