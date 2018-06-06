@@ -259,6 +259,8 @@
 #define ST_MAPTITLEY		0
 #define ST_MAPHEIGHT		1
 
+extern boolean insavemenu; // redraw status bar
+
 // graphics are drawn to a backing screen and blitted to the real screen
 byte                   *st_backing_screen;
 	    
@@ -1075,7 +1077,7 @@ void ST_Drawer (boolean fullscreen, boolean refresh)
 {
   
     st_statusbaron = (!fullscreen) || automapactive;
-    st_firsttime = st_firsttime || refresh;
+    st_firsttime = st_firsttime || refresh || insavemenu;
 
     // Do red-/gold-shifts from damage/items
     ST_doPaletteStuff();
@@ -1085,6 +1087,7 @@ void ST_Drawer (boolean fullscreen, boolean refresh)
     // Otherwise, update as little as possible
     else ST_diffDraw();
 
+	insavemenu = false;
 }
 
 typedef void (*load_callback_t)(char *lumpname, patch_t **variable); 

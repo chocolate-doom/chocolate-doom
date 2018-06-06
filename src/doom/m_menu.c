@@ -64,6 +64,8 @@ extern boolean		message_dontfuckwithme;
 
 extern boolean		chat_on;		// in heads-up code
 
+boolean insavemenu; // redraw status bar
+
 //
 // defaulted values
 //
@@ -544,6 +546,7 @@ void M_DrawLoad(void)
     {
 	M_DrawSaveLoadBorder(LoadDef.x,LoadDef.y+LINEHEIGHT*i);
 	M_WriteText(LoadDef.x,LoadDef.y+LINEHEIGHT*i,savegamestrings[i]);
+	insavemenu = true;
     }
 }
 
@@ -620,6 +623,7 @@ void M_DrawSave(void)
 	i = M_StringWidth(savegamestrings[saveSlot]);
 	M_WriteText(LoadDef.x + i,LoadDef.y+LINEHEIGHT*saveSlot,"_");
     }
+	insavemenu = true;
 }
 
 //
