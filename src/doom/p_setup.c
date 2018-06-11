@@ -220,13 +220,6 @@ void P_LoadSegs (int lump)
 	li->v1 = &vertexes[(unsigned short)SHORT(ml->v1)]; // [crispy] extended nodes
 	li->v2 = &vertexes[(unsigned short)SHORT(ml->v2)]; // [crispy] extended nodes
 
-	// [crispy] fix long wall wobble
-	{
-	    int64_t dx = li->v2->x - li->v1->x;
-	    int64_t dy = li->v2->y - li->v1->y;
-	    li->length = (int64_t)sqrt((double)dx*dx + (double)dy*dy);
-	}
-
 	li->angle = (SHORT(ml->angle))<<FRACBITS;
 //	li->offset = (SHORT(ml->offset))<<FRACBITS; // [crispy] recalculated below
 	linedef = (unsigned short)SHORT(ml->linedef); // [crispy] extended nodes
@@ -337,6 +330,22 @@ static void P_LoadSegs_DeePBSP (int lump)
     }
 
     W_ReleaseLumpNum(lump);
+}
+
+// [crispy] fix long wall wobble
+void P_SegLengths (void)
+{
+    int i;
+    seg_t *li;
+    int64_t dx, dy;
+
+    for (i = 0; i < numsegs; i++)
+    {
+    li = &segs[i];
+    dx = li->v2->x - li->v1->x;
+    dy = li->v2->y - li->v1->y;
+    li->length = (int64_t)sqrt((double)dx*dx + (double)dy*dy);
+    }
 }
 
 //
@@ -1686,6 +1695,9 @@ P_SetupLevel
 
     P_GroupLines ();
     P_LoadReject (lumpnum+ML_REJECT);
+
+    // [crispy] fix long wall wobble
+    P_SegLengths();
 
     bodyqueslot = 0;
     deathmatch_p = deathmatchstarts;
