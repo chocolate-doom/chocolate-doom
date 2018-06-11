@@ -205,7 +205,7 @@ void R_ClearPlanes (void)
 
 
 // [crispy] remove MAXVISPLANES Vanilla limit
-void R_RaiseVisplanes (visplane_t** vp)
+static void R_RaiseVisplanes (visplane_t** vp)
 {
     if (lastvisplane - visplanes == numvisplanes)
     {
@@ -259,6 +259,7 @@ R_FindPlane
 	return check;
 		
     R_RaiseVisplanes(&check);
+
     lastvisplane++;
 
     check->height = height;
