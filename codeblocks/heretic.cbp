@@ -7,7 +7,7 @@
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output="../bin/chocolate-heretic-dbg.exe" prefix_auto="0" extension_auto="0" />
+				<Option output="../bin/heretic-dbg.exe" prefix_auto="0" extension_auto="0" />
 				<Option working_dir="../bin" />
 				<Option object_output="../obj/chocolate-heretic/dbg" />
 				<Option type="0" />
@@ -22,7 +22,7 @@
 				</Linker>
 			</Target>
 			<Target title="Release">
-				<Option output="../bin/chocolate-heretic.exe" prefix_auto="0" extension_auto="0" />
+				<Option output="../bin/heretic.exe" prefix_auto="0" extension_auto="0" />
 				<Option working_dir="../bin" />
 				<Option object_output="../obj/chocolate-heretic/rel" />
 				<Option type="0" />
@@ -192,6 +192,9 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../src/heretic/p_pspr.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../src/heretic/p_saveg.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../src/heretic/p_setup.c">
@@ -398,6 +401,9 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../src/tables.h" />
+		<Unit filename="../src/v_diskicon.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="../src/v_patch.h" />
 		<Unit filename="../src/v_video.c">
 			<Option compilerVar="CC" />
