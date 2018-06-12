@@ -811,7 +811,8 @@ void D_DoomMain(void)
     char file[256];
     char demolumpname[9];
 
-    I_PrintBanner(PACKAGE_STRING);
+    //I_PrintBanner(PACKAGE_STRING);
+    I_PrintBanner("Heretic Startup v" PACKAGE_VERSION);
 
     I_AtExit(D_Endoom, false);
 

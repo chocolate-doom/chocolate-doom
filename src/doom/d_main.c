@@ -1237,7 +1237,8 @@ void D_DoomMain (void)
 
     // print banner
 
-    I_PrintBanner(PACKAGE_STRING);
+    //I_PrintBanner(PACKAGE_STRING);
+    I_PrintBanner("DOOM Operating System v" PACKAGE_VERSION);
 
     DEH_printf("Z_Init: Init zone memory allocation daemon. \n");
     Z_Init ();
