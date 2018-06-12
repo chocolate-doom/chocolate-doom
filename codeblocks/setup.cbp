@@ -7,7 +7,7 @@
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output="../bin/chocolate-setup-dbg.exe" prefix_auto="0" extension_auto="0" />
+				<Option output="../bin/setup-dbg.exe" prefix_auto="0" extension_auto="0" />
 				<Option working_dir="../bin" />
 				<Option object_output="../obj/chocolate-setup/dbg" />
 				<Option type="0" />
@@ -23,7 +23,7 @@
 				</Linker>
 			</Target>
 			<Target title="Release">
-				<Option output="../bin/chocolate-setup.exe" prefix_auto="0" extension_auto="0" />
+				<Option output="../bin/setup.exe" prefix_auto="0" extension_auto="0" />
 				<Option working_dir="../bin" />
 				<Option object_output="../obj/chocolate-setup/rel" />
 				<Option type="0" />
