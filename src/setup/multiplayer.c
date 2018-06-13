@@ -75,7 +75,7 @@ static char *wad_extensions[] = { "wad", "lmp", "deh", NULL };
 static char *doom_skills[] =
 {
     "I'm too young to die.", "Hey, not too rough.", "Hurt me plenty.",
-    "Ultra-Violence.", "NIGHTMARE!",
+    "Ultra-Violence.", "NIGHTMARE!", "Extreme violence.",
 };
 
 static char *chex_skills[] =
@@ -747,7 +747,7 @@ static void StartGameMenu(char *window_title, int multiplayer)
 
     TXT_AddWidgets(window,
                    TXT_NewLabel("Skill"),
-                   skillbutton = TXT_NewDropdownList(&skill, doom_skills, 5),
+                   skillbutton = TXT_NewDropdownList(&skill, doom_skills, 6),
                    TXT_NewLabel("Level warp"),
                    warpbutton = TXT_NewButton2("?", LevelSelectDialog, NULL),
                    NULL);
