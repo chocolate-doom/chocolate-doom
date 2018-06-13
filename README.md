@@ -1,3 +1,19 @@
+RUDE: Romero's Ultimate Doom Engine
+-----------------------------------
+
+ This is a fork of Chocolate Doom 2.3.0 with some stuff from Crispy Doom.
+ It's a tribute to John Romero hence the name, but that name should not be taken too seriously. :)
+ After all this port is also a bit rough. It's a strong limit removing port aiming to preserve most bugs in
+the original executables including rendering bugs while preventing crashes at the same time.
+ The startup console is back (running from the command line is recommended).
+ There's a new 'extreme violence' skill level (-skill 6, not in the menu). :D
+ Please refer to the Chocolate and Crispy documentation.
+ Also contains code from MBF and PrBoom+.
+ Of course DOOM © 1996 id Software, Chocolate Doom © 2018 Simon Howard and Crispy Doom © 2018 Fabian Greffrath.
+ 
+ Compiles with Code::Blocks 17.12 and tdm-gcc 5.1. You need to tell the compiler where the SDL* and zlib
+libraries are (Global compiler settings->Search directories).
+
 # Chocolate Doom
 
 Chocolate Doom aims to accurately reproduce the original DOS version of
