@@ -11,22 +11,6 @@ CMAKE_FILES=                                   \
         cmake/Findsamplerate.cmake             \
         cmake/config.h.cin
 
-CODEBLOCKS_FILES=                              \
-        codeblocks/chocolate.workspace         \
-        codeblocks/config.h                    \
-        codeblocks/doom.cbp                    \
-        codeblocks/game-res.rc                 \
-        codeblocks/heretic.cbp                 \
-        codeblocks/hexen.cbp                   \
-        codeblocks/strife.cbp                  \
-        codeblocks/libopl.cbp                  \
-        codeblocks/libpcsound.cbp              \
-        codeblocks/libtextscreen.cbp           \
-        codeblocks/README                      \
-        codeblocks/server.cbp                  \
-        codeblocks/setup.cbp                   \
-        codeblocks/setup-res.rc
-
 DOC_FILES=                              \
         COPYING.md                      \
         README.md                       \
@@ -38,7 +22,6 @@ DOC_FILES=                              \
 EXTRA_DIST=                             \
         $(AUX_DIST_GEN)                 \
         $(CMAKE_FILES)                  \
-        $(CODEBLOCKS_FILES)             \
         $(DOC_FILES)                    \
         NOT-BUGS.md                     \
         README.Strife.md                \

@@ -18,9 +18,9 @@
 
 ### Build systems
   * CMake has been added along with the deprecation of Microsoft
-    Visual Studio files.  CMake maintains support for multiple
-    versions of Visual Studio as well as additional IDEs, and reduces
-    developer overhead when updating Chocolate Doom. (thanks AlexMax)
+    Visual Studio and Code::Blocks files.  CMake maintains support for
+    multiple IDEs and versions thereof, and reduces developer overhead
+    when updating Chocolate Doom. (thanks AlexMax)
 
 ### Doom
   * Map33 intermission screen and map33-map35 automap names are
