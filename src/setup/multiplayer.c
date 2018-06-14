@@ -75,7 +75,7 @@ static char *wad_extensions[] = { "wad", "lmp", "deh", NULL };
 static char *doom_skills[] =
 {
     "I'm too young to die.", "Hey, not too rough.", "Hurt me plenty.",
-    "Ultra-Violence.", "NIGHTMARE!", "Extreme violence.",
+    "Ultra-Violence.", "NIGHTMARE!", "Unholy massacre.",
 };
 
 static char *chex_skills[] =
