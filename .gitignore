@@ -28,6 +28,7 @@ DOOM*.pcx
 HTIC*.pcx
 HEXEN*.pcx
 STRIFE*.pcx
+/build*
 
 # These are the default patterns globally ignored by Subversion:
 *.o

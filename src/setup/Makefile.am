@@ -22,6 +22,7 @@ libsetup_a_SOURCES =                            \
     txt_mouseinput.c  txt_mouseinput.h
 
 EXTRA_DIST=                                     \
+    CMakeLists.txt                              \
     setup_icon.c
 
 appdir = $(prefix)/share/applications

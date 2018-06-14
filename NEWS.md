@@ -17,11 +17,10 @@
     (thanks chungy)
 
 ### Build systems
-  * Microsoft Visual Studio files have been removed due to technical
-    limitations of the software preventing cross-version
-    compatibility, difficult dependency management, as well as being
-    unmaintained in general, resulting in a very difficult process to
-    get up to speed using this IDE and Chocolate Doom.
+  * CMake has been added along with the deprecation of Microsoft
+    Visual Studio and Code::Blocks files.  CMake maintains support for
+    multiple IDEs and versions thereof, and reduces developer overhead
+    when updating Chocolate Doom. (thanks AlexMax)
 
 ### Doom
   * Map33 intermission screen and map33-map35 automap names are
