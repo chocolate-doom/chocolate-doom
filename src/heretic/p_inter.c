@@ -168,7 +168,7 @@ boolean P_GiveAmmo(player_t * player, ammotype_t ammo, int count)
     {                           // extra ammo in baby mode and nightmare mode
         count += count >> 1;
     }
-    if (gameskill == sk_extreme)
+    else if (gameskill == sk_extreme)
     {                           // less ammo in extreme mode
         count -= count >> 1;
     }
@@ -1266,7 +1266,7 @@ void P_DamageMobj
         // Take half damage in trainer mode
         damage >>= 1;
     }
-    if (player && gameskill == sk_extreme)
+    else if (player && gameskill == sk_extreme)
     {
         // Take double damage in extreme mode
         damage <<= 1;

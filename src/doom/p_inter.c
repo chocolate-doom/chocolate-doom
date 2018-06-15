@@ -91,8 +91,7 @@ P_GiveAmmo
 	// you'll need in nightmare
 	num <<= 1;
     }
-    
-    if (gameskill == sk_extreme)
+    else if (gameskill == sk_extreme)
     {
 	// give half ammo in extreme mode
 	num >>= 1;
@@ -808,8 +807,7 @@ P_DamageMobj
     player = target->player;
     if (player && gameskill == sk_baby)
 	damage >>= 1; 	// take half damage in trainer mode
-
-    if (player && gameskill == sk_extreme)
+    else if (player && gameskill == sk_extreme)
 	damage <<= 1; 	// take double damage in extreme mode
 
     // Some close combat weapons should not
