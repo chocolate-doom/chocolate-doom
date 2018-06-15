@@ -6,7 +6,8 @@ RUDE: Romero's Ultimate Doom Engine
  After all this port is also a bit rough. It's a strong limit removing port aiming to preserve most bugs in
 the original executables including rendering bugs while preventing crashes at the same time.
  The startup console is back (running from the command line is recommended).
- There's a new 'extreme violence' skill level (-skill 6, not in the menu). :D
+ There's a new 'Unholy massacre' skill level (-skill 6, not in the menu). :D
+ Has extended nodes support and the autorun key from Crispy.
  Please refer to the Chocolate and Crispy documentation.
  Also contains code from MBF and PrBoom+.
  Of course DOOM © 1996 id Software, Chocolate Doom © 2018 Simon Howard and Crispy Doom © 2018 Fabian Greffrath.
