@@ -1017,7 +1017,7 @@ static boolean HandleCheats(byte key)
     int i;
     boolean eat;
 
-    if (netgame || gameskill == sk_nightmare)
+    if (netgame || gameskill == sk_nightmare || gameskill == sk_extreme)
     {                           // Can't cheat in a net-game, or in nightmare mode
         return (false);
     }

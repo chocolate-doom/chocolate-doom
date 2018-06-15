@@ -1080,7 +1080,7 @@ void P_SpawnMapThing(mapthing_t * mthing)
 
     if (gameskill == sk_baby)
         bit = 1;
-    else if (gameskill == sk_nightmare)
+    else if (gameskill == sk_nightmare || gameskill == sk_extreme)
         bit = 4;
     else
         bit = 1 << (gameskill - 1);

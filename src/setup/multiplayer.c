@@ -87,7 +87,7 @@ static char *chex_skills[] =
 static char *heretic_skills[] =
 {
     "Thou needeth a wet-nurse", "Yellowbellies-R-us", "Bringest them oneth",
-    "Thou art a smite-meister", "Black plague possesses thee"
+    "Thou art a smite-meister", "Black plague possesses thee", "One thousand deaths await thee"
 };
 
 static char *hexen_fighter_skills[] =
