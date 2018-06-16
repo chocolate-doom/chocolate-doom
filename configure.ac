@@ -102,6 +102,11 @@ case "$host" in
     ;;
 esac
 
+dnl - platform, for use with game console ports
+AC_ARG_WITH([platform],
+  AC_HELP_STRING([--with-platform],[build for specific platform]),
+  [], [with_platform=default])
+
 AC_CHECK_TOOL(OBJDUMP, objdump, )
 AC_CHECK_TOOL(STRIP, strip, )
 
@@ -113,6 +118,8 @@ AS_IF([test "x$enable_werror" = "xyes"], [
 
 AM_CONDITIONAL(HAVE_WINDRES, test "$WINDRES" != "")
 AM_CONDITIONAL(HAVE_PYTHON, $HAVE_PYTHON)
+
+AM_CONDITIONAL(BUILD_SWITCH, [test "$with_platform" = "switch"])
 
 dnl Automake v1.8.0 is required, please upgrade!
 

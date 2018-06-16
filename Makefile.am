@@ -48,6 +48,11 @@ MAINTAINERCLEANFILES =  $(AUX_DIST_GEN)
 
 SUBDIRS=textscreen midiproc opl pcsound data src man
 
+if BUILD_SWITCH
+else
+SUBDIRS += textscreen
+endif
+
 DIST_SUBDIRS=pkg $(SUBDIRS)
 
 if HAVE_PYTHON
