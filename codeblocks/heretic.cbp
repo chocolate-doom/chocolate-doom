@@ -52,7 +52,7 @@
 			<Add directory="../opl" />
 		</Compiler>
 		<Linker>
-			<Add option="-lmingw32 -lSDLmain -lSDL -lSDL_mixer -lSDL_net -mwindows" />
+			<Add option="-lmingw32 -lSDLmain -lSDL -lSDL_mixer -lSDL_net -mconsole -mwindows" />
 			<Add directory="../lib" />
 		</Linker>
 		<Unit filename="../src/d_event.c">
