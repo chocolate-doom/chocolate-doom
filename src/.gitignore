@@ -16,6 +16,7 @@ crispy-setup
 *.exe
 *.desktop
 *.txt
+!CMakeLists.txt
 *.appdata.xml
 tags
 TAGS

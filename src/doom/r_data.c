@@ -480,14 +480,14 @@ void R_GenerateLookup (int texnum)
 	    {
 		if (patchcount[x] > 1) // Only multipatched columns
 		{
-		    const column_t *col = (column_t*)((byte*) realpatch + LONG(cofs[x]));
+		    const column_t *col = (const column_t*)((const byte*) realpatch + LONG(cofs[x]));
 		    const byte *base = (const byte *) col;
 
 		    // count posts
 		    for ( ; col->topdelta != 0xff; postcount[x]++)
 		    {
-			if ((unsigned)((byte *) col - base) <= limit)
-			    col = (column_t *)((byte *) col + col->length + 4);
+			if ((unsigned)((const byte *) col - base) <= limit)
+			    col = (const column_t *)((const byte *) col + col->length + 4);
 			else
 			    break;
 		    }

@@ -208,7 +208,7 @@ void P_LoadNodes_DeePBSP (int lump)
     for (i = 0; i < numnodes; i++)
     {
 	node_t *no = nodes + i;
-	mapnode_deepbsp_t *mn = (mapnode_deepbsp_t *) data + i;
+	const mapnode_deepbsp_t *mn = (const mapnode_deepbsp_t *) data + i;
 	int j;
 
 	no->x = SHORT(mn->x)<<FRACBITS;

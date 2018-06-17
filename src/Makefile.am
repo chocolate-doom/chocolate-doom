@@ -210,6 +210,7 @@ endif
                         @LDFLAGS@ @SDL_LIBS@ @SDLMIXER_LIBS@ @SDLNET_LIBS@
 
 EXTRA_DIST =                        \
+        CMakeLists.txt              \
         icon.c                      \
         doom-screensaver.desktop.in \
         manifest.xml
