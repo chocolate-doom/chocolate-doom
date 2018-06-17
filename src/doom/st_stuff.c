@@ -1026,13 +1026,14 @@ ST_Responder (event_t* ev)
 #ifndef BUILD_DATE
 #define BUILD_DATE __DATE__
 #endif
-      M_snprintf(msg, sizeof(msg), "%s (%s%s%s) x%ld SDL%s",
+      M_snprintf(msg, sizeof(msg), "%s (%s) x%ld SDL%s",
                  PACKAGE_STRING,
-                 crstr[CR_GOLD], BUILD_DATE, crstr[CR_NONE],
+                 BUILD_DATE,
                  sizeof(void *) * CHAR_BIT,
                  crispy->sdlversion);
 #undef BUILD_DATE
       plyr->message = msg;
+      fprintf(stderr, "%s\n", msg);
     }
     
     // 'clev' change-level cheat
