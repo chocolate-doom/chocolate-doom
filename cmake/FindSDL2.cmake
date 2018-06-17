@@ -26,8 +26,8 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 # Currently works with the following generators:
-# - Unix Makefiles
-# - Ninja
+# - Unix Makefiles (Linux, MSYS2)
+# - Ninja (Linux, MSYS2)
 # - Visual Studio
 
 # Cache variable that allows you to point CMake at a directory containing
@@ -91,7 +91,24 @@ if(SDL2_FOUND)
                           IMPORTED_LOCATION "${SDL2_LIBRARY}")
 
     # SDL2main imported target.
-    add_library(SDL2::SDL2main UNKNOWN IMPORTED)
-    set_target_properties(SDL2::SDL2main PROPERTIES
-                          IMPORTED_LOCATION "${SDL2_MAIN_LIBRARY}")
+    if(MINGW)
+        # Gross hack to get mingw32 first in the linker order.
+        add_library(SDL2::_SDL2main_detail UNKNOWN IMPORTED)
+        set_target_properties(SDL2::_SDL2main_detail PROPERTIES
+                              IMPORTED_LOCATION "${SDL2_MAIN_LIBRARY}")
+
+        # Ensure that SDL2main comes before SDL2 in the linker order.  CMake
+        # isn't smart enough to keep proper ordering for indirect dependencies
+        # so we have to spell it out here.
+        target_link_libraries(SDL2::_SDL2main_detail INTERFACE SDL2::SDL2)
+
+        add_library(SDL2::SDL2main INTERFACE IMPORTED)
+        set_target_properties(SDL2::SDL2main PROPERTIES
+                              IMPORTED_LIBNAME mingw32)
+        target_link_libraries(SDL2::SDL2main INTERFACE SDL2::_SDL2main_detail)
+    else()
+        add_library(SDL2::SDL2main UNKNOWN IMPORTED)
+        set_target_properties(SDL2::SDL2main PROPERTIES
+                              IMPORTED_LOCATION "${SDL2_MAIN_LIBRARY}")
+    endif()
 endif()
