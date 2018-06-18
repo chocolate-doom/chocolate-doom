@@ -1029,7 +1029,7 @@ ST_Responder (event_t* ev)
       M_snprintf(msg, sizeof(msg), "%s (%s) x%ld SDL%s",
                  PACKAGE_STRING,
                  BUILD_DATE,
-                 sizeof(void *) * CHAR_BIT,
+                 (long) sizeof(void *) * CHAR_BIT,
                  crispy->sdlversion);
 #undef BUILD_DATE
       plyr->message = msg;
