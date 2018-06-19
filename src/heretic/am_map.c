@@ -97,8 +97,8 @@ static int grid = 0;
 static int leveljuststarted = 1;        // kluge until AM_LevelInit() is called
 
 boolean automapactive = false;
-static int finit_width = SCREENWIDTH;
-static int finit_height = SCREENHEIGHT - (42 << hires);
+static int finit_width;// = SCREENWIDTH;
+static int finit_height;// = SCREENHEIGHT - (42 << hires);
 static int f_x, f_y;            // location of window on screen
 static int f_w, f_h;            // size of window on screen
 static int lightlev;            // used for funky strobing effect
@@ -437,6 +437,8 @@ void AM_LevelInit(void)
 {
     leveljuststarted = 0;
 
+    finit_width = SCREENWIDTH;
+    finit_height = SCREENHEIGHT - (42 << hires);
     f_x = f_y = 0;
     f_w = finit_width;
     f_h = finit_height;

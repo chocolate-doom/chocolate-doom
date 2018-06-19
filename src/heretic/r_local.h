@@ -25,8 +25,8 @@
 
 #define	BASEYCENTER			100
 
-#define MAXWIDTH			1120
-#define	MAXHEIGHT			832
+//#define MAXWIDTH			1120
+//#define	MAXHEIGHT			832
 
 #define	PI					3.141592657
 
@@ -156,7 +156,7 @@ typedef struct
 typedef byte lighttable_t;      // this could be wider for >8 bit display
 
 #define	MAXVISPLANES	128
-#define	MAXOPENINGS		SCREENWIDTH*64*4
+#define	MAXOPENINGS		MAXWIDTH*64*4
 
 typedef struct
 {
@@ -166,10 +166,10 @@ typedef struct
     int special;
     int minx, maxx;
     unsigned int pad1;                    // [crispy] hires / 32-bit integer math
-    unsigned int top[SCREENWIDTH];        // [crispy] hires / 32-bit integer math
+    unsigned int top[MAXWIDTH];        // [crispy] hires / 32-bit integer math
     unsigned int pad2;                    // [crispy] hires / 32-bit integer math
     unsigned int pad3;                    // [crispy] hires / 32-bit integer math
-    unsigned int bottom[SCREENWIDTH];     // [crispy] hires / 32-bit integer math
+    unsigned int bottom[MAXWIDTH];     // [crispy] hires / 32-bit integer math
     unsigned int pad4;                    // [crispy] hires / 32-bit integer math
 } visplane_t;
 
@@ -272,7 +272,7 @@ extern player_t *viewplayer;
 extern angle_t clipangle;
 
 extern int viewangletox[FINEANGLES / 2];
-extern angle_t xtoviewangle[SCREENWIDTH + 1];
+extern angle_t xtoviewangle[MAXWIDTH + 1];
 
 extern fixed_t rw_distance;
 extern angle_t rw_normalangle;
@@ -363,11 +363,11 @@ extern int skyflatnum;
 
 extern int *lastopening;    // [crispy] 32-bit integer math
 
-extern int floorclip[SCREENWIDTH];   // [crispy] 32-bit integer math
-extern int ceilingclip[SCREENWIDTH]; // [crispy] 32-bit integer math
+extern int floorclip[MAXWIDTH];   // [crispy] 32-bit integer math
+extern int ceilingclip[MAXWIDTH]; // [crispy] 32-bit integer math
 
-extern fixed_t yslope[SCREENHEIGHT];
-extern fixed_t distscale[SCREENWIDTH];
+extern fixed_t yslope[MAXHEIGHT];
+extern fixed_t distscale[MAXWIDTH];
 
 void R_InitPlanes(void);
 void R_ClearPlanes(void);
@@ -415,8 +415,8 @@ extern vissprite_t *vissprites, *vissprite_p;
 extern vissprite_t vsprsortedhead;
 
 // constant arrays used for psprite clipping and initializing clipping
-extern int negonearray[SCREENWIDTH];       // [crispy] 32-bit integer math
-extern int screenheightarray[SCREENWIDTH]; // [crispy] 32-bit integer math
+extern int negonearray[MAXWIDTH];       // [crispy] 32-bit integer math
+extern int screenheightarray[MAXWIDTH]; // [crispy] 32-bit integer math
 
 // vars for R_DrawMaskedColumn
 extern int *mfloorclip;   // [crispy] 32-bit integer math

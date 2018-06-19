@@ -68,7 +68,7 @@ typedef struct
 // render overage and then bomb out by detecting the overflow after the 
 // fact. -haleyjd
 //#define MAXSEGS 32
-#define MAXSEGS (SCREENWIDTH / 2 + 1)
+#define MAXSEGS (MAXWIDTH / 2 + 1)
 
 cliprange_t solidsegs[MAXSEGS], *newend;        // newend is one past the last valid seg
 
