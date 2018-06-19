@@ -1373,7 +1373,7 @@ boolean MN_Responder(event_t * event)
         else if (key == key_menu_gamma)           // F11 (gamma correction)
         {
             usegamma++;
-            if (usegamma > 4)
+            if (usegamma > 4+4) // [crispy] intermediate gamma levels
             {
                 usegamma = 0;
             }
