@@ -1,4 +1,4 @@
-AC_INIT(Crispy Doom, 5.1,
+AC_INIT(Crispy Doom, 5.2,
         fabian@greffrath.com, crispy-doom)
 
 PACKAGE_SHORTNAME=${PACKAGE_NAME% Doom}
