@@ -1,0 +1,27 @@
+#!/bin/ksh
+#
+# $OpenBSD: chocolateserver,v 1.0 2018/06/19 19:52:12 rpe Exp $
+
+daemon="/usr/local/bin/chocolate-server"
+daemon_flags=
+daemon_user="_chocolatedoom"
+
+. /etc/rc.d/rc.subr
+
+pexp="${daemon} ${daemon_flags:+ ${daemon_flags}}"
+rc_bg=YES
+rc_usercheck=YES
+
+rc_start() {
+       ${rcexec} "${daemon} ${daemon_flags}"
+}
+
+rc_check() {
+       pgrep -q chocolate-server
+}
+
+rc_stop() {
+       pkill chocolate-server
+}
+
+rc_cmd $1
