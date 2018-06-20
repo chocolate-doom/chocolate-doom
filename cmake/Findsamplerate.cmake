@@ -26,8 +26,8 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 # Currently works with the following generators:
-# - Unix Makefiles
-# - Ninja
+# - Unix Makefiles (Linux, MSYS2)
+# - Ninja (Linux, MSYS2)
 # - Visual Studio
 
 # Use pkg-config to find library locations in *NIX environments.
