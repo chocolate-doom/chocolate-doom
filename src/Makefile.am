@@ -307,7 +307,7 @@ all-local: @PROGRAM_PREFIX@doom.nro \
 	elf2nro @PROGRAM_PREFIX@strife $@ --nacp=@PROGRAM_PREFIX@strife.nacp
 
 %.nacp: $(MAKEFILE_LIST)
-	nacptool --create "$@" "SwitchBrew Team" "1.0.0" $@
+	nacptool --create "$*" "SwitchBrew Team" "$(VERSION)" $@
 
 
 endif
