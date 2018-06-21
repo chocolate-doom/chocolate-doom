@@ -295,7 +295,7 @@ all-local: @PROGRAM_PREFIX@doom.nro \
 	@PROGRAM_PREFIX@strife.nro
 
 @PROGRAM_PREFIX@doom.nro: @PROGRAM_PREFIX@doom @PROGRAM_PREFIX@doom.nacp
-	elf2nro @PROGRAM_PREFIX@doom $@ --nacp=@PROGRAM_PREFIX@doom.nacp
+	elf2nro @PROGRAM_PREFIX@doom $@ --nacp=@PROGRAM_PREFIX@doom.nacp --icon=$(top_srcdir)/data/doom.jpg
 
 @PROGRAM_PREFIX@heretic.nro: @PROGRAM_PREFIX@heretic @PROGRAM_PREFIX@heretic.nacp
 	elf2nro @PROGRAM_PREFIX@heretic $@ --nacp=@PROGRAM_PREFIX@heretic.nacp
