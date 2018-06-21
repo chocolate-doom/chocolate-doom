@@ -52,3 +52,8 @@ GPATH
 GRTAGS
 GTAGS
 /HTML/
+
+# Nintendo Switch binaries
+*.nro
+*.nacp
+
