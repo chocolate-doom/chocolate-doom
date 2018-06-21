@@ -406,9 +406,49 @@ static void I_ToggleFullScreen(void)
     }
 }
 
+extern void I_HandleKeyboardEvent(SDL_Event *sdlevent);
+
+static void TranslateJoystickEvent(SDL_Event *ev) {
+    int i, btnmaps;
+    static const struct
+    {
+        int button;
+        SDL_Keycode sym;
+        SDL_Scancode scan;
+    } btnmap[] =
+    {
+        { 0, SDLK_RETURN, SDL_SCANCODE_RETURN },       // A Button
+        { 13, SDLK_UP, SDL_SCANCODE_UP },              // Up
+        { 15, SDLK_DOWN, SDL_SCANCODE_DOWN },          // Down
+        { 12, SDLK_LEFT, SDL_SCANCODE_LEFT },          // Left
+        { 14, SDLK_RIGHT, SDL_SCANCODE_RIGHT },        // Right
+        { 11, SDLK_ESCAPE, SDL_SCANCODE_ESCAPE },      // -
+    };
+
+    btnmaps = sizeof(btnmap)/sizeof(btnmap[0]);
+    for (i=0; i<btnmaps; i++ ) {
+        if (btnmap[i].button == ev->jbutton.button ) break;
+    }
+
+    if (i != btnmaps) {
+        SDL_Event ev_new;
+        memset(&ev_new, 0, sizeof(SDL_Event));
+        ev_new.key.keysym.sym = btnmap[i].sym;
+        ev_new.key.keysym.scancode = btnmap[i].scan;
+        if (ev->type == SDL_JOYBUTTONDOWN) {
+            ev_new.type = ev_new.key.type = SDL_KEYDOWN;
+            ev_new.key.state = SDL_PRESSED;
+        } else if (ev->type == SDL_JOYBUTTONUP) {
+            ev_new.type = ev_new.key.type = SDL_KEYUP;
+            ev_new.key.state = SDL_RELEASED;
+        }
+
+        I_HandleKeyboardEvent(&ev_new);
+    }
+}
+
 void I_GetEvent(void)
 {
-    extern void I_HandleKeyboardEvent(SDL_Event *sdlevent);
     extern void I_HandleMouseEvent(SDL_Event *sdlevent);
     SDL_Event sdlevent;
 
@@ -438,7 +478,12 @@ void I_GetEvent(void)
                     I_HandleMouseEvent(&sdlevent);
                 }
                 break;
-
+            // Translate some gamepad events to keys to allow menu navigation
+            // in games that don't support joystick menu controls (Heretic, Hexen)
+            case SDL_JOYBUTTONDOWN:
+            case SDL_JOYBUTTONUP:
+                TranslateJoystickEvent(&sdlevent);
+                break;
             case SDL_QUIT:
                 if (screensaver_mode)
                 {
