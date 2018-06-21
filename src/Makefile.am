@@ -289,7 +289,10 @@ mus2mid : $(MUS2MID_SRC_FILES)
               $(MUS2MID_SRC_FILES) -o $@
 
 if BUILD_SWITCH
-all-local: @PROGRAM_PREFIX@doom.nro
+all-local: @PROGRAM_PREFIX@doom.nro \
+	@PROGRAM_PREFIX@heretic.nro \
+	@PROGRAM_PREFIX@hexen.nro \
+	@PROGRAM_PREFIX@strife.nro
 
 @PROGRAM_PREFIX@doom.nro: @PROGRAM_PREFIX@doom @PROGRAM_PREFIX@doom.nacp
 	elf2nro @PROGRAM_PREFIX@doom $@ --nacp=@PROGRAM_PREFIX@doom.nacp
