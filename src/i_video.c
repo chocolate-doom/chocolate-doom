@@ -447,15 +447,6 @@ extern boolean askforquit __attribute__((weak));
 extern int messageToPrint __attribute__((weak));
 
 static void TranslateJoystickEvent(SDL_Event *ev) {
-    static const struct EventMap game_btnmap[] = {
-        { 0,  SDLK_RETURN, SDL_SCANCODE_RETURN },       // A Button
-        { 13, SDLK_UP, SDL_SCANCODE_UP },              // Up
-        { 15, SDLK_DOWN, SDL_SCANCODE_DOWN },          // Down
-        { 12, SDLK_LEFT, SDL_SCANCODE_LEFT },          // Left
-        { 14, SDLK_RIGHT, SDL_SCANCODE_RIGHT },        // Right
-        { 11, SDLK_ESCAPE, SDL_SCANCODE_ESCAPE },      // -
-    };
-
     static const struct EventMap menu_btnmap[] = {
         { 0, SDLK_RETURN, SDL_SCANCODE_RETURN },        // A Button
         { 13, SDLK_UP, SDL_SCANCODE_UP },               // Up
