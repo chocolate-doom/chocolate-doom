@@ -116,6 +116,13 @@ AS_IF([test "x$enable_werror" = "xyes"], [
         CFLAGS="$CFLAGS -Werror"
 ])
 
+AS_IF([test "x$with_platform" = "xswitch"], [
+        CFLAGS="-fPIC -march=armv8-a -mtune=cortex-a57 -mtp=soft -ftls-model=local-exec $CFLAGS"
+        CPPFLAGS="-D__SWITCH__ $CPPFLAGS -isystem /opt/devkitpro/libnx/include"
+        LIBS="$LIBS -L/opt/devkitpro/libnx/lib -lnx -lm"
+        LDFLAGS="-fPIE -specs=/opt/devkitpro/libnx/switch.specs"
+])
+
 AM_CONDITIONAL(HAVE_WINDRES, test "$WINDRES" != "")
 AM_CONDITIONAL(HAVE_PYTHON, $HAVE_PYTHON)
 

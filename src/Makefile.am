@@ -53,7 +53,7 @@ net_structrw.c       net_structrw.h        \
 z_native.c           z_zone.h
 
 @PROGRAM_PREFIX@server_SOURCES=$(COMMON_SOURCE_FILES) $(DEDSERV_FILES)
-@PROGRAM_PREFIX@server_LDADD = @LDFLAGS@ @SDLNET_LIBS@
+@PROGRAM_PREFIX@server_LDADD = @SDLNET_LIBS@
 
 # Source files used by the game binaries (chocolate-doom, etc.)
 
@@ -133,7 +133,7 @@ EXTRA_LIBS =                                               \
                $(top_builddir)/textscreen/libtextscreen.a  \
                $(top_builddir)/pcsound/libpcsound.a        \
                $(top_builddir)/opl/libopl.a                \
-               @LDFLAGS@                                   \
+               @PNG_LIBS@                                  \
                @SDL_LIBS@                                  \
                @SDLMIXER_LIBS@                             \
                @SDLNET_LIBS@
