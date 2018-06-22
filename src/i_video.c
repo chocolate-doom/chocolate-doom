@@ -408,16 +408,44 @@ static void I_ToggleFullScreen(void)
 
 extern void I_HandleKeyboardEvent(SDL_Event *sdlevent);
 
-static void TranslateJoystickEvent(SDL_Event *ev) {
-    int i, btnmaps;
-    static const struct
-    {
+struct EventMap {
         int button;
         SDL_Keycode sym;
         SDL_Scancode scan;
-    } btnmap[] =
-    {
-        { 0, SDLK_RETURN, SDL_SCANCODE_RETURN },       // A Button
+};
+
+void sendKeypress(SDL_Event *ev, int sym, int scancode) {
+    SDL_Event ev_new;
+    memset(&ev_new, 0, sizeof(SDL_Event));
+    ev_new.key.keysym.sym = sym;
+    ev_new.key.keysym.scancode = scancode;
+    if (ev->type == SDL_JOYBUTTONDOWN) {
+        ev_new.type = ev_new.key.type = SDL_KEYDOWN;
+        ev_new.key.state = SDL_PRESSED;
+    } else if (ev->type == SDL_JOYBUTTONUP) {
+        ev_new.type = ev_new.key.type = SDL_KEYUP;
+        ev_new.key.state = SDL_RELEASED;
+    }
+
+    I_HandleKeyboardEvent(&ev_new);
+}
+
+void TranslateEvent(SDL_Event *ev, const struct EventMap *btnmap, int btnmaps) {
+
+    int i;
+
+    for (i=0; i<btnmaps; i++ ) {
+        if (btnmap[i].button == ev->jbutton.button ) break;
+    }
+
+    if (i != btnmaps) {
+        sendKeypress(ev,btnmap[i].sym, btnmap[i].scan);
+    }
+}
+
+static void TranslateJoystickEvent(SDL_Event *ev) {
+    static const struct EventMap game_btnmap[] = {
+        { 0,  SDLK_RETURN, SDL_SCANCODE_RETURN },       // A Button
         { 13, SDLK_UP, SDL_SCANCODE_UP },              // Up
         { 15, SDLK_DOWN, SDL_SCANCODE_DOWN },          // Down
         { 12, SDLK_LEFT, SDL_SCANCODE_LEFT },          // Left
@@ -425,26 +453,17 @@ static void TranslateJoystickEvent(SDL_Event *ev) {
         { 11, SDLK_ESCAPE, SDL_SCANCODE_ESCAPE },      // -
     };
 
-    btnmaps = sizeof(btnmap)/sizeof(btnmap[0]);
-    for (i=0; i<btnmaps; i++ ) {
-        if (btnmap[i].button == ev->jbutton.button ) break;
-    }
+    static const struct EventMap menu_btnmap[] = {
+        { 0, SDLK_RETURN, SDL_SCANCODE_RETURN },        // A Button
+        { 13, SDLK_UP, SDL_SCANCODE_UP },               // Up
+        { 15, SDLK_DOWN, SDL_SCANCODE_DOWN },           // Down
+        { 12, SDLK_LEFT, SDL_SCANCODE_LEFT },           // Left
+        { 14, SDLK_RIGHT, SDL_SCANCODE_RIGHT },         // Right
+        { 11, SDLK_ESCAPE, SDL_SCANCODE_ESCAPE },       // -
+        { 1,  SDLK_BACKSPACE, SDL_SCANCODE_BACKSPACE }, // B
+    };
 
-    if (i != btnmaps) {
-        SDL_Event ev_new;
-        memset(&ev_new, 0, sizeof(SDL_Event));
-        ev_new.key.keysym.sym = btnmap[i].sym;
-        ev_new.key.keysym.scancode = btnmap[i].scan;
-        if (ev->type == SDL_JOYBUTTONDOWN) {
-            ev_new.type = ev_new.key.type = SDL_KEYDOWN;
-            ev_new.key.state = SDL_PRESSED;
-        } else if (ev->type == SDL_JOYBUTTONUP) {
-            ev_new.type = ev_new.key.type = SDL_KEYUP;
-            ev_new.key.state = SDL_RELEASED;
-        }
-
-        I_HandleKeyboardEvent(&ev_new);
-    }
+    TranslateEvent(ev, menu_btnmap, sizeof(menu_btnmap)/sizeof(menu_btnmap[0]));
 }
 
 void I_GetEvent(void)
