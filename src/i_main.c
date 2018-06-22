@@ -32,10 +32,6 @@
 // calls all startup code, parses command line options.
 //
 
-#ifdef  __SWITCH__
-#include <switch.h>
-#endif
-
 void D_DoomMain (void);
 
 int main(int argc, char **argv)
@@ -44,17 +40,6 @@ int main(int argc, char **argv)
 
     myargc = argc;
     myargv = argv;
-
-#ifdef  __SWITCH__
-
-#if 1
-	//consoleDebugInit(debugDevice_SVC);
-    socketInitializeDefault();
-	nxlinkStdio();
-	stdout = stderr;
-#endif
-
-#endif
 
     M_FindResponseFile();
 
