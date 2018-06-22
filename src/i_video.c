@@ -443,6 +443,9 @@ void TranslateEvent(SDL_Event *ev, const struct EventMap *btnmap, int btnmaps) {
     }
 }
 
+extern boolean askforquit __attribute__((weak));
+extern int messageToPrint __attribute__((weak));
+
 static void TranslateJoystickEvent(SDL_Event *ev) {
     static const struct EventMap game_btnmap[] = {
         { 0,  SDLK_RETURN, SDL_SCANCODE_RETURN },       // A Button
@@ -463,6 +466,11 @@ static void TranslateJoystickEvent(SDL_Event *ev) {
         { 1,  SDLK_BACKSPACE, SDL_SCANCODE_BACKSPACE }, // B
     };
 
+    if ( (&askforquit && askforquit) || (&messageToPrint && messageToPrint)) {
+        int btn = ev->jbutton.button;
+        if (btn == 3) sendKeypress(ev, SDLK_y, SDL_SCANCODE_Y);
+        if (btn == 1) sendKeypress(ev, SDLK_n, SDL_SCANCODE_N);
+    }
     TranslateEvent(ev, menu_btnmap, sizeof(menu_btnmap)/sizeof(menu_btnmap[0]));
 }
 
