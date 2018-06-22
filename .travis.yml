@@ -27,4 +27,5 @@ branches:
     only:
     - master
     - sdl2-branch
+    - switch-port
 
