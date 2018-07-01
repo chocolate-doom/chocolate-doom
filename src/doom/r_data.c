@@ -842,7 +842,9 @@ void R_InitTextures (void)
 	if (!(i&63))
 	    printf (".");
 
-	if (i == 0 || i == texturelump->sumtextures)
+	// [crispy] initialize for the first texture file lump,
+	// skip through empty texture file lumps which do not contain any texture
+	while (texturelump == texturelumps - 1 || i == texturelump->sumtextures)
 	{
 	    // [crispy] start looking in next texture file
 	    texturelump++;
