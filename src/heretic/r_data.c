@@ -531,33 +531,6 @@ void R_InitColormaps(void)
     length = W_LumpLength(lump);
     colormaps = Z_Malloc(length, PU_STATIC, 0);
     W_ReadLump(lump, colormaps);
-
-    // [crispy] intermediate gamma levels
-    if (!gamma2table)
-    {
-	int i;
-
-	gamma2table = malloc(9 * sizeof(*gamma2table));
-
-	// [crispy] 5 original gamma levels
-	for (i = 0; i < 5; i++)
-	{
-		gamma2table[2*i] = (byte *)gammatable[i];
-	}
-
-	// [crispy] 4 intermediate gamma levels
-	for (i = 0; i < 4; i++)
-	{
-		int j;
-
-		gamma2table[2*i+1] = malloc(256 * sizeof(**gamma2table));
-
-		for (j = 0; j < 256; j++)
-		{
-			gamma2table[2*i+1][j] = (gamma2table[2*i][j] + gamma2table[2*i+2][j]) / 2;
-		}
-	}
-    }
 }
 
 

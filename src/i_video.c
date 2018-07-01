@@ -845,10 +845,42 @@ void I_ReadScreen (pixel_t* scr)
 // I_SetPalette
 //
 // [crispy] intermediate gamma levels
-byte **gamma2table = NULL;
+static byte **gamma2table;
+static void I_SetGammaTable (void)
+{
+	int i;
+
+	gamma2table = malloc(9 * sizeof(*gamma2table));
+
+	// [crispy] 5 original gamma levels
+	for (i = 0; i < 5; i++)
+	{
+		gamma2table[2*i] = (byte *)gammatable[i];
+	}
+
+	// [crispy] 4 intermediate gamma levels
+	for (i = 0; i < 4; i++)
+	{
+		int j;
+
+		gamma2table[2*i+1] = malloc(256 * sizeof(**gamma2table));
+
+		for (j = 0; j < 256; j++)
+		{
+			gamma2table[2*i+1][j] = (gamma2table[2*i][j] + gamma2table[2*i+2][j]) / 2;
+		}
+	}
+}
+
 void I_SetPalette (byte *doompalette)
 {
     int i;
+
+    // [crispy] intermediate gamma levels
+    if (!gamma2table)
+    {
+        I_SetGammaTable();
+    }
 
     for (i=0; i<256; ++i)
     {

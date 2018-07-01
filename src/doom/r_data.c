@@ -1119,33 +1119,6 @@ void R_InitColormaps (void)
     lump = W_GetNumForName(DEH_String("COLORMAP"));
     colormaps = W_CacheLumpNum(lump, PU_STATIC);
 
-    // [crispy] intermediate gamma levels
-    if (!gamma2table)
-    {
-	int i;
-
-	gamma2table = malloc(9 * sizeof(*gamma2table));
-
-	// [crispy] 5 original gamma levels
-	for (i = 0; i < 5; i++)
-	{
-		gamma2table[2*i] = (byte *)gammatable[i];
-	}
-
-	// [crispy] 4 intermediate gamma levels
-	for (i = 0; i < 4; i++)
-	{
-		int j;
-
-		gamma2table[2*i+1] = malloc(256 * sizeof(**gamma2table));
-
-		for (j = 0; j < 256; j++)
-		{
-			gamma2table[2*i+1][j] = (gamma2table[2*i][j] + gamma2table[2*i+2][j]) / 2;
-		}
-	}
-    }
-
     // [crispy] initialize color translation and color strings tables
     {
 	byte *playpal = W_CacheLumpName("PLAYPAL", PU_STATIC);
