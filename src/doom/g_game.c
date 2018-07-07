@@ -1887,7 +1887,9 @@ void G_DoLoadGame (void)
     // cheat codes and other single player only specifics.
     if (startloadgame == -1)
     {
+	netdemo = false;
 	netgame = false;
+	deathmatch = false;
     }
     gameaction = ga_nothing; 
 	 
