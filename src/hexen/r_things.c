@@ -47,8 +47,8 @@ fixed_t pspritescale, pspriteiscale;
 lighttable_t **spritelights;
 
 // constant arrays used for psprite clipping and initializing clipping
-short negonearray[SCREENWIDTH];
-short screenheightarray[SCREENWIDTH];
+short negonearray[MAXWIDTH];
+short screenheightarray[MAXWIDTH];
 
 boolean LevelUseFullBright;
 /*
@@ -901,7 +901,7 @@ void R_SortVisSprites(void)
 void R_DrawSprite(vissprite_t * spr)
 {
     drawseg_t *ds;
-    short clipbot[SCREENWIDTH], cliptop[SCREENWIDTH];
+    short clipbot[MAXWIDTH], cliptop[MAXWIDTH];
     int x, r1, r2;
     fixed_t scale, lowscale;
     int silhouette;
