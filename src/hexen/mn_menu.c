@@ -294,11 +294,16 @@ static Menu_t *Menus[] = {
     &SaveMenu
 };
 
+// [crispy] intermediate gamma levels
 static char *GammaText[] = {
     TXT_GAMMA_LEVEL_OFF,
+    TXT_GAMMA_LEVEL_05,
     TXT_GAMMA_LEVEL_1,
+    TXT_GAMMA_LEVEL_15,
     TXT_GAMMA_LEVEL_2,
+    TXT_GAMMA_LEVEL_25,
     TXT_GAMMA_LEVEL_3,
+    TXT_GAMMA_LEVEL_35,
     TXT_GAMMA_LEVEL_4
 };
 
@@ -1491,7 +1496,7 @@ boolean MN_Responder(event_t * event)
         else if (key == key_menu_gamma)          // F11 (gamma correction)
         {
             usegamma++;
-            if (usegamma > 4)
+            if (usegamma > 4+4) // [crispy] intermediate gamma levels
             {
                 usegamma = 0;
             }

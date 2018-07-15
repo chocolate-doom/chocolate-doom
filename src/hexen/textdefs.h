@@ -40,6 +40,11 @@
 #define TXT_GAMMA_LEVEL_2	"GAMMA CORRECTION LEVEL 2"
 #define TXT_GAMMA_LEVEL_3	"GAMMA CORRECTION LEVEL 3"
 #define TXT_GAMMA_LEVEL_4	"GAMMA CORRECTION LEVEL 4"
+// [crispy] intermediate gamma levels
+#define TXT_GAMMA_LEVEL_05	"GAMMA CORRECTION LEVEL 0.5"
+#define TXT_GAMMA_LEVEL_15	"GAMMA CORRECTION LEVEL 1.5"
+#define TXT_GAMMA_LEVEL_25	"GAMMA CORRECTION LEVEL 2.5"
+#define TXT_GAMMA_LEVEL_35	"GAMMA CORRECTION LEVEL 3.5"
 #define	EMPTYSTRING	"empty slot"
 
 // P_inter.c ---------------------------------------------------------------
