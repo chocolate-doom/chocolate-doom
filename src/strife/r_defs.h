@@ -433,11 +433,11 @@ typedef struct
   unsigned short		pad1;
   // Here lies the rub for all
   //  dynamic resize/change of resolution.
-  unsigned short		top[SCREENWIDTH];
+  unsigned short		top[MAXWIDTH];
   unsigned short		pad2;
   unsigned short		pad3;
   // See above.
-  unsigned short		bottom[SCREENWIDTH];
+  unsigned short		bottom[MAXWIDTH];
   unsigned short		pad4;
 
 } visplane_t;

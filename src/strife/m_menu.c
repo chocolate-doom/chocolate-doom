@@ -105,12 +105,17 @@ boolean			messageNeedsInput;
 
 void    (*messageRoutine)(int response);
 
-char gammamsg[5][26] =
+// [crispy] intermediate gamma levels
+char gammamsg[5+4][26+2] =
 {
     GAMMALVL0,
+    GAMMALVL05,
     GAMMALVL1,
+    GAMMALVL15,
     GAMMALVL2,
+    GAMMALVL25,
     GAMMALVL3,
+    GAMMALVL35,
     GAMMALVL4
 };
 
@@ -2095,7 +2100,7 @@ boolean M_Responder (event_t* ev)
         else if (key == key_menu_gamma)    // gamma toggle
         {
             usegamma++;
-            if (usegamma > 4)
+            if (usegamma > 4+4) // [crispy] intermediate gamma levels
                 usegamma = 0;
             players[consoleplayer].message = DEH_String(gammamsg[usegamma]);
             I_SetPalette (W_CacheLumpName (DEH_String("PLAYPAL"),PU_CACHE));
