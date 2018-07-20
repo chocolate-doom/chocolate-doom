@@ -1352,6 +1352,7 @@ void SetVideoMode(int resize_fb) // [crispy] un-static, resize_fb
 
     // Format of argbbuffer must match the screen pixel format because we
     // import the surface data into the texture.
+
     if (argbbuffer != NULL && resize_fb) // [crispy] resize_fb
     {
         SDL_FreeSurface(argbbuffer);

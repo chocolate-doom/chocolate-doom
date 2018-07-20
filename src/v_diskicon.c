@@ -67,18 +67,20 @@ static void SaveDiskData(const char *disk_lump, int xoffs, int yoffs)
     patch_t *disk;
 
     // Allocate a complete temporary screen where we'll draw the patch.
-    tmpscreen = Z_Malloc(MAXWIDTH * MAXHEIGHT * sizeof(*tmpscreen),
+    tmpscreen = Z_Malloc(SCREENWIDTH * SCREENHEIGHT * sizeof(*tmpscreen),
                          PU_STATIC, NULL);
     memset(tmpscreen, 0, SCREENWIDTH * SCREENHEIGHT * sizeof(*tmpscreen));
     V_UseBuffer(tmpscreen);
 
     // Buffer where we'll save the disk data.
+
     if (disk_data != NULL)
     {
         Z_Free(disk_data);
+        disk_data = NULL;
     }
 
-    disk_data = Z_Malloc(MAX_LOADING_DISK_W * MAX_LOADING_DISK_H * sizeof(*disk_data),
+    disk_data = Z_Malloc(LOADING_DISK_W * LOADING_DISK_H * sizeof(*disk_data),
                          PU_STATIC, NULL);
 
     // Draw the patch and save the result to disk_data.
@@ -101,9 +103,10 @@ void V_EnableLoadingDisk(const char *lump_name, int xoffs, int yoffs)
     if (saved_background != NULL)
     {
         Z_Free(saved_background);
+        saved_background = NULL;
     }
 
-    saved_background = Z_Malloc(MAX_LOADING_DISK_W * MAX_LOADING_DISK_H
+    saved_background = Z_Malloc(LOADING_DISK_W * LOADING_DISK_H
                                  * sizeof(*saved_background),
                                 PU_STATIC, NULL);
     SaveDiskData(lump_name, xoffs, yoffs);
@@ -123,7 +126,7 @@ static pixel_t *DiskRegionPointer(void)
 
 void V_DrawDiskIcon(void)
 {
-    if (disk_data != NULL)// && recent_bytes_read > diskicon_threshold)
+    if (disk_data != NULL && recent_bytes_read > diskicon_threshold)
     {
         // Save the background behind the disk before we draw it.
         CopyRegion(saved_background, LOADING_DISK_W,
