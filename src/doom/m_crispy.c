@@ -123,6 +123,14 @@ multiitem_t multiitem_uncapped[NUM_UNCAPPED] =
     {UNCAPPED_VSYNC, "on+vsync"}, // "vsync"},
 };
 
+extern void AM_ReInit (void);
+extern void EnableLoadingDisk (void);
+extern void P_SegLengths (boolean contrast_only);
+extern void R_ExecuteSetViewSize (void);
+extern void R_InitLightTables (void);
+extern void SetVideoMode (int);
+extern void S_UpdateSndChannels (void);
+
 void M_CrispyToggleAutomapstats(int choice)
 {
     choice = 0;
@@ -299,6 +307,21 @@ void M_CrispyToggleHires(int choice)
 {
     choice = 0;
     crispy->hires = !crispy->hires;
+
+    // [crispy] stop rendering for a while ...
+    nodrawers = true;
+    // [crispy] re-initialize framebuffers, textures and renderer
+    I_InitGraphics();
+    // [crispy] re-calculate framebuffer coordinates
+    R_ExecuteSetViewSize();
+    // [crispy] re-draw bezel
+    R_FillBackScreen();
+    // [crispy] re-calculate disk icon coordinates
+    EnableLoadingDisk();
+    // [crispy] re-calculate automap coordinates
+    AM_ReInit();
+    // [crispy] ... continue rendering
+    nodrawers = false;
 }
 
 void M_CrispyToggleJumping(int choice)
@@ -382,10 +405,6 @@ void M_CrispyToggleSmoothScaling(int choice)
 
 void M_CrispyToggleSmoothLighting(int choice)
 {
-    extern void R_InitLightTables (void);
-    extern void R_ExecuteSetViewSize (void);
-    extern void P_SegLengths (boolean contrast_only);
-
     choice = 0;
     crispy->smoothlight = !crispy->smoothlight;
 
@@ -403,8 +422,6 @@ void M_CrispyToggleSmoothLighting(int choice)
 
 void M_CrispyToggleSndChannels(int choice)
 {
-    extern void S_UpdateSndChannels (void);
-
     choice = 0;
     crispy->sndchannels = (crispy->sndchannels + 1) % NUM_SNDCHANNELS;
 
@@ -447,8 +464,7 @@ void M_CrispyToggleUncapped(int choice)
     // i.e. UNCAPPED_OFF -> UNCAPPED_ON and UNCAPPED_ON -> UNCAPPED_VSYNC
     if (crispy_uncapped_old == UNCAPPED_ON || crispy->uncapped == UNCAPPED_ON)
     {
-	extern void SetVideoMode (void);
-	SetVideoMode();
+	SetVideoMode(0); // [crispy] resize_fb
     }
 }
 

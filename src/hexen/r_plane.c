@@ -384,7 +384,7 @@ void R_DrawPlanes(void)
     int skyTexture2;
     int scrollOffset;
     int frac;
-    int fracstep = FRACUNIT >> hires;
+    int fracstep = FRACUNIT >> crispy->hires;
 
     extern byte *ylookup[MAXHEIGHT];
     extern int columnofs[MAXWIDTH];

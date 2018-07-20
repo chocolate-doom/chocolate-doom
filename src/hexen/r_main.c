@@ -560,8 +560,8 @@ void R_ExecuteSetViewSize(void)
     }
     else
     {
-        scaledviewwidth = (setblocks * 32) << hires;
-        viewheight = (setblocks * 161 / 10) << hires;
+        scaledviewwidth = (setblocks * 32) << crispy->hires;
+        viewheight = (setblocks * 161 / 10) << crispy->hires;
     }
 
     detailshift = setdetail;
@@ -734,7 +734,7 @@ void R_SetupFrame(player_t * player)
     extralight = player->extralight;
     viewz = player->viewz;
 
-    tempCentery = viewheight / 2 + ((player->lookdir) << hires) * screenblocks / 10;
+    tempCentery = viewheight / 2 + ((player->lookdir) << crispy->hires) * screenblocks / 10;
     if (centery != tempCentery)
     {
         centery = tempCentery;

@@ -685,8 +685,8 @@ void R_ExecuteSetViewSize (void)
     }
     else
     {
-	scaledviewwidth = (setblocks*32) << hires;
-	viewheight = ((setblocks*168/10)&~7) << hires;
+	scaledviewwidth = (setblocks*32) << crispy->hires;
+	viewheight = ((setblocks*168/10)&~7) << crispy->hires;
     }
     
     detailshift = setdetail;
@@ -856,7 +856,7 @@ void R_SetupPitch(player_t* player)
     if(viewpitch != player->pitch)
     {
         viewpitch   = player->pitch;
-        pitchfrac   = (setblocks * (player->pitch << hires)) / 10;
+        pitchfrac   = (setblocks * (player->pitch << crispy->hires)) / 10;
         centery     = pitchfrac + viewheight / 2;
         centeryfrac = centery << FRACBITS;
 

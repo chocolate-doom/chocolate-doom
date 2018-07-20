@@ -895,7 +895,7 @@ static void DrawAndBlit(void)
     {
         if (!netgame)
         {
-            V_DrawPatch(160, (viewwindowy >> hires) + 5, W_CacheLumpName("PAUSED",
+            V_DrawPatch(160, (viewwindowy >> crispy->hires) + 5, W_CacheLumpName("PAUSED",
                                                               PU_CACHE));
         }
         else

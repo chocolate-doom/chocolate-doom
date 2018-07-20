@@ -257,13 +257,13 @@ void D_Display (void)
             break;
         if (automapactive)
             AM_Drawer ();
-        if (wipe || (viewheight != (200 <<hires) && fullscreen) )
+        if (wipe || (viewheight != (200 <<crispy->hires) && fullscreen) )
             redrawsbar = true;
         // haleyjd 08/29/10: [STRIFE] Always redraw sbar if menu is/was active
         if (menuactivestate || (inhelpscreensstate && !inhelpscreens))
             redrawsbar = true;              // just put away the help screen
-        ST_Drawer (viewheight == (200 << hires), redrawsbar );
-        fullscreen = viewheight == (200 << hires);
+        ST_Drawer (viewheight == (200 << crispy->hires), redrawsbar );
+        fullscreen = viewheight == (200 << crispy->hires);
         break;
       
      // haleyjd 08/23/2010: [STRIFE] No intermission
@@ -304,7 +304,7 @@ void D_Display (void)
     }
 
     // see if the border needs to be updated to the screen
-    if (gamestate == GS_LEVEL && !automapactive && scaledviewwidth != (320 << hires))
+    if (gamestate == GS_LEVEL && !automapactive && scaledviewwidth != (320 << crispy->hires))
     {
         if (menuactive || menuactivestate || !viewactivestate)
         {
@@ -350,8 +350,8 @@ void D_Display (void)
         if (automapactive)
             y = 4;
         else
-            y = (viewwindowy >> hires)+4;
-        V_DrawPatchDirect((viewwindowx >> hires) + ((scaledviewwidth >> hires) - 68) / 2, y,
+            y = (viewwindowy >> crispy->hires)+4;
+        V_DrawPatchDirect((viewwindowx >> crispy->hires) + ((scaledviewwidth >> crispy->hires) - 68) / 2, y,
                           W_CacheLumpName (DEH_String("M_PAUSE"), PU_CACHE));
     }
 

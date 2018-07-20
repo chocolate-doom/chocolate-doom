@@ -335,8 +335,8 @@ void D_Display (void)
 	if (automapactive && !crispy->automapoverlay)
 	    y = 4;
 	else
-	    y = (viewwindowy >> hires)+4;
-	V_DrawPatchShadow2((viewwindowx >> hires) + ((scaledviewwidth >> hires) - 68) / 2, y,
+	    y = (viewwindowy >> crispy->hires)+4;
+	V_DrawPatchShadow2((viewwindowx >> crispy->hires) + ((scaledviewwidth >> crispy->hires) - 68) / 2, y,
                           W_CacheLumpName (DEH_String("M_PAUSE"), PU_CACHE));
     }
 
@@ -376,7 +376,7 @@ void D_Display (void)
     } while (!done);
 }
 
-static void EnableLoadingDisk(void)
+void EnableLoadingDisk(void) // [crispy] un-static
 {
     const char *disk_lump_name;
 

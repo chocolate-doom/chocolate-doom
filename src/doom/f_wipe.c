@@ -187,7 +187,7 @@ wipe_doMelt
 	    }
 	    else if (y[i] < height)
 	    {
-		dy = (y[i] < 16) ? y[i]+1 : (8 << hires);
+		dy = (y[i] < 16) ? y[i]+1 : (8 << crispy->hires);
 		if (y[i]+dy >= height) dy = height - y[i];
 		s = &((dpixel_t *)wipe_scr_end)[i*height+y[i]];
 		d = &((dpixel_t *)wipe_scr)[y[i]*width+i];
@@ -234,7 +234,7 @@ wipe_StartScreen
   int	width,
   int	height )
 {
-    wipe_scr_start = Z_Malloc(SCREENWIDTH * SCREENHEIGHT * sizeof(*wipe_scr_start), PU_STATIC, NULL);
+    wipe_scr_start = Z_Malloc(MAXWIDTH * MAXHEIGHT * sizeof(*wipe_scr_start), PU_STATIC, NULL);
     I_ReadScreen(wipe_scr_start);
     return 0;
 }
@@ -246,7 +246,7 @@ wipe_EndScreen
   int	width,
   int	height )
 {
-    wipe_scr_end = Z_Malloc(SCREENWIDTH * SCREENHEIGHT * sizeof(*wipe_scr_end), PU_STATIC, NULL);
+    wipe_scr_end = Z_Malloc(MAXWIDTH * MAXHEIGHT * sizeof(*wipe_scr_end), PU_STATIC, NULL);
     I_ReadScreen(wipe_scr_end);
     V_DrawBlock(x, y, width, height, wipe_scr_start); // restore start scr.
     return 0;

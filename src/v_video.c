@@ -37,6 +37,7 @@
 #include "v_video.h"
 #include "w_wad.h"
 #include "z_zone.h"
+#include "crispy.h"
 
 #include "config.h"
 #ifdef HAVE_LIBPNG
@@ -94,12 +95,12 @@ void V_CopyRect(int srcx, int srcy, pixel_t *source,
     pixel_t *src;
     pixel_t *dest;
  
-    srcx <<= hires;
-    srcy <<= hires;
-    width <<= hires;
-    height <<= hires;
-    destx <<= hires;
-    desty <<= hires;
+    srcx <<= crispy->hires;
+    srcy <<= crispy->hires;
+    width <<= crispy->hires;
+    height <<= crispy->hires;
+    destx <<= crispy->hires;
+    desty <<= crispy->hires;
 
 #ifdef RANGECHECK 
     if (srcx < 0
@@ -654,7 +655,7 @@ void V_DrawBlock(int x, int y, int width, int height, pixel_t *src)
  
     V_MarkRect (x, y, width, height); 
  
-    dest = dest_screen + (y << hires) * SCREENWIDTH + x;
+    dest = dest_screen + (y << crispy->hires) * SCREENWIDTH + x;
 
     while (height--) 
     { 
@@ -681,13 +682,13 @@ void V_DrawScaledBlock(int x, int y, int width, int height, byte *src)
 
     V_MarkRect (x, y, width, height);
 
-    dest = dest_screen + (y << hires) * SCREENWIDTH + (x << hires);
+    dest = dest_screen + (y << crispy->hires) * SCREENWIDTH + (x << crispy->hires);
 
-    for (i = 0; i < (height << hires); i++)
+    for (i = 0; i < (height << crispy->hires); i++)
     {
-        for (j = 0; j < (width << hires); j++)
+        for (j = 0; j < (width << crispy->hires); j++)
         {
-            *(dest + i * SCREENWIDTH + j) = *(src + (i >> hires) * width + (j >> hires));
+            *(dest + i * SCREENWIDTH + j) = *(src + (i >> crispy->hires) * width + (j >> crispy->hires));
         }
     }
 }
@@ -769,11 +770,11 @@ void V_CopyScaledBuffer(byte *dest, byte *src, size_t size)
 
     while (size--)
     {
-        for (i = 0; i <= hires; i++)
+        for (i = 0; i <= crispy->hires; i++)
         {
-            for (j = 0; j <= hires; j++)
+            for (j = 0; j <= crispy->hires; j++)
             {
-                *(dest + (size << hires) + (hires * (int) (size / ORIGWIDTH) + i) * SCREENWIDTH + j) = *(src + size);
+                *(dest + (size << crispy->hires) + (crispy->hires * (int) (size / ORIGWIDTH) + i) * SCREENWIDTH + j) = *(src + size);
             }
         }
     }

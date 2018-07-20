@@ -42,7 +42,7 @@
 //#define MAXHEIGHT			832
 
 // status bar height at bottom of screen
-#define SBARHEIGHT		(32 << hires)
+#define SBARHEIGHT		(32 << crispy->hires)
 
 //
 // All drawing to the view buffer is accomplished in this file.
@@ -1070,36 +1070,36 @@ void R_FillBackScreen (void)
 
     patch = W_CacheLumpName(DEH_String("brdr_t"),PU_CACHE);
 
-    for (x=0 ; x<(scaledviewwidth >> hires) ; x+=8)
-	V_DrawPatch((viewwindowx >> hires)+x, (viewwindowy >> hires)-8, patch);
+    for (x=0 ; x<(scaledviewwidth >> crispy->hires) ; x+=8)
+	V_DrawPatch((viewwindowx >> crispy->hires)+x, (viewwindowy >> crispy->hires)-8, patch);
     patch = W_CacheLumpName(DEH_String("brdr_b"),PU_CACHE);
 
-    for (x=0 ; x<(scaledviewwidth >> hires) ; x+=8)
-	V_DrawPatch((viewwindowx >> hires)+x, (viewwindowy >> hires)+(viewheight >> hires), patch);
+    for (x=0 ; x<(scaledviewwidth >> crispy->hires) ; x+=8)
+	V_DrawPatch((viewwindowx >> crispy->hires)+x, (viewwindowy >> crispy->hires)+(viewheight >> crispy->hires), patch);
     patch = W_CacheLumpName(DEH_String("brdr_l"),PU_CACHE);
 
-    for (y=0 ; y<(viewheight >> hires) ; y+=8)
-	V_DrawPatch((viewwindowx >> hires)-8, (viewwindowy >> hires)+y, patch);
+    for (y=0 ; y<(viewheight >> crispy->hires) ; y+=8)
+	V_DrawPatch((viewwindowx >> crispy->hires)-8, (viewwindowy >> crispy->hires)+y, patch);
     patch = W_CacheLumpName(DEH_String("brdr_r"),PU_CACHE);
 
-    for (y=0 ; y<(viewheight >> hires) ; y+=8)
-	V_DrawPatch((viewwindowx >> hires)+(scaledviewwidth >> hires), (viewwindowy >> hires)+y, patch);
+    for (y=0 ; y<(viewheight >> crispy->hires) ; y+=8)
+	V_DrawPatch((viewwindowx >> crispy->hires)+(scaledviewwidth >> crispy->hires), (viewwindowy >> crispy->hires)+y, patch);
 
     // Draw beveled edge. 
-    V_DrawPatch((viewwindowx >> hires)-8,
-                (viewwindowy >> hires)-8,
+    V_DrawPatch((viewwindowx >> crispy->hires)-8,
+                (viewwindowy >> crispy->hires)-8,
                 W_CacheLumpName(DEH_String("brdr_tl"),PU_CACHE));
     
-    V_DrawPatch((viewwindowx >> hires)+(scaledviewwidth >> hires),
-                (viewwindowy >> hires)-8,
+    V_DrawPatch((viewwindowx >> crispy->hires)+(scaledviewwidth >> crispy->hires),
+                (viewwindowy >> crispy->hires)-8,
                 W_CacheLumpName(DEH_String("brdr_tr"),PU_CACHE));
     
-    V_DrawPatch((viewwindowx >> hires)-8,
-                (viewwindowy >> hires)+(viewheight >> hires),
+    V_DrawPatch((viewwindowx >> crispy->hires)-8,
+                (viewwindowy >> crispy->hires)+(viewheight >> crispy->hires),
                 W_CacheLumpName(DEH_String("brdr_bl"),PU_CACHE));
     
-    V_DrawPatch((viewwindowx >> hires)+(scaledviewwidth >> hires),
-                (viewwindowy >> hires)+(viewheight >> hires),
+    V_DrawPatch((viewwindowx >> crispy->hires)+(scaledviewwidth >> crispy->hires),
+                (viewwindowy >> crispy->hires)+(viewheight >> crispy->hires),
                 W_CacheLumpName(DEH_String("brdr_br"),PU_CACHE));
 
     V_RestoreBuffer();
