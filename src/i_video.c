@@ -1265,6 +1265,12 @@ static void SetVideoMode(void)
 
     // Create the 8-bit paletted and the 32-bit RGBA screenbuffer surfaces.
 
+    if (screenbuffer != NULL)
+    {
+        SDL_FreeSurface(screenbuffer);
+        screenbuffer = NULL;
+    }
+
     if (screenbuffer == NULL)
     {
         screenbuffer = SDL_CreateRGBSurface(0,
@@ -1275,6 +1281,13 @@ static void SetVideoMode(void)
 
     // Format of argbbuffer must match the screen pixel format because we
     // import the surface data into the texture.
+
+    if (argbbuffer != NULL)
+    {
+        SDL_FreeSurface(argbbuffer);
+        argbbuffer = NULL;
+    }
+
     if (argbbuffer == NULL)
     {
         SDL_PixelFormatEnumToMasks(pixel_format, &unused_bpp,
