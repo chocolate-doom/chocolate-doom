@@ -46,7 +46,7 @@ static wad_file_class_t *wad_file_classes[] =
     &stdc_wad_file,
 };
 
-wad_file_t *W_OpenFile(char *path)
+wad_file_t *W_OpenFile(const char *path)
 {
     wad_file_t *result;
     int i;
