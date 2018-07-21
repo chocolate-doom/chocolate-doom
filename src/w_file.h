@@ -28,7 +28,7 @@ typedef struct _wad_file_s wad_file_t;
 typedef struct
 {
     // Open a file for reading.
-    wad_file_t *(*OpenFile)(char *path);
+    wad_file_t *(*OpenFile)(const char *path);
 
     // Close the specified file.
     void (*CloseFile)(wad_file_t *file);
