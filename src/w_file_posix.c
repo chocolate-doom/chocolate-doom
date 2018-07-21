@@ -38,7 +38,7 @@ typedef struct
 
 extern wad_file_class_t posix_wad_file;
 
-static void MapFile(posix_wad_file_t *wad, char *filename)
+static void MapFile(posix_wad_file_t *wad, const char *filename)
 {
     void *result;
     int protection;
