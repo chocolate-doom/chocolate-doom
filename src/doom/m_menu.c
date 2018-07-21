@@ -1091,7 +1091,7 @@ void M_QuitResponse(int key)
 
 static const char *M_SelectEndMessage(void)
 {
-    char **endmsg;
+    const char **endmsg;
 
     if (logical_gamemission == doom)
     {
