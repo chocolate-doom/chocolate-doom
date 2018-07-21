@@ -670,7 +670,7 @@ void W_NWTMergeFile(char *filename, int flags)
 // a PWAD, then search the IWAD sprites, removing any sprite lumps that also
 // exist in the PWAD.
 
-void W_NWTDashMerge(char *filename)
+void W_NWTDashMerge(const char *filename)
 {
     wad_file_t *wad_file;
     int old_numlumps;
