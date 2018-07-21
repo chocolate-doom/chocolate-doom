@@ -624,7 +624,7 @@ static void W_NWTAddLumps(searchlist_t *list)
 // Merge sprites and flats in the way NWT does with its -af and -as
 // command-line options.
 
-void W_NWTMergeFile(char *filename, int flags)
+void W_NWTMergeFile(const char *filename, int flags)
 {
     int old_numlumps;
 
