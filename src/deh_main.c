@@ -483,6 +483,7 @@ void DEH_ParseCommandLine(void)
         {
             filename = D_TryFindWADByName(myargv[p]);
             DEH_LoadFile(filename);
+            free(filename);
             ++p;
         }
     }
