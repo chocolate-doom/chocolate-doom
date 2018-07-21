@@ -777,7 +777,7 @@ char *D_FindWADByName(const char *name)
 // if not found.
 //
 
-char *D_TryFindWADByName(char *filename)
+char *D_TryFindWADByName(const char *filename)
 {
     char *result;
 
