@@ -558,6 +558,15 @@ void D_DoomLoop (void)
 	// Update display, next frame, with current state.
         if (screenvisible)
             D_Display ();
+
+	// [crispy] post-rendering function pointer to apply config changes
+	// that affect rendering and that are better applied after the current
+	// frame has finished rendering
+	if (crispy->post_rendering_hook)
+	{
+		crispy->post_rendering_hook();
+		crispy->post_rendering_hook = NULL;
+	}
     }
 }
 

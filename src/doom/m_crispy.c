@@ -128,7 +128,7 @@ extern void EnableLoadingDisk (void);
 extern void P_SegLengths (boolean contrast_only);
 extern void R_ExecuteSetViewSize (void);
 extern void R_InitLightTables (void);
-extern void SetVideoMode (int);
+extern void SetVideoMode (boolean);
 extern void S_UpdateSndChannels (void);
 
 void M_CrispyToggleAutomapstats(int choice)
@@ -288,13 +288,18 @@ void M_CrispyToggleFreeaim(int choice)
     CheckCrispySingleplayer(!demorecording && !demoplayback && !netgame);
 }
 
+static void M_CrispyToggleSkyHook (void)
+{
+    players[consoleplayer].lookdir = 0;
+    R_InitSkyMap();
+}
+
 void M_CrispyToggleFreelook(int choice)
 {
     choice = 0;
     crispy->freelook = (crispy->freelook + 1) % NUM_FREELOOKS;
 
-    players[consoleplayer].lookdir = 0;
-    R_InitSkyMap();
+    crispy->post_rendering_hook = M_CrispyToggleSkyHook;
 }
 
 void M_CrispyToggleFullsounds(int choice)
@@ -303,13 +308,10 @@ void M_CrispyToggleFullsounds(int choice)
     crispy->soundfull = !crispy->soundfull;
 }
 
-void M_CrispyToggleHires(int choice)
+static void M_CrispyToggleHiresHook (void)
 {
-    choice = 0;
     crispy->hires = !crispy->hires;
 
-    // [crispy] stop rendering for a while ...
-    nodrawers = true;
     // [crispy] re-initialize framebuffers, textures and renderer
     I_InitGraphics();
     // [crispy] re-calculate framebuffer coordinates
@@ -320,8 +322,13 @@ void M_CrispyToggleHires(int choice)
     EnableLoadingDisk();
     // [crispy] re-calculate automap coordinates
     AM_ReInit();
-    // [crispy] ... continue rendering
-    nodrawers = false;
+}
+
+void M_CrispyToggleHires(int choice)
+{
+    choice = 0;
+
+    crispy->post_rendering_hook = M_CrispyToggleHiresHook;
 }
 
 void M_CrispyToggleJumping(int choice)
@@ -344,8 +351,7 @@ void M_CrispyToggleMouseLook(int choice)
     choice = 0;
     crispy->mouselook = !crispy->mouselook;
 
-    players[consoleplayer].lookdir = 0;
-    R_InitSkyMap();
+    crispy->post_rendering_hook = M_CrispyToggleSkyHook;
 }
 
 void M_CrispyToggleNeghealth(int choice)
@@ -373,7 +379,8 @@ void M_CrispyTogglePitch(int choice)
 {
     choice = 0;
     crispy->pitch = !crispy->pitch;
-    R_InitSkyMap();
+
+    crispy->post_rendering_hook = M_CrispyToggleSkyHook;
 }
 
 void M_CrispyToggleRecoil(int choice)
@@ -403,21 +410,23 @@ void M_CrispyToggleSmoothScaling(int choice)
     crispy->smoothscaling = !crispy->smoothscaling;
 }
 
-void M_CrispyToggleSmoothLighting(int choice)
+static void M_CrispyToggleSmoothLightingHook (void)
 {
-    choice = 0;
     crispy->smoothlight = !crispy->smoothlight;
 
-    // [crispy] stop rendering for a while ...
-    nodrawers = true;
     // [crispy] re-calculate the zlight[][] array
     R_InitLightTables();
     // [crispy] re-calculate the scalelight[][] array
     R_ExecuteSetViewSize();
     // [crispy] re-calculate fake contrast
     P_SegLengths(true);
-    // [crispy] ... continue rendering
-    nodrawers = false;
+}
+
+void M_CrispyToggleSmoothLighting(int choice)
+{
+    choice = 0;
+
+    crispy->post_rendering_hook = M_CrispyToggleSmoothLightingHook;
 }
 
 void M_CrispyToggleSndChannels(int choice)
@@ -446,10 +455,22 @@ void M_CrispyToggleTranslucency(int choice)
     crispy->translucency = (crispy->translucency + 1) % NUM_TRANSLUCENCY;
 }
 
-void M_CrispyToggleUncapped(int choice)
+static void M_CrispyToggleUncappedHook (void)
 {
     const int crispy_uncapped_old = crispy->uncapped;
 
+    crispy->uncapped = crispy_uncapped_old ? UNCAPPED_OFF : UNCAPPED_VSYNC;
+
+    // [crispy] restart renderer if vsync is toggled (UNCAPPED_OFF has vsync),
+    // i.e. UNCAPPED_OFF -> UNCAPPED_ON and UNCAPPED_ON -> UNCAPPED_VSYNC
+    if (crispy_uncapped_old == UNCAPPED_ON || crispy->uncapped == UNCAPPED_ON)
+    {
+	SetVideoMode(false); // [crispy] resize_fb
+    }
+}
+
+void M_CrispyToggleUncapped(int choice)
+{
     choice = 0;
 
     if (force_software_renderer)
@@ -458,14 +479,7 @@ void M_CrispyToggleUncapped(int choice)
 	return;
     }
 
-    crispy->uncapped = crispy_uncapped_old ? UNCAPPED_OFF : UNCAPPED_VSYNC;
-
-    // [crispy] restart renderer if vsync is toggled (UNCAPPED_OFF has vsync),
-    // i.e. UNCAPPED_OFF -> UNCAPPED_ON and UNCAPPED_ON -> UNCAPPED_VSYNC
-    if (crispy_uncapped_old == UNCAPPED_ON || crispy->uncapped == UNCAPPED_ON)
-    {
-	SetVideoMode(0); // [crispy] resize_fb
-    }
+    crispy->post_rendering_hook = M_CrispyToggleUncappedHook;
 }
 
 void M_CrispyToggleWeaponSquat(int choice)

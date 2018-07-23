@@ -1209,7 +1209,7 @@ void I_GetWindowPosition(int *x, int *y, int w, int h)
     }
 }
 
-void SetVideoMode(int resize_fb) // [crispy] un-static, resize_fb
+void SetVideoMode(boolean resize_fb) // [crispy] un-static, resize_fb
 {
     int w, h;
     int x, y;
@@ -1462,7 +1462,7 @@ void I_InitGraphics(void)
     // Create the game window; this may switch graphic modes depending
     // on configuration.
     AdjustWindowSize();
-    SetVideoMode(1); // [crispy] resize_fb
+    SetVideoMode(true); // [crispy] resize_fb
 
     // Start with a clear black screen
     // (screen will be flipped after we set the palette)
