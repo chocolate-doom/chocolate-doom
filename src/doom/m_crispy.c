@@ -116,6 +116,14 @@ multiitem_t multiitem_sndchannels[NUM_SNDCHANNELS] =
     {SNDCHANNELS_32, "32"},
 };
 
+extern void AM_ReInit (void);
+extern void EnableLoadingDisk (void);
+extern void P_SegLengths (boolean contrast_only);
+extern void R_ExecuteSetViewSize (void);
+extern void R_InitLightTables (void);
+extern void SetVideoMode (boolean);
+extern void S_UpdateSndChannels (void);
+
 void M_CrispyToggleAutomapstats(int choice)
 {
     choice = 0;
@@ -273,13 +281,18 @@ void M_CrispyToggleFreeaim(int choice)
     CheckCrispySingleplayer(!demorecording && !demoplayback && !netgame);
 }
 
+static void M_CrispyToggleSkyHook (void)
+{
+    players[consoleplayer].lookdir = 0;
+    R_InitSkyMap();
+}
+
 void M_CrispyToggleFreelook(int choice)
 {
     choice = 0;
     crispy->freelook = (crispy->freelook + 1) % NUM_FREELOOKS;
 
-    players[consoleplayer].lookdir = 0;
-    R_InitSkyMap();
+    crispy->post_rendering_hook = M_CrispyToggleSkyHook;
 }
 
 void M_CrispyToggleFullsounds(int choice)
@@ -288,10 +301,27 @@ void M_CrispyToggleFullsounds(int choice)
     crispy->soundfull = !crispy->soundfull;
 }
 
+static void M_CrispyToggleHiresHook (void)
+{
+    crispy->hires = !crispy->hires;
+
+    // [crispy] re-initialize framebuffers, textures and renderer
+    I_InitGraphics();
+    // [crispy] re-calculate framebuffer coordinates
+    R_ExecuteSetViewSize();
+    // [crispy] re-draw bezel
+    R_FillBackScreen();
+    // [crispy] re-calculate disk icon coordinates
+    EnableLoadingDisk();
+    // [crispy] re-calculate automap coordinates
+    AM_ReInit();
+}
+
 void M_CrispyToggleHires(int choice)
 {
     choice = 0;
-    crispy->hires = !crispy->hires;
+
+    crispy->post_rendering_hook = M_CrispyToggleHiresHook;
 }
 
 void M_CrispyToggleJumping(int choice)
@@ -314,8 +344,7 @@ void M_CrispyToggleMouseLook(int choice)
     choice = 0;
     crispy->mouselook = !crispy->mouselook;
 
-    players[consoleplayer].lookdir = 0;
-    R_InitSkyMap();
+    crispy->post_rendering_hook = M_CrispyToggleSkyHook;
 }
 
 void M_CrispyToggleNeghealth(int choice)
@@ -343,7 +372,8 @@ void M_CrispyTogglePitch(int choice)
 {
     choice = 0;
     crispy->pitch = !crispy->pitch;
-    R_InitSkyMap();
+
+    crispy->post_rendering_hook = M_CrispyToggleSkyHook;
 }
 
 void M_CrispyToggleRecoil(int choice)
@@ -373,31 +403,27 @@ void M_CrispyToggleSmoothScaling(int choice)
     crispy->smoothscaling = !crispy->smoothscaling;
 }
 
-void M_CrispyToggleSmoothLighting(int choice)
+static void M_CrispyToggleSmoothLightingHook (void)
 {
-    extern void R_InitLightTables (void);
-    extern void R_ExecuteSetViewSize (void);
-    extern void P_SegLengths (boolean contrast_only);
-
-    choice = 0;
     crispy->smoothlight = !crispy->smoothlight;
 
-    // [crispy] stop rendering for a while ...
-    nodrawers = true;
     // [crispy] re-calculate the zlight[][] array
     R_InitLightTables();
     // [crispy] re-calculate the scalelight[][] array
     R_ExecuteSetViewSize();
     // [crispy] re-calculate fake contrast
     P_SegLengths(true);
-    // [crispy] ... continue rendering
-    nodrawers = false;
+}
+
+void M_CrispyToggleSmoothLighting(int choice)
+{
+    choice = 0;
+
+    crispy->post_rendering_hook = M_CrispyToggleSmoothLightingHook;
 }
 
 void M_CrispyToggleSndChannels(int choice)
 {
-    extern void S_UpdateSndChannels (void);
-
     choice = 0;
     crispy->sndchannels = (crispy->sndchannels + 1) % NUM_SNDCHANNELS;
 
@@ -429,10 +455,15 @@ void M_CrispyToggleUncapped(int choice)
     crispy->uncapped = !crispy->uncapped;
 }
 
+void M_CrispyToggleVsyncHook (void)
+{
+    crispy->vsync = !crispy->vsync;
+
+    SetVideoMode(false); // [crispy] resize_fb
+}
+
 void M_CrispyToggleVsync(int choice)
 {
-    extern void SetVideoMode (void);
-
     choice = 0;
 
     if (force_software_renderer)
@@ -441,9 +472,7 @@ void M_CrispyToggleVsync(int choice)
 	return;
     }
 
-    crispy->vsync = !crispy->vsync;
-
-    SetVideoMode();
+    crispy->post_rendering_hook = M_CrispyToggleVsyncHook;
 }
 
 void M_CrispyToggleWeaponSquat(int choice)

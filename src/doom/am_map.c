@@ -214,7 +214,7 @@ static int 	leveljuststarted = 1; 	// kluge until AM_LevelInit() is called
 
 boolean    	automapactive = false;
 //static int 	finit_width = SCREENWIDTH;
-//static int 	finit_height = SCREENHEIGHT - (ST_HEIGHT << hires);
+//static int 	finit_height = SCREENHEIGHT - (ST_HEIGHT << crispy->hires);
 
 // location of window on screen
 static int 	f_x;
@@ -564,7 +564,7 @@ void AM_LevelInit(void)
 
     f_x = f_y = 0;
     f_w = SCREENWIDTH;
-    f_h = SCREENHEIGHT - (ST_HEIGHT << hires);
+    f_h = SCREENHEIGHT - (ST_HEIGHT << crispy->hires);
 
     AM_clearMarks();
 
@@ -579,6 +579,20 @@ void AM_LevelInit(void)
     scale_ftom = FixedDiv(FRACUNIT, scale_mtof);
 }
 
+void AM_ReInit(void)
+{
+    f_w = SCREENWIDTH;
+    f_h = SCREENHEIGHT - (ST_HEIGHT << crispy->hires);
+
+    AM_findMinMaxBoundaries();
+
+    scale_mtof = crispy->hires ? scale_mtof*2 : scale_mtof/2;
+    if (scale_mtof > max_scale_mtof)
+	scale_mtof = min_scale_mtof;
+    scale_ftom = FixedDiv(FRACUNIT, scale_mtof);
+
+    fb = I_VideoBuffer;
+}
 
 
 
@@ -1655,9 +1669,9 @@ void AM_drawMarks(void)
 	    {
 		AM_rotatePoint(&pt);
 	    }
-	    fx = (CXMTOF(pt.x) >> hires) - 1;
-	    fy = (CYMTOF(pt.y) >> hires) - 2;
-	    if (fx >= f_x && fx <= (f_w >> hires) - w && fy >= f_y && fy <= (f_h >> hires) - h)
+	    fx = (CXMTOF(pt.x) >> crispy->hires) - 1;
+	    fy = (CYMTOF(pt.y) >> crispy->hires) - 2;
+	    if (fx >= f_x && fx <= (f_w >> crispy->hires) - w && fy >= f_y && fy <= (f_h >> crispy->hires) - h)
 		V_DrawPatch(fx, fy, marknums[i]);
 	}
     }
