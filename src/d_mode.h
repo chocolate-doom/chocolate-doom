@@ -22,6 +22,20 @@
 
 #include "doomtype.h"
 
+// The current state of the game: whether we are
+// playing, gazing at the intermission screen,
+// the game final animation, or a demo.
+
+typedef enum
+{
+    GS_LEVEL,
+    GS_INTERMISSION,
+    GS_FINALE,
+    GS_DEMOSCREEN,
+} gamestate_t;
+
+#define GS_UNKNOWN GS_INTERMISSION // STRIFE-TODO: rename?
+
 // The "mission" controls what game we are playing.
 
 typedef enum
