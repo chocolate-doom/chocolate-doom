@@ -2036,6 +2036,14 @@ static default_t extra_defaults_list[] =
     //!
     // @game doom
     //
+    // Enable VSync.
+    //
+
+    CONFIG_VARIABLE_INT(crispy_vsync),
+
+    //!
+    // @game doom
+    //
     // Squat down weapon on impact.
     //
 

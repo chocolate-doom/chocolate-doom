@@ -1285,7 +1285,7 @@ void SetVideoMode(void) // [crispy] un-static
     // Turn on vsync if we aren't in a -timedemo
     if (!singletics && mode.refresh_rate > 0)
     {
-      if (crispy->uncapped != UNCAPPED_ON) // [crispy] uncapped vsync
+      if (crispy->vsync) // [crispy] uncapped vsync
       {
         renderer_flags |= SDL_RENDERER_PRESENTVSYNC;
       }
@@ -1295,7 +1295,7 @@ void SetVideoMode(void) // [crispy] un-static
     {
         renderer_flags |= SDL_RENDERER_SOFTWARE;
         renderer_flags &= ~SDL_RENDERER_PRESENTVSYNC;
-        crispy->uncapped = UNCAPPED_OFF;
+        crispy->vsync = false;
     }
 
     if (renderer != NULL)

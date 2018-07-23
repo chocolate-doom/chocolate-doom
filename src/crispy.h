@@ -69,6 +69,7 @@ typedef struct
 	int soundmono;
 	int translucency;
 	int uncapped;
+	int vsync;
 	int weaponsquat;
 
 	// [crispy] in-game switches and variables
@@ -180,14 +181,6 @@ enum
     TRANSLUCENCY_ITEM,
     TRANSLUCENCY_BOTH,
     NUM_TRANSLUCENCY
-};
-
-enum
-{
-    UNCAPPED_OFF,
-    UNCAPPED_ON,
-    UNCAPPED_VSYNC,
-    NUM_UNCAPPED
 };
 
 #endif
