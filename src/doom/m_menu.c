@@ -3053,7 +3053,8 @@ void M_Init (void)
     // [crispy] remove DOS reference from the game quit confirmation dialogs
     if (!M_ParmExists("-nodeh"))
     {
-	char *string, *replace;
+	const char *string;
+	char *replace;
 
 	// [crispy] "i wouldn't leave if i were you.\ndos is much worse."
 	string = doom1_endmsg[3];
