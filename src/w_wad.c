@@ -100,7 +100,7 @@ unsigned int W_LumpNameHash(const char *s)
 // Other files are single lumps with the base filename
 //  for the lump name.
 
-wad_file_t *W_AddFile (char *filename)
+wad_file_t *W_AddFile (const char *filename)
 {
     wadinfo_t header;
     lumpindex_t i;

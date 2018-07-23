@@ -45,7 +45,7 @@ typedef struct
 
 extern wad_file_class_t win32_wad_file;
 
-static void MapFile(win32_wad_file_t *wad, char *filename)
+static void MapFile(win32_wad_file_t *wad, const char *filename)
 {
     wad->handle_map = CreateFileMapping(wad->handle,
                                         NULL,
@@ -86,7 +86,7 @@ unsigned int GetFileLength(HANDLE handle)
     return result;
 }
    
-static wad_file_t *W_Win32_OpenFile(char *path)
+static wad_file_t *W_Win32_OpenFile(const char *path)
 {
     win32_wad_file_t *result;
     wchar_t wpath[MAX_PATH + 1];

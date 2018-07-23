@@ -714,7 +714,7 @@ void D_StartTitle (void)
 // These are from the original source: some of them are perhaps
 // not used in any dehacked patches
 
-static char *banners[] =
+static const char *banners[] =
 {
     // doom2.wad
     "                         "
@@ -1001,7 +1001,7 @@ static boolean D_AddFile(char *filename)
 // Some dehacked mods replace these.  These are only displayed if they are 
 // replaced by dehacked.
 
-static char *copyright_banners[] =
+static const char *copyright_banners[] =
 {
     "===========================================================================\n"
     "ATTENTION:  This version of DOOM has been modified.  If you would like to\n"

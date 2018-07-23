@@ -567,7 +567,7 @@ void W_PrintDirectory(void)
 
 // Merge in a file by name
 
-void W_MergeFile(char *filename)
+void W_MergeFile(const char *filename)
 {
     int old_numlumps;
 
@@ -624,7 +624,7 @@ static void W_NWTAddLumps(searchlist_t *list)
 // Merge sprites and flats in the way NWT does with its -af and -as
 // command-line options.
 
-void W_NWTMergeFile(char *filename, int flags)
+void W_NWTMergeFile(const char *filename, int flags)
 {
     int old_numlumps;
 
@@ -670,7 +670,7 @@ void W_NWTMergeFile(char *filename, int flags)
 // a PWAD, then search the IWAD sprites, removing any sprite lumps that also
 // exist in the PWAD.
 
-void W_NWTDashMerge(char *filename)
+void W_NWTDashMerge(const char *filename)
 {
     wad_file_t *wad_file;
     int old_numlumps;
