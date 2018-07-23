@@ -44,17 +44,6 @@
 // The maximum number of players, multiplayer/networking.
 #define MAXPLAYERS 4
 
-// The current state of the game: whether we are
-// playing, gazing at the intermission screen,
-// the game final animation, or a demo. 
-typedef enum
-{
-    GS_LEVEL,
-    GS_INTERMISSION,
-    GS_FINALE,
-    GS_DEMOSCREEN,
-} gamestate_t;
-
 typedef enum
 {
     ga_nothing,
