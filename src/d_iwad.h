@@ -33,7 +33,7 @@
 
 typedef struct
 {
-    char *name;
+    const char *name;
     GameMission_t mission;
     GameMode_t mode;
     char *description;
