@@ -714,7 +714,7 @@ static void SetMissionForPackName(char *pack_name)
     int i;
     static const struct
     {
-        char *name;
+        const char *name;
         int mission;
     } packs[] = {
         { "doom2",    doom2 },
