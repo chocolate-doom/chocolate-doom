@@ -132,40 +132,56 @@ R_InstallSpriteLump
     if (rotation == 0)
     {
 	// the lump should be used for all rotations
+	// [crispy] make non-fatal
 	if (sprtemp[frame].rotate == false)
-	    I_Error ("R_InitSprites: Sprite %s frame %c has "
-		     "multip rot=0 lump", spritename, 'A'+frame);
+	    fprintf (stderr, "R_InitSprites: Sprite %s frame %c has "
+		     "multip rot=0 lump\n", spritename, 'A'+frame);
 
 	// [crispy] make non-fatal
 	if (sprtemp[frame].rotate == true)
 	    fprintf (stderr, "R_InitSprites: Sprite %s frame %c has rotations "
 		     "and a rot=0 lump\n", spritename, 'A'+frame);
 			
-	sprtemp[frame].rotate = false;
-	for (r=0 ; r<16 ; r++) // [crispy] support 16 sprite rotations
+// [crispy] moved ...
+//	sprtemp[frame].rotate = false;
+	for (r=0 ; r<8 ; r++)
 	{
+	  // [crispy] only if not yet substituted
+	  if (sprtemp[frame].lump[r] == -1)
+	  {
 	    sprtemp[frame].lump[r] = lump - firstspritelump;
 	    sprtemp[frame].flip[r] = (byte)flipped;
+	    // [crispy] ... here
+	    sprtemp[frame].rotate = false;
+	  }
 	}
 	return;
     }
 	
     // the lump is only used for one rotation
+    // [crispy] make non-fatal
     if (sprtemp[frame].rotate == false)
-	I_Error ("R_InitSprites: Sprite %s frame %c has rotations "
-		 "and a rot=0 lump", spritename, 'A'+frame);
+	fprintf (stderr, "R_InitSprites: Sprite %s frame %c has rotations "
+		 "and a rot=0 lump\n", spritename, 'A'+frame);
 		
-    sprtemp[frame].rotate = true;
+// [crispy] moved ...
+//    sprtemp[frame].rotate = true;
 
     // make 0 based
     rotation--;		
     if (sprtemp[frame].lump[rotation] != -1)
-	I_Error ("R_InitSprites: Sprite %s : %c : %c "
-		 "has two lumps mapped to it",
+    {
+	// [crispy] make non-fatal
+	fprintf (stderr, "R_InitSprites: Sprite %s : %c : %c "
+		 "has two lumps mapped to it\n",
 		 spritename, 'A'+frame, '1'+rotation);
+	return;
+    }
 		
     sprtemp[frame].lump[rotation] = lump - firstspritelump;
     sprtemp[frame].flip[rotation] = (byte)flipped;
+    // [crispy] ... here
+    sprtemp[frame].rotate = true;
 }
 
 
