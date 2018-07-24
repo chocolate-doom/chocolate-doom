@@ -98,7 +98,7 @@ static int leveljuststarted = 1;        // kluge until AM_LevelInit() is called
 
 boolean automapactive = false;
 static int finit_width;// = SCREENWIDTH;
-static int finit_height;// = SCREENHEIGHT - (42 << hires);
+static int finit_height;// = SCREENHEIGHT - (42 << crispy->hires);
 static int f_x, f_y;            // location of window on screen
 static int f_w, f_h;            // size of window on screen
 static int lightlev;            // used for funky strobing effect
@@ -313,14 +313,14 @@ void AM_changeWindowLoc(void)
     // in AM_clearFB).
     mapxstart += MTOF(m_paninc.x+FRACUNIT/2);
     mapystart -= MTOF(m_paninc.y+FRACUNIT/2);
-    if(mapxstart >= (finit_width >> hires))
-        mapxstart -= (finit_width >> hires);
+    if(mapxstart >= (finit_width >> crispy->hires))
+        mapxstart -= (finit_width >> crispy->hires);
     if(mapxstart < 0)
-        mapxstart += (finit_width >> hires);
-    if(mapystart >= (finit_height >> hires))
-        mapystart -= (finit_height >> hires);
+        mapxstart += (finit_width >> crispy->hires);
+    if(mapystart >= (finit_height >> crispy->hires))
+        mapystart -= (finit_height >> crispy->hires);
     if(mapystart < 0)
-        mapystart += (finit_height >> hires);
+        mapystart += (finit_height >> crispy->hires);
     // - end of code that was commented-out
 
     m_x2 = m_x + m_w;
@@ -438,7 +438,7 @@ void AM_LevelInit(void)
     leveljuststarted = 0;
 
     finit_width = SCREENWIDTH;
-    finit_height = SCREENHEIGHT - (42 << hires);
+    finit_height = SCREENHEIGHT - (42 << crispy->hires);
     f_x = f_y = 0;
     f_w = finit_width;
     f_h = finit_height;
@@ -796,14 +796,14 @@ void AM_clearFB(int color)
         mapxstart += dmapx >> 1;
         mapystart += dmapy >> 1;
 
-        while (mapxstart >= (finit_width >> hires))
-            mapxstart -= (finit_width >> hires);
+        while (mapxstart >= (finit_width >> crispy->hires))
+            mapxstart -= (finit_width >> crispy->hires);
         while (mapxstart < 0)
-            mapxstart += (finit_width >> hires);
-        while (mapystart >= (finit_height >> hires))
-            mapystart -= (finit_height >> hires);
+            mapxstart += (finit_width >> crispy->hires);
+        while (mapystart >= (finit_height >> crispy->hires))
+            mapystart -= (finit_height >> crispy->hires);
         while (mapystart < 0)
-            mapystart += (finit_height >> hires);
+            mapystart += (finit_height >> crispy->hires);
     }
     else
     {
@@ -814,19 +814,19 @@ void AM_clearFB(int color)
         mapxstart += (MTOF(m_paninc.x) >> 1);
         mapystart -= (MTOF(m_paninc.y) >> 1);
 
-        if (mapxstart >= (finit_width >> hires))
-            mapxstart -= (finit_width >> hires);
+        if (mapxstart >= (finit_width >> crispy->hires))
+            mapxstart -= (finit_width >> crispy->hires);
         if (mapxstart < 0)
-            mapxstart += (finit_width >> hires);
-        if (mapystart >= (finit_height >> hires))
-            mapystart -= (finit_height >> hires);
+            mapxstart += (finit_width >> crispy->hires);
+        if (mapystart >= (finit_height >> crispy->hires))
+            mapystart -= (finit_height >> crispy->hires);
         if (mapystart < 0)
-            mapystart += (finit_height >> hires);
+            mapystart += (finit_height >> crispy->hires);
         */
     }
 
     //blit the automap background to the screen.
-    j = (mapystart & ~hires) * (finit_width >> hires);
+    j = (mapystart & ~crispy->hires) * (finit_width >> crispy->hires);
     for (i = 0; i < finit_height; i++)
     {
         memcpy(I_VideoBuffer + i * finit_width, maplump + j + mapxstart,
@@ -834,7 +834,7 @@ void AM_clearFB(int color)
         memcpy(I_VideoBuffer + i * finit_width + finit_width - mapxstart,
                maplump + j, mapxstart);
         j += finit_width;
-        if (j >= (finit_height >> hires) * (finit_width >> hires))
+        if (j >= (finit_height >> crispy->hires) * (finit_width >> crispy->hires))
             j = 0;
     }
 
@@ -1072,17 +1072,17 @@ void PUTDOT(short xx, short yy, byte * cc, byte * cm)
     if (yy == oldyy + 1)
     {
         oldyy++;
-        oldyyshifted += (320 << hires);
+        oldyyshifted += (320 << crispy->hires);
     }
     else if (yy == oldyy - 1)
     {
         oldyy--;
-        oldyyshifted -= (320 << hires);
+        oldyyshifted -= (320 << crispy->hires);
     }
     else if (yy != oldyy)
     {
         oldyy = yy;
-        oldyyshifted = yy * (320 << hires);
+        oldyyshifted = yy * (320 << crispy->hires);
     }
     fb[oldyyshifted + xx] = *(cc);
 //      fb[(yy)*f_w+(xx)]=*(cc);

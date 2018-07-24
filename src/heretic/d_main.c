@@ -187,7 +187,7 @@ void D_Display(void)
     {
         if (!netgame)
         {
-            V_DrawPatch(160, (viewwindowy >> hires) + 5, W_CacheLumpName(DEH_String("PAUSED"),
+            V_DrawPatch(160, (viewwindowy >> crispy->hires) + 5, W_CacheLumpName(DEH_String("PAUSED"),
                                                               PU_CACHE));
         }
         else

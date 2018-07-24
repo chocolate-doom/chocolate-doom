@@ -187,7 +187,7 @@ wipe_doMelt
 	    }
 	    else if (y[i] < height)
 	    {
-		dy = (y[i] < 16) ? y[i]+1 : (8 << hires);
+		dy = (y[i] < 16) ? y[i]+1 : (8 << crispy->hires);
 		if (y[i]+dy >= height) dy = height - y[i];
 		s = &((dpixel_t *)wipe_scr_end)[i*height+y[i]];
 		d = &((dpixel_t *)wipe_scr)[y[i]*width+i];

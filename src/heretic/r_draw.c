@@ -424,27 +424,27 @@ void R_DrawViewBorder(void)
             dest += (SCREENWIDTH & 63);
         }
     }
-    for (x = (viewwindowx >> hires); x < ((viewwindowx >> hires) + (viewwidth >> hires)); x += 16)
+    for (x = (viewwindowx >> crispy->hires); x < ((viewwindowx >> crispy->hires) + (viewwidth >> crispy->hires)); x += 16)
     {
-        V_DrawPatch(x, (viewwindowy >> hires) - 4,
+        V_DrawPatch(x, (viewwindowy >> crispy->hires) - 4,
                     W_CacheLumpName(DEH_String("bordt"), PU_CACHE));
-        V_DrawPatch(x, (viewwindowy >> hires) + (viewheight >> hires),
+        V_DrawPatch(x, (viewwindowy >> crispy->hires) + (viewheight >> crispy->hires),
                     W_CacheLumpName(DEH_String("bordb"), PU_CACHE));
     }
-    for (y = (viewwindowy >> hires); y < ((viewwindowy >> hires) + (viewheight >> hires)); y += 16)
+    for (y = (viewwindowy >> crispy->hires); y < ((viewwindowy >> crispy->hires) + (viewheight >> crispy->hires)); y += 16)
     {
-        V_DrawPatch((viewwindowx >> hires) - 4, y,
+        V_DrawPatch((viewwindowx >> crispy->hires) - 4, y,
                     W_CacheLumpName(DEH_String("bordl"), PU_CACHE));
-        V_DrawPatch((viewwindowx >> hires) + (viewwidth >> hires), y,
+        V_DrawPatch((viewwindowx >> crispy->hires) + (viewwidth >> crispy->hires), y,
                     W_CacheLumpName(DEH_String("bordr"), PU_CACHE));
     }
-    V_DrawPatch((viewwindowx >> hires) - 4, (viewwindowy >> hires) - 4,
+    V_DrawPatch((viewwindowx >> crispy->hires) - 4, (viewwindowy >> crispy->hires) - 4,
                 W_CacheLumpName(DEH_String("bordtl"), PU_CACHE));
-    V_DrawPatch((viewwindowx >> hires) + (viewwidth >> hires), (viewwindowy >> hires) - 4,
+    V_DrawPatch((viewwindowx >> crispy->hires) + (viewwidth >> crispy->hires), (viewwindowy >> crispy->hires) - 4,
                 W_CacheLumpName(DEH_String("bordtr"), PU_CACHE));
-    V_DrawPatch((viewwindowx >> hires) + (viewwidth >> hires), (viewwindowy >> hires) + (viewheight >> hires),
+    V_DrawPatch((viewwindowx >> crispy->hires) + (viewwidth >> crispy->hires), (viewwindowy >> crispy->hires) + (viewheight >> crispy->hires),
                 W_CacheLumpName(DEH_String("bordbr"), PU_CACHE));
-    V_DrawPatch((viewwindowx >> hires) - 4, (viewwindowy >> hires) + (viewheight >> hires),
+    V_DrawPatch((viewwindowx >> crispy->hires) - 4, (viewwindowy >> crispy->hires) + (viewheight >> crispy->hires),
                 W_CacheLumpName(DEH_String("bordbl"), PU_CACHE));
 }
 
@@ -490,25 +490,25 @@ void R_DrawTopBorder(void)
             dest += (SCREENWIDTH & 63);
         }
     }
-    if ((viewwindowy >> hires) < 25)
+    if ((viewwindowy >> crispy->hires) < 25)
     {
-        for (x = (viewwindowx >> hires); x < ((viewwindowx >> hires) + (viewwidth >> hires)); x += 16)
+        for (x = (viewwindowx >> crispy->hires); x < ((viewwindowx >> crispy->hires) + (viewwidth >> crispy->hires)); x += 16)
         {
-            V_DrawPatch(x, (viewwindowy >> hires) - 4,
+            V_DrawPatch(x, (viewwindowy >> crispy->hires) - 4,
                         W_CacheLumpName(DEH_String("bordt"), PU_CACHE));
         }
-        V_DrawPatch((viewwindowx >> hires) - 4, (viewwindowy >> hires),
+        V_DrawPatch((viewwindowx >> crispy->hires) - 4, (viewwindowy >> crispy->hires),
                     W_CacheLumpName(DEH_String("bordl"), PU_CACHE));
-        V_DrawPatch((viewwindowx >> hires) + (viewwidth >> hires), (viewwindowy >> hires),
+        V_DrawPatch((viewwindowx >> crispy->hires) + (viewwidth >> crispy->hires), (viewwindowy >> crispy->hires),
                     W_CacheLumpName(DEH_String("bordr"), PU_CACHE));
-        V_DrawPatch((viewwindowx >> hires) - 4, (viewwindowy >> hires) + 16,
+        V_DrawPatch((viewwindowx >> crispy->hires) - 4, (viewwindowy >> crispy->hires) + 16,
                     W_CacheLumpName(DEH_String("bordl"), PU_CACHE));
-        V_DrawPatch((viewwindowx >> hires) + (viewwidth >> hires), (viewwindowy >> hires) + 16,
+        V_DrawPatch((viewwindowx >> crispy->hires) + (viewwidth >> crispy->hires), (viewwindowy >> crispy->hires) + 16,
                     W_CacheLumpName(DEH_String("bordr"), PU_CACHE));
 
-        V_DrawPatch((viewwindowx >> hires) - 4, (viewwindowy >> hires) - 4,
+        V_DrawPatch((viewwindowx >> crispy->hires) - 4, (viewwindowy >> crispy->hires) - 4,
                     W_CacheLumpName(DEH_String("bordtl"), PU_CACHE));
-        V_DrawPatch((viewwindowx >> hires) + (viewwidth >> hires), (viewwindowy >> hires) - 4,
+        V_DrawPatch((viewwindowx >> crispy->hires) + (viewwidth >> crispy->hires), (viewwindowy >> crispy->hires) - 4,
                     W_CacheLumpName(DEH_String("bordtr"), PU_CACHE));
     }
 }

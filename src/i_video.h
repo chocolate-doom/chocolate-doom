@@ -21,10 +21,9 @@
 #define __I_VIDEO__
 
 #include "doomtype.h"
+#include "crispy.h"
 
 // Screen width and height.
-
-extern int hires; // [crispy]
 
 #define ORIGWIDTH  320 // [crispy]
 #define ORIGHEIGHT 200 // [crispy]

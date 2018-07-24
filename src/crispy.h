@@ -89,6 +89,8 @@ typedef struct
 
 	const char *sdlversion;
 	const char *platform;
+
+	void (*post_rendering_hook) (void);
 } crispy_t;
 
 extern crispy_t *const crispy;
