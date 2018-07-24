@@ -948,7 +948,7 @@ void PrintDehackedBanners(void)
 
 static struct 
 {
-    char *description;
+    const char *description;
     char *cmdline;
     GameVersion_t version;
 } gameversions[] = {
