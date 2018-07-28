@@ -1277,7 +1277,7 @@ M_WriteText
   char*		string)
 {
     int		w;
-    char*	ch;
+    const char *ch;
     int		c;
     int		cx;
     int		cy;
