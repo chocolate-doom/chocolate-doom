@@ -215,7 +215,7 @@ static void M_DrawSaveLoadBorder(int x,int y);
 static void M_SetupNextMenu(menu_t *menudef);
 static void M_DrawThermo(int x,int y,int thermWidth,int thermDot);
 static void M_WriteText(int x, int y, const char *string);
-static int  M_StringWidth(char *string);
+static int  M_StringWidth(const char *string);
 static int  M_StringHeight(const char *string);
 static void M_StartMessage(const char *string, void *routine, boolean input);
 static void M_ClearMenus (void);
@@ -1229,7 +1229,7 @@ M_StartMessage
 //
 // Find string width from hu_font chars
 //
-int M_StringWidth(char* string)
+int M_StringWidth(const char *string)
 {
     size_t             i;
     int             w = 0;
