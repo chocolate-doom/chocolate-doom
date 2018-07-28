@@ -2123,7 +2123,7 @@ void G_DeferedPlayDemo(const char *name)
 
 // Generate a string describing a demo version
 
-static char *DemoVersionDescription(int version)
+static const char *DemoVersionDescription(int version)
 {
     static char resultbuf[16];
 
