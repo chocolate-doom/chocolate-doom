@@ -591,7 +591,7 @@ boolean HU_Responder(event_t *ev)
 {
 
     static char		lastmessage[HU_MAXLINELENGTH+1];
-    char*		macromessage;
+    const char		*macromessage;
     boolean		eatkey = false;
     static boolean	altdown = false;
     unsigned char 	c;
