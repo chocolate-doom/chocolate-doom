@@ -62,7 +62,7 @@ typedef struct
     GameMission_t mission;
     int episode, level;
     const char *background;
-    char *text;
+    const char *text;
 } textscreen_t;
 
 static textscreen_t textscreens[] =
