@@ -61,7 +61,7 @@ typedef struct
 {
     GameMission_t mission;
     int episode, level;
-    char *background;
+    const char *background;
     char *text;
 } textscreen_t;
 
