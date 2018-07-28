@@ -949,7 +949,7 @@ void PrintDehackedBanners(void)
 static struct 
 {
     const char *description;
-    char *cmdline;
+    const char *cmdline;
     GameVersion_t version;
 } gameversions[] = {
     {"Doom 1.666",           "1.666",      exe_doom_1_666},
