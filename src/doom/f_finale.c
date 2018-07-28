@@ -299,7 +299,7 @@ void F_TextWrite (void)
 //
 typedef struct
 {
-    char		*name;
+    const char	*name;
     mobjtype_t	type;
 } castinfo_t;
 
