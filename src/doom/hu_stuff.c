@@ -164,7 +164,7 @@ const char *mapnames[] =	// DOOM shareware/registered/retail (Ultimate) names.
     "NEWLEVEL"
 };
 
-char*   mapnames_chex[] =   // Chex Quest names.
+const char *mapnames_chex[] =   // Chex Quest names.
 {
 
     HUSTR_E1M1,
