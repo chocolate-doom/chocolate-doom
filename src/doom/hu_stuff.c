@@ -224,7 +224,7 @@ const char *mapnames_chex[] =   // Chex Quest names.
 // the layout in the Vanilla executable, where it is possible to
 // overflow the end of one array into the next.
 
-char *mapnames_commercial[] =
+const char *mapnames_commercial[] =
 {
     // DOOM 2 map names.
 
