@@ -81,10 +81,6 @@ fixed_t			viewsin;
 
 player_t*		viewplayer;
 
-// [AM] Fractional part of the current tic, in the half-open
-//      range of [0.0, 1.0).  Used for interpolation.
-fixed_t                 fractionaltic;
-
 // 0 = high, 1 = low
 int			detailshift;	
 
@@ -967,11 +963,6 @@ void R_SetupFrame (player_t* player)
     viewplayer = player;
 
     // [AM] Interpolate the player camera if the feature is enabled.
-
-    // Figure out how far into the current tic we're in as a fixed_t
-    if (crispy->uncapped)
-        fractionaltic = I_GetTimeMS() * TICRATE % 1000 * FRACUNIT / 1000;
-
     if (crispy->uncapped &&
         // Don't interpolate on the first tic of a level,
         // otherwise oldviewz might be garbage.
