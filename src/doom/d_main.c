@@ -2148,6 +2148,13 @@ void D_DoomMain (void)
         crispy->fliplevels = !crispy->fliplevels;
     }
 
+    p = M_CheckParm("-flipweapons");
+
+    if (p > 0)
+    {
+        crispy->flipweapons = true;
+    }
+
     // Check for load game parameter
     // We do this here and save the slot number, so that the network code
     // can override it or send the load slot to other players.

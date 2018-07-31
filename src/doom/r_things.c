@@ -996,7 +996,7 @@ void R_DrawPSprite (pspdef_t* psp, psprnum_t psprnum) // [crispy] differentiate 
     sprframe = &sprdef->spriteframes[ psp->state->frame & FF_FRAMEMASK ];
 
     lump = sprframe->lump[0];
-    flip = (boolean)sprframe->flip[0];
+    flip = (boolean)sprframe->flip[0] ^ crispy->flipweapons;
     
     // [crispy] smoothen Chainsaw idle animation
     if (state == S_SAW || state == S_SAWB)
@@ -1027,7 +1027,8 @@ void R_DrawPSprite (pspdef_t* psp, psprnum_t psprnum) // [crispy] differentiate 
     // calculate edges of the shape
     tx = psp_sx-(ORIGWIDTH/2)*FRACUNIT;
 	
-    tx -= spriteoffset[lump];	
+    // [crispy] fix sprite offsets for mirrored sprites
+    tx -= flip ? 2 * tx - spriteoffset[lump] + spritewidth[lump] : spriteoffset[lump];
     x1 = (centerxfrac + FixedMul (tx,pspritescale) ) >>FRACBITS;
 
     // off the right side
@@ -1063,7 +1064,7 @@ void R_DrawPSprite (pspdef_t* psp, psprnum_t psprnum) // [crispy] differentiate 
     }
     
     // [crispy] free look
-    vis->texturemid += FixedMul(((centery - viewheight / 2) << FRACBITS), vis->xiscale) >> detailshift;
+    vis->texturemid += FixedMul(((centery - viewheight / 2) << FRACBITS), pspriteiscale) >> detailshift;
 
     if (vis->x1 > x1)
 	vis->startfrac += vis->xiscale*(vis->x1-x1);

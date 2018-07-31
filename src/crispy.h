@@ -81,6 +81,7 @@ typedef struct
 	boolean automapoverlay;
 	boolean flashinghom;
 	boolean fliplevels;
+       boolean flipweapons;
 	boolean havee1m10;
 	boolean havemap33;
 	boolean havessg;
