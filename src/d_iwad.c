@@ -914,7 +914,7 @@ const char *D_SaveGameIWADName(GameMission_t gamemission)
     return "unknown.wad";
 }
 
-char *D_SuggestIWADName(GameMission_t mission, GameMode_t mode)
+const char *D_SuggestIWADName(GameMission_t mission, GameMode_t mode)
 {
     int i;
 
@@ -929,7 +929,7 @@ char *D_SuggestIWADName(GameMission_t mission, GameMode_t mode)
     return "unknown.wad";
 }
 
-char *D_SuggestGameName(GameMission_t mission, GameMode_t mode)
+const char *D_SuggestGameName(GameMission_t mission, GameMode_t mode)
 {
     int i;
 

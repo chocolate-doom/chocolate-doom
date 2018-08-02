@@ -76,7 +76,7 @@ char *chat_macros[10] =
     HUSTR_CHATMACRO9
 };
 
-char*	player_names[] =
+const char *player_names[] =
 {
     HUSTR_PLRGREEN,
     HUSTR_PLRINDIGO,
@@ -110,7 +110,7 @@ static boolean		headsupactive = false;
 // The actual names can be found in DStrings.h.
 //
 
-char*	mapnames[] =	// DOOM shareware/registered/retail (Ultimate) names.
+const char *mapnames[] =	// DOOM shareware/registered/retail (Ultimate) names.
 {
 
     HUSTR_E1M1,
@@ -164,7 +164,7 @@ char*	mapnames[] =	// DOOM shareware/registered/retail (Ultimate) names.
     "NEWLEVEL"
 };
 
-char*   mapnames_chex[] =   // Chex Quest names.
+const char *mapnames_chex[] =   // Chex Quest names.
 {
 
     HUSTR_E1M1,
@@ -224,7 +224,7 @@ char*   mapnames_chex[] =   // Chex Quest names.
 // the layout in the Vanilla executable, where it is possible to
 // overflow the end of one array into the next.
 
-char *mapnames_commercial[] =
+const char *mapnames_commercial[] =
 {
     // DOOM 2 map names.
 
@@ -591,7 +591,7 @@ boolean HU_Responder(event_t *ev)
 {
 
     static char		lastmessage[HU_MAXLINELENGTH+1];
-    char*		macromessage;
+    const char		*macromessage;
     boolean		eatkey = false;
     static boolean	altdown = false;
     unsigned char 	c;

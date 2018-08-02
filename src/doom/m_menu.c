@@ -167,7 +167,7 @@ short		whichSkull;		// which skull to draw
 
 // graphic name of skulls
 // warning: initializer-string for array of chars is too long
-char    *skullName[2] = {"M_SKULL1","M_SKULL2"};
+const char *skullName[2] = {"M_SKULL1","M_SKULL2"};
 
 // current menudef
 menu_t*	currentMenu;                          
@@ -214,8 +214,8 @@ static void M_DrawSave(void);
 static void M_DrawSaveLoadBorder(int x,int y);
 static void M_SetupNextMenu(menu_t *menudef);
 static void M_DrawThermo(int x,int y,int thermWidth,int thermDot);
-static void M_WriteText(int x, int y, char *string);
-static int  M_StringWidth(char *string);
+static void M_WriteText(int x, int y, const char *string);
+static int  M_StringWidth(const char *string);
 static int  M_StringHeight(const char *string);
 static void M_StartMessage(const char *string, void *routine, boolean input);
 static void M_ClearMenus (void);
@@ -938,8 +938,8 @@ void M_Episode(int choice)
 //
 // M_Options
 //
-static char *detailNames[2] = {"M_GDHIGH","M_GDLOW"};
-static char *msgNames[2] = {"M_MSGOFF","M_MSGON"};
+static const char *detailNames[2] = {"M_GDHIGH","M_GDLOW"};
+static const char *msgNames[2] = {"M_MSGOFF","M_MSGON"};
 
 void M_DrawOptions(void)
 {
@@ -1229,7 +1229,7 @@ M_StartMessage
 //
 // Find string width from hu_font chars
 //
-int M_StringWidth(char* string)
+int M_StringWidth(const char *string)
 {
     size_t             i;
     int             w = 0;
@@ -1274,10 +1274,10 @@ void
 M_WriteText
 ( int		x,
   int		y,
-  char*		string)
+  const char *string)
 {
     int		w;
-    char*	ch;
+    const char *ch;
     int		c;
     int		cx;
     int		cy;

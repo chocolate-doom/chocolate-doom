@@ -2123,7 +2123,7 @@ void G_DeferedPlayDemo(const char *name)
 
 // Generate a string describing a demo version
 
-static char *DemoVersionDescription(int version)
+static const char *DemoVersionDescription(int version)
 {
     static char resultbuf[16];
 
@@ -2186,14 +2186,14 @@ void G_DoPlayDemo (void)
     }
     else if (demoversion != G_VanillaVersionCode())
     {
-        char *message = "Demo is from a different game version!\n"
-                        "(read %i, should be %i)\n"
-                        "\n"
-                        "*** You may need to upgrade your version "
-                            "of Doom to v1.9. ***\n"
-                        "    See: https://www.doomworld.com/classicdoom"
-                                  "/info/patches.php\n"
-                        "    This appears to be %s.";
+        const char *message = "Demo is from a different game version!\n"
+                              "(read %i, should be %i)\n"
+                              "\n"
+                              "*** You may need to upgrade your version "
+                                  "of Doom to v1.9. ***\n"
+                              "    See: https://www.doomworld.com/classicdoom"
+                                        "/info/patches.php\n"
+                              "    This appears to be %s.";
 
         I_Error(message, demoversion, G_VanillaVersionCode(),
                          DemoVersionDescription(demoversion));
