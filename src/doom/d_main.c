@@ -812,12 +812,12 @@ static char *GetGameName(char *gamename)
     return gamename;
 }
 
-static void SetMissionForPackName(char *pack_name)
+static void SetMissionForPackName(const char *pack_name)
 {
     int i;
     static const struct
     {
-        char *name;
+        const char *name;
         int mission;
     } packs[] = {
         { "doom2",    doom2 },
@@ -1059,8 +1059,8 @@ void PrintDehackedBanners(void)
 
 static struct 
 {
-    char *description;
-    char *cmdline;
+    const char *description;
+    const char *cmdline;
     GameVersion_t version;
 } gameversions[] = {
     {"Doom 1.666",           "1.666",      exe_doom_1_666},

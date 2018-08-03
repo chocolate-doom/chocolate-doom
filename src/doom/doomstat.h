@@ -58,7 +58,7 @@ extern GameMode_t	gamemode;
 extern GameMission_t	gamemission;
 extern GameVersion_t    gameversion;
 extern GameVariant_t    gamevariant;
-extern char            *gamedescription;
+extern const char       *gamedescription;
 extern char            *nervewadfile;
 
 // Convenience macro.
@@ -248,7 +248,7 @@ extern  wbstartstruct_t		wminfo;
 //
 
 // File handling stuff.
-extern  char *          savegamedir;
+extern  char        *savegamedir;
 extern	char		basedefault[1024];
 
 // if true, load all graphics at level load
