@@ -40,7 +40,7 @@
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
 static void CheckOpen(void);
-static void OpenScript(char *name, int type);
+static void OpenScript(const char *name, int type);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
@@ -122,7 +122,7 @@ void SC_OpenFile(char *name)
 //
 //==========================================================================
 
-static void OpenScript(char *name, int type)
+static void OpenScript(const char *name, int type)
 {
     SC_Close();
     if (type == LUMP_SCRIPT)
