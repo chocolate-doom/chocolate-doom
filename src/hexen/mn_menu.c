@@ -423,7 +423,7 @@ int MN_TextAWidth(const char *text)
 //
 //---------------------------------------------------------------------------
 
-void MN_DrTextB(char *text, int x, int y)
+void MN_DrTextB(const char *text, int x, int y)
 {
     char c;
     patch_t *p;
