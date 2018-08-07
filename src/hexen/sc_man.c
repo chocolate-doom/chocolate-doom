@@ -111,7 +111,7 @@ void SC_OpenLump(const char *name)
 //
 //==========================================================================
 
-void SC_OpenFile(char *name)
+void SC_OpenFile(const char *name)
 {
     OpenScript(name, FILE_ZONE_SCRIPT);
 }
