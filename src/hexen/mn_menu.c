@@ -294,7 +294,7 @@ static Menu_t *Menus[] = {
     &SaveMenu
 };
 
-static char *GammaText[] = {
+static const char *GammaText[] = {
     TXT_GAMMA_LEVEL_OFF,
     TXT_GAMMA_LEVEL_1,
     TXT_GAMMA_LEVEL_2,
