@@ -128,7 +128,7 @@ static byte SV_ReadByte(void);
 static uint16_t SV_ReadWord(void);
 static uint32_t SV_ReadLong(void);
 static void *SV_ReadPtr(void);
-static void SV_Write(void *buffer, int size);
+static void SV_Write(const void *buffer, int size);
 static void SV_WriteByte(byte val);
 static void SV_WriteWord(unsigned short val);
 static void SV_WriteLong(unsigned int val);
@@ -3422,7 +3422,7 @@ static void *SV_ReadPtr(void)
 //
 //==========================================================================
 
-static void SV_Write(void *buffer, int size)
+static void SV_Write(const void *buffer, int size)
 {
     fwrite(buffer, size, 1, SavingFP);
 }
