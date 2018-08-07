@@ -1060,7 +1060,7 @@ boolean MN_Responder(event_t * event);
 void MN_Ticker(void);
 void MN_Drawer(void);
 void MN_DrTextA(const char *text, int x, int y);
-void MN_DrTextAYellow(char *text, int x, int y);
+void MN_DrTextAYellow(const char *text, int x, int y);
 int MN_TextAWidth(char *text);
 void MN_DrTextB(char *text, int x, int y);
 int MN_TextBWidth(char *text);

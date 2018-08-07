@@ -365,7 +365,7 @@ void MN_DrTextA(const char *text, int x, int y)
 //
 //==========================================================================
 
-void MN_DrTextAYellow(char *text, int x, int y)
+void MN_DrTextAYellow(const char *text, int x, int y)
 {
     char c;
     patch_t *p;
