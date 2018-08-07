@@ -393,7 +393,7 @@ boolean SC_Check(void)
 //
 //==========================================================================
 
-int SC_MatchString(char **strings)
+int SC_MatchString(const char **strings)
 {
     int i;
 
@@ -413,7 +413,7 @@ int SC_MatchString(char **strings)
 //
 //==========================================================================
 
-int SC_MustMatchString(char **strings)
+int SC_MustMatchString(const char **strings)
 {
     int i;
 
