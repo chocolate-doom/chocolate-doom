@@ -574,7 +574,7 @@ int R_CheckTextureNumForName(const char *name)
 ================
 */
 
-int R_TextureNumForName(char *name)
+int R_TextureNumForName(const char *name)
 {
     int i;
     //char  namet[9];
