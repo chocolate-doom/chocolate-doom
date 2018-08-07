@@ -97,7 +97,7 @@ void SC_Open(char *name)
 //
 //==========================================================================
 
-void SC_OpenLump(char *name)
+void SC_OpenLump(const char *name)
 {
     OpenScript(name, LUMP_SCRIPT);
 }

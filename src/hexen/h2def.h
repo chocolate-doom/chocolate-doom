@@ -905,7 +905,7 @@ int M_DrawText(int x, int y, boolean direct, char *string);
 //------------------------------
 
 void SC_Open(char *name);
-void SC_OpenLump(char *name);
+void SC_OpenLump(const char *name);
 void SC_OpenFile(char *name);
 void SC_Close(void);
 boolean SC_GetString(void);
