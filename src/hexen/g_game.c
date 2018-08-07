@@ -2044,7 +2044,7 @@ void G_RecordDemo(skill_t skill, int numplayers, int episode, int map,
 
 static const char *defdemoname;
 
-void G_DeferedPlayDemo(char *name)
+void G_DeferedPlayDemo(const char *name)
 {
     defdemoname = name;
     gameaction = ga_playdemo;
