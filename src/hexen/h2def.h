@@ -885,7 +885,7 @@ void R_DrawTopBorder(void);
 void R_SetViewSize(int blocks, int detail);
 // called by M_Responder
 
-int R_FlatNumForName(char *name);
+int R_FlatNumForName(const char *name);
 
 int R_TextureNumForName(char *name);
 int R_CheckTextureNumForName(char *name);
