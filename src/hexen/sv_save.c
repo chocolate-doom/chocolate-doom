@@ -1922,7 +1922,7 @@ static void StreamOut_floorWaggle_t(floorWaggle_t *str)
 //
 //==========================================================================
 
-void SV_SaveGame(int slot, char *description)
+void SV_SaveGame(int slot, const char *description)
 {
     char fileName[100];
     char versionText[HXS_VERSION_TEXT_LENGTH];

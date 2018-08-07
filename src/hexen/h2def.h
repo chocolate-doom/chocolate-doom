@@ -807,7 +807,7 @@ void G_ScreenShot(void);
 
 extern char *SavePath;
 
-void SV_SaveGame(int slot, char *description);
+void SV_SaveGame(int slot, const char *description);
 void SV_SaveMap(boolean savePlayers);
 void SV_LoadGame(int slot);
 void SV_MapTeleport(int map, int position);
