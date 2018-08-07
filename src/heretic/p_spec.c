@@ -193,7 +193,7 @@ anim_t *lastanim;
 int *TerrainTypes;
 struct
 {
-    char *name;
+    const char *name;
     int type;
 } TerrainTypeDefs[] =
 {
