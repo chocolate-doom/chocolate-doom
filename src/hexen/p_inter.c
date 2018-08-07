@@ -90,7 +90,7 @@ void P_SetMessage(player_t * player, const char *message, boolean ultmsg)
 //
 //==========================================================================
 
-void P_SetYellowMessage(player_t * player, char *message, boolean ultmsg)
+void P_SetYellowMessage(player_t * player, const char *message, boolean ultmsg)
 {
     if ((player->ultimateMessage || !messageson) && !ultmsg)
     {
