@@ -551,7 +551,7 @@ int R_FlatNumForName(const char *name)
 ================
 */
 
-int R_CheckTextureNumForName(char *name)
+int R_CheckTextureNumForName(const char *name)
 {
     int i;
 
