@@ -915,7 +915,7 @@ boolean SC_GetNumber(void);
 void SC_MustGetNumber(void);
 void SC_UnGet(void);
 //boolean SC_Check(void);
-boolean SC_Compare(char *text);
+boolean SC_Compare(const char *text);
 int SC_MatchString(char **strings);
 int SC_MustMatchString(char **strings);
 void SC_ScriptError(const char *message);

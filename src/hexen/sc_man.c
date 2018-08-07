@@ -431,7 +431,7 @@ int SC_MustMatchString(char **strings)
 //
 //==========================================================================
 
-boolean SC_Compare(char *text)
+boolean SC_Compare(const char *text)
 {
     if (strcasecmp(text, sc_String) == 0)
     {
