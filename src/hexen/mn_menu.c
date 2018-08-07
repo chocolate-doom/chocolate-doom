@@ -596,12 +596,12 @@ static void DrawMainMenu(void)
 static void DrawClassMenu(void)
 {
     pclass_t class;
-    static char *boxLumpName[3] = {
+    static const char *boxLumpName[3] = {
         "m_fbox",
         "m_cbox",
         "m_mbox"
     };
-    static char *walkLumpName[3] = {
+    static const char *walkLumpName[3] = {
         "m_fwalk1",
         "m_cwalk1",
         "m_mwalk1"
