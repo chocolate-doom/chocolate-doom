@@ -508,7 +508,7 @@ void MN_Drawer(void)
     int x;
     int y;
     MenuItem_t *item;
-    char *selName;
+    const char *selName;
 
     if (MenuActive == false)
     {
