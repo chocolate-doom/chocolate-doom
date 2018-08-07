@@ -69,7 +69,7 @@ typedef enum
 typedef struct
 {
     ItemType_t type;
-    char *text;
+    const char *text;
     boolean(*func) (int option);
     int option;
     MenuType_t menu;
