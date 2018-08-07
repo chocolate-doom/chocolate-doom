@@ -446,7 +446,7 @@ boolean SC_Compare(char *text)
 //
 //==========================================================================
 
-void SC_ScriptError(char *message)
+void SC_ScriptError(const char *message)
 {
     if (message == NULL)
     {

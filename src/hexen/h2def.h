@@ -918,7 +918,7 @@ void SC_UnGet(void);
 boolean SC_Compare(char *text);
 int SC_MatchString(char **strings);
 int SC_MustMatchString(char **strings);
-void SC_ScriptError(char *message);
+void SC_ScriptError(const char *message);
 
 extern char *sc_String;
 extern int sc_Number;
