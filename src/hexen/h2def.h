@@ -904,7 +904,7 @@ int M_DrawText(int x, int y, boolean direct, char *string);
 // SC_man.c
 //------------------------------
 
-void SC_Open(char *name);
+void SC_Open(const char *name);
 void SC_OpenLump(const char *name);
 void SC_OpenFile(char *name);
 void SC_Close(void);

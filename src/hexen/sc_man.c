@@ -74,7 +74,7 @@ static boolean AlreadyGot = false;
 //
 //==========================================================================
 
-void SC_Open(char *name)
+void SC_Open(const char *name)
 {
     char fileName[128];
 
