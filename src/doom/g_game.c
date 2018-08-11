@@ -39,6 +39,7 @@
 #include "i_timer.h"
 #include "i_input.h"
 #include "i_video.h"
+#include "i_joystick.h"
 
 #include "p_setup.h"
 #include "p_saveg.h"
@@ -350,8 +351,8 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     
     // use two stage accelerative turning
     // on the keyboard and joystick
-    if (joyxmove < 0
-	|| joyxmove > 0  
+    if ((!joystick_analog && (joyxmove < 0
+	|| joyxmove > 0))
 	|| gamekeydown[key_right]
 	|| gamekeydown[key_left]) 
 	turnheld += ticdup; 
@@ -376,10 +377,13 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
 	    //	fprintf(stderr, "strafe left\n");
 	    side -= sidemove[speed]; 
 	}
-	if (joyxmove > 0) 
-	    side += sidemove[speed]; 
-	if (joyxmove < 0) 
-	    side -= sidemove[speed]; 
+        if (!joystick_analog)
+        {
+            if (joyxmove > 0) 
+                side += sidemove[speed]; 
+            if (joyxmove < 0) 
+                side -= sidemove[speed]; 
+        }
  
     } 
     else 
@@ -388,10 +392,13 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
 	    cmd->angleturn -= angleturn[tspeed]; 
 	if (gamekeydown[key_left]) 
 	    cmd->angleturn += angleturn[tspeed]; 
-	if (joyxmove > 0) 
-	    cmd->angleturn -= angleturn[tspeed]; 
-	if (joyxmove < 0) 
-	    cmd->angleturn += angleturn[tspeed]; 
+        if (!joystick_analog)
+        {
+            if (joyxmove > 0) 
+                cmd->angleturn -= angleturn[tspeed]; 
+            if (joyxmove < 0) 
+                cmd->angleturn += angleturn[tspeed]; 
+        }
     } 
  
     if (gamekeydown[key_up]) 
@@ -405,15 +412,24 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
 	forward -= forwardmove[speed]; 
     }
 
-    if (joyymove < 0) 
-        forward += forwardmove[speed]; 
-    if (joyymove > 0) 
-        forward -= forwardmove[speed]; 
+    if (!joystick_analog)
+    {
+        if (joyymove < 0) 
+            forward += forwardmove[speed]; 
+        if (joyymove > 0) 
+            forward -= forwardmove[speed]; 
+    }
+    else
+    {
+        forward -= (joyymove / 32766.0f) * MAXPLMOVE;
+        side += (joystrafemove / 32766.0f) * sidemove[1];
+        cmd->angleturn -= (joyxmove / 32766.0f) * angleturn[1];
+    }
 
     if (gamekeydown[key_strafeleft]
      || joybuttons[joybstrafeleft]
      || mousebuttons[mousebstrafeleft]
-     || joystrafemove < 0)
+     || (!joystick_analog && joystrafemove < 0))
     {
         side -= sidemove[speed];
     }
@@ -421,7 +437,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     if (gamekeydown[key_straferight]
      || joybuttons[joybstraferight]
      || mousebuttons[mousebstraferight]
-     || joystrafemove > 0)
+     || (!joystick_analog && joystrafemove > 0))
     {
         side += sidemove[speed]; 
     }
