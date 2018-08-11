@@ -424,6 +424,13 @@ fixed_t P_FindNextHighestFloor(sector_t * sec, int currentheight)
         }
     }
 
+    // Don't return INT_MAX if no higher floor is found.
+
+    if (!h)
+    {
+        return height;
+    }
+
     // Compatibility note, in case of demo desyncs.
 
     if (h > 20)
