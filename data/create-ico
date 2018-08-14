@@ -1,0 +1,55 @@
+#!/bin/sh
+#
+# Copyright(C) 2018 Sam Hewitt
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# Converts PNG icon assets into win32 ICO asset
+#
+
+if command -v icontool 2>&1 >/dev/null; then
+    echo "WARNING: Could not create .ico assets. Please install 'icoutils'."
+else
+    # create doom.ico
+    echo "Creating 32-bit 'doom.ico'..."
+    icotool --create --output=doom.ico \
+                icons/hicolor/16x16/apps/chocolate-doom.png \
+                icons/hicolor/24x24/apps/chocolate-doom.png \
+                icons/hicolor/32x32/apps/chocolate-doom.png \
+                icons/hicolor/48x48/apps/chocolate-doom.png \
+                icons/hicolor/256x256/apps/chocolate-doom.png \
+            --bit-depth=32
+    echo "Done."
+    # create doom.ico
+    echo "Creating 8-bit 'doom.ico'..."
+    icotool --create --output=doom8.ico \
+                icons/hicolor/16x16/apps/chocolate-doom.png \
+                icons/hicolor/24x24/apps/chocolate-doom.png \
+                icons/hicolor/32x32/apps/chocolate-doom.png \
+            --bit-depth=8
+    echo "Done."
+    # create setup.ico
+    echo "Creating 32-bit 'setup.ico'..."
+    icotool --create --output=setup.ico icons/hicolor/16x16/apps/chocolate-setup.png \
+                            icons/hicolor/24x24/apps/chocolate-setup.png \
+                            icons/hicolor/32x32/apps/chocolate-setup.png \
+                            icons/hicolor/48x48/apps/chocolate-setup.png \
+                            icons/hicolor/256x256/apps/chocolate-setup.png \
+            --bit-depth=32
+    echo "Done."
+    # create  8-bit setup.ico
+    echo "Creating 8-bit 'setup.ico'..."
+    icotool --create --output=setup8.ico icons/hicolor/16x16/apps/chocolate-setup.png \
+                            icons/hicolor/24x24/apps/chocolate-setup.png \
+                            icons/hicolor/32x32/apps/chocolate-setup.png \
+            --bit-depth=8
+    echo "Done."
+fi
