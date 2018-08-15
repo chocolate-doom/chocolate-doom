@@ -109,7 +109,7 @@ static void ConfigExtraButtons(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
     AddMouseControl(buttons_table, "Next weapon", &mousebnextweapon);
 }
 
-void ConfigMouse(void)
+void ConfigMouse(TXT_UNCAST_ARG(widget), void *user_data)
 {
     txt_window_t *window;
 

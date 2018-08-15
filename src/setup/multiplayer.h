@@ -15,10 +15,10 @@
 #ifndef SETUP_MULTIPLAYER_H
 #define SETUP_MULTIPLAYER_H
 
-void StartMultiGame(void);
-void WarpMenu(void);
-void JoinMultiGame(void);
-void MultiplayerConfig(void);
+void StartMultiGame(void *widget, void *user_data);
+void WarpMenu(void *widget, void *user_data);
+void JoinMultiGame(void *widget, void *user_data);
+void MultiplayerConfig(void *widget, void *user_data);
 
 void SetChatMacroDefaults(void);
 void SetPlayerNameDefault(void);

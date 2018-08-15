@@ -15,7 +15,7 @@
 #ifndef SETUP_DISPLAY_H 
 #define SETUP_DISPLAY_H
 
-void ConfigDisplay(void);
+void ConfigDisplay(void *widget, void *user_data);
 void SetDisplayDriver(void);
 void BindDisplayVariables(void);
 

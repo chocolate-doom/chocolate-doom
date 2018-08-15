@@ -212,7 +212,7 @@ static void AdvancedDisplayConfig(TXT_UNCAST_ARG(widget),
     TXT_SignalConnect(ar_checkbox, "changed", GenerateSizesTable, sizes_table);
 }
 
-void ConfigDisplay(void)
+void ConfigDisplay(TXT_UNCAST_ARG(widget), void *user_data)
 {
     txt_window_t *window;
     txt_table_t *sizes_table;
