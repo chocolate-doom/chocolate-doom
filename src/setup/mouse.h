@@ -15,7 +15,7 @@
 #ifndef SETUP_MOUSE_H
 #define SETUP_MOUSE_H
 
-void ConfigMouse(void);
+void ConfigMouse(void *widget, void *user_data);
 void BindMouseVariables(void);
 
 extern int novert;
