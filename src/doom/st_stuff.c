@@ -429,7 +429,6 @@ cheatseq_t cheat_showfps = CHEAT("showfps", 0);
 cheatseq_t cheat_showfps2 = CHEAT("idrate", 0); // [crispy] PrBoom+
 cheatseq_t cheat_goobers = CHEAT("goobers", 0);
 cheatseq_t cheat_version = CHEAT("version", 0); // [crispy] Russian Doom
-cheatseq_t cheat_sdlaudio = CHEAT("sdlaudio", 0); // [crispy] get current SDL audio driver
 static char msg[ST_MSGWIDTH];
 
 // [crispy] restrict cheat usage
@@ -1035,14 +1034,6 @@ ST_Responder (event_t* ev)
 #undef BUILD_DATE
       plyr->message = msg;
       fprintf(stderr, "%s\n", msg);
-    }
-    // [crispy] get current SDL audio driver
-    else if (cht_CheckCheat(&cheat_sdlaudio, ev->data2))
-    {
-      extern const char *I_GetCurrentAudioDriver(void);
-      M_snprintf(msg, sizeof(msg), "SDL audio driver: %s", I_GetCurrentAudioDriver());
-      plyr->message = msg;
-      fprintf(stderr, "SDL_GetCurrentAudioDriver: %s\n", msg);
     }
     
     // 'clev' change-level cheat

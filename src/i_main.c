@@ -61,9 +61,3 @@ int main(int argc, char **argv)
     return 0;
 }
 
-const char *I_GetCurrentAudioDriver(void)
-{
-	const char *driver_name = SDL_GetCurrentAudioDriver();
-
-	return driver_name ? driver_name : "none";
-}
