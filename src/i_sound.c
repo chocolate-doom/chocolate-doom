@@ -215,6 +215,12 @@ void I_InitSound(boolean use_sfx_prefix)
 
     nomusic = M_CheckParm("-nomusic") > 0;
 
+// [crispy] forcefully set the SDL audio backend on Windows to directsound,
+// away from the buggy WASAPI default, not overriding previously set values
+#if defined(_WIN32)
+    SDL_setenv("SDL_AUDIODRIVER", "directsound", false);
+#endif
+
     // Initialize the sound and music subsystems.
 
     if (!nosound && !screensaver_mode)
@@ -239,6 +245,12 @@ void I_InitSound(boolean use_sfx_prefix)
         {
             InitMusicModule();
         }
+    }
+    // [crispy] print the SDL audio backend
+    {
+	const char *driver_name = SDL_GetCurrentAudioDriver();
+
+	fprintf(stderr, "I_InitSound: SDL audio driver is %s\n", driver_name ? driver_name : "none");
     }
 }
 
