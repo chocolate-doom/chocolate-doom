@@ -68,7 +68,7 @@ typedef enum
 typedef struct
 {
     ItemType_t type;
-    char *text;
+    const char *text;
     void (*func) (int option);
     int option;
     MenuType_t menu;
@@ -294,7 +294,7 @@ static Menu_t *Menus[] = {
     &SaveMenu
 };
 
-static char *GammaText[] = {
+static const char *GammaText[] = {
     TXT_GAMMA_LEVEL_OFF,
     TXT_GAMMA_LEVEL_1,
     TXT_GAMMA_LEVEL_2,
@@ -339,7 +339,7 @@ static void InitFonts(void)
 //
 //---------------------------------------------------------------------------
 
-void MN_DrTextA(char *text, int x, int y)
+void MN_DrTextA(const char *text, int x, int y)
 {
     char c;
     patch_t *p;
@@ -365,7 +365,7 @@ void MN_DrTextA(char *text, int x, int y)
 //
 //==========================================================================
 
-void MN_DrTextAYellow(char *text, int x, int y)
+void MN_DrTextAYellow(const char *text, int x, int y)
 {
     char c;
     patch_t *p;
@@ -393,7 +393,7 @@ void MN_DrTextAYellow(char *text, int x, int y)
 //
 //---------------------------------------------------------------------------
 
-int MN_TextAWidth(char *text)
+int MN_TextAWidth(const char *text)
 {
     char c;
     int width;
@@ -423,7 +423,7 @@ int MN_TextAWidth(char *text)
 //
 //---------------------------------------------------------------------------
 
-void MN_DrTextB(char *text, int x, int y)
+void MN_DrTextB(const char *text, int x, int y)
 {
     char c;
     patch_t *p;
@@ -451,7 +451,7 @@ void MN_DrTextB(char *text, int x, int y)
 //
 //---------------------------------------------------------------------------
 
-int MN_TextBWidth(char *text)
+int MN_TextBWidth(const char *text)
 {
     char c;
     int width;
@@ -494,7 +494,7 @@ void MN_Ticker(void)
 //
 //---------------------------------------------------------------------------
 
-char *QuitEndMsg[] = {
+const char *QuitEndMsg[] = {
     "ARE YOU SURE YOU WANT TO QUIT?",
     "ARE YOU SURE YOU WANT TO END THE GAME?",
     "DO YOU WANT TO QUICKSAVE THE GAME NAMED",
@@ -508,7 +508,7 @@ void MN_Drawer(void)
     int x;
     int y;
     MenuItem_t *item;
-    char *selName;
+    const char *selName;
 
     if (MenuActive == false)
     {
@@ -596,12 +596,12 @@ static void DrawMainMenu(void)
 static void DrawClassMenu(void)
 {
     pclass_t class;
-    static char *boxLumpName[3] = {
+    static const char *boxLumpName[3] = {
         "m_fbox",
         "m_cbox",
         "m_mbox"
     };
-    static char *walkLumpName[3] = {
+    static const char *walkLumpName[3] = {
         "m_fwalk1",
         "m_cwalk1",
         "m_mwalk1"

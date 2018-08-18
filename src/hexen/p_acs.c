@@ -310,7 +310,7 @@ static int (*PCodeCmds[]) (void) =
 //
 //==========================================================================
 
-static void ACSAssert(int condition, char *fmt, ...)
+static void ACSAssert(int condition, const char *fmt, ...)
 {
     char buf[128];
     va_list args;
