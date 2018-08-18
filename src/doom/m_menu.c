@@ -2188,71 +2188,73 @@ boolean M_Responder (event_t* ev)
     {
         // Simulate key presses from joystick events to interact with the menu.
 
-	if (ev->data3 < 0)
-	{
-	    key = key_menu_up;
-	    joywait = I_GetTime() + 5;
-	}
-	else if (ev->data3 > 0)
-	{
-	    key = key_menu_down;
-	    joywait = I_GetTime() + 5;
-	}
-		
-	if (ev->data2 < 0)
-	{
-	    key = key_menu_left;
-	    joywait = I_GetTime() + 2;
-	}
-	else if (ev->data2 > 0)
-	{
-	    key = key_menu_right;
-	    joywait = I_GetTime() + 2;
-	}
+        if (menuactive)
+        {
+            if (ev->data3 < 0)
+            {
+                key = key_menu_up;
+                joywait = I_GetTime() + 5;
+            }
+            else if (ev->data3 > 0)
+            {
+                key = key_menu_down;
+                joywait = I_GetTime() + 5;
+            }
+            if (ev->data2 < 0)
+            {
+                key = key_menu_left;
+                joywait = I_GetTime() + 2;
+            }
+            else if (ev->data2 > 0)
+            {
+                key = key_menu_right;
+                joywait = I_GetTime() + 2;
+            }
 
 #define JOY_BUTTON_MAPPED(x) ((x) >= 0)
 #define JOY_BUTTON_PRESSED(x) (JOY_BUTTON_MAPPED(x) && (ev->data1 & (1 << (x))) != 0)
 
-        if (JOY_BUTTON_PRESSED(joybfire))
-        {
-            // Simulate a 'Y' keypress when Doom show a Y/N dialog with Fire button.
-            if (messageToPrint && messageNeedsInput)
+            if (JOY_BUTTON_PRESSED(joybfire))
             {
-                key = key_menu_confirm;
-            }
-            // Simulate pressing "Enter" when we are supplying a save slot name
-            else if (saveStringEnter)
-            {
-                key = KEY_ENTER;
-            }
-            else
-            {
-                // if selecting a save slot via joypad, set a flag
-                if (currentMenu == &SaveDef)
+                // Simulate a 'Y' keypress when Doom show a Y/N dialog with Fire button.
+                if (messageToPrint && messageNeedsInput)
                 {
-                    joypadSave = true;
+                    key = key_menu_confirm;
                 }
-                key = key_menu_forward;
+                // Simulate pressing "Enter" when we are supplying a save slot name
+                else if (saveStringEnter)
+                {
+                    key = KEY_ENTER;
+                }
+                else
+                {
+                    // if selecting a save slot via joypad, set a flag
+                    if (currentMenu == &SaveDef)
+                    {
+                        joypadSave = true;
+                    }
+                    key = key_menu_forward;
+                }
+                joywait = I_GetTime() + 5;
             }
-            joywait = I_GetTime() + 5;
-        }
-        if (JOY_BUTTON_PRESSED(joybuse))
-        {
-            // Simulate a 'N' keypress when Doom show a Y/N dialog with Use button.
-            if (messageToPrint && messageNeedsInput)
+            if (JOY_BUTTON_PRESSED(joybuse))
             {
-                key = key_menu_abort;
+                // Simulate a 'N' keypress when Doom show a Y/N dialog with Use button.
+                if (messageToPrint && messageNeedsInput)
+                {
+                    key = key_menu_abort;
+                }
+                // If user was entering a save name, back out
+                else if (saveStringEnter)
+                {
+                    key = KEY_ESCAPE;
+                }
+                else
+                {
+                    key = key_menu_back;
+                }
+                joywait = I_GetTime() + 5;
             }
-            // If user was entering a save name, back out
-            else if (saveStringEnter)
-            {
-                key = KEY_ESCAPE;
-            }
-            else
-            {
-                key = key_menu_back;
-            }
-            joywait = I_GetTime() + 5;
         }
         if (JOY_BUTTON_PRESSED(joybmenu))
         {
