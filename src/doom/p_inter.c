@@ -270,7 +270,7 @@ P_GiveCard
     if (player->cards[card])
 	return;
     
-    player->bonuscount = BONUSADD;
+    player->bonuscount += BONUSADD; // [crispy] Fix "Key pickup resets palette"
     player->cards[card] = 1;
 }
 
