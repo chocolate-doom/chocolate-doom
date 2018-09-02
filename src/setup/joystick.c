@@ -986,7 +986,7 @@ static void AddJoystickControl(TXT_UNCAST_ARG(table), char *label, int *var)
                    NULL);
 }
 
-void ConfigJoystick(void)
+void ConfigJoystick(TXT_UNCAST_ARG(widget), void *user_data)
 {
     txt_window_t *window;
 

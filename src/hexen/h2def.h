@@ -764,7 +764,7 @@ void G_DeferedInitNew(skill_t skill, int episode, int map);
 
 void G_DeferredNewGame(skill_t skill);
 
-void G_DeferedPlayDemo(char *demo);
+void G_DeferedPlayDemo(const char *demo);
 
 void G_LoadGame(int slot);
 // can be called by the startup code or M_Responder
@@ -807,7 +807,7 @@ void G_ScreenShot(void);
 
 extern char *SavePath;
 
-void SV_SaveGame(int slot, char *description);
+void SV_SaveGame(int slot, const char *description);
 void SV_SaveMap(boolean savePlayers);
 void SV_LoadGame(int slot);
 void SV_MapTeleport(int map, int position);
@@ -885,10 +885,10 @@ void R_DrawTopBorder(void);
 void R_SetViewSize(int blocks, int detail);
 // called by M_Responder
 
-int R_FlatNumForName(char *name);
+int R_FlatNumForName(const char *name);
 
-int R_TextureNumForName(char *name);
-int R_CheckTextureNumForName(char *name);
+int R_TextureNumForName(const char *name);
+int R_CheckTextureNumForName(const char *name);
 // called by P_Ticker for switches and animations
 // returns the texture number for the texture name
 
@@ -904,9 +904,9 @@ int M_DrawText(int x, int y, boolean direct, char *string);
 // SC_man.c
 //------------------------------
 
-void SC_Open(char *name);
-void SC_OpenLump(char *name);
-void SC_OpenFile(char *name);
+void SC_Open(const char *name);
+void SC_OpenLump(const char *name);
+void SC_OpenFile(const char *name);
 void SC_Close(void);
 boolean SC_GetString(void);
 void SC_MustGetString(void);
@@ -915,10 +915,10 @@ boolean SC_GetNumber(void);
 void SC_MustGetNumber(void);
 void SC_UnGet(void);
 //boolean SC_Check(void);
-boolean SC_Compare(char *text);
-int SC_MatchString(char **strings);
-int SC_MustMatchString(char **strings);
-void SC_ScriptError(char *message);
+boolean SC_Compare(const char *text);
+int SC_MatchString(const char **strings);
+int SC_MustMatchString(const char **strings);
+void SC_ScriptError(const char *message);
 
 extern char *sc_String;
 extern int sc_Number;
@@ -1059,11 +1059,11 @@ void MN_DeactivateMenu(void);
 boolean MN_Responder(event_t * event);
 void MN_Ticker(void);
 void MN_Drawer(void);
-void MN_DrTextA(char *text, int x, int y);
-void MN_DrTextAYellow(char *text, int x, int y);
-int MN_TextAWidth(char *text);
-void MN_DrTextB(char *text, int x, int y);
-int MN_TextBWidth(char *text);
+void MN_DrTextA(const char *text, int x, int y);
+void MN_DrTextAYellow(const char *text, int x, int y);
+int MN_TextAWidth(const char *text);
+void MN_DrTextB(const char *text, int x, int y);
+int MN_TextBWidth(const char *text);
 
 extern int messageson;
 

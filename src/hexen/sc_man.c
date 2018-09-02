@@ -40,7 +40,7 @@
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
 static void CheckOpen(void);
-static void OpenScript(char *name, int type);
+static void OpenScript(const char *name, int type);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
@@ -74,7 +74,7 @@ static boolean AlreadyGot = false;
 //
 //==========================================================================
 
-void SC_Open(char *name)
+void SC_Open(const char *name)
 {
     char fileName[128];
 
@@ -97,7 +97,7 @@ void SC_Open(char *name)
 //
 //==========================================================================
 
-void SC_OpenLump(char *name)
+void SC_OpenLump(const char *name)
 {
     OpenScript(name, LUMP_SCRIPT);
 }
@@ -111,7 +111,7 @@ void SC_OpenLump(char *name)
 //
 //==========================================================================
 
-void SC_OpenFile(char *name)
+void SC_OpenFile(const char *name)
 {
     OpenScript(name, FILE_ZONE_SCRIPT);
 }
@@ -122,7 +122,7 @@ void SC_OpenFile(char *name)
 //
 //==========================================================================
 
-static void OpenScript(char *name, int type)
+static void OpenScript(const char *name, int type)
 {
     SC_Close();
     if (type == LUMP_SCRIPT)
@@ -393,7 +393,7 @@ boolean SC_Check(void)
 //
 //==========================================================================
 
-int SC_MatchString(char **strings)
+int SC_MatchString(const char **strings)
 {
     int i;
 
@@ -413,7 +413,7 @@ int SC_MatchString(char **strings)
 //
 //==========================================================================
 
-int SC_MustMatchString(char **strings)
+int SC_MustMatchString(const char **strings)
 {
     int i;
 
@@ -431,7 +431,7 @@ int SC_MustMatchString(char **strings)
 //
 //==========================================================================
 
-boolean SC_Compare(char *text)
+boolean SC_Compare(const char *text)
 {
     if (strcasecmp(text, sc_String) == 0)
     {
@@ -446,7 +446,7 @@ boolean SC_Compare(char *text)
 //
 //==========================================================================
 
-void SC_ScriptError(char *message)
+void SC_ScriptError(const char *message)
 {
     if (message == NULL)
     {

@@ -128,7 +128,7 @@ static byte SV_ReadByte(void);
 static uint16_t SV_ReadWord(void);
 static uint32_t SV_ReadLong(void);
 static void *SV_ReadPtr(void);
-static void SV_Write(void *buffer, int size);
+static void SV_Write(const void *buffer, int size);
 static void SV_WriteByte(byte val);
 static void SV_WriteWord(unsigned short val);
 static void SV_WriteLong(unsigned int val);
@@ -1922,7 +1922,7 @@ static void StreamOut_floorWaggle_t(floorWaggle_t *str)
 //
 //==========================================================================
 
-void SV_SaveGame(int slot, char *description)
+void SV_SaveGame(int slot, const char *description)
 {
     char fileName[100];
     char versionText[HXS_VERSION_TEXT_LENGTH];
@@ -3422,7 +3422,7 @@ static void *SV_ReadPtr(void)
 //
 //==========================================================================
 
-static void SV_Write(void *buffer, int size)
+static void SV_Write(const void *buffer, int size)
 {
     fwrite(buffer, size, 1, SavingFP);
 }

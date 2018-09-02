@@ -802,12 +802,12 @@ static void StartGameMenu(char *window_title, int multiplayer)
     UpdateWarpButton();
 }
 
-void StartMultiGame(void)
+void StartMultiGame(TXT_UNCAST_ARG(widget), void *user_data)
 {
     StartGameMenu("Start multiplayer game", 1);
 }
 
-void WarpMenu(void)
+void WarpMenu(TXT_UNCAST_ARG(widget), void *user_data)
 {
     StartGameMenu("Level Warp", 0);
 }
@@ -1020,7 +1020,7 @@ static void FindLANServer(TXT_UNCAST_ARG(widget),
     ServerQueryWindow("Find LAN server");
 }
 
-void JoinMultiGame(void)
+void JoinMultiGame(TXT_UNCAST_ARG(widget), void *user_data)
 {
     txt_window_t *window;
     txt_inputbox_t *address_box;
@@ -1125,7 +1125,7 @@ void SetPlayerNameDefault(void)
 #endif
 }
 
-void MultiplayerConfig(void)
+void MultiplayerConfig(TXT_UNCAST_ARG(widget), void *user_data)
 {
     txt_window_t *window;
     txt_label_t *label;

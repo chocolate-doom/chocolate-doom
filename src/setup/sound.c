@@ -116,7 +116,7 @@ static txt_dropdown_list_t *OPLTypeSelector(void)
     return result;
 }
 
-void ConfigSound(void)
+void ConfigSound(TXT_UNCAST_ARG(widget), void *user_data)
 {
     txt_window_t *window;
 
