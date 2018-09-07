@@ -1594,7 +1594,7 @@ static byte* ST_WidgetColor(int i)
                 return cr[CR_RED];
 	    else if (plyr->armortype == 1)
                 return cr[CR_GREEN];
-	    else if (plyr->armortype == 2)
+	    else if (plyr->armortype >= 2)
                 return cr[CR_BLUE];
 /*
             // [crispy] alternatively, color by armor points
