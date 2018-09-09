@@ -450,15 +450,8 @@ static void CheckDOSDefaults(void)
 
 static boolean DirIsFile(const char *path, const char *filename)
 {
-    size_t path_len;
-    size_t filename_len;
-
-    path_len = strlen(path);
-    filename_len = strlen(filename);
-
-    return path_len >= filename_len + 1
-        && path[path_len - filename_len - 1] == DIR_SEPARATOR
-        && !strcasecmp(&path[path_len - filename_len], filename);
+    return strchr(path, DIR_SEPARATOR) != NULL
+        && !strcasecmp(M_BaseName(path), filename);
 }
 
 // Check if the specified directory contains the specified IWAD
@@ -536,15 +529,8 @@ static GameMission_t IdentifyIWADByName(char *name, int mask)
 {
     size_t i;
     GameMission_t mission;
-    char *p;
 
-    p = strrchr(name, DIR_SEPARATOR);
-
-    if (p != NULL)
-    {
-        name = p + 1;
-    }
-
+    name = M_BaseName(name);
     mission = none;
 
     for (i=0; i<arrlen(iwads); ++i)

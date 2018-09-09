@@ -521,17 +521,8 @@ static char *GetFullPath(char *base_filename, char *path)
 
     // Copy config filename and cut off the filename to just get the
     // parent dir.
-    basedir = M_StringDuplicate(base_filename);
-    p = strrchr(basedir, DIR_SEPARATOR);
-    if (p != NULL)
-    {
-        p[1] = '\0';
-        result = M_StringJoin(basedir, path, NULL);
-    }
-    else
-    {
-        result = M_StringDuplicate(path);
-    }
+    basedir = M_DirName(base_filename);
+    result = M_StringJoin(basedir, DIR_SEPARATOR_S, path, NULL);
     free(basedir);
     free(path);
 
@@ -829,14 +820,9 @@ static boolean WriteWrapperTimidityConfig(char *write_path)
         return false;
     }
 
-    p = strrchr(timidity_cfg_path, DIR_SEPARATOR);
-    if (p != NULL)
-    {
-        path = M_StringDuplicate(timidity_cfg_path);
-        path[p - timidity_cfg_path] = '\0';
-        fprintf(fstream, "dir %s\n", path);
-        free(path);
-    }
+    path = M_DirName(timidity_cfg_path);
+    fprintf(fstream, "dir %s\n", path);
+    free(path);
 
     fprintf(fstream, "source %s\n", timidity_cfg_path);
     fclose(fstream);

@@ -1162,23 +1162,12 @@ static void LoadIwadDeh(void)
     if (gameversion == exe_chex)
     {
         char *chex_deh = NULL;
-        char *sep;
+        char *dirname;
 
         // Look for chex.deh in the same directory as the IWAD file.
-        sep = strrchr(iwadfile, DIR_SEPARATOR);
-
-        if (sep != NULL)
-        {
-            size_t chex_deh_len = strlen(iwadfile) + 9;
-            chex_deh = malloc(chex_deh_len);
-            M_StringCopy(chex_deh, iwadfile, chex_deh_len);
-            chex_deh[sep - iwadfile + 1] = '\0';
-            M_StringConcat(chex_deh, "chex.deh", chex_deh_len);
-        }
-        else
-        {
-            chex_deh = M_StringDuplicate("chex.deh");
-        }
+        dirname = M_DirName(iwadfile);
+        chex_deh = M_StringJoin(dirname, DIR_SEPARATOR_S, "chex.deh");
+        free(dirname);
 
         // If the dehacked patch isn't found, try searching the WAD
         // search path instead.  We might find it...
