@@ -44,6 +44,6 @@ boolean M_ParmExists(const char *check);
 
 // Get name of executable used to run this program:
 
-char *M_GetExecutableName(void);
+const char *M_GetExecutableName(void);
 
 #endif

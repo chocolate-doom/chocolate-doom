@@ -525,7 +525,7 @@ static char *SearchDirectoryForIWAD(const char *dir, int mask, GameMission_t *mi
 // When given an IWAD with the '-iwad' parameter,
 // attempt to identify it by its name.
 
-static GameMission_t IdentifyIWADByName(char *name, int mask)
+static GameMission_t IdentifyIWADByName(const char *name, int mask)
 {
     size_t i;
     GameMission_t mission;

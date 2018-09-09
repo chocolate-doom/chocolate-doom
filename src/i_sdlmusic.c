@@ -497,7 +497,6 @@ static int ParseHexDigit(char c)
 static char *GetFullPath(char *base_filename, char *path)
 {
     char *basedir, *result;
-    char *p;
 
     // Starting with directory separator means we have an absolute path,
     // so just return it.
@@ -805,7 +804,7 @@ static void DumpSubstituteConfig(char *filename)
 
 static boolean WriteWrapperTimidityConfig(char *write_path)
 {
-    char *p, *path;
+    char *path;
     FILE *fstream;
 
     if (!strcmp(timidity_cfg_path, ""))
