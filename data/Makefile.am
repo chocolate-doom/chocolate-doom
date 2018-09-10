@@ -3,6 +3,7 @@ EXTRA_DIST=              \
         README           \
         doom.ico         \
         doom8.ico        \
+        doom.jpg         \
         doom.png         \
         setup.ico        \
         setup8.ico       \

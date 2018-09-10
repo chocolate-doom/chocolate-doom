@@ -406,9 +406,67 @@ static void I_ToggleFullScreen(void)
     }
 }
 
+extern void I_HandleKeyboardEvent(SDL_Event *sdlevent);
+
+struct EventMap {
+        int button;
+        SDL_Keycode sym;
+        SDL_Scancode scan;
+};
+
+void sendKeypress(SDL_Event *ev, int sym, int scancode) {
+    SDL_Event ev_new;
+    memset(&ev_new, 0, sizeof(SDL_Event));
+    ev_new.key.keysym.sym = sym;
+    ev_new.key.keysym.scancode = scancode;
+    if (ev->type == SDL_JOYBUTTONDOWN) {
+        ev_new.type = ev_new.key.type = SDL_KEYDOWN;
+        ev_new.key.state = SDL_PRESSED;
+    } else if (ev->type == SDL_JOYBUTTONUP) {
+        ev_new.type = ev_new.key.type = SDL_KEYUP;
+        ev_new.key.state = SDL_RELEASED;
+    }
+
+    I_HandleKeyboardEvent(&ev_new);
+}
+
+void TranslateEvent(SDL_Event *ev, const struct EventMap *btnmap, int btnmaps) {
+
+    int i;
+
+    for (i=0; i<btnmaps; i++ ) {
+        if (btnmap[i].button == ev->jbutton.button ) break;
+    }
+
+    if (i != btnmaps) {
+        sendKeypress(ev,btnmap[i].sym, btnmap[i].scan);
+    }
+}
+
+extern boolean askforquit __attribute__((weak));
+extern int messageToPrint __attribute__((weak));
+
+static void TranslateJoystickEvent(SDL_Event *ev) {
+    static const struct EventMap menu_btnmap[] = {
+        { 0, SDLK_RETURN, SDL_SCANCODE_RETURN },        // A Button
+        { 13, SDLK_UP, SDL_SCANCODE_UP },               // Up
+        { 15, SDLK_DOWN, SDL_SCANCODE_DOWN },           // Down
+        { 12, SDLK_LEFT, SDL_SCANCODE_LEFT },           // Left
+        { 14, SDLK_RIGHT, SDL_SCANCODE_RIGHT },         // Right
+        { 11, SDLK_ESCAPE, SDL_SCANCODE_ESCAPE },       // -
+        { 1,  SDLK_BACKSPACE, SDL_SCANCODE_BACKSPACE }, // B
+    };
+
+    if ( (&askforquit && askforquit) || (&messageToPrint && messageToPrint)) {
+        int btn = ev->jbutton.button;
+        if (btn == 3) sendKeypress(ev, SDLK_y, SDL_SCANCODE_Y);
+        if (btn == 1) sendKeypress(ev, SDLK_n, SDL_SCANCODE_N);
+    }
+    TranslateEvent(ev, menu_btnmap, sizeof(menu_btnmap)/sizeof(menu_btnmap[0]));
+}
+
 void I_GetEvent(void)
 {
-    extern void I_HandleKeyboardEvent(SDL_Event *sdlevent);
     extern void I_HandleMouseEvent(SDL_Event *sdlevent);
     SDL_Event sdlevent;
 
@@ -438,7 +496,12 @@ void I_GetEvent(void)
                     I_HandleMouseEvent(&sdlevent);
                 }
                 break;
-
+            // Translate some gamepad events to keys to allow menu navigation
+            // in games that don't support joystick menu controls (Heretic, Hexen)
+            case SDL_JOYBUTTONDOWN:
+            case SDL_JOYBUTTONUP:
+                TranslateJoystickEvent(&sdlevent);
+                break;
             case SDL_QUIT:
                 if (screensaver_mode)
                 {

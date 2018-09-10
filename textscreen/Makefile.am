@@ -5,7 +5,12 @@ CTAGS_ARGS=-I TXT_UNCAST_ARG+
 
 # build this directory before the examples directory.
 
-SUBDIRS = fonts . examples
+SUBDIRS = fonts .
+
+if BUILD_SWITCH
+else
+SUBDIRS += examples
+endif
 
 noinst_LIBRARIES=libtextscreen.a
 

@@ -2163,6 +2163,7 @@ float M_GetFloatVariable(const char *name)
 
 static char *GetDefaultConfigDir(void)
 {
+#ifndef __SWITCH__
 #if !defined(_WIN32) || defined(_WIN32_WCE)
 
     // Configuration settings are stored in an OS-appropriate path
@@ -2178,6 +2179,7 @@ static char *GetDefaultConfigDir(void)
         return result;
     }
 #endif /* #ifndef _WIN32 */
+#endif /* #ifndef __SWITCH__ */
     return M_StringDuplicate("");
 }
 
@@ -2204,11 +2206,11 @@ void M_SetConfigDir(const char *dir)
     if (strcmp(configdir, "") != 0)
     {
         printf("Using %s for configuration and saves\n", configdir);
+        // Make the directory if it doesn't already exist:
+
+        M_MakeDirectory(configdir);
     }
 
-    // Make the directory if it doesn't already exist:
-
-    M_MakeDirectory(configdir);
 }
 
 //

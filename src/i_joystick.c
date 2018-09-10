@@ -41,8 +41,12 @@ static SDL_Joystick *joystick = NULL;
 // Configuration variables:
 
 // Standard default.cfg Joystick enable/disable
-
+// always enable on Switch
+#ifdef __SWITCH__
+static int usejoystick = 1;
+#else
 static int usejoystick = 0;
+#endif
 
 // SDL GUID and index of the joystick to use.
 static char *joystick_guid = "";

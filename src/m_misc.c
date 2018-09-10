@@ -248,6 +248,8 @@ char *M_TempFile(const char *s)
     {
         tempdir = ".";
     }
+#elif defined(__SWITCH__)
+    tempdir = ".";
 #else
     // In Unix, just use /tmp.
 

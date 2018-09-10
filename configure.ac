@@ -102,6 +102,11 @@ case "$host" in
     ;;
 esac
 
+dnl - platform, for use with game console ports
+AC_ARG_WITH([platform],
+  AC_HELP_STRING([--with-platform],[build for specific platform]),
+  [], [with_platform=default])
+
 AC_CHECK_TOOL(OBJDUMP, objdump, )
 AC_CHECK_TOOL(STRIP, strip, )
 
@@ -111,8 +116,17 @@ AS_IF([test "x$enable_werror" = "xyes"], [
         CFLAGS="$CFLAGS -Werror"
 ])
 
+AS_IF([test "x$with_platform" = "xswitch"], [
+        CFLAGS="-fPIC -march=armv8-a -mtune=cortex-a57 -mtp=soft -ftls-model=local-exec $CFLAGS"
+        CPPFLAGS="-D__SWITCH__ $CPPFLAGS -isystem /opt/devkitpro/libnx/include"
+        LIBS="$LIBS -L/opt/devkitpro/libnx/lib -lnx -lm"
+        LDFLAGS="-fPIE -specs=/opt/devkitpro/libnx/switch.specs"
+])
+
 AM_CONDITIONAL(HAVE_WINDRES, test "$WINDRES" != "")
 AM_CONDITIONAL(HAVE_PYTHON, $HAVE_PYTHON)
+
+AM_CONDITIONAL(BUILD_SWITCH, [test "$with_platform" = "switch"])
 
 dnl Automake v1.8.0 is required, please upgrade!
 
