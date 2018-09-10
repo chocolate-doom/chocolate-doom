@@ -265,6 +265,45 @@ boolean M_StrToInt(const char *str, int *result)
         || sscanf(str, " %d", result) == 1;
 }
 
+// Returns the directory portion of the given path, without the trailing
+// slash separator character. If no directory is described in the path,
+// the string "." is returned. In either case, the result is newly allocated
+// and must be freed by the caller after use.
+char *M_DirName(const char *path)
+{
+    char *p, *result;
+
+    p = strrchr(path, DIR_SEPARATOR);
+    if (p == NULL)
+    {
+        return M_StringDuplicate(".");
+    }
+    else
+    {
+        result = M_StringDuplicate(path);
+        result[p - path] = '\0';
+        return result;
+    }
+}
+
+// Returns the base filename described by the given path (without the
+// directory name). The result points inside path and nothing new is
+// allocated.
+const char *M_BaseName(const char *path)
+{
+    char *p;
+
+    p = strrchr(path, DIR_SEPARATOR);
+    if (p == NULL)
+    {
+        return path;
+    }
+    else
+    {
+        return p + 1;
+    }
+}
+
 void M_ExtractFileBase(const char *path, char *dest)
 {
     const char *src;

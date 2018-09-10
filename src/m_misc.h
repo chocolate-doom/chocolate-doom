@@ -33,6 +33,8 @@ boolean M_FileExists(const char *file);
 char *M_FileCaseExists(const char *file);
 long M_FileLength(FILE *handle);
 boolean M_StrToInt(const char *str, int *result);
+char *M_DirName(const char *path);
+const char *M_BaseName(const char *path);
 void M_ExtractFileBase(const char *path, char *dest);
 char *M_BaseName(char *path);
 char *M_DirName(const char *path);
