@@ -341,52 +341,6 @@ void M_ExtractFileBase(const char *path, char *dest)
     }
 }
 
-// [crispy] portable pendant to libgen.h's basename()
-char *M_BaseName(char *path)
-{
-    char cc;
-    char *ptr;
-
-    ptr = path;
-
-    do
-    {
-        cc = *ptr++;
-
-        if (cc == '\\' || cc == '/')
-        {
-            path = ptr;
-        }
-    } while (cc);
-
-    return path;
-}
-
-// [crispy] portable pendant to libgen.h's dirname()
-// does not modify its argument
-char *M_DirName(const char *path)
-{
-    char *path_dup, *ptr;
-
-    path_dup = M_StringDuplicate(path);
-    ptr = path_dup + strlen(path_dup) - 1;
-
-    while (ptr > path_dup)
-    {
-        if (*ptr == '\\' || *ptr == '/')
-        {
-            *ptr = '\0';
-            return path_dup;
-        }
-
-        ptr--;
-    }
-
-    // path string does not contain a directory separator
-    free(path_dup);
-    return M_StringDuplicate(".");
-}
-
 //---------------------------------------------------------------------------
 //
 // PROC M_ForceUppercase
