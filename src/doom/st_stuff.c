@@ -1590,11 +1590,9 @@ static byte* ST_WidgetColor(int i)
                 plyr->powers[pw_invulnerability])
                 return cr[CR_GRAY];
 	    // [crispy] color by armor type
-	    else if (plyr->armortype == 2 || // [crispy] MegaSphere
-	             plyr->armortype == deh_blue_armor_class) // [crispy] MegaArmor
+	    else if (plyr->armortype >= 2)
                 return cr[CR_BLUE];
-	    else if (plyr->armortype == 1 || // [crispy] armor helmets
-	             plyr->armortype == deh_green_armor_class) // [crispy] green armor shirt
+	    else if (plyr->armortype == 1)
                 return cr[CR_GREEN];
 	    else if (plyr->armortype == 0)
                 return cr[CR_RED];
