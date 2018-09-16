@@ -116,6 +116,19 @@ class Category:
 
         return result
 
+    def markdown_output(self):
+        result = "## %s\n\n| Parameter | Description |\n| - | - |\n" % self.description
+
+        self.params.sort()
+
+        for p in self.params:
+            if p.should_show():
+                result += p.markdown_output()
+
+        result = result.rstrip() + "\n"
+
+        return result
+
     def completion_output(self):
         result = ""
 
@@ -259,6 +272,28 @@ class Parameter:
         if self.platform:
             result += "'''(%s only)'''" % self.platform
         result += self._games_only_text("'''(%s only)'''")
+
+        return result
+
+    def markdown_output(self):
+        if self.args:
+            name = "%s %s" % (self.name, self.args)
+        else:
+            name = "%s" % self.name
+
+        name = name.replace("|", "\\|")
+
+        text = self.text
+        if self.platform:
+            text += " (%s only)" % self.platform
+
+        text = text.replace("|", "\\|")
+
+        result = "| %s | %s |\n" % (name, text)
+
+        # html escape
+        result = result.replace("<", "&lt;")
+        result = result.replace(">", "&gt;")
 
         return result
 
@@ -468,6 +503,14 @@ def wiki_output(targets, _, template):
     for t in targets:
         stdout(t.wiki_output().encode('UTF-8') + b'\n')
 
+def markdown_output(targets, substs, template_file):
+    content = ""
+
+    for t in targets:
+        content += t.markdown_output() + "\n"
+
+    print_template(template_file, substs, content)
+
 def plaintext_output(targets, substs, template_file):
 
     content = ""
@@ -487,13 +530,14 @@ def completion_output(targets, substs, template_file):
     print_template(template_file, substs, content)
 
 def usage():
-    print("Usage: %s [-V] [-c tag] [-g game] -n program_name -s package_name [ -z shortname ] ( -m | -w | -p ) <dir>..." \
+    print("Usage: %s [-V] [-c tag] [-g game] -n program_name -s package_name [ -z shortname ] ( -M | -m | -w | -p ) <dir>..." \
             % sys.argv[0])
     print("   -c :  Provide documentation for the specified configuration file")
     print("         (matches the given tag name in the source file)")
     print("   -s :  Package name, e.g. Chocolate Doom (for substitution)")
     print("   -z :  Package short-name, e.g. Chocolate (for substitution)")
     print("   -n :  Program name, e.g. chocolate (for substitution)")
+    print("   -M :  Markdown output")
     print("   -m :  Manpage output")
     print("   -w :  Wikitext output")
     print("   -p :  Plaintext output")
@@ -504,7 +548,7 @@ def usage():
 
 # Parse command line
 
-opts, args = getopt.getopt(sys.argv[1:], "n:s:z:m:wp:b:c:g:V")
+opts, args = getopt.getopt(sys.argv[1:], "n:s:z:M:m:wp:b:c:g:V")
 
 output_function = None
 template = None
@@ -521,6 +565,9 @@ for opt in opts:
         substs["@PACKAGE_SHORTNAME@"] = opt[1]
     if opt[0] == "-m":
         output_function = manpage_output
+        template = opt[1]
+    elif opt[0] == "-M":
+        output_function = markdown_output
         template = opt[1]
     elif opt[0] == "-w":
         output_function = wiki_output
