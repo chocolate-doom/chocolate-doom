@@ -17,12 +17,6 @@ strifedocsdir = ${docdir}/../${PROGRAM_PREFIX}strife
 
 if HAVE_PYTHON
 
-if HAVE_WINDRES
-
-WIN32=-D_WIN32
-
-endif
-
 GENERATED_MAN_PAGES =               \
            @PROGRAM_PREFIX@doom.6         \
            default.cfg.5            \
@@ -52,6 +46,17 @@ hereticdocs_DATA = INSTALL.heretic CMDLINE.heretic
 hexendocs_DATA   = INSTALL.hexen   CMDLINE.hexen
 strifedocs_DATA  = INSTALL.strife  CMDLINE.strife
 
+if HAVE_WINDRES
+
+WIN32=-D_WIN32
+
+doomdocs_DATA += CMDLINE.doom.md
+hereticdocs_DATA += CMDLINE.heretic.md
+hexendocs_DATA += CMDLINE.hexen.md
+strifedocs_DATA += CMDLINE.strife.md
+
+endif
+
 CLEANFILES = $(GENERATED_MAN_PAGES) $(SETUP_MAN_PAGES) \
              $(doomdocs_DATA) $(hereticdocs_DATA) \
              $(hexendocs_DATA) $(strifedocs_DATA)
@@ -76,6 +81,11 @@ default.cfg.5: $(top_srcdir)/src $(srcdir)/default.cfg.template
 CMDLINE.doom : CMDLINE.template $(top_srcdir)/src $(top_srcdir)/src/doom
 	$(DOCGEN) $(DOCGEN_COMMON_ARGS) \
                   -p $(srcdir)/CMDLINE.template \
+                  $(top_srcdir)/src/ $(top_srcdir)/src/doom/ > $@
+
+CMDLINE.doom.md : CMDLINE.template.md $(top_srcdir)/src $(top_srcdir)/src/doom
+	$(DOCGEN) $(DOCGEN_COMMON_ARGS) \
+                  -M $(srcdir)/CMDLINE.template.md \
                   $(top_srcdir)/src/ $(top_srcdir)/src/doom/ > $@
 
 CMDLINE.doom.wikitext : $(top_srcdir)/src $(top_srcdir)/src/doom
@@ -108,6 +118,11 @@ CMDLINE.heretic : CMDLINE.template $(top_srcdir)/src $(top_srcdir)/src/heretic
                  -p $(srcdir)/CMDLINE.template \
                   $(top_srcdir)/src/ $(top_srcdir)/src/heretic/ > $@
 
+CMDLINE.heretic.md : CMDLINE.template.md $(top_srcdir)/src $(top_srcdir)/src/heretic
+	$(DOCGEN) $(DOCGEN_COMMON_ARGS) \
+                 -M $(srcdir)/CMDLINE.template.md \
+                  $(top_srcdir)/src/ $(top_srcdir)/src/heretic/ > $@
+
 INSTALL.heretic: INSTALL.template
 	$(srcdir)/simplecpp -DHERETIC $(WIN32) \
             -DLONG_GAME_NAME="@PACKAGE_SHORTNAME@ Heretic" \
@@ -133,6 +148,11 @@ hexen.cfg.5: $(top_srcdir)/src default.cfg.template
 CMDLINE.hexen : CMDLINE.template $(top_srcdir)/src $(top_srcdir)/src/hexen
 	$(DOCGEN) $(DOCGEN_COMMON_ARGS) \
                   -p $(srcdir)/CMDLINE.template \
+                  $(top_srcdir)/src/ $(top_srcdir)/src/hexen/ > $@
+
+CMDLINE.hexen.md : CMDLINE.template.md $(top_srcdir)/src $(top_srcdir)/src/hexen
+	$(DOCGEN) $(DOCGEN_COMMON_ARGS) \
+                  -M $(srcdir)/CMDLINE.template.md \
                   $(top_srcdir)/src/ $(top_srcdir)/src/hexen/ > $@
 
 INSTALL.hexen: INSTALL.template
@@ -172,6 +192,11 @@ CMDLINE.strife : CMDLINE.template $(top_srcdir)/src $(top_srcdir)/src/strife
                   -p $(srcdir)/CMDLINE.template \
                   $(top_srcdir)/src/ $(top_srcdir)/src/strife/ > $@
 
+CMDLINE.strife.md : CMDLINE.template.md $(top_srcdir)/src $(top_srcdir)/src/strife
+	$(DOCGEN) $(DOCGEN_COMMON_ARGS) \
+                  -M $(srcdir)/CMDLINE.template.md \
+                  $(top_srcdir)/src/ $(top_srcdir)/src/strife/ > $@
+
 INSTALL.strife: INSTALL.template
 	$(srcdir)/simplecpp -DSTRIFE $(WIN32) \
             -DLONG_EXE_NAME="@PROGRAM_PREFIX@strife" \
@@ -190,6 +215,7 @@ endif
 EXTRA_DIST = $(man_MANS) $(MANPAGE_GEN_FILES)        \
              wikipages                               \
              CMDLINE.template                        \
+             CMDLINE.template.md                     \
              INSTALL.template                        \
              simplecpp
 
