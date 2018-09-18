@@ -3110,7 +3110,7 @@ static void M_ForceLoadGameResponse(int key)
 		return;
 	}
 
-	savewadfilename = maplumpinfo->wad_file->basename;
+	savewadfilename = (char *)maplumpinfo->wad_file->basename;
 	gameaction = ga_loadgame;
 }
 

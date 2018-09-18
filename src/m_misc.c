@@ -265,6 +265,45 @@ boolean M_StrToInt(const char *str, int *result)
         || sscanf(str, " %d", result) == 1;
 }
 
+// Returns the directory portion of the given path, without the trailing
+// slash separator character. If no directory is described in the path,
+// the string "." is returned. In either case, the result is newly allocated
+// and must be freed by the caller after use.
+char *M_DirName(const char *path)
+{
+    char *p, *result;
+
+    p = strrchr(path, DIR_SEPARATOR);
+    if (p == NULL)
+    {
+        return M_StringDuplicate(".");
+    }
+    else
+    {
+        result = M_StringDuplicate(path);
+        result[p - path] = '\0';
+        return result;
+    }
+}
+
+// Returns the base filename described by the given path (without the
+// directory name). The result points inside path and nothing new is
+// allocated.
+const char *M_BaseName(const char *path)
+{
+    char *p;
+
+    p = strrchr(path, DIR_SEPARATOR);
+    if (p == NULL)
+    {
+        return path;
+    }
+    else
+    {
+        return p + 1;
+    }
+}
+
 void M_ExtractFileBase(const char *path, char *dest)
 {
     const char *src;
@@ -300,52 +339,6 @@ void M_ExtractFileBase(const char *path, char *dest)
 
 	dest[length++] = toupper((int)*src++);
     }
-}
-
-// [crispy] portable pendant to libgen.h's basename()
-char *M_BaseName(char *path)
-{
-    char cc;
-    char *ptr;
-
-    ptr = path;
-
-    do
-    {
-        cc = *ptr++;
-
-        if (cc == '\\' || cc == '/')
-        {
-            path = ptr;
-        }
-    } while (cc);
-
-    return path;
-}
-
-// [crispy] portable pendant to libgen.h's dirname()
-// does not modify its argument
-char *M_DirName(const char *path)
-{
-    char *path_dup, *ptr;
-
-    path_dup = M_StringDuplicate(path);
-    ptr = path_dup + strlen(path_dup) - 1;
-
-    while (ptr > path_dup)
-    {
-        if (*ptr == '\\' || *ptr == '/')
-        {
-            *ptr = '\0';
-            return path_dup;
-        }
-
-        ptr--;
-    }
-
-    // path string does not contain a directory separator
-    free(path_dup);
-    return M_StringDuplicate(".");
 }
 
 //---------------------------------------------------------------------------

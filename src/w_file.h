@@ -55,7 +55,7 @@ struct _wad_file_s
     char *path; // [crispy] un-const
 
     // [crispy] name of this file
-    char *basename;
+    const char *basename;
     // [crispy] indicate this is the IWAD
     boolean iwad;
 };

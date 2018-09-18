@@ -243,19 +243,8 @@ void M_FindResponseFile(void)
 
 // Return the name of the executable used to start the program:
 
-char *M_GetExecutableName(void)
+const char *M_GetExecutableName(void)
 {
-    char *sep;
-
-    sep = strrchr(myargv[0], DIR_SEPARATOR);
-
-    if (sep == NULL)
-    {
-        return myargv[0];
-    }
-    else
-    {
-        return sep + 1;
-    }
+    return M_BaseName(myargv[0]);
 }
 

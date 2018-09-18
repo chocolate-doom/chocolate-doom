@@ -450,15 +450,8 @@ static void CheckDOSDefaults(void)
 
 static boolean DirIsFile(const char *path, const char *filename)
 {
-    size_t path_len;
-    size_t filename_len;
-
-    path_len = strlen(path);
-    filename_len = strlen(filename);
-
-    return path_len >= filename_len + 1
-        && path[path_len - filename_len - 1] == DIR_SEPARATOR
-        && !strcasecmp(&path[path_len - filename_len], filename);
+    return strchr(path, DIR_SEPARATOR) != NULL
+        && !strcasecmp(M_BaseName(path), filename);
 }
 
 // Check if the specified directory contains the specified IWAD
@@ -532,19 +525,12 @@ static char *SearchDirectoryForIWAD(const char *dir, int mask, GameMission_t *mi
 // When given an IWAD with the '-iwad' parameter,
 // attempt to identify it by its name.
 
-static GameMission_t IdentifyIWADByName(char *name, int mask)
+static GameMission_t IdentifyIWADByName(const char *name, int mask)
 {
     size_t i;
     GameMission_t mission;
-    char *p;
 
-    p = strrchr(name, DIR_SEPARATOR);
-
-    if (p != NULL)
-    {
-        name = p + 1;
-    }
-
+    name = M_BaseName(name);
     mission = none;
 
     for (i=0; i<arrlen(iwads); ++i)
@@ -681,6 +667,10 @@ static void BuildIWADDirList(void)
 
     // Look in the current directory.  Doom always does this.
     AddIWADDir(".");
+
+    // Next check the directory where the executable is located. This might
+    // be different from the current directory.
+    AddIWADDir(M_DirName(myargv[0]));
 
     // Add DOOMWADDIR if it is in the environment
     env = getenv("DOOMWADDIR");

@@ -2572,7 +2572,10 @@ static char *GetDefaultConfigDir(void)
     char *result;
 
     result = SDL_GetPrefPath("", PACKAGE_TARNAME);
-    return result;
+    if (result != NULL)
+    {
+        return result;
+    }
 #endif /* #ifndef _WIN32 */
     return M_StringDuplicate("");
 }

@@ -245,7 +245,7 @@ static mission_config_t *GetMissionForName(char *name)
 static boolean CheckExecutableName(GameSelectCallback callback)
 {
     mission_config_t *config;
-    char *exe_name;
+    const char *exe_name;
     int i;
 
     exe_name = M_GetExecutableName();
