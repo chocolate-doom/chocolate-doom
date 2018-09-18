@@ -518,7 +518,8 @@ void R_GenerateLookup (int texnum)
 	}
 	// I_Error ("R_GenerateLookup: column without a patch");
 	
-	if (patchcount[x] > 1)
+	// [crispy] treat patch-less columns the same as multi-patched
+	if (patchcount[x] > 1 || !patchcount[x])
 	{
 	    // Use the cached block.
 	    // [crispy] moved up here, the rest in this loop
