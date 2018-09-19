@@ -1050,8 +1050,6 @@ void I_GraphicsCheckCommandLine(void)
     if (i > 0)
     {
         window_width = atoi(myargv[i + 1]);
-        window_height = window_width * 2;
-        AdjustWindowSize();
         fullscreen = false;
     }
 
@@ -1067,8 +1065,6 @@ void I_GraphicsCheckCommandLine(void)
     if (i > 0)
     {
         window_height = atoi(myargv[i + 1]);
-        window_width = window_height * 2;
-        AdjustWindowSize();
         fullscreen = false;
     }
 

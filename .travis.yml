@@ -26,5 +26,3 @@ script: ./.travis.sh
 branches:
     only:
     - master
-    - sdl2-branch
-

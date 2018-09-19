@@ -16,7 +16,6 @@ DLL_FILES=$(TOPLEVEL)/src/SDL.dll                      \
 all: $(ZIPS)
 
 $(ZIPS):
-	unix2dos --add-bom $</*.txt
 	zip -j -r $@ $</*
 
 $(DOOM_ZIP): staging-doom hook-doom
@@ -27,12 +26,12 @@ $(STRIFE_ZIP): staging-strife hook-strife
 # Special hooks to custom modify files for particular games.
 
 hook-doom: staging-doom
-	cp $(TOPLEVEL)/NOT-BUGS.md $</NOT-BUGS.txt
+	-pandoc -f gfm -s -o $</NOT-BUGS.html $(TOPLEVEL)/NOT-BUGS.md
 
 # Chocolate Strife has its own custom README file:
 
 hook-strife: staging-strife
-	cp $(TOPLEVEL)/README.Strife.md $</README.txt
+	-pandoc -f gfm -s -o $</README.html $(TOPLEVEL)/README.Strife.md
 
 # Build up a staging dir for a particular game.
 
@@ -49,11 +48,12 @@ staging-%:
 
 	$(STRIP) $@/*.exe $@/*.dll
 
-	for f in $(DOC_FILES); do                                \
-		cp $(TOPLEVEL)/$$f $@/$$(basename $$f .md).txt;  \
+	-for f in $(DOC_FILES); do                              \
+		pandoc  -f gfm -o $@/$$(basename $$f .md).html  \
+			-s $(TOPLEVEL)/$$f;                     \
 	done
-	cp $(TOPLEVEL)/man/CMDLINE.$* $@/CMDLINE.txt
-	cp $(TOPLEVEL)/man/INSTALL.$* $@/INSTALL.txt
+	-pandoc -f gfm -s -o $@/CMDLINE.html $(TOPLEVEL)/man/CMDLINE.$*.md
+	-pandoc -f gfm -s -o $@/INSTALL.html $(TOPLEVEL)/man/INSTALL.$*
 
 clean:
 	rm -f $(ZIPS)
