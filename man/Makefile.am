@@ -51,9 +51,9 @@ if HAVE_WINDRES
 WIN32=-D_WIN32
 
 doomdocs_DATA += CMDLINE.doom.md
-hereticdocs_DATA += CMDLINE.heretic.md
-hexendocs_DATA += CMDLINE.hexen.md
-strifedocs_DATA += CMDLINE.strife.md
+#hereticdocs_DATA += CMDLINE.heretic.md
+#hexendocs_DATA += CMDLINE.hexen.md
+#strifedocs_DATA += CMDLINE.strife.md
 
 endif
 
