@@ -166,7 +166,7 @@ extern  boolean setsizeneeded;
 extern  int             showMessages;
 void R_ExecuteSetViewSize (void);
 
-void D_Display (void)
+boolean D_Display (void)
 {
     static  boolean		viewactivestate = false;
     static  boolean		menuactivestate = false;
@@ -174,16 +174,9 @@ void D_Display (void)
     static  boolean		fullscreen = false;
     static  gamestate_t		oldgamestate = -1;
     static  int			borderdrawcount;
-    int				nowtime;
-    int				tics;
-    int				wipestart;
     int				y;
-    boolean			done;
     boolean			wipe;
     boolean			redrawsbar;
-
-    if (nodrawers)
-	return;                    // for comparative timing / profiling
 		
     redrawsbar = false;
     
@@ -298,35 +291,7 @@ void D_Display (void)
     M_Drawer ();          // menu is drawn even on top of everything
     NetUpdate ();         // send out any new accumulation
 
-
-    // normal update
-    if (!wipe)
-    {
-	I_FinishUpdate ();              // page flip or blit buffer
-	return;
-    }
-    
-    // wipe update
-    wipe_EndScreen(0, 0, SCREENWIDTH, SCREENHEIGHT);
-
-    wipestart = I_GetTime () - 1;
-
-    do
-    {
-	do
-	{
-	    nowtime = I_GetTime ();
-	    tics = nowtime - wipestart;
-            I_Sleep(1);
-	} while (tics <= 0);
-        
-	wipestart = nowtime;
-	done = wipe_ScreenWipe(wipe_Melt
-			       , 0, 0, SCREENWIDTH, SCREENHEIGHT, tics);
-	I_UpdateNoBlit ();
-	M_Drawer ();                            // menu is drawn even on top of wipes
-	I_FinishUpdate ();                      // page flip or blit buffer
-    } while (!done);
+    return wipe;
 }
 
 static void EnableLoadingDisk(void)
@@ -425,6 +390,57 @@ boolean D_GrabMouseCallback(void)
 }
 
 //
+//  D_RunFrame
+//
+void D_RunFrame()
+{
+    int nowtime;
+    int tics;
+    static int wipestart;
+    static boolean wipe;
+
+    if (wipe)
+    {
+        do
+        {
+            nowtime = I_GetTime ();
+            tics = nowtime - wipestart;
+            I_Sleep(1);
+        } while (tics <= 0);
+
+        wipestart = nowtime;
+        wipe = !wipe_ScreenWipe(wipe_Melt
+                               , 0, 0, SCREENWIDTH, SCREENHEIGHT, tics);
+        I_UpdateNoBlit ();
+        M_Drawer ();                            // menu is drawn even on top of wipes
+        I_FinishUpdate ();                      // page flip or blit buffer
+        return;
+    }
+
+    // frame syncronous IO operations
+    I_StartFrame ();
+
+    TryRunTics (); // will run at least one tic
+
+    S_UpdateSounds (players[consoleplayer].mo);// move positional sounds
+
+    // Update display, next frame, with current state if no profiling is on
+    if (screenvisible && !nodrawers)
+    {
+        if ((wipe = D_Display ()))
+        {
+            // start wipe on this frame
+            wipe_EndScreen(0, 0, SCREENWIDTH, SCREENHEIGHT);
+
+            wipestart = I_GetTime () - 1;
+        } else {
+            // normal update
+            I_FinishUpdate ();              // page flip or blit buffer
+        }
+    }
+}
+
+//
 //  D_DoomLoop
 //
 void D_DoomLoop (void)
@@ -463,16 +479,7 @@ void D_DoomLoop (void)
 
     while (1)
     {
-	// frame syncronous IO operations
-	I_StartFrame ();
-
-        TryRunTics (); // will run at least one tic
-
-	S_UpdateSounds (players[consoleplayer].mo);// move positional sounds
-
-	// Update display, next frame, with current state.
-        if (screenvisible)
-            D_Display ();
+        D_RunFrame();
     }
 }
 
