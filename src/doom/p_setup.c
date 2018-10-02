@@ -391,9 +391,15 @@ void P_LoadThings (int lump)
     }
 
     if (!deathmatch)
+    {
         for (i = 0; i < MAXPLAYERS; i++)
+        {
             if (playeringame[i] && !playerstartsingame[i])
+            {
                 I_Error("P_LoadThings: Player %d start missing (vanilla crashes here)", i + 1);
+            }
+        }
+    }
 
     W_ReleaseLumpNum(lump);
 }
