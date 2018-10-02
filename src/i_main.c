@@ -43,6 +43,8 @@ int main(int argc, char **argv)
 
     M_FindResponseFile();
 
+    SDL_SetHint(SDL_HINT_NO_SIGNAL_HANDLERS, "1");
+
     // start doom
 
     D_DoomMain ();
