@@ -1456,7 +1456,7 @@ void I_InitGraphics(void)
     // [crispy] (re-)initialize resolution-agnostic patch drawing
     V_Init();
 
-    if (aspect_ratio_correct)
+    if (aspect_ratio_correct == 1)
     {
         actualheight = SCREENHEIGHT_4_3;
     }
