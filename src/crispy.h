@@ -101,6 +101,14 @@ extern void CheckCrispySingleplayer (boolean singleplayer);
 
 enum
 {
+    ASPECTRATIO_OFF,
+    ASPECTRATIO_4_3,
+    ASPECTRATIO_16_10,
+    NUM_ASPECTRATIOS,
+};
+
+enum
+{
     BRIGHTMAPS_OFF,
     BRIGHTMAPS_TEXTURES,
     BRIGHTMAPS_SPRITES,

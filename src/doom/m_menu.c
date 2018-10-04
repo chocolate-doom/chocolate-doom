@@ -452,6 +452,7 @@ enum
     crispness_uncapped,
     crispness_vsync,
     crispness_smoothscaling,
+    crispness_aspectratio,
     crispness_sep_rendering_,
 
     crispness_sep_visual,
@@ -475,6 +476,7 @@ static menuitem_t Crispness1Menu[]=
     {1,"",	M_CrispyToggleUncapped,'u'},
     {1,"",	M_CrispyToggleVsync,'v'},
     {1,"",	M_CrispyToggleSmoothScaling,'s'},
+    {1,"",	M_CrispyToggleAspectRatio,'f'},
     {-1,"",0,'\0'},
     {-1,"",0,'\0'},
     {1,"",	M_CrispyToggleColoredhud,'c'},
@@ -494,7 +496,7 @@ static menu_t  Crispness1Def =
     &OptionsDef,
     Crispness1Menu,
     M_DrawCrispness1,
-    48,36,
+    48,28,
     1
 };
 
@@ -541,7 +543,7 @@ static menu_t  Crispness2Def =
     &OptionsDef,
     Crispness2Menu,
     M_DrawCrispness2,
-    48,36,
+    48,28,
     1
 };
 
@@ -594,7 +596,7 @@ static menu_t  Crispness3Def =
     &OptionsDef,
     Crispness3Menu,
     M_DrawCrispness3,
-    48,36,
+    48,28,
     1
 };
 
@@ -642,7 +644,7 @@ static menu_t  Crispness4Def =
     &OptionsDef,
     Crispness4Menu,
     M_DrawCrispness4,
-    48,36,
+    48,28,
     1
 };
 
@@ -1391,7 +1393,7 @@ static void M_DrawCrispnessHeader(char *item)
 {
     M_snprintf(crispy_menu_text, sizeof(crispy_menu_text),
                "%s%s", crstr[CR_GOLD], item);
-    M_WriteText(ORIGWIDTH/2 - M_StringWidth(item) / 2, 20, crispy_menu_text);
+    M_WriteText(ORIGWIDTH/2 - M_StringWidth(item) / 2, 12, crispy_menu_text);
 }
 
 static void M_DrawCrispnessSeparator(int y, char *item)
@@ -1437,6 +1439,7 @@ static void M_DrawCrispness1(void)
     M_DrawCrispnessItem(crispness_uncapped, "Uncapped Framerate", crispy->uncapped, true);
     M_DrawCrispnessItem(crispness_vsync, "Enable VSync", crispy->vsync, !force_software_renderer);
     M_DrawCrispnessItem(crispness_smoothscaling, "Smooth Pixel Scaling", crispy->smoothscaling, true);
+    M_DrawCrispnessMultiItem(crispness_aspectratio, "Force Aspect Ratio", multiitem_aspectratio, aspect_ratio_correct, true);
 
     M_DrawCrispnessSeparator(crispness_sep_visual, "Visual");
     M_DrawCrispnessMultiItem(crispness_coloredhud, "Colorize HUD Elements", multiitem_coloredhud, crispy->coloredhud, true);

@@ -25,6 +25,13 @@
 
 #include "m_crispy.h"
 
+multiitem_t multiitem_aspectratio[NUM_ASPECTRATIOS] =
+{
+    {ASPECTRATIO_OFF, "none"},
+    {ASPECTRATIO_4_3, "4:3"},
+    {ASPECTRATIO_16_10, "16:10"},
+};
+
 multiitem_t multiitem_brightmaps[NUM_BRIGHTMAPS] =
 {
     {BRIGHTMAPS_OFF, "none"},
@@ -123,6 +130,21 @@ extern void R_ExecuteSetViewSize (void);
 extern void R_InitLightTables (void);
 extern void SetVideoMode (boolean);
 extern void S_UpdateSndChannels (void);
+
+static void M_CrispyToggleAspectRatioHook (void)
+{
+    aspect_ratio_correct = (aspect_ratio_correct + 1) % NUM_ASPECTRATIOS;
+
+    // [crispy] re-initialize framebuffers, textures and renderer
+    I_InitGraphics();
+}
+
+void M_CrispyToggleAspectRatio(int choice)
+{
+    choice = 0;
+
+    crispy->post_rendering_hook = M_CrispyToggleAspectRatioHook;
+}
 
 void M_CrispyToggleAutomapstats(int choice)
 {
