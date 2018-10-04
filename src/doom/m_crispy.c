@@ -137,6 +137,8 @@ static void M_CrispyToggleAspectRatioHook (void)
 
     // [crispy] re-initialize framebuffers, textures and renderer
     I_InitGraphics();
+    // [crispy] re-calculate framebuffer coordinates
+    R_ExecuteSetViewSize();
 }
 
 void M_CrispyToggleAspectRatio(int choice)
