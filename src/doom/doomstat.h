@@ -232,7 +232,7 @@ extern  mapthing_t*	deathmatch_p;
 
 // Player spawn spots.
 extern  mapthing_t      playerstarts[MAXPLAYERS];
-
+extern  boolean         playerstartsingame[MAXPLAYERS];
 // Intermission stats.
 // Parameters for world map / intermission.
 extern  wbstartstruct_t		wminfo;	
