@@ -144,7 +144,7 @@ static void GenerateSizesTable(TXT_UNCAST_ARG(widget),
     int i;
 
     // Pick which window sizes list to use
-    if (aspect_ratio_correct)
+    if (aspect_ratio_correct == 1)
     {
         sizes = window_sizes_scaled;
     }

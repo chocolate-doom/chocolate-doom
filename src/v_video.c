@@ -737,7 +737,7 @@ void WritePNGfile(char *filename, pixel_t *data,
     int w_factor, h_factor;
     byte *rowbuf;
 
-    if (aspect_ratio_correct)
+    if (aspect_ratio_correct == 1)
     {
         // scale up to accommodate aspect ratio correction
         w_factor = 5;

@@ -1356,7 +1356,7 @@ void I_InitGraphics(void)
         fullscreen = true;
     }
 
-    if (aspect_ratio_correct)
+    if (aspect_ratio_correct == 1)
     {
         actualheight = SCREENHEIGHT_4_3;
     }
