@@ -579,8 +579,13 @@ void AM_LevelInit(void)
     scale_ftom = FixedDiv(FRACUNIT, scale_mtof);
 }
 
-void AM_ReInit(void)
+void AM_ReInit(boolean rescale)
 {
+    fb = I_VideoBuffer;
+
+    if (!rescale)
+	return;
+
     f_w = SCREENWIDTH;
     f_h = SCREENHEIGHT - (ST_HEIGHT << crispy->hires);
 
@@ -590,8 +595,6 @@ void AM_ReInit(void)
     if (scale_mtof > max_scale_mtof)
 	scale_mtof = min_scale_mtof;
     scale_ftom = FixedDiv(FRACUNIT, scale_mtof);
-
-    fb = I_VideoBuffer;
 }
 
 

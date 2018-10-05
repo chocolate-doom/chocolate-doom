@@ -123,7 +123,7 @@ multiitem_t multiitem_sndchannels[NUM_SNDCHANNELS] =
     {SNDCHANNELS_32, "32"},
 };
 
-extern void AM_ReInit (void);
+extern void AM_ReInit (boolean rescale);
 extern void EnableLoadingDisk (void);
 extern void P_SegLengths (boolean contrast_only);
 extern void R_ExecuteSetViewSize (void);
@@ -137,8 +137,10 @@ static void M_CrispyToggleAspectRatioHook (void)
 
     // [crispy] re-initialize framebuffers, textures and renderer
     I_InitGraphics();
-    // [crispy] re-calculate framebuffer coordinates
+    // [crispy] re-set rendering framebuffer
     R_ExecuteSetViewSize();
+    // [crispy] re-set automap framebuffer
+    AM_ReInit(false);
 }
 
 void M_CrispyToggleAspectRatio(int choice)
@@ -338,7 +340,7 @@ static void M_CrispyToggleHiresHook (void)
     // [crispy] re-calculate disk icon coordinates
     EnableLoadingDisk();
     // [crispy] re-calculate automap coordinates
-    AM_ReInit();
+    AM_ReInit(true);
 }
 
 void M_CrispyToggleHires(int choice)
