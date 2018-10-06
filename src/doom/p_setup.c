@@ -402,7 +402,8 @@ void P_LoadSectors (int lump)
         ss->interpfloorheight = ss->floorheight;
         ss->oldceilingheight = ss->ceilingheight;
         ss->interpceilingheight = ss->ceilingheight;
-        ss->oldgametic = 0;
+        // [crispy] inhibit sector interpolation during the 0th gametic
+        ss->oldgametic = -1;
     }
 	
     W_ReleaseLumpNum(lump);
