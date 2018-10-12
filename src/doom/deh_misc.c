@@ -37,8 +37,8 @@ int deh_initial_health = DEH_DEFAULT_INITIAL_HEALTH;
 int deh_initial_bullets = DEH_DEFAULT_INITIAL_BULLETS;
 
 // Dehacked: "Max Health"
-// This is the maximum health that can be reached using medikits 
-// alone.  See P_TouchSpecialThing in p_inter.c
+// This is the maximum health that can be reached using health
+// potions. See P_TouchSpecialThing in p_inter.c
 
 int deh_max_health = DEH_DEFAULT_MAX_HEALTH;
 
