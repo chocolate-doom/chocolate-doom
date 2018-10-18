@@ -1638,6 +1638,34 @@ static mapformat_t P_CheckMapFormat (int lumpnum)
     return format;
 }
 
+// [crispy] factor out map lump name and number finding into a separate function
+int P_GetNumForMap (int episode, int map, boolean critical)
+{
+    char	lumpname[9];
+    int		lumpnum;
+
+    // find map name
+    if ( gamemode == commercial)
+    {
+	if (map<10)
+	    DEH_snprintf(lumpname, 9, "map0%i", map);
+	else
+	    DEH_snprintf(lumpname, 9, "map%i", map);
+    }
+    else
+    {
+	lumpname[0] = 'E';
+	lumpname[1] = '0' + episode;
+	lumpname[2] = 'M';
+	lumpname[3] = '0' + map;
+	lumpname[4] = 0;
+    }
+
+    lumpnum = critical ? W_GetNumForName (lumpname) : W_CheckNumForName (lumpname);
+
+    return lumpnum;
+}
+
 //
 // P_SetupLevel
 //
@@ -1676,6 +1704,8 @@ P_SetupLevel
     // if working with a devlopment map, reload it
     W_Reload ();
 
+// [crispy] factor out map lump name and number finding into a separate function
+/*
     // find map name
     if ( gamemode == commercial)
     {
@@ -1694,6 +1724,8 @@ P_SetupLevel
     }
 
     lumpnum = W_GetNumForName (lumpname);
+*/
+    lumpnum = P_GetNumForMap (episode, map, true);
 	
     leveltime = 0;
 	
