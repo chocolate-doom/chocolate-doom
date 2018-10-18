@@ -3102,9 +3102,9 @@ static void M_ForceLoadGameResponse(int key)
 	free(savegwarning);
 	free(savewadfilename);
 
-	if (key != key_menu_confirm)
+	if (key != key_menu_confirm || !maplumpinfo)
 	{
-		M_EndGameResponse(key_menu_confirm);
+//		M_EndGameResponse(key_menu_confirm);
 		savewadfilename = NULL;
 
 		// [crispy] reload Load Game menu
@@ -3120,14 +3120,20 @@ static void M_ForceLoadGameResponse(int key)
 void M_ForceLoadGame()
 {
 	savegwarning =
+	maplumpinfo ?
 	M_StringJoin("This savegame requires the file\n",
 	             crstr[CR_GOLD], savewadfilename, crstr[CR_NONE], "\n",
 	             "to restore ", crstr[CR_GOLD], maplumpinfo->name, crstr[CR_NONE], " .\n\n",
 	             "Continue to restore from\n",
 	             crstr[CR_GOLD], maplumpinfo->wad_file->basename, crstr[CR_NONE], " ?\n\n",
-	             PRESSYN, NULL);
+	             PRESSYN, NULL) :
+	M_StringJoin("This savegame requires the file\n",
+	             crstr[CR_GOLD], savewadfilename, crstr[CR_NONE], "\n",
+	             "to restore a map that is\n",
+	             "currently not available!\n\n",
+	             PRESSKEY, NULL) ;
 
-	M_StartMessage(savegwarning, M_ForceLoadGameResponse, true);
+	M_StartMessage(savegwarning, M_ForceLoadGameResponse, maplumpinfo != NULL);
 	messageToPrint = 2;
 	S_StartSound(NULL,sfx_swtchn);
 }
