@@ -72,21 +72,18 @@ int M_CheckParm(const char *check)
 
 #define MAXARGVS        100
 
-static void LoadResponseFile(int argv_index)
+static void LoadResponseFile(int argv_index, const char *filename)
 {
     FILE *handle;
     int size;
     char *infile;
     char *file;
-    char *response_filename;
     char **newargv;
     int newargc;
     int i, k;
 
-    response_filename = myargv[argv_index] + 1;
-
     // Read the response file into memory
-    handle = fopen(response_filename, "rb");
+    handle = fopen(filename, "rb");
 
     if (handle == NULL)
     {
@@ -94,7 +91,7 @@ static void LoadResponseFile(int argv_index)
         exit(1);
     }
 
-    printf("Found response file %s!\n", response_filename);
+    printf("Found response file %s!\n", filename);
 
     size = M_FileLength(handle);
 
@@ -113,7 +110,7 @@ static void LoadResponseFile(int argv_index)
 
         if (k < 0)
         {
-            I_Error("Failed to read full contents of '%s'", response_filename);
+            I_Error("Failed to read full contents of '%s'", filename);
         }
 
         i += k;
@@ -173,7 +170,7 @@ static void LoadResponseFile(int argv_index)
             if (k >= size || infile[k] == '\n')
             {
                 I_Error("Quotes unclosed in response file '%s'",
-                        response_filename);
+                        filename);
             }
 
             // Cut off the string at the closing quote
@@ -230,14 +227,37 @@ static void LoadResponseFile(int argv_index)
 
 void M_FindResponseFile(void)
 {
-    int             i;
+    int i;
 
     for (i = 1; i < myargc; i++)
     {
         if (myargv[i][0] == '@')
         {
-            LoadResponseFile(i);
+            LoadResponseFile(i, myargv[i] + 1);
         }
+    }
+
+    for (;;)
+    {
+        //!
+        // @arg <filename>
+        //
+        // Load extra command line arguments from the given response file.
+        // Arguments read from the file will be inserted into the command
+        // line replacing this argument. A response file can also be loaded
+        // using the abbreviated syntax '@filename.rsp'.
+        //
+        i = M_CheckParmWithArgs("-response", 1);
+        if (i <= 0)
+        {
+            break;
+        }
+        // Replace the -response argument so that the next time through
+        // the loop we'll ignore it. Since some parameters stop reading when
+        // an argument beginning with a '-' is encountered, we keep something
+        // that starts with a '-'.
+        myargv[i] = "-_";
+        LoadResponseFile(i + 1, myargv[i + 1]);
     }
 }
 
