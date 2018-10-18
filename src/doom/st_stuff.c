@@ -1043,6 +1043,8 @@ ST_Responder (event_t* ev)
       int		epsd;
       int		map;
       
+      extern int P_GetNumForMap (int episode, int map, boolean critical);
+
       cht_GetParam(&cheat_clev, buf);
       
       if (gamemode == commercial)
@@ -1139,9 +1141,13 @@ ST_Responder (event_t* ev)
           }
       }
 
+      // [crispy] prevent idclev to nonexistent levels exiting the game
+      if (P_GetNumForMap(epsd, map, false) >= 0)
+      {
       // So be it.
       plyr->message = DEH_String(STSTR_CLEV);
       G_DeferedInitNew(gameskill, epsd, map);
+      }
 
       // [crispy] eat key press, i.e. don't change weapon upon level change
       return true;
