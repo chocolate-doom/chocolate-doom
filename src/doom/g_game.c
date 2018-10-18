@@ -1914,8 +1914,21 @@ void G_DoLoadGame (void)
 
     savedleveltime = leveltime;
     
-    // load a base level 
-    G_InitNew (gameskill, gameepisode, gamemap); 
+    // [crispy] check which map we would want to load
+    {
+        int lumpnum;
+        extern int P_GetNumForMap (int episode, int map, boolean critical);
+
+        if ((lumpnum = P_GetNumForMap(gameepisode, gamemap, false)) >= 0)
+        {
+            maplumpinfo = lumpinfo[lumpnum];
+        }
+        else
+        {
+            // [crispy] unavailable map!
+            maplumpinfo = NULL;
+        }
+    }
     // [crispy] read extended savegame data
     if (crispy->extsaveg)
     {
@@ -1925,7 +1938,7 @@ void G_DoLoadGame (void)
     if (savewadfilename)
     {
         // [crispy] strings are not equal
-        if (strcmp(savewadfilename, maplumpinfo->wad_file->basename))
+        if (!maplumpinfo || strcmp(savewadfilename, maplumpinfo->wad_file->basename))
         {
             M_ForceLoadGame();
             fclose(save_stream);
@@ -1939,6 +1952,9 @@ void G_DoLoadGame (void)
         }
     }
     savewadfilename = NULL;
+
+    // load a base level 
+    G_InitNew (gameskill, gameepisode, gamemap); 
  
     leveltime = savedleveltime;
     savedleveltime = 0;
