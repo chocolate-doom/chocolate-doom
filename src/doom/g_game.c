@@ -1904,14 +1904,13 @@ void G_DoLoadGame (void)
         I_Error("Could not load savegame %s", savename);
     }
 
-    savegame_error = false;
-
-    // [crispy] check which map we would want to load
+    // [crispy] read extended savegame data
     if (crispy->extsaveg)
     {
         int lumpnum;
         extern int P_ReadSaveGameHeaderSafe (void);
 
+        // [crispy] check which map we would want to load
         if ((lumpnum = P_ReadSaveGameHeaderSafe()) >= 0)
         {
             savemaplumpinfo = lumpinfo[lumpnum];
@@ -1921,22 +1920,8 @@ void G_DoLoadGame (void)
             // [crispy] unavailable map!
             savemaplumpinfo = NULL;
         }
-    }
 
-    if (!P_ReadSaveGameHeader())
-    {
-        // [crispy] indicate game version mismatch
-        extern void M_LoadGameVerMismatch ();
-        M_LoadGameVerMismatch();
-        fclose(save_stream);
-        return;
-    }
-
-    savedleveltime = leveltime;
-    
-    // [crispy] read extended savegame data
-    if (crispy->extsaveg)
-    {
+        // [crispy] first pass, read "savewadfilename"
         P_ReadExtendedSaveGameData(0);
     }
     // [crispy] check if WAD file is valid to restore saved map
@@ -1958,6 +1943,19 @@ void G_DoLoadGame (void)
     }
     savewadfilename = NULL;
 
+    savegame_error = false;
+
+    if (!P_ReadSaveGameHeader())
+    {
+        // [crispy] indicate game version mismatch
+        extern void M_LoadGameVerMismatch ();
+        M_LoadGameVerMismatch();
+        fclose(save_stream);
+        return;
+    }
+
+    savedleveltime = leveltime;
+    
     // load a base level 
     G_InitNew (gameskill, gameepisode, gamemap); 
  
