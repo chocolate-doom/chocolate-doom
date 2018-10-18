@@ -1906,6 +1906,23 @@ void G_DoLoadGame (void)
 
     savegame_error = false;
 
+    // [crispy] check which map we would want to load
+    if (crispy->extsaveg)
+    {
+        int lumpnum;
+        extern int P_ReadSaveGameHeaderSafe (void);
+
+        if ((lumpnum = P_ReadSaveGameHeaderSafe()) >= 0)
+        {
+            savemaplumpinfo = lumpinfo[lumpnum];
+        }
+        else
+        {
+            // [crispy] unavailable map!
+            savemaplumpinfo = NULL;
+        }
+    }
+
     if (!P_ReadSaveGameHeader())
     {
         // [crispy] indicate game version mismatch
@@ -1917,21 +1934,6 @@ void G_DoLoadGame (void)
 
     savedleveltime = leveltime;
     
-    // [crispy] check which map we would want to load
-    {
-        int lumpnum;
-        extern int P_GetNumForMap (int episode, int map, boolean critical);
-
-        if ((lumpnum = P_GetNumForMap(gameepisode, gamemap, false)) >= 0)
-        {
-            savemaplumpinfo = lumpinfo[lumpnum];
-        }
-        else
-        {
-            // [crispy] unavailable map!
-            savemaplumpinfo = NULL;
-        }
-    }
     // [crispy] read extended savegame data
     if (crispy->extsaveg)
     {

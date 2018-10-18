@@ -1460,6 +1460,23 @@ boolean P_ReadSaveGameHeader(void)
     return true;
 }
 
+int P_ReadSaveGameHeaderSafe(void)
+{
+    int i;
+    byte e, m;
+    extern int P_GetNumForMap (int episode, int map, boolean critical);
+
+    for (i = 0; i < SAVESTRINGSIZE + VERSIONSIZE + 1; i++)
+	saveg_read8();
+
+    e = saveg_read8();
+    m = saveg_read8();
+
+    fseek(save_stream, 0, SEEK_SET);
+
+    return P_GetNumForMap ((int) e, (int) m, false);
+}
+
 //
 // Read the end of file marker.  Returns true if read successfully.
 // 
