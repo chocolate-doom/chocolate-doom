@@ -3104,7 +3104,8 @@ static void M_ForceLoadGameResponse(int key)
 
 	if (key != key_menu_confirm || !savemaplumpinfo)
 	{
-//		M_EndGameResponse(key_menu_confirm);
+		// [crispy] no need to end game anymore when denied to load savegame
+		//M_EndGameResponse(key_menu_confirm);
 		savewadfilename = NULL;
 
 		// [crispy] reload Load Game menu

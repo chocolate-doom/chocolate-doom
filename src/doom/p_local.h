@@ -274,6 +274,8 @@ extern fixed_t		bmaporgx;
 extern fixed_t		bmaporgy;	// origin of block map
 extern mobj_t**		blocklinks;	// for thing chains
 
+// [crispy] factor out map lump name and number finding into a separate function
+extern int P_GetNumForMap (int episode, int map, boolean critical);
 // [crispy] pointer to the current map lump info struct
 extern lumpinfo_t *maplumpinfo;
 // [crispy] ... and the map lump about to load

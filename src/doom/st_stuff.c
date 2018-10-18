@@ -1043,8 +1043,6 @@ ST_Responder (event_t* ev)
       int		epsd;
       int		map;
       
-      extern int P_GetNumForMap (int episode, int map, boolean critical);
-
       cht_GetParam(&cheat_clev, buf);
       
       if (gamemode == commercial)

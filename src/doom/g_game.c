@@ -1879,9 +1879,6 @@ void G_LoadGame (char* name)
     gameaction = ga_loadgame; 
 } 
 
-// [crispy] pointer to the info struct for the map lump about to load
-lumpinfo_t *savemaplumpinfo;
-
 int savedleveltime = 0; // [crispy] moved here for level time logging
 void G_DoLoadGame (void) 
 { 
@@ -1907,20 +1904,6 @@ void G_DoLoadGame (void)
     // [crispy] read extended savegame data
     if (crispy->extsaveg)
     {
-        int lumpnum;
-        extern int P_ReadSaveGameHeaderSafe (void);
-
-        // [crispy] check which map we would want to load
-        if ((lumpnum = P_ReadSaveGameHeaderSafe()) >= 0)
-        {
-            savemaplumpinfo = lumpinfo[lumpnum];
-        }
-        else
-        {
-            // [crispy] unavailable map!
-            savemaplumpinfo = NULL;
-        }
-
         // [crispy] first pass, read "savewadfilename"
         P_ReadExtendedSaveGameData(0);
     }
