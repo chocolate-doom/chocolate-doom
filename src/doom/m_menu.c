@@ -3102,7 +3102,7 @@ static void M_ForceLoadGameResponse(int key)
 	free(savegwarning);
 	free(savewadfilename);
 
-	if (key != key_menu_confirm || !maplumpinfo)
+	if (key != key_menu_confirm || !savemaplumpinfo)
 	{
 //		M_EndGameResponse(key_menu_confirm);
 		savewadfilename = NULL;
@@ -3113,19 +3113,19 @@ static void M_ForceLoadGameResponse(int key)
 		return;
 	}
 
-	savewadfilename = (char *)maplumpinfo->wad_file->basename;
+	savewadfilename = (char *)savemaplumpinfo->wad_file->basename;
 	gameaction = ga_loadgame;
 }
 
 void M_ForceLoadGame()
 {
 	savegwarning =
-	maplumpinfo ?
+	savemaplumpinfo ?
 	M_StringJoin("This savegame requires the file\n",
 	             crstr[CR_GOLD], savewadfilename, crstr[CR_NONE], "\n",
-	             "to restore ", crstr[CR_GOLD], maplumpinfo->name, crstr[CR_NONE], " .\n\n",
+	             "to restore ", crstr[CR_GOLD], savemaplumpinfo->name, crstr[CR_NONE], " .\n\n",
 	             "Continue to restore from\n",
-	             crstr[CR_GOLD], maplumpinfo->wad_file->basename, crstr[CR_NONE], " ?\n\n",
+	             crstr[CR_GOLD], savemaplumpinfo->wad_file->basename, crstr[CR_NONE], " ?\n\n",
 	             PRESSYN, NULL) :
 	M_StringJoin("This savegame requires the file\n",
 	             crstr[CR_GOLD], savewadfilename, crstr[CR_NONE], "\n",
@@ -3133,7 +3133,7 @@ void M_ForceLoadGame()
 	             "currently not available!\n\n",
 	             PRESSKEY, NULL) ;
 
-	M_StartMessage(savegwarning, M_ForceLoadGameResponse, maplumpinfo != NULL);
+	M_StartMessage(savegwarning, M_ForceLoadGameResponse, savemaplumpinfo != NULL);
 	messageToPrint = 2;
 	S_StartSound(NULL,sfx_swtchn);
 }

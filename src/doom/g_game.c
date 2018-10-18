@@ -1879,6 +1879,9 @@ void G_LoadGame (char* name)
     gameaction = ga_loadgame; 
 } 
 
+// [crispy] pointer to the info struct for the map lump about to load
+lumpinfo_t *savemaplumpinfo;
+
 int savedleveltime = 0; // [crispy] moved here for level time logging
 void G_DoLoadGame (void) 
 { 
@@ -1921,12 +1924,12 @@ void G_DoLoadGame (void)
 
         if ((lumpnum = P_GetNumForMap(gameepisode, gamemap, false)) >= 0)
         {
-            maplumpinfo = lumpinfo[lumpnum];
+            savemaplumpinfo = lumpinfo[lumpnum];
         }
         else
         {
             // [crispy] unavailable map!
-            maplumpinfo = NULL;
+            savemaplumpinfo = NULL;
         }
     }
     // [crispy] read extended savegame data
@@ -1938,7 +1941,7 @@ void G_DoLoadGame (void)
     if (savewadfilename)
     {
         // [crispy] strings are not equal
-        if (!maplumpinfo || strcmp(savewadfilename, maplumpinfo->wad_file->basename))
+        if (!savemaplumpinfo || strcmp(savewadfilename, savemaplumpinfo->wad_file->basename))
         {
             M_ForceLoadGame();
             fclose(save_stream);
@@ -1946,7 +1949,7 @@ void G_DoLoadGame (void)
         }
         else
         // [crispy] strings are equal, but not identical
-        if (savewadfilename != maplumpinfo->wad_file->basename)
+        if (savewadfilename != savemaplumpinfo->wad_file->basename)
         {
             free(savewadfilename);
         }

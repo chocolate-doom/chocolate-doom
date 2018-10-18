@@ -276,6 +276,8 @@ extern mobj_t**		blocklinks;	// for thing chains
 
 // [crispy] pointer to the current map lump info struct
 extern lumpinfo_t *maplumpinfo;
+// [crispy] ... and the map lump about to load
+extern lumpinfo_t *savemaplumpinfo;
 
 
 //
