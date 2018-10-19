@@ -424,6 +424,9 @@ void D_DoomMain(void)
 
     HandleArgs();
 
+    // Generate the WAD hash table.  Speed things up a bit.
+    W_GenerateHashTable();
+
     I_PrintStartupBanner(gamedescription);
 
     ST_Message("MN_Init: Init menu system.\n");
