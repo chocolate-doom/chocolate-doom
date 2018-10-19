@@ -1129,7 +1129,7 @@ int P_GetNumForMap (int episode, int map, boolean critical)
 
     lumpnum = critical ? W_GetNumForName (lumpname) : W_CheckNumForName (lumpname);
 
-    if (nervewadfile && gamemission != pack_nerve && map <= 9)
+    if (nervewadfile && episode != 2 && map <= 9)
     {
         lumpnum = W_CheckNumForNameFromTo (lumpname, lumpnum - 1, 0);
     }
@@ -1179,7 +1179,7 @@ P_SetupLevel
     {
         if (gamemission == pack_nerve)
         {
-            gameepisode = 2;
+            episode = gameepisode = 2;
         }
     }
 

@@ -454,7 +454,7 @@ void P_ReadExtendedSaveGameData (int pass)
 	// [crispy] two-pass reading of extended savegame data
 	if (pass == 1)
 	{
-		P_ReadKeyValuePairs(pass);
+		P_ReadKeyValuePairs(1);
 
 		free(line);
 		free(string);
@@ -463,6 +463,7 @@ void P_ReadExtendedSaveGameData (int pass)
 	}
 
 	curpos = ftell(save_stream);
+	fseek(save_stream, 0, SEEK_SET);
 
 	// [crispy] check which map we would want to load
 	for (i = 0; i < SAVESTRINGSIZE + VERSIONSIZE + 1; i++) // [crispy] + 1 for "gameskill"
@@ -509,7 +510,7 @@ void P_ReadExtendedSaveGameData (int pass)
 			if (sscanf(line, "%s", string) == 1 &&
 			    !strncmp(string, extsavegdata[0].key, MAX_STRING_LEN))
 			{
-				P_ReadKeyValuePairs(pass);
+				P_ReadKeyValuePairs(0);
 				break;
 			}
 		}
@@ -518,5 +519,6 @@ void P_ReadExtendedSaveGameData (int pass)
 	free(line);
 	free(string);
 
+	// [crispy] back to where we started
 	fseek(save_stream, curpos, SEEK_SET);
 }
