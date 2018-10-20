@@ -1175,6 +1175,15 @@ static void SetVideoMode(void)
         }
     }
 
+    // Running without window decorations is potentially useful if you're
+    // playing in three window mode and want to line up three game windows
+    // next to each other on a single desktop.
+    // Deliberately not documented because I'm not sure how useful this is yet.
+    if (M_ParmExists("-borderless"))
+    {
+        window_flags |= SDL_WINDOW_BORDERLESS;
+    }
+
     I_GetWindowPosition(&x, &y, w, h);
 
     // Create window and renderer contexts. We set the window title
