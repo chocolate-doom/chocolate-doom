@@ -133,6 +133,222 @@ static Mix_Music *current_track_music = NULL;
 // If true, the currently playing track is being played on loop.
 static boolean current_track_loop;
 
+// Table of known hashes and filenames to look up for them. This allows
+// users to drop in a set of files without having to also provide a
+// configuration file.
+static const subst_music_t known_filenames[] = {
+    // Doom 1 music files.
+    {"b2e05b4e8dff8d76f8f4", "d_inter.ogg"},
+    {"0c0acce45130bab935d2", "d_intro.ogg"},
+    {"fca4086939a68ae4ed84", "d_victor.ogg"},
+    {"5971e5e20554f47ca065", "d_intro.ogg"},
+    {"99767e32769229897f77", "d_e1m1.ogg"},
+    {"b5e7dfb4efe9e688bf2a", "d_e1m2.ogg"},
+    {"fda8fa73e4d30a6b961c", "d_e1m3.ogg"},
+    {"3805f9bf3f1702f7e7f5", "d_e1m4.ogg"},
+    {"f546ed823b234fe39165", "d_e1m5.ogg"},
+    {"4450811b5a6748cfd83e", "d_e1m6.ogg"},
+    {"73edb50d96b0ac03be34", "d_e1m7.ogg"},
+    {"47d711a6fd32f5047879", "d_e1m8.ogg"},
+    {"62c631c2fdaa5ecd9a8d", "d_e1m9.ogg"},
+    {"7702a6449585428e7185", "d_e2m1.ogg"},
+    {"1cb1810989cbfae2b29b", "d_e2m2.ogg"},
+    {"7d740f3c881a22945e47", "d_e2m4.ogg"},
+    {"ae9c3dc2f9aeea002327", "d_e2m6.ogg"},
+    {"b26aad3caa420e9a2c76", "d_e2m7.ogg"},
+    {"90f06251a2a90bfaefd4", "d_e2m8.ogg"},
+    {"b2fb439f23c08c8e2577", "d_e3m1.ogg"},
+    {"b6c07bb249526b864208", "d_e3m2.ogg"},
+    {"ce3587ee503ffe707b2d", "d_e3m3.ogg"},
+    {"d746ea2aa16b3237422c", "d_e3m8.ogg"},
+    {"3da3b1335560a92912e6", "d_bunny.ogg"},
+
+    // Duplicates that don't have identical hashes:
+    {"4a5badc4f10a7d4ed021", "d_inter.ogg"},  // E2M3
+    {"36b14bf165b3fdd3958e", "d_e1m7.ogg"},   // E3M5
+    {"e77c3d42f2ea87f04607", "d_e1m6.ogg"},   // E3M6
+    {"3d85ec9c10b5ea465568", "d_e2m7.ogg"},   // E3M7
+    {"4d42e2ce1c1ff192500e", "d_e1m9.ogg"},   // E3M9
+
+    // These tracks are reused in Alien Vendetta, but are MIDs:
+    {"a05e45f67e1b64733fe3", "d_e2m1.ogg"},   // MAP02
+    {"8024ae1616ddd97ce330", "d_e1m4.ogg"},   // MAP03
+    {"3af8d79ddba49edaf9eb", "d_victor.ogg"}, // MAP05
+    {"a55352c96c025b6bd08a", "d_inter.ogg"},  // MAP07
+    {"76d1fc25ab7b1b4a58d6", "d_e1m8.ogg"},   // MAP11
+    {"497777f0863eca7cea87", "d_e1m2.ogg"},   // MAP12
+    {"0228fd87f8762f112fb6", "d_e2m2.ogg"},   // MAP13
+    {"db94e8e1d7c02092eab5", "d_e1m6.ogg"},   // MAP14
+    {"5a8d7a307eebc952795c", "d_e2m7.ogg"},   // MAP16
+    {"1a36b692bf26d94a72cc", "d_e1m7.ogg"},   // MAP23
+    {"37c6cefa351b06995152", "d_e1m5.ogg"},   // MAP27
+    {"36b97b87fe98348d44b6", "d_e2m6.ogg"},   // MAP28
+
+    // Doom II music files.
+    {"79080e9681a2d7bec3fb", "d_runnin.ogg"},  // MAP01,15
+    {"868b3aae73c7b12e92c0", "d_stalks.ogg"},  // MAP02,11,17
+    {"19237754d2eb85f41d84", "d_countd.ogg"},  // MAP03,21
+    {"00abff3b61b25a6855d2", "d_betwee.ogg"},  // MAP04
+    {"954636c7ee09edf5d98f", "d_doom.ogg"},    // MAP05,13
+    {"8d32b2b7aa3b806474c1", "d_the_da.ogg"},  // MAP06,12,24
+    {"41efc3c84bb321af2b6b", "d_shawn.ogg"},   // MAP07,19,29
+    // Assuming single D_DDTBLU: http://doomwiki.org/wiki/Doom_II_music#Trivia
+    {"51c0872fec9f43259318", "d_ddtblu.ogg"},  // MAP08
+    {"acb7ad85494d18235df8", "d_ddtblu.ogg"},  // MAP14,22
+    {"4b7ceccbf47e78e2fa0b", "d_in_cit.ogg"},  // MAP09
+    {"1d1f4a9edba174584e11", "d_dead.ogg"},    // MAP10,16
+    {"1736c81aac77f9bffd3d", "d_romero.ogg"},  // MAP18,27
+    {"a55d400570ad255a576b", "d_messag.ogg"},  // MAP20,26
+    {"29d30c3fbd712016f2e5", "d_ampie.ogg"},   // MAP23
+    {"bcfe9786afdcfb704afa", "d_adrian.ogg"},  // MAP25
+    {"e05c10389e71836834ae", "d_tense.ogg"},   // MAP28
+    {"b779022b1d0f0010b8f0", "d_openin.ogg"},  // MAP30
+    {"a9a5f7b0ab3be0f4fc24", "d_evil.ogg"},    // MAP31
+    {"4503d155aafec0296689", "d_ultima.ogg"},  // MAP32
+    {"56f2363f01df38908c77", "d_dm2ttl.ogg"},
+    {"71e58baf9e9dea4dd24a", "d_dm2int.ogg"},
+    {"e632318629869811f7dc", "d_read_m.ogg"},
+
+    // Duplicate filenames: the above filenames are the "canonical" files
+    // for the given SHA1 hashes, but we can also look for these filenames
+    // corresponding to the duplicated music tracks too.
+    {"868b3aae73c7b12e92c0", "d_stlks2.ogg"},
+    {"868b3aae73c7b12e92c0", "d_stlks3.ogg"},
+    {"8d32b2b7aa3b806474c1", "d_theda2.ogg"},
+    {"8d32b2b7aa3b806474c1", "d_theda3.ogg"},
+    {"954636c7ee09edf5d98f", "d_doom2.ogg"},
+    {"acb7ad85494d18235df8", "d_ddtbl2.ogg"},
+    {"acb7ad85494d18235df8", "d_ddtbl3.ogg"},
+    {"79080e9681a2d7bec3fb", "d_runni2.ogg"},
+    {"1d1f4a9edba174584e11", "d_dead2.ogg"},
+    {"41efc3c84bb321af2b6b", "d_shawn2.ogg"},
+    {"41efc3c84bb321af2b6b", "d_shawn3.ogg"},
+    {"19237754d2eb85f41d84", "d_count2.ogg"},
+    {"a55d400570ad255a576b", "d_messg2.ogg"},
+    {"1736c81aac77f9bffd3d", "d_romer2.ogg"},
+
+    // These tracks are reused in Alien Vendetta, but are MIDs:
+    {"9433604c098b7b1119a4", "d_in_cit.ogg"},  // MAP26
+
+    // Heretic tracks.
+    {"12818ca0d3c957e7d57e", "mus_titl.ogg"},
+    {"5cb988538ce1b1857349", "mus_intr.ogg"},
+    {"6f126abe35a78b61b930", "mus_cptd.ogg"},
+    {"62557250f0427c067dc9", "mus_e1m1.ogg"},
+    {"1e8d5fd814490b9ae166", "mus_e1m2.ogg"},
+    {"f0f31e8834e85035d434", "mus_e1m3.ogg"},
+    {"054d6997405cc5a32b46", "mus_e1m4.ogg"},
+    {"31950ab062cc1e5ca49d", "mus_e1m5.ogg"},
+    {"7389024fbab0dff47211", "mus_e1m6.ogg"},
+    {"f2aa312dddd0a294a095", "mus_e1m7.ogg"},
+    {"cd6856731d1ae1f3aa4e", "mus_e1m8.ogg"},
+    {"d7fe793f266733d92e61", "mus_e1m9.ogg"},
+    {"933545b48fad8c66f042", "mus_e2m1.ogg"},
+    {"bf88ecd4ae1621222592", "mus_e2m2.ogg"},
+    {"4f619f87a828c2ca4801", "mus_e2m3.ogg"},
+    {"13033a83c49424b2f2ab", "mus_e2m4.ogg"},
+    {"b3851f9351ae411d9de3", "mus_e2m6.ogg"},
+    {"82539791159fbbc02a23", "mus_e2m7.ogg"},
+    {"fd9e53a49cfa62c463a0", "mus_e2m8.ogg"},
+    {"29503959324d2ca67958", "mus_e2m9.ogg"},
+    {"3aa632257c5be375b97b", "mus_e3m2.ogg"},
+    {"69ba0dce7913d53b67a8", "mus_e3m3.ogg"},
+
+    // These Heretic tracks are reused in Alien Vendetta, but are MIDs:
+    {"51344131e8d260753ce7", "mus_e2m3.ogg"},  // MAP15
+    {"78b570b2397570440aff", "mus_e1m1.ogg"},  // MAP19
+    {"ee21ba9fad4de3dfaef0", "mus_e1m4.ogg"},  // MAP29
+    {"d2bb643a60696ccbca03", "mus_e1m9.ogg"},  // MAP32
+
+    // Hexen tracks:
+    {"fbf55fc1ee26bd01266b", "winnowr.ogg"},
+    {"71776e2da2b7ba607d81", "jachr.ogg"},
+    {"c5c8630608b8132b33cd", "simonr.ogg"},
+    {"43683b3f55a031de88d4", "wutzitr.ogg"},
+    {"a6062883f29436ef73db", "falconr.ogg"},
+    {"512cb6cc9b558d5f0fef", "levelr.ogg"},
+    {"d31226ae75fce6a24208", "chartr.ogg"},
+    {"bf1f1e561bbdba4e699f", "swampr.ogg"},
+    {"b303193f756ca0e2de0f", "deepr.ogg"},
+    {"f0635f0386d883b00186", "fubasr.ogg"},
+    {"18f2a01f83df6e3abedc", "grover.ogg"},
+    {"b2527eb0522f08b2cf5f", "fortr.ogg"},
+    {"343addba8ba53a20a160", "foojar.ogg"},
+    {"c13109045b06b5a63386", "sixater.ogg"},
+    {"693525aaf69eac5429ab", "wobabyr.ogg"},
+    {"8f884223811c2bb8311d", "cryptr.ogg"},
+    {"de540e6826e62b32c01c", "fantar.ogg"},
+    {"efdff548df918934f71f", "blechr.ogg"},
+    {"de91f150f6a127e72e35", "voidr.ogg"},
+    {"e0497fe27289fe18515b", "chap_1r.ogg"},
+    {"f2ef1abdc3f672a3519a", "chap_2r.ogg"},
+    {"78cd9882f61cc441bef4", "chap_3r.ogg"},
+    {"97b2b575d9d096c1f89f", "chap_4r.ogg"},
+    {"ad0197a0f6c52ac30915", "chippyr.ogg"},
+    {"30506c62e9f0989ffe09", "percr.ogg"},
+    {"3542803beaa43bf1de1a", "secretr.ogg"},
+    {"81067721f40c611d09fb", "bonesr.ogg"},
+    {"4822af2e1a2eb7faf660", "octor.ogg"},
+    {"26bb3cec902ed8008fc2", "rithmr.ogg"},
+    {"94ab641c7aa93caac77a", "stalkr.ogg"},
+    {"d0a3f337c54b0703b4d3", "borkr.ogg"},
+    {"79e7781ec7eb9b9434b5", "crucibr.ogg"},
+    {"c2786e5581a7f8801969", "hexen.ogg"},
+    {"97fae9a084c0efda5151", "hub.ogg"},
+    {"c5da52d5c2ec4803ef8f", "hall.ogg"},
+    {"1e71bc0e2feafb06214e", "orb.ogg"},
+    {"bc9dcfa6632e847e03af", "chess.ogg"},
+
+    // Hexen CD tracks: alternate filenames for a ripped copy of
+    // the CD soundtrack.
+    {"71776e2da2b7ba607d81", "hexen02.ogg"},   // level  2 (jachr)
+    {"efdff548df918934f71f", "hexen03.ogg"},   // level 26 (blechr)
+    {"c2786e5581a7f8801969", "hexen04.ogg"},   // (hexen)
+    {"1e71bc0e2feafb06214e", "hexen05.ogg"},   // (orb)
+    {"f0635f0386d883b00186", "hexen06.ogg"},   // level 10 (fubasr)
+    {"bc9dcfa6632e847e03af", "hexen07.ogg"},   // (chess)
+    {"8f884223811c2bb8311d", "hexen08.ogg"},   // level 24 (cryptr)
+    {"a6062883f29436ef73db", "hexen09.ogg"},   // level  5 (falconr)
+    {"4822af2e1a2eb7faf660", "hexen10.ogg"},   // level 36 (octor)
+    {"26bb3cec902ed8008fc2", "hexen11.ogg"},   // level 37 (rithmr)
+    {"c13109045b06b5a63386", "hexen12.ogg"},   // level 22 (sixater)
+    {"fbf55fc1ee26bd01266b", "hexen13.ogg"},   // level  1 (winnowr)
+    {"bf1f1e561bbdba4e699f", "hexen14.ogg"},   // level  8 (swampr)
+    {"43683b3f55a031de88d4", "hexen15.ogg"},   // level  4 (wutzitr)
+    {"81067721f40c611d09fb", "hexen16.ogg"},   // level 35 (bonesr)
+    {"e0497fe27289fe18515b", "hexen17.ogg"},   // level 28 (chap_1r)
+    {"97b2b575d9d096c1f89f", "hexen18.ogg"},   // level 31 (chap_4r)
+    {"de540e6826e62b32c01c", "hexen19.ogg"},   // level 25 (fantar)
+    {"343addba8ba53a20a160", "hexen20.ogg"},   // level 21 (foojar)
+    {"512cb6cc9b558d5f0fef", "hexen21.ogg"},   // level  6 (levelr)
+    {"c5c8630608b8132b33cd", "hexen22.ogg"},   // level  3 (simonr)
+
+    // Strife:
+    {"8ac2b2b47707f0fdf8f6", "d_logo.ogg"},   // Title
+    {"62e1c58054a1f1bc39b2", "d_action.ogg"}, // 1,15,28
+    {"12fa000f3fa1edac5c4f", "d_tavern.ogg"}, // 2
+    {"695e56ab3251792d20e5", "d_danger.ogg"}, // 3,11
+    {"96fe30e8712217b60dd7", "d_fast.ogg"},   // 4
+    {"ec8fa484c4e85adbf700", "d_intro.ogg"},  // 5
+    {"61345598a3de04aad508", "d_darker.ogg"}, // 6,14
+    {"52353e9a435b7b1cb268", "d_strike.ogg"}, // 7,19
+    {"061164504907bffc9c22", "d_slide.ogg"},  // 8,18,22
+    {"3dbb4b703ce69aafcdd5", "d_tribal.ogg"}, // 9
+    {"393773688eba050c3548", "d_march.ogg"},  // 10
+    {"3cba3c627de065a667dd", "d_mood.ogg"},   // 12
+    {"b1f65a333e5c70255784", "d_castle.ogg"}, // 13
+    {"e1455a83a04c9ac4a09f", "d_fight.ogg"},  // 16,31
+    {"17f822b7374b1f069b89", "d_spense.ogg"}, // 17
+    {"e66c5a1a7d05f021f4ae", "d_dark.ogg"},   // 20
+    {"1c92bd0625026af30dad", "d_tech.ogg"},   // 21,27
+    {"7ae280713d078de7933a", "d_drone.ogg"},  // 23,30
+    {"4a664afd0d7eae79c97a", "d_panthr.ogg"}, // 24
+    {"4a7d62beeac5601ccf21", "d_sad.ogg"},    // 25
+    {"e60e109779400f2855d7", "d_instry.ogg"}, // 26,29
+    {"b7d36878faeb291d6df5", "d_happy.ogg"},  // Better ending
+    {"ff4a342c8c5ec51b06c3", "d_end.ogg"},    // Worse ending
+};
+
 // Given a time string (for LOOP_START/LOOP_END), parse it and return
 // the time (in # samples since start of track) it represents.
 static unsigned int ParseVorbisTime(unsigned int samplerate_hz, char *value)
@@ -474,19 +690,10 @@ static const char *GetSubstituteMusicFile(void *data, size_t data_len)
     return filename;
 }
 
-// Add a substitute music file to the lookup list.
-
-static void AddSubstituteMusic(subst_music_t *subst)
+static char *GetFullPath(const char *musicdir, const char *path)
 {
-    ++subst_music_len;
-    subst_music =
-        I_Realloc(subst_music, sizeof(subst_music_t) * subst_music_len);
-    memcpy(&subst_music[subst_music_len - 1], subst, sizeof(subst_music_t));
-}
-
-static char *GetFullPath(char *base_filename, char *path)
-{
-    char *basedir, *result;
+    char *result;
+    char *systemized_path;
 
     // Starting with directory separator means we have an absolute path,
     // so just return it.
@@ -506,16 +713,29 @@ static char *GetFullPath(char *base_filename, char *path)
     // Paths in the substitute filenames can contain Unix-style /
     // path separators, but we should convert this to the separator
     // for the native platform.
-    path = M_StringReplace(path, "/", DIR_SEPARATOR_S);
+    systemized_path = M_StringReplace(path, "/", DIR_SEPARATOR_S);
 
     // Copy config filename and cut off the filename to just get the
     // parent dir.
-    basedir = M_DirName(base_filename);
-    result = M_StringJoin(basedir, DIR_SEPARATOR_S, path, NULL);
-    free(basedir);
-    free(path);
+    result = M_StringJoin(musicdir, systemized_path, NULL);
+    free(systemized_path);
 
     return result;
+}
+
+// Add a substitute music file to the lookup list.
+
+static void AddSubstituteMusic(const char *musicdir,
+                               const subst_music_t *subst)
+{
+    subst_music_t *s;
+
+    ++subst_music_len;
+    subst_music =
+        I_Realloc(subst_music, sizeof(subst_music_t) * subst_music_len);
+    s = &subst_music[subst_music_len - 1];
+    *s = *subst;
+    s->filename = GetFullPath(musicdir, s->filename);
 }
 
 static const char *ReadHashPrefix(char *line)
@@ -556,7 +776,7 @@ static const char *ReadHashPrefix(char *line)
 // Parse a line from substitute music configuration file; returns error
 // message or NULL for no error.
 
-static char *ParseSubstituteLine(char *filename, char *line)
+static char *ParseSubstituteLine(char *musicdir, char *line)
 {
     subst_music_t subst;
     char *p;
@@ -603,6 +823,8 @@ static char *ParseSubstituteLine(char *filename, char *line)
     // Skip spaces.
     for (; *p != '\0' && isspace(*p); ++p);
 
+    subst.filename = p;
+
     // We're now at the filename. Cut off trailing space characters.
     while (strlen(p) > 0 && isspace(p[strlen(p) - 1]))
     {
@@ -615,15 +837,14 @@ static char *ParseSubstituteLine(char *filename, char *line)
     }
 
     // Expand full path and add to our database of substitutes.
-    subst.filename = GetFullPath(filename, p);
-    AddSubstituteMusic(&subst);
+    AddSubstituteMusic(musicdir, &subst);
 
     return NULL;
 }
 
 // Read a substitute music configuration file.
 
-static boolean ReadSubstituteConfig(char *filename)
+static boolean ReadSubstituteConfig(char *musicdir, char *filename)
 {
     char *buffer;
     char *line;
@@ -658,7 +879,7 @@ static boolean ReadSubstituteConfig(char *filename)
             next = NULL;
         }
 
-        error = ParseSubstituteLine(filename, line);
+        error = ParseSubstituteLine(musicdir, line);
 
         if (error != NULL)
         {
@@ -705,17 +926,24 @@ static void LoadSubstituteConfigs(void)
     for (i = 0; i < arrlen(subst_config_filenames); ++i)
     {
         path = M_StringJoin(musicdir, subst_config_filenames[i], NULL);
-        ReadSubstituteConfig(path);
+        ReadSubstituteConfig(musicdir, path);
         free(path);
     }
-
-    free(musicdir);
 
     if (subst_music_len > 0)
     {
         printf("Loaded %i music substitutions from config files.\n",
                subst_music_len);
     }
+
+    // Add entries from known filenames list. We add this after those from the
+    // configuration files, so that the entries here can be overridden.
+    for (i = 0; i < arrlen(known_filenames); ++i)
+    {
+        AddSubstituteMusic(musicdir, &known_filenames[i]);
+    }
+
+    free(musicdir);
 }
 
 // Returns true if the given lump number is a music lump that should
