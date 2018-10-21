@@ -78,8 +78,8 @@
 
 typedef struct
 {
-    sha1_digest_t hash;
-    char *filename;
+    const char *hash_prefix;
+    const char *filename;
 } subst_music_t;
 
 // Structure containing parsed metadata read from a digital music track:
@@ -371,7 +371,7 @@ static void ParseOggFile(file_metadata_t *metadata, FILE *fs)
     }
 }
 
-static void ReadLoopPoints(char *filename, file_metadata_t *metadata)
+static void ReadLoopPoints(const char *filename, file_metadata_t *metadata)
 {
     FILE *fs;
     char header[4];
@@ -422,11 +422,12 @@ static void ReadLoopPoints(char *filename, file_metadata_t *metadata)
 // Given a MUS lump, look up a substitute MUS file to play instead
 // (or NULL to just use normal MIDI playback).
 
-static char *GetSubstituteMusicFile(void *data, size_t data_len)
+static const char *GetSubstituteMusicFile(void *data, size_t data_len)
 {
     sha1_context_t context;
     sha1_digest_t hash;
-    char *filename;
+    const char *filename;
+    char hash_str[sizeof(sha1_digest_t) * 2 + 1];
     unsigned int i;
 
     // Don't bother doing a hash if we're never going to find anything.
@@ -439,6 +440,13 @@ static char *GetSubstituteMusicFile(void *data, size_t data_len)
     SHA1_Update(&context, data, data_len);
     SHA1_Final(hash, &context);
 
+    // Build a string representation of the hash.
+    for (i = 0; i < sizeof(sha1_digest_t); ++i)
+    {
+        M_snprintf(hash_str + i * 2, sizeof(hash_str) - i * 2,
+                   "%02x", hash[i]);
+    }
+
     // Look for a hash that matches.
     // The substitute mapping list can (intentionally) contain multiple
     // filename mappings for the same hash. This allows us to try
@@ -448,7 +456,7 @@ static char *GetSubstituteMusicFile(void *data, size_t data_len)
 
     for (i = 0; i < subst_music_len; ++i)
     {
-        if (memcmp(hash, subst_music[i].hash, sizeof(hash)) == 0)
+        if (M_StringStartsWith(hash_str, subst_music[i].hash_prefix))
         {
             filename = subst_music[i].filename;
 
@@ -474,24 +482,6 @@ static void AddSubstituteMusic(subst_music_t *subst)
     subst_music =
         I_Realloc(subst_music, sizeof(subst_music_t) * subst_music_len);
     memcpy(&subst_music[subst_music_len - 1], subst, sizeof(subst_music_t));
-}
-
-static int ParseHexDigit(char c)
-{
-    c = tolower(c);
-
-    if (c >= '0' && c <= '9')
-    {
-        return c - '0';
-    }
-    else if (c >= 'a' && c <= 'f')
-    {
-        return 10 + (c - 'a');
-    }
-    else
-    {
-        return -1;
-    }
 }
 
 static char *GetFullPath(char *base_filename, char *path)
@@ -528,6 +518,41 @@ static char *GetFullPath(char *base_filename, char *path)
     return result;
 }
 
+static const char *ReadHashPrefix(char *line)
+{
+    char *result;
+    char *p;
+    int i, len;
+
+    for (p = line; *p != '\0' && !isspace(*p) && *p != '='; ++p)
+    {
+        if (!isxdigit(*p))
+        {
+            return NULL;
+        }
+    }
+
+    len = p - line;
+    if (len == 0 || len > sizeof(sha1_digest_t) * 2)
+    {
+        return NULL;
+    }
+
+    result = malloc(len + 1);
+    if (result == NULL)
+    {
+        return NULL;
+    }
+
+    for (i = 0; i < len; ++i)
+    {
+        result[i] = tolower(line[i]);
+    }
+    result[len] = '\0';
+
+    return result;
+}
+
 // Parse a line from substitute music configuration file; returns error
 // message or NULL for no error.
 
@@ -535,7 +560,6 @@ static char *ParseSubstituteLine(char *filename, char *line)
 {
     subst_music_t subst;
     char *p;
-    int hash_index;
 
     // Strip out comments if present.
     p = strchr(line, '#');
@@ -558,34 +582,13 @@ static char *ParseSubstituteLine(char *filename, char *line)
         return NULL;
     }
 
-    // Read hash.
-    hash_index = 0;
-    while (*p != '\0' && *p != '=' && !isspace(*p))
+    subst.hash_prefix = ReadHashPrefix(p);
+    if (subst.hash_prefix == NULL)
     {
-        int d1, d2;
-
-        d1 = ParseHexDigit(p[0]);
-        d2 = ParseHexDigit(p[1]);
-
-        if (d1 < 0 || d2 < 0)
-        {
-            return "Invalid hex digit in SHA1 hash";
-        }
-        else if (hash_index >= sizeof(sha1_digest_t))
-        {
-            return "SHA1 hash too long";
-        }
-
-        subst.hash[hash_index] = (d1 << 4) | d2;
-        ++hash_index;
-
-        p += 2;
+        return "Invalid hash prefix";
     }
 
-    if (hash_index != sizeof(sha1_digest_t))
-    {
-        return "SHA1 hash too short";
-    }
+    p += strlen(subst.hash_prefix);
 
     // Skip spaces.
     for (; *p != '\0' && isspace(*p); ++p);
@@ -1139,7 +1142,7 @@ static boolean IsMid(byte *mem, int len)
     return len > 4 && !memcmp(mem, "MThd", 4);
 }
 
-static boolean ConvertMus(byte *musdata, int len, char *filename)
+static boolean ConvertMus(byte *musdata, int len, const char *filename)
 {
     MEMFILE *instream;
     MEMFILE *outstream;
@@ -1167,7 +1170,8 @@ static boolean ConvertMus(byte *musdata, int len, char *filename)
 
 static void *I_SDL_RegisterSong(void *data, int len)
 {
-    char *filename;
+    const char *filename;
+    char *tmp_filename;
     Mix_Music *music;
 
     if (!music_initialized)
@@ -1204,17 +1208,17 @@ static void *I_SDL_RegisterSong(void *data, int len)
     // MUS files begin with "MUS"
     // Reject anything which doesnt have this signature
 
-    filename = M_TempFile("doom.mid");
+    tmp_filename = M_TempFile("doom.mid");
 
     if (IsMid(data, len) && len < MAXMIDLENGTH)
     {
-        M_WriteFile(filename, data, len);
+        M_WriteFile(tmp_filename, data, len);
     }
     else
     {
 	// Assume a MUS file and try to convert
 
-        ConvertMus(data, len, filename);
+        ConvertMus(data, len, tmp_filename);
     }
 
     // Load the MIDI. In an ideal world we'd be using Mix_LoadMUS_RW()
@@ -1227,7 +1231,7 @@ static void *I_SDL_RegisterSong(void *data, int len)
     if (midi_server_initialized)
     {
         music = NULL;
-        if (!I_MidiPipe_RegisterSong(filename))
+        if (!I_MidiPipe_RegisterSong(tmp_filename))
         {
             fprintf(stderr, "Error loading midi: %s\n",
                 "Could not communicate with midiproc.");
@@ -1236,7 +1240,7 @@ static void *I_SDL_RegisterSong(void *data, int len)
     else
 #endif
     {
-        music = Mix_LoadMUS(filename);
+        music = Mix_LoadMUS(tmp_filename);
         if (music == NULL)
         {
             // Failed to load
@@ -1250,11 +1254,11 @@ static void *I_SDL_RegisterSong(void *data, int len)
 
         if (strlen(snd_musiccmd) == 0)
         {
-            remove(filename);
+            remove(tmp_filename);
         }
     }
 
-    free(filename);
+    free(tmp_filename);
 
     return music;
 }
