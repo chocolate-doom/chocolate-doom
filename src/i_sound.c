@@ -187,7 +187,7 @@ static void InitMusicModule(void)
 //
 
 void I_InitSound(boolean use_sfx_prefix)
-{  
+{
     boolean nosound, nosfx, nomusic;
 
     //!
@@ -213,6 +213,9 @@ void I_InitSound(boolean use_sfx_prefix)
     //
 
     nomusic = M_CheckParm("-nomusic") > 0;
+
+    // Auto configure the music pack directory.
+    M_SetMusicPackDir();
 
     // Initialize the sound and music subsystems.
 
