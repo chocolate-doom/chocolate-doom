@@ -329,7 +329,6 @@ static const subst_music_t known_filenames[] = {
     {"12fa000f3fa1edac5c4f", "d_tavern.{ext}"}, // 2
     {"695e56ab3251792d20e5", "d_danger.{ext}"}, // 3,11
     {"96fe30e8712217b60dd7", "d_fast.{ext}"},   // 4
-    {"ec8fa484c4e85adbf700", "d_intro.{ext}"},  // 5
     {"61345598a3de04aad508", "d_darker.{ext}"}, // 6,14
     {"52353e9a435b7b1cb268", "d_strike.{ext}"}, // 7,19
     {"061164504907bffc9c22", "d_slide.{ext}"},  // 8,18,22
@@ -347,6 +346,8 @@ static const subst_music_t known_filenames[] = {
     {"e60e109779400f2855d7", "d_instry.{ext}"}, // 26,29
     {"b7d36878faeb291d6df5", "d_happy.{ext}"},  // Better ending
     {"ff4a342c8c5ec51b06c3", "d_end.{ext}"},    // Worse ending
+    // This conflicts with Doom's d_intro:
+    //{"ec8fa484c4e85adbf700", "d_intro.{ext}"},  // 5
 };
 
 // Given a time string (for LOOP_START/LOOP_END), parse it and return
