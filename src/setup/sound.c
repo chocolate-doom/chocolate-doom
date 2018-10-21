@@ -113,9 +113,25 @@ static txt_dropdown_list_t *OPLTypeSelector(void)
     return result;
 }
 
+static void OpenMusicPackDir(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
+{
+    char *cmd;
+
+#if defined(__MACOSX__)
+    cmd = M_StringJoin("open \"", music_pack_path, "\"", NULL);
+#elif defined(_WIN32)
+    cmd = M_StringJoin("start \"", music_pack_path, "\"", NULL);
+#else
+    cmd = M_StringJoin("xdg-open \"", music_pack_path, "\"", NULL);
+#endif
+    system(cmd);
+    free(cmd);
+}
+
 void ConfigSound(TXT_UNCAST_ARG(widget), void *user_data)
 {
     txt_window_t *window;
+    txt_window_action_t *music_action;
 
     // Build the window
 
@@ -125,6 +141,12 @@ void ConfigSound(TXT_UNCAST_ARG(widget), void *user_data)
     TXT_SetColumnWidths(window, 40);
     TXT_SetWindowPosition(window, TXT_HORIZ_CENTER, TXT_VERT_TOP,
                                   TXT_SCREEN_W / 2, 3);
+
+    music_action = TXT_NewWindowAction('m', "Music Packs");
+    TXT_SetWindowAction(window, TXT_HORIZ_CENTER,
+        TXT_NewConditional(&snd_musicdevice, SNDDEVICE_GENMIDI,
+            music_action));
+    TXT_SignalConnect(music_action, "pressed", OpenMusicPackDir, NULL);
 
     TXT_AddWidgets(window,
         TXT_NewSeparator("Sound effects"),
@@ -181,13 +203,6 @@ void ConfigSound(TXT_UNCAST_ARG(widget), void *user_data)
                 TXT_NewFileSelector(&timidity_cfg_path, 34,
                                     "Select Timidity config file",
                                     cfg_extension),
-                TXT_NewStrut(4, 0),
-                TXT_NewLabel("Digital music pack directory: "),
-                TXT_NewStrut(4, 0),
-                TXT_NewFileSelector(&music_pack_path, 34,
-                                    "Select directory containing music pack "
-                                    "config files",
-                                    TXT_DIRECTORY),
                 NULL)),
         NULL);
 }
