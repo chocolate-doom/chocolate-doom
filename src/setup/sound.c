@@ -116,6 +116,7 @@ static txt_dropdown_list_t *OPLTypeSelector(void)
 static void OpenMusicPackDir(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
 {
     char *cmd;
+    int result;
 
 #if defined(__MACOSX__)
     cmd = M_StringJoin("open \"", music_pack_path, "\"", NULL);
@@ -124,8 +125,13 @@ static void OpenMusicPackDir(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
 #else
     cmd = M_StringJoin("xdg-open \"", music_pack_path, "\"", NULL);
 #endif
-    system(cmd);
+    result = system(cmd);
     free(cmd);
+
+    if (result != 0)
+    {
+        TXT_MessageBox("Error", "Failed to open music pack directory.");
+    }
 }
 
 void ConfigSound(TXT_UNCAST_ARG(widget), void *user_data)
