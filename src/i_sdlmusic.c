@@ -943,6 +943,7 @@ static void LoadSubstituteConfigs(void)
 {
     char *musicdir;
     char *path;
+    unsigned int old_music_len;
     unsigned int i;
 
     // We can configure the path to music packs using the music_pack_path
@@ -978,12 +979,20 @@ static void LoadSubstituteConfigs(void)
                subst_music_len);
     }
 
+    old_music_len = subst_music_len;
+
     // Add entries from known filenames list. We add this after those from the
     // configuration files, so that the entries here can be overridden.
     for (i = 0; i < arrlen(known_filenames); ++i)
     {
         AddSubstituteMusic(musicdir, known_filenames[i].hash_prefix,
                            known_filenames[i].filename);
+    }
+
+    if (subst_music_len > old_music_len)
+    {
+        printf("Configured %i music substitutions based on filename.\n",
+               subst_music_len - old_music_len);
     }
 
     free(musicdir);
