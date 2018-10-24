@@ -52,13 +52,19 @@ char *snd_musiccmd = "";
 
 int snd_pitchshift = -1;
 
-// Low-level sound and music modules we are using
+int snd_musicdevice = SNDDEVICE_SB;
+int snd_sfxdevice = SNDDEVICE_SB;
 
+// Low-level sound and music modules we are using
 static sound_module_t *sound_module;
 static music_module_t *music_module;
 
-int snd_musicdevice = SNDDEVICE_SB;
-int snd_sfxdevice = SNDDEVICE_SB;
+// If true, the music pack module was successfully initialized.
+static boolean music_packs_active = false;
+
+// This is either equal to music_module or &music_pack_module,
+// depending on whether the current track is substituted.
+static music_module_t *active_music_module;
 
 // Sound modules
 
@@ -67,6 +73,7 @@ extern sound_module_t sound_sdl_module;
 extern sound_module_t sound_pcsound_module;
 extern music_module_t music_sdl_module;
 extern music_module_t music_opl_module;
+extern music_module_t music_pack_module;
 
 // For OPL module:
 
@@ -240,6 +247,13 @@ void I_InitSound(boolean use_sfx_prefix)
         if (!nomusic)
         {
             InitMusicModule();
+            active_music_module = music_module;
+        }
+
+        // We may also have substitute MIDIs we can load.
+        if (music_module != NULL)
+        {
+            music_packs_active = music_pack_module.Init();
         }
     }
 }
@@ -251,6 +265,11 @@ void I_ShutdownSound(void)
         sound_module->Shutdown();
     }
 
+    if (music_packs_active)
+    {
+        music_pack_module.Shutdown();
+    }
+
     if (music_module != NULL)
     {
         music_module->Shutdown();
@@ -259,7 +278,7 @@ void I_ShutdownSound(void)
 
 int I_GetSfxLumpNum(sfxinfo_t *sfxinfo)
 {
-    if (sound_module != NULL) 
+    if (sound_module != NULL)
     {
         return sound_module->GetSfxLumpNum(sfxinfo);
     }
@@ -276,9 +295,9 @@ void I_UpdateSound(void)
         sound_module->Update();
     }
 
-    if (music_module != NULL && music_module->Poll != NULL)
+    if (active_music_module != NULL && active_music_module->Poll != NULL)
     {
-        music_module->Poll();
+        active_music_module->Poll();
     }
 }
 
@@ -364,33 +383,51 @@ void I_ShutdownMusic(void)
 
 void I_SetMusicVolume(int volume)
 {
-    if (music_module != NULL)
+    if (active_music_module != NULL)
     {
-        music_module->SetMusicVolume(volume);
+        active_music_module->SetMusicVolume(volume);
     }
 }
 
 void I_PauseSong(void)
 {
-    if (music_module != NULL)
+    if (active_music_module != NULL)
     {
-        music_module->PauseMusic();
+        active_music_module->PauseMusic();
     }
 }
 
 void I_ResumeSong(void)
 {
-    if (music_module != NULL)
+    if (active_music_module != NULL)
     {
-        music_module->ResumeMusic();
+        active_music_module->ResumeMusic();
     }
 }
 
 void *I_RegisterSong(void *data, int len)
 {
-    if (music_module != NULL)
+    // If the music pack module is active, check to see if there is a
+    // valid substitution for this track. If there is, we set the
+    // active_music_module pointer to the music pack module for the
+    // duration of this particular track.
+    if (music_packs_active)
     {
-        return music_module->RegisterSong(data, len);
+        void *handle;
+
+        handle = music_pack_module.RegisterSong(data, len);
+        if (handle != NULL)
+        {
+            active_music_module = &music_pack_module;
+            return handle;
+        }
+    }
+
+    // No substitution for this track, so use the main module.
+    active_music_module = music_module;
+    if (active_music_module != NULL)
+    {
+        return active_music_module->RegisterSong(data, len);
     }
     else
     {
@@ -400,33 +437,33 @@ void *I_RegisterSong(void *data, int len)
 
 void I_UnRegisterSong(void *handle)
 {
-    if (music_module != NULL)
+    if (active_music_module != NULL)
     {
-        music_module->UnRegisterSong(handle);
+        active_music_module->UnRegisterSong(handle);
     }
 }
 
 void I_PlaySong(void *handle, boolean looping)
 {
-    if (music_module != NULL)
+    if (active_music_module != NULL)
     {
-        music_module->PlaySong(handle, looping);
+        active_music_module->PlaySong(handle, looping);
     }
 }
 
 void I_StopSong(void)
 {
-    if (music_module != NULL)
+    if (active_music_module != NULL)
     {
-        music_module->StopSong();
+        active_music_module->StopSong();
     }
 }
 
 boolean I_MusicIsPlaying(void)
 {
-    if (music_module != NULL)
+    if (active_music_module != NULL)
     {
-        return music_module->MusicIsPlaying();
+        return active_music_module->MusicIsPlaying();
     }
     else
     {
