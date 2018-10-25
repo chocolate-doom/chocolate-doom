@@ -149,9 +149,7 @@ void ConfigSound(TXT_UNCAST_ARG(widget), void *user_data)
                                   TXT_SCREEN_W / 2, 3);
 
     music_action = TXT_NewWindowAction('m', "Music Packs");
-    TXT_SetWindowAction(window, TXT_HORIZ_CENTER,
-        TXT_NewConditional(&snd_musicdevice, SNDDEVICE_GENMIDI,
-            music_action));
+    TXT_SetWindowAction(window, TXT_HORIZ_CENTER, music_action);
     TXT_SignalConnect(music_action, "pressed", OpenMusicPackDir, NULL);
 
     TXT_AddWidgets(window,
