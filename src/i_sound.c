@@ -195,7 +195,7 @@ static void InitMusicModule(void)
 
 void I_InitSound(boolean use_sfx_prefix)
 {
-    boolean nosound, nosfx, nomusic;
+    boolean nosound, nosfx, nomusic, nomusicpacks;
 
     //!
     // @vanilla
@@ -220,6 +220,13 @@ void I_InitSound(boolean use_sfx_prefix)
     //
 
     nomusic = M_CheckParm("-nomusic") > 0;
+
+    //!
+    //
+    // Disable substitution music packs.
+    //
+
+    nomusicpacks = M_ParmExists("-nomusicpacks");
 
     // Auto configure the music pack directory.
     M_SetMusicPackDir();
@@ -251,7 +258,7 @@ void I_InitSound(boolean use_sfx_prefix)
         }
 
         // We may also have substitute MIDIs we can load.
-        if (music_module != NULL)
+        if (!nomusicpacks && music_module != NULL)
         {
             music_packs_active = music_pack_module.Init();
         }
