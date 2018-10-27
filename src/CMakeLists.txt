@@ -93,6 +93,11 @@ set(GAME_SOURCE_FILES
     w_merge.c           w_merge.h
     z_zone.c            z_zone.h)
 
+if(MSVC)
+    list(APPEND GAME_SOURCE_FILES
+         "../../win32/win_opendir.c" "../../win32/win_opendir.h")
+endif()
+
 set(DEHACKED_SOURCE_FILES
                         deh_defs.h
     deh_io.c            deh_io.h

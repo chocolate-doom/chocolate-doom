@@ -16,16 +16,20 @@
 // to be interrogated.
 //
 
-// TODO: Merge win_opendir.[ch] into this file for MSVC implementation.
-
 #include <stdlib.h>
 
 #include "i_glob.h"
 #include "m_misc.h"
 #include "config.h"
 
-#ifdef HAVE_DIRENT_H
-#include "dirent.h"
+// For Visual C++, we need to include the win_opendir module.
+#if defined(_MSC_VER)
+#include <win_opendir.h>
+#elif defined(HAVE_DIRENT_H)
+#include <dirent.h>
+#endif
+
+#if defined(_MSC_VER) || defined(HAVE_DIRENT_H)
 
 struct glob_s
 {
