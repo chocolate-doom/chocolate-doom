@@ -22,14 +22,19 @@
 #include "m_misc.h"
 #include "config.h"
 
-// For Visual C++, we need to include the win_opendir module.
 #if defined(_MSC_VER)
+// For Visual C++, we need to include the win_opendir module.
 #include <win_opendir.h>
 #elif defined(HAVE_DIRENT_H)
 #include <dirent.h>
+#elif defined(__WATCOMC__)
+// Watcom has the same API in a different header.
+#include <direct.h>
+#else
+#define NO_DIRENT_IMPLEMENTATION
 #endif
 
-#if defined(_MSC_VER) || defined(HAVE_DIRENT_H)
+#ifndef NO_DIRENT_IMPLEMENTATION
 
 struct glob_s
 {
@@ -130,7 +135,7 @@ const char *I_NextGlob(glob_t *glob)
     return glob->last_filename;
 }
 
-#else /* #ifndef HAVE_DIRENT_H */
+#else /* #ifdef NO_DIRENT_IMPLEMENTATION */
 
 #warning No native implementation of file globbing.
 
@@ -148,5 +153,5 @@ const char *I_NextGlob(glob_t *glob)
     return "";
 }
 
-#endif /* #ifndef HAVE_DIRENT_H */
+#endif /* #ifdef NO_DIRENT_IMPLEMENTATION */
 
