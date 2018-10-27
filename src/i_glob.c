@@ -98,7 +98,7 @@ static boolean MatchesGlob(const char *name, const char *glob)
                 }
                 ++name;
             }
-            return false;
+            return glob[1] == '\0';
         }
         else if (*glob != '?' && *name != *glob)
         {
