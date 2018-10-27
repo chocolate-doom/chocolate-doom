@@ -95,7 +95,7 @@ set(GAME_SOURCE_FILES
 
 if(MSVC)
     list(APPEND GAME_SOURCE_FILES
-         "../../win32/win_opendir.c" "../../win32/win_opendir.h")
+         "../win32/win_opendir.c" "../win32/win_opendir.h")
 endif()
 
 set(DEHACKED_SOURCE_FILES
