@@ -117,7 +117,7 @@ const char *I_NextGlob(glob_t *glob)
         {
             return NULL;
         }
-    } while (de->d_type != DT_REG || !MatchesGlob(de->d_name, glob->glob));
+    } while (de->d_type == DT_DIR || !MatchesGlob(de->d_name, glob->glob));
 
     // Return the fully-qualified path, not just the bare filename.
     free(glob->last_filename);
