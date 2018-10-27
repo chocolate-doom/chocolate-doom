@@ -25,6 +25,7 @@
 #include "SDL.h"
 #include "SDL_mixer.h"
 
+#include "i_glob.h"
 #include "i_midipipe.h"
 
 #include "config.h"
@@ -91,16 +92,6 @@ typedef struct
 
 static subst_music_t *subst_music = NULL;
 static unsigned int subst_music_len = 0;
-
-static const char *subst_config_filenames[] =
-{
-    "doom1-music.cfg",
-    "doom2-music.cfg",
-    "tnt-music.cfg",
-    "heretic-music.cfg",
-    "hexen-music.cfg",
-    "strife-music.cfg",
-};
 
 static boolean music_initialized = false;
 
@@ -878,7 +869,7 @@ static char *ParseSubstituteLine(char *musicdir, char *line)
 
 // Read a substitute music configuration file.
 
-static boolean ReadSubstituteConfig(char *musicdir, char *filename)
+static boolean ReadSubstituteConfig(char *musicdir, const char *filename)
 {
     char *buffer;
     char *line;
@@ -933,8 +924,9 @@ static boolean ReadSubstituteConfig(char *musicdir, char *filename)
 
 static void LoadSubstituteConfigs(void)
 {
+    glob_t *glob;
     char *musicdir;
-    char *path;
+    const char *path;
     unsigned int old_music_len;
     unsigned int i;
 
@@ -954,16 +946,18 @@ static void LoadSubstituteConfigs(void)
         musicdir = M_StringJoin(configdir, "music", DIR_SEPARATOR_S, NULL);
     }
 
-    // Load all music packs. We always load all music substitution packs for
-    // all games. Why? Suppose we have a Doom PWAD that reuses some music from
-    // Heretic. If we have the Heretic music pack loaded, then we get an
-    // automatic substitution.
-    for (i = 0; i < arrlen(subst_config_filenames); ++i)
+    // Load all music packs, by searching for .cfg files.
+    glob = I_StartGlob(musicdir, "*.cfg");
+    for (;;)
     {
-        path = M_StringJoin(musicdir, subst_config_filenames[i], NULL);
+        path = I_NextGlob(glob);
+        if (path == NULL)
+        {
+            break;
+        }
         ReadSubstituteConfig(musicdir, path);
-        free(path);
     }
+    I_EndGlob(glob);
 
     if (subst_music_len > 0)
     {
