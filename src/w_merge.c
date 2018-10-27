@@ -24,6 +24,7 @@
 #include <ctype.h>
 
 #include "doomtype.h"
+#include "i_swap.h" // [crispy] LONG()
 #include "i_system.h"
 #include "m_misc.h"
 #include "w_merge.h"
@@ -753,8 +754,8 @@ int W_MergeDump (const char *file)
     fseek(fp, 12, SEEK_SET);
     for (i = 0; i < numlumps; i++)
     {
-	dir[i].pos = ftell(fp);
-	dir[i].size = lumpinfo[i]->size;
+	dir[i].pos = LONG(ftell(fp));
+	dir[i].size = LONG(lumpinfo[i]->size);
 	// [crispy] lump names are zero-byte padded
 	memset(dir[i].name, 0, 8);
 	strncpy(dir[i].name, lumpinfo[i]->name, 8);
@@ -767,13 +768,14 @@ int W_MergeDump (const char *file)
     free(lump_p);
 
     // [crispy] write directory
-    dir_p = ftell(fp);
+    dir_p = LONG(ftell(fp));
     fwrite(dir, sizeof(*dir), i, fp);
     free(dir);
 
     // [crispy] write WAD header
     fseek(fp, 0, SEEK_SET);
     fwrite("IWAD", 1, 4, fp);
+    i = LONG(i);
     fwrite(&i, 4, 1, fp);
     fwrite(&dir_p, 4, 1, fp);
 
