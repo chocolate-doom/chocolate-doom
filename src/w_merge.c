@@ -24,6 +24,7 @@
 #include <ctype.h>
 
 #include "doomtype.h"
+#include "i_swap.h" // [crispy] LONG()
 #include "i_system.h"
 #include "m_misc.h"
 #include "w_merge.h"
@@ -720,13 +721,14 @@ void W_NWTDashMerge(const char *filename)
     W_CloseFile(wad_file);
 }
 
+// [crispy] dump merged WAD data into a new IWAD file
 int W_MergeDump (const char *file)
 {
     FILE *fp = NULL;
     char *lump_p = NULL;
     uint32_t i, dir_p;
 
-    // WAD directory structure
+    // [crispy] WAD directory structure
     typedef struct {
 	uint32_t pos;
 	uint32_t size;
@@ -734,43 +736,46 @@ int W_MergeDump (const char *file)
     } directory_t;
     directory_t *dir = NULL;
 
-    // open file for writing
+    // [crispy] open file for writing
     fp = fopen(file, "wb");
     if (!fp)
     {
 	I_Error("W_MergeDump: Failed writing to file '%s'!", file);
     }
 
-    // prepare directory
+    // [crispy] prepare directory
     dir = calloc(numlumps, sizeof(*dir));
     if (!dir)
     {
 	I_Error("W_MergeDump: Error allocating memory!");
     }
 
-    // write lumps to file, starting at offset 12
+    // [crispy] write lumps to file, starting at offset 12
     fseek(fp, 12, SEEK_SET);
     for (i = 0; i < numlumps; i++)
     {
-	dir[i].pos = ftell(fp);
-	dir[i].size = lumpinfo[i]->size;
-	memcpy(dir[i].name, lumpinfo[i]->name, 8);
+	dir[i].pos = LONG(ftell(fp));
+	dir[i].size = LONG(lumpinfo[i]->size);
+	// [crispy] lump names are zero-byte padded
+	memset(dir[i].name, 0, 8);
+	strncpy(dir[i].name, lumpinfo[i]->name, 8);
 
-	// avoid flooding Doom's Zone Memory
+	// [crispy] avoid flooding Doom's Zone Memory
 	lump_p = I_Realloc(lump_p, lumpinfo[i]->size);
 	W_ReadLump(i, lump_p);
 	fwrite(lump_p, 1, lumpinfo[i]->size, fp);
     }
     free(lump_p);
 
-    // write directory
-    dir_p = ftell(fp);
+    // [crispy] write directory
+    dir_p = LONG(ftell(fp));
     fwrite(dir, sizeof(*dir), i, fp);
     free(dir);
 
-    // write WAD header
+    // [crispy] write WAD header
     fseek(fp, 0, SEEK_SET);
     fwrite("IWAD", 1, 4, fp);
+    i = LONG(i);
     fwrite(&i, 4, 1, fp);
     fwrite(&dir_p, 4, 1, fp);
 
