@@ -71,7 +71,7 @@ static int vga_porch_flash = 0;
 static int force_software_renderer = 0;
 static int fullscreen = 1;
 static int fullscreen_width = 0, fullscreen_height = 0;
-static int window_width = 640, window_height = 480;
+static int window_width = 800, window_height = 600;
 static int startup_delay = 1000;
 static int max_scaling_buffer_pixels = 16000000;
 static int usegamma = 0;
