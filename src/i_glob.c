@@ -36,6 +36,41 @@
 
 #ifndef NO_DIRENT_IMPLEMENTATION
 
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
+// Only the fields d_name and (as an XSI extension) d_ino are specified
+// in POSIX.1.  Other than Linux, the d_type field is available mainly
+// only on BSD systems.  The remaining fields are available on many, but
+// not all systems.
+static boolean IsDirectory(char *dir, struct dirent *de)
+{
+#if defined(_DIRENT_HAVE_D_TYPE)
+    if (de->d_type != DT_UNKNOWN && de->d_type != DT_LNK)
+    {
+        return de->d_type == DT_DIR;
+    }
+    else
+#endif
+    {
+        char *filename;
+        struct stat sb;
+        int result;
+
+        filename = M_StringJoin(dir, DIR_SEPARATOR_S, de->d_name, NULL);
+        result = stat(filename, &sb);
+        free(filename);
+
+        if (result != 0)
+        {
+            return false;
+        }
+
+        return S_ISDIR(sb.st_mode);
+    }
+}
+
 struct glob_s
 {
     char *glob;
@@ -126,7 +161,7 @@ const char *I_NextGlob(glob_t *glob)
         {
             return NULL;
         }
-    } while (de->d_type == DT_DIR || !MatchesGlob(de->d_name, glob->glob));
+    } while (IsDirectory(glob->directory, de) || !MatchesGlob(de->d_name, glob->glob));
 
     // Return the fully-qualified path, not just the bare filename.
     free(glob->last_filename);
