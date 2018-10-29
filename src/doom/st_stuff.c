@@ -746,7 +746,9 @@ ST_Responder (event_t* ev)
 	  S_ChangeMusic(0, 2);
 	}
 	else
-	if (gamemode == commercial || gameversion < exe_ultimate)
+	// [JN] Fixed: using a proper IDMUS selection for shareware
+	// and registered game versions.
+	if (gamemode == commercial /* || gameversion < exe_ultimate */ )
 	{
 	  musnum = mus_runnin + (buf[0]-'0')*10 + buf[1]-'0' - 1;
 	  
