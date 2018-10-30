@@ -224,13 +224,13 @@ static void SortFilenames(char **filenames, int len, int flags)
     char *pivot, *tmp;
     int i, left_len, cmp;
 
-    if (len < 2)
+    if (len <= 1)
     {
         return;
     }
-    pivot = filenames[0];
+    pivot = filenames[len - 1];
     left_len = 0;
-    for (i = 1; i < len; ++i)
+    for (i = 0; i < len-1; ++i)
     {
         if ((flags & GLOB_FLAG_NOCASE) != 0)
         {
