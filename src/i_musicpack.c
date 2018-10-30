@@ -947,7 +947,7 @@ static void LoadSubstituteConfigs(void)
     }
 
     // Load all music packs, by searching for .cfg files.
-    glob = I_StartGlob(musicdir, "*.cfg", GLOB_FLAG_NOCASE);
+    glob = I_StartGlob(musicdir, "*.cfg", GLOB_FLAG_SORTED|GLOB_FLAG_NOCASE);
     for (;;)
     {
         path = I_NextGlob(glob);

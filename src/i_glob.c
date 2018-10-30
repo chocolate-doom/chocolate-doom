@@ -79,6 +79,10 @@ struct glob_s
     DIR *dir;
     char *directory;
     char *last_filename;
+    // These fields are only used when the GLOB_FLAG_SORTED flag is set:
+    char **filenames;
+    int filenames_len;
+    int next_index;
 };
 
 glob_t *I_StartGlob(const char *directory, const char *glob, int flags)
@@ -102,16 +106,27 @@ glob_t *I_StartGlob(const char *directory, const char *glob, int flags)
     result->glob = M_StringDuplicate(glob);
     result->flags = flags;
     result->last_filename = NULL;
+    result->filenames = NULL;
+    result->filenames_len = 0;
+    result->next_index = -1;
     return result;
 }
 
 void I_EndGlob(glob_t *glob)
 {
+    int i;
+
     if (glob == NULL)
     {
         return;
     }
 
+    for (i = 0; i < glob->filenames_len; ++i)
+    {
+        free(glob->filenames[i]);
+    }
+
+    free(glob->filenames);
     free(glob->directory);
     free(glob->last_filename);
     free(glob->glob);
@@ -164,7 +179,7 @@ static boolean MatchesGlob(const char *name, const char *glob, int flags)
     return *name == '\0';
 }
 
-const char *I_NextGlob(glob_t *glob)
+static char *NextGlob(glob_t *glob)
 {
     struct dirent *de;
 
@@ -179,10 +194,86 @@ const char *I_NextGlob(glob_t *glob)
           || !MatchesGlob(de->d_name, glob->glob, glob->flags));
 
     // Return the fully-qualified path, not just the bare filename.
-    free(glob->last_filename);
-    glob->last_filename = M_StringJoin(glob->directory, DIR_SEPARATOR_S,
-                                       de->d_name, NULL);
-    return glob->last_filename;
+    return M_StringJoin(glob->directory, DIR_SEPARATOR_S, de->d_name, NULL);
+}
+
+static void ReadAllFilenames(glob_t *glob)
+{
+    char *name;
+
+    glob->filenames = NULL;
+    glob->filenames_len = 0;
+    glob->next_index = 0;
+
+    for (;;)
+    {
+        name = NextGlob(glob);
+        if (name == NULL)
+        {
+            break;
+        }
+        glob->filenames = realloc(glob->filenames,
+                                  (glob->filenames_len + 1) * sizeof(char *));
+        glob->filenames[glob->filenames_len] = name;
+        ++glob->filenames_len;
+    }
+}
+
+static void SortFilenames(char **filenames, int len)
+{
+    char *pivot, *tmp;
+    int i, left_len;
+
+    if (len < 2)
+    {
+        return;
+    }
+    pivot = filenames[0];
+    left_len = 0;
+    for (i = 1; i < len; ++i)
+    {
+        if (strcmp(filenames[i], pivot) < 0)
+        {
+            tmp = filenames[i];
+            filenames[i] = filenames[left_len];
+            filenames[left_len] = tmp;
+            ++left_len;
+        }
+    }
+    filenames[len - 1] = filenames[left_len];
+    filenames[left_len] = pivot;
+
+    SortFilenames(filenames, left_len);
+    SortFilenames(&filenames[left_len + 1], len - left_len - 1);
+}
+
+const char *I_NextGlob(glob_t *glob)
+{
+    const char *result;
+
+    // In unsorted mode we just return the filenames as we read
+    // them back from the system API.
+    if ((glob->flags & GLOB_FLAG_SORTED) == 0)
+    {
+        free(glob->last_filename);
+        glob->last_filename = NextGlob(glob);
+        return glob->last_filename;
+    }
+
+    // In sorted mode we read the whole list of filenames into memory,
+    // sort them and return them one at a time.
+    if (glob->next_index < 0)
+    {
+        ReadAllFilenames(glob);
+        SortFilenames(glob->filenames, glob->filenames_len);
+    }
+    if (glob->next_index >= glob->filenames_len)
+    {
+        return NULL;
+    }
+    result = glob->filenames[glob->next_index];
+    ++glob->next_index;
+    return result;
 }
 
 #else /* #ifdef NO_DIRENT_IMPLEMENTATION */

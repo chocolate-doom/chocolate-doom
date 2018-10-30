@@ -20,6 +20,7 @@
 #define __I_GLOB__
 
 #define GLOB_FLAG_NOCASE  0x01
+#define GLOB_FLAG_SORTED  0x02
 
 typedef struct glob_s glob_t;
 
