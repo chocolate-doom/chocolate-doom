@@ -219,10 +219,10 @@ static void ReadAllFilenames(glob_t *glob)
     }
 }
 
-static void SortFilenames(char **filenames, int len)
+static void SortFilenames(char **filenames, int len, int flags)
 {
     char *pivot, *tmp;
-    int i, left_len;
+    int i, left_len, cmp;
 
     if (len < 2)
     {
@@ -232,7 +232,16 @@ static void SortFilenames(char **filenames, int len)
     left_len = 0;
     for (i = 1; i < len; ++i)
     {
-        if (strcmp(filenames[i], pivot) < 0)
+        if ((flags & GLOB_FLAG_NOCASE) != 0)
+        {
+            cmp = strcasecmp(filenames[i], pivot);
+        }
+        else
+        {
+            cmp = strcmp(filenames[i], pivot);
+        }
+
+        if (cmp < 0)
         {
             tmp = filenames[i];
             filenames[i] = filenames[left_len];
@@ -243,8 +252,8 @@ static void SortFilenames(char **filenames, int len)
     filenames[len - 1] = filenames[left_len];
     filenames[left_len] = pivot;
 
-    SortFilenames(filenames, left_len);
-    SortFilenames(&filenames[left_len + 1], len - left_len - 1);
+    SortFilenames(filenames, left_len, flags);
+    SortFilenames(&filenames[left_len + 1], len - left_len - 1, flags);
 }
 
 const char *I_NextGlob(glob_t *glob)
@@ -265,7 +274,7 @@ const char *I_NextGlob(glob_t *glob)
     if (glob->next_index < 0)
     {
         ReadAllFilenames(glob);
-        SortFilenames(glob->filenames, glob->filenames_len);
+        SortFilenames(glob->filenames, glob->filenames_len, glob->flags);
     }
     if (glob->next_index >= glob->filenames_len)
     {
