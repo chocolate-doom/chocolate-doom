@@ -56,7 +56,7 @@ void ClearTmp(void)
     if(savepathtemp == NULL)
         I_Error("you fucked up savedir man!");
 
-    glob = I_StartGlob(savepathtemp, "*");
+    glob = I_StartGlob(savepathtemp, "*", 0);
     if (glob == NULL)
         I_Error("ClearTmp: Couldn't open dir %s", savepathtemp);
 
@@ -86,7 +86,7 @@ void ClearSlot(void)
     if(savepath == NULL)
         I_Error("userdir is fucked up man!");
 
-    glob = I_StartGlob(savepath, "*");
+    glob = I_StartGlob(savepath, "*", 0);
     if (glob == NULL)
         I_Error("ClearSlot: Couldn't open dir %s", savepath);
 
@@ -114,7 +114,7 @@ void FromCurr(void)
 {
     glob_t *glob;
 
-    glob = I_StartGlob(savepathtemp, "*");
+    glob = I_StartGlob(savepathtemp, "*", 0);
 
     if (glob == NULL)
         I_Error("FromCurr: Couldn't open dir %s", savepathtemp);
@@ -157,7 +157,7 @@ void ToCurr(void)
 
     // BUG: Rogue copypasta'd this error message, which is why we don't know
     // the real original name of this function.
-    glob = I_StartGlob(savepath, "*");
+    glob = I_StartGlob(savepath, "*", 0);
     if (glob == NULL)
         I_Error("ClearSlot: Couldn't open dir %s", savepath);
 

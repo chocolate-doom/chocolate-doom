@@ -19,11 +19,13 @@
 #ifndef __I_GLOB__
 #define __I_GLOB__
 
+#define GLOB_FLAG_NOCASE  0x01
+
 typedef struct glob_s glob_t;
 
 // Start reading a list of file paths from the given directory which match
 // the given glob pattern. I_EndGlob() must be called on completion.
-glob_t *I_StartGlob(const char *directory, const char *glob);
+glob_t *I_StartGlob(const char *directory, const char *glob, int flags);
 
 // Finish reading file list.
 void I_EndGlob(glob_t *glob);

@@ -17,6 +17,7 @@
 //
 
 #include <stdlib.h>
+#include <ctype.h>
 
 #include "i_glob.h"
 #include "m_misc.h"
@@ -74,12 +75,13 @@ static boolean IsDirectory(char *dir, struct dirent *de)
 struct glob_s
 {
     char *glob;
+    int flags;
     DIR *dir;
     char *directory;
     char *last_filename;
 };
 
-glob_t *I_StartGlob(const char *directory, const char *glob)
+glob_t *I_StartGlob(const char *directory, const char *glob, int flags)
 {
     glob_t *result;
 
@@ -98,6 +100,7 @@ glob_t *I_StartGlob(const char *directory, const char *glob)
 
     result->directory = M_StringDuplicate(directory);
     result->glob = M_StringDuplicate(glob);
+    result->flags = flags;
     result->last_filename = NULL;
     return result;
 }
@@ -116,18 +119,29 @@ void I_EndGlob(glob_t *glob)
     free(glob);
 }
 
-static boolean MatchesGlob(const char *name, const char *glob)
+static boolean MatchesGlob(const char *name, const char *glob, int flags)
 {
+    int n, g;
+
     while (*glob != '\0')
     {
-        if (*glob == '*')
+        n = *name;
+        g = *glob;
+
+        if ((flags & GLOB_FLAG_NOCASE) != 0)
+        {
+            n = tolower(n);
+            g = tolower(g);
+        }
+
+        if (g == '*')
         {
             // To handle *-matching we skip past the * and recurse
             // to check each subsequent character in turn. If none
             // match then the whole match is a failure.
             while (*name != '\0')
             {
-                if (MatchesGlob(name, glob + 1))
+                if (MatchesGlob(name, glob + 1, flags))
                 {
                     return true;
                 }
@@ -135,7 +149,7 @@ static boolean MatchesGlob(const char *name, const char *glob)
             }
             return glob[1] == '\0';
         }
-        else if (*glob != '?' && *name != *glob)
+        else if (g != '?' && n != g)
         {
             // For normal characters the name must match the glob,
             // but for ? we don't care what the character is.
@@ -161,7 +175,8 @@ const char *I_NextGlob(glob_t *glob)
         {
             return NULL;
         }
-    } while (IsDirectory(glob->directory, de) || !MatchesGlob(de->d_name, glob->glob));
+    } while (IsDirectory(glob->directory, de)
+          || !MatchesGlob(de->d_name, glob->glob, glob->flags));
 
     // Return the fully-qualified path, not just the bare filename.
     free(glob->last_filename);
