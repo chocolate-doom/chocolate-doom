@@ -17,6 +17,7 @@
 //
 
 #include <stdlib.h>
+#include <string.h>
 #include <ctype.h>
 
 #include "i_glob.h"
@@ -28,6 +29,7 @@
 #include <win_opendir.h>
 #elif defined(HAVE_DIRENT_H)
 #include <dirent.h>
+#include <sys/stat.h>
 #elif defined(__WATCOMC__)
 // Watcom has the same API in a different header.
 #include <direct.h>
@@ -36,10 +38,6 @@
 #endif
 
 #ifndef NO_DIRENT_IMPLEMENTATION
-
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
 
 // Only the fields d_name and (as an XSI extension) d_ino are specified
 // in POSIX.1.  Other than Linux, the d_type field is available mainly
