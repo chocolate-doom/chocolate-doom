@@ -207,7 +207,8 @@ void W_AutoLoadWADs(const char *path)
     glob_t *glob;
     const char *filename;
 
-    glob = I_StartGlob(path, "*.wad", GLOB_FLAG_NOCASE|GLOB_FLAG_SORTED);
+    glob = I_StartMultiGlob(path, GLOB_FLAG_NOCASE|GLOB_FLAG_SORTED,
+                            "*.wad", "*.lmp", NULL);
     for (;;)
     {
         filename = I_NextGlob(glob);
