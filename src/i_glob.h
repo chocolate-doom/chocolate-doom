@@ -28,6 +28,11 @@ typedef struct glob_s glob_t;
 // the given glob pattern. I_EndGlob() must be called on completion.
 glob_t *I_StartGlob(const char *directory, const char *glob, int flags);
 
+// Same as I_StartGlob but multiple glob patterns can be provided. The list
+// of patterns must be terminated with NULL.
+glob_t *I_StartMultiGlob(const char *directory, int flags,
+                         const char *glob, ...);
+
 // Finish reading file list.
 void I_EndGlob(glob_t *glob);
 

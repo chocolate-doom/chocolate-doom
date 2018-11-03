@@ -72,7 +72,8 @@ static boolean IsDirectory(char *dir, struct dirent *de)
 
 struct glob_s
 {
-    char *glob;
+    char **globs;
+    int num_globs;
     int flags;
     DIR *dir;
     char *directory;
@@ -83,9 +84,32 @@ struct glob_s
     int next_index;
 };
 
-glob_t *I_StartGlob(const char *directory, const char *glob, int flags)
+glob_t *I_StartMultiGlob(const char *directory, int flags,
+                         const char *glob, ...)
 {
+    char **globs;
+    int num_globs;
     glob_t *result;
+    va_list args;
+
+    globs = malloc(sizeof(char *));
+    globs[0] = M_StringDuplicate(glob);
+    num_globs = 1;
+
+    va_start(args, glob);
+    for (;;)
+    {
+        const char *arg = va_arg(args, const char *);
+        if (arg == NULL)
+        {
+            break;
+        }
+
+        globs = realloc(globs, sizeof(char *) * (num_globs + 1));
+        globs[num_globs] = M_StringDuplicate(arg);
+        ++num_globs;
+    }
+    va_end(args);
 
     result = malloc(sizeof(glob_t));
     if (result == NULL)
@@ -101,13 +125,19 @@ glob_t *I_StartGlob(const char *directory, const char *glob, int flags)
     }
 
     result->directory = M_StringDuplicate(directory);
-    result->glob = M_StringDuplicate(glob);
+    result->globs = globs;
+    result->num_globs = num_globs;
     result->flags = flags;
     result->last_filename = NULL;
     result->filenames = NULL;
     result->filenames_len = 0;
     result->next_index = -1;
     return result;
+}
+
+glob_t *I_StartGlob(const char *directory, const char *glob, int flags)
+{
+    return I_StartMultiGlob(directory, flags, glob, NULL);
 }
 
 void I_EndGlob(glob_t *glob)
@@ -119,15 +149,20 @@ void I_EndGlob(glob_t *glob)
         return;
     }
 
+    for (i = 0; i < glob->num_globs; ++i)
+    {
+        free(glob->globs[i]);
+    }
+
     for (i = 0; i < glob->filenames_len; ++i)
     {
         free(glob->filenames[i]);
     }
 
+    free(glob->globs);
     free(glob->filenames);
     free(glob->directory);
     free(glob->last_filename);
-    free(glob->glob);
     (void) closedir(glob->dir);
     free(glob);
 }
@@ -177,6 +212,20 @@ static boolean MatchesGlob(const char *name, const char *glob, int flags)
     return *name == '\0';
 }
 
+static boolean MatchesAnyGlob(const char *name, glob_t *glob)
+{
+    int i;
+
+    for (i = 0; i < glob->num_globs; ++i)
+    {
+        if (MatchesGlob(name, glob->globs[i], glob->flags))
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
 static char *NextGlob(glob_t *glob)
 {
     struct dirent *de;
@@ -189,7 +238,7 @@ static char *NextGlob(glob_t *glob)
             return NULL;
         }
     } while (IsDirectory(glob->directory, de)
-          || !MatchesGlob(de->d_name, glob->glob, glob->flags));
+          || !MatchesAnyGlob(de->d_name, glob));
 
     // Return the fully-qualified path, not just the bare filename.
     return M_StringJoin(glob->directory, DIR_SEPARATOR_S, de->d_name, NULL);
