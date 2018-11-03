@@ -84,6 +84,16 @@ struct glob_s
     int next_index;
 };
 
+static void FreeStringList(char **globs, int num_globs)
+{
+    int i;
+    for (i = 0; i < num_globs; ++i)
+    {
+        free(globs[i]);
+    }
+    free(globs);
+}
+
 glob_t *I_StartMultiGlob(const char *directory, int flags,
                          const char *glob, ...)
 {
@@ -93,6 +103,10 @@ glob_t *I_StartMultiGlob(const char *directory, int flags,
     va_list args;
 
     globs = malloc(sizeof(char *));
+    if (globs == NULL)
+    {
+        return NULL;
+    }
     globs[0] = M_StringDuplicate(glob);
     num_globs = 1;
 
@@ -100,12 +114,19 @@ glob_t *I_StartMultiGlob(const char *directory, int flags,
     for (;;)
     {
         const char *arg = va_arg(args, const char *);
+        char **new_globs;
+
         if (arg == NULL)
         {
             break;
         }
 
-        globs = realloc(globs, sizeof(char *) * (num_globs + 1));
+        new_globs = realloc(globs, sizeof(char *) * (num_globs + 1));
+        if (new_globs == NULL)
+        {
+            FreeStringList(globs, num_globs);
+        }
+        globs = new_globs;
         globs[num_globs] = M_StringDuplicate(arg);
         ++num_globs;
     }
@@ -114,12 +135,14 @@ glob_t *I_StartMultiGlob(const char *directory, int flags,
     result = malloc(sizeof(glob_t));
     if (result == NULL)
     {
+        FreeStringList(globs, num_globs);
         return NULL;
     }
 
     result->dir = opendir(directory);
     if (result->dir == NULL)
     {
+        FreeStringList(globs, num_globs);
         free(result);
         return NULL;
     }
@@ -142,25 +165,14 @@ glob_t *I_StartGlob(const char *directory, const char *glob, int flags)
 
 void I_EndGlob(glob_t *glob)
 {
-    int i;
-
     if (glob == NULL)
     {
         return;
     }
 
-    for (i = 0; i < glob->num_globs; ++i)
-    {
-        free(glob->globs[i]);
-    }
+    FreeStringList(glob->globs, glob->num_globs);
+    FreeStringList(glob->filenames, glob->filenames_len);
 
-    for (i = 0; i < glob->filenames_len; ++i)
-    {
-        free(glob->filenames[i]);
-    }
-
-    free(glob->globs);
-    free(glob->filenames);
     free(glob->directory);
     free(glob->last_filename);
     (void) closedir(glob->dir);
