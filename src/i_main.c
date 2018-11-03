@@ -41,6 +41,17 @@ int main(int argc, char **argv)
     myargc = argc;
     myargv = argv;
 
+    //!
+    // @arg
+    //
+    // Print the program version and exit.
+    //
+
+    if (M_ParmExists("-version") || M_ParmExists("--version")) {
+        puts (PACKAGE_NAME " " PACKAGE_VERSION);
+        exit (0);
+    }
+
     M_FindResponseFile();
 
     #ifdef SDL_HINT_NO_SIGNAL_HANDLERS
