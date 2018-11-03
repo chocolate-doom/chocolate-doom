@@ -555,7 +555,7 @@ void M_ReadSaveStrings(void)
         handle = fopen(fname, "rb");
         if(handle == NULL)
         {
-            M_StringCopy(savegamestrings[i], EMPTYSTRING,
+            M_StringCopy(savegamestrings[i], DEH_String(EMPTYSTRING),
                          sizeof(savegamestrings[i]));
             LoadMenu[i].status = 0;
             continue;
@@ -769,7 +769,7 @@ void M_SaveSelect(int choice)
     //saveSlot = choice;
 
     M_StringCopy(saveOldString, savegamestrings[choice], sizeof(saveOldString));
-    if (!strcmp(savegamestrings[choice],EMPTYSTRING))
+    if (!strcmp(savegamestrings[choice], DEH_String(EMPTYSTRING)))
         savegamestrings[choice][0] = 0;
     saveCharIndex = strlen(savegamestrings[choice]);
 }
