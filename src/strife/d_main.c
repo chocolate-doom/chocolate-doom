@@ -1745,7 +1745,7 @@ void D_DoomMain (void)
     {
         char *autoload_dir;
         autoload_dir = M_GetAutoloadDir("strife1.wad");
-        // TODO? DEH_AutoLoadPatches(autoload_dir);
+        DEH_AutoLoadPatches(autoload_dir);
         W_AutoLoadWADs(autoload_dir);
         free(autoload_dir);
     }
