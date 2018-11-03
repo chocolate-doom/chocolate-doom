@@ -33,6 +33,7 @@
 #include "doomkeys.h"
 #include "i_system.h"
 #include "m_argv.h"
+#include "m_config.h"
 #include "m_misc.h"
 
 #include "z_zone.h"
@@ -45,6 +46,8 @@
 // default.cfg, savegames, etc.
 
 const char *configdir;
+
+static char *autoload_path = "";
 
 // Default filenames for configuration files.
 
@@ -907,6 +910,14 @@ static default_t extra_defaults_list[] =
     // possible without clipping occurring.
 
     CONFIG_VARIABLE_FLOAT(libsamplerate_scale),
+
+    //!
+    // Full path to a directory in which WAD files and dehacked patches
+    // can be placed to be automatically loaded on startup. A subdirectory
+    // of this directory matching the IWAD name is checked to find the
+    // files to load.
+
+    CONFIG_VARIABLE_STRING(autoload_path),
 
     //!
     // Full path to a directory containing configuration files for
@@ -1977,7 +1988,10 @@ void M_SaveDefaultsAlternate(const char *main, const char *extra)
 void M_LoadDefaults (void)
 {
     int i;
- 
+
+    // This variable is a special snowflake for no good reason.
+    M_BindStringVariable("autoload_path", &autoload_path);
+
     // check for a custom default file
 
     //!
@@ -2315,5 +2329,31 @@ char *M_GetSaveGameDir(const char *iwadname)
     }
 
     return savegamedir;
+}
+
+//
+// Calculate the path to the directory for autoloaded WADs/DEHs.
+// Creates the directory as necessary.
+//
+char *M_GetAutoloadDir(const char *iwadname)
+{
+    char *result;
+
+    if (autoload_path == NULL || strlen(autoload_path) == 0)
+    {
+        char *prefdir;
+        prefdir = SDL_GetPrefPath("", PACKAGE_TARNAME);
+        autoload_path = M_StringJoin(prefdir, "autoload", NULL);
+        free(prefdir);
+    }
+
+    M_MakeDirectory(autoload_path);
+
+    result = M_StringJoin(autoload_path, DIR_SEPARATOR_S, iwadname, NULL);
+    M_MakeDirectory(result);
+
+    // TODO: Add README file
+
+    return result;
 }
 

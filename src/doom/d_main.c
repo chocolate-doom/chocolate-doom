@@ -1506,6 +1506,20 @@ void D_DoomMain (void)
         DEH_AddStringReplacement("M_SCRNSZ", "M_DISP");
     }
 
+    //!
+    // @category mod
+    //
+    // Disable auto-loading of .wad and .deh files.
+    //
+    if (!M_ParmExists("-noautoload") && gamemode != shareware)
+    {
+        char *autoload_dir;
+        autoload_dir = M_GetAutoloadDir(D_SaveGameIWADName(gamemission));
+        DEH_AutoLoadPatches(autoload_dir);
+        W_AutoLoadWADs(autoload_dir);
+        free(autoload_dir);
+    }
+
     // Load Dehacked patches specified on the command line with -deh.
     // Note that there's a very careful and deliberate ordering to how
     // Dehacked patches are loaded. The order we use is:
