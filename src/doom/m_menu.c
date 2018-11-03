@@ -681,7 +681,7 @@ void M_SaveGame (int choice)
 //
 //      M_QuickSave
 //
-char    tempstring[80];
+static char tempstring[90];
 
 void M_QuickSaveResponse(int key)
 {
@@ -711,8 +711,9 @@ void M_QuickSave(void)
 	quickSaveSlot = -2;	// means to pick a slot now
 	return;
     }
-    DEH_snprintf(tempstring, 80, QSPROMPT, savegamestrings[quickSaveSlot]);
-    M_StartMessage(tempstring,M_QuickSaveResponse,true);
+    DEH_snprintf(tempstring, sizeof(tempstring),
+                 QSPROMPT, savegamestrings[quickSaveSlot]);
+    M_StartMessage(tempstring, M_QuickSaveResponse, true);
 }
 
 
@@ -743,8 +744,9 @@ void M_QuickLoad(void)
 	M_StartMessage(DEH_String(QSAVESPOT),NULL,false);
 	return;
     }
-    DEH_snprintf(tempstring, 80, QLPROMPT, savegamestrings[quickSaveSlot]);
-    M_StartMessage(tempstring,M_QuickLoadResponse,true);
+    DEH_snprintf(tempstring, sizeof(tempstring),
+                 QLPROMPT, savegamestrings[quickSaveSlot]);
+    M_StartMessage(tempstring, M_QuickLoadResponse, true);
 }
 
 
@@ -1924,9 +1926,9 @@ void M_Drawer (void)
 	y = SCREENHEIGHT/2 - M_StringHeight(messageString) / 2;
 	while (messageString[start] != '\0')
 	{
-	    int foundnewline = 0;
+	    boolean foundnewline = false;
 
-            for (i = 0; i < strlen(messageString + start); i++)
+            for (i = 0; messageString[start + i] != '\0'; i++)
             {
                 if (messageString[start + i] == '\n')
                 {
@@ -1937,7 +1939,7 @@ void M_Drawer (void)
                         string[i] = '\0';
                     }
 
-                    foundnewline = 1;
+                    foundnewline = true;
                     start += i + 1;
                     break;
                 }
