@@ -606,6 +606,21 @@ static int ST_cheat_spechits()
     return (speciallines);
 }
 
+// [crispy] only give available weapons
+static boolean WeaponAvailable (int w)
+{
+	if (w < 0 || w >= NUMWEAPONS)
+	    return false;
+
+	if (w == wp_supershotgun && !crispy->havessg)
+	    return false;
+
+	if ((w == wp_bfg || w == wp_plasma) && gamemode == shareware)
+	    return false;
+
+	return true;
+}
+
 // Respond to keyboard input events,
 //  intercept cheats.
 boolean
@@ -689,6 +704,7 @@ ST_Responder (event_t* ev)
 	}
 
 	for (i=0;i<NUMWEAPONS;i++)
+	 if (WeaponAvailable(i)) // [crispy] only give available weapons
 	  plyr->weaponowned[i] = true;
 	
 	for (i=0;i<NUMAMMO;i++)
@@ -714,6 +730,7 @@ ST_Responder (event_t* ev)
 	}
 
 	for (i=0;i<NUMWEAPONS;i++)
+	 if (WeaponAvailable(i)) // [crispy] only give available weapons
 	  plyr->weaponowned[i] = true;
 	
 	for (i=0;i<NUMAMMO;i++)
@@ -948,13 +965,8 @@ ST_Responder (event_t* ev)
 	cht_GetParam(&cheat_weapon, buf);
 	w = *buf - '1';
 
-	if (w < 0 || w >= NUMWEAPONS)
-	    return false;
-
-	if (w == wp_supershotgun && !crispy->havessg)
-	    return false;
-
-	if ((w == wp_bfg || w == wp_plasma) && gamemode == shareware)
+	// [crispy] only give available weapons
+	if (!WeaponAvailable(w))
 	    return false;
 
 	// make '1' apply beserker strength toggle
