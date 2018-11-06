@@ -385,7 +385,7 @@ static void CheckSteamGUSPatches(void)
 {
     const char *current_path;
     char *install_path;
-    char *test_patch_path, patch_path;
+    char *test_patch_path, *patch_path;
 
     // Already configured? Don't stomp on the user's choices.
     current_path = M_GetStringVariable("gus_patch_path");
