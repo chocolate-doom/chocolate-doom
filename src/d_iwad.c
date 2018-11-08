@@ -674,6 +674,7 @@ static void AddSteamDirs(void)
     AddIWADPath(steampath, "/Hexen/base");
     AddIWADPath(steampath, "/Hexen Deathkings of the Dark Citadel/base");
     AddIWADPath(steampath, "/Strife");
+    free(steampath);
 }
 #endif // __MACOSX__
 #endif // !_WIN32
