@@ -150,6 +150,12 @@ static net_server_recv_t recvwindow[BACKUPTICS];
 static boolean need_to_acknowledge;
 static unsigned int gamedata_recv_time;
 
+// The latency (time between when we sent our command and we got all
+// the other players' commands from the server) for the last tic we
+// received. We include this latency in tics we send to the server so
+// that they can adjust to us.
+static int last_latency;
+
 // Hash checksums of our wad directory and dehacked data.
 
 sha1_digest_t net_local_wad_sha1sum;
@@ -158,10 +164,6 @@ sha1_digest_t net_local_deh_sha1sum;
 // Are we playing with the freedoom IWAD?
 
 unsigned int net_local_is_freedoom;
-
-// Average time between sending our ticcmd and receiving from the server
-
-static fixed_t average_latency;
 
 #define NET_CL_ExpandTicNum(b) NET_ExpandTicNum(recvwindow_start, (b))
 
@@ -172,19 +174,14 @@ static void NET_CL_Disconnected(void)
     D_ReceiveTic(NULL, NULL);
 }
 
-// Expand a net_full_ticcmd_t, applying the diffs in cmd->cmds as
-// patches against recvwindow_cmd_base.  Place the results into
-// the d_net.c structures (netcmds/nettics) and save the new ticcmd
-// back into recvwindow_cmd_base.
-
-static void NET_CL_ExpandFullTiccmd(net_full_ticcmd_t *cmd, unsigned int seq,
-                                    ticcmd_t *ticcmds)
+// Called when a packet is received from the server containing game
+// data. This updates the clock synchronization variable (offsetms)
+// using a PID filter that keeps client clocks in sync.
+static void UpdateClockSync(unsigned int seq,
+                            unsigned int remote_latency)
 {
-    int latency;
-    fixed_t adjustment;
-    int i;
-
-    // Update average_latency
+    static int last_error, cumul_error;
+    int latency, error;
 
     if (seq == send_queue[seq % BACKUPTICS].seq)
     {
@@ -199,42 +196,37 @@ static void NET_CL_ExpandFullTiccmd(net_full_ticcmd_t *cmd, unsigned int seq,
     }
     else
     {
-        latency = -1;
+        return;
     }
 
-    if (latency >= 0)
-    {
-        if (seq <= 20)
-        {
-            average_latency = latency * FRACUNIT;
-        }
-        else
-        {
-            // Low level filter
+    // PID filter. These are manually trained parameters.
+#define KP 0.1
+#define KI 0.01
+#define KD 0.02
 
-            average_latency = (fixed_t)((average_latency * 0.9)
-                            + (latency * FRACUNIT * 0.1));
-        }
-    }
+    // How does our latency compare to the worst other player?
+    error = latency - remote_latency;
+    cumul_error += error;
 
-    //printf("latency: %i\tremote:%i\n", average_latency / FRACUNIT, 
-    //                                   cmd->latency);
+    offsetms = KP * (FRACUNIT * error)
+             - KI * (FRACUNIT * cumul_error)
+             + (KD * FRACUNIT) * (last_error - error);
 
-    // Possibly adjust offsetms in d_net.c, try to make players all have
-    // the same lag.  Don't adjust in the first few tics of play, as 
-    // we don't have an accurate value for average_latency yet.
+    last_error = error;
+    last_latency = latency;
 
-    if (seq > TICRATE)
-    {
-        adjustment = (cmd->latency * FRACUNIT) - average_latency;
+    //printf("%i,%i,%i\n", latency, remote_latency, offsetms);
+}
 
-        // Only adjust very slightly; the cumulative effect over 
-        // multiple tics will sort it out.
+// Expand a net_full_ticcmd_t, applying the diffs in cmd->cmds as
+// patches against recvwindow_cmd_base.  Place the results into
+// the d_net.c structures (netcmds/nettics) and save the new ticcmd
+// back into recvwindow_cmd_base.
 
-        adjustment = adjustment / 100;
-
-        offsetms += adjustment;
-    }
+static void NET_CL_ExpandFullTiccmd(net_full_ticcmd_t *cmd, unsigned int seq,
+                                    ticcmd_t *ticcmds)
+{
+    int i;
 
     // Expand tic diffs for all players
     
@@ -375,7 +367,7 @@ static void NET_CL_SendTics(int start, int end)
 
         sendobj = &send_queue[i % BACKUPTICS];
 
-        NET_WriteInt16(packet, average_latency / FRACUNIT);
+        NET_WriteInt16(packet, last_latency);
 
         NET_WriteTiccmdDiff(packet, &sendobj->cmd, settings.lowres_turn);
     }
@@ -680,11 +672,21 @@ static void NET_CL_ParseGameData(net_packet_t *packet)
         }
 
         // Store in the receive window
-        
+
         recvobj = &recvwindow[index];
 
         recvobj->active = true;
         recvobj->cmd = cmd;
+
+        // If a packet is lost or arrives out of order, we might get
+        // the tic in the next packet instead (because of extratic).
+        // If that's the case then the latency for receiving that tic
+        // now will be bogus. So we only use the last tic in the packet
+        // to trigger a clock sync update.
+        if (i == num_tics - 1)
+        {
+            UpdateClockSync(seq + i, cmd.latency);
+        }
     }
 
     // Has this been received out of sequence, ie. have we not received
