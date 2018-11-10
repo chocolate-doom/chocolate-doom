@@ -42,14 +42,11 @@ int main(int argc, char **argv)
     myargv = argv;
 
     //!
-    // @arg
-    //
     // Print the program version and exit.
     //
-
     if (M_ParmExists("-version") || M_ParmExists("--version")) {
-        puts (PACKAGE_NAME " " PACKAGE_VERSION);
-        exit (0);
+        puts(PACKAGE_STRING);
+        exit(0);
     }
 
     M_FindResponseFile();
