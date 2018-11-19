@@ -28,7 +28,7 @@ net_packet_t *NET_NewPacket(int initial_size)
     net_packet_t *packet;
 
     packet = (net_packet_t *) Z_Malloc(sizeof(net_packet_t), PU_STATIC, 0);
-    
+
     if (initial_size == 0)
         initial_size = 256;
 
@@ -61,7 +61,7 @@ net_packet_t *NET_PacketDup(net_packet_t *packet)
 void NET_FreePacket(net_packet_t *packet)
 {
     //printf("%p: destroyed\n", packet);
-    
+
     total_packet_memory -= sizeof(net_packet_t) + packet->alloced;
     Z_Free(packet->data);
     Z_Free(packet);
@@ -236,33 +236,49 @@ char *NET_ReadSafeString(net_packet_t *packet)
 
 // Dynamically increases the size of a packet
 
-static void NET_IncreasePacket(net_packet_t *packet)
+static void NET_IncreasePacket(net_packet_t *packet, size_t min_len)
 {
     byte *newdata;
 
     total_packet_memory -= packet->alloced;
-   
-    packet->alloced *= 2;
+
+    while (packet->alloced < min_len)
+    {
+        packet->alloced *= 2;
+    }
 
     newdata = Z_Malloc(packet->alloced, PU_STATIC, 0);
-
     memcpy(newdata, packet->data, packet->len);
-
     Z_Free(packet->data);
     packet->data = newdata;
 
     total_packet_memory += packet->alloced;
 }
 
+static void ExtendLength(net_packet_t *packet, int bytes)
+{
+    size_t new_len;
+
+    new_len = packet->len + bytes;
+    if (new_len > packet->alloced)
+    {
+        NET_IncreasePacket(packet, new_len);
+    }
+
+    // Move any data past the current position forward.
+    memmove(&packet->data[packet->pos + bytes],
+            &packet->data[packet->pos],
+            packet->len - packet->pos);
+    packet->len = new_len;
+}
+
 // Write a single byte to the packet
 
 void NET_WriteInt8(net_packet_t *packet, unsigned int i)
 {
-    if (packet->len + 1 > packet->alloced)
-        NET_IncreasePacket(packet);
-
-    packet->data[packet->len] = i;
-    packet->len += 1;
+    ExtendLength(packet, 1);
+    packet->data[packet->pos] = i;
+    packet->pos += 1;
 }
 
 // Write a 16-bit integer to the packet
@@ -270,16 +286,13 @@ void NET_WriteInt8(net_packet_t *packet, unsigned int i)
 void NET_WriteInt16(net_packet_t *packet, unsigned int i)
 {
     byte *p;
-    
-    if (packet->len + 2 > packet->alloced)
-        NET_IncreasePacket(packet);
 
-    p = packet->data + packet->len;
+    ExtendLength(packet, 2);
 
+    p = packet->data + packet->pos;
     p[0] = (i >> 8) & 0xff;
     p[1] = i & 0xff;
-
-    packet->len += 2;
+    packet->pos += 2;
 }
 
 
@@ -289,17 +302,14 @@ void NET_WriteInt32(net_packet_t *packet, unsigned int i)
 {
     byte *p;
 
-    if (packet->len + 4 > packet->alloced)
-        NET_IncreasePacket(packet);
+    ExtendLength(packet, 4);
 
-    p = packet->data + packet->len;
-
+    p = packet->data + packet->pos;
     p[0] = (i >> 24) & 0xff;
     p[1] = (i >> 16) & 0xff;
     p[2] = (i >> 8) & 0xff;
     p[3] = i & 0xff;
-
-    packet->len += 4;
+    packet->pos += 4;
 }
 
 void NET_WriteString(net_packet_t *packet, const char *string)
@@ -308,21 +318,25 @@ void NET_WriteString(net_packet_t *packet, const char *string)
     size_t string_size;
 
     string_size = strlen(string) + 1;
+    ExtendLength(packet, string_size);
 
-    // Increase the packet size until large enough to hold the string
-
-    while (packet->len + string_size > packet->alloced)
-    {
-        NET_IncreasePacket(packet);
-    }
-
-    p = packet->data + packet->len;
-
+    p = packet->data + packet->pos;
     M_StringCopy((char *) p, string, string_size);
-
-    packet->len += string_size;
+    packet->pos += string_size;
 }
 
+unsigned int NET_GetPosition(net_packet_t *packet)
+{
+    return packet->pos;
+}
 
+void NET_SetPosition(net_packet_t *packet, unsigned int pos)
+{
+    if (pos > packet->len)
+    {
+        pos = packet->len;
+    }
 
+    packet->pos = pos;
+}
 
