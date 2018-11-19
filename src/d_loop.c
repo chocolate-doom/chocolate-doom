@@ -29,6 +29,7 @@
 
 #include "m_argv.h"
 #include "m_fixed.h"
+#include "m_misc.h"
 
 #include "net_client.h"
 #include "net_gui.h"
@@ -37,6 +38,7 @@
 #include "net_server.h"
 #include "net_sdl.h"
 #include "net_loop.h"
+#include "net_vanilla.h"
 
 // The complete set of data for a particular tic.
 
@@ -117,6 +119,8 @@ static boolean local_playeringame[NET_MAXPLAYERS];
 
 static int player_class;
 
+// If true, we're playing a vanilla-compatible peer-to-peer game.
+static boolean net_vanilla_game;
 
 // 35 fps clock adjusted by offsetms milliseconds
 
@@ -163,7 +167,8 @@ static boolean BuildNewTic(void)
        // If playing single player, do not allow tics to buffer
        // up very far
 
-       if (!net_client_connected && maketic - gameticdiv > 2)
+       if (!net_client_connected && !net_vanilla_game
+        && maketic - gameticdiv > 2)
            return false;
 
        // Never go more than ~200ms ahead
@@ -184,6 +189,10 @@ static boolean BuildNewTic(void)
     if (net_client_connected)
     {
         NET_CL_SendTiccmd(&cmd, maketic);
+    }
+    if (net_vanilla_game)
+    {
+        NET_VanillaSendTiccmd(&cmd, maketic);
     }
 
     ticdata[maketic % BACKUPTICS].cmds[localplayer] = cmd;
@@ -214,9 +223,9 @@ void NetUpdate (void)
         return;
 
     // Run network subsystems
-
     NET_CL_Run();
     NET_SV_Run();
+    NET_VanillaRun();
 
     // check time
     nowtime = GetAdjustedTime() / ticdup;
@@ -393,6 +402,10 @@ void D_StartNetGame(net_gamesettings_t *settings,
 
         NET_CL_GetSettings(settings);
     }
+    if (net_vanilla_game)
+    {
+        NET_VanillaSyncSettings(settings);
+    }
 
     if (drone)
     {
@@ -420,6 +433,44 @@ void D_StartNetGame(net_gamesettings_t *settings,
     //}
 }
 
+static void ParseVanillaNet(int p)
+{
+    net_context_t *vcontext;
+    net_vanilla_settings_t vsettings;
+    int i;
+
+    vcontext = NET_NewContext();
+    net_sdl_module.InitServer();
+    NET_AddModule(vcontext, &net_sdl_module);
+
+    vsettings.version = 109; // TODO
+    vsettings.consoleplayer = atoi(myargv[p]);
+    vsettings.extratics = 1;  // TODO
+
+    vsettings.num_nodes = 0;
+    vsettings.num_players = 1;
+
+    ++p;
+    for (i = 0; i < NET_MAXPLAYERS && p < myargc; ++i)
+    {
+        if (M_StringStartsWith(myargv[p], "-"))
+        {
+            break;
+        }
+        vsettings.addrs[i] = NET_ResolveAddress(vcontext, myargv[p]);
+        if (vsettings.addrs[i] == NULL)
+        {
+            I_Error("Unable to parse address '%s'", myargv[p]);
+        }
+        ++p;
+        ++vsettings.num_nodes;
+        ++vsettings.num_players;
+    }
+
+    NET_VanillaInit(vcontext, &vsettings);
+    net_vanilla_game = true;
+}
+
 boolean D_InitNetGame(net_connect_data_t *connect_data)
 {
     boolean result = false;
@@ -427,10 +478,16 @@ boolean D_InitNetGame(net_connect_data_t *connect_data)
     int i;
 
     // Call D_QuitNetGame on exit:
-
     I_AtExit(D_QuitNetGame, true);
 
     player_class = connect_data->player_class;
+
+    i = M_CheckParmWithArgs("-net", 2);
+    if (i > 0)
+    {
+        ParseVanillaNet(i + 1);
+        return true;
+    }
 
     //!
     // @category net
@@ -527,6 +584,7 @@ void D_QuitNetGame (void)
 {
     NET_SV_Shutdown();
     NET_CL_Disconnect();
+    NET_VanillaQuit();
 }
 
 static int GetLowTic(void)
@@ -535,7 +593,7 @@ static int GetLowTic(void)
 
     lowtic = maketic;
 
-    if (net_client_connected)
+    if (net_client_connected || net_vanilla_game)
     {
         if (drone || recvtic < lowtic)
         {
@@ -609,7 +667,7 @@ static boolean PlayersInGame(void)
     // If we are connected to a server, check if there are any players
     // in the game.
 
-    if (net_client_connected)
+    if (net_client_connected || net_vanilla_game)
     {
         for (i = 0; i < NET_MAXPLAYERS; ++i)
         {
@@ -715,7 +773,7 @@ void TryRunTics (void)
         if (counts < 1)
             counts = 1;
 
-        if (net_client_connected)
+        if (net_client_connected || net_vanilla_game)
         {
             OldNetSync();
         }
@@ -761,7 +819,7 @@ void TryRunTics (void)
 
         set = &ticdata[(gametic / ticdup) % BACKUPTICS];
 
-        if (!net_client_connected)
+        if (!net_client_connected && !net_vanilla_game)
         {
             SinglePlayerClear(set);
         }
