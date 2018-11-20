@@ -1,14 +1,13 @@
 # Crispy Doom
+![](https://www.chocolate-doom.org/wiki/images/b/be/Crispy-doom.png)
 
-![The Crispy Doom icon](data/crispy-doom.png "The Crispy Doom icon")
+Crispy Doom is a limit-removing enhanced-resolution Doom source port based on [Chocolate Doom](https://www.chocolate-doom.org/wiki/index.php/Chocolate_Doom).
 
-Crispy Doom is a limit-removing enhanced-resolution Doom source port based on [[Chocolate Doom]].
-
-Its name means that its internal 640x400 resolution looks "crisp" and is also a slight (reference)[http://www.mathsisfun.com/recipie.html] to its origin.
+Its name means that its internal 640x400 resolution looks "crisp" and is also a [slight reference](http://www.mathsisfun.com/recipie.html) to its origin.
 
 ## Synopsis
 
-Crispy Doom is a friendly fork of [[Chocolate Doom]] that provides a higher display resolution, removes the [[doom:Static_limits|static limits]] of the Doom engine and offers further optional visual, tactical and physical enhancements while remaining entirely config file, savegame, netplay and demo [[#Compatibility|compatible]] with the original.
+Crispy Doom is a friendly fork of [Chocolate Doom](https://www.chocolate-doom.org/wiki/index.php/Chocolate_Doom) that provides a higher display resolution, removes the [static limits](https://doomwiki.org/wiki/Static_limits) of the Doom engine and offers further optional visual, tactical and physical enhancements while remaining entirely config file, savegame, netplay and demo compatible with the original.
 
 ## Objectives and features
 
@@ -40,9 +39,9 @@ Furthermore, the following optional user-visible and audible features are availa
  * Playing sounds in full length, and misc. other sound fixes.
  * Demo recording and/or playback timers and progress bar.
 
-All of these features are disabled by default and need to get enabled either in the in-game "Crispness" menu, in the crispy-doom-setup tool or as command line parameters. They are implemented in a way that preserves demo-compatibility with Vanilla Doom and network game compatibility with Chocolate Doom. Furthermore, Crispy Doom's savegames and config files are compatible, [[#Compatibility|though not identical]], to Vanilla Doom's.
+All of these features are disabled by default and need to get enabled either in the in-game "Crispness" menu, in the crispy-doom-setup tool or as command line parameters. They are implemented in a way that preserves demo-compatibility with Vanilla Doom and network game compatibility with Chocolate Doom. Furthermore, Crispy Doom's savegames and config files are compatible, though not identical (see the Compatibility section below), to Vanilla Doom's.
 
-Crispy Doom strives for maximum compatibility with all "limit-removing Vanilla" maps -- but not Boom or ZDoom maps. Many additional less user-visible features have been implemented, e.g. fixed engine limitations and crashes, fixed rendering bugs, fixed harmless game logic bugs, full support for DEHACKED files and lumps in BEX format, additional and improved cheat codes, an improved Automap, and many more! Due to the extra DEHACKED states added from [[doom:MBF|MBF]], Crispy Doom supports (enhancer)[https://www.doomworld.com/forum/topic/84859-black-ops-smooth-weapons-dehacked-mod] (mods)[https://www.doomworld.com/forum/topic/85991-smoothed-smooth-monsters-for-doom-retro-and-crispy-doom] that can make the gameplay even more pleasing to the eyes. For a detailed list of features and changes please refer to the release notes below.
+Crispy Doom strives for maximum compatibility with all "limit-removing Vanilla" maps -- but not Boom or ZDoom maps. Many additional less user-visible features have been implemented, e.g. fixed engine limitations and crashes, fixed rendering bugs, fixed harmless game logic bugs, full support for DEHACKED files and lumps in BEX format, additional and improved cheat codes, an improved Automap, and many more! Due to the extra DEHACKED states added from [MBF](https://doomwiki.org/wiki/MBF), Crispy Doom supports [enhancer](https://www.doomworld.com/forum/topic/84859-black-ops-smooth-weapons-dehacked-mod) [mods](https://www.doomworld.com/forum/topic/85991-smoothed-smooth-monsters-for-doom-retro-and-crispy-doom) that can make the gameplay even more pleasing to the eyes. For a detailed list of features and changes please refer to the release notes below.
 
 ### New controls (with default bindings)
 
@@ -78,9 +77,9 @@ Crispy Doom strives for maximum compatibility with all "limit-removing Vanilla" 
 
  * `TNTWEAP` followed by a weapon number gives or removes this weapon (8 = Chainsaw, 9 = SSG). Try to load Doom 1 with `DOOM2.WAD` as a PWAD and type `TNTWEAP9` to play the SSG in Doom 1.
  * `TNTEM`, `KILLEM` or `FHHALL` kill all monsters on the current map (and disables all cube spitters).
- * `SPECHITS` triggers all [[doom:Linedef_type|Linedef actions]] on a map at once, no matter if they are enabled by pushing, walking over or shooting or whether they require a key or not. It also triggers all boss monster and Commander Keen actions if possible.
+ * `SPECHITS` triggers all [Linedef actions](https://doomwiki.org/wiki/Linedef_type) on a map at once, no matter if they are enabled by pushing, walking over or shooting or whether they require a key or not. It also triggers all boss monster and Commander Keen actions if possible.
  * `NOTARGET` or `FHSHH` toggle deaf and blind monsters that do not act until attacked.
- * `TNTHOM` toggles the flashing [[doom:Hall_of_mirrors_effect|HOM]] indicator (disabled by default).
+ * `TNTHOM` toggles the flashing [HOM](https://doomwiki.org/wiki/Hall_of_mirrors_effect) indicator (disabled by default).
  * `SHOWFPS` or `IDRATE` toggle printing the FPS in the upper right corner.
  * `NOMOMENTUM` toggles a debug aid for pixel-perfect positioning on a map (not recommended to use in-game).
  * `GOOBERS` triggers an easter egg, i.e. an "homage to an old friend". ;-)
@@ -91,7 +90,7 @@ Crispy Doom strives for maximum compatibility with all "limit-removing Vanilla" 
 
 ## Compatibility
 
- * Savegames saved by Crispy Doom are still _compatible with Vanilla Doom_, but are _not identical_ anymore to the files that Vanilla Doom would have saved. This is caused by several reasons:
+ * Savegames saved by Crispy Doom are still **compatible with Vanilla Doom**, but are **not identical** anymore to the files that Vanilla Doom would have saved. This is caused by several reasons:
    * In order to distinguish the NRFTL levels from the regular Doom 2 levels, Crispy Doom uses the `gameepisode` variable, which is used in Doom 1 to distinguish between the game episodes but is hitherto unused in Doom 2 (e.g. Chocolate Doom ignores the `gameepisode` variable in Doom 2). Consequently, savegames that have been recorded playing NRFTL in Crispy Doom can be loaded in Chocolate Doom if the latter is invoked with "`-file nerve.wad`". On the other hand, savegames that are recorded in Chocolate Doom with the "`-file nerve.wad`" parameter cannot immediately be loaded in Crispy Doom without the "`-file nerve.wad`" parameter. In order to "convert" savegames to Crispy Doom, run it with the "`-file nerve.wad`" parameter, load the savegames and save them again. It should then be possible to load them without the "`-file nerve.wad`" parameter in Crispy Doom.
    * Crispy Doom preserves the `mobj->target` and `mobj->tracers` fields when saving a game by replacing their contents with specific indices. These indices are then converted back into the corresponding pointers in Crispy Doom when the game is loaded again. In Vanilla Doom, however, the contents of the `mobj->target` and `mobj->tracers` fields are disregarded and get overwritten with `NULL` when loading the game. Games saved in Vanilla Doom, on the other hand, still contain pointers in the `mobj->target` and `mobj->tracers` fields, but these will not match any of the indices expected by Crispy Doom and will thus get overwritten with `NULL` as in Vanilla Doom.
 
@@ -99,7 +98,7 @@ Crispy Doom strives for maximum compatibility with all "limit-removing Vanilla" 
 
  * The Crispy HUD is displayed when `blocksize == 12`, which isn't supported by Chocolate Doom. To retain config file compatibility, quit the game with any other view size.
 
- * The "flipped levels" and "SSG available in Doom 1" features introduced in Crispy Doom 1.3 are considered strictly _experimental_! They may produce savegames, demo files or netgames that are not compatible with Chocolate Doom, Vanilla Doom or previous versions of Crispy Doom at all. Furthermore, the `SPECHITS` cheat introduced in Crispy Doom 1.5 may leave a map in a completely inconsistent state and games saved after using it may even cause Vanilla to crash by exceeding static limits.
+ * The "flipped levels" and "SSG available in Doom 1" features introduced in Crispy Doom 1.3 are considered strictly **experimental**! They may produce savegames, demo files or netgames that are not compatible with Chocolate Doom, Vanilla Doom or previous versions of Crispy Doom at all. Furthermore, the `SPECHITS` cheat introduced in Crispy Doom 1.5 may leave a map in a completely inconsistent state and games saved after using it may even cause Vanilla to crash by exceeding static limits.
 
 ## Download
 
@@ -109,12 +108,15 @@ http://www.greffrath.com/~fabian/crispy-doom_5.3.zip
 A supplementary Music Pack that contains the fluidsynth library and a freely-available soundfont is available here:
 http://www.greffrath.com/~fabian/crispy-doom-music-pack_5.1.zip
 
-Crispy Doom can play nearly all variants of Doom. If you don't own any, you may download the (Shareware version of Doom)[http://cdn.debian.net/debian/pool/non-free/d/doom-wad-shareware/doom-wad-shareware_1.9.fixed.orig.tar.gz], extract it and copy the DOOM1.WAD file into your Crispy Doom directory. Alternatively, you may want to play Crispy Doom with [[Freedoom]] and a MegaWAD.
+Daily builds of Crispy Doom can be found here:
+http://latest.chocolate-doom.org/
+
+Crispy Doom can play nearly all variants of Doom. If you don't own any, you may download the [Shareware version of Doom](http://cdn.debian.net/debian/pool/non-free/d/doom-wad-shareware/doom-wad-shareware_1.9.fixed.orig.tar.gz), extract it and copy the DOOM1.WAD file into your Crispy Doom directory. Alternatively, you may want to play Crispy Doom with [Freedoom](https://www.chocolate-doom.org/wiki/index.php/Freedoom) and a MegaWAD.
 
 ### Sources
 
 The Crispy Doom source code is available at GitHub: https://github.com/fabiangreffrath/crispy-doom.
-It can be (downloaded in either ZIP or TAR.GZ format)[https://github.com/fabiangreffrath/crispy-doom/releases] 
+It can be [downloaded in either ZIP or TAR.GZ format](https://github.com/fabiangreffrath/crispy-doom/releases) 
 or cloned via
 
 ```
@@ -145,29 +147,33 @@ After successful compilation the resulting binaries can be found in the `src/` d
 
 Crispy Doom 5.3 has been released on August 12, 2018. This version brings several fixes to deeper-lurking bugs and some improvements.
 
-_Features_
+**Features**
+
  * A new `-flipweapons` command line argument has been introduced to flip the player's weapon sprites, suggested by Zodomaniac.
 
-_Improvements_
+**Improvements**
+
  * A warning is now emitted to the terminal window when an Arch-Vile resurrects a monster that was crushed to a pool of gore before and thus gets turned into a "ghost monster".
  * FPS is capped to 35 if level time is not ticking (i.e. in non-level game states) which was requested and tested by JNechaevsky.
  * Changing the "High Resolution Rendering" setting now takes immediate effect and doesn't require an engine restart.
  * "Uncapped framerate" and "VSync" configure options are now separate.
  * `R_InstallSpriteLump()` has been made less error-prone on SiFi270's request.
 
-_Bug Fixes_
+**Bug Fixes**
+
  * Screen refresh hiccups at uncapped framerates have now been fixed, reported by vanfanel.
  * Player's `viewz` only updates if he is actually inside the moving sector instead of merely within its bounding box. Thanks to galileo31dos01 for reporting this issue and JNechaevsky for confirming it!
  * The `deathmatch` variable is now reset when loading a savegame from the menu, fixing the bug that carburetor and Dwaze noticed (i.e. when loading a savegame while a deathmatch demo was playing in the demo loop, the engine assumed the loaded game was a deathmatch as well and applied deathmatch rules).
  * An engine crash that occurred when encountering empty texture lumps (i.e. lumps which do not contain a single texture definition at all) in PWADs has been fixed, thanks to the report by galileo31dos01.
 
-Crispy Doom 5.3 is based on Chocolate Doom 3.0.0 and has merged all changes to the Chocolate Doom master branch up to commit (`dd78c087`)[https://github.com/chocolate-doom/chocolate-doom/commit/dd78c0873ec4756cc1bc430cf22ebe542ac3a23b]
+Crispy Doom 5.3 is based on Chocolate Doom 3.0.0 and has merged all changes to the Chocolate Doom master branch up to commit [`dd78c087`](https://github.com/chocolate-doom/chocolate-doom/commit/dd78c0873ec4756cc1bc430cf22ebe542ac3a23b)
 
 ### Changes of Crispy Doom 5.2 from Crispy Doom 5.1
 
 Crispy Doom 5.2 has been released on June 20, 2018. This release introduces many new features and sections in the Crispness menu, including a new "Rendering" section, a "Crosshair" section for crosshair options including health-based coloring and highlighting on target, and a "Demos" section with options for demo recording and playback timers as well as the demo progress bar. Furthermore, there is smooth diminishing lighting, additional gamma correction levels, increased number of sound channels and support for taller textures as well as numerous other improvements and bug fixes.
 
-_Features_
+**Features**
+
  * Smooth interpolated texture scrolling has been introduced for uncapped rendering and linedef specific 85 (Scroll texture right) is now supported, as suggested by JNechaevsky.
  * The crosshair may now indicate the player's health (as requested by JNechaevsky) and change its color ("highlight") when pointing on a target. Furthermore, crosshair options have been moved into their own submenu in the Crispness menu.
  * Intermediate gamma correction levels (`0.5`, `1.5`, `2.5` and `3.5`) have been implemented, on JNechaevsky's request.
@@ -179,7 +185,8 @@ _Features_
  * The "Demos" section of the Crispness menu has been introduced, including options for enabling the recording timer, choosing forward or backward counting playback timer and the demo progress bar (which is now 2 px high).
  * Support for MUSINFO lumps (dynamic music changing) has been added, mostly taken from PrBoom+.
 
-_Improvements_
+**Improvements**
+
  * The Fuzz effect used when drawing "invisible" things is now scrolled independent of the rendering framerate and paused when the game is paused, on JNechaevsy's suggestion.
  * The "Uncapped" framerate setting resulting in 100% CPU usage has been removed from the Crispness menu. It still remains available as a benchmarking measure by manually setting `crispy_uncapped` to `1` in the `crispy-doom.cfg` config file.
  * CPU usage is now capped by limiting the rendering framerate to 35 if the window is minimized, thanks to JNechaevsky for the idea.
@@ -201,7 +208,8 @@ _Improvements_
  * The "Always Run" and "Use native keyboard mapping" are now disabled by default, like in Chocolate Doom. This is in order not to confuse players installing Crispy for the first time. Zodomaniac requested this upon discovering the impossibility to type in savegame names in Cyrillic keyboard layout when using native keyboard mapping, which was also confirmed by JNechaevsky under different OSes. 
  * Palette changes now don't occur when the help screen or the Crispness menu is active, thanks to mfrancis95 for the contribution.
 
-_Bug Fixes_
+**Bug Fixes**
+
  * Fuzz effect going out of bounds noticed by JNechaevsky has been fixed.
  * A crash that occured when loading a map without any things has been fixed, thanks to mfrancis95 for noticing.
  * The status bar is now immediately getting redrawn after the help screens have been shown, spotted by JNechaevsky.
@@ -231,38 +239,40 @@ _Bug Fixes_
  * Bullet puffs now don't slip to the edge of a sector anymore when passing through the plane. Bullets hitting the floors and ceilings in direct aiming mode now have their puffs displayed at the actual hit spots, thanks to JNechaevsky for noticing.
  * Window going out of vertical bounds at startup has been fixed, thanks to JNechaevsky's report.
 
-_Known Issues_
+**Known Issues**
+
  * Changing the "High Resolution Rendering" option requires a restart of the engine for the change to take effect. This is currently the only option that requires this. Switching this feature with immediate effect is considered a release goal for the next version of Crispy Doom.
  * If "Vertical Aiming" is set to "direct" and the "Highlight Crosshair on Target" feature is enabled, the crosshair will get highlighted even if the direct shot would miss but if it would hit with autoaiming enabled.
  * Demo timer shadows the FPS counter if both are enabled.
 
-Crispy Doom 5.2 is based on Chocolate Doom 3.0.0 and has merged all changes to the Chocolate Doom master branch up to commit (`5329fb5d`)[https://github.com/chocolate-doom/chocolate-doom/commit/5329fb5d75971138b20abf940ed63635bd2861e0]
+Crispy Doom 5.2 is based on Chocolate Doom 3.0.0 and has merged all changes to the Chocolate Doom master branch up to commit [`5329fb5d`](https://github.com/chocolate-doom/chocolate-doom/commit/5329fb5d75971138b20abf940ed63635bd2861e0)
 
-_[[Crispy Doom/Changelog|Previous changes]]_
+**[Previous changes](https://www.chocolate-doom.org/wiki/index.php/Crispy_Doom/Changelog)**
 
 ## Versioning
 
 Crispy Doom maintains a major and a minor version number. The major version number is increased whenever a new official version of Chocolate Doom is released and the changes merged into Crispy Doom. The minor version number is increased whenever changes have been applied that are not part of an official Chocolate Doom release or do only affect Crispy Doom.
 
 ## Contact
+
 The canonical homepage for Crispy Doom is https://github.com/fabiangreffrath/crispy-doom
 
-Crispy Doom is maintained by (Fabian Greffrath)[mailto:fabian@greffXremovethisXrath.com]. 
+Crispy Doom is maintained by [Fabian Greffrath](mailto:fabian@greffXremovethisXrath.com). 
 
-Please report any bugs, glitches or crashes that you encounter to the GitHub (Issue Tracker)[https://github.com/fabiangreffrath/crispy-doom/issues].
+Please report any bugs, glitches or crashes that you encounter to the GitHub [Issue Tracker](https://github.com/fabiangreffrath/crispy-doom/issues).
 
 ## Acknowledgement
-Although I have played the thought of hacking on Chocolate Doom's renderer for quite some time already, it was Brad Harding's [[Doom Retro]] that provided the incentive to finally do it. However, his fork aims at a different direction and I did not take a single line of code from it. Lee Killough's [[doom:MBF|MBF]] was studied and used to debug the code, especially in the form of Team Eternity's [[doom:WinMBF|WinMBF]] source port, which made it easier to compile and run on my machine. And of course there is fraggle's [[Chocolate Doom]] with its exceptionally clean and legible source code. Please let me take this opportunity to appreciate all these authors for their work!
 
-Also, thanks plums of the (Doomworld forums)[https://www.doomworld.com/vb/] for beta testing, "release manager" Zodomaniac and "art director" JNechaevsky for the continuous flow of support and inspiration during the 3.x-5.x development cycle and (last but not the least) (Cacodemon9000)[http://www.moddb.com/members/cacodemon9000] for his (Infested Outpost)[http://www.moddb.com/games/doom-ii/addons/infested-outpost] map that helped to track down quite a few bugs!
+Although I have played the thought of hacking on Chocolate Doom's renderer for quite some time already, it was Brad Harding's [Doom Retro](https://www.chocolate-doom.org/wiki/index.php/Doom_Retro) that provided the incentive to finally do it. However, his fork aims at a different direction and I did not take a single line of code from it. Lee Killough's [MBF](https://doomwiki.org/wiki/WinMBF) was studied and used to debug the code, especially in the form of Team Eternity's [WinMBF](https://doomwiki.org/wiki/WinMBF) source port, which made it easier to compile and run on my machine. And of course there is fraggle's [Chocolate Doom](https://www.chocolate-doom.org/wiki/index.php/Chocolate_Doom) with its exceptionally clean and legible source code. Please let me take this opportunity to appreciate all these authors for their work!
 
-Furthermore, thanks to VGA for his aid with adding support for his two mods: (PerK & NightFright's Black Ops smooth weapons add-on converted to DEHACKED)[https://www.doomworld.com/forum/topic/84859-black-ops-smooth-weapons-dehacked-mod] and (Gifty's Smooth Doom smooth monster animations converted to DEHACKED)[https://www.doomworld.com/forum/topic/85991-smoothed-smooth-monsters-for-doom-retro-and-crispy-doom] that can make the gameplay even more pleasing to the eyes.
+Also, thanks plums of the [Doomworld forums](https://www.doomworld.com/vb/) for beta testing, "release manager" Zodomaniac and "art director" JNechaevsky for the continuous flow of support and inspiration during the 3.x-5.x development cycle and (last but not the least) [Cacodemon9000](http://www.moddb.com/members/cacodemon9000) for his [Infested Outpost](http://www.moddb.com/games/doom-ii/addons/infested-outpost) map that helped to track down quite a few bugs!
+
+Furthermore, thanks to VGA for his aid with adding support for his two mods: [PerK & NightFright's Black Ops smooth weapons add-on converted to DEHACKED](https://www.doomworld.com/forum/topic/84859-black-ops-smooth-weapons-dehacked-mod) and [Gifty's Smooth Doom smooth monster animations converted to DEHACKED](https://www.doomworld.com/forum/topic/85991-smoothed-smooth-monsters-for-doom-retro-and-crispy-doom) that can make the gameplay even more pleasing to the eyes.
 
 ## Legalese
+
 Doom is © 1993-1996 Id Software, Inc.; 
-
 Boom 2.02 is © 1999 id Software, Chi Hoang, Lee Killough, Jim Flynn, Rand Phares, Ty Halderman;
-
 PrBoom+ is © 1999 id Software, Chi Hoang, Lee Killough, Jim Flynn, Rand Phares, Ty Halderman,
 © 1999-2000 Jess Haas, Nicolas Kalkhof, Colin Phipps, Florian Schulze,
 © 2005-2006 Florian Schulze, Colin Phipps, Neil Stevens, Andrey Budko;
@@ -270,12 +280,12 @@ Chocolate Doom is © 1993-1996 Id Software, Inc., © 2005 Simon Howard;
 Chocolate Hexen is © 1993-1996 Id Software, Inc., © 1993-2008 Raven Software, © 2008 Simon Howard;
 Strawberry Doom is © 1993-1996 Id Software, Inc., © 2005 Simon Howard, © 2008-2010 GhostlyDeath; 
 Crispy Doom is additionally © 2014-2018 Fabian Greffrath;
-all of the above are released under the (GPL-2+)[https://www.gnu.org/licenses/gpl-2.0.html].
+all of the above are released under the [GPL-2+](https://www.gnu.org/licenses/gpl-2.0.html).
 
-SDL 2.0, SDL_mixer 2.0 and SDL_net 2.0 are © 1997-2016 Sam Lantinga and are released under the (zlib license)[http://www.gzip.org/zlib/zlib_license.html].
+SDL 2.0, SDL_mixer 2.0 and SDL_net 2.0 are © 1997-2016 Sam Lantinga and are released under the [zlib license](http://www.gzip.org/zlib/zlib_license.html).
 
-Secret Rabbit Code (libsamplerate) is © 2002-2011 Erik de Castro Lopo and is released under the (GPL-2+)[http://www.gnu.org/licenses/gpl-2.0.html].
-Libpng is © 1998-2014 Glenn Randers-Pehrson, © 1996-1997 Andreas Dilger, © 1995-1996 Guy Eric Schalnat, Group 42, Inc. and is released under the (libpng license)[http://www.libpng.org/pub/png/src/libpng-LICENSE.txt].
-Zlib is © 1995-2013 Jean-loup Gailly and Mark Adler and is released under the (zlib license)[http://www.zlib.net/zlib_license.html].
+Secret Rabbit Code (libsamplerate) is © 2002-2011 Erik de Castro Lopo and is released under the [GPL-2+](http://www.gnu.org/licenses/gpl-2.0.html).
+Libpng is © 1998-2014 Glenn Randers-Pehrson, © 1996-1997 Andreas Dilger, © 1995-1996 Guy Eric Schalnat, Group 42, Inc. and is released under the [libpng license](http://www.libpng.org/pub/png/src/libpng-LICENSE.txt).
+Zlib is © 1995-2013 Jean-loup Gailly and Mark Adler and is released under the [zlib license](http://www.zlib.net/zlib_license.html).
 
-The Crispy Doom icon (as shown at the top of this page) is composed of the (Chocolate Doom icon)[https://www.chocolate-doom.org/wiki/images/7/77/Chocolate-logo.png] and a [[wikipedia:File:Potato-Chips.jpg|photo]] of potato crisps (Utz-brand, grandma's kettle-cooked style) by (Evan-Amos)[https://commons.wikimedia.org/wiki/User:Evan-Amos] who kindly released it into the [[wikipedia:Public_domain|public domain]]. The current high-resolution version of this icon has been contributed by JNechaevsky (formerly by Zodomaniac).
+The Crispy Doom icon (as shown at the top of this page) is composed of the [Chocolate Doom icon](https://www.chocolate-doom.org/wiki/images/7/77/Chocolate-logo.png) and a [photo](https://en.wikipedia.org/wiki/File:Potato-Chips.jpg) of potato crisps (Utz-brand, grandma's kettle-cooked style) by [Evan-Amos](https://commons.wikimedia.org/wiki/User:Evan-Amos) who kindly released it into the [public domain](https://en.wikipedia.org/wiki/Public_domain). The current high-resolution version of this icon has been contributed by JNechaevsky (formerly by Zodomaniac).
