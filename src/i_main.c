@@ -44,7 +44,7 @@ int main(int argc, char **argv)
     //!
     // Print the program version and exit.
     //
-    if (M_ParmExists("-version") || M_ParmExists("--version")) {
+    if (M_ParmExists("-version")) {
         puts(PACKAGE_STRING);
         exit(0);
     }
