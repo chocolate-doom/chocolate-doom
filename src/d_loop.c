@@ -489,6 +489,15 @@ boolean D_InitNetGame(net_connect_data_t *connect_data)
         return true;
     }
 
+    i = M_CheckParmWithArgs("-dbconnect", 1);
+    if (i > 0)
+    {
+        extern void NET_DBIPX_Connect(char *address);
+
+        NET_DBIPX_Connect(myargv[i + 1]);
+        return true;
+    }
+
     //!
     // @category net
     //

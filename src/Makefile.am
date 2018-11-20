@@ -89,6 +89,7 @@ m_fixed.c            m_fixed.h             \
 net_client.c         net_client.h          \
 net_common.c         net_common.h          \
 net_dedicated.c      net_dedicated.h       \
+net_dbipx.c                                \
 net_defs.h                                 \
 net_gui.c            net_gui.h             \
 net_io.c             net_io.h              \
