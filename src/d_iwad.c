@@ -481,6 +481,7 @@ static char *CheckDirectoryHasIWAD(const char *dir, const char *iwadname)
         filename = M_StringJoin(dir, DIR_SEPARATOR_S, iwadname, NULL);
     }
 
+    free(probe);
     probe = M_FileCaseExists(filename);
     free(filename);
     if (probe != NULL)
