@@ -36,4 +36,8 @@ void NET_VanillaSendTiccmd(ticcmd_t *ticcmd, int maketic);
 void NET_VanillaQuit(void);
 void NET_VanillaRun(void);
 
+net_context_t *NET_DBIPX_Connect(char *address);
+void NET_DBIPX_ArbitrateGame(net_vanilla_settings_t *settings, int want_nodes);
+
 #endif /* #ifndef NET_CLIENT_H */
+

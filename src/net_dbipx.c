@@ -59,6 +59,14 @@ typedef struct
     unsigned int src_socket;
 } ipx_header_t;
 
+typedef struct
+{
+    int game_id;
+    int drone;
+    int nodes_found;
+    int nodes_wanted;
+} setupdata_t;
+
 static const ipx_addr_t ipx_broadcast = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
 
 static net_context_t *ipx_context;
@@ -367,8 +375,10 @@ static boolean RegisterToServer(void)
     return false;
 }
 
-void NET_DBIPX_Connect(char *address)
+net_context_t *NET_DBIPX_Connect(char *address)
 {
+    net_context_t *context;
+
     ipx_context = NET_NewContext();
     net_sdl_module.InitClient();
     NET_AddModule(ipx_context, &net_sdl_module);
@@ -389,6 +399,148 @@ void NET_DBIPX_Connect(char *address)
     printf("NET_DBIPX_Connect: Connected to DOSBox IPX server at %s.\n",
            NET_AddrToString(server_addr));
 
-    // TODO: arbitrate game with ipxsetup comms
+    context = NET_NewContext();
+    NET_AddModule(context, &net_dbipx_module);
+    return context;
+}
+
+static net_packet_t *MakeSetupPacket(setupdata_t *data)
+{
+    net_packet_t *packet;
+
+    packet = NET_NewPacket(16);
+    NET_WriteInt16_LE(packet, data->game_id);
+    NET_WriteInt16_LE(packet, data->drone);
+    NET_WriteInt16_LE(packet, data->nodes_found);
+    NET_WriteInt16_LE(packet, data->nodes_wanted);
+    return packet;
+}
+
+static boolean ReadSetupData(net_packet_t *packet, setupdata_t *data)
+{
+    boolean result;
+
+    result = NET_ReadSInt16_LE(packet, &data->game_id)
+          && NET_ReadSInt16_LE(packet, &data->drone)
+          && NET_ReadSInt16_LE(packet, &data->nodes_found)
+          && NET_ReadSInt16_LE(packet, &data->nodes_wanted);
+
+    return result;
+}
+
+static int FindOrAddAddr(net_vanilla_settings_t *settings, net_addr_t *addr,
+                         int want_nodes)
+{
+    int i;
+
+    for (i = 0; i < settings->num_nodes; ++i)
+    {
+        if (addr == settings->addrs[i])
+        {
+            return i;
+        }
+    }
+
+    if (settings->num_nodes >= MAXNETNODES)
+    {
+        I_Error("Too many nodes! %i > %i", settings->num_nodes + 1,
+                MAXNETNODES);
+    }
+    settings->addrs[settings->num_nodes] = addr;
+    i = settings->num_nodes;
+    ++settings->num_nodes;
+    printf("Found node at %s (%i/%i)\n", NET_AddrToString(addr),
+           settings->num_nodes + 1, want_nodes);
+    return i;
+}
+
+static boolean AllNodesReady(setupdata_t *node_data, int num_nodes)
+{
+    int i;
+
+    for (i = 0; i < num_nodes; ++i)
+    {
+        if (node_data[i].nodes_found < node_data[i].nodes_wanted)
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+static void SetPlayerNumber(net_vanilla_settings_t *settings,
+                            setupdata_t *node_data)
+{
+    byte *ipx_addr;
+    int i;
+
+    settings->consoleplayer = 0;
+    settings->num_players = 1;
+
+    for (i = 0; i < settings->num_nodes; ++i)
+    {
+        if (node_data[i].drone)
+        {
+            continue;
+        }
+        ++settings->num_players;
+
+        ipx_addr = (byte *) settings->addrs[i]->handle;
+        if (memcmp(ipx_addr, local_addr, sizeof(ipx_addr_t)) < 0)
+        {
+            ++settings->consoleplayer;
+        }
+    }
+}
+
+void NET_DBIPX_ArbitrateGame(net_vanilla_settings_t *settings,
+                             int want_nodes)
+{
+    setupdata_t setup, tmp;
+    setupdata_t node_data[MAXNETNODES];
+    net_packet_t *packet;
+    net_addr_t *addr;
+    int node_num, game_id;
+
+    // During the setup phase we must send packet IDs with the special
+    // setup time value. This distinguishes them from game packets.
+    packet_id = SETUP_TIME;
+
+    game_id = 0;  // TODO?
+    settings->num_nodes = 0;
+
+    printf("Looking for %i nodes:\n", want_nodes);
+
+    // Keep looping until we reach the desired number of nodes. Note
+    // that want_nodes includes us. We also don't start until all other
+    // nodes have reached their targets.
+    while (settings->num_nodes + 1 < want_nodes
+        || !AllNodesReady(node_data, settings->num_nodes))
+    {
+        if (!NET_DBIPX_RecvPacket(&addr, &packet))
+        {
+            setup.game_id = game_id;
+            setup.drone = 0;  // TODO
+            setup.nodes_found = settings->num_nodes + 1;
+            setup.nodes_wanted = want_nodes;
+
+            packet = MakeSetupPacket(&setup);
+            NET_DBIPX_SendPacket(&net_broadcast_addr, packet);
+            NET_FreePacket(packet);
+
+            I_Sleep(1000);
+            continue;
+        }
+        if (ReadSetupData(packet, &tmp))
+        {
+            node_num = FindOrAddAddr(settings, addr, want_nodes);
+            node_data[node_num] = tmp;
+        }
+        NET_FreePacket(packet);
+    }
+
+    SetPlayerNumber(settings, node_data);
+    packet_id = 0;
 }
 
