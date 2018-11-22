@@ -168,7 +168,8 @@ static boolean ParseSetupPacket(net_packet_t *packet,
 
     if (val != vsettings.version)
     {
-        I_Error("Different DOOM versions cannot play a net game!");
+        I_Error("Different DOOM versions cannot play a net game! %d != %d",
+                 val, vsettings.version);
     }
 
     // Last byte is numtics but is unused
