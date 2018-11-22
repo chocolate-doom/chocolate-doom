@@ -83,7 +83,7 @@ static unsigned int CalculateChecksum(net_packet_t *packet)
     pos = NET_GetPosition(packet);
 
     c = 0x1234567;
-    for (i = 0; NET_ReadInt32(packet, &val); ++i)
+    for (i = 0; NET_ReadInt32_LE(packet, &val); ++i)
     {
         c += val * (i + 1);
     }
@@ -101,7 +101,7 @@ static void AddChecksum(net_packet_t *packet, unsigned int packet_type)
 
     NET_SetPosition(packet, 0);
     csum = CalculateChecksum(packet);
-    NET_WriteInt32(packet, (csum & NCMD_CHECKSUM) | packet_type);
+    NET_WriteInt32_LE(packet, (csum & NCMD_CHECKSUM) | packet_type);
 }
 
 // Read the packet type and verify the checksum. If the checksum is
@@ -111,7 +111,7 @@ static unsigned int ReadPacketType(net_packet_t *packet)
     unsigned int csum, got_csum;
     boolean ok;
 
-    ok = NET_ReadInt32(packet, &csum);
+    ok = NET_ReadInt32_LE(packet, &csum);
     got_csum = CalculateChecksum(packet);
 
     if (!ok || (got_csum & NCMD_CHECKSUM) != (csum & NCMD_CHECKSUM))
@@ -179,8 +179,8 @@ static void WriteTiccmd(net_packet_t *packet, ticcmd_t *ticcmd)
 {
     NET_WriteInt8(packet, ticcmd->forwardmove);
     NET_WriteInt8(packet, ticcmd->sidemove);
-    NET_WriteInt16(packet, ticcmd->angleturn);
-    NET_WriteInt16(packet, ticcmd->consistancy);
+    NET_WriteInt16_LE(packet, ticcmd->angleturn);
+    NET_WriteInt16_LE(packet, ticcmd->consistancy);
     NET_WriteInt8(packet, ticcmd->chatchar);
     NET_WriteInt8(packet, ticcmd->buttons);
 }
@@ -217,8 +217,8 @@ static boolean ReadTiccmd(net_packet_t *packet, ticcmd_t *ticcmd)
 
     if (!NET_ReadSInt8(packet, &forwardmove)
      || !NET_ReadSInt8(packet, &sidemove)
-     || !NET_ReadSInt16(packet, &angleturn)
-     || !NET_ReadSInt16(packet, &consistency)
+     || !NET_ReadSInt16_LE(packet, &angleturn)
+     || !NET_ReadSInt16_LE(packet, &consistency)
      || !NET_ReadInt8(packet, &chatchar)
      || !NET_ReadInt8(packet, &buttons))
     {
