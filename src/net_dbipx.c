@@ -1,5 +1,5 @@
 //
-// Copyright(C) 2005-2014 Simon Howard
+// Copyright(C) 2018 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -14,6 +14,13 @@
 // DESCRIPTION:
 //     Networking module that tunnels an IPX connection to a
 //     DOSbox IPX server.
+//
+// Hi! Are you looking at this file this because you're thinking of trying
+// to add native IPX support to Chocolate Doom? Please don't do that.
+// Instead, look into writing a DOSbox IPX VPN server - a server that
+// speaks the DOSbox IPX protocol and bridges onto a physical IPX network.
+// Then both Choco and DOSbox can connect to real networks without the
+// complexity of having to deal with system-specific IPX APIs.
 //
 
 #include <stdlib.h>
