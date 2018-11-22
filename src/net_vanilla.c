@@ -370,6 +370,12 @@ static void SendToNode(int node_num, unsigned int starttic,
     net_packet_t *packet;
     unsigned int i, flags;
 
+    if (numtics > MAX_DOOMDATA_TICS)
+    {
+        I_Error("SendToNode: tried to send %d > %d tics",
+                numtics, MAX_DOOMDATA_TICS);
+    }
+
     dd.starttic = starttic;
     dd.numtics = numtics;
     dd.player = vsettings.consoleplayer;

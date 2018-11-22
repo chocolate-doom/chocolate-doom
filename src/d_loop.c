@@ -498,6 +498,7 @@ boolean D_InitNetGame(net_connect_data_t *connect_data)
         context = NET_DBIPX_Connect(myargv[i + 1]);
         NET_DBIPX_ArbitrateGame(&settings, 2);
         settings.version = 109; // TODO
+        settings.extratics = 0;
         NET_VanillaInit(context, &settings);
         net_vanilla_game = true;
 
