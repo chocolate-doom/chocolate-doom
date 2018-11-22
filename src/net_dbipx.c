@@ -272,16 +272,17 @@ static boolean NET_DBIPX_RecvPacket(net_addr_t **addr, net_packet_t **packet)
     return true;
 }
 
-void NET_DBIPX_AddrToString(net_addr_t *addr, char *buffer, int buffer_len)
+static void IPXAddrToString(byte *ipx_addr, char *buffer, int buffer_len)
 {
-    byte *ipx_addr;
-
-    ipx_addr = (byte *) addr->handle;
-
     M_snprintf(buffer, buffer_len,
                "%02x:%02x:%02x:%02x:%02x:%02x",
                ipx_addr[0], ipx_addr[1], ipx_addr[2], ipx_addr[3],
                ipx_addr[4], ipx_addr[5]);
+}
+
+void NET_DBIPX_AddrToString(net_addr_t *addr, char *buffer, int buffer_len)
+{
+    IPXAddrToString((byte *) addr->handle, buffer, buffer_len);
 }
 
 net_addr_t *NET_DBIPX_ResolveAddress(char *address)
@@ -499,6 +500,7 @@ void NET_DBIPX_ArbitrateGame(net_vanilla_settings_t *settings,
 {
     setupdata_t setup, tmp;
     setupdata_t node_data[MAXNETNODES];
+    char buf[32];
     net_packet_t *packet;
     net_addr_t *addr;
     int node_num, game_id;
@@ -511,6 +513,8 @@ void NET_DBIPX_ArbitrateGame(net_vanilla_settings_t *settings,
     settings->num_nodes = 0;
 
     printf("Looking for %i nodes:\n", want_nodes);
+    IPXAddrToString(local_addr, buf, sizeof(buf));
+    printf("Local address %s (1/%i)\n", buf, want_nodes);
 
     // Keep looping until we reach the desired number of nodes. Note
     // that want_nodes includes us. We also don't start until all other
