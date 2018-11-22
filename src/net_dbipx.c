@@ -29,11 +29,11 @@
 #include "net_io.h"
 #include "net_packet.h"
 #include "net_sdl.h"
+#include "net_vanilla.h"
 #include "z_zone.h"
 
-//
-// NETWORKING
-//
+#define DOOM_IPX_SOCKET  0x869b
+#define SETUP_TIME 0xffffffff
 
 typedef byte ipx_addr_t[6];
 
@@ -59,12 +59,15 @@ typedef struct
     unsigned int src_socket;
 } ipx_header_t;
 
+static const ipx_addr_t ipx_broadcast = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
+
 static net_context_t *ipx_context;
 static net_addr_t *server_addr;
 
 static ipx_addr_t local_addr;
 static unsigned int local_net;
-static unsigned int socket_id;
+static unsigned int socket_id = DOOM_IPX_SOCKET;
+static unsigned int packet_id = 0;
 
 extern net_module_t net_dbipx_module;
 static addrpair_t **addr_table;
@@ -189,9 +192,16 @@ static boolean ReadIPXHeader(net_packet_t *packet, ipx_header_t *header)
 static void NET_DBIPX_SendPacket(net_addr_t *addr, net_packet_t *packet)
 {
     ipx_header_t hdr;
-    byte *ipx_addr;
+    const byte *ipx_addr;
 
-    ipx_addr = (byte *) addr->handle;
+    if (addr == &net_broadcast_addr)
+    {
+        ipx_addr = (byte *) ipx_broadcast;
+    }
+    else
+    {
+        ipx_addr = (byte *) addr->handle;
+    }
 
     hdr.checksum = 0xffff;
     hdr.length = 0x22 + packet->len + 0x4;
@@ -211,6 +221,17 @@ static void NET_DBIPX_SendPacket(net_addr_t *addr, net_packet_t *packet)
     NET_SetPosition(packet, 0);
     WriteIPXHeader(packet, &hdr);
 
+    // IPXSETUP includes a timestamp on every packet; not sure why but it's
+    // important that it's there.
+    NET_WriteInt32_LE(packet, packet_id);
+    if (packet_id != SETUP_TIME)
+    {
+        ++packet_id;
+    }
+
+    NET_SetPosition(packet, packet->len);
+    NET_WriteInt32(packet, 0x00000000);
+
     NET_SendPacket(server_addr, packet);
 
     NET_FreePacket(packet);
@@ -221,6 +242,7 @@ static boolean NET_DBIPX_RecvPacket(net_addr_t **addr, net_packet_t **packet)
     ipx_header_t hdr;
     net_packet_t *got_packet;
     net_addr_t *got_addr;
+    unsigned int unused;
 
     for (;;)
     {
@@ -228,11 +250,12 @@ static boolean NET_DBIPX_RecvPacket(net_addr_t **addr, net_packet_t **packet)
         {
             return false;
         }
-        if (got_addr == server_addr && ReadIPXHeader(got_packet, &hdr))
+        if (got_addr == server_addr
+         && ReadIPXHeader(got_packet, &hdr)
+         && NET_ReadInt32(got_packet, &unused))
         {
             break;
         }
-        NET_FreeAddress(got_addr);
         NET_FreePacket(got_packet);
     }
 
@@ -335,6 +358,7 @@ static boolean RegisterToServer(void)
             {
                 return true;
             }
+            NET_FreePacket(packet);
         }
 
         I_Sleep(1000);
