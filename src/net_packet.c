@@ -17,6 +17,7 @@
 
 #include <ctype.h>
 #include <string.h>
+
 #include "m_misc.h"
 #include "net_packet.h"
 #include "z_zone.h"
@@ -100,9 +101,23 @@ boolean NET_ReadInt16(net_packet_t *packet, unsigned int *data)
     return true;
 }
 
+boolean NET_ReadInt16_LE(net_packet_t *packet, unsigned int *data)
+{
+    byte *p;
+
+    if (packet->pos + 2 > packet->len)
+        return false;
+
+    p = packet->data + packet->pos;
+
+    *data = (p[1] << 8) | p[0];
+    packet->pos += 2;
+
+    return true;
+}
+
 // Read a 32-bit integer from the packet, returning true if read
 // successfully
-
 boolean NET_ReadInt32(net_packet_t *packet, unsigned int *data)
 {
     byte *p;
@@ -114,7 +129,22 @@ boolean NET_ReadInt32(net_packet_t *packet, unsigned int *data)
 
     *data = (p[0] << 24) | (p[1] << 16) | (p[2] << 8) | p[3];
     packet->pos += 4;
-    
+
+    return true;
+}
+
+boolean NET_ReadInt32_LE(net_packet_t *packet, unsigned int *data)
+{
+    byte *p;
+
+    if (packet->pos + 4 > packet->len)
+        return false;
+
+    p = packet->data + packet->pos;
+
+    *data = (p[3] << 24) | (p[2] << 16) | (p[1] << 8) | p[0];
+    packet->pos += 4;
+
     return true;
 }
 
@@ -131,10 +161,8 @@ boolean NET_ReadSInt8(net_packet_t *packet, signed int *data)
         }
         return true;
     }
-    else
-    {
-        return false;
-    }
+
+    return false;
 }
 
 boolean NET_ReadSInt16(net_packet_t *packet, signed int *data)
@@ -148,10 +176,23 @@ boolean NET_ReadSInt16(net_packet_t *packet, signed int *data)
         }
         return true;
     }
-    else
+
+    return false;
+}
+
+boolean NET_ReadSInt16_LE(net_packet_t *packet, signed int *data)
+{
+    if (NET_ReadInt16_LE(packet, (unsigned int *) data))
     {
-        return false;
+        if (*data & (1 << 15))
+        {
+            *data &= ~(1 << 15);
+            *data -= (1 << 15);
+        }
+        return true;
     }
+
+    return false;
 }
 
 boolean NET_ReadSInt32(net_packet_t *packet, signed int *data)
@@ -165,10 +206,23 @@ boolean NET_ReadSInt32(net_packet_t *packet, signed int *data)
         }
         return true;
     }
-    else
+
+    return false;
+}
+
+boolean NET_ReadSInt32_LE(net_packet_t *packet, signed int *data)
+{
+    if (NET_ReadInt32_LE(packet, (unsigned int *) data))
     {
-        return false;
+        if (*data & (1 << 31))
+        {
+            *data &= ~(1 << 31);
+            *data -= (1 << 31);
+        }
+        return true;
     }
+
+    return false;
 }
 
 // Read a string from the packet.  Returns NULL if a terminating 
@@ -199,7 +253,6 @@ char *NET_ReadString(net_packet_t *packet)
     // after it.
 
     ++packet->pos;
-    
     return start;
 }
 
@@ -282,7 +335,6 @@ void NET_WriteInt8(net_packet_t *packet, unsigned int i)
 }
 
 // Write a 16-bit integer to the packet
-
 void NET_WriteInt16(net_packet_t *packet, unsigned int i)
 {
     byte *p;
@@ -295,9 +347,19 @@ void NET_WriteInt16(net_packet_t *packet, unsigned int i)
     packet->pos += 2;
 }
 
+void NET_WriteInt16_LE(net_packet_t *packet, unsigned int i)
+{
+    byte *p;
 
-// Write a single byte to the packet
+    ExtendLength(packet, 2);
 
+    p = packet->data + packet->pos;
+    p[0] = i & 0xff;
+    p[1] = (i >> 8) & 0xff;
+    packet->pos += 2;
+}
+
+// Write a 32-bit integer to the packet
 void NET_WriteInt32(net_packet_t *packet, unsigned int i)
 {
     byte *p;
@@ -309,6 +371,20 @@ void NET_WriteInt32(net_packet_t *packet, unsigned int i)
     p[1] = (i >> 16) & 0xff;
     p[2] = (i >> 8) & 0xff;
     p[3] = i & 0xff;
+    packet->pos += 4;
+}
+
+void NET_WriteInt32_LE(net_packet_t *packet, unsigned int i)
+{
+    byte *p;
+
+    ExtendLength(packet, 4);
+
+    p = packet->data + packet->pos;
+    p[0] = i & 0xff;
+    p[1] = (i >> 8) & 0xff;
+    p[2] = (i >> 16) & 0xff;
+    p[3] = (i >> 24) & 0xff;
     packet->pos += 4;
 }
 
