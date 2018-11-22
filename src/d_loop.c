@@ -433,6 +433,7 @@ void D_StartNetGame(net_gamesettings_t *settings,
     //}
 }
 
+// Initialize a peer-to-peer game with the -net command line argument.
 static void ParseVanillaNet(int p)
 {
     net_context_t *vcontext;
@@ -471,6 +472,28 @@ static void ParseVanillaNet(int p)
     net_vanilla_game = true;
 }
 
+// Initialize an IPX game by connecting to a DOSbox IPX server.
+static void IPXConnect(char *address)
+{
+    net_context_t *context;
+    net_vanilla_settings_t settings;
+    int want_nodes = 2;
+    int p;
+
+    p = M_CheckParmWithArgs("-nodes", 1);
+    if (p > 0)
+    {
+        want_nodes = atoi(myargv[p + 1]);
+    }
+
+    context = NET_DBIPX_Connect(address);
+    NET_DBIPX_ArbitrateGame(&settings, want_nodes);
+    settings.version = 109; // TODO
+    settings.extratics = 0;
+    NET_VanillaInit(context, &settings);
+    net_vanilla_game = true;
+}
+
 boolean D_InitNetGame(net_connect_data_t *connect_data)
 {
     boolean result = false;
@@ -492,16 +515,7 @@ boolean D_InitNetGame(net_connect_data_t *connect_data)
     i = M_CheckParmWithArgs("-dbconnect", 1);
     if (i > 0)
     {
-        net_context_t *context;
-        net_vanilla_settings_t settings;
-
-        context = NET_DBIPX_Connect(myargv[i + 1]);
-        NET_DBIPX_ArbitrateGame(&settings, 2);
-        settings.version = 109; // TODO
-        settings.extratics = 0;
-        NET_VanillaInit(context, &settings);
-        net_vanilla_game = true;
-
+        IPXConnect(myargv[i + 1]);
         return true;
     }
 
