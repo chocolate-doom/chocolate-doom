@@ -104,8 +104,7 @@ boolean singledemo;             // quit after playing a demo from cmdline
 
 boolean precache = true;        // if true, load all graphics at start
 
-// TODO: Hexen uses 16-bit shorts for consistancy?
-byte consistancy[MAXPLAYERS][BACKUPTICS];
+static short consistancy[MAXPLAYERS][BACKUPTICS];
 
 int mouseSensitivity = 5;
 
@@ -1021,8 +1020,13 @@ void G_Ticker(void)
 
             if (netgame && !(gametic % ticdup))
             {
+                // For historical reasons, the Chocolate Doom network protocol
+                // only sends the lower byte of the consistency field. So we
+                // actually allow a consistency value where we only have the
+                // bottom 8 bits.
                 if (gametic > BACKUPTICS
-                    && consistancy[i][buf] != cmd->consistancy)
+                 && cmd->consistancy != consistancy[i][buf]
+                 && cmd->consistancy != (consistancy[i][buf] & 0xff))
                 {
                     I_Error("consistency failure (%i should be %i)",
                             cmd->consistancy, consistancy[i][buf]);

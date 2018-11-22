@@ -36,15 +36,13 @@ typedef struct
     short angleturn;            // <<16 for angle delta
     byte chatchar;
     byte buttons;
-    // villsa [STRIFE] according to the asm,
-    // consistancy is a short, not a byte
-    byte consistancy;           // checks for net game
+    short consistancy;           // checks for net game
 
     // villsa - Strife specific:
 
     byte buttons2;
     int inventory;
-   
+
     // Heretic/Hexen specific:
 
     byte lookfly;               // look/fly up/down/centering
