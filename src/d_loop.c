@@ -120,7 +120,7 @@ static boolean local_playeringame[NET_MAXPLAYERS];
 static int player_class;
 
 // If true, we're playing a vanilla-compatible peer-to-peer game.
-static boolean net_vanilla_game;
+boolean net_vanilla_game;
 
 // 35 fps clock adjusted by offsetms milliseconds
 
