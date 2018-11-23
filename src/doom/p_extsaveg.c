@@ -446,7 +446,7 @@ void P_ReadExtendedSaveGameData (int pass)
 {
 	long p, curpos, endpos;
 	byte episode, map;
-	int lumpnum;
+	int lumpnum = -1;
 
 	line = malloc(MAX_LINE_LEN);
 	string = malloc(MAX_STRING_LEN);
@@ -466,10 +466,11 @@ void P_ReadExtendedSaveGameData (int pass)
 
 	// [crispy] check which map we would want to load
 	fseek(save_stream, SAVESTRINGSIZE + VERSIONSIZE + 1, SEEK_SET); // [crispy] + 1 for "gameskill"
-	fread(&episode, 1, 1, save_stream);
-	fread(&map, 1, 1, save_stream);
-
-	lumpnum = P_GetNumForMap ((int) episode, (int) map, false);
+	if (fread(&episode, 1, 1, save_stream) == 1 &&
+	    fread(&map, 1, 1, save_stream) == 1)
+	{
+		lumpnum = P_GetNumForMap ((int) episode, (int) map, false);
+	}
 
 	if (lumpnum >= 0)
 	{
