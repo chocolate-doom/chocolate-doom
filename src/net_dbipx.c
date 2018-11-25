@@ -529,26 +529,26 @@ void NET_DBIPX_ArbitrateGame(net_vanilla_settings_t *settings,
     while (settings->num_nodes + 1 < want_nodes
         || !AllNodesReady(node_data, settings->num_nodes))
     {
-        if (!NET_DBIPX_RecvPacket(&addr, &packet))
+        while (NET_DBIPX_RecvPacket(&addr, &packet))
         {
-            setup.game_id = game_id;
-            setup.drone = 0;  // TODO
-            setup.nodes_found = settings->num_nodes + 1;
-            setup.nodes_wanted = want_nodes;
-
-            packet = MakeSetupPacket(&setup);
-            NET_DBIPX_SendPacket(&net_broadcast_addr, packet);
+            if (ReadSetupData(packet, &tmp))
+            {
+                node_num = FindOrAddAddr(settings, addr, want_nodes);
+                node_data[node_num] = tmp;
+            }
             NET_FreePacket(packet);
+        }
 
-            I_Sleep(1000);
-            continue;
-        }
-        if (ReadSetupData(packet, &tmp))
-        {
-            node_num = FindOrAddAddr(settings, addr, want_nodes);
-            node_data[node_num] = tmp;
-        }
+        setup.game_id = game_id;
+        setup.drone = 0;  // TODO
+        setup.nodes_found = settings->num_nodes + 1;
+        setup.nodes_wanted = want_nodes;
+
+        packet = MakeSetupPacket(&setup);
+        NET_DBIPX_SendPacket(&net_broadcast_addr, packet);
         NET_FreePacket(packet);
+
+        I_Sleep(1000);
     }
 
     SetPlayerNumber(settings, node_data);
