@@ -43,6 +43,7 @@ int key_use = ' ';
 int key_strafe = KEY_RALT;
 int key_speed = KEY_RSHIFT; 
 int key_toggleautorun = KEY_CAPSLOCK; // [crispy]
+int key_togglenovert = 0; // [crispy]
 
 // 
 // Heretic keyboard controls
@@ -271,6 +272,7 @@ void M_BindBaseControls(void)
     M_BindIntVariable("mouseb_reverse",     &mousebreverse); // [crispy]
     M_BindIntVariable("key_reverse",        &key_reverse); // [crispy]
     M_BindIntVariable("key_toggleautorun",  &key_toggleautorun); // [crispy]
+    M_BindIntVariable("key_togglenovert",   &key_togglenovert); // [crispy]
 }
 
 void M_BindHereticControls(void)

@@ -1764,6 +1764,13 @@ static default_t extra_defaults_list[] =
 
     //!
     // @game doom
+    // Toggle vertical mouse movement.
+    //
+
+    CONFIG_VARIABLE_KEY(key_togglenovert),
+
+    //!
+    // @game doom
     // Invert vertical mouse movement.
     //
 

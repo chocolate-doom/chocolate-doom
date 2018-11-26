@@ -347,6 +347,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     int		forward;
     int		side;
     int		look;
+    static char autorunmsg[48];
 
     memset(cmd, 0, sizeof(ticcmd_t));
 
@@ -411,7 +412,6 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     // [crispy] toggle "always run"
     if (gamekeydown[key_toggleautorun])
     {
-        static char autorunmsg[24];
         static int joybspeed_old = 2;
 
         if (joybspeed >= MAX_JOY_BUTTONS)
@@ -431,6 +431,21 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
         S_StartSound(NULL, sfx_swtchn);
 
         gamekeydown[key_toggleautorun] = false;
+    }
+
+    // [crispy] Toggle vertical mouse movement
+    if (gamekeydown[key_togglenovert])
+    {
+        novert = !novert;
+
+        M_snprintf(autorunmsg, sizeof(autorunmsg),
+            "vertical mouse movement %s%s",
+            crstr[CR_GREEN],
+            !novert ? "ON" : "OFF");
+        players[consoleplayer].message = autorunmsg;
+        S_StartSound(NULL, sfx_swtchn);
+
+        gamekeydown[key_togglenovert] = false;
     }
 
     // let movement keys cancel each other out
