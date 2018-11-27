@@ -441,8 +441,8 @@ static void ParseVanillaNet(int p)
     int i;
 
     vcontext = NET_NewContext();
-    net_sdl_module.InitServer();
-    NET_AddModule(vcontext, &net_sdl_module);
+    net_udp_module.InitServer();
+    NET_AddModule(vcontext, &net_udp_module);
 
     vsettings.version = 109; // TODO
     vsettings.consoleplayer = atoi(myargv[p]);
@@ -546,7 +546,7 @@ boolean D_InitNetGame(net_connect_data_t *connect_data)
     {
         NET_SV_Init();
         NET_SV_AddModule(&net_loop_server_module);
-        NET_SV_AddModule(&net_sdl_module);
+        NET_SV_AddModule(&net_udp_module);
         NET_SV_RegisterWithMaster();
 
         net_loop_client_module.InitClient();
@@ -585,8 +585,8 @@ boolean D_InitNetGame(net_connect_data_t *connect_data)
 
         if (i > 0)
         {
-            net_sdl_module.InitClient();
-            addr = net_sdl_module.ResolveAddress(myargv[i+1]);
+            net_udp_module.InitClient();
+            addr = net_udp_module.ResolveAddress(myargv[i+1]);
 
             if (addr == NULL)
             {

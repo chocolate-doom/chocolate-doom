@@ -388,8 +388,8 @@ net_context_t *NET_DBIPX_Connect(char *address)
     net_context_t *context;
 
     ipx_context = NET_NewContext();
-    net_sdl_module.InitClient();
-    NET_AddModule(ipx_context, &net_sdl_module);
+    net_udp_module.InitClient();
+    NET_AddModule(ipx_context, &net_udp_module);
 
     server_addr = NET_ResolveAddress(ipx_context, address);
     if (server_addr == NULL)

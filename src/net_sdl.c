@@ -123,12 +123,12 @@ static net_addr_t *NET_SDL_FindAddress(IPaddress *addr)
     }
 
     // Add a new entry
-    
+
     new_entry = Z_Malloc(sizeof(addrpair_t), PU_STATIC, 0);
 
     new_entry->sdl_addr = *addr;
     new_entry->net_addr.handle = &new_entry->sdl_addr;
-    new_entry->net_addr.module = &net_sdl_module;
+    new_entry->net_addr.module = &net_udp_module;
 
     addr_table[empty_entry] = new_entry;
 
@@ -152,7 +152,7 @@ static void NET_SDL_FreeAddress(net_addr_t *addr)
     I_Error("NET_SDL_FreeAddress: Attempted to remove an unused address!");
 }
 
-static boolean NET_SDL_InitClient(void)
+static boolean NET_UDP_InitClient(void)
 {
     int p;
 
@@ -177,7 +177,7 @@ static boolean NET_SDL_InitClient(void)
 
     if (udpsocket == NULL)
     {
-        I_Error("NET_SDL_InitClient: Unable to open a socket!");
+        I_Error("NET_UDP_InitClient: Unable to open a socket!");
     }
     
     recvpacket = SDLNet_AllocPacket(1500);
@@ -191,7 +191,7 @@ static boolean NET_SDL_InitClient(void)
     return true;
 }
 
-static boolean NET_SDL_InitServer(void)
+static boolean NET_UDP_InitServer(void)
 {
     int p;
 
@@ -208,7 +208,7 @@ static boolean NET_SDL_InitServer(void)
 
     if (udpsocket == NULL)
     {
-        I_Error("NET_SDL_InitServer: Unable to bind to port %i", port);
+        I_Error("NET_UDP_InitServer: Unable to bind to port %i", port);
     }
 
     recvpacket = SDLNet_AllocPacket(1500);
@@ -221,7 +221,7 @@ static boolean NET_SDL_InitServer(void)
     return true;
 }
 
-static void NET_SDL_SendPacket(net_addr_t *addr, net_packet_t *packet)
+static void NET_UDP_SendPacket(net_addr_t *addr, net_packet_t *packet)
 {
     UDPpacket sdl_packet;
     IPaddress ip;
@@ -264,12 +264,12 @@ static void NET_SDL_SendPacket(net_addr_t *addr, net_packet_t *packet)
 
     if (!SDLNet_UDP_Send(udpsocket, -1, &sdl_packet))
     {
-        I_Error("NET_SDL_SendPacket: Error transmitting packet: %s",
+        I_Error("NET_UDP_SendPacket: Error transmitting packet: %s",
                 SDLNet_GetError());
     }
 }
 
-static boolean NET_SDL_RecvPacket(net_addr_t **addr, net_packet_t **packet)
+static boolean NET_UDP_RecvPacket(net_addr_t **addr, net_packet_t **packet)
 {
     int result;
 
@@ -277,7 +277,7 @@ static boolean NET_SDL_RecvPacket(net_addr_t **addr, net_packet_t **packet)
 
     if (result < 0)
     {
-        I_Error("NET_SDL_RecvPacket: Error receiving packet: %s",
+        I_Error("NET_UDP_RecvPacket: Error receiving packet: %s",
                 SDLNet_GetError());
     }
 
@@ -368,12 +368,12 @@ net_addr_t *NET_SDL_ResolveAddress(char *address)
 
 // Complete module
 
-net_module_t net_sdl_module =
+net_module_t net_udp_module =
 {
-    NET_SDL_InitClient,
-    NET_SDL_InitServer,
-    NET_SDL_SendPacket,
-    NET_SDL_RecvPacket,
+    NET_UDP_InitClient,
+    NET_UDP_InitServer,
+    NET_UDP_SendPacket,
+    NET_UDP_RecvPacket,
     NET_SDL_AddrToString,
     NET_SDL_FreeAddress,
     NET_SDL_ResolveAddress,
