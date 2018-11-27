@@ -63,7 +63,6 @@ typedef struct
 	int secretmessage;
 	int smoothlight;
 	int smoothscaling;
-	int sndchannels;
 	int soundfix;
 	int soundfull;
 	int soundmono;
@@ -175,14 +174,6 @@ enum
     JUMP_LOW,
     JUMP_HIGH,
     NUM_JUMPS
-};
-
-enum
-{
-    SNDCHANNELS_8,
-    SNDCHANNELS_16,
-    SNDCHANNELS_32,
-    NUM_SNDCHANNELS
 };
 
 enum

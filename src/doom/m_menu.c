@@ -1464,7 +1464,7 @@ static void M_DrawCrispness2(void)
     M_DrawCrispnessSeparator(crispness_sep_audible, "Audible");
     M_DrawCrispnessItem(crispness_soundfull, "Play sounds in full length", crispy->soundfull, true);
     M_DrawCrispnessItem(crispness_soundfix, "Misc. Sound Fixes", crispy->soundfix, true);
-    M_DrawCrispnessMultiItem(crispness_sndchannels, "Sound Channels", multiitem_sndchannels, crispy->sndchannels, true);
+    M_DrawCrispnessMultiItem(crispness_sndchannels, "Sound Channels", multiitem_sndchannels, snd_channels >> 4, true);
     M_DrawCrispnessItem(crispness_soundmono, "Mono SFX", crispy->soundmono, true);
 
     M_DrawCrispnessSeparator(crispness_sep_navigational, "Navigational");

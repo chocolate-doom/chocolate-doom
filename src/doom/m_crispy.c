@@ -116,11 +116,11 @@ multiitem_t multiitem_translucency[NUM_TRANSLUCENCY] =
     {TRANSLUCENCY_BOTH, "both"},
 };
 
-multiitem_t multiitem_sndchannels[NUM_SNDCHANNELS] =
+multiitem_t multiitem_sndchannels[4] =
 {
-    {SNDCHANNELS_8, "8"},
-    {SNDCHANNELS_16, "16"},
-    {SNDCHANNELS_32, "32"},
+    {8, "8"},
+    {16, "16"},
+    {32, "32"},
 };
 
 extern void AM_ReInit (boolean rescale);
@@ -451,7 +451,6 @@ void M_CrispyToggleSmoothLighting(int choice)
 void M_CrispyToggleSndChannels(int choice)
 {
     choice = 0;
-    crispy->sndchannels = (crispy->sndchannels + 1) % NUM_SNDCHANNELS;
 
     S_UpdateSndChannels();
 }
