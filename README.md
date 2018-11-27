@@ -56,6 +56,7 @@ Crispy Doom strives for maximum compatibility with all "limit-removing Vanilla" 
  * Look down "DELETE" (bindable to joystick axes)
  * Center view "END"
  * Toggle always run "CAPSLOCK"
+ * Toggle vertical mouse movement (new in 5.4)
  * Delete savegame "DELETE"
  * Go to next level
  * Reload current level
