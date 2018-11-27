@@ -179,6 +179,7 @@ categories = (
     ("mod",     Category("Dehacked and WAD merging")),
     ("demo",    Category("Demo options")),
     ("compat",  Category("Compatibility")),
+    ("vnet",    Category("Esoteric networking options")),
     ("obscure", Category("Obscure and less-used options")),
 )
 

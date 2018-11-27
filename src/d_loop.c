@@ -480,6 +480,14 @@ static void IPXConnect(char *address)
     int want_nodes = 2;
     int p;
 
+    //!
+    // @category vnet
+    // @arg <n>
+    //
+    // Number of players when starting a game with the -dbconnect command
+    // line argument. If this is not provided then a two-player game is
+    // started by default.
+    //
     p = M_CheckParmWithArgs("-nodes", 1);
     if (p > 0)
     {
@@ -511,6 +519,14 @@ boolean D_InitNetGame(net_connect_data_t *connect_data)
         ParseVanillaNet(i + 1);
         return true;
     }
+
+    //!
+    // @category vnet
+    // @arg <address:port>
+    //
+    // Connect to a DOSBox IPX server, to play a multiplayer game against
+    // vanilla Doom with ipxsetup.exe.
+    //
 
     i = M_CheckParmWithArgs("-dbconnect", 1);
     if (i > 0)
