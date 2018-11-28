@@ -1242,8 +1242,8 @@ void R_SortVisSprites (void)
 void R_DrawSprite (vissprite_t* spr)
 {
     drawseg_t*		ds;
-    int		clipbot[SCREENWIDTH]; // [crispy] 32-bit integer math
-    int		cliptop[SCREENWIDTH]; // [crispy] 32-bit integer math
+    int		clipbot[MAXWIDTH]; // [crispy] 32-bit integer math
+    int		cliptop[MAXWIDTH]; // [crispy] 32-bit integer math
     int			x;
     int			r1;
     int			r2;
