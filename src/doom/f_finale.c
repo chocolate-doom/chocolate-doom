@@ -408,6 +408,9 @@ static boolean	castflip; // [crispy] flippable death sequence
 // [crispy] randomize seestate and deathstate sounds in the cast
 static int F_RandomizeSound (int sound)
 {
+	if (!crispy->soundfix)
+		return sound;
+
 	switch (sound)
 	{
 		// [crispy] actor->info->seesound, from p_enemy.c:A_Look()
