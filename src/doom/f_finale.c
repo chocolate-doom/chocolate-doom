@@ -403,6 +403,7 @@ int		castonmelee;
 boolean		castattacking;
 static signed char	castangle; // [crispy] turnable cast
 static signed char	castskip; // [crispy] skippable cast
+static boolean	castflip; // [crispy] flippable death sequence
 
 // [crispy] randomize seestate and deathstate sounds in the cast
 static int F_RandomizeSound (int sound)
@@ -486,6 +487,7 @@ void F_CastTicker (void)
 	caststate = &states[mobjinfo[castorder[castnum].type].seestate];
 	castframes = 0;
 	castangle = 0; // [crispy] turnable cast
+	castflip = false; // [crispy] flippable death sequence
     }
     else
     {
@@ -681,6 +683,12 @@ boolean F_CastResponder (event_t* ev)
     if (mobjinfo[castorder[castnum].type].deathsound)
 	S_StartSound (NULL, F_RandomizeSound(mobjinfo[castorder[castnum].type].deathsound));
 	
+    // [crispy] flippable death sequence
+    castflip = crispy->flipcorpses &&
+	castdeath &&
+	(mobjinfo[castorder[castnum].type].flags & MF_FLIPPABLE) &&
+	(Crispy_Random() & 1);
+
     return true;
 }
 
@@ -762,7 +770,7 @@ void F_CastDrawer (void)
     }
     sprframe = &sprdef->spriteframes[ caststate->frame & FF_FRAMEMASK];
     lump = sprframe->lump[castangle]; // [crispy] turnable cast
-    flip = (boolean)sprframe->flip[castangle]; // [crispy] turnable cast
+    flip = (boolean)sprframe->flip[castangle] ^ castflip; // [crispy] turnable cast, flippable death sequence
 			
     patch = W_CacheLumpNum (lump+firstspritelump, PU_CACHE);
     if (flip)
