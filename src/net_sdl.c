@@ -35,17 +35,28 @@
 
 #include <SDL_net.h>
 
+#define TCPSOCKET_CLOSED ((TCPsocket) -1)
 #define DEFAULT_PORT 2342
+#define MAX_FRAME_LEN 1024
+#define FRAMECHAR 0x70
 
 static boolean initted = false;
 static int port = DEFAULT_PORT;
 static UDPsocket udpsocket;
 static UDPpacket *recvpacket;
 
+static TCPsocket tcpsocket;
+static SDLNet_SocketSet active_sockets;
+
 typedef struct
 {
     net_addr_t net_addr;
     IPaddress sdl_addr;
+
+    // If there is an open TCP connection from this address, this is
+    // the socket for the connection; this reuses the address
+    // table to avoid maintaining a separate table.
+    TCPsocket tcp_sock;
 } addrpair_t;
 
 static addrpair_t **addr_table;
@@ -127,8 +138,10 @@ static net_addr_t *NET_SDL_FindAddress(IPaddress *addr)
     new_entry = Z_Malloc(sizeof(addrpair_t), PU_STATIC, 0);
 
     new_entry->sdl_addr = *addr;
-    new_entry->net_addr.handle = &new_entry->sdl_addr;
+    new_entry->net_addr.handle = new_entry;
+    // TODO: Pick module based on address lookup
     new_entry->net_addr.module = &net_udp_module;
+    new_entry->tcp_sock = NULL;
 
     addr_table[empty_entry] = new_entry;
 
@@ -137,14 +150,24 @@ static net_addr_t *NET_SDL_FindAddress(IPaddress *addr)
 
 static void NET_SDL_FreeAddress(net_addr_t *addr)
 {
+    addrpair_t *ap;
     int i;
-    
-    for (i=0; i<addr_table_size; ++i)
+
+    ap = addr->handle;
+
+    for (i = 0; i < addr_table_size; ++i)
     {
-        if (addr == &addr_table[i]->net_addr)
+        if (addr_table[i] == ap)
         {
-            Z_Free(addr_table[i]);
             addr_table[i] = NULL;
+
+            // Freeing an address associated with an open TCP socket
+            // implicitly closes that socket.
+            if (ap->tcp_sock != NULL && ap->tcp_sock != TCPSOCKET_CLOSED)
+            {
+                SDLNet_TCP_Close(ap->tcp_sock);
+            }
+            Z_Free(ap);
             return;
         }
     }
@@ -152,12 +175,9 @@ static void NET_SDL_FreeAddress(net_addr_t *addr)
     I_Error("NET_SDL_FreeAddress: Attempted to remove an unused address!");
 }
 
-static boolean NET_UDP_InitClient(void)
+static void InitCommonParams(void)
 {
     int p;
-
-    if (initted)
-        return true;
 
     //!
     // @category net
@@ -172,6 +192,19 @@ static boolean NET_UDP_InitClient(void)
         port = atoi(myargv[p+1]);
 
     SDLNet_Init();
+    active_sockets = SDLNet_AllocSocketSet(MAXNETNODES);
+    if (active_sockets == NULL)
+    {
+        I_Error("Failed to create socket set: %s", SDLNet_GetError());
+    }
+}
+
+static boolean NET_UDP_InitClient(void)
+{
+    if (initted)
+        return true;
+
+    InitCommonParams();
 
     udpsocket = SDLNet_UDP_Open(0);
 
@@ -179,8 +212,8 @@ static boolean NET_UDP_InitClient(void)
     {
         I_Error("NET_UDP_InitClient: Unable to open a socket!");
     }
-    
-    recvpacket = SDLNet_AllocPacket(1500);
+
+    recvpacket = SDLNet_AllocPacket(MAX_FRAME_LEN);
 
 #ifdef DROP_PACKETS
     srand(time(NULL));
@@ -193,16 +226,10 @@ static boolean NET_UDP_InitClient(void)
 
 static boolean NET_UDP_InitServer(void)
 {
-    int p;
-
     if (initted)
         return true;
 
-    p = M_CheckParmWithArgs("-port", 1);
-    if (p > 0)
-        port = atoi(myargv[p+1]);
-
-    SDLNet_Init();
+    InitCommonParams();
 
     udpsocket = SDLNet_UDP_Open(port);
 
@@ -225,7 +252,7 @@ static void NET_UDP_SendPacket(net_addr_t *addr, net_packet_t *packet)
 {
     UDPpacket sdl_packet;
     IPaddress ip;
-   
+
     if (addr == &net_broadcast_addr)
     {
         SDLNet_ResolveHost(&ip, NULL, port);
@@ -233,7 +260,7 @@ static void NET_UDP_SendPacket(net_addr_t *addr, net_packet_t *packet)
     }
     else
     {
-        ip = *((IPaddress *) addr->handle);
+        ip = ((addrpair_t *) addr->handle)->sdl_addr;
     }
 
 #if 0
@@ -305,7 +332,7 @@ void NET_SDL_AddrToString(net_addr_t *addr, char *buffer, int buffer_len)
     uint32_t host;
     uint16_t port;
 
-    ip = (IPaddress *) addr->handle;
+    ip = &((addrpair_t *) addr->handle)->sdl_addr;
     host = SDLNet_Read32(&ip->host);
     port = SDLNet_Read16(&ip->port);
 
@@ -366,7 +393,239 @@ net_addr_t *NET_SDL_ResolveAddress(char *address)
     }
 }
 
-// Complete module
+//
+// TCP module implementation
+//
+// The following code sends "packets" over a TCP connection. The framing
+// is the same framing format used by sersetup.exe, so that it can be
+// used in conjunction with net_vanilla.c to play games against vanilla
+// Doom.
+//
+
+static boolean NET_TCP_InitClient(void)
+{
+    if (initted)
+        return true;
+
+    InitCommonParams();
+    initted = true;
+
+    // In client mode, we do not open any socket; rather, trying to send
+    // to a new address implicitly opens a TCP connection to it.
+
+    return true;
+}
+
+static boolean NET_TCP_InitServer(void)
+{
+    IPaddress addr;
+
+    if (initted)
+        return true;
+
+    InitCommonParams();
+
+    SDLNet_ResolveHost(&addr, NULL, port);
+    tcpsocket = SDLNet_TCP_Open(&addr);
+    if (tcpsocket == NULL)
+    {
+        I_Error("NET_TCP_InitServer: Unable to bind to port %i", port);
+    }
+
+    initted = true;
+    SDLNet_TCP_AddSocket(active_sockets, tcpsocket);
+
+    return true;
+}
+
+static void OpenClientConnection(net_addr_t *addr)
+{
+    addrpair_t *ap = addr->handle;
+    TCPsocket sock;
+    char buf[32];
+
+    sock = SDLNet_TCP_Open(&ap->sdl_addr);
+    if (sock == NULL)
+    {
+        NET_SDL_AddrToString(addr, buf, sizeof(buf));
+        I_Error("NET_TCP_SendPacket: Failed to connect to server %s: "
+                "%s", buf, SDLNet_GetError());
+    }
+
+    SDLNet_TCP_AddSocket(active_sockets, sock);
+    ap->tcp_sock = sock;
+}
+
+// "Escape" packet into framing format used by sersetup.exe. Packet data
+// is sent as normal, but FRAMECHAR+0 indicates end-of-packet.
+// FRAMECHAR+FRAMECHAR indicates escaped FRAMECHAR.
+static net_packet_t *EscapePacket(net_packet_t *packet)
+{
+    net_packet_t *result = NET_NewPacket(packet->len + 10);
+    unsigned int b;
+
+    NET_SetPosition(packet, 0);
+
+    while (NET_ReadInt8(packet, &b))
+    {
+        NET_WriteInt8(result, b);
+        if (b == FRAMECHAR)
+        {
+            NET_WriteInt8(result, FRAMECHAR);
+        }
+    }
+
+    NET_WriteInt8(result, FRAMECHAR);
+    NET_WriteInt8(result, 0);
+
+    return result;
+}
+
+// When a TCP connection is closed, we close it and replace the socket
+// with the TCPSOCKET_CLOSED tombstone marker. It remains in the address
+// table and the higher-level code can try to send packets to it, but
+// they will just be blackholed.
+static void LostConnection(addrpair_t *ap)
+{
+    SDLNet_TCP_DelSocket(active_sockets, ap->tcp_sock);
+    SDLNet_TCP_Close(ap->tcp_sock);
+    ap->tcp_sock = TCPSOCKET_CLOSED;
+}
+
+static void NET_TCP_SendPacket(net_addr_t *addr, net_packet_t *packet)
+{
+    addrpair_t *ap = addr->handle;
+    net_packet_t *escaped;
+
+    if (ap->tcp_sock == NULL)
+    {
+        if (tcpsocket != NULL)
+        {
+            I_Error("NET_TCP_SendPacket: Tried to send to address without "
+                    "an open socket");
+        }
+
+        OpenClientConnection(addr);
+    }
+
+    // If we try to send to an address for which we've lost the TCP
+    // connection, the packet just gets discarded.
+    if (ap->tcp_sock == TCPSOCKET_CLOSED)
+    {
+        return;
+    }
+
+    escaped = EscapePacket(packet);
+    if (SDLNet_TCP_Send(ap->tcp_sock,
+                        escaped->data, escaped->len) < escaped->len)
+    {
+        LostConnection(ap);
+    }
+    NET_FreePacket(escaped);
+}
+
+static void AcceptNewConnection(void)
+{
+    TCPsocket sock;
+    addrpair_t *ap;
+    net_addr_t *addr;
+
+    sock = SDLNet_TCP_Accept(tcpsocket);
+    if (sock == NULL)
+    {
+        I_Error("NET_TCP_RecvPacket: Failed to accept new connection: %s",
+                SDLNet_GetError());
+    }
+
+    SDLNet_TCP_AddSocket(active_sockets, sock);
+
+    addr = NET_SDL_FindAddress(SDLNet_TCP_GetPeerAddress(sock));
+    ap = addr->handle;
+    ap->tcp_sock = sock;
+}
+
+// Read a packet from the given TCP socket, using the sersetup.exe
+// framing format. A new net_packet_t is returned; NULL indicates that
+// an error occurred and the socket should be closed. Note that this
+// function has the potential to block forever if a full packet is not
+// received.
+static net_packet_t *ReadPacketFrom(TCPsocket sock)
+{
+    net_packet_t *packet;
+    byte b;
+
+    packet = NET_NewPacket(32);
+
+    for (;;)
+    {
+        if (SDLNet_TCP_Recv(sock, &b, 1) < 1)
+        {
+            NET_FreePacket(packet);
+            return NULL;
+        }
+        if (b == FRAMECHAR)
+        {
+            if (SDLNet_TCP_Recv(sock, &b, 1) < 1)
+            {
+                NET_FreePacket(packet);
+                return NULL;
+            }
+            if (b != FRAMECHAR)
+            {
+                break;
+            }
+        }
+        NET_WriteInt8(packet, b);
+    }
+
+    NET_SetPosition(packet, 0);
+    return packet;
+}
+
+static boolean NET_TCP_RecvPacket(net_addr_t **addr, net_packet_t **packet)
+{
+    int result;
+    int i;
+
+    result = SDLNet_CheckSockets(active_sockets, 0);
+    if (result <= 0)
+    {
+        return false;
+    }
+
+    if (tcpsocket != NULL && SDLNet_SocketReady(tcpsocket))
+    {
+        AcceptNewConnection();
+    }
+
+    // Find the first open socket we can read from.
+    for (i = 0; i < addr_table_size; ++i)
+    {
+        if (addr_table[i] != NULL
+         && addr_table[i]->tcp_sock != NULL
+         && addr_table[i]->tcp_sock != TCPSOCKET_CLOSED
+         && SDLNet_SocketReady(addr_table[i]->tcp_sock))
+        {
+            break;
+        }
+    }
+    if (i >= addr_table_size)
+    {
+        return false;
+    }
+
+    // Read a full packet from the TCP socket. If we fail, this is because
+    // the TCP connection was closed.
+    *packet = ReadPacketFrom(addr_table[i]->tcp_sock);
+    if (*packet == NULL)
+    {
+        LostConnection(addr_table[i]);
+        return false;
+    }
+
+    *addr = &addr_table[i]->net_addr;
+    return true;
+}
 
 net_module_t net_udp_module =
 {
@@ -374,6 +633,17 @@ net_module_t net_udp_module =
     NET_UDP_InitServer,
     NET_UDP_SendPacket,
     NET_UDP_RecvPacket,
+    NET_SDL_AddrToString,
+    NET_SDL_FreeAddress,
+    NET_SDL_ResolveAddress,
+};
+
+net_module_t net_tcp_module =
+{
+    NET_TCP_InitClient,
+    NET_TCP_InitServer,
+    NET_TCP_SendPacket,
+    NET_TCP_RecvPacket,
     NET_SDL_AddrToString,
     NET_SDL_FreeAddress,
     NET_SDL_ResolveAddress,
