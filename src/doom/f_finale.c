@@ -404,6 +404,40 @@ boolean		castattacking;
 static signed char	castangle; // [crispy] turnable cast
 static signed char	castskip; // [crispy] skippable cast
 
+// [crispy] randomize seestate and deathstate sounds in the cast
+static int F_RandomizeSound (int sound)
+{
+	switch (sound)
+	{
+		// [crispy] actor->info->seesound, from p_enemy.c:A_Look()
+		case sfx_posit1:
+		case sfx_posit2:
+		case sfx_posit3:
+			return sfx_posit1 + Crispy_Random()%3;
+			break;
+
+		case sfx_bgsit1:
+		case sfx_bgsit2:
+			return sfx_bgsit1 + Crispy_Random()%2;
+			break;
+
+		// [crispy] actor->info->deathsound, from p_enemy.c:A_Scream()
+		case sfx_podth1:
+		case sfx_podth2:
+		case sfx_podth3:
+			return sfx_podth1 + Crispy_Random()%3;
+			break;
+
+		case sfx_bgdth1:
+		case sfx_bgdth2:
+			return sfx_bgdth1 + Crispy_Random()%2;
+			break;
+
+		default:
+			return sound;
+			break;
+	}
+}
 
 //
 // F_StartCast
@@ -448,7 +482,7 @@ void F_CastTicker (void)
 	if (castorder[castnum].name == NULL)
 	    castnum = 0;
 	if (mobjinfo[castorder[castnum].type].seesound)
-	    S_StartSound (NULL, mobjinfo[castorder[castnum].type].seesound);
+	    S_StartSound (NULL, F_RandomizeSound(mobjinfo[castorder[castnum].type].seesound));
 	caststate = &states[mobjinfo[castorder[castnum].type].seestate];
 	castframes = 0;
 	castangle = 0; // [crispy] turnable cast
@@ -645,7 +679,7 @@ boolean F_CastResponder (event_t* ev)
         S_StartSound (NULL, sfx_slop);
     else
     if (mobjinfo[castorder[castnum].type].deathsound)
-	S_StartSound (NULL, mobjinfo[castorder[castnum].type].deathsound);
+	S_StartSound (NULL, F_RandomizeSound(mobjinfo[castorder[castnum].type].deathsound));
 	
     return true;
 }
