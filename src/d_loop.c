@@ -502,6 +502,20 @@ static void IPXConnect(char *address)
     net_vanilla_game = true;
 }
 
+// Initialize a serial game connecting to a DOSBox modem server.
+static void SerialDial(char *address)
+{
+    net_context_t *context;
+    net_vanilla_settings_t settings;
+
+    context = NET_Serial_Connect(address);
+    NET_Serial_ArbitrateGame(context, &settings);
+    settings.version = 109; // TODO
+    settings.extratics = 0;
+    NET_VanillaInit(context, &settings);
+    net_vanilla_game = true;
+}
+
 boolean D_InitNetGame(net_connect_data_t *connect_data)
 {
     boolean result = false;
@@ -532,6 +546,20 @@ boolean D_InitNetGame(net_connect_data_t *connect_data)
     if (i > 0)
     {
         IPXConnect(myargv[i + 1]);
+        return true;
+    }
+
+    //!
+    // @category vnet
+    // @arg <address:port>
+    //
+    // Connect to a DOSBox virtual modem, to play a multiplayer game against
+    // vanilla Doom with sersetup.exe.
+
+    i = M_CheckParmWithArgs("-dbdial", 1);
+    if (i > 0)
+    {
+        SerialDial(myargv[i + 1]);
         return true;
     }
 
