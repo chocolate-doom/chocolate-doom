@@ -22,10 +22,11 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
+#include <time.h>
 
 #include "i_system.h"
 #include "i_timer.h"
+#include "m_argv.h"
 #include "m_misc.h"
 #include "net_io.h"
 #include "net_packet.h"
@@ -100,6 +101,34 @@ static boolean ProcessSetupPacket(net_packet_t *packet, int *id, int *stage)
     return sscanf(buf, "ID%d_%d", id, stage) == 2;
 }
 
+static int GenerateID(void)
+{
+    //!
+    // @category vnet
+    //
+    // If specified when running a serial/modem game, force this player
+    // to be player 1.
+    //
+    if (M_ParmExists("-player1"))
+    {
+        return 0;
+    }
+
+    //!
+    // @category vnet
+    //
+    // If specified when running a serial/modem game, force this player
+    // to be player 2.
+    //
+    if (M_ParmExists("-player2"))
+    {
+        return 999999;
+    }
+
+    srand(time(NULL));
+    return rand() % 1000000;
+}
+
 void NET_Serial_ArbitrateGame(net_context_t *context,
                               net_vanilla_settings_t *settings)
 {
@@ -107,7 +136,7 @@ void NET_Serial_ArbitrateGame(net_context_t *context,
     net_packet_t *packet;
     net_addr_t *addr;
 
-    id = random() % 1000000;
+    id = GenerateID();
     stage = 0;
     remote_id = 0;
     remote_stage = 0;
@@ -122,6 +151,14 @@ void NET_Serial_ArbitrateGame(net_context_t *context,
                 stage = remote_stage + 1;
             }
             NET_FreePacket(packet);
+        }
+
+        if (stage > 0 && id == remote_id)
+        {
+            I_Error("NET_Serial_ArbitrateGame: Duplicate ID strings, "
+                    "ID #%06d. Check that both players are not providing "
+                    "the same -player1 or -player2 command line argument.",
+                    id);
         }
 
         SendSetupPacket(id, stage);
