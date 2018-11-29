@@ -21,6 +21,7 @@
 #include "net_defs.h"
 
 extern net_module_t net_udp_module;
+extern net_module_t net_tcp_module;
 
 #endif /* #ifndef NET_SDL_H */
 
