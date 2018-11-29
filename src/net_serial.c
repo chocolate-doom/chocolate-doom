@@ -141,8 +141,7 @@ static int GenerateID(void)
     //!
     // @category vnet
     //
-    // If specified when running a serial/modem game, force this player
-    // to be player 1.
+    // When used with -dbdial/-dbanswer, force this player to be player 1.
     //
     if (M_ParmExists("-player1"))
     {
@@ -152,8 +151,7 @@ static int GenerateID(void)
     //!
     // @category vnet
     //
-    // If specified when running a serial/modem game, force this player
-    // to be player 2.
+    // When used with -dbdial/-dbanswer, force this player to be player 2.
     //
     if (M_ParmExists("-player2"))
     {
