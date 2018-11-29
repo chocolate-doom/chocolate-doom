@@ -48,9 +48,16 @@ static UDPpacket *recvpacket;
 static TCPsocket tcpsocket;
 static SDLNet_SocketSet active_sockets;
 
+typedef enum
+{
+    IP_PROTOCOL_UDP,
+    IP_PROTOCOL_TCP,
+} ip_protocol_t;
+
 typedef struct
 {
     net_addr_t net_addr;
+    ip_protocol_t protocol;
     IPaddress sdl_addr;
 
     // If there is an open TCP connection from this address, this is
@@ -82,7 +89,7 @@ static boolean AddressesEqual(IPaddress *a, IPaddress *b)
 // Finds an address by searching the table.  If the address is not found,
 // it is added to the table.
 
-static net_addr_t *NET_SDL_FindAddress(IPaddress *addr)
+static net_addr_t *FindAddress(ip_protocol_t protocol, IPaddress *addr)
 {
     addrpair_t *new_entry;
     int empty_entry = -1;
@@ -96,6 +103,7 @@ static net_addr_t *NET_SDL_FindAddress(IPaddress *addr)
     for (i=0; i<addr_table_size; ++i)
     {
         if (addr_table[i] != NULL
+         && protocol == addr_table[i]->protocol
          && AddressesEqual(addr, &addr_table[i]->sdl_addr))
         {
             return &addr_table[i]->net_addr;
@@ -137,15 +145,90 @@ static net_addr_t *NET_SDL_FindAddress(IPaddress *addr)
 
     new_entry = Z_Malloc(sizeof(addrpair_t), PU_STATIC, 0);
 
+    new_entry->protocol = protocol;
     new_entry->sdl_addr = *addr;
     new_entry->net_addr.handle = new_entry;
-    // TODO: Pick module based on address lookup
-    new_entry->net_addr.module = &net_udp_module;
     new_entry->tcp_sock = NULL;
+
+    switch (protocol)
+    {
+        case IP_PROTOCOL_UDP:
+            new_entry->net_addr.module = &net_udp_module;
+            break;
+        case IP_PROTOCOL_TCP:
+            new_entry->net_addr.module = &net_tcp_module;
+            break;
+    }
 
     addr_table[empty_entry] = new_entry;
 
     return &new_entry->net_addr;
+}
+
+static net_addr_t *ResolveAddress(ip_protocol_t protocol, char *address)
+{
+    IPaddress ip;
+    char *addr_hostname;
+    int addr_port;
+    int result;
+    char *colon;
+
+    colon = strchr(address, ':');
+
+    if (colon != NULL)
+    {
+	addr_hostname = M_StringDuplicate(address);
+	addr_hostname[colon - address] = '\0';
+	addr_port = atoi(colon + 1);
+    }
+    else
+    {
+	addr_hostname = address;
+	addr_port = port;
+    }
+    
+    result = SDLNet_ResolveHost(&ip, addr_hostname, addr_port);
+
+    if (addr_hostname != address)
+    {
+	free(addr_hostname);
+    }
+    
+    if (result)
+    {
+        // unable to resolve
+
+        return NULL;
+    }
+
+    return FindAddress(protocol, &ip);
+}
+
+static void NET_SDL_AddrToString(net_addr_t *addr, char *buffer,
+                                 int buffer_len)
+{
+    IPaddress *ip;
+    uint32_t host;
+    uint16_t port;
+
+    ip = &((addrpair_t *) addr->handle)->sdl_addr;
+    host = SDLNet_Read32(&ip->host);
+    port = SDLNet_Read16(&ip->port);
+
+    M_snprintf(buffer, buffer_len, "%i.%i.%i.%i",
+               (host >> 24) & 0xff, (host >> 16) & 0xff,
+               (host >> 8) & 0xff, host & 0xff);
+
+    // If we are using the default port we just need to show the IP address,
+    // but otherwise we need to include the port. This is important because
+    // we use the string representation in the setup tool to provided an
+    // address to connect to.
+    if (port != DEFAULT_PORT)
+    {
+        char portbuf[10];
+        M_snprintf(portbuf, sizeof(portbuf), ":%i", port);
+        M_StringConcat(buffer, portbuf, buffer_len);
+    }
 }
 
 static void NET_SDL_FreeAddress(net_addr_t *addr)
@@ -321,76 +404,19 @@ static boolean NET_UDP_RecvPacket(net_addr_t **addr, net_packet_t **packet)
 
     // Address
 
-    *addr = NET_SDL_FindAddress(&recvpacket->address);
+    *addr = FindAddress(IP_PROTOCOL_UDP, &recvpacket->address);
 
     return true;
 }
 
-void NET_SDL_AddrToString(net_addr_t *addr, char *buffer, int buffer_len)
+static net_addr_t *NET_UDP_ResolveAddress(char *address)
 {
-    IPaddress *ip;
-    uint32_t host;
-    uint16_t port;
-
-    ip = &((addrpair_t *) addr->handle)->sdl_addr;
-    host = SDLNet_Read32(&ip->host);
-    port = SDLNet_Read16(&ip->port);
-
-    M_snprintf(buffer, buffer_len, "%i.%i.%i.%i",
-               (host >> 24) & 0xff, (host >> 16) & 0xff,
-               (host >> 8) & 0xff, host & 0xff);
-
-    // If we are using the default port we just need to show the IP address,
-    // but otherwise we need to include the port. This is important because
-    // we use the string representation in the setup tool to provided an
-    // address to connect to.
-    if (port != DEFAULT_PORT)
-    {
-        char portbuf[10];
-        M_snprintf(portbuf, sizeof(portbuf), ":%i", port);
-        M_StringConcat(buffer, portbuf, buffer_len);
-    }
+    return ResolveAddress(IP_PROTOCOL_UDP, address);
 }
 
-net_addr_t *NET_SDL_ResolveAddress(char *address)
+static net_addr_t *NET_TCP_ResolveAddress(char *address)
 {
-    IPaddress ip;
-    char *addr_hostname;
-    int addr_port;
-    int result;
-    char *colon;
-
-    colon = strchr(address, ':');
-
-    if (colon != NULL)
-    {
-	addr_hostname = M_StringDuplicate(address);
-	addr_hostname[colon - address] = '\0';
-	addr_port = atoi(colon + 1);
-    }
-    else
-    {
-	addr_hostname = address;
-	addr_port = port;
-    }
-    
-    result = SDLNet_ResolveHost(&ip, addr_hostname, addr_port);
-
-    if (addr_hostname != address)
-    {
-	free(addr_hostname);
-    }
-    
-    if (result)
-    {
-        // unable to resolve
-
-        return NULL;
-    }
-    else
-    {
-        return NET_SDL_FindAddress(&ip);
-    }
+    return ResolveAddress(IP_PROTOCOL_TCP, address);
 }
 
 //
@@ -539,7 +565,7 @@ static void AcceptNewConnection(void)
 
     SDLNet_TCP_AddSocket(active_sockets, sock);
 
-    addr = NET_SDL_FindAddress(SDLNet_TCP_GetPeerAddress(sock));
+    addr = FindAddress(IP_PROTOCOL_TCP, SDLNet_TCP_GetPeerAddress(sock));
     ap = addr->handle;
     ap->tcp_sock = sock;
 }
@@ -635,7 +661,7 @@ net_module_t net_udp_module =
     NET_UDP_RecvPacket,
     NET_SDL_AddrToString,
     NET_SDL_FreeAddress,
-    NET_SDL_ResolveAddress,
+    NET_UDP_ResolveAddress,
 };
 
 net_module_t net_tcp_module =
@@ -646,6 +672,6 @@ net_module_t net_tcp_module =
     NET_TCP_RecvPacket,
     NET_SDL_AddrToString,
     NET_SDL_FreeAddress,
-    NET_SDL_ResolveAddress,
+    NET_TCP_ResolveAddress,
 };
 
