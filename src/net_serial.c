@@ -66,6 +66,41 @@ net_context_t *NET_Serial_Connect(char *address)
     return context;
 }
 
+net_context_t *NET_Serial_Answer(void)
+{
+    net_context_t *context;
+    net_packet_t *packet;
+    net_addr_t *addr;
+
+    context = NET_NewContext();
+    net_tcp_module.InitServer();
+    NET_AddModule(context, &net_tcp_module);
+
+    // TODO: Include the port number in this message
+    printf("NET_Serial_Answer: Listening for connection.\n");
+
+    // Wait for a TCP connection - we want at least one packet to come
+    // through.
+    remote_addr = NULL;
+    while (remote_addr == NULL)
+    {
+        if (NET_RecvPacket(context, &addr, &packet))
+        {
+            remote_addr = addr;
+            NET_FreePacket(packet);
+        }
+        else
+        {
+            I_Sleep(100);
+        }
+    }
+
+    printf("NET_Serial_Answer: Connection received from %s.\n",
+           NET_AddrToString(remote_addr));
+
+    return context;
+}
+
 static void SendSetupPacket(int id, int stage)
 {
     net_packet_t *packet;

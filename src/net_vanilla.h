@@ -40,6 +40,7 @@ net_context_t *NET_DBIPX_Connect(char *address);
 void NET_DBIPX_ArbitrateGame(net_vanilla_settings_t *settings, int want_nodes);
 
 net_context_t *NET_Serial_Connect(char *address);
+net_context_t *NET_Serial_Answer(void);
 void NET_Serial_ArbitrateGame(net_context_t *context,
                               net_vanilla_settings_t *settings);
 
