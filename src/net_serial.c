@@ -158,7 +158,7 @@ static int GenerateID(void)
         return 999999;
     }
 
-    srand(time(NULL));
+    srand(time(NULL) + I_GetTimeMS());
     return rand() % 1000000;
 }
 
