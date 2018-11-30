@@ -73,6 +73,7 @@ static int run_tics;
 
 static net_context_t *vcontext;
 static net_vanilla_settings_t vsettings;
+static int extratics;
 
 // Read and calculate the checksum for the given packet, starting from
 // the current position.
@@ -349,6 +350,7 @@ boolean NET_VanillaSyncSettings(net_gamesettings_t *settings)
     settings->new_sync = false;
     settings->consoleplayer = vsettings.consoleplayer;
     settings->num_players = vsettings.num_players;
+    extratics = settings->extratics;
 
     if (vcontext == NULL)
     {
@@ -406,7 +408,7 @@ static void SendToNode(int node_num, unsigned int starttic,
 
 void NET_VanillaSendTiccmd(ticcmd_t *ticcmd, int maketic)
 {
-    unsigned int extratics;
+    unsigned int actual_extratics;
     unsigned int n;
 
     if (vcontext == NULL || maketic != sent_tics)
@@ -420,17 +422,18 @@ void NET_VanillaSendTiccmd(ticcmd_t *ticcmd, int maketic)
     // Figure out which tics to send. Usually this is just a single
     // tic (starttic=maketic; numtics=1) but we can include extra
     // tics as insurance against packet loss.
-    extratics = vsettings.extratics;
-    if (extratics > maketic)
+    actual_extratics = extratics;
+    if (actual_extratics > maketic)
     {
-        extratics = maketic;
+        actual_extratics = maketic;
     }
 
     for (n = 0; n < vsettings.num_nodes; ++n)
     {
         if (nodes[n].ingame)
         {
-            SendToNode(n, maketic - extratics, 1 + extratics);
+            SendToNode(n, maketic - actual_extratics,
+                       1 + actual_extratics);
         }
     }
 }

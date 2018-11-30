@@ -445,8 +445,6 @@ static void ParseVanillaNet(int p)
     NET_AddModule(vcontext, &net_udp_module);
 
     vsettings.consoleplayer = atoi(myargv[p]);
-    vsettings.extratics = 1;  // TODO
-
     vsettings.num_nodes = 0;
     vsettings.num_players = 1;
 
@@ -495,7 +493,6 @@ static void IPXConnect(char *address)
 
     context = NET_DBIPX_Connect(address);
     NET_DBIPX_ArbitrateGame(&settings, want_nodes);
-    settings.extratics = 0;
     NET_VanillaInit(context, &settings);
     net_vanilla_game = true;
 }
@@ -508,7 +505,6 @@ static void SerialDial(char *address)
 
     context = NET_Serial_Connect(address);
     NET_Serial_ArbitrateGame(context, &settings);
-    settings.extratics = 0;
     NET_VanillaInit(context, &settings);
     net_vanilla_game = true;
 }
@@ -522,7 +518,6 @@ static void SerialAnswer(void)
 
     context = NET_Serial_Answer();
     NET_Serial_ArbitrateGame(context, &settings);
-    settings.extratics = 0;
     NET_VanillaInit(context, &settings);
     net_vanilla_game = true;
 }
