@@ -40,7 +40,7 @@
 #define MAX_FRAME_LEN 1024
 #define FRAMECHAR 0x70
 
-static boolean initted = false;
+static boolean tcp_initted, udp_initted = false;
 static int port = DEFAULT_PORT;
 static UDPsocket udpsocket;
 static UDPpacket *recvpacket;
@@ -284,7 +284,7 @@ static void InitCommonParams(void)
 
 static boolean NET_UDP_InitClient(void)
 {
-    if (initted)
+    if (udp_initted)
         return true;
 
     InitCommonParams();
@@ -302,14 +302,14 @@ static boolean NET_UDP_InitClient(void)
     srand(time(NULL));
 #endif
 
-    initted = true;
+    udp_initted = true;
 
     return true;
 }
 
 static boolean NET_UDP_InitServer(void)
 {
-    if (initted)
+    if (udp_initted)
         return true;
 
     InitCommonParams();
@@ -326,7 +326,7 @@ static boolean NET_UDP_InitServer(void)
     srand(time(NULL));
 #endif
 
-    initted = true;
+    udp_initted = true;
 
     return true;
 }
@@ -430,11 +430,11 @@ static net_addr_t *NET_TCP_ResolveAddress(char *address)
 
 static boolean NET_TCP_InitClient(void)
 {
-    if (initted)
+    if (tcp_initted)
         return true;
 
     InitCommonParams();
-    initted = true;
+    tcp_initted = true;
 
     // In client mode, we do not open any socket; rather, trying to send
     // to a new address implicitly opens a TCP connection to it.
@@ -446,7 +446,7 @@ static boolean NET_TCP_InitServer(void)
 {
     IPaddress addr;
 
-    if (initted)
+    if (tcp_initted)
         return true;
 
     InitCommonParams();
@@ -458,7 +458,7 @@ static boolean NET_TCP_InitServer(void)
         I_Error("NET_TCP_InitServer: Unable to bind to port %i", port);
     }
 
-    initted = true;
+    tcp_initted = true;
     SDLNet_TCP_AddSocket(active_sockets, tcpsocket);
 
     return true;
