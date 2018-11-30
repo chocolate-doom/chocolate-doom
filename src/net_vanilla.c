@@ -15,6 +15,8 @@
 // Vanilla Doom networking protocol
 //
 
+#include "d_mode.h"
+
 #include "i_system.h"
 #include "i_timer.h"
 
@@ -133,7 +135,7 @@ static net_packet_t *MakeSetupPacket(net_gamesettings_t *settings)
                         | (settings->nomonsters ? 0x20 : 0)
                         | (settings->respawn_monsters ? 0x10 : 0));
     NET_WriteInt8(packet, (settings->episode << 6) | settings->map);
-    NET_WriteInt8(packet, vsettings.version);
+    NET_WriteInt8(packet, D_GameVersionCode(settings->gameversion));
     NET_WriteInt8(packet, 0); // numtics = 0
 
     AddChecksum(packet, NCMD_SETUP);
@@ -144,6 +146,7 @@ static boolean ParseSetupPacket(net_packet_t *packet,
                                 net_gamesettings_t *settings)
 {
     unsigned int val;
+    int version_code;
 
     if (!NET_ReadInt8(packet, &val))
     {
@@ -166,10 +169,11 @@ static boolean ParseSetupPacket(net_packet_t *packet,
         return false;
     }
 
-    if (val != vsettings.version)
+    version_code = D_GameVersionCode(settings->gameversion);
+    if (val != version_code)
     {
         I_Error("Different DOOM versions cannot play a net game! %d != %d",
-                 val, vsettings.version);
+                 val, version_code);
     }
 
     // Last byte is numtics but is unused

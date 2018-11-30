@@ -19,8 +19,6 @@
 
 typedef struct
 {
-    unsigned int version;
-
     net_addr_t *addrs[MAXNETNODES];
     unsigned int num_nodes;
 
