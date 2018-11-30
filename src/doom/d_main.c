@@ -695,7 +695,7 @@ static char *GetGameName(char *gamename)
 
             gamename_size = strlen(deh_sub) + 10;
             gamename = Z_Malloc(gamename_size, PU_STATIC, 0);
-            version = G_VanillaVersionCode();
+            version = D_GameVersionCode(gameversion);
             M_snprintf(gamename, gamename_size, deh_sub,
                        version / 100, version % 100);
 

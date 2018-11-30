@@ -2067,30 +2067,16 @@ void G_RecordDemo (char *name)
     demorecording = true; 
 } 
 
-// Get the demo version code appropriate for the version set in gameversion.
-int G_VanillaVersionCode(void)
-{
-    switch (gameversion)
-    {
-        case exe_doom_1_2:
-            I_Error("Doom 1.2 does not have a version code!");
-        case exe_doom_1_666:
-            return 106;
-        case exe_doom_1_7:
-            return 107;
-        case exe_doom_1_8:
-            return 108;
-        case exe_doom_1_9:
-        default:  // All other versions are variants on v1.9:
-            return 109;
-    }
-}
-
 void G_BeginRecording (void) 
 { 
     int             i; 
 
     demo_p = demobuffer;
+
+    if (gameversion == exe_doom_1_2)
+    {
+        I_Error("Recording of v1.2 demos not supported yet.");
+    }
 
     //!
     // @category demo
@@ -2110,7 +2096,7 @@ void G_BeginRecording (void)
     }
     else
     {
-        *demo_p++ = G_VanillaVersionCode();
+        *demo_p++ = D_GameVersionCode(gameversion);
     }
 
     *demo_p++ = gameskill; 
@@ -2202,7 +2188,7 @@ void G_DoPlayDemo (void)
     {
         longtics = true;
     }
-    else if (demoversion != G_VanillaVersionCode())
+    else if (demoversion != D_GameVersionCode(gameversion))
     {
         const char *message = "Demo is from a different game version!\n"
                               "(read %i, should be %i)\n"
@@ -2213,8 +2199,8 @@ void G_DoPlayDemo (void)
                                         "/info/patches.php\n"
                               "    This appears to be %s.";
 
-        I_Error(message, demoversion, G_VanillaVersionCode(),
-                         DemoVersionDescription(demoversion));
+        I_Error(message, demoversion, D_GameVersionCode(gameversion),
+                DemoVersionDescription(demoversion));
     }
 
     skill = *demo_p++; 
