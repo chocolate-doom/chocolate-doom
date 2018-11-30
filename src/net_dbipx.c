@@ -267,7 +267,8 @@ static boolean NET_DBIPX_RecvPacket(net_addr_t **addr, net_packet_t **packet)
         }
         if (got_addr == server_addr
          && ReadIPXHeader(got_packet, &hdr)
-         && NET_ReadInt32(got_packet, &unused))
+         && NET_ReadInt32(got_packet, &unused)
+         && got_packet->len >= 4)
         {
             break;
         }
@@ -276,6 +277,10 @@ static boolean NET_DBIPX_RecvPacket(net_addr_t **addr, net_packet_t **packet)
 
     *addr = NET_DBIPX_FindAddress(hdr.src_addr);
     *packet = got_packet;
+
+    // Strip IPX footer
+    got_packet->len -= 4;
+
     return true;
 }
 
