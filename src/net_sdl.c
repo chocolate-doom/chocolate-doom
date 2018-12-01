@@ -293,7 +293,8 @@ static boolean NET_UDP_InitClient(void)
 
     if (udpsocket == NULL)
     {
-        I_Error("NET_UDP_InitClient: Unable to open a socket!");
+        I_Error("NET_UDP_InitClient: Unable to open a socket: %s",
+                SDLNet_GetError());
     }
 
     recvpacket = SDLNet_AllocPacket(MAX_FRAME_LEN);
@@ -372,7 +373,7 @@ static void NET_UDP_SendPacket(net_addr_t *addr, net_packet_t *packet)
     sdl_packet.len = packet->len;
     sdl_packet.address = ip;
 
-    if (!SDLNet_UDP_Send(udpsocket, -1, &sdl_packet))
+    if (SDLNet_UDP_Send(udpsocket, -1, &sdl_packet) <= 0)
     {
         I_Error("NET_UDP_SendPacket: Error transmitting packet: %s",
                 SDLNet_GetError());
@@ -513,6 +514,9 @@ static net_packet_t *EscapePacket(net_packet_t *packet)
 // they will just be blackholed.
 static void LostConnection(addrpair_t *ap)
 {
+    char buf[32];
+    NET_SDL_AddrToString(&ap->net_addr, buf, sizeof(buf));
+    printf("Lost TCP connection to %s.\n", buf);
     SDLNet_TCP_DelSocket(active_sockets, ap->tcp_sock);
     SDLNet_TCP_Close(ap->tcp_sock);
     ap->tcp_sock = TCPSOCKET_CLOSED;
