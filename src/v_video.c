@@ -219,26 +219,26 @@ static void V_DrawPatchCrispy(int x, int y, patch_t *patch, int r)
 
     for ( ; col<w << FRACBITS ; x++, col+=dxi, desttop++, desttop2++)
     {
-        int top = -1;
+        int topdelta = -1;
         column = (column_t *)((byte *)patch + LONG(patch->columnofs[col >> FRACBITS]));
 
         // step through the posts in a column
         while (column->topdelta != 0xff)
         {
-            int height, srccol = 0;
+            int top, srccol = 0;
             // [crispy] support for DeePsea tall patches
-            if (column->topdelta <= top)
+            if (column->topdelta <= topdelta)
             {
-                top += column->topdelta;
+                topdelta += column->topdelta;
             }
             else
             {
-                top = column->topdelta;
+                topdelta = column->topdelta;
             }
-            height = ((y + top + column->length) * dy) >> FRACBITS;
+            top = ((y + topdelta) * dy) >> FRACBITS;
             source = (byte *)column + 3;
-            dest = desttop + ((top * dy) >> FRACBITS)*SCREENWIDTH;
-            dest2 = desttop2 + ((top * dy) >> FRACBITS)*SCREENWIDTH;
+            dest = desttop + ((topdelta * dy) >> FRACBITS)*SCREENWIDTH;
+            dest2 = desttop2 + ((topdelta * dy) >> FRACBITS)*SCREENWIDTH;
             count = (column->length * dy) >> FRACBITS;
 
             while (count--)
@@ -249,8 +249,8 @@ static void V_DrawPatchCrispy(int x, int y, patch_t *patch, int r)
                     dest2 += SCREENWIDTH;
                 }
 
-                // [crispy] prevent framebuffer overflows
-                if (height > count)
+                // [crispy] too high
+                if (top++ >= 0)
                 {
                     *dest = drawpatchpx(*dest, source[srccol >> FRACBITS]);
                 }
@@ -350,31 +350,31 @@ void V_DrawPatchFlipped(int x, int y, patch_t *patch)
 
     for ( ; col<w << FRACBITS ; x++, col+=dxi, desttop++)
     {
-        int top = -1;
+        int topdelta = -1;
         column = (column_t *)((byte *)patch + LONG(patch->columnofs[w-1-(col >> FRACBITS)]));
 
         // step through the posts in a column
         while (column->topdelta != 0xff )
         {
-            int height, srccol = 0;
+            int top, srccol = 0;
             // [crispy] support for DeePsea tall patches
-            if (column->topdelta <= top)
+            if (column->topdelta <= topdelta)
             {
-                top += column->topdelta;
+                topdelta += column->topdelta;
             }
             else
             {
-                top = column->topdelta;
+                topdelta = column->topdelta;
             }
-            height = ((y + top + column->length) * dy) >> FRACBITS;
+            top = ((y + topdelta) * dy) >> FRACBITS;
             source = (byte *)column + 3;
-            dest = desttop + ((top * dy) >> FRACBITS)*SCREENWIDTH;
+            dest = desttop + ((topdelta * dy) >> FRACBITS)*SCREENWIDTH;
             count = (column->length * dy) >> FRACBITS;
 
             while (count--)
             {
                 // [crispy] prevent framebuffer overflows
-                if (height > count)
+                if (top++ >= 0)
                 {
                     *dest = source[srccol >> FRACBITS];
                 }
