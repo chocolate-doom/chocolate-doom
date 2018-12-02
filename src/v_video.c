@@ -220,6 +220,19 @@ static void V_DrawPatchCrispy(int x, int y, patch_t *patch, int r)
     for ( ; col<w << FRACBITS ; x++, col+=dxi, desttop++, desttop2++)
     {
         int topdelta = -1;
+
+        // [crispy] too far left
+        if (x < 0)
+        {
+            continue;
+        }
+
+        // [crispy] too far right / width
+        if (x >= SCREENWIDTH)
+        {
+            break;
+        }
+
         column = (column_t *)((byte *)patch + LONG(patch->columnofs[col >> FRACBITS]));
 
         // step through the posts in a column
@@ -240,6 +253,18 @@ static void V_DrawPatchCrispy(int x, int y, patch_t *patch, int r)
             dest = desttop + ((topdelta * dy) >> FRACBITS)*SCREENWIDTH;
             dest2 = desttop2 + ((topdelta * dy) >> FRACBITS)*SCREENWIDTH;
             count = (column->length * dy) >> FRACBITS;
+
+            // [crispy] too low / height
+            if (top + count > SCREENHEIGHT)
+            {
+                count = SCREENHEIGHT - top;
+            }
+
+            // [crispy] nothing left to draw?
+            if (count < 1)
+            {
+                break;
+            }
 
             while (count--)
             {
@@ -351,6 +376,19 @@ void V_DrawPatchFlipped(int x, int y, patch_t *patch)
     for ( ; col<w << FRACBITS ; x++, col+=dxi, desttop++)
     {
         int topdelta = -1;
+
+        // [crispy] too far left
+        if (x < 0)
+        {
+            continue;
+        }
+
+        // [crispy] too far right / width
+        if (x >= SCREENWIDTH)
+        {
+            break;
+        }
+
         column = (column_t *)((byte *)patch + LONG(patch->columnofs[w-1-(col >> FRACBITS)]));
 
         // step through the posts in a column
@@ -371,9 +409,21 @@ void V_DrawPatchFlipped(int x, int y, patch_t *patch)
             dest = desttop + ((topdelta * dy) >> FRACBITS)*SCREENWIDTH;
             count = (column->length * dy) >> FRACBITS;
 
+            // [crispy] too low / height
+            if (top + count > SCREENHEIGHT)
+            {
+                count = SCREENHEIGHT - top;
+            }
+
+            // [crispy] nothing left to draw?
+            if (count < 1)
+            {
+                break;
+            }
+
             while (count--)
             {
-                // [crispy] prevent framebuffer overflows
+                // [crispy] too high
                 if (top++ >= 0)
                 {
                     *dest = source[srccol >> FRACBITS];
