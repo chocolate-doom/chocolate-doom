@@ -5,6 +5,7 @@ endforeach()
 # Common source files used by absolutely everything:
 
 set(COMMON_SOURCE_FILES
+    crispy.c             crispy.h
     i_main.c
     i_system.c           i_system.h
     m_argv.c             m_argv.h
@@ -83,6 +84,7 @@ set(GAME_SOURCE_FILES
     v_diskicon.c        v_diskicon.h
     v_video.c           v_video.h
                         v_patch.h
+    v_trans.c           v_trans.h
     w_checksum.c        w_checksum.h
     w_main.c            w_main.h
     w_wad.c             w_wad.h

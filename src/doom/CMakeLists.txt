@@ -1,6 +1,9 @@
 add_library(doom STATIC
             am_map.c        am_map.h
             deh_ammo.c
+            deh_bexincl.c
+            deh_bexpars.c
+            deh_bexptr.c
             deh_bexstr.c
             deh_cheat.c
             deh_doom.c
@@ -27,11 +30,17 @@ add_library(doom STATIC
             hu_lib.c        hu_lib.h
             hu_stuff.c      hu_stuff.h
             info.c          info.h
+                            m_background.h
+            m_crispy.c      m_crispy.h
             m_menu.c        m_menu.h
             m_random.c      m_random.h
+            p_bexptr.c
+            p_blockmap.c
             p_ceilng.c
             p_doors.c
             p_enemy.c
+            p_extnodes.c    p_extnodes.h
+            p_extsaveg.c    p_extsaveg.h
             p_floor.c
             p_inter.c       p_inter.h
             p_lights.c
@@ -49,6 +58,7 @@ add_library(doom STATIC
             p_telept.c
             p_tick.c        p_tick.h
             p_user.c
+            r_bmaps.c       r_bmaps.h
             r_bsp.c         r_bsp.h
             r_data.c        r_data.h
                             r_defs.h
@@ -60,6 +70,7 @@ add_library(doom STATIC
             r_sky.c         r_sky.h
                             r_state.h
             r_things.c      r_things.h
+            s_musinfo.c     s_musinfo.h
             s_sound.c       s_sound.h
             sounds.c        sounds.h
             statdump.c      statdump.h
