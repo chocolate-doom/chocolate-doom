@@ -72,7 +72,7 @@ struct txt_window_s
 
     // Actions that appear in the box at the bottom of the window
 
-    txt_window_action_t *actions[3];
+    txt_widget_t *actions[3];
 
     // Callback functions to invoke when keys/mouse buttons are pressed
 
@@ -159,7 +159,7 @@ void TXT_SetWindowPosition(txt_window_t *window,
  */
 
 void TXT_SetWindowAction(txt_window_t *window, txt_horiz_align_t position,
-                         txt_window_action_t *action);
+                         TXT_UNCAST_ARG(action));
 
 /**
  * Set a callback function to be invoked whenever a key is pressed within

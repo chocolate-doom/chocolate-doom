@@ -19,22 +19,12 @@
 // Strife Hub Saving Code
 //
 
-// For GNU C and POSIX targets, dirent.h should be available. Otherwise, for
-// Visual C++, we need to include the win_opendir module.
-#if defined(_MSC_VER)
-#include <win_opendir.h>
-#elif defined(__GNUC__) || defined(POSIX)
-#include <dirent.h>
-#elif defined(__WATCOMC__)
-#include <direct.h>
-#else
-#error Need an include for dirent.h!
-#endif
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "z_zone.h"
+#include "i_glob.h"
 #include "i_system.h"
 #include "d_player.h"
 #include "deh_str.h"
@@ -61,32 +51,27 @@ char character_name[CHARACTER_NAME_LEN]; // Name of "character" for saveslot
 //
 void ClearTmp(void)
 {
-    DIR *sp2dir = NULL;
-    struct dirent *f = NULL;
+    glob_t *glob;
 
     if(savepathtemp == NULL)
         I_Error("you fucked up savedir man!");
 
-    if(!(sp2dir = opendir(savepathtemp)))
+    glob = I_StartGlob(savepathtemp, "*", 0);
+    if (glob == NULL)
         I_Error("ClearTmp: Couldn't open dir %s", savepathtemp);
 
-    while((f = readdir(sp2dir)))
+    for (;;)
     {
-        char *filepath = NULL;
+        const char *path = I_NextGlob(glob);
 
-        // haleyjd: skip "." and ".." without assuming they're the
-        // first two entries like the original code did.
-        if(!strcmp(f->d_name, ".") || !strcmp(f->d_name, ".."))
-            continue;
-
-        // haleyjd: use M_SafeFilePath, not sprintf
-        filepath = M_SafeFilePath(savepathtemp, f->d_name);
-        remove(filepath);
-
-        Z_Free(filepath);
+        if (path == NULL)
+        {
+            break;
+        }
+        remove(path);
     }
 
-    closedir(sp2dir);
+    I_EndGlob(glob);
 }
 
 //
@@ -96,30 +81,28 @@ void ClearTmp(void)
 //
 void ClearSlot(void)
 {
-    DIR *spdir = NULL;
-    struct dirent *f = NULL;
+    glob_t *glob;
 
     if(savepath == NULL)
         I_Error("userdir is fucked up man!");
 
-    if(!(spdir = opendir(savepath)))
+    glob = I_StartGlob(savepath, "*", 0);
+    if (glob == NULL)
         I_Error("ClearSlot: Couldn't open dir %s", savepath);
 
-    while((f = readdir(spdir)))
+    for (;;)
     {
-        char *filepath = NULL;
+        const char *filepath = I_NextGlob(glob);
 
-        if(!strcmp(f->d_name, ".") || !strcmp(f->d_name, ".."))
-            continue;
-        
-        // haleyjd: use M_SafeFilePath, not sprintf
-        filepath = M_SafeFilePath(savepath, f->d_name);
+        if (filepath == NULL)
+        {
+            break;
+        }
+
         remove(filepath);
-
-        Z_Free(filepath);
     }
 
-    closedir(spdir);
+    I_EndGlob(glob);
 }
 
 //
@@ -129,37 +112,36 @@ void ClearSlot(void)
 //
 void FromCurr(void)
 {
-    DIR *sp2dir = NULL;
-    struct dirent *f = NULL;
+    glob_t *glob;
 
-    if(!(sp2dir = opendir(savepathtemp)))
+    glob = I_StartGlob(savepathtemp, "*", 0);
+
+    if (glob == NULL)
         I_Error("FromCurr: Couldn't open dir %s", savepathtemp);
 
-    while((f = readdir(sp2dir)))
+    for (;;)
     {
-        byte *filebuffer  = NULL;
-        int   filelen     = 0;
-        char *srcfilename = NULL;
-        char *dstfilename = NULL;
+        byte *filebuffer;
+        int filelen;
+        const char *srcfilename;
+        char *dstfilename;
 
-        // haleyjd: skip "." and ".." without assuming they're the
-        // first two entries like the original code did.
-        if(!strcmp(f->d_name, ".") || !strcmp(f->d_name, ".."))
-            continue;
+        srcfilename = I_NextGlob(glob);
+        if (srcfilename == NULL)
+        {
+            break;
+        }
 
-        // haleyjd: use M_SafeFilePath, NOT sprintf.
-        srcfilename = M_SafeFilePath(savepathtemp, f->d_name);
-        dstfilename = M_SafeFilePath(savepath,     f->d_name);
+        dstfilename = M_SafeFilePath(savepath, M_BaseName(srcfilename));
 
         filelen = M_ReadFile(srcfilename, &filebuffer);
         M_WriteFile(dstfilename, filebuffer, filelen);
 
         Z_Free(filebuffer);
-        Z_Free(srcfilename);
         Z_Free(dstfilename);
     }
 
-    closedir(sp2dir);
+    I_EndGlob(glob);
 }
 
 //
@@ -169,39 +151,39 @@ void FromCurr(void)
 //
 void ToCurr(void)
 {
-    DIR *spdir = NULL;
-    struct dirent *f = NULL;
+    glob_t *glob;
 
     ClearTmp();
 
     // BUG: Rogue copypasta'd this error message, which is why we don't know
     // the real original name of this function.
-    if(!(spdir = opendir(savepath)))
+    glob = I_StartGlob(savepath, "*", 0);
+    if (glob == NULL)
         I_Error("ClearSlot: Couldn't open dir %s", savepath);
 
-    while((f = readdir(spdir)))
+    for (;;)
     {
-        byte *filebuffer  = NULL;
-        int   filelen     = 0;
-        char *srcfilename = NULL;
-        char *dstfilename = NULL;
+        byte *filebuffer;
+        int filelen;
+        const char *srcfilename;
+        char *dstfilename;
 
-        if(!strcmp(f->d_name, ".") || !strcmp(f->d_name, ".."))
-            continue;
+        srcfilename = I_NextGlob(glob);
+        if (srcfilename == NULL)
+        {
+            break;
+        }
 
-        // haleyjd: use M_SafeFilePath, NOT sprintf.
-        srcfilename = M_SafeFilePath(savepath,     f->d_name);
-        dstfilename = M_SafeFilePath(savepathtemp, f->d_name);
+        dstfilename = M_SafeFilePath(savepathtemp, M_BaseName(srcfilename));
 
         filelen = M_ReadFile(srcfilename, &filebuffer);
         M_WriteFile(dstfilename, filebuffer, filelen);
 
         Z_Free(filebuffer);
-        Z_Free(srcfilename);
         Z_Free(dstfilename);
     }
 
-    closedir(spdir);
+    I_EndGlob(glob);
 }
 
 //

@@ -67,11 +67,13 @@
 
 #define PRINTF_ATTR(fmt, first) __attribute__((format(printf, fmt, first)))
 #define PRINTF_ARG_ATTR(x) __attribute__((format_arg(x)))
+#define NORETURN __attribute__((noreturn))
 
 #else
 #define PACKEDATTR
 #define PRINTF_ATTR(fmt, first)
 #define PRINTF_ARG_ATTR(x)
+#define NORETURN
 #endif
 
 #ifdef __WATCOMC__

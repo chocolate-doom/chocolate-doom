@@ -262,6 +262,10 @@ static void InitConfig(void)
     SetPlayerNameDefault();
 
     M_LoadDefaults();
+
+    // Create and configure the music pack directory if it does not
+    // already exist.
+    M_SetMusicPackDir();
 }
 
 //

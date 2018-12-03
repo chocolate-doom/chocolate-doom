@@ -422,7 +422,24 @@ void D_DoomMain(void)
     D_SetGameDescription();
     AdjustForMacIWAD();
 
+    //!
+    // @category mod
+    //
+    // Disable auto-loading of .wad files.
+    //
+    if (!M_ParmExists("-noautoload"))
+    {
+        char *autoload_dir;
+        autoload_dir = M_GetAutoloadDir("hexen.wad");
+        // TODO? DEH_AutoLoadPatches(autoload_dir);
+        W_AutoLoadWADs(autoload_dir);
+        free(autoload_dir);
+    }
+
     HandleArgs();
+
+    // Generate the WAD hash table.  Speed things up a bit.
+    W_GenerateHashTable();
 
     I_PrintStartupBanner(gamedescription);
 

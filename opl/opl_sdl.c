@@ -75,7 +75,7 @@ static int opl_opl3mode;
 
 // Temporary mixing buffer used by the mixing callback.
 
-static int32_t *mix_buffer = NULL;
+static uint8_t *mix_buffer = NULL;
 
 // Register number that was written.
 
@@ -155,36 +155,32 @@ static void AdvanceTime(unsigned int nsamples)
 
 // Call the OPL emulator code to fill the specified buffer.
 
-static void FillBuffer(int16_t *buffer, unsigned int nsamples)
+static void FillBuffer(uint8_t *buffer, unsigned int nsamples)
 {
     // This seems like a reasonable assumption.  mix_buffer is
     // 1 second long, which should always be much longer than the
     // SDL mix buffer.
-
     assert(nsamples < mixing_freq);
 
-    OPL3_GenerateStream(&opl_chip, buffer, nsamples);
+    // OPL output is generated into temporary buffer and then mixed
+    // (to avoid overflows etc.)
+    OPL3_GenerateStream(&opl_chip, (Bit16s *) mix_buffer, nsamples);
+    SDL_MixAudioFormat(buffer, mix_buffer, AUDIO_S16SYS, nsamples * 4,
+                       SDL_MIX_MAXVOLUME);
 }
 
 // Callback function to fill a new sound buffer:
 
-static void OPL_Mix_Callback(void *udata,
-                             Uint8 *byte_buffer,
-                             int buffer_bytes)
+static void OPL_Mix_Callback(void *udata, Uint8 *buffer, int len)
 {
-    int16_t *buffer;
-    unsigned int buffer_len;
-    unsigned int filled = 0;
-
-    // Buffer length in samples (quadrupled, because of 16-bit and stereo)
-
-    buffer = (int16_t *) byte_buffer;
-    buffer_len = buffer_bytes / 4;
+    unsigned int filled, buffer_samples;
 
     // Repeatedly call the OPL emulator update function until the buffer is
     // full.
+    filled = 0;
+    buffer_samples = len / 4;
 
-    while (filled < buffer_len)
+    while (filled < buffer_samples)
     {
         uint64_t next_callback_time;
         uint64_t nsamples;
@@ -197,7 +193,7 @@ static void OPL_Mix_Callback(void *udata,
 
         if (opl_sdl_paused || OPL_Queue_IsEmpty(callback_queue))
         {
-            nsamples = buffer_len - filled;
+            nsamples = buffer_samples - filled;
         }
         else
         {
@@ -206,9 +202,9 @@ static void OPL_Mix_Callback(void *udata,
             nsamples = (next_callback_time - current_time) * mixing_freq;
             nsamples = (nsamples + OPL_SECOND - 1) / OPL_SECOND;
 
-            if (nsamples > buffer_len - filled)
+            if (nsamples > buffer_samples - filled)
             {
-                nsamples = buffer_len - filled;
+                nsamples = buffer_samples - filled;
             }
         }
 
@@ -216,7 +212,7 @@ static void OPL_Mix_Callback(void *udata,
 
         // Add emulator output to buffer.
 
-        FillBuffer(buffer + filled * 2, nsamples);
+        FillBuffer(buffer + filled * 4, nsamples);
         filled += nsamples;
 
         // Invoke callbacks for this point in time.
@@ -340,9 +336,8 @@ static int OPL_SDL_Init(unsigned int port_base)
         return 0;
     }
 
-    // Mix buffer:
-
-    mix_buffer = malloc(mixing_freq * sizeof(uint32_t) * 2);
+    // Mix buffer: four bytes per sample (16 bits * 2 channels):
+    mix_buffer = malloc(mixing_freq * 4);
 
     // Create the emulator structure:
 
@@ -352,8 +347,10 @@ static int OPL_SDL_Init(unsigned int port_base)
     callback_mutex = SDL_CreateMutex();
     callback_queue_mutex = SDL_CreateMutex();
 
-    // TODO: This should be music callback? or-?
-    Mix_HookMusic(OPL_Mix_Callback, NULL);
+    // Set postmix that adds the OPL music. This is deliberately done
+    // as a postmix and not using Mix_HookMusic() as the latter disables
+    // normal SDL_mixer music mixing.
+    Mix_SetPostMix(OPL_Mix_Callback, NULL);
 
     return 1;
 }

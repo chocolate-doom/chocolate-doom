@@ -66,9 +66,7 @@ set(STRIFE_SOURCES
     st_lib.c        st_lib.h
     st_stuff.c      st_stuff.h
     wi_stuff.c      wi_stuff.h)
-if(MSVC)
-    list(APPEND STRIFE_SOURCES "../../win32/win_opendir.c" "../../win32/win_opendir.h")
-endif()
+
 add_library(strife STATIC ${STRIFE_SOURCES})
 
 target_include_directories(strife PRIVATE "../" "../../win32/" "${CMAKE_CURRENT_BINARY_DIR}/../../")

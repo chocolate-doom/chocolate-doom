@@ -33,6 +33,7 @@
 #include "doomkeys.h"
 #include "i_system.h"
 #include "m_argv.h"
+#include "m_config.h"
 #include "m_misc.h"
 
 #include "z_zone.h"
@@ -45,6 +46,8 @@
 // default.cfg, savegames, etc.
 
 const char *configdir;
+
+static char *autoload_path = "";
 
 // Default filenames for configuration files.
 
@@ -969,6 +972,14 @@ static default_t extra_defaults_list[] =
     // possible without clipping occurring.
 
     CONFIG_VARIABLE_FLOAT(libsamplerate_scale),
+
+    //!
+    // Full path to a directory in which WAD files and dehacked patches
+    // can be placed to be automatically loaded on startup. A subdirectory
+    // of this directory matching the IWAD name is checked to find the
+    // files to load.
+
+    CONFIG_VARIABLE_STRING(autoload_path),
 
     //!
     // Full path to a directory containing configuration files for
@@ -2375,7 +2386,10 @@ void M_SaveDefaultsAlternate(const char *main, const char *extra)
 void M_LoadDefaults (void)
 {
     int i;
- 
+
+    // This variable is a special snowflake for no good reason.
+    M_BindStringVariable("autoload_path", &autoload_path);
+
     // check for a custom default file
 
     //!
@@ -2609,6 +2623,45 @@ void M_SetConfigDir(const char *dir)
     M_MakeDirectory(configdir);
 }
 
+#define MUSIC_PACK_README \
+"Extract music packs into this directory in .flac or .ogg format;\n"   \
+"they will be automatically loaded based on filename to replace the\n" \
+"in-game music with high quality versions.\n\n" \
+"For more information check here:\n\n" \
+"  <https://www.chocolate-doom.org/wiki/index.php/Digital_music_packs>\n\n"
+
+// Set the value of music_pack_path if it is currently empty, and create
+// the directory if necessary.
+void M_SetMusicPackDir(void)
+{
+    const char *current_path;
+    char *prefdir, *music_pack_path, *readme_path;
+
+    current_path = M_GetStringVariable("music_pack_path");
+
+    if (current_path != NULL && strlen(current_path) > 0)
+    {
+        return;
+    }
+
+    prefdir = SDL_GetPrefPath("", PACKAGE_TARNAME);
+    music_pack_path = M_StringJoin(prefdir, "music-packs", NULL);
+
+    M_MakeDirectory(prefdir);
+    M_MakeDirectory(music_pack_path);
+    M_SetVariable("music_pack_path", music_pack_path);
+
+    // We write a README file with some basic instructions on how to use
+    // the directory.
+    readme_path = M_StringJoin(music_pack_path, DIR_SEPARATOR_S,
+                               "README.txt", NULL);
+    M_WriteFile(readme_path, MUSIC_PACK_README, strlen(MUSIC_PACK_README));
+
+    free(readme_path);
+    free(music_pack_path);
+    free(prefdir);
+}
+
 //
 // Calculate the path to the directory to use to store save games.
 // Creates the directory as necessary.
@@ -2674,5 +2727,31 @@ char *M_GetSaveGameDir(const char *iwadname)
     }
 
     return savegamedir;
+}
+
+//
+// Calculate the path to the directory for autoloaded WADs/DEHs.
+// Creates the directory as necessary.
+//
+char *M_GetAutoloadDir(const char *iwadname)
+{
+    char *result;
+
+    if (autoload_path == NULL || strlen(autoload_path) == 0)
+    {
+        char *prefdir;
+        prefdir = SDL_GetPrefPath("", PACKAGE_TARNAME);
+        autoload_path = M_StringJoin(prefdir, "autoload", NULL);
+        free(prefdir);
+    }
+
+    M_MakeDirectory(autoload_path);
+
+    result = M_StringJoin(autoload_path, DIR_SEPARATOR_S, iwadname, NULL);
+    M_MakeDirectory(result);
+
+    // TODO: Add README file
+
+    return result;
 }
 

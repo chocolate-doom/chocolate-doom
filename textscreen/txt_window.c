@@ -35,8 +35,10 @@
 
 void TXT_SetWindowAction(txt_window_t *window,
                          txt_horiz_align_t position, 
-                         txt_window_action_t *action)
+                         TXT_UNCAST_ARG(action))
 {
+    TXT_CAST_ARG(txt_widget_t, action);
+
     if (window->actions[position] != NULL)
     {
         TXT_DestroyWidget(window->actions[position]);
@@ -48,7 +50,7 @@ void TXT_SetWindowAction(txt_window_t *window,
 
     if (action != NULL)
     {
-        action->widget.parent = &window->table.widget;
+        action->parent = &window->table.widget;
     }
 }
 
@@ -82,7 +84,9 @@ txt_window_t *TXT_NewWindow(const char *title)
     TXT_AddWidget(win, TXT_NewSeparator(NULL));
 
     for (i=0; i<3; ++i)
+    {
         win->actions[i] = NULL;
+    }
 
     TXT_AddDesktopWindow(win);
 
@@ -164,7 +168,7 @@ static void LayoutActionArea(txt_window_t *window)
 
     if (window->actions[TXT_HORIZ_LEFT] != NULL)
     {
-        widget = (txt_widget_t *) window->actions[TXT_HORIZ_LEFT];
+        widget = window->actions[TXT_HORIZ_LEFT];
 
         TXT_CalcWidgetSize(widget);
 
@@ -172,16 +176,17 @@ static void LayoutActionArea(txt_window_t *window)
         widget->y = window->window_y + window->window_h - widget->h - 1;
 
         // Adjust available space:
-
         space_available -= widget->w;
         space_left_offset += widget->w;
+
+        TXT_LayoutWidget(widget);
     }
 
     // Draw the right action
 
     if (window->actions[TXT_HORIZ_RIGHT] != NULL)
     {
-        widget = (txt_widget_t *) window->actions[TXT_HORIZ_RIGHT];
+        widget = window->actions[TXT_HORIZ_RIGHT];
 
         TXT_CalcWidgetSize(widget);
 
@@ -189,25 +194,27 @@ static void LayoutActionArea(txt_window_t *window)
         widget->y = window->window_y + window->window_h - widget->h - 1;
 
         // Adjust available space:
-
         space_available -= widget->w;
+
+        TXT_LayoutWidget(widget);
     }
 
     // Draw the center action
 
     if (window->actions[TXT_HORIZ_CENTER] != NULL)
     {
-        widget = (txt_widget_t *) window->actions[TXT_HORIZ_CENTER];
+        widget = window->actions[TXT_HORIZ_CENTER];
 
         TXT_CalcWidgetSize(widget);
 
         // The left and right widgets have left a space sandwiched between
         // them.  Center this widget within that space.
-
         widget->x = window->window_x
                   + space_left_offset
                   + (space_available - widget->w) / 2;
         widget->y = window->window_y + window->window_h - widget->h - 1;
+
+        TXT_LayoutWidget(widget);
     }
 }
 
@@ -417,7 +424,7 @@ static int MouseButtonPress(txt_window_t *window, int b)
 
     for (i=0; i<3; ++i)
     {
-        widget = (txt_widget_t *) window->actions[i];
+        widget = window->actions[i];
 
         if (widget != NULL
          && x >= widget->x && x < (signed) (widget->x + widget->w)

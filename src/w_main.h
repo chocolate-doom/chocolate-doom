@@ -25,5 +25,8 @@ void W_CheckCorrectIWAD(GameMission_t mission);
 
 int W_MergeDump (const char *file);
 
+// Autoload all .wad files from the given directory:
+void W_AutoLoadWADs(const char *path);
+
 #endif /* #ifndef W_MAIN_H */
 

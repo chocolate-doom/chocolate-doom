@@ -6,5 +6,6 @@
 
 #cmakedefine HAVE_LIBSAMPLERATE
 #cmakedefine HAVE_LIBPNG
+#cmakedefine HAVE_DIRENT_H
 #cmakedefine01 HAVE_DECL_STRCASECMP
 #cmakedefine01 HAVE_DECL_STRNCASECMP

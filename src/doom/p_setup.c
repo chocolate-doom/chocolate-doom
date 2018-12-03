@@ -554,6 +554,7 @@ void P_LoadThings (int lump)
             {
                 I_Error("P_LoadThings: Player %d start missing (vanilla crashes here)", i + 1);
             }
+            playerstartsingame[i] = false;
         }
     }
 
