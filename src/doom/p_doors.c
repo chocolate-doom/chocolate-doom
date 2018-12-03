@@ -226,6 +226,8 @@ EV_DoLockedDoor
 	{
 	    p->message = DEH_String(PD_BLUEO);
 	    S_StartSound(crispy->soundfix ? p->mo : NULL,sfx_oof);
+	    // [crispy] blinking key or skull in the status bar
+	    p->tryopen[it_bluecard] = KEYBLINKTICS;
 	    return 0;
 	}
 	break;
@@ -238,6 +240,8 @@ EV_DoLockedDoor
 	{
 	    p->message = DEH_String(PD_REDO);
 	    S_StartSound(crispy->soundfix ? p->mo : NULL,sfx_oof);
+	    // [crispy] blinking key or skull in the status bar
+	    p->tryopen[it_redcard] = KEYBLINKTICS;
 	    return 0;
 	}
 	break;
@@ -251,6 +255,8 @@ EV_DoLockedDoor
 	{
 	    p->message = DEH_String(PD_YELLOWO);
 	    S_StartSound(crispy->soundfix ? p->mo : NULL,sfx_oof);
+	    // [crispy] blinking key or skull in the status bar
+	    p->tryopen[it_yellowcard] = KEYBLINKTICS;
 	    return 0;
 	}
 	break;	
@@ -371,6 +377,8 @@ EV_VerticalDoor
 	{
 	    player->message = DEH_String(PD_BLUEK);
 	    S_StartSound(crispy->soundfix ? player->mo : NULL,sfx_oof);
+	    // [crispy] blinking key or skull in the status bar
+	    player->tryopen[it_bluecard] = KEYBLINKTICS;
 	    return;
 	}
 	break;
@@ -385,6 +393,8 @@ EV_VerticalDoor
 	{
 	    player->message = DEH_String(PD_YELLOWK);
 	    S_StartSound(crispy->soundfix ? player->mo : NULL,sfx_oof);
+	    // [crispy] blinking key or skull in the status bar
+	    player->tryopen[it_yellowcard] = KEYBLINKTICS;
 	    return;
 	}
 	break;
@@ -398,6 +408,8 @@ EV_VerticalDoor
 	{
 	    player->message = DEH_String(PD_REDK);
 	    S_StartSound(crispy->soundfix ? player->mo : NULL,sfx_oof);
+	    // [crispy] blinking key or skull in the status bar
+	    player->tryopen[it_redcard] = KEYBLINKTICS;
 	    return;
 	}
 	break;

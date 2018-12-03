@@ -390,6 +390,8 @@ static int	st_faceindex = 0;
 
 // holds key-type for each key box on bar
 static int	keyboxes[3]; 
+// [crispy] blinking key or skull in the status bar
+int		st_keyorskull[3];
 
 // a random number per tick
 static int	st_randomnumber;  
@@ -1417,6 +1419,16 @@ void ST_updateWidgets(void)
 
 	if (plyr->cards[i+3])
 	    keyboxes[i] = (keyboxes[i] == -1) ? i+3 : i+6; // [crispy] support combined card and skull keys
+
+	// [crispy] blinking key or skull in the status bar
+	if (plyr->tryopen[i])
+	{
+		--plyr->tryopen[i];
+		if (screenblocks >= CRISPY_HUD)
+		{
+			keyboxes[i] = (plyr->tryopen[i] & KEYBLINKMASK) ? i + st_keyorskull[i] : -1;
+		}
+	}
     }
 
     // refresh everything if this is him coming back to life

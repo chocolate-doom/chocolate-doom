@@ -1028,6 +1028,16 @@ void P_SpawnMapThing (mapthing_t* mthing)
     {
 	mobj->flags |= (Crispy_Random() & 3) << MF_TRANSSHIFT;
     }
+
+    // [crispy] blinking key or skull in the status bar
+    if (mobj->sprite == SPR_BSKU)
+	st_keyorskull[it_bluecard] = 3;
+    else
+    if (mobj->sprite == SPR_RSKU)
+	st_keyorskull[it_redcard] = 3;
+    else
+    if (mobj->sprite == SPR_YSKU)
+	st_keyorskull[it_yellowcard] = 3;
 }
 
 
