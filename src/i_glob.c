@@ -348,7 +348,7 @@ const char *I_NextGlob(glob_t *glob)
 
 #warning No native implementation of file globbing.
 
-glob_t *I_StartGlob(const char *directory, const char *glob)
+glob_t *I_StartGlob(const char *directory, const char *glob, int flags)
 {
     return NULL;
 }
