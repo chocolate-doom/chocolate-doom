@@ -281,6 +281,10 @@ extern lumpinfo_t *maplumpinfo;
 // [crispy] ... and the map lump about to load
 extern lumpinfo_t *savemaplumpinfo;
 
+// [crispy] blinking key or skull in the status bar
+#define KEYBLINKMASK 0x8
+#define KEYBLINKTICS (7*KEYBLINKMASK)
+extern int st_keyorskull[3];
 
 //
 // P_INTER
