@@ -443,6 +443,85 @@ static int F_RandomizeSound (int sound)
 	}
 }
 
+// [crispy] play attack sound based on state action function (instead of state number)
+static int F_SoundForState (int st)
+{
+	extern void A_BruisAttack();
+	extern void A_BspiAttack();
+	extern void A_CPosAttack();
+	extern void A_CyberAttack();
+	extern void A_FatAttack1();
+	extern void A_FatAttack2();
+	extern void A_FatAttack3();
+	extern void A_HeadAttack();
+	extern void A_PainAttack();
+	extern void A_PosAttack();
+	extern void A_SargAttack();
+	extern void A_SkelFist();
+	extern void A_SkelMissile();
+	extern void A_SkelWhoosh();
+	extern void A_SkullAttack();
+	extern void A_SPosAttack();
+	extern void A_TroopAttack();
+	extern void A_VileTarget();
+
+	void *const castaction = (void *) caststate->action.acv;
+
+	// [crispy] fix Doomguy in casting sequence
+	if (castaction == NULL)
+	{
+		if (st == S_PLAY_ATK2)
+			return sfx_dshtgn;
+		else
+			return 0;
+	}
+	// [crispy] sound hacks....
+	else
+	if (castaction == A_PosAttack)
+		return sfx_pistol;
+	else
+	if (castaction == A_SPosAttack ||
+	    castaction == A_CPosAttack)
+		return sfx_shotgn;
+	else
+	if (castaction == A_VileTarget)
+		return sfx_vilatk;
+	else
+	if (castaction == A_SkelWhoosh)
+		return sfx_skeswg;
+	else
+	if (castaction == A_SkelFist)
+		return sfx_skepch;
+	else
+	if (castaction == A_SkelMissile)
+		return sfx_skeatk;
+	else
+	if (castaction == A_FatAttack1 ||
+	    castaction == A_FatAttack2 ||
+	    castaction == A_FatAttack3 ||
+	    castaction == A_HeadAttack ||
+	    castaction == A_BruisAttack)
+		return sfx_firsht;
+	else
+	if (castaction == A_TroopAttack)
+		return sfx_claw;
+	else
+	if (castaction == A_SargAttack)
+		return sfx_sgtatk;
+	else
+	if (castaction == A_SkullAttack ||
+	    castaction == A_PainAttack)
+		return sfx_sklatk;
+	else
+	if (castaction == A_BspiAttack)
+		return sfx_plasma;
+	else
+	if (castaction == A_CyberAttack)
+		return sfx_rlaunc;
+	else
+		return 0;
+}
+
 //
 // F_StartCast
 //
@@ -519,6 +598,8 @@ void F_CastTicker (void)
 	caststate = &states[st];
 	castframes++;
 	
+	sfx = F_SoundForState(st);
+/*
 	// sound hacks....
 	switch (st)
 	{
@@ -551,6 +632,7 @@ void F_CastTicker (void)
 	  default: sfx = 0; break;
 	}
 		
+*/
 	if (sfx)
 	    S_StartSound (NULL, sfx);
     }
