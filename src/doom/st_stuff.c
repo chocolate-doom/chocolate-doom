@@ -1423,10 +1423,22 @@ void ST_updateWidgets(void)
 	// [crispy] blinking key or skull in the status bar
 	if (plyr->tryopen[i])
 	{
-		--plyr->tryopen[i];
-		if (screenblocks >= CRISPY_HUD)
+#if defined(CRISPY_KEYBLINK_WITH_SOUND)
+		if (!(plyr->tryopen[i] & (2*KEYBLINKMASK-1)))
 		{
-			keyboxes[i] = (plyr->tryopen[i] & KEYBLINKMASK) ? i + st_keyorskull[i] : -1;
+			S_StartSound(NULL, sfx_itemup);
+		}
+#endif
+#if defined(CRISPY_KEYBLINK_IN_CLASSIC_HUD)
+		if (screenblocks < CRISPY_HUD && !(plyr->tryopen[i] & (KEYBLINKMASK-1)))
+		{
+			st_firsttime = true;
+		}
+#else
+		if (screenblocks >= CRISPY_HUD)
+#endif
+		{
+			keyboxes[i] = (--plyr->tryopen[i] & KEYBLINKMASK) ? i + st_keyorskull[i] : -1;
 		}
 	}
     }
