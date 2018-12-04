@@ -1434,11 +1434,13 @@ void ST_updateWidgets(void)
 		{
 			st_firsttime = true;
 		}
-#else
+#endif
+		plyr->tryopen[i]--;
+#if !defined(CRISPY_KEYBLINK_IN_CLASSIC_HUD)
 		if (screenblocks >= CRISPY_HUD)
 #endif
 		{
-			keyboxes[i] = (--plyr->tryopen[i] & KEYBLINKMASK) ? i + st_keyorskull[i] : -1;
+			keyboxes[i] = (plyr->tryopen[i] & KEYBLINKMASK) ? i + st_keyorskull[i] : -1;
 		}
 	}
     }
