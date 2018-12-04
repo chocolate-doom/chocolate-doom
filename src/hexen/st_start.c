@@ -278,7 +278,7 @@ void ST_Message(const char *message, ...)
 //
 //==========================================================================
 
-void ST_RealMessage(char *message, ...)
+void ST_RealMessage(const char *message, ...)
 {
     va_list argptr;
 
