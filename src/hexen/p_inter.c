@@ -53,7 +53,7 @@ static void TryPickupArtifact(player_t * player, artitype_t artifactType,
                               mobj_t * artifact);
 static void TryPickupWeapon(player_t * player, pclass_t weaponClass,
                             weapontype_t weaponType, mobj_t * weapon,
-                            char *message);
+                            const char *message);
 static void TryPickupWeaponPiece(player_t * player, pclass_t matchClass,
                                  int pieceValue, mobj_t * pieceMobj);
 
@@ -190,7 +190,7 @@ boolean P_GiveMana(player_t * player, manatype_t mana, int count)
 
 static void TryPickupWeapon(player_t * player, pclass_t weaponClass,
                             weapontype_t weaponType, mobj_t * weapon,
-                            char *message)
+                            const char *message)
 {
     boolean remove;
     boolean gaveMana;
