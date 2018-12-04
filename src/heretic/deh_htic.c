@@ -25,7 +25,7 @@
 #include "info.h"
 #include "m_argv.h"
 
-char *deh_signatures[] =
+const char *deh_signatures[] =
 {
     "Patch File for HHE v1.0",
     "Patch File for HHE v1.1",
