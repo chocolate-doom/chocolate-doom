@@ -241,7 +241,7 @@ int S_GetCurrentCDTrack(void)
 //
 //==========================================================================
 
-void S_StartSongName(char *songLump, boolean loop)
+void S_StartSongName(const char *songLump, boolean loop)
 {
     int lumpnum;
     int cdTrack;
