@@ -29,6 +29,7 @@
 
 #include "deh_defs.h"
 #include "deh_io.h"
+#include "deh_main.h"
 
 extern deh_section_t *deh_section_types[];
 extern const char *deh_signatures[];
