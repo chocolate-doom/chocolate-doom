@@ -443,28 +443,56 @@ static int F_RandomizeSound (int sound)
 	}
 }
 
+extern void A_BruisAttack();
+extern void A_BspiAttack();
+extern void A_CPosAttack();
+extern void A_CyberAttack();
+extern void A_FatAttack1();
+extern void A_FatAttack2();
+extern void A_FatAttack3();
+extern void A_HeadAttack();
+extern void A_PainAttack();
+extern void A_PosAttack();
+extern void A_SargAttack();
+extern void A_SkelFist();
+extern void A_SkelMissile();
+extern void A_SkelWhoosh();
+extern void A_SkullAttack();
+extern void A_SPosAttack();
+extern void A_TroopAttack();
+extern void A_VileTarget();
+
+typedef struct
+{
+	void *const action;
+	const int sound;
+} actionsound_t;
+
+static const actionsound_t actionsounds[] =
+{
+	{A_PosAttack, sfx_pistol},
+	{A_SPosAttack, sfx_shotgn},
+	{A_CPosAttack, sfx_shotgn},
+	{A_VileTarget, sfx_vilatk},
+	{A_SkelWhoosh, sfx_skeswg},
+	{A_SkelFist, sfx_skepch},
+	{A_SkelMissile, sfx_skeatk},
+	{A_FatAttack1, sfx_firsht},
+	{A_FatAttack2, sfx_firsht},
+	{A_FatAttack3, sfx_firsht},
+	{A_HeadAttack, sfx_firsht},
+	{A_BruisAttack, sfx_firsht},
+	{A_TroopAttack, sfx_claw},
+	{A_SargAttack, sfx_sgtatk},
+	{A_SkullAttack, sfx_sklatk},
+	{A_PainAttack, sfx_sklatk},
+	{A_BspiAttack, sfx_plasma},
+	{A_CyberAttack, sfx_rlaunc},
+};
+
 // [crispy] play attack sound based on state action function (instead of state number)
 static int F_SoundForState (int st)
 {
-	extern void A_BruisAttack();
-	extern void A_BspiAttack();
-	extern void A_CPosAttack();
-	extern void A_CyberAttack();
-	extern void A_FatAttack1();
-	extern void A_FatAttack2();
-	extern void A_FatAttack3();
-	extern void A_HeadAttack();
-	extern void A_PainAttack();
-	extern void A_PosAttack();
-	extern void A_SargAttack();
-	extern void A_SkelFist();
-	extern void A_SkelMissile();
-	extern void A_SkelWhoosh();
-	extern void A_SkullAttack();
-	extern void A_SPosAttack();
-	extern void A_TroopAttack();
-	extern void A_VileTarget();
-
 	void *const castaction = (void *) caststate->action.acv;
 
 	// [crispy] fix Doomguy in casting sequence
@@ -475,51 +503,20 @@ static int F_SoundForState (int st)
 		else
 			return 0;
 	}
-	// [crispy] sound hacks....
 	else
-	if (castaction == A_PosAttack)
-		return sfx_pistol;
-	else
-	if (castaction == A_SPosAttack ||
-	    castaction == A_CPosAttack)
-		return sfx_shotgn;
-	else
-	if (castaction == A_VileTarget)
-		return sfx_vilatk;
-	else
-	if (castaction == A_SkelWhoosh)
-		return sfx_skeswg;
-	else
-	if (castaction == A_SkelFist)
-		return sfx_skepch;
-	else
-	if (castaction == A_SkelMissile)
-		return sfx_skeatk;
-	else
-	if (castaction == A_FatAttack1 ||
-	    castaction == A_FatAttack2 ||
-	    castaction == A_FatAttack3 ||
-	    castaction == A_HeadAttack ||
-	    castaction == A_BruisAttack)
-		return sfx_firsht;
-	else
-	if (castaction == A_TroopAttack)
-		return sfx_claw;
-	else
-	if (castaction == A_SargAttack)
-		return sfx_sgtatk;
-	else
-	if (castaction == A_SkullAttack ||
-	    castaction == A_PainAttack)
-		return sfx_sklatk;
-	else
-	if (castaction == A_BspiAttack)
-		return sfx_plasma;
-	else
-	if (castaction == A_CyberAttack)
-		return sfx_rlaunc;
-	else
-		return 0;
+	{
+		int i;
+
+		for (i = 0; i < arrlen(actionsounds); i++)
+		{
+			if (castaction == actionsounds[i].action)
+			{
+				return actionsounds[i].sound;
+			}
+		}
+	}
+
+	return 0;
 }
 
 //
