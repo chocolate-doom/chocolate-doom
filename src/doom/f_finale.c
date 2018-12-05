@@ -446,6 +446,7 @@ static int F_RandomizeSound (int sound)
 extern void A_BruisAttack();
 extern void A_BspiAttack();
 extern void A_CPosAttack();
+extern void A_CPosRefire();
 extern void A_CyberAttack();
 extern void A_FatAttack1();
 extern void A_FatAttack2();
@@ -466,34 +467,37 @@ typedef struct
 {
 	void *const action;
 	const int sound;
+	const boolean early;
 } actionsound_t;
 
 static const actionsound_t actionsounds[] =
 {
-	{A_PosAttack, sfx_pistol},
-	{A_SPosAttack, sfx_shotgn},
-	{A_CPosAttack, sfx_shotgn},
-	{A_VileTarget, sfx_vilatk},
-	{A_SkelWhoosh, sfx_skeswg},
-	{A_SkelFist, sfx_skepch},
-	{A_SkelMissile, sfx_skeatk},
-	{A_FatAttack1, sfx_firsht},
-	{A_FatAttack2, sfx_firsht},
-	{A_FatAttack3, sfx_firsht},
-	{A_HeadAttack, sfx_firsht},
-	{A_BruisAttack, sfx_firsht},
-	{A_TroopAttack, sfx_claw},
-	{A_SargAttack, sfx_sgtatk},
-	{A_SkullAttack, sfx_sklatk},
-	{A_PainAttack, sfx_sklatk},
-	{A_BspiAttack, sfx_plasma},
-	{A_CyberAttack, sfx_rlaunc},
+	{A_PosAttack,   sfx_pistol, false},
+	{A_SPosAttack,  sfx_shotgn, false},
+	{A_CPosAttack,  sfx_shotgn, false},
+	{A_CPosRefire,  sfx_shotgn, false},
+	{A_VileTarget,  sfx_vilatk, true},
+	{A_SkelWhoosh,  sfx_skeswg, false},
+	{A_SkelFist,    sfx_skepch, false},
+	{A_SkelMissile, sfx_skeatk, true},
+	{A_FatAttack1,  sfx_firsht, false},
+	{A_FatAttack2,  sfx_firsht, false},
+	{A_FatAttack3,  sfx_firsht, false},
+	{A_HeadAttack,  sfx_firsht, true},
+	{A_BruisAttack, sfx_firsht, true},
+	{A_TroopAttack, sfx_claw,   false},
+	{A_SargAttack,  sfx_sgtatk, true},
+	{A_SkullAttack, sfx_sklatk, false},
+	{A_PainAttack,  sfx_sklatk, true},
+	{A_BspiAttack,  sfx_plasma, false},
+	{A_CyberAttack, sfx_rlaunc, false},
 };
 
 // [crispy] play attack sound based on state action function (instead of state number)
 static int F_SoundForState (int st)
 {
 	void *const castaction = (void *) caststate->action.acv;
+	void *const nextaction = (void *) (&states[caststate->nextstate])->action.acv;
 
 	// [crispy] fix Doomguy in casting sequence
 	if (castaction == NULL)
@@ -509,9 +513,12 @@ static int F_SoundForState (int st)
 
 		for (i = 0; i < arrlen(actionsounds); i++)
 		{
-			if (castaction == actionsounds[i].action)
+			const actionsound_t *const as = &actionsounds[i];
+
+			if ((!as->early && castaction == as->action) ||
+			    (as->early && nextaction == as->action))
 			{
-				return actionsounds[i].sound;
+				return as->sound;
 			}
 		}
 	}
