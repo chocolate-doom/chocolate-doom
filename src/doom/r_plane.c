@@ -274,7 +274,9 @@ R_FindPlane
     if (check < lastvisplane)
 	return check;
 		
-    R_RaiseVisplanes(&check);
+    R_RaiseVisplanes(&check); // [crispy] remove VISPLANES limit
+    if (lastvisplane - visplanes == MAXVISPLANES && false)
+	I_Error ("R_FindPlane: no more visplanes");
 		
     lastvisplane++;
 
@@ -346,13 +348,13 @@ R_CheckPlane
   }
 	
     // make a new visplane
-    R_RaiseVisplanes(&pl);
+    R_RaiseVisplanes(&pl); // [crispy] remove VISPLANES limit
     lastvisplane->height = pl->height;
     lastvisplane->picnum = pl->picnum;
     lastvisplane->lightlevel = pl->lightlevel;
     
-//  if (lastvisplane - visplanes == MAXVISPLANES)
-//	I_Error ("R_CheckPlane: no more visplanes");
+    if (lastvisplane - visplanes == MAXVISPLANES && false) // [crispy] remove VISPLANES limit
+	I_Error ("R_CheckPlane: no more visplanes");
 
     pl = lastvisplane++;
     pl->minx = start;
