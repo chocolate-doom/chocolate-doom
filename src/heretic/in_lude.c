@@ -97,7 +97,7 @@ static fixed_t dSlideY[MAXPLAYERS];
 
 static char *KillersText[] = { "K", "I", "L", "L", "E", "R", "S" };
 
-extern char *LevelNames[];
+extern const char *LevelNames[];
 
 typedef struct
 {
