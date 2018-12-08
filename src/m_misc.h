@@ -25,7 +25,7 @@
 
 #include "doomtype.h"
 
-boolean M_WriteFile(const char *name, void *source, int length);
+boolean M_WriteFile(const char *name, const void *source, int length);
 int M_ReadFile(const char *name, byte **buffer);
 void M_MakeDirectory(const char *dir);
 char *M_TempFile(const char *s);
