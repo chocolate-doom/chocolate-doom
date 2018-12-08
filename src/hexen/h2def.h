@@ -926,7 +926,7 @@ extern int sc_Line;
 extern boolean sc_End;
 extern boolean sc_Crossed;
 extern boolean sc_FileScripts;
-extern char *sc_ScriptsDir;
+extern const char *sc_ScriptsDir;
 
 //------------------------------
 // SN_sonix.c
