@@ -32,7 +32,7 @@ const char *deh_signatures[] =
     NULL
 };
 
-static char *hhe_versions[] =
+static const char *hhe_versions[] =
 {
     "1.0", "1.2", "1.3"
 };
