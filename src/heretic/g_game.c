@@ -1567,7 +1567,7 @@ void G_InitNew(skill_t skill, int episode, int map)
 {
     int i;
     int speed;
-    static char *skyLumpNames[5] = {
+    static const char *skyLumpNames[5] = {
         "SKY1", "SKY2", "SKY3", "SKY1", "SKY3"
     };
 
