@@ -141,9 +141,9 @@ void R_InstallSpriteLump(int lump, unsigned frame, unsigned rotation,
 =================
 */
 
-void R_InitSpriteDefs(char **namelist)
+void R_InitSpriteDefs(const char **namelist)
 {
-    char **check;
+    const char **check;
     int i, l, frame, rotation;
     int start, end;
 
@@ -255,7 +255,7 @@ int newvissprite;
 ===================
 */
 
-void R_InitSprites(char **namelist)
+void R_InitSprites(const char **namelist)
 {
     int i;
 
