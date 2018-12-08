@@ -95,7 +95,7 @@ static signed int totalFrags[MAXPLAYERS];
 static fixed_t dSlideX[MAXPLAYERS];
 static fixed_t dSlideY[MAXPLAYERS];
 
-static char *KillersText[] = { "K", "I", "L", "L", "E", "R", "S" };
+static const char *KillersText[] = { "K", "I", "L", "L", "E", "R", "S" };
 
 extern const char *LevelNames[];
 
