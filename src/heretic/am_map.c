@@ -1500,7 +1500,7 @@ void AM_drawCrosshair(int color)
 
 void AM_Drawer(void)
 {
-    char *level_name;
+    const char *level_name;
     int numepisodes;
 
     if (!automapactive)
