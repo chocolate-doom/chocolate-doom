@@ -718,11 +718,6 @@ void TryRunTics (void)
         else
             counts = availabletics;
 
-        // [AM] If we've uncapped the framerate and there are no tics
-        //      to run, return early instead of waiting around.
-        if (counts == 0 && crispy->uncapped && leveltime > oldleveltime && screenvisible)
-            return;
-
         if (counts < 1)
             counts = 1;
 
@@ -731,6 +726,11 @@ void TryRunTics (void)
             OldNetSync();
         }
     }
+
+    // [AM] If we've uncapped the framerate and there are no tics
+    //      to run, return early instead of waiting around.
+    if (counts == 0 && crispy->uncapped && leveltime > oldleveltime && screenvisible)
+        return;
 
     if (counts < 1)
 	counts = 1;
