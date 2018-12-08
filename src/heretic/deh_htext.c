@@ -38,7 +38,7 @@
 typedef struct
 {
     unsigned int offsets[deh_hhe_num_versions];
-    char *string;
+    const char *string;
 } hhe_string_t;
 
 //     Offsets                 String
