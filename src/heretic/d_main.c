@@ -448,7 +448,6 @@ void D_CheckRecordFrom(void)
 
 char *iwadfile;
 
-char *basedefault = "heretic.cfg";
 
 void wadprintf(void)
 {
