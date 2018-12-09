@@ -858,7 +858,7 @@ void D_IdentifyVersion(void)
             if(!M_FileExists(voiceswad))
                 Z_Free(voiceswad);
             else
-                name = voiceswad; // STRIFE-FIXME: memory leak!!
+                name = voiceswad;
         }
 
         // not found? try global search paths
@@ -877,6 +877,7 @@ void D_IdentifyVersion(void)
         {
             // add it.
             D_AddFile(name);
+            p ? Z_Free(name) : free(name);
         }
     }
 }
