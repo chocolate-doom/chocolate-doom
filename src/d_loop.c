@@ -679,6 +679,11 @@ void TryRunTics (void)
     int	availabletics;
     int	counts;
 
+    // [AM] If we've uncapped the framerate and there are no tics
+    //      to run, return early instead of waiting around.
+    extern int leveltime;
+    #define return_early (crispy->uncapped && counts == 0 && leveltime > oldleveltime && screenvisible)
+
     // get real tics
     entertic = I_GetTime() / ticdup;
     realtics = entertic - oldentertics;
@@ -705,11 +710,14 @@ void TryRunTics (void)
     if (new_sync)
     {
 	counts = availabletics;
+
+        // [AM] If we've uncapped the framerate and there are no tics
+        //      to run, return early instead of waiting around.
+        if (return_early)
+            return;
     }
     else
     {
-        extern int leveltime;
-
         // decide how many tics to run
         if (realtics < availabletics-1)
             counts = realtics+1;
@@ -717,6 +725,11 @@ void TryRunTics (void)
             counts = realtics;
         else
             counts = availabletics;
+
+        // [AM] If we've uncapped the framerate and there are no tics
+        //      to run, return early instead of waiting around.
+        if (return_early)
+            return;
 
         if (counts < 1)
             counts = 1;
@@ -726,11 +739,6 @@ void TryRunTics (void)
             OldNetSync();
         }
     }
-
-    // [AM] If we've uncapped the framerate and there are no tics
-    //      to run, return early instead of waiting around.
-    if (counts == 0 && crispy->uncapped && leveltime > oldleveltime && screenvisible)
-        return;
 
     if (counts < 1)
 	counts = 1;
