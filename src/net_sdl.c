@@ -343,17 +343,14 @@ net_addr_t *NET_SDL_ResolveAddress(char *address)
     }
     else
     {
-	addr_hostname = address;
+	addr_hostname = M_StringDuplicate(address);
 	addr_port = port;
     }
     
     result = SDLNet_ResolveHost(&ip, addr_hostname, addr_port);
 
-    if (addr_hostname != address)
-    {
-	free(addr_hostname);
-    }
-    
+    free(addr_hostname);
+
     if (result)
     {
         // unable to resolve
