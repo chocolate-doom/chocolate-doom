@@ -800,7 +800,7 @@ static const char *ReadHashPrefix(char *line)
 // Parse a line from substitute music configuration file; returns error
 // message or NULL for no error.
 
-static char *ParseSubstituteLine(char *musicdir, char *line)
+static const char *ParseSubstituteLine(char *musicdir, char *line)
 {
     const char *hash_prefix;
     char *filename;
