@@ -128,7 +128,7 @@ static void NET_CL_FreeAddress(net_addr_t *addr)
 {
 }
 
-static net_addr_t *NET_CL_ResolveAddress(char *address)
+static net_addr_t *NET_CL_ResolveAddress(const char *address)
 {
     if (address == NULL)
     {
@@ -204,7 +204,7 @@ static void NET_SV_FreeAddress(net_addr_t *addr)
 {
 }
 
-static net_addr_t *NET_SV_ResolveAddress(char *address)
+static net_addr_t *NET_SV_ResolveAddress(const char *address)
 {
     if (address == NULL)
     {

@@ -87,7 +87,7 @@ struct _net_module_s
 
     // Try to resolve a name to an address
 
-    net_addr_t *(*ResolveAddress)(char *addr);
+    net_addr_t *(*ResolveAddress)(const char *addr);
 };
 
 // net_addr_t
