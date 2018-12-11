@@ -119,7 +119,7 @@ int maxplayers = MAXPLAYERS;
 static int WarpMap;
 static int demosequence;
 static int pagetic;
-static char *pagename;
+static const char *pagename;
 static char *SavePathConfig;
 
 // CODE --------------------------------------------------------------------
