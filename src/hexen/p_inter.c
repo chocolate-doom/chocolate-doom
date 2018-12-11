@@ -34,7 +34,7 @@ int ArmorIncrement[NUMCLASSES][NUMARMOR] = {
 int AutoArmorSave[NUMCLASSES] =
     { 15 * FRACUNIT, 10 * FRACUNIT, 5 * FRACUNIT, 0 };
 
-char *TextKeyMessages[] = {
+const char *TextKeyMessages[] = {
     TXT_KEY_STEEL,
     TXT_KEY_CAVE,
     TXT_KEY_AXE,
