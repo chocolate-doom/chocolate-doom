@@ -36,7 +36,7 @@
 // specified to a dedicated server.
 //
 
-static char *not_dedicated_options[] = 
+static const char *not_dedicated_options[] =
 {
     "-deh", "-iwad", "-cdrom", "-gameversion", "-nomonsters", "-respawn",
     "-fast", "-altdeath", "-deathmatch", "-turbo", "-merge", "-af", "-as",
