@@ -65,7 +65,7 @@ int numsprites;
 
 spriteframe_t sprtemp[30];
 int maxframe;
-const char *spritename;
+static const char *spritename;
 
 
 
