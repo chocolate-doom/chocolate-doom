@@ -711,7 +711,7 @@ boolean P_GivePower(player_t * player, powertype_t power)
 static void TryPickupArtifact(player_t * player, artitype_t artifactType,
                               mobj_t * artifact)
 {
-    static char *artifactMessages[NUMARTIFACTS] = {
+    static const char *artifactMessages[NUMARTIFACTS] = {
         NULL,
         TXT_ARTIINVULNERABILITY,
         TXT_ARTIHEALTH,
