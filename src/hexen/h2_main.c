@@ -93,7 +93,7 @@ extern boolean askforquit;
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 GameMode_t gamemode;
-const char *gamedescription;
+static const char *gamedescription;
 char *iwadfile;
 static char demolumpname[9];    // Demo lump to start playing.
 boolean nomonsters;             // checkparm of -nomonsters
