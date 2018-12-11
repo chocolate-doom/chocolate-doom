@@ -887,7 +887,7 @@ static boolean ReadSubstituteConfig(char *musicdir, const char *filename)
 
     while (line != NULL)
     {
-        char *error;
+        const char *error;
         char *next;
 
         // find end of line
