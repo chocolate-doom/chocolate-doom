@@ -186,7 +186,7 @@ static boolean ClientConnected(net_client_t *client)
 
 // Send a message to be displayed on a client's console
 
-static void NET_SV_SendConsoleMessage(net_client_t *client, char *s, ...)
+static void NET_SV_SendConsoleMessage(net_client_t *client, const char *s, ...)
 {
     char buf[1024];
     va_list args;
