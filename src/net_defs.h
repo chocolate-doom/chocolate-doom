@@ -248,7 +248,7 @@ typedef struct
     int max_players;
     int gamemode;
     int gamemission;
-    char *description;
+    const char *description;
     net_protocol_t protocol;
 } net_querydata_t;
 
