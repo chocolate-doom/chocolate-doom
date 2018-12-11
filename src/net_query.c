@@ -659,7 +659,7 @@ static void formatted_printf(int wide, const char *s, ...)
     }
 }
 
-static char *GameDescription(GameMode_t mode, GameMission_t mission)
+static const char *GameDescription(GameMode_t mode, GameMission_t mission)
 {
     switch (mission)
     {
