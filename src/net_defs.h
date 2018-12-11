@@ -242,7 +242,7 @@ typedef struct
 
 typedef struct
 {
-    char *version;
+    const char *version;
     int server_state;
     int num_players;
     int max_players;
