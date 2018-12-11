@@ -30,7 +30,7 @@ boolean NET_RecvPacket(net_context_t *context, net_addr_t **addr,
                        net_packet_t **packet);
 char *NET_AddrToString(net_addr_t *addr);
 void NET_FreeAddress(net_addr_t *addr);
-net_addr_t *NET_ResolveAddress(net_context_t *context, char *address);
+net_addr_t *NET_ResolveAddress(net_context_t *context, const char *address);
 
 #endif  /* #ifndef NET_IO_H */
 
