@@ -204,7 +204,7 @@ static void NET_SV_SendConsoleMessage(net_client_t *client, char *s, ...)
 
 // Send a message to all clients
 
-static void NET_SV_BroadcastMessage(char *s, ...)
+static void NET_SV_BroadcastMessage(const char *s, ...)
 {
     char buf[1024];
     va_list args;
