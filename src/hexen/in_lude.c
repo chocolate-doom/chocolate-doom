@@ -170,7 +170,7 @@ static void InitStats(void)
     int posnum;
     int slaughtercount;
     int playercount;
-    char *msgLumpName;
+    const char *msgLumpName;
     int msgSize;
     int msgLump;
 
