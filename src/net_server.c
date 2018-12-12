@@ -220,7 +220,7 @@ static void NET_SV_BroadcastMessage(const char *s, ...)
     {
         if (ClientConnected(&clients[i]))
         {
-            NET_SV_SendConsoleMessage(&clients[i], buf);
+            NET_SV_SendConsoleMessage(&clients[i], "%s", buf);
         }
     }
 
