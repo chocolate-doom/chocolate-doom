@@ -1036,6 +1036,14 @@ static void G_ReadGameParms (void)
     nomonsters = M_CheckParm ("-nomonsters");
 }
  
+// [crispy] take a screenshot after rendering the next frame
+static void G_CrispyScreenShot()
+{
+	// [crispy] increase screenshot filename limit
+	V_ScreenShot("DOOM%04i.%s");
+	crispy->cleanscreenshot = 0;
+}
+
 //
 // G_Ticker
 // Make ticcmd_ts for the players.
@@ -1093,9 +1101,8 @@ void G_Ticker (void)
 	        crispy->screenshotmsg = 4;
 	        D_Display();
 	        I_FinishUpdate();
-	        crispy->cleanscreenshot = 0;
 	    }
-	    V_ScreenShot("DOOM%04i.%s"); // [crispy] increase screenshot filename limit
+	    crispy->post_rendering_hook = G_CrispyScreenShot;
             players[consoleplayer].message = DEH_String("screen shot");
 	    crispy->screenshotmsg = 2;
 	    gameaction = ga_nothing; 
