@@ -900,12 +900,6 @@ void M_LoadSelect(int choice)
 //
 void M_LoadGame (int choice)
 {
-    // [crispy] forbid New Game and (Quick) Load while recording a demo
-    if (demorecording)
-    {
-	return;
-    }
-
     // [crispy] allow loading game while multiplayer demo playback
     if (netgame && !demoplayback)
     {
@@ -1224,7 +1218,7 @@ void M_DrawNewGame(void)
 
 void M_NewGame(int choice)
 {
-    // [crispy] forbid New Game and (Quick) Load while recording a demo
+    // [crispy] forbid New Game while recording a demo
     if (demorecording)
     {
 	return;
@@ -2487,17 +2481,9 @@ boolean M_Responder (event_t* ev)
         }
         else if (key == key_menu_load)     // Load
         {
-	    // [crispy] forbid New Game and (Quick) Load while recording a demo
-	    if (demorecording)
-	    {
-		S_StartSound(NULL,sfx_oof);
-	    }
-	    else
-	    {
 	    M_StartControlPanel();
 	    S_StartSound(NULL,sfx_swtchn);
 	    M_LoadGame(0);
-	    }
 	    return true;
         }
         else if (key == key_menu_volume)   // Sound Volume
@@ -2534,16 +2520,8 @@ boolean M_Responder (event_t* ev)
         }
         else if (key == key_menu_qload)    // Quickload
         {
-	    // [crispy] forbid New Game and (Quick) Load while recording a demo
-	    if (demorecording)
-	    {
-		S_StartSound(NULL,sfx_oof);
-	    }
-	    else
-	    {
 	    S_StartSound(NULL,sfx_swtchn);
 	    M_QuickLoad();
-	    }
 	    return true;
         }
         else if (key == key_menu_quit)     // Quit DOOM
@@ -2894,7 +2872,7 @@ void M_Drawer (void)
 	    // [crispy] shade unavailable menu items
 	    if ((currentMenu == &MainDef && i == savegame && (!usergame || gamestate != GS_LEVEL)) ||
 	        (currentMenu == &OptionsDef && i == endgame && (!usergame || netgame)) ||
-	        (currentMenu == &MainDef && i == loadgame && ((netgame && !demoplayback) || demorecording)) ||
+	        (currentMenu == &MainDef && i == loadgame && (netgame && !demoplayback)) ||
 	        (currentMenu == &MainDef && i == newgame && (demorecording || (netgame && !demoplayback))))
 	        dp_translation = cr[CR_DARK];
 
