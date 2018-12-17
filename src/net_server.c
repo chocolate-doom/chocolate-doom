@@ -186,7 +186,8 @@ static boolean ClientConnected(net_client_t *client)
 
 // Send a message to be displayed on a client's console
 
-static void NET_SV_SendConsoleMessage(net_client_t *client, char *s, ...)
+static void NET_SV_SendConsoleMessage(net_client_t *client, const char *s, ...) PRINTF_ATTR(2, 3);
+static void NET_SV_SendConsoleMessage(net_client_t *client, const char *s, ...)
 {
     char buf[1024];
     va_list args;
@@ -204,7 +205,8 @@ static void NET_SV_SendConsoleMessage(net_client_t *client, char *s, ...)
 
 // Send a message to all clients
 
-static void NET_SV_BroadcastMessage(char *s, ...)
+static void NET_SV_BroadcastMessage(const char *s, ...) PRINTF_ATTR(1, 2);
+static void NET_SV_BroadcastMessage(const char *s, ...)
 {
     char buf[1024];
     va_list args;
@@ -218,7 +220,7 @@ static void NET_SV_BroadcastMessage(char *s, ...)
     {
         if (ClientConnected(&clients[i]))
         {
-            NET_SV_SendConsoleMessage(&clients[i], buf);
+            NET_SV_SendConsoleMessage(&clients[i], "%s", buf);
         }
     }
 
@@ -544,7 +546,7 @@ static net_client_t *NET_SV_FindClient(net_addr_t *addr)
 
 // send a rejection packet to a client
 
-static void NET_SV_SendReject(net_addr_t *addr, char *msg)
+static void NET_SV_SendReject(net_addr_t *addr, const char *msg)
 {
     net_packet_t *packet;
 
