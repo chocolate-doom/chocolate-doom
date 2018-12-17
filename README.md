@@ -66,6 +66,7 @@ Crispy Doom strives for maximum compatibility with all "limit-removing Vanilla" 
 
 ### New command line parameters
 
+ * `-dm3` specifies the Deathmatch 3.0 rules for the netgame (weapons stay, items respawn).
  * `-episode 1` launches Hell on Earth and `-episode 2` launches No Rest for the Living episode if the Doom 2 IWAD shipped with the Doom 3: BFG Edition is used.
  * `-warp 1a` warps to the secret level E1M10: Sewers of XBox Doom IWAD.
  * `-mergedump <file>` merges the PWAD file(s) given on the command line with the IWAD file and writes the resulting data into the `<file>` given as argument. Might be considered as a replacement for the `DEUSF.EXE` tool.
