@@ -106,7 +106,7 @@ Crispy Doom strives for maximum compatibility with all "limit-removing Vanilla" 
 ## Download
 
 Binaries for Windows XP / Vista / 7 / 8.1 / 10 (both x86 and x64 editions) are available here: 
-http://www.greffrath.com/~fabian/crispy-doom_5.3.zip
+http://www.greffrath.com/~fabian/crispy-doom_5.4.zip
 
 A supplementary Music Pack that contains the fluidsynth library and a freely-available soundfont is available here:
 http://www.greffrath.com/~fabian/crispy-doom-music-pack_5.1.zip
@@ -157,8 +157,8 @@ Crispy Doom 5.4 has been released on December XX, 2018. This version demonstrate
 **Improvements**
 
  * Loading a savegame while recording a demo is allowed again, as requested by Looper and ZeroMaster010.
- * The uncapped framerate feature is now independent of network sync implementation, thanks to Wintermute0110 for the discussion. Formerly it was only implemented for the '-oldsync' implementation, but now that Choco has made 'newsync' the new default, it got added there as well.
- * In the Crispy HUD, missing keys will blink for a while after an attempt to use a linedef that requires them.
+ * The uncapped framerate feature is now independent of the network sync implementation, thanks to Wintermute0110 for the discussion. Formerly it was only implemented for the '-oldsync' implementation, but now that Choco has made 'newsync' the new default, it has been made available there as well.
+ * In the Crispy HUD, missing keys will blink for a second after an unsuccessful attempt to use a linedef that requires them.
  * Some framebuffer overflow prevention measures have been added back that somehow got lost during the conversion to the resolution-agnostic patch drawing implementation. This fixes a crash when showing the TITLEPIC of MALGNANT.WAD.
  * The the Doom 2 cast sequence, seestate and deathstate sounds are now randomized (if misc. sound fixes are enabled) according to JNechaevsky's idea. Also, death sequences in the cast are now randomly flipped, if the corresponding feature is enabled. Furthermore, the attack sounds are now played based on state action functions (instead of mere state numbers) as Zodomaniac suggested, so that monsters from SMOOTHED.wad now play their attack sounds properly in the cast sequence. Finally, Doomguy now properly migrates from his aiming state to the firing state and even plays the SSG sound when firing in the cast sequence.
  * A key binding to toggle vertical mouse movement (novert) as suggested by Looper has been added.
@@ -166,10 +166,10 @@ Crispy Doom 5.4 has been released on December XX, 2018. This version demonstrate
  * Only weapons available in the respective IWAD version (shareware/registered) are given when using cheat codes, as JNechaevsky suggested.
  * Loading a savegame from a WAD file different from the currently loaded one does not interrupt the current game anymore. Also, a check is performed if the requested map is actually available at all (e.g. MAP33 from BFG Edition IWAD when playing with the standard 32-map IWAD).
  * Using the `IDCLEV` cheat to non-existent levels doesn't exit the game anymore, according to mfrancis95's suggestion.
- * Sector interpolation during the 0th gametic is inhibited due to the request by JNechaevsky and Brad Harding.
- * Brightmaps for SW2SATYR, SW2LION and SW2GARG textures have been contributed by JNechaevsky.
- * Composite textures are now precached in `R_PrecacheLevel()`. This should prevent the last remaining rendering hiccupsin uncapped framerate mode.
- * Weapon pickup messages do now even show in multiplayer games, thanks to Zodomaniac for filing the bug nearly two years ago and to mfrancis95 for the inspiring idea that lead to the patch.
+ * Sector interpolation during the 0th gametic is inhibited due to the request by JNechaevsky and Brad Harding, eliminating some visual glitches when loading a savegame from the command line.
+ * Brightmaps for the SW2SATYR, SW2LION and SW2GARG textures have been contributed by JNechaevsky.
+ * Composite textures are now pre-cached in `R_PrecacheLevel()`. This should prevent the last remaining rendering hiccups in uncapped framerate mode.
+ * Weapon pickup messages are now even shown in multiplayer games, thanks to Zodomaniac for filing the bug nearly two years ago and to mfrancis95 for an implementation idea.
 
 **Bug Fixes**
 
@@ -177,13 +177,13 @@ Crispy Doom 5.4 has been released on December XX, 2018. This version demonstrate
  * Variable array lengths induced by making SCREENWIDTH non-const are now fixed thanks to zx64's pointer.
  * SSG availability is now reflected by the Shotgun (3) slot of the arms widget the way JNechaevsky and Brad Harding proposed.
  * Sound clipping in Doom 2 MAP08 and The Ultimate Doom E4M8 has been fixed as JNechaevsky suggested.
- * A crash in the shareware/registered mode triggered by using `IDMUS` as spotted by JNechaevsky has been eliminated.
+ * A crash in shareware/registered mode triggered by using `IDMUS` as spotted by JNechaevsky has been eliminated.
  * The minigun zombie's firing frames are now rendered full-bright.
- * Patchless columns are now treated the same as multi-patched ones. Thanks to RaphaelMode for providing a level that exposed the crash when a patchless column came into view. This is now fixed.
- * Updatingthe player's viewz on sector move has been fixed again. Thanks to Dwaze for pointing out this this was *still* not properly fixed yet!
- * With HUD digits colorization enabled, digits in the armor widget are blue if armor class >= 2, after Zodomaniac reported an ambiguity in Strain.
+ * Patchless columns are now treated the same as multi-patched ones. Thanks to RaphaelMode for providing a level that exposed a crash when a patchless column came into view, which is now fixed.
+ * Updating the player's viewz on sector movement has been fixed again. Thanks to Dwaze for pointing out this this was *still* not properly working yet!
+ * With HUD digits colorization enabled, digits in the armor widget are now blue if armor class >= 2, after Zodomaniac reported an ambiguity which becomes apparent in Strain.
  * Palette resetting by key pickup reported by mfrancis95 has been fixed.
- * The SDL audio backend is forcefully set on Windows to directsound, away from the buggy WASAPI default as Brad Harding requested.
+ * The SDL audio backend is forcefully set to directsound on Windows, away from the buggy WASAPI default as Brad Harding requested.
 
 Crispy Doom 5.4 is based on Chocolate Doom 3.0.0 and has merged all changes to the Chocolate Doom master branch up to commit [`482d302e`](https://github.com/chocolate-doom/chocolate-doom/commit/482d302ee846fb30d23d50ccff8549d300a81b75)
 
