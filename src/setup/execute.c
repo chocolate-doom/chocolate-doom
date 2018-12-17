@@ -143,8 +143,13 @@ void AddCmdLineParameter(execute_context_t *context, char *s, ...)
 
 #if defined(_WIN32)
 
-// Wait for the specified process to exit.  Returns the exit code.
+boolean OpenFolder(const char *path)
+{
+    // "If the function succeeds, it returns a value greater than 32."
+    return ShellExecute(NULL, "open", path, NULL, NULL, SW_SHOWDEFAULT) > 32;
+}
 
+// Wait for the specified process to exit.  Returns the exit code.
 static unsigned int WaitForProcessExit(HANDLE subprocess)
 {
     DWORD exit_code;
@@ -256,6 +261,22 @@ static int ExecuteCommand(const char *program, const char *arg)
 }
 
 #else
+
+boolean OpenFolder(const char *path)
+{
+    char *cmd;
+    int result;
+
+#if defined(__MACOSX__)
+    cmd = M_StringJoin("open \"", path, "\"", NULL);
+#else
+    cmd = M_StringJoin("xdg-open \"", path, "\"", NULL);
+#endif
+    result = system(cmd);
+    free(cmd);
+
+    return result == 0;
+}
 
 // Given the specified program name, get the full path to the program,
 // assuming that it is in the same directory as this program is.
