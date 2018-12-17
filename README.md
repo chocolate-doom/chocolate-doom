@@ -106,10 +106,7 @@ Crispy Doom strives for maximum compatibility with all "limit-removing Vanilla" 
 ## Download
 
 Binaries for Windows XP / Vista / 7 / 8.1 / 10 (both x86 and x64 editions) are available here: 
-http://www.greffrath.com/~fabian/crispy-doom_5.4.zip
-
-A supplementary Music Pack that contains the fluidsynth library and a freely-available soundfont is available here:
-http://www.greffrath.com/~fabian/crispy-doom-music-pack_5.1.zip
+https://github.com/fabiangreffrath/crispy-doom/releases/download/crispy-doom-5.4/crispy-doom_5.4.zip
 
 Daily builds of Crispy Doom can be found here:
 http://latest.chocolate-doom.org/
@@ -148,7 +145,7 @@ After successful compilation the resulting binaries can be found in the `src/` d
 
 ### Changes of Crispy Doom 5.4 from Crispy Doom 5.3
 
-Crispy Doom 5.4 has been released on December XX, 2018. This version demonstrates that there's always room for perfection and improvement ;)
+Crispy Doom 5.4 has been released on December 17, 2018. This version demonstrates that there's always room for perfection and improvement ;)
 
 **Features**
 
