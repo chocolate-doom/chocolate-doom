@@ -52,7 +52,7 @@ int sc_Line;
 boolean sc_End;
 boolean sc_Crossed;
 boolean sc_FileScripts = false;
-char *sc_ScriptsDir = "";
+const char *sc_ScriptsDir = "";
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 

@@ -29,9 +29,10 @@
 
 #include "deh_defs.h"
 #include "deh_io.h"
+#include "deh_main.h"
 
 extern deh_section_t *deh_section_types[];
-extern char *deh_signatures[];
+extern const char *deh_signatures[];
 
 static boolean deh_initialized = false;
 

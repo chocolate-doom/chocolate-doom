@@ -44,7 +44,7 @@ static boolean CheckedLockedDoor(mobj_t * mo, byte lock);
 int *TerrainTypes;
 struct
 {
-    char *name;
+    const char *name;
     int type;
 } TerrainTypeDefs[] =
 {

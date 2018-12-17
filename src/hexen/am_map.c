@@ -1427,7 +1427,7 @@ void AM_Drawer(void)
 
 // 8-player note:  Proper player color names here, too
 
-char *PlayerColorText[MAXPLAYERS] = {
+const char *PlayerColorText[MAXPLAYERS] = {
     "BLUE:",
     "RED:",
     "YELLOW:",
