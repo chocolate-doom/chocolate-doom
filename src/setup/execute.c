@@ -27,6 +27,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <process.h>
+#include <shellapi.h>
 
 #else
 
@@ -146,7 +147,7 @@ void AddCmdLineParameter(execute_context_t *context, char *s, ...)
 boolean OpenFolder(const char *path)
 {
     // "If the function succeeds, it returns a value greater than 32."
-    return ShellExecute(NULL, "open", path, NULL, NULL, SW_SHOWDEFAULT) > 32;
+    return (int)ShellExecute(NULL, "open", path, NULL, NULL, SW_SHOWDEFAULT) > 32;
 }
 
 // Wait for the specified process to exit.  Returns the exit code.
