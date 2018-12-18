@@ -235,7 +235,7 @@ static void CheckMasterStatus(void)
     }
 }
 
-static void PrintSHA1Digest(char *s, byte *digest)
+static void PrintSHA1Digest(const char *s, const byte *digest)
 {
     unsigned int i;
 

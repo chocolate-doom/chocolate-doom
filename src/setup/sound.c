@@ -22,6 +22,7 @@
 #include "m_config.h"
 #include "m_misc.h"
 
+#include "execute.h"
 #include "mode.h"
 #include "sound.h"
 
@@ -118,20 +119,7 @@ static txt_dropdown_list_t *OPLTypeSelector(void)
 
 static void OpenMusicPackDir(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
 {
-    char *cmd;
-    int result;
-
-#if defined(__MACOSX__)
-    cmd = M_StringJoin("open \"", music_pack_path, "\"", NULL);
-#elif defined(_WIN32)
-    cmd = M_StringJoin("start \"", music_pack_path, "\"", NULL);
-#else
-    cmd = M_StringJoin("xdg-open \"", music_pack_path, "\"", NULL);
-#endif
-    result = system(cmd);
-    free(cmd);
-
-    if (result != 0)
+    if (!OpenFolder(music_pack_path))
     {
         TXT_MessageBox("Error", "Failed to open music pack directory.");
     }

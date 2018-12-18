@@ -87,7 +87,7 @@ struct _net_module_s
 
     // Try to resolve a name to an address
 
-    net_addr_t *(*ResolveAddress)(char *addr);
+    net_addr_t *(*ResolveAddress)(const char *addr);
 };
 
 // net_addr_t
@@ -242,13 +242,13 @@ typedef struct
 
 typedef struct
 {
-    char *version;
+    const char *version;
     int server_state;
     int num_players;
     int max_players;
     int gamemode;
     int gamemission;
-    char *description;
+    const char *description;
     net_protocol_t protocol;
 } net_querydata_t;
 

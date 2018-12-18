@@ -153,7 +153,7 @@ static void Stop(void)
 //      Initializes the stats for single player mode
 //========================================================================
 
-static char *ClusMsgLumpNames[] = {
+static const char *ClusMsgLumpNames[] = {
     "clus1msg",
     "clus2msg",
     "clus3msg",
@@ -170,7 +170,7 @@ static void InitStats(void)
     int posnum;
     int slaughtercount;
     int playercount;
-    char *msgLumpName;
+    const char *msgLumpName;
     int msgSize;
     int msgLump;
 

@@ -54,7 +54,7 @@ void NET_AddModule(net_context_t *context, net_module_t *module)
     ++context->num_modules;
 }
 
-net_addr_t *NET_ResolveAddress(net_context_t *context, char *addr)
+net_addr_t *NET_ResolveAddress(net_context_t *context, const char *addr)
 {
     int i;
     net_addr_t *result;
