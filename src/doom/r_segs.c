@@ -384,7 +384,7 @@ R_StoreWallRange
 	return;		
 		
 #ifdef RANGECHECK
-    if (start >=viewwidth || start > stop)
+    if (UNLIKELY(start >=viewwidth || start > stop))
 	I_Error ("Bad R_RenderWallRange: %i to %i", start , stop);
 #endif
     

@@ -500,7 +500,7 @@ void R_Subsector (int num)
     subsector_t*	sub;
 	
 #ifdef RANGECHECK
-    if (num>=numsubsectors)
+    if (UNLIKELY(num>=numsubsectors))
 	I_Error ("R_Subsector: ss %i with numss = %i",
 		 num,
 		 numsubsectors);
@@ -540,7 +540,7 @@ void R_Subsector (int num)
     }
 
     // check for solidsegs overflow - extremely unsatisfactory!
-    if(newend > &solidsegs[32])
+    if (UNLIKELY(newend > &solidsegs[32]))
         I_Error("R_Subsector: solidsegs overflow (vanilla may crash here)\n");
 }
 

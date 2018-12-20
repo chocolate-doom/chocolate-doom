@@ -68,12 +68,16 @@
 #define PRINTF_ATTR(fmt, first) __attribute__((format(printf, fmt, first)))
 #define PRINTF_ARG_ATTR(x) __attribute__((format_arg(x)))
 #define NORETURN __attribute__((noreturn))
+#define LIKELY(x) __builtin_expect(!!(x), 1)
+#define UNLIKELY(x) __builtin_expect(!!(x), 0)
 
 #else
 #define PACKEDATTR
 #define PRINTF_ATTR(fmt, first)
 #define PRINTF_ARG_ATTR(x)
 #define NORETURN
+#define LIKELY(x) (x)
+#define UNLIKELY(x) (x)
 #endif
 
 #ifdef __WATCOMC__

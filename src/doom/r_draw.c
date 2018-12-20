@@ -113,9 +113,9 @@ void R_DrawColumn (void)
 	return; 
 				 
 #ifdef RANGECHECK 
-    if ((unsigned)dc_x >= SCREENWIDTH
+    if (UNLIKELY((unsigned)dc_x >= SCREENWIDTH
 	|| dc_yl < 0
-	|| dc_yh >= SCREENHEIGHT) 
+	|| dc_yh >= SCREENHEIGHT))
 	I_Error ("R_DrawColumn: %i to %i at %i", dc_yl, dc_yh, dc_x); 
 #endif 
 
@@ -221,9 +221,9 @@ void R_DrawColumnLow (void)
 	return; 
 				 
 #ifdef RANGECHECK 
-    if ((unsigned)dc_x >= SCREENWIDTH
+    if (UNLIKELY((unsigned)dc_x >= SCREENWIDTH
 	|| dc_yl < 0
-	|| dc_yh >= SCREENHEIGHT)
+	|| dc_yh >= SCREENHEIGHT))
     {
 	
 	I_Error ("R_DrawColumn: %i to %i at %i", dc_yl, dc_yh, dc_x);
@@ -302,8 +302,8 @@ void R_DrawFuzzColumn (void)
 	return; 
 
 #ifdef RANGECHECK 
-    if ((unsigned)dc_x >= SCREENWIDTH
-	|| dc_yl < 0 || dc_yh >= SCREENHEIGHT)
+    if (UNLIKELY((unsigned)dc_x >= SCREENWIDTH
+	|| dc_yl < 0 || dc_yh >= SCREENHEIGHT))
     {
 	I_Error ("R_DrawFuzzColumn: %i to %i at %i",
 		 dc_yl, dc_yh, dc_x);
@@ -367,8 +367,8 @@ void R_DrawFuzzColumnLow (void)
     x = dc_x << 1;
     
 #ifdef RANGECHECK 
-    if ((unsigned)x >= SCREENWIDTH
-	|| dc_yl < 0 || dc_yh >= SCREENHEIGHT)
+    if (UNLIKELY((unsigned)x >= SCREENWIDTH
+	|| dc_yl < 0 || dc_yh >= SCREENHEIGHT))
     {
 	I_Error ("R_DrawFuzzColumn: %i to %i at %i",
 		 dc_yl, dc_yh, dc_x);
@@ -433,9 +433,9 @@ void R_DrawTranslatedColumn (void)
 	return; 
 				 
 #ifdef RANGECHECK 
-    if ((unsigned)dc_x >= SCREENWIDTH
+    if (UNLIKELY((unsigned)dc_x >= SCREENWIDTH
 	|| dc_yl < 0
-	|| dc_yh >= SCREENHEIGHT)
+	|| dc_yh >= SCREENHEIGHT))
     {
 	I_Error ( "R_DrawColumn: %i to %i at %i",
 		  dc_yl, dc_yh, dc_x);
@@ -482,9 +482,9 @@ void R_DrawTranslatedColumnLow (void)
     x = dc_x << 1;
 				 
 #ifdef RANGECHECK 
-    if ((unsigned)x >= SCREENWIDTH
+    if (UNLIKELY((unsigned)x >= SCREENWIDTH
 	|| dc_yl < 0
-	|| dc_yh >= SCREENHEIGHT)
+	|| dc_yh >= SCREENHEIGHT))
     {
 	I_Error ( "R_DrawColumn: %i to %i at %i",
 		  dc_yl, dc_yh, x);
@@ -596,10 +596,10 @@ void R_DrawSpan (void)
     unsigned int xtemp, ytemp;
 
 #ifdef RANGECHECK
-    if (ds_x2 < ds_x1
+    if (UNLIKELY(ds_x2 < ds_x1
 	|| ds_x1<0
 	|| ds_x2>=SCREENWIDTH
-	|| (unsigned)ds_y>SCREENHEIGHT)
+	|| (unsigned)ds_y>SCREENHEIGHT))
     {
 	I_Error( "R_DrawSpan: %i to %i at %i",
 		 ds_x1,ds_x2,ds_y);
@@ -725,10 +725,10 @@ void R_DrawSpanLow (void)
     int spot;
 
 #ifdef RANGECHECK
-    if (ds_x2 < ds_x1
+    if (UNLIKELY(ds_x2 < ds_x1
 	|| ds_x1<0
 	|| ds_x2>=SCREENWIDTH
-	|| (unsigned)ds_y>SCREENHEIGHT)
+	|| (unsigned)ds_y>SCREENHEIGHT))
     {
 	I_Error( "R_DrawSpan: %i to %i at %i",
 		 ds_x1,ds_x2,ds_y);

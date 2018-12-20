@@ -80,7 +80,7 @@ P_SetMobjState
 	
 	state = st->nextstate;
 
-	if (cycle_counter++ > MOBJ_CYCLE_LIMIT)
+	if (UNLIKELY(cycle_counter++ > MOBJ_CYCLE_LIMIT))
 	{
 	    I_Error("P_SetMobjState: Infinite state cycle detected!");
 	}

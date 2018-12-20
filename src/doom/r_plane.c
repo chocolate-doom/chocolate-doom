@@ -122,10 +122,10 @@ R_MapPlane
     unsigned	index;
 	
 #ifdef RANGECHECK
-    if (x2 < x1
+    if (UNLIKELY(x2 < x1
      || x1 < 0
      || x2 >= viewwidth
-     || y > viewheight)
+     || y > viewheight))
     {
 	I_Error ("R_MapPlane: %i, %i at %i",x1,x2,y);
     }
@@ -235,7 +235,7 @@ R_FindPlane
     if (check < lastvisplane)
 	return check;
 		
-    if (lastvisplane - visplanes == MAXVISPLANES)
+    if (UNLIKELY(lastvisplane - visplanes == MAXVISPLANES))
 	I_Error ("R_FindPlane: no more visplanes");
 		
     lastvisplane++;
@@ -307,7 +307,7 @@ R_CheckPlane
     lastvisplane->picnum = pl->picnum;
     lastvisplane->lightlevel = pl->lightlevel;
     
-    if (lastvisplane - visplanes == MAXVISPLANES)
+    if (UNLIKELY(lastvisplane - visplanes == MAXVISPLANES))
 	I_Error ("R_CheckPlane: no more visplanes");
 
     pl = lastvisplane++;
@@ -370,15 +370,15 @@ void R_DrawPlanes (void)
     int                 lumpnum;
 				
 #ifdef RANGECHECK
-    if (ds_p - drawsegs > MAXDRAWSEGS)
+    if (UNLIKELY(ds_p - drawsegs > MAXDRAWSEGS))
 	I_Error ("R_DrawPlanes: drawsegs overflow (%" PRIiPTR ")",
 		 ds_p - drawsegs);
     
-    if (lastvisplane - visplanes > MAXVISPLANES)
+    if (UNLIKELY(lastvisplane - visplanes > MAXVISPLANES))
 	I_Error ("R_DrawPlanes: visplane overflow (%" PRIiPTR ")",
 		 lastvisplane - visplanes);
     
-    if (lastopening - openings > MAXOPENINGS)
+    if (UNLIKELY(lastopening - openings > MAXOPENINGS))
 	I_Error ("R_DrawPlanes: opening overflow (%" PRIiPTR ")",
 		 lastopening - openings);
 #endif
