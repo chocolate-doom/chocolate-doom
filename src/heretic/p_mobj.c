@@ -1052,6 +1052,7 @@ void P_SpawnMapThing(mapthing_t * mthing)
     {
         // save spots for respawning in network games
         playerstarts[mthing->type - 1] = *mthing;
+        playerstartsingame[mthing->type - 1] = true;
         if (!deathmatch)
         {
             P_SpawnPlayer(mthing);
