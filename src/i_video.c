@@ -1531,6 +1531,33 @@ void I_InitGraphics(void)
     I_AtExit(I_ShutdownGraphics, true);
 }
 
+void I_ReInitGraphics (void)
+{
+    // [crispy] re-set logical rendering resolution
+
+    if (aspect_ratio_correct == 1)
+    {
+        actualheight = SCREENHEIGHT_4_3;
+    }
+    else
+    {
+        actualheight = SCREENHEIGHT;
+    }
+
+    if (aspect_ratio_correct || integer_scaling)
+    {
+        SDL_RenderSetLogicalSize(renderer,
+                                 SCREENWIDTH,
+                                 actualheight);
+    }
+    else
+    {
+        SDL_RenderSetLogicalSize(renderer, 0, 0);
+    }
+
+    need_resize = true;
+}
+
 void I_RenderReadPixels(byte **data, int *w, int *h, int *p)
 {
 	SDL_Rect rect;

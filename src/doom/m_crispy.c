@@ -130,17 +130,15 @@ extern void R_ExecuteSetViewSize (void);
 extern void R_InitLightTables (void);
 extern void SetVideoMode (boolean);
 extern void S_UpdateSndChannels (void);
+extern void I_ReInitGraphics (void);
 
 static void M_CrispyToggleAspectRatioHook (void)
 {
     aspect_ratio_correct = (aspect_ratio_correct + 1) % NUM_ASPECTRATIOS;
 
-    // [crispy] re-initialize framebuffers, textures and renderer
-    I_InitGraphics();
-    // [crispy] re-set rendering framebuffer
-    R_ExecuteSetViewSize();
-    // [crispy] re-set automap framebuffer
-    AM_ReInit(false);
+    // [crispy] re-set logical rendering resolution
+
+    I_ReInitGraphics();
 }
 
 void M_CrispyToggleAspectRatio(int choice)
