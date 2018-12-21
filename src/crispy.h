@@ -100,6 +100,13 @@ extern void CheckCrispySingleplayer (boolean singleplayer);
 
 enum
 {
+	INIT_RENDERER = 1,
+	INIT_ASPECT = 2,
+	INIT_RESOLUTION = 4
+};
+
+enum
+{
     ASPECTRATIO_OFF,
     ASPECTRATIO_4_3,
     ASPECTRATIO_16_10,

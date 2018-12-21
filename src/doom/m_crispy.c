@@ -130,7 +130,7 @@ extern void R_ExecuteSetViewSize (void);
 extern void R_InitLightTables (void);
 extern void SetVideoMode (boolean);
 extern void S_UpdateSndChannels (void);
-extern void I_ReInitGraphics (void);
+extern void I_ReInitGraphics (int init);
 
 static void M_CrispyToggleAspectRatioHook (void)
 {
@@ -138,7 +138,7 @@ static void M_CrispyToggleAspectRatioHook (void)
 
     // [crispy] re-set logical rendering resolution
 
-    I_ReInitGraphics();
+    I_ReInitGraphics(INIT_ASPECT);
 }
 
 void M_CrispyToggleAspectRatio(int choice)
@@ -482,7 +482,7 @@ void M_CrispyToggleVsyncHook (void)
 {
     crispy->vsync = !crispy->vsync;
 
-    SetVideoMode(false); // [crispy] resize_fb
+    I_ReInitGraphics(INIT_RENDERER);
 }
 
 void M_CrispyToggleVsync(int choice)

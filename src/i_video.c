@@ -1531,31 +1531,78 @@ void I_InitGraphics(void)
     I_AtExit(I_ShutdownGraphics, true);
 }
 
-void I_ReInitGraphics (void)
+void I_ReInitGraphics (int init)
 {
-    // [crispy] re-set logical rendering resolution
+	SDL_RendererInfo info = {0};
+	int flags;
 
-    if (aspect_ratio_correct == 1)
-    {
-        actualheight = SCREENHEIGHT_4_3;
-    }
-    else
-    {
-        actualheight = SCREENHEIGHT;
-    }
+	// [crispy] re-create renderer and textures
+	if (init & INIT_RENDERER)
+	{
+		if (SDL_GetRendererInfo(renderer, &info) < 0)
+		{
+			puts("Bullshit0!");fflush(stdout);
+			return;
+		}
 
-    if (aspect_ratio_correct || integer_scaling)
-    {
-        SDL_RenderSetLogicalSize(renderer,
-                                 SCREENWIDTH,
-                                 actualheight);
-    }
-    else
-    {
-        SDL_RenderSetLogicalSize(renderer, 0, 0);
-    }
+		flags = info.flags;
 
-    need_resize = true;
+		if (crispy->vsync && !(flags & SDL_RENDERER_SOFTWARE))
+		{
+			flags |= SDL_RENDERER_PRESENTVSYNC;
+		}
+		else
+		{
+			flags &= ~SDL_RENDERER_PRESENTVSYNC;
+		}
+
+		SDL_DestroyRenderer(renderer);
+
+		renderer = SDL_CreateRenderer(screen, -1, flags);
+
+		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+
+		// [crispy] re-create textures
+		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");
+
+		texture = SDL_CreateTexture(renderer,
+		                            pixel_format,
+		                            SDL_TEXTUREACCESS_STREAMING,
+		                            SCREENWIDTH, SCREENHEIGHT);
+
+		texture_upscaled = NULL;
+		CreateUpscaledTexture(true);
+	}
+
+	// [crispy] re-set logical rendering resolution
+	if (init & (INIT_RENDERER|INIT_ASPECT))
+	{
+		if (aspect_ratio_correct == 1)
+		{
+			actualheight = SCREENHEIGHT_4_3;
+		}
+		else
+		{
+			actualheight = SCREENHEIGHT;
+		}
+
+		if (aspect_ratio_correct || integer_scaling)
+		{
+			SDL_RenderSetLogicalSize(renderer,
+			                         SCREENWIDTH,
+			                         actualheight);
+		}
+		else
+		{
+			SDL_RenderSetLogicalSize(renderer, 0, 0);
+		}
+
+		#if SDL_VERSION_ATLEAST(2, 0, 5)
+		SDL_RenderSetIntegerScale(renderer, integer_scaling);
+		#endif
+
+		need_resize = true;
+	}
 }
 
 void I_RenderReadPixels(byte **data, int *w, int *h, int *p)
