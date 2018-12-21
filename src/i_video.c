@@ -1239,6 +1239,9 @@ static void SetVideoMode(void)
     if (renderer != NULL)
     {
         SDL_DestroyRenderer(renderer);
+        // all associated textures get destroyed
+        texture = NULL;
+        texture_upscaled = NULL;
     }
 
     renderer = SDL_CreateRenderer(screen, -1, renderer_flags);
