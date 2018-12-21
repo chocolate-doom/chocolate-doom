@@ -123,7 +123,7 @@ multiitem_t multiitem_sndchannels[4] =
     {32, "32"},
 };
 
-extern void AM_ReInit (boolean rescale);
+extern void AM_ReInit (void);
 extern void EnableLoadingDisk (void);
 extern void P_SegLengths (boolean contrast_only);
 extern void R_ExecuteSetViewSize (void);
@@ -338,7 +338,7 @@ static void M_CrispyToggleHiresHook (void)
     // [crispy] re-calculate disk icon coordinates
     EnableLoadingDisk();
     // [crispy] re-calculate automap coordinates
-    AM_ReInit(true);
+    AM_ReInit();
 }
 
 void M_CrispyToggleHires(int choice)

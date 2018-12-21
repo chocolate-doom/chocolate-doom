@@ -225,7 +225,8 @@ static int 	f_w;
 static int	f_h;
 
 static int 	lightlev; 		// used for funky strobing effect
-static pixel_t*	fb; 			// pseudo-frame buffer
+#define fb I_VideoBuffer // [crispy] simplify
+//static pixel_t*	fb; 			// pseudo-frame buffer
 static int 	amclock;
 
 static mpoint_t m_paninc; // how far the window pans each tic (map coords)
@@ -469,7 +470,7 @@ void AM_initVariables(void)
     static event_t st_notify = { ev_keyup, AM_MSGENTERED, 0, 0 };
 
     automapactive = true;
-    fb = I_VideoBuffer;
+//  fb = I_VideoBuffer; // [crispy] simplify
 
     f_oldloc.x = INT_MAX;
     amclock = 0;
@@ -579,13 +580,8 @@ void AM_LevelInit(void)
     scale_ftom = FixedDiv(FRACUNIT, scale_mtof);
 }
 
-void AM_ReInit(boolean rescale)
+void AM_ReInit (void)
 {
-    fb = I_VideoBuffer;
-
-    if (!rescale)
-	return;
-
     f_w = SCREENWIDTH;
     f_h = SCREENHEIGHT - (ST_HEIGHT << crispy->hires);
 
