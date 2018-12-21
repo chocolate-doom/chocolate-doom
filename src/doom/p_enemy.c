@@ -272,7 +272,7 @@ boolean P_Move (mobj_t*	actor)
     if (actor->movedir == DI_NODIR)
 	return false;
 		
-    if ((unsigned)actor->movedir >= 8)
+    if (UNLIKELY((unsigned)actor->movedir >= 8))
 	I_Error ("Weird actor->movedir!");
 		
     tryx = actor->x + actor->info->speed*xspeed[actor->movedir];
@@ -360,7 +360,7 @@ void P_NewChaseDir (mobj_t*	actor)
     
     dirtype_t	turnaround;
 
-    if (!actor->target)
+    if (UNLIKELY(!actor->target))
 	I_Error ("P_NewChaseDir: called with no target");
 		
     olddir = actor->movedir;
