@@ -1220,7 +1220,7 @@ void I_GetWindowPosition(int *x, int *y, int w, int h)
     }
 }
 
-void SetVideoMode(boolean resize_fb) // [crispy] un-static, resize_fb
+static void SetVideoMode(void)
 {
     int w, h;
     int x, y;
@@ -1356,7 +1356,7 @@ void SetVideoMode(boolean resize_fb) // [crispy] un-static, resize_fb
 
     // Create the 8-bit paletted and the 32-bit RGBA screenbuffer surfaces.
 
-    if (screenbuffer != NULL && resize_fb) // [crispy] resize_fb
+    if (screenbuffer != NULL)
     {
         SDL_FreeSurface(screenbuffer);
         screenbuffer = NULL;
@@ -1373,7 +1373,7 @@ void SetVideoMode(boolean resize_fb) // [crispy] un-static, resize_fb
     // Format of argbbuffer must match the screen pixel format because we
     // import the surface data into the texture.
 
-    if (argbbuffer != NULL && resize_fb) // [crispy] resize_fb
+    if (argbbuffer != NULL)
     {
         SDL_FreeSurface(argbbuffer);
         argbbuffer = NULL;
@@ -1482,7 +1482,7 @@ void I_InitGraphics(void)
     // Create the game window; this may switch graphic modes depending
     // on configuration.
     AdjustWindowSize();
-    SetVideoMode(true); // [crispy] resize_fb
+    SetVideoMode();
 
     // Start with a clear black screen
     // (screen will be flipped after we set the palette)

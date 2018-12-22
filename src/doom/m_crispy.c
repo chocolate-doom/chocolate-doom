@@ -128,7 +128,6 @@ extern void EnableLoadingDisk (void);
 extern void P_SegLengths (boolean contrast_only);
 extern void R_ExecuteSetViewSize (void);
 extern void R_InitLightTables (void);
-extern void SetVideoMode (boolean);
 extern void S_UpdateSndChannels (void);
 extern void I_ReInitGraphics (int init);
 
