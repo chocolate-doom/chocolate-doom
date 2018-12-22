@@ -612,6 +612,8 @@ static void CreateUpscaledTexture(boolean force)
     int h_upscale, w_upscale;
     static int h_upscale_old, w_upscale_old;
 
+    SDL_Texture *new_texture, *old_texture;
+
     // Get the size of the renderer output. The units this gives us will be
     // real world pixels, which are not necessarily equivalent to the screen's
     // window size (because of highdpi).
@@ -667,22 +669,25 @@ static void CreateUpscaledTexture(boolean force)
     h_upscale_old = h_upscale;
     w_upscale_old = w_upscale;
 
-    if (texture_upscaled)
-    {
-        SDL_DestroyTexture(texture_upscaled);
-    }
-
     // Set the scaling quality for rendering the upscaled texture to "linear",
     // which looks much softer and smoother than "nearest" but does a better
     // job at downscaling from the upscaled texture to screen.
 
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
 
-    texture_upscaled = SDL_CreateTexture(renderer,
+    new_texture = SDL_CreateTexture(renderer,
                                 pixel_format,
                                 SDL_TEXTUREACCESS_TARGET,
                                 w_upscale*SCREENWIDTH,
                                 h_upscale*SCREENHEIGHT);
+
+    old_texture = texture_upscaled;
+    texture_upscaled = new_texture;
+
+    if (old_texture != NULL)
+    {
+        SDL_DestroyTexture(old_texture);
+    }
 }
 
 // [AM] Fractional part of the current tic, in the half-open
@@ -1315,6 +1320,9 @@ void SetVideoMode(boolean resize_fb) // [crispy] un-static, resize_fb
     if (renderer != NULL)
     {
         SDL_DestroyRenderer(renderer);
+        // all associated textures get destroyed
+        texture = NULL;
+        texture_upscaled = NULL;
     }
 
     renderer = SDL_CreateRenderer(screen, -1, renderer_flags);

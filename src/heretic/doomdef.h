@@ -553,6 +553,7 @@ extern ticcmd_t *netcmds;
 extern mapthing_t *deathmatch_p;
 extern mapthing_t deathmatchstarts[10];
 extern mapthing_t playerstarts[MAXPLAYERS];
+extern boolean playerstartsingame[MAXPLAYERS];
 
 extern int mouseSensitivity;
 
