@@ -1220,7 +1220,7 @@ void I_GetWindowPosition(int *x, int *y, int w, int h)
     }
 }
 
-void SetVideoMode(boolean resize_fb) // [crispy] un-static, resize_fb
+static void SetVideoMode(void)
 {
     int w, h;
     int x, y;
@@ -1359,7 +1359,7 @@ void SetVideoMode(boolean resize_fb) // [crispy] un-static, resize_fb
 
     // Create the 8-bit paletted and the 32-bit RGBA screenbuffer surfaces.
 
-    if (screenbuffer != NULL && resize_fb) // [crispy] resize_fb
+    if (screenbuffer != NULL)
     {
         SDL_FreeSurface(screenbuffer);
         screenbuffer = NULL;
@@ -1376,7 +1376,7 @@ void SetVideoMode(boolean resize_fb) // [crispy] un-static, resize_fb
     // Format of argbbuffer must match the screen pixel format because we
     // import the surface data into the texture.
 
-    if (argbbuffer != NULL && resize_fb) // [crispy] resize_fb
+    if (argbbuffer != NULL)
     {
         SDL_FreeSurface(argbbuffer);
         argbbuffer = NULL;
@@ -1485,7 +1485,7 @@ void I_InitGraphics(void)
     // Create the game window; this may switch graphic modes depending
     // on configuration.
     AdjustWindowSize();
-    SetVideoMode(true); // [crispy] resize_fb
+    SetVideoMode();
 
     // Start with a clear black screen
     // (screen will be flipped after we set the palette)
@@ -1533,6 +1533,128 @@ void I_InitGraphics(void)
 
     I_AtExit(I_ShutdownGraphics, true);
 }
+
+// [crispy] re-initialize only the parts of the rendering stack that are really necessary
+
+void I_ReInitGraphics (int init)
+{
+	// [crispy] re-set rendering resolution and re-create framebuffers
+	if (init & INIT_RESOLUTION)
+	{
+		unsigned int rmask, gmask, bmask, amask;
+		int unused_bpp;
+
+		if (crispy->hires)
+		{
+			SCREENWIDTH = MAXWIDTH;
+			SCREENHEIGHT = MAXHEIGHT;
+			SCREENHEIGHT_4_3 = MAXHEIGHT_4_3;
+		}
+		else
+		{
+			SCREENWIDTH = ORIGWIDTH;
+			SCREENHEIGHT = ORIGHEIGHT;
+			SCREENHEIGHT_4_3 = ORIGHEIGHT_4_3;
+		}
+		blit_rect.w = SCREENWIDTH;
+		blit_rect.h = SCREENHEIGHT;
+
+		// [crispy] re-initialize resolution-agnostic patch drawing
+		V_Init();
+
+		SDL_FreeSurface(screenbuffer);
+		screenbuffer = SDL_CreateRGBSurface(0,
+				                    SCREENWIDTH, SCREENHEIGHT, 8,
+				                    0, 0, 0, 0);
+
+		// [crispy] re-set the framebuffer pointer
+		I_VideoBuffer = screenbuffer->pixels;
+		V_RestoreBuffer();
+
+		SDL_FreeSurface(argbbuffer);
+		SDL_PixelFormatEnumToMasks(pixel_format, &unused_bpp,
+		                           &rmask, &gmask, &bmask, &amask);
+		argbbuffer = SDL_CreateRGBSurface(0,
+		                                  SCREENWIDTH, SCREENHEIGHT, 32,
+		                                  rmask, gmask, bmask, amask);
+
+		// [crispy] it will get re-created below with the new resolution
+		SDL_DestroyTexture(texture);
+	}
+
+	// [crispy] re-create renderer
+	if (init & INIT_RENDERER)
+	{
+		SDL_RendererInfo info = {0};
+		int flags;
+
+		SDL_GetRendererInfo(renderer, &info);
+		flags = info.flags;
+
+		if (crispy->vsync && !(flags & SDL_RENDERER_SOFTWARE))
+		{
+			flags |= SDL_RENDERER_PRESENTVSYNC;
+		}
+		else
+		{
+			flags &= ~SDL_RENDERER_PRESENTVSYNC;
+		}
+
+		SDL_DestroyRenderer(renderer);
+		renderer = SDL_CreateRenderer(screen, -1, flags);
+		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+
+		// [crispy] the texture gets destroyed in SDL_DestroyRenderer(), force its re-creation
+		texture_upscaled = NULL;
+	}
+
+	// [crispy] re-create textures
+	if (init & (INIT_RESOLUTION | INIT_RENDERER))
+	{
+		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");
+
+		texture = SDL_CreateTexture(renderer,
+		                            pixel_format,
+		                            SDL_TEXTUREACCESS_STREAMING,
+		                            SCREENWIDTH, SCREENHEIGHT);
+
+		// [crispy] force its re-creation
+		CreateUpscaledTexture(true);
+	}
+
+	// [crispy] re-set logical rendering resolution
+	if (init & (INIT_RENDERER | INIT_ASPECT | INIT_RESOLUTION))
+	{
+		if (aspect_ratio_correct == 1)
+		{
+			actualheight = SCREENHEIGHT_4_3;
+		}
+		else
+		{
+			actualheight = SCREENHEIGHT;
+		}
+
+		if (aspect_ratio_correct || integer_scaling)
+		{
+			SDL_RenderSetLogicalSize(renderer,
+			                         SCREENWIDTH,
+			                         actualheight);
+		}
+		else
+		{
+			SDL_RenderSetLogicalSize(renderer, 0, 0);
+		}
+
+		#if SDL_VERSION_ATLEAST(2, 0, 5)
+		SDL_RenderSetIntegerScale(renderer, integer_scaling);
+		#endif
+
+		// [crispy] adjust the window size and re-set the palette
+		need_resize = true;
+	}
+}
+
+// [crispy] take screenshot of the rendered image
 
 void I_RenderReadPixels(byte **data, int *w, int *h, int *p)
 {

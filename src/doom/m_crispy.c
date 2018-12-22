@@ -123,24 +123,21 @@ multiitem_t multiitem_sndchannels[4] =
     {32, "32"},
 };
 
-extern void AM_ReInit (boolean rescale);
+extern void AM_ReInit (void);
 extern void EnableLoadingDisk (void);
 extern void P_SegLengths (boolean contrast_only);
 extern void R_ExecuteSetViewSize (void);
 extern void R_InitLightTables (void);
-extern void SetVideoMode (boolean);
 extern void S_UpdateSndChannels (void);
+extern void I_ReInitGraphics (int init);
 
 static void M_CrispyToggleAspectRatioHook (void)
 {
     aspect_ratio_correct = (aspect_ratio_correct + 1) % NUM_ASPECTRATIOS;
 
-    // [crispy] re-initialize framebuffers, textures and renderer
-    I_InitGraphics();
-    // [crispy] re-set rendering framebuffer
-    R_ExecuteSetViewSize();
-    // [crispy] re-set automap framebuffer
-    AM_ReInit(false);
+    // [crispy] re-set logical rendering resolution
+
+    I_ReInitGraphics(INIT_ASPECT);
 }
 
 void M_CrispyToggleAspectRatio(int choice)
@@ -332,7 +329,7 @@ static void M_CrispyToggleHiresHook (void)
     crispy->hires = !crispy->hires;
 
     // [crispy] re-initialize framebuffers, textures and renderer
-    I_InitGraphics();
+    I_ReInitGraphics(INIT_RESOLUTION);
     // [crispy] re-calculate framebuffer coordinates
     R_ExecuteSetViewSize();
     // [crispy] re-draw bezel
@@ -340,7 +337,7 @@ static void M_CrispyToggleHiresHook (void)
     // [crispy] re-calculate disk icon coordinates
     EnableLoadingDisk();
     // [crispy] re-calculate automap coordinates
-    AM_ReInit(true);
+    AM_ReInit();
 }
 
 void M_CrispyToggleHires(int choice)
@@ -484,7 +481,7 @@ void M_CrispyToggleVsyncHook (void)
 {
     crispy->vsync = !crispy->vsync;
 
-    SetVideoMode(false); // [crispy] resize_fb
+    I_ReInitGraphics(INIT_RENDERER);
 }
 
 void M_CrispyToggleVsync(int choice)
