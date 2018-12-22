@@ -1531,8 +1531,11 @@ void I_InitGraphics(void)
     I_AtExit(I_ShutdownGraphics, true);
 }
 
+// [crispy] re-initialize only the parts of the rendering stack that are really necessary
+
 void I_ReInitGraphics (int init)
 {
+	// [crispy] re-set rendering resolution and re-create framebuffers
 	if (init & INIT_RESOLUTION)
 	{
 		unsigned int rmask, gmask, bmask, amask;
@@ -1553,6 +1556,7 @@ void I_ReInitGraphics (int init)
 		blit_rect.w = SCREENWIDTH;
 		blit_rect.h = SCREENHEIGHT;
 
+		// [crispy] re-initialize resolution-agnostic patch drawing
 		V_Init();
 
 		SDL_FreeSurface(screenbuffer);
@@ -1560,6 +1564,7 @@ void I_ReInitGraphics (int init)
 				                    SCREENWIDTH, SCREENHEIGHT, 8,
 				                    0, 0, 0, 0);
 
+		// [crispy] re-set the framebuffer pointer
 		I_VideoBuffer = screenbuffer->pixels;
 		V_RestoreBuffer();
 
@@ -1570,10 +1575,11 @@ void I_ReInitGraphics (int init)
 		                                  SCREENWIDTH, SCREENHEIGHT, 32,
 		                                  rmask, gmask, bmask, amask);
 
+		// [crispy] it will get re-created below with the new resolution
 		SDL_DestroyTexture(texture);
 	}
 
-	// [crispy] re-create renderer and textures
+	// [crispy] re-create renderer
 	if (init & INIT_RENDERER)
 	{
 		SDL_RendererInfo info = {0};
@@ -1595,12 +1601,13 @@ void I_ReInitGraphics (int init)
 		renderer = SDL_CreateRenderer(screen, -1, flags);
 		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 
+		// [crispy] the texture gets destroyed in SDL_DestroyRenderer(), force its re-creation
 		texture_upscaled = NULL;
 	}
 
+	// [crispy] re-create textures
 	if (init & (INIT_RESOLUTION | INIT_RENDERER))
 	{
-		// [crispy] re-create textures
 		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");
 
 		texture = SDL_CreateTexture(renderer,
@@ -1608,6 +1615,7 @@ void I_ReInitGraphics (int init)
 		                            SDL_TEXTUREACCESS_STREAMING,
 		                            SCREENWIDTH, SCREENHEIGHT);
 
+		// [crispy] force its re-creation
 		CreateUpscaledTexture(true);
 	}
 
@@ -1638,9 +1646,12 @@ void I_ReInitGraphics (int init)
 		SDL_RenderSetIntegerScale(renderer, integer_scaling);
 		#endif
 
+		// [crispy] adjust the window size and re-set the palette
 		need_resize = true;
 	}
 }
+
+// [crispy] take screenshot of the rendered image
 
 void I_RenderReadPixels(byte **data, int *w, int *h, int *p)
 {
