@@ -330,7 +330,7 @@ static void M_CrispyToggleHiresHook (void)
     crispy->hires = !crispy->hires;
 
     // [crispy] re-initialize framebuffers, textures and renderer
-    I_InitGraphics();
+    I_ReInitGraphics(INIT_RESOLUTION);
     // [crispy] re-calculate framebuffer coordinates
     R_ExecuteSetViewSize();
     // [crispy] re-draw bezel

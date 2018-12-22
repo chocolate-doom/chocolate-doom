@@ -1533,18 +1533,53 @@ void I_InitGraphics(void)
 
 void I_ReInitGraphics (int init)
 {
-	SDL_RendererInfo info = {0};
-	int flags;
+	if (init & INIT_RESOLUTION)
+	{
+		unsigned int rmask, gmask, bmask, amask;
+		int unused_bpp;
+
+		if (crispy->hires)
+		{
+			SCREENWIDTH = MAXWIDTH;
+			SCREENHEIGHT = MAXHEIGHT;
+			SCREENHEIGHT_4_3 = MAXHEIGHT_4_3;
+		}
+		else
+		{
+			SCREENWIDTH = ORIGWIDTH;
+			SCREENHEIGHT = ORIGHEIGHT;
+			SCREENHEIGHT_4_3 = ORIGHEIGHT_4_3;
+		}
+		blit_rect.w = SCREENWIDTH;
+		blit_rect.h = SCREENHEIGHT;
+
+		V_Init();
+
+		SDL_FreeSurface(screenbuffer);
+		screenbuffer = SDL_CreateRGBSurface(0,
+				                    SCREENWIDTH, SCREENHEIGHT, 8,
+				                    0, 0, 0, 0);
+
+		I_VideoBuffer = screenbuffer->pixels;
+		V_RestoreBuffer();
+
+		SDL_FreeSurface(argbbuffer);
+		SDL_PixelFormatEnumToMasks(pixel_format, &unused_bpp,
+		                           &rmask, &gmask, &bmask, &amask);
+		argbbuffer = SDL_CreateRGBSurface(0,
+		                                  SCREENWIDTH, SCREENHEIGHT, 32,
+		                                  rmask, gmask, bmask, amask);
+
+		SDL_DestroyTexture(texture);
+	}
 
 	// [crispy] re-create renderer and textures
 	if (init & INIT_RENDERER)
 	{
-		if (SDL_GetRendererInfo(renderer, &info) < 0)
-		{
-			puts("Bullshit0!");fflush(stdout);
-			return;
-		}
+		SDL_RendererInfo info = {0};
+		int flags;
 
+		SDL_GetRendererInfo(renderer, &info);
 		flags = info.flags;
 
 		if (crispy->vsync && !(flags & SDL_RENDERER_SOFTWARE))
@@ -1557,11 +1592,14 @@ void I_ReInitGraphics (int init)
 		}
 
 		SDL_DestroyRenderer(renderer);
-
 		renderer = SDL_CreateRenderer(screen, -1, flags);
-
 		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 
+		texture_upscaled = NULL;
+	}
+
+	if (init & (INIT_RESOLUTION | INIT_RENDERER))
+	{
 		// [crispy] re-create textures
 		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");
 
@@ -1570,12 +1608,11 @@ void I_ReInitGraphics (int init)
 		                            SDL_TEXTUREACCESS_STREAMING,
 		                            SCREENWIDTH, SCREENHEIGHT);
 
-		texture_upscaled = NULL;
 		CreateUpscaledTexture(true);
 	}
 
 	// [crispy] re-set logical rendering resolution
-	if (init & (INIT_RENDERER|INIT_ASPECT))
+	if (init & (INIT_RENDERER | INIT_ASPECT | INIT_RESOLUTION))
 	{
 		if (aspect_ratio_correct == 1)
 		{
