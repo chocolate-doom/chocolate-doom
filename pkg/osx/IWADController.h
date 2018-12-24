@@ -38,6 +38,7 @@
 - (void) closeConfigWindow: (id)sender;
 - (void) openConfigWindow: (id)sender;
 - (NSString *) getIWADLocation;
+- (NSString *) autoloadPath;
 - (void) awakeFromNib;
 - (BOOL) setDropdownList;
 - (void) setDropdownSelection;
