@@ -15,6 +15,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <AppKit/AppKit.h>
+
+#include "config.h"
 #include "IWADController.h"
 
 typedef enum
@@ -367,7 +369,7 @@ static const char *NameForIWAD(IWAD iwad)
 
     NSString *base = [array objectAtIndex:0];
     return [NSString pathWithComponents:
-        [NSArray arrayWithObjects: base, @"chocolate-doom", @"autoload",
+        [NSArray arrayWithObjects: base, @PACKAGE_TARNAME, @"autoload",
                                    IWADFilenames[selectedIWAD], nil]];
 }
 
