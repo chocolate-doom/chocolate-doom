@@ -1224,6 +1224,7 @@ P_SetupLevel
 	
     // [crispy] pointer to the current map lump info struct
     maplumpinfo = lumpinfo[lumpnum];
+    strncpy(lumpname, maplumpinfo->name, 8);
 
     leveltime = 0;
     oldleveltime = 0;
