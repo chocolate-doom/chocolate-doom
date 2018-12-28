@@ -85,7 +85,7 @@ static const struct {
 // Unicode key mapping; see codepage.h.
 static const short code_page_to_unicode[] = CODE_PAGE_TO_UNICODE;
 
-static SDL_Color ega_colors[] =
+static const SDL_Color ega_colors[] =
 {
     {0x00, 0x00, 0x00, 0xff},          // 0: Black
     {0x00, 0x00, 0xa8, 0xff},          // 1: Blue
@@ -306,6 +306,15 @@ void TXT_Shutdown(void)
     SDL_FreeSurface(screenbuffer);
     screenbuffer = NULL;
     SDL_QuitSubSystem(SDL_INIT_VIDEO);
+}
+
+void TXT_SetColor(txt_color_t color, int r, int g, int b)
+{
+    SDL_Color c = {r, g, b, 0xff};
+
+    SDL_LockSurface(screenbuffer);
+    SDL_SetPaletteColors(screenbuffer->format->palette, &c, color, 1);
+    SDL_UnlockSurface(screenbuffer);
 }
 
 unsigned char *TXT_GetScreenData(void)

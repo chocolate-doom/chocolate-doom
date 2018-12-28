@@ -149,6 +149,9 @@ void TXT_UpdateScreenArea(int x, int y, int w, int h);
 // Update the whole screen
 void TXT_UpdateScreen(void);
 
+// Set the RGB value for a particular entry in the color palette:
+void TXT_SetColor(txt_color_t color, int r, int g, int b);
+
 // Read a character from the keyboard
 int TXT_GetChar(void);
 
