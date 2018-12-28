@@ -505,6 +505,8 @@ typedef struct
 } speciallevel_t;
 
 static const speciallevel_t speciallevels[] = {
+    // [crispy] E1M0
+    {doom, 1, 0, NULL, "E1M0"},
     // [crispy] Romero's latest E1 additions
     {doom, 1, 8, "e1m8b.wad", HUSTR_E1M8B},
     {doom, 1, 4, "e1m4b.wad", HUSTR_E1M4B},

@@ -2205,6 +2205,9 @@ G_InitNew
     if (skill > sk_nightmare)
 	skill = sk_nightmare;
 
+  // [crispy] only fix episode/map if it doesn't exist
+  if (P_GetNumForMap(episode, map, false) < 0)
+  {
     if (gameversion >= exe_ultimate)
     {
         if (episode == 0)
@@ -2241,6 +2244,7 @@ G_InitNew
       else
       map = 10;
     }
+  }
 
     M_ClearRandom ();
 

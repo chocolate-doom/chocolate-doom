@@ -1091,6 +1091,9 @@ ST_Responder (event_t* ev)
         }
       }
 
+  // [crispy] only fix episode/map if it doesn't exist
+  if (P_GetNumForMap(epsd, map, false) < 0)
+  {
       // Catch invalid maps.
       if (gamemode != commercial)
       {
@@ -1156,6 +1159,7 @@ ST_Responder (event_t* ev)
               return false;
           }
       }
+  }
 
       // [crispy] prevent idclev to nonexistent levels exiting the game
       if (P_GetNumForMap(epsd, map, false) >= 0)
