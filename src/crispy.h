@@ -100,9 +100,10 @@ extern void CheckCrispySingleplayer (boolean singleplayer);
 
 enum
 {
-	INIT_RENDERER = 1,
-	INIT_ASPECT = 2,
-	INIT_RESOLUTION = 4
+	REINIT_FRAMEBUFFERS = 1,
+	REINIT_RENDERER = 2,
+	REINIT_TEXTURES = 4,
+	REINIT_ASPECTRATIO = 8,
 };
 
 enum

@@ -129,7 +129,7 @@ extern void P_SegLengths (boolean contrast_only);
 extern void R_ExecuteSetViewSize (void);
 extern void R_InitLightTables (void);
 extern void S_UpdateSndChannels (void);
-extern void I_ReInitGraphics (int init);
+extern void I_ReInitGraphics (int reinit);
 
 static void M_CrispyToggleAspectRatioHook (void)
 {
@@ -137,7 +137,7 @@ static void M_CrispyToggleAspectRatioHook (void)
 
     // [crispy] re-set logical rendering resolution
 
-    I_ReInitGraphics(INIT_ASPECT);
+    I_ReInitGraphics(REINIT_ASPECTRATIO);
 }
 
 void M_CrispyToggleAspectRatio(int choice)
@@ -329,7 +329,7 @@ static void M_CrispyToggleHiresHook (void)
     crispy->hires = !crispy->hires;
 
     // [crispy] re-initialize framebuffers, textures and renderer
-    I_ReInitGraphics(INIT_RESOLUTION);
+    I_ReInitGraphics(REINIT_FRAMEBUFFERS | REINIT_TEXTURES | REINIT_ASPECTRATIO);
     // [crispy] re-calculate framebuffer coordinates
     R_ExecuteSetViewSize();
     // [crispy] re-draw bezel
@@ -481,7 +481,7 @@ void M_CrispyToggleVsyncHook (void)
 {
     crispy->vsync = !crispy->vsync;
 
-    I_ReInitGraphics(INIT_RENDERER);
+    I_ReInitGraphics(REINIT_RENDERER | REINIT_TEXTURES | REINIT_ASPECTRATIO);
 }
 
 void M_CrispyToggleVsync(int choice)

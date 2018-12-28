@@ -1536,10 +1536,10 @@ void I_InitGraphics(void)
 
 // [crispy] re-initialize only the parts of the rendering stack that are really necessary
 
-void I_ReInitGraphics (int init)
+void I_ReInitGraphics (int reinit)
 {
 	// [crispy] re-set rendering resolution and re-create framebuffers
-	if (init & INIT_RESOLUTION)
+	if (reinit & REINIT_FRAMEBUFFERS)
 	{
 		unsigned int rmask, gmask, bmask, amask;
 		int unused_bpp;
@@ -1583,7 +1583,7 @@ void I_ReInitGraphics (int init)
 	}
 
 	// [crispy] re-create renderer
-	if (init & INIT_RENDERER)
+	if (reinit & REINIT_RENDERER)
 	{
 		SDL_RendererInfo info = {0};
 		int flags;
@@ -1609,7 +1609,7 @@ void I_ReInitGraphics (int init)
 	}
 
 	// [crispy] re-create textures
-	if (init & (INIT_RESOLUTION | INIT_RENDERER))
+	if (reinit & REINIT_TEXTURES)
 	{
 		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");
 
@@ -1623,7 +1623,7 @@ void I_ReInitGraphics (int init)
 	}
 
 	// [crispy] re-set logical rendering resolution
-	if (init & (INIT_RENDERER | INIT_ASPECT | INIT_RESOLUTION))
+	if (reinit & REINIT_ASPECTRATIO)
 	{
 		if (aspect_ratio_correct == 1)
 		{
@@ -1648,10 +1648,10 @@ void I_ReInitGraphics (int init)
 		#if SDL_VERSION_ATLEAST(2, 0, 5)
 		SDL_RenderSetIntegerScale(renderer, integer_scaling);
 		#endif
-
-		// [crispy] adjust the window size and re-set the palette
-		need_resize = true;
 	}
+
+	// [crispy] adjust the window size and re-set the palette
+	need_resize = true;
 }
 
 // [crispy] take screenshot of the rendered image
