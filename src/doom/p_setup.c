@@ -1188,8 +1188,13 @@ P_SetupLevel
     // will be set by player think.
     players[consoleplayer].viewz = 1; 
 
+    // [crispy] don't load map's default music if loaded from a savegame with MUSINFO data
+    if (!musinfo.from_savegame)
+    {
     // Make sure all sounds are stopped before Z_FreeTags.
     S_Start ();			
+    }
+    musinfo.from_savegame = false;
 
     Z_FreeTags (PU_LEVEL, PU_PURGELEVEL-1);
 

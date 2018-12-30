@@ -355,10 +355,10 @@ static void P_WriteMusInfo (const char *key)
 {
 	if (musinfo.current_item > 0 && musinfo.items[0] > 0)
 	{
-		char *lump, *orig;
+		char lump[9], orig[9];
 
-		lump = lumpinfo[musinfo.current_item]->name;
-		orig = lumpinfo[musinfo.items[0]]->name;
+		strncpy(lump, lumpinfo[musinfo.current_item]->name, 8);
+		strncpy(orig, lumpinfo[musinfo.items[0]]->name, 8);
 
 		M_snprintf(line, MAX_LINE_LEN, "%s %s %s\n", key, lump, orig);
 		fputs(line, save_stream);
@@ -367,35 +367,28 @@ static void P_WriteMusInfo (const char *key)
 
 static void P_ReadMusInfo (const char *key)
 {
+	int items;
 	char lump[9] = {0}, orig[9] = {0};
 
-	if (sscanf(line, "%s %s %s", string, lump, orig) == 3 &&
+	items = sscanf(line, "%s %s %s", string, lump, orig);
+
+	if (items >= 2 &&
 	    !strncmp(string, key, MAX_STRING_LEN))
 	{
 		int i;
 
 		if ((i = W_CheckNumForName(lump)) > 0)
 		{
+			memset(&musinfo, 0, sizeof(musinfo));
 			musinfo.current_item = i;
+			musinfo.from_savegame = true;
 			S_ChangeMusInfoMusic(i, true);
 		}
 
-		if ((i = W_CheckNumForName(orig)) > 0)
+		if (items == 3 &&
+		    (i = W_CheckNumForName(orig)) > 0)
 		{
 			musinfo.items[0] = i;
-		}
-	}
-	else
-	// [crispy] compatibility code for Crispy Doom (<= 5.4)
-	if (sscanf(line, "%s %s", string, lump) == 2 &&
-	    !strncmp(string, key, MAX_STRING_LEN))
-	{
-		int i;
-
-		if ((i = W_CheckNumForName(lump)) > 0)
-		{
-			musinfo.current_item = i;
-			S_ChangeMusInfoMusic(i, true);
 		}
 	}
 }
@@ -420,7 +413,7 @@ static const extsavegdata_t extsavegdata[] =
 	{"braintarget", P_WriteBrainTarget, P_ReadBrainTarget, 1},
 	{"markpoints", P_WriteMarkPoints, P_ReadMarkPoints, 1},
 	{"playerslookdir", P_WritePlayersLookdir, P_ReadPlayersLookdir, 1},
-	{"musinfo", P_WriteMusInfo, P_ReadMusInfo, 1},
+	{"musinfo", P_WriteMusInfo, P_ReadMusInfo, 0},
 };
 
 void P_WriteExtendedSaveGameData (void)

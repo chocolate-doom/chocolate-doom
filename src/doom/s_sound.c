@@ -315,7 +315,7 @@ void S_Start(void)
 	prevmap = curmap;
     }
 
-    // [crispy] musinfo.items[0] is reserved for the map's default music
+    // [crispy] reset musinfo data at the start of a new map
     memset(&musinfo, 0, sizeof(musinfo));
 
     S_ChangeMusic(mnum, true);

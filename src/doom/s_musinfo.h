@@ -24,7 +24,7 @@
 
 #include "p_mobj.h"
 
-#define MAX_MUS_ENTRIES 65 // [crispy] 0 to 64 inclusinve
+#define MAX_MUS_ENTRIES 65 // [crispy] 0 to 64 inclusive
 
 typedef struct musinfo_s
 {
@@ -33,6 +33,7 @@ typedef struct musinfo_s
 	int tics;
 	int current_item;
 	int items[MAX_MUS_ENTRIES];
+	boolean from_savegame;
 } musinfo_t;
 
 extern musinfo_t musinfo;
