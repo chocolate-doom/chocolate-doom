@@ -670,6 +670,12 @@ void A_Look (mobj_t* actor)
 	}
 	else
 	    S_StartSound (actor, sound);
+
+	// [crispy] make seesounds uninterruptible
+	if (crispy->soundfull)
+	{
+		S_UnlinkSound(actor);
+	}
     }
 
     P_SetMobjState (actor, actor->info->seestate);
