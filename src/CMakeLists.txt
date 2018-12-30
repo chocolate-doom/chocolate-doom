@@ -127,7 +127,7 @@ else()
 endif()
 
 target_include_directories("${PROGRAM_PREFIX}doom"
-                           PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/../")
+                           PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/../" "${PROJECT_SOURCE_DIR}/win32/")
 target_link_libraries("${PROGRAM_PREFIX}doom" doom ${EXTRA_LIBS})
 
 if(MSVC)
@@ -142,7 +142,7 @@ else()
 endif()
 
 target_include_directories("${PROGRAM_PREFIX}heretic"
-                           PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/../")
+                           PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/../" "${PROJECT_SOURCE_DIR}/win32/")
 target_link_libraries("${PROGRAM_PREFIX}heretic" heretic ${EXTRA_LIBS})
 
 if(MSVC)
@@ -157,7 +157,7 @@ else()
 endif()
 
 target_include_directories("${PROGRAM_PREFIX}hexen"
-                           PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/../")
+                           PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/../" "${PROJECT_SOURCE_DIR}/win32/")
 target_link_libraries("${PROGRAM_PREFIX}hexen" hexen ${EXTRA_LIBS})
 
 if(MSVC)
@@ -172,7 +172,7 @@ else()
 endif()
 
 target_include_directories("${PROGRAM_PREFIX}strife"
-                           PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/../")
+                           PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/../" "${PROJECT_SOURCE_DIR}/win32/")
 target_link_libraries("${PROGRAM_PREFIX}strife" strife ${EXTRA_LIBS})
 
 if(MSVC)
