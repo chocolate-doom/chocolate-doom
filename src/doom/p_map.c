@@ -396,7 +396,8 @@ boolean PIT_CheckThing (mobj_t* thing)
     if (critical->overunder &&
         tmthing->player && thing->flags & MF_SHOOTABLE)
     {
-        if (tmthing->z >= thing->z + thing->height)
+        // [crispy] allow the usual 24 units step-up even across monsters' heads
+        if (tmthing->z + 24*FRACUNIT >= thing->z + thing->height)
         {
             // player walks over object
             tmfloorz = thing->z + thing->height;
