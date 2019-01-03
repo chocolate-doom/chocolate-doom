@@ -123,6 +123,13 @@ multiitem_t multiitem_sndchannels[4] =
     {32, "32"},
 };
 
+multiitem_t multiitem_widgets[NUM_WIDGETS] =
+{
+    {WIDGETS_OFF, "never"},
+    {WIDGETS_AUTOMAP, "in Automap"},
+    {WIDGETS_ALWAYS, "always"},
+};
+
 extern void AM_ReInit (void);
 extern void EnableLoadingDisk (void);
 extern void P_SegLengths (boolean contrast_only);
@@ -150,7 +157,7 @@ void M_CrispyToggleAspectRatio(int choice)
 void M_CrispyToggleAutomapstats(int choice)
 {
     choice = 0;
-    crispy->automapstats = !crispy->automapstats;
+    crispy->automapstats = (crispy->automapstats + 1) % NUM_WIDGETS;
 }
 
 void M_CrispyToggleBrightmaps(int choice)
@@ -362,6 +369,12 @@ void M_CrispyToggleJumping(int choice)
     CheckCrispySingleplayer(!demorecording && !demoplayback && !netgame);
 }
 
+void M_CrispyToggleLeveltime(int choice)
+{
+    choice = 0;
+    crispy->leveltime = (crispy->leveltime + 1) % NUM_WIDGETS;
+}
+
 void M_CrispyToggleMouseLook(int choice)
 {
     choice = 0;
@@ -397,6 +410,12 @@ void M_CrispyTogglePitch(int choice)
     crispy->pitch = !crispy->pitch;
 
     crispy->post_rendering_hook = M_CrispyToggleSkyHook;
+}
+
+void M_CrispyTogglePlayerCoords(int choice)
+{
+    choice = 0;
+    crispy->playercoords = (crispy->playercoords + 1) % NUM_WIDGETS;
 }
 
 void M_CrispyToggleRecoil(int choice)

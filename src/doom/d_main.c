@@ -434,10 +434,12 @@ void D_BindVariables(void)
     M_BindIntVariable("crispy_freelook",        &crispy->freelook);
     M_BindIntVariable("crispy_hires",           &crispy->hires);
     M_BindIntVariable("crispy_jump",            &crispy->jump);
+    M_BindIntVariable("crispy_leveltime",       &crispy->leveltime);
     M_BindIntVariable("crispy_mouselook",       &crispy->mouselook);
     M_BindIntVariable("crispy_neghealth",       &crispy->neghealth);
     M_BindIntVariable("crispy_overunder",       &crispy->overunder);
     M_BindIntVariable("crispy_pitch",           &crispy->pitch);
+    M_BindIntVariable("crispy_playercoords",    &crispy->playercoords);
     M_BindIntVariable("crispy_recoil",          &crispy->recoil);
     M_BindIntVariable("crispy_secretmessage",   &crispy->secretmessage);
     M_BindIntVariable("crispy_smoothlight",     &crispy->smoothlight);

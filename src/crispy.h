@@ -55,10 +55,12 @@ typedef struct
 	int freelook;
 	int hires;
 	int jump;
+	int leveltime;
 	int mouselook;
 	int neghealth;
 	int overunder;
 	int pitch;
+	int playercoords;
 	int recoil;
 	int secretmessage;
 	int smoothlight;
@@ -191,6 +193,14 @@ enum
     TRANSLUCENCY_ITEM,
     TRANSLUCENCY_BOTH,
     NUM_TRANSLUCENCY
+};
+
+enum
+{
+    WIDGETS_OFF,
+    WIDGETS_AUTOMAP,
+    WIDGETS_ALWAYS,
+    NUM_WIDGETS
 };
 
 #endif

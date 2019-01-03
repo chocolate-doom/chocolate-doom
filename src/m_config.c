@@ -1790,7 +1790,7 @@ static default_t extra_defaults_list[] =
     //!
     // @game doom
     //
-    // Show additional level statistics in the automap.
+    // Show additional level statistics.
     //
 
     CONFIG_VARIABLE_INT(crispy_automapstats),
@@ -1942,6 +1942,14 @@ static default_t extra_defaults_list[] =
     //!
     // @game doom
     //
+    // Show level time.
+    //
+
+    CONFIG_VARIABLE_INT(crispy_leveltime),
+
+    //!
+    // @game doom
+    //
     // Use the mouse to look up and down.
     //
 
@@ -1970,6 +1978,14 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_INT(crispy_pitch),
+
+    //!
+    // @game doom
+    //
+    // Show player coordinates.
+    //
+
+    CONFIG_VARIABLE_INT(crispy_playercoords),
 
     //!
     // @game doom

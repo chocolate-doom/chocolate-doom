@@ -512,6 +512,8 @@ enum
     crispness_sep_navigational,
     crispness_extautomap,
     crispness_automapstats,
+    crispness_leveltime,
+    crispness_playercoords,
     crispness_secretmessage,
     crispness_sep_navigational_,
 
@@ -531,6 +533,8 @@ static menuitem_t Crispness2Menu[]=
     {-1,"",0,'\0'},
     {1,"",	M_CrispyToggleExtAutomap,'e'},
     {1,"",	M_CrispyToggleAutomapstats,'s'},
+    {1,"",	M_CrispyToggleLeveltime,'l'},
+    {1,"",	M_CrispyTogglePlayerCoords,'p'},
     {1,"",	M_CrispyToggleSecretmessage,'s'},
     {-1,"",0,'\0'},
     {1,"",	M_CrispnessNext,'n'},
@@ -1465,7 +1469,9 @@ static void M_DrawCrispness2(void)
 
     M_DrawCrispnessSeparator(crispness_sep_navigational, "Navigational");
     M_DrawCrispnessItem(crispness_extautomap, "Extended Automap colors", crispy->extautomap, true);
-    M_DrawCrispnessItem(crispness_automapstats, "Show Level Stats in Automap", crispy->automapstats, true);
+    M_DrawCrispnessMultiItem(crispness_automapstats, "Show Level Stats", multiitem_widgets, crispy->automapstats, true);
+    M_DrawCrispnessMultiItem(crispness_leveltime, "Show Level Time", multiitem_widgets, crispy->leveltime, true);
+    M_DrawCrispnessMultiItem(crispness_playercoords, "Show Player Coords", multiitem_widgets, crispy->playercoords, true);
     M_DrawCrispnessItem(crispness_secretmessage, "Show Revealed Secrets", crispy->secretmessage, true);
 
     M_DrawCrispnessGoto(crispness2_next, "Next Page >");

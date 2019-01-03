@@ -831,10 +831,8 @@ void HU_Drawer(void)
 	HUlib_drawTextLine(&w_title, false);
     }
 
-    if (automapactive && crispy->automapstats)
+    if (crispy->automapstats == WIDGETS_ALWAYS || (automapactive && crispy->automapstats == WIDGETS_AUTOMAP))
     {
-	int time = leveltime / TICRATE;
-
 	// [crispy] move obtrusive line out of player view
 	if (!crispy->automapoverlay || screenblocks < CRISPY_HUD - 1)
 	    HUlib_drawTextLine(&w_map, false);
@@ -867,8 +865,13 @@ void HU_Drawer(void)
 	while (*s)
 	    HUlib_addCharToTextLine(&w_scrts, *(s++));
 	HUlib_drawTextLine(&w_scrts, false);
+    }
 
-	M_snprintf(str, sizeof(str), "%sT %s%02d:%02d", cr_stat, crstr[CR_GRAY],
+    if (crispy->leveltime == WIDGETS_ALWAYS || (automapactive && crispy->leveltime == WIDGETS_AUTOMAP))
+    {
+	const int time = leveltime / TICRATE;
+
+	M_snprintf(str, sizeof(str), "%s%02d:%02d", crstr[CR_GRAY],
 	        time/60, time%60);
 	HUlib_clearTextLine(&w_ltime);
 	s = str;
@@ -877,9 +880,7 @@ void HU_Drawer(void)
 	HUlib_drawTextLine(&w_ltime, false);
     }
 
-    // [crispy] show map coordinates in upper right corner
-    // if either automap stats or IDMYPOS cheat are enabled
-    if ((automapactive && crispy->automapstats) || plr->powers[pw_mapcoords])
+    if (crispy->playercoords == WIDGETS_ALWAYS || (automapactive && crispy->playercoords == WIDGETS_AUTOMAP))
     {
 	M_snprintf(str, sizeof(str), "%sX %s%-5d", cr_stat2, crstr[CR_GRAY],
 	        (plr->mo->x)>>FRACBITS);
@@ -943,6 +944,10 @@ void HU_Erase(void)
     HUlib_eraseSText(&w_secret);
     HUlib_eraseIText(&w_chat);
     HUlib_eraseTextLine(&w_title);
+    HUlib_eraseTextLine(&w_kills);
+    HUlib_eraseTextLine(&w_items);
+    HUlib_eraseTextLine(&w_scrts);
+    HUlib_eraseTextLine(&w_ltime);
     HUlib_eraseTextLine(&w_coordx);
     HUlib_eraseTextLine(&w_coordy);
     HUlib_eraseTextLine(&w_coorda);
