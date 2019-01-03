@@ -415,6 +415,8 @@ static void CrispyReplaceColor (char *str, const int cr, const char *col)
     free(str_replace);
 }
 
+static const char *cr_stat, *cr_stat2, *kills;
+
 void HU_Init(void)
 {
 
@@ -428,6 +430,19 @@ void HU_Init(void)
     {
 	DEH_snprintf(buffer, 9, "STCFN%.3d", j++);
 	hu_font[i] = (patch_t *) W_CacheLumpName(buffer, PU_STATIC);
+    }
+
+    if (gameversion == exe_chex)
+    {
+	cr_stat = crstr[CR_GREEN];
+	cr_stat2 = crstr[CR_GOLD];
+	kills = "F ";
+    }
+    else
+    {
+	cr_stat = crstr[CR_RED];
+	cr_stat2 = crstr[CR_GREEN];
+	kills = "K ";
     }
 
     // [crispy] initialize the crosshair types
@@ -616,7 +631,7 @@ void HU_Start(void)
 		       HU_FONTSTART);
 
     HUlib_initTextLine(&w_ltime,
-		       HU_TITLEX, HU_MSGY + 5 * 8,
+		       HU_TITLEX, HU_MSGY + 4 * 8,
 		       hu_font,
 		       HU_FONTSTART);
 
@@ -819,8 +834,6 @@ void HU_Drawer(void)
     if (automapactive && crispy->automapstats)
     {
 	int time = leveltime / TICRATE;
-	const char *const cr_stat = (gameversion == exe_chex) ? crstr[CR_GREEN] : crstr[CR_RED];
-	const char *const kills = (gameversion == exe_chex) ? "Flemoids: " : "Kills: ";
 
 	// [crispy] move obtrusive line out of player view
 	if (!crispy->automapoverlay || screenblocks < CRISPY_HUD - 1)
@@ -839,7 +852,7 @@ void HU_Drawer(void)
 	    HUlib_addCharToTextLine(&w_kills, *(s++));
 	HUlib_drawTextLine(&w_kills, false);
 
-	M_snprintf(str, sizeof(str), "%sItems: %s%d/%d", cr_stat, crstr[CR_GRAY],
+	M_snprintf(str, sizeof(str), "%sI %s%d/%d", cr_stat, crstr[CR_GRAY],
 	        plr->itemcount, totalitems);
 	HUlib_clearTextLine(&w_items);
 	s = str;
@@ -847,7 +860,7 @@ void HU_Drawer(void)
 	    HUlib_addCharToTextLine(&w_items, *(s++));
 	HUlib_drawTextLine(&w_items, false);
 
-	M_snprintf(str, sizeof(str), "%sSecret: %s%d/%d", cr_stat, crstr[CR_GRAY],
+	M_snprintf(str, sizeof(str), "%sS %s%d/%d", cr_stat, crstr[CR_GRAY],
 	        plr->secretcount, totalsecret);
 	HUlib_clearTextLine(&w_scrts);
 	s = str;
@@ -855,8 +868,8 @@ void HU_Drawer(void)
 	    HUlib_addCharToTextLine(&w_scrts, *(s++));
 	HUlib_drawTextLine(&w_scrts, false);
 
-	M_snprintf(str, sizeof(str), "%s%02d:%02d:%02d", crstr[CR_GRAY],
-	        time/3600, (time%3600)/60, time%60);
+	M_snprintf(str, sizeof(str), "%sT %s%02d:%02d", cr_stat, crstr[CR_GRAY],
+	        time/60, time%60);
 	HUlib_clearTextLine(&w_ltime);
 	s = str;
 	while (*s)
@@ -868,7 +881,7 @@ void HU_Drawer(void)
     // if either automap stats or IDMYPOS cheat are enabled
     if ((automapactive && crispy->automapstats) || plr->powers[pw_mapcoords])
     {
-	M_snprintf(str, sizeof(str), "%sX: %s%-5d", crstr[CR_GREEN], crstr[CR_GRAY],
+	M_snprintf(str, sizeof(str), "%sX %s%-5d", cr_stat2, crstr[CR_GRAY],
 	        (plr->mo->x)>>FRACBITS);
 	HUlib_clearTextLine(&w_coordx);
 	s = str;
@@ -876,7 +889,7 @@ void HU_Drawer(void)
 	    HUlib_addCharToTextLine(&w_coordx, *(s++));
 	HUlib_drawTextLine(&w_coordx, false);
 
-	M_snprintf(str, sizeof(str), "%sY: %s%-5d", crstr[CR_GREEN], crstr[CR_GRAY],
+	M_snprintf(str, sizeof(str), "%sY %s%-5d", cr_stat2, crstr[CR_GRAY],
 	        (plr->mo->y)>>FRACBITS);
 	HUlib_clearTextLine(&w_coordy);
 	s = str;
@@ -884,7 +897,7 @@ void HU_Drawer(void)
 	    HUlib_addCharToTextLine(&w_coordy, *(s++));
 	HUlib_drawTextLine(&w_coordy, false);
 
-	M_snprintf(str, sizeof(str), "%sA: %s%-5d", crstr[CR_GREEN], crstr[CR_GRAY],
+	M_snprintf(str, sizeof(str), "%sA %s%-5d", cr_stat2, crstr[CR_GRAY],
 	        (plr->mo->angle)/ANG1);
 	HUlib_clearTextLine(&w_coorda);
 	s = str;
@@ -895,7 +908,7 @@ void HU_Drawer(void)
 
     if (plr->powers[pw_showfps])
     {
-	M_snprintf(str, sizeof(str), "%s%-4d %sFPS", crstr[CR_GRAY], crispy->fps, crstr[CR_GREEN]);
+	M_snprintf(str, sizeof(str), "%s%-4d %sFPS", crstr[CR_GRAY], crispy->fps, cr_stat2);
 	HUlib_clearTextLine(&w_fps);
 	s = str;
 	while (*s)
