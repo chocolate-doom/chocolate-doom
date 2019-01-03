@@ -397,8 +397,8 @@ boolean PIT_CheckThing (mobj_t* thing)
         tmthing->player && thing->flags & MF_SHOOTABLE)
     {
         // [crispy] allow the usual 24 units step-up even across monsters' heads
-        // but do not allow to jump on a monster's head straight from the floor
-        fixed_t step_up = tmthing->player->jumpTics ? 0 : 24*FRACUNIT;
+        // but do not allow if this height has been reached by "low" jumping
+        fixed_t step_up = tmthing->player->jumpTics > 7 ? 0 : 24*FRACUNIT;
 
         if (tmthing->z + step_up >= thing->z + thing->height)
         {
