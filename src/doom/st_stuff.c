@@ -856,8 +856,6 @@ ST_Responder (event_t* ev)
       // 'mypos' for player position
       else if (cht_CheckCheat(&cheat_mypos, ev->data2))
       {
-        // [crispy] show (human readable) map coordinates
-        // in the upper right corner (like automap stats)
 /*
         static char buf[ST_MSGWIDTH];
         M_snprintf(buf, sizeof(buf), "ang=0x%x;x,y=(0x%x,0x%x)",
@@ -866,7 +864,8 @@ ST_Responder (event_t* ev)
                    players[consoleplayer].mo->y);
         plyr->message = buf;
 */
-        plyr->powers[pw_mapcoords] ^= 1;
+        // [crispy] extra high precision IDMYPOS variant, updates for 10 seconds
+        plyr->powers[pw_mapcoords] = 10*TICRATE;
       }
 
 // [crispy] now follow "critical" Crispy Doom specific cheats

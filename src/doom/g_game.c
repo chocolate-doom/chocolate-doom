@@ -448,6 +448,19 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
         gamekeydown[key_togglenovert] = false;
     }
 
+    // [crispy] extra high precision IDMYPOS variant, updates for 10 seconds
+    if (players[consoleplayer].powers[pw_mapcoords])
+    {
+        M_snprintf(autorunmsg, sizeof(autorunmsg),
+            "X=%.10f Y=%.10f A=%d",
+            (double)players[consoleplayer].mo->x/FRACUNIT,
+            (double)players[consoleplayer].mo->y/FRACUNIT,
+            players[consoleplayer].mo->angle >> 24);
+        players[consoleplayer].message = autorunmsg;
+
+        players[consoleplayer].powers[pw_mapcoords]--;
+    }
+
     // let movement keys cancel each other out
     if (strafe) 
     { 
