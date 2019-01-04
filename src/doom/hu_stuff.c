@@ -440,7 +440,14 @@ void HU_Init(void)
     }
     else
     {
-	cr_stat = crstr[CR_RED];
+	if (gameversion == exe_hacx)
+	{
+		cr_stat = crstr[CR_BLUE];
+	}
+	else
+	{
+		cr_stat = crstr[CR_RED];
+	}
 	cr_stat2 = crstr[CR_GREEN];
 	kills = "K ";
     }
