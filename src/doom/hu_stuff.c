@@ -822,12 +822,6 @@ void HU_Drawer(void)
 
     if (automapactive)
     {
-	// [crispy] move map title to the bottom
-	if (crispy->automapoverlay && screenblocks >= CRISPY_HUD - 1)
-	    w_title.y = HU_TITLEY + ST_HEIGHT;
-	else
-	    w_title.y = HU_TITLEY;
-
 	HUlib_drawTextLine(&w_title, false);
     }
 
@@ -1042,6 +1036,14 @@ void HU_Ticker(void)
 	}
     }
 
+    if (automapactive)
+    {
+	// [crispy] move map title to the bottom
+	if (crispy->automapoverlay && screenblocks >= CRISPY_HUD - 1)
+	    w_title.y = HU_TITLEY + ST_HEIGHT;
+	else
+	    w_title.y = HU_TITLEY;
+    }
 }
 
 #define QUEUESIZE		128
