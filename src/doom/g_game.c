@@ -348,7 +348,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     int		side;
     int		look;
     player_t *const player = &players[consoleplayer];
-    char playermessage[48];
+    static char playermessage[48];
 
     memset(cmd, 0, sizeof(ticcmd_t));
 
