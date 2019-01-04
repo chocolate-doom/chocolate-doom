@@ -347,7 +347,8 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     int		forward;
     int		side;
     int		look;
-    static char autorunmsg[48];
+    player_t *const player = &players[consoleplayer];
+    char playermessage[48];
 
     memset(cmd, 0, sizeof(ticcmd_t));
 
@@ -424,10 +425,10 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
             joybspeed = 29;
         }
 
-        M_snprintf(autorunmsg, sizeof(autorunmsg), "ALWAYS RUN %s%s",
+        M_snprintf(playermessage, sizeof(playermessage), "ALWAYS RUN %s%s",
             crstr[CR_GREEN],
             (joybspeed >= MAX_JOY_BUTTONS) ? "ON" : "OFF");
-        players[consoleplayer].message = autorunmsg;
+        player->message = playermessage;
         S_StartSound(NULL, sfx_swtchn);
 
         gamekeydown[key_toggleautorun] = false;
@@ -438,27 +439,27 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     {
         novert = !novert;
 
-        M_snprintf(autorunmsg, sizeof(autorunmsg),
+        M_snprintf(playermessage, sizeof(playermessage),
             "vertical mouse movement %s%s",
             crstr[CR_GREEN],
             !novert ? "ON" : "OFF");
-        players[consoleplayer].message = autorunmsg;
+        player->message = playermessage;
         S_StartSound(NULL, sfx_swtchn);
 
         gamekeydown[key_togglenovert] = false;
     }
 
     // [crispy] extra high precision IDMYPOS variant, updates for 10 seconds
-    if (players[consoleplayer].powers[pw_mapcoords])
+    if (player->powers[pw_mapcoords])
     {
-        M_snprintf(autorunmsg, sizeof(autorunmsg),
+        M_snprintf(playermessage, sizeof(playermessage),
             "X=%.10f Y=%.10f A=%d",
-            (double)players[consoleplayer].mo->x/FRACUNIT,
-            (double)players[consoleplayer].mo->y/FRACUNIT,
-            players[consoleplayer].mo->angle >> 24);
-        players[consoleplayer].message = autorunmsg;
+            (double)player->mo->x/FRACUNIT,
+            (double)player->mo->y/FRACUNIT,
+            player->mo->angle >> 24);
+        player->message = playermessage;
 
-        players[consoleplayer].powers[pw_mapcoords]--;
+        player->powers[pw_mapcoords]--;
     }
 
     // let movement keys cancel each other out
@@ -729,7 +730,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     cmd->sidemove += side;
 
     // [crispy] lookdir delta is stored in the lower 4 bits of the lookfly variable
-    if (players[consoleplayer].playerstate == PST_LIVE)
+    if (player->playerstate == PST_LIVE)
     {
         if (look < 0)
         {
