@@ -33,6 +33,7 @@
 #include "i_input.h"
 #include "i_joystick.h"
 #include "i_sound.h"
+#include "i_swap.h" // [crispy] SHORT()
 #include "i_system.h"
 #include "i_timer.h"
 #include "i_video.h"
@@ -137,6 +138,54 @@ void DrawMessage(void)
 //
 //---------------------------------------------------------------------------
 
+static void CrispyDrawStats (void)
+{
+    static short height, coord_x;
+    char str[32];
+    player_t *const player = &players[consoleplayer];
+
+    if (!height || !coord_x)
+    {
+	const int FontABaseLump = W_GetNumForName(DEH_String("FONTA_S")) + 1;
+	const patch_t *const p = W_CacheLumpNum(FontABaseLump + 'A' - 33, PU_CACHE);
+
+	height = SHORT(p->height) + 1;
+	coord_x = ORIGWIDTH - 7 * SHORT(p->width);
+    }
+
+    if (crispy->automapstats == WIDGETS_ALWAYS || (automapactive && crispy->automapstats == WIDGETS_AUTOMAP))
+    {
+	M_snprintf(str, sizeof(str), "K %d/%d", player->killcount, totalkills);
+	MN_DrTextA(str, 0, 1*height);
+
+	M_snprintf(str, sizeof(str), "I %d/%d", player->itemcount, totalitems);
+	MN_DrTextA(str, 0, 2*height);
+
+	M_snprintf(str, sizeof(str), "S %d/%d", player->secretcount, totalsecret);
+	MN_DrTextA(str, 0, 3*height);
+    }
+
+    if (crispy->leveltime == WIDGETS_ALWAYS || (automapactive && crispy->leveltime == WIDGETS_AUTOMAP))
+    {
+	const int time = leveltime / TICRATE;
+
+	M_snprintf(str, sizeof(str), "%02d:%02d", time/60, time%60);
+	MN_DrTextA(str, 0, 4*height);
+    }
+
+    if (crispy->playercoords == WIDGETS_ALWAYS || (automapactive && crispy->playercoords == WIDGETS_AUTOMAP))
+    {
+	M_snprintf(str, sizeof(str), "X %-5d", player->mo->x>>FRACBITS);
+	MN_DrTextA(str, coord_x, 1*height);
+
+	M_snprintf(str, sizeof(str), "Y %-5d", player->mo->y>>FRACBITS);
+	MN_DrTextA(str, coord_x, 2*height);
+
+	M_snprintf(str, sizeof(str), "A %-5d", player->mo->angle/ANG1);
+	MN_DrTextA(str, coord_x, 3*height);
+    }
+}
+
 void R_ExecuteSetViewSize(void);
 
 extern boolean finalestage;
@@ -166,6 +215,7 @@ void D_Display(void)
             CT_Drawer();
             UpdateState |= I_FULLVIEW;
             SB_Drawer();
+            CrispyDrawStats();
             break;
         case GS_INTERMISSION:
             IN_Drawer();
@@ -696,6 +746,11 @@ void D_BindVariables(void)
         M_snprintf(buf, sizeof(buf), "chatmacro%i", i);
         M_BindStringVariable(buf, &chat_macros[i]);
     }
+
+    // [crispy] bind "crispness" config variables
+    M_BindIntVariable("crispy_automapstats",    &crispy->automapstats);
+    M_BindIntVariable("crispy_leveltime",       &crispy->leveltime);
+    M_BindIntVariable("crispy_playercoords",    &crispy->playercoords);
 }
 
 // 
