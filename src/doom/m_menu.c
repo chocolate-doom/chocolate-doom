@@ -634,8 +634,11 @@ void M_DoSave(int slot)
 //
 static void SetDefaultSaveName(int slot)
 {
+    extern lumpinfo_t *maplumpinfo;
+
     M_snprintf(savegamestrings[itemOn], SAVESTRINGSIZE - 1,
-               "JOYSTICK SLOT %i", itemOn + 1);
+               "%s: %s", maplumpinfo->wad_file->basename,
+               maplumpinfo->name);
     joypadSave = false;
 }
 
