@@ -140,6 +140,9 @@ wad_file_t *W_AddFile (const char *filename)
 	return NULL;
     }
 
+    // [crispy] save the file name
+    wad_file->basename = M_BaseName(wad_file->path);
+
     if (strcasecmp(filename+strlen(filename)-3 , "wad" ) )
     {
 	// single lump file
