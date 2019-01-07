@@ -318,7 +318,6 @@ boolean D_Display (void)
     // [crispy] draw neither pause pic nor menu when taking a clean screenshot
     if (crispy->cleanscreenshot)
     {
-	I_FinishUpdate ();              // page flip or blit buffer
 	return false;
     }
 

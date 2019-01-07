@@ -1050,14 +1050,6 @@ static void G_ReadGameParms (void)
     nomonsters = M_CheckParm ("-nomonsters");
 }
  
-// [crispy] take a screenshot after rendering the next frame
-static void G_CrispyScreenShot()
-{
-	// [crispy] increase screenshot filename limit
-	V_ScreenShot("DOOM%04i.%s");
-	crispy->cleanscreenshot = 0;
-}
-
 //
 // G_Ticker
 // Make ticcmd_ts for the players.
@@ -1108,15 +1100,16 @@ void G_Ticker (void)
 	    break; 
 	  case ga_screenshot: 
 	    // [crispy] redraw view without weapons and HUD
-	    if (crispy->cleanscreenshot || crispy->screenshotmsg == 1)
+	    if (gamestate == GS_LEVEL && (crispy->cleanscreenshot || crispy->screenshotmsg == 1))
 	    {
 	        extern void D_Display (void);
 
 	        crispy->screenshotmsg = 4;
 	        D_Display();
 	        I_FinishUpdate();
+	        crispy->cleanscreenshot = 0;
 	    }
-	    crispy->post_rendering_hook = G_CrispyScreenShot;
+	    V_ScreenShot("DOOM%04i.%s"); // [crispy] increase screenshot filename limit
             players[consoleplayer].message = DEH_String("screen shot");
 	    crispy->screenshotmsg = 2;
 	    gameaction = ga_nothing; 
