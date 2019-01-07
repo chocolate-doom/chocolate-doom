@@ -760,6 +760,9 @@ static void P_LoadReject(int lumpnum)
     }
 }
 
+// [crispy] pointer to the current map lump info struct
+lumpinfo_t *maplumpinfo;
+
 //
 // P_SetupLevel
 //
@@ -816,6 +819,9 @@ P_SetupLevel
 
     lumpnum = W_GetNumForName (lumpname);
 	
+    // [crispy] pointer to the current map lump info struct
+    maplumpinfo = lumpinfo[lumpnum];
+
     leveltime = 0;
 	
     // note: most of this ordering is important	
