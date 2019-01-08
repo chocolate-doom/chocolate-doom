@@ -49,6 +49,7 @@
 #include "m_argv.h"
 #include "m_controls.h"
 #include "p_saveg.h"
+#include "p_setup.h"
 
 #include "s_sound.h"
 
@@ -634,10 +635,8 @@ void M_DoSave(int slot)
 //
 static void SetDefaultSaveName(int slot)
 {
-    extern lumpinfo_t *maplumpinfo;
-
     M_snprintf(savegamestrings[itemOn], SAVESTRINGSIZE - 1,
-               "%s: %s", maplumpinfo->wad_file->basename,
+               "%s: %s", M_BaseName(maplumpinfo->wad_file->path),
                maplumpinfo->name);
     joypadSave = false;
 }
