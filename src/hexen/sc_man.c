@@ -195,17 +195,12 @@ boolean SC_GetString(void)
     }
     while (foundToken == false)
     {
-        while (*ScriptPtr <= 32)
+        while (ScriptPtr < ScriptEndPtr && *ScriptPtr <= 32)
         {
             if (*ScriptPtr++ == '\n')
             {
                 sc_Line++;
                 sc_Crossed = true;
-            }
-            if (ScriptPtr >= ScriptEndPtr)
-            {
-                sc_End = true;
-                return false;
             }
         }
         if (ScriptPtr >= ScriptEndPtr)
