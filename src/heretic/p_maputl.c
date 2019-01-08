@@ -534,6 +534,10 @@ boolean PIT_AddLineIntercepts(line_t * ld)
     intercept_p->d.line = ld;
     intercept_p++;
 
+    // [crispy] catch intercepts overflows
+    if (intercept_p - intercepts == MAXINTERCEPTS)
+        return false;
+
     return true;                // continue
 }
 
@@ -591,6 +595,10 @@ boolean PIT_AddThingIntercepts(mobj_t * thing)
     intercept_p->isaline = false;
     intercept_p->d.thing = thing;
     intercept_p++;
+
+    // [crispy] catch intercepts overflows
+    if (intercept_p - intercepts == MAXINTERCEPTS)
+        return false;
 
     return true;                // keep going
 }
