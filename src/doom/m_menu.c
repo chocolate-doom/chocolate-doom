@@ -647,6 +647,7 @@ static void SetDefaultSaveName(int slot)
                    "%s: %s", M_BaseName(maplumpinfo->wad_file->path),
                    maplumpinfo->name);
     }
+    M_ForceUppercase(savegamestrings[itemOn]);
     joypadSave = false;
 }
 
