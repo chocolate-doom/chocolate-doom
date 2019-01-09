@@ -597,7 +597,10 @@ void S_StartSound(void *origin_p, int sfx_id)
     pitch = Clamp(pitch);
 
     // kill old sound
+    if (!crispy->soundfull || origin)
+    {
     S_StopSound(origin);
+    }
 
     // try to find a channel
     cnum = S_GetChannel(origin, sfx);
