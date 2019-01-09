@@ -635,9 +635,18 @@ void M_DoSave(int slot)
 //
 static void SetDefaultSaveName(int slot)
 {
-    M_snprintf(savegamestrings[itemOn], SAVESTRINGSIZE - 1,
-               "%s: %s", M_BaseName(maplumpinfo->wad_file->path),
-               maplumpinfo->name);
+    // map from IWAD or PWAD?
+    if (maplumpinfo->wad_file == lumpinfo[0]->wad_file)
+    {
+        M_snprintf(savegamestrings[itemOn], SAVESTRINGSIZE - 1,
+                   "%s", maplumpinfo->name);
+    }
+    else
+    {
+        M_snprintf(savegamestrings[itemOn], SAVESTRINGSIZE - 1,
+                   "%s: %s", M_BaseName(maplumpinfo->wad_file->path),
+                   maplumpinfo->name);
+    }
     joypadSave = false;
 }
 
