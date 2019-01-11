@@ -901,7 +901,7 @@ void HU_Ticker(void)
 
     int i, rc;
     char c;
-    static char str[32], *s;
+    char str[32], *s;
 
     // tick down message counter if message is up
     if (message_counter && !--message_counter)
