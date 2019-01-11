@@ -799,8 +799,6 @@ static void HU_DrawCrosshair (void)
 void HU_Drawer(void)
 {
 
-    static char str[32], *s;
-
     if (crispy->cleanscreenshot)
     {
 	HU_Erase();
@@ -838,83 +836,25 @@ void HU_Drawer(void)
 	if (!crispy->automapoverlay || screenblocks < CRISPY_HUD - 1)
 	    HUlib_drawTextLine(&w_map, false);
 
-	// [crispy] count spawned monsters
-	if (extrakills)
-	    M_snprintf(str, sizeof(str), "%s%s%s%d/%d+%d", cr_stat, kills, crstr[CR_GRAY],
-	            plr->killcount, totalkills, extrakills);
-	else
-	    M_snprintf(str, sizeof(str), "%s%s%s%d/%d", cr_stat, kills, crstr[CR_GRAY],
-	            plr->killcount, totalkills);
-	HUlib_clearTextLine(&w_kills);
-	s = str;
-	while (*s)
-	    HUlib_addCharToTextLine(&w_kills, *(s++));
 	HUlib_drawTextLine(&w_kills, false);
-
-	M_snprintf(str, sizeof(str), "%sI %s%d/%d", cr_stat, crstr[CR_GRAY],
-	        plr->itemcount, totalitems);
-	HUlib_clearTextLine(&w_items);
-	s = str;
-	while (*s)
-	    HUlib_addCharToTextLine(&w_items, *(s++));
 	HUlib_drawTextLine(&w_items, false);
-
-	M_snprintf(str, sizeof(str), "%sS %s%d/%d", cr_stat, crstr[CR_GRAY],
-	        plr->secretcount, totalsecret);
-	HUlib_clearTextLine(&w_scrts);
-	s = str;
-	while (*s)
-	    HUlib_addCharToTextLine(&w_scrts, *(s++));
 	HUlib_drawTextLine(&w_scrts, false);
     }
 
     if (crispy->leveltime == WIDGETS_ALWAYS || (automapactive && crispy->leveltime == WIDGETS_AUTOMAP))
     {
-	const int time = leveltime / TICRATE;
-
-	M_snprintf(str, sizeof(str), "%s%02d:%02d", crstr[CR_GRAY],
-	        time/60, time%60);
-	HUlib_clearTextLine(&w_ltime);
-	s = str;
-	while (*s)
-	    HUlib_addCharToTextLine(&w_ltime, *(s++));
 	HUlib_drawTextLine(&w_ltime, false);
     }
 
     if (crispy->playercoords == WIDGETS_ALWAYS || (automapactive && crispy->playercoords == WIDGETS_AUTOMAP))
     {
-	M_snprintf(str, sizeof(str), "%sX %s%-5d", cr_stat2, crstr[CR_GRAY],
-	        (plr->mo->x)>>FRACBITS);
-	HUlib_clearTextLine(&w_coordx);
-	s = str;
-	while (*s)
-	    HUlib_addCharToTextLine(&w_coordx, *(s++));
 	HUlib_drawTextLine(&w_coordx, false);
-
-	M_snprintf(str, sizeof(str), "%sY %s%-5d", cr_stat2, crstr[CR_GRAY],
-	        (plr->mo->y)>>FRACBITS);
-	HUlib_clearTextLine(&w_coordy);
-	s = str;
-	while (*s)
-	    HUlib_addCharToTextLine(&w_coordy, *(s++));
 	HUlib_drawTextLine(&w_coordy, false);
-
-	M_snprintf(str, sizeof(str), "%sA %s%-5d", cr_stat2, crstr[CR_GRAY],
-	        (plr->mo->angle)/ANG1);
-	HUlib_clearTextLine(&w_coorda);
-	s = str;
-	while (*s)
-	    HUlib_addCharToTextLine(&w_coorda, *(s++));
 	HUlib_drawTextLine(&w_coorda, false);
     }
 
     if (plr->powers[pw_showfps])
     {
-	M_snprintf(str, sizeof(str), "%s%-4d %sFPS", crstr[CR_GRAY], crispy->fps, cr_stat2);
-	HUlib_clearTextLine(&w_fps);
-	s = str;
-	while (*s)
-	    HUlib_addCharToTextLine(&w_fps, *(s++));
 	HUlib_drawTextLine(&w_fps, false);
     }
 
@@ -961,6 +901,7 @@ void HU_Ticker(void)
 
     int i, rc;
     char c;
+    static char str[32], *s;
 
     // tick down message counter if message is up
     if (message_counter && !--message_counter)
@@ -1050,6 +991,80 @@ void HU_Ticker(void)
 	    w_title.y = HU_TITLEY + ST_HEIGHT;
 	else
 	    w_title.y = HU_TITLEY;
+    }
+
+    if (crispy->automapstats)
+    {
+	// [crispy] count spawned monsters
+	if (extrakills)
+	    M_snprintf(str, sizeof(str), "%s%s%s%d/%d+%d", cr_stat, kills, crstr[CR_GRAY],
+	            plr->killcount, totalkills, extrakills);
+	else
+	    M_snprintf(str, sizeof(str), "%s%s%s%d/%d", cr_stat, kills, crstr[CR_GRAY],
+	            plr->killcount, totalkills);
+	HUlib_clearTextLine(&w_kills);
+	s = str;
+	while (*s)
+	    HUlib_addCharToTextLine(&w_kills, *(s++));
+
+	M_snprintf(str, sizeof(str), "%sI %s%d/%d", cr_stat, crstr[CR_GRAY],
+	        plr->itemcount, totalitems);
+	HUlib_clearTextLine(&w_items);
+	s = str;
+	while (*s)
+	    HUlib_addCharToTextLine(&w_items, *(s++));
+
+	M_snprintf(str, sizeof(str), "%sS %s%d/%d", cr_stat, crstr[CR_GRAY],
+	        plr->secretcount, totalsecret);
+	HUlib_clearTextLine(&w_scrts);
+	s = str;
+	while (*s)
+	    HUlib_addCharToTextLine(&w_scrts, *(s++));
+    }
+
+    if (crispy->leveltime)
+    {
+	const int time = leveltime / TICRATE;
+
+	M_snprintf(str, sizeof(str), "%s%02d:%02d", crstr[CR_GRAY],
+	        time/60, time%60);
+	HUlib_clearTextLine(&w_ltime);
+	s = str;
+	while (*s)
+	    HUlib_addCharToTextLine(&w_ltime, *(s++));
+    }
+
+    if (crispy->playercoords)
+    {
+	M_snprintf(str, sizeof(str), "%sX %s%-5d", cr_stat2, crstr[CR_GRAY],
+	        (plr->mo->x)>>FRACBITS);
+	HUlib_clearTextLine(&w_coordx);
+	s = str;
+	while (*s)
+	    HUlib_addCharToTextLine(&w_coordx, *(s++));
+
+	M_snprintf(str, sizeof(str), "%sY %s%-5d", cr_stat2, crstr[CR_GRAY],
+	        (plr->mo->y)>>FRACBITS);
+	HUlib_clearTextLine(&w_coordy);
+	s = str;
+	while (*s)
+	    HUlib_addCharToTextLine(&w_coordy, *(s++));
+
+	M_snprintf(str, sizeof(str), "%sA %s%-5d", cr_stat2, crstr[CR_GRAY],
+	        (plr->mo->angle)/ANG1);
+	HUlib_clearTextLine(&w_coorda);
+	s = str;
+	while (*s)
+	    HUlib_addCharToTextLine(&w_coorda, *(s++));
+    }
+
+    if (plr->powers[pw_showfps])
+    {
+	M_snprintf(str, sizeof(str), "%s%-4d %sFPS", crstr[CR_GRAY], crispy->fps, cr_stat2);
+	HUlib_clearTextLine(&w_fps);
+	s = str;
+	while (*s)
+	    HUlib_addCharToTextLine(&w_fps, *(s++));
     }
 }
 
