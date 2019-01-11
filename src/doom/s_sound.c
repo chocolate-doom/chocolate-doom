@@ -346,16 +346,19 @@ void S_UnlinkSound(mobj_t *origin)
 {
     int cnum;
 
-    for (cnum=0 ; cnum<snd_channels ; cnum++)
+    if (origin)
     {
-        if (channels[cnum].sfxinfo && channels[cnum].origin == origin)
+        for (cnum=0 ; cnum<snd_channels ; cnum++)
         {
-            degenmobj_t *const sobj = &sobjs[cnum];
-            sobj->x = origin->x;
-            sobj->y = origin->y;
-            sobj->z = origin->z;
-            channels[cnum].origin = (mobj_t *) sobj;
-            break;
+            if (channels[cnum].sfxinfo && channels[cnum].origin == origin)
+            {
+                degenmobj_t *const sobj = &sobjs[cnum];
+                sobj->x = origin->x;
+                sobj->y = origin->y;
+                sobj->z = origin->z;
+                channels[cnum].origin = (mobj_t *) sobj;
+                break;
+            }
         }
     }
 }
