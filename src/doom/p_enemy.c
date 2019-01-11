@@ -666,7 +666,8 @@ void A_Look (mobj_t* actor)
 	    || actor->type == MT_CYBORG)
 	{
 	    // full volume
-	    S_StartSound (NULL, sound);
+	    // [crispy] prevent from adding up volume
+	    crispy->soundfull ? S_StartSoundOnce (NULL, sound) : S_StartSound (NULL, sound);
 	}
 	else
 	    S_StartSound (actor, sound);
@@ -1619,7 +1620,8 @@ void A_Scream (mobj_t* actor)
 	|| actor->type == MT_CYBORG)
     {
 	// full volume
-	S_StartSound (NULL, sound);
+	// [crispy] prevent from adding up volume
+	crispy->soundfull ? S_StartSoundOnce (NULL, sound) : S_StartSound (NULL, sound);
     }
     else
 	S_StartSound (actor, sound);
@@ -1938,7 +1940,8 @@ void A_BrainAwake (mobj_t* mo)
 
 void A_BrainPain (mobj_t*	mo)
 {
-    S_StartSound (NULL,sfx_bospn);
+    // [crispy] prevent from adding up volume
+    crispy->soundfull ? S_StartSoundOnce (NULL,sfx_bospn) : S_StartSound (NULL,sfx_bospn);
 }
 
 
