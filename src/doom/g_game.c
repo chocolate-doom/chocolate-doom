@@ -1941,7 +1941,9 @@ void G_DoLoadGame (void)
     if (savewadfilename)
     {
         // [crispy] strings are not equal
-        if (!savemaplumpinfo || strcmp(savewadfilename, savemaplumpinfo->wad_file->basename))
+        if (!savemaplumpinfo ||
+            // [crispy] case-insensitive, so "doom.wad" matches "DOOM.WAD"
+            strcasecmp(savewadfilename, savemaplumpinfo->wad_file->basename))
         {
             M_ForceLoadGame();
             fclose(save_stream);
@@ -2003,6 +2005,10 @@ void G_DoLoadGame (void)
     // do not consider it for reload
     if (players[consoleplayer].health <= 0)
 	G_ClearSavename();
+
+    // [crisy] once loaded from the command line,
+    // the next savegame will be loaded from the menu
+    startloadgame = -1;
 } 
  
 

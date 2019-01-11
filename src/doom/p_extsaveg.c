@@ -54,7 +54,10 @@ static void P_WriteWadFileName (const char *key)
 
 static void P_ReadWadFileName (const char *key)
 {
-	if (!savewadfilename)
+	if (!savewadfilename &&
+	    // [crispy] only check if loaded from the menu,
+	    // we have no chance to show a dialog otherwise
+	    startloadgame == -1)
 	{
 		if (sscanf(line, "%s", string) == 1 &&
 		    !strncmp(string, key, MAX_STRING_LEN))
