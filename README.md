@@ -237,7 +237,7 @@ Please report any bugs, glitches or crashes that you encounter to the GitHub [Is
 
  * Why aren't you bundling the same SDL2(_Mixer) libraries as Chocolate Doom or the daily builds?
 
-   The Chocolate/Crispy Doom daily builds aren't under my control, they are provided as a courtesy of @fragglet. The library versions bundled with it are rather outdated and are missing support for playing music in MP3 format, in any tracker format and using soundfonts with the fluidsynth library. The Crispy Doom releases are built in an [https://www.msys2.org/](MSYS2) environment using the latest and full-featured library releases.
+   The Chocolate/Crispy Doom daily builds aren't under my control, they are provided as a courtesy of @fragglet. The library versions bundled with it are rather outdated and are missing support for playing music in MP3 format, in any tracker format and using soundfonts with the fluidsynth library. The Crispy Doom releases are built in an [MSYS2](https://www.msys2.org/) environment using the latest and full-featured library releases.
 
 ## Acknowledgement
 
