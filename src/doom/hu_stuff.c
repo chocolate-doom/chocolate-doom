@@ -993,7 +993,7 @@ void HU_Ticker(void)
 	    w_title.y = HU_TITLEY;
     }
 
-    if (crispy->automapstats)
+    if (crispy->automapstats == WIDGETS_ALWAYS || (automapactive && crispy->automapstats == WIDGETS_AUTOMAP))
     {
 	// [crispy] count spawned monsters
 	if (extrakills)
@@ -1022,7 +1022,7 @@ void HU_Ticker(void)
 	    HUlib_addCharToTextLine(&w_scrts, *(s++));
     }
 
-    if (crispy->leveltime)
+    if (crispy->leveltime == WIDGETS_ALWAYS || (automapactive && crispy->leveltime == WIDGETS_AUTOMAP))
     {
 	const int time = leveltime / TICRATE;
 
@@ -1034,7 +1034,7 @@ void HU_Ticker(void)
 	    HUlib_addCharToTextLine(&w_ltime, *(s++));
     }
 
-    if (crispy->playercoords)
+    if (crispy->playercoords == WIDGETS_ALWAYS || (automapactive && crispy->playercoords == WIDGETS_AUTOMAP))
     {
 	M_snprintf(str, sizeof(str), "%sX %s%-5d", cr_stat2, crstr[CR_GRAY],
 	        (plr->mo->x)>>FRACBITS);
