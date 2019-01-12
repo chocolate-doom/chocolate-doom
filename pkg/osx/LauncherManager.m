@@ -367,6 +367,27 @@ static NSString *AppendQuotedFilename(NSString *str, NSString *fileName)
     OpenDocumentation("");
 }
 
+- (void) openAutoload: (id) sender
+{
+    NSFileManager *fm = [NSFileManager defaultManager];
+    NSString *path = [self->iwadController autoloadPath];
+
+    if (path == nil)
+    {
+        return;
+    }
+
+    if (![fm fileExistsAtPath:path])
+    {
+        [fm createDirectoryAtPath:path
+            withIntermediateDirectories:YES
+            attributes:nil
+            error:nil];
+    }
+
+    [[NSWorkspace sharedWorkspace] openFile:path withApplication:@"Finder"];
+}
+
 - (void) awakeFromNib
 {
     [self->launcherWindow setTitle: @PACKAGE_NAME " Launcher"];

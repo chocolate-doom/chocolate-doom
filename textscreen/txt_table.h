@@ -110,7 +110,7 @@ txt_table_t *TXT_NewTable(int columns);
  * @return              Pointer to the new table structure.
  */
 
-txt_table_t *TXT_MakeTable(int columns, TXT_UNCAST_ARG(first_widget), ...);
+txt_table_t *TXT_MakeTable(int columns, ...);
 
 /**
  * Create a table containing the specified widgets packed horizontally,

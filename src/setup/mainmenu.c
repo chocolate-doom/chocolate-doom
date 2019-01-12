@@ -312,6 +312,10 @@ static void InitTextscreen(void)
         exit(-1);
     }
 
+    // Set Romero's "funky blue" color:
+    // <https://doomwiki.org/wiki/Romero_Blue>
+    TXT_SetColor(TXT_COLOR_BLUE, 0x04, 0x14, 0x40);
+
     SetIcon();
     SetWindowTitle();
 }
