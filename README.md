@@ -226,6 +226,19 @@ Crispy Doom is maintained by [Fabian Greffrath](mailto:fabian@greffXremovethisXr
 
 Please report any bugs, glitches or crashes that you encounter to the GitHub [Issue Tracker](https://github.com/fabiangreffrath/crispy-doom/issues).
 
+## FAQ
+
+ * I am having sound issues on Windows.
+
+   Mostly these issues aren't directly related to the port or its source code. Instead, these issues are most likely between SDL2(_Mixer), your Windows version and/or your sound drivers. Please try the following steps:
+    * Since version 5.4, Crispy Doom changed the SDL audio backend on Windows from "WASAPI" to "directsound", as the latter reportedly caused less problems for most users. However, it is still possible to explicitly change the audio backend back to "WASAPI" by [setting the "SDL_AUDIODRIVER" environment variable](https://wiki.libsdl.org/FAQUsingSDL#Win32-1).
+    * Please try to locate the ["Advanced" tab in the "Speaker Properties" window](https://superuser.com/questions/698522/how-should-i-decide-on-a-default-audio-format) for your sound hardware and change the default format to something like "CD quality".
+    * Reportedly, some older versions of the SDL2(_Mixer) libraries work better for certain sound drivers and Windows versions. Please try to replace the libraries bundled with Crispy Doom with the ones from Chocolate Doom or the daily builds.
+
+ * Why aren't you bundling the same SDL2(_Mixer) libraries as Chocolate Doom or the daily builds?
+
+   The Chocolate/Crispy Doom daily builds aren't under my control, they are provided as a courtesy of @fragglet. The library versions bundled with it are rather outdated and are missing support for playing music in MP3 format, in any tracker format and using soundfonts with the fluidsynth library. The Crispy Doom releases are built in an [https://www.msys2.org/](MSYS2) environment using the latest and full-featured library releases.
+
 ## Acknowledgement
 
 Although I have played the thought of hacking on Chocolate Doom's renderer for quite some time already, it was Brad Harding's [Doom Retro](https://www.chocolate-doom.org/wiki/index.php/Doom_Retro) that provided the incentive to finally do it. However, his fork aims at a different direction and I did not take a single line of code from it. Lee Killough's [MBF](https://doomwiki.org/wiki/WinMBF) was studied and used to debug the code, especially in the form of Team Eternity's [WinMBF](https://doomwiki.org/wiki/WinMBF) source port, which made it easier to compile and run on my machine. And of course there is fraggle's [Chocolate Doom](https://www.chocolate-doom.org/wiki/index.php/Chocolate_Doom) with its exceptionally clean and legible source code. Please let me take this opportunity to appreciate all these authors for their work!
