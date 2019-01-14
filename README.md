@@ -212,7 +212,7 @@ Crispy Doom 5.3 has been released on August 12, 2018. This version brings severa
 
 Crispy Doom 5.3 is based on Chocolate Doom 3.0.0 and has merged all changes to the Chocolate Doom master branch up to commit [`dd78c087`](https://github.com/chocolate-doom/chocolate-doom/commit/dd78c0873ec4756cc1bc430cf22ebe542ac3a23b)
 
-**[Previous changes](https://www.chocolate-doom.org/wiki/index.php/Crispy_Doom/Changelog)**
+**[Previous changes](https://github.com/fabiangreffrath/crispy-doom/wiki/Changelog)**
 
 ## FAQ
 
