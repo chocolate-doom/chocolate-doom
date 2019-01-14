@@ -92,20 +92,6 @@ Many additional less user-visible features have been implemented, e.g. fixed eng
  * `IDMUS00` restarts the current music (new in 5.1).
  * `VERSION` shows the engine version, build date and SDL version (new in 5.1).
 
-## Compatibility
-
- * Savegames saved by Crispy Doom are still **compatible with Vanilla Doom**, but are **not identical** anymore to the files that Vanilla Doom would have saved. This is caused by several reasons:
-   * By default, Crispy Doom writes savegames in an **extended format** that stores additional game state information past the end-of-file marker of the original savegame format. Vanilla and Chocolate Doom are still able to read savegames in this format but are not able to write it. Writing savegames in the extended format can be disabled by setting the `crispy_extsaveg` key to `0` in `crispy-doom.cfg`.
-   * In order to distinguish NRFTL levels from regular Doom 2 levels, Crispy Doom uses the `gameepisode` variable, which is used in Doom 1 to distinguish between the game episodes but is hitherto unused in Doom 2.
-   * Crispy Doom preserves the `mobj->target` and `mobj->tracers` fields of map objects when saving a game by replacing their contents with specific indices. These indices are then converted back to the corresponding pointers when the game is restored again. In Vanilla and Chocolate Doom, however, the contents of the `mobj->target` and `mobj->tracers` fields are disregarded and overwritten with `NULL`.
-   * Furthermore, Crispy Doom saves thinkers for active platforms in stasis.
-
- * If you are going to share savegames between Crispy Doom and Chocolate Doom, make sure to load all PWADs with the `-merge` parameter in the latter.
-
- * The Crispy HUD is displayed when `blocksize == 12`, which isn't supported by Chocolate Doom. To retain config file compatibility, quit the game with any other view size.
-
- * The "flipped levels" and "SSG available in Doom 1" features introduced in Crispy Doom 1.3 are considered strictly **experimental**! They may produce savegames, demo files or netgames that are not compatible with Chocolate Doom, Vanilla Doom or previous versions of Crispy Doom at all. Furthermore, the `SPECHITS` cheat introduced in Crispy Doom 1.5 may leave a map in a completely inconsistent state and games saved after using it may even cause Vanilla to crash by exceeding static limits.
-
 ## Download
 
 Binaries for Windows XP / Vista / 7 / 8.1 / 10 (both x86 and x64 editions) are available here: 
@@ -144,9 +130,7 @@ to install the prerequisites and then
 
 After successful compilation the resulting binaries can be found in the `src/` directory.
 
-## History of changes
-
-### Changes of Crispy Doom 5.4 from Crispy Doom 5.3
+## News
 
 Crispy Doom 5.4 has been released on December 17, 2018. This version demonstrates that there's always room for perfection and improvement ;)
 
@@ -187,36 +171,11 @@ Crispy Doom 5.4 has been released on December 17, 2018. This version demonstrate
 
 Crispy Doom 5.4 is based on Chocolate Doom 3.0.0 and has merged all changes to the Chocolate Doom master branch up to commit [`482d302e`](https://github.com/chocolate-doom/chocolate-doom/commit/482d302ee846fb30d23d50ccff8549d300a81b75)
 
-### Changes of Crispy Doom 5.3 from Crispy Doom 5.2
+## Documentation
 
-Crispy Doom 5.3 has been released on August 12, 2018. This version brings several fixes to deeper-lurking bugs and some improvements.
-
-**Features**
-
- * A new `-flipweapons` command line argument has been introduced to flip the player's weapon sprites, suggested by Zodomaniac.
-
-**Improvements**
-
- * A warning is now emitted to the terminal window when an Arch-Vile resurrects a monster that was crushed to a pool of gore before and thus gets turned into a "ghost monster".
- * FPS is capped to 35 if level time is not ticking (i.e. in non-level game states) which was requested and tested by JNechaevsky.
- * Changing the "High Resolution Rendering" setting now takes immediate effect and doesn't require an engine restart.
- * "Uncapped framerate" and "VSync" configure options are now separate.
- * `R_InstallSpriteLump()` has been made less error-prone on SiFi270's request.
-
-**Bug Fixes**
-
- * Screen refresh hiccups at uncapped framerates have now been fixed, reported by vanfanel.
- * Player's `viewz` only updates if he is actually inside the moving sector instead of merely within its bounding box. Thanks to galileo31dos01 for reporting this issue and JNechaevsky for confirming it!
- * The `deathmatch` variable is now reset when loading a savegame from the menu, fixing the bug that carburetor and Dwaze noticed (i.e. when loading a savegame while a deathmatch demo was playing in the demo loop, the engine assumed the loaded game was a deathmatch as well and applied deathmatch rules).
- * An engine crash that occurred when encountering empty texture lumps (i.e. lumps which do not contain a single texture definition at all) in PWADs has been fixed, thanks to the report by galileo31dos01.
-
-Crispy Doom 5.3 is based on Chocolate Doom 3.0.0 and has merged all changes to the Chocolate Doom master branch up to commit [`dd78c087`](https://github.com/chocolate-doom/chocolate-doom/commit/dd78c0873ec4756cc1bc430cf22ebe542ac3a23b)
-
-**[Previous changes](https://github.com/fabiangreffrath/crispy-doom/wiki/Changelog)**
-
-## FAQ
-
-Frequently Asked Questions are answered on the [Wiki](https://github.com/fabiangreffrath/crispy-doom/wiki/FAQ).
+ * **[Changelog](https://github.com/fabiangreffrath/crispy-doom/wiki/Changelog)**
+ * **[Compatibility](https://github.com/fabiangreffrath/crispy-doom/wiki/Compatibility)**
+ * **[FAQ](https://github.com/fabiangreffrath/crispy-doom/wiki/FAQ)**
 
 ## Versioning
 
