@@ -216,21 +216,7 @@ Crispy Doom 5.3 is based on Chocolate Doom 3.0.0 and has merged all changes to t
 
 ## FAQ
 
- * I am having sound issues on Windows, e.g. distorted or high-pitched SFX or music.
-
-   Mostly these issues aren't directly related to the port or its source code. Instead, these issues are most likely between SDL2(_Mixer), your Windows version and/or your sound drivers. Please try the following steps:
-    * Since version 5.4, Crispy Doom changed the SDL audio backend on Windows from "WASAPI" to "directsound", as the latter reportedly caused less problems for most users. However, it is still possible to explicitly change the audio backend back to "WASAPI" by [setting the "SDL_AUDIODRIVER" environment variable](https://wiki.libsdl.org/FAQUsingSDL#Win32-1).
-    * Please try to locate the ["Advanced" tab in the "Speaker Properties" window](https://superuser.com/questions/698522/how-should-i-decide-on-a-default-audio-format) for your sound hardware and change the default format to something like "CD quality".
-    * It may help to disable SFX resampling by setting the `use_libsamplerate` key to `0` in `crispy-doom.cfg`.
-    * Reportedly, some older versions of the SDL2(_Mixer) libraries work better for certain sound drivers and Windows versions. Please try to replace the libraries bundled with Crispy Doom with the ones from Chocolate Doom or the daily builds.
-
- * The music volume slider also changes the SFX volume.
- 
-    For some odd reasons it is impossible to set SFX and music volume separately for the same process in some versions of Windows. To mitigate this, make sure `crispy-midiproc.exe` is in the same directory (and of the same version) as `crispy-doom.exe` (in some releases, it was hidden in the `unsup/` subdirectory). However, if you experience erroneous music progression with certain music mods, move or rename `crispy-midiproc.exe` out of the way again.
-
- * Why aren't you bundling the same SDL2(_Mixer) libraries as Chocolate Doom or the daily builds?
-
-   The Chocolate/Crispy Doom daily builds aren't under my control, they are provided as a courtesy of @fragglet. The library versions bundled with it are rather outdated and are missing support for playing music in MP3 format, in any tracker format and using soundfonts with the fluidsynth library. The Crispy Doom releases are built in an [MSYS2](https://www.msys2.org/) environment using the latest and full-featured library releases.
+Frequently Asked Questions are answered on the [Wiki](https://github.com/fabiangreffrath/crispy-doom/wiki/FAQ).
 
 ## Versioning
 
