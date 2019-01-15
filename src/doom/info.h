@@ -1446,6 +1446,8 @@ typedef struct
     int	activesound;
     int	flags;
     int	raisestate;
+    // [crispy] height of the spawnstate's first sprite in pixels
+    int	actualheight;
 
 } mobjinfo_t;
 

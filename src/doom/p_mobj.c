@@ -637,6 +637,7 @@ P_SpawnMobjSafe
     mobj->height = info->height;
     mobj->flags = info->flags;
     mobj->health = info->spawnhealth;
+    mobj->actualheight = info->actualheight;
 
     if (gameskill != sk_nightmare)
 	mobj->reactiontime = info->reactiontime;
