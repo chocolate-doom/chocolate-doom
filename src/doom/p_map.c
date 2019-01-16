@@ -1145,7 +1145,7 @@ boolean PTR_ShootTraverse (intercept_t* in)
     // check angles to see if the thing can be aimed at
     dist = FixedMul (attackrange, in->frac);
     // [crispy] mobj or actual sprite height
-    thingheight = (critical->freeaim == FREEAIM_DIRECT) ? th->actualheight : th->height;
+    thingheight = (critical->freeaim == FREEAIM_DIRECT) ? th->info->actualheight : th->height;
     thingtopslope = FixedDiv (th->z+thingheight - shootz , dist);
 
     if (thingtopslope < aimslope)

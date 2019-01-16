@@ -293,8 +293,6 @@ typedef struct mobj_s
     fixed_t		oldz;
     angle_t		oldangle;
 
-    // [crispy] height of the spawnstate's first sprite in pixels
-    fixed_t		actualheight;
 } mobj_t;
 
 
