@@ -600,7 +600,7 @@ void S_StartSound(void *origin_p, int sfx_id)
     pitch = Clamp(pitch);
 
     // kill old sound
-    if (!crispy->soundfull || origin)
+    if (!crispy->soundfull || origin || gamestate != GS_LEVEL)
     {
     S_StopSound(origin);
     }
