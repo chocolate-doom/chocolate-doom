@@ -330,8 +330,12 @@ boolean PIT_CheckThing (mobj_t* thing)
     // missiles can hit other things
     if (tmthing->flags & MF_MISSILE)
     {
+	// [crispy] mobj or actual sprite height
+	const fixed_t thingheight = (tmthing->target && tmthing->target->player &&
+	                            critical->freeaim == FREEAIM_DIRECT) ?
+	                            thing->info->actualheight : thing->height;
 	// see if it went over / under
-	if (tmthing->z > thing->z + thing->height)
+	if (tmthing->z > thing->z + thingheight)
 	    return true;		// overhead
 	if (tmthing->z+tmthing->height < thing->z)
 	    return true;		// underneath
@@ -1145,7 +1149,8 @@ boolean PTR_ShootTraverse (intercept_t* in)
     // check angles to see if the thing can be aimed at
     dist = FixedMul (attackrange, in->frac);
     // [crispy] mobj or actual sprite height
-    thingheight = (critical->freeaim == FREEAIM_DIRECT) ? th->info->actualheight : th->height;
+    thingheight = (shootthing->player && critical->freeaim == FREEAIM_DIRECT) ?
+                  th->info->actualheight : th->height;
     thingtopslope = FixedDiv (th->z+thingheight - shootz , dist);
 
     if (thingtopslope < aimslope)
