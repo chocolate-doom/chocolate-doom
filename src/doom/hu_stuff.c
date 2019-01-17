@@ -833,7 +833,7 @@ void HU_Drawer(void)
     if (crispy->automapstats == WIDGETS_ALWAYS || (automapactive && crispy->automapstats == WIDGETS_AUTOMAP))
     {
 	// [crispy] move obtrusive line out of player view
-	if (!crispy->automapoverlay || screenblocks < CRISPY_HUD - 1)
+	if (automapactive && (!crispy->automapoverlay || screenblocks < CRISPY_HUD - 1))
 	    HUlib_drawTextLine(&w_map, false);
 
 	HUlib_drawTextLine(&w_kills, false);
