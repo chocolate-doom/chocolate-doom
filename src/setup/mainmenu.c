@@ -316,6 +316,11 @@ static void InitTextscreen(void)
     // <https://doomwiki.org/wiki/Romero_Blue>
     TXT_SetColor(TXT_COLOR_BLUE, 0x04, 0x14, 0x40);
 
+    // [crispy] Crispy colors for Crispy Setup
+    TXT_SetColor(TXT_COLOR_BRIGHT_GREEN, 255, 140, 0);
+    TXT_SetColor(TXT_COLOR_CYAN, 160, 144, 0);
+    TXT_SetColor(TXT_COLOR_BRIGHT_CYAN, 255, 255, 0);
+
     SetIcon();
     SetWindowTitle();
 }
