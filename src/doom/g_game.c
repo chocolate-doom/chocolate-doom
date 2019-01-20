@@ -1110,7 +1110,7 @@ void G_Ticker (void)
 	    break; 
 	  case ga_screenshot: 
 	    // [crispy] redraw view without weapons and HUD
-	    if (gamestate == GS_LEVEL && (crispy->cleanscreenshot || crispy->screenshotmsg == 1))
+	    if (leveltime > oldleveltime && (crispy->cleanscreenshot || crispy->screenshotmsg == 1))
 	    {
 		crispy->screenshotmsg = 4;
 		crispy->post_rendering_hook = G_CrispyScreenShot;
