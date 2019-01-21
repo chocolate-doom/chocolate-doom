@@ -1364,7 +1364,7 @@ static void P_InitActualHeights (void)
 		state = &states[mobjinfo[i].spawnstate];
 		sprdef = &sprites[state->sprite];
 
-		if (!sprdef->numframes)
+		if (!sprdef->numframes || !(mobjinfo[i].flags & (MF_SOLID|MF_SHOOTABLE)))
 		{
 			mobjinfo[i].actualheight = mobjinfo[i].height;
 			continue;
