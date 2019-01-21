@@ -525,7 +525,7 @@ void S_StartSound(void *origin_p, int sfx_id)
     int volume;
 
     // [crispy] play no sounds
-    if (crispy->demowarp)
+    if (nodrawers && singletics)
 	return;
 
     origin = (mobj_t *) origin_p;
@@ -792,7 +792,7 @@ void S_ChangeMusic(int musicnum, int looping)
     musinfo.current_item = -1;
 
     // [crispy] play no music if this is not the right map
-    if (crispy->demowarp && (gamestate != GS_LEVEL || crispy->demowarp != gamemap))
+    if (nodrawers && singletics)
 	return;
 
     // [crispy] restart current music if IDMUS00 is entered
@@ -885,7 +885,7 @@ void S_ChangeMusInfoMusic (int lumpnum, int looping)
     prevmap = -1;
 
     // [crispy] play no music if this is not the right map
-    if (crispy->demowarp && (gamestate != GS_LEVEL || crispy->demowarp != gamemap))
+    if (nodrawers && singletics)
     {
 	musinfo.current_item = lumpnum;
 	return;

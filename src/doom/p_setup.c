@@ -1188,6 +1188,14 @@ P_SetupLevel
     // will be set by player think.
     players[consoleplayer].viewz = 1; 
 
+    // [crispy] stop demo warp mode now
+    if (crispy->demowarp == map)
+    {
+	crispy->demowarp = 0;
+	nodrawers = false;
+	singletics = false;
+    }
+
     // [crispy] don't load map's default music if loaded from a savegame with MUSINFO data
     if (!musinfo.from_savegame)
     {
@@ -1339,13 +1347,6 @@ P_SetupLevel
 
     //printf ("free memory: 0x%x\n", Z_FreeMemory());
 
-    // [crispy] stop demo warp mode now
-    if (crispy->demowarp == map)
-    {
-	crispy->demowarp = 0;
-	nodrawers = false;
-	singletics = false;
-    }
 }
 
 // [crispy] height of the spawnstate's first sprite in pixels
