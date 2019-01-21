@@ -460,6 +460,12 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
         player->message = playermessage;
 
         player->powers[pw_mapcoords]--;
+
+        // [crispy] discard instead of going static
+        if (!player->powers[pw_mapcoords])
+        {
+            player->message = "";
+        }
     }
 
     // let movement keys cancel each other out
