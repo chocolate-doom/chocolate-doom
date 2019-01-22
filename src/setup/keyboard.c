@@ -158,7 +158,7 @@ static void AddKeyControl(TXT_UNCAST_ARG(table), const char *name, int *var)
     TXT_SignalConnect(key_input, "set", KeySetCallback, var);
 }
 
-static void AddSectionLabel(TXT_UNCAST_ARG(table), char *title,
+static void AddSectionLabel(TXT_UNCAST_ARG(table), const char *title,
                             boolean add_space)
 {
     TXT_CAST_ARG(txt_table_t, table);
