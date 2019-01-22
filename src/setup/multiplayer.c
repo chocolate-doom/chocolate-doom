@@ -1067,7 +1067,7 @@ void JoinMultiGame(TXT_UNCAST_ARG(widget), void *user_data)
 void SetChatMacroDefaults(void)
 {
     int i;
-    char *defaults[] = 
+    const char *const defaults[] =
     {
         HUSTR_CHATMACRO0,
         HUSTR_CHATMACRO1,
