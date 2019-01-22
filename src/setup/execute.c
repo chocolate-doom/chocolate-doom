@@ -56,7 +56,7 @@ struct execute_context_s
 
 static char *TempFile(char *s)
 {
-    char *tempdir;
+    const char *tempdir;
 
 #ifdef _WIN32
     // Check the TEMP environment variable to find the location.
