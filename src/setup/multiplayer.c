@@ -984,7 +984,7 @@ static void QueryWindowClosed(TXT_UNCAST_ARG(window), void *unused)
     TXT_SetPeriodicCallback(NULL, NULL, 0);
 }
 
-static void ServerQueryWindow(char *title)
+static void ServerQueryWindow(const char *title)
 {
     txt_table_t *results_table;
 
