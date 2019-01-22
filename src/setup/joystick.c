@@ -39,7 +39,7 @@ typedef struct
 
 typedef struct
 {
-    char *name;
+    const char *name;
     int axes, buttons, hats;
     const joystick_config_t *configs;
 } known_joystick_t;
