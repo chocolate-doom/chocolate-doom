@@ -33,7 +33,7 @@
 
 typedef struct
 {
-    char *name;  // Config file name
+    const char *name;  // Config file name
     int value;
 } joystick_config_t;
 
