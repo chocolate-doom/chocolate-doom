@@ -146,7 +146,7 @@ static void KeySetCallback(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(variable))
 
 // Add a label and keyboard input to the specified table.
 
-static void AddKeyControl(TXT_UNCAST_ARG(table), char *name, int *var)
+static void AddKeyControl(TXT_UNCAST_ARG(table), const char *name, int *var)
 {
     TXT_CAST_ARG(txt_table_t, table);
     txt_key_input_t *key_input;
