@@ -972,7 +972,7 @@ static void CalibrateJoystick(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
 // GUI
 //
 
-static void AddJoystickControl(TXT_UNCAST_ARG(table), char *label, int *var)
+static void AddJoystickControl(TXT_UNCAST_ARG(table), const char *label, int *var)
 {
     TXT_CAST_ARG(txt_table_t, table);
     txt_joystick_input_t *joy_input;
