@@ -367,7 +367,7 @@ void SetupMission(GameSelectCallback callback)
     }
 }
 
-char *GetExecutableName(void)
+const char *GetExecutableName(void)
 {
     return executable;
 }
