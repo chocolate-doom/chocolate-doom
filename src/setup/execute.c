@@ -130,7 +130,7 @@ execute_context_t *NewExecuteContext(void)
     return result;
 }
 
-void AddCmdLineParameter(execute_context_t *context, char *s, ...)
+void AddCmdLineParameter(execute_context_t *context, const char *s, ...)
 {
     va_list args;
 
