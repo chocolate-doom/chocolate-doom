@@ -372,7 +372,7 @@ const char *GetExecutableName(void)
     return executable;
 }
 
-char *GetGameTitle(void)
+const char *GetGameTitle(void)
 {
     return game_title;
 }
