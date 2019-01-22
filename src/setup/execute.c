@@ -54,7 +54,7 @@ struct execute_context_s
 // Returns the path to a temporary file of the given name, stored
 // inside the system temporary directory.
 
-static char *TempFile(char *s)
+static char *TempFile(const char *s)
 {
     const char *tempdir;
 
