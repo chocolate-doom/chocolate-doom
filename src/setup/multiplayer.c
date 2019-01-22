@@ -705,7 +705,7 @@ static txt_dropdown_list_t *GameTypeDropdown(void)
 // and the single player warp menu.  The parameters specify
 // the window title and whether to display multiplayer options.
 
-static void StartGameMenu(char *window_title, int multiplayer)
+static void StartGameMenu(const char *window_title, int multiplayer)
 {
     txt_window_t *window;
     txt_widget_t *iwad_selector;
