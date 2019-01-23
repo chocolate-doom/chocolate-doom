@@ -110,15 +110,13 @@ HUlib_drawTextLine
     {
 	c = toupper(l->l[i]);
 	// [crispy] support multi-colored text lines
-	if (c == '\x1b')
+	if (c == cr_esc)
 	{
-	    if (++i < l->len)
-	    {
-		if (l->l[i] >= '0' && l->l[i] <= '0' + CRMAX - 1)
+		if (l->l[i+1] >= '0' && l->l[i+1] <= '0' + CRMAX - 1)
 		{
+		    i++;
 		    dp_translation = (crispy->coloredhud & COLOREDHUD_TEXT) ? cr[(int) (l->l[i] - '0')] : NULL;
 		}
-	    }
 	}
 	else
 	// [crispy] support line breaks
