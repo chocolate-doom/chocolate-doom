@@ -638,12 +638,12 @@ static void SetDefaultSaveName(int slot)
     // map from IWAD or PWAD?
     if (maplumpinfo->wad_file == lumpinfo[0]->wad_file)
     {
-        M_snprintf(savegamestrings[itemOn], SAVESTRINGSIZE - 1,
+        M_snprintf(savegamestrings[itemOn], SAVESTRINGSIZE,
                    "%s", maplumpinfo->name);
     }
     else
     {
-        M_snprintf(savegamestrings[itemOn], SAVESTRINGSIZE - 1,
+        M_snprintf(savegamestrings[itemOn], SAVESTRINGSIZE,
                    "%s: %s", M_BaseName(maplumpinfo->wad_file->path),
                    maplumpinfo->name);
     }
