@@ -319,6 +319,11 @@ const char *I_NextGlob(glob_t *glob)
 {
     const char *result;
 
+    if (glob == NULL)
+    {
+        return NULL;
+    }
+
     // In unsorted mode we just return the filenames as we read
     // them back from the system API.
     if ((glob->flags & GLOB_FLAG_SORTED) == 0)
