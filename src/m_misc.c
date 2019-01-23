@@ -291,7 +291,7 @@ char *M_DirName(const char *path)
 // allocated.
 const char *M_BaseName(const char *path)
 {
-    char *p;
+    const char *p;
 
     p = strrchr(path, DIR_SEPARATOR);
     if (p == NULL)

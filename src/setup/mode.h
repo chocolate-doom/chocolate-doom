@@ -23,8 +23,8 @@ extern GameMission_t gamemission;
 
 void SetupMission(GameSelectCallback callback);
 void InitBindings(void);
-char *GetExecutableName(void);
-char *GetGameTitle(void);
+const char *GetExecutableName(void);
+const char *GetGameTitle(void);
 const iwad_t **GetIwads(void);
 
 #endif /* #ifndef SETUP_MODE_H */
