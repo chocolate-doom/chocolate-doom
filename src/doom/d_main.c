@@ -1379,15 +1379,15 @@ static void LoadNerveWad(void)
 // [crispy] support loading MASTERLEVELS.WAD alongside DOOM2.WAD
 static void LoadMasterlevelsWad(void)
 {
-    int i;
+    int i, j;
 
     if (gamemission != doom2)
         return;
 
-    if ((i = W_GetNumForName("map01")),
+    if ((i = W_GetNumForName("map01")) != -1 &&
+        (j = W_GetNumForName("map21")) != -1 &&
         !strcasecmp(lumpinfo[i]->wad_file->basename, "masterlevels.wad") &&
-        (i = W_GetNumForName("map21")),
-        !strcasecmp(lumpinfo[i]->wad_file->basename, "masterlevels.wad"))
+        !strcasecmp(lumpinfo[j]->wad_file->basename, "masterlevels.wad"))
     {
 	gamemission = pack_master;
     }
