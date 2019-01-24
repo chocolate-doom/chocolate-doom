@@ -23,7 +23,7 @@ can be found in the PHILOSOPHY file distributed with the source code.
 ## Setting up gameplay
 
 For instructions on how to set up Chocolate Doom for play, see the
-INSTALL file.
+[Development page in the wiki](https://www.chocolate-doom.org/wiki/index.php/Development).
 
 ## Configuration File
 
