@@ -22,7 +22,7 @@ addons:
         - libsdl2-image-dev
         - libsamplerate0-dev
 
-script: ./.travis.sh
+script: travis_wait ./.travis.sh
 
 branches:
     only:
