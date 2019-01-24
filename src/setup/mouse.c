@@ -73,7 +73,7 @@ static void MouseSetCallback(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(variable))
     }
 }
 
-static void AddMouseControl(TXT_UNCAST_ARG(table), char *label, int *var)
+static void AddMouseControl(TXT_UNCAST_ARG(table), const char *label, int *var)
 {
     TXT_CAST_ARG(txt_table_t, table);
     txt_mouse_input_t *mouse_input;
