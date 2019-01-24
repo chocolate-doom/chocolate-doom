@@ -222,8 +222,6 @@ P_GiveWeapon
 	gaveweapon = true;
 	player->weaponowned[weapon] = true;
 	player->pendingweapon = weapon;
-	// [crispy] show weapon pickup messages in multiplayer games
-	player->message = DEH_String(WeaponPickupMessages[weapon]);
     }
 	
     return (gaveweapon || gaveammo);
@@ -617,7 +615,7 @@ P_TouchSpecialThing
       case SPR_BFUG:
 	if (!P_GiveWeapon (player, wp_bfg, false) )
 	    return;
-//	player->message = DEH_String(GOTBFG9000); // [crispy] moved to P_GiveWeapon()
+	player->message = DEH_String(GOTBFG9000);
 	sound = sfx_wpnup;	
 	break;
 	
@@ -625,28 +623,28 @@ P_TouchSpecialThing
         if (!P_GiveWeapon(player, wp_chaingun,
                           (special->flags & MF_DROPPED) != 0))
             return;
-//	player->message = DEH_String(GOTCHAINGUN); // [crispy] moved to P_GiveWeapon()
+	player->message = DEH_String(GOTCHAINGUN);
 	sound = sfx_wpnup;	
 	break;
 	
       case SPR_CSAW:
 	if (!P_GiveWeapon (player, wp_chainsaw, false) )
 	    return;
-//	player->message = DEH_String(GOTCHAINSAW); // [crispy] moved to P_GiveWeapon()
+	player->message = DEH_String(GOTCHAINSAW);
 	sound = sfx_wpnup;	
 	break;
 	
       case SPR_LAUN:
 	if (!P_GiveWeapon (player, wp_missile, false) )
 	    return;
-//	player->message = DEH_String(GOTLAUNCHER); // [crispy] moved to P_GiveWeapon()
+	player->message = DEH_String(GOTLAUNCHER);
 	sound = sfx_wpnup;	
 	break;
 	
       case SPR_PLAS:
 	if (!P_GiveWeapon (player, wp_plasma, false) )
 	    return;
-//	player->message = DEH_String(GOTPLASMA); // [crispy] moved to P_GiveWeapon()
+	player->message = DEH_String(GOTPLASMA);
 	sound = sfx_wpnup;	
 	break;
 	
@@ -654,7 +652,7 @@ P_TouchSpecialThing
         if (!P_GiveWeapon(player, wp_shotgun,
                           (special->flags & MF_DROPPED) != 0))
             return;
-//	player->message = DEH_String(GOTSHOTGUN); // [crispy] moved to P_GiveWeapon()
+	player->message = DEH_String(GOTSHOTGUN);
 	sound = sfx_wpnup;	
 	break;
 		
@@ -662,7 +660,7 @@ P_TouchSpecialThing
         if (!P_GiveWeapon(player, wp_supershotgun,
                           (special->flags & MF_DROPPED) != 0))
             return;
-//	player->message = DEH_String(GOTSHOTGUN2); // [crispy] moved to P_GiveWeapon()
+	player->message = DEH_String(GOTSHOTGUN2);
 	sound = sfx_wpnup;	
 	break;
 		
