@@ -1909,10 +1909,13 @@ int M_StringWidth(const char *string)
     for (i = 0;i < strlen(string);i++)
     {
 	// [crispy] correctly center colorized strings
-	if (string[i] == '\x1b')
+	if (string[i] == cr_esc)
 	{
-	    i++;
-	    continue;
+	    if (string[i+1] >= '0' && string[i+1] <= '0' + CRMAX - 1)
+	    {
+		i++;
+		continue;
+	    }
 	}
 
 	c = toupper(string[i]) - HU_FONTSTART;
@@ -1977,11 +1980,14 @@ M_WriteText
 	    continue;
 	}
 	// [crispy] support multi-colored text
-	if (c == '\x1b')
+	if (c == cr_esc)
 	{
-	    c = *ch++;
-	    dp_translation = cr[(int) (c - '0')];
-	    continue;
+	    if (*ch >= '0' && *ch <= '0' + CRMAX - 1)
+	    {
+		c = *ch++;
+		dp_translation = cr[(int) (c - '0')];
+		continue;
+	    }
 	}
 		
 	c = toupper(c) - HU_FONTSTART;

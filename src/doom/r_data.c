@@ -1143,7 +1143,7 @@ void R_InitColormaps (void)
 		cr[i][j] = V_Colorize(playpal, i, j, keepgray);
 	    }
 
-	    M_snprintf(c, sizeof(c), "\x1b%c", '0' + i);
+	    M_snprintf(c, sizeof(c), "%c%c", cr_esc, '0' + i);
 	    crstr[i] = M_StringDuplicate(c);
 	}
 

@@ -52,6 +52,8 @@ enum
 extern byte *cr[CRMAX];
 extern char **crstr;
 
+#define cr_esc '~'
+
 extern byte *tranmap;
 
 #endif // __V_TRANS__
