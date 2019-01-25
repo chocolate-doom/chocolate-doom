@@ -1026,8 +1026,12 @@ void HU_Ticker(void)
     {
 	const int time = leveltime / TICRATE;
 
-	M_snprintf(str, sizeof(str), "%s%02d:%02d", crstr[CR_GRAY],
-	        time/60, time%60);
+	if (time >= 3600)
+	    M_snprintf(str, sizeof(str), "%s%02d:%02d:%02d", crstr[CR_GRAY],
+	            time/3600, (time%3600)/60, time%60);
+	else
+	    M_snprintf(str, sizeof(str), "%s%02d:%02d", crstr[CR_GRAY],
+	            time/60, time%60);
 	HUlib_clearTextLine(&w_ltime);
 	s = str;
 	while (*s)
