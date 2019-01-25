@@ -1,18 +1,20 @@
-<!--
-  Thank you for reporting a bug in Chocolate Doom. Please complete
+---
+name: Crispy Doom issue template
+about: Create a report to help us improve
+title: ''
+labels: ''
+assignees: ''
+
+---
+
+Thank you for reporting a bug in Crispy Doom. Please complete
   the following template so that we can better diagnose the source
   of your problem.
 
-  To save yourself some time, you may want to check the FAQ and the
-  NOT-BUGS list for solutions to some common problems:
-
-     https://www.chocolate-doom.org/wiki/index.php/FAQ
-     https://www.chocolate-doom.org/not-bugs
--->
 
 ### Background
 
-Version of Chocolate Doom:
+Version of Crispy Doom:
 
 Operating System and version:
 
@@ -25,4 +27,3 @@ Any loaded WADs and mods (please include full command line):
 Observed behavior:
 
 Expected behavior:
-
