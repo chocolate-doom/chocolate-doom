@@ -1098,9 +1098,6 @@ const char *skilltable[] =
     "NM"
 };
 
-// [crispy] pointer to the current map lump info struct
-lumpinfo_t *maplumpinfo;
-
 // [crispy] factor out map lump name and number finding into a separate function
 int P_GetNumForMap (int episode, int map, boolean critical)
 {
@@ -1137,6 +1134,9 @@ int P_GetNumForMap (int episode, int map, boolean critical)
 
     return lumpnum;
 }
+
+// pointer to the current map lump info struct
+lumpinfo_t *maplumpinfo;
 
 //
 // P_SetupLevel
@@ -1235,7 +1235,6 @@ P_SetupLevel
 */
     lumpnum = P_GetNumForMap (episode, map, true);
 	
-    // [crispy] pointer to the current map lump info struct
     maplumpinfo = lumpinfo[lumpnum];
     strncpy(lumpname, maplumpinfo->name, 8);
 

@@ -35,7 +35,7 @@
 #include "w_wad.h"
 #include "m_argv.h" // [crispy] M_ParmExists()
 #include "st_stuff.h" // [crispy] ST_HEIGHT
-#include "p_local.h" // maplumpinfo
+#include "p_setup.h" // maplumpinfo
 
 #include "s_sound.h"
 

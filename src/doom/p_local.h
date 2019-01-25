@@ -24,8 +24,6 @@
 #include "r_local.h"
 #endif
 
-#include "w_wad.h" // [crispy] lumpinfo_t
-
 #define TOCENTER                -8
 #define AFLAG_JUMP              0x80
 #define FLOATSPEED		(FRACUNIT*4)
@@ -276,10 +274,6 @@ extern mobj_t**		blocklinks;	// for thing chains
 
 // [crispy] factor out map lump name and number finding into a separate function
 extern int P_GetNumForMap (int episode, int map, boolean critical);
-// [crispy] pointer to the current map lump info struct
-extern lumpinfo_t *maplumpinfo;
-// [crispy] ... and the map lump about to load
-extern lumpinfo_t *savemaplumpinfo;
 
 // [crispy] blinking key or skull in the status bar
 #define KEYBLINKMASK 0x8
