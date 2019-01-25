@@ -1,16 +1,8 @@
----
-name: Crispy Doom issue template
-about: Create a report to help us improve
-title: ''
-labels: ''
-assignees: ''
-
----
-
-Thank you for reporting a bug in Crispy Doom. Please complete
+<!--
+  Thank you for reporting a bug in Crispy Doom. Please complete
   the following template so that we can better diagnose the source
   of your problem.
-
+-->
 
 ### Background
 
@@ -27,3 +19,4 @@ Any loaded WADs and mods (please include full command line):
 Observed behavior:
 
 Expected behavior:
+
