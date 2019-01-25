@@ -53,11 +53,6 @@ struct _wad_file_s
 
     // File's location on disk.
     char *path; // [crispy] un-const
-
-    // [crispy] name of this file
-    const char *basename;
-    // [crispy] indicate this is the IWAD
-    boolean iwad;
 };
 
 // Open the specified file. Returns a pointer to a new wad_file_t 

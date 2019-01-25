@@ -49,7 +49,7 @@ char *savewadfilename = NULL;
 
 static void P_WriteWadFileName (const char *key)
 {
-	M_snprintf(line, MAX_LINE_LEN, "%s %s\n", key, maplumpinfo->wad_file->basename);
+	M_snprintf(line, MAX_LINE_LEN, "%s %s\n", key, W_WadNameForLump(maplumpinfo));
 	fputs(line, save_stream);
 }
 

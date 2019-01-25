@@ -860,7 +860,7 @@ void R_InitBrightmaps (int flats)
 
 			// [crispy] detect Chex Quest 2
 			lump = W_CheckNumForName("INTERPIC");
-			if (!strcasecmp(lumpinfo[lump]->wad_file->basename, "chex2.wad"))
+			if (!strcasecmp(W_WadNameForLump(lumpinfo[lump]), "chex2.wad"))
 			{
 				chex2 = true;
 			}

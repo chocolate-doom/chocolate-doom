@@ -1496,7 +1496,7 @@ static boolean WI_drawParTime (void)
 	boolean result = true;
 
 	// [crispy] PWADs have no par times (including The Master Levels)
-	if (!maplumpinfo->wad_file->iwad)
+	if (!W_IsIWADLump(maplumpinfo))
 	{
 		result = false;
 	}

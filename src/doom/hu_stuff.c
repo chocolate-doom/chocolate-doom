@@ -705,15 +705,15 @@ void HU_Start(void)
     }
 
     // [crispy] display names of single special levels in Automap
-    HU_SetSpecialLevelName(maplumpinfo->wad_file->basename, &s);
+    HU_SetSpecialLevelName(W_WadNameForLump(maplumpinfo), &s);
 
     // [crispy] explicitely display (episode and) map if the
     // map is from a PWAD or if the map title string has been dehacked
-    if (strcmp(s, DEH_String(s)) || (!maplumpinfo->wad_file->iwad && (!nervewadfile || gamemission != pack_nerve)))
+    if (strcmp(s, DEH_String(s)) || (!W_IsIWADLump(maplumpinfo) && (!nervewadfile || gamemission != pack_nerve)))
     {
 	char *m;
 
-	ptr = M_StringJoin(crstr[CR_GOLD], maplumpinfo->wad_file->basename, ": ", crstr[CR_GRAY], maplumpinfo->name, NULL);
+	ptr = M_StringJoin(crstr[CR_GOLD], W_WadNameForLump(maplumpinfo), ": ", crstr[CR_GRAY], maplumpinfo->name, NULL);
 	m = ptr;
 
 	while (*m)

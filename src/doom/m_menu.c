@@ -3117,7 +3117,7 @@ static void M_ForceLoadGameResponse(int key)
 		return;
 	}
 
-	savewadfilename = (char *)savemaplumpinfo->wad_file->basename;
+	savewadfilename = (char *)W_WadNameForLump(savemaplumpinfo);
 	gameaction = ga_loadgame;
 }
 
@@ -3129,7 +3129,7 @@ void M_ForceLoadGame()
 	             crstr[CR_GOLD], savewadfilename, crstr[CR_NONE], "\n",
 	             "to restore ", crstr[CR_GOLD], savemaplumpinfo->name, crstr[CR_NONE], " .\n\n",
 	             "Continue to restore from\n",
-	             crstr[CR_GOLD], savemaplumpinfo->wad_file->basename, crstr[CR_NONE], " ?\n\n",
+	             crstr[CR_GOLD], W_WadNameForLump(savemaplumpinfo), crstr[CR_NONE], " ?\n\n",
 	             PRESSYN, NULL) :
 	M_StringJoin("This savegame requires the file\n",
 	             crstr[CR_GOLD], savewadfilename, crstr[CR_NONE], "\n",
