@@ -957,7 +957,7 @@ static boolean D_AddFile(char *filename)
 // Some dehacked mods replace these.  These are only displayed if they are 
 // replaced by dehacked.
 // haleyjd 08/22/2010: [STRIFE] altered to match strings from binary
-static char *copyright_banners[] =
+static const char *copyright_banners[] =
 {
     "===========================================================================\n"
     "ATTENTION:  This version of STRIFE has extra files added to it.\n"
