@@ -757,7 +757,7 @@ void D_QuitGame(void)
 // These are from the original source: some of them are perhaps
 // not used in any dehacked patches
 
-static char *banners[] =
+static const char *banners[] =
 {
     // strife1.wad:
 
