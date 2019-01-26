@@ -1003,8 +1003,8 @@ void PrintDehackedBanners(void)
 
 static struct 
 {
-    char *description;
-    char *cmdline;
+    const char *description;
+    const char *cmdline;
     GameVersion_t version;
 } gameversions[] = {
     { "Strife 1.2",          "1.2",       exe_strife_1_2  },
