@@ -1145,7 +1145,7 @@ static void D_SetChar(char c)
 //
 // D_DrawText
 //
-static void D_DrawText(char *string, int bc, int fc)
+static void D_DrawText(const char *string, int bc, int fc)
 {
     int column;
     int row;
