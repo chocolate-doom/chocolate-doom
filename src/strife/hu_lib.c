@@ -41,10 +41,10 @@ extern boolean D_PatchClipCallback(patch_t *patch, int x, int y); // [STRIFE]
 //
 // haleyjd 20100918: [STRIFE] New function.
 //
-void HUlib_drawYellowText(int x, int y, char *text)
+void HUlib_drawYellowText(int x, int y, const char *text)
 {
     int start_x = x;
-    char *rover = text;
+    const char *rover = text;
     char c;
 
     while((c = *rover++))
