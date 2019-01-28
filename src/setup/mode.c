@@ -44,13 +44,13 @@ static const iwad_t **iwads;
 
 typedef struct
 {
-    char *label;
+    const char *label;
     GameMission_t mission;
     int mask;
-    char *name;
-    char *config_file;
-    char *extra_config_file;
-    char *executable;
+    const char *name;
+    const char *config_file;
+    const char *extra_config_file;
+    const char *executable;
 } mission_config_t;
 
 // Default mission to fall back on, if no IWADs are found at all:
@@ -106,7 +106,7 @@ static int screenblocks = 9;
 static int detailLevel = 0;
 static char *savedir = NULL;
 static char *executable = NULL;
-static char *game_title = "Doom";
+static const char *game_title = "Doom";
 static char *back_flat = "F_PAVE01";
 static int comport = 0;
 static char *nickname = NULL;
@@ -367,12 +367,12 @@ void SetupMission(GameSelectCallback callback)
     }
 }
 
-char *GetExecutableName(void)
+const char *GetExecutableName(void)
 {
     return executable;
 }
 
-char *GetGameTitle(void)
+const char *GetGameTitle(void)
 {
     return game_title;
 }

@@ -54,9 +54,9 @@ struct execute_context_s
 // Returns the path to a temporary file of the given name, stored
 // inside the system temporary directory.
 
-static char *TempFile(char *s)
+static char *TempFile(const char *s)
 {
-    char *tempdir;
+    const char *tempdir;
 
 #ifdef _WIN32
     // Check the TEMP environment variable to find the location.
@@ -130,7 +130,7 @@ execute_context_t *NewExecuteContext(void)
     return result;
 }
 
-void AddCmdLineParameter(execute_context_t *context, char *s, ...)
+void AddCmdLineParameter(execute_context_t *context, const char *s, ...)
 {
     va_list args;
 

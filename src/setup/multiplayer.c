@@ -705,7 +705,7 @@ static txt_dropdown_list_t *GameTypeDropdown(void)
 // and the single player warp menu.  The parameters specify
 // the window title and whether to display multiplayer options.
 
-static void StartGameMenu(char *window_title, int multiplayer)
+static void StartGameMenu(const char *window_title, int multiplayer)
 {
     txt_window_t *window;
     txt_widget_t *iwad_selector;
@@ -984,7 +984,7 @@ static void QueryWindowClosed(TXT_UNCAST_ARG(window), void *unused)
     TXT_SetPeriodicCallback(NULL, NULL, 0);
 }
 
-static void ServerQueryWindow(char *title)
+static void ServerQueryWindow(const char *title)
 {
     txt_table_t *results_table;
 
@@ -1067,7 +1067,7 @@ void JoinMultiGame(TXT_UNCAST_ARG(widget), void *user_data)
 void SetChatMacroDefaults(void)
 {
     int i;
-    char *defaults[] = 
+    const char *const defaults[] =
     {
         HUSTR_CHATMACRO0,
         HUSTR_CHATMACRO1,

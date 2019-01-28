@@ -1173,7 +1173,7 @@ static void LoadIwadDeh(void)
 
         // Look for chex.deh in the same directory as the IWAD file.
         dirname = M_DirName(iwadfile);
-        chex_deh = M_StringJoin(dirname, DIR_SEPARATOR_S, "chex.deh");
+        chex_deh = M_StringJoin(dirname, DIR_SEPARATOR_S, "chex.deh", NULL);
         free(dirname);
 
         // If the dehacked patch isn't found, try searching the WAD

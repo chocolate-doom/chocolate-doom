@@ -181,7 +181,7 @@ static void LaunchDoom(void *unused1, void *unused2)
 
 static txt_button_t *GetLaunchButton(void)
 {
-    char *label;
+    const char *label;
 
     switch (gamemission)
     {
