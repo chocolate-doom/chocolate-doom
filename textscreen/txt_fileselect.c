@@ -175,11 +175,18 @@ static BOOL (*MySHGetPathFromIDList)(LPITEMIDLIST, LPTSTR) = NULL;
 
 static int LoadDLLs(void)
 {
-    HMODULE comdlg32 = LoadLibraryW(L"comdlg32.dll");
-    HMODULE shell32 = LoadLibraryW(L"shell32.dll");
+    HMODULE comdlg32, shell32
 
-    if (comdlg32 == NULL || shell32 == NULL)
+    comdlg32 = LoadLibraryW(L"comdlg32.dll");
+    if (comdlg32 == NULL)
     {
+        return 0;
+    }
+
+    shell32 = LoadLibraryW(L"shell32.dll");
+    if (shell32 == NULL)
+    {
+        FreeLibrary(comdlg32);
         return 0;
     }
 

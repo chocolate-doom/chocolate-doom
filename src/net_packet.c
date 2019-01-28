@@ -158,10 +158,10 @@ boolean NET_ReadSInt32(net_packet_t *packet, signed int *data)
 {
     if (NET_ReadInt32(packet, (unsigned int *) data))
     {
-        if (*data & (1 << 31))
+        if (*data & (1U << 31))
         {
-            *data &= ~(1 << 31);
-            *data -= (1 << 31);
+            *data &= ~(1U << 31);
+            *data -= (1U << 31);
         }
         return true;
     }

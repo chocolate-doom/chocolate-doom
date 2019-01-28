@@ -2,10 +2,8 @@ language: c
 
 compiler: gcc
 
-# Travis uses Ubuntu 12.04 (Precise) for builds by default, which is too
-# old and missing the SDL2 packages, so use Trusty instead.
 sudo: required
-dist: trusty
+dist: xenial
 
 env:
     - ANALYZE=false
