@@ -1136,6 +1136,7 @@ void NET_CL_Init(void)
 
 void NET_Init(void)
 {
+    NET_OpenLog();
     NET_CL_Init();
 }
 

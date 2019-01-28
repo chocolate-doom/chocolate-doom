@@ -25,7 +25,7 @@
 
 #include "m_argv.h"
 
-#include "net_defs.h"
+#include "net_common.h"
 #include "net_sdl.h"
 #include "net_server.h"
 
@@ -65,6 +65,7 @@ void NET_DedicatedServer(void)
 {
     CheckForClientOptions();
 
+    NET_OpenLog();
     NET_SV_Init();
     NET_SV_AddModule(&net_sdl_module);
     NET_SV_RegisterWithMaster();

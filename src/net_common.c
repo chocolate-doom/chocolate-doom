@@ -16,12 +16,14 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdarg.h>
 #include <string.h>
 
 #include "doomtype.h"
 #include "d_mode.h"
 #include "i_system.h"
 #include "i_timer.h"
+#include "m_argv.h"
 
 #include "net_common.h"
 #include "net_io.h"
@@ -45,6 +47,8 @@ struct net_reliable_packet_s
     int seq;
     net_reliable_packet_t *next;
 };
+
+static FILE *net_debug = NULL;
 
 // Why did the server reject us?
 char *net_client_reject_reason = NULL;
@@ -476,5 +480,76 @@ boolean NET_ValidGameSettings(GameMode_t mode, GameMission_t mission,
         return false;
 
     return true;
+}
+
+static void CloseLog(void)
+{
+    if (net_debug != NULL)
+    {
+        fclose(net_debug);
+        net_debug = NULL;
+    }
+}
+
+void NET_OpenLog(void)
+{
+    int p;
+
+    p = M_CheckParmWithArgs("-netlog", 1);
+    if (p > 0)
+    {
+        net_debug = fopen(myargv[p + 1], "w");
+        if (net_debug == NULL)
+        {
+            I_Error("Failed to open %s to write debug log.", myargv[p + 1]);
+        }
+        I_AtExit(CloseLog, true);
+    }
+}
+
+void NET_Log(const char *fmt, ...)
+{
+    va_list args;
+
+    if (net_debug == NULL)
+    {
+        return;
+    }
+
+    fprintf(net_debug, "%8d: ", I_GetTimeMS());
+    va_start(args, fmt);
+    vfprintf(net_debug, fmt, args);
+    va_end(args);
+    fprintf(net_debug, "\n");
+}
+
+void NET_LogPacket(net_packet_t *packet)
+{
+    int i, bytes;
+
+    if (net_debug == NULL)
+    {
+        return;
+    }
+
+    bytes = packet->len - packet->pos;
+    if (bytes == 0)
+    {
+        return;
+    }
+    fprintf(net_debug, "\t%02x", packet->data[packet->pos]);
+    for (i = 1; i < bytes; ++i)
+    {
+        if ((i % 16) == 0)
+        {
+            fprintf(net_debug, "\n\t");
+        }
+        else
+        {
+            fprintf(net_debug, " ");
+        }
+        fprintf(net_debug, "%02x", packet->data[packet->pos + i]);
+    }
+    fprintf(net_debug, "\n");
 }
 
