@@ -1033,7 +1033,7 @@ void R_DrawMasked(void)
 //
 // Added for the sideviewing with an external device
     if (viewangleoffset <= 1024 << ANGLETOFINESHIFT || viewangleoffset >=
-        -1024 << ANGLETOFINESHIFT)
+        -(1024 << ANGLETOFINESHIFT))
     {                           // don't draw on side views
         R_DrawPlayerSprites();
     }
