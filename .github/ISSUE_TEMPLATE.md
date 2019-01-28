@@ -1,7 +1,6 @@
 <!--
-  Thank you for reporting a bug in Crispy Doom. Please complete
-  the following template so that we can better diagnose the source
-  of your problem.
+  Thank you for reporting a bug in Crispy Doom. Please complete the following template
+  so that we can better diagnose the source of your problem.
 -->
 
 ### Background
