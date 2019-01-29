@@ -595,7 +595,7 @@ void P_PlayerThink (player_t* player)
 // P_RemoveInventoryItem
 // villsa [STRIFE] new function
 //
-char* P_RemoveInventoryItem(player_t *player, int slot, int amount)
+const char* P_RemoveInventoryItem(player_t *player, int slot, int amount)
 {
     mobjtype_t type;
 
