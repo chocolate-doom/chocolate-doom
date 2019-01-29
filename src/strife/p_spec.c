@@ -196,7 +196,7 @@ void P_InitPicAnims (void)
 // villsa [STRIFE] terrain type definitions
 typedef struct
 {
-    char*   flat;
+    const char *flat;
     int     type;
     int     num;
 } terraintype_t;
