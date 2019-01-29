@@ -841,7 +841,7 @@ boolean P_SpawnTeleportBeacon(player_t* player)
 boolean P_UseInventoryItem(player_t* player, int item)
 {
     int i;
-    char* name;
+    const char *name;
 
     if(player->cheats & CF_ONFIRE)
         return false;
