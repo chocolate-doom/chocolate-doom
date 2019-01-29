@@ -201,7 +201,7 @@ static patch_t*         invsigil[5];      // sigil pieces
 static patch_t*         invarmor[2];      // armor icons
 
 // names for ammo patches
-static char *invammonames[NUMAMMO] =
+static const char *invammonames[NUMAMMO] =
 {
     "I_BLIT",
     "I_XQRL",
