@@ -121,7 +121,7 @@ static boolean hu_setting_name = false;
 // haleyjd 08/31/10: [STRIFE] Changed for Strife level names.
 // List of names for levels.
 
-char *mapnames[] =
+const char *mapnames[] =
 {
     // Strife map names
 
