@@ -2326,14 +2326,14 @@ void G_DoPlayDemo (void)
     */
     else
     {
-        char *message = "Demo is from a different game version!\n"
-                        "(read %i, should be %i)\n"
-                        "\n"
-                        "*** You may need to upgrade your version "
-                            "of Strife to v1.1 or later. ***\n"
-                        "    See: https://www.doomworld.com/classicdoom"
-                                  "/info/patches.php\n"
-                        "    This appears to be %s.";
+        const char *message = "Demo is from a different game version!\n"
+                              "(read %i, should be %i)\n"
+                              "\n"
+                              "*** You may need to upgrade your version "
+                                  "of Strife to v1.1 or later. ***\n"
+                              "    See: https://www.doomworld.com/classicdoom"
+                                        "/info/patches.php\n"
+                              "    This appears to be %s.";
 
         I_Error(message, demoversion, STRIFE_VERSION,
                          DemoVersionDescription(demoversion));
