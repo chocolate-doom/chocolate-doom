@@ -414,7 +414,9 @@ void NET_CL_SendTiccmd(ticcmd_t *ticcmd, int maketic)
 
     if (starttic < 0)
         starttic = 0;
-    
+
+    NET_Log("client: generated tic %d, sending %d-%d",
+            maketic, starttic, endtic);
     NET_CL_SendTics(starttic, endtic);
 }
 
