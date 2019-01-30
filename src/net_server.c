@@ -1681,6 +1681,18 @@ void NET_SV_CheckDeadlock(net_client_t *client)
                 break;
             }
         }
+
+        // If we sent a resend request to break the deadlock, also trigger a
+        // resend of any tics we have sitting in the send queue, in case the
+        // client is blocked waiting on tics from us that have been lost.
+        // This fixes deadlock with some older clients which do not send
+        // resends to break deadlock.
+        if (i < BACKUPTICS && client->sendseq > client->acknowledged)
+        {
+            NET_Log("server: also resending tics %d-%d to break deadlock",
+                    client->acknowledged, client->sendseq - 1);
+            NET_SV_SendTics(client, client->acknowledged, client->sendseq - 1);
+        }
     }
 }
 
