@@ -387,61 +387,76 @@ boolean PIT_CheckThing (mobj_t* thing)
 	return !solid;
     }
 
-    // [crispy] a solid hanging body will allow sufficiently small things underneath it
-    if (critical->overunder &&
-        (thing->flags & (MF_SOLID | MF_SPAWNCEILING)) == (MF_SOLID | MF_SPAWNCEILING) &&
-        tmthing->z + tmthing->height <= thing->z)
-    {
-	if (thing->z < tmceilingz)
-	    tmceilingz = thing->z;
-	return true;
-    }
+	if (critical->overunder)
+	{
+		// [crispy] a solid hanging body will allow sufficiently small things underneath it
+		if (thing->flags & MF_SOLID && thing->flags & MF_SPAWNCEILING)
+		{
+			if (tmthing->z + tmthing->height <= thing->z)
+			{
+				if (thing->z < tmceilingz)
+				{
+					tmceilingz = thing->z;
+				}
+				return true;
+			}
+		}
 
-    // [crispy] allow players to walk over/under shootable objects
-    if (critical->overunder &&
-        tmthing->player && thing->flags & MF_SHOOTABLE)
-    {
-        fixed_t newfloorz, newceilingz;
-        // [crispy] allow the usual 24 units step-up even across monsters' heads
-        // but do not allow if this height has been reached by "low" jumping
-        fixed_t step_up = tmthing->player->jumpTics > 7 ? 0 : 24*FRACUNIT;
+		// [crispy] allow players to walk over/under shootable objects
+		if (tmthing->player && thing->flags & MF_SHOOTABLE)
+		{
+			fixed_t newfloorz, newceilingz;
+			// [crispy] allow the usual 24 units step-up even across monsters' heads,
+			// only if the current height has not been reached by "low" jumping
+			fixed_t step_up = tmthing->player->jumpTics > 7 ? 0 : 24*FRACUNIT;
 
-        if (tmthing->z + step_up >= thing->z + thing->height)
-        {
-            // player walks over object
-            if ((newfloorz = thing->z + thing->height) > tmfloorz)
-                tmfloorz = newfloorz;
-            if ((newceilingz = tmthing->z) < thing->ceilingz)
-                thing->ceilingz = newceilingz;
-            return true;
-        }
-        else
-        if (tmthing->z + tmthing->height <= thing->z)
-        {
-            // player walks underneath object
-            if ((newceilingz = thing->z) < tmceilingz)
-                tmceilingz = newceilingz;
-            if ((newfloorz = tmthing->z + tmthing->height) > thing->floorz)
-                thing->floorz = newfloorz;
-            return true;
-        }
+			if (tmthing->z + step_up >= thing->z + thing->height)
+			{
+				// player walks over object
+				if ((newfloorz = thing->z + thing->height) > tmfloorz)
+				{
+					tmfloorz = newfloorz;
+				}
+				if ((newceilingz = tmthing->z) < thing->ceilingz)
+				{
+					thing->ceilingz = newceilingz;
+				}
+				return true;
+			}
+			else
+			if (tmthing->z + tmthing->height <= thing->z)
+			{
+				// player walks underneath object
+				if ((newceilingz = thing->z) < tmceilingz)
+				{
+					tmceilingz = newceilingz;
+				}
+				if ((newfloorz = tmthing->z + tmthing->height) > thing->floorz)
+				{
+					thing->floorz = newfloorz;
+				}
+				return true;
+			}
 
-        // [crispy] check if things are stuck and allow them to move further apart
-        // taken from doomretro/src/p_map.c:319-332
-        if (tmx == tmthing->x && tmy == tmthing->y)
-            unblocking = true;
-        else
-        {
-            fixed_t newdist = P_AproxDistance(thing->x - tmx, thing->y - tmy);
-            fixed_t olddist = P_AproxDistance(thing->x - tmthing->x, thing->y - tmthing->y);
+			// [crispy] check if things are stuck and allow them to move further apart
+			// taken from doomretro/src/p_map.c:319-332
+			if (tmx == tmthing->x && tmy == tmthing->y)
+			{
+				unblocking = true;
+			}
+			else
+			{
+				fixed_t newdist = P_AproxDistance(thing->x - tmx, thing->y - tmy);
+				fixed_t olddist = P_AproxDistance(thing->x - tmthing->x, thing->y - tmthing->y);
 
-            if (newdist > olddist)
-            {
-                unblocking = (tmthing->z < thing->z + thing->height
-                           && tmthing->z + tmthing->height > thing->z);
-            }
-        }
-    }
+				if (newdist > olddist)
+				{
+					unblocking = (tmthing->z < thing->z + thing->height
+					           && tmthing->z + tmthing->height > thing->z);
+				}
+			}
+		}
+	}
 	
     return !(thing->flags & MF_SOLID) || unblocking;
 }

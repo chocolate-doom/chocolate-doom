@@ -702,7 +702,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
         // [crispy] released
         if (mbmlookctrl)
         {
-            if (crispy->freelook == FREELOOK_SPRING || mbmlookctrl < 6) // [crispy] short click
+            if (crispy->freelook == FREELOOK_SPRING || mbmlookctrl < SLOWTURNTICS) // [crispy] short click
             {
                 look = TOCENTER;
             }
