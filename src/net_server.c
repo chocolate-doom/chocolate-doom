@@ -1186,6 +1186,7 @@ static void NET_SV_ParseGameData(net_packet_t *packet, net_client_t *client)
         recvobj->latency = latency;
 
         client->last_gamedata_time = nowtime;
+        NET_Log("server: stored tic %d for player %d", seq + i, player);
     }
 
     // Higher acknowledgement point?
