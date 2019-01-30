@@ -1003,7 +1003,7 @@ void M_SaveSelect(int choice)
     {
         savegamestrings[choice][0] = 0;
 
-        if (joypadSave)
+        if (joypadSave || true) // [crispy] always prefill empty savegame slot names
         {
             SetDefaultSaveName(choice);
         }
