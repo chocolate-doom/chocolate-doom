@@ -131,6 +131,12 @@ static default_t	doom_defaults_list[] =
     CONFIG_VARIABLE_INT(mouse_sensitivity),
 
     //!
+    // Horizontal mouse sensitivity (strafe)
+    //
+
+    CONFIG_VARIABLE_INT(mouse_sensitivity_x2),
+
+    //!
     // Vertical mouse sensitivity
     //
 

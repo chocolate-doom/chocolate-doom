@@ -73,6 +73,7 @@ extern boolean		chat_on;		// in heads-up code
 // defaulted values
 //
 int			mouseSensitivity = 5;
+int			mouseSensitivity_x2 = 5; // [crispy] mouse sensitivity menu
 int			mouseSensitivity_y = 5; // [crispy] mouse sensitivity menu
 
 // Show messages has default, 0 = off, 1 = on
@@ -203,6 +204,7 @@ static void M_QuitDOOM(int choice);
 
 static void M_ChangeMessages(int choice);
 static void M_ChangeSensitivity(int choice);
+static void M_ChangeSensitivity_x2(int choice); // [crispy] mouse sensitivity menu
 static void M_ChangeSensitivity_y(int choice); // [crispy] mouse sensitivity menu
 static void M_MouseInvert(int choice); // [crispy] mouse sensitivity menu
 static void M_SfxVol(int choice);
@@ -419,8 +421,10 @@ enum
 {
     mouse_horiz,
     mouse_empty1,
-    mouse_vert,
+    mouse_horiz2,
     mouse_empty2,
+    mouse_vert,
+    mouse_empty3,
     mouse_invert,
     mouse_end
 } mouse_e;
@@ -428,6 +432,8 @@ enum
 static menuitem_t MouseMenu[]=
 {
     {2,"",	M_ChangeSensitivity,'h'},
+    {-1,"",0,'\0'},
+    {2,"",	M_ChangeSensitivity_x2,'s'},
     {-1,"",0,'\0'},
     {2,"",	M_ChangeSensitivity_y,'v'},
     {-1,"",0,'\0'},
@@ -1353,18 +1359,24 @@ static void M_DrawMouse(void)
 {
     char mouse_menu_text[48];
 
-    V_DrawPatchShadow2 (60, 38, W_CacheLumpName(DEH_String("M_MSENS"), PU_CACHE));
+    V_DrawPatchShadow2 (60, LoadDef_y, W_CacheLumpName(DEH_String("M_MSENS"), PU_CACHE));
 
     M_WriteText(MouseDef.x, MouseDef.y + LINEHEIGHT * mouse_horiz + 6,
-                "HORIZONTAL");
+                "HORIZONTAL: TURN");
 
     M_DrawThermo(MouseDef.x, MouseDef.y + LINEHEIGHT * mouse_empty1,
 		 21, mouseSensitivity);
 
+    M_WriteText(MouseDef.x, MouseDef.y + LINEHEIGHT * mouse_horiz2 + 6,
+                "HORIZONTAL: STRAFE");
+
+    M_DrawThermo(MouseDef.x, MouseDef.y + LINEHEIGHT * mouse_empty2,
+		 21, mouseSensitivity_x2);
+
     M_WriteText(MouseDef.x, MouseDef.y + LINEHEIGHT * mouse_vert + 6,
                 "VERTICAL");
 
-    M_DrawThermo(MouseDef.x, MouseDef.y + LINEHEIGHT * mouse_empty2,
+    M_DrawThermo(MouseDef.x, MouseDef.y + LINEHEIGHT * mouse_empty3,
 		 21, mouseSensitivity_y);
 
     M_snprintf(mouse_menu_text, sizeof(mouse_menu_text),
@@ -1772,6 +1784,21 @@ void M_ChangeSensitivity(int choice)
       case 1:
 	if (mouseSensitivity < 255) // [crispy] extended range
 	    mouseSensitivity++;
+	break;
+    }
+}
+
+void M_ChangeSensitivity_x2(int choice)
+{
+    switch(choice)
+    {
+      case 0:
+	if (mouseSensitivity_x2)
+	    mouseSensitivity_x2--;
+	break;
+      case 1:
+	if (mouseSensitivity_x2 < 255) // [crispy] extended range
+	    mouseSensitivity_x2++;
 	break;
     }
 }
@@ -3058,6 +3085,7 @@ void M_Init (void)
 		LoadDef_y = vstep + captionheight - SHORT(patchl->height) + SHORT(patchl->topoffset);
 		SaveDef_y = vstep + captionheight - SHORT(patchs->height) + SHORT(patchs->topoffset);
 		LoadDef.y = SaveDef.y = vstep + captionheight + vstep + SHORT(patchm->topoffset) - 7; // [crispy] see M_DrawSaveLoadBorder()
+		MouseDef.y = LoadDef.y;
 	}
     }
 

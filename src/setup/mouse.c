@@ -31,6 +31,7 @@
 static int usemouse = 1;
 
 static int mouseSensitivity = 5;
+static int mouseSensitivity_x2 = 5; // [crispy]
 static float mouse_acceleration = 2.0;
 static int mouse_threshold = 10;
 static int mouseSensitivity_y = 5; // [crispy]
@@ -148,8 +149,10 @@ void ConfigMouse(TXT_UNCAST_ARG(widget), void *user_data)
                    TXT_TABLE_OVERFLOW_RIGHT,
 
                    TXT_NewSeparator("Mouse motion"),
-                   TXT_NewLabel("Speed (h)"),
+                   TXT_NewLabel("Speed (h/turn)"),
                    TXT_NewSpinControl(&mouseSensitivity, 0, 255), // [crispy] extended range
+                   TXT_NewLabel("Speed (h/strafe)"),
+                   TXT_NewSpinControl(&mouseSensitivity_x2, 0, 255), // [crispy] extended range
                    TXT_NewLabel("Acceleration (h)"),
                    TXT_NewFloatSpinControl(&mouse_acceleration, 1.0, 5.0),
                    TXT_NewLabel("Acceleration threshold (h)"),
@@ -160,8 +163,8 @@ void ConfigMouse(TXT_UNCAST_ARG(widget), void *user_data)
                    TXT_NewFloatSpinControl(&mouse_acceleration_y, 1.0, 5.0),
                    TXT_NewLabel("Acceleration threshold (v)"),
                    TXT_NewSpinControl(&mouse_threshold_y, 0, 32),
-                   TXT_NewCheckBox("Permanent Mouse Look",
-                                   &crispy->mouselook),
+//                 TXT_NewCheckBox("Permanent Mouse Look",
+//                                 &crispy->mouselook),
                    TXT_TABLE_OVERFLOW_RIGHT,
 
                    TXT_NewSeparator("Buttons"),
@@ -212,6 +215,7 @@ void BindMouseVariables(void)
     M_BindFloatVariable("mouse_acceleration",    &mouse_acceleration);
     if (gamemission == doom) // [crispy]
     {
+    M_BindIntVariable("mouse_sensitivity_x2",    &mouseSensitivity_x2);
     M_BindIntVariable("mouse_sensitivity_y",     &mouseSensitivity_y);
     M_BindIntVariable("mouse_threshold_y",       &mouse_threshold_y);
     M_BindFloatVariable("mouse_acceleration_y",  &mouse_acceleration_y);

@@ -390,6 +390,7 @@ void D_BindVariables(void)
     NET_BindVariables();
 
     M_BindIntVariable("mouse_sensitivity",      &mouseSensitivity);
+    M_BindIntVariable("mouse_sensitivity_x2",   &mouseSensitivity_x2); // [crispy]
     M_BindIntVariable("mouse_sensitivity_y",    &mouseSensitivity_y); // [crispy]
     M_BindIntVariable("sfx_volume",             &sfxVolume);
     M_BindIntVariable("music_volume",           &musicVolume);
