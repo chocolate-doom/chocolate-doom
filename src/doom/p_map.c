@@ -392,7 +392,8 @@ boolean PIT_CheckThing (mobj_t* thing)
         (thing->flags & (MF_SOLID | MF_SPAWNCEILING)) == (MF_SOLID | MF_SPAWNCEILING) &&
         tmthing->z + tmthing->height <= thing->z)
     {
-	tmceilingz = thing->z;
+	if (thing->z < tmceilingz)
+	    tmceilingz = thing->z;
 	return true;
     }
 
@@ -400,6 +401,7 @@ boolean PIT_CheckThing (mobj_t* thing)
     if (critical->overunder &&
         tmthing->player && thing->flags & MF_SHOOTABLE)
     {
+        fixed_t newfloorz, newceilingz;
         // [crispy] allow the usual 24 units step-up even across monsters' heads
         // but do not allow if this height has been reached by "low" jumping
         fixed_t step_up = tmthing->player->jumpTics > 7 ? 0 : 24*FRACUNIT;
@@ -407,16 +409,20 @@ boolean PIT_CheckThing (mobj_t* thing)
         if (tmthing->z + step_up >= thing->z + thing->height)
         {
             // player walks over object
-            tmfloorz = thing->z + thing->height;
-            thing->ceilingz = tmthing->z;
+            if ((newfloorz = thing->z + thing->height) > tmfloorz)
+                tmfloorz = newfloorz;
+            if ((newceilingz = tmthing->z) < thing->ceilingz)
+                thing->ceilingz = newceilingz;
             return true;
         }
         else
         if (tmthing->z + tmthing->height <= thing->z)
         {
             // player walks underneath object
-            tmceilingz = thing->z;
-            thing->floorz = tmthing->z + tmthing->height;
+            if ((newceilingz = thing->z) < tmceilingz)
+                tmceilingz = newceilingz;
+            if ((newfloorz = tmthing->z + tmthing->height) > thing->floorz)
+                thing->floorz = newfloorz;
             return true;
         }
 
