@@ -185,16 +185,11 @@ boolean P_CheckMeleeRange (mobj_t*	actor)
     if (! P_CheckSight (actor, actor->target) )
 	return false;
 							
-    // [crispy] height check for melee attacks (from Hexen)
+    // [crispy] height check for melee attacks
     if (critical->overunder && pl->player)
     {
-	// [crispy] Target is higher than the attacker
-	if (pl->z > actor->z + actor->height)
-	{
-	    return false;
-	}
-	// [crispy] Attacker is higher
-	else if (actor->z > pl->z + pl->height)
+	if (pl->z >= actor->z + actor->height ||
+	    actor->z >= pl->z + pl->height)
 	{
 	    return false;
 	}
