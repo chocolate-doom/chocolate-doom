@@ -611,8 +611,10 @@ static void NET_CL_CheckResends(void)
     int i;
     int resend_start, resend_end;
     unsigned int nowtime;
+    boolean maybe_deadlocked;
 
     nowtime = I_GetTimeMS();
+    maybe_deadlocked = nowtime - gamedata_recv_time > 1000;
 
     resend_start = -1;
     resend_end = -1;
@@ -631,15 +633,26 @@ static void NET_CL_CheckResends(void)
                    && recvobj->resend_time != 0
                    && nowtime > recvobj->resend_time + 300;
 
+        // if no game data has been received in a long time, we may be in
+        // a deadlock scenario where tics from the server have been lost, so
+        // we've stopped generating any more, so the server isn't sending us
+        // any, so we don't get any to trigger a resend request. So force the
+        // first few tics in the receive window to be requested.
+        if (i == 0 && !recvobj->active && recvobj->resend_time == 0
+         && maybe_deadlocked)
+        {
+            need_resend = true;
+        }
+
         if (need_resend)
         {
             // Start a new run of resend tics?
- 
+
             if (resend_start < 0)
             {
                 resend_start = i;
             }
-            
+
             resend_end = i;
         }
         else if (resend_start >= 0)
