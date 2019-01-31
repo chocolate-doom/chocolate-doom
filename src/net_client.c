@@ -215,7 +215,8 @@ static void UpdateClockSync(unsigned int seq,
     last_error = error;
     last_latency = latency;
 
-    //printf("%i,%i,%i\n", latency, remote_latency, offsetms);
+    NET_Log("client: latency %d, remote %d -> offset=%dms, cumul_error=%d",
+            latency, remote_latency, offsetms / FRACUNIT, cumul_error);
 }
 
 // Expand a net_full_ticcmd_t, applying the diffs in cmd->cmds as
