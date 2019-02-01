@@ -1447,6 +1447,11 @@ void ST_updateWidgets(void)
 		{
 			keyboxes[i] = (plyr->tryopen[i] & KEYBLINKMASK) ? i + st_keyorskull[i] : -1;
 		}
+
+		if (!plyr->tryopen[i])
+		{
+			w_keyboxes[i].oldinum = -1;
+		}
 	}
     }
 
