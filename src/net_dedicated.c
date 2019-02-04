@@ -73,7 +73,8 @@ void NET_DedicatedServer(void)
     while (true)
     {
         NET_SV_Run();
-        I_Sleep(10);
+        // TODO: Block on socket instead of polling.
+        I_Sleep(1);
     }
 }
 
