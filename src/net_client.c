@@ -215,7 +215,8 @@ static void UpdateClockSync(unsigned int seq,
     last_error = error;
     last_latency = latency;
 
-    //printf("%i,%i,%i\n", latency, remote_latency, offsetms);
+    NET_Log("client: latency %d, remote %d -> offset=%dms, cumul_error=%d",
+            latency, remote_latency, offsetms / FRACUNIT, cumul_error);
 }
 
 // Expand a net_full_ticcmd_t, applying the diffs in cmd->cmds as
@@ -414,7 +415,9 @@ void NET_CL_SendTiccmd(ticcmd_t *ticcmd, int maketic)
 
     if (starttic < 0)
         starttic = 0;
-    
+
+    NET_Log("client: generated tic %d, sending %d-%d",
+            maketic, starttic, endtic);
     NET_CL_SendTics(starttic, endtic);
 }
 
@@ -609,8 +612,10 @@ static void NET_CL_CheckResends(void)
     int i;
     int resend_start, resend_end;
     unsigned int nowtime;
+    boolean maybe_deadlocked;
 
     nowtime = I_GetTimeMS();
+    maybe_deadlocked = nowtime - gamedata_recv_time > 1000;
 
     resend_start = -1;
     resend_end = -1;
@@ -629,15 +634,26 @@ static void NET_CL_CheckResends(void)
                    && recvobj->resend_time != 0
                    && nowtime > recvobj->resend_time + 300;
 
+        // if no game data has been received in a long time, we may be in
+        // a deadlock scenario where tics from the server have been lost, so
+        // we've stopped generating any more, so the server isn't sending us
+        // any, so we don't get any to trigger a resend request. So force the
+        // first few tics in the receive window to be requested.
+        if (i == 0 && !recvobj->active && recvobj->resend_time == 0
+         && maybe_deadlocked)
+        {
+            need_resend = true;
+        }
+
         if (need_resend)
         {
             // Start a new run of resend tics?
- 
+
             if (resend_start < 0)
             {
                 resend_start = i;
             }
-            
+
             resend_end = i;
         }
         else if (resend_start >= 0)
@@ -738,7 +754,7 @@ static void NET_CL_ParseGameData(net_packet_t *packet)
 
         recvobj->active = true;
         recvobj->cmd = cmd;
-        NET_Log("client: stored tic %d in receive window", seq);
+        NET_Log("client: stored tic %d in receive window", seq + i);
 
         // If a packet is lost or arrives out of order, we might get
         // the tic in the next packet instead (because of extratic).
