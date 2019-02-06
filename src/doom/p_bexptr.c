@@ -194,7 +194,7 @@ void A_LineEffect(mobj_t *mo)
 // This code may not be used in other mods without appropriate credit given.
 // Code leeches will be telefragged.
 
-void A_FireOldBFG(mobj_t *mo, player_t *player, pspdef_t *psp)
+void A_FireOldBFG(mobj_t *mobj, player_t *player, pspdef_t *psp)
 {
   int type = MT_PLASMA1;
   extern void P_CheckMissileSpawn (mobj_t* th);
@@ -222,6 +222,9 @@ void A_FireOldBFG(mobj_t *mo, player_t *player, pspdef_t *psp)
 	  // killough 8/2/98: make autoaiming prefer enemies
 	  int mask = 0;//MF_FRIEND;
 	  fixed_t slope;
+	  if (critical->freeaim == FREEAIM_DIRECT)
+	    slope = PLAYER_SLOPE(player);
+	  else
 	  do
 	    {
 	      slope = P_AimLineAttack(mo, an, 16*64*FRACUNIT);//, mask);
@@ -230,10 +233,14 @@ void A_FireOldBFG(mobj_t *mo, player_t *player, pspdef_t *psp)
 	      if (!linetarget)
 		slope = P_AimLineAttack(mo, an -= 2<<26, 16*64*FRACUNIT);//, mask);
 	      if (!linetarget)
-		slope = 0, an = mo->angle;
+		slope = (critical->freeaim == FREEAIM_BOTH) ? PLAYER_SLOPE(player) : 0, an = mo->angle;
 	    }
 	  while (mask && (mask=0, !linetarget));     // killough 8/2/98
 	  an1 += an - mo->angle;
+	  // [crispy] consider negative slope
+	  if (slope < 0)
+	    an2 -= tantoangle[-slope >> DBITS];
+	  else
 	  an2 += tantoangle[slope >> DBITS];
 	}
 
@@ -245,6 +252,8 @@ void A_FireOldBFG(mobj_t *mo, player_t *player, pspdef_t *psp)
       th->momx = finecosine[an1>>ANGLETOFINESHIFT] * 25;
       th->momy = finesine[an1>>ANGLETOFINESHIFT] * 25;
       th->momz = finetangent[an2>>ANGLETOFINESHIFT] * 25;
+      // [crispy] suppress interpolation of player missiles for the first tic
+      th->interp = -1;
       P_CheckMissileSpawn(th);
     }
   while ((type != MT_PLASMA2) && (type = MT_PLASMA2)); //killough: obfuscated!
