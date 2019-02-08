@@ -1,6 +1,16 @@
 # Crispy Doom
 ![](https://www.chocolate-doom.org/wiki/images/b/be/Crispy-doom.png)
 
+![](https://img.shields.io/github/languages/top/fabiangreffrath/crispy-doom.svg?style=flat)
+![](https://img.shields.io/github/languages/code-size/fabiangreffrath/crispy-doom.svg?style=flat)
+![](https://img.shields.io/github/license/fabiangreffrath/crispy-doom.svg?style=flat)
+![](https://img.shields.io/github/release/fabiangreffrath/crispy-doom.svg?style=flat)
+![](https://img.shields.io/github/release-date/fabiangreffrath/crispy-doom.svg?style=flat)
+![](https://img.shields.io/github/downloads/fabiangreffrath/crispy-doom/latest/total.svg?style=flat)
+![](https://img.shields.io/github/commits-since/fabiangreffrath/crispy-doom/latest.svg?style=flat)
+![](https://img.shields.io/github/last-commit/fabiangreffrath/crispy-doom.svg?style=flat)
+![](https://img.shields.io/travis/com/fabiangreffrath/crispy-doom.svg?style=flat)
+
 Crispy Doom is a limit-removing enhanced-resolution Doom source port based on [Chocolate Doom](https://www.chocolate-doom.org/wiki/index.php/Chocolate_Doom).
 
 Its name means that its internal 640x400 resolution looks "crisp" and is also a [slight reference](http://www.mathsisfun.com/recipie.html) to its origin.
