@@ -30,7 +30,7 @@
 #include "p_mobj.h"
 
 // villsa [STRIFE]
-char *sprnames[NUMSPRITES+1] =
+const char *sprnames[NUMSPRITES+1] =
 {
     "PLAY", "PNCH", "WAVE", "RBPY", "TRGT", "XBOW", "MMIS", "RIFG", 
     "RIFF", "FLMT", "FLMF", "BLST", "BLSF", "GREN", "GREF", "SIGH", 
