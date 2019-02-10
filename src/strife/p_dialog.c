@@ -158,7 +158,7 @@ typedef struct rndmessage_s
 {
     const char *type_name;
     int nummessages;
-    char *messages[MAXRNDMESSAGES];
+    const char *messages[MAXRNDMESSAGES];
 } rndmessage_t;
 
 static rndmessage_t rndMessages[] = 

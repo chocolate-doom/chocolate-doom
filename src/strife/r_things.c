@@ -171,9 +171,9 @@ R_InstallSpriteLump
 //  letter/number appended.
 // The rotation character can be 0 to signify no rotations.
 //
-void R_InitSpriteDefs (char** namelist) 
+void R_InitSpriteDefs (const char** namelist)
 { 
-    char**	check;
+    const char **check;
     int		i;
     int		l;
     int		frame;
@@ -292,7 +292,7 @@ int             sprbotscreen;       // villsa [STRIFE]
 // R_InitSprites
 // Called at program start.
 //
-void R_InitSprites (char** namelist)
+void R_InitSprites (const char** namelist)
 {
     int		i;
 	
