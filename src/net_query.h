@@ -39,6 +39,7 @@ extern net_addr_t *NET_Query_ResolveMaster(net_context_t *context);
 extern void NET_Query_AddToMaster(net_addr_t *master_addr);
 extern boolean NET_Query_CheckAddedToMaster(boolean *result);
 extern void NET_Query_AddResponse(net_packet_t *packet);
+extern void NET_RequestHolePunch(net_context_t *context, net_addr_t *addr);
 
 #endif /* #ifndef NET_QUERY_H */
 

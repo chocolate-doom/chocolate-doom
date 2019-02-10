@@ -176,6 +176,28 @@ static void NET_Query_SendMasterQuery(net_addr_t *addr)
     NET_FreePacket(packet);
 }
 
+// Send a hole punch request to the master server for the server at the
+// given address.
+void NET_RequestHolePunch(net_context_t *context, net_addr_t *addr)
+{
+    net_addr_t *master_addr;
+    net_packet_t *packet;
+
+    master_addr = NET_Query_ResolveMaster(context);
+    if (master_addr == NULL)
+    {
+        return;
+    }
+
+    packet = NET_NewPacket(32);
+    NET_WriteInt16(packet, NET_MASTER_PACKET_TYPE_NAT_HOLE_PUNCH);
+    NET_WriteString(packet, NET_AddrToString(addr));
+    NET_SendPacket(master_addr, packet);
+
+    NET_FreePacket(packet);
+    NET_ReleaseAddress(master_addr);
+}
+
 // Given the specified address, find the target associated.  If no
 // target is found, and 'create' is true, a new target is created.
 
