@@ -1423,6 +1423,63 @@ void NET_SV_SendQueryResponse(net_addr_t *addr)
     NET_FreePacket(reply);
 }
 
+static void NET_SV_ParseHolePunch(net_packet_t *packet)
+{
+    const char *addr_string;
+    net_packet_t *sendpacket;
+    net_addr_t *addr;
+
+    addr_string = NET_ReadString(packet);
+    if (addr_string == NULL)
+    {
+        NET_Log("server: error: hole punch request but no address provided");
+        return;
+    }
+
+    addr = NET_ResolveAddress(server_context, addr_string);
+    if (addr == NULL)
+    {
+        NET_Log("server: error: failed to resolve address: %s", addr_string);
+        return;
+    }
+
+    sendpacket = NET_NewPacket(16);
+    NET_WriteInt16(sendpacket, NET_PACKET_TYPE_NAT_HOLE_PUNCH);
+    NET_SendPacket(addr, sendpacket);
+    NET_FreePacket(sendpacket);
+
+    // TODO: We should NET_FreeAddress(addr) here, but this could cause a
+    // problem if the client has already connected. The address system needs
+    // to be changed to use a reference-counting system to prevent this.
+}
+
+static void NET_SV_MasterPacket(net_packet_t *packet)
+{
+    unsigned int packet_type;
+
+    // Read the packet type
+
+    if (!NET_ReadInt16(packet, &packet_type))
+    {
+        NET_Log("server: error: no packet type in master server message");
+        return;
+    }
+
+    NET_Log("server: packet from master server; type %d", packet_type);
+    NET_LogPacket(packet);
+
+    switch (packet_type)
+    {
+        case NET_MASTER_PACKET_TYPE_ADD_RESPONSE:
+            NET_Query_AddResponse(packet);
+            break;
+
+        case NET_MASTER_PACKET_TYPE_NAT_HOLE_PUNCH:
+            NET_SV_ParseHolePunch(packet);
+            break;
+    }
+}
+
 // Process a packet received by the server
 
 static void NET_SV_Packet(net_packet_t *packet, net_addr_t *addr)
@@ -1434,7 +1491,7 @@ static void NET_SV_Packet(net_packet_t *packet, net_addr_t *addr)
 
     if (addr != NULL && addr == master_server)
     {
-        NET_Query_MasterResponse(packet);
+        NET_SV_MasterPacket(packet);
         return;
     }
 

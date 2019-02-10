@@ -120,40 +120,35 @@ void NET_Query_AddToMaster(net_addr_t *master_addr)
 
 // Process a packet received from the master server.
 
-void NET_Query_MasterResponse(net_packet_t *packet)
+void NET_Query_AddResponse(net_packet_t *packet)
 {
-    unsigned int packet_type;
     unsigned int result;
 
-    if (!NET_ReadInt16(packet, &packet_type)
-     || !NET_ReadInt16(packet, &result))
+    if (!NET_ReadInt16(packet, &result))
     {
         return;
     }
 
-    if (packet_type == NET_MASTER_PACKET_TYPE_ADD_RESPONSE)
+    if (result != 0)
     {
-        if (result != 0)
-        {
-            // Only show the message once.
+        // Only show the message once.
 
-            if (!registered_with_master)
-            {
-                printf("Registered with master server at %s\n",
-                       MASTER_SERVER_ADDRESS);
-                registered_with_master = true;
-            }
-        }
-        else
+        if (!registered_with_master)
         {
-            // Always show rejections.
-
-            printf("Failed to register with master server at %s\n",
+            printf("Registered with master server at %s\n",
                    MASTER_SERVER_ADDRESS);
+            registered_with_master = true;
         }
-
-        got_master_response = true;
     }
+    else
+    {
+        // Always show rejections.
+
+        printf("Failed to register with master server at %s\n",
+               MASTER_SERVER_ADDRESS);
+    }
+
+    got_master_response = true;
 }
 
 boolean NET_Query_CheckAddedToMaster(boolean *result)

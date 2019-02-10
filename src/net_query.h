@@ -38,7 +38,7 @@ extern int NET_Query_Poll(net_query_callback_t callback, void *user_data);
 extern net_addr_t *NET_Query_ResolveMaster(net_context_t *context);
 extern void NET_Query_AddToMaster(net_addr_t *master_addr);
 extern boolean NET_Query_CheckAddedToMaster(boolean *result);
-extern void NET_Query_MasterResponse(net_packet_t *packet);
+extern void NET_Query_AddResponse(net_packet_t *packet);
 
 #endif /* #ifndef NET_QUERY_H */
 
