@@ -170,8 +170,15 @@ static void NET_Query_SendMasterQuery(net_addr_t *addr)
 {
     net_packet_t *packet;
 
-    packet = NET_NewPacket(10);
+    packet = NET_NewPacket(4);
     NET_WriteInt16(packet, NET_MASTER_PACKET_TYPE_QUERY);
+    NET_SendPacket(addr, packet);
+    NET_FreePacket(packet);
+
+    // We also send a NAT_HOLE_PUNCH_ALL packet so that servers behind
+    // NAT gateways will open themselves up to us.
+    packet = NET_NewPacket(4);
+    NET_WriteInt16(packet, NET_MASTER_PACKET_TYPE_NAT_HOLE_PUNCH_ALL);
     NET_SendPacket(addr, packet);
     NET_FreePacket(packet);
 }

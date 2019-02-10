@@ -166,6 +166,7 @@ typedef enum
     NET_MASTER_PACKET_TYPE_SIGN_END,
     NET_MASTER_PACKET_TYPE_SIGN_END_RESPONSE,
     NET_MASTER_PACKET_TYPE_NAT_HOLE_PUNCH,
+    NET_MASTER_PACKET_TYPE_NAT_HOLE_PUNCH_ALL,
 } net_master_packet_type_t;
 
 // Settings specified when the client connects to the server.
