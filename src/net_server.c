@@ -40,11 +40,9 @@
 #include "net_structrw.h"
 
 // How often to refresh our registration with the master server.
-
-#define MASTER_REFRESH_PERIOD 20 * 60 /* 20 minutes */
+#define MASTER_REFRESH_PERIOD 30  /* twice per minute */
 
 // How often to re-resolve the address of the master server?
-
 #define MASTER_RESOLVE_PERIOD 8 * 60 * 60 /* 8 hours */
 
 typedef enum
