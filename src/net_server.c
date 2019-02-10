@@ -1449,6 +1449,7 @@ static void NET_SV_ParseHolePunch(net_packet_t *packet)
     NET_SendPacket(addr, sendpacket);
     NET_FreePacket(sendpacket);
     NET_ReleaseAddress(addr);
+    NET_Log("server: sent hole punch to %s", addr_string);
 }
 
 static void NET_SV_MasterPacket(net_packet_t *packet)
