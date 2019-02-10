@@ -205,9 +205,23 @@ static query_target_t *GetTargetForAddr(net_addr_t *addr, boolean create)
     target->printed = false;
     target->query_attempts = 0;
     target->addr = addr;
+    NET_ReferenceAddress(addr);
     ++num_targets;
 
     return target;
+}
+
+static void FreeTargets(void)
+{
+    int i;
+
+    for (i = 0; i < num_targets; ++i)
+    {
+        NET_ReleaseAddress(targets[i].addr);
+    }
+    free(targets);
+    targets = NULL;
+    num_targets = 0;
 }
 
 // Transmit a query packet
@@ -333,10 +347,10 @@ static void NET_Query_ParseMasterResponse(net_addr_t *master_addr,
         // there.
 
         addr = NET_ResolveAddress(query_context, addr_str);
-
         if (addr != NULL)
         {
             GetTargetForAddr(addr, true);
+            NET_ReleaseAddress(addr);
         }
     }
 
@@ -375,6 +389,7 @@ static void NET_Query_GetResponse(net_query_callback_t callback,
     if (NET_RecvPacket(query_context, &addr, &packet))
     {
         NET_Query_ParsePacket(addr, packet, callback, user_data);
+        NET_ReleaseAddress(addr);
         NET_FreePacket(packet);
     }
 }
@@ -631,6 +646,7 @@ int NET_StartMasterQuery(void)
 
     target = GetTargetForAddr(master, true);
     target->type = QUERY_TARGET_MASTER;
+    NET_ReleaseAddress(master);
 
     return 1;
 }
@@ -746,6 +762,7 @@ void NET_LANQuery(void)
         NET_Query_QueryLoop(NET_QueryPrintCallback, NULL);
 
         printf("\n%i server(s) found.\n", GetNumResponses());
+        FreeTargets();
     }
 }
 
@@ -758,6 +775,7 @@ void NET_MasterQuery(void)
         NET_Query_QueryLoop(NET_QueryPrintCallback, NULL);
 
         printf("\n%i server(s) found.\n", GetNumResponses());
+        FreeTargets();
     }
 }
 
@@ -790,6 +808,8 @@ void NET_QueryAddress(char *addr_str)
     if (target->state == QUERY_TARGET_RESPONDED)
     {
         NET_QueryPrintCallback(addr, &target->data, target->ping_time, NULL);
+        NET_ReleaseAddress(addr);
+        FreeTargets();
     }
     else
     {
@@ -801,6 +821,7 @@ net_addr_t *NET_FindLANServer(void)
 {
     query_target_t *target;
     query_target_t *responder;
+    net_addr_t *result;
 
     NET_Query_Init();
 
@@ -817,12 +838,16 @@ net_addr_t *NET_FindLANServer(void)
 
     if (responder != NULL)
     {
-        return responder->addr;
+        result = responder->addr;
+        NET_ReferenceAddress(result);
     }
     else
     {
-        return NULL;
+        result = NULL;
     }
+
+    FreeTargets();
+    return result;
 }
 
 // Block until a packet of the given type is received from the given
@@ -845,6 +870,9 @@ static net_packet_t *BlockForPacket(net_addr_t *addr, unsigned int packet_type,
             I_Sleep(20);
             continue;
         }
+
+        // Caller doesn't need additional reference.
+        NET_ReleaseAddress(packet_src);
 
         if (packet_src == addr
          && NET_ReadInt16(packet, &read_packet_type)

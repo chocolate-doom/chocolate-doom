@@ -95,6 +95,7 @@ struct _net_module_s
 struct _net_addr_s
 {
     net_module_t *module;
+    int refcount;
     void *handle;
 };
 

@@ -290,7 +290,7 @@ static void NET_CL_Shutdown(void)
     {
         net_client_connected = false;
 
-        NET_FreeAddress(server_addr);
+        NET_ReleaseAddress(server_addr);
 
         // Shut down network module, etc.  To do.
     }
@@ -969,12 +969,9 @@ void NET_CL_Run(void)
         {
             NET_CL_ParsePacket(packet);
         }
-        else
-        {
-            NET_FreeAddress(addr);
-        }
 
         NET_FreePacket(packet);
+        NET_ReleaseAddress(addr);
     }
 
     // Run the common connection code to send any packets as needed
@@ -1029,6 +1026,7 @@ boolean NET_CL_Connect(net_addr_t *addr, net_connect_data_t *data)
     int last_send_time;
 
     server_addr = addr;
+    NET_ReferenceAddress(addr);
 
     memcpy(net_local_wad_sha1sum, data->wad_sha1sum, sizeof(sha1_digest_t));
     memcpy(net_local_deh_sha1sum, data->deh_sha1sum, sizeof(sha1_digest_t));

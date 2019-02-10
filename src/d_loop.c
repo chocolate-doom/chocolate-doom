@@ -448,6 +448,7 @@ boolean D_InitNetGame(net_connect_data_t *connect_data)
 
         net_loop_client_module.InitClient();
         addr = net_loop_client_module.ResolveAddress(NULL);
+        NET_ReferenceAddress(addr);
     }
     else
     {
@@ -484,6 +485,7 @@ boolean D_InitNetGame(net_connect_data_t *connect_data)
         {
             net_sdl_module.InitClient();
             addr = net_sdl_module.ResolveAddress(myargv[i+1]);
+            NET_ReferenceAddress(addr);
 
             if (addr == NULL)
             {
@@ -506,6 +508,7 @@ boolean D_InitNetGame(net_connect_data_t *connect_data)
         }
 
         printf("D_InitNetGame: Connected to %s\n", NET_AddrToString(addr));
+        NET_ReleaseAddress(addr);
 
         // Wait for launch message received from server.
 

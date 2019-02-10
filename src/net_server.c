@@ -565,6 +565,7 @@ static void NET_SV_InitNewClient(net_client_t *client, net_addr_t *addr,
     client->connect_time = I_GetTimeMS();
     NET_Conn_InitServer(&client->connection, addr, protocol);
     client->addr = addr;
+    NET_ReferenceAddress(addr);
     client->last_send_time = -1;
 
     // init the ticcmd send queue
@@ -1447,10 +1448,7 @@ static void NET_SV_ParseHolePunch(net_packet_t *packet)
     NET_WriteInt16(sendpacket, NET_PACKET_TYPE_NAT_HOLE_PUNCH);
     NET_SendPacket(addr, sendpacket);
     NET_FreePacket(sendpacket);
-
-    // TODO: We should NET_FreeAddress(addr) here, but this could cause a
-    // problem if the client has already connected. The address system needs
-    // to be changed to use a reference-counting system to prevent this.
+    NET_ReleaseAddress(addr);
 }
 
 static void NET_SV_MasterPacket(net_packet_t *packet)
@@ -1554,14 +1552,6 @@ static void NET_SV_Packet(net_packet_t *packet, net_addr_t *addr)
 
                 break;
         }
-    }
-
-    // If this address is not in the list of clients, be sure to
-    // free it back.
-
-    if (NET_SV_FindClient(addr) == NULL)
-    {
-        NET_FreeAddress(addr);
     }
 }
 
@@ -1807,7 +1797,7 @@ static void NET_SV_RunClient(net_client_t *client)
         }
 
         free(client->name);
-        NET_FreeAddress(client->addr);
+        NET_ReleaseAddress(client->addr);
 
         // Are there any clients left connected?  If not, return the
         // server to the waiting-for-players state.
@@ -1895,14 +1885,8 @@ static void UpdateMasterServer(void)
         net_addr_t *new_addr;
 
         new_addr = NET_Query_ResolveMaster(server_context);
-
-        // Has the master server changed address?
-
-        if (new_addr != NULL && new_addr != master_server)
-        {
-            NET_FreeAddress(master_server);
-            master_server = new_addr;
-        }
+        NET_ReleaseAddress(master_server);
+        master_server = new_addr;
 
         master_resolve_time = now;
     }
@@ -1962,6 +1946,7 @@ void NET_SV_Run(void)
     {
         NET_SV_Packet(packet, addr);
         NET_FreePacket(packet);
+        NET_ReleaseAddress(addr);
     }
 
     if (master_server != NULL)
