@@ -1,34 +1,88 @@
-## HEAD
+## 3.1.0 (2019-??-??)
 
 ### General
+  * WAD file autoloading was added - WAD and DEH files can be copied into
+    an autoload folder to be automatically included on every game start.
+  * Music pack configuration has been significantly simplified. By simply
+    copying .flac/.ogg music files into a folder they will be automatically
+    detected by filename and used.
+  * Music packs can now be used with OPL as a fallback, and music pack
+    config files can have any name ending in '.cfg'.
+  * Network synchronization now uses a PID controller by default, which
+    makes games more smooth and more stable, especially for Internet play.
+  * UDP hole punching is now used to make servers behind NAT gateways
+    automatically accessible to the Internet.
+  * OPL emulation now uses Nuked OPL3 v1.8 (thanks nukeykt)
+  * The setup tool now uses "Romero Blue" as a background (see the wiki:
+    <https://doomwiki.org/wiki/Romero_Blue> for more info).
   * The 0 and 5 keys on the number pad can now be bound independently
-    of any other keyboard key.  (thanks BlooD2ool)
-  * Man page generation has been reworked to use autoconf macro
-    substitution, making it eaiser for downstream forks to change the
-    project name.  (thanks Jon)
-  * Several functions have been hardened against incomplete reads and
-    error conditions, and made safer.  (thanks turol)
-  * We now print a meaningful error message when a savegame cannot be
-    loaded.  (thanks Zodomaniac, chungy)
-  * Fixed an exception thrown by the Windows kernel when debugging with
-    GDB.  (thanks AXDOOMER)
+    of any other keyboard key (thanks BlooD2ool).
   * With aspect ratio correction disabled, the game can scale to any
     arbitrary size and remove all black borders in full screen mode.
     (thanks chungy)
+  * The executable's location is now checked when looking for IWADs.
+  * The IWAD files installed by Steam-on-Linux are now detected (thanks
+    chungy).
+  * It's now possible to use `-response` to load response files.
+  * Default savegame name now includes the WAD filename (thanks Fabian).
 
-### Build systems
-  * CMake has been added along with the deprecation of Microsoft
-    Visual Studio and Code::Blocks files.  CMake maintains support for
-    multiple IDEs and versions thereof, and reduces developer overhead
-    when updating Chocolate Doom. (thanks AlexMax)
+### Refactorings
+  * CMake project files have been added, replacing the Microsoft Visual
+    Studio and Code::Blocks files. CMake maintains support for multiple
+    IDEs and versions thereof, and reduces developer overhead when updating
+    Chocolate Doom (huge thanks to AlexMax for this work).
+  * Source code has been retrofitted to fix many compiler warnings and
+    add const annotations to many variables (thanks turol).
+  * Several functions have been hardened against incomplete reads and
+    error conditions, and made safer (thanks turol).
+  * Man page generation has been reworked to use autoconf macro
+    substitution, making it eaiser for downstream forks to change the
+    project name (thanks Jon).
+  * We now print a meaningful error message when a savegame cannot be
+    loaded (thanks Zodomaniac, chungy).
+  * There's now a log file feature for the network code to aid in tracking
+    down multiplayer bugs.
+
+### Bug fixes
+  * Fixed an exception thrown by the Windows kernel when debugging with
+    GDB (thanks AXDOOMER).
+  * Loop metadata now works properly with music packs on Windows.
+  * Mouse movement is ignored when the game window isn't active (thanks
+    Julia Nechaevskaya).
+  * A bug was fixed where music would not play after pausing on an
+    intermission screen (thanks Julia Nechaevskaya).
+  * Timeouts when connecting to a network server were fixed (thanks
+    @bradc6).
+  * A long-standing bug where some visplane overflows caused crashes was
+    fixed (thanks Mike Francis).
+  * A multiplayer deadlock bug where clients would stop sending tics after
+    missing tics from the server was fixed. There are both client- and
+    server- side fixes to fix the problem when playing with older versions
+    (thanks MadDog and Mortrixs for help tracking this down).
 
 ### Doom
   * Map33 intermission screen and map33-map35 automap names are
-    emulated. (thanks CapnClever)
+    emulated (thanks CapnClever).
+  * We now exit gracefully when player starts are missing (thanks Mike
+    Francis).
+  * We now exit gracefully on levels with a boss brain and no boss spitter
+    things (thanks Jason Benaim).
+  * It's now possible to play multiplayer with gameversion=1.2.
+
+### Heretic
+  * P\_FindNextHighestFloor was changed to match vanilla behavior (thanks
+    Alexandre-Xavier).
+  * WAD hash table is now generated for speed (thanks Mike Francis).
+  * HHE level name replacements now apply on the intermission screen
+    (thanks ETTiNGRiNDER).
 
 ### Hexen
-  * ACS code has been hardened against potential security
-    vulnerabilities.
+  * ACS code has been hardened against potential security vulnerabilities.
+  * WAD hash table is now generated for speed (thanks Alexandre-Xavier).
+
+### Strife
+  * Sehacked replacements of the "empty slot" string now work.
+  * VOICES.WAD is now found in a case-insensitive way (thanks Mike Francis).
 
 ## 3.0.0 (2017-12-30)
 
