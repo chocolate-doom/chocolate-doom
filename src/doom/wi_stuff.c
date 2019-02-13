@@ -43,6 +43,7 @@
 // Needs access to LFB.
 #include "v_video.h"
 
+#include "st_stuff.h" // [crispy] ST_DrawDemoTimer()
 #include "wi_stuff.h"
 
 //
@@ -1594,6 +1595,13 @@ void WI_drawStats(void)
 	V_DrawPatch(SP_TIMEX, SP_TIMEY + 16, total);
 	// [crispy] choose x-position depending on width of time string
 	WI_drawTime((wide ? ORIGWIDTH : ORIGWIDTH/2) - SP_TIMEX, SP_TIMEY + 16, ttime, false);
+    }
+
+    // [crispy] demo timer widget
+    if ((demoplayback && (crispy->demotimer & DEMOTIMER_PLAYBACK)) ||
+        (demorecording && (crispy->demotimer & DEMOTIMER_RECORD)))
+    {
+	ST_DrawDemoTimer(leveltime);
     }
 }
 
