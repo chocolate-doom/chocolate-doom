@@ -151,8 +151,8 @@ short		whichCursor;		// which skull to draw
 
 // graphic name of cursors
 // haleyjd 08/27/10: [STRIFE] M_SKULL* -> M_CURS*
-char    *cursorName[8] = {"M_CURS1", "M_CURS2", "M_CURS3", "M_CURS4", 
-                          "M_CURS5", "M_CURS6", "M_CURS7", "M_CURS8" };
+const char *cursorName[8] = {"M_CURS1", "M_CURS2", "M_CURS3", "M_CURS4",
+                             "M_CURS5", "M_CURS6", "M_CURS7", "M_CURS8" };
 
 // haleyjd 20110210 [STRIFE]: skill level for menus
 int menuskill;

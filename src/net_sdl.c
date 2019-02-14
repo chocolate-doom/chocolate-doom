@@ -127,6 +127,7 @@ static net_addr_t *NET_SDL_FindAddress(IPaddress *addr)
     new_entry = Z_Malloc(sizeof(addrpair_t), PU_STATIC, 0);
 
     new_entry->sdl_addr = *addr;
+    new_entry->net_addr.refcount = 0;
     new_entry->net_addr.handle = &new_entry->sdl_addr;
     new_entry->net_addr.module = &net_sdl_module;
 

@@ -1833,7 +1833,7 @@ typedef struct
 } state_t;
 
 extern state_t	states[NUMSTATES];
-extern char *sprnames[];
+extern const char *sprnames[];
 
 typedef enum
 {
@@ -2211,7 +2211,7 @@ typedef struct
     int     damage;
     int     activesound;
     int     flags;
-    char*   name;
+    const char *name;
 } mobjinfo_t;
 
 extern mobjinfo_t mobjinfo[NUMMOBJTYPES];

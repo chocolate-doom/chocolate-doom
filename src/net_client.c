@@ -35,6 +35,7 @@
 #include "net_gui.h"
 #include "net_io.h"
 #include "net_packet.h"
+#include "net_query.h"
 #include "net_server.h"
 #include "net_structrw.h"
 #include "w_checksum.h"
@@ -290,7 +291,7 @@ static void NET_CL_Shutdown(void)
     {
         net_client_connected = false;
 
-        NET_FreeAddress(server_addr);
+        NET_ReleaseAddress(server_addr);
 
         // Shut down network module, etc.  To do.
     }
@@ -969,12 +970,9 @@ void NET_CL_Run(void)
         {
             NET_CL_ParsePacket(packet);
         }
-        else
-        {
-            NET_FreeAddress(addr);
-        }
 
         NET_FreePacket(packet);
+        NET_ReleaseAddress(addr);
     }
 
     // Run the common connection code to send any packets as needed
@@ -1027,20 +1025,19 @@ boolean NET_CL_Connect(net_addr_t *addr, net_connect_data_t *data)
 {
     int start_time;
     int last_send_time;
+    boolean sent_hole_punch;
 
     server_addr = addr;
+    NET_ReferenceAddress(addr);
 
     memcpy(net_local_wad_sha1sum, data->wad_sha1sum, sizeof(sha1_digest_t));
     memcpy(net_local_deh_sha1sum, data->deh_sha1sum, sizeof(sha1_digest_t));
     net_local_is_freedoom = data->is_freedoom;
 
-    // create a new network I/O context and add just the
-    // necessary module
-
+    // create a new network I/O context and add just the necessary module
     client_context = NET_NewContext();
 
     // initialize module for client mode
-
     if (!addr->module->InitClient())
     {
         return false;
@@ -1050,13 +1047,11 @@ boolean NET_CL_Connect(net_addr_t *addr, net_connect_data_t *data)
 
     net_client_connected = true;
     net_client_received_wait_data = false;
-
-    // Initialize connection
+    sent_hole_punch = false;
 
     NET_Conn_InitClient(&client_connection, addr, NET_PROTOCOL_UNKNOWN);
 
     // try to connect
-
     start_time = I_GetTimeMS();
     last_send_time = -1;
 
@@ -1065,7 +1060,6 @@ boolean NET_CL_Connect(net_addr_t *addr, net_connect_data_t *data)
         int nowtime = I_GetTimeMS();
 
         // Send a SYN packet every second.
-
         if (nowtime - last_send_time > 1000 || last_send_time < 0)
         {
             NET_CL_SendSYN(data);
@@ -1073,23 +1067,25 @@ boolean NET_CL_Connect(net_addr_t *addr, net_connect_data_t *data)
         }
 
         // time out after 5 seconds
-
         if (nowtime - start_time > 5000)
         {
             break;
         }
 
-        // run client code
+        if (!sent_hole_punch && nowtime - start_time > 2000)
+        {
+            NET_Log("client: no response to SYN, requesting hole punch");
+            NET_RequestHolePunch(client_context, addr);
+            sent_hole_punch = true;
+        }
 
+        // run client code
         NET_CL_Run();
 
-        // run the server, just incase we are doing a loopback
-        // connect
-
+        // run the server, just in case we are doing a loopback connect
         NET_SV_Run();
 
         // Don't hog the CPU
-
         I_Sleep(1);
     }
 

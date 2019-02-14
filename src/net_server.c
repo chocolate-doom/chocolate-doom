@@ -40,11 +40,9 @@
 #include "net_structrw.h"
 
 // How often to refresh our registration with the master server.
-
-#define MASTER_REFRESH_PERIOD 20 * 60 /* 20 minutes */
+#define MASTER_REFRESH_PERIOD 30  /* twice per minute */
 
 // How often to re-resolve the address of the master server?
-
 #define MASTER_RESOLVE_PERIOD 8 * 60 * 60 /* 8 hours */
 
 typedef enum
@@ -565,6 +563,7 @@ static void NET_SV_InitNewClient(net_client_t *client, net_addr_t *addr,
     client->connect_time = I_GetTimeMS();
     NET_Conn_InitServer(&client->connection, addr, protocol);
     client->addr = addr;
+    NET_ReferenceAddress(addr);
     client->last_send_time = -1;
 
     // init the ticcmd send queue
@@ -1423,6 +1422,61 @@ void NET_SV_SendQueryResponse(net_addr_t *addr)
     NET_FreePacket(reply);
 }
 
+static void NET_SV_ParseHolePunch(net_packet_t *packet)
+{
+    const char *addr_string;
+    net_packet_t *sendpacket;
+    net_addr_t *addr;
+
+    addr_string = NET_ReadString(packet);
+    if (addr_string == NULL)
+    {
+        NET_Log("server: error: hole punch request but no address provided");
+        return;
+    }
+
+    addr = NET_ResolveAddress(server_context, addr_string);
+    if (addr == NULL)
+    {
+        NET_Log("server: error: failed to resolve address: %s", addr_string);
+        return;
+    }
+
+    sendpacket = NET_NewPacket(16);
+    NET_WriteInt16(sendpacket, NET_PACKET_TYPE_NAT_HOLE_PUNCH);
+    NET_SendPacket(addr, sendpacket);
+    NET_FreePacket(sendpacket);
+    NET_ReleaseAddress(addr);
+    NET_Log("server: sent hole punch to %s", addr_string);
+}
+
+static void NET_SV_MasterPacket(net_packet_t *packet)
+{
+    unsigned int packet_type;
+
+    // Read the packet type
+
+    if (!NET_ReadInt16(packet, &packet_type))
+    {
+        NET_Log("server: error: no packet type in master server message");
+        return;
+    }
+
+    NET_Log("server: packet from master server; type %d", packet_type);
+    NET_LogPacket(packet);
+
+    switch (packet_type)
+    {
+        case NET_MASTER_PACKET_TYPE_ADD_RESPONSE:
+            NET_Query_AddResponse(packet);
+            break;
+
+        case NET_MASTER_PACKET_TYPE_NAT_HOLE_PUNCH:
+            NET_SV_ParseHolePunch(packet);
+            break;
+    }
+}
+
 // Process a packet received by the server
 
 static void NET_SV_Packet(net_packet_t *packet, net_addr_t *addr)
@@ -1434,7 +1488,7 @@ static void NET_SV_Packet(net_packet_t *packet, net_addr_t *addr)
 
     if (addr != NULL && addr == master_server)
     {
-        NET_Query_MasterResponse(packet);
+        NET_SV_MasterPacket(packet);
         return;
     }
 
@@ -1497,14 +1551,6 @@ static void NET_SV_Packet(net_packet_t *packet, net_addr_t *addr)
 
                 break;
         }
-    }
-
-    // If this address is not in the list of clients, be sure to
-    // free it back.
-
-    if (NET_SV_FindClient(addr) == NULL)
-    {
-        NET_FreeAddress(addr);
     }
 }
 
@@ -1750,7 +1796,7 @@ static void NET_SV_RunClient(net_client_t *client)
         }
 
         free(client->name);
-        NET_FreeAddress(client->addr);
+        NET_ReleaseAddress(client->addr);
 
         // Are there any clients left connected?  If not, return the
         // server to the waiting-for-players state.
@@ -1838,14 +1884,8 @@ static void UpdateMasterServer(void)
         net_addr_t *new_addr;
 
         new_addr = NET_Query_ResolveMaster(server_context);
-
-        // Has the master server changed address?
-
-        if (new_addr != NULL && new_addr != master_server)
-        {
-            NET_FreeAddress(master_server);
-            master_server = new_addr;
-        }
+        NET_ReleaseAddress(master_server);
+        master_server = new_addr;
 
         master_resolve_time = now;
     }
@@ -1905,6 +1945,7 @@ void NET_SV_Run(void)
     {
         NET_SV_Packet(packet, addr);
         NET_FreePacket(packet);
+        NET_ReleaseAddress(addr);
     }
 
     if (master_server != NULL)
