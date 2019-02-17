@@ -129,13 +129,16 @@ void FunctionName(int argument, int arg2, int arg3, int arg4, int arg5,
 
 If you use vim, you can put this into your `.vimrc` (or install the
 `localvimrc` script):
+
 ```
 set expandtab
 set tabstop=8
 set softtabstop=4
 set shiftwidth=4
 ```
+
 Or, if you use Emacs, put this in your `.emacs`:
+
 ``lisp
 (add-hook 'c-mode-hook (lambda ()
   (when (and buffer-file-name
