@@ -37,7 +37,7 @@ Furthermore, the following optional user-visible and audible features are availa
  * Free vertical looking, including mouse look and vertical aiming.
  * Aiming support by a crosshair that may get directly rendered into the game world.
  * A new minimal Crispy HUD, displaying only the status bar numbers.
- * Clean Screenshot feature, enabling to take screenshots without burning the status bar and HUD messages into them.
+ * Clean Screenshot feature, enabling to take screenshots without HUD elements and even without status bar numbers and weapon sprites at higher screen sizes.
  * Colorized status bar numbers, HUD texts and blood sprites for certain monsters.
  * Translucency for certain sprites and status bar elements in the Crispy HUD.
  * Randomly mirrored death animations and corpse sprites.
