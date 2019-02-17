@@ -139,7 +139,7 @@ set shiftwidth=4
 
 Or, if you use Emacs, put this in your `.emacs`:
 
-``lisp
+```lisp
 (add-hook 'c-mode-hook (lambda ()
   (when (and buffer-file-name
              (string-match "chocolate-doom" buffer-file-name))
