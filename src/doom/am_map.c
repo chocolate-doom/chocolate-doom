@@ -79,6 +79,7 @@
 #define THINGCOLORS	GREENS
 #define THINGRANGE	GREENRANGE
 #define SECRETWALLCOLORS (crispy->extautomap ? 252 : WALLCOLORS) // [crispy] purple
+#define SECRETWALLCOLORS2 (crispy->extautomap ? 254 : WALLCOLORS) // [crispy] darker purple
 #define SECRETWALLRANGE WALLRANGE
 #define GRIDCOLORS	(GRAYS + GRAYSRANGE/2)
 #define GRIDRANGE	0
@@ -1352,8 +1353,8 @@ void AM_drawWalls(void)
 	    {
 		// [crispy] draw 1S secret sector boundaries in purple
 		if (crispy->extautomap &&
-		    cheating && (lines[i].frontsector->special == 9))
-		    AM_drawMline(&l, SECRETWALLCOLORS);
+		    cheating && (lines[i].frontsector->special == 9 || lines[i].frontsector->oldspecial == 9))
+		    AM_drawMline(&l, (lines[i].frontsector->oldspecial == 9) ? SECRETWALLCOLORS2 : SECRETWALLCOLORS);
 		else
 		AM_drawMline(&l, WALLCOLORS+lightlev);
 	    }
@@ -1375,6 +1376,12 @@ void AM_drawWalls(void)
 		    else AM_drawMline(&l, WALLCOLORS+lightlev);
 		}
 		// [crispy] draw 2S secret sector boundaries in purple
+		else if (crispy->extautomap && cheating &&
+		    (lines[i].backsector->oldspecial == 9 ||
+		    lines[i].frontsector->oldspecial == 9))
+		{
+		    AM_drawMline(&l, SECRETWALLCOLORS2);
+		}
 		else if (crispy->extautomap && cheating &&
 		    (lines[i].backsector->special == 9 ||
 		    lines[i].frontsector->special == 9))

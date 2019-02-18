@@ -125,6 +125,30 @@ void FunctionName(int argument, int arg2, int arg3, int arg4, int arg5,
 }
 ```
 
+## Editor-specific default settings
+
+If you use vim, you can put this into your `.vimrc` (or install the
+`localvimrc` script):
+
+```
+set expandtab
+set tabstop=8
+set softtabstop=4
+set shiftwidth=4
+```
+
+Or, if you use Emacs, put this in your `.emacs`:
+
+```lisp
+(add-hook 'c-mode-hook (lambda ()
+  (when (and buffer-file-name
+             (string-match "chocolate-doom" buffer-file-name))
+    (c-set-style "bsd")
+    (setq indent-tabs-mode nil)
+    (setq tab-width 8)
+    (setq c-basic-offset 4))))
+```
+
 ## Security
 
 The C standard library has a number of unsafe functions that should be

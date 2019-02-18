@@ -550,9 +550,6 @@ void D_DoomLoop (void)
                " may cause demos and network games to get out of sync.\n");
     }
 
-    if (demorecording)
-	G_BeginRecording ();
-
     main_loop_started = true;
 
     I_SetWindowTitle(gamedescription);

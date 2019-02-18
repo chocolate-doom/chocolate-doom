@@ -1144,6 +1144,7 @@ void P_PlayerInSpecialSector (player_t* player)
 	        S_StartSound(NULL, sfx_id);
 	}
 	player->secretcount++;
+	sector->oldspecial = sector->special;
 	sector->special = 0;
 	break;
 			

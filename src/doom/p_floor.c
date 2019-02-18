@@ -30,6 +30,8 @@
 // Data.
 #include "sounds.h"
 
+//e6y
+#define STAIRS_UNINITIALIZED_CRUSH_FIELD_VALUE 10
 
 //
 // FLOORS
@@ -568,7 +570,10 @@ EV_BuildStairs
 	floor->floordestheight = height;
 	// Initialize
 	floor->type = lowerFloor;
-	floor->crush = true;
+	// e6y
+	// Uninitialized crush field will not be equal to 0 or 1 (true)
+	// with high probability. So, initialize it with any other value
+	floor->crush = STAIRS_UNINITIALIZED_CRUSH_FIELD_VALUE;
 		
 	texture = sec->floorpic;
 	
@@ -614,7 +619,10 @@ EV_BuildStairs
 		floor->floordestheight = height;
 		// Initialize
 		floor->type = lowerFloor;
-		floor->crush = true;
+		// e6y
+		// Uninitialized crush field will not be equal to 0 or 1 (true)
+		// with high probability. So, initialize it with any other value
+		floor->crush = STAIRS_UNINITIALIZED_CRUSH_FIELD_VALUE;
 		ok = 1;
 		break;
 	    }
