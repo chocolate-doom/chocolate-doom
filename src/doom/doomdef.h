@@ -27,8 +27,6 @@
 #include "i_timer.h"
 #include "d_mode.h"
 
-#include "crispy.h"
-
 //
 // Global parameters/defines.
 //
