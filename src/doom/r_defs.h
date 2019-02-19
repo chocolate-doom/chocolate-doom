@@ -108,7 +108,6 @@ typedef	struct
     short	floorpic;
     short	ceilingpic;
     short	lightlevel;
-    short	oldspecial;
     short	special;
     short	tag;
 
