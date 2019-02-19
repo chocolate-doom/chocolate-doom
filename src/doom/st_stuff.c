@@ -826,7 +826,7 @@ ST_Responder (event_t* ev)
 	{
 	  if (!plyr->powers[i])
 	    P_GivePower( plyr, i);
-	  else if (i!=pw_strength)
+	  else if (i!=pw_strength && i!=pw_allmap) // [crispy] disable full Automap
 	    plyr->powers[i] = 1;
 	  else
 	    plyr->powers[i] = 0;
