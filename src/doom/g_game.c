@@ -139,10 +139,8 @@ boolean         longtics;               // cph's doom 1.91 longtics hack
 boolean         lowres_turn;            // low resolution turning for longtics
 boolean         demoplayback; 
 boolean		netdemo; 
-byte*		demo_in_buffer;
-byte*		demo_out_buffer;
-byte*		demo_in_p;
-byte*		demo_out_p = NULL;
+byte*		demobuffer;
+byte*		demo_p;
 byte*		demoend; 
 boolean         singledemo;            	// quit after playing a demo from cmdline 
  
@@ -2393,28 +2391,28 @@ int defdemotics = 0, deftotaldemotics;
 
 void G_ReadDemoTiccmd (ticcmd_t* cmd) 
 { 
-    if (*demo_in_p == DEMOMARKER)
+    if (*demo_p == DEMOMARKER) 
     {
-	// end of demo data stream
-	G_CheckDemoStatus ();
-	return;
-    }
-    cmd->forwardmove = ((signed char)*demo_in_p++);
-    cmd->sidemove = ((signed char)*demo_in_p++);
+	// end of demo data stream 
+	G_CheckDemoStatus (); 
+	return; 
+    } 
+    cmd->forwardmove = ((signed char)*demo_p++); 
+    cmd->sidemove = ((signed char)*demo_p++); 
 
     // If this is a longtics demo, read back in higher resolution
 
     if (longtics)
     {
-        cmd->angleturn = *demo_in_p++;
-        cmd->angleturn |= (*demo_in_p++) << 8;
+        cmd->angleturn = *demo_p++;
+        cmd->angleturn |= (*demo_p++) << 8;
     }
     else
     {
-        cmd->angleturn = ((unsigned char) *demo_in_p++)<<8;
+        cmd->angleturn = ((unsigned char) *demo_p++)<<8; 
     }
 
-    cmd->buttons = (unsigned char)*demo_in_p++;
+    cmd->buttons = (unsigned char)*demo_p++; 
 
     if (crispy->fliplevels)
     {
@@ -2439,35 +2437,30 @@ static void IncreaseDemoBuffer(void)
 
     // Find the current size
 
-    current_length = demoend - demo_out_buffer;
+    current_length = demoend - demobuffer;
     
     // Generate a new buffer twice the size
     new_length = current_length * 2;
     
     new_demobuffer = Z_Malloc(new_length, PU_STATIC, 0);
-    new_demop = new_demobuffer + (demo_out_p - demo_out_buffer);
+    new_demop = new_demobuffer + (demo_p - demobuffer);
 
     // Copy over the old data
 
-    memcpy(new_demobuffer, demo_out_buffer, current_length);
+    memcpy(new_demobuffer, demobuffer, current_length);
 
     // Free the old buffer and point the demo pointers at the new buffer.
 
-    Z_Free(demo_out_buffer);
+    Z_Free(demobuffer);
 
-    demo_out_buffer = new_demobuffer;
-    demo_out_p = new_demop;
-    demoend = demo_out_buffer + new_length;
+    demobuffer = new_demobuffer;
+    demo_p = new_demop;
+    demoend = demobuffer + new_length;
 }
 
 void G_WriteDemoTiccmd (ticcmd_t* cmd) 
-{
+{ 
     byte *demo_start;
-
-    if (demo_out_p == NULL)
-    {
-        G_BeginRecording();
-    }
 
     if (crispy->fliplevels)
     {
@@ -2475,35 +2468,32 @@ void G_WriteDemoTiccmd (ticcmd_t* cmd)
 	cmd->angleturn *= (const short) -1;
     }
 
-    if (gamekeydown[key_demo_quit])           // press q to end demo recording
-	G_CheckDemoStatus ();
-
     if (gamekeydown[key_demo_quit])           // press q to end demo recording 
 	G_CheckDemoStatus (); 
 
-    demo_start = demo_out_p;
+    demo_start = demo_p;
 
-    *demo_out_p++ = cmd->forwardmove;
-    *demo_out_p++ = cmd->sidemove;
+    *demo_p++ = cmd->forwardmove; 
+    *demo_p++ = cmd->sidemove; 
 
     // If this is a longtics demo, record in higher resolution
  
     if (longtics)
     {
-        *demo_out_p++ = (cmd->angleturn & 0xff);
-        *demo_out_p++ = (cmd->angleturn >> 8) & 0xff;
+        *demo_p++ = (cmd->angleturn & 0xff);
+        *demo_p++ = (cmd->angleturn >> 8) & 0xff;
     }
     else
     {
-        *demo_out_p++ = cmd->angleturn >> 8;
+        *demo_p++ = cmd->angleturn >> 8; 
     }
 
-    *demo_out_p++ = cmd->buttons;
+    *demo_p++ = cmd->buttons; 
 
     // reset demo pointer back
-    demo_out_p = demo_start;
+    demo_p = demo_start;
 
-    if (demo_out_p > demoend - 16)
+    if (demo_p > demoend - 16)
     {
         // [crispy] unconditionally disable savegame and demo limits
         /*
@@ -2563,8 +2553,8 @@ void G_RecordDemo (char *name)
     i = M_CheckParmWithArgs("-maxdemo", 1);
     if (i)
 	maxsize = atoi(myargv[i+1])*1024;
-    demo_out_buffer = Z_Malloc (maxsize,PU_STATIC,NULL);
-    demoend = demo_out_buffer + maxsize;
+    demobuffer = Z_Malloc (maxsize,PU_STATIC,NULL); 
+    demoend = demobuffer + maxsize;
 	
     demorecording = true; 
 } 
@@ -2592,7 +2582,7 @@ void G_BeginRecording (void)
 { 
     int             i; 
 
-    demo_out_p = demo_out_buffer;
+    demo_p = demobuffer;
 
     //!
     // @category demo
@@ -2608,24 +2598,24 @@ void G_BeginRecording (void)
 
     if (longtics)
     {
-        *demo_out_p++ = DOOM_191_VERSION;
+        *demo_p++ = DOOM_191_VERSION;
     }
     else
     {
-        *demo_out_p++ = G_VanillaVersionCode();
+        *demo_p++ = G_VanillaVersionCode();
     }
 
-    *demo_out_p++ = gameskill;
-    *demo_out_p++ = gameepisode;
-    *demo_out_p++ = gamemap;
-    *demo_out_p++ = deathmatch;
-    *demo_out_p++ = respawnparm;
-    *demo_out_p++ = fastparm;
-    *demo_out_p++ = nomonsters;
-    *demo_out_p++ = consoleplayer;
-
+    *demo_p++ = gameskill; 
+    *demo_p++ = gameepisode; 
+    *demo_p++ = gamemap; 
+    *demo_p++ = deathmatch; 
+    *demo_p++ = respawnparm;
+    *demo_p++ = fastparm;
+    *demo_p++ = nomonsters;
+    *demo_p++ = consoleplayer;
+	 
     for (i=0 ; i<MAXPLAYERS ; i++) 
-	*demo_out_p++ = playeringame[i];
+	*demo_p++ = playeringame[i]; 		 
 } 
  
 
@@ -2698,8 +2688,8 @@ void G_DoPlayDemo (void)
 
     lumpnum = W_GetNumForName(defdemoname);
     gameaction = ga_nothing;
-    demo_in_buffer = W_CacheLumpNum(lumpnum, PU_STATIC);
-    demo_in_p = demo_in_buffer;
+    demobuffer = W_CacheLumpNum(lumpnum, PU_STATIC);
+    demo_p = demobuffer;
 
     // [crispy] ignore empty demo lumps
     lumplength = W_LumpLength(lumpnum);
@@ -2710,7 +2700,7 @@ void G_DoPlayDemo (void)
 	return;
     }
 
-    demoversion = *demo_in_p++;
+    demoversion = *demo_p++;
 
     longtics = false;
 
@@ -2747,17 +2737,17 @@ void G_DoPlayDemo (void)
         }
     }
 
-    skill = *demo_in_p++;
-    episode = *demo_in_p++;
-    map = *demo_in_p++;
-    deathmatch = *demo_in_p++;
-    respawnparm = *demo_in_p++;
-    fastparm = *demo_in_p++;
-    nomonsters = *demo_in_p++;
-    consoleplayer = *demo_in_p++;
+    skill = *demo_p++; 
+    episode = *demo_p++; 
+    map = *demo_p++; 
+    deathmatch = *demo_p++;
+    respawnparm = *demo_p++;
+    fastparm = *demo_p++;
+    nomonsters = *demo_p++;
+    consoleplayer = *demo_p++;
 	
     for (i=0 ; i<MAXPLAYERS ; i++) 
-	playeringame[i] = *demo_in_p++;
+	playeringame[i] = *demo_p++; 
 
     if (playeringame[1] || M_CheckParm("-solo-net") > 0
                         || M_CheckParm("-netdemo") > 0)
@@ -2790,7 +2780,7 @@ void G_DoPlayDemo (void)
     // [crispy] demo progress bar
     {
 	int i, numplayersingame = 0;
-	byte *demo_ptr = demo_in_p;
+	byte *demo_ptr = demo_p;
 
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
@@ -2802,7 +2792,7 @@ void G_DoPlayDemo (void)
 
 	deftotaldemotics = defdemotics = 0;
 
-	while (*demo_ptr != DEMOMARKER && (demo_ptr - demo_in_buffer) < lumplength)
+	while (*demo_ptr != DEMOMARKER && (demo_ptr - demobuffer) < lumplength)
 	{
 	    demo_ptr += numplayersingame * (longtics ? 5 : 4);
 	    deftotaldemotics++;
@@ -2886,9 +2876,9 @@ boolean G_CheckDemoStatus (void)
  
     if (demorecording) 
     { 
-	*demo_out_p++ = DEMOMARKER;
-	M_WriteFile (demoname, demo_out_buffer, demo_out_p - demo_out_buffer);
-	Z_Free (demo_out_buffer);
+	*demo_p++ = DEMOMARKER; 
+	M_WriteFile (demoname, demobuffer, demo_p - demobuffer); 
+	Z_Free (demobuffer); 
 	demorecording = false; 
 	I_Error ("Demo %s recorded",demoname); 
     } 
