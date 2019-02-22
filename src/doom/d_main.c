@@ -550,7 +550,8 @@ void D_DoomLoop (void)
                " may cause demos and network games to get out of sync.\n");
     }
 
-    if (demorecording)
+    // [crispy] no need to write a demo header in demo continue mode
+    if (demorecording && gameaction != ga_playdemo)
 	G_BeginRecording ();
 
     main_loop_started = true;

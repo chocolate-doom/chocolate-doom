@@ -1151,7 +1151,8 @@ void G_Ticker (void)
 
 	    if (demoplayback) 
 		G_ReadDemoTiccmd (cmd); 
-	    if (demorecording) 
+	    // [crispy] do not record tics while still playing back in demo continue mode
+	    if (demorecording && !demoplayback)
 		G_WriteDemoTiccmd (cmd);
 	    
 	    // check for turbo cheats
@@ -2631,7 +2632,8 @@ void G_DeferedPlayDemo(const char *name)
     gameaction = ga_playdemo; 
 
     // [crispy] fast-forward demo up to the desired map
-    if (crispy->demowarp)
+    // in demo warp mode or to the end of the demo in continue mode
+    if (crispy->demowarp || demorecording)
     {
 	nodrawers = true;
 	singletics = true;
@@ -2685,6 +2687,13 @@ void G_DoPlayDemo (void)
     int i, lumpnum, episode, map;
     int demoversion;
     int lumplength; // [crispy]
+
+    // [crispy] in demo continue mode free the obsolete demo buffer
+    // of size 'maxsize' previously allocated in G_RecordDemo()
+    if (demorecording)
+    {
+        Z_Free(demobuffer);
+    }
 
     lumpnum = W_GetNumForName(defdemoname);
     gameaction = ga_nothing;
@@ -2866,6 +2875,19 @@ boolean G_CheckDemoStatus (void)
 	nomonsters = false;
 	consoleplayer = 0;
         
+        // [crispy] in demo continue mode increase the demo buffer and
+        // continue recording once we are done with playback
+        if (demorecording)
+        {
+            demoend = demo_p;
+            IncreaseDemoBuffer();
+
+            nodrawers = false;
+            singletics = false;
+
+            return true;
+        }
+
         if (singledemo) 
             I_Quit (); 
         else 
