@@ -201,6 +201,40 @@ static void P_ReadSoundTarget (const char *key)
 	}
 }
 
+// sector->oldspecial
+
+static void P_WriteOldSpecial (const char *key)
+{
+	int i;
+	sector_t *sector;
+
+	for (i = 0, sector = sectors; i < numsectors; i++, sector++)
+	{
+		if (sector->oldspecial)
+		{
+			M_snprintf(line, MAX_LINE_LEN, "%s %d %d\n",
+			           key,
+			           i,
+			           sector->oldspecial);
+			fputs(line, save_stream);
+		}
+	}
+}
+
+static void P_ReadOldSpecial (const char *key)
+{
+	int sector, oldspecial;
+
+	if (sscanf(line, "%s %d %d\n",
+	           string,
+	           &sector,
+	           &oldspecial) == 3 &&
+	    !strncmp(string, key, MAX_STRING_LEN))
+	{
+		sectors[sector].oldspecial = oldspecial;
+	}
+}
+
 // buttonlist[]
 
 extern void P_StartButton (line_t *line, bwhere_e w, int texture, int time);
@@ -413,6 +447,7 @@ static const extsavegdata_t extsavegdata[] =
 	{"totalleveltimes", P_WriteTotalLevelTimes, P_ReadTotalLevelTimes, 1},
 	{"fireflicker", P_WriteFireFlicker, P_ReadFireFlicker, 1},
 	{"soundtarget", P_WriteSoundTarget, P_ReadSoundTarget, 1},
+	{"oldspecial", P_WriteOldSpecial, P_ReadOldSpecial, 1},
 	{"button", P_WriteButton, P_ReadButton, 1},
 	{"braintarget", P_WriteBrainTarget, P_ReadBrainTarget, 1},
 	{"markpoints", P_WriteMarkPoints, P_ReadMarkPoints, 1},
