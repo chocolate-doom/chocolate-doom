@@ -109,6 +109,9 @@ static net_context_t *client_context;
 
 static net_gamesettings_t settings;
 
+// Why did the server reject us?
+char *net_client_reject_reason = NULL;
+
 // true if the client code is in use
 
 boolean net_client_connected;
@@ -459,6 +462,37 @@ static void NET_CL_ParseSYN(net_packet_t *packet)
         fprintf(stderr, "NET_CL_ParseSYN: This is '%s', but the server is "
                 "'%s'. It is possible that this mismatch may cause the game "
                 "to desync.\n", PACKAGE_STRING, server_version);
+    }
+}
+
+static void SetRejectReason(const char *s)
+{
+    free(net_client_reject_reason);
+    if (s != NULL)
+    {
+        net_client_reject_reason = strdup(s);
+    }
+    else
+    {
+        net_client_reject_reason = NULL;
+    }
+}
+
+static void NET_CL_ParseReject(net_packet_t *packet)
+{
+    char *msg;
+
+    msg = NET_ReadSafeString(packet);
+    if (msg == NULL)
+    {
+        return;
+    }
+
+    if (client_connection.state == NET_CONN_STATE_CONNECTING)
+    {
+        client_connection.state = NET_CONN_STATE_DISCONNECTED;
+        client_connection.disconnect_reason = NET_DISCONNECT_REMOTE;
+        SetRejectReason(msg);
     }
 }
 
@@ -919,6 +953,10 @@ static void NET_CL_ParsePacket(net_packet_t *packet)
                 NET_CL_ParseSYN(packet);
                 break;
 
+            case NET_PACKET_TYPE_REJECTED:
+                NET_CL_ParseReject(packet);
+                break;
+
             case NET_PACKET_TYPE_WAITING_DATA:
                 NET_CL_ParseWaitingData(packet);
                 break;
@@ -1040,6 +1078,7 @@ boolean NET_CL_Connect(net_addr_t *addr, net_connect_data_t *data)
     // initialize module for client mode
     if (!addr->module->InitClient())
     {
+        SetRejectReason("Failed to initialize client module");
         return false;
     }
 
@@ -1054,6 +1093,7 @@ boolean NET_CL_Connect(net_addr_t *addr, net_connect_data_t *data)
     // try to connect
     start_time = I_GetTimeMS();
     last_send_time = -1;
+    SetRejectReason("Unknown reason");
 
     while (client_connection.state == NET_CONN_STATE_CONNECTING)
     {
@@ -1069,6 +1109,7 @@ boolean NET_CL_Connect(net_addr_t *addr, net_connect_data_t *data)
         // time out after 5 seconds
         if (nowtime - start_time > 5000)
         {
+            SetRejectReason("No response from server");
             break;
         }
 
@@ -1093,6 +1134,7 @@ boolean NET_CL_Connect(net_addr_t *addr, net_connect_data_t *data)
     {
         // connected ok!
         NET_Log("client: connected successfully");
+        SetRejectReason(NULL);
         client_state = CLIENT_STATE_WAITING_LAUNCH;
         drone = data->drone;
 
