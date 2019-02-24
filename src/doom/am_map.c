@@ -1357,7 +1357,7 @@ void AM_drawWalls(void)
 		if (crispy->extautomap &&
 		    ((cheating && lines[i].frontsector->special == 9)
 #if defined CRISPY_HIGHLIGHT_REVEALED_SECRETS
-		    || lines[i].frontsector->oldspecial == 9
+		    || (crispy->secretmessage && lines[i].frontsector->oldspecial == 9)
 #endif
 		    ))
 		    AM_drawMline(&l, (lines[i].frontsector->oldspecial == 9) ? REVEALEDSECRETWALLCOLORS : SECRETWALLCOLORS);
