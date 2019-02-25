@@ -143,44 +143,54 @@ After successful compilation the resulting binaries can be found in the `src/` d
 
 ## News
 
-Crispy Doom 5.4 has been released on December 17, 2018. This version demonstrates that there's always room for perfection and improvement ;)
+Crispy Doom 5.5 has been released on February 26, 2019. This version's primary goal is to address the community suggestions.
 
 **Features**
 
- * In-game aspect ratio correction switching with options to force the 4:3 and 16:10 (native internal resolution) aspect ratios has been implemented per Zodomaniac's request.
+ * Demo recording can now be continued by using -playdemo and -record simultaneously, contributed by Fraggle.
+ * Menu switches for level stats, time and user coords are now separate. Choices are `Always`, `In automap` or `Never`.
 
 **Improvements**
 
- * Loading a savegame while recording a demo is allowed again, as requested by Looper and ZeroMaster010.
- * The uncapped framerate feature is now independent of the network sync implementation, thanks to Wintermute0110 for the discussion. Formerly it was only implemented for the '-oldsync' implementation, but now that Choco has made 'newsync' the new default, it has been made available there as well.
- * In the Crispy HUD, missing keys will blink for a second after an unsuccessful attempt to use a linedef that requires them.
- * Some framebuffer overflow prevention measures have been added back that somehow got lost during the conversion to the resolution-agnostic patch drawing implementation. This fixes a crash when showing the TITLEPIC of MALGNANT.WAD.
- * In the Doom 2 cast sequence, seestate and deathstate sounds are now randomized (if misc. sound fixes are enabled) according to JNechaevsky's idea. Also, death sequences in the cast are now randomly flipped, if the corresponding feature is enabled. Furthermore, the attack sounds are now played based on state action functions (instead of mere state numbers) as Zodomaniac suggested, so that monsters from SMOOTHED.wad now play their attack sounds properly in the cast sequence. Finally, Doomguy now properly migrates from his aiming state to the firing state and even plays the SSG sound when firing in the cast sequence.
- * A key binding to toggle vertical mouse movement (novert) as suggested by Looper has been added.
- * Level times in the intermission screen are now displayed at most in hhhh:mm:ss format, eliminating the ambiguity for multi-day plays that JNechaevsky pointed out.
- * Only weapons available in the respective IWAD version (shareware/registered) are given when using cheat codes, as JNechaevsky suggested.
- * Loading a savegame from a WAD file different from the currently loaded one does not interrupt the current game anymore. Also, a check is performed if the requested map is actually available at all (e.g. MAP33 from BFG Edition IWAD when playing with the standard 32-map IWAD).
- * Using the `IDCLEV` cheat to non-existent levels doesn't exit the game anymore, according to mfrancis95's suggestion.
- * Sector interpolation during the 0th gametic is inhibited due to the request by JNechaevsky and Brad Harding, eliminating some visual glitches when loading a savegame from the command line.
- * Brightmaps for the SW2SATYR, SW2LION and SW2GARG textures have been contributed by JNechaevsky.
- * Composite textures are now pre-cached in `R_PrecacheLevel()`. This should prevent the last remaining rendering hiccups in uncapped framerate mode.
- * Weapon pickup messages are now even shown in multiplayer games, thanks to Zodomaniac for filing the bug nearly two years ago and to mfrancis95 for an implementation idea.
+ * Revealed secret sectors now highlight in gold on the Automap in case of Extended automap colors and Show revealed secrets being enabled. That is, unrevealed secret sectors are drawn normally without the IDDT cheat and in purple with the IDDT cheat. Revealed secrets are drawn in gold regardless of IDDT. Zodomaniac suggested this feature.
+ * IDBEHOLDA cheat now disables full automap if it's on, pointed out by Zodomaniac.
+ * Documentation of "clean screenshot" feature has been clarified, thanks to danpla for pointing out.
+ * Demo timer widget is now drawn in intermission screens, thanks to Looper for the suggestion.
+ * MF_DROPPED check for all ammo and weapons has been contributed by NeuralStunner.
+ * Colored text escape character has been parametrized and assigned to be the tilde (~). Why? Because it is a printable ASCII character, so it is possible to print colored texts to system console without accidentally triggering a control sequence.
+ * A 'crispy' color scheme has been introduced for Crispy Setup based on the suggestions of JNechaevsky and Zodomaniac.
+ * Map WAD file name is printed in non-overlay in Automap only.
+ * Interrupted sounds from origin NULL are allowed if `gamestate != GS_LEVEL`, which makes sense in the cast sequence.
+ * Like in Chocolate Heretic, HHE level names are applied in intermission screen. Thanks to ETTiNGRiNDER for the report.
+ * Sounds "played in the player's head" now don't interrupt each other, thanks to BCG2000's remark.
+ * Optional level stats for Crispy Heretic can now be enabled, see [`11e6091a`](https://github.com/fabiangreffrath/crispy-doom/commit/11e6091ac13906b5c79238a0a7f49abe60e2c7c9)
+ * Right-sided widgets are now moved one step further to the right.
+ * IDMYPOS now yields extra high precision coordinates updating for 10 seconds and discarding after that instead of going static (the latter caught by Zodomaniac).
+ * Automap stats widgets have been condenced a bit (K or (Chex) F for Kills, I for Items, S for Secrets).
+ * The usual 24 units step-up even across monsters' heads is now allowed, thanks to BCG2000's suggestion. In addition to this, jumping on a monster's head straight from the floor or by "low" jumping is disallowed.
+ * Map's default music isn't loaded if the game is loaded from a savegame with MUSINFO data, thanks to zstephens for filing the issue.
+ * Monster seesounds are now uninterruptible in case of playing sounds in full length, thanks to BCG2000 for pointing this out.
+ * Map's default music is now saved in extended savegames.
+ * ExM0 maps are now supported, reachable through both `-warp x0` command ine argument and `IDCLEVx0` cheat, as suggested by StasBFG for No End In Sight megawad (neis.wad).
+ * IWAD version v1.2 is now valid, as well as in Choco.
 
 **Bug Fixes**
 
- * Screenshots without the `screen shot` message have been fixed, as Zodomaniac kept an eye on it.
- * Variable array lengths induced by making SCREENWIDTH non-const are now fixed thanks to zx64's pointer.
- * SSG availability is now reflected by the Shotgun (3) slot of the arms widget the way JNechaevsky and Brad Harding proposed.
- * Sound clipping in Doom 2 MAP08 and The Ultimate Doom E4M8 has been fixed as JNechaevsky suggested.
- * A crash in shareware/registered mode triggered by using `IDMUS` as spotted by JNechaevsky has been eliminated.
- * The minigun zombie's firing frames are now rendered full-bright.
- * Patchless columns are now treated the same as multi-patched ones. Thanks to RaphaelMode for providing a level that exposed a crash when a patchless column came into view, which is now fixed.
- * Updating the player's viewz on sector movement has been fixed again. Thanks to Dwaze for pointing out this this was *still* not properly working yet!
- * With HUD digits colorization enabled, digits in the armor widget are now blue if armor class >= 2, after Zodomaniac reported an ambiguity which becomes apparent in Strain.
- * Palette resetting by key pickup reported by mfrancis95 has been fixed.
- * The SDL audio backend is forcefully set to directsound on Windows, away from the buggy WASAPI default as Brad Harding requested.
+ * Initialization value of `floor->crush` in `EV_BuildStairs()` has been fixed, in Chocolate Doom as well.
+ * Direct aiming has been applied to Beta BFG code as well, thanks to NeuralStunner for drawing attention to this.
+ * Screenshots without the `screen shot` message have been fixed again for all platforms.
+ * Blinking keys implementation for the classic status bar has been fixed but intentionally disabled.
+ * Forceful setting of the SDL audiobackend on Windows has been dropped. Windows "releases" 5.5 and on will be based on the daily builds and use different SDL library versions than previous releases-whatever is the default there, as it reportedly works alright for most users.
+ * Pickup messages for weapons that are already owned have been brought back as Zodomaniac spotted their absence.
+ * `I_NextGlob()` now returns `NULL` if `(glob == NULL)`. If a non-existent directory is passed over to `I_StartGlob()`, e.g. when moving config files between computers, it will return `NULL` preventing a crash reported by Zodomaniac.
+ * All additional player properties are now reset when finishing a level, e.g. you'll now never start a new level with your view in the sky.
+ * The things' actual height is now calculated from the spawnstate's first sprite (for shootable solid things only), this mitigates the issue JNechaevsky once reported when both mouselook and direct aiming are enabled and you miss some obvious targets, like e.g. Romero's head on a stick.
+ * Crispy Heretic now catches intercepts overflows which fixes a crash in E1M2 of "Lost and Forgotten".
+ * "Ouch Face" priority has been raised to actually show up, thanks to BCG2000 and JNechaevsky's carefulness.
+ * Default HUD digit color for Hacx is now blue.
+ * MUSINFO support accidentally destroyed by not setting lumpname anymore in `P_SetupLevel()` has been repaired.
 
-Crispy Doom 5.4 is based on Chocolate Doom 3.0.0 and has merged all changes to the Chocolate Doom master branch up to commit [`482d302e`](https://github.com/chocolate-doom/chocolate-doom/commit/482d302ee846fb30d23d50ccff8549d300a81b75)
+Crispy Doom 5.5 is based on Chocolate Doom 3.0.0 and has merged all changes to the Chocolate Doom master branch up to commit [`25ae4973`](https://github.com/chocolate-doom/chocolate-doom/commit/25ae4973fab0cfffe47fbc8373dae8a8715786d7)
 
 ## Documentation
 
