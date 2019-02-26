@@ -84,6 +84,7 @@ Many additional less user-visible features have been implemented, e.g. fixed eng
  * `-mergedump <file>` merges the PWAD file(s) given on the command line with the IWAD file and writes the resulting data into the `<file>` given as argument. Might be considered as a replacement for the `DEUSF.EXE` tool.
  * `-blockmap` forces a (re-)building of the BLOCKMAP lumps for loaded maps.
  * `-loadgame N -record demoname` and `-loadgame N -playdemo demoname` allow to record and play demos starting from a savegame, not from the level start.
+ * `-record demoname1 -playdemo demoname2` plays back until the end of demoname1 and continues recording as demoname2.
  * `-fliplevels` loads mirrored versions of the maps (this was the default on April 1st up to version 5.0).
  * `-flipweapons` flips the player's weapons (new in 5.3).
 
@@ -143,52 +144,49 @@ After successful compilation the resulting binaries can be found in the `src/` d
 
 ## News
 
-Crispy Doom 5.5 has been released on February 26, 2019. This version's primary goal is to address the community suggestions.
+Crispy Doom 5.5 has been released on February XX, 2019. This is another release which mostly addresses community suggestions.
+
+Forceful setting of the SDL_AUDIODRIVER variable on Windows has been dropped. Windows "releases" from 5.5 onward will be based on the daily builds and use their SDL libraries with the default audio backend.
 
 **Features**
 
- * Demo recording can now be continued by using -playdemo and -record simultaneously, contributed by Fraggle.
- * Menu switches for level stats, time and user coords are now separate. Choices are `Always`, `In automap` or `Never`.
+ * Demo recording can now be continued by using `-playdemo` and `-record` simultaneously, based on a pull request by Fraggle.
+ * Menu switches for level stats, level time and player coords are now separate. Choices are `Always`, `In Automap` or `Never`. Also, Automap stats widgets have been condensed a bit ('K' for Kills -- or 'F' for Flemoids in Chex Quest, 'I' for Items and 'S' for Secrets). Right-sided widgets (i.e. player coords and FPS counter) have been moved a step further to the right.
 
 **Improvements**
 
- * Revealed secret sectors now highlight in gold on the Automap in case of Extended automap colors and Show revealed secrets being enabled. That is, unrevealed secret sectors are drawn normally without the IDDT cheat and in purple with the IDDT cheat. Revealed secrets are drawn in gold regardless of IDDT. Zodomaniac suggested this feature.
- * IDBEHOLDA cheat now disables full automap if it's on, pointed out by Zodomaniac.
- * Documentation of "clean screenshot" feature has been clarified, thanks to danpla for pointing out.
- * Demo timer widget is now drawn in intermission screens, thanks to Looper for the suggestion.
- * MF_DROPPED check for all ammo and weapons has been contributed by NeuralStunner.
- * Colored text escape character has been parametrized and assigned to be the tilde (~). Why? Because it is a printable ASCII character, so it is possible to print colored texts to system console without accidentally triggering a control sequence.
- * A 'crispy' color scheme has been introduced for Crispy Setup based on the suggestions of JNechaevsky and Zodomaniac.
- * Map WAD file name is printed in non-overlay in Automap only.
- * Interrupted sounds from origin NULL are allowed if `gamestate != GS_LEVEL`, which makes sense in the cast sequence.
- * Like in Chocolate Heretic, HHE level names are applied in intermission screen. Thanks to ETTiNGRiNDER for the report.
- * Sounds "played in the player's head" now don't interrupt each other, thanks to BCG2000's remark.
- * Optional level stats for Crispy Heretic can now be enabled, see [`11e6091a`](https://github.com/fabiangreffrath/crispy-doom/commit/11e6091ac13906b5c79238a0a7f49abe60e2c7c9)
- * Right-sided widgets are now moved one step further to the right.
+ * Revealed secret sectors are now highlighted in gold on the Automap if both the "Extended Automap Colors" and "Show Revealed Secrets" features are enabled. Zodomaniac suggested this feature.
+ * The IDBEHOLDA cheat can now disable the full automap again, pointed out by Zodomaniac.
+ * The demo timer widget is now also drawn in intermission screens (if enabled), thanks to Looper for the suggestion.
+ * The `MF_DROPPED` flag is now checked for all ammo and weapon things. This has been contributed by NeuralStunner.
+ * A 'Crispy' color scheme has been introduced for Crispy Setup based on the suggestions by JNechaevsky and Zodomaniac.
+ * Monster seesounds are not uninterruptible anymore if the "Play Sounds In Full Length" feature is enabled, thanks to BCG2000 for pointing this out. Also, sounds "played in the player's head" (i.e. from origin `NULL`) don't interrupt each other anymore, thanks to BCG2000's remark.
  * IDMYPOS now yields extra high precision coordinates updating for 10 seconds and discarding after that instead of going static (the latter caught by Zodomaniac).
- * Automap stats widgets have been condenced a bit (K or (Chex) F for Kills, I for Items, S for Secrets).
- * The usual 24 units step-up even across monsters' heads is now allowed, thanks to BCG2000's suggestion. In addition to this, jumping on a monster's head straight from the floor or by "low" jumping is disallowed.
- * Map's default music isn't loaded if the game is loaded from a savegame with MUSINFO data, thanks to zstephens for filing the issue.
- * Monster seesounds are now uninterruptible in case of playing sounds in full length, thanks to BCG2000 for pointing this out.
- * Map's default music is now saved in extended savegames.
- * ExM0 maps are now supported, reachable through both `-warp x0` command ine argument and `IDCLEVx0` cheat, as suggested by StasBFG for No End In Sight megawad (neis.wad).
- * IWAD version v1.2 is now valid, as well as in Choco.
+ * When the "Walk Over/Under Monsters" feature is enabled, the usual 24 units step-up is now allowed even across monsters' heads, thanks to BCG2000's suggestion. However, jumping on a monster's head straight from the floor is explicitly disallowed if this height has been reached by "low" jumping.
+ * A map's default music isn't loaded anymore if MUSINFO data is available and the game has been loaded from a savegame, thanks to zstephens for filing the issue.
+ * ExM0 maps are now supported, reachable through both the `-warp x0` command line argument and the `IDCLEVx0` cheat, as suggested by StasBFG for the "No End In Sight" megawad (neis.wad).
 
 **Bug Fixes**
 
- * Initialization value of `floor->crush` in `EV_BuildStairs()` has been fixed, in Chocolate Doom as well.
- * Direct aiming has been applied to Beta BFG code as well, thanks to NeuralStunner for drawing attention to this.
- * Screenshots without the `screen shot` message have been fixed again for all platforms.
- * Blinking keys implementation for the classic status bar has been fixed but intentionally disabled.
- * Forceful setting of the SDL audiobackend on Windows has been dropped. Windows "releases" 5.5 and on will be based on the daily builds and use different SDL library versions than previous releases-whatever is the default there, as it reportedly works alright for most users.
+ * Crashes or black screens when switching specific rendering options have been fixed by a complete overhaul of the rendering stack re-initialization code.
+ * The initialization value of `floor->crush` in `EV_BuildStairs()` has been fixed (inherited from Chocolate Doom) which caused a rare and obscure demo desyncing bug on TNT map 22, reported by Dime.
+ * Direct aiming has been applied to the Beta BFG code as well, thanks to NeuralStunner for drawing attention to this.
+ * Screenshots without the `screen shot` message have (hopefully!) been fixed again for all platforms and all rendering options.
  * Pickup messages for weapons that are already owned have been brought back as Zodomaniac spotted their absence.
- * `I_NextGlob()` now returns `NULL` if `(glob == NULL)`. If a non-existent directory is passed over to `I_StartGlob()`, e.g. when moving config files between computers, it will return `NULL` preventing a crash reported by Zodomaniac.
  * All additional player properties are now reset when finishing a level, e.g. you'll now never start a new level with your view in the sky.
- * The things' actual height is now calculated from the spawnstate's first sprite (for shootable solid things only), this mitigates the issue JNechaevsky once reported when both mouselook and direct aiming are enabled and you miss some obvious targets, like e.g. Romero's head on a stick.
+ * The things' actual height is now calculated from the spawnstate's first sprite (for shootable solid things only). This mitigates the issue JNechaevsky once reported when both "Mouselook" and "Direct Aiming" are enabled and you miss some obvious targets, like e.g. Romero's head on a stick.
+ * The widget priority for the "Ouch Face" has been raised so that it actually shows up, thanks to BCG2000 and JNechaevsky's carefulness.
+ * The default HUD digit color for Hacx is now blue.
+ * MUSINFO support has been repaired after if was accidentally destroyed in 5.4 by not setting the lumpname variable anymore in `P_SetupLevel()`.
+
+**Other Games**
+
  * Crispy Heretic now catches intercepts overflows which fixes a crash in E1M2 of "Lost and Forgotten".
- * "Ouch Face" priority has been raised to actually show up, thanks to BCG2000 and JNechaevsky's carefulness.
- * Default HUD digit color for Hacx is now blue.
- * MUSINFO support accidentally destroyed by not setting lumpname anymore in `P_SetupLevel()` has been repaired.
+ * Optional level stats for Crispy Heretic can now be enabled, see the commit message to [`11e6091a`](https://github.com/fabiangreffrath/crispy-doom/commit/11e6091ac13906b5c79238a0a7f49abe60e2c7c9).
+
+**Errata**
+
+ * A thing height clipping issue when standing on a monster's head on a moving platform has been vastly improved, but not entirely fixed yet. Monsters may still get stuck in walls occasionally, but players won't anymore.
 
 Crispy Doom 5.5 is based on Chocolate Doom 3.0.0 and has merged all changes to the Chocolate Doom master branch up to commit [`25ae4973`](https://github.com/chocolate-doom/chocolate-doom/commit/25ae4973fab0cfffe47fbc8373dae8a8715786d7)
 
