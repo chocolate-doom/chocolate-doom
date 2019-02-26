@@ -159,7 +159,7 @@ Forceful setting of the `SDL_AUDIODRIVER` variable on Windows has been dropped. 
  * The `IDBEHOLDA` cheat can now disable the full automap again, pointed out by Zodomaniac.
  * The demo timer widget is now also drawn on intermission screens (if enabled), thanks to Looper for the suggestion.
  * The `MF_DROPPED` flag is now checked for all ammo and weapon things. This has been contributed by NeuralStunner.
- * A 'Crispy' color scheme has been introduced for Crispy Setup based on the suggestions by JNechaevsky and Zodomaniac.
+ * A "Crispy" color scheme has been introduced for Crispy Setup based on the suggestions by JNechaevsky and Zodomaniac.
  * Monster seesounds are now uninterruptible if the "Play Sounds In Full Length" feature is enabled, thanks to BCG2000 for pointing this out. Also, sounds "played in the player's head" (i.e. from origin `NULL`) don't interrupt each other anymore, thanks to BCG2000's remark.
  * The `IDMYPOS` cheat now yields extra high precision coordinates updating for 10 seconds and discarding after that instead of going static (the latter caught by Zodomaniac).
  * When the "Walk Over/Under Monsters" feature is enabled, the usual 24 units step-up is now allowed even across monsters' heads, thanks to BCG2000's suggestion. However, jumping on a monster's head straight from the floor is explicitly disallowed if this height has been reached by "low" jumping.
@@ -175,9 +175,9 @@ Forceful setting of the `SDL_AUDIODRIVER` variable on Windows has been dropped. 
  * Pickup messages for weapons that are already owned have been brought back as Zodomaniac spotted their absence.
  * All additional player properties are now reset when finishing a level, e.g. you'll now never start a new level with your view in the sky.
  * The things' actual height is now calculated from the spawnstate's first sprite (for shootable solid things only). This mitigates the issue JNechaevsky once reported when both "Mouselook" and "Direct Aiming" are enabled and you miss some obvious targets, like e.g. Romero's head on a stick.
- * The priority for the "Ouch Face" has been raised so that it actually shows up, thanks to BCG2000 and JNechaevsky's carefulness.
+ * The priority for the "Ouch Face" has been raised so that it actually shows up, thanks to BCG2000's and JNechaevsky's carefulness.
  * The default HUD digit color for Hacx is now blue.
- * MUSINFO support has been repaired after if was accidentally destroyed in 5.4 by not setting the lumpname variable anymore in `P_SetupLevel()`.
+ * MUSINFO support has been repaired after it was accidentally destroyed in 5.4 by not setting the lumpname variable anymore in `P_SetupLevel()`.
 
 **Other Games**
 
