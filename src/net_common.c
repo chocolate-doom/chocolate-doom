@@ -50,9 +50,6 @@ struct net_reliable_packet_s
 
 static FILE *net_debug = NULL;
 
-// Why did the server reject us?
-char *net_client_reject_reason = NULL;
-
 static void NET_Conn_Init(net_connection_t *conn, net_addr_t *addr,
                           net_protocol_t protocol)
 {
@@ -126,29 +123,6 @@ static void NET_Conn_ParseDisconnectACK(net_connection_t *conn,
         conn->state = NET_CONN_STATE_DISCONNECTED;
         conn->disconnect_reason = NET_DISCONNECT_LOCAL;
         conn->last_send_time = -1;
-    }
-}
-
-static void NET_Conn_ParseReject(net_connection_t *conn, net_packet_t *packet)
-{
-    char *msg;
-
-    msg = NET_ReadSafeString(packet);
-
-    if (msg == NULL)
-    {
-        return;
-    }
-    
-    if (conn->state == NET_CONN_STATE_CONNECTING)
-    {
-        // rejected by server
-
-        conn->state = NET_CONN_STATE_DISCONNECTED;
-        conn->disconnect_reason = NET_DISCONNECT_REMOTE;
-
-        free(net_client_reject_reason);
-        net_client_reject_reason = strdup(msg);
     }
 }
 
@@ -272,9 +246,6 @@ boolean NET_Conn_Packet(net_connection_t *conn, net_packet_t *packet,
             break;
         case NET_PACKET_TYPE_KEEPALIVE:
             // No special action needed.
-            break;
-        case NET_PACKET_TYPE_REJECTED:
-            NET_Conn_ParseReject(conn, packet);
             break;
         case NET_PACKET_TYPE_RELIABLE_ACK:
             NET_Conn_ParseReliableACK(conn, packet);
