@@ -84,7 +84,7 @@ Many additional less user-visible features have been implemented, e.g. fixed eng
  * `-mergedump <file>` merges the PWAD file(s) given on the command line with the IWAD file and writes the resulting data into the `<file>` given as argument. Might be considered as a replacement for the `DEUSF.EXE` tool.
  * `-blockmap` forces a (re-)building of the BLOCKMAP lumps for loaded maps.
  * `-loadgame N -record demoname` and `-loadgame N -playdemo demoname` allow to record and play demos starting from a savegame, not from the level start.
- * `-record demoname1 -playdemo demoname2` plays back until the end of demoname1 and continues recording as demoname2.
+ * `-playdemo demoname1 -record demoname2` plays back until the end of demoname1 and continues recording as demoname2.
  * `-fliplevels` loads mirrored versions of the maps (this was the default on April 1st up to version 5.0).
  * `-flipweapons` flips the player's weapons (new in 5.3).
 
