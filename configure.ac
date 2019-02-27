@@ -1,4 +1,4 @@
-AC_INIT(Crispy Doom, 5.4,
+AC_INIT(Crispy Doom, 5.5.0,
         fabian@greffrath.com, crispy-doom)
 
 PACKAGE_SHORTNAME=${PACKAGE_NAME% Doom}
@@ -141,11 +141,10 @@ dnl Automake v1.8.0 is required, please upgrade!
 AM_INIT_AUTOMAKE([1.8.0 foreign])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
-WINDOWS_RC_VERSION=`echo $PACKAGE_VERSION | sed 's/-.*//; s/\./, /g; s/$/, 0, 0/'`
+WINDOWS_RC_VERSION=`echo $PACKAGE_VERSION | sed 's/-.*//; s/\./, /g; s/$/, 0/'`
 
 dnl Without a hyphen. This is used for the bash-completion scripts.
 PROGRAM_SPREFIX=$(echo $PACKAGE_SHORTNAME | tr A-Z a-z)
-PROGRAM_SPREFIX=crispy
 
 dnl With a hyphen, used almost everywhere else.
 PROGRAM_PREFIX=${PROGRAM_SPREFIX}-

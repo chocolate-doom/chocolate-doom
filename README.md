@@ -78,13 +78,14 @@ Many additional less user-visible features have been implemented, e.g. fixed eng
 
 ### New command line parameters
 
- * `-dm3` specifies the Deathmatch 3.0 rules for the netgame (weapons stay, items respawn).
+ * `-dm3` specifies the Deathmatch 3.0 rules (weapons stay, items respawn) for netgames (since 4.1).
  * `-episode 1` launches Hell on Earth and `-episode 2` launches No Rest for the Living episode if the Doom 2 IWAD shipped with the Doom 3: BFG Edition is used.
- * `-warp 1a` warps to the secret level E1M10: Sewers of XBox Doom IWAD.
- * `-mergedump <file>` merges the PWAD file(s) given on the command line with the IWAD file and writes the resulting data into the `<file>` given as argument. Might be considered as a replacement for the `DEUSF.EXE` tool.
- * `-blockmap` forces a (re-)building of the BLOCKMAP lumps for loaded maps.
- * `-loadgame N -record demoname` and `-loadgame N -playdemo demoname` allow to record and play demos starting from a savegame, not from the level start.
- * `-playdemo demoname1 -record demoname2` plays back until the end of demoname1 and continues recording as demoname2.
+ * `-warp 1a` warps to the secret level E1M10: Sewers of XBox Doom IWAD (since 2.3).
+ * `-mergedump <file>` merges the PWAD file(s) given on the command line with the IWAD file and writes the resulting data into the `<file>` given as argument. May be considered as a replacement for the `DEUSF.EXE` tool (since 2.3).
+ * `-blockmap` forces a (re-)building of the BLOCKMAP lumps for loaded maps (since 2.3).
+ * `-playdemo demoname -warp N` plays back fast-forward up to the requested map (since 3.0).
+ * `-loadgame N -record demoname` and `-loadgame N -playdemo demoname` allow to record and play demos starting from a savegame instead of the level start (since 4.0).
+ * `-playdemo demoname1 -record demoname2` plays back fast-forward until the end of demoname1 and continues recording as demoname2 (new in 5.5).
  * `-fliplevels` loads mirrored versions of the maps (this was the default on April 1st up to version 5.0).
  * `-flipweapons` flips the player's weapons (new in 5.3).
 
@@ -98,15 +99,15 @@ Many additional less user-visible features have been implemented, e.g. fixed eng
  * `SHOWFPS` or `IDRATE` toggle printing the FPS in the upper right corner.
  * `NOMOMENTUM` toggles a debug aid for pixel-perfect positioning on a map (not recommended to use in-game).
  * `GOOBERS` triggers an easter egg, i.e. an "homage to an old friend". ;-)
- * `IDBEHOLD0` disables all currently active power-ups.
- * `IDCLEV00` restarts the current level.
+ * `IDBEHOLD0` disables all currently active power-ups (since 2.2).
+ * `IDCLEV00` restarts the current level (since 2.0).
  * `IDMUS00` restarts the current music (new in 5.1).
  * `VERSION` shows the engine version, build date and SDL version (new in 5.1).
 
 ## Download
 
 Binaries for Windows XP / Vista / 7 / 8.1 / 10 (both x86 and x64 editions) are available here: 
-https://github.com/fabiangreffrath/crispy-doom/releases/download/crispy-doom-5.4/crispy-doom_5.4.zip
+https://github.com/fabiangreffrath/crispy-doom/releases/download/crispy-doom-5.5/crispy-doom-5.5-win32.zip
 
 Daily builds of Crispy Doom can be found here:
 http://latest.chocolate-doom.org/
@@ -162,22 +163,22 @@ Forceful setting of the `SDL_AUDIODRIVER` variable on Windows has been dropped. 
  * A 'Crispy' color scheme has been introduced for Crispy Setup based on the suggestions by JNechaevsky and Zodomaniac.
  * Monster seesounds are now uninterruptible if the "Play Sounds In Full Length" feature is enabled, thanks to BCG2000 for pointing this out. Also, sounds "played in the player's head" (i.e. from origin `NULL`) don't interrupt each other anymore, thanks to BCG2000's remark.
  * The `IDMYPOS` cheat now yields extra high precision coordinates updating for 10 seconds and discarding after that instead of going static (the latter caught by Zodomaniac).
- * When the "Walk Over/Under Monsters" feature is enabled, the usual 24 units step-up is now allowed even across monsters' heads, thanks to BCG2000's suggestion. However, jumping on a monster's head straight from the floor is explicitly disallowed if this height has been reached by "low" jumping.
- * A map's default music isn't loaded anymore if MUSINFO data is available and the game has been loaded from a savegame, thanks to zstephens for filing the issue.
- * ExM0 maps are now supported, reachable through both the `-warp x0` command line argument and the `IDCLEVx0` cheat, as suggested by StasBFG for the "No End In Sight" megawad (neis.wad).
+ * If the "Walk Over/Under Monsters" feature is enabled, the usual 24 units step-up is now allowed even across monsters' heads, thanks to BCG2000's suggestion. However, jumping on a monster's head straight from the floor by means of "low" jumping is disallowed.
+ * A map's default music isn't loaded anymore if MUSINFO data is available and the game gets loaded from a savegame, thanks to zstephens for filing the issue.
+ * ExM0 maps are now supported, reachable either through the `-warp x0` command line argument or the `IDCLEVx0` cheat, as suggested by StasBFG for the "No End In Sight" megawad (neis.wad).
 
 **Bug Fixes**
 
- * Crashes or black screens when switching specific rendering options have been fixed by a complete overhaul of the rendering stack re-initialization code.
- * The initialization value of `floor->crush` in `EV_BuildStairs()` has been fixed (inherited from Chocolate Doom) which caused a rare and obscure demo desyncing bug on TNT map 22, reported by Dime.
- * Direct aiming has been applied to the Beta BFG code as well, thanks to NeuralStunner for drawing attention to this.
- * Screenshots without the `screen shot` message have (hopefully!) been fixed again for all platforms and all rendering options.
+ * Crashes or black screens that occurred when switching specific rendering options have been fixed by a complete overhaul of the rendering stack re-initialization code.
+ * The initialization value of `floor->crush` in `EV_BuildStairs()` has been fixed, inherited from Chocolate Doom. This has caused a rare and obscure demo desyncing bug on TNT map 22, reported by Dime.
+ * Direct aiming is now applied to the Beta BFG code as well, thanks to NeuralStunner for drawing attention to this.
+ * Screenshots without the "screen shot" message have (hopefully!) been fixed again for all platforms and all rendering options.
  * Pickup messages for weapons that are already owned have been brought back as Zodomaniac spotted their absence.
  * All additional player properties are now reset when finishing a level, e.g. you'll now never start a new level with your view in the sky.
  * The things' actual height is now calculated from the spawnstate's first sprite (for shootable solid things only). This mitigates the issue JNechaevsky once reported when both "Mouselook" and "Direct Aiming" are enabled and you miss some obvious targets, like e.g. Romero's head on a stick.
  * The priority for the "Ouch Face" has been raised so that it actually shows up, thanks to BCG2000 and JNechaevsky's carefulness.
  * The default HUD digit color for Hacx is now blue.
- * MUSINFO support has been repaired after if was accidentally destroyed in 5.4 by not setting the lumpname variable anymore in `P_SetupLevel()`.
+ * MUSINFO support has been repaired after it was accidentally destroyed in 5.4 by not setting the `lumpname` variable anymore in `P_SetupLevel()`.
 
 **Other Games**
 
@@ -188,7 +189,7 @@ Forceful setting of the `SDL_AUDIODRIVER` variable on Windows has been dropped. 
 
  * A thing height clipping issue when standing on a monster's head on a moving platform has been vastly improved, but not entirely fixed yet. Monsters may still get stuck in walls occasionally, but players won't anymore.
 
-Crispy Doom 5.5 is based on Chocolate Doom 3.0.0 and has merged all changes to the Chocolate Doom master branch up to commit [`25ae4973`](https://github.com/chocolate-doom/chocolate-doom/commit/25ae4973fab0cfffe47fbc8373dae8a8715786d7)
+Crispy Doom 5.5 is based on Chocolate Doom 3.0.0 and has merged all changes to the Chocolate Doom master branch up to commit [`25ae4973`](https://github.com/chocolate-doom/chocolate-doom/commit/25ae4973fab0cfffe47fbc8373dae8a8715786d7).
 
 ## Documentation
 
@@ -198,7 +199,7 @@ Crispy Doom 5.5 is based on Chocolate Doom 3.0.0 and has merged all changes to t
 
 ## Versioning
 
-Crispy Doom maintains a major and a minor version number. The major version number is increased whenever a new official version of Chocolate Doom is released and the changes merged into Crispy Doom. The minor version number is increased whenever changes have been applied that are not part of an official Chocolate Doom release or do only affect Crispy Doom.
+Crispy Doom's major version number is increased whenever a new Chocolate Doom (pre-)release got merged into its code base. The minor version number is increased for intermediate releases that do only contain Crispy-specific changes or unreleased changes to the Chocolate Doom code base. The micro or patch version is reserved for post-release hotfixes, it remained unused until the 5.5 release.
 
 ## Contact
 
@@ -212,7 +213,7 @@ Please report any bugs, glitches or crashes that you encounter to the GitHub [Is
 
 Although I have played the thought of hacking on Chocolate Doom's renderer for quite some time already, it was Brad Harding's [Doom Retro](https://www.chocolate-doom.org/wiki/index.php/Doom_Retro) that provided the incentive to finally do it. However, his fork aims at a different direction and I did not take a single line of code from it. Lee Killough's [MBF](https://doomwiki.org/wiki/WinMBF) was studied and used to debug the code, especially in the form of Team Eternity's [WinMBF](https://doomwiki.org/wiki/WinMBF) source port, which made it easier to compile and run on my machine. And of course there is fraggle's [Chocolate Doom](https://www.chocolate-doom.org/wiki/index.php/Chocolate_Doom) with its exceptionally clean and legible source code. Please let me take this opportunity to appreciate all these authors for their work!
 
-Also, thanks plums of the [Doomworld forums](https://www.doomworld.com/vb/) for beta testing, "release manager" Zodomaniac and "art director" JNechaevsky for the continuous flow of support and inspiration during the 3.x-5.x development cycle and (last but not the least) [Cacodemon9000](http://www.moddb.com/members/cacodemon9000) for his [Infested Outpost](http://www.moddb.com/games/doom-ii/addons/infested-outpost) map that helped to track down quite a few bugs!
+Also, thanks to plums of the [Doomworld forums](https://www.doomworld.com/vb/) for beta testing, "release manager" Zodomaniac and "art director" JNechaevsky for the continuous flow of support and inspiration during the post-3.x development cycle and (last but not the least) [Cacodemon9000](http://www.moddb.com/members/cacodemon9000) for his [Infested Outpost](http://www.moddb.com/games/doom-ii/addons/infested-outpost) map that helped to track down quite a few bugs!
 
 Furthermore, thanks to VGA for his aid with adding support for his two mods: [PerK & NightFright's Black Ops smooth weapons add-on converted to DEHACKED](https://www.doomworld.com/forum/topic/84859-black-ops-smooth-weapons-dehacked-mod) and [Gifty's Smooth Doom smooth monster animations converted to DEHACKED](https://www.doomworld.com/forum/topic/85991-smoothed-smooth-monsters-for-doom-retro-and-crispy-doom) that can make the gameplay even more pleasing to the eyes.
 
@@ -226,7 +227,7 @@ PrBoom+ is © 1999 id Software, Chi Hoang, Lee Killough, Jim Flynn, Rand Phares,
 Chocolate Doom is © 1993-1996 Id Software, Inc., © 2005 Simon Howard; 
 Chocolate Hexen is © 1993-1996 Id Software, Inc., © 1993-2008 Raven Software, © 2008 Simon Howard;
 Strawberry Doom is © 1993-1996 Id Software, Inc., © 2005 Simon Howard, © 2008-2010 GhostlyDeath; 
-Crispy Doom is additionally © 2014-2018 Fabian Greffrath;
+Crispy Doom is additionally © 2014-2019 Fabian Greffrath;
 all of the above are released under the [GPL-2+](https://www.gnu.org/licenses/gpl-2.0.html).
 
 SDL 2.0, SDL_mixer 2.0 and SDL_net 2.0 are © 1997-2016 Sam Lantinga and are released under the [zlib license](http://www.gzip.org/zlib/zlib_license.html).
