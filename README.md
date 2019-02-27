@@ -177,7 +177,7 @@ Forceful setting of the `SDL_AUDIODRIVER` variable on Windows has been dropped. 
  * All additional player properties are now reset when finishing a level, e.g. you'll now never start a new level with your view in the sky.
  * The things' actual height is now calculated from the spawnstate's first sprite (for shootable solid things only). This mitigates the issue JNechaevsky once reported when both "Mouselook" and "Direct Aiming" are enabled and you miss some obvious targets, like e.g. Romero's head on a stick.
  * The priority for the "Ouch Face" has been raised so that it actually shows up, thanks to BCG2000's and JNechaevsky's carefulness.
- * The default HUD digit color for Hacx is now blue.
+ * The default color of HUD level stat names for Hacx is now blue.
  * MUSINFO support has been repaired after it was accidentally destroyed in 5.4 by not setting the `lumpname` variable anymore in `P_SetupLevel()`.
 
 **Other Games**
