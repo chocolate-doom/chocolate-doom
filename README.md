@@ -145,7 +145,7 @@ After successful compilation the resulting binaries can be found in the `src/` d
 
 ## News
 
-Crispy Doom 5.5 has been released on February XX, 2019. This is another release which mostly addresses community suggestions.
+Crispy Doom 5.5 has been released on February 27, 2019. This is another release which mostly addresses community suggestions.
 
 Forceful setting of the `SDL_AUDIODRIVER` variable on Windows has been dropped. Windows "releases" from 5.5 onward will be based on the daily builds and use their SDL libraries with the default audio backend.
 
