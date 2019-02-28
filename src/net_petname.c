@@ -36,13 +36,11 @@ static char *adjectives[] = {
     "Pacifist",
     "Aggressive",
     "Hostile",
-    "Diseased",
     "Bubbly",
     "Giggly",
     "Laughing",
     "Crying",
     "Frowning",
-    "Flatulent",
     "Torpid",
     "Lethargic",
     "Manic",
@@ -68,6 +66,7 @@ static char *adjectives[] = {
 };
 
 static char *nouns[] = {
+    "Frad",
     // Doom
     "Cacodemon",
     "Arch-Vile",
@@ -95,7 +94,7 @@ static char *nouns[] = {
     "Acolyte",
     "Templar",
     "Reaver",
-    "Crusader",
+    "Spectre",
 };
 
 /*
