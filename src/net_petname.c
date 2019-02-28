@@ -17,7 +17,6 @@
 
 #include <stdlib.h>
 #include <time.h>
-#include <string.h>
 #include "doomtype.h"
 #include "m_misc.h"
 
