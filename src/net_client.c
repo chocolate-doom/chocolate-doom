@@ -38,7 +38,7 @@
 #include "net_query.h"
 #include "net_server.h"
 #include "net_structrw.h"
-#include "petname.h"
+#include "net_petname.h"
 #include "w_checksum.h"
 #include "w_wad.h"
 
@@ -1214,7 +1214,7 @@ void NET_CL_Init(void)
 
     if (net_player_name == NULL)
     {
-        net_player_name = getRandomPetName();
+        net_player_name = NET_GetRandomPetName();
     }
 
     if (net_player_name == NULL)

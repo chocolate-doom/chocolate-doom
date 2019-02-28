@@ -18,6 +18,8 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
+#include "doomtype.h"
+#include "m_misc.h"
 
 static char *adjectives[] = {
     "Grumpy",
@@ -64,8 +66,6 @@ static char *adjectives[] = {
     "Posh",
     "Baby",
 };
-#define NUM_ADJECTIVES (sizeof adjectives / sizeof (char *))
-
 
 static char *nouns[] = {
     // Doom
@@ -97,34 +97,24 @@ static char *nouns[] = {
     "Reaver",
     "Crusader",
 };
-#define NUM_NOUNS (sizeof nouns / sizeof (char *))
 
 /*
  * ideally we would export this and the caller would invoke it during
  * their setup routine. But, the two callers only invoke getRandomPetName
- * once, so the initialisation might as well occur then.
+ * once, so the initialization might as well occur then.
  */
-static void initPetName()
+static void InitPetName()
 {
-    srandom((unsigned int)time(NULL));
+    srand((unsigned int)time(NULL));
 }
 
-char *getRandomPetName()
+char *NET_GetRandomPetName()
 {
-    char *a, *n, *r;
+    char *a, *n;
 
-    initPetName();
+    InitPetName();
+    a = adjectives[rand() % arrlen(adjectives)];
+    n = nouns[rand() % arrlen(nouns)];
 
-    a = adjectives[random() % NUM_ADJECTIVES];
-    n = nouns[random() % NUM_NOUNS];
-    r = (char *)malloc(strlen(a) + (sizeof ' ') +
-                       strlen(n) + (sizeof '\0'));
-    if(r)
-    {
-        strcpy(r,a);
-        r[strlen(a)] = ' ';
-        strcpy(r + strlen(a) + 1, n);
-    }
-
-    return r;
+    return M_StringJoin(a, " ", n, NULL);
 }

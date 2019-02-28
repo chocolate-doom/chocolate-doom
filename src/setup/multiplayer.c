@@ -33,7 +33,7 @@
 #include "net_io.h"
 #include "net_query.h"
 
-#include "petname.h"
+#include "net_petname.h"
 
 #define MULTI_START_HELP_URL "https://www.chocolate-doom.org/setup-multi-start"
 #define MULTI_JOIN_HELP_URL "https://www.chocolate-doom.org/setup-multi-join"
@@ -1098,7 +1098,7 @@ void SetPlayerNameDefault(void)
 {
     if (net_player_name == NULL)
     {
-        net_player_name = getRandomPetName();
+        net_player_name = NET_GetRandomPetName();
     }
 
     if (net_player_name == NULL)
