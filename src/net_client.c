@@ -1216,9 +1216,6 @@ void NET_CL_Init(void)
     {
         net_player_name = NET_GetRandomPetName();
     }
-
-    if (net_player_name == NULL)
-        net_player_name = "Player";
 }
 
 void NET_Init(void)

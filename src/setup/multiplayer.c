@@ -1100,11 +1100,6 @@ void SetPlayerNameDefault(void)
     {
         net_player_name = NET_GetRandomPetName();
     }
-
-    if (net_player_name == NULL)
-    {
-        net_player_name = M_StringDuplicate("player");
-    }
 }
 
 void MultiplayerConfig(TXT_UNCAST_ARG(widget), void *user_data)
