@@ -158,6 +158,7 @@ Forceful setting of the `SDL_AUDIODRIVER` variable on Windows has been dropped. 
 
  * Revealed secret sectors are now highlighted in gold on the Automap if both the "Extended Automap Colors" and "Show Revealed Secrets" features are enabled. Zodomaniac suggested this feature.
  * The `IDBEHOLDA` cheat can now disable the full automap again, pointed out by Zodomaniac.
+ * Autocompletion of savegame slot name with [PWAD name in case it contains the map + map number] is introduced for all kinds of controllers, not only for the joystick as in Choco.
  * The demo timer widget is now also drawn on intermission screens (if enabled), thanks to Looper for the suggestion.
  * The `MF_DROPPED` flag is now checked for all ammo and weapon things. This has been contributed by NeuralStunner.
  * A "Crispy" color scheme has been introduced for Crispy Setup based on the suggestions by JNechaevsky and Zodomaniac.
