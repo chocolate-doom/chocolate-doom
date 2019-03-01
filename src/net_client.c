@@ -38,6 +38,7 @@
 #include "net_query.h"
 #include "net_server.h"
 #include "net_structrw.h"
+#include "net_petname.h"
 #include "w_checksum.h"
 #include "w_wad.h"
 
@@ -1211,23 +1212,10 @@ void NET_CL_Init(void)
     // Try to set from the USER and USERNAME environment variables
     // Otherwise, fallback to "Player"
 
-    if (net_player_name == NULL) 
-        net_player_name = getenv("USER");
     if (net_player_name == NULL)
-        net_player_name = getenv("USERNAME");
-
-    // On Windows, environment variables are in OEM codepage
-    // encoding, so convert to UTF8:
-
-#ifdef _WIN32
-    if (net_player_name != NULL)
     {
-        net_player_name = M_OEMToUTF8(net_player_name);
+        net_player_name = NET_GetRandomPetName();
     }
-#endif
-
-    if (net_player_name == NULL)
-        net_player_name = "Player";
 }
 
 void NET_Init(void)
