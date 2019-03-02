@@ -71,14 +71,14 @@
 
 ### Heretic
   * P\_FindNextHighestFloor was changed to match vanilla behavior (thanks
-    Alexandre-Xavier).
+    AXDOOMER).
   * WAD hash table is now generated for speed (thanks Mike Francis).
   * HHE level name replacements now apply on the intermission screen
     (thanks ETTiNGRiNDER).
 
 ### Hexen
   * ACS code has been hardened against potential security vulnerabilities.
-  * WAD hash table is now generated for speed (thanks Alexandre-Xavier).
+  * WAD hash table is now generated for speed (thanks AXDOOMER).
 
 ### Strife
   * Sehacked replacements of the "empty slot" string now work.
