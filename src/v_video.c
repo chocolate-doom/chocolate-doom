@@ -169,6 +169,9 @@ static const inline byte drawpatchpx10 (const byte dest, const byte source)
 // (4) color-translated, translucent patch
 static const inline byte drawpatchpx11 (const byte dest, const byte source)
 {return tranmap[(dest<<8)+dp_translation[source]];}
+// [crispy] array of function pointers holding the different rendering functions
+typedef const byte drawpatchpx_t (const byte dest, const byte source);
+static drawpatchpx_t *const drawpatchpx_a[2][2] = {{drawpatchpx11, drawpatchpx10}, {drawpatchpx01, drawpatchpx00}};
 
 static fixed_t dx, dxi, dy, dyi;
 
@@ -184,10 +187,7 @@ static void V_DrawPatchCrispy(int x, int y, patch_t *patch, int r)
     int w;
 
     // [crispy] four different rendering functions
-    const byte (* drawpatchpx) (const byte dest, const byte source) =
-        (!dp_translucent ?
-        (!dp_translation ? drawpatchpx00 : drawpatchpx01) :
-        (!dp_translation ? drawpatchpx10 : drawpatchpx11));
+    drawpatchpx_t *const drawpatchpx = drawpatchpx_a[!dp_translucent][!dp_translation];
 
     y -= SHORT(patch->topoffset);
     x -= SHORT(patch->leftoffset);
