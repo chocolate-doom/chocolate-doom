@@ -707,36 +707,32 @@ static char *GetFullPath(const char *musicdir, const char *path)
     return result;
 }
 
-// If filename ends with .{ext}, check if a .ogg or .flac file exists with that
-// name, returning it if found. If neither file exists, NULL exists. If the
+// If filename ends with .{ext}, check if a .ogg, .flac or .mp3 exists with
+// that name, returning it if found. If none exist, NULL is returned. If the
 // filename doesn't end with .{ext} then it just acts as a wrapper around
 // GetFullPath().
 static char *ExpandFileExtension(const char *musicdir, const char *filename)
 {
+    static const char *extns[] = {".flac", ".ogg", ".mp3"};
     char *replaced, *result;
+    int i;
 
     if (!M_StringEndsWith(filename, ".{ext}"))
     {
         return GetFullPath(musicdir, filename);
     }
 
-    replaced = M_StringReplace(filename, ".{ext}", ".flac");
-    result = GetFullPath(musicdir, replaced);
-    if (M_FileExists(result))
+    for (i = 0; i < arrlen(extns); ++i)
     {
-        return result;
+        replaced = M_StringReplace(filename, ".{ext}", extns[i]);
+        result = GetFullPath(musicdir, replaced);
+        free(replaced);
+        if (M_FileExists(result))
+        {
+            return result;
+        }
+        free(result);
     }
-    free(result);
-    free(replaced);
-
-    replaced = M_StringReplace(filename, ".{ext}", ".ogg");
-    result = GetFullPath(musicdir, replaced);
-    if (M_FileExists(result))
-    {
-        return result;
-    }
-    free(result);
-    free(replaced);
 
     return NULL;
 }
