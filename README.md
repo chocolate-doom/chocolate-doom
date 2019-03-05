@@ -75,6 +75,7 @@ Many additional less user-visible features have been implemented, e.g. fixed eng
  * Save a clean screenshot
  * (with automap open) Toggle overlay mode "O"
  * (with automap open) Toggle rotate mode "R"
+ * Load last used savegame after death in singleplayer "SHIFT+Use" 
 
 ### New command line parameters
 
