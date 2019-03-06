@@ -61,21 +61,21 @@ Many additional less user-visible features have been implemented, e.g. fixed eng
  * Move Backward (alt.) "S"
  * Strafe Left (alt.) "A"
  * Strafe Right (alt.) "D"
- * Jump (bindable to mouse buttons as well) "/" (like in Chocolate Hexen and Strife)
- * Quick Reverse (bindable to keys or mouse buttons as well)
- * Mouse Look (bindable to keys or mouse buttons or permanent)
- * Look up "PgDn" (bindable to joystick axes)
- * Look down "DELETE" (bindable to joystick axes)
- * Center view "END"
+ * Jump (bindable to joystick and mouse buttons as well) "/" (as in Hexen and Strife)
+ * Quick Reverse (bindable to mouse buttons as well)
+ * Mouse Look (bindable to mouse buttons or permanent)
+ * Look up (bindable to joystick axes as well) "PgDn" (as in Heretic)
+ * Look down (bindable to joystick axes as well) "DELETE" (as in Heretic)
+ * Center view "END" (as in Heretic)
  * Toggle always run "CAPSLOCK"
  * Toggle vertical mouse movement (new in 5.4)
  * Delete savegame "DELETE"
  * Go to next level
  * Reload current level
  * Save a clean screenshot
- * (with automap open) Toggle overlay mode "O"
- * (with automap open) Toggle rotate mode "R"
- * Load last used savegame after death in singleplayer "SHIFT+Use" 
+ * Toggle Automap overlay mode "O"
+ * Toggle Automap rotate mode "R"
+ * Resurrect from savegame (single player mode only) "Run" + "Use"
 
 ### New command line parameters
 
