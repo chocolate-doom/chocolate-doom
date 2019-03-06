@@ -108,7 +108,7 @@ Many additional less user-visible features have been implemented, e.g. fixed eng
 ## Download
 
 Binaries for Windows XP / Vista / 7 / 8.1 / 10 (both x86 and x64 editions) are available here: 
-https://github.com/fabiangreffrath/crispy-doom/releases/download/crispy-doom-5.5/crispy-doom-5.5-win32.zip
+https://github.com/fabiangreffrath/crispy-doom/releases/download/crispy-doom-5.5.1/crispy-doom-5.5.1-win32.zip
 
 Daily builds of Crispy Doom can be found here:
 http://latest.chocolate-doom.org/
@@ -145,6 +145,18 @@ to install the prerequisites and then
 After successful compilation the resulting binaries can be found in the `src/` directory.
 
 ## News
+
+### Crispy Doom 5.5.1
+
+Crispy Doom 5.5.1 has been released on March 7, 2019. This is a hotfix release to fix a minor bug introduced in the previous version.
+
+**Bug Fixes**
+
+ * Revealed secret sector boundaries are now only drawn in gold if the "Show Revealed Secrets" feature is enabled.
+
+Crispy Doom 5.5.1 is based on Chocolate Doom 3.0.0 and has merged all changes to the Chocolate Doom master branch up to commit [`ecab8d3a`](https://github.com/chocolate-doom/chocolate-doom/commit/ecab8d3ac0ca34fbb6cb04b608926a57b6dbdcc5).
+
+### Crispy Doom 5.5
 
 Crispy Doom 5.5 has been released on February 27, 2019. This is another release which mostly addresses community suggestions.
 
