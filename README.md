@@ -152,7 +152,7 @@ Crispy Doom 5.5.1 has been released on March 7, 2019. This is a hotfix release t
 
 **Bug Fixes**
 
- * Revealed secret sector boundaries are now only drawn in gold if the "Show Revealed Secrets" feature is enabled.
+ * Revealed secret sectors are now highlighted in green (instead of gold) on the Automap only if the "Show Revealed Secrets" feature is enabled (the "Extended Automap Colors" feature alone isn't sufficient anymore).
 
 Crispy Doom 5.5.1 is based on Chocolate Doom 3.0.0 and has merged all changes to the Chocolate Doom master branch up to commit [`ecab8d3a`](https://github.com/chocolate-doom/chocolate-doom/commit/ecab8d3ac0ca34fbb6cb04b608926a57b6dbdcc5).
 
