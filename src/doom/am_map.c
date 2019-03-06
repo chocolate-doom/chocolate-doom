@@ -1357,7 +1357,7 @@ void AM_drawWalls(void)
 		    cheating && (lines[i].frontsector->special == 9))
 		    AM_drawMline(&l, SECRETWALLCOLORS);
 #if defined CRISPY_HIGHLIGHT_REVEALED_SECRETS
-		// [crispy] draw revealed secret sector boundaries in gold
+		// [crispy] draw revealed secret sector boundaries in green
 		else
 		if (crispy->extautomap &&
 		    crispy->secretmessage && (lines[i].frontsector->oldspecial == 9))
@@ -1384,7 +1384,7 @@ void AM_drawWalls(void)
 		    else AM_drawMline(&l, WALLCOLORS+lightlev);
 		}
 #if defined CRISPY_HIGHLIGHT_REVEALED_SECRETS
-		// [crispy] draw revealed secret sector boundaries in gold
+		// [crispy] draw revealed secret sector boundaries in green
 		else if (crispy->extautomap && crispy->secretmessage &&
 		    (lines[i].backsector->oldspecial == 9 ||
 		    lines[i].frontsector->oldspecial == 9))
