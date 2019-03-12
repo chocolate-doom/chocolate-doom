@@ -1090,12 +1090,12 @@ static void P_LoadReject(int lumpnum)
 // [crispy] log game skill in plain text
 const char *skilltable[] =
 {
-    "No Items",
-    "ITYTD",
-    "HNTR",
-    "HMP",
-    "UV",
-    "NM"
+    "Nothing",
+    "Baby",
+    "Easy",
+    "Normal",
+    "Hard",
+    "Nightmare"
 };
 
 // [crispy] factor out map lump name and number finding into a separate function
