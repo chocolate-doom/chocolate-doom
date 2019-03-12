@@ -1119,7 +1119,7 @@ ST_Responder (event_t* ev)
               map = gamemap;
           }
           // [crispy] support E1M10 "Sewers"
-          if ((map == 0) && crispy->havee1m10 && epsd == 1)
+          if ((map == 0 || map > 9) && crispy->havee1m10 && epsd == 1)
           {
               map = 10;
           }
