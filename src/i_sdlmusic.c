@@ -194,6 +194,9 @@ static boolean I_SDL_InitMusic(void)
         }
     }
 
+    // Initialize SDL_Mixer for MIDI music playback
+    Mix_Init(MIX_INIT_MID);
+
     // Once initialization is complete, the temporary Timidity config
     // file can be removed.
 
