@@ -104,6 +104,7 @@ Many additional less user-visible features have been implemented, e.g. fixed eng
  * `IDCLEV00` restarts the current level (since 2.0).
  * `IDMUS00` restarts the current music (new in 5.1).
  * `VERSION` shows the engine version, build date and SDL version (new in 5.1).
+ * `SKILL` shows the current skill level (new in 5.x).
 
 ## Download
 

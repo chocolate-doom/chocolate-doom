@@ -433,6 +433,7 @@ cheatseq_t cheat_showfps = CHEAT("showfps", 0);
 cheatseq_t cheat_showfps2 = CHEAT("idrate", 0); // [crispy] PrBoom+
 cheatseq_t cheat_goobers = CHEAT("goobers", 0);
 cheatseq_t cheat_version = CHEAT("version", 0); // [crispy] Russian Doom
+cheatseq_t cheat_skill = CHEAT("skill", 0);
 static char msg[ST_MSGWIDTH];
 
 // [crispy] restrict cheat usage
@@ -1051,6 +1052,15 @@ ST_Responder (event_t* ev)
 #undef BUILD_DATE
       plyr->message = msg;
       fprintf(stderr, "%s\n", msg);
+    }
+    // [crispy] Show skill level
+    else if (cht_CheckCheat(&cheat_skill, ev->data2))
+    {
+      extern const char *skilltable[];
+
+      M_snprintf(msg, sizeof(msg), "Skill: %s",
+                 skilltable[BETWEEN(0,5,(int) gameskill+1)]);
+      plyr->message = msg;
     }
     
     // 'clev' change-level cheat
