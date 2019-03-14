@@ -1148,6 +1148,9 @@ static boolean I_MP_InitMusic(void)
         music_initialized = true;
     }
 
+    // Initialize SDL_Mixer for digital music playback
+    Mix_Init(MIX_INIT_FLAC | MIX_INIT_OGG | MIX_INIT_MP3);
+
     // Register an effect function to track the music position.
     Mix_RegisterEffect(MIX_CHANNEL_POST, TrackPositionCallback, NULL, NULL);
 
