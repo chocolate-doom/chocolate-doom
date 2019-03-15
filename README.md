@@ -104,7 +104,7 @@ Many additional less user-visible features have been implemented, e.g. fixed eng
  * `IDCLEV00` restarts the current level (since 2.0).
  * `IDMUS00` restarts the current music (new in 5.1).
  * `VERSION` shows the engine version, build date and SDL version (new in 5.1).
- * `SKILL` shows the current skill level (new in 5.x).
+ * `SKILL` shows the current skill level (new in 5.5.2).
 
 ## Download
 
@@ -146,6 +146,17 @@ to install the prerequisites and then
 After successful compilation the resulting binaries can be found in the `src/` directory.
 
 ## News
+
+### Crispy Doom 5.5.2
+
+Crispy Doom 5.5.2 has been released on March XX, 2019. This is another hotfix release updating to the latest SDL2 libraries and bringing a couple of improvements to cheats requested by Zodomaniac.
+
+**Improvements**
+
+ * New `SKILL` cheat has been introduced displaying current skill level: Baby, Easy, Normal, Hard or Nightmare.
+ * `IDCLEV` cheat now supports level number `IDCLEV1A` to warp to E1M10: Sewers even if No End In Sight `neis.wad` with its ExM0 levels is loaded with XBox Doom IWAD. `IDCLEV10` still warps to E1M10: Sewers if XBox Doom IWAD is used without E1M0 map in PWADs.
+ 
+Crispy Doom 5.5.2 is based on Chocolate Doom 3.0.0 and has merged all changes to the Chocolate Doom master branch up to commit [`c2c3e55b`](https://github.com/chocolate-doom/chocolate-doom/commit/c2c3e55b68c15e4952cb38cc46616e14695622e7).
 
 ### Crispy Doom 5.5.1
 
