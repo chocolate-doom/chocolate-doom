@@ -196,7 +196,7 @@ static boolean I_SDL_InitMusic(void)
 
 #ifdef MIX_INIT_MID
     // Initialize SDL_Mixer for MIDI music playback
-    Mix_Init(MIX_INIT_MID);
+    Mix_Init(MIX_INIT_MID | MIX_INIT_FLAC | MIX_INIT_OGG | MIX_INIT_MP3); // [crispy] initialize some more audio formats
 #endif
 
     // Once initialization is complete, the temporary Timidity config
