@@ -194,7 +194,7 @@ static boolean I_SDL_InitMusic(void)
         }
     }
 
-#ifdef MIX_INIT_MID
+#if SDL_MIXER_VERSION_ATLEAST(2,0,2)
     // Initialize SDL_Mixer for MIDI music playback
     Mix_Init(MIX_INIT_MID);
 #endif
