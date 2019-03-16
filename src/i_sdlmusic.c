@@ -194,10 +194,11 @@ static boolean I_SDL_InitMusic(void)
         }
     }
 
-#if defined(SDL_MIXER_VERSION_ATLEAST) && \
-    SDL_MIXER_VERSION_ATLEAST(2,0,2)
+#if defined(SDL_MIXER_VERSION_ATLEAST)
+#if SDL_MIXER_VERSION_ATLEAST(2,0,2)
     // Initialize SDL_Mixer for MIDI music playback
     Mix_Init(MIX_INIT_MID | MIX_INIT_FLAC | MIX_INIT_OGG | MIX_INIT_MP3); // [crispy] initialize some more audio formats
+#endif
 #endif
 
     // Once initialization is complete, the temporary Timidity config
