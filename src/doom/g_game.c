@@ -2530,14 +2530,14 @@ void G_RecordDemo (char *name)
     FILE *fp = NULL;
 
     usergame = false;
-    demoname_size = strlen(name) + 5 + 4; // [crispy] + 4 for "-000"
+    demoname_size = strlen(name) + 5 + 6; // [crispy] + 6 for "-00000"
     demoname = Z_Malloc(demoname_size, PU_STATIC, NULL);
     M_snprintf(demoname, demoname_size, "%s.lmp", name);
 
     // [crispy] prevent overriding demos by adding a file name suffix
-    for (i = 0; i <= 999 && (fp = fopen(demoname, "rb")) != NULL; i++)
+    for (i = 0; i <= 99999 && (fp = fopen(demoname, "rb")) != NULL; i++)
     {
-	M_snprintf(demoname, demoname_size, "%s-%03d.lmp", name, i);
+	M_snprintf(demoname, demoname_size, "%s-%05d.lmp", name, i);
 	fclose (fp);
     }
 
