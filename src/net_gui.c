@@ -400,6 +400,8 @@ void NET_WaitForLaunch(void)
         exit(-1);
     }
 
+    TXT_SetColor(TXT_COLOR_BLUE, 0x04, 0x14, 0x40); // Romero's "funky blue" color
+    
     I_InitWindowIcon();
 
     ParseCommandLineArgs();
