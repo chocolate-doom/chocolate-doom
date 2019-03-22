@@ -751,7 +751,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     { 
 	sendpause = false; 
 	// [crispy] ignore un-pausing in menus during demo recording
-	if (!(menuactive && demorecording && paused))
+	if (!(menuactive && demorecording && paused) && gameaction != ga_loadgame)
 	{
 	cmd->buttons = BT_SPECIAL | BTS_PAUSE; 
 	}
