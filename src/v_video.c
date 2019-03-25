@@ -959,7 +959,11 @@ void V_DrawMouseSpeedBox(int speed)
 
     // Calculate line length
 
-    if (draw_acceleration && speed >= mouse_threshold)
+    if (!draw_acceleration)
+    {
+        linelen = speed / linelen_multiplier;
+    }
+    else if (speed >= mouse_threshold)
     {
         // Undo acceleration and get back the original mouse speed
         original_speed = speed - mouse_threshold;
@@ -970,7 +974,7 @@ void V_DrawMouseSpeedBox(int speed)
     }
     else
     {
-        linelen = speed / linelen_multiplier;
+        linelen = (speed * redline_x) / mouse_threshold;
     }
 
     // Draw horizontal "thermometer" 
