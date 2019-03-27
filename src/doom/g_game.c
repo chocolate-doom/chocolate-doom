@@ -2400,6 +2400,30 @@ void G_ReadDemoTiccmd (ticcmd_t* cmd)
 	G_CheckDemoStatus (); 
 	return; 
     } 
+
+    // [crispy] if demo playback is quit by pressing 'q',
+    // stay in the game, hand over controls to the player and
+    // continue recording the demo under a different name
+    if (gamekeydown[key_demo_quit] && singledemo)
+    {
+	byte *actualbuffer = demobuffer;
+	char *actualname = M_StringDuplicate(defdemoname);
+
+	gamekeydown[key_demo_quit] = false;
+
+	// [crispy] find a new name for the continued demo
+	G_RecordDemo(actualname);
+	free(actualname);
+
+	// [crispy] discard the newly allocated demo buffer
+	Z_Free(demobuffer);
+	demobuffer = actualbuffer;
+
+	// [crispy] continue recording
+	G_CheckDemoStatus();
+	return;
+    }
+
     cmd->forwardmove = ((signed char)*demo_p++); 
     cmd->sidemove = ((signed char)*demo_p++); 
 
@@ -2427,29 +2451,6 @@ void G_ReadDemoTiccmd (ticcmd_t* cmd)
     // applies to both recording and playback,
     // because G_WriteDemoTiccmd() calls G_ReadDemoTiccmd() once
     defdemotics++;
-
-    // [crispy] if demo playback is quit by pressing 'q',
-    // stay in the game, hand over controls to the player and
-    // continue recording the demo under a different name
-    if (gamekeydown[key_demo_quit] && singledemo)
-    {
-	byte *actualbuffer = demobuffer;
-	char *actualname = M_StringDuplicate(defdemoname);
-
-	gamekeydown[key_demo_quit] = false;
-
-	// [crispy] find a new name for the continued demo
-	G_RecordDemo(actualname);
-	free(actualname);
-
-	// [crispy] discard the newly allocated demo buffer
-	Z_Free(demobuffer);
-	demobuffer = actualbuffer;
-
-	// [crispy] continue recording
-	G_CheckDemoStatus();
-	return;
-    }
 } 
 
 // Increase the size of the demo buffer to allow unlimited demos
