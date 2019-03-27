@@ -2895,9 +2895,12 @@ boolean G_CheckDemoStatus (void)
 	netgame = false;
 	deathmatch = false;
 	playeringame[1] = playeringame[2] = playeringame[3] = 0;
+	if (!demorecording)
+	{
 	respawnparm = false;
 	fastparm = false;
 	nomonsters = false;
+	}
 	consoleplayer = 0;
         
         // [crispy] in demo continue mode increase the demo buffer and
