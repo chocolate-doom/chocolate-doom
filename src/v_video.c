@@ -966,10 +966,9 @@ static int max_seen_speed = MOUSE_SPEED_BOX_WIDTH - 1;
 
 static void DrawNonAcceleratingBox(int speed)
 {
-    int white, yellow;
+    int white;
     int linelen;
 
-    yellow = I_GetPaletteIndex(0xff, 0xff, 0x00);
     white = I_GetPaletteIndex(0xff, 0xff, 0xff);
 
     if (speed > max_seen_speed)
