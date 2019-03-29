@@ -2404,7 +2404,7 @@ void G_ReadDemoTiccmd (ticcmd_t* cmd)
     // [crispy] if demo playback is quit by pressing 'q',
     // stay in the game, hand over controls to the player and
     // continue recording the demo under a different name
-    if (gamekeydown[key_demo_quit] && singledemo)
+    if (gamekeydown[key_demo_quit] && singledemo && !netgame)
     {
 	byte *actualbuffer = demobuffer;
 	char *actualname = M_StringDuplicate(defdemoname);
@@ -2788,6 +2788,8 @@ void G_DoPlayDemo (void)
     {
 	netgame = true;
 	netdemo = true;
+	// [crispy] impossible to continue a multiplayer demo
+	demorecording = false;
     }
 
     // don't spend a lot of time in loadlevel 
@@ -2895,6 +2897,7 @@ boolean G_CheckDemoStatus (void)
 	netgame = false;
 	deathmatch = false;
 	playeringame[1] = playeringame[2] = playeringame[3] = 0;
+	// [crispy] leave game parameters intact when continuing a demo
 	if (!demorecording)
 	{
 	respawnparm = false;
@@ -2912,6 +2915,12 @@ boolean G_CheckDemoStatus (void)
 
             nodrawers = false;
             singletics = false;
+
+            // [crispy] start music for the current level
+            if (gamestate == GS_LEVEL)
+            {
+                S_Start();
+            }
 
             return true;
         }

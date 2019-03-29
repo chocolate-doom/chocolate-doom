@@ -224,7 +224,7 @@ static void S_StopChannel(int cnum)
 // Kills playing sounds at start of level,
 //  determines music if any, changes music.
 //
-static short prevmap;
+static short prevmap = -1;
 
 void S_Start(void)
 {
@@ -309,7 +309,7 @@ void S_Start(void)
     {
 	const short curmap = (gameepisode << 8) + gamemap;
 
-	if (prevmap == curmap)
+	if (prevmap == curmap || (nodrawers && singletics))
 	    return;
 
 	prevmap = curmap;
@@ -525,15 +525,11 @@ void S_StartSound(void *origin_p, int sfx_id)
     int cnum;
     int volume;
 
-    // [crispy] play no sounds
-    if (nodrawers && singletics)
-	return;
-
     origin = (mobj_t *) origin_p;
     volume = snd_SfxVolume;
 
     // [crispy] make non-fatal, consider zero volume
-    if (sfx_id == sfx_None || !snd_SfxVolume)
+    if (sfx_id == sfx_None || !snd_SfxVolume || (nodrawers && singletics))
     {
         return;
     }
