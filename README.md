@@ -149,14 +149,25 @@ After successful compilation the resulting binaries can be found in the `src/` d
 
 ### Crispy Doom 5.5.2
 
-Crispy Doom 5.5.2 has been released on March XX, 2019. This is another hotfix release updating to the latest SDL2 libraries and bringing a couple of improvements to cheats requested by Zodomaniac.
+Crispy Doom 5.5.2 has been released on March XX, 2019. This is another hotfix release bringing the feature of taking over a demo any moment and some subtle improvements as well.
+
+**Features**
+ 
+ * Hitting the 'quit recording demo' button when playing back a demo will 'take it over', i.e. hand the controls over to the player and record the forked timeline into a different file. Multiplayer demos are prevented from being taken over.
 
 **Improvements**
 
- * New `SKILL` cheat has been introduced displaying current skill level: Baby, Easy, Normal, Hard or Nightmare.
- * `IDCLEV` cheat now supports level number `IDCLEV1A` to warp to E1M10: Sewers even if No End In Sight `neis.wad` with its ExM0 levels is loaded with XBox Doom IWAD. `IDCLEV10` still warps to E1M10: Sewers if XBox Doom IWAD is used without E1M0 map in PWADs.
+ * Crispy color scheme is now applied to the network GUI as Zodomaniac insisted.
+ * 100000 demos of the same name can now be recorded without overriding files, thanks to Looper for the suggestion.
+ * New `SKILL` cheat suggested by Zodomaniac has been introduced displaying current skill level: Baby, Easy, Normal, Hard or Nightmare.
+ * `IDCLEV` cheat now supports level number `IDCLEV1A` to warp to E1M10: Sewers even if No End In Sight `neis.wad` with its ExM0 levels is loaded with XBox Doom IWAD. This obscure case was pointed out by Zodomaniac. `IDCLEV10` still warps to E1M10: Sewers (along with `IDCLEV1A`) if XBox Doom IWAD is used without E1M0 map in PWADs.
+
+**Bug Fixes**
  
-Crispy Doom 5.5.2 is based on Chocolate Doom 3.0.0 and has merged all changes to the Chocolate Doom master branch up to commit [`c2c3e55b`](https://github.com/chocolate-doom/chocolate-doom/commit/c2c3e55b68c15e4952cb38cc46616e14695622e7).
+ * Desyncing of demos continued by using `-playdemo` and `-record` in case of demos recorded with `-fast`, `-respawn` or `-nomonsters` has been fixed, spotted by Zodomaniac.
+ * Game is now un-paused after loading a game while recording a demo, on Looper's report.
+ 
+Crispy Doom 5.5.2 is based on Chocolate Doom 3.0.0 and has merged all changes to the Chocolate Doom master branch up to commit [`fd171dda`](https://github.com/chocolate-doom/chocolate-doom/commit/fd171dda546f38a9b7a6158ed2c3c8044e4ce72d).
 
 ### Crispy Doom 5.5.1
 
