@@ -109,7 +109,7 @@ Many additional less user-visible features have been implemented, e.g. fixed eng
 ## Download
 
 Binaries for Windows XP / Vista / 7 / 8.1 / 10 (both x86 and x64 editions) are available here: 
-https://github.com/fabiangreffrath/crispy-doom/releases/download/crispy-doom-5.5.1/crispy-doom-5.5.1-win32.zip
+https://github.com/fabiangreffrath/crispy-doom/releases/download/crispy-doom-5.5.2/crispy-doom-5.5.2-win32.zip
 
 Daily builds of Crispy Doom can be found here:
 http://latest.chocolate-doom.org/
@@ -149,7 +149,7 @@ After successful compilation the resulting binaries can be found in the `src/` d
 
 ### Crispy Doom 5.5.2
 
-Crispy Doom 5.5.2 has been released on March XX, 2019. This is another hotfix release bringing the feature of taking over a demo any moment and some subtle improvements as well.
+Crispy Doom 5.5.2 has been released on April 1st, 2019. This is another hotfix release bringing the feature of taking over a demo any moment and some subtle improvements as well.
 
 **Features**
  
