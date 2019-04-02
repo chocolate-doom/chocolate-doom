@@ -49,7 +49,7 @@
 #include "w_wad.h"
 #include "z_zone.h"
 
-int SCREENWIDTH, SCREENHEIGHT, SCREENHEIGHT_4_3;
+unsigned int SCREENWIDTH, SCREENHEIGHT, SCREENHEIGHT_4_3;
 
 // These are (1) the window (or the full screen) that our game is rendered to
 // and (2) the renderer that scales the texture (see below) into this window.
