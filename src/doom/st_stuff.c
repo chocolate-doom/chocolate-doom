@@ -978,22 +978,28 @@ ST_Responder (event_t* ev)
 	    {
 		P_GivePower(plyr, pw_strength);
 		S_StartSound(NULL, sfx_getpow);
+		plyr->message = DEH_String(GOTBERSERK);
 	    }
 	    else
 	    {
 		plyr->powers[pw_strength] = 0;
+		plyr->message = DEH_String(STSTR_BEHOLDX);
 	    }
-
-	    M_snprintf(msg, sizeof(msg), DEH_String(STSTR_BEHOLDX));
 	}
 	else
 	{
 	    if (!plyr->weaponowned[w])
 	    {
 		extern boolean P_GiveWeapon (player_t* player, weapontype_t weapon, boolean dropped);
+		extern const char *const WeaponPickupMessages[NUMWEAPONS];
 
 		P_GiveWeapon(plyr, w, false);
 		S_StartSound(NULL, sfx_wpnup);
+
+		if (w > 1)
+		{
+		    plyr->message = DEH_String(WeaponPickupMessages[w]);
+		}
 
 		// [crispy] trigger evil grin now
 		plyr->bonuscount += 2;
@@ -1011,12 +1017,15 @@ ST_Responder (event_t* ev)
 		    P_CheckAmmo(plyr);
 		}
 	    }
+	}
 
+	if (!plyr->message)
+	{
 	    M_snprintf(msg, sizeof(msg), "Weapon %s%d%s %s",
 	               crstr[CR_GOLD], w + 1, crstr[CR_NONE],
 	               plyr->weaponowned[w] ? "added" : "removed");
+	    plyr->message = msg;
 	}
-	plyr->message = msg;
       }
     }
 

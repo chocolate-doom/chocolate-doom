@@ -162,7 +162,7 @@ P_GiveAmmo
 
 
 // [crispy] show weapon pickup messages in multiplayer games
-static const char *const WeaponPickupMessages[NUMWEAPONS] =
+const char *const WeaponPickupMessages[NUMWEAPONS] =
 {
 	NULL, // wp_fist
 	NULL, // wp_pistol
