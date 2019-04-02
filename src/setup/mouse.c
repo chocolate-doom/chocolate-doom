@@ -97,23 +97,24 @@ static void ConfigExtraButtons(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
     TXT_SetWindowHelpURL(window, WINDOW_HELP_URL);
 
     TXT_AddWidgets(window,
-                   buttons_table = TXT_NewTable(2),
+                   buttons_table = TXT_NewTable(4),
                    NULL);
 
-    TXT_SetColumnWidths(buttons_table, 24, 5);
+    TXT_SetColumnWidths(buttons_table, 16, 11, 14, 10);
 
-    AddMouseControl(buttons_table, "Move backward", &mousebbackward);
-    AddMouseControl(buttons_table, "Use", &mousebuse);
+    AddMouseControl(buttons_table, "Move forward", &mousebforward);
     AddMouseControl(buttons_table, "Strafe left", &mousebstrafeleft);
+    AddMouseControl(buttons_table, "Move backward", &mousebbackward);
     AddMouseControl(buttons_table, "Strafe right", &mousebstraferight);
+    AddMouseControl(buttons_table, "Previous weapon", &mousebprevweapon);
+    AddMouseControl(buttons_table, "Strafe on", &mousebstrafe);
+    AddMouseControl(buttons_table, "Next weapon", &mousebnextweapon);
 
     if (gamemission == hexen || gamemission == strife)
     {
         AddMouseControl(buttons_table, "Jump", &mousebjump);
     }
 
-    AddMouseControl(buttons_table, "Previous weapon", &mousebprevweapon);
-    AddMouseControl(buttons_table, "Next weapon", &mousebnextweapon);
     if (gamemission == doom) // [crispy]
     {
         AddMouseControl(buttons_table, "Quick Reverse", &mousebreverse);
@@ -198,8 +199,7 @@ void ConfigMouse(TXT_UNCAST_ARG(widget), void *user_data)
     }
 
     AddMouseControl(window, "Fire/Attack", &mousebfire);
-    AddMouseControl(window, "Move forward", &mousebforward);
-    AddMouseControl(window, "Strafe on", &mousebstrafe);
+    AddMouseControl(window, "Use", &mousebuse);
 
     TXT_AddWidget(window,
                   TXT_NewButton2("More controls...", ConfigExtraButtons, NULL));

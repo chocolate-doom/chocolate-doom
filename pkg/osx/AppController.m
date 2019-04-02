@@ -70,6 +70,10 @@
 {
 }
 
+- (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)_ {
+    return YES;
+}
+
 - (BOOL) application:(NSApplication *) application
          openFile:(NSString *) fileName
 {
