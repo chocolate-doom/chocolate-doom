@@ -164,9 +164,6 @@ void ConfigMouse(TXT_UNCAST_ARG(widget), void *user_data)
                    TXT_NewFloatSpinControl(&mouse_acceleration_y, 1.0, 5.0),
                    TXT_NewLabel("Acceleration threshold (v)"),
                    TXT_NewSpinControl(&mouse_threshold_y, 0, 32),
-//                 TXT_NewCheckBox("Permanent Mouse Look",
-//                                 &crispy->mouselook),
-                   TXT_TABLE_OVERFLOW_RIGHT,
 
                    TXT_NewSeparator("Buttons"),
                    NULL);
