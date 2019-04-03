@@ -212,7 +212,10 @@ boolean P_CheckAmmo (player_t* player)
     // [crispy] force weapon switch if weapon not owned
     // only relevant when removing current weapon with TNTWEAPx cheat
     if (!player->weaponowned[player->readyweapon])
+    {
+	ammo = 0;
 	count = INT_MAX;
+    }
 
     // Some do not need ammunition anyway.
     // Return if current ammunition sufficient.
