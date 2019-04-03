@@ -67,7 +67,7 @@ Many additional less user-visible features have been implemented, e.g. fixed eng
  * Look up (bindable to joystick axes as well) <kbd>PgDn</kbd> (as in Heretic)
  * Look down (bindable to joystick axes as well) <kbd>Del</kbd> (as in Heretic)
  * Center view <kbd>End</kbd> (as in Heretic)
- * Toggle always run <kbd>⇪</kbd>
+ * Toggle always run <kbd>&#8682;</kbd>
  * Toggle vertical mouse movement (new in 5.4)
  * Delete savegame <kbd>Del</kbd>
  * Go to next level
