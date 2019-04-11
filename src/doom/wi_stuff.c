@@ -786,6 +786,13 @@ static boolean		snl_pointeron = false;
 
 void WI_initShowNextLoc(void)
 {
+    // [crispy] display tally screen after ExM8
+    if ((gamemode != commercial) && (gamemap == 8))
+    {
+	G_WorldDone();
+	return;
+    }
+
     state = ShowNextLoc;
     acceleratestage = 0;
     cnt = SHOWNEXTLOCDELAY * TICRATE;
