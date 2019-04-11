@@ -1656,9 +1656,12 @@ void G_DoCompleted (void)
         {
             switch(gamemap)
             {
+            // [crispy] display tally screen after ExM8
+            /*
               case 8:
                 gameaction = ga_victory;
                 return;
+            */
               case 9: 
                 for (i=0 ; i<MAXPLAYERS ; i++) 
                     players[i].didsecret = true; 
@@ -1667,6 +1670,8 @@ void G_DoCompleted (void)
         }
     }
 
+// [crispy] disable redundant code
+/*
 //#if 0  Hmmm - why?
     if ( (gamemap == 8)
 	 && (gamemode != commercial) ) 
@@ -1684,6 +1689,7 @@ void G_DoCompleted (void)
 	    players[i].didsecret = true; 
     } 
 //#endif
+*/
     
 	 
     wminfo.didsecret = players[consoleplayer].didsecret; 
@@ -1906,6 +1912,12 @@ void G_WorldDone (void)
 	    F_StartFinale ();
 	    break;
 	}
+    }
+    // [crispy] display tally screen after ExM8
+    else
+    if ( gamemap == 8 )
+    {
+	gameaction = ga_victory;
     }
 } 
  
