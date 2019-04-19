@@ -297,7 +297,7 @@ void NET_DBIPX_AddrToString(net_addr_t *addr, char *buffer, int buffer_len)
     IPXAddrToString((byte *) addr->handle, buffer, buffer_len);
 }
 
-net_addr_t *NET_DBIPX_ResolveAddress(char *address)
+net_addr_t *NET_DBIPX_ResolveAddress(const char *address)
 {
     unsigned int a, b, c, d, e, f;
 

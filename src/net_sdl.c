@@ -166,7 +166,7 @@ static net_addr_t *FindAddress(ip_protocol_t protocol, IPaddress *addr)
     return &new_entry->net_addr;
 }
 
-static net_addr_t *ResolveAddress(ip_protocol_t protocol, char *address)
+static net_addr_t *ResolveAddress(ip_protocol_t protocol, const char *address)
 {
     IPaddress ip;
     char *addr_hostname;
@@ -184,17 +184,13 @@ static net_addr_t *ResolveAddress(ip_protocol_t protocol, char *address)
     }
     else
     {
-	addr_hostname = address;
+	addr_hostname = M_StringDuplicate(address);
 	addr_port = port;
     }
-    
-    result = SDLNet_ResolveHost(&ip, addr_hostname, addr_port);
 
-    if (addr_hostname != address)
-    {
-	free(addr_hostname);
-    }
-    
+    result = SDLNet_ResolveHost(&ip, addr_hostname, addr_port);
+    free(addr_hostname);
+
     if (result)
     {
         // unable to resolve
@@ -411,12 +407,12 @@ static boolean NET_UDP_RecvPacket(net_addr_t **addr, net_packet_t **packet)
     return true;
 }
 
-static net_addr_t *NET_UDP_ResolveAddress(char *address)
+static net_addr_t *NET_UDP_ResolveAddress(const char *address)
 {
     return ResolveAddress(IP_PROTOCOL_UDP, address);
 }
 
-static net_addr_t *NET_TCP_ResolveAddress(char *address)
+static net_addr_t *NET_TCP_ResolveAddress(const char *address)
 {
     return ResolveAddress(IP_PROTOCOL_TCP, address);
 }
