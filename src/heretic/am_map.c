@@ -34,7 +34,7 @@ vertex_t KeyPoints[NUMKEYS];
 
 #define NUMALIAS 3              // Number of antialiased lines.
 
-char *LevelNames[] = {
+const char *LevelNames[] = {
     // EPISODE 1 - THE CITY OF THE DAMNED
     "E1M1:  THE DOCKS",
     "E1M2:  THE DUNGEONS",
@@ -1500,7 +1500,7 @@ void AM_drawCrosshair(int color)
 
 void AM_Drawer(void)
 {
-    char *level_name;
+    const char *level_name;
     int numepisodes;
 
     if (!automapactive)

@@ -141,9 +141,9 @@ void R_InstallSpriteLump(int lump, unsigned frame, unsigned rotation,
 =================
 */
 
-void R_InitSpriteDefs(char **namelist)
+void R_InitSpriteDefs(const char **namelist)
 {
-    char **check;
+    const char **check;
     int i, l, frame, rotation;
     int start, end;
 
@@ -255,7 +255,7 @@ int newvissprite;
 ===================
 */
 
-void R_InitSprites(char **namelist)
+void R_InitSprites(const char **namelist)
 {
     int i;
 
@@ -1006,7 +1006,7 @@ void R_DrawMasked(void)
 //
 // Added for the sideviewing with an external device
     if (viewangleoffset <= 1024 << ANGLETOFINESHIFT || viewangleoffset >=
-        -1024 << ANGLETOFINESHIFT)
+        -(1024 << ANGLETOFINESHIFT))
     {                           // don't draw on side views
         R_DrawPlayerSprites();
     }

@@ -22,15 +22,40 @@
 
 extern net_addr_t net_broadcast_addr;
 
+// Create a new network context.
 net_context_t *NET_NewContext(void);
+
+// Add a network module to a context.
 void NET_AddModule(net_context_t *context, net_module_t *module);
+
+// Send a packet to the given address.
 void NET_SendPacket(net_addr_t *addr, net_packet_t *packet);
+
+// Send a broadcast using all modules in the given context.
 void NET_SendBroadcast(net_context_t *context, net_packet_t *packet);
-boolean NET_RecvPacket(net_context_t *context, net_addr_t **addr, 
+
+// Check all modules in the given context and receive a packet, returning true
+// if a packet was received. The result is stored in *packet and the source is
+// stored in *addr, with an implicit reference added. The packet must be freed
+// by the caller and the reference releasd.
+boolean NET_RecvPacket(net_context_t *context, net_addr_t **addr,
                        net_packet_t **packet);
+
+// Return a string representation of the given address. The result points to a
+// static buffer and will become invalid with the next call.
 char *NET_AddrToString(net_addr_t *addr);
-void NET_FreeAddress(net_addr_t *addr);
-net_addr_t *NET_ResolveAddress(net_context_t *context, char *address);
+
+// Add a reference to the given address.
+void NET_ReferenceAddress(net_addr_t *addr);
+
+// Release a reference to the given address. When there are no more references,
+// the address will be freed.
+void NET_ReleaseAddress(net_addr_t *addr);
+
+// Resolve a string representation of an address. If successful, a net_addr_t
+// pointer is received with an implicit reference that must be freed by the
+// caller when it is no longer needed.
+net_addr_t *NET_ResolveAddress(net_context_t *context, const char *address);
 
 #endif  /* #ifndef NET_IO_H */
 

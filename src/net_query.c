@@ -120,40 +120,35 @@ void NET_Query_AddToMaster(net_addr_t *master_addr)
 
 // Process a packet received from the master server.
 
-void NET_Query_MasterResponse(net_packet_t *packet)
+void NET_Query_AddResponse(net_packet_t *packet)
 {
-    unsigned int packet_type;
     unsigned int result;
 
-    if (!NET_ReadInt16(packet, &packet_type)
-     || !NET_ReadInt16(packet, &result))
+    if (!NET_ReadInt16(packet, &result))
     {
         return;
     }
 
-    if (packet_type == NET_MASTER_PACKET_TYPE_ADD_RESPONSE)
+    if (result != 0)
     {
-        if (result != 0)
-        {
-            // Only show the message once.
+        // Only show the message once.
 
-            if (!registered_with_master)
-            {
-                printf("Registered with master server at %s\n",
-                       MASTER_SERVER_ADDRESS);
-                registered_with_master = true;
-            }
-        }
-        else
+        if (!registered_with_master)
         {
-            // Always show rejections.
-
-            printf("Failed to register with master server at %s\n",
+            printf("Registered with master server at %s\n",
                    MASTER_SERVER_ADDRESS);
+            registered_with_master = true;
         }
-
-        got_master_response = true;
     }
+    else
+    {
+        // Always show rejections.
+
+        printf("Failed to register with master server at %s\n",
+               MASTER_SERVER_ADDRESS);
+    }
+
+    got_master_response = true;
 }
 
 boolean NET_Query_CheckAddedToMaster(boolean *result)
@@ -175,10 +170,39 @@ static void NET_Query_SendMasterQuery(net_addr_t *addr)
 {
     net_packet_t *packet;
 
-    packet = NET_NewPacket(10);
+    packet = NET_NewPacket(4);
     NET_WriteInt16(packet, NET_MASTER_PACKET_TYPE_QUERY);
     NET_SendPacket(addr, packet);
     NET_FreePacket(packet);
+
+    // We also send a NAT_HOLE_PUNCH_ALL packet so that servers behind
+    // NAT gateways will open themselves up to us.
+    packet = NET_NewPacket(4);
+    NET_WriteInt16(packet, NET_MASTER_PACKET_TYPE_NAT_HOLE_PUNCH_ALL);
+    NET_SendPacket(addr, packet);
+    NET_FreePacket(packet);
+}
+
+// Send a hole punch request to the master server for the server at the
+// given address.
+void NET_RequestHolePunch(net_context_t *context, net_addr_t *addr)
+{
+    net_addr_t *master_addr;
+    net_packet_t *packet;
+
+    master_addr = NET_Query_ResolveMaster(context);
+    if (master_addr == NULL)
+    {
+        return;
+    }
+
+    packet = NET_NewPacket(32);
+    NET_WriteInt16(packet, NET_MASTER_PACKET_TYPE_NAT_HOLE_PUNCH);
+    NET_WriteString(packet, NET_AddrToString(addr));
+    NET_SendPacket(master_addr, packet);
+
+    NET_FreePacket(packet);
+    NET_ReleaseAddress(master_addr);
 }
 
 // Given the specified address, find the target associated.  If no
@@ -210,9 +234,23 @@ static query_target_t *GetTargetForAddr(net_addr_t *addr, boolean create)
     target->printed = false;
     target->query_attempts = 0;
     target->addr = addr;
+    NET_ReferenceAddress(addr);
     ++num_targets;
 
     return target;
+}
+
+static void FreeTargets(void)
+{
+    int i;
+
+    for (i = 0; i < num_targets; ++i)
+    {
+        NET_ReleaseAddress(targets[i].addr);
+    }
+    free(targets);
+    targets = NULL;
+    num_targets = 0;
 }
 
 // Transmit a query packet
@@ -338,10 +376,10 @@ static void NET_Query_ParseMasterResponse(net_addr_t *master_addr,
         // there.
 
         addr = NET_ResolveAddress(query_context, addr_str);
-
         if (addr != NULL)
         {
             GetTargetForAddr(addr, true);
+            NET_ReleaseAddress(addr);
         }
     }
 
@@ -380,6 +418,7 @@ static void NET_Query_GetResponse(net_query_callback_t callback,
     if (NET_RecvPacket(query_context, &addr, &packet))
     {
         NET_Query_ParsePacket(addr, packet, callback, user_data);
+        NET_ReleaseAddress(addr);
         NET_FreePacket(packet);
     }
 }
@@ -636,14 +675,15 @@ int NET_StartMasterQuery(void)
 
     target = GetTargetForAddr(master, true);
     target->type = QUERY_TARGET_MASTER;
+    NET_ReleaseAddress(master);
 
     return 1;
 }
 
 // -----------------------------------------------------------------------
 
-static void formatted_printf(int wide, char *s, ...) PRINTF_ATTR(2, 3);
-static void formatted_printf(int wide, char *s, ...)
+static void formatted_printf(int wide, const char *s, ...) PRINTF_ATTR(2, 3);
+static void formatted_printf(int wide, const char *s, ...)
 {
     va_list args;
     int i;
@@ -659,7 +699,7 @@ static void formatted_printf(int wide, char *s, ...)
     }
 }
 
-static char *GameDescription(GameMode_t mode, GameMission_t mission)
+static const char *GameDescription(GameMode_t mode, GameMission_t mission)
 {
     switch (mission)
     {
@@ -751,6 +791,7 @@ void NET_LANQuery(void)
         NET_Query_QueryLoop(NET_QueryPrintCallback, NULL);
 
         printf("\n%i server(s) found.\n", GetNumResponses());
+        FreeTargets();
     }
 }
 
@@ -763,6 +804,7 @@ void NET_MasterQuery(void)
         NET_Query_QueryLoop(NET_QueryPrintCallback, NULL);
 
         printf("\n%i server(s) found.\n", GetNumResponses());
+        FreeTargets();
     }
 }
 
@@ -795,6 +837,8 @@ void NET_QueryAddress(char *addr_str)
     if (target->state == QUERY_TARGET_RESPONDED)
     {
         NET_QueryPrintCallback(addr, &target->data, target->ping_time, NULL);
+        NET_ReleaseAddress(addr);
+        FreeTargets();
     }
     else
     {
@@ -806,6 +850,7 @@ net_addr_t *NET_FindLANServer(void)
 {
     query_target_t *target;
     query_target_t *responder;
+    net_addr_t *result;
 
     NET_Query_Init();
 
@@ -822,12 +867,16 @@ net_addr_t *NET_FindLANServer(void)
 
     if (responder != NULL)
     {
-        return responder->addr;
+        result = responder->addr;
+        NET_ReferenceAddress(result);
     }
     else
     {
-        return NULL;
+        result = NULL;
     }
+
+    FreeTargets();
+    return result;
 }
 
 // Block until a packet of the given type is received from the given
@@ -850,6 +899,9 @@ static net_packet_t *BlockForPacket(net_addr_t *addr, unsigned int packet_type,
             I_Sleep(20);
             continue;
         }
+
+        // Caller doesn't need additional reference.
+        NET_ReleaseAddress(packet_src);
 
         if (packet_src == addr
          && NET_ReadInt16(packet, &read_packet_type)

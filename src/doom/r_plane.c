@@ -307,6 +307,9 @@ R_CheckPlane
     lastvisplane->picnum = pl->picnum;
     lastvisplane->lightlevel = pl->lightlevel;
     
+    if (lastvisplane - visplanes == MAXVISPLANES)
+	I_Error ("R_CheckPlane: no more visplanes");
+
     pl = lastvisplane++;
     pl->minx = start;
     pl->maxx = stop;

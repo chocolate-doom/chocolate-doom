@@ -25,14 +25,14 @@
 #include "info.h"
 #include "m_argv.h"
 
-char *deh_signatures[] =
+const char *deh_signatures[] =
 {
     "Patch File for HHE v1.0",
     "Patch File for HHE v1.1",
     NULL
 };
 
-static char *hhe_versions[] =
+static const char *hhe_versions[] =
 {
     "1.0", "1.2", "1.3"
 };

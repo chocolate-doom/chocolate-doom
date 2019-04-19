@@ -27,6 +27,8 @@
 #if defined(_MSC_VER)
 // For Visual C++, we need to include the win_opendir module.
 #include <win_opendir.h>
+#include <sys/stat.h>
+#define S_ISDIR(m)      (((m)& S_IFMT) == S_IFDIR)
 #elif defined(HAVE_DIRENT_H)
 #include <dirent.h>
 #include <sys/stat.h>
@@ -319,6 +321,11 @@ const char *I_NextGlob(glob_t *glob)
 {
     const char *result;
 
+    if (glob == NULL)
+    {
+        return NULL;
+    }
+
     // In unsorted mode we just return the filenames as we read
     // them back from the system API.
     if ((glob->flags & GLOB_FLAG_SORTED) == 0)
@@ -348,7 +355,7 @@ const char *I_NextGlob(glob_t *glob)
 
 #warning No native implementation of file globbing.
 
-glob_t *I_StartGlob(const char *directory, const char *glob)
+glob_t *I_StartGlob(const char *directory, const char *glob, int flags)
 {
     return NULL;
 }

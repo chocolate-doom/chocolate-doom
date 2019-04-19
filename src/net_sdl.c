@@ -147,6 +147,7 @@ static net_addr_t *FindAddress(ip_protocol_t protocol, IPaddress *addr)
 
     new_entry->protocol = protocol;
     new_entry->sdl_addr = *addr;
+    new_entry->net_addr.refcount = 0;
     new_entry->net_addr.handle = new_entry;
     new_entry->tcp_sock = NULL;
 

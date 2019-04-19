@@ -32,7 +32,7 @@
 
 #define JOYSTICK_AXIS_WIDTH 20
 
-static char *CalibrationLabel(txt_joystick_axis_t *joystick_axis)
+static const char *CalibrationLabel(txt_joystick_axis_t *joystick_axis)
 {
     switch (joystick_axis->config_stage)
     {

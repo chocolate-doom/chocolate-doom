@@ -49,6 +49,7 @@
 #include "m_argv.h"
 #include "m_controls.h"
 #include "p_saveg.h"
+#include "p_setup.h"
 
 #include "s_sound.h"
 
@@ -634,8 +635,19 @@ void M_DoSave(int slot)
 //
 static void SetDefaultSaveName(int slot)
 {
-    M_snprintf(savegamestrings[itemOn], SAVESTRINGSIZE - 1,
-               "JOYSTICK SLOT %i", itemOn + 1);
+    // map from IWAD or PWAD?
+    if (W_IsIWADLump(maplumpinfo))
+    {
+        M_snprintf(savegamestrings[itemOn], SAVESTRINGSIZE,
+                   "%s", maplumpinfo->name);
+    }
+    else
+    {
+        M_snprintf(savegamestrings[itemOn], SAVESTRINGSIZE,
+                   "%s: %s", W_WadNameForLump(maplumpinfo),
+                   maplumpinfo->name);
+    }
+    M_ForceUppercase(savegamestrings[itemOn]);
     joypadSave = false;
 }
 

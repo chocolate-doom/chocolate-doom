@@ -1,5 +1,5 @@
 //
-// Copyright(C) 2005-2014 Simon Howard
+// Copyright(C) 2019 Jonathan Dowland
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -11,21 +11,8 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
+// DESCRIPTION:
+//     Generate a randomized, private, memorable name for a Player
+//
 
-#ifndef SETUP_MODE_H
-#define SETUP_MODE_H
-
-#include "d_mode.h"
-#include "d_iwad.h"
-
-typedef void (*GameSelectCallback)(void);
-extern GameMission_t gamemission;
-
-void SetupMission(GameSelectCallback callback);
-void InitBindings(void);
-const char *GetExecutableName(void);
-const char *GetGameTitle(void);
-const iwad_t **GetIwads(void);
-
-#endif /* #ifndef SETUP_MODE_H */
-
+char *NET_GetRandomPetName();

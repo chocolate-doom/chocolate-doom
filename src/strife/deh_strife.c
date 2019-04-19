@@ -19,7 +19,7 @@
 #include "deh_defs.h"
 #include "deh_main.h"
 
-char *deh_signatures[] =
+const char *deh_signatures[] =
 {
     "Patch File for SeHackEd v0.4",
     "Patch File for SeHackEd v0.3",

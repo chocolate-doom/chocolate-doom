@@ -707,36 +707,32 @@ static char *GetFullPath(const char *musicdir, const char *path)
     return result;
 }
 
-// If filename ends with .{ext}, check if a .ogg or .flac file exists with that
-// name, returning it if found. If neither file exists, NULL exists. If the
+// If filename ends with .{ext}, check if a .ogg, .flac or .mp3 exists with
+// that name, returning it if found. If none exist, NULL is returned. If the
 // filename doesn't end with .{ext} then it just acts as a wrapper around
 // GetFullPath().
 static char *ExpandFileExtension(const char *musicdir, const char *filename)
 {
+    static const char *extns[] = {".flac", ".ogg", ".mp3"};
     char *replaced, *result;
+    int i;
 
     if (!M_StringEndsWith(filename, ".{ext}"))
     {
         return GetFullPath(musicdir, filename);
     }
 
-    replaced = M_StringReplace(filename, ".{ext}", ".flac");
-    result = GetFullPath(musicdir, replaced);
-    if (M_FileExists(result))
+    for (i = 0; i < arrlen(extns); ++i)
     {
-        return result;
+        replaced = M_StringReplace(filename, ".{ext}", extns[i]);
+        result = GetFullPath(musicdir, replaced);
+        free(replaced);
+        if (M_FileExists(result))
+        {
+            return result;
+        }
+        free(result);
     }
-    free(result);
-    free(replaced);
-
-    replaced = M_StringReplace(filename, ".{ext}", ".ogg");
-    result = GetFullPath(musicdir, replaced);
-    if (M_FileExists(result))
-    {
-        return result;
-    }
-    free(result);
-    free(replaced);
 
     return NULL;
 }
@@ -800,7 +796,7 @@ static const char *ReadHashPrefix(char *line)
 // Parse a line from substitute music configuration file; returns error
 // message or NULL for no error.
 
-static char *ParseSubstituteLine(char *musicdir, char *line)
+static const char *ParseSubstituteLine(char *musicdir, char *line)
 {
     const char *hash_prefix;
     char *filename;
@@ -887,7 +883,7 @@ static boolean ReadSubstituteConfig(char *musicdir, const char *filename)
 
     while (line != NULL)
     {
-        char *error;
+        const char *error;
         char *next;
 
         // find end of line
@@ -1151,6 +1147,9 @@ static boolean I_MP_InitMusic(void)
         sdl_was_initialized = true;
         music_initialized = true;
     }
+
+    // Initialize SDL_Mixer for digital music playback
+    Mix_Init(MIX_INIT_FLAC | MIX_INIT_OGG | MIX_INIT_MP3);
 
     // Register an effect function to track the music position.
     Mix_RegisterEffect(MIX_CHANNEL_POST, TrackPositionCallback, NULL, NULL);

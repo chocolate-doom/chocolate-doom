@@ -908,16 +908,13 @@ txt_table_t *TXT_NewTable(int columns)
 
 // Alternative to TXT_NewTable() that allows a list of widgets to be
 // provided in its arguments.
-txt_table_t *TXT_MakeTable(int columns, TXT_UNCAST_ARG(first_widget), ...)
+txt_table_t *TXT_MakeTable(int columns, ...)
 {
-    TXT_CAST_ARG(txt_widget_t, first_widget);
     txt_table_t *table;
     va_list args;
 
     table = TXT_NewTable(columns);
-    TXT_AddWidget(table, first_widget);
-
-    va_start(args, TXT_UNCAST_ARG_NAME(first_widget));
+    va_start(args, columns);
 
     for (;;)
     {

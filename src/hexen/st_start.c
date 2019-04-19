@@ -263,7 +263,7 @@ void ST_NetDone(void)
 //
 //==========================================================================
 
-void ST_Message(char *message, ...)
+void ST_Message(const char *message, ...)
 {
     va_list argptr;
 
@@ -278,7 +278,7 @@ void ST_Message(char *message, ...)
 //
 //==========================================================================
 
-void ST_RealMessage(char *message, ...)
+void ST_RealMessage(const char *message, ...)
 {
     va_list argptr;
 

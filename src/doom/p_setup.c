@@ -398,6 +398,7 @@ void P_LoadThings (int lump)
             {
                 I_Error("P_LoadThings: Player %d start missing (vanilla crashes here)", i + 1);
             }
+            playerstartsingame[i] = false;
         }
     }
 
@@ -759,6 +760,9 @@ static void P_LoadReject(int lumpnum)
     }
 }
 
+// pointer to the current map lump info struct
+lumpinfo_t *maplumpinfo;
+
 //
 // P_SetupLevel
 //
@@ -815,6 +819,8 @@ P_SetupLevel
 
     lumpnum = W_GetNumForName (lumpname);
 	
+    maplumpinfo = lumpinfo[lumpnum];
+
     leveltime = 0;
 	
     // note: most of this ordering is important	

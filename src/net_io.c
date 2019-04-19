@@ -54,12 +54,10 @@ void NET_AddModule(net_context_t *context, net_module_t *module)
     ++context->num_modules;
 }
 
-net_addr_t *NET_ResolveAddress(net_context_t *context, char *addr)
+net_addr_t *NET_ResolveAddress(net_context_t *context, const char *addr)
 {
     int i;
     net_addr_t *result;
-
-    result = NULL;
 
     for (i=0; i<context->num_modules; ++i)
     {
@@ -67,11 +65,12 @@ net_addr_t *NET_ResolveAddress(net_context_t *context, char *addr)
 
         if (result != NULL)
         {
-            break;
+            NET_ReferenceAddress(result);
+            return result;
         }
     }
 
-    return result;
+    return NULL;
 }
 
 void NET_SendPacket(net_addr_t *addr, net_packet_t *packet)
@@ -101,6 +100,7 @@ boolean NET_RecvPacket(net_context_t *context,
     {
         if (context->modules[i]->RecvPacket(addr, packet))
         {
+            NET_ReferenceAddress(*addr);
             return true;
         }
     }
@@ -120,9 +120,28 @@ char *NET_AddrToString(net_addr_t *addr)
     return buf;
 }
 
-void NET_FreeAddress(net_addr_t *addr)
+void NET_ReferenceAddress(net_addr_t *addr)
 {
-    addr->module->FreeAddress(addr);
+    if (addr == NULL)
+    {
+        return;
+    }
+    ++addr->refcount;
+    //printf("%s: +refcount=%d\n", NET_AddrToString(addr), addr->refcount);
 }
 
+void NET_ReleaseAddress(net_addr_t *addr)
+{
+    if (addr == NULL)
+    {
+        return;
+    }
+
+    --addr->refcount;
+    //printf("%s: -refcount=%d\n", NET_AddrToString(addr), addr->refcount);
+    if (addr->refcount <= 0)
+    {
+        addr->module->FreeAddress(addr);
+    }
+}
 

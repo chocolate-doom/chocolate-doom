@@ -33,6 +33,8 @@
 #include "net_io.h"
 #include "net_query.h"
 
+#include "net_petname.h"
+
 #define MULTI_START_HELP_URL "https://www.chocolate-doom.org/setup-multi-start"
 #define MULTI_JOIN_HELP_URL "https://www.chocolate-doom.org/setup-multi-join"
 #define MULTI_CONFIG_HELP_URL "https://www.chocolate-doom.org/setup-multi-config"
@@ -705,7 +707,7 @@ static txt_dropdown_list_t *GameTypeDropdown(void)
 // and the single player warp menu.  The parameters specify
 // the window title and whether to display multiplayer options.
 
-static void StartGameMenu(char *window_title, int multiplayer)
+static void StartGameMenu(const char *window_title, int multiplayer)
 {
     txt_window_t *window;
     txt_widget_t *iwad_selector;
@@ -984,7 +986,7 @@ static void QueryWindowClosed(TXT_UNCAST_ARG(window), void *unused)
     TXT_SetPeriodicCallback(NULL, NULL, 0);
 }
 
-static void ServerQueryWindow(char *title)
+static void ServerQueryWindow(const char *title)
 {
     txt_table_t *results_table;
 
@@ -1067,7 +1069,7 @@ void JoinMultiGame(TXT_UNCAST_ARG(widget), void *user_data)
 void SetChatMacroDefaults(void)
 {
     int i;
-    char *defaults[] = 
+    const char *const defaults[] =
     {
         HUSTR_CHATMACRO0,
         HUSTR_CHATMACRO1,
@@ -1096,29 +1098,8 @@ void SetPlayerNameDefault(void)
 {
     if (net_player_name == NULL)
     {
-        net_player_name = getenv("USER");
+        net_player_name = NET_GetRandomPetName();
     }
-
-    if (net_player_name == NULL)
-    {
-        net_player_name = getenv("USERNAME");
-    }
-
-    if (net_player_name == NULL)
-    {
-        net_player_name = "player";
-    }
-
-    // Now strdup() the string so that it's in a mutable form
-    // that can be freed when the value changes.
-
-#ifdef _WIN32
-    // On Windows, environment variables are in OEM codepage
-    // encoding, so convert to UTF8:
-    net_player_name = M_OEMToUTF8(net_player_name);
-#else
-    net_player_name = M_StringDuplicate(net_player_name);
-#endif
 }
 
 void MultiplayerConfig(TXT_UNCAST_ARG(widget), void *user_data)

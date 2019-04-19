@@ -62,7 +62,7 @@ AS_HELP_STRING([--without-libpng],
     [with_libpng=check]
 ])
 AS_IF([test "x$with_libpng" != xno], [
-    PKG_CHECK_MODULES(PNG, libpng >= 1.6.10, [
+    PKG_CHECK_MODULES(PNG, libpng >= 1.2.50, [
         AC_DEFINE([HAVE_LIBPNG], [1], [libpng installed])
     ], [
         AS_IF([test "x$with_libpng" != xcheck], [AC_MSG_FAILURE(

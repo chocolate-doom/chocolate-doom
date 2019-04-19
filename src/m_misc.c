@@ -178,7 +178,7 @@ long M_FileLength(FILE *handle)
 // M_WriteFile
 //
 
-boolean M_WriteFile(const char *name, void *source, int length)
+boolean M_WriteFile(const char *name, const void *source, int length)
 {
     FILE *handle;
     int	count;
@@ -291,7 +291,7 @@ char *M_DirName(const char *path)
 // allocated.
 const char *M_BaseName(const char *path)
 {
-    char *p;
+    const char *p;
 
     p = strrchr(path, DIR_SEPARATOR);
     if (p == NULL)

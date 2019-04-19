@@ -95,9 +95,9 @@ static signed int totalFrags[MAXPLAYERS];
 static fixed_t dSlideX[MAXPLAYERS];
 static fixed_t dSlideY[MAXPLAYERS];
 
-static char *KillersText[] = { "K", "I", "L", "L", "E", "R", "S" };
+static const char *KillersText[] = { "K", "I", "L", "L", "E", "R", "S" };
 
-extern char *LevelNames[];
+extern const char *LevelNames[];
 
 typedef struct
 {
@@ -140,6 +140,17 @@ static yahpt_t YAHspot[3][9] = {
      {107, 80}
      }
 };
+
+static const char *NameForMap(int map)
+{
+    const char *name = LevelNames[(gameepisode - 1) * 9 + map - 1];
+    name = DEH_String(name);
+    if (strlen(name) < 7)
+    {
+        return "";
+    }
+    return name + 7;
+}
 
 //========================================================================
 //
@@ -596,12 +607,12 @@ void IN_DrawStatBack(void)
 
 void IN_DrawOldLevel(void)
 {
+    const char *level_name = NameForMap(prevmap);
     int i;
     int x;
 
-    x = 160 - MN_TextBWidth(LevelNames[(gameepisode - 1) * 9 + prevmap - 1] +
-                            7) / 2;
-    IN_DrTextB(LevelNames[(gameepisode - 1) * 9 + prevmap - 1] + 7, x, 3);
+    x = 160 - MN_TextBWidth(level_name) / 2;
+    IN_DrTextB(level_name, x, 3);
     x = 160 - MN_TextAWidth(DEH_String("FINISHED")) / 2;
     MN_DrTextA(DEH_String("FINISHED"), x, 25);
 
@@ -647,14 +658,14 @@ void IN_DrawOldLevel(void)
 
 void IN_DrawYAH(void)
 {
+    const char *level_name = NameForMap(gamemap);
     int i;
     int x;
 
     x = 160 - MN_TextAWidth(DEH_String("NOW ENTERING:")) / 2;
     MN_DrTextA(DEH_String("NOW ENTERING:"), x, 10);
-    x = 160 - MN_TextBWidth(LevelNames[(gameepisode - 1) * 9 + gamemap - 1] +
-                            7) / 2;
-    IN_DrTextB(LevelNames[(gameepisode - 1) * 9 + gamemap - 1] + 7, x, 20);
+    x = 160 - MN_TextBWidth(level_name) / 2;
+    IN_DrTextB(level_name, x, 20);
 
     if (prevmap == 9)
     {
@@ -685,6 +696,8 @@ void IN_DrawYAH(void)
 
 void IN_DrawSingleStats(void)
 {
+    const char *prev_level_name = NameForMap(prevmap);
+    const char *next_level_name = NameForMap(gamemap);
     int x;
     static int sounds;
 
@@ -692,9 +705,8 @@ void IN_DrawSingleStats(void)
     IN_DrTextB(DEH_String("ITEMS"), 50, 90);
     IN_DrTextB(DEH_String("SECRETS"), 50, 115);
 
-    x = 160 - MN_TextBWidth(LevelNames[(gameepisode - 1) * 9 + prevmap - 1] +
-                            7) / 2;
-    IN_DrTextB(LevelNames[(gameepisode - 1) * 9 + prevmap - 1] + 7, x, 3);
+    x = 160 - MN_TextBWidth(prev_level_name) / 2;
+    IN_DrTextB(prev_level_name, x, 3);
     x = 160 - MN_TextAWidth(DEH_String("FINISHED")) / 2;
     MN_DrTextA(DEH_String("FINISHED"), x, 25);
 
@@ -754,11 +766,8 @@ void IN_DrawSingleStats(void)
     {
         x = 160 - MN_TextAWidth(DEH_String("NOW ENTERING:")) / 2;
         MN_DrTextA(DEH_String("NOW ENTERING:"), x, 160);
-        x = 160 -
-            MN_TextBWidth(LevelNames[(gameepisode - 1) * 9 + gamemap - 1] +
-                          7) / 2;
-        IN_DrTextB(LevelNames[(gameepisode - 1) * 9 + gamemap - 1] + 7, x,
-                   170);
+        x = 160 - MN_TextBWidth(next_level_name) / 2;
+        IN_DrTextB(next_level_name, x, 170);
         skipintermission = false;
     }
 }
@@ -771,6 +780,7 @@ void IN_DrawSingleStats(void)
 
 void IN_DrawCoopStats(void)
 {
+    const char *level_name = NameForMap(prevmap);
     int i;
     int x;
     int ypos;
@@ -780,9 +790,8 @@ void IN_DrawCoopStats(void)
     IN_DrTextB(DEH_String("KILLS"), 95, 35);
     IN_DrTextB(DEH_String("BONUS"), 155, 35);
     IN_DrTextB(DEH_String("SECRET"), 232, 35);
-    x = 160 - MN_TextBWidth(LevelNames[(gameepisode - 1) * 9 + prevmap - 1] +
-                            7) / 2;
-    IN_DrTextB(LevelNames[(gameepisode - 1) * 9 + prevmap - 1] + 7, x, 3);
+    x = 160 - MN_TextBWidth(level_name) / 2;
+    IN_DrTextB(level_name, x, 3);
     x = 160 - MN_TextAWidth(DEH_String("FINISHED")) / 2;
     MN_DrTextA(DEH_String("FINISHED"), x, 25);
 

@@ -52,7 +52,7 @@ int sc_Line;
 boolean sc_End;
 boolean sc_Crossed;
 boolean sc_FileScripts = false;
-char *sc_ScriptsDir = "";
+const char *sc_ScriptsDir = "";
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -195,13 +195,8 @@ boolean SC_GetString(void)
     }
     while (foundToken == false)
     {
-        while (*ScriptPtr <= 32)
+        while (ScriptPtr < ScriptEndPtr && *ScriptPtr <= 32)
         {
-            if (ScriptPtr >= ScriptEndPtr)
-            {
-                sc_End = true;
-                return false;
-            }
             if (*ScriptPtr++ == '\n')
             {
                 sc_Line++;

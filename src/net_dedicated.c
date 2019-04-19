@@ -25,7 +25,7 @@
 
 #include "m_argv.h"
 
-#include "net_defs.h"
+#include "net_common.h"
 #include "net_sdl.h"
 #include "net_server.h"
 
@@ -36,7 +36,7 @@
 // specified to a dedicated server.
 //
 
-static char *not_dedicated_options[] = 
+static const char *not_dedicated_options[] =
 {
     "-deh", "-iwad", "-cdrom", "-gameversion", "-nomonsters", "-respawn",
     "-fast", "-altdeath", "-deathmatch", "-turbo", "-merge", "-af", "-as",
@@ -65,6 +65,7 @@ void NET_DedicatedServer(void)
 {
     CheckForClientOptions();
 
+    NET_OpenLog();
     NET_SV_Init();
     NET_SV_AddModule(&net_udp_module);
     NET_SV_RegisterWithMaster();
@@ -72,7 +73,8 @@ void NET_DedicatedServer(void)
     while (true)
     {
         NET_SV_Run();
-        I_Sleep(10);
+        // TODO: Block on socket instead of polling.
+        I_Sleep(1);
     }
 }
 

@@ -269,7 +269,7 @@ enum
     QF_QUEST29 = (1 << tk_quest29), // Destroyed the Mines Transmitter
     QF_QUEST30 = (1 << tk_quest30),
     QF_QUEST31 = (1 << tk_quest31),
-    QF_QUEST32 = (1 << tk_quest32), // Unused; BUG: Broken Coupling accidentally sets it.
+    QF_QUEST32 = (1U << tk_quest32), // Unused; BUG: Broken Coupling accidentally sets it.
     
     QF_ALLQUESTS  = (QF_QUEST31 + (QF_QUEST31 - 1)) // does not include bit 32!
 };

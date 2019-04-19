@@ -34,7 +34,7 @@ int ArmorIncrement[NUMCLASSES][NUMARMOR] = {
 int AutoArmorSave[NUMCLASSES] =
     { 15 * FRACUNIT, 10 * FRACUNIT, 5 * FRACUNIT, 0 };
 
-char *TextKeyMessages[] = {
+const char *TextKeyMessages[] = {
     TXT_KEY_STEEL,
     TXT_KEY_CAVE,
     TXT_KEY_AXE,
@@ -53,7 +53,7 @@ static void TryPickupArtifact(player_t * player, artitype_t artifactType,
                               mobj_t * artifact);
 static void TryPickupWeapon(player_t * player, pclass_t weaponClass,
                             weapontype_t weaponType, mobj_t * weapon,
-                            char *message);
+                            const char *message);
 static void TryPickupWeaponPiece(player_t * player, pclass_t matchClass,
                                  int pieceValue, mobj_t * pieceMobj);
 
@@ -190,7 +190,7 @@ boolean P_GiveMana(player_t * player, manatype_t mana, int count)
 
 static void TryPickupWeapon(player_t * player, pclass_t weaponClass,
                             weapontype_t weaponType, mobj_t * weapon,
-                            char *message)
+                            const char *message)
 {
     boolean remove;
     boolean gaveMana;
@@ -412,12 +412,12 @@ static void TryPickupWeaponPiece(player_t * player, pclass_t matchClass,
     boolean checkAssembled;
     boolean gaveWeapon;
     int gaveMana;
-    static char *fourthWeaponText[] = {
+    static const char *fourthWeaponText[] = {
         TXT_WEAPON_F4,
         TXT_WEAPON_C4,
         TXT_WEAPON_M4
     };
-    static char *weaponPieceText[] = {
+    static const char *weaponPieceText[] = {
         TXT_QUIETUS_PIECE,
         TXT_WRAITHVERGE_PIECE,
         TXT_BLOODSCOURGE_PIECE
@@ -711,7 +711,7 @@ boolean P_GivePower(player_t * player, powertype_t power)
 static void TryPickupArtifact(player_t * player, artitype_t artifactType,
                               mobj_t * artifact)
 {
-    static char *artifactMessages[NUMARTIFACTS] = {
+    static const char *artifactMessages[NUMARTIFACTS] = {
         NULL,
         TXT_ARTIINVULNERABILITY,
         TXT_ARTIHEALTH,

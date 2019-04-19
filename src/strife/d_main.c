@@ -757,7 +757,7 @@ void D_QuitGame(void)
 // These are from the original source: some of them are perhaps
 // not used in any dehacked patches
 
-static char *banners[] =
+static const char *banners[] =
 {
     // strife1.wad:
 
@@ -855,10 +855,8 @@ void D_IdentifyVersion(void)
             voiceswad = M_SafeFilePath(iwadpath, "voices.wad");
             Z_Free(iwadpath);
 
-            if(!M_FileExists(voiceswad))
-                Z_Free(voiceswad);
-            else
-                name = voiceswad; // STRIFE-FIXME: memory leak!!
+            name = M_FileCaseExists(voiceswad);
+            Z_Free(voiceswad);
         }
 
         // not found? try global search paths
@@ -877,6 +875,7 @@ void D_IdentifyVersion(void)
         {
             // add it.
             D_AddFile(name);
+            free(name);
         }
     }
 }
@@ -958,7 +957,7 @@ static boolean D_AddFile(char *filename)
 // Some dehacked mods replace these.  These are only displayed if they are 
 // replaced by dehacked.
 // haleyjd 08/22/2010: [STRIFE] altered to match strings from binary
-static char *copyright_banners[] =
+static const char *copyright_banners[] =
 {
     "===========================================================================\n"
     "ATTENTION:  This version of STRIFE has extra files added to it.\n"
@@ -1004,8 +1003,8 @@ void PrintDehackedBanners(void)
 
 static struct 
 {
-    char *description;
-    char *cmdline;
+    const char *description;
+    const char *cmdline;
     GameVersion_t version;
 } gameversions[] = {
     { "Strife 1.2",          "1.2",       exe_strife_1_2  },
@@ -1146,7 +1145,7 @@ static void D_SetChar(char c)
 //
 // D_DrawText
 //
-static void D_DrawText(char *string, int bc, int fc)
+static void D_DrawText(const char *string, int bc, int fc)
 {
     int column;
     int row;

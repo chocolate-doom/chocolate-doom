@@ -132,7 +132,7 @@ int deh_species_infighting = DEH_DEFAULT_SPECIES_INFIGHTING;
 
 static struct
 {
-    char *deh_name;
+    const char *deh_name;
     int *value;
 } misc_settings[] = {
     {"Initial Health",      &deh_initial_health},

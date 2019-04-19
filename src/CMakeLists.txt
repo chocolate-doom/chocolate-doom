@@ -75,6 +75,7 @@ set(GAME_SOURCE_FILES
     net_io.c            net_io.h
     net_loop.c          net_loop.h
     net_packet.c        net_packet.h
+    net_petname.c       net_petname.h
     net_query.c         net_query.h
     net_sdl.c           net_sdl.h
     net_server.c        net_server.h
@@ -95,9 +96,14 @@ set(GAME_SOURCE_FILES
     w_merge.c           w_merge.h
     z_zone.c            z_zone.h)
 
+set(GAME_INCLUDE_DIRS "${CMAKE_CURRENT_BINARY_DIR}/../")
+
 if(MSVC)
     list(APPEND GAME_SOURCE_FILES
          "../win32/win_opendir.c" "../win32/win_opendir.h")
+
+    list(APPEND GAME_INCLUDE_DIRS
+         "${PROJECT_SOURCE_DIR}/win32/")
 endif()
 
 set(DEHACKED_SOURCE_FILES
@@ -126,8 +132,7 @@ else()
     add_executable("${PROGRAM_PREFIX}doom" ${SOURCE_FILES_WITH_DEH})
 endif()
 
-target_include_directories("${PROGRAM_PREFIX}doom"
-                           PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/../")
+target_include_directories("${PROGRAM_PREFIX}doom" PRIVATE ${GAME_INCLUDE_DIRS})
 target_link_libraries("${PROGRAM_PREFIX}doom" doom ${EXTRA_LIBS})
 
 if(MSVC)
@@ -141,8 +146,7 @@ else()
     add_executable("${PROGRAM_PREFIX}heretic" ${SOURCE_FILES_WITH_DEH})
 endif()
 
-target_include_directories("${PROGRAM_PREFIX}heretic"
-                           PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/../")
+target_include_directories("${PROGRAM_PREFIX}heretic" PRIVATE ${GAME_INCLUDE_DIRS})
 target_link_libraries("${PROGRAM_PREFIX}heretic" heretic ${EXTRA_LIBS})
 
 if(MSVC)
@@ -156,8 +160,7 @@ else()
     add_executable("${PROGRAM_PREFIX}hexen" ${SOURCE_FILES})
 endif()
 
-target_include_directories("${PROGRAM_PREFIX}hexen"
-                           PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/../")
+target_include_directories("${PROGRAM_PREFIX}hexen" PRIVATE ${GAME_INCLUDE_DIRS})
 target_link_libraries("${PROGRAM_PREFIX}hexen" hexen ${EXTRA_LIBS})
 
 if(MSVC)
@@ -171,8 +174,7 @@ else()
     add_executable("${PROGRAM_PREFIX}strife" ${SOURCE_FILES_WITH_DEH})
 endif()
 
-target_include_directories("${PROGRAM_PREFIX}strife"
-                           PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/../")
+target_include_directories("${PROGRAM_PREFIX}strife" PRIVATE ${GAME_INCLUDE_DIRS})
 target_link_libraries("${PROGRAM_PREFIX}strife" strife ${EXTRA_LIBS})
 
 if(MSVC)
@@ -191,6 +193,7 @@ set(SETUP_FILES
     m_controls.c        m_controls.h
     net_io.c            net_io.h
     net_packet.c        net_packet.h
+    net_petname.c       net_petname.h
     net_sdl.c           net_sdl.h
     net_query.c         net_query.h
     net_structrw.c      net_structrw.h

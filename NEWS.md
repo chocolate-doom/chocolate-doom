@@ -1,34 +1,88 @@
-## HEAD
+## 3.1.0 (2019-??-??)
 
 ### General
+  * WAD file autoloading was added - WAD and DEH files can be copied into
+    an autoload folder to be automatically included on every game start.
+  * Music pack configuration has been significantly simplified. By simply
+    copying .flac/.ogg music files into a folder they will be automatically
+    detected by filename and used.
+  * Music packs can now be used with OPL as a fallback, and music pack
+    config files can have any name ending in '.cfg'.
+  * Network synchronization now uses a PID controller by default, which
+    makes games more smooth and more stable, especially for Internet play.
+  * UDP hole punching is now used to make servers behind NAT gateways
+    automatically accessible to the Internet.
+  * OPL emulation now uses Nuked OPL3 v1.8 (thanks nukeykt)
+  * The setup tool now uses "Romero Blue" as a background (see the wiki:
+    <https://doomwiki.org/wiki/Romero_Blue> for more info).
   * The 0 and 5 keys on the number pad can now be bound independently
-    of any other keyboard key.  (thanks BlooD2ool)
-  * Man page generation has been reworked to use autoconf macro
-    substitution, making it eaiser for downstream forks to change the
-    project name.  (thanks Jon)
-  * Several functions have been hardened against incomplete reads and
-    error conditions, and made safer.  (thanks turol)
-  * We now print a meaningful error message when a savegame cannot be
-    loaded.  (thanks Zodomaniac, chungy)
-  * Fixed an exception thrown by the Windows kernel when debugging with
-    GDB.  (thanks AXDOOMER)
+    of any other keyboard key (thanks BlooD2ool).
   * With aspect ratio correction disabled, the game can scale to any
     arbitrary size and remove all black borders in full screen mode.
     (thanks chungy)
+  * The executable's location is now checked when looking for IWADs.
+  * The IWAD files installed by Steam-on-Linux are now detected (thanks
+    chungy).
+  * It's now possible to use `-response` to load response files.
+  * Default savegame name now includes the WAD filename (thanks Fabian).
 
-### Build systems
-  * CMake has been added along with the deprecation of Microsoft
-    Visual Studio and Code::Blocks files.  CMake maintains support for
-    multiple IDEs and versions thereof, and reduces developer overhead
-    when updating Chocolate Doom. (thanks AlexMax)
+### Refactorings
+  * CMake project files have been added, replacing the Microsoft Visual
+    Studio and Code::Blocks files. CMake maintains support for multiple
+    IDEs and versions thereof, and reduces developer overhead when updating
+    Chocolate Doom (huge thanks to AlexMax for this work).
+  * Source code has been retrofitted to fix many compiler warnings and
+    add const annotations to many variables (thanks turol).
+  * Several functions have been hardened against incomplete reads and
+    error conditions, and made safer (thanks turol).
+  * Man page generation has been reworked to use autoconf macro
+    substitution, making it eaiser for downstream forks to change the
+    project name (thanks Jon).
+  * We now print a meaningful error message when a savegame cannot be
+    loaded (thanks Zodomaniac, chungy).
+  * There's now a log file feature for the network code to aid in tracking
+    down multiplayer bugs.
+
+### Bug fixes
+  * Fixed an exception thrown by the Windows kernel when debugging with
+    GDB (thanks AXDOOMER).
+  * Loop metadata now works properly with music packs on Windows.
+  * Mouse movement is ignored when the game window isn't active (thanks
+    Julia Nechaevskaya).
+  * A bug was fixed where music would not play after pausing on an
+    intermission screen (thanks Julia Nechaevskaya).
+  * Timeouts when connecting to a network server were fixed (thanks
+    @bradc6).
+  * A long-standing bug where some visplane overflows caused crashes was
+    fixed (thanks Mike Francis).
+  * A multiplayer deadlock bug where clients would stop sending tics after
+    missing tics from the server was fixed. There are both client- and
+    server- side fixes to fix the problem when playing with older versions
+    (thanks MadDog and Mortrixs for help tracking this down).
 
 ### Doom
   * Map33 intermission screen and map33-map35 automap names are
-    emulated. (thanks CapnClever)
+    emulated (thanks CapnClever).
+  * We now exit gracefully when player starts are missing (thanks Mike
+    Francis).
+  * We now exit gracefully on levels with a boss brain and no boss spitter
+    things (thanks Jason Benaim).
+  * It's now possible to play multiplayer with gameversion=1.2.
+
+### Heretic
+  * P\_FindNextHighestFloor was changed to match vanilla behavior (thanks
+    AXDOOMER).
+  * WAD hash table is now generated for speed (thanks Mike Francis).
+  * HHE level name replacements now apply on the intermission screen
+    (thanks ETTiNGRiNDER).
 
 ### Hexen
-  * ACS code has been hardened against potential security
-    vulnerabilities.
+  * ACS code has been hardened against potential security vulnerabilities.
+  * WAD hash table is now generated for speed (thanks AXDOOMER).
+
+### Strife
+  * Sehacked replacements of the "empty slot" string now work.
+  * VOICES.WAD is now found in a case-insensitive way (thanks Mike Francis).
 
 ## 3.0.0 (2017-12-30)
 
@@ -274,7 +328,7 @@
     strdup() (thanks Quasar). M_StringCopy() now handles short buffers
     more gracefully.
   * The netgame discrepancy window is now dismissed by pressing enter
-    to proceed, not escape (thanks Alexandre-Xavier).
+    to proceed, not escape (thanks AXDOOMER).
   * A couple of source files that were in the previous release and
     were GPL3 have been replaced by GPL2 equivalents. Previous
     releases that included these files should be retroactively
@@ -282,8 +336,7 @@
 
 ### Bug fixes
   * A long-standing bug that could cause every display frame to be
-    rendered twice was fixed (thanks Linguica, Harha, Alexandre-
-    Xavier).
+    rendered twice was fixed (thanks Linguica, Harha, AXDOOMER).
   * Lots of endianness fixes were integrated that were found by Ronald
     Lasmanowicz during development of his Wii port of Chocolate Doom,
     including a fix for a bug that could cause monsters to become
@@ -318,11 +371,11 @@
   * A crash related to username lookup was fixed.
   * It’s now possible to connect via the setup tool to multiplayer
     servers that are not listening on the default port (thanks
-    Alexandre-Xavier).
+    AXDOOMER).
 
 ### Doom
   * Sky transitions when emulating the id anthology version of the
-    Final Doom executable were fixed (thanks Alexandre-Xavier, Fabian,
+    Final Doom executable were fixed (thanks AXDOOMER, Fabian,
     chungy).
   * Structure fields in the stair-building functions were fixed to be
     deterministic, fixing a desync in mm09-512.lmp (thanks Fabian).
@@ -358,7 +411,7 @@
 
 ### libtextscreen
   * The main loop now exits immediately once all windows are closed
-    (thanks Alexander-Xavier).
+    (thanks AXDOOMER).
   * The large font is no longer selected based entirely on screen
     size.
 
@@ -394,7 +447,7 @@
   * PNG format screenshots are now supported, and there is a dedicated
     key binding for taking screenshots without needing to always use
     -devparm (thanks Fabian Greffrath). The PrintScreen key can be
-    used as a key binding (thanks Alexandre-Xavier).
+    used as a key binding (thanks AXDOOMER).
   * There is now a config file variable (snd_maxslicetime_ms) to
     control the sound buffer size, and the default is more precise to
     reduce sound latency (thanks Holering).
@@ -432,14 +485,13 @@
     Greffrath). A new command line parameter, -nodeh, can be used to
     prevent this from being loaded.
   * Behavior of the M_EPI4 menu item is now correctly emulated based
-    on game version (thanks Alexandre-Xavier).
+    on game version (thanks AXDOOMER).
   * IDCLEV up to MAP40 is now supported, to match Vanilla (thanks
-    Alexandre-Xavier).
+    AXDOOMER).
   * Level warping on the command line (-warp) to episodes higher than
     4 is possible, matching Vanilla behavior (thanks plumsinus).
   * The -cdrom command line parameter writes savegames to the correct
-    directory now, matching Vanilla Doom behavior (thanks
-    Alexandre-Xavier).
+    directory now, matching Vanilla Doom behavior (thanks AXDOOMER).
   * The Doom II mission pack to use can now be specified manually on
     the command line with the -pack parameter (thanks chungy)
 
@@ -472,8 +524,7 @@
 ### Strife
   * “Show mission” key is configured properly in setup (thanks Sander
     van Dijk).
-  * Default music volume level now matches Vanilla (thanks
-    Alexandre-Xavier).
+  * Default music volume level now matches Vanilla (thanks AXDOOMER).
   * Teleport beacon allegiance was fixed to match Vanilla (thanks
     Quasar).
   * The stair building code now more closely matches Vanilla (thanks
@@ -495,12 +546,12 @@
   * WAD and Dehacked checksums are now sent to clients and checked
     correctly when setting up netgames.
   * A bug was fixed that caused sound not to work in multiplayer games
-    (thanks to everyone who reported this, and for Alexandre-Xavier
-    and Quasar for help in fixing it).
+    (thanks to everyone who reported this, and for AXDOOMER and Quasar
+    for help in fixing it).
   * The “D_DDTBLU disease” bug affecting certain MIDI files has been
     fixed (thanks plumsinus, Brad Harding and Quasar).
   * Calculation of the -devparm “ticker” dots was fixed to match
-    Vanilla behavior (thanks _bruce_ and Alexandre-Xavier).
+    Vanilla behavior (thanks _bruce_ and AXDOOMER).
   * The PC speaker code now supports the full range of sound
     frequencies (thanks Gez).
   * Annoying “jumping” behavior when grabbing the mouse cursor was
@@ -517,7 +568,7 @@
   * A crash was fixed when running fullscreen with the -2 parameter
     (thanks Fabian Greffrath).
   * A crash when using large values of snd_channels was fixed (thanks
-    Alexandre-Xavier).
+    AXDOOMER).
   * A resource leak in the BSD PC speaker code was fixed (thanks
     Edward-san).
   * Windows resource files were fixed for Windows 7 (thanks Brad
@@ -532,12 +583,12 @@
 
 ### libtextscreen
   * Clicking on scrollbars now jumps to the correct position (thanks
-    Alexandre-Xavier).
+    AXDOOMER).
   * A use-after-free bug has been fixed where a click in a window that
     causes the window to close could lead to a crash (thanks DuClare).
   * Characters that are unprintable in the Extended ASCII chart are
     just ignored when they’re typed, rather than appearing as an
-    upside-down question mark (thanks Alexandre-Xavier).
+    upside-down question mark (thanks AXDOOMER).
 
 ## 2.0.0 (2013-12-09)
 
@@ -595,7 +646,7 @@
     it is needed), and not on other systems. This fixes Chocolate Doom
     on AmigaOS (thanks Timo Sievänen).
   * UTF-8 usernames are supported, and Windows usernames with
-    non-ASCII characters are now supported (thanks Alexandre Xavier).
+    non-ASCII characters are now supported (thanks AXDOOMER).
 
 ### Compatibility
   * Palette accuracy is reduced to 6 bits per channel, to more
@@ -605,9 +656,9 @@
 
 ### Bugs fixed
   * Fixed weapon cycling keys when playing in Shareware Doom and using
-    the IDKFA cheat (thanks Alexandre Xavier).
+    the IDKFA cheat (thanks AXDOOMER).
   * Fixed the default mouse buttons in the setup tool (thanks
-    Alexandre Xavier).
+    AXDOOMER).
   * Chat macros now work when vanilla_keyboard_mapping is turned off.
   * Default chat macros were fixed in the setup tool.
   * Ping time calculation was fixed for LAN search, and made more
@@ -617,7 +668,7 @@
 ### libtextscreen
   * There is now limited UTF-8 text support in the textscreen library,
     used in the label and input box widgets.
-  * Scroll bar behavior was fixed (thanks Alexandre Xavier).
+  * Scroll bar behavior was fixed (thanks AXDOOMER).
   * Input boxes stop editing and save when they lose their focus,
     correcting a previous counterintuitive behavior (thanks Twelve).
   * The numeric keypad now works properly when entering text values
@@ -638,7 +689,7 @@
     changing key/mouse/joystick bindings to prevent other bindings to
     the same key from being cleared (thanks myk).
   * The joystick menu in the setup tool now has a test button (thanks
-    Alexandre Xavier).
+    AXDOOMER).
   * Specifying the -privateserver option implies -server (thanks
     Porsche Monty).
   * The Mac OS X .dmg package now has a background and looks generally
@@ -668,33 +719,30 @@
   * The null sector dereference emulation code has been imported from
     Prboom+ - this fixes a desync with CLNJ-506.LMP (thanks entryway).
   * The IDMUS cheat doesn’t work when emulating the v1.9 executable
-    (thanks Alexandre Xavier).
+    (thanks AXDOOMER).
 
 ### Bugs fixed
-  * Menu navigation when using joystick/joypad (thanks Alexandre
-    Xavier).
+  * Menu navigation when using joystick/joypad (thanks AXDOOMER).
   * For configuration file value for shift keys, use scan code for
-    right shift, not left shift (thanks Alexandre Xavier).
+    right shift, not left shift (thanks AXDOOMER).
   * Default joystick buttons for the setup tool now match Vanilla
     (thanks twipley).
   * Visual Studio project files work again (thanks GhostlyDeath).
   * The default sfx/music volume set by the setup tool is now 8
-    instead of 15, matching the game itself. (thanks Alexandre
-    Xavier).
+    instead of 15, matching the game itself. (thanks AXDOOMER).
   * Weapon cycling from the shotgun to the chaingun in Doom 1 now
-    works properly (thanks Alexandre Xavier).
+    works properly (thanks AXDOOMER).
   * MIDI playback that locked up when using an empty MUS / MIDI file
-    (thanks Alexandre Xavier).
+    (thanks AXDOOMER).
   * Default sampling rate used by setup tool changed to 44100Hz, to
-    match the game default (thanks Alexandre Xavier).
+    match the game default (thanks AXDOOMER).
   * Cheat codes and menu hot keys now work when shift is held down or
-    capslock turned on (thanks Alexandre Xavier).
+    capslock turned on (thanks AXDOOMER).
 
 ### libtextscreen
   * The background on GUI controls now lights up when hovering over
     them, so that it is more obvious what you are selecting.
-  * It is now possible to type a “+” in input boxes (thanks Alexandre
-    Xavier).
+  * It is now possible to type a “+” in input boxes (thanks AXDOOMER).
   * It is possible to use the mouse wheel to scroll through scroll
     panes.
   * Clicking on scroll bars now moves the scroll handle to a matching
@@ -702,7 +750,7 @@
   * Clicking outside a dropdown list popup window now dismisses the
     window.
   * Window hotkeys that are an alphabetical letter now work when shift
-    is held down or capslock turned on (thanks Alexandre Xavier).
+    is held down or capslock turned on (thanks AXDOOMER).
 
 ## 1.5.0 (2011-01-02)
 
@@ -755,11 +803,11 @@
     when this happens.  This is desirable as not all such messages are
     actually errors (thanks Proteh).
   * The setup tool now passes through all command line arguments when
-    launching the game (thanks AlexXav).
+    launching the game (thanks AXDOOMER).
   * Demo loop behavior (ie. whether to play DEMO4) now depends on the
     version being emulated.  When playing Final Doom the game will
     exit unexpectedly as it tries to play the fourth demo - this is
-    Vanilla behaviour (thanks AlexXav).
+    Vanilla behaviour (thanks AXDOOMER).
 
 ### Bugs fixed
   * A workaround has been a bug in old versions of SDL_mixer (v1.2.8
@@ -789,11 +837,11 @@
   * Command line arguments that take an option now check that an
     option is provided (thanks Sander van Dijk).
   * Skill level names in the setup tool are now written the same as
-    they are on the in-game “new game” menu (thanks AlexXav).
+    they are on the in-game “new game” menu (thanks AXDOOMER).
   * There is no longer a limit on the lengths of filenames provided to
-    the -record command line parameter (thanks AlexXav).
+    the -record command line parameter (thanks AXDOOMER).
   * Window title is not lost in setup tool when changing video driver
-    (thanks AlexXav).
+    (thanks AXDOOMER).
 
 ### libtextscreen
   * The font used for the textscreen library can be forced by setting

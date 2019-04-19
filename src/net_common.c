@@ -16,12 +16,14 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdarg.h>
 #include <string.h>
 
 #include "doomtype.h"
 #include "d_mode.h"
 #include "i_system.h"
 #include "i_timer.h"
+#include "m_argv.h"
 
 #include "net_common.h"
 #include "net_io.h"
@@ -46,8 +48,7 @@ struct net_reliable_packet_s
     net_reliable_packet_t *next;
 };
 
-// Why did the server reject us?
-char *net_client_reject_reason = NULL;
+static FILE *net_debug = NULL;
 
 static void NET_Conn_Init(net_connection_t *conn, net_addr_t *addr,
                           net_protocol_t protocol)
@@ -122,29 +123,6 @@ static void NET_Conn_ParseDisconnectACK(net_connection_t *conn,
         conn->state = NET_CONN_STATE_DISCONNECTED;
         conn->disconnect_reason = NET_DISCONNECT_LOCAL;
         conn->last_send_time = -1;
-    }
-}
-
-static void NET_Conn_ParseReject(net_connection_t *conn, net_packet_t *packet)
-{
-    char *msg;
-
-    msg = NET_ReadSafeString(packet);
-
-    if (msg == NULL)
-    {
-        return;
-    }
-    
-    if (conn->state == NET_CONN_STATE_CONNECTING)
-    {
-        // rejected by server
-
-        conn->state = NET_CONN_STATE_DISCONNECTED;
-        conn->disconnect_reason = NET_DISCONNECT_REMOTE;
-
-        free(net_client_reject_reason);
-        net_client_reject_reason = strdup(msg);
     }
 }
 
@@ -268,9 +246,6 @@ boolean NET_Conn_Packet(net_connection_t *conn, net_packet_t *packet,
             break;
         case NET_PACKET_TYPE_KEEPALIVE:
             // No special action needed.
-            break;
-        case NET_PACKET_TYPE_REJECTED:
-            NET_Conn_ParseReject(conn, packet);
             break;
         case NET_PACKET_TYPE_RELIABLE_ACK:
             NET_Conn_ParseReliableACK(conn, packet);
@@ -476,5 +451,76 @@ boolean NET_ValidGameSettings(GameMode_t mode, GameMission_t mission,
         return false;
 
     return true;
+}
+
+static void CloseLog(void)
+{
+    if (net_debug != NULL)
+    {
+        fclose(net_debug);
+        net_debug = NULL;
+    }
+}
+
+void NET_OpenLog(void)
+{
+    int p;
+
+    p = M_CheckParmWithArgs("-netlog", 1);
+    if (p > 0)
+    {
+        net_debug = fopen(myargv[p + 1], "w");
+        if (net_debug == NULL)
+        {
+            I_Error("Failed to open %s to write debug log.", myargv[p + 1]);
+        }
+        I_AtExit(CloseLog, true);
+    }
+}
+
+void NET_Log(const char *fmt, ...)
+{
+    va_list args;
+
+    if (net_debug == NULL)
+    {
+        return;
+    }
+
+    fprintf(net_debug, "%8d: ", I_GetTimeMS());
+    va_start(args, fmt);
+    vfprintf(net_debug, fmt, args);
+    va_end(args);
+    fprintf(net_debug, "\n");
+}
+
+void NET_LogPacket(net_packet_t *packet)
+{
+    int i, bytes;
+
+    if (net_debug == NULL)
+    {
+        return;
+    }
+
+    bytes = packet->len - packet->pos;
+    if (bytes == 0)
+    {
+        return;
+    }
+    fprintf(net_debug, "\t%02x", packet->data[packet->pos]);
+    for (i = 1; i < bytes; ++i)
+    {
+        if ((i % 16) == 0)
+        {
+            fprintf(net_debug, "\n\t");
+        }
+        else
+        {
+            fprintf(net_debug, " ");
+        }
+        fprintf(net_debug, "%02x", packet->data[packet->pos + i]);
+    }
+    fprintf(net_debug, "\n");
 }
 
