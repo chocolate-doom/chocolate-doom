@@ -137,6 +137,22 @@ static boolean ProcessSetupPacket(net_packet_t *packet, int *id, int *stage)
     return sscanf(buf, "ID%d_%d", id, stage) == 2;
 }
 
+static unsigned int HashAddr(net_addr_t *addr)
+{
+    unsigned int result = 5381;
+    unsigned int i;
+    char *addr_str;
+
+    addr_str = NET_AddrToString(addr);
+    // djb2 hash:
+    for (i = 0; addr_str[i] != '\0'; ++i)
+    {
+        result = result * 33 + addr_str[i];
+    }
+
+    return result;
+}
+
 static int GenerateID(void)
 {
     //!
@@ -159,7 +175,11 @@ static int GenerateID(void)
         return 999999;
     }
 
-    srand(time(NULL) + I_GetTimeMS());
+    // Otherwise generate the ID randomly, seeding from a hash of the remote
+    // address. This allows games to be played locally with -dbdial/-dbanswer
+    // in different Chocolate Doom instances without the possibility of the
+    // two processes generating the same ID.
+    srand(HashAddr(remote_addr));
     return rand() % 1000000;
 }
 
