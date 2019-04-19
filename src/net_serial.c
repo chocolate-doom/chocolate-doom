@@ -86,6 +86,7 @@ net_context_t *NET_Serial_Answer(void)
     {
         if (NET_RecvPacket(context, &addr, &packet))
         {
+            NET_ReleaseAddress(remote_addr);
             remote_addr = addr;
             NET_FreePacket(packet);
         }
@@ -184,6 +185,7 @@ void NET_Serial_ArbitrateGame(net_context_t *context,
                 stage = remote_stage + 1;
             }
             NET_FreePacket(packet);
+            NET_ReleaseAddress(addr);
         }
 
         if (stage > 0 && id == remote_id)

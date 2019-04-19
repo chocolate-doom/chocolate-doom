@@ -127,6 +127,7 @@ static net_addr_t *NET_DBIPX_FindAddress(ipx_addr_t addr)
     memcpy(new_entry->ipx_addr, addr, sizeof(ipx_addr_t));
     new_entry->net_addr.handle = &new_entry->ipx_addr;
     new_entry->net_addr.module = &net_dbipx_module;
+    new_entry->net_addr.refcount = 0;
     addr_table[empty_entry] = new_entry;
 
     return &new_entry->net_addr;
@@ -270,9 +271,11 @@ static boolean NET_DBIPX_RecvPacket(net_addr_t **addr, net_packet_t **packet)
          && NET_ReadInt32(got_packet, &unused)
          && got_packet->len >= 4)
         {
+            NET_ReleaseAddress(got_addr);
             break;
         }
         NET_FreePacket(got_packet);
+        NET_ReleaseAddress(got_addr);
     }
 
     *addr = NET_DBIPX_FindAddress(hdr.src_addr);
@@ -374,6 +377,7 @@ static boolean RegisterToServer(void)
 
         while (NET_RecvPacket(ipx_context, &addr, &packet))
         {
+            NET_ReleaseAddress(addr);
             if (addr == server_addr
              && ParseRegistrationResponse(packet))
             {
@@ -460,6 +464,7 @@ static int FindOrAddAddr(net_vanilla_settings_t *settings, net_addr_t *addr,
                 MAXNETNODES);
     }
     settings->addrs[settings->num_nodes] = addr;
+    NET_ReferenceAddress(addr);
     i = settings->num_nodes;
     ++settings->num_nodes;
     printf("Found node at %s (%i/%i)\n", NET_AddrToString(addr),
@@ -536,12 +541,14 @@ void NET_DBIPX_ArbitrateGame(net_vanilla_settings_t *settings,
     {
         while (NET_DBIPX_RecvPacket(&addr, &packet))
         {
+            NET_ReferenceAddress(addr);
             if (ReadSetupData(packet, &tmp))
             {
                 node_num = FindOrAddAddr(settings, addr, want_nodes);
                 node_data[node_num] = tmp;
             }
             NET_FreePacket(packet);
+            NET_ReleaseAddress(addr);
         }
 
         setup.game_id = game_id;

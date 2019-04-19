@@ -332,6 +332,8 @@ static void RecvGameSettings(net_gamesettings_t *settings)
             continue;
         }
 
+        // TODO: Confirm sending address is key player
+        NET_ReleaseAddress(addr);
         if (ReadPacketType(packet) != NCMD_SETUP)
         {
             continue;
@@ -637,6 +639,7 @@ void NET_VanillaRun(void)
     {
         ProcessPacket(packet, addr);
         NET_FreePacket(packet);
+        NET_ReleaseAddress(addr);
     }
 
     while (run_tics < sent_tics)
