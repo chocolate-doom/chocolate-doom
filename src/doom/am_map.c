@@ -724,8 +724,9 @@ AM_Responder
 	else
 	if (!followplayer && (ev->data2 || ev->data3))
 	{
-		m_paninc.x = FTOM(ev->data2);
-		m_paninc.y = FTOM(ev->data3);
+		// [crispy] mouse sensitivity for strafe
+		m_paninc.x = FTOM(ev->data2*(mouseSensitivity_x2+5)/80);
+		m_paninc.y = FTOM(ev->data3*(mouseSensitivity_x2+5)/80);
 		f_oldloc.y = INT_MAX;
 		rc = true;
 	}
