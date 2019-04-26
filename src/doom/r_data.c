@@ -1181,11 +1181,10 @@ void R_InitData (void)
     // R_InitBrightmaps() comes next, because it sets R_BrightmapForTexName()
     // to initialize brightmaps depending on gameversion in R_InitTextures().
     R_InitFlats ();
-    R_InitBrightmaps (0);
+    R_InitBrightmaps ();
     R_InitTextures ();
     printf (".");
 //  R_InitFlats (); [crispy] moved ...
-    R_InitBrightmaps (1);
     printf (".");
     R_InitSpriteLumps ();
     printf (".");
