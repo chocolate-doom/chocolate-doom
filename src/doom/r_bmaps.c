@@ -824,68 +824,55 @@ byte *(*R_BrightmapForSprite) (const int type);
 byte *(*R_BrightmapForFlatNum) (const int num);
 byte *(*R_BrightmapForState) (const int state);
 
-void R_InitBrightmaps (int flats)
+void R_InitBrightmaps ()
 {
 	if (gameversion == exe_hacx)
 	{
-		if (flats)
-		{
-			bmapflatnum[0] = R_FlatNumForName("FLOOR1_1");
-			bmapflatnum[1] = R_FlatNumForName("FLOOR1_7");
-			bmapflatnum[2] = R_FlatNumForName("FLOOR3_3");
-			bmapflatnum[3] = R_FlatNumForName("NUKAGE1");
-			bmapflatnum[4] = R_FlatNumForName("NUKAGE2");
-			bmapflatnum[5] = R_FlatNumForName("NUKAGE3");
-			bmapflatnum[6] = R_FlatNumForName("BLOOD1");
-			bmapflatnum[7] = R_FlatNumForName("BLOOD2");
-			bmapflatnum[8] = R_FlatNumForName("BLOOD2");
-			bmapflatnum[9] = R_FlatNumForName("SLIME13");
-			bmapflatnum[10] = R_FlatNumForName("SLIME14");
-			bmapflatnum[11] = R_FlatNumForName("SLIME15");
-		}
-		else
-		{
-			R_BrightmapForTexName = R_BrightmapForTexName_Hacx;
-			R_BrightmapForSprite = R_BrightmapForSprite_Hacx;
-			R_BrightmapForFlatNum = R_BrightmapForFlatNum_Hacx;
-			R_BrightmapForState = R_BrightmapForState_Hacx;
-		}
+		bmapflatnum[0] = R_FlatNumForName("FLOOR1_1");
+		bmapflatnum[1] = R_FlatNumForName("FLOOR1_7");
+		bmapflatnum[2] = R_FlatNumForName("FLOOR3_3");
+		bmapflatnum[3] = R_FlatNumForName("NUKAGE1");
+		bmapflatnum[4] = R_FlatNumForName("NUKAGE2");
+		bmapflatnum[5] = R_FlatNumForName("NUKAGE3");
+		bmapflatnum[6] = R_FlatNumForName("BLOOD1");
+		bmapflatnum[7] = R_FlatNumForName("BLOOD2");
+		bmapflatnum[8] = R_FlatNumForName("BLOOD2");
+		bmapflatnum[9] = R_FlatNumForName("SLIME13");
+		bmapflatnum[10] = R_FlatNumForName("SLIME14");
+		bmapflatnum[11] = R_FlatNumForName("SLIME15");
+
+		R_BrightmapForTexName = R_BrightmapForTexName_Hacx;
+		R_BrightmapForSprite = R_BrightmapForSprite_Hacx;
+		R_BrightmapForFlatNum = R_BrightmapForFlatNum_Hacx;
+		R_BrightmapForState = R_BrightmapForState_Hacx;
 	}
 	else
 	if (gameversion == exe_chex)
 	{
-		if (!flats)
+		int lump;
+
+		// [crispy] detect Chex Quest 2
+		lump = W_CheckNumForName("INTERPIC");
+		if (!strcasecmp(W_WadNameForLump(lumpinfo[lump]), "chex2.wad"))
 		{
-			int lump;
-
-			// [crispy] detect Chex Quest 2
-			lump = W_CheckNumForName("INTERPIC");
-			if (!strcasecmp(W_WadNameForLump(lumpinfo[lump]), "chex2.wad"))
-			{
-				chex2 = true;
-			}
-
-			R_BrightmapForTexName = R_BrightmapForTexName_Chex;
-			R_BrightmapForSprite = R_BrightmapForSprite_Chex;
-			R_BrightmapForFlatNum = R_BrightmapForFlatNum_None;
-			R_BrightmapForState = R_BrightmapForState_None;
+			chex2 = true;
 		}
+
+		R_BrightmapForTexName = R_BrightmapForTexName_Chex;
+		R_BrightmapForSprite = R_BrightmapForSprite_Chex;
+		R_BrightmapForFlatNum = R_BrightmapForFlatNum_None;
+		R_BrightmapForState = R_BrightmapForState_None;
 	}
 	else
 	{
-		if (flats)
-		{
-			// [crispy] only three select brightmapped flats
-			bmapflatnum[0] = R_FlatNumForName("CONS1_1");
-			bmapflatnum[1] = R_FlatNumForName("CONS1_5");
-			bmapflatnum[2] = R_FlatNumForName("CONS1_7");
-		}
-		else
-		{
-			R_BrightmapForTexName = R_BrightmapForTexName_Doom;
-			R_BrightmapForSprite = R_BrightmapForSprite_Doom;
-			R_BrightmapForFlatNum = R_BrightmapForFlatNum_Doom;
-			R_BrightmapForState = R_BrightmapForState_Doom;
-		}
+		// [crispy] only three select brightmapped flats
+		bmapflatnum[0] = R_FlatNumForName("CONS1_1");
+		bmapflatnum[1] = R_FlatNumForName("CONS1_5");
+		bmapflatnum[2] = R_FlatNumForName("CONS1_7");
+
+		R_BrightmapForTexName = R_BrightmapForTexName_Doom;
+		R_BrightmapForSprite = R_BrightmapForSprite_Doom;
+		R_BrightmapForFlatNum = R_BrightmapForFlatNum_Doom;
+		R_BrightmapForState = R_BrightmapForState_Doom;
 	}
 }
