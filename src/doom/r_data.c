@@ -765,8 +765,16 @@ void R_InitTextures (void)
     {
 	for (j = 0; j < pnameslumps[i].nummappatches; j++)
 	{
+	    int p;
+
 	    M_StringCopy(name, pnameslumps[i].name_p + j * 8, sizeof(name));
-	    patchlookup[k++] = W_CheckNumForName(name);
+	    p = W_CheckNumForName(name);
+	    // [crispy] prevent flat lumps from being mistaken as patches
+	    while (p >= firstflat && p <= lastflat)
+	    {
+		p = W_CheckNumForNameFromTo (name, p - 1, 0);
+	    }
+	    patchlookup[k++] = p;
 	}
     }
 
@@ -1167,10 +1175,16 @@ void R_InitColormaps (void)
 //
 void R_InitData (void)
 {
+    // [crispy] Moved R_InitFlats() to the top, because it sets firstflat/lastflat
+    // which are required by R_InitTextures() to prevent flat lumps from being
+    // mistaken as patches and by R_InitBrightmaps() to set brightmaps for flats.
+    // R_InitBrightmaps() comes next, because it sets R_BrightmapForTexName()
+    // to initialize brightmaps depending on gameversion in R_InitTextures().
+    R_InitFlats ();
     R_InitBrightmaps (0);
     R_InitTextures ();
     printf (".");
-    R_InitFlats ();
+//  R_InitFlats (); [crispy] moved ...
     R_InitBrightmaps (1);
     printf (".");
     R_InitSpriteLumps ();
