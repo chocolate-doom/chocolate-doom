@@ -609,6 +609,12 @@ static byte *R_BrightmapForSprite_Doom (const int type)
 				return greenonly1;
 				break;
 			}
+			// Barrel
+			case SPR_BAR1:
+			{
+				return greenonly3;
+				break;
+			}
 			// Cell Charge Pack
 			case SPR_CELP:
 			{
