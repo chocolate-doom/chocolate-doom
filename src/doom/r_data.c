@@ -765,16 +765,17 @@ void R_InitTextures (void)
     {
 	for (j = 0; j < pnameslumps[i].nummappatches; j++)
 	{
-	    int p;
+	    int p, po;
 
 	    M_StringCopy(name, pnameslumps[i].name_p + j * 8, sizeof(name));
-	    p = W_CheckNumForName(name);
+	    p = po = W_CheckNumForName(name);
 	    // [crispy] prevent flat lumps from being mistaken as patches
 	    while (p >= firstflat && p <= lastflat)
 	    {
 		p = W_CheckNumForNameFromTo (name, p - 1, 0);
 	    }
-	    patchlookup[k++] = p;
+	    // [crispy] if the name is unambiguous, use the lump we found
+	    patchlookup[k++] = (p == -1) ? po : p;
 	}
     }
 
