@@ -135,7 +135,15 @@ static net_packet_t *MakeSetupPacket(net_gamesettings_t *settings)
                         | ((settings->deathmatch & 0x03) << 6)
                         | (settings->nomonsters ? 0x20 : 0)
                         | (settings->respawn_monsters ? 0x10 : 0));
-    NET_WriteInt8(packet, (settings->episode << 6) | settings->map);
+    switch (vsettings.protocol)
+    {
+        case NET_VANILLA_PROTO_DOOM:
+            NET_WriteInt8(packet, (settings->episode << 6) | settings->map);
+            break;
+        case NET_VANILLA_PROTO_HERETIC:
+            NET_WriteInt8(packet, (settings->episode << 4) | settings->map);
+            break;
+    }
     NET_WriteInt8(packet, D_GameVersionCode(settings->gameversion));
     NET_WriteInt8(packet, 0); // numtics = 0
 
@@ -162,8 +170,18 @@ static boolean ParseSetupPacket(net_packet_t *packet,
     {
         return false;
     }
-    settings->episode = val >> 6;
-    settings->map = val & 0x1f;
+
+    switch (vsettings.protocol)
+    {
+        case NET_VANILLA_PROTO_DOOM:
+            settings->episode = val >> 6;
+            settings->map = val & 0x1f;
+            break;
+        case NET_VANILLA_PROTO_HERETIC:
+            settings->episode = val >> 4;
+            settings->map = val & 0x0f;
+            break;
+    }
 
     if (!NET_ReadInt8(packet, &val))
     {
@@ -189,6 +207,16 @@ static void WriteTiccmd(net_packet_t *packet, ticcmd_t *ticcmd)
     NET_WriteInt16_LE(packet, ticcmd->consistancy);
     NET_WriteInt8(packet, ticcmd->chatchar);
     NET_WriteInt8(packet, ticcmd->buttons);
+
+    switch (vsettings.protocol)
+    {
+        case NET_VANILLA_PROTO_DOOM:
+            break;
+        case NET_VANILLA_PROTO_HERETIC:
+            NET_WriteInt8(packet, ticcmd->lookfly);
+            NET_WriteInt8(packet, ticcmd->arti);
+            break;
+    }
 }
 
 static net_packet_t *MakeTicsPacket(doomdata_t *data, unsigned int flags)
@@ -219,7 +247,7 @@ static net_packet_t *MakeTicsPacket(doomdata_t *data, unsigned int flags)
 static boolean ReadTiccmd(net_packet_t *packet, ticcmd_t *ticcmd)
 {
     int forwardmove, sidemove, angleturn, consistency;
-    unsigned int chatchar, buttons;
+    unsigned int chatchar, buttons, lookfly, arti;
 
     if (!NET_ReadSInt8(packet, &forwardmove)
      || !NET_ReadSInt8(packet, &sidemove)
@@ -237,6 +265,21 @@ static boolean ReadTiccmd(net_packet_t *packet, ticcmd_t *ticcmd)
     ticcmd->consistancy = consistency;
     ticcmd->chatchar = chatchar;
     ticcmd->buttons = buttons;
+
+    switch (vsettings.protocol)
+    {
+        case NET_VANILLA_PROTO_DOOM:
+            break;
+        case NET_VANILLA_PROTO_HERETIC:
+            if (!NET_ReadInt8(packet, &lookfly)
+             || !NET_ReadInt8(packet, &arti))
+            {
+                return false;
+            }
+            ticcmd->lookfly = lookfly;
+            ticcmd->arti = arti;
+            break;
+    }
 
     return true;
 }

@@ -21,6 +21,7 @@
 
 #include "d_event.h"
 #include "d_loop.h"
+#include "d_mode.h"
 #include "d_ticcmd.h"
 
 #include "i_system.h"
@@ -433,8 +434,27 @@ void D_StartNetGame(net_gamesettings_t *settings,
     //}
 }
 
+static net_vanilla_protocol_t VanillaProtocol(int mission)
+{
+    switch (mission)
+    {
+        default:
+            I_Error("No vanilla protocol for game mission '%s'.",
+                    D_GameMissionString(mission));
+        case doom:
+        case doom2:
+        case pack_tnt:
+        case pack_plut:
+        case pack_chex:
+        case pack_hacx:
+            return NET_VANILLA_PROTO_DOOM;
+        case heretic:
+            return NET_VANILLA_PROTO_HERETIC;
+    }
+}
+
 // Initialize a peer-to-peer game with the -net command line argument.
-static void ParseVanillaNet(int p)
+static void ParseVanillaNet(int mission, int p)
 {
     net_context_t *vcontext;
     net_vanilla_settings_t vsettings;
@@ -444,6 +464,7 @@ static void ParseVanillaNet(int p)
     net_udp_module.InitServer();
     NET_AddModule(vcontext, &net_udp_module);
 
+    vsettings.protocol = VanillaProtocol(mission);
     vsettings.consoleplayer = atoi(myargv[p]);
     vsettings.num_nodes = 0;
     vsettings.num_players = 1;
@@ -470,7 +491,7 @@ static void ParseVanillaNet(int p)
 }
 
 // Initialize an IPX game by connecting to a DOSbox IPX server.
-static void IPXConnect(char *address)
+static void IPXConnect(int mission, char *address)
 {
     net_context_t *context;
     net_vanilla_settings_t settings;
@@ -492,18 +513,20 @@ static void IPXConnect(char *address)
     }
 
     context = NET_DBIPX_Connect(address);
+    settings.protocol = VanillaProtocol(mission);
     NET_DBIPX_ArbitrateGame(&settings, want_nodes);
     NET_VanillaInit(context, &settings);
     net_vanilla_game = true;
 }
 
 // Initialize a serial game connecting to a DOSBox modem server.
-static void SerialDial(char *address)
+static void SerialDial(int mission, char *address)
 {
     net_context_t *context;
     net_vanilla_settings_t settings;
 
     context = NET_Serial_Connect(address);
+    settings.protocol = VanillaProtocol(mission);
     NET_Serial_ArbitrateGame(context, &settings);
     NET_VanillaInit(context, &settings);
     net_vanilla_game = true;
@@ -511,12 +534,13 @@ static void SerialDial(char *address)
 
 // Initialize a serial game listening for a connection from a DOSBox
 // emulated "modem".
-static void SerialAnswer(void)
+static void SerialAnswer(int mission)
 {
     net_context_t *context;
     net_vanilla_settings_t settings;
 
     context = NET_Serial_Answer();
+    settings.protocol = VanillaProtocol(mission);
     NET_Serial_ArbitrateGame(context, &settings);
     NET_VanillaInit(context, &settings);
     net_vanilla_game = true;
@@ -536,7 +560,7 @@ boolean D_InitNetGame(net_connect_data_t *connect_data)
     i = M_CheckParmWithArgs("-net", 2);
     if (i > 0)
     {
-        ParseVanillaNet(i + 1);
+        ParseVanillaNet(connect_data->gamemission, i + 1);
         return true;
     }
 
@@ -551,7 +575,7 @@ boolean D_InitNetGame(net_connect_data_t *connect_data)
     i = M_CheckParmWithArgs("-dbconnect", 1);
     if (i > 0)
     {
-        IPXConnect(myargv[i + 1]);
+        IPXConnect(connect_data->gamemission, myargv[i + 1]);
         return true;
     }
 
@@ -563,7 +587,7 @@ boolean D_InitNetGame(net_connect_data_t *connect_data)
 
     if (M_ParmExists("-dbanswer"))
     {
-        SerialAnswer();
+        SerialAnswer(connect_data->gamemission);
         return true;
     }
 
@@ -577,7 +601,7 @@ boolean D_InitNetGame(net_connect_data_t *connect_data)
     i = M_CheckParmWithArgs("-dbdial", 1);
     if (i > 0)
     {
-        SerialDial(myargv[i + 1]);
+        SerialDial(connect_data->gamemission, myargv[i + 1]);
         return true;
     }
 

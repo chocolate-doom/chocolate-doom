@@ -17,8 +17,15 @@
 
 #include "net_defs.h"
 
+typedef enum
+{
+    NET_VANILLA_PROTO_DOOM,
+    NET_VANILLA_PROTO_HERETIC,
+} net_vanilla_protocol_t;
+
 typedef struct
 {
+    net_vanilla_protocol_t protocol;
     net_addr_t *addrs[MAXNETNODES];
     unsigned int num_nodes;
 
