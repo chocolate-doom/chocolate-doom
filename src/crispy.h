@@ -69,6 +69,9 @@ typedef struct
 	int soundfull;
 	int soundmono;
 	int translucency;
+#if CRISPY_TRUECOLOR
+	int truecolor;
+#endif
 	int uncapped;
 	int vsync;
 	int weaponsquat;

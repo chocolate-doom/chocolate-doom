@@ -45,6 +45,7 @@
 #include "dstrings.h"
 #include "sounds.h"
 
+#include "r_state.h" // [crispy] colormaps
 #include "v_video.h" // [crispy] V_DrawPatch() et al.
 #include "v_trans.h" // [crispy] colored kills/items/secret/etc. messages
 
@@ -755,12 +756,21 @@ void HU_DemoProgressBar (void)
 {
     const int i = SCREENWIDTH * defdemotics / deftotaldemotics;
 
+#ifndef CRISPY_TRUECOLOR
 //  V_DrawHorizLine(0, SCREENHEIGHT - 3, i, 4); // [crispy] white
     V_DrawHorizLine(0, SCREENHEIGHT - 2, i, 0); // [crispy] black
     V_DrawHorizLine(0, SCREENHEIGHT - 1, i, 4); // [crispy] white
 
 //  V_DrawHorizLine(0, SCREENHEIGHT - 2, 1, 4); // [crispy] white start
 //  V_DrawHorizLine(i - 1, SCREENHEIGHT - 2, 1, 4); // [crispy] white end
+#else
+//  V_DrawHorizLine(0, SCREENHEIGHT - 3, i, colormaps[4]); // [crispy] white
+    V_DrawHorizLine(0, SCREENHEIGHT - 2, i, colormaps[0]); // [crispy] black
+    V_DrawHorizLine(0, SCREENHEIGHT - 1, i, colormaps[4]); // [crispy] white
+
+//  V_DrawHorizLine(0, SCREENHEIGHT - 2, 1, colormaps[4]); // [crispy] white start
+//  V_DrawHorizLine(i - 1, SCREENHEIGHT - 2, 1, colormaps[4]); // [crispy] white end
+#endif
 }
 
 // [crispy] static, non-projected crosshair

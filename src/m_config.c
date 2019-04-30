@@ -2060,6 +2060,14 @@ static default_t extra_defaults_list[] =
     //!
     // @game doom
     //
+    // Enable true-color rendering (experimental).
+    //
+
+    CONFIG_VARIABLE_INT(crispy_truecolor),
+
+    //!
+    // @game doom
+    //
     // Uncapped Framerate.
     //
 

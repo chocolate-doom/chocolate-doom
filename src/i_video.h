@@ -53,8 +53,13 @@ void I_GraphicsCheckCommandLine(void);
 void I_ShutdownGraphics(void);
 
 // Takes full 8 bit values.
+#ifndef CRISPY_TRUECOLOR
 void I_SetPalette (byte* palette);
 int I_GetPaletteIndex(int r, int g, int b);
+#else
+void I_SetPalette (int palette);
+extern const pixel_t I_MapRGB (const uint8_t r, const uint8_t g, const uint8_t b);
+#endif
 
 void I_UpdateNoBlit (void);
 void I_FinishUpdate (void);

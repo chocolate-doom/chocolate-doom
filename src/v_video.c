@@ -34,6 +34,9 @@
 #include "i_video.h"
 #include "m_bbox.h"
 #include "m_misc.h"
+#ifdef CRISPY_TRUECOLOR
+#include "v_trans.h"
+#endif
 #include "v_video.h"
 #include "w_wad.h"
 #include "z_zone.h"
@@ -55,6 +58,9 @@ byte *tinttable = NULL;
 byte *tranmap = NULL;
 byte *dp_translation = NULL;
 boolean dp_translucent = false;
+#ifdef CRISPY_TRUECOLOR
+extern pixel_t *colormaps;
+#endif
 
 // villsa [STRIFE] Blending table used for Strife
 byte *xlatab = NULL;
@@ -158,19 +164,35 @@ void V_SetPatchClipCallback(vpatchclipfunc_t func)
 // [crispy] four different rendering functions
 // for each possible combination of dp_translation and dp_translucent:
 // (1) normal, opaque patch
-static const inline byte drawpatchpx00 (const byte dest, const byte source)
+static const inline pixel_t drawpatchpx00 (const pixel_t dest, const pixel_t source)
+#ifndef CRISPY_TRUECOLOR
 {return source;}
+#else
+{return colormaps[source];}
+#endif
 // (2) color-translated, opaque patch
-static const inline byte drawpatchpx01 (const byte dest, const byte source)
+static const inline pixel_t drawpatchpx01 (const pixel_t dest, const pixel_t source)
+#ifndef CRISPY_TRUECOLOR
 {return dp_translation[source];}
+#else
+{return colormaps[dp_translation[source]];}
+#endif
 // (3) normal, translucent patch
-static const inline byte drawpatchpx10 (const byte dest, const byte source)
+static const inline pixel_t drawpatchpx10 (const pixel_t dest, const pixel_t source)
+#ifndef CRISPY_TRUECOLOR
 {return tranmap[(dest<<8)+source];}
+#else
+{return I_BlendOver(dest, colormaps[source]);}
+#endif
 // (4) color-translated, translucent patch
-static const inline byte drawpatchpx11 (const byte dest, const byte source)
+static const inline pixel_t drawpatchpx11 (const pixel_t dest, const pixel_t source)
+#ifndef CRISPY_TRUECOLOR
 {return tranmap[(dest<<8)+dp_translation[source]];}
+#else
+{return I_BlendOver(dest, colormaps[dp_translation[source]]);}
+#endif
 // [crispy] array of function pointers holding the different rendering functions
-typedef const byte drawpatchpx_t (const byte dest, const byte source);
+typedef const pixel_t drawpatchpx_t (const pixel_t dest, const pixel_t source);
 static drawpatchpx_t *const drawpatchpx_a[2][2] = {{drawpatchpx11, drawpatchpx10}, {drawpatchpx01, drawpatchpx00}};
 
 static fixed_t dx, dxi, dy, dyi;
@@ -183,7 +205,7 @@ static void V_DrawPatchCrispy(int x, int y, patch_t *patch, int r)
     pixel_t *desttop;
     pixel_t *dest;
     byte *source;
-    byte *desttop2, *dest2;
+    pixel_t *desttop2, *dest2;
     int w;
 
     // [crispy] four different rendering functions
@@ -270,7 +292,11 @@ static void V_DrawPatchCrispy(int x, int y, patch_t *patch, int r)
             {
                 if (r)
                 {
+#ifndef CRISPY_TRUECOLOR
                     *dest2 = tinttable[*dest2];
+#else
+                    *dest2 = I_BlendDark(*dest2, 0xff>>1);
+#endif
                     dest2 += SCREENWIDTH;
                 }
 
@@ -426,7 +452,11 @@ void V_DrawPatchFlipped(int x, int y, patch_t *patch)
                 // [crispy] too high
                 if (top++ >= 0)
                 {
+#ifndef CRISPY_TRUECOLOR
                     *dest = source[srccol >> FRACBITS];
+#else
+                    *dest = colormaps[source[srccol >> FRACBITS]];
+#endif
                 }
                 srccol += dyi;
                 dest += SCREENWIDTH;
@@ -715,9 +745,9 @@ void V_DrawBlock(int x, int y, int width, int height, pixel_t *src)
     } 
 } 
 
-void V_DrawScaledBlock(int x, int y, int width, int height, byte *src)
+void V_DrawScaledBlock(int x, int y, int width, int height, pixel_t *src)
 {
-    byte *dest;
+    pixel_t *dest;
     int i, j;
 
 #ifdef RANGECHECK
@@ -807,7 +837,7 @@ void V_DrawBox(int x, int y, int w, int h, int c)
 // to the screen)
 //
 
-void V_CopyScaledBuffer(byte *dest, byte *src, size_t size)
+void V_CopyScaledBuffer(pixel_t *dest, pixel_t *src, size_t size)
 {
     int i, j;
 
@@ -1175,9 +1205,15 @@ static void DrawAcceleratingBox(int speed)
     int redline_x;
     int linelen;
 
+#ifndef CRISPY_TRUECOLOR
     red = I_GetPaletteIndex(0xff, 0x00, 0x00);
     white = I_GetPaletteIndex(0xff, 0xff, 0xff);
     yellow = I_GetPaletteIndex(0xff, 0xff, 0x00);
+#else
+    red = I_MapRGB(0xff, 0x00, 0x00);
+    white = I_MapRGB(0xff, 0xff, 0xff);
+    yellow = I_MapRGB(0xff, 0xff, 0x00);
+#endif
 
     // Calculate the position of the red threshold line when calibrating
     // acceleration.  This is 1/3 of the way along the box.
@@ -1235,7 +1271,11 @@ static void DrawNonAcceleratingBox(int speed)
     int white;
     int linelen;
 
+#ifndef CRISPY_TRUECOLOR
     white = I_GetPaletteIndex(0xff, 0xff, 0xff);
+#else
+    white = I_MapRGB(0xff, 0xff, 0xff);
+#endif
 
     if (speed > max_seen_speed)
     {
@@ -1264,9 +1304,15 @@ void V_DrawMouseSpeedBox(int speed)
     // Get palette indices for colors for widget. These depend on the
     // palette of the game being played.
 
+#ifndef CRISPY_TRUECOLOR
     bgcolor = I_GetPaletteIndex(0x77, 0x77, 0x77);
     bordercolor = I_GetPaletteIndex(0x55, 0x55, 0x55);
     black = I_GetPaletteIndex(0x00, 0x00, 0x00);
+#else
+    bgcolor = I_MapRGB(0x77, 0x77, 0x77);
+    bordercolor = I_MapRGB(0x55, 0x55, 0x55);
+    black = I_MapRGB(0x00, 0x00, 0x00);
+#endif
 
     // Calculate box position
 

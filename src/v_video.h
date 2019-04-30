@@ -70,7 +70,7 @@ void V_DrawPatchFullScreen(patch_t *patch, boolean flipped);
 // Draw a linear block of pixels into the view buffer.
 
 void V_DrawBlock(int x, int y, int width, int height, pixel_t *src);
-void V_DrawScaledBlock(int x, int y, int width, int height, byte *src);
+void V_DrawScaledBlock(int x, int y, int width, int height, pixel_t *src);
 
 void V_MarkRect(int x, int y, int width, int height);
 
@@ -78,7 +78,7 @@ void V_DrawFilledBox(int x, int y, int w, int h, int c);
 void V_DrawHorizLine(int x, int y, int w, int c);
 void V_DrawVertLine(int x, int y, int h, int c);
 void V_DrawBox(int x, int y, int w, int h, int c);
-void V_CopyScaledBuffer(byte *dest, byte *src, size_t size);
+void V_CopyScaledBuffer(pixel_t *dest, pixel_t *src, size_t size);
 
 // Draw a raw screen lump
 

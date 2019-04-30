@@ -32,6 +32,9 @@
 
 // Needs access to LFB (guess what).
 #include "v_video.h"
+#ifdef CRISPY_TRUECOLOR
+#include "v_trans.h"
+#endif
 
 // State.
 #include "doomstat.h"
@@ -405,7 +408,11 @@ void R_DrawFuzzColumn (void)
 	//  a pixel that is either one column
 	//  left or right of the current one.
 	// Add index from colormap to index.
+#ifndef CRISPY_TRUECOLOR
 	*dest = colormaps[6*256+dest[SCREENWIDTH*fuzzoffset[fuzzpos]]]; 
+#else
+	*dest = I_BlendDark(dest[fuzzoffset[fuzzpos]], 0xff>>2);
+#endif
 
 	// Clamp table lookup index.
 	if (++fuzzpos == FUZZTABLE) 
@@ -420,7 +427,11 @@ void R_DrawFuzzColumn (void)
     // draw one extra line using only pixels of that line and the one above
     if (cutoff)
     {
+#ifndef CRISPY_TRUECOLOR
 	*dest = colormaps[6*256+dest[SCREENWIDTH*(fuzzoffset[fuzzpos]-FUZZOFF)/2]];
+#else
+	*dest = I_BlendDark(dest[(fuzzoffset[fuzzpos]-FUZZOFF)/2], 0xff>>2);
+#endif
     }
 } 
 
@@ -482,8 +493,13 @@ void R_DrawFuzzColumnLow (void)
 	//  a pixel that is either one column
 	//  left or right of the current one.
 	// Add index from colormap to index.
+#ifndef CRISPY_TRUECOLOR
 	*dest = colormaps[6*256+dest[SCREENWIDTH*fuzzoffset[fuzzpos]]];
 	*dest2 = colormaps[6*256+dest2[SCREENWIDTH*fuzzoffset[fuzzpos]]];
+#else
+	*dest = I_BlendDark(dest[fuzzoffset[fuzzpos]], 0xff>>2); 
+	*dest2 = I_BlendDark(dest2[fuzzoffset[fuzzpos]], 0xff>>2); 
+#endif
 
 	// Clamp table lookup index.
 	if (++fuzzpos == FUZZTABLE) 
@@ -499,8 +515,13 @@ void R_DrawFuzzColumnLow (void)
     // draw one extra line using only pixels of that line and the one above
     if (cutoff)
     {
+#ifndef CRISPY_TRUECOLOR
 	*dest = colormaps[6*256+dest[SCREENWIDTH*(fuzzoffset[fuzzpos]-FUZZOFF)/2]];
 	*dest2 = colormaps[6*256+dest2[SCREENWIDTH*(fuzzoffset[fuzzpos]-FUZZOFF)/2]];
+#else
+	*dest = I_BlendDark(dest[(fuzzoffset[fuzzpos]-FUZZOFF)/2], 0xff>>2);
+	*dest2 = I_BlendDark(dest2[(fuzzoffset[fuzzpos]-FUZZOFF)/2], 0xff>>2);
+#endif
     }
 } 
  
@@ -622,7 +643,7 @@ extern byte *tranmap;
 void R_DrawTLColumn (void)
 {
     int			count;
-    byte*		dest;
+    pixel_t*		dest;
     fixed_t		frac;
     fixed_t		fracstep;
 
@@ -647,8 +668,13 @@ void R_DrawTLColumn (void)
 
     do
     {
+#ifndef CRISPY_TRUECOLOR
         // actual translucency map lookup taken from boom202s/R_DRAW.C:255
         *dest = tranmap[(*dest<<8)+dc_colormap[0][dc_source[frac>>FRACBITS]]];
+#else
+        const pixel_t destrgb = dc_colormap[0][dc_source[frac>>FRACBITS]];
+        *dest = blendfunc(*dest, destrgb);
+#endif
 	dest += SCREENWIDTH;
 
 	frac += fracstep;
@@ -659,8 +685,8 @@ void R_DrawTLColumn (void)
 void R_DrawTLColumnLow (void)
 {
     int			count;
-    byte*		dest;
-    byte*		dest2;
+    pixel_t*		dest;
+    pixel_t*		dest2;
     fixed_t		frac;
     fixed_t		fracstep;
     int                 x;
@@ -689,8 +715,14 @@ void R_DrawTLColumnLow (void)
 
     do
     {
+#ifndef CRISPY_TRUECOLOR
 	*dest = tranmap[(*dest<<8)+dc_colormap[0][dc_source[frac>>FRACBITS]]];
 	*dest2 = tranmap[(*dest2<<8)+dc_colormap[0][dc_source[frac>>FRACBITS]]];
+#else
+	const pixel_t destrgb = dc_colormap[0][dc_source[frac>>FRACBITS]];
+	*dest = blendfunc(*dest, destrgb);
+	*dest2 = blendfunc(*dest2, destrgb);
+#endif
 	dest += SCREENWIDTH;
 	dest2 += SCREENWIDTH;
 
@@ -1051,6 +1083,7 @@ void R_FillBackScreen (void)
 	 
     for (y=0 ; y<SCREENHEIGHT-SBARHEIGHT ; y++) 
     { 
+#ifndef CRISPY_TRUECOLOR
 	for (x=0 ; x<SCREENWIDTH/64 ; x++) 
 	{ 
 	    memcpy (dest, src+((y&63)<<6), 64); 
@@ -1062,6 +1095,12 @@ void R_FillBackScreen (void)
 	    memcpy (dest, src+((y&63)<<6), SCREENWIDTH&63); 
 	    dest += (SCREENWIDTH&63); 
 	} 
+#else
+	for (x=0 ; x<SCREENWIDTH ; x++)
+	{
+		*dest++ = colormaps[src[((y&63)<<6) + (x&63)]];
+	}
+#endif
     } 
      
     // Draw screen and bezel; this is done to a separate screen buffer.

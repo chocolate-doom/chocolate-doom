@@ -840,10 +840,18 @@ void R_InitTextures (void)
     if (I_ConsoleStdout())
     {
         printf("[");
+#ifndef CRISPY_TRUECOLOR
         for (i = 0; i < temp3 + 9 + 1; i++) // [crispy] one more for R_InitTranMap()
+#else
+        for (i = 0; i < temp3 + 9; i++)
+#endif
             printf(" ");
         printf("]");
+#ifndef CRISPY_TRUECOLOR
         for (i = 0; i < temp3 + 10 + 1; i++) // [crispy] one more for R_InitTranMap()
+#else
+        for (i = 0; i < temp3 + 10; i++)
+#endif
             printf("\b");
     }
 	
@@ -997,6 +1005,7 @@ void R_InitSpriteLumps (void)
     }
 }
 
+#ifndef CRISPY_TRUECOLOR
 // [crispy] initialize translucency filter map
 // based in parts on the implementation from boom202s/R_DATA.C:676-787
 
@@ -1004,9 +1013,9 @@ enum {
     r, g, b
 } rgb_t;
 
-int tran_filter_pct = 66;
+static const int tran_filter_pct = 66;
 
-void R_InitTranMap()
+static void R_InitTranMap()
 {
     int lump = W_CheckNumForName("TRANMAP");
 
@@ -1116,18 +1125,79 @@ void R_InitTranMap()
 	Z_ChangeTag(playpal, PU_CACHE);
     }
 }
+#endif
 
 //
 // R_InitColormaps
 //
 void R_InitColormaps (void)
 {
+#ifndef CRISPY_TRUECOLOR
     int	lump;
 
     // Load in the light tables, 
     //  256 byte align tables.
     lump = W_GetNumForName(DEH_String("COLORMAP"));
     colormaps = W_CacheLumpNum(lump, PU_STATIC);
+#else
+	byte *playpal;
+	int c, i, j = 0;
+	byte r, g, b;
+
+	playpal = W_CacheLumpName("PLAYPAL", PU_STATIC);
+
+	if (!colormaps)
+	{
+		colormaps = (lighttable_t*) Z_Malloc((NUMCOLORMAPS + 1) * 256 * sizeof(lighttable_t), PU_STATIC, 0);
+	}
+
+	if (crispy->truecolor)
+	{
+		for (c = 0; c < NUMCOLORMAPS; c++)
+		{
+			const float scale = 1. * c / NUMCOLORMAPS;
+
+			for (i = 0; i < 256; i++)
+			{
+				r = gammatable[usegamma][playpal[3 * i + 0]] * (1. - scale) + gammatable[usegamma][0] * scale;
+				g = gammatable[usegamma][playpal[3 * i + 1]] * (1. - scale) + gammatable[usegamma][0] * scale;
+				b = gammatable[usegamma][playpal[3 * i + 2]] * (1. - scale) + gammatable[usegamma][0] * scale;
+
+				colormaps[j++] = 0xff000000 | (r << 16) | (g << 8) | b;
+			}
+		}
+
+		// [crispy] Invulnerability (c == COLORMAPS)
+		for (i = 0; i < 256; i++)
+		{
+			const byte gray = 0xff -
+			     (byte) (0.299 * playpal[3 * i + 0] +
+			             0.587 * playpal[3 * i + 1] +
+			             0.144 * playpal[3 * i + 2]);
+			r = g = b = gammatable[usegamma][gray];
+
+			colormaps[j++] = 0xff000000 | (r << 16) | (g << 8) | b;
+		}
+	}
+	else
+	{
+		byte *const colormap = W_CacheLumpName("COLORMAP", PU_STATIC);
+
+		for (c = 0; c <= NUMCOLORMAPS; c++)
+		{
+			for (i = 0; i < 256; i++)
+			{
+				r = gammatable[usegamma][playpal[3 * colormap[c * 256 + i] + 0]] & ~3;
+				g = gammatable[usegamma][playpal[3 * colormap[c * 256 + i] + 1]] & ~3;
+				b = gammatable[usegamma][playpal[3 * colormap[c * 256 + i] + 2]] & ~3;
+
+				colormaps[j++] = 0xff000000 | (r << 16) | (g << 8) | b;
+			}
+		}
+
+		Z_ChangeTag(colormap, PU_CACHE);
+	}
+#endif
 
     // [crispy] initialize color translation and color strings tables
     {
@@ -1190,7 +1260,9 @@ void R_InitData (void)
     R_InitSpriteLumps ();
     printf (".");
     R_InitColormaps ();
+#ifndef CRISPY_TRUECOLOR
     R_InitTranMap(); // [crispy] prints a mark itself
+#endif
 }
 
 
