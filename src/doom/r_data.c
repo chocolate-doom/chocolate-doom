@@ -1143,6 +1143,14 @@ void R_InitColormaps (void)
 	byte *playpal;
 	int c, i, j = 0;
 	byte r, g, b;
+	extern byte **gamma2table;
+
+	// [crispy] intermediate gamma levels
+	if (!gamma2table)
+	{
+		extern void I_SetGammaTable (void);
+		I_SetGammaTable();
+	}
 
 	playpal = W_CacheLumpName("PLAYPAL", PU_STATIC);
 
@@ -1159,9 +1167,9 @@ void R_InitColormaps (void)
 
 			for (i = 0; i < 256; i++)
 			{
-				r = gammatable[usegamma][playpal[3 * i + 0]] * (1. - scale) + gammatable[usegamma][0] * scale;
-				g = gammatable[usegamma][playpal[3 * i + 1]] * (1. - scale) + gammatable[usegamma][0] * scale;
-				b = gammatable[usegamma][playpal[3 * i + 2]] * (1. - scale) + gammatable[usegamma][0] * scale;
+				r = gamma2table[usegamma][playpal[3 * i + 0]] * (1. - scale) + gamma2table[usegamma][0] * scale;
+				g = gamma2table[usegamma][playpal[3 * i + 1]] * (1. - scale) + gamma2table[usegamma][0] * scale;
+				b = gamma2table[usegamma][playpal[3 * i + 2]] * (1. - scale) + gamma2table[usegamma][0] * scale;
 
 				colormaps[j++] = 0xff000000 | (r << 16) | (g << 8) | b;
 			}
@@ -1174,7 +1182,7 @@ void R_InitColormaps (void)
 			     (byte) (0.299 * playpal[3 * i + 0] +
 			             0.587 * playpal[3 * i + 1] +
 			             0.144 * playpal[3 * i + 2]);
-			r = g = b = gammatable[usegamma][gray];
+			r = g = b = gamma2table[usegamma][gray];
 
 			colormaps[j++] = 0xff000000 | (r << 16) | (g << 8) | b;
 		}
@@ -1187,9 +1195,9 @@ void R_InitColormaps (void)
 		{
 			for (i = 0; i < 256; i++)
 			{
-				r = gammatable[usegamma][playpal[3 * colormap[c * 256 + i] + 0]] & ~3;
-				g = gammatable[usegamma][playpal[3 * colormap[c * 256 + i] + 1]] & ~3;
-				b = gammatable[usegamma][playpal[3 * colormap[c * 256 + i] + 2]] & ~3;
+				r = gamma2table[usegamma][playpal[3 * colormap[c * 256 + i] + 0]] & ~3;
+				g = gamma2table[usegamma][playpal[3 * colormap[c * 256 + i] + 1]] & ~3;
+				b = gamma2table[usegamma][playpal[3 * colormap[c * 256 + i] + 2]] & ~3;
 
 				colormaps[j++] = 0xff000000 | (r << 16) | (g << 8) | b;
 			}

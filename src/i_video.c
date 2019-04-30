@@ -891,8 +891,8 @@ void I_ReadScreen (pixel_t* scr)
 // I_SetPalette
 //
 // [crispy] intermediate gamma levels
-static byte **gamma2table;
-static void I_SetGammaTable (void)
+byte **gamma2table = NULL;
+void I_SetGammaTable (void)
 {
 	int i;
 
@@ -975,12 +975,6 @@ int I_GetPaletteIndex(int r, int g, int b)
 #else
 void I_SetPalette (int palette)
 {
-    // [crispy] intermediate gamma levels
-    if (!gamma2table)
-    {
-        I_SetGammaTable();
-    }
-
     switch (palette)
     {
 	case 0:
