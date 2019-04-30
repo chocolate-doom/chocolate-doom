@@ -2057,6 +2057,7 @@ static default_t extra_defaults_list[] =
 
     CONFIG_VARIABLE_INT(crispy_translucency),
 
+#ifdef CRISPY_TRUECOLOR
     //!
     // @game doom
     //
@@ -2064,6 +2065,7 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_INT(crispy_truecolor),
+#endif
 
     //!
     // @game doom
