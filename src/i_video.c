@@ -1872,13 +1872,9 @@ const pixel_t I_BlendAdd (const pixel_t bg, const pixel_t fg)
 	return amask | r | g | b;
 }
 
-const pixel_t I_BlendDark (const pixel_t bg, const int d)
+const pixel_t I_BlendDark (pixel_t bg, const int d)
 {
-	const uint32_t r = (((bg & rmask) * (0xff - d)) >> 8) & rmask;
-	const uint32_t g = (((bg & gmask) * (0xff - d)) >> 8) & gmask;
-	const uint32_t b = (((bg & bmask) * (0xff - d)) >> 8) & bmask;
-
-	return amask | r | g | b;
+	return amask | ((bg >> 1) & ~0x80808080);
 }
 
 const pixel_t I_BlendOver (const pixel_t bg, const pixel_t fg)
