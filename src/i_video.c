@@ -1872,9 +1872,19 @@ const pixel_t I_BlendAdd (const pixel_t bg, const pixel_t fg)
 	return amask | r | g | b;
 }
 
-const pixel_t I_BlendDark (pixel_t bg, const int d)
+// [crispy] http://stereopsis.com/doubleblend.html
+const pixel_t I_BlendDark (const pixel_t bg, const int d)
 {
-	return amask | ((bg >> 1) & ~0x80808080);
+	const uint32_t ag = (bg & 0xff00ff00) >> 8;
+	const uint32_t rb =  bg & 0x00ff00ff;
+
+	uint32_t sag = d * ag;
+	uint32_t srb = d * rb;
+
+	sag = sag & 0xff00ff00;
+	srb = (srb >> 8) & 0x00ff00ff;
+
+	return amask | sag | srb;
 }
 
 const pixel_t I_BlendOver (const pixel_t bg, const pixel_t fg)

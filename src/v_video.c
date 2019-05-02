@@ -295,7 +295,7 @@ static void V_DrawPatchCrispy(int x, int y, patch_t *patch, int r)
 #ifndef CRISPY_TRUECOLOR
                     *dest2 = tinttable[*dest2];
 #else
-                    *dest2 = I_BlendDark(*dest2, 0xff>>1);
+                    *dest2 = I_BlendDark(*dest2, 0x80);
 #endif
                     dest2 += SCREENWIDTH;
                 }

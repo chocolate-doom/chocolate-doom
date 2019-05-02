@@ -411,7 +411,7 @@ void R_DrawFuzzColumn (void)
 #ifndef CRISPY_TRUECOLOR
 	*dest = colormaps[6*256+dest[SCREENWIDTH*fuzzoffset[fuzzpos]]]; 
 #else
-	*dest = I_BlendDark(dest[fuzzoffset[fuzzpos]], 0xff>>2);
+	*dest = I_BlendDark(dest[fuzzoffset[fuzzpos]], 0xbf);
 #endif
 
 	// Clamp table lookup index.
@@ -430,7 +430,7 @@ void R_DrawFuzzColumn (void)
 #ifndef CRISPY_TRUECOLOR
 	*dest = colormaps[6*256+dest[SCREENWIDTH*(fuzzoffset[fuzzpos]-FUZZOFF)/2]];
 #else
-	*dest = I_BlendDark(dest[(fuzzoffset[fuzzpos]-FUZZOFF)/2], 0xff>>2);
+	*dest = I_BlendDark(dest[(fuzzoffset[fuzzpos]-FUZZOFF)/2], 0xbf);
 #endif
     }
 } 
@@ -497,8 +497,8 @@ void R_DrawFuzzColumnLow (void)
 	*dest = colormaps[6*256+dest[SCREENWIDTH*fuzzoffset[fuzzpos]]];
 	*dest2 = colormaps[6*256+dest2[SCREENWIDTH*fuzzoffset[fuzzpos]]];
 #else
-	*dest = I_BlendDark(dest[fuzzoffset[fuzzpos]], 0xff>>2); 
-	*dest2 = I_BlendDark(dest2[fuzzoffset[fuzzpos]], 0xff>>2); 
+	*dest = I_BlendDark(dest[fuzzoffset[fuzzpos]], 0xbf);
+	*dest2 = I_BlendDark(dest2[fuzzoffset[fuzzpos]], 0xbf);
 #endif
 
 	// Clamp table lookup index.
@@ -519,8 +519,8 @@ void R_DrawFuzzColumnLow (void)
 	*dest = colormaps[6*256+dest[SCREENWIDTH*(fuzzoffset[fuzzpos]-FUZZOFF)/2]];
 	*dest2 = colormaps[6*256+dest2[SCREENWIDTH*(fuzzoffset[fuzzpos]-FUZZOFF)/2]];
 #else
-	*dest = I_BlendDark(dest[(fuzzoffset[fuzzpos]-FUZZOFF)/2], 0xff>>2);
-	*dest2 = I_BlendDark(dest2[(fuzzoffset[fuzzpos]-FUZZOFF)/2], 0xff>>2);
+	*dest = I_BlendDark(dest[(fuzzoffset[fuzzpos]-FUZZOFF)/2], 0xbf);
+	*dest2 = I_BlendDark(dest2[(fuzzoffset[fuzzpos]-FUZZOFF)/2], 0xbf);
 #endif
     }
 } 
