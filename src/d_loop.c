@@ -450,6 +450,8 @@ static net_vanilla_protocol_t VanillaProtocol(int mission)
             return NET_VANILLA_PROTO_DOOM;
         case heretic:
             return NET_VANILLA_PROTO_HERETIC;
+        case hexen:
+            return NET_VANILLA_PROTO_HEXEN;
     }
 }
 

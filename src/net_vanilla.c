@@ -58,6 +58,13 @@ typedef struct
     boolean need_resend;
 } node_t;
 
+typedef struct
+{
+    unsigned int player;
+    unsigned int player_class;
+    unsigned int ready;
+} hexen_class_packet_t;
+
 extern void D_ReceiveTic(ticcmd_t *ticcmds, boolean *playeringame);
 
 static node_t nodes[NET_MAXPLAYERS];
@@ -143,6 +150,9 @@ static net_packet_t *MakeSetupPacket(net_gamesettings_t *settings)
         case NET_VANILLA_PROTO_HERETIC:
             NET_WriteInt8(packet, (settings->episode << 4) | settings->map);
             break;
+        case NET_VANILLA_PROTO_HEXEN:
+            NET_WriteInt8(packet, settings->map & 0x3f);
+            break;
     }
     NET_WriteInt8(packet, D_GameVersionCode(settings->gameversion));
     NET_WriteInt8(packet, 0); // numtics = 0
@@ -181,6 +191,15 @@ static boolean ParseSetupPacket(net_packet_t *packet,
             settings->episode = val >> 4;
             settings->map = val & 0x0f;
             break;
+        case NET_VANILLA_PROTO_HEXEN:
+            // Ignore player-class setup packets.
+            if (val >= 64)
+            {
+                return false;
+            }
+            settings->episode = 1;
+            settings->map = val;
+            break;
     }
 
     if (!NET_ReadInt8(packet, &val))
@@ -199,6 +218,37 @@ static boolean ParseSetupPacket(net_packet_t *packet,
     return NET_ReadInt8(packet, &val);
 }
 
+static net_packet_t *MakeHexenClassPacket(hexen_class_packet_t *h)
+{
+    net_packet_t *packet;
+
+    packet = NET_NewPacket(8);
+
+    NET_WriteInt8(packet, h->ready);
+    NET_WriteInt8(packet, h->player_class + 64);
+    NET_WriteInt8(packet, h->player);
+    NET_WriteInt8(packet, 0);
+    AddChecksum(packet, NCMD_SETUP);
+    return packet;
+}
+
+static boolean ReadHexenClassPacket(net_packet_t *packet,
+                                    hexen_class_packet_t *h)
+{
+    unsigned int throwaway;
+    boolean result;
+
+    result = NET_ReadInt8(packet, &h->ready)
+          && NET_ReadInt8(packet, &h->player_class)
+          && NET_ReadInt8(packet, &h->player)
+          && NET_ReadInt8(packet, &throwaway)
+          && throwaway == 0
+          && h->player_class >= 64 && h->player_class < 67;
+
+    h->player_class -= 64;
+    return result;
+}
+
 static void WriteTiccmd(net_packet_t *packet, ticcmd_t *ticcmd)
 {
     NET_WriteInt8(packet, ticcmd->forwardmove);
@@ -213,6 +263,7 @@ static void WriteTiccmd(net_packet_t *packet, ticcmd_t *ticcmd)
         case NET_VANILLA_PROTO_DOOM:
             break;
         case NET_VANILLA_PROTO_HERETIC:
+        case NET_VANILLA_PROTO_HEXEN:
             NET_WriteInt8(packet, ticcmd->lookfly);
             NET_WriteInt8(packet, ticcmd->arti);
             break;
@@ -271,6 +322,7 @@ static boolean ReadTiccmd(net_packet_t *packet, ticcmd_t *ticcmd)
         case NET_VANILLA_PROTO_DOOM:
             break;
         case NET_VANILLA_PROTO_HERETIC:
+        case NET_VANILLA_PROTO_HEXEN:
             if (!NET_ReadInt8(packet, &lookfly)
              || !NET_ReadInt8(packet, &arti))
             {
@@ -321,6 +373,72 @@ void NET_VanillaInit(net_context_t *context, net_vanilla_settings_t *settings)
     {
         nodes[n].ingame = true;
         nodes[n].player = -1;
+    }
+}
+
+static int CountBoolVector(boolean *values, int values_len)
+{
+    int result, i;
+
+    for (i = 0, result = 0; i < values_len; ++i)
+    {
+        if (values[i])
+        {
+            ++result;
+        }
+    }
+
+    return result;
+}
+
+// Synchronize player class types. Only used for Hexen protocol.
+static void SyncPlayerClasses(net_gamesettings_t *settings)
+{
+    net_packet_t *packet;
+    net_addr_t *addr;
+    hexen_class_packet_t hpkt;
+    boolean got_class[NET_MAXPLAYERS];
+    boolean ready[NET_MAXPLAYERS];
+    unsigned int i;
+
+    for (i = 0; i < settings->num_players; ++i)
+    {
+        got_class[i] = i == settings->consoleplayer;
+        ready[i] = false;
+    }
+
+    while (!ready[settings->consoleplayer])
+    {
+        while (NET_RecvPacket(vcontext, &addr, &packet))
+        {
+            if (ReadPacketType(packet) == NCMD_SETUP
+             && ReadHexenClassPacket(packet, &hpkt)
+             && hpkt.player < settings->num_players)
+            {
+                settings->player_classes[hpkt.player] = hpkt.player_class;
+                got_class[hpkt.player] = true;
+                ready[hpkt.player] = hpkt.ready;
+            }
+            NET_ReleaseAddress(addr);
+            NET_FreePacket(packet);
+        }
+        ready[settings->consoleplayer] =
+            CountBoolVector(got_class, settings->num_players)
+               == settings->num_players;
+
+        hpkt.player = settings->consoleplayer;
+        hpkt.player_class = settings->player_classes[settings->consoleplayer];
+        hpkt.ready = ready[settings->consoleplayer];
+
+        packet = MakeHexenClassPacket(&hpkt);
+        for (i = 0; i < vsettings.num_nodes; ++i)
+        {
+            NET_SendPacket(vsettings.addrs[i], packet);
+        }
+        NET_FreePacket(packet);
+
+        // Wait a little bit before sending more packets.
+        I_Sleep(250);
     }
 }
 
@@ -400,6 +518,11 @@ boolean NET_VanillaSyncSettings(net_gamesettings_t *settings)
     if (vcontext == NULL)
     {
         return false;
+    }
+
+    if (vsettings.protocol == NET_VANILLA_PROTO_HEXEN)
+    {
+        SyncPlayerClasses(settings);
     }
 
     if (vsettings.consoleplayer == 0)

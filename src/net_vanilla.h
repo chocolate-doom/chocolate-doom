@@ -21,6 +21,7 @@ typedef enum
 {
     NET_VANILLA_PROTO_DOOM,
     NET_VANILLA_PROTO_HERETIC,
+    NET_VANILLA_PROTO_HEXEN,
 } net_vanilla_protocol_t;
 
 typedef struct
