@@ -32,6 +32,7 @@ typedef struct
 
     unsigned int consoleplayer;
     unsigned int num_players;
+    unsigned int player_class;
 } net_vanilla_settings_t;
 
 void NET_VanillaInit(net_context_t *context, net_vanilla_settings_t *settings);

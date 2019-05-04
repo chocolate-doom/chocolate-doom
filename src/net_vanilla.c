@@ -403,9 +403,12 @@ static void SyncPlayerClasses(net_gamesettings_t *settings)
 
     for (i = 0; i < settings->num_players; ++i)
     {
-        got_class[i] = i == settings->consoleplayer;
+        got_class[i] = false;
         ready[i] = false;
     }
+
+    settings->player_classes[settings->consoleplayer] = vsettings.player_class;
+    got_class[settings->consoleplayer] = true;
 
     while (!ready[settings->consoleplayer])
     {
@@ -427,7 +430,7 @@ static void SyncPlayerClasses(net_gamesettings_t *settings)
                == settings->num_players;
 
         hpkt.player = settings->consoleplayer;
-        hpkt.player_class = settings->player_classes[settings->consoleplayer];
+        hpkt.player_class = vsettings.player_class;
         hpkt.ready = ready[settings->consoleplayer];
 
         packet = MakeHexenClassPacket(&hpkt);

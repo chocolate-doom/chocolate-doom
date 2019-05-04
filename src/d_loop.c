@@ -468,6 +468,7 @@ static void ParseVanillaNet(int mission, int p)
 
     vsettings.protocol = VanillaProtocol(mission);
     vsettings.consoleplayer = atoi(myargv[p]);
+    vsettings.player_class = player_class;
     vsettings.num_nodes = 0;
     vsettings.num_players = 1;
 
@@ -515,6 +516,7 @@ static void IPXConnect(int mission, char *address)
     }
 
     context = NET_DBIPX_Connect(address);
+    settings.player_class = player_class;
     settings.protocol = VanillaProtocol(mission);
     NET_DBIPX_ArbitrateGame(&settings, want_nodes);
     NET_VanillaInit(context, &settings);
@@ -528,6 +530,7 @@ static void SerialDial(int mission, char *address)
     net_vanilla_settings_t settings;
 
     context = NET_Serial_Connect(address);
+    settings.player_class = player_class;
     settings.protocol = VanillaProtocol(mission);
     NET_Serial_ArbitrateGame(context, &settings);
     NET_VanillaInit(context, &settings);
@@ -543,6 +546,7 @@ static void SerialAnswer(int mission)
 
     context = NET_Serial_Answer();
     settings.protocol = VanillaProtocol(mission);
+    settings.player_class = player_class;
     NET_Serial_ArbitrateGame(context, &settings);
     NET_VanillaInit(context, &settings);
     net_vanilla_game = true;
