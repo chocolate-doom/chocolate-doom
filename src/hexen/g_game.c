@@ -194,6 +194,20 @@ int testcontrols_mousespeed;
 extern boolean inventory;
 boolean usearti = true;
 
+// We store consistency values in a circular buffer and check consistency from
+// several tics in the past. In vanilla Doom the buffer size is 12 tics, but
+// Chocolate Doom bumped it up to a larger value for the new networking code.
+// However, if we're playing a vanilla game then we need to use the original
+// vanilla value.
+static unsigned int NumBackupTics(void)
+{
+    if (net_vanilla_game)
+    {
+        return 12;
+    }
+    return BACKUPTICS;
+}
+
 void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
 {
     int i;
@@ -214,7 +228,7 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
 //      cmd->consistancy =
 //              consistancy[consoleplayer][(maketic*ticdup)%BACKUPTICS];
 
-    cmd->consistancy = consistancy[consoleplayer][maketic % BACKUPTICS];
+    cmd->consistancy = consistancy[consoleplayer][maketic % NumBackupTics()];
 
 //printf ("cons: %i\n",cmd->consistancy);
 
@@ -1004,7 +1018,7 @@ void G_Ticker(void)
 // get commands, check consistancy, and build new consistancy check
 //
     //buf = gametic%BACKUPTICS;
-    buf = (gametic / ticdup) % BACKUPTICS;
+    buf = (gametic / ticdup) % NumBackupTics();
 
     for (i = 0; i < maxplayers; i++)
         if (playeringame[i])
@@ -1024,7 +1038,7 @@ void G_Ticker(void)
                 // only sends the lower byte of the consistency field. So we
                 // actually allow a consistency value where we only have the
                 // bottom 8 bits.
-                if (gametic > BACKUPTICS
+                if (gametic > NumBackupTics()
                  && cmd->consistancy != consistancy[i][buf]
                  && cmd->consistancy != (consistancy[i][buf] & 0xff))
                 {
