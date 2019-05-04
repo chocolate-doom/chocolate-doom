@@ -36,7 +36,8 @@ typedef struct
 } net_vanilla_settings_t;
 
 void NET_VanillaInit(net_context_t *context, net_vanilla_settings_t *settings);
-boolean NET_VanillaSyncSettings(net_gamesettings_t *settings);
+boolean NET_VanillaSyncSettings(net_gamesettings_t *settings,
+                                net_startup_callback_t callback);
 void NET_VanillaSendTiccmd(ticcmd_t *ticcmd, int maketic);
 void NET_VanillaQuit(void);
 void NET_VanillaRun(void);

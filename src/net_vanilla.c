@@ -392,7 +392,8 @@ static int CountBoolVector(boolean *values, int values_len)
 }
 
 // Synchronize player class types. Only used for Hexen protocol.
-static void SyncPlayerClasses(net_gamesettings_t *settings)
+static boolean SyncPlayerClasses(net_gamesettings_t *settings,
+                                 net_startup_callback_t callback)
 {
     net_packet_t *packet;
     net_addr_t *addr;
@@ -442,7 +443,16 @@ static void SyncPlayerClasses(net_gamesettings_t *settings)
 
         // Wait a little bit before sending more packets.
         I_Sleep(250);
+
+        if (callback != NULL
+         && !callback(CountBoolVector(ready, settings->num_players),
+                      settings->num_players))
+        {
+            return false;
+        }
     }
+
+    return true;
 }
 
 // Send game settings to other players and block until the other nodes
@@ -511,7 +521,8 @@ static void RecvGameSettings(net_gamesettings_t *settings)
     }
 }
 
-boolean NET_VanillaSyncSettings(net_gamesettings_t *settings)
+boolean NET_VanillaSyncSettings(net_gamesettings_t *settings,
+                                net_startup_callback_t callback)
 {
     settings->new_sync = false;
     settings->consoleplayer = vsettings.consoleplayer;
@@ -523,9 +534,10 @@ boolean NET_VanillaSyncSettings(net_gamesettings_t *settings)
         return false;
     }
 
-    if (vsettings.protocol == NET_VANILLA_PROTO_HEXEN)
+    if (vsettings.protocol == NET_VANILLA_PROTO_HEXEN
+     && !SyncPlayerClasses(settings, callback))
     {
-        SyncPlayerClasses(settings);
+        return false;
     }
 
     if (vsettings.consoleplayer == 0)

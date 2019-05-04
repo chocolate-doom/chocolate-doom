@@ -314,35 +314,8 @@ void D_StartGameLoop(void)
     lasttime = GetAdjustedTime() / ticdup;
 }
 
-//
-// Block until the game start message is received from the server.
-//
-
-static void BlockUntilStart(net_gamesettings_t *settings,
-                            netgame_startup_callback_t callback)
-{
-    while (!NET_CL_GetSettings(settings))
-    {
-        NET_CL_Run();
-        NET_SV_Run();
-
-        if (!net_client_connected)
-        {
-            I_Error("Lost connection to server");
-        }
-
-        if (callback != NULL && !callback(net_client_wait_data.ready_players,
-                                          net_client_wait_data.num_players))
-        {
-            I_Error("Netgame startup aborted.");
-        }
-
-        I_Sleep(100);
-    }
-}
-
 void D_StartNetGame(net_gamesettings_t *settings,
-                    netgame_startup_callback_t callback)
+                    net_startup_callback_t callback)
 {
     int i;
 
@@ -397,15 +370,17 @@ void D_StartNetGame(net_gamesettings_t *settings,
         // from the server.
 
         NET_CL_StartGame(settings);
-        BlockUntilStart(settings, callback);
+        if (!NET_CL_WaitForStart(callback))
+        {
+            I_Error("Game start aborted.");
+        }
 
         // Read the game settings that were received.
-
         NET_CL_GetSettings(settings);
     }
-    if (net_vanilla_game)
+    if (net_vanilla_game && !NET_VanillaSyncSettings(settings, callback))
     {
-        NET_VanillaSyncSettings(settings);
+        I_Error("Game start aborted.");
     }
 
     if (drone)
