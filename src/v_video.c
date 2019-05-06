@@ -1013,7 +1013,6 @@ void WritePNGfile(char *filename, pixel_t *data,
 //  int w_factor, h_factor;
     byte *rowbuf;
 
-    byte *buf;
     extern void I_RenderReadPixels(byte **data, int *w, int *h, int *p);
 
 /*
@@ -1057,8 +1056,8 @@ void WritePNGfile(char *filename, pixel_t *data,
 
     png_init_io(ppng, handle);
 
-    I_RenderReadPixels(&buf, &width, &height, &j);
-    rowbuf = buf;
+    I_RenderReadPixels(&palette, &width, &height, &j);
+    rowbuf = palette; // [crispy] pointer abuse!
 
     png_set_IHDR(ppng, pinfo, width, height,
                  8, PNG_COLOR_TYPE_RGB_ALPHA, PNG_INTERLACE_NONE,
@@ -1118,7 +1117,7 @@ void WritePNGfile(char *filename, pixel_t *data,
         png_write_row(ppng, rowbuf);
         rowbuf += j;
     }
-    free(buf);
+    free(palette);
 
     png_write_end(ppng, pinfo);
     png_destroy_write_struct(&ppng, &pinfo);
