@@ -96,6 +96,7 @@ static SDL_Texture *grnpane = NULL;
 static int pane_alpha;
 static unsigned int rmask, gmask, bmask, amask; // [crispy] moved up here
 static const uint8_t blend_alpha = 0xa8;
+extern pixel_t* colormaps; // [crispy] evil hack to get FPS dots working as in Vanilla
 #else
 static SDL_Color palette[256];
 #endif
@@ -774,13 +775,13 @@ void I_FinishUpdate (void)
 #ifndef CRISPY_TRUECOLOR
 	    I_VideoBuffer[ (SCREENHEIGHT-1)*SCREENWIDTH + i] = 0xff;
 #else
-	    I_VideoBuffer[ (SCREENHEIGHT-1)*SCREENWIDTH + i] = I_MapRGB(0xff, 0xff, 0xff);
+	    I_VideoBuffer[ (SCREENHEIGHT-1)*SCREENWIDTH + i] = colormaps[0xff];
 #endif
 	for ( ; i<20*4 ; i+=4)
 #ifndef CRISPY_TRUECOLOR
 	    I_VideoBuffer[ (SCREENHEIGHT-1)*SCREENWIDTH + i] = 0x0;
 #else
-	    I_VideoBuffer[ (SCREENHEIGHT-1)*SCREENWIDTH + i] = I_MapRGB(0x0, 0x0, 0x0);
+	    I_VideoBuffer[ (SCREENHEIGHT-1)*SCREENWIDTH + i] = colormaps[0x0];
 #endif
     }
 
