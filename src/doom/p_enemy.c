@@ -1841,7 +1841,7 @@ A_OpenShotgun2
   pspdef_t*	psp )
 {
     if (!player) return; // [crispy] let pspr action pointers get called from mobj states
-    S_StartSound (player->mo, sfx_dbopn);
+    S_StartSound (player->so, sfx_dbopn); // [crispy] weapon sound source
 }
 
 void
@@ -1851,7 +1851,7 @@ A_LoadShotgun2
   pspdef_t*	psp )
 {
     if (!player) return; // [crispy] let pspr action pointers get called from mobj states
-    S_StartSound (player->mo, sfx_dbload);
+    S_StartSound (player->so, sfx_dbload); // [crispy] weapon sound source
 }
 
 void
@@ -1867,7 +1867,7 @@ A_CloseShotgun2
   pspdef_t*	psp )
 {
     if (!player) return; // [crispy] let pspr action pointers get called from mobj states
-    S_StartSound (player->mo, sfx_dbcls);
+    S_StartSound (player->so, sfx_dbcls); // [crispy] weapon sound source
     A_ReFire(NULL,player,psp); // [crispy] let pspr action pointers get called from mobj states
 }
 
