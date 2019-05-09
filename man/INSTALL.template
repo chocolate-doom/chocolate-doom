@@ -83,18 +83,49 @@ If you have a commercial version on a CD-ROM, obtaining the IWAD
 file is usually straightforward. Simply locate the IWAD file on the
 disc and copy it off.
 
-#if !STRIFE
-#if _WIN32
-The Doom games, along with Heretic and Hexen, are also available to
-purchase for download on Steam (http://www.steampowered.com/).
-LONG_GAME_NAME will autodetect IWADs installed by Steam and you do
-not need to do anything.
+#if !__MACOSX__
+#if DOOM
+The Doom games are available to purchase for download on Steam
+(https://store.steampowered.com/), all releases containing the classic
+games including Doom 3: BFG Edition are supported.
+#endif
+#if HERETIC
+Heretic is available to purchase for download on Steam
+(https://store.steampowered.com/).
+#endif
+#if HEXEN
+Hexen and its expansion pack is available to purchase for download on
+Steam (https://store.steampowered.com/).
+#endif
+#if STRIFE
+Strife: Veteran Edition is available to purchase for download on Steam
+(https://store.steampowered.com/).
+#endif
+#if !_WIN32
+For Steam on Linux, you need to enable “Steam Play” for all titles in
+order to install the games.  You may do this from the Steam menu,
+Setup, and the Steam Play tab.
+#endif
+LONG_GAME_NAME will autodetect IWADs installed by Steam and you do not
+need to anything.
 #else
-The Doom games, along with Heretic and Hexen, are available to buy
-for download on Steam (http://www.steampowered.com/), but are only
-available for Windows. To find the IWAD files on a Windows system,
-look in the Steam directory (usually within “Program Files”), under
-the “steamapps/common” path.
+The Doom, Heretic, Hexen, and Strife games are available to purchase
+for download on Steam (https://store.steampowered.com/), but are only
+available for Windows.  To find the IWAD files on a Windows or Wine
+system, look in the Steam directory (usually within “Program Files”),
+under the “steamapps/common” path.
+#endif
+
+#if DOOM || STRIFE
+The Doom and Strife: Veteran Edition games are available for purchase
+on GOG.com (https://www.gog.com/).
+#if _WIN32
+LONG_GAME_NAME will autodetect IWADs from the standalone or GOG Galaxy
+installers and you do not need to do anything.
+#else
+The games are only available for Windows, but you may find the IWAD
+files on a Windows or Wine system, typically within the “C:\GOG Games”
+or “C:\Program Files\GOG Galaxy” directories.
 #endif
 
 #endif
