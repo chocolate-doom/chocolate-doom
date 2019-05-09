@@ -94,7 +94,7 @@ Heretic is available to purchase for download on Steam
 (https://store.steampowered.com/).
 #endif
 #if HEXEN
-Hexen and its expansion pack is available to purchase for download on
+Hexen and its expansion pack are available to purchase for download on
 Steam (https://store.steampowered.com/).
 #endif
 #if STRIFE
@@ -107,7 +107,7 @@ order to install the games.  You may do this from the Steam menu,
 Setup, and the Steam Play tab.
 #endif
 LONG_GAME_NAME will autodetect IWADs installed by Steam and you do not
-need to anything.
+need to do anything.
 #else
 The Doom, Heretic, Hexen, and Strife games are available to purchase
 for download on Steam (https://store.steampowered.com/), but are only
