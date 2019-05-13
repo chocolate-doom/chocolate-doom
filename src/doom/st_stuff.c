@@ -2232,7 +2232,7 @@ void ST_Stop (void)
 #ifndef CRISPY_TRUECOLOR
     I_SetPalette (W_CacheLumpNum (lu_palette, PU_CACHE));
 #else
-    I_SetPalette (lu_palette);
+    I_SetPalette (0);
 #endif
 
     st_stopped = true;
