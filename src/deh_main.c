@@ -25,6 +25,7 @@
 #include "i_system.h"
 #include "d_iwad.h"
 #include "m_argv.h"
+#include "m_misc.h"
 #include "w_wad.h"
 
 #include "deh_defs.h"
@@ -489,6 +490,29 @@ void DEH_ParseCommandLine(void)
 {
     char *filename;
     int p;
+
+    // Scan the command line for DEH filenames without any preceeding regular
+    // parameter and add them as if they were passed to the -deh parameter.
+    // This allows for loading DEHACKED patches by dragging them onto the game
+    // executable in e.g. Windows Explorer.
+
+    for (p = 1; p < myargc && myargv[p][0] != '-'; ++p)
+    {
+        char *lower;
+
+        filename = D_TryFindWADByName(myargv[p]);
+
+        lower = M_StringDuplicate(filename);
+        M_ForceLowercase(lower);
+
+        if (M_StringEndsWith(lower, ".deh"))
+        {
+            DEH_LoadFile(filename);
+        }
+
+        free(lower);
+        free(filename);
+    }
 
     //!
     // @arg <files>

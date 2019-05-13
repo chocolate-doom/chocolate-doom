@@ -23,6 +23,7 @@
 #include "i_glob.h"
 #include "i_system.h"
 #include "m_argv.h"
+#include "m_misc.h"
 #include "w_main.h"
 #include "w_merge.h"
 #include "w_wad.h"
@@ -37,6 +38,33 @@ boolean W_ParseCommandLine(void)
 
     // Merged PWADs are loaded first, because they are supposed to be 
     // modified IWADs.
+
+    // Scan the command line for WAD filenames without any preceeding regular
+    // parameter and add them as if they were passed to the -merge parameter.
+    // This allows for loading PWADs by dragging them onto the game executable
+    // in e.g. Windows Explorer.
+
+    for (p = 1; p < myargc && myargv[p][0] != '-'; ++p)
+    {
+        char *filename, *lower;
+
+        filename = D_TryFindWADByName(myargv[p]);
+
+        lower = M_StringDuplicate(filename);
+        M_ForceLowercase(lower);
+
+        if (M_StringEndsWith(lower, ".wad") ||
+            M_StringEndsWith(lower, ".lmp"))
+        {
+            modifiedgame = true;
+
+            printf(" merging %s\n", filename);
+            W_MergeFile(filename);
+        }
+
+        free(lower);
+        free(filename);
+    }
 
     //!
     // @arg <files>
