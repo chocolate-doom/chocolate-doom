@@ -261,6 +261,122 @@ void M_FindResponseFile(void)
     }
 }
 
+void M_AddLooseFiles(void)
+{
+    int i, j, k;
+
+    char **wads;
+    char **lmps;
+    char **dehs;
+    int wadcount = 0;
+    int lmpcount = 0;
+    int dehcount = 0;
+
+    char **newargv;
+    int newargc;
+
+    struct {
+        const char *ext;
+        char ***list;
+        int *count;
+    } looses[] = {
+        {".wad", &wads, &wadcount},
+//      {".lmp", &wads, &wadcount}, // demo lumps are the most common
+        {".deh", &dehs, &dehcount},
+//      {".bex", &dehs, &dehcount},
+        {".hhe", &dehs, &dehcount},
+        {".seh", &dehs, &dehcount},
+        {".lmp", &lmps, &lmpcount},
+    };
+
+    struct {
+        const char *cmdparam;
+        char ***list;
+        int *count;
+    } params[] = {
+        {"-merge"   , &wads, &wadcount},
+        {"-deh"     , &dehs, &dehcount},
+        {"-playdemo", &lmps, &lmpcount},
+    };
+
+    // check for command line arguments
+    if (myargc < 2)
+    {
+        return;
+    }
+
+    // check for regular arguments and response files
+    for (i = 1; i < myargc; i++)
+    {
+        if (myargv[i][0] == '-' || myargv[i][0] == '@')
+        {
+            return;
+        }
+    }
+
+    // we will find at most myargc files of a kind
+    wads = malloc(myargc * sizeof(*wads));
+    lmps = malloc(myargc * sizeof(*lmps));
+    dehs = malloc(myargc * sizeof(*dehs));
+
+    // identify loose files on the command line by their extensions
+    for (i = 1; i < myargc; i++)
+    {
+        char *lower;
+
+        lower = M_StringDuplicate(myargv[i]);
+        M_ForceLowercase(lower);
+
+        for (j = 0; j < arrlen(looses); j++)
+        {
+            if (M_StringEndsWith(lower, looses[j].ext))
+            {
+                (*(looses[j].list))[(*looses[j].count)++] = myargv[i];
+                break;
+            }
+        }
+
+        free(lower);
+    }
+
+    // count the new number of command line arguments,
+    // we need one additional regular parameter for each kind of file
+    newargc = 1;
+    for (j = 0; j < arrlen(params); j++)
+    {
+        if ((*params[j].count) > 0)
+        {
+            newargc += (*params[j].count) + 1;
+        }
+    }
+
+    // compose the new command line
+    if (newargc > 1)
+    {
+        i = 0;
+        newargv = malloc(newargc * sizeof(*newargv));
+        newargv[i++] = myargv[0]; // invocation
+
+        for (j = 0; j < arrlen(params); j++)
+        {
+            if ((*params[j].count) > 0)
+            {
+                newargv[i++] = M_StringDuplicate(params[j].cmdparam);
+
+                for (k = 0; k < (*params[j].count); k++)
+                {
+                    newargv[i++] = (*(params[j].list))[k];
+                }
+            }
+
+            free(*(params[j].list));
+        }
+
+        myargc = newargc;
+        myargv = newargv;
+    }
+}
+
 // Return the name of the executable used to start the program:
 
 const char *M_GetExecutableName(void)

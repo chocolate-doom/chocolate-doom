@@ -49,6 +49,12 @@ int main(int argc, char **argv)
         exit(0);
     }
 
+#if defined(_WIN32)
+    // Compose a proper command line from loose file names passed as arguments,
+    // this allows for loading PWADs and DEHACKED patches by drag-and-drop.
+    M_AddLooseFiles();
+#endif
+
     M_FindResponseFile();
 
     #ifdef SDL_HINT_NO_SIGNAL_HANDLERS
