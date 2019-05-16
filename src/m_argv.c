@@ -368,12 +368,16 @@ void M_AddLooseFiles(void)
                     newargv[i++] = (*(params[j].list))[k];
                 }
             }
-
-            free(*(params[j].list));
         }
 
         myargc = newargc;
         myargv = newargv;
+    }
+
+    // free allocated memory
+    for (j = 0; j < arrlen(params); j++)
+    {
+        free(*(params[j].list));
     }
 }
 
