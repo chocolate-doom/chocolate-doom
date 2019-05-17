@@ -315,9 +315,10 @@ void M_AddLooseFiles(void)
     }
 
     // we will find at most myargc files of a kind
-    wads = malloc(myargc * sizeof(*wads));
-    lmps = malloc(myargc * sizeof(*lmps));
-    dehs = malloc(myargc * sizeof(*dehs));
+    for (j = 0; j < arrlen(params); j++)
+    {
+        *(params[j].list) = malloc(myargc * sizeof(char *));
+    }
 
     // identify loose files on the command line by their extensions
     for (i = 1; i < myargc; i++)
