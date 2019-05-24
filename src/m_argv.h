@@ -37,6 +37,7 @@ int M_CheckParm (char* check);
 int M_CheckParmWithArgs(char *check, int num_args);
 
 void M_FindResponseFile(void);
+void M_AddLooseFiles(void);
 
 // Parameter has been specified?
 
