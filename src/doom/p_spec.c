@@ -1131,19 +1131,21 @@ void P_PlayerInSpecialSector (player_t* player)
 			
       case 9:
 	// SECRET SECTOR
+	player->secretcount++;
 	// [crispy] show centered "Secret Revealed!" message
-	if (showMessages && crispy->secretmessage)
+	if (showMessages && crispy->secretmessage && player == &players[consoleplayer])
 	{
 	    int sfx_id;
+	    static char str_count[32];
+
+	    M_snprintf(str_count, sizeof(str_count), "Secret %d of %d is revealed!", player->secretcount, totalsecret);
 
 	    // [crispy] play DSSECRET if available
 	    sfx_id = I_GetSfxLumpNum(&S_sfx[sfx_secret]) != -1 ? sfx_secret : sfx_itmbk;
 
-	    player->centermessage = HUSTR_SECRETFOUND;
-	    if (player == &players[consoleplayer])
-	        S_StartSound(NULL, sfx_id);
+	    player->centermessage = (crispy->secretmessage == SECRETMESSAGE_COUNT) ? str_count : HUSTR_SECRETFOUND;
+	    S_StartSound(NULL, sfx_id);
 	}
-	player->secretcount++;
 	// [crispy] remember revealed secrets
 	sector->oldspecial = sector->special;
 	sector->special = 0;

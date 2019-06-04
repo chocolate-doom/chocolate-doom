@@ -932,6 +932,9 @@ void HU_Ticker(void)
 	// [crispy] display centered message
 	if (plr->centermessage)
 	{
+	    extern int M_StringWidth(const char *string);
+	    w_secret.l[0].x = ORIGWIDTH/2 - M_StringWidth(plr->centermessage)/2;
+
 	    HUlib_addMessageToSText(&w_secret, 0, plr->centermessage);
 	    plr->centermessage = 0;
 	    secret_on = true;

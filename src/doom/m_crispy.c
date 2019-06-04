@@ -108,6 +108,13 @@ multiitem_t multiitem_jump[NUM_JUMPS] =
     {JUMP_HIGH, "high"},
 };
 
+multiitem_t multiitem_secretmessage[NUM_SECRETMESSAGE] =
+{
+    {SECRETMESSAGE_OFF, "off"},
+    {SECRETMESSAGE_ON, "on"},
+    {SECRETMESSAGE_COUNT, "count"},
+};
+
 multiitem_t multiitem_translucency[NUM_TRANSLUCENCY] =
 {
     {TRANSLUCENCY_OFF, "off"},
@@ -436,7 +443,7 @@ void M_CrispyToggleRecoil(int choice)
 void M_CrispyToggleSecretmessage(int choice)
 {
     choice = 0;
-    crispy->secretmessage = !crispy->secretmessage;
+    crispy->secretmessage = (crispy->secretmessage + 1) % NUM_SECRETMESSAGE;
 }
 
 void M_CrispyToggleSmoothScaling(int choice)

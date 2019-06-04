@@ -236,7 +236,7 @@ static void M_DrawSaveLoadBorder(int x,int y);
 static void M_SetupNextMenu(menu_t *menudef);
 static void M_DrawThermo(int x,int y,int thermWidth,int thermDot);
 static void M_WriteText(int x, int y, const char *string);
-static int  M_StringWidth(const char *string);
+int  M_StringWidth(const char *string); // [crispy] un-static
 static int  M_StringHeight(const char *string);
 static void M_StartMessage(const char *string, void *routine, boolean input);
 static void M_ClearMenus (void);
@@ -1499,7 +1499,7 @@ static void M_DrawCrispness2(void)
     M_DrawCrispnessMultiItem(crispness_automapstats, "Show Level Stats", multiitem_widgets, crispy->automapstats, true);
     M_DrawCrispnessMultiItem(crispness_leveltime, "Show Level Time", multiitem_widgets, crispy->leveltime, true);
     M_DrawCrispnessMultiItem(crispness_playercoords, "Show Player Coords", multiitem_widgets, crispy->playercoords, true);
-    M_DrawCrispnessItem(crispness_secretmessage, "Show Revealed Secrets", crispy->secretmessage, true);
+    M_DrawCrispnessMultiItem(crispness_secretmessage, "Show Revealed Secrets", multiitem_secretmessage, crispy->secretmessage, true);
 
     M_DrawCrispnessGoto(crispness2_next, "Next Page >");
     M_DrawCrispnessGoto(crispness2_prev, "< Prev Page");
