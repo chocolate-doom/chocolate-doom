@@ -1533,20 +1533,20 @@ static boolean WI_drawParTime (void)
 	{
 		// [crispy] IWAD: Episode 4 has no par times
 		// (but we have for singleplayer games)
-		if (wbs->epsd >= 4 && !crispy->singleplayer)
+		if (wbs->epsd == 3 && !crispy->singleplayer)
 		{
 			result = false;
 		}
 
 		// [crispy] IWAD/PWAD: BEX patch provided par times for Episode 4
 		// (disguised as par times for Doom II MAP02 to MAP10)
-		if (wbs->epsd >= 4 && bex_cpars[wbs->last + 1])
+		if (wbs->epsd == 3 && bex_cpars[wbs->last + 1])
 		{
 			result = true;
 		}
 
 		// [crispy] PWAD: BEX patch provided par times for Episodes 1-3
-		if (wbs->epsd < 4 && bex_pars[wbs->epsd + 1][wbs->last + 1])
+		if (wbs->epsd < 3 && bex_pars[wbs->epsd + 1][wbs->last + 1])
 		{
 			result = true;
 		}
