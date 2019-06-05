@@ -1760,6 +1760,7 @@ void G_DoCompleted (void)
 		wminfo.next = 5; 
 		break; 
 	      case 3: 
+	      case 5: // [crispy] Sigil
 		wminfo.next = 6; 
 		break; 
 	      case 4:
@@ -2381,6 +2382,13 @@ G_InitNew
             break;
           case 4:        // Special Edition sky
             skytexturename = "SKY4";
+            break;
+          case 5:        // [crispy] Sigil
+            skytexturename = "SKY5_ZD";
+            if (R_TextureNumForName(DEH_String(skytexturename)) == -1)
+            {
+                skytexturename = "SKY5";
+            }
             break;
         }
     }

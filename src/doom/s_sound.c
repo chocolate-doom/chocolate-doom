@@ -285,7 +285,7 @@ void S_Start(void)
             mus_e1m9,        // Tim          e4m9
         };
 
-        if (gameepisode < 4)
+        if (gameepisode < 4 || gameepisode == 5) // [crispy] Sigil
         {
             mnum = mus_e1m1 + (gameepisode-1)*9 + gamemap-1;
         }

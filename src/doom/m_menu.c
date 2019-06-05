@@ -297,6 +297,7 @@ enum
     ep2,
     ep3,
     ep4,
+    ep5, // [crispy] Sigil
     ep_end
 } episodes_e;
 
@@ -306,6 +307,7 @@ menuitem_t EpisodeMenu[]=
     {1,"M_EPI2", M_Episode,'t'},
     {1,"M_EPI3", M_Episode,'i'},
     {1,"M_EPI4", M_Episode,'t'}
+   ,{1,"M_EPI5", M_Episode,'s'} // [crispy] Sigil
 };
 
 menu_t  EpiDef =
@@ -2080,11 +2082,12 @@ static int G_ReloadLevel(void)
 
 static int G_GotoNextLevel(void)
 {
-  static byte doom_next[4][9] = {
+  static byte doom_next[5][9] = {
     {12, 13, 19, 15, 16, 17, 18, 21, 14},
     {22, 23, 24, 25, 29, 27, 28, 31, 26},
     {32, 33, 34, 35, 36, 39, 38, 41, 37},
-    {42, 49, 44, 45, 46, 47, 48, 11, 43}
+    {42, 49, 44, 45, 46, 47, 48, 51, 43},
+    {52, 53, 54, 55, 56, 59, 58, 11, 57},
   };
   static byte doom2_next[33] = {
     0, 3, 4, 5, 6, 7, 8, 9, 10, 11,
@@ -2130,6 +2133,9 @@ static int G_GotoNextLevel(void)
 
       if (gamemode == registered)
         doom_next[2][7] = 11;
+
+      if (!crispy->haved1e5)
+        doom_next[3][7] = 11;
 
       if (gameversion == exe_chex)
       {
@@ -3057,6 +3063,12 @@ void M_Init (void)
         ReadDef1.x = 330;
         ReadDef1.y = 165;
         ReadMenu1[rdthsempty1].routine = M_FinishReadThis;
+    }
+
+    // [crispy] Sigil
+    if (!crispy->haved1e5)
+    {
+        EpiDef.numitems = 4;
     }
 
     // Versions of doom.exe before the Ultimate Doom release only had

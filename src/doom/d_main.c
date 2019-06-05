@@ -2008,6 +2008,12 @@ void D_DoomMain (void)
         )
     );
 
+    // [crispy] check for presence of a 5th episode
+    crispy->haved1e5 = (gameversion == exe_ultimate) &&
+                       (W_CheckNumForName("m_epi5") != -1) &&
+                       (W_CheckNumForName("e5m1") != -1) &&
+                       (W_CheckNumForName("wilv40") != -1);
+
     // [crispy] check for presence of E1M10
     crispy->havee1m10 = (gamemode == retail) &&
                        (W_CheckNumForName("e1m10") != -1) &&
