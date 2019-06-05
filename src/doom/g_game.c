@@ -2385,9 +2385,9 @@ G_InitNew
             break;
           case 5:        // [crispy] Sigil
             skytexturename = "SKY5_ZD";
-            if (R_TextureNumForName(DEH_String(skytexturename)) == -1)
+            if (R_CheckTextureNumForName(DEH_String(skytexturename)) == -1)
             {
-                skytexturename = "SKY5";
+                skytexturename = "SKY3";
             }
             break;
         }
