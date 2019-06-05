@@ -671,6 +671,8 @@ ST_Responder (event_t* ev)
           }
           if (epsd > 4)
           {
+              // [crispy] Sigil
+              if (!(haved1e5 && epsd == 5))
               return false;
           }
           if (epsd == 4 && gameversion < exe_ultimate)

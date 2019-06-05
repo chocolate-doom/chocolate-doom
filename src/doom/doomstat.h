@@ -71,6 +71,8 @@ extern char            *gamedescription;
 // Set if homebrew PWAD stuff has been added.
 extern  boolean	modifiedgame;
 
+// [crispy] Sigil
+extern boolean haved1e5;
 
 // -------------------------------------------
 // Selected skill type, map etc.

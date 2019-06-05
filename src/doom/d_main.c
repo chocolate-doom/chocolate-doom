@@ -1713,6 +1713,12 @@ void D_DoomMain (void)
     I_InitSound(true);
     I_InitMusic();
 
+    // [crispy] check for presence of a 5th episode
+    haved1e5 = (gameversion == exe_ultimate) &&
+                       (W_CheckNumForName("m_epi5") != -1) &&
+                       (W_CheckNumForName("e5m1") != -1) &&
+                       (W_CheckNumForName("wilv40") != -1);
+
 #ifdef FEATURE_MULTIPLAYER
     printf ("NET_Init: Init network subsystem.\n");
     NET_Init ();
