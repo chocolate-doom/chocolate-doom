@@ -303,16 +303,18 @@ enum
     hurtme,
     violence,
     nightmare,
+    massacre,
     newg_end
 } newgame_e;
 
 menuitem_t NewGameMenu[]=
 {
     {1,"M_JKILL",	M_ChooseSkill, 'i'},
-    {1,"M_ROUGH",	M_ChooseSkill, 'h'},
+    {1,"M_ROUGH",	M_ChooseSkill, 'r'},
     {1,"M_HURT",	M_ChooseSkill, 'h'},
     {1,"M_ULTRA",	M_ChooseSkill, 'u'},
-    {1,"M_NMARE",	M_ChooseSkill, 'n'}
+    {1,"M_NMARE",	M_ChooseSkill, 'n'},
+	{1,"M_EXTR",	M_ChooseSkill, 'm'}
 };
 
 menu_t  NewDef =

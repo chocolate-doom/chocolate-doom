@@ -94,6 +94,7 @@ char *          savegamedir;
 // location of IWAD and WAD files
 
 char *          iwadfile;
+char *          rwadfile = "rude.wad";
 
 
 boolean		devparm;	// started game with -devparm
@@ -1456,6 +1457,10 @@ void D_DoomMain (void)
     modifiedgame = false;
 
     DEH_printf("W_Init: Init WADfiles.\n");
+    if (!D_AddFile(rwadfile))
+    {
+        I_Error("RUDE.WAD not found.\n");
+    }
     D_AddFile(iwadfile);
     numiwadlumps = numlumps;
 
