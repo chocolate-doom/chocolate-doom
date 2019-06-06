@@ -1007,6 +1007,10 @@ static void F_ArtScreenDrawer(void)
             case 4:
                 lumpname = "ENDPIC";
                 break;
+            // [crispy] Sigil
+            case 5:
+                lumpname = "SIGILEND";
+                break;
             default:
                 return;
         }
