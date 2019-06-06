@@ -949,7 +949,7 @@ void HU_Ticker(void)
 	    HUlib_addMessageToSText(&w_secret, 0, plr->centermessage);
 	    plr->centermessage = 0;
 	    secret_on = true;
-	    secret_counter = HU_MSGTIMEOUT >> 1;
+	    secret_counter = 5*TICRATE/2; // [crispy] 2.5 seconds
 	}
 
 	// display message if necessary

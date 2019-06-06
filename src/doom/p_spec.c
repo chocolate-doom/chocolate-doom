@@ -1138,7 +1138,7 @@ void P_PlayerInSpecialSector (player_t* player)
 	    int sfx_id;
 	    static char str_count[32];
 
-	    M_snprintf(str_count, sizeof(str_count), "Secret %d of %d is revealed!", player->secretcount, totalsecret);
+	    M_snprintf(str_count, sizeof(str_count), "Secret %d of %d revealed!", player->secretcount, totalsecret);
 
 	    // [crispy] play DSSECRET if available
 	    sfx_id = I_GetSfxLumpNum(&S_sfx[sfx_secret]) != -1 ? sfx_secret : sfx_itmbk;
