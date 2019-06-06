@@ -251,6 +251,7 @@ P_ChangeSwitchTexture
     int     texBot;
     int     i;
     int     sound;
+    boolean playsound = false;
 	
     if (!useAgain)
 	line->special = 0;
@@ -269,7 +270,8 @@ P_ChangeSwitchTexture
     {
 	if (switchlist[i] == texTop)
 	{
-	    S_StartSoundOnce(crispy->soundfix ? &line->soundorg : buttonlist->soundorg,sound); // [crispy] corrected sound source
+//	    S_StartSound(buttonlist->soundorg,sound);
+	    playsound = true;
 	    sides[line->sidenum[0]].toptexture = switchlist[i^1];
 
 	    if (useAgain)
@@ -282,7 +284,8 @@ P_ChangeSwitchTexture
 	{
 	    if (switchlist[i] == texMid)
 	    {
-		S_StartSoundOnce(crispy->soundfix ? &line->soundorg : buttonlist->soundorg,sound); // [crispy] corrected sound source
+//		S_StartSound(buttonlist->soundorg,sound);
+		playsound = true;
 		sides[line->sidenum[0]].midtexture = switchlist[i^1];
 
 		if (useAgain)
@@ -295,7 +298,8 @@ P_ChangeSwitchTexture
 	    {
 		if (switchlist[i] == texBot)
 		{
-		    S_StartSoundOnce(crispy->soundfix ? &line->soundorg : buttonlist->soundorg,sound); // [crispy] corrected sound source
+//		    S_StartSound(buttonlist->soundorg,sound);
+		    playsound = true;
 		    sides[line->sidenum[0]].bottomtexture = switchlist[i^1];
 
 		    if (useAgain)
@@ -305,6 +309,12 @@ P_ChangeSwitchTexture
 		}
 	    }
 	}
+    }
+
+    // [crispy] corrected sound source
+    if (playsound)
+    {
+	S_StartSound(crispy->soundfix ? &line->soundorg : buttonlist->soundorg,sound);
     }
 }
 
