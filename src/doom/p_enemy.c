@@ -1700,6 +1700,10 @@ static boolean CheckBossEnd(mobjtype_t motype)
                 return (gamemap == 6 && motype == MT_CYBORG)
                     || (gamemap == 8 && motype == MT_SPIDER);
 
+            // [crispy] Sigil
+            case 5:
+                return false;
+
             default:
                 return gamemap == 8;
 	}
