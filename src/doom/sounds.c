@@ -72,7 +72,6 @@ musicinfo_t S_music[] =
     MUSIC("e4m8"),
     MUSIC("e4m9"),
     // [crispy] Sigil
-    MUSIC("sigint"),
     MUSIC("e5m1"),
     MUSIC("e5m2"),
     MUSIC("e5m3"),
@@ -82,6 +81,7 @@ musicinfo_t S_music[] =
     MUSIC("e5m7"),
     MUSIC("e5m8"),
     MUSIC("e5m9"),
+    MUSIC("sigint"),
     MUSIC("inter"),
     MUSIC("intro"),
     MUSIC("bunny"),
