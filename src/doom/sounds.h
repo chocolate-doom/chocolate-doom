@@ -73,6 +73,7 @@ typedef enum
     mus_e4m8,
     mus_e4m9,
     // [crispy] Sigil
+    mus_sigint,
     mus_e5m1,
     mus_e5m2,
     mus_e5m3,

@@ -1655,6 +1655,9 @@ void WI_Ticker(void)
 	// intermission music
   	if ( gamemode == commercial )
 	  S_ChangeMusic(mus_dm2int, true);
+	// [crispy] Sigil
+	else if (crispy->haved1e5 && wbs->epsd == 4 && W_CheckNumForName(DEH_String("D_SIGINT")) != -1)
+	  S_ChangeMusic(mus_sigint, true);
 	else
 	  S_ChangeMusic(mus_inter, true); 
     }
