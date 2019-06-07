@@ -690,6 +690,10 @@ static void F_ArtScreenDrawer(void)
             // [crispy] Sigil
             case 5:
                 lumpname = "SIGILEND";
+                if (W_CheckNumForName(DEH_String(lumpname)) == -1)
+                {
+                    return;
+                }
                 break;
             default:
                 return;
