@@ -36,7 +36,7 @@ static boolean deh_initialized = false;
 
 // If true, we can parse [STRINGS] sections in BEX format.
 
-boolean deh_allow_extended_strings = false;
+boolean deh_allow_extended_strings = true; // [crispy] always allow
 
 // If true, we can do long string replacements.
 
@@ -380,9 +380,12 @@ int DEH_LoadFile(char *filename)
     // Before parsing a new file, reset special override flags to false.
     // Magic comments should only apply to the file in which they were
     // defined, and shouldn't carry over to subsequent files as well.
+    // [crispy] always allow everything
+/*
     deh_allow_long_strings = false;
     deh_allow_long_cheats = false;
     deh_allow_extended_strings = false;
+*/
 
     printf(" loading %s\n", filename);
 
@@ -419,9 +422,12 @@ int DEH_LoadLump(int lumpnum, boolean allow_long, boolean allow_error)
     }
 
     // Reset all special flags to defaults.
+    // [crispy] always allow everything
+/*
     deh_allow_long_strings = allow_long;
     deh_allow_long_cheats = allow_long;
     deh_allow_extended_strings = false;
+*/
 
     context = DEH_OpenLump(lumpnum);
 

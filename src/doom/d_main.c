@@ -1627,7 +1627,8 @@ void D_DoomMain (void)
     // Load Dehacked patches from DEHACKED lumps contained in one of the
     // loaded PWAD files.
     //
-    if (M_ParmExists("-dehlump"))
+	// [crispy] load DEHACKED lumps by default, but allow overriding
+    if (!M_ParmExists("-nodehlump"))
     {
         int i, loaded = 0;
 
@@ -1635,7 +1636,7 @@ void D_DoomMain (void)
         {
             if (!strncmp(lumpinfo[i]->name, "DEHACKED", 8))
             {
-                DEH_LoadLump(i, false, false);
+                DEH_LoadLump(i, true, true); // [crispy] allow long strings and cheats, allow error
                 loaded++;
             }
         }
