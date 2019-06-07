@@ -1,4 +1,4 @@
-add_library(textscreen
+add_library(textscreen STATIC
             textscreen.h
             txt_conditional.c   txt_conditional.h
             txt_checkbox.c      txt_checkbox.h
