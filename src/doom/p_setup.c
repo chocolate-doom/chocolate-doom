@@ -1254,7 +1254,7 @@ P_SetupLevel
 	    nomonsters ? " -nomonsters" : "",
 	    NULL);
 
-	fprintf(stderr, "P_SetupLevel: %s (%s), %s%s, Time %d:%02d:%02d, Total %d:%02d:%02d, ",
+	fprintf(stderr, "P_SetupLevel: %s (%s) %s%s %d:%02d:%02d/%d:%02d:%02d ",
 	    maplumpinfo->name, W_WadNameForLump(maplumpinfo),
 	    skilltable[BETWEEN(0,5,(int) skill+1)], rfn_str,
 	    ltime/3600, (ltime%3600)/60, ltime%60,
