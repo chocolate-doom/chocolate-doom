@@ -1339,6 +1339,12 @@ static void LoadSigilWad(void)
         {"D_INTRO",  "D_SIGTIT"},
     };
 
+    // [crispy] don't load SIGIL.wad if another PWAD already provides E5M1
+    if (W_CheckNumForName("E5M1") != -1)
+    {
+        return;
+    }
+
     if (gameversion == exe_ultimate)
     {
         char *sigil_wad = NULL, *sigil_shreds = NULL;
