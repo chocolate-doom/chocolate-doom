@@ -1321,6 +1321,82 @@ static void LoadIwadDeh(void)
     }
 }
 
+// [crispy] support loading SIGIL.WAD (and SIGIL_SHREDS.WAD) alongside DOOM.WAD
+static void LoadSigilWad(void)
+{
+    struct {
+        const char *name;
+        const char *new_name;
+    } sigil_lumps [] = {
+        {"CREDIT",   "SIGCREDI"},
+        {"HELP1",    "SIGHELP1"},
+        {"TITLEPIC", "SIGTITLE"},
+        {"DEMO1",    "SIGDEMO1"},
+        {"DEMO2",    "SIGDEMO2"},
+        {"DEMO3",    "SIGDEMO3"},
+        {"DEMO4",    "SIGDEMO4"},
+        {"D_INTER",  "D_SIGINT"},
+        {"D_INTRO",  "D_SIGTIT"},
+    };
+
+    if (gameversion == exe_ultimate)
+    {
+        char *sigil_wad = NULL, *sigil_shreds = NULL;
+        char *dirname;
+        int i;
+
+        dirname = M_DirName(iwadfile);
+        sigil_wad = M_StringJoin(dirname, DIR_SEPARATOR_S, "SIGIL.wad", NULL);
+        sigil_shreds = M_StringJoin(dirname, DIR_SEPARATOR_S, "SIGIL_SHREDS.wad", NULL);
+        free(dirname);
+
+        // [crispy] load SIGIL.WAD
+        if (!M_FileExists(sigil_wad))
+        {
+            free(sigil_wad);
+            sigil_wad = D_FindWADByName("SIGIL.wad");
+        }
+
+        if (sigil_wad == NULL)
+        {
+            free(sigil_shreds);
+            return;
+        }
+
+        D_AddFile(sigil_wad);
+        free(sigil_wad);
+
+        // [crispy] load SIGIL_SHREDS.WAD
+        if (!M_FileExists(sigil_shreds))
+        {
+            free(sigil_shreds);
+            sigil_shreds = D_FindWADByName("SIGIL_SHREDS.wad");
+        }
+
+        if (sigil_shreds != NULL)
+        {
+            D_AddFile(sigil_shreds);
+            free(sigil_shreds);
+        }
+
+        // [crispy] rename intrusive lumps out of the way
+        for (i = 0; i < arrlen(sigil_lumps); i++)
+        {
+            int j;
+
+            j = W_CheckNumForName(sigil_lumps[i].name);
+
+            if (j != -1 && !strcasecmp(W_WadNameForLump(lumpinfo[j]), "SIGIL.wad"))
+            {
+                memcpy(lumpinfo[j]->name, sigil_lumps[i].new_name, 8);
+            }
+        }
+
+        // [crispy] regenerate the hashtable
+        W_GenerateHashTable();
+    }
+}
+
 // [crispy] support loading NERVE.WAD alongside DOOM2.WAD
 static void LoadNerveWad(void)
 {
@@ -1382,6 +1458,9 @@ static void LoadNerveWad(void)
             M_snprintf (lumpname, 9, "CWILV%2.2d", i);
             lumpinfo[W_GetNumForName(lumpname)]->name[0] = 'N';
         }
+
+        // [crispy] regenerate the hashtable
+        W_GenerateHashTable();
     }
 }
 
@@ -1902,6 +1981,7 @@ void D_DoomMain (void)
     {
 	LoadMasterlevelsWad();
 	LoadNerveWad();
+	LoadSigilWad();
     }
 
     // Load DEHACKED lumps from WAD files - but only if we give the right
