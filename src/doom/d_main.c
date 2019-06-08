@@ -1324,6 +1324,8 @@ static void LoadIwadDeh(void)
 // [crispy] support loading SIGIL.WAD (and SIGIL_SHREDS.WAD) alongside DOOM.WAD
 static void LoadSigilWad(void)
 {
+    int i;
+
     struct {
         const char *name;
         const char *new_name;
@@ -1340,7 +1342,15 @@ static void LoadSigilWad(void)
     };
 
     // [crispy] don't load SIGIL.wad if another PWAD already provides E5M1
-    if (W_CheckNumForName("E5M1") != -1)
+    i = W_CheckNumForName("E5M1");
+    if (i != -1)
+    {
+        return;
+    }
+
+    // [crispy] don't load SIGIL.wad if SIGIL_COMPAT.wad is already loaded
+    i = W_CheckNumForName("E3M1");
+    if (i != -1 && !strcasecmp(W_WadNameForLump(lumpinfo[i]), "SIGIL_COMPAT.wad"))
     {
         return;
     }
@@ -1349,7 +1359,6 @@ static void LoadSigilWad(void)
     {
         char *sigil_wad = NULL, *sigil_shreds = NULL;
         char *dirname;
-        int i;
 
         dirname = M_DirName(iwadfile);
         sigil_wad = M_StringJoin(dirname, DIR_SEPARATOR_S, "SIGIL.wad", NULL);
