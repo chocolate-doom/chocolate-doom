@@ -1328,7 +1328,7 @@ static void LoadSigilWad(void)
 
     struct {
         const char *name;
-        const char *new_name;
+        const char new_name[8];
     } sigil_lumps [] = {
         {"CREDIT",   "SIGCREDI"},
         {"HELP1",    "SIGHELP1"},
@@ -1394,7 +1394,20 @@ static void LoadSigilWad(void)
             free(sigil_shreds);
         }
 
-        // [crispy] rename intrusive lumps out of the way
+        // [crispy] rename intrusive SIGIL_SHREDS.wad music lumps out of the way
+        for (i = 7; i < arrlen(sigil_lumps); i++)
+        {
+            int j;
+
+            j = W_CheckNumForName(sigil_lumps[i].name);
+
+            if (j != -1 && !strcasecmp(W_WadNameForLump(lumpinfo[j]), "SIGIL_SHREDS.wad"))
+            {
+                memcpy(lumpinfo[j]->name, sigil_lumps[i].new_name, 8);
+            }
+        }
+
+        // [crispy] rename intrusive SIGIL.wad graphics, demos and music lumps out of the way
         for (i = 0; i < arrlen(sigil_lumps); i++)
         {
             int j;
