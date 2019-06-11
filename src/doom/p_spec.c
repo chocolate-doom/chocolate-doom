@@ -492,8 +492,8 @@ P_FindSectorFromLineTag
 {
     int	i;
 	
+#if 0
     // [crispy] linedefs without tags apply locally
-/*
     if (crispy->singleplayer && !line->tag)
     {
     for (i=start+1;i<numsectors;i++)
@@ -505,7 +505,14 @@ P_FindSectorFromLineTag
 	}
     }
     else
-*/
+#else
+    // [crispy] emit a warning for linedefs without tags
+    if (!line->tag)
+    {
+        fprintf(stderr, "P_FindSectorFromLineTag: Linedef %ld without tag\n", linedef);
+    }
+#endif
+
     for (i=start+1;i<numsectors;i++)
 	if (sectors[i].tag == line->tag)
 	    return i;
