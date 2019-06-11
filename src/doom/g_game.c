@@ -1827,6 +1827,11 @@ void G_DoCompleted (void)
     {
         wminfo.partime = TICRATE*e4pars[gamemap];
     }
+    // [crispy] use episode 3 par times for Sigil's episode 5
+    else if (gameepisode == 5)
+    {
+        wminfo.partime = TICRATE*pars[3][gamemap];
+    }
     else
     {
         wminfo.partime = TICRATE*cpars[gamemap];
