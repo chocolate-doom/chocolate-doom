@@ -391,6 +391,7 @@ static patch_t*		bp[MAXPLAYERS];
 
  // Name graphics of each level (centered)
 static patch_t**	lnames;
+static unsigned int	num_lnames;
 
 // Buffer storing the backdrop
 static patch_t *background;
@@ -419,8 +420,7 @@ void WI_drawLF(void)
     int y = WI_TITLEY;
 
     // [crispy] prevent crashes with maps without map title graphics lump
-    if ((gamemode == commercial && (unsigned)wbs->last >= NUMCMAPS) ||
-        (gamemode != commercial && (unsigned)wbs->last >= (crispy->havee1m10 ? NUMMAPS + 1 : NUMMAPS)))
+    if (wbs->last >= num_lnames)
     {
         V_DrawPatch((ORIGWIDTH - SHORT(finished->width)) / 2, y, finished);
         return;
@@ -464,8 +464,7 @@ void WI_drawEL(void)
     int y = WI_TITLEY;
 
     // [crispy] prevent crashes with maps without map title graphics lump
-    if ((gamemode == commercial && (unsigned)wbs->next >= NUMCMAPS) ||
-        (gamemode != commercial && (unsigned)wbs->next >= (crispy->havee1m10 ? NUMMAPS + 1 : NUMMAPS)))
+    if (wbs->last >= num_lnames)
     {
         return;
     }
@@ -1880,6 +1879,7 @@ void WI_loadData(void)
 	NUMCMAPS = (crispy->havemap33) ? 33 : 32;
 	lnames = (patch_t **) Z_Malloc(sizeof(patch_t*) * NUMCMAPS,
 				       PU_STATIC, NULL);
+	num_lnames = NUMCMAPS;
     }
     else
     {
@@ -1887,6 +1887,7 @@ void WI_loadData(void)
 	int nummaps = crispy->havee1m10 ? NUMMAPS + 1 : NUMMAPS;
 	lnames = (patch_t **) Z_Malloc(sizeof(patch_t*) * nummaps,
 				       PU_STATIC, NULL);
+	num_lnames = nummaps;
     }
 
     WI_loadUnloadData(WI_loadCallback);
