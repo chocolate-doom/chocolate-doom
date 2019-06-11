@@ -390,6 +390,7 @@ static patch_t*		bp[MAXPLAYERS];
 
  // Name graphics of each level (centered)
 static patch_t**	lnames;
+static unsigned int	num_lnames;
 
 // Buffer storing the backdrop
 static patch_t *background;
@@ -417,10 +418,11 @@ void WI_drawLF(void)
 {
     int y = WI_TITLEY;
 
-    // [crispy] prevent crashes with maps > 33
-    if ((unsigned)wbs->last >= NUMCMAPS)
+    // [crispy] prevent crashes with maps without map title graphics lump
+    if (wbs->last >= num_lnames)
     {
-	return;
+        V_DrawPatch((SCREENWIDTH - SHORT(finished->width)) / 2, y, finished);
+        return;
     }
 
     if (gamemode != commercial || wbs->last < NUMCMAPS)
@@ -459,10 +461,10 @@ void WI_drawEL(void)
 {
     int y = WI_TITLEY;
 
-    // [crispy] prevent crashes with maps > 33
-    if ((unsigned)wbs->last >= NUMCMAPS)
+    // [crispy] prevent crashes with maps without map title graphics lump
+    if (wbs->last >= num_lnames)
     {
-	return;
+        return;
     }
 
     // draw "Entering"
@@ -1732,11 +1734,13 @@ void WI_loadData(void)
 	NUMCMAPS = 32;
 	lnames = (patch_t **) Z_Malloc(sizeof(patch_t*) * NUMCMAPS,
 				       PU_STATIC, NULL);
+	num_lnames = NUMCMAPS;
     }
     else
     {
 	lnames = (patch_t **) Z_Malloc(sizeof(patch_t*) * NUMMAPS,
 				       PU_STATIC, NULL);
+	num_lnames = NUMMAPS;
     }
 
     WI_loadUnloadData(WI_loadCallback);
