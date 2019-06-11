@@ -1780,12 +1780,7 @@ void G_DoCompleted (void)
     wminfo.maxsecret = totalsecret; 
     wminfo.maxfrags = 0; 
 
-    if (gamemap == 33 || (crispy->havee1m10 && gameepisode == 1 && gamemap == 10))
-    {
-        // [crispy] par time for inofficial maps sucks
-        wminfo.partime = INT_MAX;
-    }
-    else
+    // [crispy] single player par times for NRFTL
     if (gamemission == pack_nerve && crispy->singleplayer)
     {
         wminfo.partime = TICRATE*npars[gamemap-1];
@@ -1796,7 +1791,7 @@ void G_DoCompleted (void)
     if (gamemode == commercial)
     {
         // map33 has no official time: initialize to zero
-        if (gamemap == 33 && false) // [crispy] disable
+        if (gamemap == 33)
         {
             wminfo.partime = 0;
         }
@@ -1823,6 +1818,7 @@ void G_DoCompleted (void)
         else
         wminfo.partime = TICRATE*pars[gameepisode][gamemap];
     }
+    // [crispy] single player par times for episode 4
     else if (gameepisode == 4 && crispy->singleplayer)
     {
         wminfo.partime = TICRATE*e4pars[gamemap];

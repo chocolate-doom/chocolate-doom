@@ -391,6 +391,7 @@ static patch_t*		bp[MAXPLAYERS];
 
  // Name graphics of each level (centered)
 static patch_t**	lnames;
+// [crispy] prevent crashes with maps without map title graphics lump
 static unsigned int	num_lnames;
 
 // Buffer storing the backdrop
@@ -1586,7 +1587,7 @@ void WI_drawStats(void)
         V_DrawPatch(ORIGWIDTH/2 + SP_TIMEX, SP_TIMEY, par);
 
         // Emulation: don't draw partime value if map33
-        if (true || gamemode != commercial || wbs->last != NUMCMAPS) // [crispy] always show
+        if (gamemode != commercial || wbs->last != NUMCMAPS)
         {
             WI_drawTime(ORIGWIDTH - SP_TIMEX, SP_TIMEY, cnt_par, true);
         }
