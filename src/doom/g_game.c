@@ -1697,7 +1697,7 @@ void G_DoCompleted (void)
     wminfo.last = gamemap -1;
     
     // wminfo.next is 0 biased, unlike gamemap
-    if ( gamemission == pack_nerve && crispy->singleplayer )
+    if ( gamemission == pack_nerve && gamemap <= 9 && crispy->singleplayer )
     {
 	if (secretexit)
 	    switch(gamemap)
@@ -1712,7 +1712,7 @@ void G_DoCompleted (void)
 	    }
     }
     else
-    if ( gamemission == pack_master && crispy->singleplayer )
+    if ( gamemission == pack_master && gamemap <= 21 && crispy->singleplayer )
     {
 	wminfo.next = gamemap;
     }
