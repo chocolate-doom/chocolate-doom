@@ -1857,6 +1857,12 @@ static void WI_loadUnloadData(load_callback_t callback)
 	DEH_snprintf(name, sizeof(name), "WIMAP%d", wbs->epsd);
     }
 
+    // [crispy] if still in doubt, use INTERPIC
+    if (W_CheckNumForName(name) == -1)
+    {
+        M_StringCopy(name, DEH_String("INTERPIC"), sizeof(name));
+    }
+
     // Draw backdrop and save to a temporary buffer
 
     callback(name, &background);
