@@ -419,7 +419,7 @@ void WI_drawLF(void)
     int y = WI_TITLEY;
 
     // [crispy] prevent crashes with maps without map title graphics lump
-    if (wbs->last >= num_lnames)
+    if (wbs->last >= num_lnames || lnames[wbs->last] == NULL)
     {
         V_DrawPatch((SCREENWIDTH - SHORT(finished->width)) / 2, y, finished);
         return;
@@ -462,7 +462,7 @@ void WI_drawEL(void)
     int y = WI_TITLEY;
 
     // [crispy] prevent crashes with maps without map title graphics lump
-    if (wbs->last >= num_lnames)
+    if (wbs->next >= num_lnames || lnames[wbs->next] == NULL)
     {
         return;
     }
@@ -1724,7 +1724,11 @@ static void WI_loadUnloadData(load_callback_t callback)
 
 static void WI_loadCallback(char *name, patch_t **variable)
 {
+  // [crispy] prevent crashes with maps without map title graphics lump
+  if (W_CheckNumForName(name) != -1)
     *variable = W_CacheLumpName(name, PU_STATIC);
+  else
+    *variable = NULL;
 }
 
 void WI_loadData(void)
