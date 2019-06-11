@@ -51,14 +51,20 @@ int main(int argc, char **argv)
         exit(0);
     }
 
-    crispy->platform = SDL_GetPlatform();
     {
         char buf[16];
         SDL_version version;
         SDL_GetVersion(&version);
         M_snprintf(buf, sizeof(buf), "%d.%d.%d", version.major, version.minor, version.patch);
         crispy->sdlversion = M_StringDuplicate(buf);
+        crispy->platform = SDL_GetPlatform();
     }
+
+#if defined(_WIN32)
+    // compose a proper command line from loose file paths passed as arguments
+    // to allow for loading WADs and DEHACKED patches by drag-and-drop
+    M_AddLooseFiles();
+#endif
 
     M_FindResponseFile();
 

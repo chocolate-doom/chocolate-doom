@@ -36,8 +36,11 @@ m_misc.c             m_misc.h
 
 DEDSERV_FILES=\
 d_dedicated.c                              \
+d_iwad.c             d_iwad.h              \
 d_mode.c             d_mode.h              \
+deh_str.c            deh_str.h             \
 i_timer.c            i_timer.h             \
+m_config.c           m_config.h            \
 net_common.c         net_common.h          \
 net_dedicated.c      net_dedicated.h       \
 net_io.c             net_io.h              \

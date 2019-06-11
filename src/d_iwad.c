@@ -50,6 +50,21 @@ static const iwad_t iwads[] =
     { "strife1.wad",  strife,    commercial, "Strife" },
 };
 
+boolean D_IsIWADName(const char *name)
+{
+    int i;
+
+    for (i = 0; i < arrlen(iwads); i++)
+    {
+        if (!strcasecmp(name, iwads[i].name))
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 // Array of locations to search for IWAD files
 //
 // "128 IWAD search directories should be enough for anybody".
