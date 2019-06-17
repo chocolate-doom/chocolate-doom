@@ -42,6 +42,7 @@
 
 #include "i_swap.h"
 #include "i_system.h"
+#include "i_timer.h"
 #include "i_video.h"
 #include "m_misc.h"
 #include "v_video.h"
@@ -182,8 +183,16 @@ boolean M_WriteFile(const char *name, const void *source, int length)
 {
     FILE *handle;
     int	count;
+    const int timeout = I_GetTimeMS() + 1000;
 	
     handle = fopen(name, "wb");
+
+    // tolerate up to 1s delay when opening a file for writing
+    while (handle == NULL && I_GetTimeMS() < timeout)
+    {
+        I_Sleep(10);
+        handle = fopen(name, "wb");
+    }
 
     if (handle == NULL)
 	return false;
