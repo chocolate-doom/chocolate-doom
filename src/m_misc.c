@@ -183,16 +183,8 @@ boolean M_WriteFile(const char *name, const void *source, int length)
 {
     FILE *handle;
     int	count;
-    const int timeout = I_GetTimeMS() + 1000;
 	
     handle = fopen(name, "wb");
-
-    // tolerate up to 1s delay when opening a file for writing
-    while (handle == NULL && I_GetTimeMS() < timeout)
-    {
-        I_Sleep(10);
-        handle = fopen(name, "wb");
-    }
 
     if (handle == NULL)
 	return false;
@@ -206,6 +198,22 @@ boolean M_WriteFile(const char *name, const void *source, int length)
     return true;
 }
 
+boolean M_WriteFileTimeout(const char *name, const void *source, int length, int delay)
+{
+    boolean res;
+    const int timeout = I_GetTimeMS() + delay;
+
+    res = M_WriteFile(name, source, length);
+
+    // tolerate the given delay when opening a file for writing
+    while (res == false && I_GetTimeMS() < timeout)
+    {
+        I_Sleep(10);
+        res = M_WriteFile(name, source, length);
+    }
+
+    return res;
+}
 
 //
 // M_ReadFile
