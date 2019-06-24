@@ -861,6 +861,13 @@ void S_ChangeMusic(int musicnum, int looping)
     handle = I_RegisterSong(music->data, W_LumpLength(music->lumpnum));
     music->handle = handle;
     I_PlaySong(handle, looping);
+    // [crispy] log played music
+    {
+        char name[9];
+        M_snprintf(name, sizeof(name), "%s", lumpinfo[music->lumpnum]->name);
+        fprintf(stderr, "S_ChangeMusic: %s (%s)\n", name,
+                W_WadNameForLump(lumpinfo[music->lumpnum]));
+    }
 
     mus_playing = music;
 
@@ -908,6 +915,13 @@ void S_ChangeMusInfoMusic (int lumpnum, int looping)
     music->handle = I_RegisterSong(music->data, W_LumpLength(music->lumpnum));
 
     I_PlaySong(music->handle, looping);
+    // [crispy] log played music
+    {
+        char name[9];
+        M_snprintf(name, sizeof(name), "%s", lumpinfo[music->lumpnum]->name);
+        fprintf(stderr, "S_ChangeMusInfoMusic: %s (%s)\n", name,
+                W_WadNameForLump(lumpinfo[music->lumpnum]));
+    }
 
     mus_playing = music;
 
