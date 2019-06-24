@@ -644,8 +644,8 @@ static void SetDefaultSaveName(int slot)
     else
     {
         M_snprintf(savegamestrings[itemOn], SAVESTRINGSIZE,
-                   "%s: %s", W_WadNameForLump(maplumpinfo),
-                   maplumpinfo->name);
+                   "%s (%s)", maplumpinfo->name
+                   W_WadNameForLump(maplumpinfo));
     }
     M_ForceUppercase(savegamestrings[itemOn]);
     joypadSave = false;
