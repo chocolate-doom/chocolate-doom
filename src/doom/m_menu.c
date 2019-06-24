@@ -636,7 +636,7 @@ void M_DoSave(int slot)
 static void SetDefaultSaveName(int slot)
 {
     // map from IWAD or PWAD?
-    if (W_IsIWADLump(maplumpinfo))
+    if (W_IsIWADLump(maplumpinfo) && strcmp(savegamedir, ""))
     {
         M_snprintf(savegamestrings[itemOn], SAVESTRINGSIZE,
                    "%s", maplumpinfo->name);
@@ -644,7 +644,7 @@ static void SetDefaultSaveName(int slot)
     else
     {
         M_snprintf(savegamestrings[itemOn], SAVESTRINGSIZE,
-                   "%s (%s)", maplumpinfo->name
+                   "%s (%s)", maplumpinfo->name,
                    W_WadNameForLump(maplumpinfo));
     }
     M_ForceUppercase(savegamestrings[itemOn]);
