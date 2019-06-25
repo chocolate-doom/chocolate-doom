@@ -966,16 +966,25 @@ void M_DoSave(int slot)
 static void SetDefaultSaveName(int slot)
 {
     // map from IWAD or PWAD?
-    if (W_IsIWADLump(maplumpinfo))
+    if (W_IsIWADLump(maplumpinfo) && strcmp(savegamedir, ""))
     {
         M_snprintf(savegamestrings[itemOn], SAVESTRINGSIZE,
                    "%s", maplumpinfo->name);
     }
     else
     {
+        char *wadname = M_StringDuplicate(W_WadNameForLump(maplumpinfo));
+        char *ext = strrchr(wadname, '.');
+
+        if (ext != NULL)
+        {
+            *ext = '\0';
+        }
+
         M_snprintf(savegamestrings[itemOn], SAVESTRINGSIZE,
-                   "%s: %s", W_WadNameForLump(maplumpinfo),
-                   maplumpinfo->name);
+                   "%s (%s)", maplumpinfo->name,
+                   wadname);
+        free(wadname);
     }
     M_ForceUppercase(savegamestrings[itemOn]);
     joypadSave = false;
