@@ -204,9 +204,13 @@ void P_InitPicAnims (void)
 	lastanim->istexture = animdefs[i].istexture;
 	lastanim->numpics = lastanim->picnum - lastanim->basepic + 1;
 
+	// [crispy] add support for SMMU swirling flats
+	if (lastanim->speed < 65536 && lastanim->numpics != 1)
+	{
 	if (lastanim->numpics < 2)
 	    I_Error ("P_InitPicAnims: bad cycle from %s to %s",
 		     startname, endname);
+	}
 	
 	lastanim->speed = from_lump ? LONG(animdefs[i].speed) : animdefs[i].speed;
 	lastanim++;
