@@ -183,7 +183,7 @@ static const altmusic_t altmusic_plut[] =
 //	{"ampie",  "ampie"},  // MAP23
 //	{"theda3", "theda3"}, // MAP24
 //	{"adrian", "adrian"}, // MAP25
-	{"messg2", "blood"},  // MAP26
+	{"messg2", "messg2"}, // MAP26
 	{"romer2", "e2m1"},   // MAP27
 	{"tense",  "e2m2"},   // MAP28
 	{"shawn3", "e1m1"},   // MAP29
