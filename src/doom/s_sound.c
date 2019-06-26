@@ -187,7 +187,7 @@ static const altmusic_t altmusic_plut[] =
 	{"romer2", "e2m1"},   // MAP27
 	{"tense",  "e2m2"},   // MAP28
 	{"shawn3", "e1m1"},   // MAP29
-	{"openin", "victor"}, // MAP30
+//	{"openin", "openin"}, // MAP30 (d_victor has no instumental cover in Doom Metal)
 	{"evil",   "e3m4"},   // MAP31
 	{"ultima", "e2m8"},   // MAP32
 	{NULL,     NULL},
