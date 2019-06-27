@@ -162,8 +162,8 @@ byte *I_ZoneBase (int *size)
     // [crispy] if called again, allocate another zone twice as big
     i *= 2;
 
-    printf("zone memory: %p, %x allocated for zone\n", 
-           zonemem, *size);
+    printf("zone memory: %p, %d MiB allocated for zone\n",
+           zonemem, *size >> 20); // [crispy] human-understandable zone heap size
 
     return zonemem;
 }
