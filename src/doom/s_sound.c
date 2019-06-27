@@ -138,7 +138,7 @@ static const altmusic_t altmusic_tnt[] =
 	{"shawn2", "countd"}, // MAP19
 	{"messag", "horizo"}, // MAP20
 	{"count2", "in_cit"}, // MAP21
-	{"ddtbl3", "cold"},   // MAP22
+	{"ddtbl3", "aim"},    // MAP22
 //	{"ampie",  "ampie"},  // MAP23
 	{"theda3", "betwee"}, // MAP24
 	{"adrian", "doom"},   // MAP25
