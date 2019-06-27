@@ -119,7 +119,7 @@ static const altmusic_t altmusic_tnt[] =
 {
 	{"runnin", "sadist"}, // MAP01
 	{"stalks", "burn"},   // MAP02
-	{"countd", "aim"},    // MAP03
+	{"countd", "messag"}, // MAP03
 	{"betwee", "bells"},  // MAP04
 	{"doom",   "more"},   // MAP05
 	{"the_da", "agony"},  // MAP06
@@ -128,27 +128,27 @@ static const altmusic_t altmusic_tnt[] =
 	{"in_cit", "sadist"}, // MAP09
 	{"dead",   "infini"}, // MAP10
 	{"stlks2", "kill"},   // MAP11
-	{"theda2", "chaos"},  // MAP12
+//	{"theda2", "theda2"}, // MAP12
 	{"doom2",  "bells"},  // MAP13
 	{"ddtbl2", "cold"},   // MAP14
 	{"runni2", "burn2"},  // MAP15
 	{"dead2",  "blood"},  // MAP16
 	{"stlks3", "more"},   // MAP17
 	{"romero", "infini"}, // MAP18
-	{"shawn2", "chaos"},  // MAP19
+	{"shawn2", "countd"}, // MAP19
 	{"messag", "horizo"}, // MAP20
-	{"count2", "blood"},  // MAP21
+	{"count2", "in_cit"}, // MAP21
 	{"ddtbl3", "cold"},   // MAP22
-	{"ampie",  "aim"},    // MAP23
-	{"theda3", "more"},   // MAP24
-	{"adrian", "bells"},  // MAP25
+//	{"ampie",  "ampie"},  // MAP23
+	{"theda3", "betwee"}, // MAP24
+	{"adrian", "doom"},   // MAP25
 	{"messg2", "blood"},  // MAP26
 	{"romer2", "beast"},  // MAP27
 	{"tense",  "aim"},    // MAP28
 	{"shawn3", "doom3"},  // MAP29
 	{"openin", "beast"},  // MAP30
 //	{"evil",   "evil"},   // MAP31
-//	{"ultima", "ultima"}, // MAP32
+	{"ultima", "in_cit"}, // MAP32
 	{NULL,     NULL},
 };
 
