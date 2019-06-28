@@ -128,7 +128,7 @@ static const altmusic_t altmusic_tnt[] =
 	{"in_cit", "sadist"}, // MAP09
 	{"dead",   "infini"}, // MAP10
 	{"stlks2", "kill"},   // MAP11
-//	{"theda2", "theda2"}, // MAP12
+	{"theda2", "ddtbl3"}, // MAP12
 	{"doom2",  "bells"},  // MAP13
 	{"ddtbl2", "cold"},   // MAP14
 	{"runni2", "burn2"},  // MAP15
