@@ -145,7 +145,7 @@ static const altmusic_t altmusic_tnt[] =
 	{"messg2", "blood"},  // MAP26
 	{"romer2", "beast"},  // MAP27
 	{"tense",  "aim"},    // MAP28
-	{"shawn3", "doom3"},  // MAP29
+	{"shawn3", "bells"},  // MAP29
 	{"openin", "beast"},  // MAP30
 //	{"evil",   "evil"},   // MAP31
 	{"ultima", "in_cit"}, // MAP32
