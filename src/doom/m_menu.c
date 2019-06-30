@@ -2763,6 +2763,7 @@ boolean M_Responder (event_t* ev)
     // [crispy] next/prev Crispness menu
     else if (key == KEY_PGUP)
     {
+	currentMenu->lastOn = itemOn;
 	if (currentMenu == CrispnessMenus[crispness_cur])
 	{
 	    M_CrispnessPrev(0);
@@ -2772,6 +2773,7 @@ boolean M_Responder (event_t* ev)
     }
     else if (key == KEY_PGDN)
     {
+	currentMenu->lastOn = itemOn;
 	if (currentMenu == CrispnessMenus[crispness_cur])
 	{
 	    M_CrispnessNext(0);
