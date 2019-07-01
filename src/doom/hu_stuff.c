@@ -415,7 +415,7 @@ static void CrispyReplaceColor (char *str, const int cr, const char *col)
 {
     char *str_replace, col_replace[16];
 
-    if (strcmp(str, DEH_String(str)))
+    if (DEH_HasStringReplacement(str))
     {
 	return;
     }
@@ -721,7 +721,7 @@ void HU_Start(void)
 
     // [crispy] explicitely display (episode and) map if the
     // map is from a PWAD or if the map title string has been dehacked
-    if (strcmp(s, DEH_String(s)) || (!W_IsIWADLump(maplumpinfo) && (!nervewadfile || gamemission != pack_nerve)))
+    if (DEH_HasStringReplacement(s) || (!W_IsIWADLump(maplumpinfo) && (!nervewadfile || gamemission != pack_nerve)))
     {
 	char *m;
 

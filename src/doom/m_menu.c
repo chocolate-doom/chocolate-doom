@@ -3135,7 +3135,7 @@ void M_Init (void)
 
 	// [crispy] "i wouldn't leave if i were you.\ndos is much worse."
 	string = doom1_endmsg[3];
-	if (!strcmp(string, DEH_String(string)))
+	if (!DEH_HasStringReplacement(string))
 	{
 		replace = M_StringReplace(string, "dos", crispy->platform);
 		DEH_AddStringReplacement(string, replace);
@@ -3144,7 +3144,7 @@ void M_Init (void)
 
 	// [crispy] "you're trying to say you like dos\nbetter than me, right?"
 	string = doom1_endmsg[4];
-	if (!strcmp(string, DEH_String(string)))
+	if (!DEH_HasStringReplacement(string))
 	{
 		replace = M_StringReplace(string, "dos", crispy->platform);
 		DEH_AddStringReplacement(string, replace);
@@ -3153,7 +3153,7 @@ void M_Init (void)
 
 	// [crispy] "don't go now, there's a \ndimensional shambler waiting\nat the dos prompt!"
 	string = doom2_endmsg[2];
-	if (!strcmp(string, DEH_String(string)))
+	if (!DEH_HasStringReplacement(string))
 	{
 		replace = M_StringReplace(string, "dos", "command");
 		DEH_AddStringReplacement(string, replace);

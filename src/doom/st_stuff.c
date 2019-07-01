@@ -2243,7 +2243,7 @@ void ST_Stop (void)
 void ST_Init (void)
 {
     // [crispy] colorize the confusing 'behold' power-up menu
-    if (!strcmp(STSTR_BEHOLD, DEH_String(STSTR_BEHOLD)) &&
+    if (!DEH_HasStringReplacement(STSTR_BEHOLD) &&
         !M_ParmExists("-nodeh"))
     {
 	char str_behold[80];

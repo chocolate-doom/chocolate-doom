@@ -2133,7 +2133,7 @@ void D_DoomMain (void)
                        (W_CheckNumForName("cwilv32") != -1);
 
     // [crispy] change level name for MAP33 if not already changed
-    if (crispy->havemap33 && !strcmp(PHUSTR_1, DEH_String(PHUSTR_1)))
+    if (crispy->havemap33 && !DEH_HasStringReplacement(PHUSTR_1))
     {
         DEH_AddStringReplacement(PHUSTR_1, "level 33: betray");
     }
