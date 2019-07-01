@@ -34,6 +34,7 @@
 #include "m_misc.h"
 #include "m_random.h"
 #include "w_wad.h"
+#include "r_swirl.h" // [crispy] R_InitDistortedFlats()
 
 #include "r_local.h"
 #include "p_local.h"
@@ -151,6 +152,7 @@ extern  line_t*	linespeciallist[MAXLINEANIMS];
 void P_InitPicAnims (void)
 {
     int		i;
+    boolean init_swirl = false;
 
     // [crispy] add support for ANIMATED lumps
     animdef_t *animdefs;
@@ -206,12 +208,14 @@ void P_InitPicAnims (void)
 	lastanim->speed = from_lump ? LONG(animdefs[i].speed) : animdefs[i].speed;
 
 	// [crispy] add support for SMMU swirling flats
-	if (lastanim->speed < 65536 && lastanim->numpics != 1)
+	if (lastanim->speed > 65535 || lastanim->numpics == 1)
 	{
+		init_swirl = true;
+	}
+	else
 	if (lastanim->numpics < 2)
 	    I_Error ("P_InitPicAnims: bad cycle from %s to %s",
 		     startname, endname);
-	}
 	
 	lastanim++;
     }
@@ -219,6 +223,11 @@ void P_InitPicAnims (void)
     if (from_lump)
     {
 	Z_ChangeTag(animdefs, PU_CACHE);
+    }
+
+    if (init_swirl)
+    {
+	R_InitDistortedFlats();
     }
 }
 
