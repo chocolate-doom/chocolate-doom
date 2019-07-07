@@ -24,9 +24,36 @@
 #include "pcsound.h"
 #include "pcsound_internal.h"
 
+typedef void(__stdcall *lpOut32)(short, short);
+typedef short(__stdcall *lpInp32)(short);
+
 static SDL_Thread *sound_thread_handle;
 static int sound_thread_running;
 static pcsound_callback_func callback;
+
+HINSTANCE hInpOutDll;
+lpOut32 gfpOut32;
+lpInp32 gfpInp32;
+
+void MyBeep(unsigned int freq, unsigned int duration)
+{
+	int div;
+	uint8_t tmp;
+
+	div = 1193180 / freq;
+	gfpOut32(0x43, 0xB6);
+	gfpOut32(0x42, (div & 0xFF));
+	gfpOut32(0x42, (div >> 8) & 0xFF);
+
+	tmp = gfpInp32(0x61);
+	if (tmp != (tmp | 3))
+	{
+		gfpOut32(0x61, gfpInp32(0x61) | 0x03);
+	}
+
+	Sleep(duration);
+	gfpOut32(0x61, (gfpInp32(0x61) & 0xFC));
+}
 
 static int SoundThread(void *unused)
 {
@@ -58,7 +85,7 @@ static int PCSound_Win32_Init(pcsound_callback_func callback_func)
     // Temporarily disabled - the Windows scheduler is strange and 
     // stupid.
    
-    return 0;
+    //return 0;
 
     // Find the OS version
 
@@ -77,6 +104,10 @@ static int PCSound_Win32_Init(pcsound_callback_func callback_func)
     {
         return 0;
     }
+    
+    hInpOutDll = LoadLibrary("InpOut32.DLL");
+	gfpOut32 = (lpOut32)GetProcAddress(hInpOutDll, "Out32");
+	gfpInp32 = (lpInp32)GetProcAddress(hInpOutDll, "Inp32");
 
     // Start a thread to play sound.
 
