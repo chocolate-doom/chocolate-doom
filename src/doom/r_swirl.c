@@ -114,7 +114,7 @@ char *R_DistortedFlat(int flatnum)
 			distortedflat[i] = normalflat[offset[i]];
 		}
 
-		Z_ChangeTag(normalflat, PU_CACHE);
+		W_ReleaseLumpNum(flatnum);
 
 		swirlflat = flatnum;
 	}

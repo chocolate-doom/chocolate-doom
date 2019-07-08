@@ -25,7 +25,7 @@
 #include "p_local.h"
 #include "i_swap.h" // [crispy] SHORT()
 #include "w_wad.h" // [crispy] W_CheckNumForName()
-#include "z_zone.h" // [crispy] Z_ChangeTag()
+#include "z_zone.h" // [crispy] PU_STATIC
 
 #include "g_game.h"
 
@@ -171,7 +171,7 @@ void P_InitSwitchList(void)
     // [crispy] add support for SWITCHES lumps
     if (from_lump)
     {
-	Z_ChangeTag(alphSwitchList, PU_CACHE);
+	W_ReleaseLumpName("SWITCHES");
     }
 
     // [crispy] pre-allocate some memory for the buttonlist[] array

@@ -1122,7 +1122,7 @@ static void R_InitTranMap()
 
 	free(fname);
 
-	Z_ChangeTag(playpal, PU_CACHE);
+	W_ReleaseLumpName("PLAYPAL");
     }
 }
 #endif
@@ -1203,7 +1203,7 @@ void R_InitColormaps (void)
 			}
 		}
 
-		Z_ChangeTag(colormap, PU_CACHE);
+		W_ReleaseLumpName("COLORMAP");
 	}
 #endif
 
@@ -1234,7 +1234,7 @@ void R_InitColormaps (void)
 	    crstr[i] = M_StringDuplicate(c);
 	}
 
-	Z_ChangeTag(playpal, PU_CACHE);
+	W_ReleaseLumpName("PLAYPAL");
     }
 
 #ifndef CRISPY_TRUECOLOR

@@ -222,7 +222,7 @@ void P_InitPicAnims (void)
 	
     if (from_lump)
     {
-	Z_ChangeTag(animdefs, PU_CACHE);
+	W_ReleaseLumpName("ANIMATED");
     }
 
     if (init_swirl)
