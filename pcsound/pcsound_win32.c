@@ -123,6 +123,7 @@ static int PCSound_Win32_Init(pcsound_callback_func callback_func)
 static void PCSound_Win32_Shutdown(void)
 {
     sound_thread_running = 0;
+    FreeLibrary(hInpOutDll);
     SDL_WaitThread(sound_thread_handle, NULL);
 }
 
