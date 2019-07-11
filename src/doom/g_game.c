@@ -2360,12 +2360,13 @@ G_InitNew
 
     if (gamemode == commercial)
     {
-        if (gamemap < 12)
-            skytexturename = "SKY1";
-        else if (gamemap < 21)
-            skytexturename = "SKY2";
-        else
-            skytexturename = "SKY3";
+        skytexturename = DEH_String("SKY3");
+        skytexture = R_TextureNumForName(skytexturename);
+        if (gamemap < 21)
+        {
+            skytexturename = DEH_String(gamemap < 12 ? "SKY1" : "SKY2");
+            skytexture = R_TextureNumForName(skytexturename);
+        }
     }
     else
     {
@@ -2392,12 +2393,9 @@ G_InitNew
             }
             break;
         }
+        skytexturename = DEH_String(skytexturename);
+        skytexture = R_TextureNumForName(skytexturename);
     }
-
-    skytexturename = DEH_String(skytexturename);
-
-    skytexture = R_TextureNumForName(skytexturename);
-
 
     G_DoLoadLevel ();
 }
