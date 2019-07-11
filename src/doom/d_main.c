@@ -1514,6 +1514,16 @@ void D_DoomMain (void)
     if (!M_ParmExists("-noautoload") && gamemode != shareware)
     {
         char *autoload_dir;
+
+        // common auto-loaded files for all Doom flavors
+
+        autoload_dir = M_GetAutoloadDir("doom-all");
+        DEH_AutoLoadPatches(autoload_dir);
+        W_AutoLoadWADs(autoload_dir);
+        free(autoload_dir);
+
+        // auto-loaded files per IWAD
+
         autoload_dir = M_GetAutoloadDir(D_SaveGameIWADName(gamemission));
         DEH_AutoLoadPatches(autoload_dir);
         W_AutoLoadWADs(autoload_dir);
