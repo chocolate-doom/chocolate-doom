@@ -263,6 +263,32 @@ boolean I_MidiPipe_RegisterSong(char *filename)
 }
 
 //
+// I_MidiPipe_UnregisterSong
+//
+// Tells the MIDI subprocess to unload the current song.
+//
+void I_MidiPipe_UnregisterSong(void)
+{
+    boolean ok;
+    net_packet_t *packet;
+
+    packet = NET_NewPacket(64);
+    NET_WriteInt16(packet, MIDIPIPE_PACKET_TYPE_UNREGISTER_SONG);
+    ok = WritePipe(packet);
+    NET_FreePacket(packet);
+
+    if (!ok)
+    {
+        DEBUGOUT("I_MidiPipe_UnregisterSong failed");
+        return;
+    }
+
+    midi_server_registered = false;
+
+    DEBUGOUT("I_MidiPipe_UnregisterSong succeeded");
+}
+
+//
 // I_MidiPipe_SetVolume
 //
 // Tells the MIDI subprocess to set a specific volume for the song.

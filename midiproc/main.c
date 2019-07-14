@@ -119,7 +119,6 @@ static void ShutdownSDL(void)
 
 static boolean RegisterSong(const char *filename)
 {
-    UnregisterSong();
     music = Mix_LoadMUS(filename);
 
     // Remove the temporary MIDI file
@@ -191,6 +190,12 @@ static boolean MidiPipe_RegisterSong(buffer_reader_t *reader)
     return true;
 }
 
+static boolean MidiPipe_UnregisterSong(buffer_reader_t *reader)
+{
+    UnregisterSong();
+    return true;
+}
+
 boolean MidiPipe_SetVolume(buffer_reader_t *reader)
 {
     int vol;
@@ -222,7 +227,6 @@ boolean MidiPipe_PlaySong(buffer_reader_t *reader)
 boolean MidiPipe_StopSong()
 {
     StopSong();
-    UnregisterSong();
 
     return true;
 }
@@ -246,6 +250,8 @@ boolean ParseCommand(buffer_reader_t *reader, uint16_t command)
     {
     case MIDIPIPE_PACKET_TYPE_REGISTER_SONG:
         return MidiPipe_RegisterSong(reader);
+    case MIDIPIPE_PACKET_TYPE_UNREGISTER_SONG:
+        return MidiPipe_UnregisterSong(reader);
     case MIDIPIPE_PACKET_TYPE_SET_VOLUME:
         return MidiPipe_SetVolume(reader);
     case MIDIPIPE_PACKET_TYPE_PLAY_SONG:
