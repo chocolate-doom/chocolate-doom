@@ -164,30 +164,13 @@ static void StopSong()
 
 static boolean MidiPipe_RegisterSong(buffer_reader_t *reader)
 {
-    CHAR buffer[2];
-    DWORD bytes_written;
-
     char *filename = Reader_ReadString(reader);
     if (filename == NULL)
     {
         return false;
     }
 
-    if (!RegisterSong(filename))
-    {
-        return false;
-    }
-
-    if (!WriteInt16(buffer, sizeof(buffer),
-                    MIDIPIPE_PACKET_TYPE_REGISTER_SONG_ACK))
-    {
-        return false;
-    }
-
-    WriteFile(midi_process_out, buffer, sizeof(buffer),
-              &bytes_written, NULL);
-
-    return true;
+    return RegisterSong(filename);
 }
 
 static boolean MidiPipe_UnregisterSong(buffer_reader_t *reader)
@@ -270,6 +253,8 @@ boolean ParseCommand(buffer_reader_t *reader, uint16_t command)
 //
 boolean ParseMessage(buffer_t *buf)
 {
+    CHAR buffer[2];
+    DWORD bytes_written;
     int bytes_read;
     uint16_t command;
     buffer_reader_t *reader = NewReader(buf);
@@ -291,6 +276,15 @@ boolean ParseMessage(buffer_t *buf)
     bytes_read = Reader_BytesRead(reader);
     DeleteReader(reader);
     Buffer_Shift(buf, bytes_read);
+
+    // Send acknowledgement back that the command has completed.
+    if (!WriteInt16(buffer, sizeof(buffer), MIDIPIPE_PACKET_TYPE_ACK))
+    {
+        goto fail;
+    }
+
+    WriteFile(midi_process_out, buffer, sizeof(buffer),
+              &bytes_written, NULL);
 
     return true;
 

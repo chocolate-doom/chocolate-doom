@@ -215,6 +215,19 @@ void RemoveFileSpec(TCHAR *path, size_t size)
     *(fp + 1) = '\0';
 }
 
+static boolean BlockForAck(void)
+{
+    boolean ok;
+    net_packet_t *packet;
+
+    packet = NET_NewPacket(2);
+    NET_WriteInt16(packet, MIDIPIPE_PACKET_TYPE_REGISTER_SONG_ACK);
+    ok = ExpectPipe(packet);
+    NET_FreePacket(packet);
+
+    return ok;
+}
+
 //=============================================================================
 //
 // Protocol Commands
@@ -239,20 +252,10 @@ boolean I_MidiPipe_RegisterSong(char *filename)
 
     midi_server_registered = false;
 
+    ok = ok && BlockForAck();
     if (!ok)
     {
         DEBUGOUT("I_MidiPipe_RegisterSong failed");
-        return false;
-    }
-
-    packet = NET_NewPacket(2);
-    NET_WriteInt16(packet, MIDIPIPE_PACKET_TYPE_REGISTER_SONG_ACK);
-    ok = ExpectPipe(packet);
-    NET_FreePacket(packet);
-
-    if (!ok)
-    {
-        DEBUGOUT("I_MidiPipe_RegisterSong ack failed");
         return false;
     }
 
@@ -277,6 +280,7 @@ void I_MidiPipe_UnregisterSong(void)
     ok = WritePipe(packet);
     NET_FreePacket(packet);
 
+    ok = ok && BlockForAck();
     if (!ok)
     {
         DEBUGOUT("I_MidiPipe_UnregisterSong failed");
@@ -304,6 +308,7 @@ void I_MidiPipe_SetVolume(int vol)
     ok = WritePipe(packet);
     NET_FreePacket(packet);
 
+    ok = ok && BlockForAck();
     if (!ok)
     {
         DEBUGOUT("I_MidiPipe_SetVolume failed");
@@ -329,6 +334,7 @@ void I_MidiPipe_PlaySong(int loops)
     ok = WritePipe(packet);
     NET_FreePacket(packet);
 
+    ok = ok && BlockForAck();
     if (!ok)
     {
         DEBUGOUT("I_MidiPipe_PlaySong failed");
@@ -355,6 +361,7 @@ void I_MidiPipe_StopSong()
 
     midi_server_registered = false;
 
+    ok = ok && BlockForAck();
     if (!ok)
     {
         DEBUGOUT("I_MidiPipe_StopSong failed");
@@ -379,6 +386,7 @@ void I_MidiPipe_ShutdownServer()
     ok = WritePipe(packet);
     NET_FreePacket(packet);
 
+    ok = ok && BlockForAck();
     FreePipes();
 
     midi_server_initialized = false;
