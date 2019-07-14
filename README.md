@@ -147,6 +147,51 @@ After successful compilation the resulting binaries can be found in the `src/` d
 
 ## News
 
+### Crispy Doom 5.6
+
+Crispy Doom 5.6 has been released on July XX, 2019. This release features support for the new Ultimate Doom Episode 5: Sigil by John Romero (with its MP3 soundtrack by Buckethead) and Doom Metal Vol.5 metal soundtrack mod for all IWADs, also addressing more community feedback.
+
+**Features**
+ 
+ * Support for alternative music tracks for Final Doom has been implemented as introduced in DoomMetalVol5.wad, music replacement tables provided by Zodomaniac.
+ * SIGIL.wad and SIGIL_SHREDS.wad are auto-loaded with Ultimate Doom IWAD when available, suggested by buvk. The Sigil art screen is only used when finishing episode 5. If you want to replace DMENUPIC and other art by Sigil's, load it manually.
+
+**Improvements**
+ 
+ * Crispy's own WAD autoload mechanism has been replaced by Choco's one, autoloading files from `doom-all` subdirectory of config directory.
+ * Item position in Crispness menu is now remembered as well as in the rest of Doom menu, fixing the non-Doominess spotted by JNechaevsky.
+ * Drag-and-drop of .bex files is now allowed.
+ * Auto-naming savegames now excludes the .wad extension from the file name but writes the IWAD name on Windows for savegames in IWAD maps, where all saves from different IWADs are stored in one folder (inherited from Choco). 
+ * Played music is now logged.
+ * Sound channels have no meaning and are therefore disabled with the PC speaker sound device
+ * Ambiguity in music backend name `Native MIDI` pointed out by pmjdebruijn has been eliminated, now it reads `MIDI/MP3/OGG/FLAC`.
+ * Automap colors for different things (visible with IDDT) have been figured out by Zodomaniac: orange for projectiles, including Lost Souls, and dark gold for shootable things like barrels.
+ * A warning for linedefs without tags is emitted.
+ * Extra Arch-Vile fire spawn sound is only played if available, which makes Capellan's SpecBoss.wad work with Doom 1 as IWAD.
+ * Optional secret counting in the "secret revealed" message has been introduced, suggested by Ledmeister.
+ * Green brightmap is applied to barrels according to JNechaevsky's idea.
+ * Colors for HUD digits have been improved on artistic advice by JNechaevsky.
+ * Zooming and moving Automap with the mouse wheel has been implemented, thanks to JNechaevsky for the suggestion and testing.
+ * Tally screen is displayed after ExM8, requested by Sector 147 and tested by JNechaevsky.
+ * Weapon pickup message is printed when using the `TNTWEAPx` cheat, requested by Zodomaniac.
+
+**Bug Fixes**
+ 
+ * Support for SMMU swirling flats has been repaired.
+ * Playing with 32 sound channels is now actually enabled, thanks to seed and SiFi270 for pointing this out and providing examples.
+ * More crashes with maps without map title graphics lump are prevented.
+ * Level transitions back from MAP33 when playing Doom 2 extensions (e.g. NERVE) have been fixed, thanks to buvk for reporting.
+ * If still in doubt about the correct background to use for the intermission screen, INTERPIC is used on the intermission screen, preventing a crash.
+ * Playing up to three sounds from lines with more than one switch texture has been fixed, squashing the button spamming sound bug reported by Looper in the forums.
+ * A crash when a door that is actually a platform is closed manually has been fixed, spotted by glyphic from the forums.
+ * Off-by-one typo in the par time drawing decision has been fixed.
+ * SSG reloading sounds being breakable have been fixed, reported by JNechaevsky.
+ * If the lump name is unambiguous, the one found is used, as Brad Harding pointed out. This fixes WOS.wad.
+ * Flat lumps are prevented from being mistaken as patches, at least when composing textures, fixes a crash when loading any map with Sunder.wad (and who knows where else) spotted by JNechaevsky.
+ * Ammo type is reset in `P_CheckAmmo()` when weapon is removed (by `TNTWEAPx` cheat) after Zodomaniac's report, so that even the chainsaw which consumes no ammo is removed properly.
+ 
+Crispy Doom 5.6 is based on Chocolate Doom 3.0.0 and has merged all changes to the Chocolate Doom master branch up to commit [`f1d557ff`](https://github.com/chocolate-doom/chocolate-doom/commit/f1d557ff6344e84595a5eb0b2ac2639224286d5b).
+
 ### Crispy Doom 5.5.2
 
 Crispy Doom 5.5.2 has been released on April 1st, 2019. This is another hotfix release bringing the feature of taking over a demo any moment and some subtle improvements as well.
