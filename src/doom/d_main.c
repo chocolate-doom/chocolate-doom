@@ -1853,63 +1853,12 @@ void D_DoomMain (void)
     // Note that there's a very careful and deliberate ordering to how
     // Dehacked patches are loaded. The order we use is:
     //  1. IWAD dehacked patches.
-    // [crispy] 1.a. dehacked patches in the config directory following
-    // the preload?.deh/.bex naming scheme are preloaded at game startup
-    if (!M_ParmExists("-nodeh") && !M_ParmExists("-noload"))
-    {
-	int i;
-
-	for (i = 0; i < 10; i++)
-	{
-	    char *path;
-
-	    M_snprintf(file, sizeof(file), "preload%d.deh", i);
-	    path = M_StringJoin(configdir, file, NULL);
-
-	    if (M_FileExists(path))
-		DEH_LoadFile(path);
-	    else
-	    {
-		free(path);
-		M_snprintf(file, sizeof(file), "preload%d.bex", i);
-		path = M_StringJoin(configdir, file, NULL);
-
-		if (M_FileExists(path))
-		    DEH_LoadFile(path);
-	    }
-	    free(path);
-	}
-    }
     //  2. Command line dehacked patches specified with -deh.
     //  3. PWAD dehacked patches in DEHACKED lumps.
     DEH_ParseCommandLine();
 
-    // [crispy] PWAD files in the config directory following
-    // the preload?.wad naming scheme are preloaded at game startup
-    if (!M_ParmExists("-noload") && gamemode != shareware)
-    {
-	int i;
-	extern void W_MergeFile(char *filename);
-
-	for (i = 0; i < 10; i++)
-	{
-	    char *path;
-
-	    M_snprintf(file, sizeof(file), "preload%d.wad", i);
-	    path = M_StringJoin(configdir, file, NULL);
-
-	    if (M_FileExists(path))
-	    {
-		modifiedgame = true;
-		printf(" auto-merging %s !\n", path);
-		W_MergeFile(path);
-	    }
-	    free(path);
-	}
-    }
-
     // Load PWAD files.
-    modifiedgame |= W_ParseCommandLine(); // [crispy] OR'ed
+    modifiedgame = W_ParseCommandLine();
 
     //!
     // @arg <file>
