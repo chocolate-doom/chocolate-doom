@@ -2691,7 +2691,7 @@ void M_SetMusicPackDir(void)
 
     free(readme_path);
     free(music_pack_path);
-    free(prefdir);
+    SDL_free(prefdir);
 }
 
 //
@@ -2774,7 +2774,7 @@ char *M_GetAutoloadDir(const char *iwadname)
         char *prefdir;
         prefdir = SDL_GetPrefPath("", PACKAGE_TARNAME);
         autoload_path = M_StringJoin(prefdir, "autoload", NULL);
-        free(prefdir);
+        SDL_free(prefdir);
     }
 
     M_MakeDirectory(autoload_path);

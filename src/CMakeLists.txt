@@ -15,17 +15,20 @@ set(COMMON_SOURCE_FILES
 
 set(DEDSERV_FILES
     d_dedicated.c
-    d_mode.c             d_mode.h
-    i_timer.c            i_timer.h
-    net_common.c         net_common.h
-    net_dedicated.c      net_dedicated.h
-    net_io.c             net_io.h
-    net_packet.c         net_packet.h
-    net_sdl.c            net_sdl.h
-    net_query.c          net_query.h
-    net_server.c         net_server.h
-    net_structrw.c       net_structrw.h
-    z_native.c           z_zone.h)
+    d_iwad.c            d_iwad.h
+    d_mode.c            d_mode.h
+    deh_str.c           deh_str.h
+    i_timer.c           i_timer.h
+    m_config.c          m_config.h
+    net_common.c        net_common.h
+    net_dedicated.c     net_dedicated.h
+    net_io.c            net_io.h
+    net_packet.c        net_packet.h
+    net_sdl.c           net_sdl.h
+    net_query.c         net_query.h
+    net_server.c        net_server.h
+    net_structrw.c      net_structrw.h
+    z_native.c          z_zone.h)
 
 add_executable("${PROGRAM_PREFIX}server" WIN32 ${COMMON_SOURCE_FILES} ${DEDSERV_FILES})
 target_include_directories("${PROGRAM_PREFIX}server"
@@ -71,7 +74,7 @@ set(GAME_SOURCE_FILES
     net_client.c        net_client.h
     net_common.c        net_common.h
     net_dedicated.c     net_dedicated.h
-                        net_defs.h
+    net_defs.h
     net_gui.c           net_gui.h
     net_io.c            net_io.h
     net_loop.c          net_loop.h
@@ -109,7 +112,7 @@ if(MSVC)
 endif()
 
 set(DEHACKED_SOURCE_FILES
-                        deh_defs.h
+    deh_defs.h
     deh_io.c            deh_io.h
     deh_main.c          deh_main.h
     deh_mapping.c       deh_mapping.h
@@ -216,12 +219,12 @@ if(MSVC)
                           LINK_FLAGS "/MANIFEST:NO")
 endif()
 
-add_executable(midiread midifile.c z_native.c i_system.c m_argv.c m_misc.c)
+add_executable(midiread midifile.c z_native.c i_system.c m_argv.c m_misc.c d_iwad.c deh_str.c m_config.c)
 target_compile_definitions(midiread PRIVATE "-DTEST")
 target_include_directories(midiread PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/../")
 target_link_libraries(midiread SDL2::SDL2main SDL2::SDL2)
 
-add_executable(mus2mid mus2mid.c memio.c z_native.c i_system.c m_argv.c m_misc.c)
+add_executable(mus2mid mus2mid.c memio.c z_native.c i_system.c m_argv.c m_misc.c d_iwad.c deh_str.c m_config.c)
 target_compile_definitions(mus2mid PRIVATE "-DSTANDALONE")
 target_include_directories(mus2mid PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/../")
 target_link_libraries(mus2mid SDL2::SDL2main SDL2::SDL2)
