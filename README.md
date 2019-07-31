@@ -127,18 +127,18 @@ or cloned via
  git clone https://github.com/fabiangreffrath/crispy-doom.git
 ```
 
-Compilation on Debian/Ubuntu systems should be as simple as
+Compilation on Debian systems (Debian 10 "buster" or later) should be as simple as
 
 ```
- sudo apt-get install build-essential automake
- sudo apt-get build-dep chocolate-doom
+ sudo apt install build-essential automake
+ sudo apt build-dep crispy-doom
 ```
 
 to install the prerequisites and then
 
 ```
  cd crispy-doom
- autoreconf -vif
+ autoreconf -fiv
  ./configure
  make
 ```
@@ -159,7 +159,6 @@ Crispy Doom 5.6 has been released on August 1, 2019. This release features suppo
 **Improvements**
 
  * Joystick jump button can now be assigned, contributed by Jeff Green.
- * Crispy's own WAD autoload mechanism has been replaced by Choco's one, autoloading files from `doom-all` subdirectory of config directory.
  * Item position in Crispness menu is now remembered as well as in the rest of Doom menu, fixing the non-Doominess spotted by JNechaevsky.
  * Ambiguity in music backend name `Native MIDI` pointed out by pmjdebruijn has been eliminated, now it reads `MIDI/MP3/OGG/FLAC`.
  * Automap colors for different things (visible with IDDT) have been figured out by Zodomaniac: orange for projectiles, including Lost Souls, and dark gold for shootable things like barrels.
@@ -184,6 +183,10 @@ Crispy Doom 5.6 has been released on August 1, 2019. This release features suppo
  * Flat lumps are prevented from being mistaken as patches, at least when composing textures. This fixes a crash when loading any map with Sunder.wad (and who knows where else) spotted by JNechaevsky. If the flat lump name is unambiguous, though, then the one found is used, as Brad Harding pointed out. This fixes WOS.wad.
  * The ammo type is reset in `P_CheckAmmo()` when a weapon is removed (by the `TNTWEAPx` cheat) after Zodomaniac's report, so that even the chainsaw which consumes no ammo is removed properly.
  
+**Regressions**
+
+ * Crispy's own WAD autoload mechanism has been replaced by Choco's one, autoloading files from the `doom-all` subdirectory of the config directory.
+
 Crispy Doom 5.6 is based on Chocolate Doom 3.0.0 and has merged all changes to the Chocolate Doom master branch up to commit [`485b939b`](https://github.com/chocolate-doom/chocolate-doom/commit/485b939b9b01e00ab47cd34a9de4a4e901d96a33).
 
 ## Documentation
