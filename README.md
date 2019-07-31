@@ -109,7 +109,7 @@ Many additional less user-visible features have been implemented, e.g. fixed eng
 ## Download
 
 Binaries for Windows XP / Vista / 7 / 8.1 / 10 (both x86 and x64 editions) are available here: 
-https://github.com/fabiangreffrath/crispy-doom/releases/download/crispy-doom-5.5.2/crispy-doom-5.5.2-win32.zip
+https://github.com/fabiangreffrath/crispy-doom/releases/download/crispy-doom-5.6/crispy-doom-5.6-win32.zip
 
 Daily builds of Crispy Doom can be found here:
 http://latest.chocolate-doom.org/
@@ -149,26 +149,20 @@ After successful compilation the resulting binaries can be found in the `src/` d
 
 ### Crispy Doom 5.6
 
-Crispy Doom 5.6 has been released on August 1, 2019. This release features support for the new Ultimate Doom Episode 5: Sigil by John Romero (with its MP3 soundtrack by Buckethead) and Doom Metal Vol.5 metal soundtrack mod for all IWADs, also addressing more community feedback.
+Crispy Doom 5.6 has been released on August 1, 2019. This release features support for the new Ultimate Doom Episode 5: Sigil by John Romero (with its MP3 soundtrack by Buckethead) and the Doom Metal Vol. 5 metal soundtrack mod for all IWADs.
 
 **Features**
- 
- * Support for alternative music tracks for Final Doom has been implemented as introduced in DoomMetalVol5.wad, music replacement tables provided by Zodomaniac.
+
  * SIGIL.wad and SIGIL_SHREDS.wad are auto-loaded with Ultimate Doom IWAD when available, suggested by buvk. The Sigil art screen is only used when finishing episode 5. If you want to replace DMENUPIC and other art by Sigil's, load it manually.
+ * Support for alternative music tracks for Final Doom has been implemented as introduced in DoomMetalVol5.wad, music replacement tables provided by Zodomaniac.
 
 **Improvements**
- 
- * `Double click acts as "Use"` mouse setting is now false by default, as Zodomaniac pointed out that in Crispy the right mouse button can be assigned e.g. for quick reverse. 
+
  * Joystick jump button can now be assigned, contributed by Jeff Green.
  * Crispy's own WAD autoload mechanism has been replaced by Choco's one, autoloading files from `doom-all` subdirectory of config directory.
  * Item position in Crispness menu is now remembered as well as in the rest of Doom menu, fixing the non-Doominess spotted by JNechaevsky.
- * Drag-and-drop of .bex files is now allowed.
- * Auto-naming savegames now excludes the .wad extension from the file name but writes the IWAD name on Windows for savegames in IWAD maps, where all saves from different IWADs are stored in one folder (inherited from Choco). 
- * Played music is now logged.
- * Sound channels have no meaning and are therefore disabled with the PC speaker sound device
  * Ambiguity in music backend name `Native MIDI` pointed out by pmjdebruijn has been eliminated, now it reads `MIDI/MP3/OGG/FLAC`.
  * Automap colors for different things (visible with IDDT) have been figured out by Zodomaniac: orange for projectiles, including Lost Souls, and dark gold for shootable things like barrels.
- * A warning for linedefs without tags is emitted.
  * Extra Arch-Vile fire spawn sound is only played if available, which makes Capellan's SpecBoss.wad work with Doom 1 as IWAD.
  * Optional secret counting in the "secret revealed" message has been introduced, suggested by Ledmeister.
  * Green brightmap is applied to barrels according to JNechaevsky's idea.
@@ -178,102 +172,19 @@ Crispy Doom 5.6 has been released on August 1, 2019. This release features suppo
  * Weapon pickup message is printed when using the `TNTWEAPx` cheat, requested by Zodomaniac.
 
 **Bug Fixes**
- 
+
  * Support for SMMU swirling flats has been repaired.
  * Playing with 32 sound channels is now actually enabled, thanks to seed and SiFi270 for pointing this out and providing examples.
  * More crashes with maps without map title graphics lump are prevented.
  * Level transitions back from MAP33 when playing Doom 2 extensions (e.g. NERVE) have been fixed, thanks to buvk for reporting.
- * If still in doubt about the correct background to use for the intermission screen, INTERPIC is used on the intermission screen, preventing a crash.
  * Playing up to three sounds from lines with more than one switch texture has been fixed, squashing the button spamming sound bug reported by Looper in the forums.
  * A crash when a door that is actually a platform is closed manually has been fixed, spotted by glyphic from the forums.
- * Off-by-one typo in the par time drawing decision has been fixed.
- * SSG reloading sounds being breakable have been fixed, reported by JNechaevsky.
- * If the lump name is unambiguous, the one found is used, as Brad Harding pointed out. This fixes WOS.wad.
- * Flat lumps are prevented from being mistaken as patches, at least when composing textures, fixes a crash when loading any map with Sunder.wad (and who knows where else) spotted by JNechaevsky.
- * Ammo type is reset in `P_CheckAmmo()` when weapon is removed (by `TNTWEAPx` cheat) after Zodomaniac's report, so that even the chainsaw which consumes no ammo is removed properly.
+ * An off-by-one typo in the par time drawing decision has been fixed.
+ * The SSG reloading sounds being breakable have been fixed, reported by JNechaevsky.
+ * Flat lumps are prevented from being mistaken as patches, at least when composing textures. This fixes a crash when loading any map with Sunder.wad (and who knows where else) spotted by JNechaevsky. If the flat lump name is unambiguous, though, then the one found is used, as Brad Harding pointed out. This fixes WOS.wad.
+ * The ammo type is reset in `P_CheckAmmo()` when a weapon is removed (by the `TNTWEAPx` cheat) after Zodomaniac's report, so that even the chainsaw which consumes no ammo is removed properly.
  
-Crispy Doom 5.6 is based on Chocolate Doom 3.0.0 and has merged all changes to the Chocolate Doom master branch up to commit [`f1d557ff`](https://github.com/chocolate-doom/chocolate-doom/commit/f1d557ff6344e84595a5eb0b2ac2639224286d5b).
-
-### Crispy Doom 5.5.2
-
-Crispy Doom 5.5.2 has been released on April 1st, 2019. This is another hotfix release bringing the feature of taking over a demo any moment and some subtle improvements as well.
-
-**Features**
- 
- * Hitting the 'quit recording demo' button when playing back a demo will 'take it over', i.e. hand the controls over to the player and record the forked timeline into a different file. Multiplayer demos are prevented from being taken over.
-
-**Improvements**
-
- * Crispy color scheme is now applied to the network GUI as Zodomaniac insisted.
- * 100000 demos of the same name can now be recorded without overriding files, thanks to Looper for the suggestion.
- * New `SKILL` cheat suggested by Zodomaniac has been introduced displaying current skill level: Baby, Easy, Normal, Hard or Nightmare.
- * `IDCLEV` cheat now supports level number `IDCLEV1A` to warp to E1M10: Sewers even if No End In Sight `neis.wad` with its ExM0 levels is loaded with XBox Doom IWAD. This obscure case was pointed out by Zodomaniac. `IDCLEV10` still warps to E1M10: Sewers (along with `IDCLEV1A`) if XBox Doom IWAD is used without E1M0 map in PWADs.
-
-**Bug Fixes**
- 
- * Desyncing of demos continued by using `-playdemo` and `-record` in case of demos recorded with `-fast`, `-respawn` or `-nomonsters` has been fixed, spotted by Zodomaniac.
- * Game is now un-paused after loading a game while recording a demo, on Looper's report.
- 
-Crispy Doom 5.5.2 is based on Chocolate Doom 3.0.0 and has merged all changes to the Chocolate Doom master branch up to commit [`fd171dda`](https://github.com/chocolate-doom/chocolate-doom/commit/fd171dda546f38a9b7a6158ed2c3c8044e4ce72d).
-
-### Crispy Doom 5.5.1
-
-Crispy Doom 5.5.1 has been released on March 7, 2019. This is a hotfix release to fix a minor bug introduced in the previous version.
-
-**Bug Fixes**
-
- * Revealed secret sectors are now highlighted in green (instead of gold) on the Automap only if the "Show Revealed Secrets" feature is enabled (the "Extended Automap Colors" feature alone isn't sufficient anymore).
-
-Crispy Doom 5.5.1 is based on Chocolate Doom 3.0.0 and has merged all changes to the Chocolate Doom master branch up to commit [`ecab8d3a`](https://github.com/chocolate-doom/chocolate-doom/commit/ecab8d3ac0ca34fbb6cb04b608926a57b6dbdcc5).
-
-### Crispy Doom 5.5
-
-Crispy Doom 5.5 has been released on February 27, 2019. This is another release which mostly addresses community suggestions.
-
-Forceful setting of the `SDL_AUDIODRIVER` variable on Windows has been dropped. Windows "releases" from 5.5 onward will be based on the daily builds and use their SDL libraries with the default audio backend.
-
-**Features**
-
- * Demo recording can now be continued by using `-playdemo` and `-record` simultaneously, based on a pull request by Fraggle.
- * Menu switches for level stats, level time and player coords are now separate. Choices are "Always", "In Automap" or "Never". Also, Automap stats widgets have been condensed a bit ('K' for Kills -- or 'F' for Flemoids in Chex Quest, 'I' for Items and 'S' for Secrets). Right-aligned widgets (i.e. player coords and FPS counter) have been moved a step further to the right.
-
-**Improvements**
-
- * Revealed secret sectors are now highlighted in gold on the Automap if both the "Extended Automap Colors" and "Show Revealed Secrets" features are enabled. Zodomaniac suggested this feature.
- * The `IDBEHOLDA` cheat can now disable the full automap again, pointed out by Zodomaniac.
- * Autocompletion of savegame slot name with [PWAD name in case it contains the map + map number] is introduced for all kinds of controllers, not only for the joystick as in Choco.
- * The demo timer widget is now also drawn on intermission screens (if enabled), thanks to Looper for the suggestion.
- * The `MF_DROPPED` flag is now checked for all ammo and weapon things. This has been contributed by NeuralStunner.
- * A "Crispy" color scheme has been introduced for Crispy Setup based on the suggestions by JNechaevsky and Zodomaniac.
- * Monster seesounds are now uninterruptible if the "Play Sounds In Full Length" feature is enabled, thanks to BCG2000 for pointing this out. Also, sounds "played in the player's head" (i.e. from origin `NULL`) don't interrupt each other anymore, thanks to BCG2000's remark.
- * The `IDMYPOS` cheat now yields extra high precision coordinates updating for 10 seconds and discarding after that instead of going static (the latter caught by Zodomaniac).
- * If the "Walk Over/Under Monsters" feature is enabled, the usual 24 units step-up is now allowed even across monsters' heads, thanks to BCG2000's suggestion. However, jumping on a monster's head straight from the floor by means of "low" jumping is disallowed.
- * A map's default music isn't loaded anymore if MUSINFO data is available and the game gets loaded from a savegame, thanks to zstephens for filing the issue.
- * ExM0 maps are now supported, reachable either through the `-warp x0` command line argument or the `IDCLEVx0` cheat, as suggested by StasBFG for the "No End In Sight" megawad (neis.wad).
-
-**Bug Fixes**
-
- * Crashes or black screens that occurred when switching specific rendering options have been fixed by a complete overhaul of the rendering stack re-initialization code.
- * The initialization value of `floor->crush` in `EV_BuildStairs()` has been fixed, inherited from Chocolate Doom. This has caused a rare and obscure demo desyncing bug on TNT map 22, reported by Dime.
- * Direct aiming is now applied to the Beta BFG code as well, thanks to NeuralStunner for drawing attention to this.
- * Screenshots without the "screen shot" message have (hopefully!) been fixed again for all platforms and all rendering options.
- * Pickup messages for weapons that are already owned have been brought back as Zodomaniac spotted their absence.
- * All additional player properties are now reset when finishing a level, e.g. you'll now never start a new level with your view in the sky.
- * The things' actual height is now calculated from the spawnstate's first sprite (for shootable solid things only). This mitigates the issue JNechaevsky once reported when both "Mouselook" and "Direct Aiming" are enabled and you miss some obvious targets, like e.g. Romero's head on a stick.
- * The priority for the "Ouch Face" has been raised so that it actually shows up, thanks to BCG2000's and JNechaevsky's carefulness.
- * The default color of HUD level stat names for Hacx is now blue.
- * MUSINFO support has been repaired after it was accidentally destroyed in 5.4 by not setting the `lumpname` variable anymore in `P_SetupLevel()`.
-
-**Other Games**
-
- * Crispy Heretic now catches intercepts overflows which fixes a crash in E1M2 of "Lost and Forgotten".
- * Optional level stats for Crispy Heretic can now be enabled, see the commit message to [`11e6091a`](https://github.com/fabiangreffrath/crispy-doom/commit/11e6091ac13906b5c79238a0a7f49abe60e2c7c9).
-
-**Errata**
-
- * A thing height clipping issue when standing on a monster's head on a moving platform has been vastly improved, but not entirely fixed yet. Monsters may still get stuck in walls occasionally, but players won't anymore.
-
-Crispy Doom 5.5 is based on Chocolate Doom 3.0.0 and has merged all changes to the Chocolate Doom master branch up to commit [`25ae4973`](https://github.com/chocolate-doom/chocolate-doom/commit/25ae4973fab0cfffe47fbc8373dae8a8715786d7).
+Crispy Doom 5.6 is based on Chocolate Doom 3.0.0 and has merged all changes to the Chocolate Doom master branch up to commit [`485b939b`](https://github.com/chocolate-doom/chocolate-doom/commit/485b939b9b01e00ab47cd34a9de4a4e901d96a33).
 
 ## Documentation
 
