@@ -149,7 +149,7 @@ After successful compilation the resulting binaries can be found in the `src/` d
 
 ### Crispy Doom 5.6
 
-Crispy Doom 5.6 has been released on July XX, 2019. This release features support for the new Ultimate Doom Episode 5: Sigil by John Romero (with its MP3 soundtrack by Buckethead) and Doom Metal Vol.5 metal soundtrack mod for all IWADs, also addressing more community feedback.
+Crispy Doom 5.6 has been released on August 1, 2019. This release features support for the new Ultimate Doom Episode 5: Sigil by John Romero (with its MP3 soundtrack by Buckethead) and Doom Metal Vol.5 metal soundtrack mod for all IWADs, also addressing more community feedback.
 
 **Features**
  
@@ -158,6 +158,8 @@ Crispy Doom 5.6 has been released on July XX, 2019. This release features suppor
 
 **Improvements**
  
+ * `Double click acts as "Use"` mouse setting is now false by default, as Zodomaniac pointed out that in Crispy the right mouse button can be assigned e.g. for quick reverse. 
+ * Joystick jump button can now be assigned, contributed by Jeff Green.
  * Crispy's own WAD autoload mechanism has been replaced by Choco's one, autoloading files from `doom-all` subdirectory of config directory.
  * Item position in Crispness menu is now remembered as well as in the rest of Doom menu, fixing the non-Doominess spotted by JNechaevsky.
  * Drag-and-drop of .bex files is now allowed.
