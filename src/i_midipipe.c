@@ -221,7 +221,7 @@ static boolean BlockForAck(void)
     net_packet_t *packet;
 
     packet = NET_NewPacket(2);
-    NET_WriteInt16(packet, MIDIPIPE_PACKET_TYPE_REGISTER_SONG_ACK);
+    NET_WriteInt16(packet, MIDIPIPE_PACKET_TYPE_ACK);
     ok = ExpectPipe(packet);
     NET_FreePacket(packet);
 
