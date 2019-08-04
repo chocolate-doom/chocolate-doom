@@ -345,12 +345,19 @@ static void I_SDL_UnRegisterSong(void *handle)
         return;
     }
 
-    if (handle == NULL)
+#if defined(_WIN32)
+    if (midi_server_registered)
     {
-        return;
+        I_MidiPipe_StopSong();
     }
-
-    Mix_FreeMusic(music);
+    else
+#endif
+    {
+        if (handle != NULL)
+        {
+            Mix_FreeMusic(music);
+        }
+    }
 }
 
 // Determine whether memory block is a .mid file 
