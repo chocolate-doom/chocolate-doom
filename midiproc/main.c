@@ -119,7 +119,6 @@ static void ShutdownSDL(void)
 
 static boolean RegisterSong(const char *filename)
 {
-    UnregisterSong();
     music = Mix_LoadMUS(filename);
 
     // Remove the temporary MIDI file
@@ -165,29 +164,18 @@ static void StopSong()
 
 static boolean MidiPipe_RegisterSong(buffer_reader_t *reader)
 {
-    CHAR buffer[2];
-    DWORD bytes_written;
-
     char *filename = Reader_ReadString(reader);
     if (filename == NULL)
     {
         return false;
     }
 
-    if (!RegisterSong(filename))
-    {
-        return false;
-    }
+    return RegisterSong(filename);
+}
 
-    if (!WriteInt16(buffer, sizeof(buffer),
-                    MIDIPIPE_PACKET_TYPE_REGISTER_SONG_ACK))
-    {
-        return false;
-    }
-
-    WriteFile(midi_process_out, buffer, sizeof(buffer),
-              &bytes_written, NULL);
-
+static boolean MidiPipe_UnregisterSong(buffer_reader_t *reader)
+{
+    UnregisterSong();
     return true;
 }
 
@@ -222,7 +210,6 @@ boolean MidiPipe_PlaySong(buffer_reader_t *reader)
 boolean MidiPipe_StopSong()
 {
     StopSong();
-    UnregisterSong();
 
     return true;
 }
@@ -246,6 +233,8 @@ boolean ParseCommand(buffer_reader_t *reader, uint16_t command)
     {
     case MIDIPIPE_PACKET_TYPE_REGISTER_SONG:
         return MidiPipe_RegisterSong(reader);
+    case MIDIPIPE_PACKET_TYPE_UNREGISTER_SONG:
+        return MidiPipe_UnregisterSong(reader);
     case MIDIPIPE_PACKET_TYPE_SET_VOLUME:
         return MidiPipe_SetVolume(reader);
     case MIDIPIPE_PACKET_TYPE_PLAY_SONG:
@@ -264,6 +253,8 @@ boolean ParseCommand(buffer_reader_t *reader, uint16_t command)
 //
 boolean ParseMessage(buffer_t *buf)
 {
+    CHAR buffer[2];
+    DWORD bytes_written;
     int bytes_read;
     uint16_t command;
     buffer_reader_t *reader = NewReader(buf);
@@ -285,6 +276,15 @@ boolean ParseMessage(buffer_t *buf)
     bytes_read = Reader_BytesRead(reader);
     DeleteReader(reader);
     Buffer_Shift(buf, bytes_read);
+
+    // Send acknowledgement back that the command has completed.
+    if (!WriteInt16(buffer, sizeof(buffer), MIDIPIPE_PACKET_TYPE_ACK))
+    {
+        goto fail;
+    }
+
+    WriteFile(midi_process_out, buffer, sizeof(buffer),
+              &bytes_written, NULL);
 
     return true;
 
