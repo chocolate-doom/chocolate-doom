@@ -1341,6 +1341,12 @@ static void LoadSigilWad(void)
         {"D_INTRO",  "D_SIGTIT"},
     };
 
+    const char *const texture_files[] = {
+        "PNAMES",
+        "TEXTURE1",
+        "TEXTURE2",
+    };
+
     // [crispy] don't load SIGIL.wad if another PWAD already provides E5M1
     i = W_CheckNumForName("E5M1");
     if (i != -1)
@@ -1353,6 +1359,19 @@ static void LoadSigilWad(void)
     if (i != -1 && !strcasecmp(W_WadNameForLump(lumpinfo[i]), "SIGIL_COMPAT.wad"))
     {
         return;
+    }
+
+    // [crispy] don't load SIGIL.wad if another PWAD already modifies the texture files
+    for (i = 0; i < arrlen(texture_files); i++)
+    {
+        int j;
+
+        j = W_CheckNumForName(texture_files[i]);
+
+        if (j != -1 && !W_IsIWADLump(lumpinfo[j]))
+        {
+            return;
+        }
     }
 
     if (gameversion == exe_ultimate)
