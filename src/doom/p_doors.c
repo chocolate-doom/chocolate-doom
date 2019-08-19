@@ -446,7 +446,7 @@ EV_VerticalDoor
 	    {
 		door->direction = 1;	// go back up
 		// [crispy] play sound effect when the door is opened again while going down
-		if (crispy->soundfix)
+		if (crispy->soundfix && door->thinker.function.acp1 == (actionf_p1) T_VerticalDoor)
 		S_StartSound(&door->sector->soundorg, line->special == 117 ? sfx_bdopn : sfx_doropn);
 	    }
 	    else
