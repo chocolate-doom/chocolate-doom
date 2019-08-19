@@ -422,7 +422,7 @@ void M_CrispyTogglePitch(int choice)
 void M_CrispyTogglePlayerCoords(int choice)
 {
     choice = 0;
-    crispy->playercoords = (crispy->playercoords + 1) % NUM_WIDGETS;
+    crispy->playercoords = (crispy->playercoords + 1) % (NUM_WIDGETS - 1); // [crispy] disable "always" setting
 }
 
 void M_CrispyToggleRecoil(int choice)
