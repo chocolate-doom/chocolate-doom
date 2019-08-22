@@ -147,6 +147,24 @@ After successful compilation the resulting binaries can be found in the `src/` d
 
 ## News
 
+### Crispy Doom 5.6.1 
+
+Crispy Doom 5.6.1 has been released on August 22, 2019. It is dedicated to hotfixing the bugs reported by the community after 5.6 release.
+
+**Bug Fixes**
+
+ * `IDBEHOLD0` cheat not cancelling the player's invisibility has been fixed, thanks to maxmanium for being watchful.
+ * The crash when a door that is actually a platform is opened again while going down has now actually been fixed, thanks to maximanium for pointing this out at Doomworld forums and Zodomaniac for the confirmation.
+ * Door-closing sound playing even when the door is already closed has been fixed, thanks to Worm from Doomworld forums for the heads-up. This also affects repeatable walkover triggers.
+ * SIGIL.wad is not loaded anymore if another PWAD already modifies the texture files. This fixes the buttons in REKKR being rendered incorrectly, thanks to IsBebs for the report.
+
+**Regressions**
+
+ * "Show Player Coords: Always" setting is now disabled to prevent cheating while speedrunning. Thanks to ZeroMaster010 for the suggestions at Doomworld forums.
+
+ 
+Crispy Doom 5.6.1 is based on Chocolate Doom 3.0.0 and has merged all changes to the Chocolate Doom master branch up to commit [`b9d4c04c`](https://github.com/chocolate-doom/chocolate-doom/commit/b9d4c04c840321f5ec70787d8afb1256766aaa01).
+
 ### Crispy Doom 5.6
 
 Crispy Doom 5.6 has been released on August 1, 2019. This release features support for the new Ultimate Doom Episode 5: Sigil by John Romero (with its MP3 soundtrack by Buckethead) and the Doom Metal Vol. 5 metal soundtrack mod for all IWADs.
