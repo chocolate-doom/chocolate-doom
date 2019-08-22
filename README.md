@@ -210,7 +210,7 @@ Crispy Doom 5.6 is based on Chocolate Doom 3.0.0 and has merged all changes to t
 
  * **[Changelog](https://github.com/fabiangreffrath/crispy-doom/wiki/Changelog)**
  * **[Compatibility](https://github.com/fabiangreffrath/crispy-doom/wiki/Compatibility)**
- * **[Crispness](ttps://github.com/fabiangreffrath/crispy-doom/wiki/Crispness)**
+ * **[Crispness](https://github.com/fabiangreffrath/crispy-doom/wiki/Crispness)**
  * **[FAQ](https://github.com/fabiangreffrath/crispy-doom/wiki/FAQ)**
 
 ## Versioning
