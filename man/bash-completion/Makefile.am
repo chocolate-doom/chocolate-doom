@@ -1,4 +1,4 @@
-bashcompletiondir=@bashcompletiondir@
+bashcompletiondir=@datadir@/bash-completion/completions
 
 BASH_COMPLETION_TEMPLATES = \
     doom.template \

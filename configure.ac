@@ -115,13 +115,6 @@ AC_CHECK_DECLS([strcasecmp, strncasecmp], [], [], [[#include <strings.h>]])
 AC_CHECK_LIB(i386, i386_iopl)
 AC_CHECK_LIB(amd64, amd64_iopl)
 
-AC_ARG_WITH([bashcompletiondir],
-    AS_HELP_STRING([--with-bashcompletiondir=DIR], [Bash completion directory]),
-    [],
-    [AS_IF([$($PKG_CONFIG --exists bash-completion 2> /dev/null)],
-        [bashcompletiondir=$($PKG_CONFIG --variable=completionsdir bash-completion)],
-	[bashcompletiondir=${datadir}/bash-completion/completions])])
-
 case "$host" in
   *-*-mingw* | *-*-cygwin* | *-*-msvc* )
     AC_CHECK_TOOL(WINDRES, windres, )
@@ -180,8 +173,6 @@ AC_SUBST(PACKAGE_MAINTAINER)
 AC_SUBST(PACKAGE_URL)
 AC_SUBST(PACKAGE_RDNS)
 AC_SUBST(PACKAGE_ISSUES)
-
-AC_SUBST(bashcompletiondir)
 
 dnl Shut up the datarootdir warnings.
 AC_DEFUN([AC_DATAROOTDIR_CHECKED])
