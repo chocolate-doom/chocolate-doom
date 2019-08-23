@@ -154,7 +154,7 @@ Crispy Doom 5.6.1 has been released on August 23, 2019. It is dedicated to hotfi
 **Bug Fixes**
 
  * The `IDBEHOLD0` cheat not cancelling the player's invisibility has been fixed, thanks to maxmanium for being watchful.
- * The crash when a door that is actually a platform is opened again while going down has now actually been fixed, thanks to maximanium for pointing this out at the Doomworld forums and Zodomaniac for the confirmation.
+ * The crash when a door that is actually a platform is opened again while going down has now actually been fixed, thanks to maxmanium for pointing this out at the Doomworld forums and Zodomaniac for the confirmation.
  * The door-closing sound playing even when the door is already closed has been fixed, thanks to Worm from the Doomworld forums for the heads-up. This especially affects repeatable walkover triggers.
  * SIGIL.wad is no longer auto-loaded anymore if another PWAD already modifies the texture files. This fixes the buttons in REKKR being rendered incorrectly, thanks to IsBebs for the report.
 
