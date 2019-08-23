@@ -91,7 +91,7 @@ boolean PTR_SightTraverse(intercept_t * in)
 boolean P_SightBlockLinesIterator(int x, int y)
 {
     int offset;
-    short *list;
+    int32_t *list;
     line_t *ld;
     int s1, s2;
     divline_t dl;
