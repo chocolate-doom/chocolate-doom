@@ -180,7 +180,7 @@ static boolean MidiPipe_UnregisterSong(buffer_reader_t *reader)
     // Remove the temporary MIDI file
     if (music_filename != NULL)
     {
-        remove(filename);
+        remove(music_filename);
     }
 
     return true;
