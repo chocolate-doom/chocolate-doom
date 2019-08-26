@@ -117,12 +117,12 @@ static void ShutdownSDL(void)
 // SDL_mixer Interface
 //
 
+static char *music_filename;
+
 static boolean RegisterSong(const char *filename)
 {
-    music = Mix_LoadMUS(filename);
-
-    // Remove the temporary MIDI file
-    remove(filename);
+    music_filename = filename;
+    music = Mix_LoadMUS(music_filename);
 
     if (music == NULL)
     {
@@ -176,6 +176,13 @@ static boolean MidiPipe_RegisterSong(buffer_reader_t *reader)
 static boolean MidiPipe_UnregisterSong(buffer_reader_t *reader)
 {
     UnregisterSong();
+
+    // Remove the temporary MIDI file
+    if (music_filename != NULL)
+    {
+        remove(filename);
+    }
+
     return true;
 }
 
