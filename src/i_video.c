@@ -1803,11 +1803,7 @@ void I_RenderReadPixels(byte **data, int *w, int *h, int *p)
 	}
 
 	// [crispy] native PNG pixel format
-#if SDL_BYTEORDER == SDL_LIL_ENDIAN
-	png_format = SDL_PIXELFORMAT_ABGR8888;
-#else
-	png_format = SDL_PIXELFORMAT_RGBA8888;
-#endif
+	png_format = SDL_PIXELFORMAT_RGB24;
 	format = SDL_AllocFormat(png_format);
 	temp = rect.w * format->BytesPerPixel; // [crispy] pitch
 
