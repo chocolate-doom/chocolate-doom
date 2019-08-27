@@ -1060,7 +1060,11 @@ void WritePNGfile(char *filename, pixel_t *data,
     rowbuf = palette; // [crispy] pointer abuse!
 
     png_set_IHDR(ppng, pinfo, width, height,
+#if SDL_VERSION_ATLEAST(2, 0, 5)
                  8, PNG_COLOR_TYPE_RGB, PNG_INTERLACE_NONE,
+#else
+                 8, PNG_COLOR_TYPE_RGB_ALPHA, PNG_INTERLACE_NONE,
+#endif
                  PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
 /*
     png_set_IHDR(ppng, pinfo, width, height,
