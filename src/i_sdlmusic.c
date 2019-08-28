@@ -348,7 +348,7 @@ static void I_SDL_UnRegisterSong(void *handle)
 #if defined(_WIN32)
     if (midi_server_registered)
     {
-        I_MidiPipe_StopSong();
+        I_MidiPipe_UnregisterSong();
     }
     else
 #endif
