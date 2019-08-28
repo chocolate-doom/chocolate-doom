@@ -1610,6 +1610,14 @@ void WI_drawStats(void)
     {
 	ST_DrawDemoTimer(leveltime);
     }
+
+    // [crispy] demo progress bar
+    if (demoplayback && crispy->demobar)
+    {
+	extern void HU_DemoProgressBar (void);
+
+	HU_DemoProgressBar();
+    }
 }
 
 void WI_checkForAccelerate(void)

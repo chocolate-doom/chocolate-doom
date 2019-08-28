@@ -252,14 +252,6 @@ boolean D_Display (void)
     // the HUD is drawn on top of everything else
     if (gamestate == GS_LEVEL && gametic && !(automapactive && crispy->automapoverlay))
 	HU_Drawer ();
-
-    // [crispy] demo progress bar
-    if (demoplayback && crispy->demobar)
-    {
-	extern void HU_DemoProgressBar (void);
-
-	HU_DemoProgressBar();
-    }
     
     // clean up border stuff
     if (gamestate != oldgamestate && gamestate != GS_LEVEL)

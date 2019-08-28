@@ -897,6 +897,12 @@ void HU_Drawer(void)
     {
 	ST_DrawDemoTimer(defdemotics);
     }
+
+    // [crispy] demo progress bar
+    if (demoplayback && crispy->demobar)
+    {
+	HU_DemoProgressBar();
+    }
 }
 
 void HU_Erase(void)
