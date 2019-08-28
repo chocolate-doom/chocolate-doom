@@ -336,8 +336,6 @@ static void I_SDL_StopSong(void)
     }
 }
 
-static char *music_filename;
-
 static void I_SDL_UnRegisterSong(void *handle)
 {
     Mix_Music *music = (Mix_Music *) handle;
@@ -359,12 +357,6 @@ static void I_SDL_UnRegisterSong(void *handle)
         {
             Mix_FreeMusic(music);
         }
-    }
-
-    if (music_filename != NULL)
-    {
-        remove(music_filename);
-        music_filename = NULL;
     }
 }
 
@@ -418,7 +410,6 @@ static void *I_SDL_RegisterSong(void *data, int len)
     // Reject anything which doesnt have this signature
 
     filename = M_TempFile("doom"); // [crispy] generic filename
-    music_filename = filename;
 
     // [crispy] Reverse Choco's logic from "if (MIDI)" to "if (not MUS)"
     // MUS is the only format that requires conversion,
