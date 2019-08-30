@@ -127,6 +127,8 @@ or cloned via
  git clone https://github.com/fabiangreffrath/crispy-doom.git
 ```
 
+Steps to set up a build system on Windows can be found [in the Wiki](https://github.com/fabiangreffrath/crispy-doom/wiki/Building-on-Windows).
+
 Compilation on Debian systems (Debian 10 "buster" or later) should be as simple as
 
 ```
