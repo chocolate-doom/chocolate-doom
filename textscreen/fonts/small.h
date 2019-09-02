@@ -1,4 +1,4 @@
-/* Font data generated from small.bmp; do not edit.
+/* Font data generated from small.png; do not edit.
    Please see textscreen/fonts/README for copyright
    information. */
 

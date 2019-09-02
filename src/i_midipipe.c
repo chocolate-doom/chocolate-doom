@@ -359,8 +359,6 @@ void I_MidiPipe_StopSong()
     ok = WritePipe(packet);
     NET_FreePacket(packet);
 
-    midi_server_registered = false;
-
     ok = ok && BlockForAck();
     if (!ok)
     {
