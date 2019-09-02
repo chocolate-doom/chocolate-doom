@@ -1,4 +1,4 @@
-/* Font data generated from normal.bmp; do not edit.
+/* Font data generated from normal.png; do not edit.
    Please see textscreen/fonts/README for copyright
    information. */
 
