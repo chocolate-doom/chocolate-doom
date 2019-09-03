@@ -1847,10 +1847,13 @@ void D_DoomMain (void)
 
         // common auto-loaded files for all Doom flavors
 
-        autoload_dir = M_GetAutoloadDir("doom-all");
-        DEH_AutoLoadPatches(autoload_dir);
-        W_AutoLoadWADs(autoload_dir);
-        free(autoload_dir);
+        if (gamemission < pack_chex)
+        {
+            autoload_dir = M_GetAutoloadDir("doom-all");
+            DEH_AutoLoadPatches(autoload_dir);
+            W_AutoLoadWADs(autoload_dir);
+            free(autoload_dir);
+        }
 
         // auto-loaded files per IWAD
 
