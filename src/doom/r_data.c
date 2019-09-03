@@ -1181,7 +1181,7 @@ void R_InitColormaps (void)
 			const byte gray = 0xff -
 			     (byte) (0.299 * playpal[3 * i + 0] +
 			             0.587 * playpal[3 * i + 1] +
-			             0.144 * playpal[3 * i + 2]);
+			             0.114 * playpal[3 * i + 2]);
 			r = g = b = gamma2table[usegamma][gray];
 
 			colormaps[j++] = 0xff000000 | (r << 16) | (g << 8) | b;
