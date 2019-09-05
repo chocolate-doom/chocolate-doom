@@ -1389,6 +1389,7 @@ static void LoadSigilWad(void)
             return;
         }
 
+        printf(" [expansion]");
         D_AddFile(sigil_wad);
         free(sigil_wad);
 
@@ -1401,6 +1402,7 @@ static void LoadSigilWad(void)
 
         if (sigil_shreds != NULL)
         {
+            printf(" [expansion]");
             D_AddFile(sigil_shreds);
             free(sigil_shreds);
         }
@@ -1487,6 +1489,7 @@ static void LoadNerveWad(void)
             return;
         }
 
+        printf(" [expansion]");
         D_AddFile(nervewadfile);
 
         // [crispy] rename level name patch lumps out of the way
@@ -1978,7 +1981,7 @@ void D_DoomMain (void)
     W_GenerateHashTable();
 
     // [crispy] allow overriding of special-casing
-    if (!M_ParmExists("-nodeh"))
+    if (!M_ParmExists("-noautoload") && gamemode != shareware)
     {
 	LoadMasterlevelsWad();
 	LoadNerveWad();
