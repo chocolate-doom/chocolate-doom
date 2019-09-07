@@ -167,14 +167,14 @@ pkg/osx/Info.plist
 rpm.spec
 data/Makefile
 src/Makefile
-src/doom.appdata.xml
+src/Doom.metainfo.xml
 src/doom.desktop
 src/doom-screensaver.desktop
 src/doom/Makefile
-src/heretic.appdata.xml
+src/Heretic.metainfo.xml
 src/heretic.desktop
 src/heretic/Makefile
-src/hexen.appdata.xml
+src/Hexen.metainfo.xml
 src/hexen.desktop
 src/hexen/Makefile
 src/resource.rc
@@ -182,7 +182,7 @@ src/setup-res.rc
 src/setup/Makefile
 src/setup/setup.desktop
 src/setup/setup-manifest.xml
-src/strife.appdata.xml
+src/Strife.metainfo.xml
 src/strife.desktop
 src/strife/Makefile
 textscreen/Makefile

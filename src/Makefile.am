@@ -220,24 +220,24 @@ EXTRA_DIST =                        \
         doom-screensaver.desktop.in \
         manifest.xml
 
-appdatadir = $(prefix)/share/metainfo
-appdata_DATA =                              \
-        @PROGRAM_PREFIX@doom.appdata.xml    \
-        @PROGRAM_PREFIX@heretic.appdata.xml \
-        @PROGRAM_PREFIX@hexen.appdata.xml   \
-        @PROGRAM_PREFIX@strife.appdata.xml
+metainfodir = $(prefix)/share/metainfo
+metainfo_DATA =                             \
+        @PACKAGE_RDNS@.Doom.metainfo.xml    \
+        @PACKAGE_RDNS@.Heretic.metainfo.xml \
+        @PACKAGE_RDNS@.Hexen.metainfo.xml   \
+        @PACKAGE_RDNS@.Strife.metainfo.xml
 
-@PROGRAM_PREFIX@doom.appdata.xml : doom.appdata.xml
-	cp doom.appdata.xml $@
+@PACKAGE_RDNS@.Doom.metainfo.xml : Doom.metainfo.xml
+	cp Doom.metainfo.xml $@
 
-@PROGRAM_PREFIX@heretic.appdata.xml : heretic.appdata.xml
-	cp heretic.appdata.xml $@
+@PACKAGE_RDNS@.Heretic.metainfo.xml : Heretic.metainfo.xml
+	cp Heretic.metainfo.xml $@
 
-@PROGRAM_PREFIX@hexen.appdata.xml : hexen.appdata.xml
-	cp hexen.appdata.xml $@
+@PACKAGE_RDNS@.Hexen.metainfo.xml : Hexen.metainfo.xml
+	cp Hexen.metainfo.xml $@
 
-@PROGRAM_PREFIX@strife.appdata.xml : strife.appdata.xml
-	cp strife.appdata.xml $@
+@PACKAGE_RDNS@.Strife.metainfo.xml : Strife.metainfo.xml
+	cp Strife.metainfo.xml $@
 
 appdir = $(prefix)/share/applications
 app_DATA =                                 \
