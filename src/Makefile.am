@@ -217,7 +217,7 @@ endif
 EXTRA_DIST =                        \
         CMakeLists.txt              \
         icon.c                      \
-        doom-screensaver.desktop.in \
+        Doom_Screensaver.desktop.in \
         manifest.xml
 
 metainfodir = $(prefix)/share/metainfo
@@ -241,28 +241,28 @@ metainfo_DATA =                             \
 
 appdir = $(prefix)/share/applications
 app_DATA =                                 \
-           @PROGRAM_PREFIX@doom.desktop    \
-           @PROGRAM_PREFIX@heretic.desktop \
-           @PROGRAM_PREFIX@hexen.desktop   \
-           @PROGRAM_PREFIX@strife.desktop
+           @PACKAGE_RDNS@.Doom.desktop    \
+           @PACKAGE_RDNS@.Heretic.desktop \
+           @PACKAGE_RDNS@.Hexen.desktop   \
+           @PACKAGE_RDNS@.Strife.desktop
 
-@PROGRAM_PREFIX@doom.desktop : doom.desktop
-	cp doom.desktop $@
+@PACKAGE_RDNS@.Doom.desktop : Doom.desktop
+	cp Doom.desktop $@
 
-@PROGRAM_PREFIX@heretic.desktop : heretic.desktop
-	cp heretic.desktop $@
+@PACKAGE_RDNS@.Heretic.desktop : Heretic.desktop
+	cp Heretic.desktop $@
 
-@PROGRAM_PREFIX@hexen.desktop : hexen.desktop
-	cp hexen.desktop $@
+@PACKAGE_RDNS@.Hexen.desktop : Hexen.desktop
+	cp Hexen.desktop $@
 
-@PROGRAM_PREFIX@strife.desktop : strife.desktop
-	cp strife.desktop $@
+@PACKAGE_RDNS@.Strife.desktop : Strife.desktop
+	cp Strife.desktop $@
 
 screensaverdir = $(prefix)/share/applications/screensavers
-screensaver_DATA = @PROGRAM_PREFIX@doom-screensaver.desktop
+screensaver_DATA = @PACKAGE_RDNS@.Doom_Screensaver.desktop
 
-@PROGRAM_PREFIX@doom-screensaver.desktop: doom-screensaver.desktop
-	cp doom-screensaver.desktop $@
+@PACKAGE_RDNS@.Doom_Screensaver.desktop: Doom_Screensaver.desktop
+	cp Doom_Screensaver.desktop $@
 
 CLEANFILES = $(execgames_SCRIPTS) $(app_DATA) $(screensaver_DATA)
 
