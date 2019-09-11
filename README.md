@@ -149,6 +149,24 @@ After successful compilation the resulting binaries can be found in the `src/` d
 
 ## News
 
+### Crispy Doom 5.6.2 
+
+Crispy Doom 5.6.2 has been released on September 13, 2019. The primary aim of this release is to fix the music-related bugs that surfaced in 5.6.1 and some others.
+
+**Bug Fixes**
+ 
+ * Other channels than stdin/stdout are used now for communication with midiproc process that was getting broken previously by fluidsynth warnings which Zodomaniac noticed years ago playing with Memento Mori music PWAD, hats off to Fabian Greffrath for spotting where this bug lurks and AlexMax for fixing it!
+ * Playing the same song over and over again despite level change in case of using MP3/OGG/FLAC music PWADs has been fixed, pointed out by Zodomaniac.
+ * Carmack's famous typo in the truecolor code has been fixed.
+ * Clean screenshots are now saved without demo progress bar after Zodomaniac spotted that it gets burned into them.
+ * Screenshots are now saved without alpha channel, they were transparent before on MacOS as JamesDunne reported.
+
+**Other Games**
+
+ * Heretic's `BLOCKMAP` limit has been removed. Thanks to Jeff Green for the contribution.
+
+Crispy Doom 5.6.2 is based on Chocolate Doom 3.0.0 and has merged all changes to the Chocolate Doom master branch up to commit [`9a26795b`](https://github.com/chocolate-doom/chocolate-doom/commit/9a26795bd108ad33622abdb8431e100477a413f5).
+
 ### Crispy Doom 5.6.1 
 
 Crispy Doom 5.6.1 has been released on August 23, 2019. It is dedicated to hotfixing the bugs reported by the community after the 5.6 release.
