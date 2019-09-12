@@ -378,28 +378,12 @@ boolean InitSDL()
 //
 // Ensure that we can communicate.
 //
-boolean InitPipes()
+void InitPipes(HANDLE in, HANDLE out)
 {
-    midi_process_in = GetStdHandle(STD_INPUT_HANDLE);
-    if (midi_process_in == INVALID_HANDLE_VALUE)
-    {
-        goto fail;
-    }
-
-    midi_process_out = GetStdHandle(STD_OUTPUT_HANDLE);
-    if (midi_process_out == INVALID_HANDLE_VALUE)
-    {
-        goto fail;
-    }
+    midi_process_in = in;
+    midi_process_out = out;
 
     atexit(FreePipes);
-
-    return true;
-
-fail:
-    FreePipes();
-
-    return false;
 }
 
 //
@@ -409,8 +393,10 @@ fail:
 //
 int main(int argc, char *argv[])
 {
+    HANDLE in, out;
+
     // Make sure we're not launching this process by itself.
-    if (argc < 3)
+    if (argc < 5)
     {
         MessageBox(NULL, TEXT("This program is tasked with playing Native ")
                    TEXT("MIDI music, and is intended to be launched by ")
@@ -446,10 +432,20 @@ int main(int argc, char *argv[])
         snd_samplerate = 44100;
     }
 
-    if (!InitPipes())
+    // Parse out our handle ids.
+    in = (HANDLE) strtol(argv[3], NULL, 10);
+    if (in == 0)
     {
         return EXIT_FAILURE;
     }
+
+    out = (HANDLE) strtol(argv[4], NULL, 10);
+    if (out == 0)
+    {
+        return EXIT_FAILURE;
+    }
+
+    InitPipes(in, out);
 
     if (!InitSDL())
     {

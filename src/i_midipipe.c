@@ -414,7 +414,7 @@ boolean I_MidiPipe_InitServer()
     DWORD dirname_len;
     char *module = NULL;
     char *cmdline = NULL;
-    char snd_samplerate_buf[8];
+    char params_buf[128];
     SECURITY_ATTRIBUTES sec_attrs;
     PROCESS_INFORMATION proc_info;
     STARTUPINFO startup_info;
@@ -438,13 +438,6 @@ boolean I_MidiPipe_InitServer()
 
     // Define the module.
     module = PROGRAM_PREFIX "midiproc.exe";
-
-    // Define the command line.  Version and Sample Rate follow the
-    // executable name.
-    M_snprintf(snd_samplerate_buf, sizeof(snd_samplerate_buf),
-               "%d", snd_samplerate);
-    cmdline = M_StringJoin(module, " \"" PACKAGE_STRING "\"", " ",
-                           snd_samplerate_buf, NULL);
 
     // Set up pipes
     memset(&sec_attrs, 0, sizeof(SECURITY_ATTRIBUTES));
@@ -476,13 +469,16 @@ boolean I_MidiPipe_InitServer()
         return false;
     }
 
+    // Define the command line.  Version, Sample Rate, and handles follow
+    // the executable name.
+    M_snprintf(params_buf, sizeof(params_buf), "%d %Iu %Iu",
+        snd_samplerate, (size_t) midi_process_in_reader, (size_t) midi_process_out_writer);
+    cmdline = M_StringJoin(module, " \"" PACKAGE_STRING "\"", " ", params_buf, NULL);
+
     // Launch the subprocess
     memset(&proc_info, 0, sizeof(proc_info));
     memset(&startup_info, 0, sizeof(startup_info));
     startup_info.cb = sizeof(startup_info);
-    startup_info.hStdInput = midi_process_in_reader;
-    startup_info.hStdOutput = midi_process_out_writer;
-    startup_info.dwFlags = STARTF_USESTDHANDLES;
 
     ok = CreateProcess(TEXT(module), TEXT(cmdline), NULL, NULL, TRUE,
                        0, NULL, dirname, &startup_info, &proc_info);

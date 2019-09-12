@@ -6,8 +6,8 @@ set shiftwidth=4
 
 " Add all tag files to tags path.
 
-let topdir = findfile("configure.in", ".;")
-let topdir = substitute(topdir, "configure.in", "", "")
+let topdir = findfile("configure.ac", ".;")
+let topdir = substitute(topdir, "configure.ac", "", "")
 
 " Check tags file in current dir:
 set tags+=tags
