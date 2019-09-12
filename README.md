@@ -109,7 +109,7 @@ Many additional less user-visible features have been implemented, e.g. fixed eng
 ## Download
 
 Binaries for Windows XP / Vista / 7 / 8.1 / 10 (both x86 and x64 editions) are available here: 
-https://github.com/fabiangreffrath/crispy-doom/releases/download/crispy-doom-5.6.1/crispy-doom-5.6.1-win32.zip
+https://github.com/fabiangreffrath/crispy-doom/releases/download/crispy-doom-5.6.2/crispy-doom-5.6.2-win32.zip
 
 Daily builds of Crispy Doom can be found here:
 http://latest.chocolate-doom.org/
@@ -151,13 +151,13 @@ After successful compilation the resulting binaries can be found in the `src/` d
 
 ### Crispy Doom 5.6.2 
 
-Crispy Doom 5.6.2 has been released on September 13, 2019. The primary aim of this release is to fix the music-related bugs that surfaced in 5.6.1 and some others.
+Crispy Doom 5.6.2 has been released on September 13, 2019. The primary aim of this release is to fix the music-related bugs that surfaced in 5.6.1 and previous releases.
 
 **Bug Fixes**
  
- * Other channels than stdin/stdout are used now for communication with midiproc process that was getting broken previously by fluidsynth warnings which Zodomaniac noticed years ago playing with Memento Mori music PWAD, hats off to Fabian Greffrath for spotting where this bug lurks and AlexMax for fixing it!
- * Playing the same song over and over again despite level change in case of using MP3/OGG/FLAC music PWADs has been fixed, pointed out by Zodomaniac.
- * Carmack's famous typo in the truecolor code has been fixed.
+ * Pulled midiproc-related bug fixes from Chocolate Doom.
+   * Use inherited handles to communicate with midiproc to prevent libraries that print error messages to standard streams from disrupting communication with the subprocess. Thanks to Zodomaniac for noticing this years ago when playing with the Memento Mori music PWAD, to Fabian Greffrath for spotting where this bug lurks and to AlexMax for finally fixing it!
+   * Call `UnregisterSong()` where appropriate and do not unset `midi_server_registered` in `StopSong()`. This fixes the same song being played over and over again despite level changes when using MP3/OGG/FLAC music PWADs, pointed out by Zodomaniac.
  * Clean screenshots are now saved without demo progress bar after Zodomaniac spotted that it gets burned into them.
  * Screenshots are now saved without alpha channel, they were transparent before on MacOS as JamesDunne reported.
 
@@ -165,7 +165,7 @@ Crispy Doom 5.6.2 has been released on September 13, 2019. The primary aim of th
 
  * Heretic's `BLOCKMAP` limit has been removed. Thanks to Jeff Green for the contribution.
 
-Crispy Doom 5.6.2 is based on Chocolate Doom 3.0.0 and has merged all changes to the Chocolate Doom master branch up to commit [`9a26795b`](https://github.com/chocolate-doom/chocolate-doom/commit/9a26795bd108ad33622abdb8431e100477a413f5).
+Crispy Doom 5.6.2 is based on Chocolate Doom 3.0.0 and has merged all changes to the Chocolate Doom master branch up to commit [`ee9fc21f`](https://github.com/chocolate-doom/chocolate-doom/commit/ee9fc21fd6b7e50706fa093b9ccabd6dd56b02db).
 
 ### Crispy Doom 5.6.1 
 
