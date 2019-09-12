@@ -472,7 +472,7 @@ boolean I_MidiPipe_InitServer()
     // Define the command line.  Version, Sample Rate, and handles follow
     // the executable name.
     M_snprintf(params_buf, sizeof(params_buf), "%d %Iu %Iu",
-        snd_samplerate, midi_process_in_reader, midi_process_out_writer);
+        snd_samplerate, (size_t) midi_process_in_reader, (size_t) midi_process_out_writer);
     cmdline = M_StringJoin(module, " \"" PACKAGE_STRING "\"", " ", params_buf, NULL);
 
     // Launch the subprocess

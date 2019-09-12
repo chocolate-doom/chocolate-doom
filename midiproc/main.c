@@ -393,6 +393,8 @@ void InitPipes(HANDLE in, HANDLE out)
 //
 int main(int argc, char *argv[])
 {
+    HANDLE in, out;
+
     // Make sure we're not launching this process by itself.
     if (argc < 5)
     {
@@ -431,13 +433,13 @@ int main(int argc, char *argv[])
     }
 
     // Parse out our handle ids.
-    HANDLE in = strtol(argv[3], NULL, 10);
+    in = (HANDLE) strtol(argv[3], NULL, 10);
     if (in == 0)
     {
         return EXIT_FAILURE;
     }
 
-    HANDLE out = strtol(argv[4], NULL, 10);
+    out = (HANDLE) strtol(argv[4], NULL, 10);
     if (out == 0)
     {
         return EXIT_FAILURE;
