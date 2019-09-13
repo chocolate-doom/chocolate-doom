@@ -400,6 +400,7 @@ static void saveg_read_mobj_t(mobj_t *str)
     {
         str->player = &players[pl - 1];
         str->player->mo = str;
+        str->player->so = Crispy_PlayerSO(pl - 1); // [crispy] weapon sound sources
     }
     else
     {

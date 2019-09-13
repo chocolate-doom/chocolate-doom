@@ -334,8 +334,19 @@ void M_CrispyToggleFreelook(int choice)
 
 void M_CrispyToggleFullsounds(int choice)
 {
+    int i;
+
     choice = 0;
     crispy->soundfull = !crispy->soundfull;
+
+    // [crispy] weapon sound sources
+    for (i = 0; i < MAXPLAYERS; i++)
+    {
+	if (playeringame[i])
+	{
+	    players[i].so = Crispy_PlayerSO(i);
+	}
+    }
 }
 
 static void M_CrispyToggleHiresHook (void)

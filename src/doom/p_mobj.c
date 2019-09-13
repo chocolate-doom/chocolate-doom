@@ -813,6 +813,11 @@ void P_RespawnSpecials (void)
 // [crispy] weapon sound sources
 degenmobj_t muzzles[MAXPLAYERS];
 
+mobj_t *Crispy_PlayerSO (int p)
+{
+	return crispy->soundfull ? (mobj_t *) &muzzles[p] : players[p].mo;
+}
+
 //
 // P_SpawnPlayer
 // Called when a player is spawned on the level.
@@ -868,7 +873,7 @@ void P_SpawnPlayer (mapthing_t* mthing)
     p->viewheight = VIEWHEIGHT;
 
     // [crispy] weapon sound source
-    p->so = crispy->soundfull ? (mobj_t *) &muzzles[mthing->type-1] : p->mo;
+    p->so = Crispy_PlayerSO(mthing->type-1);
 
     // setup gun psprite
     P_SetupPsprites (p);
