@@ -159,9 +159,9 @@ void P_InitSwitchList(void)
 	if (alphSwitchList_episode <= episode)
 	{
 	    switchlist[slindex++] =
-                R_TextureNumForName(DEH_String(alphSwitchList[i].name1));
+                R_TextureNumForName(DEH_String(alphSwitchList[i].name1)) ? : -1;
 	    switchlist[slindex++] =
-                R_TextureNumForName(DEH_String(alphSwitchList[i].name2));
+                R_TextureNumForName(DEH_String(alphSwitchList[i].name2)) ? : -1;
 	}
     }
 
