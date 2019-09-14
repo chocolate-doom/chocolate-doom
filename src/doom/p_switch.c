@@ -159,9 +159,15 @@ void P_InitSwitchList(void)
 	if (alphSwitchList_episode <= episode)
 	{
 	    switchlist[slindex++] =
-                R_TextureNumForName(DEH_String(alphSwitchList[i].name1)) ? : -1;
+                R_TextureNumForName(DEH_String(alphSwitchList[i].name1));
 	    switchlist[slindex++] =
-                R_TextureNumForName(DEH_String(alphSwitchList[i].name2)) ? : -1;
+                R_TextureNumForName(DEH_String(alphSwitchList[i].name2));
+
+	    // [crispy] if one texture is missing, disable the whole pair
+	    if (!switchlist[slindex - 2] || !switchlist[slindex - 1])
+	    {
+                switchlist[slindex - 2] = switchlist[slindex - 1] = -1;
+	    }
 	}
     }
 
