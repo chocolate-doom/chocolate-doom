@@ -156,17 +156,26 @@ void P_InitSwitchList(void)
 	    maxswitches = newmax;
 	}
 
+	// [crispy] ignore switches referencing unknown texture names,
+	// warn if either one is missing, but only add if both are valid
 	if (alphSwitchList_episode <= episode)
 	{
-	    switchlist[slindex++] =
-                R_TextureNumForName(DEH_String(alphSwitchList[i].name1));
-	    switchlist[slindex++] =
-                R_TextureNumForName(DEH_String(alphSwitchList[i].name2));
+	    int texture1, texture2;
+	    const char *name1 = DEH_String(alphSwitchList[i].name1);
+	    const char *name2 = DEH_String(alphSwitchList[i].name2);
 
-	    // [crispy] if one texture is missing, disable the whole pair
-	    if (!switchlist[slindex - 2] || !switchlist[slindex - 1])
+	    texture1 = R_CheckTextureNumForName(name1);
+	    texture2 = R_CheckTextureNumForName(name2);
+
+	    if (texture1 == -1 || texture2 == -1)
 	    {
-                switchlist[slindex - 2] = switchlist[slindex - 1] = -1;
+		fprintf(stderr, "P_InitSwitchList: could not add %s(%d)/%s(%d)\n",
+		        name1, texture1, name2, texture2);
+	    }
+	    else
+	    {
+		switchlist[slindex++] = texture1;
+		switchlist[slindex++] = texture2;
 	    }
 	}
     }
