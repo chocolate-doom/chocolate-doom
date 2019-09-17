@@ -165,12 +165,6 @@ Crispy Doom 5.6.3 has been released on September XX, 2019. This release addresse
 
  * [No music and high-pitched sound effects](https://github.com/fabiangreffrath/crispy-doom/issues/454) occur with SDL2.dll v2.0.10 and SDL2_mixer.dll v2.0.4 on Windows in case of 5.1 speaker configuration, according to investigation by StasBFG. [The DLL pack fixing this and providing fluidsynth soundfont support](https://github.com/fabiangreffrath/crispy-doom/files/3616050/crispy-doom-DLL-fix-pack.zip) has been built by Zodomaniac.
 
-* Multiplayer is currently [impossible on non-standard maps](https://github.com/fabiangreffrath/crispy-doom/issues/455) (E1M10, MAP33, Sigil, No Rest for the Living etc.)
-
-* [Demo timer shadows the FPS counter](https://github.com/fabiangreffrath/crispy-doom/issues/266) if both are enabled.
-
-* If "Vertical Aiming" is set to "direct" and the "Highlight Crosshair on Target" feature is enabled, the crosshair will get highlighted even if the direct shot would miss but if it would hit with autoaiming enabled.
-
 Crispy Doom 5.6.3 is based on Chocolate Doom 3.0.0 and has merged all changes to the Chocolate Doom master branch up to commit [`ee9fc21f`](https://github.com/chocolate-doom/chocolate-doom/commit/ee9fc21fd6b7e50706fa093b9ccabd6dd56b02db).
 
 ### Crispy Doom 5.6.2 
