@@ -827,6 +827,7 @@ boolean P_LoadBlockMap (int lump)
     memset(blocklinks, 0, count);
 
     // [crispy] (re-)create BLOCKMAP if necessary
+    fprintf(stderr, ")\n");
     return true;
 }
 

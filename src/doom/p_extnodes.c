@@ -78,7 +78,6 @@ mapformat_t P_CheckMapFormat (int lumpnum)
     }
     else
 	fprintf(stderr, "BSP");
-    fprintf(stderr, ")\n");
 
     if (nodes)
 	W_ReleaseLumpNum(b);

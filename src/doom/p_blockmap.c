@@ -203,4 +203,6 @@ void P_CreateBlockMap(void)
     memset(blocklinks, 0, count);
     blockmap = blockmaplump+4;
   }
+
+  fprintf(stderr, "+BLOCKMAP)\n");
 }
