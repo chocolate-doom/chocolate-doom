@@ -149,6 +149,24 @@ After successful compilation the resulting binaries can be found in the `src/` d
 
 ## News
 
+### Crispy Doom 5.6.3 
+
+Crispy Doom 5.6.3 has been released on September XX, 2019. This release addresses the community feedback received after 5.6.2 release.
+
+**Improvements**
+ 
+ * A workaround has been implemented for missing textures in SWITCHES lumps: if one texture is missing, the whole pair is disabled. Thanks to Aurelius for reporting this issue with the OTEX 1.0 texture pack in the Doomworld forum.
+
+**Bug Fixes**
+ 
+ * Player weapon sound source is now set properly when loading a savegame, thanks to maxmanium from the Doomworld forum for bringing attention to this. 
+
+**Known Issues**
+
+ * [No music and high-pitched sound effects](https://github.com/fabiangreffrath/crispy-doom/issues/454) occur with SDL2.dll v2.0.10 and SDL2_mixer.dll v2.0.4 on Windows in case of 5.1 speaker configuration, according to investigation by StasBFG. [The DLL pack fixing this and providing fluidsynth soundfont support](https://github.com/fabiangreffrath/crispy-doom/files/3616050/crispy-doom-DLL-fix-pack.zip) has been built by Zodomaniac.
+
+Crispy Doom 5.6.3 is based on Chocolate Doom 3.0.0 and has merged all changes to the Chocolate Doom master branch up to commit [`ee9fc21f`](https://github.com/chocolate-doom/chocolate-doom/commit/ee9fc21fd6b7e50706fa093b9ccabd6dd56b02db).
+
 ### Crispy Doom 5.6.2 
 
 Crispy Doom 5.6.2 has been released on September 13, 2019. The primary aim of this release is to fix the music-related bugs that surfaced in 5.6.1 and previous releases.
