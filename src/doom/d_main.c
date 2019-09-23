@@ -1348,7 +1348,7 @@ static void LoadSigilWad(void)
 
     // [crispy] don't load SIGIL.wad if SIGIL_COMPAT.wad is already loaded
     i = W_CheckNumForName("E3M1");
-    if (i != -1 && !strcasecmp(W_WadNameForLump(lumpinfo[i]), "SIGIL_COMPAT.wad"))
+    if (i != -1 && !strcasecmp(W_WadNameForLump(lumpinfo[i]), "SIGIL_COMPAT"))
     {
         return;
     }
@@ -1368,20 +1368,32 @@ static void LoadSigilWad(void)
 
     if (gameversion == exe_ultimate)
     {
+        const char *const sigil_wads[] = {"SIGIL_v1_2.wad", "SIGIL.wad"};
         char *sigil_wad = NULL, *sigil_shreds = NULL;
         char *dirname;
 
         dirname = M_DirName(iwadfile);
-        sigil_wad = M_StringJoin(dirname, DIR_SEPARATOR_S, "SIGIL.wad", NULL);
         sigil_shreds = M_StringJoin(dirname, DIR_SEPARATOR_S, "SIGIL_SHREDS.wad", NULL);
-        free(dirname);
 
         // [crispy] load SIGIL.WAD
-        if (!M_FileExists(sigil_wad))
+        for (i = 0; i < arrlen(sigil_wads); i++)
         {
+            sigil_wad = M_StringJoin(dirname, DIR_SEPARATOR_S, sigil_wads[i], NULL);
+
+            if (M_FileExists(sigil_wad))
+            {
+                break;
+            }
+
             free(sigil_wad);
-            sigil_wad = D_FindWADByName("SIGIL.wad");
+            sigil_wad = D_FindWADByName(sigil_wads[i]);
+
+            if (sigil_wad)
+            {
+                break;
+            }
         }
+        free(dirname);
 
         if (sigil_wad == NULL)
         {
