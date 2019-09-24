@@ -9,7 +9,7 @@ am_map.c           am_map.h     \
 deh_ammo.c                      \
 deh_bexstr.c                    \
 deh_bexincl.c                   \
-deh_bexpars.c                   \
+deh_bexpars.c     deh_bexpars.h \
 deh_bexptr.c                    \
 deh_cheat.c                     \
 deh_doom.c                      \

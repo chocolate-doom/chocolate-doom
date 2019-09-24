@@ -27,6 +27,7 @@
 
 #include "deh_main.h"
 #include "deh_misc.h"
+#include "deh_bexpars.h" // [crispy] bex_pars[]
 
 #include "z_zone.h"
 #include "f_finale.h"
@@ -1629,7 +1630,6 @@ void G_SecretExitLevel (void)
 void G_DoCompleted (void) 
 { 
     int             i; 
-    extern int bex_pars[4][10], bex_cpars[32]; // [crispy] support [PARS] sections in BEX files
 	 
     gameaction = ga_nothing; 
  
@@ -1823,10 +1823,17 @@ void G_DoCompleted (void)
     {
         wminfo.partime = TICRATE*e4pars[gamemap];
     }
-    // [crispy] use episode 3 par times for Sigil's episode 5
+    // [crispy] BEX patch provided par times for Sigil, else episode 3 par times
     else if (gameepisode == 5)
     {
-        wminfo.partime = TICRATE*pars[3][gamemap];
+        if (bex_pars[gameepisode][gamemap])
+        {
+            wminfo.partime = TICRATE*bex_pars[gameepisode][gamemap];
+        }
+        else
+        {
+            wminfo.partime = TICRATE*pars[3][gamemap];
+        }
     }
     else
     {

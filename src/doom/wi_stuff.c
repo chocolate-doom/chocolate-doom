@@ -25,6 +25,7 @@
 #include "m_random.h"
 
 #include "deh_main.h"
+#include "deh_bexpars.h" // [crispy] bex_pars[]
 #include "i_swap.h"
 #include "i_system.h"
 
@@ -1498,7 +1499,6 @@ void WI_updateStats(void)
 // [crispy] conditionally draw par times on intermission screen
 static boolean WI_drawParTime (void)
 {
-	extern int bex_pars[4][10], bex_cpars[32];
 	extern lumpinfo_t *maplumpinfo;
 
 	boolean result = true;
@@ -1547,6 +1547,12 @@ static boolean WI_drawParTime (void)
 
 		// [crispy] PWAD: BEX patch provided par times for Episodes 1-3
 		if (wbs->epsd < 3 && bex_pars[wbs->epsd + 1][wbs->last + 1])
+		{
+			result = true;
+		}
+
+		// [crispy] PWAD: par times for Sigil
+		if (wbs->epsd == 4)
 		{
 			result = true;
 		}
