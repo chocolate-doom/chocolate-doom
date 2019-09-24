@@ -1348,7 +1348,7 @@ static void LoadSigilWad(void)
 
     // [crispy] don't load SIGIL.wad if SIGIL_COMPAT.wad is already loaded
     i = W_CheckNumForName("E3M1");
-    if (i != -1 && !strcasecmp(W_WadNameForLump(lumpinfo[i]), "SIGIL_COMPAT"))
+    if (i != -1 && !strncasecmp(W_WadNameForLump(lumpinfo[i]), "SIGIL_COMPAT", 12))
     {
         return;
     }
@@ -1426,7 +1426,7 @@ static void LoadSigilWad(void)
 
             j = W_CheckNumForName(sigil_lumps[i].name);
 
-            if (j != -1 && !strcasecmp(W_WadNameForLump(lumpinfo[j]), "SIGIL_SHREDS.wad"))
+            if (j != -1 && !strncasecmp(W_WadNameForLump(lumpinfo[j]), "SIGIL_SHREDS", 12))
             {
                 memcpy(lumpinfo[j]->name, sigil_lumps[i].new_name, 8);
             }
@@ -1439,7 +1439,7 @@ static void LoadSigilWad(void)
 
             j = W_CheckNumForName(sigil_lumps[i].name);
 
-            if (j != -1 && !strcasecmp(W_WadNameForLump(lumpinfo[j]), "SIGIL.wad"))
+            if (j != -1 && !strncasecmp(W_WadNameForLump(lumpinfo[j]), "SIGIL", 5))
             {
                 memcpy(lumpinfo[j]->name, sigil_lumps[i].new_name, 8);
             }
