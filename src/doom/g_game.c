@@ -1821,7 +1821,14 @@ void G_DoCompleted (void)
     // [crispy] single player par times for episode 4
     else if (gameepisode == 4 && crispy->singleplayer)
     {
-        wminfo.partime = TICRATE*e4pars[gamemap];
+        if (bex_pars[gameepisode][gamemap])
+        {
+            wminfo.partime = TICRATE*bex_pars[gameepisode][gamemap];
+        }
+        else
+        {
+            wminfo.partime = TICRATE*e4pars[gamemap];
+        }
     }
     // [crispy] BEX patch provided par times for Sigil, else episode 3 par times
     else if (gameepisode == 5)
