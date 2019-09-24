@@ -1368,7 +1368,11 @@ static void LoadSigilWad(void)
 
     if (gameversion == exe_ultimate)
     {
-        const char *const sigil_wads[] = {"SIGIL_v1_2.wad", "SIGIL.wad"};
+        const char *const sigil_wads[] = {
+            "SIGIL_v1_21.wad",
+            "SIGIL_v1_2.wad",
+            "SIGIL.wad"
+        };
         char *sigil_wad = NULL, *sigil_shreds = NULL;
         char *dirname;
 
