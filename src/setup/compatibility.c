@@ -57,6 +57,8 @@ void BindCompatibilityVariables(void)
     // [crispy]
     if (gamemission == doom)
     {
+        M_BindIntVariable("crispy_automapoverlay",  &crispy->automapoverlay);
+        M_BindIntVariable("crispy_automaprotate",   &crispy->automaprotate);
         M_BindIntVariable("crispy_automapstats",    &crispy->automapstats);
         M_BindIntVariable("crispy_brightmaps",      &crispy->brightmaps);
         M_BindIntVariable("crispy_centerweapon",    &crispy->centerweapon);

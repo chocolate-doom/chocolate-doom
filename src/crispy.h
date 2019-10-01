@@ -36,6 +36,8 @@
 typedef struct
 {
 	// [crispy] "crispness" config variables
+	int automapoverlay;
+	int automaprotate;
 	int automapstats;
 	int brightmaps;
 	int centerweapon;
@@ -82,7 +84,6 @@ typedef struct
 	int demowarp;
 	int fps;
 
-	boolean automapoverlay;
 	boolean flashinghom;
 	boolean fliplevels;
 	boolean flipweapons;

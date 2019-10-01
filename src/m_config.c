@@ -1796,6 +1796,22 @@ static default_t extra_defaults_list[] =
     //!
     // @game doom
     //
+    // Automap overlay mode.
+    //
+
+    CONFIG_VARIABLE_INT(crispy_automapoverlay),
+
+    //!
+    // @game doom
+    //
+    // Automap rotate mode.
+    //
+
+    CONFIG_VARIABLE_INT(crispy_automaprotate),
+
+    //!
+    // @game doom
+    //
     // Show additional level statistics.
     //
 

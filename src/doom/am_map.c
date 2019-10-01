@@ -289,9 +289,7 @@ cheatseq_t cheat_amap = CHEAT("iddt", 0);
 
 static boolean stopped = true;
 
-// [crispy] automap rotate mode ...
-static boolean crispy_automaprotate = false;
-// ... needs these early on
+// [crispy] automap rotate mode needs these early on
 void AM_rotate (int64_t *x, int64_t *y, angle_t a);
 static void AM_rotatePoint (mpoint_t *pt);
 static mpoint_t mapcenter;
@@ -445,7 +443,7 @@ void AM_changeWindowLoc(void)
 
     incx = m_paninc.x;
     incy = m_paninc.y;
-    if (crispy_automaprotate)
+    if (crispy->automaprotate)
     {
 	AM_rotate(&incx, &incy, -mapangle);
     }
@@ -826,8 +824,8 @@ AM_Responder
         }
         else if (key == key_map_rotate)
         {
-            crispy_automaprotate = !crispy_automaprotate;
-            if (crispy_automaprotate)
+            crispy->automaprotate = !crispy->automaprotate;
+            if (crispy->automaprotate)
                 plr->message = DEH_String(AMSTR_ROTATEON);
             else
                 plr->message = DEH_String(AMSTR_ROTATEOFF);
@@ -974,7 +972,7 @@ void AM_Ticker (void)
     // AM_updateLightLev();
 
     // [crispy] required for AM_rotatePoint()
-    if (crispy_automaprotate)
+    if (crispy->automaprotate)
     {
 	mapcenter.x = m_x + m_w / 2;
 	mapcenter.y = m_y + m_h / 2;
@@ -1244,7 +1242,7 @@ void AM_drawGrid(int color)
 
     // Figure out start of vertical gridlines
     start = m_x;
-    if (crispy_automaprotate)
+    if (crispy->automaprotate)
     {
 	start -= m_h / 2;
     }
@@ -1252,7 +1250,7 @@ void AM_drawGrid(int color)
 	start += (MAPBLOCKUNITS<<FRACBITS)
 	    - ((start-bmaporgx)%(MAPBLOCKUNITS<<FRACBITS));
     end = m_x + m_w;
-    if (crispy_automaprotate)
+    if (crispy->automaprotate)
     {
 	end += m_h / 2;
     }
@@ -1265,7 +1263,7 @@ void AM_drawGrid(int color)
 	// [crispy] moved here
 	ml.a.y = m_y;
 	ml.b.y = m_y+m_h;
-	if (crispy_automaprotate)
+	if (crispy->automaprotate)
 	{
 	    ml.a.y -= m_w / 2;
 	    ml.b.y += m_w / 2;
@@ -1277,7 +1275,7 @@ void AM_drawGrid(int color)
 
     // Figure out start of horizontal gridlines
     start = m_y;
-    if (crispy_automaprotate)
+    if (crispy->automaprotate)
     {
 	start -= m_w / 2;
     }
@@ -1285,7 +1283,7 @@ void AM_drawGrid(int color)
 	start += (MAPBLOCKUNITS<<FRACBITS)
 	    - ((start-bmaporgy)%(MAPBLOCKUNITS<<FRACBITS));
     end = m_y + m_h;
-    if (crispy_automaprotate)
+    if (crispy->automaprotate)
     {
 	end += m_w / 2;
     }
@@ -1298,7 +1296,7 @@ void AM_drawGrid(int color)
 	// [crispy] moved here
 	ml.a.x = m_x;
 	ml.b.x = m_x + m_w;
-	if (crispy_automaprotate)
+	if (crispy->automaprotate)
 	{
 	    ml.a.x -= m_h / 2;
 	    ml.b.x += m_h / 2;
@@ -1353,7 +1351,7 @@ void AM_drawWalls(void)
 	l.a.y = lines[i].v1->y;
 	l.b.x = lines[i].v2->x;
 	l.b.y = lines[i].v2->y;
-	if (crispy_automaprotate)
+	if (crispy->automaprotate)
 	{
 	    AM_rotatePoint(&l.a);
 	    AM_rotatePoint(&l.b);
@@ -1523,7 +1521,7 @@ AM_drawLineCharacter
     int		i;
     mline_t	l;
 
-    if (crispy_automaprotate)
+    if (crispy->automaprotate)
     {
 	angle += mapangle;
     }
@@ -1577,7 +1575,7 @@ void AM_drawPlayers(void)
     {
 	pt.x = plr->mo->x;
 	pt.y = plr->mo->y;
-	if (crispy_automaprotate)
+	if (crispy->automaprotate)
 	{
 	    AM_rotatePoint(&pt);
 	}
@@ -1611,7 +1609,7 @@ void AM_drawPlayers(void)
 	
 	pt.x = p->mo->x;
 	pt.y = p->mo->y;
-	if (crispy_automaprotate)
+	if (crispy->automaprotate)
 	{
 	    AM_rotatePoint(&pt);
 	}
@@ -1647,7 +1645,7 @@ AM_drawThings
 
 	    pt.x = t->x;
 	    pt.y = t->y;
-	    if (crispy_automaprotate)
+	    if (crispy->automaprotate)
 	    {
 		AM_rotatePoint(&pt);
 	    }
@@ -1733,7 +1731,7 @@ void AM_drawMarks(void)
 	    // [crispy] center marks around player
 	    pt.x = markpoints[i].x;
 	    pt.y = markpoints[i].y;
-	    if (crispy_automaprotate)
+	    if (crispy->automaprotate)
 	    {
 		AM_rotatePoint(&pt);
 	    }
