@@ -460,7 +460,7 @@ void ST_Stop(void);
 void ST_refreshBackground(void)
 {
 
-    if (screenblocks >= CRISPY_HUD && !automapactive)
+    if (screenblocks >= CRISPY_HUD && (!automapactive || crispy->automapoverlay))
         return;
 
     if (st_statusbaron)
