@@ -1368,7 +1368,13 @@ int cpars[32] =
     240,150,180,150,150,300,330,420,300,180,	// 21-30
     120,30					// 31-32
 };
- 
+
+// [crispy] Episode 5 par times from Sigil v1.21
+static int e5pars[10] =
+{
+    0,90,150,360,420,780,420,780,300,660
+};
+
 
 //
 // G_DoCompleted 
@@ -1517,7 +1523,7 @@ void G_DoCompleted (void)
     // [crispy] use episode 3 par times for Sigil's episode 5
     else if (gameepisode == 5)
     {
-        wminfo.partime = TICRATE*pars[3][gamemap];
+        wminfo.partime = TICRATE*e5pars[gamemap];
     }
     else
         wminfo.partime = TICRATE*cpars[gamemap];
