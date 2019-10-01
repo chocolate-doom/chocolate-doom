@@ -1595,6 +1595,12 @@ static int e4pars[10] =
     0,165,255,135,150,180,390,135,360,180
 };
 
+// [crispy] Episode 5 par times from Sigil v1.21
+static int e5pars[10] =
+{
+    0,90,150,360,420,780,420,780,300,660
+};
+
 // [crispy] No Rest For The Living par times from the BFG Edition
 static int npars[9] =
 {
@@ -1839,7 +1845,7 @@ void G_DoCompleted (void)
         }
         else
         {
-            wminfo.partime = TICRATE*pars[3][gamemap];
+            wminfo.partime = TICRATE*e5pars[gamemap];
         }
     }
     else
