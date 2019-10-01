@@ -85,16 +85,8 @@ void P_CreateBlockMap(void)
 	int dx, dy, diff, b;
 
 	// starting coordinates
-	if (crispy->fliplevels)
-	{
-	    x = (lines[i].v2->x >> FRACBITS) - minx;
-	    y = (lines[i].v2->y >> FRACBITS) - miny;
-	}
-	else
-	{
-	    x = (lines[i].v1->x >> FRACBITS) - minx;
-	    y = (lines[i].v1->y >> FRACBITS) - miny;
-	}
+	x = (lines[i].v1->x >> FRACBITS) - minx;
+	y = (lines[i].v1->y >> FRACBITS) - miny;
 
 	// x-y deltas
 	adx = lines[i].dx >> FRACBITS, dx = adx < 0 ? -1 : 1;
@@ -111,16 +103,8 @@ void P_CreateBlockMap(void)
 	b = (y >> MAPBTOFRAC)*bmapwidth + (x >> MAPBTOFRAC);
 
 	// ending block
-	if (crispy->fliplevels)
-	{
-	    bend = (((lines[i].v1->y >> FRACBITS) - miny) >> MAPBTOFRAC) *
-	        bmapwidth + (((lines[i].v1->x >> FRACBITS) - minx) >> MAPBTOFRAC);
-	}
-	else
-	{
-	    bend = (((lines[i].v2->y >> FRACBITS) - miny) >> MAPBTOFRAC) *
-	        bmapwidth + (((lines[i].v2->x >> FRACBITS) - minx) >> MAPBTOFRAC);
-	}
+	bend = (((lines[i].v2->y >> FRACBITS) - miny) >> MAPBTOFRAC) *
+	    bmapwidth + (((lines[i].v2->x >> FRACBITS) - minx) >> MAPBTOFRAC);
 
 	// delta for pointer when moving across y
 	dy *= bmapwidth;
