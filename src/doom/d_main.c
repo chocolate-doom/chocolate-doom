@@ -1327,6 +1327,7 @@ static void LoadSigilWad(void)
         {"CREDIT",   "SIGCREDI"},
         {"HELP1",    "SIGHELP1"},
         {"TITLEPIC", "SIGTITLE"},
+        {"DEHACKED", "SIG_DEH"},
         {"DEMO1",    "SIGDEMO1"},
         {"DEMO2",    "SIGDEMO2"},
         {"DEMO3",    "SIGDEMO3"},
@@ -1426,9 +1427,15 @@ static void LoadSigilWad(void)
         }
 
         // [crispy] rename intrusive SIGIL_SHREDS.wad music lumps out of the way
-        for (i = 7; i < arrlen(sigil_lumps); i++)
+        for (i = 0; i < arrlen(sigil_lumps); i++)
         {
             int j;
+
+            // [crispy] skip non-music lumps
+            if (strncasecmp(sigil_lumps[i].name, "D_", 2))
+            {
+                continue;
+            }
 
             j = W_CheckNumForName(sigil_lumps[i].name);
 
