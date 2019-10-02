@@ -2271,13 +2271,14 @@ void D_DoomMain (void)
     if (p > 0)
     {
         crispy->fliplevels = !crispy->fliplevels;
+        crispy->flipweapons = !crispy->flipweapons;
     }
 
     p = M_CheckParm("-flipweapons");
 
     if (p > 0)
     {
-        crispy->flipweapons = true;
+        crispy->flipweapons = !crispy->flipweapons;
     }
 
     // Check for load game parameter

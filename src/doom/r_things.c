@@ -1013,7 +1013,7 @@ void R_DrawPSprite (pspdef_t* psp, psprnum_t psprnum) // [crispy] differentiate 
     sprframe = &sprdef->spriteframes[ psp->state->frame & FF_FRAMEMASK ];
 
     lump = sprframe->lump[0];
-    flip = (boolean)sprframe->flip[0] ^ crispy->flipweapons ^ crispy->fliplevels;
+    flip = (boolean)sprframe->flip[0] ^ crispy->flipweapons;
     
     // [crispy] smoothen Chainsaw idle animation
     if (state == S_SAW || state == S_SAWB)
