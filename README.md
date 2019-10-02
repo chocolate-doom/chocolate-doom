@@ -155,15 +155,20 @@ Crispy Doom 5.6.3 will be released on October XX, 2019. This release addresses t
 
 **Features**
 
+ * Automap overlay and rotate modes are now stored as config variables, suggested by JNechaevsky.
  * Versions 1.2 and 1.21 of Episode 5: Sigil are now supported.
 
 **Improvements**
 
+ * Par times provided by Sigil 1.21 have been coded in, their introduction noticed by JNechaevsky.
  * Par times for Episode 4: Thy Flesh Consumed and Episode 5: Sigil can now be provided in BEX format.
  * A workaround has been implemented for missing textures in SWITCHES lumps: if one texture is missing, the whole pair is disabled. Thanks to Aurelius for reporting this issue with the OTEX 1.0 texture pack in the Doomworld forum.
 
 **Bug Fixes**
- 
+
+ * Sigil's DEHACKED patch is not loaded now when auto-loading the WAD, as this would break any episode-finishing demo for Doom 1 if
+Sigil is auto-loaded at start.
+ * Status bar background appearing at low framerates with Crispy HUD and automap overlay on when holding [TAB] key has been fixed, spotted by JNechaevsky and confirmed by Zodomaniac.
  * Configuration not being saved when exiting the game while recording a demo has been fixed, reported by Zodomaniac. Now configuraton is always saved on exit.
  * Player weapon sound source is now set properly when loading a savegame, thanks to maxmanium from the Doomworld forum for bringing attention to this.
 
