@@ -109,7 +109,7 @@ Many additional less user-visible features have been implemented, e.g. fixed eng
 ## Download
 
 Binaries for Windows XP / Vista / 7 / 8.1 / 10 (both x86 and x64 editions) are available here: 
-https://github.com/fabiangreffrath/crispy-doom/releases/download/crispy-doom-5.6.2/crispy-doom-5.6.2-win32.zip
+https://github.com/fabiangreffrath/crispy-doom/releases/download/crispy-doom-5.6.3/crispy-doom-5.6.3-win32.zip
 
 Daily builds of Crispy Doom can be found here:
 http://latest.chocolate-doom.org/
@@ -151,7 +151,7 @@ After successful compilation the resulting binaries can be found in the `src/` d
 
 ### Crispy Doom 5.6.3 
 
-Crispy Doom 5.6.3 will be released on October XX, 2019. This release addresses the community feedback received after 5.6.2 release and brings support for the updated Episode 5: Sigil.
+Crispy Doom 5.6.3 has been released on October 04, 2019. This release addresses the community feedback received after 5.6.2 release and brings support for the updated Episode 5: Sigil v1.2/v1.21.
 
 **Features**
 
@@ -166,8 +166,7 @@ Crispy Doom 5.6.3 will be released on October XX, 2019. This release addresses t
 
 **Bug Fixes**
 
- * Sigil's DEHACKED patch is not loaded now when auto-loading the WAD, as this would break any episode-finishing demo for Doom 1 if
-Sigil is auto-loaded at start.
+ * Sigil's DEHACKED patch is no longer loaded when auto-loading the WAD, as this would break any episode-finishing demo for Doom 1.
  * Status bar background appearing at low framerates with Crispy HUD and automap overlay on when holding <kbd>TAB</kbd> key has been fixed, spotted by JNechaevsky and confirmed by Zodomaniac.
  * Configuration not being saved when exiting the game while recording a demo has been fixed, reported by Zodomaniac. Now configuration is always saved on exit.
  * Player weapon sound source is now set properly when loading a savegame, thanks to maxmanium from the Doomworld forum for bringing attention to this.
