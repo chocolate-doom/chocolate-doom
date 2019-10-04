@@ -1545,8 +1545,8 @@ static boolean WI_drawParTime (void)
 			result = true;
 		}
 
-		// [crispy] PWAD: BEX patch provided par times for Episodes 1-3
-		if (wbs->epsd < 3 && bex_pars[wbs->epsd + 1][wbs->last + 1])
+		// [crispy] IWAD/PWAD: BEX patch provided par times for Episodes 1-4
+		if (wbs->epsd <= 3 && bex_pars[wbs->epsd + 1][wbs->last + 1])
 		{
 			result = true;
 		}

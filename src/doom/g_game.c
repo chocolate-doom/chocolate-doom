@@ -1572,12 +1572,16 @@ void G_ScreenShot (void)
 
 
 // DOOM Par Times
-int pars[4][10] = 
+int pars[6][10] =
 { 
     {0}, 
     {0,30,75,120,90,165,180,180,30,165}, 
     {0,90,90,90,120,90,360,240,30,170}, 
     {0,90,45,90,150,90,90,165,30,135} 
+    // [crispy] Episode 4 par times from the BFG Edition
+   ,{0,165,255,135,150,180,390,135,360,180}
+    // [crispy] Episode 5 par times from Sigil v1.21
+   ,{0,90,150,360,420,780,420,780,300,660}
 }; 
 
 // DOOM II Par Times
@@ -1589,18 +1593,6 @@ int cpars[32] =
     120,30					// 31-32
 };
  
-// [crispy] Episode 4 par times from the BFG Edition
-static int e4pars[10] =
-{
-    0,165,255,135,150,180,390,135,360,180
-};
-
-// [crispy] Episode 5 par times from Sigil v1.21
-static int e5pars[10] =
-{
-    0,90,150,360,420,780,420,780,300,660
-};
-
 // [crispy] No Rest For The Living par times from the BFG Edition
 static int npars[9] =
 {
@@ -1786,12 +1778,6 @@ void G_DoCompleted (void)
     wminfo.maxsecret = totalsecret; 
     wminfo.maxfrags = 0; 
 
-    // [crispy] single player par times for NRFTL
-    if (gamemission == pack_nerve && crispy->singleplayer)
-    {
-        wminfo.partime = TICRATE*npars[gamemap-1];
-    }
-    else
     // Set par time. Exceptions are added for purposes of
     // statcheck regression testing.
     if (gamemode == commercial)
@@ -1801,11 +1787,15 @@ void G_DoCompleted (void)
         {
             wminfo.partime = 0;
         }
-        else
         // [crispy] support [PARS] sections in BEX files
-        if (bex_cpars[gamemap-1])
+        else if (bex_cpars[gamemap-1])
         {
             wminfo.partime = TICRATE*bex_cpars[gamemap-1];
+        }
+        // [crispy] single player par times for NRFTL
+        else if (gamemission == pack_nerve && crispy->singleplayer)
+        {
+            wminfo.partime = TICRATE*npars[gamemap-1];
         }
         else
         {
@@ -1814,7 +1804,11 @@ void G_DoCompleted (void)
     }
     // Doom episode 4 doesn't have a par time, so this
     // overflows into the cpars array.
-    else if (gameepisode < 4)
+    else if (gameepisode < 4 ||
+        // [crispy] single player par times for episode 4
+        (gameepisode == 4 && crispy->singleplayer) ||
+        // [crispy] par times for Sigil
+        gameepisode == 5)
     {
         // [crispy] support [PARS] sections in BEX files
         if (bex_pars[gameepisode][gamemap])
@@ -1823,30 +1817,6 @@ void G_DoCompleted (void)
         }
         else
         wminfo.partime = TICRATE*pars[gameepisode][gamemap];
-    }
-    // [crispy] single player par times for episode 4
-    else if (gameepisode == 4 && crispy->singleplayer)
-    {
-        if (bex_pars[gameepisode][gamemap])
-        {
-            wminfo.partime = TICRATE*bex_pars[gameepisode][gamemap];
-        }
-        else
-        {
-            wminfo.partime = TICRATE*e4pars[gamemap];
-        }
-    }
-    // [crispy] BEX patch provided par times for Sigil, else episode 3 par times
-    else if (gameepisode == 5)
-    {
-        if (bex_pars[gameepisode][gamemap])
-        {
-            wminfo.partime = TICRATE*bex_pars[gameepisode][gamemap];
-        }
-        else
-        {
-            wminfo.partime = TICRATE*e5pars[gamemap];
-        }
     }
     else
     {
