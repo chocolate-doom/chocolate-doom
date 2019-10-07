@@ -97,6 +97,12 @@ STlib_drawNum
     
     int		neg;
 
+    // [crispy] redraw only if necessary
+    if (n->oldnum == num && !refresh)
+    {
+	return;
+    }
+
     n->oldnum = *n->num;
 
     neg = num < 0;
