@@ -106,17 +106,7 @@ void P_LoadSegs_DeePBSP (int lump)
 	li->v1 = &vertexes[ml->v1];
 	li->v2 = &vertexes[ml->v2];
 
-	if (crispy->fliplevels)
-	{
-	    vertex_t* tmp = li->v1;
-	    li->v1 = li->v2;
-	    li->v2 = tmp;
-	}
-
 	li->angle = (SHORT(ml->angle))<<FRACBITS;
-
-	if (crispy->fliplevels)
-	    li->angle = -li->angle;
 
 //	li->offset = (SHORT(ml->offset))<<FRACBITS; // [crispy] recalculated below
 	linedef = (unsigned short)SHORT(ml->linedef);
@@ -134,7 +124,7 @@ void P_LoadSegs_DeePBSP (int lump)
 	li->sidedef = &sides[ldef->sidenum[side]];
 	li->frontsector = sides[ldef->sidenum[side]].sector;
 	// [crispy] recalculate
-	li->offset = GetOffset(li->v1, ((ml->side ^ crispy->fliplevels) ? ldef->v2 : ldef->v1));
+	li->offset = GetOffset(li->v1, (ml->side ? ldef->v2 : ldef->v1));
 
 	if (ldef->flags & ML_TWOSIDED)
 	{
@@ -217,14 +207,6 @@ void P_LoadNodes_DeePBSP (int lump)
 	no->dx = SHORT(mn->dx)<<FRACBITS;
 	no->dy = SHORT(mn->dy)<<FRACBITS;
 
-	if (crispy->fliplevels)
-	{
-	    no->x += no->dx;
-	    no->y += no->dy;
-	    no->x = -no->x;
-	    no->dy = -no->dy;
-	}
-
 	for (j = 0; j < 2; j++)
 	{
 	    int k;
@@ -232,13 +214,6 @@ void P_LoadNodes_DeePBSP (int lump)
 
 	    for (k = 0; k < 4; k++)
 		no->bbox[j][k] = SHORT(mn->bbox[j][k])<<FRACBITS;
-
-	    if (crispy->fliplevels)
-	    {
-		fixed_t tmp = no->bbox[j][2];
-		no->bbox[j][2] = -no->bbox[j][3];
-		no->bbox[j][3] = -tmp;
-	    }
 	}
     }
 
@@ -353,12 +328,6 @@ void P_LoadNodes_ZDBSP (int lump, boolean compressed)
 	newvertarray[i + orgVerts].x = *((unsigned int*)data);
 	data += sizeof(newvertarray[0].x);
 
-	if (crispy->fliplevels)
-	{
-	    newvertarray[i + orgVerts].r_x =
-	    newvertarray[i + orgVerts].x = -newvertarray[i + orgVerts].x;
-	}
-
 	newvertarray[i + orgVerts].r_y =
 	newvertarray[i + orgVerts].y = *((unsigned int*)data);
 	data += sizeof(newvertarray[0].y);
@@ -424,13 +393,6 @@ void P_LoadNodes_ZDBSP (int lump, boolean compressed)
 	li->v1 = &vertexes[ml->v1];
 	li->v2 = &vertexes[ml->v2];
 
-	if (crispy->fliplevels)
-	{
-	    vertex_t* tmp = li->v1;
-	    li->v1 = li->v2;
-	    li->v2 = tmp;
-	}
-
 	linedef = (unsigned short)SHORT(ml->linedef);
 	ldef = &lines[linedef];
 	li->linedef = ldef;
@@ -492,27 +454,12 @@ void P_LoadNodes_ZDBSP (int lump, boolean compressed)
 	no->dx = SHORT(mn->dx)<<FRACBITS;
 	no->dy = SHORT(mn->dy)<<FRACBITS;
 
-	if (crispy->fliplevels)
-	{
-	    no->x += no->dx;
-	    no->y += no->dy;
-	    no->x = -no->x;
-	    no->dy = -no->dy;
-	}
-
 	for (j = 0; j < 2; j++)
 	{
 	    no->children[j] = (unsigned int)(mn->children[j]);
 
 	    for (k = 0; k < 4; k++)
 		no->bbox[j][k] = SHORT(mn->bbox[j][k])<<FRACBITS;
-
-	    if (crispy->fliplevels)
-	    {
-		fixed_t tmp = no->bbox[j][2];
-		no->bbox[j][2] = -no->bbox[j][3];
-		no->bbox[j][3] = -tmp;
-	    }
 	}
     }
 
@@ -554,12 +501,6 @@ void P_LoadThings_Hexen (int lump)
 //	spawnthing.arg3 = mt->arg3;
 //	spawnthing.arg4 = mt->arg4;
 //	spawnthing.arg5 = mt->arg5;
-
-	if (crispy->fliplevels)
-	{
-	    spawnthing.x = -spawnthing.x;
-	    spawnthing.angle = 180 - spawnthing.angle;
-	}
 
 	P_SpawnMapThing(&spawnthing);
     }
@@ -604,16 +545,9 @@ void P_LoadLineDefs_Hexen (int lump)
 	    warn++;
 	}
 
-	if (crispy->fliplevels)
-	{
-	    v1 = ld->v2 = &vertexes[(unsigned short)SHORT(mld->v2)];
-	    v2 = ld->v1 = &vertexes[(unsigned short)SHORT(mld->v1)];
-	}
-	else
-	{
-	    v1 = ld->v1 = &vertexes[(unsigned short)SHORT(mld->v1)];
-	    v2 = ld->v2 = &vertexes[(unsigned short)SHORT(mld->v2)];
-	}
+	v1 = ld->v1 = &vertexes[(unsigned short)SHORT(mld->v1)];
+	v2 = ld->v2 = &vertexes[(unsigned short)SHORT(mld->v2)];
+
 	ld->dx = v2->x - v1->x;
 	ld->dy = v2->y - v1->y;
 	if (!ld->dx)

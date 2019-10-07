@@ -764,6 +764,12 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
 	cmd->buttons = BT_SPECIAL | BTS_SAVEGAME | (savegameslot<<BTS_SAVESHIFT); 
     } 
 
+    if (crispy->fliplevels)
+    {
+	cmd->angleturn = -cmd->angleturn;
+	cmd->sidemove = -cmd->sidemove;
+    }
+
     // low-res turning
 
     if (lowres_turn)
@@ -2450,12 +2456,6 @@ void G_ReadDemoTiccmd (ticcmd_t* cmd)
 
     cmd->buttons = (unsigned char)*demo_p++; 
 
-    if (crispy->fliplevels)
-    {
-	cmd->sidemove *= (const signed char) -1;
-	cmd->angleturn *= (const short) -1;
-    }
-
     // [crispy] increase demo tics counter
     // applies to both recording and playback,
     // because G_WriteDemoTiccmd() calls G_ReadDemoTiccmd() once
@@ -2497,12 +2497,6 @@ static void IncreaseDemoBuffer(void)
 void G_WriteDemoTiccmd (ticcmd_t* cmd) 
 { 
     byte *demo_start;
-
-    if (crispy->fliplevels)
-    {
-	cmd->sidemove *= (const signed char) -1;
-	cmd->angleturn *= (const short) -1;
-    }
 
     if (gamekeydown[key_demo_quit])           // press q to end demo recording 
 	G_CheckDemoStatus (); 
