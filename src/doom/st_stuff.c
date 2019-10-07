@@ -1742,7 +1742,7 @@ void ST_drawWidgets(boolean refresh)
     st_fragson = deathmatch && st_statusbaron; 
 
     dp_translation = ST_WidgetColor(hudcolor_ammo);
-    STlib_updateNum(&w_ready, refresh);
+    STlib_updateNum(&w_ready, refresh || screenblocks >= CRISPY_HUD);
     dp_translation = NULL;
 
     // [crispy] draw "special widgets" in the Crispy HUD
@@ -1788,8 +1788,8 @@ void ST_drawWidgets(boolean refresh)
 
     for (i=0;i<4;i++)
     {
-	STlib_updateNum(&w_ammo[i], refresh);
-	STlib_updateNum(&w_maxammo[i], refresh);
+	STlib_updateNum(&w_ammo[i], refresh || screenblocks >= CRISPY_HUD);
+	STlib_updateNum(&w_maxammo[i], refresh || screenblocks >= CRISPY_HUD);
     }
 
     if (!gibbed)
