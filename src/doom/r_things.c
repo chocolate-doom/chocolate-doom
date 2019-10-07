@@ -562,6 +562,7 @@ void R_ProjectSprite (mobj_t* thing)
     
     fixed_t		gxt;
     fixed_t		gyt;
+    fixed_t		gzt; // [JN] killough 3/27/98
     
     fixed_t		tx;
     fixed_t		tz;
@@ -709,6 +710,20 @@ void R_ProjectSprite (mobj_t* thing)
     if (x2 < 0)
 	return;
     
+    // [JN] killough 4/9/98: clip things which are out of view due to height
+    gzt = interpz + spritetopoffset[lump];
+    if (interpz > viewz + FixedDiv(viewheight << FRACBITS, xscale) ||
+        gzt < viewz - FixedDiv((viewheight << FRACBITS)-viewheight, xscale))
+    {
+	return;
+    }
+
+    // [JN] quickly reject sprites with bad x ranges
+    if (x1 >= x2)
+    {
+	return;
+    }
+
     // store information in a vissprite
     vis = R_NewVisSprite ();
     vis->translation = NULL; // [crispy] no color translation
@@ -717,8 +732,8 @@ void R_ProjectSprite (mobj_t* thing)
     vis->gx = interpx;
     vis->gy = interpy;
     vis->gz = interpz;
-    vis->gzt = interpz + spritetopoffset[lump];
-    vis->texturemid = vis->gzt - viewz;
+    vis->gzt = gzt; // [JN] killough 3/27/98
+    vis->texturemid = gzt - viewz;
     vis->x1 = x1 < 0 ? 0 : x1;
     vis->x2 = x2 >= viewwidth ? viewwidth-1 : x2;	
     iscale = FixedDiv (FRACUNIT, xscale);
