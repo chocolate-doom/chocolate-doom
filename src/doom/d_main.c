@@ -245,7 +245,7 @@ boolean D_Display (void)
 
         // [crispy] Crispy HUD
         if (screenblocks >= CRISPY_HUD)
-            ST_Drawer(false, false);
+            ST_Drawer(false, true);
     }
 
     // [crispy] in automap overlay mode,

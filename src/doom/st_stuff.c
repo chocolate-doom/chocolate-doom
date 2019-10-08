@@ -460,9 +460,6 @@ void ST_Stop(void);
 void ST_refreshBackground(void)
 {
 
-    if (screenblocks >= CRISPY_HUD && (!automapactive || crispy->automapoverlay))
-        return;
-
     if (st_statusbaron)
     {
         V_UseBuffer(st_backing_screen);
@@ -1742,7 +1739,7 @@ void ST_drawWidgets(boolean refresh)
     st_fragson = deathmatch && st_statusbaron; 
 
     dp_translation = ST_WidgetColor(hudcolor_ammo);
-    STlib_updateNum(&w_ready, refresh || screenblocks >= CRISPY_HUD);
+    STlib_updateNum(&w_ready, refresh);
     dp_translation = NULL;
 
     // [crispy] draw "special widgets" in the Crispy HUD
@@ -1788,17 +1785,17 @@ void ST_drawWidgets(boolean refresh)
 
     for (i=0;i<4;i++)
     {
-	STlib_updateNum(&w_ammo[i], refresh || screenblocks >= CRISPY_HUD);
-	STlib_updateNum(&w_maxammo[i], refresh || screenblocks >= CRISPY_HUD);
+	STlib_updateNum(&w_ammo[i], refresh);
+	STlib_updateNum(&w_maxammo[i], refresh);
     }
 
     if (!gibbed)
     {
     dp_translation = ST_WidgetColor(hudcolor_health);
-    STlib_updatePercent(&w_health, refresh || screenblocks >= CRISPY_HUD);
+    STlib_updatePercent(&w_health, refresh);
     }
     dp_translation = ST_WidgetColor(hudcolor_armor);
-    STlib_updatePercent(&w_armor, refresh || screenblocks >= CRISPY_HUD);
+    STlib_updatePercent(&w_armor, refresh);
     dp_translation = NULL;
 
     if (screenblocks < CRISPY_HUD || (automapactive && !crispy->automapoverlay))
@@ -1810,7 +1807,7 @@ void ST_drawWidgets(boolean refresh)
     st_shotguns = plyr->weaponowned[wp_shotgun] | plyr->weaponowned[wp_supershotgun];
 
     for (i=0;i<6;i++)
-	STlib_updateMultIcon(&w_arms[i], refresh || screenblocks >= CRISPY_HUD);
+	STlib_updateMultIcon(&w_arms[i], refresh);
 
     if (screenblocks < CRISPY_HUD || (automapactive && !crispy->automapoverlay))
     {
@@ -1818,10 +1815,11 @@ void ST_drawWidgets(boolean refresh)
     }
 
     for (i=0;i<3;i++)
-	STlib_updateMultIcon(&w_keyboxes[i], refresh || screenblocks >= CRISPY_HUD);
+	STlib_updateMultIcon(&w_keyboxes[i], refresh);
 
     dp_translation = ST_WidgetColor(hudcolor_frags);
-    STlib_updateNum(&w_frags, refresh || screenblocks >= CRISPY_HUD);
+    STlib_updateNum(&w_frags, refresh);
+
     dp_translation = NULL;
 }
 
@@ -1831,7 +1829,10 @@ void ST_doRefresh(void)
     st_firsttime = false;
 
     // draw status bar background to off-screen buff
+    if (screenblocks < CRISPY_HUD || (automapactive && !crispy->automapoverlay))
+    {
     ST_refreshBackground();
+    }
 
     // and refresh all widgets
     ST_drawWidgets(true);
@@ -1847,7 +1848,7 @@ void ST_diffDraw(void)
 void ST_Drawer (boolean fullscreen, boolean refresh)
 {
   
-    st_statusbaron = (!fullscreen) || (automapactive && !crispy->automapoverlay) || screenblocks >= CRISPY_HUD;
+    st_statusbaron = (!fullscreen) || (automapactive && !crispy->automapoverlay);
     // [crispy] immediately redraw status bar after help screens have been shown
     st_firsttime = st_firsttime || refresh || inhelpscreens;
 
@@ -1866,8 +1867,7 @@ void ST_Drawer (boolean fullscreen, boolean refresh)
     // Otherwise, update as little as possible
     else ST_diffDraw();
 
-    if (dp_translucent)
-	dp_translucent = false;
+    dp_translucent = false;
 }
 
 typedef void (*load_callback_t)(const char *lumpname, patch_t **variable);
