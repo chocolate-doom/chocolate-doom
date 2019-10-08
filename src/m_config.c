@@ -2185,11 +2185,14 @@ static char *GetDefaultConfigDir(void)
     // Vanilla Doom and save in the current directory.
 
     char *result;
+    char *copy;
 
     result = SDL_GetPrefPath("", PACKAGE_TARNAME);
     if (result != NULL)
     {
-        return result;
+        copy = M_StringDuplicate(result);
+        SDL_free(result);
+        return copy;
     }
 #endif /* #ifndef _WIN32 */
     return M_StringDuplicate("");
