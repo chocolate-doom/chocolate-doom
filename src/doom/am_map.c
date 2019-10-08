@@ -1164,9 +1164,9 @@ AM_drawFline
     }
 
 #ifndef CRISPY_TRUECOLOR
-#define PUTDOT(xx,yy,cc) fb[(yy)*f_w+(xx)]=(cc)
+#define PUTDOT(xx,yy,cc) fb[(yy)*f_w+(flipwidth[xx])]=(cc)
 #else
-#define PUTDOT(xx,yy,cc) fb[(yy)*f_w+(xx)]=(colormaps[(cc)])
+#define PUTDOT(xx,yy,cc) fb[(yy)*f_w+(flipwidth[xx])]=(colormaps[(cc)])
 #endif
 
     dx = fl->b.x - fl->a.x;
