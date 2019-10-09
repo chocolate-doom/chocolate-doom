@@ -1458,14 +1458,14 @@ void ST_updateWidgets(void)
 		}
 #endif
 #if defined(CRISPY_KEYBLINK_IN_CLASSIC_HUD)
-		if (screenblocks < CRISPY_HUD && !(plyr->tryopen[i] & (KEYBLINKMASK-1)))
+		if (st_classicstatusbar && !(plyr->tryopen[i] & (KEYBLINKMASK-1)))
 		{
 			st_firsttime = true;
 		}
 #endif
 		plyr->tryopen[i]--;
 #if !defined(CRISPY_KEYBLINK_IN_CLASSIC_HUD)
-		if (screenblocks >= CRISPY_HUD)
+		if (st_crispyhud)
 #endif
 		{
 			keyboxes[i] = (plyr->tryopen[i] & KEYBLINKMASK) ? i + st_keyorskull[i] : -1;
