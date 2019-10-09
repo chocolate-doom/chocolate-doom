@@ -293,6 +293,10 @@ static st_stateenum_t	st_gamestate;
 // whether left-side main status bar is active
 static boolean		st_statusbaron;
 
+// [crispy] distinguish classic status bar with background and player face from Crispy HUD
+static boolean		st_crispyhud;
+static boolean		st_classicstatusbar;
+
 // whether status bar chat is active
 static boolean		st_chat;
 
@@ -460,7 +464,7 @@ void ST_Stop(void);
 void ST_refreshBackground(void)
 {
 
-    if (st_statusbaron)
+    if (st_classicstatusbar)
     {
         V_UseBuffer(st_backing_screen);
 
@@ -1743,7 +1747,7 @@ void ST_drawWidgets(boolean refresh)
     dp_translation = NULL;
 
     // [crispy] draw "special widgets" in the Crispy HUD
-    if (screenblocks >= CRISPY_HUD && (!automapactive || crispy->automapoverlay))
+    if (st_crispyhud)
     {
 	// [crispy] draw berserk pack instead of no ammo if appropriate
 	if (plyr->readyweapon == wp_fist && plyr->powers[pw_strength])
@@ -1798,10 +1802,7 @@ void ST_drawWidgets(boolean refresh)
     STlib_updatePercent(&w_armor, refresh);
     dp_translation = NULL;
 
-    if (screenblocks < CRISPY_HUD || (automapactive && !crispy->automapoverlay))
-    {
     STlib_updateBinIcon(&w_armsbg, refresh);
-    }
 
     // [crispy] show SSG availability in the Shotgun slot of the arms widget
     st_shotguns = plyr->weaponowned[wp_shotgun] | plyr->weaponowned[wp_supershotgun];
@@ -1809,10 +1810,7 @@ void ST_drawWidgets(boolean refresh)
     for (i=0;i<6;i++)
 	STlib_updateMultIcon(&w_arms[i], refresh);
 
-    if (screenblocks < CRISPY_HUD || (automapactive && !crispy->automapoverlay))
-    {
     STlib_updateMultIcon(&w_faces, refresh);
-    }
 
     for (i=0;i<3;i++)
 	STlib_updateMultIcon(&w_keyboxes[i], refresh);
@@ -1829,10 +1827,7 @@ void ST_doRefresh(void)
     st_firsttime = false;
 
     // draw status bar background to off-screen buff
-    if (screenblocks < CRISPY_HUD || (automapactive && !crispy->automapoverlay))
-    {
     ST_refreshBackground();
-    }
 
     // and refresh all widgets
     ST_drawWidgets(true);
@@ -1852,6 +1847,10 @@ void ST_Drawer (boolean fullscreen, boolean refresh)
     // [crispy] immediately redraw status bar after help screens have been shown
     st_firsttime = st_firsttime || refresh || inhelpscreens;
 
+    // [crispy] distinguish classic status bar with background and player face from Crispy HUD
+    st_crispyhud = screenblocks >= CRISPY_HUD && (!automapactive || crispy->automapoverlay);
+    st_classicstatusbar = st_statusbaron && !st_crispyhud;
+
     if (crispy->cleanscreenshot == 2)
         return;
 
@@ -1859,7 +1858,7 @@ void ST_Drawer (boolean fullscreen, boolean refresh)
     ST_doPaletteStuff();
 
     // [crispy] translucent HUD
-    if (screenblocks > CRISPY_HUD && !(automapactive && !crispy->automapoverlay))
+    if (st_crispyhud && screenblocks > CRISPY_HUD)
 	dp_translucent = true;
 
     // If just after ST_Start(), refresh all
@@ -2073,7 +2072,7 @@ void ST_createWidgets(void)
 		      ST_ARMSBGY,
 		      armsbg,
 		      &st_notdeathmatch,
-		      &st_statusbaron);
+		      &st_classicstatusbar);
 
     // weapons owned
     for(i=0;i<6;i++)
@@ -2103,7 +2102,7 @@ void ST_createWidgets(void)
 		       ST_FACESY,
 		       faces,
 		       &st_faceindex,
-		       &st_statusbaron);
+		       &st_classicstatusbar);
 
     // armor percentage - should be colored later
     STlib_initPercent(&w_armor,
