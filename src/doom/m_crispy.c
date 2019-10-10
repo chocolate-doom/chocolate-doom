@@ -142,7 +142,6 @@ extern void EnableLoadingDisk (void);
 extern void P_SegLengths (boolean contrast_only);
 extern void R_ExecuteSetViewSize (void);
 extern void R_InitLightTables (void);
-extern void S_UpdateSndChannels (void);
 extern void I_ReInitGraphics (int reinit);
 
 static void M_CrispyToggleAspectRatioHook (void)
@@ -499,6 +498,8 @@ void M_CrispyToggleSoundMono(int choice)
 {
     choice = 0;
     crispy->soundmono = !crispy->soundmono;
+
+    S_UpdateStereoSeparation();
 }
 
 void M_CrispyToggleTranslucency(int choice)

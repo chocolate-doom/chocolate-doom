@@ -20,7 +20,6 @@
 
 #include "SDL_mixer.h"
 
-#include "crispy.h"
 #include "config.h"
 #include "doomtype.h"
 
@@ -317,12 +316,6 @@ void I_UpdateSound(void)
 
 static void CheckVolumeSeparation(int *vol, int *sep)
 {
-    // [crispy] Play all sound effects in mono.
-    if (crispy->soundmono)
-    {
-        *sep = 128; // [crispy] NORM_SEP
-    }
-    else
     if (*sep < 0)
     {
         *sep = 0;

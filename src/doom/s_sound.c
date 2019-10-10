@@ -58,6 +58,7 @@
 // Stereo separation
 
 #define S_STEREO_SWING (96 * FRACUNIT)
+static int stereo_swing;
 
 #define NORM_PRIORITY 64
 #define NORM_SEP 128
@@ -304,6 +305,9 @@ void S_Init(int sfxVolume, int musicVolume)
     // [crispy] add support for alternative music tracks for Final Doom's
     // TNT and Plutonia as introduced in DoomMetalVol5.wad
     S_RegisterAltMusic();
+
+    // [crispy] handle stereo separation for mono-sfx and flipped levels
+    S_UpdateStereoSeparation();
 }
 
 void S_Shutdown(void)
@@ -598,7 +602,7 @@ static int S_AdjustSoundParams(mobj_t *listener, mobj_t *source,
     angle >>= ANGLETOFINESHIFT;
 
     // stereo separation
-    *sep = 128 - (FixedMul(S_STEREO_SWING, finesine[angle]) >> FRACBITS);
+    *sep = 128 - (FixedMul(stereo_swing, finesine[angle]) >> FRACBITS);
 
     // volume calculation
     if (approx_dist < S_CLOSE_DIST)
@@ -1102,5 +1106,23 @@ void S_UpdateSndChannels (void)
 	for (i = 0; i < snd_channels; i++)
 	{
 		channels[i].sfxinfo = 0;
+	}
+}
+
+void S_UpdateStereoSeparation (void)
+{
+	// [crispy] play all sound effects in mono
+	if (crispy->soundmono)
+	{
+		stereo_swing = 0;
+	}
+	else
+	if (crispy->fliplevels)
+	{
+		stereo_swing = -S_STEREO_SWING;
+	}
+	else
+	{
+		stereo_swing = S_STEREO_SWING;
 	}
 }
