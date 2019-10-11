@@ -30,6 +30,7 @@ Its core features are:
  * Intermediate gamma correction levels (0.5, 1.5, 2.5 and 3.5).
  * Removal of all static engine limits, or at least raising of the less crucial ones.
  * Full support for the "Doom Classic" WADs shipped with the "Doom 3: BFG Edition", especially the "No Rest For The Living" episode shipped in the NERVE.WAD file.
+ * Support for all versions of John Romero's Episode 5: Sigil for Ultimate Doom.
 
 Furthermore, the following optional user-visible and audible features are available:
 
