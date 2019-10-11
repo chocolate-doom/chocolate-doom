@@ -260,7 +260,7 @@ static int GuessFileType(const char *name)
     char *lower;
     static boolean iwad_found = false;
 
-    base = M_BaseName(name);
+    base = basename(name);
     lower = M_StringDuplicate(base);
     M_ForceLowercase(lower);
 
