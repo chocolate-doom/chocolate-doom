@@ -956,7 +956,7 @@ void D_DoomMain(void)
     // Load defaults before initing other systems
     DEH_printf("M_LoadDefaults: Load system defaults.\n");
     D_BindVariables();
-    M_SetConfigFilenames("heretic.cfg", PROGRAM_PREFIX "heretic.cfg");
+    M_SetConfigFilenames("defaulth.cfg", PROGRAM_PREFIX "heretic.cfg");
     M_LoadDefaults();
 
     I_AtExit(M_SaveDefaults, false);
