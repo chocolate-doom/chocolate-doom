@@ -45,10 +45,18 @@
 		<Unit filename="../src/d_dedicated.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="../src/d_iwad.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../src/d_iwad.h" />
 		<Unit filename="../src/d_mode.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../src/d_mode.h" />
+		<Unit filename="../src/deh_str.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../src/deh_str.h" />
 		<Unit filename="../src/i_main.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -60,6 +68,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../src/i_timer.h" />
+		<Unit filename="../src/m_config.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../src/m_config.h" />
 		<Unit filename="../src/m_argv.c">
 			<Option compilerVar="CC" />
 		</Unit>
