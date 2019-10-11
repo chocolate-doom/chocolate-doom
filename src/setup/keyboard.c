@@ -204,7 +204,7 @@ static void ConfigExtraKeys(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
         scrollpane = TXT_NewScrollPane(0, 13, table);
         TXT_AddWidget(window, scrollpane);
 
-        if (gamemission == doom)
+        if (gamemission == doom || gamemission == heretic)
         {
         AddSectionLabel(table, "Movement", false);
         AddKeyControl(table, "Toggle always run", &key_toggleautorun);

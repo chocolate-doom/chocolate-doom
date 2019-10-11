@@ -289,6 +289,7 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
     boolean strafe, bstrafe;
     int speed, tspeed, lspeed;
     int forward, side;
+    static int		joybspeed_old = 2;
     int look, arti;
     int flyheight;
 
@@ -305,9 +306,14 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
 
     strafe = gamekeydown[key_strafe] || mousebuttons[mousebstrafe]
         || joybuttons[joybstrafe];
-    speed = joybspeed >= MAX_JOY_BUTTONS
-         || gamekeydown[key_speed]
-         || joybuttons[joybspeed];
+
+    // fraggle: support the old "joyb_speed = 31" hack which
+    // allowed an autorun effect
+    // [crispy] when autorun is active, pressing the run key results in walking
+    speed = key_speed >= NUMKEYS
+         || joybspeed >= MAX_JOY_BUTTONS;
+    speed ^= (key_speed < NUMKEYS && gamekeydown[key_speed])
+         || (joybspeed < MAX_JOY_BUTTONS && joybuttons[joybspeed]);
 
     // haleyjd: removed externdriver crap
     
@@ -325,6 +331,28 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
         tspeed = 2;             // slow turn
     else
         tspeed = speed;
+
+    // [crispy] toggle always run
+    if (gamekeydown[key_toggleautorun])
+    {
+        static char autorunmsg[15];
+
+        if (joybspeed >= MAX_JOY_BUTTONS)
+        {
+            joybspeed = joybspeed_old;
+        }
+        else
+        {
+            joybspeed_old = joybspeed;
+            joybspeed = 29;
+        }
+
+        sprintf(autorunmsg, "ALWAYS RUN %s",
+            (joybspeed >= MAX_JOY_BUTTONS) ? "ON" : "OFF");
+		P_SetMessage(&players[consoleplayer], autorunmsg, false);
+
+        gamekeydown[key_toggleautorun] = false;
+    }
 
     if (gamekeydown[key_lookdown] || gamekeydown[key_lookup])
     {
