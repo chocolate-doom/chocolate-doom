@@ -469,9 +469,9 @@ ST_Responder (event_t* ev)
       if (cht_CheckCheat(&cheat_god, ev->data2))
       {
 	// [crispy] dead players are first respawned at the current position
-	mapthing_t mt = {0};
 	if (plyr->playerstate == PST_DEAD)
 	{
+	    mapthing_t mt = {0};
 	    extern void P_SpawnPlayer (mapthing_t* mthing);
 
 	    mt.x = plyr->mo->x >> FRACBITS;
@@ -481,6 +481,13 @@ ST_Responder (event_t* ev)
 
 	    P_SpawnPlayer(&mt);
 	    S_StartSound(plyr, sfx_slop);
+		if (plyr->mo)
+		    plyr->mo->health = 100;
+	    plyr->health = deh_god_mode_health;
+	    plyr->message = DEH_String(STSTR_DQDRES);
+		// [crispy] eat key press when respawning
+		if (mt.type)
+		    return true;
 	}
 
 	plyr->cheats ^= CF_GODMODE;
@@ -494,10 +501,6 @@ ST_Responder (event_t* ev)
 	}
 	else 
 	  plyr->message = DEH_String(STSTR_DQDOFF);
-
-	// [crispy] eat key press when respawning
-	if (mt.type)
-	    return true;
       }
       // 'fa' cheat for killer fucking arsenal
       else if (cht_CheckCheat(&cheat_ammonokey, ev->data2))
