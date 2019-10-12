@@ -49,6 +49,7 @@ Furthermore, the following optional user-visible and audible features are availa
  * Level statistics and extended coloring in the Automap.
  * Playing sounds in full length, and misc. other sound fixes.
  * Demo recording and/or playback timers and progress bar.
+ * Taking over a demo: if 'Finish recording demo' key is hit during playing the demo, controls are handed over to the player, and the updated demo is saved in a different demo file.
 
 All of these features are disabled by default and need to get enabled either in the in-game "Crispness" menu, in the crispy-doom-setup tool or as command line parameters. They are implemented in a way that preserves demo-compatibility with Vanilla Doom and network game compatibility with Chocolate Doom. Furthermore, Crispy Doom's savegames and config files are compatible, though not identical (see the Compatibility section below), to Vanilla Doom's.
 
