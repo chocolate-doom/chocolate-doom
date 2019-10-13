@@ -307,6 +307,9 @@ static boolean		st_fragson;
 // main bar left
 static patch_t*		sbar;
 
+// main bar right, for doom 1.0
+static patch_t*		sbarr;
+
 // 0-9, tall numbers
 static patch_t*		tallnum[10];
 
@@ -421,6 +424,10 @@ void ST_refreshBackground(void)
         V_UseBuffer(st_backing_screen);
 
 	V_DrawPatch(ST_X, 0, sbar);
+
+	// draw right side of bar if needed (Doom 1.0)
+	if (sbarr)
+	    V_DrawPatch(ST_ARMSBGX, 0, sbarr);
 
 	if (netgame)
 	    V_DrawPatch(ST_FX, 0, faceback);
@@ -1142,7 +1149,16 @@ static void ST_loadUnloadGraphics(load_callback_t callback)
     callback(namebuf, &faceback);
 
     // status bar background bits
-    callback(DEH_String("STBAR"), &sbar);
+    if (W_CheckNumForName(DEH_String("STBAR")) > 0)
+    {
+        callback(DEH_String("STBAR"), &sbar);
+        sbarr = NULL;
+    }
+    else
+    {
+        callback(DEH_String("STMBARL"), &sbar);
+        callback(DEH_String("STMBARR"), &sbarr);
+    }
 
     // face states
     facenum = 0;

@@ -445,6 +445,40 @@ void S_StartSound(void *origin_p, int sfx_id)
         I_Error("Bad sfx #: %d", sfx_id);
     }
 
+    // substitute missing sounds in Doom 1.2
+    if (gameversion == exe_doom_1_2)
+    {
+        switch(sfx_id)
+        {
+            case sfx_bdcls:
+                sfx_id = sfx_dorcls;
+                break;
+
+            case sfx_bdopn:
+                sfx_id = sfx_doropn;
+                break;
+
+            case sfx_getpow:
+                sfx_id = sfx_itemup;
+                break;
+
+            case sfx_itmbk:
+                sfx_id = sfx_stnmov;
+                break;
+
+            case sfx_pdiehi:
+                sfx_id = sfx_pldeth;
+                break;
+
+            case sfx_tink:
+                sfx_id = sfx_swtchx;
+                break;
+
+            default:
+                break;
+        }
+    }
+
     sfx = &S_sfx[sfx_id];
 
     // Initialize sound parameters
@@ -661,7 +695,8 @@ void S_ChangeMusic(int musicnum, int looping)
     // and d_introa.  The latter is used for OPL playback.
 
     if (musicnum == mus_intro && (snd_musicdevice == SNDDEVICE_ADLIB
-                               || snd_musicdevice == SNDDEVICE_SB))
+                               || snd_musicdevice == SNDDEVICE_SB)
+        && W_CheckNumForName("D_INTROA") > 0)
     {
         musicnum = mus_introa;
     }
