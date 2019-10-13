@@ -1061,6 +1061,13 @@ static void InitGameVersion(void)
                     status = true;
                     switch (demoversion)
                     {
+                        case 0:
+                        case 1:
+                        case 2:
+                        case 3:
+                        case 4:
+                            gameversion = exe_doom_1_2;
+                            break;
                         case 106:
                             gameversion = exe_doom_1_666;
                             break;

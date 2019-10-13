@@ -1324,7 +1324,8 @@ boolean PIT_ChangeSector (mobj_t*	thing)
     {
 	P_SetMobjState (thing, S_GIBS);
 
-	thing->flags &= ~MF_SOLID;
+    if (gameversion != exe_doom_1_2)
+	    thing->flags &= ~MF_SOLID;
 	thing->height = 0;
 	thing->radius = 0;
 
