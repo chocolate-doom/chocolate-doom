@@ -959,6 +959,8 @@ static struct
     const char *cmdline;
     GameVersion_t version;
 } gameversions[] = {
+    {"Doom 1.0/1.1",         "1.1",        exe_doom_1_1},
+    {"Doom 1.2",             "1.2",        exe_doom_1_2},
     {"Doom 1.666",           "1.666",      exe_doom_1_666},
     {"Doom 1.7/1.7a",        "1.7",        exe_doom_1_7},
     {"Doom 1.8",             "1.8",        exe_doom_1_8},
@@ -986,9 +988,9 @@ static void InitGameVersion(void)
     // @arg <version>
     // @category compat
     //
-    // Emulate a specific version of Doom.  Valid values are "1.666",
-    // "1.7", "1.8", "1.9", "ultimate", "final", "final2", "hacx" and
-    // "chex".
+    // Emulate a specific version of Doom.  Valid values are "1.1", "1.2", 
+    // "1.666", "1.7", "1.8", "1.9", "ultimate", "final", "final2", "hacx"
+    // and "chex".
     //
 
     p = M_CheckParmWithArgs("-gameversion", 1);
@@ -1079,6 +1081,12 @@ static void InitGameVersion(void)
                         break;
                     }
                 }
+            }
+
+            // detect v1.0/v1.1 from missing D_INTROA
+            if (gameversion == exe_doom_1_2 && W_CheckNumForName("D_INTROA") < 0)
+            {
+                gameversion = exe_doom_1_1;
             }
         }
         else if (gamemode == retail)

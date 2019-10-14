@@ -446,7 +446,7 @@ void S_StartSound(void *origin_p, int sfx_id)
     }
 
     // substitute missing sounds in Doom 1.2
-    if (gameversion == exe_doom_1_2)
+    if (gameversion <= exe_doom_1_2)
     {
         switch(sfx_id)
         {
@@ -696,7 +696,7 @@ void S_ChangeMusic(int musicnum, int looping)
 
     if (musicnum == mus_intro && (snd_musicdevice == SNDDEVICE_ADLIB
                                || snd_musicdevice == SNDDEVICE_SB)
-        && W_CheckNumForName("D_INTROA") > 0)
+        && gameversion >= exe_doom_1_2)
     {
         musicnum = mus_introa;
     }

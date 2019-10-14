@@ -2052,6 +2052,8 @@ int G_VanillaVersionCode(void)
 {
     switch (gameversion)
     {
+        case exe_doom_1_1:
+            return 101;
         case exe_doom_1_2:
             return 102;
         case exe_doom_1_666:
@@ -2088,7 +2090,7 @@ void G_BeginRecording (void)
     {
         *demo_p++ = DOOM_191_VERSION;
     }
-    else if (gameversion != exe_doom_1_2)
+    else if (gameversion > exe_doom_1_2)
     {
         *demo_p++ = G_VanillaVersionCode();
     }
@@ -2096,7 +2098,7 @@ void G_BeginRecording (void)
     *demo_p++ = gameskill; 
     *demo_p++ = gameepisode; 
     *demo_p++ = gamemap; 
-    if (longtics || gameversion != exe_doom_1_2)
+    if (longtics || gameversion > exe_doom_1_2)
     {
         *demo_p++ = deathmatch; 
         *demo_p++ = respawnparm;
@@ -2130,6 +2132,10 @@ static const char *DemoVersionDescription(int version)
 
     switch (version)
     {
+        case 101:
+            return "v1.0/v1.1";
+        case 102:
+            return "v1.2";
         case 104:
             return "v1.4";
         case 105:
@@ -2151,7 +2157,7 @@ static const char *DemoVersionDescription(int version)
     // Unknown version.  Perhaps this is a pre-v1.4 IWAD?  If the version
     // byte is in the range 0-4 then it can be a v1.0-v1.2 demo.
 
-    if (version == 102 || (version >= 0 && version <= 4))
+    if (version >= 0 && version <= 4)
     {
         return "v1.0/v1.1/v1.2";
     }
@@ -2176,9 +2182,11 @@ void G_DoPlayDemo (void)
 
     demoversion = *demo_p++;
 
-    if (demoversion < 102)
+    if (demoversion >= 0 && demoversion <= 4)
     {
-        demoversion = 102;
+        if (gameversion <= exe_doom_1_2)
+            demoversion = G_VanillaVersionCode();
+        
         demo_p--;
     }
 
@@ -2209,7 +2217,7 @@ void G_DoPlayDemo (void)
     skill = *demo_p++; 
     episode = *demo_p++; 
     map = *demo_p++; 
-    if (demoversion != 102)
+    if (demoversion > 102)
     {
         deathmatch = *demo_p++;
         respawnparm = *demo_p++;
