@@ -1191,7 +1191,7 @@ static void ST_loadUnloadGraphics(load_callback_t callback)
     callback(namebuf, &faceback);
 
     // status bar background bits
-    if (W_CheckNumForName(DEH_String("STBAR")) > 0)
+    if (gameversion >= exe_doom_1_2)
     {
         callback(DEH_String("STBAR"), &sbar);
         sbarr = NULL;

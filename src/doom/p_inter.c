@@ -462,7 +462,7 @@ P_TouchSpecialThing
 	
       case SPR_BON2:
 	player->armorpoints++;		// can go over 100%
-	if (player->armorpoints > deh_max_armor && gameversion != exe_doom_1_2)
+	if (player->armorpoints > deh_max_armor && gameversion > exe_doom_1_2)
 	    player->armorpoints = deh_max_armor;
         // deh_green_armor_class only applies to the green armor shirt;
         // for the armor helmets, armortype 1 is always used.
@@ -1054,7 +1054,7 @@ P_DamageMobj
     target->reactiontime = 0;		// we're awake now...	
 
     if ( (!target->threshold || target->type == MT_VILE)
-	 && source && (source != target || gameversion == exe_doom_1_2)
+	 && source && (source != target || gameversion <= exe_doom_1_2)
 	 && source->type != MT_VILE)
     {
 	// if not intent on another player,
