@@ -1593,7 +1593,7 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_KEY(key_multi_msgplayer8),
 
     //!
-    // @game doom
+    // @game doom heretic
     // Toggle always run.
     //
 

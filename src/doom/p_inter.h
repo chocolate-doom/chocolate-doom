@@ -21,10 +21,21 @@
 #define __P_INTER__
 
 
-
-
 boolean	P_GivePower(player_t*, int);
 
+// [marshmallow]
+typedef struct {
+	int weapons[NUMWEAPONS];
+	int ammo[NUMAMMO];
+
+	boolean backpack;
+
+} backpack_s;
+
+backpack_s dropped_backpack;
+
+void DropInventoryInBackpack(mobj_t* target);
+void RecoverInventoryFromBackpack(mobj_t* toucher);
 
 
 #endif

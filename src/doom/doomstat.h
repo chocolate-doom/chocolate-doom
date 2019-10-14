@@ -105,6 +105,9 @@ extern  boolean	netgame;
 // 0=Cooperative; 1=Deathmatch; 2=Altdeath
 extern int deathmatch;
 
+// Drop backpack with inventory upon death in coop games.
+extern boolean dropbackpack;
+
 // -------------------------
 // Internal parameters for sound rendering.
 // These have been taken from the DOS version,

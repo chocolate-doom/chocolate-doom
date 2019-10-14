@@ -50,6 +50,71 @@
 int	maxammo[NUMAMMO] = {200, 50, 300, 50};
 int	clipammo[NUMAMMO] = {10, 4, 20, 1};
 
+extern boolean dropbackpack;
+
+
+// [marshmallow]
+void RecoverInventoryFromBackpack(mobj_t* toucher)
+{
+	int i;
+
+	// Recover weapons
+	for (i=0; i<NUMWEAPONS; i++)
+	{
+		if (dropped_backpack.weapons[i])
+			toucher->player->weaponowned[i] = true;
+	}
+
+	// Backpack powerup yes/no
+	if (dropped_backpack.backpack && !toucher->player->backpack)
+	{
+		toucher->player->backpack = true;
+		for (i=0 ; i<NUMAMMO ; i++)
+			toucher->player->maxammo[i] *= 2;
+	}
+
+	// Recover ammo
+	for (i=0; i<NUMAMMO; i++)
+	{
+		if (dropped_backpack.ammo[i])
+		{
+			toucher->player->ammo[i] += dropped_backpack.ammo[i];
+
+			if (toucher->player->ammo[i] > toucher->player->maxammo[i])  // don't let us go over maxammo
+				toucher->player->ammo[i] = toucher->player->maxammo[i];
+		}
+	}
+
+	toucher->player->message = DEH_String(GOTBACKPACK);
+}
+
+
+// [marshmallow]
+void DropInventoryInBackpack(mobj_t* target)
+{
+	int i;
+
+	// Save weapons
+	for (i=0; i<NUMWEAPONS; i++)
+	{
+		if (target->player->weaponowned[i])
+			dropped_backpack.weapons[i] = true;
+	}
+
+	// Save ammo
+	for (i=0; i<NUMAMMO; i++)
+	{
+		if (target->player->ammo[i])
+			dropped_backpack.ammo[i] = target->player->ammo[i];
+	}
+
+	// Backpack powerup yes/no
+	if (target->player->backpack)
+		dropped_backpack.backpack = true;
+
+	return;
+}
+
 
 //
 // GET STUFF
@@ -340,7 +405,7 @@ P_TouchSpecialThing
     int		i;
     fixed_t	delta;
     int		sound;
-		
+
     delta = special->z - toucher->z;
 
     if (delta > toucher->height
@@ -587,17 +652,26 @@ P_TouchSpecialThing
 	break;
 	
       case SPR_BPAK:
-	if (!player->backpack)
+	if (netgame && !deathmatch && dropbackpack
+		&& special->flags & MF_DROPPED && toucher->player && toucher->player->health > 0) // [marshmallow] So we don't pick it up while dead/dying
 	{
-	    for (i=0 ; i<NUMAMMO ; i++)
-		player->maxammo[i] *= 2;
-	    player->backpack = true;
+		RecoverInventoryFromBackpack(toucher);
+		break;
 	}
-	for (i=0 ; i<NUMAMMO ; i++)
-	    P_GiveAmmo (player, i, 1);
-	player->message = DEH_String(GOTBACKPACK);
-	break;
-	
+	else
+	{
+		if (!player->backpack)
+		{
+			for (i=0 ; i<NUMAMMO ; i++)
+				player->maxammo[i] *= 2;
+			player->backpack = true;
+		}
+		for (i=0 ; i<NUMAMMO ; i++)
+			P_GiveAmmo (player, i, 1);
+		player->message = DEH_String(GOTBACKPACK);
+		break;
+	}
+
 	// weapons
       case SPR_BFUG:
 	if (!P_GiveWeapon (player, wp_bfg, false) )
@@ -757,7 +831,16 @@ P_KillMobj
       case MT_CHAINGUY:
 	item = MT_CHAINGUN;
 	break;
-	
+
+	  case MT_PLAYER:
+	if (dropbackpack && netgame && !deathmatch)
+	{
+		DropInventoryInBackpack(target); // [marshmallow]
+		item = MT_MISC24;
+	}
+	else return;
+	break;
+
       default:
 	return;
     }

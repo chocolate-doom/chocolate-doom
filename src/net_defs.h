@@ -176,6 +176,7 @@ typedef struct
     int new_sync;
     int timelimit;
     int loadgame;
+    int dropbackpack;
     int random;  // [Strife only]
 
     // These fields are only used by the server when sending a game

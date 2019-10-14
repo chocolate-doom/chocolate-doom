@@ -101,6 +101,7 @@ boolean		devparm;	// started game with -devparm
 boolean         nomonsters;	// checkparm of -nomonsters
 boolean         respawnparm;	// checkparm of -respawn
 boolean         fastparm;	// checkparm of -fast
+boolean		dropbackpack; // checkparm of -backpack
 
 //extern int soundVolume;
 //extern  int	sfxVolume;
@@ -1785,6 +1786,8 @@ void D_DoomMain (void)
     {
 	timelimit = 20;
     }
+
+    dropbackpack = M_CheckParm("-backpack");
 
     //!
     // @arg [<x> <y> | <xy>]
