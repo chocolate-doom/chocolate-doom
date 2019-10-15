@@ -1498,6 +1498,11 @@ void WI_drawStats(void)
         WI_drawTime(SCREENWIDTH - SP_TIMEX, SP_TIMEY, cnt_par);
     }
 
+    // [crispy] exit early from the tally screen after ExM8
+    if (sp_state == 10 && gamemode != commercial && gamemap == 8)
+    {
+	acceleratestage = 1;
+    }
 }
 
 void WI_checkForAccelerate(void)
