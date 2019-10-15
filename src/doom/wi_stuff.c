@@ -1610,6 +1610,12 @@ void WI_drawStats(void)
 	WI_drawTime((wide ? ORIGWIDTH : ORIGWIDTH/2) - SP_TIMEX, SP_TIMEY + 16, ttime, false);
     }
 
+    // [crispy] exit early from the tally screen after ExM8
+    if (sp_state == 10 && gamemode != commercial && gamemap == 8)
+    {
+	acceleratestage = 1;
+    }
+
     // [crispy] demo timer widget
     if ((demoplayback && (crispy->demotimer & DEMOTIMER_PLAYBACK)) ||
         (demorecording && (crispy->demotimer & DEMOTIMER_RECORD)))
