@@ -213,7 +213,7 @@ boolean P_CheckAmmo (player_t* player)
     // only relevant when removing current weapon with TNTWEAPx cheat
     if (!player->weaponowned[player->readyweapon])
     {
-	ammo = 0;
+	ammo = am_clip; // [crispy] at least not am_noammo, see below
 	count = INT_MAX;
     }
 
@@ -248,7 +248,8 @@ boolean P_CheckAmmo (player_t* player)
 	{
 	    player->pendingweapon = wp_shotgun;
 	}
-	else if (player->ammo[am_clip])
+	// [crispy] allow to remove the pistol via TNTWEAP2
+	else if (player->ammo[am_clip] && player->weaponowned[wp_pistol])
 	{
 	    player->pendingweapon = wp_pistol;
 	}
