@@ -423,6 +423,10 @@ cheatseq_t cheat_choppers = CHEAT("idchoppers", 0);
 cheatseq_t cheat_clev = CHEAT("idclev", 2);
 cheatseq_t cheat_mypos = CHEAT("idmypos", 0);
 
+// [crispy] pseudo cheats to eat up the first digit typed after a cheat expecting two parameters
+cheatseq_t cheat_mus1 = CHEAT("idmus", 1);
+cheatseq_t cheat_clev1 = CHEAT("idclev", 1);
+
 // [crispy] new cheats
 cheatseq_t cheat_weapon = CHEAT("tntweap", 1);
 cheatseq_t cheat_massacre = CHEAT("tntem", 0); // [crispy] PrBoom+
@@ -767,6 +771,8 @@ ST_Responder (event_t* ev)
 	if (buf[0] == '0' && buf[1] == '0')
 	{
 	  S_ChangeMusic(0, 2);
+	  // [crispy] eat key press, i.e. don't change weapon upon music change
+	  return true;
 	}
 	else
 	// [JN] Fixed: using a proper IDMUS selection for shareware
@@ -783,7 +789,11 @@ ST_Responder (event_t* ev)
 	  if (musnum < mus_runnin || musnum >= NUMMUSIC)
 	    plyr->message = DEH_String(STSTR_NOMUS);
 	  else
+	  {
 	    S_ChangeMusic(musnum, 1);
+	    // [crispy] eat key press, i.e. don't change weapon upon music change
+	    return true;
+	  }
 	}
 	else
 	{
@@ -798,11 +808,21 @@ ST_Responder (event_t* ev)
 	      S_music[musnum].lumpnum == -1)
 	    plyr->message = DEH_String(STSTR_NOMUS);
 	  else
+	  {
 	    S_ChangeMusic(musnum, 1);
+	    // [crispy] eat key press, i.e. don't change weapon upon music change
+	    return true;
+	  }
 	}
+      }
+      // [crispy] eat up the first digit typed after a cheat expecting two parameters
+      else if (cht_CheckCheat(&cheat_mus1, ev->data2))
+      {
+	char buf[2];
 
-      // [crispy] eat key press, i.e. don't change weapon upon music change
-      return true;
+	cht_GetParam(&cheat_mus1, buf);
+
+	return isdigit(buf[0]);
       }
       // [crispy] allow both idspispopd and idclip cheats in all gamemissions
       else if ( ( /* logical_gamemission == doom
@@ -1189,10 +1209,18 @@ ST_Responder (event_t* ev)
       // So be it.
       plyr->message = DEH_String(STSTR_CLEV);
       G_DeferedInitNew(gameskill, epsd, map);
-      }
-
       // [crispy] eat key press, i.e. don't change weapon upon level change
       return true;
+      }
+    }
+    // [crispy] eat up the first digit typed after a cheat expecting two parameters
+    else if (!netgame && !menuactive && cht_CheckCheatSP(&cheat_clev1, ev->data2))
+    {
+	char buf[2];
+
+	cht_GetParam(&cheat_clev1, buf);
+
+	return isdigit(buf[0]);
     }
   }
   return false;
