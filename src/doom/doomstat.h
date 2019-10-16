@@ -111,6 +111,9 @@ extern boolean dropbackpack;
 // Don't spawn deathmatch weapons in coop games.
 extern boolean nodmweapons;
 
+// Keep keys in coop games.
+extern boolean keepkeys;
+
 // -------------------------
 // Internal parameters for sound rendering.
 // These have been taken from the DOS version,

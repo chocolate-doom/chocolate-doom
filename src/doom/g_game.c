@@ -241,6 +241,26 @@ int G_CmdChecksum (ticcmd_t* cmd)
     return sum; 
 } 
 
+// [marshmallow]
+void SaveKeys(int player)
+{
+	card_t i;
+
+	for (i=0; i<NUMCARDS; i++) 
+		if (players[player].cards[i] == true)
+			keyring[player][i] = true;
+}
+
+// [marshmallow]
+void RestoreKeys(int player)
+{
+	card_t i;
+
+	for (i=0; i<NUMCARDS; i++) 
+		if (keyring[player][i] == true)
+			players[player].cards[i] = true;
+}
+
 static boolean WeaponSelectable(weapontype_t weapon)
 {
     // Can't select the super shotgun in Doom 1.
@@ -1107,7 +1127,11 @@ void G_PlayerReborn (int player)
     itemcount = players[player].itemcount; 
     secretcount = players[player].secretcount; 
 	 
-    p = &players[player]; 
+    p = &players[player];
+
+	if (keepkeys && netgame && !deathmatch)
+		SaveKeys(player); // [marshmallow] grab his keys here before we zero out the player struct
+
     memset (p, 0, sizeof(*p)); 
  
     memcpy (players[player].frags, frags, sizeof(players[player].frags)); 
@@ -1122,7 +1146,10 @@ void G_PlayerReborn (int player)
     p->weaponowned[wp_fist] = true; 
     p->weaponowned[wp_pistol] = true; 
     p->ammo[am_clip] = deh_initial_bullets; 
-	 
+
+	if (keepkeys && netgame && !deathmatch)
+	    RestoreKeys(player); // [marshmallow] restore keys
+
     for (i=0 ; i<NUMAMMO ; i++) 
 	p->maxammo[i] = maxammo[i]; 
 		 
