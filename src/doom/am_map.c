@@ -565,18 +565,6 @@ void AM_clearMarks(void)
     markpointnum = 0;
 }
 
-static int am_flipwidth[MAXWIDTH];
-static void AM_FlipWidthInit (void)
-{
-	int i, j;
-
-	// [crispy] lookup table for horizontal screen coordinates
-	for (i = 0, j = f_w - 1; i < f_w; i++, j--)
-	{
-		am_flipwidth[i] = crispy->fliplevels ? j : i;
-	}
-}
-
 //
 // should be called at the start of every level
 // right now, i figure it out myself
@@ -589,7 +577,6 @@ void AM_LevelInit(void)
     f_x = f_y = 0;
     f_w = SCREENWIDTH;
     f_h = SCREENHEIGHT - (ST_HEIGHT << crispy->hires);
-    AM_FlipWidthInit();
 
     AM_clearMarks();
 
@@ -608,7 +595,6 @@ void AM_ReInit (void)
 {
     f_w = SCREENWIDTH;
     f_h = SCREENHEIGHT - (ST_HEIGHT << crispy->hires);
-    AM_FlipWidthInit();
 
     AM_findMinMaxBoundaries();
 
@@ -1178,9 +1164,9 @@ AM_drawFline
     }
 
 #ifndef CRISPY_TRUECOLOR
-#define PUTDOT(xx,yy,cc) fb[(yy)*f_w+(am_flipwidth[xx])]=(cc)
+#define PUTDOT(xx,yy,cc) fb[(yy)*f_w+(flipscreenwidth[xx])]=(cc)
 #else
-#define PUTDOT(xx,yy,cc) fb[(yy)*f_w+(am_flipwidth[xx])]=(colormaps[(cc)])
+#define PUTDOT(xx,yy,cc) fb[(yy)*f_w+(flipscreenwidth[xx])]=(colormaps[(cc)])
 #endif
 
     dx = fl->b.x - fl->a.x;
@@ -1751,7 +1737,7 @@ void AM_drawMarks(void)
 	    {
 		AM_rotatePoint(&pt);
 	    }
-	    fx = (am_flipwidth[CXMTOF(pt.x)] >> crispy->hires) - 1;
+	    fx = (flipscreenwidth[CXMTOF(pt.x)] >> crispy->hires) - 1;
 	    fy = (CYMTOF(pt.y) >> crispy->hires) - 2;
 	    if (fx >= f_x && fx <= (f_w >> crispy->hires) - w && fy >= f_y && fy <= (f_h >> crispy->hires) - h)
 		V_DrawPatch(fx, fy, marknums[i]);

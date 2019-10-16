@@ -130,7 +130,7 @@ void R_DrawColumn (void)
     // Framebuffer destination address.
     // Use ylookup LUT to avoid multiply with ScreenWidth.
     // Use columnofs LUT for subwindows? 
-    dest = ylookup[dc_yl] + columnofs[flipwidth[dc_x]];
+    dest = ylookup[dc_yl] + columnofs[flipviewwidth[dc_x]];
 
     // Determine scaling,
     //  which is the only mapping to be done.
@@ -271,8 +271,8 @@ void R_DrawColumnLow (void)
     // Blocky mode, need to multiply by 2.
     x = dc_x << 1;
     
-    dest = ylookup[dc_yl] + columnofs[flipwidth[x]];
-    dest2 = ylookup[dc_yl] + columnofs[flipwidth[x+1]];
+    dest = ylookup[dc_yl] + columnofs[flipviewwidth[x]];
+    dest2 = ylookup[dc_yl] + columnofs[flipviewwidth[x+1]];
     
     fracstep = dc_iscale; 
     frac = dc_texturemid + (dc_yl-centery)*fracstep;
@@ -393,7 +393,7 @@ void R_DrawFuzzColumn (void)
     }
 #endif
     
-    dest = ylookup[dc_yl] + columnofs[flipwidth[dc_x]];
+    dest = ylookup[dc_yl] + columnofs[flipviewwidth[dc_x]];
 
     // Looks familiar.
     fracstep = dc_iscale; 
@@ -477,8 +477,8 @@ void R_DrawFuzzColumnLow (void)
     }
 #endif
     
-    dest = ylookup[dc_yl] + columnofs[flipwidth[x]];
-    dest2 = ylookup[dc_yl] + columnofs[flipwidth[x+1]];
+    dest = ylookup[dc_yl] + columnofs[flipviewwidth[x]];
+    dest2 = ylookup[dc_yl] + columnofs[flipviewwidth[x+1]];
 
     // Looks familiar.
     fracstep = dc_iscale; 
@@ -564,7 +564,7 @@ void R_DrawTranslatedColumn (void)
 #endif 
 
 
-    dest = ylookup[dc_yl] + columnofs[flipwidth[dc_x]];
+    dest = ylookup[dc_yl] + columnofs[flipviewwidth[dc_x]];
 
     // Looks familiar.
     fracstep = dc_iscale; 
@@ -613,8 +613,8 @@ void R_DrawTranslatedColumnLow (void)
 #endif 
 
 
-    dest = ylookup[dc_yl] + columnofs[flipwidth[x]];
-    dest2 = ylookup[dc_yl] + columnofs[flipwidth[x+1]];
+    dest = ylookup[dc_yl] + columnofs[flipviewwidth[x]];
+    dest2 = ylookup[dc_yl] + columnofs[flipviewwidth[x+1]];
 
     // Looks familiar.
     fracstep = dc_iscale; 
@@ -661,7 +661,7 @@ void R_DrawTLColumn (void)
     }
 #endif
 
-    dest = ylookup[dc_yl] + columnofs[flipwidth[dc_x]];
+    dest = ylookup[dc_yl] + columnofs[flipviewwidth[dc_x]];
 
     fracstep = dc_iscale;
     frac = dc_texturemid + (dc_yl-centery)*fracstep;
@@ -707,8 +707,8 @@ void R_DrawTLColumnLow (void)
     }
 #endif
 
-    dest = ylookup[dc_yl] + columnofs[flipwidth[x]];
-    dest2 = ylookup[dc_yl] + columnofs[flipwidth[x+1]];
+    dest = ylookup[dc_yl] + columnofs[flipviewwidth[x]];
+    dest2 = ylookup[dc_yl] + columnofs[flipviewwidth[x+1]];
 
     fracstep = dc_iscale;
     frac = dc_texturemid + (dc_yl-centery)*fracstep;
@@ -847,7 +847,7 @@ void R_DrawSpan (void)
 	// Lookup pixel from flat texture tile,
 	//  re-index using light/colormap.
 	source = ds_source[spot];
-	dest = ylookup[ds_y] + columnofs[flipwidth[ds_x1++]];
+	dest = ylookup[ds_y] + columnofs[flipviewwidth[ds_x1++]];
 	*dest = ds_colormap[ds_brightmap[source]][source];
 
 //      position += step;
@@ -982,9 +982,9 @@ void R_DrawSpanLow (void)
 	// Lowres/blocky mode does it twice,
 	//  while scale is adjusted appropriately.
 	source = ds_source[spot];
-	dest = ylookup[ds_y] + columnofs[flipwidth[ds_x1++]];
+	dest = ylookup[ds_y] + columnofs[flipviewwidth[ds_x1++]];
 	*dest = ds_colormap[ds_brightmap[source]][source];
-	dest = ylookup[ds_y] + columnofs[flipwidth[ds_x1++]];
+	dest = ylookup[ds_y] + columnofs[flipviewwidth[ds_x1++]];
 	*dest = ds_colormap[ds_brightmap[source]][source];
 
 //	position += step;
