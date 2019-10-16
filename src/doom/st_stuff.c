@@ -479,6 +479,9 @@ ST_Responder (event_t* ev)
 	    mt.angle = (plyr->mo->angle + ANG45/2)*(uint64_t)45/ANG45;
 	    mt.type = consoleplayer + 1;
 
+	    // remove the corpse 
+	    players[consoleplayer].mo->player = NULL;
+	    P_RemoveMobj(plyr->mo);
 	    P_SpawnPlayer(&mt);
 	    S_StartSound(plyr, sfx_slop);
 		if (plyr->mo)

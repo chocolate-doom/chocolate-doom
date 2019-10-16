@@ -1056,6 +1056,9 @@ static void CheatGodFunc(player_t * player, Cheat_t * cheat)
 	    mt.angle = (player->mo->angle + ANG45/2)*(uint64_t)45/ANG45;
 	    mt.type = consoleplayer + 1;
 
+	    // remove the corpse 
+	    players[consoleplayer].mo->player = NULL;
+	    P_RemoveMobj(player->mo);
 	    P_SpawnPlayer(&mt);
 	    S_StartSound(player, sfx_ripslop);
 		if (player->mo)
