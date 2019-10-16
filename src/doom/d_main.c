@@ -102,6 +102,7 @@ boolean         nomonsters;	// checkparm of -nomonsters
 boolean         respawnparm;	// checkparm of -respawn
 boolean         fastparm;	// checkparm of -fast
 boolean		dropbackpack; // checkparm of -backpack
+boolean		nodmweapons; // checkparm of -nodmweapons
 
 //extern int soundVolume;
 //extern  int	sfxVolume;
@@ -1788,6 +1789,8 @@ void D_DoomMain (void)
     }
 
     dropbackpack = M_CheckParm("-backpack");
+
+    nodmweapons = M_CheckParm("-nodmweapons");
 
     //!
     // @arg [<x> <y> | <xy>]

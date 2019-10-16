@@ -120,6 +120,7 @@ static void LoadGameSettings(net_gamesettings_t *settings)
     respawnparm = settings->respawn_monsters;
     timelimit = settings->timelimit;
     dropbackpack = settings->dropbackpack;
+    nodmweapons = settings->nodmweapons;
     consoleplayer = settings->consoleplayer;
 
     if (lowres_turn)
@@ -153,6 +154,7 @@ static void SaveGameSettings(net_gamesettings_t *settings)
     settings->respawn_monsters = respawnparm;
     settings->timelimit = timelimit;
     settings->dropbackpack = dropbackpack;
+    settings->nodmweapons = nodmweapons;
 
     settings->lowres_turn = M_CheckParm("-record") > 0
                          && M_CheckParm("-longtics") == 0;

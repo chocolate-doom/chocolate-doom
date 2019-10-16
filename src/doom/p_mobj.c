@@ -827,7 +827,14 @@ void P_SpawnMapThing (mapthing_t* mthing)
     {
 	return;
     }
-    
+
+    // [marshmallow]
+    // don't spawn DM weapons if -nodmweapons
+    if (mthing->options & 16 && !deathmatch && nodmweapons)
+    {
+	return;
+    }
+
     // spawn it
     x = mthing->x << FRACBITS;
     y = mthing->y << FRACBITS;

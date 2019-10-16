@@ -108,6 +108,9 @@ extern int deathmatch;
 // Drop backpack with inventory upon death in coop games.
 extern boolean dropbackpack;
 
+// Don't spawn deathmatch weapons in coop games.
+extern boolean nodmweapons;
+
 // -------------------------
 // Internal parameters for sound rendering.
 // These have been taken from the DOS version,
