@@ -397,7 +397,8 @@ P_TouchSpecialThing
 	    player->health = deh_max_soulsphere;
 	player->mo->health = player->health;
 	player->message = DEH_String(GOTSUPER);
-	sound = sfx_getpow;
+	if (gameversion > exe_doom_1_2)
+	    sound = sfx_getpow;
 	break;
 	
       case SPR_MEGA:
@@ -409,7 +410,8 @@ P_TouchSpecialThing
         // affects the MegaArmor.
 	P_GiveArmor (player, 2);
 	player->message = DEH_String(GOTMSPHERE);
-	sound = sfx_getpow;
+	if (gameversion > exe_doom_1_2)
+	    sound = sfx_getpow;
 	break;
 	
 	// cards
@@ -485,7 +487,8 @@ P_TouchSpecialThing
 	if (!P_GivePower (player, pw_invulnerability))
 	    return;
 	player->message = DEH_String(GOTINVUL);
-	sound = sfx_getpow;
+	if (gameversion > exe_doom_1_2)
+	    sound = sfx_getpow;
 	break;
 	
       case SPR_PSTR:
@@ -494,35 +497,40 @@ P_TouchSpecialThing
 	player->message = DEH_String(GOTBERSERK);
 	if (player->readyweapon != wp_fist)
 	    player->pendingweapon = wp_fist;
-	sound = sfx_getpow;
+	if (gameversion > exe_doom_1_2)
+	    sound = sfx_getpow;
 	break;
 	
       case SPR_PINS:
 	if (!P_GivePower (player, pw_invisibility))
 	    return;
 	player->message = DEH_String(GOTINVIS);
-	sound = sfx_getpow;
+	if (gameversion > exe_doom_1_2)
+	    sound = sfx_getpow;
 	break;
 	
       case SPR_SUIT:
 	if (!P_GivePower (player, pw_ironfeet))
 	    return;
 	player->message = DEH_String(GOTSUIT);
-	sound = sfx_getpow;
+	if (gameversion > exe_doom_1_2)
+	    sound = sfx_getpow;
 	break;
 	
       case SPR_PMAP:
 	if (!P_GivePower (player, pw_allmap))
 	    return;
 	player->message = DEH_String(GOTMAP);
-	sound = sfx_getpow;
+	if (gameversion > exe_doom_1_2)
+	    sound = sfx_getpow;
 	break;
 	
       case SPR_PVIS:
 	if (!P_GivePower (player, pw_infrared))
 	    return;
 	player->message = DEH_String(GOTVISOR);
-	sound = sfx_getpow;
+	if (gameversion > exe_doom_1_2)
+	    sound = sfx_getpow;
 	break;
 	
 	// ammo
