@@ -2119,10 +2119,6 @@ int G_VanillaVersionCode(void)
 {
     switch (gameversion)
     {
-        case exe_doom_1_1:
-            return 101;
-        case exe_doom_1_2:
-            return 102;
         case exe_doom_1_666:
             return 106;
         case exe_doom_1_7:
@@ -2199,10 +2195,6 @@ static char *DemoVersionDescription(int version)
 
     switch (version)
     {
-        case 101:
-            return "v1.0/v1.1";
-        case 102:
-            return "v1.2";
         case 104:
             return "v1.4";
         case 105:
@@ -2241,6 +2233,7 @@ void G_DoPlayDemo (void)
     skill_t skill;
     int i, lumpnum, episode, map;
     int demoversion;
+    boolean olddemo = false;
 
     lumpnum = W_GetNumForName(defdemoname);
     gameaction = ga_nothing;
@@ -2251,9 +2244,7 @@ void G_DoPlayDemo (void)
 
     if (demoversion >= 0 && demoversion <= 4)
     {
-        if (gameversion <= exe_doom_1_2)
-            demoversion = G_VanillaVersionCode();
-        
+        olddemo = true;
         demo_p--;
     }
 
@@ -2266,7 +2257,8 @@ void G_DoPlayDemo (void)
     {
         longtics = true;
     }
-    else if (demoversion != G_VanillaVersionCode())
+    else if (demoversion != G_VanillaVersionCode() &&
+             !(gameversion <= exe_doom_1_2 && olddemo))
     {
         char *message = "Demo is from a different game version!\n"
                         "(read %i, should be %i)\n"
@@ -2295,7 +2287,7 @@ void G_DoPlayDemo (void)
     skill = *demo_p++; 
     episode = *demo_p++; 
     map = *demo_p++; 
-    if (demoversion > 102)
+    if (!olddemo)
     {
         deathmatch = *demo_p++;
         respawnparm = *demo_p++;

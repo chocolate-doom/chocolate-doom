@@ -16,7 +16,6 @@
 //	LineOfSight/Visibility checks, uses REJECT Lookup Table.
 //
 
-#include <stdlib.h> // abs()
 
 #include "doomdef.h"
 #include "doomstat.h"
@@ -45,37 +44,37 @@ int		sightcounts[2];
 // taken from prboom-plus/src/p_sight.c:69-102
 boolean PTR_SightTraverse(intercept_t *in)
 {
-  line_t *li;
-  fixed_t slope;
+    line_t *li;
+    fixed_t slope;
 
-  li = in->d.line;
+    li = in->d.line;
 
-  //
-  // crosses a two sided line
-  //
-  P_LineOpening(li);
+    //
+    // crosses a two sided line
+    //
+    P_LineOpening(li);
 
-  if (openbottom >= opentop)  // quick test for totally closed doors
-    return false;  // stop
+    if (openbottom >= opentop) // quick test for totally closed doors
+        return false;          // stop
 
-  if (li->frontsector->floorheight != li->backsector->floorheight)
-  {
-    slope = FixedDiv(openbottom - sightzstart , in->frac);
-    if (slope > bottomslope)
-      bottomslope = slope;
-  }
+    if (li->frontsector->floorheight != li->backsector->floorheight)
+    {
+        slope = FixedDiv(openbottom - sightzstart, in->frac);
+        if (slope > bottomslope)
+            bottomslope = slope;
+    }
 
-  if (li->frontsector->ceilingheight != li->backsector->ceilingheight)
-  {
-    slope = FixedDiv(opentop - sightzstart, in->frac);
-    if (slope < topslope)
-      topslope = slope;
-  }
+    if (li->frontsector->ceilingheight != li->backsector->ceilingheight)
+    {
+        slope = FixedDiv(opentop - sightzstart, in->frac);
+        if (slope < topslope)
+            topslope = slope;
+    }
 
-  if (topslope <= bottomslope)
-    return false;  // stop
+    if (topslope <= bottomslope)
+        return false; // stop
 
-  return true;  // keep going
+    return true; // keep going
 }
 
 
