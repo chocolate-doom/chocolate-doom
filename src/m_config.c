@@ -25,6 +25,12 @@
 #include <errno.h>
 #include <assert.h>
 
+#ifdef _WIN32
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#include <direct.h>
+#endif
+
 #include "config.h"
 
 #include "doomtype.h"
@@ -2134,10 +2140,17 @@ static char *GetDefaultConfigDir(void)
         return result;
     }
     else
-#endif /* #ifndef _WIN32 */
     {
         return M_StringDuplicate("");
     }
+#else
+    char cwdir[PATH_MAX + 1]; // current directory
+
+    _getcwd(cwdir, sizeof(cwdir));
+    if (cwdir != NULL && strlen(cwdir) < PATH_MAX)
+        return M_StringJoin(cwdir, DIR_SEPARATOR_S, NULL);
+    else return M_StringDuplicate("");
+#endif /* #ifndef _WIN32 */
 }
 
 // 
