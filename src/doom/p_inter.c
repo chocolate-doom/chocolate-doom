@@ -652,7 +652,7 @@ P_TouchSpecialThing
 	break;
 	
       case SPR_BPAK:
-	if (netgame && !deathmatch && dropbackpack
+	if ((netgame || sprespawn) && dropbackpack
 		&& special->flags & MF_DROPPED && toucher->player && toucher->player->health > 0) // [marshmallow] So we don't pick it up while dead/dying
 	{
 		RecoverInventoryFromBackpack(toucher);
@@ -833,7 +833,7 @@ P_KillMobj
 	break;
 
 	  case MT_PLAYER:
-	if (dropbackpack && netgame && !deathmatch)
+	if ((netgame || sprespawn) && dropbackpack)
 	{
 		DropInventoryInBackpack(target); // [marshmallow]
 		item = MT_MISC24;
