@@ -56,6 +56,9 @@ char *configdir;
 static char *default_main_config;
 static char *default_extra_config;
 
+ // Current directory
+char cwdir[PATH_MAX + 1];
+
 typedef enum 
 {
     DEFAULT_INT,
@@ -2118,14 +2121,14 @@ float M_GetFloatVariable(char *name)
 
 static char *GetDefaultConfigDir(void)
 {
-#if !defined(_WIN32) || defined(_WIN32_WCE)
 
     // Configuration settings are stored in ~/.chocolate-doom/,
     // except on Windows, where we behave like Vanilla Doom and
     // save in the current directory.
 
-    char *homedir;
     char *result;
+#if !defined(_WIN32) || defined(_WIN32_WCE)
+    char *homedir;
 
     homedir = getenv("HOME");
 
@@ -2136,21 +2139,23 @@ static char *GetDefaultConfigDir(void)
 
         result = M_StringJoin(homedir, DIR_SEPARATOR_S,
                               "." PACKAGE_TARNAME, DIR_SEPARATOR_S, NULL);
-
-        return result;
     }
     else
     {
         return M_StringDuplicate("");
     }
 #else
-    char cwdir[PATH_MAX + 1]; // current directory
-
     _getcwd(cwdir, sizeof(cwdir));
     if (cwdir != NULL && strlen(cwdir) < PATH_MAX)
-        return M_StringJoin(cwdir, DIR_SEPARATOR_S, NULL);
-    else return M_StringDuplicate("");
+    {
+        result = M_StringJoin(cwdir, DIR_SEPARATOR_S, NULL);
+    }
+    else
+    {
+        return M_StringDuplicate("");
+    }
 #endif /* #ifndef _WIN32 */
+    return result;
 }
 
 // 
@@ -2173,7 +2178,7 @@ void M_SetConfigDir(char *dir)
         configdir = GetDefaultConfigDir();
     }
 
-    if (strcmp(configdir, "") != 0)
+    if (strcmp(configdir, "") != 0 && strcmp(configdir, M_StringJoin(cwdir, DIR_SEPARATOR_S, NULL)) != 0)
     {
         printf("Using %s for configuration and saves\n", configdir);
     }
@@ -2226,7 +2231,7 @@ char *M_GetSaveGameDir(char *iwadname)
 #endif
     // If not "doing" a configuration directory (Windows), don't "do"
     // a savegame directory, either.
-    else if (!strcmp(configdir, ""))
+    else if (!strcmp(configdir, "") || !strcmp(configdir, M_StringJoin(cwdir, DIR_SEPARATOR_S, NULL)))
     {
 	savegamedir = M_StringDuplicate("");
     }
