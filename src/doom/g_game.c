@@ -2128,10 +2128,6 @@ static const char *DemoVersionDescription(int version)
 
     switch (version)
     {
-        case 101:
-            return "v1.0/v1.1";
-        case 102:
-            return "v1.2";
         case 104:
             return "v1.4";
         case 105:
