@@ -1302,7 +1302,7 @@ void G_DoReborn (int playernum)
 { 
     int                             i; 
 	 
-    if (!netgame)
+    if (!netgame && !sprespawn)
     {
 	// reload the level from scratch
 	gameaction = ga_loadlevel;  

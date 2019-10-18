@@ -104,6 +104,7 @@ boolean         fastparm;	// checkparm of -fast
 boolean		dropbackpack; // checkparm of -backpack
 boolean		nodmweapons; // checkparm of -nodmweapons
 boolean		keepkeys; // checkparm of -keepkeys
+boolean		sprespawn; // checkparm of -sprespawn
 
 //extern int soundVolume;
 //extern  int	sfxVolume;
@@ -1794,6 +1795,8 @@ void D_DoomMain (void)
     nodmweapons = M_CheckParm("-nodmweapons");
 
     keepkeys = M_CheckParm("-keepkeys");
+
+    sprespawn = M_CheckParm("-sprespawn");
 
     //!
     // @arg [<x> <y> | <xy>]

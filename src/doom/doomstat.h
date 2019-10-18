@@ -114,6 +114,9 @@ extern boolean nodmweapons;
 // Keep keys in coop games.
 extern boolean keepkeys;
 
+// Respawn in single player games.
+extern boolean sprespawn;
+
 // -------------------------
 // Internal parameters for sound rendering.
 // These have been taken from the DOS version,

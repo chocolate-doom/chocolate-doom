@@ -469,7 +469,7 @@ ST_Responder (event_t* ev)
       if (cht_CheckCheat(&cheat_god, ev->data2))
       {
 	// [crispy] dead players are first respawned at the current position
-	if (plyr->playerstate == PST_DEAD)
+	if (plyr->playerstate == PST_DEAD && !sprespawn)
 	{
 	    mapthing_t mt = {0};
 	    extern void P_SpawnPlayer (mapthing_t* mthing);
