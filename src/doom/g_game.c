@@ -2052,8 +2052,6 @@ int G_VanillaVersionCode(void)
 {
     switch (gameversion)
     {
-        case exe_doom_1_2:
-            I_Error("Doom 1.2 does not have a version code!");
         case exe_doom_1_666:
             return 106;
         case exe_doom_1_7:
@@ -2088,7 +2086,7 @@ void G_BeginRecording (void)
     {
         *demo_p++ = DOOM_191_VERSION;
     }
-    else
+    else if (gameversion > exe_doom_1_2)
     {
         *demo_p++ = G_VanillaVersionCode();
     }
@@ -2096,11 +2094,14 @@ void G_BeginRecording (void)
     *demo_p++ = gameskill; 
     *demo_p++ = gameepisode; 
     *demo_p++ = gamemap; 
-    *demo_p++ = deathmatch; 
-    *demo_p++ = respawnparm;
-    *demo_p++ = fastparm;
-    *demo_p++ = nomonsters;
-    *demo_p++ = consoleplayer;
+    if (longtics || gameversion > exe_doom_1_2)
+    {
+        *demo_p++ = deathmatch; 
+        *demo_p++ = respawnparm;
+        *demo_p++ = fastparm;
+        *demo_p++ = nomonsters;
+        *demo_p++ = consoleplayer;
+    }
 	 
     for (i=0 ; i<MAXPLAYERS ; i++) 
 	*demo_p++ = playeringame[i]; 		 
@@ -2165,6 +2166,7 @@ void G_DoPlayDemo (void)
     skill_t skill;
     int i, lumpnum, episode, map;
     int demoversion;
+    boolean olddemo = false;
 
     lumpnum = W_GetNumForName(defdemoname);
     gameaction = ga_nothing;
@@ -2172,6 +2174,12 @@ void G_DoPlayDemo (void)
     demo_p = demobuffer;
 
     demoversion = *demo_p++;
+
+    if (demoversion >= 0 && demoversion <= 4)
+    {
+        olddemo = true;
+        demo_p--;
+    }
 
     longtics = false;
 
@@ -2182,7 +2190,8 @@ void G_DoPlayDemo (void)
     {
         longtics = true;
     }
-    else if (demoversion != G_VanillaVersionCode())
+    else if (demoversion != G_VanillaVersionCode() &&
+             !(gameversion <= exe_doom_1_2 && olddemo))
     {
         const char *message = "Demo is from a different game version!\n"
                               "(read %i, should be %i)\n"
@@ -2200,12 +2209,24 @@ void G_DoPlayDemo (void)
     skill = *demo_p++; 
     episode = *demo_p++; 
     map = *demo_p++; 
-    deathmatch = *demo_p++;
-    respawnparm = *demo_p++;
-    fastparm = *demo_p++;
-    nomonsters = *demo_p++;
-    consoleplayer = *demo_p++;
-	
+    if (!olddemo)
+    {
+        deathmatch = *demo_p++;
+        respawnparm = *demo_p++;
+        fastparm = *demo_p++;
+        nomonsters = *demo_p++;
+        consoleplayer = *demo_p++;
+    }
+    else
+    {
+        deathmatch = 0;
+        respawnparm = 0;
+        fastparm = 0;
+        nomonsters = 0;
+        consoleplayer = 0;
+    }
+    
+        
     for (i=0 ; i<MAXPLAYERS ; i++) 
 	playeringame[i] = *demo_p++; 
 
