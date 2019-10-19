@@ -154,7 +154,7 @@ byte		consistancy[MAXPLAYERS][BACKUPTICS];
  
 #define MAXPLMOVE		(forwardmove[1]) 
  
-#define TURBOTHRESHOLD	0x32
+#define TURBOTHRESHOLD	(gameversion < exe_doom_1_2 ? 0x71 : 0x32)
 
 fixed_t         forwardmove[2] = {0x19, 0x32}; 
 fixed_t         sidemove[2] = {0x18, 0x28}; 
@@ -613,6 +613,14 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     else if (side < -MAXPLMOVE) 
 	side = -MAXPLMOVE; 
  
+    // Doom 1.0 emulation FIXME
+    // Lazily scaling instead of reverse engineering
+    if (gameversion < exe_doom_1_2)
+    {
+        forward = forward * 2048 / 900;
+        side = side * 2048 / 900;
+    }
+
     cmd->forwardmove += forward; 
     cmd->sidemove += side;
     

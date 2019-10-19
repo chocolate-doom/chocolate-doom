@@ -984,6 +984,7 @@ static struct
     char *cmdline;
     GameVersion_t version;
 } gameversions[] = {
+    {"Doom 1.0",             "1.0",        exe_doom_1_0},
     {"Doom 1.2",             "1.2",        exe_doom_1_2},
     {"Doom 1.666",           "1.666",      exe_doom_1_666},
     {"Doom 1.7/1.7a",        "1.7",        exe_doom_1_7},
@@ -1012,9 +1013,9 @@ static void InitGameVersion(void)
     // @arg <version>
     // @category compat
     //
-    // Emulate a specific version of Doom.  Valid values are "1.2", 
-    // "1.666", "1.7", "1.8", "1.9", "ultimate", "final", "final2",
-    // "hacx" and "chex".
+    // Emulate a specific version of Doom.  Valid values are "1.0", 
+    // "1.2", "1.666", "1.7", "1.8", "1.9", "ultimate", "final",
+    // "final2", "hacx" and "chex".
     //
 
     p = M_CheckParmWithArgs("-gameversion", 1);
@@ -1106,6 +1107,13 @@ static void InitGameVersion(void)
                     }
                 }
             }
+
+            // detect v1.0/v1.1 from missing D_INTROA
+            // FIXME: figure out a way to distinguish v1.0 from v1.1
+            if (gameversion == exe_doom_1_2 && W_CheckNumForName("D_INTROA") < 0)
+            {
+                gameversion = exe_doom_1_0;
+            }
         }
         else if (gamemode == retail)
         {
@@ -1122,6 +1130,10 @@ static void InitGameVersion(void)
             gameversion = exe_final;
         }
     }
+
+    // EXEs prior to v1.2 use a different tantoangle table.
+    if (gameversion < exe_doom_1_2)
+        tantoangle = tantoangle1_0;
 
     // Deathmatch 2.0 did not exist until Doom v1.4
     if (gameversion <= exe_doom_1_2 && deathmatch == 2)

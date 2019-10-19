@@ -52,6 +52,20 @@ extern const fixed_t finesine[5*FINEANGLES/4];
 extern const fixed_t *finecosine;
 
 
+#define COARSEANGLES		256
+#define COARSEMASK		(COARSEANGLES-1)
+
+
+// 0x100000000 to 0x0100
+#define ANGLETOCOARSESHIFT	24		
+
+// Effective size is 320.
+extern const fixed_t coarsesine[5*COARSEANGLES/4];
+
+// Re-use data, is just PI/2 phase shift.
+extern const fixed_t *coarsecosine;
+
+
 // Effective size is 4096.
 extern const fixed_t finetangent[FINEANGLES/2];
 
@@ -84,7 +98,9 @@ typedef unsigned angle_t;
 // Effective size is 2049;
 // The +1 size is to handle the case when x==y
 //  without additional checking.
-extern const angle_t tantoangle[SLOPERANGE+1];
+extern const angle_t *tantoangle;
+
+extern const angle_t tantoangle1_0[SLOPERANGE+1];
 
 
 // Utility function,

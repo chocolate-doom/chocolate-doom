@@ -155,7 +155,7 @@ void P_XYMovement (mobj_t* mo)
 	
     do
     {
-	if (xmove > MAXMOVE/2 || ymove > MAXMOVE/2)
+	if (gameversion >= exe_doom_1_2 && (xmove > MAXMOVE/2 || ymove > MAXMOVE/2))
 	{
 	    ptryx = mo->x + xmove/2;
 	    ptryy = mo->y + ymove/2;
@@ -541,7 +541,8 @@ P_SpawnMobj
     if (gameskill != sk_nightmare)
 	mobj->reactiontime = info->reactiontime;
     
-    mobj->lastlook = P_Random () % MAXPLAYERS;
+    if (gameversion >= exe_doom_1_2)
+        mobj->lastlook = P_Random () % MAXPLAYERS;
     // do not set the state with P_SetMobjState,
     // because action routines can not be called yet
     st = &states[info->spawnstate];

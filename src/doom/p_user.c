@@ -110,6 +110,15 @@ P_Thrust
   angle_t	angle,
   fixed_t	move ) 
 {
+    if (gameversion < exe_doom_1_2)
+    {
+        angle >>= ANGLETOCOARSESHIFT;
+
+        player->mo->momx += FixedMul(move,coarsecosine[angle]); 
+        player->mo->momy += FixedMul(move,coarsesine[angle]);
+        return;
+    }
+
     angle >>= ANGLETOFINESHIFT;
     
     player->mo->momx += FixedMul(move,finecosine[angle]); 
@@ -154,9 +163,16 @@ void P_CalcHeight (player_t* player)
 	return;
     }
 		
-    angle = (FINEANGLES/20*leveltime)&FINEMASK;
-    bob = FixedMul ( player->bob/2, finesine[angle]);
-
+    if (gameversion < exe_doom_1_2)
+    {
+        angle = (COARSEANGLES/20*gametic)&COARSEMASK;
+        bob = FixedMul ( player->bob/2, coarsesine[angle]);
+    }
+    else
+    {
+        angle = (FINEANGLES/20*gametic)&FINEMASK;
+        bob = FixedMul ( player->bob/2, finesine[angle]);
+    }
     
     // move viewheight
     if (player->playerstate == PST_LIVE)
@@ -197,22 +213,34 @@ void P_CalcHeight (player_t* player)
 void P_MovePlayer (player_t* player)
 {
     ticcmd_t*		cmd;
+    int forwardmove, sidemove;
 	
     cmd = &player->cmd;
 	
     player->mo->angle += (cmd->angleturn<<FRACBITS);
 
+    if (gameversion < exe_doom_1_2)
+    {
+        forwardmove = cmd->justattacked ? 0xc800 : cmd->forwardmove * 900;
+        sidemove = cmd->sidemove * 900;
+    }
+    else
+    {
+        forwardmove = cmd->forwardmove * 2048;
+        sidemove = cmd->sidemove * 2048;
+    }
+
     // Do not let the player control movement
     //  if not onground.
     onground = (player->mo->z <= player->mo->floorz);
 	
-    if (cmd->forwardmove && onground)
-	P_Thrust (player, player->mo->angle, cmd->forwardmove*2048);
+    if (forwardmove && onground)
+	P_Thrust (player, player->mo->angle, forwardmove);
     
-    if (cmd->sidemove && onground)
-	P_Thrust (player, player->mo->angle-ANG90, cmd->sidemove*2048);
+    if (sidemove && onground)
+	P_Thrust (player, player->mo->angle-ANG90, sidemove);
 
-    if ( (cmd->forwardmove || cmd->sidemove) 
+    if ( (forwardmove || sidemove) 
 	 && player->mo->state == &states[S_PLAY] )
     {
 	P_SetMobjState (player->mo, S_PLAY_RUN1);
@@ -300,8 +328,14 @@ void P_PlayerThink (player_t* player)
 	cmd->angleturn = 0;
 	cmd->forwardmove = 0xc800/512;
 	cmd->sidemove = 0;
+        cmd->justattacked = true;
 	player->mo->flags &= ~MF_JUSTATTACKED;
     }
+    else
+    {
+        cmd->justattacked = false;
+    }
+    
 			
 	
     if (player->playerstate == PST_DEAD)
