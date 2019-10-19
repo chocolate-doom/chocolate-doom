@@ -110,7 +110,7 @@ P_Thrust
   angle_t	angle,
   fixed_t	move ) 
 {
-    if (gameversion < exe_doom_1_2)
+    if (gameversion < exe_doom_1_1)
     {
         angle >>= ANGLETOCOARSESHIFT;
 
@@ -162,17 +162,9 @@ void P_CalcHeight (player_t* player)
 	player->viewz = player->mo->z + player->viewheight;
 	return;
     }
-		
-    if (gameversion < exe_doom_1_2)
-    {
-        angle = (COARSEANGLES/20*gametic)&COARSEMASK;
-        bob = FixedMul ( player->bob/2, coarsesine[angle]);
-    }
-    else
-    {
-        angle = (FINEANGLES/20*gametic)&FINEMASK;
-        bob = FixedMul ( player->bob/2, finesine[angle]);
-    }
+	
+    angle = (FINEANGLES/20*leveltime)&FINEMASK;
+    bob = FixedMul ( player->bob/2, finesine[angle]);
     
     // move viewheight
     if (player->playerstate == PST_LIVE)

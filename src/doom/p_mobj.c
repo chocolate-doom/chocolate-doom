@@ -541,7 +541,7 @@ P_SpawnMobj
     if (gameskill != sk_nightmare)
 	mobj->reactiontime = info->reactiontime;
     
-    if (gameversion >= exe_doom_1_2)
+    if (gameversion >= exe_doom_1_1)
         mobj->lastlook = P_Random () % MAXPLAYERS;
     // do not set the state with P_SetMobjState,
     // because action routines can not be called yet

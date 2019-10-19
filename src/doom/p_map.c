@@ -1197,7 +1197,7 @@ void P_UseLines (player_t*	player)
     x1 = player->mo->x;
     y1 = player->mo->y;
 
-    if (gameversion < exe_doom_1_2)
+    if (gameversion < exe_doom_1_1)
     {
         angle = player->mo->angle >> ANGLETOCOARSESHIFT;
 

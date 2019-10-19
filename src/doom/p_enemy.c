@@ -505,7 +505,7 @@ P_LookForPlayers
     c = 0;
     stop = (actor->lastlook-1)&3;
 	
-    if (gameversion < exe_doom_1_2)
+    if (gameversion < exe_doom_1_1)
     {
         actor->lastlook = P_Random() & 3;
         stop = 4;
