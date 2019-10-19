@@ -57,7 +57,8 @@ typedef enum
 typedef enum
 {
     exe_doom_1_0,    // Doom 1.0: shareware
-    exe_doom_1_2,    // Doom 1.2: shareware and registered
+    exe_doom_1_1,    // Doom 1.1: shareware and registered
+    exe_doom_1_2,    // Doom 1.2: "
     exe_doom_1_666,  // Doom 1.666: for shareware, registered and commercial
     exe_doom_1_7,    // Doom 1.7/1.7a: "
     exe_doom_1_8,    // Doom 1.8: "
