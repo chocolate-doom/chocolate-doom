@@ -36,10 +36,6 @@ typedef struct
     short angleturn;            // <<16 for angle delta
     byte chatchar;
     byte buttons;
-
-    // Doom 1.0 emulation needs to track this
-    boolean justattacked;
-
     // villsa [STRIFE] according to the asm,
     // consistancy is a short, not a byte
     byte consistancy;           // checks for net game
