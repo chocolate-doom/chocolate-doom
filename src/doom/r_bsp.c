@@ -23,6 +23,8 @@
 
 #include "m_bbox.h"
 
+#include "i_system.h"
+
 #include "r_main.h"
 #include "r_plane.h"
 #include "r_things.h"
