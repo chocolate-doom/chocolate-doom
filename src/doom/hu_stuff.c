@@ -376,7 +376,8 @@ void HU_Start(void)
     int		i;
     char*	s;
     // [crispy] string buffers for map title and WAD file name
-    char	buf[8], *ptr;
+    char	buf[8];
+    const char* ptr;
 
     if (headsupactive)
 	HU_Stop();
