@@ -1485,8 +1485,11 @@ void D_DoomMain (void)
     if ( (p=M_CheckParm ("-turbo")) )
     {
 	int     scale = 200;
-	extern int forwardmove[2];
-	extern int sidemove[2];
+	int     i;
+	extern int forwardmove10[2];
+	extern int sidemove10[2];
+	extern int forwardmove12[2];
+	extern int sidemove12[2];
 	
 	if (p<myargc-1)
 	    scale = atoi (myargv[p+1]);
@@ -1495,10 +1498,13 @@ void D_DoomMain (void)
 	if (scale > 400)
 	    scale = 400;
         DEH_printf("turbo scale: %i%%\n", scale);
-	forwardmove[0] = forwardmove[0]*scale/100;
-	forwardmove[1] = forwardmove[1]*scale/100;
-	sidemove[0] = sidemove[0]*scale/100;
-	sidemove[1] = sidemove[1]*scale/100;
+	for (i = 0; i < 2; i++)
+	{
+	    forwardmove10[i] = forwardmove10[i]*scale/100;
+	    sidemove10[i] = sidemove10[i]*scale/100;
+	    forwardmove12[i] = forwardmove12[i]*scale/100;
+	    sidemove12[i] = sidemove12[i]*scale/100;
+	}
     }
     
     // init subsystems

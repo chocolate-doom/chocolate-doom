@@ -202,7 +202,7 @@ void P_CalcHeight (player_t* player)
 //
 // P_MovePlayer
 //
-void P_MovePlayer (player_t* player)
+void P_MovePlayer (player_t* player, boolean justattacked)
 {
     ticcmd_t*		cmd;
     int forwardmove, sidemove;
@@ -213,7 +213,7 @@ void P_MovePlayer (player_t* player)
 
     if (gameversion < exe_doom_1_2)
     {
-        forwardmove = cmd->justattacked ? 0xc800 : cmd->forwardmove * 900;
+        forwardmove = justattacked ? 0xc800 : cmd->forwardmove * 900;
         sidemove = cmd->sidemove * 900;
     }
     else
@@ -306,6 +306,7 @@ void P_PlayerThink (player_t* player)
 {
     ticcmd_t*		cmd;
     weapontype_t	newweapon;
+    boolean         justattacked = false;
 	
     // fixme: do this in the cheat code
     if (player->cheats & CF_NOCLIP)
@@ -320,15 +321,9 @@ void P_PlayerThink (player_t* player)
 	cmd->angleturn = 0;
 	cmd->forwardmove = 0xc800/512;
 	cmd->sidemove = 0;
-        cmd->justattacked = true;
+        justattacked = true;
 	player->mo->flags &= ~MF_JUSTATTACKED;
     }
-    else
-    {
-        cmd->justattacked = false;
-    }
-    
-			
 	
     if (player->playerstate == PST_DEAD)
     {
@@ -342,7 +337,7 @@ void P_PlayerThink (player_t* player)
     if (player->mo->reactiontime)
 	player->mo->reactiontime--;
     else
-	P_MovePlayer (player);
+	P_MovePlayer (player, justattacked);
     
     P_CalcHeight (player);
 
