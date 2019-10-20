@@ -44,7 +44,6 @@
 		<Compiler>
 			<Add option="-Wall" />
 			<Add option="-D_WIN32" />
-			<Add option='-DPROGRAM_PREFIX=&quot;\&quot;chocolate-\&quot;&quot;' />
 			<Add directory="." />
 			<Add directory="../src" />
 			<Add directory="../src/doom" />
