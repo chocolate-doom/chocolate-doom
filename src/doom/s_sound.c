@@ -700,7 +700,7 @@ void S_ChangeMusic(int musicnum, int looping)
         }
         else
         {
-            musicnum = mus_e1m1 + (umusicnum % (mus_e4m1 - mus_e1m1));
+            musicnum = mus_e1m1 + (umusicnum % (mus_e5m1 - mus_e1m1));
         }
     }
 
