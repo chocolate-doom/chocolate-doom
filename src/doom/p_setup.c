@@ -855,7 +855,7 @@ void P_LoadThings (int lump)
 	    }
 	}
 	if (spawn == false)
-	    break;
+	    continue;
 
 	// Do spawn all other stuff. 
 	spawnthing.x = SHORT(mt->x);
