@@ -46,7 +46,9 @@
 #define ANGLETOFINESHIFT	19		
 
 // Effective size is 10240.
-extern const fixed_t finesine[5*FINEANGLES/4];
+extern const fixed_t finesine1_0[5*FINEANGLES/4];
+
+extern const fixed_t *finesine;
 
 // Re-use data, is just PI/2 pahse shift.
 extern const fixed_t *finecosine;
@@ -67,7 +69,9 @@ extern const fixed_t *coarsecosine;
 
 
 // Effective size is 4096.
-extern const fixed_t finetangent[FINEANGLES/2];
+extern const fixed_t finetangent1_0[FINEANGLES/2];
+
+extern const fixed_t *finetangent;
 
 // Gamma correction tables.
 extern const byte gammatable[5][256];
