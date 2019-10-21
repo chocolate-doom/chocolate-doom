@@ -1140,9 +1140,14 @@ static void InitGameVersion(void)
         }
     }
 
-    // EXEs prior to v1.1 use a different tantoangle table.
+    // EXEs prior to v1.1 use different tables.
     if (gameversion < exe_doom_1_1)
+    {
+        finetangent = finetangent1_0;
+        finesine = finesine1_0;
+        finecosine = &finesine1_0[FINEANGLES/4];
         tantoangle = tantoangle1_0;
+    }
 
     // Deathmatch 2.0 did not exist until Doom v1.4
     if (gameversion <= exe_doom_1_2 && deathmatch == 2)
