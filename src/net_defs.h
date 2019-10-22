@@ -179,6 +179,7 @@ typedef struct
     int dropbackpack;
     int nodmweapons;
     int keepkeys;
+    int doublespawn;
     int random;  // [Strife only]
 
     // These fields are only used by the server when sending a game

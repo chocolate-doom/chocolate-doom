@@ -71,6 +71,7 @@ void NET_WriteSettings(net_packet_t *packet, net_gamesettings_t *settings)
     NET_WriteInt8(packet, settings->dropbackpack);
     NET_WriteInt8(packet, settings->nodmweapons);
     NET_WriteInt8(packet, settings->keepkeys);
+    NET_WriteInt8(packet, settings->doublespawn);
     NET_WriteInt8(packet, settings->random);
     NET_WriteInt8(packet, settings->num_players);
     NET_WriteInt8(packet, settings->consoleplayer);
@@ -103,6 +104,7 @@ boolean NET_ReadSettings(net_packet_t *packet, net_gamesettings_t *settings)
            && NET_ReadSInt8(packet, (signed int *) &settings->dropbackpack)
            && NET_ReadSInt8(packet, (signed int *) &settings->nodmweapons)
            && NET_ReadSInt8(packet, (signed int *) &settings->keepkeys)
+           && NET_ReadSInt8(packet, (signed int *) &settings->doublespawn)
            && NET_ReadInt8(packet, (unsigned int *) &settings->random)
            && NET_ReadInt8(packet, (unsigned int *) &settings->num_players)
            && NET_ReadSInt8(packet, (signed int *) &settings->consoleplayer);

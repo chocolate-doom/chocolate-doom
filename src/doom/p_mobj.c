@@ -754,6 +754,7 @@ void P_SpawnMapThing (mapthing_t* mthing)
     int			i;
     int			bit;
     mobj_t*		mobj;
+    mobj_t*		mobj2;
     fixed_t		x;
     fixed_t		y;
     fixed_t		z;
@@ -857,6 +858,40 @@ void P_SpawnMapThing (mapthing_t* mthing)
     mobj->angle = ANG45 * (mthing->angle/45);
     if (mthing->options & MTF_AMBUSH)
 	mobj->flags |= MF_AMBUSH;
+
+	if ((doublespawn || gameskill == sk_extreme) && mobjinfo[i].flags & MF_COUNTKILL && mthing->type != MT_SPIDER && mthing->type != MT_CYBORG)
+	{
+		mobj2 = P_SpawnMobj (x + 2 * mobjinfo[i].radius, y, z, i);
+		if (!P_CheckPosition (mobj2, mobj2->x, mobj2->y))
+		{
+			P_RemoveMobj (mobj2);
+			mobj2 = P_SpawnMobj (x - 2 * mobjinfo[i].radius, y, z, i);
+			if (!P_CheckPosition (mobj2, mobj2->x, mobj2->y))
+			{
+				P_RemoveMobj (mobj2);
+				mobj2 = P_SpawnMobj (x, y + 2 * mobjinfo[i].radius, z, i);
+				if (!P_CheckPosition (mobj2, mobj2->x, mobj2->y))
+				{
+					P_RemoveMobj (mobj2);
+					mobj2 = P_SpawnMobj (x, y - 2 * mobjinfo[i].radius, z, i);
+					if (!P_CheckPosition (mobj2, mobj2->x, mobj2->y))
+						P_RemoveMobj (mobj2);
+				}
+			}
+		}
+		else
+		{
+			mobj2->spawnpoint = *mthing;
+			if (mobj2->tics > 0)
+				mobj2->tics = 1 + (P_Random () % mobj->tics);
+			if (mobj2->flags & MF_COUNTKILL)
+				totalkills++;
+
+			mobj2->angle = ANG45 * (mthing->angle/45);
+			if (mthing->options & MTF_AMBUSH)
+				mobj2->flags |= MF_AMBUSH;
+		}
+	}
 }
 
 

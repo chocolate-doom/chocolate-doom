@@ -122,6 +122,7 @@ static void LoadGameSettings(net_gamesettings_t *settings)
     dropbackpack = settings->dropbackpack;
     nodmweapons = settings->nodmweapons;
     keepkeys = settings->keepkeys;
+    doublespawn = settings->doublespawn;
     consoleplayer = settings->consoleplayer;
 
     if (lowres_turn)
@@ -157,6 +158,7 @@ static void SaveGameSettings(net_gamesettings_t *settings)
     settings->dropbackpack = dropbackpack;
     settings->nodmweapons = nodmweapons;
     settings->keepkeys = keepkeys;
+    settings->doublespawn = doublespawn;
 
     settings->lowres_turn = M_CheckParm("-record") > 0
                          && M_CheckParm("-longtics") == 0;

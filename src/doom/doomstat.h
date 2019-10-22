@@ -119,6 +119,9 @@ extern boolean keepkeys;
 // Respawn in single player games.
 extern boolean sprespawn;
 
+// 2x monsters.
+extern boolean doublespawn;
+
 // -------------------------
 // Internal parameters for sound rendering.
 // These have been taken from the DOS version,
