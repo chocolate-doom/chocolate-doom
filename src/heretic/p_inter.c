@@ -169,8 +169,8 @@ boolean P_GiveAmmo(player_t * player, ammotype_t ammo, int count)
         count += count >> 1;
     }
     else if (gameskill == sk_extreme)
-    {                           // less ammo in extreme mode
-        count -= count >> 1;
+    {                           // half ammo in extreme mode
+        count >>= 1;
     }
     prevAmmo = player->ammo[ammo];
 

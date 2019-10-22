@@ -870,7 +870,7 @@ mobj_t *P_SpawnMobj(fixed_t x, fixed_t y, fixed_t z, mobjtype_t type)
     mobj->flags2 = info->flags2;
     mobj->damage = info->damage;
     mobj->health = info->spawnhealth;
-    if (gameskill == sk_extreme)
+    if (gameskill == sk_extreme && type >= MT_MUMMY && type <= MT_MINOTAUR)
     {
         // Half monster health in extreme mode
         mobj->health >>= 1;
