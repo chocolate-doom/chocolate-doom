@@ -1015,7 +1015,7 @@ static void InitGameVersion(void)
     // @category compat
     //
     // Emulate a specific version of Doom.  Valid values are "1.0", 
-    // "1.2", "1.666", "1.7", "1.8", "1.9", "ultimate", "final",
+    // "1.1", "1.2", "1.666", "1.7", "1.8", "1.9", "ultimate", "final",
     // "final2", "hacx" and "chex".
     //
 
