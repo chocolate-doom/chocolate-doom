@@ -533,14 +533,30 @@ P_TouchSpecialThing
 	
 	// medikits, heals
       case SPR_STIM:
-	if (!P_GiveBody (player, 10))
-	    return;
+	if (gameskill == sk_extreme)
+	{
+	    if (!P_GiveBody (player, 5))
+	        return;
+	}
+	else
+	{
+	    if (!P_GiveBody (player, 10))
+	        return;
+	}
 	player->message = DEH_String(GOTSTIM);
 	break;
 	
       case SPR_MEDI:
-	if (!P_GiveBody (player, 25))
-	    return;
+	if (gameskill == sk_extreme)
+	{
+	    if (!P_GiveBody (player, 15))
+	        return;
+	}
+	else
+	{
+	    if (!P_GiveBody (player, 25))
+	        return;
+	}
 
 	if (player->health < 25)
 	    player->message = DEH_String(GOTMEDINEED);
@@ -890,9 +906,9 @@ P_DamageMobj
     player = target->player;
     if (player && gameskill == sk_baby)
 	damage >>= 1; 	// take half damage in trainer mode
-    else if (player && gameskill == sk_extreme)
+/*  else if (player && gameskill == sk_extreme)
 	damage <<= 1; 	// take double damage in extreme mode
-
+*/
     // Some close combat weapons should not
     // inflict thrust and push the victim out of reach,
     // thus kick away unless using the chainsaw.
