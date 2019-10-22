@@ -897,6 +897,15 @@ void M_VerifyNightmare(int key)
     M_ClearMenus ();
 }
 
+void M_VerifyMassacre(int key)
+{
+    if (key != key_menu_confirm)
+	return;
+
+    G_DeferedInitNew(massacre,epi+1,1);
+    M_ClearMenus ();
+}
+
 void M_ChooseSkill(int choice)
 {
     if (choice == nightmare)
@@ -904,7 +913,13 @@ void M_ChooseSkill(int choice)
 	M_StartMessage(DEH_String(NIGHTMARE),M_VerifyNightmare,true);
 	return;
     }
-	
+
+    if (choice == massacre)
+    {
+	M_StartMessage(DEH_String(NIGHTMARE),M_VerifyMassacre,true);
+	return;
+    }
+
     G_DeferedInitNew(choice,epi+1,1);
     M_ClearMenus ();
 }
