@@ -906,9 +906,9 @@ P_DamageMobj
     player = target->player;
     if (player && gameskill == sk_baby)
 	damage >>= 1; 	// take half damage in trainer mode
-/*  else if (player && gameskill == sk_extreme)
-	damage <<= 1; 	// take double damage in extreme mode
-*/
+    else if (player && doubledamage)
+	damage <<= 1; 	// take double damage
+
     // Some close combat weapons should not
     // inflict thrust and push the victim out of reach,
     // thus kick away unless using the chainsaw.

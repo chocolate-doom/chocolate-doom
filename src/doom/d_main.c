@@ -106,6 +106,7 @@ boolean		nodmweapons; // checkparm of -nodmweapons
 boolean		keepkeys; // checkparm of -keepkeys
 boolean		sprespawn; // checkparm of -sprespawn
 boolean		doublespawn; // checkparm of -2xmonsters
+boolean		doubledamage; // checkparm of -xpain
 
 //extern int soundVolume;
 //extern  int	sfxVolume;
@@ -1806,6 +1807,8 @@ void D_DoomMain (void)
     sprespawn = M_CheckParm("-sprespawn");
 
     doublespawn = M_CheckParm("-2xmonsters");
+
+    doubledamage = M_CheckParm("-xpain");
 
     //!
     // @arg [<x> <y> | <xy>]

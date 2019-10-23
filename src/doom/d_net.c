@@ -123,6 +123,7 @@ static void LoadGameSettings(net_gamesettings_t *settings)
     nodmweapons = settings->nodmweapons;
     keepkeys = settings->keepkeys;
     doublespawn = settings->doublespawn;
+    doubledamage = settings->doubledamage;
     consoleplayer = settings->consoleplayer;
 
     if (lowres_turn)
@@ -159,6 +160,7 @@ static void SaveGameSettings(net_gamesettings_t *settings)
     settings->nodmweapons = nodmweapons;
     settings->keepkeys = keepkeys;
     settings->doublespawn = doublespawn;
+    settings->doubledamage = doubledamage;
 
     settings->lowres_turn = (M_ParmExists("-record")
                          && !M_ParmExists("-longtics"))

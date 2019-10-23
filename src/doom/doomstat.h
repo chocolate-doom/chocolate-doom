@@ -122,6 +122,9 @@ extern boolean sprespawn;
 // 2x monsters.
 extern boolean doublespawn;
 
+// 2x damage taken.
+extern boolean doubledamage;
+
 // -------------------------
 // Internal parameters for sound rendering.
 // These have been taken from the DOS version,
