@@ -85,6 +85,9 @@ void RecoverInventoryFromBackpack(mobj_t* toucher)
 		}
 	}
 
+	// Empty dropped_items
+	memset (&dropped_backpack, 0, sizeof(dropped_backpack)); 
+
 	toucher->player->message = DEH_String(GOTBACKPACK);
 }
 
@@ -102,7 +105,9 @@ void DropInventoryInBackpack(mobj_t* target)
 	}
 
 	// Save ammo
-	for (i=0; i<NUMAMMO; i++)
+	if (target->player->ammo[am_clip] > 50)
+		dropped_backpack.ammo[am_clip] = target->player->ammo[am_clip] - 50;
+	for (i=1; i<NUMAMMO; i++)
 	{
 		if (target->player->ammo[i])
 			dropped_backpack.ammo[i] = target->player->ammo[i];
