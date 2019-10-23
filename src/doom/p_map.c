@@ -468,6 +468,10 @@ P_CheckPosition
 	    if (!P_BlockLinesIterator (bx,by,PIT_CheckLine))
 		return false;
 
+	if ( !(thing->flags&(MF_DROPOFF|MF_FLOAT))
+	     && tmfloorz - tmdropoffz > 24*FRACUNIT && (doublespawn || gameskill == sk_extreme) )
+	    return false;	// don't stand over a dropoff
+
     return true;
 }
 
