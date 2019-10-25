@@ -32,6 +32,7 @@ typedef struct {
 
 } backpack_s;
 
+backpack_s backpacks[4];
 backpack_s dropped_backpack;
 
 void DropInventoryInBackpack(mobj_t* target);

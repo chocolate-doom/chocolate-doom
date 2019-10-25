@@ -56,7 +56,10 @@ extern boolean dropbackpack;
 // [marshmallow]
 void RecoverInventoryFromBackpack(mobj_t* toucher)
 {
-	int i;
+	int i, p;
+
+	for (p=0; p<MAXPLAYERS && &players[p] != toucher->player; p++) {};
+	dropped_backpack = backpacks[p];
 
 	// Recover weapons
 	for (i=0; i<NUMWEAPONS; i++)
@@ -86,7 +89,9 @@ void RecoverInventoryFromBackpack(mobj_t* toucher)
 	}
 
 	// Empty dropped_items
-	memset (&dropped_backpack, 0, sizeof(dropped_backpack)); 
+	memset (&dropped_backpack, 0, sizeof(dropped_backpack));
+
+	backpacks[p] = dropped_backpack;
 
 	toucher->player->message = DEH_String(GOTBACKPACK);
 }
@@ -95,7 +100,10 @@ void RecoverInventoryFromBackpack(mobj_t* toucher)
 // [marshmallow]
 void DropInventoryInBackpack(mobj_t* target)
 {
-	int i;
+	int i, p;
+
+	for (p=0; p<MAXPLAYERS && &players[p] != target->player; p++) {};
+	dropped_backpack = backpacks[p];
 
 	// Save weapons
 	for (i=0; i<NUMWEAPONS; i++)
@@ -116,6 +124,8 @@ void DropInventoryInBackpack(mobj_t* target)
 	// Backpack powerup yes/no
 	if (target->player->backpack)
 		dropped_backpack.backpack = true;
+
+	backpacks[p] = dropped_backpack;
 
 	return;
 }
