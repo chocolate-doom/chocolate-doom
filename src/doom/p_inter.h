@@ -35,8 +35,8 @@ typedef struct {
 backpack_s backpacks[4];
 backpack_s dropped_backpack;
 
-void DropInventoryInBackpack(mobj_t* target);
-void RecoverInventoryFromBackpack(mobj_t* toucher);
+void DropInventoryInBackpack(mobj_t* target, int p);
+void RecoverInventoryFromBackpack(mobj_t* toucher, int p);
 
 
 #endif

@@ -54,11 +54,10 @@ extern boolean dropbackpack;
 
 
 // [marshmallow]
-void RecoverInventoryFromBackpack(mobj_t* toucher)
+void RecoverInventoryFromBackpack(mobj_t* toucher, int p)
 {
-	int i, p;
+	int i;
 
-	for (p=0; p<MAXPLAYERS && &players[p] != toucher->player; p++) {};
 	dropped_backpack = backpacks[p];
 
 	// Recover weapons
@@ -92,17 +91,14 @@ void RecoverInventoryFromBackpack(mobj_t* toucher)
 	memset (&dropped_backpack, 0, sizeof(dropped_backpack));
 
 	backpacks[p] = dropped_backpack;
-
-	toucher->player->message = DEH_String(GOTBACKPACK);
 }
 
 
 // [marshmallow]
-void DropInventoryInBackpack(mobj_t* target)
+void DropInventoryInBackpack(mobj_t* target, int p)
 {
-	int i, p;
+	int i;
 
-	for (p=0; p<MAXPLAYERS && &players[p] != target->player; p++) {};
 	dropped_backpack = backpacks[p];
 
 	// Save weapons
@@ -683,25 +679,48 @@ P_TouchSpecialThing
 	break;
 	
       case SPR_BPAK:
-	if ((netgame || sprespawn) && dropbackpack
-		&& special->flags & MF_DROPPED && toucher->player && toucher->player->health > 0) // [marshmallow] So we don't pick it up while dead/dying
+	if (!player->backpack)
 	{
-		RecoverInventoryFromBackpack(toucher);
-		break;
-	}
-	else
-	{
-		if (!player->backpack)
-		{
-			for (i=0 ; i<NUMAMMO ; i++)
-				player->maxammo[i] *= 2;
-			player->backpack = true;
-		}
 		for (i=0 ; i<NUMAMMO ; i++)
-			P_GiveAmmo (player, i, 1);
-		player->message = DEH_String(GOTBACKPACK);
-		break;
+			player->maxammo[i] *= 2;
+		player->backpack = true;
 	}
+	for (i=0 ; i<NUMAMMO ; i++)
+		P_GiveAmmo (player, i, 1);
+	player->message = DEH_String(GOTBACKPACK);
+	break;
+
+      case SPR_BPAG:
+	if (toucher->player && toucher->player->health > 0) // [marshmallow] So we don't pick it up while dead/dying
+	{
+		RecoverInventoryFromBackpack(toucher, 0);
+		toucher->player->message = DEH_String(GOTBACKPACK);
+	}
+	break;
+
+      case SPR_BPAI:
+	if (toucher->player && toucher->player->health > 0)
+	{
+		RecoverInventoryFromBackpack(toucher, 1);
+		toucher->player->message = DEH_String(GOTBACKPACK);
+	}
+	break;
+
+      case SPR_BPAB:
+	if (toucher->player && toucher->player->health > 0)
+	{
+		RecoverInventoryFromBackpack(toucher, 2);
+		toucher->player->message = DEH_String(GOTBACKPACK);
+	}
+	break;
+
+      case SPR_BPAR:
+	if (toucher->player && toucher->player->health > 0)
+	{
+		RecoverInventoryFromBackpack(toucher, 3);
+		toucher->player->message = DEH_String(GOTBACKPACK);
+	}
+	break;
 
 	// weapons
       case SPR_BFUG:
@@ -779,6 +798,7 @@ P_KillMobj
 {
     mobjtype_t	item;
     mobj_t*	mo;
+    int p;
 	
     target->flags &= ~(MF_SHOOTABLE|MF_FLOAT|MF_SKULLFLY);
 
@@ -866,8 +886,16 @@ P_KillMobj
 	  case MT_PLAYER:
 	if ((netgame || sprespawn) && dropbackpack)
 	{
-		DropInventoryInBackpack(target); // [marshmallow]
-		item = MT_MISC24;
+		for (p=0; p<MAXPLAYERS && &players[p] != target->player; p++) {};
+		if (p == 0)
+			item = MT_MISC87; // Green
+		else if (p == 1)
+			item = MT_MISC88; // Indigo
+		else if (p == 2)
+			item = MT_MISC89; // Brown
+		else
+			item = MT_MISC90; // Red
+		DropInventoryInBackpack(target, p); // [marshmallow]
 	}
 	else return;
 	break;

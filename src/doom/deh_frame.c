@@ -48,7 +48,7 @@ static void *DEH_FrameStart(deh_context_t *context, char *line)
         return NULL;
     }
     
-    if (frame_number < 0 || frame_number >= NUMSTATES)
+    if (frame_number < 0 || frame_number >= NUMSTATES - 4) // Backpacks
     {
         DEH_Warning(context, "Invalid frame number: %i", frame_number);
         return NULL;
@@ -127,7 +127,7 @@ static void DEH_FrameParseLine(deh_context_t *context, char *line, void *tag)
 
     ivalue = atoi(value);
     
-    if (state == &states[NUMSTATES - 1])
+    if (state == &states[NUMSTATES - 1 - 4]) // Backpacks
     {
         DEH_FrameOverflow(context, variable_name, ivalue);
     }
@@ -143,7 +143,7 @@ static void DEH_FrameSHA1Sum(sha1_context_t *context)
 {
     int i;
 
-    for (i=0; i<NUMSTATES; ++i)
+    for (i=0; i<NUMSTATES-4; ++i) // Backpacks
     {
         DEH_StructSHA1Sum(context, &state_mapping, &states[i]);
     }
