@@ -1161,9 +1161,6 @@ static void InitGameVersion(void)
             mobjinfo[MT_MISC14].flags |= MF_COUNTITEM;
 
         case exe_doom_1_2:
-            // Lost souls count for kill %
-            mobjinfo[MT_SKULL].flags |= MF_COUNTKILL;
-
         //case exe_doom_1_3:
         //case exe_doom_1_25:
             // Deathmatch 2.0 not supported
