@@ -1140,34 +1140,73 @@ static void InitGameVersion(void)
         }
     }
 
-    // EXEs prior to v1.1 use different tables.
-    if (gameversion < exe_doom_1_1)
+    // Version-specific differences
+    // Each entry is the last version where the statement is true.
+    switch (gameversion)
     {
-        finetangent = finetangent1_0;
-        finesine = finesine1_0;
-        finecosine = &finesine1_0[FINEANGLES/4];
-        tantoangle = tantoangle1_0;
-    }
+        case exe_doom_1_0:
+            // Different trig tables
+            finetangent = finetangent1_0;
+            finesine = finesine1_0;
+            finecosine = &finesine1_0[FINEANGLES/4];
+            tantoangle = tantoangle1_0;
 
-    // Deathmatch 2.0 did not exist until Doom v1.4
-    if (gameversion <= exe_doom_1_2 && deathmatch == 2)
-    {
-        deathmatch = 1;
-    }
-    
-    // The original exe does not support retail - 4th episode not supported
+            // Skull keys still spawn in deathmatch
+            mobjinfo[MT_MISC7].flags &= ~MF_NOTDMATCH;
+            mobjinfo[MT_MISC8].flags &= ~MF_NOTDMATCH;
+            mobjinfo[MT_MISC9].flags &= ~MF_NOTDMATCH;
 
-    if (gameversion < exe_ultimate && gamemode == retail)
-    {
-        gamemode = registered;
-    }
+        case exe_doom_1_1:
+            // Env suits count for item %
+            mobjinfo[MT_MISC14].flags |= MF_COUNTITEM;
 
-    // EXEs prior to the Final Doom exes do not support Final Doom.
+        case exe_doom_1_2:
+            // Lost souls count for kill %
+            mobjinfo[MT_SKULL].flags |= MF_COUNTKILL;
 
-    if (gameversion < exe_final && gamemode == commercial
-     && (gamemission == pack_tnt || gamemission == pack_plut))
-    {
-        gamemission = doom2;
+        //case exe_doom_1_3:
+        //case exe_doom_1_25:
+            // Deathmatch 2.0 not supported
+            if (deathmatch == 2)
+            {
+                deathmatch = 0;
+                if (M_CheckParm ("-deathmatch"))
+                {
+                    deathmatch = 1;
+                }
+            }
+
+        //case exe_doom_1_4:
+        //case exe_doom_1_5:
+        //case exe_doom_1_6:
+            // lost souls count for kill %
+            // FIXME: not sure about last version, true at least in v1.2
+            mobjinfo[MT_SKULL].flags |= MF_COUNTKILL;
+
+        case exe_doom_1_666:
+        case exe_doom_1_7:
+        case exe_doom_1_8:
+        case exe_doom_1_9:
+        case exe_hacx:
+            // 4th episode (retail) not supported
+            if (gamemode == retail)
+            {
+                gamemode = registered;
+            }
+
+        case exe_ultimate:
+            // Final Doom not supported
+            if (gamemode == commercial 
+             && (gamemission == pack_tnt || gamemission == pack_plut))
+            {
+                gamemission = doom2;
+            }
+
+        case exe_final:
+        case exe_final2:
+        case exe_chex:
+        default:
+            break;
     }
 }
 
