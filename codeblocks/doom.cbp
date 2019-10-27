@@ -51,7 +51,7 @@
 			<Add directory="../opl" />
 		</Compiler>
 		<Linker>
-			<Add option="-lmingw32 -lSDLmain -lSDL -lSDL_mixer -lSDL_net -lz -mconsole -mwindows" />
+			<Add option="-lmingw32 -lSDLmain -lSDL -lSDL_mixer -lSDL_net -lz.dll -llibFLAC-8 -llibogg-0 -llibvorbis-0 -llibvorbisfile-3 -mconsole -mwindows" />
 			<Add directory="../lib" />
 		</Linker>
 		<Unit filename="../src/d_event.c">
