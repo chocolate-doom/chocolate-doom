@@ -463,10 +463,13 @@ A_Punch
     angle_t	angle;
     int		damage;
     int		slope;
-	
-    damage = (P_Random ()%10+1)<<1;
 
-    if (player->powers[pw_strength])	
+    if (gameskill == sk_extreme)
+	    damage = 5*(P_Random ()%4+1);
+	else
+	    damage = (P_Random ()%10+1)<<1;
+
+    if (player->powers[pw_strength])
 	damage *= 10;
 
     angle = player->mo->angle;
@@ -649,6 +652,24 @@ P_GunShot
 }
 
 
+void
+P_PistolShot
+( mobj_t*	mo,
+  boolean	accurate )
+{
+    angle_t	angle;
+    int		damage;
+
+    damage = 7*(P_Random ()%3+1);
+    angle = mo->angle;
+
+    if (!accurate)
+	angle += P_SubRandom() << 16;
+
+    P_LineAttack (mo, angle, MISSILERANGE, bulletslope, damage);
+}
+
+
 //
 // A_FirePistol
 //
@@ -667,7 +688,10 @@ A_FirePistol
 		  weaponinfo[player->readyweapon].flashstate);
 
     P_BulletSlope (player->mo);
-    P_GunShot (player->mo, !player->refire);
+    if (gameskill == sk_extreme)
+	    P_PistolShot (player->mo, !player->refire);
+	else
+	    P_GunShot (player->mo, !player->refire);
 }
 
 
