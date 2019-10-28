@@ -2973,7 +2973,7 @@ void M_Drawer (void)
     {
         name = DEH_String(currentMenu->menuitems[i].name);
 
-	if (name[0] && W_CheckNumForName(name) > 0)
+	if (name[0]) // && W_CheckNumForName(name) > 0) // [crispy] moved...
 	{
 	    // [crispy] shade unavailable menu items
 	    if ((currentMenu == &MainDef && i == savegame && (!usergame || gamestate != GS_LEVEL)) ||
@@ -2989,7 +2989,7 @@ void M_Drawer (void)
 		if (alttext)
 		    M_WriteText(x, y+8-(M_StringHeight(alttext)/2), alttext);
 	    }
-	    else
+	    else if (W_CheckNumForName(name) > 0) // [crispy] ...here
 	    V_DrawPatchShadow2 (x, y, W_CacheLumpName(name, PU_CACHE));
 
 	    dp_translation = NULL;
