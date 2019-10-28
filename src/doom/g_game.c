@@ -1853,7 +1853,11 @@ void G_DoCompleted (void)
     viewactive = false; 
     automapactive = false; 
 
+    // [crispy] no statdump output for ExM8
+    if (gamemode == commercial || gamemap != 8)
+    {
     StatCopy(&wminfo);
+    }
  
     WI_Start (&wminfo); 
 } 
