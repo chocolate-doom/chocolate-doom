@@ -17,8 +17,8 @@
 //
 
 
-
 #include "doomdef.h"
+#include "doomstat.h"
 
 #include "i_system.h"
 #include "p_local.h"
@@ -38,6 +38,44 @@ fixed_t		t2x;
 fixed_t		t2y;
 
 int		sightcounts[2];
+
+
+// PTR_SightTraverse() for Doom 1.2 sight calculations
+// taken from prboom-plus/src/p_sight.c:69-102
+boolean PTR_SightTraverse(intercept_t *in)
+{
+    line_t *li;
+    fixed_t slope;
+
+    li = in->d.line;
+
+    //
+    // crosses a two sided line
+    //
+    P_LineOpening(li);
+
+    if (openbottom >= opentop) // quick test for totally closed doors
+        return false;          // stop
+
+    if (li->frontsector->floorheight != li->backsector->floorheight)
+    {
+        slope = FixedDiv(openbottom - sightzstart, in->frac);
+        if (slope > bottomslope)
+            bottomslope = slope;
+    }
+
+    if (li->frontsector->ceilingheight != li->backsector->ceilingheight)
+    {
+        slope = FixedDiv(opentop - sightzstart, in->frac);
+        if (slope < topslope)
+            topslope = slope;
+    }
+
+    if (topslope <= bottomslope)
+        return false; // stop
+
+    return true; // keep going
+}
 
 
 //
@@ -336,6 +374,12 @@ P_CheckSight
     topslope = (t2->z+t2->height) - sightzstart;
     bottomslope = (t2->z) - sightzstart;
 	
+    if (gameversion <= exe_doom_1_2)
+    {
+        return P_PathTraverse(t1->x, t1->y, t2->x, t2->y,
+                              PT_EARLYOUT | PT_ADDLINES, PTR_SightTraverse);
+    }
+
     strace.x = t1->x;
     strace.y = t1->y;
     t2x = t2->x;

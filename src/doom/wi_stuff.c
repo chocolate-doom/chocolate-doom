@@ -699,7 +699,7 @@ WI_drawNum
     }
 
     // draw a minus sign if necessary
-    if (neg)
+    if (neg && wiminus)
 	V_DrawPatch(x-=8, y, wiminus);
 
     return x;
@@ -1784,7 +1784,10 @@ static void WI_loadUnloadData(load_callback_t callback)
     }
 
     // More hacks on minus sign.
-    callback(DEH_String("WIMINUS"), &wiminus);
+    if (W_CheckNumForName(DEH_String("WIMINUS")) > 0)
+        callback(DEH_String("WIMINUS"), &wiminus);
+    else
+        wiminus = NULL;
 
     for (i=0;i<10;i++)
     {

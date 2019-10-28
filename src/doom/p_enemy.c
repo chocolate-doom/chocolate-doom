@@ -172,6 +172,7 @@ boolean P_CheckMeleeRange (mobj_t*	actor)
 {
     mobj_t*	pl;
     fixed_t	dist;
+    fixed_t range;
 	
     if (!actor->target)
 	return false;
@@ -179,8 +180,14 @@ boolean P_CheckMeleeRange (mobj_t*	actor)
     pl = actor->target;
     dist = P_AproxDistance (pl->x-actor->x, pl->y-actor->y);
 
-    if (dist >= MELEERANGE-20*FRACUNIT+pl->info->radius)
-	return false;
+    if (gameversion <= exe_doom_1_2)
+        range = MELEERANGE;
+    else
+        range = MELEERANGE-20*FRACUNIT+pl->info->radius;
+
+    if (dist >= range)
+        return false;
+
 	
     if (! P_CheckSight (actor, actor->target) )
 	return false;
@@ -694,8 +701,8 @@ void A_Chase (mobj_t*	actor)
     // modify target threshold
     if  (actor->threshold)
     {
-	if (!actor->target
-	    || actor->target->health <= 0)
+        if (gameversion > exe_doom_1_2 && 
+            (!actor->target || actor->target->health <= 0))
 	{
 	    actor->threshold = 0;
 	}
@@ -954,11 +961,19 @@ void A_SargAttack (mobj_t* actor)
 	return;
 		
     A_FaceTarget (actor);
-    if (P_CheckMeleeRange (actor))
+
+    if (gameversion > exe_doom_1_2)
     {
-	damage = ((P_Random()%10)+1)*4;
-	P_DamageMobj (actor->target, actor, actor, damage);
+        if (!P_CheckMeleeRange (actor))
+            return;
     }
+
+    damage = ((P_Random()%10)+1)*4;
+
+    if (gameversion <= exe_doom_1_2)
+        P_LineAttack(actor, actor->angle, MELEERANGE, 0, damage);
+    else
+        P_DamageMobj (actor->target, actor, actor, damage);
 }
 
 void A_HeadAttack (mobj_t* actor)

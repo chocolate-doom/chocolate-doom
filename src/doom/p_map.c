@@ -1546,7 +1546,8 @@ boolean PIT_ChangeSector (mobj_t*	thing)
 	// TODO: Add a check for DEHACKED states
 	P_SetMobjState (thing, (thing->flags & MF_NOBLOOD) ? S_NULL : S_GIBS);
 
-	thing->flags &= ~MF_SOLID;
+    if (gameversion > exe_doom_1_2)
+	    thing->flags &= ~MF_SOLID;
 	thing->height = 0;
 	thing->radius = 0;
 

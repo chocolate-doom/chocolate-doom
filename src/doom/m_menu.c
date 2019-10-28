@@ -2973,7 +2973,7 @@ void M_Drawer (void)
     {
         name = DEH_String(currentMenu->menuitems[i].name);
 
-	if (name[0])
+	if (name[0] && W_CheckNumForName(name) > 0)
 	{
 	    // [crispy] shade unavailable menu items
 	    if ((currentMenu == &MainDef && i == savegame && (!usergame || gamestate != GS_LEVEL)) ||

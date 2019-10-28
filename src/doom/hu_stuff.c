@@ -1003,7 +1003,7 @@ void HU_Ticker(void)
 			    message_counter = HU_MSGTIMEOUT;
 			    if ( gamemode == commercial )
 			      S_StartSound(0, sfx_radio);
-			    else
+			    else if (gameversion > exe_doom_1_2)
 			      S_StartSound(0, sfx_tink);
 			}
 			HUlib_resetIText(&w_inputbuffer[i]);
