@@ -1723,7 +1723,7 @@ void A_BossDeath (mobj_t* mo)
 	if (playeringame[i] && players[i].health > 0)
 	    break;
     
-    if (i==MAXPLAYERS)
+    if (!netgame && i==MAXPLAYERS)
 	return;	// no one left alive, so do not end game
     
     // scan the remaining thinkers to see
