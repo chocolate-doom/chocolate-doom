@@ -42,7 +42,7 @@ static char *not_dedicated_options[] =
     "-fast", "-altdeath", "-deathmatch", "-turbo", "-merge", "-af", "-as",
     "-aa", "-file", "-wart", "-skill", "-episode", "-timer", "-avg", "-warp",
     "-loadgame", "-longtics", "-extratics", "-dup", "-shorttics", "-backpack",
-    "-nodmweapons", "-keepkeys", "-2xmonsters", "-xpain", NULL,
+    "-nodmweapons", "-keepkeys", "-2xmonsters", "-xpain", "-nod2monsters", NULL,
 };
 
 static void CheckForClientOptions(void)

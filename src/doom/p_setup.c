@@ -863,7 +863,38 @@ void P_LoadThings (int lump)
 	spawnthing.angle = SHORT(mt->angle);
 	spawnthing.type = SHORT(mt->type);
 	spawnthing.options = SHORT(mt->options);
-	
+
+	if (nod2monsters)
+	{
+	    switch (spawnthing.type)
+	    {
+	      case 68:	// Arachnotron
+	    spawnthing.type = 3003;
+	    break;
+	      case 64:	// Archvile
+	    spawnthing.type = 3003;
+	    break;
+	      case 69:	// Hell Knight
+	    spawnthing.type = 3003;
+	    break;
+	      case 67:	// Mancubus
+	    spawnthing.type = 3003;
+	    break;
+	      case 71:	// Pain Elemental
+	    spawnthing.type = 3005;
+	    break;
+	      case 65:	// Former Human Commando
+	    spawnthing.type = 3004;
+	    break;
+	      case 66:	// Revenant
+	    spawnthing.type = 3001;
+	    break;
+	      case 84:	// Wolf SS
+	    spawnthing.type = 3004;
+		break;
+	    }
+	}
+
 	P_SpawnMapThing(&spawnthing);
     }
 

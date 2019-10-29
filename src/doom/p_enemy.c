@@ -1703,9 +1703,10 @@ void A_BossDeath (mobj_t* mo)
     {
 	if (gamemap != 7)
 	    return;
-		
-	if ((mo->type != MT_FATSO)
-	    && (mo->type != MT_BABY))
+
+	if ((!nod2monsters && mo->type != MT_FATSO
+	    && mo->type != MT_BABY)
+	    || (nod2monsters && mo->type != MT_BRUISER))
 	    return;
     }
     else
@@ -1737,7 +1738,7 @@ void A_BossDeath (mobj_t* mo)
 	    && mo2->health > 0)
 	{
 	    // other boss not dead
-	    return;
+	    if (gamemode != commercial || (gamemode == commercial && !nod2monsters)) return;
 	}
     }
 	
@@ -1746,14 +1747,14 @@ void A_BossDeath (mobj_t* mo)
     {
 	if (gamemap == 7)
 	{
-	    if (mo->type == MT_FATSO)
+	    if (mo->type == MT_FATSO || (nod2monsters && mo->type == MT_BRUISER))
 	    {
 		junk.tag = 666;
 		EV_DoFloor(&junk,lowerFloorToLowest);
-		return;
+		if (!nod2monsters) return;
 	    }
-	    
-	    if (mo->type == MT_BABY)
+
+	    if (mo->type == MT_BABY || (nod2monsters && mo->type == MT_BRUISER))
 	    {
 		junk.tag = 667;
 		EV_DoFloor(&junk,raiseToTexture);
