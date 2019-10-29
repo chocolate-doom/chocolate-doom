@@ -636,6 +636,30 @@ static boolean WeaponAvailable (int w)
 	return true;
 }
 
+// [crispy] give or take backpack
+static void GiveBackpack (boolean give)
+{
+	int i;
+
+	if (give && !plyr->backpack)
+	{
+		for (i = 0; i < NUMAMMO; i++)
+		{
+			plyr->maxammo[i] *= 2;
+		}
+		plyr->backpack = true;
+	}
+	else
+	if (!give && plyr->backpack)
+	{
+		for (i = 0; i < NUMAMMO; i++)
+		{
+			plyr->maxammo[i] /= 2;
+		}
+		plyr->backpack = false;
+	}
+}
+
 // Respond to keyboard input events,
 //  intercept cheats.
 boolean
@@ -711,12 +735,7 @@ ST_Responder (event_t* ev)
 	plyr->armortype = deh_idfa_armor_class;
 	
 	// [crispy] give backpack
-	if (!plyr->backpack)
-	{
-	    for (i=0 ; i<NUMAMMO ; i++)
-		plyr->maxammo[i] *= 2;
-	    plyr->backpack = true;
-	}
+	GiveBackpack(true);
 
 	for (i=0;i<NUMWEAPONS;i++)
 	 if (WeaponAvailable(i)) // [crispy] only give available weapons
@@ -737,12 +756,7 @@ ST_Responder (event_t* ev)
 	plyr->armortype = deh_idkfa_armor_class;
 	
 	// [crispy] give backpack
-	if (!plyr->backpack)
-	{
-	    for (i=0 ; i<NUMAMMO ; i++)
-		plyr->maxammo[i] *= 2;
-	    plyr->backpack = true;
-	}
+	GiveBackpack(true);
 
 	for (i=0;i<NUMWEAPONS;i++)
 	 if (WeaponAvailable(i)) // [crispy] only give available weapons
@@ -995,6 +1009,35 @@ ST_Responder (event_t* ev)
 
 	cht_GetParam(&cheat_weapon, buf);
 	w = *buf - '1';
+
+	// [crispy] TNTWEAP0 takes away all weapons and ammo except for the pistol and 50 bullets
+	if (w == -1)
+	{
+	    GiveBackpack(false);
+	    plyr->powers[pw_strength] = 0;
+
+	    for (i = 0; i < NUMWEAPONS; i++)
+	    {
+		oldweaponsowned[i] = plyr->weaponowned[i] = false;
+	    }
+	    oldweaponsowned[wp_fist] = plyr->weaponowned[wp_fist] = true;
+	    oldweaponsowned[wp_pistol] = plyr->weaponowned[wp_pistol] = true;
+
+	    for (i = 0; i < NUMAMMO; i++)
+	    {
+		plyr->ammo[i] = 0;
+	    }
+	    plyr->ammo[am_clip] = deh_initial_bullets;
+
+	    if (plyr->readyweapon > wp_pistol)
+	    {
+		plyr->pendingweapon = wp_pistol;
+	    }
+
+	    plyr->message = "All weapons removed!";
+
+	    return true;
+	}
 
 	// [crispy] only give available weapons
 	if (!WeaponAvailable(w))
