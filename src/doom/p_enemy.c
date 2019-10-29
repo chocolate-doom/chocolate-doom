@@ -39,6 +39,7 @@
 #include "sounds.h"
 
 
+extern boolean activated; // tag 667 fix
 
 
 typedef enum
@@ -1756,8 +1757,12 @@ void A_BossDeath (mobj_t* mo)
 
 	    if (mo->type == MT_BABY || (nod2monsters && mo->type == MT_BRUISER))
 	    {
-		junk.tag = 667;
-		EV_DoFloor(&junk,raiseToTexture);
+		if (!activated)
+		{
+			junk.tag = 667;
+			EV_DoFloor(&junk,raiseToTexture);
+			activated = true;
+		}
 		return;
 	    }
 	}

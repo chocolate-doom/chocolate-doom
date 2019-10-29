@@ -98,7 +98,9 @@ gamestate_t     gamestate;
 skill_t         gameskill; 
 boolean		respawnmonsters;
 int             gameepisode; 
-int             gamemap; 
+int             gamemap;
+
+boolean         activated; // tag 667 fix
 
 // If non-zero, exit the level after this number of minutes.
 
@@ -697,7 +699,9 @@ void G_DoLoadLevel (void)
 	memset (players[i].frags,0,sizeof(players[i].frags)); 
     } 
 		 
-    P_SetupLevel (gameepisode, gamemap, 0, gameskill);    
+    P_SetupLevel (gameepisode, gamemap, 0, gameskill);
+    if (gamemode == commercial && gamemap == 7)
+	    activated = false; // tag 667 fix
     displayplayer = consoleplayer;		// view the guy you are playing    
     gameaction = ga_nothing; 
     Z_CheckHeap ();
