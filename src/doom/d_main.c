@@ -1148,10 +1148,7 @@ static void InitGameVersion(void)
     {
         case exe_doom_1_0:
             // Different trig tables
-            finetangent = finetangent1_0;
-            finesine = finesine1_0;
-            finecosine = &finesine1_0[FINEANGLES/4];
-            tantoangle = tantoangle1_0;
+            ChangeTrigTablesToDoom1_0();
 
             // Skull keys still spawn in deathmatch
             mobjinfo[MT_MISC7].flags &= ~MF_NOTDMATCH;
