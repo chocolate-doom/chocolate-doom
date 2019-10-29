@@ -1145,6 +1145,9 @@ typedef enum
     S_BPAI,
     S_BPAB,
     S_BPAR,
+    S_POSS_ATK4,
+    S_POSS_ATK5,
+    S_POSS_ATK6,
     NUMSTATES
 } statenum_t;
 
@@ -1306,6 +1309,7 @@ typedef enum {
     MT_MISC88,
     MT_MISC89,
     MT_MISC90,
+    MT_MISC91,
     NUMMOBJTYPES
 
 } mobjtype_t;

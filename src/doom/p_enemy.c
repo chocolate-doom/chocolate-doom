@@ -810,6 +810,25 @@ void A_PosAttack (mobj_t* actor)
     P_LineAttack (actor, angle, MISSILERANGE, slope, damage);
 }
 
+void A_PosAttackPB (mobj_t* actor) // Point blank
+{
+    int		angle;
+    int		damage;
+    int		slope;
+
+    if (!actor->target)
+	return;
+
+    A_FaceTarget (actor);
+    angle = actor->angle;
+    slope = P_AimLineAttack (actor, angle, MELEERANGE);
+
+    S_StartSound (actor, sfx_pistol);
+    angle += P_SubRandom() << 18;
+    damage = ((P_Random()%5)+1)*5;
+    P_LineAttack (actor, angle, MELEERANGE, slope, damage);
+}
+
 void A_SPosAttack (mobj_t* actor)
 {
     int		i;

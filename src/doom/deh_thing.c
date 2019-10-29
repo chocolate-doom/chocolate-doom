@@ -66,7 +66,7 @@ static void *DEH_ThingStart(deh_context_t *context, char *line)
     // dehacked files are indexed from 1
     --thing_number;
 
-    if (thing_number < 0 || thing_number >= NUMMOBJTYPES - 4) // Backpacks
+    if (thing_number < 0 || thing_number >= NUMMOBJTYPES - 5) // Backpacks & Zombieman
     {
         DEH_Warning(context, "Invalid thing number: %i", thing_number);
         return NULL;
@@ -113,7 +113,7 @@ static void DEH_ThingSHA1Sum(sha1_context_t *context)
 {
     int i;
 
-    for (i=0; i<NUMMOBJTYPES-4; ++i) // Backpacks
+    for (i=0; i<NUMMOBJTYPES-5; ++i) // Backpacks & Zombieman
     {
         DEH_StructSHA1Sum(context, &thing_mapping, &mobjinfo[i]);
     }

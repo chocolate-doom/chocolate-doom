@@ -844,7 +844,10 @@ void P_SpawnMapThing (mapthing_t* mthing)
 	z = ONCEILINGZ;
     else
 	z = ONFLOORZ;
-    
+
+    if (i == MT_POSSESSED && gameskill == sk_extreme)
+	    i = MT_MISC91;
+
     mobj = P_SpawnMobj (x,y,z, i);
     mobj->spawnpoint = *mthing;
 
