@@ -1119,7 +1119,7 @@ static void InitGameVersion(void)
                 gameversion = exe_doom_1_1;
 
                 // detect v1.0 from length of demo1 lump
-                if (demo1 && W_LumpLength(demo1) < 10 * 1024)
+                if (demo1 > -1 && W_LumpLength(demo1) < 10 * 1024)
                     gameversion = exe_doom_1_0;
             }
 
