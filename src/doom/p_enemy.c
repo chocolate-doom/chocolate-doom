@@ -1757,7 +1757,7 @@ void A_BossDeath (mobj_t* mo)
 
 	    if (mo->type == MT_BABY || (nod2monsters && mo->type == MT_BRUISER))
 	    {
-		if (!activated)
+		if (!activated || !nod2monsters)
 		{
 			junk.tag = 667;
 			EV_DoFloor(&junk,raiseToTexture);
