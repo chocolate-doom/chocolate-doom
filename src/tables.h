@@ -46,8 +46,6 @@
 #define ANGLETOFINESHIFT	19		
 
 // Effective size is 10240.
-extern const fixed_t finesine1_0[5*FINEANGLES/4];
-
 extern const fixed_t *finesine;
 
 // Re-use data, is just PI/2 pahse shift.
@@ -69,8 +67,6 @@ extern const fixed_t *coarsecosine;
 
 
 // Effective size is 4096.
-extern const fixed_t finetangent1_0[FINEANGLES/2];
-
 extern const fixed_t *finetangent;
 
 // Gamma correction tables.
@@ -104,13 +100,13 @@ typedef unsigned int angle_t;
 //  without additional checking.
 extern const angle_t *tantoangle;
 
-extern const angle_t tantoangle1_0[SLOPERANGE+1];
-
 
 // Utility function,
 //  called by R_PointToAngle.
 int SlopeDiv(unsigned int num, unsigned int den);
 
+// Change trig tables to match Doom v1.0
+void ChangeTrigTablesToDoom1_0();
 
 #endif
 
