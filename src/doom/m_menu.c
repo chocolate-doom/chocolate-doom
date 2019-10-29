@@ -2358,7 +2358,11 @@ boolean M_Responder (event_t* ev)
     {
 	if (ev->type == ev_mouse && mousewait < I_GetTime())
 	{
+	    // [crispy] novert disables controlling the menus with the mouse
+	    if (!novert)
+	    {
 	    mousey += ev->data3;
+	    }
 	    if (mousey < lasty-30)
 	    {
 		key = key_menu_down;
