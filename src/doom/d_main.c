@@ -37,6 +37,8 @@
 #include "doomdef.h"
 #include "doomstat.h"
 
+#include "deh_misc.h"
+
 #include "dstrings.h"
 #include "doomfeatures.h"
 #include "sounds.h"
@@ -1192,6 +1194,11 @@ static void InitGameVersion(void)
             states[S_PMAP4].frame &= ~FF_FULLBRIGHT;
             states[S_PMAP5].frame &= ~FF_FULLBRIGHT;
             states[S_PMAP6].frame &= ~FF_FULLBRIGHT;
+
+            // Max health is 199
+            // FIXME: not sure about last version, true at least in v1.2
+            deh_max_health = 199;
+            deh_max_soulsphere = 199;
 
         //case exe_doom_1_3:
         //case exe_doom_1_25:
