@@ -57,7 +57,7 @@ static char *musicmode_strings[] =
     "Disabled",
     "OPL (Adlib/SB)",
     "GUS (emulated)",
-    "Native MIDI",
+    "Native MIDI/OGG/FLAC",
     "CD audio"
 };
 
