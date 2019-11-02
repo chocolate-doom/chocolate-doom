@@ -382,6 +382,7 @@ P_TouchSpecialThing
 	
       case SPR_BON2:
 	player->armorpoints++;		// can go over 100%
+	// https://doomwiki.org/wiki/Armor_percentage_rollover
 	if (player->armorpoints > deh_max_armor && gameversion > exe_doom_1_2)
 	    player->armorpoints = deh_max_armor;
         // deh_green_armor_class only applies to the green armor shirt;
@@ -914,6 +915,8 @@ P_DamageMobj
 			
     target->reactiontime = 0;		// we're awake now...	
 
+    // https://doomwiki.org/wiki/Barrel_suicide
+    // FIXME: check should be for <= Doom v1.4
     if ( (!target->threshold || target->type == MT_VILE)
 	 && source && (source != target || gameversion <= exe_doom_1_2)
 	 && source->type != MT_VILE)

@@ -719,6 +719,7 @@ AM_Responder
             rc = false;
         }
 
+        // Automap cheat works in multiplayer prior to Doom v1.9
         if ((!deathmatch || gameversion <= exe_doom_1_8)
          && cht_CheckCheat(&cheat_amap, ev->data2))
         {
