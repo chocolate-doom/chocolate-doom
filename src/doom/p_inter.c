@@ -95,11 +95,27 @@ void RecoverInventoryFromBackpack(mobj_t* toucher, int p)
 
 
 // [marshmallow]
-void DropInventoryInBackpack(mobj_t* target, int p)
+boolean DropInventoryInBackpack(mobj_t* target, int p)
 {
 	int i;
+	boolean laden = false;
 
 	dropped_backpack = backpacks[p];
+
+	for (i=0; i<NUMAMMO && !laden; i++)
+	{
+		if (dropped_backpack.ammo[i])
+			laden = true;
+	}
+
+	for (i=0; i<NUMWEAPONS && !laden; i++)
+	{
+		if (dropped_backpack.weapons[i])
+			laden = true;
+	}
+
+	if (laden)
+		return false;
 
 	// Save weapons
 	for (i=0; i<NUMWEAPONS; i++)
@@ -123,7 +139,7 @@ void DropInventoryInBackpack(mobj_t* target, int p)
 
 	backpacks[p] = dropped_backpack;
 
-	return;
+	return true;
 }
 
 
@@ -916,7 +932,13 @@ P_KillMobj
 			item = MT_MISC89; // Brown
 		else
 			item = MT_MISC90; // Red
-		DropInventoryInBackpack(target, p); // [marshmallow]
+		if (DropInventoryInBackpack(target, p)) // [marshmallow]
+		{
+			mo = P_SpawnMobj (target->x,target->y,ONFLOORZ, item);
+			mo->flags |= MF_DROPPED;
+			return;
+		}
+		else return;
 	}
 	else return;
 	break;
