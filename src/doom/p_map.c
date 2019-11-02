@@ -1338,6 +1338,8 @@ boolean PIT_ChangeSector (mobj_t*	thing)
     {
 	P_SetMobjState (thing, S_GIBS);
 
+    // https://doomwiki.org/wiki/Crushed_monsters_block_player_movement
+    // FIXME: check which exact version this was fixed, at least in v1.666
     if (gameversion > exe_doom_1_2)
 	    thing->flags &= ~MF_SOLID;
 	thing->height = 0;

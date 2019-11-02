@@ -521,6 +521,8 @@ P_CrossSpecialLine
 
     line = &lines[linenum];
     
+    // https://doomwiki.org/wiki/Projectiles_triggering_linedefs
+    // FIXME: check should be for <= exe_doom_1_3
     if (gameversion <= exe_doom_1_2)
     {
         if (line->special > 98 && line->special != 104)

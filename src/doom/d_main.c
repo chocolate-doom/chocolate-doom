@@ -1157,6 +1157,7 @@ static void InitGameVersion(void)
 
         case exe_doom_1_1:
             // Env suits count for item %
+            // https://tcrf.net/Doom_(PC,_1993)/Revisional_Differences#v1.2
             mobjinfo[MT_MISC14].flags |= MF_COUNTITEM;
 
         case exe_doom_1_2:
@@ -1192,14 +1193,16 @@ static void InitGameVersion(void)
             states[S_PMAP5].frame &= ~FF_FULLBRIGHT;
             states[S_PMAP6].frame &= ~FF_FULLBRIGHT;
 
-            // Max health is 199
-            // FIXME: not sure about last version, true at least in v1.2
+            // https://doomwiki.org/wiki/Health_limited_to_199
+            // FIXME: trcf claims this changed in v1.6, please check
+            // https://tcrf.net/Doom_(PC,_1993)/Revisional_Differences#v1.6
             deh_max_health = 199;
             deh_max_soulsphere = 199;
 
         //case exe_doom_1_3:
         //case exe_doom_1_25:
             // Deathmatch 2.0 not supported
+            // https://doomwiki.org/wiki/Versions_of_Doom_and_Doom_II#v1.4
             if (deathmatch == 2)
             {
                 deathmatch = 0;
@@ -1213,7 +1216,7 @@ static void InitGameVersion(void)
         //case exe_doom_1_5:
         //case exe_doom_1_6:
             // lost souls count for kill %
-            // FIXME: not sure about last version, true at least in v1.2
+            // https://doomwiki.org/wiki/Versions_of_Doom_and_Doom_II#v1.666
             mobjinfo[MT_SKULL].flags |= MF_COUNTKILL;
 
         case exe_doom_1_666:
@@ -1222,6 +1225,7 @@ static void InitGameVersion(void)
         case exe_doom_1_9:
         case exe_hacx:
             // 4th episode (retail) not supported
+            // https://doomwiki.org/wiki/Versions_of_Doom_and_Doom_II#Ultimate_Doom
             if (gamemode == retail)
             {
                 gamemode = registered;
@@ -1229,6 +1233,7 @@ static void InitGameVersion(void)
 
         case exe_ultimate:
             // Final Doom not supported
+            // https://doomwiki.org/wiki/Versions_of_Doom_and_Doom_II#Final_Doom
             if (gamemode == commercial 
              && (gamemission == pack_tnt || gamemission == pack_plut))
             {
