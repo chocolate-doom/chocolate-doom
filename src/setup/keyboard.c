@@ -39,6 +39,7 @@ static int *controls[] = { &key_left, &key_right, &key_up, &key_down,
                            &key_use, &key_strafe, &key_speed, &key_jump,
                            &key_flyup, &key_flydown, &key_flycenter,
                            &key_lookup, &key_lookdown, &key_lookcenter,
+						   &key_dropbackpack,
                            &key_invleft, &key_invright, &key_invquery,
                            &key_invuse, &key_invpop, &key_mission, &key_invkey,
                            &key_invhome, &key_invend, &key_invdrop,
@@ -245,6 +246,11 @@ static void ConfigExtraKeys(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
         else
         {
             AddKeyControl(table, "Use artifact", &key_useartifact);
+        }
+
+        if (gamemission == doom)
+        {
+            AddKeyControl(table, "Drop backpack", &key_dropbackpack);
         }
 
         if (gamemission == hexen)

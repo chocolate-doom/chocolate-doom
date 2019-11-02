@@ -687,46 +687,59 @@ P_TouchSpecialThing
 	break;
 	
       case SPR_BPAK:
-	if (!player->backpack)
+	if (netgame && dropbackpack
+		&& special->flags & MF_DROPPED && player && player->health > 0) // [marshmallow] So we don't pick it up while dead/dying
 	{
-		for (i=0 ; i<NUMAMMO ; i++)
-			player->maxammo[i] *= 2;
-		player->backpack = true;
+		P_GiveAmmo (player, am_clip, 2);
+		P_GiveAmmo (player, am_shell, 2);
+		P_GiveAmmo (player, am_misl, 4);
+		P_GiveBody (player, 5);
+		player->message = DEH_String(GOTBACKPACK);
+		break;
 	}
-	for (i=0 ; i<NUMAMMO ; i++)
-		P_GiveAmmo (player, i, 1);
-	player->message = DEH_String(GOTBACKPACK);
-	break;
+	else
+	{
+		if (!player->backpack)
+		{
+			for (i=0 ; i<NUMAMMO ; i++)
+				player->maxammo[i] *= 2;
+			player->backpack = true;
+		}
+		for (i=0 ; i<NUMAMMO ; i++)
+			P_GiveAmmo (player, i, 1);
+		player->message = DEH_String(GOTBACKPACK);
+		break;
+	}
 
       case SPR_BPAG:
-	if (toucher->player && toucher->player->health > 0) // [marshmallow] So we don't pick it up while dead/dying
+	if (player && player->health > 0) // [marshmallow] So we don't pick it up while dead/dying
 	{
 		RecoverInventoryFromBackpack(toucher, 0);
-		toucher->player->message = DEH_String(GOTBACKPACK);
+		player->message = DEH_String(GOTBACKPACK);
 	}
 	break;
 
       case SPR_BPAI:
-	if (toucher->player && toucher->player->health > 0)
+	if (player && player->health > 0)
 	{
 		RecoverInventoryFromBackpack(toucher, 1);
-		toucher->player->message = DEH_String(GOTBACKPACK);
+		player->message = DEH_String(GOTBACKPACK);
 	}
 	break;
 
       case SPR_BPAB:
-	if (toucher->player && toucher->player->health > 0)
+	if (player && player->health > 0)
 	{
 		RecoverInventoryFromBackpack(toucher, 2);
-		toucher->player->message = DEH_String(GOTBACKPACK);
+		player->message = DEH_String(GOTBACKPACK);
 	}
 	break;
 
       case SPR_BPAR:
-	if (toucher->player && toucher->player->health > 0)
+	if (player && player->health > 0)
 	{
 		RecoverInventoryFromBackpack(toucher, 3);
-		toucher->player->message = DEH_String(GOTBACKPACK);
+		player->message = DEH_String(GOTBACKPACK);
 	}
 	break;
 
