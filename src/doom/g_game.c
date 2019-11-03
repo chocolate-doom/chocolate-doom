@@ -264,44 +264,6 @@ void RestoreKeys(int player)
 			players[player].cards[i] = true;
 }
 
-void DropBackpack(player_t* player)
-{
-	int x, y;
-	unsigned an;
-	mobj_t* backpack;
-	mobjtype_t item = MT_MISC24;
-
-	if (player->playerstate == PST_DEAD)
-	{
-		return;
-	}
-	
-	if (player->ammo[am_clip] <= 20
-		|| player->ammo[am_shell] <= 8
-		|| player->ammo[am_misl] <= 4)
-	{
-		player->message = DEH_String(NOAMMO);
-		return;
-	}
-
-	an = player->mo->angle >> ANGLETOFINESHIFT; 
-
-	x = player->mo->x + FixedMul (3*24*FRACUNIT, finecosine[an]);
-	y = player->mo->y + FixedMul (3*24*FRACUNIT, finesine[an]);
-
-	backpack = P_SpawnMobj (x, y, ONFLOORZ, item);
-	if (!P_CheckPosition (backpack, backpack->x, backpack->y))
-	{
-		P_RemoveMobj (backpack);
-		return;
-	}
-	backpack->flags |= MF_DROPPED;
-
-	player->ammo[am_clip] -= 20; 
-	player->ammo[am_shell] -= 8;    
-	player->ammo[am_misl] -= 4;    
-}
-
 static boolean WeaponSelectable(weapontype_t weapon)
 {
     // Can't select the super shotgun in Doom 1.
@@ -448,13 +410,6 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
         gamekeydown[key_toggleautorun] = false;
     }
 
-	if (gamekeydown[key_dropbackpack] && netgame && dropbackpack)
-	{
-		p = &players[consoleplayer];
-		DropBackpack(p);
-		gamekeydown[key_dropbackpack] = false;
-	}
-
     // let movement keys cancel each other out
     if (strafe) 
     { 
@@ -533,6 +488,12 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
 	// clear double clicks if hit use button 
 	dclicks = 0;                   
     } 
+
+	if (gamekeydown[key_dropbackpack] && netgame && dropbackpack)
+	{
+		cmd->buttons |= BT_DROP;
+		gamekeydown[key_dropbackpack] = false;
+	}
 
     // If the previous or next weapon button is pressed, the
     // next_weapon variable is set to change weapons when

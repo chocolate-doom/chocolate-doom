@@ -28,6 +28,8 @@
 
 #include "doomstat.h"
 
+#include "deh_str.h"
+#include "dstrings.h"
 
 
 // Index of the special effects (INVUL inverse) map.
@@ -43,6 +45,43 @@
 
 boolean		onground;
 
+void DropBackpack(player_t* player)
+{
+	int x, y;
+	unsigned an;
+	mobj_t* backpack;
+	mobjtype_t item = MT_MISC24;
+
+	if (player->playerstate == PST_DEAD)
+	{
+		return;
+	}
+	
+	if (player->ammo[am_clip] <= 20
+		|| player->ammo[am_shell] <= 8
+		|| player->ammo[am_misl] <= 4)
+	{
+		player->message = DEH_String(NOAMMO);
+		return;
+	}
+
+	an = player->mo->angle >> ANGLETOFINESHIFT; 
+
+	x = player->mo->x + FixedMul (3*24*FRACUNIT, finecosine[an]);
+	y = player->mo->y + FixedMul (3*24*FRACUNIT, finesine[an]);
+
+	backpack = P_SpawnMobj (x, y, ONFLOORZ, item);
+	if (!P_CheckPosition (backpack, backpack->x, backpack->y))
+	{
+		P_RemoveMobj (backpack);
+		return;
+	}
+	backpack->flags |= MF_DROPPED;
+
+	player->ammo[am_clip] -= 20; 
+	player->ammo[am_shell] -= 8;    
+	player->ammo[am_misl] -= 4;    
+}
 
 //
 // P_Thrust
@@ -323,7 +362,13 @@ void P_PlayerThink (player_t* player)
     }
     else
 	player->usedown = false;
-    
+
+    // check for drop
+    if (cmd->buttons & BT_DROP)
+    {
+		DropBackpack(player);
+	}
+
     // cycle psprites
     P_MovePsprites (player);
     
