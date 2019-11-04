@@ -567,7 +567,7 @@ void W_PrintDirectory(void)
 
 // Merge in a file by name
 
-boolean W_MergeFile(char *filename)
+void W_MergeFile(char *filename)
 {
     int old_numlumps;
 
@@ -576,7 +576,7 @@ boolean W_MergeFile(char *filename)
     // Load PWAD
 
     if (W_AddFile(filename) == NULL)
-        return false;
+        return;
 
     // IWAD is at the start, PWAD was appended to the end
 
@@ -597,8 +597,6 @@ boolean W_MergeFile(char *filename)
     // Perform the merge
 
     DoMerge();
-
-    return true;
 }
 
 // Replace lumps in the given list with lumps from the PWAD

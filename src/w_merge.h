@@ -26,7 +26,7 @@
 
 // Add a new WAD and merge it into the main directory
 
-boolean W_MergeFile(char *filename);
+void W_MergeFile(char *filename);
 
 // NWT-style merging
 
