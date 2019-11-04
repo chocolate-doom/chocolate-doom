@@ -813,7 +813,8 @@ void ST_updateFaceWidget(void)
 	    // being attacked
 	    priority = 7;
 	    
-	    if (plyr->health - st_oldhealth > ST_MUCHPAIN)
+	    // [crispy] show "Ouch Face" as intended
+	    if (st_oldhealth - plyr->health > ST_MUCHPAIN)
 	    {
 		st_facecount = ST_TURNCOUNT;
 		st_faceindex = ST_calcPainOffset() + ST_OUCHOFFSET;
@@ -866,7 +867,8 @@ void ST_updateFaceWidget(void)
 	// getting hurt because of your own damn stupidity
 	if (plyr->damagecount)
 	{
-	    if (plyr->health - st_oldhealth > ST_MUCHPAIN)
+	    // [crispy] show "Ouch Face" as intended
+	    if (st_oldhealth - plyr->health > ST_MUCHPAIN)
 	    {
 		priority = 7;
 		st_facecount = ST_TURNCOUNT;
