@@ -21,14 +21,18 @@
 
 #include "m_argv.h"
 
-#define COARSEANGLES		256
-#define COARSEMASK		(COARSEANGLES-1)
+extern fixed_t finetangent1_2[4096];
+extern fixed_t finesine1_2[10240];
+extern angle_t tantoangle1_2[2049];
+
+#define COARSEANGLES1_0		256
+#define COARSEMASK1_0		(COARSEANGLES1_0-1)
 
 // 0x100000000 to 0x0100
-#define ANGLETOCOARSESHIFT	24		
+#define ANGLETOCOARSESHIFT1_0	24		
 
 // Effective size is 320.
-const fixed_t coarsesine[5*COARSEANGLES/4] =
+const fixed_t coarsesine1_0[5*COARSEANGLES1_0/4] =
 {
     0,1608,3215,4821,6423,8022,9616,11204,
     12785,14359,15923,17479,19024,20557,22078,23586,
@@ -72,32 +76,10 @@ const fixed_t coarsesine[5*COARSEANGLES/4] =
     64276,64571,64826,65043,65220,65358,65457,65516
 };
 
-const fixed_t *coarsecosine = &coarsesine[64];
-
-fixed_t D_CoarseOrFineCosine(angle_t angle)
-{
-    if (gameversion < exe_doom_1_1)
-    {
-        return coarsecosine[angle >> ANGLETOCOARSESHIFT];
-    }
-    else
-    {
-        return finecosine[angle >> ANGLETOFINESHIFT];
-    }
-}
-
-fixed_t D_CoarseOrFineSine(angle_t angle)
-{
-    if (gameversion < exe_doom_1_1)
-    {
-        return coarsesine[angle >> ANGLETOCOARSESHIFT];
-    }
-    else
-    {
-        return finesine[angle >> ANGLETOFINESHIFT];
-    }
-}
-
+// These default to finesine, but change to coarsesine with Doom v1.0
+int angletocoarseshift = ANGLETOFINESHIFT;
+const fixed_t *coarsesine = &finesine1_2[0];
+const fixed_t *coarsecosine = &finesine1_2[FINEANGLES/4];
 
 struct {
     unsigned short index;
@@ -251,10 +233,6 @@ const char tantoangle_to_1_0[2049] = {
     -5,6,-2,5,-6,-2,-16,-16,-1
 };
 
-extern fixed_t finetangent1_2[4096];
-extern fixed_t finesine1_2[10240];
-extern angle_t tantoangle1_2[2049];
-
 void ChangeTrigTablesToDoom1_0()
 {
     int i, j, count;
@@ -283,6 +261,10 @@ void ChangeTrigTablesToDoom1_0()
     {
         tantoangle1_2[i] += tantoangle_to_1_0[i];
     }
+
+    angletocoarseshift = ANGLETOCOARSESHIFT1_0;
+    coarsesine = coarsesine1_0;
+    coarsecosine = &coarsesine1_0[64];
 }
 
 extern fixed_t forwardmove[2], sidemove[2];
