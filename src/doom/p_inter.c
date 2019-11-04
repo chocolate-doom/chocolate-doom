@@ -706,10 +706,21 @@ P_TouchSpecialThing
 	if (netgame && dropbackpack
 		&& special->flags & MF_DROPPED && player && player->health > 0) // [marshmallow] So we don't pick it up while dead/dying
 	{
-		P_GiveAmmo (player, am_clip, 2);
-		P_GiveAmmo (player, am_shell, 2);
-		P_GiveAmmo (player, am_misl, 4);
-		P_GiveBody (player, 5);
+		if (special->type == MT_MISC87)
+			RecoverInventoryFromBackpack(toucher, 0);
+		else if (special->type == MT_MISC88)
+			RecoverInventoryFromBackpack(toucher, 1);
+		else if (special->type == MT_MISC89)
+			RecoverInventoryFromBackpack(toucher, 2);
+		else if (special->type == MT_MISC90)
+			RecoverInventoryFromBackpack(toucher, 3);
+		else // MT_MISC24
+		{
+			P_GiveAmmo (player, am_clip, 2);
+			P_GiveAmmo (player, am_shell, 2);
+			P_GiveAmmo (player, am_misl, 4);
+			P_GiveBody (player, 5);
+		}
 		player->message = DEH_String(GOTBACKPACK);
 		break;
 	}
@@ -726,38 +737,6 @@ P_TouchSpecialThing
 		player->message = DEH_String(GOTBACKPACK);
 		break;
 	}
-
-      case SPR_BPAG:
-	if (player && player->health > 0) // [marshmallow] So we don't pick it up while dead/dying
-	{
-		RecoverInventoryFromBackpack(toucher, 0);
-		player->message = DEH_String(GOTBACKPACK);
-	}
-	break;
-
-      case SPR_BPAI:
-	if (player && player->health > 0)
-	{
-		RecoverInventoryFromBackpack(toucher, 1);
-		player->message = DEH_String(GOTBACKPACK);
-	}
-	break;
-
-      case SPR_BPAB:
-	if (player && player->health > 0)
-	{
-		RecoverInventoryFromBackpack(toucher, 2);
-		player->message = DEH_String(GOTBACKPACK);
-	}
-	break;
-
-      case SPR_BPAR:
-	if (player && player->health > 0)
-	{
-		RecoverInventoryFromBackpack(toucher, 3);
-		player->message = DEH_String(GOTBACKPACK);
-	}
-	break;
 
 	// weapons
       case SPR_BFUG:

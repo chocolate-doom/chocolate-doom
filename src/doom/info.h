@@ -164,10 +164,6 @@ typedef enum
     SPR_BRS1,
     SPR_TLMP,
     SPR_TLP2,
-    SPR_BPAG,
-    SPR_BPAI,
-    SPR_BPAB,
-    SPR_BPAR,
     NUMSPRITES
 
 } spritenum_t;
@@ -1141,10 +1137,6 @@ typedef enum
     S_TECH2LAMP2,
     S_TECH2LAMP3,
     S_TECH2LAMP4,
-    S_BPAG,
-    S_BPAI,
-    S_BPAB,
-    S_BPAR,
     S_POSS_ATK4,
     S_POSS_ATK5,
     S_POSS_ATK6,

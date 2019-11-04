@@ -48,7 +48,7 @@ static void *DEH_FrameStart(deh_context_t *context, char *line)
         return NULL;
     }
     
-    if (frame_number < 0 || frame_number >= NUMSTATES - 7) // Backpacks & Zombieman
+    if (frame_number < 0 || frame_number >= NUMSTATES - 3) // Zombieman
     {
         DEH_Warning(context, "Invalid frame number: %i", frame_number);
         return NULL;
@@ -127,7 +127,7 @@ static void DEH_FrameParseLine(deh_context_t *context, char *line, void *tag)
 
     ivalue = atoi(value);
     
-    if (state == &states[NUMSTATES - 1 - 7]) // Backpacks & Zombieman
+    if (state == &states[NUMSTATES - 1 - 3]) // Zombieman
     {
         DEH_FrameOverflow(context, variable_name, ivalue);
     }
@@ -143,7 +143,7 @@ static void DEH_FrameSHA1Sum(sha1_context_t *context)
 {
     int i;
 
-    for (i=0; i<NUMSTATES-7; ++i) // Backpacks & Zombieman
+    for (i=0; i<NUMSTATES-3; ++i) // Zombieman
     {
         DEH_StructSHA1Sum(context, &state_mapping, &states[i]);
     }
