@@ -16,8 +16,10 @@
 
 #include "tables.h"
 
-fixed_t D_CoarseOrFineCosine(angle_t angle);
-fixed_t D_CoarseOrFineSine(angle_t angle);
+extern int angletocoarseshift;
+
+extern const fixed_t *coarsecosine;
+extern const fixed_t *coarsesine;
 
 void D_SetTurboScale(int scale);
 void D_GetScaledMove(fixed_t *forward, fixed_t *side, boolean justattacked);

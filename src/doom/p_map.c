@@ -1195,12 +1195,12 @@ void P_UseLines (player_t*	player)
 	
     usething = player->mo;
 		
-    angle = player->mo->angle;
+    angle = player->mo->angle >> angletocoarseshift;
 
     x1 = player->mo->x;
     y1 = player->mo->y;
-    x2 = x1 + (USERANGE>>FRACBITS) * D_CoarseOrFineCosine(angle);
-    y2 = y1 + (USERANGE>>FRACBITS) * D_CoarseOrFineSine(angle);
+    x2 = x1 + (USERANGE>>FRACBITS) * coarsecosine[angle];
+    y2 = y1 + (USERANGE>>FRACBITS) * coarsesine[angle];
 
     P_PathTraverse ( x1, y1, x2, y2, PT_ADDLINES, PTR_UseTraverse );
 }

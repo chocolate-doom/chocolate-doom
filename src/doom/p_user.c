@@ -111,8 +111,10 @@ P_Thrust
   angle_t	angle,
   fixed_t	move ) 
 {
-    player->mo->momx += FixedMul(move, D_CoarseOrFineCosine(angle)); 
-    player->mo->momy += FixedMul(move, D_CoarseOrFineSine(angle));
+    angle >>= angletocoarseshift;
+
+    player->mo->momx += FixedMul(move, coarsecosine[angle]); 
+    player->mo->momy += FixedMul(move, coarsesine[angle]);
 }
 
 
