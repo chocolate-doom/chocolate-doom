@@ -593,7 +593,17 @@ P_TouchSpecialThing
 	    player->message = DEH_String(GOTMEDIKIT);
 	break;
 
-	
+      case SPR_POL5:
+	if (player->health < 10 && gameskill == sk_extreme)
+	{
+	    if (!P_GiveBody (player, 5))
+	        return;
+	    player->message = DEH_String(GOTBLOOD);
+	    sound = sfx_slop;
+	}
+	else return;
+	break;
+
 	// power ups
       case SPR_PINV:
 	if (!P_GivePower (player, pw_invulnerability))
@@ -722,7 +732,6 @@ P_TouchSpecialThing
 			P_GiveBody (player, 5);
 		}
 		player->message = DEH_String(GOTBACKPACK);
-		break;
 	}
 	else
 	{
@@ -735,8 +744,8 @@ P_TouchSpecialThing
 		for (i=0 ; i<NUMAMMO ; i++)
 			P_GiveAmmo (player, i, 1);
 		player->message = DEH_String(GOTBACKPACK);
-		break;
 	}
+	break;
 
 	// weapons
       case SPR_BFUG:

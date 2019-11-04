@@ -4269,7 +4269,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
 	100,		// mass
 	0,		// damage
 	sfx_None,		// activesound
-	0,		// flags
+	MF_SPECIAL,		// flags
 	S_NULL		// raisestate
     },
 

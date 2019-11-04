@@ -82,6 +82,7 @@
 #define GOTMEDINEED	"Picked up a medikit that you REALLY need!"
 #define GOTMEDIKIT	"Picked up a medikit."
 #define GOTSUPER	"Supercharge!"
+#define GOTBLOOD	"Sucked it down. Romero made you his bitch!"
 
 #define GOTBLUECARD	"Picked up a blue keycard."
 #define GOTYELWCARD	"Picked up a yellow keycard."
