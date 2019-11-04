@@ -5,6 +5,7 @@ noinst_LIBRARIES=libdoom.a
 SOURCE_FILES=                   \
 am_map.c           am_map.h     \
                    d_englsh.h   \
+d_compat.c         d_compat.h   \
 d_items.c          d_items.h    \
 d_main.c           d_main.h     \
 d_net.c                         \

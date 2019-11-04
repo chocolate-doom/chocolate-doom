@@ -171,7 +171,7 @@ typedef struct
     int respawn_monsters;
     int map;
     int skill;
-    int gameversion;
+    int netgameversion;
     int lowres_turn;
     int new_sync;
     int timelimit;

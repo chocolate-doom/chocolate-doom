@@ -85,3 +85,11 @@ void W_Checksum(sha1_digest_t digest)
     SHA1_Final(digest, &sha1_context);
 }
 
+void W_ChecksumLump(sha1_digest_t digest, int lumpnum)
+{
+    sha1_context_t sha1_context;
+
+    SHA1_Init(&sha1_context);
+    ChecksumAddLump(&sha1_context, lumpinfo[lumpnum]);
+    SHA1_Final(digest, &sha1_context);
+}

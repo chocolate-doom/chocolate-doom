@@ -157,7 +157,7 @@ static void SaveGameSettings(net_gamesettings_t *settings)
     settings->map = startmap;
     settings->skill = startskill;
     // TODO settings->loadgame = startloadgame;
-    settings->gameversion = exe_hexen_1_1;
+    settings->netgameversion = net_hexen_1_1;
     settings->nomonsters = nomonsters;
     settings->respawn_monsters = respawnparm;
     settings->timelimit = 0;

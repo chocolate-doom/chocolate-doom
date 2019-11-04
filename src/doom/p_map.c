@@ -22,6 +22,7 @@
 
 #include "deh_misc.h"
 
+#include "d_compat.h"
 #include "m_bbox.h"
 #include "m_random.h"
 #include "i_system.h"
@@ -1194,24 +1195,13 @@ void P_UseLines (player_t*	player)
 	
     usething = player->mo;
 		
+    angle = player->mo->angle;
+
     x1 = player->mo->x;
     y1 = player->mo->y;
+    x2 = x1 + (USERANGE>>FRACBITS) * D_CoarseOrFineCosine(angle);
+    y2 = y1 + (USERANGE>>FRACBITS) * D_CoarseOrFineSine(angle);
 
-    if (gameversion < exe_doom_1_1)
-    {
-        angle = player->mo->angle >> ANGLETOCOARSESHIFT;
-
-        x2 = x1 + (USERANGE>>FRACBITS)*coarsecosine[angle];
-        y2 = y1 + (USERANGE>>FRACBITS)*coarsesine[angle];
-    }
-    else
-    {
-        angle = player->mo->angle >> ANGLETOFINESHIFT;
-
-        x2 = x1 + (USERANGE>>FRACBITS)*finecosine[angle];
-        y2 = y1 + (USERANGE>>FRACBITS)*finesine[angle];
-    }
-	
     P_PathTraverse ( x1, y1, x2, y2, PT_ADDLINES, PTR_UseTraverse );
 }
 

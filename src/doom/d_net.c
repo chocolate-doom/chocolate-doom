@@ -152,7 +152,7 @@ static void SaveGameSettings(net_gamesettings_t *settings)
     settings->map = startmap;
     settings->skill = startskill;
     settings->loadgame = startloadgame;
-    settings->gameversion = gameversion;
+    settings->netgameversion = D_NetGameVersion(gameversion);
     settings->nomonsters = nomonsters;
     settings->fast_monsters = fastparm;
     settings->respawn_monsters = respawnparm;

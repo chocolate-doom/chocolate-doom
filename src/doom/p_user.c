@@ -22,6 +22,7 @@
 
 
 #include "doomdef.h"
+#include "d_compat.h"
 #include "d_event.h"
 
 #include "p_local.h"
@@ -110,19 +111,8 @@ P_Thrust
   angle_t	angle,
   fixed_t	move ) 
 {
-    if (gameversion < exe_doom_1_1)
-    {
-        angle >>= ANGLETOCOARSESHIFT;
-
-        player->mo->momx += FixedMul(move,coarsecosine[angle]); 
-        player->mo->momy += FixedMul(move,coarsesine[angle]);
-        return;
-    }
-
-    angle >>= ANGLETOFINESHIFT;
-    
-    player->mo->momx += FixedMul(move,finecosine[angle]); 
-    player->mo->momy += FixedMul(move,finesine[angle]);
+    player->mo->momx += FixedMul(move, D_CoarseOrFineCosine(angle)); 
+    player->mo->momy += FixedMul(move, D_CoarseOrFineSine(angle));
 }
 
 
@@ -205,22 +195,16 @@ void P_CalcHeight (player_t* player)
 void P_MovePlayer (player_t* player, boolean justattacked)
 {
     ticcmd_t*		cmd;
-    int forwardmove, sidemove;
+    fixed_t forwardmove, sidemove;
 	
     cmd = &player->cmd;
 	
     player->mo->angle += (cmd->angleturn<<FRACBITS);
 
-    if (gameversion < exe_doom_1_2)
-    {
-        forwardmove = justattacked ? 0xc800 : cmd->forwardmove * 900;
-        sidemove = cmd->sidemove * 900;
-    }
-    else
-    {
-        forwardmove = cmd->forwardmove * 2048;
-        sidemove = cmd->sidemove * 2048;
-    }
+    forwardmove = cmd->forwardmove;
+    sidemove = cmd->sidemove;
+
+    D_GetScaledMove(&forwardmove, &sidemove, justattacked);
 
     // Do not let the player control movement
     //  if not onground.

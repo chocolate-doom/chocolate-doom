@@ -37,12 +37,11 @@
 #include "doomdef.h"
 #include "doomstat.h"
 
-#include "deh_misc.h"
-
 #include "dstrings.h"
 #include "doomfeatures.h"
 #include "sounds.h"
 
+#include "d_compat.h"
 #include "d_iwad.h"
 
 #include "z_zone.h"
@@ -82,6 +81,8 @@
 #include "r_local.h"
 #include "statdump.h"
 
+#include "sha1.h"
+#include "w_checksum.h"
 
 #include "d_main.h"
 
@@ -1001,6 +1002,12 @@ static struct
     { NULL,                  NULL,         0},
 };
 
+sha1_digest_t demo1_doom_1_0_sha1sum =
+{
+    0x2a, 0xa9, 0xf7, 0xfa, 0xe9, 0xf2, 0xa4, 0x4a, 0xf3, 0x43, 0xd3, 0x3b,
+    0xc9, 0x97, 0xab, 0x7e, 0x63, 0xcc, 0xf8, 0x96
+};
+
 // Initialize the game version
 
 static void InitGameVersion(void)
@@ -1118,13 +1125,20 @@ static void InitGameVersion(void)
 
                 gameversion = exe_doom_1_1;
 
-                // detect v1.0 from length of demo1 lump
-                if (demo1 > -1 && W_LumpLength(demo1) < 10 * 1024)
-                    gameversion = exe_doom_1_0;
-            }
+                // detect v1.0 from DEMO1 SHA1
+                if (demo1 > -1)
+                {
+                    sha1_digest_t digest;
 
-            
-            
+                    W_ChecksumLump(digest, demo1);
+
+                    if (memcmp(digest, demo1_doom_1_0_sha1sum, 
+                               sizeof(sha1_digest_t)) == 0)
+                    {
+                        gameversion = exe_doom_1_0;
+                    }
+                }
+            }
         }
         else if (gamemode == retail)
         {
@@ -1142,110 +1156,7 @@ static void InitGameVersion(void)
         }
     }
 
-    // Version-specific differences
-    // Each entry is the last version where the statement is true.
-    switch (gameversion)
-    {
-        case exe_doom_1_0:
-            // Different trig tables
-            ChangeTrigTablesToDoom1_0();
-
-            // Skull keys still spawn in deathmatch
-            mobjinfo[MT_MISC7].flags &= ~MF_NOTDMATCH;
-            mobjinfo[MT_MISC8].flags &= ~MF_NOTDMATCH;
-            mobjinfo[MT_MISC9].flags &= ~MF_NOTDMATCH;
-
-        case exe_doom_1_1:
-            // Env suits count for item %
-            // https://tcrf.net/Doom_(PC,_1993)/Revisional_Differences#v1.2
-            mobjinfo[MT_MISC14].flags |= MF_COUNTITEM;
-
-        case exe_doom_1_2:
-            // Boss spider is not fullbright when attacking
-            // FIXME: not sure about last version, true at least in v1.2
-            states[S_SPID_ATK1].frame &= ~FF_FULLBRIGHT;
-            states[S_SPID_ATK2].frame &= ~FF_FULLBRIGHT;
-            states[S_SPID_ATK3].frame &= ~FF_FULLBRIGHT;
-            states[S_SPID_ATK4].frame &= ~FF_FULLBRIGHT;
-
-            // Powerups are not fullbright
-            // FIXME: not sure about last version, true at least in v1.2
-            states[S_SOUL].frame &= ~FF_FULLBRIGHT;
-            states[S_SOUL2].frame &= ~FF_FULLBRIGHT;
-            states[S_SOUL3].frame &= ~FF_FULLBRIGHT;
-            states[S_SOUL4].frame &= ~FF_FULLBRIGHT;
-            states[S_SOUL5].frame &= ~FF_FULLBRIGHT;
-            states[S_SOUL6].frame &= ~FF_FULLBRIGHT;
-            states[S_PINV].frame &= ~FF_FULLBRIGHT;
-            states[S_PINV2].frame &= ~FF_FULLBRIGHT;
-            states[S_PINV3].frame &= ~FF_FULLBRIGHT;
-            states[S_PINV4].frame &= ~FF_FULLBRIGHT;
-            states[S_PSTR].frame &= ~FF_FULLBRIGHT;
-            states[S_PINS].frame &= ~FF_FULLBRIGHT;
-            states[S_PINS2].frame &= ~FF_FULLBRIGHT;
-            states[S_PINS3].frame &= ~FF_FULLBRIGHT;
-            states[S_PINS4].frame &= ~FF_FULLBRIGHT;
-            states[S_SUIT].frame &= ~FF_FULLBRIGHT;
-            states[S_PMAP].frame &= ~FF_FULLBRIGHT;
-            states[S_PMAP2].frame &= ~FF_FULLBRIGHT;
-            states[S_PMAP3].frame &= ~FF_FULLBRIGHT;
-            states[S_PMAP4].frame &= ~FF_FULLBRIGHT;
-            states[S_PMAP5].frame &= ~FF_FULLBRIGHT;
-            states[S_PMAP6].frame &= ~FF_FULLBRIGHT;
-
-            // https://doomwiki.org/wiki/Health_limited_to_199
-            // FIXME: trcf claims this changed in v1.6, please check
-            // https://tcrf.net/Doom_(PC,_1993)/Revisional_Differences#v1.6
-            deh_max_health = 199;
-            deh_max_soulsphere = 199;
-
-        //case exe_doom_1_3:
-        //case exe_doom_1_25:
-            // Deathmatch 2.0 not supported
-            // https://doomwiki.org/wiki/Versions_of_Doom_and_Doom_II#v1.4
-            if (deathmatch == 2)
-            {
-                deathmatch = 0;
-                if (M_CheckParm ("-deathmatch"))
-                {
-                    deathmatch = 1;
-                }
-            }
-
-        //case exe_doom_1_4:
-        //case exe_doom_1_5:
-        //case exe_doom_1_6:
-            // lost souls count for kill %
-            // https://doomwiki.org/wiki/Versions_of_Doom_and_Doom_II#v1.666
-            mobjinfo[MT_SKULL].flags |= MF_COUNTKILL;
-
-        case exe_doom_1_666:
-        case exe_doom_1_7:
-        case exe_doom_1_8:
-        case exe_doom_1_9:
-        case exe_hacx:
-            // 4th episode (retail) not supported
-            // https://doomwiki.org/wiki/Versions_of_Doom_and_Doom_II#Ultimate_Doom
-            if (gamemode == retail)
-            {
-                gamemode = registered;
-            }
-
-        case exe_ultimate:
-            // Final Doom not supported
-            // https://doomwiki.org/wiki/Versions_of_Doom_and_Doom_II#Final_Doom
-            if (gamemode == commercial 
-             && (gamemission == pack_tnt || gamemission == pack_plut))
-            {
-                gamemission = doom2;
-            }
-
-        case exe_final:
-        case exe_final2:
-        case exe_chex:
-        default:
-            break;
-    }
+    D_SetConstantsForGameversion();
 }
 
 void PrintGameVersion(void)
@@ -1567,11 +1478,6 @@ void D_DoomMain (void)
     if ( (p=M_CheckParm ("-turbo")) )
     {
 	int     scale = 200;
-	int     i;
-	extern int forwardmove10[2];
-	extern int sidemove10[2];
-	extern int forwardmove12[2];
-	extern int sidemove12[2];
 	
 	if (p<myargc-1)
 	    scale = atoi (myargv[p+1]);
@@ -1580,13 +1486,7 @@ void D_DoomMain (void)
 	if (scale > 400)
 	    scale = 400;
         DEH_printf("turbo scale: %i%%\n", scale);
-	for (i = 0; i < 2; i++)
-	{
-	    forwardmove10[i] = forwardmove10[i]*scale/100;
-	    sidemove10[i] = sidemove10[i]*scale/100;
-	    forwardmove12[i] = forwardmove12[i]*scale/100;
-	    sidemove12[i] = sidemove12[i]*scale/100;
-	}
+        D_SetTurboScale(scale);
     }
     
     // init subsystems

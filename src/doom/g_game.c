@@ -154,15 +154,10 @@ byte		consistancy[MAXPLAYERS][BACKUPTICS];
  
 #define MAXPLMOVE		(forwardmove[1]) 
  
-#define TURBOTHRESHOLD	(gameversion < exe_doom_1_2 ? 0x71 : 0x32)
+#define TURBOTHRESHOLD	MAXPLMOVE
 
-fixed_t         forwardmove12[2] = {0x19, 0x32}; 
-fixed_t         sidemove12[2] = {0x18, 0x28}; 
-
-// Doom 1.0 values, scaled by 1/900
-fixed_t         forwardmove10[2] = {51200/900, 102400/900}; 
-fixed_t         sidemove10[2] = {49152/900, 81920/900}; 
-
+fixed_t         forwardmove[2] = {0x19, 0x32}; 
+fixed_t         sidemove[2] = {0x18, 0x28}; 
 fixed_t         angleturn[3] = {640, 1280, 320};    // + slow turn 
 
 static int *weapon_keys[] = {
@@ -358,15 +353,6 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     int		side;
     static int		joybspeed_old = 2;
 	player_t* p;
-
-    fixed_t     *forwardmove = forwardmove12;
-    fixed_t     *sidemove = sidemove12;
-
-    if (gameversion < exe_doom_1_2)
-    {
-	    forwardmove = forwardmove10;
-	    sidemove = sidemove10;
-    }
 
     memset(cmd, 0, sizeof(ticcmd_t));
 
