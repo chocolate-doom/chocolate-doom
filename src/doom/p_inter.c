@@ -335,7 +335,7 @@ P_TouchSpecialThing
     player_t*	player;
     int		i;
     fixed_t	delta;
-    int		sound;
+    int		sound, getpowsound;
 		
     delta = special->z - toucher->z;
 
@@ -348,6 +348,7 @@ P_TouchSpecialThing
     
 	
     sound = sfx_itemup;	
+    getpowsound = (gameversion > exe_doom_1_2) ? sfx_getpow : sfx_itemup;
     player = toucher->player;
 
     // Dead thing touching.
@@ -398,8 +399,7 @@ P_TouchSpecialThing
 	    player->health = deh_max_soulsphere;
 	player->mo->health = player->health;
 	player->message = DEH_String(GOTSUPER);
-	if (gameversion > exe_doom_1_2)
-	    sound = sfx_getpow;
+	sound = getpowsound;
 	break;
 	
       case SPR_MEGA:
@@ -411,8 +411,7 @@ P_TouchSpecialThing
         // affects the MegaArmor.
 	P_GiveArmor (player, 2);
 	player->message = DEH_String(GOTMSPHERE);
-	if (gameversion > exe_doom_1_2)
-	    sound = sfx_getpow;
+	sound = getpowsound;
 	break;
 	
 	// cards
@@ -488,8 +487,7 @@ P_TouchSpecialThing
 	if (!P_GivePower (player, pw_invulnerability))
 	    return;
 	player->message = DEH_String(GOTINVUL);
-	if (gameversion > exe_doom_1_2)
-	    sound = sfx_getpow;
+	sound = getpowsound;
 	break;
 	
       case SPR_PSTR:
@@ -498,40 +496,35 @@ P_TouchSpecialThing
 	player->message = DEH_String(GOTBERSERK);
 	if (player->readyweapon != wp_fist)
 	    player->pendingweapon = wp_fist;
-	if (gameversion > exe_doom_1_2)
-	    sound = sfx_getpow;
+	sound = getpowsound;
 	break;
 	
       case SPR_PINS:
 	if (!P_GivePower (player, pw_invisibility))
 	    return;
 	player->message = DEH_String(GOTINVIS);
-	if (gameversion > exe_doom_1_2)
-	    sound = sfx_getpow;
+	sound = getpowsound;
 	break;
 	
       case SPR_SUIT:
 	if (!P_GivePower (player, pw_ironfeet))
 	    return;
 	player->message = DEH_String(GOTSUIT);
-	if (gameversion > exe_doom_1_2)
-	    sound = sfx_getpow;
+	sound = getpowsound;
 	break;
 	
       case SPR_PMAP:
 	if (!P_GivePower (player, pw_allmap))
 	    return;
 	player->message = DEH_String(GOTMAP);
-	if (gameversion > exe_doom_1_2)
-	    sound = sfx_getpow;
+	sound = getpowsound;
 	break;
 	
       case SPR_PVIS:
 	if (!P_GivePower (player, pw_infrared))
 	    return;
 	player->message = DEH_String(GOTVISOR);
-	if (gameversion > exe_doom_1_2)
-	    sound = sfx_getpow;
+	sound = getpowsound;
 	break;
 	
 	// ammo
