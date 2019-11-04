@@ -587,7 +587,8 @@ P_TouchSpecialThing
 	        return;
 	}
 
-	if (player->health < 25)
+	// [crispy] show "Picked up a Medikit that you really need" message as intended
+	if (player->health < 50 && gameskill != sk_extreme)
 	    player->message = DEH_String(GOTMEDINEED);
 	else
 	    player->message = DEH_String(GOTMEDIKIT);
