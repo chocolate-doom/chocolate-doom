@@ -1479,12 +1479,11 @@ void D_DoomMain (void)
     modifiedgame = false;
 
     DEH_printf("W_Init: Init WADfiles.\n");
-    D_AddFile(iwadfile);
-    printf(" merging %s\n", rwadfile);
-    if (!W_MergeFile(rwadfile))
+    if (!D_AddFile(rwadfile))
     {
         I_Error("RUDE.WAD not found.\n");
     }
+    D_AddFile(iwadfile);
     numiwadlumps = numlumps;
 
     W_CheckCorrectIWAD(doom);
