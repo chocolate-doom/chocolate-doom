@@ -827,7 +827,7 @@ void HU_Drawer(void)
     }
 
     // [crispy] translucent messages for translucent HUD
-    if (screenblocks > CRISPY_HUD && (!automapactive || crispy->automapoverlay))
+    if (screenblocks > CRISPY_HUD + 1 && (!automapactive || crispy->automapoverlay))
 	dp_translucent = true;
 
     if (secret_on && !menuactive)

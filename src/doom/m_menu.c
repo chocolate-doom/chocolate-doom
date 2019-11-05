@@ -1386,7 +1386,7 @@ void M_DrawOptions(void)
                 showMessages ? "On" : "Off");
 
     M_DrawThermo(OptionsDef.x,OptionsDef.y+LINEHEIGHT*(scrnsize+1),
-		 9 + 2,screenSize); // [crispy] Crispy HUD
+		 9 + 3,screenSize); // [crispy] Crispy HUD
 }
 
 // [crispy] mouse sensitivity menu
@@ -1892,7 +1892,7 @@ void M_SizeDisplay(int choice)
 	}
 	break;
       case 1:
-	if (screenSize < 8 + 2) // [crispy] Crispy HUD
+	if (screenSize < 8 + 3) // [crispy] Crispy HUD
 	{
 	    screenblocks++;
 	    screenSize++;
