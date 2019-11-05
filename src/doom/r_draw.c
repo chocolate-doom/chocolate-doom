@@ -344,6 +344,11 @@ int	fuzzpos = 0;
 static int fuzzpos_tic;
 void R_SetFuzzPosTic (void)
 {
+	// [crispy] prevent the animation from remaining static
+	if (fuzzpos == fuzzpos_tic)
+	{
+		fuzzpos = (fuzzpos + 1) % FUZZTABLE;
+	}
 	fuzzpos_tic = fuzzpos;
 }
 void R_SetFuzzPosDraw (void)
