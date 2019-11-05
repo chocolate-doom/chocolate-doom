@@ -1150,13 +1150,18 @@ void P_DamageMobj(mobj_t* target, mobj_t* inflictor, mobj_t* source, int damage)
                 target->momy += FixedMul(finesine[ang],   (12750*FRACUNIT) / target->info->mass);
                 target->reactiontime += 10;
 
+                //themightyheracross- here, temp is assigned a fixed_t value
                 temp = P_AproxDistance(target->x - source->x, target->y - source->y);
-                temp /= target->info->mass;
+                
+                //Convert mass to fixed point number
+                //Use fixed point math here
+                temp = FixedDiv(temp, ((target->info->mass) << FRACBITS));
 
                 if(temp < 1)
                     temp = 1;
-
-                target->momz = (source->z - target->z) / temp;
+                    
+                //...and here, for correct momz calculation
+                target->momz = FixedDiv((source->z - target->z), temp);
                 break;
 
             case MT_POISARROW:
