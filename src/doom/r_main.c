@@ -37,6 +37,7 @@
 #include "p_local.h" // [crispy] MLOOKUNIT
 #include "r_local.h"
 #include "r_sky.h"
+#include "st_stuff.h" // [crispy] ST_refreshBackground()
 
 
 
@@ -899,6 +900,9 @@ void R_ExecuteSetViewSize (void)
     }
 
     flipviewwidth = flipscreenwidth + (crispy->fliplevels ? (SCREENWIDTH - scaledviewwidth) : 0);
+
+    // [crispy] forcefully initialize the status bar backing screen
+    ST_refreshBackground(true);
 }
 
 

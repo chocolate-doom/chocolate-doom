@@ -56,6 +56,8 @@ void ST_Start (void);
 // Called by startup code.
 void ST_Init (void);
 
+// [crispy] forcefully initialize the status bar backing screen
+extern void ST_refreshBackground(boolean force);
 
 
 // States for status bar code.

@@ -469,10 +469,10 @@ static inline int cht_CheckCheatSP (cheatseq_t *cht, char key)
 //
 void ST_Stop(void);
 
-void ST_refreshBackground(void)
+void ST_refreshBackground(boolean force)
 {
 
-    if (st_classicstatusbar)
+    if (st_classicstatusbar || force)
     {
         V_UseBuffer(st_backing_screen);
 
@@ -491,6 +491,7 @@ void ST_refreshBackground(void)
 
         V_RestoreBuffer();
 
+	if (!force)
 	V_CopyRect(ST_X, 0, st_backing_screen, ST_WIDTH, ST_HEIGHT, ST_X, ST_Y);
     }
 
@@ -1890,15 +1891,10 @@ void ST_drawWidgets(boolean refresh)
     for (i=0;i<6;i++)
 	STlib_updateMultIcon(&w_arms[i], refresh);
 
+    // [crispy] draw the actual face widget background
     if (st_crispyhud && screenblocks == CRISPY_HUD)
     {
-	dp_translation = netgame ? 0 : cr[CR_GRAY];
-	dp_translucent = true;
-
-	V_DrawPatch(ST_FX, ST_Y, faceback);
-
-	dp_translation = NULL;
-	dp_translucent = false;
+	V_CopyRect(ST_FX, 1, st_backing_screen, SHORT(faceback->width), ST_HEIGHT - 1, ST_FX, ST_Y + 1);
     }
 
     STlib_updateMultIcon(&w_faces, refresh);
@@ -1918,7 +1914,7 @@ void ST_doRefresh(void)
     st_firsttime = false;
 
     // draw status bar background to off-screen buff
-    ST_refreshBackground();
+    ST_refreshBackground(false);
 
     // and refresh all widgets
     ST_drawWidgets(true);
