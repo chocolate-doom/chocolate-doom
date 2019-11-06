@@ -1892,8 +1892,12 @@ void ST_drawWidgets(boolean refresh)
 
     if (st_crispyhud && screenblocks == CRISPY_HUD)
     {
+	dp_translation = netgame ? 0 : cr[CR_GRAY];
 	dp_translucent = true;
+
 	V_DrawPatch(ST_FX, ST_Y, faceback);
+
+	dp_translation = NULL;
 	dp_translucent = false;
     }
 
