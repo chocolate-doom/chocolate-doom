@@ -91,8 +91,6 @@ extern const angle_t *tantoangle;
 //  called by R_PointToAngle.
 int SlopeDiv(unsigned int num, unsigned int den);
 
-// Change trig tables to match Doom v1.0
-void ChangeTrigTablesToDoom1_0();
 
 #endif
 
