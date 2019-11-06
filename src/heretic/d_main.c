@@ -811,9 +811,10 @@ void D_DoomMain(void)
     char file[256];
     char demolumpname[9];
 
+#ifdef _WIN32
     freopen("CONOUT$","w",stdout);
     freopen("CONOUT$","w",stderr);
-
+#endif
     //I_PrintBanner(PACKAGE_STRING);
     I_PrintBanner("Heretic Startup v" PACKAGE_VERSION);
 

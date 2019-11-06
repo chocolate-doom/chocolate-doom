@@ -25,6 +25,13 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifdef _WIN32
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+#include <windows.h>
+#endif
+
 #include "config.h"
 #include "deh_main.h"
 #include "doomdef.h"
@@ -1254,13 +1261,28 @@ void D_DoomMain (void)
 
     I_AtExit(D_Endoom, false);
 
+#ifdef _WIN32
     freopen("CONOUT$","w",stdout);
     freopen("CONOUT$","w",stderr);
 
+    DEH_printf("\n");
+    // [JN] Print colorized title
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),
+      BACKGROUND_BLUE | FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
+    DEH_printf("                             DOOM Operating System v" PACKAGE_VERSION
+               "                            ");
+    DEH_printf("\n");
+
+    // [JN] Fallback to standard console colors
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),
+      FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+#else
+    // [JN] Just print an uncolored banner
     // print banner
 
     //I_PrintBanner(PACKAGE_STRING);
     I_PrintBanner("DOOM Operating System v" PACKAGE_VERSION);
+#endif
 
     DEH_printf("Z_Init: Init zone memory allocation daemon. \n");
     Z_Init ();
@@ -1897,6 +1919,7 @@ void D_DoomMain (void)
     M_Init ();
 
     DEH_printf("R_Init: Init DOOM refresh daemon - ");
+	Sleep (1000);
     R_Init ();
 
     DEH_printf("\nP_Init: Init Playloop state.\n");
