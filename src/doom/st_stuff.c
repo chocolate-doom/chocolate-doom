@@ -1893,7 +1893,7 @@ void ST_drawWidgets(boolean refresh)
     if (st_crispyhud && screenblocks == CRISPY_HUD)
     {
 	dp_translucent = true;
-	V_DrawPatch(ST_FX, SCREENHEIGHT-ST_HEIGHT, faceback);
+	V_DrawPatch(ST_FX, ST_Y, faceback);
 	dp_translucent = false;
     }
 
