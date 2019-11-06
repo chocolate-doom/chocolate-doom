@@ -203,10 +203,14 @@ void P_MovePlayer (player_t* player, boolean justattacked)
 	
     player->mo->angle += (cmd->angleturn<<FRACBITS);
 
-    forwardmove = cmd->forwardmove;
-    sidemove = cmd->sidemove;
+    forwardmove = cmd->forwardmove * cmd_move_scale;
+    sidemove = cmd->sidemove * cmd_move_scale;
 
-    D_GetScaledMove(&forwardmove, &sidemove, justattacked);
+    // Need to set this manually, as 0xc800 doesn't divide cleanly by 900
+    if (justattacked && gameversion < exe_doom_1_2)
+    {
+        forwardmove = 0xc800;
+    }
 
     // Do not let the player control movement
     //  if not onground.

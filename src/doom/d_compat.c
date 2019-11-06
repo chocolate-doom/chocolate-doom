@@ -13,6 +13,7 @@
 //
 
 #include "d_compat.h"
+#include "sounds.h"
 #include "d_mode.h"
 
 #include "doomstat.h"
@@ -273,42 +274,10 @@ extern fixed_t forwardmove[2], sidemove[2];
 fixed_t         forwardmove10[2] = {51200/900, 102400/900}; 
 fixed_t         sidemove10[2] = {49152/900, 81920/900}; 
 
-static fixed_t turboScale = 100;
+fixed_t turbo_scale = 100;
+fixed_t cmd_move_scale = 2048;
 
-void D_SetTurboScale(int scale)
-{
-    turboScale = scale;
-    forwardmove[0] = forwardmove[0]*turboScale/100;
-    forwardmove[1] = forwardmove[1]*turboScale/100;
-    sidemove[0] = sidemove[0]*turboScale/100;
-    sidemove[1] = sidemove[1]*turboScale/100;
-}
-
-void ChangePlayerMoveToDoom1_0()
-{
-    forwardmove[0] = forwardmove10[0]*turboScale/100;
-    forwardmove[1] = forwardmove10[1]*turboScale/100;
-    sidemove[0] = sidemove10[0]*turboScale/100;
-    sidemove[1] = sidemove10[1]*turboScale/100;
-}
-
-void D_GetScaledMove(fixed_t *forward, fixed_t *side, boolean justattacked)
-{
-    if (gameversion < exe_doom_1_2)
-    {
-        *forward *= 900;
-        if (justattacked)
-        {
-            *forward = 0xc800;
-        }
-        *side *= 900;
-    }
-    else
-    {
-        *forward *= 2048;
-        *side *= 2048;
-    }
-}
+int sfx_getpow_1_2 = sfx_getpow;
 
 void D_SetConstantsForGameversion()
 {
@@ -331,10 +300,18 @@ void D_SetConstantsForGameversion()
             mobjinfo[MT_MISC14].flags |= MF_COUNTITEM;
 
             // Player move is different in Doom v1.0/v1.1
-            ChangePlayerMoveToDoom1_0();
+            forwardmove[0] = forwardmove10[0]*turbo_scale/100;
+            forwardmove[1] = forwardmove10[1]*turbo_scale/100;
+            sidemove[0] = sidemove10[0]*turbo_scale/100;
+            sidemove[1] = sidemove10[1]*turbo_scale/100;
+            cmd_move_scale = 900;
 
         // fallthrough
         case exe_doom_1_2:
+            // sfx_getpow does not exist, use sfx_itemup instead
+            // FIXME: not sure about last version, true at least in v1.2
+            sfx_getpow_1_2 = sfx_itemup;
+
             // Boss spider is not fullbright when attacking
             // FIXME: not sure about last version, true at least in v1.2
             states[S_SPID_ATK1].frame &= ~FF_FULLBRIGHT;

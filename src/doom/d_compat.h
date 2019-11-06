@@ -21,7 +21,9 @@ extern int angletocoarseshift;
 extern const fixed_t *coarsecosine;
 extern const fixed_t *coarsesine;
 
-void D_SetTurboScale(int scale);
-void D_GetScaledMove(fixed_t *forward, fixed_t *side, boolean justattacked);
+extern fixed_t turbo_scale;
+extern fixed_t cmd_move_scale;
+
+extern int sfx_getpow_1_2;
 
 void D_SetConstantsForGameversion(void);

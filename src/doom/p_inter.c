@@ -28,6 +28,8 @@
 #include "deh_misc.h"
 #include "doomstat.h"
 
+#include "d_compat.h"
+
 #include "m_random.h"
 #include "i_system.h"
 
@@ -431,7 +433,7 @@ P_TouchSpecialThing
     player_t*	player;
     int		i;
     fixed_t	delta;
-    int		sound, getpowsound;
+    int		sound;
 
     delta = special->z - toucher->z;
 
@@ -444,7 +446,6 @@ P_TouchSpecialThing
     
 	
     sound = sfx_itemup;	
-    getpowsound = (gameversion > exe_doom_1_2) ? sfx_getpow : sfx_itemup;
     player = toucher->player;
 
     // Dead thing touching.
@@ -495,7 +496,7 @@ P_TouchSpecialThing
 	    player->health = deh_max_soulsphere;
 	player->mo->health = player->health;
 	player->message = DEH_String(GOTSUPER);
-	sound = getpowsound;
+	sound = sfx_getpow_1_2;
 	break;
 	
       case SPR_MEGA:
@@ -507,7 +508,7 @@ P_TouchSpecialThing
         // affects the MegaArmor.
 	P_GiveArmor (player, 2);
 	player->message = DEH_String(GOTMSPHERE);
-	sound = getpowsound;
+	sound = sfx_getpow_1_2;
 	break;
 	
 	// cards
@@ -610,7 +611,7 @@ P_TouchSpecialThing
 	if (!P_GivePower (player, pw_invulnerability))
 	    return;
 	player->message = DEH_String(GOTINVUL);
-	sound = getpowsound;
+	sound = sfx_getpow_1_2;
 	break;
 	
       case SPR_PSTR:
@@ -619,35 +620,35 @@ P_TouchSpecialThing
 	player->message = DEH_String(GOTBERSERK);
 	if (player->readyweapon != wp_fist)
 	    player->pendingweapon = wp_fist;
-	sound = getpowsound;
+	sound = sfx_getpow_1_2;
 	break;
 	
       case SPR_PINS:
 	if (!P_GivePower (player, pw_invisibility))
 	    return;
 	player->message = DEH_String(GOTINVIS);
-	sound = getpowsound;
+	sound = sfx_getpow_1_2;
 	break;
 	
       case SPR_SUIT:
 	if (!P_GivePower (player, pw_ironfeet))
 	    return;
 	player->message = DEH_String(GOTSUIT);
-	sound = getpowsound;
+	sound = sfx_getpow_1_2;
 	break;
 	
       case SPR_PMAP:
 	if (!P_GivePower (player, pw_allmap))
 	    return;
 	player->message = DEH_String(GOTMAP);
-	sound = getpowsound;
+	sound = sfx_getpow_1_2;
 	break;
 	
       case SPR_PVIS:
 	if (!P_GivePower (player, pw_infrared))
 	    return;
 	player->message = DEH_String(GOTVISOR);
-	sound = getpowsound;
+	sound = sfx_getpow_1_2;
 	break;
 	
 	// ammo

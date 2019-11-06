@@ -81,7 +81,6 @@
 #include "r_local.h"
 #include "statdump.h"
 
-#include "sha1.h"
 #include "w_checksum.h"
 
 #include "d_main.h"
@@ -1478,6 +1477,8 @@ void D_DoomMain (void)
     if ( (p=M_CheckParm ("-turbo")) )
     {
 	int     scale = 200;
+	extern int forwardmove[2];
+	extern int sidemove[2];
 	
 	if (p<myargc-1)
 	    scale = atoi (myargv[p+1]);
@@ -1486,7 +1487,14 @@ void D_DoomMain (void)
 	if (scale > 400)
 	    scale = 400;
         DEH_printf("turbo scale: %i%%\n", scale);
-        D_SetTurboScale(scale);
+
+        // Need to store turbo scale in case forward/side move change later
+        turbo_scale = scale;
+
+	forwardmove[0] = forwardmove[0]*scale/100;
+	forwardmove[1] = forwardmove[1]*scale/100;
+	sidemove[0] = sidemove[0]*scale/100;
+	sidemove[1] = sidemove[1]*scale/100;
     }
     
     // init subsystems

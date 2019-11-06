@@ -93,8 +93,6 @@ int (*SlopeDiv)(unsigned int num, unsigned int den);
 int SlopeDivVanilla(unsigned int num, unsigned int den);
 int SlopeDivCrispy(unsigned int num, unsigned int den);
 
-// Change trig tables to match Doom v1.0
-void ChangeTrigTablesToDoom1_0();
 
 #endif
 
