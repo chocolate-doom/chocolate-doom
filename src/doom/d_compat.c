@@ -268,19 +268,19 @@ void ChangeTrigTablesToDoom1_0()
     coarsecosine = &coarsesine1_0[64];
 }
 
-extern fixed_t forwardmove[2], sidemove[2];
-
-// Doom 1.0 speed values, scaled by 1/900
-fixed_t         forwardmove10[2] = {51200/900, 102400/900}; 
-fixed_t         sidemove10[2] = {49152/900, 81920/900}; 
-
 fixed_t turbo_scale = 100;
 fixed_t cmd_move_scale = 2048;
 
-int sfx_getpow_1_2 = sfx_getpow;
+int compat_sfx_getpow = sfx_getpow;
 
 void D_SetConstantsForGameversion()
 {
+    extern fixed_t forwardmove[2], sidemove[2];
+
+    // Doom 1.0 speed values, scaled by 1/900
+    fixed_t forwardmove10[2] = {51200/900, 102400/900}; 
+    fixed_t sidemove10[2]    = {49152/900, 81920/900}; 
+
     // Each entry is the last version where the statement is true.
     switch (gameversion)
     {
@@ -310,7 +310,7 @@ void D_SetConstantsForGameversion()
         case exe_doom_1_2:
             // sfx_getpow does not exist, use sfx_itemup instead
             // FIXME: not sure about last version, true at least in v1.2
-            sfx_getpow_1_2 = sfx_itemup;
+            compat_sfx_getpow = sfx_itemup;
 
             // Boss spider is not fullbright when attacking
             // FIXME: not sure about last version, true at least in v1.2
