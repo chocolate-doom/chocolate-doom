@@ -1839,20 +1839,6 @@ void D_DoomMain (void)
 	timelimit = 20;
     }
 
-    dropbackpack = M_CheckParm("-backpack");
-
-    nodmweapons = M_CheckParm("-nodmweapons");
-
-    keepkeys = M_CheckParm("-keepkeys");
-
-    sprespawn = M_CheckParm("-sprespawn");
-
-    doublespawn = M_CheckParm("-2xmonsters");
-
-    doubledamage = M_CheckParm("-xpain");
-
-    nod2monsters = M_CheckParm("-nod2monsters");
-
     //!
     // @arg [<x> <y> | <xy>]
     // @vanilla
@@ -1882,6 +1868,22 @@ void D_DoomMain (void)
         }
         autostart = true;
     }
+
+    dropbackpack = M_CheckParm("-backpack");
+
+    nodmweapons = M_CheckParm("-nodmweapons");
+
+    keepkeys = M_CheckParm("-keepkeys");
+
+    sprespawn = M_CheckParm("-sprespawn");
+
+    doublespawn = M_CheckParm("-2xmonsters");
+
+    doubledamage = M_CheckParm("-xpain");
+
+    nod2monsters = M_CheckParm("-nod2monsters");
+
+    isa = M_CheckParm("-isa");
 
     // Undocumented:
     // Invoked by setup to test the controls.

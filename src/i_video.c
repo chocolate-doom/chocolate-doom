@@ -49,6 +49,10 @@
 #include "w_wad.h"
 #include "z_zone.h"
 
+extern int detailLevel;
+extern int screenblocks;
+boolean isa;
+
 // Lookup table for mapping ASCII characters to their equivalent when
 // shift is pressed on an American layout keyboard:
 
@@ -915,6 +919,14 @@ static boolean BlitArea(int x1, int y1, int x2, int y2)
     return result;
 }
 
+extern boolean singletics;
+
+static const int rates[2][9] =
+{
+    {30, 26, 23, 20, 18, 16, 14, 12, 11}, // high
+    {48, 43, 39, 35, 32, 29, 26, 23, 22}  // low
+};
+
 //
 // I_FinishUpdate
 //
@@ -923,6 +935,7 @@ void I_FinishUpdate (void)
     static int	lasttic;
     int		tics;
     int		i;
+    int rate;
 
     if (!initialized)
         return;
@@ -945,6 +958,23 @@ void I_FinishUpdate (void)
 
     if (!(SDL_GetAppState() & SDL_APPACTIVE))
         return;
+
+    // [crispy] variable rendering framerate
+    if (isa && !singletics)
+    {
+        static int doubletics_old;
+        int doubletics;
+        extern int GetAdjustedTimeN (const int N);
+
+        rate = rates[detailLevel][screenblocks-3];
+		if (rate > TICRATE) rate = TICRATE;
+        while ((doubletics = GetAdjustedTimeN(rate)) == doubletics_old)
+        {
+            I_Sleep(1);
+        }
+
+        doubletics_old = doubletics;
+    }
 
     // draws little dots on the bottom of the screen
 

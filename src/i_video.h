@@ -37,6 +37,8 @@
 
 #define MAX_MOUSE_BUTTONS 8
 
+extern boolean isa; // emulate an isa graphics card
+
 typedef struct
 {
     // Screen width and height
