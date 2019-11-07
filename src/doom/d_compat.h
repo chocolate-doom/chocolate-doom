@@ -24,6 +24,6 @@ extern const fixed_t *coarsesine;
 extern fixed_t turbo_scale;
 extern fixed_t cmd_move_scale;
 
-extern int sfx_getpow_1_2;
+extern int compat_sfx_getpow;
 
 void D_SetConstantsForGameversion(void);
