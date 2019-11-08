@@ -1320,13 +1320,6 @@ void A_Fire (mobj_t* actor)
     actor->y = dest->y + FixedMul (24*FRACUNIT, finesine[an]);
     actor->z = dest->z;
     P_SetThingPosition (actor);
-    // [crispy] update the Archvile fire's floorz and ceilingz values
-    // to prevent it from jumping back and forth between the floor heights
-    // of its (faulty) spawn sector and the target's actual sector.
-    // Thanks to Quasar for his excellent analysis at
-    // https://www.doomworld.com/vb/post/1297952
-    actor->floorz = actor->subsector->sector->floorheight;
-    actor->ceilingz = actor->subsector->sector->ceilingheight;
 }
 
 
