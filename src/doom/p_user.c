@@ -327,15 +327,24 @@ void P_PlayerThink (player_t* player)
 	{
 	    newweapon = wp_chainsaw;
 	}
-	
+
 	if ( (gamemode == commercial)
 	    && newweapon == wp_shotgun 
 	    && player->weaponowned[wp_supershotgun]
-	    && player->readyweapon != wp_supershotgun)
+	    && player->readyweapon != wp_supershotgun
+	    && !nod2monsters )
 	{
 	    newweapon = wp_supershotgun;
 	}
-	
+
+	if ( (gamemode == commercial)
+	    && newweapon == wp_shotgun 
+	    && player->weaponowned[wp_supershotgun]
+	    && player->readyweapon == wp_shotgun
+	    && nod2monsters )
+	{
+	    newweapon = wp_supershotgun;
+	}
 
 	if (player->weaponowned[newweapon]
 	    && newweapon != player->readyweapon)
