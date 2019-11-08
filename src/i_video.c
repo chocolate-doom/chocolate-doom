@@ -962,18 +962,18 @@ void I_FinishUpdate (void)
     // [crispy] variable rendering framerate
     if (isa && !singletics)
     {
-        static int doubletics_old;
-        int doubletics;
+        static int slowtics_old;
+        int slowtics;
         extern int GetAdjustedTimeN (const int N);
 
         rate = rates[detailLevel][screenblocks-3];
-		if (rate > TICRATE) rate = TICRATE;
-        while ((doubletics = GetAdjustedTimeN(rate)) == doubletics_old)
+        if (rate > TICRATE) rate = TICRATE;
+        while ((slowtics = GetAdjustedTimeN(rate)) == slowtics_old)
         {
             I_Sleep(1);
         }
 
-        doubletics_old = doubletics;
+        slowtics_old = slowtics;
     }
 
     // draws little dots on the bottom of the screen
