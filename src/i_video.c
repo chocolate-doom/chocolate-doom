@@ -921,10 +921,11 @@ static boolean BlitArea(int x1, int y1, int x2, int y2)
 
 extern boolean singletics;
 
-static const int rates[2][9] =
+// Trident 9000i-3
+static const float rates[2][9] =
 {
-    {30, 26, 23, 20, 18, 16, 14, 12, 11}, // high
-    {48, 43, 39, 35, 32, 29, 26, 23, 22}  // low
+    {54.3, 42.9, 34.0, 27.2, 22.0, 18.0, 15.0, 12.1, 11.6}, // high
+    {66.3, 57.2, 48.7, 41.3, 35.0, 29.7, 25.5, 21.3, 22.4}  // low
 };
 
 //
@@ -966,7 +967,7 @@ void I_FinishUpdate (void)
         int slowtics;
         extern int GetAdjustedTimeN (const int N);
 
-        rate = rates[detailLevel][screenblocks-3];
+        rate = (int)rates[detailLevel][screenblocks-3];
         if (rate > TICRATE) rate = TICRATE;
         while ((slowtics = GetAdjustedTimeN(rate)) == slowtics_old)
         {
