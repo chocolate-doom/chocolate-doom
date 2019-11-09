@@ -658,7 +658,7 @@ P_TouchSpecialThing
 	
 	// ammo
       case SPR_CLIP:
-	if (special->flags & MF_DROPPED)
+	if (special->flags & MF_DROPPED && (gameskill != sk_extreme))
 	{
 	    if (!P_GiveAmmo (player,am_clip,0))
 		return;
@@ -898,6 +898,7 @@ P_KillMobj
     {
       case MT_WOLFSS:
       case MT_POSSESSED:
+      case MT_MISC91:
 	item = MT_CLIP;
 	break;
 	
