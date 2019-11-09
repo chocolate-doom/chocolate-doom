@@ -39,6 +39,8 @@
 
 extern boolean isa; // emulate an isa graphics card
 
+extern int lcd_gamma_fix; // [JN] LCD gamma fix.
+
 typedef struct
 {
     // Screen width and height

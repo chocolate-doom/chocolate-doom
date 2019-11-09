@@ -141,6 +141,7 @@ char		mapdir[1024];           // directory of development maps
 
 int             show_endoom = 1;
 int             show_diskicon = 1;
+extern int lcd_gamma_fix;
 
 
 void D_ConnectNetGame(void);
@@ -266,7 +267,12 @@ void D_Display (void)
     
     // clean up border stuff
     if (gamestate != oldgamestate && gamestate != GS_LEVEL)
-	I_SetPalette (W_CacheLumpName (DEH_String("PLAYPAL"),PU_CACHE));
+    {
+        if (lcd_gamma_fix)
+            I_SetPalette (W_CacheLumpName (DEH_String("PALFIX"),PU_CACHE));
+        else
+            I_SetPalette (W_CacheLumpName (DEH_String("PLAYPAL"),PU_CACHE));
+    }
 
     // see if the border needs to be initially drawn
     if (gamestate == GS_LEVEL && oldgamestate != GS_LEVEL)
@@ -410,6 +416,7 @@ void D_BindVariables(void)
     M_BindIntVariable("vanilla_demo_limit",     &vanilla_demo_limit);
     M_BindIntVariable("show_endoom",            &show_endoom);
     M_BindIntVariable("show_diskicon",          &show_diskicon);
+    M_BindIntVariable("lcd_gamma_fix",          &lcd_gamma_fix);
 
     // Multiplayer chat macros
 

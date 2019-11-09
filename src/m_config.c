@@ -1614,6 +1614,14 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_KEY(key_dropbackpack),
+
+    //!
+    // @game doom
+    // Game palette optimization
+    //
+
+    CONFIG_VARIABLE_INT(lcd_gamma_fix),
+
 };
 
 static default_collection_t extra_defaults =

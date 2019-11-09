@@ -1701,6 +1701,10 @@ boolean M_Responder (event_t* ev)
 	    if (usegamma > 4)
 		usegamma = 0;
 	    players[consoleplayer].message = DEH_String(gammamsg[usegamma]);
+
+        if (lcd_gamma_fix)
+            I_SetPalette (W_CacheLumpName (DEH_String("PALFIX"),PU_CACHE));
+        else
             I_SetPalette (W_CacheLumpName (DEH_String("PLAYPAL"),PU_CACHE));
 	    return true;
 	}

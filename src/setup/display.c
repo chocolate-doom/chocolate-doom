@@ -109,6 +109,9 @@ int show_endoom = 1;
 int show_diskicon = 1;
 int png_screenshots = 0;
 
+// [JN] Game palette optimization
+int lcd_gamma_fix = 0;
+
 // These are the last screen width/height values that were chosen by the
 // user.  These are used when finding the "nearest" mode, so when 
 // changing the fullscreen / aspect ratio options, the setting does not
@@ -560,6 +563,13 @@ static void AdvancedDisplayConfig(TXT_UNCAST_ARG(widget),
                                       &show_endoom));
     }
 
+    // [JN] Palette optimization
+    if (gamemission == doom)
+    {
+        TXT_AddWidget(window,
+                      TXT_NewCheckBox("LCD gamma fix", &lcd_gamma_fix));
+    }
+
 #ifdef HAVE_LIBPNG
     TXT_AddWidget(window,
                   TXT_NewCheckBox("Save screenshots in PNG format",
@@ -724,6 +734,12 @@ void BindDisplayVariables(void)
      || gamemission == strife)
     {
         M_BindIntVariable("show_endoom",               &show_endoom);
+    }
+
+	// [JN] Palette optimization
+	if (gamemission == doom)
+    {
+        M_BindIntVariable("lcd_gamma_fix",         &lcd_gamma_fix);
     }
 
     if (gamemission == doom || gamemission == strife)
