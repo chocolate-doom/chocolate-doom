@@ -755,6 +755,7 @@ void P_SpawnMapThing (mapthing_t* mthing)
     int			bit;
     mobj_t*		mobj;
     mobj_t*		mobj2;
+    boolean spawned;
     fixed_t		x;
     fixed_t		y;
     fixed_t		z;
@@ -866,6 +867,7 @@ void P_SpawnMapThing (mapthing_t* mthing)
 	if ((doublespawn || gameskill == sk_extreme) && mobjinfo[i].flags & MF_COUNTKILL && mthing->type != MT_SPIDER && mthing->type != MT_CYBORG)
 	{
 		mobj2 = P_SpawnMobj (x + 2 * mobjinfo[i].radius, y, z, i);
+		spawned = true;
 		if (!P_CheckPosition (mobj2, mobj2->x, mobj2->y))
 		{
 			P_RemoveMobj (mobj2);
@@ -879,11 +881,14 @@ void P_SpawnMapThing (mapthing_t* mthing)
 					P_RemoveMobj (mobj2);
 					mobj2 = P_SpawnMobj (x, y - 2 * mobjinfo[i].radius, z, i);
 					if (!P_CheckPosition (mobj2, mobj2->x, mobj2->y))
+					{
 						P_RemoveMobj (mobj2);
+						spawned = false;
+					}
 				}
 			}
 		}
-		else
+		if (spawned)
 		{
 			mobj2->spawnpoint = *mthing;
 			if (mobj2->tics > 0)
