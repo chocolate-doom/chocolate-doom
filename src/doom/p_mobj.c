@@ -826,7 +826,7 @@ void P_SpawnMapThing (mapthing_t* mthing)
     // don't spawn any monsters if -nomonsters
     if (nomonsters
 	&& ( i == MT_SKULL
-	     || (mobjinfo[i].flags & MF_COUNTKILL)) )
+	     || (mobjinfo[i].flags & MF_COUNTKILL && !(netgame && i == MT_KEEN)) ))
     {
 	return;
     }
