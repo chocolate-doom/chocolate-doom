@@ -1260,13 +1260,29 @@ ST_Responder (event_t* ev)
       {
       // So be it.
       plyr->message = DEH_String(STSTR_CLEV);
+      // [crisp] allow IDCLEV during demo playback and warp to the requested map
+      if (demoplayback)
+      {
+          if (map > gamemap)
+          {
+              crispy->demowarp = map;
+              nodrawers = true;
+              singletics = true;
+              return true;
+          }
+          else
+          {
+              return false;
+          }
+      }
+      else
       G_DeferedInitNew(gameskill, epsd, map);
       // [crispy] eat key press, i.e. don't change weapon upon level change
       return true;
       }
     }
     // [crispy] eat up the first digit typed after a cheat expecting two parameters
-    else if (!netgame && !menuactive && cht_CheckCheatSP(&cheat_clev1, ev->data2))
+    else if (!netgame && cht_CheckCheat(&cheat_clev1, ev->data2) && !menuactive)
     {
 	char buf[2];
 
