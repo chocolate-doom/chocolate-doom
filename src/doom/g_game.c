@@ -135,6 +135,7 @@ int             totalleveltimes;        // [crispy] CPhipps - total time for all
 int             demostarttic;           // [crispy] fix revenant internal demo bug
  
 char           *demoname;
+char           *orig_demoname; // [crispy] the name originally chosen for the demo, i.e. without "-00000"
 boolean         demorecording; 
 boolean         longtics;               // cph's doom 1.91 longtics hack
 boolean         lowres_turn;            // low resolution turning for longtics
@@ -2185,6 +2186,16 @@ G_DeferedInitNew
     d_map = map; 
     G_ClearSavename();
     gameaction = ga_newgame; 
+
+    // [crispy] if a new game is started during demo recording, start a new demo
+    if (demorecording)
+    {
+	G_CheckDemoStatus();
+	Z_Free(demoname);
+
+	G_RecordDemo(orig_demoname);
+	G_BeginRecording();
+    }
 } 
 
 
@@ -2561,6 +2572,12 @@ void G_RecordDemo (char *name)
     int i;
     int maxsize;
     FILE *fp = NULL;
+
+    // [crispy] the name originally chosen for the demo, i.e. without "-00000"
+    if (!orig_demoname)
+    {
+	orig_demoname = name;
+    }
 
     usergame = false;
     demoname_size = strlen(name) + 5 + 6; // [crispy] + 6 for "-00000"
@@ -2967,7 +2984,15 @@ boolean G_CheckDemoStatus (void)
 	M_WriteFile (demoname, demobuffer, demo_p - demobuffer); 
 	Z_Free (demobuffer); 
 	demorecording = false; 
+	// [crispy] if a new game is started during demo recording, start a new demo
+	if (gameaction != ga_newgame)
+	{
 	I_Error ("Demo %s recorded",demoname); 
+	}
+	else
+	{
+	    fprintf(stderr, "Demo %s recorded\n",demoname);
+	}
     } 
 	 
     return false; 

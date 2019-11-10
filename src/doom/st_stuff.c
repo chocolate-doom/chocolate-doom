@@ -1147,7 +1147,7 @@ ST_Responder (event_t* ev)
     }
     
     // 'clev' change-level cheat
-    if (!netgame && !menuactive && cht_CheckCheatSP(&cheat_clev, ev->data2)) // [crispy] restrict cheat usage
+    if (!netgame && cht_CheckCheat(&cheat_clev, ev->data2) && !menuactive) // [crispy] prevent only half the screen being updated
     {
       char		buf[3];
       int		epsd;
