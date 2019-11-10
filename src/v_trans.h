@@ -49,6 +49,8 @@ enum
     CRMAX
 } cr_t;
 
+#define CR_GREY CR_GRAY
+
 extern byte *cr[CRMAX];
 extern char **crstr;
 

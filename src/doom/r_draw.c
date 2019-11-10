@@ -32,9 +32,7 @@
 
 // Needs access to LFB (guess what).
 #include "v_video.h"
-#ifdef CRISPY_TRUECOLOR
 #include "v_trans.h"
-#endif
 
 // State.
 #include "doomstat.h"
@@ -641,9 +639,6 @@ void R_DrawTranslatedColumnLow (void)
 	frac += fracstep; 
     } while (count--); 
 } 
-
-// [crispy] draw translucent column
-extern byte *tranmap;
 
 void R_DrawTLColumn (void)
 {
