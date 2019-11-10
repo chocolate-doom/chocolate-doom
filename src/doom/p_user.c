@@ -42,6 +42,9 @@
 // 16 pixels of bob
 #define MAXBOB	0x100000	
 
+// [crispy] variable player view bob
+static const fixed_t crispy_bobfactor[3] = {4, 3, 0};
+
 boolean		onground;
 
 
@@ -89,6 +92,9 @@ void P_CalcHeight (player_t* player, boolean safe)
 
     if (player->bob>MAXBOB)
 	player->bob = MAXBOB;
+
+    // [crispy] variable player view bob
+    player->bob = crispy_bobfactor[crispy->bobfactor] * player->bob / 4;
 
     // [crispy] squat down weapon sprite a bit after hitting the ground
     if (crispy->weaponsquat && player->psp_dy_max)

@@ -39,6 +39,7 @@ typedef struct
 	int automapoverlay;
 	int automaprotate;
 	int automapstats;
+	int bobfactor;
 	int brightmaps;
 	int centerweapon;
 	int coloredblood;
@@ -119,6 +120,14 @@ enum
     ASPECTRATIO_4_3,
     ASPECTRATIO_16_10,
     NUM_ASPECTRATIOS,
+};
+
+enum
+{
+    BOBFACTOR_FULL,
+    BOBFACTOR_75,
+    BOBFACTOR_OFF,
+    NUM_BOBFACTORS,
 };
 
 enum

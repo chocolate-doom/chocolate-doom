@@ -32,6 +32,13 @@ multiitem_t multiitem_aspectratio[NUM_ASPECTRATIOS] =
     {ASPECTRATIO_16_10, "16:10"},
 };
 
+multiitem_t multiitem_bobfactor[NUM_BOBFACTORS] =
+{
+    {BOBFACTOR_FULL, "full"},
+    {BOBFACTOR_75, "75%"},
+    {BOBFACTOR_OFF, "off"},
+};
+
 multiitem_t multiitem_brightmaps[NUM_BRIGHTMAPS] =
 {
     {BRIGHTMAPS_OFF, "none"},
@@ -164,6 +171,12 @@ void M_CrispyToggleAutomapstats(int choice)
 {
     choice = 0;
     crispy->automapstats = (crispy->automapstats + 1) % NUM_WIDGETS;
+}
+
+void M_CrispyToggleBobfactor(int choice)
+{
+    choice = 0;
+    crispy->bobfactor = (crispy->bobfactor + 1) % NUM_BOBFACTORS;
 }
 
 void M_CrispyToggleBrightmaps(int choice)

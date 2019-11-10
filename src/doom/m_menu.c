@@ -567,6 +567,7 @@ enum
     crispness_neghealth,
     crispness_centerweapon,
     crispness_pitch,
+    crispness_bobfactor,
     crispness_weaponsquat,
     crispness_sep_tactical_,
 
@@ -590,6 +591,7 @@ static menuitem_t Crispness3Menu[]=
     {1,"",	M_CrispyToggleNeghealth,'n'},
     {1,"",	M_CrispyToggleCenterweapon,'c'},
     {1,"",	M_CrispyTogglePitch,'w'},
+    {1,"",	M_CrispyToggleBobfactor,'p'},
     {1,"",	M_CrispyToggleWeaponSquat,'w'},
     {-1,"",0,'\0'},
     {-1,"",0,'\0'},
@@ -1555,6 +1557,7 @@ static void M_DrawCrispness3(void)
     M_DrawCrispnessItem(crispness_neghealth, "Negative Player Health", crispy->neghealth, true);
     M_DrawCrispnessMultiItem(crispness_centerweapon, "Weapon Attack Alignment", multiitem_centerweapon, crispy->centerweapon, true);
     M_DrawCrispnessItem(crispness_pitch, "Weapon Recoil Pitch", crispy->pitch, true);
+    M_DrawCrispnessMultiItem(crispness_bobfactor, "Player View Bobbing", multiitem_bobfactor, crispy->bobfactor, true);
     M_DrawCrispnessItem(crispness_weaponsquat, "Squat weapon down on impact", crispy->weaponsquat, true);
 //  M_DrawCrispnessItem(crispness_extsaveg, "Extended Savegames", crispy->extsaveg, true);
 
