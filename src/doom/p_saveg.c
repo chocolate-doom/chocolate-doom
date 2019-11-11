@@ -711,6 +711,8 @@ static void saveg_read_player_t(player_t *str)
 
     // fixed_t bob;
     str->bob = saveg_read32();
+    // [crispy] variable player view bob
+    str->bob2 = str->bob;
 
     // int health;
     str->health = saveg_read32();
