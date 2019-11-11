@@ -10,8 +10,8 @@ if [ "$ANALYZE" = "true" ] ; then
 else
 	set -e
 	./autogen.sh --enable-werror
-	make
+	make -j4
 	make install DESTDIR=/tmp/whatever
 	make dist
-	make -C quickcheck check SOURCE_PORT=$PWD/src/chocolate-doom
+	make -j4 -C quickcheck check SOURCE_PORT=$PWD/src/chocolate-doom
 fi
