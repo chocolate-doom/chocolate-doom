@@ -13,4 +13,5 @@ else
 	make
 	make install DESTDIR=/tmp/whatever
 	make dist
+	make -C quickcheck check SOURCE_PORT=$PWD/src/chocolate-doom
 fi

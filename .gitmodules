@@ -1,0 +1,3 @@
+[submodule "quickcheck"]
+	path = quickcheck
+	url = ./quickcheck/
