@@ -108,6 +108,9 @@ P_SetPsprite
 	    // coordinate set
 	    psp->sx = state->misc1 << FRACBITS;
 	    psp->sy = state->misc2 << FRACBITS;
+	    // [crispy] variable weapon sprite bob
+	    psp->sx2 = psp->sx;
+	    psp->sy2 = psp->sy;
 	}
 	
 	// Call action routine.

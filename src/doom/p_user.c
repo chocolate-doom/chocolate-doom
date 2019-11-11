@@ -66,6 +66,56 @@ P_Thrust
 
 
 
+extern void A_Lower();
+extern void A_Raise();
+void P_ApplyWeaponBob (player_t *player)
+{
+	state_t *state = player->mo->state;
+	pspdef_t *psp = &player->psprites[ps_weapon];
+
+	if (psp->state->misc1 ||
+	    psp->state->action.acp3 == (actionf_p3)A_Lower ||
+	    psp->state->action.acp3 == (actionf_p3)A_Raise)
+	{
+		psp->sx2 = psp->sx;
+		psp->sy2 = psp->sy;
+	}
+	else
+	{
+		psp->sx2 = FRACUNIT;
+		psp->sy2 = 32 * FRACUNIT; // [crispy] WEAPONTOP
+
+		if (!(crispy->centerweapon == CENTERWEAPON_HORVER &&
+		    (state == &states[S_PLAY_ATK1] || state == &states[S_PLAY_ATK2])))
+		{
+			const angle_t angle = (128 * leveltime) & FINEMASK;
+
+			psp->sx2 += FixedMul(player->bob2, finecosine[angle]);
+			psp->sy2 += FixedMul(player->bob2, finesine[angle & (FINEANGLES / 2 - 1)]);
+		}
+	}
+
+	// [crispy] squat down weapon sprite a bit after hitting the ground
+	if (crispy->weaponsquat && player->psp_dy_max)
+	{
+		player->psp_dy -= FRACUNIT;
+
+		if (player->psp_dy < player->psp_dy_max)
+		{
+			player->psp_dy = -player->psp_dy;
+		}
+
+		if (player->psp_dy == 0)
+		{
+			player->psp_dy_max = 0;
+		}
+
+		psp->sy2 += abs(player->psp_dy);
+	}
+
+	player->psprites[ps_flash].sx2 = psp->sx2;
+	player->psprites[ps_flash].sy2 = psp->sy2;
+}
 
 //
 // P_CalcHeight
@@ -93,22 +143,6 @@ void P_CalcHeight (player_t* player)
 
     // [crispy] variable player view bob
     player->bob2 = crispy_bobfactor[crispy->bobfactor] * player->bob / 4;
-
-    // [crispy] squat down weapon sprite a bit after hitting the ground
-    if (crispy->weaponsquat && player->psp_dy_max)
-    {
-	player->psp_dy -= FRACUNIT;
-
-	if (player->psp_dy < player->psp_dy_max)
-	{
-		player->psp_dy = -player->psp_dy;
-	}
-
-	if (player->psp_dy == 0)
-	{
-		player->psp_dy_max = 0;
-	}
-    }
 
     if ((player->cheats & CF_NOMOMENTUM) || !onground)
     {
@@ -453,6 +487,7 @@ void P_PlayerThink (player_t* player)
     
     // cycle psprites
     P_MovePsprites (player);
+    P_ApplyWeaponBob(player);
     
     // Counters, time dependend power ups.
 

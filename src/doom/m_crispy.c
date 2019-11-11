@@ -50,10 +50,10 @@ multiitem_t multiitem_brightmaps[NUM_BRIGHTMAPS] =
 multiitem_t multiitem_centerweapon[NUM_CENTERWEAPON] =
 {
     {CENTERWEAPON_OFF, "off"},
-    {CENTERWEAPON_HOR, "horizontal"},
+//  {CENTERWEAPON_HOR, "horizontal"},
     {CENTERWEAPON_HORVER, "centered"},
     {CENTERWEAPON_BOB, "bobbing"},
-    {CENTERWEAPON_BOB2, "bobbing/2"},
+//  {CENTERWEAPON_BOB2, "bobbing/2"},
 };
 
 multiitem_t multiitem_coloredhud[NUM_COLOREDHUD] =

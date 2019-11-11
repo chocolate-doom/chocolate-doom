@@ -66,6 +66,9 @@ typedef struct
     fixed_t	sx;
     fixed_t	sy;
 
+    // [crispy] variable weapon sprite bob
+    fixed_t	sx2;
+    fixed_t	sy2;
 } pspdef_t;
 
 #endif
