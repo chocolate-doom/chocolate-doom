@@ -2106,7 +2106,10 @@ void G_RecordDemo (char *name)
     usergame = false;
     demoname_size = strlen(name) + 5;
     demoname = Z_Malloc(demoname_size, PU_STATIC, NULL);
-    M_snprintf(demoname, demoname_size, "%s.lmp", name);
+    if (!strstr(name, ".lmp") && !strstr(name, ".LMP"))
+        M_snprintf(demoname, demoname_size, "%s.lmp", name);
+    else
+        M_snprintf(demoname, demoname_size, name);
     maxsize = 0x20000;
 
     //!
