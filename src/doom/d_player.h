@@ -165,15 +165,27 @@ typedef struct player_s
     //      Used to interpolate between camera positions.
     angle_t		oldviewz;
 
-    // [crispy] additional fields for crispy features
-    char*	centermessage;
+    // [crispy] show centered "Secret Revealed!" message
+    char	*centermessage;
+
+    // [crispy] free look / mouse look
     int	lookdir, oldlookdir;
     boolean	centering;
+
+    // [crispy] jumping
     unsigned int	jumpTics;
+
+    // [crispy] weapon recoil pitch
     fixed_t	recoilpitch, oldrecoilpitch;
+
+    // [crispy] weapon sound source
     mobj_t	*so;
-    // [crispy] squat down weapon sprite a bit after hitting the ground
+
+    // [crispy] squat weapon down on impact
     fixed_t	psp_dy, psp_dy_max;
+
+    // [crispy] variable player view bob
+    fixed_t	bob2;
 } player_t;
 
 
