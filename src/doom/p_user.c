@@ -71,7 +71,7 @@ P_Thrust
 // P_CalcHeight
 // Calculate the walking / running height adjustment
 //
-void P_CalcHeight (player_t* player, boolean safe)
+void P_CalcHeight (player_t* player) 
 {
     int		angle;
     fixed_t	bob;
@@ -82,8 +82,6 @@ void P_CalcHeight (player_t* player, boolean safe)
     // OPTIMIZE: tablify angle
     // Note: a LUT allows for effects
     //  like a ramp with low health.
-  if (!safe)
-  {
     player->bob =
 	FixedMul (player->mo->momx, player->mo->momx)
 	+ FixedMul (player->mo->momy,player->mo->momy);
@@ -111,7 +109,6 @@ void P_CalcHeight (player_t* player, boolean safe)
 		player->psp_dy_max = 0;
 	}
     }
-  }
 
     if ((player->cheats & CF_NOMOMENTUM) || !onground)
     {
@@ -129,8 +126,6 @@ void P_CalcHeight (player_t* player, boolean safe)
 
     
     // move viewheight
-  if (!safe)
-  {
     if (player->playerstate == PST_LIVE)
     {
 	player->viewheight += player->deltaviewheight;
@@ -155,7 +150,6 @@ void P_CalcHeight (player_t* player, boolean safe)
 		player->deltaviewheight = 1;
 	}
     }
-  }
     player->viewz = player->mo->z + player->viewheight + bob;
 
     if (player->viewz > player->mo->ceilingz-4*FRACUNIT)
@@ -252,7 +246,7 @@ void P_DeathThink (player_t* player)
 
     player->deltaviewheight = 0;
     onground = (player->mo->z <= player->mo->floorz);
-    P_CalcHeight (player, false);
+    P_CalcHeight (player);
 	
     if (player->attacker && player->attacker != player->mo)
     {
@@ -383,7 +377,7 @@ void P_PlayerThink (player_t* player)
     else
 	P_MovePlayer (player);
     
-    P_CalcHeight (player, false);
+    P_CalcHeight (player);
 
     if (player->mo->subsector->sector->special)
 	P_PlayerInSpecialSector (player);
