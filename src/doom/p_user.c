@@ -82,16 +82,18 @@ void P_ApplyWeaponBob (player_t *player)
 	}
 	else
 	{
-		psp->sx2 = FRACUNIT;
-		psp->sy2 = 32 * FRACUNIT; // [crispy] WEAPONTOP
-
-		if (!(crispy->centerweapon == CENTERWEAPON_HORVER &&
-		    (state == &states[S_PLAY_ATK1] || state == &states[S_PLAY_ATK2])))
+		if (!player->attackdown || crispy->centerweapon >= CENTERWEAPON_HORVER || crispy->bobfactor == BOBFACTOR_OFF)
 		{
-			const angle_t angle = (128 * leveltime) & FINEMASK;
+			psp->sx2 = FRACUNIT;
+			psp->sy2 = 32 * FRACUNIT; // [crispy] WEAPONTOP
 
-			psp->sx2 += FixedMul(player->bob2, finecosine[angle]);
-			psp->sy2 += FixedMul(player->bob2, finesine[angle & (FINEANGLES / 2 - 1)]);
+			if (!player->attackdown || crispy->centerweapon == CENTERWEAPON_BOB)
+			{
+				const angle_t angle = (128 * leveltime) & FINEMASK;
+
+				psp->sx2 += FixedMul(player->bob2, finecosine[angle]);
+				psp->sy2 += FixedMul(player->bob2, finesine[angle & (FINEANGLES / 2 - 1)]);
+			}
 		}
 	}
 
