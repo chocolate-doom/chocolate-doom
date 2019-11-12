@@ -99,8 +99,8 @@ void P_CalcHeight (player_t* player)
 	return;
     }
 	
-    angle = (FINEANGLES/20*leveltime)&FINEMASK;
-    bob = FixedMul ( player->bob/2, finesine[angle]);
+    angle = (coarseangles/20*leveltime)&coarsemask;
+    bob = FixedMul ( player->bob/2, coarsesine[angle]);
     
     // move viewheight
     if (player->playerstate == PST_LIVE)

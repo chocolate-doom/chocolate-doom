@@ -21,6 +21,8 @@
 #include "doomdef.h"
 #include "d_event.h"
 
+#include "d_compat.h"
+
 #include "deh_misc.h"
 
 #include "m_random.h"
@@ -318,10 +320,10 @@ A_WeaponReady
 	player->attackdown = false;
     
     // bob the weapon based on movement speed
-    angle = (128*leveltime)&FINEMASK;
-    psp->sx = FRACUNIT + FixedMul (player->bob, finecosine[angle]);
-    angle &= FINEANGLES/2-1;
-    psp->sy = WEAPONTOP + FixedMul (player->bob, finesine[angle]);
+    angle = (coarseangles/64*leveltime)&coarsemask;
+    psp->sx = FRACUNIT + FixedMul (player->bob, coarsecosine[angle]);
+    angle &= coarseangles/2-1;
+    psp->sy = WEAPONTOP + FixedMul (player->bob, coarsesine[angle]);
 }
 
 
