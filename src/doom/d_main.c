@@ -1932,7 +1932,6 @@ void D_DoomMain (void)
     M_Init ();
 
     DEH_printf("R_Init: Init DOOM refresh daemon - ");
-	Sleep (1000);
     R_Init ();
 
     DEH_printf("\nP_Init: Init Playloop state.\n");
@@ -1944,6 +1943,7 @@ void D_DoomMain (void)
     DEH_printf("D_CheckNetGame: Checking network game status.\n");
     D_CheckNetGame ();
 
+    I_Sleep (1000);
     PrintGameVersion();
 
     DEH_printf("HU_Init: Setting up heads up display.\n");
