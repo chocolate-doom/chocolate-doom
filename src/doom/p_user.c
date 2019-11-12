@@ -70,7 +70,6 @@ extern void A_Lower();
 extern void A_Raise();
 void P_ApplyWeaponBob (player_t *player)
 {
-	state_t *state = player->mo->state;
 	pspdef_t *psp = &player->psprites[ps_weapon];
 
 	if (psp->state->misc1 ||

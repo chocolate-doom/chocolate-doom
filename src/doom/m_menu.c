@@ -564,11 +564,11 @@ enum
     crispness_sep_tactical,
     crispness_freelook,
     crispness_mouselook,
-    crispness_neghealth,
-    crispness_centerweapon,
-    crispness_pitch,
     crispness_bobfactor,
+    crispness_centerweapon,
     crispness_weaponsquat,
+    crispness_pitch,
+    crispness_neghealth,
     crispness_sep_tactical_,
 
     crispness_sep_crosshair,
@@ -588,11 +588,11 @@ static menuitem_t Crispness3Menu[]=
     {-1,"",0,'\0'},
     {1,"",	M_CrispyToggleFreelook,'a'},
     {1,"",	M_CrispyToggleMouseLook,'p'},
-    {1,"",	M_CrispyToggleNeghealth,'n'},
-    {1,"",	M_CrispyToggleCenterweapon,'c'},
-    {1,"",	M_CrispyTogglePitch,'w'},
     {1,"",	M_CrispyToggleBobfactor,'p'},
+    {1,"",	M_CrispyToggleCenterweapon,'c'},
     {1,"",	M_CrispyToggleWeaponSquat,'w'},
+    {1,"",	M_CrispyTogglePitch,'w'},
+    {1,"",	M_CrispyToggleNeghealth,'n'},
     {-1,"",0,'\0'},
     {-1,"",0,'\0'},
     {1,"",	M_CrispyToggleCrosshair,'d'},
@@ -1554,11 +1554,11 @@ static void M_DrawCrispness3(void)
 
     M_DrawCrispnessMultiItem(crispness_freelook, "Allow Free Look", multiitem_freelook, crispy->freelook, true);
     M_DrawCrispnessItem(crispness_mouselook, "Permanent Mouse Look", crispy->mouselook, true);
-    M_DrawCrispnessItem(crispness_neghealth, "Negative Player Health", crispy->neghealth, true);
+    M_DrawCrispnessMultiItem(crispness_bobfactor, "Player View/Weapon Bobbing", multiitem_bobfactor, crispy->bobfactor, true);
     M_DrawCrispnessMultiItem(crispness_centerweapon, "Weapon Attack Alignment", multiitem_centerweapon, crispy->centerweapon, crispy->bobfactor != BOBFACTOR_OFF);
-    M_DrawCrispnessItem(crispness_pitch, "Weapon Recoil Pitch", crispy->pitch, true);
-    M_DrawCrispnessMultiItem(crispness_bobfactor, "Player View Bobbing", multiitem_bobfactor, crispy->bobfactor, true);
     M_DrawCrispnessItem(crispness_weaponsquat, "Squat weapon down on impact", crispy->weaponsquat, true);
+    M_DrawCrispnessItem(crispness_pitch, "Weapon Recoil Pitch", crispy->pitch, true);
+    M_DrawCrispnessItem(crispness_neghealth, "Negative Player Health", crispy->neghealth, true);
 //  M_DrawCrispnessItem(crispness_extsaveg, "Extended Savegames", crispy->extsaveg, true);
 
     M_DrawCrispnessSeparator(crispness_sep_crosshair, "Crosshair");
