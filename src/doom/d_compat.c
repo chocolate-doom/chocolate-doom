@@ -78,6 +78,8 @@ const fixed_t coarsesine1_0[5*COARSEANGLES1_0/4] =
 };
 
 // These default to finesine, but change to coarsesine with Doom v1.0
+int coarseangles = FINEANGLES;
+int coarsemask = FINEMASK;
 int angletocoarseshift = ANGLETOFINESHIFT;
 const fixed_t *coarsesine = &finesine1_2[0];
 const fixed_t *coarsecosine = &finesine1_2[FINEANGLES/4];
@@ -263,6 +265,8 @@ void ChangeTrigTablesToDoom1_0()
         tantoangle1_2[i] += tantoangle_to_1_0[i];
     }
 
+    coarseangles = COARSEANGLES1_0;
+    coarsemask = COARSEMASK1_0;
     angletocoarseshift = ANGLETOCOARSESHIFT1_0;
     coarsesine = coarsesine1_0;
     coarsecosine = &coarsesine1_0[64];

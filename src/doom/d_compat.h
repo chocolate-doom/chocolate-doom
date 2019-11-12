@@ -16,6 +16,8 @@
 
 #include "tables.h"
 
+extern int coarseangles;
+extern int coarsemask;
 extern int angletocoarseshift;
 
 extern const fixed_t *coarsecosine;
