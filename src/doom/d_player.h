@@ -181,8 +181,8 @@ typedef struct player_s
     // [crispy] weapon sound source
     mobj_t	*so;
 
-    // [crispy] squat weapon down on impact
-    fixed_t	psp_dy, psp_dy_max;
+    // [crispy] squat down weapon sprite
+    fixed_t	psp_dy_max;
 
     // [crispy] variable player view bob
     fixed_t	bob2;
