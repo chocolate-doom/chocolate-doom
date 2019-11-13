@@ -1,21 +1,21 @@
 1 ICON "../data/doom.ico"
 
 1 VERSIONINFO
-PRODUCTVERSION 2,4,0,2
-FILEVERSION 2,4,0,2
+PRODUCTVERSION 2,5,0,0
+FILEVERSION 2,5,0,0
 FILETYPE 1
 {
  BLOCK "StringFileInfo"
  {
   BLOCK "040904E4"
   {
-   VALUE "FileVersion", "2.4.0b"
-   VALUE "FileDescription", "2.4.0b"
+   VALUE "FileVersion", "2.5.0"
+   VALUE "FileDescription", "2.5.0"
    VALUE "InternalName", "Doom"
    VALUE "CompanyName", "id Software"
    VALUE "LegalCopyright", "GNU General Public License"
    VALUE "ProductName", "RUDE"
-   VALUE "ProductVersion", "2.4.0b"
+   VALUE "ProductVersion", "2.5.0"
   }
  }
  BLOCK "VarFileInfo"

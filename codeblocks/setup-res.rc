@@ -1,19 +1,19 @@
 1 VERSIONINFO
-PRODUCTVERSION 2,4,0,2
-FILEVERSION 2,4,0,2
+PRODUCTVERSION 2,5,0,0
+FILEVERSION 2,5,0,0
 FILETYPE 1
 {
  BLOCK "StringFileInfo"
  {
   BLOCK "040904E4"
   {
-   VALUE "FileVersion", "2.4.0b"
+   VALUE "FileVersion", "2.5.0"
    VALUE "FileDescription", "Chocolate Doom Configure"
    VALUE "InternalName", "chocolate-configure"
    VALUE "CompanyName", "Chocolate Doom"
    VALUE "LegalCopyright", "GNU General Public License"
    VALUE "ProductName", "RUDE Configure"
-   VALUE "ProductVersion", "2.4.0b"
+   VALUE "ProductVersion", "2.5.0"
   }
  }
  BLOCK "VarFileInfo"
