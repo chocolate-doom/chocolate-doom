@@ -33,7 +33,7 @@ static struct
     { pack_chex, retail,     1, 5 },
     { doom,      shareware,  1, 9 },
     { doom,      registered, 3, 9 },
-    { doom,      retail,     4, 9 },
+    { doom,      retail,     5, 9 }, // SIGIL
     { doom2,     commercial, 1, 32 },
     { pack_tnt,  commercial, 1, 32 },
     { pack_plut, commercial, 1, 32 },
