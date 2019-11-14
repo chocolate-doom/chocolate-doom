@@ -843,29 +843,44 @@ static void StartGameMenu(char *window_title, int multiplayer)
                NULL);
     }
 
-    TXT_AddWidgets(window,
-                   TXT_NewSeparator("Game options"),
-                   TXT_NewCheckBox("No monsters", &nomonsters),
-                   TXT_NewCheckBox("Fast", &fast),
-                   TXT_NewCheckBox("Respawn", &respawn),
-                   TXT_NewCheckBox("2x monsters", &doublespawn),
-                   TXT_NewCheckBox("Only D1 monsters", &nod2monsters),
-                   TXT_NewCheckBox("Take 2x damage", &doubledamage),
-                   TXT_NewCheckBox("Backpacks", &dropbackpack),
-                   NULL);
-
-    if (!multiplayer)
+    if (gamemission == doom)
     {
-        TXT_AddWidget(window,
-                       TXT_NewCheckBox("SP respawn", &sprespawn));
+        TXT_AddWidgets(window,
+                       TXT_NewSeparator("Game options"),
+                       TXT_NewCheckBox("No monsters", &nomonsters),
+                       TXT_NewCheckBox("Fast", &fast),
+                       TXT_NewCheckBox("Respawn", &respawn),
+                       TXT_NewCheckBox("2x monsters", &doublespawn),
+                       TXT_NewCheckBox("Only D1 monsters", &nod2monsters),
+                       TXT_NewCheckBox("Take 2x damage", &doubledamage),
+                       TXT_NewCheckBox("Backpacks", &dropbackpack),
+                       NULL);
+
+        if (!multiplayer)
+        {
+            TXT_AddWidget(window,
+                           TXT_NewCheckBox("SP respawn", &sprespawn));
+        }
+        else
+        {
+            TXT_AddWidget(window,
+                           TXT_NewCheckBox("Don't spawn DM things", &nodmweapons));
+
+            TXT_AddWidget(window,
+                           TXT_NewCheckBox("Keep keys", &keepkeys));
+        }
     }
-    else
+	else
     {
-        TXT_AddWidget(window,
-                       TXT_NewCheckBox("Don't spawn DM things", &nodmweapons));
-
-        TXT_AddWidget(window,
-                       TXT_NewCheckBox("Keep keys", &keepkeys));
+        TXT_AddWidgets(window,
+                       TXT_NewSeparator("Monster options"),
+                       TXT_NewInvertedCheckBox("Monsters enabled", &nomonsters),
+                       TXT_TABLE_OVERFLOW_RIGHT,
+                       TXT_NewCheckBox("Fast monsters", &fast),
+                       TXT_TABLE_OVERFLOW_RIGHT,
+                       TXT_NewCheckBox("Respawning monsters", &respawn),
+                       TXT_TABLE_OVERFLOW_RIGHT,
+                       NULL);
     }
 
     if (multiplayer)
