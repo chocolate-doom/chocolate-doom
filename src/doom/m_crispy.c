@@ -32,6 +32,13 @@ multiitem_t multiitem_aspectratio[NUM_ASPECTRATIOS] =
     {ASPECTRATIO_16_10, "16:10"},
 };
 
+multiitem_t multiitem_bobfactor[NUM_BOBFACTORS] =
+{
+    {BOBFACTOR_FULL, "full"},
+    {BOBFACTOR_75, "75%"},
+    {BOBFACTOR_OFF, "off"},
+};
+
 multiitem_t multiitem_brightmaps[NUM_BRIGHTMAPS] =
 {
     {BRIGHTMAPS_OFF, "none"},
@@ -43,10 +50,10 @@ multiitem_t multiitem_brightmaps[NUM_BRIGHTMAPS] =
 multiitem_t multiitem_centerweapon[NUM_CENTERWEAPON] =
 {
     {CENTERWEAPON_OFF, "off"},
-    {CENTERWEAPON_HOR, "horizontal"},
+//  {CENTERWEAPON_HOR, "horizontal"},
     {CENTERWEAPON_HORVER, "centered"},
     {CENTERWEAPON_BOB, "bobbing"},
-    {CENTERWEAPON_BOB2, "bobbing/2"},
+//  {CENTERWEAPON_BOB2, "bobbing/2"},
 };
 
 multiitem_t multiitem_coloredhud[NUM_COLOREDHUD] =
@@ -164,6 +171,12 @@ void M_CrispyToggleAutomapstats(int choice)
 {
     choice = 0;
     crispy->automapstats = (crispy->automapstats + 1) % NUM_WIDGETS;
+}
+
+void M_CrispyToggleBobfactor(int choice)
+{
+    choice = 0;
+    crispy->bobfactor = (crispy->bobfactor + 1) % NUM_BOBFACTORS;
 }
 
 void M_CrispyToggleBrightmaps(int choice)

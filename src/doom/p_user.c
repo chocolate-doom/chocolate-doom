@@ -42,6 +42,9 @@
 // 16 pixels of bob
 #define MAXBOB	0x100000	
 
+// [crispy] variable player view bob
+static const fixed_t crispy_bobfactor[3] = {4, 3, 0};
+
 boolean		onground;
 
 
@@ -63,12 +66,64 @@ P_Thrust
 
 
 
+// [crispy] apply bobbing (or centering) to the player's weapon sprite
+void P_ApplyWeaponBob (player_t *player)
+{
+	pspdef_t *psp = &player->psprites[ps_weapon];
+
+	extern void A_Lower();
+	extern void A_Raise();
+
+	// [crispy] don't center vertically during lowering and raising states
+	if (psp->state->misc1 ||
+	    psp->state->action.acp3 == (actionf_p3)A_Lower ||
+	    psp->state->action.acp3 == (actionf_p3)A_Raise)
+	{
+		psp->sx2 = psp->sx;
+		psp->sy2 = psp->sy;
+	}
+	else
+	// [crispy] center the weapon sprite horizontally and vertically
+	if (player->attackdown && crispy->centerweapon == CENTERWEAPON_HORVER)
+	{
+		psp->sx2 = FRACUNIT;
+		psp->sy2 = 32 * FRACUNIT; // [crispy] WEAPONTOP
+	}
+	else
+	if (!player->attackdown || crispy->centerweapon == CENTERWEAPON_BOB)
+	{
+		angle_t angle = (128 * leveltime) & FINEMASK;
+		psp->sx2 = FRACUNIT + FixedMul(player->bob2, finecosine[angle]);
+		angle &= FINEANGLES / 2 - 1;
+		psp->sy2 = 32 * FRACUNIT + FixedMul(player->bob2, finesine[angle]);
+	}
+
+	// [crispy] squat down weapon sprite a bit after hitting the ground
+	if (player->psp_dy_max)
+	{
+		psp->dy -= FRACUNIT;
+
+		if (psp->dy < player->psp_dy_max)
+		{
+			psp->dy = -psp->dy;
+		}
+
+		if (psp->dy == 0)
+		{
+			player->psp_dy_max = 0;
+		}
+	}
+
+	player->psprites[ps_flash].dy = psp->dy;
+	player->psprites[ps_flash].sx2 = psp->sx2;
+	player->psprites[ps_flash].sy2 = psp->sy2;
+}
 
 //
 // P_CalcHeight
 // Calculate the walking / running height adjustment
 //
-void P_CalcHeight (player_t* player, boolean safe)
+void P_CalcHeight (player_t* player) 
 {
     int		angle;
     fixed_t	bob;
@@ -79,8 +134,6 @@ void P_CalcHeight (player_t* player, boolean safe)
     // OPTIMIZE: tablify angle
     // Note: a LUT allows for effects
     //  like a ramp with low health.
-  if (!safe)
-  {
     player->bob =
 	FixedMul (player->mo->momx, player->mo->momx)
 	+ FixedMul (player->mo->momy,player->mo->momy);
@@ -90,22 +143,8 @@ void P_CalcHeight (player_t* player, boolean safe)
     if (player->bob>MAXBOB)
 	player->bob = MAXBOB;
 
-    // [crispy] squat down weapon sprite a bit after hitting the ground
-    if (crispy->weaponsquat && player->psp_dy_max)
-    {
-	player->psp_dy -= FRACUNIT;
-
-	if (player->psp_dy < player->psp_dy_max)
-	{
-		player->psp_dy = -player->psp_dy;
-	}
-
-	if (player->psp_dy == 0)
-	{
-		player->psp_dy_max = 0;
-	}
-    }
-  }
+    // [crispy] variable player view bob
+    player->bob2 = crispy_bobfactor[crispy->bobfactor] * player->bob / 4;
 
     if ((player->cheats & CF_NOMOMENTUM) || !onground)
     {
@@ -119,12 +158,10 @@ void P_CalcHeight (player_t* player, boolean safe)
     }
 		
     angle = (FINEANGLES/20*leveltime)&FINEMASK;
-    bob = FixedMul ( player->bob/2, finesine[angle]);
+    bob = FixedMul ( player->bob2/2, finesine[angle]); // [crispy] variable player view bob
 
     
     // move viewheight
-  if (!safe)
-  {
     if (player->playerstate == PST_LIVE)
     {
 	player->viewheight += player->deltaviewheight;
@@ -149,7 +186,6 @@ void P_CalcHeight (player_t* player, boolean safe)
 		player->deltaviewheight = 1;
 	}
     }
-  }
     player->viewz = player->mo->z + player->viewheight + bob;
 
     if (player->viewz > player->mo->ceilingz-4*FRACUNIT)
@@ -246,7 +282,7 @@ void P_DeathThink (player_t* player)
 
     player->deltaviewheight = 0;
     onground = (player->mo->z <= player->mo->floorz);
-    P_CalcHeight (player, false);
+    P_CalcHeight (player);
 	
     if (player->attacker && player->attacker != player->mo)
     {
@@ -377,7 +413,7 @@ void P_PlayerThink (player_t* player)
     else
 	P_MovePlayer (player);
     
-    P_CalcHeight (player, false);
+    P_CalcHeight (player);
 
     if (player->mo->subsector->sector->special)
 	P_PlayerInSpecialSector (player);
@@ -391,7 +427,10 @@ void P_PlayerThink (player_t* player)
             player->mo->momz = (7 + crispy->jump) * FRACUNIT;
             player->jumpTics = 18;
             // [crispy] squat down weapon sprite a bit
-            player->psp_dy_max = -player->mo->momz>>2;
+            if (crispy->weaponsquat)
+            {
+                player->psp_dy_max = -player->mo->momz>>2;
+            }
         }
     }
 
@@ -453,6 +492,7 @@ void P_PlayerThink (player_t* player)
     
     // cycle psprites
     P_MovePsprites (player);
+    P_ApplyWeaponBob(player);
     
     // Counters, time dependend power ups.
 

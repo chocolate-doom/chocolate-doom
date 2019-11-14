@@ -108,6 +108,9 @@ P_SetPsprite
 	    // coordinate set
 	    psp->sx = state->misc1 << FRACBITS;
 	    psp->sy = state->misc2 << FRACBITS;
+	    // [crispy] variable weapon sprite bob
+	    psp->sx2 = psp->sx;
+	    psp->sy2 = psp->sy;
 	}
 	
 	// Call action routine.
@@ -185,6 +188,8 @@ void P_BringUpWeapon (player_t* player)
 
     player->pendingweapon = wp_nochange;
     player->psprites[ps_weapon].sy = WEAPONBOTTOM;
+    // [crispy] squat down weapon sprite
+    player->psprites[ps_weapon].dy = 0;
 
     P_SetPsprite (player, ps_weapon, newstate);
 }

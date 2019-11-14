@@ -646,7 +646,6 @@ P_TryMove
 // the z will be set to the lowest value
 // and false will be returned.
 //
-static sector_t *movingsector;
 boolean P_ThingHeightClip (mobj_t* thing)
 {
     boolean		onfloor;
@@ -663,13 +662,6 @@ boolean P_ThingHeightClip (mobj_t* thing)
     {
 	// walking monsters rise and fall with the floor
 	thing->z = thing->floorz;
-	// [crispy] update player's viewz on sector move
-	if (thing->player && thing->subsector->sector == movingsector)
-	{
-	    extern void P_CalcHeight (player_t* player, boolean safe);
-
-	    P_CalcHeight (thing->player, true);
-	}
     }
     else
     {
@@ -1616,7 +1608,6 @@ P_ChangeSector
     nofit = false;
     crushchange = crunch;
 	
-    movingsector = sector;
     // re-check heights for all things near the moving sector
     for (x=sector->blockbox[BOXLEFT] ; x<= sector->blockbox[BOXRIGHT] ; x++)
 	for (y=sector->blockbox[BOXBOTTOM];y<= sector->blockbox[BOXTOP] ; y++)

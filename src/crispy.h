@@ -39,6 +39,7 @@ typedef struct
 	int automapoverlay;
 	int automaprotate;
 	int automapstats;
+	int bobfactor;
 	int brightmaps;
 	int centerweapon;
 	int coloredblood;
@@ -123,6 +124,14 @@ enum
 
 enum
 {
+    BOBFACTOR_FULL,
+    BOBFACTOR_75,
+    BOBFACTOR_OFF,
+    NUM_BOBFACTORS,
+};
+
+enum
+{
     BRIGHTMAPS_OFF,
     BRIGHTMAPS_TEXTURES,
     BRIGHTMAPS_SPRITES,
@@ -133,10 +142,10 @@ enum
 enum
 {
     CENTERWEAPON_OFF,
-    CENTERWEAPON_HOR,
+//  CENTERWEAPON_HOR,
     CENTERWEAPON_HORVER,
     CENTERWEAPON_BOB,
-    CENTERWEAPON_BOB2,
+//  CENTERWEAPON_BOB2,
     NUM_CENTERWEAPON,
 };
 

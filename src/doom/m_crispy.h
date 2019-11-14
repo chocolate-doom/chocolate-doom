@@ -27,6 +27,7 @@ typedef struct
 } multiitem_t;
 
 extern multiitem_t multiitem_aspectratio[NUM_ASPECTRATIOS];
+extern multiitem_t multiitem_bobfactor[NUM_BOBFACTORS];
 extern multiitem_t multiitem_brightmaps[NUM_BRIGHTMAPS];
 extern multiitem_t multiitem_centerweapon[NUM_CENTERWEAPON];
 extern multiitem_t multiitem_coloredhud[NUM_COLOREDHUD];
@@ -44,6 +45,7 @@ extern multiitem_t multiitem_widgets[NUM_WIDGETS];
 
 extern void M_CrispyToggleAspectRatio(int choice);
 extern void M_CrispyToggleAutomapstats(int choice);
+extern void M_CrispyToggleBobfactor(int choice);
 extern void M_CrispyToggleBrightmaps(int choice);
 extern void M_CrispyToggleCenterweapon(int choice);
 extern void M_CrispyToggleColoredblood(int choice);

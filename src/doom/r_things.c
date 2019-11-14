@@ -965,31 +965,6 @@ void R_AddSprites (sector_t* sec)
 	R_ProjectSprite (thing);
 }
 
-// [crispy] apply bobbing (or centering) to the player's weapon sprite
-static inline void R_ApplyWeaponBob (fixed_t *sx, boolean bobx, fixed_t *sy, boolean boby, int div)
-{
-	const angle_t angle = (128 * leveltime) & FINEMASK;
-
-	if (sx)
-	{
-		*sx = FRACUNIT;
-
-		if (bobx)
-		{
-			 *sx += FixedMul(viewplayer->bob, finecosine[angle]) / div;
-		}
-	}
-
-	if (sy)
-	{
-		*sy = 32 * FRACUNIT; // [crispy] WEAPONTOP
-
-		if (boby)
-		{
-			*sy += FixedMul(viewplayer->bob, finesine[angle & (FINEANGLES / 2 - 1)]) / div;
-		}
-	}
-}
 
 //
 // R_DrawPSprite
@@ -1005,8 +980,6 @@ void R_DrawPSprite (pspdef_t* psp, psprnum_t psprnum) // [crispy] differentiate 
     boolean		flip;
     vissprite_t*	vis;
     vissprite_t		avis;
-    fixed_t		psp_sx = psp->sx, psp_sy = psp->sy;
-    const int state = viewplayer->psprites[ps_weapon].state - states;
     
     // decide which patch to use
 #ifdef RANGECHECK
@@ -1030,34 +1003,8 @@ void R_DrawPSprite (pspdef_t* psp, psprnum_t psprnum) // [crispy] differentiate 
     lump = sprframe->lump[0];
     flip = (boolean)sprframe->flip[0] ^ crispy->flipweapons;
     
-    // [crispy] smoothen Chainsaw idle animation
-    if (state == S_SAW || state == S_SAWB)
-    {
-        R_ApplyWeaponBob(&psp_sx, true, &psp_sy, true, 1);
-    }
-    else
-    // [crispy] center the weapon sprite horizontally and vertically
-    if (crispy->centerweapon && viewplayer->attackdown && !psp->state->misc1)
-    {
-        const weaponinfo_t *const winfo = &weaponinfo[viewplayer->readyweapon];
-
-        R_ApplyWeaponBob(&psp_sx, crispy->centerweapon >= CENTERWEAPON_BOB,
-                         NULL, false,
-                         crispy->centerweapon / CENTERWEAPON_BOB2 + 1);
-
-        // [crispy] don't center vertically during lowering and raising states
-        if (crispy->centerweapon >= CENTERWEAPON_HORVER &&
-            state != winfo->downstate && state != winfo->upstate)
-        {
-            R_ApplyWeaponBob(NULL, false,
-                             &psp_sy, crispy->centerweapon >= CENTERWEAPON_BOB,
-                             crispy->centerweapon / CENTERWEAPON_BOB2 + 1);
-        }
-    }
-    // [crispy] squat down weapon sprite a bit after hitting the ground
-    psp_sy += abs(viewplayer->psp_dy);
     // calculate edges of the shape
-    tx = psp_sx-(ORIGWIDTH/2)*FRACUNIT;
+    tx = psp->sx2-(ORIGWIDTH/2)*FRACUNIT;
 	
     // [crispy] fix sprite offsets for mirrored sprites
     tx -= flip ? 2 * tx - spriteoffset[lump] + spritewidth[lump] : spriteoffset[lump];
@@ -1079,7 +1026,7 @@ void R_DrawPSprite (pspdef_t* psp, psprnum_t psprnum) // [crispy] differentiate 
     vis->translation = NULL; // [crispy] no color translation
     vis->mobjflags = 0;
     // [crispy] weapons drawn 1 pixel too high when player is idle
-    vis->texturemid = (BASEYCENTER<<FRACBITS)+FRACUNIT/4-(psp_sy-spritetopoffset[lump]);
+    vis->texturemid = (BASEYCENTER<<FRACBITS)+FRACUNIT/4-(psp->sy2+abs(psp->dy)-spritetopoffset[lump]);
     vis->x1 = x1 < 0 ? 0 : x1;
     vis->x2 = x2 >= viewwidth ? viewwidth-1 : x2;	
     vis->scale = pspritescale<<detailshift;
@@ -1125,7 +1072,7 @@ void R_DrawPSprite (pspdef_t* psp, psprnum_t psprnum) // [crispy] differentiate 
 	vis->colormap[0] = spritelights[MAXLIGHTSCALE-1];
 	vis->colormap[1] = scalelight[LIGHTLEVELS-1][MAXLIGHTSCALE-1];
     }
-    vis->brightmap = R_BrightmapForState(state);
+    vis->brightmap = R_BrightmapForState(psp->state - states);
 	
     // [crispy] translucent gun flash sprites
     if (psprnum == ps_flash)
