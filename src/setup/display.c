@@ -155,14 +155,13 @@ void SetDisplayDriver(void)
         putenv(env_string);
         free(env_string);
     }
+#if defined(_WIN32) && !defined(_WIN32_WCE)
+    // On Windows, use windib over DirectX by default.
     else
     {
-#if defined(_WIN32) && !defined(_WIN32_WCE)
-        // On Windows, use DirectX over windib by default.
-
-        putenv("SDL_VIDEODRIVER=directx");
-#endif
+        putenv("SDL_VIDEODRIVER=windib");
     }
+#endif
 }
 
 // Query SDL as to whether any fullscreen modes are available for the
@@ -542,7 +541,7 @@ static void UpdateModeSeparator(TXT_UNCAST_ARG(widget),
 
 #if defined(_WIN32) && !defined(_WIN32_WCE)
 
-static int use_directx = 1;
+static int use_directx = 0;
 
 static void SetWin32VideoDriver(void)
 {
@@ -550,7 +549,7 @@ static void SetWin32VideoDriver(void)
     {
         use_directx = 0;
     }
-    else
+    else if (!strcmp(video_driver, "directx"))
     {
         use_directx = 1;
     }
@@ -563,7 +562,7 @@ static void UpdateVideoDriver(TXT_UNCAST_ARG(widget),
 
     if (use_directx)
     {
-        video_driver = "";
+        video_driver = "directx";
     }
     else
     {

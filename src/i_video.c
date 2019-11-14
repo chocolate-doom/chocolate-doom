@@ -1720,18 +1720,18 @@ static void SetSDLVideoDriver(void)
 
 #if defined(_WIN32) && !defined(_WIN32_WCE)
 
-    // Allow -gdi as a shortcut for using the windib driver.
+    // Allow -directx as a shortcut for using the directx driver.
 
     //!
     // @category video 
     // @platform windows
     //
-    // Use the Windows GDI driver instead of DirectX.
+    // Use the Windows DirectX driver instead of GDI.
     //
 
-    if (M_CheckParm("-gdi") > 0)
+    if (M_CheckParm("-directx") > 0)
     {
-        putenv("SDL_VIDEODRIVER=windib");
+        putenv("SDL_VIDEODRIVER=directx");
     }
 
     // From the SDL 1.2.10 release notes: 
@@ -1739,12 +1739,10 @@ static void SetSDLVideoDriver(void)
     // > The "windib" video driver is the default now, to prevent 
     // > problems with certain laptops, 64-bit Windows, and Windows 
     // > Vista. 
-    //
-    // The hell with that.
 
     if (getenv("SDL_VIDEODRIVER") == NULL)
     {
-        putenv("SDL_VIDEODRIVER=directx");
+        putenv("SDL_VIDEODRIVER=windib");
     }
 #endif
 }
