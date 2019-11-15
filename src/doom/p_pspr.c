@@ -1015,11 +1015,10 @@ void P_MovePsprites (player_t* player)
 		psp->sy2 = psp->sy;
 	}
 	else
-	// [crispy] center the weapon sprite horizontally and vertically
-	if (player->attackdown && crispy->centerweapon == CENTERWEAPON_HORVER)
+	// [crispy] center the weapon sprite horizontally
+	if (player->attackdown && crispy->centerweapon == CENTERWEAPON_HOR)
 	{
 		psp->sx2 = FRACUNIT;
-		psp->sy2 = 32 * FRACUNIT; // [crispy] WEAPONTOP
 	}
 	else
 	if (!player->attackdown || crispy->centerweapon == CENTERWEAPON_BOB)
@@ -1027,7 +1026,7 @@ void P_MovePsprites (player_t* player)
 		angle_t angle = (128 * leveltime) & FINEMASK;
 		psp->sx2 = FRACUNIT + FixedMul(player->bob2, finecosine[angle]);
 		angle &= FINEANGLES / 2 - 1;
-		psp->sy2 = 32 * FRACUNIT + FixedMul(player->bob2, finesine[angle]);
+		psp->sy2 = WEAPONTOP + FixedMul(player->bob2, finesine[angle]);
 	}
 
 	// [crispy] squat down weapon sprite a bit after hitting the ground
