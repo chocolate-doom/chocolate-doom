@@ -1015,10 +1015,11 @@ void P_MovePsprites (player_t* player)
 		psp->sy2 = psp->sy;
 	}
 	else
-	// [crispy] center the weapon sprite horizontally
-	if (player->attackdown && crispy->centerweapon == CENTERWEAPON_HOR)
+	// [crispy] center the weapon sprite horizontally and push up vertically
+	if (player->attackdown && crispy->centerweapon == CENTERWEAPON_CENTER)
 	{
 		psp->sx2 = FRACUNIT;
+		psp->sy2 = WEAPONTOP;
 	}
 	else
 	if (!player->attackdown || crispy->centerweapon == CENTERWEAPON_BOB)
