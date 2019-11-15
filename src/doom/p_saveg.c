@@ -661,6 +661,7 @@ static void saveg_read_pspdef_t(pspdef_t *str)
     str->sy = saveg_read32();
 
     // [crispy] variable weapon sprite bob
+    str->dy = 0;
     str->sx2 = str->sx;
     str->sy2 = str->sy;
 }
