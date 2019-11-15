@@ -1004,8 +1004,9 @@ void P_MovePsprites (player_t* player)
     player->psprites[ps_flash].sx = player->psprites[ps_weapon].sx;
     player->psprites[ps_flash].sy = player->psprites[ps_weapon].sy;
 
-// [crispy] apply bobbing (or centering) to the player's weapon sprite
-
+    // [crispy] apply bobbing (or centering) to the player's weapon sprite
+    if (psp->state)
+    {
 	// [crispy] don't center vertically during lowering and raising states
 	if (psp->state->misc1 ||
 	    psp->state->action.acp3 == (actionf_p3)A_Lower ||
@@ -1045,6 +1046,7 @@ void P_MovePsprites (player_t* player)
 			player->psp_dy_max = 0;
 		}
 	}
+    }
 
 	player->psprites[ps_flash].dy = psp->dy;
 	player->psprites[ps_flash].sx2 = psp->sx2;
