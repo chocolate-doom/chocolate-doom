@@ -101,7 +101,8 @@ void P_CalcHeight (player_t* player)
 	if (player->viewz > player->mo->ceilingz-4*FRACUNIT)
 	    player->viewz = player->mo->ceilingz-4*FRACUNIT;
 
-	player->viewz = player->mo->z + player->viewheight;
+	// [crispy] fix player viewheight in NOMOMENTUM mode
+	//player->viewz = player->mo->z + player->viewheight;
 	return;
     }
 		
