@@ -49,10 +49,14 @@
 			<Add directory="../textscreen" />
 			<Add directory="../pcsound" />
 			<Add directory="../opl" />
+			<Add directory="../../SDL/include/SDL" />
+			<Add directory="../../SDL/include" />
 		</Compiler>
 		<Linker>
 			<Add option="-lmingw32 -lSDLmain -lSDL -lSDL_mixer -lSDL_net -lz.dll -llibFLAC-8 -llibogg-0 -llibvorbis-0 -llibvorbisfile-3 -mconsole -mwindows" />
 			<Add directory="../lib" />
+			<Add directory="../../SDL/lib" />
+			<Add directory="../../SDL/lib/x86" />
 		</Linker>
 		<Unit filename="../src/d_event.c">
 			<Option compilerVar="CC" />

@@ -48,6 +48,8 @@
 			<Add directory="../src" />
 			<Add directory="../src/doom" />
 			<Add directory="../textscreen" />
+			<Add directory="../../SDL/include/SDL" />
+			<Add directory="../../SDL/include" />
 		</Compiler>
 		<ResourceCompiler>
 			<Add directory="../src/setup" />
@@ -55,10 +57,9 @@
 		<Linker>
 			<Add option="-lmingw32 -lSDLmain -lSDL -lSDL_net -mwindows" />
 			<Add directory="../lib" />
+			<Add directory="../../SDL/lib" />
+			<Add directory="../../SDL/lib/x86" />
 		</Linker>
-		<Unit filename="setup-res.rc">
-			<Option compilerVar="WINDRES" />
-		</Unit>
 		<Unit filename="../src/d_iwad.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -185,6 +186,9 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../src/z_zone.h" />
+		<Unit filename="setup-res.rc">
+			<Option compilerVar="WINDRES" />
+		</Unit>
 		<Extensions>
 			<code_completion />
 			<envvars />

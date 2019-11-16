@@ -38,9 +38,11 @@
 		</VirtualTargets>
 		<Compiler>
 			<Add directory="../src" />
+			<Add directory="../../SDL/include/SDL" />
 		</Compiler>
 		<Linker>
 			<Add option="-lmingw32 -lSDLmain -lSDL -mwindows" />
+			<Add directory="../../SDL/lib" />
 		</Linker>
 		<Unit filename="../textscreen/textscreen.h" />
 		<Unit filename="../textscreen/txt_button.c">

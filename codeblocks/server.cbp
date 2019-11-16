@@ -38,9 +38,13 @@
 			<Add directory="." />
 			<Add directory="../src" />
 			<Add directory="../textscreen" />
+			<Add directory="../../SDL/include/SDL" />
+			<Add directory="../../SDL/include" />
 		</Compiler>
 		<Linker>
 			<Add option="-lmingw32 -lSDLmain -lSDL -lSDL_net -mwindows" />
+			<Add directory="../../SDL/lib" />
+			<Add directory="../../SDL/lib/x86" />
 		</Linker>
 		<Unit filename="../src/d_dedicated.c">
 			<Option compilerVar="CC" />
@@ -68,14 +72,14 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../src/i_timer.h" />
-		<Unit filename="../src/m_config.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../src/m_config.h" />
 		<Unit filename="../src/m_argv.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../src/m_argv.h" />
+		<Unit filename="../src/m_config.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../src/m_config.h" />
 		<Unit filename="../src/m_misc.c">
 			<Option compilerVar="CC" />
 		</Unit>

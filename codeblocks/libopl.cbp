@@ -37,9 +37,13 @@
 			<Add option="-Wall" />
 			<Add directory="." />
 			<Add directory="../src" />
+			<Add directory="../../SDL/include/SDL" />
+			<Add directory="../../SDL/include" />
 		</Compiler>
 		<Linker>
 			<Add option="-lmingw32 -lSDLmain -lSDL -lSDL_mixer -mwindows" />
+			<Add directory="../../SDL/lib" />
+			<Add directory="../../SDL/lib/x86" />
 		</Linker>
 		<Unit filename="../opl/ioperm_sys.c">
 			<Option compilerVar="CC" />
