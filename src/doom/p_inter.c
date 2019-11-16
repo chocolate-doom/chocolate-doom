@@ -714,7 +714,7 @@ P_TouchSpecialThing
 	break;
 	
       case SPR_BPAK:
-	if (netgame && dropbackpack
+	if ((netgame || sprespawn) && dropbackpack
 		&& special->flags & MF_DROPPED && player && player->health > 0) // [marshmallow] So we don't pick it up while dead/dying
 	{
 		if (special->type == MT_MISC87)
