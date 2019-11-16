@@ -1,0 +1,554 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Source Files\heretic">
+      <UniqueIdentifier>{45e7909d-0ae8-487f-bc67-9dd7498fce43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Header Files\heretic">
+      <UniqueIdentifier>{88cb34c4-1c49-42ae-8cfe-0ad8252d9b30}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\d_event.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\d_iwad.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\d_loop.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\d_mode.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\deh_io.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\deh_main.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\deh_mapping.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\deh_str.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\deh_text.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\gusconf.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\i_cdmus.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\i_endoom.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\i_joystick.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\i_main.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\i_oplmusic.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\i_pcsound.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\i_scale.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\i_sdlmusic.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\i_sdlsound.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\i_sound.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\i_system.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\i_timer.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\i_video.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\icon.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\m_argv.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\m_bbox.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\m_cheat.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\m_config.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\m_controls.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\m_fixed.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\m_misc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\memio.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\midifile.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\mus2mid.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\net_client.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\net_common.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\net_dedicated.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\net_gui.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\net_io.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\net_loop.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\net_packet.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\net_query.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\net_sdl.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\net_server.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\net_structrw.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\sha1.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\tables.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\v_diskicon.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\v_video.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\w_checksum.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\w_file.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\w_file_posix.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\w_file_stdc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\w_file_win32.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\w_main.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\w_merge.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\w_wad.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\z_zone.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\heretic\am_map.c">
+      <Filter>Source Files\heretic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\heretic\ct_chat.c">
+      <Filter>Source Files\heretic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\heretic\d_main.c">
+      <Filter>Source Files\heretic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\heretic\d_net.c">
+      <Filter>Source Files\heretic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\heretic\deh_ammo.c">
+      <Filter>Source Files\heretic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\heretic\deh_frame.c">
+      <Filter>Source Files\heretic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\heretic\deh_htext.c">
+      <Filter>Source Files\heretic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\heretic\deh_htic.c">
+      <Filter>Source Files\heretic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\heretic\deh_sound.c">
+      <Filter>Source Files\heretic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\heretic\deh_thing.c">
+      <Filter>Source Files\heretic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\heretic\deh_weapon.c">
+      <Filter>Source Files\heretic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\heretic\f_finale.c">
+      <Filter>Source Files\heretic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\heretic\g_game.c">
+      <Filter>Source Files\heretic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\heretic\in_lude.c">
+      <Filter>Source Files\heretic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\heretic\info.c">
+      <Filter>Source Files\heretic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\heretic\m_random.c">
+      <Filter>Source Files\heretic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\heretic\mn_menu.c">
+      <Filter>Source Files\heretic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\heretic\p_ceilng.c">
+      <Filter>Source Files\heretic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\heretic\p_doors.c">
+      <Filter>Source Files\heretic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\heretic\p_enemy.c">
+      <Filter>Source Files\heretic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\heretic\p_floor.c">
+      <Filter>Source Files\heretic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\heretic\p_inter.c">
+      <Filter>Source Files\heretic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\heretic\p_lights.c">
+      <Filter>Source Files\heretic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\heretic\p_map.c">
+      <Filter>Source Files\heretic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\heretic\p_maputl.c">
+      <Filter>Source Files\heretic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\heretic\p_mobj.c">
+      <Filter>Source Files\heretic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\heretic\p_plats.c">
+      <Filter>Source Files\heretic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\heretic\p_pspr.c">
+      <Filter>Source Files\heretic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\heretic\p_saveg.c">
+      <Filter>Source Files\heretic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\heretic\p_setup.c">
+      <Filter>Source Files\heretic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\heretic\p_sight.c">
+      <Filter>Source Files\heretic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\heretic\p_spec.c">
+      <Filter>Source Files\heretic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\heretic\p_switch.c">
+      <Filter>Source Files\heretic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\heretic\p_telept.c">
+      <Filter>Source Files\heretic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\heretic\p_tick.c">
+      <Filter>Source Files\heretic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\heretic\p_user.c">
+      <Filter>Source Files\heretic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\heretic\r_bsp.c">
+      <Filter>Source Files\heretic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\heretic\r_data.c">
+      <Filter>Source Files\heretic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\heretic\r_draw.c">
+      <Filter>Source Files\heretic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\heretic\r_main.c">
+      <Filter>Source Files\heretic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\heretic\r_plane.c">
+      <Filter>Source Files\heretic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\heretic\r_segs.c">
+      <Filter>Source Files\heretic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\heretic\r_things.c">
+      <Filter>Source Files\heretic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\heretic\s_sound.c">
+      <Filter>Source Files\heretic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\heretic\sb_bar.c">
+      <Filter>Source Files\heretic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\heretic\sounds.c">
+      <Filter>Source Files\heretic</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\d_event.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\d_iwad.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\d_loop.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\d_mode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\d_ticcmd.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\deh_defs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\deh_io.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\deh_main.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\deh_mapping.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\deh_str.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\doomfeatures.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\doomkeys.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\doomtype.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\gusconf.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\i_cdmus.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\i_joystick.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\i_scale.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\i_sound.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\i_swap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\i_system.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\i_timer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\i_video.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\m_argv.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\m_bbox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\m_cheat.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\m_config.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\m_controls.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\m_fixed.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\m_misc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\memio.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\midifile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\mus2mid.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\net_client.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\net_common.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\net_dedicated.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\net_defs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\net_gui.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\net_io.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\net_loop.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\net_packet.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\net_query.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\net_sdl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\net_server.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\net_structrw.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\sha1.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\tables.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\v_diskicon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\v_patch.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\v_video.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\w_checksum.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\w_file.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\w_main.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\w_merge.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\w_wad.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\z_zone.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\heretic\am_data.h">
+      <Filter>Header Files\heretic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\heretic\am_map.h">
+      <Filter>Header Files\heretic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\heretic\ct_chat.h">
+      <Filter>Header Files\heretic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\heretic\deh_htic.h">
+      <Filter>Header Files\heretic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\heretic\doomdata.h">
+      <Filter>Header Files\heretic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\heretic\doomdef.h">
+      <Filter>Header Files\heretic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\heretic\dstrings.h">
+      <Filter>Header Files\heretic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\heretic\info.h">
+      <Filter>Header Files\heretic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\heretic\m_random.h">
+      <Filter>Header Files\heretic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\heretic\p_action.h">
+      <Filter>Header Files\heretic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\heretic\p_local.h">
+      <Filter>Header Files\heretic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\heretic\p_spec.h">
+      <Filter>Header Files\heretic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\heretic\r_local.h">
+      <Filter>Header Files\heretic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\heretic\s_sound.h">
+      <Filter>Header Files\heretic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\heretic\sounds.h">
+      <Filter>Header Files\heretic</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="win32.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>

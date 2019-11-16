@@ -57,6 +57,10 @@ static char *default_main_config;
 static char *default_extra_config;
 
  // Current directory
+#ifdef _MSC_VER
+#define PATH_MAX MAX_PATH
+#endif
+
 char cwdir[PATH_MAX + 1];
 
 typedef enum 
