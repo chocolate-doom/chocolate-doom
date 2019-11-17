@@ -209,7 +209,8 @@ boolean I_ConsoleStdout(void)
 {
 #ifdef _WIN32
     // SDL "helpfully" always redirects stdout to a file.
-    return 0;
+    // But now we've got a working console
+    return 1;
 #else
     return isatty(fileno(stdout));
 #endif

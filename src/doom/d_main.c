@@ -1269,10 +1269,14 @@ void D_DoomMain (void)
     I_AtExit(D_Endoom, false);
 
 #ifdef _WIN32
+#ifdef _MSC_VER
+    system("cls");
+#endif
     freopen("CONOUT$","w",stdout);
     freopen("CONOUT$","w",stderr);
-
+#ifdef __MINGW32__
     DEH_printf("\n");
+#endif
     // [JN] Print colorized title
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),
       BACKGROUND_BLUE | FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
