@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14113" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
         <deployment version="1070" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14113"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14460.31"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -52,7 +52,7 @@
                         <autoresizingMask key="autoresizingMask"/>
                         <imageCell key="cell" refusesFirstResponder="YES" alignment="left" animates="YES" imageScaling="axesIndependently" image="128x128" id="327"/>
                     </imageView>
-                    <textField verticalHuggingPriority="750" misplaced="YES" allowsCharacterPickerTouchBarItem="YES" id="218">
+                    <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" id="218">
                         <rect key="frame" x="18" y="125" width="350" height="11"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <textFieldCell key="cell" sendsActionOnEndEditing="YES" id="329">
@@ -68,7 +68,7 @@
                         <autoresizingMask key="autoresizingMask"/>
                         <textFieldCell key="cell" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="border" drawsBackground="YES" id="330">
                             <font key="font" metaFont="fixedUser" size="11"/>
-                            <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
@@ -308,6 +308,8 @@
                 <outlet property="doom1" destination="AlQ-U8-wym" id="XjI-7B-upb"/>
                 <outlet property="doom2" destination="BpX-4L-Bf7" id="9tZ-Ld-Ave"/>
                 <outlet property="freedm" destination="A8Y-Bc-ep0" id="foobar-9901"/>
+                <outlet property="freedoom1" destination="ui6-B4-dSB" id="iwad-freedoom1"/>
+                <outlet property="freedoom2" destination="zrE-cJ-E5z" id="iwad-freedoom2"/>
                 <outlet property="heretic" destination="7O9-NO-XLA" id="VqX-Pb-Fsq"/>
                 <outlet property="hexen" destination="ngU-dW-hTF" id="AYw-fH-1fY"/>
                 <outlet property="iwadSelector" destination="211" id="266"/>
@@ -319,15 +321,15 @@
         <window title="IWAD configuration" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="227" userLabel="Configuration Window">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="377" y="417" width="470" height="325"/>
+            <rect key="contentRect" x="377" y="417" width="470" height="376"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1440" height="878"/>
             <value key="minSize" type="size" width="213" height="107"/>
             <view key="contentView" id="228">
-                <rect key="frame" x="0.0" y="0.0" width="470" height="325"/>
+                <rect key="frame" x="0.0" y="0.0" width="470" height="376"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <pathControl verticalHuggingPriority="750" allowsExpansionToolTips="YES" id="BpX-4L-Bf7">
-                        <rect key="frame" x="225" y="253" width="228" height="26"/>
+                        <rect key="frame" x="225" y="304" width="228" height="26"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <pathCell key="cell" selectable="YES" editable="YES" alignment="left" placeholderString="Click to select doom2.wad" pathStyle="popUp" id="7IJ-Hw-vbF">
                             <font key="font" metaFont="system"/>
@@ -338,7 +340,7 @@
                         </pathCell>
                     </pathControl>
                     <pathControl verticalHuggingPriority="750" allowsExpansionToolTips="YES" id="4yg-SA-mta">
-                        <rect key="frame" x="225" y="225" width="228" height="26"/>
+                        <rect key="frame" x="225" y="276" width="228" height="26"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <pathCell key="cell" selectable="YES" editable="YES" alignment="left" placeholderString="Click to select tnt.wad" pathStyle="popUp" id="Eos-nO-gEh">
                             <font key="font" metaFont="system"/>
@@ -349,7 +351,7 @@
                         </pathCell>
                     </pathControl>
                     <pathControl verticalHuggingPriority="750" allowsExpansionToolTips="YES" id="BBS-Yh-DIl">
-                        <rect key="frame" x="225" y="197" width="228" height="26"/>
+                        <rect key="frame" x="225" y="248" width="228" height="26"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <pathCell key="cell" selectable="YES" editable="YES" alignment="left" placeholderString="Click to select plutonia.wad" pathStyle="popUp" id="BPR-GP-htf">
                             <font key="font" metaFont="system"/>
@@ -360,7 +362,7 @@
                         </pathCell>
                     </pathControl>
                     <pathControl verticalHuggingPriority="750" allowsExpansionToolTips="YES" id="7O9-NO-XLA">
-                        <rect key="frame" x="225" y="169" width="228" height="26"/>
+                        <rect key="frame" x="225" y="220" width="228" height="26"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <pathCell key="cell" selectable="YES" editable="YES" alignment="left" placeholderString="Click to select heretic.wad" pathStyle="popUp" id="JMx-XN-a9Y">
                             <font key="font" metaFont="system"/>
@@ -371,7 +373,7 @@
                         </pathCell>
                     </pathControl>
                     <pathControl verticalHuggingPriority="750" allowsExpansionToolTips="YES" id="ngU-dW-hTF">
-                        <rect key="frame" x="225" y="141" width="228" height="26"/>
+                        <rect key="frame" x="225" y="192" width="228" height="26"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <pathCell key="cell" selectable="YES" editable="YES" alignment="left" placeholderString="Click to select hexen.wad" pathStyle="popUp" id="gzx-DJ-3f1">
                             <font key="font" metaFont="system"/>
@@ -382,7 +384,7 @@
                         </pathCell>
                     </pathControl>
                     <pathControl verticalHuggingPriority="750" allowsExpansionToolTips="YES" id="wCO-QO-xIA">
-                        <rect key="frame" x="225" y="113" width="228" height="26"/>
+                        <rect key="frame" x="225" y="164" width="228" height="26"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <pathCell key="cell" selectable="YES" editable="YES" alignment="left" placeholderString="Click to select strife1.wad" pathStyle="popUp" id="OXq-d6-Zdl">
                             <font key="font" metaFont="system"/>
@@ -393,7 +395,7 @@
                         </pathCell>
                     </pathControl>
                     <pathControl verticalHuggingPriority="750" allowsExpansionToolTips="YES" id="Lk6-np-Wql">
-                        <rect key="frame" x="225" y="85" width="228" height="26"/>
+                        <rect key="frame" x="225" y="136" width="228" height="26"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <pathCell key="cell" selectable="YES" editable="YES" alignment="left" placeholderString="Click to select chex.wad" pathStyle="popUp" id="HVV-Yk-Awv">
                             <font key="font" metaFont="system"/>
@@ -404,7 +406,7 @@
                         </pathCell>
                     </pathControl>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" id="Wgq-Ur-mWw">
-                        <rect key="frame" x="18" y="201" width="204" height="17"/>
+                        <rect key="frame" x="18" y="252" width="204" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Final Doom: Plutonia Experiment:" id="LaP-df-7lY">
                             <font key="font" metaFont="system"/>
@@ -413,7 +415,7 @@
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" id="0w5-iR-7C5">
-                        <rect key="frame" x="178" y="285" width="44" height="17"/>
+                        <rect key="frame" x="178" y="336" width="44" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Doom:" id="wiP-4D-kso">
                             <font key="font" metaFont="system"/>
@@ -422,7 +424,7 @@
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" id="kTD-c1-mVC">
-                        <rect key="frame" x="168" y="257" width="54" height="17"/>
+                        <rect key="frame" x="168" y="308" width="54" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Doom II:" id="ucj-hk-PmE">
                             <font key="font" metaFont="system"/>
@@ -431,7 +433,7 @@
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" id="s5l-jK-qkw">
-                        <rect key="frame" x="55" y="229" width="167" height="17"/>
+                        <rect key="frame" x="55" y="280" width="167" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Final Doom: TNT: Evilution:" id="LZC-z3-CHF">
                             <font key="font" metaFont="system"/>
@@ -440,7 +442,7 @@
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" id="2kB-0c-PG2">
-                        <rect key="frame" x="170" y="173" width="52" height="17"/>
+                        <rect key="frame" x="170" y="224" width="52" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Heretic:" id="qPW-Co-8Wz">
                             <font key="font" metaFont="system"/>
@@ -449,7 +451,7 @@
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" id="lI6-dr-25E">
-                        <rect key="frame" x="176" y="145" width="46" height="17"/>
+                        <rect key="frame" x="176" y="196" width="46" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Hexen:" id="4hb-dZ-XUu">
                             <font key="font" metaFont="system"/>
@@ -458,7 +460,7 @@
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" id="iDb-XT-j0E">
-                        <rect key="frame" x="181" y="117" width="41" height="17"/>
+                        <rect key="frame" x="181" y="168" width="41" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Strife:" id="ecs-y3-DUG">
                             <font key="font" metaFont="system"/>
@@ -467,7 +469,7 @@
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" id="g5t-SY-4aL">
-                        <rect key="frame" x="143" y="89" width="79" height="17"/>
+                        <rect key="frame" x="143" y="140" width="79" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Chex Quest:" id="MK2-8j-Xab">
                             <font key="font" metaFont="system"/>
@@ -487,7 +489,7 @@
                         </connections>
                     </button>
                     <pathControl verticalHuggingPriority="750" allowsExpansionToolTips="YES" id="AlQ-U8-wym">
-                        <rect key="frame" x="225" y="281" width="228" height="26"/>
+                        <rect key="frame" x="225" y="332" width="228" height="26"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <pathCell key="cell" selectable="YES" editable="YES" alignment="left" placeholderString="Click to select doom.wad" pathStyle="popUp" id="IgE-nz-OsF">
                             <font key="font" metaFont="system"/>
@@ -498,7 +500,7 @@
                         </pathCell>
                     </pathControl>
                     <pathControl verticalHuggingPriority="750" allowsExpansionToolTips="YES" id="A8Y-Bc-ep0">
-                        <rect key="frame" x="225" y="57" width="228" height="26"/>
+                        <rect key="frame" x="225" y="52" width="228" height="26"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <pathCell key="cell" selectable="YES" editable="YES" alignment="left" placeholderString="Click to select freedm.wad" pathStyle="popUp" id="3z7-y0-giQ">
                             <font key="font" metaFont="system"/>
@@ -508,8 +510,30 @@
                             </allowedTypes>
                         </pathCell>
                     </pathControl>
+                    <pathControl verticalHuggingPriority="750" allowsExpansionToolTips="YES" id="zrE-cJ-E5z">
+                        <rect key="frame" x="225" y="80" width="228" height="26"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <pathCell key="cell" selectable="YES" editable="YES" alignment="left" placeholderString="Click to select freedoom2.wad" pathStyle="popUp" id="QsB-AM-ggZ">
+                            <font key="font" metaFont="system"/>
+                            <allowedTypes>
+                                <string>WAD</string>
+                                <string>wad</string>
+                            </allowedTypes>
+                        </pathCell>
+                    </pathControl>
+                    <pathControl verticalHuggingPriority="750" allowsExpansionToolTips="YES" id="ui6-B4-dSB">
+                        <rect key="frame" x="225" y="108" width="228" height="26"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <pathCell key="cell" selectable="YES" editable="YES" alignment="left" placeholderString="Click to select freedoom1.wad" pathStyle="popUp" id="6Xt-KL-S0L">
+                            <font key="font" metaFont="system"/>
+                            <allowedTypes>
+                                <string>WAD</string>
+                                <string>wad</string>
+                            </allowedTypes>
+                        </pathCell>
+                    </pathControl>
                     <button horizontalHuggingPriority="750" verticalHuggingPriority="750" id="383">
-                        <rect key="frame" x="18" y="17" width="25" height="25"/>
+                        <rect key="frame" x="18" y="16" width="25" height="25"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <buttonCell key="cell" type="help" bezelStyle="helpButton" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="384">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -520,7 +544,7 @@
                         </connections>
                     </button>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" id="2Lv-nA-R1p">
-                        <rect key="frame" x="166" y="61" width="56" height="17"/>
+                        <rect key="frame" x="164" y="56" width="56" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="FreeDM:" id="Tjv-BA-EVD">
                             <font key="font" metaFont="system"/>
@@ -528,9 +552,27 @@
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" id="F1P-c6-eGn">
+                        <rect key="frame" x="99" y="112" width="123" height="17"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Freedoom: Phase 1:" id="t6G-N3-giu">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" id="d6S-OS-s0a">
+                        <rect key="frame" x="97" y="84" width="125" height="17"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Freedoom: Phase 2:" id="dUG-Vr-seO">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
                 </subviews>
             </view>
-            <point key="canvasLocation" x="523" y="-60.5"/>
+            <point key="canvasLocation" x="481" y="-38"/>
         </window>
         <customObject id="270" userLabel="AppController" customClass="AppController">
             <connections>
@@ -545,6 +587,18 @@
                 <url key="url" string="file://localhost/Applications/"/>
                 <color key="backgroundColor" red="0.89803921568627454" green="0.92549019607843142" blue="0.97254901960784312" alpha="1" colorSpace="deviceRGB"/>
             </pathCell>
+        </pathControl>
+        <pathControl verticalHuggingPriority="750" allowsExpansionToolTips="YES" id="oIL-Qy-yZu">
+            <rect key="frame" x="0.0" y="0.0" width="228" height="26"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <pathCell key="cell" selectable="YES" editable="YES" alignment="left" placeholderString="Click to select freedm.wad" pathStyle="popUp" id="Zlj-9z-QQX">
+                <font key="font" metaFont="system"/>
+                <allowedTypes>
+                    <string>WAD</string>
+                    <string>wad</string>
+                </allowedTypes>
+            </pathCell>
+            <point key="canvasLocation" x="647" y="54"/>
         </pathControl>
     </objects>
     <resources>

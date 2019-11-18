@@ -58,6 +58,8 @@ following names:
 |  tnt.wad                   | Final Doom: TNT: Evilution      |
 |  plutonia.wad              | Final Doom: Plutonia Experiment |
 |  chex.wad                  | Chex Quest                      |
+|  freedoom1.wad             | Freedoom: Phase 1               |
+|  freedoom2.wad             | Freedoom: Phase 2               |
 |  freedm.wad                | FreeDM                          |
 #endif
 #if HERETIC
@@ -218,13 +220,9 @@ that is entirely free software. The website can be found here:
 
   https://freedoom.github.io/
 
-The main Freedoom IWAD files are not currently compatible with
-LONG_GAME_NAME. However, you can play using FreeDM, the
-deathmatch spinoff project. If you want to play single player games,
-you’ll need to download additional fan-made WAD files to use in
-conjunction with it. Check out the [Chocolate Doom wiki’s page on
+Check out the [Chocolate Doom wiki’s page on
 Freedoom](https://www.chocolate-doom.org/wiki/index.php/Freedoom)
-for some suggestions.
+for more information.
 
 # Playing with Chex Quest
 

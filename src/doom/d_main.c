@@ -2094,18 +2094,6 @@ void D_DoomMain (void)
     I_PrintStartupBanner(gamedescription);
     PrintDehackedBanners();
 
-    // Freedoom's IWADs are Boom-compatible, which means they usually
-    // don't work in Vanilla (though FreeDM is okay). Show a warning
-    // message and give a link to the website.
-    if (gamevariant == freedoom)
-    {
-        printf(" WARNING: You are playing using one of the Freedoom IWAD\n"
-               " files, which might not work in this port. See this page\n"
-               " for more information on how to play using Freedoom:\n"
-               "   https://www.chocolate-doom.org/wiki/index.php/Freedoom\n");
-        I_PrintDivider();
-    }
-
     DEH_printf("I_Init: Setting up machine state.\n");
     I_CheckIsScreensaver();
     I_InitTimer();

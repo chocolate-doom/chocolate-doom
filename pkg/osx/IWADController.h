@@ -28,6 +28,8 @@
     id doom2;
     id plutonia;
     id tnt;
+    id freedoom1;
+    id freedoom2;
     id freedm;
 
     id heretic;
