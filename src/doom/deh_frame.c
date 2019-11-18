@@ -48,7 +48,7 @@ static void *DEH_FrameStart(deh_context_t *context, char *line)
         return NULL;
     }
     
-    if (frame_number < 0 || frame_number >= NUMSTATES - 3) // Zombieman
+    if (frame_number < 0 || frame_number >= NUMSTATES)
     {
         DEH_Warning(context, "Invalid frame number: %i", frame_number);
         return NULL;
@@ -128,7 +128,7 @@ static void DEH_FrameParseLine(deh_context_t *context, char *line, void *tag)
     ivalue = atoi(value);
     
     // [crispy] drop the overflow simulation into the frame table
-    if (false && state == &states[NUMSTATES - 1 - 3]) // Zombieman])
+    if (false && state == &states[NUMSTATES - 1])
     {
         DEH_FrameOverflow(context, variable_name, ivalue);
     }
@@ -144,7 +144,7 @@ static void DEH_FrameSHA1Sum(sha1_context_t *context)
 {
     int i;
 
-    for (i=0; i<NUMSTATES-3; ++i) // Zombieman
+    for (i=0; i<NUMSTATES; ++i)
     {
         DEH_StructSHA1Sum(context, &state_mapping, &states[i]);
     }

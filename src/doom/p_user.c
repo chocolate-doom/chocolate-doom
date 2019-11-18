@@ -50,16 +50,30 @@ void DropBackpack(player_t* player)
 	int x, y;
 	unsigned an;
 	mobj_t* backpack;
-	mobjtype_t item = MT_MISC24;
+	mobjtype_t item = 0;
 
 	if (player->playerstate == PST_DEAD)
-	{
 		return;
+
+	if (player->ammo[am_clip] > 20
+		&& player->ammo[am_shell] > 8
+		&& player->ammo[am_misl] > 4
+		&& player->ammo[am_cell] > 40)
+	{
+		item = MT_MISC94;
 	}
-	
-	if (player->ammo[am_clip] <= 20
-		|| player->ammo[am_shell] <= 8
-		|| player->ammo[am_misl] <= 4)
+	else if (player->ammo[am_clip] > 20
+		&& player->ammo[am_shell] > 8
+		&& player->ammo[am_misl] > 4)
+	{
+		item = MT_MISC93;
+	}
+	else if (player->ammo[am_clip] > 20
+		&& player->ammo[am_shell] > 8)
+	{
+		item = MT_MISC92;
+	}
+	else
 	{
 		player->message = DEH_String(NOAMMO);
 		return;
@@ -78,9 +92,12 @@ void DropBackpack(player_t* player)
 	}
 	backpack->flags |= MF_DROPPED;
 
-	player->ammo[am_clip] -= 20; 
+	if (item == MT_MISC94)
+		player->ammo[am_cell] -= 40;
+	if (item >= MT_MISC93)
+		player->ammo[am_misl] -= 4;
+	player->ammo[am_clip] -= 20;
 	player->ammo[am_shell] -= 8;    
-	player->ammo[am_misl] -= 4;    
 }
 
 //

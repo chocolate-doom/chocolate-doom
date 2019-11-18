@@ -725,11 +725,14 @@ P_TouchSpecialThing
 			RecoverInventoryFromBackpack(toucher, 2);
 		else if (special->type == MT_MISC90)
 			RecoverInventoryFromBackpack(toucher, 3);
-		else // MT_MISC24
+		else // exchange supplies
 		{
+			if (special->type == MT_MISC94)
+				P_GiveAmmo (player, am_cell, 2);
+			if (special->type >= MT_MISC93)
+				P_GiveAmmo (player, am_misl, 4);
 			P_GiveAmmo (player, am_clip, 2);
 			P_GiveAmmo (player, am_shell, 2);
-			P_GiveAmmo (player, am_misl, 4);
 			P_GiveBody (player, 5);
 		}
 		player->message = DEH_String(GOTBACKPACK);

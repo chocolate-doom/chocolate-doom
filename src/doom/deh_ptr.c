@@ -32,7 +32,7 @@ static int CodePointerIndex(actionf_t *ptr)
 {
     int i;
 
-    for (i=0; i<NUMSTATES-3; ++i) // Zombieman
+    for (i=0; i<NUMSTATES; ++i)
     {
         if (!memcmp(&codeptrs[i], ptr, sizeof(actionf_t)))
         {
@@ -49,7 +49,7 @@ static void DEH_PointerInit(void)
     
     // Initialize list of dehacked pointers
 
-    for (i=0; i<NUMSTATES-3; ++i) // Zombieman
+    for (i=0; i<NUMSTATES; ++i)
         codeptrs[i] = states[i].action;
 }
 
@@ -66,7 +66,7 @@ static void *DEH_PointerStart(deh_context_t *context, char *line)
         return NULL;
     }
 
-    if (frame_number < 0 || frame_number >= NUMSTATES - 3) // Zombieman
+    if (frame_number < 0 || frame_number >= NUMSTATES)
     {
         DEH_Warning(context, "Invalid frame number: %i", frame_number);
         return NULL;
@@ -105,7 +105,7 @@ static void DEH_PointerParseLine(deh_context_t *context, char *line, void *tag)
 
     if (!strcasecmp(variable_name, "Codep frame"))
     {
-        if (ivalue < 0 || ivalue >= NUMSTATES - 3) // Zombieman
+        if (ivalue < 0 || ivalue >= NUMSTATES)
         {
             DEH_Warning(context, "Invalid state '%i'", ivalue);
         }
@@ -124,7 +124,7 @@ static void DEH_PointerSHA1Sum(sha1_context_t *context)
 {
     int i;
 
-    for (i=0; i<NUMSTATES-3; ++i) // Zombieman
+    for (i=0; i<NUMSTATES; ++i)
     {
         SHA1_UpdateInt32(context, CodePointerIndex(&states[i].action));
     }
