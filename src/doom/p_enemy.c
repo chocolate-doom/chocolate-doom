@@ -1887,7 +1887,7 @@ A_CloseShotgun2
 
 mobj_t**		braintargets = NULL;
 int		numbraintargets = 0; // [crispy] initialize
-int		braintargeton = -1; // [crispy] initialize
+int		braintargeton = 0;
 static int	maxbraintargets; // [crispy] remove braintargets limit
 
 void A_BrainAwake (mobj_t* mo)
@@ -1897,11 +1897,7 @@ void A_BrainAwake (mobj_t* mo)
 	
     // find all the target spots
     numbraintargets = 0;
-    // [crispy] initialize, but allow overriding from savegame
-    if (braintargeton == -1)
-    {
     braintargeton = 0;
-    }
 	
     thinker = thinkercap.next;
     for (thinker = thinkercap.next ;
@@ -2028,7 +2024,7 @@ void A_BrainSpit (mobj_t*	mo)
 
     // shoot a cube at current target
     targ = braintargets[braintargeton];
-    if (numbraintargets == 0 && false) // [crispy] fixed division by zero
+    if (numbraintargets == 0)
     {
         I_Error("A_BrainSpit: numbraintargets was 0 (vanilla crashes here)");
     }
