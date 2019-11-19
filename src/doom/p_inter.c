@@ -733,7 +733,6 @@ P_TouchSpecialThing
 				P_GiveAmmo (player, am_misl, 4);
 			P_GiveAmmo (player, am_clip, 2);
 			P_GiveAmmo (player, am_shell, 2);
-			P_GiveBody (player, 5);
 		}
 		player->message = DEH_String(GOTBACKPACK);
 	}
