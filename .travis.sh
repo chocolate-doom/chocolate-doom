@@ -13,5 +13,5 @@ else
 	make -j4
 	make install DESTDIR=/tmp/whatever
 	make dist
-	make -j4 -C quickcheck check SOURCE_PORT=$PWD/src/crispy-doom
+	make -j4 -C quickcheck check SOURCE_PORT=$PWD/src/chocolate-doom
 fi
