@@ -13,5 +13,6 @@ else
 	make -j4
 	make install DESTDIR=/tmp/whatever
 	make dist
-	make -j4 -C quickcheck check SOURCE_PORT=$PWD/src/chocolate-doom
+	PREFIX=`sed -n '/PROGRAM_PREFIX/p' ${PWD}/config.h | cut -d '"' -f 2`
+	make -j4 -C quickcheck check SOURCE_PORT=$PWD/src/${PREFIX}doom
 fi
