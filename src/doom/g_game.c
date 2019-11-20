@@ -1844,7 +1844,6 @@ G_InitNew
     }
     */
 
-    //if (skill > sk_nightmare)
 	if (skill > sk_extreme)
 		skill = sk_extreme;
 

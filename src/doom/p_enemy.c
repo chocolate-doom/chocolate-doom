@@ -728,7 +728,7 @@ void A_Chase (mobj_t*	actor)
     // check for missile attack
     if (actor->info->missilestate)
     {
-	if (gameskill < sk_nightmare
+	if (gameskill != sk_nightmare
 	    && !fastparm && actor->movecount)
 	{
 	    goto nomissile;

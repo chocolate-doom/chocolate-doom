@@ -1603,7 +1603,6 @@ void G_InitNew(skill_t skill, int episode, int map)
     }
     if (skill < sk_baby)
         skill = sk_baby;
-    //if (skill > sk_nightmare)
     if (skill > sk_extreme)
         skill = sk_extreme;
     if (episode < 1)

@@ -749,7 +749,7 @@ void A_Chase(mobj_t * actor)
 //
     if (actor->info->missilestate)
     {
-        if (gameskill < sk_nightmare && actor->movecount)
+        if (gameskill != sk_nightmare && actor->movecount)
             goto nomissile;
         if (!P_CheckMissileRange(actor))
             goto nomissile;
