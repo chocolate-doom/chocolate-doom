@@ -1,19 +1,64 @@
-RUDE: Romero's Ultimate Doom Engine
------------------------------------
+# RUDE: Romero's Ultimate Doom Engine
 
- This is a fork of Chocolate Doom 2.3.0 with some stuff from Crispy Doom.
- It's a tribute to John Romero hence the name, but that name should not be taken too seriously. :)
- After all this port is also a bit rough. It's a strong limit removing port aiming to preserve most bugs in
-the original executables including rendering bugs while preventing crashes at the same time.
- The startup console is back (running from the command line is recommended).
- There's a new 'Unholy massacre' skill level (-skill 6, not in the menu). :D
- Has extended nodes support and the autorun key from Crispy.
+ RUDE is a fork of Chocolate Doom 2.3.0 with some stuff from Crispy Doom.
+ The name is some kind of play on words and stands for Romero's Ultimate Doom Engine and
+it's another tribute to John Romero. Easy to understand if you know my Romero's Heresy II
+project for Heretic. :)
+
+ It's a strong limit removing port aiming to fix game breaking bugs and prevent crashes while
+remaining faithful to the original executables. There are a few new gameplay features too.
+ It's somewhere in the middle between Chocolate Doom and Crispy.
+
  Please refer to the Chocolate and Crispy documentation.
  Also contains code from MBF and PrBoom+.
- Of course DOOM © 1996 id Software, Chocolate Doom © 2018 Simon Howard and Crispy Doom © 2018 Fabian Greffrath.
+ Of course DOOM © 1996 id Software.
+ Chocolate Doom © 2019 Simon Howard and Crispy Doom © 2019 Fabian Greffrath.
  
- Compiles with Code::Blocks 17.12 and tdm-gcc 5.1. You need to tell the compiler where the SDL* and zlib
-libraries are (Global compiler settings->Search directories).
+ Compiles with Code::Blocks 17.12 (tdm-gcc 5.1) and Visual Studio 2017 (v141_xp).
+
+# New features:
+
+ * Supports SIGIL (even multiplayer), E1M4b and E1M8b (Crispy). For the Buckethead soundtrack to
+ work you'd need to convert it to Ogg first (MP3 support for SDL1 was very poor) or FLAC.
+ * Extended setup to support SIGIL and new features. Can warp to title. It's named config now for
+ compatibility with Vista and later (the port should still run on win98).
+ * There's a new 'Unholy massacre' skill level (-skill 6). :D Double monsters, half ammo,
+ smaller health pickups, zombiemen got a point blank attack, pistol with increased accuracy
+ and damage, bumped minimum damage dealt for punch.
+ * Fixed backpacks from Marshmallow (idea and bits of code):
+ * Players now can exchange supplies, also you drop a small health medikit in the backpack
+ (default key is 'x').
+ * Players drop backpacks with their inventory upon death, you can't drop another one until the
+ previous one has been picked up tough. They work even in SP.
+ * Single player respawn.
+ * Keep keys and no DM items in Coop options (Marshmallow).
+ * Spawn double the monsters and take double damage options.
+ * Classic mode with only Doom 1 monsters for slaughterfest maps and lame players, regular shotgun
+ takes precedence.
+ * Slow ISA VGA simulation (Trident 9000i).
+ * New command line parameters for the above: dropbackpack, nodmweapons, keepkeys, sprespawn,
+ 2xmonsters, xpain, nod2monsters, isa.
+ * Extended demo format while keeping vanilla compatibility.
+ * Doom 1.2 demo support (Chocolate).
+ * Drag and Drop support (Crispy).
+ * Resurrect cheat with IDDQD (Crispy, works differently here).
+ * Support for extended nodes (Crispy).
+ * Autorun key (Crispy).
+ * The startup console is back and with colored title, can be run run from the command line
+ (thanks JNechaevsky for hint on colors).
+ * Fake splitscreen (Chocolate 2.x). On SDL1 the window cannot be freely resized tough.
+ * Bring back the video driver selection box on windows. Added the -directx parameter.
+ * Added LCD gamma fix from Russian Doom using a darker palette by JNechaevsky.
+ * New 'One thousand deaths await thee' skill level for Heretic. You take double damage, monsters
+ got half hit points and half ammo for a more dynamic gameplay.
+ * Removed limits for Heretic (Crispy).
+ * Migrated solution to VS 2017 and fixed compilation (release is still a MinGW build tough).
+ * Fixed boss level ending not triggered if every player is dead in multiplayer.
+ * Fixed Doom II monster exclusion bug.
+ * Fixed configuration not being saved for Heretic.
+ * Many bugfixes from Crispy.
+
+ Have fun!
 
 # Chocolate Doom
 
