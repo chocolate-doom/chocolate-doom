@@ -744,6 +744,35 @@ void P_SpawnPlayer (mapthing_t* mthing)
 }
 
 
+boolean P_CheckDoubleSpawn (mobj_t* mobj, fixed_t x, fixed_t y, fixed_t z, int mobjtype)
+{
+	boolean spawned = true;
+
+	if (!P_CheckPosition (mobj, mobj->x, mobj->y))
+	{
+		P_RemoveMobj (mobj);
+		mobj = P_SpawnMobj (x - 2 * mobjinfo[mobjtype].radius, y, z, mobjtype);
+		if (!P_CheckPosition (mobj, mobj->x, mobj->y))
+		{
+			P_RemoveMobj (mobj);
+			mobj = P_SpawnMobj (x, y + 2 * mobjinfo[mobjtype].radius, z, mobjtype);
+			if (!P_CheckPosition (mobj, mobj->x, mobj->y))
+			{
+				P_RemoveMobj (mobj);
+				mobj = P_SpawnMobj (x, y - 2 * mobjinfo[mobjtype].radius, z, mobjtype);
+				if (!P_CheckPosition (mobj, mobj->x, mobj->y))
+				{
+					P_RemoveMobj (mobj);
+					spawned = false;
+				}
+			}
+		}
+	}
+
+	return spawned;
+}
+
+
 //
 // P_SpawnMapThing
 // The fields of the mapthing should
@@ -755,7 +784,7 @@ void P_SpawnMapThing (mapthing_t* mthing)
     int			bit;
     mobj_t*		mobj;
     mobj_t*		mobj2;
-    boolean spawned;
+    boolean spawned = true;
     fixed_t		x;
     fixed_t		y;
     fixed_t		z;
@@ -851,43 +880,31 @@ void P_SpawnMapThing (mapthing_t* mthing)
 	    i = MT_MISC91;
 
     mobj = P_SpawnMobj (x,y,z, i);
-    mobj->spawnpoint = *mthing;
 
-    if (mobj->tics > 0)
-	mobj->tics = 1 + (P_Random () % mobj->tics);
-    if (mobj->flags & MF_COUNTKILL)
-	totalkills++;
-    if (mobj->flags & MF_COUNTITEM)
-	totalitems++;
-		
-    mobj->angle = ANG45 * (mthing->angle/45);
-    if (mthing->options & MTF_AMBUSH)
-	mobj->flags |= MF_AMBUSH;
+	if ((doublespawn || gameskill == sk_extreme) && mobjinfo[i].flags & MF_COUNTKILL && mthing->type != MT_SPIDER && mthing->type != MT_CYBORG)
+	{
+		spawned = P_CheckDoubleSpawn (mobj, x, y, z, i); // previously double spawned monster might block
+	}
+
+	if (spawned)
+	{
+	    mobj->spawnpoint = *mthing;
+	    if (mobj->tics > 0)
+		    mobj->tics = 1 + (P_Random () % mobj->tics);
+	    if (mobj->flags & MF_COUNTKILL)
+		    totalkills++;
+	    if (mobj->flags & MF_COUNTITEM)
+		    totalitems++;
+
+	    mobj->angle = ANG45 * (mthing->angle/45);
+	    if (mthing->options & MTF_AMBUSH)
+		    mobj->flags |= MF_AMBUSH;
+	}
 
 	if ((doublespawn || gameskill == sk_extreme) && mobjinfo[i].flags & MF_COUNTKILL && mthing->type != MT_SPIDER && mthing->type != MT_CYBORG)
 	{
 		mobj2 = P_SpawnMobj (x + 2 * mobjinfo[i].radius, y, z, i);
-		spawned = true;
-		if (!P_CheckPosition (mobj2, mobj2->x, mobj2->y))
-		{
-			P_RemoveMobj (mobj2);
-			mobj2 = P_SpawnMobj (x - 2 * mobjinfo[i].radius, y, z, i);
-			if (!P_CheckPosition (mobj2, mobj2->x, mobj2->y))
-			{
-				P_RemoveMobj (mobj2);
-				mobj2 = P_SpawnMobj (x, y + 2 * mobjinfo[i].radius, z, i);
-				if (!P_CheckPosition (mobj2, mobj2->x, mobj2->y))
-				{
-					P_RemoveMobj (mobj2);
-					mobj2 = P_SpawnMobj (x, y - 2 * mobjinfo[i].radius, z, i);
-					if (!P_CheckPosition (mobj2, mobj2->x, mobj2->y))
-					{
-						P_RemoveMobj (mobj2);
-						spawned = false;
-					}
-				}
-			}
-		}
+		spawned = P_CheckDoubleSpawn (mobj2, x, y ,z, i);
 		if (spawned)
 		{
 			mobj2->spawnpoint = *mthing;
