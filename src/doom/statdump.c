@@ -268,7 +268,7 @@ static void PrintLevelName(FILE *stream, int episode, int level)
 
 static void PrintStats(FILE *stream, wbstartstruct_t *stats)
 {
-    int leveltime, partime;
+    short leveltime, partime;
     int i;
 
     PrintLevelName(stream, stats->epsd, stats->last);
