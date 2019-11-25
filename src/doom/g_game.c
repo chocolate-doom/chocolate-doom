@@ -39,6 +39,7 @@
 #include "i_system.h"
 #include "i_timer.h"
 #include "i_input.h"
+#include "i_swap.h"
 #include "i_video.h"
 
 #include "p_setup.h"
@@ -1789,10 +1790,15 @@ void G_DoCompleted (void)
     // statcheck regression testing.
     if (gamemode == commercial)
     {
-        // map33 has no official time: initialize to zero
+        // map33 reads its par time from beyond the cpars[] array
         if (gamemap == 33)
         {
-            wminfo.partime = 0;
+            int cpars32;
+
+            memcpy(&cpars32, DEH_String(GAMMALVL0), sizeof(int));
+            cpars32 = LONG(cpars32);
+
+            wminfo.partime = TICRATE*cpars32;
         }
         // [crispy] support [PARS] sections in BEX files
         else if (bex_cpars[gamemap-1])
