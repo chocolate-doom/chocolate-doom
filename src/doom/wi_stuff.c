@@ -1474,12 +1474,7 @@ void WI_drawStats(void)
     if (wbs->epsd < 3)
     {
         V_DrawPatch(SCREENWIDTH/2 + SP_TIMEX, SP_TIMEY, par);
-
-        // Emulation: don't draw partime value if map33
-        if (gamemode != commercial || wbs->last != NUMCMAPS)
-        {
-            WI_drawTime(SCREENWIDTH - SP_TIMEX, SP_TIMEY, cnt_par);
-        }
+        WI_drawTime(SCREENWIDTH - SP_TIMEX, SP_TIMEY, cnt_par);
     }
 
 }
