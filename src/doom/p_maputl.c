@@ -626,7 +626,56 @@ PIT_AddLineIntercepts (line_t* ld)
     return true;	// continue
 }
 
+//
+// PIT_CompatAddLineIntercepts.
+// Old line intercept code for Doom v1.0/v1.1/v1.2 compatibility.
+// Derived from code in P_SightBlockLinesIterator() 
+//     in prboom-plus/src/p_sight.c:133-151.
+// Adjusted to more closely resemble PIT_AddLineIntercepts().
+//
+boolean
+PIT_CompatAddLineIntercepts(line_t *ld)
+{
+    int s1;
+    int s2;
+    fixed_t frac;
+    divline_t dl;
 
+    s1 = P_PointOnDivlineSide(ld->v1->x, ld->v1->y, &trace);
+    s2 = P_PointOnDivlineSide(ld->v2->x, ld->v2->y, &trace);
+
+    if (s1 == s2)
+    {
+        return true; // line isn't crossed
+    }
+
+    // hit the line
+    P_MakeDivline(ld, &dl);
+
+    s1 = P_PointOnDivlineSide(trace.x, trace.y, &dl);
+    s2 = P_PointOnDivlineSide(trace.x + trace.dx, trace.y + trace.dy, &dl);
+
+    if (s1 == s2)
+    {
+        return true; // line isn't crossed
+    }
+
+    frac = P_InterceptVector(&trace, &dl);
+
+    // try to early out the check
+    if (!ld->backsector)
+    {
+        return false; // stop checking
+    }
+
+    intercept_p->frac = frac;
+    intercept_p->isaline = true;
+    intercept_p->d.line = ld;
+    InterceptsOverrun(intercept_p - intercepts, intercept_p);
+    intercept_p++;
+
+    return true; // continue
+}
 
 //
 // PIT_AddThingIntercepts
@@ -995,6 +1044,12 @@ P_PathTraverse
 		return false;	// early out
 	}
 		
+	if (flags & PT_COMPATADDLINES)
+	{
+	    if (!P_BlockLinesIterator (mapx, mapy,PIT_CompatAddLineIntercepts))
+		return false;	// early out
+	}
+
 	if (mapx == xt2
 	    && mapy == yt2)
 	{
