@@ -227,7 +227,10 @@ boolean PIT_CheckLine (line_t* ld)
     
     if (!ld->backsector)
 	return false;		// one sided line
-		
+
+    if ((doublespawn || gameskill == sk_extreme) && ld->backsector->floorheight == ld->backsector->ceilingheight)
+	return false;       // closed door
+
     if (!(tmthing->flags & MF_MISSILE) )
     {
 	if ( ld->flags & ML_BLOCKING )
