@@ -1748,6 +1748,9 @@ P_SetupLevel
     crispy_mapformat = P_CheckMapFormat(lumpnum);
     crispy_createblockmap = false;
 
+    if (crispy_mapformat & HEXEN)
+	    I_Error("P_SetupLevel: HEXEN map format not properly supported.");
+
     // note: most of this ordering is important	
     P_LoadBlockMap (lumpnum+ML_BLOCKMAP);
     P_LoadVertexes (lumpnum+ML_VERTEXES);
