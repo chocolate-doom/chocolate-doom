@@ -848,7 +848,7 @@ void M_DrawLoad(void)
 {
     int             i;
 	
-    V_DrawPatchShadow2(LoadDef_x, LoadDef_y,
+    V_DrawPatchDirect(LoadDef_x, LoadDef_y,
                       W_CacheLumpName(DEH_String("M_LOADG"), PU_CACHE));
 
     for (i = 0;i < load_end; i++)
@@ -934,7 +934,7 @@ void M_DrawSave(void)
 {
     int             i;
 	
-    V_DrawPatchShadow2(SaveDef_x, SaveDef_y, W_CacheLumpName(DEH_String("M_SAVEG"), PU_CACHE));
+    V_DrawPatchDirect(SaveDef_x, SaveDef_y, W_CacheLumpName(DEH_String("M_SAVEG"), PU_CACHE));
     for (i = 0;i < load_end; i++)
     {
 	M_DrawSaveLoadBorder(LoadDef.x,LoadDef.y+LINEHEIGHT*i);
@@ -1202,7 +1202,7 @@ void M_DrawReadThisCommercial(void)
 //
 void M_DrawSound(void)
 {
-    V_DrawPatchShadow2 (60, 38, W_CacheLumpName(DEH_String("M_SVOL"), PU_CACHE));
+    V_DrawPatchDirect (60, 38, W_CacheLumpName(DEH_String("M_SVOL"), PU_CACHE));
 
     M_DrawThermo(SoundDef.x,SoundDef.y+LINEHEIGHT*(sfx_vol+1),
 		 16,sfxVolume);
@@ -1270,8 +1270,8 @@ void M_DrawMainMenu(void)
 //
 void M_DrawNewGame(void)
 {
-    V_DrawPatchShadow2(96, 14, W_CacheLumpName(DEH_String("M_NEWG"), PU_CACHE));
-    V_DrawPatchShadow2(54, 38, W_CacheLumpName(DEH_String("M_SKILL"), PU_CACHE));
+    V_DrawPatchDirect(96, 14, W_CacheLumpName(DEH_String("M_NEWG"), PU_CACHE));
+    V_DrawPatchDirect(54, 38, W_CacheLumpName(DEH_String("M_SKILL"), PU_CACHE));
 }
 
 void M_NewGame(int choice)
@@ -1307,7 +1307,7 @@ int     epi;
 
 void M_DrawEpisode(void)
 {
-    V_DrawPatchShadow2(54, 38, W_CacheLumpName(DEH_String("M_EPISOD"), PU_CACHE));
+    V_DrawPatchDirect(54, 38, W_CacheLumpName(DEH_String("M_EPISOD"), PU_CACHE));
 }
 
 void M_VerifyNightmare(int key)
@@ -1363,7 +1363,7 @@ static const char *msgNames[2] = {"M_MSGOFF","M_MSGON"};
 
 void M_DrawOptions(void)
 {
-    V_DrawPatchShadow2(108, 15, W_CacheLumpName(DEH_String("M_OPTTTL"),
+    V_DrawPatchDirect(108, 15, W_CacheLumpName(DEH_String("M_OPTTTL"),
                                                PU_CACHE));
 	
 // [crispy] no patches are drawn in the Options menu anymore
@@ -1396,7 +1396,7 @@ static void M_DrawMouse(void)
 {
     char mouse_menu_text[48];
 
-    V_DrawPatchShadow2 (60, LoadDef_y, W_CacheLumpName(DEH_String("M_MSENS"), PU_CACHE));
+    V_DrawPatchDirect (60, LoadDef_y, W_CacheLumpName(DEH_String("M_MSENS"), PU_CACHE));
 
     M_WriteText(MouseDef.x, MouseDef.y + LINEHEIGHT * mouse_horiz + 6,
                 "HORIZONTAL: TURN");
@@ -2080,14 +2080,7 @@ M_WriteText
 	w = SHORT (hu_font[c]->width);
 	if (cx+w > ORIGWIDTH)
 	    break;
-	if (!messageToPrint && (currentMenu == &LoadDef || currentMenu == &SaveDef))
-	{
 	V_DrawPatchDirect(cx, cy, hu_font[c]);
-	}
-	else
-	{
-	    V_DrawPatchShadow1(cx, cy, hu_font[c]);
-	}
 	cx+=w;
     }
 }
@@ -2997,7 +2990,7 @@ void M_Drawer (void)
 		    M_WriteText(x, y+8-(M_StringHeight(alttext)/2), alttext);
 	    }
 	    else if (W_CheckNumForName(name) > 0) // [crispy] ...here
-	    V_DrawPatchShadow2 (x, y, W_CacheLumpName(name, PU_CACHE));
+	    V_DrawPatchDirect (x, y, W_CacheLumpName(name, PU_CACHE));
 
 	    dp_translation = NULL;
 	}

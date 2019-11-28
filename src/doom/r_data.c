@@ -1236,14 +1236,6 @@ void R_InitColormaps (void)
 
 	W_ReleaseLumpName("PLAYPAL");
     }
-
-#ifndef CRISPY_TRUECOLOR
-    // [crispy] initialize tinttable for V_DrawPatchShadow2
-    {
-	extern byte *tinttable;
-	tinttable = cr[CR_DARK];
-    }
-#endif
 }
 
 
