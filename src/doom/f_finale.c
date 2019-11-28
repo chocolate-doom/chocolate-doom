@@ -363,7 +363,7 @@ void F_TextWrite (void)
 	{
 	    break;
 	}
-	V_DrawPatchShadow1(cx, cy, hu_font[c]);
+	V_DrawPatch(cx, cy, hu_font[c]);
 	cx+=w;
     }
 	
@@ -834,7 +834,7 @@ void F_CastPrint (const char *text)
 	}
 		
 	w = SHORT (hu_font[c]->width);
-	V_DrawPatchShadow1(cx, 180, hu_font[c]);
+	V_DrawPatch(cx, 180, hu_font[c]);
 	cx+=w;
     }
 	
