@@ -1699,7 +1699,8 @@ void D_DoomMain (void)
             }
         }
 
-        printf("  loaded %i DEHACKED lumps from PWAD files.\n", loaded);
+        if (loaded)
+            printf("  loaded %i DEHACKED lumps from PWAD files.\n", loaded);
     }
 
     // Set the gamedescription string. This is only possible now that
