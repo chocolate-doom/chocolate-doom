@@ -1591,12 +1591,7 @@ void WI_drawStats(void)
     if (WI_drawParTime())
     {
         V_DrawPatch(ORIGWIDTH/2 + SP_TIMEX, SP_TIMEY, par);
-
-        // Emulation: don't draw partime value if map33
-        if (gamemode != commercial || wbs->last != NUMCMAPS)
-        {
-            WI_drawTime(ORIGWIDTH - SP_TIMEX, SP_TIMEY, cnt_par, true);
-        }
+        WI_drawTime(ORIGWIDTH - SP_TIMEX, SP_TIMEY, cnt_par, true);
     }
 
     // [crispy] draw total time after level time and par time
