@@ -668,10 +668,10 @@ PIT_CompatAddLineIntercepts(line_t *ld)
         return false; // stop checking
     }
 
+    check_intercept(); // [crispy] remove INTERCEPTS limit
     intercept_p->frac = frac;
     intercept_p->isaline = true;
     intercept_p->d.line = ld;
-    InterceptsOverrun(intercept_p - intercepts, intercept_p);
     intercept_p++;
 
     return true; // continue

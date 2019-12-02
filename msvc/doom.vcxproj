@@ -137,6 +137,7 @@
     <ClInclude Include="..\src\doom\doomdef.h" />
     <ClInclude Include="..\src\doom\doomstat.h" />
     <ClInclude Include="..\src\doom\dstrings.h" />
+    <ClInclude Include="..\src\doom\d_compat.h" />
     <ClInclude Include="..\src\doom\d_englsh.h" />
     <ClInclude Include="..\src\doom\d_items.h" />
     <ClInclude Include="..\src\doom\d_main.h" />
@@ -246,6 +247,7 @@
     <ClCompile Include="..\src\doom\doomdef.c" />
     <ClCompile Include="..\src\doom\doomstat.c" />
     <ClCompile Include="..\src\doom\dstrings.c" />
+    <ClCompile Include="..\src\doom\d_compat.c" />
     <ClCompile Include="..\src\doom\d_items.c" />
     <ClCompile Include="..\src\doom\d_main.c" />
     <ClCompile Include="..\src\doom\d_net.c" />

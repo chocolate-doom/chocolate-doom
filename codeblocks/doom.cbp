@@ -99,6 +99,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../src/doom/am_map.h" />
+		<Unit filename="../src/doom/d_compat.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../src/doom/d_compat.h" />
 		<Unit filename="../src/doom/d_englsh.h" />
 		<Unit filename="../src/doom/d_items.c">
 			<Option compilerVar="CC" />
