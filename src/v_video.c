@@ -199,7 +199,7 @@ static drawpatchpx_t *const drawpatchpx_a[2][2] = {{drawpatchpx11, drawpatchpx10
 
 static fixed_t dx, dxi, dy, dyi;
 
-static void V_DrawPatchCrispy(int x, int y, patch_t *patch, int r)
+void V_DrawPatch(int x, int y, patch_t *patch)
 { 
     int count;
     int col;
@@ -207,7 +207,6 @@ static void V_DrawPatchCrispy(int x, int y, patch_t *patch, int r)
     pixel_t *desttop;
     pixel_t *dest;
     byte *source;
-    pixel_t *desttop2, *dest2;
     int w;
 
     // [crispy] four different rendering functions
@@ -237,11 +236,10 @@ static void V_DrawPatchCrispy(int x, int y, patch_t *patch, int r)
 
     col = 0;
     desttop = dest_screen + ((y * dy) >> FRACBITS) * SCREENWIDTH + ((x * dx) >> FRACBITS);
-    desttop2 = dest_screen + (((y + r) * dy) >> FRACBITS) * SCREENWIDTH + (((x + r) * dx) >> FRACBITS);
 
     w = SHORT(patch->width);
 
-    for ( ; col<w << FRACBITS ; x++, col+=dxi, desttop++, desttop2++)
+    for ( ; col<w << FRACBITS ; x++, col+=dxi, desttop++)
     {
         int topdelta = -1;
 
@@ -275,7 +273,6 @@ static void V_DrawPatchCrispy(int x, int y, patch_t *patch, int r)
             top = ((y + topdelta) * dy) >> FRACBITS;
             source = (byte *)column + 3;
             dest = desttop + ((topdelta * dy) >> FRACBITS)*SCREENWIDTH;
-            dest2 = desttop2 + ((topdelta * dy) >> FRACBITS)*SCREENWIDTH;
             count = (column->length * dy) >> FRACBITS;
 
             // [crispy] too low / height
@@ -292,16 +289,6 @@ static void V_DrawPatchCrispy(int x, int y, patch_t *patch, int r)
 
             while (count--)
             {
-                if (r)
-                {
-#ifndef CRISPY_TRUECOLOR
-                    *dest2 = tinttable[*dest2];
-#else
-                    *dest2 = I_BlendDark(*dest2, 0x80);
-#endif
-                    dest2 += SCREENWIDTH;
-                }
-
                 // [crispy] too high
                 if (top++ >= 0)
                 {
@@ -313,21 +300,6 @@ static void V_DrawPatchCrispy(int x, int y, patch_t *patch, int r)
             column = (column_t *)((byte *)column + column->length + 4);
         }
     }
-}
-
-void V_DrawPatch(int x, int y, patch_t *patch)
-{
-    return V_DrawPatchCrispy(x, y, patch, 0);
-}
-
-void V_DrawPatchShadow1(int x, int y, patch_t *patch)
-{
-    return V_DrawPatchCrispy(x, y, patch, 1);
-}
-
-void V_DrawPatchShadow2(int x, int y, patch_t *patch)
-{
-    return V_DrawPatchCrispy(x, y, patch, 2);
 }
 
 void V_DrawPatchFullScreen(patch_t *patch, boolean flipped)
