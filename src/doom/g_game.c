@@ -352,7 +352,6 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     int		forward;
     int		side;
     static int		joybspeed_old = 2;
-	player_t* p;
 
     memset(cmd, 0, sizeof(ticcmd_t));
 
