@@ -2577,6 +2577,9 @@ void G_RecordDemo (char *name)
     size_t demoname_size;
     int i;
     int maxsize;
+
+    // [crispy] demo file name suffix counter
+    static unsigned int j = 0;
     FILE *fp = NULL;
 
     // [crispy] the name originally chosen for the demo, i.e. without "-00000"
@@ -2591,9 +2594,9 @@ void G_RecordDemo (char *name)
     M_snprintf(demoname, demoname_size, "%s.lmp", name);
 
     // [crispy] prevent overriding demos by adding a file name suffix
-    for (i = 0; i <= 99999 && (fp = fopen(demoname, "rb")) != NULL; i++)
+    for ( ; j <= 99999 && (fp = fopen(demoname, "rb")) != NULL; j++)
     {
-	M_snprintf(demoname, demoname_size, "%s-%05d.lmp", name, i);
+	M_snprintf(demoname, demoname_size, "%s-%05d.lmp", name, j);
 	fclose (fp);
     }
 
