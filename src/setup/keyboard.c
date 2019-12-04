@@ -347,7 +347,7 @@ static void OtherKeysDialog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
     AddKeyControl(table, "Toggle gamma",          &key_menu_gamma);
     AddKeyControl(table, "Multiplayer spy",       &key_spy);
     AddKeyControl(table, "Go to next level",      &key_menu_nextlevel);
-    AddKeyControl(table, "Reload current level",  &key_menu_reloadlevel);
+    AddKeyControl(table, "Restart level/demo",    &key_menu_reloadlevel);
 
     AddKeyControl(table, "Increase screen size",  &key_menu_incscreen);
     AddKeyControl(table, "Decrease screen size",  &key_menu_decscreen);

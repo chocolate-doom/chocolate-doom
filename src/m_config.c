@@ -1448,7 +1448,7 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_KEY(key_menu_nextlevel),
 
     //!
-    // Keyboard shortcut to reload current level.
+    // Keyboard shortcut to restart current level or demo.
     //
 
     CONFIG_VARIABLE_KEY(key_menu_reloadlevel),
