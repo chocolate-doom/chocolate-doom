@@ -1246,6 +1246,23 @@ static void SetVideoMode(void)
 
     renderer = SDL_CreateRenderer(screen, -1, renderer_flags);
 
+    // If we could not find a matching render driver,
+    // try again without hardware acceleration.
+
+    if (renderer == NULL && !force_software_renderer)
+    {
+        renderer_flags |= SDL_RENDERER_SOFTWARE;
+        renderer_flags &= ~SDL_RENDERER_PRESENTVSYNC;
+
+        renderer = SDL_CreateRenderer(screen, -1, renderer_flags);
+
+        // If this helped, save the setting for later.
+        if (renderer != NULL)
+        {
+            force_software_renderer = 1;
+        }
+    }
+
     if (renderer == NULL)
     {
         I_Error("Error creating renderer for screen window: %s",
