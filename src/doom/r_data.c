@@ -303,6 +303,7 @@ void R_GenerateLookup (int texnum)
     int			i;
     short*		collump;
     unsigned short*	colofs;
+    int			err = 0; // killough 10/98
 	
     texture = textures[texnum];
 
@@ -346,7 +347,7 @@ void R_GenerateLookup (int texnum)
 	
     for (x=0 ; x<texture->width ; x++)
     {
-	if (!patchcount[x])
+	if (!patchcount[x] && !err++) // killough 10/98: non-verbose output
 	{
 	    printf ("R_GenerateLookup: column without a patch (%s)\n",
 		    texture->name);
