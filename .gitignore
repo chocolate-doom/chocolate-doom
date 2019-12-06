@@ -28,7 +28,12 @@ DOOM*.pcx
 HTIC*.pcx
 HEXEN*.pcx
 STRIFE*.pcx
+
+# CMake-specific ignores
+/.vs
 /build*
+/CMakeSettings.json
+/out
 
 # These are the default patterns globally ignored by Subversion:
 *.o
