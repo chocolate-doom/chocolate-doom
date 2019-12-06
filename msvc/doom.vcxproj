@@ -215,6 +215,7 @@
     <ClInclude Include="..\src\net_sdl.h" />
     <ClInclude Include="..\src\net_server.h" />
     <ClInclude Include="..\src\net_structrw.h" />
+    <ClInclude Include="..\src\r_medusa.h" />
     <ClInclude Include="..\src\sha1.h" />
     <ClInclude Include="..\src\tables.h" />
     <ClInclude Include="..\src\v_diskicon.h" />
@@ -332,6 +333,7 @@
     <ClCompile Include="..\src\net_sdl.c" />
     <ClCompile Include="..\src\net_server.c" />
     <ClCompile Include="..\src\net_structrw.c" />
+    <ClCompile Include="..\src\r_medusa.c" />
     <ClCompile Include="..\src\sha1.c" />
     <ClCompile Include="..\src\tables.c" />
     <ClCompile Include="..\src\v_diskicon.c" />

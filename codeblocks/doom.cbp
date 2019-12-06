@@ -467,6 +467,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../src/net_structrw.h" />
+		<Unit filename="../src/r_medusa.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../src/r_medusa.h" />
 		<Unit filename="../src/sha1.c">
 			<Option compilerVar="CC" />
 		</Unit>

@@ -330,6 +330,9 @@
     <ClInclude Include="..\src\doom\d_compat.h">
       <Filter>Header Files\doom</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\r_medusa.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\d_event.c">
@@ -682,6 +685,9 @@
     </ClCompile>
     <ClCompile Include="..\src\doom\d_compat.c">
       <Filter>Source Files\doom</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\r_medusa.c">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
