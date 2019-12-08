@@ -48,6 +48,13 @@
 #define MID_HEADER_MAGIC "MThd"
 #define MUS_HEADER_MAGIC "MUS\x1a"
 
+#if defined(SDL_MIXER_VERSION_ATLEAST) && SDL_MIXER_VERSION_ATLEAST(2,0,5)
+#define USE_SDL_MIXER_LOOPING 1
+#else
+#define USE_SDL_MIXER_LOOPING 0
+#endif
+
+#if !USE_SDL_MIXER_LOOPING
 #define FLAC_HEADER "fLaC"
 #define OGG_HEADER "OggS"
 
@@ -65,6 +72,7 @@
 // Ogg metadata headers that we care about.
 #define OGG_ID_HEADER        1
 #define OGG_COMMENT_HEADER   3
+#endif // !USE_SDL_MIXER_LOOPING
 
 // Structure for music substitution.
 // We store a mapping based on SHA1 checksum -> filename of substitute music
@@ -82,6 +90,7 @@ typedef struct
     const char *filename;
 } subst_music_t;
 
+#if !USE_SDL_MIXER_LOOPING
 // Structure containing parsed metadata read from a digital music track:
 typedef struct
 {
@@ -89,6 +98,7 @@ typedef struct
     unsigned int samplerate_hz;
     int start_time, end_time;
 } file_metadata_t;
+#endif
 
 static subst_music_t *subst_music = NULL;
 static unsigned int subst_music_len = 0;
@@ -102,6 +112,7 @@ static boolean sdl_was_initialized = false;
 
 char *music_pack_path = "";
 
+#if !USE_SDL_MIXER_LOOPING
 // If true, we are playing a substitute digital track rather than in-WAD
 // MIDI/MUS track, and file_metadata contains loop metadata.
 static file_metadata_t file_metadata;
@@ -109,6 +120,7 @@ static file_metadata_t file_metadata;
 // Position (in samples) that we have reached in the current track.
 // This is updated by the TrackPositionCallback function.
 static unsigned int current_track_pos;
+#endif
 
 // Currently playing music track.
 static Mix_Music *current_track_music = NULL;
@@ -333,6 +345,7 @@ static const subst_music_t known_filenames[] = {
     //{"ec8fa484c4e85adbf700", "d_intro.{ext}"},  // 5
 };
 
+#if !USE_SDL_MIXER_LOOPING
 // Given a time string (for LOOP_START/LOOP_END), parse it and return
 // the time (in # samples since start of track) it represents.
 static unsigned int ParseVorbisTime(unsigned int samplerate_hz, char *value)
@@ -368,7 +381,9 @@ static unsigned int ParseVorbisTime(unsigned int samplerate_hz, char *value)
 
     return (result * 60 + atoi(num_start)) * samplerate_hz;
 }
+#endif
 
+#if !USE_SDL_MIXER_LOOPING
 // Given a vorbis comment string (eg. "LOOP_START=12345"), set fields
 // in the metadata structure as appropriate.
 static void ParseVorbisComment(file_metadata_t *metadata, char *comment)
@@ -395,7 +410,10 @@ static void ParseVorbisComment(file_metadata_t *metadata, char *comment)
         metadata->end_time = ParseVorbisTime(metadata->samplerate_hz, value);
     }
 }
+#endif
 
+
+#if !USE_SDL_MIXER_LOOPING
 // Parse a vorbis comments structure, reading from the given file.
 static void ParseVorbisComments(file_metadata_t *metadata, FILE *fs)
 {
@@ -451,7 +469,9 @@ static void ParseVorbisComments(file_metadata_t *metadata, FILE *fs)
         free(comment);
     }
 }
+#endif // !USE_SDL_MIXER_LOOPING
 
+#if !USE_SDL_MIXER_LOOPING
 static void ParseFlacStreaminfo(file_metadata_t *metadata, FILE *fs)
 {
     byte buf[34];
@@ -470,7 +490,9 @@ static void ParseFlacStreaminfo(file_metadata_t *metadata, FILE *fs)
     //metadata->song_length = (buf[14] << 24) | (buf[15] << 16)
     //                      | (buf[16] << 8) | buf[17];
 }
+#endif
 
+#if !USE_SDL_MIXER_LOOPING
 static void ParseFlacFile(file_metadata_t *metadata, FILE *fs)
 {
     byte header[4];
@@ -519,7 +541,9 @@ static void ParseFlacFile(file_metadata_t *metadata, FILE *fs)
         }
     }
 }
+#endif // !USE_SDL_MIXER_LOOPING
 
+#if !USE_SDL_MIXER_LOOPING
 static void ParseOggIdHeader(file_metadata_t *metadata, FILE *fs)
 {
     byte buf[21];
@@ -532,7 +556,9 @@ static void ParseOggIdHeader(file_metadata_t *metadata, FILE *fs)
     metadata->samplerate_hz = (buf[8] << 24) | (buf[7] << 16)
                             | (buf[6] << 8) | buf[5];
 }
+#endif
 
+#if !USE_SDL_MIXER_LOOPING
 static void ParseOggFile(file_metadata_t *metadata, FILE *fs)
 {
     byte buf[7];
@@ -570,7 +596,9 @@ static void ParseOggFile(file_metadata_t *metadata, FILE *fs)
         }
     }
 }
+#endif
 
+#if !USE_SDL_MIXER_LOOPING
 static void ReadLoopPoints(const char *filename, file_metadata_t *metadata)
 {
     FILE *fs;
@@ -618,6 +646,7 @@ static void ReadLoopPoints(const char *filename, file_metadata_t *metadata)
         metadata->valid = false;
     }
 }
+#endif // !USE_SDL_MIXER_LOOPING
 
 // Given a MUS lump, look up a substitute MUS file to play instead
 // (or NULL to just use normal MIDI playback).
@@ -1088,12 +1117,14 @@ static boolean SDLIsInitialized(void)
     return Mix_QuerySpec(&freq, &format, &channels) != 0;
 }
 
+#if !USE_SDL_MIXER_LOOPING
 // Callback function that is invoked to track current track position.
 void TrackPositionCallback(int chan, void *stream, int len, void *udata)
 {
     // Position is doubled up twice: for 16-bit samples and for stereo.
     current_track_pos += len / 4;
 }
+#endif
 
 // Initialize music subsystem
 static boolean I_MP_InitMusic(void)
@@ -1151,8 +1182,10 @@ static boolean I_MP_InitMusic(void)
     // Initialize SDL_Mixer for digital music playback
     Mix_Init(MIX_INIT_FLAC | MIX_INIT_OGG | MIX_INIT_MP3);
 
+#if !USE_SDL_MIXER_LOOPING
     // Register an effect function to track the music position.
     Mix_RegisterEffect(MIX_CHANNEL_POST, TrackPositionCallback, NULL, NULL);
+#endif
 
     return music_initialized;
 }
@@ -1192,6 +1225,7 @@ static void I_MP_PlaySong(void *handle, boolean looping)
         loops = 1;
     }
 
+#if !USE_SDL_MIXER_LOOPING
     // Don't loop when playing substitute music, as we do it
     // ourselves instead.
     if (file_metadata.valid)
@@ -1201,6 +1235,7 @@ static void I_MP_PlaySong(void *handle, boolean looping)
         current_track_pos = 0;  // start of track
         SDL_UnlockAudio();
     }
+#endif
 
     if (Mix_PlayMusic(current_track_music, loops) == -1)
     {
@@ -1284,9 +1319,11 @@ static void *I_MP_RegisterSong(void *data, int len)
         return NULL;
     }
 
+#if !USE_SDL_MIXER_LOOPING
     // Read loop point metadata from the file so that we know where
     // to loop the music.
     ReadLoopPoints(filename, &file_metadata);
+#endif
     return music;
 }
 
@@ -1301,6 +1338,7 @@ static boolean I_MP_MusicIsPlaying(void)
     return Mix_PlayingMusic();
 }
 
+#if !USE_SDL_MIXER_LOOPING
 // Get position in substitute music track, in seconds since start of track.
 static double GetMusicPosition(void)
 {
@@ -1315,7 +1353,9 @@ static double GetMusicPosition(void)
 
     return (double) music_pos / freq;
 }
+#endif
 
+#if !USE_SDL_MIXER_LOOPING
 static void RestartCurrentTrack(void)
 {
     double start = (double) file_metadata.start_time
@@ -1332,11 +1372,13 @@ static void RestartCurrentTrack(void)
     current_track_pos = file_metadata.start_time;
     SDL_UnlockAudio();
 }
+#endif
 
 // Poll music position; if we have passed the loop point end position
 // then we need to go back.
 static void I_MP_PollMusic(void)
 {
+#if !USE_SDL_MIXER_LOOPING
     // When playing substitute tracks, loop tags only apply if we're playing
     // a looping track. Tracks like the title screen music have the loop
     // tags ignored.
@@ -1357,6 +1399,7 @@ static void I_MP_PollMusic(void)
             RestartCurrentTrack();
         }
     }
+#endif
 }
 
 music_module_t music_pack_module =
