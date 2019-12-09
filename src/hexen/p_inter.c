@@ -2174,7 +2174,7 @@ void P_PoisonDamage(player_t * player, mobj_t * source, int damage,
     {                           // mobj is invulnerable
         return;
     }
-    if (player && gameskill == sk_baby)
+    if (gameskill == sk_baby)
     {
         // Take half damage in trainer mode
         damage >>= 1;
@@ -2203,7 +2203,7 @@ void P_PoisonDamage(player_t * player, mobj_t * source, int damage,
     if (target->health <= 0)
     {                           // Death
         target->special1.i = damage;
-        if (player && inflictor && !player->morphTics)
+        if (inflictor && !player->morphTics)
         {                       // Check for flame death
             if ((inflictor->flags2 & MF2_FIREDAMAGE)
                 && (target->health > -50) && (damage > 25))
