@@ -189,7 +189,7 @@ int mem_fseek(MEMFILE *stream, signed long position, mem_rel_t whence)
 	}
 	else
 	{
-		printf("Error seeking to %i\n", newpos);
+		printf("Error seeking to %u\n", newpos);
 		return -1;
 	}
 }

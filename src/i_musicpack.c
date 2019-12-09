@@ -957,7 +957,7 @@ static void LoadSubstituteConfigs(void)
 
     if (subst_music_len > 0)
     {
-        printf("Loaded %i music substitutions from config files.\n",
+        printf("Loaded %u music substitutions from config files.\n",
                subst_music_len);
     }
 
@@ -973,7 +973,7 @@ static void LoadSubstituteConfigs(void)
 
     if (subst_music_len > old_music_len)
     {
-        printf("Configured %i music substitutions based on filename.\n",
+        printf("Configured %u music substitutions based on filename.\n",
                subst_music_len - old_music_len);
     }
 

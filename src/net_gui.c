@@ -291,7 +291,7 @@ static void CheckSHA1Sums(void)
     if (!same_freedoom)
     {
         printf("Warning: Mixing Freedoom with non-Freedoom\n");
-        printf("Local: %i  Server: %i\n", 
+        printf("Local: %u  Server: %i\n",
                net_local_is_freedoom, 
                net_client_wait_data.is_freedoom);
     }

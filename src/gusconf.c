@@ -247,7 +247,7 @@ static boolean WriteTimidityConfig(char *path, gus_config_t *config)
         if (config->mapping[i] >= 0 && config->mapping[i] < MAX_INSTRUMENTS
          && config->patch_names[config->mapping[i]] != NULL)
         {
-            fprintf(fstream, "%i %s\n",
+            fprintf(fstream, "%u %s\n",
                     i, config->patch_names[config->mapping[i]]);
         }
     }
@@ -259,7 +259,7 @@ static boolean WriteTimidityConfig(char *path, gus_config_t *config)
         if (config->mapping[i] >= 0 && config->mapping[i] < MAX_INSTRUMENTS
          && config->patch_names[config->mapping[i]] != NULL)
         {
-            fprintf(fstream, "%i %s\n",
+            fprintf(fstream, "%u %s\n",
                     i - 128, config->patch_names[config->mapping[i]]);
         }
     }
