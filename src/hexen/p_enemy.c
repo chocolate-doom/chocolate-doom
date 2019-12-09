@@ -4876,13 +4876,10 @@ void A_FreezeDeathChunks(mobj_t * actor)
                          actor->z + (r1 * actor->height / 255),
                          MT_ICECHUNK);
         P_SetMobjState(mo, mo->info->spawnstate + (P_Random() % 3));
-        if (mo)
-        {
-            mo->momz = FixedDiv(mo->z - actor->z, actor->height) << 2;
-            mo->momx = P_SubRandom() << (FRACBITS - 7);
-            mo->momy = P_SubRandom() << (FRACBITS - 7);
-            A_IceSetTics(mo);   // set a random tic wait
-        }
+        mo->momz = FixedDiv(mo->z - actor->z, actor->height) << 2;
+        mo->momx = P_SubRandom() << (FRACBITS - 7);
+        mo->momy = P_SubRandom() << (FRACBITS - 7);
+        A_IceSetTics(mo);   // set a random tic wait
     }
     for (i = 12 + (P_Random() & 15); i >= 0; i--)
     {
@@ -4896,13 +4893,10 @@ void A_FreezeDeathChunks(mobj_t * actor)
                          actor->z + (r1 * actor->height / 255),
                          MT_ICECHUNK);
         P_SetMobjState(mo, mo->info->spawnstate + (P_Random() % 3));
-        if (mo)
-        {
-            mo->momz = FixedDiv(mo->z - actor->z, actor->height) << 2;
-            mo->momx = P_SubRandom() << (FRACBITS - 7);
-            mo->momy = P_SubRandom() << (FRACBITS - 7);
-            A_IceSetTics(mo);   // set a random tic wait
-        }
+        mo->momz = FixedDiv(mo->z - actor->z, actor->height) << 2;
+        mo->momx = P_SubRandom() << (FRACBITS - 7);
+        mo->momy = P_SubRandom() << (FRACBITS - 7);
+        A_IceSetTics(mo);   // set a random tic wait
     }
     if (actor->player)
     {                           // attach the player's view to a chunk of ice
