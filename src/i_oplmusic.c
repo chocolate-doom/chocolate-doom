@@ -1211,7 +1211,7 @@ static void ControllerEvent(opl_track_data_t *track, midi_event_t *event)
 
         default:
 #ifdef OPL_MIDI_DEBUG
-            fprintf(stderr, "Unknown MIDI controller type: %i\n", controller);
+            fprintf(stderr, "Unknown MIDI controller type: %u\n", controller);
 #endif
             break;
     }
@@ -1304,7 +1304,7 @@ static void MetaEvent(opl_track_data_t *track, midi_event_t *event)
 
         default:
 #ifdef OPL_MIDI_DEBUG
-            fprintf(stderr, "Unknown MIDI meta event type: %i\n",
+            fprintf(stderr, "Unknown MIDI meta event type: %u\n",
                             event->data.meta.type);
 #endif
             break;
