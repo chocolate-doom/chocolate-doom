@@ -60,11 +60,17 @@
 #endif
 
 #else
+#if defined(_MSC_VER)
+#define PACKEDATTR __pragma(pack(pop))
+#else
 #define PACKEDATTR
+#endif
 #endif
 
 #ifdef __WATCOMC__
 #define PACKEDPREFIX _Packed
+#elif defined(_MSC_VER)
+#define PACKEDPREFIX __pragma(pack(push,1))
 #else
 #define PACKEDPREFIX
 #endif
