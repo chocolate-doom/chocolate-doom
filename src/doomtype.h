@@ -70,7 +70,11 @@
 #define NORETURN __attribute__((noreturn))
 
 #else
+#if defined(_MSC_VER)
+#define PACKEDATTR __pragma(pack(pop))
+#else
 #define PACKEDATTR
+#endif
 #define PRINTF_ATTR(fmt, first)
 #define PRINTF_ARG_ATTR(x)
 #define NORETURN
@@ -78,6 +82,8 @@
 
 #ifdef __WATCOMC__
 #define PACKEDPREFIX _Packed
+#elif defined(_MSC_VER)
+#define PACKEDPREFIX __pragma(pack(push,1))
 #else
 #define PACKEDPREFIX
 #endif
