@@ -362,15 +362,13 @@ int*		mceilingclip; // [crispy] 32-bit integer math
 fixed_t		spryscale;
 int64_t		sprtopscreen; // [crispy] WiggleFix
 
-extern boolean medusa; // slowdown emulation
-
 void R_DrawMaskedColumn (column_t* column, byte *maxextent)
 {
     int64_t	topscreen; // [crispy] WiggleFix
     int64_t 	bottomscreen; // [crispy] WiggleFix
     fixed_t	basetexturemid;
-    static int medusas = 0;
-
+    boolean	medusa = false;
+	
     basetexturemid = dc_texturemid;
 	
     for ( ; column->topdelta != 0xff ; ) 
@@ -407,21 +405,10 @@ void R_DrawMaskedColumn (column_t* column, byte *maxextent)
 	{
 	    byte *buf = R_GetMedusaBuffer(&maxextent);
 	    if (buf != NULL)
-		    column = buf;
-	    medusas = medusas + 1024;
-	}
-	else if (medusas > 0)
-	{
-	    medusas--;
+		column = buf;
 	}
     }
-
-	if (medusas > 512)
-	    medusas = 512;
-	if (medusas < 0)
-	    medusas = 0;
-	medusa = medusas;
-
+	
     dc_texturemid = basetexturemid;
 }
 

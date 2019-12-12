@@ -54,7 +54,6 @@ extern int screenblocks;
 int lcd_gamma_fix = 0; // [JN] Palette optimization Doom
 
 boolean isa;
-boolean medusa = false; // slowdown emulation
 
 // Lookup table for mapping ASCII characters to their equivalent when
 // shift is pressed on an American layout keyboard:
@@ -964,15 +963,13 @@ void I_FinishUpdate (void)
         return;
 
     // [crispy] variable rendering framerate
-    if ((isa || medusa) && !singletics)
+    if (isa && !singletics)
     {
         static int slowtics_old;
         int slowtics;
         extern int GetAdjustedTimeN (const int N);
 
         rate = (int)rates[detailLevel][screenblocks-3];
-        if (medusa)
-            rate = 5;
         if (rate > TICRATE) rate = TICRATE;
         while ((slowtics = GetAdjustedTimeN(rate)) == slowtics_old)
         {
