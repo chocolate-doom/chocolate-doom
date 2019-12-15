@@ -30,6 +30,8 @@
 
 #include "ioperm_sys.h"
 
+#include "m_argv.h"
+
 static unsigned int opl_port_base;
 
 // MingW?
@@ -131,6 +133,11 @@ static int OPL_Win32_Init(unsigned int port_base)
 
     if (version_info.dwPlatformId == VER_PLATFORM_WIN32_NT)
     {
+        if (!M_CheckParm("-ioperm"))
+        {
+            return 0;
+        }
+
         // Install driver.
 
         if (!IOperm_InstallDriver())
