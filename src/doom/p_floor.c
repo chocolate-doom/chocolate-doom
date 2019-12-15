@@ -410,7 +410,12 @@ EV_DoFloor
 		    {
 			sec = getSector(secnum,i,1);
 
-			if (sec->floorheight == floor->floordestheight)
+			// Versions pre v1.25 don't check the floor height here
+			// and just use the texture and special of the sector
+			// attached to the first two sided linedef found.
+			// https://tcrf.net/Doom_(PC,_1993)/Revisional_Differences#v1.25
+			// FIXME: use gameversion < exe_doom_1_25 check
+			if (gameversion < exe_doom_1_666 || sec->floorheight == floor->floordestheight)
 			{
 			    floor->texture = sec->floorpic;
 			    floor->newspecial = sec->special;
@@ -421,7 +426,12 @@ EV_DoFloor
 		    {
 			sec = getSector(secnum,i,0);
 
-			if (sec->floorheight == floor->floordestheight)
+			// Versions pre v1.25 don't check the floor height here
+			// and just use the texture and special of the sector
+			// attached to the first two sided linedef found.
+			// https://tcrf.net/Doom_(PC,_1993)/Revisional_Differences#v1.25
+			// FIXME: use gameversion < exe_doom_1_25 check
+			if (gameversion < exe_doom_1_666 || sec->floorheight == floor->floordestheight)
 			{
 			    floor->texture = sec->floorpic;
 			    floor->newspecial = sec->special;
