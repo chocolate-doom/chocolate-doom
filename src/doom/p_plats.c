@@ -85,7 +85,10 @@ void T_PlatRaise(plat_t* plat)
 		    
 		  case raiseAndChange:
 		  case raiseToNearestAndChange:
-		    P_RemoveActivePlat(plat);
+		    // In versions <= v1.2 (at least), platform types besides
+		    // downWaitUpStay always remain active.
+		    if (gameversion > exe_doom_1_2)
+		        P_RemoveActivePlat(plat);
 		    break;
 		    
 		  default:
