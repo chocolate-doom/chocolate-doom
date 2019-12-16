@@ -153,12 +153,9 @@ void A_PotteryExplode(mobj_t * actor)
     {
         mo = P_SpawnMobj(actor->x, actor->y, actor->z, MT_POTTERYBIT1);
         P_SetMobjState(mo, mo->info->spawnstate + (P_Random() % 5));
-        if (mo)
-        {
-            mo->momz = ((P_Random() & 7) + 5) * (3 * FRACUNIT / 4);
-            mo->momx = P_SubRandom() << (FRACBITS - 6);
-            mo->momy = P_SubRandom() << (FRACBITS - 6);
-        }
+        mo->momz = ((P_Random() & 7) + 5) * (3 * FRACUNIT / 4);
+        mo->momx = P_SubRandom() << (FRACBITS - 6);
+        mo->momy = P_SubRandom() << (FRACBITS - 6);
     }
     S_StartSound(mo, SFX_POTTERY_EXPLODE);
     if (actor->args[0])
@@ -262,12 +259,9 @@ void A_CorpseExplode(mobj_t * actor)
     {
         mo = P_SpawnMobj(actor->x, actor->y, actor->z, MT_CORPSEBIT);
         P_SetMobjState(mo, mo->info->spawnstate + (P_Random() % 3));
-        if (mo)
-        {
-            mo->momz = ((P_Random() & 7) + 5) * (3 * FRACUNIT / 4);
-            mo->momx = P_SubRandom() << (FRACBITS - 6);
-            mo->momy = P_SubRandom() << (FRACBITS - 6);
-        }
+        mo->momz = ((P_Random() & 7) + 5) * (3 * FRACUNIT / 4);
+        mo->momx = P_SubRandom() << (FRACBITS - 6);
+        mo->momy = P_SubRandom() << (FRACBITS - 6);
     }
     // Spawn a skull
     mo = P_SpawnMobj(actor->x, actor->y, actor->z, MT_CORPSEBIT);
@@ -1177,12 +1171,9 @@ void A_SoAExplode(mobj_t * actor)
                          actor->z + (r1 * actor->height / 256),
                          MT_ZARMORCHUNK);
         P_SetMobjState(mo, mo->info->spawnstate + i);
-        if (mo)
-        {
-            mo->momz = ((P_Random() & 7) + 5) * FRACUNIT;
-            mo->momx = P_SubRandom() << (FRACBITS - 6);
-            mo->momy = P_SubRandom() << (FRACBITS - 6);
-        }
+        mo->momz = ((P_Random() & 7) + 5) * FRACUNIT;
+        mo->momx = P_SubRandom() << (FRACBITS - 6);
+        mo->momy = P_SubRandom() << (FRACBITS - 6);
     }
     if (actor->args[0])
     {                           // Spawn an item
