@@ -241,7 +241,10 @@ void T_MoveFloor(floormove_t* floor)
 	}
 	P_RemoveThinker(&floor->thinker);
 
-	S_StartSound(&floor->sector->soundorg, sfx_pstop);
+	// Moving floors (but not plats) in versions <= v1.2 did not 
+	// make a stop sound.
+	if (gameversion > exe_doom_1_2)
+	    S_StartSound(&floor->sector->soundorg, sfx_pstop);
     }
 
 }
