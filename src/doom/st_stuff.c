@@ -1849,30 +1849,26 @@ void ST_drawWidgets(boolean refresh)
 	// [crispy] draw berserk pack instead of no ammo if appropriate
 	if (plyr->readyweapon == wp_fist && plyr->powers[pw_strength])
 	{
-		static patch_t *patch;
+		static int lump = -1;
+		patch_t *patch;
 
-		if (!patch)
+		if (lump == -1)
 		{
-			const int lump = W_CheckNumForName(DEH_String("PSTRA0"));
+			lump = W_CheckNumForName(DEH_String("PSTRA0"));
 
-			if (lump >= 0)
+			if (lump == -1)
 			{
-				patch = W_CacheLumpNum(lump, PU_STATIC);
-			}
-			// [crispy] should you ever play with the IDBEHOLDS cheat and the Shareware version...
-			else
-			{
-				patch = W_CacheLumpName("MEDIA0", PU_STATIC);
+				lump = W_CheckNumForName(DEH_String("MEDIA0"));
 			}
 		}
 
-		if (patch)
-		{
-			// [crispy] (23,179) is the center of the Ammo widget
-			V_DrawPatch(23 - SHORT(patch->width)/2 + SHORT(patch->leftoffset),
-			            179 - SHORT(patch->height)/2 + SHORT(patch->topoffset),
-			            patch);
-		}
+		patch = W_CacheLumpNum(lump, PU_CACHE);
+
+		// [crispy] (23,179) is the center of the Ammo widget
+		V_DrawPatch(23 - SHORT(patch->width)/2 + SHORT(patch->leftoffset),
+		            179 - SHORT(patch->height)/2 + SHORT(patch->topoffset),
+		            patch);
+
 	}
 
 	// [crispy] draw the gibbed death state frames in the Health widget
