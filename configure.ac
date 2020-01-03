@@ -3,7 +3,7 @@ AC_INIT(Chocolate Doom, 3.0.0,
 
 PACKAGE_SHORTNAME=${PACKAGE_NAME% Doom}
 PACKAGE_SHORTDESC="Conservative source port"
-PACKAGE_COPYRIGHT="Copyright (C) 1993-2019"
+PACKAGE_COPYRIGHT="Copyright (C) 1993-2020"
 PACKAGE_LICENSE="GNU General Public License, version 2"
 PACKAGE_MAINTAINER="Simon Howard"
 PACKAGE_URL="https://www.chocolate-doom.org/"
