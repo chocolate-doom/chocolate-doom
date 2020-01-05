@@ -2361,6 +2361,7 @@ G_InitNew
 
     // [crispy] CPhipps - total time for all completed levels
     totalleveltimes = 0;
+    defdemotics = 0;
     demostarttic = gametic; // [crispy] fix revenant internal demo bug
 
     viewactive = true;
