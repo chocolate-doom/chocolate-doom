@@ -208,6 +208,12 @@ static mline_t cross_mark[] = {
     { { -R, 0 }, { R, 0 } },
     { { 0, -R }, { 0, R } },
 };
+static mline_t square_mark[] = {
+    { { -R,  0 }, {  0,  R } },
+    { {  0,  R }, {  R,  0 } },
+    { {  R,  0 }, {  0, -R } },
+    { {  0, -R }, { -R,  0 } },
+};
 #undef R
 
 
@@ -1684,6 +1690,16 @@ AM_drawThings
 		 (key == yellow_key) ? YELLOWS :
 		 (key == blue_key) ? BLUES :
 		 colors+lightlev,
+		 pt.x, pt.y);
+	    }
+	    else
+	    // [crispy] draw blood splats and puffs as small squares
+	    if (t->type == MT_BLOOD || t->type == MT_PUFF)
+	    {
+	    AM_drawLineCharacter
+		(square_mark, arrlen(square_mark),
+		 t->radius >> 2, t->angle,
+		 (t->type == MT_BLOOD) ? REDS : GRAYS,
 		 pt.x, pt.y);
 	    }
 	    else
