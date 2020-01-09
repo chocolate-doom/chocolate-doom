@@ -375,7 +375,8 @@ static boolean ToggleFullScreenKeyShortcut(SDL_Keysym *sym)
 #if defined(__MACOSX__)
     flags |= (KMOD_LGUI | KMOD_RGUI);
 #endif
-    return sym->scancode == SDL_SCANCODE_RETURN && (sym->mod & flags) != 0;
+    return (sym->scancode == SDL_SCANCODE_RETURN || 
+            sym->scancode == SDL_SCANCODE_KP_ENTER) && (sym->mod & flags) != 0;
 }
 
 static void I_ToggleFullScreen(void)
