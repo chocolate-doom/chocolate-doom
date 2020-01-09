@@ -453,7 +453,7 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
         gamekeydown[key_arti_tome] = false;
         cmd->arti = arti_tomeofpower;
     }
-    if (gamekeydown[key_arti_quartz] && !cmd->arti
+    else if (gamekeydown[key_arti_quartz] && !cmd->arti
         && (players[consoleplayer].mo->health < MAXHEALTH))
     {
         gamekeydown[key_arti_quartz] = false;
