@@ -895,7 +895,7 @@ void HU_Drawer(void)
     else
     if (demorecording && (crispy->demotimer & DEMOTIMER_RECORD))
     {
-	ST_DrawDemoTimer(defdemotics);
+	ST_DrawDemoTimer(leveltime);
     }
 
     // [crispy] demo progress bar
