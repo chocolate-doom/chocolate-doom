@@ -447,10 +447,10 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
             }
         }
     }
-    if (gamekeydown[127] && !cmd->arti
+    if (gamekeydown[key_arti_tome] && !cmd->arti
         && !players[consoleplayer].powers[pw_weaponlevel2])
     {
-        gamekeydown[127] = false;
+        gamekeydown[key_arti_tome] = false;
         cmd->arti = arti_tomeofpower;
     }
     if (gamekeydown[key_arti_quartz] && !cmd->arti
@@ -468,11 +468,6 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
     {
         gamekeydown[key_arti_bomb] = false;
         cmd->arti = arti_firebomb;
-    }
-    else if (gamekeydown[key_arti_tome] && !cmd->arti)
-    {
-        gamekeydown[key_arti_tome] = false;
-        cmd->arti = arti_tomeofpower;
     }
     else if (gamekeydown[key_arti_ring] && !cmd->arti)
     {
