@@ -151,6 +151,64 @@ After successful compilation the resulting binaries can be found in the `src/` d
 
 ## News
 
+### Crispy Doom 5.6.4 
+
+Crispy Doom 5.6.4 has been released on January XX, 2020. This release addresses the community feedback received after 5.6.3.
+
+**Features**
+
+ * Toggling full screen using Enter on num. keyboard is now possible (inherited from Chocolate Doom).
+ * `IDCLEV` is now allowed during demo playback and warps to the requested map (starting a new demo).
+ * If a new game is started (current level is reloaded/next level is loaded on pressing the respective key) during demo recording, a new demo is started. Thanks to Looper from Doomworld forums for the feature request.
+ * 'Intermediate Crispy HUD' without the status bar but with the face and its background in place has been introduced.
+ * DOOM.WAD v0.99-v1.2 are now supported along with v1.2 demos, merged from Chocolate Doom, contributed by SmileTheory. 
+
+**Improvements**
+
+ * `leveltime` is now shown in the demo timer widget during recording instead of the accumulated demo time, thanks to Looper from Doomworld forums for the input.
+ * Windows binaries being 32-bit has been clarified, thanks to RetroDoomKid for the remark.
+ * Demo timer widget is now reset when restarting a demo during recording.
+ * `gamemap` is now set to `startmap` when restarting a demo during recording.
+ * Blood splats and projectile puffs are now drawn as small squares in the Automap.
+ * Level/demo restart key description has been adjusted to become self-explanatory.
+ * Static demo file name suffix counter has been added. This avoids checks for an increasing number of file names being available by just remembering the latest given suffix number. Thanks to Looper for the suggestion.
+ * Demos are now restarted from the map they were started, thanks to Looper for the input.
+ * OSX: Freedoom single player IWADs have been added to launcher (inherited from Chocolate Doom).
+ * The smooth chainsaw idle animation has been brought back.
+ * Weapon bobbing has been reworked and made adjustable.
+ * Disallowing the vertical mouse movement now disables controlling the menus with the mouse, thanks to bryc for requesting this.
+ * TNTWEAP0 now removes the berserk strength, all weapons and ammo except for pistol and 50 bullets.
+ * Early exit from the tally screen after ExM8 is now forced, which enables demos to progress to the end of game sequence.
+ * TNTWEAP2 now removes the pistol.
+ * Some clipping optimizations taken from JNechaevsky's Russian Doom (and there from MBF respectively) have been implemented.
+ * Savegame name is automatically overridden on saving if it already starts with a map identifier, proposed by zebzorb.
+ * Status bar optimizations, including numbers to be only redrawn if necessary, on JNechaevsky's suggestion.
+ * In automap overlay mode the automap is now drawn on top of everything as JNechaevsky suggested, not beneath the bezel for decreased screen sizes.
+
+**Bug Fixes**
+
+ * Missing prototype for `calloc` in `r_data.c` causing memory corruption on 64bit in Windows/MSVC builds has been fixed, thanks to zx64 for spotting this. 
+ * Crash when the flag for the berserk pack sprite patch memory zone is changed has been fixed, thanks to IsBebs for the bug report and Zodomaniac, JNechaevsky and turol for helping with the analysis.
+ * Zombie player crash on SELFDEAD has been fixed, thanks to tpoppins for the report and turol for the analysis.
+ * `"doomstat.h"` is now included instead of `<doomstat.h>` in `doom/r_swirl.c`, fixing compilation with MSVC2017, and packed attribute for structs when compiling with MSVC has been fixed. Thanks to drfrag666 for reporting and confirming the fix.
+ * Shadowed menu and text drawing has been removed, as it is bugged in wipe screens.
+ * The par time for MAP33 is now determined correctly (inherited from Chocolate Doom).
+ * Subsequent calls to `A_BrainAwake()` to reset the `braintargeton` variable are now allowed. This fixes demo sync for maps with more than one brain, e.g. PL2.
+ * Player viewheight in NOMOMENTUM mode has been fixed on Zodomaniac's report.
+ * The revenant sync bug (with homing or non-homing missiles) with New Game demos has hopefully been fixed.
+ * No statdump output is generated now for ExM8, and updating the Archvile fire's `floorz` and `ceilingz` values has been reverted, which fixes demo desyncs that fraggle discovered. Thanks a lot!
+ * Fuzz effect animation remaining static in one case has been fixed, this happened if the number of pixels to apply the fuzz effect to was an integer multiple of FUZZTABLE. Thanks to JNechaevsky for the suggestion!
+ * Status bar face expression staying across level changes has been removed, thanks to JNechaevsky for pointing this out.
+ * Automap panning in flippedlevels mode has been fixed, thanks to JNechaevsky for reporting.
+ * Self-repeating states in `P_LatestSafeState()` are now handled.
+ * Max-sized background buffer is now allocated for the bezel. This fixes a crash when the game is started with `crispy->hires == 0` and `scaledviewwidth != SCREENWIDTH` and then `crispy->hires` is switched to `1`.
+ * Switching to the fist after typing a cheat expecting two parameters has been fixed. This affects IDMUSx1 and IDCLEVx1, thanks to maxmanium for pointing this out.
+ * Automap marker coordinate for flipped levels has been fixed.
+ * Loss of grid lines near the automap boundary has been fixed, spotted by JNechaevsky.
+ * Overlayed automap blinking one tic on screen borders has been fixed, noticed by JNechaevsky.
+
+Crispy Doom 5.6.3 is based on Chocolate Doom 3.0.0 and has merged all changes to the Chocolate Doom master branch up to commit [`f81b5c7b`](https://github.com/chocolate-doom/chocolate-doom/commit/f81b5c7b3e7c24364fce681ad3d7ba18119a867b).
+
 ### Crispy Doom 5.6.3 
 
 Crispy Doom 5.6.3 has been released on October 04, 2019. This release addresses the community feedback received after 5.6.2 release and brings support for the updated Episode 5: Sigil v1.2/v1.21.
