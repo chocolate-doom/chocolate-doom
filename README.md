@@ -207,7 +207,7 @@ Crispy Doom 5.6.4 has been released on January XX, 2020. This release addresses 
  * Loss of grid lines near the automap boundary has been fixed, spotted by JNechaevsky.
  * Overlayed automap blinking one tic on screen borders has been fixed, noticed by JNechaevsky.
 
-Crispy Doom 5.6.3 is based on Chocolate Doom 3.0.0 and has merged all changes to the Chocolate Doom master branch up to commit [`f81b5c7b`](https://github.com/chocolate-doom/chocolate-doom/commit/f81b5c7b3e7c24364fce681ad3d7ba18119a867b).
+Crispy Doom 5.6.4 is based on Chocolate Doom 3.0.0 and has merged all changes to the Chocolate Doom master branch up to commit [`f81b5c7b`](https://github.com/chocolate-doom/chocolate-doom/commit/f81b5c7b3e7c24364fce681ad3d7ba18119a867b).
 
 ### Crispy Doom 5.6.3 
 
