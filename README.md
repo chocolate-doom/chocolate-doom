@@ -111,7 +111,7 @@ Many additional less user-visible features have been implemented, e.g. fixed eng
 ## Download
 
 Binaries for Windows XP / Vista / 7 / 8.1 / 10 (32-bit binaries compatible with both x86 and x64 editions) are available here:
-https://github.com/fabiangreffrath/crispy-doom/releases/download/crispy-doom-5.6.3/crispy-doom-5.6.3-win32.zip
+https://github.com/fabiangreffrath/crispy-doom/releases/download/crispy-doom-5.6.4/crispy-doom-5.6.4-win32.zip
 
 Daily builds of Crispy Doom can be found here:
 http://latest.chocolate-doom.org/
@@ -153,7 +153,7 @@ After successful compilation the resulting binaries can be found in the `src/` d
 
 ### Crispy Doom 5.6.4 
 
-Crispy Doom 5.6.4 has been released on January XX, 2020. This release addresses the community feedback received after 5.6.3.
+Crispy Doom 5.6.4 has been released on January 14, 2020. This release addresses the community feedback received after 5.6.3.
 
 **Features**
 
@@ -161,7 +161,6 @@ Crispy Doom 5.6.4 has been released on January XX, 2020. This release addresses 
  * `IDCLEV` is now allowed during demo playback and warps to the requested map (starting a new demo).
  * If a new game is started (current level is reloaded/next level is loaded on pressing the respective key) during demo recording, a new demo is started. Thanks to Looper from Doomworld forums for the feature request.
  * 'Intermediate Crispy HUD' without the status bar but with the face and its background in place has been introduced.
- * DOOM.WAD v0.99-v1.2 are now supported along with v1.2 demos, merged from Chocolate Doom, contributed by SmileTheory. 
 
 **Improvements**
 
@@ -187,7 +186,7 @@ Crispy Doom 5.6.4 has been released on January XX, 2020. This release addresses 
 
 **Bug Fixes**
 
- * Missing prototype for `calloc` in `r_data.c` causing memory corruption on 64bit in Windows/MSVC builds has been fixed, thanks to zx64 for spotting this. 
+ * Missing prototype for `calloc()` in `r_data.c` causing memory corruption on 64bit in Windows/MSVC builds has been fixed, thanks to zx64 for spotting this. 
  * Crash when the flag for the berserk pack sprite patch memory zone is changed has been fixed, thanks to IsBebs for the bug report and Zodomaniac, JNechaevsky and turol for helping with the analysis.
  * Zombie player crash on SELFDEAD has been fixed, thanks to tpoppins for the report and turol for the analysis.
  * `"doomstat.h"` is now included instead of `<doomstat.h>` in `doom/r_swirl.c`, fixing compilation with MSVC2017, and packed attribute for structs when compiling with MSVC has been fixed. Thanks to drfrag666 for reporting and confirming the fix.
