@@ -785,7 +785,7 @@ static boolean CacheSFX(sfxinfo_t *sfxinfo)
         if (bits != 16 && bits != 8)
             return false;
 
-        data += 44;
+        data += 44 - 8;
     }
     // Check the header, and ensure this is a valid sound
     else if (lumplen >= 8 && data[0] == 0x03 && data[1] == 00)
