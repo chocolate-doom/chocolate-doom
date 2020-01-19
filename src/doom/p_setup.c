@@ -611,7 +611,7 @@ static void P_LoadNodes_ZDBSP (int lump, boolean compressed)
 	{
 	    int outlen_old = outlen;
 	    outlen = 2 * outlen_old;
-	    output = realloc(output, outlen);
+	    output = I_Realloc(output, outlen);
 	    zstream->next_out = output + outlen_old;
 	    zstream->avail_out = outlen - outlen_old;
 	}
@@ -1274,7 +1274,7 @@ static void P_CreateBlockMap(void)
 	  {
 	    // Increase size of allocated list if necessary
 	    if (bmap[b].n >= bmap[b].nalloc)
-	      bmap[b].list = realloc(bmap[b].list,
+	      bmap[b].list = I_Realloc(bmap[b].list,
 				     (bmap[b].nalloc = bmap[b].nalloc ?
 				      bmap[b].nalloc*2 : 8)*sizeof*bmap->list);
 

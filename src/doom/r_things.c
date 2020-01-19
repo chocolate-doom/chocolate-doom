@@ -337,7 +337,7 @@ vissprite_t* R_NewVisSprite (void)
 	return &overflowsprite;
 
 	numvissprites = numvissprites ? 2 * numvissprites : MAXVISSPRITES;
-	vissprites = realloc(vissprites, numvissprites * sizeof(*vissprites));
+	vissprites = I_Realloc(vissprites, numvissprites * sizeof(*vissprites));
 	vissprite_p = vissprites + numvissprites_old;
 
 	if (numvissprites_old)

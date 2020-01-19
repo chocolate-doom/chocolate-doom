@@ -1893,7 +1893,7 @@ void A_BrainAwake (mobj_t* mo)
 	    if (numbraintargets == maxbraintargets)
 	    {
 		maxbraintargets = maxbraintargets ? 2 * maxbraintargets : 32;
-		braintargets = realloc(braintargets, maxbraintargets * sizeof(*braintargets));
+		braintargets = I_Realloc(braintargets, maxbraintargets * sizeof(*braintargets));
 
 		if (maxbraintargets > 32)
 		    fprintf(stderr, "R_BrainAwake: Raised braintargets limit to %d.\n", maxbraintargets);

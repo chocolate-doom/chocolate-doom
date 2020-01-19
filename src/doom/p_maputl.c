@@ -24,7 +24,7 @@
 
 #include <stdlib.h>
 
-
+#include "i_system.h" // [crispy] I_Realloc()
 #include "m_bbox.h"
 
 #include "doomdef.h"
@@ -551,7 +551,7 @@ static void check_intercept(void)
 		int num_intercepts_old = num_intercepts;
 
 		num_intercepts = num_intercepts ? num_intercepts * 2 : MAXINTERCEPTS_ORIGINAL;
-		intercepts = realloc(intercepts, sizeof(*intercepts) * num_intercepts);
+		intercepts = I_Realloc(intercepts, sizeof(*intercepts) * num_intercepts);
 		intercept_p = intercepts + offset;
 
 		if (num_intercepts_old)
