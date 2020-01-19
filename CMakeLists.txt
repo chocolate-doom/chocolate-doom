@@ -44,6 +44,12 @@ if(PNG_FOUND)
     set(HAVE_LIBPNG TRUE)
 endif()
 
+# Check for zlib.
+find_package(ZLIB)
+if(ZLIB_FOUND)
+    set(HAVE_LIBZ TRUE)
+endif()
+
 find_package(m)
 
 include(CheckSymbolExists)
