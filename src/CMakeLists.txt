@@ -141,7 +141,10 @@ target_link_libraries("${PROGRAM_PREFIX}doom" doom ${EXTRA_LIBS})
 
 if(MSVC)
     set_target_properties("${PROGRAM_PREFIX}doom" PROPERTIES
-                          LINK_FLAGS "/MANIFEST:NO")
+                          LINK_FLAGS "/MANIFEST:NO" "/SUBSYSTEM:CONSOLE")
+elseif(MINGW)
+    set_target_properties("${PROGRAM_PREFIX}doom" PROPERTIES
+                          LINK_FLAGS "-mconsole")
 endif()
 
 if(WIN32)
@@ -155,7 +158,10 @@ target_link_libraries("${PROGRAM_PREFIX}heretic" heretic ${EXTRA_LIBS})
 
 if(MSVC)
     set_target_properties("${PROGRAM_PREFIX}heretic" PROPERTIES
-                          LINK_FLAGS "/MANIFEST:NO")
+                          LINK_FLAGS "/MANIFEST:NO" "/SUBSYSTEM:CONSOLE")
+elseif(MINGW)
+    set_target_properties("${PROGRAM_PREFIX}heretic" PROPERTIES
+                          LINK_FLAGS "-mconsole")
 endif()
 
 if(WIN32)
