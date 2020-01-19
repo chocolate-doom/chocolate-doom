@@ -192,7 +192,8 @@ int IOperm_InstallDriver(void)
 
     // Get the full path to the driver file.
 
-    GetFullPathNameW(L"ioperm.sys", MAX_PATH, driver_path, NULL);
+    if (!GetFullPathNameW(L"ioperm.sys", MAX_PATH, driver_path, NULL))
+        return 0;
 
     // Create the service.
 

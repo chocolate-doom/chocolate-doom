@@ -76,7 +76,7 @@ static const char *wad_extensions[] = { "wad", "lmp", "deh", NULL };
 static const char *doom_skills[] =
 {
     "I'm too young to die.", "Hey, not too rough.", "Hurt me plenty.",
-    "Ultra-Violence.", "NIGHTMARE!",
+    "Ultra-Violence.", "NIGHTMARE!", "Unholy massacre.",
 };
 
 static const char *chex_skills[] =
@@ -88,7 +88,7 @@ static const char *chex_skills[] =
 static const char *heretic_skills[] =
 {
     "Thou needeth a wet-nurse", "Yellowbellies-R-us", "Bringest them oneth",
-    "Thou art a smite-meister", "Black plague possesses thee"
+    "Thou art a smite-meister", "Black plague possesses thee", "One thousand deaths await thee"
 };
 
 static const char *hexen_fighter_skills[] =
@@ -113,7 +113,7 @@ static const char *strife_skills[] =
 
 static const char *character_classes[] = { "Fighter", "Cleric", "Mage" };
 
-static const char *gamemodes[] = { "Co-operative", "Deathmatch", "Deathmatch 2.0" };
+static const char *gamemodes[] = { "Co-operative", "Deathmatch", "Deathmatch 2.0", "Deathmatch 3.0" };
 
 static const char *strife_gamemodes[] =
 {
@@ -133,6 +133,13 @@ static int deathmatch = 0;
 static int strife_altdeath = 0;
 static int fast = 0;
 static int respawn = 0;
+static int doublespawn = 0;
+static int nod2monsters = 0;
+static int doubledamage = 0;
+static int dropbackpack = 0;
+static int sprespawn = 0;
+static int nodmweapons = 0;
+static int keepkeys = 0;
 static int udpport = 2342;
 static int timer = 0;
 static int privateserver = 0;
@@ -220,7 +227,11 @@ static void StartGame(int multiplayer)
     AddExtraParameters(exec);
 
     AddIWADParameter(exec);
-    AddCmdLineParameter(exec, "-skill %i", skill + 1);
+	
+    if (warpmap != 0)
+    {
+        AddCmdLineParameter(exec, "-skill %i", skill + 1);
+    }
 
     if (gamemission == hexen)
     {
@@ -242,14 +253,52 @@ static void StartGame(int multiplayer)
         AddCmdLineParameter(exec, "-respawn");
     }
 
-    if (warptype == WARP_ExMy)
+    if (doublespawn)
     {
-        // TODO: select IWAD based on warp type
-        AddCmdLineParameter(exec, "-warp %i %i", warpepisode, warpmap);
+        AddCmdLineParameter(exec, "-2xmonsters");
     }
-    else if (warptype == WARP_MAPxy)
+
+    if (nod2monsters)
     {
-        AddCmdLineParameter(exec, "-warp %i", warpmap);
+        AddCmdLineParameter(exec, "-nod2monsters");
+    }
+
+    if (doubledamage)
+    {
+        AddCmdLineParameter(exec, "-xpain");
+    }
+
+    if (dropbackpack)
+    {
+        AddCmdLineParameter(exec, "-backpack");
+    }
+
+    if (sprespawn)
+    {
+        AddCmdLineParameter(exec, "-sprespawn");
+    }
+
+    if (nodmweapons)
+    {
+        AddCmdLineParameter(exec, "-nodmweapons");
+    }
+
+    if (keepkeys)
+    {
+        AddCmdLineParameter(exec, "-keepkeys");
+    }
+
+    if (warpmap != 0)
+    {
+        if (warptype == WARP_ExMy)
+        {
+            // TODO: select IWAD based on warp type
+            AddCmdLineParameter(exec, "-warp %i %i", warpepisode, warpmap);
+        }
+        else if (warptype == WARP_MAPxy)
+        {
+            AddCmdLineParameter(exec, "-warp %i", warpmap);
+        }
     }
 
     // Multiplayer-specific options:
@@ -266,6 +315,10 @@ static void StartGame(int multiplayer)
         else if (deathmatch == 2 || strife_altdeath != 0)
         {
             AddCmdLineParameter(exec, "-altdeath");
+        }
+        else if (deathmatch == 3) // AX: this is a Crispy-specific change
+        {
+            AddCmdLineParameter(exec, "-dm3");
         }
 
         if (timer > 0)
@@ -305,13 +358,20 @@ static void UpdateWarpButton(void)
 {
     char buf[10];
 
-    if (warptype == WARP_ExMy)
+    if (warpmap != 0)
     {
-        M_snprintf(buf, sizeof(buf), "E%iM%i", warpepisode, warpmap);
+        if (warptype == WARP_ExMy)
+        {
+            M_snprintf(buf, sizeof(buf), "E%iM%i", warpepisode, warpmap);
+        }
+        else if (warptype == WARP_MAPxy)
+        {
+            M_snprintf(buf, sizeof(buf), "MAP%02i", warpmap);
+        }
     }
-    else if (warptype == WARP_MAPxy)
+    else
     {
-        M_snprintf(buf, sizeof(buf), "MAP%02i", warpmap);
+        M_snprintf(buf, sizeof(buf), "Title");
     }
 
     TXT_SetButtonLabel(warpbutton, buf);
@@ -376,6 +436,13 @@ static void SetMAPxyWarp(TXT_UNCAST_ARG(widget), void *val)
     l = (intptr_t) val;
 
     warpmap = l;
+
+    UpdateWarpButton();
+}
+
+static void SetNoWarp(TXT_UNCAST_ARG(widget), void *val)
+{
+    warpmap = 0;
 
     UpdateWarpButton();
 }
@@ -469,6 +536,18 @@ static void LevelSelectDialog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(user_data))
                 TXT_SelectWidget(window, button);
             }
         }
+    }
+
+    button = TXT_NewButton(" Title");
+    TXT_SignalConnect(button, "pressed",
+                      SetNoWarp, (void *) NULL);
+    TXT_SignalConnect(button, "pressed",
+                      CloseLevelSelectDialog, window);
+    TXT_AddWidget(window, button);
+
+    if (warpmap == 0)
+    {
+        TXT_SelectWidget(window, button);
     }
 }
 
@@ -686,7 +765,7 @@ static txt_dropdown_list_t *GameTypeDropdown(void)
     {
         case doom:
         default:
-            return TXT_NewDropdownList(&deathmatch, gamemodes, 3);
+            return TXT_NewDropdownList(&deathmatch, gamemodes, 4);
 
         // Heretic and Hexen don't support Deathmatch II:
 
@@ -749,7 +828,7 @@ static void StartGameMenu(const char *window_title, int multiplayer)
 
     TXT_AddWidgets(window,
                    TXT_NewLabel("Skill"),
-                   skillbutton = TXT_NewDropdownList(&skill, doom_skills, 5),
+                   skillbutton = TXT_NewDropdownList(&skill, doom_skills, 6),
                    TXT_NewLabel("Level warp"),
                    warpbutton = TXT_NewButton2("?", LevelSelectDialog, NULL),
                    NULL);
@@ -766,15 +845,45 @@ static void StartGameMenu(const char *window_title, int multiplayer)
                NULL);
     }
 
-    TXT_AddWidgets(window,
-                   TXT_NewSeparator("Monster options"),
-                   TXT_NewInvertedCheckBox("Monsters enabled", &nomonsters),
-                   TXT_TABLE_OVERFLOW_RIGHT,
-                   TXT_NewCheckBox("Fast monsters", &fast),
-                   TXT_TABLE_OVERFLOW_RIGHT,
-                   TXT_NewCheckBox("Respawning monsters", &respawn),
-                   TXT_TABLE_OVERFLOW_RIGHT,
-                   NULL);
+    if (gamemission == doom)
+    {
+        TXT_AddWidgets(window,
+                       TXT_NewSeparator("Game options"),
+                       TXT_NewCheckBox("No monsters", &nomonsters),
+                       TXT_NewCheckBox("Fast", &fast),
+                       TXT_NewCheckBox("Respawn", &respawn),
+                       TXT_NewCheckBox("2x monsters", &doublespawn),
+                       TXT_NewCheckBox("Only D1 monsters", &nod2monsters),
+                       TXT_NewCheckBox("Take 2x damage", &doubledamage),
+                       TXT_NewCheckBox("Backpacks", &dropbackpack),
+                       NULL);
+
+        if (!multiplayer)
+        {
+            TXT_AddWidget(window,
+                           TXT_NewCheckBox("SP respawn", &sprespawn));
+        }
+        else
+        {
+            TXT_AddWidget(window,
+                           TXT_NewCheckBox("Don't spawn DM things", &nodmweapons));
+
+            TXT_AddWidget(window,
+                           TXT_NewCheckBox("Keep keys", &keepkeys));
+        }
+    }
+	else
+    {
+        TXT_AddWidgets(window,
+                       TXT_NewSeparator("Monster options"),
+                       TXT_NewInvertedCheckBox("Monsters enabled", &nomonsters),
+                       TXT_TABLE_OVERFLOW_RIGHT,
+                       TXT_NewCheckBox("Fast monsters", &fast),
+                       TXT_TABLE_OVERFLOW_RIGHT,
+                       TXT_NewCheckBox("Respawning monsters", &respawn),
+                       TXT_TABLE_OVERFLOW_RIGHT,
+                       NULL);
+    }
 
     if (multiplayer)
     {

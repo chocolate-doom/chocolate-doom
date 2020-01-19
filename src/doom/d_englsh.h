@@ -82,6 +82,7 @@
 #define GOTMEDINEED	"Picked up a medikit that you REALLY need!"
 #define GOTMEDIKIT	"Picked up a medikit."
 #define GOTSUPER	"Supercharge!"
+#define GOTBLOOD	"Sucked it down. Romero made you his bitch!"
 
 #define GOTBLUECARD	"Picked up a blue keycard."
 #define GOTYELWCARD	"Picked up a yellow keycard."
@@ -107,6 +108,7 @@
 #define GOTSHELLS	"Picked up 4 shotgun shells."
 #define GOTSHELLBOX	"Picked up a box of shotgun shells."
 #define GOTBACKPACK	"Picked up a backpack full of ammo!"
+#define NOAMMO "Not enough ammo."
 
 #define GOTBFG9000	"You got the BFG9000!  Oh, yes."
 #define GOTCHAINGUN	"You got the chaingun!"
@@ -145,6 +147,8 @@
 #define HUSTR_E1M7	"E1M7: Computer Station"
 #define HUSTR_E1M8	"E1M8: Phobos Anomaly"
 #define HUSTR_E1M9	"E1M9: Military Base"
+#define HUSTR_E1M4B	"E1M4B: Phobos Mission Control"
+#define HUSTR_E1M8B	"E1M8B: Tech Gone Bad"
 
 #define HUSTR_E2M1	"E2M1: Deimos Anomaly"
 #define HUSTR_E2M2	"E2M2: Containment Area"
@@ -175,6 +179,16 @@
 #define HUSTR_E4M7	"E4M7: And Hell Followed"
 #define HUSTR_E4M8	"E4M8: Unto The Cruel"
 #define HUSTR_E4M9	"E4M9: Fear"
+
+#define HUSTR_E5M1	"E5M1: Baphomet's Demesne"
+#define HUSTR_E5M2	"E5M2: Sheol"
+#define HUSTR_E5M3	"E5M3: Cages of the Damned"
+#define HUSTR_E5M4	"E5M4: Paths of Wretchedness"
+#define HUSTR_E5M5	"E5M5: Abaddon's Void"
+#define HUSTR_E5M6	"E5M6: Unspeakable Persecution"
+#define HUSTR_E5M7	"E5M7: Nightmare Underworld"
+#define HUSTR_E5M8	"E5M8: Halls of Perdition"
+#define HUSTR_E5M9	"E5M9: Realm of Iblis"
 
 #define HUSTR_1	"level 1: entryway"
 #define HUSTR_2	"level 2: underhalls"
@@ -337,6 +351,7 @@
 #define STSTR_NOMUS		"IMPOSSIBLE SELECTION"
 #define STSTR_DQDON		"Degreelessness Mode On"
 #define STSTR_DQDOFF	"Degreelessness Mode Off"
+#define STSTR_DQDRES	"Rise from your grave!"
 
 #define STSTR_KFAADDED	"Very Happy Ammo Added"
 #define STSTR_FAADDED	"Ammo (no keys) Added"
@@ -429,6 +444,18 @@
 "\n"\
 "next stop, hell on earth!"
 
+#define E5TEXT \
+"Baphomet was only doing Satan's bidding\n"\
+"by bringing you back to Hell. Somehow they\n"\
+"didn't understand that you're the reason\n"\
+"they failed in the first place.\n"\
+"\n"\
+"After mopping up the place with your\n"\
+"arsenal, you're ready to face the more\n"\
+"advanced demons that were sent to Earth.\n"\
+"\n"\
+"\n"\
+"Lock and load. Rip and tear."
 
 // after level 6, put this:
 

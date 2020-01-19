@@ -43,15 +43,16 @@ planefunction_t		ceilingfunc;
 
 // Here comes the obnoxious "visplane".
 #define MAXVISPLANES	128
-visplane_t		visplanes[MAXVISPLANES];
+visplane_t*		visplanes = NULL;
 visplane_t*		lastvisplane;
 visplane_t*		floorplane;
 visplane_t*		ceilingplane;
+static int		numvisplanes;
 
 // ?
-#define MAXOPENINGS	SCREENWIDTH*64
-short			openings[MAXOPENINGS];
-short*			lastopening;
+#define MAXOPENINGS	SCREENWIDTH*64*4
+int			openings[MAXOPENINGS]; // [crispy] 32-bit integer math
+int*			lastopening; // [crispy] 32-bit integer math
 
 
 //
@@ -59,8 +60,8 @@ short*			lastopening;
 //  floorclip starts out SCREENHEIGHT
 //  ceilingclip starts out -1
 //
-short			floorclip[SCREENWIDTH];
-short			ceilingclip[SCREENWIDTH];
+int			floorclip[SCREENWIDTH]; // [crispy] 32-bit integer math
+int			ceilingclip[SCREENWIDTH]; // [crispy] 32-bit integer math
 
 //
 // spanstart holds the start of a plane span
@@ -203,6 +204,28 @@ void R_ClearPlanes (void)
 
 
 
+// [crispy] remove MAXVISPLANES Vanilla limit
+static void R_RaiseVisplanes (visplane_t** vp)
+{
+    if (lastvisplane - visplanes == numvisplanes)
+    {
+	int numvisplanes_old = numvisplanes;
+	visplane_t* visplanes_old = visplanes;
+
+	numvisplanes = numvisplanes ? 2 * numvisplanes : MAXVISPLANES;
+	visplanes = realloc(visplanes, numvisplanes * sizeof(*visplanes));
+	lastvisplane = visplanes + numvisplanes_old;
+	floorplane = visplanes + (floorplane - visplanes_old);
+	ceilingplane = visplanes + (ceilingplane - visplanes_old);
+
+	if (numvisplanes_old)
+	    fprintf(stderr, "R_FindPlane: Hit MAXVISPLANES limit at %d, raised to %d.\n", numvisplanes_old, numvisplanes);
+
+	// keep the pointer passed as argument in relation to the visplanes pointer
+	if (vp)
+	    *vp = visplanes + (*vp - visplanes_old);
+    }
+}
 
 //
 // R_FindPlane
@@ -235,9 +258,9 @@ R_FindPlane
     if (check < lastvisplane)
 	return check;
 		
-    if (lastvisplane - visplanes == MAXVISPLANES)
+    R_RaiseVisplanes(&check); // [crispy] remove VISPLANES limit
+    if (lastvisplane - visplanes == MAXVISPLANES && false)
 	I_Error ("R_FindPlane: no more visplanes");
-		
     lastvisplane++;
 
     check->height = height;
@@ -290,7 +313,7 @@ R_CheckPlane
     }
 
     for (x=intrl ; x<= intrh ; x++)
-	if (pl->top[x] != 0xff)
+	if (pl->top[x] != 0xffffffffu) // [crispy] hires / 32-bit integer math
 	    break;
 
     if (x > intrh)
@@ -303,11 +326,12 @@ R_CheckPlane
     }
 	
     // make a new visplane
+    R_RaiseVisplanes(&pl); // [crispy] remove VISPLANES limit
     lastvisplane->height = pl->height;
     lastvisplane->picnum = pl->picnum;
     lastvisplane->lightlevel = pl->lightlevel;
     
-    if (lastvisplane - visplanes == MAXVISPLANES)
+    if (lastvisplane - visplanes == MAXVISPLANES && false) // [crispy] remove VISPLANES limit
 	I_Error ("R_CheckPlane: no more visplanes");
 
     pl = lastvisplane++;
@@ -326,10 +350,10 @@ R_CheckPlane
 void
 R_MakeSpans
 ( int		x,
-  int		t1,
-  int		b1,
-  int		t2,
-  int		b2 )
+  unsigned int		t1, // [crispy] 32-bit integer math
+  unsigned int		b1, // [crispy] 32-bit integer math
+  unsigned int		t2, // [crispy] 32-bit integer math
+  unsigned int		b2 ) // [crispy] 32-bit integer math
 {
     while (t1 < t2 && t1<=b1)
     {
@@ -370,11 +394,11 @@ void R_DrawPlanes (void)
     int                 lumpnum;
 				
 #ifdef RANGECHECK
-    if (ds_p - drawsegs > MAXDRAWSEGS)
+    if (ds_p - drawsegs > numdrawsegs)
 	I_Error ("R_DrawPlanes: drawsegs overflow (%" PRIiPTR ")",
 		 ds_p - drawsegs);
     
-    if (lastvisplane - visplanes > MAXVISPLANES)
+    if (lastvisplane - visplanes > numvisplanes)
 	I_Error ("R_DrawPlanes: visplane overflow (%" PRIiPTR ")",
 		 lastvisplane - visplanes);
     
@@ -405,7 +429,7 @@ void R_DrawPlanes (void)
 		dc_yl = pl->top[x];
 		dc_yh = pl->bottom[x];
 
-		if (dc_yl <= dc_yh)
+		if ((unsigned) dc_yl <= dc_yh) // [crispy] 32-bit integer math
 		{
 		    angle = (viewangle + xtoviewangle[x])>>ANGLETOSKYSHIFT;
 		    dc_x = x;
@@ -431,8 +455,8 @@ void R_DrawPlanes (void)
 
 	planezlight = zlight[light];
 
-	pl->top[pl->maxx+1] = 0xff;
-	pl->top[pl->minx-1] = 0xff;
+	pl->top[pl->maxx+1] = 0xffffffffu; // [crispy] hires / 32-bit integer math
+	pl->top[pl->minx-1] = 0xffffffffu; // [crispy] hires / 32-bit integer math
 		
 	stop = pl->maxx + 1;
 

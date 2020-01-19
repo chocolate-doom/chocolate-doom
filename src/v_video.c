@@ -97,13 +97,19 @@ void V_CopyRect(int srcx, int srcy, pixel_t *source,
      || srcy < 0
      || srcy + height > SCREENHEIGHT 
      || destx < 0
-     || destx + width > SCREENWIDTH
+     || destx /* + width */ > SCREENWIDTH
      || desty < 0
-     || desty + height > SCREENHEIGHT)
+     || desty /* + height */ > SCREENHEIGHT)
     {
         I_Error ("Bad V_CopyRect");
     }
 #endif 
+
+    // [crispy] prevent framebuffer overflow
+    if (destx + width > SCREENWIDTH)
+	width = SCREENWIDTH - destx;
+    if (desty + height > SCREENHEIGHT)
+	height = SCREENHEIGHT - desty;
 
     V_MarkRect(destx, desty, width, height); 
  
@@ -146,7 +152,7 @@ void V_DrawPatch(int x, int y, patch_t *patch)
     pixel_t *desttop;
     pixel_t *dest;
     byte *source;
-    int w;
+    int w, f, tmpy;
 
     y -= SHORT(patch->topoffset);
     x -= SHORT(patch->leftoffset);
@@ -158,11 +164,11 @@ void V_DrawPatch(int x, int y, patch_t *patch)
             return;
     }
 
-#ifdef RANGECHECK
+#ifdef RANGECHECK_NOTHANKS
     if (x < 0
      || x + SHORT(patch->width) > SCREENWIDTH
      || y < 0
-     || y + SHORT(patch->height) > SCREENHEIGHT)
+     || y + SHORT(patch->height) > SCREENHEIGHT )
     {
         I_Error("Bad V_DrawPatch");
     }
@@ -175,7 +181,16 @@ void V_DrawPatch(int x, int y, patch_t *patch)
 
     w = SHORT(patch->width);
 
-    for ( ; col<w ; x++, col++, desttop++)
+    // [crispy] prevent framebuffer overflow
+    while (x < 0)
+    {
+        x++;
+        col++;
+        desttop++;
+    }
+
+    // [crispy] prevent framebuffer overflow
+    for ( ; col<w && x < SCREENWIDTH; x++, col++, desttop++)
     {
         column = (column_t *)((byte *)patch + LONG(patch->columnofs[col]));
 
@@ -185,8 +200,23 @@ void V_DrawPatch(int x, int y, patch_t *patch)
             source = (byte *)column + 3;
             dest = desttop + column->topdelta*SCREENWIDTH;
             count = column->length;
+            tmpy = y + column->topdelta;
 
-            while (count--)
+            // [crispy] prevent framebuffer overflow
+            while (tmpy < 0)
+            {
+                count--;
+                source++;
+                dest += SCREENWIDTH;
+                tmpy++;
+            }
+
+            while (tmpy + count > SCREENHEIGHT)
+            {
+                count--;
+            }
+
+            while (count-- > 0)
             {
                 *dest = *source++;
                 dest += SCREENWIDTH;
@@ -210,7 +240,7 @@ void V_DrawPatchFlipped(int x, int y, patch_t *patch)
     pixel_t *desttop;
     pixel_t *dest;
     byte *source; 
-    int w; 
+    int w, f, tmpy;
  
     y -= SHORT(patch->topoffset); 
     x -= SHORT(patch->leftoffset); 
@@ -222,11 +252,11 @@ void V_DrawPatchFlipped(int x, int y, patch_t *patch)
             return;
     }
 
-#ifdef RANGECHECK 
+#ifdef RANGECHECK_NOTHANKS
     if (x < 0
      || x + SHORT(patch->width) > SCREENWIDTH
      || y < 0
-     || y + SHORT(patch->height) > SCREENHEIGHT)
+     || y + SHORT(patch->height) > SCREENHEIGHT )
     {
         I_Error("Bad V_DrawPatchFlipped");
     }
@@ -239,7 +269,16 @@ void V_DrawPatchFlipped(int x, int y, patch_t *patch)
 
     w = SHORT(patch->width);
 
-    for ( ; col<w ; x++, col++, desttop++)
+    // [crispy] prevent framebuffer overflow
+    while (x < 0)
+    {
+        x++;
+        col++;
+        desttop++;
+    }
+
+    // [crispy] prevent framebuffer overflow
+    for ( ; col<w && x < SCREENWIDTH; x++, col++, desttop++)
     {
         column = (column_t *)((byte *)patch + LONG(patch->columnofs[w-1-col]));
 
@@ -249,8 +288,23 @@ void V_DrawPatchFlipped(int x, int y, patch_t *patch)
             source = (byte *)column + 3;
             dest = desttop + column->topdelta*SCREENWIDTH;
             count = column->length;
+            tmpy = y + column->topdelta;
 
-            while (count--)
+            // [crispy] prevent framebuffer overflow
+            while (tmpy < 0)
+            {
+                count--;
+                source++;
+                dest += SCREENWIDTH;
+                tmpy++;
+            }
+
+            while (tmpy + count > SCREENHEIGHT)
+            {
+                count--;
+            }
+
+            while (count-- > 0)
             {
                 *dest = *source++;
                 dest += SCREENWIDTH;

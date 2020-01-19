@@ -28,6 +28,8 @@
 #include "deh_misc.h"
 #include "doomstat.h"
 
+#include "d_compat.h"
+
 #include "m_random.h"
 #include "i_system.h"
 
@@ -49,6 +51,96 @@
 // a big item has five clip loads
 int	maxammo[NUMAMMO] = {200, 50, 300, 50};
 int	clipammo[NUMAMMO] = {10, 4, 20, 1};
+
+
+// [marshmallow]
+void RecoverInventoryFromBackpack(mobj_t* toucher, int p)
+{
+	int i;
+
+	dropped_backpack = backpacks[p];
+
+	// Recover weapons
+	for (i=0; i<NUMWEAPONS; i++)
+	{
+		if (dropped_backpack.weapons[i])
+			toucher->player->weaponowned[i] = true;
+	}
+
+	// Backpack powerup yes/no
+	if (dropped_backpack.backpack && !toucher->player->backpack)
+	{
+		toucher->player->backpack = true;
+		for (i=0 ; i<NUMAMMO ; i++)
+			toucher->player->maxammo[i] *= 2;
+	}
+
+	// Recover ammo
+	for (i=0; i<NUMAMMO; i++)
+	{
+		if (dropped_backpack.ammo[i])
+		{
+			toucher->player->ammo[i] += dropped_backpack.ammo[i];
+
+			if (toucher->player->ammo[i] > toucher->player->maxammo[i])  // don't let us go over maxammo
+				toucher->player->ammo[i] = toucher->player->maxammo[i];
+		}
+	}
+
+	// Empty dropped_items
+	memset (&dropped_backpack, 0, sizeof(dropped_backpack));
+
+	backpacks[p] = dropped_backpack;
+}
+
+
+// [marshmallow]
+boolean DropInventoryInBackpack(mobj_t* target, int p)
+{
+	int i;
+	boolean laden = false;
+
+	dropped_backpack = backpacks[p];
+
+	for (i=0; i<NUMAMMO && !laden; i++)
+	{
+		if (dropped_backpack.ammo[i])
+			laden = true;
+	}
+
+	for (i=0; i<NUMWEAPONS && !laden; i++)
+	{
+		if (dropped_backpack.weapons[i])
+			laden = true;
+	}
+
+	if (laden)
+		return false;
+
+	// Save weapons
+	for (i=0; i<NUMWEAPONS; i++)
+	{
+		if (target->player->weaponowned[i])
+			dropped_backpack.weapons[i] = true;
+	}
+
+	// Save ammo
+	if (target->player->ammo[am_clip] > 50)
+		dropped_backpack.ammo[am_clip] = target->player->ammo[am_clip] - 50;
+	for (i=1; i<NUMAMMO; i++)
+	{
+		if (target->player->ammo[i])
+			dropped_backpack.ammo[i] = target->player->ammo[i];
+	}
+
+	// Backpack powerup yes/no
+	if (target->player->backpack)
+		dropped_backpack.backpack = true;
+
+	backpacks[p] = dropped_backpack;
+
+	return true;
+}
 
 
 //
@@ -91,8 +183,12 @@ P_GiveAmmo
 	// you'll need in nightmare
 	num <<= 1;
     }
-    
-		
+    else if (gameskill == sk_extreme)
+    {
+	// give half ammo in extreme mode
+	num >>= 1;
+    }
+
     oldammo = player->ammo[ammo];
     player->ammo[ammo] += num;
 
@@ -336,7 +432,7 @@ P_TouchSpecialThing
     int		i;
     fixed_t	delta;
     int		sound;
-		
+
     delta = special->z - toucher->z;
 
     if (delta > toucher->height
@@ -382,6 +478,7 @@ P_TouchSpecialThing
 	
       case SPR_BON2:
 	player->armorpoints++;		// can go over 100%
+	// https://doomwiki.org/wiki/Armor_percentage_rollover
 	if (player->armorpoints > deh_max_armor && gameversion > exe_doom_1_2)
 	    player->armorpoints = deh_max_armor;
         // deh_green_armor_class only applies to the green armor shirt;
@@ -397,8 +494,7 @@ P_TouchSpecialThing
 	    player->health = deh_max_soulsphere;
 	player->mo->health = player->health;
 	player->message = DEH_String(GOTSUPER);
-	if (gameversion > exe_doom_1_2)
-	    sound = sfx_getpow;
+	sound = compat_sfx_getpow;
 	break;
 	
       case SPR_MEGA:
@@ -410,8 +506,7 @@ P_TouchSpecialThing
         // affects the MegaArmor.
 	P_GiveArmor (player, 2);
 	player->message = DEH_String(GOTMSPHERE);
-	if (gameversion > exe_doom_1_2)
-	    sound = sfx_getpow;
+	sound = compat_sfx_getpow;
 	break;
 	
 	// cards
@@ -420,7 +515,7 @@ P_TouchSpecialThing
 	if (!player->cards[it_bluecard])
 	    player->message = DEH_String(GOTBLUECARD);
 	P_GiveCard (player, it_bluecard);
-	if (!netgame)
+	if (!netgame && !sprespawn)
 	    break;
 	return;
 	
@@ -428,7 +523,7 @@ P_TouchSpecialThing
 	if (!player->cards[it_yellowcard])
 	    player->message = DEH_String(GOTYELWCARD);
 	P_GiveCard (player, it_yellowcard);
-	if (!netgame)
+	if (!netgame && !sprespawn)
 	    break;
 	return;
 	
@@ -436,7 +531,7 @@ P_TouchSpecialThing
 	if (!player->cards[it_redcard])
 	    player->message = DEH_String(GOTREDCARD);
 	P_GiveCard (player, it_redcard);
-	if (!netgame)
+	if (!netgame && !sprespawn)
 	    break;
 	return;
 	
@@ -444,7 +539,7 @@ P_TouchSpecialThing
 	if (!player->cards[it_blueskull])
 	    player->message = DEH_String(GOTBLUESKUL);
 	P_GiveCard (player, it_blueskull);
-	if (!netgame)
+	if (!netgame && !sprespawn)
 	    break;
 	return;
 	
@@ -452,7 +547,7 @@ P_TouchSpecialThing
 	if (!player->cards[it_yellowskull])
 	    player->message = DEH_String(GOTYELWSKUL);
 	P_GiveCard (player, it_yellowskull);
-	if (!netgame)
+	if (!netgame && !sprespawn)
 	    break;
 	return;
 	
@@ -460,35 +555,61 @@ P_TouchSpecialThing
 	if (!player->cards[it_redskull])
 	    player->message = DEH_String(GOTREDSKULL);
 	P_GiveCard (player, it_redskull);
-	if (!netgame)
+	if (!netgame && !sprespawn)
 	    break;
 	return;
 	
 	// medikits, heals
       case SPR_STIM:
-	if (!P_GiveBody (player, 10))
-	    return;
+	if (gameskill == sk_extreme)
+	{
+	    if (!P_GiveBody (player, 5))
+	        return;
+	}
+	else
+	{
+	    if (!P_GiveBody (player, 10))
+	        return;
+	}
 	player->message = DEH_String(GOTSTIM);
 	break;
 	
       case SPR_MEDI:
-	if (!P_GiveBody (player, 25))
-	    return;
+	if (gameskill == sk_extreme)
+	{
+	    if (!P_GiveBody (player, 15))
+	        return;
+	}
+	else
+	{
+	    if (!P_GiveBody (player, 25))
+	        return;
+	}
 
-	if (player->health < 25)
+	// [crispy] show "Picked up a Medikit that you really need" message as intended
+	if (player->health < 50 && gameskill != sk_extreme)
 	    player->message = DEH_String(GOTMEDINEED);
 	else
 	    player->message = DEH_String(GOTMEDIKIT);
 	break;
 
-	
+      case SPR_POL5:
+	if (player->health < 10 && gameskill == sk_extreme)
+	{
+	    if (!P_GiveBody (player, 5))
+	        return;
+	    player->message = DEH_String(GOTBLOOD);
+	    sound = sfx_slop;
+	}
+	else return;
+	break;
+
 	// power ups
       case SPR_PINV:
 	if (!P_GivePower (player, pw_invulnerability))
 	    return;
 	player->message = DEH_String(GOTINVUL);
-	if (gameversion > exe_doom_1_2)
-	    sound = sfx_getpow;
+	sound = compat_sfx_getpow;
 	break;
 	
       case SPR_PSTR:
@@ -497,45 +618,40 @@ P_TouchSpecialThing
 	player->message = DEH_String(GOTBERSERK);
 	if (player->readyweapon != wp_fist)
 	    player->pendingweapon = wp_fist;
-	if (gameversion > exe_doom_1_2)
-	    sound = sfx_getpow;
+	sound = compat_sfx_getpow;
 	break;
 	
       case SPR_PINS:
 	if (!P_GivePower (player, pw_invisibility))
 	    return;
 	player->message = DEH_String(GOTINVIS);
-	if (gameversion > exe_doom_1_2)
-	    sound = sfx_getpow;
+	sound = compat_sfx_getpow;
 	break;
 	
       case SPR_SUIT:
 	if (!P_GivePower (player, pw_ironfeet))
 	    return;
 	player->message = DEH_String(GOTSUIT);
-	if (gameversion > exe_doom_1_2)
-	    sound = sfx_getpow;
+	sound = compat_sfx_getpow;
 	break;
 	
       case SPR_PMAP:
 	if (!P_GivePower (player, pw_allmap))
 	    return;
 	player->message = DEH_String(GOTMAP);
-	if (gameversion > exe_doom_1_2)
-	    sound = sfx_getpow;
+	sound = compat_sfx_getpow;
 	break;
 	
       case SPR_PVIS:
 	if (!P_GivePower (player, pw_infrared))
 	    return;
 	player->message = DEH_String(GOTVISOR);
-	if (gameversion > exe_doom_1_2)
-	    sound = sfx_getpow;
+	sound = compat_sfx_getpow;
 	break;
 	
 	// ammo
       case SPR_CLIP:
-	if (special->flags & MF_DROPPED)
+	if (special->flags & MF_DROPPED && (gameskill != sk_extreme))
 	{
 	    if (!P_GiveAmmo (player,am_clip,0))
 		return;
@@ -591,17 +707,42 @@ P_TouchSpecialThing
 	break;
 	
       case SPR_BPAK:
-	if (!player->backpack)
+	if ((netgame || sprespawn) && dropbackpack
+		&& special->flags & MF_DROPPED && player && player->health > 0) // [marshmallow] So we don't pick it up while dead/dying
 	{
-	    for (i=0 ; i<NUMAMMO ; i++)
-		player->maxammo[i] *= 2;
-	    player->backpack = true;
+		if (special->type == MT_MISC87)
+			RecoverInventoryFromBackpack(toucher, 0);
+		else if (special->type == MT_MISC88)
+			RecoverInventoryFromBackpack(toucher, 1);
+		else if (special->type == MT_MISC89)
+			RecoverInventoryFromBackpack(toucher, 2);
+		else if (special->type == MT_MISC90)
+			RecoverInventoryFromBackpack(toucher, 3);
+		else // exchange supplies
+		{
+			if (special->type == MT_MISC94)
+				P_GiveAmmo (player, am_cell, 2);
+			if (special->type >= MT_MISC93)
+				P_GiveAmmo (player, am_misl, 4);
+			P_GiveAmmo (player, am_clip, 2);
+			P_GiveAmmo (player, am_shell, 2);
+		}
+		player->message = DEH_String(GOTBACKPACK);
 	}
-	for (i=0 ; i<NUMAMMO ; i++)
-	    P_GiveAmmo (player, i, 1);
-	player->message = DEH_String(GOTBACKPACK);
+	else
+	{
+		if (!player->backpack)
+		{
+			for (i=0 ; i<NUMAMMO ; i++)
+				player->maxammo[i] *= 2;
+			player->backpack = true;
+		}
+		for (i=0 ; i<NUMAMMO ; i++)
+			P_GiveAmmo (player, i, 1);
+		player->message = DEH_String(GOTBACKPACK);
+	}
 	break;
-	
+
 	// weapons
       case SPR_BFUG:
 	if (!P_GiveWeapon (player, wp_bfg, false) )
@@ -678,6 +819,7 @@ P_KillMobj
 {
     mobjtype_t	item;
     mobj_t*	mo;
+    int p;
 	
     target->flags &= ~(MF_SHOOTABLE|MF_FLOAT|MF_SKULLFLY);
 
@@ -751,6 +893,7 @@ P_KillMobj
     {
       case MT_WOLFSS:
       case MT_POSSESSED:
+      case MT_MISC91:
 	item = MT_CLIP;
 	break;
 	
@@ -761,7 +904,30 @@ P_KillMobj
       case MT_CHAINGUY:
 	item = MT_CHAINGUN;
 	break;
-	
+
+	  case MT_PLAYER:
+	if ((netgame || sprespawn) && dropbackpack)
+	{
+		for (p=0; p<MAXPLAYERS && &players[p] != target->player; p++) {};
+		if (p == 0)
+			item = MT_MISC87; // Green
+		else if (p == 1)
+			item = MT_MISC88; // Indigo
+		else if (p == 2)
+			item = MT_MISC89; // Brown
+		else
+			item = MT_MISC90; // Red
+		if (DropInventoryInBackpack(target, p)) // [marshmallow]
+		{
+			mo = P_SpawnMobj (target->x,target->y,ONFLOORZ, item);
+			mo->flags |= MF_DROPPED;
+			return;
+		}
+		else return;
+	}
+	else return;
+	break;
+
       default:
 	return;
     }
@@ -811,7 +977,8 @@ P_DamageMobj
     player = target->player;
     if (player && gameskill == sk_baby)
 	damage >>= 1; 	// take half damage in trainer mode
-		
+    else if (player && doubledamage)
+	damage <<= 1; 	// take double damage
 
     // Some close combat weapons should not
     // inflict thrust and push the victim out of reach,
@@ -914,6 +1081,8 @@ P_DamageMobj
 			
     target->reactiontime = 0;		// we're awake now...	
 
+    // https://doomwiki.org/wiki/Barrel_suicide
+    // FIXME: check should be for <= Doom v1.4
     if ( (!target->threshold || target->type == MT_VILE)
 	 && source && (source != target || gameversion <= exe_doom_1_2)
 	 && source->type != MT_VILE)

@@ -25,6 +25,13 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifdef _WIN32
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+#include <windows.h>
+#endif
+
 #include "config.h"
 #include "deh_main.h"
 #include "doomdef.h"
@@ -33,6 +40,7 @@
 #include "dstrings.h"
 #include "sounds.h"
 
+#include "d_compat.h"
 #include "d_iwad.h"
 
 #include "z_zone.h"
@@ -73,6 +81,7 @@
 #include "r_local.h"
 #include "statdump.h"
 
+#include "w_checksum.h"
 
 #include "d_main.h"
 
@@ -94,12 +103,20 @@ char *          savegamedir;
 // location of IWAD and WAD files
 
 char *          iwadfile;
+char *          rwadfile = "rude.wad";
 
 
 boolean		devparm;	// started game with -devparm
 boolean         nomonsters;	// checkparm of -nomonsters
 boolean         respawnparm;	// checkparm of -respawn
 boolean         fastparm;	// checkparm of -fast
+boolean		dropbackpack; // checkparm of -backpack
+boolean		nodmweapons; // checkparm of -nodmweapons
+boolean		keepkeys; // checkparm of -keepkeys
+boolean		sprespawn; // checkparm of -sprespawn
+boolean		doublespawn; // checkparm of -2xmonsters
+boolean		doubledamage; // checkparm of -xpain
+boolean		nod2monsters; // checkparm of -nod2monsters
 
 //extern int soundVolume;
 //extern  int	sfxVolume;
@@ -178,6 +195,9 @@ boolean D_Display (void)
     boolean			wipe;
     boolean			redrawsbar;
 		
+    // [crispy] catch SlopeDiv overflows
+    SlopeDiv = SlopeDivCrispy;
+
     redrawsbar = false;
     
     // change the view size if needed
@@ -241,7 +261,12 @@ boolean D_Display (void)
     
     // clean up border stuff
     if (gamestate != oldgamestate && gamestate != GS_LEVEL)
-	I_SetPalette (W_CacheLumpName (DEH_String("PLAYPAL"),PU_CACHE));
+    {
+        if (lcd_gamma_fix)
+            I_SetPalette (W_CacheLumpName (DEH_String("PALFIX"),PU_CACHE));
+        else
+            I_SetPalette (W_CacheLumpName (DEH_String("PLAYPAL"),PU_CACHE));
+    }
 
     // see if the border needs to be initially drawn
     if (gamestate == GS_LEVEL && oldgamestate != GS_LEVEL)
@@ -290,6 +315,9 @@ boolean D_Display (void)
     // menus go directly to the screen
     M_Drawer ();          // menu is drawn even on top of everything
     NetUpdate ();         // send out any new accumulation
+
+    // [crispy] back to Vanilla SlopeDiv
+    SlopeDiv = SlopeDivVanilla;
 
     return wipe;
 }
@@ -354,6 +382,7 @@ void D_BindVariables(void)
     M_BindIntVariable("vanilla_demo_limit",     &vanilla_demo_limit);
     M_BindIntVariable("show_endoom",            &show_endoom);
     M_BindIntVariable("show_diskicon",          &show_diskicon);
+    M_BindIntVariable("lcd_gamma_fix",          &lcd_gamma_fix);
 
     // Multiplayer chat macros
 
@@ -545,7 +574,11 @@ void D_DoAdvanceDemo (void)
     // However! There is an alternate version of Final Doom that
     // includes a fixed executable.
 
+    // [crispy] get rid of this demo sequence breaking bug
+    /*
     if (gameversion == exe_ultimate || gameversion == exe_final)
+    */
+    if (W_CheckNumForName(DEH_String("demo4")) >= 0)
       demosequence = (demosequence+1)%7;
     else
       demosequence = (demosequence+1)%6;
@@ -959,6 +992,8 @@ static struct
     const char *cmdline;
     GameVersion_t version;
 } gameversions[] = {
+    {"Doom 1.0",             "1.0",        exe_doom_1_0},
+    {"Doom 1.1",             "1.1",        exe_doom_1_1},
     {"Doom 1.2",             "1.2",        exe_doom_1_2},
     {"Doom 1.666",           "1.666",      exe_doom_1_666},
     {"Doom 1.7/1.7a",        "1.7",        exe_doom_1_7},
@@ -970,6 +1005,12 @@ static struct
     {"Final Doom (alt)",     "final2",     exe_final2},
     {"Chex Quest",           "chex",       exe_chex},
     { NULL,                  NULL,         0},
+};
+
+sha1_digest_t demo1_doom_1_0_sha1sum =
+{
+    0x2a, 0xa9, 0xf7, 0xfa, 0xe9, 0xf2, 0xa4, 0x4a, 0xf3, 0x43, 0xd3, 0x3b,
+    0xc9, 0x97, 0xab, 0x7e, 0x63, 0xcc, 0xf8, 0x96
 };
 
 // Initialize the game version
@@ -987,9 +1028,9 @@ static void InitGameVersion(void)
     // @arg <version>
     // @category compat
     //
-    // Emulate a specific version of Doom.  Valid values are "1.2", 
-    // "1.666", "1.7", "1.8", "1.9", "ultimate", "final", "final2",
-    // "hacx" and "chex".
+    // Emulate a specific version of Doom.  Valid values are "1.0", 
+    // "1.1", "1.2", "1.666", "1.7", "1.8", "1.9", "ultimate", "final",
+    // "final2", "hacx" and "chex".
     //
 
     p = M_CheckParmWithArgs("-gameversion", 1);
@@ -1081,6 +1122,28 @@ static void InitGameVersion(void)
                     }
                 }
             }
+
+            // detect v1.0/v1.1 from missing D_INTROA
+            if (gameversion == exe_doom_1_2 && W_CheckNumForName("D_INTROA") < 0)
+            {
+                lumpindex_t demo1 = W_CheckNumForName("demo1");
+
+                gameversion = exe_doom_1_1;
+
+                // detect v1.0 from DEMO1 SHA1
+                if (demo1 > -1)
+                {
+                    sha1_digest_t digest;
+
+                    W_ChecksumLump(digest, demo1);
+
+                    if (memcmp(digest, demo1_doom_1_0_sha1sum, 
+                               sizeof(sha1_digest_t)) == 0)
+                    {
+                        gameversion = exe_doom_1_0;
+                    }
+                }
+            }
         }
         else if (gamemode == retail)
         {
@@ -1098,26 +1161,7 @@ static void InitGameVersion(void)
         }
     }
 
-    // Deathmatch 2.0 did not exist until Doom v1.4
-    if (gameversion <= exe_doom_1_2 && deathmatch == 2)
-    {
-        deathmatch = 1;
-    }
-    
-    // The original exe does not support retail - 4th episode not supported
-
-    if (gameversion < exe_ultimate && gamemode == retail)
-    {
-        gamemode = registered;
-    }
-
-    // EXEs prior to the Final Doom exes do not support Final Doom.
-
-    if (gameversion < exe_final && gamemode == commercial
-     && (gamemission == pack_tnt || gamemission == pack_plut))
-    {
-        gamemission = doom2;
-    }
+    D_SetConstantsForGameversion();
 }
 
 void PrintGameVersion(void)
@@ -1232,9 +1276,32 @@ void D_DoomMain (void)
 
     I_AtExit(D_Endoom, false);
 
+#ifdef _WIN32
+#ifdef _MSC_VER
+    system("cls");
+#endif
+    freopen("CONOUT$","w",stdout);
+    freopen("CONOUT$","w",stderr);
+#ifdef __MINGW32__
+    DEH_printf("\n");
+#endif
+    // [JN] Print colorized title
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),
+      BACKGROUND_BLUE | FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
+    DEH_printf("                             DOOM Operating System v" PACKAGE_VERSION
+               "                            ");
+    DEH_printf("\n");
+
+    // [JN] Fallback to standard console colors
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),
+      FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+#else
+    // [JN] Just print an uncolored banner
     // print banner
 
-    I_PrintBanner(PACKAGE_STRING);
+    //I_PrintBanner(PACKAGE_STRING);
+    I_PrintBanner("DOOM Operating System v" PACKAGE_VERSION);
+#endif
 
     DEH_printf("Z_Init: Init zone memory allocation daemon. \n");
     Z_Init ();
@@ -1354,6 +1421,17 @@ void D_DoomMain (void)
     if (M_CheckParm ("-altdeath"))
 	deathmatch = 2;
 
+    //!
+    // @category net
+    // @vanilla
+    //
+    // Start a deathmatch 3.0 game.  Weapons stay in place and
+    // all items respawn after 30 seconds.
+    //
+
+    if (M_CheckParm ("-dm3"))
+	deathmatch = 3;
+
     if (devparm)
 	DEH_printf(D_DEVSTR);
     
@@ -1406,6 +1484,10 @@ void D_DoomMain (void)
 	if (scale > 400)
 	    scale = 400;
         DEH_printf("turbo scale: %i%%\n", scale);
+
+        // Need to store turbo scale in case forward/side move change later
+        turbo_scale = scale;
+
 	forwardmove[0] = forwardmove[0]*scale/100;
 	forwardmove[1] = forwardmove[1]*scale/100;
 	sidemove[0] = sidemove[0]*scale/100;
@@ -1421,6 +1503,10 @@ void D_DoomMain (void)
     M_SetConfigFilenames("default.cfg", PROGRAM_PREFIX "doom.cfg");
     D_BindVariables();
     M_LoadDefaults();
+
+    // [crispy] unconditionally disable savegame and demo limit
+    vanilla_savegame_limit = 0;
+    vanilla_demo_limit = 0;
 
     // Save configuration at exit.
     I_AtExit(M_SaveDefaults, false);
@@ -1439,6 +1525,10 @@ void D_DoomMain (void)
     modifiedgame = false;
 
     DEH_printf("W_Init: Init WADfiles.\n");
+    if (!D_AddFile(rwadfile))
+    {
+        I_Error("RUDE.WAD not found.\n");
+    }
     D_AddFile(iwadfile);
     numiwadlumps = numlumps;
 
@@ -1634,7 +1724,8 @@ void D_DoomMain (void)
     // Load Dehacked patches from DEHACKED lumps contained in one of the
     // loaded PWAD files.
     //
-    if (M_ParmExists("-dehlump"))
+	// [crispy] load DEHACKED lumps by default, but allow overriding
+    if (!M_ParmExists("-nodehlump"))
     {
         int i, loaded = 0;
 
@@ -1642,12 +1733,13 @@ void D_DoomMain (void)
         {
             if (!strncmp(lumpinfo[i]->name, "DEHACKED", 8))
             {
-                DEH_LoadLump(i, false, false);
+                DEH_LoadLump(i, true, true); // [crispy] allow long strings and cheats, allow error
                 loaded++;
             }
         }
 
-        printf("  loaded %i DEHACKED lumps from PWAD files.\n", loaded);
+        if (loaded)
+            printf("  loaded %i DEHACKED lumps from PWAD files.\n", loaded);
     }
 
     // Set the gamedescription string. This is only possible now that
@@ -1681,6 +1773,8 @@ void D_DoomMain (void)
 		    I_Error(DEH_String("\nThis is not the registered version."));
     }
 
+// [crispy] disable meaningless warning, we always use "-merge" anyway
+#if 0
     if (W_CheckNumForName("SS_START") >= 0
      || W_CheckNumForName("FF_END") >= 0)
     {
@@ -1689,6 +1783,7 @@ void D_DoomMain (void)
                " floor textures.  You may want to use the '-merge' command\n"
                " line option instead of '-file'.\n");
     }
+#endif
 
     I_PrintStartupBanner(gamedescription);
     PrintDehackedBanners();
@@ -1699,6 +1794,12 @@ void D_DoomMain (void)
     I_InitJoystick();
     I_InitSound(true);
     I_InitMusic();
+
+    // [crispy] check for presence of a 5th episode
+    haved1e5 = (gameversion == exe_ultimate) &&
+                       (W_CheckNumForName("m_epi5") != -1) &&
+                       (W_CheckNumForName("e5m1") != -1) &&
+                       (W_CheckNumForName("wilv40") != -1);
 
     printf ("NET_Init: Init network subsystem.\n");
     NET_Init ();
@@ -1808,6 +1909,22 @@ void D_DoomMain (void)
         autostart = true;
     }
 
+    dropbackpack = M_CheckParm("-backpack");
+
+    nodmweapons = M_CheckParm("-nodmweapons");
+
+    keepkeys = M_CheckParm("-keepkeys");
+
+    sprespawn = M_CheckParm("-sprespawn");
+
+    doublespawn = M_CheckParm("-2xmonsters");
+
+    doubledamage = M_CheckParm("-xpain");
+
+    nod2monsters = M_CheckParm("-nod2monsters");
+
+    isa = M_CheckParm("-isa");
+
     // Undocumented:
     // Invoked by setup to test the controls.
 
@@ -1860,6 +1977,7 @@ void D_DoomMain (void)
     DEH_printf("D_CheckNetGame: Checking network game status.\n");
     D_CheckNetGame ();
 
+    I_Sleep (1000);
     PrintGameVersion();
 
     DEH_printf("HU_Init: Setting up heads up display.\n");

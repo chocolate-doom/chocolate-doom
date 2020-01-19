@@ -31,6 +31,7 @@ R_GetColumn
 ( int		tex,
   int		col );
 
+byte *R_ColumnMaxExtent(int tex);
 
 // I/O, setting up the stuff.
 void R_InitData (void);

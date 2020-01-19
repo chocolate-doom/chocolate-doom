@@ -128,6 +128,9 @@ typedef	struct
     int			linecount;
     struct line_s**	lines;	// [linecount] size
     
+    // [crispy] WiggleFix: [kb] for R_FixWiggle()
+    int		cachedheight;
+    int		scaleindex;
 } sector_t;
 
 
@@ -183,13 +186,13 @@ typedef struct line_s
     fixed_t	dy;
 
     // Animation related.
-    short	flags;
+    unsigned short	flags;
     short	special;
     short	tag;
 
     // Visual appearance: SideDefs.
-    //  sidenum[1] will be -1 if one sided
-    short	sidenum[2];			
+    //  sidenum[1] will be -1 (NO_INDEX) if one sided
+    unsigned short	sidenum[2];
 
     // Neat. Another bounding box, for the extent
     //  of the LineDef.
@@ -223,8 +226,8 @@ typedef struct line_s
 typedef struct subsector_s
 {
     sector_t*	sector;
-    short	numlines;
-    short	firstline;
+    int	numlines;
+    int	firstline;
     
 } subsector_t;
 
@@ -251,6 +254,8 @@ typedef struct
     sector_t*	frontsector;
     sector_t*	backsector;
     
+    uint32_t	length; // [crispy] fix long wall wobble
+    angle_t	pangle; // [crispy] re-calculated angle used for rendering
 } seg_t;
 
 
@@ -270,7 +275,7 @@ typedef struct
     fixed_t	bbox[2][4];
 
     // If NF_SUBSECTOR its a subsector.
-    unsigned short children[2];
+    int children[2];
     
 } node_t;
 
@@ -324,9 +329,9 @@ typedef struct drawseg_s
     
     // Pointers to lists for sprite clipping,
     //  all three adjusted so [x1] is first value.
-    short*		sprtopclip;		
-    short*		sprbottomclip;	
-    short*		maskedtexturecol;
+    int*		sprtopclip; // [crispy] 32-bit integer math
+    int*		sprbottomclip; // [crispy] 32-bit integer math
+    int*		maskedtexturecol; // [crispy] 32-bit integer math
     
 } drawseg_t;
 
@@ -430,15 +435,15 @@ typedef struct
   
   // leave pads for [minx-1]/[maxx+1]
   
-  byte		pad1;
+  unsigned int		pad1; // [crispy] hires / 32-bit integer math
   // Here lies the rub for all
   //  dynamic resize/change of resolution.
-  byte		top[SCREENWIDTH];
-  byte		pad2;
-  byte		pad3;
+  unsigned int		top[SCREENWIDTH]; // [crispy] hires / 32-bit integer math
+  unsigned int		pad2; // [crispy] hires / 32-bit integer math
+  unsigned int		pad3; // [crispy] hires / 32-bit integer math
   // See above.
-  byte		bottom[SCREENWIDTH];
-  byte		pad4;
+  unsigned int		bottom[SCREENWIDTH]; // [crispy] hires / 32-bit integer math
+  unsigned int		pad4; // [crispy] hires / 32-bit integer math
 
 } visplane_t;
 

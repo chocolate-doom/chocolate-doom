@@ -66,6 +66,8 @@ extern boolean		message_dontfuckwithme;
 
 extern boolean		chat_on;		// in heads-up code
 
+boolean insavemenu; // redraw status bar
+
 //
 // defaulted values
 //
@@ -269,6 +271,7 @@ enum
     ep2,
     ep3,
     ep4,
+    ep5, // [crispy] Sigil
     ep_end
 } episodes_e;
 
@@ -278,6 +281,7 @@ menuitem_t EpisodeMenu[]=
     {1,"M_EPI2", M_Episode,'t'},
     {1,"M_EPI3", M_Episode,'i'},
     {1,"M_EPI4", M_Episode,'t'}
+   ,{1,"M_EPI5", M_Episode,'s'} // [crispy] Sigil
 };
 
 menu_t  EpiDef =
@@ -300,16 +304,18 @@ enum
     hurtme,
     violence,
     nightmare,
+    massacre,
     newg_end
 } newgame_e;
 
 menuitem_t NewGameMenu[]=
 {
     {1,"M_JKILL",	M_ChooseSkill, 'i'},
-    {1,"M_ROUGH",	M_ChooseSkill, 'h'},
+    {1,"M_ROUGH",	M_ChooseSkill, 'r'},
     {1,"M_HURT",	M_ChooseSkill, 'h'},
     {1,"M_ULTRA",	M_ChooseSkill, 'u'},
-    {1,"M_NMARE",	M_ChooseSkill, 'n'}
+    {1,"M_NMARE",	M_ChooseSkill, 'n'},
+	{1,"M_EXTR",	M_ChooseSkill, 'm'}
 };
 
 menu_t  NewDef =
@@ -448,6 +454,8 @@ enum
     load4,
     load5,
     load6,
+    load7, // [crispy] up to 8 savegames
+    load8, // [crispy] up to 8 savegames
     load_end
 } load_e;
 
@@ -458,7 +466,9 @@ menuitem_t LoadMenu[]=
     {1,"", M_LoadSelect,'3'},
     {1,"", M_LoadSelect,'4'},
     {1,"", M_LoadSelect,'5'},
-    {1,"", M_LoadSelect,'6'}
+    {1,"", M_LoadSelect,'6'},
+    {1,"", M_LoadSelect,'7'}, // [crispy] up to 8 savegames
+    {1,"", M_LoadSelect,'8'}  // [crispy] up to 8 savegames
 };
 
 menu_t  LoadDef =
@@ -481,7 +491,9 @@ menuitem_t SaveMenu[]=
     {1,"", M_SaveSelect,'3'},
     {1,"", M_SaveSelect,'4'},
     {1,"", M_SaveSelect,'5'},
-    {1,"", M_SaveSelect,'6'}
+    {1,"", M_SaveSelect,'6'},
+    {1,"", M_SaveSelect,'7'}, // [crispy] up to 8 savegames
+    {1,"", M_SaveSelect,'8'}  // [crispy] up to 8 savegames
 };
 
 menu_t  SaveDef =
@@ -538,6 +550,7 @@ void M_DrawLoad(void)
     {
 	M_DrawSaveLoadBorder(LoadDef.x,LoadDef.y+LINEHEIGHT*i);
 	M_WriteText(LoadDef.x,LoadDef.y+LINEHEIGHT*i,savegamestrings[i]);
+	insavemenu = true;
     }
 }
 
@@ -614,6 +627,7 @@ void M_DrawSave(void)
 	i = M_StringWidth(savegamestrings[saveSlot]);
 	M_WriteText(LoadDef.x + i,LoadDef.y+LINEHEIGHT*saveSlot,"_");
     }
+	insavemenu = true;
 }
 
 //
@@ -930,6 +944,15 @@ void M_VerifyNightmare(int key)
     M_ClearMenus ();
 }
 
+void M_VerifyMassacre(int key)
+{
+    if (key != key_menu_confirm)
+	return;
+
+    G_DeferedInitNew(massacre,epi+1,1);
+    M_ClearMenus ();
+}
+
 void M_ChooseSkill(int choice)
 {
     if (choice == nightmare)
@@ -937,7 +960,13 @@ void M_ChooseSkill(int choice)
 	M_StartMessage(DEH_String(NIGHTMARE),M_VerifyNightmare,true);
 	return;
     }
-	
+
+    if (choice == massacre)
+    {
+	M_StartMessage(DEH_String(NIGHTMARE),M_VerifyMassacre,true);
+	return;
+    }
+
     G_DeferedInitNew(choice,epi+1,1);
     M_ClearMenus ();
 }
@@ -978,7 +1007,7 @@ void M_DrawOptions(void)
                                       PU_CACHE));
 
     M_DrawThermo(OptionsDef.x, OptionsDef.y + LINEHEIGHT * (mousesens + 1),
-		 10, mouseSensitivity);
+		 20, mouseSensitivity);
 
     M_DrawThermo(OptionsDef.x,OptionsDef.y+LINEHEIGHT*(scrnsize+1),
 		 9,screenSize);
@@ -1108,6 +1137,7 @@ void M_QuitResponse(int key)
 	    S_StartSound(NULL,quitsounds[(gametic>>2)&7]);
 	I_WaitVBL(105);
     }
+    DEH_fprintf(stdout, "M_Shutdown: Shutdown all subsystems.\n");
     I_Quit ();
 }
 
@@ -1153,7 +1183,7 @@ void M_ChangeSensitivity(int choice)
 	    mouseSensitivity--;
 	break;
       case 1:
-	if (mouseSensitivity < 9)
+	if (mouseSensitivity < 19)
 	    mouseSensitivity++;
 	break;
     }
@@ -1227,6 +1257,10 @@ M_DrawThermo
 	xx += 8;
     }
     V_DrawPatchDirect(xx, y, W_CacheLumpName(DEH_String("M_THERMR"), PU_CACHE));
+
+    // [crispy] do not crash anymore if value exceeds thermometer range
+    if (thermDot > thermWidth)
+        thermDot = thermWidth;
 
     V_DrawPatchDirect((x + 8) + thermDot * 8, y,
 		      W_CacheLumpName(DEH_String("M_THERMO"), PU_CACHE));
@@ -1734,6 +1768,10 @@ boolean M_Responder (event_t* ev)
 	    if (usegamma > 4)
 		usegamma = 0;
 	    players[consoleplayer].message = DEH_String(gammamsg[usegamma]);
+
+        if (lcd_gamma_fix)
+            I_SetPalette (W_CacheLumpName (DEH_String("PALFIX"),PU_CACHE));
+        else
             I_SetPalette (W_CacheLumpName (DEH_String("PLAYPAL"),PU_CACHE));
 	    return true;
 	}
@@ -1889,6 +1927,10 @@ void M_StartControlPanel (void)
     // intro might call this repeatedly
     if (menuactive)
 	return;
+
+    // [crispy] entering menus while recording demos pauses the game
+    if (demorecording && !paused)
+        sendpause = true;
     
     menuactive = 1;
     currentMenu = &MainDef;         // JDC
@@ -2006,7 +2048,7 @@ void M_Drawer (void)
     {
         name = DEH_String(currentMenu->menuitems[i].name);
 
-	if (name[0] && W_CheckNumForName(name) > 0)
+	if (name[0])
 	{
 	    V_DrawPatchDirect (x, y, W_CacheLumpName(name, PU_CACHE));
 	}
@@ -2027,6 +2069,11 @@ void M_Drawer (void)
 void M_ClearMenus (void)
 {
     menuactive = 0;
+
+    // [crispy] entering menus while recording demos pauses the game
+    if (demorecording && paused)
+        sendpause = true;
+
     // if (!netgame && usergame && paused)
     //       sendpause = true;
 }
@@ -2101,6 +2148,12 @@ void M_Init (void)
         ReadMenu1[rdthsempty1].routine = M_FinishReadThis;
     }
 
+    // [crispy] Sigil
+    if (!haved1e5)
+    {
+        EpiDef.numitems = 4;
+    }
+
     // Versions of doom.exe before the Ultimate Doom release only had
     // three episodes; if we're emulating one of those then don't try
     // to show episode four. If we are, then do show episode four
@@ -2115,6 +2168,21 @@ void M_Init (void)
         EpiDef.numitems = 1;
     }
 
+    // Doom v1.0/v1.1 didn't have nightmare difficulty
+    if (gameversion < exe_doom_1_2)
+    {
+        NewDef.numitems--; // UM
+        NewDef.numitems--;
+    }
+
     opldev = M_CheckParm("-opldev") > 0;
+}
+
+// [crispy] indicate game version mismatch
+void M_LoadGameVerMismatch ()
+{
+	M_StartMessage("Game Version Mismatch\n\n"PRESSKEY, NULL, false);
+	messageToPrint = 2;
+	S_StartSound(NULL,sfx_swtchn);
 }
 

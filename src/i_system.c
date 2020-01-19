@@ -49,8 +49,8 @@
 #include "w_wad.h"
 #include "z_zone.h"
 
-#define DEFAULT_RAM 16 /* MiB */
-#define MIN_RAM     4  /* MiB */
+#define DEFAULT_RAM 16*2 /* MiB */
+#define MIN_RAM     4*2  /* MiB */
 
 
 typedef struct atexit_listentry_s atexit_listentry_t;
@@ -206,7 +206,8 @@ boolean I_ConsoleStdout(void)
 {
 #ifdef _WIN32
     // SDL "helpfully" always redirects stdout to a file.
-    return false;
+    // But now we've got a working console
+    return true;
 #else
     return isatty(fileno(stdout));
 #endif

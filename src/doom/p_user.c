@@ -22,12 +22,15 @@
 
 
 #include "doomdef.h"
+#include "d_compat.h"
 #include "d_event.h"
 
 #include "p_local.h"
 
 #include "doomstat.h"
 
+#include "deh_str.h"
+#include "dstrings.h"
 
 
 // Index of the special effects (INVUL inverse) map.
@@ -43,6 +46,60 @@
 
 boolean		onground;
 
+void DropBackpack(player_t* player)
+{
+	int x, y;
+	unsigned an;
+	mobj_t* backpack;
+	mobjtype_t item = 0;
+
+	if (player->playerstate == PST_DEAD)
+		return;
+
+	if (player->ammo[am_clip] > 20
+		&& player->ammo[am_shell] > 8
+		&& player->ammo[am_misl] > 4
+		&& player->ammo[am_cell] > 40)
+	{
+		item = MT_MISC94;
+	}
+	else if (player->ammo[am_clip] > 20
+		&& player->ammo[am_shell] > 8
+		&& player->ammo[am_misl] > 4)
+	{
+		item = MT_MISC93;
+	}
+	else if (player->ammo[am_clip] > 20
+		&& player->ammo[am_shell] > 8)
+	{
+		item = MT_MISC92;
+	}
+	else
+	{
+		player->message = DEH_String(NOAMMO);
+		return;
+	}
+
+	an = player->mo->angle >> ANGLETOFINESHIFT; 
+
+	x = player->mo->x + FixedMul (3*24*FRACUNIT, finecosine[an]);
+	y = player->mo->y + FixedMul (3*24*FRACUNIT, finesine[an]);
+
+	backpack = P_SpawnMobj (x, y, ONFLOORZ, item);
+	if (!P_CheckPosition (backpack, backpack->x, backpack->y))
+	{
+		P_RemoveMobj (backpack);
+		return;
+	}
+	backpack->flags |= MF_DROPPED;
+
+	if (item == MT_MISC94)
+		player->ammo[am_cell] -= 40;
+	if (item >= MT_MISC93)
+		player->ammo[am_misl] -= 4;
+	player->ammo[am_clip] -= 20;
+	player->ammo[am_shell] -= 8;    
+}
 
 //
 // P_Thrust
@@ -54,10 +111,10 @@ P_Thrust
   angle_t	angle,
   fixed_t	move ) 
 {
-    angle >>= ANGLETOFINESHIFT;
-    
-    player->mo->momx += FixedMul(move,finecosine[angle]); 
-    player->mo->momy += FixedMul(move,finesine[angle]);
+    angle >>= angletocoarseshift;
+
+    player->mo->momx += FixedMul(move, coarsecosine[angle]); 
+    player->mo->momy += FixedMul(move, coarsesine[angle]);
 }
 
 
@@ -97,10 +154,9 @@ void P_CalcHeight (player_t* player)
 	player->viewz = player->mo->z + player->viewheight;
 	return;
     }
-		
-    angle = (FINEANGLES/20*leveltime)&FINEMASK;
-    bob = FixedMul ( player->bob/2, finesine[angle]);
-
+	
+    angle = (coarseangles/20*leveltime)&coarsemask;
+    bob = FixedMul ( player->bob/2, coarsesine[angle]);
     
     // move viewheight
     if (player->playerstate == PST_LIVE)
@@ -138,25 +194,35 @@ void P_CalcHeight (player_t* player)
 //
 // P_MovePlayer
 //
-void P_MovePlayer (player_t* player)
+void P_MovePlayer (player_t* player, boolean justattacked)
 {
     ticcmd_t*		cmd;
+    fixed_t forwardmove, sidemove;
 	
     cmd = &player->cmd;
 	
     player->mo->angle += (cmd->angleturn<<FRACBITS);
 
+    forwardmove = cmd->forwardmove * cmd_move_scale;
+    sidemove = cmd->sidemove * cmd_move_scale;
+
+    // Need to set this manually, as 0xc800 doesn't divide cleanly by 900
+    if (justattacked && gameversion < exe_doom_1_2)
+    {
+        forwardmove = 0xc800;
+    }
+
     // Do not let the player control movement
     //  if not onground.
     onground = (player->mo->z <= player->mo->floorz);
 	
-    if (cmd->forwardmove && onground)
-	P_Thrust (player, player->mo->angle, cmd->forwardmove*2048);
+    if (forwardmove && onground)
+	P_Thrust (player, player->mo->angle, forwardmove);
     
-    if (cmd->sidemove && onground)
-	P_Thrust (player, player->mo->angle-ANG90, cmd->sidemove*2048);
+    if (sidemove && onground)
+	P_Thrust (player, player->mo->angle-ANG90, sidemove);
 
-    if ( (cmd->forwardmove || cmd->sidemove) 
+    if ( (forwardmove || sidemove) 
 	 && player->mo->state == &states[S_PLAY] )
     {
 	P_SetMobjState (player->mo, S_PLAY_RUN1);
@@ -230,6 +296,7 @@ void P_PlayerThink (player_t* player)
 {
     ticcmd_t*		cmd;
     weapontype_t	newweapon;
+    boolean         justattacked = false;
 	
     // fixme: do this in the cheat code
     if (player->cheats & CF_NOCLIP)
@@ -244,9 +311,9 @@ void P_PlayerThink (player_t* player)
 	cmd->angleturn = 0;
 	cmd->forwardmove = 0xc800/512;
 	cmd->sidemove = 0;
+        justattacked = true;
 	player->mo->flags &= ~MF_JUSTATTACKED;
     }
-			
 	
     if (player->playerstate == PST_DEAD)
     {
@@ -260,7 +327,7 @@ void P_PlayerThink (player_t* player)
     if (player->mo->reactiontime)
 	player->mo->reactiontime--;
     else
-	P_MovePlayer (player);
+	P_MovePlayer (player, justattacked);
     
     P_CalcHeight (player);
 
@@ -280,22 +347,32 @@ void P_PlayerThink (player_t* player)
 	//  (read: not in the middle of an attack).
 	newweapon = (cmd->buttons&BT_WEAPONMASK)>>BT_WEAPONSHIFT;
 	
+	// [crispy] allow to toggle Fist/Chainsaw
 	if (newweapon == wp_fist
 	    && player->weaponowned[wp_chainsaw]
 	    && !(player->readyweapon == wp_chainsaw
-		 && player->powers[pw_strength]))
+		 && (player->powers[pw_strength] || gameskill == sk_extreme)))
 	{
 	    newweapon = wp_chainsaw;
 	}
-	
+
 	if ( (gamemode == commercial)
 	    && newweapon == wp_shotgun 
 	    && player->weaponowned[wp_supershotgun]
-	    && player->readyweapon != wp_supershotgun)
+	    && player->readyweapon != wp_supershotgun
+	    && !nod2monsters )
 	{
 	    newweapon = wp_supershotgun;
 	}
-	
+
+	if ( (gamemode == commercial)
+	    && newweapon == wp_shotgun 
+	    && player->weaponowned[wp_supershotgun]
+	    && player->readyweapon == wp_shotgun
+	    && nod2monsters )
+	{
+	    newweapon = wp_supershotgun;
+	}
 
 	if (player->weaponowned[newweapon]
 	    && newweapon != player->readyweapon)
@@ -322,7 +399,13 @@ void P_PlayerThink (player_t* player)
     }
     else
 	player->usedown = false;
-    
+
+    // check for drop
+    if (cmd->buttons & BT_DROP)
+    {
+		DropBackpack(player);
+	}
+
     // cycle psprites
     P_MovePsprites (player);
     

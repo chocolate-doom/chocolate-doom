@@ -330,7 +330,7 @@ static int		cnt_par;
 static int		cnt_pause;
 
 // # of commercial levels
-static int		NUMCMAPS; 
+static int		NUMCMAPS = 32;
 
 
 //
@@ -390,6 +390,7 @@ static patch_t*		bp[MAXPLAYERS];
 
  // Name graphics of each level (centered)
 static patch_t**	lnames;
+static unsigned int	num_lnames;
 
 // Buffer storing the backdrop
 static patch_t *background;
@@ -417,6 +418,13 @@ void WI_drawLF(void)
 {
     int y = WI_TITLEY;
 
+    // [crispy] prevent crashes with maps without map title graphics lump
+    if (wbs->last >= num_lnames || lnames[wbs->last] == NULL)
+    {
+        V_DrawPatch((SCREENWIDTH - SHORT(finished->width)) / 2, y, finished);
+        return;
+    }
+
     if (gamemode != commercial || wbs->last < NUMCMAPS)
     {
         // draw <LevelName> 
@@ -428,7 +436,7 @@ void WI_drawLF(void)
 
         V_DrawPatch((SCREENWIDTH - SHORT(finished->width)) / 2, y, finished);
     }
-    else if (wbs->last == NUMCMAPS)
+    else if (wbs->last >= NUMCMAPS) // [crispy] prevent crashes with maps > 33
     {
         // MAP33 - draw "Finished!" only
         V_DrawPatch((SCREENWIDTH - SHORT(finished->width)) / 2, y, finished);
@@ -453,6 +461,12 @@ void WI_drawLF(void)
 void WI_drawEL(void)
 {
     int y = WI_TITLEY;
+
+    // [crispy] prevent crashes with maps without map title graphics lump
+    if (wbs->next >= num_lnames || lnames[wbs->next] == NULL)
+    {
+        return;
+    }
 
     // draw "Entering"
     V_DrawPatch((SCREENWIDTH - SHORT(entering->width))/2,
@@ -1695,6 +1709,10 @@ static void WI_loadUnloadData(load_callback_t callback)
     {
         M_StringCopy(name, DEH_String("INTERPIC"), sizeof(name));
     }
+    else if (haved1e5 && wbs->epsd == 4 && W_CheckNumForName(DEH_String("SIGILINT")) != -1) // [crispy] Sigil
+    {
+        M_StringCopy(name, DEH_String("SIGILINT"), sizeof(name));
+    }
     else
     {
 	DEH_snprintf(name, sizeof(name), "WIMAP%d", wbs->epsd);
@@ -1707,7 +1725,11 @@ static void WI_loadUnloadData(load_callback_t callback)
 
 static void WI_loadCallback(const char *name, patch_t **variable)
 {
+  // [crispy] prevent crashes with maps without map title graphics lump
+  if (W_CheckNumForName(name) != -1)
     *variable = W_CacheLumpName(name, PU_STATIC);
+  else
+    *variable = NULL;
 }
 
 void WI_loadData(void)
@@ -1717,11 +1739,13 @@ void WI_loadData(void)
 	NUMCMAPS = 32;
 	lnames = (patch_t **) Z_Malloc(sizeof(patch_t*) * NUMCMAPS,
 				       PU_STATIC, NULL);
+	num_lnames = NUMCMAPS;
     }
     else
     {
 	lnames = (patch_t **) Z_Malloc(sizeof(patch_t*) * NUMMAPS,
 				       PU_STATIC, NULL);
+	num_lnames = NUMMAPS;
     }
 
     WI_loadUnloadData(WI_loadCallback);

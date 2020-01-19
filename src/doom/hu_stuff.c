@@ -153,6 +153,17 @@ const char *mapnames[] =	// DOOM shareware/registered/retail (Ultimate) names.
     HUSTR_E4M8,
     HUSTR_E4M9,
 
+    // [crispy] Sigil
+    HUSTR_E5M1,
+    HUSTR_E5M2,
+    HUSTR_E5M3,
+    HUSTR_E5M4,
+    HUSTR_E5M5,
+    HUSTR_E5M6,
+    HUSTR_E5M7,
+    HUSTR_E5M8,
+    HUSTR_E5M9,
+
     "NEWLEVEL",
     "NEWLEVEL",
     "NEWLEVEL",
@@ -371,6 +382,9 @@ void HU_Start(void)
 
     int		i;
     const char *s;
+    // [crispy] string buffers for map title and WAD file name
+    char	buf[8];
+    const char* ptr;
 
     if (headsupactive)
 	HU_Stop();
@@ -420,6 +434,28 @@ void HU_Start(void)
     if (logical_gamemission == doom && gameversion == exe_chex)
     {
         s = HU_TITLE_CHEX;
+    }
+
+    // [crispy] explicitly display (episode and) map if the map is from a PWAD
+    if (gamemode == commercial)
+	M_snprintf(buf, sizeof(buf), "map%02d", gamemap);
+    else
+	M_snprintf(buf, sizeof(buf), "e%dm%d", gameepisode, gamemap);
+
+    ptr = M_BaseName(lumpinfo[W_GetNumForName(buf)]->wad_file->path);
+
+    if (gamemission == doom && gameepisode == 1)
+    {
+	// [crispy] add support for Romero's latest E1 additions
+	if (gamemap == 4 && !strcasecmp(ptr, "e1m4b.wad"))
+	{
+	    s = HUSTR_E1M4B;
+	}
+	else
+	if (gamemap == 8 && !strcasecmp(ptr, "e1m8b.wad"))
+	{
+	    s = HUSTR_E1M8B;
+	}
     }
 
     // dehacked substitution to get modified level name

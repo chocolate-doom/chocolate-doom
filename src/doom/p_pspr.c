@@ -21,6 +21,8 @@
 #include "doomdef.h"
 #include "d_event.h"
 
+#include "d_compat.h"
+
 #include "deh_misc.h"
 
 #include "m_random.h"
@@ -318,10 +320,10 @@ A_WeaponReady
 	player->attackdown = false;
     
     // bob the weapon based on movement speed
-    angle = (128*leveltime)&FINEMASK;
-    psp->sx = FRACUNIT + FixedMul (player->bob, finecosine[angle]);
-    angle &= FINEANGLES/2-1;
-    psp->sy = WEAPONTOP + FixedMul (player->bob, finesine[angle]);
+    angle = (coarseangles/64*leveltime)&coarsemask;
+    psp->sx = FRACUNIT + FixedMul (player->bob, coarsecosine[angle]);
+    angle &= coarseangles/2-1;
+    psp->sy = WEAPONTOP + FixedMul (player->bob, coarsesine[angle]);
 }
 
 
@@ -463,10 +465,13 @@ A_Punch
     angle_t	angle;
     int		damage;
     int		slope;
-	
-    damage = (P_Random ()%10+1)<<1;
 
-    if (player->powers[pw_strength])	
+    if (gameskill == sk_extreme)
+	    damage = 5*(P_Random ()%4+1);
+	else
+	    damage = (P_Random ()%10+1)<<1;
+
+    if (player->powers[pw_strength])
 	damage *= 10;
 
     angle = player->mo->angle;
@@ -649,6 +654,24 @@ P_GunShot
 }
 
 
+void
+P_PistolShot
+( mobj_t*	mo,
+  boolean	accurate )
+{
+    angle_t	angle;
+    int		damage;
+
+    damage = 7*(P_Random ()%3+1);
+    angle = mo->angle;
+
+    if (!accurate)
+	angle += P_SubRandom() << 16;
+
+    P_LineAttack (mo, angle, MISSILERANGE, bulletslope, damage);
+}
+
+
 //
 // A_FirePistol
 //
@@ -667,7 +690,10 @@ A_FirePistol
 		  weaponinfo[player->readyweapon].flashstate);
 
     P_BulletSlope (player->mo);
-    P_GunShot (player->mo, !player->refire);
+    if (gameskill == sk_extreme)
+	    P_PistolShot (player->mo, !player->refire);
+	else
+	    P_GunShot (player->mo, !player->refire);
 }
 
 

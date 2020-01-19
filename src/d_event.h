@@ -87,6 +87,9 @@ typedef enum
     // Use button, to open doors, activate switches.
     BT_USE		= 2,
 
+    // Drop backpack.
+    BT_DROP		= 64,
+
     // Flag: game events, not really buttons.
     BT_SPECIAL		= 128,
     BT_SPECIALMASK	= 3,

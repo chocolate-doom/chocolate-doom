@@ -37,6 +37,8 @@ int key_fire = KEY_RCTRL;
 int key_use = ' ';
 int key_strafe = KEY_RALT;
 int key_speed = KEY_RSHIFT; 
+int key_toggleautorun = KEY_CAPSLOCK;
+int key_dropbackpack = 'x';
 
 // 
 // Heretic keyboard controls
@@ -239,6 +241,8 @@ void M_BindBaseControls(void)
     M_BindIntVariable("dclick_use",          &dclick_use);
     M_BindIntVariable("key_pause",           &key_pause);
     M_BindIntVariable("key_message_refresh", &key_message_refresh);
+    M_BindIntVariable("key_toggleautorun",   &key_toggleautorun);
+    M_BindIntVariable("key_dropbackpack",    &key_dropbackpack);
 }
 
 void M_BindHereticControls(void)

@@ -22,6 +22,7 @@
 
 #include "deh_misc.h"
 
+#include "d_compat.h"
 #include "m_bbox.h"
 #include "m_random.h"
 #include "i_system.h"
@@ -227,7 +228,10 @@ boolean PIT_CheckLine (line_t* ld)
     
     if (!ld->backsector)
 	return false;		// one sided line
-		
+
+    if ((doublespawn || gameskill == sk_extreme) && ld->backsector->floorheight == ld->backsector->ceilingheight)
+	return false;       // closed door
+
     if (!(tmthing->flags & MF_MISSILE) )
     {
 	if ( ld->flags & ML_BLOCKING )
@@ -262,6 +266,9 @@ boolean PIT_CheckLine (line_t* ld)
         // fraggle: spechits overrun emulation code from prboom-plus
         if (numspechit > MAXSPECIALCROSS_ORIGINAL)
         {
+            // [crispy] print a warning
+            if (numspechit == MAXSPECIALCROSS_ORIGINAL + 1)
+                fprintf(stderr, "PIT_CheckLine: Triggered SPECHITS overflow!\n");
             SpechitOverrun(ld);
         }
     }
@@ -464,6 +471,10 @@ P_CheckPosition
 	for (by=yl ; by<=yh ; by++)
 	    if (!P_BlockLinesIterator (bx,by,PIT_CheckLine))
 		return false;
+
+	if ( !(thing->flags&(MF_DROPOFF|MF_FLOAT))
+	     && tmfloorz - tmdropoffz > 24*FRACUNIT && (doublespawn || gameskill == sk_extreme) )
+	    return false;	// don't stand over a dropoff
 
     return true;
 }
@@ -1184,13 +1195,13 @@ void P_UseLines (player_t*	player)
 	
     usething = player->mo;
 		
-    angle = player->mo->angle >> ANGLETOFINESHIFT;
+    angle = player->mo->angle >> angletocoarseshift;
 
     x1 = player->mo->x;
     y1 = player->mo->y;
-    x2 = x1 + (USERANGE>>FRACBITS)*finecosine[angle];
-    y2 = y1 + (USERANGE>>FRACBITS)*finesine[angle];
-	
+    x2 = x1 + (USERANGE>>FRACBITS) * coarsecosine[angle];
+    y2 = y1 + (USERANGE>>FRACBITS) * coarsesine[angle];
+
     P_PathTraverse ( x1, y1, x2, y2, PT_ADDLINES, PTR_UseTraverse );
 }
 
@@ -1317,6 +1328,8 @@ boolean PIT_ChangeSector (mobj_t*	thing)
     {
 	P_SetMobjState (thing, S_GIBS);
 
+    // https://doomwiki.org/wiki/Crushed_monsters_block_player_movement
+    // FIXME: check which exact version this was fixed, at least in v1.666
     if (gameversion > exe_doom_1_2)
 	    thing->flags &= ~MF_SOLID;
 	thing->height = 0;

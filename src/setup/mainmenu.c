@@ -290,7 +290,7 @@ static void SetWindowTitle(void)
 {
     char *title;
 
-    title = M_StringReplace(PACKAGE_NAME " Setup ver " PACKAGE_VERSION,
+    title = M_StringReplace("DOOM Setup ver " PACKAGE_VERSION,
                             "Doom",
                             GetGameTitle());
 

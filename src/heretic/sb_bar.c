@@ -1017,14 +1017,14 @@ static boolean HandleCheats(byte key)
     int i;
     boolean eat;
 
-    if (netgame || gameskill == sk_nightmare)
+    if (netgame || gameskill == sk_nightmare || gameskill == sk_extreme)
     {                           // Can't cheat in a net-game, or in nightmare mode
         return (false);
     }
-    if (players[consoleplayer].health <= 0)
+  /*if (players[consoleplayer].health <= 0)
     {                           // Dead players can't cheat
         return (false);
-    }
+    }*/
     eat = false;
     for (i = 0; Cheats[i].func != NULL; i++)
     {
@@ -1045,6 +1045,31 @@ static boolean HandleCheats(byte key)
 
 static void CheatGodFunc(player_t * player, Cheat_t * cheat)
 {
+	// [crispy] dead players are first respawned at the current position
+	if (player->playerstate == PST_DEAD)
+	{
+	    mapthing_t mt = {0};
+	    extern void P_SpawnPlayer (mapthing_t* mthing);
+
+	    mt.x = player->mo->x >> FRACBITS;
+	    mt.y = player->mo->y >> FRACBITS;
+	    mt.angle = (player->mo->angle + ANG45/2)*(uint64_t)45/ANG45;
+	    mt.type = consoleplayer + 1;
+
+	    // remove the corpse 
+	    players[consoleplayer].mo->player = NULL;
+	    P_RemoveMobj(player->mo);
+	    P_SpawnPlayer(&mt);
+	    S_StartSound(player, sfx_ripslop);
+		if (player->mo)
+		    player->mo->health = 100;
+	    player->health = MAXHEALTH;
+	    P_SetMessage(player, DEH_String(TXT_CHEATGODRES), false);
+		// [crispy] eat key press when respawning
+		if (mt.type)
+		    return;
+	}
+
     player->cheats ^= CF_GODMODE;
     if (player->cheats & CF_GODMODE)
     {

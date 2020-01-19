@@ -870,6 +870,11 @@ mobj_t *P_SpawnMobj(fixed_t x, fixed_t y, fixed_t z, mobjtype_t type)
     mobj->flags2 = info->flags2;
     mobj->damage = info->damage;
     mobj->health = info->spawnhealth;
+    if (gameskill == sk_extreme && mobj->flags & MF_COUNTKILL)
+    {
+        // Half monster health in extreme mode
+        mobj->health >>= 1;
+    }
     if (gameskill != sk_nightmare)
     {
         mobj->reactiontime = info->reactiontime;
@@ -1081,7 +1086,7 @@ void P_SpawnMapThing(mapthing_t * mthing)
 
     if (gameskill == sk_baby)
         bit = 1;
-    else if (gameskill == sk_nightmare)
+    else if (gameskill == sk_nightmare || gameskill == sk_extreme)
         bit = 4;
     else
         bit = 1 << (gameskill - 1);

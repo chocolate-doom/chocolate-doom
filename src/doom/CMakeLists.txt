@@ -11,6 +11,7 @@ add_library(doom STATIC
             deh_thing.c
             deh_weapon.c
                             d_englsh.h
+            d_compat.c      d_compat.h
             d_items.c       d_items.h
             d_main.c        d_main.h
             d_net.c

@@ -198,11 +198,17 @@ typedef struct
     int respawn_monsters;
     int map;
     int skill;
-    int gameversion;
+    int netgameversion;
     int lowres_turn;
     int new_sync;
     int timelimit;
     int loadgame;
+    int dropbackpack;
+    int nodmweapons;
+    int keepkeys;
+    int doublespawn;
+    int doubledamage;
+    int nod2monsters;
     int random;  // [Strife only]
 
     // These fields are only used by the server when sending a game

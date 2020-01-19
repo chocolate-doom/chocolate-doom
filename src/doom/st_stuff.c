@@ -259,6 +259,8 @@
 #define ST_MAPTITLEY		0
 #define ST_MAPHEIGHT		1
 
+extern boolean insavemenu; // redraw status bar
+
 // graphics are drawn to a backing screen and blitted to the real screen
 pixel_t			*st_backing_screen;
 	    
@@ -468,11 +470,36 @@ ST_Responder (event_t* ev)
   // if a user keypress...
   else if (ev->type == ev_keydown)
   {
-    if (!netgame && gameskill != sk_nightmare)
+    if (!netgame && gameskill != sk_nightmare && gameskill != sk_extreme)
     {
       // 'dqd' cheat for toggleable god mode
       if (cht_CheckCheat(&cheat_god, ev->data2))
       {
+	// [crispy] dead players are first respawned at the current position
+	if (plyr->playerstate == PST_DEAD && !sprespawn)
+	{
+	    mapthing_t mt = {0};
+	    extern void P_SpawnPlayer (mapthing_t* mthing);
+
+	    mt.x = plyr->mo->x >> FRACBITS;
+	    mt.y = plyr->mo->y >> FRACBITS;
+	    mt.angle = (plyr->mo->angle + ANG45/2)*(uint64_t)45/ANG45;
+	    mt.type = consoleplayer + 1;
+
+	    // remove the corpse 
+	    players[consoleplayer].mo->player = NULL;
+	    P_RemoveMobj(plyr->mo);
+	    P_SpawnPlayer(&mt);
+	    S_StartSound(plyr, sfx_slop);
+		if (plyr->mo)
+		    plyr->mo->health = 100;
+	    plyr->health = deh_god_mode_health;
+	    plyr->message = DEH_String(STSTR_DQDRES);
+		// [crispy] eat key press when respawning
+		if (mt.type)
+		    return true;
+	}
+
 	plyr->cheats ^= CF_GODMODE;
 	if (plyr->cheats & CF_GODMODE)
 	{
@@ -491,6 +518,14 @@ ST_Responder (event_t* ev)
 	plyr->armorpoints = deh_idfa_armor;
 	plyr->armortype = deh_idfa_armor_class;
 	
+	// [crispy] give backpack
+	if (dropbackpack && !plyr->backpack)
+	{
+	    for (i=0 ; i<NUMAMMO ; i++)
+		plyr->maxammo[i] *= 2;
+	    plyr->backpack = true;
+	}
+
 	for (i=0;i<NUMWEAPONS;i++)
 	  plyr->weaponowned[i] = true;
 	
@@ -505,6 +540,14 @@ ST_Responder (event_t* ev)
 	plyr->armorpoints = deh_idkfa_armor;
 	plyr->armortype = deh_idkfa_armor_class;
 	
+	// [crispy] give backpack
+	if (dropbackpack && !plyr->backpack)
+	{
+	    for (i=0 ; i<NUMAMMO ; i++)
+		plyr->maxammo[i] *= 2;
+	    plyr->backpack = true;
+	}
+
 	for (i=0;i<NUMWEAPONS;i++)
 	  plyr->weaponowned[i] = true;
 	
@@ -531,12 +574,18 @@ ST_Responder (event_t* ev)
         // in the Ultimate Doom executable so that it would work for
         // the Doom 1 music as well.
 
-	if (gamemode == commercial || gameversion < exe_ultimate)
+	// [JN] Fixed: using a proper IDMUS selection for shareware
+	// and registered game versions.
+	if (gamemode == commercial /* || gameversion < exe_ultimate */ )
 	{
 	  musnum = mus_runnin + (buf[0]-'0')*10 + buf[1]-'0' - 1;
 	  
+	  /*
 	  if (((buf[0]-'0')*10 + buf[1]-'0') > 35
        && gameversion >= exe_doom_1_8)
+	  */
+	  // [crispy] prevent crash with IDMUS00
+	  if (musnum < mus_runnin || musnum >= NUMMUSIC)
 	    plyr->message = DEH_String(STSTR_NOMUS);
 	  else
 	    S_ChangeMusic(musnum, 1);
@@ -545,16 +594,23 @@ ST_Responder (event_t* ev)
 	{
 	  musnum = mus_e1m1 + (buf[0]-'1')*9 + (buf[1]-'1');
 	  
+	  /*
 	  if (((buf[0]-'1')*9 + buf[1]-'1') > 31)
+	  */
+	  // [crispy] prevent crash with IDMUS0x or IDMUSx0
+	  if (musnum < mus_e1m1 || musnum >= mus_runnin ||
+	      // [crispy] support dedicated music tracks for the 4th episode
+	      S_music[musnum].lumpnum == -1)
 	    plyr->message = DEH_String(STSTR_NOMUS);
 	  else
 	    S_ChangeMusic(musnum, 1);
 	}
       }
-      else if ( (logical_gamemission == doom 
-                 && cht_CheckCheat(&cheat_noclip, ev->data2))
-             || (logical_gamemission != doom 
-                 && cht_CheckCheat(&cheat_commercial_noclip,ev->data2)))
+      // [crispy] allow both idspispopd and idclip cheats in all gamemissions
+      else if ( ( /* logical_gamemission == doom
+                 && */ cht_CheckCheat(&cheat_noclip, ev->data2))
+             || ( /* logical_gamemission != doom
+                 && */ cht_CheckCheat(&cheat_commercial_noclip,ev->data2)))
       {	
         // Noclip cheat.
         // For Doom 1, use the idspipsopd cheat; for all others, use
@@ -614,6 +670,8 @@ ST_Responder (event_t* ev)
       int		epsd;
       int		map;
       
+      extern int P_GetNumForMap (int episode, int map, boolean critical);
+
       cht_GetParam(&cheat_clev, buf);
       
       if (gamemode == commercial)
@@ -650,6 +708,8 @@ ST_Responder (event_t* ev)
           }
           if (epsd > 4)
           {
+              // [crispy] Sigil
+              if (!(haved1e5 && epsd == 5))
               return false;
           }
           if (epsd == 4 && gameversion < exe_ultimate)
@@ -677,9 +737,13 @@ ST_Responder (event_t* ev)
           }
       }
 
+      // [crispy] prevent idclev to nonexistent levels exiting the game
+      if (P_GetNumForMap(epsd, map, false) >= 0)
+      {
       // So be it.
       plyr->message = DEH_String(STSTR_CLEV);
       G_DeferedInitNew(gameskill, epsd, map);
+      }
     }
   }
   return false;
@@ -765,7 +829,8 @@ void ST_updateFaceWidget(void)
 	    // being attacked
 	    priority = 7;
 	    
-	    if (plyr->health - st_oldhealth > ST_MUCHPAIN)
+	    // [crispy] show "Ouch Face" as intended
+	    if (st_oldhealth - plyr->health > ST_MUCHPAIN)
 	    {
 		st_facecount = ST_TURNCOUNT;
 		st_faceindex = ST_calcPainOffset() + ST_OUCHOFFSET;
@@ -818,7 +883,8 @@ void ST_updateFaceWidget(void)
 	// getting hurt because of your own damn stupidity
 	if (plyr->damagecount)
 	{
-	    if (plyr->health - st_oldhealth > ST_MUCHPAIN)
+	    // [crispy] show "Ouch Face" as intended
+	    if (st_oldhealth - plyr->health > ST_MUCHPAIN)
 	    {
 		priority = 7;
 		st_facecount = ST_TURNCOUNT;
@@ -1081,7 +1147,7 @@ void ST_Drawer (boolean fullscreen, boolean refresh)
 {
   
     st_statusbaron = (!fullscreen) || automapactive;
-    st_firsttime = st_firsttime || refresh;
+    st_firsttime = st_firsttime || refresh || insavemenu;
 
     // Do red-/gold-shifts from damage/items
     ST_doPaletteStuff();
@@ -1091,6 +1157,7 @@ void ST_Drawer (boolean fullscreen, boolean refresh)
     // Otherwise, update as little as possible
     else ST_diffDraw();
 
+	insavemenu = false;
 }
 
 typedef void (*load_callback_t)(const char *lumpname, patch_t **variable);
@@ -1205,7 +1272,10 @@ void ST_loadGraphics(void)
 
 void ST_loadData(void)
 {
-    lu_palette = W_GetNumForName (DEH_String("PLAYPAL"));
+    if (lcd_gamma_fix)
+        lu_palette = W_GetNumForName (DEH_String("PALFIX"));
+    else
+        lu_palette = W_GetNumForName (DEH_String("PLAYPAL"));
     ST_loadGraphics();
 }
 

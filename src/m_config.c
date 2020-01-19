@@ -1660,6 +1660,28 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_KEY(key_multi_msgplayer8),
+
+    //!
+    // @game doom heretic
+    // Toggle always run.
+    //
+
+    CONFIG_VARIABLE_KEY(key_toggleautorun),
+
+    //!
+    // @game doom
+    // Drop backpack.
+    //
+
+    CONFIG_VARIABLE_KEY(key_dropbackpack),
+
+    //!
+    // @game doom
+    // Game palette optimization
+    //
+
+    CONFIG_VARIABLE_INT(lcd_gamma_fix),
+
 };
 
 static default_collection_t extra_defaults =

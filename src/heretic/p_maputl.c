@@ -424,7 +424,7 @@ If the function returns false, exit with false without checking anything else.
 boolean P_BlockLinesIterator(int x, int y, boolean(*func) (line_t *))
 {
     int offset;
-    short *list;
+    int32_t *list; // [crispy] BLOCKMAP limit
     line_t *ld;
 
     if (x < 0 || y < 0 || x >= bmapwidth || y >= bmapheight)
@@ -534,6 +534,10 @@ boolean PIT_AddLineIntercepts(line_t * ld)
     intercept_p->d.line = ld;
     intercept_p++;
 
+    // [crispy] catch intercepts overflows
+    if (intercept_p - intercepts == MAXINTERCEPTS)
+        return false;
+
     return true;                // continue
 }
 
@@ -591,6 +595,10 @@ boolean PIT_AddThingIntercepts(mobj_t * thing)
     intercept_p->isaline = false;
     intercept_p->d.thing = thing;
     intercept_p++;
+
+    // [crispy] catch intercepts overflows
+    if (intercept_p - intercepts == MAXINTERCEPTS)
+        return false;
 
     return true;                // keep going
 }

@@ -163,6 +163,16 @@ void S_Init(int sfxVolume, int musicVolume)
     }
 
     I_AtExit(S_Shutdown, true);
+
+    // [crispy] initialize dedicated music tracks for the 4th episode
+    for (i = mus_e4m1; i <= mus_e5m9; i++)
+    {
+        musicinfo_t *const music = &S_music[i];
+        char namebuf[9];
+
+        M_snprintf(namebuf, sizeof(namebuf), "d_%s", DEH_String(music->name));
+        music->lumpnum = W_CheckNumForName(namebuf);
+    }
 }
 
 void S_Shutdown(void)
@@ -250,13 +260,23 @@ void S_Start(void)
             mus_e1m9,        // Tim          e4m9
         };
 
-        if (gameepisode < 4)
+        if (gameepisode < 4 || gameepisode == 5) // [crispy] Sigil
         {
             mnum = mus_e1m1 + (gameepisode-1)*9 + gamemap-1;
         }
         else
         {
             mnum = spmus[gamemap-1];
+
+            // [crispy] support dedicated music tracks for the 4th episode
+            {
+                const int sp_mnum = mus_e1m1 + 3 * 9 + gamemap - 1;
+
+                if (S_music[sp_mnum].lumpnum > 0)
+                {
+                    mnum = sp_mnum;
+                }
+            }
         }
     }
 
@@ -665,6 +685,23 @@ void S_ChangeMusic(int musicnum, int looping)
         && W_CheckNumForName("D_INTROA") >= 0)
     {
         musicnum = mus_introa;
+    }
+
+    // [crispy] prevent music number under- and overflows
+    if (musicnum <= mus_None || (gamemode == commercial && musicnum < mus_runnin) ||
+        musicnum >= NUMMUSIC || (gamemode != commercial && musicnum >= mus_runnin) ||
+        S_music[musicnum].lumpnum == -1)
+    {
+        const unsigned int umusicnum = (unsigned int) musicnum;
+
+        if (gamemode == commercial)
+        {
+            musicnum = mus_runnin + (umusicnum % (NUMMUSIC - mus_runnin));
+        }
+        else
+        {
+            musicnum = mus_e1m1 + (umusicnum % (mus_e5m1 - mus_e1m1));
+        }
     }
 
     if (musicnum <= mus_None || musicnum >= NUMMUSIC)

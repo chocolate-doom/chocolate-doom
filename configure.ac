@@ -1,14 +1,14 @@
-AC_INIT(Chocolate Doom, 3.0.0,
-        chocolate-doom-dev-list@chocolate-doom.org, chocolate-doom)
+AC_INIT(RUDE, 3.1.0,
+        chocolate-doom-dev-list@chocolate-doom.org, RUDE)
 
 PACKAGE_SHORTNAME=${PACKAGE_NAME% Doom}
 PACKAGE_SHORTDESC="Conservative source port"
 PACKAGE_COPYRIGHT="Copyright (C) 1993-2020"
 PACKAGE_LICENSE="GNU General Public License, version 2"
-PACKAGE_MAINTAINER="Simon Howard"
-PACKAGE_URL="https://www.chocolate-doom.org/"
-PACKAGE_RDNS="org.chocolate_doom"
-PACKAGE_ISSUES="https://github.com/chocolate-doom/chocolate-doom/issues"
+PACKAGE_MAINTAINER="drfrag"
+PACKAGE_URL="https://github.com/drfrag666/chocolate-doom/releases"
+PACKAGE_RDNS=""
+PACKAGE_ISSUES="https://github.com/drfrag666/chocolate-doom/issues"
 
 AC_CONFIG_AUX_DIR(autotools)
 AC_CANONICAL_HOST

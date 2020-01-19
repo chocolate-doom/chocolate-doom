@@ -31,6 +31,10 @@
 
 #define SCREENHEIGHT_4_3 240
 
+extern boolean isa; // emulate an isa graphics card
+
+extern int lcd_gamma_fix; // [JN] LCD gamma fix.
+
 typedef boolean (*grabmouse_callback_t)(void);
 
 // Called by D_DoomMain,

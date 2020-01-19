@@ -17,6 +17,7 @@
 //
 
 
+#include <stdlib.h>
 #include "SDL.h"
 #include "SDL_opengl.h"
 
@@ -47,9 +48,14 @@
 #include "w_wad.h"
 #include "z_zone.h"
 
+extern int detailLevel;
+extern int screenblocks;
+int lcd_gamma_fix = 0; // [JN] Palette optimization Doom
+
+boolean isa;
+
 // These are (1) the window (or the full screen) that our game is rendered to
 // and (2) the renderer that scales the texture (see below) into this window.
-
 static SDL_Window *screen;
 static SDL_Renderer *renderer;
 
@@ -687,6 +693,13 @@ static void CreateUpscaledTexture(boolean force)
     }
 }
 
+// Trident 9000i-3
+static const float rates[2][9] =
+{
+    {54.3, 42.9, 34.0, 27.2, 22.0, 18.0, 15.0, 12.1, 11.6}, // high
+    {66.3, 57.2, 48.7, 41.3, 35.0, 29.7, 25.5, 21.3, 22.4}  // low
+};
+
 //
 // I_FinishUpdate
 //
@@ -695,6 +708,7 @@ void I_FinishUpdate (void)
     static int lasttic;
     int tics;
     int i;
+    int rate;
 
     if (!initialized)
         return;
@@ -739,6 +753,23 @@ void I_FinishUpdate (void)
     if (!(SDL_GetAppState() & SDL_APPACTIVE))
         return;
 #endif
+
+    // [crispy] variable rendering framerate
+    if (isa && !singletics)
+    {
+        static int slowtics_old;
+        int slowtics;
+        extern int GetAdjustedTimeN (const int N);
+
+        rate = (int)rates[detailLevel][screenblocks-3];
+        if (rate > TICRATE) rate = TICRATE;
+        while ((slowtics = GetAdjustedTimeN(rate)) == slowtics_old)
+        {
+            I_Sleep(1);
+        }
+
+        slowtics_old = slowtics;
+    }
 
     // draws little dots on the bottom of the screen
 
@@ -1412,7 +1443,10 @@ void I_InitGraphics(void)
 
     // Set the palette
 
-    doompal = W_CacheLumpName(DEH_String("PLAYPAL"), PU_CACHE);
+    if (lcd_gamma_fix)
+        doompal = W_CacheLumpName(DEH_String("PALFIX"), PU_CACHE);
+    else
+        doompal = W_CacheLumpName(DEH_String("PLAYPAL"), PU_CACHE);
     I_SetPalette(doompal);
     SDL_SetPaletteColors(screenbuffer->format->palette, palette, 0, 256);
 

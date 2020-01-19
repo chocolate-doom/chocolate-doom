@@ -438,13 +438,13 @@ boolean NET_ValidGameSettings(GameMode_t mode, GameMission_t mission,
     if (settings->extratics < 0)
         return false;
 
-    if (settings->deathmatch < 0 || settings->deathmatch > 2)
+    if (settings->deathmatch < 0 || settings->deathmatch > 3)
         return false;
 
-    if (settings->skill < sk_noitems || settings->skill > sk_nightmare)
+    if (settings->skill < sk_noitems || settings->skill > sk_extreme)
         return false;
 
-    if (!D_ValidGameVersion(mission, settings->gameversion))
+    if (!D_ValidNetGameVersion(mission, settings->netgameversion))
         return false;
 
     if (!D_ValidEpisodeMap(mission, mode, settings->episode, settings->map))

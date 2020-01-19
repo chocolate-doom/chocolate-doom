@@ -22,6 +22,7 @@
 #include "doomtype.h"
 
 extern void W_Checksum(sha1_digest_t digest);
+void W_ChecksumLump(sha1_digest_t digest, int lumpnum);
 
 #endif /* #ifndef W_CHECKSUM_H */
 

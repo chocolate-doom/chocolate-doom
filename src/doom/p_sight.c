@@ -40,8 +40,10 @@ fixed_t		t2y;
 int		sightcounts[2];
 
 
-// PTR_SightTraverse() for Doom 1.2 sight calculations
-// taken from prboom-plus/src/p_sight.c:69-102
+//
+// PTR_SightTraverse() for Doom v1.0/v1.1/1.2 sight calculations
+// Taken from prboom-plus/src/p_sight.c:69-102
+//
 boolean PTR_SightTraverse(intercept_t *in)
 {
     line_t *li;
@@ -377,7 +379,8 @@ P_CheckSight
     if (gameversion <= exe_doom_1_2)
     {
         return P_PathTraverse(t1->x, t1->y, t2->x, t2->y,
-                              PT_EARLYOUT | PT_ADDLINES, PTR_SightTraverse);
+                              PT_EARLYOUT | PT_COMPATADDLINES,
+                              PTR_SightTraverse);
     }
 
     strace.x = t1->x;

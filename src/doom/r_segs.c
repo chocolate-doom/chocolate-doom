@@ -71,23 +71,117 @@ int		worldbottom;
 int		worldhigh;
 int		worldlow;
 
-fixed_t		pixhigh;
-fixed_t		pixlow;
+int64_t		pixhigh; // [crispy] WiggleFix
+int64_t		pixlow; // [crispy] WiggleFix
 fixed_t		pixhighstep;
 fixed_t		pixlowstep;
 
-fixed_t		topfrac;
+int64_t		topfrac; // [crispy] WiggleFix
 fixed_t		topstep;
 
-fixed_t		bottomfrac;
+int64_t		bottomfrac; // [crispy] WiggleFix
 fixed_t		bottomstep;
 
 
 lighttable_t**	walllights;
 
-short*		maskedtexturecol;
+int*		maskedtexturecol; // [crispy] 32-bit integer math
 
 
+// [crispy] WiggleFix: add this code block near the top of r_segs.c
+//
+// R_FixWiggle()
+// Dynamic wall/texture rescaler, AKA "WiggleHack II"
+//  by Kurt "kb1" Baumgardner ("kb") and Andrey "Entryway" Budko ("e6y")
+//
+//  [kb] When the rendered view is positioned, such that the viewer is
+//   looking almost parallel down a wall, the result of the scale
+//   calculation in R_ScaleFromGlobalAngle becomes very large. And, the
+//   taller the wall, the larger that value becomes. If these large
+//   values were used as-is, subsequent calculations would overflow,
+//   causing full-screen HOM, and possible program crashes.
+//
+//  Therefore, vanilla Doom clamps this scale calculation, preventing it
+//   from becoming larger than 0x400000 (64*FRACUNIT). This number was
+//   chosen carefully, to allow reasonably-tight angles, with reasonably
+//   tall sectors to be rendered, within the limits of the fixed-point
+//   math system being used. When the scale gets clamped, Doom cannot
+//   properly render the wall, causing an undesirable wall-bending
+//   effect that I call "floor wiggle". Not a crash, but still ugly.
+//
+//  Modern source ports offer higher video resolutions, which worsens
+//   the issue. And, Doom is simply not adjusted for the taller walls
+//   found in many PWADs.
+//
+//  This code attempts to correct these issues, by dynamically
+//   adjusting the fixed-point math, and the maximum scale clamp,
+//   on a wall-by-wall basis. This has 2 effects:
+//
+//  1. Floor wiggle is greatly reduced and/or eliminated.
+//  2. Overflow is no longer possible, even in levels with maximum
+//     height sectors (65535 is the theoretical height, though Doom
+//     cannot handle sectors > 32767 units in height.
+//
+//  The code is not perfect across all situations. Some floor wiggle can
+//   still be seen, and some texture strips may be slightly misaligned in
+//   extreme cases. These effects cannot be corrected further, without
+//   increasing the precision of various renderer variables, and,
+//   possibly, creating a noticable performance penalty.
+//
+
+static int	max_rwscale = 64 * FRACUNIT;
+static int	heightbits = 12;
+static int	heightunit = (1 << 12);
+static int	invhgtbits = 4;
+
+static const struct
+{
+    int clamp;
+    int heightbits;
+} scale_values[8] = {
+    {2048 * FRACUNIT, 12},
+    {1024 * FRACUNIT, 12},
+    {1024 * FRACUNIT, 11},
+    { 512 * FRACUNIT, 11},
+    { 512 * FRACUNIT, 10},
+    { 256 * FRACUNIT, 10},
+    { 256 * FRACUNIT,  9},
+    { 128 * FRACUNIT,  9}
+};
+
+void R_FixWiggle (sector_t *sector)
+{
+    static int	lastheight = 0;
+    int		height = (sector->ceilingheight - sector->floorheight) >> FRACBITS;
+
+    // disallow negative heights. using 1 forces cache initialization
+    if (height < 1)
+	height = 1;
+
+    // early out?
+    if (height != lastheight)
+    {
+	lastheight = height;
+
+	// initialize, or handle moving sector
+	if (height != sector->cachedheight)
+	{
+	    sector->cachedheight = height;
+	    sector->scaleindex = 0;
+	    height >>= 7;
+
+	    // calculate adjustment
+	    while (height >>= 1)
+		sector->scaleindex++;
+	}
+
+	// fine-tune renderer for this wall
+	max_rwscale = scale_values[sector->scaleindex].clamp;
+	heightbits = scale_values[sector->scaleindex].heightbits;
+	heightunit = (1 << heightbits);
+	invhgtbits = FRACBITS - heightbits;
+    }
+}
 
 //
 // R_RenderMaskedSegRange
@@ -155,7 +249,7 @@ R_RenderMaskedSegRange
     for (dc_x = x1 ; dc_x <= x2 ; dc_x++)
     {
 	// calculate lighting
-	if (maskedtexturecol[dc_x] != SHRT_MAX)
+	if (maskedtexturecol[dc_x] != INT_MAX) // [crispy] 32-bit integer math
 	{
 	    if (!fixedcolormap)
 	    {
@@ -167,15 +261,37 @@ R_RenderMaskedSegRange
 		dc_colormap = walllights[index];
 	    }
 			
-	    sprtopscreen = centeryfrac - FixedMul(dc_texturemid, spryscale);
+	    // [crispy] apply Killough's int64 sprtopscreen overflow fix
+	    // from winmbf/Source/r_segs.c:174-191
+	    // killough 3/2/98:
+	    //
+	    // This calculation used to overflow and cause crashes in Doom:
+	    //
+	    // sprtopscreen = centeryfrac - FixedMul(dc_texturemid, spryscale);
+	    //
+	    // This code fixes it, by using double-precision intermediate
+	    // arithmetic and by skipping the drawing of 2s normals whose
+	    // mapping to screen coordinates is totally out of range:
+
+	    {
+		int64_t t = ((int64_t) centeryfrac << FRACBITS) -
+		             (int64_t) dc_texturemid * spryscale;
+
+		if (t + (int64_t) textureheight[texnum] * spryscale < 0 ||
+		    t > (int64_t) SCREENHEIGHT << FRACBITS*2)
+			continue; // skip if the texture is out of screen's range
+
+		sprtopscreen = (int64_t)(t >> FRACBITS); // [crispy] WiggleFix
+	    }
+
 	    dc_iscale = 0xffffffffu / (unsigned)spryscale;
 	    
 	    // draw the texture
 	    col = (column_t *)( 
 		(byte *)R_GetColumn(texnum,maskedtexturecol[dc_x]) -3);
-			
-	    R_DrawMaskedColumn (col);
-	    maskedtexturecol[dc_x] = SHRT_MAX;
+
+	    R_DrawMaskedColumn (col, R_ColumnMaxExtent(texnum));
+	    maskedtexturecol[dc_x] = INT_MAX; // [crispy] 32-bit integer math
 	}
 	spryscale += rw_scalestep;
     }
@@ -210,7 +326,7 @@ void R_RenderSegLoop (void)
     for ( ; rw_x < rw_stopx ; rw_x++)
     {
 	// mark floor / ceiling areas
-	yl = (topfrac+HEIGHTUNIT-1)>>HEIGHTBITS;
+	yl = (int)((topfrac+heightunit-1)>>heightbits); // [crispy] WiggleFix
 
 	// no space above wall?
 	if (yl < ceilingclip[rw_x]+1)
@@ -231,7 +347,7 @@ void R_RenderSegLoop (void)
 	    }
 	}
 		
-	yh = bottomfrac>>HEIGHTBITS;
+	yh = (int)(bottomfrac>>heightbits); // [crispy] WiggleFix
 
 	if (yh >= floorclip[rw_x])
 	    yh = floorclip[rw_x]-1;
@@ -291,7 +407,7 @@ void R_RenderSegLoop (void)
 	    if (toptexture)
 	    {
 		// top wall
-		mid = pixhigh>>HEIGHTBITS;
+		mid = (int)(pixhigh>>heightbits); // [crispy] WiggleFix
 		pixhigh += pixhighstep;
 
 		if (mid >= floorclip[rw_x])
@@ -319,7 +435,7 @@ void R_RenderSegLoop (void)
 	    if (bottomtexture)
 	    {
 		// bottom wall
-		mid = (pixlow+HEIGHTUNIT-1)>>HEIGHTBITS;
+		mid = (int)((pixlow+heightunit-1)>>heightbits); // [crispy] WiggleFix
 		pixlow += pixlowstep;
 
 		// no space above wall?
@@ -362,6 +478,32 @@ void R_RenderSegLoop (void)
 
 
 
+// [crispy] WiggleFix: move R_ScaleFromGlobalAngle function to r_segs.c,
+// above R_StoreWallRange
+fixed_t R_ScaleFromGlobalAngle (angle_t visangle)
+{
+    int		anglea = ANG90 + (visangle - viewangle);
+    int		angleb = ANG90 + (visangle - rw_normalangle);
+    int		den = FixedMul(rw_distance, finesine[anglea >> ANGLETOFINESHIFT]);
+    fixed_t	num = FixedMul(projection, finesine[angleb >> ANGLETOFINESHIFT])<<detailshift;
+    fixed_t 	scale;
+
+    if (den > (num >> 16))
+    {
+	scale = FixedDiv(num, den);
+
+	// [kb] When this evaluates True, the scale is clamped,
+	//  and there will be some wiggling.
+	if (scale > max_rwscale)
+	    scale = max_rwscale;
+	else if (scale < 256)
+	    scale = 256;
+    }
+    else
+	scale = max_rwscale;
+
+    return scale;
+}
 
 //
 // R_StoreWallRange
@@ -373,15 +515,23 @@ R_StoreWallRange
 ( int	start,
   int	stop )
 {
-    fixed_t		hyp;
-    fixed_t		sineval;
-    angle_t		distangle, offsetangle;
     fixed_t		vtop;
     int			lightnum;
+    int64_t		dx, dy, dx1, dy1, dist; // [crispy] fix long wall wobble
+    const uint32_t	len = curline->length;
 
-    // don't overflow and crash
-    if (ds_p == &drawsegs[MAXDRAWSEGS])
-	return;		
+    // [crispy] remove MAXDRAWSEGS Vanilla limit
+    if (ds_p == &drawsegs[numdrawsegs])
+    {
+	int numdrawsegs_old = numdrawsegs;
+
+	numdrawsegs = numdrawsegs ? 2 * numdrawsegs : MAXDRAWSEGS;
+	drawsegs = realloc(drawsegs, numdrawsegs * sizeof(*drawsegs));
+	ds_p = drawsegs + numdrawsegs_old;
+
+	if (numdrawsegs_old)
+	    fprintf(stderr, "R_StoreWallRange: Hit MAXDRAWSEGS limit at %d, raised to %d.\n", numdrawsegs_old, numdrawsegs);
+    }
 		
 #ifdef RANGECHECK
     if (start >=viewwidth || start > stop)
@@ -395,16 +545,18 @@ R_StoreWallRange
     linedef->flags |= ML_MAPPED;
     
     // calculate rw_distance for scale calculation
-    rw_normalangle = curline->angle + ANG90;
-    offsetangle = abs((int)rw_normalangle-(int)rw_angle1);
+    rw_normalangle = curline->pangle + ANG90; // [crispy] use re-calculated angle
     
-    if (offsetangle > ANG90)
-	offsetangle = ANG90;
-
-    distangle = ANG90 - offsetangle;
-    hyp = R_PointToDist (curline->v1->x, curline->v1->y);
-    sineval = finesine[distangle>>ANGLETOFINESHIFT];
-    rw_distance = FixedMul (hyp, sineval);
+    // [crispy] fix long wall wobble
+    // thank you very much Linguica, e6y and kb1
+    // http://www.doomworld.com/vb/post/1340718
+    // shift right to avoid possibility of int64 overflow in rw_distance calculation
+    dx = ((int64_t)curline->v2->x - curline->v1->x) >> 1;
+    dy = ((int64_t)curline->v2->y - curline->v1->y) >> 1;
+    dx1 = ((int64_t)viewx - curline->v1->x) >> 1;
+    dy1 = ((int64_t)viewy - curline->v1->y) >> 1;
+    dist = ((dy * dx1 - dx * dy1) / len) << 1;
+    rw_distance = (fixed_t)BETWEEN(INT_MIN, INT_MAX, dist);
 		
 	
     ds_p->x1 = rw_x = start;
@@ -412,6 +564,10 @@ R_StoreWallRange
     ds_p->curline = curline;
     rw_stopx = stop+1;
     
+    // [crispy] WiggleFix: add this line, in r_segs.c:R_StoreWallRange,
+    // right before calls to R_ScaleFromGlobalAngle:
+    R_FixWiggle(frontsector);
+
     // calculate scale at both ends and step
     ds_p->scale1 = rw_scale = 
 	R_ScaleFromGlobalAngle (viewangle + xtoviewangle[start]);
@@ -615,20 +771,9 @@ R_StoreWallRange
 
     if (segtextured)
     {
-	offsetangle = rw_normalangle-rw_angle1;
 	
-	if (offsetangle > ANG180)
-	    offsetangle = -offsetangle;
-
-	if (offsetangle > ANG90)
-	    offsetangle = ANG90;
-
-	sineval = finesine[offsetangle >>ANGLETOFINESHIFT];
-	rw_offset = FixedMul (hyp, sineval);
-
-	if (rw_normalangle-rw_angle1 < ANG180)
-	    rw_offset = -rw_offset;
-
+	// [crispy] fix long wall wobble
+	rw_offset = (fixed_t)(((dx*dx1 + dy*dy1) / len) << 1);
 	rw_offset += sidedef->textureoffset + curline->offset;
 	rw_centerangle = ANG90 + viewangle - rw_normalangle;
 	
@@ -674,29 +819,29 @@ R_StoreWallRange
 
     
     // calculate incremental stepping values for texture edges
-    worldtop >>= 4;
-    worldbottom >>= 4;
+    worldtop >>= invhgtbits;
+    worldbottom >>= invhgtbits;
 	
     topstep = -FixedMul (rw_scalestep, worldtop);
-    topfrac = (centeryfrac>>4) - FixedMul (worldtop, rw_scale);
+    topfrac = ((int64_t)centeryfrac>>invhgtbits) - (((int64_t)worldtop * rw_scale)>>FRACBITS); // [crispy] WiggleFix
 
     bottomstep = -FixedMul (rw_scalestep,worldbottom);
-    bottomfrac = (centeryfrac>>4) - FixedMul (worldbottom, rw_scale);
+    bottomfrac = ((int64_t)centeryfrac>>invhgtbits) - (((int64_t)worldbottom * rw_scale)>>FRACBITS); // [crispy] WiggleFix
 	
     if (backsector)
     {	
-	worldhigh >>= 4;
-	worldlow >>= 4;
+	worldhigh >>= invhgtbits;
+	worldlow >>= invhgtbits;
 
 	if (worldhigh < worldtop)
 	{
-	    pixhigh = (centeryfrac>>4) - FixedMul (worldhigh, rw_scale);
+	    pixhigh = ((int64_t)centeryfrac>>invhgtbits) - (((int64_t)worldhigh * rw_scale)>>FRACBITS); // [crispy] WiggleFix
 	    pixhighstep = -FixedMul (rw_scalestep,worldhigh);
 	}
 	
 	if (worldlow > worldbottom)
 	{
-	    pixlow = (centeryfrac>>4) - FixedMul (worldlow, rw_scale);
+	    pixlow = ((int64_t)centeryfrac>>invhgtbits) - (((int64_t)worldlow * rw_scale)>>FRACBITS); // [crispy] WiggleFix
 	    pixlowstep = -FixedMul (rw_scalestep,worldlow);
 	}
     }
@@ -715,7 +860,7 @@ R_StoreWallRange
     if ( ((ds_p->silhouette & SIL_TOP) || maskedtexture)
 	 && !ds_p->sprtopclip)
     {
-	memcpy (lastopening, ceilingclip+start, sizeof(*lastopening)*(rw_stopx-start));
+	memcpy (lastopening, ceilingclip+start, sizeof(*lastopening)*(rw_stopx-start)); // [crispy] 32-bit integer math
 	ds_p->sprtopclip = lastopening - start;
 	lastopening += rw_stopx - start;
     }
@@ -723,7 +868,7 @@ R_StoreWallRange
     if ( ((ds_p->silhouette & SIL_BOTTOM) || maskedtexture)
 	 && !ds_p->sprbottomclip)
     {
-	memcpy (lastopening, floorclip+start, sizeof(*lastopening)*(rw_stopx-start));
+	memcpy (lastopening, floorclip+start, sizeof(*lastopening)*(rw_stopx-start)); // [crispy] 32-bit integer math
 	ds_p->sprbottomclip = lastopening - start;
 	lastopening += rw_stopx - start;	
     }

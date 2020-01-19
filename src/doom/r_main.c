@@ -33,7 +33,9 @@
 #include "m_menu.h"
 
 #include "r_local.h"
+#include "r_medusa.h"
 #include "r_sky.h"
+
 
 
 
@@ -357,6 +359,26 @@ R_PointToAngle
     return 0;
 }
 
+angle_t
+R_PointToAngleCrispy
+( fixed_t	x,
+  fixed_t	y )
+{
+    // [crispy] fix overflows for very long distances
+    int64_t y_viewy = (int64_t)y - viewy;
+    int64_t x_viewx = (int64_t)x - viewx;
+
+    // [crispy] the worst that could happen is e.g. INT_MIN-INT_MAX = 2*INT_MIN
+    if (x_viewx < INT_MIN || x_viewx > INT_MAX ||
+        y_viewy < INT_MIN || y_viewy > INT_MAX)
+    {
+	// [crispy] preserving the angle by halfing the distance in both directions
+	x = x_viewx / 2 + viewx;
+	y = y_viewy / 2 + viewy;
+    }
+
+    return R_PointToAngle (x, y);
+}
 
 angle_t
 R_PointToAngle2
@@ -439,6 +461,9 @@ void R_InitPointToAngle (void)
 }
 
 
+// [crispy] WiggleFix: move R_ScaleFromGlobalAngle function to r_segs.c,
+// above R_StoreWallRange
+#if 0
 //
 // R_ScaleFromGlobalAngle
 // Returns the texture mapping scale
@@ -496,6 +521,7 @@ fixed_t R_ScaleFromGlobalAngle (angle_t visangle)
 	
     return scale;
 }
+#endif
 
 
 
@@ -782,7 +808,7 @@ void R_Init (void)
     R_InitSkyMap ();
     R_InitTranslationTables ();
     printf (".");
-	
+
     framecount = 0;
 }
 
@@ -842,7 +868,7 @@ void R_SetupFrame (player_t* player)
 	fixedcolormap =
 	    colormaps
 	    + player->fixedcolormap*256;
-	
+
 	walllights = scalelightfixed;
 
 	for (i=0 ; i<MAXLIGHTSCALE ; i++)

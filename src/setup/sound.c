@@ -186,7 +186,7 @@ void ConfigSound(TXT_UNCAST_ARG(widget), void *user_data)
                                     TXT_DIRECTORY),
                 NULL)),
 
-        TXT_NewRadioButton("Native MIDI", &snd_musicdevice, SNDDEVICE_GENMIDI),
+        TXT_NewRadioButton("Native MIDI/OGG/FLAC", &snd_musicdevice, SNDDEVICE_GENMIDI),
         TXT_NewConditional(&snd_musicdevice, SNDDEVICE_GENMIDI,
             TXT_MakeTable(2,
                 TXT_NewStrut(4, 0),

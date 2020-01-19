@@ -81,6 +81,9 @@ int show_endoom = 1;
 int show_diskicon = 1;
 int png_screenshots = 0;
 
+// [JN] Game palette optimization
+int lcd_gamma_fix = 0;
+
 static int system_video_env_set;
 
 // Set the SDL_VIDEODRIVER environment variable
@@ -209,6 +212,13 @@ static void AdvancedDisplayConfig(TXT_UNCAST_ARG(widget),
 #endif
         NULL);
 
+    // [JN] Palette optimization
+    if (gamemission == doom)
+    {
+        TXT_AddWidget(window,
+                      TXT_NewCheckBox("LCD gamma fix", &lcd_gamma_fix));
+    }
+
     TXT_SignalConnect(ar_checkbox, "changed", GenerateSizesTable, sizes_table);
 }
 
@@ -271,6 +281,12 @@ void BindDisplayVariables(void)
      || gamemission == strife)
     {
         M_BindIntVariable("show_endoom",               &show_endoom);
+    }
+
+	// [JN] Palette optimization
+	if (gamemission == doom)
+    {
+        M_BindIntVariable("lcd_gamma_fix",         &lcd_gamma_fix);
     }
 
     if (gamemission == doom || gamemission == strife)

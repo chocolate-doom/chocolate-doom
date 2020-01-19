@@ -71,6 +71,8 @@ extern const char       *gamedescription;
 // Set if homebrew PWAD stuff has been added.
 extern  boolean	modifiedgame;
 
+// [crispy] Sigil
+extern boolean haved1e5;
 
 // -------------------------------------------
 // Selected skill type, map etc.
@@ -104,6 +106,27 @@ extern  boolean	netgame;
 
 // 0=Cooperative; 1=Deathmatch; 2=Altdeath
 extern int deathmatch;
+
+// Drop backpack with inventory upon death in coop games.
+extern boolean dropbackpack;
+
+// Don't spawn deathmatch weapons in coop games.
+extern boolean nodmweapons;
+
+// Keep keys in coop games.
+extern boolean keepkeys;
+
+// Respawn in single player games.
+extern boolean sprespawn;
+
+// 2x monsters.
+extern boolean doublespawn;
+
+// 2x damage taken.
+extern boolean doubledamage;
+
+// No Doom II monsters.
+extern boolean nod2monsters;
 
 // -------------------------
 // Internal parameters for sound rendering.

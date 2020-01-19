@@ -234,14 +234,14 @@ static MenuItem_t SkillItems[] = {
     {ITT_EFUNC, "YELLOWBELLIES-R-US", SCSkill, sk_easy, MENU_NONE},
     {ITT_EFUNC, "BRINGEST THEM ONETH", SCSkill, sk_medium, MENU_NONE},
     {ITT_EFUNC, "THOU ART A SMITE-MEISTER", SCSkill, sk_hard, MENU_NONE},
-    {ITT_EFUNC, "BLACK PLAGUE POSSESSES THEE",
-     SCSkill, sk_nightmare, MENU_NONE}
+    {ITT_EFUNC, "BLACK PLAGUE POSSESSES THEE", SCSkill, sk_nightmare, MENU_NONE},
+	{ITT_EFUNC, "1K DEATHS AWAIT THEE", SCSkill, sk_extreme, MENU_NONE}
 };
 
 static Menu_t SkillMenu = {
     38, 30,
     DrawSkillMenu,
-    5, SkillItems,
+    6, SkillItems,
     2,
     MENU_EPISODE
 };

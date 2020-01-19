@@ -155,7 +155,8 @@ void P_XYMovement (mobj_t* mo)
 	
     do
     {
-	if (xmove > MAXMOVE/2 || ymove > MAXMOVE/2)
+	// Doom v1.0/v1.1 don't do half moves
+	if (gameversion >= exe_doom_1_2 && (xmove > MAXMOVE/2 || ymove > MAXMOVE/2))
 	{
 	    ptryx = mo->x + xmove/2;
 	    ptryy = mo->y + ymove/2;
@@ -541,7 +542,10 @@ P_SpawnMobj
     if (gameskill != sk_nightmare)
 	mobj->reactiontime = info->reactiontime;
     
-    mobj->lastlook = P_Random () % MAXPLAYERS;
+    // Doom v1.0 picked a random player to look for first every time in 
+    // P_LookForPlayers(), instead of here
+    if (gameversion >= exe_doom_1_1)
+        mobj->lastlook = P_Random () % MAXPLAYERS;
     // do not set the state with P_SetMobjState,
     // because action routines can not be called yet
     st = &states[info->spawnstate];
@@ -626,7 +630,8 @@ void P_RespawnSpecials (void)
     int			i;
 
     // only respawn items in deathmatch
-    if (deathmatch != 2)
+    // AX: deathmatch 3 is a Crispy-specific change
+    if (deathmatch != 2 && deathmatch != 3)
 	return;	// 
 
     // nothing left to respawn?
@@ -750,6 +755,45 @@ void P_SpawnPlayer (mapthing_t* mthing)
 }
 
 
+boolean P_CheckDoubleSpawn (mobj_t* mobj, fixed_t x, fixed_t y, fixed_t z, int mobjtype, boolean first)
+{
+	boolean spawned = true;
+
+	if (first)
+	{
+		if (!P_CheckPosition (mobj, mobj->x, mobj->y))
+		{
+			P_RemoveMobj (mobj);
+			mobj = P_SpawnMobj (x + 2 * mobjinfo[mobjtype].radius, y, z, mobjtype);
+		}
+		else return spawned;
+	}
+
+	if (!P_CheckPosition (mobj, mobj->x, mobj->y))
+	{
+		P_RemoveMobj (mobj);
+		mobj = P_SpawnMobj (x - 2 * mobjinfo[mobjtype].radius, y, z, mobjtype);
+		if (!P_CheckPosition (mobj, mobj->x, mobj->y))
+		{
+			P_RemoveMobj (mobj);
+			mobj = P_SpawnMobj (x, y + 2 * mobjinfo[mobjtype].radius, z, mobjtype);
+			if (!P_CheckPosition (mobj, mobj->x, mobj->y))
+			{
+				P_RemoveMobj (mobj);
+				mobj = P_SpawnMobj (x, y - 2 * mobjinfo[mobjtype].radius, z, mobjtype);
+				if (!P_CheckPosition (mobj, mobj->x, mobj->y))
+				{
+					P_RemoveMobj (mobj);
+					spawned = false;
+				}
+			}
+		}
+	}
+
+	return spawned;
+}
+
+
 //
 // P_SpawnMapThing
 // The fields of the mapthing should
@@ -760,6 +804,8 @@ void P_SpawnMapThing (mapthing_t* mthing)
     int			i;
     int			bit;
     mobj_t*		mobj;
+    mobj_t*		mobj2;
+    boolean spawned = true;
     fixed_t		x;
     fixed_t		y;
     fixed_t		z;
@@ -801,7 +847,7 @@ void P_SpawnMapThing (mapthing_t* mthing)
 		
     if (gameskill == sk_baby)
 	bit = 1;
-    else if (gameskill == sk_nightmare)
+    else if (gameskill == sk_nightmare || gameskill == sk_extreme)
 	bit = 4;
     else
 	bit = 1<<(gameskill-1);
@@ -815,9 +861,13 @@ void P_SpawnMapThing (mapthing_t* mthing)
 	    break;
 	
     if (i==NUMMOBJTYPES)
-	I_Error ("P_SpawnMapThing: Unknown type %i at (%i, %i)",
+    {
+	// [crispy] ignore unknown map things
+	fprintf (stderr, "P_SpawnMapThing: Unknown type %i at (%i, %i)\n",
 		 mthing->type,
 		 mthing->x, mthing->y);
+	return;
+    }
 		
     // don't spawn keycards and players in deathmatch
     if (deathmatch && mobjinfo[i].flags & MF_NOTDMATCH)
@@ -826,11 +876,18 @@ void P_SpawnMapThing (mapthing_t* mthing)
     // don't spawn any monsters if -nomonsters
     if (nomonsters
 	&& ( i == MT_SKULL
-	     || (mobjinfo[i].flags & MF_COUNTKILL)) )
+	     || (mobjinfo[i].flags & MF_COUNTKILL && !(netgame && i == MT_KEEN)) ))
     {
 	return;
     }
-    
+
+    // [marshmallow]
+    // don't spawn DM weapons if -nodmweapons
+    if (mthing->options & 16 && !deathmatch && nodmweapons)
+    {
+	return;
+    }
+
     // spawn it
     x = mthing->x << FRACBITS;
     y = mthing->y << FRACBITS;
@@ -839,20 +896,49 @@ void P_SpawnMapThing (mapthing_t* mthing)
 	z = ONCEILINGZ;
     else
 	z = ONFLOORZ;
-    
-    mobj = P_SpawnMobj (x,y,z, i);
-    mobj->spawnpoint = *mthing;
 
-    if (mobj->tics > 0)
-	mobj->tics = 1 + (P_Random () % mobj->tics);
-    if (mobj->flags & MF_COUNTKILL)
-	totalkills++;
-    if (mobj->flags & MF_COUNTITEM)
-	totalitems++;
-		
-    mobj->angle = ANG45 * (mthing->angle/45);
-    if (mthing->options & MTF_AMBUSH)
-	mobj->flags |= MF_AMBUSH;
+    if (i == MT_POSSESSED && gameskill == sk_extreme)
+	    i = MT_MISC91;
+
+    mobj = P_SpawnMobj (x,y,z, i);
+
+	if ((doublespawn || gameskill == sk_extreme) && mobjinfo[i].flags & MF_COUNTKILL && i != MT_SPIDER && i != MT_CYBORG)
+	{
+		spawned = P_CheckDoubleSpawn (mobj, x, y, z, i, true); // previously double spawned monster might block
+	}
+
+	if (spawned)
+	{
+	    mobj->spawnpoint = *mthing;
+	    if (mobj->tics > 0)
+		    mobj->tics = 1 + (P_Random () % mobj->tics);
+	    if (mobj->flags & MF_COUNTKILL)
+		    totalkills++;
+	    if (mobj->flags & MF_COUNTITEM)
+		    totalitems++;
+
+	    mobj->angle = ANG45 * (mthing->angle/45);
+	    if (mthing->options & MTF_AMBUSH)
+		    mobj->flags |= MF_AMBUSH;
+	}
+
+	if ((doublespawn || gameskill == sk_extreme) && mobjinfo[i].flags & MF_COUNTKILL && i != MT_SPIDER && i != MT_CYBORG)
+	{
+		mobj2 = P_SpawnMobj (x + 2 * mobjinfo[i].radius, y, z, i);
+		spawned = P_CheckDoubleSpawn (mobj2, x, y ,z, i, false);
+		if (spawned)
+		{
+			mobj2->spawnpoint = *mthing;
+			if (mobj2->tics > 0)
+				mobj2->tics = 1 + (P_Random () % mobj->tics);
+			if (mobj2->flags & MF_COUNTKILL)
+				totalkills++;
+
+			mobj2->angle = ANG45 * (mthing->angle/45);
+			if (mthing->options & MTF_AMBUSH)
+				mobj2->flags |= MF_AMBUSH;
+		}
+	}
 }
 
 

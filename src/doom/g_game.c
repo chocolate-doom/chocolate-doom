@@ -100,7 +100,9 @@ gamestate_t     gamestate;
 skill_t         gameskill; 
 boolean		respawnmonsters;
 int             gameepisode; 
-int             gamemap; 
+int             gamemap;
+
+boolean         activated; // tag 667 fix
 
 // If non-zero, exit the level after this number of minutes.
 
@@ -128,7 +130,8 @@ int             consoleplayer;          // player taking events and displaying
 int             displayplayer;          // view being displayed 
 int             levelstarttic;          // gametic at level start 
 int             totalkills, totalitems, totalsecret;    // for intermission 
- 
+int             demostarttic;           // [crispy] fix revenant internal demo bug
+
 char           *demoname;
 boolean         demorecording; 
 boolean         longtics;               // cph's doom 1.91 longtics hack
@@ -153,7 +156,7 @@ byte		consistancy[MAXPLAYERS][BACKUPTICS];
  
 #define MAXPLMOVE		(forwardmove[1]) 
  
-#define TURBOTHRESHOLD	0x32
+#define TURBOTHRESHOLD	MAXPLMOVE
 
 fixed_t         forwardmove[2] = {0x19, 0x32}; 
 fixed_t         sidemove[2] = {0x18, 0x28}; 
@@ -243,6 +246,26 @@ int G_CmdChecksum (ticcmd_t* cmd)
     return sum; 
 } 
 
+// [marshmallow]
+void SaveKeys(int player)
+{
+	card_t i;
+
+	for (i=0; i<NUMCARDS; i++) 
+		if (players[player].cards[i] == true)
+			keyring[player][i] = true;
+}
+
+// [marshmallow]
+void RestoreKeys(int player)
+{
+	card_t i;
+
+	for (i=0; i<NUMCARDS; i++) 
+		if (keyring[player][i] == true)
+			players[player].cards[i] = true;
+}
+
 static boolean WeaponSelectable(weapontype_t weapon)
 {
     // Can't select the super shotgun in Doom 1.
@@ -274,7 +297,7 @@ static boolean WeaponSelectable(weapontype_t weapon)
      && players[consoleplayer].weaponowned[wp_chainsaw]
      && !players[consoleplayer].powers[pw_strength])
     {
-        return false;
+        return (gameskill == sk_extreme); // [crispy]
     }
 
     return true;
@@ -330,6 +353,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     int		tspeed; 
     int		forward;
     int		side;
+    static int		joybspeed_old = 2;
 
     memset(cmd, 0, sizeof(ticcmd_t));
 
@@ -342,10 +366,11 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     // fraggle: support the old "joyb_speed = 31" hack which
     // allowed an autorun effect
 
+    // [crispy] when autorun is active, pressing the run key results in walking
     speed = key_speed >= NUMKEYS
-         || joybspeed >= MAX_JOY_BUTTONS
-         || gamekeydown[key_speed] 
-         || joybuttons[joybspeed];
+         || joybspeed >= MAX_JOY_BUTTONS;
+    speed ^= (key_speed < NUMKEYS && gamekeydown[key_speed])
+         || (joybspeed < MAX_JOY_BUTTONS && joybuttons[joybspeed]);
  
     forward = side = 0;
     
@@ -364,6 +389,28 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     else 
 	tspeed = speed;
     
+    // [crispy] toggle always run
+    if (gamekeydown[key_toggleautorun])
+    {
+        static char autorunmsg[15];
+
+        if (joybspeed >= MAX_JOY_BUTTONS)
+        {
+            joybspeed = joybspeed_old;
+        }
+        else
+        {
+            joybspeed_old = joybspeed;
+            joybspeed = 29;
+        }
+
+        sprintf(autorunmsg, "ALWAYS RUN %s",
+            (joybspeed >= MAX_JOY_BUTTONS) ? "ON" : "OFF");
+        players[consoleplayer].message = autorunmsg;
+
+        gamekeydown[key_toggleautorun] = false;
+    }
+
     // let movement keys cancel each other out
     if (strafe) 
     { 
@@ -442,6 +489,12 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
 	// clear double clicks if hit use button 
 	dclicks = 0;                   
     } 
+
+	if (gamekeydown[key_dropbackpack] && netgame && dropbackpack)
+	{
+		cmd->buttons |= BT_DROP;
+		gamekeydown[key_dropbackpack] = false;
+	}
 
     // If the previous or next weapon button is pressed, the
     // next_weapon variable is set to change weapons when
@@ -568,7 +621,11 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     if (sendpause) 
     { 
 	sendpause = false; 
+	// [crispy] ignore un-pausing in menus during demo recording
+	if (!(menuactive && demorecording && paused))
+	{
 	cmd->buttons = BT_SPECIAL | BTS_PAUSE; 
+	}
     } 
  
     if (sendsave) 
@@ -614,10 +671,11 @@ void G_DoLoadLevel (void)
 
     skyflatnum = R_FlatNumForName(DEH_String(SKYFLATNAME));
 
+    // [crispy] correct "Sky never changes in Doom II" bug
     // The "Sky never changes in Doom II" bug was fixed in
     // the id Anthology version of doom2.exe for Final Doom.
     if ((gamemode == commercial)
-     && (gameversion == exe_final2 || gameversion == exe_chex))
+     && (gameversion == exe_final2 || gameversion == exe_chex || true))
     {
         const char *skytexturename;
 
@@ -654,7 +712,9 @@ void G_DoLoadLevel (void)
 	memset (players[i].frags,0,sizeof(players[i].frags)); 
     } 
 		 
-    P_SetupLevel (gameepisode, gamemap, 0, gameskill);    
+    P_SetupLevel (gameepisode, gamemap, 0, gameskill);
+    if (gamemode == commercial && gamemap == 7)
+	    activated = false; // tag 667 fix
     displayplayer = consoleplayer;		// view the guy you are playing    
     gameaction = ga_nothing; 
     Z_CheckHeap ();
@@ -917,7 +977,7 @@ void G_Ticker (void)
 
 	    if (demoplayback) 
 		G_ReadDemoTiccmd (cmd); 
-	    if (demorecording) 
+	    if (demorecording)
 		G_WriteDemoTiccmd (cmd);
 	    
 	    // check for turbo cheats
@@ -979,6 +1039,9 @@ void G_Ticker (void)
 		    break; 
 					 
 		  case BTS_SAVEGAME: 
+		    // [crispy] never override savegames by demo playback
+		    if (demoplayback)
+			break;
 		    if (!savedescription[0]) 
                     {
                         M_StringCopy(savedescription, "NET GAME",
@@ -1085,7 +1148,11 @@ void G_PlayerReborn (int player)
     itemcount = players[player].itemcount; 
     secretcount = players[player].secretcount; 
 	 
-    p = &players[player]; 
+    p = &players[player];
+
+	if (keepkeys && netgame && !deathmatch)
+		SaveKeys(player); // [marshmallow] grab his keys here before we zero out the player struct
+
     memset (p, 0, sizeof(*p)); 
  
     memcpy (players[player].frags, frags, sizeof(players[player].frags)); 
@@ -1100,7 +1167,10 @@ void G_PlayerReborn (int player)
     p->weaponowned[wp_fist] = true; 
     p->weaponowned[wp_pistol] = true; 
     p->ammo[am_clip] = deh_initial_bullets; 
-	 
+
+	if (keepkeys && netgame && !deathmatch)
+	    RestoreKeys(player); // [marshmallow] restore keys
+
     for (i=0 ; i<NUMAMMO ; i++) 
 	p->maxammo[i] = maxammo[i]; 
 		 
@@ -1253,7 +1323,7 @@ void G_DoReborn (int playernum)
 { 
     int                             i; 
 	 
-    if (!netgame)
+    if (!netgame && !sprespawn)
     {
 	// reload the level from scratch
 	gameaction = ga_loadlevel;  
@@ -1319,7 +1389,13 @@ int cpars[32] =
     240,150,180,150,150,300,330,420,300,180,	// 21-30
     120,30					// 31-32
 };
- 
+
+// [crispy] Episode 5 par times from Sigil v1.21
+static int e5pars[10] =
+{
+    0,90,150,360,420,780,420,780,300,660
+};
+
 
 //
 // G_DoCompleted 
@@ -1441,6 +1517,7 @@ void G_DoCompleted (void)
 		wminfo.next = 5; 
 		break; 
 	      case 3: 
+	      case 5: // [crispy] Sigil
 		wminfo.next = 6; 
 		break; 
 	      case 4:
@@ -1481,6 +1558,11 @@ void G_DoCompleted (void)
     else if (gameepisode < 4)
     {
         wminfo.partime = TICRATE*pars[gameepisode][gamemap];
+    }
+    // [crispy] use episode 3 par times for Sigil's episode 5
+    else if (gameepisode == 5)
+    {
+        wminfo.partime = TICRATE*e5pars[gamemap];
     }
     else
     {
@@ -1581,6 +1663,9 @@ void G_DoLoadGame (void)
 
     if (!P_ReadSaveGameHeader())
     {
+        // [crispy] indicate game version mismatch
+        extern void M_LoadGameVerMismatch ();
+        M_LoadGameVerMismatch();
         fclose(save_stream);
         return;
     }
@@ -1787,8 +1872,8 @@ G_InitNew
     }
     */
 
-    if (skill > sk_nightmare)
-	skill = sk_nightmare;
+	if (skill > sk_extreme)
+		skill = sk_extreme;
 
     if (gameversion >= exe_ultimate)
     {
@@ -1831,7 +1916,11 @@ G_InitNew
     if (fastparm || (skill == sk_nightmare && gameskill != sk_nightmare) )
     {
 	for (i=S_SARG_RUN1 ; i<=S_SARG_PAIN2 ; i++)
+	    // [crispy] Fix infinite loop caused by Demon speed bug
+	    if (states[i].tics != 1)
+	    {
 	    states[i].tics >>= 1;
+	    }
 	mobjinfo[MT_BRUISERSHOT].speed = 20*FRACUNIT;
 	mobjinfo[MT_HEADSHOT].speed = 20*FRACUNIT;
 	mobjinfo[MT_TROOPSHOT].speed = 20*FRACUNIT;
@@ -1857,6 +1946,8 @@ G_InitNew
     gameepisode = episode;
     gamemap = map;
     gameskill = skill;
+
+    demostarttic = 0; // [crispy] fix revenant internal demo bug
 
     viewactive = true;
 
@@ -1896,6 +1987,13 @@ G_InitNew
             break;
           case 4:        // Special Edition sky
             skytexturename = "SKY4";
+            break;
+          case 5:        // [crispy] Sigil
+            skytexturename = "SKY5_ZD";
+            if (R_CheckTextureNumForName(DEH_String(skytexturename)) == -1)
+            {
+                skytexturename = "SKY3";
+            }
             break;
         }
         skytexturename = DEH_String(skytexturename);
@@ -2033,7 +2131,10 @@ void G_RecordDemo (char *name)
     usergame = false;
     demoname_size = strlen(name) + 5;
     demoname = Z_Malloc(demoname_size, PU_STATIC, NULL);
-    M_snprintf(demoname, demoname_size, "%s.lmp", name);
+    if (!strstr(name, ".lmp") && !strstr(name, ".LMP"))
+        M_snprintf(demoname, demoname_size, "%s.lmp", name);
+    else
+        M_snprintf(demoname, demoname_size, name);
     maxsize = 0x20000;
 
     //!
@@ -2070,11 +2171,16 @@ int G_VanillaVersionCode(void)
     }
 }
 
+static boolean newdemo;
+
 void G_BeginRecording (void) 
 { 
     int             i; 
 
     demo_p = demobuffer;
+
+    newdemo = M_ParmExists("-backpack") || M_ParmExists("-nodmweapons") || M_ParmExists("-keepkeys") || M_ParmExists("-sprespawn")
+      || M_ParmExists("-2xmonsters") || M_ParmExists("-xpain") || M_ParmExists("-nod2monsters");
 
     //!
     // @category demo
@@ -2085,10 +2191,19 @@ void G_BeginRecording (void)
     longtics = D_NonVanillaRecord(M_ParmExists("-longtics"),
                                   "Doom 1.91 demo format");
 
+    newdemo = D_NonVanillaRecord(newdemo,
+                                  "Extended demo format");
+
+    if (newdemo) longtics = true;
+
     // If not recording a longtics demo, record in low res
     lowres_turn = !longtics;
 
-    if (longtics)
+    if (newdemo)
+    {
+        *demo_p++ = EXTENDED_DEMO_VERSION;
+    }
+    else if (longtics)
     {
         *demo_p++ = DOOM_191_VERSION;
     }
@@ -2108,11 +2223,22 @@ void G_BeginRecording (void)
         *demo_p++ = nomonsters;
         *demo_p++ = consoleplayer;
     }
-	 
+
+    if (newdemo)
+    {
+        *demo_p++ = dropbackpack; 
+        *demo_p++ = nodmweapons;
+        *demo_p++ = keepkeys;
+        *demo_p++ = sprespawn;
+        *demo_p++ = doublespawn;
+        *demo_p++ = doubledamage;
+        *demo_p++ = nod2monsters;
+    }
+
     for (i=0 ; i<MAXPLAYERS ; i++) 
-	*demo_p++ = playeringame[i]; 		 
-} 
- 
+	*demo_p++ = playeringame[i];
+}
+
 
 //
 // G_PlayDemo 
@@ -2148,6 +2274,8 @@ static const char *DemoVersionDescription(int version)
             return "v1.9";
         case 111:
             return "v1.91 hack demo?";
+        case 222:
+            return "Extended demo";
         default:
             break;
     }
@@ -2179,6 +2307,14 @@ void G_DoPlayDemo (void)
     demobuffer = W_CacheLumpNum(lumpnum, PU_STATIC);
     demo_p = demobuffer;
 
+    // [crispy] ignore empty demo lumps
+    if (W_LumpLength(W_GetNumForName(defdemoname)) < 0xd)
+    {
+	demoplayback = true;
+	G_CheckDemoStatus();
+	return;
+    }
+
     demoversion = *demo_p++;
 
     if (demoversion >= 0 && demoversion <= 4)
@@ -2189,9 +2325,16 @@ void G_DoPlayDemo (void)
 
     longtics = false;
 
+    // Extended demo format
     // Longtics demos use the modified format that is generated by cph's
     // hacked "v1.91" doom exe. This is a non-vanilla extension.
-    if (D_NonVanillaPlayback(demoversion == DOOM_191_VERSION, lumpnum,
+    if (D_NonVanillaPlayback(demoversion == EXTENDED_DEMO_VERSION, lumpnum,
+                             "Extended demo format"))
+    {
+        newdemo = true;
+        longtics = true;
+    }
+    else if (D_NonVanillaPlayback(demoversion == DOOM_191_VERSION, lumpnum,
                              "Doom 1.91 demo format"))
     {
         longtics = true;
@@ -2208,8 +2351,19 @@ void G_DoPlayDemo (void)
                                         "/info/patches.php\n"
                               "    This appears to be %s.";
 
+        if (singledemo)
         I_Error(message, demoversion, G_VanillaVersionCode(),
                          DemoVersionDescription(demoversion));
+        // [crispy] make non-fatal
+        else
+        {
+        fprintf(stderr, message, demoversion, G_VanillaVersionCode(),
+                         DemoVersionDescription(demoversion));
+	fprintf(stderr, "\n");
+	demoplayback = true;
+	G_CheckDemoStatus();
+	return;
+        }
     }
 
     skill = *demo_p++; 
@@ -2232,7 +2386,17 @@ void G_DoPlayDemo (void)
         consoleplayer = 0;
     }
     
-        
+    if (newdemo)
+    {
+        dropbackpack = *demo_p++;
+        nodmweapons = *demo_p++;
+        keepkeys = *demo_p++;
+        sprespawn = *demo_p++;
+        doublespawn = *demo_p++;
+        doubledamage = *demo_p++;
+        nod2monsters = *demo_p++;
+    }
+
     for (i=0 ; i<MAXPLAYERS ; i++) 
 	playeringame[i] = *demo_p++; 
 
@@ -2248,6 +2412,7 @@ void G_DoPlayDemo (void)
     G_InitNew (skill, episode, map); 
     precache = true; 
     starttime = I_GetTime (); 
+    demostarttic = gametic; // [crispy] fix revenant internal demo bug
 
     usergame = false; 
     demoplayback = true; 

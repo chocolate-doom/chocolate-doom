@@ -731,7 +731,12 @@ void D_DoomMain(void)
     char file[256];
     char demolumpname[9];
 
-    I_PrintBanner(PACKAGE_STRING);
+#ifdef _WIN32
+    freopen("CONOUT$","w",stdout);
+    freopen("CONOUT$","w",stderr);
+#endif
+    //I_PrintBanner(PACKAGE_STRING);
+    I_PrintBanner("Heretic Startup v" PACKAGE_VERSION);
 
     I_AtExit(D_Endoom, false);
 
@@ -879,7 +884,7 @@ void D_DoomMain(void)
     // Load defaults before initing other systems
     DEH_printf("M_LoadDefaults: Load system defaults.\n");
     D_BindVariables();
-    M_SetConfigFilenames("heretic.cfg", PROGRAM_PREFIX "heretic.cfg");
+    M_SetConfigFilenames("defaulth.cfg", PROGRAM_PREFIX "heretic.cfg");
     M_LoadDefaults();
 
     I_AtExit(M_SaveDefaults, false);

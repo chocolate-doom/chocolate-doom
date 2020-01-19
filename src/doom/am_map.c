@@ -101,8 +101,9 @@
 #define M_ZOOMOUT       ((int) (FRACUNIT/1.02))
 
 // translates between frame-buffer and map distances
-#define FTOM(x) FixedMul(((x)<<FRACBITS),scale_ftom)
-#define MTOF(x) (FixedMul((x),scale_mtof)>>FRACBITS)
+// [crispy] fix int overflow that causes map and grid lines to disappear
+#define FTOM(x) (((int64_t)((x)<<FRACBITS) * scale_ftom) >> FRACBITS)
+#define MTOF(x) ((((int64_t)(x) * scale_mtof) >> FRACBITS)>>FRACBITS)
 // translates between frame-buffer and map coordinates
 #define CXMTOF(x)  (f_x + MTOF((x)-m_x))
 #define CYMTOF(y)  (f_y + (f_h - MTOF((y)-m_y)))
@@ -122,7 +123,7 @@ typedef struct
 
 typedef struct
 {
-    fixed_t		x,y;
+    int64_t		x,y;
 } mpoint_t;
 
 typedef struct
@@ -219,14 +220,14 @@ static mpoint_t m_paninc; // how far the window pans each tic (map coords)
 static fixed_t 	mtof_zoommul; // how far the window zooms in each tic (map coords)
 static fixed_t 	ftom_zoommul; // how far the window zooms in each tic (fb coords)
 
-static fixed_t 	m_x, m_y;   // LL x,y where the window is on the map (map coords)
-static fixed_t 	m_x2, m_y2; // UR x,y where the window is on the map (map coords)
+static int64_t 	m_x, m_y;   // LL x,y where the window is on the map (map coords)
+static int64_t 	m_x2, m_y2; // UR x,y where the window is on the map (map coords)
 
 //
 // width/height of window on map (map coords)
 //
-static fixed_t 	m_w;
-static fixed_t	m_h;
+static int64_t 	m_w;
+static int64_t 	m_h;
 
 // based on level size
 static fixed_t 	min_x;
@@ -246,8 +247,8 @@ static fixed_t 	min_scale_mtof; // used to tell when to stop zooming out
 static fixed_t 	max_scale_mtof; // used to tell when to stop zooming in
 
 // old stuff for recovery later
-static fixed_t old_m_w, old_m_h;
-static fixed_t old_m_x, old_m_y;
+static int64_t old_m_w, old_m_h;
+static int64_t old_m_x, old_m_y;
 
 // old location used by the Follower routine
 static mpoint_t f_oldloc;
@@ -376,8 +377,9 @@ void AM_findMinMaxBoundaries(void)
 	    max_y = vertexes[i].y;
     }
   
-    max_w = max_x - min_x;
-    max_h = max_y - min_y;
+    // [crispy] cope with huge level dimensions which span the entire INT range
+    max_w = max_x/2 - min_x/2;
+    max_h = max_y/2 - min_y/2;
 
     min_w = 2*PLAYERRADIUS; // const? never changed?
     min_h = 2*PLAYERRADIUS;
@@ -385,7 +387,7 @@ void AM_findMinMaxBoundaries(void)
     a = FixedDiv(f_w<<FRACBITS, max_w);
     b = FixedDiv(f_h<<FRACBITS, max_h);
   
-    min_scale_mtof = a < b ? a : b;
+    min_scale_mtof = a < b ? a/2 : b/2;
     max_scale_mtof = FixedDiv(f_h<<FRACBITS, 2*PLAYERRADIUS);
 
 }
@@ -719,6 +721,7 @@ AM_Responder
             rc = false;
         }
 
+        // Automap cheat works in multiplayer prior to Doom v1.9
         if ((!deathmatch || gameversion <= exe_doom_1_8)
          && cht_CheckCheat(&cheat_amap, ev->data2))
         {
@@ -1099,8 +1102,8 @@ AM_drawMline
 //
 void AM_drawGrid(int color)
 {
-    fixed_t x, y;
-    fixed_t start, end;
+    int64_t x, y;
+    int64_t start, end;
     mline_t ml;
 
     // Figure out start of vertical gridlines
@@ -1200,11 +1203,11 @@ void AM_drawWalls(void)
 //
 void
 AM_rotate
-( fixed_t*	x,
-  fixed_t*	y,
+( int64_t*	x,
+  int64_t*	y,
   angle_t	a )
 {
-    fixed_t tmpx;
+    int64_t tmpx;
 
     tmpx =
 	FixedMul(*x,finecosine[a>>ANGLETOFINESHIFT])

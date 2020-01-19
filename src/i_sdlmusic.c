@@ -408,7 +408,8 @@ static void *I_SDL_RegisterSong(void *data, int len)
 
     filename = M_TempFile("doom.mid");
 
-    if (IsMid(data, len) && len < MAXMIDLENGTH)
+    // [crispy] remove MID file size limit
+    if (IsMid(data, len) /* && len < MAXMIDLENGTH */)
     {
         M_WriteFile(filename, data, len);
     }

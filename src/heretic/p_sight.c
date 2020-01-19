@@ -91,7 +91,7 @@ boolean PTR_SightTraverse(intercept_t * in)
 boolean P_SightBlockLinesIterator(int x, int y)
 {
     int offset;
-    short *list;
+    int32_t *list;
     line_t *ld;
     int s1, s2;
     divline_t dl;
@@ -125,6 +125,10 @@ boolean P_SightBlockLinesIterator(int x, int y)
         // store the line for later intersection testing
         intercept_p->d.line = ld;
         intercept_p++;
+
+        // [crispy] catch intercepts overflows
+        if (intercept_p - intercepts == MAXINTERCEPTS)
+            return false;
 
     }
 

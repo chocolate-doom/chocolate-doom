@@ -73,7 +73,7 @@ static mission_config_t mission_configs[] =
         heretic,
         IWAD_MASK_HERETIC,
         "heretic",
-        "heretic.cfg",
+        "defaulth.cfg",
         PROGRAM_PREFIX "heretic.cfg",
         PROGRAM_PREFIX "heretic"
     },

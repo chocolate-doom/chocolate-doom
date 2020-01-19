@@ -117,6 +117,12 @@ static void LoadGameSettings(net_gamesettings_t *settings)
     fastparm = settings->fast_monsters;
     respawnparm = settings->respawn_monsters;
     timelimit = settings->timelimit;
+    dropbackpack = settings->dropbackpack;
+    nodmweapons = settings->nodmweapons;
+    keepkeys = settings->keepkeys;
+    doublespawn = settings->doublespawn;
+    doubledamage = settings->doubledamage;
+    nod2monsters = settings->nod2monsters;
     consoleplayer = settings->consoleplayer;
 
     if (lowres_turn)
@@ -144,11 +150,17 @@ static void SaveGameSettings(net_gamesettings_t *settings)
     settings->map = startmap;
     settings->skill = startskill;
     settings->loadgame = startloadgame;
-    settings->gameversion = gameversion;
+    settings->netgameversion = D_NetGameVersion(gameversion);
     settings->nomonsters = nomonsters;
     settings->fast_monsters = fastparm;
     settings->respawn_monsters = respawnparm;
     settings->timelimit = timelimit;
+    settings->dropbackpack = dropbackpack;
+    settings->nodmweapons = nodmweapons;
+    settings->keepkeys = keepkeys;
+    settings->doublespawn = doublespawn;
+    settings->doubledamage = doubledamage;
+    settings->nod2monsters = nod2monsters;
 
     settings->lowres_turn = (M_ParmExists("-record")
                          && !M_ParmExists("-longtics"))
