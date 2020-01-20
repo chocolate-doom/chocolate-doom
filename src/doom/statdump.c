@@ -339,7 +339,7 @@ void StatDump(void)
         }
         else
         {
-            dumpfile = NULL;
+            dumpfile = stdout;
         }
 
         for (i = 0; i < num_captured_stats; ++i)
@@ -347,7 +347,7 @@ void StatDump(void)
             PrintStats(dumpfile, &captured_stats[i]);
         }
 
-        if (dumpfile != NULL)
+        if (dumpfile != stdout)
         {
             fclose(dumpfile);
         }
