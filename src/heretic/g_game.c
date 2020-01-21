@@ -475,11 +475,52 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
             }
         }
     }
-    if (gamekeydown[127] && !cmd->arti
+    if (gamekeydown[key_arti_tome] && !cmd->arti
         && !players[consoleplayer].powers[pw_weaponlevel2])
     {
-        gamekeydown[127] = false;
+        gamekeydown[key_arti_tome] = false;
         cmd->arti = arti_tomeofpower;
+    }
+    else if (gamekeydown[key_arti_quartz] && !cmd->arti
+        && (players[consoleplayer].mo->health < MAXHEALTH))
+    {
+        gamekeydown[key_arti_quartz] = false;
+        cmd->arti = arti_health;
+    }
+    else if (gamekeydown[key_arti_urn] && !cmd->arti)
+    {
+        gamekeydown[key_arti_urn] = false;
+        cmd->arti = arti_superhealth;
+    }
+    else if (gamekeydown[key_arti_bomb] && !cmd->arti)
+    {
+        gamekeydown[key_arti_bomb] = false;
+        cmd->arti = arti_firebomb;
+    }
+    else if (gamekeydown[key_arti_ring] && !cmd->arti)
+    {
+        gamekeydown[key_arti_ring] = false;
+        cmd->arti = arti_invulnerability;
+    }
+    else if (gamekeydown[key_arti_chaosdevice] && !cmd->arti)
+    {
+        gamekeydown[key_arti_chaosdevice] = false;
+        cmd->arti = arti_teleport;
+    }
+    else if (gamekeydown[key_arti_shadowsphere] && !cmd->arti)
+    {
+        gamekeydown[key_arti_shadowsphere] = false;
+        cmd->arti = arti_invisibility;
+    }
+    else if (gamekeydown[key_arti_wings] && !cmd->arti)
+    {
+        gamekeydown[key_arti_wings] = false;
+        cmd->arti = arti_fly;
+    }
+    else if (gamekeydown[key_arti_torch] && !cmd->arti)
+    {
+        gamekeydown[key_arti_torch] = false;
+        cmd->arti = arti_torch;
     }
 
 //
