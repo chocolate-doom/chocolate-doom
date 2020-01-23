@@ -97,7 +97,7 @@ int			viewangletox[FINEANGLES/2];
 // The xtoviewangleangle[] table maps a screen pixel
 // to the lowest viewangle that maps back to x ranges
 // from clipangle to -clipangle.
-angle_t			xtoviewangle[SCREENWIDTH+1];
+angle_t			xtoviewangle[WIDESCREENWIDTH+1];
 
 lighttable_t*		scalelight[LIGHTLEVELS][MAXLIGHTSCALE];
 lighttable_t*		scalelightfixed[MAXLIGHTSCALE];
@@ -701,15 +701,25 @@ void R_ExecuteSetViewSize (void)
 
     setsizeneeded = false;
 
-    if (setblocks == 11)
+    if (widescreen)
     {
-	scaledviewwidth = SCREENWIDTH;
-	viewheight = SCREENHEIGHT;
+        // [JN] Wide screen: use only SCREENWIDTH and SCREENHEIGHT sizes,
+        // there is no bordered view and effective screen size is always same.
+        scaledviewwidth = WIDESCREENWIDTH;
+        viewheight = SCREENHEIGHT;
     }
     else
     {
-	scaledviewwidth = setblocks*32;
-	viewheight = (setblocks*168/10)&~7;
+        if (setblocks == 11)
+        {
+	    scaledviewwidth = SCREENWIDTH;
+	    viewheight = SCREENHEIGHT;
+        }
+        else
+        {
+	    scaledviewwidth = setblocks*32;
+	    viewheight = (setblocks*168/10)&~7;
+        }
     }
     
     detailshift = setdetail;

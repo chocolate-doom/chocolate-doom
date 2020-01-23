@@ -27,6 +27,16 @@
 #define SCREENWIDTH  320
 #define SCREENHEIGHT 200
 
+// [JN] Wide screen definition. In fact it's not a real wide screen mode,
+// it's just a way to get a wide picture on resolutions like:
+// - 1920x1080
+// - 1366x768
+// - 1600x900
+//
+
+#define WIDESCREENWIDTH 420
+#define WIDEWIDTH_DELTA 52
+
 // Screen height used when aspect_ratio_correct=true.
 
 #define SCREENHEIGHT_4_3 240
@@ -97,6 +107,7 @@ extern int aspect_ratio_correct;
 extern int integer_scaling;
 extern int vga_porch_flash;
 extern int force_software_renderer;
+extern int widescreen;
 
 extern char *window_position;
 void I_GetWindowPosition(int *x, int *y, int w, int h);

@@ -73,8 +73,8 @@ lighttable_t**	spritelights;
 
 // constant arrays
 //  used for psprite clipping and initializing clipping
-int		negonearray[SCREENWIDTH]; // [crispy] 32-bit integer math
-int		screenheightarray[SCREENWIDTH]; // [crispy] 32-bit integer math
+int		negonearray[WIDESCREENWIDTH]; // [crispy] 32-bit integer math
+int		screenheightarray[WIDESCREENWIDTH]; // [crispy] 32-bit integer math
 
 
 //
@@ -293,8 +293,15 @@ static int	numvissprites;
 void R_InitSprites(const char **namelist)
 {
     int		i;
-	
-    for (i=0 ; i<SCREENWIDTH ; i++)
+
+    int screenwidth;
+
+    if (widescreen)
+        screenwidth = WIDESCREENWIDTH;
+    else
+        screenwidth = SCREENWIDTH;
+
+    for (i=0 ; i<screenwidth ; i++)
     {
 	negonearray[i] = -1;
     }
@@ -891,8 +898,8 @@ void R_SortVisSprites (void)
 void R_DrawSprite (vissprite_t* spr)
 {
     drawseg_t*		ds;
-    int		clipbot[SCREENWIDTH]; // [crispy] 32-bit integer math
-    int		cliptop[SCREENWIDTH]; // [crispy] 32-bit integer math
+    int		clipbot[WIDESCREENWIDTH]; // [crispy] 32-bit integer math
+    int		cliptop[WIDESCREENWIDTH]; // [crispy] 32-bit integer math
     int			x;
     int			r1;
     int			r2;

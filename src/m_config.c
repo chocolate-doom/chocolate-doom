@@ -1749,6 +1749,13 @@ static default_t extra_defaults_list[] =
 
     //!
     // @game doom
+    // Wide picture on widescreen resolutions
+    //
+
+    CONFIG_VARIABLE_INT(widescreen),
+
+    //!
+    // @game doom
     // Game palette optimization
     //
 

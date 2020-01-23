@@ -81,6 +81,9 @@ int show_endoom = 1;
 int show_diskicon = 1;
 int png_screenshots = 0;
 
+// [JN] Widescreen
+int widescreen = 0;
+
 // [JN] Game palette optimization
 int lcd_gamma_fix = 0;
 
@@ -212,6 +215,13 @@ static void AdvancedDisplayConfig(TXT_UNCAST_ARG(widget),
 #endif
         NULL);
 
+    // [JN] Widescreen
+    if (gamemission == doom)
+    {
+        TXT_AddWidget(window,
+                      TXT_NewCheckBox("Widescreen", &widescreen));
+    }
+
     // [JN] Palette optimization
     if (gamemission == doom)
     {
@@ -281,6 +291,12 @@ void BindDisplayVariables(void)
      || gamemission == strife)
     {
         M_BindIntVariable("show_endoom",               &show_endoom);
+    }
+
+	// [JN] Widescreen
+	if (gamemission == doom)
+    {
+        M_BindIntVariable("widescreen",         &widescreen);
     }
 
 	// [JN] Palette optimization

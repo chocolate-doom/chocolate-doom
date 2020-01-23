@@ -105,15 +105,22 @@ void R_DrawColumn (void)
     pixel_t*		dest;
     fixed_t		frac;
     fixed_t		fracstep;	 
- 
+
+    int screenwidth;
+
+    if (widescreen)
+        screenwidth = WIDESCREENWIDTH;
+    else
+        screenwidth = SCREENWIDTH;
+
     count = dc_yh - dc_yl; 
 
     // Zero length, column does not exceed a pixel.
     if (count < 0) 
 	return; 
-				 
+
 #ifdef RANGECHECK 
-    if ((unsigned)dc_x >= SCREENWIDTH
+    if ((unsigned)dc_x >= screenwidth
 	|| dc_yl < 0
 	|| dc_yh >= SCREENHEIGHT) 
 	I_Error ("R_DrawColumn: %i to %i at %i", dc_yl, dc_yh, dc_x); 
@@ -138,7 +145,7 @@ void R_DrawColumn (void)
 	//  using a lighting/special effects LUT.
 	*dest = dc_colormap[dc_source[(frac>>FRACBITS)&127]];
 	
-	dest += SCREENWIDTH; 
+	dest += screenwidth; 
 	frac += fracstep;
 	
     } while (count--); 
@@ -213,7 +220,14 @@ void R_DrawColumnLow (void)
     fixed_t		frac;
     fixed_t		fracstep;	 
     int                 x;
- 
+
+    int screenwidth;
+
+    if (widescreen)
+        screenwidth = WIDESCREENWIDTH;
+    else
+        screenwidth = SCREENWIDTH;
+
     count = dc_yh - dc_yl; 
 
     // Zero length.
@@ -221,7 +235,7 @@ void R_DrawColumnLow (void)
 	return; 
 				 
 #ifdef RANGECHECK 
-    if ((unsigned)dc_x >= SCREENWIDTH
+    if ((unsigned)dc_x >= screenwidth
 	|| dc_yl < 0
 	|| dc_yh >= SCREENHEIGHT)
     {
@@ -243,8 +257,8 @@ void R_DrawColumnLow (void)
     {
 	// Hack. Does not work corretly.
 	*dest2 = *dest = dc_colormap[dc_source[(frac>>FRACBITS)&127]];
-	dest += SCREENWIDTH;
-	dest2 += SCREENWIDTH;
+	dest += screenwidth;
+	dest2 += screenwidth;
 	frac += fracstep; 
 
     } while (count--);
@@ -287,6 +301,13 @@ void R_DrawFuzzColumn (void)
     fixed_t		frac;
     fixed_t		fracstep;	 
 
+    int screenwidth;
+
+    if (widescreen)
+        screenwidth = WIDESCREENWIDTH;
+    else
+        screenwidth = SCREENWIDTH;
+
     // Adjust borders. Low... 
     if (!dc_yl) 
 	dc_yl = 1;
@@ -302,7 +323,7 @@ void R_DrawFuzzColumn (void)
 	return; 
 
 #ifdef RANGECHECK 
-    if ((unsigned)dc_x >= SCREENWIDTH
+    if ((unsigned)dc_x >= screenwidth
 	|| dc_yl < 0 || dc_yh >= SCREENHEIGHT)
     {
 	I_Error ("R_DrawFuzzColumn: %i to %i at %i",
@@ -331,7 +352,7 @@ void R_DrawFuzzColumn (void)
 	if (++fuzzpos == FUZZTABLE) 
 	    fuzzpos = 0;
 	
-	dest += SCREENWIDTH;
+	dest += screenwidth;
 
 	frac += fracstep; 
     } while (count--); 
@@ -347,6 +368,13 @@ void R_DrawFuzzColumnLow (void)
     fixed_t		frac;
     fixed_t		fracstep;	 
     int x;
+
+    int screenwidth;
+
+    if (widescreen)
+        screenwidth = WIDESCREENWIDTH;
+    else
+        screenwidth = SCREENWIDTH;
 
     // Adjust borders. Low... 
     if (!dc_yl) 
@@ -367,7 +395,7 @@ void R_DrawFuzzColumnLow (void)
     x = dc_x << 1;
     
 #ifdef RANGECHECK 
-    if ((unsigned)x >= SCREENWIDTH
+    if ((unsigned)x >= screenwidth
 	|| dc_yl < 0 || dc_yh >= SCREENHEIGHT)
     {
 	I_Error ("R_DrawFuzzColumn: %i to %i at %i",
@@ -398,8 +426,8 @@ void R_DrawFuzzColumnLow (void)
 	if (++fuzzpos == FUZZTABLE) 
 	    fuzzpos = 0;
 	
-	dest += SCREENWIDTH;
-	dest2 += SCREENWIDTH;
+	dest += screenwidth;
+	dest2 += screenwidth;
 
 	frac += fracstep; 
     } while (count--); 
@@ -427,13 +455,20 @@ void R_DrawTranslatedColumn (void)
     pixel_t*		dest;
     fixed_t		frac;
     fixed_t		fracstep;	 
- 
+
+    int screenwidth;
+
+    if (widescreen)
+        screenwidth = WIDESCREENWIDTH;
+    else
+        screenwidth = SCREENWIDTH;
+
     count = dc_yh - dc_yl; 
     if (count < 0) 
 	return; 
 				 
 #ifdef RANGECHECK 
-    if ((unsigned)dc_x >= SCREENWIDTH
+    if ((unsigned)dc_x >= screenwidth
 	|| dc_yl < 0
 	|| dc_yh >= SCREENHEIGHT)
     {
@@ -459,7 +494,7 @@ void R_DrawTranslatedColumn (void)
 	// Thus the "green" ramp of the player 0 sprite
 	//  is mapped to gray, red, black/indigo. 
 	*dest = dc_colormap[dc_translation[dc_source[frac>>FRACBITS]]];
-	dest += SCREENWIDTH;
+	dest += screenwidth;
 	
 	frac += fracstep; 
     } while (count--); 
@@ -473,7 +508,14 @@ void R_DrawTranslatedColumnLow (void)
     fixed_t		frac;
     fixed_t		fracstep;	 
     int                 x;
- 
+
+    int screenwidth;
+
+    if (widescreen)
+        screenwidth = WIDESCREENWIDTH;
+    else
+        screenwidth = SCREENWIDTH;
+
     count = dc_yh - dc_yl; 
     if (count < 0) 
 	return; 
@@ -482,7 +524,7 @@ void R_DrawTranslatedColumnLow (void)
     x = dc_x << 1;
 				 
 #ifdef RANGECHECK 
-    if ((unsigned)x >= SCREENWIDTH
+    if ((unsigned)x >= screenwidth
 	|| dc_yl < 0
 	|| dc_yh >= SCREENHEIGHT)
     {
@@ -510,8 +552,8 @@ void R_DrawTranslatedColumnLow (void)
 	//  is mapped to gray, red, black/indigo. 
 	*dest = dc_colormap[dc_translation[dc_source[frac>>FRACBITS]]];
 	*dest2 = dc_colormap[dc_translation[dc_source[frac>>FRACBITS]]];
-	dest += SCREENWIDTH;
-	dest2 += SCREENWIDTH;
+	dest += screenwidth;
+	dest2 += screenwidth;
 	
 	frac += fracstep; 
     } while (count--); 
@@ -598,7 +640,7 @@ void R_DrawSpan (void)
 #ifdef RANGECHECK
     if (ds_x2 < ds_x1
 	|| ds_x1<0
-	|| ds_x2>=SCREENWIDTH
+	|| ds_x2>=WIDESCREENWIDTH
 	|| (unsigned)ds_y>SCREENHEIGHT)
     {
 	I_Error( "R_DrawSpan: %i to %i at %i",
@@ -727,7 +769,7 @@ void R_DrawSpanLow (void)
 #ifdef RANGECHECK
     if (ds_x2 < ds_x1
 	|| ds_x1<0
-	|| ds_x2>=SCREENWIDTH
+	|| ds_x2>=WIDESCREENWIDTH
 	|| (unsigned)ds_y>SCREENHEIGHT)
     {
 	I_Error( "R_DrawSpan: %i to %i at %i",
@@ -780,24 +822,31 @@ R_InitBuffer
 { 
     int		i; 
 
+    int screenwidth;
+
+    if (widescreen)
+        screenwidth = WIDESCREENWIDTH;
+    else
+        screenwidth = SCREENWIDTH;
+
     // Handle resize,
     //  e.g. smaller view windows
     //  with border and/or status bar.
-    viewwindowx = (SCREENWIDTH-width) >> 1; 
+    viewwindowx = (screenwidth-width) >> 1; 
 
     // Column offset. For windows.
     for (i=0 ; i<width ; i++) 
 	columnofs[i] = viewwindowx + i;
 
     // Samw with base row offset.
-    if (width == SCREENWIDTH) 
+    if (width == screenwidth) 
 	viewwindowy = 0; 
     else 
 	viewwindowy = (SCREENHEIGHT-SBARHEIGHT-height) >> 1; 
 
     // Preclaculate all row offsets.
     for (i=0 ; i<height ; i++) 
-	ylookup[i] = I_VideoBuffer + (i+viewwindowy)*SCREENWIDTH; 
+	ylookup[i] = I_VideoBuffer + (i+viewwindowy)*screenwidth; 
 } 
  
  

@@ -212,7 +212,10 @@ boolean D_Display (void)
     if (gamestate != wipegamestate)
     {
 	wipe = true;
-	wipe_StartScreen(0, 0, SCREENWIDTH, SCREENHEIGHT);
+	if (widescreen)
+	    wipe_StartScreen(0, 0, WIDESCREENWIDTH, SCREENHEIGHT);
+	else
+	    wipe_StartScreen(0, 0, SCREENWIDTH, SCREENHEIGHT);
     }
     else
 	wipe = false;
@@ -276,7 +279,7 @@ boolean D_Display (void)
     }
 
     // see if the border needs to be updated to the screen
-    if (gamestate == GS_LEVEL && !automapactive && scaledviewwidth != SCREENWIDTH)
+    if (gamestate == GS_LEVEL && !automapactive && scaledviewwidth != SCREENWIDTH && !widescreen)
     {
 	if (menuactive || menuactivestate || !viewactivestate)
 	    borderdrawcount = 3;
@@ -337,9 +340,14 @@ static void EnableLoadingDisk(void)
             disk_lump_name = DEH_String("STDISK");
         }
 
-        V_EnableLoadingDisk(disk_lump_name,
-                            SCREENWIDTH - LOADING_DISK_W,
-                            SCREENHEIGHT - LOADING_DISK_H);
+        if (widescreen)
+            V_EnableLoadingDisk(disk_lump_name,
+                                WIDESCREENWIDTH - LOADING_DISK_W,
+                                SCREENHEIGHT - LOADING_DISK_H);
+        else
+            V_EnableLoadingDisk(disk_lump_name,
+                                SCREENWIDTH - LOADING_DISK_W,
+                                SCREENHEIGHT - LOADING_DISK_H);
     }
 }
 
@@ -438,8 +446,12 @@ void D_RunFrame()
         } while (tics <= 0);
 
         wipestart = nowtime;
-        wipe = !wipe_ScreenWipe(wipe_Melt
-                               , 0, 0, SCREENWIDTH, SCREENHEIGHT, tics);
+        if (widescreen)
+            wipe = !wipe_ScreenWipe(wipe_Melt
+                                   , 0, 0, WIDESCREENWIDTH, SCREENHEIGHT, tics);
+        else
+            wipe = !wipe_ScreenWipe(wipe_Melt
+                                   , 0, 0, SCREENWIDTH, SCREENHEIGHT, tics);
         I_UpdateNoBlit ();
         M_Drawer ();                            // menu is drawn even on top of wipes
         I_FinishUpdate ();                      // page flip or blit buffer
@@ -459,8 +471,10 @@ void D_RunFrame()
         if ((wipe = D_Display ()))
         {
             // start wipe on this frame
-            wipe_EndScreen(0, 0, SCREENWIDTH, SCREENHEIGHT);
-
+            if (widescreen)
+                wipe_EndScreen(0, 0, WIDESCREENWIDTH, SCREENHEIGHT);
+            else
+                wipe_EndScreen(0, 0, SCREENWIDTH, SCREENHEIGHT);
             wipestart = I_GetTime () - 1;
         } else {
             // normal update
@@ -1496,13 +1510,15 @@ void D_DoomMain (void)
     
     // init subsystems
     DEH_printf("V_Init: allocate screens.\n");
-    V_Init ();
+    //V_Init (); NO-OP
 
     // Load configuration files before initialising other subsystems.
     DEH_printf("M_LoadDefaults: Load system defaults.\n");
     M_SetConfigFilenames("default.cfg", PROGRAM_PREFIX "doom.cfg");
     D_BindVariables();
     M_LoadDefaults();
+
+    V_Init (); // For widescreen
 
     // [crispy] unconditionally disable savegame and demo limit
     vanilla_savegame_limit = 0;

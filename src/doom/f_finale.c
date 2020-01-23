@@ -236,26 +236,33 @@ void F_TextWrite (void)
     int		c;
     int		cx;
     int		cy;
-    
+
+    int screenwidth;
+
+    if (widescreen)
+        screenwidth = WIDESCREENWIDTH;
+    else
+        screenwidth = SCREENWIDTH;
+
     // erase the entire screen to a tiled background
     src = W_CacheLumpName ( finaleflat , PU_CACHE);
     dest = I_VideoBuffer;
 	
     for (y=0 ; y<SCREENHEIGHT ; y++)
     {
-	for (x=0 ; x<SCREENWIDTH/64 ; x++)
+	for (x=0 ; x<screenwidth/64 ; x++)
 	{
 	    memcpy (dest, src+((y&63)<<6), 64);
 	    dest += 64;
 	}
-	if (SCREENWIDTH&63)
+	if (screenwidth&63)
 	{
-	    memcpy (dest, src+((y&63)<<6), SCREENWIDTH&63);
-	    dest += (SCREENWIDTH&63);
+	    memcpy (dest, src+((y&63)<<6), screenwidth&63);
+	    dest += (screenwidth&63);
 	}
     }
 
-    V_MarkRect (0, 0, SCREENWIDTH, SCREENHEIGHT);
+    V_MarkRect (0, 0, screenwidth, SCREENHEIGHT);
     
     // draw some of the text onto the screen
     cx = 10;
@@ -580,7 +587,14 @@ F_DrawPatchCol
     pixel_t*	dest;
     pixel_t*	desttop;
     int		count;
-	
+
+    int screenwidth;
+
+    if (widescreen)
+        screenwidth = WIDESCREENWIDTH;
+    else
+        screenwidth = SCREENWIDTH;
+
     column = (column_t *)((byte *)patch + LONG(patch->columnofs[col]));
     desttop = I_VideoBuffer + x;
 
@@ -588,13 +602,13 @@ F_DrawPatchCol
     while (column->topdelta != 0xff )
     {
 	source = (byte *)column + 3;
-	dest = desttop + column->topdelta*SCREENWIDTH;
+	dest = desttop + column->topdelta*screenwidth;
 	count = column->length;
 		
 	while (count--)
 	{
 	    *dest = *source++;
-	    dest += SCREENWIDTH;
+	    dest += screenwidth;
 	}
 	column = (column_t *)(  (byte *)column + column->length + 4 );
     }
@@ -617,7 +631,10 @@ void F_BunnyScroll (void)
     p1 = W_CacheLumpName (DEH_String("PFUB2"), PU_LEVEL);
     p2 = W_CacheLumpName (DEH_String("PFUB1"), PU_LEVEL);
 
-    V_MarkRect (0, 0, SCREENWIDTH, SCREENHEIGHT);
+    if (widescreen)
+        V_MarkRect (0, 0, WIDESCREENWIDTH, SCREENHEIGHT);
+    else
+        V_MarkRect (0, 0, SCREENWIDTH, SCREENHEIGHT);
 	
     scrolled = (SCREENWIDTH - ((signed int) finalecount-230)/2);
     if (scrolled > SCREENWIDTH)

@@ -1516,6 +1516,9 @@ void ST_Stop (void)
 void ST_Init (void)
 {
     ST_loadData();
-    st_backing_screen = (pixel_t *) Z_Malloc(ST_WIDTH * ST_HEIGHT * sizeof(*st_backing_screen), PU_STATIC, 0);
+    if (widescreen)
+        st_backing_screen = (pixel_t *) Z_Malloc(WIDESCREENWIDTH * ST_HEIGHT * sizeof(*st_backing_screen), PU_STATIC, 0);
+    else
+        st_backing_screen = (pixel_t *) Z_Malloc(ST_WIDTH * ST_HEIGHT * sizeof(*st_backing_screen), PU_STATIC, 0);
 }
 

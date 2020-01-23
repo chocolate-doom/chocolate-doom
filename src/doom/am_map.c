@@ -523,6 +523,9 @@ void AM_LevelInit(void)
 {
     leveljuststarted = 0;
 
+    if (widescreen)
+        finit_width = WIDESCREENWIDTH;
+
     f_x = f_y = 0;
     f_w = finit_width;
     f_h = finit_height;

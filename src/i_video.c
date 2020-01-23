@@ -50,9 +50,13 @@
 
 extern int detailLevel;
 extern int screenblocks;
+
+int widescreen = 0; // [JN] Wide picture on widescreen resolutions
 int lcd_gamma_fix = 0; // [JN] Palette optimization Doom
 
 boolean isa;
+
+static int actualwidth;
 
 // These are (1) the window (or the full screen) that our game is rendered to
 // and (2) the renderer that scales the texture (see below) into this window.
@@ -79,6 +83,13 @@ static SDL_Rect blit_rect = {
     0,
     0,
     SCREENWIDTH,
+    SCREENHEIGHT
+};
+
+static SDL_Rect wblit_rect = {
+    0,
+    0,
+    WIDESCREENWIDTH,
     SCREENHEIGHT
 };
 
@@ -298,15 +309,15 @@ static void AdjustWindowSize(void)
 {
     if (aspect_ratio_correct || integer_scaling)
     {
-        if (window_width * actualheight <= window_height * SCREENWIDTH)
+        if (window_width * actualheight <= window_height * actualwidth)
         {
             // We round up window_height if the ratio is not exact; this leaves
             // the result stable.
-            window_height = (window_width * actualheight + SCREENWIDTH - 1) / SCREENWIDTH;
+            window_height = (window_width * actualheight + actualwidth - 1) / actualwidth;
         }
         else
         {
-            window_width = window_height * SCREENWIDTH / actualheight;
+            window_width = window_height * actualwidth / actualheight;
         }
     }
 }
@@ -556,7 +567,7 @@ static void LimitTextureSize(int *w_upscale, int *h_upscale)
                 SDL_GetError());
     }
 
-    while (*w_upscale * SCREENWIDTH > rinfo.max_texture_width)
+    while (*w_upscale * actualwidth > rinfo.max_texture_width)
     {
         --*w_upscale;
     }
@@ -579,14 +590,14 @@ static void LimitTextureSize(int *w_upscale, int *h_upscale)
     // huge textures, so the user can use this to reduce the maximum texture
     // size if desired.
 
-    if (max_scaling_buffer_pixels < SCREENWIDTH * SCREENHEIGHT)
+    if (max_scaling_buffer_pixels < actualwidth * SCREENHEIGHT)
     {
         I_Error("CreateUpscaledTexture: max_scaling_buffer_pixels too small "
                 "to create a texture buffer: %d < %d",
-                max_scaling_buffer_pixels, SCREENWIDTH * SCREENHEIGHT);
+                max_scaling_buffer_pixels, actualwidth * SCREENHEIGHT);
     }
 
-    while (*w_upscale * *h_upscale * SCREENWIDTH * SCREENHEIGHT
+    while (*w_upscale * *h_upscale * actualwidth * SCREENHEIGHT
            > max_scaling_buffer_pixels)
     {
         if (*w_upscale > *h_upscale)
@@ -603,7 +614,7 @@ static void LimitTextureSize(int *w_upscale, int *h_upscale)
     {
         printf("CreateUpscaledTexture: Limited texture size to %dx%d "
                "(max %d pixels, max texture size %dx%d)\n",
-               *w_upscale * SCREENWIDTH, *h_upscale * SCREENHEIGHT,
+               *w_upscale * actualwidth, *h_upscale * SCREENHEIGHT,
                max_scaling_buffer_pixels,
                rinfo.max_texture_width, rinfo.max_texture_height);
     }
@@ -629,24 +640,24 @@ static void CreateUpscaledTexture(boolean force)
     // of the texture, the rendered area is scaled down to fit. Calculate
     // the actual dimensions of the rendered area.
 
-    if (w * actualheight < h * SCREENWIDTH)
+    if (w * actualheight < h * actualwidth)
     {
         // Tall window.
 
-        h = w * actualheight / SCREENWIDTH;
+        h = w * actualheight / actualwidth;
     }
     else
     {
         // Wide window.
 
-        w = h * SCREENWIDTH / actualheight;
+        w = h * actualwidth / actualheight;
     }
 
     // Pick texture size the next integer multiple of the screen dimensions.
     // If one screen dimension matches an integer multiple of the original
     // resolution, there is no need to overscale in this direction.
 
-    w_upscale = (w + SCREENWIDTH - 1) / SCREENWIDTH;
+    w_upscale = (w + actualwidth - 1) / actualwidth;
     h_upscale = (h + SCREENHEIGHT - 1) / SCREENHEIGHT;
 
     // Minimum texture dimensions of 320x200.
@@ -681,7 +692,7 @@ static void CreateUpscaledTexture(boolean force)
     new_texture = SDL_CreateTexture(renderer,
                                 pixel_format,
                                 SDL_TEXTUREACCESS_TARGET,
-                                w_upscale*SCREENWIDTH,
+                                w_upscale*actualwidth,
                                 h_upscale*SCREENHEIGHT);
 
     old_texture = texture_upscaled;
@@ -781,9 +792,9 @@ void I_FinishUpdate (void)
 	if (tics > 20) tics = 20;
 
 	for (i=0 ; i<tics*4 ; i+=4)
-	    I_VideoBuffer[ (SCREENHEIGHT-1)*SCREENWIDTH + i] = 0xff;
+	    I_VideoBuffer[ (SCREENHEIGHT-1)*actualwidth + i] = 0xff;
 	for ( ; i<20*4 ; i+=4)
-	    I_VideoBuffer[ (SCREENHEIGHT-1)*SCREENWIDTH + i] = 0x0;
+	    I_VideoBuffer[ (SCREENHEIGHT-1)*actualwidth + i] = 0x0;
     }
 
     // Draw disk icon before blit, if necessary.
@@ -806,7 +817,10 @@ void I_FinishUpdate (void)
     // Blit from the paletted 8-bit screen buffer to the intermediate
     // 32-bit RGBA buffer that we can load into the texture.
 
-    SDL_LowerBlit(screenbuffer, &blit_rect, argbbuffer, &blit_rect);
+    if (widescreen)
+        SDL_LowerBlit(screenbuffer, &wblit_rect, argbbuffer, &wblit_rect);
+    else
+        SDL_LowerBlit(screenbuffer, &blit_rect, argbbuffer, &blit_rect);
 
     // Update the intermediate texture with the contents of the RGBA buffer.
 
@@ -841,7 +855,7 @@ void I_FinishUpdate (void)
 //
 void I_ReadScreen (pixel_t* scr)
 {
-    memcpy(scr, I_VideoBuffer, SCREENWIDTH*SCREENHEIGHT*sizeof(*scr));
+    memcpy(scr, I_VideoBuffer, actualwidth*SCREENHEIGHT*sizeof(*scr));
 }
 
 
@@ -939,7 +953,7 @@ static void SetScaleFactor(int factor)
 {
     // Pick 320x200 or 320x240, depending on aspect ratio correct
 
-    window_width = factor * SCREENWIDTH;
+    window_width = factor * actualwidth;
     window_height = factor * actualheight;
     fullscreen = false;
 }
@@ -1050,6 +1064,17 @@ void I_GraphicsCheckCommandLine(void)
         }
     }
 
+    //!
+    // @category video 
+    //
+    // Wide picture on widescreen resolutions.
+    //
+/*
+    if (M_CheckParm("-widescreen"))
+    {
+        widescreen = true;
+    }
+*/
     //!
     // @category video
     //
@@ -1240,7 +1265,7 @@ static void SetVideoMode(void)
 
         pixel_format = SDL_GetWindowPixelFormat(screen);
 
-        SDL_SetWindowMinimumSize(screen, SCREENWIDTH, actualheight);
+        SDL_SetWindowMinimumSize(screen, actualwidth, actualheight);
 
         I_InitWindowTitle();
         I_InitWindowIcon();
@@ -1308,7 +1333,7 @@ static void SetVideoMode(void)
     if (aspect_ratio_correct || integer_scaling)
     {
         SDL_RenderSetLogicalSize(renderer,
-                                 SCREENWIDTH,
+                                 actualwidth,
                                  actualheight);
     }
 
@@ -1336,7 +1361,7 @@ static void SetVideoMode(void)
     if (screenbuffer == NULL)
     {
         screenbuffer = SDL_CreateRGBSurface(0,
-                                            SCREENWIDTH, SCREENHEIGHT, 8,
+                                            actualwidth, SCREENHEIGHT, 8,
                                             0, 0, 0, 0);
         SDL_FillRect(screenbuffer, NULL, 0);
     }
@@ -1355,7 +1380,7 @@ static void SetVideoMode(void)
         SDL_PixelFormatEnumToMasks(pixel_format, &unused_bpp,
                                    &rmask, &gmask, &bmask, &amask);
         argbbuffer = SDL_CreateRGBSurface(0,
-                                          SCREENWIDTH, SCREENHEIGHT, 32,
+                                          actualwidth, SCREENHEIGHT, 32,
                                           rmask, gmask, bmask, amask);
         SDL_FillRect(argbbuffer, NULL, 0);
     }
@@ -1378,7 +1403,7 @@ static void SetVideoMode(void)
     texture = SDL_CreateTexture(renderer,
                                 pixel_format,
                                 SDL_TEXTUREACCESS_STREAMING,
-                                SCREENWIDTH, SCREENHEIGHT);
+                                actualwidth, SCREENHEIGHT);
 
     // Initially create the upscaled texture for rendering to screen
 
@@ -1431,6 +1456,11 @@ void I_InitGraphics(void)
         actualheight = SCREENHEIGHT;
     }
 
+    if (widescreen)
+		actualwidth = WIDESCREENWIDTH;
+    else
+        actualwidth = SCREENWIDTH;
+
     // Create the game window; this may switch graphic modes depending
     // on configuration.
     AdjustWindowSize();
@@ -1473,7 +1503,7 @@ void I_InitGraphics(void)
 
     // Clear the screen to black.
 
-    memset(I_VideoBuffer, 0, SCREENWIDTH * SCREENHEIGHT * sizeof(*I_VideoBuffer));
+    memset(I_VideoBuffer, 0, actualwidth * SCREENHEIGHT * sizeof(*I_VideoBuffer));
 
     // clear out any events waiting at the start and center the mouse
   
@@ -1503,6 +1533,7 @@ void I_BindVideoVariables(void)
     M_BindIntVariable("max_scaling_buffer_pixels", &max_scaling_buffer_pixels);
     M_BindIntVariable("window_width",              &window_width);
     M_BindIntVariable("window_height",             &window_height);
+    M_BindIntVariable("widescreen",                &widescreen);
     M_BindIntVariable("grabmouse",                 &grabmouse);
     M_BindStringVariable("video_driver",           &video_driver);
     M_BindStringVariable("window_position",        &window_position);

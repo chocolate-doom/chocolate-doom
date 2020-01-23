@@ -50,7 +50,7 @@ visplane_t*		ceilingplane;
 static int		numvisplanes;
 
 // ?
-#define MAXOPENINGS	SCREENWIDTH*64*4
+#define MAXOPENINGS	WIDESCREENWIDTH*64*4
 int			openings[MAXOPENINGS]; // [crispy] 32-bit integer math
 int*			lastopening; // [crispy] 32-bit integer math
 
@@ -60,8 +60,8 @@ int*			lastopening; // [crispy] 32-bit integer math
 //  floorclip starts out SCREENHEIGHT
 //  ceilingclip starts out -1
 //
-int			floorclip[SCREENWIDTH]; // [crispy] 32-bit integer math
-int			ceilingclip[SCREENWIDTH]; // [crispy] 32-bit integer math
+int			floorclip[WIDESCREENWIDTH]; // [crispy] 32-bit integer math
+int			ceilingclip[WIDESCREENWIDTH]; // [crispy] 32-bit integer math
 
 //
 // spanstart holds the start of a plane span
@@ -77,7 +77,7 @@ lighttable_t**		planezlight;
 fixed_t			planeheight;
 
 fixed_t			yslope[SCREENHEIGHT];
-fixed_t			distscale[SCREENWIDTH];
+fixed_t			distscale[WIDESCREENWIDTH];
 fixed_t			basexscale;
 fixed_t			baseyscale;
 
@@ -266,7 +266,10 @@ R_FindPlane
     check->height = height;
     check->picnum = picnum;
     check->lightlevel = lightlevel;
-    check->minx = SCREENWIDTH;
+    if (widescreen)
+        check->minx = WIDESCREENWIDTH;
+	else
+        check->minx = SCREENWIDTH;
     check->maxx = -1;
     
     memset (check->top,0xff,sizeof(check->top));
