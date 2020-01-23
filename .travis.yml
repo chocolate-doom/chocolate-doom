@@ -3,7 +3,7 @@ language: c
 compiler: gcc
 
 sudo: required
-dist: bionic
+dist: xenial
 
 env:
     - ANALYZE=false

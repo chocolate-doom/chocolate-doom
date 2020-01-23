@@ -2134,7 +2134,7 @@ void G_RecordDemo (char *name)
     if (!strstr(name, ".lmp") && !strstr(name, ".LMP"))
         M_snprintf(demoname, demoname_size, "%s.lmp", name);
     else
-        M_snprintf(demoname, demoname_size, name);
+        M_snprintf(demoname, demoname_size, "%s", name);
     maxsize = 0x20000;
 
     //!

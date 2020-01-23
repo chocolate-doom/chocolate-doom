@@ -1769,10 +1769,11 @@ boolean M_Responder (event_t* ev)
 		usegamma = 0;
 	    players[consoleplayer].message = DEH_String(gammamsg[usegamma]);
 
-        if (lcd_gamma_fix)
-            I_SetPalette (W_CacheLumpName (DEH_String("PALFIX"),PU_CACHE));
-        else
-            I_SetPalette (W_CacheLumpName (DEH_String("PLAYPAL"),PU_CACHE));
+	    if (lcd_gamma_fix)
+	        I_SetPalette (W_CacheLumpName (DEH_String("PALFIX"),PU_CACHE));
+	    else
+	        I_SetPalette (W_CacheLumpName (DEH_String("PLAYPAL"),PU_CACHE));
+
 	    return true;
 	}
     }
