@@ -34,8 +34,8 @@
 // - 1600x900
 //
 
-#define WIDESCREENWIDTH 420
-#define WIDEWIDTH_DELTA 52
+#define WIDESCREENWIDTH 400
+#define WIDEWIDTH_DELTA 50
 
 // Screen height used when aspect_ratio_correct=true.
 
