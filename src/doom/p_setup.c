@@ -662,11 +662,9 @@ static void P_LoadNodes_ZDBSP (int lump, boolean compressed)
 
     for (i = 0; i < newVerts; i++)
     {
-	newvertarray[i + orgVerts].x =
 	newvertarray[i + orgVerts].x = *((unsigned int*)data);
 	data += sizeof(newvertarray[0].x);
 
-	newvertarray[i + orgVerts].y =
 	newvertarray[i + orgVerts].y = *((unsigned int*)data);
 	data += sizeof(newvertarray[0].y);
     }

@@ -155,7 +155,7 @@ void V_DrawPatch(int x, int y, patch_t *patch)
     pixel_t *desttop;
     pixel_t *dest;
     byte *source;
-    int w, f, tmpy;
+    int w, tmpy;
 
     y -= SHORT(patch->topoffset);
     x -= SHORT(patch->leftoffset);
@@ -243,7 +243,7 @@ void V_DrawPatchFlipped(int x, int y, patch_t *patch)
     pixel_t *desttop;
     pixel_t *dest;
     byte *source; 
-    int w, f, tmpy;
+    int w, tmpy;
  
     y -= SHORT(patch->topoffset); 
     x -= SHORT(patch->leftoffset); 
