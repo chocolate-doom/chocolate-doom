@@ -1064,17 +1064,13 @@ void I_GraphicsCheckCommandLine(void)
         }
     }
 
-    //!
-    // @category video 
-    //
-    // Wide picture on widescreen resolutions.
-    //
 /*
     if (M_CheckParm("-widescreen"))
     {
         widescreen = true;
     }
 */
+
     //!
     // @category video
     //
