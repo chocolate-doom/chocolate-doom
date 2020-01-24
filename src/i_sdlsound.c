@@ -67,6 +67,7 @@ static boolean use_sfx_prefix;
 static boolean (*ExpandSoundData)(sfxinfo_t *sfxinfo,
                                   byte *data,
                                   int samplerate,
+                                  int bits,
                                   int length) = NULL;
 
 // Doubly-linked list of allocated sounds.
@@ -402,6 +403,7 @@ static int SRC_ConversionMode(void)
 static boolean ExpandSoundData_SRC(sfxinfo_t *sfxinfo,
                                    byte *data,
                                    int samplerate,
+                                   int bits,
                                    int length)
 {
     SRC_DATA src_data;
@@ -412,26 +414,38 @@ static boolean ExpandSoundData_SRC(sfxinfo_t *sfxinfo,
     int16_t *expanded;
     allocated_sound_t *snd;
     Mix_Chunk *chunk;
+    uint32_t samplecount = length / (bits / 8);
 
-    src_data.input_frames = length;
-    data_in = malloc(length * sizeof(float));
+    src_data.input_frames = samplecount;
+    data_in = malloc(samplecount * sizeof(float));
     src_data.data_in = data_in;
     src_data.src_ratio = (double)mixer_freq / samplerate;
 
     // We include some extra space here in case of rounding-up.
-    src_data.output_frames = src_data.src_ratio * length + (mixer_freq / 4);
+    src_data.output_frames = src_data.src_ratio * samplecount + (mixer_freq / 4);
     src_data.data_out = malloc(src_data.output_frames * sizeof(float));
 
     assert(src_data.data_in != NULL && src_data.data_out != NULL);
 
     // Convert input data to floats
-
-    for (i=0; i<length; ++i)
+    // [crispy] Handle 16 bit audio data
+    if (bits == 16)
     {
-        // Unclear whether 128 should be interpreted as "zero" or whether a
-        // symmetrical range should be assumed.  The following assumes a
-        // symmetrical range.
-        data_in[i] = data[i] / 127.5 - 1;
+        for (i=0; i<samplecount; ++i)
+        {
+            // Code below uses 32767, so use it here too and trust it to clip.
+            data_in[i] = (int16_t)(data[i*2] | (data[i*2+1] << 8)) / 32767.0;
+        }
+    }
+    else
+    {
+        for (i=0; i<length; ++i)
+        {
+            // Unclear whether 128 should be interpreted as "zero" or whether a
+            // symmetrical range should be assumed.  The following assumes a
+            // symmetrical range.
+            data_in[i] = data[i] / 127.5 - 1;
+        }
     }
 
     // Do the sound conversion
@@ -600,16 +614,18 @@ static void WriteWAV(char *filename, byte *data,
 static boolean ExpandSoundData_SDL(sfxinfo_t *sfxinfo,
                                    byte *data,
                                    int samplerate,
+                                   int bits,
                                    int length)
 {
     SDL_AudioCVT convertor;
     allocated_sound_t *snd;
     Mix_Chunk *chunk;
     uint32_t expanded_length;
+    uint32_t samplecount = length / (bits / 8);
 
     // Calculate the length of the expanded version of the sample.
 
-    expanded_length = (uint32_t) ((((uint64_t) length) * mixer_freq) / samplerate);
+    expanded_length = (uint32_t) ((((uint64_t) samplecount) * mixer_freq) / samplerate);
 
     // Double up twice: 8 -> 16 bit and mono -> stereo
 
@@ -631,7 +647,7 @@ static boolean ExpandSoundData_SDL(sfxinfo_t *sfxinfo,
     if (samplerate <= mixer_freq
      && ConvertibleRatio(samplerate, mixer_freq)
      && SDL_BuildAudioCVT(&convertor,
-                          AUDIO_U8, 1, samplerate,
+                          bits == 16 ? AUDIO_S16 : AUDIO_U8, 1, samplerate,
                           mixer_format, mixer_channels, mixer_freq))
     {
         convertor.len = length;
@@ -659,8 +675,8 @@ static boolean ExpandSoundData_SDL(sfxinfo_t *sfxinfo,
 
         // number of samples in the converted sound
 
-        expanded_length = ((uint64_t) length * mixer_freq) / samplerate;
-        expand_ratio = (length << 8) / expanded_length;
+        expanded_length = ((uint64_t) samplecount * mixer_freq) / samplerate;
+        expand_ratio = (samplecount << 8) / expanded_length;
 
         for (i=0; i<expanded_length; ++i)
         {
@@ -669,10 +685,18 @@ static boolean ExpandSoundData_SDL(sfxinfo_t *sfxinfo,
 
             src = (i * expand_ratio) >> 8;
 
-            sample = data[src] | (data[src] << 8);
-            sample -= 32768;
+            // [crispy] Handle 16 bit audio data
+            if (bits == 16)
+            {
+                sample = data[src * 2] | (data[src * 2 + 1] << 8);
+            }
+            else
+            {
+                sample = data[src] | (data[src] << 8);
+                sample -= 32768;
+            }
 
-            // expand 8->16 bits, mono->stereo
+            // expand mono->stereo
 
             expanded[i * 2] = expanded[i * 2 + 1] = sample;
         }
@@ -719,6 +743,7 @@ static boolean CacheSFX(sfxinfo_t *sfxinfo)
     int lumpnum;
     unsigned int lumplen;
     int samplerate;
+    unsigned int bits;
     unsigned int length;
     byte *data;
 
@@ -728,44 +753,84 @@ static boolean CacheSFX(sfxinfo_t *sfxinfo)
     data = W_CacheLumpNum(lumpnum, PU_STATIC);
     lumplen = W_LumpLength(lumpnum);
 
-    // Check the header, and ensure this is a valid sound
+    // [crispy] Check if this is a valid RIFF wav file
+    if (lumplen > 44 && memcmp(data, "RIFF", 4) == 0 && memcmp(data + 8, "WAVEfmt ", 8) == 0)
+    {
+        // Valid RIFF wav file
+        int check;
 
-    if (lumplen < 8
-     || data[0] != 0x03 || data[1] != 0x00)
+        // Make sure this is a PCM format file
+        // "fmt " chunk size must == 16
+        check = data[16] | (data[17] << 8) | (data[18] << 16) | (data[19] << 24);
+        if (check != 16)
+            return false;
+
+        // Format must == 1 (PCM)
+        check = data[20] | (data[21] << 8);
+        if (check != 1)
+            return false;
+
+        // FIXME: can't handle stereo wavs
+        // Number of channels must == 1
+        check = data[22] | (data[23] << 8);
+        if (check != 1)
+            return false;
+
+        samplerate = data[24] | (data[25] << 8) | (data[26] << 16) | (data[27] << 24);
+        length = data[40] | (data[41] << 8) | (data[42] << 16) | (data[43] << 24);
+
+        if (length > lumplen - 44)
+            length = lumplen - 44;
+
+        bits = data[34] | (data[35] << 8);
+
+        // Reject non 8 or 16 bit
+        if (bits != 16 && bits != 8)
+            return false;
+
+        data += 44 - 8;
+    }
+    // Check the header, and ensure this is a valid sound
+    else if (lumplen >= 8 && data[0] == 0x03 && data[1] == 00)
+    {
+        // Valid DOOM sound
+
+        // 16 bit sample rate field, 32 bit length field
+        samplerate = (data[3] << 8) | data[2];
+        length = (data[7] << 24) | (data[6] << 16) | (data[5] << 8) | data[4];
+
+        // If the header specifies that the length of the sound is greater than
+        // the length of the lump itself, this is an invalid sound lump
+
+        // We also discard sound lumps that are less than 49 samples long,
+        // as this is how DMX behaves - although the actual cut-off length
+        // seems to vary slightly depending on the sample rate.  This needs
+        // further investigation to better understand the correct
+        // behavior.
+
+        if (length > lumplen - 8 || length <= 48)
+        {
+            return false;
+        }
+
+        // All Doom sounds are 8-bit
+        bits = 8;
+
+        // The DMX sound library seems to skip the first 16 and last 16
+        // bytes of the lump - reason unknown.
+
+        data += 16;
+        length -= 32;
+    }
+    else
     {
         // Invalid sound
-
         return false;
     }
-
-    // 16 bit sample rate field, 32 bit length field
-
-    samplerate = (data[3] << 8) | data[2];
-    length = (data[7] << 24) | (data[6] << 16) | (data[5] << 8) | data[4];
-
-    // If the header specifies that the length of the sound is greater than
-    // the length of the lump itself, this is an invalid sound lump
-
-    // We also discard sound lumps that are less than 49 samples long,
-    // as this is how DMX behaves - although the actual cut-off length
-    // seems to vary slightly depending on the sample rate.  This needs
-    // further investigation to better understand the correct
-    // behavior.
-
-    if (length > lumplen - 8 || length <= 48)
-    {
-        return false;
-    }
-
-    // The DMX sound library seems to skip the first 16 and last 16
-    // bytes of the lump - reason unknown.
-
-    data += 16;
-    length -= 32;
 
     // Sample rate conversion
 
-    if (!ExpandSoundData(sfxinfo, data + 8, samplerate, length))
+    if (!ExpandSoundData(sfxinfo, data + 8, samplerate, bits, length))
     {
         return false;
     }
