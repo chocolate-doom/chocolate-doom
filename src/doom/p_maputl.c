@@ -555,7 +555,7 @@ static void check_intercept(void)
 		intercept_p = intercepts + offset;
 
 		if (num_intercepts_old)
-			fprintf(stderr, "PIT_Add*Intercepts: Hit INTERCEPTS limit at %d, raised to %d.\n", num_intercepts_old, num_intercepts);
+			fprintf(stderr, "PIT_Add*Intercepts: Hit INTERCEPTS limit at %d, raised to %d.\n", num_intercepts_old, (int)num_intercepts);
 	}
 }
 
@@ -818,7 +818,7 @@ typedef struct
 // Almost all of the values to overwrite are 32-bit integers, except for
 // playerstarts, which is effectively an array of 16-bit integers and
 // must be treated differently.
-
+#if 0  // UNUSED
 static intercepts_overrun_t intercepts_overrun[] =
 {
     {4,   NULL,                          false},
@@ -917,7 +917,7 @@ static void InterceptsOverrun(int num_intercepts, intercept_t *intercept)
     InterceptsMemoryOverrun(location + 4, intercept->isaline);
     InterceptsMemoryOverrun(location + 8, (intptr_t) intercept->d.thing);
 }
-
+#endif
 
 //
 // P_PathTraverse

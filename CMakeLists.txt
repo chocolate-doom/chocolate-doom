@@ -25,7 +25,7 @@ if(MSVC)
                     "/D_CRT_NONSTDC_NO_DEPRECATE")
 else()
     add_compile_options("-Wall" "-Wdeclaration-after-statement"
-                        "-Wredundant-decls")
+                        "-Wredundant-decls" "-Wno-error")
 endif()
 
 find_package(SDL2 2.0.1)
