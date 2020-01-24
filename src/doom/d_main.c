@@ -1947,6 +1947,42 @@ void D_DoomMain (void)
 	}
     }
 
+    //!
+    // @arg <file>
+    // @category mod
+    //
+    // [crispy] experimental feature: dump lump data into a new LMP file <file>
+    //
+
+    p = M_CheckParm("-lumpdump");
+
+    if (p)
+    {
+	p = M_CheckParmWithArgs("-lumpdump", 1);
+
+	if (p)
+	{
+	    int dumped;
+
+	    M_StringCopy(file, myargv[p+1], sizeof(file));
+
+	    dumped = W_LumpDump(file);
+
+	    if (dumped < 0)
+	    {
+		I_Error("W_LumpDump: Failed to write lump '%s'.", file);
+	    }
+	    else
+	    {
+		I_Error("W_LumpDump: Dumped lump into file '%s.lmp'.", file);
+	    }
+	}
+	else
+	{
+	    I_Error("W_LumpDump: The '-lumpdump' parameter requires an argument.");
+	}
+    }
+
     // Debug:
 //    W_PrintDirectory();
 

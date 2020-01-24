@@ -642,3 +642,36 @@ boolean W_IsIWADLump(const lumpinfo_t *lump)
 {
 	return lump->wad_file == lumpinfo[0]->wad_file;
 }
+
+// [crispy] dump lump data into a new LMP file
+int W_LumpDump (const char *lumpname)
+{
+    FILE *fp;
+    char *filename, *lump_p;
+    int i;
+
+    i = W_CheckNumForName(lumpname);
+
+    if (i < 0 || !lumpinfo[i]->size)
+    {
+	return -1;
+    }
+
+    // [crispy] open file for writing
+    filename = M_StringJoin(lumpname, ".lmp", NULL);
+    fp = fopen(filename, "wb");
+    if (!fp)
+    {
+	I_Error("W_LumpDump: Failed writing to file '%s'!", filename);
+    }
+    free(filename);
+
+    lump_p = malloc(lumpinfo[i]->size);
+    W_ReadLump(i, lump_p);
+    fwrite(lump_p, 1, lumpinfo[i]->size, fp);
+    free(lump_p);
+
+    fclose(fp);
+
+    return i;
+}
