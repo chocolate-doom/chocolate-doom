@@ -153,6 +153,7 @@ void I_InitJoystick(void)
         return;
     }
 
+    SDL_SetHint("SDL_JOYSTICK_ALLOW_BACKGROUND_EVENTS", "1");
     if (SDL_Init(SDL_INIT_JOYSTICK) < 0)
     {
         return;
