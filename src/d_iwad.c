@@ -787,6 +787,7 @@ char *D_FindWADByName(const char *name)
         {
             return probe;
         }
+        free(probe);
 
         // Construct a string for the full path
 
