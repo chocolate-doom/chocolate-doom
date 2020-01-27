@@ -230,7 +230,11 @@ boolean D_Display (void)
 	if (!gametic)
 	    break;
 	if (automapactive)
+    {
+	    if (widescreen)
+	        V_DrawFilledBox(SCREENWIDTH, SCREENHEIGHT - SBARHEIGHT, WIDESCREENWIDTH - SCREENWIDTH, SBARHEIGHT, 0);
 	    AM_Drawer ();
+    }
 	if (wipe || (viewheight != SCREENHEIGHT && fullscreen))
 	    redrawsbar = true;
 	if (inhelpscreensstate && !inhelpscreens)
