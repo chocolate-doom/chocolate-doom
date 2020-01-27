@@ -259,6 +259,8 @@
 #define ST_MAPTITLEY		0
 #define ST_MAPHEIGHT		1
 
+extern int screenblocks;
+
 extern boolean insavemenu; // redraw status bar
 
 // graphics are drawn to a backing screen and blitted to the real screen
@@ -436,6 +438,7 @@ void ST_refreshBackground(void)
 
         V_RestoreBuffer();
 
+    if (screenblocks < 12 || automapactive) // [Crispy]
 	V_CopyRect(ST_X, 0, st_backing_screen, ST_WIDTH, ST_HEIGHT, ST_X, ST_Y);
     }
 
@@ -1099,6 +1102,8 @@ void ST_drawWidgets(boolean refresh)
     // used by w_frags widget
     st_fragson = deathmatch && st_statusbaron; 
 
+    if (screenblocks < 12 || automapactive)
+    {
     STlib_updateNum(&w_ready, refresh);
 
     for (i=0;i<4;i++)
@@ -1121,6 +1126,9 @@ void ST_drawWidgets(boolean refresh)
 	STlib_updateMultIcon(&w_keyboxes[i], refresh);
 
     STlib_updateNum(&w_frags, refresh);
+    }
+	else
+    V_DrawPatch(w_faces.x - 138, w_faces.y, faces[st_faceindex]);
 
 }
 

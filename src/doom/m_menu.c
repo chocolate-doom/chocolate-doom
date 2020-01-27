@@ -1010,7 +1010,7 @@ void M_DrawOptions(void)
 		 20, mouseSensitivity);
 
     M_DrawThermo(OptionsDef.x,OptionsDef.y+LINEHEIGHT*(scrnsize+1),
-		 9,screenSize);
+		 10,screenSize);
 }
 
 void M_Options(int choice)
@@ -1220,14 +1220,19 @@ void M_SizeDisplay(int choice)
 	}
 	break;
       case 1:
-	if (screenSize < 8)
+	if (screenSize < 9)
 	{
 	    screenblocks++;
 	    screenSize++;
 	}
 	break;
     }
-	
+
+    if (widescreen && screenblocks < 11)
+    {
+	    screenblocks = 11;
+	    screenSize = screenblocks -3;
+    }
 
     R_SetViewSize (screenblocks, detailLevel);
 }
