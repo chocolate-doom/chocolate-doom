@@ -7,7 +7,7 @@ dist: bionic
 
 env:
     - ANALYZE=false
-    - ANALYZE=true
+#   - ANALYZE=true
 
 addons:
     apt:
