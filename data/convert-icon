@@ -21,7 +21,7 @@ import os
 import re
 
 try:
-        from PIL import Image
+        import Image
 except ImportError:
         try:
                 from PIL import Image
