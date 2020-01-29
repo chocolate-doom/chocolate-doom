@@ -659,6 +659,7 @@ int W_LumpDump (const char *lumpname)
 
     // [crispy] open file for writing
     filename = M_StringJoin(lumpname, ".lmp", NULL);
+    M_ForceLowercase(filename);
     fp = fopen(filename, "wb");
     if (!fp)
     {
