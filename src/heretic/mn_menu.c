@@ -63,6 +63,7 @@ typedef enum
     MENU_FILES,
     MENU_LOAD,
     MENU_SAVE,
+    MENU_CRISPNESS,
     MENU_NONE
 } MenuType_t;
 
@@ -103,6 +104,10 @@ static boolean SCSaveGame(int option);
 static boolean SCMessages(int option);
 static boolean SCEndGame(int option);
 static boolean SCInfo(int option);
+static boolean CrispySmoothing(int option);
+static boolean CrispyAutomapStats(int option);
+static boolean CrispyLevelTime(int option);
+static boolean CrispyPlayerCoords(int option);
 static void DrawMainMenu(void);
 static void DrawEpisodeMenu(void);
 static void DrawSkillMenu(void);
@@ -114,6 +119,7 @@ static void MN_DrawInfo(void);
 static void DrawLoadMenu(void);
 static void DrawSaveMenu(void);
 static void DrawSlider(Menu_t * menu, int item, int width, int slot);
+static void DrawCrispnessMenu(void);
 void MN_LoadSlotText(void);
 
 // External Data
@@ -251,13 +257,14 @@ static MenuItem_t OptionsItems[] = {
     {ITT_EFUNC, "MESSAGES : ", SCMessages, 0, MENU_NONE},
     {ITT_LRFUNC, "MOUSE SENSITIVITY", SCMouseSensi, 0, MENU_NONE},
     {ITT_EMPTY, NULL, NULL, 0, MENU_NONE},
-    {ITT_SETMENU, "MORE...", NULL, 0, MENU_OPTIONS2}
+    {ITT_SETMENU, "MORE...", NULL, 0, MENU_OPTIONS2},
+    {ITT_SETMENU, "CRISPNESS...", NULL, 0, MENU_CRISPNESS}
 };
 
 static Menu_t OptionsMenu = {
     88, 30,
     DrawOptionsMenu,
-    5, OptionsItems,
+    5+1, OptionsItems, // [JN] Extra item: Crispness menu
     0,
     MENU_MAIN
 };
@@ -279,6 +286,23 @@ static Menu_t Options2Menu = {
     MENU_OPTIONS
 };
 
+static MenuItem_t CrispnessItems[] = {
+    {ITT_LRFUNC, "SMOOTH PIXEL SCALING:", CrispySmoothing, 0, MENU_NONE},
+    {ITT_EMPTY, NULL, NULL, 0, MENU_NONE},
+    {ITT_EMPTY, NULL, NULL, 0, MENU_NONE},
+    {ITT_LRFUNC, "SHOW LEVEL STATS:", CrispyAutomapStats, 0, MENU_NONE},
+    {ITT_LRFUNC, "SHOW LEVEL TIME:", CrispyLevelTime, 0, MENU_NONE},
+    {ITT_LRFUNC, "SHOW PLAYER COORDS:", CrispyPlayerCoords, 0, MENU_NONE}
+};
+
+static Menu_t CrispnessMenu = {
+    68, 40,
+    DrawCrispnessMenu,
+    6, CrispnessItems,
+    0,
+    MENU_OPTIONS
+};
+
 static Menu_t *Menus[] = {
     &MainMenu,
     &EpisodeMenu,
@@ -287,7 +311,8 @@ static Menu_t *Menus[] = {
     &Options2Menu,
     &FilesMenu,
     &LoadMenu,
-    &SaveMenu
+    &SaveMenu,
+    &CrispnessMenu
 };
 
 //---------------------------------------------------------------------------
@@ -523,15 +548,43 @@ void MN_Drawer(void)
         {
             if (item->type != ITT_EMPTY && item->text)
             {
+                if (CurrentMenu == &CrispnessMenu)
+                {
+                // [JN] Crispness menu: use small "A" font
+                MN_DrTextA(DEH_String(item->text), x, y);
+                }
+                else
+                {
                 MN_DrTextB(DEH_String(item->text), x, y);
+                }
             }
+            if (CurrentMenu == &CrispnessMenu)
+            {
+            // [JN] Crispness menu: use 10px vertical spacing for small font
+            y += ITEM_HEIGHT/2;
+            }
+            else
+            {
             y += ITEM_HEIGHT;
+            }
             item++;
         }
+        if (CurrentMenu == &CrispnessMenu)
+        {
+        // [JN] Crispness menu: use small blue gem instead of big red arrow.
+        // Blinks a bit faster and shifted right, closer to the text.
+        y = CurrentMenu->y + (CurrentItPos * (ITEM_HEIGHT/2)) + SELECTOR_YOFFSET;
+        selName = DEH_String(MenuTime & 8 ? "INVGEMR1" : "INVGEMR2");
+        V_DrawPatch(x + (SELECTOR_XOFFSET/2), y,
+                    W_CacheLumpName(selName, PU_CACHE));
+        }
+        else
+        {
         y = CurrentMenu->y + (CurrentItPos * ITEM_HEIGHT) + SELECTOR_YOFFSET;
         selName = DEH_String(MenuTime & 16 ? "M_SLCTR1" : "M_SLCTR2");
         V_DrawPatch(x + SELECTOR_XOFFSET, y,
                     W_CacheLumpName(selName, PU_CACHE));
+        }
     }
 }
 
@@ -1028,6 +1081,36 @@ static boolean SCInfo(int option)
     {
         paused = true;
     }
+    return true;
+}
+
+//---------------------------------------------------------------------------
+//
+// Crispness menu: toggable features
+//
+//---------------------------------------------------------------------------
+
+static boolean CrispySmoothing(int option)
+{
+    crispy->smoothscaling = !crispy->smoothscaling;
+    return true;
+}
+
+static boolean CrispyAutomapStats(int option)
+{
+    crispy->automapstats = (crispy->automapstats + 1) % NUM_WIDGETS;
+    return true;
+}
+
+static boolean CrispyLevelTime(int option)
+{
+    crispy->leveltime = (crispy->leveltime + 1) % NUM_WIDGETS;
+    return true;
+}
+
+static boolean CrispyPlayerCoords(int option)
+{
+    crispy->playercoords = (crispy->playercoords + 1) % (NUM_WIDGETS - 1); // [crispy] disable "always" setting
     return true;
 }
 
@@ -1692,4 +1775,39 @@ static void DrawSlider(Menu_t * menu, int item, int width, int slot)
     V_DrawPatch(x2, y, W_CacheLumpName(DEH_String("M_SLDRT"), PU_CACHE));
     V_DrawPatch(x + 4 + slot * 8, y + 7,
                 W_CacheLumpName(DEH_String("M_SLDKB"), PU_CACHE));
+}
+
+//---------------------------------------------------------------------------
+//
+// PROC DrawCrispnessMenu
+//
+//---------------------------------------------------------------------------
+
+static void DrawCrispnessMenu(void)
+{
+    static const char *title;
+
+    // Title
+    title = DEH_String("CRISPNESS");
+    MN_DrTextB(title, 160 - MN_TextBWidth(title) / 2, 6);
+
+    // Subheaders
+    MN_DrTextA("RENDERING", 63, 30);
+    MN_DrTextA("NAVIGATIONAL", 63, 60);
+
+    // Smooth pixel scaling
+    MN_DrTextA(crispy->smoothscaling ? "ON" : "OFF", 216, 40);
+
+    // Show level stats
+    MN_DrTextA(crispy->automapstats == WIDGETS_OFF ? "NEVER" :
+               crispy->automapstats == WIDGETS_AUTOMAP ? "IN AUTOMAP" :
+                                                         "ALWAYS", 190, 70);
+
+    // Show level time
+    MN_DrTextA(crispy->leveltime == WIDGETS_OFF ? "NEVER" :
+               crispy->leveltime == WIDGETS_AUTOMAP ? "IN AUTOMAP" :
+                                                       "ALWAYS", 179, 80);
+
+    // Show player coords
+    MN_DrTextA(crispy->playercoords == WIDGETS_OFF ? "NEVER" : "IN AUTOMAP", 211, 90);
 }
