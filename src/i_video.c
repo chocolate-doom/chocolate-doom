@@ -766,7 +766,7 @@ void I_FinishUpdate (void)
 #endif
 
     // [crispy] variable rendering framerate
-    if (isa && !singletics)
+    if (isa && !singletics && screenblocks < 12)
     {
         static int slowtics_old;
         int slowtics;
