@@ -267,6 +267,7 @@ void R_DrawColumnLow (void)
 //
 #define FUZZTABLE		50 
 #define FUZZOFF	(SCREENWIDTH)
+#define WFUZZOFF	(WIDESCREENWIDTH)
 
 
 int	fuzzoffset[FUZZTABLE] =
@@ -278,6 +279,17 @@ int	fuzzoffset[FUZZTABLE] =
     FUZZOFF,-FUZZOFF,FUZZOFF,FUZZOFF,-FUZZOFF,-FUZZOFF,FUZZOFF,
     FUZZOFF,-FUZZOFF,-FUZZOFF,-FUZZOFF,-FUZZOFF,FUZZOFF,FUZZOFF,
     FUZZOFF,FUZZOFF,-FUZZOFF,FUZZOFF,FUZZOFF,-FUZZOFF,FUZZOFF 
+}; 
+
+int	wfuzzoffset[FUZZTABLE] =
+{
+    WFUZZOFF,-WFUZZOFF,WFUZZOFF,-WFUZZOFF,WFUZZOFF,WFUZZOFF,-WFUZZOFF,
+    WFUZZOFF,WFUZZOFF,-WFUZZOFF,WFUZZOFF,WFUZZOFF,WFUZZOFF,-WFUZZOFF,
+    WFUZZOFF,WFUZZOFF,WFUZZOFF,-WFUZZOFF,-WFUZZOFF,-WFUZZOFF,-WFUZZOFF,
+    WFUZZOFF,-WFUZZOFF,-WFUZZOFF,WFUZZOFF,WFUZZOFF,WFUZZOFF,WFUZZOFF,-WFUZZOFF,
+    WFUZZOFF,-WFUZZOFF,WFUZZOFF,WFUZZOFF,-WFUZZOFF,-WFUZZOFF,WFUZZOFF,
+    WFUZZOFF,-WFUZZOFF,-WFUZZOFF,-WFUZZOFF,-WFUZZOFF,WFUZZOFF,WFUZZOFF,
+    WFUZZOFF,WFUZZOFF,-WFUZZOFF,WFUZZOFF,WFUZZOFF,-WFUZZOFF,WFUZZOFF 
 }; 
 
 int	fuzzpos = 0; 
@@ -298,12 +310,18 @@ void R_DrawFuzzColumn (void)
     fixed_t		frac;
     fixed_t		fracstep;	 
 
+    int* afuzzoffset; // actual offset
     int screenwidth;
 
     if (widescreen)
         screenwidth = WIDESCREENWIDTH;
     else
         screenwidth = SCREENWIDTH;
+
+    if (widescreen)
+        afuzzoffset = wfuzzoffset;
+    else
+        afuzzoffset = fuzzoffset;
 
     // Adjust borders. Low... 
     if (!dc_yl) 
@@ -343,7 +361,7 @@ void R_DrawFuzzColumn (void)
 	//  a pixel that is either one column
 	//  left or right of the current one.
 	// Add index from colormap to index.
-	*dest = colormaps[6*256+dest[fuzzoffset[fuzzpos]]]; 
+	*dest = colormaps[6*256+dest[afuzzoffset[fuzzpos]]]; 
 
 	// Clamp table lookup index.
 	if (++fuzzpos == FUZZTABLE) 
