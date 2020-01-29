@@ -640,7 +640,14 @@ void R_InitLightTables (void)
     int		level;
     int		startmap; 	
     int		scale;
-    
+
+    int screenwidth;
+
+    if (widescreen)
+        screenwidth = WIDESCREENWIDTH;
+    else
+        screenwidth = SCREENWIDTH;
+
     // Calculate the light levels to use
     //  for each level / distance combination.
     for (i=0 ; i< LIGHTLEVELS ; i++)
@@ -648,7 +655,7 @@ void R_InitLightTables (void)
 	startmap = ((LIGHTLEVELS-1-i)*2)*NUMCOLORMAPS/LIGHTLEVELS;
 	for (j=0 ; j<MAXLIGHTZ ; j++)
 	{
-	    scale = FixedDiv ((SCREENWIDTH/2*FRACUNIT), (j+1)<<LIGHTZSHIFT);
+	    scale = FixedDiv ((screenwidth/2*FRACUNIT), (j+1)<<LIGHTZSHIFT);
 	    scale >>= LIGHTSCALESHIFT;
 	    level = startmap - scale/DISTMAP;
 	    
@@ -699,27 +706,26 @@ void R_ExecuteSetViewSize (void)
     int		level;
     int		startmap; 	
 
-    setsizeneeded = false;
+    int screenwidth;
 
     if (widescreen)
-    {
-        // [JN] Wide screen: use only SCREENWIDTH and SCREENHEIGHT sizes,
-        // there is no bordered view and effective screen size is always same.
-        scaledviewwidth = WIDESCREENWIDTH;
-        viewheight = SCREENHEIGHT;
-    }
+        screenwidth = WIDESCREENWIDTH;
     else
+        screenwidth = SCREENWIDTH;
+
+    setsizeneeded = false;
+
+    // [JN] Wide screen: use only SCREENWIDTH and SCREENHEIGHT sizes,
+    // there is no bordered view and effective screen size is always same.
+    if (setblocks >= 11)
     {
-        if (setblocks >= 11)
-        {
-	    scaledviewwidth = SCREENWIDTH;
-	    viewheight = SCREENHEIGHT;
-        }
-        else
-        {
-	    scaledviewwidth = setblocks*32;
-	    viewheight = (setblocks*168/10)&~7;
-        }
+	scaledviewwidth = screenwidth;
+	viewheight = SCREENHEIGHT;
+    }
+    else if (!widescreen)
+    {
+	scaledviewwidth = setblocks*32;
+	viewheight = (setblocks*168/10)&~7;
     }
     
     detailshift = setdetail;
@@ -751,8 +757,8 @@ void R_ExecuteSetViewSize (void)
     R_InitTextureMapping ();
     
     // psprite scales
-    pspritescale = FRACUNIT*viewwidth/SCREENWIDTH;
-    pspriteiscale = FRACUNIT*SCREENWIDTH/viewwidth;
+    pspritescale = FRACUNIT*viewwidth/screenwidth;
+    pspriteiscale = FRACUNIT*screenwidth/viewwidth;
     
     // thing clipping
     for (i=0 ; i<viewwidth ; i++)
@@ -779,7 +785,7 @@ void R_ExecuteSetViewSize (void)
 	startmap = ((LIGHTLEVELS-1-i)*2)*NUMCOLORMAPS/LIGHTLEVELS;
 	for (j=0 ; j<MAXLIGHTSCALE ; j++)
 	{
-	    level = startmap - j*SCREENWIDTH/(viewwidth<<detailshift)/DISTMAP;
+	    level = startmap - j*screenwidth/(viewwidth<<detailshift)/DISTMAP;
 	    
 	    if (level < 0)
 		level = 0;
