@@ -569,6 +569,7 @@ void R_InitTextureMapping (void)
     int			x;
     int			t;
     fixed_t		focallength;
+    fixed_t		focalwidth;
     
     // Use tangent table to generate viewangletox:
     //  viewangletox will give the next greatest x
@@ -576,7 +577,10 @@ void R_InitTextureMapping (void)
     //
     // Calc focallength
     //  so FIELDOFVIEW angles covers SCREENWIDTH.
-    focallength = FixedDiv (centerxfrac,
+    // [crispy] in widescreen mode, make sure the same number of horizontal
+    // pixels show the same game scene as in regular rendering mode
+    focalwidth = widescreen ? ((SCREENWIDTH>>detailshift)/2)<<FRACBITS : centerxfrac;
+    focallength = FixedDiv (focalwidth,
 			    finetangent[FINEANGLES/4+FIELDOFVIEW/2] );
 	
     for (i=0 ; i<FINEANGLES/2 ; i++)
