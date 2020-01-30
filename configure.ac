@@ -34,6 +34,7 @@ fi
 PKG_CHECK_MODULES(SDL, [sdl2 >= 2.0.1])
 PKG_CHECK_MODULES(SDLMIXER, [SDL2_mixer >= 2.0.0])
 PKG_CHECK_MODULES(SDLNET, [SDL2_net >= 2.0.0])
+PKG_CHECK_MODULES(SDLIMAGE, [SDL2_image >= 2.0.0])
 
 # Check for libsamplerate.
 AC_ARG_WITH([libsamplerate],
@@ -53,28 +54,10 @@ AS_IF([test "x$with_libsamplerate" != xno], [
     ])
 ])
 
-# Check for libpng.
-AC_ARG_WITH([libpng],
-AS_HELP_STRING([--without-libpng],
-    [Build without libpng @<:@default=check@:>@]),
-[],
-[
-    [with_libpng=check]
-])
-AS_IF([test "x$with_libpng" != xno], [
-    PKG_CHECK_MODULES(PNG, libpng >= 1.2.50, [
-        AC_DEFINE([HAVE_LIBPNG], [1], [libpng installed])
-    ], [
-        AS_IF([test "x$with_libpng" != xcheck], [AC_MSG_FAILURE(
-            [--with-libpng was given, but test for libpng failed])
-        ])
-    ])
-])
-
 # TODO: We currently link everything against libraries that don't need it.
 # Use the specific library CFLAGS/LIBS variables instead of setting them here.
-CFLAGS="$CFLAGS $SDL_CFLAGS ${SAMPLERATE_CFLAGS:-} ${PNG_CFLAGS:-}"
-LDFLAGS="$LDFLAGS $SDL_LIBS ${SAMPLERATE_LIBS:-} ${PNG_LIBS:-}"
+CFLAGS="$CFLAGS $SDL_CFLAGS ${SAMPLERATE_CFLAGS:-}"
+LDFLAGS="$LDFLAGS $SDL_LIBS ${SAMPLERATE_LIBS:-}"
 AC_CHECK_LIB(m, log)
 
 AC_CHECK_HEADERS([dirent.h linux/kd.h dev/isa/spkrio.h dev/speaker/speaker.h])

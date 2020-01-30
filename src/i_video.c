@@ -19,6 +19,7 @@
 
 #include <stdlib.h>
 #include "SDL.h"
+#include "SDL_image.h"
 #include "SDL_opengl.h"
 
 #ifdef _WIN32
@@ -1545,4 +1546,28 @@ void I_BindVideoVariables(void)
     M_BindStringVariable("window_position",        &window_position);
     M_BindIntVariable("usegamma",                  &usegamma);
     M_BindIntVariable("png_screenshots",           &png_screenshots);
+}
+
+void I_SavePNGScreenshot (char *filename)
+{
+    if (aspect_ratio_correct)
+    {
+        const int width = 1600, height = 1200;
+        SDL_Surface *shotbuffer;
+
+        shotbuffer = SDL_CreateRGBSurface(0, width, height, 32,
+                                          0x00ff0000,
+                                          0x0000ff00,
+                                          0x000000ff,
+                                          0xff000000);
+
+        SDL_BlitScaled(rgbabuffer, NULL, shotbuffer, NULL);
+        IMG_SavePNG(shotbuffer, filename);
+
+        SDL_FreeSurface(shotbuffer);
+    }
+    else
+    {
+        IMG_SavePNG(rgbabuffer, filename);
+    }
 }
