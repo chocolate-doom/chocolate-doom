@@ -1550,10 +1550,13 @@ void I_BindVideoVariables(void)
 
 void I_SavePNGScreenshot (char *filename)
 {
-    if (aspect_ratio_correct)
+    if (aspect_ratio_correct == 1)
     {
-        const int width = 1600, height = 1200;
+        int width = actualwidth*2, height = actualheight*2;
         SDL_Surface *shotbuffer;
+
+        if (!fullscreen)
+            SDL_GetWindowSize(screen, &width, &height);
 
         shotbuffer = SDL_CreateRGBSurface(0, width, height, 32,
                                           0x00ff0000,
@@ -1561,13 +1564,13 @@ void I_SavePNGScreenshot (char *filename)
                                           0x000000ff,
                                           0xff000000);
 
-        SDL_BlitScaled(rgbabuffer, NULL, shotbuffer, NULL);
+        SDL_BlitScaled(argbbuffer, NULL, shotbuffer, NULL);
         IMG_SavePNG(shotbuffer, filename);
 
         SDL_FreeSurface(shotbuffer);
     }
     else
     {
-        IMG_SavePNG(rgbabuffer, filename);
+        IMG_SavePNG(argbbuffer, filename);
     }
 }

@@ -803,13 +803,11 @@ void V_ScreenShot(const char *format)
 
     if (i == 100)
     {
-#ifdef HAVE_LIBPNG
         if (png_screenshots)
         {
             I_Error ("V_ScreenShot: Couldn't create a PNG");
         }
         else
-#endif
         {
             I_Error ("V_ScreenShot: Couldn't create a PCX");
         }

@@ -5,7 +5,6 @@
 #cmakedefine PROGRAM_PREFIX "@PROGRAM_PREFIX@"
 
 #cmakedefine HAVE_LIBSAMPLERATE
-#cmakedefine HAVE_LIBPNG
 #cmakedefine HAVE_LIBZ
 #cmakedefine HAVE_DIRENT_H
 #cmakedefine01 HAVE_DECL_STRCASECMP
