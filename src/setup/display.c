@@ -84,6 +84,9 @@ int png_screenshots = 0;
 // [JN] Widescreen
 int widescreen = 0;
 
+// [Crispy] Enable the intermediate buffer
+int smoothscaling = 1;
+
 // [JN] Game palette optimization
 int lcd_gamma_fix = 0;
 
@@ -222,6 +225,13 @@ static void AdvancedDisplayConfig(TXT_UNCAST_ARG(widget),
                       TXT_NewCheckBox("Widescreen", &widescreen));
     }
 
+    // [Crispy] Enable the intermediate buffer
+    if (gamemission == doom)
+    {
+        TXT_AddWidget(window,
+                      TXT_NewCheckBox("Smooth Scaling", &smoothscaling));
+    }
+
     // [JN] Palette optimization
     if (gamemission == doom)
     {
@@ -297,6 +307,12 @@ void BindDisplayVariables(void)
 	if (gamemission == doom)
     {
         M_BindIntVariable("widescreen",         &widescreen);
+    }
+
+	// [Crispy] Enable the intermediate buffer
+	if (gamemission == doom)
+    {
+        M_BindIntVariable("smoothscaling",         &smoothscaling);
     }
 
 	// [JN] Palette optimization

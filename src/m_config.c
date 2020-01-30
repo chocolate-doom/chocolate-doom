@@ -1756,6 +1756,14 @@ static default_t extra_defaults_list[] =
 
     //!
     // @game doom
+    //
+    // Smooth Scaling.
+    //
+
+    CONFIG_VARIABLE_INT(smoothscaling),
+
+    //!
+    // @game doom
     // Game palette optimization
     //
 

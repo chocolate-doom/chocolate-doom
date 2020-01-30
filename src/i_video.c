@@ -53,6 +53,7 @@ extern int screenblocks;
 
 int widescreen = 0; // [JN] Wide picture on widescreen resolutions
 int lcd_gamma_fix = 0; // [JN] Palette optimization Doom
+int smoothscaling = 1; // [Crispy] Enable the intermediate buffer
 
 boolean isa;
 
@@ -830,6 +831,8 @@ void I_FinishUpdate (void)
 
     SDL_RenderClear(renderer);
 
+    if (smoothscaling)
+    {
     // Render this intermediate texture into the upscaled texture
     // using "nearest" integer scaling.
 
@@ -840,6 +843,12 @@ void I_FinishUpdate (void)
 
     SDL_SetRenderTarget(renderer, NULL);
     SDL_RenderCopy(renderer, texture_upscaled, NULL, NULL);
+    }
+    else
+    {
+	SDL_SetRenderTarget(renderer, NULL);
+	SDL_RenderCopy(renderer, texture, NULL, NULL);
+    }
 
     // Draw!
 
@@ -1530,6 +1539,7 @@ void I_BindVideoVariables(void)
     M_BindIntVariable("window_width",              &window_width);
     M_BindIntVariable("window_height",             &window_height);
     M_BindIntVariable("widescreen",                &widescreen);
+    M_BindIntVariable("smoothscaling",             &smoothscaling);
     M_BindIntVariable("grabmouse",                 &grabmouse);
     M_BindStringVariable("video_driver",           &video_driver);
     M_BindStringVariable("window_position",        &window_position);
