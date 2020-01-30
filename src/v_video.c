@@ -788,7 +788,7 @@ static void warning_fn(png_structp p, png_const_charp s)
 }
 
 void WritePNGfile(char *filename, pixel_t *data,
-                  int width, int height,
+                  int inwidth, int inheight,
                   byte *palette)
 {
     png_structp ppng;
@@ -796,22 +796,19 @@ void WritePNGfile(char *filename, pixel_t *data,
     png_colorp pcolor;
     FILE *handle;
     int i, j;
-    int w_factor, h_factor;
+    int width, height;
     byte *rowbuf;
 
     if (aspect_ratio_correct == 1)
     {
         // scale up to accommodate aspect ratio correction
-        w_factor = 5;
-        h_factor = 6;
-
-        width *= w_factor;
-        height *= h_factor;
+        width = inwidth * 5;
+        height = inheight * 6;
     }
     else
     {
-        w_factor = 1;
-        h_factor = 1;
+        width = inwidth;
+        height = inheight;
     }
 
     handle = fopen(filename, "wb");
@@ -866,17 +863,32 @@ void WritePNGfile(char *filename, pixel_t *data,
 
     if (rowbuf)
     {
-        for (i = 0; i < SCREENHEIGHT; i++)
+        if (aspect_ratio_correct)
         {
-            // expand the row 5x
-            for (j = 0; j < SCREENWIDTH; j++)
+            for (i = 0; i < SCREENHEIGHT; i++)
             {
-                memset(rowbuf + j * w_factor, *(data + i*SCREENWIDTH + j), w_factor);
-            }
+                // expand the row 5x
+                for (j = 0; j < SCREENWIDTH; j++)
+                {
+                    memset(rowbuf + j * 5, *(data + i*SCREENWIDTH + j), 5);
+                }
 
-            // write the row 6 times
-            for (j = 0; j < h_factor; j++)
+                // write the row 6 times
+                for (j = 0; j < 6; j++)
+                {
+                    png_write_row(ppng, rowbuf);
+                }
+            }
+        }
+        else
+        {
+            for (i = 0; i < SCREENHEIGHT; i++)
             {
+                for (j = 0; j < SCREENWIDTH; j++)
+                {
+                    memset(rowbuf + j, *(data + i*SCREENWIDTH + j), 1);
+                }
+
                 png_write_row(ppng, rowbuf);
             }
         }
