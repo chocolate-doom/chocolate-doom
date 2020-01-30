@@ -869,9 +869,9 @@ void WritePNGfile(char *filename, pixel_t *data,
         for (i = 0; i < SCREENHEIGHT; i++)
         {
             // expand the row 5x
-            for (j = 0; j < screenwidth; j++)
+            for (j = 0; j < SCREENWIDTH; j++)
             {
-                memset(rowbuf + j * w_factor, *(data + i*screenwidth + j), w_factor);
+                memset(rowbuf + j * w_factor, *(data + i*SCREENWIDTH + j), w_factor);
             }
 
             // write the row 6 times
@@ -942,7 +942,7 @@ void V_ScreenShot(const char *format)
     if (png_screenshots)
     {
     WritePNGfile(lbmname, I_VideoBuffer,
-                 screenwidth, SCREENHEIGHT,
+                 SCREENWIDTH, SCREENHEIGHT,
                  W_CacheLumpName (DEH_String("PLAYPAL"), PU_CACHE));
     }
     else
