@@ -813,14 +813,12 @@ void WritePNGfile(char *filename, pixel_t *data,
                                    error_fn, warning_fn);
     if (!ppng)
     {
-        fclose(handle);
         return;
     }
 
     pinfo = png_create_info_struct(ppng);
     if (!pinfo)
     {
-        fclose(handle);
         png_destroy_write_struct(&ppng, NULL);
         return;
     }
@@ -834,7 +832,6 @@ void WritePNGfile(char *filename, pixel_t *data,
     pcolor = malloc(sizeof(*pcolor) * 256);
     if (!pcolor)
     {
-        fclose(handle);
         png_destroy_write_struct(&ppng, &pinfo);
         return;
     }
