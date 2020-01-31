@@ -1567,7 +1567,6 @@ void I_SavePNGScreenshot (char *filename)
         else
         {
             DEH_fprintf(stderr, "Failed to get renderer output size: %s", SDL_GetError());
-            return;
         }
 
         shotbuffer = SDL_CreateRGBSurface(0, width, height, 32,
