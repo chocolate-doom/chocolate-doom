@@ -1556,7 +1556,19 @@ void I_SavePNGScreenshot (char *filename)
         SDL_Surface *shotbuffer;
 
         if (!fullscreen)
+        {
             SDL_GetWindowSize(screen, &width, &height);
+        }
+        else if (!SDL_GetRendererOutputSize(renderer, &width, &height))
+        {
+            if (widescreen) height = width * 3/5;
+            else height = width * 3/4;
+        }
+        else
+        {
+            DEH_fprintf(stderr, "Failed to get renderer output size: %s", SDL_GetError());
+            return;
+        }
 
         shotbuffer = SDL_CreateRGBSurface(0, width, height, 32,
                                           0x00ff0000,
