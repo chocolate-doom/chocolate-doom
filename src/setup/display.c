@@ -212,8 +212,10 @@ static void AdvancedDisplayConfig(TXT_UNCAST_ARG(widget),
             || gamemission == strife,
             TXT_NewCheckBox("Show ENDOOM screen on exit",
                             &show_endoom)),
+#ifdef HAVE_LIBPNG
         TXT_NewCheckBox("Save screenshots in PNG format",
                         &png_screenshots),
+#endif
         NULL);
 
     // [JN] Widescreen

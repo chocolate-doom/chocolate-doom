@@ -21,8 +21,7 @@ execgames_SCRIPTS = $(SETUP_BINARIES)
 AM_CFLAGS = -I$(top_srcdir)/textscreen            \
             -I$(top_srcdir)/opl                   \
             -I$(top_srcdir)/pcsound               \
-            @SDLMIXER_CFLAGS@ @SDLNET_CFLAGS@     \
-            @SDLIMAGE_CFLAGS@
+            @SDLMIXER_CFLAGS@ @SDLNET_CFLAGS@
 
 # Common source files used by absolutely everything:
 
@@ -139,8 +138,7 @@ EXTRA_LIBS =                                               \
                @LDFLAGS@                                   \
                @SDL_LIBS@                                  \
                @SDLMIXER_LIBS@                             \
-               @SDLNET_LIBS@                               \
-               @SDLIMAGE_LIBS@
+               @SDLNET_LIBS@
 
 if HAVE_WINDRES
 @PROGRAM_PREFIX@doom_SOURCES=$(SOURCE_FILES_WITH_DEH) resource.rc

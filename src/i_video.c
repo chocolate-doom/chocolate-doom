@@ -19,7 +19,6 @@
 
 #include <stdlib.h>
 #include "SDL.h"
-#include "SDL_image.h"
 #include "SDL_opengl.h"
 
 #ifdef _WIN32
@@ -1546,42 +1545,4 @@ void I_BindVideoVariables(void)
     M_BindStringVariable("window_position",        &window_position);
     M_BindIntVariable("usegamma",                  &usegamma);
     M_BindIntVariable("png_screenshots",           &png_screenshots);
-}
-
-void I_SavePNGScreenshot (char *filename)
-{
-    if (aspect_ratio_correct == 1)
-    {
-        int width = actualwidth*2, height = actualheight*2;
-        SDL_Surface *shotbuffer;
-
-        if (!fullscreen)
-        {
-            SDL_GetWindowSize(screen, &width, &height);
-        }
-        else if (!SDL_GetRendererOutputSize(renderer, &width, &height))
-        {
-            if (widescreen) height = width * 3/5;
-            else height = width * 3/4;
-        }
-        else
-        {
-            DEH_fprintf(stderr, "Failed to get renderer output size: %s", SDL_GetError());
-        }
-
-        shotbuffer = SDL_CreateRGBSurface(0, width, height, 32,
-                                          0x00ff0000,
-                                          0x0000ff00,
-                                          0x000000ff,
-                                          0xff000000);
-
-        SDL_BlitScaled(argbbuffer, NULL, shotbuffer, NULL);
-        IMG_SavePNG(shotbuffer, filename);
-
-        SDL_FreeSurface(shotbuffer);
-    }
-    else
-    {
-        IMG_SavePNG(argbbuffer, filename);
-    }
 }

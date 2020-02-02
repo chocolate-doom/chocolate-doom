@@ -31,12 +31,17 @@ endif()
 find_package(SDL2 2.0.1)
 find_package(SDL2_mixer 2.0.0)
 find_package(SDL2_net 2.0.0)
-find_package(SDL2_image 2.0.0)
 
 # Check for libsamplerate.
 find_package(samplerate)
 if(SAMPLERATE_FOUND)
     set(HAVE_LIBSAMPLERATE TRUE)
+endif()
+
+# Check for libpng.
+find_package(PNG)
+if(PNG_FOUND)
+    set(HAVE_LIBPNG TRUE)
 endif()
 
 # Check for zlib.
