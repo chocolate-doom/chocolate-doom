@@ -33,8 +33,6 @@
 
 #define CENTERY			(SCREENHEIGHT/2)
 
-// status bar height at bottom of screen
-#define SBARHEIGHT		32
 
 extern int dirtybox[4];
 
