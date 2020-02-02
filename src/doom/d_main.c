@@ -230,11 +230,10 @@ boolean D_Display (void)
 	if (!gametic)
 	    break;
 	if (automapactive)
-    {
-	    if (widescreen)
-	        V_DrawFilledBox(SCREENWIDTH, SCREENHEIGHT - SBARHEIGHT, WIDESCREENWIDTH - SCREENWIDTH, SBARHEIGHT, 0);
 	    AM_Drawer ();
-    }
+	// fill with black box
+	if (widescreen && (automapactive || screenblocks == 10))
+	    V_DrawFilledBox(SCREENWIDTH, SCREENHEIGHT - SBARHEIGHT, WIDESCREENWIDTH - SCREENWIDTH, SBARHEIGHT, 0);
 	if (wipe || (viewheight != SCREENHEIGHT && fullscreen))
 	    redrawsbar = true;
 	if (inhelpscreensstate && !inhelpscreens)
@@ -264,7 +263,7 @@ boolean D_Display (void)
     {
         R_RenderPlayerView (&players[displayplayer]);
         // [crispy]
-        if (screenblocks == 12)
+        if (screenblocks == 12 || (widescreen && screenblocks == 10))
             ST_Drawer(false, true);
     }
 

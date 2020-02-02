@@ -1228,9 +1228,9 @@ void M_SizeDisplay(int choice)
 	break;
     }
 
-    if (widescreen && screenblocks < 11)
+    if (widescreen && screenblocks < 10)
     {
-	    screenblocks = 11;
+	    screenblocks = 10;
 	    screenSize = screenblocks -3;
     }
 

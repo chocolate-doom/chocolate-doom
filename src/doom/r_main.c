@@ -719,8 +719,6 @@ void R_ExecuteSetViewSize (void)
 
     setsizeneeded = false;
 
-    // [JN] Wide screen: use only SCREENWIDTH and SCREENHEIGHT sizes,
-    // there is no bordered view and effective screen size is always same.
     if (setblocks >= 11)
     {
 	scaledviewwidth = screenwidth;
@@ -729,6 +727,11 @@ void R_ExecuteSetViewSize (void)
     else if (!widescreen)
     {
 	scaledviewwidth = setblocks*32;
+	viewheight = (setblocks*168/10)&~7;
+    }
+	else
+    {
+	scaledviewwidth = screenwidth;
 	viewheight = (setblocks*168/10)&~7;
     }
     
