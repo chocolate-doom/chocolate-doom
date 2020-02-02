@@ -1532,17 +1532,17 @@ void I_RenderReadPixels(byte **data, int *w, int *h, int *p)
 	// [crispy] adjust cropping rectangle if necessary
 	rect.x = rect.y = 0;
 	SDL_GetRendererOutputSize(renderer, &rect.w, &rect.h);
-	if (rect.w * actualheight > rect.h * SCREENWIDTH)
+	if (rect.w * actualheight > rect.h * actualwidth)
 	{
 		temp = rect.w;
-		rect.w = rect.h * SCREENWIDTH / actualheight;
+		rect.w = rect.h * actualwidth / actualheight;
 		rect.x = (temp - rect.w) / 2;
 	}
 	else
-	if (rect.h * SCREENWIDTH > rect.w * actualheight)
+	if (rect.h * actualwidth > rect.w * actualheight)
 	{
 		temp = rect.h;
-		rect.h = rect.w * actualheight / SCREENWIDTH;
+		rect.h = rect.w * actualheight / actualwidth;
 		rect.y = (temp - rect.h) / 2;
 	}
 

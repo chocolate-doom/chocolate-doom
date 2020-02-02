@@ -793,29 +793,10 @@ void WritePNGfile(char *filename, pixel_t *data,
 {
     png_structp ppng;
     png_infop pinfo;
-//  png_colorp pcolor;
     FILE *handle;
     int i, j;
-//  int w_factor, h_factor;
     byte *rowbuf;
     extern void I_RenderReadPixels(byte **data, int *w, int *h, int *p);
-
-/*
-    if (aspect_ratio_correct)
-    {
-        // scale up to accommodate aspect ratio correction
-        w_factor = 5;
-        h_factor = 6;
-
-        width *= w_factor;
-        height *= h_factor;
-    }
-    else
-    {
-        w_factor = 1;
-        h_factor = 1;
-    }
-*/
 
     handle = fopen(filename, "wb");
     if (!handle)
@@ -847,55 +828,8 @@ void WritePNGfile(char *filename, pixel_t *data,
     png_set_IHDR(ppng, pinfo, width, height,
                  8, PNG_COLOR_TYPE_RGB_ALPHA, PNG_INTERLACE_NONE,
                  PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
-/*
-    png_set_IHDR(ppng, pinfo, width, height,
-                 8, PNG_COLOR_TYPE_PALETTE, PNG_INTERLACE_NONE,
-                 PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
-
-    pcolor = malloc(sizeof(*pcolor) * 256);
-    if (!pcolor)
-    {
-        fclose(handle);
-        png_destroy_write_struct(&ppng, &pinfo);
-        return;
-    }
-
-    for (i = 0; i < 256; i++)
-    {
-        pcolor[i].red   = *(palette + 3 * i);
-        pcolor[i].green = *(palette + 3 * i + 1);
-        pcolor[i].blue  = *(palette + 3 * i + 2);
-    }
-
-    png_set_PLTE(ppng, pinfo, pcolor, 256);
-    free(pcolor);
-*/
 
     png_write_info(ppng, pinfo);
-
-/*
-    rowbuf = malloc(width);
-
-    if (rowbuf)
-    {
-        for (i = 0; i < SCREENHEIGHT; i++)
-        {
-            // expand the row 5x
-            for (j = 0; j < SCREENWIDTH; j++)
-            {
-                memset(rowbuf + j * w_factor, *(data + i*SCREENWIDTH + j), w_factor);
-            }
-
-            // write the row 6 times
-            for (j = 0; j < h_factor; j++)
-            {
-                png_write_row(ppng, rowbuf);
-            }
-        }
-
-        free(rowbuf);
-    }
-*/
 
     for (i = 0; i < height; i++)
     {
@@ -962,7 +896,7 @@ void V_ScreenShot(const char *format)
     if (png_screenshots)
     {
     WritePNGfile(lbmname, I_VideoBuffer,
-                 SCREENWIDTH, SCREENHEIGHT,
+                 screenwidth, SCREENHEIGHT,
                  W_CacheLumpName (DEH_String("PLAYPAL"), PU_CACHE));
     }
     else
