@@ -128,6 +128,9 @@ extern boolean doubledamage;
 // No Doom II monsters.
 extern boolean nod2monsters;
 
+// Half ammo. Not demo safe.
+extern boolean halfammo;
+
 // -------------------------
 // Internal parameters for sound rendering.
 // These have been taken from the DOS version,

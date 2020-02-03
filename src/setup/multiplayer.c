@@ -138,6 +138,7 @@ static int nod2monsters = 0;
 static int doubledamage = 0;
 static int dropbackpack = 0;
 static int sprespawn = 0;
+static int halfammo = 0;
 static int nodmweapons = 0;
 static int keepkeys = 0;
 static int udpport = 2342;
@@ -276,6 +277,11 @@ static void StartGame(int multiplayer)
     if (sprespawn)
     {
         AddCmdLineParameter(exec, "-sprespawn");
+    }
+
+    if (halfammo)
+    {
+        AddCmdLineParameter(exec, "-halfammo");
     }
 
     if (nodmweapons)
@@ -862,6 +868,8 @@ static void StartGameMenu(const char *window_title, int multiplayer)
         {
             TXT_AddWidget(window,
                            TXT_NewCheckBox("SP respawn", &sprespawn));
+            TXT_AddWidget(window,
+                           TXT_NewCheckBox("Half ammo", &halfammo));
         }
         else
         {

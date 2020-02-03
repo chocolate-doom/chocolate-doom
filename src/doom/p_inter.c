@@ -183,9 +183,8 @@ P_GiveAmmo
 	// you'll need in nightmare
 	num <<= 1;
     }
-    else if (gameskill == sk_extreme)
+    else if (halfammo)
     {
-	// give half ammo in extreme mode
 	num >>= 1;
     }
 
@@ -260,7 +259,8 @@ P_GiveWeapon
 {
     boolean	gaveammo;
     boolean	gaveweapon;
-	
+    boolean givehalf = (gameskill == sk_extreme && !halfammo);
+
     if (netgame
 	&& (deathmatch!=2)
 	 && !dropped )
@@ -288,9 +288,9 @@ P_GiveWeapon
 	// give one clip with a dropped weapon,
 	// two clips with a found weapon
 	if (dropped)
-	    gaveammo = P_GiveAmmo (player, weaponinfo[weapon].ammo, 1);
+	    gaveammo = P_GiveAmmo (player, weaponinfo[weapon].ammo, 1 >> givehalf); // half ammo in UM
 	else
-	    gaveammo = P_GiveAmmo (player, weaponinfo[weapon].ammo, 2);
+	    gaveammo = P_GiveAmmo (player, weaponinfo[weapon].ammo, 2 >> givehalf);
     }
     else
 	gaveammo = false;
@@ -651,7 +651,7 @@ P_TouchSpecialThing
 	
 	// ammo
       case SPR_CLIP:
-	if (special->flags & MF_DROPPED && (gameskill != sk_extreme))
+	if (special->flags & MF_DROPPED && !halfammo)
 	{
 	    if (!P_GiveAmmo (player,am_clip,0))
 		return;

@@ -117,6 +117,7 @@ boolean		sprespawn; // checkparm of -sprespawn
 boolean		doublespawn; // checkparm of -2xmonsters
 boolean		doubledamage; // checkparm of -xpain
 boolean		nod2monsters; // checkparm of -nod2monsters
+boolean		halfammo; // checkparm of -halfammo
 
 //extern int soundVolume;
 //extern  int	sfxVolume;
@@ -1946,6 +1947,8 @@ void D_DoomMain (void)
     doubledamage = M_CheckParm("-xpain");
 
     nod2monsters = M_CheckParm("-nod2monsters");
+
+    halfammo = M_CheckParm("-halfammo");
 
     isa = M_CheckParm("-isa");
 
