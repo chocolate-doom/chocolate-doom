@@ -843,7 +843,7 @@ void D_IdentifyVersion(void)
 
 // Set the gamedescription string
 
-void D_SetGameDescription(void)
+static void D_SetGameDescription(void)
 {
     gamedescription = "Unknown";
 
