@@ -87,7 +87,7 @@
 //
 void D_DoomLoop (void);
 
-static const char *gamedescription;
+static char *gamedescription;
 
 // Location where savegames are stored
 
