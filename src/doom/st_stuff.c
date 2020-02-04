@@ -2376,12 +2376,12 @@ void ST_Init (void)
 void ST_DrawDemoTimer (const int time)
 {
 	char buffer[16];
-	const int secs = time / TICRATE;
+	const int mins = time / (60 * TICRATE);
+	const float secs = (float)(time % (60 * TICRATE)) / TICRATE;
 	const int w = shortnum[0]->width;
 	int n, x;
 
-	n = M_snprintf(buffer, sizeof(buffer), "%02i %02i %02i",
-	               secs / 60, secs % 60, time % TICRATE);
+	n = M_snprintf(buffer, sizeof(buffer), "%02i %05.02f", mins, secs);
 
 	x = (viewwindowx >> crispy->hires) + (scaledviewwidth >> crispy->hires);
 
