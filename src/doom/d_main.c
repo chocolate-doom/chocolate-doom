@@ -678,14 +678,14 @@ static const char *banners[] =
 static char *GetGameName(const char *gamename)
 {
     size_t i;
-    
+
     for (i=0; i<arrlen(banners); ++i)
     {
         const char *deh_sub;
         // Has the banner been replaced?
 
         deh_sub = DEH_String(banners[i]);
-        
+
         if (deh_sub != banners[i])
         {
             size_t gamename_size;
