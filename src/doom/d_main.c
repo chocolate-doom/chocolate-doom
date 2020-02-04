@@ -845,8 +845,6 @@ void D_IdentifyVersion(void)
 
 static void D_SetGameDescription(void)
 {
-    gamedescription = "Unknown";
-
     if (logical_gamemission == doom)
     {
         // Doom 1.  But which version?
@@ -894,6 +892,11 @@ static void D_SetGameDescription(void)
         {
             gamedescription = GetGameName("DOOM 2: TNT - Evilution");
         }
+    }
+
+    if (gamedescription == NULL)
+    {
+        gamedescription = M_StringDuplicate("Unknown");
     }
 }
 
