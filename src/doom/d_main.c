@@ -673,7 +673,7 @@ static const char *banners[] =
 // Otherwise, use the name given
 // 
 
-static char *GetGameName(char *gamename)
+static char *GetGameName(const char *gamename)
 {
     size_t i;
     const char *deh_sub;
