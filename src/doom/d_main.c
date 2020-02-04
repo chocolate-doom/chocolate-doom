@@ -718,7 +718,7 @@ static char *GetGameName(char *gamename)
         }
     }
 
-    return gamename;
+    return M_StringDuplicate(gamename);
 }
 
 static void SetMissionForPackName(const char *pack_name)
