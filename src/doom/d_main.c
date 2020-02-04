@@ -695,7 +695,11 @@ static char *GetGameName(char *gamename)
             // We also need to cut off spaces to get the basic name
 
             gamename_size = strlen(deh_sub) + 10;
-            deh_gamename = Z_Malloc(gamename_size, PU_STATIC, 0);
+            deh_gamename = malloc(gamename_size);
+            if (deh_gamename == NULL)
+            {
+                I_Error("GetGameName: Failed to allocate new string");
+            }
             version = G_VanillaVersionCode();
             M_snprintf(deh_gamename, gamename_size, deh_sub,
                        version / 100, version % 100);
