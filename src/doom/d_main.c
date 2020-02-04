@@ -701,8 +701,8 @@ static char *GetGameName(const char *gamename)
                 I_Error("GetGameName: Failed to allocate new string");
             }
             version = G_VanillaVersionCode();
-            M_snprintf(deh_gamename, gamename_size, deh_sub,
-                       version / 100, version % 100);
+            DEH_snprintf(deh_gamename, gamename_size, banners[i],
+                         version / 100, version % 100);
 
             while (deh_gamename[0] != '\0' && isspace(deh_gamename[0]))
             {
