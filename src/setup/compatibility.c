@@ -99,6 +99,7 @@ void BindCompatibilityVariables(void)
         M_BindIntVariable("crispy_uncapped",        &crispy->uncapped);
         M_BindIntVariable("crispy_vsync",           &crispy->vsync);
         M_BindIntVariable("crispy_weaponsquat",     &crispy->weaponsquat);
+        M_BindIntVariable("crispy_widescreen",      &crispy->widescreen);
     }
     else
     {

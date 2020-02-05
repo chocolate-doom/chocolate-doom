@@ -25,13 +25,6 @@
 
 #include "m_crispy.h"
 
-multiitem_t multiitem_aspectratio[NUM_ASPECTRATIOS] =
-{
-    {ASPECTRATIO_OFF, "none"},
-    {ASPECTRATIO_4_3, "4:3"},
-    {ASPECTRATIO_16_10, "16:10"},
-};
-
 multiitem_t multiitem_bobfactor[NUM_BOBFACTORS] =
 {
     {BOBFACTOR_FULL, "full"},
@@ -148,22 +141,10 @@ extern void P_SegLengths (boolean contrast_only);
 extern void R_ExecuteSetViewSize (void);
 extern void R_InitLightTables (void);
 extern void I_ReInitGraphics (int reinit);
+extern void ST_createWidgets(void);
+extern void HU_Start(void);
+extern void M_SizeDisplay(int choice);
 
-static void M_CrispyToggleAspectRatioHook (void)
-{
-    aspect_ratio_correct = (aspect_ratio_correct + 1) % NUM_ASPECTRATIOS;
-
-    // [crispy] re-set logical rendering resolution
-
-    I_ReInitGraphics(REINIT_ASPECTRATIO);
-}
-
-void M_CrispyToggleAspectRatio(int choice)
-{
-    choice = 0;
-
-    crispy->post_rendering_hook = M_CrispyToggleAspectRatioHook;
-}
 
 void M_CrispyToggleAutomapstats(int choice)
 {
@@ -550,4 +531,37 @@ void M_CrispyToggleWeaponSquat(int choice)
 {
     choice = 0;
     crispy->weaponsquat = !crispy->weaponsquat;
+}
+
+static void M_CrispyToggleWidescreenHook (void)
+{
+    crispy->widescreen = !crispy->widescreen;
+
+    // [crispy] re-initialize screenSize_min
+    M_SizeDisplay(-1);
+    // [crispy] re-initialize framebuffers, textures and renderer
+    I_ReInitGraphics(REINIT_FRAMEBUFFERS | REINIT_TEXTURES | REINIT_ASPECTRATIO);
+    // [crispy] re-calculate framebuffer coordinates
+    R_ExecuteSetViewSize();
+    // [crispy] re-draw bezel
+    R_FillBackScreen();
+    // [crispy] re-calculate disk icon coordinates
+    EnableLoadingDisk();
+    // [crispy] re-calculate automap coordinates
+    AM_ReInit();
+
+    if (gamestate == GS_LEVEL && gamemap > 0)
+    {
+	// [crispy] re-arrange status bar widgets
+	ST_createWidgets();
+	// [crispy] re-arrange heads-up widgets
+	HU_Start();
+    }
+}
+
+void M_CrispyToggleWidescreen(int choice)
+{
+    choice = 0;
+
+    crispy->post_rendering_hook = M_CrispyToggleWidescreenHook;
 }

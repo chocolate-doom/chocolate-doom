@@ -60,7 +60,7 @@
 #define HU_TITLEM	(mapnames_commercial[gamemap-1 + 105 + 3])
 #define HU_TITLE_CHEX   (mapnames_chex[(gameepisode-1)*9+gamemap-1])
 #define HU_TITLEHEIGHT	1
-#define HU_TITLEX	0
+#define HU_TITLEX	(0 - DELTAWIDTH)
 #define HU_TITLEY	(167 - SHORT(hu_font[0]->height))
 
 #define HU_INPUTTOGGLE	't'
@@ -69,7 +69,7 @@
 #define HU_INPUTWIDTH	64
 #define HU_INPUTHEIGHT	1
 
-#define HU_COORDX	(ORIGWIDTH - 7 * hu_font['A'-HU_FONTSTART]->width)
+#define HU_COORDX	((ORIGWIDTH - 7 * hu_font['A'-HU_FONTSTART]->width) + DELTAWIDTH)
 
 
 char *chat_macros[10] =
@@ -610,6 +610,9 @@ void HU_Start(void)
     secret_on = false;
     chat_on = false;
 
+    // [crispy] re-calculate DELTAWIDTH
+    I_GetScreenDimensions();
+
     // create the message widget
     HUlib_initSText(&w_message,
 		    HU_MSGX, HU_MSGY, HU_MSGHEIGHT,
@@ -1017,7 +1020,7 @@ void HU_Ticker(void)
     if (automapactive)
     {
 	// [crispy] move map title to the bottom
-	if (crispy->automapoverlay && screenblocks >= CRISPY_HUD - 1)
+	if ((crispy->automapoverlay && screenblocks >= CRISPY_HUD - 1) || crispy->widescreen)
 	    w_title.y = HU_TITLEY + ST_HEIGHT;
 	else
 	    w_title.y = HU_TITLEY;

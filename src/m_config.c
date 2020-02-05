@@ -2114,6 +2114,14 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_INT(crispy_weaponsquat),
+
+    //!
+    // @game doom
+    //
+    // Widescreen rendering.
+    //
+
+    CONFIG_VARIABLE_INT(crispy_widescreen),
 };
 
 static default_collection_t extra_defaults =

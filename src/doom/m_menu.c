@@ -86,6 +86,7 @@ int			screenblocks = 10; // [crispy] increased
 
 // temp for screenblocks (0-9)
 int			screenSize;
+int			screenSize_min;
 
 // -1 = no quicksave slot picked!
 int			quickSaveSlot;
@@ -210,7 +211,7 @@ static void M_MouseInvert(int choice); // [crispy] mouse sensitivity menu
 static void M_SfxVol(int choice);
 static void M_MusicVol(int choice);
 static void M_ChangeDetail(int choice);
-static void M_SizeDisplay(int choice);
+void M_SizeDisplay(int choice); // [crispy] un-static for R_ExecuteSetViewSize()
 static void M_Mouse(int choice); // [crispy] mouse sensitivity menu
 static void M_Sound(int choice);
 
@@ -457,10 +458,10 @@ enum
 {
     crispness_sep_rendering,
     crispness_hires,
+    crispness_widescreen,
     crispness_uncapped,
     crispness_vsync,
     crispness_smoothscaling,
-    crispness_aspectratio,
     crispness_sep_rendering_,
 
     crispness_sep_visual,
@@ -481,10 +482,10 @@ static menuitem_t Crispness1Menu[]=
 {
     {-1,"",0,'\0'},
     {1,"",	M_CrispyToggleHires,'h'},
+    {1,"",	M_CrispyToggleWidescreen,'w'},
     {1,"",	M_CrispyToggleUncapped,'u'},
     {1,"",	M_CrispyToggleVsync,'v'},
     {1,"",	M_CrispyToggleSmoothScaling,'s'},
-    {1,"",	M_CrispyToggleAspectRatio,'f'},
     {-1,"",0,'\0'},
     {-1,"",0,'\0'},
     {1,"",	M_CrispyToggleColoredhud,'c'},
@@ -1387,8 +1388,8 @@ void M_DrawOptions(void)
                 OptionsDef.y + LINEHEIGHT * messages + 8 - (M_StringHeight("OnOff")/2),
                 showMessages ? "On" : "Off");
 
-    M_DrawThermo(OptionsDef.x,OptionsDef.y+LINEHEIGHT*(scrnsize+1),
-		 9 + 3,screenSize); // [crispy] Crispy HUD
+    M_DrawThermo(OptionsDef.x + screenSize_min * 8,OptionsDef.y+LINEHEIGHT*(scrnsize+1),
+		 9 + 3 - screenSize_min,screenSize - screenSize_min); // [crispy] Crispy HUD
 }
 
 // [crispy] mouse sensitivity menu
@@ -1500,10 +1501,10 @@ static void M_DrawCrispness1(void)
 
     M_DrawCrispnessSeparator(crispness_sep_rendering, "Rendering");
     M_DrawCrispnessItem(crispness_hires, "High Resolution Rendering", crispy->hires, true);
+    M_DrawCrispnessItem(crispness_widescreen, "Widescreen Rendering", crispy->widescreen, true);
     M_DrawCrispnessItem(crispness_uncapped, "Uncapped Framerate", crispy->uncapped, true);
     M_DrawCrispnessItem(crispness_vsync, "Enable VSync", crispy->vsync, !force_software_renderer);
     M_DrawCrispnessItem(crispness_smoothscaling, "Smooth Pixel Scaling", crispy->smoothscaling, true);
-    M_DrawCrispnessMultiItem(crispness_aspectratio, "Force Aspect Ratio", multiitem_aspectratio, aspect_ratio_correct, true);
 
     M_DrawCrispnessSeparator(crispness_sep_visual, "Visual");
     M_DrawCrispnessMultiItem(crispness_coloredhud, "Colorize HUD Elements", multiitem_coloredhud, crispy->coloredhud, true);
@@ -1885,10 +1886,13 @@ void M_ChangeDetail(int choice)
 
 void M_SizeDisplay(int choice)
 {
+    // [crispy] initialize screenSize_min
+    screenSize_min = crispy->widescreen ? 8 : 0;
+
     switch(choice)
     {
       case 0:
-	if (screenSize > 0)
+	if (screenSize > screenSize_min)
 	{
 	    screenblocks--;
 	    screenSize--;
@@ -1904,7 +1908,11 @@ void M_SizeDisplay(int choice)
     }
 	
 
+    // [crispy] initialize screenSize_min
+    if (choice == 0 || choice == 1)
+    {
     R_SetViewSize (screenblocks, detailLevel);
+    }
 }
 
 
@@ -3070,6 +3078,7 @@ void M_Init (void)
     whichSkull = 0;
     skullAnimCounter = 10;
     screenSize = screenblocks - 3;
+    M_SizeDisplay(-1); // [crispy] initialize screenSize_min
     messageToPrint = 0;
     messageString = NULL;
     messageLastMenuActive = menuactive;

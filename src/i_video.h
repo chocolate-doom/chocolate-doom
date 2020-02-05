@@ -28,11 +28,14 @@
 #define ORIGWIDTH  320 // [crispy]
 #define ORIGHEIGHT 200 // [crispy]
 
-#define MAXWIDTH  (ORIGWIDTH << 1) // [crispy]
+#define MAXWIDTH  (426 << 1) // (ORIGWIDTH << 1) // [crispy]
 #define MAXHEIGHT (ORIGHEIGHT << 1) // [crispy]
 
 extern int SCREENWIDTH;
 extern int SCREENHEIGHT;
+extern int HIRESWIDTH; // [crispy] non-widescreen SCREENWIDTH
+extern int DELTAWIDTH; // [crispy] horizontal widescreen offset
+void I_GetScreenDimensions (void); // [crispy] re-calculate DELTAWIDTH
 
 // Screen height used when aspect_ratio_correct=true.
 
