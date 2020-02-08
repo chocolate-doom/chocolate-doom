@@ -578,7 +578,7 @@ void R_InitTextureMapping (void)
     // Calc focallength
     //  so FIELDOFVIEW angles covers SCREENWIDTH.
     // [crispy] in widescreen mode, make sure the same number of horizontal
-    // pixels show the same game scene as in regular rendering mode
+    // pixels shows the same part of the game scene as in regular rendering mode
     focalwidth = widescreen ? ((SCREENWIDTH>>detailshift)/2)<<FRACBITS : centerxfrac;
     focallength = FixedDiv (focalwidth,
 			    finetangent[FINEANGLES/4+FIELDOFVIEW/2] );
@@ -776,7 +776,8 @@ void R_ExecuteSetViewSize (void)
     {
 	dy = ((i-viewheight/2)<<FRACBITS)+FRACUNIT/2;
 	dy = abs(dy);
-	yslope[i] = FixedDiv ( (viewwidth<<detailshift)/2*FRACUNIT, dy);
+	// [crispy] adjust yslope[]
+	yslope[i] = FixedDiv ( MIN(viewwidth<<detailshift, SCREENWIDTH)/2*FRACUNIT, dy);
     }
 	
     for (i=0 ; i<viewwidth ; i++)
