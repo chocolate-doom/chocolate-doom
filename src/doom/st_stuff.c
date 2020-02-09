@@ -1824,7 +1824,7 @@ static inline void ST_DrawGibbedPlayerSprites (void)
 		                 ((plyr->mo->flags & MF_TRANSLATION) >> (MF_TRANSSHIFT - 8));
 	}
 
-	V_DrawPatch(73, 186, patch);
+	V_DrawPatch(ST_HEALTHX - 17, 186, patch);
 	dp_translation = NULL;
 }
 
@@ -1865,7 +1865,7 @@ void ST_drawWidgets(boolean refresh)
 		patch = W_CacheLumpNum(lump, PU_CACHE);
 
 		// [crispy] (23,179) is the center of the Ammo widget
-		V_DrawPatch(23 - SHORT(patch->width)/2 + SHORT(patch->leftoffset),
+		V_DrawPatch(ST_AMMOX - 21 - SHORT(patch->width)/2 + SHORT(patch->leftoffset),
 		            179 - SHORT(patch->height)/2 + SHORT(patch->topoffset),
 		            patch);
 
