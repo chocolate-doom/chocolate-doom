@@ -579,7 +579,7 @@ void R_InitTextureMapping (void)
     //  so FIELDOFVIEW angles covers SCREENWIDTH.
     // [crispy] in widescreen mode, make sure the same number of horizontal
     // pixels shows the same part of the game scene as in regular rendering mode
-    focalwidth = widescreen ? ((SCREENWIDTH>>detailshift)/2)<<FRACBITS : centerxfrac;
+    focalwidth = widescreen == 2 ? ((SCREENWIDTH>>detailshift)/2)<<FRACBITS : centerxfrac;
     focallength = FixedDiv (focalwidth,
 			    finetangent[FINEANGLES/4+FIELDOFVIEW/2] );
 	
@@ -719,7 +719,7 @@ void R_ExecuteSetViewSize (void)
 
     setsizeneeded = false;
 
-    if (setblocks >= 11)
+    if (setblocks >= 11 || widescreen == 1) // zoomed view
     {
 	scaledviewwidth = screenwidth;
 	viewheight = SCREENHEIGHT;
@@ -729,7 +729,7 @@ void R_ExecuteSetViewSize (void)
 	scaledviewwidth = setblocks*32;
 	viewheight = (setblocks*168/10)&~7;
     }
-	else
+	else // real wide
     {
 	scaledviewwidth = screenwidth;
 	viewheight = (setblocks*168/10)&~7;
@@ -742,7 +742,10 @@ void R_ExecuteSetViewSize (void)
     centerx = viewwidth/2;
     centerxfrac = centerx<<FRACBITS;
     centeryfrac = centery<<FRACBITS;
-    projection = MIN(centerxfrac, ((SCREENWIDTH>>detailshift)/2)<<FRACBITS);
+    if (widescreen == 1) // zoomed view
+        projection = centerxfrac;
+    else
+        projection = MIN(centerxfrac, ((SCREENWIDTH>>detailshift)/2)<<FRACBITS);
 
     if (!detailshift)
     {
@@ -777,7 +780,10 @@ void R_ExecuteSetViewSize (void)
 	dy = ((i-viewheight/2)<<FRACBITS)+FRACUNIT/2;
 	dy = abs(dy);
 	// [crispy] adjust yslope[]
-	yslope[i] = FixedDiv ( MIN(viewwidth<<detailshift, SCREENWIDTH)/2*FRACUNIT, dy);
+	if (widescreen == 1) // zoomed view
+	    yslope[i] = FixedDiv ( (viewwidth<<detailshift)/2*FRACUNIT, dy);
+	else
+	    yslope[i] = FixedDiv ( MIN(viewwidth<<detailshift, SCREENWIDTH)/2*FRACUNIT, dy);
     }
 	
     for (i=0 ; i<viewwidth ; i++)

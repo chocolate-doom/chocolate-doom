@@ -51,7 +51,7 @@
 extern int detailLevel;
 extern int screenblocks;
 
-int widescreen = 0; // [JN] Wide picture on widescreen resolutions
+int widescreen = 0; // [JN] Wide picture on widescreen resolutions [Crispy] Real wide
 int lcd_gamma_fix = 0; // [JN] Palette optimization Doom
 int smoothscaling = 1; // [Crispy] Enable the intermediate buffer
 

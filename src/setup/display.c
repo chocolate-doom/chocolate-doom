@@ -63,6 +63,12 @@ static window_size_t window_sizes_scaled[] =
     { 0, 0},
 };
 
+static const char *wide_modes[] =
+{
+    "Off", "Zoomed view", "Real wide",
+};
+static txt_dropdown_list_t *widebutton;
+
 static char *video_driver = "";
 static char *window_position = "";
 static int aspect_ratio_correct = 1;
@@ -81,7 +87,7 @@ int show_endoom = 1;
 int show_diskicon = 1;
 int png_screenshots = 0;
 
-// [JN] Widescreen
+// [JN] [Crispy] Widescreen
 int widescreen = 0;
 
 // [Crispy] Enable the intermediate buffer
@@ -218,13 +224,6 @@ static void AdvancedDisplayConfig(TXT_UNCAST_ARG(widget),
 #endif
         NULL);
 
-    // [JN] Widescreen
-    if (gamemission == doom)
-    {
-        TXT_AddWidget(window,
-                      TXT_NewCheckBox("Widescreen", &widescreen));
-    }
-
     // [Crispy] Enable the intermediate buffer
     if (gamemission == doom)
     {
@@ -237,6 +236,15 @@ static void AdvancedDisplayConfig(TXT_UNCAST_ARG(widget),
     {
         TXT_AddWidget(window,
                       TXT_NewCheckBox("LCD gamma fix", &lcd_gamma_fix));
+    }
+
+    // [JN] [Crispy] Widescreen
+    if (gamemission == doom)
+    {
+        TXT_AddWidgets(window,
+                       TXT_NewSeparator("Widescreen mode"),
+                       widebutton = TXT_NewDropdownList(&widescreen, wide_modes, 3),
+                       NULL);
     }
 
     TXT_SignalConnect(ar_checkbox, "changed", GenerateSizesTable, sizes_table);
@@ -303,7 +311,7 @@ void BindDisplayVariables(void)
         M_BindIntVariable("show_endoom",               &show_endoom);
     }
 
-	// [JN] Widescreen
+	// [JN] [Crispy] Widescreen
 	if (gamemission == doom)
     {
         M_BindIntVariable("widescreen",         &widescreen);
