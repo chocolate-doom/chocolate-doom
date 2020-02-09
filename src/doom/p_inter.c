@@ -937,13 +937,11 @@ P_DamageMobj
 	}
 	player->health -= damage; 	// mirror mobj health here for Dave
 	// [crispy] negative player health
-	if (player->health < -99)
-	    player->health = -99;
-	if (!crispy->neghealth)
-	{
+	player->neghealth = player->health;
+	if (player->neghealth < -99)
+	    player->neghealth = -99;
 	if (player->health < 0)
 	    player->health = 0;
-	}
 	
 	player->attacker = source;
 	player->damagecount += damage;	// add damage after armor / invuln

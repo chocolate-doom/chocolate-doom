@@ -348,6 +348,9 @@ void P_PlayerThink (player_t* player)
 	return;
     }
 
+    // [crispy] negative player health
+    player->neghealth = player->health;
+
     // [crispy] delay next possible jump
     if (player->jumpTics)
     {

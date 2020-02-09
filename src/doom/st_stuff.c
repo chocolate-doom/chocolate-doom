@@ -1340,8 +1340,7 @@ void ST_updateFaceWidget(void)
     if (priority < 10)
     {
 	// dead
-	// [crispy] negative player health
-	if (plyr->health <= 0)
+	if (!plyr->health)
 	{
 	    priority = 9;
 	    painoffset = 0;
@@ -1889,6 +1888,8 @@ void ST_drawWidgets(boolean refresh)
     if (!gibbed)
     {
     dp_translation = ST_WidgetColor(hudcolor_health);
+    // [crispy] negative player health
+    w_health.n.num = crispy->neghealth ? &plyr->neghealth : &plyr->health;
     STlib_updatePercent(&w_health, refresh);
     }
     dp_translation = ST_WidgetColor(hudcolor_armor);

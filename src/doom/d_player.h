@@ -104,7 +104,6 @@ typedef struct player_s
     // Power ups. invinc and invis are tic counters.
     int			powers[NUMPOWERS + 3]; // [crispy] showfps and mapcoords are now "powers"
     boolean		cards[NUMCARDS];
-    boolean		tryopen[NUMCARDS]; // [crispy] blinking key or skull in the status bar
     boolean		backpack;
     
     // Frags, kills of other players.
@@ -161,6 +160,8 @@ typedef struct player_s
     // True if secret level has been done.
     boolean		didsecret;	
 
+// [crispy] now follow Crispy Doom specific properties
+
     // [AM] Previous position of viewz before think.
     //      Used to interpolate between camera positions.
     angle_t		oldviewz;
@@ -186,6 +187,12 @@ typedef struct player_s
 
     // [crispy] variable player view bob
     fixed_t	bob2;
+
+    // [crispy] blinking key or skull in the status bar
+    boolean		tryopen[NUMCARDS];
+
+    // [crispy] negative player health
+    int			neghealth;
 } player_t;
 
 

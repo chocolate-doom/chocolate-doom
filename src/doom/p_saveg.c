@@ -721,6 +721,8 @@ static void saveg_read_player_t(player_t *str)
 
     // int health;
     str->health = saveg_read32();
+    // [crispy] negative player health
+    str->neghealth = str->health;
 
     // int armorpoints;
     str->armorpoints = saveg_read32();

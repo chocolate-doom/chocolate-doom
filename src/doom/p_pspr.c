@@ -353,7 +353,7 @@ A_WeaponReady
     
     // check for change
     //  if player is dead, put the weapon away
-    if (player->pendingweapon != wp_nochange || player->health <= 0) // [crispy] negative player health
+    if (player->pendingweapon != wp_nochange || !player->health)
     {
 	// change weapon
 	//  (pending weapon should allready be validated)
@@ -403,7 +403,7 @@ void A_ReFire
     //  (if a weaponchange is pending, let it go through instead)
     if ( (player->cmd.buttons & BT_ATTACK) 
 	 && player->pendingweapon == wp_nochange
-	 && player->health > 0) // [crispy] negative player health
+	 && player->health)
     {
 	player->refire++;
 	P_FireWeapon (player);
@@ -461,7 +461,7 @@ A_Lower
     
     // The old weapon has been lowered off the screen,
     // so change the weapon and start raising it
-    if (player->health <= 0) // [crispy] negative player health
+    if (!player->health)
     {
 	// Player is dead, so keep the weapon off screen.
 	P_SetPsprite (player,  ps_weapon, S_NULL);
