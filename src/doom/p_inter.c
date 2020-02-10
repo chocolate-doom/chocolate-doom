@@ -259,7 +259,7 @@ P_GiveWeapon
 {
     boolean	gaveammo;
     boolean	gaveweapon;
-    boolean givehalf = (gameskill == sk_extreme && !halfammo);
+	
 
     if (netgame
 	&& (deathmatch!=2)
@@ -288,9 +288,9 @@ P_GiveWeapon
 	// give one clip with a dropped weapon,
 	// two clips with a found weapon
 	if (dropped)
-	    gaveammo = P_GiveAmmo (player, weaponinfo[weapon].ammo, 1 >> givehalf); // half ammo in UM
+	    gaveammo = P_GiveAmmo (player, weaponinfo[weapon].ammo, 1);
 	else
-	    gaveammo = P_GiveAmmo (player, weaponinfo[weapon].ammo, 2 >> givehalf);
+	    gaveammo = P_GiveAmmo (player, weaponinfo[weapon].ammo, 2);
     }
     else
 	gaveammo = false;
