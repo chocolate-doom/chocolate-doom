@@ -9,22 +9,24 @@ project for Heretic. :)
 remaining faithful to the original executables. There are a few new gameplay features too.
  It's somewhere in the middle between Chocolate Doom and Crispy.
 
- Please refer to the Chocolate and Crispy documentation.
+ Please refer to the Chocolate Doom documentation.
  Also contains code from MBF and PrBoom+.
  Of course DOOM © 1996 id Software.
- Chocolate Doom © 2019 Simon Howard and Crispy Doom © 2019 Fabian Greffrath.
- 
- Compiles with Code::Blocks 17.12 (tdm-gcc 5.1) and Visual Studio 2017 (v141_xp).
+ Chocolate Doom © 2020 Simon Howard and Crispy Doom © 2020 Fabian Greffrath.
 
 # New features:
 
- * Supports SIGIL (even multiplayer), E1M4b and E1M8b (Crispy). For the Buckethead soundtrack to
- work you'd need to convert it to Ogg first (MP3 support for SDL1 was very poor) or FLAC.
- * Extended setup to support SIGIL and new features. Can warp to title. It's named config now for
- compatibility with Vista and later (the port should still run on win98).
- * There's a new 'Unholy massacre' skill level (-skill 6). :D Double monsters, half ammo,
- smaller health pickups, zombiemen got a point blank attack, pistol with increased accuracy
- and damage, bumped minimum damage dealt for punch.
+ * Widescreen support both zoomed view and real wide (bits from Russian Doom and Crispy).
+ * Enable loading 16 bit RIFF wavs in .wads (SmileTheory).
+ * Doom 1.0 and 1.1 emulation (SmileTheory).
+ * Supports SIGIL (even multiplayer), E1M4b and E1M8b (Crispy).
+ * Extended setup to support SIGIL and new features. Can warp to title.
+ * There's a new 'Unholy massacre' skill level (-skill 6). :D Double monsters, lesser health pickups,
+ zombiemen got a point blank attack, pistol with increased accuracy and damage, bumped minimum damage
+ dealt for punch.
+ * Changed ammo balance in UM, added the single player demo unsafe -halfammo parameter to play
+ old demos.
+ * Got rid of supersized PNGs (Crispy).
  * Fixed backpacks from Marshmallow (idea and bits of code):
  * Players now can exchange supplies, also you drop a small health medikit in the backpack
  (default key is 'x').
@@ -37,25 +39,24 @@ remaining faithful to the original executables. There are a few new gameplay fea
  takes precedence.
  * Slow ISA VGA simulation (Trident 9000i).
  * New command line parameters for the above: dropbackpack, nodmweapons, keepkeys, sprespawn,
- 2xmonsters, xpain, nod2monsters, isa.
+ 2xmonsters, xpain, nod2monsters, isa, halfammo.
  * Extended demo format while keeping vanilla compatibility.
- * Doom 1.2 demo support (Chocolate).
+ * Doom 1.2 demo support (SmileTheory).
  * Drag and Drop support (Crispy).
  * Resurrect cheat with IDDQD (Crispy, works differently here).
  * Support for extended nodes (Crispy).
  * Autorun key (Crispy).
  * The startup console is back and with colored title, can be run run from the command line
  (thanks JNechaevsky for hint on colors).
- * Fake splitscreen (Chocolate 2.x). On SDL1 the window cannot be freely resized tough.
- * Bring back the video driver selection box on windows. Added the -directx parameter.
+ * Fake splitscreen.
  * Added LCD gamma fix from Russian Doom using a darker palette by JNechaevsky.
  * New 'One thousand deaths await thee' skill level for Heretic. You take double damage, monsters
  got half hit points and half ammo for a more dynamic gameplay.
  * Removed limits for Heretic (Crispy).
- * Migrated solution to VS 2017 and fixed compilation (release is still a MinGW build tough).
  * Fixed boss level ending not triggered if every player is dead in multiplayer.
  * Fixed Doom II monster exclusion bug.
  * Fixed configuration not being saved for Heretic.
+ * Support for Ogg, FLAC and MP3 music lumps (Crispy).
  * Many bugfixes from Crispy.
 
  Have fun!
