@@ -19,6 +19,7 @@ remaining faithful to the original executables. There are a few new gameplay fea
  * Widescreen support both zoomed view and real wide (bits from Russian Doom and Crispy).
  * Enable loading 16 bit RIFF wavs in .wads (SmileTheory).
  * Doom 1.0 and 1.1 emulation (SmileTheory).
+ * Draw the player mugshot with max view.
  * Supports SIGIL (even multiplayer), E1M4b and E1M8b (Crispy).
  * Extended setup to support SIGIL and new features. Can warp to title.
  * There's a new 'Unholy massacre' skill level (-skill 6). :D Double monsters, lesser health pickups,
@@ -28,8 +29,7 @@ remaining faithful to the original executables. There are a few new gameplay fea
  old demos.
  * Got rid of supersized PNGs (Crispy).
  * Fixed backpacks from Marshmallow (idea and bits of code):
- * Players now can exchange supplies, also you drop a small health medikit in the backpack
- (default key is 'x').
+ * Players now can exchange supplies (default backpack key is 'x').
  * Players drop backpacks with their inventory upon death, you can't drop another one until the
  previous one has been picked up tough. They work even in SP.
  * Single player respawn.
@@ -38,8 +38,8 @@ remaining faithful to the original executables. There are a few new gameplay fea
  * Classic mode with only Doom 1 monsters for slaughterfest maps and lame players, regular shotgun
  takes precedence.
  * Slow ISA VGA simulation (Trident 9000i).
- * New command line parameters for the above: dropbackpack, nodmweapons, keepkeys, sprespawn,
- 2xmonsters, xpain, nod2monsters, isa, halfammo.
+ * New command line parameters for the above: backpack, nodmweapons, keepkeys, sprespawn, 2xmonsters,
+ xpain, nod2monsters, isa, halfammo.
  * Extended demo format while keeping vanilla compatibility.
  * Doom 1.2 demo support (SmileTheory).
  * Drag and Drop support (Crispy).
