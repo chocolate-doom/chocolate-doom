@@ -155,11 +155,11 @@ After successful compilation the resulting binaries can be found in the `src/` d
 
 ### Crispy Doom 5.7 
 
-Crispy Doom 5.7 has been released on February 19, 2020. This release brings the widescreen rendering as well as some other improvements. 
+Crispy Doom 5.7 has been released on February 21, 2020. This release brings proper widescreen rendering as well as other improvements requested by the speed-running community.
 
 **Features**
 
-* Widescreen rendering has been implemented, thanks to JNechaevsky and ice44 for spotting the bugs that had been surfacing in process. The pixel aspect ratio can still be controlled by setting `aspect_ratio_correct` variable to 1 for 1.2 (Vanilla aspect ratio correction) and 2 for 1.0 (square pixels) in `crispy-doom.cfg`.
+* Widescreen rendering has been implemented, thanks to JNechaevsky and ice44 for spotting the bugs that had been surfacing in the process.
 * Loading 16 bit RIFF wavs in .wads has been enabled, contributed by SmileTheory.
 * `-lumpdump` command line parameter has been added that dumps raw content of a lump into a file.
 
