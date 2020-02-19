@@ -86,6 +86,7 @@ Many additional less user-visible features have been implemented, e.g. fixed eng
  * `-episode 1` launches Hell on Earth and `-episode 2` launches No Rest for the Living episode if the Doom 2 IWAD shipped with the Doom 3: BFG Edition is used.
  * `-warp 1a` warps to the secret level E1M10: Sewers of XBox Doom IWAD (since 2.3).
  * `-mergedump <file>` merges the PWAD file(s) given on the command line with the IWAD file and writes the resulting data into the `<file>` given as argument. May be considered as a replacement for the `DEUSF.EXE` tool (since 2.3).
+ * `-lumpdump` dumps raw content of a lump into a file.
  * `-blockmap` forces a (re-)building of the BLOCKMAP lumps for loaded maps (since 2.3).
  * `-playdemo demoname -warp N` plays back fast-forward up to the requested map (since 3.0).
  * `-loadgame N -record demoname` and `-loadgame N -playdemo demoname` allow to record and play demos starting from a savegame instead of the level start (since 4.0).
