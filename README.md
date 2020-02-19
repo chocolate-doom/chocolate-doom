@@ -26,6 +26,7 @@ Crispy Doom is a source port that aims to provide a faithful Doom gaming experie
 Its core features are:
 
  * Enhanced 640x400 display resolution, with the original 320x200 resolution still available in the "High Resolution Rendering: Off" mode.
+ * Widescreen rendering to use all the screen space of 16:9 monitors.
  * Uncapped rendering framerate with interpolation and optional vertical synchronization (VSync) with the screen refresh rate.
  * Intermediate gamma correction levels (0.5, 1.5, 2.5 and 3.5).
  * Removal of all static engine limits, or at least raising of the less crucial ones.
@@ -111,7 +112,7 @@ Many additional less user-visible features have been implemented, e.g. fixed eng
 ## Download
 
 Binaries for Windows XP / Vista / 7 / 8.1 / 10 (32-bit binaries compatible with both x86 and x64 editions) are available here:
-https://github.com/fabiangreffrath/crispy-doom/releases/download/crispy-doom-5.6.4/crispy-doom-5.6.4-win32.zip
+https://github.com/fabiangreffrath/crispy-doom/releases/download/crispy-doom-5.7/crispy-doom-5.7-win32.zip
 
 Daily builds of Crispy Doom can be found here:
 http://latest.chocolate-doom.org/
@@ -150,6 +151,23 @@ to install the prerequisites and then
 After successful compilation the resulting binaries can be found in the `src/` directory.
 
 ## News
+
+### Crispy Doom 5.7 
+
+Crispy Doom 5.7 has been released on February 19, 2020. This release brings the widescreen rendering as well as some other improvements. 
+
+**Features**
+
+* Widescreen rendering has been implemented, thanks to JNechaevsky and ice44 for spotting the bugs that had been surfacing in process. The pixel aspect ratio can still be controlled by setting `aspect_ratio_correct` variable to 1 for 1.2 (Vanilla aspect ratio correction) and 2 for 1.0 (square pixels) in `crispy-doom.cfg`.
+* Loading 16 bit RIFF wavs in .wads has been enabled, contributed by SmileTheory.
+* `-lumpdump` command line parameter has been added that dumps raw content of a lump into a file.
+
+**Improvements**
+
+* `IDDT` cheat is now reset when re-starting map during demo recording, thanks to Looper for the suggestion.
+* Time in demo timer widget is now printed in centiseconds instead of tics. Thanks to Looper and ZeroMaster010 for the proposal.
+
+Crispy Doom 5.7 is based on Chocolate Doom 3.0.0 and has merged all changes to the Chocolate Doom master branch up to commit [`a8e8763c`](https://github.com/chocolate-doom/chocolate-doom/commit/a8e8763cba49db50e4a9dc7198c6e4b6dcfbcbfe).
 
 ### Crispy Doom 5.6.4 
 
