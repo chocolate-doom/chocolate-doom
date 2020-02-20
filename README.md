@@ -26,7 +26,7 @@ Crispy Doom is a source port that aims to provide a faithful Doom gaming experie
 Its core features are:
 
  * Enhanced 640x400 display resolution, with the original 320x200 resolution still available in the "High Resolution Rendering: Off" mode.
- * Widescreen rendering to use all the screen space of monitors with aspect ratios from 16:9 to 24:9.
+ * Widescreen rendering for using all the available horizontal space of screens with aspect ratios up to 24:9.
  * Uncapped rendering framerate with interpolation and optional vertical synchronization (VSync) with the screen refresh rate.
  * Intermediate gamma correction levels (0.5, 1.5, 2.5 and 3.5).
  * Removal of all static engine limits, or at least raising of the less crucial ones.
@@ -159,7 +159,7 @@ Crispy Doom 5.7 has been released on February 21, 2020. This release brings prop
 
 **Features**
 
-* Widescreen rendering has been implemented, thanks to JNechaevsky and ice44 for spotting the bugs that had been surfacing in the process.
+* Widescreen rendering has been implemented, thanks to JNechaevsky and ice44 for spotting the bugs that had been surfacing in the progress.
 * Loading 16 bit RIFF wavs in .wads has been enabled, contributed by SmileTheory.
 * `-lumpdump` command line parameter has been added that dumps raw content of a lump into a file.
 
@@ -168,7 +168,7 @@ Crispy Doom 5.7 has been released on February 21, 2020. This release brings prop
 * `IDDT` cheat is now reset when re-starting map during demo recording, thanks to Looper for the suggestion.
 * Time in demo timer widget is now printed in centiseconds instead of tics. Thanks to Looper and ZeroMaster010 for the proposal.
 
-Crispy Doom 5.7 is based on Chocolate Doom 3.0.0 and has merged all changes to the Chocolate Doom master branch up to commit [`a8e8763c`](https://github.com/chocolate-doom/chocolate-doom/commit/a8e8763cba49db50e4a9dc7198c6e4b6dcfbcbfe).
+Crispy Doom 5.7 is based on Chocolate Doom 3.0.0 and has merged all changes to the Chocolate Doom master branch up to commit [`f1fa7faf`](https://github.com/chocolate-doom/chocolate-doom/commit/f1fa7faf566e3e325c1b1fbf8ace8d5ac2db2b1e).
 
 ### Crispy Doom 5.6.4 
 
