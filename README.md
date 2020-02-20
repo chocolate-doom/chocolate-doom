@@ -26,7 +26,7 @@ Crispy Doom is a source port that aims to provide a faithful Doom gaming experie
 Its core features are:
 
  * Enhanced 640x400 display resolution, with the original 320x200 resolution still available in the "High Resolution Rendering: Off" mode.
- * Widescreen rendering to use all the screen space of 16:9 monitors.
+ * Widescreen rendering to use all the screen space of monitors with aspect ratios from 16:9 to 24:9.
  * Uncapped rendering framerate with interpolation and optional vertical synchronization (VSync) with the screen refresh rate.
  * Intermediate gamma correction levels (0.5, 1.5, 2.5 and 3.5).
  * Removal of all static engine limits, or at least raising of the less crucial ones.
