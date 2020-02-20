@@ -216,6 +216,8 @@ static boolean I_SDL_InitMusic(void)
 
 #if defined(_WIN32)
     // [AM] Start up midiproc to handle playing MIDI music.
+    // Don't enable it for GUS, since it handles its own volume just fine.
+    if (snd_musicdevice != SNDDEVICE_GUS)
     I_MidiPipe_InitServer();
 #endif
 
