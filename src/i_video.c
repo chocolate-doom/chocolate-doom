@@ -1548,6 +1548,12 @@ void I_GetScreenDimensions (void)
 		}
 	}
 
+	// [crispy] widescreen rendering makes no sense without aspect ratio correction
+	if (!aspect_ratio_correct)
+	{
+		crispy->widescreen = 0;
+	}
+	
 	if (crispy->widescreen)
 	{
 		SCREENWIDTH = w * ah / h;
