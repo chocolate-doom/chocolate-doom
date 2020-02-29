@@ -61,16 +61,20 @@ void DropBackpack(player_t* player)
 		&& player->ammo[am_misl] > 4
 		&& player->ammo[am_cell] > 40)
 	{
-		item = MT_MISC94;
+		item = MT_MISC95;
 	}
 	else if (player->ammo[am_clip] > 20
 		&& player->ammo[am_shell] > 8
 		&& player->ammo[am_misl] > 4)
 	{
-		item = MT_MISC93;
+		item = MT_MISC94;
 	}
 	else if (player->ammo[am_clip] > 20
 		&& player->ammo[am_shell] > 8)
+	{
+		item = MT_MISC93;
+	}
+	else if (player->ammo[am_clip] > 20)
 	{
 		item = MT_MISC92;
 	}
@@ -93,12 +97,13 @@ void DropBackpack(player_t* player)
 	}
 	backpack->flags |= MF_DROPPED;
 
-	if (item == MT_MISC94)
+	if (item == MT_MISC95)
 		player->ammo[am_cell] -= 40;
-	if (item >= MT_MISC93)
+	if (item >= MT_MISC94)
 		player->ammo[am_misl] -= 4;
+	if (item >= MT_MISC93)
+		player->ammo[am_shell] -= 8;
 	player->ammo[am_clip] -= 20;
-	player->ammo[am_shell] -= 8;    
 }
 
 //
