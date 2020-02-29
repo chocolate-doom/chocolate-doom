@@ -2120,6 +2120,8 @@ void M_Init (void)
     itemOn = currentMenu->lastOn;
     whichSkull = 0;
     skullAnimCounter = 10;
+    if (widescreen && screenblocks < 10)
+        screenblocks = 10;
     screenSize = screenblocks - 3;
     messageToPrint = 0;
     messageString = NULL;
