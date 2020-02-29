@@ -1340,7 +1340,7 @@ boolean PIT_ChangeSector (mobj_t*	thing)
     }
 
     // crunch dropped items
-    if (thing->flags & MF_DROPPED)
+    if (thing->flags & MF_DROPPED && thing->type < MT_MISC87)
     {
 	P_RemoveMobj (thing);
 	
