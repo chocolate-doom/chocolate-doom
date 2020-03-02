@@ -1537,7 +1537,7 @@ static void M_DrawCrispness2(void)
     M_DrawCrispnessMultiItem(crispness_automapstats, "Show Level Stats", multiitem_widgets, crispy->automapstats, true);
     M_DrawCrispnessMultiItem(crispness_leveltime, "Show Level Time", multiitem_widgets, crispy->leveltime, true);
     M_DrawCrispnessMultiItem(crispness_playercoords, "Show Player Coords", multiitem_widgets, crispy->playercoords, true);
-    M_DrawCrispnessMultiItem(crispness_secretmessage, "Show Revealed Secrets", multiitem_secretmessage, crispy->secretmessage, true);
+    M_DrawCrispnessMultiItem(crispness_secretmessage, "Report Revealed Secrets", multiitem_secretmessage, crispy->secretmessage, true);
 
     M_DrawCrispnessGoto(crispness2_next, "Next Page >");
     M_DrawCrispnessGoto(crispness2_prev, "< Prev Page");
