@@ -155,18 +155,18 @@ After successful compilation the resulting binaries can be found in the `src/` d
 
 ### Crispy Doom 5.7.1
 
-Crispy Doom 5.7.1 has been released on March 02, 2020 to hotfix the bugs related to widescreen rendering and fulfil some players' suggestions.
+Crispy Doom 5.7.1 has been released on March 03, 2020 to fix some bugs related to widescreen rendering.
 
 **Improvements**
 
-* The Navigation menu item now bears the title "Report Revealed Secrets", proposed by oprypin.
+* In order to improve the discoverability of the "A Secret is Revealed!" feature, its corresponding Crispness menu item has been renamed to "Report Revealed Secrets", based on a discussion with oprypin.
 * Widescreen rendering is now disabled in case of disabled aspect ratio correction, as Zodomaniac proved it made no sense.
 
 **Bug Fixes**
 
-* Tutti-frutti wall textures and crashes when switching to high resolution rendering or widescreen mode during screen wipe have been fixed, reported and investigated by Zodomaniac and JNechaevsky.
+* A crash when switching to high resolution or widescreen rendering during a screen wipe has been fixed, reported and investigated by Zodomaniac and JNechaevsky.
 * The obtrusive MAP/WAD automap text widget is not drawn anymore in widescreen mode, thanks to plumsinus.
-* Horizontal coordinates of automap markers in widescreen mode have been fixed, thanks unerxai from Doomworld forums.
+* Horizontal coordinates of automap markers in widescreen mode have been fixed, thanks to unerxai from Doomworld forums.
 
 Crispy Doom 5.7.1 is based on Chocolate Doom 3.0.0 and has merged all changes to the Chocolate Doom master branch up to commit [`f1fa7faf`](https://github.com/chocolate-doom/chocolate-doom/commit/f1fa7faf566e3e325c1b1fbf8ace8d5ac2db2b1e).
 
