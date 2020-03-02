@@ -526,7 +526,7 @@ void D_RunFrame()
 	// [crispy] post-rendering function pointer to apply config changes
 	// that affect rendering and that are better applied after the current
 	// frame has finished rendering
-	if (crispy->post_rendering_hook)
+	if (crispy->post_rendering_hook && !wipe)
 	{
 		crispy->post_rendering_hook();
 		crispy->post_rendering_hook = NULL;
