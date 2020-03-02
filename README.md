@@ -113,7 +113,7 @@ Many additional less user-visible features have been implemented, e.g. fixed eng
 ## Download
 
 Binaries for Windows XP / Vista / 7 / 8.1 / 10 (32-bit binaries compatible with both x86 and x64 editions) are available here:
-https://github.com/fabiangreffrath/crispy-doom/releases/download/crispy-doom-5.7/crispy-doom-5.7-win32.zip
+https://github.com/fabiangreffrath/crispy-doom/releases/download/crispy-doom-5.7.1/crispy-doom-5.7.1-win32.zip
 
 Daily builds of Crispy Doom can be found here:
 http://latest.chocolate-doom.org/
@@ -153,6 +153,23 @@ After successful compilation the resulting binaries can be found in the `src/` d
 
 ## News
 
+### Crispy Doom 5.7.1
+
+Crispy Doom 5.7.1 has been released on March 02, 2020 to hotfix the bugs related to widescreen rendering and fulfil some players' suggestions.
+
+**Improvements**
+
+* The Navigation menu item now bears the title "Report Revealed Secrets", proposed by oprypin.
+* Widescreen rendering is now disabled in case of disabled aspect ratio correction, as Zodomaniac proved it made no sense.
+
+**Bug Fixes**
+
+* Tutti-frutti wall textures and crashes when switching to high resolution rendering or widescreen mode during screen wipe have been fixed, reported and investigated by Zodomaniac and JNechaevsky.
+* The obtrusive MAP/WAD automap text widget is not drawn anymore in widescreen mode, thanks to plumsinus.
+* Horizontal coordinates of automap markers in widescreen mode have been fixed, thanks unerxai from Doomworld forums.
+
+Crispy Doom 5.7.1 is based on Chocolate Doom 3.0.0 and has merged all changes to the Chocolate Doom master branch up to commit [`f1fa7faf`](https://github.com/chocolate-doom/chocolate-doom/commit/f1fa7faf566e3e325c1b1fbf8ace8d5ac2db2b1e).
+
 ### Crispy Doom 5.7 
 
 Crispy Doom 5.7 has been released on February 21, 2020. This release brings proper widescreen rendering as well as other improvements requested by the speed-running community.
@@ -167,6 +184,10 @@ Crispy Doom 5.7 has been released on February 21, 2020. This release brings prop
 
 * `IDDT` cheat is now reset when re-starting map during demo recording, thanks to Looper for the suggestion.
 * Time in demo timer widget is now printed in centiseconds instead of tics. Thanks to Looper and ZeroMaster010 for the proposal.
+
+**Bug Fixes**
+
+* Fix for GUS emulation in presence of midiproc.exe has been pulled from Chocolate Doom, whereto it was contributed by JNechaevsky.
 
 Crispy Doom 5.7 is based on Chocolate Doom 3.0.0 and has merged all changes to the Chocolate Doom master branch up to commit [`f1fa7faf`](https://github.com/chocolate-doom/chocolate-doom/commit/f1fa7faf566e3e325c1b1fbf8ace8d5ac2db2b1e).
 
