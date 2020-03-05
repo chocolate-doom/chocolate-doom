@@ -487,6 +487,9 @@ P_BlockLinesIterator
 
     for ( list = blockmaplump+offset ; *list != -1 ; list++)
     {
+	if (*list < 0 || *list > 32767)
+	    continue; 	// invalid blockmap
+
 	ld = &lines[*list];
 
 	if (ld->validcount == validcount)
