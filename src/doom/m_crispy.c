@@ -183,7 +183,6 @@ void M_CrispyToggleColoredblood(int choice)
 
     if (gameversion == exe_chex)
     {
-	S_StartSound(NULL,sfx_oof);
 	return;
     }
 
@@ -240,7 +239,6 @@ void M_CrispyToggleCrosshairtype(int choice)
 {
     if (!crispy->crosshair)
     {
-	S_StartSound(NULL,sfx_oof);
 	return;
     }
 
@@ -269,7 +267,6 @@ void M_CrispyToggleDemoTimerDir(int choice)
 {
     if (!(crispy->demotimer & DEMOTIMER_PLAYBACK))
     {
-	S_StartSound(NULL,sfx_oof);
 	return;
     }
 
@@ -293,7 +290,6 @@ void M_CrispyToggleFlipcorpses(int choice)
 {
     if (gameversion == exe_chex)
     {
-	S_StartSound(NULL,sfx_oof);
 	return;
     }
 
@@ -305,7 +301,6 @@ void M_CrispyToggleFreeaim(int choice)
 {
     if (!crispy->singleplayer)
     {
-	S_StartSound(NULL,sfx_oof);
 	return;
     }
 
@@ -374,7 +369,6 @@ void M_CrispyToggleJumping(int choice)
 {
     if (!crispy->singleplayer)
     {
-	S_StartSound(NULL,sfx_oof);
 	return;
     }
 
@@ -409,7 +403,6 @@ void M_CrispyToggleOverunder(int choice)
 {
     if (!crispy->singleplayer)
     {
-	S_StartSound(NULL,sfx_oof);
 	return;
     }
 
@@ -438,7 +431,6 @@ void M_CrispyToggleRecoil(int choice)
 {
     if (!crispy->singleplayer)
     {
-	S_StartSound(NULL,sfx_oof);
 	return;
     }
 
@@ -527,7 +519,6 @@ void M_CrispyToggleVsync(int choice)
 
     if (force_software_renderer)
     {
-	S_StartSound(NULL,sfx_oof);
 	return;
     }
 
