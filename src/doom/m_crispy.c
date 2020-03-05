@@ -131,8 +131,8 @@ multiitem_t multiitem_sndchannels[4] =
 multiitem_t multiitem_widescreen[NUM_WIDESCREEN] =
 {
     {WIDESCREEN_OFF, "off"},
-    {WIDESCREEN_WIDE, "wide"},
-    {WIDESCREEN_COMPACT, "compact"},
+    {WIDESCREEN_WIDE, "on (wide HUD)"},
+    {WIDESCREEN_COMPACT, "on (compact HUD)"},
 };
 
 multiitem_t multiitem_widgets[NUM_WIDGETS] =
