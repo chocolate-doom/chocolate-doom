@@ -441,6 +441,7 @@ typedef struct
 
 static const extsavegdata_t extsavegdata[] =
 {
+	// [crispy] @FORKS: please change this if you are going to introduce incompatible changes!
 	{"crispy-doom", P_WritePackageTarname, NULL, 0},
 	{"wadfilename", P_WriteWadFileName, P_ReadWadFileName, 0},
 	{"extrakills", P_WriteExtraKills, P_ReadExtraKills, 1},
