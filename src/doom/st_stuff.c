@@ -140,73 +140,73 @@ extern boolean inhelpscreens; // [crispy] prevent palette changes
 
 // AMMO number pos.
 #define ST_AMMOWIDTH		3	
-#define ST_AMMOX			(44 - DELTAWIDTH)
+#define ST_AMMOX			(44 - HORIZDELTA)
 #define ST_AMMOY			171
 
 // HEALTH number pos.
 #define ST_HEALTHWIDTH		3	
-#define ST_HEALTHX			(90 - DELTAWIDTH)
+#define ST_HEALTHX			(90 - HORIZDELTA)
 #define ST_HEALTHY			171
 
 // Weapon pos.
-#define ST_ARMSX			(111 - DELTAWIDTH)
+#define ST_ARMSX			(111 - HORIZDELTA)
 #define ST_ARMSY			172
-#define ST_ARMSBGX			(104 - DELTAWIDTH)
+#define ST_ARMSBGX			(104 - HORIZDELTA)
 #define ST_ARMSBGY			168
 #define ST_ARMSXSPACE		12
 #define ST_ARMSYSPACE		10
 
 // Frags pos.
-#define ST_FRAGSX			(138 - DELTAWIDTH)
+#define ST_FRAGSX			(138 - HORIZDELTA)
 #define ST_FRAGSY			171	
 #define ST_FRAGSWIDTH		2
 
 // ARMOR number pos.
 #define ST_ARMORWIDTH		3
-#define ST_ARMORX			(221 + DELTAWIDTH)
+#define ST_ARMORX			(221 + HORIZDELTA)
 #define ST_ARMORY			171
 
 // Key icon positions.
 #define ST_KEY0WIDTH		8
 #define ST_KEY0HEIGHT		5
-#define ST_KEY0X			(239 + DELTAWIDTH)
+#define ST_KEY0X			(239 + HORIZDELTA)
 #define ST_KEY0Y			171
 #define ST_KEY1WIDTH		ST_KEY0WIDTH
-#define ST_KEY1X			(239 + DELTAWIDTH)
+#define ST_KEY1X			(239 + HORIZDELTA)
 #define ST_KEY1Y			181
 #define ST_KEY2WIDTH		ST_KEY0WIDTH
-#define ST_KEY2X			(239 + DELTAWIDTH)
+#define ST_KEY2X			(239 + HORIZDELTA)
 #define ST_KEY2Y			191
 
 // Ammunition counter.
 #define ST_AMMO0WIDTH		3
 #define ST_AMMO0HEIGHT		6
-#define ST_AMMO0X			(288 + DELTAWIDTH)
+#define ST_AMMO0X			(288 + HORIZDELTA)
 #define ST_AMMO0Y			173
 #define ST_AMMO1WIDTH		ST_AMMO0WIDTH
-#define ST_AMMO1X			(288 + DELTAWIDTH)
+#define ST_AMMO1X			(288 + HORIZDELTA)
 #define ST_AMMO1Y			179
 #define ST_AMMO2WIDTH		ST_AMMO0WIDTH
-#define ST_AMMO2X			(288 + DELTAWIDTH)
+#define ST_AMMO2X			(288 + HORIZDELTA)
 #define ST_AMMO2Y			191
 #define ST_AMMO3WIDTH		ST_AMMO0WIDTH
-#define ST_AMMO3X			(288 + DELTAWIDTH)
+#define ST_AMMO3X			(288 + HORIZDELTA)
 #define ST_AMMO3Y			185
 
 // Indicate maximum ammunition.
 // Only needed because backpack exists.
 #define ST_MAXAMMO0WIDTH		3
 #define ST_MAXAMMO0HEIGHT		5
-#define ST_MAXAMMO0X		(314 + DELTAWIDTH)
+#define ST_MAXAMMO0X		(314 + HORIZDELTA)
 #define ST_MAXAMMO0Y		173
 #define ST_MAXAMMO1WIDTH		ST_MAXAMMO0WIDTH
-#define ST_MAXAMMO1X		(314 + DELTAWIDTH)
+#define ST_MAXAMMO1X		(314 + HORIZDELTA)
 #define ST_MAXAMMO1Y		179
 #define ST_MAXAMMO2WIDTH		ST_MAXAMMO0WIDTH
-#define ST_MAXAMMO2X		(314 + DELTAWIDTH)
+#define ST_MAXAMMO2X		(314 + HORIZDELTA)
 #define ST_MAXAMMO2Y		191
 #define ST_MAXAMMO3WIDTH		ST_MAXAMMO0WIDTH
-#define ST_MAXAMMO3X		(314 + DELTAWIDTH)
+#define ST_MAXAMMO3X		(314 + HORIZDELTA)
 #define ST_MAXAMMO3Y		185
 
 // pistol
