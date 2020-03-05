@@ -1548,6 +1548,13 @@ void I_GetScreenDimensions (void)
 		}
 	}
 
+	else
+	if (!crispy->post_rendering_hook)
+	{
+		extern void ST_createWidgets(void);
+		crispy->post_rendering_hook = ST_createWidgets;
+	}
+	
 	// [crispy] widescreen rendering makes no sense without aspect ratio correction
 
 	if (crispy->widescreen && aspect_ratio_correct)
