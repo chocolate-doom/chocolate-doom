@@ -138,6 +138,8 @@ extern boolean inhelpscreens; // [crispy] prevent palette changes
 //       into a buffer,
 //       or into the frame buffer?
 
+#define HORIZDELTA (crispy->widescreen == 1 ? DELTAWIDTH : 0)
+
 // AMMO number pos.
 #define ST_AMMOWIDTH		3	
 #define ST_AMMOX			(44 - HORIZDELTA)
