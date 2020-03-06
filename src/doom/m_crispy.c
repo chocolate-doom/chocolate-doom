@@ -531,6 +531,17 @@ void M_CrispyToggleWeaponSquat(int choice)
     crispy->weaponsquat = !crispy->weaponsquat;
 }
 
+void M_CrispyReinitHUDWidgets (void)
+{
+    if (gamestate == GS_LEVEL && gamemap > 0)
+    {
+	// [crispy] re-arrange status bar widgets
+	ST_createWidgets();
+	// [crispy] re-arrange heads-up widgets
+	HU_Start();
+    }
+}
+
 static void M_CrispyToggleWidescreenHook (void)
 {
     crispy->widescreen = (crispy->widescreen + 1) % NUM_WIDESCREEN;
@@ -552,13 +563,7 @@ static void M_CrispyToggleWidescreenHook (void)
 	AM_ReInit();
     }
 
-    if (gamestate == GS_LEVEL && gamemap > 0)
-    {
-	// [crispy] re-arrange status bar widgets
-	ST_createWidgets();
-	// [crispy] re-arrange heads-up widgets
-	HU_Start();
-    }
+    M_CrispyReinitHUDWidgets();
 }
 
 void M_CrispyToggleWidescreen(int choice)
