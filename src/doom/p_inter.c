@@ -921,6 +921,12 @@ P_KillMobj
 		if (DropInventoryInBackpack(target, p)) // [marshmallow]
 		{
 			mo = P_SpawnMobj (target->x,target->y,ONFLOORZ, item);
+			if (!P_CheckPosition (mo, mo->x, mo->y))
+			{
+				P_RemoveMobj (mo);
+				RecoverInventoryFromBackpack(target, p);
+				return;
+			}
 			mo->flags |= MF_DROPPED;
 			return;
 		}
