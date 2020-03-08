@@ -123,6 +123,7 @@ static void LoadGameSettings(net_gamesettings_t *settings)
     doublespawn = settings->doublespawn;
     doubledamage = settings->doubledamage;
     nod2monsters = settings->nod2monsters;
+    halfammo = settings->halfammo;
     consoleplayer = settings->consoleplayer;
 
     if (lowres_turn)
@@ -161,6 +162,7 @@ static void SaveGameSettings(net_gamesettings_t *settings)
     settings->doublespawn = doublespawn;
     settings->doubledamage = doubledamage;
     settings->nod2monsters = nod2monsters;
+    settings->halfammo = halfammo;
 
     settings->lowres_turn = (M_ParmExists("-record")
                          && !M_ParmExists("-longtics"))

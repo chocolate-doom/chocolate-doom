@@ -862,14 +862,13 @@ static void StartGameMenu(const char *window_title, int multiplayer)
                        TXT_NewCheckBox("Only D1 monsters", &nod2monsters),
                        TXT_NewCheckBox("Take 2x damage", &doubledamage),
                        TXT_NewCheckBox("Backpacks", &dropbackpack),
+                       TXT_NewCheckBox("Half ammo", &halfammo),
                        NULL);
 
         if (!multiplayer)
         {
             TXT_AddWidget(window,
                            TXT_NewCheckBox("SP respawn", &sprespawn));
-            TXT_AddWidget(window,
-                           TXT_NewCheckBox("Half ammo", &halfammo));
         }
         else
         {

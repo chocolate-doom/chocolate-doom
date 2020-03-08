@@ -209,6 +209,7 @@ typedef struct
     int doublespawn;
     int doubledamage;
     int nod2monsters;
+    int halfammo;
     int random;  // [Strife only]
 
     // These fields are only used by the server when sending a game
