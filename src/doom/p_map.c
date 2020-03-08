@@ -458,7 +458,7 @@ P_CheckPosition
 
     for (bx=xl ; bx<=xh ; bx++)
 	for (by=yl ; by<=yh ; by++)
-	    if (!P_BlockThingsIterator(bx,by,PIT_CheckThing))
+	    if (!P_BlockThingsIterator(bx,by,PIT_CheckThing) && (thing->type < MT_MISC87 || thing->type > MT_MISC90))
 		return false;
     
     // check lines
