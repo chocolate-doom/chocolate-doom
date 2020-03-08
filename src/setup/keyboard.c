@@ -211,15 +211,18 @@ static void ConfigExtraKeys(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
 
         if (gamemission == doom || gamemission == heretic)
         {
-        AddSectionLabel(table, "Movement", false);
-        AddKeyControl(table, "Toggle always run", &key_toggleautorun);
+            AddSectionLabel(table, "Movement", false);
+            AddKeyControl(table, "Toggle always run", &key_toggleautorun);
         }
 
+        if (gamemission == heretic || gamemission == hexen || gamemission == strife)
+        {
         AddSectionLabel(table, "View", false);
 
         AddKeyControl(table, "Look up", &key_lookup);
         AddKeyControl(table, "Look down", &key_lookdown);
         AddKeyControl(table, "Center view", &key_lookcenter);
+        }
 
         if (gamemission == heretic || gamemission == hexen)
         {
@@ -230,10 +233,13 @@ static void ConfigExtraKeys(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
             AddKeyControl(table, "Fly center", &key_flycenter);
         }
 
+        if (gamemission == heretic || gamemission == hexen || gamemission == strife)
+        {
         AddSectionLabel(table, "Inventory", true);
 
         AddKeyControl(table, "Inventory left", &key_invleft);
         AddKeyControl(table, "Inventory right", &key_invright);
+        }
 
         if (gamemission == strife)
         {
@@ -247,7 +253,7 @@ static void ConfigExtraKeys(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
             AddKeyControl(table, "Use", &key_invuse);
             AddKeyControl(table, "Use health", &key_usehealth);
         }
-        else
+        else if (gamemission == heretic || gamemission == hexen)
         {
             AddKeyControl(table, "Use artifact", &key_useartifact);
         }
