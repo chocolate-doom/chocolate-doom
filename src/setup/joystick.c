@@ -87,7 +87,7 @@ static int joystick_look_invert = 0;
 
 // Virtual to physical mapping.
 int joystick_physical_buttons[NUM_VIRTUAL_BUTTONS] = {
-    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
 };
 
 static txt_button_t *joystick_button;
@@ -151,6 +151,7 @@ static const joystick_config_t empty_defaults[] =
     {"joyb_jump",                  -1},
     {"joyb_menu_activate",         -1},
     {"joyb_toggle_automap",        -1},
+    {"joyb_dropbackpack",          -1},
     {"joystick_physical_button0",  0},
     {"joystick_physical_button1",  1},
     {"joystick_physical_button2",  2},
@@ -161,6 +162,8 @@ static const joystick_config_t empty_defaults[] =
     {"joystick_physical_button7",  7},
     {"joystick_physical_button8",  8},
     {"joystick_physical_button9",  9},
+    {"joystick_physical_button10",10},
+    {"joystick_physical_button11",11},
     {NULL, 0},
 };
 
@@ -1074,6 +1077,11 @@ void ConfigJoystick(TXT_UNCAST_ARG(widget), void *user_data)
     AddJoystickControl(window, "Activate menu", &joybmenu);
 
     AddJoystickControl(window, "Toggle Automap", &joybautomap);
+
+    if (gamemission == doom)
+    {
+        AddJoystickControl(window, "Drop backpack", &joybdropbackpack);
+    }
 
     TXT_SignalConnect(joystick_button, "pressed", CalibrateJoystick, NULL);
     TXT_SetWindowAction(window, TXT_HORIZ_CENTER, TestConfigAction());

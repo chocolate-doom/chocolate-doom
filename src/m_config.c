@@ -1206,6 +1206,13 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(joystick_physical_button10),
 
     //!
+    // The physical joystick button that corresponds to joystick
+    // virtual button #11.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_physical_button11),
+
+    //!
     // Joystick virtual button to make the player strafe left.
     //
 
@@ -1240,6 +1247,12 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_INT(joyb_nextweapon),
+
+    //!
+    // Joystick virtual button to drop a backpack.
+    //
+
+    CONFIG_VARIABLE_INT(joyb_dropbackpack),
 
     //!
     // Key to pause or unpause the game.

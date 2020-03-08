@@ -490,10 +490,11 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
 	dclicks = 0;                   
     } 
 
-	if (gamekeydown[key_dropbackpack] && netgame && dropbackpack)
+	if ((gamekeydown[key_dropbackpack] || joybuttons[joybdropbackpack]) && netgame && dropbackpack)
 	{
 		cmd->buttons |= BT_DROP;
 		gamekeydown[key_dropbackpack] = false;
+		joybuttons[joybdropbackpack] = false;
 	}
 
     // If the previous or next weapon button is pressed, the
