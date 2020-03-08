@@ -59,6 +59,7 @@ static int *all_joystick_buttons[NUM_VIRTUAL_BUTTONS] =
     &joybmenu,
     &joybautomap,
     &joybdropbackpack,
+    &joybdropstimpack,
 };
 
 static int PhysicalForVirtualButton(int vbutton)

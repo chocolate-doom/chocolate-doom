@@ -497,6 +497,13 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
 		joybuttons[joybdropbackpack] = false;
 	}
 
+	if ((gamekeydown[key_dropstimpack] || joybuttons[joybdropstimpack]) && netgame && dropbackpack)
+	{
+		cmd->arti |= AFLAG_STIM;
+		gamekeydown[key_dropstimpack] = false;
+		joybuttons[joybdropstimpack] = false;
+	}
+
     // If the previous or next weapon button is pressed, the
     // next_weapon variable is set to change weapons when
     // we generate a ticcmd.  Choose a new weapon.

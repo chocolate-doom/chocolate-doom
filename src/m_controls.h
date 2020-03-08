@@ -32,7 +32,8 @@ extern int key_speed;
 extern int key_jump;
 extern int key_toggleautorun;
 extern int key_dropbackpack;
- 
+extern int key_dropstimpack;
+
 extern int key_flyup;
 extern int key_flydown;
 extern int key_flycenter;
@@ -165,6 +166,7 @@ extern int joybmenu;
 extern int joybautomap;
 
 extern int joybdropbackpack;
+extern int joybdropstimpack;
 
 extern int dclick_use;
 

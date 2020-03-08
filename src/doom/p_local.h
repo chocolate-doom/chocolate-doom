@@ -24,6 +24,8 @@
 #include "r_local.h"
 #endif
 
+#define AFLAG_STIM		0x40
+
 #define FLOATSPEED		(FRACUNIT*4)
 
 

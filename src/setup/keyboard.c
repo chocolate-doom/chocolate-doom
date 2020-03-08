@@ -40,6 +40,7 @@ static int *controls[] = { &key_left, &key_right, &key_up, &key_down,
                            &key_flyup, &key_flydown, &key_flycenter,
                            &key_lookup, &key_lookdown, &key_lookcenter,
 						   &key_dropbackpack,
+						   &key_dropstimpack,
                            &key_invleft, &key_invright, &key_invquery,
                            &key_invuse, &key_invpop, &key_mission, &key_invkey,
                            &key_invhome, &key_invend, &key_invdrop,
@@ -254,6 +255,7 @@ static void ConfigExtraKeys(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
         if (gamemission == doom)
         {
             AddKeyControl(table, "Drop backpack", &key_dropbackpack);
+            AddKeyControl(table, "Drop stimpack", &key_dropstimpack);
         }
 
         if (gamemission == heretic)

@@ -39,6 +39,7 @@ int key_strafe = KEY_RALT;
 int key_speed = KEY_RSHIFT; 
 int key_toggleautorun = KEY_CAPSLOCK;
 int key_dropbackpack = 'x';
+int key_dropstimpack = 'c';
 
 // 
 // Heretic keyboard controls
@@ -207,6 +208,7 @@ int joybmenu = -1;
 int joybautomap = -1;
 
 int joybdropbackpack = -1;
+int joybdropstimpack = -1;
 
 // Control whether if a mouse button is double clicked, it acts like 
 // "use" has been pressed
@@ -247,6 +249,7 @@ void M_BindBaseControls(void)
     M_BindIntVariable("joyb_strafeleft",     &joybstrafeleft);
     M_BindIntVariable("joyb_straferight",    &joybstraferight);
     M_BindIntVariable("joyb_dropbackpack",   &joybdropbackpack);
+    M_BindIntVariable("joyb_dropstimpack",   &joybdropstimpack);
     M_BindIntVariable("mouseb_strafeleft",   &mousebstrafeleft);
     M_BindIntVariable("mouseb_straferight",  &mousebstraferight);
     M_BindIntVariable("mouseb_use",          &mousebuse);
@@ -256,6 +259,7 @@ void M_BindBaseControls(void)
     M_BindIntVariable("key_message_refresh", &key_message_refresh);
     M_BindIntVariable("key_toggleautorun",   &key_toggleautorun);
     M_BindIntVariable("key_dropbackpack",    &key_dropbackpack);
+    M_BindIntVariable("key_dropstimpack",    &key_dropstimpack);
 }
 
 void M_BindHereticControls(void)

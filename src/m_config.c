@@ -1213,6 +1213,12 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(joystick_physical_button11),
 
     //!
+    // The physical joystick button that corresponds to joystick
+    // virtual button #12.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_physical_button12),
+    //!
     // Joystick virtual button to make the player strafe left.
     //
 
@@ -1253,6 +1259,12 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_INT(joyb_dropbackpack),
+
+    //!
+    // Joystick virtual button to drop a stimpack.
+    //
+
+    CONFIG_VARIABLE_INT(joyb_dropstimpack),
 
     //!
     // Key to pause or unpause the game.
@@ -1759,6 +1771,13 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_KEY(key_dropbackpack),
+
+    //!
+    // @game doom
+    // Drop stimpack.
+    //
+
+    CONFIG_VARIABLE_KEY(key_dropstimpack),
 
     //!
     // @game doom

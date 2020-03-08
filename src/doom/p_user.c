@@ -32,6 +32,8 @@
 #include "deh_str.h"
 #include "dstrings.h"
 
+#include "s_sound.h"
+
 
 // Index of the special effects (INVUL inverse) map.
 #define INVERSECOLORMAP		32
@@ -104,6 +106,41 @@ void DropBackpack(player_t* player)
 	if (item >= MT_MISC93)
 		player->ammo[am_shell] -= 8;
 	player->ammo[am_clip] -= 20;
+}
+
+void DropStimpack(player_t* player)
+{
+	int x, y;
+	unsigned an;
+	mobj_t* stimpack;
+	mobjtype_t item = 0;
+
+	if (player->playerstate == PST_DEAD)
+		return;
+
+	if (player->health > 20)
+		item = MT_MISC10;
+	else
+		return;
+
+	an = player->mo->angle >> ANGLETOFINESHIFT; 
+
+	x = player->mo->x + FixedMul (3*24*FRACUNIT, finecosine[an]);
+	y = player->mo->y + FixedMul (3*24*FRACUNIT, finesine[an]);
+
+	stimpack = P_SpawnMobj (x, y, ONFLOORZ, item);
+	if (!P_CheckPosition (stimpack, stimpack->x, stimpack->y))
+	{
+		P_RemoveMobj (stimpack);
+		return;
+	}
+	stimpack->flags |= MF_DROPPED;
+
+	if (gameskill != sk_extreme)
+		player->health -= 10;
+	else
+		player->health -= 5;
+	S_StartSound(player->mo, sfx_plpain);
 }
 
 //
@@ -409,6 +446,11 @@ void P_PlayerThink (player_t* player)
     if (cmd->buttons & BT_DROP)
     {
 		DropBackpack(player);
+	}
+
+    if (cmd->arti & AFLAG_STIM)
+    {
+		DropStimpack(player);
 	}
 
     // cycle psprites
