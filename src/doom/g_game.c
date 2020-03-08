@@ -2188,7 +2188,7 @@ void G_BeginRecording (void)
     demo_p = demobuffer;
 
     newdemo = M_ParmExists("-backpack") || M_ParmExists("-nodmweapons") || M_ParmExists("-keepkeys") || M_ParmExists("-sprespawn")
-      || M_ParmExists("-2xmonsters") || M_ParmExists("-xpain") || M_ParmExists("-nod2monsters");
+      || M_ParmExists("-2xmonsters") || M_ParmExists("-xpain") || M_ParmExists("-nod2monsters") || M_ParmExists("-halfammo");
 
     //!
     // @category demo
@@ -2241,6 +2241,7 @@ void G_BeginRecording (void)
         *demo_p++ = doublespawn;
         *demo_p++ = doubledamage;
         *demo_p++ = nod2monsters;
+        *demo_p++ = halfammo;
     }
 
     for (i=0 ; i<MAXPLAYERS ; i++) 
@@ -2403,6 +2404,7 @@ void G_DoPlayDemo (void)
         doublespawn = *demo_p++;
         doubledamage = *demo_p++;
         nod2monsters = *demo_p++;
+        halfammo = *demo_p++;
     }
 
     for (i=0 ; i<MAXPLAYERS ; i++) 
