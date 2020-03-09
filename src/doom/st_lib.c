@@ -176,6 +176,9 @@ STlib_initPercent
 {
     STlib_initNum(&p->n, x, y, pl, num, on, 3);
     p->p = percent;
+
+    // [crispy] remember previous colorization
+    p->oldtranslation = NULL;
 }
 
 
@@ -186,6 +189,12 @@ STlib_updatePercent
 ( st_percent_t*		per,
   int			refresh )
 {
+    // [crispy] remember previous colorization
+    if (per->oldtranslation != dp_translation)
+    {
+        refresh = true;
+    }
+    per->oldtranslation = dp_translation;
 
     STlib_updateNum(&per->n, refresh); // [crispy] moved here
 

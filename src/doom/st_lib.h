@@ -69,6 +69,8 @@ typedef struct
     // percent sign graphic
     patch_t*		p;
     
+    // [crispy] remember previous colorization
+    byte *oldtranslation;
 } st_percent_t;
 
 
