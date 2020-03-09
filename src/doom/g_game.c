@@ -490,15 +490,17 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
 	dclicks = 0;                   
     } 
 
-	if ((gamekeydown[key_dropbackpack] || joybuttons[joybdropbackpack]) && netgame && dropbackpack)
+	if ((gamekeydown[key_dropbackpack] || joybuttons[joybdropbackpack]) && netgame && dropbackpack && joywait < I_GetTime())
 	{
+		joywait = I_GetTime() + 5;
 		cmd->buttons |= BT_DROP;
 		gamekeydown[key_dropbackpack] = false;
 		joybuttons[joybdropbackpack] = false;
 	}
 
-	if ((gamekeydown[key_dropstimpack] || joybuttons[joybdropstimpack]) && netgame && dropbackpack)
+	if ((gamekeydown[key_dropstimpack] || joybuttons[joybdropstimpack]) && netgame && dropbackpack && joywait < I_GetTime())
 	{
+		joywait = I_GetTime() + 5;
 		cmd->arti |= AFLAG_STIM;
 		gamekeydown[key_dropstimpack] = false;
 		joybuttons[joybdropstimpack] = false;
