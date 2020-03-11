@@ -193,8 +193,8 @@ STlib_updatePercent
     if (per->oldtranslation != dp_translation)
     {
         refresh = true;
+        per->oldtranslation = dp_translation;
     }
-    per->oldtranslation = dp_translation;
 
     STlib_updateNum(&per->n, refresh); // [crispy] moved here
 
