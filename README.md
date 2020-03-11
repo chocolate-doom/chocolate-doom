@@ -113,7 +113,7 @@ Many additional less user-visible features have been implemented, e.g. fixed eng
 ## Download
 
 Binaries for Windows XP / Vista / 7 / 8.1 / 10 (32-bit binaries compatible with both x86 and x64 editions) are available here:
-https://github.com/fabiangreffrath/crispy-doom/releases/download/crispy-doom-5.7.1/crispy-doom-5.7.1-win32.zip
+https://github.com/fabiangreffrath/crispy-doom/releases/download/crispy-doom-5.7.2/crispy-doom-5.7.2-win32.zip
 
 Daily builds of Crispy Doom can be found here:
 http://latest.chocolate-doom.org/
@@ -155,24 +155,24 @@ After successful compilation the resulting binaries can be found in the `src/` d
 
 ### Crispy Doom 5.7.2
 
-Crispy Doom 5.7.2 has been released on March XX, 2020 to introduce the Compact HUD for widescreen rendering mode and bring some general improvements and fixes.
+Crispy Doom 5.7.2 has been released on March 13, 2020 to introduce the Compact HUD for widescreen rendering mode and bring some general improvements and fixes.
 
 **Features**
 
- * 'Compact' (native aspect ratio) HUD option for better readability on widescreen monitors has been introduced, with the status bar numbers and face drawn in the positions they would be in the status bar.
+ * A new "Compact HUD" mode has been introduced for widescreen rendering mode which leaves the status bar widgets at the same position as in regular rendering mode instead of moving them to the edges of the screen. The latter is now available in the "Wide HUD" mode.
 
 **Improvements**
 
- * `crispy-doom` is now explicitly written to extended savegame header to preserve savegame header compatibility across forks that might have different names. Zodomaniac noticed this issue with his So Doom fork.
- * 'Oof' sounds upon attempt to manipulate an inactive Crispness menu item have been removed on Zodomaniac's remark as pistol firing sound played upon any (including futile) item toggle is much louder and oofs can barely be heard.
+ * Compatibility of extended savegames has been improved across forks which change the project name away from "crispy-doom". Zodomaniac noticed this issue with his So Doom fork.
+ * No 'Oof' sounds are played anymore upon attempt to manipulate an inactive Crispness menu item, on Zodomaniac's remark.
 
 **Bug Fixes**
 
- * HUD widgets are now re-initialized just in case graphics were not initialized before to mitigate the alignment issues that JNechaevsky and Zodomaniac experienced on launching a map from command line.
+ * HUD widgets are now re-initialized immediately after graphics initialization to mitigate the alignment issues that JNechaevsky and Zodomaniac experienced on launching a map from command line.
  * Previous colorization of "percent" status bar widgets is now remembered. This applies to the health and armor widget and forces them to update not only if their value changes, but also if their colorization changes, e.g. when entering the IDDQD cheat. Thanks to unerxai for the report.
- * Horizontal location of the "PAUSE" graphic in widescreen mode has been fixes, thanks to JNechaevsky fr spotting this.
- * Widescreen setting is now remembered after it gets forcefully disabled by setting aspect ratio correction to 'none', requested by Zodomaniac.
- * Code line ordering in hexen/r_things.c has been fixed to prevent a crash, thanks to Nick_Z for the bug report.
+ * Horizontal location of the "PAUSE" graphic in widescreen mode has been fixes, thanks to JNechaevsky for spotting this.
+ * The widescreen rendering setting is not changed anymore by disabling aspect ratio correction, requested by Zodomaniac.
+ * A undetected merge conflict has been fixed in `hexen/r_things.c`, thanks to Nick_Z for the bug report.
 
 Crispy Doom 5.7.2 is based on Chocolate Doom 3.0.0 and has merged all changes to the Chocolate Doom master branch up to commit [`f1fa7faf`](https://github.com/chocolate-doom/chocolate-doom/commit/f1fa7faf566e3e325c1b1fbf8ace8d5ac2db2b1e).
 
