@@ -1046,6 +1046,8 @@ void P_LoadLineDefs (int lump)
     {
 	fprintf(stderr, "P_LoadLineDefs: Found %d line%s with unknown linedef type.\n"
 	                "THIS MAP MAY NOT WORK AS EXPECTED!\n", warn, (warn > 1) ? "s" : "");
+	if (!M_CheckParm("-boom"))
+	    I_Error("P_LoadLineDefs: Boom map format not supported. Try with the '-boom' command line parameter.");
     }
 
     W_ReleaseLumpNum(lump);
