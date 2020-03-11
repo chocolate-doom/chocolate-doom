@@ -170,9 +170,9 @@ Crispy Doom 5.7.2 has been released on March 13, 2020 to introduce the Compact H
 
  * HUD widgets are now re-initialized immediately after graphics initialization to mitigate the alignment issues that JNechaevsky and Zodomaniac experienced on launching a map from command line.
  * Previous colorization of "percent" status bar widgets is now remembered. This applies to the health and armor widget and forces them to update not only if their value changes, but also if their colorization changes, e.g. when entering the IDDQD cheat. Thanks to unerxai for the report.
- * Horizontal location of the "PAUSE" graphic in widescreen mode has been fixes, thanks to JNechaevsky for spotting this.
+ * Horizontal location of the "PAUSE" graphic in widescreen mode has been fixed, thanks to JNechaevsky for spotting this.
  * The widescreen rendering setting is not changed anymore by disabling aspect ratio correction, requested by Zodomaniac.
- * A undetected merge conflict has been fixed in `hexen/r_things.c`, thanks to Nick_Z for the bug report.
+ * An undetected merge conflict has been fixed in `hexen/r_things.c`, thanks to NickZ for the bug report.
 
 Crispy Doom 5.7.2 is based on Chocolate Doom 3.0.0 and has merged all changes to the Chocolate Doom master branch up to commit [`f1fa7faf`](https://github.com/chocolate-doom/chocolate-doom/commit/f1fa7faf566e3e325c1b1fbf8ace8d5ac2db2b1e).
 
