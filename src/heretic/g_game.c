@@ -345,6 +345,20 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
         lspeed = 2;
     }
 
+    // [crispy] Toggle vertical mouse movement
+    if (gamekeydown[key_togglenovert])
+    {
+        novert = !novert;
+
+        P_SetMessage(&players[consoleplayer], novert ?
+                     "VERTICAL MOUSE MOVEMENT OFF" :
+                     "VERTICAL MOUSE MOVEMENT ON", false);
+
+        S_StartSound(NULL, sfx_switch);
+
+        gamekeydown[key_togglenovert] = false;
+    }
+
 //
 // let movement keys cancel each other out
 //
