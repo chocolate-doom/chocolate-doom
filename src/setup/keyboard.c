@@ -226,7 +226,6 @@ static void ConfigExtraKeys(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
         AddKeyControl(table, "Strafe Left (alt.)", &key_alt_strafeleft);
         AddKeyControl(table, "Strafe Right (alt.)", &key_alt_straferight);
         AddKeyControl(table, "Toggle always run", &key_toggleautorun);
-        AddKeyControl(table, "Toggle vert. mouse", &key_togglenovert);
         AddKeyControl(table, "Quick Reverse", &key_reverse);
         }
         else
@@ -236,6 +235,11 @@ static void ConfigExtraKeys(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
         AddKeyControl(table, "Look up", &key_lookup);
         AddKeyControl(table, "Look down", &key_lookdown);
         AddKeyControl(table, "Center view", &key_lookcenter);
+        }
+
+        if (gamemission == doom || gamemission == heretic)
+        {
+        AddKeyControl(table, "Toggle vert. mouse", &key_togglenovert);
         }
 
         if (gamemission == heretic || gamemission == hexen)

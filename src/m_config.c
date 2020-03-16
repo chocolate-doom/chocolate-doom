@@ -1852,7 +1852,7 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_KEY(key_toggleautorun),
 
     //!
-    // @game doom
+    // @game doom heretic
     // Toggle vertical mouse movement.
     //
 
