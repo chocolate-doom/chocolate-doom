@@ -123,12 +123,9 @@ boolean P_SightBlockLinesIterator(int x, int y)
             return false;       // stop checking
 
         // store the line for later intersection testing
+        check_intercept(); // [crispy] remove INTERCEPTS limit
         intercept_p->d.line = ld;
         intercept_p++;
-
-        // [crispy] catch intercepts overflows
-        if (intercept_p - intercepts == MAXINTERCEPTS)
-            return false;
 
     }
 

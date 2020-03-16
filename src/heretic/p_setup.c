@@ -450,7 +450,7 @@ void P_LoadBlockMap(int lump)
     blockmaplump[3] = (int32_t)(SHORT(wadblockmaplump[3])) & 0xffff;
 
     // Swap all short integers to native byte ordering:
-	
+
     // count = lumplen / 2; // [crispy] moved up
     for (i=4; i<count; i++)
     {

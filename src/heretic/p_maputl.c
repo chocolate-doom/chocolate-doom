@@ -19,6 +19,7 @@
 #include <stdlib.h>
 
 #include "doomdef.h"
+#include "i_system.h" // [crispy] I_Realloc()
 #include "m_bbox.h"
 #include "p_local.h"
 
@@ -478,7 +479,21 @@ boolean P_BlockThingsIterator(int x, int y, boolean(*func) (mobj_t *))
 ===============================================================================
 */
 
-intercept_t intercepts[MAXINTERCEPTS], *intercept_p;
+intercept_t *intercepts, *intercept_p; // [crispy] remove INTERCEPTS limit
+
+// [crispy] remove INTERCEPTS limit
+void check_intercept(void)
+{
+	static size_t num_intercepts;
+	const size_t offset = intercept_p - intercepts;
+
+	if (offset >= num_intercepts)
+	{
+		num_intercepts = num_intercepts ? num_intercepts * 2 : MAXINTERCEPTS;
+		intercepts = I_Realloc(intercepts, sizeof(*intercepts) * num_intercepts);
+		intercept_p = intercepts + offset;
+	}
+}
 
 divline_t trace;
 boolean earlyout;
@@ -529,14 +544,11 @@ boolean PIT_AddLineIntercepts(line_t * ld)
     if (earlyout && frac < FRACUNIT && !ld->backsector)
         return false;           // stop checking
 
+    check_intercept(); // [crispy] remove INTERCEPTS limit
     intercept_p->frac = frac;
     intercept_p->isaline = true;
     intercept_p->d.line = ld;
     intercept_p++;
-
-    // [crispy] catch intercepts overflows
-    if (intercept_p - intercepts == MAXINTERCEPTS)
-        return false;
 
     return true;                // continue
 }
@@ -591,14 +603,11 @@ boolean PIT_AddThingIntercepts(mobj_t * thing)
     frac = P_InterceptVector(&trace, &dl);
     if (frac < 0)
         return true;            // behind source
+    check_intercept(); // [crispy] remove INTERCEPTS limit
     intercept_p->frac = frac;
     intercept_p->isaline = false;
     intercept_p->d.thing = thing;
     intercept_p++;
-
-    // [crispy] catch intercepts overflows
-    if (intercept_p - intercepts == MAXINTERCEPTS)
-        return false;
 
     return true;                // keep going
 }
