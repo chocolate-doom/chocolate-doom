@@ -492,6 +492,11 @@ void check_intercept(void)
 		num_intercepts = num_intercepts ? num_intercepts * 2 : MAXINTERCEPTS;
 		intercepts = I_Realloc(intercepts, sizeof(*intercepts) * num_intercepts);
 		intercept_p = intercepts + offset;
+
+		if (num_intercepts == 2 * MAXINTERCEPTS)
+		{
+			fprintf(stderr, "PIT_Add{Line,Thing}Intercepts: Hit INTERCEPTS limit!\n");
+		}
 	}
 }
 
