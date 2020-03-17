@@ -234,6 +234,11 @@ static void check_spechit(void)
 	{
 		spechit_max = spechit_max ? spechit_max * 2 : MAXSPECIALCROSS;
 		spechit = I_Realloc(spechit, sizeof(*spechit) * spechit_max);
+
+		if (spechit_max == 2 * MAXSPECIALCROSS)
+		{
+			fprintf(stderr, "PIT_CheckLine: Hit SPECHIT limit!\n");
+		}
 	}
 }
 
