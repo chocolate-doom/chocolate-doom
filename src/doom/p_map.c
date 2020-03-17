@@ -82,8 +82,9 @@ line_t*		ceilingline;
 // keep track of special lines as they are hit,
 // but don't process them until the move is proven valid
 
-line_t*		spechit[MAXSPECIALCROSS];
+line_t**	spechit; // [crispy] remove SPECHIT limit
 int		numspechit;
+static int spechit_max; // [crispy] remove SPECHIT limit
 
 
 
@@ -260,6 +261,12 @@ boolean PIT_CheckLine (line_t* ld)
     // if contacted a special line, add it to the list
     if (ld->special)
     {
+        // [crispy] remove SPECHIT limit
+        if (numspechit >= spechit_max)
+        {
+            spechit_max = spechit_max ? spechit_max * 2 : MAXSPECIALCROSS;
+            spechit = I_Realloc(spechit, sizeof(*spechit) * spechit_max);
+        }
         spechit[numspechit] = ld;
 	numspechit++;
 
