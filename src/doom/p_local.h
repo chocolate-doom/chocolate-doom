@@ -222,7 +222,7 @@ extern	line_t*		ceilingline;
 #define MAXSPECIALCROSS 		20
 #define MAXSPECIALCROSS_ORIGINAL	8
 
-extern	line_t*	spechit[MAXSPECIALCROSS];
+extern	line_t**	spechit; // [crispy] remove SPECHIT limit
 extern	int	numspechit;
 
 boolean P_CheckPosition (mobj_t *thing, fixed_t x, fixed_t y);
