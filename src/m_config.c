@@ -1123,6 +1123,22 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_INT(mouseb_nextweapon),
+    
+    //!
+    // @game heretic
+    //
+    // Mouse button to move to the left in the inventory.
+    //
+
+    CONFIG_VARIABLE_INT(mouseb_invleft),
+
+    //!
+    // @game heretic
+    //
+    // Mouse button to move to the right in the inventory.
+    //
+
+    CONFIG_VARIABLE_INT(mouseb_invright),
 
     //!
     // If non-zero, double-clicking a mouse button acts like pressing
