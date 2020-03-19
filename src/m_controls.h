@@ -145,6 +145,8 @@ extern int mousebuse;
 
 extern int mousebprevweapon;
 extern int mousebnextweapon;
+extern int mousebinvleft;
+extern int mousebinvright;
 
 extern int joybfire;
 extern int joybstrafe;

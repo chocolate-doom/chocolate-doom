@@ -771,6 +771,59 @@ static void SetJoyButtons(unsigned int buttons_mask)
     }
 }
 
+static boolean InventoryMoveLeft()
+{
+    inventoryTics = 5 * 35;
+    if (!inventory)
+    {
+        inventory = true;
+        return false;
+    }
+    inv_ptr--;
+    if (inv_ptr < 0)
+    {
+        inv_ptr = 0;
+    }
+    else
+    {
+        curpos--;
+        if (curpos < 0)
+        {
+            curpos = 0;
+        }
+    }
+    return true;
+}
+
+static boolean InventoryMoveRight()
+{
+    player_t *plr;
+
+    plr = &players[consoleplayer];
+    inventoryTics = 5 * 35;
+    if (!inventory)
+    {
+        inventory = true;
+        return false;
+    }
+    inv_ptr++;
+    if (inv_ptr >= plr->inventorySlotNum)
+    {
+        inv_ptr--;
+        if (inv_ptr < 0)
+            inv_ptr = 0;
+    }
+    else
+    {
+        curpos++;
+        if (curpos > 6)
+        {
+            curpos = 6;
+        }
+    }
+    return true;
+}
+
 static void SetMouseButtons(unsigned int buttons_mask)
 {
     int i;
@@ -790,6 +843,14 @@ static void SetMouseButtons(unsigned int buttons_mask)
             else if (i == mousebnextweapon)
             {
                 next_weapon = 1;
+            }
+            else if (i == mousebinvleft)
+            {
+                InventoryMoveLeft();
+            }
+            else if (i == mousebinvright)
+            {
+                InventoryMoveRight();
             }
         }
 
@@ -873,51 +934,19 @@ boolean G_Responder(event_t * ev)
         case ev_keydown:
             if (ev->data1 == key_invleft)
             {
-                inventoryTics = 5 * 35;
-                if (!inventory)
+                if (InventoryMoveLeft())
                 {
-                    inventory = true;
-                    break;
+                    return (true);
                 }
-                inv_ptr--;
-                if (inv_ptr < 0)
-                {
-                    inv_ptr = 0;
-                }
-                else
-                {
-                    curpos--;
-                    if (curpos < 0)
-                    {
-                        curpos = 0;
-                    }
-                }
-                return (true);
+                break;
             }
             if (ev->data1 == key_invright)
             {
-                inventoryTics = 5 * 35;
-                if (!inventory)
+                if (InventoryMoveRight())
                 {
-                    inventory = true;
-                    break;
+                    return (true);
                 }
-                inv_ptr++;
-                if (inv_ptr >= plr->inventorySlotNum)
-                {
-                    inv_ptr--;
-                    if (inv_ptr < 0)
-                        inv_ptr = 0;
-                }
-                else
-                {
-                    curpos++;
-                    if (curpos > 6)
-                    {
-                        curpos = 6;
-                    }
-                }
-                return (true);
+                break;
             }
             if (ev->data1 == key_pause && !MenuActive)
             {
