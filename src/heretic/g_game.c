@@ -307,9 +307,11 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
 
     strafe = gamekeydown[key_strafe] || mousebuttons[mousebstrafe]
         || joybuttons[joybstrafe];
-    speed = joybspeed >= MAX_JOY_BUTTONS
-         || gamekeydown[key_speed]
-         || joybuttons[joybspeed];
+
+    // [crispy] when "always run" is active,
+    // pressing the "run" key will result in walking
+    speed = (joybspeed >= MAX_JOY_BUTTONS)
+        ^ (gamekeydown[key_speed] || joybuttons[joybspeed]);
 
     // haleyjd: removed externdriver crap
     
