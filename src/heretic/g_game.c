@@ -311,7 +311,8 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
     // [crispy] when "always run" is active,
     // pressing the "run" key will result in walking
     speed = (joybspeed >= MAX_JOY_BUTTONS)
-        ^ (gamekeydown[key_speed] || joybuttons[joybspeed]);
+        ^ (gamekeydown[key_speed]
+            || (joybspeed < MAX_JOY_BUTTONS && joybuttons[joybspeed]));
 
     // haleyjd: removed externdriver crap
     
