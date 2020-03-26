@@ -108,6 +108,7 @@ static boolean CrispySmoothing(int option);
 static boolean CrispyAutomapStats(int option);
 static boolean CrispyLevelTime(int option);
 static boolean CrispyPlayerCoords(int option);
+static boolean CrispySecretMessage(int option);
 static void DrawMainMenu(void);
 static void DrawEpisodeMenu(void);
 static void DrawSkillMenu(void);
@@ -292,13 +293,14 @@ static MenuItem_t CrispnessItems[] = {
     {ITT_EMPTY, NULL, NULL, 0, MENU_NONE},
     {ITT_LRFUNC, "SHOW LEVEL STATS:", CrispyAutomapStats, 0, MENU_NONE},
     {ITT_LRFUNC, "SHOW LEVEL TIME:", CrispyLevelTime, 0, MENU_NONE},
-    {ITT_LRFUNC, "SHOW PLAYER COORDS:", CrispyPlayerCoords, 0, MENU_NONE}
+    {ITT_LRFUNC, "SHOW PLAYER COORDS:", CrispyPlayerCoords, 0, MENU_NONE},
+    {ITT_LRFUNC, "REPORT REVEALED SECRETS:", CrispySecretMessage, 0, MENU_NONE},
 };
 
 static Menu_t CrispnessMenu = {
     68, 40,
     DrawCrispnessMenu,
-    6, CrispnessItems,
+    7, CrispnessItems,
     0,
     MENU_OPTIONS
 };
@@ -1114,6 +1116,12 @@ static boolean CrispyPlayerCoords(int option)
     return true;
 }
 
+static boolean CrispySecretMessage(int option)
+{
+    crispy->secretmessage = (crispy->secretmessage + 1) % NUM_SECRETMESSAGE; // [crispy] enable secret message
+    return true;
+}
+
 //---------------------------------------------------------------------------
 //
 // FUNC MN_Responder
@@ -1810,4 +1818,9 @@ static void DrawCrispnessMenu(void)
 
     // Show player coords
     MN_DrTextA(crispy->playercoords == WIDGETS_OFF ? "NEVER" : "IN AUTOMAP", 211, 90);
+
+    // Show secret message
+    MN_DrTextA(crispy->secretmessage == SECRETMESSAGE_OFF ? "OFF" :
+        crispy->secretmessage == SECRETMESSAGE_ON ? "ON" :
+        "COUNT", 250, 100);
 }

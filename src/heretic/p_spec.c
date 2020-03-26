@@ -20,6 +20,7 @@
 #include "deh_str.h"
 #include "i_system.h"
 #include "i_timer.h"
+#include "m_misc.h" // [crispy] So M_sprintf can be used
 #include "m_random.h"
 #include "p_local.h"
 #include "s_sound.h"
@@ -28,6 +29,8 @@
 // Macros
 
 #define MAX_AMBIENT_SFX 8       // Per level
+
+#define HUSTR_SECRETFOUND	"A SECRET IS REVEALED!" // [crispy] Secret message
 
 // Types
 
@@ -842,6 +845,7 @@ void P_ShootSpecialLine(mobj_t * thing, line_t * line)
 
 void P_PlayerInSpecialSector(player_t * player)
 {
+    extern boolean messageson;
     sector_t *sector;
     static int pushTab[5] = {
         2048 * 5,
@@ -888,6 +892,18 @@ void P_PlayerInSpecialSector(player_t * player)
             break;
         case 9:                // SecretArea
             player->secretcount++;
+            // [crispy] Show centered "Secret Revealed!" message
+            if (messageson && crispy->secretmessage && player == &players[consoleplayer]) 
+            {
+                static char str_count[32];
+                
+                M_snprintf(str_count, sizeof(str_count), "SECRET %d OF %d REVEALED!", player->secretcount, totalsecret);
+
+                P_SetCenterMessage(&players[consoleplayer],
+                    (crispy->secretmessage == SECRETMESSAGE_COUNT) ? str_count : HUSTR_SECRETFOUND);
+                // Play an unused sound when secret found
+                S_StartSound(NULL, sfx_chicpk3);
+            }
             sector->special = 0;
             break;
         case 11:               // Exit_SuperDamage (DOOM E1M8 finale)

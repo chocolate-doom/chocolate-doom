@@ -132,6 +132,27 @@ void DrawMessage(void)
 
 //---------------------------------------------------------------------------
 //
+// PROC DrawCenterMessage
+//
+// [crispy]
+//
+//---------------------------------------------------------------------------
+
+void DrawCenterMessage(void)
+{
+    player_t* player;
+
+    player = &players[consoleplayer];
+    if (player->centerMessageTics <= 0 || !player->centerMessage)
+    {                           // No message
+        return;
+    }
+    // Place message above quit game message position so they don't overlap
+    MN_DrTextA(player->centerMessage, 160 - MN_TextAWidth(player->centerMessage) / 2, 70);
+}
+
+//---------------------------------------------------------------------------
+//
 // PROC D_Display
 //
 // Draw current display, possibly wiping it from the previous.
@@ -247,6 +268,9 @@ void D_Display(void)
     }
     // Handle player messages
     DrawMessage();
+
+    // [crispy] Handle centered player messages
+    DrawCenterMessage();
 
     // Menu drawing
     MN_Drawer();
@@ -752,6 +776,7 @@ void D_BindVariables(void)
     M_BindIntVariable("crispy_automapstats",    &crispy->automapstats);
     M_BindIntVariable("crispy_leveltime",       &crispy->leveltime);
     M_BindIntVariable("crispy_playercoords",    &crispy->playercoords);
+    M_BindIntVariable("crispy_secretmessage",   &crispy->secretmessage);
 }
 
 // 

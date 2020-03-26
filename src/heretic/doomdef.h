@@ -467,6 +467,10 @@ typedef struct player_s
     int chickenPeck;            // chicken peck countdown
     mobj_t *rain1;              // active rain maker 1
     mobj_t *rain2;              // active rain maker 2
+
+    // [crispy] show centered "Secret Revealed!" message
+    const char *centerMessage;
+    int centerMessageTics;            // counter for showing centered messages
 } player_t;
 
 #define CF_NOCLIP		1

@@ -140,6 +140,25 @@ void P_SetMessage(player_t * player, const char *message, boolean ultmsg)
 
 //--------------------------------------------------------------------------
 //
+// PROC P_SetCenterMessage
+//
+// [crispy] Set centered message
+//
+//--------------------------------------------------------------------------
+void P_SetCenterMessage(player_t * player, const char *message)
+{
+    extern boolean messageson;
+
+    if (!messageson)
+    {
+        return;
+    }
+    player->centerMessage = message;
+    player->centerMessageTics = MESSAGETICS;
+    BorderTopRefresh = true;
+}
+//--------------------------------------------------------------------------
+//
 // FUNC P_GiveAmmo
 //
 // Returns true if the player accepted the ammo, false if it was
