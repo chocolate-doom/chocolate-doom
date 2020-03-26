@@ -52,6 +52,7 @@ extern int detailLevel;
 extern int screenblocks;
 
 int widescreen = 0; // [JN] Wide picture on widescreen resolutions [Crispy] Real wide
+int WIDEWIDTH_DELTA; // [Crispy] Horizontal widescreen offset
 int lcd_gamma_fix = 0; // [JN] Palette optimization Doom
 int smoothscaling = 1; // [Crispy] Enable the intermediate buffer
 
@@ -1462,9 +1463,15 @@ void I_InitGraphics(void)
     }
 
     if (widescreen)
-		actualwidth = WIDESCREENWIDTH;
+    {
+        actualwidth = WIDESCREENWIDTH;
+        WIDEWIDTH_DELTA = (WIDESCREENWIDTH - SCREENWIDTH)/ 2;
+    }
     else
+    {
         actualwidth = SCREENWIDTH;
+        WIDEWIDTH_DELTA = 0;
+    }
 
     // Create the game window; this may switch graphic modes depending
     // on configuration.

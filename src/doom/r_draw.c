@@ -889,10 +889,17 @@ void R_FillBackScreen (void)
 
     const char *name;
 
+    int screenwidth;
+
+    if (widescreen)
+        screenwidth = WIDESCREENWIDTH;
+    else
+        screenwidth = SCREENWIDTH;
+
     // If we are running full screen, there is no need to do any of this,
     // and the background buffer can be freed if it was previously in use.
 
-    if (scaledviewwidth == SCREENWIDTH)
+    if (scaledviewwidth == screenwidth)
     {
         if (background_buffer != NULL)
         {
@@ -907,7 +914,7 @@ void R_FillBackScreen (void)
 	
     if (background_buffer == NULL)
     {
-        background_buffer = Z_Malloc(SCREENWIDTH * (SCREENHEIGHT - SBARHEIGHT) * sizeof(*background_buffer),
+        background_buffer = Z_Malloc(screenwidth * (SCREENHEIGHT - SBARHEIGHT) * sizeof(*background_buffer),
                                      PU_STATIC, NULL);
     }
 
