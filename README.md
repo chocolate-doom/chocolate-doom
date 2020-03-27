@@ -17,6 +17,7 @@ remaining faithful to the original executables. There are a few new gameplay fea
 # New features:
 
  * Widescreen support both zoomed view and real wide (bits from Russian Doom and Crispy).
+ * UI centering for widescreen (mostly taken from Crispy).
  * Enable loading 16 bit RIFF wavs in .wads (SmileTheory).
  * Doom 1.0 and 1.1 emulation (SmileTheory).
  * Draw the player mugshot with max view.
@@ -25,11 +26,12 @@ remaining faithful to the original executables. There are a few new gameplay fea
  * There's a new 'Unholy massacre' skill level (-skill 6). :D Double monsters, lesser health pickups,
  zombiemen got a point blank attack, pistol with increased accuracy and damage, bumped minimum damage
  dealt for punch.
- * Changed ammo balance in UM, added the single player demo unsafe -halfammo parameter to play
- old demos.
+ * Replaced the Unholy Massacre title graphic. Thanks JNechaevsky!
+ * Doom: remove SPECHIT limit (Crispy).
+ * Heretic: entirely remove INTERCEPTS and SPECHIT limits (Crispy).
  * Got rid of supersized PNGs (Crispy).
  * Fixed backpacks from Marshmallow (idea and bits of code):
- * Players now can exchange supplies (default backpack key is 'x').
+ * Players now can exchange supplies (default backpack key is 'x', default stimpack key is 'c').
  * Players drop backpacks with their inventory upon death, you can't drop another one until the
  previous one has been picked up tough. They work even in SP.
  * Single player respawn.
@@ -46,7 +48,7 @@ remaining faithful to the original executables. There are a few new gameplay fea
  * Resurrect cheat with IDDQD (Crispy, works differently here).
  * Support for extended nodes (Crispy).
  * Autorun key (Crispy).
- * The startup console is back and with colored title, can be run run from the command line
+ * The startup console is back and with colored title, works from the Windows command line
  (thanks JNechaevsky for hint on colors).
  * Fake splitscreen.
  * Added LCD gamma fix from Russian Doom using a darker palette by JNechaevsky.
@@ -57,6 +59,8 @@ remaining faithful to the original executables. There are a few new gameplay fea
  * Fixed Doom II monster exclusion bug.
  * Fixed configuration not being saved for Heretic.
  * Support for Ogg, FLAC and MP3 music lumps (Crispy).
+ * Don't load Boom maps by default, only with the -boom parameter.
+ * Fixed crash with invalid blockmap (DWHEEL.WAD).
  * Many bugfixes from Crispy.
 
  Have fun!
