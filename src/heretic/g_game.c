@@ -348,6 +348,30 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
         lspeed = 2;
     }
 
+    // [crispy] toggle "always run"
+    if (gamekeydown[key_toggleautorun])
+    {
+        static int joybspeed_old = 2;
+
+        if (joybspeed >= MAX_JOY_BUTTONS)
+        {
+            joybspeed = joybspeed_old;
+        }
+        else
+        {
+            joybspeed_old = joybspeed;
+            joybspeed = 29;
+        }
+
+        P_SetMessage(&players[consoleplayer], (joybspeed >= MAX_JOY_BUTTONS) ?
+                     "ALWAYS RUN ON" :
+                     "ALWAYS RUN OFF", false);
+
+        S_StartSound(NULL, sfx_switch);
+
+        gamekeydown[key_toggleautorun] = false;
+    }
+
     // [crispy] Toggle vertical mouse movement
     if (gamekeydown[key_togglenovert])
     {
