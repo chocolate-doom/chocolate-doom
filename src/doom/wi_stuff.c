@@ -504,7 +504,7 @@ WI_drawOnLnode
 	bottom = top + SHORT(c[i]->height);
 
 	if (left >= 0
-	    && right < SCREENWIDTH
+	    && right < WIDESCREENWIDTH
 	    && top >= 0
 	    && bottom < SCREENHEIGHT)
 	{

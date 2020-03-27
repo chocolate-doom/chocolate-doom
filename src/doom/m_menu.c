@@ -1369,7 +1369,7 @@ M_WriteText
 	}
 		
 	w = SHORT (hu_font[c]->width);
-	if (cx+w > SCREENWIDTH)
+	if (cx+w > WIDESCREENWIDTH)
 	    break;
 	V_DrawPatchDirect(cx, cy, hu_font[c]);
 	cx+=w;

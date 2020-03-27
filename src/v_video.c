@@ -93,7 +93,10 @@ void V_CopyRect(int srcx, int srcy, pixel_t *source,
 { 
     pixel_t *src;
     pixel_t *dest;
- 
+
+    destx += WIDEWIDTH_DELTA; // [crispy] horizontal widescreen offset
+    srcx += WIDEWIDTH_DELTA; // else it crashed
+
 #ifdef RANGECHECK 
     if (srcx < 0
      || srcx + width > screenwidth
@@ -159,6 +162,7 @@ void V_DrawPatch(int x, int y, patch_t *patch)
 
     y -= SHORT(patch->topoffset);
     x -= SHORT(patch->leftoffset);
+    x += WIDEWIDTH_DELTA; // [crispy] horizontal widescreen offset
 
     // haleyjd 08/28/10: Strife needs silent error checking here.
     if(patchclip_callback)
@@ -246,7 +250,8 @@ void V_DrawPatchFlipped(int x, int y, patch_t *patch)
     int w, tmpy;
  
     y -= SHORT(patch->topoffset); 
-    x -= SHORT(patch->leftoffset); 
+    x -= SHORT(patch->leftoffset);
+    x += WIDEWIDTH_DELTA; // [crispy] horizontal widescreen offset
 
     // haleyjd 08/28/10: Strife needs silent error checking here.
     if(patchclip_callback)

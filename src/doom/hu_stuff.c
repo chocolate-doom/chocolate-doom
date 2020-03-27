@@ -397,13 +397,13 @@ void HU_Start(void)
 
     // create the message widget
     HUlib_initSText(&w_message,
-		    HU_MSGX, HU_MSGY, HU_MSGHEIGHT,
+		    HU_MSGX - WIDEWIDTH_DELTA, HU_MSGY, HU_MSGHEIGHT,
 		    hu_font,
 		    HU_FONTSTART, &message_on);
 
     // create the map title widget
     HUlib_initTextLine(&w_title,
-		       HU_TITLEX, HU_TITLEY,
+		       HU_TITLEX - WIDEWIDTH_DELTA, HU_TITLEY,
 		       hu_font,
 		       HU_FONTSTART);
     

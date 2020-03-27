@@ -1128,8 +1128,7 @@ void ST_drawWidgets(boolean refresh)
     STlib_updateNum(&w_frags, refresh);
     }
 	else
-    V_DrawPatch(w_faces.x - 138, w_faces.y, faces[st_faceindex]);
-
+    V_DrawPatch(w_faces.x - 135 - WIDEWIDTH_DELTA, w_faces.y, faces[st_faceindex]);
 }
 
 void ST_doRefresh(void)

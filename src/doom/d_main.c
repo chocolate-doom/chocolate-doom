@@ -234,7 +234,10 @@ boolean D_Display (void)
 	    AM_Drawer ();
 	// fill with black box
 	if (widescreen && (automapactive || (widescreen == 2 && screenblocks == 10)))
-	    V_DrawFilledBox(SCREENWIDTH, SCREENHEIGHT - SBARHEIGHT, WIDESCREENWIDTH - SCREENWIDTH, SBARHEIGHT, 0);
+	{
+	    V_DrawFilledBox(0, SCREENHEIGHT - SBARHEIGHT, WIDEWIDTH_DELTA, SBARHEIGHT, 0);
+	    V_DrawFilledBox(WIDESCREENWIDTH - WIDEWIDTH_DELTA, SCREENHEIGHT - SBARHEIGHT, WIDEWIDTH_DELTA, SBARHEIGHT, 0);
+	}
 	if (wipe || (viewheight != SCREENHEIGHT && fullscreen))
 	    redrawsbar = true;
 	if (inhelpscreensstate && !inhelpscreens)

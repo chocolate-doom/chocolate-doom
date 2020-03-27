@@ -292,7 +292,7 @@ void F_TextWrite (void)
 	}
 		
 	w = SHORT (hu_font[c]->width);
-	if (cx+w > SCREENWIDTH)
+	if (cx+w > WIDESCREENWIDTH)
 	    break;
 	V_DrawPatch(cx, cy, hu_font[c]);
 	cx+=w;
@@ -645,9 +645,9 @@ void F_BunnyScroll (void)
     for ( x=0 ; x<SCREENWIDTH ; x++)
     {
 	if (x+scrolled < SCREENWIDTH)
-	    F_DrawPatchCol (x, p1, x+scrolled);
+	    F_DrawPatchCol (x+WIDEWIDTH_DELTA, p1, x+scrolled);
 	else
-	    F_DrawPatchCol (x, p2, x+scrolled - SCREENWIDTH);		
+	    F_DrawPatchCol (x+WIDEWIDTH_DELTA, p2, x+scrolled - SCREENWIDTH);
     }
 	
     if (finalecount < 1130)

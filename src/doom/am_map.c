@@ -1349,7 +1349,7 @@ void AM_drawMarks(void)
 	    //      h = SHORT(marknums[i]->height);
 	    w = 5; // because something's wrong with the wad, i guess
 	    h = 6; // because something's wrong with the wad, i guess
-	    fx = CXMTOF(markpoints[i].x);
+	    fx = CXMTOF(markpoints[i].x) - WIDEWIDTH_DELTA;
 	    fy = CYMTOF(markpoints[i].y);
 	    if (fx >= f_x && fx <= f_w - w && fy >= f_y && fy <= f_h - h)
 		V_DrawPatch(fx, fy, marknums[i]);
