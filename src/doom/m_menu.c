@@ -1389,7 +1389,7 @@ void M_DrawOptions(void)
                 showMessages ? "On" : "Off");
 
     M_DrawThermo(OptionsDef.x + screenSize_min * 8,OptionsDef.y+LINEHEIGHT*(scrnsize+1),
-		 9 + 3 - screenSize_min,screenSize - screenSize_min); // [crispy] Crispy HUD
+		 9 + (crispy->widescreen ? 6 : 3) - screenSize_min,screenSize - screenSize_min); // [crispy] Crispy HUD
 }
 
 // [crispy] mouse sensitivity menu
@@ -1501,7 +1501,7 @@ static void M_DrawCrispness1(void)
 
     M_DrawCrispnessSeparator(crispness_sep_rendering, "Rendering");
     M_DrawCrispnessItem(crispness_hires, "High Resolution Rendering", crispy->hires, true);
-    M_DrawCrispnessMultiItem(crispness_widescreen, "Widescreen Rendering", multiitem_widescreen, crispy->widescreen, aspect_ratio_correct);
+    M_DrawCrispnessItem(crispness_widescreen, "Widescreen Rendering", crispy->widescreen, aspect_ratio_correct);
     M_DrawCrispnessItem(crispness_uncapped, "Uncapped Framerate", crispy->uncapped, true);
     M_DrawCrispnessItem(crispness_vsync, "Enable VSync", crispy->vsync, !force_software_renderer);
     M_DrawCrispnessItem(crispness_smoothscaling, "Smooth Pixel Scaling", crispy->smoothscaling, true);
@@ -1899,10 +1899,15 @@ void M_SizeDisplay(int choice)
 	}
 	break;
       case 1:
-	if (screenSize < 8 + 3) // [crispy] Crispy HUD
+	if (screenSize < 8 + (crispy->widescreen ? 6 : 3)) // [crispy] Crispy HUD
 	{
 	    screenblocks++;
 	    screenSize++;
+	}
+	else
+	{
+	    screenblocks = 11;
+	    screenSize = 8;
 	}
 	break;
     }
@@ -1912,6 +1917,10 @@ void M_SizeDisplay(int choice)
     if (choice == 0 || choice == 1)
     {
     R_SetViewSize (screenblocks, detailLevel);
+    if (crispy->widescreen)
+    {
+        M_CrispyReinitHUDWidgets();
+    }
     }
 }
 

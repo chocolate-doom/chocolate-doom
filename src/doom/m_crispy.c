@@ -128,13 +128,6 @@ multiitem_t multiitem_sndchannels[4] =
     {32, "32"},
 };
 
-multiitem_t multiitem_widescreen[NUM_WIDESCREEN] =
-{
-    {WIDESCREEN_OFF, "off"},
-    {WIDESCREEN_WIDE, "on, wide HUD"},
-    {WIDESCREEN_COMPACT, "on, compact HUD"},
-};
-
 multiitem_t multiitem_widgets[NUM_WIDGETS] =
 {
     {WIDGETS_OFF, "never"},
@@ -544,10 +537,9 @@ void M_CrispyReinitHUDWidgets (void)
 
 static void M_CrispyToggleWidescreenHook (void)
 {
-    crispy->widescreen = (crispy->widescreen + 1) % NUM_WIDESCREEN;
+    crispy->widescreen = !crispy->widescreen;
 
     // [crispy] no need to re-init when switching from wide to compact
-    if (crispy->widescreen == 1 || crispy->widescreen == 0)
     {
 	// [crispy] re-initialize screenSize_min
 	M_SizeDisplay(-1);

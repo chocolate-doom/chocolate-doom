@@ -138,7 +138,7 @@ extern boolean inhelpscreens; // [crispy] prevent palette changes
 //       into a buffer,
 //       or into the frame buffer?
 
-#define HORIZDELTA (crispy->widescreen == 1 ? DELTAWIDTH : 0)
+#define HORIZDELTA ((crispy->widescreen && screenblocks >= CRISPY_HUD + 3) ? DELTAWIDTH : 0)
 
 // AMMO number pos.
 #define ST_AMMOWIDTH		3	
@@ -1907,7 +1907,7 @@ void ST_drawWidgets(boolean refresh)
 	STlib_updateMultIcon(&w_arms[i], refresh);
 
     // [crispy] draw the actual face widget background
-    if (st_crispyhud && screenblocks == CRISPY_HUD)
+    if (st_crispyhud && screenblocks % 3 == 0)
     {
 	V_CopyRect(ST_FX + DELTAWIDTH, 1, st_backing_screen, SHORT(faceback->width), ST_HEIGHT - 1, ST_FX + DELTAWIDTH, ST_Y + 1);
     }
@@ -1952,7 +1952,7 @@ void ST_Drawer (boolean fullscreen, boolean refresh)
     // [crispy] distinguish classic status bar with background and player face from Crispy HUD
     st_crispyhud = screenblocks >= CRISPY_HUD && (!automapactive || crispy->automapoverlay);
     st_classicstatusbar = st_statusbaron && !st_crispyhud && !crispy->widescreen;
-    st_statusbarface = st_classicstatusbar || (st_crispyhud && screenblocks == CRISPY_HUD);
+    st_statusbarface = st_classicstatusbar || (st_crispyhud && screenblocks % 3 == 0);
 
     if (crispy->cleanscreenshot == 2)
         return;
@@ -1961,7 +1961,7 @@ void ST_Drawer (boolean fullscreen, boolean refresh)
     ST_doPaletteStuff();
 
     // [crispy] translucent HUD
-    if (st_crispyhud && screenblocks > CRISPY_HUD + 1)
+    if (st_crispyhud && screenblocks % 3 == 2)
 	dp_translucent = true;
 
     // If just after ST_Start(), refresh all
