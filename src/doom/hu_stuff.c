@@ -60,7 +60,7 @@
 #define HU_TITLEM	(mapnames_commercial[gamemap-1 + 105 + 3])
 #define HU_TITLE_CHEX   (mapnames_chex[(gameepisode-1)*9+gamemap-1])
 #define HU_TITLEHEIGHT	1
-#define HU_TITLEX	(0 - DELTAWIDTH)
+#define HU_TITLEX	(0 - WIDESCREENDELTA)
 #define HU_TITLEY	(167 - SHORT(hu_font[0]->height))
 
 #define HU_INPUTTOGGLE	't'
@@ -69,7 +69,7 @@
 #define HU_INPUTWIDTH	64
 #define HU_INPUTHEIGHT	1
 
-#define HU_COORDX	((ORIGWIDTH - 7 * hu_font['A'-HU_FONTSTART]->width) + DELTAWIDTH)
+#define HU_COORDX	((ORIGWIDTH - 7 * hu_font['A'-HU_FONTSTART]->width) + WIDESCREENDELTA)
 
 
 char *chat_macros[10] =
@@ -612,9 +612,9 @@ void HU_Start(void)
     secret_on = false;
     chat_on = false;
 
-    // [crispy] re-calculate DELTAWIDTH
+    // [crispy] re-calculate WIDESCREENDELTA
     I_GetScreenDimensions();
-    hu_widescreendelta = DELTAWIDTH;
+    hu_widescreendelta = WIDESCREENDELTA;
 
     // create the message widget
     HUlib_initSText(&w_message,
@@ -936,7 +936,7 @@ void HU_Ticker(void)
     char c;
     char str[32], *s;
 
-    if (hu_widescreendelta != DELTAWIDTH)
+    if (hu_widescreendelta != WIDESCREENDELTA)
     {
         HU_Start();
     }

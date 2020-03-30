@@ -50,8 +50,8 @@
 #include "z_zone.h"
 
 int SCREENWIDTH, SCREENHEIGHT, SCREENHEIGHT_4_3;
-int HIRESWIDTH; // [crispy] non-widescreen SCREENWIDTH
-int DELTAWIDTH; // [crispy] horizontal widescreen offset
+int NONWIDEWIDTH; // [crispy] non-widescreen SCREENWIDTH
+int WIDESCREENDELTA; // [crispy] horizontal widescreen offset
 
 // These are (1) the window (or the full screen) that our game is rendered to
 // and (2) the renderer that scales the texture (see below) into this window.
@@ -1524,7 +1524,7 @@ static void SetVideoMode(void)
     CreateUpscaledTexture(true);
 }
 
-// [crispy] re-calculate SCREENWIDTH, SCREENHEIGHT, HIRESWIDTH and DELTAWIDTH
+// [crispy] re-calculate SCREENWIDTH, SCREENHEIGHT, NONWIDEWIDTH and WIDESCREENDELTA
 void I_GetScreenDimensions (void)
 {
 	SDL_DisplayMode mode;
@@ -1534,7 +1534,7 @@ void I_GetScreenDimensions (void)
 	SCREENWIDTH = ORIGWIDTH << crispy->hires;
 	SCREENHEIGHT = ORIGHEIGHT << crispy->hires;
 
-	HIRESWIDTH = SCREENWIDTH;
+	NONWIDEWIDTH = SCREENWIDTH;
 
 	ah = (aspect_ratio_correct == 1) ? (6 * SCREENHEIGHT / 5) : SCREENHEIGHT;
 
@@ -1558,7 +1558,7 @@ void I_GetScreenDimensions (void)
 		SCREENWIDTH = MIN(SCREENWIDTH, MAXWIDTH);
 	}
 
-	DELTAWIDTH = ((SCREENWIDTH - HIRESWIDTH) >> crispy->hires) / 2;
+	WIDESCREENDELTA = ((SCREENWIDTH - NONWIDEWIDTH) >> crispy->hires) / 2;
 }
 
 void I_InitGraphics(void)

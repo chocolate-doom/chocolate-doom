@@ -626,7 +626,7 @@ void R_InitTextureMapping (void)
     //  so FIELDOFVIEW angles covers SCREENWIDTH.
     // [crispy] in widescreen mode, make sure the same number of horizontal
     // pixels shows the same part of the game scene as in regular rendering mode
-    focalwidth = crispy->widescreen ? ((HIRESWIDTH>>detailshift)/2)<<FRACBITS : centerxfrac;
+    focalwidth = crispy->widescreen ? ((NONWIDEWIDTH>>detailshift)/2)<<FRACBITS : centerxfrac;
     focallength = FixedDiv (focalwidth,
 			    finetangent[FINEANGLES/4+FIELDOFVIEW/2] );
 	
@@ -837,7 +837,7 @@ void R_ExecuteSetViewSize (void)
     centerx = viewwidth/2;
     centerxfrac = centerx<<FRACBITS;
     centeryfrac = centery<<FRACBITS;
-    projection = MIN(centerxfrac, ((HIRESWIDTH>>detailshift)/2)<<FRACBITS);
+    projection = MIN(centerxfrac, ((NONWIDEWIDTH>>detailshift)/2)<<FRACBITS);
 
     if (!detailshift)
     {
@@ -861,8 +861,8 @@ void R_ExecuteSetViewSize (void)
     R_InitTextureMapping ();
     
     // psprite scales
-    pspritescale = FRACUNIT*MIN(viewwidth, HIRESWIDTH>>detailshift)/ORIGWIDTH;
-    pspriteiscale = FRACUNIT*ORIGWIDTH/MIN(viewwidth, HIRESWIDTH>>detailshift);
+    pspritescale = FRACUNIT*MIN(viewwidth, NONWIDEWIDTH>>detailshift)/ORIGWIDTH;
+    pspriteiscale = FRACUNIT*ORIGWIDTH/MIN(viewwidth, NONWIDEWIDTH>>detailshift);
     
     // thing clipping
     for (i=0 ; i<viewwidth ; i++)
@@ -873,7 +873,7 @@ void R_ExecuteSetViewSize (void)
     {
 	// [crispy] re-generate lookup-table for yslope[] (free look)
 	// whenever "detailshift" or "screenblocks" change
-	const fixed_t num = MIN(viewwidth<<detailshift, HIRESWIDTH)/2*FRACUNIT;
+	const fixed_t num = MIN(viewwidth<<detailshift, NONWIDEWIDTH)/2*FRACUNIT;
 	for (j = 0; j < LOOKDIRS; j++)
 	{
 	dy = ((i-(viewheight/2 + ((j-LOOKDIRMIN) * (1 << crispy->hires)) * (screenblocks < 11 ? screenblocks : 11) / 10))<<FRACBITS)+FRACUNIT/2;
@@ -898,7 +898,7 @@ void R_ExecuteSetViewSize (void)
 	startmap = ((LIGHTLEVELS-LIGHTBRIGHT-i)*2)*NUMCOLORMAPS/LIGHTLEVELS;
 	for (j=0 ; j<MAXLIGHTSCALE ; j++)
 	{
-	    level = startmap - j*HIRESWIDTH/MIN(viewwidth<<detailshift, HIRESWIDTH)/DISTMAP;
+	    level = startmap - j*NONWIDEWIDTH/MIN(viewwidth<<detailshift, NONWIDEWIDTH)/DISTMAP;
 	    
 	    if (level < 0)
 		level = 0;
