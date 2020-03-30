@@ -1603,8 +1603,15 @@ void ST_updateWidgets(void)
 
 }
 
+static int st_widescreendelta;
+
 void ST_Ticker (void)
 {
+    if (st_widescreendelta != HORIZDELTA)
+    {
+        void ST_createWidgets (void);
+        ST_createWidgets();
+    }
 
     st_clock++;
     st_randomnumber = M_Random();
@@ -2160,6 +2167,7 @@ void ST_createWidgets(void)
 
     // [crispy] re-calculate DELTAWIDTH
     I_GetScreenDimensions();
+    st_widescreendelta = HORIZDELTA;
 
     // ready weapon ammo
     STlib_initNum(&w_ready,

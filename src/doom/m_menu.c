@@ -1917,10 +1917,6 @@ void M_SizeDisplay(int choice)
     if (choice == 0 || choice == 1)
     {
     R_SetViewSize (screenblocks, detailLevel);
-    if (crispy->widescreen)
-    {
-        M_CrispyReinitHUDWidgets();
-    }
     }
 }
 

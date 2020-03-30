@@ -592,6 +592,8 @@ static void HU_SetSpecialLevelName (const char *wad, const char **name)
     }
 }
 
+static int hu_widescreendelta;
+
 void HU_Start(void)
 {
 
@@ -612,6 +614,7 @@ void HU_Start(void)
 
     // [crispy] re-calculate DELTAWIDTH
     I_GetScreenDimensions();
+    hu_widescreendelta = DELTAWIDTH;
 
     // create the message widget
     HUlib_initSText(&w_message,
@@ -932,6 +935,11 @@ void HU_Ticker(void)
     int i, rc;
     char c;
     char str[32], *s;
+
+    if (hu_widescreendelta != DELTAWIDTH)
+    {
+        HU_Start();
+    }
 
     // tick down message counter if message is up
     if (message_counter && !--message_counter)

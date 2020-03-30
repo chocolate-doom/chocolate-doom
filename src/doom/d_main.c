@@ -557,12 +557,6 @@ void D_DoomLoop (void)
     I_GraphicsCheckCommandLine();
     I_SetGrabMouseCallback(D_GrabMouseCallback);
     I_InitGraphics();
-    // [crispy] re-init HUD widgets now just in case graphics were not initialized before
-    if (crispy->widescreen && aspect_ratio_correct)
-    {
-	extern void M_CrispyReinitHUDWidgets(void);
-	M_CrispyReinitHUDWidgets();
-    }
     EnableLoadingDisk();
 
     TryRunTics();
