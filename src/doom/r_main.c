@@ -607,6 +607,11 @@ void R_InitTables (void)
 
 
 
+// [crispy] in widescreen mode, make sure the same number of horizontal
+// pixels shows the same part of the game scene as in regular rendering mode
+static int scaledviewwidth_nonwide, viewwidth_nonwide;
+static fixed_t centerxfrac_nonwide;
+
 //
 // R_InitTextureMapping
 //
@@ -616,7 +621,6 @@ void R_InitTextureMapping (void)
     int			x;
     int			t;
     fixed_t		focallength;
-    fixed_t		focalwidth;
     
     // Use tangent table to generate viewangletox:
     //  viewangletox will give the next greatest x
@@ -624,10 +628,7 @@ void R_InitTextureMapping (void)
     //
     // Calc focallength
     //  so FIELDOFVIEW angles covers SCREENWIDTH.
-    // [crispy] in widescreen mode, make sure the same number of horizontal
-    // pixels shows the same part of the game scene as in regular rendering mode
-    focalwidth = crispy->widescreen ? ((NONWIDEWIDTH>>detailshift)/2)<<FRACBITS : centerxfrac;
-    focallength = FixedDiv (focalwidth,
+    focallength = FixedDiv (centerxfrac_nonwide,
 			    finetangent[FINEANGLES/4+FIELDOFVIEW/2] );
 	
     for (i=0 ; i<FINEANGLES/2 ; i++)
@@ -806,38 +807,35 @@ void R_ExecuteSetViewSize (void)
 
     setsizeneeded = false;
 
-	// [crispy] make absolutely sure screenblocks is never < 11 in widescreen mode
-	if (crispy->widescreen)
-	{
-		extern void M_SizeDisplay(int choice);
-
-		while (setblocks < 11)
-		{
-			M_SizeDisplay(1);
-			R_ExecuteSetViewSize();
-			return;
-		}
-	}
-
     if (setblocks >= 11) // [crispy] Crispy HUD
     {
+	scaledviewwidth_nonwide = NONWIDEWIDTH;
 	scaledviewwidth = SCREENWIDTH;
 	viewheight = SCREENHEIGHT;
     }
     else
     {
-	scaledviewwidth = (setblocks*32)<<crispy->hires;
+	scaledviewwidth_nonwide = (setblocks*32)<<crispy->hires;
 	viewheight = ((setblocks*168/10)&~7)<<crispy->hires;
+	scaledviewwidth = ((viewheight * SCREENWIDTH / SCREENHEIGHT) + 31) & ~31;
+    }
+
+    // [crispy] regular viewwidth in non-widescreen mode
+    if (!crispy->widescreen)
+    {
+	scaledviewwidth = scaledviewwidth_nonwide;
     }
     
     detailshift = setdetail;
     viewwidth = scaledviewwidth>>detailshift;
+    viewwidth_nonwide = scaledviewwidth_nonwide>>detailshift;
 	
     centery = viewheight/2;
     centerx = viewwidth/2;
     centerxfrac = centerx<<FRACBITS;
     centeryfrac = centery<<FRACBITS;
-    projection = MIN(centerxfrac, ((NONWIDEWIDTH>>detailshift)/2)<<FRACBITS);
+    centerxfrac_nonwide = (viewwidth_nonwide/2)<<FRACBITS;
+    projection = centerxfrac_nonwide;
 
     if (!detailshift)
     {
@@ -861,8 +859,8 @@ void R_ExecuteSetViewSize (void)
     R_InitTextureMapping ();
     
     // psprite scales
-    pspritescale = FRACUNIT*MIN(viewwidth, NONWIDEWIDTH>>detailshift)/ORIGWIDTH;
-    pspriteiscale = FRACUNIT*ORIGWIDTH/MIN(viewwidth, NONWIDEWIDTH>>detailshift);
+    pspritescale = FRACUNIT*viewwidth_nonwide/ORIGWIDTH;
+    pspriteiscale = FRACUNIT*ORIGWIDTH/viewwidth_nonwide;
     
     // thing clipping
     for (i=0 ; i<viewwidth ; i++)
@@ -873,7 +871,7 @@ void R_ExecuteSetViewSize (void)
     {
 	// [crispy] re-generate lookup-table for yslope[] (free look)
 	// whenever "detailshift" or "screenblocks" change
-	const fixed_t num = MIN(viewwidth<<detailshift, NONWIDEWIDTH)/2*FRACUNIT;
+	const fixed_t num = (viewwidth_nonwide<<detailshift)/2*FRACUNIT;
 	for (j = 0; j < LOOKDIRS; j++)
 	{
 	dy = ((i-(viewheight/2 + ((j-LOOKDIRMIN) * (1 << crispy->hires)) * (screenblocks < 11 ? screenblocks : 11) / 10))<<FRACBITS)+FRACUNIT/2;
@@ -898,7 +896,7 @@ void R_ExecuteSetViewSize (void)
 	startmap = ((LIGHTLEVELS-LIGHTBRIGHT-i)*2)*NUMCOLORMAPS/LIGHTLEVELS;
 	for (j=0 ; j<MAXLIGHTSCALE ; j++)
 	{
-	    level = startmap - j*NONWIDEWIDTH/MIN(viewwidth<<detailshift, NONWIDEWIDTH)/DISTMAP;
+	    level = startmap - j*NONWIDEWIDTH/(viewwidth_nonwide<<detailshift)/DISTMAP;
 	    
 	    if (level < 0)
 		level = 0;

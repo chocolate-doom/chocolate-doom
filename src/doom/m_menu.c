@@ -86,7 +86,6 @@ int			screenblocks = 10; // [crispy] increased
 
 // temp for screenblocks (0-9)
 int			screenSize;
-int			screenSize_min;
 
 // -1 = no quicksave slot picked!
 int			quickSaveSlot;
@@ -211,7 +210,7 @@ static void M_MouseInvert(int choice); // [crispy] mouse sensitivity menu
 static void M_SfxVol(int choice);
 static void M_MusicVol(int choice);
 static void M_ChangeDetail(int choice);
-void M_SizeDisplay(int choice); // [crispy] un-static for R_ExecuteSetViewSize()
+static void M_SizeDisplay(int choice);
 static void M_Mouse(int choice); // [crispy] mouse sensitivity menu
 static void M_Sound(int choice);
 
@@ -1388,8 +1387,8 @@ void M_DrawOptions(void)
                 OptionsDef.y + LINEHEIGHT * messages + 8 - (M_StringHeight("OnOff")/2),
                 showMessages ? "On" : "Off");
 
-    M_DrawThermo(OptionsDef.x + screenSize_min * 8,OptionsDef.y+LINEHEIGHT*(scrnsize+1),
-		 9 + (crispy->widescreen ? 6 : 3) - screenSize_min,screenSize - screenSize_min); // [crispy] Crispy HUD
+    M_DrawThermo(OptionsDef.x,OptionsDef.y+LINEHEIGHT*(scrnsize+1),
+		 9 + (crispy->widescreen ? 6 : 3),screenSize); // [crispy] Crispy HUD
 }
 
 // [crispy] mouse sensitivity menu
@@ -1886,13 +1885,10 @@ void M_ChangeDetail(int choice)
 
 void M_SizeDisplay(int choice)
 {
-    // [crispy] initialize screenSize_min
-    screenSize_min = crispy->widescreen ? 8 : 0;
-
     switch(choice)
     {
       case 0:
-	if (screenSize > screenSize_min)
+	if (screenSize > 0)
 	{
 	    screenblocks--;
 	    screenSize--;
@@ -1904,6 +1900,7 @@ void M_SizeDisplay(int choice)
 	    screenblocks++;
 	    screenSize++;
 	}
+	// [crispy] reset to fullscreen HUD
 	else
 	{
 	    screenblocks = 11;
@@ -1913,11 +1910,7 @@ void M_SizeDisplay(int choice)
     }
 	
 
-    // [crispy] initialize screenSize_min
-    if (choice == 0 || choice == 1)
-    {
     R_SetViewSize (screenblocks, detailLevel);
-    }
 }
 
 
@@ -3083,7 +3076,6 @@ void M_Init (void)
     whichSkull = 0;
     skullAnimCounter = 10;
     screenSize = screenblocks - 3;
-    M_SizeDisplay(-1); // [crispy] initialize screenSize_min
     messageToPrint = 0;
     messageString = NULL;
     messageLastMenuActive = menuactive;

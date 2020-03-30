@@ -141,10 +141,6 @@ extern void P_SegLengths (boolean contrast_only);
 extern void R_ExecuteSetViewSize (void);
 extern void R_InitLightTables (void);
 extern void I_ReInitGraphics (int reinit);
-extern void ST_createWidgets(void);
-extern void HU_Start(void);
-extern void M_SizeDisplay(int choice);
-
 
 void M_CrispyToggleAutomapstats(int choice)
 {
@@ -530,8 +526,6 @@ static void M_CrispyToggleWidescreenHook (void)
 
     // [crispy] no need to re-init when switching from wide to compact
     {
-	// [crispy] re-initialize screenSize_min
-	M_SizeDisplay(-1);
 	// [crispy] re-initialize framebuffers, textures and renderer
 	I_ReInitGraphics(REINIT_FRAMEBUFFERS | REINIT_TEXTURES | REINIT_ASPECTRATIO);
 	// [crispy] re-calculate framebuffer coordinates

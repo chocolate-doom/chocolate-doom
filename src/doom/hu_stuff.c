@@ -860,7 +860,7 @@ void HU_Drawer(void)
     if (crispy->automapstats == WIDGETS_ALWAYS || (automapactive && crispy->automapstats == WIDGETS_AUTOMAP))
     {
 	// [crispy] move obtrusive line out of player view
-	if (automapactive && (!crispy->automapoverlay || screenblocks < CRISPY_HUD - 1) && !crispy->widescreen)
+	if (automapactive && (!crispy->automapoverlay || screenblocks < CRISPY_HUD - 1))
 	    HUlib_drawTextLine(&w_map, false);
 
 	HUlib_drawTextLine(&w_kills, false);
@@ -936,6 +936,7 @@ void HU_Ticker(void)
     char c;
     char str[32], *s;
 
+    // [crispy] re-calculate widget coordinates on demand
     if (hu_widescreendelta != WIDESCREENDELTA)
     {
         HU_Start();
@@ -1028,7 +1029,7 @@ void HU_Ticker(void)
     if (automapactive)
     {
 	// [crispy] move map title to the bottom
-	if ((crispy->automapoverlay && screenblocks >= CRISPY_HUD - 1) || crispy->widescreen)
+	if (crispy->automapoverlay && screenblocks >= CRISPY_HUD - 1)
 	    w_title.y = HU_TITLEY + ST_HEIGHT;
 	else
 	    w_title.y = HU_TITLEY;

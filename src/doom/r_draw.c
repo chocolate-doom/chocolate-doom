@@ -1113,34 +1113,34 @@ void R_FillBackScreen (void)
     patch = W_CacheLumpName(DEH_String("brdr_t"),PU_CACHE);
 
     for (x=0 ; x<(scaledviewwidth >> crispy->hires) ; x+=8)
-	V_DrawPatch((viewwindowx >> crispy->hires)+x, (viewwindowy >> crispy->hires)-8, patch);
+	V_DrawPatch((viewwindowx >> crispy->hires)+x-WIDESCREENDELTA, (viewwindowy >> crispy->hires)-8, patch);
     patch = W_CacheLumpName(DEH_String("brdr_b"),PU_CACHE);
 
     for (x=0 ; x<(scaledviewwidth >> crispy->hires) ; x+=8)
-	V_DrawPatch((viewwindowx >> crispy->hires)+x, (viewwindowy >> crispy->hires)+(viewheight >> crispy->hires), patch);
+	V_DrawPatch((viewwindowx >> crispy->hires)+x-WIDESCREENDELTA, (viewwindowy >> crispy->hires)+(viewheight >> crispy->hires), patch);
     patch = W_CacheLumpName(DEH_String("brdr_l"),PU_CACHE);
 
     for (y=0 ; y<(viewheight >> crispy->hires) ; y+=8)
-	V_DrawPatch((viewwindowx >> crispy->hires)-8, (viewwindowy >> crispy->hires)+y, patch);
+	V_DrawPatch((viewwindowx >> crispy->hires)-8-WIDESCREENDELTA, (viewwindowy >> crispy->hires)+y, patch);
     patch = W_CacheLumpName(DEH_String("brdr_r"),PU_CACHE);
 
     for (y=0 ; y<(viewheight >> crispy->hires) ; y+=8)
-	V_DrawPatch((viewwindowx >> crispy->hires)+(scaledviewwidth >> crispy->hires), (viewwindowy >> crispy->hires)+y, patch);
+	V_DrawPatch((viewwindowx >> crispy->hires)+(scaledviewwidth >> crispy->hires)-WIDESCREENDELTA, (viewwindowy >> crispy->hires)+y, patch);
 
     // Draw beveled edge. 
-    V_DrawPatch((viewwindowx >> crispy->hires)-8,
+    V_DrawPatch((viewwindowx >> crispy->hires)-8-WIDESCREENDELTA,
                 (viewwindowy >> crispy->hires)-8,
                 W_CacheLumpName(DEH_String("brdr_tl"),PU_CACHE));
     
-    V_DrawPatch((viewwindowx >> crispy->hires)+(scaledviewwidth >> crispy->hires),
+    V_DrawPatch((viewwindowx >> crispy->hires)+(scaledviewwidth >> crispy->hires)-WIDESCREENDELTA,
                 (viewwindowy >> crispy->hires)-8,
                 W_CacheLumpName(DEH_String("brdr_tr"),PU_CACHE));
     
-    V_DrawPatch((viewwindowx >> crispy->hires)-8,
+    V_DrawPatch((viewwindowx >> crispy->hires)-8-WIDESCREENDELTA,
                 (viewwindowy >> crispy->hires)+(viewheight >> crispy->hires),
                 W_CacheLumpName(DEH_String("brdr_bl"),PU_CACHE));
     
-    V_DrawPatch((viewwindowx >> crispy->hires)+(scaledviewwidth >> crispy->hires),
+    V_DrawPatch((viewwindowx >> crispy->hires)+(scaledviewwidth >> crispy->hires)-WIDESCREENDELTA,
                 (viewwindowy >> crispy->hires)+(viewheight >> crispy->hires),
                 W_CacheLumpName(DEH_String("brdr_br"),PU_CACHE));
 
