@@ -817,7 +817,7 @@ void R_ExecuteSetViewSize (void)
     {
 	scaledviewwidth_nonwide = (setblocks*32)<<crispy->hires;
 	viewheight = ((setblocks*168/10)&~7)<<crispy->hires;
-	scaledviewwidth = ((viewheight * SCREENWIDTH / SCREENHEIGHT) + 31) & ~31;
+	scaledviewwidth = viewheight*SCREENWIDTH/(SCREENHEIGHT-(ST_HEIGHT<<crispy->hires));
     }
 
     // [crispy] regular viewwidth in non-widescreen mode
@@ -859,8 +859,8 @@ void R_ExecuteSetViewSize (void)
     R_InitTextureMapping ();
     
     // psprite scales
-    pspritescale = FRACUNIT*viewwidth_nonwide/ORIGWIDTH;
-    pspriteiscale = FRACUNIT*ORIGWIDTH/viewwidth_nonwide;
+    pspritescale = FRACUNIT*MIN(NONWIDEWIDTH*viewwidth/SCREENWIDTH, NONWIDEWIDTH>>detailshift)/ORIGWIDTH;
+    pspriteiscale = FRACUNIT*ORIGWIDTH/MIN(NONWIDEWIDTH*viewwidth/SCREENWIDTH, NONWIDEWIDTH>>detailshift);
     
     // thing clipping
     for (i=0 ; i<viewwidth ; i++)
