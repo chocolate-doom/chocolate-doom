@@ -817,7 +817,7 @@ void R_ExecuteSetViewSize (void)
     {
 	scaledviewwidth_nonwide = (setblocks*32)<<crispy->hires;
 	viewheight = ((setblocks*168/10)&~7)<<crispy->hires;
-	scaledviewwidth = viewheight*SCREENWIDTH/(SCREENHEIGHT-(ST_HEIGHT<<crispy->hires));
+	scaledviewwidth = (viewheight*SCREENWIDTH/(SCREENHEIGHT-(ST_HEIGHT<<crispy->hires))+7) & (int) ~7;
     }
 
     // [crispy] regular viewwidth in non-widescreen mode
