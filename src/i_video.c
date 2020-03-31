@@ -1211,7 +1211,7 @@ static void SetVideoMode(void)
     int w, h;
     int x, y;
     unsigned int rmask, gmask, bmask, amask;
-    int unused_bpp;
+    int bpp;
     int window_flags = 0, renderer_flags = 0;
     SDL_DisplayMode mode;
 
@@ -1383,10 +1383,10 @@ static void SetVideoMode(void)
 
     if (argbbuffer == NULL)
     {
-        SDL_PixelFormatEnumToMasks(pixel_format, &unused_bpp,
+        SDL_PixelFormatEnumToMasks(pixel_format, &bpp,
                                    &rmask, &gmask, &bmask, &amask);
         argbbuffer = SDL_CreateRGBSurface(0,
-                                          actualwidth, SCREENHEIGHT, 32,
+                                          actualwidth, SCREENHEIGHT, bpp,
                                           rmask, gmask, bmask, amask);
         SDL_FillRect(argbbuffer, NULL, 0);
     }
