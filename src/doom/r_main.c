@@ -800,7 +800,7 @@ void R_ExecuteSetViewSize (void)
 {
     fixed_t	cosadj;
     fixed_t	dy;
-    int widescreen_edge_aligner = crispy->hires ? 15 : 7;
+    int 	widescreen_edge_aligner = crispy->hires ? 15 : 7;
     int		i;
     int		j;
     int		level;
@@ -814,11 +814,17 @@ void R_ExecuteSetViewSize (void)
 	scaledviewwidth = SCREENWIDTH;
 	viewheight = SCREENHEIGHT;
     }
+    else if (setblocks == 10)
+    {
+	scaledviewwidth_nonwide = (setblocks*32)<<crispy->hires;
+	viewheight = ((setblocks*168/10)&~7)<<crispy->hires;
+	scaledviewwidth = viewheight*SCREENWIDTH/(SCREENHEIGHT-(ST_HEIGHT<<crispy->hires));
+    }
     else
     {
 	scaledviewwidth_nonwide = (setblocks*32)<<crispy->hires;
 	viewheight = ((setblocks*168/10)&~7)<<crispy->hires;
-	scaledviewwidth = setblocks == 10 ? viewheight*SCREENWIDTH/(SCREENHEIGHT-(ST_HEIGHT<<crispy->hires)) : (viewheight*SCREENWIDTH/(SCREENHEIGHT-(ST_HEIGHT<<crispy->hires))+widescreen_edge_aligner) & (int) ~widescreen_edge_aligner;
+	scaledviewwidth = (viewheight*SCREENWIDTH/(SCREENHEIGHT-(ST_HEIGHT<<crispy->hires))+widescreen_edge_aligner) & (int) ~widescreen_edge_aligner;
     }
 
     // [crispy] regular viewwidth in non-widescreen mode
