@@ -809,28 +809,33 @@ void R_ExecuteSetViewSize (void)
 
     if (setblocks >= 11) // [crispy] Crispy HUD
     {
-	scaledviewwidth_nonwide = SCREENWIDTH;
-	scaledviewwidth = SCREENWIDTH;
+	scaledviewwidth_nonwide = scaledviewwidth = SCREENWIDTH;
 	viewheight = SCREENHEIGHT;
+    }
+    else if (setblocks == 10)
+    {
+	scaledviewwidth_nonwide = scaledviewwidth = SCREENWIDTH;
+	viewheight = SCREENHEIGHT-(ST_HEIGHT<<crispy->hires);
     }
     else
     {
 	scaledviewwidth_nonwide = (setblocks*32)<<crispy->hires;
 	viewheight = ((setblocks*168/10)&~7)<<crispy->hires;
-	scaledviewwidth = viewheight*SCREENWIDTH/(SCREENHEIGHT-(ST_HEIGHT<<crispy->hires));
-    }
 
-    // [crispy] make sure scaledviewwidth is an integer multiple of the bezel patch width
-    if (setblocks < 10)
-    {
-	const int widescreen_edge_aligner = (8 << crispy->hires) - 1;
-	scaledviewwidth = (scaledviewwidth + widescreen_edge_aligner) & (int)~widescreen_edge_aligner;
-    }
+	// [crispy] regular viewwidth in non-widescreen mode
+	if (crispy->widescreen)
+	{
+		const int widescreen_edge_aligner = (8 << crispy->hires) - 1;
 
-    // [crispy] regular viewwidth in non-widescreen mode
-    if (!crispy->widescreen)
-    {
-	scaledviewwidth = scaledviewwidth_nonwide;
+		scaledviewwidth = viewheight*SCREENWIDTH/(SCREENHEIGHT-(ST_HEIGHT<<crispy->hires));
+		// [crispy] make sure scaledviewwidth is an integer multiple of the bezel patch width
+		scaledviewwidth = (scaledviewwidth + widescreen_edge_aligner) & (int)~widescreen_edge_aligner;
+		scaledviewwidth = MIN(scaledviewwidth, SCREENWIDTH);
+	}
+	else
+	{
+		scaledviewwidth = scaledviewwidth_nonwide;
+	}
     }
     
     detailshift = setdetail;
