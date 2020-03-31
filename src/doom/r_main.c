@@ -809,12 +809,15 @@ void R_ExecuteSetViewSize (void)
 
     if (setblocks >= 11) // [crispy] Crispy HUD
     {
-	scaledviewwidth_nonwide = scaledviewwidth = SCREENWIDTH;
+	scaledviewwidth_nonwide = NONWIDEWIDTH;
+	scaledviewwidth = SCREENWIDTH;
 	viewheight = SCREENHEIGHT;
     }
+    // [crispy] hard-code to SCREENWIDTH and SCRENHEIGHT minus status bar height
     else if (setblocks == 10)
     {
-	scaledviewwidth_nonwide = scaledviewwidth = SCREENWIDTH;
+	scaledviewwidth_nonwide = NONWIDEWIDTH;
+	scaledviewwidth = SCREENWIDTH;
 	viewheight = SCREENHEIGHT-(ST_HEIGHT<<crispy->hires);
     }
     else

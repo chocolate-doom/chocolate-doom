@@ -1057,7 +1057,7 @@ void R_FillBackScreen (void)
     // If we are running full screen, there is no need to do any of this,
     // and the background buffer can be freed if it was previously in use.
 
-    if (scaledviewwidth == SCREENWIDTH)
+    if (viewheight == SCREENHEIGHT)
     {
         if (background_buffer != NULL)
         {
@@ -1072,7 +1072,7 @@ void R_FillBackScreen (void)
 	
     if (background_buffer == NULL)
     {
-        background_buffer = Z_Malloc(MAXWIDTH * (MAXHEIGHT - SBARHEIGHT) * sizeof(*background_buffer),
+        background_buffer = Z_Malloc(MAXWIDTH * MAXHEIGHT * sizeof(*background_buffer),
                                      PU_STATIC, NULL);
     }
 
@@ -1084,7 +1084,7 @@ void R_FillBackScreen (void)
     src = W_CacheLumpName(name, PU_CACHE); 
     dest = background_buffer;
 	 
-    for (y=0 ; y<SCREENHEIGHT-SBARHEIGHT ; y++) 
+    for (y=0 ; y<SCREENHEIGHT ; y++)
     { 
 #ifndef CRISPY_TRUECOLOR
 	for (x=0 ; x<SCREENWIDTH/64 ; x++) 
@@ -1181,7 +1181,7 @@ void R_DrawViewBorder (void)
     int		ofs;
     int		i; 
  
-    if (scaledviewwidth == SCREENWIDTH) 
+    if (viewheight == SCREENHEIGHT)
 	return; 
   
     top = ((SCREENHEIGHT-SBARHEIGHT)-viewheight)/2;
@@ -1203,6 +1203,21 @@ void R_DrawViewBorder (void)
 	R_VideoErase (ofs, side); 
 	ofs += SCREENWIDTH; 
     } 
+
+    // [crispy] draw bezel to the left and right of the status bar
+    if (SCREENWIDTH != NONWIDEWIDTH)
+    {
+	top = SCREENHEIGHT-SBARHEIGHT;
+	side = (SCREENWIDTH-NONWIDEWIDTH)/2;
+	ofs = top*SCREENWIDTH;
+
+	for (i = 0; i < SBARHEIGHT; i++)
+	{
+		R_VideoErase (ofs, side);
+		R_VideoErase (ofs+NONWIDEWIDTH+side, side);
+		ofs += SCREENWIDTH;
+	}
+    }
 
     // ? 
     V_MarkRect (0,0,SCREENWIDTH, SCREENHEIGHT-SBARHEIGHT); 

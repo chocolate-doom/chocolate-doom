@@ -491,35 +491,10 @@ void ST_refreshBackground(boolean force)
 	if (netgame)
 	    V_DrawPatch(ST_FX, 0, faceback);
 
-	// [crispy] fill the space to the left and right of the status bar
-	// with a repeating pattern of the face widget background
-	if (SCREENWIDTH != NONWIDEWIDTH)
-	{
-		int w, d, x1, x2;
-
-		w = SHORT(faceback->width);
-		d = 0;
-		x1 = WIDESCREENDELTA;
-		x2 = WIDESCREENDELTA + ST_WIDTH;
-
-		do
-		{
-			if ((x1 -= w) < 0)
-			{
-				d = -x1;
-			}
-
-			V_CopyRect(ST_FX + WIDESCREENDELTA + d, 0, st_backing_screen, w - d, ST_HEIGHT, x1 + d, 0);
-			V_CopyRect(ST_FX + WIDESCREENDELTA,     0, st_backing_screen, w - d, ST_HEIGHT, x2,     0);
-
-			x2 += w;
-		} while (!d);
-	}
-
         V_RestoreBuffer();
 
 	if (!force)
-	V_CopyRect(ST_X, 0, st_backing_screen, SCREENWIDTH >> crispy->hires, ST_HEIGHT, ST_X, ST_Y);
+	V_CopyRect(ST_X + WIDESCREENDELTA, 0, st_backing_screen, ST_WIDTH, ST_HEIGHT, ST_X + WIDESCREENDELTA, ST_Y);
     }
 
 }
