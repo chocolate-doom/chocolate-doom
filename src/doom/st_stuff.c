@@ -494,7 +494,7 @@ void ST_refreshBackground(boolean force)
         V_RestoreBuffer();
 
 	if (!force)
-	V_CopyRect(ST_X, 0, st_backing_screen, ST_WIDTH, ST_HEIGHT, ST_X, ST_Y);
+	V_CopyRect(ST_X + WIDESCREENDELTA, 0, st_backing_screen, ST_WIDTH, ST_HEIGHT, ST_X + WIDESCREENDELTA, ST_Y);
     }
 
 }
@@ -1607,6 +1607,7 @@ static int st_widescreendelta;
 
 void ST_Ticker (void)
 {
+    // [crispy] re-calculate widget coordinates on demand
     if (st_widescreendelta != ST_WIDESCREENDELTA)
     {
         void ST_createWidgets (void);
@@ -1914,7 +1915,7 @@ void ST_drawWidgets(boolean refresh)
 	STlib_updateMultIcon(&w_arms[i], refresh);
 
     // [crispy] draw the actual face widget background
-    if (st_crispyhud && screenblocks % 3 == 0)
+    if (st_crispyhud && (screenblocks % 3 == 0))
     {
 	V_CopyRect(ST_FX + WIDESCREENDELTA, 1, st_backing_screen, SHORT(faceback->width), ST_HEIGHT - 1, ST_FX + WIDESCREENDELTA, ST_Y + 1);
     }
@@ -1952,14 +1953,14 @@ void ST_diffDraw(void)
 void ST_Drawer (boolean fullscreen, boolean refresh)
 {
   
-    st_statusbaron = (!fullscreen) || (automapactive && !crispy->automapoverlay && !crispy->widescreen);
+    st_statusbaron = (!fullscreen) || (automapactive && !crispy->automapoverlay);
     // [crispy] immediately redraw status bar after help screens have been shown
     st_firsttime = st_firsttime || refresh || inhelpscreens;
 
     // [crispy] distinguish classic status bar with background and player face from Crispy HUD
     st_crispyhud = screenblocks >= CRISPY_HUD && (!automapactive || crispy->automapoverlay);
-    st_classicstatusbar = st_statusbaron && !st_crispyhud && !crispy->widescreen;
-    st_statusbarface = st_classicstatusbar || (st_crispyhud && screenblocks % 3 == 0);
+    st_classicstatusbar = st_statusbaron && !st_crispyhud;
+    st_statusbarface = st_classicstatusbar || (st_crispyhud && (screenblocks % 3 == 0));
 
     if (crispy->cleanscreenshot == 2)
         return;
@@ -1968,7 +1969,7 @@ void ST_Drawer (boolean fullscreen, boolean refresh)
     ST_doPaletteStuff();
 
     // [crispy] translucent HUD
-    if (st_crispyhud && screenblocks % 3 == 2)
+    if (st_crispyhud && (screenblocks % 3 == 2))
 	dp_translucent = true;
 
     // If just after ST_Start(), refresh all
