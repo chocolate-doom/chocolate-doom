@@ -135,7 +135,7 @@ multiitem_t multiitem_widgets[NUM_WIDGETS] =
     {WIDGETS_ALWAYS, "always"},
 };
 
-extern void AM_ReInit (void);
+extern void AM_LevelInit (boolean reinit);
 extern void EnableLoadingDisk (void);
 extern void P_SegLengths (boolean contrast_only);
 extern void R_ExecuteSetViewSize (void);
@@ -344,7 +344,7 @@ static void M_CrispyToggleHiresHook (void)
     // [crispy] re-calculate disk icon coordinates
     EnableLoadingDisk();
     // [crispy] re-calculate automap coordinates
-    AM_ReInit();
+    AM_LevelInit(true);
 }
 
 void M_CrispyToggleHires(int choice)
@@ -535,7 +535,7 @@ static void M_CrispyToggleWidescreenHook (void)
 	// [crispy] re-calculate disk icon coordinates
 	EnableLoadingDisk();
 	// [crispy] re-calculate automap coordinates
-	AM_ReInit();
+	AM_LevelInit(true);
     }
 }
 
