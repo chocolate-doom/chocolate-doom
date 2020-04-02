@@ -138,7 +138,8 @@ extern boolean inhelpscreens; // [crispy] prevent palette changes
 //       into a buffer,
 //       or into the frame buffer?
 
-#define ST_WIDESCREENDELTA ((crispy->widescreen && screenblocks >= CRISPY_HUD + 3) ? WIDESCREENDELTA : 0)
+// [crispy] in non-widescreen mode WIDESCREENDELTA is 0 anyway
+#define ST_WIDESCREENDELTA ((screenblocks >= CRISPY_HUD + 3 && (!automapactive || crispy->automapoverlay)) ? WIDESCREENDELTA : 0)
 
 // AMMO number pos.
 #define ST_AMMOWIDTH		3	
@@ -478,6 +479,28 @@ void ST_refreshBackground(boolean force)
     {
         V_UseBuffer(st_backing_screen);
 
+	// [crispy] this is our own local copy of R_FillBackScreen() to
+	// fill the entire background of st_backing_screen with the bezel pattern,
+	// so it appears to the left and right of the status bar in widescreen mode
+	if ((SCREENWIDTH >> crispy->hires) != ST_WIDTH)
+	{
+		int x, y;
+		byte *src;
+		pixel_t *dest;
+		const char *name = (gamemode == commercial) ? DEH_String("GRNROCK") : DEH_String("FLOOR7_2");
+
+		src = W_CacheLumpName(name, PU_CACHE);
+		dest = st_backing_screen;
+
+		for (y = SCREENHEIGHT-(ST_HEIGHT<<crispy->hires); y < SCREENHEIGHT; y++)
+		{
+			for (x = 0; x < SCREENWIDTH; x++)
+			{
+				*dest++ = src[((y&63)<<6) + (x&63)];
+			}
+		}
+	}
+
 	V_DrawPatch(ST_X, 0, sbar);
 
 	// draw right side of bar if needed (Doom 1.0)
@@ -493,8 +516,10 @@ void ST_refreshBackground(boolean force)
 
         V_RestoreBuffer();
 
+	// [crispy] copy entire SCREENWIDTH, to preserve the pattern
+	// to the left and right of the status bar in widescren mode
 	if (!force)
-	V_CopyRect(ST_X + WIDESCREENDELTA, 0, st_backing_screen, ST_WIDTH, ST_HEIGHT, ST_X + WIDESCREENDELTA, ST_Y);
+	V_CopyRect(ST_X, 0, st_backing_screen, SCREENWIDTH >> crispy->hires, ST_HEIGHT, ST_X, ST_Y);
     }
 
 }

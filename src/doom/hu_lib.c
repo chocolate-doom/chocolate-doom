@@ -131,7 +131,7 @@ HUlib_drawTextLine
 	    && c <= '_')
 	{
 	    w = SHORT(l->f[c - l->sc]->width);
-	    if (x+w > ORIGWIDTH + WIDESCREENDELTA)
+	    if (x+w > ORIGWIDTH)
 		break;
 	    V_DrawPatchDirect(x, y, l->f[c - l->sc]);
 	    x += w;
@@ -139,14 +139,14 @@ HUlib_drawTextLine
 	else
 	{
 	    x += 4;
-	    if (x >= ORIGWIDTH + WIDESCREENDELTA)
+	    if (x >= ORIGWIDTH)
 		break;
 	}
     }
 
     // draw the cursor if requested
     if (drawcursor
-	&& x + SHORT(l->f['_' - l->sc]->width) <= ORIGWIDTH + WIDESCREENDELTA)
+	&& x + SHORT(l->f['_' - l->sc]->width) <= ORIGWIDTH)
     {
 	V_DrawPatchDirect(x, y, l->f['_' - l->sc]);
     }
