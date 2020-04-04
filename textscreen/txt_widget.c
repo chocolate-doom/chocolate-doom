@@ -15,6 +15,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "safe.h"
+
 #include "txt_io.h"
 #include "txt_widget.h"
 #include "txt_gui.h"
@@ -38,7 +40,7 @@ txt_callback_table_t *TXT_NewCallbackTable(void)
 {
     txt_callback_table_t *table;
 
-    table = malloc(sizeof(txt_callback_table_t));
+    table = X_Alloc(txt_callback_table_t);
     table->callbacks = NULL;
     table->num_callbacks = 0;
     table->refcount = 1;
@@ -105,9 +107,8 @@ void TXT_SignalConnect(TXT_UNCAST_ARG(widget),
 
     // Add a new callback to the table
 
-    table->callbacks 
-            = realloc(table->callbacks,
-                      sizeof(txt_callback_t) * (table->num_callbacks + 1));
+    table->callbacks = X_ReallocArray(
+        table->callbacks, txt_callback_t, table->num_callbacks + 1);
     callback = &table->callbacks[table->num_callbacks];
     ++table->num_callbacks;
 

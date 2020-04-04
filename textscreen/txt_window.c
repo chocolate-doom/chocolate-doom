@@ -17,6 +17,7 @@
 #include <stdarg.h>
 #include <string.h>
 
+#include "safe.h"
 #include "doomkeys.h"
 
 #include "txt_label.h"
@@ -60,7 +61,7 @@ txt_window_t *TXT_NewWindow(const char *title)
 
     txt_window_t *win;
 
-    win = malloc(sizeof(txt_window_t));
+    win = X_Alloc(txt_window_t);
 
     TXT_InitTable(&win->table, 1);
 
@@ -536,10 +537,10 @@ void TXT_OpenURL(const char *url)
     int retval;
 
     cmd_len = strlen(url) + 30;
-    cmd = malloc(cmd_len);
+    cmd = X_AllocArray(char, cmd_len);
 
 #if defined(__MACOSX__)
-    TXT_snprintf(cmd, cmd_len, "open \"%s\"", url);
+    X_snprintf(cmd, cmd_len, "open \"%s\"", url);
 #else
     // The Unix situation sucks as usual, but the closest thing to a
     // standard that exists is the xdg-utils package.
@@ -551,7 +552,7 @@ void TXT_OpenURL(const char *url)
         return;
     }
 
-    TXT_snprintf(cmd, cmd_len, "xdg-open \"%s\"", url);
+    X_snprintf(cmd, cmd_len, "xdg-open \"%s\"", url);
 #endif
 
     retval = system(cmd);
@@ -580,7 +581,7 @@ txt_window_t *TXT_MessageBox(const char *title, const char *message, ...)
     va_list args;
 
     va_start(args, message);
-    TXT_vsnprintf(buf, sizeof(buf), message, args);
+    X_vsnprintf(buf, sizeof(buf), message, args);
     va_end(args);
 
     window = TXT_NewWindow(title);

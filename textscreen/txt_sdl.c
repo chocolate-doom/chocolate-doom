@@ -22,6 +22,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "safe.h"
 #include "doomkeys.h"
 
 #include "txt_main.h"
@@ -293,7 +294,7 @@ int TXT_Init(void)
     SDL_SetPaletteColors(screenbuffer->format->palette, ega_colors, 0, 16);
     SDL_UnlockSurface(screenbuffer);
 
-    screendata = malloc(TXT_SCREEN_W * TXT_SCREEN_H * 2);
+    screendata = X_AllocArray(unsigned char, TXT_SCREEN_W * TXT_SCREEN_H * 2);
     memset(screendata, 0, TXT_SCREEN_W * TXT_SCREEN_H * 2);
 
     return 1;
@@ -788,7 +789,7 @@ void TXT_GetKeyDescription(int key, char *buf, size_t buf_len)
 
     if (keyname != NULL)
     {
-        TXT_StringCopy(buf, keyname, buf_len);
+        X_StringCopy(buf, keyname, buf_len);
 
         // Key description should be all-uppercase to match setup.exe.
         for (i = 0; buf[i] != '\0'; ++i)
@@ -798,7 +799,7 @@ void TXT_GetKeyDescription(int key, char *buf, size_t buf_len)
     }
     else
     {
-        TXT_snprintf(buf, buf_len, "??%i", key);
+        X_snprintf(buf, buf_len, "??%i", key);
     }
 }
 
@@ -908,75 +909,5 @@ void TXT_SDL_SetEventCallback(TxtSDLEventCallbackFunc callback, void *user_data)
 {
     event_callback = callback;
     event_callback_data = user_data;
-}
-
-// Safe string functions.
-
-void TXT_StringCopy(char *dest, const char *src, size_t dest_len)
-{
-    if (dest_len < 1)
-    {
-        return;
-    }
-
-    dest[dest_len - 1] = '\0';
-    strncpy(dest, src, dest_len - 1);
-}
-
-void TXT_StringConcat(char *dest, const char *src, size_t dest_len)
-{
-    size_t offset;
-
-    offset = strlen(dest);
-    if (offset > dest_len)
-    {
-        offset = dest_len;
-    }
-
-    TXT_StringCopy(dest + offset, src, dest_len - offset);
-}
-
-// On Windows, vsnprintf() is _vsnprintf().
-#ifdef _WIN32
-#if _MSC_VER < 1400 /* not needed for Visual Studio 2008 */
-#define vsnprintf _vsnprintf
-#endif
-#endif
-
-// Safe, portable vsnprintf().
-int TXT_vsnprintf(char *buf, size_t buf_len, const char *s, va_list args)
-{
-    int result;
-
-    if (buf_len < 1)
-    {
-        return 0;
-    }
-
-    // Windows (and other OSes?) has a vsnprintf() that doesn't always
-    // append a trailing \0. So we must do it, and write into a buffer
-    // that is one byte shorter; otherwise this function is unsafe.
-    result = vsnprintf(buf, buf_len, s, args);
-
-    // If truncated, change the final char in the buffer to a \0.
-    // A negative result indicates a truncated buffer on Windows.
-    if (result < 0 || result >= buf_len)
-    {
-        buf[buf_len - 1] = '\0';
-        result = buf_len - 1;
-    }
-
-    return result;
-}
-
-// Safe, portable snprintf().
-int TXT_snprintf(char *buf, size_t buf_len, const char *s, ...)
-{
-    va_list args;
-    int result;
-    va_start(args, s);
-    result = TXT_vsnprintf(buf, buf_len, s, args);
-    va_end(args);
-    return result;
 }
 

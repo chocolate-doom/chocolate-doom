@@ -16,6 +16,7 @@
 #include <string.h>
 
 #include "doomkeys.h"
+#include "safe.h"
 
 #include "txt_button.h"
 #include "txt_gui.h"
@@ -103,7 +104,7 @@ txt_button_t *TXT_NewButton(const char *label)
 {
     txt_button_t *button;
 
-    button = malloc(sizeof(txt_button_t));
+    button = X_Alloc(txt_button_t);
 
     TXT_InitWidget(button, &txt_button_class);
     button->label = strdup(label);

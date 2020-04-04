@@ -22,6 +22,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "safe.h"
 #include "textscreen.h"
 
 enum 
@@ -70,13 +71,13 @@ void UpdateLabel(TXT_UNCAST_ARG(widget), void *user_data)
 {
     char buf[40];
     
-    TXT_StringCopy(buf, " Current value: ", sizeof(buf));
+    X_StringCopy(buf, " Current value: ", sizeof(buf));
     if (cheesy)
     {
-        TXT_StringConcat(buf, "Cheesy ", sizeof(buf));
+        X_StringConcat(buf, "Cheesy ", sizeof(buf));
     }
-    TXT_StringConcat(buf, radio_values[radiobutton_value], sizeof(buf));
-    TXT_StringConcat(buf, "\n", sizeof(buf));
+    X_StringConcat(buf, radio_values[radiobutton_value], sizeof(buf));
+    X_StringConcat(buf, "\n", sizeof(buf));
 
     TXT_SetLabel(value_label, buf);
 }
@@ -141,11 +142,11 @@ void SetupWindow(void)
 
     for (i=0; i<3; ++i)
     {
-        TXT_snprintf(buf, sizeof(buf), "Option %i in a table:", i + 1);
+        X_snprintf(buf, sizeof(buf), "Option %i in a table:", i + 1);
         TXT_AddWidget(table, TXT_NewLabel(buf));
-        TXT_snprintf(buf, sizeof(buf), " Button %i-1 ", i + 1);
+        X_snprintf(buf, sizeof(buf), " Button %i-1 ", i + 1);
         TXT_AddWidget(table, TXT_NewButton(buf));
-        TXT_snprintf(buf, sizeof(buf), " Button %i-2 ", i + 1);
+        X_snprintf(buf, sizeof(buf), " Button %i-2 ", i + 1);
         TXT_AddWidget(table, TXT_NewButton(buf));
     }
 

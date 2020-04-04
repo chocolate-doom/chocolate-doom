@@ -19,6 +19,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "safe.h"
 #include "doomkeys.h"
 
 #include "txt_fileselect.h"
@@ -101,7 +102,8 @@ static char *ExecReadOutput(char **argv)
         }
         else
         {
-            char *new_result = realloc(result, result_len + bytes + 1);
+            char *new_result =
+                X_ReallocArray(result, char, result_len + bytes + 1);
             if (new_result == NULL)
             {
                 break;
@@ -234,18 +236,18 @@ static char *GenerateFilterString(const char **extensions)
         result_len += 16 + strlen(extensions[i]) * 3;
     }
 
-    result = malloc(result_len);
+    result = X_AllocArray(char, result_len);
     out = result; out_len = result_len;
 
     for (i = 0; extensions[i] != NULL; ++i)
     {
         // .wad files (*.wad)\0
-        offset = TXT_snprintf(out, out_len, "%s files (*.%s)",
-                              extensions[i], extensions[i]);
+        offset = X_snprintf(out, out_len, "%s files (*.%s)",
+                            extensions[i], extensions[i]);
         out += offset + 1; out_len -= offset + 1;
 
         // *.wad\0
-        offset = TXT_snprintf(out, out_len, "*.%s", extensions[i]);
+        offset = X_snprintf(out, out_len, "*.%s", extensions[i]);
         out_len += offset + 1; out_len -= offset + 1;
     }
 
@@ -357,7 +359,7 @@ static char *CreateEscapedString(const char *original)
         }
     }
 
-    result = malloc(strlen(original) + count_extras + 1);
+    result = X_AllocArray(char, strlen(original) + count_extras + 1);
     if (!result)
     {
         return NULL;
@@ -398,12 +400,12 @@ static char *CreateExtensionsList(const char **extensions)
         result_len += 5 + strlen(extensions[i]) * 2;
     }
 
-    result = malloc(result_len);
+    result = X_AllocArray(char, result_len);
     if (!result)
     {
         return NULL;
     }
-    TXT_StringCopy(result, "{", result_len);
+    X_StringCopy(result, "{", result_len);
 
     for (i = 0; extensions[i] != NULL; ++i)
     {
@@ -413,16 +415,16 @@ static char *CreateExtensionsList(const char **extensions)
             free(result);
             return NULL;
         }
-        TXT_StringConcat(result, escaped, result_len);
+        X_StringConcat(result, escaped, result_len);
         free(escaped);
 
         if (extensions[i + 1] != NULL)
         {
-            TXT_StringConcat(result, ",", result_len);
+            X_StringConcat(result, ",", result_len);
         }
     }
 
-    TXT_StringConcat(result, "}", result_len);
+    X_StringConcat(result, "}", result_len);
 
     return result;
 }
@@ -466,7 +468,7 @@ static char *GenerateSelector(const char *const window_title, const char **exten
         result_len += strlen(ext_list);
     }
 
-    result = malloc(result_len);
+    result = X_AllocArray(char, result_len);
     if (!result)
     {
         free(window_title_escaped);
@@ -474,18 +476,18 @@ static char *GenerateSelector(const char *const window_title, const char **exten
         return NULL;
     }
 
-    TXT_StringCopy(result, chooser, result_len);
+    X_StringCopy(result, chooser, result_len);
 
     if (window_title_escaped != NULL)
     {
-        TXT_StringConcat(result, " with prompt ", result_len);
-        TXT_StringConcat(result, window_title_escaped, result_len);
+        X_StringConcat(result, " with prompt ", result_len);
+        X_StringConcat(result, window_title_escaped, result_len);
     }
 
     if (ext_list != NULL)
     {
-        TXT_StringConcat(result, " of type ", result_len);
-        TXT_StringConcat(result, ext_list, result_len);
+        X_StringConcat(result, " of type ", result_len);
+        X_StringConcat(result, ext_list, result_len);
     }
 
     free(window_title_escaped);
@@ -505,14 +507,14 @@ static char *GenerateAppleScript(const char *window_title, const char **extensio
     }
 
     result_len = strlen(APPLESCRIPT_WRAPPER) + strlen(selector);
-    result = malloc(result_len);
+    result = X_AllocArray(char, result_len);
     if (!result)
     {
         free(selector);
         return NULL;
     }
 
-    TXT_snprintf(result, result_len, APPLESCRIPT_WRAPPER, selector);
+    X_snprintf(result, result_len, APPLESCRIPT_WRAPPER, selector);
     free(selector);
 
     return result;
@@ -588,7 +590,7 @@ static char *ExpandExtension(const char *orig)
 
     oldlen = strlen(orig);
     newlen = oldlen * 4; // pathological case: 'w' => '[Ww]'
-    newext = malloc(newlen+1);
+    newext = X_AllocArray(char, newlen+1);
 
     if (newext == NULL)
     {
@@ -627,7 +629,7 @@ char *TXT_SelectFile(const char *window_title, const char **extensions)
         return NULL;
     }
 
-    argv = calloc(5 + NumExtensions(extensions), sizeof(char *));
+    argv = X_AllocArray(char *, 5 + NumExtensions(extensions));
     argv[0] = strdup(ZENITY_BINARY);
     argv[1] = strdup("--file-selection");
     argc = 2;
@@ -635,8 +637,8 @@ char *TXT_SelectFile(const char *window_title, const char **extensions)
     if (window_title != NULL)
     {
         len = 10 + strlen(window_title);
-        argv[argc] = malloc(len);
-        TXT_snprintf(argv[argc], len, "--title=%s", window_title);
+        argv[argc] = X_AllocArray(char, len);
+        X_snprintf(argv[argc], len, "--title=%s", window_title);
         ++argc;
     }
 
@@ -653,9 +655,9 @@ char *TXT_SelectFile(const char *window_title, const char **extensions)
             if (newext)
             {
                 len = 30 + strlen(extensions[i]) + strlen(newext);
-                argv[argc] = malloc(len);
-                TXT_snprintf(argv[argc], len, "--file-filter=.%s | *.%s",
-                             extensions[i], newext);
+                argv[argc] = X_AllocArray(char, len);
+                X_snprintf(argv[argc], len, "--file-filter=.%s | *.%s",
+                           extensions[i], newext);
                 ++argc;
                 free(newext);
             }
@@ -819,7 +821,7 @@ txt_fileselect_t *TXT_NewFileSelector(char **variable, int size,
 {
     txt_fileselect_t *fileselect;
 
-    fileselect = malloc(sizeof(txt_fileselect_t));
+    fileselect = X_Alloc(txt_fileselect_t);
     TXT_InitWidget(fileselect, &txt_fileselect_class);
     fileselect->inputbox = TXT_NewInputBox(variable, 1024);
     fileselect->inputbox->widget.parent = &fileselect->widget;

@@ -18,6 +18,7 @@
 #include <string.h>
 #include <math.h>
 
+#include "safe.h"
 #include "doomkeys.h"
 
 #include "txt_spinctrl.h"
@@ -37,11 +38,11 @@ static void FloatFormatString(float step, char *buf, size_t buf_len)
 
     if (precision > 0)
     {
-        TXT_snprintf(buf, buf_len, "%%.%if", precision);
+        X_snprintf(buf, buf_len, "%%.%if", precision);
     }
     else
     {
-        TXT_StringCopy(buf, "%.1f", buf_len);
+        X_StringCopy(buf, "%.1f", buf_len);
     }
 }
 
@@ -51,7 +52,7 @@ static unsigned int IntWidth(int val)
 {
     char buf[25];
 
-    TXT_snprintf(buf, sizeof(buf), "%i", val);
+    X_snprintf(buf, sizeof(buf), "%i", val);
 
     return strlen(buf);
 }
@@ -126,14 +127,14 @@ static void SetBuffer(txt_spincontrol_t *spincontrol)
     switch (spincontrol->type)
     {
         case TXT_SPINCONTROL_INT:
-            TXT_snprintf(spincontrol->buffer, spincontrol->buffer_len,
-                         "%i", spincontrol->value->i);
+            X_snprintf(spincontrol->buffer, spincontrol->buffer_len,
+                       "%i", spincontrol->value->i);
             break;
 
         case TXT_SPINCONTROL_FLOAT:
             FloatFormatString(spincontrol->step.f, format, sizeof(format));
-            TXT_snprintf(spincontrol->buffer, spincontrol->buffer_len,
-                         format, spincontrol->value->f);
+            X_snprintf(spincontrol->buffer, spincontrol->buffer_len,
+                       format, spincontrol->value->f);
             break;
     }
 }
@@ -299,7 +300,7 @@ static int TXT_SpinControlKeyPress(TXT_UNCAST_ARG(spincontrol), int key)
         if (key == KEY_ENTER)
         {
             spincontrol->editing = 1;
-            TXT_StringCopy(spincontrol->buffer, "", spincontrol->buffer_len);
+            X_StringCopy(spincontrol->buffer, "", spincontrol->buffer_len);
             return 1;
         }
         if (key == KEY_LEFTARROW)
@@ -383,12 +384,12 @@ static txt_spincontrol_t *TXT_BaseSpinControl(void)
 {
     txt_spincontrol_t *spincontrol;
 
-    spincontrol = malloc(sizeof(txt_spincontrol_t));
+    spincontrol = X_Alloc(txt_spincontrol_t);
 
     TXT_InitWidget(spincontrol, &txt_spincontrol_class);
     spincontrol->buffer_len = 25;
-    spincontrol->buffer = malloc(spincontrol->buffer_len);
-    TXT_StringCopy(spincontrol->buffer, "", spincontrol->buffer_len);
+    spincontrol->buffer = X_AllocArray(char, spincontrol->buffer_len);
+    X_StringCopy(spincontrol->buffer, "", spincontrol->buffer_len);
     spincontrol->editing = 0;
 
     return spincontrol;

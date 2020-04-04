@@ -16,6 +16,7 @@
 #include <string.h>
 
 #include "doomkeys.h"
+#include "safe.h"
 
 #include "txt_strut.h"
 #include "txt_io.h"
@@ -61,7 +62,7 @@ txt_strut_t *TXT_NewStrut(int width, int height)
 {
     txt_strut_t *strut;
 
-    strut = malloc(sizeof(txt_strut_t));
+    strut = X_Alloc(txt_strut_t);
 
     TXT_InitWidget(strut, &txt_strut_class);
     strut->width = width;

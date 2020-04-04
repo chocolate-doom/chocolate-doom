@@ -1,5 +1,7 @@
 
-AM_CFLAGS = -I$(top_srcdir)/src
+AM_CFLAGS = \
+    -I$(top_srcdir)/safe  \
+    -I$(top_srcdir)/src
 
 CTAGS_ARGS=-I TXT_UNCAST_ARG+
 

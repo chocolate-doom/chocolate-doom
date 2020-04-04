@@ -16,6 +16,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "safe.h"
 #include "doomkeys.h"
 
 #include "txt_desktop.h"
@@ -331,7 +332,7 @@ void TXT_DrawASCIITable(void)
             n = y * 16 + x;
 
             TXT_GotoXY(x * 5, y);
-            TXT_snprintf(buf, sizeof(buf), "%02x   ", n);
+            X_snprintf(buf, sizeof(buf), "%02x   ", n);
             TXT_Puts(buf);
 
             // Write the character directly to the screen memory buffer:

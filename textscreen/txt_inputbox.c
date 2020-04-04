@@ -17,6 +17,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "safe.h"
 #include "doomkeys.h"
 
 #include "txt_inputbox.h"
@@ -37,17 +38,17 @@ static void SetBufferFromValue(txt_inputbox_t *inputbox)
 
         if (*value != NULL)
         {
-            TXT_StringCopy(inputbox->buffer, *value, inputbox->size);
+            X_StringCopy(inputbox->buffer, *value, inputbox->size);
         }
         else
         {
-            TXT_StringCopy(inputbox->buffer, "", inputbox->buffer_len);
+            X_StringCopy(inputbox->buffer, "", inputbox->buffer_len);
         }
     }
     else if (inputbox->widget.widget_class == &txt_int_inputbox_class)
     {
         int *value = (int *) inputbox->value;
-        TXT_snprintf(inputbox->buffer, inputbox->buffer_len, "%i", *value);
+        X_snprintf(inputbox->buffer, inputbox->buffer_len, "%i", *value);
     }
 }
 
@@ -57,7 +58,7 @@ static void StartEditing(txt_inputbox_t *inputbox)
 
     if (inputbox->widget.widget_class == &txt_int_inputbox_class)
     {
-        TXT_StringCopy(inputbox->buffer, "", inputbox->buffer_len);
+        X_StringCopy(inputbox->buffer, "", inputbox->buffer_len);
     }
     else
     {
@@ -320,7 +321,7 @@ static txt_inputbox_t *NewInputBox(txt_widget_class_t *widget_class,
 {
     txt_inputbox_t *inputbox;
 
-    inputbox = malloc(sizeof(txt_inputbox_t));
+    inputbox = X_Alloc(txt_inputbox_t);
 
     TXT_InitWidget(inputbox, widget_class);
     inputbox->value = value;
@@ -329,7 +330,7 @@ static txt_inputbox_t *NewInputBox(txt_widget_class_t *widget_class,
     // but for a UTF-8 string, each character can take up to four
     // characters.
     inputbox->buffer_len = size * 4 + 1;
-    inputbox->buffer = malloc(inputbox->buffer_len);
+    inputbox->buffer = X_AllocArray(char, inputbox->buffer_len);
     inputbox->editing = 0;
 
     return inputbox;

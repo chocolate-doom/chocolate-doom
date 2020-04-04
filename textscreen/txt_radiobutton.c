@@ -16,6 +16,7 @@
 #include <string.h>
 
 #include "doomkeys.h"
+#include "safe.h"
 
 #include "txt_radiobutton.h"
 #include "txt_gui.h"
@@ -125,7 +126,7 @@ txt_radiobutton_t *TXT_NewRadioButton(const char *label, int *variable, int valu
 {
     txt_radiobutton_t *radiobutton;
 
-    radiobutton = malloc(sizeof(txt_radiobutton_t));
+    radiobutton = X_Alloc(txt_radiobutton_t);
 
     TXT_InitWidget(radiobutton, &txt_radiobutton_class);
     radiobutton->label = strdup(label);

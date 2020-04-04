@@ -17,6 +17,7 @@
 #include <ctype.h>
 
 #include "doomkeys.h"
+#include "safe.h"
 
 #include "txt_window_action.h"
 #include "txt_gui.h"
@@ -110,7 +111,7 @@ txt_window_action_t *TXT_NewWindowAction(int key, const char *label)
 {
     txt_window_action_t *action;
 
-    action = malloc(sizeof(txt_window_action_t));
+    action = X_Alloc(txt_window_action_t);
 
     TXT_InitWidget(action, &txt_window_action_class);
     action->key = key;

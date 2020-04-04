@@ -15,6 +15,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "safe.h"
+
 #include "txt_separator.h"
 #include "txt_gui.h"
 #include "txt_io.h"
@@ -102,7 +104,7 @@ txt_separator_t *TXT_NewSeparator(const char *label)
 {
     txt_separator_t *separator;
 
-    separator = malloc(sizeof(txt_separator_t));
+    separator = X_Alloc(txt_separator_t);
 
     TXT_InitWidget(separator, &txt_separator_class);
 

@@ -17,6 +17,7 @@
 #include <string.h>
 
 #include "doomkeys.h"
+#include "safe.h"
 
 #include "txt_desktop.h"
 #include "txt_gui.h"
@@ -256,8 +257,8 @@ static void TXT_CalcTableSize(TXT_UNCAST_ARG(table))
 
     rows = TableRows(table);
 
-    row_heights = malloc(sizeof(int) * rows);
-    column_widths = malloc(sizeof(int) * table->columns);
+    row_heights = X_AllocArray(unsigned int, rows);
+    column_widths = X_AllocArray(unsigned int, table->columns);
 
     CalcRowColSizes(table, row_heights, column_widths);
 
@@ -340,8 +341,8 @@ void TXT_AddWidget(TXT_UNCAST_ARG(table), TXT_UNCAST_ARG(widget))
         FillRowToEnd(table);
     }
 
-    table->widgets = realloc(table->widgets,
-                             sizeof(txt_widget_t *) * (table->num_widgets + 1));
+    table->widgets = X_ReallocArray(
+        table->widgets, txt_widget_t *, table->num_widgets + 1);
     table->widgets[table->num_widgets] = widget;
     ++table->num_widgets;
 
@@ -699,8 +700,8 @@ static void TXT_TableLayout(TXT_UNCAST_ARG(table))
 
     rows = TableRows(table);
 
-    column_widths = malloc(sizeof(int) * table->columns);
-    row_heights = malloc(sizeof(int) * rows);
+    column_widths = X_AllocArray(unsigned int, table->columns);
+    row_heights = X_AllocArray(unsigned int, rows);
 
     CalcRowColSizes(table, row_heights, column_widths);
 
@@ -899,7 +900,7 @@ txt_table_t *TXT_NewTable(int columns)
 {
     txt_table_t *table;
 
-    table = malloc(sizeof(txt_table_t));
+    table = X_Alloc(txt_table_t);
 
     TXT_InitTable(table, columns);
 
@@ -1090,7 +1091,7 @@ void TXT_SetTableColumns(TXT_UNCAST_ARG(table), int new_columns)
     // remainder from the last row.
     new_num_widgets = (table->num_widgets / table->columns) * new_columns
                     + (table->num_widgets % table->columns);
-    new_widgets = calloc(new_num_widgets, sizeof(txt_widget_t *));
+    new_widgets = X_AllocArray(txt_widget_t *, new_num_widgets);
 
     // Reset and add one by one from the old table.
     new_num_widgets = 0;
@@ -1174,8 +1175,8 @@ int TXT_PageTable(TXT_UNCAST_ARG(table), int pagex, int pagey)
 
     rows = TableRows(table);
 
-    row_heights = malloc(sizeof(int) * rows);
-    column_widths = malloc(sizeof(int) * table->columns);
+    row_heights = X_AllocArray(unsigned int, rows);
+    column_widths = X_AllocArray(unsigned int, table->columns);
 
     CalcRowColSizes(table, row_heights, column_widths);
 

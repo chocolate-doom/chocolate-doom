@@ -19,6 +19,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "safe.h"
 #include "textscreen.h"
 
 typedef enum
@@ -40,7 +41,7 @@ void UpdateInputBox(void)
 {
     char buf[20];
 
-    TXT_snprintf(buf, sizeof(buf), "  %i", input_value);
+    X_snprintf(buf, sizeof(buf), "  %i", input_value);
     TXT_SetLabel(input_box, buf);
 }
 
@@ -64,10 +65,10 @@ void AddNumberButton(txt_table_t *table, int value)
     char buf[10];
     int *val_copy;
 
-    val_copy = malloc(sizeof(int));
+    val_copy = X_Alloc(int);
     *val_copy = value;
 
-    TXT_snprintf(buf, sizeof(buf), "  %i  ", value);
+    X_snprintf(buf, sizeof(buf), "  %i  ", value);
 
     TXT_AddWidget(table, TXT_NewButton2(buf, InsertNumber, val_copy));
 }
@@ -86,10 +87,10 @@ void AddOperatorButton(txt_table_t *table, const char *label, operator_t op)
     char buf[10];
     operator_t *op_copy;
 
-    op_copy = malloc(sizeof(operator_t));
+    op_copy = X_Alloc(operator_t);
     *op_copy = op;
 
-    TXT_snprintf(buf, sizeof(buf), "  %s  ", label);
+    X_snprintf(buf, sizeof(buf), "  %s  ", label);
 
     TXT_AddWidget(table, TXT_NewButton2(buf, Operator, op_copy));
 }

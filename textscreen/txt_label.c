@@ -15,6 +15,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "safe.h"
+
 #include "txt_label.h"
 #include "txt_gui.h"
 #include "txt_io.h"
@@ -141,7 +143,7 @@ void TXT_SetLabel(txt_label_t *label, const char *value)
 
     // Split into lines
 
-    label->lines = malloc(sizeof(char *) * label->h);
+    label->lines = X_AllocArray(char *, label->h);
     label->lines[0] = label->label;
     y = 1;
 
@@ -172,7 +174,7 @@ txt_label_t *TXT_NewLabel(const char *text)
 {
     txt_label_t *label;
 
-    label = malloc(sizeof(txt_label_t));
+    label = X_Alloc(txt_label_t);
 
     TXT_InitWidget(label, &txt_label_class);
     label->label = NULL;

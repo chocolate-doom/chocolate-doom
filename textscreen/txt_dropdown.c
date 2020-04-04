@@ -16,6 +16,7 @@
 #include <string.h>
 
 #include "doomkeys.h"
+#include "safe.h"
 
 #include "txt_button.h"
 #include "txt_dropdown.h"
@@ -158,7 +159,7 @@ static void OpenSelectorWindow(txt_dropdown_list_t *list)
 
         // Callback struct
 
-        data = malloc(sizeof(callback_data_t));
+        data = X_Alloc(callback_data_t);
         data->list = list;
         data->window = window;
         data->item = i;
@@ -293,7 +294,7 @@ txt_dropdown_list_t *TXT_NewDropdownList(int *variable, const char **values,
 {
     txt_dropdown_list_t *list;
 
-    list = malloc(sizeof(txt_dropdown_list_t));
+    list = X_Alloc(txt_dropdown_list_t);
 
     TXT_InitWidget(list, &txt_dropdown_list_class);
     list->variable = variable;

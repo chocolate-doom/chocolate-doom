@@ -15,6 +15,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "safe.h"
 #include "doomkeys.h"
 
 #include "txt_checkbox.h"
@@ -120,7 +121,7 @@ txt_checkbox_t *TXT_NewCheckBox(const char *label, int *variable)
 {
     txt_checkbox_t *checkbox;
 
-    checkbox = malloc(sizeof(txt_checkbox_t));
+    checkbox = X_Alloc(txt_checkbox_t);
 
     TXT_InitWidget(checkbox, &txt_checkbox_class);
     checkbox->label = strdup(label);

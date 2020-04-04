@@ -15,6 +15,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "safe.h"
+
 #include "txt_conditional.h"
 #include "txt_strut.h"
 
@@ -134,7 +136,7 @@ txt_conditional_t *TXT_NewConditional(int *var, int expected_value,
     TXT_CAST_ARG(txt_widget_t, child);
     txt_conditional_t *conditional;
 
-    conditional = malloc(sizeof(txt_conditional_t));
+    conditional = X_Alloc(txt_conditional_t);
 
     TXT_InitWidget(conditional, &txt_conditional_class);
     conditional->var = var;
