@@ -24,6 +24,7 @@
 #include <stdarg.h>
 
 #include "doomtype.h"
+#include "safe.h"
 
 boolean M_WriteFile(const char *name, const void *source, int length);
 int M_ReadFile(const char *name, byte **buffer);
@@ -39,17 +40,18 @@ void M_ExtractFileBase(const char *path, char *dest);
 void M_ForceUppercase(char *text);
 void M_ForceLowercase(char *text);
 const char *M_StrCaseStr(const char *haystack, const char *needle);
-char *M_StringDuplicate(const char *orig);
-boolean M_StringCopy(char *dest, const char *src, size_t dest_size);
-boolean M_StringConcat(char *dest, const char *src, size_t dest_size);
 char *M_StringReplace(const char *haystack, const char *needle,
                       const char *replacement);
 char *M_StringJoin(const char *s, ...);
 boolean M_StringStartsWith(const char *s, const char *prefix);
 boolean M_StringEndsWith(const char *s, const char *suffix);
-int M_vsnprintf(char *buf, size_t buf_len, const char *s, va_list args);
-int M_snprintf(char *buf, size_t buf_len, const char *s, ...) PRINTF_ATTR(3, 4);
 char *M_OEMToUTF8(const char *ansi);
+
+#define M_StringDuplicate   X_StringDuplicate
+#define M_StringCopy        X_StringCopy
+#define M_StringConcat      X_StringConcat
+#define M_snprintf          X_snprintf
+#define M_vsnprintf         X_vsnprintf
 
 #endif
 
