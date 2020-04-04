@@ -39,6 +39,23 @@
 
 #include "safe.h"
 
+static void ErrorAbort(const char *s, ...)
+{
+    va_list args;
+
+    va_start(args, s);
+    vfprintf(stderr, s, args);
+    va_end(args);
+    exit(1);
+}
+
+static x_abort_function_t abort_function = ErrorAbort;
+
+void X_SetAbortFunction(x_abort_function_t fn)
+{
+    abort_function = fn;
+}
+
 // Safe version of strdup() that checks the string was successfully
 // allocated.
 char *X_StringDuplicate(const char *orig)
@@ -49,8 +66,8 @@ char *X_StringDuplicate(const char *orig)
 
     if (result == NULL)
     {
-        fprintf(stderr, "Failed allocation; strdup(%" PRIuPTR " bytes)=NULL\n",
-                strlen(orig));
+        abort_function("Failed allocation; strdup(%" PRIuPTR " bytes)=NULL\n",
+                       strlen(orig));
     }
 
     return result;
@@ -141,10 +158,9 @@ void *X_CheckedCalloc(size_t count, size_t size)
 
     if (result == NULL)
     {
-        fprintf(stderr, "Failed allocation; "
-                        "calloc(%" PRIuPTR ", %" PRIuPTR ")=NULL\n",
-                        count, size);
-        exit(1);
+        abort_function("Failed allocation; "
+                       "calloc(%" PRIuPTR ", %" PRIuPTR ")=NULL\n",
+                       count, size);
     }
 
     return result;
@@ -159,10 +175,8 @@ void *X_CheckedRealloc(void *ptr, size_t count, size_t size)
     result = realloc(ptr, new_size);
     if (result == NULL)
     {
-	fprintf(stderr, "Failed allocation; "
-                        "realloc(%p, %" PRIuPTR ")=NULL\n",
-                        ptr, new_size);
-	exit(1);
+        abort_function("Failed allocation; realloc(%p, %" PRIuPTR ")=NULL\n",
+                       ptr, new_size);
     }
 
     return ptr;

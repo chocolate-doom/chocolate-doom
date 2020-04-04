@@ -22,6 +22,7 @@
 
 #include "SDL.h"
 
+#include "safe.h"
 #include "doomtype.h"
 #include "i_system.h"
 #include "m_argv.h"
@@ -36,6 +37,8 @@ void D_DoomMain (void);
 
 int main(int argc, char **argv)
 {
+    X_SetAbortFunction(I_Error);
+
     // save arguments
 
     myargc = argc;

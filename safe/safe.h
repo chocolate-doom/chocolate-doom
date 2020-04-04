@@ -20,6 +20,8 @@
 #include <stdarg.h>
 #include <stddef.h>
 
+typedef void (*x_abort_function_t)(const char *s, ...);
+
 #ifdef __GNUC__
 
 #define X_PRINTF_ATTR(fmt, first) __attribute__((format(printf, fmt, first)))
@@ -33,6 +35,8 @@
 #define X_NORETURN
 
 #endif
+
+void X_SetAbortFunction(x_abort_function_t fn);
 
 // Use instead of strdup(); aborts on error:
 char *X_StringDuplicate(const char *orig);
