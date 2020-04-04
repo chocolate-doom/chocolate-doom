@@ -388,7 +388,7 @@ void R_DrawVisSprite(vissprite_t * vis, int x1, int x2)
         {
             colfunc = R_DrawTranslatedTLColumn;
             dc_translation = translationtables - 256
-                + vis->class * ((maxplayers - 1) * 256) +
+                + vis->pclass * ((maxplayers - 1) * 256) +
                 ((vis->mobjflags & MF_TRANSLATION) >> (MF_TRANSSHIFT - 8));
         }
         else if (vis->mobjflags & MF_SHADOW)
@@ -405,7 +405,7 @@ void R_DrawVisSprite(vissprite_t * vis, int x1, int x2)
         // Draw using translated column function
         colfunc = R_DrawTranslatedColumn;
         dc_translation = translationtables - 256
-            + vis->class * ((maxplayers - 1) * 256) +
+            + vis->pclass * ((maxplayers - 1) * 256) +
             ((vis->mobjflags & MF_TRANSLATION) >> (MF_TRANSSHIFT - 8));
     }
 
@@ -562,15 +562,15 @@ void R_ProjectSprite(mobj_t * thing)
     {
         if (thing->player)
         {
-            vis->class = thing->player->class;
+            vis->pclass = thing->player->pclass;
         }
         else
         {
-            vis->class = thing->special1.i;
+            vis->pclass = thing->special1.i;
         }
-        if (vis->class > 2)
+        if (vis->pclass > 2)
         {
-            vis->class = 0;
+            vis->pclass = 0;
         }
     }
     // foot clipping
@@ -725,14 +725,14 @@ void R_DrawPSprite(pspdef_t * psp)
 //
     vis = &avis;
     vis->mobjflags = 0;
-    vis->class = 0;
+    vis->pclass = 0;
     vis->psprite = true;
     vis->floorclip = 0;
     vis->texturemid = (BASEYCENTER << FRACBITS) + FRACUNIT / 2
         - (psp->sy - spritetopoffset[lump]);
     if (viewheight == SCREENHEIGHT)
     {
-        vis->texturemid -= PSpriteSY[viewplayer->class]
+        vis->texturemid -= PSpriteSY[viewplayer->pclass]
             [players[consoleplayer].readyweapon];
     }
     vis->x1 = x1 < 0 ? 0 : x1;
@@ -752,7 +752,7 @@ void R_DrawPSprite(pspdef_t * psp)
         vis->startfrac += vis->xiscale * (vis->x1 - x1);
     vis->patch = lump;
 
-    if (viewplayer->powers[pw_invulnerability] && viewplayer->class
+    if (viewplayer->powers[pw_invulnerability] && viewplayer->pclass
         == PCLASS_CLERIC)
     {
         vis->colormap = spritelights[MAXLIGHTSCALE - 1];

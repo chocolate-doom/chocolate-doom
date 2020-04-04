@@ -1902,7 +1902,7 @@ boolean PTR_UseTraverse(intercept_t * in)
         {
             if (usething->player)
             {
-                switch (usething->player->class)
+                switch (usething->player->pclass)
                 {
                     case PCLASS_FIGHTER:
                         sound = SFX_PLAYER_FIGHTER_FAILED_USE;
@@ -1929,7 +1929,7 @@ boolean PTR_UseTraverse(intercept_t * in)
             pheight = usething->z + (usething->height / 2);
             if ((opentop < pheight) || (openbottom > pheight))
             {
-                switch (usething->player->class)
+                switch (usething->player->pclass)
                 {
                     case PCLASS_FIGHTER:
                         sound = SFX_PLAYER_FIGHTER_FAILED_USE;
@@ -2016,7 +2016,7 @@ boolean PTR_PuzzleItemTraverse(intercept_t * in)
                 sound = SFX_NONE;
                 if (PuzzleItemUser->player)
                 {
-                    switch (PuzzleItemUser->player->class)
+                    switch (PuzzleItemUser->player->pclass)
                     {
                         case PCLASS_FIGHTER:
                             sound = SFX_PUZZLE_FAIL_FIGHTER;

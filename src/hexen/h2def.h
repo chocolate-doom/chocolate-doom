@@ -520,7 +520,7 @@ typedef struct player_s
     playerstate_t playerstate;
     ticcmd_t cmd;
 
-    pclass_t class;             // player class type
+    pclass_t pclass;            // player class type
 
     fixed_t viewz;              // focal origin above r.z
     fixed_t viewheight;         // base height above floor for viewz

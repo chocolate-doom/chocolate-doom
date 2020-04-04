@@ -353,8 +353,8 @@ static void StreamIn_player_t(player_t *str)
     // ticcmd_t cmd;
     StreamIn_ticcmd_t(&str->cmd);
 
-    // pclass_t class;
-    str->class = SV_ReadLong();
+    // pclass_t pclass;
+    str->pclass = SV_ReadLong();
 
     // fixed_t viewz;
     str->viewz = SV_ReadLong();
@@ -522,8 +522,8 @@ static void StreamOut_player_t(player_t *str)
     // ticcmd_t cmd;
     StreamOut_ticcmd_t(&str->cmd);
 
-    // pclass_t class;
-    SV_WriteLong(str->class);
+    // pclass_t pclass;
+    SV_WriteLong(str->pclass);
 
     // fixed_t viewz;
     SV_WriteLong(str->viewz);

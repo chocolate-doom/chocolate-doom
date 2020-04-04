@@ -254,7 +254,7 @@ typedef struct vissprite_s
     lighttable_t *colormap;
     int mobjflags;              // for color translation and shadow draw
     boolean psprite;            // true if psprite
-    int class;                  // player class (used in translation)
+    int pclass;                 // player class (used in translation)
     fixed_t floorclip;
 } vissprite_t;
 

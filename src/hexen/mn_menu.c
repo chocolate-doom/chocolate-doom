@@ -594,7 +594,7 @@ static void DrawMainMenu(void)
 
 static void DrawClassMenu(void)
 {
-    pclass_t class;
+    pclass_t pclass;
     static const char *boxLumpName[3] = {
         "m_fbox",
         "m_cbox",
@@ -607,10 +607,10 @@ static void DrawClassMenu(void)
     };
 
     MN_DrTextB("CHOOSE CLASS:", 34, 24);
-    class = (pclass_t) CurrentMenu->items[CurrentItPos].option;
-    V_DrawPatch(174, 8, W_CacheLumpName(boxLumpName[class], PU_CACHE));
+    pclass = (pclass_t) CurrentMenu->items[CurrentItPos].option;
+    V_DrawPatch(174, 8, W_CacheLumpName(boxLumpName[pclass], PU_CACHE));
     V_DrawPatch(174 + 24, 8 + 12,
-                W_CacheLumpNum(W_GetNumForName(walkLumpName[class])
+                W_CacheLumpNum(W_GetNumForName(walkLumpName[pclass])
                                + ((MenuTime >> 3) & 3), PU_CACHE));
 }
 

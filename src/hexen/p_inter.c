@@ -174,7 +174,7 @@ boolean P_GiveMana(player_t * player, manatype_t mana, int count)
     {
         player->mana[mana] = MAX_MANA;
     }
-    if (player->class == PCLASS_FIGHTER && player->readyweapon == WP_SECOND
+    if (player->pclass == PCLASS_FIGHTER && player->readyweapon == WP_SECOND
         && mana == MANA_1 && prevMana <= 0)
     {
         P_SetPsprite(player, ps_weapon, S_FAXEREADY_G);
@@ -197,7 +197,7 @@ static void TryPickupWeapon(player_t * player, pclass_t weaponClass,
     boolean gaveWeapon;
 
     remove = true;
-    if (player->class != weaponClass)
+    if (player->pclass != weaponClass)
     {                           // Wrong class, but try to pick up for mana
         if (netgame && !deathmatch)
         {                       // Can't pick up weapons for other classes in coop netplay
@@ -302,12 +302,12 @@ static void TryPickupWeapon(player_t * player, pclass_t weaponClass,
 //--------------------------------------------------------------------------
 
 /*
-boolean P_GiveWeapon(player_t *player, pclass_t class, weapontype_t weapon)
+boolean P_GiveWeapon(player_t *player, pclass_t pclass, weapontype_t weapon)
 {
 	boolean gaveMana;
 	boolean gaveWeapon;
 
-	if(player->class != class)
+	if(player->pclass != pclass)
 	{ // player cannot use this weapon, take it anyway, and get mana
 		if(netgame && !deathmatch)
 		{ // Can't pick up weapons for other classes in coop netplay
@@ -377,11 +377,11 @@ boolean P_GiveWeapon(player_t *player, pclass_t class, weapontype_t weapon)
 //===========================================================================
 
 /*
-boolean P_GiveWeaponPiece(player_t *player, pclass_t class, int piece)
+boolean P_GiveWeaponPiece(player_t *player, pclass_t pclass, int piece)
 {
 	P_GiveMana(player, MANA_1, 20);
 	P_GiveMana(player, MANA_2, 20);
-	if(player->class != class)
+	if(player->pclass != pclass)
 	{
 		return true;
 	}
@@ -392,7 +392,7 @@ boolean P_GiveWeaponPiece(player_t *player, pclass_t class, int piece)
 	player->pieces |= piece;
 	if(player->pieces == 7)
 	{ // player has built the fourth weapon!
-		P_GiveWeapon(player, class, WP_FOURTH);
+		P_GiveWeapon(player, pclass, WP_FOURTH);
 		S_StartSound(player->mo, SFX_WEAPON_BUILD);
 	}
 	return true;
@@ -433,7 +433,7 @@ static void TryPickupWeaponPiece(player_t * player, pclass_t matchClass,
     remove = true;
     checkAssembled = true;
     gaveWeapon = false;
-    if (player->class != matchClass)
+    if (player->pclass != matchClass)
     {                           // Wrong class, but try to pick up for mana
         if (netgame && !deathmatch)
         {                       // Can't pick up wrong-class weapons in coop netplay
@@ -571,7 +571,7 @@ boolean P_GiveArmor(player_t * player, armortype_t armortype, int amount)
 
     if (amount == -1)
     {
-        hits = ArmorIncrement[player->class][armortype];
+        hits = ArmorIncrement[player->pclass][armortype];
         if (player->armorpoints[armortype] >= hits)
         {
             return false;
@@ -588,8 +588,8 @@ boolean P_GiveArmor(player_t * player, armortype_t armortype, int amount)
             + player->armorpoints[ARMOR_SHIELD]
             + player->armorpoints[ARMOR_HELMET]
             + player->armorpoints[ARMOR_AMULET]
-            + AutoArmorSave[player->class];
-        if (totalArmor < ArmorMax[player->class] * 5 * FRACUNIT)
+            + AutoArmorSave[player->pclass];
+        if (totalArmor < ArmorMax[player->pclass] * 5 * FRACUNIT)
         {
             player->armorpoints[armortype] += hits;
         }
@@ -636,7 +636,7 @@ boolean P_GivePower(player_t * player, powertype_t power)
         }
         player->powers[power] = INVULNTICS;
         player->mo->flags2 |= MF2_INVULNERABLE;
-        if (player->class == PCLASS_MAGE)
+        if (player->pclass == PCLASS_MAGE)
         {
             player->mo->flags2 |= MF2_REFLECTIVE;
         }
@@ -1348,7 +1348,7 @@ void P_KillMobj(mobj_t * source, mobj_t * target)
         P_DropWeapon(target->player);
         if (target->flags2 & MF2_FIREDAMAGE)
         {                       // Player flame death
-            switch (target->player->class)
+            switch (target->player->pclass)
             {
                 case PCLASS_FIGHTER:
                     S_StartSound(target, SFX_PLAYER_FIGHTER_BURN_DEATH);
@@ -1370,7 +1370,7 @@ void P_KillMobj(mobj_t * source, mobj_t * target)
         {                       // Player ice death
             target->flags &= ~(7 << MF_TRANSSHIFT);     //no translation
             target->flags |= MF_ICECORPSE;
-            switch (target->player->class)
+            switch (target->player->pclass)
             {
                 case PCLASS_FIGHTER:
                     P_SetMobjState(target, S_FPLAY_ICE);
@@ -1574,7 +1574,7 @@ boolean P_MorphPlayer(player_t * player)
     player->health = beastMo->health = MAXMORPHHEALTH;
     player->mo = beastMo;
     memset(&player->armorpoints[0], 0, NUMARMOR * sizeof(int));
-    player->class = PCLASS_PIG;
+    player->pclass = PCLASS_PIG;
     if (oldFlags2 & MF2_FLY)
     {
         beastMo->flags2 |= MF2_FLY;
@@ -1933,7 +1933,7 @@ void P_DamageMobj
     //
     if (player)
     {
-        savedPercent = AutoArmorSave[player->class]
+        savedPercent = AutoArmorSave[player->pclass]
             + player->armorpoints[ARMOR_ARMOR] +
             player->armorpoints[ARMOR_SHIELD] +
             player->armorpoints[ARMOR_HELMET] +
@@ -1950,7 +1950,7 @@ void P_DamageMobj
                 {
                     player->armorpoints[i] -=
                         FixedDiv(FixedMul(damage << FRACBITS,
-                                          ArmorIncrement[player->class][i]),
+                                          ArmorIncrement[player->pclass][i]),
                                  300 * FRACUNIT);
                     if (player->armorpoints[i] < 2 * FRACUNIT)
                     {

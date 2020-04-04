@@ -209,7 +209,7 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
 
     // haleyjd: removed externdriver crap
 
-    pClass = players[consoleplayer].class;
+    pClass = players[consoleplayer].pclass;
     memset(cmd, 0, sizeof(*cmd));
 
 //      cmd->consistancy =
@@ -1225,7 +1225,7 @@ void G_PlayerReborn(int player)
     players[player].itemcount = itemcount;
     players[player].secretcount = secretcount;
     players[player].worldTimer = worldTimer;
-    players[player].class = PlayerClass[player];
+    players[player].pclass = PlayerClass[player];
 
     p->usedown = p->attackdown = true;  // don't do anything immediately
     p->playerstate = PST_LIVE;
