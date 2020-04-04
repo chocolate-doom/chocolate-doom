@@ -152,21 +152,24 @@ Or, if you use Emacs, put this in your `.emacs`:
 ## Security
 
 The C standard library has a number of unsafe functions that should be
-avoided when writing code for Chocolate Doom. These are:
+avoided when writing code for Chocolate Doom. Instead, use the versions from
+`libsafe`. These are:
 
 Unsafe function   |   Safer alternative
 ------------------|------------------------
+`malloc()`        |  `X_Alloc()` or `X_AllocArray()`
+`calloc()`        |  `X_AllocArray()`
+`realloc()`       |  `X_ReallocArray()`
+`sprintf`         |  `X_snprintf()`
+`snprintf`        |  `X_snprintf()`
+`vsprintf`        |  `X_vsnprintf()`
+`vsnprintf`       |  `X_vsnprintf()`
+`strcpy()`        |  `X_StringCopy()`
+`strncpy()`       |  `X_StringCopy()`
+`strcat()`        |  `X_StringConcat()`
+`strncat()`       |  `X_StringConcat()`
+`strdup()`        |  `X_StringDuplicate()`
 `gets()`          |  `fgets(.., stdin)`
-`sprintf`         |  `M_snprintf()`
-`snprintf`        |  `M_snprintf()`
-`vsprintf`        |  `M_vsnprintf()`
-`vsnprintf`       |  `M_vsnprintf()`
-`strcpy()`        |  `M_StringCopy()`
-`strncpy()`       |  `M_StringCopy()`
-`strcat()`        |  `M_StringConcat()`
-`strncat()`       |  `M_StringConcat()`
-`strdup()`        |  `M_StringDuplicate()`
-`realloc()`       |  `I_Realloc()`
 
 Lots of the code includes calls to DEH_String() to simulate string
 replacement by the Dehacked tool. Be careful when using Dehacked
