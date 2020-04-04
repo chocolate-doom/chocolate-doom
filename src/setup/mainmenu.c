@@ -27,7 +27,7 @@
 #include "m_misc.h"
 #include "z_zone.h"
 
-#include "setup_icon.c"
+#include "setup_icon.h"
 #include "mode.h"
 
 #include "compatibility.h"

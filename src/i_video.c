@@ -29,7 +29,7 @@
 #include <windows.h>
 #endif
 
-#include "icon.c"
+#include "icon.h"
 
 #include "config.h"
 #include "d_loop.h"

@@ -59,6 +59,7 @@ set(GAME_SOURCE_FILES
     i_pcsound.c
     i_sdlmusic.c
     i_sdlsound.c
+                        icon.h
     i_sound.c           i_sound.h
     i_timer.c           i_timer.h
     i_video.c           i_video.h

@@ -23,7 +23,7 @@ libsetup_a_SOURCES =                            \
 
 EXTRA_DIST=                                     \
     CMakeLists.txt                              \
-    setup_icon.c
+    setup_icon.h
 
 appdir = $(prefix)/share/applications
 app_DATA = @PACKAGE_RDNS@.Setup.desktop
@@ -35,7 +35,7 @@ CLEANFILES = $(app_DATA)
 
 if HAVE_PYTHON
 
-setup_icon.c : $(top_builddir)/data/setup.png
+setup_icon.h : $(top_builddir)/data/setup.png
 	$(top_builddir)/data/convert-icon $(top_builddir)/data/setup.png $@
 
 endif

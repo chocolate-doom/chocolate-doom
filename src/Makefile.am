@@ -216,7 +216,7 @@ endif
 
 EXTRA_DIST =                        \
         CMakeLists.txt              \
-        icon.c                      \
+        icon.h                      \
         Doom_Screensaver.desktop.in \
         manifest.xml
 
@@ -273,7 +273,7 @@ CLEANFILES = $(execgames_SCRIPTS) $(app_DATA) $(screensaver_DATA)
 
 if HAVE_PYTHON
 
-icon.c : $(top_builddir)/data/doom.png
+icon.h : $(top_builddir)/data/doom.png
 	$(top_builddir)/data/convert-icon $(top_builddir)/data/doom.png $@
 
 endif
