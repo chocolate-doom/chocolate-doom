@@ -166,6 +166,7 @@ pkg/config.make
 pkg/osx/Info.plist
 rpm.spec
 data/Makefile
+safe/Makefile
 src/Makefile
 src/Doom.metainfo.xml
 src/Doom.desktop
