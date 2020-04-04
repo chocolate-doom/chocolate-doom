@@ -774,7 +774,7 @@ static void NET_SV_ParseSYN(net_packet_t *packet, net_client_t *client,
     memcpy(client->deh_sha1sum, data.deh_sha1sum, sizeof(sha1_digest_t));
     client->is_freedoom = data.is_freedoom;
     client->max_players = data.max_players;
-    client->name = M_StringDuplicate(player_name);
+    client->name = X_StringDuplicate(player_name);
     client->recording_lowres = data.lowres_turn;
     client->drone = data.drone;
     client->player_class = data.player_class;

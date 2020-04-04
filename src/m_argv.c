@@ -21,6 +21,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "safe.h"
+
 #include "SDL_stdinc.h"
 
 #include "doomtype.h"
@@ -281,7 +283,7 @@ static int GuessFileType(const char *name)
     static boolean iwad_found = false;
 
     base = M_BaseName(name);
-    lower = M_StringDuplicate(base);
+    lower = X_StringDuplicate(base);
     M_ForceLowercase(lower);
 
     // only ever add one argument to the -iwad parameter
@@ -373,19 +375,19 @@ void M_AddLooseFiles(void)
 
     if (types & FILETYPE_IWAD)
     {
-        arguments[myargc].str = M_StringDuplicate("-iwad");
+        arguments[myargc].str = X_StringDuplicate("-iwad");
         arguments[myargc].type = FILETYPE_IWAD - 1;
         myargc++;
     }
     if (types & FILETYPE_PWAD)
     {
-        arguments[myargc].str = M_StringDuplicate("-merge");
+        arguments[myargc].str = X_StringDuplicate("-merge");
         arguments[myargc].type = FILETYPE_PWAD - 1;
         myargc++;
     }
     if (types & FILETYPE_DEH)
     {
-        arguments[myargc].str = M_StringDuplicate("-deh");
+        arguments[myargc].str = X_StringDuplicate("-deh");
         arguments[myargc].type = FILETYPE_DEH - 1;
         myargc++;
     }

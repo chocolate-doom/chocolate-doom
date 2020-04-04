@@ -19,6 +19,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "safe.h"
+
 #include "d_event.h"
 #include "d_loop.h"
 #include "d_ticcmd.h"
@@ -836,7 +838,7 @@ static boolean IsDemoFile(int lumpnum)
     char *lower;
     boolean result;
 
-    lower = M_StringDuplicate(lumpinfo[lumpnum]->wad_file->path);
+    lower = X_StringDuplicate(lumpinfo[lumpnum]->wad_file->path);
     M_ForceLowercase(lower);
     result = M_StringEndsWith(lower, ".lmp");
     free(lower);

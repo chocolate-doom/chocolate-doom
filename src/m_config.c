@@ -25,6 +25,8 @@
 #include <errno.h>
 #include <assert.h>
 
+#include "safe.h"
+
 #include "SDL_filesystem.h"
 
 #include "config.h"
@@ -1931,7 +1933,7 @@ static void SetVariable(default_t *def, const char *value)
     switch (def->type)
     {
         case DEFAULT_STRING:
-            *def->location.s = M_StringDuplicate(value);
+            *def->location.s = X_StringDuplicate(value);
             break;
 
         case DEFAULT_INT:
@@ -2278,12 +2280,12 @@ static char *GetDefaultConfigDir(void)
     result = SDL_GetPrefPath("", PACKAGE_TARNAME);
     if (result != NULL)
     {
-        copy = M_StringDuplicate(result);
+        copy = X_StringDuplicate(result);
         SDL_free(result);
         return copy;
     }
 #endif /* #ifndef _WIN32 */
-    return M_StringDuplicate("");
+    return X_StringDuplicate("");
 }
 
 // 
@@ -2393,14 +2395,14 @@ char *M_GetSaveGameDir(const char *iwadname)
 
     else if (M_ParmExists("-cdrom"))
     {
-        savegamedir = M_StringDuplicate(configdir);
+        savegamedir = X_StringDuplicate(configdir);
     }
 #endif
     // If not "doing" a configuration directory (Windows), don't "do"
     // a savegame directory, either.
     else if (!strcmp(configdir, ""))
     {
-	savegamedir = M_StringDuplicate("");
+	savegamedir = X_StringDuplicate("");
     }
     else
     {

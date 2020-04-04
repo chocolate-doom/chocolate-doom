@@ -16,6 +16,8 @@
 
 #include <stdlib.h>
 
+#include "safe.h"
+
 #include "SDL_mixer.h"
 
 #include "textscreen.h"
@@ -235,9 +237,9 @@ void BindSoundVariables(void)
         M_BindIntVariable("show_talk",            &show_talk);
     }
 
-    music_pack_path = M_StringDuplicate("");
-    timidity_cfg_path = M_StringDuplicate("");
-    gus_patch_path = M_StringDuplicate("");
+    music_pack_path = X_StringDuplicate("");
+    timidity_cfg_path = X_StringDuplicate("");
+    gus_patch_path = X_StringDuplicate("");
 
     // All versions of Heretic and Hexen did pitch-shifting.
     // Most versions of Doom did not and Strife never did.

@@ -25,6 +25,8 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
+#include "safe.h"
+
 #include "i_system.h"
 #include "m_misc.h"
 #include "w_file.h"
@@ -116,7 +118,7 @@ static wad_file_t *W_Win32_OpenFile(const char *path)
     result = Z_Malloc(sizeof(win32_wad_file_t), PU_STATIC, 0);
     result->wad.file_class = &win32_wad_file;
     result->wad.length = GetFileLength(handle);
-    result->wad.path = M_StringDuplicate(path);
+    result->wad.path = X_StringDuplicate(path);
     result->handle = handle;
 
     // Try to map the file into memory with mmap:

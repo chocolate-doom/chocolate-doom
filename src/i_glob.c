@@ -20,6 +20,8 @@
 #include <string.h>
 #include <ctype.h>
 
+#include "safe.h"
+
 #include "i_glob.h"
 #include "m_misc.h"
 #include "config.h"
@@ -109,7 +111,7 @@ glob_t *I_StartMultiGlob(const char *directory, int flags,
     {
         return NULL;
     }
-    globs[0] = M_StringDuplicate(glob);
+    globs[0] = X_StringDuplicate(glob);
     num_globs = 1;
 
     va_start(args, glob);
@@ -129,7 +131,7 @@ glob_t *I_StartMultiGlob(const char *directory, int flags,
             FreeStringList(globs, num_globs);
         }
         globs = new_globs;
-        globs[num_globs] = M_StringDuplicate(arg);
+        globs[num_globs] = X_StringDuplicate(arg);
         ++num_globs;
     }
     va_end(args);
@@ -149,7 +151,7 @@ glob_t *I_StartMultiGlob(const char *directory, int flags,
         return NULL;
     }
 
-    result->directory = M_StringDuplicate(directory);
+    result->directory = X_StringDuplicate(directory);
     result->globs = globs;
     result->num_globs = num_globs;
     result->flags = flags;

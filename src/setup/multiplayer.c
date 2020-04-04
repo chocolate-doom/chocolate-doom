@@ -877,7 +877,7 @@ static void SelectQueryAddress(TXT_UNCAST_ARG(button),
     // Set address to connect to:
 
     free(connect_address);
-    connect_address = M_StringDuplicate(button->label);
+    connect_address = X_StringDuplicate(button->label);
 
     // Auto-choose IWAD if there is already a player connected.
 
@@ -1090,7 +1090,7 @@ void SetChatMacroDefaults(void)
     {
         if (chat_macros[i] == NULL)
         {
-            chat_macros[i] = M_StringDuplicate(defaults[i]);
+            chat_macros[i] = X_StringDuplicate(defaults[i]);
         }
     }
 }

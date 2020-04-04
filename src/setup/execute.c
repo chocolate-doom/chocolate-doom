@@ -295,7 +295,7 @@ static char *GetFullExePath(const char *program)
 
     if (sep == NULL)
     {
-        result = M_StringDuplicate(program);
+        result = X_StringDuplicate(program);
     }
     else
     {

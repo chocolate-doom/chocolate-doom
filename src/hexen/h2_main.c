@@ -199,7 +199,7 @@ static void D_SetDefaultSavePath(void)
         }
         else
         {
-            SavePath = M_StringDuplicate(SavePathConfig);
+            SavePath = X_StringDuplicate(SavePathConfig);
         }
     }
 

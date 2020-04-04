@@ -91,7 +91,7 @@ char *M_FileCaseExists(const char *path)
 {
     char *path_dup, *filename, *ext;
 
-    path_dup = M_StringDuplicate(path);
+    path_dup = X_StringDuplicate(path);
 
     // 0: actual path
     if (M_FileExists(path_dup))
@@ -277,11 +277,11 @@ char *M_DirName(const char *path)
     p = strrchr(path, DIR_SEPARATOR);
     if (p == NULL)
     {
-        return M_StringDuplicate(".");
+        return X_StringDuplicate(".");
     }
     else
     {
-        result = M_StringDuplicate(path);
+        result = X_StringDuplicate(path);
         result[p - path] = '\0';
         return result;
     }

@@ -21,6 +21,8 @@
 #include <ctype.h>
 #include <string.h>
 
+#include "safe.h"
+
 #include "deh_str.h"
 #include "doomkeys.h"
 #include "d_iwad.h"
@@ -489,7 +491,7 @@ static char *CheckDirectoryHasIWAD(const char *dir, const char *iwadname)
 
     if (!strcmp(dir, "."))
     {
-        filename = M_StringDuplicate(iwadname);
+        filename = X_StringDuplicate(iwadname);
     }
     else
     {
@@ -574,7 +576,7 @@ static void AddIWADPath(const char *path, const char *suffix)
 {
     char *left, *p, *dup_path;
 
-    dup_path = M_StringDuplicate(path);
+    dup_path = X_StringDuplicate(path);
 
     // Split into individual dirs within the list.
     left = dup_path;
@@ -826,7 +828,7 @@ char *D_TryFindWADByName(const char *filename)
     }
     else
     {
-        return M_StringDuplicate(filename);
+        return X_StringDuplicate(filename);
     }
 }
 

@@ -685,14 +685,14 @@ static char *GetFullPath(const char *musicdir, const char *path)
     // so just return it.
     if (path[0] == DIR_SEPARATOR)
     {
-        return M_StringDuplicate(path);
+        return X_StringDuplicate(path);
     }
 
 #ifdef _WIN32
     // d:\path\...
     if (isalpha(path[0]) && path[1] == ':' && path[2] == DIR_SEPARATOR)
     {
-        return M_StringDuplicate(path);
+        return X_StringDuplicate(path);
     }
 #endif
 
@@ -936,7 +936,7 @@ static void LoadSubstituteConfigs(void)
     }
     else if (!strcmp(configdir, ""))
     {
-        musicdir = M_StringDuplicate("");
+        musicdir = X_StringDuplicate("");
     }
     else
     {

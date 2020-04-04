@@ -722,7 +722,7 @@ static char *GetGameName(const char *gamename)
         }
     }
 
-    return M_StringDuplicate(gamename);
+    return X_StringDuplicate(gamename);
 }
 
 static void SetMissionForPackName(const char *pack_name)
@@ -898,7 +898,7 @@ static void D_SetGameDescription(void)
 
     if (gamedescription == NULL)
     {
-        gamedescription = M_StringDuplicate("Unknown");
+        gamedescription = X_StringDuplicate("Unknown");
     }
 }
 

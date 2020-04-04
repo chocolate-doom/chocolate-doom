@@ -338,7 +338,7 @@ net_addr_t *NET_SDL_ResolveAddress(const char *address)
 
     colon = strchr(address, ':');
 
-    addr_hostname = M_StringDuplicate(address);
+    addr_hostname = X_StringDuplicate(address);
     if (colon != NULL)
     {
 	addr_hostname[colon - address] = '\0';

@@ -644,7 +644,7 @@ static void SetDefaultSaveName(int slot)
     }
     else
     {
-        char *wadname = M_StringDuplicate(W_WadNameForLump(maplumpinfo));
+        char *wadname = X_StringDuplicate(W_WadNameForLump(maplumpinfo));
         char *ext = strrchr(wadname, '.');
 
         if (ext != NULL)

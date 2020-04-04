@@ -1540,7 +1540,7 @@ static char *savename = NULL;
 
 void G_LoadGame(char *name)
 {
-    savename = M_StringDuplicate(name);
+    savename = X_StringDuplicate(name);
     gameaction = ga_loadgame;
 }
 
