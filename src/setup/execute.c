@@ -36,6 +36,8 @@
 
 #endif
 
+#include "safe.h"
+
 #include "textscreen.h"
 
 #include "config.h"
@@ -304,7 +306,7 @@ static char *GetFullExePath(const char *program)
         M_StringCopy(result, myargv[0], result_len);
         result[path_len] = '\0';
 
-        M_StringConcat(result, program, result_len);
+        X_StringConcat(result, program, result_len);
     }
 
     return result;

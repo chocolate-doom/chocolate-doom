@@ -20,6 +20,8 @@
 #include <stdio.h>
 
 #include "doomtype.h"
+#include "safe.h"
+
 #include "i_system.h"
 #include "m_argv.h"
 #include "m_misc.h"
@@ -322,7 +324,7 @@ void NET_SDL_AddrToString(net_addr_t *addr, char *buffer, int buffer_len)
     {
         char portbuf[10];
         M_snprintf(portbuf, sizeof(portbuf), ":%i", port);
-        M_StringConcat(buffer, portbuf, buffer_len);
+        X_StringConcat(buffer, portbuf, buffer_len);
     }
 }
 

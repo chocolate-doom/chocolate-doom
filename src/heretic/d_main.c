@@ -19,6 +19,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "safe.h"
+
 #include "txt_main.h"
 #include "txt_io.h"
 
@@ -524,7 +526,7 @@ static void status(const char *string)
 {
     if (using_graphical_startup)
     {
-        M_StringConcat(smsg, string, sizeof(smsg));
+        X_StringConcat(smsg, string, sizeof(smsg));
         drawstatus();
     }
 }

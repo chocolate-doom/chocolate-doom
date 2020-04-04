@@ -20,6 +20,8 @@
 #include <string.h>
 #include <ctype.h>
 
+#include "safe.h"
+
 #include "doomdef.h"
 #include "doomkeys.h"
 
@@ -286,7 +288,7 @@ void CT_Ticker(void)
                 {
                     M_StringCopy(plr_lastmsg[i], DEH_String(CT_FromPlrText[i]),
                                  sizeof(plr_lastmsg[i]));
-                    M_StringConcat(plr_lastmsg[i], chat_msg[i],
+                    X_StringConcat(plr_lastmsg[i], chat_msg[i],
                                    sizeof(plr_lastmsg[i]));
                 }
                 else

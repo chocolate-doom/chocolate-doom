@@ -14,9 +14,11 @@
 // GNU General Public License for more details.
 //
 
-
 #include <string.h>
 #include <ctype.h>
+
+#include "safe.h"
+
 #include "h2def.h"
 #include "i_input.h"
 #include "s_sound.h"
@@ -324,7 +326,7 @@ void CT_Ticker(void)
                 {
                     M_StringCopy(plr_lastmsg[i], CT_FromPlrText[i],
                                  sizeof(plr_lastmsg[i]));
-                    M_StringConcat(plr_lastmsg[i], chat_msg[i],
+                    X_StringConcat(plr_lastmsg[i], chat_msg[i],
                                    sizeof(plr_lastmsg[i]));
                 }
                 else

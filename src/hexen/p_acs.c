@@ -17,6 +17,8 @@
 
 // HEADER FILES ------------------------------------------------------------
 
+#include "safe.h"
+
 #include "h2def.h"
 #include "m_misc.h"
 #include "m_random.h"
@@ -1794,7 +1796,7 @@ static int CmdEndPrintBold(void)
 
 static int CmdPrintString(void)
 {
-    M_StringConcat(PrintBuffer, StringLookup(Pop()), sizeof(PrintBuffer));
+    X_StringConcat(PrintBuffer, StringLookup(Pop()), sizeof(PrintBuffer));
     return SCRIPT_CONTINUE;
 }
 
@@ -1803,7 +1805,7 @@ static int CmdPrintNumber(void)
     char tempStr[16];
 
     M_snprintf(tempStr, sizeof(tempStr), "%d", Pop());
-    M_StringConcat(PrintBuffer, tempStr, sizeof(PrintBuffer));
+    X_StringConcat(PrintBuffer, tempStr, sizeof(PrintBuffer));
     return SCRIPT_CONTINUE;
 }
 
@@ -1813,7 +1815,7 @@ static int CmdPrintCharacter(void)
 
     tempStr[0] = Pop();
     tempStr[1] = '\0';
-    M_StringConcat(PrintBuffer, tempStr, sizeof(PrintBuffer));
+    X_StringConcat(PrintBuffer, tempStr, sizeof(PrintBuffer));
 
     return SCRIPT_CONTINUE;
 }

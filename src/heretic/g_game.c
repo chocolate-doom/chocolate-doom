@@ -19,6 +19,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include "safe.h"
+
 #include "doomdef.h"
 #include "doomkeys.h"
 #include "deh_str.h"
@@ -1881,7 +1884,7 @@ void G_RecordDemo(skill_t skill, int numplayers, int episode, int map,
     G_InitNew(skill, episode, map);
     usergame = false;
     M_StringCopy(demoname, name, sizeof(demoname));
-    M_StringConcat(demoname, ".lmp", sizeof(demoname));
+    X_StringConcat(demoname, ".lmp", sizeof(demoname));
     maxsize = 0x20000;
 
     //!

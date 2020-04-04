@@ -37,6 +37,7 @@
 #endif
 
 #include "doomtype.h"
+#include "safe.h"
 
 #include "deh_str.h"
 
@@ -534,7 +535,7 @@ char *M_StringJoin(const char *s, ...)
             break;
         }
 
-        M_StringConcat(result, v, result_len);
+        X_StringConcat(result, v, result_len);
     }
     va_end(args);
 

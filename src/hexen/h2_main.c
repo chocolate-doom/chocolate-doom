@@ -23,6 +23,7 @@
 #include <time.h>
 
 #include "config.h"
+#include "safe.h"
 
 #include "h2def.h"
 #include "ct_chat.h"
@@ -708,7 +709,7 @@ static void HandleArgs(void)
 
         if (!M_StringEndsWith(uc_filename, ".LMP"))
         {
-            M_StringConcat(file, ".lmp", sizeof(file));
+            X_StringConcat(file, ".lmp", sizeof(file));
         }
 
         free(uc_filename);

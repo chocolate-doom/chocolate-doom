@@ -17,6 +17,7 @@
 #include <string.h>
 
 #include "doomtype.h"
+#include "safe.h"
 
 #include "textscreen.h"
 
@@ -950,7 +951,7 @@ static void QueryResponseCallback(net_addr_t *addr,
         M_StringCopy(description, "", sizeof(description));
     }
 
-    M_StringConcat(description, querydata->description, sizeof(description));
+    X_StringConcat(description, querydata->description, sizeof(description));
 
     TXT_AddWidgets(results_table,
                    TXT_NewLabel(ping_time_str),

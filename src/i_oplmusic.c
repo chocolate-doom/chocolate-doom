@@ -21,6 +21,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "safe.h"
+
 #include "memio.h"
 #include "mus2mid.h"
 
@@ -1867,13 +1869,13 @@ void I_OPL_DevMessages(char *result, size_t result_len)
                    ChannelInUse(&channels[i]) ? '\'' : ' ',
                    instr_num + 1,
                    main_instr_names[instr_num]);
-        M_StringConcat(result, tmp, result_len);
+        X_StringConcat(result, tmp, result_len);
 
         ++lines;
     }
 
     M_snprintf(tmp, sizeof(tmp), "\nLast percussion:\n");
-    M_StringConcat(result, tmp, result_len);
+    X_StringConcat(result, tmp, result_len);
     lines += 2;
 
     i = (last_perc_count + PERCUSSION_LOG_LEN - 1) % PERCUSSION_LOG_LEN;
@@ -1889,7 +1891,7 @@ void I_OPL_DevMessages(char *result, size_t result_len)
                    i == 0 ? '\'' : ' ',
                    last_perc[i],
                    percussion_names[last_perc[i] - 35]);
-        M_StringConcat(result, tmp, result_len);
+        X_StringConcat(result, tmp, result_len);
         ++lines;
 
         i = (i + PERCUSSION_LOG_LEN - 1) % PERCUSSION_LOG_LEN;
