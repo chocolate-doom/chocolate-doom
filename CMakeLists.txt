@@ -68,3 +68,5 @@ add_subdirectory(midiproc)
 add_subdirectory(opl)
 add_subdirectory(pcsound)
 add_subdirectory(src)
+
+add_subdirectory(man)
