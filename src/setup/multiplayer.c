@@ -567,7 +567,7 @@ static txt_widget_t *IWADSelector(void)
          ++num_iwads;
     }
 
-    iwad_labels = malloc(sizeof(*iwad_labels) * num_iwads);
+    iwad_labels = X_AllocArray(const char *, num_iwads);
 
     for (i=0; i < num_iwads; ++i)
     {

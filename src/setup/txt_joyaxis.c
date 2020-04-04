@@ -228,9 +228,8 @@ static void IdentifyBadAxes(txt_joystick_axis_t *joystick_axis)
 
     free(joystick_axis->bad_axis);
 
-    joystick_axis->bad_axis
-        = calloc(SDL_JoystickNumAxes(joystick_axis->joystick),
-                                     sizeof(boolean));
+    joystick_axis->bad_axis = X_AllocArray(
+        boolean, SDL_JoystickNumAxes(joystick_axis->joystick));
 
     // Look for uncentered axes.
 
@@ -520,7 +519,7 @@ txt_joystick_axis_t *TXT_NewJoystickAxis(int *axis, int *invert,
 {
     txt_joystick_axis_t *joystick_axis;
 
-    joystick_axis = malloc(sizeof(txt_joystick_axis_t));
+    joystick_axis = X_Alloc(txt_joystick_axis_t);
 
     TXT_InitWidget(joystick_axis, &txt_joystick_axis_class);
     joystick_axis->axis = axis;

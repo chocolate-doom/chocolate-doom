@@ -118,7 +118,7 @@ execute_context_t *NewExecuteContext(void)
 {
     execute_context_t *result;
 
-    result = malloc(sizeof(execute_context_t));
+    result = X_Alloc(execute_context_t);
     
     result->response_file = TempFile("chocolat.rsp");
     result->stream = fopen(result->response_file, "w");
@@ -196,8 +196,8 @@ static wchar_t *BuildCommandLine(const char *program, const char *arg)
 
     // Allocate buffer to contain result string.
 
-    result = calloc(wcslen(exe_path) + strlen(program) + strlen(arg) + 6,
-                    sizeof(wchar_t));
+    result = X_AllocArray(wchar_t, wcslen(exe_path) + strlen(program)
+                                   + strlen(arg) + 6);
 
     wcscpy(result, L"\"");
 
@@ -301,7 +301,7 @@ static char *GetFullExePath(const char *program)
     {
         path_len = sep - myargv[0] + 1;
         result_len = strlen(program) + path_len + 1;
-        result = malloc(result_len);
+        result = X_AllocArray(char, result_len);
 
         X_StringCopy(result, myargv[0], result_len);
         result[path_len] = '\0';

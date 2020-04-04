@@ -17,6 +17,8 @@
 #include <string.h>
 
 #include "doomtype.h"
+#include "safe.h"
+
 #include "i_joystick.h"
 #include "m_config.h"
 #include "m_controls.h"
@@ -797,7 +799,7 @@ static int OpenAllJoysticks(void)
     // SDL_JoystickOpen() all joysticks.
 
     all_joysticks_len = SDL_NumJoysticks();
-    all_joysticks = calloc(all_joysticks_len, sizeof(SDL_Joystick *));
+    all_joysticks = X_AllocArray(SDL_Joystick *, all_joysticks_len);
 
     result = 0;
 
@@ -867,7 +869,7 @@ static boolean SetJoystickGUID(SDL_JoystickID joy_id)
         if (SDL_JoystickInstanceID(all_joysticks[i]) == joy_id)
         {
             guid = SDL_JoystickGetGUID(all_joysticks[i]);
-            joystick_guid = malloc(33);
+            joystick_guid = X_AllocArray(char, 33);
             SDL_JoystickGetGUIDString(guid, joystick_guid, 33);
             joystick_index = i;
             return true;
