@@ -207,7 +207,7 @@ wad_file_t *W_AddFile (const char *filename)
 
     startlump = numlumps;
     numlumps += numfilelumps;
-    lumpinfo = X_ReallocArray(lumpinfo, lumpinfo_t, numlumps);
+    lumpinfo = X_ReallocArray(lumpinfo, lumpinfo_t *, numlumps);
     filerover = fileinfo;
 
     for (i = startlump; i < numlumps; ++i)

@@ -47,7 +47,7 @@ static int GetFileNumber(wad_file_t *handle)
     // Not found in list.  This is a new file we haven't seen yet.
     // Allocate another slot for this file.
 
-    open_wadfiles = X_ReallocArray(open_wadfiles, wad_file_t,
+    open_wadfiles = X_ReallocArray(open_wadfiles, wad_file_t *,
                                    num_open_wadfiles + 1);
     open_wadfiles[num_open_wadfiles] = handle;
 
