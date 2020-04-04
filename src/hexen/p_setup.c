@@ -19,6 +19,9 @@
 
 #include <math.h>
 #include <stdlib.h>
+
+#include "safe.h"
+
 #include "h2def.h"
 #include "i_system.h"
 #include "m_argv.h"
@@ -818,9 +821,9 @@ static void InitMapInfo(void)
     info->doubleSky = false;
     info->lightning = false;
     info->fadetable = W_GetNumForName(DEFAULT_FADE_TABLE);
-    M_StringCopy(info->name, UNKNOWN_MAP_NAME, sizeof(info->name));
+    X_StringCopy(info->name, UNKNOWN_MAP_NAME, sizeof(info->name));
 
-//    M_StringCopy(info->songLump, DEFAULT_SONG_LUMP, sizeof(info->songLump));
+//    X_StringCopy(info->songLump, DEFAULT_SONG_LUMP, sizeof(info->songLump));
     SC_Open(MAPINFO_SCRIPT_NAME);
     while (SC_GetString())
     {
@@ -838,20 +841,20 @@ static void InitMapInfo(void)
         info = &MapInfo[map];
 
         // Save song lump name
-        M_StringCopy(songMulch, info->songLump, sizeof(songMulch));
+        X_StringCopy(songMulch, info->songLump, sizeof(songMulch));
 
         // Copy defaults to current map definition
         memcpy(info, &MapInfo[0], sizeof(*info));
 
         // Restore song lump name
-        M_StringCopy(info->songLump, songMulch, sizeof(info->songLump));
+        X_StringCopy(info->songLump, songMulch, sizeof(info->songLump));
 
         // The warp translation defaults to the map number
         info->warpTrans = map;
 
         // Map name must follow the number
         SC_MustGetString();
-        M_StringCopy(info->name, sc_String, sizeof(info->name));
+        X_StringCopy(info->name, sc_String, sizeof(info->name));
 
         // Process optional tokens
         while (SC_GetString())
@@ -1105,7 +1108,7 @@ void P_PutMapSongLump(int map, char *lumpName)
     {
         return;
     }
-    M_StringCopy(MapInfo[map].songLump, lumpName,
+    X_StringCopy(MapInfo[map].songLump, lumpName,
                  sizeof(MapInfo[map].songLump));
 }
 
@@ -1210,7 +1213,7 @@ void InitMapMusicInfo(void)
 
     for (i = 0; i < 99; i++)
     {
-        M_StringCopy(MapInfo[i].songLump, DEFAULT_SONG_LUMP,
+        X_StringCopy(MapInfo[i].songLump, DEFAULT_SONG_LUMP,
                      sizeof(MapInfo[i].songLump));
     }
     MapCount = 98;

@@ -19,6 +19,8 @@
 #include <stdlib.h>
 #include <ctype.h>
 
+#include "safe.h"
+
 #include "i_sound.h"
 #include "i_system.h"
 
@@ -554,7 +556,7 @@ static voiceinfo_t *S_getVoice(const char *name, int lumpnum)
     {
         voice = calloc(1, sizeof(voiceinfo_t));
 
-        M_StringCopy(voice->sfx.name, name, sizeof(voice->sfx.name));
+        X_StringCopy(voice->sfx.name, name, sizeof(voice->sfx.name));
         voice->sfx.priority = INT_MIN; // make highest possible priority
         voice->sfx.pitch = -1;
         voice->sfx.volume = -1;
@@ -608,7 +610,7 @@ void I_StartVoice(const char *lumpname)
         return;
 
     // Because of constness problems...
-    M_StringCopy(lumpnamedup, lumpname, sizeof(lumpnamedup));
+    X_StringCopy(lumpnamedup, lumpname, sizeof(lumpnamedup));
 
     if((lumpnum = W_CheckNumForName(lumpnamedup)) != -1)
     {

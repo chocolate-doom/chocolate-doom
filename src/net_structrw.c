@@ -19,6 +19,8 @@
 #include <string.h>
 
 #include "doomtype.h"
+#include "safe.h"
+
 #include "i_system.h"
 #include "m_misc.h"
 #include "net_packet.h"
@@ -503,7 +505,7 @@ boolean NET_ReadWaitData(net_packet_t *packet, net_waitdata_t *data)
             return false;
         }
 
-        M_StringCopy(data->player_names[i], s, MAXPLAYERNAME);
+        X_StringCopy(data->player_names[i], s, MAXPLAYERNAME);
 
         s = NET_ReadString(packet);
 
@@ -512,7 +514,7 @@ boolean NET_ReadWaitData(net_packet_t *packet, net_waitdata_t *data)
             return false;
         }
 
-        M_StringCopy(data->player_addrs[i], s, MAXPLAYERNAME);
+        X_StringCopy(data->player_addrs[i], s, MAXPLAYERNAME);
     }
 
     return NET_ReadSHA1Sum(packet, data->wad_sha1sum)

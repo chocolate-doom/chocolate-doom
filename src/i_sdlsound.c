@@ -23,6 +23,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+
+#include "safe.h"
+
 #include "SDL.h"
 #include "SDL_mixer.h"
 
@@ -804,7 +807,7 @@ static void GetSfxLumpName(sfxinfo_t *sfx, char *buf, size_t buf_len)
     }
     else
     {
-        M_StringCopy(buf, DEH_String(sfx->name), buf_len);
+        X_StringCopy(buf, DEH_String(sfx->name), buf_len);
     }
 }
 

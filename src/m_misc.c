@@ -457,7 +457,7 @@ char *M_StringReplace(const char *haystack, const char *needle,
     {
         if (!strncmp(p, needle, needle_len))
         {
-            M_StringCopy(dst, replacement, dst_len);
+            X_StringCopy(dst, replacement, dst_len);
             p += needle_len;
             dst += strlen(replacement);
             dst_len -= strlen(replacement);
@@ -524,7 +524,7 @@ char *M_StringJoin(const char *s, ...)
         return NULL;
     }
 
-    M_StringCopy(result, s, result_len);
+    X_StringCopy(result, s, result_len);
 
     va_start(args, s);
     for (;;)

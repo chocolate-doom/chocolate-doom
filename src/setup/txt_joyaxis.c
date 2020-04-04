@@ -18,6 +18,8 @@
 
 #include "SDL.h"
 
+#include "safe.h"
+
 #include "joystick.h"
 #include "i_joystick.h"
 #include "i_system.h"
@@ -431,7 +433,7 @@ static void TXT_JoystickAxisDrawer(TXT_UNCAST_ARG(joystick_axis))
 
     if (*joystick_axis->axis < 0)
     {
-        M_StringCopy(buf, "(none)", sizeof(buf));
+        X_StringCopy(buf, "(none)", sizeof(buf));
     }
     else if (IS_BUTTON_AXIS(*joystick_axis->axis))
     {

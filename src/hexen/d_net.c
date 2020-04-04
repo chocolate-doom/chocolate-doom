@@ -19,6 +19,8 @@
 
 #include <stdlib.h>
 
+#include "safe.h"
+
 #include "m_argv.h"
 #include "i_system.h"
 #include "i_timer.h"
@@ -52,7 +54,7 @@ static void PlayerQuitGame(player_t *player)
 
     player_num = player - players;
 
-    M_StringCopy(exitmsg, "PLAYER 1 LEFT THE GAME", sizeof(exitmsg));
+    X_StringCopy(exitmsg, "PLAYER 1 LEFT THE GAME", sizeof(exitmsg));
     exitmsg[7] += player_num;
     P_SetMessage(&players[consoleplayer], exitmsg, true);
     S_StartSound(NULL, SFX_CHAT);

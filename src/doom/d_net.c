@@ -19,6 +19,8 @@
 
 #include <stdlib.h>
 
+#include "safe.h"
+
 #include "d_main.h"
 #include "m_argv.h"
 #include "m_menu.h"
@@ -50,7 +52,7 @@ static void PlayerQuitGame(player_t *player)
     // Do this the same way as Vanilla Doom does, to allow dehacked
     // replacements of this message
 
-    M_StringCopy(exitmsg, DEH_String("Player 1 left the game"),
+    X_StringCopy(exitmsg, DEH_String("Player 1 left the game"),
                  sizeof(exitmsg));
 
     exitmsg[7] += player_num;

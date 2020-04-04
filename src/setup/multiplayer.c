@@ -948,7 +948,7 @@ static void QueryResponseCallback(net_addr_t *addr,
     }
     else
     {
-        M_StringCopy(description, "", sizeof(description));
+        X_StringCopy(description, "", sizeof(description));
     }
 
     X_StringConcat(description, querydata->description, sizeof(description));

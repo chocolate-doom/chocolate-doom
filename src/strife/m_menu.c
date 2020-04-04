@@ -21,6 +21,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 
+#include "safe.h"
 
 #include "doomdef.h"
 #include "doomkeys.h"
@@ -555,7 +556,7 @@ void M_ReadSaveStrings(void)
         handle = fopen(fname, "rb");
         if(handle == NULL)
         {
-            M_StringCopy(savegamestrings[i], DEH_String(EMPTYSTRING),
+            X_StringCopy(savegamestrings[i], DEH_String(EMPTYSTRING),
                          sizeof(savegamestrings[i]));
             LoadMenu[i].status = 0;
             continue;
@@ -768,7 +769,7 @@ void M_SaveSelect(int choice)
     quickSaveSlot = choice;
     //saveSlot = choice;
 
-    M_StringCopy(saveOldString, savegamestrings[choice], sizeof(saveOldString));
+    X_StringCopy(saveOldString, savegamestrings[choice], sizeof(saveOldString));
     if (!strcmp(savegamestrings[choice], DEH_String(EMPTYSTRING)))
         savegamestrings[choice][0] = 0;
     saveCharIndex = strlen(savegamestrings[choice]);
@@ -1859,7 +1860,7 @@ boolean M_Responder (event_t* ev)
         case KEY_ESCAPE:
             saveStringEnter = 0;
             I_StopTextInput();
-            M_StringCopy(savegamestrings[quickSaveSlot], saveOldString,
+            X_StringCopy(savegamestrings[quickSaveSlot], saveOldString,
                          sizeof(savegamestrings[quickSaveSlot]));
             break;
 
@@ -2310,7 +2311,7 @@ void M_Drawer (void)
             {
                 if (messageString[start + i] == '\n')
                 {
-                    M_StringCopy(string, messageString + start,
+                    X_StringCopy(string, messageString + start,
                                  sizeof(string));
                     if (i < sizeof(string))
                     {
@@ -2325,7 +2326,7 @@ void M_Drawer (void)
 
             if (!foundnewline)
             {
-                M_StringCopy(string, messageString + start,
+                X_StringCopy(string, messageString + start,
                              sizeof(string));
                 start += strlen(string);
             }

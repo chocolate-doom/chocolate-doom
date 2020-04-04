@@ -954,7 +954,7 @@ void D_DoomMain(void)
         // but make that optional.
         if (M_StringEndsWith(uc_filename, ".LMP"))
         {
-            M_StringCopy(file, myargv[p + 1], sizeof(file));
+            X_StringCopy(file, myargv[p + 1], sizeof(file));
         }
         else
         {
@@ -965,14 +965,14 @@ void D_DoomMain(void)
 
         if (D_AddFile(file))
         {
-            M_StringCopy(demolumpname, lumpinfo[numlumps - 1]->name,
+            X_StringCopy(demolumpname, lumpinfo[numlumps - 1]->name,
                          sizeof(demolumpname));
         }
         else
         {
             // The file failed to load, but copy the original arg as a
             // demo name to make tricks like -playdemo demo1 possible.
-            M_StringCopy(demolumpname, myargv[p + 1], sizeof(demolumpname));
+            X_StringCopy(demolumpname, myargv[p + 1], sizeof(demolumpname));
         }
 
         printf("Playing demo %s.\n", file);

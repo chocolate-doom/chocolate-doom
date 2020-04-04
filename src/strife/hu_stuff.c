@@ -18,6 +18,8 @@
 
 #include <ctype.h>
 
+#include "safe.h"
+
 #include "doomdef.h"
 #include "doomkeys.h"
 
@@ -607,7 +609,7 @@ boolean HU_Responder(event_t *ev)
 
             // leave chat mode and notify that it was sent
             StopChatInput();
-            M_StringCopy(lastmessage, chat_macros[c], sizeof(lastmessage));
+            X_StringCopy(lastmessage, chat_macros[c], sizeof(lastmessage));
             plr->message = lastmessage;
             eatkey = true;
         }
@@ -658,7 +660,7 @@ boolean HU_Responder(event_t *ev)
                 {
                     eatkey = true;
                     HU_queueChatChar(HU_CHANGENAME);
-                    M_StringCopy(lastmessage, DEH_String("Changing Name:"),
+                    X_StringCopy(lastmessage, DEH_String("Changing Name:"),
                                  sizeof(lastmessage));
                     plr->message = lastmessage;
                     hu_setting_name = true;
@@ -690,7 +692,7 @@ boolean HU_Responder(event_t *ev)
                     }
                     else
                     {
-                        M_StringCopy(lastmessage, w_chat.l.l,
+                        X_StringCopy(lastmessage, w_chat.l.l,
                                      sizeof(lastmessage));
                     }
                     plr->message = lastmessage;

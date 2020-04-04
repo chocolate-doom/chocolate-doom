@@ -700,7 +700,7 @@ static void HandleArgs(void)
         char *uc_filename;
         char file[256];
 
-        M_StringCopy(file, myargv[p+1], sizeof(file));
+        X_StringCopy(file, myargv[p+1], sizeof(file));
 
         // With Vanilla Hexen you have to specify the file without
         // extension, but make that optional.
@@ -716,14 +716,14 @@ static void HandleArgs(void)
 
         if (W_AddFile(file) != NULL)
         {
-            M_StringCopy(demolumpname, lumpinfo[numlumps - 1]->name,
+            X_StringCopy(demolumpname, lumpinfo[numlumps - 1]->name,
                          sizeof(demolumpname));
         }
         else
         {
             // The file failed to load, but copy the original arg as a
             // demo name to make tricks like -playdemo demo1 possible.
-            M_StringCopy(demolumpname, myargv[p+1], sizeof(demolumpname));
+            X_StringCopy(demolumpname, myargv[p+1], sizeof(demolumpname));
         }
 
         ST_Message("Playing demo %s.\n", myargv[p+1]);

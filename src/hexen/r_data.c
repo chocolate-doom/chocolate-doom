@@ -15,6 +15,8 @@
 //
 
 
+#include "safe.h"
+
 #include "h2def.h"
 #include "i_system.h"
 #include "i_swap.h"
@@ -314,7 +316,7 @@ void R_InitTextures(void)
     patchlookup = Z_Malloc(nummappatches * sizeof(*patchlookup), PU_STATIC, NULL);
     for (i = 0; i < nummappatches; i++)
     {
-        M_StringCopy(name, name_p + i * 8, sizeof(name));
+        X_StringCopy(name, name_p + i * 8, sizeof(name));
         patchlookup[i] = W_CheckNumForName(name);
     }
     W_ReleaseLumpName("PNAMES");

@@ -17,6 +17,8 @@
 
 // HEADER FILES ------------------------------------------------------------
 
+#include "safe.h"
+
 #include "h2def.h"
 #include "i_system.h"
 #include "m_misc.h"
@@ -1937,7 +1939,7 @@ void SV_SaveGame(int slot, const char *description)
 
     // Write version info
     memset(versionText, 0, HXS_VERSION_TEXT_LENGTH);
-    M_StringCopy(versionText, HXS_VERSION_TEXT, HXS_VERSION_TEXT_LENGTH);
+    X_StringCopy(versionText, HXS_VERSION_TEXT, HXS_VERSION_TEXT_LENGTH);
     SV_Write(versionText, HXS_VERSION_TEXT_LENGTH);
 
     // Place a header marker

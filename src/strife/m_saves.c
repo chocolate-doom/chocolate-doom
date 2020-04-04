@@ -23,6 +23,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "safe.h"
+
 #include "z_zone.h"
 #include "i_glob.h"
 #include "i_system.h"
@@ -479,7 +481,7 @@ char M_GetFilePath(const char *fn, char *dest, size_t len)
 
     p = dest + len - 1;
 
-    M_StringCopy(dest, fn, len);
+    X_StringCopy(dest, fn, len);
 
     while(p >= dest)
     {

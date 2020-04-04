@@ -22,6 +22,8 @@
 #include <string.h>
 
 #include "doomtype.h"
+#include "safe.h"
+
 #include "i_system.h"
 #include "m_misc.h"
 
@@ -151,7 +153,7 @@ boolean DEH_SetStringMapping(deh_context_t *context, deh_mapping_t *mapping,
 
     // Copy value into field:
 
-    M_StringCopy(location, value, entry->size);
+    X_StringCopy(location, value, entry->size);
 
     return true;
 }

@@ -16,6 +16,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "safe.h"
+
 #include "doomkeys.h"
 #include "m_misc.h"
 
@@ -76,13 +78,13 @@ static void GetMouseButtonDescription(int button, char *buf, size_t buf_len)
     switch (button)
     {
         case 0:
-            M_StringCopy(buf, "LEFT", buf_len);
+            X_StringCopy(buf, "LEFT", buf_len);
             break;
         case 1:
-            M_StringCopy(buf, "RIGHT", buf_len);
+            X_StringCopy(buf, "RIGHT", buf_len);
             break;
         case 2:
-            M_StringCopy(buf, "MID", buf_len);
+            X_StringCopy(buf, "MID", buf_len);
             break;
         default:
             M_snprintf(buf, buf_len, "BUTTON #%i", button + 1);
@@ -98,7 +100,7 @@ static void TXT_MouseInputDrawer(TXT_UNCAST_ARG(mouse_input))
 
     if (*mouse_input->variable < 0)
     {
-        M_StringCopy(buf, "(none)", sizeof(buf));
+        X_StringCopy(buf, "(none)", sizeof(buf));
     }
     else
     {

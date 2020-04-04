@@ -20,6 +20,8 @@
 #if 0
 #include <stdio.h>
 
+#include "safe.h"
+
 #include "z_zone.h"
 
 #include "m_random.h"
@@ -1689,12 +1691,12 @@ static void WI_loadUnloadData(load_callback_t callback)
 
     if (gamemode == commercial)
     {
-	M_StringCopy(name, DEH_String("INTERPIC"), sizeof(name));
+	X_StringCopy(name, DEH_String("INTERPIC"), sizeof(name));
         name[8] = '\0';
     }
     else if (gamemode == retail && wbs->epsd == 3)
     {
-	M_StringCopy(name, DEH_String("INTERPIC"), sizeof(name));
+	X_StringCopy(name, DEH_String("INTERPIC"), sizeof(name));
         name[8] = '\0';
     }
     else

@@ -19,6 +19,8 @@
 
 #include <stdio.h>
 
+#include "safe.h"
+
 #include "deh_main.h"
 #include "i_swap.h"
 #include "i_system.h"
@@ -492,7 +494,7 @@ void R_InitTextures (void)
 
     for (i = 0; i < nummappatches; i++)
     {
-        M_StringCopy(name, name_p + i * 8, sizeof(name));
+        X_StringCopy(name, name_p + i * 8, sizeof(name));
         patchlookup[i] = W_CheckNumForName(name);
     }
     W_ReleaseLumpName(DEH_String("PNAMES"));

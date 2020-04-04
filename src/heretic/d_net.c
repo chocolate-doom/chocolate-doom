@@ -19,6 +19,8 @@
 
 #include <stdlib.h>
 
+#include "safe.h"
+
 #include "i_system.h"
 #include "i_timer.h"
 #include "i_video.h"
@@ -51,7 +53,7 @@ static void PlayerQuitGame(player_t *player)
     // The Heretic source code does this, which doesn't actually work.
     // As a result, the exit message is never seen.
 
-    M_StringCopy(exitmsg, "PLAYER 1 LEFT THE GAME", sizeof(exitmsg));
+    X_StringCopy(exitmsg, "PLAYER 1 LEFT THE GAME", sizeof(exitmsg));
     exitmsg[7] += player_num;
     players[consoleplayer].message = exitmsg;
 

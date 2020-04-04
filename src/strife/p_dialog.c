@@ -21,6 +21,8 @@
 
 #include <stdlib.h>
 
+#include "safe.h"
+
 #include "z_zone.h"
 #include "w_wad.h"
 #include "deh_str.h"
@@ -712,7 +714,7 @@ boolean P_GiveItemToPlayer(player_t *player, int sprnum, mobjtype_t type)
     {
         if(mobjinfo[type].name)
         {
-            M_StringCopy(pickupstring, DEH_String(mobjinfo[type].name), 39);
+            X_StringCopy(pickupstring, DEH_String(mobjinfo[type].name), 39);
             player->message = pickupstring;
         }
         player->questflags |= 1 << (type - MT_TOKEN_QUEST1);
@@ -1126,7 +1128,7 @@ static void P_DialogDrawer(void)
             if(currentdialog->choices[i].needamounts[0] > 0)
             {
                 // haleyjd 20120401: necessary to avoid undefined behavior:
-                M_StringCopy(choicetext2, choicetext, sizeof(choicetext2));
+                X_StringCopy(choicetext2, choicetext, sizeof(choicetext2));
                 DEH_snprintf(choicetext, sizeof(choicetext),
                              "%s for %d", choicetext2,
                              currentdialog->choices[i].needamounts[0]);
@@ -1221,7 +1223,7 @@ void P_DialogDoChoice(int choice)
         {
             DEH_snprintf(mission_objective, OBJECTIVE_LEN, "log%i", objective);
             objlump = W_CacheLumpName(mission_objective, PU_CACHE);
-            M_StringCopy(mission_objective, objlump, OBJECTIVE_LEN);
+            X_StringCopy(mission_objective, objlump, OBJECTIVE_LEN);
         }
         // haleyjd 20130301: v1.31 hack: if first char of message is a period,
         // clear the player's message. Is this actually used anywhere?

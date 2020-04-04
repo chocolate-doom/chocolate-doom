@@ -18,6 +18,8 @@
 
 #include "SDL_joystick.h"
 
+#include "safe.h"
+
 #include "doomkeys.h"
 #include "joystick.h"
 #include "i_joystick.h"
@@ -254,7 +256,7 @@ static void TXT_JoystickInputDrawer(TXT_UNCAST_ARG(joystick_input))
 
     if (*joystick_input->variable < 0)
     {
-        M_StringCopy(buf, "(none)", sizeof(buf));
+        X_StringCopy(buf, "(none)", sizeof(buf));
     }
     else
     {

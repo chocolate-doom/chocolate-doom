@@ -21,6 +21,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 
+#include "safe.h"
 
 #include "doomdef.h"
 #include "doomkeys.h"
@@ -508,12 +509,12 @@ void M_ReadSaveStrings(void)
     for (i = 0;i < load_end;i++)
     {
         int retval;
-        M_StringCopy(name, P_SaveGameFile(i), sizeof(name));
+        X_StringCopy(name, P_SaveGameFile(i), sizeof(name));
 
 	handle = fopen(name, "rb");
         if (handle == NULL)
         {
-            M_StringCopy(savegamestrings[i], EMPTYSTRING, SAVESTRINGSIZE);
+            X_StringCopy(savegamestrings[i], EMPTYSTRING, SAVESTRINGSIZE);
             LoadMenu[i].status = 0;
             continue;
         }
@@ -573,7 +574,7 @@ void M_LoadSelect(int choice)
 {
     char    name[256];
 	
-    M_StringCopy(name, P_SaveGameFile(choice), sizeof(name));
+    X_StringCopy(name, P_SaveGameFile(choice), sizeof(name));
 
     G_LoadGame (name);
     M_ClearMenus ();
@@ -676,7 +677,7 @@ void M_SaveSelect(int choice)
     I_StartTextInput(x, y, x + 8 + 24 * 8 + 8, y + LINEHEIGHT - 2);
 
     saveSlot = choice;
-    M_StringCopy(saveOldString,savegamestrings[choice], SAVESTRINGSIZE);
+    X_StringCopy(saveOldString,savegamestrings[choice], SAVESTRINGSIZE);
     if (!strcmp(savegamestrings[choice], EMPTYSTRING))
     {
         savegamestrings[choice][0] = 0;
@@ -1555,7 +1556,7 @@ boolean M_Responder (event_t* ev)
           case KEY_ESCAPE:
             saveStringEnter = 0;
             I_StopTextInput();
-            M_StringCopy(savegamestrings[saveSlot], saveOldString,
+            X_StringCopy(savegamestrings[saveSlot], saveOldString,
                          SAVESTRINGSIZE);
             break;
 
@@ -1959,7 +1960,7 @@ void M_Drawer (void)
             {
                 if (messageString[start + i] == '\n')
                 {
-                    M_StringCopy(string, messageString + start,
+                    X_StringCopy(string, messageString + start,
                                  sizeof(string));
                     if (i < sizeof(string))
                     {
@@ -1974,7 +1975,7 @@ void M_Drawer (void)
 
             if (!foundnewline)
             {
-                M_StringCopy(string, messageString + start, sizeof(string));
+                X_StringCopy(string, messageString + start, sizeof(string));
                 start += strlen(string);
             }
 

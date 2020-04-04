@@ -19,6 +19,8 @@
 
 #include <stdio.h>
 
+#include "safe.h"
+
 #include "z_zone.h"
 
 #include "m_misc.h"
@@ -1689,11 +1691,11 @@ static void WI_loadUnloadData(load_callback_t callback)
 
     if (gamemode == commercial)
     {
-        M_StringCopy(name, DEH_String("INTERPIC"), sizeof(name));
+        X_StringCopy(name, DEH_String("INTERPIC"), sizeof(name));
     }
     else if (gameversion >= exe_ultimate && wbs->epsd == 3)
     {
-        M_StringCopy(name, DEH_String("INTERPIC"), sizeof(name));
+        X_StringCopy(name, DEH_String("INTERPIC"), sizeof(name));
     }
     else
     {

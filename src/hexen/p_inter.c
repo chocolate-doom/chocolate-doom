@@ -15,6 +15,8 @@
 //
 
 
+#include "safe.h"
+
 #include "h2def.h"
 #include "m_misc.h"
 #include "m_random.h"
@@ -70,7 +72,7 @@ void P_SetMessage(player_t * player, const char *message, boolean ultmsg)
         return;
     }
 
-    M_StringCopy(player->message, message, sizeof(player->message));
+    X_StringCopy(player->message, message, sizeof(player->message));
 //    strupr(player->message);
     player->messageTics = MESSAGETICS;
     player->yellowMessage = false;
@@ -96,7 +98,7 @@ void P_SetYellowMessage(player_t * player, const char *message, boolean ultmsg)
     {
         return;
     }
-    M_StringCopy(player->message, message, sizeof(player->message));
+    X_StringCopy(player->message, message, sizeof(player->message));
     player->messageTics = 5 * MESSAGETICS;      // Bold messages last longer
     player->yellowMessage = true;
     if (ultmsg)

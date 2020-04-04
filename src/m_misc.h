@@ -48,7 +48,6 @@ boolean M_StringEndsWith(const char *s, const char *suffix);
 char *M_OEMToUTF8(const char *ansi);
 
 #define M_StringDuplicate   X_StringDuplicate
-#define M_StringCopy        X_StringCopy
 #define M_snprintf          X_snprintf
 #define M_vsnprintf         X_vsnprintf
 

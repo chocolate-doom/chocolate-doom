@@ -23,6 +23,8 @@
 #include <string.h>
 #include <ctype.h>
 
+#include "safe.h"
+
 #include "doomtype.h"
 #include "i_system.h"
 #include "m_misc.h"
@@ -708,7 +710,7 @@ void W_NWTDashMerge(const char *filename)
             // Replace this entry with an empty string.  This is what
             // nwt -merge does.
 
-            M_StringCopy(iwad_sprites.lumps[i]->name, "", 8);
+            X_StringCopy(iwad_sprites.lumps[i]->name, "", 8);
         }
     }
 

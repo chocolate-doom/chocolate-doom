@@ -14,6 +14,8 @@
 // GNU General Public License for more details.
 //
 
+#include "safe.h"
+
 #include "h2def.h"
 #include "m_random.h"
 #include "i_cdmus.h"
@@ -982,12 +984,12 @@ void S_InitScript(void)
                     SC_MustGetString();
                     if (*sc_String != '?')
                     {
-                        M_StringCopy(S_sfx[i].name, sc_String,
+                        X_StringCopy(S_sfx[i].name, sc_String,
                                      sizeof(S_sfx[i].name));
                     }
                     else
                     {
-                        M_StringCopy(S_sfx[i].name, "default",
+                        X_StringCopy(S_sfx[i].name, "default",
                                      sizeof(S_sfx[i].name));
                     }
                     break;
@@ -1005,7 +1007,7 @@ void S_InitScript(void)
     {
         if (!strcmp(S_sfx[i].name, ""))
         {
-            M_StringCopy(S_sfx[i].name, "default", sizeof(S_sfx[i].name));
+            X_StringCopy(S_sfx[i].name, "default", sizeof(S_sfx[i].name));
         }
     }
 }

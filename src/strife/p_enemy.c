@@ -21,6 +21,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "safe.h"
+
 #include "m_random.h"
 #include "i_system.h"
 #include "doomdef.h"
@@ -2697,7 +2699,7 @@ void A_QuestMsg(mobj_t* actor)
 
     // get name
     name = DEH_String(mobjinfo[(MT_TOKEN_QUEST1 - 1) + actor->info->speed].name);
-    M_StringCopy(pmsgbuffer, name, sizeof(pmsgbuffer));   // inlined in asm
+    X_StringCopy(pmsgbuffer, name, sizeof(pmsgbuffer));   // inlined in asm
 
     // give quest and display message to players
     for(i = 0; i < MAXPLAYERS; i++)

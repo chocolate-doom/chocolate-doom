@@ -19,6 +19,7 @@
 #include <string.h>
 
 #include "doomtype.h"
+#include "safe.h"
 
 #include "deh_str.h"
 #include "i_sound.h"
@@ -250,7 +251,7 @@ static int I_PCS_GetSfxLumpNum(sfxinfo_t* sfx)
     }
     else
     {
-        M_StringCopy(namebuf, DEH_String(sfx->name), sizeof(namebuf));
+        X_StringCopy(namebuf, DEH_String(sfx->name), sizeof(namebuf));
     }
 
     return W_GetNumForName(namebuf);

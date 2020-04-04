@@ -17,6 +17,9 @@
 
 #include <ctype.h>
 #include <string.h>
+
+#include "safe.h"
+
 #include "m_misc.h"
 #include "net_packet.h"
 #include "z_zone.h"
@@ -318,7 +321,7 @@ void NET_WriteString(net_packet_t *packet, const char *string)
 
     p = packet->data + packet->len;
 
-    M_StringCopy((char *) p, string, string_size);
+    X_StringCopy((char *) p, string, string_size);
 
     packet->len += string_size;
 }

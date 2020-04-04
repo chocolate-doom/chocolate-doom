@@ -21,6 +21,8 @@
 #include <string.h>
 #include <ctype.h>
 
+#include "safe.h"
+
 #include "m_misc.h"
 #include "w_wad.h"
 #include "z_zone.h"
@@ -120,7 +122,7 @@ deh_context_t *DEH_OpenLump(int lumpnum)
     context->input_buffer_pos = 0;
 
     context->filename = malloc(9);
-    M_StringCopy(context->filename, lumpinfo[lumpnum]->name, 9);
+    X_StringCopy(context->filename, lumpinfo[lumpnum]->name, 9);
 
     return context;
 }

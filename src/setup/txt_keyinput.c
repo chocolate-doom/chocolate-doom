@@ -15,6 +15,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "safe.h"
+
 #include "doomkeys.h"
 #include "m_misc.h"
 
@@ -105,7 +107,7 @@ static void TXT_KeyInputDrawer(TXT_UNCAST_ARG(key_input))
 
     if (*key_input->variable == 0)
     {
-        M_StringCopy(buf, "(none)", sizeof(buf));
+        X_StringCopy(buf, "(none)", sizeof(buf));
     }
     else
     {

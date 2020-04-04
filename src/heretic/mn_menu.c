@@ -19,6 +19,8 @@
 #include <stdlib.h>
 #include <ctype.h>
 
+#include "safe.h"
+
 #include "deh_str.h"
 #include "doomdef.h"
 #include "doomkeys.h"
@@ -858,7 +860,7 @@ static boolean SCSaveGame(int option)
         y = SaveMenu.y + 1 + option * ITEM_HEIGHT;
         I_StartTextInput(x, y, x + 190, y + ITEM_HEIGHT - 2);
 
-        M_StringCopy(oldSlotText, SlotText[option], sizeof(oldSlotText));
+        X_StringCopy(oldSlotText, SlotText[option], sizeof(oldSlotText));
         ptr = SlotText[option];
         while (*ptr)
         {
@@ -1534,7 +1536,7 @@ boolean MN_Responder(event_t * event)
         if (key == KEY_ESCAPE)
         {
             memset(SlotText[currentSlot], 0, SLOTTEXTLEN + 2);
-            M_StringCopy(SlotText[currentSlot], oldSlotText,
+            X_StringCopy(SlotText[currentSlot], oldSlotText,
                          sizeof(SlotText[currentSlot]));
             SlotStatus[currentSlot]--;
             MN_DeactivateMenu();

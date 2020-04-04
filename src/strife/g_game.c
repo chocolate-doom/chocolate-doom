@@ -19,6 +19,8 @@
 #include <stdlib.h>
 #include <math.h>
 
+#include "safe.h"
+
 #include "doomdef.h" 
 #include "doomkeys.h"
 #include "doomstat.h"
@@ -1028,7 +1030,7 @@ void G_Ticker (void)
                 case BTS_SAVEGAME: 
                     if (!character_name[0]) // [STRIFE]
                     {
-                        M_StringCopy(character_name, "NET GAME",
+                        X_StringCopy(character_name, "NET GAME",
                                      sizeof(character_name));
                     }
                     savegameslot =  
@@ -1178,7 +1180,7 @@ void G_PlayerReborn (int player)
         p->inventory[i].type = NUMMOBJTYPES;
 
     // villsa [STRIFE]: Default objective
-    M_StringCopy(mission_objective, DEH_String("Find help"),
+    X_StringCopy(mission_objective, DEH_String("Find help"),
                  OBJECTIVE_LEN);
 }
 
@@ -1665,7 +1667,7 @@ char	savename[256];
 /*
 void G_LoadGame (char* name)
 {
-    M_StringCopy(savename, name, sizeof(savename));
+    X_StringCopy(savename, name, sizeof(savename));
     gameaction = ga_loadgame;
 }
 */
@@ -1762,7 +1764,7 @@ boolean G_WriteSaveName(int slot, const char *charname)
 
     // haleyjd: memset full character_name for safety
     memset(character_name, 0, CHARACTER_NAME_LEN);
-    M_StringCopy(character_name, charname, sizeof(character_name));
+    X_StringCopy(character_name, charname, sizeof(character_name));
 
     // haleyjd: use M_SafeFilePath
     tmpname = M_SafeFilePath(savepathtemp, "name");
@@ -1789,7 +1791,7 @@ G_SaveGame
   char*	description )
 {
     savegameslot = slot;
-    M_StringCopy(savedescription, description, sizeof(savedescription));
+    X_StringCopy(savedescription, description, sizeof(savedescription));
     sendsave = true;
 }
 */
@@ -1866,7 +1868,7 @@ void G_DoSaveGame (char *path)
     Z_Free(savegame_file);
 
     gameaction = ga_nothing; 
-    //M_StringCopy(savedescription, "", sizeof(savedescription));
+    //X_StringCopy(savedescription, "", sizeof(savedescription));
 
     // [STRIFE]: custom message logic
     if(!strcmp(path, savepath))

@@ -303,7 +303,7 @@ static char *GetFullExePath(const char *program)
         result_len = strlen(program) + path_len + 1;
         result = malloc(result_len);
 
-        M_StringCopy(result, myargv[0], result_len);
+        X_StringCopy(result, myargv[0], result_len);
         result[path_len] = '\0';
 
         X_StringConcat(result, program, result_len);

@@ -1064,12 +1064,12 @@ void G_Ticker(void)
                         {
                             if (netgame)
                             {
-                                M_StringCopy(savedescription, "NET GAME",
+                                X_StringCopy(savedescription, "NET GAME",
                                              sizeof(savedescription));
                             }
                             else
                             {
-                                M_StringCopy(savedescription, "SAVE GAME",
+                                X_StringCopy(savedescription, "SAVE GAME",
                                              sizeof(savedescription));
                             }
                         }
@@ -1686,7 +1686,7 @@ void G_DoLoadGame(void)
 void G_SaveGame(int slot, char *description)
 {
     savegameslot = slot;
-    M_StringCopy(savedescription, description, sizeof(savedescription));
+    X_StringCopy(savedescription, description, sizeof(savedescription));
     sendsave = true;
 }
 
@@ -1981,7 +1981,7 @@ void G_RecordDemo(skill_t skill, int numplayers, int episode, int map,
 
     G_InitNew(skill, episode, map);
     usergame = false;
-    M_StringCopy(demoname, name, sizeof(demoname));
+    X_StringCopy(demoname, name, sizeof(demoname));
     X_StringConcat(demoname, ".lmp", sizeof(demoname));
     maxsize = 0x20000;
 

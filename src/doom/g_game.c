@@ -21,6 +21,8 @@
 #include <stdlib.h>
 #include <math.h>
 
+#include "safe.h"
+
 #include "doomdef.h" 
 #include "doomkeys.h"
 #include "doomstat.h"
@@ -981,7 +983,7 @@ void G_Ticker (void)
 		  case BTS_SAVEGAME: 
 		    if (!savedescription[0]) 
                     {
-                        M_StringCopy(savedescription, "NET GAME",
+                        X_StringCopy(savedescription, "NET GAME",
                                      sizeof(savedescription));
                     }
 
@@ -1560,7 +1562,7 @@ char	savename[256];
 
 void G_LoadGame (char* name) 
 { 
-    M_StringCopy(savename, name, sizeof(savename));
+    X_StringCopy(savename, name, sizeof(savename));
     gameaction = ga_loadgame; 
 } 
 
@@ -1622,7 +1624,7 @@ G_SaveGame
   char*	description )
 {
     savegameslot = slot;
-    M_StringCopy(savedescription, description, sizeof(savedescription));
+    X_StringCopy(savedescription, description, sizeof(savedescription));
     sendsave = true;
 }
 
@@ -1695,7 +1697,7 @@ void G_DoSaveGame (void)
     rename(temp_savegame_file, savegame_file);
 
     gameaction = ga_nothing;
-    M_StringCopy(savedescription, "", sizeof(savedescription));
+    X_StringCopy(savedescription, "", sizeof(savedescription));
 
     players[consoleplayer].message = DEH_String(GGSAVED);
 
