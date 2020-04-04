@@ -25,6 +25,7 @@
 #include <string.h>
 
 #include "doomtype.h"
+#include "safe.h"
 
 #include "i_swap.h"
 #include "i_system.h"
@@ -206,7 +207,7 @@ wad_file_t *W_AddFile (const char *filename)
 
     startlump = numlumps;
     numlumps += numfilelumps;
-    lumpinfo = I_Realloc(lumpinfo, numlumps * sizeof(lumpinfo_t *));
+    lumpinfo = X_ReallocArray(lumpinfo, lumpinfo_t, numlumps);
     filerover = fileinfo;
 
     for (i = startlump; i < numlumps; ++i)

@@ -20,6 +20,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "safe.h"
+
 #include "i_system.h"
 #include "i_timer.h"
 #include "m_misc.h"
@@ -226,7 +228,7 @@ static query_target_t *GetTargetForAddr(net_addr_t *addr, boolean create)
         return NULL;
     }
 
-    targets = I_Realloc(targets, sizeof(query_target_t) * (num_targets + 1));
+    targets = X_ReallocArray(targets, query_target_t, num_targets + 1);
 
     target = &targets[num_targets];
     target->type = QUERY_TARGET_SERVER;

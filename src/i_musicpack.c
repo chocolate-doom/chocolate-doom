@@ -22,6 +22,8 @@
 #include <string.h>
 #include <ctype.h>
 
+#include "safe.h"
+
 #include "SDL.h"
 #include "SDL_mixer.h"
 
@@ -751,8 +753,7 @@ static void AddSubstituteMusic(const char *musicdir, const char *hash_prefix,
     }
 
     ++subst_music_len;
-    subst_music =
-        I_Realloc(subst_music, sizeof(subst_music_t) * subst_music_len);
+    subst_music = X_ReallocArray(subst_music, subst_music_t, subst_music_len);
     s = &subst_music[subst_music_len - 1];
     s->hash_prefix = hash_prefix;
     s->filename = path;
