@@ -18,6 +18,7 @@
 #ifdef _WIN32
 
 #include "buffer.h"
+#include "safe.h"
 
 #include <stdlib.h>
 
@@ -26,7 +27,7 @@
 //
 buffer_t *NewBuffer()
 {
-    buffer_t *buf = malloc(sizeof(buffer_t));
+    buffer_t *buf = X_Alloc(buffer_t);
 
     buf->buffer_end = buf->buffer + BUFFER_SIZE;
     Buffer_Clear(buf);
@@ -134,7 +135,7 @@ void Buffer_Clear(buffer_t *buf)
 //
 buffer_reader_t *NewReader(buffer_t* buffer)
 {
-    buffer_reader_t *reader = malloc(sizeof(buffer_reader_t));
+    buffer_reader_t *reader = X_Alloc(buffer_reader_t);
 
     reader->buffer = buffer;
     reader->pos = buffer->data;
