@@ -1,4 +1,4 @@
-add_library(textscreen STATIC
+add_library(textscreen STATIC EXCLUDE_FROM_ALL
             textscreen.h
             txt_conditional.c   txt_conditional.h
             txt_checkbox.c      txt_checkbox.h
@@ -21,8 +21,14 @@ add_library(textscreen STATIC
             txt_utf8.c          txt_utf8.h
             txt_widget.c        txt_widget.h
             txt_window.c        txt_window.h
-            txt_window_action.c txt_window_action.h)
+            txt_window_action.c txt_window_action.h
+)
+
 target_include_directories(textscreen
-                           INTERFACE "."
-                           PRIVATE "../src/")
-target_link_libraries(textscreen m SDL2::SDL2)
+    INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}"
+    PUBLIC "${PROJECT_SOURCE_DIR}/src"
+)
+target_link_libraries(textscreen PUBLIC
+    m
+    SDL2::SDL2
+)

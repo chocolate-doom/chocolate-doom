@@ -1,6 +1,20 @@
 if(WIN32)
-    add_executable("${PROGRAM_PREFIX}midiproc" WIN32 buffer.c buffer.h main.c proto.h)
-    target_include_directories("${PROGRAM_PREFIX}midiproc"
-                               PRIVATE "../src/" "${CMAKE_CURRENT_BINARY_DIR}/../")
-    target_link_libraries("${PROGRAM_PREFIX}midiproc" SDL2::SDL2main SDL2::mixer)
+    add_executable(midiproc WIN32
+        buffer.c        buffer.h
+        main.c
+        proto.h
+    )
+
+    target_include_directories(midiproc PRIVATE
+        "${PROJECT_BINARY_DIR}"
+        "${PROJECT_SOURCE_DIR}/src"
+    )
+
+    target_link_libraries(midiproc PUBLIC
+        SDL2::mixer
+    )
+
+    set_target_properties(midiproc PROPERTIES
+        OUTPUT_NAME "${PROGRAM_PREFIX}midiproc"
+    )
 endif()

@@ -1,4 +1,4 @@
-add_library(hexen STATIC
+add_executable(hexen WIN32
             a_action.c
                                 am_data.h
             am_map.c            am_map.h
@@ -52,7 +52,25 @@ add_library(hexen STATIC
             st_start.c          st_start.h
             sv_save.c
                                 textdefs.h
-                                xddefs.h)
+                                xddefs.h
+)
 
-target_include_directories(hexen PRIVATE "../" "${CMAKE_CURRENT_BINARY_DIR}/../../")
-target_link_libraries(hexen SDL2::SDL2 SDL2::mixer SDL2::net)
+if(WIN32)
+    target_sources(hexen PRIVATE
+        "${CMAKE_CURRENT_BINARY_DIR}/../resource.rc"
+    )
+endif()
+
+target_link_libraries(hexen PUBLIC
+    gamecommon
+)
+
+set_target_properties(hexen PROPERTIES
+    OUTPUT_NAME "${PROGRAM_PREFIX}hexen"
+)
+
+if(MSVC)
+    set_target_properties(hexen PROPERTIES
+        LINK_FLAGS "/MANIFEST:NO"
+    )
+endif()

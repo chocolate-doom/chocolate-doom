@@ -1,4 +1,4 @@
-set(STRIFE_SOURCES
+add_executable(strife WIN32
     am_map.c        am_map.h
     deh_ammo.c
     deh_cheat.c
@@ -65,9 +65,30 @@ set(STRIFE_SOURCES
     sounds.c        sounds.h
     st_lib.c        st_lib.h
     st_stuff.c      st_stuff.h
-    wi_stuff.c      wi_stuff.h)
+    wi_stuff.c      wi_stuff.h
+)
 
-add_library(strife STATIC ${STRIFE_SOURCES})
+if(WIN32)
+    target_sources(strife
+        "${CMAKE_CURRENT_BINARY_DIR}/../resource.rc"
+    )
+endif()
 
-target_include_directories(strife PRIVATE "../" "../../win32/" "${CMAKE_CURRENT_BINARY_DIR}/../../")
-target_link_libraries(strife textscreen SDL2::SDL2 SDL2::mixer SDL2::net)
+target_include_directories(strife
+    PRIVATE
+        "${PROJECT_SOURCE_DIR}/win32"
+)
+
+target_link_libraries(strife PUBLIC
+    gamecommon_dehacked
+)
+
+set_target_properties(strife PROPERTIES
+    OUTPUT_NAME "${PROGRAM_PREFIX}strife"
+)
+
+if(MSVC)
+    set_target_properties(strife PROPERTIES
+        LINK_FLAGS "/MANIFEST:NO"
+    )
+endif()

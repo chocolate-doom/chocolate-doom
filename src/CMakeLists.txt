@@ -1,18 +1,26 @@
-foreach(SUBDIR doom heretic hexen strife setup)
-    add_subdirectory("${SUBDIR}")
-endforeach()
-
 # Common source files used by absolutely everything:
 
-set(COMMON_SOURCE_FILES
+add_library(common STATIC EXCLUDE_FROM_ALL
     i_main.c
     i_system.c           i_system.h
     m_argv.c             m_argv.h
-    m_misc.c             m_misc.h)
+    m_misc.c             m_misc.h
+)
+
+target_include_directories(common PUBLIC
+    "${PROJECT_BINARY_DIR}"
+    "${PROJECT_SOURCE_DIR}/utils"
+    "${CMAKE_CURRENT_SOURCE_DIR}"
+)
+target_link_libraries(common PUBLIC
+    SDL2::SDL2
+)
 
 # Dedicated server (chocolate-server):
 
-set(DEDSERV_FILES
+option(DOOM_BUILD_SERVER "Build server" ON)
+if(DOOM_BUILD_SERVER)
+    add_executable(server WIN32
     d_dedicated.c
     d_iwad.c            d_iwad.h
     d_mode.c            d_mode.h
@@ -27,16 +35,22 @@ set(DEDSERV_FILES
     net_query.c         net_query.h
     net_server.c        net_server.h
     net_structrw.c      net_structrw.h
-    z_native.c          z_zone.h)
+    z_native.c          z_zone.h
+    )
 
-add_executable("${PROGRAM_PREFIX}server" WIN32 ${COMMON_SOURCE_FILES} ${DEDSERV_FILES})
-target_include_directories("${PROGRAM_PREFIX}server"
-                           PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/../")
-target_link_libraries("${PROGRAM_PREFIX}server" SDL2::SDL2main SDL2::net)
+    target_link_libraries(server
+        common
+        SDL2::net
+    )
+
+    set_target_properties(server
+        PROPERTIES
+            OUTPUT_NAME "${PROGRAM_PREFIX}server"
+    )
+endif()
 
 # Source files used by the game binaries (chocolate-doom, etc.)
-
-set(GAME_SOURCE_FILES
+add_library(gamecommon STATIC EXCLUDE_FROM_ALL
     aes_prng.c          aes_prng.h
     d_event.c           d_event.h
                         doomkeys.h
@@ -97,132 +111,131 @@ set(GAME_SOURCE_FILES
     w_file_posix.c
     w_file_win32.c
     w_merge.c           w_merge.h
-    z_zone.c            z_zone.h)
-
-set(GAME_INCLUDE_DIRS "${CMAKE_CURRENT_BINARY_DIR}/../")
+    z_zone.c            z_zone.h
+)
 
 if(MSVC)
-    list(APPEND GAME_SOURCE_FILES
-         "../win32/win_opendir.c" "../win32/win_opendir.h")
-
-    list(APPEND GAME_INCLUDE_DIRS
-         "${PROJECT_SOURCE_DIR}/win32/")
+    target_sources(gamecommon PRIVATE
+         ../win32/win_opendir.c ../win32/win_opendir.h
+     )
 endif()
 
-set(DEHACKED_SOURCE_FILES
+target_include_directories(gamecommon INTERFACE
+    "${CMAKE_CURRENT_SOURCE_DIR}"
+)
+
+target_link_libraries(gamecommon PUBLIC
+    common
+    SDL2::mixer
+    SDL2::net
+    textscreen
+    pcsound
+    opl
+)
+if(SAMPLERATE_FOUND)
+    target_link_libraries(gamecommon PUBLIC samplerate::samplerate)
+endif()
+if(PNG_FOUND)
+    target_link_libraries(gamecommon PUBLIC PNG::PNG)
+endif()
+
+# Some games support dehacked patches, some don't:
+add_library(gamecommon_dehacked STATIC
     deh_defs.h
     deh_io.c            deh_io.h
     deh_main.c          deh_main.h
     deh_mapping.c       deh_mapping.h
-    deh_text.c)
-
-# Some games support dehacked patches, some don't:
-
-set(SOURCE_FILES ${COMMON_SOURCE_FILES} ${GAME_SOURCE_FILES})
-set(SOURCE_FILES_WITH_DEH ${SOURCE_FILES} ${DEHACKED_SOURCE_FILES})
-
-set(EXTRA_LIBS SDL2::SDL2main SDL2::SDL2 SDL2::mixer SDL2::net textscreen pcsound opl)
-if(SAMPLERATE_FOUND)
-    list(APPEND EXTRA_LIBS samplerate::samplerate)
-endif()
-if(PNG_FOUND)
-    list(APPEND EXTRA_LIBS PNG::PNG)
-endif()
-
-if(WIN32)
-    add_executable("${PROGRAM_PREFIX}doom" WIN32 ${SOURCE_FILES_WITH_DEH} "${CMAKE_CURRENT_BINARY_DIR}/resource.rc")
-else()
-    add_executable("${PROGRAM_PREFIX}doom" ${SOURCE_FILES_WITH_DEH})
-endif()
-
-target_include_directories("${PROGRAM_PREFIX}doom" PRIVATE ${GAME_INCLUDE_DIRS})
-target_link_libraries("${PROGRAM_PREFIX}doom" doom ${EXTRA_LIBS})
-
-if(MSVC)
-    set_target_properties("${PROGRAM_PREFIX}doom" PROPERTIES
-                          LINK_FLAGS "/MANIFEST:NO")
-endif()
-
-if(WIN32)
-    add_executable("${PROGRAM_PREFIX}heretic" WIN32 ${SOURCE_FILES_WITH_DEH} "${CMAKE_CURRENT_BINARY_DIR}/resource.rc")
-else()
-    add_executable("${PROGRAM_PREFIX}heretic" ${SOURCE_FILES_WITH_DEH})
-endif()
-
-target_include_directories("${PROGRAM_PREFIX}heretic" PRIVATE ${GAME_INCLUDE_DIRS})
-target_link_libraries("${PROGRAM_PREFIX}heretic" heretic ${EXTRA_LIBS})
-
-if(MSVC)
-    set_target_properties("${PROGRAM_PREFIX}heretic" PROPERTIES
-                          LINK_FLAGS "/MANIFEST:NO")
-endif()
-
-if(WIN32)
-    add_executable("${PROGRAM_PREFIX}hexen" WIN32 ${SOURCE_FILES} "${CMAKE_CURRENT_BINARY_DIR}/resource.rc")
-else()
-    add_executable("${PROGRAM_PREFIX}hexen" ${SOURCE_FILES})
-endif()
-
-target_include_directories("${PROGRAM_PREFIX}hexen" PRIVATE ${GAME_INCLUDE_DIRS})
-target_link_libraries("${PROGRAM_PREFIX}hexen" hexen ${EXTRA_LIBS})
-
-if(MSVC)
-    set_target_properties("${PROGRAM_PREFIX}hexen" PROPERTIES
-                          LINK_FLAGS "/MANIFEST:NO")
-endif()
-
-if(WIN32)
-    add_executable("${PROGRAM_PREFIX}strife" WIN32 ${SOURCE_FILES_WITH_DEH} "${CMAKE_CURRENT_BINARY_DIR}/resource.rc")
-else()
-    add_executable("${PROGRAM_PREFIX}strife" ${SOURCE_FILES_WITH_DEH})
-endif()
-
-target_include_directories("${PROGRAM_PREFIX}strife" PRIVATE ${GAME_INCLUDE_DIRS})
-target_link_libraries("${PROGRAM_PREFIX}strife" strife ${EXTRA_LIBS})
-
-if(MSVC)
-    set_target_properties("${PROGRAM_PREFIX}strife" PROPERTIES
-                          LINK_FLAGS "/MANIFEST:NO")
-endif()
+    deh_text.c
+)
+target_link_libraries(gamecommon_dehacked PUBLIC
+    gamecommon
+)
 
 # Source files needed for chocolate-setup:
 
-set(SETUP_FILES
-    deh_str.c           deh_str.h
-    d_mode.c            d_mode.h
-    d_iwad.c            d_iwad.h
-    i_timer.c           i_timer.h
-    m_config.c          m_config.h
-    m_controls.c        m_controls.h
-    net_io.c            net_io.h
-    net_packet.c        net_packet.h
-    net_petname.c       net_petname.h
-    net_sdl.c           net_sdl.h
-    net_query.c         net_query.h
-    net_structrw.c      net_structrw.h
-    z_native.c          z_zone.h)
+option(DOOM_BUILD_SETUP "Build setup" ON)
+if(DOOM_BUILD_SETUP)
+    add_library(setupcommon
+        deh_str.c             deh_str.h
+        d_mode.c              d_mode.h
+        d_iwad.c              d_iwad.h
+        i_timer.c             i_timer.h
+        m_config.c            m_config.h
+        m_controls.c          m_controls.h
+        net_io.c              net_io.h
+        net_packet.c          net_packet.h
+        net_petname.c         net_petname.h
+        net_sdl.c             net_sdl.h
+        net_query.c           net_query.h
+        net_structrw.c        net_structrw.h
+        z_native.c            z_zone.h
+    )
 
-if(WIN32)
-    add_executable("${PROGRAM_PREFIX}setup" WIN32 ${SETUP_FILES} ${COMMON_SOURCE_FILES} "${CMAKE_CURRENT_BINARY_DIR}/setup-res.rc")
-else()
-    add_executable("${PROGRAM_PREFIX}setup" ${SETUP_FILES} ${COMMON_SOURCE_FILES})
+    target_link_libraries(setupcommon PUBLIC
+        common
+        SDL2::net
+    )
+
+    add_subdirectory(setup)
 endif()
 
-target_include_directories("${PROGRAM_PREFIX}setup"
-                           PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/../")
-target_link_libraries("${PROGRAM_PREFIX}setup" SDL2::SDL2main SDL2::SDL2 SDL2::mixer SDL2::net setup textscreen)
-
-if(MSVC)
-    set_target_properties("${PROGRAM_PREFIX}setup" PROPERTIES
-                          LINK_FLAGS "/MANIFEST:NO")
+option(DOOM_BUILD_DOOM "Build doom" ON)
+if(DOOM_BUILD_DOOM)
+    add_subdirectory(doom)
 endif()
 
-add_executable(midiread midifile.c z_native.c i_system.c m_argv.c m_misc.c d_iwad.c deh_str.c m_config.c)
-target_compile_definitions(midiread PRIVATE "-DTEST")
-target_include_directories(midiread PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/../")
-target_link_libraries(midiread SDL2::SDL2main SDL2::SDL2)
+option(DOOM_BUILD_HERETIC "Build heretic" ON)
+if(DOOM_BUILD_HERETIC)
+    add_subdirectory(heretic)
+endif()
 
-add_executable(mus2mid mus2mid.c memio.c z_native.c i_system.c m_argv.c m_misc.c d_iwad.c deh_str.c m_config.c)
-target_compile_definitions(mus2mid PRIVATE "-DSTANDALONE")
-target_include_directories(mus2mid PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/../")
-target_link_libraries(mus2mid SDL2::SDL2main SDL2::SDL2)
+option(DOOM_BUILD_HEXEN "Build hexen" ON)
+if(DOOM_BUILD_HEXEN)
+    add_subdirectory(hexen)
+endif()
+
+option(DOOM_BUILD_STRIFE "Build strife" ON)
+if(DOOM_BUILD_STRIFE)
+    add_subdirectory(strife)
+endif()
+
+add_executable(midiread
+    deh_str.c             deh_str.h
+    d_iwad.c              d_iwad.h
+    i_system.c            i_system.h
+    midifile.c            midifile.h
+    m_argv.c              m_argv.h
+    m_config.c            m_config.h
+    m_misc.c              m_misc.h
+    z_native.c
+)
+target_compile_definitions(midiread PRIVATE
+    TEST
+)
+target_include_directories(midiread PRIVATE
+    "${PROJECT_BINARY_DIR}"
+)
+target_link_libraries(midiread PRIVATE
+    SDL2::SDL2
+)
+
+add_executable(mus2mid
+    mus2mid.c             mus2mid.h
+    memio.c               memio.h
+    z_native.c
+    i_system.c            i_system.h
+    m_argv.c              m_argv.h
+    m_misc.c              m_misc.h
+    d_iwad.c              d_iwad.h
+    deh_str.c             deh_str.h
+    m_config.c            m_config.h
+)
+target_compile_definitions(mus2mid PRIVATE
+    STANDALONE
+)
+target_include_directories(mus2mid PRIVATE
+    "${PROJECT_BINARY_DIR}"
+)
+target_link_libraries(mus2mid PRIVATE
+    SDL2::SDL2
+)

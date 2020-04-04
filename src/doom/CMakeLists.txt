@@ -1,4 +1,4 @@
-add_library(doom STATIC
+add_executable(doom WIN32
             am_map.c        am_map.h
             deh_ammo.c
             deh_bexstr.c
@@ -65,7 +65,25 @@ add_library(doom STATIC
             statdump.c      statdump.h
             st_lib.c        st_lib.h
             st_stuff.c      st_stuff.h
-            wi_stuff.c      wi_stuff.h)
+            wi_stuff.c      wi_stuff.h
+)
 
-target_include_directories(doom PRIVATE "../" "${CMAKE_CURRENT_BINARY_DIR}/../../")
-target_link_libraries(doom SDL2::SDL2 SDL2::mixer SDL2::net)
+if(WIN32)
+    target_sources(doom PRIVATE
+        "${CMAKE_CURRENT_BINARY_DIR}/../resource.rc"
+    )
+endif()
+
+target_link_libraries(doom PUBLIC
+    gamecommon_dehacked
+)
+
+set_target_properties(doom PROPERTIES
+    OUTPUT_NAME "${PROGRAM_PREFIX}doom"
+)
+
+if(MSVC)
+    set_target_properties("${PROGRAM_PREFIX}doom" PROPERTIES
+        LINK_FLAGS /MANIFEST:NO
+    )
+endif()

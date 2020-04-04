@@ -9,7 +9,8 @@ CMAKE_FILES=                                   \
         cmake/FindSDL2_net.cmake               \
         cmake/Findm.cmake                      \
         cmake/Findsamplerate.cmake             \
-        cmake/config.h.cin
+        cmake/config.h.cin                     \
+        cmake/ParseAutoconfigure.cmake
 
 DOC_FILES=                              \
         COPYING.md                      \

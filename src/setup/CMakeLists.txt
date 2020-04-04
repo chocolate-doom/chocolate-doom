@@ -1,4 +1,4 @@
-add_library(setup STATIC
+add_executable(setup WIN32
             compatibility.c     compatibility.h
             display.c           display.h
             joystick.c          joystick.h
@@ -12,7 +12,26 @@ add_library(setup STATIC
             txt_joyaxis.c       txt_joyaxis.h
             txt_joybinput.c     txt_joybinput.h
             txt_keyinput.c      txt_keyinput.h
-            txt_mouseinput.c    txt_mouseinput.h)
+            txt_mouseinput.c    txt_mouseinput.h
+)
 
-target_include_directories(setup PRIVATE "../" "${CMAKE_CURRENT_BINARY_DIR}/../../")
-target_link_libraries(setup textscreen SDL2::SDL2 SDL2::mixer)
+if(WIN32)
+    target_sources(setup PRIVATE
+        "${CMAKE_CURRENT_BINARY_DIR}/../setup-res.rc"
+    )
+endif()
+
+target_link_libraries(setup PRIVATE
+    setupcommon
+    textscreen
+)
+
+set_target_properties(setup PROPERTIES
+    OUTPUT_NAME "${PROGRAM_PREFIX}setup"
+)
+
+if(MSVC)
+    set_target_properties(setup PROPERTIES
+        LINK_FLAGS "/MANIFEST:NO"
+    )
+endif()
