@@ -185,7 +185,7 @@ static boolean ClientConnected(net_client_t *client)
 
 // Send a message to be displayed on a client's console
 
-static void NET_SV_SendConsoleMessage(net_client_t *client, const char *s, ...) PRINTF_ATTR(2, 3);
+static void NET_SV_SendConsoleMessage(net_client_t *client, const char *s, ...) X_PRINTF_ATTR(2, 3);
 static void NET_SV_SendConsoleMessage(net_client_t *client, const char *s, ...)
 {
     char buf[1024];
@@ -204,7 +204,7 @@ static void NET_SV_SendConsoleMessage(net_client_t *client, const char *s, ...)
 
 // Send a message to all clients
 
-static void NET_SV_BroadcastMessage(const char *s, ...) PRINTF_ATTR(1, 2);
+static void NET_SV_BroadcastMessage(const char *s, ...) X_PRINTF_ATTR(1, 2);
 static void NET_SV_BroadcastMessage(const char *s, ...)
 {
     char buf[1024];

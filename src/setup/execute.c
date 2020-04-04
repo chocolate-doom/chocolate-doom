@@ -36,6 +36,7 @@
 
 #endif
 
+#include "doomtype.h"
 #include "safe.h"
 
 #include "textscreen.h"

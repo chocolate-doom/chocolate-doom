@@ -22,6 +22,7 @@
 
 #include "d_ticcmd.h"
 #include "d_event.h"
+#include "safe.h"
 
 
 typedef void (*atexit_func_t)(void);
@@ -50,9 +51,9 @@ ticcmd_t* I_BaseTiccmd (void);
 
 // Called by M_Responder when quit is selected.
 // Clean exit, displays sell blurb.
-void I_Quit (void) NORETURN;
+void I_Quit (void) X_NORETURN;
 
-void I_Error (const char *error, ...) NORETURN PRINTF_ATTR(1, 2);
+void I_Error (const char *error, ...) X_NORETURN X_PRINTF_ATTR(1, 2);
 
 void I_Tactile (int on, int off, int total);
 

@@ -17,6 +17,7 @@
 #include <string.h>
 
 #include "config.h"
+#include "doomtype.h"
 #include "textscreen.h"
 
 #include "execute.h"
