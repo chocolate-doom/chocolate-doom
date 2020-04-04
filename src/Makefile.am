@@ -21,6 +21,7 @@ execgames_SCRIPTS = $(SETUP_BINARIES)
 AM_CFLAGS = -I$(top_srcdir)/textscreen            \
             -I$(top_srcdir)/opl                   \
             -I$(top_srcdir)/pcsound               \
+            -I$(top_srcdir)/safe                  \
             @SDLMIXER_CFLAGS@ @SDLNET_CFLAGS@
 
 # Common source files used by absolutely everything:
@@ -51,7 +52,9 @@ net_structrw.c       net_structrw.h        \
 z_native.c           z_zone.h
 
 @PROGRAM_PREFIX@server_SOURCES=$(COMMON_SOURCE_FILES) $(DEDSERV_FILES)
-@PROGRAM_PREFIX@server_LDADD = @LDFLAGS@ @SDLNET_LIBS@
+@PROGRAM_PREFIX@server_LDADD = \
+    $(top_builddir)/safe/libsafe.a  \
+    @LDFLAGS@ @SDLNET_LIBS@
 
 # Source files used by the game binaries (chocolate-doom, etc.)
 
@@ -134,6 +137,7 @@ EXTRA_LIBS =                                               \
                $(top_builddir)/textscreen/libtextscreen.a  \
                $(top_builddir)/pcsound/libpcsound.a        \
                $(top_builddir)/opl/libopl.a                \
+               $(top_builddir)/safe/libsafe.a              \
                @LDFLAGS@                                   \
                @SDL_LIBS@                                  \
                @SDLMIXER_LIBS@                             \
@@ -211,7 +215,8 @@ else
 @PROGRAM_PREFIX@setup_SOURCES=$(SETUP_FILES) $(COMMON_SOURCE_FILES)
 endif
 @PROGRAM_PREFIX@setup_LDADD = setup/libsetup.a                             \
-                        $(top_builddir)/textscreen/libtextscreen.a   \
+                        $(top_builddir)/textscreen/libtextscreen.a         \
+                        $(top_builddir)/safe/libsafe.a                     \
                         @LDFLAGS@ @SDL_LIBS@ @SDLMIXER_LIBS@ @SDLNET_LIBS@
 
 EXTRA_DIST =                        \

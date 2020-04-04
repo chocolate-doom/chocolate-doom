@@ -1,4 +1,7 @@
-AM_CFLAGS = -I$(top_srcdir)/src @SDL_CFLAGS@ @SDLMIXER_CFLAGS@ @SDLNET_CFLAGS@
+AM_CFLAGS = \
+    -I$(top_srcdir)/safe \
+    -I$(top_srcdir)/src  \
+    @SDL_CFLAGS@ @SDLMIXER_CFLAGS@ @SDLNET_CFLAGS@
 
 EXTRA_DIST = CMakeLists.txt
 
