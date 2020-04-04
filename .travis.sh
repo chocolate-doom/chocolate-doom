@@ -8,6 +8,10 @@ if [ "$ANALYZE" = "true" ] ; then
 	fi
 	exit $RET
 else
+	# This is a hack that hides warnings due to the boolean enum; 'false' and 'true'
+	# are reserved words in C++ and cause -Wc++-compat to produce an enormous number
+	# of warnings.
+	sed -i 's/\bfalse\b/zzz_false/g; s/\btrue\b/zzz_true/g' $(find . -name '*.[ch]')
 	set -e
 	./autogen.sh --enable-werror
 	make -j4
