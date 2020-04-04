@@ -1,5 +1,7 @@
 
-AM_CFLAGS=@SDLMIXER_CFLAGS@
+AM_CFLAGS = \
+    -I$(top_srcdir)/safe \
+    @SDLMIXER_CFLAGS@
 
 EXTRA_DIST=CMakeLists.txt
 
