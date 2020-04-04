@@ -73,6 +73,7 @@ add_library(gamecommon STATIC EXCLUDE_FROM_ALL
     i_pcsound.c
     i_sdlmusic.c
     i_sdlsound.c
+    icon.c
     i_sound.c           i_sound.h
     i_timer.c           i_timer.h
     i_video.c           i_video.h
@@ -113,6 +114,7 @@ add_library(gamecommon STATIC EXCLUDE_FROM_ALL
     w_merge.c           w_merge.h
     z_zone.c            z_zone.h
 )
+convert_icon("${PROJECT_DATADIR}/doom.png" "icon.c" COPY "${CMAKE_CURRENT_SOURCE_DIR}/icon.c")
 
 if(MSVC)
     target_sources(gamecommon PRIVATE

@@ -57,6 +57,12 @@ configure_file(src/resource.rc.in src/resource.rc)
 configure_file(src/setup-res.rc.in src/setup-res.rc)
 configure_file(src/setup/setup-manifest.xml.in src/setup/setup-manifest.xml)
 
+set(Python_ADDITIONAL_VERSIONS 3 2)
+find_package(PythonInterp)
+
+set(PROJECT_DATADIR "${PROJECT_SOURCE_DIR}/data")
+add_subdirectory(data)
+
 add_subdirectory(textscreen)
 add_subdirectory(midiproc)
 add_subdirectory(opl)

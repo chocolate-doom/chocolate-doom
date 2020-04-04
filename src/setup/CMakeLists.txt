@@ -7,6 +7,7 @@ add_executable(setup WIN32
             mode.c              mode.h
             mouse.c             mouse.h
             multiplayer.c       multiplayer.h
+            setup_icon.c
             sound.c             sound.h
             execute.c           execute.h
             txt_joyaxis.c       txt_joyaxis.h
@@ -14,6 +15,8 @@ add_executable(setup WIN32
             txt_keyinput.c      txt_keyinput.h
             txt_mouseinput.c    txt_mouseinput.h
 )
+
+convert_icon("${PROJECT_DATADIR}/setup.png" setup_icon.c COPY "${CMAKE_CURRENT_SOURCE_DIR}/setup_icon.c")
 
 if(WIN32)
     target_sources(setup PRIVATE
