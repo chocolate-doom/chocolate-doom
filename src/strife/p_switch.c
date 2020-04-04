@@ -19,6 +19,8 @@
 
 #include <stdio.h>
 
+#include "safe.h"
+
 #include "i_system.h"
 #include "deh_main.h"
 #include "doomdef.h"

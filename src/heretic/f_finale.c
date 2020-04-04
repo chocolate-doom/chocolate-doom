@@ -17,6 +17,8 @@
 
 #include <ctype.h>
 
+#include "safe.h"
+
 #include "doomdef.h"
 #include "deh_str.h"
 #include "i_swap.h"
@@ -394,7 +396,7 @@ void F_BunnyScroll(void)
         laststage = stage;
     }
 
-    M_snprintf(name, sizeof(name), "END%i", stage);
+    X_snprintf(name, sizeof(name), "END%i", stage);
     V_DrawPatch((SCREENWIDTH - 13 * 8) / 2, (SCREENHEIGHT - 8 * 8) / 2,
                 W_CacheLumpName(name, PU_CACHE));
 }

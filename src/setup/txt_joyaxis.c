@@ -440,7 +440,7 @@ static void TXT_JoystickAxisDrawer(TXT_UNCAST_ARG(joystick_axis))
 
         neg = BUTTON_AXIS_NEG(*joystick_axis->axis);
         pos = BUTTON_AXIS_POS(*joystick_axis->axis);
-        M_snprintf(buf, sizeof(buf), "BUTTONS #%i+#%i", neg, pos);
+        X_snprintf(buf, sizeof(buf), "BUTTONS #%i+#%i", neg, pos);
     }
     else if (IS_HAT_AXIS(*joystick_axis->axis))
     {
@@ -449,12 +449,12 @@ static void TXT_JoystickAxisDrawer(TXT_UNCAST_ARG(joystick_axis))
         hat = HAT_AXIS_HAT(*joystick_axis->axis);
         dir = HAT_AXIS_DIRECTION(*joystick_axis->axis);
 
-        M_snprintf(buf, sizeof(buf), "HAT #%i (%s)", hat,
+        X_snprintf(buf, sizeof(buf), "HAT #%i (%s)", hat,
                    dir == HAT_AXIS_HORIZONTAL ? "horizontal" : "vertical");
     }
     else
     {
-        M_snprintf(buf, sizeof(buf), "AXIS #%i", *joystick_axis->axis);
+        X_snprintf(buf, sizeof(buf), "AXIS #%i", *joystick_axis->axis);
     }
 
     TXT_SetWidgetBG(joystick_axis);

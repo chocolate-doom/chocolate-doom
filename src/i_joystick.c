@@ -23,6 +23,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "safe.h"
+
 #include "doomtype.h"
 #include "d_event.h"
 #include "i_joystick.h"
@@ -396,7 +398,7 @@ void I_BindJoystickVariables(void)
     for (i = 0; i < NUM_VIRTUAL_BUTTONS; ++i)
     {
         char name[32];
-        M_snprintf(name, sizeof(name), "joystick_physical_button%i", i);
+        X_snprintf(name, sizeof(name), "joystick_physical_button%i", i);
         M_BindIntVariable(name, &joystick_physical_buttons[i]);
     }
 }

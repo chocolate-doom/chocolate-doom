@@ -20,6 +20,8 @@
 
 #include <stdlib.h>
 
+#include "safe.h"
+
 #include "doomdef.h"
 #include "d_event.h"
 #include "p_local.h"
@@ -858,7 +860,7 @@ boolean P_UseInventoryItem(player_t* player, int item)
         if(name == NULL)
             name = "Item";
 
-        M_snprintf(useinventorymsg, sizeof(useinventorymsg),
+        X_snprintf(useinventorymsg, sizeof(useinventorymsg),
                    "You used the %s.", name);
         player->message = useinventorymsg;
 

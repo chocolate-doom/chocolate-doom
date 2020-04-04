@@ -21,6 +21,8 @@
 #include <stdarg.h>
 
 #include "doomtype.h"
+#include "safe.h"
+
 #include "deh_str.h"
 #include "m_misc.h"
 
@@ -426,7 +428,7 @@ void DEH_snprintf(char *buffer, size_t len, const char *fmt, ...)
 
     va_start(args, fmt);
 
-    M_vsnprintf(buffer, len, repl, args);
+    X_vsnprintf(buffer, len, repl, args);
 
     va_end(args);
 }

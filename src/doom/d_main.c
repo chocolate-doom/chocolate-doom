@@ -365,7 +365,7 @@ void D_BindVariables(void)
     {
         char buf[12];
 
-        M_snprintf(buf, sizeof(buf), "chatmacro%i", i);
+        X_snprintf(buf, sizeof(buf), "chatmacro%i", i);
         M_BindStringVariable(buf, &chat_macros[i]);
     }
 }
@@ -1055,7 +1055,7 @@ static void InitGameVersion(void)
             // Detect version from demo lump
             for (i = 1; i <= 3; ++i)
             {
-                M_snprintf(demolumpname, 6, "demo%i", i);
+                X_snprintf(demolumpname, 6, "demo%i", i);
                 if (W_CheckNumForName(demolumpname) > 0)
                 {
                     demolump = W_CacheLumpName(demolumpname, PU_STATIC);

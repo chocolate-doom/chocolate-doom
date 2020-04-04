@@ -21,6 +21,8 @@
 #include <stdlib.h>
 #include <ctype.h>
 
+#include "safe.h"
+
 #include "config.h"
 #include "doomkeys.h"
 
@@ -101,7 +103,7 @@ static void BuildWindow(void)
 
     for (i = 0; i < net_client_wait_data.max_players; ++i)
     {
-        M_snprintf(buf, sizeof(buf), " %i. ", i + 1);
+        X_snprintf(buf, sizeof(buf), " %i. ", i + 1);
         TXT_AddWidget(table, TXT_NewLabel(buf));
         player_labels[i] = TXT_NewLabel("");
         ip_labels[i] = TXT_NewLabel("");
@@ -164,7 +166,7 @@ static void UpdateGUI(void)
 
     if (net_client_wait_data.num_drones > 0)
     {
-        M_snprintf(buf, sizeof(buf), " (+%i observer clients)",
+        X_snprintf(buf, sizeof(buf), " (+%i observer clients)",
                    net_client_wait_data.num_drones);
         TXT_SetLabel(drone_label, buf);
     }

@@ -193,7 +193,7 @@ static void NET_SV_SendConsoleMessage(net_client_t *client, const char *s, ...)
     net_packet_t *packet;
 
     va_start(args, s);
-    M_vsnprintf(buf, sizeof(buf), s, args);
+    X_vsnprintf(buf, sizeof(buf), s, args);
     va_end(args);
     
     packet = NET_Conn_NewReliable(&client->connection, 
@@ -212,7 +212,7 @@ static void NET_SV_BroadcastMessage(const char *s, ...)
     int i;
 
     va_start(args, s);
-    M_vsnprintf(buf, sizeof(buf), s, args);
+    X_vsnprintf(buf, sizeof(buf), s, args);
     va_end(args);
 
     for (i=0; i<MAXNETNODES; ++i)
@@ -639,7 +639,7 @@ static void NET_SV_ParseSYN(net_packet_t *packet, net_client_t *client,
     {
         char reject_msg[256];
 
-        M_snprintf(reject_msg, sizeof(reject_msg),
+        X_snprintf(reject_msg, sizeof(reject_msg),
             "Version mismatch: server version is: " PACKAGE_STRING "; "
             "client is: %s. No common compatible protocol could be "
             "negotiated.", client_version);
@@ -718,7 +718,7 @@ static void NET_SV_ParseSYN(net_packet_t *packet, net_client_t *client,
         char msg[128];
         NET_Log("server: wrong mode/mission, %d != %d || %d != %d",
                 data.gamemode, sv_gamemode, data.gamemission, sv_gamemission);
-        M_snprintf(msg, sizeof(msg),
+        X_snprintf(msg, sizeof(msg),
                    "Game mismatch: server is %s (%s), client is %s (%s)",
                    D_GameMissionString(sv_gamemission),
                    D_GameModeString(sv_gamemode),

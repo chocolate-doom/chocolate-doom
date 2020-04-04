@@ -83,7 +83,7 @@ void SC_Open(const char *name)
 
     if (sc_FileScripts == true)
     {
-        M_snprintf(fileName, sizeof(fileName), "%s%s.txt", sc_ScriptsDir, name);
+        X_snprintf(fileName, sizeof(fileName), "%s%s.txt", sc_ScriptsDir, name);
         SC_OpenFile(fileName);
     }
     else

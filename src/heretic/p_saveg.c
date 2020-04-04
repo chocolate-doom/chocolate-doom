@@ -18,6 +18,8 @@
 
 #include <stdlib.h>
 
+#include "safe.h"
+
 #include "doomdef.h"
 #include "i_swap.h"
 #include "i_system.h"
@@ -46,7 +48,7 @@ char *SV_Filename(int slot)
 
     filename_len = strlen(savegamedir) + strlen(SAVEGAMENAME) + 8;
     filename = malloc(filename_len);
-    M_snprintf(filename, filename_len,
+    X_snprintf(filename, filename_len,
                "%s" SAVEGAMENAME "%d.hsg", savegamedir, slot);
 
     return filename;

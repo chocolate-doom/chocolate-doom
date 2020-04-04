@@ -27,6 +27,7 @@
 #include "i_system.h"
 
 #include "doomtype.h"
+#include "safe.h"
 
 #include "deh_str.h"
 #include "i_input.h"
@@ -854,7 +855,7 @@ void V_ScreenShot(const char *format)
 
     for (i=0; i<=99; i++)
     {
-        M_snprintf(lbmname, sizeof(lbmname), format, i, ext);
+        X_snprintf(lbmname, sizeof(lbmname), format, i, ext);
 
         if (!M_FileExists(lbmname))
         {

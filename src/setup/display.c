@@ -20,6 +20,8 @@
 #include <windows.h>
 #endif
 
+#include "safe.h"
+
 #include "textscreen.h"
 #include "m_config.h"
 #include "m_misc.h"
@@ -128,7 +130,7 @@ static txt_radiobutton_t *SizeSelectButton(window_size_t *size)
     char buf[15];
     txt_radiobutton_t *result;
 
-    M_snprintf(buf, sizeof(buf), "%ix%i", size->w, size->h);
+    X_snprintf(buf, sizeof(buf), "%ix%i", size->w, size->h);
     result = TXT_NewRadioButton(buf, &window_width, size->w);
     TXT_SignalConnect(result, "selected", WindowSizeSelected, size);
 

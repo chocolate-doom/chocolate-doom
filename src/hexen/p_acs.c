@@ -323,7 +323,7 @@ static void ACSAssert(int condition, const char *fmt, ...)
     }
 
     va_start(args, fmt);
-    M_vsnprintf(buf, sizeof(buf), fmt, args);
+    X_vsnprintf(buf, sizeof(buf), fmt, args);
     va_end(args);
     I_Error("ACS assertion failure: in %s: %s", EvalContext, buf);
 }
@@ -457,7 +457,7 @@ void P_LoadACScripts(int lump)
     ActionCodeBase = W_CacheLumpNum(lump, PU_LEVEL);
     ActionCodeSize = W_LumpLength(lump);
 
-    M_snprintf(EvalContext, sizeof(EvalContext),
+    X_snprintf(EvalContext, sizeof(EvalContext),
                "header parsing of lump #%d", lump);
 
     header = (acsHeader_t *) ActionCodeBase;
@@ -593,7 +593,7 @@ boolean P_StartACS(int number, int map, byte * args, mobj_t * activator,
     if (infoIndex == -1)
     {                           // Script not found
         //I_Error("P_StartACS: Unknown script number %d", number);
-        M_snprintf(ErrorMsg, sizeof(ErrorMsg),
+        X_snprintf(ErrorMsg, sizeof(ErrorMsg),
                    "P_STARTACS ERROR: UNKNOWN SCRIPT %d", number);
         P_SetMessage(&players[consoleplayer], ErrorMsg, true);
     }
@@ -690,7 +690,7 @@ boolean P_StartLockedACS(line_t * line, byte * args, mobj_t * mo, int side)
     {
         if (!(mo->player->keys & (1 << (lock - 1))))
         {
-            M_snprintf(LockedBuffer, sizeof(LockedBuffer),
+            X_snprintf(LockedBuffer, sizeof(LockedBuffer),
                        "YOU NEED THE %s\n", TextKeyMessages[lock - 1]);
             P_SetMessage(mo->player, LockedBuffer, true);
             S_StartSound(mo, SFX_DOOR_LOCKED);
@@ -798,10 +798,10 @@ void T_InterpretACS(acs_t * script)
 
     do
     {
-        M_snprintf(EvalContext, sizeof(EvalContext), "script %d @0x%x",
+        X_snprintf(EvalContext, sizeof(EvalContext), "script %d @0x%x",
                    ACSInfo[script->infoIndex].number, PCodeOffset);
         cmd = ReadCodeInt();
-        M_snprintf(EvalContext, sizeof(EvalContext), "script %d @0x%x, cmd=%d",
+        X_snprintf(EvalContext, sizeof(EvalContext), "script %d @0x%x, cmd=%d",
                    ACSInfo[script->infoIndex].number, PCodeOffset, cmd);
         ACSAssert(cmd >= 0, "negative ACS instruction %d", cmd);
         ACSAssert(cmd < arrlen(PCodeCmds),
@@ -1804,7 +1804,7 @@ static int CmdPrintNumber(void)
 {
     char tempStr[16];
 
-    M_snprintf(tempStr, sizeof(tempStr), "%d", Pop());
+    X_snprintf(tempStr, sizeof(tempStr), "%d", Pop());
     X_StringConcat(PrintBuffer, tempStr, sizeof(PrintBuffer));
     return SCRIPT_CONTINUE;
 }

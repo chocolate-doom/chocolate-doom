@@ -24,6 +24,8 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
+#include "safe.h"
+
 #include "i_midipipe.h"
 
 #include "config.h"
@@ -471,7 +473,7 @@ boolean I_MidiPipe_InitServer()
 
     // Define the command line.  Version, Sample Rate, and handles follow
     // the executable name.
-    M_snprintf(params_buf, sizeof(params_buf), "%d %Iu %Iu",
+    X_snprintf(params_buf, sizeof(params_buf), "%d %Iu %Iu",
         snd_samplerate, (size_t) midi_process_in_reader, (size_t) midi_process_out_writer);
     cmdline = M_StringJoin(module, " \"" PACKAGE_STRING "\"", " ", params_buf, NULL);
 

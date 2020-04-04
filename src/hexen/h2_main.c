@@ -173,7 +173,7 @@ void D_BindVariables(void)
     {
         char buf[12];
 
-        M_snprintf(buf, sizeof(buf), "chatmacro%i", i);
+        X_snprintf(buf, sizeof(buf), "chatmacro%i", i);
         M_BindStringVariable(buf, &chat_macros[i]);
     }
 }
@@ -195,7 +195,7 @@ static void D_SetDefaultSavePath(void)
             // and use hexndata/:
 
             SavePath = malloc(10);
-            M_snprintf(SavePath, 10, "hexndata%c", DIR_SEPARATOR);
+            X_snprintf(SavePath, 10, "hexndata%c", DIR_SEPARATOR);
         }
         else
         {
@@ -802,7 +802,7 @@ void H2_GameLoop(void)
     if (M_CheckParm("-debugfile"))
     {
         char filename[20];
-        M_snprintf(filename, sizeof(filename), "debug%i.txt", consoleplayer);
+        X_snprintf(filename, sizeof(filename), "debug%i.txt", consoleplayer);
         debugfile = fopen(filename, "w");
     }
     I_SetWindowTitle(gamedescription);

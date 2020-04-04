@@ -639,7 +639,7 @@ static void SetDefaultSaveName(int slot)
     // map from IWAD or PWAD?
     if (W_IsIWADLump(maplumpinfo) && strcmp(savegamedir, ""))
     {
-        M_snprintf(savegamestrings[itemOn], SAVESTRINGSIZE,
+        X_snprintf(savegamestrings[itemOn], SAVESTRINGSIZE,
                    "%s", maplumpinfo->name);
     }
     else
@@ -652,7 +652,7 @@ static void SetDefaultSaveName(int slot)
             *ext = '\0';
         }
 
-        M_snprintf(savegamestrings[itemOn], SAVESTRINGSIZE,
+        X_snprintf(savegamestrings[itemOn], SAVESTRINGSIZE,
                    "%s (%s)", maplumpinfo->name,
                    wadname);
         free(wadname);

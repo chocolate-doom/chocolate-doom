@@ -645,7 +645,7 @@ static const char *GetSubstituteMusicFile(void *data, size_t data_len)
     // Build a string representation of the hash.
     for (i = 0; i < sizeof(sha1_digest_t); ++i)
     {
-        M_snprintf(hash_str + i * 2, sizeof(hash_str) - i * 2,
+        X_snprintf(hash_str + i * 2, sizeof(hash_str) - i * 2,
                    "%02x", hash[i]);
     }
 

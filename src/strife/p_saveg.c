@@ -20,6 +20,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "safe.h"
+
 #include "dstrings.h"
 #include "deh_main.h"
 #include "i_system.h"
@@ -73,7 +75,7 @@ char *P_SaveGameFile(int slot)
 
     DEH_snprintf(basename, 32, SAVEGAMENAME "%d.dsg", slot);
 
-    M_snprintf(filename, filename_size, "%s%s", savegamedir, basename);
+    X_snprintf(filename, filename_size, "%s%s", savegamedir, basename);
 
     return filename;
 }
@@ -1602,7 +1604,7 @@ void P_WriteSaveGameHeader(char *description)
     */
 
     memset (name,0,sizeof(name)); 
-    M_snprintf(name, sizeof(name), "ver %i", STRIFE_VERSION);
+    X_snprintf(name, sizeof(name), "ver %i", STRIFE_VERSION);
 
     for (i=0; i<VERSIONSIZE; ++i)
         saveg_write8(name[i]);
@@ -1642,7 +1644,7 @@ boolean P_ReadSaveGameHeader(void)
         read_vcheck[i] = saveg_read8();
 
     memset (vcheck,0,sizeof(vcheck));
-    M_snprintf(vcheck, sizeof(vcheck), "ver %i", STRIFE_VERSION);
+    X_snprintf(vcheck, sizeof(vcheck), "ver %i", STRIFE_VERSION);
     if (strcmp(read_vcheck, vcheck) != 0)
         return false;                       // bad version 
 

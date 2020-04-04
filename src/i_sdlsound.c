@@ -775,7 +775,7 @@ static boolean CacheSFX(sfxinfo_t *sfxinfo)
         char filename[16];
         allocated_sound_t * snd;
 
-        M_snprintf(filename, sizeof(filename), "%s.wav",
+        X_snprintf(filename, sizeof(filename), "%s.wav",
                    DEH_String(sfxinfo->name));
         snd = GetAllocatedSoundBySfxInfoAndPitch(sfxinfo, NORM_PITCH);
         WriteWAV(filename, snd->chunk.abuf, snd->chunk.alen,mixer_freq);
@@ -803,7 +803,7 @@ static void GetSfxLumpName(sfxinfo_t *sfx, char *buf, size_t buf_len)
 
     if (use_sfx_prefix)
     {
-        M_snprintf(buf, buf_len, "ds%s", DEH_String(sfx->name));
+        X_snprintf(buf, buf_len, "ds%s", DEH_String(sfx->name));
     }
     else
     {

@@ -308,11 +308,11 @@ static void UpdateWarpButton(void)
 
     if (warptype == WARP_ExMy)
     {
-        M_snprintf(buf, sizeof(buf), "E%iM%i", warpepisode, warpmap);
+        X_snprintf(buf, sizeof(buf), "E%iM%i", warpepisode, warpmap);
     }
     else if (warptype == WARP_MAPxy)
     {
-        M_snprintf(buf, sizeof(buf), "MAP%02i", warpmap);
+        X_snprintf(buf, sizeof(buf), "MAP%02i", warpmap);
     }
 
     TXT_SetButtonLabel(warpbutton, buf);
@@ -424,7 +424,7 @@ static void LevelSelectDialog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(user_data))
                     continue;
                 }
 
-                M_snprintf(buf, sizeof(buf),
+                X_snprintf(buf, sizeof(buf),
                            " E%" PRIiPTR "M%" PRIiPTR " ", x, y);
                 button = TXT_NewButton(buf);
                 TXT_SignalConnect(button, "pressed",
@@ -457,7 +457,7 @@ static void LevelSelectDialog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(user_data))
                 continue;
             }
 
-            M_snprintf(buf, sizeof(buf), " MAP%02" PRIiPTR " ", l);
+            X_snprintf(buf, sizeof(buf), " MAP%02" PRIiPTR " ", l);
             button = TXT_NewButton(buf);
             TXT_SignalConnect(button, "pressed", 
                               SetMAPxyWarp, (void *) l);
@@ -936,14 +936,14 @@ static void QueryResponseCallback(net_addr_t *addr,
         return;
     }
 
-    M_snprintf(ping_time_str, sizeof(ping_time_str), "%ims", ping_time);
+    X_snprintf(ping_time_str, sizeof(ping_time_str), "%ims", ping_time);
 
     // Build description from server name field. Because there is limited
     // space, we only include the player count if there are already players
     // connected to the server.
     if (querydata->num_players > 0)
     {
-        M_snprintf(description, sizeof(description), "(%d/%d) ",
+        X_snprintf(description, sizeof(description), "(%d/%d) ",
                    querydata->num_players, querydata->max_players);
     }
     else
@@ -1127,7 +1127,7 @@ void MultiplayerConfig(TXT_UNCAST_ARG(widget), void *user_data)
 
     for (i=0; i<10; ++i)
     {
-        M_snprintf(buf, sizeof(buf), "#%i ", i + 1);
+        X_snprintf(buf, sizeof(buf), "#%i ", i + 1);
 
         label = TXT_NewLabel(buf);
         TXT_SetFGColor(label, TXT_COLOR_BRIGHT_CYAN);
@@ -1150,7 +1150,7 @@ void BindMultiplayerVariables(void)
 
     for (i=0; i<10; ++i)
     {
-        M_snprintf(buf, sizeof(buf), "chatmacro%i", i);
+        X_snprintf(buf, sizeof(buf), "chatmacro%i", i);
         M_BindStringVariable(buf, &chat_macros[i]);
     }
 

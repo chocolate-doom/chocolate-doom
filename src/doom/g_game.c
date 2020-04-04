@@ -941,7 +941,7 @@ void G_Ticker (void)
             {
                 static char turbomessage[80];
                 extern char *player_names[4];
-                M_snprintf(turbomessage, sizeof(turbomessage),
+                X_snprintf(turbomessage, sizeof(turbomessage),
                            "%s is turbo!", player_names[i]);
                 players[consoleplayer].message = turbomessage;
                 turbodetected[i] = false;
@@ -2035,7 +2035,7 @@ void G_RecordDemo (char *name)
     usergame = false;
     demoname_size = strlen(name) + 5;
     demoname = Z_Malloc(demoname_size, PU_STATIC, NULL);
-    M_snprintf(demoname, demoname_size, "%s.lmp", name);
+    X_snprintf(demoname, demoname_size, "%s.lmp", name);
     maxsize = 0x20000;
 
     //!
@@ -2163,7 +2163,7 @@ static const char *DemoVersionDescription(int version)
     }
     else
     {
-        M_snprintf(resultbuf, sizeof(resultbuf),
+        X_snprintf(resultbuf, sizeof(resultbuf),
                    "%i.%i (unknown)", version / 100, version % 100);
         return resultbuf;
     }

@@ -17,6 +17,8 @@
 #include <stdio.h>
 
 #include "doomtype.h"
+#include "safe.h"
+
 #include "doomkeys.h"
 
 #include "m_config.h"
@@ -408,7 +410,7 @@ void M_BindChatControls(unsigned int num_players)
 
     for (i=0; i<num_players; ++i)
     {
-        M_snprintf(name, sizeof(name), "key_multi_msgplayer%i", i + 1);
+        X_snprintf(name, sizeof(name), "key_multi_msgplayer%i", i + 1);
         M_BindIntVariable(name, &key_multi_msgplayer[i]);
     }
 }

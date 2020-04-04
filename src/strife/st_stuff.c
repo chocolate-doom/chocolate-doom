@@ -22,6 +22,8 @@
 
 #include <stdio.h>
 
+#include "safe.h"
+
 #include "i_system.h"
 #include "i_video.h"
 #include "z_zone.h"
@@ -656,7 +658,7 @@ boolean ST_Responder(event_t* ev)
     {
         // [STRIFE] 'GPS' for player position
         static char buf[ST_MSGWIDTH];
-        M_snprintf(buf, sizeof(buf),
+        X_snprintf(buf, sizeof(buf),
                    "ang=0x%x;x,y=(0x%x,0x%x)",
                    players[consoleplayer].mo->angle,
                    players[consoleplayer].mo->x,

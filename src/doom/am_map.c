@@ -19,6 +19,8 @@
 
 #include <stdio.h>
 
+#include "safe.h"
+
 #include "deh_main.h"
 
 #include "z_zone.h"
@@ -704,7 +706,7 @@ AM_Responder
         }
         else if (key == key_map_mark)
         {
-            M_snprintf(buffer, sizeof(buffer), "%s %d",
+            X_snprintf(buffer, sizeof(buffer), "%s %d",
                        DEH_String(AMSTR_MARKEDSPOT), markpointnum);
             plr->message = buffer;
             AM_addMark();

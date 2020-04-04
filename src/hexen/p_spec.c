@@ -17,6 +17,8 @@
 
 // HEADER FILES ------------------------------------------------------------
 
+#include "safe.h"
+
 #include "h2def.h"
 #include "i_system.h"
 #include "m_misc.h"
@@ -421,7 +423,7 @@ static boolean CheckedLockedDoor(mobj_t * mo, byte lock)
     }
     if (!(mo->player->keys & (1 << (lock - 1))))
     {
-        M_snprintf(LockedBuffer, sizeof(LockedBuffer),
+        X_snprintf(LockedBuffer, sizeof(LockedBuffer),
                    "YOU NEED THE %s\n", TextKeyMessages[lock - 1]);
         P_SetMessage(mo->player, LockedBuffer, true);
         S_StartSound(mo, SFX_DOOR_LOCKED);

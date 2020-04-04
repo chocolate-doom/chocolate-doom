@@ -312,7 +312,7 @@ void NET_SDL_AddrToString(net_addr_t *addr, char *buffer, int buffer_len)
     host = SDLNet_Read32(&ip->host);
     port = SDLNet_Read16(&ip->port);
 
-    M_snprintf(buffer, buffer_len, "%i.%i.%i.%i",
+    X_snprintf(buffer, buffer_len, "%i.%i.%i.%i",
                (host >> 24) & 0xff, (host >> 16) & 0xff,
                (host >> 8) & 0xff, host & 0xff);
 
@@ -323,7 +323,7 @@ void NET_SDL_AddrToString(net_addr_t *addr, char *buffer, int buffer_len)
     if (port != DEFAULT_PORT)
     {
         char portbuf[10];
-        M_snprintf(portbuf, sizeof(portbuf), ":%i", port);
+        X_snprintf(portbuf, sizeof(portbuf), ":%i", port);
         X_StringConcat(buffer, portbuf, buffer_len);
     }
 }

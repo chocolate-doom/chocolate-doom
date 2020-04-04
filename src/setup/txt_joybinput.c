@@ -244,7 +244,7 @@ static void TXT_JoystickInputSizeCalc(TXT_UNCAST_ARG(joystick_input))
 static void GetJoystickButtonDescription(int vbutton, char *buf,
                                          size_t buf_len)
 {
-    M_snprintf(buf, buf_len, "BUTTON #%i",
+    X_snprintf(buf, buf_len, "BUTTON #%i",
                PhysicalForVirtualButton(vbutton) + 1);
 }
 

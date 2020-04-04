@@ -16,6 +16,8 @@
 
 // SB_bar.c
 
+#include "safe.h"
+
 #include "doomdef.h"
 #include "deh_str.h"
 #include "i_video.h"
@@ -477,20 +479,20 @@ static void DrawSoundInfo(void)
             MN_DrTextA(DEH_String("------"), xPos[0], y);
             continue;
         }
-        M_snprintf(text, sizeof(text), "%s", c->name);
+        X_snprintf(text, sizeof(text), "%s", c->name);
         M_ForceUppercase(text);
         MN_DrTextA(text, xPos[x++], y);
-        M_snprintf(text, sizeof(text), "%d", c->mo->type);
+        X_snprintf(text, sizeof(text), "%d", c->mo->type);
         MN_DrTextA(text, xPos[x++], y);
-        M_snprintf(text, sizeof(text), "%d", c->mo->x >> FRACBITS);
+        X_snprintf(text, sizeof(text), "%d", c->mo->x >> FRACBITS);
         MN_DrTextA(text, xPos[x++], y);
-        M_snprintf(text, sizeof(text), "%d", c->mo->y >> FRACBITS);
+        X_snprintf(text, sizeof(text), "%d", c->mo->y >> FRACBITS);
         MN_DrTextA(text, xPos[x++], y);
-        M_snprintf(text, sizeof(text), "%d", c->id);
+        X_snprintf(text, sizeof(text), "%d", c->id);
         MN_DrTextA(text, xPos[x++], y);
-        M_snprintf(text, sizeof(text), "%d", c->priority);
+        X_snprintf(text, sizeof(text), "%d", c->priority);
         MN_DrTextA(text, xPos[x++], y);
-        M_snprintf(text, sizeof(text), "%d", c->distance);
+        X_snprintf(text, sizeof(text), "%d", c->distance);
         MN_DrTextA(text, xPos[x++], y);
     }
     UpdateState |= I_FULLSCRN;

@@ -19,6 +19,8 @@
 
 #include <stdio.h>
 
+#include "safe.h"
+
 #include "deh_main.h"
 
 #include "z_zone.h"
@@ -692,7 +694,7 @@ AM_Responder
             // haleyjd 20141101: [STRIFE] if full, mark 9 is replaced
             if(markpointnum == AM_NUMMARKPOINTS)
                 --markpointnum;
-            M_snprintf(buffer, sizeof(buffer),
+            X_snprintf(buffer, sizeof(buffer),
                        "%s %d", DEH_String(AMSTR_MARKEDSPOT), markpointnum + 1); // [STRIFE]
             plr->message = buffer;
             AM_addMark();

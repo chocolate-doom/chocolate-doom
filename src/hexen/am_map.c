@@ -16,6 +16,8 @@
 
 #include <stdio.h>
 
+#include "safe.h"
+
 #include "h2def.h"
 #include "doomkeys.h"
 #include "i_video.h"
@@ -1492,7 +1494,7 @@ void AM_DrawDeathmatchStats(void)
         else
         {
             MN_DrTextA(PlayerColorText[order[i]], 8, yPosition);
-            M_snprintf(textBuffer, sizeof(textBuffer),
+            X_snprintf(textBuffer, sizeof(textBuffer),
                        "%d", fragCount[order[i]]);
             MN_DrTextA(textBuffer, 80, yPosition);
             yPosition += 10;
@@ -1527,7 +1529,7 @@ static void DrawWorldTimer(void)
     worldTimer -= minutes * 60;
     seconds = worldTimer;
 
-    M_snprintf(timeBuffer, sizeof(timeBuffer),
+    X_snprintf(timeBuffer, sizeof(timeBuffer),
                "%.2d : %.2d : %.2d", hours, minutes, seconds);
     MN_DrTextA(timeBuffer, 240, 8);
 
@@ -1535,11 +1537,11 @@ static void DrawWorldTimer(void)
     {
         if (days == 1)
         {
-            M_snprintf(dayBuffer, sizeof(dayBuffer), "%.2d DAY", days);
+            X_snprintf(dayBuffer, sizeof(dayBuffer), "%.2d DAY", days);
         }
         else
         {
-            M_snprintf(dayBuffer, sizeof(dayBuffer), "%.2d DAYS", days);
+            X_snprintf(dayBuffer, sizeof(dayBuffer), "%.2d DAYS", days);
         }
         MN_DrTextA(dayBuffer, 240, 20);
         if (days >= 5)

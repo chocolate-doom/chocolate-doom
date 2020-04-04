@@ -27,6 +27,8 @@
 #include <windows.h>
 #endif
 
+#include "safe.h"
+
 #include "icon.c"
 
 #include "config.h"
@@ -1372,7 +1374,7 @@ void I_InitGraphics(void)
         int winid;
 
         sscanf(env, "0x%x", &winid);
-        M_snprintf(winenv, sizeof(winenv), "SDL_WINDOWID=%i", winid);
+        X_snprintf(winenv, sizeof(winenv), "SDL_WINDOWID=%i", winid);
 
         putenv(winenv);
     }

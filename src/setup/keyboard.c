@@ -13,7 +13,10 @@
 //
 
 #include "textscreen.h"
+
 #include "doomtype.h"
+#include "safe.h"
+
 #include "m_config.h"
 #include "m_controls.h"
 #include "m_misc.h"
@@ -175,7 +178,7 @@ static void AddSectionLabel(TXT_UNCAST_ARG(table), const char *title,
                        NULL);
     }
 
-    M_snprintf(buf, sizeof(buf), " - %s - ", title);
+    X_snprintf(buf, sizeof(buf), " - %s - ", title);
 
     TXT_AddWidgets(table,
                    TXT_NewLabel(buf),

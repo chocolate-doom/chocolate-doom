@@ -23,6 +23,8 @@
 
 #include <stdlib.h>
 
+#include "safe.h"
+
 #include "doomdef.h"
 #include "doomstat.h"
 

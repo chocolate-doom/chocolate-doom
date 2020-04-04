@@ -30,6 +30,8 @@
 #include <unistd.h>
 #endif
 
+#include "safe.h"
+
 #include "SDL.h"
 
 #include "config.h"
@@ -289,7 +291,7 @@ void I_Error (const char *error, ...)
     // Write a copy of the message into buffer.
     va_start(argptr, error);
     memset(msgbuf, 0, sizeof(msgbuf));
-    M_vsnprintf(msgbuf, sizeof(msgbuf), error, argptr);
+    X_vsnprintf(msgbuf, sizeof(msgbuf), error, argptr);
     va_end(argptr);
 
     // Shutdown. Here might be other errors.
