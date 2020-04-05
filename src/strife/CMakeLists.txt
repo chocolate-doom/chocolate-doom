@@ -92,3 +92,12 @@ if(MSVC)
         LINK_FLAGS "/MANIFEST:NO"
     )
 endif()
+
+generate_install_desktop(Strife)
+generate_install_metainfo(Strife)
+
+doom_install(TARGETS strife)
+
+if(DOOM_BUILD_SETUP)
+    create_setup_link(strife)
+endif()

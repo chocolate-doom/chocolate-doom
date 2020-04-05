@@ -10,6 +10,23 @@ project("${PACKAGE_NAME}"
     LANGUAGES C
 )
 
+if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
+    set(DOOM_MAIN_PROJECT ON)
+endif()
+
+option(DOOM_INSTALL "Enable Doom installation" "${DOOM_MAIN_PROJECT}")
+
+set(CMAKE_INSTALL_DOCDIR "share/doc" CACHE FILEPATH "Where to install docs")
+include(GNUInstallDirs)
+set(CMAKE_INSTALL_DESKTOPDIR "${CMAKE_INSTALL_DATAROOTDIR}/applications" CACHE FILEPATH "Where to install desktop files")
+set(CMAKE_INSTALL_COMPLETIONDIR "${CMAKE_INSTALL_DATAROOTDIR}/bash-completion/completions" CACHE FILEPATH "Where to install bash completions")
+
+function(doom_install)
+    if(DOOM_INSTALL)
+        install(${ARGN})
+    endif()
+endfunction()
+
 # Any settings that should apply to all targets in this directory and all
 # subdirectories should go here.  Use judiciously.
 if(MSVC)

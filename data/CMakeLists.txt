@@ -11,3 +11,15 @@ function(convert_icon PNG SRC)
         )
     endif()
 endfunction()
+
+doom_install(
+    FILES doom.png
+    DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/128x128/apps"
+    RENAME "${PROGRAM_PREFIX}doom.png"
+)
+
+doom_install(
+    FILES setup.png
+    DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/128x128/apps"
+    RENAME "${PROGRAM_PREFIX}setup.png"
+)

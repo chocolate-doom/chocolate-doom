@@ -138,6 +138,26 @@ function(generate_man)
     )
     list(APPEND GENERATED_DOCS "${CMAKE_CURRENT_BINARY_DIR}/INSTALL.${AD_GAME_NAME}")
 
+    doom_install(FILES ${GENERATED_MAN5}
+        DESTINATION "${CMAKE_INSTALL_MANDIR}/man5"
+    )
+
+    doom_install(FILES ${GENERATED_MAN6}
+        DESTINATION "${CMAKE_INSTALL_MANDIR}/man6"
+    )
+
+    doom_install(
+        FILES
+            ${GENERATED_DOCS}
+            "${PROJECT_SOURCE_DIR}/ChangeLog"
+            "${PROJECT_SOURCE_DIR}/COPYING.md"
+            "${PROJECT_SOURCE_DIR}/NEWS.md"
+            "${PROJECT_SOURCE_DIR}/PHILOSOPHY.md"
+            "${PROJECT_SOURCE_DIR}/README.md"
+            "${PROJECT_SOURCE_DIR}/README.Music.md"
+        DESTINATION "${CMAKE_INSTALL_DOCDIR}/${PROGRAM_PREFIX}${AD_GAME_NAME}"
+    )
+
     add_custom_target("mans_${AD_GAME_NAME}"
         DEPENDS ${GENERATED_DOCS} ${GENERATED_MAN5} ${GENERATED_MAN6}
     )
@@ -156,6 +176,9 @@ if(DOOM_BUILD_SERVER)
         EXTRA
             "${PROJECT_SOURCE_DIR}/src"
     )
+    doom_install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${PROGRAM_PREFIX}server.6"
+        DESTINATION "${CMAKE_INSTALL_MANDIR}/man6"
+    )
     add_custom_target(mans_server
         DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/${PROGRAM_PREFIX}server.6"
     )
@@ -165,6 +188,9 @@ endif()
 if(DOOM_BUILD_DOOM)
     generate_man(GAME_NAME doom DEFAULT_CFG_NAME default)
     list(APPEND DOOM_INSTALL_DEFINES doom)
+    doom_install(FILES "${PROJECT_SOURCE_DIR}/NOT-BUGS.md"
+        DESTINATION "${CMAKE_INSTALL_DOCDIR}/${PROGRAM_PREFIX}doom"
+    )
 endif()
 
 if(DOOM_BUILD_HERETIC)
@@ -180,6 +206,9 @@ endif()
 if(DOOM_BUILD_STRIFE)
     generate_man(GAME_NAME strife)
     list(APPEND DOOM_INSTALL_DEFINES strife)
+    doom_install(FILES "${PROJECT_SOURCE_DIR}/README.Strife.md"
+        DESTINATION "${CMAKE_INSTALL_DOCDIR}/${PROGRAM_PREFIX}strife"
+    )
 endif()
 
 set(EXTRA_MANS)
@@ -197,6 +226,10 @@ simplecpp(INSTALL INSTALL.template
     EXTRA "${PROJECT_SOURCE_DIR}/src" "${PROJECT_SOURCE_DIR}/src/doom"
 )
 #list(APPEND EXTRA_MANS "${CMAKE_CURRENT_BINARY_DIR}/INSTALL")
+
+doom_install(FILES "${EXTRA_MANS}"
+    DESTINATION "${CMAKE_INSTALL_DOCDIR}"
+)
 
 add_custom_target(mans_extra
     DEPENDS ${EXTRA_MANS}

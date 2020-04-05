@@ -1,4 +1,4 @@
-# Common source files used by absolutely everything:
+set(DOOM_SRCDIR "${CMAKE_CURRENT_SOURCE_DIR}" CACHE INTERNAL "Doom srcdir")
 
 add_library(common STATIC EXCLUDE_FROM_ALL
     i_main.c
@@ -47,6 +47,8 @@ if(DOOM_BUILD_SERVER)
         PROPERTIES
             OUTPUT_NAME "${PROGRAM_PREFIX}server"
     )
+
+    doom_install(TARGETS server)
 endif()
 
 # Source files used by the game binaries (chocolate-doom, etc.)
@@ -115,6 +117,34 @@ add_library(gamecommon STATIC EXCLUDE_FROM_ALL
     z_zone.c            z_zone.h
 )
 convert_icon("${PROJECT_DATADIR}/doom.png" "icon.c" COPY "${CMAKE_CURRENT_SOURCE_DIR}/icon.c")
+
+function(generate_install_desktop NAME_CAP)
+    cmake_parse_arguments(GID "" "SRCDIR;INSTALL_SUBDIR" "" ${ARGV})
+
+    set(SRCDIR "${DOOM_SRCDIR}")
+    if(GID_SRCDIR)
+        set(SRCDIR "${GID_SRCDIR}")
+    endif()
+    set(OUT "${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_RDNS}.${NAME_CAP}.desktop")
+    configure_file("${SRCDIR}/${NAME_CAP}.desktop.in" "${OUT}" @ONLY)
+    doom_install(FILES "${OUT}"
+        DESTINATION "${CMAKE_INSTALL_DESKTOPDIR}/${GID_INSTALL_SUBDIR}"
+    )
+endfunction()
+
+function(generate_install_metainfo NAME_CAP)
+    cmake_parse_arguments(GIM "" "SRCDIR" "" ${ARGV})
+
+    set(SRCDIR "${DOOM_SRCDIR}")
+    if(GIM_SRCDIR)
+        set(SRCDIR "${GIM_SRCDIR}")
+    endif()
+    set(OUT "${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_RDNS}.${NAME_CAP}.metainfo.xml")
+    configure_file("${SRCDIR}/${NAME_CAP}.metainfo.xml.in" "${OUT}" @ONLY)
+    doom_install(FILES "${OUT}"
+        DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/metainfo"
+    )
+endfunction()
 
 if(MSVC)
     target_sources(gamecommon PRIVATE

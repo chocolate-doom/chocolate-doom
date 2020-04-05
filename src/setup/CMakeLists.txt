@@ -38,3 +38,25 @@ if(MSVC)
         LINK_FLAGS "/MANIFEST:NO"
     )
 endif()
+
+doom_install(TARGETS setup)
+
+generate_install_desktop(Setup
+    SRCDIR "${CMAKE_CURRENT_SOURCE_DIR}"
+)
+
+add_custom_target(create_setups ALL)
+
+set(SETUP_BIN_DIR "${CMAKE_CURRENT_BINARY_DIR}" CACHE INTERNAL "setup binary dir")
+
+function(create_setup_link NAME)
+    set(SETUP_NAME "${PROGRAM_PREFIX}${NAME}-setup${CMAKE_EXECUTABLE_SUFFIX}")
+    add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/${SETUP_NAME}"
+        COMMAND "${CMAKE_COMMAND}" -E create_symlink "$<TARGET_FILE:setup>" "${CMAKE_CURRENT_BINARY_DIR}/${SETUP_NAME}"
+    )
+    add_custom_target("create_setup_${NAME}" DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/${SETUP_NAME}")
+    add_dependencies(create_setups "create_setup_${NAME}")
+
+    cmake_policy(SET CMP0087 NEW)
+    install(CODE "file(CREATE_LINK \"$<TARGET_FILE_BASE_NAME:setup>\" \"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}/${SETUP_NAME}\" SYMBOLIC)")
+endfunction()

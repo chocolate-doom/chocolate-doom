@@ -8,6 +8,10 @@ function(add_completion NAME)
             "${PROJECT_SOURCE_DIR}/src/${NAME}"
     )
 
+    doom_install(FILES "${OUT}"
+        DESTINATION "${CMAKE_INSTALL_COMPLETIONDIR}"
+    )
+
     add_custom_target("completion_${NAME}"
         DEPENDS "${OUT}"
     )

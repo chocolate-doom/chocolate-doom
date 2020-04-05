@@ -73,3 +73,12 @@ if(MSVC)
         LINK_FLAGS "/MANIFEST:NO"
     )
 endif()
+
+generate_install_desktop(Heretic)
+generate_install_metainfo(Heretic)
+
+doom_install(TARGETS heretic)
+
+if(DOOM_BUILD_SETUP)
+    create_setup_link(heretic)
+endif()

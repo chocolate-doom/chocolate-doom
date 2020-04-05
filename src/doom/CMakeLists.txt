@@ -87,3 +87,13 @@ if(MSVC)
         LINK_FLAGS /MANIFEST:NO
     )
 endif()
+
+generate_install_desktop(Doom)
+generate_install_desktop(Doom_Screensaver INSTALL_SUBDIR screensavers)
+generate_install_metainfo(Doom)
+
+doom_install(TARGETS doom)
+
+if(DOOM_BUILD_SETUP)
+    create_setup_link(doom)
+endif()
