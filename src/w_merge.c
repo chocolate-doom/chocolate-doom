@@ -394,7 +394,7 @@ static void DoMerge(void)
     int i, n;
 
     // Can't ever have more lumps than we already have
-    newlumps = calloc(numlumps, sizeof(lumpinfo_t *));
+    newlumps = X_AllocArray(lumpinfo_t *, numlumps);
     num_newlumps = 0;
 
     // Add IWAD lumps

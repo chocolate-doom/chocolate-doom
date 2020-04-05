@@ -198,12 +198,7 @@ wad_file_t *W_AddFile (const char *filename)
     }
 
     // Increase size of numlumps array to accomodate the new file.
-    filelumps = calloc(numfilelumps, sizeof(lumpinfo_t));
-    if (filelumps == NULL)
-    {
-        W_CloseFile(wad_file);
-        I_Error("Failed to allocate array for lumps from new file.");
-    }
+    filelumps = X_AllocArray(lumpinfo_t, numfilelumps);
 
     startlump = numlumps;
     numlumps += numfilelumps;

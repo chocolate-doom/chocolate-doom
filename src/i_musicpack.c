@@ -440,9 +440,8 @@ static void ParseVorbisComments(file_metadata_t *metadata, FILE *fs)
         comment_len = LONG(buf);
 
         // Read actual comment data into string buffer.
-        comment = calloc(1, comment_len + 1);
-        if (comment == NULL
-         || fread(comment, 1, comment_len, fs) < comment_len)
+        comment = X_AllocArray(char, comment_len + 1);
+        if (fread(comment, 1, comment_len, fs) < comment_len)
         {
             free(comment);
             break;
