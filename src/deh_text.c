@@ -69,8 +69,8 @@ static void *DEH_TextStart(deh_context_t *context, char *line)
         return NULL;
     }
 
-    from_text = malloc(fromlen + 1);
-    to_text = malloc(tolen + 1);
+    from_text = X_AllocArray(char, fromlen + 1);
+    to_text = X_AllocArray(char, tolen + 1);
 
     // read in the "from" text
 

@@ -105,7 +105,7 @@ static void LoadResponseFile(int argv_index, const char *filename)
     // at the end of the response file, in which case a '\0' will be
     // needed.
 
-    file = malloc(size + 1);
+    file = X_AllocArray(char, size + 1);
 
     i = 0;
 
@@ -125,7 +125,7 @@ static void LoadResponseFile(int argv_index, const char *filename)
 
     // Create new arguments list array
 
-    newargv = malloc(sizeof(char *) * MAXARGVS);
+    newargv = X_AllocArray(char *, MAXARGVS);
     newargc = 0;
     memset(newargv, 0, sizeof(char *) * MAXARGVS);
 
@@ -340,8 +340,7 @@ void M_AddLooseFiles(void)
 
     // allocate space for up to three additional regular parameters
 
-    arguments = malloc((myargc + 3) * sizeof(*arguments));
-    memset(arguments, 0, (myargc + 3) * sizeof(*arguments));
+    arguments = X_AllocArray(argument_t, myargc + 3);
 
     // check the command line and make sure it does not already
     // contain any regular parameters or response files
@@ -392,7 +391,7 @@ void M_AddLooseFiles(void)
         myargc++;
     }
 
-    newargv = malloc(myargc * sizeof(*newargv));
+    newargv = X_AllocArray(char *, myargc);
 
     // sort the argument list by file type, except for the zeroth argument
     // which is the executable invocation itself

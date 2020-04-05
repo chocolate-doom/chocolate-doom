@@ -781,13 +781,7 @@ void WritePNGfile(char *filename, pixel_t *data,
                  8, PNG_COLOR_TYPE_PALETTE, PNG_INTERLACE_NONE,
                  PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
 
-    pcolor = malloc(sizeof(*pcolor) * 256);
-    if (!pcolor)
-    {
-        fclose(handle);
-        png_destroy_write_struct(&ppng, &pinfo);
-        return;
-    }
+    pcolor = X_AllocArray(png_color, 256);
 
     for (i = 0; i < 256; i++)
     {
@@ -801,27 +795,24 @@ void WritePNGfile(char *filename, pixel_t *data,
 
     png_write_info(ppng, pinfo);
 
-    rowbuf = malloc(width);
+    rowbuf = X_AllocArray(byte, width);
 
-    if (rowbuf)
+    for (i = 0; i < SCREENHEIGHT; i++)
     {
-        for (i = 0; i < SCREENHEIGHT; i++)
+        // expand the row 5x
+        for (j = 0; j < SCREENWIDTH; j++)
         {
-            // expand the row 5x
-            for (j = 0; j < SCREENWIDTH; j++)
-            {
-                memset(rowbuf + j * w_factor, *(data + i*SCREENWIDTH + j), w_factor);
-            }
-
-            // write the row 6 times
-            for (j = 0; j < h_factor; j++)
-            {
-                png_write_row(ppng, rowbuf);
-            }
+            memset(rowbuf + j * w_factor, *(data + i*SCREENWIDTH + j), w_factor);
         }
 
-        free(rowbuf);
+        // write the row 6 times
+        for (j = 0; j < h_factor; j++)
+        {
+            png_write_row(ppng, rowbuf);
+        }
     }
+
+    free(rowbuf);
 
     png_write_end(ppng, pinfo);
     png_destroy_write_struct(&ppng, &pinfo);

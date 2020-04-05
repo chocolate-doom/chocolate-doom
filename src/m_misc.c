@@ -443,13 +443,7 @@ char *M_StringReplace(const char *haystack, const char *needle,
 
     // Construct new string.
 
-    result = malloc(result_len);
-    if (result == NULL)
-    {
-        I_Error("M_StringReplace: Failed to allocate new string");
-        return NULL;
-    }
-
+    result = X_AllocArray(char, result_len);
     dst = result; dst_len = result_len;
     p = haystack;
 
@@ -516,14 +510,7 @@ char *M_StringJoin(const char *s, ...)
     }
     va_end(args);
 
-    result = malloc(result_len);
-
-    if (result == NULL)
-    {
-        I_Error("M_StringJoin: Failed to allocate new string.");
-        return NULL;
-    }
-
+    result = X_AllocArray(char, result_len);
     X_StringCopy(result, s, result_len);
 
     va_start(args, s);
@@ -550,9 +537,9 @@ char *M_OEMToUTF8(const char *oem)
     wchar_t *tmp;
     char *result;
 
-    tmp = malloc(len * sizeof(wchar_t));
+    tmp = X_AllocArray(wchar_t, len);
     MultiByteToWideChar(CP_OEMCP, 0, oem, len, tmp, len);
-    result = malloc(len * 4);
+    result = X_AllocArray(char, len * 4);
     WideCharToMultiByte(CP_UTF8, 0, tmp, len, result, len * 4, NULL, NULL);
     free(tmp);
 

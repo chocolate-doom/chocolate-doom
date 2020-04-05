@@ -121,7 +121,7 @@ deh_context_t *DEH_OpenLump(int lumpnum)
     context->input_buffer_len = W_LumpLength(lumpnum);
     context->input_buffer_pos = 0;
 
-    context->filename = malloc(9);
+    context->filename = X_AllocArray(char, 9);
     X_StringCopy(context->filename, lumpinfo[lumpnum]->name, 9);
 
     return context;

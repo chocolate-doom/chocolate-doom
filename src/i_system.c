@@ -70,7 +70,7 @@ void I_AtExit(atexit_func_t func, boolean run_on_error)
 {
     atexit_listentry_t *entry;
 
-    entry = malloc(sizeof(*entry));
+    entry = X_Alloc(atexit_listentry_t);
 
     entry->func = func;
     entry->run_on_error = run_on_error;

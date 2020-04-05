@@ -47,7 +47,7 @@ char *SV_Filename(int slot)
     size_t filename_len;
 
     filename_len = strlen(savegamedir) + strlen(SAVEGAMENAME) + 8;
-    filename = malloc(filename_len);
+    filename = X_AllocArray(char, filename_len);
     X_snprintf(filename, filename_len,
                "%s" SAVEGAMENAME "%d.hsg", savegamedir, slot);
 

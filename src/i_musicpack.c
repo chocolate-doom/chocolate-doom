@@ -779,11 +779,7 @@ static const char *ReadHashPrefix(char *line)
         return NULL;
     }
 
-    result = malloc(len + 1);
-    if (result == NULL)
-    {
-        return NULL;
-    }
+    result = X_AllocArray(char, len + 1);
 
     for (i = 0; i < len; ++i)
     {

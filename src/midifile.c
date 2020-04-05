@@ -174,13 +174,7 @@ static void *ReadByteSequence(unsigned int num_bytes, FILE *stream)
     // Allocate a buffer. Allocate one extra byte, as malloc(0) is
     // non-portable.
 
-    result = malloc(num_bytes + 1);
-
-    if (result == NULL)
-    {
-        fprintf(stderr, "ReadByteSequence: Failed to allocate buffer\n");
-        return NULL;
-    }
+    result = X_AllocArray(byte, num_bytes + 1);
 
     // Read the data:
 
@@ -503,18 +497,7 @@ static boolean ReadAllTracks(midi_file_t *file, FILE *stream)
 {
     unsigned int i;
 
-    // Allocate list of tracks and read each track:
-
-    file->tracks = malloc(sizeof(midi_track_t) * file->num_tracks);
-
-    if (file->tracks == NULL)
-    {
-        return false;
-    }
-
-    memset(file->tracks, 0, sizeof(midi_track_t) * file->num_tracks);
-
-    // Read each track:
+    file->tracks = X_AllocArray(midi_track_t, file->num_tracks);
 
     for (i=0; i<file->num_tracks; ++i)
     {
@@ -586,12 +569,7 @@ midi_file_t *MIDI_LoadFile(char *filename)
     midi_file_t *file;
     FILE *stream;
 
-    file = malloc(sizeof(midi_file_t));
-
-    if (file == NULL)
-    {
-        return NULL;
-    }
+    file = X_Alloc(midi_file_t);
 
     file->tracks = NULL;
     file->num_tracks = 0;
@@ -647,7 +625,7 @@ midi_track_iter_t *MIDI_IterateTrack(midi_file_t *file, unsigned int track)
 
     assert(track < file->num_tracks);
 
-    iter = malloc(sizeof(*iter));
+    iter = X_Alloc(midi_track_iter_t);
     iter->track = &file->tracks[track];
     iter->position = 0;
 

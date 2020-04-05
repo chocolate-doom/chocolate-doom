@@ -106,11 +106,7 @@ glob_t *I_StartMultiGlob(const char *directory, int flags,
     glob_t *result;
     va_list args;
 
-    globs = malloc(sizeof(char *));
-    if (globs == NULL)
-    {
-        return NULL;
-    }
+    globs = X_AllocArray(char *, 1);
     globs[0] = X_StringDuplicate(glob);
     num_globs = 1;
 
@@ -136,13 +132,7 @@ glob_t *I_StartMultiGlob(const char *directory, int flags,
     }
     va_end(args);
 
-    result = malloc(sizeof(glob_t));
-    if (result == NULL)
-    {
-        FreeStringList(globs, num_globs);
-        return NULL;
-    }
-
+    result = X_Alloc(glob_t);
     result->dir = opendir(directory);
     if (result->dir == NULL)
     {

@@ -194,7 +194,7 @@ static void D_SetDefaultSavePath(void)
             // Windows and not using a config dir), behave like Vanilla Hexen
             // and use hexndata/:
 
-            SavePath = malloc(10);
+            SavePath = X_AllocArray(char, 10);
             X_snprintf(SavePath, 10, "hexndata%c", DIR_SEPARATOR);
         }
         else

@@ -777,7 +777,7 @@ static void *DEH_TextStart(deh_context_t *context, char *line)
         return NULL;
     }
 
-    repl_text = malloc(repl_len + 1);
+    repl_text = X_AllocArray(char, repl_len + 1);
 
     // read in the "to" text
 
