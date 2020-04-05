@@ -460,7 +460,7 @@ static void ReleaseVoice(int index)
 
 // Load data to the specified operator
 
-static void LoadOperatorData(int operator, genmidi_op_t *data,
+static void LoadOperatorData(int op, genmidi_op_t *data,
                              boolean max_level, unsigned int *volume)
 {
     int level;
@@ -481,11 +481,11 @@ static void LoadOperatorData(int operator, genmidi_op_t *data,
 
     *volume = level;
 
-    OPL_WriteRegister(OPL_REGS_LEVEL + operator, level);
-    OPL_WriteRegister(OPL_REGS_TREMOLO + operator, data->tremolo);
-    OPL_WriteRegister(OPL_REGS_ATTACK + operator, data->attack);
-    OPL_WriteRegister(OPL_REGS_SUSTAIN + operator, data->sustain);
-    OPL_WriteRegister(OPL_REGS_WAVEFORM + operator, data->waveform);
+    OPL_WriteRegister(OPL_REGS_LEVEL + op, level);
+    OPL_WriteRegister(OPL_REGS_TREMOLO + op, data->tremolo);
+    OPL_WriteRegister(OPL_REGS_ATTACK + op, data->attack);
+    OPL_WriteRegister(OPL_REGS_SUSTAIN + op, data->sustain);
+    OPL_WriteRegister(OPL_REGS_WAVEFORM + op, data->waveform);
 }
 
 // Set the instrument for a particular voice.

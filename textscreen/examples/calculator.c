@@ -35,7 +35,7 @@ int starting_input = 0;
 int input_value = 0;
 txt_label_t *input_box;
 int first_operand;
-operator_t operator = OP_NONE;
+operator_t op = OP_NONE;
 
 void UpdateInputBox(void)
 {
@@ -73,12 +73,12 @@ void AddNumberButton(txt_table_t *table, int value)
     TXT_AddWidget(table, TXT_NewButton2(buf, InsertNumber, val_copy));
 }
 
-void Operator(TXT_UNCAST_ARG(button), TXT_UNCAST_ARG(op))
+void Operator(TXT_UNCAST_ARG(button), TXT_UNCAST_ARG(arg))
 {
-    TXT_CAST_ARG(operator_t, op);
+    TXT_CAST_ARG(operator_t, arg);
 
     first_operand = input_value;
-    operator = *op;
+    op = *arg;
     starting_input = 1;
 }
 
@@ -97,7 +97,7 @@ void AddOperatorButton(txt_table_t *table, const char *label, operator_t op)
 
 void Calculate(TXT_UNCAST_ARG(button), void *unused)
 {
-    switch (operator)
+    switch (op)
     {
         case OP_PLUS:
             input_value = first_operand + input_value;
@@ -117,7 +117,7 @@ void Calculate(TXT_UNCAST_ARG(button), void *unused)
 
     UpdateInputBox();
 
-    operator = OP_NONE;
+    op = OP_NONE;
     starting_input = 1;
 }
 
