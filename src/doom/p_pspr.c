@@ -1018,9 +1018,7 @@ void P_MovePsprites (player_t* player)
 	}
 	else
 	// [crispy] not attacking means idle
-	if ((player->mo->state != &states[S_PLAY_ATK1] &&
-	    player->mo->state != &states[S_PLAY_ATK2]) ||
-//	    psp->state->action.acp3 == (actionf_p3)A_WeaponReady ||
+	if (!player->attackdown ||
 	    crispy->centerweapon == CENTERWEAPON_BOB)
 	{
 		angle_t angle = (128 * leveltime) & FINEMASK;
