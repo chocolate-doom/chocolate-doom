@@ -8,7 +8,7 @@ PACKAGE_LICENSE="GNU General Public License, version 2"
 PACKAGE_MAINTAINER="Fabian Greffrath"
 PACKAGE_URL="http://fabiangreffrath.github.io/crispy-doom"
 PACKAGE_RDNS="io.github.fabiangreffrath"
-PACKAGE_ISSUES="https://github.com/fabiangreffrath/crispy-doom/issues"
+PACKAGE_BUGREPORT="https://github.com/fabiangreffrath/crispy-doom/issues"
 
 AC_CONFIG_AUX_DIR(autotools)
 AC_CANONICAL_HOST
@@ -172,7 +172,7 @@ AC_SUBST(PACKAGE_LICENSE)
 AC_SUBST(PACKAGE_MAINTAINER)
 AC_SUBST(PACKAGE_URL)
 AC_SUBST(PACKAGE_RDNS)
-AC_SUBST(PACKAGE_ISSUES)
+AC_SUBST(PACKAGE_BUGREPORT)
 
 dnl Shut up the datarootdir warnings.
 AC_DEFUN([AC_DATAROOTDIR_CHECKED])

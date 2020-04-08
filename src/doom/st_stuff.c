@@ -21,6 +21,7 @@
 
 
 #include <stdio.h>
+#include <ctype.h>
 
 #include "i_swap.h" // [crispy] SHORT()
 #include "i_system.h"

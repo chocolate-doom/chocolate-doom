@@ -20,6 +20,7 @@
 #include "buffer.h"
 
 #include <stdlib.h>
+#include <stddef.h>
 
 //
 // Create a new buffer.

@@ -25,3 +25,5 @@ script: ./.travis.sh
 branches:
     only:
     - master
+    - c++-clean
+    - vanilla-net
