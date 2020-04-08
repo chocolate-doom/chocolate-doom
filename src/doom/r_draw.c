@@ -1113,34 +1113,34 @@ void R_FillBackScreen (void)
     patch = W_CacheLumpName(DEH_String("brdr_t"),PU_CACHE);
 
     for (x=0 ; x<(scaledviewwidth >> crispy->hires) ; x+=8)
-	V_DrawPatch((viewwindowx >> crispy->hires)+x, (viewwindowy >> crispy->hires)-8, patch);
+	V_DrawPatch((viewwindowx >> crispy->hires)+x-WIDESCREENDELTA, (viewwindowy >> crispy->hires)-8, patch);
     patch = W_CacheLumpName(DEH_String("brdr_b"),PU_CACHE);
 
     for (x=0 ; x<(scaledviewwidth >> crispy->hires) ; x+=8)
-	V_DrawPatch((viewwindowx >> crispy->hires)+x, (viewwindowy >> crispy->hires)+(viewheight >> crispy->hires), patch);
+	V_DrawPatch((viewwindowx >> crispy->hires)+x-WIDESCREENDELTA, (viewwindowy >> crispy->hires)+(viewheight >> crispy->hires), patch);
     patch = W_CacheLumpName(DEH_String("brdr_l"),PU_CACHE);
 
     for (y=0 ; y<(viewheight >> crispy->hires) ; y+=8)
-	V_DrawPatch((viewwindowx >> crispy->hires)-8, (viewwindowy >> crispy->hires)+y, patch);
+	V_DrawPatch((viewwindowx >> crispy->hires)-8-WIDESCREENDELTA, (viewwindowy >> crispy->hires)+y, patch);
     patch = W_CacheLumpName(DEH_String("brdr_r"),PU_CACHE);
 
     for (y=0 ; y<(viewheight >> crispy->hires) ; y+=8)
-	V_DrawPatch((viewwindowx >> crispy->hires)+(scaledviewwidth >> crispy->hires), (viewwindowy >> crispy->hires)+y, patch);
+	V_DrawPatch((viewwindowx >> crispy->hires)+(scaledviewwidth >> crispy->hires)-WIDESCREENDELTA, (viewwindowy >> crispy->hires)+y, patch);
 
     // Draw beveled edge. 
-    V_DrawPatch((viewwindowx >> crispy->hires)-8,
+    V_DrawPatch((viewwindowx >> crispy->hires)-8-WIDESCREENDELTA,
                 (viewwindowy >> crispy->hires)-8,
                 W_CacheLumpName(DEH_String("brdr_tl"),PU_CACHE));
     
-    V_DrawPatch((viewwindowx >> crispy->hires)+(scaledviewwidth >> crispy->hires),
+    V_DrawPatch((viewwindowx >> crispy->hires)+(scaledviewwidth >> crispy->hires)-WIDESCREENDELTA,
                 (viewwindowy >> crispy->hires)-8,
                 W_CacheLumpName(DEH_String("brdr_tr"),PU_CACHE));
     
-    V_DrawPatch((viewwindowx >> crispy->hires)-8,
+    V_DrawPatch((viewwindowx >> crispy->hires)-8-WIDESCREENDELTA,
                 (viewwindowy >> crispy->hires)+(viewheight >> crispy->hires),
                 W_CacheLumpName(DEH_String("brdr_bl"),PU_CACHE));
     
-    V_DrawPatch((viewwindowx >> crispy->hires)+(scaledviewwidth >> crispy->hires),
+    V_DrawPatch((viewwindowx >> crispy->hires)+(scaledviewwidth >> crispy->hires)-WIDESCREENDELTA,
                 (viewwindowy >> crispy->hires)+(viewheight >> crispy->hires),
                 W_CacheLumpName(DEH_String("brdr_br"),PU_CACHE));
 
@@ -1184,21 +1184,21 @@ void R_DrawViewBorder (void)
     if (scaledviewwidth == SCREENWIDTH) 
 	return; 
   
-    top = ((SCREENHEIGHT-SBARHEIGHT)-viewheight)/2;
+    top = ((SCREENHEIGHT-SBARHEIGHT)-viewheight)/2; 
     side = (SCREENWIDTH-scaledviewwidth)/2; 
  
     // copy top and one line of left side 
     R_VideoErase (0, top*SCREENWIDTH+side); 
  
     // copy one line of right side and bottom 
-    ofs = (viewheight+top)*SCREENWIDTH-side;
+    ofs = (viewheight+top)*SCREENWIDTH-side; 
     R_VideoErase (ofs, top*SCREENWIDTH+side); 
  
     // copy sides using wraparound 
     ofs = top*SCREENWIDTH + SCREENWIDTH-side; 
     side <<= 1;
     
-    for (i=1 ; i<viewheight ; i++)
+    for (i=1 ; i<viewheight ; i++) 
     { 
 	R_VideoErase (ofs, side); 
 	ofs += SCREENWIDTH; 

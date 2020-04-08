@@ -61,7 +61,7 @@
 #define HU_TITLEM	(mapnames_commercial[gamemap-1 + 105 + 3])
 #define HU_TITLE_CHEX   (mapnames_chex[(gameepisode-1)*9+gamemap-1])
 #define HU_TITLEHEIGHT	1
-#define HU_TITLEX	(0 - DELTAWIDTH)
+#define HU_TITLEX	(0 - WIDESCREENDELTA)
 #define HU_TITLEY	(167 - SHORT(hu_font[0]->height))
 
 #define HU_INPUTTOGGLE	't'
@@ -70,7 +70,7 @@
 #define HU_INPUTWIDTH	64
 #define HU_INPUTHEIGHT	1
 
-#define HU_COORDX	((ORIGWIDTH - 7 * hu_font['A'-HU_FONTSTART]->width) + DELTAWIDTH)
+#define HU_COORDX	((ORIGWIDTH - 7 * hu_font['A'-HU_FONTSTART]->width) + WIDESCREENDELTA)
 
 
 char *chat_macros[10] =
@@ -593,6 +593,8 @@ static void HU_SetSpecialLevelName (const char *wad, const char **name)
     }
 }
 
+static int hu_widescreendelta;
+
 void HU_Start(void)
 {
 
@@ -611,8 +613,9 @@ void HU_Start(void)
     secret_on = false;
     chat_on = false;
 
-    // [crispy] re-calculate DELTAWIDTH
+    // [crispy] re-calculate WIDESCREENDELTA
     I_GetScreenDimensions();
+    hu_widescreendelta = WIDESCREENDELTA;
 
     // create the message widget
     HUlib_initSText(&w_message,
@@ -858,7 +861,7 @@ void HU_Drawer(void)
     if (crispy->automapstats == WIDGETS_ALWAYS || (automapactive && crispy->automapstats == WIDGETS_AUTOMAP))
     {
 	// [crispy] move obtrusive line out of player view
-	if (automapactive && (!crispy->automapoverlay || screenblocks < CRISPY_HUD - 1) && !crispy->widescreen)
+	if (automapactive && (!crispy->automapoverlay || screenblocks < CRISPY_HUD - 1))
 	    HUlib_drawTextLine(&w_map, false);
 
 	HUlib_drawTextLine(&w_kills, false);
@@ -933,6 +936,12 @@ void HU_Ticker(void)
     int i, rc;
     char c;
     char str[32], *s;
+
+    // [crispy] re-calculate widget coordinates on demand
+    if (hu_widescreendelta != WIDESCREENDELTA)
+    {
+        HU_Start();
+    }
 
     // tick down message counter if message is up
     if (message_counter && !--message_counter)
@@ -1021,7 +1030,7 @@ void HU_Ticker(void)
     if (automapactive)
     {
 	// [crispy] move map title to the bottom
-	if ((crispy->automapoverlay && screenblocks >= CRISPY_HUD - 1) || crispy->widescreen)
+	if (crispy->automapoverlay && screenblocks >= CRISPY_HUD - 1)
 	    w_title.y = HU_TITLEY + ST_HEIGHT;
 	else
 	    w_title.y = HU_TITLEY;

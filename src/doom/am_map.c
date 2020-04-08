@@ -575,50 +575,40 @@ void AM_clearMarks(void)
 // should be called at the start of every level
 // right now, i figure it out myself
 //
-void AM_LevelInit(void)
+void AM_LevelInit(boolean reinit)
 {
     fixed_t a, b;
+    static int f_h_old;
     leveljuststarted = 0;
 
     f_x = f_y = 0;
     f_w = SCREENWIDTH;
-    f_h = SCREENHEIGHT;
-    // [crispy] automap without status bar in widescreen mode
-    if (!crispy->widescreen)
-    {
-        f_h -= (ST_HEIGHT << crispy->hires);
-    }
+    f_h = SCREENHEIGHT - (ST_HEIGHT << crispy->hires);
 
+    if (!reinit)
     AM_clearMarks();
 
     AM_findMinMaxBoundaries();
+    // [crispy] preserve map scale when re-initializing
+    if (reinit && f_h_old)
+    {
+	scale_mtof = scale_mtof * f_h / f_h_old;
+    }
+    else
+    {
     // [crispy] initialize zoomlevel on all maps so that a 4096 units
     // square map would just fit in (MAP01 is 3376x3648 units)
     a = FixedDiv(f_w, (max_w>>FRACBITS < 2048) ? 2*(max_w>>FRACBITS) : 4096);
     b = FixedDiv(f_h, (max_h>>FRACBITS < 2048) ? 2*(max_h>>FRACBITS) : 4096);
     scale_mtof = FixedDiv(a < b ? a : b, (int) (0.7*FRACUNIT));
-    if (scale_mtof > max_scale_mtof)
-	scale_mtof = min_scale_mtof;
-    scale_ftom = FixedDiv(FRACUNIT, scale_mtof);
-}
-
-void AM_ReInit (void)
-{
-    f_w = SCREENWIDTH;
-    f_h = SCREENHEIGHT;
-    // [crispy] automap without status bar in widescreen mode
-    if (!crispy->widescreen)
-    {
-        f_h -= (ST_HEIGHT << crispy->hires);
     }
-
-    AM_findMinMaxBoundaries();
-
-    scale_mtof = crispy->hires ? scale_mtof*2 : scale_mtof/2;
     if (scale_mtof > max_scale_mtof)
 	scale_mtof = min_scale_mtof;
     scale_ftom = FixedDiv(FRACUNIT, scale_mtof);
+
+    f_h_old = f_h;
 }
+
 
 
 
@@ -646,7 +636,7 @@ void AM_Start (void)
     stopped = false;
     if (lastlevel != gamemap || lastepisode != gameepisode)
     {
-	AM_LevelInit();
+	AM_LevelInit(false);
 	lastlevel = gamemap;
 	lastepisode = gameepisode;
     }
@@ -1768,7 +1758,7 @@ void AM_drawMarks(void)
 	    {
 		AM_rotatePoint(&pt);
 	    }
-	    fx = (flipscreenwidth[CXMTOF(pt.x)] >> crispy->hires) - 1 - DELTAWIDTH;
+	    fx = (flipscreenwidth[CXMTOF(pt.x)] >> crispy->hires) - 1 - WIDESCREENDELTA;
 	    fy = (CYMTOF(pt.y) >> crispy->hires) - 2;
 	    if (fx >= f_x && fx <= (f_w >> crispy->hires) - w && fy >= f_y && fy <= (f_h >> crispy->hires) - h)
 		V_DrawPatch(fx, fy, marknums[i]);
@@ -1850,7 +1840,7 @@ void AM_SetMarkPoints (int n, long *p)
 {
 	int i;
 
-	AM_LevelInit();
+	AM_LevelInit(false);
 	lastlevel = gamemap;
 	lastepisode = gameepisode;
 

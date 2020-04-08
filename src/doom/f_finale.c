@@ -896,7 +896,7 @@ F_DrawPatchCol
     int		count;
 	
     column = (column_t *)((byte *)patch + LONG(patch->columnofs[col >> FRACBITS]));
-    desttop = I_VideoBuffer + x + (DELTAWIDTH << crispy->hires);
+    desttop = I_VideoBuffer + x + (WIDESCREENDELTA << crispy->hires);
 
     // step through the posts in a column
     while (column->topdelta != 0xff )
@@ -930,12 +930,12 @@ void F_BunnyScroll (void)
     int		stage;
     static int	laststage;
 		
-    dxi = (ORIGWIDTH << FRACBITS) / HIRESWIDTH;
+    dxi = (ORIGWIDTH << FRACBITS) / NONWIDEWIDTH;
     dy = (SCREENHEIGHT << FRACBITS) / ORIGHEIGHT;
     dyi = (ORIGHEIGHT << FRACBITS) / SCREENHEIGHT;
 
     // [crispy] fill pillarboxes in widescreen mode
-    if (SCREENWIDTH != HIRESWIDTH)
+    if (SCREENWIDTH != NONWIDEWIDTH)
     {
 	V_DrawFilledBox(0, 0, SCREENWIDTH, SCREENHEIGHT, 0);
     }

@@ -214,7 +214,7 @@ void V_DrawPatch(int x, int y, patch_t *patch)
 
     y -= SHORT(patch->topoffset);
     x -= SHORT(patch->leftoffset);
-    x += DELTAWIDTH; // [crispy] horizontal widescreen offset
+    x += WIDESCREENDELTA; // [crispy] horizontal widescreen offset
 
     // haleyjd 08/28/10: Strife needs silent error checking here.
     if(patchclip_callback)
@@ -308,8 +308,8 @@ void V_DrawPatchFullScreen(patch_t *patch, boolean flipped)
     const short width = SHORT(patch->width);
     const short height = SHORT(patch->height);
 
-    dx = (HIRESWIDTH << FRACBITS) / width;
-    dxi = (width << FRACBITS) / HIRESWIDTH;
+    dx = (NONWIDEWIDTH << FRACBITS) / width;
+    dxi = (width << FRACBITS) / NONWIDEWIDTH;
     dy = (SCREENHEIGHT << FRACBITS) / height;
     dyi = (height << FRACBITS) / SCREENHEIGHT;
 
@@ -317,7 +317,7 @@ void V_DrawPatchFullScreen(patch_t *patch, boolean flipped)
     patch->topoffset = 0;
 
     // [crispy] fill pillarboxes in widescreen mode
-    if (SCREENWIDTH != HIRESWIDTH)
+    if (SCREENWIDTH != NONWIDEWIDTH)
     {
         V_DrawFilledBox(0, 0, SCREENWIDTH, SCREENHEIGHT, 0);
     }
@@ -331,8 +331,8 @@ void V_DrawPatchFullScreen(patch_t *patch, boolean flipped)
         V_DrawPatch(0, 0, patch);
     }
 
-    dx = (HIRESWIDTH << FRACBITS) / ORIGWIDTH;
-    dxi = (ORIGWIDTH << FRACBITS) / HIRESWIDTH;
+    dx = (NONWIDEWIDTH << FRACBITS) / ORIGWIDTH;
+    dxi = (ORIGWIDTH << FRACBITS) / NONWIDEWIDTH;
     dy = (SCREENHEIGHT << FRACBITS) / ORIGHEIGHT;
     dyi = (ORIGHEIGHT << FRACBITS) / SCREENHEIGHT;
 }
@@ -355,7 +355,7 @@ void V_DrawPatchFlipped(int x, int y, patch_t *patch)
  
     y -= SHORT(patch->topoffset); 
     x -= SHORT(patch->leftoffset); 
-    x += DELTAWIDTH; // [crispy] horizontal widescreen offset
+    x += WIDESCREENDELTA; // [crispy] horizontal widescreen offset
 
     // haleyjd 08/28/10: Strife needs silent error checking here.
     if(patchclip_callback)
@@ -853,10 +853,10 @@ void V_DrawRawScreen(pixel_t *raw)
 void V_Init (void) 
 { 
     // [crispy] initialize resolution-agnostic patch drawing
-    if (HIRESWIDTH && SCREENHEIGHT)
+    if (NONWIDEWIDTH && SCREENHEIGHT)
     {
-        dx = (HIRESWIDTH << FRACBITS) / ORIGWIDTH;
-        dxi = (ORIGWIDTH << FRACBITS) / HIRESWIDTH;
+        dx = (NONWIDEWIDTH << FRACBITS) / ORIGWIDTH;
+        dxi = (ORIGWIDTH << FRACBITS) / NONWIDEWIDTH;
         dy = (SCREENHEIGHT << FRACBITS) / ORIGHEIGHT;
         dyi = (ORIGHEIGHT << FRACBITS) / SCREENHEIGHT;
     }
