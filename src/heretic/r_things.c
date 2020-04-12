@@ -500,15 +500,15 @@ void R_ProjectSprite(mobj_t * thing)
     angle_t ang;
     fixed_t iscale;
 
-    if (thing->flags2 & MF2_DONTDRAW)
-    {                           // Never make a vissprite when MF2_DONTDRAW is flagged.
-        return;
-    }
-
     fixed_t             interpx;
     fixed_t             interpy;
     fixed_t             interpz;
     fixed_t             interpangle;
+
+    if (thing->flags2 & MF2_DONTDRAW)
+    {                           // Never make a vissprite when MF2_DONTDRAW is flagged.
+        return;
+    }
 
     // [AM] Interpolate between current and last position,
     //      if prudent.

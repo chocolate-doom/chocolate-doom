@@ -362,6 +362,7 @@ fixed_t R_ScaleFromGlobalAngle(angle_t visangle)
     return scale;
 }
 
+
 // [AM] Interpolate between two angles.
 angle_t R_InterpolateAngle(angle_t oangle, angle_t nangle, fixed_t scale)
 {
@@ -776,7 +777,7 @@ void R_SetupFrame(player_t * player)
     }
 
     tableAngle = viewangle >> ANGLETOFINESHIFT;
-    
+
     // [crispy] Set chicken attack view position
     if (player->chickenTics && player->chickenPeck)
     {
