@@ -1,18 +1,18 @@
 
-SUBDIRS = doom setup # heretic hexen strife
+SUBDIRS = doom heretic setup # hexen strife
 
 execgamesdir = ${bindir}
 
 execgames_PROGRAMS = @PROGRAM_PREFIX@doom     \
+                     @PROGRAM_PREFIX@heretic  \
                      @PROGRAM_PREFIX@server
-EXTRA_PROGRAMS =     @PROGRAM_PREFIX@heretic  \
-                     @PROGRAM_PREFIX@hexen    \
+EXTRA_PROGRAMS =     @PROGRAM_PREFIX@hexen    \
                      @PROGRAM_PREFIX@strife
 
 noinst_PROGRAMS = @PROGRAM_PREFIX@setup
 
-SETUP_BINARIES = @PROGRAM_PREFIX@doom-setup$(EXEEXT)
-#                @PROGRAM_PREFIX@heretic-setup$(EXEEXT) \
+SETUP_BINARIES = @PROGRAM_PREFIX@doom-setup$(EXEEXT)    \
+                 @PROGRAM_PREFIX@heretic-setup$(EXEEXT)
 #                @PROGRAM_PREFIX@hexen-setup$(EXEEXT)   \
 #                @PROGRAM_PREFIX@strife-setup$(EXEEXT)
 
@@ -224,8 +224,8 @@ EXTRA_DIST =                        \
 
 metainfodir = $(prefix)/share/metainfo
 metainfo_DATA =                             \
-        @PACKAGE_RDNS@.Doom.metainfo.xml
-#       @PACKAGE_RDNS@.Heretic.metainfo.xml \
+        @PACKAGE_RDNS@.Doom.metainfo.xml    \
+        @PACKAGE_RDNS@.Heretic.metainfo.xml
 #       @PACKAGE_RDNS@.Hexen.metainfo.xml   \
 #       @PACKAGE_RDNS@.Strife.metainfo.xml
 
@@ -243,8 +243,8 @@ metainfo_DATA =                             \
 
 appdir = $(prefix)/share/applications
 app_DATA =                                 \
-           @PACKAGE_RDNS@.Doom.desktop
-#          @PACKAGE_RDNS@.Heretic.desktop \
+           @PACKAGE_RDNS@.Doom.desktop    \
+           @PACKAGE_RDNS@.Heretic.desktop
 #          @PACKAGE_RDNS@.Hexen.desktop   \
 #          @PACKAGE_RDNS@.Strife.desktop
 
