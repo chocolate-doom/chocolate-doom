@@ -64,6 +64,10 @@ lighttable_t *scalelight[LIGHTLEVELS][MAXLIGHTSCALE];
 lighttable_t *scalelightfixed[MAXLIGHTSCALE];
 lighttable_t *zlight[LIGHTLEVELS][MAXLIGHTZ];
 
+// [AM] Fractional part of the current tic, in the half-open
+//      range of [0.0, 1.0).  Used for interpolation.
+extern fixed_t          fractionaltic;
+
 int extralight;                 // bumped light from gun blasts
 
 void (*colfunc) (void);
@@ -358,7 +362,26 @@ fixed_t R_ScaleFromGlobalAngle(angle_t visangle)
     return scale;
 }
 
-
+// [AM] Interpolate between two angles.
+angle_t R_InterpolateAngle(angle_t oangle, angle_t nangle, fixed_t scale)
+{
+    if (nangle == oangle)
+        return nangle;
+    else if (nangle > oangle)
+    {
+        if (nangle - oangle < ANG270)
+            return oangle + (angle_t)((nangle - oangle) * FIXED2DOUBLE(scale));
+        else // Wrapped around
+            return oangle - (angle_t)((oangle - nangle) * FIXED2DOUBLE(scale));
+    }
+    else // nangle < oangle
+    {
+        if (oangle - nangle < ANG270)
+            return oangle - (angle_t)((oangle - nangle) * FIXED2DOUBLE(scale));
+        else // Wrapped around
+            return oangle + (angle_t)((nangle - oangle) * FIXED2DOUBLE(scale));
+    }
+}
 
 /*
 =================
@@ -727,21 +750,41 @@ void R_SetupFrame(player_t * player)
     viewplayer = player;
     // haleyjd: removed WATCOMC
     // haleyjd FIXME: viewangleoffset handling?
-    viewangle = player->mo->angle + viewangleoffset;
-    tableAngle = viewangle >> ANGLETOFINESHIFT;
-    if (player->chickenTics && player->chickenPeck)
-    {                           // Set chicken attack view position
-        viewx = player->mo->x + player->chickenPeck * finecosine[tableAngle];
-        viewy = player->mo->y + player->chickenPeck * finesine[tableAngle];
+
+    // [AM] Interpolate the player camera if the feature is enabled.
+    if (crispy->uncapped &&
+        // Don't interpolate on the first tic of a level,
+        // otherwise oldviewz might be garbage.
+        leveltime > 1 &&
+        // Don't interpolate if the player did something
+        // that would necessitate turning it off for a tic.
+        player->mo->interp == true &&
+        // Don't interpolate during a paused state
+        leveltime > oldleveltime)
+    {
+        viewx = player->mo->oldx + FixedMul(player->mo->x - player->mo->oldx, fractionaltic);
+        viewy = player->mo->oldy + FixedMul(player->mo->y - player->mo->oldy, fractionaltic);
+        viewz = player->oldviewz + FixedMul(player->viewz - player->oldviewz, fractionaltic);
+        viewangle = R_InterpolateAngle(player->mo->oldangle, player->mo->angle, fractionaltic) + viewangleoffset;
     }
     else
-    {                           // Normal view position
+    {
         viewx = player->mo->x;
         viewy = player->mo->y;
+        viewz = player->viewz;
+        viewangle = player->mo->angle + viewangleoffset;
     }
-    extralight = player->extralight;
-    viewz = player->viewz;
 
+    tableAngle = viewangle >> ANGLETOFINESHIFT;
+    
+    // [crispy] Set chicken attack view position
+    if (player->chickenTics && player->chickenPeck)
+    {
+        viewx += player->chickenPeck * finecosine[tableAngle];
+        viewy += player->chickenPeck * finesine[tableAngle];
+    }
+
+    extralight = player->extralight;
     tempCentery = viewheight / 2 + ((player->lookdir) << crispy->hires) * screenblocks / 10;
     if (centery != tempCentery)
     {
@@ -804,12 +847,16 @@ void R_SetupFrame(player_t * player)
 
 void R_RenderPlayerView(player_t * player)
 {
+    // [crispy] Smooth texture scrolling
+    extern void R_InterpolateTextureOffsets(void);
+
     R_SetupFrame(player);
     R_ClearClipSegs();
     R_ClearDrawSegs();
     R_ClearPlanes();
     R_ClearSprites();
     NetUpdate();                // check for new console commands
+    R_InterpolateTextureOffsets(); // [crispy] smooth texture scrolling
     R_RenderBSPNode(numnodes - 1);      // the head node is the last node output
     NetUpdate();                // check for new console commands
     R_DrawPlanes();

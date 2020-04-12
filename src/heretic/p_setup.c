@@ -209,6 +209,16 @@ void P_LoadSectors(int lump)
         ss->special = SHORT(ms->special);
         ss->tag = SHORT(ms->tag);
         ss->thinglist = NULL;
+
+        // [AM] Sector interpolation.  Even if we're
+        //      not running uncapped, the renderer still
+        //      uses this data.
+        ss->oldfloorheight = ss->floorheight;
+        ss->interpfloorheight = ss->floorheight;
+        ss->oldceilingheight = ss->ceilingheight;
+        ss->interpceilingheight = ss->ceilingheight;
+        // [crispy] inhibit sector interpolation during the 0th gametic
+        ss->oldgametic = -1;
     }
 
     W_ReleaseLumpNum(lump);
@@ -413,6 +423,8 @@ void P_LoadSideDefs(int lump)
         sd->bottomtexture = R_TextureNumForName(msd->bottomtexture);
         sd->midtexture = R_TextureNumForName(msd->midtexture);
         sd->sector = &sectors[SHORT(msd->sector)];
+        // [crispy] smooth texture scrolling
+        sd->basetextureoffset = sd->textureoffset;
     }
 
     W_ReleaseLumpNum(lump);
@@ -655,6 +667,7 @@ void P_SetupLevel(int episode, int map, int playermask, skill_t skill)
     lumpname[3] = '0' + map;
     lumpname[4] = 0;
     leveltime = 0;
+    oldleveltime = 0;  // [crispy] Track if game is running
 
     lumpnum = W_GetNumForName(lumpname);
 
