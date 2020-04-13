@@ -819,22 +819,14 @@ void G_DoLoadLevel (void)
 
         if (gamemap < 12)
         {
+            if (gamemission == pack_nerve && gamemap >= 4 && gamemap <= 8)
+                skytexturename = "SKY3";
+            else
             skytexturename = "SKY1";
         }
         else if (gamemap < 21)
         {
             skytexturename = "SKY2";
-        }
-        else if (gamemission == pack_nerve)
-        {
-            if (gamemap < 4 || gamemap == 9)
-            {
-                skytexturename = ("SKY1");
-            }
-            else
-            {
-                skytexturename = ("SKY3");
-            }
         }
         else
         {
