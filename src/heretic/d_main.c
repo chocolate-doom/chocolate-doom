@@ -207,6 +207,27 @@ static void CrispyDrawStats (void)
     }
 }
 
+// [crispy] Draw the current FPS if show fps cheat is active
+static void CrispyDrawFps(void)
+{
+    short coord_x, height;
+    char str[32];
+    player_t* const player = &players[consoleplayer];
+
+    const int FontABaseLump = W_GetNumForName(DEH_String("FONTA_S")) + 1;
+    const patch_t* const p = W_CacheLumpNum(FontABaseLump + 'A' - 33, PU_CACHE);
+
+    height = SHORT(p->height) + 1;
+    coord_x = ORIGWIDTH - 6 * SHORT(p->width);
+
+    // [crispy] Only show FPS outside automap as it could obscure level coords
+    if (player->cheats & CF_SHOWFPS && !automapactive)
+    {
+        M_snprintf(str, sizeof(str), "%d F", crispy->fps);
+        MN_DrTextA(str, coord_x, height);
+    }
+}
+
 void R_ExecuteSetViewSize(void);
 
 extern boolean finalestage;
@@ -237,6 +258,7 @@ void D_Display(void)
             UpdateState |= I_FULLVIEW;
             SB_Drawer();
             CrispyDrawStats();
+            CrispyDrawFps();
             break;
         case GS_INTERMISSION:
             IN_Drawer();

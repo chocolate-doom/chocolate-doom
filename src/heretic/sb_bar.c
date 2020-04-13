@@ -60,6 +60,7 @@ static void CheatArtifact2Func(player_t * player, Cheat_t * cheat);
 static void CheatArtifact3Func(player_t * player, Cheat_t * cheat);
 static void CheatWarpFunc(player_t * player, Cheat_t * cheat);
 static void CheatChickenFunc(player_t * player, Cheat_t * cheat);
+static void CheatShowFpsFunc(player_t* player, Cheat_t* cheat); // [crispy]
 static void CheatMassacreFunc(player_t * player, Cheat_t * cheat);
 static void CheatIDKFAFunc(player_t * player, Cheat_t * cheat);
 static void CheatIDDQDFunc(player_t * player, Cheat_t * cheat);
@@ -153,6 +154,9 @@ cheatseq_t CheatWarpSeq = CHEAT("engage", 2);
 // Save a screenshot
 cheatseq_t CheatChickenSeq = CHEAT("cockadoodledoo", 0);
 
+// [crispy] Show FPS
+cheatseq_t CheatShowFpsSeq = CHEAT("showfps", 0);
+
 // Kill all monsters
 cheatseq_t CheatMassacreSeq = CHEAT("massacre", 0);
 
@@ -173,6 +177,7 @@ static Cheat_t Cheats[] = {
     {CheatArtifact3Func, &CheatArtifact3Seq},
     {CheatWarpFunc,      &CheatWarpSeq},
     {CheatChickenFunc,   &CheatChickenSeq},
+    {CheatShowFpsFunc,   &CheatShowFpsSeq},
     {CheatMassacreFunc,  &CheatMassacreSeq},
     {CheatIDKFAFunc,     &CheatIDKFASeq},
     {CheatIDDQDFunc,     &CheatIDDQDSeq},
@@ -1261,6 +1266,20 @@ static void CheatChickenFunc(player_t * player, Cheat_t * cheat)
     else if (P_ChickenMorphPlayer(player))
     {
         P_SetMessage(player, DEH_String(TXT_CHEATCHICKENON), false);
+    }
+}
+
+// [crispy] "Cheat" to show FPS
+static void CheatShowFpsFunc(player_t* player, Cheat_t* cheat)
+{
+    player->cheats ^= CF_SHOWFPS;
+    if (player->cheats & CF_SHOWFPS)
+    {
+        P_SetMessage(player, DEH_String(TXT_SHOWFPSON), false);
+    }
+    else
+    {
+        P_SetMessage(player, DEH_String(TXT_SHOWFPSOFF), false);
     }
 }
 
