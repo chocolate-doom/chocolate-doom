@@ -332,6 +332,15 @@ void D_DoomLoop(void)
         // Move positional sounds
         S_UpdateSounds(players[consoleplayer].mo);
         D_Display();
+
+        // [crispy] post-rendering function pointer to apply config changes
+        // that affect rendering and that are better applied after the current
+        // frame has finished rendering
+        if (crispy->post_rendering_hook)
+        {
+            crispy->post_rendering_hook();
+            crispy->post_rendering_hook = NULL;
+        }
     }
 }
 
@@ -772,6 +781,7 @@ void D_BindVariables(void)
     }
 
     // [crispy] bind "crispness" config variables
+    M_BindIntVariable("crispy_hires",           &crispy->hires);
     M_BindIntVariable("crispy_smoothscaling",   &crispy->smoothscaling);
     M_BindIntVariable("crispy_automapstats",    &crispy->automapstats);
     M_BindIntVariable("crispy_leveltime",       &crispy->leveltime);
