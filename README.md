@@ -176,6 +176,7 @@ Crispy Doom 5.8.0 has been released on April 17, 2020 to bring the status bar to
 
 **Crispy Heretic changes**
 
+ * Support for mouse sensitivity up to 255 and, while at it, displaying numeric values next to the menu sliders has been contributed by Zodomaniac.
  * Cheat showing FPS has been added to Crispy Heretic by Jeff Green.
  * High resolution rendering toggle has been introduced in Crispy Heretic by Jeff Green.
  * Uncapped framerate has been implemented in Crispy Heretic by Jeff Green.
