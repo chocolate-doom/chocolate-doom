@@ -153,9 +153,9 @@ After successful compilation the resulting binaries can be found in the `src/` d
 
 ## News
 
-### Crispy Doom 5.7.3
+### Crispy Doom 5.8.0
 
-Crispy Doom 5.7.3 has been released on April XX, 2020 to bring the status bar to widescreen rendering mode, remove SPECHITS limit and fix some bugs as well as introduce significant changes to Crispy Heretic.
+Crispy Doom 5.8.0 has been released on April 17, 2020 to bring the status bar to widescreen rendering mode, remove SPECHITS limit and fix some bugs as well as implement the core feature set in Crispy Heretic.
 
 **Features**
 
@@ -164,16 +164,22 @@ Crispy Doom 5.7.3 has been released on April XX, 2020 to bring the status bar to
 
 **Improvements**
 
+ * Compilation with Code::Blocks and TDM-GCC 5.1 (missing includes) has been fixed by drfrag666.
  * Wide and compact HUD are now handled as separate screen sizes, and you can switch through them as normal.
  * Once the last screen size has been exceeded you loop over to the empty HUD.
 
 **Bug Fixes**
 
- * When calculating weapon bobbing, the check is now performed for player being not in attacking state instead of checking for `A_WeaponReady()` because weapon states could have been modified by DeHackEd. This fixes jerky weapon bobbing reported by kitchen-ace for some weapons in mods like Vanilla Smooth Weapons and DOOM 4 Vanilla.
+ * SKY3 texture is now used for MAP04-MAP08 in NRftL, thanks to JNechaevsky for contributing the fix.
+ * When calculating weapon bobbing, the check is now performed for attack key/button being held down (thanks to unRyker for helping to choose the criterion) instead of checking for `A_WeaponReady()` because weapon states could have been modified by DeHackEd. This fixes jerky weapon bobbing reported by kitchen-ace for some weapons in mods like Vanilla Smooth Weapons and DOOM 4 Vanilla.
  * Fix for segmentation fault when running on rgb565 screen has been pulled from Chocolate Doom, contributed by Wells Lu.
 
 **Crispy Heretic changes**
 
+ * Cheat showing FPS has been added to Crispy Heretic by Jeff Green.
+ * High resolution rendering toggle has been introduced in Crispy Heretic by Jeff Green.
+ * Uncapped framerate has been implemented in Crispy Heretic by Jeff Green.
+ * An implicit declaration warning has been fixed by drfrag666.
  * Crispy settings have been prevented from resetting in setup by Ryan Krafnick.
  * Secret message has been implemented by Jeff Green.
  * Always Run toggle key and Always Run + Run = Walk behavior has been introduced by Ryan Krafnick.
@@ -181,7 +187,7 @@ Crispy Doom 5.7.3 has been released on April XX, 2020 to bring the status bar to
  * The INTERCEPTS and SPECHITS limits have been removed entirely.
  * Vertical mouse movement (novert) toggle has been added by Ryan Krafnick.
 
-Crispy Doom 5.7.3 is based on Chocolate Doom 3.0.0 and has merged all changes to the Chocolate Doom master branch up to commit [`ae2ee6c8`](https://github.com/chocolate-doom/chocolate-doom/commit/ae2ee6c8e91f1dbb4dcf3649f7e3cc7ed124f373).
+Crispy Doom 5.8.0 is based on Chocolate Doom 3.0.0 and has merged all changes to the Chocolate Doom master branch up to commit [`daaaefa7`](https://github.com/chocolate-doom/chocolate-doom/commit/daaaefa7e75d056ab4c1b3b2b68fa29885e750fe).
 
 ### Crispy Doom 5.7.2
 
