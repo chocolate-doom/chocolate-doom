@@ -21,6 +21,7 @@
 
 
 #include <stdio.h>
+#include <ctype.h>
 
 #include "i_system.h"
 #include "i_video.h"

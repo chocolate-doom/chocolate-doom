@@ -20,6 +20,7 @@
 
 #include <stdlib.h>
 #include <math.h>
+#include <stdlib.h>
 
 #include "z_zone.h"
 

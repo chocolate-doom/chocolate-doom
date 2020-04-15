@@ -96,6 +96,8 @@
 //
 void D_DoomLoop (void);
 
+static char *gamedescription;
+
 // Location where savegames are stored
 
 char *          savegamedir;
@@ -732,47 +734,52 @@ static const char *banners[] =
 // Otherwise, use the name given
 // 
 
-static char *GetGameName(char *gamename)
+static char *GetGameName(const char *gamename)
 {
     size_t i;
-    const char *deh_sub;
-    
+
     for (i=0; i<arrlen(banners); ++i)
     {
+        const char *deh_sub;
         // Has the banner been replaced?
 
         deh_sub = DEH_String(banners[i]);
-        
+
         if (deh_sub != banners[i])
         {
             size_t gamename_size;
             int version;
+            char *deh_gamename;
 
             // Has been replaced.
             // We need to expand via printf to include the Doom version number
             // We also need to cut off spaces to get the basic name
 
             gamename_size = strlen(deh_sub) + 10;
-            gamename = Z_Malloc(gamename_size, PU_STATIC, 0);
+            deh_gamename = malloc(gamename_size);
+            if (deh_gamename == NULL)
+            {
+                I_Error("GetGameName: Failed to allocate new string");
+            }
             version = G_VanillaVersionCode();
-            M_snprintf(gamename, gamename_size, deh_sub,
-                       version / 100, version % 100);
+            DEH_snprintf(deh_gamename, gamename_size, banners[i],
+                         version / 100, version % 100);
 
-            while (gamename[0] != '\0' && isspace(gamename[0]))
+            while (deh_gamename[0] != '\0' && isspace(deh_gamename[0]))
             {
-                memmove(gamename, gamename + 1, gamename_size - 1);
+                memmove(deh_gamename, deh_gamename + 1, gamename_size - 1);
             }
 
-            while (gamename[0] != '\0' && isspace(gamename[strlen(gamename)-1]))
+            while (deh_gamename[0] != '\0' && isspace(deh_gamename[strlen(deh_gamename)-1]))
             {
-                gamename[strlen(gamename) - 1] = '\0';
+                deh_gamename[strlen(deh_gamename) - 1] = '\0';
             }
 
-            return gamename;
+            return deh_gamename;
         }
     }
 
-    return gamename;
+    return M_StringDuplicate(gamename);
 }
 
 static void SetMissionForPackName(const char *pack_name)
@@ -895,10 +902,8 @@ void D_IdentifyVersion(void)
 
 // Set the gamedescription string
 
-void D_SetGameDescription(void)
+static void D_SetGameDescription(void)
 {
-    gamedescription = "Unknown";
-
     if (logical_gamemission == doom)
     {
         // Doom 1.  But which version?
@@ -946,6 +951,11 @@ void D_SetGameDescription(void)
         {
             gamedescription = GetGameName("DOOM 2: TNT - Evilution");
         }
+    }
+
+    if (gamedescription == NULL)
+    {
+        gamedescription = M_StringDuplicate("Unknown");
     }
 }
 
