@@ -834,7 +834,7 @@ void HU_Drawer(void)
     }
 
     // [crispy] translucent messages for translucent HUD
-    if (screenblocks > CRISPY_HUD + 1 && (!automapactive || crispy->automapoverlay))
+    if (screenblocks >= CRISPY_HUD && (screenblocks % 3 == 2) && (!automapactive || crispy->automapoverlay))
 	dp_translucent = true;
 
     if (secret_on && !menuactive)
@@ -890,9 +890,7 @@ void HU_Drawer(void)
 	HU_DrawCrosshair();
 
     dp_translation = NULL;
-
-    if (dp_translucent)
-	dp_translucent = false;
+    dp_translucent = false;
 
     // [crispy] demo timer widget
     if (demoplayback && (crispy->demotimer & DEMOTIMER_PLAYBACK))
