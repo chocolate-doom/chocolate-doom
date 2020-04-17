@@ -1486,7 +1486,7 @@ static void LoadSigilWad(void)
 // [crispy] support loading NERVE.WAD alongside DOOM2.WAD
 static void LoadNerveWad(void)
 {
-    int i, j, k;
+    int i, j;
 
     if (gamemission != doom2)
         return;
@@ -1500,16 +1500,6 @@ static void LoadNerveWad(void)
 	DEH_AddStringReplacement ("TITLEPIC", "INTERPIC");
     }
     else
-    // [crispy] The "New Game -> Which Expansion" menu is only shown if the
-    // menu graphics lumps are available and (a) if they are from the IWAD
-    // and that is the BFG Edition DOOM2.WAD or (b) if they are from a PWAD.
-    if ((i = W_CheckNumForName("M_EPI1")) != -1 &&
-        (j = W_CheckNumForName("M_EPI2")) != -1 &&
-        (k = W_CheckNumForName("M_EPISOD")) != -1 &&
-        (gamevariant == bfgedition ||
-        (!W_IsIWADLump(lumpinfo[i]) &&
-         !W_IsIWADLump(lumpinfo[j]) &&
-         !W_IsIWADLump(lumpinfo[k]))))
     {
         if (strrchr(iwadfile, DIR_SEPARATOR) != NULL)
         {
@@ -1544,6 +1534,17 @@ static void LoadNerveWad(void)
 
             M_snprintf (lumpname, 9, "CWILV%2.2d", i);
             lumpinfo[W_GetNumForName(lumpname)]->name[0] = 'N';
+        }
+
+        // [crispy] The "New Game -> Which Expansion" menu is only shown if the
+        // menu graphics lumps are available and (a) if they are from the IWAD
+        // and that is the BFG Edition DOOM2.WAD or (b) if they are from a PWAD.
+        if (gamevariant != bfgedition)
+        {
+            if ((i = W_CheckNumForName("M_EPI1")) != -1 && W_IsIWADLump(lumpinfo[i]))
+                lumpinfo[i]->name[0] = 'X';
+            if ((i = W_CheckNumForName("M_EPI2")) != -1 && W_IsIWADLump(lumpinfo[i]))
+                lumpinfo[i]->name[0] = 'X';
         }
 
         // [crispy] regenerate the hashtable
