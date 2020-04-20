@@ -31,6 +31,7 @@
 #include "r_local.h"
 #include "s_sound.h"
 #include "v_video.h"
+#include "v_trans.h" // [crispy] dp_translation
 
 // Macros
 
@@ -1861,17 +1862,54 @@ static void DrawSlider(Menu_t * menu, int item, int width, int slot)
 //
 //---------------------------------------------------------------------------
 
+static void M_DrawCrispnessBackground(void)
+{
+    byte *src, *dest;
+    int x, y;
+
+    if (gamemode == shareware)
+    {
+        src = W_CacheLumpName(DEH_String("FLOOR04"), PU_CACHE);
+    }
+    else
+    {
+        src = W_CacheLumpName(DEH_String("FLAT513"), PU_CACHE);
+    }
+    dest = I_VideoBuffer;
+
+    for (y = 0; y < SCREENHEIGHT; y++)
+    {
+        for (x = 0; x < SCREENWIDTH / 64; x++)
+        {
+            memcpy(dest, src + ((y & 63) << 6), 64);
+            dest += 64;
+        }
+        if (SCREENWIDTH & 63)
+        {
+            memcpy(dest, src + ((y & 63) << 6), SCREENWIDTH & 63);
+            dest += (SCREENWIDTH & 63);
+        }
+    }
+
+    SB_state = -1;
+}
+
 static void DrawCrispnessMenu(void)
 {
     static const char *title;
+
+    // Background
+    M_DrawCrispnessBackground();
 
     // Title
     title = DEH_String("CRISPNESS");
     MN_DrTextB(title, 160 - MN_TextBWidth(title) / 2, 6);
 
     // Subheaders
+    dp_translation = cr[CR_GOLD];
     MN_DrTextA("RENDERING", 63, 30);
     MN_DrTextA("NAVIGATIONAL", 63, 90);
+    dp_translation = cr[CR_GREY];
 
     // Hires rendering
     MN_DrTextA(crispy->hires ? "ON" : "OFF", 254, 40);
@@ -1902,4 +1940,6 @@ static void DrawCrispnessMenu(void)
     MN_DrTextA(crispy->secretmessage == SECRETMESSAGE_OFF ? "OFF" :
         crispy->secretmessage == SECRETMESSAGE_ON ? "ON" :
         "COUNT", 250, 130);
+
+    dp_translation = NULL;
 }

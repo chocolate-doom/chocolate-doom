@@ -45,6 +45,7 @@
 #include "s_sound.h"
 #include "w_main.h"
 #include "v_video.h"
+#include "v_trans.h" // [crispy] dp_translation
 
 #define CT_KEY_GREEN    'g'
 #define CT_KEY_YELLOW   'y'
@@ -148,7 +149,9 @@ void DrawCenterMessage(void)
         return;
     }
     // Place message above quit game message position so they don't overlap
+    dp_translation = cr[CR_GOLD];
     MN_DrTextA(player->centerMessage, 160 - MN_TextAWidth(player->centerMessage) / 2, 70);
+    dp_translation = NULL;
 }
 
 //---------------------------------------------------------------------------

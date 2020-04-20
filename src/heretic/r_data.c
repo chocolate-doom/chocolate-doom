@@ -24,6 +24,7 @@
 #include "m_misc.h"
 #include "r_local.h"
 #include "p_local.h"
+#include "v_trans.h" // [crispy] color translation and color string tables
 
 extern void CheckAbortStartup(void);
 
@@ -531,6 +532,31 @@ void R_InitColormaps(void)
     length = W_LumpLength(lump);
     colormaps = Z_Malloc(length, PU_STATIC, 0);
     W_ReadLump(lump, colormaps);
+
+    // [crispy] initialize color translation and color string tables
+    {
+	byte *playpal = W_CacheLumpName("PLAYPAL", PU_STATIC);
+	char c[3];
+	int i, j;
+	extern byte V_Colorize (byte *playpal, int cr, byte source, boolean keepgray109);
+
+	if (!crstr)
+	    crstr = I_Realloc(NULL, CRMAX * sizeof(*crstr));
+
+	// [crispy] CRMAX - 2: don't override the original GREN and BLUE2 Boom tables
+	for (i = 0; i < CRMAX - 2; i++)
+	{
+	    for (j = 0; j < 256; j++)
+	    {
+		cr[i][j] = V_Colorize(playpal, i, j, false);
+	    }
+
+	    M_snprintf(c, sizeof(c), "%c%c", cr_esc, '0' + i);
+	    crstr[i] = M_StringDuplicate(c);
+	}
+
+	W_ReleaseLumpName("PLAYPAL");
+    }
 }
 
 
