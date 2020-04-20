@@ -1534,16 +1534,18 @@ static void LoadNerveWad(void)
             char lumpname[9];
 
             M_snprintf (lumpname, 9, "CWILV%2.2d", i);
-            lumpinfo[W_GetNumForName(lumpname)]->name[0] = 'N';
+            lumpinfo[W_GetNumForName(lumpname)]->name[7] = 'N';
+
+            M_snprintf (lumpname, 9, "MAP%02d", i + 1);
+            lumpinfo[W_GetNumForName(lumpname)]->name[5] = 'N';
         }
 
         // [crispy] The "New Game -> Which Expansion" menu is only shown if the
         // menu graphics lumps are available and (a) if they are from the IWAD
         // and that is the BFG Edition DOOM2.WAD or (b) if they are from a PWAD.
-        if (gamevariant != bfgedition)
+        if (gamevariant != bfgedition && (i = W_CheckNumForName("M_EPI2")) != -1 && W_IsIWADLump(lumpinfo[i]))
         {
-            if ((i = W_CheckNumForName("M_EPI2")) != -1 && W_IsIWADLump(lumpinfo[i]))
-                lumpinfo[i]->name[0] = 'X';
+            lumpinfo[i]->name[0] = 'X';
         }
 
         // [crispy] regenerate the hashtable
@@ -1600,7 +1602,10 @@ static void LoadMasterlevelsWad(void)
             char lumpname[9];
 
             M_snprintf (lumpname, 9, "CWILV%2.2d", i);
-            lumpinfo[W_GetNumForName(lumpname)]->name[0] = 'M';
+            lumpinfo[W_GetNumForName(lumpname)]->name[7] = 'M';
+
+            M_snprintf (lumpname, 9, "MAP%02d", i + 1);
+            lumpinfo[W_GetNumForName(lumpname)]->name[5] = 'M';
         }
 
         if ((i = W_CheckNumForName("M_EPI1")) != -1 && W_IsIWADLump(lumpinfo[i]))

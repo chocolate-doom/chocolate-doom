@@ -1060,35 +1060,16 @@ int P_GetNumForMap (int episode, int map, boolean critical)
     if (crispy->havee1m10 && episode == 1 && map == 10)
 	DEH_snprintf(lumpname, 9, "E1M10");
 
-    lumpnum = critical ? W_GetNumForName (lumpname) : W_CheckNumForName (lumpname);
-
-    if (nervewadfile || masterlevelsfile)
+    if (nervewadfile && episode == 2 && map <= 9)
     {
-	int lumpnum_m = INT_MAX, lumpnum_n = INT_MAX;
-
-	if (nervewadfile)
-	{
-		lumpnum_n = W_CheckNumForNameFromWAD (lumpname, nervewadfile);
-	}
-	if (masterlevelsfile)
-	{
-		lumpnum_m = W_CheckNumForNameFromWAD (lumpname, masterlevelsfile);
-	}
-
-	if (episode == 3 && map <= 21)
-	{
-		lumpnum = lumpnum_m;
-	}
-	else
-	if (episode == 2 && map <= 9)
-	{
-		lumpnum = lumpnum_n;
-	}
-	else
-	{
-		lumpnum = W_CheckNumForNameFromTo (lumpname, MIN(lumpnum_m, lumpnum_n) - 1, 0);
-	}
+	lumpname[5] = 'N';
     }
+    if (masterlevelsfile && episode == 3 && map <= 21)
+    {
+	lumpname[5] = 'M';
+    }
+
+    lumpnum = critical ? W_GetNumForName (lumpname) : W_CheckNumForName (lumpname);
 
     return lumpnum;
 }
@@ -1137,7 +1118,6 @@ P_SetupLevel
         else
         {
             gamemission = doom2;
-            episode = gameepisode = 1;
         }
     }
     else

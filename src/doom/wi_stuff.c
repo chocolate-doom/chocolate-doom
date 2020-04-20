@@ -1709,25 +1709,19 @@ static void WI_loadUnloadData(load_callback_t callback)
     char name[9];
     anim_t *a;
 
-    if (nervewadfile && gamemission == pack_nerve)
-    {
-	for (i=0 ; i<9 ; i++)
-	{
-	    DEH_snprintf(name, 9, "NWILV%2.2d", i);
-            callback(name, &lnames[i]);
-	}
-	for ( ; i<NUMCMAPS ; i++)
-	{
-	    DEH_snprintf(name, 9, "CWILV%2.2d", i);
-            callback(name, &lnames[i]);
-	}
-    }
-    else
     if (gamemode == commercial)
     {
 	for (i=0 ; i<NUMCMAPS ; i++)
 	{
 	    DEH_snprintf(name, 9, "CWILV%2.2d", i);
+	    if (nervewadfile && gamemission == pack_nerve && i < 9)
+	    {
+		name[7] = 'N';
+	    }
+	    if (masterlevelsfile && gamemission == pack_master && i < 21)
+	    {
+		name[7] = 'M';
+	    }
             callback(name, &lnames[i]);
 	}
     }

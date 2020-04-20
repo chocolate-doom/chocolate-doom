@@ -2279,6 +2279,12 @@ G_InitNew
     if (skill > sk_nightmare)
 	skill = sk_nightmare;
 
+  // [crispy] if NRFTL is not found, episode 2 means The Master Levels
+  if (gamemode == commercial && episode == 2 && !nervewadfile)
+  {
+    episode = masterlevelsfile ? 3 : 0;
+  }
+
   // [crispy] only fix episode/map if it doesn't exist
   if (P_GetNumForMap(episode, map, false) < 0)
   {

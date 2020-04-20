@@ -337,22 +337,6 @@ lumpindex_t W_CheckNumForNameFromTo(const char *name, int from, int to)
     return -1;
 }
 
-lumpindex_t W_CheckNumForNameFromWAD(const char *name, const char *wad)
-{
-    lumpindex_t i;
-
-    for (i = W_CheckNumForName(name); i >= 0; i--)
-    {
-        if (!strncasecmp(lumpinfo[i]->name, name, 8) &&
-            !strcasecmp(lumpinfo[i]->wad_file->path, wad))
-        {
-            return i;
-        }
-    }
-
-    return -1;
-}
-
 //
 // W_LumpLength
 // Returns the buffer size needed to load the given lump.
