@@ -1174,10 +1174,12 @@ void P_PlayerInSpecialSector (player_t* player)
 	    M_snprintf(str_count, sizeof(str_count), "Secret %d of %d revealed!", player->secretcount, totalsecret);
 
 	    // [crispy] play DSSECRET if available
-	    sfx_id = I_GetSfxLumpNum(&S_sfx[sfx_secret]) != -1 ? sfx_secret : sfx_itmbk;
+	    sfx_id = I_GetSfxLumpNum(&S_sfx[sfx_secret]) != -1 ? sfx_secret :
+	             I_GetSfxLumpNum(&S_sfx[sfx_itmbk]) != -1 ? sfx_itmbk : -1;
 
 	    player->centermessage = (crispy->secretmessage == SECRETMESSAGE_COUNT) ? str_count : HUSTR_SECRETFOUND;
-	    S_StartSound(NULL, sfx_id);
+	    if (sfx_id != -1)
+		S_StartSound(NULL, sfx_id);
 	}
 	// [crispy] remember revealed secrets
 	sector->oldspecial = sector->special;
