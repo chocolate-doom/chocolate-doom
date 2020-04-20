@@ -335,11 +335,11 @@ enum
 
 menuitem_t NewGameMenu[]=
 {
-    {1,"M_JKILL",	M_ChooseSkill, 'i'},
-    {1,"M_ROUGH",	M_ChooseSkill, 'h'},
-    {1,"M_HURT",	M_ChooseSkill, 'h'},
-    {1,"M_ULTRA",	M_ChooseSkill, 'u'},
-    {1,"M_NMARE",	M_ChooseSkill, 'n'}
+    {1,"M_JKILL",	M_ChooseSkill, 'i', "I'm too young to die."},
+    {1,"M_ROUGH",	M_ChooseSkill, 'h', "Hey, not too rough!."},
+    {1,"M_HURT",	M_ChooseSkill, 'h', "Hurt me plenty."},
+    {1,"M_ULTRA",	M_ChooseSkill, 'u', "Ultra-Violence."},
+    {1,"M_NMARE",	M_ChooseSkill, 'n', "Nightmare!"}
 };
 
 menu_t  NewDef =
