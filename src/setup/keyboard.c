@@ -237,7 +237,11 @@ static void ConfigExtraKeys(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
         AddKeyControl(table, "Look down", &key_lookdown);
         AddKeyControl(table, "Center view", &key_lookcenter);
 
-        AddSectionLabel(table, "Movement", true);
+        AddSectionLabel(table, "Movement", false);
+        AddKeyControl(table, "Move Forward (alt.)", &key_alt_up);
+        AddKeyControl(table, "Move Backward (alt.)", &key_alt_down);
+        AddKeyControl(table, "Strafe Left (alt.)", &key_alt_strafeleft);
+        AddKeyControl(table, "Strafe Right (alt.)", &key_alt_straferight);
         AddKeyControl(table, "Toggle always run", &key_toggleautorun);
         AddKeyControl(table, "Toggle vert. mouse", &key_togglenovert);
         }
