@@ -131,6 +131,7 @@ int             show_endoom = 0; // [crispy] disable
 int             show_diskicon = 1;
 
 char            *nervewadfile = NULL;
+char            *masterlevelsfile = NULL;
 
 void D_ConnectNetGame(void);
 void D_CheckNetGame(void);
@@ -1541,8 +1542,6 @@ static void LoadNerveWad(void)
         // and that is the BFG Edition DOOM2.WAD or (b) if they are from a PWAD.
         if (gamevariant != bfgedition)
         {
-            if ((i = W_CheckNumForName("M_EPI1")) != -1 && W_IsIWADLump(lumpinfo[i]))
-                lumpinfo[i]->name[0] = 'X';
             if ((i = W_CheckNumForName("M_EPI2")) != -1 && W_IsIWADLump(lumpinfo[i]))
                 lumpinfo[i]->name[0] = 'X';
         }
@@ -1566,6 +1565,49 @@ static void LoadMasterlevelsWad(void)
         !strcasecmp(W_WadNameForLump(lumpinfo[j]), "masterlevels.wad"))
     {
 	gamemission = pack_master;
+    }
+    else
+    {
+        if (strrchr(iwadfile, DIR_SEPARATOR) != NULL)
+        {
+            char *dir;
+            dir = M_DirName(iwadfile);
+            masterlevelsfile = M_StringJoin(dir, DIR_SEPARATOR_S, "masterlevels.wad", NULL);
+            free(dir);
+        }
+        else
+        {
+            masterlevelsfile = M_StringDuplicate("masterlevels.wad");
+        }
+
+        if (!M_FileExists(masterlevelsfile))
+        {
+            free(masterlevelsfile);
+            masterlevelsfile = D_FindWADByName("masterlevels.wad");
+        }
+
+        if (masterlevelsfile == NULL)
+        {
+            return;
+        }
+
+        printf(" [expansion]");
+        D_AddFile(masterlevelsfile);
+
+        // [crispy] rename level name patch lumps out of the way
+        for (i = 0; i < 21; i++)
+        {
+            char lumpname[9];
+
+            M_snprintf (lumpname, 9, "CWILV%2.2d", i);
+            lumpinfo[W_GetNumForName(lumpname)]->name[0] = 'M';
+        }
+
+        if ((i = W_CheckNumForName("M_EPI1")) != -1 && W_IsIWADLump(lumpinfo[i]))
+            lumpinfo[i]->name[0] = 'X';
+
+        // [crispy] regenerate the hashtable
+        W_GenerateHashTable();
     }
 }
 

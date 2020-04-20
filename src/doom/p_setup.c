@@ -1062,9 +1062,32 @@ int P_GetNumForMap (int episode, int map, boolean critical)
 
     lumpnum = critical ? W_GetNumForName (lumpname) : W_CheckNumForName (lumpname);
 
-    if (nervewadfile && episode != 2 && map <= 9)
+    if (nervewadfile || masterlevelsfile)
     {
-        lumpnum = W_CheckNumForNameFromTo (lumpname, lumpnum - 1, 0);
+	int lumpnum_m = INT_MAX, lumpnum_n = INT_MAX;
+
+	if (nervewadfile)
+	{
+		lumpnum_n = W_CheckNumForNameFromWAD (lumpname, nervewadfile);
+	}
+	if (masterlevelsfile)
+	{
+		lumpnum_m = W_CheckNumForNameFromWAD (lumpname, masterlevelsfile);
+	}
+
+	if (episode == 3 && map <= 21)
+	{
+		lumpnum = lumpnum_m;
+	}
+	else
+	if (episode == 2 && map <= 9)
+	{
+		lumpnum = lumpnum_n;
+	}
+	else
+	{
+		lumpnum = W_CheckNumForNameFromTo (lumpname, MIN(lumpnum_m, lumpnum_n) - 1, 0);
+	}
     }
 
     return lumpnum;
@@ -1100,19 +1123,30 @@ P_SetupLevel
     }
 
     // [crispy] No Rest for the Living ...
-    if (nervewadfile)
+    if (nervewadfile || masterlevelsfile)
     {
-        if (episode == 2)
+        if (masterlevelsfile && episode == 3)
+        {
+            gamemission = pack_master;
+        }
+        else
+        if (nervewadfile && episode == 2)
         {
             gamemission = pack_nerve;
         }
         else
         {
             gamemission = doom2;
+            episode = gameepisode = 1;
         }
     }
     else
     {
+        if (gamemission == pack_master)
+        {
+            episode = gameepisode = 3;
+        }
+        else
         if (gamemission == pack_nerve)
         {
             episode = gameepisode = 2;
