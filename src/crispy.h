@@ -96,6 +96,9 @@ typedef struct
 	boolean singleplayer;
 	boolean stretchsky;
 
+	char *havenerve;
+	char *havemaster;
+
 	const char *sdlversion;
 	const char *platform;
 

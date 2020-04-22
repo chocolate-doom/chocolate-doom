@@ -1036,8 +1036,7 @@ const char *skilltable[] =
 // [crispy] factor out map lump name and number finding into a separate function
 int P_GetNumForMap (int episode, int map, boolean critical)
 {
-    char	lumpname[9];
-    int		lumpnum;
+    char lumpname[9];
 
     // find map name
     if ( gamemode == commercial)
@@ -1058,16 +1057,21 @@ int P_GetNumForMap (int episode, int map, boolean critical)
 
     // [crispy] special-casing for E1M10 "Sewers" support
     if (crispy->havee1m10 && episode == 1 && map == 10)
-	DEH_snprintf(lumpname, 9, "E1M10");
-
-    lumpnum = critical ? W_GetNumForName (lumpname) : W_CheckNumForName (lumpname);
-
-    if (nervewadfile && episode != 2 && map <= 9)
     {
-        lumpnum = W_CheckNumForNameFromTo (lumpname, lumpnum - 1, 0);
+	DEH_snprintf(lumpname, 9, "E1M10");
     }
 
-    return lumpnum;
+    // [crispy] NRFTL / The Master Levels
+    if (crispy->havenerve && episode == 2 && map <= 9)
+    {
+	strcat(lumpname, "N");
+    }
+    if (crispy->havemaster && episode == 3 && map <= 21)
+    {
+	strcat(lumpname, "M");
+    }
+
+    return critical ? W_GetNumForName(lumpname) : W_CheckNumForName(lumpname);
 }
 
 // pointer to the current map lump info struct
@@ -1099,10 +1103,15 @@ P_SetupLevel
 	    = players[i].itemcount = 0;
     }
 
-    // [crispy] No Rest for the Living ...
-    if (nervewadfile)
+    // [crispy] NRFTL / The Master Levels
+    if (crispy->havenerve || crispy->havemaster)
     {
-        if (episode == 2)
+        if (crispy->havemaster && episode == 3)
+        {
+            gamemission = pack_master;
+        }
+        else
+        if (crispy->havenerve && episode == 2)
         {
             gamemission = pack_nerve;
         }
@@ -1113,6 +1122,11 @@ P_SetupLevel
     }
     else
     {
+        if (gamemission == pack_master)
+        {
+            episode = gameepisode = 3;
+        }
+        else
         if (gamemission == pack_nerve)
         {
             episode = gameepisode = 2;

@@ -1264,7 +1264,7 @@ void M_NewGame(int choice)
 	
     // Chex Quest disabled the episode select screen, as did Doom II.
 
-    if ((gamemode == commercial && !nervewadfile) || gameversion == exe_chex) // [crispy] NRFTL
+    if ((gamemode == commercial && !crispy->havenerve && !crispy->havemaster) || gameversion == exe_chex) // [crispy] NRFTL / The Master Levels
 	M_SetupNextMenu(&NewDef);
     else
 	M_SetupNextMenu(&EpiDef);
@@ -3117,15 +3117,26 @@ void M_Init (void)
         NewDef.prevMenu = &MainDef;
     }
 
-    // [crispy] NRFTL
-    if (nervewadfile)
+    // [crispy] NRFTL / The Master Levels
+    if (crispy->havenerve || crispy->havemaster)
     {
         NewDef.prevMenu = &EpiDef;
-        EpiDef.numitems = 2;
         EpisodeMenu[0].alphaKey = 'h';
         EpisodeMenu[0].alttext = "Hell on Earth";
-        EpisodeMenu[1].alphaKey = 'n';
-        EpisodeMenu[1].alttext = "No Rest for the Living";
+        EpiDef.numitems = 1;
+
+        if (crispy->havenerve)
+        {
+            EpisodeMenu[EpiDef.numitems].alphaKey = 'n';
+            EpisodeMenu[EpiDef.numitems].alttext = "No Rest for the Living";
+            EpiDef.numitems++;
+        }
+        if (crispy->havemaster)
+        {
+            EpisodeMenu[EpiDef.numitems].alphaKey = 't';
+            EpisodeMenu[EpiDef.numitems].alttext = "The Master Levels";
+            EpiDef.numitems++;
+        }
     }
 
     // [crispy] rearrange Load Game and Save Game menus

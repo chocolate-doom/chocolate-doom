@@ -2279,6 +2279,12 @@ G_InitNew
     if (skill > sk_nightmare)
 	skill = sk_nightmare;
 
+  // [crispy] if NRFTL is not available, "episode 2" may mean The Master Levels ("episode 3")
+  if (gamemode == commercial && episode == 2 && !crispy->havenerve)
+  {
+    episode = crispy->havemaster ? 3 : 1;
+  }
+
   // [crispy] only fix episode/map if it doesn't exist
   if (P_GetNumForMap(episode, map, false) < 0)
   {

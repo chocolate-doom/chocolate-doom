@@ -58,7 +58,6 @@ extern GameMode_t	gamemode;
 extern GameMission_t	gamemission;
 extern GameVersion_t    gameversion;
 extern GameVariant_t    gamevariant;
-extern char            *nervewadfile;
 
 // Convenience macro.
 // 'gamemission' can be equal to pack_chex or pack_hacx, but these are
