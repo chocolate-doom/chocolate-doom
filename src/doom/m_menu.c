@@ -3120,6 +3120,8 @@ void M_Init (void)
     // [crispy] NRFTL / The Master Levels
     if (crispy->havenerve || crispy->havemaster)
     {
+        int i;
+
         NewDef.prevMenu = &EpiDef;
         EpisodeMenu[0].alphaKey = 'h';
         EpisodeMenu[0].alttext = "Hell on Earth";
@@ -3130,12 +3132,28 @@ void M_Init (void)
             EpisodeMenu[EpiDef.numitems].alphaKey = 'n';
             EpisodeMenu[EpiDef.numitems].alttext = "No Rest for the Living";
             EpiDef.numitems++;
+
+            // [crispy] render the episode menu with the HUD font
+            // if the graphics are not from the BFG Edition Doom 2 IWAD or from a PWAD
+            if (gamevariant != bfgedition &&
+                (i = W_CheckNumForName("M_EPI2")) != -1 && W_IsIWADLump(lumpinfo[i]))
+            {
+                EpiDef.lumps_missing = 1;
+            }
         }
+
         if (crispy->havemaster)
         {
             EpisodeMenu[EpiDef.numitems].alphaKey = 't';
             EpisodeMenu[EpiDef.numitems].alttext = "The Master Levels";
             EpiDef.numitems++;
+
+            // [crispy] render the episode menu with the HUD font
+            // if the graphics are not from a PWAD
+            if ((i = W_CheckNumForName("M_EPI1")) != -1 && W_IsIWADLump(lumpinfo[i]))
+            {
+                EpiDef.lumps_missing = 1;
+            }
         }
     }
 

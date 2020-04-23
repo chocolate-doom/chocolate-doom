@@ -1540,13 +1540,6 @@ static void LoadNerveWad(void)
             strcat(lumpinfo[j]->name, "N");
         }
 
-        // [crispy] invalidate the episode menu graphics
-        // if they are not from the BFG Edition Doom 2 IWAD or a PWAD
-        if (gamevariant != bfgedition && (i = W_CheckNumForName("M_EPI2")) != -1 && W_IsIWADLump(lumpinfo[i]))
-        {
-            strcat(lumpinfo[i]->name, "N");
-        }
-
         // [crispy] regenerate the hashtable
         W_GenerateHashTable();
     }
@@ -1607,12 +1600,6 @@ static void LoadMasterlevelsWad(void)
             M_snprintf(lumpname, 9, "MAP%02d", i + 1);
             j = W_GetNumForName(lumpname);
             strcat(lumpinfo[j]->name, "M");
-        }
-
-        // [crispy] invalidate the episode menu graphics if they are not from a PWAD
-        if ((i = W_CheckNumForName("M_EPI1")) != -1 && W_IsIWADLump(lumpinfo[i]))
-        {
-            strcat(lumpinfo[i]->name, "M");
         }
 
         // [crispy] regenerate the hashtable
