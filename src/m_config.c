@@ -1612,6 +1612,14 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_KEY(key_arti_torch),
 
     //!
+    // @game heretic
+    //
+    // Key to use "morph ovum" artifact.
+    //
+
+    CONFIG_VARIABLE_KEY(key_arti_morph),
+
+    //!
     // @game hexen
     //
     // Key to use one of each artifact.
