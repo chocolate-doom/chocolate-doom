@@ -836,6 +836,12 @@ void HU_Drawer(void)
 	return;
     }
 
+    // [crispy] re-calculate widget coordinates on demand
+    if (hu_widescreendelta != WIDESCREENDELTA)
+    {
+        HU_Start();
+    }
+
     // [crispy] translucent messages for translucent HUD
     if (screenblocks >= CRISPY_HUD && (screenblocks % 3 == 2) && (!automapactive || crispy->automapoverlay))
 	dp_translucent = true;
@@ -937,12 +943,6 @@ void HU_Ticker(void)
     int i, rc;
     char c;
     char str[32], *s;
-
-    // [crispy] re-calculate widget coordinates on demand
-    if (hu_widescreendelta != WIDESCREENDELTA)
-    {
-        HU_Start();
-    }
 
     // tick down message counter if message is up
     if (message_counter && !--message_counter)
