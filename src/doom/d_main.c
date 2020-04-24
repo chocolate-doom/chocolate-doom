@@ -1526,14 +1526,14 @@ static void LoadNerveWad(void)
         printf(" [expansion]");
         D_AddFile(crispy->havenerve);
 
-        // [crispy] add suffices to level and level name patch lump names
+        // [crispy] add indicators to level and level name patch lump names
         for (i = 0; i < 9; i++)
         {
             char lumpname[9];
 
             M_snprintf (lumpname, 9, "CWILV%2.2d", i);
             j = W_GetNumForName(lumpname);
-            strcat(lumpinfo[j]->name, "N");
+            lumpinfo[j]->name[0] = 'N';
 
             M_snprintf (lumpname, 9, "MAP%02d", i + 1);
             j = W_GetNumForName(lumpname);
@@ -1588,14 +1588,14 @@ static void LoadMasterlevelsWad(void)
         printf(" [expansion]");
         D_AddFile(crispy->havemaster);
 
-        // [crispy] add suffices to level and level name patch lump names
+        // [crispy] add indicators to level and level name patch lump names
         for (i = 0; i < 21; i++)
         {
             char lumpname[9];
 
             M_snprintf(lumpname, 9, "CWILV%2.2d", i);
             j = W_GetNumForName(lumpname);
-            strcat(lumpinfo[j]->name, "M");
+            lumpinfo[j]->name[0] = 'M';
 
             M_snprintf(lumpname, 9, "MAP%02d", i + 1);
             j = W_GetNumForName(lumpname);

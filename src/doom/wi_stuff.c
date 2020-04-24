@@ -1717,11 +1717,11 @@ static void WI_loadUnloadData(load_callback_t callback)
 	    // [crispy] NRFTL / The Master Levels
 	    if (crispy->havenerve && gamemission == pack_nerve && i < 9)
 	    {
-		strcat(name, "N");
+		name[0] = 'N';
 	    }
 	    if (crispy->havemaster && gamemission == pack_master && i < 21)
 	    {
-		strcat(name, "M");
+		name[0] = 'M';
 	    }
             callback(name, &lnames[i]);
 	}
