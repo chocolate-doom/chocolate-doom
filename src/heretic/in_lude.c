@@ -934,6 +934,7 @@ void IN_DrawDMStats(void)
 //
 //========================================================================
 
+// [crispy] always draw seconds; don't 0-pad minutes with no hour
 void IN_DrawTime(int x, int y, int h, int m, int s)
 {
     if (h)
@@ -942,12 +943,15 @@ void IN_DrawTime(int x, int y, int h, int m, int s)
         IN_DrTextB(DEH_String(":"), x + 26, y);
     }
     x += 34;
-    if (m || h)
+    if (h || m > 9)
     {
         IN_DrawNumber(m, x, y, 2);
     }
+    else if (m)
+    {
+        IN_DrawNumber(m, x + 12, y, 1);
+    }
     x += 34;
-    if (s)
     {
         IN_DrTextB(DEH_String(":"), x - 8, y);
         IN_DrawNumber(s, x, y, 2);
