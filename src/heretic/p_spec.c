@@ -905,8 +905,8 @@ void P_PlayerInSpecialSector(player_t * player)
 
                 P_SetCenterMessage(&players[consoleplayer],
                     (crispy->secretmessage == SECRETMESSAGE_COUNT) ? str_count : HUSTR_SECRETFOUND);
-                // Play an unused sound when secret found
-                S_StartSound(NULL, sfx_chicpk3);
+                // Play the chat sound when secret found, it's a message after all
+                S_StartSound(NULL, sfx_chat);
             }
             sector->special = 0;
             break;
