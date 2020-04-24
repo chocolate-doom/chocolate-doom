@@ -1127,7 +1127,7 @@ static void SetChannelPan(opl_channel_data_t *channel, unsigned int pan)
     // perhaps it was just a bug in the OPL3 support that was never
     // finished. By default we preserve this bug, but we also provide a
     // secret DMXOPTION to fix it.
-//    if (opl_stereo_correct) // [crispy] unconditionally enable correctly reversed stereo
+    if (opl_stereo_correct)
     {
         pan = 144 - pan;
     }
