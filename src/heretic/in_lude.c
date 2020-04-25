@@ -701,9 +701,16 @@ void IN_DrawSingleStats(void)
     int x;
     static int sounds;
 
-    IN_DrTextB(DEH_String("KILLS"), 50, 65);
-    IN_DrTextB(DEH_String("ITEMS"), 50, 90);
-    IN_DrTextB(DEH_String("SECRETS"), 50, 115);
+    // [crispy] offset the stats for Ep.4 and up, to make room for level time
+    int yoffset = 0;
+    if (gamemode == retail && gameepisode > 3)
+    {
+        yoffset = 20;
+    }
+
+    IN_DrTextB(DEH_String("KILLS"), 50, 65 - yoffset);
+    IN_DrTextB(DEH_String("ITEMS"), 50, 90 - yoffset);
+    IN_DrTextB(DEH_String("SECRETS"), 50, 115 - yoffset);
 
     x = 160 - MN_TextBWidth(prev_level_name) / 2;
     IN_DrTextB(prev_level_name, x, 3);
@@ -720,9 +727,9 @@ void IN_DrawSingleStats(void)
         S_StartSound(NULL, sfx_dorcls);
         sounds++;
     }
-    IN_DrawNumber(players[consoleplayer].killcount, 200, 65, 3);
-    V_DrawShadowedPatch(237, 65, FontBSlash);
-    IN_DrawNumber(totalkills, 248, 65, 3);
+    IN_DrawNumber(players[consoleplayer].killcount, 200, 65 - yoffset, 3);
+    V_DrawShadowedPatch(237, 65 - yoffset, FontBSlash);
+    IN_DrawNumber(totalkills, 248, 65 - yoffset, 3);
     if (intertime < 60)
     {
         return;
@@ -732,9 +739,9 @@ void IN_DrawSingleStats(void)
         S_StartSound(NULL, sfx_dorcls);
         sounds++;
     }
-    IN_DrawNumber(players[consoleplayer].itemcount, 200, 90, 3);
-    V_DrawShadowedPatch(237, 90, FontBSlash);
-    IN_DrawNumber(totalitems, 248, 90, 3);
+    IN_DrawNumber(players[consoleplayer].itemcount, 200, 90 - yoffset, 3);
+    V_DrawShadowedPatch(237, 90 - yoffset, FontBSlash);
+    IN_DrawNumber(totalitems, 248, 90 - yoffset, 3);
     if (intertime < 90)
     {
         return;
@@ -744,9 +751,9 @@ void IN_DrawSingleStats(void)
         S_StartSound(NULL, sfx_dorcls);
         sounds++;
     }
-    IN_DrawNumber(players[consoleplayer].secretcount, 200, 115, 3);
-    V_DrawShadowedPatch(237, 115, FontBSlash);
-    IN_DrawNumber(totalsecret, 248, 115, 3);
+    IN_DrawNumber(players[consoleplayer].secretcount, 200, 115 - yoffset, 3);
+    V_DrawShadowedPatch(237, 115 - yoffset, FontBSlash);
+    IN_DrawNumber(totalsecret, 248, 115 - yoffset, 3);
     if (intertime < 150)
     {
         return;
@@ -764,6 +771,9 @@ void IN_DrawSingleStats(void)
     }
     else
     {
+        // [crispy] show the level time for Ep.4 and up
+        IN_DrTextB(DEH_String("TIME"), 85, 130);
+        IN_DrawTime(155, 130, hours, minutes, seconds);
         x = 160 - MN_TextAWidth(DEH_String("NOW ENTERING:")) / 2;
         MN_DrTextA(DEH_String("NOW ENTERING:"), x, 160);
         x = 160 - MN_TextBWidth(next_level_name) / 2;
