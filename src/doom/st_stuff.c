@@ -1185,6 +1185,9 @@ ST_Responder (event_t* ev)
       
       if (gamemode == commercial)
       {
+	if (gamemission == pack_master)
+	    epsd = 3;
+	else
 	if (gamemission == pack_nerve)
 	    epsd = 2;
 	else
