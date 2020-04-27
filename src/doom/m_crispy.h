@@ -23,7 +23,7 @@
 typedef struct
 {
     int value;
-    char *name;
+    const char *name;
 } multiitem_t;
 
 extern multiitem_t multiitem_bobfactor[NUM_BOBFACTORS];

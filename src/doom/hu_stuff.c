@@ -412,7 +412,7 @@ const char *mapnames_commercial[] =
     MHUSTR_21
 };
 
-static void CrispyReplaceColor (char *str, const int cr, const char *col)
+static void CrispyReplaceColor (const char *str, const int cr, const char *col)
 {
     char *str_replace, col_replace[16];
 

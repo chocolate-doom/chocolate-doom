@@ -28,7 +28,7 @@
 #include "p_mobj.h" // [crispy] MF_*
 
 typedef struct {
-    char *flag;
+    const char *flag;
     int bits;
 } bex_thingbits_t;
 
