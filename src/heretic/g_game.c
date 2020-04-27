@@ -1918,10 +1918,11 @@ void G_RecordDemo(skill_t skill, int numplayers, int episode, int map,
     //!
     // @category demo
     //
-    // Smooth out low resolution turning when recording a demo.
+    // Don't smooth out low resolution turning when recording a demo.
     //
 
-    shortticfix = M_ParmExists("-shortticfix");
+    shortticfix = (!M_ParmExists("-noshortticfix"));
+    //[crispy] make shortticfix the default
 
     G_InitNew(skill, episode, map);
     usergame = false;
