@@ -1731,7 +1731,7 @@ AM_drawThings
 	  {
 	    AM_drawLineCharacter
 		(thintriangle_guy, arrlen(thintriangle_guy),
-		 16<<FRACBITS, t->angle, colors+lightlev, t->x, t->y);
+		 16<<FRACBITS, t->angle, colors+lightlev, pt.x, pt.y);
 	  }
 	    t = t->snext;
 	}
