@@ -58,19 +58,7 @@
 #define HU_INPUTWIDTH   64
 #define HU_INPUTHEIGHT  1
 
-char *chat_macros[10] =
-{
-    HUSTR_CHATMACRO0,
-    HUSTR_CHATMACRO1,
-    HUSTR_CHATMACRO2,
-    HUSTR_CHATMACRO3,
-    HUSTR_CHATMACRO4,
-    HUSTR_CHATMACRO5,
-    HUSTR_CHATMACRO6,
-    HUSTR_CHATMACRO7,
-    HUSTR_CHATMACRO8,
-    HUSTR_CHATMACRO9
-};
+char *chat_macros[10];
 
 // villsa [STRIFE]
 char player_names[8][16] =
