@@ -1243,6 +1243,8 @@ void P_SpawnPuff(fixed_t x, fixed_t y, fixed_t z)
         default:
             break;
     }
+    // [crispy] suppress interpolation for the first tic
+    puff->interp = -1;
 }
 
 /*
