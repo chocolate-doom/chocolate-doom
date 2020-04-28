@@ -731,11 +731,12 @@ static void HandleArgs(void)
     //!
     // @category demo
     //
-    // Record or playback a demo without automatically quitting
+    // Record or playback a demo, automatically quitting
     // after either level exit or player respawn.
     //
 
-    demoextend = M_ParmExists("-demoextend");
+    demoextend = (!M_ParmExists("-nodemoextend"));
+    //[crispy] make demoextend the default
 
     if (M_ParmExists("-testcontrols"))
     {
