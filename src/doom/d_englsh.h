@@ -757,7 +757,7 @@
 "twisted levels that hell had to\n"\
 "offer and you have survived. \n\n"\
 "But alas the demons laugh at you\n"\
-"since you have shown cowardness and didn't\n"\
+"since you have shown cowardice and didn't\n"\
 "reach the most hideous level\n"\
 "they had made for you."
 
