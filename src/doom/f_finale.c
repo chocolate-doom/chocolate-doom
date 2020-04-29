@@ -100,6 +100,7 @@ static textscreen_t textscreens[] =
 
     { pack_nerve, 1, 8, "SLIME16",   N1TEXT},
     { pack_master, 1, 20, "SLIME16",   M1TEXT},
+    { pack_master, 1, 21, "SLIME16",   M2TEXT},
 };
 
 const char *finaletext;
@@ -145,12 +146,6 @@ void F_StartFinale (void)
         if (gameversion == exe_chex && screen->mission == doom)
         {
             screen->level = 5;
-        }
-
-        // [crispy] Hack for Master Levels MAP21: Bad Dream
-        if (gamemission == pack_master && screen->mission == pack_master && gamemap == 21)
-        {
-            screen->level = 21;
         }
 
         // [crispy] During demo recording/playback or network games

@@ -752,7 +752,26 @@
 
 #define M1TEXT \
 "CONGRATULATIONS YOU HAVE FINISHED... \n\n"\
-"THE MASTER LEVELS\n"
+"MOST OF THE MASTER LEVELS\n\n"\
+"You have ventured throught the most\n"\
+"twisted levels that hell had to\n"\
+"offer and you have survived.\n\n"\
+"But alas the demons laugh at you\n"\
+"since you have shown cowardness and didn't\n"\
+"reach the most hideous level\n"\
+"they had made for you."
+
+#define M2TEXT \
+"CONGRATULATIONS YOU HAVE FINISHED... \n\n"\
+"ALL THE MASTER LEVELS\n\n"\
+"You have ventured throught all the\n"\
+"twisted levels that hell had to\n"\
+"offer and you have survived.\n\n"\
+"The Flames of rage flow through\n"\
+"your veins, you are ready\n"\
+"for more - but you don't know where\n"\
+"to find more when the demons hide\n"\
+"like cowards when they see you."
 
 //
 // Character cast strings F_FINALE.C
