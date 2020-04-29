@@ -753,9 +753,9 @@
 #define M1TEXT \
 "CONGRATULATIONS YOU HAVE FINISHED... \n\n"\
 "MOST OF THE MASTER LEVELS\n\n"\
-"You have ventured throught the most\n"\
+"You have ventured through the most\n"\
 "twisted levels that hell had to\n"\
-"offer and you have survived.\n\n"\
+"offer and you have survived. \n\n"\
 "But alas the demons laugh at you\n"\
 "since you have shown cowardness and didn't\n"\
 "reach the most hideous level\n"\
@@ -764,9 +764,9 @@
 #define M2TEXT \
 "CONGRATULATIONS YOU HAVE FINISHED... \n\n"\
 "ALL THE MASTER LEVELS\n\n"\
-"You have ventured throught all the\n"\
+"You have ventured through all the\n"\
 "twisted levels that hell had to\n"\
-"offer and you have survived.\n\n"\
+"offer and you have survived. \n\n"\
 "The Flames of rage flow through\n"\
 "your veins, you are ready\n"\
 "for more - but you don't know where\n"\
