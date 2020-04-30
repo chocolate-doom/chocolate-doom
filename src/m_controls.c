@@ -66,6 +66,7 @@ int key_arti_chaosdevice = 0;
 int key_arti_shadowsphere = 0;
 int key_arti_wings = 0;
 int key_arti_torch = 0;
+int key_arti_morph = 0;
 
 //
 // Hexen key controls
@@ -289,6 +290,7 @@ void M_BindHereticControls(void)
     M_BindIntVariable("key_arti_shadowsphere",  &key_arti_shadowsphere);
     M_BindIntVariable("key_arti_wings",         &key_arti_wings);
     M_BindIntVariable("key_arti_torch",         &key_arti_torch);
+    M_BindIntVariable("key_arti_morph",         &key_arti_morph);
 }
 
 void M_BindHexenControls(void)
