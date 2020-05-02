@@ -860,7 +860,7 @@ void D_IdentifyVersion(void)
         // filepath.
         if((p = M_CheckParm("-iwad")) && p < myargc - 1)
         {
-            char   *iwad     = myargv[p + 1];
+            const char *iwad = myargv[p + 1];
             size_t  len      = strlen(iwad) + 1;
             char   *iwadpath = Z_Malloc(len, PU_STATIC, NULL);
             char   *voiceswad;
