@@ -224,7 +224,7 @@ static void SetMission(mission_config_t *config)
     M_SetConfigFilenames(config->config_file, config->extra_config_file);
 }
 
-static mission_config_t *GetMissionForName(char *name)
+static mission_config_t *GetMissionForName(const char *name)
 {
     int i;
 
