@@ -1008,7 +1008,7 @@ static boolean IsMusicLump(int lumpnum)
 // Dump an example config file containing checksums for all MIDI music
 // found in the WAD directory.
 
-static void DumpSubstituteConfig(char *filename)
+static void DumpSubstituteConfig(const char *filename)
 {
     sha1_context_t context;
     sha1_digest_t digest;
