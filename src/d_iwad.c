@@ -622,7 +622,7 @@ static void AddXdgDirs(void)
 
     if (env == NULL)
     {
-        char *homedir = getenv("HOME");
+        const char *homedir = getenv("HOME");
         if (homedir == NULL)
         {
             homedir = "/";
