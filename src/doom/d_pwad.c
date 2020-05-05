@@ -1,0 +1,443 @@
+//
+// Copyright(C) 1993-1996 Id Software, Inc.
+// Copyright(C) 2005-2014 Simon Howard
+// Copyright(C) 2020 Fabian Greffrath
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// DESCRIPTION:
+//	Auto-loading of (semi-)official PWAD expansions, i.e.
+//	Sigil, No Rest for the Living and The Master Levels
+//
+
+#include <stdlib.h>
+
+#include "doomstat.h"
+#include "deh_str.h"
+#include "d_iwad.h"
+#include "m_misc.h"
+#include "w_wad.h"
+
+extern char *iwadfile;
+
+// [crispy] auto-load SIGIL.WAD (and SIGIL_SHREDS.WAD) if available
+void D_LoadSigilWad (void)
+{
+	int i, j;
+	char *sigil_wad = NULL, *sigil_shreds = NULL;
+	char *dirname;
+
+	const char *const sigil_wads[] = {
+		"SIGIL_V1_21.WAD",
+		"SIGIL_V1_2.WAD",
+		"SIGIL.WAD"
+	};
+
+	struct {
+		const char *name;
+		const char new_name[8];
+	} sigil_lumps [] = {
+		{"CREDIT",   "SIGCREDI"},
+		{"HELP1",    "SIGHELP1"},
+		{"TITLEPIC", "SIGTITLE"},
+		{"DEHACKED", "SIG_DEH"},
+		{"DEMO1",    "SIGDEMO1"},
+		{"DEMO2",    "SIGDEMO2"},
+		{"DEMO3",    "SIGDEMO3"},
+		{"DEMO4",    "SIGDEMO4"},
+		{"D_INTER",  "D_SIGINT"},
+		{"D_INTRO",  "D_SIGTIT"},
+	};
+
+	const char *const texture_files[] = {
+		"PNAMES",
+		"TEXTURE1",
+		"TEXTURE2",
+	};
+
+	// [crispy] don't load SIGIL.WAD if another PWAD already provides E5M1
+	i = W_CheckNumForName("E5M1");
+	if (i != -1)
+	{
+		return;
+	}
+
+	// [crispy] don't load SIGIL.WAD if SIGIL_COMPAT.WAD is already loaded
+	i = W_CheckNumForName("E3M1");
+	if (i != -1 && !strncasecmp(W_WadNameForLump(lumpinfo[i]), "SIGIL_COMPAT", 12))
+	{
+		return;
+	}
+
+	// [crispy] don't load SIGIL.WAD if another PWAD already modifies the texture files
+	for (i = 0; i < arrlen(texture_files); i++)
+	{
+		j = W_CheckNumForName(texture_files[i]);
+
+		if (j != -1 && !W_IsIWADLump(lumpinfo[j]))
+		{
+			return;
+		}
+	}
+
+	dirname = M_DirName(iwadfile);
+	sigil_shreds = M_StringJoin(dirname, DIR_SEPARATOR_S, "SIGIL_SHREDS.WAD", NULL);
+
+	// [crispy] load SIGIL.WAD
+	for (i = 0; i < arrlen(sigil_wads); i++)
+	{
+		sigil_wad = M_StringJoin(dirname, DIR_SEPARATOR_S, sigil_wads[i], NULL);
+
+		if (M_FileExists(sigil_wad))
+		{
+			break;
+		}
+
+		free(sigil_wad);
+		sigil_wad = D_FindWADByName(sigil_wads[i]);
+
+		if (sigil_wad)
+		{
+			break;
+		}
+	}
+	free(dirname);
+
+	if (sigil_wad == NULL)
+	{
+		free(sigil_shreds);
+		return;
+	}
+
+	printf(" [Sigil] adding %s\n", sigil_wad);
+	W_AddFile(sigil_wad);
+	free(sigil_wad);
+
+	// [crispy] load SIGIL_SHREDS.WAD
+	if (!M_FileExists(sigil_shreds))
+	{
+		free(sigil_shreds);
+		sigil_shreds = D_FindWADByName("SIGIL_SHREDS.WAD");
+	}
+
+	if (sigil_shreds != NULL)
+	{
+		printf(" [Sigil Shreds] adding %s\n", sigil_shreds);
+		W_AddFile(sigil_shreds);
+		free(sigil_shreds);
+	}
+
+	// [crispy] rename intrusive SIGIL_SHREDS.WAD music lumps out of the way
+	for (i = 0; i < arrlen(sigil_lumps); i++)
+	{
+		// [crispy] skip non-music lumps
+		if (strncasecmp(sigil_lumps[i].name, "D_", 2))
+		{
+			continue;
+		}
+
+		j = W_CheckNumForName(sigil_lumps[i].name);
+
+		if (j != -1 && !strncasecmp(W_WadNameForLump(lumpinfo[j]), "SIGIL_SHREDS", 12))
+		{
+			memcpy(lumpinfo[j]->name, sigil_lumps[i].new_name, 8);
+		}
+	}
+
+	// [crispy] rename intrusive SIGIL.WAD graphics, demos and music lumps out of the way
+	for (i = 0; i < arrlen(sigil_lumps); i++)
+	{
+		j = W_CheckNumForName(sigil_lumps[i].name);
+
+		if (j != -1 && !strncasecmp(W_WadNameForLump(lumpinfo[j]), "SIGIL", 5))
+		{
+			memcpy(lumpinfo[j]->name, sigil_lumps[i].new_name, 8);
+		}
+	}
+
+	// [crispy] regenerate the hashtable
+	W_GenerateHashTable();
+}
+
+// [crispy] check if NERVE.WAD is already loaded as a PWAD
+static boolean CheckNerveLoaded (void)
+{
+	int i, j;
+
+	if ((i = W_GetNumForName("MAP01")) != -1 &&
+	    (j = W_GetNumForName("MAP09")) != -1 &&
+	    !strcasecmp(W_WadNameForLump(lumpinfo[i]), "NERVE.WAD") &&
+	    !strcasecmp(W_WadNameForLump(lumpinfo[j]), "NERVE.WAD"))
+	{
+		gamemission = pack_nerve;
+		DEH_AddStringReplacement ("TITLEPIC", "INTERPIC");
+
+		return true;
+	}
+
+	return false;
+}
+
+// [crispy] auto-load NERVE.WAD if available
+static void CheckLoadNerve (void)
+{
+	int i, j;
+
+	if (strrchr(iwadfile, DIR_SEPARATOR) != NULL)
+	{
+		char *dir;
+		dir = M_DirName(iwadfile);
+		crispy->havenerve = M_StringJoin(dir, DIR_SEPARATOR_S, "NERVE.WAD", NULL);
+		free(dir);
+	}
+	else
+	{
+		crispy->havenerve = M_StringDuplicate("NERVE.WAD");
+	}
+
+	if (!M_FileExists(crispy->havenerve))
+	{
+		free(crispy->havenerve);
+		crispy->havenerve = D_FindWADByName("NERVE.WAD");
+	}
+
+	if (crispy->havenerve == NULL)
+	{
+		return;
+	}
+
+	printf(" [No Rest for the Living] adding %s\n", crispy->havenerve);
+	W_AddFile(crispy->havenerve);
+
+	// [crispy] add indicators to level and level name patch lump names
+	for (i = 0; i < 9; i++)
+	{
+		char lumpname[9];
+
+		M_snprintf (lumpname, 9, "CWILV%2.2d", i);
+		j = W_GetNumForName(lumpname);
+		lumpinfo[j]->name[0] = 'N';
+
+		M_snprintf (lumpname, 9, "MAP%02d", i + 1);
+		j = W_GetNumForName(lumpname);
+		strcat(lumpinfo[j]->name, "N");
+	}
+
+	// [crispy] regenerate the hashtable
+	W_GenerateHashTable();
+
+	return;
+}
+
+void D_LoadNerveWad (void)
+{
+	// [crispy] check if NERVE.WAD is already loaded as a PWAD
+	if (!CheckNerveLoaded())
+	{
+		// [crispy] else auto-load NERVE.WAD if available
+		CheckLoadNerve();
+	}
+}
+
+// [crispy] check if the single MASTERLEVELS.WAD is already loaded as a PWAD
+static boolean CheckMasterlevelsLoaded (void)
+{
+	int i, j;
+
+	if ((i = W_GetNumForName("MAP01")) != -1 &&
+	    (j = W_GetNumForName("MAP21")) != -1 &&
+	    !strcasecmp(W_WadNameForLump(lumpinfo[i]), "MASTERLEVELS.WAD") &&
+	    !strcasecmp(W_WadNameForLump(lumpinfo[j]), "MASTERLEVELS.WAD"))
+	{
+		gamemission = pack_master;
+
+		return true;
+	}
+
+	return false;
+}
+
+// [crispy] auto-load the single MASTERLEVELS.WAD if available
+static boolean CheckLoadMasterlevels (void)
+{
+	int i, j;
+
+	if (strrchr(iwadfile, DIR_SEPARATOR) != NULL)
+	{
+		char *dir;
+		dir = M_DirName(iwadfile);
+		crispy->havemaster = M_StringJoin(dir, DIR_SEPARATOR_S, "MASTERLEVELS.WAD", NULL);
+		free(dir);
+	}
+	else
+	{
+		crispy->havemaster = M_StringDuplicate("MASTERLEVELS.WAD");
+	}
+
+	if (!M_FileExists(crispy->havemaster))
+	{
+		free(crispy->havemaster);
+		crispy->havemaster = D_FindWADByName("MASTERLEVELS.WAD");
+	}
+
+	if (crispy->havemaster == NULL)
+	{
+		return false;
+	}
+
+	printf(" [The Master Levels] adding %s\n", crispy->havemaster);
+	W_AddFile(crispy->havemaster);
+
+	// [crispy] add indicators to level and level name patch lump names
+	for (i = 0; i < 21; i++)
+	{
+		char lumpname[9];
+
+		M_snprintf(lumpname, 9, "CWILV%2.2d", i);
+		j = W_GetNumForName(lumpname);
+		lumpinfo[j]->name[0] = 'M';
+
+		M_snprintf(lumpname, 9, "MAP%02d", i + 1);
+		j = W_GetNumForName(lumpname);
+		strcat(lumpinfo[j]->name, "M");
+	}
+
+	// [crispy] regenerate the hashtable
+	W_GenerateHashTable();
+
+	return true;
+}
+
+// [crispy] check if the 20 individual separate Mater Levels PWADs are available
+
+static struct {
+	const char *wad_name;
+	int pc_slot;
+	int psn_slot;
+	char *file_path;
+} masterlevels_wads [] = {
+	{"ATTACK.WAD",    1,  1},
+	{"CANYON.WAD",    1,  2},
+	{"CATWALK.WAD",   1,  3},
+	{"COMBINE.WAD",   1,  4},
+	{"FISTULA.WAD",   1,  5},
+	{"GARRISON.WAD",  1,  6},
+	{"MANOR.WAD",     1,  7},
+	{"PARADOX.WAD",   1,  8},
+	{"SUBSPACE.WAD",  1,  9},
+	{"SUBTERRA.WAD",  1, 10},
+	{"TTRAP.WAD",     1, 11},
+	{"VIRGIL.WAD",    3, 12},
+	{"MINOS.WAD",     5, 13},
+	{"BLOODSEA.WAD",  7, 14},
+	{"MEPHISTO.WAD",  7, 15},
+	{"NESSUS.WAD",    7, 16},
+	{"GERYON.WAD",    8, 17},
+	{"VESPERAS.WAD",  9, 18},
+	{"BLACKTWR.WAD", 25, 19},
+	{"TEETH.WAD",    31, 20},
+	{NULL,           32, 21}, // [crispy] TEETH.WAD
+};
+
+static boolean CheckMasterlevelsAvailable (void)
+{
+	int i;
+	char *dir;
+
+	dir = M_DirName(iwadfile);
+
+	for (i = 0; masterlevels_wads[i].wad_name; i++)
+	{
+		char *havemaster;
+
+		if (strrchr(iwadfile, DIR_SEPARATOR) != NULL)
+		{
+			havemaster = M_StringJoin(dir, DIR_SEPARATOR_S, masterlevels_wads[i].wad_name, NULL);
+		}
+		else
+		{
+			havemaster = M_StringDuplicate(masterlevels_wads[i].wad_name);
+		}
+
+		if (!M_FileExists(havemaster))
+		{
+			free(havemaster);
+			havemaster = D_FindWADByName(masterlevels_wads[i].wad_name);
+		}
+
+		if (havemaster == NULL)
+		{
+			int j;
+
+			for (j = 0; j < i; j++)
+			{
+				free(masterlevels_wads[i].file_path);
+			}
+
+			free(dir);
+			return false;
+		}
+
+		masterlevels_wads[i].file_path = havemaster;
+	}
+
+	free(dir);
+	return true;
+}
+
+// [crispy] auto-load the 20 individual separate Mater Levels PWADs as if the were the single MASTERLEVELS.WAD
+static void LoadMasterlevelsWads (void)
+{
+	int i, j;
+	char lumpname[9];
+
+	for (i = 0; i < arrlen(masterlevels_wads); i++)
+	{
+		// [crispy] add TEETH.WAD only once
+		if (masterlevels_wads[i].wad_name)
+		{
+			printf(" [The Master Levels %02d] adding %s\n", i+1, masterlevels_wads[i].file_path);
+			W_AddFile(masterlevels_wads[i].file_path);
+			free(masterlevels_wads[i].file_path);
+		}
+
+		M_snprintf(lumpname, 9, "MAP%02d", masterlevels_wads[i].pc_slot);
+		j = W_GetNumForName(lumpname);
+		lumpinfo[j]->name[3] = '0' + (masterlevels_wads[i].psn_slot / 10);
+		lumpinfo[j]->name[4] = '0' + (masterlevels_wads[i].psn_slot % 10);
+		lumpinfo[j]->name[5] = 'M';
+	}
+
+	// [crispy] indicate this is not the single MASTERLEVELS.WAD
+	crispy->havemaster = (char *)-1;
+
+	// [crispy] regenerate the hashtable
+	W_GenerateHashTable();
+	return;
+}
+
+void D_LoadMasterlevelsWad (void)
+{
+	// [crispy] check if the single MASTERLEVELS.WAD is already loaded as a PWAD
+	if (!CheckMasterlevelsLoaded())
+	{
+		// [crispy] else auto-load the single MASTERLEVELS.WAD if available
+		if (!CheckLoadMasterlevels())
+		{
+			// [crispy] else check if the 20 individual separate Mater Levels PWADs are available
+			if (CheckMasterlevelsAvailable())
+			{
+				// [crispy] and auto-load them as if the were the single MASTERLEVELS.WAD
+				LoadMasterlevelsWads();
+			}
+		}
+	}
+}

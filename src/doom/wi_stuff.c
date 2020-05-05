@@ -1719,7 +1719,7 @@ static void WI_loadUnloadData(load_callback_t callback)
 	    {
 		name[0] = 'N';
 	    }
-	    if (crispy->havemaster && wbs->epsd == 2 && i < 21) // [crispy] gamemission == pack_master
+	    if (crispy->havemaster && crispy->havemaster != (char *)-1 && wbs->epsd == 2 && i < 21) // [crispy] gamemission == pack_master
 	    {
 		name[0] = 'M';
 	    }

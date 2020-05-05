@@ -23,6 +23,7 @@ deh_weapon.c                    \
 d_items.c          d_items.h    \
 d_main.c           d_main.h     \
 d_net.c                         \
+d_pwad.c           d_pwad.h     \
                    doomdata.h   \
 doomdef.c          doomdef.h    \
 doomstat.c         doomstat.h   \

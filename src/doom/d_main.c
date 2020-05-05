@@ -35,6 +35,7 @@
 #include "sounds.h"
 
 #include "d_iwad.h"
+#include "d_pwad.h" // [crispy] D_Load{Sigil,Nerve,Masterlevels}Wad()
 
 #include "z_zone.h"
 #include "w_main.h"
@@ -1351,279 +1352,6 @@ static void LoadIwadDeh(void)
     }
 }
 
-// [crispy] support loading SIGIL.WAD (and SIGIL_SHREDS.WAD) alongside DOOM.WAD
-static void LoadSigilWad(void)
-{
-    int i;
-
-    struct {
-        const char *name;
-        const char new_name[8];
-    } sigil_lumps [] = {
-        {"CREDIT",   "SIGCREDI"},
-        {"HELP1",    "SIGHELP1"},
-        {"TITLEPIC", "SIGTITLE"},
-        {"DEHACKED", "SIG_DEH"},
-        {"DEMO1",    "SIGDEMO1"},
-        {"DEMO2",    "SIGDEMO2"},
-        {"DEMO3",    "SIGDEMO3"},
-        {"DEMO4",    "SIGDEMO4"},
-        {"D_INTER",  "D_SIGINT"},
-        {"D_INTRO",  "D_SIGTIT"},
-    };
-
-    const char *const texture_files[] = {
-        "PNAMES",
-        "TEXTURE1",
-        "TEXTURE2",
-    };
-
-    // [crispy] don't load SIGIL.wad if another PWAD already provides E5M1
-    i = W_CheckNumForName("E5M1");
-    if (i != -1)
-    {
-        return;
-    }
-
-    // [crispy] don't load SIGIL.wad if SIGIL_COMPAT.wad is already loaded
-    i = W_CheckNumForName("E3M1");
-    if (i != -1 && !strncasecmp(W_WadNameForLump(lumpinfo[i]), "SIGIL_COMPAT", 12))
-    {
-        return;
-    }
-
-    // [crispy] don't load SIGIL.wad if another PWAD already modifies the texture files
-    for (i = 0; i < arrlen(texture_files); i++)
-    {
-        int j;
-
-        j = W_CheckNumForName(texture_files[i]);
-
-        if (j != -1 && !W_IsIWADLump(lumpinfo[j]))
-        {
-            return;
-        }
-    }
-
-    if (gameversion == exe_ultimate)
-    {
-        const char *const sigil_wads[] = {
-            "SIGIL_v1_21.wad",
-            "SIGIL_v1_2.wad",
-            "SIGIL.wad"
-        };
-        char *sigil_wad = NULL, *sigil_shreds = NULL;
-        char *dirname;
-
-        dirname = M_DirName(iwadfile);
-        sigil_shreds = M_StringJoin(dirname, DIR_SEPARATOR_S, "SIGIL_SHREDS.wad", NULL);
-
-        // [crispy] load SIGIL.WAD
-        for (i = 0; i < arrlen(sigil_wads); i++)
-        {
-            sigil_wad = M_StringJoin(dirname, DIR_SEPARATOR_S, sigil_wads[i], NULL);
-
-            if (M_FileExists(sigil_wad))
-            {
-                break;
-            }
-
-            free(sigil_wad);
-            sigil_wad = D_FindWADByName(sigil_wads[i]);
-
-            if (sigil_wad)
-            {
-                break;
-            }
-        }
-        free(dirname);
-
-        if (sigil_wad == NULL)
-        {
-            free(sigil_shreds);
-            return;
-        }
-
-        printf(" [expansion]");
-        D_AddFile(sigil_wad);
-        free(sigil_wad);
-
-        // [crispy] load SIGIL_SHREDS.WAD
-        if (!M_FileExists(sigil_shreds))
-        {
-            free(sigil_shreds);
-            sigil_shreds = D_FindWADByName("SIGIL_SHREDS.wad");
-        }
-
-        if (sigil_shreds != NULL)
-        {
-            printf(" [expansion]");
-            D_AddFile(sigil_shreds);
-            free(sigil_shreds);
-        }
-
-        // [crispy] rename intrusive SIGIL_SHREDS.wad music lumps out of the way
-        for (i = 0; i < arrlen(sigil_lumps); i++)
-        {
-            int j;
-
-            // [crispy] skip non-music lumps
-            if (strncasecmp(sigil_lumps[i].name, "D_", 2))
-            {
-                continue;
-            }
-
-            j = W_CheckNumForName(sigil_lumps[i].name);
-
-            if (j != -1 && !strncasecmp(W_WadNameForLump(lumpinfo[j]), "SIGIL_SHREDS", 12))
-            {
-                memcpy(lumpinfo[j]->name, sigil_lumps[i].new_name, 8);
-            }
-        }
-
-        // [crispy] rename intrusive SIGIL.wad graphics, demos and music lumps out of the way
-        for (i = 0; i < arrlen(sigil_lumps); i++)
-        {
-            int j;
-
-            j = W_CheckNumForName(sigil_lumps[i].name);
-
-            if (j != -1 && !strncasecmp(W_WadNameForLump(lumpinfo[j]), "SIGIL", 5))
-            {
-                memcpy(lumpinfo[j]->name, sigil_lumps[i].new_name, 8);
-            }
-        }
-
-        // [crispy] regenerate the hashtable
-        W_GenerateHashTable();
-    }
-}
-
-// [crispy] support loading NERVE.WAD alongside DOOM2.WAD
-static void LoadNerveWad(void)
-{
-    int i, j;
-
-    if (gamemission != doom2)
-        return;
-
-    if ((i = W_GetNumForName("map01")) != -1 &&
-        (j = W_GetNumForName("map09")) != -1 &&
-        !strcasecmp(W_WadNameForLump(lumpinfo[i]), "nerve.wad") &&
-        !strcasecmp(W_WadNameForLump(lumpinfo[j]), "nerve.wad"))
-    {
-	gamemission = pack_nerve;
-	DEH_AddStringReplacement ("TITLEPIC", "INTERPIC");
-    }
-    else
-    {
-        if (strrchr(iwadfile, DIR_SEPARATOR) != NULL)
-        {
-            char *dir;
-            dir = M_DirName(iwadfile);
-            crispy->havenerve = M_StringJoin(dir, DIR_SEPARATOR_S, "nerve.wad", NULL);
-            free(dir);
-        }
-        else
-        {
-            crispy->havenerve = M_StringDuplicate("nerve.wad");
-        }
-
-        if (!M_FileExists(crispy->havenerve))
-        {
-            free(crispy->havenerve);
-            crispy->havenerve = D_FindWADByName("nerve.wad");
-        }
-
-        if (crispy->havenerve == NULL)
-        {
-            return;
-        }
-
-        printf(" [expansion]");
-        D_AddFile(crispy->havenerve);
-
-        // [crispy] add indicators to level and level name patch lump names
-        for (i = 0; i < 9; i++)
-        {
-            char lumpname[9];
-
-            M_snprintf (lumpname, 9, "CWILV%2.2d", i);
-            j = W_GetNumForName(lumpname);
-            lumpinfo[j]->name[0] = 'N';
-
-            M_snprintf (lumpname, 9, "MAP%02d", i + 1);
-            j = W_GetNumForName(lumpname);
-            strcat(lumpinfo[j]->name, "N");
-        }
-
-        // [crispy] regenerate the hashtable
-        W_GenerateHashTable();
-    }
-}
-
-// [crispy] support loading MASTERLEVELS.WAD alongside DOOM2.WAD
-static void LoadMasterlevelsWad(void)
-{
-    int i, j;
-
-    if (gamemission != doom2)
-        return;
-
-    if ((i = W_GetNumForName("map01")) != -1 &&
-        (j = W_GetNumForName("map21")) != -1 &&
-        !strcasecmp(W_WadNameForLump(lumpinfo[i]), "masterlevels.wad") &&
-        !strcasecmp(W_WadNameForLump(lumpinfo[j]), "masterlevels.wad"))
-    {
-	gamemission = pack_master;
-    }
-    else
-    {
-        if (strrchr(iwadfile, DIR_SEPARATOR) != NULL)
-        {
-            char *dir;
-            dir = M_DirName(iwadfile);
-            crispy->havemaster = M_StringJoin(dir, DIR_SEPARATOR_S, "masterlevels.wad", NULL);
-            free(dir);
-        }
-        else
-        {
-            crispy->havemaster = M_StringDuplicate("masterlevels.wad");
-        }
-
-        if (!M_FileExists(crispy->havemaster))
-        {
-            free(crispy->havemaster);
-            crispy->havemaster = D_FindWADByName("masterlevels.wad");
-        }
-
-        if (crispy->havemaster == NULL)
-        {
-            return;
-        }
-
-        printf(" [expansion]");
-        D_AddFile(crispy->havemaster);
-
-        // [crispy] add indicators to level and level name patch lump names
-        for (i = 0; i < 21; i++)
-        {
-            char lumpname[9];
-
-            M_snprintf(lumpname, 9, "CWILV%2.2d", i);
-            j = W_GetNumForName(lumpname);
-            lumpinfo[j]->name[0] = 'M';
-
-            M_snprintf(lumpname, 9, "MAP%02d", i + 1);
-            j = W_GetNumForName(lumpname);
-            strcat(lumpinfo[j]->name, "M");
-        }
-
-        // [crispy] regenerate the hashtable
-        W_GenerateHashTable();
-    }
-}
-
 static void G_CheckDemoStatusAtExit (void)
 {
     G_CheckDemoStatus();
@@ -2120,9 +1848,16 @@ void D_DoomMain (void)
     // [crispy] allow overriding of special-casing
     if (!M_ParmExists("-noautoload") && gamemode != shareware)
     {
-	LoadMasterlevelsWad();
-	LoadNerveWad();
-	LoadSigilWad();
+	if (gamemode == retail)
+	{
+		D_LoadSigilWad();
+	}
+
+	if (gamemission == doom2)
+	{
+		D_LoadNerveWad();
+		D_LoadMasterlevelsWad();
+	}
     }
 
     // Load DEHACKED lumps from WAD files - but only if we give the right
