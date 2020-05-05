@@ -535,6 +535,11 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
         gamekeydown[key_arti_torch] = false;
         cmd->arti = arti_torch;
     }
+    else if (gamekeydown[key_arti_morph] && !cmd->arti)
+    {
+        gamekeydown[key_arti_morph] = false;
+        cmd->arti = arti_egg;
+    }
 
 //
 // buttons
@@ -1897,7 +1902,7 @@ void G_WriteDemoTiccmd(ticcmd_t * cmd)
 */
 
 void G_RecordDemo(skill_t skill, int numplayers, int episode, int map,
-                  char *name)
+                  const char *name)
 {
     int i;
     int maxsize;

@@ -699,7 +699,7 @@ uint32_t SV_ReadLong(void);
 extern char *savegamedir;
 
 void G_RecordDemo(skill_t skill, int numplayers, int episode, int map,
-                  char *name);
+                  const char *name);
 // only called by startup code
 
 void G_PlayDemo(char *name);

@@ -2584,7 +2584,7 @@ void G_WriteDemoTiccmd (ticcmd_t* cmd)
 //
 // G_RecordDemo
 //
-void G_RecordDemo (char *name)
+void G_RecordDemo (const char *name)
 {
     size_t demoname_size;
     int i;
