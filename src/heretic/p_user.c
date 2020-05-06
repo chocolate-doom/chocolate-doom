@@ -582,7 +582,7 @@ void P_PlayerThink(player_t * player)
         if (!player->centerMessageTics)
         {
             // Refresh the screen when a message goes away
-            BorderTopRefresh = true;
+            BorderNeedRefresh = true;
         }
     }
 
