@@ -521,7 +521,7 @@ void R_DrawTopBorder(void)
     src = W_CacheLumpName("F_022", PU_CACHE);
     dest = I_VideoBuffer;
 
-    for (y = 0; y < 34; y++)
+    for (y = 0; y < (34 << crispy->hires); y++)
     {
         for (x = 0; x < SCREENWIDTH / 64; x++)
         {
