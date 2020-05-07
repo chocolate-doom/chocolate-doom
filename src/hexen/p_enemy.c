@@ -2915,9 +2915,9 @@ static void DragonSeek(mobj_t * actor, angle_t thresh, angle_t turnMax)
                 mo = P_FindMobjFromTID(target->args[i], &search);
                 angleToSpot = R_PointToAngle2(actor->x, actor->y,
                                               mo->x, mo->y);
-                if (abs(angleToSpot - angleToTarget) < bestAngle)
+                if (abs((int) angleToSpot - (int) angleToTarget) < bestAngle)
                 {
-                    bestAngle = abs(angleToSpot - angleToTarget);
+                    bestAngle = abs((int) angleToSpot - (int) angleToTarget);
                     bestArg = i;
                 }
             }
