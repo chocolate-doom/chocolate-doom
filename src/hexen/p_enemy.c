@@ -2986,13 +2986,13 @@ void A_DragonFlight(mobj_t * actor)
         }
         angle = R_PointToAngle2(actor->x, actor->y, actor->target->x,
                                 actor->target->y);
-        if (abs(actor->angle - angle) < ANG45 / 2
+        if (abs((int) actor->angle - (int) angle) < ANG45 / 2
             && P_CheckMeleeRange(actor))
         {
             P_DamageMobj(actor->target, actor, actor, HITDICE(8));
             S_StartSound(actor, SFX_DRAGON_ATTACK);
         }
-        else if (abs(actor->angle - angle) <= ANG1 * 20)
+        else if (abs((int) actor->angle - (int) angle) <= ANG1 * 20)
         {
             P_SetMobjState(actor, actor->info->missilestate);
             S_StartSound(actor, SFX_DRAGON_ATTACK);
