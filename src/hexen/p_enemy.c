@@ -2877,7 +2877,7 @@ static void DragonSeek(mobj_t * actor, angle_t thresh, angle_t turnMax)
     {                           // attack the destination mobj if it's attackable
         mobj_t *oldTarget;
 
-        if (abs(actor->angle - R_PointToAngle2(actor->x, actor->y,
+        if (abs((int) actor->angle - (int) R_PointToAngle2(actor->x, actor->y,
                                                target->x,
                                                target->y)) < ANG45 / 2)
         {
