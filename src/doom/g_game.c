@@ -1125,12 +1125,15 @@ void G_InitPlayer (int player)
 //
 void G_PlayerFinishLevel (int player) 
 { 
-    player_t*	p; 
-	 
+    player_t*	p;
+    boolean* keys;
+
     p = &players[player]; 
-	 
+    keys = keyring[player]; // keep keys
+
     memset (p->powers, 0, sizeof (p->powers)); 
-    memset (p->cards, 0, sizeof (p->cards)); 
+    memset (p->cards, 0, sizeof (p->cards));
+    memset (keys, 0, NUMCARDS * sizeof (boolean));
     p->mo->flags &= ~MF_SHADOW;		// cancel invisibility 
     p->extralight = 0;			// cancel gun flashes 
     p->fixedcolormap = 0;		// cancel ir gogles 
