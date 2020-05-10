@@ -455,6 +455,9 @@ P_CheckPosition
 
     if ( tmflags & MF_NOCLIP )
 	return true;
+
+    if (thing->type >= MT_MISC87 && thing->type <= MT_MISC90)
+	return true;  // allow backpacks
     
     // Check things first, possibly picking things up.
     // The bounding box is extended by MAXRADIUS
@@ -468,7 +471,7 @@ P_CheckPosition
 
     for (bx=xl ; bx<=xh ; bx++)
 	for (by=yl ; by<=yh ; by++)
-	    if (!P_BlockThingsIterator(bx,by,PIT_CheckThing) && (thing->type < MT_MISC87 || thing->type > MT_MISC90))
+	    if (!P_BlockThingsIterator(bx,by,PIT_CheckThing))
 		return false;
     
     // check lines
