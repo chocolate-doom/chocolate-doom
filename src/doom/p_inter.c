@@ -177,13 +177,14 @@ P_GiveAmmo
 	num = clipammo[ammo]/2;
     
     if (gameskill == sk_baby
-	|| gameskill == sk_nightmare)
+	|| gameskill == sk_nightmare
+	|| doubleammo)
     {
 	// give double ammo in trainer mode,
 	// you'll need in nightmare
 	num <<= 1;
     }
-    else if (halfammo)
+    if (halfammo)
     {
 	num >>= 1;
     }
@@ -651,7 +652,7 @@ P_TouchSpecialThing
 	
 	// ammo
       case SPR_CLIP:
-	if (special->flags & MF_DROPPED && !halfammo)
+	if (special->flags & MF_DROPPED && (!halfammo || doubleammo))
 	{
 	    if (!P_GiveAmmo (player,am_clip,0))
 		return;

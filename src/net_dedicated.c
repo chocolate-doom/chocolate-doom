@@ -43,7 +43,7 @@ static const char *not_dedicated_options[] =
     "-aa", "-file", "-wart", "-skill", "-episode", "-timer", "-avg", "-warp",
     "-loadgame", "-longtics", "-extratics", "-dup", "-shorttics", "-backpack",
     "-nodmweapons", "-keepkeys", "-2xmonsters", "-xpain", "-nod2monsters",
-    "-halfammo", "-isa", NULL,
+    "-halfammo", "-doubleammo", "-isa", NULL,
 };
 
 static void CheckForClientOptions(void)

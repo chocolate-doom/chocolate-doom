@@ -139,6 +139,7 @@ static int doubledamage = 0;
 static int dropbackpack = 0;
 static int sprespawn = 0;
 static int halfammo = 0;
+static int doubleammo = 0;
 static int nodmweapons = 0;
 static int keepkeys = 0;
 static int udpport = 2342;
@@ -282,6 +283,11 @@ static void StartGame(int multiplayer)
     if (halfammo)
     {
         AddCmdLineParameter(exec, "-halfammo");
+    }
+
+    if (doubleammo)
+    {
+        AddCmdLineParameter(exec, "-doubleammo");
     }
 
     if (nodmweapons)
@@ -863,6 +869,7 @@ static void StartGameMenu(const char *window_title, int multiplayer)
                        TXT_NewCheckBox("Take 2x damage", &doubledamage),
                        TXT_NewCheckBox("Backpacks", &dropbackpack),
                        TXT_NewCheckBox("Half ammo", &halfammo),
+                       TXT_NewCheckBox("Double ammo", &doubleammo),
                        NULL);
 
         if (!multiplayer)
