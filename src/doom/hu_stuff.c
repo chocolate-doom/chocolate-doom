@@ -735,7 +735,7 @@ boolean HU_Responder(event_t *ev)
 	    else if (c == KEY_ESCAPE)
 	    {
                 StopChatInput();
-            }
+        }
 	}
     }
 
