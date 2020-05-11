@@ -184,7 +184,7 @@ P_GiveAmmo
 	// you'll need in nightmare
 	num <<= 1;
     }
-    if (halfammo)
+    if (halfammo && num > 5)
     {
 	num >>= 1;
     }
@@ -652,7 +652,7 @@ P_TouchSpecialThing
 	
 	// ammo
       case SPR_CLIP:
-	if (special->flags & MF_DROPPED && (!halfammo || doubleammo))
+	if (special->flags & MF_DROPPED)
 	{
 	    if (!P_GiveAmmo (player,am_clip,0))
 		return;
