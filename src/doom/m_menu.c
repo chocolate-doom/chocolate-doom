@@ -1786,7 +1786,7 @@ boolean M_Responder (event_t* ev)
     // Pop-up menu?
     if (!menuactive)
     {
-	if (key == key_menu_activate)
+	if (key == key_menu_activate && !chat_on)
 	{
 	    M_StartControlPanel ();
 	    S_StartSound(NULL,sfx_swtchn);
