@@ -461,6 +461,15 @@ void M_CrispyToggleSmoothLighting(int choice)
     crispy->post_rendering_hook = M_CrispyToggleSmoothLightingHook;
 }
 
+void M_CrispyToggleSmoothMap(int choice)
+{
+    choice = 0;
+    crispy->smoothmap = !crispy->smoothmap;
+    // Update function pointer used to draw lines
+    AM_LevelInit(true);
+}
+
+
 void M_CrispyToggleSndChannels(int choice)
 {
     choice = 0;

@@ -2140,6 +2140,14 @@ static default_t extra_defaults_list[] =
     //!
     // @game doom
     //
+    // Smooth Lines on Automap.
+    //
+
+    CONFIG_VARIABLE_INT(crispy_smoothmap),
+
+    //!
+    // @game doom
+    //
     // Smooth Scaling.
     //
 

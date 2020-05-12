@@ -67,6 +67,7 @@ typedef struct
 	int recoil;
 	int secretmessage;
 	int smoothlight;
+	int smoothmap;
 	int smoothscaling;
 	int soundfix;
 	int soundfull;
