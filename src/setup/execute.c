@@ -76,9 +76,9 @@ static char *TempFile(const char *s)
     return M_StringJoin(tempdir, DIR_SEPARATOR_S, s, NULL);
 }
 
-static int ArgumentNeedsEscape(char *arg)
+static int ArgumentNeedsEscape(const char *arg)
 {
-    char *p;
+    const char *p;
 
     for (p = arg; *p != '\0'; ++p)
     {

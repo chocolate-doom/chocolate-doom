@@ -808,7 +808,7 @@ void NET_MasterQuery(void)
     }
 }
 
-void NET_QueryAddress(char *addr_str)
+void NET_QueryAddress(const char *addr_str)
 {
     net_addr_t *addr;
     query_target_t *target;
