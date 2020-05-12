@@ -1,5 +1,7 @@
 language: c
 
+cache: ccache
+
 compiler:
   - gcc
   - clang
