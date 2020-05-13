@@ -1545,6 +1545,7 @@ void AM_drawWalls(void)
 	    {
 		// [crispy] draw keyed doors in their respective colors
 		// (no Boom multiple keys)
+		// make keyed doors flash for easier visibility
 		keycolor_t amd;
 		if (!(lines[i].flags & ML_SECRET) &&
 		    (amd = AM_DoorColor(lines[i].special)) > no_key)
@@ -1552,13 +1553,13 @@ void AM_drawWalls(void)
 		    switch (amd)
 		    {
 			case blue_key:
-			    AM_drawMline(&l, BLUES);
+			    AM_drawMline(&l, ((leveltime & 16) ? BLUES : GRIDCOLORS));
 			    continue;
 			case yellow_key:
-			    AM_drawMline(&l, YELLOWS);
+			    AM_drawMline(&l, ((leveltime & 16) ? YELLOWS : GRIDCOLORS));
 			    continue;
 			case red_key:
-			    AM_drawMline(&l, REDS);
+			    AM_drawMline(&l, ((leveltime & 16) ? REDS : GRIDCOLORS));
 			    continue;
 			default:
 			    // [crispy] it should be impossible to reach here
