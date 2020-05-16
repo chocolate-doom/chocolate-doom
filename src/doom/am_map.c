@@ -69,13 +69,13 @@ extern boolean inhelpscreens; // [crispy]
 #define BACKGROUND	BLACK
 #define YOURCOLORS	WHITE
 #define YOURRANGE	0
-#define WALLCOLORS	(crispy->extautomap ? 23 : REDS) // [crispy] red-brown
+#define WALLCOLORS	(crispy->extautomap ? REDS+4 : REDS) // [crispy] slightly darker red
 #define WALLRANGE	REDRANGE
 #define TSWALLCOLORS	GRAYS
 #define TSWALLRANGE	GRAYSRANGE
-#define FDWALLCOLORS	(crispy->extautomap ? 55 : BROWNS) // [crispy] lt brown
+#define FDWALLCOLORS	(crispy->extautomap ? BROWNS+6 : BROWNS) // [crispy] darker brown
 #define FDWALLRANGE	BROWNRANGE
-#define CDWALLCOLORS	(crispy->extautomap ? 215 : YELLOWS) // [crispy] orange
+#define CDWALLCOLORS	(crispy->extautomap ? 163 : YELLOWS) // [crispy] golden yellow
 #define CDWALLRANGE	YELLOWRANGE
 #define THINGCOLORS	GREENS
 #define THINGRANGE	GREENRANGE
@@ -1556,10 +1556,10 @@ void AM_drawWalls(void)
 			    AM_drawMline(&l, ((leveltime & 16) ? BLUES : GRIDCOLORS));
 			    continue;
 			case yellow_key:
-			    AM_drawMline(&l, ((leveltime & 16) ? YELLOWS : GRIDCOLORS));
+			    AM_drawMline(&l, ((leveltime & 16) ? (YELLOWS-2) : GRIDCOLORS));
 			    continue;
 			case red_key:
-			    AM_drawMline(&l, ((leveltime & 16) ? REDS : GRIDCOLORS));
+			    AM_drawMline(&l, ((leveltime & 16) ? (REDS-2) : GRIDCOLORS));
 			    continue;
 			default:
 			    // [crispy] it should be impossible to reach here
