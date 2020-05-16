@@ -115,6 +115,11 @@ Many additional less user-visible features have been implemented, e.g. fixed eng
 Binaries for Windows XP / Vista / 7 / 8.1 / 10 (32-bit binaries compatible with both x86 and x64 editions) are available here:
 https://github.com/fabiangreffrath/crispy-doom/releases/download/crispy-doom-5.7.2/crispy-doom-5.7.2-win32.zip
 
+To install on Ubuntu ("Eoan Ermine" 19.10 and later)/Debian ("Buster" 10 and later) based systems:
+```bash
+sudo apt-get install crispy-doom
+```
+
 Daily builds of Crispy Doom can be found here:
 http://latest.chocolate-doom.org/
 
