@@ -233,7 +233,8 @@ boolean PIT_CheckLine (line_t* ld)
     if ((doublespawn || gameskill == sk_extreme) && ld->backsector->floorheight == ld->backsector->ceilingheight)
 	return false;       // closed door
 
-    if ((doublespawn || gameskill == sk_extreme) && (ld->backsector->ceilingheight - ld->backsector->floorheight < tmthing->height))
+    if ((doublespawn || gameskill == sk_extreme) && !tmthing->player
+      && (ld->backsector->ceilingheight - ld->backsector->floorheight < tmthing->height))
 	return false;       // no room
 
     if (!(tmthing->flags & MF_MISSILE) )
