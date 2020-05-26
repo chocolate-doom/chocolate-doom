@@ -274,6 +274,15 @@ char *M_DirName(const char *path)
     char *p, *result;
 
     p = strrchr(path, DIR_SEPARATOR);
+#ifdef _WIN32
+    if (p == NULL)
+    {
+        // Windows allows for both backward and forward slashes as path
+        // separators. So, if we cannot find the former, try the latter
+        // instead, but don't accept mixed forms.
+        p = strrchr(path, '/');
+    }
+#endif
     if (p == NULL)
     {
         return M_StringDuplicate(".");
@@ -294,6 +303,15 @@ const char *M_BaseName(const char *path)
     const char *p;
 
     p = strrchr(path, DIR_SEPARATOR);
+#ifdef _WIN32
+    if (p == NULL)
+    {
+        // Windows allows for both backward and forward slashes as path
+        // separators. So, if we cannot find the former, try the latter
+        // instead, but don't accept mixed forms.
+        p = strrchr(path, '/');
+    }
+#endif
     if (p == NULL)
     {
         return path;
