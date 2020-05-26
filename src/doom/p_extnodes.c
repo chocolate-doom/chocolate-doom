@@ -119,12 +119,17 @@ void P_LoadSegs_DeePBSP (int lump)
 	li->linedef = ldef;
 	side = SHORT(ml->side);
 
-        // e6y: check for wrong indexes
-        if ((unsigned)ldef->sidenum[side] >= (unsigned)numsides)
-        {
-            I_Error("P_LoadSegs: linedef %d for seg %d references a non-existent sidedef %d",
-                    linedef, i, (unsigned)ldef->sidenum[side]);
-        }
+	// e6y: check for wrong indexes
+	if ((unsigned)linedef >= (unsigned)numlines)
+	{
+		I_Error("P_LoadSegs: seg %d references a non-existent linedef %d",
+			i, (unsigned)linedef);
+	}
+	if ((unsigned)ldef->sidenum[side] >= (unsigned)numsides)
+	{
+		I_Error("P_LoadSegs: linedef %d for seg %d references a non-existent sidedef %d",
+			linedef, i, (unsigned)ldef->sidenum[side]);
+	}
 
 	li->sidedef = &sides[ldef->sidenum[side]];
 	li->frontsector = sides[ldef->sidenum[side]].sector;
@@ -409,12 +414,17 @@ void P_LoadNodes_ZDBSP (int lump, boolean compressed)
 	li->linedef = ldef;
 	side = ml->side;
 
-        // e6y: check for wrong indexes
-        if ((unsigned)ldef->sidenum[side] >= (unsigned)numsides)
-        {
-            I_Error("P_LoadSegs: linedef %d for seg %d references a non-existent sidedef %d",
-                    linedef, i, (unsigned)ldef->sidenum[side]);
-        }
+	// e6y: check for wrong indexes
+	if ((unsigned)linedef >= (unsigned)numlines)
+	{
+		I_Error("P_LoadSegs: seg %d references a non-existent linedef %d",
+			i, (unsigned)linedef);
+	}
+	if ((unsigned)ldef->sidenum[side] >= (unsigned)numsides)
+	{
+		I_Error("P_LoadSegs: linedef %d for seg %d references a non-existent sidedef %d",
+			linedef, i, (unsigned)ldef->sidenum[side]);
+	}
 
 	li->sidedef = &sides[ldef->sidenum[side]];
 	li->frontsector = sides[ldef->sidenum[side]].sector;
