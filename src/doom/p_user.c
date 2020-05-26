@@ -140,6 +140,7 @@ void DropStimpack(player_t* player)
 		player->health -= 10;
 	else
 		player->health -= 5;
+	player->mo->health = player->health;
 	S_StartSound(player->mo, sfx_plpain);
 }
 
