@@ -437,6 +437,12 @@ void P_PlayerThink (player_t* player)
 	{
 	    P_UseLines (player);
 	    player->usedown = true;
+	    // [crispy] "use" button timer
+	    if (crispy->btusetimer)
+	    {
+		player->btuse = leveltime;
+		player->btuse_tics = 5*TICRATE/2; // [crispy] 2.5 seconds
+	    }
 	}
     }
     else

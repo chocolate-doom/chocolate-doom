@@ -55,6 +55,7 @@ extern void M_CrispyToggleCrosshairtype(int choice);
 extern void M_CrispyToggleDemoBar(int choice);
 extern void M_CrispyToggleDemoTimer(int choice);
 extern void M_CrispyToggleDemoTimerDir(int choice);
+extern void M_CrispyToggleDemoUseTimer(int choice);
 extern void M_CrispyToggleExtAutomap(int choice);
 extern void M_CrispyToggleExtsaveg(int choice);
 extern void M_CrispyToggleFlipcorpses(int choice);

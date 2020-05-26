@@ -41,6 +41,7 @@ typedef struct
 	int automapstats;
 	int bobfactor;
 	int brightmaps;
+	int btusetimer;
 	int centerweapon;
 	int coloredblood;
 	int coloredhud;

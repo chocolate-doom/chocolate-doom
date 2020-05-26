@@ -263,6 +263,12 @@ void M_CrispyToggleDemoTimerDir(int choice)
     crispy->demotimerdir = !crispy->demotimerdir;
 }
 
+void M_CrispyToggleDemoUseTimer(int choice)
+{
+    choice = 0;
+    crispy->btusetimer = !crispy->btusetimer;
+}
+
 void M_CrispyToggleExtAutomap(int choice)
 {
     choice = 0;

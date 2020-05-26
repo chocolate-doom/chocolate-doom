@@ -866,7 +866,8 @@ void HU_Drawer(void)
 	HUlib_drawTextLine(&w_scrts, false);
     }
 
-    if (crispy->leveltime == WIDGETS_ALWAYS || (automapactive && crispy->leveltime == WIDGETS_AUTOMAP))
+    if (crispy->leveltime == WIDGETS_ALWAYS || (automapactive && crispy->leveltime == WIDGETS_AUTOMAP) ||
+        (crispy->btusetimer && plr->btuse_tics))
     {
 	HUlib_drawTextLine(&w_ltime, false);
     }
@@ -1064,6 +1065,21 @@ void HU_Ticker(void)
 	else
 	    M_snprintf(str, sizeof(str), "%s%02d:%02d", crstr[CR_GRAY],
 	            time/60, time%60);
+	HUlib_clearTextLine(&w_ltime);
+	s = str;
+	while (*s)
+	    HUlib_addCharToTextLine(&w_ltime, *(s++));
+    }
+
+    // [crispy] "use" button timer overrides the level time widget
+    if (crispy->btusetimer && plr->btuse_tics)
+    {
+	const int mins = plr->btuse / (60 * TICRATE);
+	const float secs = (float)(plr->btuse % (60 * TICRATE)) / TICRATE;
+
+	plr->btuse_tics--;
+
+	M_snprintf(str, sizeof(str), "%sU %02i:%05.02f", crstr[CR_GRAY], mins, secs);
 	HUlib_clearTextLine(&w_ltime);
 	s = str;
 	while (*s)

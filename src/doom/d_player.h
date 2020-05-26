@@ -193,6 +193,9 @@ typedef struct player_s
 
     // [crispy] negative player health
     int			neghealth;
+
+    // [crispy] "use" button timer
+    int			btuse, btuse_tics;
 } player_t;
 
 
