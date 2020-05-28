@@ -97,6 +97,8 @@ fixed_t		bmaporgy;
 mobj_t**	blocklinks;		
 boolean		crispy_createblockmap = false;
 
+boolean allspawned; // double spawn
+
 
 // REJECT
 // For fast sight rejection.
@@ -830,6 +832,8 @@ void P_LoadThings (int lump)
 	I_Error("P_LoadThings: No things in map!");
     }
 
+    allspawned = false;
+
     mt = (mapthing_t *)data;
     for (i=0 ; i<numthings ; i++, mt++)
     {
@@ -898,6 +902,7 @@ void P_LoadThings (int lump)
 	P_SpawnMapThing(&spawnthing);
     }
 
+    allspawned = true;
     if (!deathmatch)
     {
         for (i = 0; i < MAXPLAYERS; i++)

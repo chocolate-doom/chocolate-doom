@@ -61,6 +61,8 @@
 //#define DEFAULT_SPECHIT_MAGIC 0x84f968e8
 
 
+extern boolean allspawned; // double spawn
+
 fixed_t		tmbbox[4];
 mobj_t*		tmthing;
 int		tmflags;
@@ -230,10 +232,11 @@ boolean PIT_CheckLine (line_t* ld)
     if (!ld->backsector)
 	return false;		// one sided line
 
-    if ((doublespawn || gameskill == sk_extreme) && ld->backsector->floorheight == ld->backsector->ceilingheight)
+    if ((doublespawn || gameskill == sk_extreme) && !allspawned
+	  && ld->backsector->floorheight == ld->backsector->ceilingheight)
 	return false;       // closed door
 
-    if ((doublespawn || gameskill == sk_extreme) && !tmthing->player
+    if ((doublespawn || gameskill == sk_extreme) && !allspawned
       && (ld->backsector->ceilingheight - ld->backsector->floorheight < tmthing->height))
 	return false;       // no room
 
@@ -487,7 +490,7 @@ P_CheckPosition
 		return false;
 
 	if ( !(thing->flags&(MF_DROPOFF|MF_FLOAT))
-	     && tmfloorz - tmdropoffz > 24*FRACUNIT && (doublespawn || gameskill == sk_extreme) )
+	      && tmfloorz - tmdropoffz > 24*FRACUNIT && (doublespawn || gameskill == sk_extreme) && !allspawned)
 	    return false;	// don't stand over a dropoff
 
     return true;
