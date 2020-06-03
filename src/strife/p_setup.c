@@ -511,7 +511,9 @@ void P_LoadBlockMap (int lump)
     lumplen = W_LumpLength(lump);
     count = lumplen / 2;
     if(count >= 32766)
+    {
 	I_Error("Blockmap too large");
+    }
 	
     blockmaplump = Z_Malloc(lumplen, PU_LEVEL, NULL);
     W_ReadLump(lump, blockmaplump);
