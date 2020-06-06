@@ -193,7 +193,7 @@ static void DrawDesktopBackground(const char *title)
 static void DrawHelpIndicator(void)
 {
     char keybuf[10];
-    int fgcolor;
+    txt_color_t fgcolor;
     int x, y;
 
     TXT_GetKeyDescription(HELP_KEY, keybuf, sizeof(keybuf));
