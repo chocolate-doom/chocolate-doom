@@ -322,26 +322,27 @@ static struct {
 	const char *wad_name;
 	int pc_slot;
 	int psn_slot;
+	boolean custom_sky;
 	char *file_path;
 } masterlevels_wads [] = {
 	{"ATTACK.WAD",    1,  1},
 	{"CANYON.WAD",    1,  2},
 	{"CATWALK.WAD",   1,  3},
-	{"COMBINE.WAD",   1,  4},
+	{"COMBINE.WAD",   1,  4, true},
 	{"FISTULA.WAD",   1,  5},
 	{"GARRISON.WAD",  1,  6},
-	{"MANOR.WAD",     1,  7},
+	{"MANOR.WAD",     1,  7, true},
 	{"PARADOX.WAD",   1,  8},
 	{"SUBSPACE.WAD",  1,  9},
 	{"SUBTERRA.WAD",  1, 10},
-	{"TTRAP.WAD",     1, 11},
-	{"VIRGIL.WAD",    3, 12},
-	{"MINOS.WAD",     5, 13},
+	{"TTRAP.WAD",     1, 11, true},
+	{"VIRGIL.WAD",    3, 12, true},
+	{"MINOS.WAD",     5, 13, true},
 	{"BLOODSEA.WAD",  7, 14},
 	{"MEPHISTO.WAD",  7, 15},
-	{"NESSUS.WAD",    7, 16},
-	{"GERYON.WAD",    8, 17},
-	{"VESPERAS.WAD",  9, 18},
+	{"NESSUS.WAD",    7, 16, true},
+	{"GERYON.WAD",    8, 17, true},
+	{"VESPERAS.WAD",  9, 18, true},
 	{"BLACKTWR.WAD", 25, 19},
 	{"TEETH.WAD",    31, 20},
 	{NULL,           32, 21}, // [crispy] TEETH.WAD
@@ -399,6 +400,12 @@ static void LoadMasterlevelsWads (void)
 	int i, j;
 	char lumpname[9];
 
+	const char *const sky_lumps[] = {
+		"RSKY1",
+		"PNAMES",
+		"TEXTURE1",
+	};
+
 	for (i = 0; i < arrlen(masterlevels_wads); i++)
 	{
 		// [crispy] add TEETH.WAD only once
@@ -407,6 +414,22 @@ static void LoadMasterlevelsWads (void)
 			printf(" [The Master Levels %02d] adding %s\n", i+1, masterlevels_wads[i].file_path);
 			W_AddFile(masterlevels_wads[i].file_path);
 			free(masterlevels_wads[i].file_path);
+
+			// [crispy] rename lumps changing the SKY texture out of the way
+			if (masterlevels_wads[i].custom_sky)
+			{
+				for (j = 0; j < arrlen(sky_lumps); j++)
+				{
+					int k;
+
+					k = W_CheckNumForName(sky_lumps[j]);
+
+					if (k != -1 && !strcasecmp(W_WadNameForLump(lumpinfo[k]), masterlevels_wads[i].wad_name))
+					{
+						lumpinfo[k]->name[0] = 'M';
+					}
+				}
+			}
 		}
 
 		M_snprintf(lumpname, 9, "MAP%02d", masterlevels_wads[i].pc_slot);
