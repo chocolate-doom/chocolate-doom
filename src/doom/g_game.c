@@ -826,6 +826,14 @@ void G_DoLoadLevel (void)
         }
         else if (gamemap < 21)
         {
+            // [crispy] BLACKTWR (MAP25) and TEETH (MAP31 and MAP32)
+            if ((gameepisode == 3 || gamemission == pack_master) && gamemap >= 19)
+                skytexturename = "SKY3";
+            else
+            // [crispy] BLOODSEA and MEPHISTO (both MAP07)
+            if ((gameepisode == 3 || gamemission == pack_master) && (gamemap == 14 || gamemap == 15))
+                skytexturename = "SKY1";
+            else
             skytexturename = "SKY2";
         }
         else
