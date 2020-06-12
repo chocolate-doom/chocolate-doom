@@ -2196,7 +2196,10 @@ void G_BeginRecording (void)
 
     newdemo = M_ParmExists("-backpack") || M_ParmExists("-nodmweapons") || M_ParmExists("-keepkeys")
       || M_ParmExists("-sprespawn") || M_ParmExists("-2xmonsters") || M_ParmExists("-xpain")
-	  || M_ParmExists("-nod2monsters") || M_ParmExists("-halfammo") || M_ParmExists("-doubleammo");
+      || M_ParmExists("-nod2monsters") || M_ParmExists("-halfammo") || M_ParmExists("-doubleammo");
+
+    newdemo = D_NonVanillaRecord(newdemo || M_ParmExists("-extended"),
+                                  "Extended demo format");
 
     //!
     // @category demo
@@ -2204,13 +2207,10 @@ void G_BeginRecording (void)
     // Record a high resolution "Doom 1.91" demo.
     //
 
+    if (!newdemo)
     longtics = D_NonVanillaRecord(M_ParmExists("-longtics"),
                                   "Doom 1.91 demo format");
-
-    newdemo = D_NonVanillaRecord(newdemo,
-                                  "Extended demo format");
-
-    if (newdemo) longtics = true;
+    else longtics = true;
 
     // If not recording a longtics demo, record in low res
     lowres_turn = !longtics;
