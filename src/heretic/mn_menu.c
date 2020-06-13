@@ -1525,9 +1525,10 @@ boolean MN_Responder(event_t * event)
         {
             if (slotptr)
             {
-                *textBuffer-- = 0;
-                *textBuffer = ASCII_CURSOR;
+                *textBuffer = 0;
                 slotptr--;
+                textBuffer = &SlotText[currentSlot][slotptr];
+                *textBuffer = ASCII_CURSOR;
             }
             return (true);
         }

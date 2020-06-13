@@ -1,13 +1,18 @@
 language: c
 
-compiler: gcc
+cache: ccache
+
+compiler:
+  - gcc
+  - clang
 
 sudo: required
 dist: bionic
 
-env:
-    - ANALYZE=false
-#   - ANALYZE=true
+matrix:
+  include:
+    - compiler: gcc
+      env: ANALYZE=false
 
 addons:
     apt:
