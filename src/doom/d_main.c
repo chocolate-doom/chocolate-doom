@@ -325,7 +325,7 @@ boolean D_Display (void)
 	    y = 4;
 	else
 	    y = viewwindowy+4;
-	V_DrawPatchDirect(viewwindowx + (scaledviewwidth - 68) / 2, y,
+	V_DrawPatchDirect((viewwindowx + (scaledviewwidth - 68) / 2) - WIDEWIDTH_DELTA, y,
                           W_CacheLumpName (DEH_String("M_PAUSE"), PU_CACHE));
     }
 
