@@ -36,6 +36,9 @@
 
 #include "d_loop.h"
 
+
+boolean newdemo; // extended demos
+
 ticcmd_t *netcmds;
 
 // Called when a player leaves the game
@@ -168,7 +171,8 @@ static void SaveGameSettings(net_gamesettings_t *settings)
 
     settings->lowres_turn = (M_ParmExists("-record")
                           && !M_ParmExists("-longtics")
-                          && !M_ParmExists("-extended"))
+                          && !M_ParmExists("-extended")
+                          && !newdemo)
                           || M_ParmExists("-shorttics");
 }
 
@@ -224,7 +228,8 @@ static void InitConnectData(net_connect_data_t *connect_data)
 
     connect_data->lowres_turn = (M_ParmExists("-record")
                               && !M_ParmExists("-longtics")
-                              && !M_ParmExists("-extended"))
+                              && !M_ParmExists("-extended")
+                              && !newdemo)
                               || shorttics;
 
     // Read checksums of our WAD directory and dehacked information
@@ -265,6 +270,10 @@ void D_ConnectNetGame(void)
 void D_CheckNetGame (void)
 {
     net_gamesettings_t settings;
+
+    newdemo = M_ParmExists("-backpack") || M_ParmExists("-nodmweapons") || M_ParmExists("-keepkeys")
+      || M_ParmExists("-sprespawn") || M_ParmExists("-2xmonsters") || M_ParmExists("-xpain")
+      || M_ParmExists("-nod2monsters") || M_ParmExists("-halfammo") || M_ParmExists("-doubleammo");
 
     if (netgame)
     {

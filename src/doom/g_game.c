@@ -2186,17 +2186,13 @@ int G_VanillaVersionCode(void)
     }
 }
 
-static boolean newdemo;
+extern boolean newdemo; // extended demos
 
 void G_BeginRecording (void) 
 { 
     int             i; 
 
     demo_p = demobuffer;
-
-    newdemo = M_ParmExists("-backpack") || M_ParmExists("-nodmweapons") || M_ParmExists("-keepkeys")
-      || M_ParmExists("-sprespawn") || M_ParmExists("-2xmonsters") || M_ParmExists("-xpain")
-      || M_ParmExists("-nod2monsters") || M_ParmExists("-halfammo") || M_ParmExists("-doubleammo");
 
     newdemo = D_NonVanillaRecord(newdemo || M_ParmExists("-extended"),
                                   "Extended demo format");
