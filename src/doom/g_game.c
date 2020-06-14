@@ -1178,7 +1178,13 @@ void G_PlayerFinishLevel (int player)
     p->extralight = 0;			// cancel gun flashes 
     p->fixedcolormap = 0;		// cancel ir gogles 
     p->damagecount = 0;			// no palette changes 
-    p->bonuscount = 0; 
+    p->bonuscount = 0;
+
+    if ((netgame || sprespawn) && dropbackpack)
+	{
+	    RecoverInventoryFromBackpackF(p, player);
+	    faileddrop = false;
+	}
 } 
  
 
@@ -1491,7 +1497,7 @@ void G_DoCompleted (void)
 
     memset (keyring, 0, sizeof (keyring)); // don't keep keys
 	
-    memset (backpacks, 0, sizeof (backpacks)); // empty not picked up backpacks
+    memset (backpacks, 0, sizeof (backpacks)); // empty not picked up backpacks, not needed now
 
     if (automapactive) 
 	AM_Stop (); 
