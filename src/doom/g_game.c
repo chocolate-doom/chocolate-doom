@@ -1203,7 +1203,7 @@ void G_PlayerReborn (int player)
 	 
     p = &players[player];
 
-	if (keepkeys && netgame && !deathmatch)
+	if (keepkeys && ((netgame && !deathmatch) || sprespawn))
 		SaveKeys(player); // [marshmallow] grab his keys here before we zero out the player struct
 
     memset (p, 0, sizeof(*p)); 
@@ -1221,7 +1221,7 @@ void G_PlayerReborn (int player)
     p->weaponowned[wp_pistol] = true; 
     p->ammo[am_clip] = deh_initial_bullets; 
 
-	if (keepkeys && netgame && !deathmatch)
+	if (keepkeys && ((netgame && !deathmatch) || sprespawn))
 	    RestoreKeys(player); // [marshmallow] restore keys
 
     for (i=0 ; i<NUMAMMO ; i++) 

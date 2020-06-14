@@ -870,6 +870,7 @@ static void StartGameMenu(const char *window_title, int multiplayer)
                        TXT_NewCheckBox("Backpacks", &dropbackpack),
                        TXT_NewCheckBox("Half ammo", &halfammo),
                        TXT_NewCheckBox("Double ammo", &doubleammo),
+                       TXT_NewCheckBox("Keep keys", &keepkeys),
                        NULL);
 
         if (!multiplayer)
@@ -881,9 +882,6 @@ static void StartGameMenu(const char *window_title, int multiplayer)
         {
             TXT_AddWidget(window,
                            TXT_NewCheckBox("Don't spawn DM things", &nodmweapons));
-
-            TXT_AddWidget(window,
-                           TXT_NewCheckBox("Keep keys", &keepkeys));
         }
     }
 	else
