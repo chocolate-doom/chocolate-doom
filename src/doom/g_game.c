@@ -78,6 +78,8 @@
 
 #define SAVEGAMESIZE	0x2c000
 
+extern boolean faileddrop; // could not drop a backpack
+
 void	G_ReadDemoTiccmd (ticcmd_t* cmd); 
 void	G_WriteDemoTiccmd (ticcmd_t* cmd); 
 void	G_PlayerReborn (int player); 
@@ -265,6 +267,46 @@ void RestoreKeys(int player)
 	for (i=0; i<NUMCARDS; i++) 
 		if (keyring[player][i] == true)
 			players[player].cards[i] = true;
+}
+
+// [marshmallow]
+void RecoverInventoryFromBackpackF(player_t* player, int p) // failed drop
+{
+	int i;
+
+	dropped_backpack = backpacks[p];
+
+	// Recover weapons
+	for (i=0; i<NUMWEAPONS; i++)
+	{
+		if (dropped_backpack.weapons[i])
+			player->weaponowned[i] = true;
+	}
+
+	// Backpack powerup yes/no
+	if (dropped_backpack.backpack && !player->backpack)
+	{
+		player->backpack = true;
+		for (i=0 ; i<NUMAMMO ; i++)
+			player->maxammo[i] *= 2;
+	}
+
+	// Recover ammo
+	for (i=0; i<NUMAMMO; i++)
+	{
+		if (dropped_backpack.ammo[i])
+		{
+			player->ammo[i] += dropped_backpack.ammo[i];
+
+			if (player->ammo[i] > player->maxammo[i])  // don't let us go over maxammo
+				player->ammo[i] = player->maxammo[i];
+		}
+	}
+
+	// Empty dropped_items
+	memset (&dropped_backpack, 0, sizeof(dropped_backpack));
+
+	backpacks[p] = dropped_backpack;
 }
 
 static boolean WeaponSelectable(weapontype_t weapon)
@@ -1183,8 +1225,13 @@ void G_PlayerReborn (int player)
 	    RestoreKeys(player); // [marshmallow] restore keys
 
     for (i=0 ; i<NUMAMMO ; i++) 
-	p->maxammo[i] = maxammo[i]; 
-		 
+	p->maxammo[i] = maxammo[i];
+
+    if ((netgame || sprespawn) && dropbackpack && faileddrop)
+	{
+	    RecoverInventoryFromBackpackF(p, player);
+	    faileddrop = false;
+	}
 }
 
 //

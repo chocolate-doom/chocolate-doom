@@ -820,6 +820,8 @@ P_TouchSpecialThing
 	S_StartSound (NULL, sound);
 }
 
+boolean faileddrop = false;
+
 
 //
 // KillMobj
@@ -935,7 +937,8 @@ P_KillMobj
 			if (!P_CheckPosition (mo, mo->x, mo->y))
 			{
 				P_RemoveMobj (mo);
-				RecoverInventoryFromBackpack(target, p);
+				faileddrop = true;
+				target->player->message = DEH_String(FAILEDDROP);
 				return;
 			}
 			mo->flags |= MF_DROPPED;
