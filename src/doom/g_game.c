@@ -280,7 +280,10 @@ void RecoverInventoryFromBackpackF(player_t* player, int p) // failed drop
 	for (i=0; i<NUMWEAPONS; i++)
 	{
 		if (dropped_backpack.weapons[i])
+		{
 			player->weaponowned[i] = true;
+			players[consoleplayer].weaponowned[i] = true;
+		}
 	}
 
 	// Backpack powerup yes/no
