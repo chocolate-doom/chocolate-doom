@@ -128,9 +128,7 @@ boolean DropInventoryInBackpack(mobj_t* target, int p)
 	}
 
 	// Save ammo
-	if (target->player->ammo[am_clip] > 50)
-		dropped_backpack.ammo[am_clip] = target->player->ammo[am_clip] - 50;
-	for (i=1; i<NUMAMMO; i++)
+	for (i=0; i<NUMAMMO; i++)
 	{
 		if (target->player->ammo[i])
 			dropped_backpack.ammo[i] = target->player->ammo[i];
