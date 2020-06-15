@@ -755,35 +755,35 @@ void P_SpawnPlayer (mapthing_t* mthing)
 }
 
 
-boolean P_CheckDoubleSpawn (mobj_t* mobj, fixed_t x, fixed_t y, fixed_t z, int mobjtype, boolean first)
+boolean P_CheckDoubleSpawn (mobj_t** mobjptr, fixed_t x, fixed_t y, fixed_t z, int mobjtype, boolean first)
 {
 	boolean spawned = true;
 
 	if (first)
 	{
-		if (!P_CheckPosition (mobj, mobj->x, mobj->y))
+		if (!P_CheckPosition (*mobjptr, (*mobjptr)->x, (*mobjptr)->y))
 		{
-			P_RemoveMobj (mobj);
-			mobj = P_SpawnMobj (x + 2 * mobjinfo[mobjtype].radius, y, z, mobjtype);
+			P_RemoveMobj (*mobjptr);
+			*mobjptr = P_SpawnMobj (x + 2 * mobjinfo[mobjtype].radius, y, z, mobjtype);
 		}
 		else return spawned;
 	}
 
-	if (!P_CheckPosition (mobj, mobj->x, mobj->y))
+	if (!P_CheckPosition (*mobjptr, (*mobjptr)->x, (*mobjptr)->y))
 	{
-		P_RemoveMobj (mobj);
-		mobj = P_SpawnMobj (x - 2 * mobjinfo[mobjtype].radius, y, z, mobjtype);
-		if (!P_CheckPosition (mobj, mobj->x, mobj->y))
+		P_RemoveMobj (*mobjptr);
+		*mobjptr = P_SpawnMobj (x - 2 * mobjinfo[mobjtype].radius, y, z, mobjtype);
+		if (!P_CheckPosition (*mobjptr, (*mobjptr)->x, (*mobjptr)->y))
 		{
-			P_RemoveMobj (mobj);
-			mobj = P_SpawnMobj (x, y + 2 * mobjinfo[mobjtype].radius, z, mobjtype);
-			if (!P_CheckPosition (mobj, mobj->x, mobj->y))
+			P_RemoveMobj (*mobjptr);
+			*mobjptr = P_SpawnMobj (x, y + 2 * mobjinfo[mobjtype].radius, z, mobjtype);
+			if (!P_CheckPosition (*mobjptr, (*mobjptr)->x, (*mobjptr)->y))
 			{
-				P_RemoveMobj (mobj);
-				mobj = P_SpawnMobj (x, y - 2 * mobjinfo[mobjtype].radius, z, mobjtype);
-				if (!P_CheckPosition (mobj, mobj->x, mobj->y))
+				P_RemoveMobj (*mobjptr);
+				*mobjptr = P_SpawnMobj (x, y - 2 * mobjinfo[mobjtype].radius, z, mobjtype);
+				if (!P_CheckPosition (*mobjptr, (*mobjptr)->x, (*mobjptr)->y))
 				{
-					P_RemoveMobj (mobj);
+					P_RemoveMobj (*mobjptr);
 					spawned = false;
 				}
 			}
@@ -805,6 +805,8 @@ void P_SpawnMapThing (mapthing_t* mthing)
     int			bit;
     mobj_t*		mobj;
     mobj_t*		mobj2;
+    mobj_t**    mobjptr;
+    mobj_t**    mobjptr2;
     boolean spawned = true;
     fixed_t		x;
     fixed_t		y;
@@ -901,10 +903,11 @@ void P_SpawnMapThing (mapthing_t* mthing)
 	    i = MT_MISC91;
 
     mobj = P_SpawnMobj (x,y,z, i);
+	mobjptr = &mobj;
 
 	if ((doublespawn || gameskill == sk_extreme) && (mobjinfo[i].flags & MF_COUNTKILL || i == MT_SKULL) && i != MT_SPIDER)
 	{
-		spawned = P_CheckDoubleSpawn (mobj, x, y, z, i, true); // previously double spawned monster might block
+		spawned = P_CheckDoubleSpawn (mobjptr, x, y, z, i, true); // previously double spawned monster might block
 	}
 
 	if (spawned)
@@ -925,7 +928,8 @@ void P_SpawnMapThing (mapthing_t* mthing)
 	if ((doublespawn || gameskill == sk_extreme) && (mobjinfo[i].flags & MF_COUNTKILL || i == MT_SKULL) && i != MT_SPIDER)
 	{
 		mobj2 = P_SpawnMobj (x + 2 * mobjinfo[i].radius, y, z, i);
-		spawned = P_CheckDoubleSpawn (mobj2, x, y ,z, i, false);
+		mobjptr2 = &mobj2;
+		spawned = P_CheckDoubleSpawn (mobjptr2, x, y ,z, i, false);
 		if (spawned)
 		{
 			mobj2->spawnpoint = *mthing;
