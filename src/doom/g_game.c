@@ -242,6 +242,9 @@ int		bodyqueslot;
  
 int             vanilla_savegame_limit = 1;
 int             vanilla_demo_limit = 1;
+
+// [crispy] store last cmd to track joins
+static ticcmd_t* last_cmd = NULL;
  
 int G_CmdChecksum (ticcmd_t* cmd) 
 { 
@@ -2453,6 +2456,8 @@ void G_ReadDemoTiccmd (ticcmd_t* cmd)
 { 
     if (*demo_p == DEMOMARKER) 
     {
+	last_cmd = cmd; // [crispy] remember last cmd to track joins
+
 	// end of demo data stream 
 	G_CheckDemoStatus (); 
 	return; 
@@ -2475,6 +2480,8 @@ void G_ReadDemoTiccmd (ticcmd_t* cmd)
 	// [crispy] discard the newly allocated demo buffer
 	Z_Free(demobuffer);
 	demobuffer = actualbuffer;
+
+	last_cmd = cmd; // [crispy] remember last cmd to track joins
 
 	// [crispy] continue recording
 	G_CheckDemoStatus();
@@ -2946,7 +2953,11 @@ void G_TimeDemo (char* name)
 boolean G_CheckDemoStatus (void) 
 { 
     int             endtime; 
-	 
+
+    // [crispy] catch the last cmd to track joins
+    ticcmd_t* cmd = last_cmd;
+    last_cmd = NULL;
+
     if (timingdemo) 
     { 
         float fps;
@@ -2995,6 +3006,12 @@ boolean G_CheckDemoStatus (void)
             if (gamestate == GS_LEVEL)
             {
                 S_Start();
+            }
+
+            // [crispy] record demo join
+            if (cmd != NULL)
+            {
+                cmd->buttons |= BT_JOIN;
             }
 
             return true;

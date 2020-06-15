@@ -108,6 +108,8 @@ typedef enum
     BTS_SAVEMASK	= (4+8+16),
     BTS_SAVESHIFT 	= 2,
   
+    // [crispy] demo joined.
+    BT_JOIN = 64
 } buttoncode_t;
 
 // villsa [STRIFE] Strife specific buttons
