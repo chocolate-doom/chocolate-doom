@@ -411,7 +411,8 @@ void P_PlayerThink (player_t* player)
 	if ( (gamemode == commercial)
 	    && newweapon == wp_shotgun 
 	    && player->weaponowned[wp_supershotgun]
-	    && player->readyweapon == wp_shotgun
+	    && player->readyweapon != wp_supershotgun
+	    && (player->readyweapon == wp_shotgun || !player->weaponowned[wp_shotgun])
 	    && nod2monsters )
 	{
 	    newweapon = wp_supershotgun;
