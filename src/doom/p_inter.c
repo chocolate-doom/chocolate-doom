@@ -920,31 +920,44 @@ P_KillMobj
 	  case MT_PLAYER:
 	if ((netgame || sprespawn) && dropbackpack)
 	{
-		for (p=0; p<MAXPLAYERS && &players[p] != target->player; p++) {};
-		if (p == 0)
-			item = MT_MISC87; // Green
-		else if (p == 1)
-			item = MT_MISC88; // Indigo
-		else if (p == 2)
-			item = MT_MISC89; // Brown
-		else
-			item = MT_MISC90; // Red
-		if (DropInventoryInBackpack(target, p)) // [marshmallow]
+		for (p=0; p<MAXPLAYERS; p++)
 		{
-			mo = P_SpawnMobj (target->x,target->y,ONFLOORZ, item);
-			if (!P_CheckPosition (mo, mo->x, mo->y))
+			if (&players[p] == target->player)
 			{
-				P_RemoveMobj (mo);
-				faileddrop = true;
-				target->player->message = DEH_String(FAILEDDROP);
-				return;
+				fprintf(stderr, "player %d\n", p);
+				switch (p)
+				{
+				case 0:
+					item = MT_MISC87; // Green
+					break;
+				case 1:
+					item = MT_MISC88; // Indigo
+					break;
+				case 2:
+					item = MT_MISC89; // Brown
+					break;
+				case 3:
+					item = MT_MISC90; // Red
+					break;
+				default:
+					return;
+				}
+				if (DropInventoryInBackpack(target, p)) // [marshmallow]
+				{
+					mo = P_SpawnMobj (target->x,target->y,ONFLOORZ, item);
+					if (!P_CheckPosition (mo, mo->x, mo->y))
+					{
+						P_RemoveMobj (mo);
+						faileddrop = true;
+						target->player->message = DEH_String(FAILEDDROP);
+						return;
+					}
+					mo->flags |= MF_DROPPED;
+				}
 			}
-			mo->flags |= MF_DROPPED;
-			return;
 		}
-		else return;
 	}
-	else return;
+	return;
 	break;
 
       default:
