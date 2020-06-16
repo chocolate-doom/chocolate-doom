@@ -12,7 +12,7 @@ dist: bionic
 matrix:
   include:
     - compiler: gcc
-      env: ANALYZE=false
+      env: ANALYZE=true
 
 addons:
     apt:
