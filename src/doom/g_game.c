@@ -2257,8 +2257,7 @@ void G_BeginRecording (void)
     // Record a high resolution "Doom 1.91" demo.
     //
 
-    if (!newdemo)
-    longtics = D_NonVanillaRecord(M_ParmExists("-longtics"),
+    if (!newdemo) longtics = D_NonVanillaRecord(M_ParmExists("-longtics"),
                                   "Doom 1.91 demo format");
     else longtics = true;
 
