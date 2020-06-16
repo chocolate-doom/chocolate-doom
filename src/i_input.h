@@ -26,6 +26,7 @@
 
 extern float mouse_acceleration;
 extern int mouse_threshold;
+extern int novert;
 
 void I_BindInputVariables(void);
 void I_ReadMouse(void);

@@ -660,7 +660,8 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
         testcontrols_mousespeed = 0;
     }
 
-    forward += mousey;
+    if (!novert) // [Crispy]
+        forward += mousey;
     mousex = mousey = 0;
 
     if (forward > MAXPLMOVE)
