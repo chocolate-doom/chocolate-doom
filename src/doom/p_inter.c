@@ -64,10 +64,7 @@ void RecoverInventoryFromBackpack(mobj_t* toucher, int p)
 	for (i=0; i<NUMWEAPONS; i++)
 	{
 		if (dropped_backpack.weapons[i])
-		{
 			toucher->player->weaponowned[i] = true;
-			players[consoleplayer].weaponowned[i] = true;
-		}
 	}
 
 	// Backpack powerup yes/no
