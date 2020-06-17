@@ -274,7 +274,7 @@ void D_CheckNetGame (void)
     newdemo = (M_ParmExists("-backpack") || M_ParmExists("-nodmweapons") || M_ParmExists("-keepkeys")
       || M_ParmExists("-sprespawn") || M_ParmExists("-2xmonsters") || M_ParmExists("-xpain")
       || M_ParmExists("-nod2monsters") || M_ParmExists("-halfammo") || M_ParmExists("-doubleammo"))
-      && M_ParmExists("-record");
+      && M_ParmExists("-record") && !M_ParmExists("-strictdemos");
 
     if (netgame)
     {
