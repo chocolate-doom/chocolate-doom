@@ -924,7 +924,6 @@ P_KillMobj
 		{
 			if (&players[p] == target->player)
 			{
-				fprintf(stderr, "player %d\n", p);
 				switch (p)
 				{
 				case 0:
