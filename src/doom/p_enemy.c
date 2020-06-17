@@ -2045,19 +2045,19 @@ void A_SpawnFly (mobj_t* mo)
 	type = MT_SERGEANT;
     else if (r<120)
 	type = MT_SHADOWS;
-    else if (r<130)
+    else if (r<130 && !nod2monsters)
 	type = MT_PAIN;
     else if (r<160)
 	type = MT_HEAD;
-    else if (r<162)
+    else if (r<162 && !nod2monsters)
 	type = MT_VILE;
-    else if (r<172)
+    else if (r<172 && !nod2monsters)
 	type = MT_UNDEAD;
-    else if (r<192)
+    else if (r<192 && !nod2monsters)
 	type = MT_BABY;
-    else if (r<222)
+    else if (r<222 && !nod2monsters)
 	type = MT_FATSO;
-    else if (r<246)
+    else if (r<246 && !nod2monsters)
 	type = MT_KNIGHT;
     else
 	type = MT_BRUISER;		
