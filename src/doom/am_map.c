@@ -676,13 +676,17 @@ void AM_Start (void)
 	lastlevel = gamemap;
 	lastepisode = gameepisode;
     }
-    // [crispy] reset IDDT cheat when re-starting map during demo recording
-    else if (demorecording)
-    {
-        cheating = 0;
-    }
     AM_initVariables();
     AM_loadPics();
+}
+
+// [crispy] reset IDDT cheat when re-starting map during demo recording
+void AM_ResetIDDTcheat (void)
+{
+	if (lastlevel == gamemap && lastepisode == gameepisode)
+	{
+		cheating = 0;
+	}
 }
 
 //
