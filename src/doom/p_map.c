@@ -237,6 +237,11 @@ boolean PIT_CheckLine (line_t* ld)
 	return false;       // closed door
 
     if ((doublespawn || gameskill == sk_extreme) && !allspawned
+	  && (ld->backsector->floorheight >= ld->frontsector->ceilingheight
+	  || ld->frontsector->floorheight >= ld->backsector->ceilingheight))
+	return false;       // solid wall
+
+    if ((doublespawn || gameskill == sk_extreme) && !allspawned
       && (ld->backsector->ceilingheight - ld->backsector->floorheight < tmthing->height))
 	return false;       // no room
 
