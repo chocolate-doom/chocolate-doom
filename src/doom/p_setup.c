@@ -1149,12 +1149,6 @@ P_SetupLevel
 	nodrawers = false;
 	singletics = false;
     }
-    // [crispy] reset IDDT cheat when re-starting map during demo recording
-    if (demorecording)
-    {
-	void AM_ResetIDDTcheat (void);
-	AM_ResetIDDTcheat();
-    }
 
     // [crispy] don't load map's default music if loaded from a savegame with MUSINFO data
     if (!musinfo.from_savegame)

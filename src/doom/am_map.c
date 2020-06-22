@@ -683,10 +683,7 @@ void AM_Start (void)
 // [crispy] reset IDDT cheat when re-starting map during demo recording
 void AM_ResetIDDTcheat (void)
 {
-	if (lastlevel == gamemap && lastepisode == gameepisode)
-	{
-		cheating = 0;
-	}
+	cheating = 0;
 }
 
 //

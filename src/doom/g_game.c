@@ -2213,6 +2213,10 @@ G_DeferedInitNew
     // [crispy] if a new game is started during demo recording, start a new demo
     if (demorecording)
     {
+	// [crispy] reset IDDT cheat when re-starting map during demo recording
+	void AM_ResetIDDTcheat (void);
+	AM_ResetIDDTcheat();
+
 	G_CheckDemoStatus();
 	Z_Free(demoname);
 
