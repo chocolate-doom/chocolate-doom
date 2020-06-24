@@ -73,6 +73,10 @@ else()
     find_library(SDL2_MAIN_LIBRARY "SDL2main"
         HINTS "${SDL2_DIR}/lib/x86" ${PC_SDL2_LIBRARY_DIRS})
 endif()
+
+if (NOT SDL2_MAIN_LIBRARY)
+	set(SDL2_MAIN_LIBRARY "${SDL2_LIBRARY}")
+endif()
 set(SDL2_LIBRARIES "${SDL2_MAIN_LIBRARY}" "${SDL2_LIBRARY}")
 
 include(FindPackageHandleStandardArgs)
