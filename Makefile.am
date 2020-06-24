@@ -50,7 +50,7 @@ SUBDIRS=textscreen midiproc opl pcsound data src man
 
 DIST_SUBDIRS=pkg $(SUBDIRS)
 
-if HAVE_PYTHON
+if HAVE_DOC
 
 INSTALL : man/INSTALL.template man/simplecpp
 	./man/simplecpp -DDOOM -DHERETIC -DHEXEN -DSTRIFE \

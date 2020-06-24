@@ -271,7 +271,7 @@ CLEANFILES = $(execgames_SCRIPTS) $(app_DATA) $(screensaver_DATA)
 %.o : %.rc
 	$(WINDRES) $< -o $@
 
-if HAVE_PYTHON
+if HAVE_ICONS
 
 icon.c : $(top_builddir)/data/doom.png
 	$(top_builddir)/data/convert-icon $(top_builddir)/data/doom.png $@
