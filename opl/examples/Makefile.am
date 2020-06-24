@@ -6,8 +6,8 @@ AM_CFLAGS = \
 noinst_PROGRAMS=droplay
 
 droplay_LDADD = \
-    $(top_srcdir)/opl/libopl.a \
-    $(top_srcdir)/safe/libsafe.a \
+    $(top_builddir)/opl/libopl.a \
+    $(top_builddir)/safe/libsafe.a \
     @LDFLAGS@ @SDL_LIBS@ @SDLMIXER_LIBS@
 droplay_SOURCES = droplay.c
 

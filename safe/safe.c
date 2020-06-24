@@ -179,6 +179,6 @@ void *X_CheckedRealloc(void *ptr, size_t count, size_t size)
                        ptr, new_size);
     }
 
-    return ptr;
+    return result;
 }
 

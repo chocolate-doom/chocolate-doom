@@ -6,9 +6,9 @@ AM_CFLAGS = \
 
 noinst_PROGRAMS=guitest calculator
 
-guitest_LDADD = ../libtextscreen.a $(top_srcdir)/safe/libsafe.a @LDFLAGS@ @SDL_LIBS@
+guitest_LDADD = ../libtextscreen.a $(top_builddir)/safe/libsafe.a @LDFLAGS@ @SDL_LIBS@
 guitest_SOURCES = guitest.c
 
-calculator_LDADD = ../libtextscreen.a $(top_srcdir)/safe/libsafe.a @LDFLAGS@ @SDL_LIBS@
+calculator_LDADD = ../libtextscreen.a $(top_builddir)/safe/libsafe.a @LDFLAGS@ @SDL_LIBS@
 calculator_SOURCES = calculator.c
 
