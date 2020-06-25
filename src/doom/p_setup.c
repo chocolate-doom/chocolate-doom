@@ -241,7 +241,7 @@ void P_LoadSegs (int lump)
 	li->sidedef = &sides[ldef->sidenum[side]];
 	li->frontsector = sides[ldef->sidenum[side]].sector;
 	// [crispy] recalculate
-	li->offset = GetOffset(li->v1, ldef->v1);
+	li->offset = GetOffset(li->v1, (ml->side ? ldef->v2 : ldef->v1));
 
         if (ldef-> flags & ML_TWOSIDED)
         {
@@ -310,7 +310,7 @@ static void P_LoadSegs_DeePBSP (int lump)
 	li->sidedef = &sides[ldef->sidenum[side]];
 	li->frontsector = sides[ldef->sidenum[side]].sector;
 	// [crispy] recalculate
-	li->offset = GetOffset(li->v1, ldef->v1);
+	li->offset = GetOffset(li->v1, (ml->side ? ldef->v2 : ldef->v1));
 
 	if (ldef->flags & ML_TWOSIDED)
 	{
