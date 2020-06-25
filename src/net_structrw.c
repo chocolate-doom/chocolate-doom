@@ -116,7 +116,7 @@ boolean NET_ReadSettings(net_packet_t *packet, net_gamesettings_t *settings)
         return false;
     }
 
-    for (i = 0; i < settings->num_players; ++i)
+    for (i = 0; i < settings->num_players && i < NET_MAXPLAYERS; ++i)
     {
         if (!NET_ReadInt8(packet,
                           (unsigned int *) &settings->player_classes[i]))
