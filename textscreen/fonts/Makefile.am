@@ -3,7 +3,7 @@ EXTRA_DIST = small.png normal.png large.png convert-font $(FONT_HDRS)
 
 noinst_DATA = $(FONT_HDRS)
 
-if HAVE_PYTHON
+if HAVE_FONTS
 
 small.h: small.png convert-font
 	./convert-font small small.png small.h
