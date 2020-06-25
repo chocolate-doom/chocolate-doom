@@ -1,3 +1,11 @@
+## 3.0.1 (2020-06-24)
+
+  This is a point release that fixes a security vulnerability
+  (CVE-2020-14983). An unchecked field in the Chocolate Doom server logic
+  could allow a malicious attacker to trigger arbitrary code execution
+  against Chocolate Doom servers. Thanks to Michał Dardas from LogicalTrust
+  for discovering the vulnerability.
+
 ## 3.0.0 (2017-12-30)
 
   Chocolate Doom 3.0 is a new major revision. The main change is that
