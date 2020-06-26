@@ -52,7 +52,7 @@ HUlib_initTextLine
   patch_t**		f,
   int			sc )
 {
-    t->x = x;
+    t->x = x - WIDEWIDTH_DELTA;
     t->y = y;
     t->f = f;
     t->sc = sc;
