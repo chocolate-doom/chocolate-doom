@@ -678,19 +678,29 @@ void M_NormalizeSlashes(char *str)
     char *p;
 
     // Convert all slashes/backslashes to DIR_SEPARATOR
-    for(p = str; *p; p++)
+    for (p = str; *p; p++)
     {
-        if((*p == '/' || *p == '\\') && *p != DIR_SEPARATOR)
+        if ((*p == '/' || *p == '\\') && *p != DIR_SEPARATOR)
+        {
             *p = DIR_SEPARATOR;
+        }
     }
 
     // Remove trailing slashes
-    while(p > str && *--p == DIR_SEPARATOR)
+    while (p > str && *--p == DIR_SEPARATOR)
+    {
         *p = 0;
+    }
 
     // Collapse multiple slashes
-    for(p = str; (*str++ = *p); )
-        if(*p++ == DIR_SEPARATOR)
-            while(*p == DIR_SEPARATOR)
+    for (p = str; (*str++ = *p); )
+    {
+        if (*p++ == DIR_SEPARATOR)
+        {
+            while (*p == DIR_SEPARATOR)
+            {
                 p++;
+            }
+        }
+    }
 }
