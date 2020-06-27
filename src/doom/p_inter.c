@@ -595,10 +595,59 @@ P_TouchSpecialThing
       case SPR_POL5:
 	if (player->health < 10 && gameskill == sk_extreme)
 	{
-	    if (!P_GiveBody (player, 5))
-	        return;
+	    P_GiveBody (player, 5);
 	    player->message = DEH_String(GOTBLOOD);
 	    sound = sfx_slop;
+	    special->flags &= ~MF_SPECIAL;
+	}
+	else return;
+	break;
+
+      case SPR_POB1:
+	if (player->health < 10 && gameskill == sk_extreme)
+	{
+	    P_GiveBody (player, 5);
+	    player->message = DEH_String(GOTBLOOD);
+	    sound = sfx_slop;
+	    special->flags &= ~MF_SPECIAL;
+	}
+	else return;
+	break;
+
+      case SPR_POB2:
+	if (player->health < 10 && gameskill == sk_extreme)
+	{
+	    P_GiveBody (player, 5);
+	    player->message = DEH_String(GOTBLOOD);
+	    sound = sfx_slop;
+	    special->flags &= ~MF_SPECIAL;
+	}
+	else return;
+	break;
+
+      case SPR_BRS1:
+	if (player->health < 10 && gameskill == sk_extreme)
+	{
+	    P_GiveBody (player, 5);
+	    player->message = DEH_String(GOTBLOOD);
+	    sound = sfx_slop;
+	    special->flags &= ~MF_SPECIAL;
+	}
+	else return;
+	break;
+
+      case SPR_PLAY:
+	if (player->health <= 90 && gameskill == sk_extreme)
+	{
+	    P_GiveBody (player, 10);
+	    player->armorpoints += 10;
+	    if (player->armorpoints > deh_max_armor)
+	        player->armorpoints = deh_max_armor;
+	    if (!player->armortype)
+	        player->armortype = 1;
+	    player->message = DEH_String(GOTBODY);
+	    sound = sfx_itemup;
+	    special->flags &= ~MF_SPECIAL;
 	}
 	else return;
 	break;
@@ -812,7 +861,8 @@ P_TouchSpecialThing
 	
     if (special->flags & MF_COUNTITEM)
 	player->itemcount++;
-    P_RemoveMobj (special);
+	if (special->type != MT_PLAYER)
+	    P_RemoveMobj (special);
     player->bonuscount += BONUSADD;
     if (player == &players[consoleplayer])
 	S_StartSound (NULL, sound);
@@ -839,6 +889,8 @@ P_KillMobj
 	target->flags &= ~MF_NOGRAVITY;
 
     target->flags |= MF_CORPSE|MF_DROPOFF;
+    if (target->type == MT_PLAYER && gameskill == sk_extreme)
+	    target->flags |= MF_SPECIAL;
     target->height >>= 2;
 
     if (source && source->player)

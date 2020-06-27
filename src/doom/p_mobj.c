@@ -590,7 +590,8 @@ void P_RemoveMobj (mobj_t* mobj)
     if ((mobj->flags & MF_SPECIAL)
 	&& !(mobj->flags & MF_DROPPED)
 	&& (mobj->type != MT_INV)
-	&& (mobj->type != MT_INS))
+	&& (mobj->type != MT_INS)
+	&& (mobj->type != MT_PLAYER))
     {
 	itemrespawnque[iquehead] = mobj->spawnpoint;
 	itemrespawntime[iquehead] = leveltime;
