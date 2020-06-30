@@ -637,9 +637,12 @@ P_TouchSpecialThing
 	break;
 
       case SPR_PLAY:
-	if (player->health <= 90 && gameskill == sk_extreme)
+	if (gameskill == sk_extreme)
 	{
-	    P_GiveBody (player, 10);
+	    player->health += 10;
+	    if (player->health > deh_max_health)
+	        player->health = deh_max_health;
+	    player->mo->health = player->health;
 	    player->armorpoints += 10;
 	    if (player->armorpoints > deh_max_armor)
 	        player->armorpoints = deh_max_armor;
