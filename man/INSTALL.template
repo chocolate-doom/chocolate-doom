@@ -199,7 +199,9 @@ do one of the following:
  * Put the file into one of the following directories:
 
      $HOME/.local/share/games/doom
+     /usr/share/doom
      /usr/share/games/doom
+     /usr/local/share/doom
      /usr/local/share/games/doom
 
  * Set the environment variable DOOMWADDIR to specify the path to a
