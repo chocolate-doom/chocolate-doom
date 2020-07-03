@@ -259,9 +259,9 @@ char *M_TempFile(const char *s)
 
 boolean M_StrToInt(const char *str, int *result)
 {
-    return sscanf(str, " 0x%x", result) == 1
-        || sscanf(str, " 0X%x", result) == 1
-        || sscanf(str, " 0%o", result) == 1
+    return sscanf(str, " 0x%x", (unsigned int *) result) == 1
+        || sscanf(str, " 0X%x", (unsigned int *) result) == 1
+        || sscanf(str, " 0%o", (unsigned int *) result) == 1
         || sscanf(str, " %d", result) == 1;
 }
 
