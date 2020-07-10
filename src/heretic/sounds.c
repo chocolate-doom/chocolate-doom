@@ -26,64 +26,65 @@
 #define MUSIC(name) \
     { name, 0, NULL, NULL }
 
-musicinfo_t S_music[] = {
-    MUSIC("MUS_E1M1"),            // 1-1
-    MUSIC("MUS_E1M2"),
-    MUSIC("MUS_E1M3"),
-    MUSIC("MUS_E1M4"),
-    MUSIC("MUS_E1M5"),
-    MUSIC("MUS_E1M6"),
-    MUSIC("MUS_E1M7"),
-    MUSIC("MUS_E1M8"),
-    MUSIC("MUS_E1M9"),
+// [crispy] support dedicated music tracks for each map
+musicinfo_t S_music[][2] = {
+    {MUSIC("MUS_E1M1"), {NULL}},           // 1-1
+    {MUSIC("MUS_E1M2"), {NULL}},
+    {MUSIC("MUS_E1M3"), {NULL}},
+    {MUSIC("MUS_E1M4"), {NULL}},
+    {MUSIC("MUS_E1M5"), {NULL}},
+    {MUSIC("MUS_E1M6"), {NULL}},
+    {MUSIC("MUS_E1M7"), {NULL}},
+    {MUSIC("MUS_E1M8"), {NULL}},
+    {MUSIC("MUS_E1M9"), {NULL}},
 
-    MUSIC("MUS_E2M1"),            // 2-1
-    MUSIC("MUS_E2M2"),
-    MUSIC("MUS_E2M3"),
-    MUSIC("MUS_E2M4"),
-    MUSIC("MUS_E1M4"),
-    MUSIC("MUS_E2M6"),
-    MUSIC("MUS_E2M7"),
-    MUSIC("MUS_E2M8"),
-    MUSIC("MUS_E2M9"),
+    {MUSIC("MUS_E2M1"), {NULL}},            // 2-1
+    {MUSIC("MUS_E2M2"), {NULL}},
+    {MUSIC("MUS_E2M3"), {NULL}},
+    {MUSIC("MUS_E2M4"), {NULL}},
+    {MUSIC("MUS_E1M4"), MUSIC("MUS_E2M5")},
+    {MUSIC("MUS_E2M6"), {NULL}},
+    {MUSIC("MUS_E2M7"), {NULL}},
+    {MUSIC("MUS_E2M8"), {NULL}},
+    {MUSIC("MUS_E2M9"), {NULL}},
 
-    MUSIC("MUS_E1M1"),            // 3-1
-    MUSIC("MUS_E3M2"),
-    MUSIC("MUS_E3M3"),
-    MUSIC("MUS_E1M6"),
-    MUSIC("MUS_E1M3"),
-    MUSIC("MUS_E1M2"),
-    MUSIC("MUS_E1M5"),
-    MUSIC("MUS_E1M9"),
-    MUSIC("MUS_E2M6"),
+    {MUSIC("MUS_E1M1"), MUSIC("MUS_E3M1")}, // 3-1
+    {MUSIC("MUS_E3M2"), {NULL}},
+    {MUSIC("MUS_E3M3"), {NULL}},
+    {MUSIC("MUS_E1M6"), MUSIC("MUS_E3M4")},
+    {MUSIC("MUS_E1M3"), MUSIC("MUS_E3M5")},
+    {MUSIC("MUS_E1M2"), MUSIC("MUS_E3M6")},
+    {MUSIC("MUS_E1M5"), MUSIC("MUS_E3M7")},
+    {MUSIC("MUS_E1M9"), MUSIC("MUS_E3M8")},
+    {MUSIC("MUS_E2M6"), MUSIC("MUS_E3M9")},
 
-    MUSIC("MUS_E1M6"),            // 4-1
-    MUSIC("MUS_E1M2"),
-    MUSIC("MUS_E1M3"),
-    MUSIC("MUS_E1M4"),
-    MUSIC("MUS_E1M5"),
-    MUSIC("MUS_E1M1"),
-    MUSIC("MUS_E1M7"),
-    MUSIC("MUS_E1M8"),
-    MUSIC("MUS_E1M9"),
+    {MUSIC("MUS_E1M6"), MUSIC("MUS_E4M1")}, // 4-1
+    {MUSIC("MUS_E1M2"), MUSIC("MUS_E4M2")},
+    {MUSIC("MUS_E1M3"), MUSIC("MUS_E4M3")},
+    {MUSIC("MUS_E1M4"), MUSIC("MUS_E4M4")},
+    {MUSIC("MUS_E1M5"), MUSIC("MUS_E4M5")},
+    {MUSIC("MUS_E1M1"), MUSIC("MUS_E4M6")},
+    {MUSIC("MUS_E1M7"), MUSIC("MUS_E4M7")},
+    {MUSIC("MUS_E1M8"), MUSIC("MUS_E4M8")},
+    {MUSIC("MUS_E1M9"), MUSIC("MUS_E4M9")},
 
-    MUSIC("MUS_E2M1"),            // 5-1
-    MUSIC("MUS_E2M2"),
-    MUSIC("MUS_E2M3"),
-    MUSIC("MUS_E2M4"),
-    MUSIC("MUS_E1M4"),
-    MUSIC("MUS_E2M6"),
-    MUSIC("MUS_E2M7"),
-    MUSIC("MUS_E2M8"),
-    MUSIC("MUS_E2M9"),
+    {MUSIC("MUS_E2M1"), MUSIC("MUS_E5M1")}, // 5-1
+    {MUSIC("MUS_E2M2"), MUSIC("MUS_E5M2")},
+    {MUSIC("MUS_E2M3"), MUSIC("MUS_E5M3")},
+    {MUSIC("MUS_E2M4"), MUSIC("MUS_E5M4")},
+    {MUSIC("MUS_E1M4"), MUSIC("MUS_E5M5")},
+    {MUSIC("MUS_E2M6"), MUSIC("MUS_E5M6")},
+    {MUSIC("MUS_E2M7"), MUSIC("MUS_E5M7")},
+    {MUSIC("MUS_E2M8"), MUSIC("MUS_E5M8")},
+    {MUSIC("MUS_E2M9"), MUSIC("MUS_E5M9")},
 
-    MUSIC("MUS_E3M2"),            // 6-1
-    MUSIC("MUS_E3M3"),            // 6-2
-    MUSIC("MUS_E1M6"),            // 6-3
+    {MUSIC("MUS_E3M2"), MUSIC("MUS_E6M1")}, // 6-1
+    {MUSIC("MUS_E3M3"), MUSIC("MUS_E6M2")}, // 6-2
+    {MUSIC("MUS_E1M6"), MUSIC("MUS_E6M3")}, // 6-3
 
-    MUSIC("MUS_TITL"),
-    MUSIC("MUS_INTR"),
-    MUSIC("MUS_CPTD")
+    {MUSIC("MUS_TITL"), {NULL}},
+    {MUSIC("MUS_INTR"), {NULL}},
+    {MUSIC("MUS_CPTD"), {NULL}}
 };
 
 // Sound info

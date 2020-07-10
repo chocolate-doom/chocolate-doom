@@ -91,7 +91,15 @@ void S_StartSong(int song, boolean loop)
     {
         return;
     }
-    mus_lumpnum = W_GetNumForName(S_music[song].name);
+    // [crispy] support dedicated music tracks for each map
+    if (S_music[song][1].name && W_CheckNumForName(S_music[song][1].name) > 0)
+    {
+        mus_lumpnum = (W_GetNumForName(S_music[song][1].name));
+    }
+    else
+    {
+        mus_lumpnum = (W_GetNumForName(S_music[song][0].name));
+    }
     mus_sndptr = W_CacheLumpNum(mus_lumpnum, PU_MUSIC);
     mus_len = W_LumpLength(mus_lumpnum);
     rs = I_RegisterSong(mus_sndptr, mus_len);
