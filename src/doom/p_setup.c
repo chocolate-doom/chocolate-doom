@@ -1302,8 +1302,8 @@ P_SetupLevel
 
 }
 
-// [crispy] height of the spawnstate's first sprite in pixels
-static void P_InitActualHeights (void)
+// [crispy] initialize Thing extra properties (keeping vanilla props in info.c)
+static void P_InitThingProperties (void)
 {
 	int i;
 
@@ -1318,6 +1318,27 @@ static void P_InitActualHeights (void)
 		state = &states[mobjinfo[i].spawnstate];
 		sprdef = &sprites[state->sprite];
 
+		// [crispy] mobj id for item dropped on death
+		switch (i)
+		{
+			case MT_WOLFSS:
+			case MT_POSSESSED:
+			mobjinfo[i].droppeditem = MT_CLIP;
+			break;
+
+			case MT_SHOTGUY:
+			mobjinfo[i].droppeditem = MT_SHOTGUN;
+			break;
+
+			case MT_CHAINGUY:
+			mobjinfo[i].droppeditem = MT_CHAINGUN;
+			break;
+
+			default:
+			mobjinfo[i].droppeditem = MT_NULL;
+		}
+
+		// [crispy] height of the spawnstate's first sprite in pixels
 		if (!sprdef->numframes || !(mobjinfo[i].flags & (MF_SOLID|MF_SHOOTABLE)))
 		{
 			mobjinfo[i].actualheight = mobjinfo[i].height;
@@ -1342,7 +1363,7 @@ void P_Init (void)
     P_InitSwitchList ();
     P_InitPicAnims ();
     R_InitSprites (sprnames);
-    P_InitActualHeights();
+    P_InitThingProperties();
 }
 
 

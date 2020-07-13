@@ -1249,6 +1249,7 @@ extern state_t	states[NUMSTATES];
 extern const char *sprnames[];
 
 typedef enum {
+    MT_NULL = -1, // [crispy] null/invalid mobj (zero is reserved for MT_PLAYER)
     MT_PLAYER,
     MT_POSSESSED,
     MT_SHOTGUY,
@@ -1448,6 +1449,8 @@ typedef struct
     int	raisestate;
     // [crispy] height of the spawnstate's first sprite in pixels
     int	actualheight;
+    // [crispy] mobj to drop after death
+    mobjtype_t droppeditem;
 
 } mobjinfo_t;
 
