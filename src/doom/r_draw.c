@@ -384,12 +384,18 @@ void R_DrawFuzzColumnLow (void)
     fixed_t		fracstep;	 
     int x;
 
+    int* afuzzoffset; // actual offset
     int screenwidth;
 
     if (widescreen)
         screenwidth = WIDESCREENWIDTH;
     else
         screenwidth = SCREENWIDTH;
+
+    if (widescreen)
+        afuzzoffset = wfuzzoffset;
+    else
+        afuzzoffset = fuzzoffset;
 
     // Adjust borders. Low... 
     if (!dc_yl) 
@@ -434,8 +440,8 @@ void R_DrawFuzzColumnLow (void)
 	//  a pixel that is either one column
 	//  left or right of the current one.
 	// Add index from colormap to index.
-	*dest = colormaps[6*256+dest[fuzzoffset[fuzzpos]]]; 
-	*dest2 = colormaps[6*256+dest2[fuzzoffset[fuzzpos]]]; 
+	*dest = colormaps[6*256+dest[afuzzoffset[fuzzpos]]]; 
+	*dest2 = colormaps[6*256+dest2[afuzzoffset[fuzzpos]]]; 
 
 	// Clamp table lookup index.
 	if (++fuzzpos == FUZZTABLE) 
