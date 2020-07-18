@@ -165,6 +165,11 @@ static void DEH_ThingParseLine(deh_context_t *context, char *line, void *tag)
 		}
 	}
     }
+    // [crispy] Thing ids in dehacked are 1-based, convert dropped item to 0-based
+    if (!strcasecmp(variable_name, "dropped item"))
+    {
+        ivalue -= 1;
+    }
 
     // Set the field value
 
