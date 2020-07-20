@@ -1369,6 +1369,9 @@ void D_DoomMain (void)
     char demolumpname[9];
     int numiwadlumps;
 
+    // [crispy] unconditionally initialize DEH tables
+    DEH_Init();
+
     I_AtExit(D_Endoom, false);
 
     // print banner

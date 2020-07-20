@@ -62,9 +62,6 @@ int main(int argc, char **argv)
         crispy->platform = SDL_GetPlatform();
     }
 
-    // [crispy] unconditionally initialize DEH tables
-    DEH_Init();
-
 #if defined(_WIN32)
     // compose a proper command line from loose file paths passed as arguments
     // to allow for loading WADs and DEHACKED patches by drag-and-drop
