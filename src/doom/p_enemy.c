@@ -235,33 +235,29 @@ boolean P_CheckMissileRange (mobj_t* actor)
 
     dist >>= FRACBITS;
 
-    if (actor->type == MT_VILE)
+    // [crispy] generalization of the Arch Vile's different attack range
+    if (actor->info->maxattackrange > 0)
     {
-	if (dist > 14*64)	
+	if (dist > actor->info->maxattackrange)
 	    return false;	// too far away
     }
 	
-
-    if (actor->type == MT_UNDEAD)
+    // [crispy] generalization of the Revenant's different melee threshold
+    if (actor->info->meleethreshold > 0)
     {
-	if (dist < 196)	
+	if (dist < actor->info->meleethreshold)
 	    return false;	// close for fist attack
-	dist >>= 1;
     }
 	
-
-    if (actor->type == MT_CYBORG
-	|| actor->type == MT_SPIDER
-	|| actor->type == MT_SKULL)
+    // [crispy] generalize missile chance for Cyb, Spider, Revenant & Lost Soul
+    if (actor->info->missilechancemult != FRACUNIT)
     {
-	dist >>= 1;
+	dist = FixedMul(dist, actor->info->missilechancemult);
     }
     
-    if (dist > 200)
-	dist = 200;
-		
-    if (actor->type == MT_CYBORG && dist > 160)
-	dist = 160;
+    // [crispy] generalization of Min Missile Chance values hardcoded in vanilla
+    if (dist > actor->info->minmissilechance)
+      dist = actor->info->minmissilechance;
 		
     if (P_Random () < dist)
 	return false;

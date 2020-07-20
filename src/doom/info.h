@@ -1451,6 +1451,14 @@ typedef struct
     int	actualheight;
     // [crispy] mobj to drop after death
     mobjtype_t droppeditem;
+    // [crispy] distance to switch from missile to melee attack (generaliz. for Revenant)
+    int meleethreshold;
+    // [crispy] maximum distance range to start shooting (generaliz. for Arch Vile)
+    int maxattackrange;
+    // [crispy] minimum likelihood of a missile attack (generaliz. for Cyberdemon)
+    int minmissilechance;
+    // [crispy] multiplier for likelihood of a missile attack (generaliz. for various)
+    int missilechancemult;
 
 } mobjinfo_t;
 

@@ -97,6 +97,14 @@ DEH_BEGIN_MAPPING(thing_mapping, mobjinfo_t)
   DEH_MAPPING("Respawn frame",       raisestate)
   // [crispy] Thing id to drop after death
   DEH_MAPPING("Dropped item",        droppeditem)
+  // [crispy] Distance to switch from missile to melee attack
+  DEH_MAPPING("Melee threshold",     meleethreshold)
+  // [crispy] Maximum distance range to start shooting (zero for unlimited)
+  DEH_MAPPING("Max target range",    maxattackrange)
+  // [crispy] Minimum chance for firing a missile
+  DEH_MAPPING("Min missile chance",  minmissilechance)
+  // [crispy] Multiplies the chance of firing a missile (65536 = normal chance)
+  DEH_MAPPING("Missile chance multiplier",  missilechancemult)
 DEH_END_MAPPING
 
 static void *DEH_ThingStart(deh_context_t *context, char *line)
