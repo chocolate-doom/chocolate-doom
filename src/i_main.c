@@ -28,7 +28,6 @@
 #include "i_system.h"
 #include "m_argv.h"
 #include "m_misc.h" // [crispy] M_snprintf()
-#include "deh_main.h" // [crispy] DEH_Init()
 
 //
 // D_DoomMain()
