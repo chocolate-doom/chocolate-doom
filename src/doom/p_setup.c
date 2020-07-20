@@ -1302,84 +1302,6 @@ P_SetupLevel
 
 }
 
-// [crispy] initialize Thing extra properties (keeping vanilla props in info.c)
-static void P_InitThingProperties (void)
-{
-	int i;
-
-	for (i = 0; i < NUMMOBJTYPES; i++)
-	{
-		state_t *state;
-		spritedef_t *sprdef;
-		spriteframe_t *sprframe;
-		int lump;
-		patch_t *patch;
-
-		state = &states[mobjinfo[i].spawnstate];
-		sprdef = &sprites[state->sprite];
-
-		// [crispy] mobj id for item dropped on death
-		switch (i)
-		{
-			case MT_WOLFSS:
-			case MT_POSSESSED:
-			mobjinfo[i].droppeditem = MT_CLIP;
-			break;
-
-			case MT_SHOTGUY:
-			mobjinfo[i].droppeditem = MT_SHOTGUN;
-			break;
-
-			case MT_CHAINGUY:
-			mobjinfo[i].droppeditem = MT_CHAINGUN;
-			break;
-
-			default:
-			mobjinfo[i].droppeditem = MT_NULL;
-		}
-
-		// [crispy] distance to switch from missile to melee attack (generaliz. for Revenant)
-		if (i == MT_UNDEAD)
-			mobjinfo[i].meleethreshold = 196;
-		else
-			mobjinfo[i].meleethreshold = 0;
-
-		// [crispy] maximum distance range to start shooting (generaliz. for Arch Vile)
-		if (i == MT_VILE)
-			mobjinfo[i].maxattackrange = 14*64;
-		else
-			mobjinfo[i].maxattackrange = 0; // unlimited
-
-		// [crispy] minimum likelihood of a missile attack (generaliz. for Cyberdemon)
-		if (i == MT_CYBORG)
-			mobjinfo[i].minmissilechance = 160;
-		else
-			mobjinfo[i].minmissilechance = 200;
-
-		// [crispy] multiplier for missile firing chance (generaliz. from vanilla)
-		if (i == MT_CYBORG
-		   || i == MT_SPIDER
-		   || i == MT_UNDEAD
-		   || i == MT_SKULL)
-			mobjinfo[i].missilechancemult = FRACUNIT/2;
-		else
-			mobjinfo[i].missilechancemult = FRACUNIT;
-
-		// [crispy] height of the spawnstate's first sprite in pixels
-		if (!sprdef->numframes || !(mobjinfo[i].flags & (MF_SOLID|MF_SHOOTABLE)))
-		{
-			mobjinfo[i].actualheight = mobjinfo[i].height;
-			continue;
-		}
-
-		sprframe = &sprdef->spriteframes[state->frame & FF_FRAMEMASK];
-		lump = sprframe->lump[0];
-		patch = W_CacheLumpNum (lump + firstspritelump, PU_CACHE);
-
-		// [crispy] round to the next integer multiple of 8
-		mobjinfo[i].actualheight = ((patch->height + 7) & (~7)) << FRACBITS;
-	}
-}
 
 
 //
@@ -1390,7 +1312,6 @@ void P_Init (void)
     P_InitSwitchList ();
     P_InitPicAnims ();
     R_InitSprites (sprnames);
-    P_InitThingProperties();
 }
 
 

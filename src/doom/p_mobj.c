@@ -31,6 +31,8 @@
 
 #include "s_sound.h"
 #include "s_musinfo.h" // [crispy] S_ParseMusInfo()
+#include "i_swap.h" // [crispy] SHORT()
+#include "w_wad.h" // [crispy] W_CacheLumpNum()
 
 #include "doomstat.h"
 
@@ -681,6 +683,30 @@ P_SpawnMobjSafe
     mobj->oldy = mobj->y;
     mobj->oldz = mobj->z;
     mobj->oldangle = mobj->angle;
+
+    // [crispy] height of the spawnstate's first sprite in pixels
+    if (!info->actualheight)
+    {
+	const spritedef_t *const sprdef = &sprites[mobj->sprite];
+
+	if (!sprdef->numframes || !(mobj->flags & (MF_SOLID|MF_SHOOTABLE)))
+	{
+		info->actualheight = info->height;
+	}
+	else
+	{
+		spriteframe_t *sprframe;
+		int lump;
+		patch_t *patch;
+
+		sprframe = &sprdef->spriteframes[mobj->frame & FF_FRAMEMASK];
+		lump = sprframe->lump[0];
+		patch = W_CacheLumpNum(lump + firstspritelump, PU_CACHE);
+
+		// [crispy] round up to the next integer multiple of 8
+		info->actualheight = ((SHORT(patch->height) + 7) >> 3) << (FRACBITS + 3);
+	}
+    }
 
     mobj->thinker.function.acp1 = (actionf_p1)P_MobjThinker;
 	

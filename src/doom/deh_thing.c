@@ -107,6 +107,62 @@ DEH_BEGIN_MAPPING(thing_mapping, mobjinfo_t)
   DEH_MAPPING("Missile chance multiplier",  missilechancemult)
 DEH_END_MAPPING
 
+// [crispy] initialize Thing extra properties (keeping vanilla props in info.c)
+void DEH_InitThingProperties (void)
+{
+	int i;
+
+	for (i = 0; i < NUMMOBJTYPES; i++)
+	{
+		// [crispy] mobj id for item dropped on death
+		switch (i)
+		{
+			case MT_WOLFSS:
+			case MT_POSSESSED:
+			mobjinfo[i].droppeditem = MT_CLIP;
+			break;
+
+			case MT_SHOTGUY:
+			mobjinfo[i].droppeditem = MT_SHOTGUN;
+			break;
+
+			case MT_CHAINGUY:
+			mobjinfo[i].droppeditem = MT_CHAINGUN;
+			break;
+
+			default:
+			mobjinfo[i].droppeditem = MT_NULL;
+		}
+
+		// [crispy] distance to switch from missile to melee attack (generaliz. for Revenant)
+		if (i == MT_UNDEAD)
+			mobjinfo[i].meleethreshold = 196;
+		else
+			mobjinfo[i].meleethreshold = 0;
+
+		// [crispy] maximum distance range to start shooting (generaliz. for Arch Vile)
+		if (i == MT_VILE)
+			mobjinfo[i].maxattackrange = 14*64;
+		else
+			mobjinfo[i].maxattackrange = 0; // unlimited
+
+		// [crispy] minimum likelihood of a missile attack (generaliz. for Cyberdemon)
+		if (i == MT_CYBORG)
+			mobjinfo[i].minmissilechance = 160;
+		else
+			mobjinfo[i].minmissilechance = 200;
+
+		// [crispy] multiplier for missile firing chance (generaliz. from vanilla)
+		if (i == MT_CYBORG
+		   || i == MT_SPIDER
+		   || i == MT_UNDEAD
+		   || i == MT_SKULL)
+			mobjinfo[i].missilechancemult = FRACUNIT/2;
+		else
+			mobjinfo[i].missilechancemult = FRACUNIT;
+	}
+}
+
 static void *DEH_ThingStart(deh_context_t *context, char *line)
 {
     int thing_number = 0;
