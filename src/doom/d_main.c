@@ -1378,12 +1378,6 @@ void D_DoomMain (void)
     DEH_printf("Z_Init: Init zone memory allocation daemon. \n");
     Z_Init ();
 
-    // [crispy] initialize Thing extra properties (keeping vanilla props in info.c)
-    {
-        extern void DEH_InitThingProperties (void);
-        DEH_InitThingProperties();
-    }
-
     //!
     // @category net
     //

@@ -85,7 +85,7 @@ static void InitializeSections(void)
     }
 }
 
-static void DEH_Init(void)
+void DEH_Init(void) // [crispy] un-static
 {
     //!
     // @category mod

@@ -28,6 +28,7 @@
 #include "i_system.h"
 #include "m_argv.h"
 #include "m_misc.h" // [crispy] M_snprintf()
+#include "deh_main.h" // [crispy] DEH_Init()
 
 //
 // D_DoomMain()
@@ -60,6 +61,9 @@ int main(int argc, char **argv)
         crispy->sdlversion = M_StringDuplicate(buf);
         crispy->platform = SDL_GetPlatform();
     }
+
+    // [crispy] unconditionally initialize DEH tables
+    DEH_Init();
 
 #if defined(_WIN32)
     // compose a proper command line from loose file paths passed as arguments

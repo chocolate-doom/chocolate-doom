@@ -108,7 +108,7 @@ DEH_BEGIN_MAPPING(thing_mapping, mobjinfo_t)
 DEH_END_MAPPING
 
 // [crispy] initialize Thing extra properties (keeping vanilla props in info.c)
-void DEH_InitThingProperties (void)
+static void DEH_InitThingProperties (void)
 {
 	int i;
 
@@ -253,7 +253,7 @@ static void DEH_ThingSHA1Sum(sha1_context_t *context)
 deh_section_t deh_section_thing =
 {
     "Thing",
-    NULL,
+    DEH_InitThingProperties, // [crispy] initialize Thing extra properties
     DEH_ThingStart,
     DEH_ThingParseLine,
     NULL,
