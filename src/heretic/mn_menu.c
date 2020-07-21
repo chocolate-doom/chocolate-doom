@@ -332,6 +332,60 @@ static Menu_t *Menus[] = {
     &CrispnessMenu
 };
 
+// [crispy] reload current level / go to next level
+// adapted from prboom-plus/src/e6y.c:369-449
+static int G_ReloadLevel(void)
+{
+  int result = false;
+
+  if (gamestate == GS_LEVEL)
+  {
+    // [crispy] restart demos from the map they were started
+    if (demorecording)
+    {
+      gamemap = startmap;
+    }
+    G_DeferedInitNew(gameskill, gameepisode, gamemap);
+    result = true;
+  }
+
+  return result;
+}
+
+static int G_GotoNextLevel(void)
+{
+  byte heretic_next[6][9] = {
+
+    {12, 13, 14, 15, 16, 19, 18, 21, 17},
+    {22, 23, 24, 29, 26, 27, 28, 31, 25},
+    {32, 33, 34, 39, 36, 37, 38, 41, 35},
+    {42, 43, 44, 49, 46, 47, 48, 51, 45},
+    {52, 53, 59, 55, 56, 57, 58, 61, 54},
+    {62, 63, 11, 11, 11, 11, 11, 11, 11}, // E6M4-E6M9 shouldn't be accessible
+  };
+
+  int changed = false;
+
+  if (gamemode == shareware)
+    heretic_next[0][7] = 11;
+
+  if (gamemode == registered)
+    heretic_next[2][7] = 11;
+
+  if (gamestate == GS_LEVEL)
+  {
+    int epsd, map;
+
+    epsd = heretic_next[gameepisode-1][gamemap-1] / 10;
+    map = heretic_next[gameepisode-1][gamemap-1] % 10;
+
+    G_DeferedInitNew(gameskill, epsd, map);
+    changed = true;
+  }
+
+  return changed;
+}
+
 //---------------------------------------------------------------------------
 //
 // PROC MN_Init
@@ -1529,6 +1583,18 @@ boolean MN_Responder(event_t * event)
             }
             I_SetPalette((byte *) W_CacheLumpName("PLAYPAL", PU_CACHE));
             return true;
+        }
+        // [crispy] those two can be considered as shortcuts for the ENGAGE cheat
+        // and should be treated as such, i.e. add "if (!netgame)"
+        else if (!netgame && key != 0 && key == key_menu_reloadlevel)
+        {
+	    if (G_ReloadLevel())
+		return true;
+        }
+        else if (!netgame && key != 0 && key == key_menu_nextlevel)
+        {
+	    if (G_GotoNextLevel())
+		return true;
         }
 
     }
