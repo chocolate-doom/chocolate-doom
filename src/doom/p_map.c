@@ -438,6 +438,8 @@ P_CheckPosition
     int			by;
     subsector_t*	newsubsec;
 
+    boolean isbackpack = false;
+
     tmthing = thing;
     tmflags = thing->flags;
 	
@@ -466,7 +468,7 @@ P_CheckPosition
 	return true;
 
     if (thing->type >= MT_MISC87 && thing->type <= MT_MISC90)
-	return true;  // allow backpacks
+	isbackpack = true;  // allow backpacks
     
     // Check things first, possibly picking things up.
     // The bounding box is extended by MAXRADIUS
@@ -480,7 +482,7 @@ P_CheckPosition
 
     for (bx=xl ; bx<=xh ; bx++)
 	for (by=yl ; by<=yh ; by++)
-	    if (!P_BlockThingsIterator(bx,by,PIT_CheckThing))
+	    if (!P_BlockThingsIterator(bx,by,PIT_CheckThing) && !isbackpack)
 		return false;
     
     // check lines
@@ -491,11 +493,12 @@ P_CheckPosition
 
     for (bx=xl ; bx<=xh ; bx++)
 	for (by=yl ; by<=yh ; by++)
-	    if (!P_BlockLinesIterator (bx,by,PIT_CheckLine))
+	    if (!P_BlockLinesIterator (bx,by,PIT_CheckLine) && !isbackpack)
 		return false;
 
 	if ( !(thing->flags&(MF_DROPOFF|MF_FLOAT))
-	      && tmfloorz - tmdropoffz > 24*FRACUNIT && (doublespawn || gameskill == sk_extreme) && !allspawned)
+	      && tmfloorz - tmdropoffz > 24*FRACUNIT
+	      && (((doublespawn || gameskill == sk_extreme) && !allspawned) || isbackpack) )
 	    return false;	// don't stand over a dropoff
 
     return true;
