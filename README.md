@@ -25,15 +25,17 @@ remaining faithful to the original executables. There are a few new gameplay fea
  * Extended setup to support SIGIL and new features. Can warp to title.
  * There's a new 'Unholy massacre' skill level (-skill 6). :D Double monsters, lesser health pickups,
  zombiemen got a point blank attack, pistol with increased accuracy and damage, bumped minimum damage
- dealt for punch.
+ dealt for punch and you can eat gore when very low on health.
  * Replaced the Unholy Massacre title graphic. Thanks JNechaevsky!
  * Doom: remove SPECHIT limit (Crispy).
+ * Doom: entirely remove INTERCEPTS limit (fixes all-ghosts bug).
  * Heretic: entirely remove INTERCEPTS and SPECHIT limits (Crispy).
  * Got rid of supersized PNGs (Crispy).
  * Fixed backpacks from Marshmallow (idea and bits of code):
  * Players now can exchange supplies (default backpack key is 'x', default stimpack key is 'c').
  * Players drop backpacks with their inventory upon death, you can't drop another one until the
  previous one has been picked up tough. They work even in SP.
+ * Now you can pickup health and armor bonuses from dead players in the UM skill.
  * Single player respawn.
  * Keep keys and no DM items in Coop options (Marshmallow).
  * Spawn double the monsters and take double damage options.
