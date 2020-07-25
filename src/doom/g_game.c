@@ -272,6 +272,7 @@ void RestoreKeys(int player)
 // [marshmallow]
 void RecoverInventoryFromBackpackF(player_t* player, int p) // failed drop
 {
+	backpack_s dropped_backpack;
 	int i;
 
 	dropped_backpack = backpacks[p];

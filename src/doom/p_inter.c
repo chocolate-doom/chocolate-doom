@@ -56,6 +56,7 @@ int	clipammo[NUMAMMO] = {10, 4, 20, 1};
 // [marshmallow]
 void RecoverInventoryFromBackpack(mobj_t* toucher, int p)
 {
+	backpack_s dropped_backpack;
 	int i;
 
 	dropped_backpack = backpacks[p];
@@ -97,6 +98,7 @@ void RecoverInventoryFromBackpack(mobj_t* toucher, int p)
 // [marshmallow]
 boolean DropInventoryInBackpack(mobj_t* target, int p)
 {
+	backpack_s dropped_backpack;
 	int i;
 	boolean laden = false;
 
