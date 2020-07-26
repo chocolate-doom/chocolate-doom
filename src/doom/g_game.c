@@ -1498,8 +1498,6 @@ void G_DoCompleted (void)
 	    G_PlayerFinishLevel (i);        // take away cards and stuff 
 
     memset (keyring, 0, sizeof (keyring)); // don't keep keys
-	
-    memset (backpacks, 0, sizeof (backpacks)); // empty not picked up backpacks, not needed now
 
     if (automapactive) 
 	AM_Stop (); 
