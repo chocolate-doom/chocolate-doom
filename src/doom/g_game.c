@@ -78,7 +78,7 @@
 
 #define SAVEGAMESIZE	0x2c000
 
-extern boolean faileddrop; // could not drop a backpack
+extern boolean faileddrop[4]; // could not drop a backpack
 
 void	G_ReadDemoTiccmd (ticcmd_t* cmd); 
 void	G_WriteDemoTiccmd (ticcmd_t* cmd); 
@@ -1185,7 +1185,7 @@ void G_PlayerFinishLevel (int player)
     if ((netgame || sprespawn) && dropbackpack)
 	{
 	    RecoverInventoryFromBackpackF(p, player);
-	    faileddrop = false;
+	    faileddrop[player] = false;
 	}
 } 
  
@@ -1235,10 +1235,10 @@ void G_PlayerReborn (int player)
     for (i=0 ; i<NUMAMMO ; i++) 
 	p->maxammo[i] = maxammo[i];
 
-    if ((netgame || sprespawn) && dropbackpack && faileddrop)
+    if ((netgame || sprespawn) && dropbackpack && faileddrop[player])
 	{
 	    RecoverInventoryFromBackpackF(p, player);
-	    faileddrop = false;
+	    faileddrop[player] = false;
 	}
 }
 

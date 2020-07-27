@@ -873,7 +873,7 @@ P_TouchSpecialThing
 	S_StartSound (NULL, sound);
 }
 
-boolean faileddrop = false;
+boolean faileddrop[4]; // could not drop a backpack
 
 
 //
@@ -1004,7 +1004,7 @@ P_KillMobj
 					if (!P_CheckPosition (mo, mo->x, mo->y))
 					{
 						P_RemoveMobj (mo);
-						faileddrop = true;
+						faileddrop[p] = true;
 						target->player->message = DEH_String(FAILEDDROP);
 						return;
 					}
