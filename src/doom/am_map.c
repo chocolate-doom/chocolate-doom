@@ -241,7 +241,7 @@ static int 	lightlev; 		// used for funky strobing effect
 //static pixel_t*	fb; 			// pseudo-frame buffer
 static int 	amclock;
 
-static mpoint_t m_paninc; // how far the window pans each tic (map coords)
+static mpoint_t m_paninc, m_paninc2; // how far the window pans each tic (map coords)
 static fixed_t 	mtof_zoommul; // how far the window zooms in each tic (map coords)
 static fixed_t 	ftom_zoommul; // how far the window zooms in each tic (fb coords)
 
@@ -452,14 +452,15 @@ void AM_changeWindowLoc(void)
 {
     int64_t incx, incy;
 
-    if (m_paninc.x || m_paninc.y)
+    if (m_paninc.x || m_paninc.y || m_paninc2.x || m_paninc2.y)
     {
 	followplayer = 0;
 	f_oldloc.x = INT_MAX;
     }
 
-    incx = m_paninc.x;
-    incy = m_paninc.y;
+    // [crispy] accumulate automap panning by keyboard and mouse
+    incx = m_paninc.x + m_paninc2.x;
+    incy = m_paninc.y + m_paninc2.y;
     if (crispy->automaprotate)
     {
 	AM_rotate(&incx, &incy, -mapangle);
@@ -481,11 +482,7 @@ void AM_changeWindowLoc(void)
     m_y2 = m_y + m_h;
 
     // [crispy] reset after moving with the mouse
-    if (f_oldloc.y == INT_MAX)
-    {
-	m_paninc.x = 0;
-	m_paninc.y = 0;
-    }
+    m_paninc2.x = m_paninc2.y = 0;
 }
 
 
@@ -504,7 +501,7 @@ void AM_initVariables(void)
     amclock = 0;
     lightlev = 0;
 
-    m_paninc.x = m_paninc.y = 0;
+    m_paninc.x = m_paninc.y = m_paninc2.x = m_paninc2.y = 0;
     ftom_zoommul = FRACUNIT;
     mtof_zoommul = FRACUNIT;
 
@@ -771,9 +768,8 @@ AM_Responder
 	if (!followplayer && (ev->data2 || ev->data3))
 	{
 		// [crispy] mouse sensitivity for strafe
-		m_paninc.x = FTOM(ev->data2*(mouseSensitivity_x2+5)/80);
-		m_paninc.y = FTOM(ev->data3*(mouseSensitivity_x2+5)/80);
-		f_oldloc.y = INT_MAX;
+		m_paninc2.x = FTOM(ev->data2*(mouseSensitivity_x2+5)/80);
+		m_paninc2.y = FTOM(ev->data3*(mouseSensitivity_x2+5)/80);
 		rc = true;
 	}
     }
@@ -1013,7 +1009,7 @@ void AM_Ticker (void)
 	AM_changeWindowScale();
 
     // Change x,y location
-    if (m_paninc.x || m_paninc.y)
+    if (m_paninc.x || m_paninc.y || m_paninc2.x || m_paninc2.y)
 	AM_changeWindowLoc();
 
     // Update light level
