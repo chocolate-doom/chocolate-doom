@@ -928,7 +928,7 @@ const iwad_t **D_FindAllIWADs(int mask)
 // Get the IWAD name used for savegames.
 //
 
-const char *D_SaveGameIWADName(GameMission_t gamemission)
+const char *D_SaveGameIWADName(GameMission_t gamemission, GameVariant_t gamevariant)
 {
     size_t i;
 
@@ -938,6 +938,22 @@ const char *D_SaveGameIWADName(GameMission_t gamemission)
     // Note that we match on gamemission rather than on IWAD name.
     // This ensures that doom1.wad and doom.wad saves are stored
     // in the same place.
+
+    if (gamevariant == freedoom)
+    {
+        if (gamemission == doom)
+        {
+            return "freedoom1.wad";
+        }
+        else if (gamemission == doom2)
+        {
+            return "freedoom2.wad";
+        }
+    }
+    else if (gamevariant == freedm && gamemission == doom2)
+    {
+        return "freedm.wad";
+    }
 
     for (i=0; i<arrlen(iwads); ++i)
     {
