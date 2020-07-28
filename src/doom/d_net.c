@@ -180,6 +180,11 @@ static void InitConnectData(net_connect_data_t *connect_data)
 {
     boolean shorttics;
 
+    newdemo = (M_ParmExists("-backpack") || M_ParmExists("-nodmweapons") || M_ParmExists("-keepkeys")
+      || M_ParmExists("-sprespawn") || M_ParmExists("-2xmonsters") || M_ParmExists("-xpain")
+      || M_ParmExists("-nod2monsters") || M_ParmExists("-halfammo") || M_ParmExists("-doubleammo"))
+      && M_ParmExists("-record") && !M_ParmExists("-strictdemos");
+
     connect_data->max_players = MAXPLAYERS;
     connect_data->drone = false;
 
@@ -270,11 +275,6 @@ void D_ConnectNetGame(void)
 void D_CheckNetGame (void)
 {
     net_gamesettings_t settings;
-
-    newdemo = (M_ParmExists("-backpack") || M_ParmExists("-nodmweapons") || M_ParmExists("-keepkeys")
-      || M_ParmExists("-sprespawn") || M_ParmExists("-2xmonsters") || M_ParmExists("-xpain")
-      || M_ParmExists("-nod2monsters") || M_ParmExists("-halfammo") || M_ParmExists("-doubleammo"))
-      && M_ParmExists("-record") && !M_ParmExists("-strictdemos");
 
     if (netgame)
     {
