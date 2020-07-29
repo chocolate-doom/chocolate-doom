@@ -54,6 +54,9 @@ void G_DoVictory(void);
 void G_DoWorldDone(void);
 void G_DoSaveGame(void);
 
+// [crispy] Write level statistics upon exit
+void G_WriteLevelStat(void);
+
 void D_PageTicker(void);
 void D_AdvanceDemo(void);
 
@@ -1510,10 +1513,68 @@ void G_SecretExitLevel(void)
     gameaction = ga_completed;
 }
 
+// [crispy] Write level statistics upon exit
+void G_WriteLevelStat(void)
+{
+    static FILE *fstream = NULL;
+
+    int i, playerKills = 0, playerItems = 0, playerSecrets = 0;
+    int exitHours, exitMinutes;
+    float exitTime, exitSeconds;
+
+    char levelTimeString[16];
+    
+    if (fstream == NULL)
+    {
+        fstream = fopen("levelstat.txt", "w");
+    }
+
+    exitTime = (float) leveltime / 35;
+    exitHours = exitTime / 3600;
+    exitTime -= exitHours * 3600;
+    exitMinutes = exitTime / 60;
+    exitTime -= exitMinutes * 60;
+    exitSeconds = exitTime;
+
+    if (exitHours)
+    {
+        M_snprintf(levelTimeString, sizeof(levelTimeString), "%d:%02d:%05.2f",
+                    exitHours, exitMinutes, exitSeconds);
+    }
+    else
+    {
+        M_snprintf(levelTimeString, sizeof(levelTimeString), "%01d:%05.2f", 
+                    exitMinutes, exitSeconds);
+    }
+
+    for (i = 0; i < MAXPLAYERS; i++)
+    {
+        if (playeringame[i])
+        {
+            playerKills += players[i].killcount;
+            playerItems += players[i].itemcount;
+            playerSecrets += players[i].secretcount;
+        }
+    }
+
+    // Duplicating prboom+ format for consistency
+    // Heretic isn't tracking total time (in parentheses) so it's 0 for now
+    fprintf(fstream, "E%dM%d%s - %s (0:00)  K: %d/%d  I: %d/%d  S: %d/%d\n",
+            gameepisode, gamemap, (secretexit ? "s" : ""),
+            levelTimeString, playerKills, totalkills, 
+            playerItems, totalitems, playerSecrets, totalsecret);
+}
+
 void G_DoCompleted(void)
 {
     int i;
     static int afterSecret[5] = { 7, 5, 5, 5, 4 };
+
+    // [crispy] Write level statistics upon exit
+    if (M_ParmExists("-levelstat"))
+    {
+        G_WriteLevelStat();
+    }
 
     gameaction = ga_nothing;
 
