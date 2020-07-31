@@ -96,7 +96,7 @@ void RecoverInventoryFromBackpack(player_t* player, int p)
 
 
 // [marshmallow]
-boolean DropInventoryInBackpack(mobj_t* target, int p)
+boolean DropInventoryInBackpack(player_t* player, int p)
 {
 	backpack_s dropped_backpack;
 	int i;
@@ -122,19 +122,19 @@ boolean DropInventoryInBackpack(mobj_t* target, int p)
 	// Save weapons
 	for (i=0; i<NUMWEAPONS; i++)
 	{
-		if (target->player->weaponowned[i])
+		if (player->weaponowned[i])
 			dropped_backpack.weapons[i] = true;
 	}
 
 	// Save ammo
 	for (i=0; i<NUMAMMO; i++)
 	{
-		if (target->player->ammo[i])
-			dropped_backpack.ammo[i] = target->player->ammo[i];
+		if (player->ammo[i])
+			dropped_backpack.ammo[i] = player->ammo[i];
 	}
 
 	// Backpack powerup yes/no
-	if (target->player->backpack)
+	if (player->backpack)
 		dropped_backpack.backpack = true;
 
 	backpacks[p] = dropped_backpack;
@@ -998,7 +998,7 @@ P_KillMobj
 				default:
 					return;
 				}
-				if (DropInventoryInBackpack(target, p)) // [marshmallow]
+				if (DropInventoryInBackpack(target->player, p)) // [marshmallow]
 				{
 					mo = P_SpawnMobj (target->x,target->y,target->z, item);
 					if (!P_CheckPosition (mo, mo->x, mo->y))
