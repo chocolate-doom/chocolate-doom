@@ -93,6 +93,7 @@ Many additional less user-visible features have been implemented, e.g. fixed eng
  * `-playdemo demoname1 -record demoname2` plays back fast-forward until the end of demoname1 and continues recording as demoname2 (new in 5.5).
  * `-fliplevels` loads mirrored versions of the maps (this was the default on April 1st up to version 5.0).
  * `-flipweapons` flips the player's weapons (new in 5.3).
+ * `-levelstat` prints a levelstat.txt file with statistics for each completed level (new in dev).
 
 ### New cheat codes
 
