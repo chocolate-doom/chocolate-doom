@@ -1285,7 +1285,7 @@ M_StartMessage
     messageNeedsInput = input;
     menuactive = true;
     // [crispy] entering menus while recording demos pauses the game
-    if (demorecording && !paused && !netgame)
+    if (demorecording && !paused)
     {
         sendpause = true;
     }
@@ -1940,7 +1940,7 @@ void M_StartControlPanel (void)
 	return;
 
     // [crispy] entering menus while recording demos pauses the game
-    if (demorecording && !paused && !netgame)
+    if (demorecording && !paused)
         sendpause = true;
     
     menuactive = 1;
@@ -2082,7 +2082,7 @@ void M_ClearMenus (void)
     menuactive = 0;
 
     // [crispy] entering menus while recording demos pauses the game
-    if (demorecording && paused && !netgame)
+    if (demorecording && paused)
         sendpause = true;
 
     // if (!netgame && usergame && paused)
