@@ -563,6 +563,7 @@ extern int prevmap;
 extern int totalkills, totalitems, totalsecret; // for intermission
 extern int levelstarttic;       // gametic at level start
 extern int leveltime;           // tics in game play for par
+extern int totalleveltimes; // [crispy] total time for all completed levels
 
 extern ticcmd_t *netcmds;
 

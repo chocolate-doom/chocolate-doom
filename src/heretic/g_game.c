@@ -54,9 +54,6 @@ void G_DoVictory(void);
 void G_DoWorldDone(void);
 void G_DoSaveGame(void);
 
-// [crispy] Write level statistics upon exit
-void G_WriteLevelStat(void);
-
 void D_PageTicker(void);
 void D_AdvanceDemo(void);
 
@@ -109,6 +106,7 @@ int consoleplayer;              // player taking events and displaying
 int displayplayer;              // view being displayed
 int levelstarttic;              // gametic at level start
 int totalkills, totalitems, totalsecret;        // for intermission
+int totalleveltimes; // [crispy] total time for all completed levels
 
 int mouseSensitivity;
 
@@ -1513,23 +1511,13 @@ void G_SecretExitLevel(void)
     gameaction = ga_completed;
 }
 
-// [crispy] Write level statistics upon exit
-void G_WriteLevelStat(void)
+// [crispy] format time for level statistics
+static void G_FormatLevelStatTime(char *str, int tics)
 {
-    static FILE *fstream = NULL;
-
-    int i, playerKills = 0, playerItems = 0, playerSecrets = 0;
     int exitHours, exitMinutes;
     float exitTime, exitSeconds;
 
-    char levelTimeString[16];
-    
-    if (fstream == NULL)
-    {
-        fstream = fopen("levelstat.txt", "w");
-    }
-
-    exitTime = (float) leveltime / 35;
+    exitTime = (float) tics / 35;
     exitHours = exitTime / 3600;
     exitTime -= exitHours * 3600;
     exitMinutes = exitTime / 60;
@@ -1538,13 +1526,45 @@ void G_WriteLevelStat(void)
 
     if (exitHours)
     {
-        M_snprintf(levelTimeString, sizeof(levelTimeString), "%d:%02d:%05.2f",
+        M_snprintf(str, sizeof(str), "%d:%02d:%05.2f",
                     exitHours, exitMinutes, exitSeconds);
     }
     else
     {
-        M_snprintf(levelTimeString, sizeof(levelTimeString), "%01d:%05.2f", 
-                    exitMinutes, exitSeconds);
+        M_snprintf(str, sizeof(str), "%01d:%05.2f", exitMinutes, exitSeconds);
+    }
+}
+
+// [crispy] Write level statistics upon exit
+static void G_WriteLevelStat(void)
+{
+    static FILE *fstream = NULL;
+
+    int i, playerKills = 0, playerItems = 0, playerSecrets = 0;
+
+    char levelTimeString[16];
+    char totalTimeString[16];
+    char *decimal;
+
+    if (fstream == NULL)
+    {
+        fstream = fopen("levelstat.txt", "w");
+
+        if (fstream == NULL)
+        {
+            fprintf(stderr, "Unable to open levelstat.txt for writing!\n");
+            return;
+        }
+    }
+
+    G_FormatLevelStatTime(levelTimeString, leveltime);
+    G_FormatLevelStatTime(totalTimeString, totalleveltimes + leveltime);
+
+    // Total time ignores centiseconds
+    decimal = strchr(totalTimeString, '.');
+    if (decimal != NULL)
+    {
+        *decimal = '\0';
     }
 
     for (i = 0; i < MAXPLAYERS; i++)
@@ -1557,11 +1577,9 @@ void G_WriteLevelStat(void)
         }
     }
 
-    // Duplicating prboom+ format for consistency
-    // Heretic isn't tracking total time (in parentheses) so it's 0 for now
-    fprintf(fstream, "E%dM%d%s - %s (0:00)  K: %d/%d  I: %d/%d  S: %d/%d\n",
+    fprintf(fstream, "E%dM%d%s - %s (%s)  K: %d/%d  I: %d/%d  S: %d/%d\n",
             gameepisode, gamemap, (secretexit ? "s" : ""),
-            levelTimeString, playerKills, totalkills, 
+            levelTimeString, totalTimeString, playerKills, totalkills, 
             playerItems, totalitems, playerSecrets, totalsecret);
 }
 
@@ -1608,6 +1626,10 @@ void G_DoCompleted(void)
     {
         gamemap++;
     }
+
+    // [crispy] total time for all completed levels (only count seconds)
+    totalleveltimes += (leveltime - leveltime % TICRATE);
+
     gamestate = GS_INTERMISSION;
     IN_Start();
 }
@@ -1804,6 +1826,9 @@ void G_InitNew(skill_t skill, int episode, int map)
     gameskill = skill;
     viewactive = true;
     BorderNeedRefresh = true;
+
+    // [crispy] total time for all completed levels
+    totalleveltimes = 0;
 
     // Set the sky map
     if (episode > 5)
