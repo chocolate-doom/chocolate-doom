@@ -269,47 +269,6 @@ void RestoreKeys(int player)
 			players[player].cards[i] = true;
 }
 
-// [marshmallow]
-void RecoverInventoryFromBackpackF(player_t* player, int p) // failed drop
-{
-	backpack_s dropped_backpack;
-	int i;
-
-	dropped_backpack = backpacks[p];
-
-	// Recover weapons
-	for (i=0; i<NUMWEAPONS; i++)
-	{
-		if (dropped_backpack.weapons[i])
-			player->weaponowned[i] = true;
-	}
-
-	// Backpack powerup yes/no
-	if (dropped_backpack.backpack && !player->backpack)
-	{
-		player->backpack = true;
-		for (i=0 ; i<NUMAMMO ; i++)
-			player->maxammo[i] *= 2;
-	}
-
-	// Recover ammo
-	for (i=0; i<NUMAMMO; i++)
-	{
-		if (dropped_backpack.ammo[i])
-		{
-			player->ammo[i] += dropped_backpack.ammo[i];
-
-			if (player->ammo[i] > player->maxammo[i])  // don't let us go over maxammo
-				player->ammo[i] = player->maxammo[i];
-		}
-	}
-
-	// Empty dropped_items
-	memset (&dropped_backpack, 0, sizeof(dropped_backpack));
-
-	backpacks[p] = dropped_backpack;
-}
-
 static boolean WeaponSelectable(weapontype_t weapon)
 {
     // Can't select the super shotgun in Doom 1.
@@ -1184,7 +1143,7 @@ void G_PlayerFinishLevel (int player)
 
     if ((netgame || sprespawn) && dropbackpack)
 	{
-	    RecoverInventoryFromBackpackF(p, player);
+	    RecoverInventoryFromBackpack(p, player);
 	    faileddrop[player] = false;
 	}
 } 
@@ -1237,7 +1196,7 @@ void G_PlayerReborn (int player)
 
     if ((netgame || sprespawn) && dropbackpack && faileddrop[player])
 	{
-	    RecoverInventoryFromBackpackF(p, player);
+	    RecoverInventoryFromBackpack(p, player); // failed drop
 	    faileddrop[player] = false;
 	}
 }

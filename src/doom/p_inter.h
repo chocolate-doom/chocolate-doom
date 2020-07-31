@@ -35,7 +35,7 @@ typedef struct {
 backpack_s backpacks[4];
 
 boolean DropInventoryInBackpack(mobj_t* target, int p);
-void RecoverInventoryFromBackpack(mobj_t* toucher, int p);
+void RecoverInventoryFromBackpack(player_t* player, int p);
 
 
 #endif

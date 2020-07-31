@@ -54,7 +54,7 @@ int	clipammo[NUMAMMO] = {10, 4, 20, 1};
 
 
 // [marshmallow]
-void RecoverInventoryFromBackpack(mobj_t* toucher, int p)
+void RecoverInventoryFromBackpack(player_t* player, int p)
 {
 	backpack_s dropped_backpack;
 	int i;
@@ -65,15 +65,15 @@ void RecoverInventoryFromBackpack(mobj_t* toucher, int p)
 	for (i=0; i<NUMWEAPONS; i++)
 	{
 		if (dropped_backpack.weapons[i])
-			toucher->player->weaponowned[i] = true;
+			player->weaponowned[i] = true;
 	}
 
 	// Backpack powerup yes/no
-	if (dropped_backpack.backpack && !toucher->player->backpack)
+	if (dropped_backpack.backpack && !player->backpack)
 	{
-		toucher->player->backpack = true;
+		player->backpack = true;
 		for (i=0 ; i<NUMAMMO ; i++)
-			toucher->player->maxammo[i] *= 2;
+			player->maxammo[i] *= 2;
 	}
 
 	// Recover ammo
@@ -81,10 +81,10 @@ void RecoverInventoryFromBackpack(mobj_t* toucher, int p)
 	{
 		if (dropped_backpack.ammo[i])
 		{
-			toucher->player->ammo[i] += dropped_backpack.ammo[i];
+			player->ammo[i] += dropped_backpack.ammo[i];
 
-			if (toucher->player->ammo[i] > toucher->player->maxammo[i])  // don't let us go over maxammo
-				toucher->player->ammo[i] = toucher->player->maxammo[i];
+			if (player->ammo[i] > player->maxammo[i])  // don't let us go over maxammo
+				player->ammo[i] = player->maxammo[i];
 		}
 	}
 
@@ -764,13 +764,13 @@ P_TouchSpecialThing
 		&& special->flags & MF_DROPPED && player && player->health > 0) // [marshmallow] So we don't pick it up while dead/dying
 	{
 		if (special->type == MT_MISC87)
-			RecoverInventoryFromBackpack(toucher, 0);
+			RecoverInventoryFromBackpack(player, 0);
 		else if (special->type == MT_MISC88)
-			RecoverInventoryFromBackpack(toucher, 1);
+			RecoverInventoryFromBackpack(player, 1);
 		else if (special->type == MT_MISC89)
-			RecoverInventoryFromBackpack(toucher, 2);
+			RecoverInventoryFromBackpack(player, 2);
 		else if (special->type == MT_MISC90)
-			RecoverInventoryFromBackpack(toucher, 3);
+			RecoverInventoryFromBackpack(player, 3);
 		else // exchange supplies
 		{
 			if (special->type == MT_MISC95)
