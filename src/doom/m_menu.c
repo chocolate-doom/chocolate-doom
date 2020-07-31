@@ -1795,6 +1795,7 @@ boolean M_Responder (event_t* ev)
 	{
 	    M_StartControlPanel ();
 	    S_StartSound(NULL,sfx_swtchn);
+	    return true;
 	}
 	return false;
     }
