@@ -635,11 +635,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     if (sendpause) 
     { 
 	sendpause = false; 
-	// [crispy] ignore un-pausing in menus during demo recording
-	if (!(menuactive && demorecording && paused))
-	{
 	cmd->buttons = BT_SPECIAL | BTS_PAUSE; 
-	}
     } 
  
     if (sendsave) 
@@ -991,7 +987,7 @@ void G_Ticker (void)
 
 	    if (demoplayback) 
 		G_ReadDemoTiccmd (cmd); 
-	    if (demorecording)
+	    if (demorecording) 
 		G_WriteDemoTiccmd (cmd);
 	    
 	    // check for turbo cheats
