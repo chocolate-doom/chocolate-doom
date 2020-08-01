@@ -602,7 +602,13 @@ void M_LoadGame (int choice)
 	M_StartMessage(DEH_String(LOADNET),NULL,false);
 	return;
     }
-	
+
+    if (demorecording)
+    {
+	M_StartMessage(DEH_String(LOADDEMO),NULL,false);
+	return;
+    }
+
     M_SetupNextMenu(&LoadDef);
     M_ReadSaveStrings();
 }
@@ -745,6 +751,12 @@ void M_QuickSave(void)
 	return;
     }
 
+    if (demorecording)
+    {
+	M_StartMessage(DEH_String(QSAVEDEMO),NULL,false);
+	return;
+    }
+
     if (gamestate != GS_LEVEL)
 	return;
 	
@@ -783,7 +795,13 @@ void M_QuickLoad(void)
 	M_StartMessage(DEH_String(QLOADNET),NULL,false);
 	return;
     }
-	
+
+    if (demorecording)
+    {
+	M_StartMessage(DEH_String(LOADDEMO),NULL,false);
+	return;
+    }
+
     if (quickSaveSlot < 0)
     {
 	M_StartMessage(DEH_String(QSAVESPOT),NULL,false);
@@ -1065,7 +1083,13 @@ void M_EndGame(int choice)
 	M_StartMessage(DEH_String(NETEND),NULL,false);
 	return;
     }
-	
+
+    if (demorecording)
+    {
+	M_StartMessage(DEH_String(DEMOEND),NULL,false);
+	return;
+    }
+
     M_StartMessage(DEH_String(ENDGAME),M_EndGameResponse,true);
 }
 
@@ -1723,7 +1747,7 @@ boolean M_Responder (event_t* ev)
 	    M_LoadGame(0);
 	    return true;
         }
-        else if (key == key_menu_volume)   // Sound Volume
+        else if (key == key_menu_volume && !demorecording)   // Sound Volume
         {
 	    M_StartControlPanel ();
 	    currentMenu = &SoundDef;
@@ -1786,7 +1810,7 @@ boolean M_Responder (event_t* ev)
     // Pop-up menu?
     if (!menuactive)
     {
-	if (key == key_menu_activate && !chat_on)
+	if (key == key_menu_activate && !chat_on && !demorecording)
 	{
 	    M_StartControlPanel ();
 	    S_StartSound(NULL,sfx_swtchn);

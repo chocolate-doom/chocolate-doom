@@ -134,6 +134,7 @@ void P_Ticker (void)
     if ( !netgame
 	 && menuactive
 	 && !demoplayback
+	 && !demorecording
 	 && players[consoleplayer].viewz != 1)
     {
 	return;

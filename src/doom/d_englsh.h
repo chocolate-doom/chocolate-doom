@@ -42,6 +42,8 @@
 #define SAVEDEAD 	"you can't save if you aren't playing!\n\n"PRESSKEY
 #define QSPROMPT 	"quicksave over your game named\n\n'%s'?\n\n"PRESSYN
 #define QLPROMPT	"do you want to quickload the game named\n\n'%s'?\n\n"PRESSYN
+#define LOADDEMO	"you can't do load while recording a demo!\n\n"PRESSKEY
+#define QSAVEDEMO	"you can't quicksave while recording a demo!\n\n"PRESSKEY
 
 #define NEWGAME	\
 "you can't start a new game\n"\
@@ -58,6 +60,7 @@
 #define MSGOFF	"Messages OFF"
 #define MSGON		"Messages ON"
 #define NETEND	"you can't end a netgame!\n\n"PRESSKEY
+#define DEMOEND	"you can't end a game while recording a demo!\n\n"PRESSKEY
 #define ENDGAME	"are you sure you want to end the game?\n\n"PRESSYN
 
 #define DOSY		"(press y to quit to dos.)"
