@@ -764,13 +764,21 @@ P_TouchSpecialThing
 		&& special->flags & MF_DROPPED && player && player->health > 0) // [marshmallow] So we don't pick it up while dead/dying
 	{
 		if (special->type == MT_MISC87)
-			RecoverInventoryFromBackpack(player, 0);
+			if (deathmatch || &players[0] == player)
+				RecoverInventoryFromBackpack(player, 0);
+			else return;
 		else if (special->type == MT_MISC88)
-			RecoverInventoryFromBackpack(player, 1);
+			if (deathmatch || &players[1] == player)
+				RecoverInventoryFromBackpack(player, 1);
+			else return;
 		else if (special->type == MT_MISC89)
-			RecoverInventoryFromBackpack(player, 2);
+			if (deathmatch || &players[2] == player)
+				RecoverInventoryFromBackpack(player, 2);
+			else return;
 		else if (special->type == MT_MISC90)
-			RecoverInventoryFromBackpack(player, 3);
+			if (deathmatch || &players[3] == player)
+				RecoverInventoryFromBackpack(player, 3);
+			else return;
 		else // exchange supplies
 		{
 			if (special->type == MT_MISC95)
@@ -998,23 +1006,22 @@ P_KillMobj
 				default:
 					return;
 				}
-				if (DropInventoryInBackpack(target->player, p)) // [marshmallow]
+				mo = P_SpawnMobj (target->x,target->y,target->z, item);
+				if (!P_CheckPosition (mo, mo->x, mo->y))
 				{
-					mo = P_SpawnMobj (target->x,target->y,target->z, item);
-					if (!P_CheckPosition (mo, mo->x, mo->y))
-					{
-						P_RemoveMobj (mo);
-						faileddrop[p] = true;
-						target->player->message = DEH_String(FAILEDDROP);
-						return;
-					}
-					mo->flags |= MF_DROPPED;
+					faileddrop[p] = true;
+					target->player->message = DEH_String(FAILEDDROP);
 				}
+				if (!DropInventoryInBackpack(target->player, p) || faileddrop[p]) // [marshmallow]
+				{
+					P_RemoveMobj (mo);
+					return;
+				}
+				mo->flags |= MF_DROPPED;
 			}
 		}
 	}
 	return;
-	break;
 
       default:
 	return;
