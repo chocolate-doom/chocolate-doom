@@ -44,6 +44,7 @@
 #define QLPROMPT	"do you want to quickload the game named\n\n'%s'?\n\n"PRESSYN
 #define LOADDEMO	"you can't do load while recording a demo!\n\n"PRESSKEY
 #define QSAVEDEMO	"you can't quicksave while recording a demo!\n\n"PRESSKEY
+#define MENUDEMO	"you can't open the menu while recording a demo!\n\n"PRESSKEY
 
 #define NEWGAME	\
 "you can't start a new game\n"\

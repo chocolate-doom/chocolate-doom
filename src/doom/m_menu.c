@@ -1810,11 +1810,18 @@ boolean M_Responder (event_t* ev)
     // Pop-up menu?
     if (!menuactive)
     {
-	if (key == key_menu_activate && !chat_on && !demorecording)
+	if (key == key_menu_activate)
 	{
-	    M_StartControlPanel ();
-	    S_StartSound(NULL,sfx_swtchn);
-	    return true;
+	    if (!chat_on && !demorecording)
+	    {
+	        M_StartControlPanel ();
+	        S_StartSound(NULL,sfx_swtchn);
+	        return true;
+	    }
+	    else if (demorecording)
+	    {
+	        M_StartMessage(DEH_String(MENUDEMO),NULL,false);
+	    }
 	}
 	return false;
     }
