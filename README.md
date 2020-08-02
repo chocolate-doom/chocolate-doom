@@ -35,6 +35,7 @@ remaining faithful to the original executables. There are a few new gameplay fea
  * Players now can exchange supplies (default backpack key is 'x', default stimpack key is 'c').
  * Players drop backpacks with their inventory upon death, you can't drop another one until the
  previous one has been picked up tough. They work even in SP.
+ * Players can only pick up their own backpacks in coop.
  * Now you can pickup health and armor bonuses from dead players in the UM skill.
  * Single player respawn.
  * Keep keys and no DM items in Coop options (Marshmallow).
@@ -46,6 +47,8 @@ remaining faithful to the original executables. There are a few new gameplay fea
  xpain, nod2monsters, isa, halfammo.
  * Extended demo format while keeping vanilla compatibility.
  * Doom 1.2 demo support (SmileTheory).
+ * Alternative fix for the demo desync accessing menus bug: disable some menus while recording demos
+ instead of pausing the game at record and playback time.
  * Drag and Drop support (Crispy).
  * Resurrect cheat with IDDQD (Crispy, works differently here).
  * Support for extended nodes (Crispy).
