@@ -751,12 +751,6 @@ void M_QuickSave(void)
 	return;
     }
 
-    if (demorecording)
-    {
-	M_StartMessage(DEH_String(QSAVEDEMO),NULL,false);
-	return;
-    }
-
     if (gamestate != GS_LEVEL)
 	return;
 	
