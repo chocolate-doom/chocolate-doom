@@ -1012,7 +1012,7 @@ P_KillMobj
 					faileddrop[p] = true;
 					target->player->message = DEH_String(FAILEDDROP);
 				}
-				if (!DropInventoryInBackpack(target->player, p) || faileddrop[p]) // [marshmallow]
+				if (!DropInventoryInBackpack(target->player, p) || faileddrop[p])
 				{
 					P_RemoveMobj (mo);
 					return;
