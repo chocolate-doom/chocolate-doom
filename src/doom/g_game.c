@@ -78,8 +78,6 @@
 
 #define SAVEGAMESIZE	0x2c000
 
-extern boolean faileddrop[4]; // could not drop a backpack
-
 void	G_ReadDemoTiccmd (ticcmd_t* cmd); 
 void	G_WriteDemoTiccmd (ticcmd_t* cmd); 
 void	G_PlayerReborn (int player); 
@@ -1140,6 +1138,7 @@ void G_PlayerFinishLevel (int player)
     if ((netgame || sprespawn) && dropbackpack)
 	{
 	    RecoverInventoryFromBackpack(p, player);
+	    bpmobjs[player] = NULL;
 	    faileddrop[player] = false;
 	}
 } 
@@ -1193,6 +1192,11 @@ void G_PlayerReborn (int player)
     if ((netgame || sprespawn) && dropbackpack && faileddrop[player])
 	{
 	    RecoverInventoryFromBackpack(p, player); // failed drop
+	    if (bpmobjs[player] != NULL)
+	    {
+	        P_RemoveMobj(bpmobjs[player]); // remove old backpack
+	        bpmobjs[player] = NULL;
+	    }
 	    faileddrop[player] = false;
 	}
 }

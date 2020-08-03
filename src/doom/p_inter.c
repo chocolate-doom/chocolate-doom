@@ -765,19 +765,31 @@ P_TouchSpecialThing
 	{
 		if (special->type == MT_MISC87)
 			if (deathmatch || &players[0] == player)
+			{
 				RecoverInventoryFromBackpack(player, 0);
+				bpmobjs[0] = NULL;
+			}
 			else return;
 		else if (special->type == MT_MISC88)
 			if (deathmatch || &players[1] == player)
+			{
 				RecoverInventoryFromBackpack(player, 1);
+				bpmobjs[1] = NULL;
+			}
 			else return;
 		else if (special->type == MT_MISC89)
 			if (deathmatch || &players[2] == player)
+			{
 				RecoverInventoryFromBackpack(player, 2);
+				bpmobjs[2] = NULL;
+			}
 			else return;
 		else if (special->type == MT_MISC90)
 			if (deathmatch || &players[3] == player)
+			{
 				RecoverInventoryFromBackpack(player, 3);
+				bpmobjs[3] = NULL;
+			}
 			else return;
 		else // exchange supplies
 		{
@@ -880,8 +892,6 @@ P_TouchSpecialThing
     if (player == &players[consoleplayer])
 	S_StartSound (NULL, sound);
 }
-
-boolean faileddrop[4]; // could not drop a backpack
 
 
 //
@@ -1017,6 +1027,7 @@ P_KillMobj
 					P_RemoveMobj (mo);
 					return;
 				}
+				bpmobjs[p] = mo;
 				mo->flags |= MF_DROPPED;
 			}
 		}
