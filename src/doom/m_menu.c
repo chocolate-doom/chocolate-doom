@@ -1812,7 +1812,7 @@ boolean M_Responder (event_t* ev)
 	        S_StartSound(NULL,sfx_swtchn);
 	        return true;
 	    }
-	    else if (demorecording)
+	    else if (demorecording && !chat_on)
 	    {
 	        M_StartMessage(DEH_String(MENUDEMO),NULL,false);
 	    }
