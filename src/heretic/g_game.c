@@ -2104,7 +2104,7 @@ boolean G_CheckDemoStatus(void)
         M_WriteFile(demoname, demobuffer, demo_p - demobuffer);
         Z_Free(demobuffer);
         demorecording = false;
-        I_Error("Demo %s recorded", demoname);
+        fprintf(stderr, "Demo %s recorded\n", demoname);
     }
 
     return false;
