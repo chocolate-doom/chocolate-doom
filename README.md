@@ -36,7 +36,6 @@ remaining faithful to the original executables. There are a few new gameplay fea
  * Players drop backpacks with their inventory upon death, you can't drop another one until the
  previous one has been picked up tough. They work even in SP.
  * Players can only pick up their own backpacks in coop.
- * Now you can pickup health and armor bonuses from dead players in the UM skill.
  * Single player respawn.
  * Keep keys and no DM items in Coop options (Marshmallow).
  * Spawn double the monsters and take double damage options.
