@@ -639,7 +639,7 @@ P_TouchSpecialThing
 	break;
 
       case SPR_PLAY:
-	if (gameskill == sk_extreme)
+	if (gameskill == sk_extreme && player->health > 0)
 	{
 	    player->health += 10;
 	    if (player->health > deh_max_health)
