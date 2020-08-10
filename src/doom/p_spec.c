@@ -214,8 +214,12 @@ void P_InitPicAnims (void)
 	}
 	else
 	if (lastanim->numpics < 2)
-	    I_Error ("P_InitPicAnims: bad cycle from %s to %s",
+	{
+	    // [crispy] make non-fatal, skip invalid animation sequences
+	    fprintf (stderr, "P_InitPicAnims: bad cycle from %s to %s\n",
 		     startname, endname);
+	    continue;
+	}
 	
 	lastanim++;
     }
