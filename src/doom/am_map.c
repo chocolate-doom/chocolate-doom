@@ -1023,7 +1023,7 @@ void AM_Ticker (void)
 	// [crispy] keep the map static in overlay mode
 	// if not following the player
 	if (!(!followplayer && crispy->automapoverlay))
-	mapangle = ANG90 - viewangle;
+	mapangle = ANG90 - plr->mo->angle;
     }
 }
 
