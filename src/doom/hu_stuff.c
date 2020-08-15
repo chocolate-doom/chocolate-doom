@@ -77,6 +77,7 @@ char			chat_char; // remove later.
 static player_t*	plr;
 patch_t*		hu_font[HU_FONTSIZE];
 static hu_textline_t	w_title;
+static hu_textline_t	w_fps;
 boolean			chat_on;
 static hu_itext_t	w_chat;
 static boolean		always_off = false;
@@ -398,7 +399,12 @@ void HU_Start(void)
 		       HU_TITLEX, HU_TITLEY,
 		       hu_font,
 		       HU_FONTSTART);
-    
+
+    HUlib_initTextLine(&w_fps,
+		       SCREENWIDTH + WIDEWIDTH_DELTA * 2 - 48, 0,
+		       hu_font,
+		       HU_FONTSTART);
+
     switch ( logical_gamemission )
     {
       case doom:
@@ -471,13 +477,28 @@ void HU_Start(void)
 
 }
 
+extern boolean showfps;
+
 void HU_Drawer(void)
 {
 
+    static char str[32], *s;
     HUlib_drawSText(&w_message);
     HUlib_drawIText(&w_chat);
     if (automapactive)
 	HUlib_drawTextLine(&w_title, false);
+
+    if (showfps) // [Crispy]
+    {
+	extern int fps;
+
+	M_snprintf(str, sizeof(str), "%d FPS", fps);
+	HUlib_clearTextLine(&w_fps);
+	s = str;
+	while (*s)
+	    HUlib_addCharToTextLine(&w_fps, *(s++));
+	HUlib_drawTextLine(&w_fps, false);
+    }
 
 }
 
@@ -487,7 +508,7 @@ void HU_Erase(void)
     HUlib_eraseSText(&w_message);
     HUlib_eraseIText(&w_chat);
     HUlib_eraseTextLine(&w_title);
-
+    HUlib_eraseTextLine(&w_fps);
 }
 
 void HU_Ticker(void)

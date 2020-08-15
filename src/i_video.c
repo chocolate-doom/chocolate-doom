@@ -815,8 +815,8 @@ void I_FinishUpdate (void)
 		i = SDL_GetTicks();
 		mili = i - lastmili;
 
-		// Update FPS counter every 100ms
-		if (mili >= 100)
+		// Update FPS counter every second
+		if (mili >= 1000)
 		{
 			fps = (fpscount * 1000) / mili;
 			fpscount = 0;
