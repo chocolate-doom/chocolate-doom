@@ -659,10 +659,10 @@ ST_Responder (event_t* ev)
       else if (cht_CheckCheat(&cheat_mypos, ev->data2))
       {
         static char buf[ST_MSGWIDTH];
-        M_snprintf(buf, sizeof(buf), "ang=0x%x;x,y=(0x%x,0x%x)",
-                   players[consoleplayer].mo->angle,
-                   players[consoleplayer].mo->x,
-                   players[consoleplayer].mo->y);
+        M_snprintf(buf, sizeof(buf), "ang=%d;x,y=(%d,%d)",
+                   (players[consoleplayer].mo->angle)/ANG1,
+                   (players[consoleplayer].mo->x)>>FRACBITS,
+                   (players[consoleplayer].mo->y)>>FRACBITS);
         plyr->message = buf;
       }
     }
