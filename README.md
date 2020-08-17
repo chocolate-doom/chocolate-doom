@@ -93,7 +93,7 @@ Many additional less user-visible features have been implemented, e.g. fixed eng
  * `-playdemo demoname1 -record demoname2` plays back fast-forward until the end of demoname1 and continues recording as demoname2 (new in 5.5).
  * `-fliplevels` loads mirrored versions of the maps (this was the default on April 1st up to version 5.0).
  * `-flipweapons` flips the player's weapons (new in 5.3).
- * `-levelstat` prints a levelstat.txt file with statistics for each completed level (new in dev).
+ * `-levelstat` prints a levelstat.txt file with statistics for each completed level (new in 5.9.0).
 
 ### New cheat codes
 
@@ -114,7 +114,7 @@ Many additional less user-visible features have been implemented, e.g. fixed eng
 ## Download
 
 Binaries for Windows XP / Vista / 7 / 8.1 / 10 (32-bit binaries compatible with both x86 and x64 editions) are available here:
-https://github.com/fabiangreffrath/crispy-doom/releases/download/crispy-doom-5.7.2/crispy-doom-5.7.2-win32.zip
+https://github.com/fabiangreffrath/crispy-doom/releases/download/crispy-doom-5.9.0/crispy-doom-5.9.0-win32.zip
 
 To install on Ubuntu ("Eoan Ermine" 19.10 and later)/Debian ("Buster" 10 and later) based systems:
 ```bash
@@ -158,6 +158,82 @@ to install the prerequisites and then
 After successful compilation the resulting binaries can be found in the `src/` directory.
 
 ## News
+
+### Crispy Doom 5.9.0
+
+Crispy Doom 5.9.0 is released on August 21, 2020 and introduces auto-loading of both official Doom 2 expansions for any supported Doom 2 IWAD, additional DEHACKED fields to de-hardcode some Vanilla behavior and many other improvements and bug fixes.
+
+**New Features and Improvements**
+
+ * NERVE.wad is now automatically loaded even with the Vanilla DOOM2.wad IWAD (thanks @hkight).
+ * MASTERLEVELS.wad is now automatically loaded alongside DOOM2.wad just like NERVE.wad was for the BFG Edition DOOM2.wad IWAD before. However, this will now work for *any* DOOM2.wad IWAD as well (thanks @buvk for reporting a bug in the initial implementation).
+ * Support has been added for automatically loading all the 20 separate Master Levels PWADs and arranging them as if they came from the single MASTERLEVELS.wad PWAD.
+ * Alternative text entries have been added to the skill menu. Thus, the entries are still there and rendered consistently even if the Nightmare! skill graphics lump is missing when playing with a v1.2 or earlier IWAD (thanks @zx64).
+ * The unconditional "fixing" of reversed stereo channels in OPL music playback has been reverted. People got so much used to the flipped channels that the correct channel order has been regarded as a bug (thanks @drivetheory).
+ * Two separate finale texts for the Master Levels have been introduced, depending on whether you have found and finished the secret MAP21 or not. The actual texts have been taken from @MadDeCoDeR's Classic-RBDOOM-3-BFG project with some minor wording fixes applied (thanks @icecreamoverlord).
+ * Optional Automap lines smoothing has been added with a toggle in the Crispness menu (by @zx64).
+ * Doors locked with a key now flash on the Automap, if extended map colours are enabled (by @kitchen-ace).
+ * Extended map colours have been adjusted to be closer to Vanilla's (by @kitchen-ace).
+ * A "use" button timer has been added and can be enabled in the "Demos" Crispness menu section, apparently useful for practicing speed-running (thanks Looper).
+ * A check for segs referencing non-existent linedefs has been ported over from PrBoom+ (thanks @tpoppins).
+ * Demo joins are now tracked (by @kraflab).
+ * Support for the "Dropped Item" DEHACKED field has been added, which allows to specify the Thing Id to be spawned after the Thing dies. It's a generalization of the same behavior that is hardcoded for MT_WOLFSS, MT_POSSESSED, MT_SHOTGUY and MT_CHAINGUY in Vanilla Doom (by @Ferk).
+ * More generalizations de-hardcoding some Vanilla Doom behavior have been added (by @Ferk).
+   * The following DEHACKED fields for Things have been added:
+     * Melee threshold: Distance to switch from missile to melee attack.
+     * Max target range: Maximum distance to start shooting (0 for unlimited).
+     * Min missile chance: Minimum chance for firing a missile.
+     * Missile chance multiplier: This de-hardcodes the double missile chance that vanilla Cyberdemon, Spider Mastermind, Revent and Lost Souls have. The value is FRACUNIT based (65536 = normal firing chance), also note that the lower the value, the higher the chance.
+ * A `-levelstat` option has been added (by @kraflab).
+
+**Bug Fixes**
+
+ * The sky in NRFTL Maps 04-08 is now fixed if loaded from command line (thanks @Zodomaniac).
+ * HUD texts are now printed up to the right screen edge again (thanks Grizzly).
+ * The DSSECRET fallback sound is now checked for availability. This fixes a crash when playing with a v1.2 or earlier IWAD (thanks @zx64).
+ * The HUD widget coordinate re-calculation has been moved from thinker to drawer functions. This should fix the racing condition that caused the wide status bar widget alignment being drawn to the automap status bar with the brick border (thanks @kitchen-ace).
+ * The IDCLEV cheat has been fixed for the Master Levels (thanks @buvk).
+ * Thing coordinates in the rotated automap have been fixed when the "extended automap colors" feature is disabled (thanks @icecreamoverlord).
+ * A segmentation fault has been fixed when changing episodes during the intermission screen (thanks @icecreamoverlord).
+ * The "go to next level" cheat key for the Master Levels has been fixed.
+ * Endianess issues when loading extended nodes have been fixed (thanks Michael Bäuerle).
+ * The IDDT cheat is now reset when restarting a map during demo recording, but not each time the Automap is opened (thanks galileo31dos01).
+ * Missing server-side num_players validation (CVE-2020-14983) and missing client-side ticdup validation have been fixed (found by Michał Dardas from LogicalTrust, fixes inherited from Chocolate Doom).
+ * Automap panning by keyboard and mouse is now accumulated (thanks @kitchen-ace).
+ * Invalid texture/flat animation sequences are now skipped instead of erroring out (thanks @kitchen-ace).
+ * The Automap shaking for one frame after changing the view angle has been fixed (thanks @JNechaevsky).
+ * The top-right HU widgets have been moved one char to the left to allow for display of multi-thousand FPS (thanks @JNechaevsky).
+
+**Crispy Heretic**
+
+ * The alternative WASD movement scheme key bindings have been added (thanks @zx64).
+ * The Heretic Crispness menu has been colorized.
+ * Morph Ovum is now allowed to be bound to a key (by @kitchen-ace).
+ * The chat sound is now played when a secret is found. It's a message after all.
+ * Seconds are now always displayed in intermission time, bringing time display in line with Doom (by @kitchen-ace).
+ * Level time is now always shown in extended maps, i.e. episodes 4 and above (by @kitchen-ace).
+ * The demoextend and shortticfix features are now enabled by default (by @kitchen-ace, also applied to the Hexen sources).
+ * Interpolation of the puff object is now suppressed for the first tic, so the snapping of the puff to the floor level isn't interpolated (thanks Wagi).
+ * Centered messages are now cleared on intermission and finale screens (by @JNechaevsky).
+ * Centered messages are now cleared from border and bezel (by @JNechaevsky).
+ * Top border refresh has been fixed for centered messages (by @JNechaevsky).
+ * Support dedicated music tracks for each map has been added (by @kitchen-ace, thanks Dwars).
+ * The ENGAGExy cheat (and some others) are now allowed in Nightmare.
+   * Cheats enabled in Black Plague Possesses Thee, i.e. Heretic's Nightmare (by @kitchen-ace):
+     * ENGAGExy: warp to level
+     * NOISE: sound debug info
+   * Cheats enabled in BPPT as well as netgames:
+     * TICKER: show ticks-per-frame counter
+     * SHOWFPS: show FPS counter (Crispy specific cheat)
+ * Key bindings to restart the level/demo and go to next level have been added (by @kitchen-ace).
+ * A `-levelstat` option has been added (by @kraflab).
+ * Total level time is now tracked for levelstat and is also added to the intermission screen  (by @kraflab).
+
+**Known Issues**
+
+ * When the 20 separate Master Levels PWADs are automatically loaded, their individual sky textures have to get removed, else they would override the regular sky textures for Doom 2 and NRFTL (thanks @tpoppins for noticing). If you insist to play the Master Levels each with their designated sky, load the individual PWADs on the command line.
+
+Crispy Doom 5.9.0 is based on Chocolate Doom 3.0.1 and has merged all changes to the Chocolate Doom master branch up to commit [`6ba89d0c`](https://github.com/chocolate-doom/chocolate-doom/commit/6ba89d0c05e4b93bdb64460b64a9ba3bdcc4bf6e).
 
 ### Crispy Doom 5.8.0
 
