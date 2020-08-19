@@ -421,6 +421,15 @@ void IN_Ticker(void)
     if (oldintertime < intertime)
     {
         interstate++;
+
+        // [crispy] skip "now entering" if it's the final intermission
+        if (interstate >= 1 && finalintermission)
+        {
+            IN_Stop();
+            G_WorldDone();
+            return;
+        }
+
         if (gameepisode > 3 && interstate >= 1)
         {                       // Extended Wad levels:  skip directly to the next level
             interstate = 3;
@@ -453,6 +462,13 @@ void IN_Ticker(void)
         {
             intertime = 150;
             skipintermission = false;
+            return;
+        }
+        // [crispy] skip "now entering" if it's the final intermission
+        else if (finalintermission)
+        {
+            IN_Stop();
+            G_WorldDone();
             return;
         }
         else if (interstate < 2 && gameepisode < 4)
@@ -777,7 +793,8 @@ void IN_DrawSingleStats(void)
         sounds++;
     }
 
-    if (gamemode != retail || gameepisode <= 3)
+    // [crispy] ignore "now entering" if it's the final intermission
+    if (gamemode != retail || gameepisode <= 3 || finalintermission)
     {
         IN_DrTextB(DEH_String("TIME"), 85, 150);
         IN_DrawTime(155, 150, hours, minutes, seconds);

@@ -108,6 +108,8 @@ int levelstarttic;              // gametic at level start
 int totalkills, totalitems, totalsecret;        // for intermission
 int totalleveltimes; // [crispy] total time for all completed levels
 
+boolean finalintermission; // [crispy] track intermission at end of episode
+
 int mouseSensitivity;
 
 char demoname[32];
@@ -1619,8 +1621,8 @@ void G_DoCompleted(void)
     }
     else if (gamemap == 8)
     {
-        gameaction = ga_victory;
-        return;
+        // [crispy] track intermission at end of episode
+        finalintermission = true;
     }
     else
     {
@@ -1643,6 +1645,12 @@ void G_DoCompleted(void)
 void G_WorldDone(void)
 {
     gameaction = ga_worlddone;
+
+    // [crispy] track intermission at end of episode
+    if (finalintermission)
+    {
+        gameaction = ga_victory;
+    }
 }
 
 //============================================================================
@@ -1829,6 +1837,9 @@ void G_InitNew(skill_t skill, int episode, int map)
 
     // [crispy] total time for all completed levels
     totalleveltimes = 0;
+
+    // [crispy] track intermission at end of episode
+    finalintermission = false;
 
     // Set the sky map
     if (episode > 5)
