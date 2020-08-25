@@ -40,7 +40,7 @@ AC_ARG_ENABLE([bash-completion],
 AS_HELP_STRING([--disable-bash-completion], [Disable bash-completion])
 )
 AS_IF([test "x$enable_bash_completion" != xno], [
-    AS_IF([test HAVE_PYTHON = false], [
+    AS_IF([test "x$HAVE_PYTHON" = xfalse], [
         AC_MSG_WARN([Building bash-completion requires Python, but Python not found])
         enable_bash_completion=no
     ])
@@ -51,7 +51,7 @@ AC_ARG_ENABLE([doc],
 AS_HELP_STRING([--disable-doc], [Disable documentation])
 )
 AS_IF([test "x$enable_doc" != xno], [
-    AS_IF([test HAVE_PYTHON = false], [
+    AS_IF([test "x$HAVE_PYTHON" = xfalse], [
         AC_MSG_WARN([Building documentation requires Python, but Python not found])
         enable_doc=no
     ])
@@ -62,7 +62,7 @@ AC_ARG_ENABLE([fonts],
 AS_HELP_STRING([--disable-fonts], [Disable fonts])
 )
 AS_IF([test "x$enable_fonts" != xno], [
-    AS_IF([test HAVE_PYTHON = false], [
+    AS_IF([test "x$HAVE_PYTHON" = xfalse], [
         AC_MSG_WARN([Building fonts require Python, but Python not found])
         enable_fonts=no
     ])
@@ -73,7 +73,7 @@ AC_ARG_ENABLE([icons],
 AS_HELP_STRING([--disable-icons], [Disable icons])
 )
 AS_IF([test "x$enable_icons" != xno], [
-    AS_IF([test HAVE_PYTHON = false], [
+    AS_IF([test "x$HAVE_PYTHON" = xfalse], [
         AC_MSG_WARN([Building icons require Python, but Python not found])
         enable_icons=no
     ])
