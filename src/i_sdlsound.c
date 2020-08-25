@@ -1075,18 +1075,6 @@ static boolean I_SDL_InitSound(boolean _use_sfx_prefix)
 {
     int i;
 
-    // SDL 2.0.6 has a bug that makes it unusable.
-    if (SDL_COMPILEDVERSION == SDL_VERSIONNUM(2, 0, 6))
-    {
-        I_Error(
-            "I_SDL_InitSound: "
-            "You are trying to launch with SDL 2.0.6 which has a known bug "
-            "that makes the game crash. Please either downgrade to "
-            "SDL 2.0.5 or upgrade to 2.0.7. See the following bug for some "
-            "additional context:\n"
-            "<https://github.com/chocolate-doom/chocolate-doom/issues/945>");
-    }
-
     use_sfx_prefix = _use_sfx_prefix;
 
     // No sounds yet
