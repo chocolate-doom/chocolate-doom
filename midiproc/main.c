@@ -363,7 +363,7 @@ boolean InitSDL()
         return false;
     }
 
-    if (Mix_OpenAudio(snd_samplerate, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
+    if (Mix_OpenAudioDevice(snd_samplerate, MIX_DEFAULT_FORMAT, 2, 2048, NULL, SDL_AUDIO_ALLOW_FREQUENCY_CHANGE) < 0)
     {
         return false;
     }

@@ -185,7 +185,7 @@ static boolean I_SDL_InitMusic(void)
         {
             fprintf(stderr, "Unable to set up sound.\n");
         }
-        else if (Mix_OpenAudio(snd_samplerate, AUDIO_S16SYS, 2, 1024) < 0)
+        else if (Mix_OpenAudioDevice(snd_samplerate, AUDIO_S16SYS, 2, 1024, NULL, SDL_AUDIO_ALLOW_FREQUENCY_CHANGE) < 0)
         {
             fprintf(stderr, "Error initializing SDL_mixer: %s\n",
                     Mix_GetError());
@@ -200,12 +200,8 @@ static boolean I_SDL_InitMusic(void)
         }
     }
 
-#if defined(SDL_MIXER_VERSION_ATLEAST)
-#if SDL_MIXER_VERSION_ATLEAST(2,0,2)
     // Initialize SDL_Mixer for MIDI music playback
     Mix_Init(MIX_INIT_MID);
-#endif
-#endif
 
     // Once initialization is complete, the temporary Timidity config
     // file can be removed.

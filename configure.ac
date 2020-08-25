@@ -31,8 +31,8 @@ then
         CFLAGS="-O$OPT_LEVEL -g $WARNINGS $orig_CFLAGS"
 fi
 
-PKG_CHECK_MODULES(SDL, [sdl2 >= 2.0.1])
-PKG_CHECK_MODULES(SDLMIXER, [SDL2_mixer >= 2.0.0])
+PKG_CHECK_MODULES(SDL, [sdl2 >= 2.0.7])
+PKG_CHECK_MODULES(SDLMIXER, [SDL2_mixer >= 2.0.2])
 PKG_CHECK_MODULES(SDLNET, [SDL2_net >= 2.0.0])
 
 # Check for bash-completion.
