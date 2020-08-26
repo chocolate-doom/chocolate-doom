@@ -159,6 +159,19 @@ After successful compilation the resulting binaries can be found in the `src/` d
 
 ## News
 
+### Crispy Doom 5.9.1
+
+Crispy Doom 5.9.1 is currently under development...
+
+**Bug Fixes**
+
+ * Building without Python has been fixed again (inherited from Chocolate Doom, by @vilhelmgray, thanks Michael Bäuerle).
+ * An old bug has been fixed which was caused by SDL2_Mixer opening a different number of audio channels than requested (inherited from Chocolate Doom, thanks Edward850).
+
+**Crispy Heretic**
+
+ * Final intermissions screens are now shown after each episode (by @kraflab).
+
 ### Crispy Doom 5.9.0
 
 Crispy Doom 5.9.0 is released on August 21, 2020 and introduces auto-loading of both official Doom 2 expansions for any supported Doom 2 IWAD, additional DEHACKED fields to de-hardcode some Vanilla behavior and many other improvements and bug fixes.
@@ -234,44 +247,6 @@ Crispy Doom 5.9.0 is released on August 21, 2020 and introduces auto-loading of 
  * When the 20 separate Master Levels PWADs are automatically loaded, their individual sky textures have to get removed, else they would override the regular sky textures for Doom 2 and NRFTL (thanks @tpoppins for noticing). If you insist to play the Master Levels each with their designated sky, load the individual PWADs on the command line.
 
 Crispy Doom 5.9.0 is based on Chocolate Doom 3.0.1 and has merged all changes to the Chocolate Doom master branch up to commit [`6ba89d0c`](https://github.com/chocolate-doom/chocolate-doom/commit/6ba89d0c05e4b93bdb64460b64a9ba3bdcc4bf6e).
-
-### Crispy Doom 5.8.0
-
-Crispy Doom 5.8.0 has been released on April 17, 2020 to bring the status bar to widescreen rendering mode, remove SPECHITS limit and fix some bugs as well as implement the core feature set in Crispy Heretic.
-
-**Features**
-
- * Status bar and reduced screen sizes are now available in widescreen mode, requested by sovietmewtwo and many Doomworld members and debugged with the help from cnrm and Zodomaniac.
- * SPECHITS limit, the last persisting static limit, has been removed.
-
-**Improvements**
-
- * Compilation with Code::Blocks and TDM-GCC 5.1 (missing includes) has been fixed by drfrag666.
- * Wide and compact HUD are now handled as separate screen sizes, and you can switch through them as normal.
- * Once the last screen size has been exceeded you loop over to the empty HUD.
-
-**Bug Fixes**
-
- * SKY3 texture is now used for MAP04-MAP08 in NRftL, thanks to JNechaevsky for contributing the fix.
- * When calculating weapon bobbing, the check is now performed for attack key/button being held down (thanks to unRyker for helping to choose the criterion) instead of checking for `A_WeaponReady()` because weapon states could have been modified by DeHackEd. This fixes jerky weapon bobbing reported by kitchen-ace for some weapons in mods like Vanilla Smooth Weapons and DOOM 4 Vanilla.
- * Fix for segmentation fault when running on rgb565 screen has been pulled from Chocolate Doom, contributed by Wells Lu.
-
-**Crispy Heretic changes**
-
- * JNechaevsky fixed the issue that new messages would not appear if a level was finished while an "ultimate message" was shown.
- * Support for mouse sensitivity up to 255 and, while at it, displaying numeric values next to the menu sliders has been contributed by Zodomaniac.
- * Cheat showing FPS has been added to Crispy Heretic by Jeff Green.
- * High resolution rendering toggle has been introduced in Crispy Heretic by Jeff Green.
- * Uncapped framerate has been implemented in Crispy Heretic by Jeff Green.
- * An implicit declaration warning has been fixed by drfrag666.
- * Crispy settings have been prevented from resetting in setup by Ryan Krafnick.
- * Secret message has been implemented by Jeff Green.
- * Always Run toggle key and Always Run + Run = Walk behavior has been introduced by Ryan Krafnick.
- * Mouse inventory buttons have been added by Ryan Krafnick to Chocolate Heretic and then merged from there.
- * The INTERCEPTS and SPECHITS limits have been removed entirely.
- * Vertical mouse movement (novert) toggle has been added by Ryan Krafnick.
-
-Crispy Doom 5.8.0 is based on Chocolate Doom 3.0.0 and has merged all changes to the Chocolate Doom master branch up to commit [`daaaefa7`](https://github.com/chocolate-doom/chocolate-doom/commit/daaaefa7e75d056ab4c1b3b2b68fa29885e750fe).
 
 ## Documentation
 
