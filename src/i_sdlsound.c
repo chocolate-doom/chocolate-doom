@@ -880,6 +880,9 @@ static void I_SDL_PrecacheSounds(sfxinfo_t *sounds, int num_sounds)
     char namebuf[9];
     int i;
 
+    if (M_CheckParm("-noprecachesounds") > 0)
+        return;
+
     printf("I_SDL_PrecacheSounds: Precaching all sound effects..");
 
     for (i=0; i<num_sounds; ++i)
