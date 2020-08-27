@@ -36,9 +36,9 @@ void D_LoadSigilWad (void)
 	char *dirname;
 
 	const char *const sigil_wads[] = {
-		"SIGIL_V1_21.WAD",
-		"SIGIL_V1_2.WAD",
-		"SIGIL.WAD"
+		"SIGIL_v1_21.wad",
+		"SIGIL_v1_2.wad",
+		"SIGIL.wad"
 	};
 
 	struct {
