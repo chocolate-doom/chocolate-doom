@@ -114,7 +114,7 @@ Many additional less user-visible features have been implemented, e.g. fixed eng
 ## Download
 
 Binaries for Windows XP / Vista / 7 / 8.1 / 10 (32-bit binaries compatible with both x86 and x64 editions) are available here:
-https://github.com/fabiangreffrath/crispy-doom/releases/download/crispy-doom-5.9.0/crispy-doom-5.9.0-win32.zip
+https://github.com/fabiangreffrath/crispy-doom/releases/download/crispy-doom-5.9.1/crispy-doom-5.9.1-win32.zip
 
 To install on Ubuntu ("Eoan Ermine" 19.10 and later)/Debian ("Buster" 10 and later) based systems:
 ```bash
@@ -161,16 +161,19 @@ After successful compilation the resulting binaries can be found in the `src/` d
 
 ### Crispy Doom 5.9.1
 
-Crispy Doom 5.9.1 is currently under development...
+Crispy Doom 5.9.1 is released on September 04, 2020 to fix some minor bugs.
 
 **Bug Fixes**
 
  * Building without Python has been fixed again (inherited from Chocolate Doom, by @vilhelmgray, thanks Michael Bäuerle).
  * An old bug has been fixed which was caused by SDL2_Mixer opening a different number of audio channels than requested (inherited from Chocolate Doom, thanks Edward850).
+ * Auto-loading of the Sigil PWAD has been fixed on file systems with case-sensitive file names (thanks @kitchen-ace and @kbterkelsen).
 
 **Crispy Heretic**
 
  * Final intermissions screens are now shown after each episode (by @kraflab).
+
+Crispy Doom 5.9.1 is based on Chocolate Doom 3.0.1 and has merged all changes to the Chocolate Doom master branch up to commit [`f7007449`](https://github.com/chocolate-doom/chocolate-doom/commit/f700744969ac867649aa581ae19447a4c172179e).
 
 ### Crispy Doom 5.9.0
 
