@@ -1499,7 +1499,7 @@ void WI_drawStats(void)
     }
 
     // [crispy] exit early from the tally screen after ExM8
-    if (sp_state == 10 && gamemode != commercial && gamemap == 8)
+    if (sp_state == 10 && gamemode != commercial && gamemap == 8 && (demoplayback || demorecording))
     {
 	acceleratestage = 1;
     }
