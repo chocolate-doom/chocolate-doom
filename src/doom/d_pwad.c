@@ -303,7 +303,16 @@ static boolean CheckLoadMasterlevels (void)
 
 		M_snprintf(lumpname, 9, "CWILV%2.2d", i);
 		j = W_GetNumForName(lumpname);
-		lumpinfo[j]->name[0] = 'M';
+		if (!strcasecmp(W_WadNameForLump(lumpinfo[j]), "MASTERLEVELS.WAD"))
+		{
+			lumpinfo[j]->name[0] = 'M';
+		}
+		else
+		{
+			// [crispy] indicate this is not the complete MASTERLEVELS.WAD
+			crispy->havemaster = (char *)-1;
+		}
+
 
 		M_snprintf(lumpname, 9, "MAP%02d", i + 1);
 		j = W_GetNumForName(lumpname);
