@@ -1852,7 +1852,7 @@ void D_DoomMain (void)
     // [crispy] allow overriding of special-casing
     if (!M_ParmExists("-noautoload") && gamemode != shareware)
     {
-	if (gamemode == retail)
+	if (gamemode == retail && gameversion == exe_ultimate)
 	{
 		D_LoadSigilWad();
 	}
