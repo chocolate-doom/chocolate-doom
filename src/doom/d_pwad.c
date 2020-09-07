@@ -178,7 +178,13 @@ static boolean CheckNerveLoaded (void)
 	    !strcasecmp(W_WadNameForLump(lumpinfo[j]), "NERVE.WAD"))
 	{
 		gamemission = pack_nerve;
-		DEH_AddStringReplacement ("TITLEPIC", "INTERPIC");
+
+		// [crispy] if NERVE.WAD does not contain TITLEPIC, use INTERPIC instead
+		j = W_GetNumForName("TITLEPIC");
+		if (strcasecmp(W_WadNameForLump(lumpinfo[j]), "NERVE.WAD"))
+		{
+			DEH_AddStringReplacement ("TITLEPIC", "INTERPIC");
+		}
 
 		return true;
 	}
@@ -229,6 +235,13 @@ static void CheckLoadNerve (void)
 		M_snprintf (lumpname, 9, "MAP%02d", i + 1);
 		j = W_GetNumForName(lumpname);
 		strcat(lumpinfo[j]->name, "N");
+	}
+
+	// [crispy] if NERVE.WAD contains TITLEPIC, rename it
+	j = W_GetNumForName("TITLEPIC");
+	if (!strcasecmp(W_WadNameForLump(lumpinfo[j]), "NERVE.WAD"))
+	{
+		memcpy(lumpinfo[j]->name, "NERVEPIC", 8);
 	}
 
 	// [crispy] regenerate the hashtable
