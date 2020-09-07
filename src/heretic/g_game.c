@@ -771,6 +771,30 @@ void G_DoLoadLevel(void)
         memset(players[i].frags, 0, sizeof(players[i].frags));
     }
 
+    // [crispy] update the "singleplayer" variable
+    CheckCrispySingleplayer(!demorecording && !demoplayback && !netgame);
+
+    // [crispy] wand start
+    if (crispy->pistolstart)
+    {
+        if (crispy->singleplayer)
+        {
+            G_PlayerReborn(0);
+        }
+        else if (demoplayback && !singledemo)
+        {
+            // no-op - silently ignore pistolstart when playing demo from
+            // the demo reel
+        }
+        else
+        {
+            const char message[] = "The -wandstart option is not supported"
+                                   " for demos and\n"
+                                   " network play.";
+            I_Error(message);
+        }
+    }
+
     P_SetupLevel(gameepisode, gamemap, 0, gameskill);
     displayplayer = consoleplayer;      // view the guy you are playing
     gameaction = ga_nothing;
