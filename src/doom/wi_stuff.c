@@ -1855,7 +1855,14 @@ static void WI_loadUnloadData(load_callback_t callback)
 
     if (gamemode == commercial)
     {
+        if (crispy->havenerve && wbs->epsd == 1 && W_CheckNumForName(DEH_String("NERVEINT")) != -1) // [crispy] gamemission == pack_nerve
+        {
+            M_StringCopy(name, DEH_String("NERVEINT"), sizeof(name));
+        }
+        else
+        {
         M_StringCopy(name, DEH_String("INTERPIC"), sizeof(name));
+        }
     }
     else if (gameversion >= exe_ultimate && wbs->epsd == 3)
     {

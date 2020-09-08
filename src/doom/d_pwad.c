@@ -41,7 +41,7 @@ void D_LoadSigilWad (void)
 		"SIGIL.wad"
 	};
 
-	struct {
+	static const struct {
 		const char *name;
 		const char new_name[8];
 	} sigil_lumps [] = {
@@ -197,6 +197,14 @@ static void CheckLoadNerve (void)
 {
 	int i, j;
 
+	static const struct {
+		const char *name;
+		const char new_name[8];
+	} nerve_lumps [] = {
+		{"TITLEPIC", "NERVEPIC"},
+		{"INTERPIC", "NERVEINT"},
+	};
+
 	if (strrchr(iwadfile, DIR_SEPARATOR) != NULL)
 	{
 		char *dir;
@@ -237,11 +245,15 @@ static void CheckLoadNerve (void)
 		strcat(lumpinfo[j]->name, "N");
 	}
 
-	// [crispy] if NERVE.WAD contains TITLEPIC, rename it
-	j = W_GetNumForName("TITLEPIC");
-	if (!strcasecmp(W_WadNameForLump(lumpinfo[j]), "NERVE.WAD"))
+	// [crispy] if NERVE.WAD contains TITLEPIC and INTERPIC, rename them
+	for (i = 0; i < arrlen(nerve_lumps); i++)
 	{
-		memcpy(lumpinfo[j]->name, "NERVEPIC", 8);
+		j = W_CheckNumForName(nerve_lumps[i].name);
+
+		if (j != -1 && !strcasecmp(W_WadNameForLump(lumpinfo[j]), "NERVE.WAD"))
+		{
+			memcpy(lumpinfo[j]->name, nerve_lumps[i].new_name, 8);
+		}
 	}
 
 	// [crispy] regenerate the hashtable
