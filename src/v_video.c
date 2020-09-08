@@ -307,14 +307,22 @@ void V_DrawPatchFullScreen(patch_t *patch, boolean flipped)
 {
     const short width = SHORT(patch->width);
     const short height = SHORT(patch->height);
-
-    dx = (NONWIDEWIDTH << FRACBITS) / width;
-    dxi = (width << FRACBITS) / NONWIDEWIDTH;
-    dy = (SCREENHEIGHT << FRACBITS) / height;
-    dyi = (height << FRACBITS) / SCREENHEIGHT;
+    short targetwidth = NONWIDEWIDTH;
 
     patch->leftoffset = 0;
     patch->topoffset = 0;
+
+    // [crispy] widescreen patch?
+    if (width * ORIGHEIGHT > height * ORIGWIDTH)
+    {
+        targetwidth = BETWEEN(NONWIDEWIDTH, SCREENWIDTH, width * ORIGHEIGHT / height);
+        patch->leftoffset = (width - ORIGWIDTH) / 2;
+    }
+
+    dx = (targetwidth << FRACBITS) / width;
+    dxi = (width << FRACBITS) / targetwidth;
+    dy = (SCREENHEIGHT << FRACBITS) / height;
+    dyi = (height << FRACBITS) / SCREENHEIGHT;
 
     // [crispy] fill pillarboxes in widescreen mode
     if (SCREENWIDTH != NONWIDEWIDTH)
