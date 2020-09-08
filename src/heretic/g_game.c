@@ -1538,6 +1538,7 @@ void G_SecretExitLevel(void)
 }
 
 // [crispy] format time for level statistics
+#define TIMESTRSIZE 16
 static void G_FormatLevelStatTime(char *str, int tics)
 {
     int exitHours, exitMinutes;
@@ -1552,12 +1553,12 @@ static void G_FormatLevelStatTime(char *str, int tics)
 
     if (exitHours)
     {
-        M_snprintf(str, sizeof(str), "%d:%02d:%05.2f",
+        M_snprintf(str, TIMESTRSIZE, "%d:%02d:%05.2f",
                     exitHours, exitMinutes, exitSeconds);
     }
     else
     {
-        M_snprintf(str, sizeof(str), "%01d:%05.2f", exitMinutes, exitSeconds);
+        M_snprintf(str, TIMESTRSIZE, "%01d:%05.2f", exitMinutes, exitSeconds);
     }
 }
 
@@ -1568,8 +1569,8 @@ static void G_WriteLevelStat(void)
 
     int i, playerKills = 0, playerItems = 0, playerSecrets = 0;
 
-    char levelTimeString[16];
-    char totalTimeString[16];
+    char levelTimeString[TIMESTRSIZE];
+    char totalTimeString[TIMESTRSIZE];
     char *decimal;
 
     if (fstream == NULL)
@@ -1578,7 +1579,7 @@ static void G_WriteLevelStat(void)
 
         if (fstream == NULL)
         {
-            fprintf(stderr, "Unable to open levelstat.txt for writing!\n");
+            fprintf(stderr, "G_WriteLevelStat: Unable to open levelstat.txt for writing!\n");
             return;
         }
     }
