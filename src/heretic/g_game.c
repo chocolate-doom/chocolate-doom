@@ -781,7 +781,7 @@ void G_DoLoadLevel(void)
         {
             G_PlayerReborn(0);
         }
-        else if (demoplayback && !singledemo)
+        else if ((demoplayback || netdemo) && !singledemo)
         {
             // no-op - silently ignore pistolstart when playing demo from
             // the demo reel
