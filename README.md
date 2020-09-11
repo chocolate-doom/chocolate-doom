@@ -159,6 +159,26 @@ After successful compilation the resulting binaries can be found in the `src/` d
 
 ## News
 
+### Crispy Doom 5.9.2
+
+Crispy Doom 5.9.2 is currently under development...
+
+**New Features and Improvements**
+
+ * Support for the "new" Nerve PWAD has been improved: If the Nerve PWAD is explicitly loaded and contains a TITLEPIC lump, use it - else use the INTERPIC lump. Consequently, if the Nerve PWAD gets auto-loaded and contains TITLEPIC and an INTERPIC lumps, rename them.
+ * Graphic patch lumps in widescreen format are now properly centered (but still squashed to Vanilla aspect ratio).
+ * A `-pistolstart` command line option has been added (by @mikeday0).
+
+**Bug Fixes**
+
+ * The Sigil PWAD is now only pre-loaded if the gameversion is The Ultimate Doom. This fixes a glitched texture file when Chex Quest is loaded as the IWAD (by @kitchen-ace, thanks Mr.Unsmiley)
+ * Check if the map name graphics lumps are actually from the Masterlevels PWAD before renaming them. This fixes an issue with unofficial MAsterlevels compilation which do not contain these lumps (thanks @Dark-Jaguar).
+ * A string buffer size calculation bug has been fixed in the `-levelstat` implementation (thanks Eric Claus).
+
+**Crispy Heretic**
+
+ * A `-wandstart` command line option has been added (by @mikeday0).
+
 ### Crispy Doom 5.9.1
 
 Crispy Doom 5.9.1 is released on September 04, 2020 to fix some minor bugs.
