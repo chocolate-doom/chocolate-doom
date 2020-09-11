@@ -893,9 +893,6 @@ void P_LoadThings (int lump)
 	      case 66:	// Revenant
 	    spawnthing.type = 3001;
 	    break;
-	      case 84:	// Wolf SS
-	    spawnthing.type = 3004;
-		break;
 	    }
 	}
 
