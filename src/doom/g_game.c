@@ -1781,11 +1781,14 @@ void G_DoCompleted (void)
 
         if (gameversion == exe_chex)
         {
+            // [crispy] display tally screen after Chex Quest E1M5
+            /*
             if (gamemap == 5)
             {
                 gameaction = ga_victory;
                 return;
             }
+            */
         }
         else
         {
@@ -2053,7 +2056,7 @@ void G_WorldDone (void)
     }
     // [crispy] display tally screen after ExM8
     else
-    if ( gamemap == 8 )
+    if ( gamemap == 8 || (gameversion == exe_chex && gamemap == 5) )
     {
 	gameaction = ga_victory;
     }

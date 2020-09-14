@@ -804,7 +804,7 @@ static boolean		snl_pointeron = false;
 void WI_initShowNextLoc(void)
 {
     // [crispy] display tally screen after ExM8
-    if ((gamemode != commercial) && (gamemap == 8))
+    if ((gamemode != commercial && gamemap == 8) || (gameversion == exe_chex && gamemap == 5))
     {
 	G_WorldDone();
 	return;
@@ -1606,7 +1606,7 @@ void WI_drawStats(void)
     }
 
     // [crispy] exit early from the tally screen after ExM8
-    if (sp_state == 10 && gamemode != commercial && gamemap == 8)
+    if (sp_state == 10 && ((gamemode != commercial && gamemap == 8) || (gameversion == exe_chex && gamemap == 5)))
     {
 	acceleratestage = 1;
     }
