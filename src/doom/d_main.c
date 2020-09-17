@@ -1842,6 +1842,16 @@ void D_DoomMain (void)
 
         if (D_AddFile(file))
         {
+	    int i;
+	    // [crispy] check if the demo file name gets truncated to a lump name that is already present
+	    if ((i = W_CheckNumForNameFromTo(lumpinfo[numlumps - 1]->name, numlumps - 2, 0)) != -1)
+	    {
+		printf("Demo lump name collision detected with lump \'%.8s\' from %s.\n",
+		        lumpinfo[i]->name, W_WadNameForLump(lumpinfo[i]));
+		// [FG] the DEMO1 lump is almost certainly always a demo lump
+		M_StringCopy(lumpinfo[numlumps - 1]->name, "DEMO1", 6);
+	    }
+
             M_StringCopy(demolumpname, lumpinfo[numlumps - 1]->name,
                          sizeof(demolumpname));
         }
