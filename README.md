@@ -161,13 +161,15 @@ After successful compilation the resulting binaries can be found in the `src/` d
 
 ### Crispy Doom 5.9.2
 
-Crispy Doom 5.9.2 is currently under development...
+Crispy Doom 5.9.1 is released on September 22, 2020 to fix some more bugs and add some minor improvements.
 
 **New Features and Improvements**
 
  * Support for the "new" Nerve PWAD has been improved: If the Nerve PWAD is explicitly loaded and contains a TITLEPIC lump, use it - else use the INTERPIC lump. Consequently, if the Nerve PWAD gets auto-loaded and contains TITLEPIC and an INTERPIC lumps, rename them (thanks @buvk).
  * Graphic patch lumps in widescreen format are now properly centered - but still squashed to Vanilla aspect ratio (thanks @buvk).
  * A `-pistolstart` command line option has been added (by @mikeday0, thanks @Asais10).
+ * The tally screen is now shown after finishing Chex Quest E1M5 (thanks kokrean).
+ * Apparently random crashes have been fixed that occured when the (truncated) file name of a loaded demo happens to match the name of an already available lump. Now this lump name collision is detected and the offending demo lump renamed to DEMO1, which is most certainly always the name of a demo lump (thanks galileo31dos01 and plums).
 
 **Bug Fixes**
 
@@ -178,6 +180,8 @@ Crispy Doom 5.9.2 is currently under development...
 **Crispy Heretic**
 
  * A `-wandstart` command line option has been added (by @mikeday0, thanks @Asais10).
+
+Crispy Doom 5.9.1 is based on Chocolate Doom 3.0.1 and has merged all changes to the Chocolate Doom master branch up to commit [`f7007449`](https://github.com/chocolate-doom/chocolate-doom/commit/f700744969ac867649aa581ae19447a4c172179e).
 
 ### Crispy Doom 5.9.1
 
