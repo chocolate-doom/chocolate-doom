@@ -114,7 +114,7 @@ Many additional less user-visible features have been implemented, e.g. fixed eng
 ## Download
 
 Binaries for Windows XP / Vista / 7 / 8.1 / 10 (32-bit binaries compatible with both x86 and x64 editions) are available here:
-https://github.com/fabiangreffrath/crispy-doom/releases/download/crispy-doom-5.9.1/crispy-doom-5.9.1-win32.zip
+https://github.com/fabiangreffrath/crispy-doom/releases/download/crispy-doom-5.9.2/crispy-doom-5.9.2-win32.zip
 
 To install on Ubuntu ("Eoan Ermine" 19.10 and later)/Debian ("Buster" 10 and later) based systems:
 ```bash
@@ -161,7 +161,7 @@ After successful compilation the resulting binaries can be found in the `src/` d
 
 ### Crispy Doom 5.9.2
 
-Crispy Doom 5.9.1 is released on September 22, 2020 to fix some more bugs and add some minor improvements.
+Crispy Doom 5.9.2 is released on September 22, 2020 to fix some more bugs and add some minor improvements.
 
 **New Features and Improvements**
 
@@ -181,7 +181,7 @@ Crispy Doom 5.9.1 is released on September 22, 2020 to fix some more bugs and ad
 
  * A `-wandstart` command line option has been added (by @mikeday0, thanks @Asais10).
 
-Crispy Doom 5.9.1 is based on Chocolate Doom 3.0.1 and has merged all changes to the Chocolate Doom master branch up to commit [`f7007449`](https://github.com/chocolate-doom/chocolate-doom/commit/f700744969ac867649aa581ae19447a4c172179e).
+Crispy Doom 5.9.2 is based on Chocolate Doom 3.0.1 and has merged all changes to the Chocolate Doom master branch up to commit [`f7007449`](https://github.com/chocolate-doom/chocolate-doom/commit/f700744969ac867649aa581ae19447a4c172179e).
 
 ### Crispy Doom 5.9.1
 
