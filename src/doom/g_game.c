@@ -886,6 +886,7 @@ void G_DoLoadLevel (void)
             const char message[] = "The -pistolstart option is not suppported"
                                    " for demos and\n"
                                    " network play.";
+            if (!demo_p) demorecording = false;
             I_Error(message);
         }
     }
