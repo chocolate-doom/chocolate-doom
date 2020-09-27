@@ -82,6 +82,7 @@ typedef enum
     freedoom,   // FreeDoom: Phase 1 + 2
     freedm,     // FreeDM
     bfgedition, // Doom Classic (Doom 3: BFG Edition)
+    unitywide,  // Doom Rerelease with widescreen assets
 } GameVariant_t;
 
 // Skill level.

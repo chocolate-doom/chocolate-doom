@@ -401,7 +401,14 @@ static patch_t *background;
 // slam background
 void WI_slamBackground(void)
 {
-    V_DrawPatch(0, 0, background);
+    if (gamevariant == unitywide)
+    {
+        V_DrawPatchCenterClip (0, background);
+    }
+    else
+    {
+        V_DrawPatch (0, 0, background);
+    }
 }
 
 // The ticker is used to detect keys

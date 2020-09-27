@@ -529,7 +529,14 @@ void D_PageTicker (void)
 //
 void D_PageDrawer (void)
 {
-    V_DrawPatch (0, 0, W_CacheLumpName(pagename, PU_CACHE));
+    if (gamevariant == unitywide)
+    {
+        V_DrawPatchCenterClip (0, W_CacheLumpName(pagename, PU_CACHE));
+    }
+    else
+    {
+        V_DrawPatch (0, 0, W_CacheLumpName(pagename, PU_CACHE));
+    }
 }
 
 
@@ -1492,6 +1499,14 @@ void D_DoomMain (void)
     else if (W_CheckNumForName("DMENUPIC") >= 0)
     {
         gamevariant = bfgedition;
+        if (W_CheckNumForName("TITLEPIC") >= 0)
+        {
+            patch_t *titlepic = W_CacheLumpName ("TITLEPIC", PU_CACHE);
+            if (titlepic->width > 320)
+            {
+                gamevariant = unitywide;
+            }
+        }
     }
 
     //!
@@ -1545,6 +1560,17 @@ void D_DoomMain (void)
         // Doom IWADs) has an unused graphic that says "Display". So we
         // can swap this in instead, and it kind of makes sense.
         DEH_AddStringReplacement("M_SCRNSZ", "M_DISP");
+    }
+
+    if (gamevariant == unitywide)
+    {
+        printf("Unity: Using workarounds as needed.\n");
+
+        // Unity widescreen uses a bitmap font stored outside the IWAD to
+	// render level name graphics, but retains the old CWILV## 
+	// level name graphics from the BFG Edition in the IWAD.
+        DEH_AddStringReplacement(HUSTR_31, "level 31: idkfa");
+        DEH_AddStringReplacement(HUSTR_32, "level 32: keen");
     }
 
     //!

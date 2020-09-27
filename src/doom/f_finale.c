@@ -548,7 +548,15 @@ void F_CastDrawer (void)
     patch_t*		patch;
     
     // erase the entire screen to a background
-    V_DrawPatch (0, 0, W_CacheLumpName (DEH_String("BOSSBACK"), PU_CACHE));
+    if (gamevariant == unitywide)
+    {
+        V_DrawPatchCenterClip (0, W_CacheLumpName (DEH_String("BOSSBACK"),
+                               PU_CACHE));
+    }
+    else
+    {
+        V_DrawPatch (0, 0, W_CacheLumpName (DEH_String("BOSSBACK"), PU_CACHE));
+    }
 
     F_CastPrint (DEH_String(castorder[castnum].name));
     
@@ -613,6 +621,7 @@ void F_BunnyScroll (void)
     char	name[10];
     int		stage;
     static int	laststage;
+    int		p2offset, p1offset;
 		
     p1 = W_CacheLumpName (DEH_String("PFUB2"), PU_LEVEL);
     p2 = W_CacheLumpName (DEH_String("PFUB1"), PU_LEVEL);
@@ -625,12 +634,23 @@ void F_BunnyScroll (void)
     if (scrolled < 0)
 	scrolled = 0;
 		
+    if (gamevariant == unitywide)
+    {
+        p2offset = p2->width - (SCREENWIDTH - p1->width) / 2;
+        p1offset = p2offset - p1->width;
+    }
+    else
+    {
+        p2offset = SCREENWIDTH;
+        p1offset = 0;
+    }
+
     for ( x=0 ; x<SCREENWIDTH ; x++)
     {
-	if (x+scrolled < SCREENWIDTH)
-	    F_DrawPatchCol (x, p1, x+scrolled);
+	if (x+scrolled < p2offset)
+	    F_DrawPatchCol (x, p1, x+scrolled - p1offset);
 	else
-	    F_DrawPatchCol (x, p2, x+scrolled - SCREENWIDTH);		
+	    F_DrawPatchCol (x, p2, x+scrolled - p2offset);
     }
 	
     if (finalecount < 1130)
@@ -693,7 +713,14 @@ static void F_ArtScreenDrawer(void)
 
         lumpname = DEH_String(lumpname);
 
-        V_DrawPatch (0, 0, W_CacheLumpName(lumpname, PU_CACHE));
+        if (gamevariant == unitywide)
+        {
+            V_DrawPatchCenterClip (0, W_CacheLumpName(lumpname, PU_CACHE));
+        }
+        else
+        {
+            V_DrawPatch (0, 0, W_CacheLumpName(lumpname, PU_CACHE));
+        }
     }
 }
 
