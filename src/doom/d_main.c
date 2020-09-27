@@ -1686,8 +1686,8 @@ void D_DoomMain (void)
         printf("Unity: Using workarounds as needed.\n");
 
         // Unity widescreen uses a bitmap font stored outside the IWAD to
-	// render level name graphics, but retains the old CWILV## 
-	// level name graphics from the BFG Edition in the IWAD.
+        // render level name graphics, but retains the old CWILV## 
+        // level name graphics from the BFG Edition in the IWAD.
         DEH_AddStringReplacement(HUSTR_31, "level 31: idkfa");
         DEH_AddStringReplacement(HUSTR_32, "level 32: keen");
 
