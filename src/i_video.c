@@ -57,6 +57,7 @@ int WIDEWIDTH_DELTA; // [Crispy] Horizontal widescreen offset
 int lcd_gamma_fix = 0; // [JN] Palette optimization Doom
 int smoothscaling = 1; // [Crispy] Enable the intermediate buffer
 
+boolean isunitywide;
 boolean isa;
 
 static int actualwidth;

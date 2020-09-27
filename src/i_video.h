@@ -37,6 +37,8 @@
 
 extern int WIDEWIDTH_DELTA; // [Crispy] Horizontal widescreen offset
 
+extern boolean isunitywide;
+
 extern boolean isa; // emulate an isa graphics card
 
 extern int lcd_gamma_fix; // [JN] LCD gamma fix.

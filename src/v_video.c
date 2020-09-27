@@ -234,6 +234,86 @@ void V_DrawPatch(int x, int y, patch_t *patch)
 }
 
 //
+// V_DrawPatchWideClip
+// Masks a column based masked pic to the screen.
+// Centers the patch horizontally and clips to the screen.
+//
+
+void V_DrawPatchCenterClip(int y, patch_t *patch)
+{
+    int count;
+    int col;
+    column_t *column;
+    pixel_t *desttop;
+    pixel_t *dest;
+    byte *source;
+    int x;
+    int w;
+
+    // center patch
+    x = (screenwidth - SHORT(patch->width)) / 2;
+
+    y -= SHORT(patch->topoffset);
+
+    // haleyjd 08/28/10: Strife needs silent error checking here.
+    if(patchclip_callback)
+    {
+        if(!patchclip_callback(patch, x, y))
+            return;
+    }
+
+    // retain height check
+#ifdef RANGECHECK
+    if (y < 0
+     || y + SHORT(patch->height) > SCREENHEIGHT)
+    {
+        I_Error("Bad V_DrawPatchCenterClip");
+    }
+#endif
+
+    col = 0;
+    desttop = dest_screen + y * screenwidth + x;
+
+    w = SHORT(patch->width);
+
+    // clip to right border
+    if (x + w > screenwidth)
+    {
+        w = screenwidth - x;
+    }
+
+    // clip to left border
+    if (x < 0)
+    {
+        col -= x;
+        desttop -= x;
+        x = 0;
+    }
+
+    V_MarkRect(x, y, w - col, SHORT(patch->height));
+
+    for ( ; col<w ; x++, col++, desttop++)
+    {
+        column = (column_t *)((byte *)patch + LONG(patch->columnofs[col]));
+
+        // step through the posts in a column
+        while (column->topdelta != 0xff)
+        {
+            source = (byte *)column + 3;
+            dest = desttop + column->topdelta*screenwidth;
+            count = column->length;
+
+            while (count--)
+            {
+                *dest = *source++;
+                dest += screenwidth;
+            }
+            column = (column_t *)((byte *)column + column->length + 4);
+        }
+    }
+}
+
+//
 // V_DrawPatchFlipped
 // Masks a column based masked pic to the screen.
 // Flips horizontally, e.g. to mirror face.

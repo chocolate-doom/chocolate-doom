@@ -428,7 +428,14 @@ void ST_refreshBackground(void)
     {
         V_UseBuffer(st_backing_screen);
 
-	V_DrawPatch(ST_X, 0, sbar);
+        if (gamevariant == unitywide)
+        {
+            V_DrawPatchCenterClip (0, sbar);
+        }
+        else
+        {
+            V_DrawPatch (0, 0, sbar);
+        }
 
 	// draw right side of bar if needed (Doom 1.0)
 	if (sbarr)
