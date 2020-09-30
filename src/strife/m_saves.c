@@ -362,40 +362,6 @@ int M_StringAlloc(char **str, int numstrs, size_t extra, const char *str1, ...)
 }
 
 //
-// M_NormalizeSlashes
-//
-// Remove trailing slashes, translate backslashes to slashes
-// The string to normalize is passed and returned in str
-//
-// killough 11/98: rewritten
-//
-// [STRIFE] - haleyjd 20110210: Borrowed from Eternity and adapted to respect 
-// the DIR_SEPARATOR define used by Choco Doom. This routine originated in
-// BOOM.
-//
-void M_NormalizeSlashes(char *str)
-{
-    char *p;
-   
-    // Convert all slashes/backslashes to DIR_SEPARATOR
-    for(p = str; *p; p++)
-    {
-        if((*p == '/' || *p == '\\') && *p != DIR_SEPARATOR)
-            *p = DIR_SEPARATOR;
-    }
-
-    // Remove trailing slashes
-    while(p > str && *--p == DIR_SEPARATOR)
-        *p = 0;
-
-    // Collapse multiple slashes
-    for(p = str; (*str++ = *p); )
-        if(*p++ == DIR_SEPARATOR)
-            while(*p == DIR_SEPARATOR)
-                p++;
-}
-
-//
 // M_SafeFilePath
 //
 // haleyjd 20110210 - original routine.
