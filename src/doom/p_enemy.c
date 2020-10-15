@@ -1831,8 +1831,7 @@ void A_BrainAwake (mobj_t* mo)
     // find all the target spots
     numbraintargets = 0;
     braintargeton = 0;
-	
-    thinker = thinkercap.next;
+
     for (thinker = thinkercap.next ;
 	 thinker != &thinkercap ;
 	 thinker = thinker->next)
