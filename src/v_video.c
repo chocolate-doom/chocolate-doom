@@ -236,19 +236,22 @@ void V_DrawPatch(int x, int y, patch_t *patch)
     V_MarkRect(x, y, SHORT(patch->width), SHORT(patch->height));
 
     col = 0;
+    if (x < 0)
+    {
+	col += dxi * ((-x * dx) >> FRACBITS);
+	x = 0;
+    }
+
     desttop = dest_screen + ((y * dy) >> FRACBITS) * SCREENWIDTH + ((x * dx) >> FRACBITS);
 
     w = SHORT(patch->width);
 
+    // convert x to screen position
+    x = (x * dx) >> FRACBITS;
+
     for ( ; col<w << FRACBITS ; x++, col+=dxi, desttop++)
     {
         int topdelta = -1;
-
-        // [crispy] too far left
-        if (x < 0)
-        {
-            continue;
-        }
 
         // [crispy] too far right / width
         if (x >= SCREENWIDTH)
@@ -305,13 +308,7 @@ void V_DrawPatch(int x, int y, patch_t *patch)
 
 void V_DrawPatchFullScreen(patch_t *patch, boolean flipped)
 {
-    const short width = SHORT(patch->width);
-    const short height = SHORT(patch->height);
-
-    dx = (NONWIDEWIDTH << FRACBITS) / ORIGWIDTH;
-    dxi = (width << FRACBITS) / NONWIDEWIDTH;
-    dy = (SCREENHEIGHT << FRACBITS) / height;
-    dyi = (height << FRACBITS) / SCREENHEIGHT;
+    int x = ((SCREENWIDTH >> crispy->hires) - patch->width) / 2 - WIDESCREENDELTA;
 
     patch->leftoffset = 0;
     patch->topoffset = 0;
@@ -324,17 +321,12 @@ void V_DrawPatchFullScreen(patch_t *patch, boolean flipped)
 
     if (flipped)
     {
-        V_DrawPatchFlipped(0, 0, patch);
+        V_DrawPatchFlipped(x, 0, patch);
     }
     else
     {
-        V_DrawPatch(0, 0, patch);
+        V_DrawPatch(x, 0, patch);
     }
-
-    dx = (NONWIDEWIDTH << FRACBITS) / ORIGWIDTH;
-    dxi = (ORIGWIDTH << FRACBITS) / NONWIDEWIDTH;
-    dy = (SCREENHEIGHT << FRACBITS) / ORIGHEIGHT;
-    dyi = (ORIGHEIGHT << FRACBITS) / SCREENHEIGHT;
 }
 
 //
@@ -377,9 +369,18 @@ void V_DrawPatchFlipped(int x, int y, patch_t *patch)
     V_MarkRect (x, y, SHORT(patch->width), SHORT(patch->height));
 
     col = 0;
+    if (x < 0)
+    {
+	col += dxi * ((-x * dx) >> FRACBITS);
+	x = 0;
+    }
+
     desttop = dest_screen + ((y * dy) >> FRACBITS) * SCREENWIDTH + ((x * dx) >> FRACBITS);
 
     w = SHORT(patch->width);
+
+    // convert x to screen position
+    x = (x * dx) >> FRACBITS;
 
     for ( ; col<w << FRACBITS ; x++, col+=dxi, desttop++)
     {
