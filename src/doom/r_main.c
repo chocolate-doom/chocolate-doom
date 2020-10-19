@@ -933,6 +933,7 @@ void R_ExecuteSetViewSize (void)
 
     // [crispy] forcefully initialize the status bar backing screen
     ST_refreshBackground(true);
+    ST_drawWidgets(true);
 }
 
 

@@ -500,6 +500,18 @@ void ST_refreshBackground(boolean force)
 				*dest++ = src[((y&63)<<6) + (x&63)];
 			}
 		}
+
+		// [crispy] preserve bezel bottom edge
+		if (scaledviewwidth == SCREENWIDTH)
+		{
+			patch_t *const patch = W_CacheLumpName(DEH_String("brdr_b"), PU_CACHE);
+
+			for (x = 0; x < WIDESCREENDELTA; x += 8)
+			{
+				V_DrawPatch(x - WIDESCREENDELTA, 0, patch);
+				V_DrawPatch(ORIGWIDTH + WIDESCREENDELTA - x - 8, 0, patch);
+			}
+		}
 	}
 
 	V_DrawPatch(ST_X, 0, sbar);
@@ -519,7 +531,7 @@ void ST_refreshBackground(boolean force)
 
 	// [crispy] copy entire SCREENWIDTH, to preserve the pattern
 	// to the left and right of the status bar in widescren mode
-	if (!force)
+	if (st_classicstatusbar)
 	V_CopyRect(ST_X, 0, st_backing_screen, SCREENWIDTH >> crispy->hires, ST_HEIGHT, ST_X, ST_Y);
     }
 
