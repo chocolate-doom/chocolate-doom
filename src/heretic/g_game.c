@@ -1695,7 +1695,6 @@ void G_InitNew(skill_t skill, int episode, int map)
     gameepisode = episode;
     gamemap = map;
     gameskill = skill;
-    viewactive = true;
     BorderNeedRefresh = true;
 
     // Set the sky map

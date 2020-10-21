@@ -1858,8 +1858,6 @@ G_InitNew
     gamemap = map;
     gameskill = skill;
 
-    viewactive = true;
-
     // Set the sky to use.
     //
     // Note: This IS broken, but it is how Vanilla Doom behaves.
