@@ -159,6 +159,26 @@ After successful compilation the resulting binaries can be found in the `src/` d
 
 ## News
 
+### Crispy Doom 5.10.0
+
+Crispy Doom 5.10.0 is currently under development.
+
+**New Features and Improvements**
+
+ * Proper support for widescreen assets has been added (by @SmileTheory, thanks @ghost and @chungy).
+ * The bezel bottom edge to the left and right of the status bar in widescreen mode is now preserved (thanks braders1986).
+ * Special treatment is now applied to the No Rest for the Living and The Masterlevels expansions - even during network games, demo recording and playback. This includes level transitions to the secret maps and back, finale text screens, par times, etc. (thanks Coincident and Keyboard_Doomer for input from the DSDA community).
+
+**Bug Fixes**
+
+ * A crash has been fixed when the -record and -pistolstart parameters were used simultaneously (thanks Spie812).
+
+**Known Issues**
+
+ * Users who insist on the pure Vanilla experience that was formerly applied to the No Rest for the Living and The Masterlevels expansions or who need it to properly play back demos recorded with a previous release will have to rename their PWAD files and explicitly load them on the command line.
+
+Crispy Doom 5.10.0 is based on Chocolate Doom 3.0.1 and has merged all changes to the Chocolate Doom master branch up to commit [`01168584`](https://github.com/chocolate-doom/chocolate-doom/commit/01168584c8f0e6485efcd8ffa5e9f720809eb64c).
+
 ### Crispy Doom 5.9.2
 
 Crispy Doom 5.9.2 is released on September 22, 2020 to fix some more bugs and add some minor improvements.
