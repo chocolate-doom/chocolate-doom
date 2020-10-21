@@ -868,10 +868,9 @@ void WI_drawShowNextLoc(void)
 	    WI_drawOnLnode(wbs->next, yah); 
     }
 
-    if (crispy->singleplayer && (
-        (gamemission == pack_nerve && wbs->last == 7) ||
+    if ((gamemission == pack_nerve && wbs->last == 7) ||
         (gamemission == pack_master && wbs->last == 19 && !secretexit) ||
-        (gamemission == pack_master && wbs->last == 20)))
+        (gamemission == pack_master && wbs->last == 20))
         return;
 
     // draws which level you are entering..
@@ -1517,8 +1516,8 @@ static boolean WI_drawParTime (void)
 			result = false;
 		}
 
-		// [crispy] PWAD: NRFTL has par times (for singleplayer games)
-		if (gamemission == pack_nerve && crispy->singleplayer)
+		// [crispy] PWAD: NRFTL has par times
+		if (gamemission == pack_nerve)
 		{
 			result = true;
 		}
