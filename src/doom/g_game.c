@@ -1988,8 +1988,6 @@ G_InitNew
 
     demostarttic = 0; // [crispy] fix revenant internal demo bug
 
-    viewactive = true;
-
     // Set the sky to use.
     //
     // Note: This IS broken, but it is how Vanilla Doom behaves.

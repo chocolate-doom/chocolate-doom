@@ -887,13 +887,12 @@ void P_MovePsprites (player_t* player)
 {
     int		i;
     pspdef_t*	psp;
-    state_t*	state;
 	
     psp = &player->psprites[0];
     for (i=0 ; i<NUMPSPRITES ; i++, psp++)
     {
 	// a null state means not active
-	if ( (state = psp->state) )	
+	if (psp->state)
 	{
 	    // drop tic count and possibly change state
 
