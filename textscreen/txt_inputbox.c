@@ -29,6 +29,16 @@
 extern txt_widget_class_t txt_inputbox_class;
 extern txt_widget_class_t txt_int_inputbox_class;
 
+static size_t mystrnlen(const char* s, size_t maxlen) // strnlen is POSIX only
+{
+    for (size_t i = 0; i < maxlen ; i++ )
+    {
+        if (s[i] == '\0')
+            return i;
+    }
+    return maxlen;
+}
+
 static void SetBufferFromValue(txt_inputbox_t *inputbox)
 {
     if (inputbox->widget.widget_class == &txt_inputbox_class)
@@ -37,7 +47,7 @@ static void SetBufferFromValue(txt_inputbox_t *inputbox)
 
         if (*value != NULL)
         {
-            TXT_StringCopy(inputbox->buffer, *value, strnlen(*value, inputbox->buffer_len) + 1);
+            TXT_StringCopy(inputbox->buffer, *value, mystrnlen(*value, inputbox->buffer_len) + 1);
         }
         else
         {
