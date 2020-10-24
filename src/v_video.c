@@ -68,6 +68,14 @@ int dirtybox[4];
 // This is needed for Chocolate Strife, which clips patches to the screen.
 static vpatchclipfunc_t patchclip_callback = NULL;
 
+void SetScreenWidth (int* width)
+{
+    if (widescreen)
+        *width = WIDESCREENWIDTH;
+    else
+        *width = SCREENWIDTH;
+}
+
 //
 // V_MarkRect 
 // 

@@ -105,10 +105,7 @@ void R_DrawColumn (void)
 
     int screenwidth;
 
-    if (widescreen)
-        screenwidth = WIDESCREENWIDTH;
-    else
-        screenwidth = SCREENWIDTH;
+    SetScreenWidth(&screenwidth);
 
     count = dc_yh - dc_yl; 
 
@@ -220,10 +217,7 @@ void R_DrawColumnLow (void)
 
     int screenwidth;
 
-    if (widescreen)
-        screenwidth = WIDESCREENWIDTH;
-    else
-        screenwidth = SCREENWIDTH;
+    SetScreenWidth(&screenwidth);
 
     count = dc_yh - dc_yl; 
 
@@ -313,10 +307,7 @@ void R_DrawFuzzColumn (void)
     int* afuzzoffset; // actual offset
     int screenwidth;
 
-    if (widescreen)
-        screenwidth = WIDESCREENWIDTH;
-    else
-        screenwidth = SCREENWIDTH;
+    SetScreenWidth(&screenwidth);
 
     if (widescreen)
         afuzzoffset = wfuzzoffset;
@@ -387,10 +378,7 @@ void R_DrawFuzzColumnLow (void)
     int* afuzzoffset; // actual offset
     int screenwidth;
 
-    if (widescreen)
-        screenwidth = WIDESCREENWIDTH;
-    else
-        screenwidth = SCREENWIDTH;
+    SetScreenWidth(&screenwidth);
 
     if (widescreen)
         afuzzoffset = wfuzzoffset;
@@ -479,10 +467,7 @@ void R_DrawTranslatedColumn (void)
 
     int screenwidth;
 
-    if (widescreen)
-        screenwidth = WIDESCREENWIDTH;
-    else
-        screenwidth = SCREENWIDTH;
+    SetScreenWidth(&screenwidth);
 
     count = dc_yh - dc_yl; 
     if (count < 0) 
@@ -532,10 +517,7 @@ void R_DrawTranslatedColumnLow (void)
 
     int screenwidth;
 
-    if (widescreen)
-        screenwidth = WIDESCREENWIDTH;
-    else
-        screenwidth = SCREENWIDTH;
+    SetScreenWidth(&screenwidth);
 
     count = dc_yh - dc_yl; 
     if (count < 0) 
@@ -845,10 +827,7 @@ R_InitBuffer
 
     int screenwidth;
 
-    if (widescreen)
-        screenwidth = WIDESCREENWIDTH;
-    else
-        screenwidth = SCREENWIDTH;
+    SetScreenWidth(&screenwidth);
 
     // Handle resize,
     //  e.g. smaller view windows
@@ -897,10 +876,7 @@ void R_FillBackScreen (void)
 
     int screenwidth;
 
-    if (widescreen)
-        screenwidth = WIDESCREENWIDTH;
-    else
-        screenwidth = SCREENWIDTH;
+    SetScreenWidth(&screenwidth);
 
     // If we are running full screen, there is no need to do any of this,
     // and the background buffer can be freed if it was previously in use.

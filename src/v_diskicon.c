@@ -68,10 +68,7 @@ static void SaveDiskData(const char *disk_lump, int xoffs, int yoffs)
 
     int screenwidth;
 
-    if (widescreen)
-        screenwidth = WIDESCREENWIDTH;
-    else
-        screenwidth = SCREENWIDTH;
+    SetScreenWidth(&screenwidth);
 
     // Allocate a complete temporary screen where we'll draw the patch.
     tmpscreen = Z_Malloc(screenwidth * SCREENHEIGHT * sizeof(*tmpscreen),
@@ -140,10 +137,7 @@ void V_DrawDiskIcon(void)
 {
     int screenwidth;
 
-    if (widescreen)
-        screenwidth = WIDESCREENWIDTH;
-    else
-        screenwidth = SCREENWIDTH;
+    SetScreenWidth(&screenwidth);
 
     if (disk_data != NULL && recent_bytes_read > diskicon_threshold)
     {

@@ -253,10 +253,7 @@ void F_TextWrite (void)
 
     int screenwidth;
 
-    if (widescreen)
-        screenwidth = WIDESCREENWIDTH;
-    else
-        screenwidth = SCREENWIDTH;
+    SetScreenWidth(&screenwidth);
 
     // erase the entire screen to a tiled background
     src = W_CacheLumpName ( finaleflat , PU_CACHE);
@@ -612,10 +609,7 @@ F_DrawPatchCol
 
     int screenwidth;
 
-    if (widescreen)
-        screenwidth = WIDESCREENWIDTH;
-    else
-        screenwidth = SCREENWIDTH;
+    SetScreenWidth(&screenwidth);
 
     column = (column_t *)((byte *)patch + LONG(patch->columnofs[col]));
     desttop = I_VideoBuffer + x;

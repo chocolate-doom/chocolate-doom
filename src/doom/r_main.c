@@ -36,7 +36,7 @@
 #include "r_medusa.h"
 #include "r_sky.h"
 
-
+#include "v_video.h"
 
 
 
@@ -647,10 +647,7 @@ void R_InitLightTables (void)
 
     int screenwidth;
 
-    if (widescreen)
-        screenwidth = WIDESCREENWIDTH;
-    else
-        screenwidth = SCREENWIDTH;
+    SetScreenWidth(&screenwidth);
 
     // Calculate the light levels to use
     //  for each level / distance combination.
@@ -712,10 +709,7 @@ void R_ExecuteSetViewSize (void)
 
     int screenwidth;
 
-    if (widescreen)
-        screenwidth = WIDESCREENWIDTH;
-    else
-        screenwidth = SCREENWIDTH;
+    SetScreenWidth(&screenwidth);
 
     setsizeneeded = false;
 

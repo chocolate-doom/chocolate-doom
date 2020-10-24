@@ -36,6 +36,8 @@
 
 #include "doomstat.h"
 
+#include "v_video.h"
+
 
 
 #define MINZ				(FRACUNIT*4)
@@ -296,10 +298,7 @@ void R_InitSprites(const char **namelist)
 
     int screenwidth;
 
-    if (widescreen)
-        screenwidth = WIDESCREENWIDTH;
-    else
-        screenwidth = SCREENWIDTH;
+    SetScreenWidth(&screenwidth);
 
     for (i=0 ; i<screenwidth ; i++)
     {
