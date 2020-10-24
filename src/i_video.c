@@ -1366,6 +1366,8 @@ void I_InitGraphics(void)
 
     env = getenv("XSCREENSAVER_WINDOW");
 
+    SDL_SetHint(SDL_HINT_VIDEO_MINIMIZE_ON_FOCUS_LOSS, "0");
+
     if (env != NULL)
     {
         char winenv[30];
