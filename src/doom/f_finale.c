@@ -192,7 +192,20 @@ void F_Ticker (void)
 	  gameaction = ga_worlddone;
       }
     }
-    
+
+    if ( (gamemode == registered || gamemode == retail)
+      && ( finalecount > 50) )
+    {
+	    for (i=0 ; i<MAXPLAYERS ; i++)
+	        if (players[i].cmd.buttons)
+	            break;
+
+	    if (i < MAXPLAYERS)
+	    {
+	        finalecount += 1024;
+	    }
+    }
+
     // advance animation
     finalecount++;
 	
