@@ -539,8 +539,15 @@ void ST_refreshBackground(boolean force)
 
 	// [crispy] copy entire SCREENWIDTH, to preserve the pattern
 	// to the left and right of the status bar in widescren mode
-	if (st_classicstatusbar)
-	V_CopyRect(ST_X, 0, st_backing_screen, SCREENWIDTH >> crispy->hires, ST_HEIGHT, ST_X, ST_Y);
+	if (!force)
+	{
+	    V_CopyRect(ST_X, 0, st_backing_screen, SCREENWIDTH >> crispy->hires, ST_HEIGHT, ST_X, ST_Y);
+	}
+	else if (WIDESCREENDELTA > 0)
+	{
+	    V_CopyRect(0, 0, st_backing_screen, WIDESCREENDELTA, ST_HEIGHT, 0, ST_Y);
+	    V_CopyRect(ORIGWIDTH + WIDESCREENDELTA, 0, st_backing_screen, WIDESCREENDELTA, ST_HEIGHT, ORIGWIDTH + WIDESCREENDELTA, ST_Y);
+	}
     }
 
 }

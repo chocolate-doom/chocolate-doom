@@ -58,7 +58,6 @@ void ST_Init (void);
 
 // [crispy] forcefully initialize the status bar backing screen
 extern void ST_refreshBackground(boolean force);
-extern void ST_drawWidgets(boolean refresh);
 
 
 // States for status bar code.
