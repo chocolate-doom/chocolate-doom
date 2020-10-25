@@ -236,7 +236,7 @@ boolean D_Display (void)
 	if (automapactive)
 	    AM_Drawer ();
 	// fill with black box
-	if (widescreen && (automapactive || (widescreen == 2 && screenblocks == 10)))
+	if (widescreen && gamevariant != unitywide && (automapactive || (widescreen == 2 && screenblocks == 10)))
 	{
 	    V_DrawFilledBox(0, SCREENHEIGHT - SBARHEIGHT, WIDEWIDTH_DELTA, SBARHEIGHT, 0);
 	    V_DrawFilledBox(WIDESCREENWIDTH - WIDEWIDTH_DELTA, SCREENHEIGHT - SBARHEIGHT, WIDEWIDTH_DELTA, SBARHEIGHT, 0);

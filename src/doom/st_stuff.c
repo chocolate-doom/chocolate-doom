@@ -447,7 +447,12 @@ void ST_refreshBackground(void)
         V_RestoreBuffer();
 
     if (screenblocks < 12 || automapactive) // [Crispy]
-	V_CopyRect(ST_X, 0, st_backing_screen, ST_WIDTH, ST_HEIGHT, ST_X, ST_Y);
+    {
+	    if (widescreen && gamevariant == unitywide)
+	        V_CopyRect(ST_X, 0, st_backing_screen, WIDESCREENWIDTH, ST_HEIGHT, ST_X, ST_Y);
+	    else
+	        V_CopyRect(ST_X + WIDEWIDTH_DELTA, 0, st_backing_screen, ST_WIDTH, ST_HEIGHT, ST_X + WIDEWIDTH_DELTA, ST_Y);
+    }
     }
 
 }

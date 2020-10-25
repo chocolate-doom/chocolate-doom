@@ -102,9 +102,6 @@ void V_CopyRect(int srcx, int srcy, pixel_t *source,
     pixel_t *src;
     pixel_t *dest;
 
-    destx += WIDEWIDTH_DELTA; // [crispy] horizontal widescreen offset
-    srcx += WIDEWIDTH_DELTA; // else it crashed
-
 #ifdef RANGECHECK 
     if (srcx < 0
      || srcx + width > screenwidth
