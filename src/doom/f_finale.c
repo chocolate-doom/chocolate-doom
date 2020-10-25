@@ -643,39 +643,51 @@ void F_BunnyScroll (void)
     char	name[10];
     int		stage;
     static int	laststage;
-    int		p2offset, p1offset;
-		
+    int		p2offset, p1offset, pillar_width;
+
+    int screenwidth;
+
+    SetScreenWidth(&screenwidth);
+
     p1 = W_CacheLumpName (DEH_String("PFUB2"), PU_LEVEL);
     p2 = W_CacheLumpName (DEH_String("PFUB1"), PU_LEVEL);
 
-    if (widescreen)
-        V_MarkRect (0, 0, WIDESCREENWIDTH, SCREENHEIGHT);
+    // [crispy] calculate pillarboxes in widescreen mode
+    pillar_width = (screenwidth - p1->width) / 2;
+    if (pillar_width < 0) pillar_width = 0;
+
+    // Calculate the portion of PFUB2 that would be offscreen at original res.
+    p1offset = (SCREENWIDTH - p1->width) / 2;
+
+    if (p2->width == SCREENWIDTH)
+    {
+        // Unity or original PFUBs.
+        // PFUB1 only contains the pixels that scroll off.
+        p2offset = SCREENWIDTH - p1offset;
+    }
     else
-        V_MarkRect (0, 0, SCREENWIDTH, SCREENHEIGHT);
+    {
+        // Widescreen mod PFUBs.
+        // Right side of PFUB2 and left side of PFUB1 are identical.
+        p2offset = SCREENWIDTH + p1offset;
+    }
+
+    V_MarkRect (0, 0, screenwidth, SCREENHEIGHT);
 	
     scrolled = (SCREENWIDTH - ((signed int) finalecount-230)/2);
     if (scrolled > SCREENWIDTH)
 	scrolled = SCREENWIDTH;
     if (scrolled < 0)
 	scrolled = 0;
-		
-    if (gamevariant == unitywide)
-    {
-        p2offset = p2->width - (WIDESCREENWIDTH - p1->width) / 2;
-        p1offset = p2offset - p1->width;
-    }
-    else
-    {
-        p2offset = SCREENWIDTH;
-        p1offset = 0;
-    }
 
-    for ( x=0 ; x<SCREENWIDTH ; x++)
+    for ( x=pillar_width ; x<screenwidth - pillar_width; x++)
     {
-	if (x+scrolled < p2offset)
-	    F_DrawPatchCol (x+WIDEWIDTH_DELTA, p1, x+scrolled - p1offset);
-	else
-	    F_DrawPatchCol (x+WIDEWIDTH_DELTA, p2, x+scrolled - p2offset);
+        int x2 = x - WIDEWIDTH_DELTA + scrolled;
+
+        if (x2 < p2offset)
+            F_DrawPatchCol (x, p1, x2 - p1offset);
+        else
+            F_DrawPatchCol (x, p2, x2 - p2offset);
     }
 	
     if (finalecount < 1130)
