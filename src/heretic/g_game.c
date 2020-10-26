@@ -113,6 +113,7 @@ boolean finalintermission; // [crispy] track intermission at end of episode
 int mouseSensitivity;
 
 char demoname[32];
+static const char *orig_demoname = NULL; // [crispy] the name originally chosen for the demo, i.e. without "-00000"
 boolean demorecording;
 boolean longtics;               // specify high resolution turning in demos
 boolean lowres_turn;
@@ -1792,6 +1793,13 @@ void G_DeferedInitNew(skill_t skill, int episode, int map)
     d_episode = episode;
     d_map = map;
     gameaction = ga_newgame;
+
+    // [crispy] if a new game is started during demo recording, start a new demo
+    if (demorecording)
+    {
+	G_CheckDemoStatus();
+	G_RecordDemo(skill, 1, episode, map, orig_demoname);
+    }
 }
 
 void G_DoNewGame(void)
@@ -2030,6 +2038,16 @@ void G_RecordDemo(skill_t skill, int numplayers, int episode, int map,
     int i;
     int maxsize;
 
+    // [crispy] demo file name suffix counter
+    static unsigned int j = 0;
+    FILE *fp = NULL;
+
+    // [crispy] the name originally chosen for the demo, i.e. without "-00000"
+    if (!orig_demoname)
+    {
+	orig_demoname = name;
+    }
+
     //!
     // @category demo
     //
@@ -2057,6 +2075,13 @@ void G_RecordDemo(skill_t skill, int numplayers, int episode, int map,
     M_StringCopy(demoname, name, sizeof(demoname));
     M_StringConcat(demoname, ".lmp", sizeof(demoname));
     maxsize = 0x20000;
+
+    // [crispy] prevent overriding demos by adding a file name suffix
+    for ( ; j <= 99999 && (fp = fopen(demoname, "rb")) != NULL; j++)
+    {
+	M_snprintf(demoname, sizeof(demoname), "%s-%05d.lmp", name, j);
+	fclose (fp);
+    }
 
     //!
     // @arg <size>
@@ -2244,7 +2269,15 @@ boolean G_CheckDemoStatus(void)
         M_WriteFile(demoname, demobuffer, demo_p - demobuffer);
         Z_Free(demobuffer);
         demorecording = false;
+        // [crispy] if a new game is started during demo recording, start a new demo
+        if (gameaction != ga_newgame)
+        {
         I_Error("Demo %s recorded", demoname);
+        }
+        else
+        {
+            fprintf(stderr, "Demo %s recorded", demoname);
+        }
     }
 
     return false;

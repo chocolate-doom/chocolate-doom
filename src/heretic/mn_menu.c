@@ -344,6 +344,7 @@ static int G_ReloadLevel(void)
     if (demorecording)
     {
       gamemap = startmap;
+      gameepisode = startepisode;
     }
     G_DeferedInitNew(gameskill, gameepisode, gamemap);
     result = true;
