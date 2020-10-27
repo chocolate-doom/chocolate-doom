@@ -2276,7 +2276,7 @@ boolean G_CheckDemoStatus(void)
         }
         else
         {
-            fprintf(stderr, "Demo %s recorded", demoname);
+            fprintf(stderr, "Demo %s recorded\n", demoname);
         }
     }
 
