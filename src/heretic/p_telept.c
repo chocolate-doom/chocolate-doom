@@ -139,7 +139,6 @@ boolean EV_Teleport(line_t * line, int side, mobj_t * thing)
     {
         if (sectors[i].tag == tag)
         {
-            thinker = thinkercap.next;
             for (thinker = thinkercap.next; thinker != &thinkercap;
                  thinker = thinker->next)
             {

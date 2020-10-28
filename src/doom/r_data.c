@@ -280,15 +280,13 @@ void R_GenerateComposite (int texnum)
     collump = texturecolumnlump[texnum];
     colofs = texturecolumnofs[texnum];
     
-    // Composite the columns together.
-    patch = texture->patches;
-		
     // killough 4/9/98: marks to identify transparent regions in merged textures
     marks = calloc(texture->width, texture->height);
 
     // [crispy] initialize composite background to black (index 0)
     memset(block, 0, texturecompositesize[texnum]);
 
+    // Composite the columns together.
     for (i=0 , patch = texture->patches;
 	 i<texture->patchcount;
 	 i++, patch++)
@@ -423,7 +421,6 @@ void R_GenerateLookup (int texnum)
     postcount = (byte *) Z_Malloc(texture->width, PU_STATIC, &postcount);
     memset (patchcount, 0, texture->width);
     memset (postcount, 0, texture->width);
-    patch = texture->patches;
 
     for (i=0 , patch = texture->patches;
 	 i<texture->patchcount;

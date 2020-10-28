@@ -151,8 +151,6 @@ void R_GenerateComposite(int texnum)
 //
 // composite the columns together
 //
-    patch = texture->patches;
-
     for (i = 0, patch = texture->patches; i < texture->patchcount;
          i++, patch++)
     {
@@ -217,7 +215,6 @@ void R_GenerateLookup(int texnum)
 //
     patchcount = (byte *) Z_Malloc(texture->width, PU_STATIC, &patchcount);
     memset(patchcount, 0, texture->width);
-    patch = texture->patches;
 
     for (i = 0, patch = texture->patches; i < texture->patchcount;
          i++, patch++)

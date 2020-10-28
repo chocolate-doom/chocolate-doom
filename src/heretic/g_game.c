@@ -112,7 +112,7 @@ boolean finalintermission; // [crispy] track intermission at end of episode
 
 int mouseSensitivity;
 
-char demoname[32];
+char *demoname;
 static const char *orig_demoname = NULL; // [crispy] the name originally chosen for the demo, i.e. without "-00000"
 boolean demorecording;
 boolean longtics;               // specify high resolution turning in demos
@@ -1865,7 +1865,6 @@ void G_InitNew(skill_t skill, int episode, int map)
     gameepisode = episode;
     gamemap = map;
     gameskill = skill;
-    viewactive = true;
     BorderNeedRefresh = true;
 
     // [crispy] total time for all completed levels
@@ -2035,6 +2034,7 @@ void G_WriteDemoTiccmd(ticcmd_t * cmd)
 void G_RecordDemo(skill_t skill, int numplayers, int episode, int map,
                   const char *name)
 {
+    size_t demoname_size;
     int i;
     int maxsize;
 
@@ -2072,8 +2072,9 @@ void G_RecordDemo(skill_t skill, int numplayers, int episode, int map,
 
     G_InitNew(skill, episode, map);
     usergame = false;
-    M_StringCopy(demoname, name, sizeof(demoname));
-    M_StringConcat(demoname, ".lmp", sizeof(demoname));
+    demoname_size = strlen(name) + 5;
+    demoname = Z_Malloc(demoname_size, PU_STATIC, NULL);
+    M_snprintf(demoname, demoname_size, "%s.lmp", name);
     maxsize = 0x20000;
 
     // [crispy] prevent overriding demos by adding a file name suffix
