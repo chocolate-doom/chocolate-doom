@@ -1798,6 +1798,7 @@ void G_DeferedInitNew(skill_t skill, int episode, int map)
     if (demorecording)
     {
 	G_CheckDemoStatus();
+	Z_Free(demoname);
 	G_RecordDemo(skill, 1, episode, map, orig_demoname);
     }
 }
