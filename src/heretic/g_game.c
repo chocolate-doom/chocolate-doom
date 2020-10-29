@@ -2073,7 +2073,7 @@ void G_RecordDemo(skill_t skill, int numplayers, int episode, int map,
 
     G_InitNew(skill, episode, map);
     usergame = false;
-    demoname_size = strlen(name) + 5;
+    demoname_size = strlen(name) + 5 + 6; // [crispy] + 6 for "-00000"
     demoname = Z_Malloc(demoname_size, PU_STATIC, NULL);
     M_snprintf(demoname, demoname_size, "%s.lmp", name);
     maxsize = 0x20000;
@@ -2081,7 +2081,7 @@ void G_RecordDemo(skill_t skill, int numplayers, int episode, int map,
     // [crispy] prevent overriding demos by adding a file name suffix
     for ( ; j <= 99999 && (fp = fopen(demoname, "rb")) != NULL; j++)
     {
-	M_snprintf(demoname, sizeof(demoname), "%s-%05d.lmp", name, j);
+	M_snprintf(demoname, demoname_size, "%s-%05d.lmp", name, j);
 	fclose (fp);
     }
 
