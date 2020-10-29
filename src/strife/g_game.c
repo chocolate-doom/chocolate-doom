@@ -1844,6 +1844,8 @@ void G_DoSaveGame (char *path)
 
     P_WriteSaveGameEOF();
 
+    // [crispy] unconditionally disable savegame and demo limits
+    /*
     // Enforce the same savegame size limit as in Vanilla Doom, 
     // except if the vanilla_savegame_limit setting is turned off.
     // [STRIFE]: Verified subject to same limit.
@@ -1852,6 +1854,7 @@ void G_DoSaveGame (char *path)
     {
         I_Error ("Savegame buffer overrun");
     }
+    */
     
     // Finish up, close the savegame file.
 
@@ -2163,6 +2166,8 @@ void G_WriteDemoTiccmd (ticcmd_t* cmd)
 
     if (demo_p > demoend - 16)
     {
+        // [crispy] unconditionally disable savegame and demo limits
+        /*
         if (vanilla_demo_limit)
         {
             // no more space 
@@ -2170,6 +2175,7 @@ void G_WriteDemoTiccmd (ticcmd_t* cmd)
             return; 
         }
         else
+        */
         {
             // Vanilla demo limit disabled: unlimited
             // demo lengths!
