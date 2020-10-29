@@ -1922,6 +1922,8 @@ void G_WriteDemoTiccmd(ticcmd_t * cmd)
 
     if (demo_p > demoend - 16)
     {
+        // [crispy] unconditionally disable savegame and demo limits
+        /*
         if (vanilla_demo_limit)
         {
             // no more space
@@ -1929,6 +1931,7 @@ void G_WriteDemoTiccmd(ticcmd_t * cmd)
             return;
         }
         else
+        */
         {
             // Vanilla demo limit disabled: unlimited
             // demo lengths!
