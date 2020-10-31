@@ -2212,6 +2212,10 @@ void M_Init (void)
         NewDef.numitems--; // UM
         NewDef.numitems--;
     }
+    else if (M_CheckParm("-noumskill") > 0)
+    {
+        NewDef.numitems--; // UM
+    }
 
     opldev = M_CheckParm("-opldev") > 0;
 }
