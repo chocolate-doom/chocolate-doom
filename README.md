@@ -18,6 +18,7 @@ remaining faithful to the original executables. There are a few new gameplay fea
 
  * Widescreen support both zoomed view and real wide (bits from Russian Doom and Crispy).
  * UI centering for widescreen (mostly taken from Crispy).
+ * Support for Unity IWADs with widescreen assets (SmileTheory).
  * Enable loading 16 bit RIFF wavs in .wads (SmileTheory).
  * Doom 1.0 and 1.1 emulation (SmileTheory).
  * Draw the player mugshot with max view.
@@ -40,7 +41,7 @@ remaining faithful to the original executables. There are a few new gameplay fea
  * Keep keys and no DM items in Coop options (Marshmallow).
  * Spawn double the monsters and take double damage options.
  * Classic mode with only Doom 1 monsters for slaughterfest maps and lame players, regular shotgun
- takes precedence.
+ takes precedence. Now Wolf SS is not replaced.
  * Slow ISA VGA simulation (Trident 9000i).
  * New command line parameters for the above: backpack, nodmweapons, keepkeys, sprespawn, 2xmonsters,
  xpain, nod2monsters, isa, halfammo.
@@ -65,6 +66,11 @@ remaining faithful to the original executables. There are a few new gameplay fea
  * Support for Ogg, FLAC and MP3 music lumps (Crispy).
  * Don't load Boom maps by default, only with the -boom parameter.
  * Fixed crash with invalid blockmap (DWHEEL.WAD).
+ * Add FPS counter (AlexMax).
+ * Always precache sounds (fabian, guarded with -noprecachesounds).
+ * Display tally screen after ExM8 (Crispy).
+ * Allow skipping the Doom finales.
+ * Add the -noumskill parameter to prevent showing UM in the menu.
  * Many bugfixes from Crispy.
 
  Have fun!
