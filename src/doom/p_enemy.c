@@ -1342,7 +1342,15 @@ void A_VileTarget (mobj_t*	actor)
     fog->tracer = actor->target;
     // [crispy] play DSFLAMST sound when Arch-Vile spawns fire attack
     if (crispy->soundfix && I_GetSfxLumpNum(&S_sfx[sfx_flamst]) != -1)
+    {
 	S_StartSound(fog, sfx_flamst);
+	// [crispy] make DSFLAMST sound uninterruptible
+	if (crispy->soundfull)
+	{
+		S_UnlinkSound(fog);
+	}
+    }
+
     A_Fire (fog);
 }
 
