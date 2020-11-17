@@ -1540,10 +1540,13 @@ boolean PIT_ChangeSector (mobj_t*	thing)
     // crunch bodies to giblets
     if (thing->health <= 0)
     {
+	P_SetMobjState (thing, S_GIBS);
+
 	// [crispy] no blood, no giblets
-	// S_GIBS should be a "safe" state, and so is S_NULL
-	// TODO: Add a check for DEHACKED states
-	P_SetMobjState (thing, (thing->flags & MF_NOBLOOD) ? S_NULL : S_GIBS);
+	if (thing->flags & MF_NOBLOOD)
+	{
+		thing->sprite = SPR_TNT1;
+	}
 
     if (gameversion > exe_doom_1_2)
 	    thing->flags &= ~MF_SOLID;
