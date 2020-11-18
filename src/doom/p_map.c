@@ -1543,7 +1543,7 @@ boolean PIT_ChangeSector (mobj_t*	thing)
 	P_SetMobjState (thing, S_GIBS);
 
 	// [crispy] no blood, no giblets
-	if (thing->flags & MF_NOBLOOD)
+	if (crispy->coloredblood && (thing->flags & MF_NOBLOOD))
 	{
 		thing->sprite = SPR_TNT1;
 	}
