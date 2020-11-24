@@ -297,7 +297,7 @@ R_RenderMaskedSegRange
 	    
 	    // draw the texture
 	    col = (column_t *)( 
-		(byte *)R_GetColumn(texnum,maskedtexturecol[dc_x], false) -3);
+		(byte *)R_GetColumnMod(texnum,maskedtexturecol[dc_x]) -3);
 			
 	    R_DrawMaskedColumn (col);
 	    maskedtexturecol[dc_x] = INT_MAX; // [crispy] 32-bit integer math
@@ -407,7 +407,7 @@ void R_RenderSegLoop (void)
 	    dc_yl = yl;
 	    dc_yh = yh;
 	    dc_texturemid = rw_midtexturemid;
-	    dc_source = R_GetColumn(midtexture,texturecolumn,true);
+	    dc_source = R_GetColumn(midtexture,texturecolumn);
 	    dc_texheight = textureheight[midtexture]>>FRACBITS; // [crispy] Tutti-Frutti fix
 	    dc_brightmap = texturebrightmap[midtexture];
 	    colfunc ();
@@ -431,7 +431,7 @@ void R_RenderSegLoop (void)
 		    dc_yl = yl;
 		    dc_yh = mid;
 		    dc_texturemid = rw_toptexturemid;
-		    dc_source = R_GetColumn(toptexture,texturecolumn,true);
+		    dc_source = R_GetColumn(toptexture,texturecolumn);
 		    dc_texheight = textureheight[toptexture]>>FRACBITS; // [crispy] Tutti-Frutti fix
 		    dc_brightmap = texturebrightmap[toptexture];
 		    colfunc ();
@@ -463,7 +463,7 @@ void R_RenderSegLoop (void)
 		    dc_yh = yh;
 		    dc_texturemid = rw_bottomtexturemid;
 		    dc_source = R_GetColumn(bottomtexture,
-					    texturecolumn,true);
+					    texturecolumn);
 		    dc_texheight = textureheight[bottomtexture]>>FRACBITS; // [crispy] Tutti-Frutti fix
 		    dc_brightmap = texturebrightmap[bottomtexture];
 		    colfunc ();
