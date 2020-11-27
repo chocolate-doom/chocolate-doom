@@ -226,6 +226,16 @@ static void ChooseFont(void)
 // Returns 1 if successful, 0 if an error occurred
 //
 
+void TXT_PreInit(SDL_Window *preset_window,
+                 SDL_Renderer *preset_renderer)
+{
+    if (preset_window != NULL && preset_renderer != NULL)
+    {
+        TXT_SDLWindow = preset_window;
+        renderer = preset_renderer;
+    }
+}
+
 int TXT_Init(void)
 {
     int flags = 0;
@@ -246,14 +256,31 @@ int TXT_Init(void)
         flags |= SDL_WINDOW_ALLOW_HIGHDPI;
     }
 
+    if (TXT_SDLWindow == NULL)
+    {
     TXT_SDLWindow =
         SDL_CreateWindow("", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
                          screen_image_w, screen_image_h, flags);
+    }
 
     if (TXT_SDLWindow == NULL)
         return 0;
 
-    renderer = SDL_CreateRenderer(TXT_SDLWindow, -1, SDL_RENDERER_SOFTWARE);
+    flags = SDL_RENDERER_SOFTWARE;
+
+    // Destroy the existing renderer, so we can create our own new one
+    // with the same flags to use with the same window.
+    if (renderer != NULL)
+    {
+        SDL_RendererInfo info = {0};
+
+        SDL_GetRendererInfo(renderer, &info);
+        flags = info.flags;
+
+        SDL_DestroyRenderer(renderer);
+    }
+
+    renderer = SDL_CreateRenderer(TXT_SDLWindow, -1, flags);
 
     // Special handling for OS X retina display. If we successfully set the
     // highdpi flag, check the output size for the screen renderer. If we get

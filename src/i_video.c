@@ -201,6 +201,16 @@ int usegamma = 0;
 // Joystick/gamepad hysteresis
 unsigned int joywait = 0;
 
+void *I_GetSDLWindow(void)
+{
+    return screen;
+}
+
+void *I_GetSDLRenderer(void)
+{
+    return renderer;
+}
+
 static boolean MouseShouldBeGrabbed()
 {
     // never grab the mouse when in screensaver mode
@@ -1446,10 +1456,6 @@ void I_InitGraphics(void)
     while (SDL_PollEvent(&dummy));
 
     initialized = true;
-
-    // Call I_ShutdownGraphics on quit
-
-    I_AtExit(I_ShutdownGraphics, true);
 }
 
 // Bind all variables controlling video options into the configuration
