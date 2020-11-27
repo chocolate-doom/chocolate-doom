@@ -266,21 +266,12 @@ int TXT_Init(void)
     if (TXT_SDLWindow == NULL)
         return 0;
 
-    flags = SDL_RENDERER_SOFTWARE;
-
     // Destroy the existing renderer, so we can create our own new one
-    // with the same flags to use with the same window.
     if (renderer != NULL)
     {
-        SDL_RendererInfo info = {0};
-
-        SDL_GetRendererInfo(renderer, &info);
-        flags = info.flags;
-
         SDL_DestroyRenderer(renderer);
     }
-
-    renderer = SDL_CreateRenderer(TXT_SDLWindow, -1, flags);
+    renderer = SDL_CreateRenderer(TXT_SDLWindow, -1, SDL_RENDERER_SOFTWARE);
 
     // Special handling for OS X retina display. If we successfully set the
     // highdpi flag, check the output size for the screen renderer. If we get
