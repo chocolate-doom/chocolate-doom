@@ -169,11 +169,14 @@ Crispy Doom 5.10.0 is currently under development.
  * The bezel bottom edge to the left and right of the status bar in widescreen mode is now preserved (thanks braders1986 and @SmileTheory).
  * Special treatment is now applied to the No Rest for the Living and The Masterlevels expansions - even during network games, demo recording and playback. This includes level transitions to the secret maps and back, finale text screens, par times, etc. (thanks Coincident and Keyboard_Doomer for input from the DSDA community).
  * Menu scrolling with the mouse wheel has been improved to be more responsive (by @JNechaevsky).
+ * All textures are now always composed, whether they are multi-patched or not. Furthermore, two separate composites are created, one for opaque and one for translucent mid-textures on 2S walls. Additionally, textures may now be arbitrarily tall.
 
 **Bug Fixes**
 
  * A crash has been fixed when the -record and -pistolstart parameters were used simultaneously (thanks Spie812).
  * An optimization inherited from MBF has been fixed which led to sprites not being rendered on the lowest possible floor (thanks @retro65).
+ * Only non-sky flats are now checked for the swirling effect.
+ * Crushed non-bleeding monsters are not removed off the map anymore, their sprites are replaced with the invisible SPR_TNT1 instead (thanks ZeroMaster010 and sorry for the desyncing demo).
 
 **Crispy Heretic**
 
