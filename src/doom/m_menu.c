@@ -3124,8 +3124,15 @@ void M_Init (void)
         int i;
 
         NewDef.prevMenu = &EpiDef;
-        EpisodeMenu[0].alphaKey = 'h';
-        EpisodeMenu[0].alttext = "Hell on Earth";
+        EpisodeMenu[0].alphaKey = gamevariant == freedm ||
+                                  gamevariant == freedoom ?
+                                 'f' :
+                                 'h';
+        EpisodeMenu[0].alttext = gamevariant == freedm ?
+                                 "FreeDM" :
+                                 gamevariant == freedoom ?
+                                 "Freedoom: Phase 2" :
+                                 "Hell on Earth";
         EpiDef.numitems = 1;
 
         if (crispy->havenerve)
