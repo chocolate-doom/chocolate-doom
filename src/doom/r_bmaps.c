@@ -842,7 +842,7 @@ void R_InitBrightmaps ()
 		bmapflatnum[5] = R_FlatNumForName("NUKAGE3");
 		bmapflatnum[6] = R_FlatNumForName("BLOOD1");
 		bmapflatnum[7] = R_FlatNumForName("BLOOD2");
-		bmapflatnum[8] = R_FlatNumForName("BLOOD2");
+		bmapflatnum[8] = R_FlatNumForName("BLOOD3");
 		bmapflatnum[9] = R_FlatNumForName("SLIME13");
 		bmapflatnum[10] = R_FlatNumForName("SLIME14");
 		bmapflatnum[11] = R_FlatNumForName("SLIME15");
