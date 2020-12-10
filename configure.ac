@@ -136,9 +136,10 @@ AS_IF([test "x$with_libpng" != xno], [
 # [crispy] true-color rendering as a compile-time option
 AC_ARG_ENABLE([truecolor],
 AS_HELP_STRING([--enable-truecolor],
-    [true-color rendering (experimental) @<:@default=no@:>@]),
-AC_DEFINE([CRISPY_TRUECOLOR], [1], [true-color rendering])
-)
+    [true-color rendering (experimental) @<:@default=no@:>@]))
+AS_IF([test "x$enable_truecolor" = "xyes"], [
+    AC_DEFINE([CRISPY_TRUECOLOR], [1], [true-color rendering])
+])
 
 # TODO: We currently link everything against libraries that don't need it.
 # Use the specific library CFLAGS/LIBS variables instead of setting them here.
