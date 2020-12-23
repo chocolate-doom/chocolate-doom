@@ -563,6 +563,8 @@ void R_ExecuteSetViewSize(void)
         scaledviewwidth = (setblocks * 32) << crispy->hires;
         viewheight = (setblocks * 161 / 10) << crispy->hires;
     }
+    // [crispy] make sure viewheight is always an even number
+    viewheight &= ~1;
 
     detailshift = setdetail;
     viewwidth = scaledviewwidth >> detailshift;
