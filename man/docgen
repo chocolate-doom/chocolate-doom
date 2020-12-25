@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # 
 # Chocolate Doom self-documentation tool.  This works similar to javadoc
 # or doxygen, but documents command line parameters and configuration
