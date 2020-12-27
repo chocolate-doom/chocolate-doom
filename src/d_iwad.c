@@ -208,6 +208,30 @@ static registry_value_t root_path_keys[] =
         SOFTWARE_KEY "\\GOG.com\\Games\\1432899949",
         "PATH",
     },
+
+    // Heretic
+
+    {
+        HKEY_LOCAL_MACHINE,
+        SOFTWARE_KEY "\\GOG.com\\Games\\1290366318",
+        "PATH",
+    },
+
+    // Hexen
+
+    {
+        HKEY_LOCAL_MACHINE,
+        SOFTWARE_KEY "\\GOG.com\\Games\\1247951670",
+        "PATH",
+    },
+
+    // Hexen: Deathkings of a Dark Citadel
+
+    {
+        HKEY_LOCAL_MACHINE,
+        SOFTWARE_KEY "\\GOG.com\\Games\\1983497091",
+        "PATH",
+    },
 };
 
 // Subdirectories of the above install path, where IWADs are installed.
