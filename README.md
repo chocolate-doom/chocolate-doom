@@ -170,6 +170,7 @@ Crispy Doom 5.10.0 is currently under development.
  * Special treatment is now applied to the No Rest for the Living and The Masterlevels expansions - even during network games, demo recording and playback. This includes level transitions to the secret maps and back, finale text screens, par times, etc. (thanks Coincident and Keyboard_Doomer for input from the DSDA community).
  * Menu scrolling with the mouse wheel has been improved to be more responsive (by @JNechaevsky).
  * All textures are now always composed, whether they are multi-patched or not. Furthermore, two separate composites are created, one for opaque and one for translucent mid-textures on 2S walls. Additionally, textures may now be arbitrarily tall.
+ * Freedoom Phase 2 and FreeDM are now explicitly named in the Doom 2 Episode menu.
 
 **Bug Fixes**
 
@@ -177,12 +178,18 @@ Crispy Doom 5.10.0 is currently under development.
  * An optimization inherited from MBF has been fixed which led to sprites not being rendered on the lowest possible floor (thanks @retro65).
  * Only non-sky flats are now checked for the swirling effect.
  * Crushed non-bleeding monsters are not removed off the map anymore, their sprites are replaced with the invisible SPR_TNT1 instead (thanks ZeroMaster010 and sorry for the desyncing demo).
+ * Sigil is not auto-loaded anymore with the Freedoom Phase 1 IWAD, since Sigil's own texture definitions may clash with the ones from Freedoom (thanks @Some1NamedNate).
+ * A brightmap definition for an animated flat sequence in HacX has been fixed.
+ * Some fixes to the "--enable-truecolor" configure option have been implemented (i.e. the --disable-truecolor option, the rendering of the status bar bezel, fuzzy column drawing and the translucency factor - thanks xttl).
+ * Window height adjustment when changing window size has been brought back at the cost of the window shrinking when repeatedly changing the widescreen option.
+ * Parts of the status bar being visible during the initial wipe in widescreen mode has been fixed (thanks xttl).
 
 **Crispy Heretic**
 
  * The level restart key now restarts the current demo recording from the map it was started, but under a new name (thanks @thom-wye).
  * Demo file names may now have arbitrary length (inherited from Chocolate Doom, also applied to the Hexen sources).
  * The demo file size limit has been removed (also applied to the Hexen and Strife sources).
+ * The top border not always being drawn correctly in hires mode for all reduced screen sizes has been fixed (thanks @xttl).
 
 **Known Issues**
 
