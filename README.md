@@ -171,6 +171,7 @@ Crispy Doom 5.10.0 is currently under development.
  * Menu scrolling with the mouse wheel has been improved to be more responsive (by @JNechaevsky).
  * All textures are now always composed, whether they are multi-patched or not. Furthermore, two separate composites are created, one for opaque and one for translucent mid-textures on 2S walls. Additionally, textures may now be arbitrarily tall.
  * Freedoom Phase 2 and FreeDM are now explicitly named in the Doom 2 Episode menu.
+ * The status bar is now redrawn in the Main, Episode and Skill menus, where it could get overridden by custom graphics (thanks @JNechaevsky).
 
 **Bug Fixes**
 

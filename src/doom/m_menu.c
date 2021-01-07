@@ -1236,6 +1236,9 @@ void M_MusicVol(int choice)
 //
 void M_DrawMainMenu(void)
 {
+    // [crispy] force status bar refresh
+    inhelpscreens = true;
+
     V_DrawPatchDirect(94, 2,
                       W_CacheLumpName(DEH_String("M_DOOM"), PU_CACHE));
 }
@@ -1248,6 +1251,9 @@ void M_DrawMainMenu(void)
 //
 void M_DrawNewGame(void)
 {
+    // [crispy] force status bar refresh
+    inhelpscreens = true;
+
     V_DrawPatchDirect(96, 14, W_CacheLumpName(DEH_String("M_NEWG"), PU_CACHE));
     V_DrawPatchDirect(54, 38, W_CacheLumpName(DEH_String("M_SKILL"), PU_CACHE));
 }
@@ -1282,6 +1288,9 @@ int     epi;
 
 void M_DrawEpisode(void)
 {
+    // [crispy] force status bar refresh
+    inhelpscreens = true;
+
     V_DrawPatchDirect(54, 38, W_CacheLumpName(DEH_String("M_EPISOD"), PU_CACHE));
 }
 
