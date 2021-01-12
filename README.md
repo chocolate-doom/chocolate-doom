@@ -196,7 +196,7 @@ Crispy Doom 5.10.0 is released on Jan 12, 2021. Its major new feature is the add
 
  * Users who insist on the pure Vanilla experience that was formerly applied to the No Rest for the Living and The Masterlevels expansions or who need it to properly play back demos recorded with a previous release will have to rename their PWAD files and explicitly load them on the command line.
 
-Crispy Doom 5.10.0 is based on Chocolate Doom 3.0.1 and has merged all changes to the Chocolate Doom master branch up to commit [`df1837c1`](https://github.com/chocolate-doom/chocolate-doom/commit/df1837c1210b85ebc4ec84e42b5edb2001c66463).
+Crispy Doom 5.10.0 is based on Chocolate Doom 3.0.1 and has merged all changes to the Chocolate Doom master branch up to commit [`b26157ac`](https://github.com/chocolate-doom/chocolate-doom/commit/b26157aca5b12049b35d8dfcf969c51967a369f6).
 
 ## More documentation
 
