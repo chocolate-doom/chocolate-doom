@@ -161,7 +161,7 @@ After successful compilation the resulting binaries can be found in the `src/` d
 
 ### Crispy Doom 5.10.0
 
-Crispy Doom 5.10.0 is currently under development.
+Crispy Doom 5.10.0 is released on Jan 21, 2021. Its major new feature is the addition of support for the widescreen assets found e.g. in the Unity version of Doom.
 
 **New Features and Improvements**
 
