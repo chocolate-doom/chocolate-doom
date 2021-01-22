@@ -832,14 +832,7 @@ void M_DrawLoad(void)
     for (i = 0;i < load_end; i++)
     {
 	M_DrawSaveLoadBorder(LoadDef.x,LoadDef.y+LINEHEIGHT*i);
-
-	// [crispy] shade empty savegame slots
-	if (!LoadMenu[i].status)
-	    dp_translation = cr[CR_DARK];
-
 	M_WriteText(LoadDef.x,LoadDef.y+LINEHEIGHT*i,savegamestrings[i]);
-
-	dp_translation = NULL;
     }
 }
 
@@ -1062,8 +1055,6 @@ void M_QuickSaveResponse(int key)
 
 void M_QuickSave(void)
 {
-    char *savegamestring;
-
     if (!usergame)
     {
 	S_StartSound(NULL,sfx_oof);
@@ -1081,14 +1072,8 @@ void M_QuickSave(void)
 	quickSaveSlot = -2;	// means to pick a slot now
 	return;
     }
-    // [crispy] print savegame name in golden letters
-    savegamestring = M_StringJoin(crstr[CR_GOLD],
-                                  savegamestrings[quickSaveSlot],
-                                  crstr[CR_NONE],
-                                  NULL);
     DEH_snprintf(tempstring, sizeof(tempstring),
-                 QSPROMPT, savegamestring);
-    free(savegamestring);
+                 QSPROMPT, savegamestrings[quickSaveSlot]);
     M_StartMessage(tempstring, M_QuickSaveResponse, true);
 }
 
@@ -1109,8 +1094,6 @@ void M_QuickLoadResponse(int key)
 
 void M_QuickLoad(void)
 {
-    char *savegamestring;
-
     // [crispy] allow quickloading game while multiplayer demo playback
     if (netgame && !demoplayback)
     {
@@ -1127,14 +1110,8 @@ void M_QuickLoad(void)
 	quickSaveSlot = -2;
 	return;
     }
-    // [crispy] print savegame name in golden letters
-    savegamestring = M_StringJoin(crstr[CR_GOLD],
-                                  savegamestrings[quickSaveSlot],
-                                  crstr[CR_NONE],
-                                  NULL);
     DEH_snprintf(tempstring, sizeof(tempstring),
-                 QLPROMPT, savegamestring);
-    free(savegamestring);
+                 QLPROMPT, savegamestrings[quickSaveSlot]);
     M_StartMessage(tempstring, M_QuickLoadResponse, true);
 }
 
@@ -2985,19 +2962,10 @@ void M_Drawer (void)
 
 	if (name[0] && (W_CheckNumForName(name) > 0 || alttext))
 	{
-	    // [crispy] shade unavailable menu items
-	    if ((currentMenu == &MainDef && i == savegame && (!usergame || gamestate != GS_LEVEL)) ||
-	        (currentMenu == &OptionsDef && i == endgame && (!usergame || netgame)) ||
-	        (currentMenu == &MainDef && i == loadgame && (netgame && !demoplayback)) ||
-	        (currentMenu == &MainDef && i == newgame && (demorecording || (netgame && !demoplayback))))
-	        dp_translation = cr[CR_DARK];
-
 	    if (W_CheckNumForName(name) > 0 && currentMenu->lumps_missing == -1)
 	    V_DrawPatchDirect (x, y, W_CacheLumpName(name, PU_CACHE));
 	    else if (alttext)
 		M_WriteText(x, y+8-(M_StringHeight(alttext)/2), alttext);
-
-	    dp_translation = NULL;
 	}
 	y += LINEHEIGHT;
     }
