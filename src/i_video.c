@@ -1558,8 +1558,8 @@ void I_GetScreenDimensions (void)
 				h = 10;
 				break;
 			case RATIO_16_9:
-				w = 16;
-				h = 9;
+				w = 426;
+				h = 240;
 				break;
 			case RATIO_21_9:
 				w = 21;
