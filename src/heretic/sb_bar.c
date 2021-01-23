@@ -60,10 +60,17 @@ static void CheatArtifact2Func(player_t * player, Cheat_t * cheat);
 static void CheatArtifact3Func(player_t * player, Cheat_t * cheat);
 static void CheatWarpFunc(player_t * player, Cheat_t * cheat);
 static void CheatChickenFunc(player_t * player, Cheat_t * cheat);
-static void CheatShowFpsFunc(player_t* player, Cheat_t* cheat); // [crispy]
 static void CheatMassacreFunc(player_t * player, Cheat_t * cheat);
 static void CheatIDKFAFunc(player_t * player, Cheat_t * cheat);
 static void CheatIDDQDFunc(player_t * player, Cheat_t * cheat);
+
+// [crispy] new cheat functions
+static void CheatShowFpsFunc(player_t *player, Cheat_t *cheat);
+static void CheatNoTargetFunc(player_t *player, Cheat_t *cheat);
+static void CheatAddRemoveWpnFunc(player_t *player, Cheat_t *cheat);
+static void CheatSpecHitFunc(player_t *player, Cheat_t *cheat);
+static void CheatNoMomentumFunc(player_t *player, Cheat_t *cheat);
+static void CheatHomDetectFunc(player_t *player, Cheat_t *cheat);
 
 // Public Data
 
@@ -154,14 +161,19 @@ cheatseq_t CheatWarpSeq = CHEAT("engage", 2);
 // Save a screenshot
 cheatseq_t CheatChickenSeq = CHEAT("cockadoodledoo", 0);
 
-// [crispy] Show FPS
-cheatseq_t CheatShowFpsSeq = CHEAT("showfps", 0);
-
 // Kill all monsters
 cheatseq_t CheatMassacreSeq = CHEAT("massacre", 0);
 
 cheatseq_t CheatIDKFASeq = CHEAT("idkfa", 0);
 cheatseq_t CheatIDDQDSeq = CHEAT("iddqd", 0);
+
+// [crispy] new cheat sequences
+cheatseq_t CheatShowFpsSeq = CHEAT("showfps", 0);         // Show FPS
+cheatseq_t CheatNoTargetSeq = CHEAT("notarget", 0);       // Monsters don't target player
+cheatseq_t CheatAddRemoveWpnSeq = CHEAT("weap", 1);       // Add/remove single weapon, or bag
+cheatseq_t CheatSpecHitSeq = CHEAT("spechits", 0);        // Trigger all special lines in map
+cheatseq_t CheatNoMomentumSeq = CHEAT("nomomentum", 0);   // No momentum mode
+cheatseq_t CheatHomDetectSeq = CHEAT("homdet", 0);        // Flash unrendered areas red
 
 static Cheat_t Cheats[] = {
     {CheatGodFunc,       &CheatGodSeq},
@@ -177,11 +189,19 @@ static Cheat_t Cheats[] = {
     {CheatArtifact3Func, &CheatArtifact3Seq},
     {CheatWarpFunc,      &CheatWarpSeq},
     {CheatChickenFunc,   &CheatChickenSeq},
-    {CheatShowFpsFunc,   &CheatShowFpsSeq},
     {CheatMassacreFunc,  &CheatMassacreSeq},
     {CheatIDKFAFunc,     &CheatIDKFASeq},
     {CheatIDDQDFunc,     &CheatIDDQDSeq},
-    {NULL,               NULL} 
+
+    // [crispy] new cheats
+    {CheatShowFpsFunc,      &CheatShowFpsSeq},
+    {CheatNoTargetFunc,     &CheatNoTargetSeq},
+    {CheatAddRemoveWpnFunc, &CheatAddRemoveWpnSeq},
+    {CheatSpecHitFunc,      &CheatSpecHitSeq},
+    {CheatNoMomentumFunc,   &CheatNoMomentumSeq},
+    {CheatHomDetectFunc,    &CheatHomDetectSeq},
+
+    {NULL,               NULL}
 };
 
 //---------------------------------------------------------------------------
@@ -1286,20 +1306,6 @@ static void CheatChickenFunc(player_t * player, Cheat_t * cheat)
     }
 }
 
-// [crispy] "Cheat" to show FPS
-static void CheatShowFpsFunc(player_t* player, Cheat_t* cheat)
-{
-    player->cheats ^= CF_SHOWFPS;
-    if (player->cheats & CF_SHOWFPS)
-    {
-        P_SetMessage(player, DEH_String(TXT_SHOWFPSON), false);
-    }
-    else
-    {
-        P_SetMessage(player, DEH_String(TXT_SHOWFPSOFF), false);
-    }
-}
-
 static void CheatMassacreFunc(player_t * player, Cheat_t * cheat)
 {
     NIGHTMARE_NETGAME_CHECK;
@@ -1329,4 +1335,325 @@ static void CheatIDDQDFunc(player_t * player, Cheat_t * cheat)
     NIGHTMARE_NETGAME_CHECK;
     P_DamageMobj(player->mo, NULL, player->mo, 10000);
     P_SetMessage(player, DEH_String(TXT_CHEATIDDQD), true);
+}
+
+// [crispy] used by some of the new cheats, the buffer cannot be local
+//          to the cheat functions because the message string data is
+//          still accessed elsewhere after the function returns!
+static char msgbuf[64];
+
+// [crispy] "Cheat" to show FPS
+static void CheatShowFpsFunc(player_t* player, Cheat_t* cheat)
+{
+    player->cheats ^= CF_SHOWFPS;
+    if (player->cheats & CF_SHOWFPS)
+    {
+        P_SetMessage(player, DEH_String(TXT_SHOWFPSON), false);
+    }
+    else
+    {
+        P_SetMessage(player, DEH_String(TXT_SHOWFPSOFF), false);
+    }
+}
+
+// [crispy] implement boom-style "tntweap?" cheat
+extern boolean P_GiveWeapon(player_t * player, weapontype_t weapon);
+extern const char *const WeaponPickupMessages[NUMWEAPONS];
+
+static boolean WeaponAvailable (int w)
+{
+    if (w < 0 || w == wp_beak || w >= NUMWEAPONS)
+    {
+        return false;
+    }
+
+    if (shareware && (w >= wp_skullrod && w != wp_gauntlets))
+    {
+        return false;
+    }
+
+    return true;
+}
+
+// same order of preference as in p_inter.c:WeaponValue
+static weapontype_t PickBestWeapon(player_t *player)
+{
+    int i;
+
+    for (i = wp_mace; i >= wp_goldwand; i--)
+    {
+        if (player->weaponowned[i])
+        {
+            return i;
+        }
+    }
+
+    if (player->weaponowned[wp_gauntlets])
+    {
+        return wp_gauntlets;
+    }
+
+    return wp_staff;
+}
+
+static void CheatAddRemoveWpnFunc(player_t *player, Cheat_t *cheat)
+{
+    int i, w, setmsg;
+    char arg;
+
+    NIGHTMARE_NETGAME_CHECK;
+
+    // don't do anything if currently chicken
+    if (player->chickenTics)
+    {
+        return;
+    }
+
+    cht_GetParam(cheat->seq, &arg);
+    w = arg-'1';
+
+    // WEAP0 takes away all weapons and ammo except for the elvenwand
+    // and 50 crystal ammo
+    if (w == -1)
+    {
+        // remove backpack if the player has it
+        if (player->backpack)
+        {
+            player->backpack = false;
+            for (i = 0; i < NUMAMMO; i++)
+            {
+                player->maxammo[i] /= 2;
+            }
+        }
+
+        // remove Tome of Power if active
+        player->powers[pw_weaponlevel2] = 0;
+
+        for (i = 0; i < NUMWEAPONS; i++)
+        {
+            player->weaponowned[i] = false;
+        }
+        player->weaponowned[wp_staff] = true;
+        player->weaponowned[wp_goldwand] = true;
+
+        for (i = 0; i < NUMAMMO; i++)
+        {
+            player->ammo[i] = 0;
+        }
+        player->ammo[am_goldwand] = 50; // not HHE modifiable?
+
+        if (player->readyweapon > wp_goldwand)
+        {
+            player->pendingweapon = wp_goldwand;
+        }
+
+        P_SetMessage(player, DEH_String(TXT_CHEATWEAPREMOVEALL), false);
+
+        return;
+    }
+
+    setmsg = 0;
+
+    // do not give registered only weapons if in shareware mode
+    // or touch the chicken beak, never remove staff
+    if (!WeaponAvailable(w) || w == wp_staff)
+    {
+        return;
+    }
+
+    if (!player->weaponowned[w])
+    {
+        P_GiveWeapon(player, w);
+        S_StartSound(NULL, sfx_wpnup);
+
+        // no pickup message for staff or wand
+        if (w > 1)
+        {
+            P_SetMessage(player, DEH_String(WeaponPickupMessages[w]), false);
+            setmsg = 1;
+        }
+
+        // trigger palette flash
+        player->bonuscount += 6; // same as BONUSADD
+    }
+    else
+    {
+        player->weaponowned[w] = false;
+
+        // if current weapon was removed, select another one
+        if (w == player->readyweapon)
+        {
+            player->pendingweapon = PickBestWeapon(player);
+        }
+    }
+
+    if (!setmsg)
+    {
+        DEH_snprintf(msgbuf, sizeof(msgbuf),
+         player->weaponowned[w] ? TXT_CHEATWEAPADD : TXT_CHEATWEAPREMOVE,
+         w+1);
+        P_SetMessage(player, msgbuf, false);
+    }
+}
+
+// [crispy] trigger all special lines available on the map
+#define NO_INDEX (-1)
+static void CheatSpecHitFunc(player_t *player, Cheat_t *cheat)
+{
+    int i, speciallines = 0;
+    boolean origkeys[NUMKEYS];
+    line_t dummy;
+
+    NIGHTMARE_NETGAME_CHECK;
+
+    // temporarily give all keys
+    for (i = 0; i < NUMKEYS; i++)
+    {
+        origkeys[i] = player->keys[i];
+        player->keys[i] = true;
+    }
+
+    for (i = 0; i < numlines; i++)
+    {
+        if (lines[i].special)
+        {
+            // do not trigger level exits or teleports
+            // 39 = teleport, 97 = retrig teleport
+            // 52 = regular walk exit, 105 = secret walk exit
+            // 11 = regular switch exit, 51 = secret switch exit
+            if (lines[i].special == 39 || lines[i].special == 97 ||
+                lines[i].special == 52 || lines[i].special == 105 ||
+                lines[i].special == 11 || lines[i].special == 51)
+            {
+                continue;
+            }
+
+            // special without tag --> DR linedef type, don't
+            // change door direction if it is already moving
+            if (lines[i].tag == 0 && lines[i].sidenum[1] != NO_INDEX &&
+                sides[lines[i].sidenum[1]].sector->specialdata)
+            {
+                continue;
+            }
+
+            P_CrossSpecialLine(i, 0, player->mo);
+            P_ShootSpecialLine(player->mo, &lines[i]);
+            P_UseSpecialLine(player->mo, &lines[i]);
+
+            speciallines++;
+        }
+    }
+
+    // restore original keys
+    for (i = 0; i < NUMKEYS; i++)
+    {
+        player->keys[i] = origkeys[i];
+    }
+
+    // trigger special tag 666 events
+    dummy.tag = 666;
+    speciallines += EV_DoFloor(&dummy, lowerFloor);
+
+    DEH_snprintf(msgbuf, sizeof(msgbuf), TXT_CHEATSPECHIT,
+                 speciallines,speciallines != 1 ? "S" : "");
+    P_SetMessage(player, msgbuf, false);
+}
+
+// [crispy] nomomentum mode, pretty useless
+static void CheatNoMomentumFunc(player_t *player, Cheat_t *cheat)
+{
+    NIGHTMARE_NETGAME_CHECK;
+
+    player->cheats ^= CF_NOMOMENTUM;
+
+    if (player->cheats & CF_NOMOMENTUM)
+    {
+        P_SetMessage(player, DEH_String(TXT_CHEATNOMOMON), false);
+    }
+    else
+    {
+        P_SetMessage(player, DEH_String(TXT_CHEATNOMOMOFF), false);
+    }
+
+    return;
+}
+
+// [crispy] toggle flashing HOM indicator, see also:
+//          r_main.c:R_RenderPlayerView
+static void CheatHomDetectFunc(player_t *player, Cheat_t *cheat)
+{
+    crispy->flashinghom = !crispy->flashinghom;
+
+    if (crispy->flashinghom)
+    {
+        P_SetMessage(player, DEH_String(TXT_HOMDETECTON), false);
+    }
+    else
+    {
+        P_SetMessage(player, DEH_String(TXT_HOMDETECTOFF), false);
+    }
+
+    return;
+}
+
+
+// [crispy] toggle notarget mode: monsters don't target player, and also
+//          forget their target if they're currently targeting the player
+//          when this mode is toggled on
+static void CheatNoTargetFunc(player_t *player, Cheat_t *cheat)
+{
+    int i;
+
+    NIGHTMARE_NETGAME_CHECK;
+
+    player->cheats ^= CF_NOTARGET;
+
+    if (player->cheats & CF_NOTARGET)
+    {
+        thinker_t *th;
+
+        // [crispy] let monsters and tracers forget their target
+        for (th = thinkercap.next; th != &thinkercap; th = th->next)
+        {
+            if (th->function == P_MobjThinker)
+            {
+                mobj_t *const mo = (mobj_t *)th;
+
+                if (mo->target && mo->target->player)
+                {
+                    mo->target = NULL;
+                }
+
+                // MT_HORNRODFX2 is the powered up Hellstaff projectile which
+                // can also home on a target stored in special1, but it should
+                // never be homing on the player in single player mode, and
+                // HHE patches cannot make monsters fire those properly since
+                // it is only spawned by a pspr action function
+                if (mo->type == MT_MUMMYFX1 || mo->type == MT_WHIRLWIND)
+                {
+                    if (mo->special1.m && mo->special1.m->player)
+                    {
+                        mo->special1.m = NULL;
+                    }
+                }
+            }
+        }
+    }
+
+    // [crispy] let sectors forget their soundtarget
+    for (i = 0; i < numsectors; i++)
+    {
+        sector_t *const sector = &sectors[i];
+
+        sector->soundtarget = NULL;
+    }
+
+    if (player->cheats & CF_NOTARGET)
+    {
+        P_SetMessage(player, DEH_String(TXT_CHEATNOTARGETON), false);
+    }
+    else
+    {
+        P_SetMessage(player, DEH_String(TXT_CHEATNOTARGETOFF), false);
+    }
 }

@@ -233,6 +233,20 @@ boolean P_GiveAmmo(player_t * player, ammotype_t ammo, int count)
 //
 //--------------------------------------------------------------------------
 
+// [crispy] show weapon pickup messages in multiplayer games
+const char *const WeaponPickupMessages[NUMWEAPONS] =
+{
+    NULL, // wp_staff
+    NULL, // wp_goldwand
+    TXT_WPNCROSSBOW,
+    TXT_WPNBLASTER,
+    TXT_WPNSKULLROD,
+    TXT_WPNPHOENIXROD,
+    TXT_WPNMACE,
+    TXT_WPNGAUNTLETS,
+    NULL // wp_beak
+};
+
 boolean P_GiveWeapon(player_t * player, weapontype_t weapon)
 {
     boolean gaveAmmo;
@@ -248,6 +262,10 @@ boolean P_GiveWeapon(player_t * player, weapontype_t weapon)
         player->weaponowned[weapon] = true;
         P_GiveAmmo(player, wpnlev1info[weapon].ammo, GetWeaponAmmo[weapon]);
         player->pendingweapon = weapon;
+	
+        // [crispy] show weapon pickup messages in multiplayer games
+        P_SetMessage(player, DEH_String(WeaponPickupMessages[weapon]), false);
+
         if (player == &players[consoleplayer])
         {
             S_StartSound(NULL, sfx_wpnup);

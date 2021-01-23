@@ -102,11 +102,24 @@
 #define TXT_CHEATSCREENSHOT		"SCREENSHOT"
 #define TXT_CHEATCHICKENON		"CHICKEN ON"
 #define TXT_CHEATCHICKENOFF		"CHICKEN OFF"
-#define TXT_SHOWFPSON			"SHOW FPS ON"	// [crispy]
-#define TXT_SHOWFPSOFF			"SHOW FPS OFF"	// [crispy]
 #define TXT_CHEATMASSACRE		"MASSACRE"
 #define TXT_CHEATIDDQD			"TRYING TO CHEAT, EH?  NOW YOU DIE!"
 #define TXT_CHEATIDKFA			"CHEATER - YOU DON'T DESERVE WEAPONS"
+
+// [crispy] strings for new cheats
+#define TXT_SHOWFPSON			"SHOW FPS ON"
+#define TXT_SHOWFPSOFF			"SHOW FPS OFF"
+#define TXT_CHEATNOTARGETON             "NOTARGET MODE ON"
+#define TXT_CHEATNOTARGETOFF            "NOTARGET MODE OFF"
+#define TXT_CHEATWEAPREMOVEALL          "ALL WEAPONS REMOVED"
+#define TXT_CHEATWEAPBAD                "WEAPON NOT AVAILABLE"
+#define TXT_CHEATWEAPADD                "WEAPON %i ADDED"
+#define TXT_CHEATWEAPREMOVE             "WEAPON %i REMOVED"
+#define TXT_CHEATSPECHIT                "%i SPECIAL LINE%s TRIGGERED"
+#define TXT_CHEATNOMOMON                "NO MOMENTUM MODE ON"
+#define TXT_CHEATNOMOMOFF               "NO MOMENTUM MODE OFF"
+#define TXT_HOMDETECTON                 "HOM DETECTION ON"
+#define TXT_HOMDETECTOFF                "HOM DETECTION OFF"
 
 //---------------------------------------------------------------------------
 //
