@@ -853,12 +853,19 @@ void R_RenderPlayerView(player_t * player)
 {
     // [crispy] Smooth texture scrolling
     extern void R_InterpolateTextureOffsets(void);
+    extern boolean automapactive;
 
     R_SetupFrame(player);
     R_ClearClipSegs();
     R_ClearDrawSegs();
     R_ClearPlanes();
     R_ClearSprites();
+
+    if (automapactive && !crispy->automapoverlay)
+    {
+        R_RenderBSPNode (numnodes-1);
+        return;
+    }
 
     // [crispy] flashing HOM indicator
     if (crispy->flashinghom)

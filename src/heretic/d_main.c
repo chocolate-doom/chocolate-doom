@@ -253,10 +253,19 @@ void D_Display(void)
         case GS_LEVEL:
             if (!gametic)
                 break;
-            if (automapactive)
+            if (automapactive && !crispy->automapoverlay)
+            {
+                // [crispy] update automap while playing
+                R_RenderPlayerView (&players[displayplayer]);
                 AM_Drawer();
+            }
             else
                 R_RenderPlayerView(&players[displayplayer]);
+            if (automapactive && crispy->automapoverlay)
+            {
+                AM_Drawer();
+                BorderNeedRefresh = true;
+            }
             CT_Drawer();
             UpdateState |= I_FULLVIEW;
             SB_Drawer();

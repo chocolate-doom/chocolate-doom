@@ -552,28 +552,28 @@ boolean AM_Responder(event_t * ev)
 
         if (key == key_map_east)                 // pan right
         {
-            if (!followplayer)
+            if (!followplayer && !crispy->automapoverlay)
                 m_paninc.x = FTOM(F_PANINC);
             else
                 rc = false;
         }
         else if (key == key_map_west)            // pan left
         {
-            if (!followplayer)
+            if (!followplayer && !crispy->automapoverlay)
                 m_paninc.x = -FTOM(F_PANINC);
             else
                 rc = false;
         }
         else if (key == key_map_north)           // pan up
         {
-            if (!followplayer)
+            if (!followplayer && !crispy->automapoverlay)
                 m_paninc.y = FTOM(F_PANINC);
             else
                 rc = false;
         }
         else if (key == key_map_south)           // pan down
         {
-            if (!followplayer)
+            if (!followplayer && !crispy->automapoverlay)
                 m_paninc.y = -FTOM(F_PANINC);
             else
                 rc = false;
@@ -632,6 +632,18 @@ boolean AM_Responder(event_t * ev)
             plr->message = AMSTR_MARKSCLEARED;
         }
         */
+        else if (key == key_map_overlay)
+        {
+            // [crispy] force redraw status bar
+            UpdateState |= I_FULLSCRN;
+            SB_state = -1;
+
+            crispy->automapoverlay = !crispy->automapoverlay;
+            if (crispy->automapoverlay)
+                plr->message = DEH_String(AMSTR_OVERLAYON);
+            else
+                plr->message = DEH_String(AMSTR_OVERLAYOFF);
+        }
         else
         {
             rc = false;
@@ -1509,7 +1521,10 @@ void AM_Drawer(void)
         return;
 
     UpdateState |= I_FULLSCRN;
+    if (!crispy->automapoverlay)
+    {
     AM_clearFB(BACKGROUND);
+    }
     if (grid)
         AM_drawGrid(GRIDCOLORS);
     AM_drawWalls();
