@@ -490,8 +490,8 @@ typedef struct player_s
 #define CF_NOCLIP		1
 #define	CF_GODMODE		2
 #define	CF_NOMOMENTUM	4       // not really a cheat, just a debug aid
-#define CF_SHOWFPS      8       // [crispy]
-#define CF_NOTARGET     16      // [crispy]
+#define CF_SHOWFPS      8       // [crispy] "Cheat" to show FPS
+#define CF_NOTARGET     16      // [crispy] toggle notarget mode: monsters don't target player
 
 #define	SBARHEIGHT	(42 << crispy->hires)      // status bar height at bottom of screen
 

@@ -168,12 +168,12 @@ cheatseq_t CheatIDKFASeq = CHEAT("idkfa", 0);
 cheatseq_t CheatIDDQDSeq = CHEAT("iddqd", 0);
 
 // [crispy] new cheat sequences
-cheatseq_t CheatShowFpsSeq = CHEAT("showfps", 0);         // Show FPS
-cheatseq_t CheatNoTargetSeq = CHEAT("notarget", 0);       // Monsters don't target player
-cheatseq_t CheatAddRemoveWpnSeq = CHEAT("weap", 1);       // Add/remove single weapon, or bag
-cheatseq_t CheatSpecHitSeq = CHEAT("spechits", 0);        // Trigger all special lines in map
-cheatseq_t CheatNoMomentumSeq = CHEAT("nomomentum", 0);   // No momentum mode
-cheatseq_t CheatHomDetectSeq = CHEAT("homdet", 0);        // Flash unrendered areas red
+cheatseq_t CheatShowFpsSeq = CHEAT("showfps", 0);       // Show FPS
+cheatseq_t CheatNoTargetSeq = CHEAT("notarget", 0);     // Monsters don't target player
+cheatseq_t CheatAddRemoveWpnSeq = CHEAT("weap", 1);     // Add/remove single weapon, or bag
+cheatseq_t CheatSpecHitSeq = CHEAT("spechits", 0);      // Trigger all special lines in map
+cheatseq_t CheatNoMomentumSeq = CHEAT("nomomentum", 0); // No momentum mode
+cheatseq_t CheatHomDetectSeq = CHEAT("homdet", 0);      // Flash unrendered areas red
 
 static Cheat_t Cheats[] = {
     {CheatGodFunc,       &CheatGodSeq},
@@ -1497,7 +1497,6 @@ static void CheatAddRemoveWpnFunc(player_t *player, Cheat_t *cheat)
 }
 
 // [crispy] trigger all special lines available on the map
-#define NO_INDEX (-1)
 static void CheatSpecHitFunc(player_t *player, Cheat_t *cheat)
 {
     int i, speciallines = 0;
@@ -1574,8 +1573,6 @@ static void CheatNoMomentumFunc(player_t *player, Cheat_t *cheat)
     {
         P_SetMessage(player, DEH_String(TXT_CHEATNOMOMOFF), false);
     }
-
-    return;
 }
 
 // [crispy] toggle flashing HOM indicator, see also:
@@ -1592,8 +1589,6 @@ static void CheatHomDetectFunc(player_t *player, Cheat_t *cheat)
     {
         P_SetMessage(player, DEH_String(TXT_HOMDETECTOFF), false);
     }
-
-    return;
 }
 
 

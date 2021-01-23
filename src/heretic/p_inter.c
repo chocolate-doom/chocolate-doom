@@ -262,7 +262,7 @@ boolean P_GiveWeapon(player_t * player, weapontype_t weapon)
         player->weaponowned[weapon] = true;
         P_GiveAmmo(player, wpnlev1info[weapon].ammo, GetWeaponAmmo[weapon]);
         player->pendingweapon = weapon;
-	
+
         // [crispy] show weapon pickup messages in multiplayer games
         P_SetMessage(player, DEH_String(WeaponPickupMessages[weapon]), false);
 

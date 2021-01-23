@@ -111,6 +111,7 @@ typedef PACKED_STRUCT (
 }) mapseg_t;
 
 #define	NF_SUBSECTOR	0x8000
+#define	NO_INDEX	(-1) // [crispy] prepare for extended nodes
 typedef PACKED_STRUCT (
 {
     short x, y, dx, dy;         // partition line
