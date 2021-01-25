@@ -579,6 +579,8 @@ extern mapthing_t playerstarts[MAXPLAYERS];
 extern boolean playerstartsingame[MAXPLAYERS];
 
 extern int mouseSensitivity;
+extern int mouseSensitivity_x2;
+extern int mouseSensitivity_y;
 
 extern boolean precache;        // if true, load all graphics at level load
 

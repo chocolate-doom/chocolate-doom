@@ -64,6 +64,7 @@ typedef enum
     MENU_FILES,
     MENU_LOAD,
     MENU_SAVE,
+    MENU_MOUSE,
     MENU_CRISPNESS,
     MENU_NONE
 } MenuType_t;
@@ -97,6 +98,8 @@ static boolean SCQuitGame(int option);
 static boolean SCEpisode(int option);
 static boolean SCSkill(int option);
 static boolean SCMouseSensi(int option);
+static boolean SCMouseSensiX2(int option);
+static boolean SCMouseSensiY(int option);
 static boolean SCSfxVolume(int option);
 static boolean SCMusicVolume(int option);
 static boolean SCScreenSize(int option);
@@ -124,6 +127,7 @@ static void MN_DrawInfo(void);
 static void DrawLoadMenu(void);
 static void DrawSaveMenu(void);
 static void DrawSlider(Menu_t * menu, int item, int width, int slot);
+static void DrawMouseMenu(void);
 static void DrawCrispnessMenu(void);
 void MN_LoadSlotText(void);
 
@@ -268,8 +272,7 @@ static Menu_t SkillMenu = {
 static MenuItem_t OptionsItems[] = {
     {ITT_EFUNC, "END GAME", SCEndGame, 0, MENU_NONE},
     {ITT_EFUNC, "MESSAGES : ", SCMessages, 0, MENU_NONE},
-    {ITT_LRFUNC, "MOUSE SENSITIVITY", SCMouseSensi, 0, MENU_NONE},
-    {ITT_EMPTY, NULL, NULL, 0, MENU_NONE},
+    {ITT_SETMENU, "MOUSE SENSITIVITY...", NULL, 0, MENU_MOUSE},
     {ITT_SETMENU, "MORE...", NULL, 0, MENU_OPTIONS2},
     {ITT_SETMENU, "CRISPNESS...", NULL, 0, MENU_CRISPNESS}
 };
@@ -277,9 +280,26 @@ static MenuItem_t OptionsItems[] = {
 static Menu_t OptionsMenu = {
     88, 30,
     DrawOptionsMenu,
-    5+1, OptionsItems, // [JN] Extra item: Crispness menu
+    5, OptionsItems, // [crispy] + Crispness menu, - Mouse slider
     0,
     MENU_MAIN
+};
+
+static MenuItem_t MouseItems[] = {
+    {ITT_LRFUNC, "HORIZONTAL: TURN", SCMouseSensi, 0, MENU_NONE},
+    {ITT_EMPTY, NULL, NULL, 0, MENU_NONE},
+    {ITT_LRFUNC, "HORIZONTAL: STRAFE", SCMouseSensiX2, 0, MENU_NONE},
+    {ITT_EMPTY, NULL, NULL, 0, MENU_NONE},
+    {ITT_LRFUNC, "VERTICAL", SCMouseSensiY, 0, MENU_NONE},
+    {ITT_EMPTY, NULL, NULL, 0, MENU_NONE},
+};
+
+static Menu_t MouseMenu = {
+    90, 20,
+    DrawMouseMenu,
+    6, MouseItems,
+    0,
+    MENU_OPTIONS
 };
 
 static MenuItem_t Options2Items[] = {
@@ -329,6 +349,7 @@ static Menu_t *Menus[] = {
     &FilesMenu,
     &LoadMenu,
     &SaveMenu,
+    &MouseMenu,
     &CrispnessMenu
 };
 
@@ -826,7 +847,6 @@ static void DrawOptionsMenu(void)
     {
         MN_DrTextB(DEH_String("OFF"), 196, 50);
     }
-    DrawSlider(&OptionsMenu, 3, 10, mouseSensitivity);
 }
 
 //---------------------------------------------------------------------------
@@ -1066,6 +1086,40 @@ static boolean SCMouseSensi(int option)
     else if (mouseSensitivity)
     {
         mouseSensitivity--;
+    }
+    return true;
+}
+
+static boolean SCMouseSensiX2(int option)
+{
+    if (option == RIGHT_DIR)
+    {
+        // [crispy] remove mouse sensitivity limit
+        if (mouseSensitivity_x2 < 255)
+        {
+            mouseSensitivity_x2++;
+        }
+    }
+    else if (mouseSensitivity_x2)
+    {
+        mouseSensitivity_x2--;
+    }
+    return true;
+}
+
+static boolean SCMouseSensiY(int option)
+{
+    if (option == RIGHT_DIR)
+    {
+        // [crispy] remove mouse sensitivity limit
+        if (mouseSensitivity_y < 255)
+        {
+            mouseSensitivity_y++;
+        }
+    }
+    else if (mouseSensitivity_y)
+    {
+        mouseSensitivity_y--;
     }
     return true;
 }
@@ -1922,6 +1976,20 @@ static void DrawSlider(Menu_t * menu, int item, int width, int slot)
 
     V_DrawPatch(x + 4 + slot * 8, y + 7,
                 W_CacheLumpName(DEH_String("M_SLDKB"), PU_CACHE));
+}
+
+//---------------------------------------------------------------------------
+//
+// PROC DrawMouseMenu
+//
+//---------------------------------------------------------------------------
+
+static void DrawMouseMenu(void)
+{
+
+    DrawSlider(&MouseMenu, 1, 16, mouseSensitivity);
+    DrawSlider(&MouseMenu, 3, 16, mouseSensitivity_x2);
+    DrawSlider(&MouseMenu, 5, 16, mouseSensitivity_y);
 }
 
 //---------------------------------------------------------------------------
