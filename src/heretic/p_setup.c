@@ -652,6 +652,14 @@ void P_SetupLevel(int episode, int map, int playermask, skill_t skill)
     }
     players[consoleplayer].viewz = 1;   // will be set by player think
 
+    // [crispy] stop demo warp mode now
+    if (crispy->demowarp == map)
+    {
+        crispy->demowarp = 0;
+        nodrawers = false;
+        singletics = false;
+    }
+
     S_Start();                  // make sure all sounds are stopped before Z_FreeTags
 
     Z_FreeTags(PU_LEVEL, PU_PURGELEVEL - 1);
