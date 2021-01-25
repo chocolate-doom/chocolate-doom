@@ -1558,8 +1558,8 @@ void I_GetScreenDimensions (void)
 				h = 10;
 				break;
 			case RATIO_16_9:
-				w = 426;
-				h = 240;
+				w = 16;
+				h = 9;
 				break;
 			case RATIO_21_9:
 				w = 21;
@@ -1571,7 +1571,7 @@ void I_GetScreenDimensions (void)
 
 		SCREENWIDTH = w * ah / h;
 		// [crispy] make sure SCREENWIDTH is an integer multiple of 4 ...
-		SCREENWIDTH = (SCREENWIDTH + 3) & (int)~3;
+		SCREENWIDTH = SCREENWIDTH & (int)~3;
 		// [crispy] ... but never exceeds MAXWIDTH (array size!)
 		SCREENWIDTH = MIN(SCREENWIDTH, MAXWIDTH);
 	}
