@@ -592,6 +592,8 @@ extern int startepisode;
 extern int startmap;
 extern boolean autostart;
 
+extern  boolean nodrawers; // [crispy] for the demowarp feature
+
 extern boolean testcontrols;
 extern int testcontrols_mousespeed;
 

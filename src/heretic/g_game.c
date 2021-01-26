@@ -93,6 +93,7 @@ boolean sendsave;               // send a save event next tic
 boolean usergame;               // ok to save / end game
 
 boolean timingdemo;             // if true, exit with report on completion
+boolean nodrawers = false; // [crispy] for the demowarp feature
 int starttime;                  // for comparative timing purposes
 
 boolean viewactive;

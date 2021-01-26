@@ -76,7 +76,7 @@ void S_StartSong(int song, boolean loop)
 {
     int mus_len;
 
-    if (song == mus_song)
+    if (song == mus_song || (nodrawers && singletics))
     {                           // don't replay an old song
         return;
     }
@@ -145,7 +145,7 @@ void S_StartSound(void *_origin, int sound_id)
 
     listener = GetSoundListener();
 
-    if (sound_id == 0 || snd_MaxVolume == 0)
+    if (sound_id == 0 || snd_MaxVolume == 0 || (nodrawers && singletics))
         return;
     if (origin == NULL)
     {
@@ -303,7 +303,7 @@ void S_StartSoundAtVolume(void *_origin, int sound_id, int volume)
 
     listener = GetSoundListener();
 
-    if (sound_id == 0 || snd_MaxVolume == 0)
+    if (sound_id == 0 || snd_MaxVolume == 0 || (nodrawers && singletics))
         return;
     if (origin == NULL)
     {
