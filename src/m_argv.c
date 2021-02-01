@@ -268,6 +268,7 @@ void M_FindResponseFile(void)
         // the loop we'll ignore it. Since some parameters stop reading when
         // an argument beginning with a '-' is encountered, we keep something
         // that starts with a '-'.
+        free(myargv[i]);
         myargv[i] = M_StringDuplicate("-_");
         LoadResponseFile(i + 1, myargv[i + 1]);
     }
