@@ -210,6 +210,7 @@ static void LoadResponseFile(int argv_index, const char *filename)
         ++newargc;
     }
 
+    free(myargv);
     myargv = newargv;
     myargc = newargc;
 
