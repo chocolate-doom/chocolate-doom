@@ -132,6 +132,7 @@ static void LoadResponseFile(int argv_index, const char *filename)
     for (i=0; i<argv_index; ++i)
     {
         newargv[i] = myargv[i];
+        myargv[i] = NULL;
         ++newargc;
     }
 
@@ -205,6 +206,7 @@ static void LoadResponseFile(int argv_index, const char *filename)
     for (i=argv_index + 1; i<myargc; ++i)
     {
         newargv[newargc] = myargv[i];
+        myargv[i] = NULL;
         ++newargc;
     }
 
