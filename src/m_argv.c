@@ -214,6 +214,16 @@ static void LoadResponseFile(int argv_index, const char *filename)
         ++newargc;
     }
 
+    // Free any old strings in myargv which were not moved to newargv
+    for (i = 0; i < myargc; ++i)
+    {
+        if (myargv[i] != NULL)
+        {
+            free(myargv[i]);
+            myargv[i] = NULL;
+        }
+    }
+
     free(myargv);
     myargv = newargv;
     myargc = newargc;
