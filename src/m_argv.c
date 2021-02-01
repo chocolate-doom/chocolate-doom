@@ -159,10 +159,11 @@ static void LoadResponseFile(int argv_index, const char *filename)
 
         if (infile[k] == '\"')
         {
+            char *argstart;
             // Skip the first character(")
             ++k;
 
-            newargv[newargc++] = &infile[k];
+            argstart = &infile[k];
 
             // Read all characters between quotes
 
@@ -181,12 +182,14 @@ static void LoadResponseFile(int argv_index, const char *filename)
 
             infile[k] = '\0';
             ++k;
+            newargv[newargc++] = M_StringDuplicate(argstart);
         }
         else
         {
+            char *argstart;
             // Read in the next argument until a space is reached
 
-            newargv[newargc++] = &infile[k];
+            argstart = &infile[k];
 
             while(k < size && !isspace(infile[k]))
             {
@@ -198,6 +201,7 @@ static void LoadResponseFile(int argv_index, const char *filename)
             infile[k] = '\0';
 
             ++k;
+            newargv[newargc++] = M_StringDuplicate(argstart);
         }
     }
 
