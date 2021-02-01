@@ -218,6 +218,8 @@ static void LoadResponseFile(int argv_index, const char *filename)
     myargv = newargv;
     myargc = newargc;
 
+    free(file);
+
 #if 0
     // Disabled - Vanilla Doom does not do this.
     // Display arguments
