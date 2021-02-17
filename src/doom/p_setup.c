@@ -726,7 +726,7 @@ static void PadRejectArray(byte *array, unsigned int len)
         }
         else
         {
-            padvalue = 0xf00;
+            padvalue = 0x00;
         }
 
         memset(array + sizeof(rejectpad), padvalue, len - sizeof(rejectpad));
