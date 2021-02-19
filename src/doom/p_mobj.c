@@ -538,9 +538,9 @@ void P_MobjThinker (mobj_t* mobj)
     }
     // [crispy] suppress interpolation of player missiles for the first tic
     // and Archvile fire to mitigate it being spawned at the wrong location
-    if (mobj->interp == -1 || mobj->type == MT_FIRE)
+    if (mobj->interp < 0)
     {
-        mobj->interp = false;
+        mobj->interp++;
     }
     else
     // [AM] Handle interpolation unless we're an active player.
