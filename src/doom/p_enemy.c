@@ -1316,6 +1316,10 @@ void A_Fire (mobj_t* actor)
     actor->y = dest->y + FixedMul (24*FRACUNIT, finesine[an]);
     actor->z = dest->z;
     P_SetThingPosition (actor);
+
+    // [crispy] suppress interpolation of Archvile fire
+    // to mitigate it being spawned at the wrong location
+    actor->interp = -actor->tics;
 }
 
 
