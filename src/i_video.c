@@ -739,11 +739,15 @@ void I_FinishUpdate (void)
             flags = SDL_GetWindowFlags(screen);
             if ((flags & SDL_WINDOW_FULLSCREEN_DESKTOP) == 0)
             {
+                int old_height;
                 SDL_GetWindowSize(screen, &window_width, &window_height);
+                old_height = window_height;
 
                 // Adjust the window by resizing again so that the window
                 // is the right aspect ratio.
                 AdjustWindowSize();
+                if (window_height < old_height)
+                    window_height = old_height;
                 SDL_SetWindowSize(screen, window_width, window_height);
             }
             CreateUpscaledTexture(false);
