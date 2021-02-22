@@ -519,9 +519,9 @@ void ST_refreshBackground(boolean force)
 	}
 
 	// [crispy] center unity rerelease wide status bar
-	if (sbar->width > ORIGWIDTH && sbar->leftoffset == 0)
+	if (SHORT(sbar->width) > ORIGWIDTH && SHORT(sbar->leftoffset) == 0)
 	{
-	    V_DrawPatch(ST_X + (ORIGWIDTH - sbar->width) / 2, 0, sbar);
+	    V_DrawPatch(ST_X + (ORIGWIDTH - SHORT(sbar->width)) / 2, 0, sbar);
 	}
 	else
 	{

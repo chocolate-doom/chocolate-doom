@@ -925,7 +925,7 @@ void F_BunnyScroll (void)
     p2 = W_CacheLumpName (DEH_String("PFUB1"), PU_LEVEL);
 
     // [crispy] fill pillarboxes in widescreen mode
-    pillar_width = (SCREENWIDTH - (p1->width << FRACBITS) / dxi) / 2;
+    pillar_width = (SCREENWIDTH - (SHORT(p1->width) << FRACBITS) / dxi) / 2;
 
     if (pillar_width > 0)
     {
@@ -938,9 +938,9 @@ void F_BunnyScroll (void)
     }
 
     // Calculate the portion of PFUB2 that would be offscreen at original res.
-    p1offset = (ORIGWIDTH - p1->width) / 2;
+    p1offset = (ORIGWIDTH - SHORT(p1->width)) / 2;
 
-    if (p2->width == ORIGWIDTH)
+    if (SHORT(p2->width) == ORIGWIDTH)
     {
         // Unity or original PFUBs.
         // PFUB1 only contains the pixels that scroll off.
