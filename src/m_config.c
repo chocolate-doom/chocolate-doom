@@ -2291,7 +2291,7 @@ static char *GetDefaultConfigDir(void)
         return copy;
     }
 #endif /* #ifndef _WIN32 */
-    return M_StringDuplicate("");
+    return M_DirName(myargv[0]);
 }
 
 // 
