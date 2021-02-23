@@ -308,7 +308,7 @@ void V_DrawPatch(int x, int y, patch_t *patch)
 
 void V_DrawPatchFullScreen(patch_t *patch, boolean flipped)
 {
-    int x = ((SCREENWIDTH >> crispy->hires) - patch->width) / 2 - WIDESCREENDELTA;
+    int x = ((SCREENWIDTH >> crispy->hires) - SHORT(patch->width)) / 2 - WIDESCREENDELTA;
 
     patch->leftoffset = 0;
     patch->topoffset = 0;
