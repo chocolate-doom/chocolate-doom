@@ -298,7 +298,7 @@ static boolean stopped = true;
 // [crispy] Antialiased lines from Heretic with more colors
 #define NUMSHADES 8
 #define NUMSHADES_BITS 3 // log2(NUMSHADES)
-static byte color_shades[NUMSHADES * 256];
+static pixel_t color_shades[NUMSHADES * 256];
 
 // Forward declare for AM_LevelInit
 static void AM_drawFline_Vanilla(fline_t* fl, int color);
@@ -1207,10 +1207,11 @@ AM_drawFline_Vanilla
 	return;
     }
 
+#define PUTDOT_RAW(xx,yy,cc) fb[(yy)*f_w+(flipscreenwidth[xx])]=(cc)
 #ifndef CRISPY_TRUECOLOR
-#define PUTDOT(xx,yy,cc) fb[(yy)*f_w+(flipscreenwidth[xx])]=(cc)
+#define PUTDOT(xx,yy,cc) PUTDOT_RAW(xx,yy,cc)
 #else
-#define PUTDOT(xx,yy,cc) fb[(yy)*f_w+(flipscreenwidth[xx])]=(colormaps[(cc)])
+#define PUTDOT(xx,yy,cc) PUTDOT_RAW(xx,yy,(colormaps[(cc)]))
 #endif
 
     dx = fl->b.x - fl->a.x;
@@ -1262,7 +1263,7 @@ AM_drawFline_Vanilla
 static void AM_drawFline_Smooth(fline_t* fl, int color)
 {
     int X0 = fl->a.x, Y0 = fl->a.y, X1 = fl->b.x, Y1 = fl->b.y;
-    byte* BaseColor = &color_shades[color * NUMSHADES];
+    pixel_t* BaseColor = &color_shades[color * NUMSHADES];
 
     unsigned short IntensityShift, ErrorAdj, ErrorAcc;
     unsigned short ErrorAccTemp, Weighting, WeightingComplementMask;
@@ -1278,9 +1279,12 @@ static void AM_drawFline_Smooth(fline_t* fl, int color)
         X0 = X1;
         X1 = Temp;
     }
+
     /* Draw the initial pixel, which is always exactly intersected by
        the line and so needs no weighting */
-    PUTDOT(X0, Y0, BaseColor[0]);
+    /* Always write the raw color value because we've already performed the necessary lookup
+     * into colormap */
+    PUTDOT_RAW(X0, Y0, BaseColor[0]);
 
     if ((DeltaX = X1 - X0) >= 0)
     {
@@ -1300,7 +1304,7 @@ static void AM_drawFline_Smooth(fline_t* fl, int color)
         while (DeltaX-- != 0)
         {
             X0 += XDir;
-            PUTDOT(X0, Y0, BaseColor[0]);
+            PUTDOT_RAW(X0, Y0, BaseColor[0]);
         }
         return;
     }
@@ -1310,7 +1314,7 @@ static void AM_drawFline_Smooth(fline_t* fl, int color)
         do
         {
             Y0++;
-            PUTDOT(X0, Y0, BaseColor[0]);
+            PUTDOT_RAW(X0, Y0, BaseColor[0]);
         }
         while (--DeltaY != 0);
         return;
@@ -1322,7 +1326,7 @@ static void AM_drawFline_Smooth(fline_t* fl, int color)
         {
             X0 += XDir;
             Y0++;
-            PUTDOT(X0, Y0, BaseColor[0]);
+            PUTDOT_RAW(X0, Y0, BaseColor[0]);
         }
         while (--DeltaY != 0);
         return;
@@ -1356,12 +1360,12 @@ static void AM_drawFline_Smooth(fline_t* fl, int color)
                intensity weighting for this pixel, and the complement of the
                weighting for the paired pixel */
             Weighting = ErrorAcc >> IntensityShift;
-            PUTDOT(X0, Y0, BaseColor[Weighting]);
-            PUTDOT(X0 + XDir, Y0, BaseColor[(Weighting ^ WeightingComplementMask)]);
+            PUTDOT_RAW(X0, Y0, BaseColor[Weighting]);
+            PUTDOT_RAW(X0 + XDir, Y0, BaseColor[(Weighting ^ WeightingComplementMask)]);
         }
         /* Draw the final pixel, which is always exactly intersected by the line
            and so needs no weighting */
-        PUTDOT(X1, Y1, BaseColor[0]);
+        PUTDOT_RAW(X1, Y1, BaseColor[0]);
         return;
     }
     /* It's an X-major line; calculate 16-bit fixed-point fractional part of a
@@ -1383,13 +1387,13 @@ static void AM_drawFline_Smooth(fline_t* fl, int color)
            intensity weighting for this pixel, and the complement of the
            weighting for the paired pixel */
         Weighting = ErrorAcc >> IntensityShift;
-        PUTDOT(X0, Y0, BaseColor[Weighting]);
-        PUTDOT(X0, Y0 + 1, BaseColor[(Weighting ^ WeightingComplementMask)]);
+        PUTDOT_RAW(X0, Y0, BaseColor[Weighting]);
+        PUTDOT_RAW(X0, Y0 + 1, BaseColor[(Weighting ^ WeightingComplementMask)]);
 
     }
     /* Draw the final pixel, which is always exactly intersected by the line
        and so needs no weighting */
-    PUTDOT(X1, Y1, BaseColor[0]);
+    PUTDOT_RAW(X1, Y1, BaseColor[0]);
 }
 
 //
