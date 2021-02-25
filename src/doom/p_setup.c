@@ -473,6 +473,12 @@ void P_LoadLineDefs (int lump)
 
 	ld->sidenum[0] = SHORT(mld->sidenum[0]);
 	ld->sidenum[1] = SHORT(mld->sidenum[1]);
+	    
+	// substitute dummy sidedef for missing 1st sidedef (fix from Crispy)
+	if (ld->sidenum[0] == -1)
+	{
+	    ld->sidenum[0] = 0;
+	}
 
 	if (ld->sidenum[0] != -1)
 	    ld->frontsector = sides[ld->sidenum[0]].sector;
