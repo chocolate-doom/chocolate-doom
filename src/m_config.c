@@ -2273,15 +2273,15 @@ float M_GetFloatVariable(const char *name)
 
 static char *GetDefaultConfigDir(void)
 {
+    char *result;
+    char *copy;
+
 #if !defined(_WIN32) || defined(_WIN32_WCE)
 
     // Configuration settings are stored in an OS-appropriate path
     // determined by SDL.  On typical Unix systems, this might be
     // ~/.local/share/chocolate-doom.  On Windows, we behave like
     // Vanilla Doom and save in the current directory.
-
-    char *result;
-    char *copy;
 
     result = SDL_GetPrefPath("", PACKAGE_TARNAME);
     if (result != NULL)
@@ -2291,7 +2291,11 @@ static char *GetDefaultConfigDir(void)
         return copy;
     }
 #endif /* #ifndef _WIN32 */
-    return M_DirName(myargv[0]);
+
+    result = M_DirName(myargv[0]);
+    copy = M_StringJoin(result, DIR_SEPARATOR_S, NULL);
+    free(result);
+    return copy;
 }
 
 // 
