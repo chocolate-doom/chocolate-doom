@@ -1990,7 +1990,7 @@ void G_DoPlayDemo(void)
         playeringame[i] = (*demo_p++) != 0;
 
     if (playeringame[1] || M_CheckParm("-solo-net") > 0
-                            || M_CheckParm("-netdemo") > 0)
+                        || M_CheckParm("-netdemo") > 0)
     {
     	netgame = true;
     }
