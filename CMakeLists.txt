@@ -1,7 +1,7 @@
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 cmake_minimum_required(VERSION 3.7.2)
-project("Crispy Doom" VERSION 5.10.0 LANGUAGES C)
+project("Crispy Doom" VERSION 5.10.1 LANGUAGES C)
 
 # Autotools variables
 set(top_srcdir ${CMAKE_CURRENT_SOURCE_DIR})
@@ -15,7 +15,7 @@ set(PACKAGE_STRING "${PROJECT_NAME} ${PROJECT_VERSION}")
 set(PACKAGE_BUGREPORT "https://github.com/fabiangreffrath/crispy-doom/issues")
 
 string(REGEX REPLACE " Doom$" "" PACKAGE_SHORTNAME "${PACKAGE_NAME}")
-set(PACKAGE_COPYRIGHT "Copyright (C) 1993-2020")
+set(PACKAGE_COPYRIGHT "Copyright (C) 1993-2021")
 set(PACKAGE_LICENSE "GNU General Public License, version 2")
 
 # Any settings that should apply to all targets in this directory and all

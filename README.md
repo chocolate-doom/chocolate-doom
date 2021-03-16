@@ -159,6 +159,34 @@ After successful compilation the resulting binaries can be found in the `src/` d
 
 ## News
 
+### Crispy Doom 5.10.1
+
+Crispy Doom 5.10.1 is currently under development.
+
+**New Features and Improvements**
+
+ * Some colored text has been reverted back to the pristine Vanilla experience. As a rule of thumb, UI that has been inherited from Vanilla does doesn't get any colorization anymore (thanks @OpenRift412).
+ * Screenwidth values are now rounded *down* to the nearest multiple of 4 in hires mode, and *up* in lores mode. This makes sure we end up with a screenwidth of 852 px for a 16:9 ratio in hires mode, which is exact twice the width of the widescreen assets, and with a screenwidth of 428 px in lores mode, which is the next integer multiple of 4 (thanks @buvk).
+ * A CMake toggle has been added for the truecolor mode (by @zx64).
+
+**Bug Fixes**
+
+ * The weapon sprite coordinates now remain unchanged if neither variable bobbing nor weapon sprite centering is enabled. Coincidently, this will bring back the sloppy bobbing of the chainsaw weapon sprite during its idle frames.
+ * Interpolation of the Archvile's fire sprite is now suppressed to mitigate it being spawned at the wrong location.
+ * Status bar positioning, drawing of fullscreen patches and the bunny scroll screen have been fixed on big-endian systems.
+ * The window height is now prevented from shrinking when changing widescreen modes.
+ * The smooth automap lines features has been fixed for truecolor mode (by @zx64).
+
+**Crispy Heretic**
+
+ * Weapon pickup messages are now shown in cooperative multiplayer mode (by @xttl).
+ * All Crispy Doom specific cheats have been ported over and adapted accordingly (by @xttl).
+ * An Automap overlay mode has been added.
+ * There are now separate mouse sensitivities for turn, strafe and y-axis.
+ * Heretic now has a "demowarp" feature, i.e. support for using both `-playdemo` and `-warp` on the command line (thanks @thom-wye).
+
+Crispy Doom 5.10.1 is based on Chocolate Doom 3.0.1 and has merged all changes to the Chocolate Doom master branch up to commit [`d5b1a695`](https://github.com/chocolate-doom/chocolate-doom/commit/d5b1a695090eb49da3a4277686a30920cd5de046).
+
 ### Crispy Doom 5.10.0
 
 Crispy Doom 5.10.0 is released on Jan 12, 2021. Its major new feature is the addition of support for the widescreen assets found e.g. in the Unity version of Doom.
