@@ -46,6 +46,7 @@
 // default.cfg, savegames, etc.
 
 const char *configdir;
+static const char *exedir;
 
 static char *autoload_path = "";
 
@@ -2268,10 +2269,8 @@ float M_GetFloatVariable(const char *name)
     return *variable->location.f;
 }
 
-static const char *GetExeDir(void)
+static void M_SetExeDir(void)
 {
-    static const char *exedir;
-
     if (exedir == NULL)
     {
         char *dirname;
@@ -2280,8 +2279,6 @@ static const char *GetExeDir(void)
         exedir = M_StringJoin(dirname, DIR_SEPARATOR_S, NULL);
         free(dirname);
     }
-
-    return exedir;
 }
 
 // Get the path to the default configuration dir to use, if NULL
@@ -2307,7 +2304,7 @@ static const char *GetDefaultConfigDir(void)
     }
 #endif /* #ifndef _WIN32 */
 
-    return GetExeDir();
+    return M_StringDuplicate(exedir);
 }
 
 // 
@@ -2319,6 +2316,8 @@ static const char *GetDefaultConfigDir(void)
 
 void M_SetConfigDir(const char *dir)
 {
+    M_SetExeDir();
+
     // Use the directory that was passed, or find the default.
 
     if (dir != NULL)
@@ -2330,7 +2329,7 @@ void M_SetConfigDir(const char *dir)
         configdir = GetDefaultConfigDir();
     }
 
-    if (configdir != GetExeDir())
+    if (strcmp(configdir, exedir) != 0)
     {
         printf("Using %s for configuration and saves\n", configdir);
     }
@@ -2390,6 +2389,8 @@ char *M_GetSaveGameDir(const char *iwadname)
     char *topdir;
     int p;
 
+    M_SetExeDir();
+
     //!
     // @arg <directory>
     //
@@ -2422,7 +2423,7 @@ char *M_GetSaveGameDir(const char *iwadname)
 #endif
     // If not "doing" a configuration directory (Windows), don't "do"
     // a savegame directory, either.
-    else if (configdir == GetExeDir())
+    else if (!strcmp(configdir, exedir))
     {
 	savegamedir = M_StringDuplicate("");
     }
