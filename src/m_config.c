@@ -46,7 +46,6 @@
 // default.cfg, savegames, etc.
 
 const char *configdir;
-static const char *exedir;
 
 static char *autoload_path = "";
 
@@ -2269,18 +2268,6 @@ float M_GetFloatVariable(const char *name)
     return *variable->location.f;
 }
 
-static void M_SetExeDir(void)
-{
-    if (exedir == NULL)
-    {
-        char *dirname;
-
-        dirname = M_DirName(myargv[0]);
-        exedir = M_StringJoin(dirname, DIR_SEPARATOR_S, NULL);
-        free(dirname);
-    }
-}
-
 // Get the path to the default configuration dir to use, if NULL
 // is passed to M_SetConfigDir.
 
@@ -2316,8 +2303,6 @@ static const char *GetDefaultConfigDir(void)
 
 void M_SetConfigDir(const char *dir)
 {
-    M_SetExeDir();
-
     // Use the directory that was passed, or find the default.
 
     if (dir != NULL)
@@ -2388,8 +2373,6 @@ char *M_GetSaveGameDir(const char *iwadname)
     char *savegamedir;
     char *topdir;
     int p;
-
-    M_SetExeDir();
 
     //!
     // @arg <directory>
