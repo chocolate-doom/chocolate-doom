@@ -1306,14 +1306,7 @@ void G_ScreenShot (void)
 int pars[4][10] = 
 { 
     {0}, 
-    if (gameversion == exe_chex)
-    {
-        {0,120,360,480,200,360,180,180,30,165}, 
-    }
-    else
-    {
-        {0,30,75,120,90,165,180,180,30,165}, 
-    }
+    {0,30,75,120,90,165,180,180,30,165}, 
     {0,90,90,90,120,90,360,240,30,170}, 
     {0,90,45,90,150,90,90,165,30,135} 
 }; 
@@ -1326,6 +1319,15 @@ int cpars[32] =
     240,150,180,150,150,300,330,420,300,180,	// 21-30
     120,30					// 31-32
 };
+
+// Chex Quest Par Times
+int qpars[4][10] = 
+{ 
+    {0}, 
+    {0,120,360,480,200,360,180,180,30,165}, 
+    {0,90,90,90,120,90,360,240,30,170}, 
+    {0,90,45,90,150,90,90,165,30,135} 
+}; 
  
 
 //
@@ -1487,7 +1489,14 @@ void G_DoCompleted (void)
     // overflows into the cpars array.
     else if (gameepisode < 4)
     {
-        wminfo.partime = TICRATE*pars[gameepisode][gamemap];
+        if (gameversion == exe_chex && gamemap < 6)
+        {
+            wminfo.partime = TICRATE*chexpars[gameepisode][gamemap];
+        }
+        else
+        {
+            wminfo.partime = TICRATE*pars[gameepisode][gamemap];
+        }
     }
     else
     {
