@@ -1306,9 +1306,9 @@ void G_ScreenShot (void)
 int pars[4][10] = 
 { 
     {0}, 
-    if (gameversion == exe_chex && gamemap < 6)
+    if (gameversion == exe_chex)
     {
-        {0,120,360,480,200,360}, 
+        {0,120,360,480,200,360,180,180,30,165}, 
     }
     else
     {
