@@ -1319,6 +1319,12 @@ int cpars[32] =
     240,150,180,150,150,300,330,420,300,180,	// 21-30
     120,30					// 31-32
 };
+
+// Chex Quest Par Times
+int chexpars[6] = 
+{ 
+    0,120,360,480,200,360
+}; 
  
 
 //
@@ -1480,7 +1486,14 @@ void G_DoCompleted (void)
     // overflows into the cpars array.
     else if (gameepisode < 4)
     {
-        wminfo.partime = TICRATE*pars[gameepisode][gamemap];
+        if (gameversion == exe_chex && gameepisode == 1 && gamemap < 6)
+        {
+            wminfo.partime = TICRATE*chexpars[gamemap];
+        }
+        else
+        {
+            wminfo.partime = TICRATE*pars[gameepisode][gamemap];
+        }
     }
     else
     {
