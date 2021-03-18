@@ -1323,7 +1323,7 @@ int cpars[32] =
 // Chex Quest Par Times
 int chexpars[6] = 
 { 
-    {0,120,360,480,200,360} 
+    0,120,360,480,200,360
 }; 
  
 
