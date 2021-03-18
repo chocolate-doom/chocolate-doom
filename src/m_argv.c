@@ -417,16 +417,13 @@ const char *M_GetExecutableName(void)
     return M_BaseName(myargv[0]);
 }
 
-const char *exedir = NULL;
+char *exedir = NULL;
 
 void M_SetExeDir(void)
 {
-    if (exedir == NULL)
-    {
-        char *dirname;
+    char *dirname;
 
-        dirname = M_DirName(myargv[0]);
-        exedir = M_StringJoin(dirname, DIR_SEPARATOR_S, NULL);
-        free(dirname);
-    }
+    dirname = M_DirName(myargv[0]);
+    exedir = M_StringJoin(dirname, DIR_SEPARATOR_S, NULL);
+    free(dirname);
 }

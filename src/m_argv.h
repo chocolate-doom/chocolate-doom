@@ -28,7 +28,7 @@
 extern  int	myargc;
 extern  char**	myargv;
 
-extern const char *exedir;
+extern char *exedir;
 void M_SetExeDir(void);
 
 // Returns the position of the given parameter
