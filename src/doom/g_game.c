@@ -1487,7 +1487,7 @@ void G_DoCompleted (void)
     // overflows into the cpars array.
     else if (gameepisode < 4)
     {
-        if (gameversion == exe_chex && gamemap < 6)
+        if (gameversion == exe_chex && gameepisode == 1 && gamemap < 6)
         {
             wminfo.partime = TICRATE*chexpars[gameepisode][gamemap];
         }
