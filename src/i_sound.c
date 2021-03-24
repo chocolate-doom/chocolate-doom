@@ -390,9 +390,14 @@ void I_ShutdownMusic(void)
 
 void I_SetMusicVolume(int volume)
 {
-    if (active_music_module != NULL)
+    if (music_module != NULL)
     {
-        active_music_module->SetMusicVolume(volume);
+        music_module->SetMusicVolume(volume);
+    }
+
+    if (music_packs_active)
+    {
+        music_pack_module.SetMusicVolume(volume);
     }
 }
 
