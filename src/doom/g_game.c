@@ -1620,7 +1620,7 @@ void G_ScreenShot (void)
 
 
 // DOOM Par Times
-int pars[6][10] =
+static const int pars[6][10] =
 { 
     {0}, 
     {0,30,75,120,90,165,180,180,30,165}, 
@@ -1633,7 +1633,7 @@ int pars[6][10] =
 }; 
 
 // DOOM II Par Times
-int cpars[32] =
+static const int cpars[32] =
 {
     30,90,120,120,90,150,120,120,270,90,	//  1-10
     210,150,150,150,210,150,420,150,210,150,	// 11-20
@@ -1642,13 +1642,13 @@ int cpars[32] =
 };
 
 // Chex Quest Par Times
-int chexpars[6] = 
+static const int chexpars[6] =
 { 
     0,120,360,480,200,360
 }; 
  
 // [crispy] No Rest For The Living par times from the BFG Edition
-static int npars[9] =
+static const int npars[9] =
 {
     75,105,120,105,210,105,165,105,135
 };
