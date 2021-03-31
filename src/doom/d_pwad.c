@@ -180,8 +180,10 @@ static boolean CheckNerveLoaded (void)
 		gamemission = pack_nerve;
 
 		// [crispy] if NERVE.WAD does not contain TITLEPIC, use INTERPIC instead
+		i = W_GetNumForName("INTERPIC");
 		j = W_GetNumForName("TITLEPIC");
-		if (strcasecmp(W_WadNameForLump(lumpinfo[j]), "NERVE.WAD"))
+		if (W_IsIWADLump(lumpinfo[i]) &&
+		    strcasecmp(W_WadNameForLump(lumpinfo[j]), "NERVE.WAD"))
 		{
 			DEH_AddStringReplacement ("TITLEPIC", "INTERPIC");
 		}
