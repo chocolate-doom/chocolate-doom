@@ -393,11 +393,11 @@ void I_SetMusicVolume(int volume)
     if (music_module != NULL)
     {
         music_module->SetMusicVolume(volume);
-    }
 
-    if (music_packs_active)
-    {
-        music_pack_module.SetMusicVolume(volume);
+        if (music_packs_active && music_module != &music_pack_module)
+        {
+            music_pack_module.SetMusicVolume(volume);
+        }
     }
 }
 
