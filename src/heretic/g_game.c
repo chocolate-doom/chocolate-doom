@@ -320,7 +320,8 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
 // use two stage accelerative turning on the keyboard and joystick
 //
     if (joyxmove < 0 || joyxmove > 0
-        || gamekeydown[key_right] || gamekeydown[key_left])
+        || gamekeydown[key_right] || gamekeydown[key_left]
+        || mousebuttons[mousebturnright] || mousebuttons[mousebturnleft])
         turnheld += ticdup;
     else
         turnheld = 0;
@@ -359,6 +360,10 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
             side += sidemove[speed];
         if (joyxmove < 0)
             side -= sidemove[speed];
+        if (mousebuttons[mousebturnright])
+            side += sidemove[speed];
+        if (mousebuttons[mousebturnleft])
+            side -= sidemove[speed];
     }
     else
     {
@@ -369,6 +374,10 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
         if (joyxmove > 0)
             cmd->angleturn -= angleturn[tspeed];
         if (joyxmove < 0)
+            cmd->angleturn += angleturn[tspeed];
+        if (mousebuttons[mousebturnright])
+            cmd->angleturn -= angleturn[tspeed];
+        if (mousebuttons[mousebturnleft])
             cmd->angleturn += angleturn[tspeed];
     }
 

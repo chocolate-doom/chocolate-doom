@@ -48,7 +48,9 @@ static int *all_mouse_buttons[] = {
     &mousebprevweapon,
     &mousebnextweapon,
     &mousebinvleft,
-    &mousebinvright
+    &mousebinvright,
+    &mousebturnleft,
+    &mousebturnright,
 };
 
 static void MouseSetCallback(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(variable))
@@ -102,8 +104,10 @@ static void ConfigExtraButtons(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
     AddMouseControl(buttons_table, "Move backward", &mousebbackward);
     AddMouseControl(buttons_table, "Strafe right", &mousebstraferight);
     AddMouseControl(buttons_table, "Previous weapon", &mousebprevweapon);
-    AddMouseControl(buttons_table, "Strafe on", &mousebstrafe);
+    AddMouseControl(buttons_table, "Turn left", &mousebturnright);
     AddMouseControl(buttons_table, "Next weapon", &mousebnextweapon);
+    AddMouseControl(buttons_table, "Turn right", &mousebturnright);
+    AddMouseControl(buttons_table, "Strafe on", &mousebstrafe);
     
     if (gamemission == heretic)
     {
