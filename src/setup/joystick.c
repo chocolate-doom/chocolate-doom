@@ -1115,8 +1115,8 @@ void BindJoystickVariables(void)
     M_BindIntVariable("joystick_strafe_invert", &joystick_strafe_invert);
     M_BindIntVariable("joystick_look_axis",   &joystick_look_axis);
     M_BindIntVariable("joystick_look_invert", &joystick_look_invert);
-    M_BindIntVariable("joystick_fire_axis",   &joystick_look_axis);
-    M_BindIntVariable("joystick_fire_invert", &joystick_look_invert);
+    M_BindIntVariable("joystick_fire_axis",   &joystick_fire_axis);
+    M_BindIntVariable("joystick_fire_invert", &joystick_fire_invert);
 
     for (i = 0; i < NUM_VIRTUAL_BUTTONS; ++i)
     {

@@ -236,7 +236,7 @@ static void IdentifyBadAxes(txt_joystick_axis_t *joystick_axis)
     {
         val = SDL_JoystickGetAxis(joystick_axis->joystick, i);
 
-        joystick_axis->bad_axis[i] = abs(val) > (32768 / 5);
+        joystick_axis->bad_axis[i] = (abs(val) > (32768 / 5)) && (abs(val) < 32767);
 
         if (joystick_axis->bad_axis[i])
         {
