@@ -1145,6 +1145,19 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(joystick_look_invert),
 
     //!
+    // Joystick axis to use to for fire/attac.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_fire_axis),
+
+    //!
+    // If non-zero, movement on the joystick axis used for fire/attack
+    // is inverted.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_fire_invert),
+
+    //!
     // The physical joystick button that corresponds to joystick
     // virtual button #0.
     //
