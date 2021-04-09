@@ -112,6 +112,8 @@ int mousebjump = -1;
 
 int mousebstrafeleft = -1;
 int mousebstraferight = -1;
+int mousebturnleft = -1;
+int mousebturnright = -1;
 int mousebbackward = -1;
 int mousebuse = -1;
 
@@ -246,6 +248,8 @@ void M_BindBaseControls(void)
     M_BindIntVariable("joyb_straferight",    &joybstraferight);
     M_BindIntVariable("mouseb_strafeleft",   &mousebstrafeleft);
     M_BindIntVariable("mouseb_straferight",  &mousebstraferight);
+    M_BindIntVariable("mouseb_turnleft",     &mousebturnleft);
+    M_BindIntVariable("mouseb_turnright",    &mousebturnright);
     M_BindIntVariable("mouseb_use",          &mousebuse);
     M_BindIntVariable("mouseb_backward",     &mousebbackward);
     M_BindIntVariable("dclick_use",          &dclick_use);
