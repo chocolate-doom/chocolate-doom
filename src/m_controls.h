@@ -154,6 +154,8 @@ extern int mousebjump;
 
 extern int mousebstrafeleft;
 extern int mousebstraferight;
+extern int mousebturnleft;
+extern int mousebturnright;
 extern int mousebbackward;
 extern int mousebuse;
 extern int mousebmouselook;

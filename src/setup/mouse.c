@@ -55,7 +55,9 @@ static int *all_mouse_buttons[] = {
     &mousebmouselook, // [crispy]
     &mousebreverse, // [crispy]
     &mousebinvleft,
-    &mousebinvright
+    &mousebinvright,
+    &mousebturnleft,
+    &mousebturnright,
 };
 
 static void MouseSetCallback(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(variable))

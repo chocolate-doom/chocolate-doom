@@ -1101,6 +1101,18 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(mouseb_straferight),
 
     //!
+    // Mouse button to turn left.
+    //
+
+    CONFIG_VARIABLE_INT(mouseb_turnleft),
+
+    //!
+    // Mouse button to turn right.
+    //
+
+    CONFIG_VARIABLE_INT(mouseb_turnright),
+
+    //!
     // Mouse button to "use" an object, eg. a door or switch.
     //
 
