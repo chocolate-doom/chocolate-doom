@@ -46,9 +46,11 @@ void P_CreateBlockMap(void)
 	  maxy = vertexes[i].y >> FRACBITS;
     }
 
+#if 0
   // [crispy] doombsp/DRAWING.M:175-178
   minx -= 8; miny -= 8;
   maxx += 8; maxy += 8;
+#endif
 
   // Save blockmap parameters
 
