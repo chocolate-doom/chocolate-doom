@@ -1,0 +1,21 @@
+name: Chocolate Doom
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: mstksg/get-package@v1
+        with:
+          apt-get: cppcheck libpng-dev libsdl2-dev libsdl2-mixer-dev libsdl2-net-dev libsdl2-image-dev libsamplerate0-dev
+
+      - uses: actions/checkout@v2
+
+      - name: Run a one-line script
+        run: ./travis.sh
