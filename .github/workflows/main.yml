@@ -1,0 +1,35 @@
+name: Chocolate Doom
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+
+    strategy:
+      matrix:
+        compiler: [clang, gcc]
+
+    steps:
+      - uses: mstksg/get-package@v1
+        with:
+          apt-get: cppcheck libpng-dev libsdl2-dev libsdl2-mixer-dev libsdl2-net-dev libsdl2-image-dev libsamplerate0-dev
+
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      - name: Run cppcheck
+        env:
+          ANALYZE: true
+          CC: ${{ matrix.compiler }}
+        run: $GITHUB_WORKSPACE/.travis.sh
+
+      - name: Make
+        env:
+          CC: ${{ matrix.compiler }}
+        run: $GITHUB_WORKSPACE/.travis.sh
