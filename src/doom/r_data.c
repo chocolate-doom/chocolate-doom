@@ -1054,6 +1054,7 @@ static const int tran_filter_pct = 66;
 static void R_InitTranMap()
 {
     int lump = W_CheckNumForName("TRANMAP");
+    const int originalgamma = usegamma;
 
     // If a tranlucency filter map lump is present, use it
     if (lump != -1)
@@ -1099,6 +1100,8 @@ static void R_InitTranMap()
 	    byte *fg, *bg, blend[3], *tp = tranmap;
 	    int i, j, btmp;
 
+	    // [crispy] set gamma-correction to zero so I_SetPalette can use a full color range
+	    usegamma = 0;
 	    I_SetPalette(playpal);
 	    // [crispy] background color
 	    for (i = 0; i < 256; i++)
@@ -1158,6 +1161,7 @@ static void R_InitTranMap()
 
 	free(fname);
 
+	usegamma = originalgamma;
 	W_ReleaseLumpName("PLAYPAL");
     }
 }
