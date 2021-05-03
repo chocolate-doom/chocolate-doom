@@ -65,4 +65,7 @@ extern const pixel_t I_BlendDark (const pixel_t bg, const int d);
 extern const pixel_t I_BlendOver (const pixel_t bg, const pixel_t fg);
 #endif
 
+int V_GetPaletteIndex(byte *palette, int r, int g, int b);
+byte V_Colorize (byte *playpal, int cr, byte source, boolean keepgray109);
+
 #endif // __V_TRANS__

@@ -229,7 +229,7 @@ static void rgb_to_hsv(vect *rgb, vect *hsv)
 }
 
 // [crispy] copied over from i_video.c
-static int I_GetPaletteIndex2(byte *palette, int r, int g, int b)
+int V_GetPaletteIndex(byte *palette, int r, int g, int b)
 {
     int best, best_diff, diff;
     int i;
@@ -313,5 +313,5 @@ byte V_Colorize (byte *playpal, int cr, byte source, boolean keepgray109)
     rgb.y *= 255.;
     rgb.z *= 255.;
 
-    return I_GetPaletteIndex2(playpal, (int) rgb.x, (int) rgb.y, (int) rgb.z);
+    return V_GetPaletteIndex(playpal, (int) rgb.x, (int) rgb.y, (int) rgb.z);
 }

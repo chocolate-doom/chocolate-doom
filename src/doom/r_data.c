@@ -1054,7 +1054,6 @@ static const int tran_filter_pct = 66;
 static void R_InitTranMap()
 {
     int lump = W_CheckNumForName("TRANMAP");
-    const int originalgamma = usegamma;
 
     // If a tranlucency filter map lump is present, use it
     if (lump != -1)
@@ -1100,9 +1099,6 @@ static void R_InitTranMap()
 	    byte *fg, *bg, blend[3], *tp = tranmap;
 	    int i, j, btmp;
 
-	    // [crispy] set gamma-correction to zero so I_SetPalette can use a full color range
-	    usegamma = 0;
-	    I_SetPalette(playpal);
 	    // [crispy] background color
 	    for (i = 0; i < 256; i++)
 	    {
@@ -1128,7 +1124,7 @@ static void R_InitTranMap()
 		    blend[g] = (tran_filter_pct * fg[g] + (100 - tran_filter_pct) * bg[g]) / (100 + btmp);
 		    blend[b] = (tran_filter_pct * fg[b] + (100 - tran_filter_pct) * bg[b]) / 100;
 
-		    *tp++ = I_GetPaletteIndex(blend[r], blend[g], blend[b]);
+		    *tp++ = V_GetPaletteIndex(playpal, blend[r], blend[g], blend[b]);
 		}
 	    }
 
@@ -1161,7 +1157,6 @@ static void R_InitTranMap()
 
 	free(fname);
 
-	usegamma = originalgamma;
 	W_ReleaseLumpName("PLAYPAL");
     }
 }
@@ -1253,7 +1248,6 @@ void R_InitColormaps (void)
 	char c[3];
 	int i, j;
 	boolean keepgray = false;
-	extern byte V_Colorize (byte *playpal, int cr, byte source, boolean keepgray109);
 
 	if (!crstr)
 	    crstr = I_Realloc(NULL, CRMAX * sizeof(*crstr));

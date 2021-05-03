@@ -535,7 +535,6 @@ void R_InitColormaps(void)
 	byte *playpal = W_CacheLumpName("PLAYPAL", PU_STATIC);
 	char c[3];
 	int i, j;
-	extern byte V_Colorize (byte *playpal, int cr, byte source, boolean keepgray109);
 
 	if (!crstr)
 	    crstr = I_Realloc(NULL, CRMAX * sizeof(*crstr));
