@@ -3098,7 +3098,7 @@ void M_Init (void)
     // [crispy] NRFTL / The Master Levels
     if (crispy->havenerve || crispy->havemaster)
     {
-        int i;
+        int i, j;
 
         NewDef.prevMenu = &EpiDef;
         EpisodeMenu[0].alphaKey = gamevariant == freedm ||
@@ -3118,10 +3118,30 @@ void M_Init (void)
             EpisodeMenu[EpiDef.numitems].alttext = "No Rest for the Living";
             EpiDef.numitems++;
 
-            // [crispy] render the episode menu with the HUD font
-            // if the graphics are not from the BFG Edition Doom 2 IWAD or from a PWAD
-            if (gamevariant != bfgedition &&
-                (i = W_CheckNumForName("M_EPI2")) != -1 && W_IsIWADLump(lumpinfo[i]))
+            i = W_CheckNumForName("M_EPI1");
+            j = W_CheckNumForName("M_EPI2");
+
+            // [crispy] render the episode menu with the HUD font ...
+            // ... if the graphics are not available
+            if (i != -1 && j != -1)
+            {
+                // ... or if the graphics are both from an IWAD
+                if (W_IsIWADLump(lumpinfo[i]) && W_IsIWADLump(lumpinfo[j]))
+                {
+                    const patch_t *pi, *pj;
+
+                    pi = W_CacheLumpNum(i, PU_CACHE);
+                    pj = W_CacheLumpNum(j, PU_CACHE);
+
+                    // ... and if the patch width for "Hell on Earth"
+                    //     is longer than "No Rest for the Living"
+                    if (SHORT(pi->width) > SHORT(pj->width))
+                    {
+                        EpiDef.lumps_missing = 1;
+                    }
+                }
+            }
+            else
             {
                 EpiDef.lumps_missing = 1;
             }
@@ -3133,9 +3153,11 @@ void M_Init (void)
             EpisodeMenu[EpiDef.numitems].alttext = "The Master Levels";
             EpiDef.numitems++;
 
+            i = W_CheckNumForName(EpiDef.numitems == 3 ? "M_EPI3" : "M_EPI2");
+
             // [crispy] render the episode menu with the HUD font
-            // if the graphics are not from a PWAD
-            if ((i = W_CheckNumForName("M_EPI1")) != -1 && W_IsIWADLump(lumpinfo[i]))
+            // if the graphics are not available or not from a PWAD
+            if (i == -1 || W_IsIWADLump(lumpinfo[i]))
             {
                 EpiDef.lumps_missing = 1;
             }
