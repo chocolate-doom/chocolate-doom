@@ -15,9 +15,24 @@ jobs:
         compiler: [clang, gcc]
 
     steps:
-      - uses: mstksg/get-package@v1
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install libpng-dev libsamplerate0-dev libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-net-dev
+
+      - uses: actions/checkout@v2
         with:
-          apt-get: cppcheck libpng-dev libsdl2-dev libsdl2-mixer-dev libsdl2-net-dev libsdl2-image-dev libsamplerate0-dev
+          submodules: true
+
+      - name: Make
+        env:
+          CC: ${{ matrix.compiler }}
+        run: $GITHUB_WORKSPACE/.travis.sh
+
+  cppcheck:
+    runs-on: ubuntu-18.04
+
+    steps:
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install cppcheck
 
       - uses: actions/checkout@v2
         with:
@@ -26,10 +41,4 @@ jobs:
       - name: Run cppcheck
         env:
           ANALYZE: true
-          CC: ${{ matrix.compiler }}
-        run: $GITHUB_WORKSPACE/.travis.sh
-
-      - name: Make
-        env:
-          CC: ${{ matrix.compiler }}
         run: $GITHUB_WORKSPACE/.travis.sh
