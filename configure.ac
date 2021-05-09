@@ -3,7 +3,7 @@ AC_INIT(RUDE, 3.1.0,
 
 PACKAGE_SHORTNAME=${PACKAGE_NAME% Doom}
 PACKAGE_SHORTDESC="Conservative source port"
-PACKAGE_COPYRIGHT="Copyright (C) 1993-2020"
+PACKAGE_COPYRIGHT="Copyright (C) 1993-2021"
 PACKAGE_LICENSE="GNU General Public License, version 2"
 PACKAGE_MAINTAINER="drfrag"
 PACKAGE_URL="https://github.com/drfrag666/chocolate-doom/releases"

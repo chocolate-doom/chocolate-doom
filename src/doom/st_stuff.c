@@ -520,7 +520,7 @@ ST_Responder (event_t* ev)
 	if (plyr->cheats & CF_GODMODE)
 	{
 	  if (plyr->mo)
-	    plyr->mo->health = 100;
+	    plyr->mo->health = deh_god_mode_health;
 	  
 	  plyr->health = deh_god_mode_health;
 	  plyr->message = DEH_String(STSTR_DQDON);
