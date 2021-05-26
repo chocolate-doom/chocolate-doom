@@ -1760,7 +1760,7 @@ void D_DoomMain (void)
     if (!M_ParmExists("-noautoload"))
     {
         char *autoload_dir;
-        autoload_dir = M_GetAutoloadDir("strife1.wad");
+        autoload_dir = M_GetAutoloadDir("strife1.wad", true);
         DEH_AutoLoadPatches(autoload_dir);
         W_AutoLoadWADs(autoload_dir);
         free(autoload_dir);

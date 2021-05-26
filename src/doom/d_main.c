@@ -1700,14 +1700,14 @@ void D_DoomMain (void)
 
         if (gamemission < pack_chex)
         {
-            autoload_dir = M_GetAutoloadDir("doom-all");
+            autoload_dir = M_GetAutoloadDir("doom-all", true);
             DEH_AutoLoadPatches(autoload_dir);
             W_AutoLoadWADs(autoload_dir);
             free(autoload_dir);
         }
 
         // auto-loaded files per IWAD
-        autoload_dir = M_GetAutoloadDir(D_SaveGameIWADName(gamemission, gamevariant));
+        autoload_dir = M_GetAutoloadDir(D_SaveGameIWADName(gamemission, gamevariant), true);
         DEH_AutoLoadPatches(autoload_dir);
         W_AutoLoadWADs(autoload_dir);
         free(autoload_dir);
@@ -1798,6 +1798,25 @@ void D_DoomMain (void)
 
     // Debug:
 //    W_PrintDirectory();
+
+    // [crispy] add wad files from autoload PWAD directories
+
+    if (!M_ParmExists("-noautoload") && gamemode != shareware)
+    {
+        int p;
+
+        p = M_CheckParmWithArgs ("-file", 1);
+        if (p)
+        {
+            while (++p != myargc && myargv[p][0] != '-')
+            {
+                char *autoload_dir;
+                autoload_dir = M_GetAutoloadDir(M_BaseName(myargv[p]), false);
+                W_AutoLoadWADs(autoload_dir);
+                free(autoload_dir);
+            }
+        }
+    }
 
     //!
     // @arg <demo>
@@ -1914,6 +1933,25 @@ void D_DoomMain (void)
         }
 
         printf("  loaded %i DEHACKED lumps from PWAD files.\n", loaded);
+    }
+
+    // [crispy] process .deh files from PWADs autoload directories
+
+    if (!M_ParmExists("-noautoload") && gamemode != shareware)
+    {
+        int p;
+
+        p = M_CheckParmWithArgs ("-file", 1);
+        if (p)
+        {
+            while (++p != myargc && myargv[p][0] != '-')
+            {
+                char *autoload_dir;
+                autoload_dir = M_GetAutoloadDir(M_BaseName(myargv[p]), false);
+                DEH_AutoLoadPatches(autoload_dir);
+                free(autoload_dir);
+            }
+        }
     }
 
     // Set the gamedescription string. This is only possible now that
