@@ -196,6 +196,8 @@ typedef struct player_s
 
     // [crispy] "use" button timer
     int			btuse, btuse_tics;
+
+    mobj_t*		over;
 } player_t;
 
 

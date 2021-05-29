@@ -560,8 +560,10 @@ void P_MobjThinker (mobj_t* mobj)
     // momentum movement
     if (mobj->momx
 	|| mobj->momy
-	|| (mobj->flags&MF_SKULLFLY) )
+	|| (mobj->flags&MF_SKULLFLY)
+	|| (mobj->player && mobj->player->over) )
     {
+	if (mobj->player) mobj->player->over = NULL;
 	P_XYMovement (mobj);
 
 	// FIXME: decent NOP/NULL/Nil function pointer please.

@@ -412,7 +412,6 @@ boolean PIT_CheckThing (mobj_t* thing)
 		// [crispy] allow players to walk over/under shootable objects
 		if (tmthing->player && thing->flags & MF_SHOOTABLE)
 		{
-			fixed_t newfloorz, newceilingz;
 			// [crispy] allow the usual 24 units step-up even across monsters' heads,
 			// only if the current height has not been reached by "low" jumping
 			fixed_t step_up = tmthing->player->jumpTics > 7 ? 0 : 24*FRACUNIT;
@@ -420,28 +419,17 @@ boolean PIT_CheckThing (mobj_t* thing)
 			if (tmthing->z + step_up >= thing->z + thing->height)
 			{
 				// player walks over object
-				if ((newfloorz = thing->z + thing->height) > tmfloorz)
-				{
-					tmfloorz = newfloorz;
-				}
-				if ((newceilingz = tmthing->z) < thing->ceilingz)
-				{
-					thing->ceilingz = newceilingz;
-				}
+				tmfloorz = MAX(thing->z + thing->height, tmfloorz);
+				thing->ceilingz = MIN(tmthing->z, thing->ceilingz);
+				tmthing->player->over = thing;
 				return true;
 			}
 			else
 			if (tmthing->z + tmthing->height <= thing->z)
 			{
 				// player walks underneath object
-				if ((newceilingz = thing->z) < tmceilingz)
-				{
-					tmceilingz = newceilingz;
-				}
-				if ((newfloorz = tmthing->z + tmthing->height) > thing->floorz)
-				{
-					thing->floorz = newfloorz;
-				}
+				tmceilingz = MIN(thing->z, tmceilingz);
+				thing->floorz = MAX(tmthing->z + tmthing->height, thing->floorz);
 				return true;
 			}
 

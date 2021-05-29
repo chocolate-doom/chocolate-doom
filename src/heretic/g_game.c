@@ -1490,7 +1490,7 @@ void G_DoReborn(int playernum)
     int i;
 
     // quit demo unless -demoextend
-    if (!demoextend && G_CheckDemoStatus())
+    if ((!demoextend || !singledemo) && G_CheckDemoStatus())
         return;
     if (!netgame)
         gameaction = ga_loadlevel;      // reload the level from scratch
@@ -1639,8 +1639,8 @@ void G_DoCompleted(void)
 
     gameaction = ga_nothing;
 
-    // quit demo unless -demoextend
-    if (!demoextend && G_CheckDemoStatus())
+    // quit demo unless -tend
+    if ((!demoextend || !singledemo) && G_CheckDemoStatus())
     {
         return;
     }

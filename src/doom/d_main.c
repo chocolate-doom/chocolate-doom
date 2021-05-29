@@ -1360,6 +1360,8 @@ static void G_CheckDemoStatusAtExit (void)
     G_CheckDemoStatus();
 }
 
+static const char *const loadparms[] = {"-file", "-merge", NULL};
+
 //
 // D_DoomMain
 //
@@ -1803,17 +1805,21 @@ void D_DoomMain (void)
 
     if (!M_ParmExists("-noautoload") && gamemode != shareware)
     {
-        int p;
+        int i;
 
-        p = M_CheckParmWithArgs ("-file", 1);
-        if (p)
+        for (i = 0; loadparms[i]; i++)
         {
-            while (++p != myargc && myargv[p][0] != '-')
+            int p;
+            p = M_CheckParmWithArgs(loadparms[i], 1);
+            if (p)
             {
-                char *autoload_dir;
-                autoload_dir = M_GetAutoloadDir(M_BaseName(myargv[p]), false);
-                W_AutoLoadWADs(autoload_dir);
-                free(autoload_dir);
+                while (++p != myargc && myargv[p][0] != '-')
+                {
+                    char *autoload_dir;
+                    autoload_dir = M_GetAutoloadDir(M_BaseName(myargv[p]), false);
+                    W_AutoLoadWADs(autoload_dir);
+                    free(autoload_dir);
+                }
             }
         }
     }
@@ -1939,17 +1945,21 @@ void D_DoomMain (void)
 
     if (!M_ParmExists("-noautoload") && gamemode != shareware)
     {
-        int p;
+        int i;
 
-        p = M_CheckParmWithArgs ("-file", 1);
-        if (p)
+        for (i = 0; loadparms[i]; i++)
         {
-            while (++p != myargc && myargv[p][0] != '-')
+            int p;
+            p = M_CheckParmWithArgs(loadparms[i], 1);
+            if (p)
             {
-                char *autoload_dir;
-                autoload_dir = M_GetAutoloadDir(M_BaseName(myargv[p]), false);
-                DEH_AutoLoadPatches(autoload_dir);
-                free(autoload_dir);
+                while (++p != myargc && myargv[p][0] != '-')
+                {
+                    char *autoload_dir;
+                    autoload_dir = M_GetAutoloadDir(M_BaseName(myargv[p]), false);
+                    DEH_AutoLoadPatches(autoload_dir);
+                    free(autoload_dir);
+                }
             }
         }
     }
