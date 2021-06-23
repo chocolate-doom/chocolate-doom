@@ -2693,9 +2693,15 @@ static void SetMobjPtr(mobj_t **ptr, unsigned int archiveNum)
         TargetPlayerAddrs[TargetPlayerCount++] = ptr;
         *ptr = NULL;
     }
-    else
+    // [Dasperal] If the save is corrupted and the identity number is higher than the number of objects on the map restore it as a NULL pointer.
+    // This still potentially leaves complex objects broken but NULL is safer than garbage value.
+    else if(archiveNum < MobjCount)
     {
         *ptr = MobjList[archiveNum];
+    }
+    else
+    {
+        *ptr = NULL;
     }
 }
 
