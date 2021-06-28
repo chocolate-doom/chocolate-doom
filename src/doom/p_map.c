@@ -421,7 +421,6 @@ boolean PIT_CheckThing (mobj_t* thing)
 				// player walks over object
 				tmfloorz = MAX(thing->z + thing->height, tmfloorz);
 				thing->ceilingz = MIN(tmthing->z, thing->ceilingz);
-				tmthing->player->over = thing;
 				return true;
 			}
 			else
