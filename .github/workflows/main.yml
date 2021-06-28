@@ -1,4 +1,4 @@
-name: Chocolate Doom
+name: build
 
 on:
   push:
