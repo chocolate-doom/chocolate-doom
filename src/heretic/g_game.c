@@ -1639,7 +1639,7 @@ void G_DoCompleted(void)
 
     gameaction = ga_nothing;
 
-    // quit demo unless -tend
+    // quit demo unless -demoextend
     if ((!demoextend || !singledemo) && G_CheckDemoStatus())
     {
         return;
