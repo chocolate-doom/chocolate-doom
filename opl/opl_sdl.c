@@ -172,9 +172,10 @@ static void FillBuffer(uint8_t *buffer, unsigned int nsamples)
 
 // Callback function to fill a new sound buffer:
 
-static void OPL_Mix_Callback(void *udata, Uint8 *buffer, int len)
+static void OPL_Mix_Callback(int chan, void *stream, int len, void *udata)
 {
     unsigned int filled, buffer_samples;
+    Uint8 *buffer = (Uint8*)stream;
 
     // Repeatedly call the OPL emulator update function until the buffer is
     // full.
@@ -351,7 +352,7 @@ static int OPL_SDL_Init(unsigned int port_base)
     // Set postmix that adds the OPL music. This is deliberately done
     // as a postmix and not using Mix_HookMusic() as the latter disables
     // normal SDL_mixer music mixing.
-    Mix_SetPostMix(OPL_Mix_Callback, NULL);
+    Mix_RegisterEffect(MIX_CHANNEL_POST, OPL_Mix_Callback, NULL, NULL);
 
     return 1;
 }
