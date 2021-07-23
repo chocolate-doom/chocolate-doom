@@ -2093,6 +2093,21 @@ void G_DoPlayDemo(void)
         PlayerClass[i] = *demo_p++;
     }
 
+    {
+        int p = M_CheckParm("-consoleplayer");
+
+        if (p && (p + 1 < myargc))
+        {
+            consoleplayer = atoi(myargv[p + 1]);
+
+            if (consoleplayer < 0 || consoleplayer >= maxplayers
+                                  || !playeringame[consoleplayer])
+            {
+                consoleplayer = 0;
+            }
+        }
+    }
+
     // Initialize world info, etc.
     G_StartNewInit();
 
@@ -2133,6 +2148,21 @@ void G_TimeDemo(char *name)
     {
         playeringame[i] = (*demo_p++) != 0;
         PlayerClass[i] = *demo_p++;
+    }
+
+    {
+        int p = M_CheckParm("-consoleplayer");
+
+        if (p && (p + 1 < myargc))
+        {
+            consoleplayer = atoi(myargv[p + 1]);
+
+            if (consoleplayer < 0 || consoleplayer >= maxplayers
+                                  || !playeringame[consoleplayer])
+            {
+                consoleplayer = 0;
+            }
+        }
     }
 
     G_InitNew(skill, episode, map);

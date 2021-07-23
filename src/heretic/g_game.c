@@ -1990,6 +1990,21 @@ void G_DoPlayDemo(void)
     for (i = 0; i < MAXPLAYERS; i++)
         playeringame[i] = (*demo_p++) != 0;
 
+    {
+        int p = M_CheckParm("-consoleplayer");
+
+        if (p && (p + 1 < myargc))
+        {
+            consoleplayer = atoi(myargv[p + 1]);
+
+            if (consoleplayer < 0 || consoleplayer >= MAXPLAYERS
+                                  || !playeringame[consoleplayer])
+            {
+                consoleplayer = 0;
+            }
+        }
+    }
+
     if (playeringame[1] || M_CheckParm("-solo-net") > 0
                         || M_CheckParm("-netdemo") > 0)
     {
@@ -2037,6 +2052,21 @@ void G_TimeDemo(char *name)
     for (i = 0; i < MAXPLAYERS; i++)
     {
         playeringame[i] = (*demo_p++) != 0;
+    }
+
+    {
+        int p = M_CheckParm("-consoleplayer");
+
+        if (p && (p + 1 < myargc))
+        {
+            consoleplayer = atoi(myargv[p + 1]);
+
+            if (consoleplayer < 0 || consoleplayer >= MAXPLAYERS
+                                  || !playeringame[consoleplayer])
+            {
+                consoleplayer = 0;
+            }
+        }
     }
 
     if (playeringame[1] || M_CheckParm("-solo-net") > 0
