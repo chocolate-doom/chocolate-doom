@@ -99,6 +99,7 @@ boolean lowres_turn;
 boolean shortticfix;            // calculate lowres turning like doom
 boolean demoplayback;
 boolean demoextend;
+boolean netdemo;
 byte *demobuffer, *demo_p, *demoend;
 boolean singledemo;             // quit after playing a demo from cmdline
 
@@ -1020,7 +1021,7 @@ void G_Ticker(void)
             if (demorecording)
                 G_WriteDemoTiccmd(cmd);
 
-            if (netgame && !(gametic % ticdup))
+            if (netgame && !netdemo && !(gametic % ticdup))
             {
                 if (gametic > BACKUPTICS
                     && consistancy[i][buf] != cmd->consistancy)
@@ -1794,6 +1795,7 @@ void G_InitNew(skill_t skill, int episode, int map)
         // loading a saved one from the menu, and only during playback.
         demorecording = false;
         demoplayback = false;
+        netdemo = false;
         usergame = true;            // will be set false if a demo
     }
     paused = false;
@@ -2093,6 +2095,12 @@ void G_DoPlayDemo(void)
         PlayerClass[i] = *demo_p++;
     }
 
+    if (playeringame[1] || M_CheckParm("-solo-net") > 0
+                        || M_CheckParm("-netdemo") > 0)
+    {
+        netgame = true;
+    }
+
     // Initialize world info, etc.
     G_StartNewInit();
 
@@ -2101,6 +2109,11 @@ void G_DoPlayDemo(void)
     precache = true;
     usergame = false;
     demoplayback = true;
+
+    if (netgame == true)
+    {
+        netdemo = true;
+    }
 }
 
 
@@ -2135,6 +2148,12 @@ void G_TimeDemo(char *name)
         PlayerClass[i] = *demo_p++;
     }
 
+    if (playeringame[1] || M_CheckParm("-solo-net") > 0
+                        || M_CheckParm("-netdemo") > 0)
+    {
+        netgame = true;
+    }
+
     G_InitNew(skill, episode, map);
     starttime = I_GetTime();
 
@@ -2142,6 +2161,11 @@ void G_TimeDemo(char *name)
     demoplayback = true;
     timingdemo = true;
     singletics = true;
+
+    if (netgame == true)
+    {
+        netdemo = true;
+    }
 }
 
 
@@ -2176,6 +2200,8 @@ boolean G_CheckDemoStatus(void)
 
         W_ReleaseLumpName(defdemoname);
         demoplayback = false;
+        netdemo = false;
+        netgame = false;
         H2_AdvanceDemo();
         return true;
     }
