@@ -525,6 +525,8 @@ boolean P_LookForMonsters(mobj_t * actor)
 ================
 */
 
+extern boolean demorecording;
+
 static int P_NextLook(mobj_t *actor)
 {
     if (demorecording || demoplayback)
