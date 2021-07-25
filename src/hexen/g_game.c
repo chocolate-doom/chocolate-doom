@@ -2095,8 +2095,8 @@ void G_DoPlayDemo(void)
         PlayerClass[i] = *demo_p++;
     }
 
-    if (playeringame[1] || M_CheckParm("-solo-net") > 0
-                        || M_CheckParm("-netdemo") > 0)
+    if (playeringame[1] || M_ParmExists("-solo-net")
+                        || M_ParmExists("-netdemo"))
     {
         netgame = true;
     }
@@ -2110,7 +2110,7 @@ void G_DoPlayDemo(void)
     usergame = false;
     demoplayback = true;
 
-    if (netgame == true)
+    if (netgame)
     {
         netdemo = true;
     }
@@ -2148,8 +2148,8 @@ void G_TimeDemo(char *name)
         PlayerClass[i] = *demo_p++;
     }
 
-    if (playeringame[1] || M_CheckParm("-solo-net") > 0
-                        || M_CheckParm("-netdemo") > 0)
+    if (playeringame[1] || M_ParmExists("-solo-net")
+                        || M_ParmExists("-netdemo"))
     {
         netgame = true;
     }
@@ -2162,7 +2162,7 @@ void G_TimeDemo(char *name)
     timingdemo = true;
     singletics = true;
 
-    if (netgame == true)
+    if (netgame)
     {
         netdemo = true;
     }
