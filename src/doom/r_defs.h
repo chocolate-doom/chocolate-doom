@@ -162,6 +162,9 @@ typedef	struct
 
     // [crispy] revealed secrets
     short	oldspecial;
+
+    // [crispy] A11Y light level used for rendering
+    short	rlightlevel;
 } sector_t;
 
 

@@ -30,6 +30,7 @@
 #include "setup_icon.c"
 #include "mode.h"
 
+#include "accessibility.h"
 #include "compatibility.h"
 #include "display.h"
 #include "joystick.h"
@@ -231,6 +232,8 @@ void MainMenu(void)
         TXT_NewButton2("Compatibility",
                        (TxtWidgetSignalFunc) CompatibilitySettings, NULL),
 */
+        TXT_NewButton2("Accessibility",
+                       (TxtWidgetSignalFunc) AccessibilitySettings, NULL),
         GetLaunchButton(),
         TXT_NewStrut(0, 1),
         TXT_NewButton2("Start a Network Game",

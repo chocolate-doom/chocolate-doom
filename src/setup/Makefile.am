@@ -6,6 +6,7 @@ AM_CFLAGS = @SDL_CFLAGS@                                           \
 noinst_LIBRARIES = libsetup.a
 
 libsetup_a_SOURCES =                            \
+    accessibility.c   accessibility.h           \
     compatibility.c   compatibility.h           \
     display.c         display.h                 \
     joystick.c        joystick.h                \

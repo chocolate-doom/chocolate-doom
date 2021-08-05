@@ -34,6 +34,7 @@
 #include "sounds.h"
 
 #include "p_pspr.h"
+#include "a11y.h" // [crispy] A11Y
 
 #define LOWERSPEED		FRACUNIT*6
 #define RAISESPEED		FRACUNIT*6
@@ -968,6 +969,9 @@ void P_SetupPsprites (player_t* player)
     // spawn the gun
     player->pendingweapon = player->readyweapon;
     P_BringUpWeapon (player);
+
+    // [crispy] A11Y
+    numrpsprites = a11y_weapon_pspr ? NUMPSPRITES : (NUMPSPRITES - 1);
 }
 
 

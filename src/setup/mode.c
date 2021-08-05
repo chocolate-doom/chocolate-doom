@@ -29,6 +29,7 @@
 #include "m_controls.h"
 #include "m_misc.h"
 
+#include "accessibility.h"
 #include "compatibility.h"
 #include "display.h"
 #include "joystick.h"
@@ -188,6 +189,7 @@ void InitBindings(void)
 
     // All other variables
 
+    BindAccessibilityVariables();
     BindCompatibilityVariables();
     BindDisplayVariables();
     BindJoystickVariables();

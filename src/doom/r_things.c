@@ -951,7 +951,7 @@ void R_AddSprites (sector_t* sec)
     // Well, now it will be done.
     sec->validcount = validcount;
 	
-    lightnum = (sec->lightlevel >> LIGHTSEGSHIFT)+(extralight * LIGHTBRIGHT);
+    lightnum = (sec->rlightlevel >> LIGHTSEGSHIFT)+(extralight * LIGHTBRIGHT); // [crispy] A11Y
 
     if (lightnum < 0)		
 	spritelights = scalelight[0];
@@ -1087,6 +1087,8 @@ void R_DrawPSprite (pspdef_t* psp, psprnum_t psprnum) // [crispy] differentiate 
 }
 
 
+// [crispy] A11Y number of player sprites to draw
+int numrpsprites = NUMPSPRITES;
 
 //
 // R_DrawPlayerSprites
@@ -1099,7 +1101,7 @@ void R_DrawPlayerSprites (void)
     
     // get light level
     lightnum =
-	(viewplayer->mo->subsector->sector->lightlevel >> LIGHTSEGSHIFT) 
+	(viewplayer->mo->subsector->sector->rlightlevel >> LIGHTSEGSHIFT) // [crispy] A11Y
 	+(extralight * LIGHTBRIGHT);
 
     if (lightnum < 0)		
@@ -1118,7 +1120,7 @@ void R_DrawPlayerSprites (void)
 
     // add all active psprites
     for (i=0, psp=viewplayer->psprites;
-	 i<NUMPSPRITES;
+	 i<numrpsprites; // [crispy] A11Y number of player sprites to draw
 	 i++,psp++)
     {
 	if (psp->state)

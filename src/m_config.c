@@ -1050,6 +1050,38 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(vanilla_keyboard_mapping),
 
     //!
+    // If zero, this disables sectors changing their light level.
+    //
+
+    CONFIG_VARIABLE_INT(a11y_sector_lighting),
+
+    //!
+    // If zero, this disables weapon flashes changing the ambient light
+    // level.
+    //
+
+    CONFIG_VARIABLE_INT(a11y_weapon_flash),
+
+    //!
+    // If zero, this disables rendering of weapon flashes sprites.
+    //
+
+    CONFIG_VARIABLE_INT(a11y_weapon_pspr),
+
+    //!
+    // If zero, this disables palette changes upon damage, item pickup,
+    // or when wearing the radiation suit.
+    //
+
+    CONFIG_VARIABLE_INT(a11y_palette_changes),
+
+    //!
+    // If zero, this disables colormap changes during invulnerability.
+    //
+
+    CONFIG_VARIABLE_INT(a11y_invul_colormap),
+
+    //!
     // Name to use in network games for identification.  This is only
     // used on the "waiting" screen while waiting for the game to start.
     //

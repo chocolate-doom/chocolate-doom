@@ -38,6 +38,7 @@
 #include "doomkeys.h"
 
 #include "g_game.h"
+#include "a11y.h" // [crispy] A11Y
 
 #include "st_stuff.h"
 #include "st_lib.h"
@@ -1698,6 +1699,12 @@ void ST_doPaletteStuff(void)
 	    cnt = bzc;
     }
 	
+    // [crispy] A11Y
+    if (!a11y_palette_changes)
+    {
+	palette = 0;
+    }
+    else
     if (cnt)
     {
 	palette = (cnt+7)>>3;

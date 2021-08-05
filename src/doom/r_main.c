@@ -38,6 +38,7 @@
 #include "r_local.h"
 #include "r_sky.h"
 #include "st_stuff.h" // [crispy] ST_refreshBackground()
+#include "a11y.h" // [crispy] A11Y
 
 
 
@@ -1038,7 +1039,13 @@ void R_SetupFrame (player_t* player)
         pitch = player->lookdir / MLOOKUNIT + player->recoilpitch;
     }
 
+    // [crispy] A11Y
+    if (a11y_weapon_flash)
+    {
     extralight = player->extralight;
+    }
+    else
+        extralight = 0;
 
     if (pitch > LOOKDIRMAX)
 	pitch = LOOKDIRMAX;

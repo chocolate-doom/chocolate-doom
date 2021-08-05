@@ -28,6 +28,7 @@
 #include "p_local.h"
 
 #include "doomstat.h"
+#include "a11y.h" // [crispy] A11Y
 
 
 
@@ -477,6 +478,15 @@ void P_PlayerThink (player_t* player)
 	player->bonuscount--;
 
     
+    // [crispy] A11Y
+    if (!a11y_invul_colormap)
+    {
+	if (player->powers[pw_invulnerability] || player->powers[pw_infrared])
+	    player->fixedcolormap = 1;
+	else
+	    player->fixedcolormap = 0;
+    }
+    else
     // Handling colormaps.
     if (player->powers[pw_invulnerability])
     {
