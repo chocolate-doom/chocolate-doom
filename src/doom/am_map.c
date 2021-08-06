@@ -529,6 +529,15 @@ void AM_initVariables(void)
 
     m_x = plr->mo->x - m_w/2;
     m_y = plr->mo->y - m_h/2;
+
+    // [JN] Predefine rotation variables for AM_rotatePoint.
+    mapcenter.x = m_x + m_w / 2;
+    mapcenter.y = m_y + m_h / 2;
+    if (!(!automap_follow && automap_overlay))
+    {
+        mapangle = ANG90 - plr->mo->angle;
+    }
+
     AM_changeWindowLoc();
 
     // for saving & restoring
