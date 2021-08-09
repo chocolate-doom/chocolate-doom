@@ -533,7 +533,7 @@ void AM_initVariables(void)
     // [JN] Predefine rotation variables for AM_rotatePoint.
     mapcenter.x = m_x + m_w / 2;
     mapcenter.y = m_y + m_h / 2;
-    if (!(!automap_follow && automap_overlay))
+    if (!(!followplayer && crispy->automapoverlay))
     {
         mapangle = ANG90 - plr->mo->angle;
     }
