@@ -159,9 +159,43 @@ After successful compilation the resulting binaries can be found in the `src/` d
 
 ## News
 
+### Crispy Doom 5.10.2
+
+Crispy Doom 5.10.2 is currently under development. It is a minor release introducing basic accessibility features and the accumulated fixes since the previous release.
+
+**New Features and Improvements**
+
+ * Smooth automap rotation and srolling have been implemented (by @JNechaevsky).
+ * Autoload directories for PWADs are now supported (thanks @OpenRift412 for the suggestion and @rfomin for the prior implementation in Woof!).
+ * Basic accessibility features have been added and can be toggled in the Accessibility menu of the setup tool:
+   * Flickering Sector Lighting (disables sectors changing their light levels)
+   * Weapon Flash Lighting (disables weapon flashes changing the ambient light levels)
+   * Weapon Flash Sprite (disables rendering of weapon flashes sprites)
+   * Palette Changes (disables palette changes upon damage, item pickup, or when wearing the radiation suit)
+   * Invulnerability Colormap (disables colormap changes during invulnerability)
+
+**Bug Fixes**
+
+ * In NRFTL the TITLEPIC is only replaced with the INTERPIC if the former is from the IWAD (thanks @OpenRift412).
+ * Overlaid automap remainings are now cleared from the demo loop (by @JNechaevsky).
+ * Adjusting of the BLOCKMAP boundaries to match the Vanilla algorithm has been reverted. Although this was done in the Vanilla algorithm, it doesn't match what's done in the algorithms used by MBF and Boom - and thus PrBoom+ which uses the latter. This fixes sync for one demo reported by galileo31dos01 on 5L1C.wad MAP01.
+ * The Compatibility menu has been removed from the setup tool, it is obsolete for all games now.
+ * The translucency table is now always calculated at gamma level 0, fixing potentially incorrect entries (by @JNechaevsky).
+ * The episode menu is now rendered with the HUD font if the graphics are both from an IWAD and if the patch width for "Hell on Earth" is longer than "No Rest for the Living" (thanks thanks @hackneyed-one).
+
+**Crispy Heretic**
+
+ * The `-demoext` parameter (even though enabled by default) only applies to demos loaded on the command line.
+
+**Crispy Hexen**
+
+ * Hexen: Restore pointers to `mobj_t` with garbage identity as `NULL` pointers (by @Dasperal).
+
+Crispy Doom 5.10.2 is based on Chocolate Doom 3.0.1 and has merged all changes to the Chocolate Doom master branch up to commit [`3524a67d`](https://github.com/chocolate-doom/chocolate-doom/commit/3524a67dd3c7d48a172c83d3ae170a7176fb3cfa).
+
 ### Crispy Doom 5.10.1
 
-Crispy Doom 5.10.1 is currently under development.
+Crispy Doom 5.10.1 is released on Mar 24, 2021. It is a minor release containing the accumulated fixes of the past weeks.
 
 **New Features and Improvements**
 
@@ -185,7 +219,7 @@ Crispy Doom 5.10.1 is currently under development.
  * There are now separate mouse sensitivities for turn, strafe and y-axis.
  * Heretic now has a "demowarp" feature, i.e. support for using both `-playdemo` and `-warp` on the command line (thanks @thom-wye).
 
-Crispy Doom 5.10.1 is based on Chocolate Doom 3.0.1 and has merged all changes to the Chocolate Doom master branch up to commit [`d5b1a695`](https://github.com/chocolate-doom/chocolate-doom/commit/d5b1a695090eb49da3a4277686a30920cd5de046).
+Crispy Doom 5.10.1 is based on Chocolate Doom 3.0.1 and has merged all changes to the Chocolate Doom master branch up to commit [`5003ab52`](https://github.com/chocolate-doom/chocolate-doom/commit/5003ab5283ff27c951c97b064c26cdde2bb0f427).
 
 ### Crispy Doom 5.10.0
 
