@@ -1053,48 +1053,11 @@ static const int tran_filter_pct = 66;
 
 static void R_InitTranMap()
 {
-    int lump = W_CheckNumForName("TRANMAP");
-
-    // If a tranlucency filter map lump is present, use it
-    if (lump != -1)
-    {
-	// Set a pointer to the translucency filter maps.
-	tranmap = W_CacheLumpNum(lump, PU_STATIC);
-	// [crispy] loaded from a lump
-	printf(":");
-    }
-    else
     {
 	// Compose a default transparent filter map based on PLAYPAL.
 	unsigned char *playpal = W_CacheLumpName("PLAYPAL", PU_STATIC);
-	FILE *cachefp;
-	char *fname = NULL;
-	extern char *configdir;
-
-	struct {
-	    unsigned char pct;
-	    unsigned char playpal[256*3]; // [crispy] a palette has 768 bytes!
-	} cache;
 
 	tranmap = Z_Malloc(256*256, PU_STATIC, 0);
-	fname = M_StringJoin(configdir, "tranmap.dat", NULL);
-
-	// [crispy] open file readable
-	if ((cachefp = fopen(fname, "rb")) &&
-	    // [crispy] could read struct cache from file
-	    fread(&cache, 1, sizeof(cache), cachefp) == sizeof(cache) &&
-	    // [crispy] same filter percents
-	    cache.pct == tran_filter_pct &&
-	    // [crispy] same base palettes
-	    memcmp(cache.playpal, playpal, sizeof(cache.playpal)) == 0 &&
-	    // [crispy] could read entire translucency map
-	    fread(tranmap, 256, 256, cachefp) == 256 )
-	{
-		// [crispy] loaded from a file
-		printf(".");
-	}
-	// [crispy] file not readable
-	else
 	{
 	    byte *fg, *bg, blend[3], *tp = tranmap;
 	    int i, j, btmp;
@@ -1127,35 +1090,9 @@ static void R_InitTranMap()
 		    *tp++ = V_GetPaletteIndex(playpal, blend[r], blend[g], blend[b]);
 		}
 	    }
-
-	    // [crispy] file not readable, open writable
-	    if ((cachefp = fopen(fname, "wb")))
-	    {
-		// [crispy] set filter percents
-		cache.pct = tran_filter_pct;
-		// [crispy] set base palette
-		memcpy(cache.playpal, playpal, sizeof(cache.playpal));
-		// [crispy] go to start of file
-		fseek(cachefp, 0, SEEK_SET);
-		// [crispy] write struct cache
-		fwrite(&cache, 1, sizeof(cache), cachefp);
-		// [crispy] write translucency map
-		fwrite(tranmap, 256, 256, cachefp);
-
-		// [crispy] generated and saved
-		printf("!");
-	    }
-	    else
-	    {
-		// [crispy] generated, but not saved
-		printf("?");
-	    }
 	}
 
-	if (cachefp)
-	    fclose(cachefp);
-
-	free(fname);
+	printf(".");
 
 	W_ReleaseLumpName("PLAYPAL");
     }
