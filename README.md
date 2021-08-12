@@ -161,7 +161,7 @@ After successful compilation the resulting binaries can be found in the `src/` d
 
 ### Crispy Doom 5.10.2
 
-Crispy Doom 5.10.2 is currently under development. It is a minor release introducing basic accessibility features and the accumulated fixes since the previous release.
+Crispy Doom 5.10.2 is released on Aug 10, 2021. It is a minor release introducing basic accessibility features and accumulated fixes since the previous release.
 
 **New Features and Improvements**
 
@@ -182,6 +182,7 @@ Crispy Doom 5.10.2 is currently under development. It is a minor release introdu
  * The Compatibility menu has been removed from the setup tool, it is obsolete for all games now.
  * The translucency table is now always calculated at gamma level 0, fixing potentially incorrect entries (by @JNechaevsky).
  * The episode menu is now rendered with the HUD font if the graphics are both from an IWAD and if the patch width for "Hell on Earth" is longer than "No Rest for the Living" (thanks thanks @hackneyed-one).
+ * Automap rotation variables are now properly initialized, preventing line shaking (by @JNechaevsky).
 
 **Crispy Heretic**
 
