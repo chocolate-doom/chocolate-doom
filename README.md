@@ -159,6 +159,23 @@ After successful compilation the resulting binaries can be found in the `src/` d
 
 ## News
 
+### Crispy Doom 5.10.3
+
+Crispy Doom 5.10.3 is currently under development.
+
+**New Features and Improvements**
+
+ * The translucency map is now always recalculated and no more loaded from a file or lump.
+ * Autoload directories are now also supported for "sideloaded" PWADs - i.e. nerve.wad, masterlevels.wad and sigil.wad (thanks @Raddatoons).
+
+**Bug Fixes**
+
+ * Rendered sector lightlevels are now saved in savegames if they are different from the logical lightlevels, fixing a regression intruduced with A11Y support (thanks Alaux).
+ * The green color translation range has been fine-tuned so that light-blue isn't preferred over green anymore (thanks maxmanium).
+ * The CMake build system has been updated for A11Y (thanks @vanfanel).
+
+Crispy Doom 5.10.3 is based on Chocolate Doom 3.0.1 and has merged all changes to the Chocolate Doom master branch up to commit [`3524a67d`](https://github.com/chocolate-doom/chocolate-doom/commit/3524a67dd3c7d48a172c83d3ae170a7176fb3cfa).
+
 ### Crispy Doom 5.10.2
 
 Crispy Doom 5.10.2 is released on Aug 10, 2021. It is a minor release introducing basic accessibility features and accumulated fixes since the previous release.
