@@ -1,4 +1,5 @@
 add_library(setup STATIC
+            accessibility.c     accessibility.h
             compatibility.c     compatibility.h
             display.c           display.h
             joystick.c          joystick.h

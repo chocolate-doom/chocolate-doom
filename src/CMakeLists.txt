@@ -38,6 +38,7 @@ target_link_libraries("${PROGRAM_PREFIX}server" SDL2::SDL2main SDL2::net)
 # Source files used by the game binaries (chocolate-doom, etc.)
 
 set(GAME_SOURCE_FILES
+    a11y.c              a11y.h
     aes_prng.c          aes_prng.h
     d_event.c           d_event.h
                         doomkeys.h
