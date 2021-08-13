@@ -21,9 +21,11 @@
 #include <stdlib.h>
 
 #include "doomstat.h"
-#include "deh_str.h"
+#include "deh_main.h"
 #include "d_iwad.h"
+#include "m_config.h"
 #include "m_misc.h"
+#include "w_main.h"
 #include "w_wad.h"
 
 extern char *iwadfile;
@@ -33,6 +35,7 @@ void D_LoadSigilWad (void)
 {
 	int i, j;
 	char *sigil_wad = NULL, *sigil_shreds = NULL;
+	char *sigil_basename, *autoload_dir;
 	char *dirname;
 
 	const char *const sigil_wads[] = {
@@ -119,6 +122,7 @@ void D_LoadSigilWad (void)
 
 	printf(" [Sigil] adding %s\n", sigil_wad);
 	W_AddFile(sigil_wad);
+	sigil_basename = M_StringDuplicate(M_BaseName(sigil_wad));
 	free(sigil_wad);
 
 	// [crispy] load SIGIL_SHREDS.WAD
@@ -157,11 +161,18 @@ void D_LoadSigilWad (void)
 	{
 		j = W_CheckNumForName(sigil_lumps[i].name);
 
-		if (j != -1 && !strncasecmp(W_WadNameForLump(lumpinfo[j]), "SIGIL", 5))
+		if (j != -1 && !strcasecmp(W_WadNameForLump(lumpinfo[j]), sigil_basename))
 		{
 			memcpy(lumpinfo[j]->name, sigil_lumps[i].new_name, 8);
 		}
 	}
+
+	// [crispy] load WAD and DEH files from autoload directories
+	autoload_dir = M_GetAutoloadDir(sigil_basename, false);
+	W_AutoLoadWADs(autoload_dir);
+	DEH_AutoLoadPatches(autoload_dir);
+	free(autoload_dir);
+	free(sigil_basename);
 
 	// [crispy] regenerate the hashtable
 	W_GenerateHashTable();
@@ -197,6 +208,8 @@ static boolean CheckNerveLoaded (void)
 // [crispy] auto-load NERVE.WAD if available
 static void CheckLoadNerve (void)
 {
+	const char *nerve_basename;
+	char *autoload_dir;
 	int i, j;
 
 	static const struct {
@@ -232,6 +245,7 @@ static void CheckLoadNerve (void)
 
 	printf(" [No Rest for the Living] adding %s\n", crispy->havenerve);
 	W_AddFile(crispy->havenerve);
+	nerve_basename = M_BaseName(crispy->havenerve);
 
 	// [crispy] add indicators to level and level name patch lump names
 	for (i = 0; i < 9; i++)
@@ -257,6 +271,12 @@ static void CheckLoadNerve (void)
 			memcpy(lumpinfo[j]->name, nerve_lumps[i].new_name, 8);
 		}
 	}
+
+	// [crispy] load WAD and DEH files from autoload directories
+	autoload_dir = M_GetAutoloadDir(nerve_basename, false);
+	W_AutoLoadWADs(autoload_dir);
+	DEH_AutoLoadPatches(autoload_dir);
+	free(autoload_dir);
 
 	// [crispy] regenerate the hashtable
 	W_GenerateHashTable();
@@ -295,6 +315,8 @@ static boolean CheckMasterlevelsLoaded (void)
 // [crispy] auto-load the single MASTERLEVELS.WAD if available
 static boolean CheckLoadMasterlevels (void)
 {
+	const char *master_basename;
+	char *autoload_dir;
 	int i, j;
 
 	if (strrchr(iwadfile, DIR_SEPARATOR) != NULL)
@@ -322,6 +344,7 @@ static boolean CheckLoadMasterlevels (void)
 
 	printf(" [The Master Levels] adding %s\n", crispy->havemaster);
 	W_AddFile(crispy->havemaster);
+	master_basename = M_BaseName(crispy->havemaster);
 
 	// [crispy] add indicators to level and level name patch lump names
 	for (i = 0; i < 21; i++)
@@ -345,6 +368,12 @@ static boolean CheckLoadMasterlevels (void)
 		j = W_GetNumForName(lumpname);
 		strcat(lumpinfo[j]->name, "M");
 	}
+
+	// [crispy] load WAD and DEH files from autoload directories
+	autoload_dir = M_GetAutoloadDir(master_basename, false);
+	W_AutoLoadWADs(autoload_dir);
+	DEH_AutoLoadPatches(autoload_dir);
+	free(autoload_dir);
 
 	// [crispy] regenerate the hashtable
 	W_GenerateHashTable();
