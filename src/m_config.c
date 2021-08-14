@@ -929,7 +929,7 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_STRING(music_pack_path),
 
     //!
-    // Documentation goes here.
+    // Full path to a soundfont file to use with FluidSynth MIDI playback.
     //
 
     CONFIG_VARIABLE_STRING(fluidsynth_sf_path),
