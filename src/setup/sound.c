@@ -42,7 +42,7 @@ static const char *opltype_strings[] =
 };
 
 static const char *cfg_extension[] = { "cfg", NULL };
-static const char *sf2_extension[] = { "sf2", NULL };
+static const char *sf_extension[] = { "sf2", "sf3", NULL };
 
 // Config file variables:
 
@@ -202,7 +202,7 @@ void ConfigSound(TXT_UNCAST_ARG(widget), void *user_data)
                 TXT_NewStrut(4, 0),
                 TXT_NewFileSelector(&fluidsynth_sf_path, 34,
                                     "Select FluidSynth soundfont file",
-                                    sf2_extension),
+                                    sf_extension),
                 NULL)),
         NULL);
 }
