@@ -2125,12 +2125,10 @@ void G_DoLoadGame (void)
         I_Error("Could not load savegame %s", savename);
     }
 
-    // [crispy] read extended savegame data
-    if (crispy->extsaveg)
-    {
-        // [crispy] first pass, read "savewadfilename"
-        P_ReadExtendedSaveGameData(0);
-    }
+    // [crispy] read extended savegame data,
+    //          first pass: read "savewadfilename"
+    P_ReadExtendedSaveGameData(0);
+
     // [crispy] check if WAD file is valid to restore saved map
     if (savewadfilename)
     {
@@ -2182,10 +2180,7 @@ void G_DoLoadGame (void)
 	I_Error ("Bad savegame");
 
     // [crispy] read more extended savegame data
-    if (crispy->extsaveg)
-    {
-        P_ReadExtendedSaveGameData(1);
-    }
+    P_ReadExtendedSaveGameData(1);
 
     fclose(save_stream);
     
@@ -2273,10 +2268,7 @@ void G_DoSaveGame (void)
 
     P_WriteSaveGameEOF();
     // [crispy] write extended savegame data
-    if (crispy->extsaveg)
-    {
-        P_WriteExtendedSaveGameData();
-    }
+    P_WriteExtendedSaveGameData();
 
     // [crispy] unconditionally disable savegame and demo limits
     /*

@@ -66,7 +66,6 @@ void BindCompatibilityVariables(void)
         M_BindIntVariable("crispy_demotimer",       &crispy->demotimer);
         M_BindIntVariable("crispy_demotimerdir",    &crispy->demotimerdir);
         M_BindIntVariable("crispy_extautomap",      &crispy->extautomap);
-        M_BindIntVariable("crispy_extsaveg",        &crispy->extsaveg);
         M_BindIntVariable("crispy_flipcorpses",     &crispy->flipcorpses);
         M_BindIntVariable("crispy_freeaim",         &crispy->freeaim);
         M_BindIntVariable("crispy_freelook",        &crispy->freelook);

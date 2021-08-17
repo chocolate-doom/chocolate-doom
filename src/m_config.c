@@ -2072,14 +2072,6 @@ static default_t extra_defaults_list[] =
     //!
     // @game doom
     //
-    // Extended Savegames.
-    //
-
-    CONFIG_VARIABLE_INT(crispy_extsaveg),
-
-    //!
-    // @game doom
-    //
     // Enable Mirrored Corpses.
     //
 

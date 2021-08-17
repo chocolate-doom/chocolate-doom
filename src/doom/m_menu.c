@@ -1526,7 +1526,6 @@ static void M_DrawCrispness3(void)
     M_DrawCrispnessItem(crispness_weaponsquat, "Squat weapon down on impact", crispy->weaponsquat, true);
     M_DrawCrispnessItem(crispness_pitch, "Weapon Recoil Pitch", crispy->pitch, true);
     M_DrawCrispnessItem(crispness_neghealth, "Negative Player Health", crispy->neghealth, true);
-//  M_DrawCrispnessItem(crispness_extsaveg, "Extended Savegames", crispy->extsaveg, true);
 
     M_DrawCrispnessSeparator(crispness_sep_crosshair, "Crosshair");
 

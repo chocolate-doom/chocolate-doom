@@ -53,7 +53,6 @@ typedef struct
 	int demotimerdir;
 	int demobar;
 	int extautomap;
-	int extsaveg;
 	int flipcorpses;
 	int freeaim;
 	int freelook;
