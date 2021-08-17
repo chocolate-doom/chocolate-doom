@@ -161,7 +161,7 @@ After successful compilation the resulting binaries can be found in the `src/` d
 
 ### Crispy Doom 5.10.3
 
-Crispy Doom 5.10.3 is currently under development.
+Crispy Doom 5.10.3 is released on Aug 17, 2021. It is a bug-fix release fixing a regression in savegame restoring introduced by the A11Y features from the 5.10.2 release.
 
 **New Features and Improvements**
 
