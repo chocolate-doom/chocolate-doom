@@ -6,13 +6,13 @@ noinst_DATA = $(FONT_HDRS)
 if HAVE_FONTS
 
 small.h: small.png convert-font
-	./convert-font small small.png small.h
+	$(srcdir)/convert-font small small.png small.h
 
 normal.h: normal.png convert-font
-	./convert-font normal normal.png normal.h
+	$(srcdir)/convert-font normal normal.png normal.h
 
 large.h: large.png convert-font
-	./convert-font large large.png large.h
+	$(srcdir)/convert-font large large.png large.h
 
 endif
 
