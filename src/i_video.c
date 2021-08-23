@@ -347,6 +347,7 @@ static void HandleWindowEvent(SDL_WindowEvent *event)
 
         case SDL_WINDOWEVENT_FOCUS_GAINED:
             window_focused = true;
+            screenvisible = true;
             break;
 
         case SDL_WINDOWEVENT_FOCUS_LOST:
