@@ -42,6 +42,7 @@ static const char *opltype_strings[] =
 };
 
 static const char *cfg_extension[] = { "cfg", NULL };
+static const char *sf_extension[] = { "sf2", "sf3", NULL };
 
 // Config file variables:
 
@@ -65,6 +66,7 @@ static float libsamplerate_scale = 0.65;
 
 static char *music_pack_path = NULL;
 static char *timidity_cfg_path = NULL;
+static char *fluidsynth_sf_path = NULL;
 static char *gus_patch_path = NULL;
 static int gus_ram_kb = 1024;
 
@@ -195,6 +197,12 @@ void ConfigSound(TXT_UNCAST_ARG(widget), void *user_data)
                 TXT_NewFileSelector(&timidity_cfg_path, 34,
                                     "Select Timidity config file",
                                     cfg_extension),
+                TXT_NewStrut(4, 0),
+                TXT_NewLabel("FluidSynth soundfont file: "),
+                TXT_NewStrut(4, 0),
+                TXT_NewFileSelector(&fluidsynth_sf_path, 34,
+                                    "Select FluidSynth soundfont file",
+                                    sf_extension),
                 NULL)),
         NULL);
 }
@@ -215,6 +223,7 @@ void BindSoundVariables(void)
     M_BindStringVariable("gus_patch_path",        &gus_patch_path);
     M_BindStringVariable("music_pack_path",     &music_pack_path);
     M_BindStringVariable("timidity_cfg_path",     &timidity_cfg_path);
+    M_BindStringVariable("fluidsynth_sf_path",    &fluidsynth_sf_path);
 
     M_BindIntVariable("snd_sbport",               &snd_sbport);
     M_BindIntVariable("snd_sbirq",                &snd_sbirq);
