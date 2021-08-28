@@ -698,7 +698,8 @@ static void AddXdgDirs(void)
 // about everyone.
 static void AddSteamDirs(void)
 {
-    char *homedir, *steampath;
+    char *homedir;
+    char *steampath;
 
     homedir = getenv("HOME");
     if (homedir == NULL)
