@@ -634,7 +634,8 @@ static void AddIWADPath(const char *path, const char *suffix)
 // <http://standards.freedesktop.org/basedir-spec/basedir-spec-latest.html>
 static void AddXdgDirs(void)
 {
-    char *env, *tmp_env;
+    char *env;
+    char *tmp_env;
 
     // Quote:
     // > $XDG_DATA_HOME defines the base directory relative to which
