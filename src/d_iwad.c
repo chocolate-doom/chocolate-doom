@@ -634,7 +634,7 @@ static void AddIWADPath(const char *path, const char *suffix)
 // <http://standards.freedesktop.org/basedir-spec/basedir-spec-latest.html>
 static void AddXdgDirs(void)
 {
-    char *env;
+    const char *env;
     char *tmp_env;
 
     // Quote:
