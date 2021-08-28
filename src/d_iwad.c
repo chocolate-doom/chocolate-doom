@@ -698,7 +698,7 @@ static void AddXdgDirs(void)
 // about everyone.
 static void AddSteamDirs(void)
 {
-    char *homedir;
+    const char *homedir;
     char *steampath;
 
     homedir = getenv("HOME");
