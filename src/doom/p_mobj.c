@@ -1052,10 +1052,6 @@ void P_SpawnMapThing (mapthing_t* mthing)
 	mobj->health = 1000 + musid;
     }
 
-    // [crispy] Lost Souls bleed Puffs
-    if (crispy->coloredblood && i == MT_SKULL)
-        mobj->flags |= MF_NOBLOOD;
-
     // [crispy] randomly colorize space marine corpse objects
     if (!netgame && crispy->coloredblood &&
         (mobj->info->spawnstate == S_PLAY_DIE7 ||
@@ -1149,10 +1145,6 @@ P_SpawnBlood
 
     // [crispy] connect blood object with the monster that bleeds it
     th->target = target;
-
-    // [crispy] Spectres bleed spectre blood
-    if (crispy->coloredblood)
-	th->flags |= (target->flags & MF_SHADOW);
 }
 
 
