@@ -1997,7 +1997,7 @@ static void SetVariable(default_t *def, const char *value)
 
             for (i = 0; str[i] != '\0'; i++)
             {
-                if (!isdigit(str[i]))
+                if (!isdigit(str[i]) && str[i] != '-')
                 {
                     str[i] = dec;
                     break;
