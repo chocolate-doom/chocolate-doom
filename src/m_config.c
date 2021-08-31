@@ -24,6 +24,7 @@
 #include <ctype.h>
 #include <errno.h>
 #include <assert.h>
+#include <locale.h>
 
 #include "SDL_filesystem.h"
 
@@ -1986,7 +1987,26 @@ static void SetVariable(default_t *def, const char *value)
             break;
 
         case DEFAULT_FLOAT:
-            *def->location.f = (float) atof(value);
+        {
+            struct lconv *lc = localeconv();
+            char dec, *str;
+            int i;
+
+            dec = lc->decimal_point[0];
+            str = M_StringDuplicate(value);
+
+            for (i = 0; str[i] != '\0'; i++)
+            {
+                if (!isdigit(str[i]))
+                {
+                    str[i] = dec;
+                    break;
+                }
+            }
+
+            *def->location.f = (float) atof(str);
+            free(str);
+        }
             break;
     }
 }
