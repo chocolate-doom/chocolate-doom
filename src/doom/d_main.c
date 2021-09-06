@@ -1361,7 +1361,7 @@ static void LoadIwadDeh(void)
         }
     }
     // [crispy] try anyway...
-    else
+    else if (W_CheckNumForName("DEHACKED") != -1)
     {
         DEH_LoadLumpByName("DEHACKED", true, true);
     }
