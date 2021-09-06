@@ -1313,6 +1313,7 @@ static void LoadIwadDeh(void)
         DEH_LoadLumpByName("DEHACKED", false, true);
     }
 
+    else // [crispy]
     // If this is the HACX IWAD, we need to load the DEHACKED lump.
     if (gameversion == exe_hacx)
     {
@@ -1323,6 +1324,7 @@ static void LoadIwadDeh(void)
         }
     }
 
+    else // [crispy]
     // Chex Quest needs a separate Dehacked patch which must be downloaded
     // and installed next to the IWAD.
     if (gameversion == exe_chex)
@@ -1357,6 +1359,11 @@ static void LoadIwadDeh(void)
         {
             I_Error("Failed to load chex.deh needed for emulating chex.exe.");
         }
+    }
+    // [crispy] try anyway...
+    else
+    {
+        DEH_LoadLumpByName("DEHACKED", true, true);
     }
 }
 
