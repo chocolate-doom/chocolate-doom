@@ -19,6 +19,7 @@
 #include "config.h"
 #include "crispy.h"
 
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -27,7 +28,8 @@
 #include "doomtype.h"
 #include "i_system.h"
 #include "m_argv.h"
-#include "m_misc.h" // [crispy] M_snprintf()
+#include "m_misc.h"
+
 
 //
 // D_DoomMain()
@@ -42,7 +44,13 @@ int main(int argc, char **argv)
     // save arguments
 
     myargc = argc;
-    myargv = argv;
+    myargv = malloc(argc * sizeof(char *));
+    assert(myargv != NULL);
+
+    for (int i = 0; i < argc; i++)
+    {
+        myargv[i] = M_StringDuplicate(argv[i]);
+    }
 
     //!
     // Print the program version and exit.

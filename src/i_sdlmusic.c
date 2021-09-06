@@ -56,6 +56,7 @@ static boolean sdl_was_initialized = false;
 static boolean musicpaused = false;
 static int current_music_volume;
 
+char *fluidsynth_sf_path = "";
 char *timidity_cfg_path = "";
 
 static char *temp_timidity_cfg = NULL;
@@ -207,6 +208,14 @@ static boolean I_SDL_InitMusic(void)
     // file can be removed.
 
     RemoveTimidityConfig();
+
+    // When using FluidSynth, proceed to set the soundfont path via
+    // Mix_SetSoundFonts if necessary.
+
+    if (strlen(fluidsynth_sf_path) > 0 && strlen(timidity_cfg_path) == 0)
+    {
+        Mix_SetSoundFonts(fluidsynth_sf_path);
+    }
 
     // If snd_musiccmd is set, we need to call Mix_SetMusicCMD to
     // configure an external music playback program.
