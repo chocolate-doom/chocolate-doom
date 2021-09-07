@@ -93,6 +93,12 @@ static boolean WriteWrapperTimidityConfig(char *write_path)
     return true;
 }
 
+
+// putenv requires a non-const string whose lifetime is the whole program
+// so can't use a string directly, have to do this silliness
+static char sdl_mixer_disable_fluidsynth[] = "SDL_MIXER_DISABLE_FLUIDSYNTH=1";
+
+
 void I_InitTimidityConfig(void)
 {
     char *env_string;
@@ -121,7 +127,7 @@ void I_InitTimidityConfig(void)
         // timidity_cfg_path or GUS mode), then disable Fluidsynth, because
         // SDL_mixer considers Fluidsynth a higher priority than Timidity and
         // therefore can end up circumventing Timidity entirely.
-        putenv("SDL_MIXER_DISABLE_FLUIDSYNTH=1");
+        putenv(sdl_mixer_disable_fluidsynth);
     }
     else
     {
