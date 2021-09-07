@@ -1529,6 +1529,10 @@ boolean PIT_ChangeSector (mobj_t*	thing)
     {
 	P_SetMobjState (thing, S_GIBS);
 
+	// [crispy] no blood, no giblets
+	if (thing->flags & MF_NOBLOOD)
+		thing->sprite = SPR_TNT1;
+
     if (gameversion > exe_doom_1_2)
 	    thing->flags &= ~MF_SOLID;
 	thing->height = 0;
@@ -1565,7 +1569,8 @@ boolean PIT_ChangeSector (mobj_t*	thing)
 	// spray blood in a random direction
 	mo = P_SpawnMobj (thing->x,
 			  thing->y,
-			  thing->z + thing->height/2, MT_BLOOD);
+			  // [crispy] no blood, no.. well.. blood
+			  thing->z + thing->height/2, (thing->flags & MF_NOBLOOD) ? MT_PUFF : MT_BLOOD);
 	
 	mo->momx = P_SubRandom() << 12;
 	mo->momy = P_SubRandom() << 12;
