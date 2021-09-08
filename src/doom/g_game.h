@@ -76,5 +76,6 @@ int G_VanillaVersionCode(void);
 
 extern int vanilla_savegame_limit;
 extern int vanilla_demo_limit;
+extern int doom_plus_plus_limits;
 #endif
 

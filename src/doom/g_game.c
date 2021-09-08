@@ -70,10 +70,8 @@
 #include "r_data.h"
 #include "r_sky.h"
 
-
-
 #include "g_game.h"
-
+#include "dpplimits.h"
 
 #define SAVEGAMESIZE	0x2c000
 
@@ -231,6 +229,7 @@ int		bodyqueslot;
  
 int             vanilla_savegame_limit = 1;
 int             vanilla_demo_limit = 1;
+int             doom_plus_plus_limits = 0;
  
 int G_CmdChecksum (ticcmd_t* cmd) 
 { 
@@ -1684,7 +1683,8 @@ void G_DoSaveGame (void)
     // Enforce the same savegame size limit as in Vanilla Doom,
     // except if the vanilla_savegame_limit setting is turned off.
 
-    if (vanilla_savegame_limit && ftell(save_stream) > SAVEGAMESIZE)
+    if ((!doom_plus_plus_limits && vanilla_savegame_limit && ftell(save_stream) > SAVEGAMESIZE / DOOM_PLUS_PLUS_SAVEGAMESIZE_FACTOR)
+        || (doom_plus_plus_limits && vanilla_savegame_limit && ftell(save_stream) > SAVEGAMESIZE))
     {
         I_Error("Savegame buffer overrun");
     }

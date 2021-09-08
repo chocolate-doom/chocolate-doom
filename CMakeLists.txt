@@ -12,7 +12,7 @@ set(PACKAGE_NAME "${PROJECT_NAME}")
 set(PACKAGE_TARNAME "chocolate-doom")
 set(PACKAGE_VERSION "${PROJECT_VERSION}")
 set(PACKAGE_STRING "${PROJECT_NAME} ${PROJECT_VERSION}")
-set(PACKAGE_BUGREPORT "chocolate-doom-dev-list@chocolate-doom.org")
+set(PACKAGE_BUGREPORT "")
 
 string(REGEX REPLACE " Doom$" "" PACKAGE_SHORTNAME "${PACKAGE_NAME}")
 set(PACKAGE_COPYRIGHT "Copyright (C) 1993-2017")

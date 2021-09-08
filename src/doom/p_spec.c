@@ -46,6 +46,7 @@
 
 // Data.
 #include "sounds.h"
+#include "dpplimits.h"
 
 
 //
@@ -1486,10 +1487,10 @@ void P_SpawnSpecials (void)
 	switch(lines[i].special)
 	{
 	  case 48:
-            if (numlinespecials >= MAXLINEANIMS)
+            if ((!doom_plus_plus_limits && numlinespecials >= MAXLINEANIMS / DOOM_PLUS_PLUS_MAXLINEANIMS_FACTOR)
+                || (doom_plus_plus_limits && numlinespecials >= MAXLINEANIMS))
             {
-                I_Error("Too many scrolling wall linedefs (%d)! "
-                        "(Vanilla limit is 64)", NumScrollers());
+                I_Error("Too many scrolling wall linedefs!");
             }
 	    // EFFECT FIRSTCOL SCROLL+
 	    linespeciallist[numlinespecials] = &lines[i];

@@ -1,5 +1,5 @@
 //
-// Copyright(C) 2005-2014 Simon Howard
+// Copyright(C) 2016 Alexandre-Xavier Labonté-Lamoureux
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -11,15 +11,16 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
+// DESCRIPTION:
+//	Doom Plus Plus
+//
 
-#ifndef SETUP_COMPATIBILITY_H
-#define SETUP_COMPATIBILITY_H
+#define DOOM_PLUS_PLUS_MAXVISPLANES_FACTOR	8
+#define DOOM_PLUS_PLUS_MAXVISSPRITES_FACTOR	8
+#define DOOM_PLUS_PLUS_MAXDRAWSEGS_FACTOR	8
+#define DOOM_PLUS_PLUS_MAXPLATS_FACTOR	        256
+#define DOOM_PLUS_PLUS_SAVEGAMESIZE_FACTOR	16
+#define DOOM_PLUS_PLUS_MAXLINEANIMS_FACTOR	256
+#define DOOM_PLUS_PLUS_MAXOPENINGS_FACTOR	4
 
-void CompatibilitySettings(void *widget, void *user_data);
-void BindCompatibilityVariables(void);
-
-extern int vanilla_savegame_limit;
-extern int vanilla_demo_limit;
 extern int doom_plus_plus_limits;
-
-#endif /* #ifndef SETUP_COMPATIBILITY_H */

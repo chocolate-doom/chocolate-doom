@@ -34,7 +34,7 @@
 #include "r_local.h"
 
 #include "doomstat.h"
-
+#include "dpplimits.h"
 
 
 #define MINZ				(FRACUNIT*4)
@@ -319,7 +319,8 @@ vissprite_t	overflowsprite;
 
 vissprite_t* R_NewVisSprite (void)
 {
-    if (vissprite_p == &vissprites[MAXVISSPRITES])
+    if ((!doom_plus_plus_limits && vissprite_p == &vissprites[MAXVISSPRITES / DOOM_PLUS_PLUS_MAXVISSPRITES_FACTOR])
+        || (doom_plus_plus_limits && vissprite_p == &vissprites[MAXVISSPRITES]))
 	return &overflowsprite;
     
     vissprite_p++;

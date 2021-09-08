@@ -978,6 +978,15 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_INT(vanilla_demo_limit),
+    
+    //!
+    // @game doom
+    //
+    // If non-zero, static limits will be increased to those of Doom Plus. 
+    // If this has a value of zero, use the limits from Vanilla. 
+    //
+
+    CONFIG_VARIABLE_INT(doom_plus_plus_limits),
 
     //!
     // If non-zero, the game behaves like Vanilla Doom, always assuming
