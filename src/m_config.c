@@ -1988,6 +1988,15 @@ static void SetVariable(default_t *def, const char *value)
 
         case DEFAULT_FLOAT:
         {
+            // Different locales use different decimal separators.
+            // However, the choice of the current locale isn't always
+            // under our own control. If the atof() function fails to
+            // parse the string representing the floating point number
+            // using the current locale's decimal separator, it will
+            // return 0, resulting in silent sound effects. To
+            // mitigate this, we replace the first non-digit,
+            // non-minus character in the string with the current
+            // locale's decimal separator before passing it to atof().
             struct lconv *lc = localeconv();
             char dec, *str;
             int i;
