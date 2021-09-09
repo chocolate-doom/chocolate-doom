@@ -22,6 +22,7 @@
 #include "m_misc.h"
 #include "p_local.h"
 #include "s_sound.h"
+#include "dpplimits.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -1144,8 +1145,23 @@ void P_SpawnSpecials(void)
         switch (lines[i].special)
         {
             case 100:          // Scroll_Texture_Left
+                if ((!doom_plus_plus_limits && numlinespecials >= MAXLINEANIMS / DOOM_PLUS_PLUS_MAXLINEANIMS_FACTOR)
+                    || (doom_plus_plus_limits && numlinespecials >= MAXLINEANIMS))
+                {
+                    I_Error("Too many scrolling wall linedefs!");
+                }
             case 101:          // Scroll_Texture_Right
+                if ((!doom_plus_plus_limits && numlinespecials >= MAXLINEANIMS / DOOM_PLUS_PLUS_MAXLINEANIMS_FACTOR)
+                    || (doom_plus_plus_limits && numlinespecials >= MAXLINEANIMS))
+                {
+                    I_Error("Too many scrolling wall linedefs!");
+                }
             case 102:          // Scroll_Texture_Up
+                if ((!doom_plus_plus_limits && numlinespecials >= MAXLINEANIMS / DOOM_PLUS_PLUS_MAXLINEANIMS_FACTOR)
+                    || (doom_plus_plus_limits && numlinespecials >= MAXLINEANIMS))
+                {
+                    I_Error("Too many scrolling wall linedefs!");
+                }
             case 103:          // Scroll_Texture_Down
                 linespeciallist[numlinespecials] = &lines[i];
                 numlinespecials++;

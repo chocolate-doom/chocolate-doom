@@ -50,7 +50,7 @@
 // [STRIFE]
 #include "hu_stuff.h"
 #include "p_dialog.h"
-
+#include "dpplimits.h"
 
 //
 // Animating textures and planes
@@ -1964,8 +1964,23 @@ void P_SpawnSpecials (void)
         switch(lines[i].special)
         {
         case 48:  // EFFECT FIRSTCOL SCROLL+
+            if ((!doom_plus_plus_limits && numlinespecials >= MAXLINEANIMS / DOOM_PLUS_PLUS_MAXLINEANIMS_FACTOR)
+                || (doom_plus_plus_limits && numlinespecials >= MAXLINEANIMS))
+            {
+                I_Error("Too many scrolling wall linedefs!");
+            }
         case 142:
+            if ((!doom_plus_plus_limits && numlinespecials >= MAXLINEANIMS / DOOM_PLUS_PLUS_MAXLINEANIMS_FACTOR)
+                || (doom_plus_plus_limits && numlinespecials >= MAXLINEANIMS))
+            {
+                I_Error("Too many scrolling wall linedefs!");
+            }
         case 143:
+            if ((!doom_plus_plus_limits && numlinespecials >= MAXLINEANIMS / DOOM_PLUS_PLUS_MAXLINEANIMS_FACTOR)
+                || (doom_plus_plus_limits && numlinespecials >= MAXLINEANIMS))
+            {
+                I_Error("Too many scrolling wall linedefs!");
+            }
         case 149:
             linespeciallist[numlinespecials] = &lines[i];
             numlinespecials++;

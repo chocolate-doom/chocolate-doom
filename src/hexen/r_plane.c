@@ -20,6 +20,7 @@
 #include "h2def.h"
 #include "i_system.h"
 #include "r_local.h"
+#include "dpplimits.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -252,7 +253,8 @@ visplane_t *R_FindPlane(fixed_t height, int picnum,
         return (check);
     }
 
-    if (lastvisplane - visplanes == MAXVISPLANES)
+    if ((!doom_plus_plus_limits && lastvisplane - visplanes == MAXVISPLANES / DOOM_PLUS_PLUS_MAXVISPLANES_FACTOR)
+        || (doom_plus_plus_limits && lastvisplane - visplanes == MAXVISPLANES))
     {
         I_Error("R_FindPlane: no more visplanes");
     }
@@ -388,7 +390,8 @@ void R_DrawPlanes(void)
     extern int columnofs[MAXWIDTH];
 
 #ifdef RANGECHECK
-    if (ds_p - drawsegs > MAXDRAWSEGS)
+    if ((!doom_plus_plus_limits && ds_p - drawsegs > MAXDRAWSEGS / DOOM_PLUS_PLUS_MAXDRAWSEGS_FACTOR)
+        || (doom_plus_plus_limits && ds_p - drawsegs > MAXDRAWSEGS))
     {
         I_Error("R_DrawPlanes: drawsegs overflow (%td)",
                 ds_p - drawsegs);
@@ -398,7 +401,8 @@ void R_DrawPlanes(void)
         I_Error("R_DrawPlanes: visplane overflow (%td)",
                 lastvisplane - visplanes);
     }
-    if (lastopening - openings > MAXOPENINGS)
+    if ((!doom_plus_plus_limits && lastopening - openings > MAXOPENINGS / DOOM_PLUS_PLUS_MAXOPENINGS_FACTOR)
+        || (doom_plus_plus_limits && lastopening - openings > MAXOPENINGS))
     {
         I_Error("R_DrawPlanes: opening overflow (%td)",
                 lastopening - openings);

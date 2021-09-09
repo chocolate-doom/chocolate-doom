@@ -32,6 +32,7 @@
 #include "p_local.h"
 #include "s_sound.h"
 #include "v_video.h"
+#include "dpplimits.h"
 
 // Macros
 
@@ -202,7 +203,7 @@ int savegameslot;
 char savedescription[32];
 
 int vanilla_demo_limit = 1;
-
+int doom_plus_plus_limits = 0;
 int inventoryTics;
 
 // haleyjd: removed WATCOMC

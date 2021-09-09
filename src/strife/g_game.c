@@ -67,7 +67,7 @@
 #include "p_dialog.h"   // villsa [STRIFE]
 
 #include "g_game.h"
-
+#include "dpplimits.h"
 
 #define SAVEGAMESIZE	0x2c000
 
@@ -235,7 +235,7 @@ mobj_t*		bodyque[BODYQUESIZE];
  
 int             vanilla_savegame_limit = 1;
 int             vanilla_demo_limit = 1;
- 
+int             doom_plus_plus_limits = 0;
 
 int G_CmdChecksum (ticcmd_t* cmd) 
 { 
@@ -1849,7 +1849,8 @@ void G_DoSaveGame (char *path)
     // except if the vanilla_savegame_limit setting is turned off.
     // [STRIFE]: Verified subject to same limit.
 
-    if (vanilla_savegame_limit && ftell(save_stream) > SAVEGAMESIZE)
+    if ((!doom_plus_plus_limits && vanilla_savegame_limit && ftell(save_stream) > SAVEGAMESIZE / DOOM_PLUS_PLUS_SAVEGAMESIZE_FACTOR)
+        || (doom_plus_plus_limits && vanilla_savegame_limit && ftell(save_stream) > SAVEGAMESIZE))
     {
         I_Error ("Savegame buffer overrun");
     }

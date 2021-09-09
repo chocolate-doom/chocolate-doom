@@ -29,6 +29,7 @@
 #include "m_misc.h"
 #include "p_local.h"
 #include "v_video.h"
+#include "dpplimits.h"
 
 #define AM_STARTKEY	9
 
@@ -169,6 +170,7 @@ int savegameslot;
 char savedescription[32];
 
 int vanilla_demo_limit = 1;
+int doom_plus_plus_limits = 0;
 
 int inventoryTics;
 
