@@ -42,14 +42,14 @@ planefunction_t		ceilingfunc;
 //
 
 // Here comes the obnoxious "visplane".
-#define MAXVISPLANES	128
+#define MAXVISPLANES	1024
 visplane_t		visplanes[MAXVISPLANES];
 visplane_t*		lastvisplane;
 visplane_t*		floorplane;
 visplane_t*		ceilingplane;
 
 // ?
-#define MAXOPENINGS	SCREENWIDTH*64
+#define MAXOPENINGS	SCREENWIDTH*256
 short			openings[MAXOPENINGS];
 short*			lastopening;
 
@@ -308,7 +308,8 @@ R_CheckPlane
     lastvisplane->picnum = pl->picnum;
     lastvisplane->lightlevel = pl->lightlevel;
     
-    if (lastvisplane - visplanes == MAXVISPLANES)
+    if ((!doom_plus_plus_limits && lastvisplane - visplanes == MAXVISPLANES / DOOM_PLUS_PLUS_MAXVISPLANES_FACTOR)
+        || (doom_plus_plus_limits && lastvisplane - visplanes == MAXVISPLANES))
 	I_Error ("R_CheckPlane: no more visplanes");
 
     pl = lastvisplane++;

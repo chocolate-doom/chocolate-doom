@@ -73,7 +73,7 @@
 #include "g_game.h"
 #include "dpplimits.h"
 
-#define SAVEGAMESIZE	0x2c000
+#define SAVEGAMESIZE	0x2c0000
 
 void	G_ReadDemoTiccmd (ticcmd_t* cmd); 
 void	G_WriteDemoTiccmd (ticcmd_t* cmd); 
