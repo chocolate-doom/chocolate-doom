@@ -1,6 +1,6 @@
-# Chocolate-Doom Plus Plus
+# Sprinkled Doom
 
-Welcome to the official Chocolate-Doom Plus Plus!
+Welcome to the official Sprinkled Doom!
 
 This project is a fork of Chocolate-Doom that aims to implement the ability to raise or decrease the static limits according to Doom+ or Doom v1.2 respectively. 
 
