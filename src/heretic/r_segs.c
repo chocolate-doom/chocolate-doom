@@ -26,6 +26,7 @@
 
 #include "doomdef.h"
 #include "r_local.h"
+#include "dpplimits.h"
 
 // OPTIMIZE: closed two sided lines as single sided
 
@@ -338,7 +339,8 @@ void R_StoreWallRange(int start, int stop)
     fixed_t vtop;
     int lightnum;
 
-    if (ds_p == &drawsegs[MAXDRAWSEGS])
+    if ((!doom_plus_plus_limits && ds_p == &drawsegs[MAXDRAWSEGS / DOOM_PLUS_PLUS_MAXDRAWSEGS_FACTOR])
+        || (doom_plus_plus_limits && ds_p == &drawsegs[MAXDRAWSEGS]))
         return;                 // don't overflow and crash
 
 #ifdef RANGECHECK
