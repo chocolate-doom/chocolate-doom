@@ -41,6 +41,7 @@
 #include "p_local.h"
 #include "v_video.h"
 #include "w_main.h"
+#include "dpplimits.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -179,6 +180,7 @@ void D_BindVariables(void)
     M_BindIntVariable("snd_channels",           &snd_Channels);
     M_BindIntVariable("vanilla_savegame_limit", &vanilla_savegame_limit);
     M_BindIntVariable("vanilla_demo_limit",     &vanilla_demo_limit);
+    M_BindIntVariable("doom_plus_plus_limits",  &doom_plus_plus_limits);
 
     M_BindStringVariable("savedir", &SavePathConfig);
 
