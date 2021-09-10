@@ -530,14 +530,6 @@ void AM_initVariables(void)
     m_x = plr->mo->x - m_w/2;
     m_y = plr->mo->y - m_h/2;
 
-    // [JN] Predefine rotation variables for AM_rotatePoint.
-    mapcenter.x = m_x + m_w / 2;
-    mapcenter.y = m_y + m_h / 2;
-    if (!(!followplayer && crispy->automapoverlay))
-    {
-        mapangle = ANG90 - plr->mo->angle;
-    }
-
     AM_changeWindowLoc();
 
     // for saving & restoring
@@ -1026,16 +1018,6 @@ void AM_Ticker (void)
     // Update light level
     // AM_updateLightLev();
 
-    // [crispy] required for AM_rotatePoint()
-    if (crispy->automaprotate)
-    {
-	mapcenter.x = m_x + m_w / 2;
-	mapcenter.y = m_y + m_h / 2;
-	// [crispy] keep the map static in overlay mode
-	// if not following the player
-	if (!(!followplayer && crispy->automapoverlay))
-	mapangle = ANG90 - plr->mo->angle;
-    }
 }
 
 
@@ -1688,17 +1670,16 @@ AM_rotate
 static void AM_rotatePoint (mpoint_t *pt)
 {
     int64_t tmpx;
-    const angle_t actualangle = (followplayer || !crispy->automapoverlay) ? ANG90 - viewangle : mapangle;
 
     pt->x -= mapcenter.x;
     pt->y -= mapcenter.y;
 
-    tmpx = (int64_t)FixedMul(pt->x, finecosine[actualangle>>ANGLETOFINESHIFT])
-         - (int64_t)FixedMul(pt->y, finesine[actualangle>>ANGLETOFINESHIFT])
+    tmpx = (int64_t)FixedMul(pt->x, finecosine[mapangle>>ANGLETOFINESHIFT])
+         - (int64_t)FixedMul(pt->y, finesine[mapangle>>ANGLETOFINESHIFT])
          + mapcenter.x;
 
-    pt->y = (int64_t)FixedMul(pt->x, finesine[actualangle>>ANGLETOFINESHIFT])
-          + (int64_t)FixedMul(pt->y, finecosine[actualangle>>ANGLETOFINESHIFT])
+    pt->y = (int64_t)FixedMul(pt->x, finesine[mapangle>>ANGLETOFINESHIFT])
+          + (int64_t)FixedMul(pt->y, finecosine[mapangle>>ANGLETOFINESHIFT])
           + mapcenter.y;
 
     pt->x = tmpx;
@@ -1983,6 +1964,17 @@ void AM_drawCrosshair(int color)
 void AM_Drawer (void)
 {
     if (!automapactive) return;
+
+    // [crispy] required for AM_rotatePoint()
+    if (crispy->automaprotate)
+    {
+	mapcenter.x = m_x + m_w / 2;
+	mapcenter.y = m_y + m_h / 2;
+	// [crispy] keep the map static in overlay mode
+	// if not following the player
+	if (!(!followplayer && crispy->automapoverlay))
+	mapangle = ANG90 - plr->mo->angle;
+    }
 
     if (!crispy->automapoverlay)
     AM_clearFB(BACKGROUND);
