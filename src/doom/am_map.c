@@ -1688,7 +1688,7 @@ AM_rotate
 static void AM_rotatePoint (mpoint_t *pt)
 {
     int64_t tmpx;
-    const angle_t actualangle = ANG90 - viewangle;
+    const angle_t actualangle = (followplayer || !crispy->automapoverlay) ? ANG90 - viewangle : mapangle;
 
     pt->x -= mapcenter.x;
     pt->y -= mapcenter.y;
