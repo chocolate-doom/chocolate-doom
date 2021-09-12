@@ -2264,14 +2264,6 @@ static default_t extra_defaults_list[] =
     //!
     // @game doom
     //
-    // Squat down weapon on impact.
-    //
-
-    CONFIG_VARIABLE_INT(crispy_weaponsquat),
-
-    //!
-    // @game doom
-    //
     // Widescreen rendering.
     //
 

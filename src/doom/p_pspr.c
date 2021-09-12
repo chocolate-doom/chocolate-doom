@@ -189,8 +189,6 @@ void P_BringUpWeapon (player_t* player)
 
     player->pendingweapon = wp_nochange;
     player->psprites[ps_weapon].sy = WEAPONBOTTOM;
-    // [crispy] squat down weapon sprite
-    player->psprites[ps_weapon].dy = 0;
 
     P_SetPsprite (player, ps_weapon, newstate);
 }
@@ -1038,23 +1036,6 @@ void P_MovePsprites (player_t* player)
 	}
     }
 
-	// [crispy] squat down weapon sprite a bit after hitting the ground
-	if (player->psp_dy_max)
-	{
-		psp->dy -= FRACUNIT;
-
-		if (psp->dy < player->psp_dy_max)
-		{
-			psp->dy = -psp->dy;
-		}
-
-		if (psp->dy == 0)
-		{
-			player->psp_dy_max = 0;
-		}
-	}
-
-	player->psprites[ps_flash].dy = psp->dy;
 	player->psprites[ps_flash].sx2 = psp->sx2;
 	player->psprites[ps_flash].sy2 = psp->sy2;
 }

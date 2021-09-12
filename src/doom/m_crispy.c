@@ -532,12 +532,6 @@ void M_CrispyToggleVsync(int choice)
     crispy->post_rendering_hook = M_CrispyToggleVsyncHook;
 }
 
-void M_CrispyToggleWeaponSquat(int choice)
-{
-    choice = 0;
-    crispy->weaponsquat = !crispy->weaponsquat;
-}
-
 static void M_CrispyToggleWidescreenHook (void)
 {
     crispy->widescreen = (crispy->widescreen + 1) % NUM_RATIOS;

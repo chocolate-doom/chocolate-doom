@@ -379,11 +379,6 @@ void P_PlayerThink (player_t* player)
             // [crispy] Hexen sets 9; Strife adds 8
             player->mo->momz = (7 + crispy->jump) * FRACUNIT;
             player->jumpTics = 18;
-            // [crispy] squat down weapon sprite a bit
-            if (crispy->weaponsquat)
-            {
-                player->psp_dy_max = -player->mo->momz>>2;
-            }
         }
     }
 
