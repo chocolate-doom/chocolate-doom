@@ -425,20 +425,6 @@ void M_CrispyTogglePlayerCoords(int choice)
     crispy->playercoords = (crispy->playercoords + 1) % (NUM_WIDGETS - 1); // [crispy] disable "always" setting
 }
 
-void M_CrispyToggleRecoil(int choice)
-{
-    if (!crispy->singleplayer)
-    {
-	return;
-    }
-
-    choice = 0;
-    crispy->recoil = !crispy->recoil;
-
-    // [crispy] update the "critical" struct
-    CheckCrispySingleplayer(!demorecording && !demoplayback && !netgame);
-}
-
 void M_CrispyToggleSecretmessage(int choice)
 {
     choice = 0;

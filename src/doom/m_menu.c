@@ -594,7 +594,6 @@ enum
     crispness_freeaim,
     crispness_jumping,
     crispness_overunder,
-    crispness_recoil,
     crispness_sep_physical_,
 
     crispness_sep_demos,
@@ -616,7 +615,6 @@ static menuitem_t Crispness4Menu[]=
     {1,"",	M_CrispyToggleFreeaim,'v'},
     {1,"",	M_CrispyToggleJumping,'a'},
     {1,"",	M_CrispyToggleOverunder,'w'},
-    {1,"",	M_CrispyToggleRecoil,'w'},
     {-1,"",0,'\0'},
     {-1,"",0,'\0'},
     {1,"",	M_CrispyToggleDemoTimer,'v'},
@@ -1548,7 +1546,6 @@ static void M_DrawCrispness4(void)
     M_DrawCrispnessMultiItem(crispness_freeaim, "Vertical Aiming", multiitem_freeaim, crispy->freeaim, crispy->singleplayer);
     M_DrawCrispnessMultiItem(crispness_jumping, "Allow Jumping", multiitem_jump, crispy->jump, crispy->singleplayer);
     M_DrawCrispnessItem(crispness_overunder, "Walk over/under Monsters", crispy->overunder, crispy->singleplayer);
-    M_DrawCrispnessItem(crispness_recoil, "Weapon Recoil Thrust", crispy->recoil, crispy->singleplayer);
 
     M_DrawCrispnessSeparator(crispness_sep_demos, "Demos");
 

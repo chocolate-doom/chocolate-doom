@@ -201,10 +201,6 @@ void A_FireOldBFG(mobj_t *mobj, player_t *player, pspdef_t *psp)
 
   if (!player) return; // [crispy] let pspr action pointers get called from mobj states
 
-  if (crispy->recoil && !(player->mo->flags & MF_NOCLIP))
-    P_Thrust(player, ANG180 + player->mo->angle,
-	     512*20);//recoil_values[wp_plasma][0]);
-
   player->ammo[weaponinfo[player->readyweapon].ammo]--;
 
   player->extralight = 2;
