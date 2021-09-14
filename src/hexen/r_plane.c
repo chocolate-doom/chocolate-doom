@@ -390,17 +390,17 @@ void R_DrawPlanes(void)
 #ifdef RANGECHECK
     if (ds_p - drawsegs > MAXDRAWSEGS)
     {
-        I_Error("R_DrawPlanes: drawsegs overflow (%td)",
+        I_Error("R_DrawPlanes: drawsegs overflow (%" PRIiPTR ")",
                 ds_p - drawsegs);
     }
     if (lastvisplane - visplanes > MAXVISPLANES)
     {
-        I_Error("R_DrawPlanes: visplane overflow (%td)",
+        I_Error("R_DrawPlanes: visplane overflow (%" PRIiPTR ")",
                 lastvisplane - visplanes);
     }
     if (lastopening - openings > MAXOPENINGS)
     {
-        I_Error("R_DrawPlanes: opening overflow (%td)",
+        I_Error("R_DrawPlanes: opening overflow (%" PRIiPTR ")",
                 lastopening - openings);
     }
 #endif
