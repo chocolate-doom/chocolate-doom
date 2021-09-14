@@ -34,8 +34,8 @@
 // 8 per each game type
 #define NUM_QUITMESSAGES   8
 
-extern char *doom1_endmsg[];
-extern char *doom2_endmsg[];
+extern const char *doom1_endmsg[];
+extern const char *doom2_endmsg[];
 
 
 #endif

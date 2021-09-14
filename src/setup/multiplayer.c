@@ -473,8 +473,8 @@ static void LevelSelectDialog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(user_data))
     const iwad_t *iwad;
     char buf[10];
     int episodes;
-    intptr_t x, y;
-    intptr_t l;
+    int x, y;
+    int l;
     int i;
 
     window = TXT_NewWindow("Select level");
@@ -503,10 +503,10 @@ static void LevelSelectDialog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(user_data))
                 }
 
                 M_snprintf(buf, sizeof(buf),
-                           " E%" PRIiPTR "M%" PRIiPTR " ", x, y);
+                           " E%dM%d ", x, y);
                 button = TXT_NewButton(buf);
                 TXT_SignalConnect(button, "pressed",
-                                  SetExMyWarp, (void *) (x * 10 + y));
+                                  SetExMyWarp, (void *) (intptr_t) (x * 10 + y));
                 TXT_SignalConnect(button, "pressed",
                                   CloseLevelSelectDialog, window);
                 TXT_AddWidget(window, button);
@@ -535,10 +535,10 @@ static void LevelSelectDialog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(user_data))
                 continue;
             }
 
-            M_snprintf(buf, sizeof(buf), " MAP%02" PRIiPTR " ", l);
+            M_snprintf(buf, sizeof(buf), " MAP%02d ", l);
             button = TXT_NewButton(buf);
             TXT_SignalConnect(button, "pressed", 
-                              SetMAPxyWarp, (void *) l);
+                              SetMAPxyWarp, (void *) (intptr_t) l);
             TXT_SignalConnect(button, "pressed",
                               CloseLevelSelectDialog, window);
             TXT_AddWidget(window, button);
