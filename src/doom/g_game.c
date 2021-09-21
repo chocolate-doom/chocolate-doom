@@ -2796,12 +2796,6 @@ void G_BeginRecording (void)
 { 
     int             i; 
 
-    // [crispy] use sigil_commpat.wad and episode 3 for recording Sigil demos
-    if (gameepisode >= 5)
-    {
-        I_Error("G_BeginRecording: Demo recording for episodes >= 5 is unsupported!");
-    }
-
     demo_p = demobuffer;
 
     //!

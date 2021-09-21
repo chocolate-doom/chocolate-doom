@@ -34,9 +34,9 @@ extern char *iwadfile;
 void D_LoadSigilWad (void)
 {
 	int i, j;
-	char *sigil_wad = NULL, *sigil_shreds = NULL;
-	char *sigil_basename, *autoload_dir;
-	char *dirname;
+	char *sigil_shreds = NULL;
+	const char *sigil_basename;
+	char *dirname, *autoload_dir;
 
 	const char *const sigil_wads[] = {
 		"SIGIL_v1_21.wad",
@@ -97,33 +97,32 @@ void D_LoadSigilWad (void)
 	// [crispy] load SIGIL.WAD
 	for (i = 0; i < arrlen(sigil_wads); i++)
 	{
-		sigil_wad = M_StringJoin(dirname, DIR_SEPARATOR_S, sigil_wads[i], NULL);
+		crispy->havesigil = M_StringJoin(dirname, DIR_SEPARATOR_S, sigil_wads[i], NULL);
 
-		if (M_FileExists(sigil_wad))
+		if (M_FileExists(crispy->havesigil))
 		{
 			break;
 		}
 
-		free(sigil_wad);
-		sigil_wad = D_FindWADByName(sigil_wads[i]);
+		free(crispy->havesigil);
+		crispy->havesigil = D_FindWADByName(sigil_wads[i]);
 
-		if (sigil_wad)
+		if (crispy->havesigil)
 		{
 			break;
 		}
 	}
 	free(dirname);
 
-	if (sigil_wad == NULL)
+	if (crispy->havesigil == NULL)
 	{
 		free(sigil_shreds);
 		return;
 	}
 
-	printf(" [Sigil] adding %s\n", sigil_wad);
-	W_AddFile(sigil_wad);
-	sigil_basename = M_StringDuplicate(M_BaseName(sigil_wad));
-	free(sigil_wad);
+	printf(" [Sigil] adding %s\n", crispy->havesigil);
+	W_AddFile(crispy->havesigil);
+	sigil_basename = M_BaseName(crispy->havesigil);
 
 	// [crispy] load SIGIL_SHREDS.WAD
 	if (!M_FileExists(sigil_shreds))
@@ -172,7 +171,6 @@ void D_LoadSigilWad (void)
 	W_AutoLoadWADs(autoload_dir);
 	DEH_AutoLoadPatches(autoload_dir);
 	free(autoload_dir);
-	free(sigil_basename);
 
 	// [crispy] regenerate the hashtable
 	W_GenerateHashTable();

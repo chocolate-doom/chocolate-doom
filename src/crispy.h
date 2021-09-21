@@ -99,6 +99,7 @@ typedef struct
 
 	char *havenerve;
 	char *havemaster;
+	char *havesigil;
 
 	const char *sdlversion;
 	const char *platform;
