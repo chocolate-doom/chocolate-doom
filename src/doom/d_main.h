@@ -44,7 +44,7 @@ void D_StartTitle (void);
 //
 
 extern  gameaction_t    gameaction;
-
+extern int is_sigil;
 
 #endif
 

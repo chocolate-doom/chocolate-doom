@@ -35,6 +35,7 @@ typedef enum
     heretic,         // Heretic
     hexen,           // Hexen
     strife,          // Strife
+    sigil,           // Sigil
 
     none
 } GameMission_t;

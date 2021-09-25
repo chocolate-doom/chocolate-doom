@@ -1304,12 +1304,16 @@ void G_ScreenShot (void)
 
 
 // DOOM Par Times
-static const int pars[4][10] =
+static const int pars[6][10] =
 { 
     {0}, 
     {0,30,75,120,90,165,180,180,30,165}, 
     {0,90,90,90,120,90,360,240,30,170}, 
-    {0,90,45,90,150,90,90,165,30,135} 
+    {0,90,45,90,150,90,90,165,30,135},
+
+    // [BH] Episode 4 and 5 Par Times
+    { 0, 165, 255, 135, 150, 180, 390, 135, 360, 180 },
+    { 0,  90, 150, 360, 420, 780, 420, 780, 300, 660 }
 }; 
 
 // DOOM II Par Times
@@ -1683,8 +1687,8 @@ void G_DoSaveGame (void)
     // Enforce the same savegame size limit as in Vanilla Doom,
     // except if the vanilla_savegame_limit setting is turned off.
 
-    if ((!doom_plus_plus_limits && vanilla_savegame_limit && ftell(save_stream) > SAVEGAMESIZE / DOOM_PLUS_PLUS_SAVEGAMESIZE_FACTOR)
-        || (doom_plus_plus_limits && vanilla_savegame_limit && ftell(save_stream) > SAVEGAMESIZE))
+    if (vanilla_savegame_limit && ftell(save_stream) > (doom_plus_plus_limits ? 
+        SAVEGAMESIZE : SAVEGAMESIZE / DOOM_PLUS_PLUS_SAVEGAMESIZE_FACTOR))
     {
         I_Error("Savegame buffer overrun");
     }

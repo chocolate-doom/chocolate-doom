@@ -1642,6 +1642,8 @@ static boolean CheckBossEnd(mobjtype_t motype)
         // episode 4 support.  Now bosses only trigger on their
         // specific episode.
 
+    if (!is_sigil)
+    {
 	switch(gameepisode)
 	{
             case 1:
@@ -1653,14 +1655,30 @@ static boolean CheckBossEnd(mobjtype_t motype)
             case 3:
                 return gamemap == 8 && motype == MT_SPIDER;
 
-	    case 4:
+	        case 4:
                 return (gamemap == 6 && motype == MT_CYBORG)
                     || (gamemap == 8 && motype == MT_SPIDER);
 
             default:
                 return gamemap == 8;
+		}
 	}
-    }
+
+	// Adam - sigil support for not ending early.
+	// Using FATSO since it is a DOOM PWAD, thus, it will never end early.
+    if (is_sigil)
+	{
+	switch(gameepisode)
+	{
+		case 1:
+			return (gamemap == 8 && motype == MT_FATSO);
+
+		default:
+			return (gamemap == 8 && motype == MT_FATSO);
+				}
+			}	
+		}
+	return true;
 }
 
 //

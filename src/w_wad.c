@@ -206,7 +206,12 @@ wad_file_t *W_AddFile (const char *filename)
 
     startlump = numlumps;
     numlumps += numfilelumps;
-    lumpinfo = I_Realloc(lumpinfo, numlumps * sizeof(lumpinfo_t *));
+    lumpinfo = realloc(lumpinfo, numlumps * sizeof(lumpinfo_t *));
+    if (lumpinfo == NULL)
+    {
+        W_CloseFile(wad_file);
+        I_Error("Failed to increase lumpinfo[] array size.");
+    }
     filerover = fileinfo;
 
     for (i = startlump; i < numlumps; ++i)
@@ -616,14 +621,4 @@ void W_Reload(void)
     // The WAD directory has changed, so we have to regenerate the
     // fast lookup hashtable:
     W_GenerateHashTable();
-}
-
-const char *W_WadNameForLump(const lumpinfo_t *lump)
-{
-	return M_BaseName(lump->wad_file->path);
-}
-
-boolean W_IsIWADLump(const lumpinfo_t *lump)
-{
-	return lump->wad_file == lumpinfo[0]->wad_file;
 }

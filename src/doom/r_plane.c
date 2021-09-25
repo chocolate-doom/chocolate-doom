@@ -235,8 +235,8 @@ R_FindPlane
     if (check < lastvisplane)
 	return check;
 		
-    if ((!doom_plus_plus_limits && lastvisplane - visplanes == MAXVISPLANES / DOOM_PLUS_PLUS_MAXVISPLANES_FACTOR) 
-        || (doom_plus_plus_limits && lastvisplane - visplanes == MAXVISPLANES))
+    if (lastvisplane - visplanes == (doom_plus_plus_limits ? MAXVISPLANES : 
+        MAXVISPLANES / DOOM_PLUS_PLUS_MAXVISPLANES_FACTOR))
 	I_Error ("R_FindPlane: no more visplanes");
 		
     lastvisplane++;
@@ -308,9 +308,9 @@ R_CheckPlane
     lastvisplane->picnum = pl->picnum;
     lastvisplane->lightlevel = pl->lightlevel;
     
-    if ((!doom_plus_plus_limits && lastvisplane - visplanes == MAXVISPLANES / DOOM_PLUS_PLUS_MAXVISPLANES_FACTOR)
-        || (doom_plus_plus_limits && lastvisplane - visplanes == MAXVISPLANES))
-	I_Error ("R_CheckPlane: no more visplanes");
+    if (lastvisplane - visplanes == (doom_plus_plus_limits ? MAXVISPLANES : 
+        MAXVISPLANES / DOOM_PLUS_PLUS_MAXVISPLANES_FACTOR))
+	I_Error ("R_FindPlane: no more visplanes");
 
     pl = lastvisplane++;
     pl->minx = start;
@@ -372,18 +372,18 @@ void R_DrawPlanes (void)
     int                 lumpnum;
 				
 #ifdef RANGECHECK
-    if ((!doom_plus_plus_limits && ds_p - drawsegs > MAXDRAWSEGS / DOOM_PLUS_PLUS_MAXDRAWSEGS_FACTOR)
-        || (doom_plus_plus_limits && ds_p - drawsegs > MAXDRAWSEGS))
-	I_Error ("R_DrawPlanes: drawsegs overflow (%td)",
+    if (ds_p - drawsegs > (doom_plus_plus_limits ? MAXDRAWSEGS :
+        MAXDRAWSEGS / DOOM_PLUS_PLUS_MAXDRAWSEGS_FACTOR))
+	I_Error ("R_DrawPlanes: drawsegs overflow (%i)",
 		 ds_p - drawsegs);
     
     if (lastvisplane - visplanes > MAXVISPLANES)
-	I_Error ("R_DrawPlanes: visplane overflow (%td)",
+	I_Error ("R_DrawPlanes: visplane overflow (%i)",
 		 lastvisplane - visplanes);
     
-    if ((!doom_plus_plus_limits && lastopening - openings > MAXOPENINGS / DOOM_PLUS_PLUS_MAXOPENINGS_FACTOR)
-        || (doom_plus_plus_limits && lastopening - openings > MAXOPENINGS))
-	I_Error ("R_DrawPlanes: opening overflow (%td)",
+    if (lastopening - openings > (doom_plus_plus_limits ? MAXOPENINGS :
+        MAXOPENINGS / DOOM_PLUS_PLUS_MAXOPENINGS_FACTOR))
+	I_Error ("R_DrawPlanes: opening overflow (%i)",
 		 lastopening - openings);
 #endif
 

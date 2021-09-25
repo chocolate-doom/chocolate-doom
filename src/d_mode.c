@@ -43,6 +43,7 @@ static struct
     { heretic,   retail,     5, 9 },
     { hexen,     commercial, 1, 60 },
     { strife,    commercial, 1, 34 },
+    { sigil,     commercial, 5, 8  }
 };
 
 // Check that a gamemode+gamemission received over the network is valid.

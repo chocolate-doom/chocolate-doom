@@ -507,7 +507,6 @@ void M_ReadSaveStrings(void)
 
     for (i = 0;i < load_end;i++)
     {
-        int retval;
         M_StringCopy(name, P_SaveGameFile(i), sizeof(name));
 
 	handle = fopen(name, "rb");
@@ -517,9 +516,9 @@ void M_ReadSaveStrings(void)
             LoadMenu[i].status = 0;
             continue;
         }
-        retval = fread(&savegamestrings[i], 1, SAVESTRINGSIZE, handle);
+	fread(&savegamestrings[i], 1, SAVESTRINGSIZE, handle);
 	fclose(handle);
-        LoadMenu[i].status = retval == SAVESTRINGSIZE;
+	LoadMenu[i].status = 1;
     }
 }
 
@@ -630,62 +629,17 @@ void M_DoSave(int slot)
 }
 
 //
-// Generate a default save slot name when the user saves to
-// an empty slot via the joypad.
-//
-static void SetDefaultSaveName(int slot)
-{
-    // map from IWAD or PWAD?
-    if (W_IsIWADLump(maplumpinfo) && strcmp(savegamedir, ""))
-    {
-        M_snprintf(savegamestrings[itemOn], SAVESTRINGSIZE,
-                   "%s", maplumpinfo->name);
-    }
-    else
-    {
-        char *wadname = M_StringDuplicate(W_WadNameForLump(maplumpinfo));
-        char *ext = strrchr(wadname, '.');
-
-        if (ext != NULL)
-        {
-            *ext = '\0';
-        }
-
-        M_snprintf(savegamestrings[itemOn], SAVESTRINGSIZE,
-                   "%s (%s)", maplumpinfo->name,
-                   wadname);
-        free(wadname);
-    }
-    M_ForceUppercase(savegamestrings[itemOn]);
-    joypadSave = false;
-}
-
-//
 // User wants to save. Start string input for M_Responder
 //
 void M_SaveSelect(int choice)
 {
-    int x, y;
-
     // we are going to be intercepting all chars
     saveStringEnter = 1;
-
-    // We need to turn on text input:
-    x = LoadDef.x - 11;
-    y = LoadDef.y + choice * LINEHEIGHT - 4;
-    I_StartTextInput(x, y, x + 8 + 24 * 8 + 8, y + LINEHEIGHT - 2);
-
+    
     saveSlot = choice;
     M_StringCopy(saveOldString,savegamestrings[choice], SAVESTRINGSIZE);
     if (!strcmp(savegamestrings[choice], EMPTYSTRING))
-    {
-        savegamestrings[choice][0] = 0;
-
-        if (joypadSave)
-        {
-            SetDefaultSaveName(choice);
-        }
-    }
+	savegamestrings[choice][0] = 0;
     saveCharIndex = strlen(savegamestrings[choice]);
 }
 
@@ -742,9 +696,8 @@ void M_QuickSave(void)
 	quickSaveSlot = -2;	// means to pick a slot now
 	return;
     }
-    DEH_snprintf(tempstring, sizeof(tempstring),
-                 QSPROMPT, savegamestrings[quickSaveSlot]);
-    M_StartMessage(tempstring, M_QuickSaveResponse, true);
+    DEH_snprintf(tempstring, 80, QSPROMPT, savegamestrings[quickSaveSlot]);
+    M_StartMessage(tempstring,M_QuickSaveResponse,true);
 }
 
 
@@ -775,9 +728,8 @@ void M_QuickLoad(void)
 	M_StartMessage(DEH_String(QSAVESPOT),NULL,false);
 	return;
     }
-    DEH_snprintf(tempstring, sizeof(tempstring),
-                 QLPROMPT, savegamestrings[quickSaveSlot]);
-    M_StartMessage(tempstring, M_QuickLoadResponse, true);
+    DEH_snprintf(tempstring, 80, QLPROMPT, savegamestrings[quickSaveSlot]);
+    M_StartMessage(tempstring,M_QuickLoadResponse,true);
 }
 
 
@@ -1232,6 +1184,23 @@ M_DrawThermo
 		      W_CacheLumpName(DEH_String("M_THERMO"), PU_CACHE));
 }
 
+void
+M_DrawEmptyCell
+( menu_t*	menu,
+  int		item )
+{
+    V_DrawPatchDirect(menu->x - 10, menu->y + item * LINEHEIGHT - 1, 
+                      W_CacheLumpName(DEH_String("M_CELL1"), PU_CACHE));
+}
+
+void
+M_DrawSelCell
+( menu_t*	menu,
+  int		item )
+{
+    V_DrawPatchDirect(menu->x - 10, menu->y + item * LINEHEIGHT - 1,
+                      W_CacheLumpName(DEH_String("M_CELL2"), PU_CACHE));
+}
 
 void
 M_StartMessage
@@ -2006,7 +1975,7 @@ void M_Drawer (void)
     {
         name = DEH_String(currentMenu->menuitems[i].name);
 
-	if (name[0] && W_CheckNumForName(name) > 0)
+	if (name[0])
 	{
 	    V_DrawPatchDirect (x, y, W_CacheLumpName(name, PU_CACHE));
 	}

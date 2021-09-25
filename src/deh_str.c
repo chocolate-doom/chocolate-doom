@@ -96,6 +96,13 @@ const char *DEH_String(const char *s)
     }
 }
 
+// [crispy] returns true if a string has been substituted
+
+boolean DEH_HasStringReplacement(const char *s)
+{
+    return DEH_String(s) != s;
+}
+
 static void InitHashTable(void)
 {
     // init hash table
