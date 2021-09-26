@@ -231,7 +231,7 @@ static void D_SetDefaultSavePath(void)
 
 // The Mac version of the Hexen IWAD is different to the "normal" DOS
 // version - it doesn't include lumps used by the DOS DMX library.
-// This means that we can't do GUS or OPL emulation and need to apply
+// This means that we can't do OPL emulation and need to apply
 // a workaround.
 static void AdjustForMacIWAD(void)
 {
@@ -244,10 +244,6 @@ static void AdjustForMacIWAD(void)
             adjust_music = W_CheckNumForName("GENMIDI") < 0;
             break;
 
-        case SNDDEVICE_GUS:
-            adjust_music = W_CheckNumForName("DMXGUS") < 0;
-            break;
-
         default:
             break;
     }
@@ -255,8 +251,8 @@ static void AdjustForMacIWAD(void)
     if (adjust_music)
     {
         printf("** Note: You appear to be using the Mac version of the Hexen\n"
-               "** IWAD file. This is missing the lumps required for OPL or\n"
-               "** GUS emulation. Your music configuration is being adjusted\n"
+               "** IWAD file. This is missing the lumps required for OPL emulation.\n"
+               "Your music configuration is being adjusted\n"
                "** to a different setting that won't cause the game to "
                "crash.\n");
         snd_musicdevice = SNDDEVICE_GENMIDI;

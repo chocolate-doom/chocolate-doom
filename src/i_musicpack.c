@@ -34,7 +34,6 @@
 #include "mus2mid.h"
 
 #include "deh_str.h"
-#include "gusconf.h"
 #include "i_sound.h"
 #include "i_system.h"
 #include "i_swap.h"

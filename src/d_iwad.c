@@ -276,9 +276,6 @@ static char *steam_install_subdirs[] =
     "steamapps\\common\\Strife",
 };
 
-#define STEAM_BFG_GUS_PATCHES \
-    "steamapps\\common\\DOOM 3 BFG Edition\\base\\classicmusic\\instruments"
-
 static char *GetRegistryString(registry_value_t *reg_val)
 {
     HKEY key;
@@ -414,44 +411,6 @@ static void CheckSteamEdition(void)
         AddIWADDir(subpath);
     }
 
-    free(install_path);
-}
-
-// The BFG edition ships with a full set of GUS patches. If we find them,
-// we can autoconfigure to use them.
-
-static void CheckSteamGUSPatches(void)
-{
-    const char *current_path;
-    char *install_path;
-    char *test_patch_path, *patch_path;
-
-    // Already configured? Don't stomp on the user's choices.
-    current_path = M_GetStringVariable("gus_patch_path");
-    if (current_path != NULL && strlen(current_path) > 0)
-    {
-        return;
-    }
-
-    install_path = GetRegistryString(&steam_install_location);
-
-    if (install_path == NULL)
-    {
-        return;
-    }
-
-    patch_path = M_StringJoin(install_path, "\\", STEAM_BFG_GUS_PATCHES,
-                              NULL);
-    test_patch_path = M_StringJoin(patch_path, "\\ACBASS.PAT", NULL);
-
-    // Does acbass.pat exist? If so, then set gus_patch_path.
-    if (M_FileExists(test_patch_path))
-    {
-        M_SetVariable("gus_patch_path", patch_path);
-    }
-
-    free(test_patch_path);
-    free(patch_path);
     free(install_path);
 }
 
@@ -764,10 +723,6 @@ static void BuildIWADDirList(void)
     CheckInstallRootPaths();
     CheckSteamEdition();
     CheckDOSDefaults();
-
-    // Check for GUS patches installed with the BFG edition!
-
-    CheckSteamGUSPatches();
 
 #else
     AddXdgDirs();

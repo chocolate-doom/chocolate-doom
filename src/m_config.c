@@ -929,35 +929,6 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_STRING(music_pack_path),
 
     //!
-    // Full path to a soundfont file to use with FluidSynth MIDI playback.
-    //
-
-    CONFIG_VARIABLE_STRING(fluidsynth_sf_path),
-
-    //!
-    // Full path to a Timidity configuration file to use for MIDI
-    // playback. The file will be evaluated from the directory where
-    // it is evaluated, so there is no need to add "dir" commands
-    // into it.
-    //
-
-    CONFIG_VARIABLE_STRING(timidity_cfg_path),
-
-    //!
-    // Path to GUS patch files to use when operating in GUS emulation
-    // mode.
-    //
-
-    CONFIG_VARIABLE_STRING(gus_patch_path),
-
-    //!
-    // Number of kilobytes of RAM to use in GUS emulation mode. Valid
-    // values are 256, 512, 768 or 1024.
-    //
-
-    CONFIG_VARIABLE_INT(gus_ram_kb),
-
-    //!
     // @game doom strife
     //
     // If non-zero, the Vanilla savegame limit is enforced; if the
