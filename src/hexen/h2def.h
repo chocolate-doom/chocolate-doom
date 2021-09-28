@@ -73,8 +73,9 @@
 //#endif
 #define HEXEN_VERSIONTEXT ((gamemode == shareware) ? \
                            "DEMO 10 16 95" : \
-                           "VERSION 1.1 MAR 12 1996 (CBI)" \
-                           /*"VERSION 1.1 MAR 22 1996 (BCP)"*/)
+                           (gameversion != exe_hexen_1_1r2) ? \
+                           "VERSION 1.1 MAR 12 1996 (CBI)" : \
+                           "VERSION 1.1 MAR 22 1996 (BCP)")
 
 // all exterior data is defined here
 #include "xddefs.h"
@@ -589,6 +590,7 @@ void NET_SendFrags(player_t * player);
 #define TELEFOGHEIGHT (32*FRACUNIT)
 
 extern GameMode_t gamemode;
+extern GameVersion_t gameversion;
 
 extern gameaction_t gameaction;
 
