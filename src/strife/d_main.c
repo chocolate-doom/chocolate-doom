@@ -1009,7 +1009,7 @@ void PrintDehackedBanners(void)
     }
 }
 
-static struct 
+static struct
 {
     const char *description;
     const char *cmdline;
@@ -1027,7 +1027,7 @@ static void InitGameVersion(void)
     int p;
     int i;
 
-    // haleyjd: we support emulating either the 1.2 or the 1.31 versions of 
+    // haleyjd: we support emulating either the 1.2 or the 1.31 versions of
     // Strife, which are the most significant. 1.2 is the most mature version
     // that still has the single saveslot restriction, whereas 1.31 is the
     // final revision. The differences between the two are barely worth
@@ -1053,7 +1053,7 @@ static void InitGameVersion(void)
             }
         }
 
-        if (gameversions[i].description == NULL) 
+        if (gameversions[i].description == NULL)
         {
             printf("Supported game versions:\n");
 
