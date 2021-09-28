@@ -73,7 +73,8 @@
 //#endif
 #define HEXEN_VERSIONTEXT ((gamemode == shareware) ? \
                            "DEMO 10 16 95" : \
-                           "VERSION 1.1 MAR 22 1996 (BCP)")
+                           "VERSION 1.1 MAR 12 1996 (CBI)" \
+                           /*"VERSION 1.1 MAR 22 1996 (BCP)"*/)
 
 // all exterior data is defined here
 #include "xddefs.h"
