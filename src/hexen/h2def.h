@@ -587,7 +587,7 @@ void NET_SendFrags(player_t * player);
 
 #define TELEFOGHEIGHT (32*FRACUNIT)
 
-extern GameMode_t gamemode;         // Always commercial
+extern GameMode_t gamemode;
 
 extern gameaction_t gameaction;
 
