@@ -27,9 +27,6 @@
 #include "deh_io.h"
 #include "deh_main.h"
 
-// [crispy] support INCLUDE NOTEXT directive in BEX files
-boolean bex_notext = false;
-
 // Given a string length, find the maximum length of a 
 // string that can replace it.
 
@@ -91,10 +88,7 @@ static void *DEH_TextStart(deh_context_t *context, char *line)
     }
     to_text[tolen] = '\0';
 
-    if (!bex_notext)
-    {
     DEH_AddStringReplacement(from_text, to_text);
-    }
 
     free(from_text);
     free(to_text);
