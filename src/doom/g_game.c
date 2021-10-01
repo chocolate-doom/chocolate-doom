@@ -1310,11 +1310,13 @@ static const int pars[6][10] =
     {0,30,75,120,90,165,180,180,30,165}, 
     {0,90,90,90,120,90,360,240,30,170}, 
     {0,90,45,90,150,90,90,165,30,135},
+};
 
-    // [BH] Episode 4 and 5 Par Times
-    { 0, 165, 255, 135, 150, 180, 390, 135, 360, 180 },
-    { 0,  90, 150, 360, 420, 780, 420, 780, 300, 660 }
-}; 
+// [crispy] Episode 5 par times from Sigil v1.21
+static int e5pars[10] =
+{
+    0,90,150,360,420,780,420,780,300,660
+};
 
 // DOOM II Par Times
 static const int cpars[32] =
@@ -1329,7 +1331,7 @@ static const int cpars[32] =
 static const int chexpars[6] =
 { 
     0,120,360,480,200,360
-}; 
+};
  
 
 //
@@ -1452,6 +1454,7 @@ void G_DoCompleted (void)
 		wminfo.next = 5; 
 		break; 
 	      case 3: 
+	      case 5: // [crispy] Sigil
 		wminfo.next = 6; 
 		break; 
 	      case 4:
@@ -1499,6 +1502,11 @@ void G_DoCompleted (void)
         {
             wminfo.partime = TICRATE*pars[gameepisode][gamemap];
         }
+    }
+    // [crispy] use episode 3 par times for Sigil's episode 5
+    else if (gameepisode == 5)
+    {
+        wminfo.partime = TICRATE*e5pars[gamemap];
     }
     else
     {
@@ -1913,6 +1921,13 @@ G_InitNew
             break;
           case 4:        // Special Edition sky
             skytexturename = "SKY4";
+            break;
+          case 5:        // [crispy] Sigil
+            skytexturename = "SKY5_ZD";
+            if (R_CheckTextureNumForName(DEH_String(skytexturename)) == -1)
+            {
+                skytexturename = "SKY3";
+            }
             break;
         }
         skytexturename = DEH_String(skytexturename);

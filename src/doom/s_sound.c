@@ -250,13 +250,23 @@ void S_Start(void)
             mus_e1m9,        // Tim          e4m9
         };
 
-        if (gameepisode < 4)
+        if (gameepisode < 4 || gameepisode == 5) // [crispy] Sigil
         {
             mnum = mus_e1m1 + (gameepisode-1)*9 + gamemap-1;
         }
         else
         {
             mnum = spmus[gamemap-1];
+
+            // [crispy] support dedicated music tracks for the 4th episode
+            {
+                const int sp_mnum = mus_e1m1 + 3 * 9 + gamemap - 1;
+
+                if (S_music[sp_mnum].lumpnum > 0)
+                {
+                    mnum = sp_mnum;
+                }
+            }
         }
     }
 
