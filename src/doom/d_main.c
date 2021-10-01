@@ -103,6 +103,9 @@ boolean         nomonsters;	// checkparm of -nomonsters
 boolean         respawnparm;	// checkparm of -respawn
 boolean         fastparm;	// checkparm of -fast
 
+// Adam - Sigil
+int is_sigil;
+
 //extern int soundVolume;
 //extern  int	sfxVolume;
 //extern  int	musicVolume;
@@ -1754,6 +1757,14 @@ void D_DoomMain (void)
     {
 	startskill = myargv[p+1][0]-'1';
 	autostart = true;
+    }
+
+    // Sigil
+
+    p = M_CheckParm("-sigil");
+    if (p)
+    {
+        is_sigil = 1;
     }
 
     //!

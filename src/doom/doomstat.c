@@ -30,7 +30,6 @@ GameVariant_t   gamevariant = vanilla;
 // Set if homebrew PWAD stuff has been added.
 boolean	modifiedgame;
 
-// Sigil
-boolean haved1e5;
+
 
 

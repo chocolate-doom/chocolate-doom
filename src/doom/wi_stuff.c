@@ -1695,11 +1695,6 @@ static void WI_loadUnloadData(load_callback_t callback)
     {
         M_StringCopy(name, DEH_String("INTERPIC"), sizeof(name));
     }
-    // [crispy] Sigil
-    else if (haved1e5 && wbs->epsd == 4 && W_CheckNumForName(DEH_String("SIGILINT")) != -1)
-    {
-        M_StringCopy(name, DEH_String("SIGILINT"), sizeof(name));
-    }
     else
     {
 	DEH_snprintf(name, sizeof(name), "WIMAP%d", wbs->epsd);

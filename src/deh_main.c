@@ -85,7 +85,7 @@ static void InitializeSections(void)
     }
 }
 
-static void DEH_Init(void)
+void DEH_Init(void) // [crispy] un-static
 {
     //!
     // @category mod
@@ -451,7 +451,7 @@ void DEH_AutoLoadPatches(const char *path)
     glob_t *glob;
 
     glob = I_StartMultiGlob(path, GLOB_FLAG_NOCASE|GLOB_FLAG_SORTED,
-                            "*.deh", "*.hhe", "*.seh", NULL);
+                            "*.deh", "*.bex", "*.hhe", "*.seh", NULL); // [crispy] *.bex
     for (;;)
     {
         filename = I_NextGlob(glob);

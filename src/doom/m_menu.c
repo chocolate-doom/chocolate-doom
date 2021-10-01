@@ -269,7 +269,6 @@ enum
     ep2,
     ep3,
     ep4,
-    ep5, // [crispy] Sigil
     ep_end
 } episodes_e;
 
@@ -278,8 +277,7 @@ menuitem_t EpisodeMenu[]=
     {1,"M_EPI1", M_Episode,'k'},
     {1,"M_EPI2", M_Episode,'t'},
     {1,"M_EPI3", M_Episode,'i'},
-    {1,"M_EPI4", M_Episode,'t'},
-    {1,"M_EPI5", M_Episode,'s'} // [crispy] Sigil
+    {1,"M_EPI4", M_Episode,'t'}
 };
 
 menu_t  EpiDef =
@@ -2070,12 +2068,6 @@ void M_Init (void)
         ReadDef1.x = 330;
         ReadDef1.y = 165;
         ReadMenu1[rdthsempty1].routine = M_FinishReadThis;
-    }
-
-    // [crispy] Sigil
-    if (!haved1e5)
-    {
-        EpiDef.numitems = 4;
     }
 
     // Versions of doom.exe before the Ultimate Doom release only had

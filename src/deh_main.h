@@ -29,6 +29,8 @@
 #define DEH_VANILLA_NUMSTATES 966
 #define DEH_VANILLA_NUMSFX 107
 
+void DEH_Init(void); // [crispy] un-static
+
 void DEH_ParseCommandLine(void);
 int DEH_LoadFile(const char *filename);
 void DEH_AutoLoadPatches(const char *path);

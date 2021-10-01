@@ -165,4 +165,6 @@ typedef enum
     
 } powerduration_t;
 
+extern int is_sigil;
+
 #endif          // __DOOMDEF__

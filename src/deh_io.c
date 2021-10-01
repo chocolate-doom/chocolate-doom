@@ -395,3 +395,15 @@ boolean DEH_HadError(deh_context_t *context)
     return context->had_error;
 }
 
+// [crispy] return the filename of the DEHACKED file
+// or NULL if it is a DEHACKED lump loaded from a PWAD
+char *DEH_FileName(deh_context_t *context)
+{
+    if (context->type == DEH_INPUT_FILE)
+    {
+        return context->filename;
+    }
+
+    return NULL;
+}
+
