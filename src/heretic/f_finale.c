@@ -260,6 +260,7 @@ void F_DemonScroll(void)
 {
     byte *p1, *p2;
     static int yval = 0;
+    static int yval_dest = 0;
     static int nextscroll = 0;
 
     if (finalecount < nextscroll)
@@ -277,8 +278,9 @@ void F_DemonScroll(void)
     if (yval < 64000)
     {
         V_CopyScaledBuffer(I_VideoBuffer, p2 + ORIGHEIGHT * ORIGWIDTH - yval, yval);
-        V_CopyScaledBuffer(I_VideoBuffer + (yval << (2 * crispy->hires)), p1, ORIGHEIGHT * ORIGWIDTH - yval);
+        V_CopyScaledBuffer(I_VideoBuffer + yval_dest, p1, ORIGHEIGHT * ORIGWIDTH - yval);
         yval += ORIGWIDTH;
+        yval_dest += SCREENWIDTH << crispy->hires;
         nextscroll = finalecount + 3;
     }
     else

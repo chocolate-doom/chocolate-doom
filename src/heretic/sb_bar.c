@@ -83,6 +83,9 @@ int ArtifactFlash;
 
 static int DisplayTicker = 0;
 
+// [crispy] for widescreen status bar background
+pixel_t *st_backing_screen;
+
 // Private Data
 
 static int HealthMarker;
@@ -262,6 +265,8 @@ void SB_Init(void)
     playpalette = W_GetNumForName(DEH_String("PLAYPAL"));
     spinbooklump = W_GetNumForName(DEH_String("SPINBK0"));
     spinflylump = W_GetNumForName(DEH_String("SPFLY0"));
+
+    st_backing_screen = (pixel_t *) Z_Malloc(MAXWIDTH * (42 << 1) * sizeof(*st_backing_screen), PU_STATIC, 0);
 }
 
 //---------------------------------------------------------------------------
@@ -436,7 +441,7 @@ static void ShadeLine(int x, int y, int height, int shade)
     height <<= crispy->hires;
 
     shades = colormaps + 9 * 256 + shade * 2 * 256;
-    dest = I_VideoBuffer + y * SCREENWIDTH + x;
+    dest = I_VideoBuffer + y * SCREENWIDTH + x + (WIDESCREENDELTA << crispy->hires);
     while (height--)
     {
         if (crispy->hires)
@@ -572,6 +577,38 @@ int playerkeys = 0;
 
 extern boolean automapactive;
 
+// [crispy] Create background texture which appears at each side of the status
+// bar in widescreen rendering modes. The chosen textures match those which
+// surround the non-fullscreen game window.
+static void RefreshBackground()
+{
+    V_UseBuffer(st_backing_screen);
+
+    if ((SCREENWIDTH >> crispy->hires) != ORIGWIDTH)
+    {
+        int x, y;
+        byte *src;
+        pixel_t *dest;
+        const char *name = (gamemode == shareware) ?
+                           DEH_String("FLOOR04") :
+                           DEH_String("FLAT513");
+
+        src = W_CacheLumpName(name, PU_CACHE);
+        dest = st_backing_screen;
+
+        for (y = SCREENHEIGHT - (42 << crispy->hires); y < SCREENHEIGHT; y++)
+        {
+            for (x = 0; x < SCREENWIDTH; x++)
+            {
+                *dest++ = src[((y & 63) << 6) + (x & 63)];
+            }
+        }
+    }
+
+    V_RestoreBuffer();
+    V_CopyRect(0, 0, st_backing_screen, SCREENWIDTH >> crispy->hires, 42, 0, 158);
+}
+
 void SB_Drawer(void)
 {
     int frame;
@@ -592,6 +629,7 @@ void SB_Drawer(void)
     {
         if (SB_state == -1)
         {
+            RefreshBackground(); // [crispy] for widescreen
             V_DrawPatch(0, 158, PatchBARBACK);
             if (players[consoleplayer].cheats & CF_GODMODE)
             {

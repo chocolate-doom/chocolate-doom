@@ -33,6 +33,8 @@
 #include "v_video.h"
 #include "v_trans.h" // [crispy] dp_translation
 
+#include "crispy.h"
+
 // Macros
 
 #define LEFT_DIR 0
@@ -109,6 +111,7 @@ static boolean SCMessages(int option);
 static boolean SCEndGame(int option);
 static boolean SCInfo(int option);
 static boolean CrispyHires(int option);
+static boolean CrispyToggleWidescreen(int option);
 static boolean CrispySmoothing(int option);
 static boolean CrispyAutomapStats(int option);
 static boolean CrispyLevelTime(int option);
@@ -135,7 +138,7 @@ void MN_LoadSlotText(void);
 
 extern void I_ReInitGraphics(int reinit);
 extern void R_ExecuteSetViewSize(void);
-extern void AM_LevelInit(void);
+extern void AM_LevelInit(boolean reinit);
 extern void AM_initVariables(void);
 
 // External Data
@@ -321,6 +324,7 @@ static Menu_t Options2Menu = {
 
 static MenuItem_t CrispnessItems[] = {
     {ITT_LRFUNC, "HIGH RESOLUTION RENDERING:", CrispyHires, 0, MENU_NONE},
+    {ITT_LRFUNC, "ASPECT RATIO:", CrispyToggleWidescreen, 0, MENU_NONE},
     {ITT_LRFUNC, "SMOOTH PIXEL SCALING:", CrispySmoothing, 0, MENU_NONE},
     {ITT_LRFUNC, "UNCAPPED FRAMERATE:", CrispyUncapped, 0, MENU_NONE},
     {ITT_LRFUNC, "ENABLE VSYNC:", CrispyVsync, 0, MENU_NONE},
@@ -335,7 +339,7 @@ static MenuItem_t CrispnessItems[] = {
 static Menu_t CrispnessMenu = {
     68, 40,
     DrawCrispnessMenu,
-    10, CrispnessItems,
+    11, CrispnessItems,
     0,
     MENU_OPTIONS
 };
@@ -1227,7 +1231,7 @@ static void CrispyHiresHook(void)
     // [crispy] scale the sky for new resolution
     R_InitSkyMap();
     // [crispy] re-calculate automap coordinates
-    AM_LevelInit();
+    AM_LevelInit(true);
     if (automapactive) {
         AM_initVariables();
     }
@@ -1242,6 +1246,29 @@ static boolean CrispyHires(int option)
     return true;
 }
 
+static void CrispyToggleWidescreenHook (void)
+{
+    crispy->widescreen = (crispy->widescreen + 1) % NUM_RATIOS;
+
+    // [crispy] no need to re-init when switching from wide to compact
+    {
+	// [crispy] re-initialize framebuffers, textures and renderer
+	I_ReInitGraphics(REINIT_FRAMEBUFFERS | REINIT_TEXTURES | REINIT_ASPECTRATIO);
+	// [crispy] re-calculate framebuffer coordinates
+	R_ExecuteSetViewSize();
+	// [crispy] re-calculate automap coordinates
+        AM_LevelInit(true);
+        if (automapactive) {
+            AM_initVariables();
+        }
+    }
+}
+static boolean CrispyToggleWidescreen(int option)
+{
+    crispy->post_rendering_hook = CrispyToggleWidescreenHook;
+
+    return true;
+}
 static boolean CrispySmoothing(int option)
 {
     crispy->smoothscaling = !crispy->smoothscaling;
@@ -2044,38 +2071,45 @@ static void DrawCrispnessMenu(void)
     // Subheaders
     dp_translation = cr[CR_GOLD];
     MN_DrTextA("RENDERING", 63, 30);
-    MN_DrTextA("NAVIGATIONAL", 63, 90);
+    MN_DrTextA("NAVIGATIONAL", 63, 100);
     dp_translation = cr[CR_GREY];
 
     // Hires rendering
     MN_DrTextA(crispy->hires ? "ON" : "OFF", 254, 40);
 
+    // Widescreen
+    MN_DrTextA(crispy->widescreen == RATIO_4_3 ? "4:3" :
+               crispy->widescreen == RATIO_MATCH_SCREEN ? "MATCH SCREEN" :
+               crispy->widescreen == RATIO_16_10 ? "16:10" :
+               crispy->widescreen == RATIO_16_9 ? "16:9" :
+                                                  "21:9", 164, 50);
+
     // Smooth pixel scaling
-    MN_DrTextA(crispy->smoothscaling ? "ON" : "OFF", 216, 50);
+    MN_DrTextA(crispy->smoothscaling ? "ON" : "OFF", 216, 60);
 
     // Uncapped framerate
-    MN_DrTextA(crispy->uncapped ? "ON" : "OFF", 217, 60);
+    MN_DrTextA(crispy->uncapped ? "ON" : "OFF", 217, 70);
 
     // Vsync
-    MN_DrTextA(crispy->vsync ? "ON" : "OFF", 167, 70);
+    MN_DrTextA(crispy->vsync ? "ON" : "OFF", 167, 80);
 
     // Show level stats
     MN_DrTextA(crispy->automapstats == WIDGETS_OFF ? "NEVER" :
                crispy->automapstats == WIDGETS_AUTOMAP ? "IN AUTOMAP" :
-                                                         "ALWAYS", 190, 100);
+                                                         "ALWAYS", 190, 110);
 
     // Show level time
     MN_DrTextA(crispy->leveltime == WIDGETS_OFF ? "NEVER" :
                crispy->leveltime == WIDGETS_AUTOMAP ? "IN AUTOMAP" :
-                                                       "ALWAYS", 179, 110);
+                                                       "ALWAYS", 179, 120);
 
     // Show player coords
-    MN_DrTextA(crispy->playercoords == WIDGETS_OFF ? "NEVER" : "IN AUTOMAP", 211, 120);
+    MN_DrTextA(crispy->playercoords == WIDGETS_OFF ? "NEVER" : "IN AUTOMAP", 211, 130);
 
     // Show secret message
     MN_DrTextA(crispy->secretmessage == SECRETMESSAGE_OFF ? "OFF" :
         crispy->secretmessage == SECRETMESSAGE_ON ? "ON" :
-        "COUNT", 250, 130);
+        "COUNT", 250, 140);
 
     dp_translation = NULL;
 }
