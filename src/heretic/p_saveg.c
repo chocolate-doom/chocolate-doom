@@ -894,8 +894,7 @@ static void saveg_read_mobj_t(mobj_t *str)
     str->movecount = SV_ReadLong();
 
     // struct mobj_s *target;
-    SV_ReadLong();
-    str->target = NULL;
+    str->target = (void *)(uintptr_t) SV_ReadLong();
 
     // int reactiontime;
     str->reactiontime = SV_ReadLong();
@@ -920,6 +919,53 @@ static void saveg_read_mobj_t(mobj_t *str)
 
     // mapthing_t spawnpoint;
     saveg_read_mapthing_t(&str->spawnpoint);
+}
+
+// [crispy] enumerate all thinker pointers
+static uint32_t P_ThinkerToIndex (const thinker_t *thinker)
+{
+    thinker_t *th;
+    uint32_t i;
+
+    if (!thinker)
+	return 0;
+
+    for (th = thinkercap.next, i = 0; th != &thinkercap; th = th->next)
+    {
+	if (th->function == P_MobjThinker)
+	{
+	    i++;
+	    if (th == thinker)
+		return i;
+	}
+    }
+
+    return 0;
+}
+
+// [crispy] replace indices with corresponding pointers
+static int restoretargets_fail = 0;
+static const thinker_t *P_IndexToThinker (uint32_t index)
+{
+    thinker_t *th;
+    uint32_t i;
+
+    if (!index)
+	return NULL;
+
+    for (th = thinkercap.next, i = 0; th != &thinkercap; th = th->next)
+    {
+	if (th->function == P_MobjThinker)
+	{
+	    i++;
+	    if (i == index)
+		return th;
+	}
+    }
+
+    restoretargets_fail++;
+
+    return NULL;
 }
 
 static void saveg_write_mobj_t(mobj_t *str)
@@ -1022,7 +1068,7 @@ static void saveg_write_mobj_t(mobj_t *str)
     SV_WriteLong(str->movecount);
 
     // struct mobj_s *target;
-    SV_WritePtr(str->target);
+    SV_WritePtr((void *)(uintptr_t) P_ThinkerToIndex((const thinker_t *) str->target));
 
     // int reactiontime;
     SV_WriteLong(str->reactiontime);
@@ -1715,7 +1761,7 @@ void P_UnArchiveThinkers(void)
             case tc_mobj:
                 mobj = Z_Malloc(sizeof(*mobj), PU_LEVEL, NULL);
                 saveg_read_mobj_t(mobj);
-                mobj->target = NULL;
+//              mobj->target = NULL;
                 P_SetThingPosition(mobj);
                 mobj->info = &mobjinfo[mobj->type];
                 mobj->floorz = mobj->subsector->sector->floorheight;
@@ -1734,6 +1780,28 @@ void P_UnArchiveThinkers(void)
 
 //=============================================================================
 
+// [crispy] after all the thinkers have been restored, replace all indices in
+// the mobj->target fields by the corresponding current pointers again
+void P_RestoreTargets (void)
+{
+    mobj_t *mo;
+    thinker_t *th;
+
+    restoretargets_fail = 0;
+    for (th = thinkercap.next; th != &thinkercap; th = th->next)
+    {
+	if (th->function == P_MobjThinker)
+	{
+	    mo = (mobj_t *) th;
+	    mo->target = (mobj_t *) P_IndexToThinker((uintptr_t) mo->target);
+	}
+    }
+
+    if (restoretargets_fail)
+    {
+	fprintf (stderr, "P_RestoreTargets: Failed to restore %d target pointers.\n", restoretargets_fail);
+    }
+}
 
 /*
 ====================
