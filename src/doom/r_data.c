@@ -451,6 +451,17 @@ void R_GenerateLookup (int texnum)
 	realpatch = W_CacheLumpNum (patch->patch, PU_CACHE);
 	x1 = patch->originx;
 	x2 = x1 + SHORT(realpatch->width);
+
+	// [crispy] detect patches in PNG format... and fail
+	{
+		const unsigned char *magic = (const unsigned char *) realpatch;
+
+		if (magic[0] == 0x89 &&
+		    magic[1] == 'P' && magic[2] == 'N' && magic[3] == 'G')
+		{
+			I_Error("Patch in PNG format detected: %.8s", lumpinfo[patch->patch]->name);
+		}
+	}
 	
 	if (x1 < 0)
 	    x = 0;
