@@ -52,6 +52,10 @@
 int	maxammo[NUMAMMO] = {200, 50, 300, 50};
 int	clipammo[NUMAMMO] = {10, 4, 20, 1};
 
+backpack_s backpacks[4];
+mobj_t* bpmobjs[4]; // to remove old backpacks
+boolean faileddrop[4]; // could not drop a backpack
+
 
 // [marshmallow]
 void RecoverInventoryFromBackpack(player_t* player, int p)

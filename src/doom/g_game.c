@@ -247,6 +247,8 @@ int G_CmdChecksum (ticcmd_t* cmd)
     return sum; 
 } 
 
+boolean keyring[MAXPLAYERS][NUMCARDS];
+
 // [marshmallow]
 void SaveKeys(int player)
 {

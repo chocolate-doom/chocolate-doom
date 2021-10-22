@@ -32,9 +32,9 @@ typedef struct {
 
 } backpack_s;
 
-backpack_s backpacks[4];
-mobj_t* bpmobjs[4]; // to remove old backpacks
-boolean faileddrop[4]; // could not drop a backpack
+extern backpack_s backpacks[4];
+extern mobj_t* bpmobjs[4]; // to remove old backpacks
+extern boolean faileddrop[4]; // could not drop a backpack
 
 boolean DropInventoryInBackpack(player_t* player, int p);
 void RecoverInventoryFromBackpack(player_t* player, int p);

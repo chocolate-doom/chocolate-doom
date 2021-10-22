@@ -24,8 +24,6 @@
 #include "d_event.h"
 #include "d_ticcmd.h"
 
-boolean keyring[MAXPLAYERS][NUMCARDS]; 
-
 
 //
 // GAME
