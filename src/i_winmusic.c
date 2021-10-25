@@ -421,7 +421,8 @@ void I_WIN_RegisterSong(char *filename)
 {
     int i;
     midi_file_t *file;
-    MIDIPROPTIMEDIV prop;
+    MIDIPROPTIMEDIV timediv;
+    MIDIPROPTEMPO tempo;
     MMRESULT mmr;
 
     file = MIDI_LoadFile(filename);
@@ -438,10 +439,21 @@ void I_WIN_RegisterSong(char *filename)
         channel_volume[i] = 100;
     }
 
-    prop.cbStruct = sizeof(MIDIPROPTIMEDIV);
-    prop.dwTimeDiv = MIDI_GetFileTimeDivision(file);
-    mmr = midiStreamProperty(hMidiStream, (LPBYTE)&prop,
+    timediv.cbStruct = sizeof(MIDIPROPTIMEDIV);
+    timediv.dwTimeDiv = MIDI_GetFileTimeDivision(file);
+    mmr = midiStreamProperty(hMidiStream, (LPBYTE)&timediv,
                              MIDIPROP_SET | MIDIPROP_TIMEDIV);
+    if (mmr != MMSYSERR_NOERROR)
+    {
+        MidiErrorMessageBox(mmr);
+        return;
+    }
+
+    // Set initial tempo.
+    tempo.cbStruct = sizeof(MIDIPROPTIMEDIV);
+    tempo.dwTempo = 500000; // 120 bmp
+    mmr = midiStreamProperty(hMidiStream, (LPBYTE)&tempo,
+                             MIDIPROP_SET | MIDIPROP_TEMPO);
     if (mmr != MMSYSERR_NOERROR)
     {
         MidiErrorMessageBox(mmr);
