@@ -14,6 +14,8 @@
 // DESCRIPTION:
 //      Windows native MIDI
 
+#ifdef _WIN32
+
 #ifndef __I_WINMUSIC__
 #define __I_WINMUSIC__
 
@@ -28,5 +30,7 @@ void I_WIN_UnRegisterSong(void);
 void I_WIN_ShutdownMusic(void);
 
 extern boolean win_midi_stream_opened;
+
+#endif
 
 #endif
