@@ -290,7 +290,7 @@ static void I_SDL_PlaySong(void *handle, boolean looping)
         return;
     }
 
-    if (handle == NULL && !win_midi_stream_opened)
+    if (handle == NULL)
     {
         return;
     }
