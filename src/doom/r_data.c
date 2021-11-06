@@ -1064,6 +1064,17 @@ static const int tran_filter_pct = 66;
 
 static void R_InitTranMap()
 {
+    int lump = W_CheckNumForName("TRANMAP");
+
+    // If a tranlucency filter map lump is present, use it
+    if (lump != -1 && W_LumpLength(lump) == 256*256)
+    {
+        // Set a pointer to the translucency filter maps.
+        tranmap = W_CacheLumpNum(lump, PU_STATIC);
+        // [crispy] loaded from a lump
+        printf(":");
+    }
+    else
     {
 	// Compose a default transparent filter map based on PLAYPAL.
 	unsigned char *playpal = W_CacheLumpName("PLAYPAL", PU_STATIC);
