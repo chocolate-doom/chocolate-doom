@@ -692,6 +692,15 @@ P_TouchSpecialThing
 	sound = sfx_wpnup;	
 	break;
 		
+	// [NS] Beta pickups.
+      case SPR_BON3:
+	player->message = DEH_String(BETA_BONUS3);
+	break;
+
+      case SPR_BON4:
+	player->message = DEH_String(BETA_BONUS4);
+	break;
+
       default:
 	I_Error ("P_SpecialThing: Unknown gettable thing");
     }

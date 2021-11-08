@@ -97,6 +97,9 @@ static const bex_string_t bex_stringtable[] = {
     {"GOTPLASMA", GOTPLASMA},
     {"GOTSHOTGUN", GOTSHOTGUN},
     {"GOTSHOTGUN2", GOTSHOTGUN2},
+    // [NS] Beta pickups.
+    {"BETA_BONUS3", BETA_BONUS3},
+    {"BETA_BONUS4", BETA_BONUS4},
     // part 3 - messages when keys are needed
     {"PD_BLUEO", PD_BLUEO},
     {"PD_REDO", PD_REDO},
