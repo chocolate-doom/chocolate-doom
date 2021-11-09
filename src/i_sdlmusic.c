@@ -53,6 +53,8 @@ static boolean music_initialized = false;
 
 static boolean sdl_was_initialized = false;
 
+static boolean win_midi_stream_opened = false;
+
 static boolean musicpaused = false;
 static int current_music_volume;
 
@@ -157,6 +159,7 @@ static void I_SDL_ShutdownMusic(void)
         if (win_midi_stream_opened)
         {
             I_WIN_ShutdownMusic();
+            win_midi_stream_opened = false;
         }
 #endif
         Mix_HaltMusic();
@@ -238,7 +241,7 @@ static boolean I_SDL_InitMusic(void)
     // Don't enable it for GUS, since it handles its own volume just fine.
     if (snd_musicdevice != SNDDEVICE_GUS)
     {
-        I_WIN_InitMusic();
+        win_midi_stream_opened = I_WIN_InitMusic();
     }
 #endif
 
@@ -290,7 +293,7 @@ static void I_SDL_PlaySong(void *handle, boolean looping)
         return;
     }
 
-    if (handle == NULL)
+    if (handle == NULL && !win_midi_stream_opened)
     {
         return;
     }

@@ -29,8 +29,6 @@ void I_WIN_RegisterSong(char* filename);
 void I_WIN_UnRegisterSong(void);
 void I_WIN_ShutdownMusic(void);
 
-extern boolean win_midi_stream_opened;
-
 #endif
 
 #endif

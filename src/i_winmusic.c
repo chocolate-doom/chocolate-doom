@@ -25,12 +25,6 @@
 #include "m_misc.h"
 #include "midifile.h"
 
-// Public data
-
-boolean win_midi_stream_opened = false;
-
-// Private data
-
 static HMIDISTRM hMidiStream;
 static HANDLE hBufferReturnEvent;
 static HANDLE hExitEvent;
@@ -352,7 +346,6 @@ boolean I_WIN_InitMusic(void)
     hBufferReturnEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
     hExitEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
 
-    win_midi_stream_opened = true;
     return true;
 }
 
@@ -505,8 +498,6 @@ void I_WIN_ShutdownMusic(void)
 
     CloseHandle(hBufferReturnEvent);
     CloseHandle(hExitEvent);
-
-    win_midi_stream_opened = false;
 }
 
 #endif
