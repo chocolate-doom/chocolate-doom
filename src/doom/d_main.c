@@ -548,10 +548,11 @@ void D_AdvanceDemo (void)
 
 
 //
-// This cycles through the demo sequences.
-// FIXME - version dependend demo numbers?
+// Gibbon - This just displays the title screen now and cycles the music
+// Demo playback removed as it was very annoying when you're in the menu
+// it halts input for 2 seconds while it loads the demo.
 //
-void D_DoAdvanceDemo (void)
+void D_DoAdvanceDemo(void)
 {
     players[consoleplayer].playerstate = PST_LIVE;  // not reborn
     advancedemo = false;
@@ -576,52 +577,16 @@ void D_DoAdvanceDemo (void)
     switch (demosequence)
     {
       case 0:
-	if ( gamemode == commercial )
+	if (gamemode == commercial)
 	    pagetic = TICRATE * 11;
 	else
 	    pagetic = 170;
 	gamestate = GS_DEMOSCREEN;
 	pagename = DEH_String("TITLEPIC");
-	if ( gamemode == commercial )
+	if (gamemode == commercial)
 	  S_StartMusic(mus_dm2ttl);
 	else
 	  S_StartMusic (mus_intro);
-	break;
-      case 1:
-	G_DeferedPlayDemo(DEH_String("demo1"));
-	break;
-      case 2:
-	pagetic = 200;
-	gamestate = GS_DEMOSCREEN;
-	pagename = DEH_String("CREDIT");
-	break;
-      case 3:
-	G_DeferedPlayDemo(DEH_String("demo2"));
-	break;
-      case 4:
-	gamestate = GS_DEMOSCREEN;
-	if ( gamemode == commercial)
-	{
-	    pagetic = TICRATE * 11;
-	    pagename = DEH_String("TITLEPIC");
-	    S_StartMusic(mus_dm2ttl);
-	}
-	else
-	{
-	    pagetic = 200;
-
-	    if (gameversion >= exe_ultimate)
-	      pagename = DEH_String("CREDIT");
-	    else
-	      pagename = DEH_String("HELP2");
-	}
-	break;
-      case 5:
-	G_DeferedPlayDemo(DEH_String("demo3"));
-	break;
-        // THE DEFINITIVE DOOM Special Edition demo
-      case 6:
-	G_DeferedPlayDemo(DEH_String("demo4"));
 	break;
     }
 
