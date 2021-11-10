@@ -585,6 +585,14 @@ void R_StoreWallRange(int start, int stop)
         && frontsector->ceilingpic != skyflatnum)
         markceiling = false;    // below view plane
 
+  // The original code compared values after shifting them right.
+  // The code above here makes judgements based on the comparison before shifting.
+  // In some cases (see: hexen floor waggles when the texture visibility is ~0),
+  //   the discrepancy would cause textures to be drawn with the wrong height.
+  {
+    boolean low_greater_than_bottom = (worldlow > worldbottom);
+    boolean high_less_than_top = (worldhigh < worldtop);
+
 //
 // calculate incremental stepping values for texture edges
 //
@@ -602,17 +610,18 @@ void R_StoreWallRange(int start, int stop)
         worldhigh >>= 4;
         worldlow >>= 4;
 
-        if (worldhigh < worldtop)
+        if (high_less_than_top)
         {
             pixhigh = (centeryfrac >> 4) - FixedMul(worldhigh, rw_scale);
             pixhighstep = -FixedMul(rw_scalestep, worldhigh);
         }
-        if (worldlow > worldbottom)
+        if (low_greater_than_bottom)
         {
             pixlow = (centeryfrac >> 4) - FixedMul(worldlow, rw_scale);
             pixlowstep = -FixedMul(rw_scalestep, worldlow);
         }
     }
+  }
 
 //
 // render it
