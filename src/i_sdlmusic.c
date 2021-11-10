@@ -25,7 +25,7 @@
 #include "SDL.h"
 #include "SDL_mixer.h"
 
-#include "i_midipipe.h"
+#include "i_winmusic.h"
 
 #include "config.h"
 #include "doomtype.h"
@@ -52,6 +52,8 @@ static boolean music_initialized = false;
 // responsibility to shut it down
 
 static boolean sdl_was_initialized = false;
+
+static boolean win_midi_stream_opened = false;
 
 static boolean musicpaused = false;
 static int current_music_volume;
@@ -154,7 +156,11 @@ static void I_SDL_ShutdownMusic(void)
     if (music_initialized)
     {
 #if defined(_WIN32)
-        I_MidiPipe_ShutdownServer();
+        if (win_midi_stream_opened)
+        {
+            I_WIN_ShutdownMusic();
+            win_midi_stream_opened = false;
+        }
 #endif
         Mix_HaltMusic();
         music_initialized = false;
@@ -232,11 +238,10 @@ static boolean I_SDL_InitMusic(void)
     }
 
 #if defined(_WIN32)
-    // [AM] Start up midiproc to handle playing MIDI music.
     // Don't enable it for GUS, since it handles its own volume just fine.
     if (snd_musicdevice != SNDDEVICE_GUS)
     {
-        I_MidiPipe_InitServer();
+        win_midi_stream_opened = I_WIN_InitMusic();
     }
 #endif
 
@@ -262,7 +267,7 @@ static void UpdateMusicVolume(void)
     }
 
 #if defined(_WIN32)
-    I_MidiPipe_SetVolume(vol);
+    I_WIN_SetMusicVolume(vol);
 #endif
     Mix_VolumeMusic(vol);
 }
@@ -288,7 +293,7 @@ static void I_SDL_PlaySong(void *handle, boolean looping)
         return;
     }
 
-    if (handle == NULL && !midi_server_registered)
+    if (handle == NULL && !win_midi_stream_opened)
     {
         return;
     }
@@ -303,9 +308,9 @@ static void I_SDL_PlaySong(void *handle, boolean looping)
     }
 
 #if defined(_WIN32)
-    if (midi_server_registered)
+    if (win_midi_stream_opened)
     {
-        I_MidiPipe_PlaySong(loops);
+        I_WIN_PlaySong(looping);
     }
     else
 #endif
@@ -346,9 +351,9 @@ static void I_SDL_StopSong(void)
     }
 
 #if defined(_WIN32)
-    if (midi_server_registered)
+    if (win_midi_stream_opened)
     {
-        I_MidiPipe_StopSong();
+        I_WIN_StopSong();
     }
     else
 #endif
@@ -367,9 +372,9 @@ static void I_SDL_UnRegisterSong(void *handle)
     }
 
 #if defined(_WIN32)
-    if (midi_server_registered)
+    if (win_midi_stream_opened)
     {
-        I_MidiPipe_UnregisterSong();
+        I_WIN_UnRegisterSong();
     }
     else
 #endif
@@ -445,16 +450,12 @@ static void *I_SDL_RegisterSong(void *data, int len)
     // we have to generate a temporary file.
 
 #if defined(_WIN32)
-    // [AM] If we do not have an external music command defined, play
-    //      music with the MIDI server.
-    if (midi_server_initialized)
+    // If we do not have an external music command defined, play
+    // music with the Windows native MIDI.
+    if (win_midi_stream_opened)
     {
         music = NULL;
-        if (!I_MidiPipe_RegisterSong(filename))
-        {
-            fprintf(stderr, "Error loading midi: %s\n",
-                "Could not communicate with midiproc.");
-        }
+        I_WIN_RegisterSong(filename);
     }
     else
 #endif
