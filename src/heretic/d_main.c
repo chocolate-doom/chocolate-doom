@@ -335,47 +335,10 @@ void D_DoAdvanceDemo(void)
     switch (demosequence)
     {
         case 0:
-            pagetic = 210;
+            pagetic = 99999;
             gamestate = GS_DEMOSCREEN;
             pagename = DEH_String("TITLE");
             S_StartSong(mus_titl, false);
-            break;
-        case 1:
-            pagetic = 140;
-            gamestate = GS_DEMOSCREEN;
-            pagename = DEH_String("TITLE");
-            break;
-        case 2:
-            BorderNeedRefresh = true;
-            UpdateState |= I_FULLSCRN;
-            G_DeferedPlayDemo(DEH_String("demo1"));
-            break;
-        case 3:
-            pagetic = 200;
-            gamestate = GS_DEMOSCREEN;
-            pagename = DEH_String("CREDIT");
-            break;
-        case 4:
-            BorderNeedRefresh = true;
-            UpdateState |= I_FULLSCRN;
-            G_DeferedPlayDemo(DEH_String("demo2"));
-            break;
-        case 5:
-            pagetic = 200;
-            gamestate = GS_DEMOSCREEN;
-            if (gamemode == shareware)
-            {
-                pagename = DEH_String("ORDER");
-            }
-            else
-            {
-                pagename = DEH_String("CREDIT");
-            }
-            break;
-        case 6:
-            BorderNeedRefresh = true;
-            UpdateState |= I_FULLSCRN;
-            G_DeferedPlayDemo(DEH_String("demo3"));
             break;
     }
 }
