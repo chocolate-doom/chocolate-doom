@@ -1047,14 +1047,6 @@ void P_SpawnMapThing (mapthing_t* mthing)
 	mobj->health = 1000 + musid;
     }
 
-    // [crispy] randomly colorize space marine corpse objects
-    if (!netgame && crispy->coloredblood &&
-        (mobj->info->spawnstate == S_PLAY_DIE7 ||
-        mobj->info->spawnstate == S_PLAY_XDIE9))
-    {
-	mobj->flags |= (Crispy_Random() & 3) << MF_TRANSSHIFT;
-    }
-
     // [crispy] blinking key or skull in the status bar
     if (mobj->sprite == SPR_BSKU)
 	st_keyorskull[it_bluecard] = 3;
