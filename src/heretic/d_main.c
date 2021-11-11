@@ -1093,7 +1093,7 @@ void D_DoomMain(void)
     IncThermo();
 
 //
-// start the apropriate game based on parms
+// start the appropriate game based on params
 //
 
     D_CheckRecordFrom();

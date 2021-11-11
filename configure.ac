@@ -3,7 +3,7 @@ AC_INIT(Chocolate Doom, 3.0.0,
 
 PACKAGE_SHORTNAME=${PACKAGE_NAME% Doom}
 PACKAGE_SHORTDESC="Conservative source port"
-PACKAGE_COPYRIGHT="Copyright (C) 1993-2020"
+PACKAGE_COPYRIGHT="Copyright (C) 1993-2021"
 PACKAGE_LICENSE="GNU General Public License, version 2"
 PACKAGE_MAINTAINER="Simon Howard"
 PACKAGE_URL="https://www.chocolate-doom.org/"
@@ -18,7 +18,7 @@ orig_CFLAGS="$CFLAGS"
 AM_PROG_AR
 AC_PROG_CC
 AC_PROG_RANLIB
-AC_CHECK_PROG(HAVE_PYTHON, python, true, false)
+AC_CHECK_PROG(HAVE_PYTHON, python3, true, false)
 
 OPT_LEVEL=2
 
@@ -119,6 +119,13 @@ AS_IF([test "x$with_libpng" != xno], [
 # Use the specific library CFLAGS/LIBS variables instead of setting them here.
 CFLAGS="$CFLAGS $SDL_CFLAGS ${SAMPLERATE_CFLAGS:-} ${PNG_CFLAGS:-}"
 LDFLAGS="$LDFLAGS $SDL_LIBS ${SAMPLERATE_LIBS:-} ${PNG_LIBS:-}"
+case "$host" in
+  *-*-mingw* | *-*-cygwin* | *-*-msvc* )
+    LDFLAGS="$LDFLAGS -lwinmm"
+    ;;
+  *)
+esac
+
 AC_CHECK_LIB(m, log)
 
 AC_CHECK_HEADERS([dirent.h linux/kd.h dev/isa/spkrio.h dev/speaker/speaker.h])
@@ -204,7 +211,6 @@ man/bash-completion/doom.template
 man/bash-completion/heretic.template
 man/bash-completion/hexen.template
 man/bash-completion/strife.template
-midiproc/Makefile
 opl/Makefile
 opl/examples/Makefile
 pcsound/Makefile

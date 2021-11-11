@@ -72,10 +72,10 @@ boolean D_IsIWADName(const char *name)
 #define MAX_IWAD_DIRS 128
 
 static boolean iwad_dirs_built = false;
-static char *iwad_dirs[MAX_IWAD_DIRS];
+static const char *iwad_dirs[MAX_IWAD_DIRS];
 static int num_iwad_dirs = 0;
 
-static void AddIWADDir(char *dir)
+static void AddIWADDir(const char *dir)
 {
     if (num_iwad_dirs < MAX_IWAD_DIRS)
     {
@@ -206,6 +206,30 @@ static registry_value_t root_path_keys[] =
     {
         HKEY_LOCAL_MACHINE,
         SOFTWARE_KEY "\\GOG.com\\Games\\1432899949",
+        "PATH",
+    },
+
+    // Heretic
+
+    {
+        HKEY_LOCAL_MACHINE,
+        SOFTWARE_KEY "\\GOG.com\\Games\\1290366318",
+        "PATH",
+    },
+
+    // Hexen
+
+    {
+        HKEY_LOCAL_MACHINE,
+        SOFTWARE_KEY "\\GOG.com\\Games\\1247951670",
+        "PATH",
+    },
+
+    // Hexen: Deathkings of a Dark Citadel
+
+    {
+        HKEY_LOCAL_MACHINE,
+        SOFTWARE_KEY "\\GOG.com\\Games\\1983497091",
         "PATH",
     },
 };
@@ -610,7 +634,8 @@ static void AddIWADPath(const char *path, const char *suffix)
 // <http://standards.freedesktop.org/basedir-spec/basedir-spec-latest.html>
 static void AddXdgDirs(void)
 {
-    char *env, *tmp_env;
+    const char *env;
+    char *tmp_env;
 
     // Quote:
     // > $XDG_DATA_HOME defines the base directory relative to which
@@ -673,7 +698,8 @@ static void AddXdgDirs(void)
 // about everyone.
 static void AddSteamDirs(void)
 {
-    char *homedir, *steampath;
+    const char *homedir;
+    char *steampath;
 
     homedir = getenv("HOME");
     if (homedir == NULL)

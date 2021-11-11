@@ -26,7 +26,6 @@
 #include "SDL_mixer.h"
 
 #include "i_glob.h"
-#include "i_midipipe.h"
 
 #include "config.h"
 #include "doomtype.h"
@@ -933,7 +932,7 @@ static void LoadSubstituteConfigs(void)
     {
         musicdir = M_StringJoin(music_pack_path, DIR_SEPARATOR_S, NULL);
     }
-    else if (!strcmp(configdir, ""))
+    else if (!strcmp(configdir, exedir))
     {
         musicdir = M_StringDuplicate("");
     }

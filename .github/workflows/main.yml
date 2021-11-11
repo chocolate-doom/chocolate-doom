@@ -1,0 +1,44 @@
+name: Chocolate Doom
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+
+    strategy:
+      matrix:
+        compiler: [clang, gcc]
+
+    steps:
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install libpng-dev libsamplerate0-dev libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-net-dev
+
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      - name: Make
+        env:
+          CC: ${{ matrix.compiler }}
+        run: $GITHUB_WORKSPACE/.travis.sh
+
+  cppcheck:
+    runs-on: ubuntu-18.04
+
+    steps:
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install cppcheck
+
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      - name: Run cppcheck
+        env:
+          ANALYZE: true
+        run: $GITHUB_WORKSPACE/.travis.sh

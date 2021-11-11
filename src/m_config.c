@@ -929,6 +929,12 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_STRING(music_pack_path),
 
     //!
+    // Full path to a soundfont file to use with FluidSynth MIDI playback.
+    //
+
+    CONFIG_VARIABLE_STRING(fluidsynth_sf_path),
+
+    //!
     // Full path to a Timidity configuration file to use for MIDI
     // playback. The file will be evaluated from the directory where
     // it is evaluated, so there is no need to add "dir" commands
@@ -1031,6 +1037,18 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_INT(mouseb_straferight),
+
+    //!
+    // Mouse button to turn left.
+    //
+
+    CONFIG_VARIABLE_INT(mouseb_turnleft),
+
+    //!
+    // Mouse button to turn right.
+    //
+
+    CONFIG_VARIABLE_INT(mouseb_turnright),
 
     //!
     // Mouse button to "use" an object, eg. a door or switch.
@@ -2291,7 +2309,7 @@ static char *GetDefaultConfigDir(void)
         return copy;
     }
 #endif /* #ifndef _WIN32 */
-    return M_StringDuplicate("");
+    return M_StringDuplicate(exedir);
 }
 
 // 
@@ -2314,7 +2332,7 @@ void M_SetConfigDir(const char *dir)
         configdir = GetDefaultConfigDir();
     }
 
-    if (strcmp(configdir, "") != 0)
+    if (strcmp(configdir, exedir) != 0)
     {
         printf("Using %s for configuration and saves\n", configdir);
     }
@@ -2406,7 +2424,7 @@ char *M_GetSaveGameDir(const char *iwadname)
 #endif
     // If not "doing" a configuration directory (Windows), don't "do"
     // a savegame directory, either.
-    else if (!strcmp(configdir, ""))
+    else if (!strcmp(configdir, exedir))
     {
 	savegamedir = M_StringDuplicate("");
     }
