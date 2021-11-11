@@ -25,7 +25,7 @@ boolean I_WIN_InitMusic(void);
 void I_WIN_PlaySong(boolean looping);
 void I_WIN_StopSong(void);
 void I_WIN_SetMusicVolume(int volume);
-void I_WIN_RegisterSong(char* filename);
+boolean I_WIN_RegisterSong(char* filename);
 void I_WIN_UnRegisterSong(void);
 void I_WIN_ShutdownMusic(void);
 

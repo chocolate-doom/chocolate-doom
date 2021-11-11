@@ -411,7 +411,7 @@ void I_WIN_PlaySong(boolean looping)
     }
 }
 
-void I_WIN_RegisterSong(char *filename)
+boolean I_WIN_RegisterSong(char *filename)
 {
     int i;
     midi_file_t *file;
@@ -424,7 +424,7 @@ void I_WIN_RegisterSong(char *filename)
     if (file == NULL)
     {
         fprintf(stderr, "I_WIN_RegisterSong: Failed to load MID.\n");
-        return;
+        return false;
     }
 
     // Initialize channels volume.
@@ -440,7 +440,7 @@ void I_WIN_RegisterSong(char *filename)
     if (mmr != MMSYSERR_NOERROR)
     {
         MidiErrorMessageBox(mmr);
-        return;
+        return false;
     }
 
     // Set initial tempo.
@@ -451,7 +451,7 @@ void I_WIN_RegisterSong(char *filename)
     if (mmr != MMSYSERR_NOERROR)
     {
         MidiErrorMessageBox(mmr);
-        return;
+        return false;
     }
 
     MIDItoStream(file);
@@ -463,6 +463,8 @@ void I_WIN_RegisterSong(char *filename)
 
     FillBuffer();
     StreamOut();
+
+    return true;
 }
 
 void I_WIN_UnRegisterSong(void)

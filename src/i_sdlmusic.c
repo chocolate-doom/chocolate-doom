@@ -454,8 +454,15 @@ static void *I_SDL_RegisterSong(void *data, int len)
     // music with the Windows native MIDI.
     if (win_midi_stream_opened)
     {
-        music = NULL;
-        I_WIN_RegisterSong(filename);
+        if (I_WIN_RegisterSong(filename))
+        {
+            music = (void *) 1;
+        }
+        else
+        {
+            music = NULL;
+            fprintf(stderr, "Error loading midi: Failed to register song.\n");
+        }
     }
     else
 #endif
