@@ -42,9 +42,6 @@ staging-%:
 	LC_ALL=C ./cp-with-libs --ldflags="$(LDFLAGS)" \
 	               $(TOPLEVEL)/src/$(PROGRAM_PREFIX)setup.exe \
 	               $@/$(PROGRAM_PREFIX)$*-setup.exe
-	LC_ALL=C ./cp-with-libs --ldflags="$(LDFLAGS)" \
-	               $(TOPLEVEL)/midiproc/$(PROGRAM_PREFIX)midiproc.exe \
-	               $@/$(PROGRAM_PREFIX)midiproc.exe
 
 	$(STRIP) $@/*.exe $@/*.dll
 

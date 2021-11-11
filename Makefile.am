@@ -46,7 +46,7 @@ doomdocs_DATA = $(DOC_FILES) NOT-BUGS.md
 
 MAINTAINERCLEANFILES =  $(AUX_DIST_GEN)
 
-SUBDIRS=textscreen midiproc opl pcsound data src man
+SUBDIRS=textscreen opl pcsound data src man
 
 DIST_SUBDIRS=pkg $(SUBDIRS)
 

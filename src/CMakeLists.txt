@@ -55,7 +55,6 @@ set(GAME_SOURCE_FILES
     i_input.c           i_input.h
     i_joystick.c        i_joystick.h
                         i_swap.h
-    i_midipipe.c        i_midipipe.h
     i_musicpack.c
     i_oplmusic.c
     i_pcsound.c
@@ -65,6 +64,7 @@ set(GAME_SOURCE_FILES
     i_timer.c           i_timer.h
     i_video.c           i_video.h
     i_videohr.c         i_videohr.h
+    i_winmusic.c        i_winmusic.h
     midifile.c          midifile.h
     mus2mid.c           mus2mid.h
     m_bbox.c            m_bbox.h
@@ -130,6 +130,9 @@ if(SAMPLERATE_FOUND)
 endif()
 if(PNG_FOUND)
     list(APPEND EXTRA_LIBS PNG::PNG)
+endif()
+if(WIN32)
+	list(APPEND EXTRA_LIBS winmm)
 endif()
 
 if(WIN32)
