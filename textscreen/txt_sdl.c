@@ -226,8 +226,7 @@ static void ChooseFont(void)
 // Returns 1 if successful, 0 if an error occurred
 //
 
-void TXT_PreInit(SDL_Window *preset_window,
-                 SDL_Renderer *preset_renderer)
+void TXT_PreInit(SDL_Window *preset_window, SDL_Renderer *preset_renderer)
 {
     if (preset_window != NULL && preset_renderer != NULL)
     {
@@ -267,11 +266,19 @@ int TXT_Init(void)
         return 0;
 
     // Destroy the existing renderer, so we can create our own new one
+
     if (renderer != NULL)
     {
         SDL_DestroyRenderer(renderer);
     }
-    renderer = SDL_CreateRenderer(TXT_SDLWindow, -1, SDL_RENDERER_SOFTWARE);
+
+    renderer = SDL_CreateRenderer(TXT_SDLWindow, -1, SDL_RENDERER_PRESENTVSYNC);
+
+    if (renderer == NULL)
+        renderer = SDL_CreateRenderer(TXT_SDLWindow, -1, SDL_RENDERER_SOFTWARE);
+
+    if (renderer == NULL)
+        return 0;
 
     // Special handling for OS X retina display. If we successfully set the
     // highdpi flag, check the output size for the screen renderer. If we get
@@ -306,6 +313,9 @@ int TXT_Init(void)
                                         TXT_SCREEN_W * font->w,
                                         TXT_SCREEN_H * font->h,
                                         8, 0, 0, 0, 0);
+
+    // Set width and height of the logical viewport for automatic scaling.
+    SDL_RenderSetLogicalSize(renderer, screenbuffer->w, screenbuffer->h);
 
     SDL_LockSurface(screenbuffer);
     SDL_SetPaletteColors(screenbuffer->format->palette, ega_colors, 0, 16);
@@ -423,8 +433,9 @@ static void GetDestRect(SDL_Rect *rect)
     int w, h;
 
     SDL_GetRendererOutputSize(renderer, &w, &h);
-    rect->x = (w - screenbuffer->w) / 2;
-    rect->y = (h - screenbuffer->h) / 2;
+    // Set x and y to 0 due to SDL auto-centering.
+    rect->x = 0;
+    rect->y = 0;
     rect->w = screenbuffer->w;
     rect->h = screenbuffer->h;
 }
