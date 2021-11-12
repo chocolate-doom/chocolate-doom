@@ -185,7 +185,6 @@ static boolean SDLIsInitialized(void)
 // Initialize music subsystem
 static boolean I_SDL_InitMusic(void)
 {
-    boolean fluidsynth_sf_is_set = false;
     // If SDL_mixer is not initialized, we have to initialize it
     // and have the responsibility to shut it down later on.
 
@@ -227,15 +226,7 @@ static boolean I_SDL_InitMusic(void)
 
     if (strlen(fluidsynth_sf_path) > 0 && strlen(timidity_cfg_path) == 0)
     {
-        if (!M_FileExists(fluidsynth_sf_path))
-        {
-            fprintf(stderr, "Can't find Fluidsynth soundfont.\n");
-        }
-        else
-        {
-            Mix_SetSoundFonts(fluidsynth_sf_path);
-            fluidsynth_sf_is_set = true;
-        }
+        Mix_SetSoundFonts(fluidsynth_sf_path);
     }
 
     // If snd_musiccmd is set, we need to call Mix_SetMusicCMD to
@@ -249,7 +240,7 @@ static boolean I_SDL_InitMusic(void)
 #if defined(_WIN32)
     // Don't enable it for GUS or Fluidsynth, since they handle their own volume
     // just fine.
-    if (snd_musicdevice != SNDDEVICE_GUS && !fluidsynth_sf_is_set)
+    if (snd_musicdevice != SNDDEVICE_GUS && strlen(fluidsynth_sf_path) == 0)
     {
         win_midi_stream_opened = I_WIN_InitMusic();
     }
