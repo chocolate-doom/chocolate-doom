@@ -356,6 +356,11 @@ void I_WIN_SetMusicVolume(int volume)
 
   volume_factor = (float)volume / 127;
 
+  if (hMidiStream == NULL)
+  {
+      return;
+  }
+
   // Send MIDI controller events to adjust the volume.
   for (i = 0; i < MIDI_CHANNELS_PER_TRACK; ++i)
   {
