@@ -3,12 +3,12 @@ name: Chocolate Doom
 on:
   push:
     branches:
-      - "*"
+      - "master"
     paths-ignore:
       - "**.md"
   pull_request:
     branches:
-      - "*"
+      - "master"
   workflow_dispatch:
 
 jobs:
@@ -18,7 +18,7 @@ jobs:
     strategy:
       matrix:
         compiler: [clang, gcc]
-        os: [ubuntu-18.04, ubuntu-20.04]
+        os: [ubuntu-latest]
 
     steps:
       - name: Install dependencies
