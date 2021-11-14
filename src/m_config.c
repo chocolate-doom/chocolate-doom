@@ -1999,14 +1999,20 @@ static void SetVariable(default_t *def, const char *value)
             // locale's decimal separator before passing it to atof().
             struct lconv *lc = localeconv();
             char dec, *str;
-            int i;
+            int i = 0;
 
             dec = lc->decimal_point[0];
             str = M_StringDuplicate(value);
 
-            for (i = 0; str[i] != '\0'; i++)
+            // Skip sign indicators.
+            if (str[0] == '-' || str[0] == '+')
             {
-                if (!isdigit(str[i]) && str[i] != '-')
+                i = 1;
+            }
+
+            for ( ; str[i] != '\0'; i++)
+            {
+                if (!isdigit(str[i]))
                 {
                     str[i] = dec;
                     break;
