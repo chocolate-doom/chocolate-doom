@@ -30,6 +30,7 @@
 #include "doomstat.h"
 #include "a11y.h" // [crispy] A11Y
 
+#include "s_sound.h" // [NS] Jump sound etc.
 
 
 // Index of the special effects (INVUL inverse) map.
@@ -379,6 +380,8 @@ void P_PlayerThink (player_t* player)
             // [crispy] Hexen sets 9; Strife adds 8
             player->mo->momz = (7 + crispy->jump) * FRACUNIT;
             player->jumpTics = 18;
+            // [NS] Jump sound.
+            S_StartSoundOptional(player->mo, sfx_pljump, -1);
         }
     }
 
