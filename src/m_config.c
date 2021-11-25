@@ -951,7 +951,7 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(vanilla_demo_limit),
     
     //!
-    // @game doom
+    // @game doom heretic hexen strife
     //
     // If non-zero, static limits will be increased to those of Doom Plus. 
     // If this has a value of zero, use the limits from Vanilla. 
@@ -960,7 +960,7 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(doom_plus_plus_limits),
 	
     //!
-    // @game doom
+    // @game doom hexen
     //
     // Extra Gibbing. 
     //

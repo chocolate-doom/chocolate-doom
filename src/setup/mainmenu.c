@@ -88,6 +88,7 @@ static void SensibleDefaults(void)
     vanilla_keyboard_mapping = 0;
     vanilla_demo_limit = 0;
     doom_plus_plus_limits = 0;
+    sprinkled_gibbing = 0;
     graphical_startup = 0;
     show_endoom = 0;
     dclick_use = 0;

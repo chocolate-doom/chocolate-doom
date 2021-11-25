@@ -38,6 +38,7 @@
 
 #include "net_defs.h"
 
+extern int sprinkled_gibbing;
 
 // ------------------------
 // Command line parameters.

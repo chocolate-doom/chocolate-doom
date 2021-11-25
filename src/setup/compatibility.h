@@ -21,5 +21,6 @@ void BindCompatibilityVariables(void);
 extern int vanilla_savegame_limit;
 extern int vanilla_demo_limit;
 extern int doom_plus_plus_limits;
+extern int sprinkled_gibbing;
 
 #endif /* #ifndef SETUP_COMPATIBILITY_H */
