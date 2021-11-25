@@ -24,3 +24,4 @@
 #define DOOM_PLUS_PLUS_MAXOPENINGS_FACTOR	4
 
 extern int doom_plus_plus_limits;
+extern int sprinkled_gibbing;

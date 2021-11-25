@@ -958,6 +958,14 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_INT(doom_plus_plus_limits),
+	
+    //!
+    // @game doom
+    //
+    // Extra Gibbing. 
+    //
+
+    CONFIG_VARIABLE_INT(sprinkled_gibbing),
 
     //!
     // If non-zero, the game behaves like Vanilla Doom, always assuming

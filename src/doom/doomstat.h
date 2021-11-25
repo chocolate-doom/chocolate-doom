@@ -39,7 +39,6 @@
 #include "net_defs.h"
 
 
-
 // ------------------------
 // Command line parameters.
 //

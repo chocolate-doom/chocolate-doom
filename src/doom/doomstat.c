@@ -20,6 +20,7 @@
 
 #include "doomstat.h"
 
+int sprinkled_gibbing;
 
 // Game Mode - identify IWAD as shareware, retail etc.
 GameMode_t gamemode = indetermined;
