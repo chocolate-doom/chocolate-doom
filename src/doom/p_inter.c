@@ -739,8 +739,8 @@ P_KillMobj
 		}
 	}
 		// More Gibs
-		if (source && source->player && target->info->xdeathstate && !(demorecording || demoplayback)
-			|| (sprinkled_gibbing && ((source->player->readyweapon == wp_chainsaw
+		if ((sprinkled_gibbing && (source && source->player && target->info->xdeathstate && !(demorecording || demoplayback)
+			|| ((source->player->readyweapon == wp_chainsaw
 				&& P_SprinkledCheckDist(source, target, 65 * FRACUNIT, false))
 				|| (source->player->readyweapon == wp_supershotgun
 					&& P_SprinkledCheckDist(source, target, 96 * FRACUNIT, true))
@@ -753,6 +753,7 @@ P_KillMobj
 				|| (source->player->readyweapon == wp_chaingun
 					&& source->player->powers[pw_strength]
 					&& P_SprinkledCheckDist(source, target, 96 * FRACUNIT, true))
+					)
 				)
 			)
 		)
