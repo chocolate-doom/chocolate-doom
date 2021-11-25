@@ -1280,25 +1280,6 @@ mobj_t* ActiveMinotaur(player_t* master)
     return (NULL);
 }
 
-// [Nugget] Calculate distance between player and target,
-// used for Extra Gibbing and Chainsaw knockback fix
-boolean P_SprinkledCheckDist(mobj_t* source, mobj_t* target, fixed_t range, boolean addradius)
-{
-    fixed_t	dist;
-    fixed_t radius = 0;
-    fixed_t range2;
-
-    if (addradius) { radius = target->info->radius; }
-    range2 = range + radius;
-
-    dist = P_AproxDistance(target->x - source->x,
-        target->y - source->y);
-
-    if (dist > range2) { return false; }
-    else { return true; }
-}
-
-
 //---------------------------------------------------------------------------
 //
 // PROC P_KillMobj
@@ -2054,15 +2035,11 @@ void P_DamageMobj
             target->health = -5000;
         }
         if (sprinkled_gibbing && (source && (source->player)
-            && ((source->player->readyweapon == WP_FIRST
-                && P_SprinkledCheckDist(source, target, 96 * FRACUNIT, false))
-                || (source->player->readyweapon == WP_SECOND
-                    && P_SprinkledCheckDist(source, target, 96 * FRACUNIT, false))
-                || (source->player->readyweapon == WP_THIRD
-                    && P_SprinkledCheckDist(source, target, 96 * FRACUNIT, false))
-                )
+            && ((source->player->readyweapon == WP_FIRST)
+                || (source->player->readyweapon == WP_SECOND)
+                || (source->player->readyweapon == WP_THIRD))
             )
-            )
+        )
         {
             target->health = -5000;
         }
