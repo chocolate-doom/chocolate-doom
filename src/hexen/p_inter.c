@@ -24,6 +24,7 @@
 #include "dpplimits.h"
 
 int sprinkled_gibbing;
+extern boolean demorecording;
 
 #define BONUSADD 6
 
@@ -2034,7 +2035,7 @@ void P_DamageMobj
             // Always extreme death from fourth weapon
             target->health = -5000;
         }
-        if (sprinkled_gibbing && (source && (source->player)
+        if (sprinkled_gibbing && (source && (source->player) && (!demoplayback || demorecording)
             && ((source->player->readyweapon == WP_FIRST)
                 || (source->player->readyweapon == WP_SECOND)
                 || (source->player->readyweapon == WP_THIRD))
