@@ -667,24 +667,6 @@ P_TouchSpecialThing
 	S_StartSound (NULL, sound);
 }
 
-// [Nugget] Calculate distance between player and target,
-// used for Extra Gibbing and Chainsaw knockback fix
-boolean P_SprinkledCheckDist(mobj_t* source, mobj_t* target, fixed_t range, boolean addradius)
-{
-	fixed_t	dist;
-	fixed_t radius = 0;
-	fixed_t range2;
-
-	if (addradius) { radius = target->info->radius; }
-	range2 = range + radius;
-
-	dist = P_AproxDistance(target->x - source->x,
-		target->y - source->y);
-
-	if (dist > range2) { return false; }
-	else { return true; }
-}
-
 //
 // KillMobj
 //
@@ -738,25 +720,8 @@ P_KillMobj
 			AM_Stop();
 		}
 	}
-		// More Gibs
-		if ((sprinkled_gibbing && (source && source->player && target->info->xdeathstate && !(demorecording || demoplayback)
-			|| ((source->player->readyweapon == wp_chainsaw
-				&& P_SprinkledCheckDist(source, target, 65 * FRACUNIT, false))
-				|| (source->player->readyweapon == wp_supershotgun
-					&& P_SprinkledCheckDist(source, target, 96 * FRACUNIT, true))
-				|| (source->player->readyweapon == wp_fist
-					&& source->player->powers[pw_strength]
-					&& P_SprinkledCheckDist(source, target, 64 * FRACUNIT, false))
-				|| (source->player->readyweapon == wp_plasma
-					&& source->player->powers[pw_strength]
-					&& P_SprinkledCheckDist(source, target, 128 * FRACUNIT, true))
-				|| (source->player->readyweapon == wp_chaingun
-					&& source->player->powers[pw_strength]
-					&& P_SprinkledCheckDist(source, target, 96 * FRACUNIT, true))
-					)
-				)
-			)
-		)
+    // More Gibs
+    if((sprinkled_gibbing && source && source->player && target->info->xdeathstate && (!demoplayback || demorecording)))
 		{
 			P_SetMobjState(target, target->info->xdeathstate);
 		}
