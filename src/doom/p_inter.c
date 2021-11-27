@@ -721,7 +721,7 @@ P_KillMobj
 		}
 	}
     // More Gibs
-    if((sprinkled_gibbing && source && source->player && target->info->xdeathstate && (!demoplayback || demorecording)))
+    if((sprinkled_gibbing && source && source->player && target->info->xdeathstate && !(demoplayback || demorecording)))
 		{
 			P_SetMobjState(target, target->info->xdeathstate);
 		}
