@@ -352,21 +352,21 @@ boolean I_WIN_InitMusic(void)
 
 void I_WIN_SetMusicVolume(int volume)
 {
-  int i;
+    int i;
 
-  volume_factor = (float)volume / 127;
+    volume_factor = (float)volume / 127;
 
-  // Send MIDI controller events to adjust the volume.
-  for (i = 0; i < MIDI_CHANNELS_PER_TRACK; ++i)
-  {
-    int value = channel_volume[i] * volume_factor;
+    // Send MIDI controller events to adjust the volume.
+    for (i = 0; i < MIDI_CHANNELS_PER_TRACK; ++i)
+    {
+        int value = channel_volume[i] * volume_factor;
 
-    DWORD msg = MIDI_EVENT_CONTROLLER | i |
-                (MIDI_CONTROLLER_MAIN_VOLUME << 8) |
-                (value << 16);
+        DWORD msg = MIDI_EVENT_CONTROLLER | i |
+                    (MIDI_CONTROLLER_MAIN_VOLUME << 8) |
+                    (value << 16);
 
-    midiOutShortMsg((HMIDIOUT)hMidiStream, msg);
-  }
+        midiOutShortMsg((HMIDIOUT)hMidiStream, msg);
+    }
 }
 
 void I_WIN_StopSong(void)
