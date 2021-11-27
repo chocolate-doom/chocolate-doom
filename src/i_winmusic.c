@@ -259,6 +259,7 @@ static void MIDItoStream(midi_file_t *file)
 
         if (!MIDI_GetNextEvent(tracks[idx].iter, &event))
         {
+            MIDI_FreeIterator(tracks[idx].iter);
             tracks[idx].iter = NULL;
             continue;
         }
