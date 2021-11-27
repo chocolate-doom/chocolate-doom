@@ -733,6 +733,8 @@ P_KillMobj
 		{
 			P_SetMobjState(target, target->info->deathstate);
 		}
+    
+    target->tics -= P_Random()&3;
 
     if (target->tics < 1)
 	target->tics = 1;
