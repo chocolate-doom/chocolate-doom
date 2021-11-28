@@ -43,7 +43,7 @@ void CompatibilitySettings(TXT_UNCAST_ARG(widget), void *user_data)
                                    &vanilla_demo_limit),
                    TXT_NewCheckBox("Doom-plus-plus limits",
                                    &doom_plus_plus_limits),
-				   TXT_NewCheckBox("Extra Gibbing",
+				   TXT_NewCheckBox("Insane Gibbing",
                                    &sprinkled_gibbing),
                    NULL);
 }
