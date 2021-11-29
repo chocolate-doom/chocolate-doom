@@ -637,6 +637,21 @@ unsigned int MIDI_NumTracks(midi_file_t *file)
     return file->num_tracks;
 }
 
+// Get the number of events in a MIDI file.
+
+unsigned int MIDI_NumEvents(midi_file_t *file)
+{
+    int i;
+    unsigned int num_events = 0;
+
+    for (i = 0; i < file->num_tracks; ++i)
+    {
+        num_events += file->tracks[i].num_events;
+    }
+
+    return num_events;
+}
+
 // Start iterating over the events in a track.
 
 midi_track_iter_t *MIDI_IterateTrack(midi_file_t *file, unsigned int track)
