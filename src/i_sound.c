@@ -23,6 +23,7 @@
 #include "config.h"
 #include "doomtype.h"
 
+#include "gusconf.h"
 #include "i_sound.h"
 #include "i_video.h"
 #include "m_argv.h"
@@ -66,6 +67,7 @@ static boolean music_packs_active = false;
 static music_module_t *active_music_module;
 
 // Sound modules
+extern void I_InitTimidityConfig(void);
 extern sound_module_t sound_sdl_module;
 extern sound_module_t sound_pcsound_module;
 extern music_module_t music_sdl_module;
@@ -80,6 +82,8 @@ extern int opl_io_port;
 // For native music module:
 
 extern char *music_pack_path;
+extern char *fluidsynth_sf_path;
+extern char *timidity_cfg_path;
 
 // DOS-specific options: These are unused but should be maintained
 // so that the config file can be shared between chocolate
@@ -231,6 +235,16 @@ void I_InitSound(boolean use_sfx_prefix)
 
     if (!nosound && !screensaver_mode)
     {
+        // This is kind of a hack. If native MIDI is enabled, set up
+         // the TIMIDITY_CFG environment variable here before SDL_mixer
+         // is opened.
+
+        if (!nomusic
+          && (snd_musicdevice == SNDDEVICE_GENMIDI
+           || snd_musicdevice == SNDDEVICE_GUS))
+        {
+            I_InitTimidityConfig();
+        }
 
         if (!nosfx)
         {
@@ -490,7 +504,10 @@ void I_BindSoundVariables(void)
     M_BindIntVariable("snd_pitchshift",          &snd_pitchshift);
 
     M_BindStringVariable("music_pack_path",      &music_pack_path);
-
+    M_BindStringVariable("fluidsynth_sf_path",   &fluidsynth_sf_path);
+    M_BindStringVariable("timidity_cfg_path",    &timidity_cfg_path);
+    M_BindStringVariable("gus_patch_path",       &gus_patch_path);
+    M_BindIntVariable("gus_ram_kb",              &gus_ram_kb);
     M_BindIntVariable("use_libsamplerate",       &use_libsamplerate);
     M_BindFloatVariable("libsamplerate_scale",   &libsamplerate_scale);
 }

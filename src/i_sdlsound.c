@@ -1132,6 +1132,7 @@ static snddevice_t sound_sdl_devices[] =
 {
     SNDDEVICE_SB,
     SNDDEVICE_PAS,
+    SNDDEVICE_GUS,
     SNDDEVICE_WAVEBLASTER,
     SNDDEVICE_SOUNDCANVAS,
     SNDDEVICE_AWE32,
