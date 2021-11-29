@@ -67,6 +67,7 @@ static boolean music_packs_active = false;
 static music_module_t *active_music_module;
 
 // Sound modules
+
 extern void I_InitTimidityConfig(void);
 extern sound_module_t sound_sdl_module;
 extern sound_module_t sound_pcsound_module;
@@ -236,12 +237,12 @@ void I_InitSound(boolean use_sfx_prefix)
     if (!nosound && !screensaver_mode)
     {
         // This is kind of a hack. If native MIDI is enabled, set up
-         // the TIMIDITY_CFG environment variable here before SDL_mixer
-         // is opened.
+        // the TIMIDITY_CFG environment variable here before SDL_mixer
+        // is opened.
 
         if (!nomusic
-          && (snd_musicdevice == SNDDEVICE_GENMIDI
-           || snd_musicdevice == SNDDEVICE_GUS))
+         && (snd_musicdevice == SNDDEVICE_GENMIDI
+          || snd_musicdevice == SNDDEVICE_GUS))
         {
             I_InitTimidityConfig();
         }
@@ -508,6 +509,7 @@ void I_BindSoundVariables(void)
     M_BindStringVariable("timidity_cfg_path",    &timidity_cfg_path);
     M_BindStringVariable("gus_patch_path",       &gus_patch_path);
     M_BindIntVariable("gus_ram_kb",              &gus_ram_kb);
+
     M_BindIntVariable("use_libsamplerate",       &use_libsamplerate);
     M_BindFloatVariable("libsamplerate_scale",   &libsamplerate_scale);
 }
