@@ -251,6 +251,24 @@ typedef enum
     sfx_dgpain,
     // [crispy] play DSSECRET if available
     sfx_secret,
+    // [NS] New optional sounds.
+    sfx_pljump,
+    sfx_plland,
+    sfx_locked,
+    sfx_keyup,
+    // [NS] Optional menu/intermission sounds.
+    sfx_mnuopn,
+    sfx_mnucls,
+    sfx_mnuact,
+    sfx_mnubak,
+    sfx_mnumov,
+    sfx_mnusli,
+    sfx_mnuerr,
+    sfx_inttic,
+    sfx_inttot,
+    sfx_intnex,
+    sfx_intnet,
+    sfx_intdms,
     NUMSFX
 } sfxenum_t;
 

@@ -77,6 +77,8 @@ void S_StopMusic(void);
 void S_PauseSound(void);
 void S_ResumeSound(void);
 
+// [NS] Optional sound effects.
+void S_StartSoundOptional(void *origin, int sound_id, int old_sound_id);
 
 //
 // Updates music & sounds

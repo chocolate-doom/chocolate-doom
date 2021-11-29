@@ -438,7 +438,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
             crstr[CR_GREEN],
             (joybspeed >= MAX_JOY_BUTTONS) ? "ON" : "OFF");
         player->message = playermessage;
-        S_StartSound(NULL, sfx_swtchn);
+        S_StartSoundOptional(NULL, sfx_mnusli, sfx_swtchn); // [NS] Optional menu sounds.
 
         gamekeydown[key_toggleautorun] = false;
     }
@@ -453,7 +453,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
             crstr[CR_GREEN],
             !novert ? "ON" : "OFF");
         player->message = playermessage;
-        S_StartSound(NULL, sfx_swtchn);
+        S_StartSoundOptional(NULL, sfx_mnusli, sfx_swtchn); // [NS] Optional menu sounds.
 
         gamekeydown[key_togglenovert] = false;
     }
@@ -999,7 +999,7 @@ boolean G_Responder (event_t* ev)
 	    M_StartControlPanel (); 
 	    // [crispy] play a sound if the menu is activated with a different key than ESC
 	    if (crispy->soundfix)
-		S_StartSound(NULL,sfx_swtchn);
+		S_StartSoundOptional(NULL, sfx_mnuopn, sfx_swtchn); // [NS] Optional menu sounds.
 	    return true; 
 	} 
 	return false; 

@@ -392,6 +392,11 @@ void P_ZMovement (mobj_t* mo)
 		if (mo->health > 0 || !crispy->soundfix)
 		{
 		S_StartSound (mo, sfx_oof);
+		    // [NS] Landing sound for longer falls. (Hexen's calculation.)
+		    if (mo->momz < -GRAVITY * 12)
+		    {
+		        S_StartSoundOptional(mo, sfx_plland, -1);
+		    }
 		}
 	    }
 	    mo->momz = 0;
