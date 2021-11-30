@@ -2005,9 +2005,9 @@ static void SetVariable(default_t *def, const char *value)
             str = M_StringDuplicate(value);
 
             // Skip sign indicators.
-            if (str[0] == '-' || str[0] == '+')
+            if (str[i] == '-' || str[i] == '+')
             {
-                i = 1;
+                i++;
             }
 
             for ( ; str[i] != '\0'; i++)
