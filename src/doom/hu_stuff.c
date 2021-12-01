@@ -46,10 +46,12 @@
 //
 // Locally used constants, shortcuts.
 //
-#define HU_TITLE	(mapnames[(gameepisode-1)*9+gamemap-1])
-#define HU_TITLE2	(mapnames_commercial[gamemap-1])
-#define HU_TITLEP	(mapnames_commercial[gamemap-1 + 32])
-#define HU_TITLET	(mapnames_commercial[gamemap-1 + 64])
+#define HU_TITLE    (mapnames[(gameepisode-1)*9+gamemap-1])
+#define HU_TITLE2    (mapnames_commercial[gamemap-1])
+#define HU_TITLEP    (mapnames_commercial[gamemap-1 + 32])
+#define HU_TITLET    (mapnames_commercial[gamemap-1 + 64])
+#define HU_TITLEN    (mapnames_commercial[gamemap-1 + 96 + 3])
+#define HU_TITLEM    (mapnames_commercial[gamemap-1 + 105 + 3])
 #define HU_TITLE_CHEX   (mapnames_chex[(gameepisode-1)*9+gamemap-1])
 #define HU_TITLEHEIGHT	1
 #define HU_TITLEX	0
@@ -436,6 +438,10 @@ void HU_Start(void)
          {
              s = "";
          }
+        if (is_nrftl)
+        {
+            s = HU_TITLEN;
+        }
 	 break;
       case pack_plut:
 	s = HU_TITLEP;

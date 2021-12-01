@@ -36,6 +36,7 @@ typedef enum
     hexen,           // Hexen
     strife,          // Strife
     sigil,           // Sigil
+    nrftl,           // NRFTL
 
     none
 } GameMission_t;
