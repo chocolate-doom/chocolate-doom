@@ -1540,7 +1540,7 @@ static void G_WriteLevelStat(void)
 {
     static FILE *fstream = NULL;
 
-    int i, playerKills = 0, playerItems = 0, playerSecrets = 0;
+    int i, playerKills = 0, playerItems = 0, playerSecrets = 0, playerType = 0;
 
     char levelString[8];
     char levelTimeString[TIMESTRSIZE];
@@ -1568,20 +1568,19 @@ static void G_WriteLevelStat(void)
     {
         *decimal = '\0';
     }
-
-    for (i = 0; i < MAXPLAYERS; i++)
+    for (i = 0; i < maxplayers; i++)
     {
         if (playeringame[i])
         {
             playerKills += players[i].killcount;
             playerItems += players[i].itemcount;
             playerSecrets += players[i].secretcount;
+            playerType += players[i].class = PlayerClass[i];
         }
     }
 
-    fprintf(fstream, "%s TIME: %s KILLS: %d ITEMS: %d SECRETS: %d\n",
-            levelString, levelTimeString, playerKills,
-            playerItems, playerSecrets);
+    fprintf(fstream, "%s TIME: %s\n",
+        levelString, levelTimeString);
 }
 
 //==========================================================================
