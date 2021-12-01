@@ -1524,6 +1524,13 @@ void G_DoCompleted (void)
         }
     }
     else
+        switch(gamemap)
+        {
+          case  9: wminfo.next = 4; break;
+          default: wminfo.next = gamemap;
+        }
+    }
+    else
     if ( gamemode == commercial)
     {
 	if (secretexit)
