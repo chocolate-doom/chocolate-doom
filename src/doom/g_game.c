@@ -1330,8 +1330,13 @@ static const int cpars[32] =
 static const int chexpars[6] =
 { 
     0,120,360,480,200,360
-}; 
- 
+};
+
+// [crispy] No Rest For The Living par times from the BFG Edition
+static const int npars[9] =
+{
+    75,105,120,105,210,105,165,105,135
+};
 
 //
 // G_DoCompleted 
@@ -1571,6 +1576,11 @@ void G_DoCompleted (void)
 
             wminfo.partime = TICRATE*cpars32;
         }
+        // [sprinkled] par times for NRFTL
+        if (is_nrftl)
+        {
+            wminfo.partime = TICRATE*npars[gamemap-1];
+        }
         else
         {
             wminfo.partime = TICRATE*cpars[gamemap-1];
@@ -1578,7 +1588,11 @@ void G_DoCompleted (void)
     }
     // Doom episode 4 doesn't have a par time, so this
     // overflows into the cpars array.
-    else if (gameepisode < 4)
+    else if (gameepisode < 4 ||
+        // [crispy] single player par times for episode 4
+        (gameepisode == 4 ||
+        // [crispy] par times for Sigil
+        gameepisode == 5))
     {
         if (gameversion == exe_chex && gameepisode == 1 && gamemap < 6)
         {

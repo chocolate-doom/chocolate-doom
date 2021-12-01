@@ -103,6 +103,9 @@ boolean         nomonsters;	// checkparm of -nomonsters
 boolean         respawnparm;	// checkparm of -respawn
 boolean         fastparm;	// checkparm of -fast
 
+// Adam - NRFTL
+int is_nrftl;
+
 // Adam - Sigil
 int is_sigil;
 
@@ -1723,6 +1726,14 @@ void D_DoomMain (void)
     {
 	startskill = myargv[p+1][0]-'1';
 	autostart = true;
+    }
+    
+    // NRFTL
+
+    p = M_CheckParm("-nrftl");
+    if (p)
+    {
+        is_nrftl = 1;
     }
 
     // Sigil
