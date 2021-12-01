@@ -1520,14 +1520,13 @@ void G_DoCompleted (void)
     if (secretexit)
         switch(gamemap)
         {
-          case  4: wminfo.next = 8; break;
+            case  4: wminfo.next = 8; break;
         }
-    }
     else
         switch(gamemap)
         {
-          case  9: wminfo.next = 4; break;
-          default: wminfo.next = gamemap;
+            case  9: wminfo.next = 4; break;
+            default: wminfo.next = gamemap;
         }
     }
     else
