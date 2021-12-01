@@ -66,13 +66,38 @@ typedef struct
     const char *text;
 } textscreen_t;
 
+typedef struct
+{
+    GameMission_t mission;
+    int episode, level;
+    const char *background;
+    const char *text;
+} textscreen_sigil_t;
+
+typedef struct
+{
+    GameMission_t mission;
+    int episode, level;
+    const char *background;
+    const char *text;
+} textscreen_nrftl_t;
+
+static textscreen_sigil_t textscreens_sigil[] =
+{
+    { doom,      3, 8,  "FLOOR7_2",  E5TEXT}, // [sprinkled] Sigil
+};
+
+static textscreen_nrftl_t textscreens_nrftl[] =
+{
+    { doom2,     1, 8,  "SLIME16",   N1TEXT}, // [sprinkled] NRFTL
+};
+
 static textscreen_t textscreens[] =
 {
     { doom,      1, 8,  "FLOOR4_8",  E1TEXT},
     { doom,      2, 8,  "SFLR6_1",   E2TEXT},
     { doom,      3, 8,  "MFLR8_4",   E3TEXT},
     { doom,      4, 8,  "MFLR8_3",   E4TEXT},
-    { doom,      5, 8,  "FLOOR7_2",  E5TEXT}, // [crispy] Sigil
 
     { doom2,     1, 6,  "SLIME16",   C1TEXT},
     { doom2,     1, 11, "RROCK14",   C2TEXT},
@@ -94,8 +119,6 @@ static textscreen_t textscreens[] =
     { pack_plut, 1, 30, "RROCK17",   P4TEXT},
     { pack_plut, 1, 15, "RROCK13",   P5TEXT},
     { pack_plut, 1, 31, "RROCK19",   P6TEXT},
-    
-    { nrftl,     1, 8,  "SLIME16",   N1TEXT},
 };
 
 const char *finaletext;
@@ -127,8 +150,42 @@ void F_StartFinale (void)
         S_ChangeMusic(mus_read_m, true);
     }
 
-    // Find the right screen and set the text and background
+    // [sprinkled] Sigil and NRFTL ending text screens
+    if (is_sigil)
+    {
+    // Find the right Sigil screen and set the text and background
+    for (i=0; i<arrlen(textscreens_sigil); ++i)
+    {
+        textscreen_sigil_t *screen = &textscreens_sigil[i];
 
+        if (logical_gamemission == screen->mission
+            && (logical_gamemission != doom || gameepisode == screen->episode)
+            && gamemap == screen->level)
+        {
+            finaletext = screen->text;
+            finaleflat = screen->background;
+        }
+    }
+    }
+    else
+    if (is_nrftl)
+    {
+    // Find the right NRFTL screen and set the text and background
+    for (i=0; i<arrlen(textscreens_nrftl); ++i)
+    {
+        textscreen_nrftl_t *screen = &textscreens_nrftl[i];
+
+        if (logical_gamemission == screen->mission
+            && (logical_gamemission != doom || gameepisode == screen->episode)
+            && gamemap == screen->level)
+        {
+            finaletext = screen->text;
+            finaleflat = screen->background;
+        }
+    }
+    }
+    else
+    // Find the right screen and set the text and background
     for (i=0; i<arrlen(textscreens); ++i)
     {
         textscreen_t *screen = &textscreens[i];
