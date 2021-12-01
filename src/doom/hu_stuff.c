@@ -47,6 +47,7 @@
 // Locally used constants, shortcuts.
 //
 #define HU_TITLE    (mapnames[(gameepisode-1)*9+gamemap-1])
+#define HU_TITLE_SIGIL   (mapnames_sigil[(gameepisode-3)*9+gamemap-1])
 #define HU_TITLE2    (mapnames_commercial[gamemap-1])
 #define HU_TITLEP    (mapnames_commercial[gamemap-1 + 32])
 #define HU_TITLET    (mapnames_commercial[gamemap-1 + 64])
@@ -144,7 +145,19 @@ const char *mapnames[] =    // DOOM shareware/registered/retail (Ultimate) names
     HUSTR_E4M8,
     HUSTR_E4M9,
 
-    // [crispy] Sigil
+    "NEWLEVEL",
+    "NEWLEVEL",
+    "NEWLEVEL",
+    "NEWLEVEL",
+    "NEWLEVEL",
+    "NEWLEVEL",
+    "NEWLEVEL",
+    "NEWLEVEL",
+    "NEWLEVEL"
+};
+
+const char *mapnames_sigil[] =  // Sigil
+{
     HUSTR_E5M1,
     HUSTR_E5M2,
     HUSTR_E5M3,
@@ -154,7 +167,7 @@ const char *mapnames[] =    // DOOM shareware/registered/retail (Ultimate) names
     HUSTR_E5M7,
     HUSTR_E5M8,
     HUSTR_E5M9,
-
+    
     "NEWLEVEL",
     "NEWLEVEL",
     "NEWLEVEL",
@@ -430,6 +443,10 @@ void HU_Start(void)
     {
       case doom:
 	s = HU_TITLE;
+        if (is_sigil)
+        {
+            s = HU_TITLE_SIGIL;
+        }
 	break;
       case doom2:
 	 s = HU_TITLE2;
