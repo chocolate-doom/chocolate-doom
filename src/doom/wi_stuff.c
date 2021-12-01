@@ -824,6 +824,9 @@ void WI_drawShowNextLoc(void)
 	if (snl_pointeron)
 	    WI_drawOnLnode(wbs->next, yah); 
     }
+    
+    if (is_nrftl && wbs->last == 7)
+        return;
 
     // draws which level you are entering..
     if ( (gamemode != commercial)

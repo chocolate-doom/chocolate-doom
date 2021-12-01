@@ -1515,6 +1515,15 @@ void G_DoCompleted (void)
     wminfo.last = gamemap -1;
     
     // wminfo.next is 0 biased, unlike gamemap
+    if (is_nrftl && gamemap <= 9 )
+    {
+    if (secretexit)
+        switch(gamemap)
+        {
+          case  4: wminfo.next = 8; break;
+        }
+    }
+    else
     if ( gamemode == commercial)
     {
 	if (secretexit)
@@ -1651,8 +1660,18 @@ void G_WorldDone (void)
     gameaction = ga_worlddone; 
 
     if (secretexit) 
-	players[consoleplayer].didsecret = true; 
-
+	players[consoleplayer].didsecret = true;
+    
+    if (is_nrftl)
+    {
+    switch (gamemap)
+    {
+      case 8:
+        F_StartFinale ();
+        break;
+    }
+    }
+    else
     if ( gamemode == commercial )
     {
 	switch (gamemap)
