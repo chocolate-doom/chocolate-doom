@@ -27,6 +27,7 @@
 
 #include "deh_main.h"
 #include "deh_misc.h"
+#include "deh_bexpars.h" // [crispy] bex_pars[]
 
 #include "z_zone.h"
 #include "f_finale.h"
@@ -1576,6 +1577,11 @@ void G_DoCompleted (void)
 
             wminfo.partime = TICRATE*cpars32;
         }
+        // [crispy] support [PARS] sections in BEX files
+        else if (bex_cpars[gamemap-1])
+        {
+            wminfo.partime = TICRATE*bex_cpars[gamemap-1];
+        }
         // [sprinkled] par times for NRFTL
         if (is_nrftl)
         {
@@ -1594,6 +1600,12 @@ void G_DoCompleted (void)
         // [crispy] par times for Sigil
         gameepisode == 5))
     {
+        // [crispy] support [PARS] sections in BEX files
+        if (bex_pars[gameepisode][gamemap])
+        {
+            wminfo.partime = TICRATE*bex_pars[gameepisode][gamemap];
+        }
+        else
         if (gameversion == exe_chex && gameepisode == 1 && gamemap < 6)
         {
             wminfo.partime = TICRATE*chexpars[gamemap];

@@ -25,6 +25,8 @@
 #include "m_random.h"
 
 #include "deh_main.h"
+#include "deh_bexpars.h" // [crispy] bex_pars[]
+
 #include "i_swap.h"
 #include "i_system.h"
 
@@ -1442,7 +1444,64 @@ void WI_updateStats(void)
 	    cnt_pause = TICRATE;
 	}
     }
+}
 
+// [crispy] conditionally draw par times on intermission screen
+static boolean WI_drawParTime (void)
+{
+    extern lumpinfo_t *maplumpinfo;
+
+    boolean result = true;
+
+    // [crispy] PWADs have no par times (including The Master Levels)
+    if (!W_IsIWADLump(maplumpinfo))
+    {
+        result = false;
+    }
+
+    if (gamemode == commercial)
+    {
+        // [crispy] IWAD: Final Doom has no par times
+        if (gamemission == pack_tnt || gamemission == pack_plut)
+        {
+            result = false;
+        }
+
+        // [sprinkled] PWAD: NRFTL has par times
+        if (is_nrftl)
+        {
+            result = true;
+        }
+        // [crispy] IWAD/PWAD: BEX patch provided par times
+        if (bex_cpars[wbs->last])
+        {
+            result = true;
+        }
+    }
+    else
+    {
+        // [crispy] IWAD: Episode 4 has no par times
+        // (but we have for singleplayer games)
+        if (wbs->epsd == 3)
+        {
+            result = false;
+        }
+
+        // [crispy] IWAD/PWAD: BEX patch provided par times for Episode 4
+        // (disguised as par times for Doom II MAP02 to MAP10)
+        if (wbs->epsd == 3 && bex_cpars[wbs->last + 1])
+        {
+            result = true;
+        }
+
+        // [crispy] IWAD/PWAD: BEX patch provided par times for Episodes 1-4
+        if (wbs->epsd <= 3 && bex_pars[wbs->epsd + 1][wbs->last + 1])
+        {
+            result = true;
+        }
+    }
+
+    return result;
 }
 
 void WI_drawStats(void)
@@ -1470,6 +1529,13 @@ void WI_drawStats(void)
 
     V_DrawPatch(SP_TIMEX, SP_TIMEY, timepatch);
     WI_drawTime(SCREENWIDTH/2 - SP_TIMEX, SP_TIMEY, cnt_time);
+    
+    // [crispy] conditionally draw par times on intermission screen
+    if (WI_drawParTime())
+    {
+        V_DrawPatch(SCREENWIDTH/2 + SP_TIMEX, SP_TIMEY, par);
+        WI_drawTime(SCREENWIDTH - SP_TIMEX, SP_TIMEY, cnt_par);
+    }
 
     if (wbs->epsd < 3)
     {

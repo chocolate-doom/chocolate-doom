@@ -60,7 +60,7 @@
 #define NETEND	"you can't end a netgame!\n\n"PRESSKEY
 #define ENDGAME	"are you sure you want to end the game?\n\n"PRESSYN
 
-#define DOSY		"(press y to quit to dos.)"
+#define DOSY		"(press y to quit.)" // [crispy] remove " to dos.)"
 
 #define DETAILHI	"High detail"
 #define DETAILLO	"Low detail"
@@ -69,6 +69,11 @@
 #define GAMMALVL2	"Gamma correction level 2"
 #define GAMMALVL3	"Gamma correction level 3"
 #define GAMMALVL4	"Gamma correction level 4"
+// [crispy] intermediate gamma levels
+#define GAMMALVL05	"Gamma correction level 0.5"
+#define GAMMALVL15	"Gamma correction level 1.5"
+#define GAMMALVL25	"Gamma correction level 2.5"
+#define GAMMALVL35	"Gamma correction level 3.5"
 #define EMPTYSTRING	"empty slot"
 
 //
@@ -116,6 +121,10 @@
 #define GOTSHOTGUN	"You got the shotgun!"
 #define GOTSHOTGUN2	"You got the super shotgun!"
 
+// [NS] Beta pickups.
+#define BETA_BONUS3	"Picked up an evil sceptre."
+#define BETA_BONUS4	"Picked up an unholy bible."
+
 //
 // P_Doors.C
 //
@@ -145,6 +154,9 @@
 #define HUSTR_E1M7	"E1M7: Computer Station"
 #define HUSTR_E1M8	"E1M8: Phobos Anomaly"
 #define HUSTR_E1M9	"E1M9: Military Base"
+#define HUSTR_E1M10	"E1M10: Sewers"
+#define HUSTR_E1M4B	"E1M4B: Phobos Mission Control"
+#define HUSTR_E1M8B	"E1M8B: Tech Gone Bad"
 
 #define HUSTR_E2M1	"E2M1: Deimos Anomaly"
 #define HUSTR_E2M2	"E2M2: Containment Area"
@@ -175,6 +187,16 @@
 #define HUSTR_E4M7	"E4M7: And Hell Followed"
 #define HUSTR_E4M8	"E4M8: Unto The Cruel"
 #define HUSTR_E4M9	"E4M9: Fear"
+
+#define HUSTR_E5M1	"E5M1: Baphomet's Demesne"
+#define HUSTR_E5M2	"E5M2: Sheol"
+#define HUSTR_E5M3	"E5M3: Cages of the Damned"
+#define HUSTR_E5M4	"E5M4: Paths of Wretchedness"
+#define HUSTR_E5M5	"E5M5: Abaddon's Void"
+#define HUSTR_E5M6	"E5M6: Unspeakable Persecution"
+#define HUSTR_E5M7	"E5M7: Nightmare Underworld"
+#define HUSTR_E5M8	"E5M8: Halls of Perdition"
+#define HUSTR_E5M9	"E5M9: Realm of Iblis"
 
 #define HUSTR_1	"level 1: entryway"
 #define HUSTR_2	"level 2: underhalls"
@@ -284,6 +306,38 @@
 #define THUSTR_31	"level 31: pharaoh"
 #define THUSTR_32	"level 32: caribbean"
 
+#define NHUSTR_1	"level 1: The Earth Base"
+#define NHUSTR_2	"level 2: The Pain Labs"
+#define NHUSTR_3	"level 3: Canyon of the Dead"
+#define NHUSTR_4	"level 4: Hell Mountain"
+#define NHUSTR_5	"level 5: Vivisection"
+#define NHUSTR_6	"level 6: Inferno of Blood"
+#define NHUSTR_7	"level 7: Baron's Banquet"
+#define NHUSTR_8	"level 8: Tomb of Malevolence"
+#define NHUSTR_9	"level 9: March of the Demons"
+
+#define MHUSTR_1	"level 1: Attack"
+#define MHUSTR_2	"level 2: Canyon"
+#define MHUSTR_3	"level 3: The Catwalk"
+#define MHUSTR_4	"level 4: The Combine"
+#define MHUSTR_5	"level 5: The Fistula"
+#define MHUSTR_6	"level 6: The Garrison"
+#define MHUSTR_7	"level 7: Titan Manor"
+#define MHUSTR_8	"level 8: Paradox"
+#define MHUSTR_9	"level 9: Subspace"
+#define MHUSTR_10	"level 10: Subterra"
+#define MHUSTR_11	"level 11: Trapped On Titan"
+#define MHUSTR_12	"level 12: Virgil's Lead"
+#define MHUSTR_13	"level 13: Minos' Judgement"
+#define MHUSTR_14	"level 14: Bloodsea Keep"
+#define MHUSTR_15	"level 15: Mephisto's Maosoleum"
+#define MHUSTR_16	"level 16: Nessus"
+#define MHUSTR_17	"level 17: Geryon"
+#define MHUSTR_18	"level 18: Vesperas"
+#define MHUSTR_19	"level 19: Black Tower"
+#define MHUSTR_20	"level 20: The Express Elevator To Hell"
+#define MHUSTR_21	"level 21: Bad Dream"
+
 #define HUSTR_CHATMACRO1	"I'm ready to kick butt!"
 #define HUSTR_CHATMACRO2	"I'm OK."
 #define HUSTR_CHATMACRO3	"I'm not looking too good!"
@@ -328,6 +382,12 @@
 
 #define AMSTR_MARKEDSPOT	"Marked Spot"
 #define AMSTR_MARKSCLEARED	"All Marks Cleared"
+
+#define AMSTR_OVERLAYON	"Overlay Mode ON"
+#define AMSTR_OVERLAYOFF	"Overlay Mode OFF"
+
+#define AMSTR_ROTATEON	"Rotate Mode ON"
+#define AMSTR_ROTATEOFF	"Rotate Mode OFF"
 
 //
 //	ST_stuff.C
@@ -429,6 +489,18 @@
 "\n"\
 "next stop, hell on earth!"
 
+#define E5TEXT \
+"Baphomet was only doing Satan's bidding\n"\
+"by bringing you back to Hell. Somehow they\n"\
+"didn't understand that you're the reason\n"\
+"they failed in the first place.\n"\
+"\n"\
+"After mopping up the place with your\n"\
+"arsenal, you're ready to face the more\n"\
+"advanced demons that were sent to Earth.\n"\
+"\n"\
+"\n"\
+"Lock and load. Rip and tear."
 
 // after level 6, put this:
 
@@ -667,6 +739,43 @@
 "the stomp of a cyberdemon's iron shoe."
 
 
+#define N1TEXT \
+"TROUBLE WAS BREWING AGAIN IN YOUR FAVORITE\n"\
+"VACATION SPOT... HELL. SOME CYBERDEMON\n"\
+"PUNK THOUGHT HE COULD TURN HELL INTO A\n"\
+"PERSONAL AMUSEMENT PARK, AND MAKE EARTH\nTHE TICKET BOOTH.\n\n"\
+"WELL THAT HALF-ROBOT FREAK SHOW DIDN'T\n"\
+"KNOW WHO WAS COMING TO THE FAIR. THERE'S\n"\
+"NOTHING LIKE A SHOOTING GALLERY FULL OF\n"\
+"HELLSPAWN TO GET THE BLOOD PUMPING...\n\n"\
+"NOW THE WALLS OF THE DEMON'S LABYRINTH\n"\
+"ECHO WITH THE SOUND OF HIS METALLIC LIMBS\n"\
+"HITTING THE FLOOR. HIS DEATH MOAN GURGLES\n" \
+"OUT THROUGH THE MESS YOU LEFT OF HIS FACE.\n\n" \
+"THIS RIDE IS CLOSED."
+
+#define M1TEXT \
+"CONGRATULATIONS YOU HAVE FINISHED... \n\n"\
+"MOST OF THE MASTER LEVELS\n\n"\
+"You have ventured through the most\n"\
+"twisted levels that hell had to\n"\
+"offer and you have survived. \n\n"\
+"But alas the demons laugh at you\n"\
+"since you have shown cowardice and didn't\n"\
+"reach the most hideous level\n"\
+"they had made for you."
+
+#define M2TEXT \
+"CONGRATULATIONS YOU HAVE FINISHED... \n\n"\
+"ALL THE MASTER LEVELS\n\n"\
+"You have ventured through all the\n"\
+"twisted levels that hell had to\n"\
+"offer and you have survived. \n\n"\
+"The Flames of rage flow through\n"\
+"your veins, you are ready\n"\
+"for more - but you don't know where\n"\
+"to find more when the demons hide\n"\
+"like cowards when they see you."
 
 //
 // Character cast strings F_FINALE.C

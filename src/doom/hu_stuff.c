@@ -99,7 +99,7 @@ static boolean		headsupactive = false;
 // The actual names can be found in DStrings.h.
 //
 
-const char *mapnames[] =	// DOOM shareware/registered/retail (Ultimate) names.
+const char *mapnames[] =    // DOOM shareware/registered/retail (Ultimate) names.
 {
 
     HUSTR_E1M1,
@@ -141,6 +141,17 @@ const char *mapnames[] =	// DOOM shareware/registered/retail (Ultimate) names.
     HUSTR_E4M7,
     HUSTR_E4M8,
     HUSTR_E4M9,
+
+    // [crispy] Sigil
+    HUSTR_E5M1,
+    HUSTR_E5M2,
+    HUSTR_E5M3,
+    HUSTR_E5M4,
+    HUSTR_E5M5,
+    HUSTR_E5M6,
+    HUSTR_E5M7,
+    HUSTR_E5M8,
+    HUSTR_E5M9,
 
     "NEWLEVEL",
     "NEWLEVEL",
@@ -206,7 +217,6 @@ const char *mapnames_chex[] =   // Chex Quest names.
     "NEWLEVEL",
     "NEWLEVEL"
 };
-
 // List of names for levels in commercial IWADs
 // (doom2.wad, plutonia.wad, tnt.wad).  These are stored in a
 // single large array; WADs like pl2.wad have a MAP33, and rely on
@@ -228,7 +238,7 @@ const char *mapnames_commercial[] =
     HUSTR_9,
     HUSTR_10,
     HUSTR_11,
-	
+    
     HUSTR_12,
     HUSTR_13,
     HUSTR_14,
@@ -238,7 +248,7 @@ const char *mapnames_commercial[] =
     HUSTR_18,
     HUSTR_19,
     HUSTR_20,
-	
+    
     HUSTR_21,
     HUSTR_22,
     HUSTR_23,
@@ -265,7 +275,7 @@ const char *mapnames_commercial[] =
     PHUSTR_9,
     PHUSTR_10,
     PHUSTR_11,
-	
+    
     PHUSTR_12,
     PHUSTR_13,
     PHUSTR_14,
@@ -275,7 +285,7 @@ const char *mapnames_commercial[] =
     PHUSTR_18,
     PHUSTR_19,
     PHUSTR_20,
-	
+    
     PHUSTR_21,
     PHUSTR_22,
     PHUSTR_23,
@@ -302,7 +312,7 @@ const char *mapnames_commercial[] =
     THUSTR_9,
     THUSTR_10,
     THUSTR_11,
-	
+    
     THUSTR_12,
     THUSTR_13,
     THUSTR_14,
@@ -312,7 +322,7 @@ const char *mapnames_commercial[] =
     THUSTR_18,
     THUSTR_19,
     THUSTR_20,
-	
+    
     THUSTR_21,
     THUSTR_22,
     THUSTR_23,
@@ -331,6 +341,38 @@ const char *mapnames_commercial[] =
     "",
     "",
     ""
+    ,
+    NHUSTR_1,
+    NHUSTR_2,
+    NHUSTR_3,
+    NHUSTR_4,
+    NHUSTR_5,
+    NHUSTR_6,
+    NHUSTR_7,
+    NHUSTR_8,
+    NHUSTR_9,
+
+    MHUSTR_1,
+    MHUSTR_2,
+    MHUSTR_3,
+    MHUSTR_4,
+    MHUSTR_5,
+    MHUSTR_6,
+    MHUSTR_7,
+    MHUSTR_8,
+    MHUSTR_9,
+    MHUSTR_10,
+    MHUSTR_11,
+    MHUSTR_12,
+    MHUSTR_13,
+    MHUSTR_14,
+    MHUSTR_15,
+    MHUSTR_16,
+    MHUSTR_17,
+    MHUSTR_18,
+    MHUSTR_19,
+    MHUSTR_20,
+    MHUSTR_21
 };
 
 void HU_Init(void)

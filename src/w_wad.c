@@ -622,3 +622,8 @@ void W_Reload(void)
     // fast lookup hashtable:
     W_GenerateHashTable();
 }
+
+boolean W_IsIWADLump(const lumpinfo_t *lump)
+{
+    return lump->wad_file == lumpinfo[0]->wad_file;
+}

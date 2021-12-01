@@ -97,6 +97,9 @@ static const bex_string_t bex_stringtable[] = {
     {"GOTPLASMA", GOTPLASMA},
     {"GOTSHOTGUN", GOTSHOTGUN},
     {"GOTSHOTGUN2", GOTSHOTGUN2},
+    // [NS] Beta pickups.
+    {"BETA_BONUS3", BETA_BONUS3},
+    {"BETA_BONUS4", BETA_BONUS4},
     // part 3 - messages when keys are needed
     {"PD_BLUEO", PD_BLUEO},
     {"PD_REDO", PD_REDO},
@@ -337,7 +340,7 @@ static void *DEH_BEXStrStart(deh_context_t *context, char *line)
 {
     char s[10];
 
-    if (sscanf(line, "%9s", s) == 0 || strncmp("[STRINGS]", s, sizeof(s)))
+    if (sscanf(line, "%9s", s) == 0 || strcmp("[STRINGS]", s))
     {
 	DEH_Warning(context, "Parse error on section start");
     }
@@ -358,7 +361,7 @@ static void DEH_BEXStrParseLine(deh_context_t *context, char *line, void *tag)
 
     for (i = 0; i < arrlen(bex_stringtable); i++)
     {
-	if (!strcmp(bex_stringtable[i].macro, variable_name))
+	if (!strcasecmp(bex_stringtable[i].macro, variable_name))
 	{
 	    DEH_AddStringReplacement(bex_stringtable[i].string, value);
 	}
