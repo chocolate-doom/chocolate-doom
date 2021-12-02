@@ -245,7 +245,7 @@ void F_Ticker (void)
 				
       if (i < MAXPLAYERS)
       {
-          if (gamemission == nrftl && gamemap == 8)
+          if (is_nrftl && gamemap == 8)
               F_StartCast ();
           else
               if (gamemap == 30)
