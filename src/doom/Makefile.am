@@ -8,6 +8,9 @@ libdoom_a_SOURCES =             \
 am_map.c           am_map.h     \
 deh_ammo.c                      \
 deh_bexstr.c                    \
+deh_bexpars.c					\
+deh_bexptr.c					\
+deh_bexincl.c					\		
 deh_cheat.c                     \
 deh_doom.c                      \
 deh_frame.c                     \
