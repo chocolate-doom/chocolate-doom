@@ -23,7 +23,6 @@
 #include "s_sound.h"
 #include "dpplimits.h"
 
-int sprinkled_gibbing;
 extern boolean demorecording;
 
 #define BONUSADD 6
