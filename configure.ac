@@ -214,11 +214,7 @@ man/bash-completion/strife.template
 opl/Makefile
 opl/examples/Makefile
 pcsound/Makefile
-pkg/Makefile
-pkg/config.make
-pkg/osx/Info.plist
 rpm.spec
-data/Makefile
 src/Makefile
 src/Doom.metainfo.xml
 src/Doom.desktop

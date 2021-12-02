@@ -1544,7 +1544,6 @@ static void G_WriteLevelStat(void)
 
     char levelString[8];
     char levelTimeString[TIMESTRSIZE];
-    char totalTimeString[TIMESTRSIZE];
     char *decimal;
 
     if (fstream == NULL)
@@ -1562,12 +1561,6 @@ static void G_WriteLevelStat(void)
 
     G_FormatLevelStatTime(levelTimeString, leveltime);
 
-    // Total time ignores centiseconds
-    decimal = strchr(totalTimeString, '.');
-    if (decimal != NULL)
-    {
-        *decimal = '\0';
-    }
     for (i = 0; i < maxplayers; i++)
     {
         if (playeringame[i])
