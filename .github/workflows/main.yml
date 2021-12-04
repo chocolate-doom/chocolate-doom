@@ -20,7 +20,7 @@ jobs:
       matrix:
         include:
           - arch: armv6
-            distro: ubuntu20.04
+            distro: jessie
           - arch: armv7
             distro: ubuntu20.04
           - arch: aarch64
