@@ -2,7 +2,7 @@
 
 Welcome to the official Sprinkled Doom!
 
-[![Sprinkled Doom](https://github.com/atsb/chocolate-doom-plus-plus/actions/workflows/main.yml/badge.svg)](https://github.com/atsb/chocolate-doom-plus-plus/actions/workflows/main.yml)
+[![Sprinkled Doom](https://github.com/atsb/chocolate-doom-plus-plus/actions/workflows/main.yml/badge.svg?branch=master)](https://github.com/atsb/chocolate-doom-plus-plus/actions/workflows/main.yml)
 
 This project is a fork of Chocolate-Doom that aims to implement the ability to raise or decrease the static limits according to Doom+ or Doom v1.2 respectively. 
 
