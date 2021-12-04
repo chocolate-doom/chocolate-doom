@@ -13,22 +13,22 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu20.04
+    runs-on: stretch
     name: Build on ${{ matrix.distro }} ${{ matrix.arch }}
 
     strategy:
       matrix:
         include:
           - arch: armv6
-            distro: jessie
+            distro: stretch
           - arch: armv7
-            distro: ubuntu20.04
+            distro: stretch
           - arch: aarch64
-            distro: ubuntu20.04
+            distro: stretch
           - arch: ppc64le
-            distro: ubuntu20.04
+            distro: stretch
           - arch: s390x
-            distro: ubuntu20.04
+            distro: stretch
 
     steps:
       - name: Install dependencies
