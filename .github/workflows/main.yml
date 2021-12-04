@@ -13,21 +13,22 @@ on:
 
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu20.04
+    name: Build on ${{ matrix.distro }} ${{ matrix.arch }}
 
     strategy:
       matrix:
-        os: [ubuntu-latest, ubuntu-latest]
         include:
-        - os: ubuntu-latest
-          TARGET: armv7-unknown-linux-musleabihf
-          COMPILER: arm-linux-gnueabihf-gcc-5
-          LINKER: gcc-5-arm-linux-gnueabihf
-
-        - os: ubuntu-latest
-          TARGET: x86_64-unknown-linux-musl
-          COMPILER: gcc
-          LINKER: gcc
+          - arch: armv6
+            distro: ubuntu20.04
+          - arch: armv7
+            distro: ubuntu20.04
+          - arch: aarch64
+            distro: ubuntu20.04
+          - arch: ppc64le
+            distro: ubuntu20.04
+          - arch: s390x
+            distro: ubuntu20.04
 
     steps:
       - name: Install dependencies
@@ -43,7 +44,7 @@ jobs:
         run: cmake -S . -B build -G Ninja && ninja -C build
 
   cppcheck:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu20.04
 
     steps:
       - name: Install dependencies
