@@ -41,19 +41,3 @@ jobs:
         env:
           CC: ${{ matrix.compiler }}
         run: cmake -S . -B build -G Ninja && ninja -C build
-
-  cppcheck:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Install dependencies
-        run: sudo apt-get update && sudo apt-get install cppcheck
-
-      - uses: actions/checkout@v2
-        with:
-          submodules: true
-
-      - name: Run cppcheck
-        env:
-          ANALYZE: true
-        run: $GITHUB_WORKSPACE/.travis.sh
