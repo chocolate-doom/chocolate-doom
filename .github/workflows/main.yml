@@ -17,8 +17,17 @@ jobs:
 
     strategy:
       matrix:
-        compiler: [clang, gcc]
-        os: [ubuntu-latest]
+        os: [ubuntu-latest, ubuntu-latest]
+        include:
+        - os: ubuntu-latest
+          TARGET: armv7-unknown-linux-musleabihf
+          COMPILER: arm-linux-gnueabihf-gcc-5
+          LINKER: gcc-5-arm-linux-gnueabihf
+
+        - os: ubuntu-latest
+          TARGET: x86_64-unknown-linux-musl
+          COMPILER: gcc
+          LINKER: gcc
 
     steps:
       - name: Install dependencies
@@ -33,13 +42,8 @@ jobs:
           CC: ${{ matrix.compiler }}
         run: cmake -S . -B build -G Ninja && ninja -C build
 
-      - name: Make
-        env:
-          CC: ${{ matrix.compiler }}
-        run: $GITHUB_WORKSPACE/.travis.sh
-
   cppcheck:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
 
     steps:
       - name: Install dependencies
