@@ -43,7 +43,7 @@ jobs:
         run: cmake -S . -B build -G Ninja && ninja -C build
 
   cppcheck:
-    runs-on: ubuntu20.04
+    runs-on: ubuntu-latest
 
     steps:
       - name: Install dependencies
