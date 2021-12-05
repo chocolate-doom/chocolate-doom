@@ -1303,7 +1303,7 @@ void P_DamageMobj
                         return;
                     }
                 }
-                damage = 10000; // Something's gonna die
+                damage = 100000; // Something's gonna die
                 break;
             case MT_PHOENIXFX2:        // Flame thrower
                 if (target->player && P_Random() < 128)
@@ -1350,8 +1350,7 @@ void P_DamageMobj
     {
         ang = R_PointToAngle2(inflictor->x, inflictor->y,
                               target->x, target->y);
-        //thrust = damage*(FRACUNIT>>3)*100/target->info->mass;
-        thrust = damage * (FRACUNIT >> 3) * 150 / target->info->mass;
+        thrust = damage * (FRACUNIT >> 3) * 100 / target->info->mass;
         // make fall forwards sometimes
         if ((damage < 40) && (damage > target->health)
             && (target->z - inflictor->z > 64 * FRACUNIT) && (P_Random() & 1))
