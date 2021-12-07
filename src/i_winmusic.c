@@ -396,6 +396,7 @@ void I_WIN_SetMusicVolume(int volume)
 
 void I_WIN_StopSong(void)
 {
+    int i;
     MMRESULT mmr;
 
     if (hPlayerThread)
