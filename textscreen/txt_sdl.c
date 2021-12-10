@@ -228,9 +228,13 @@ static void ChooseFont(void)
 
 void TXT_PreInit(SDL_Window *preset_window, SDL_Renderer *preset_renderer)
 {
-    if (preset_window != NULL && preset_renderer != NULL)
+    if (preset_window != NULL)
     {
         TXT_SDLWindow = preset_window;
+    }
+
+    if (preset_renderer != NULL)
+    {
         renderer = preset_renderer;
     }
 }
@@ -257,25 +261,21 @@ int TXT_Init(void)
 
     if (TXT_SDLWindow == NULL)
     {
-    TXT_SDLWindow =
-        SDL_CreateWindow("", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-                         screen_image_w, screen_image_h, flags);
+        TXT_SDLWindow = SDL_CreateWindow("",
+                            SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+                            screen_image_w, screen_image_h, flags);
     }
 
     if (TXT_SDLWindow == NULL)
         return 0;
 
-    // Destroy the existing renderer, so we can create our own new one
-
-    if (renderer != NULL)
-    {
-        SDL_DestroyRenderer(renderer);
-    }
-
-    renderer = SDL_CreateRenderer(TXT_SDLWindow, -1, SDL_RENDERER_PRESENTVSYNC);
-
     if (renderer == NULL)
-        renderer = SDL_CreateRenderer(TXT_SDLWindow, -1, SDL_RENDERER_SOFTWARE);
+    {
+        renderer = SDL_CreateRenderer(TXT_SDLWindow, -1, SDL_RENDERER_PRESENTVSYNC);
+
+        if (renderer == NULL)
+            renderer = SDL_CreateRenderer(TXT_SDLWindow, -1, SDL_RENDERER_SOFTWARE);
+    }
 
     if (renderer == NULL)
         return 0;
