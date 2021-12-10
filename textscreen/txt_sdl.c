@@ -51,7 +51,7 @@ typedef struct
 
 #define BLINK_PERIOD 250
 
-SDL_Window *TXT_SDLWindow;
+SDL_Window *TXT_SDLWindow = NULL;
 static SDL_Surface *screenbuffer;
 static unsigned char *screendata;
 static SDL_Renderer *renderer;
