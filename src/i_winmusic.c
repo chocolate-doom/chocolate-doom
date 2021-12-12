@@ -338,6 +338,24 @@ static void MIDItoStream(midi_file_t *file)
     }
 }
 
+static void UpdateVolume(void)
+{
+    int i;
+
+    // Send MIDI controller events to adjust the volume.
+    for (i = 0; i < MIDI_CHANNELS_PER_TRACK; ++i)
+    {
+        DWORD msg = 0;
+
+        int value = channel_volume[i] * volume_factor;
+
+        msg = MIDI_EVENT_CONTROLLER | i | (MIDI_CONTROLLER_MAIN_VOLUME << 8) |
+              (value << 16);
+
+        midiOutShortMsg((HMIDIOUT)hMidiStream, msg);
+    }
+}
+
 boolean I_WIN_InitMusic(void)
 {
     UINT MidiDevice = MIDI_MAPPER;
@@ -374,24 +392,9 @@ boolean I_WIN_InitMusic(void)
 
 void I_WIN_SetMusicVolume(int volume)
 {
-    int i;
-
     volume_factor = (float)volume / 127;
 
-    // Send MIDI controller events to adjust the volume.
-    for (i = 0; i < MIDI_CHANNELS_PER_TRACK; ++i)
-    {
-        DWORD msg = 0;
-
-        int value = channel_volume[i] * volume_factor;
-
-        value = volume_correction[value];
-
-        msg = MIDI_EVENT_CONTROLLER | i | (MIDI_CONTROLLER_MAIN_VOLUME << 8) |
-              (value << 16);
-
-        midiOutShortMsg((HMIDIOUT)hMidiStream, msg);
-    }
+    UpdateVolume();
 }
 
 void I_WIN_StopSong(void)
@@ -458,6 +461,8 @@ void I_WIN_PlaySong(boolean looping)
     {
         MidiErrorMessageBox(mmr);
     }
+
+    UpdateVolume();
 }
 
 boolean I_WIN_RegisterSong(char *filename)
