@@ -23,6 +23,7 @@
 #include "deh_main.h"
 #include "deh_misc.h"
 #include "doomstat.h"
+#include "dpplimits.h"
 #include "m_misc.h"
 #include "m_random.h"
 #include "i_system.h"
@@ -866,9 +867,15 @@ void P_KillMobj(mobj_t* source, mobj_t* target)
         }
 
     }
+    
+    // More Gibs
+    if((sprinkled_gibbing && !(demoplayback || demorecording || netgame)))
+    {
+        P_SetMobjState(target, target->info->xdeathstate);
+    }
 
     // villsa [STRIFE] some modifications to setting states
-    if(target->state != &states[S_BURN_23])
+    if(!sprinkled_gibbing && target->state != &states[S_BURN_23])
     {
         if(target->health == -6666)
             P_SetMobjState(target, S_DISR_00);  // 373

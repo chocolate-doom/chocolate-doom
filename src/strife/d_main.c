@@ -466,7 +466,8 @@ void D_BindVariables(void)
     M_BindIntVariable("show_endoom",            &show_endoom);
     M_BindIntVariable("show_diskicon",          &show_diskicon);
     M_BindIntVariable("graphical_startup",      &graphical_startup);
-
+    M_BindIntVariable("sprinkled_gibbing",      &sprinkled_gibbing);
+    
     M_BindStringVariable("back_flat",           &back_flat);
     M_BindStringVariable("nickname",            &nickname);
 

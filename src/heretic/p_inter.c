@@ -23,6 +23,7 @@
 #include "m_random.h"
 #include "p_local.h"
 #include "s_sound.h"
+#include "dpplimits.h"
 
 #define BONUSADD 6
 
@@ -942,7 +943,12 @@ void P_KillMobj(mobj_t * source, mobj_t * target)
             return;
         }
     }
-    if (target->health < -(target->info->spawnhealth >> 1)
+    // More Gibs
+    if((sprinkled_gibbing && source && source->player && target->info->xdeathstate && !(demoplayback || demorecording || netgame)))
+    {
+        P_SetMobjState(target, target->info->xdeathstate);
+    }
+    else if (target->health < -(target->info->spawnhealth >> 1)
         && target->info->xdeathstate)
     {                           // Extreme death
         P_SetMobjState(target, target->info->xdeathstate);

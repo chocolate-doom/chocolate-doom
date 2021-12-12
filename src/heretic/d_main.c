@@ -653,6 +653,7 @@ void D_BindVariables(void)
     M_BindIntVariable("doom_plus_plus_limits",  &doom_plus_plus_limits);
     M_BindIntVariable("show_endoom",            &show_endoom);
     M_BindIntVariable("graphical_startup",      &graphical_startup);
+    M_BindIntVariable("sprinkled_gibbing",      &sprinkled_gibbing);
 
     for (i=0; i<10; ++i)
     {
