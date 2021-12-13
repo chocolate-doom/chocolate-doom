@@ -1909,7 +1909,7 @@ void D_DoomMain (void)
     W_GenerateHashTable();
 
     // [crispy] allow overriding of special-casing
-    if (!M_ParmExists("-noautoload") && gamemode != shareware)
+    if (!M_ParmExists("-nosideload") && gamemode != shareware)
     {
 	if (gamemode == retail &&
 	    gameversion == exe_ultimate &&

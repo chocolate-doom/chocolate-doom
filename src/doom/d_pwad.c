@@ -23,6 +23,7 @@
 #include "doomstat.h"
 #include "deh_main.h"
 #include "d_iwad.h"
+#include "m_argv.h"
 #include "m_config.h"
 #include "m_misc.h"
 #include "w_main.h"
@@ -167,10 +168,13 @@ void D_LoadSigilWad (void)
 	}
 
 	// [crispy] load WAD and DEH files from autoload directories
-	autoload_dir = M_GetAutoloadDir(sigil_basename, false);
-	W_AutoLoadWADs(autoload_dir);
-	DEH_AutoLoadPatches(autoload_dir);
-	free(autoload_dir);
+	if (!M_ParmExists("-noautoload"))
+	{
+		autoload_dir = M_GetAutoloadDir(sigil_basename, false);
+		W_AutoLoadWADs(autoload_dir);
+		DEH_AutoLoadPatches(autoload_dir);
+		free(autoload_dir);
+	}
 
 	// [crispy] regenerate the hashtable
 	W_GenerateHashTable();
@@ -278,10 +282,13 @@ static void CheckLoadNerve (void)
 	}
 
 	// [crispy] load WAD and DEH files from autoload directories
-	autoload_dir = M_GetAutoloadDir(nerve_basename, false);
-	W_AutoLoadWADs(autoload_dir);
-	DEH_AutoLoadPatches(autoload_dir);
-	free(autoload_dir);
+	if (!M_ParmExists("-noautoload"))
+	{
+		autoload_dir = M_GetAutoloadDir(nerve_basename, false);
+		W_AutoLoadWADs(autoload_dir);
+		DEH_AutoLoadPatches(autoload_dir);
+		free(autoload_dir);
+	}
 
 	// [crispy] regenerate the hashtable
 	W_GenerateHashTable();
@@ -382,10 +389,13 @@ static boolean CheckLoadMasterlevels (void)
 	}
 
 	// [crispy] load WAD and DEH files from autoload directories
-	autoload_dir = M_GetAutoloadDir(master_basename, false);
-	W_AutoLoadWADs(autoload_dir);
-	DEH_AutoLoadPatches(autoload_dir);
-	free(autoload_dir);
+	if (!M_ParmExists("-noautoload"))
+	{
+		autoload_dir = M_GetAutoloadDir(master_basename, false);
+		W_AutoLoadWADs(autoload_dir);
+		DEH_AutoLoadPatches(autoload_dir);
+		free(autoload_dir);
+	}
 
 	// [crispy] regenerate the hashtable
 	W_GenerateHashTable();
