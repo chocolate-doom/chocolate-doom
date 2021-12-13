@@ -218,6 +218,13 @@ static void CheckLoadNerve (void)
 		{"INTERPIC", "NERVEINT"},
 	};
 
+	// [crispy] don't load if another PWAD already provides MAP01
+	i = W_CheckNumForName("MAP01");
+	if (i != -1 && !W_IsIWADLump(lumpinfo[i]))
+	{
+		return;
+	}
+
 	if (strrchr(iwadfile, DIR_SEPARATOR) != NULL)
 	{
 		char *dir;
@@ -317,6 +324,13 @@ static boolean CheckLoadMasterlevels (void)
 	char *autoload_dir;
 	int i, j;
 
+	// [crispy] don't load if another PWAD already provides MAP01
+	i = W_CheckNumForName("MAP01");
+	if (i != -1 && !W_IsIWADLump(lumpinfo[i]))
+	{
+		return false;
+	}
+
 	if (strrchr(iwadfile, DIR_SEPARATOR) != NULL)
 	{
 		char *dir;
@@ -415,6 +429,13 @@ static boolean CheckMasterlevelsAvailable (void)
 {
 	int i;
 	char *dir;
+
+	// [crispy] don't load if another PWAD already provides MAP01
+	i = W_CheckNumForName("MAP01");
+	if (i != -1 && !W_IsIWADLump(lumpinfo[i]))
+	{
+		return false;
+	}
 
 	dir = M_DirName(iwadfile);
 
