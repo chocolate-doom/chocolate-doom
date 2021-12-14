@@ -136,6 +136,7 @@ extern int key_menu_screenshot;
 extern int mousebfire;
 extern int mousebstrafe;
 extern int mousebforward;
+extern int mousebspeed;
 
 extern int mousebjump;
 
