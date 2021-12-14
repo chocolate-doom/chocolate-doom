@@ -1970,17 +1970,7 @@ void P_SpawnSpecials (void)
                 I_Error("Too many scrolling wall linedefs!");
             }
         case 142:
-            if ((!doom_plus_plus_limits && numlinespecials >= MAXLINEANIMS / DOOM_PLUS_PLUS_MAXLINEANIMS_FACTOR)
-                || (doom_plus_plus_limits && numlinespecials >= MAXLINEANIMS))
-            {
-                I_Error("Too many scrolling wall linedefs!");
-            }
         case 143:
-            if ((!doom_plus_plus_limits && numlinespecials >= MAXLINEANIMS / DOOM_PLUS_PLUS_MAXLINEANIMS_FACTOR)
-                || (doom_plus_plus_limits && numlinespecials >= MAXLINEANIMS))
-            {
-                I_Error("Too many scrolling wall linedefs!");
-            }
         case 149:
             linespeciallist[numlinespecials] = &lines[i];
             numlinespecials++;
