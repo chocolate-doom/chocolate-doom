@@ -1495,6 +1495,13 @@ void D_DoomMain (void)
     char            demolumpname[9];
 
     I_AtExit(D_Endoom, false);
+    
+    // REMOVE LIMITS (REML)
+
+    if (M_CheckParm("-reml"))
+    {
+        doom_plus_plus_limits = 1;
+    }
 
     // haleyjd 20110206 [STRIFE]: -nograph parameter
 

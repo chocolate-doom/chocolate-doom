@@ -167,6 +167,5 @@ typedef enum
 
 extern int is_nrftl;
 extern int is_sigil;
-extern int reml;
 
 #endif          // __DOOMDEF__

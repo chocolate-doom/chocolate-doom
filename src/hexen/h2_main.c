@@ -673,6 +673,15 @@ static void HandleArgs(void)
         sc_FileScripts = true;
         sc_ScriptsDir = myargv[p+1];
     }
+    
+    // REMOVE LIMITS (REML)
+
+    p = M_CheckParm("-reml");
+    
+    if (p)
+    {
+        doom_plus_plus_limits = 1;
+    }
 
     //!
     // @category game

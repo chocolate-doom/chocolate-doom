@@ -103,9 +103,6 @@ boolean         nomonsters;	// checkparm of -nomonsters
 boolean         respawnparm;	// checkparm of -respawn
 boolean         fastparm;	// checkparm of -fast
 
-// Adam - remove limits
-int reml;
-
 // Adam - NRFTL
 int is_nrftl;
 
@@ -1734,6 +1731,7 @@ void D_DoomMain (void)
     // REMOVE LIMITS (REML)
 
     p = M_CheckParm("-reml");
+    
     if (p)
     {
         doom_plus_plus_limits = 1;

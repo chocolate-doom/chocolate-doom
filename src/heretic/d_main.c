@@ -789,6 +789,15 @@ void D_DoomMain(void)
         startmap = 1;
         autostart = true;
     }
+    
+    
+    // REMOVE LIMITS (REML)
+
+    p = M_CheckParm("-reml");
+    if (p)
+    {
+        doom_plus_plus_limits = 1;
+    }
 
     //!
     // @category game
