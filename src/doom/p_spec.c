@@ -33,6 +33,7 @@
 #include "m_argv.h"
 #include "m_misc.h"
 #include "m_random.h"
+#include "v_snow.h"
 #include "w_wad.h"
 #include "r_swirl.h" // [crispy] R_InitDistortedFlats()
 
@@ -1327,6 +1328,10 @@ void P_UpdateSpecials (void)
 		memset(&buttonlist[i],0,sizeof(button_t));
 	    }
 	}
+    
+    // [crispy] Snow
+    if (crispy->snowflakes)
+	V_SnowUpdate();
 
     // [crispy] draw fuzz effect independent of rendering frame rate
     R_SetFuzzPosTic();

@@ -65,6 +65,7 @@
 #include "a11y.h" // [crispy] A11Y
 
 #include "hu_stuff.h"
+#include "v_snow.h"
 #include "wi_stuff.h"
 #include "st_stuff.h"
 #include "am_map.h"
@@ -246,8 +247,12 @@ boolean D_Display (void)
     {
 	R_RenderPlayerView (&players[displayplayer]);
 
+	// [crispy] Snow
+	if (crispy->snowflakes)
+	    V_SnowDraw();
+
         // [crispy] Crispy HUD
-        if (screenblocks >= CRISPY_HUD)
+        if (screenblocks >= CRISPY_HUD || crispy->snowflakes)
             ST_Drawer(false, true);
     }
 
@@ -276,7 +281,7 @@ boolean D_Display (void)
     {
 	if (menuactive || menuactivestate || !viewactivestate)
 	    borderdrawcount = 3;
-	if (borderdrawcount)
+	if (borderdrawcount || crispy->snowflakes)
 	{
 	    R_DrawViewBorder ();    // erase old menu stuff
 	    borderdrawcount--;

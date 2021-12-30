@@ -82,6 +82,7 @@ typedef struct
 
 	// [crispy] in-game switches and variables
 	int screenshotmsg;
+	int snowflakes;
 	int cleanscreenshot;
 	int demowarp;
 	int fps;
