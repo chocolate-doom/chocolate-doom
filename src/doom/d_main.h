@@ -46,6 +46,7 @@ void D_StartTitle (void);
 extern  gameaction_t    gameaction;
 extern int is_nrftl;
 extern int is_sigil;
+extern int reml;
 
 #endif
 

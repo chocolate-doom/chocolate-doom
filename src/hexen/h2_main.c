@@ -105,7 +105,7 @@ boolean ravpic;                 // checkparm of -ravpic
 boolean cdrom = false;          // true if cd-rom mode active
 boolean cmdfrag;                // true if a CMD_FRAG packet should be sent out
 boolean artiskip;               // whether shift-enter skips an artifact
-int maxzone = 0x800000;         // Maximum allocated for zone heap (8meg default)
+int maxzone = 0x640000;         // Maximum allocated for zone heap (64meg default)
 skill_t startskill;
 int startepisode;
 int startmap;
