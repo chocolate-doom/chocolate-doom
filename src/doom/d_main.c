@@ -218,7 +218,7 @@ boolean D_Display (void)
 	    R_RenderPlayerView (&players[displayplayer]);
 	    AM_Drawer ();
 	}
-	if (wipe || (viewheight != SCREENHEIGHT && fullscreen) || crispy->snowflakes)
+	if (wipe || (viewheight != SCREENHEIGHT && fullscreen))
 	    redrawsbar = true;
 	if (inhelpscreensstate && !inhelpscreens)
 	    redrawsbar = true;              // just put away the help screen
@@ -246,10 +246,6 @@ boolean D_Display (void)
     if (gamestate == GS_LEVEL && (!automapactive || crispy->automapoverlay) && gametic)
     {
 	R_RenderPlayerView (&players[displayplayer]);
-
-	// [crispy] Snow
-	if (crispy->snowflakes)
-	    V_SnowDraw();
 
         // [crispy] Crispy HUD
         if (screenblocks >= CRISPY_HUD)
@@ -281,7 +277,7 @@ boolean D_Display (void)
     {
 	if (menuactive || menuactivestate || !viewactivestate)
 	    borderdrawcount = 3;
-	if (borderdrawcount || crispy->snowflakes)
+	if (borderdrawcount)
 	{
 	    R_DrawViewBorder ();    // erase old menu stuff
 	    borderdrawcount--;
@@ -307,6 +303,16 @@ boolean D_Display (void)
     {
 	AM_Drawer ();
 	HU_Drawer ();
+
+	// [crispy] force redraw of status bar and border
+	viewactivestate = false;
+	inhelpscreensstate = true;
+    }
+
+    // [crispy] Snow
+    if (crispy->snowflakes)
+    {
+	V_SnowDraw();
 
 	// [crispy] force redraw of status bar and border
 	viewactivestate = false;
