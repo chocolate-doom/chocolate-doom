@@ -18,8 +18,6 @@
 //	[crispy] Snow drawing
 //
 
-#include <stdlib.h>
-
 #include "v_snow.h"
 #include "i_video.h"
 #include "i_system.h"
