@@ -218,7 +218,7 @@ boolean D_Display (void)
 	    R_RenderPlayerView (&players[displayplayer]);
 	    AM_Drawer ();
 	}
-	if (wipe || (viewheight != SCREENHEIGHT && fullscreen))
+	if (wipe || (viewheight != SCREENHEIGHT && fullscreen) || crispy->snowflakes)
 	    redrawsbar = true;
 	if (inhelpscreensstate && !inhelpscreens)
 	    redrawsbar = true;              // just put away the help screen
@@ -252,7 +252,7 @@ boolean D_Display (void)
 	    V_SnowDraw();
 
         // [crispy] Crispy HUD
-        if (screenblocks >= CRISPY_HUD || crispy->snowflakes)
+        if (screenblocks >= CRISPY_HUD)
             ST_Drawer(false, true);
     }
 

@@ -22,7 +22,7 @@
 
 #include "v_snow.h"
 #include "i_video.h"
-#include "z_zone.h"
+#include "i_system.h"
 #include "r_main.h"
 #include "m_random.h"
 
@@ -53,7 +53,7 @@ static void ResetSnow()
     last_screen_size = SCREENWIDTH * SCREENHEIGHT;
     snowflakes_num = last_screen_size / 100;
 
-    snowflakes = realloc(snowflakes, snowflakes_num * sizeof(snowflake_t));
+    snowflakes = I_Realloc(snowflakes, snowflakes_num * sizeof(snowflake_t));
 
     InitSnowCoords();
 
