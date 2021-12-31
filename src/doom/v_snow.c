@@ -51,12 +51,9 @@ static void InitSnowCoords()
 static void ResetSnow()
 {
     last_screen_size = SCREENWIDTH * SCREENHEIGHT;
-    snowflakes_num = last_screen_size >> 6;
+    snowflakes_num = last_screen_size / 100;
 
-    if (snowflakes != NULL)
-        free(snowflakes);
-
-    snowflakes = malloc(snowflakes_num * sizeof(snowflake_t));
+    snowflakes = realloc(snowflakes, snowflakes_num * sizeof(snowflake_t));
 
     InitSnowCoords();
 
@@ -74,9 +71,7 @@ void V_SnowUpdate()
 
     for (size_t i = 0; i < snowflakes_num; i++)
     {
-        snowflakes[i].y += Crispy_Random() % 2;
-        if (snowflakes[i].y < 0)
-            continue;
+        snowflakes[i].y += Crispy_Random() % 4;
 
         snowflakes[i].x += 1 - Crispy_Random() % 3;
         snowflakes[i].x += wind;
