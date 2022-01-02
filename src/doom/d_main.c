@@ -1116,9 +1116,10 @@ static void InitGameVersion(void)
         else if (gamemode == commercial)
         {
             // Final Doom: tnt or plutonia
-            // Final Doom Anthology IWADs should default to the Anthology EXEs.
-            // DMAPINFO check prevents false positives with attempts to load the
-            // Classic Unity IWADs.
+            // Final Doom Anthology IWADs should default to the
+            // Anthology EXEs. DMAPINFO check prevents false
+            // positives caused by attempts to load the Classic Unity
+            // IWADs.
 
             if (W_CheckNumForName("P1_START") >= 0 && W_CheckNumForName("P1_END") >= 0
              && W_CheckNumForName("F1_START") >= 0 && W_CheckNumForName("F1_END") >= 0 && W_CheckNumForName("DMAPINFO") < 0)
@@ -1126,10 +1127,10 @@ static void InitGameVersion(void)
                 gameversion = exe_final2;
             }
 
-            // Defaults to emulating the first Final Doom executable,
-            // which has the crash in the demo loop; however, having
-            // this as the default should mean that it plays back
-            // most demos correctly.
+            // Otherwise, defaults to emulating the first Final Doom
+            // executable, which has the crash in the demo loop;
+            // however, having this as the default should mean that
+            // it plays back most demos correctly.
 
             else
             {
