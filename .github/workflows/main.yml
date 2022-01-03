@@ -18,11 +18,18 @@ jobs:
     strategy:
       matrix:
         compiler: [clang, gcc]
-        os: [ubuntu-latest]
+        os: [ubuntu-latest, windows-latest]
 
     steps:
       - name: Install dependencies
+        if: ${{ matrix.os == 'ubuntu-latest' }}
         run: sudo apt-get update && sudo apt-get install libpng-dev libsamplerate0-dev libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-net-dev ninja-build
+
+      - uses: msys2/setup-msys2@v2
+        if: ${{ matrix.os == 'windows-latest' }}
+        with:
+          install: mingw-w64-i686-{gcc,libpng,libsamplerate,python-pillow,SDL2{_mixer,_net}}
+          update: true
 
       - uses: actions/checkout@v2
         with:
@@ -31,6 +38,7 @@ jobs:
       - name: CMake
         env:
           CC: ${{ matrix.compiler }}
+        if: ${{ matrix.os == 'ubuntu-latest' }}
         run: cmake -S . -B build -G Ninja && ninja -C build
 
       - name: Make
