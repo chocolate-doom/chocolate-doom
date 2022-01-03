@@ -1712,7 +1712,7 @@ void NET_SV_CheckDeadlock(net_client_t *client)
 
         for (i=0; i<BACKUPTICS; ++i)
         {
-            if (!recvwindow[client->player_number][i].active)
+            if (!recvwindow[i][client->player_number].active)
             {
                 NET_Log("server: deadlock: sending resend request for %d-%d",
                         recvwindow_start + i, recvwindow_start + i + 5);
