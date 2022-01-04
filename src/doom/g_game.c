@@ -973,6 +973,19 @@ static void SetMouseButtons(unsigned int buttons_mask)
 // 
 boolean G_Responder (event_t* ev) 
 { 
+    // [crispy] demo pause (from prboom-plus)
+    if (gameaction == ga_nothing && 
+        (demoplayback || gamestate == GS_DEMOSCREEN))
+    {
+        if (ev->type == ev_keydown && ev->data1 == key_pause)
+        {
+            if (paused ^= 2)
+                S_PauseSound();
+            else
+                S_ResumeSound();
+            return true;
+        }
+
     // [crispy] demo fast-forward
     if (ev->type == ev_keydown && ev->data1 == key_demospeed && 
         (demoplayback || gamestate == GS_DEMOSCREEN))
@@ -1193,6 +1206,13 @@ void G_Ticker (void)
 	} 
     }
     
+    // [crispy] demo sync of revenant tracers and RNG (from prboom-plus)
+    if (paused & 2 || (!demoplayback && menuactive && !netgame))
+    {
+        demostarttic++;
+    }
+    else
+    {     
     // get commands, check consistancy,
     // and build new consistancy check
     buf = (gametic/ticdup)%BACKUPTICS; 
@@ -1293,6 +1313,7 @@ void G_Ticker (void)
 	    } 
 	}
     }
+    }
 
     // Have we just finished displaying an intermission screen?
 
@@ -1303,6 +1324,14 @@ void G_Ticker (void)
 
     oldgamestate = gamestate;
     oldleveltime = leveltime;
+
+    // [crispy] no pause at intermission screen during demo playback 
+    // to avoid desyncs (from prboom-plus)
+    if ((paused & 2 || (!demoplayback && menuactive && !netgame)) 
+        && gamestate != GS_LEVEL)
+    {
+    return;
+    }
     
     // do main actions
     switch (gamestate) 
