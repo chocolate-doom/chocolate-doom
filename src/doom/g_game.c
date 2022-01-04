@@ -985,6 +985,7 @@ boolean G_Responder (event_t* ev)
                 S_ResumeSound();
             return true;
         }
+    }
 
     // [crispy] demo fast-forward
     if (ev->type == ev_keydown && ev->data1 == key_demospeed && 
