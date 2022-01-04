@@ -56,7 +56,7 @@ static int *controls[] = { &key_left, &key_right, &key_up, &key_down,
                            &key_arti_blastradius, &key_arti_teleport,
                            &key_arti_teleportother, &key_arti_egg,
                            &key_arti_invulnerability,
-                           &key_prevweapon, &key_nextweapon, NULL };
+                           &key_prevweapon, &key_nextweapon, &key_demospeed, NULL };
 
 static int *menu_nav[] = { &key_menu_activate, &key_menu_up, &key_menu_down,
                            &key_menu_left, &key_menu_right, &key_menu_back,
@@ -392,6 +392,7 @@ static void OtherKeysDialog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
 
     AddKeyControl(table, "Display last message",  &key_message_refresh);
     AddKeyControl(table, "Finish recording demo", &key_demo_quit);
+    AddKeyControl(table, "Fast-forward demo",     &key_demospeed);
 
     AddSectionLabel(table, "Map", true);
     AddKeyControl(table, "Toggle map",            &key_map_toggle);

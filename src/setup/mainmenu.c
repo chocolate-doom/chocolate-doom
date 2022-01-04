@@ -58,6 +58,7 @@ static void SensibleDefaults(void)
     key_down = 's';
     key_strafeleft = 'a';
     key_straferight = 'd';
+    key_demospeed = KEYP_PLUS;  // [crispy]
     key_jump = '/';
     key_lookup = KEY_PGUP;
     key_lookdown = KEY_PGDN;
