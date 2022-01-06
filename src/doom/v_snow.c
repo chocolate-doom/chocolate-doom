@@ -31,43 +31,43 @@ typedef struct snowflake_t
 
 static snowflake_t *snowflakes = NULL;
 static size_t snowflakes_num;
-static int snowflakes_color = -1;
-static int last_screen_size;
+static int snowflakes_color;
+static int last_screen_size = -1;
 static int wind = 1;
-
-static void InitSnowCoords()
-{
-    for (size_t i = 0; i < snowflakes_num; i++)
-    {
-        // here rand() but not Crispy_Random() because
-        // Crispy_Random() returns too small numbers
-        snowflakes[i].y = 0 - (Crispy_Random() * SCREENHEIGHT) / 256;
-        snowflakes[i].x = (Crispy_Random() * SCREENWIDTH) / 256;
-    }
-}
 
 static void ResetSnow()
 {
+    size_t i;
+
     last_screen_size = SCREENWIDTH * SCREENHEIGHT;
     snowflakes_num = last_screen_size / 100;
 
     snowflakes = I_Realloc(snowflakes, snowflakes_num * sizeof(snowflake_t));
 
-    InitSnowCoords();
+    for (i = 0; i < snowflakes_num; i++)
+    {
+        snowflakes[i].y = 0 - (Crispy_Random() * SCREENHEIGHT) / 256;
+        snowflakes[i].x = (Crispy_Random() * SCREENWIDTH) / 256;
+    }
 
-    if (snowflakes_color == -1)
-        snowflakes_color = I_GetPaletteIndex(0xFF, 0xFF, 0xFF);
+#ifndef CRISPY_TRUECOLOR
+    snowflakes_color = I_GetPaletteIndex(0xFF, 0xFF, 0xFF);
+#else
+    snowflakes_color = I_MapRGB(0xFF, 0xFF, 0xFF);
+#endif
 }
 
 void V_SnowUpdate()
 {
+    size_t i;
+
     if (last_screen_size != (SCREENHEIGHT * SCREENWIDTH))
         ResetSnow();
 
     if (Crispy_Random() % 20 == 4)
         wind = 1 - Crispy_Random() % 3;
 
-    for (size_t i = 0; i < snowflakes_num; i++)
+    for (i = 0; i < snowflakes_num; i++)
     {
         snowflakes[i].y += Crispy_Random() % 4;
 
@@ -85,10 +85,12 @@ void V_SnowUpdate()
 
 void V_SnowDraw()
 {
-    int video_offset;
+    size_t i;
 
-    for (size_t i = 0; i < snowflakes_num; i++)
+    for (i = 0; i < snowflakes_num; i++)
     {
+        int video_offset;
+
         if (snowflakes[i].y < 0)
             continue;
 
