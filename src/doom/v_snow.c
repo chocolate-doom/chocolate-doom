@@ -31,7 +31,7 @@ typedef struct snowflake_t
 
 static snowflake_t *snowflakes = NULL;
 static size_t snowflakes_num;
-static int snowflakes_color;
+static pixel_t snowflakes_color;
 static int last_screen_size = -1;
 static int wind = 1;
 
