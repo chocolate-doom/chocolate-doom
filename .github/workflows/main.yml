@@ -2,25 +2,36 @@ name: build
 
 on:
   push:
-    branches: [ master ]
+    branches:
+      - "master"
+    paths-ignore:
+      - "**.md"
   pull_request:
-    branches: [ master ]
+    branches:
+      - "master"
+  workflow_dispatch:
 
 jobs:
   build:
-    runs-on: ubuntu-18.04
+    runs-on: ${{ matrix.os }}
 
     strategy:
       matrix:
         compiler: [clang, gcc]
+        os: [ubuntu-latest]
 
     steps:
       - name: Install dependencies
-        run: sudo apt-get update && sudo apt-get install libpng-dev libsamplerate0-dev libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-net-dev
+        run: sudo apt-get update && sudo apt-get install libpng-dev libsamplerate0-dev libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-net-dev ninja-build
 
       - uses: actions/checkout@v2
         with:
           submodules: true
+
+      - name: CMake
+        env:
+          CC: ${{ matrix.compiler }}
+        run: cmake -S . -B build -G Ninja && ninja -C build
 
       - name: Make
         env:

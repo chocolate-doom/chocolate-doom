@@ -3,7 +3,7 @@ AC_INIT(Crispy Doom, 5.10.3,
 
 PACKAGE_SHORTNAME=${PACKAGE_NAME% Doom}
 PACKAGE_SHORTDESC="Limit-removing enhanced-resolution Doom source port"
-PACKAGE_COPYRIGHT="Copyright (C) 1993-2021"
+PACKAGE_COPYRIGHT="Copyright (C) 1993-2022"
 PACKAGE_LICENSE="GNU General Public License, version 2"
 PACKAGE_MAINTAINER="Fabian Greffrath"
 PACKAGE_URL="http://fabiangreffrath.github.io/crispy-doom"
@@ -209,7 +209,7 @@ AC_DEFINE_UNQUOTED(PROGRAM_PREFIX, "$PROGRAM_PREFIX",
                    Change this when you create your awesome forked version)
 AC_SUBST(PROGRAM_SPREFIX)
 
-AM_CONFIG_HEADER(config.h:config.hin)
+AC_CONFIG_HEADERS(config.h:config.hin)
 
 AC_SUBST(WINDOWS_RC_VERSION)
 AC_SUBST(SDLMIXER_CFLAGS)
@@ -232,7 +232,7 @@ AC_SUBST(PACKAGE_BUGREPORT)
 dnl Shut up the datarootdir warnings.
 AC_DEFUN([AC_DATAROOTDIR_CHECKED])
 
-AC_OUTPUT([
+AC_CONFIG_FILES([
 Makefile
 man/Makefile
 man/bash-completion/Makefile
@@ -271,4 +271,4 @@ textscreen/Makefile
 textscreen/examples/Makefile
 textscreen/fonts/Makefile
 ])
-
+AC_OUTPUT
