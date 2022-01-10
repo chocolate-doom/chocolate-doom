@@ -2236,6 +2236,14 @@ static default_t extra_defaults_list[] =
     //!
     // @game doom
     //
+    // Level Stats Format.
+    //
+
+    CONFIG_VARIABLE_INT(crispy_statsformat),
+
+    //!
+    // @game doom
+    //
     // Enable translucency.
     //
 

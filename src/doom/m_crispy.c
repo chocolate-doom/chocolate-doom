@@ -113,6 +113,14 @@ multiitem_t multiitem_secretmessage[NUM_SECRETMESSAGE] =
     {SECRETMESSAGE_COUNT, "count"},
 };
 
+multiitem_t multiitem_statsformat[NUM_STATSFORMATS] =
+{
+    {STATSFORMAT_RATIO, "ratio"},
+    {STATSFORMAT_REMAINING, "remaining"},
+    {STATSFORMAT_PERCENT, "percent"},
+    {STATSFORMAT_BOOLEAN, "boolean"},
+};
+
 multiitem_t multiitem_translucency[NUM_TRANSLUCENCY] =
 {
     {TRANSLUCENCY_OFF, "off"},
@@ -484,6 +492,12 @@ void M_CrispyToggleSoundMono(int choice)
     crispy->soundmono = !crispy->soundmono;
 
     S_UpdateStereoSeparation();
+}
+
+void M_CrispyToggleStatsFormat(int choice)
+{
+    choice = 0;
+    crispy->statsformat = (crispy->statsformat + 1) % NUM_STATSFORMATS;
 }
 
 void M_CrispyToggleTranslucency(int choice)

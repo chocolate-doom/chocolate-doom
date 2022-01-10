@@ -72,6 +72,7 @@ typedef struct
 	int soundfix;
 	int soundfull;
 	int soundmono;
+	int statsformat;
 	int translucency;
 #ifdef CRISPY_TRUECOLOR
 	int truecolor;
@@ -220,6 +221,15 @@ enum
     WIDGETS_AUTOMAP,
     WIDGETS_ALWAYS,
     NUM_WIDGETS
+};
+
+enum
+{
+    STATSFORMAT_RATIO,
+    STATSFORMAT_REMAINING,
+    STATSFORMAT_PERCENT,
+    STATSFORMAT_BOOLEAN,
+    NUM_STATSFORMATS
 };
 
 enum
