@@ -418,24 +418,6 @@ static void HandleWindowEvent(SDL_WindowEvent *event)
     }
 }
 
-// -----------------------------------------------------------------------------
-// HandleWindowResize
-// [JN] Updates window contents (SDL texture) on fly while resizing.
-// SDL_WINDOWEVENT_RESIZED from above is still needed to get rid of
-// black borders after window size has been changed.
-// -----------------------------------------------------------------------------
-
-static int HandleWindowResize (void* data, SDL_Event *event)
-{
-    if (event->type == SDL_WINDOWEVENT
-    &&  event->window.event == SDL_WINDOWEVENT_RESIZED)
-    {
-        // Redraw window contents
-        I_FinishUpdate();
-    }
-    return 0;
-}
-
 static boolean ToggleFullScreenKeyShortcut(SDL_Keysym *sym)
 {
     Uint16 flags = (KMOD_LALT | KMOD_RALT);
@@ -1665,10 +1647,6 @@ void I_InitGraphics(void)
     }
 
     SetSDLVideoDriver();
-
-    // [JN] Set an event watcher for window resize to allow
-    // update window contents on fly.
-    SDL_AddEventWatch(HandleWindowResize, screen);
 
     if (SDL_Init(SDL_INIT_VIDEO) < 0) 
     {
