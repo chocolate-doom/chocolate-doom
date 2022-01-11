@@ -327,9 +327,7 @@ static void AdjustWindowSize(void)
           else
             rendered_height = window_height;
 
-          // need to resize window width?
-//        if (rendered_height * SCREENWIDTH > window_width * actualheight)
-            window_width = rendered_height * SCREENWIDTH / actualheight;
+          window_width = rendered_height * SCREENWIDTH / actualheight;
         }
 
         old_v_w = SCREENWIDTH;
