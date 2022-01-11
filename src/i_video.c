@@ -315,6 +315,26 @@ static void AdjustWindowSize(void)
 {
     if (aspect_ratio_correct || integer_scaling)
     {
+        static int old_v_w, old_v_h;
+
+        if (old_v_w > 0 && old_v_h > 0)
+        {
+          int rendered_height;
+
+          // rendered height does not necessarily match window height
+          if (window_height * old_v_w > window_width * old_v_h)
+            rendered_height = window_width * old_v_h / old_v_w;
+          else
+            rendered_height = window_height;
+
+          // need to resize window width?
+//        if (rendered_height * SCREENWIDTH > window_width * actualheight)
+            window_width = rendered_height * SCREENWIDTH / actualheight;
+        }
+
+        old_v_w = SCREENWIDTH;
+        old_v_h = actualheight;
+#if 0
         if (window_width * actualheight <= window_height * SCREENWIDTH)
         {
             // We round up window_height if the ratio is not exact; this leaves
@@ -325,6 +345,7 @@ static void AdjustWindowSize(void)
         {
             window_width = window_height * SCREENWIDTH / actualheight;
         }
+#endif
     }
 }
 
@@ -739,15 +760,11 @@ void I_FinishUpdate (void)
             flags = SDL_GetWindowFlags(screen);
             if ((flags & SDL_WINDOW_FULLSCREEN_DESKTOP) == 0)
             {
-                int old_height;
                 SDL_GetWindowSize(screen, &window_width, &window_height);
-                old_height = window_height;
 
                 // Adjust the window by resizing again so that the window
                 // is the right aspect ratio.
                 AdjustWindowSize();
-                if (window_height < old_height)
-                    window_height = old_height;
                 SDL_SetWindowSize(screen, window_width, window_height);
             }
             CreateUpscaledTexture(false);
