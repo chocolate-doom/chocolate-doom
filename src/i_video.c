@@ -323,7 +323,7 @@ static void AdjustWindowSize(void)
 
           // rendered height does not necessarily match window height
           if (window_height * old_v_w > window_width * old_v_h)
-            rendered_height = window_width * old_v_h / old_v_w;
+            rendered_height = (window_width * old_v_h + old_v_w - 1) / old_v_w;
           else
             rendered_height = window_height;
 
