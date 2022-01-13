@@ -26,6 +26,7 @@
 #define WINDOW_HELP_URL "https://www.chocolate-doom.org/setup-a11y"
 
 int a11y_sector_lighting = 1;
+int a11y_extra_lighting = 0;
 int a11y_weapon_flash = 1;
 int a11y_weapon_pspr = 1;
 int a11y_palette_changes = 1;
@@ -51,11 +52,20 @@ void AccessibilitySettings(TXT_UNCAST_ARG(widget), void *user_data)
                    TXT_NewCheckBox("Invulnerability Colormap",
                                    &a11y_invul_colormap),
                    NULL);
+
+    TXT_SetTableColumns(window, 2);
+
+    TXT_AddWidgets(window,
+                   TXT_NewLabel("Extra Lighting"),
+                   TXT_NewSpinControl(&a11y_extra_lighting, 0, 8),
+                   NULL);
+
 }
 
 void BindAccessibilityVariables(void)
 {
     M_BindIntVariable("a11y_sector_lighting", &a11y_sector_lighting);
+    M_BindIntVariable("a11y_extra_lighting",  &a11y_extra_lighting);
     M_BindIntVariable("a11y_weapon_flash",    &a11y_weapon_flash);
     M_BindIntVariable("a11y_weapon_pspr",     &a11y_weapon_pspr);
     M_BindIntVariable("a11y_palette_changes", &a11y_palette_changes);
