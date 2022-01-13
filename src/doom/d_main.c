@@ -1391,7 +1391,7 @@ void D_DoomMain (void)
 {
     int p;
     char file[256];
-    char demolumpname[9];
+    char demolumpname[9] = {0};
     int numiwadlumps;
 
     // [crispy] unconditionally initialize DEH tables
@@ -1921,7 +1921,7 @@ void D_DoomMain (void)
     W_GenerateHashTable();
 
     // [crispy] allow overriding of special-casing
-    if (!M_ParmExists("-nosideload") && gamemode != shareware)
+    if (!M_ParmExists("-nosideload") && gamemode != shareware && !demolumpname[0])
     {
 	if (gamemode == retail &&
 	    gameversion == exe_ultimate &&
