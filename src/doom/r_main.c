@@ -1046,6 +1046,8 @@ void R_SetupFrame (player_t* player)
     }
     else
         extralight = 0;
+    // [crispy] A11Y
+    extralight += a11y_extra_lighting;
 
     if (pitch > LOOKDIRMAX)
 	pitch = LOOKDIRMAX;

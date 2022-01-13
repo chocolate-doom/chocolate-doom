@@ -1068,6 +1068,12 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(a11y_sector_lighting),
 
     //!
+    // Amount of extra light to add to the game scene.
+    //
+
+    CONFIG_VARIABLE_INT(a11y_extra_lighting),
+
+    //!
     // If zero, this disables weapon flashes changing the ambient light
     // level.
     //
