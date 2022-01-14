@@ -345,9 +345,18 @@ static void I_SDL_PauseSong(void)
         return;
     }
 
-    musicpaused = true;
+#if defined(_WIN32)
+    if (win_midi_stream_opened)
+    {
+        I_WIN_PauseSong();
+    }
+    else
+#endif
+    {
+        musicpaused = true;
 
-    UpdateMusicVolume();
+        UpdateMusicVolume();
+    }
 }
 
 static void I_SDL_ResumeSong(void)
@@ -357,9 +366,18 @@ static void I_SDL_ResumeSong(void)
         return;
     }
 
-    musicpaused = false;
+#if defined(_WIN32)
+    if (win_midi_stream_opened)
+    {
+        I_WIN_ResumeSong();
+    }
+    else
+#endif
+    {
+        musicpaused = false;
 
-    UpdateMusicVolume();
+        UpdateMusicVolume();
+    }
 }
 
 static void I_SDL_StopSong(void)
