@@ -437,7 +437,7 @@ void HU_Init(void)
     {
 	cr_stat = crstr[CR_GREEN];
 	cr_stat2 = crstr[CR_GOLD];
-	kills = "F ";
+	kills = "F\t";
     }
     else
     {
@@ -450,7 +450,7 @@ void HU_Init(void)
 		cr_stat = crstr[CR_RED];
 	}
 	cr_stat2 = crstr[CR_GREEN];
-	kills = "K ";
+	kills = "K\t";
     }
 
     // [crispy] initialize the crosshair types
@@ -1074,13 +1074,13 @@ void HU_Ticker(void)
 	while (*s)
 	    HUlib_addCharToTextLine(&w_kills, *(s++));
 
-	crispy_statsline(str, sizeof(str), "I ", plr->itemcount, totalitems, 0);
+	crispy_statsline(str, sizeof(str), "I\t", plr->itemcount, totalitems, 0);
 	HUlib_clearTextLine(&w_items);
 	s = str;
 	while (*s)
 	    HUlib_addCharToTextLine(&w_items, *(s++));
 
-	crispy_statsline(str, sizeof(str), "S ", plr->secretcount, totalsecret, 0);
+	crispy_statsline(str, sizeof(str), "S\t", plr->secretcount, totalsecret, 0);
 	HUlib_clearTextLine(&w_scrts);
 	s = str;
 	while (*s)
@@ -1111,7 +1111,7 @@ void HU_Ticker(void)
 
 	plr->btuse_tics--;
 
-	M_snprintf(str, sizeof(str), "%sU %02i:%05.02f", crstr[CR_GRAY], mins, secs);
+	M_snprintf(str, sizeof(str), "%sU\t%02i:%05.02f", crstr[CR_GRAY], mins, secs);
 	HUlib_clearTextLine(&w_ltime);
 	s = str;
 	while (*s)
@@ -1120,21 +1120,21 @@ void HU_Ticker(void)
 
     if (crispy->playercoords == WIDGETS_ALWAYS || (automapactive && crispy->playercoords == WIDGETS_AUTOMAP))
     {
-	M_snprintf(str, sizeof(str), "%sX %s%-5d", cr_stat2, crstr[CR_GRAY],
+	M_snprintf(str, sizeof(str), "%sX\t%s%-5d", cr_stat2, crstr[CR_GRAY],
 	        (plr->mo->x)>>FRACBITS);
 	HUlib_clearTextLine(&w_coordx);
 	s = str;
 	while (*s)
 	    HUlib_addCharToTextLine(&w_coordx, *(s++));
 
-	M_snprintf(str, sizeof(str), "%sY %s%-5d", cr_stat2, crstr[CR_GRAY],
+	M_snprintf(str, sizeof(str), "%sY\t%s%-5d", cr_stat2, crstr[CR_GRAY],
 	        (plr->mo->y)>>FRACBITS);
 	HUlib_clearTextLine(&w_coordy);
 	s = str;
 	while (*s)
 	    HUlib_addCharToTextLine(&w_coordy, *(s++));
 
-	M_snprintf(str, sizeof(str), "%sA %s%-5d", cr_stat2, crstr[CR_GRAY],
+	M_snprintf(str, sizeof(str), "%sA\t%s%-5d", cr_stat2, crstr[CR_GRAY],
 	        (plr->mo->angle)/ANG1);
 	HUlib_clearTextLine(&w_coorda);
 	s = str;
