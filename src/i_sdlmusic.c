@@ -342,12 +342,17 @@ static void I_SDL_PauseSong(void)
     }
 
 #if defined(_WIN32)
-    I_WIN_PauseSong();
-#else
-    musicpaused = true;
-
-    UpdateMusicVolume();
+    if (win_midi_stream_opened)
+    {
+        I_WIN_PauseSong();
+    }
+    else
 #endif
+    {
+        musicpaused = true;
+
+        UpdateMusicVolume();
+    }
 }
 
 static void I_SDL_ResumeSong(void)
@@ -358,12 +363,17 @@ static void I_SDL_ResumeSong(void)
     }
 
 #if defined(_WIN32)
-    I_WIN_ResumeSong();
-#else
-    musicpaused = false;
-
-    UpdateMusicVolume();
+    if (win_midi_stream_opened)
+    {
+        I_WIN_ResumeSong();
+    }
+    else
 #endif
+    {
+        musicpaused = false;
+
+        UpdateMusicVolume();
+    }
 }
 
 static void I_SDL_StopSong(void)
