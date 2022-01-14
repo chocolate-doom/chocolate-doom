@@ -341,9 +341,13 @@ static void I_SDL_PauseSong(void)
         return;
     }
 
+#if defined(_WIN32)
+    I_WIN_PauseSong();
+#else
     musicpaused = true;
 
     UpdateMusicVolume();
+#endif
 }
 
 static void I_SDL_ResumeSong(void)
@@ -353,9 +357,13 @@ static void I_SDL_ResumeSong(void)
         return;
     }
 
+#if defined(_WIN32)
+    I_WIN_ResumeSong();
+#else
     musicpaused = false;
 
     UpdateMusicVolume();
+#endif
 }
 
 static void I_SDL_StopSong(void)

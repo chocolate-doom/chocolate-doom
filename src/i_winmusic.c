@@ -444,6 +444,28 @@ void I_WIN_PlaySong(boolean looping)
     UpdateVolume();
 }
 
+void I_WIN_PauseSong(void)
+{
+    MMRESULT mmr;
+
+    mmr = midiStreamPause(hMidiStream);
+    if (mmr != MMSYSERR_NOERROR)
+    {
+        MidiErrorMessageBox(mmr);
+    }
+}
+
+void I_WIN_ResumeSong(void)
+{
+    MMRESULT mmr;
+
+    mmr = midiStreamRestart(hMidiStream);
+    if (mmr != MMSYSERR_NOERROR)
+    {
+        MidiErrorMessageBox(mmr);
+    }
+}
+
 boolean I_WIN_RegisterSong(char *filename)
 {
     int i;
@@ -517,6 +539,7 @@ void I_WIN_ShutdownMusic(void)
     MMRESULT mmr;
 
     I_WIN_StopSong();
+    I_WIN_UnRegisterSong();
 
     mmr = midiOutUnprepareHeader((HMIDIOUT)hMidiStream, hdr, sizeof(MIDIHDR));
     if (mmr != MMSYSERR_NOERROR)
