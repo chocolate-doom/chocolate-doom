@@ -9,7 +9,7 @@ if [ "$ANALYZE" = "true" ] ; then
 	exit $RET
 else
 	set -e
-	./autogen.sh --enable-werror
+	./autogen.sh "$CROSSRULE" --enable-werror
 	make -j4
 	make install DESTDIR=/tmp/whatever
 	make dist
