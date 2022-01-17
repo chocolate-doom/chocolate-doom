@@ -27,6 +27,8 @@
 // Needed because we are refering to patches.
 #include "v_patch.h"
 
+#include "w_wad.h" // [crispy] for lumpindex_t
+
 //
 // VIDEO
 //
@@ -84,6 +86,7 @@ void V_DrawRawScreen(pixel_t *raw);
 
 // Temporarily switch to using a different buffer to draw graphics, etc.
 
+void V_DrawFullscreenRawOrPatch(lumpindex_t index); // [crispy]
 void V_UseBuffer(pixel_t *buffer);
 
 // Return to using the normal screen buffer to draw graphics.

@@ -170,8 +170,7 @@ static void TextWrite(void)
     int cx, cy;
     patch_t *w;
 
-    V_CopyScaledBuffer(I_VideoBuffer, W_CacheLumpNum(FinaleLumpNum, PU_CACHE),
-           ORIGWIDTH * ORIGHEIGHT);
+    V_DrawFullscreenRawOrPatch(FinaleLumpNum); // [crispy]
     if (FinaleStage == 5)
     {                           // Chess pic, draw the correct character graphic
         if (netgame)
@@ -311,8 +310,7 @@ static void FadePic(void)
 
 static void DrawPic(void)
 {
-    V_CopyScaledBuffer(I_VideoBuffer, W_CacheLumpNum(FinaleLumpNum, PU_CACHE),
-           ORIGWIDTH * ORIGHEIGHT);
+    V_DrawFullscreenRawOrPatch(FinaleLumpNum); // [crispy]
     if (FinaleStage == 4 || FinaleStage == 5)
     {                           // Chess pic, draw the correct character graphic
         if (netgame)

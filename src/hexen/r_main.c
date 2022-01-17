@@ -71,6 +71,8 @@ void (*tlcolfunc) (void);
 void (*transcolfunc) (void);
 void (*spanfunc) (void);
 
+void SB_ForceRedraw(void); // [crispy] sb_bar.c
+
 /*
 ===================
 =
@@ -403,6 +405,10 @@ void R_InitTables(void)
 
 }
 
+// [crispy] in widescreen mode, make sure the same number of horizontal
+// pixels shows the same part of the game scene as in regular rendering mode
+static int scaledviewwidth_nonwide, viewwidth_nonwide;
+static fixed_t centerxfrac_nonwide;
 
 /*
 =================
@@ -425,8 +431,8 @@ void R_InitTextureMapping(void)
 // viewangletox will give the next greatest x after the view angle
 //
     // calc focallength so FIELDOFVIEW angles covers SCREENWIDTH
-    focallength =
-        FixedDiv(centerxfrac, finetangent[FINEANGLES / 4 + FIELDOFVIEW / 2]);
+    focallength = FixedDiv(centerxfrac_nonwide,
+                           finetangent[FINEANGLES / 4 + FIELDOFVIEW / 2]);
 
     for (i = 0; i < FINEANGLES / 2; i++)
     {
@@ -555,25 +561,43 @@ void R_ExecuteSetViewSize(void)
 
     if (setblocks == 11)
     {
+        scaledviewwidth_nonwide = NONWIDEWIDTH;
         scaledviewwidth = SCREENWIDTH;
         viewheight = SCREENHEIGHT;
     }
     else
     {
-        scaledviewwidth = (setblocks * 32) << crispy->hires;
+        scaledviewwidth_nonwide = (setblocks * 32) << crispy->hires;
         viewheight = (setblocks * 161 / 10) << crispy->hires;
+
+	// [crispy] regular viewwidth in non-widescreen mode
+	if (crispy->widescreen)
+	{
+		const int widescreen_edge_aligner = (16 << crispy->hires) - 1;
+
+		scaledviewwidth = viewheight*SCREENWIDTH/(SCREENHEIGHT-(42<<crispy->hires));
+		// [crispy] make sure scaledviewwidth is an integer multiple of the bezel patch width
+		scaledviewwidth = (scaledviewwidth + widescreen_edge_aligner) & (int)~widescreen_edge_aligner;
+		scaledviewwidth = MIN(scaledviewwidth, SCREENWIDTH);
+	}
+	else
+	{
+		scaledviewwidth = scaledviewwidth_nonwide;
+	}
     }
     // [crispy] make sure viewheight is always an even number
     viewheight &= ~1;
 
     detailshift = setdetail;
     viewwidth = scaledviewwidth >> detailshift;
+    viewwidth_nonwide = scaledviewwidth_nonwide >> detailshift;
 
     centery = viewheight / 2;
     centerx = viewwidth / 2;
     centerxfrac = centerx << FRACBITS;
     centeryfrac = centery << FRACBITS;
-    projection = centerxfrac;
+    centerxfrac_nonwide = (viewwidth_nonwide / 2) << FRACBITS;
+    projection = centerxfrac_nonwide;
 
     if (!detailshift)
     {
@@ -597,8 +621,8 @@ void R_ExecuteSetViewSize(void)
 //
 // psprite scales
 //
-    pspritescale = FRACUNIT * viewwidth / ORIGWIDTH;
-    pspriteiscale = FRACUNIT * ORIGWIDTH / viewwidth;
+    pspritescale = FRACUNIT * viewwidth_nonwide / ORIGWIDTH;
+    pspriteiscale = FRACUNIT * ORIGWIDTH / viewwidth_nonwide;
 
 //
 // thing clipping
@@ -613,7 +637,7 @@ void R_ExecuteSetViewSize(void)
     {
         dy = ((i - viewheight / 2) << FRACBITS) + FRACUNIT / 2;
         dy = abs(dy);
-        yslope[i] = FixedDiv((viewwidth << detailshift) / 2 * FRACUNIT, dy);
+        yslope[i] = FixedDiv((viewwidth_nonwide << detailshift) / 2 * FRACUNIT, dy);
     }
 
     for (i = 0; i < viewwidth; i++)
@@ -632,7 +656,7 @@ void R_ExecuteSetViewSize(void)
         {
             level =
                 startmap -
-                j * SCREENWIDTH / (viewwidth << detailshift) / DISTMAP;
+                j * NONWIDEWIDTH / (viewwidth_nonwide << detailshift) / DISTMAP;
             if (level < 0)
                 level = 0;
             if (level >= NUMCOLORMAPS)
@@ -645,6 +669,9 @@ void R_ExecuteSetViewSize(void)
 // draw the border
 //
     R_DrawViewBorder();         // erase old menu stuff
+
+    // [crispy] Redraw status bar needed for widescreen HUD
+    SB_ForceRedraw();
 }
 
 
@@ -743,7 +770,7 @@ void R_SetupFrame(player_t * player)
         centeryfrac = centery << FRACBITS;
         for (i = 0; i < viewheight; i++)
         {
-            yslope[i] = FixedDiv((viewwidth << detailshift) / 2 * FRACUNIT,
+            yslope[i] = FixedDiv((viewwidth_nonwide << detailshift) / 2 * FRACUNIT,
                                  abs(((i - centery) << FRACBITS) +
                                      FRACUNIT / 2));
         }

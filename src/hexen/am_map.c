@@ -103,6 +103,10 @@ static short mapystart = 0;     // y-value for the start of the map bitmap...use
                                                                                 //the parallax stuff.
 static short mapxstart = 0;     //x-value for the bitmap.
 
+// [crispy] Used for automap background tiling and scrolling
+#define MAPBGROUNDWIDTH ORIGWIDTH
+#define MAPBGROUNDHEIGHT (ORIGHEIGHT - ORIGSBARHEIGHT - 3)
+
 //byte screens[][SCREENWIDTH*SCREENHEIGHT];
 //void V_MarkRect (int x, int y, int width, int height);
 
@@ -256,14 +260,15 @@ void AM_changeWindowLoc(void)
     // in AM_clearFB).
     mapxstart += MTOF(m_paninc.x+FRACUNIT/2);
     mapystart -= MTOF(m_paninc.y+FRACUNIT/2);
-    if(mapxstart >= (finit_width >> crispy->hires))
-        mapxstart -= (finit_width >> crispy->hires);
+    // [crispy] Change background tile dimensions for hi-res
+    if(mapxstart >= MAPBGROUNDWIDTH << crispy->hires)
+        mapxstart -= MAPBGROUNDWIDTH << crispy->hires;
     if(mapxstart < 0)
-        mapxstart += (finit_width >> crispy->hires);
-    if(mapystart >= (finit_height >> crispy->hires))
-        mapystart -= (finit_height >> crispy->hires);
+        mapxstart += MAPBGROUNDWIDTH << crispy->hires;
+    if(mapystart >= MAPBGROUNDHEIGHT >> crispy->hires)
+        mapystart -= MAPBGROUNDHEIGHT >> crispy->hires;
     if(mapystart < 0)
-        mapystart += (finit_height >> crispy->hires);
+        mapystart += MAPBGROUNDHEIGHT >> crispy->hires;
     // - end of code that was commented-out
 
     m_x2 = m_x + m_w;
@@ -346,12 +351,15 @@ void AM_clearMarks(void)
 // should be called at the start of every level
 // right now, i figure it out myself
 
-void AM_LevelInit(void)
+void AM_LevelInit(boolean reinit)
 {
+    // [crispy] Used for reinit
+    static int f_h_old;
+
     leveljuststarted = 0;
 
     finit_width = SCREENWIDTH;
-    finit_height = SCREENHEIGHT - SBARHEIGHT - (3 << crispy->hires);
+    finit_height = SCREENHEIGHT - ((ORIGSBARHEIGHT + 3) << crispy->hires);
 
     f_x = f_y = 0;
     f_w = finit_width;
@@ -362,10 +370,21 @@ void AM_LevelInit(void)
 //  AM_clearMarks();
 
     AM_findMinMaxBoundaries();
+
+    // [crispy] preserve map scale when re-initializing
+    if (reinit && f_h_old)
+    {
+        scale_mtof = scale_mtof * f_h / f_h_old;
+    }
+    else
+    {
     scale_mtof = FixedDiv(min_scale_mtof, (int) (0.7 * FRACUNIT));
+    }
     if (scale_mtof > max_scale_mtof)
         scale_mtof = min_scale_mtof;
     scale_ftom = FixedDiv(FRACUNIT, scale_mtof);
+
+    f_h_old = f_h;
 }
 
 static boolean stopped = true;
@@ -394,7 +413,7 @@ void AM_Start(void)
     }
     if (lastlevel != gamemap || lastepisode != gameepisode)
     {
-        AM_LevelInit();
+        AM_LevelInit(false);
         lastlevel = gamemap;
         lastepisode = gameepisode;
     }
@@ -471,28 +490,28 @@ boolean AM_Responder(event_t * ev)
         if (key == key_map_east)                 // pan right
         {
             if (!followplayer)
-                m_paninc.x = FTOM(F_PANINC);
+                m_paninc.x = FTOM(F_PANINC << crispy->hires);
             else
                 rc = false;
         }
         else if (key == key_map_west)                   // pan left
         {
             if (!followplayer)
-                m_paninc.x = -FTOM(F_PANINC);
+                m_paninc.x = -FTOM(F_PANINC << crispy->hires);
             else
                 rc = false;
         }
         else if (key == key_map_north)             // pan up
         {
             if (!followplayer)
-                m_paninc.y = FTOM(F_PANINC);
+                m_paninc.y = FTOM(F_PANINC << crispy->hires);
             else
                 rc = false;
         }
         else if (key == key_map_south)                   // pan down
         {
             if (!followplayer)
-                m_paninc.y = -FTOM(F_PANINC);
+                m_paninc.y = -FTOM(F_PANINC << crispy->hires);
             else
                 rc = false;
         }
@@ -684,6 +703,7 @@ void AM_clearFB(int color)
     int i, j;
     int dmapx;
     int dmapy;
+    int x1, x2, x3;
 
     if (followplayer)
     {
@@ -697,14 +717,15 @@ void AM_clearFB(int color)
         mapxstart += dmapx >> 1;
         mapystart += dmapy >> 1;
 
-        while (mapxstart >= (finit_width >> crispy->hires))
-            mapxstart -= (finit_width >> crispy->hires);
+        // [crispy] Change background tile dimensions for hi-res
+        while (mapxstart >= MAPBGROUNDWIDTH << crispy->hires)
+            mapxstart -= MAPBGROUNDWIDTH << crispy->hires;
         while (mapxstart < 0)
-            mapxstart += (finit_width >> crispy->hires);
-        while (mapystart >= (finit_height >> crispy->hires))
-            mapystart -= (finit_height >> crispy->hires);
+            mapxstart += MAPBGROUNDWIDTH << crispy->hires;
+        while (mapystart >= MAPBGROUNDHEIGHT >> crispy->hires)
+            mapystart -= MAPBGROUNDHEIGHT >> crispy->hires;
         while (mapystart < 0)
-            mapystart += (finit_height >> crispy->hires);
+            mapystart += MAPBGROUNDHEIGHT >> crispy->hires;
     }
     else
     {
@@ -726,15 +747,33 @@ void AM_clearFB(int color)
     }
 
     //blit the automap background to the screen.
-    j = (mapystart & ~crispy->hires) * (finit_width >> crispy->hires);
+
+    // [crispy] To support widescreen, increase the number of possible
+    // background tiles from 2 to 3. To support rendering at 2x resolution,
+    // treat original 320 x 158 tile image as 640 x 79.
+    j = mapystart * (MAPBGROUNDWIDTH << crispy->hires);
+
+    x1 = mapxstart;
+    x2 = finit_width - x1;
+
+    if (x2 > MAPBGROUNDWIDTH << crispy->hires)
+        x2 = MAPBGROUNDWIDTH << crispy->hires;
+
+    x3 = finit_width - x2 - x1;
+
     for (i = 0; i < SCREENHEIGHT - SBARHEIGHT; i++)
     {
-        memcpy(I_VideoBuffer + i * finit_width, maplump + j + mapxstart,
-               finit_width - mapxstart);
-        memcpy(I_VideoBuffer + i * finit_width + finit_width - mapxstart,
-               maplump + j, mapxstart);
-        j += finit_width;
-        if (j >= (finit_height >> crispy->hires) * (finit_width >> crispy->hires))
+        memcpy(I_VideoBuffer + i * finit_width,
+               maplump + j + (MAPBGROUNDWIDTH << crispy->hires) - x3, x3);
+
+        memcpy(I_VideoBuffer + i * finit_width + x3,
+               maplump + j + (MAPBGROUNDWIDTH << crispy->hires) - x2, x2);
+
+        memcpy(I_VideoBuffer + i * finit_width + x2 + x3,
+               maplump + j, x1);
+
+        j += MAPBGROUNDWIDTH << crispy->hires;
+        if (j >= MAPBGROUNDHEIGHT * MAPBGROUNDWIDTH)
             j = 0;
     }
 
@@ -971,17 +1010,17 @@ void PUTDOT(short xx, short yy, byte * cc, byte * cm)
     if (yy == oldyy + 1)
     {
         oldyy++;
-        oldyyshifted += (320 << crispy->hires);
+        oldyyshifted += f_w;
     }
     else if (yy == oldyy - 1)
     {
         oldyy--;
-        oldyyshifted -= (320 << crispy->hires);
+        oldyyshifted -= f_w;
     }
     else if (yy != oldyy)
     {
         oldyy = yy;
-        oldyyshifted = yy * (320 << crispy->hires);
+        oldyyshifted = yy * f_w;
     }
     fb[oldyyshifted + xx] = *(cc);
 //      fb[(yy)*f_w+(xx)]=*(cc);
