@@ -149,12 +149,22 @@ static yahpt_t YAHspot[3][9] = {
 static const char *NameForMap(int map)
 {
     const char *name = LevelNames[(gameepisode - 1) * 9 + map - 1];
+    int skip = 0;
     name = DEH_String(name);
-    if (strlen(name) < 7)
+
+    // [crispy] check if map name starts with identifier before skipping it
+    if (strlen(name) >= 4 &&
+        toupper(name[0]) == 'E' && isdigit(name[1]) &&
+        toupper(name[2]) == 'M' && isdigit(name[3]))
+    {
+        skip = 7;
+    }
+
+    if (strlen(name) < skip)
     {
         return "";
     }
-    return name + 7;
+    return name + skip;
 }
 
 //========================================================================
