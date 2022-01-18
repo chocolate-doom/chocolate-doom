@@ -168,9 +168,9 @@ boolean askforquit;
 static int typeofask;
 static boolean FileMenuKeySteal;
 static boolean slottextloaded;
-static char SlotText[6][SLOTTEXTLEN + 2];
+static char SlotText[8][SLOTTEXTLEN + 2];
 static char oldSlotText[SLOTTEXTLEN + 2];
-static int SlotStatus[6];
+static int SlotStatus[8];
 static int slotptr;
 static int currentSlot;
 static int quicksave;
@@ -227,13 +227,15 @@ static MenuItem_t LoadItems[] = {
     {ITT_EFUNC, NULL, SCLoadGame, 2, MENU_NONE},
     {ITT_EFUNC, NULL, SCLoadGame, 3, MENU_NONE},
     {ITT_EFUNC, NULL, SCLoadGame, 4, MENU_NONE},
-    {ITT_EFUNC, NULL, SCLoadGame, 5, MENU_NONE}
+    {ITT_EFUNC, NULL, SCLoadGame, 5, MENU_NONE},
+    {ITT_EFUNC, NULL, SCLoadGame, 6, MENU_NONE},
+    {ITT_EFUNC, NULL, SCLoadGame, 7, MENU_NONE},
 };
 
 static Menu_t LoadMenu = {
     70, 30,
     DrawLoadMenu,
-    6, LoadItems,
+    8, LoadItems,
     0,
     MENU_FILES
 };
@@ -244,13 +246,15 @@ static MenuItem_t SaveItems[] = {
     {ITT_EFUNC, NULL, SCSaveGame, 2, MENU_NONE},
     {ITT_EFUNC, NULL, SCSaveGame, 3, MENU_NONE},
     {ITT_EFUNC, NULL, SCSaveGame, 4, MENU_NONE},
-    {ITT_EFUNC, NULL, SCSaveGame, 5, MENU_NONE}
+    {ITT_EFUNC, NULL, SCSaveGame, 5, MENU_NONE},
+    {ITT_EFUNC, NULL, SCSaveGame, 6, MENU_NONE},
+    {ITT_EFUNC, NULL, SCSaveGame, 7, MENU_NONE},
 };
 
 static Menu_t SaveMenu = {
     70, 30,
     DrawSaveMenu,
-    6, SaveItems,
+    8, SaveItems,
     0,
     MENU_FILES
 };
@@ -790,7 +794,7 @@ void MN_LoadSlotText(void)
     int i;
     char *filename;
 
-    for (i = 0; i < 6; i++)
+    for (i = 0; i < 8; i++)
     {
         int retval;
         filename = SV_Filename(i);
@@ -824,7 +828,7 @@ static void DrawFileSlots(Menu_t * menu)
 
     x = menu->x;
     y = menu->y;
-    for (i = 0; i < 6; i++)
+    for (i = 0; i < 8; i++)
     {
         V_DrawPatch(x, y, W_CacheLumpName(DEH_String("M_FSLOT"), PU_CACHE));
         if (SlotStatus[i])
@@ -833,6 +837,9 @@ static void DrawFileSlots(Menu_t * menu)
         }
         y += ITEM_HEIGHT;
     }
+    // [crispy] refresh the status bar and border
+    SB_state = -1;
+    BorderNeedRefresh = true;
 }
 
 //---------------------------------------------------------------------------
