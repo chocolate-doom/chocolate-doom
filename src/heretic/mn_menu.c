@@ -589,7 +589,8 @@ const char *QuitEndMsg[] = {
     "ARE YOU SURE YOU WANT TO QUIT?",
     "ARE YOU SURE YOU WANT TO END THE GAME?",
     "DO YOU WANT TO QUICKSAVE THE GAME NAMED",
-    "DO YOU WANT TO QUICKLOAD THE GAME NAMED"
+    "DO YOU WANT TO QUICKLOAD THE GAME NAMED",
+    "DO YOU WANT TO DELETE THE GAME NAMED",
 };
 
 void MN_Drawer(void)
@@ -621,6 +622,13 @@ void MN_Drawer(void)
                            MN_TextAWidth(SlotText[quickload - 1]) / 2, 90);
                 MN_DrTextA(DEH_String("?"), 160 +
                            MN_TextAWidth(SlotText[quickload - 1]) / 2, 90);
+            }
+            if (typeofask == 5)
+            {
+                MN_DrTextA(SlotText[CurrentItPos], 160 -
+                           MN_TextAWidth(SlotText[CurrentItPos]) / 2, 90);
+                MN_DrTextA(DEH_String("?"), 160 +
+                           MN_TextAWidth(SlotText[CurrentItPos]) / 2, 90);
             }
             UpdateState |= I_FULLSCRN;
         }
@@ -990,6 +998,25 @@ static boolean SCLoadGame(int option)
         players[consoleplayer].message = NULL;
         players[consoleplayer].messageTics = 1;
     }
+    return true;
+}
+
+static boolean SCDeleteGame(int option)
+{
+    char *filename;
+
+    if (!SlotStatus[option])
+    {
+        return false;
+    }
+
+    filename = SV_Filename(option);
+    remove(filename);
+    free(filename);
+
+    MN_LoadSlotText();
+    BorderNeedRefresh = true;
+
     return true;
 }
 
@@ -1480,6 +1507,11 @@ boolean MN_Responder(event_t * event)
                     BorderNeedRefresh = true;
                     break;
 
+                case 5:
+                    SCDeleteGame(CurrentItPos);
+                    BorderNeedRefresh = true;
+                    break;
+
                 default:
                     break;
             }
@@ -1811,6 +1843,25 @@ boolean MN_Responder(event_t * event)
             else
             {
                 SetMenu(CurrentMenu->prevMenu);
+            }
+            return (true);
+        }
+        // [crispy] delete a savegame
+        else if (key == key_menu_del)
+        {
+            if (CurrentMenu == &LoadMenu || CurrentMenu == &SaveMenu)
+            {
+                if (SlotStatus[CurrentItPos])
+                {
+                    MenuActive = false;
+                    askforquit = true;
+                    if (!netgame && !demoplayback)
+                    {
+                        paused = true;
+                    }
+                    typeofask = 5;
+                    S_StartSound(NULL, sfx_chat);
+                }
             }
             return (true);
         }
