@@ -96,6 +96,9 @@ int curpos;
 int inv_ptr;
 int ArtifactFlash;
 
+// [crispy] for widescreen status bar background
+pixel_t *st_backing_screen;
+
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static int DisplayTicker = 0;
@@ -302,6 +305,7 @@ void SB_Init(void)
     SpinSpeedLump = W_GetNumForName("SPBOOT0");
     SpinDefenseLump = W_GetNumForName("SPSHLD0");
 
+    st_backing_screen = (pixel_t *) Z_Malloc(MAXWIDTH * (ORIGSBARHEIGHT << 1) * sizeof(*st_backing_screen), PU_STATIC, 0);
     if (deathmatch)
     {
         PatchKILLS = W_CacheLumpName("KILLS", PU_STATIC);
@@ -742,6 +746,54 @@ static int oldkeys = -1;
 
 extern boolean automapactive;
 
+// [crispy] Needed to support widescreen status bar.
+void SB_ForceRedraw(void)
+{
+    SB_state = -1;
+}
+
+// [crispy] Create background texture which appears at each side of the status
+// bar in widescreen rendering modes. The chosen textures match those which
+// surround the non-fullscreen game window.
+static void RefreshBackground(void)
+{
+    V_UseBuffer(st_backing_screen);
+
+    if ((SCREENWIDTH >> crispy->hires) != ORIGWIDTH)
+    {
+        int x, y;
+        byte *src;
+        pixel_t *dest;
+
+        src = W_CacheLumpName("F_022", PU_CACHE);
+        dest = st_backing_screen;
+
+        for (y = SCREENHEIGHT - SBARHEIGHT; y < SCREENHEIGHT; y++)
+        {
+            for (x = 0; x < SCREENWIDTH; x++)
+            {
+                *dest++ = src[((y & 63) << 6) + (x & 63)];
+            }
+        }
+
+        // [crispy] preserve bezel bottom edge
+        if (scaledviewwidth == SCREENWIDTH)
+        {
+            patch_t *const patch = W_CacheLumpName("bordb", PU_CACHE);
+
+            for (x = 0; x < WIDESCREENDELTA; x += 16)
+            {
+                V_DrawPatch(x - WIDESCREENDELTA, 0, patch);
+                V_DrawPatch(ORIGWIDTH + WIDESCREENDELTA - x - 16, 0, patch);
+            }
+        }
+    }
+
+    V_RestoreBuffer();
+    V_CopyRect(0, 0, st_backing_screen, SCREENWIDTH >> crispy->hires,
+                   ORIGSBARHEIGHT, 0, ORIGHEIGHT - ORIGSBARHEIGHT);
+}
+
 void SB_Drawer(void)
 {
     // Sound info debug stuff
@@ -759,6 +811,7 @@ void SB_Drawer(void)
     {
         if (SB_state == -1)
         {
+            RefreshBackground(); // [crispy] for widescreen
             V_DrawPatch(0, 134, PatchH2BAR);
             oldhealth = -1;
         }
@@ -1180,9 +1233,12 @@ void DrawMainBar(void)
          for (j = 0; j <= crispy->hires; j++)
           for (k = 0; k <= crispy->hires; k++)
           {
-            I_VideoBuffer[((i << crispy->hires) + j) * SCREENWIDTH + ((95 << crispy->hires) + k)] = 0;
-            I_VideoBuffer[((i << crispy->hires) + j) * SCREENWIDTH + ((96 << crispy->hires) + k)] = 0;
-            I_VideoBuffer[((i << crispy->hires) + j) * SCREENWIDTH + ((97 << crispy->hires) + k)] = 0;
+            I_VideoBuffer[SCREENWIDTH * ((i << crispy->hires) + j)
+                          + ((95 + WIDESCREENDELTA) << crispy->hires) + k] = 0;
+            I_VideoBuffer[SCREENWIDTH * ((i << crispy->hires) + j)
+                          + ((96 + WIDESCREENDELTA) << crispy->hires) + k] = 0;
+            I_VideoBuffer[SCREENWIDTH * ((i << crispy->hires) + j)
+                          + ((97 + WIDESCREENDELTA) << crispy->hires) + k] = 0;
           }
         }
         V_DrawPatch(102, 164, manaVialPatch2);
@@ -1191,9 +1247,12 @@ void DrawMainBar(void)
          for (j = 0; j <= crispy->hires; j++)
           for (k = 0; k <= crispy->hires; k++)
           {
-            I_VideoBuffer[((i << crispy->hires) + j) * SCREENWIDTH + ((103 << crispy->hires) + k)] = 0;
-            I_VideoBuffer[((i << crispy->hires) + j) * SCREENWIDTH + ((104 << crispy->hires) + k)] = 0;
-            I_VideoBuffer[((i << crispy->hires) + j) * SCREENWIDTH + ((105 << crispy->hires) + k)] = 0;
+            I_VideoBuffer[SCREENWIDTH * ((i << crispy->hires) + j)
+                          + ((103 + WIDESCREENDELTA) << crispy->hires) + k] = 0;
+            I_VideoBuffer[SCREENWIDTH * ((i << crispy->hires) + j)
+                          + ((104 + WIDESCREENDELTA) << crispy->hires) + k] = 0;
+            I_VideoBuffer[SCREENWIDTH * ((i << crispy->hires) + j)
+                          + ((105 + WIDESCREENDELTA) << crispy->hires) + k] = 0;
           }
         }
         oldweapon = CPlayer->readyweapon;

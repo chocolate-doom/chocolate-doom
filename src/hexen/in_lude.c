@@ -403,7 +403,7 @@ void IN_Drawer(void)
         return;
     }
     UpdateState |= I_FULLSCRN;
-    V_CopyScaledBuffer(I_VideoBuffer, (byte *) patchINTERPIC, ORIGWIDTH * ORIGHEIGHT);
+    V_DrawFullscreenRawOrPatch(W_GetNumForName("INTERPIC")); // [crispy]
 
     if (gametype == SINGLE)
     {

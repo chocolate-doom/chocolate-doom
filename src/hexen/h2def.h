@@ -573,7 +573,8 @@ typedef struct player_s
 #define	CF_GODMODE		2
 #define	CF_NOMOMENTUM	4       // not really a cheat, just a debug aid
 
-#define	SBARHEIGHT	(39 << crispy->hires)      // status bar height at bottom of screen
+#define ORIGSBARHEIGHT          39 // [crispy]
+#define	SBARHEIGHT	(ORIGSBARHEIGHT << crispy->hires)      // status bar height at bottom of screen
 
 void NET_SendFrags(player_t * player);
 

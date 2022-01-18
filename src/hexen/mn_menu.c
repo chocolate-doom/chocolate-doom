@@ -1779,10 +1779,33 @@ void MN_DeactivateMenu(void)
 
 void MN_DrawInfo(void)
 {
+    lumpindex_t lumpindex; // [crispy]
+
     I_SetPalette(W_CacheLumpName("PLAYPAL", PU_CACHE));
-    V_CopyScaledBuffer(I_VideoBuffer,
-           (byte *) W_CacheLumpNum(W_GetNumForName("TITLE") + InfoType,
-                                   PU_CACHE), ORIGWIDTH * ORIGHEIGHT);
+
+    // [crispy] Refactor to allow for use of V_DrawFullscreenRawOrPatch
+
+    switch (InfoType)
+    {
+        case 1:
+            lumpindex = W_GetNumForName("HELP1");
+            break;
+
+        case 2:
+            lumpindex = W_GetNumForName("HELP2");
+            break;
+
+        case 3:
+            lumpindex = W_GetNumForName("CREDIT");
+            break;
+
+        default:
+            lumpindex = W_GetNumForName("TITLE");
+            break;
+    }
+
+    V_DrawFullscreenRawOrPatch(lumpindex);
+
 //      V_DrawPatch(0, 0, W_CacheLumpNum(W_GetNumForName("TITLE")+InfoType,
 //              PU_CACHE));
 }
