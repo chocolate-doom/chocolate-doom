@@ -992,6 +992,19 @@ static boolean SCLoadGame(int option)
 //
 //---------------------------------------------------------------------------
 
+// [crispy] override savegame name if it already starts with a map identifier
+static boolean StartsWithMapIdentifier (char *str)
+{
+    if (strlen(str) >= 4 &&
+        toupper(str[0]) == 'E' && isdigit(str[1]) &&
+        toupper(str[2]) == 'M' && isdigit(str[3]))
+    {
+        return true;
+    }
+
+    return false;
+}
+
 static boolean SCSaveGame(int option)
 {
     char *ptr;
@@ -1009,6 +1022,9 @@ static boolean SCSaveGame(int option)
 
         M_StringCopy(oldSlotText, SlotText[option], sizeof(oldSlotText));
         ptr = SlotText[option];
+        // [crispy] generate a default save slot name when the user saves to an empty slot
+        if (!oldSlotText[0] || StartsWithMapIdentifier(oldSlotText))
+          M_snprintf(ptr, sizeof(oldSlotText), "E%dM%d", gameepisode, gamemap);
         while (*ptr)
         {
             ptr++;
