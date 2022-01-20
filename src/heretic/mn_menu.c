@@ -1368,6 +1368,14 @@ static boolean CrispySecretMessage(int option)
     return true;
 }
 
+static void CrispyReturnToMenu()
+{
+	Menu_t *cur = CurrentMenu;
+	MN_ActivateMenu();
+	CurrentMenu = cur;
+	CurrentItPos = CurrentMenu->oldItPos;
+}
+
 //---------------------------------------------------------------------------
 //
 // FUNC MN_Responder
@@ -1510,6 +1518,7 @@ boolean MN_Responder(event_t * event)
                 case 5:
                     SCDeleteGame(CurrentItPos);
                     BorderNeedRefresh = true;
+                    CrispyReturnToMenu();
                     break;
 
                 default:
@@ -1523,6 +1532,10 @@ boolean MN_Responder(event_t * event)
         }
         else if (key == key_menu_abort || key == KEY_ESCAPE)
         {
+            if (typeofask == 5)
+            {
+                CrispyReturnToMenu();
+            }
             players[consoleplayer].messageTics = 1;  //set the msg to be cleared
             askforquit = false;
             typeofask = 0;
