@@ -407,7 +407,7 @@ void ConfigKeyboard(TXT_UNCAST_ARG(widget), void *user_data)
 
     AddKeyControl(window, "Turn Left", &key_left);
     TXT_AddWidget(window, TXT_TABLE_EMPTY);
-    AddKeyControl(window, "Speed On", &key_speed);
+    AddKeyControl(window, "Run", &key_speed);
 
     AddKeyControl(window, "Turn Right", &key_right);
     TXT_AddWidget(window, TXT_TABLE_EMPTY);

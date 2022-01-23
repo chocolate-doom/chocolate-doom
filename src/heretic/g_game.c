@@ -310,7 +310,8 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
         || joybuttons[joybstrafe];
     speed = joybspeed >= MAX_JOY_BUTTONS
          || gamekeydown[key_speed]
-         || joybuttons[joybspeed];
+         || joybuttons[joybspeed]
+         || mousebuttons[mousebspeed];
 
     // haleyjd: removed externdriver crap
     
