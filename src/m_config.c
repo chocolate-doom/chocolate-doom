@@ -442,6 +442,13 @@ static default_t	doom_defaults_list[] =
     CONFIG_VARIABLE_INT(mouseb_forward),
 
     //!
+    // Mouse button to turn on running.  When held down, the player
+    // will run while moving.
+    //
+
+    CONFIG_VARIABLE_INT(mouseb_speed),
+
+    //!
     // @game hexen strife
     //
     // Mouse button to jump.
