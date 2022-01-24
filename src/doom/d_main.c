@@ -1241,7 +1241,8 @@ static void LoadIwadDeh(void)
         }
     }
 
-    if (gamevariant == doom2f)
+    if (gamemission == doom2 && W_CheckNumForName("M_RDTHIS") < 0 && W_CheckNumForName("M_EPISOD") < 0 && W_CheckNumForName("M_EPI1") < 0
+          && W_CheckNumForName("M_EPI2") < 0 && W_CheckNumForName("M_EPI3") < 0 && W_CheckNumForName("WIOSTF") < 0 && W_CheckNumForName("WIOBJ") >= 0)
     {
         char *french_deh = NULL;
         char *dirname;
@@ -1527,11 +1528,6 @@ void D_DoomMain (void)
     else if (W_CheckNumForName("DMENUPIC") >= 0)
     {
         gamevariant = bfgedition;
-    }
-    else if (gamemission == doom2 && W_CheckNumForName("M_RDTHIS") < 0 && W_CheckNumForName("M_EPISOD") < 0 && W_CheckNumForName("M_EPI1") < 0
-          && W_CheckNumForName("M_EPI2") < 0 && W_CheckNumForName("M_EPI3") < 0 && W_CheckNumForName("WIOSTF") < 0 && W_CheckNumForName("WIOBJ") >= 0)
-    {
-        gamevariant = doom2f;
     }
 
     //!
