@@ -469,6 +469,8 @@ void AM_LevelInit(boolean reinit)
     if (scale_mtof > max_scale_mtof)
         scale_mtof = min_scale_mtof;
     scale_ftom = FixedDiv(FRACUNIT, scale_mtof);
+
+    f_h_old = f_h;
 }
 
 static boolean stopped = true;

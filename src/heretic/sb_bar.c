@@ -577,6 +577,12 @@ int playerkeys = 0;
 
 extern boolean automapactive;
 
+// [crispy] Needed to support widescreen status bar.
+void SB_ForceRedraw(void)
+{
+    SB_state = -1;
+}
+
 // [crispy] Create background texture which appears at each side of the status
 // bar in widescreen rendering modes. The chosen textures match those which
 // surround the non-fullscreen game window.
@@ -601,6 +607,18 @@ static void RefreshBackground()
             for (x = 0; x < SCREENWIDTH; x++)
             {
                 *dest++ = src[((y & 63) << 6) + (x & 63)];
+            }
+        }
+
+        // [crispy] preserve bezel bottom edge
+        if (scaledviewwidth == SCREENWIDTH)
+        {
+            patch_t *const patch = W_CacheLumpName("bordb", PU_CACHE);
+
+            for (x = 0; x < WIDESCREENDELTA; x += 16)
+            {
+                V_DrawPatch(x - WIDESCREENDELTA, 0, patch);
+                V_DrawPatch(ORIGWIDTH + WIDESCREENDELTA - x - 16, 0, patch);
             }
         }
     }

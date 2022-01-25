@@ -583,21 +583,21 @@ void IN_Drawer(void)
         case 1:                // leaving old level
             if (gameepisode < 4)
             {
-                V_DrawPatch(0, 0, patchINTERPIC);
+                V_DrawPatchFullScreen(patchINTERPIC, false);
                 IN_DrawOldLevel();
             }
             break;
         case 2:                // going to the next level
             if (gameepisode < 4)
             {
-                V_DrawPatch(0, 0, patchINTERPIC);
+                V_DrawPatchFullScreen(patchINTERPIC, false);
                 IN_DrawYAH();
             }
             break;
         case 3:                // waiting before going to the next level
             if (gameepisode < 4)
             {
-                V_DrawPatch(0, 0, patchINTERPIC);
+                V_DrawPatchFullScreen(patchINTERPIC, false);
             }
             break;
         default:

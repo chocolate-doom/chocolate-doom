@@ -890,7 +890,7 @@ void V_DrawFullscreenRawOrPatch(lumpindex_t index)
     {
         V_DrawRawScreen((pixel_t*)patch);
     }
-    else if ((patch->height == 200) && (patch->width >= 320))
+    else if ((SHORT(patch->height) == 200) && (SHORT(patch->width) >= 320))
     {
         V_DrawPatchFullScreen(patch, false);
     }
