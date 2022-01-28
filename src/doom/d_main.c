@@ -1257,6 +1257,7 @@ static void LoadIwadDeh(void)
         // Look for french.deh in the same directory as the IWAD file.
         dirname = M_DirName(iwadfile);
         french_deh = M_StringJoin(dirname, DIR_SEPARATOR_S, "french.deh", NULL);
+        printf("French version\n");
         free(dirname);
 
         // If the dehacked patch isn't found, try searching the WAD
