@@ -1183,6 +1183,14 @@ static void D_Endoom(void)
     I_Endoom(endoom);
 }
 
+boolean IsFrenchIWAD(void)
+{
+    return (gamemission == doom2 && W_CheckNumForName("M_RDTHIS") < 0
+          && W_CheckNumForName("M_EPISOD") < 0 && W_CheckNumForName("M_EPI1") < 0
+          && W_CheckNumForName("M_EPI2") < 0 && W_CheckNumForName("M_EPI3") < 0
+          && W_CheckNumForName("WIOSTF") < 0 && W_CheckNumForName("WIOBJ") >= 0);
+}
+
 // Load dehacked patches needed for certain IWADs.
 static void LoadIwadDeh(void)
 {
@@ -1241,8 +1249,7 @@ static void LoadIwadDeh(void)
         }
     }
 
-    if (gamemission == doom2 && W_CheckNumForName("M_RDTHIS") < 0 && W_CheckNumForName("M_EPISOD") < 0 && W_CheckNumForName("M_EPI1") < 0
-          && W_CheckNumForName("M_EPI2") < 0 && W_CheckNumForName("M_EPI3") < 0 && W_CheckNumForName("WIOSTF") < 0 && W_CheckNumForName("WIOBJ") >= 0)
+    if (IsFrenchIWAD())
     {
         char *french_deh = NULL;
         char *dirname;
