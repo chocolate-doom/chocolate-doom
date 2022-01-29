@@ -1,6 +1,8 @@
 ## 3.1.0 (2019-??-??)
 
 ### General
+  * Drag and drop loading of WAD and Dehacked files is now supported on
+    Windows - simply drag the files onto chocolate-doom.exe (thanks Fabian).
   * WAD file autoloading was added - WAD and DEH files can be copied into
     an autoload folder to be automatically included on every game start.
   * Music pack configuration has been significantly simplified. By simply
@@ -8,6 +10,7 @@
     detected by filename and used.
   * Music packs can now be used with OPL as a fallback, and music pack
     config files can have any name ending in '.cfg'.
+  * MP3 music packs are now supported.
   * Network synchronization now uses a PID controller by default, which
     makes games more smooth and more stable, especially for Internet play.
   * UDP hole punching is now used to make servers behind NAT gateways
@@ -27,6 +30,10 @@
   * Default savegame name now includes the WAD filename (thanks Fabian).
   * Mouse movement is no longer read when the game window is inactive
     (thanks Julia Nechaevskaya).
+  * Chocolate Doom now by default generates a "pet name" for the user
+    to respect privacy (thanks Jon!)
+  * The Freedoom single-player IWAD files are now officially supported,
+    since recent versions changed all levels to be vanilla compatible.
 
 ### Refactorings
   * CMake project files have been added, replacing the Microsoft Visual
@@ -44,6 +51,7 @@
     loaded (thanks Zodomaniac, chungy).
   * There's now a log file feature for the network code to aid in tracking
     down multiplayer bugs.
+  * AppData files were updated to the AppStream standard (thanks Mike).
 
 ### Bug fixes
   * Fixed an exception thrown by the Windows kernel when debugging with
@@ -61,8 +69,14 @@
     missing tics from the server was fixed. There are both client- and
     server- side fixes to fix the problem when playing with older versions
     (thanks MadDog and Mortrixs for help tracking this down).
+  * The macOS launcher now quits automatically when all windows are closed.
+  * The mouse speed calibration thermometer was fixed.
+  * Some bugs were fixed in the protocol used for chocolate-midiproc.exe
+    so that songs are correctly unregistered (thanks AlexMax).
+  * Install of bash completion scripts was fixed (thanks Mike).
 
 ### Doom
+  * Doom 1.2 demo support was added (thanks James Canete!)
   * Map33 intermission screen and map33-map35 automap names are
     emulated (thanks CapnClever).
   * We now exit gracefully when player starts are missing (thanks Mike
@@ -70,6 +84,8 @@
   * We now exit gracefully on levels with a boss brain and no boss spitter
     things (thanks Jason Benaim).
   * It's now possible to play multiplayer with gameversion=1.2.
+  * When the game hits the limit for the number of wall scrollers, a count
+    of the number of scrollers is now displayed (thanks Jon).
 
 ### Heretic
   * P\_FindNextHighestFloor was changed to match vanilla behavior (thanks
