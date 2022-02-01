@@ -1266,7 +1266,13 @@ void M_DrawEpisode(void)
     // [crispy] force status bar refresh
     inhelpscreens = true;
 
+    if (W_CheckNumForName(DEH_String("M_EPISOD")) != -1)
     V_DrawPatchDirect(54, 38, W_CacheLumpName(DEH_String("M_EPISOD"), PU_CACHE));
+    else
+    {
+      M_WriteText(54, 38, "Which Episode?");
+      EpiDef.lumps_missing = 1
+    }
 }
 
 void M_VerifyNightmare(int key)
