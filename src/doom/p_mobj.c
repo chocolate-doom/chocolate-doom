@@ -391,12 +391,13 @@ void P_ZMovement (mobj_t* mo)
 		// [crispy] dead men don't say "oof"
 		if (mo->health > 0 || !crispy->soundfix)
 		{
+		// [NS] Landing sound for longer falls. (Hexen's calculation.)
+		if (mo->momz < -GRAVITY * 12)
+		{
+		    S_StartSoundOptional(mo, sfx_plland, sfx_oof);
+		}
+		else
 		S_StartSound (mo, sfx_oof);
-		    // [NS] Landing sound for longer falls. (Hexen's calculation.)
-		    if (mo->momz < -GRAVITY * 12)
-		    {
-		        S_StartSoundOptional(mo, sfx_plland, -1);
-		    }
 		}
 	    }
 	    mo->momz = 0;
