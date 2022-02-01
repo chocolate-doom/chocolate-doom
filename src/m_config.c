@@ -2178,14 +2178,6 @@ static default_t extra_defaults_list[] =
     //!
     // @game doom
     //
-    // Enable weapon recoil thrust.
-    //
-
-    CONFIG_VARIABLE_INT(crispy_recoil),
-
-    //!
-    // @game doom
-    //
     // Show a centered message and play a sound when a secret is found.
     //
 
