@@ -1271,7 +1271,7 @@ void M_DrawEpisode(void)
     else
     {
       M_WriteText(54, 38, "Which Episode?");
-      EpiDef.lumps_missing = 1
+      EpiDef.lumps_missing = 1;
     }
 }
 
