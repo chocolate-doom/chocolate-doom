@@ -64,7 +64,6 @@ typedef struct
 	int overunder;
 	int pitch;
 	int playercoords;
-	int recoil;
 	int secretmessage;
 	int smoothlight;
 	int smoothmap;
