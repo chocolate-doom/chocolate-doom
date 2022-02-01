@@ -35,6 +35,7 @@ typedef enum
     heretic,         // Heretic
     hexen,           // Hexen
     strife,          // Strife
+    doom2f,          // Doom 2: L'Enfer sur Terre
     pack_nerve,      // Doom 2: No Rest For The Living
     pack_master,     // Master Levels for Doom 2
 

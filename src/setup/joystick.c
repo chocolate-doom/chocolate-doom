@@ -1063,7 +1063,7 @@ void ConfigJoystick(TXT_UNCAST_ARG(widget), void *user_data)
 
     if (joybspeed < 20)
     {
-        AddJoystickControl(window, "Speed", &joybspeed);
+        AddJoystickControl(window, "Run", &joybspeed);
     }
 
     if (gamemission == doom || gamemission == hexen || gamemission == strife) // [crispy]

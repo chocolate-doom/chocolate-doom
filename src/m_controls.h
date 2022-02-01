@@ -150,6 +150,7 @@ extern int key_menu_reloadlevel; // [crispy]
 extern int mousebfire;
 extern int mousebstrafe;
 extern int mousebforward;
+extern int mousebspeed;
 
 extern int mousebjump;
 

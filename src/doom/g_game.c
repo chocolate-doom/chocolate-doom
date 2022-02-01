@@ -334,7 +334,8 @@ static int G_NextWeapon(int direction)
 boolean speedkeydown (void)
 {
     return (key_speed < NUMKEYS && gamekeydown[key_speed]) ||
-           (joybspeed < MAX_JOY_BUTTONS && joybuttons[joybspeed]);
+           (joybspeed < MAX_JOY_BUTTONS && joybuttons[joybspeed]) ||
+           (mousebspeed < MAX_MOUSE_BUTTONS && mousebuttons[mousebspeed]);
 }
 
 //
@@ -370,9 +371,11 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
 
     // [crispy] when "always run" is active,
     // pressing the "run" key will result in walking
-    speed = key_speed >= NUMKEYS
-         || joybspeed >= MAX_JOY_BUTTONS;
-    speed ^= speedkeydown();
+    speed = (key_speed >= NUMKEYS
+         || joybspeed >= MAX_JOY_BUTTONS)
+         ^ (gamekeydown[key_speed]
+         || joybuttons[joybspeed]
+         || mousebuttons[mousebspeed]);
  
     forward = side = look = 0;
     

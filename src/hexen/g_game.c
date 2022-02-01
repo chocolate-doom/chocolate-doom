@@ -226,10 +226,11 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
 
     // Allow joybspeed hack.
 
-    speed = key_speed >= NUMKEYS
-        || joybspeed >= MAX_JOY_BUTTONS
-        || gamekeydown[key_speed]
-        || joybuttons[joybspeed];
+    speed = (key_speed >= NUMKEYS
+        || joybspeed >= MAX_JOY_BUTTONS)
+        ^ (gamekeydown[key_speed]
+        || joybuttons[joybspeed]
+        || mousebuttons[mousebspeed]);
 
     // haleyjd: removed externdriver crap
     
