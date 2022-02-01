@@ -91,9 +91,6 @@ boolean HUlib_delCharFromTextLine(hu_textline_t* t)
 
 }
 
-// [crispy] support tab stops
-static const int tabwidth = 12;
-
 void
 HUlib_drawTextLine
 ( hu_textline_t*	l,
@@ -131,8 +128,7 @@ HUlib_drawTextLine
 	// [crispy] support tab stops
 	else if (c == '\t')
 	{
-	    int tab = (x - l->x - 1) / tabwidth;
-	    x = l->x + (tab + 1) * tabwidth;
+	    x = x - (x - l->x)%12 + 12;
 	    if (x >= ORIGWIDTH + WIDESCREENDELTA)
 		break;
 	}
