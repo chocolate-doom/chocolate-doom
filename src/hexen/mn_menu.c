@@ -30,6 +30,9 @@
 #include "r_local.h"
 #include "s_sound.h"
 #include "v_video.h"
+#include "v_trans.h" // [crispy] dp_translation
+
+#include "crispy.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -62,6 +65,7 @@ typedef enum
     MENU_FILES,
     MENU_LOAD,
     MENU_SAVE,
+    MENU_CRISPNESS,
     MENU_NONE
 } MenuType_t;
 
@@ -86,6 +90,10 @@ typedef struct
 } Menu_t;
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
+extern void I_ReInitGraphics(int reinit); // [crispy]
+extern void R_ExecuteSetViewSize(void); // [crispy]
+extern void AM_LevelInit(boolean reinit); // [crispy]
+extern void AM_initVariables(void); // [crispy]
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
@@ -101,6 +109,10 @@ static void SCSfxVolume(int option);
 static void SCMusicVolume(int option);
 static void SCScreenSize(int option);
 static boolean SCNetCheck(int option);
+static void CrispyHires(int option);
+static void CrispyToggleWidescreen(int option);
+static void CrispySmoothing(int option);
+static void CrispyVsync(int option);
 static void SCNetCheck2(int option);
 static void SCLoadGame(int option);
 static void SCSaveGame(int option);
@@ -118,12 +130,14 @@ static void MN_DrawInfo(void);
 static void DrawLoadMenu(void);
 static void DrawSaveMenu(void);
 static void DrawSlider(Menu_t * menu, int item, int width, int slot);
+static void DrawCrispnessMenu(void);
 void MN_LoadSlotText(void);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
 extern int detailLevel;
 extern boolean gamekeydown[256];        // The NUMKEYS macro is local to g_game
+extern boolean automapactive; // [crispy]
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
@@ -254,13 +268,14 @@ static MenuItem_t OptionsItems[] = {
     {ITT_EFUNC, "MESSAGES : ", SCMessages, 0, MENU_NONE},
     {ITT_LRFUNC, "MOUSE SENSITIVITY", SCMouseSensi, 0, MENU_NONE},
     {ITT_EMPTY, NULL, NULL, 0, MENU_NONE},
-    {ITT_SETMENU, "MORE...", NULL, 0, MENU_OPTIONS2}
+    {ITT_SETMENU, "MORE...", NULL, 0, MENU_OPTIONS2},
+    {ITT_SETMENU, "CRISPNESS...", NULL, 0, MENU_CRISPNESS}
 };
 
 static Menu_t OptionsMenu = {
     88, 30,
     DrawOptionsMenu,
-    5, OptionsItems,
+    6, OptionsItems,
     0,
     MENU_MAIN
 };
@@ -282,6 +297,21 @@ static Menu_t Options2Menu = {
     MENU_OPTIONS
 };
 
+static MenuItem_t CrispnessItems[] = {
+    {ITT_LRFUNC, "HIGH RESOLUTION RENDERING:", CrispyHires, 0, MENU_NONE},
+    {ITT_LRFUNC, "ASPECT RATIO:", CrispyToggleWidescreen, 0, MENU_NONE},
+    {ITT_LRFUNC, "SMOOTH PIXEL SCALING:", CrispySmoothing, 0, MENU_NONE},
+    {ITT_LRFUNC, "ENABLE VSYNC:", CrispyVsync, 0, MENU_NONE}
+};
+
+static Menu_t CrispnessMenu = {
+    68, 40,
+    DrawCrispnessMenu,
+    4, CrispnessItems,
+    0,
+    MENU_OPTIONS
+};
+
 static Menu_t *Menus[] = {
     &MainMenu,
     &ClassMenu,
@@ -290,7 +320,8 @@ static Menu_t *Menus[] = {
     &Options2Menu,
     &FilesMenu,
     &LoadMenu,
-    &SaveMenu
+    &SaveMenu,
+    &CrispnessMenu
 };
 
 // [crispy] intermediate gamma levels
@@ -561,15 +592,42 @@ void MN_Drawer(void)
         {
             if (item->type != ITT_EMPTY && item->text)
             {
-                MN_DrTextB(item->text, x, y);
+                if (CurrentMenu == &CrispnessMenu)
+                {
+                    // [crispy] use smaller font
+                    MN_DrTextA(item->text, x, y);
+                }
+                else
+                {
+                    MN_DrTextB(item->text, x, y);
+                }
             }
-            y += ITEM_HEIGHT;
+            if (CurrentMenu == &CrispnessMenu)
+            {
+                // [crispy] use 10px vertical spacing for small font
+                y += ITEM_HEIGHT/2;
+            }
+            else
+            {
+                y += ITEM_HEIGHT;
+            }
             item++;
         }
-        y = CurrentMenu->y + (CurrentItPos * ITEM_HEIGHT) + SELECTOR_YOFFSET;
-        selName = MenuTime & 16 ? "M_SLCTR1" : "M_SLCTR2";
-        V_DrawPatch(x + SELECTOR_XOFFSET, y,
-                    W_CacheLumpName(selName, PU_CACHE));
+        if (CurrentMenu == &CrispnessMenu)
+        {
+            // [crispy] use small blue gem instead of big red arrow
+            y = CurrentMenu->y + (CurrentItPos * ITEM_HEIGHT/2) + SELECTOR_YOFFSET;
+            selName = MenuTime & 8 ? "INVGEMR1" : "INVGEMR2";
+            V_DrawPatch(x + (SELECTOR_XOFFSET/2), y,
+                        W_CacheLumpName(selName, PU_CACHE));
+        }
+        else
+        {
+            y = CurrentMenu->y + (CurrentItPos * ITEM_HEIGHT) + SELECTOR_YOFFSET;
+            selName = MenuTime & 16 ? "M_SLCTR1" : "M_SLCTR2";
+            V_DrawPatch(x + SELECTOR_XOFFSET, y,
+                        W_CacheLumpName(selName, PU_CACHE));
+        }
     }
 }
 
@@ -1141,6 +1199,73 @@ static void SCInfo(int option)
 
 //---------------------------------------------------------------------------
 //
+// Crispness menu: toggable features
+//
+//---------------------------------------------------------------------------
+
+static void CrispyHiresHook(void)
+{
+    crispy->hires = !crispy->hires;
+    // [crispy] re-initialize framebuffers, textures and renderer
+    I_ReInitGraphics(REINIT_FRAMEBUFFERS | REINIT_TEXTURES | REINIT_ASPECTRATIO);
+    // [crispy] re-calculate framebuffer coordinates
+    R_ExecuteSetViewSize();
+    // [crispy] scale the sky for new resolution
+    R_InitSkyMap();
+    // [crispy] re-calculate automap coordinates
+    AM_LevelInit(true);
+    if (automapactive) {
+        AM_initVariables();
+    }
+    // [crispy] refresh the status bar
+    SB_state = -1;
+}
+
+static void CrispyHires(int option)
+{
+    crispy->post_rendering_hook = CrispyHiresHook;
+}
+
+static void CrispyToggleWidescreenHook (void)
+{
+    crispy->widescreen = (crispy->widescreen + 1) % NUM_RATIOS;
+
+    // [crispy] no need to re-init when switching from wide to compact
+    {
+	// [crispy] re-initialize framebuffers, textures and renderer
+	I_ReInitGraphics(REINIT_FRAMEBUFFERS | REINIT_TEXTURES | REINIT_ASPECTRATIO);
+	// [crispy] re-calculate framebuffer coordinates
+	R_ExecuteSetViewSize();
+	// [crispy] re-calculate automap coordinates
+        AM_LevelInit(true);
+        if (automapactive) {
+            AM_initVariables();
+        }
+    }
+}
+static void CrispyToggleWidescreen(int option)
+{
+    crispy->post_rendering_hook = CrispyToggleWidescreenHook;
+}
+
+static void CrispySmoothing(int option)
+{
+    crispy->smoothscaling = !crispy->smoothscaling;
+}
+
+static void CrispyVsyncHook(void)
+{
+    crispy->vsync = !crispy->vsync;
+    I_ReInitGraphics(REINIT_RENDERER | REINIT_TEXTURES | REINIT_ASPECTRATIO);
+}
+
+static void CrispyVsync(int option)
+{
+    crispy->post_rendering_hook = CrispyVsyncHook;
+}
+
+//---------------------------------------------------------------------------
+//
 // FUNC MN_Responder
 //
 //---------------------------------------------------------------------------
@@ -1151,7 +1276,6 @@ boolean MN_Responder(event_t * event)
     int charTyped;
     int i;
     MenuItem_t *item;
-    extern boolean automapactive;
     extern void H2_StartTitle(void);
     extern void G_CheckDemoStatus(void);
     char *textBuffer;
@@ -1848,4 +1972,70 @@ static void DrawSlider(Menu_t * menu, int item, int width, int slot)
     V_DrawPatch(x2, y, W_CacheLumpName("M_SLDRT", PU_CACHE));
     V_DrawPatch(x + 4 + slot * 8, y + 7,
                 W_CacheLumpName("M_SLDKB", PU_CACHE));
+}
+
+//---------------------------------------------------------------------------
+//
+// PROC DrawCrispnessMenu
+//
+//---------------------------------------------------------------------------
+
+static void M_DrawCrispnessBackground(void)
+{
+    byte *src, *dest;
+    int x, y;
+
+    src = W_CacheLumpName("F_022", PU_CACHE);
+    dest = I_VideoBuffer;
+
+    for (y = 0; y < SCREENHEIGHT; y++)
+    {
+        for (x = 0; x < SCREENWIDTH / 64; x++)
+        {
+            memcpy(dest, src + ((y & 63) << 6), 64);
+            dest += 64;
+        }
+        if (SCREENWIDTH & 63)
+        {
+            memcpy(dest, src + ((y & 63) << 6), SCREENWIDTH & 63);
+            dest += (SCREENWIDTH & 63);
+        }
+    }
+
+    SB_state = -1;
+}
+
+static void DrawCrispnessMenu(void)
+{
+    static const char *title;
+
+    // Background
+    M_DrawCrispnessBackground();
+
+    // Title
+    title = "CRISPNESS";
+    MN_DrTextB(title, 160 - MN_TextBWidth(title) / 2, 6);
+
+    // Subheaders
+    dp_translation = cr[CR_GREEN];
+    MN_DrTextA("RENDERING", 63, 30);
+    dp_translation = cr[CR_GOLD];
+
+    // Hires rendering
+    MN_DrTextA(crispy->hires ? "ON" : "OFF", 254, 40);
+
+    // Widescreen
+    MN_DrTextA(crispy->widescreen == RATIO_4_3 ? "4:3" :
+               crispy->widescreen == RATIO_MATCH_SCREEN ? "MATCH SCREEN" :
+               crispy->widescreen == RATIO_16_10 ? "16:10" :
+               crispy->widescreen == RATIO_16_9 ? "16:9" :
+                                                  "21:9", 164, 50);
+
+    // Smooth pixel scaling
+    MN_DrTextA(crispy->smoothscaling ? "ON" : "OFF", 216, 60);
+
+    // Vsync
+    MN_DrTextA(crispy->vsync ? "ON" : "OFF", 167, 70);
+
+    dp_translation = NULL;
 }

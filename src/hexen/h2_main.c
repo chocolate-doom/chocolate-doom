@@ -194,6 +194,9 @@ void D_BindVariables(void)
     }
 
     // [crispy] bind "crispness" config variables
+    M_BindIntVariable("crispy_hires",           &crispy->hires);
+    M_BindIntVariable("crispy_smoothscaling",   &crispy->smoothscaling);
+    M_BindIntVariable("crispy_vsync",           &crispy->vsync);
     M_BindIntVariable("crispy_widescreen",      &crispy->widescreen);
 }
 
@@ -843,6 +846,15 @@ void H2_GameLoop(void)
         S_UpdateSounds(players[displayplayer].mo);
 
         DrawAndBlit();
+
+        // [crispy] post-rendering function pointer to apply config changes
+        // that affect rendering and that are better applied after the current
+        // frame has finished rendering
+        if (crispy->post_rendering_hook)
+        {
+            crispy->post_rendering_hook();
+            crispy->post_rendering_hook = NULL;
+        }
     }
 }
 
