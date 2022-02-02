@@ -400,7 +400,15 @@ void P_ZMovement (mobj_t* mo)
 		S_StartSound (mo, sfx_oof);
 		}
 	    }
+	    // [NS] Beta projectile bouncing.
+	    if ( (mo->flags & MF_MISSILE) && (mo->flags & MF_BOUNCES) )
+	    {
+		mo->momz = -mo->momz;
+	    }
+	    else
+	    {
 	    mo->momz = 0;
+	    }
 	}
 	mo->z = mo->floorz;
 
@@ -415,7 +423,8 @@ void P_ZMovement (mobj_t* mo)
             mo->momz = -mo->momz;
 
 	if ( (mo->flags & MF_MISSILE)
-	     && !(mo->flags & MF_NOCLIP) )
+	     // [NS] Beta projectile bouncing.
+	     && !(mo->flags & MF_NOCLIP) && !(mo->flags & MF_BOUNCES) )
 	{
 	    P_ExplodeMissile (mo);
 	    return;
@@ -433,7 +442,17 @@ void P_ZMovement (mobj_t* mo)
     {
 	// hit the ceiling
 	if (mo->momz > 0)
+	{
+	// [NS] Beta projectile bouncing.
+	    if ( (mo->flags & MF_MISSILE) && (mo->flags & MF_BOUNCES) )
+	    {
+		mo->momz = -mo->momz;
+	    }
+	    else
+	    {
 	    mo->momz = 0;
+	    }
+	}
 	{
 	    mo->z = mo->ceilingz - mo->height;
 	}
@@ -444,7 +463,7 @@ void P_ZMovement (mobj_t* mo)
 	}
 	
 	if ( (mo->flags & MF_MISSILE)
-	     && !(mo->flags & MF_NOCLIP) )
+	     && !(mo->flags & MF_NOCLIP) && !(mo->flags & MF_BOUNCES) )
 	{
 	    P_ExplodeMissile (mo);
 	    return;
