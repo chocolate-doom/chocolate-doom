@@ -84,7 +84,7 @@ typedef	struct
 // render overage and then bomb out by detecting the overflow after the 
 // fact. -haleyjd
 //#define MAXSEGS		32
-#define MAXSEGS (SCREENWIDTH / 2 + 1)
+#define MAXSEGS (SCREENWIDTH / 2 + 1) * SCREENHEIGHT
 
 // newend is one past the last valid seg
 cliprange_t*	newend;
@@ -540,7 +540,7 @@ void R_Subsector (int num)
     }
 
     // check for solidsegs overflow - extremely unsatisfactory!
-    if(newend > &solidsegs[32])
+    if(newend > &solidsegs[32 * SCREENHEIGHT])
         I_Error("R_Subsector: solidsegs overflow (vanilla may crash here)\n");
 }
 
