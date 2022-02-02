@@ -2162,6 +2162,12 @@ void G_DoLoadGame (void)
 
     if (save_stream == NULL)
     {
+      if (startloadgame == -1)
+      {
+        players[consoleplayer].message = "Could not load savegame";
+        return;
+      }
+      else
         I_Error("Could not load savegame %s", savename);
     }
 
@@ -2254,6 +2260,16 @@ G_SaveGame
     savegameslot = slot;
     M_StringCopy(savedescription, description, sizeof(savedescription));
     sendsave = true;
+}
+
+// [crispy] directly save to dedicated quicksave slot
+extern const int quickSaveSlot;
+void G_QuickSaveGame (void)
+{
+    savegameslot = quickSaveSlot;
+    M_StringCopy(savedescription, "quicksave", sizeof(savedescription));
+    // skip the BTS_SAVEGAME round trip
+    G_DoSaveGame();
 }
 
 void G_DoSaveGame (void) 

@@ -56,6 +56,7 @@ char *P_TempSaveGameFile(void)
 
 // Get the filename of the save game file to use for the specified slot.
 
+extern const int quickSaveSlot;
 char *P_SaveGameFile(int slot)
 {
     static char *filename = NULL;
@@ -68,6 +69,9 @@ char *P_SaveGameFile(int slot)
         filename = malloc(filename_size);
     }
 
+    if (slot == quickSaveSlot)
+      DEH_snprintf(basename, 32, "%s.dsg", "quicksave");
+    else
     DEH_snprintf(basename, 32, SAVEGAMENAME "%d.dsg", slot);
     M_snprintf(filename, filename_size, "%s%s", savegamedir, basename);
 

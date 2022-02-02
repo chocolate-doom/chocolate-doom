@@ -47,6 +47,7 @@ void G_DoLoadGame (void);
 
 // Called by M_Responder.
 void G_SaveGame (int slot, char* description);
+void G_QuickSaveGame(void);
 
 // Only called by startup code.
 void G_RecordDemo (const char* name);
