@@ -271,15 +271,21 @@ boolean M_StrToInt(const char *str, int *result)
 // and must be freed by the caller after use.
 char *M_DirName(const char *path)
 {
-    char *p, *result;
+    char *pf, *pb, *result;
 
-    p = strrchr(path, DIR_SEPARATOR);
-    if (p == NULL)
+    pf = strrchr(path, '/');
+#ifdef _WIN32
+    pb = strrchr(path, '\\');
+#else
+    pb = NULL;
+#endif
+    if (pf == NULL && pb == NULL)
     {
         return M_StringDuplicate(".");
     }
     else
     {
+        char *p = MAX(pf, pb);
         result = M_StringDuplicate(path);
         result[p - path] = '\0';
         return result;
@@ -291,15 +297,21 @@ char *M_DirName(const char *path)
 // allocated.
 const char *M_BaseName(const char *path)
 {
-    const char *p;
+    const char *pf, *pb;
 
-    p = strrchr(path, DIR_SEPARATOR);
-    if (p == NULL)
+    pf = strrchr(path, '/');
+#ifdef _WIN32
+    pb = strrchr(path, '\\');
+#else
+    pb = NULL;
+#endif
+    if (pf == NULL && pb == NULL)
     {
         return path;
     }
     else
     {
+        const char *p = MAX(pf, pb);
         return p + 1;
     }
 }
