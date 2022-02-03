@@ -372,10 +372,8 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     // [crispy] when "always run" is active,
     // pressing the "run" key will result in walking
     speed = (key_speed >= NUMKEYS
-         || joybspeed >= MAX_JOY_BUTTONS)
-         ^ (gamekeydown[key_speed]
-         || joybuttons[joybspeed]
-         || mousebuttons[mousebspeed]);
+         || joybspeed >= MAX_JOY_BUTTONS);
+    speed ^= speedkeydown();
  
     forward = side = look = 0;
     
@@ -434,7 +432,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
         else
         {
             joybspeed_old = joybspeed;
-            joybspeed = 29;
+            joybspeed = MAX_JOY_BUTTONS;
         }
 
         M_snprintf(playermessage, sizeof(playermessage), "ALWAYS RUN %s%s",
