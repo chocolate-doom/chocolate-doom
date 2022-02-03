@@ -35,6 +35,7 @@ typedef enum
     heretic,         // Heretic
     hexen,           // Hexen
     strife,          // Strife
+    doom2f,          // Doom 2: L'Enfer sur Terre
 
     none
 } GameMission_t;
