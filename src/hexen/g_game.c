@@ -196,6 +196,13 @@ int testcontrols_mousespeed;
 extern boolean inventory;
 boolean usearti = true;
 
+static boolean speedkeydown (void)
+{
+    return (key_speed < NUMKEYS && gamekeydown[key_speed]) ||
+           (joybspeed < MAX_JOY_BUTTONS && joybuttons[joybspeed]) ||
+           (mousebspeed < MAX_MOUSE_BUTTONS && mousebuttons[mousebspeed]);
+}
+
 void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
 {
     int i;
@@ -227,10 +234,8 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
     // Allow joybspeed hack.
 
     speed = (key_speed >= NUMKEYS
-        || joybspeed >= MAX_JOY_BUTTONS)
-        ^ (gamekeydown[key_speed]
-        || joybuttons[joybspeed]
-        || mousebuttons[mousebspeed]);
+        || joybspeed >= MAX_JOY_BUTTONS);
+    speed ^= speedkeydown();
 
     // haleyjd: removed externdriver crap
     

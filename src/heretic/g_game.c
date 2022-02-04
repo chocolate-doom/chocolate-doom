@@ -293,6 +293,13 @@ extern int inv_ptr;
 
 boolean usearti = true;
 
+static boolean speedkeydown (void)
+{
+    return (key_speed < NUMKEYS && gamekeydown[key_speed]) ||
+           (joybspeed < MAX_JOY_BUTTONS && joybuttons[joybspeed]) ||
+           (mousebspeed < MAX_MOUSE_BUTTONS && mousebuttons[mousebspeed]);
+}
+
 void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
 {
     int i;
@@ -318,10 +325,9 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
 
     // [crispy] when "always run" is active,
     // pressing the "run" key will result in walking
-    speed = (joybspeed >= MAX_JOY_BUTTONS)
-         ^ (gamekeydown[key_speed]
-         || joybuttons[joybspeed]
-         || mousebuttons[mousebspeed]);
+    speed = (key_speed >= NUMKEYS
+         || joybspeed >= MAX_JOY_BUTTONS);
+    speed ^= speedkeydown();
 
     // haleyjd: removed externdriver crap
     
@@ -370,7 +376,7 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
         else
         {
             joybspeed_old = joybspeed;
-            joybspeed = 29;
+            joybspeed = MAX_JOY_BUTTONS;
         }
 
         P_SetMessage(&players[consoleplayer], (joybspeed >= MAX_JOY_BUTTONS) ?
