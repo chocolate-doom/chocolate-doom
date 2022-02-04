@@ -854,31 +854,28 @@ void H2_GameLoop(void)
     // [crispy] update the "singleplayer" variable
     CheckCrispySingleplayer(!demorecording && gameaction != ga_playdemo && !netgame);
 
-    // [crispy] more mana
-    if (crispy->moreammo && !crispy->singleplayer)
+    if (!crispy->singleplayer)
     {
-        const char message[] = "The -moremana option is not supported"
-                               " for demos and\n"
-                               " network play.";
-        I_Error(message);
-    }
+        int i;
 
-    // [crispy] fast monsters
-    if (crispy->fast && !crispy->singleplayer)
-    {
-        const char message[] = "The -fast option is not supported"
-                               " for demos and\n"
-                               " network play.";
-        I_Error(message);
-    }
+        const struct {
+            boolean feature;
+            const char *option;
+        } custom_options[] = {
+            {crispy->moreammo,   "-moremana"},
+            {crispy->fast,       "-fast"},
+            {crispy->autohealth, "-autohealth"},
+        };
 
-    // [crispy] auto health
-    if (crispy->autohealth && !crispy->singleplayer)
-    {
-        const char message[] = "The -autohealth option is not supported"
-                               " for demos and\n"
-                               " network play.";
-        I_Error(message);
+        for (i = 0; i < arrlen(custom_options); i++)
+        {
+            if (custom_options[i].feature)
+            {
+                I_Error("The %s option is not supported\n"
+                        "for demos and network play.",
+                        custom_options[i].option);
+            }
+        }
     }
 
     if (M_CheckParm("-debugfile"))

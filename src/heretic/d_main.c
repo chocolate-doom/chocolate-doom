@@ -345,42 +345,29 @@ void D_DoomLoop(void)
     // [crispy] update the "singleplayer" variable
     CheckCrispySingleplayer(!demorecording && gameaction != ga_playdemo && !netgame);
 
-    if (crispy->moreammo && !crispy->singleplayer)
+    if (!crispy->singleplayer)
     {
-        const char message[] = "The -moreammo option is not supported"
-                               " for demos and\n"
-                               " network play.";
-        I_Error(message);
-    }
+        int i;
 
-    // [crispy] fast monsters
-    if (crispy->fast && !crispy->singleplayer)
-    {
-        const char message[] = "The -fast option is not supported"
-                               " for demos and\n"
-                               " network play.";
-        I_Error(message);
-    }
+        const struct {
+            boolean feature;
+            const char *option;
+        } custom_options[] = {
+            {crispy->moreammo,   "-moreammo"},
+            {crispy->fast,       "-fast"},
+            {crispy->pistolstart, "-wandstart"},
+            {crispy->autohealth, "-autohealth"},
+        };
 
-
-    // [crispy] wand start
-    // silently ignore pistolstart when playing demo from
-    // the demo reel
-    if (crispy->pistolstart && !crispy->singleplayer)
-    {
-        const char message[] = "The -wandstart option is not supported"
-                               " for demos and\n"
-                               " network play.";
-        I_Error(message);
-    }
-
-    // [crispy] auto health
-    if (crispy->autohealth && !crispy->singleplayer)
-    {
-        const char message[] = "The -autohealth option is not supported"
-                               " for demos and\n"
-                               " network play.";
-        I_Error(message);
+        for (i = 0; i < arrlen(custom_options); i++)
+        {
+            if (custom_options[i].feature)
+            {
+                I_Error("The %s option is not supported\n"
+                        "for demos and network play.",
+                        custom_options[i].option);
+            }
+        }
     }
 
     if (M_CheckParm("-debugfile"))

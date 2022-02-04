@@ -87,8 +87,6 @@ typedef struct
 	int demowarp;
 	int fps;
 
-	boolean autohealth;
-	boolean fast;
 	boolean flashinghom;
 	boolean fliplevels;
 	boolean flipweapons;
@@ -96,11 +94,15 @@ typedef struct
 	boolean havee1m10;
 	boolean havemap33;
 	boolean havessg;
+	boolean singleplayer;
+	boolean stretchsky;
+
+	// [crispy] custom difficulty parameters
+	boolean autohealth;
+	boolean fast;
 	boolean keysloc;
 	boolean moreammo;
 	boolean pistolstart;
-	boolean singleplayer;
-	boolean stretchsky;
 
 	char *havenerve;
 	char *havemaster;
