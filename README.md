@@ -94,8 +94,8 @@ Many additional less user-visible features have been implemented, e.g. fixed eng
  * `-fliplevels` loads mirrored versions of the maps (this was the default on April 1st up to version 5.0).
  * `-flipweapons` flips the player's weapons (new in 5.3).
  * `-levelstat` prints a levelstat.txt file with statistics for each completed level (new in 5.9.0).
- * `-pistolstart` enables automatic pistol start when advancing from one level to the next in Doom. At the beginning of each level, the player's health is reset to 100, their armor to 0 and their inventory is reduced to the following: pistol, fists and 50 bullets.
- * `-wandstart` enables automatic wand start when advancing from one level to the next in Heretic. At the beginning of each level, the player's health is reset to 100, their armor to 0 and their inventory is reduced to the following: wand, staff and 50 ammo for the wand.
+ * `-pistolstart` reset health, armor and inventory at start of each level in Doom (new in 5.9.2)
+ * `-wandstart` reset health, armor and inventory at start of each level in Heretic (new in 5.9.2)
  * `-doubleammo` doubles ammo pickup rate in Doom and Strife (new in 5.11).
  * `-moreammo` increases ammo pickup rate by 50% in Heretic (new in 5.11).
  * `-moremana` increases mana pickup rate by 50% in Hexen (new in 5.11).
