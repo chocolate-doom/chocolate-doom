@@ -1640,6 +1640,16 @@ void D_DoomMain (void)
 
     fastparm = M_CheckParm ("-fast");
 
+    //!
+    // @category game
+    // @category mod
+    //
+    // Double ammo pickup rate. This option is not allowed when recording a
+    // demo, playing back a demo or when starting a network game.
+    //
+
+    crispy->moreammo = M_ParmExists("-doubleammo");
+
     I_DisplayFPSDots(devparm);
 
     // haleyjd 20110206 [STRIFE]: -devparm implies -nograph

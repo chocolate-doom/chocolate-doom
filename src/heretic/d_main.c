@@ -342,6 +342,47 @@ boolean D_GrabMouseCallback(void)
 
 void D_DoomLoop(void)
 {
+    // [crispy] update the "singleplayer" variable
+    CheckCrispySingleplayer(!demorecording && gameaction != ga_playdemo && !netgame);
+
+    if (crispy->moreammo && !crispy->singleplayer)
+    {
+        const char message[] = "The -moreammo option is not supported"
+                               " for demos and\n"
+                               " network play.";
+        I_Error(message);
+    }
+
+    // [crispy] fast monsters
+    if (crispy->fast && !crispy->singleplayer)
+    {
+        const char message[] = "The -fast option is not supported"
+                               " for demos and\n"
+                               " network play.";
+        I_Error(message);
+    }
+
+
+    // [crispy] wand start
+    // silently ignore pistolstart when playing demo from
+    // the demo reel
+    if (crispy->pistolstart && !crispy->singleplayer)
+    {
+        const char message[] = "The -wandstart option is not supported"
+                               " for demos and\n"
+                               " network play.";
+        I_Error(message);
+    }
+
+    // [crispy] auto health
+    if (crispy->autohealth && !crispy->singleplayer)
+    {
+        const char message[] = "The -autohealth option is not supported"
+                               " for demos and\n"
+                               " network play.";
+        I_Error(message);
+    }
+
     if (M_CheckParm("-debugfile"))
     {
         char filename[20];
@@ -1045,6 +1086,44 @@ void D_DoomMain(void)
     //
 
     crispy->pistolstart = M_ParmExists("-wandstart");
+
+    //!
+    // @category game
+    // @category mod
+    //
+    // Ammo pickups give 50% more ammo. This option is not allowed when recording a
+    // demo, playing back a demo or when starting a network game.
+    //
+
+    crispy->moreammo = M_ParmExists("-moreammo");
+
+    //!
+    // @category game
+    // @category mod
+    //
+    // Fast monsters. This option is not allowed when recording a demo,
+    // playing back a demo or when starting a network game.
+    //
+
+    crispy->fast = M_ParmExists("-fast");
+
+    //!
+    // @category game
+    // @category mod
+    //
+    // Automatic use of Quartz flasks and Mystic urns.
+    //
+
+    crispy->autohealth = M_ParmExists("-autohealth");
+
+    //!
+    // @category game
+    // @category mod
+    //
+    // Show the location of keys on the automap.
+    //
+
+    crispy->keysloc = M_ParmExists("-keysloc");
 
     //!
     // @category mod

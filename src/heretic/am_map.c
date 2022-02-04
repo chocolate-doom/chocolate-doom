@@ -375,7 +375,7 @@ void AM_initVariables(void)
     // load in the location of keys, if in baby mode
 
     memset(KeyPoints, 0, sizeof(vertex_t) * 3);
-    if (gameskill == sk_baby)
+    if (gameskill == sk_baby || crispy->keysloc)
     {
         for (think = thinkercap.next; think != &thinkercap;
              think = think->next)
@@ -1574,7 +1574,7 @@ void AM_Drawer(void)
 //  AM_drawCrosshair(XHAIRCOLORS);
 
 //  AM_drawMarks();
-    if (gameskill == sk_baby)
+    if (gameskill == sk_baby || crispy->keysloc)
     {
         AM_drawkeys();
     }

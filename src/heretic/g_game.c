@@ -778,9 +778,6 @@ void G_DoLoadLevel(void)
         memset(players[i].frags, 0, sizeof(players[i].frags));
     }
 
-    // [crispy] update the "singleplayer" variable
-    CheckCrispySingleplayer(!demorecording && !demoplayback && !netgame);
-
     // [crispy] wand start
     if (crispy->pistolstart)
     {
@@ -1102,6 +1099,8 @@ void G_Ticker(void)
 //
     while (gameaction != ga_nothing)
     {
+        // [crispy] check if we are in the demo reel
+        CheckCrispySingleplayer(!demorecording && gameaction != ga_playdemo && !netgame);
         switch (gameaction)
         {
             case ga_loadlevel:
@@ -1862,7 +1861,7 @@ void G_InitNew(skill_t skill, int episode, int map)
         respawnmonsters = false;
     }
     // Set monster missile speeds
-    speed = skill == sk_nightmare;
+    speed = skill == sk_nightmare || critical->fast;
     for (i = 0; MonsterMissileInfo[i].type != -1; i++)
     {
         mobjinfo[MonsterMissileInfo[i].type].speed

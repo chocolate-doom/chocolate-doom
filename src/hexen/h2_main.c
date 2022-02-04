@@ -446,6 +446,35 @@ void D_DoomMain(void)
     AdjustForMacIWAD();
 
     //!
+    // @category game
+    // @category mod
+    //
+    // Mana pickups give 50% more mana. This option is not allowed when recording a
+    // demo, playing back a demo or when starting a network game.
+    //
+
+    crispy->moreammo = M_ParmExists("-moremana");
+
+    //!
+    // @category game
+    // @category mod
+    //
+    // Fast monsters. This option is not allowed when recording a demo,
+    // playing back a demo or when starting a network game.
+    //
+
+    crispy->fast = M_ParmExists("-fast");
+
+    //!
+    // @category game
+    // @category mod
+    //
+    // Automatic use of Quartz flasks and Mystic urns.
+    //
+
+    crispy->autohealth = M_ParmExists("-autohealth");
+
+    //!
     // @category mod
     //
     // Disable auto-loading of .wad files.
@@ -822,6 +851,36 @@ static void WarpCheck(void)
 
 void H2_GameLoop(void)
 {
+    // [crispy] update the "singleplayer" variable
+    CheckCrispySingleplayer(!demorecording && gameaction != ga_playdemo && !netgame);
+
+    // [crispy] more mana
+    if (crispy->moreammo && !crispy->singleplayer)
+    {
+        const char message[] = "The -moremana option is not supported"
+                               " for demos and\n"
+                               " network play.";
+        I_Error(message);
+    }
+
+    // [crispy] fast monsters
+    if (crispy->fast && !crispy->singleplayer)
+    {
+        const char message[] = "The -fast option is not supported"
+                               " for demos and\n"
+                               " network play.";
+        I_Error(message);
+    }
+
+    // [crispy] auto health
+    if (crispy->autohealth && !crispy->singleplayer)
+    {
+        const char message[] = "The -autohealth option is not supported"
+                               " for demos and\n"
+                               " network play.";
+        I_Error(message);
+    }
+
     if (M_CheckParm("-debugfile"))
     {
         char filename[20];

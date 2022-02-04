@@ -872,6 +872,16 @@ void G_DoLoadLevel (void)
     // [crispy] update the "singleplayer" variable
     CheckCrispySingleplayer(!demorecording && !demoplayback && !netgame);
 
+    // [crispy] double ammo
+    if (crispy->moreammo && !crispy->singleplayer)
+    {
+        const char message[] = "The -doubleammo option is not supported"
+                               " for demos and\n"
+                               " network play.";
+        if (!demo_p) demorecording = false;
+        I_Error(message);
+    }
+
     // [crispy] pistol start
     if (crispy->pistolstart)
     {

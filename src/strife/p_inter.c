@@ -83,7 +83,8 @@ boolean P_GiveAmmo(player_t* player, ammotype_t ammo, int num)
         num = clipammo[ammo]/2;
 
     if(gameskill == sk_baby
-        || gameskill == sk_nightmare)
+        || gameskill == sk_nightmare
+        || critical->moreammo)
     {
         // give double ammo in trainer mode,
         // you'll need in nightmare

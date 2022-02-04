@@ -695,6 +695,19 @@ void G_DoLoadLevel (void)
         memset (players[i].frags,0,sizeof(players[i].frags)); 
     } 
 
+    // [crispy] update the "singleplayer" variable
+    CheckCrispySingleplayer(!demorecording && !demoplayback && !netgame);
+
+    // [crispy] double ammo
+    if (crispy->moreammo && !crispy->singleplayer)
+    {
+        const char message[] = "The -doubleammo option is not supported"
+                               " for demos and\n"
+                               " network play.";
+        if (!demo_p) demorecording = false;
+        I_Error(message);
+    }
+
     P_SetupLevel (gamemap, 0, gameskill);    
     displayplayer = consoleplayer;      // view the guy you are playing    
     starttime = I_GetTime(); // haleyjd 20110204 [STRIFE]

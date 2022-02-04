@@ -1757,6 +1757,16 @@ void D_DoomMain (void)
     crispy->pistolstart = M_ParmExists("-pistolstart");
 
     //!
+    // @category game
+    // @category mod
+    //
+    // Double ammo pickup rate. This option is not allowed when recording a
+    // demo, playing back a demo or when starting a network game.
+    //
+
+    crispy->moreammo = M_ParmExists("-doubleammo");
+
+    //!
     // @category mod
     //
     // Disable auto-loading of .wad and .deh files.

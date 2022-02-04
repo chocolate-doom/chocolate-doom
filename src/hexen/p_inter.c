@@ -163,7 +163,8 @@ boolean P_GiveMana(player_t * player, manatype_t mana, int count)
     {
         return (false);
     }
-    if (gameskill == sk_baby || gameskill == sk_nightmare)
+    if (gameskill == sk_baby || gameskill == sk_nightmare
+                             || critical->moreammo)
     {                           // extra mana in baby mode and nightmare mode
         count += count >> 1;
     }
@@ -1681,7 +1682,7 @@ void P_AutoUseHealth(player_t * player, int saveHealth)
             superCount = player->inventory[i].count;
         }
     }
-    if ((gameskill == sk_baby) && (normalCount * 25 >= saveHealth))
+    if ((gameskill == sk_baby || critical->autohealth) && (normalCount * 25 >= saveHealth))
     {                           // Use quartz flasks
         count = (saveHealth + 24) / 25;
         for (i = 0; i < count; i++)
@@ -1699,7 +1700,7 @@ void P_AutoUseHealth(player_t * player, int saveHealth)
             P_PlayerRemoveArtifact(player, superSlot);
         }
     }
-    else if ((gameskill == sk_baby)
+    else if ((gameskill == sk_baby || critical->autohealth)
              && (superCount * 100 + normalCount * 25 >= saveHealth))
     {                           // Use mystic urns and quartz flasks
         count = (saveHealth + 24) / 25;
@@ -2185,7 +2186,7 @@ void P_PoisonDamage(player_t * player, mobj_t * source, int damage,
         return;
     }
     if (damage >= player->health
-        && ((gameskill == sk_baby) || deathmatch) && !player->morphTics)
+        && ((gameskill == sk_baby) || deathmatch || critical->autohealth) && !player->morphTics)
     {                           // Try to use some inventory health
         P_AutoUseHealth(player, damage - player->health + 1);
     }
