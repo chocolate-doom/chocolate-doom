@@ -35,12 +35,9 @@ typedef enum
     heretic,         // Heretic
     hexen,           // Hexen
     strife,          // Strife
-<<<<<<< HEAD
     sigil,           // Sigil
     nrftl,           // NRFTL
-=======
     doom2f,          // Doom 2: L'Enfer sur Terre
->>>>>>> 41865b179684eaf812fc9682936d9b79320f5a1d
 
     none
 } GameMission_t;
