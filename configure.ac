@@ -1,14 +1,13 @@
-AC_INIT(Chocolate Doom, 3.0.0,
-        chocolate-doom-dev-list@chocolate-doom.org, chocolate-doom)
+AC_INIT(Sprinkled Doom, 3.3.0, sprinkled-doom)
 
 PACKAGE_SHORTNAME=${PACKAGE_NAME% Doom}
 PACKAGE_SHORTDESC="Conservative source port"
 PACKAGE_COPYRIGHT="Copyright (C) 1993-2022"
 PACKAGE_LICENSE="GNU General Public License, version 2"
-PACKAGE_MAINTAINER="Simon Howard"
-PACKAGE_URL="https://www.chocolate-doom.org/"
-PACKAGE_RDNS="org.chocolate_doom"
-PACKAGE_BUGREPORT="https://github.com/chocolate-doom/chocolate-doom/issues"
+PACKAGE_MAINTAINER="Adam Bilbrough (Gibbon)"
+PACKAGE_URL="https://github.com/atsb/chocolate-doom-plus-plus"
+PACKAGE_RDNS="org.sprinkled_doom"
+PACKAGE_BUGREPORT="https://github.com/atsb/chocolate-doom-plus-plus/issues"
 
 AC_CONFIG_AUX_DIR(autotools)
 AC_CANONICAL_HOST
