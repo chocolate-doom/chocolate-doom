@@ -25,7 +25,6 @@
 
 int vanilla_savegame_limit = 1;
 int vanilla_demo_limit = 1;
-int doom_plus_plus_limits = 0;
 int sprinkled_gibbing = 0;
 
 void CompatibilitySettings(TXT_UNCAST_ARG(widget), void *user_data)
@@ -41,9 +40,7 @@ void CompatibilitySettings(TXT_UNCAST_ARG(widget), void *user_data)
                                    &vanilla_savegame_limit),
                    TXT_NewCheckBox("Vanilla demo limit",
                                    &vanilla_demo_limit),
-                   TXT_NewCheckBox("Doom-plus-plus limits",
-                                   &doom_plus_plus_limits),
-				   TXT_NewCheckBox("Insane Gibbing",
+		  TXT_NewCheckBox("Insane Gibbing",
                                    &sprinkled_gibbing),
                    NULL);
 }
@@ -52,7 +49,6 @@ void BindCompatibilityVariables(void)
 {
     M_BindIntVariable("vanilla_savegame_limit", &vanilla_savegame_limit);
     M_BindIntVariable("vanilla_demo_limit",     &vanilla_demo_limit);
-    M_BindIntVariable("doom_plus_plus_limits",  &doom_plus_plus_limits);
     M_BindIntVariable("sprinkled_gibbing",      &sprinkled_gibbing);
 }
 

@@ -22,6 +22,7 @@
 #include <string.h>
 //haleyjd: removed WATCOMC
 #include <limits.h>
+#include "dpplimits.h"
 
 #define HERETIC_VERSION 130
 #define HERETIC_VERSION_TEXT "v1.3"
@@ -547,7 +548,7 @@ extern int leveltime;           // tics in game play for par
 
 extern ticcmd_t *netcmds;
 
-#define SAVEGAMESIZE 0x30000
+#define SAVEGAMESIZE 0x30000 * DOOM_PLUS_PLUS_SAVEGAMESIZE_FACTOR
 #define SAVESTRINGSIZE 24
 
 extern mapthing_t *deathmatch_p;

@@ -202,7 +202,6 @@ int savegameslot;
 char savedescription[32];
 
 int vanilla_demo_limit = 1;
-int doom_plus_plus_limits = 0;
 int sprinkled_gibbing = 0;
 int inventoryTics;
 
