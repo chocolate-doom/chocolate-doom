@@ -376,7 +376,6 @@ void D_BindVariables(void)
     M_BindIntVariable("snd_channels",           &snd_channels);
     M_BindIntVariable("vanilla_savegame_limit", &vanilla_savegame_limit);
     M_BindIntVariable("vanilla_demo_limit",     &vanilla_demo_limit);
-    M_BindIntVariable("doom_plus_plus_limits",  &doom_plus_plus_limits);
     M_BindIntVariable("show_endoom",            &show_endoom);
     M_BindIntVariable("show_diskicon",          &show_diskicon);
     M_BindIntVariable("sprinkled_gibbing",      &sprinkled_gibbing);
@@ -1770,15 +1769,6 @@ void D_DoomMain (void)
     {
 	startskill = myargv[p+1][0]-'1';
 	autostart = true;
-    }
-    
-    // REMOVE LIMITS (REML)
-
-    p = M_CheckParm("-reml");
-    
-    if (p)
-    {
-        doom_plus_plus_limits = 1;
     }
     
     // NRFTL

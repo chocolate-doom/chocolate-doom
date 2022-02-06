@@ -380,8 +380,7 @@ R_StoreWallRange
     int			lightnum;
 
     // don't overflow and crash
-    if ((!doom_plus_plus_limits && ds_p == &drawsegs[MAXDRAWSEGS / DOOM_PLUS_PLUS_MAXDRAWSEGS_FACTOR])
-        || (doom_plus_plus_limits && ds_p == &drawsegs[MAXDRAWSEGS]))
+    if (ds_p == &drawsegs[MAXDRAWSEGS])
 	return;		
 		
 #ifdef RANGECHECK

@@ -23,6 +23,7 @@
 #ifndef __P_SPEC__
 #define __P_SPEC__
 
+#include "dpplimits.h"
 
 //
 // End-level timer (-TIMER option)
@@ -300,7 +301,7 @@ typedef struct
 
 #define PLATWAIT		3
 #define PLATSPEED		FRACUNIT
-#define MAXPLATS		7680
+#define MAXPLATS		7680 * DOOM_PLUS_PLUS_MAXPLATS_FACTOR
 
 
 extern plat_t*	activeplats[MAXPLATS];

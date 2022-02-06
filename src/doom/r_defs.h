@@ -38,6 +38,7 @@
 
 #include "v_patch.h"
 
+#include "dpplimits.h"
 
 
 
@@ -48,7 +49,7 @@
 #define SIL_TOP			2
 #define SIL_BOTH		3
 
-#define MAXDRAWSEGS		2048
+#define MAXDRAWSEGS		2048 * DOOM_PLUS_PLUS_MAXDRAWSEGS_FACTOR
 
 
 
