@@ -227,9 +227,7 @@ static char     savedescription[32];
 
 mobj_t*		bodyque[BODYQUESIZE]; 
 int		bodyqueslot; 
- 
-int             vanilla_savegame_limit = 1;
-int             vanilla_demo_limit = 1;
+
 int             sprinkled_gibbing = 0;
 
 int G_CmdChecksum (ticcmd_t* cmd) 
@@ -1824,10 +1822,7 @@ void G_DoSaveGame (void)
 
     P_WriteSaveGameEOF();
 
-    // Enforce the same savegame size limit as in Vanilla Doom,
-    // except if the vanilla_savegame_limit setting is turned off.
-
-    if (vanilla_savegame_limit && ftell(save_stream) > SAVEGAMESIZE)
+    if (ftell(save_stream) > SAVEGAMESIZE)
     {
         I_Error("Savegame buffer overrun");
     }
@@ -2157,19 +2152,8 @@ void G_WriteDemoTiccmd (ticcmd_t* cmd)
 
     if (demo_p > demoend - 16)
     {
-        if (vanilla_demo_limit)
-        {
-            // no more space 
-            G_CheckDemoStatus (); 
-            return; 
-        }
-        else
-        {
-            // Vanilla demo limit disabled: unlimited
-            // demo lengths!
 
-            IncreaseDemoBuffer();
-        }
+        IncreaseDemoBuffer();
     } 
 	
     G_ReadDemoTiccmd (cmd);         // make SURE it is exactly the same 

@@ -299,8 +299,7 @@ vissprite_t overflowsprite;
 
 vissprite_t *R_NewVisSprite(void)
 {
-    if ((!doom_plus_plus_limits && vissprite_p == &vissprites[MAXVISSPRITES / DOOM_PLUS_PLUS_MAXVISSPRITES_FACTOR])
-        || (doom_plus_plus_limits && vissprite_p == &vissprites[MAXVISSPRITES]))
+    if (vissprite_p == &vissprites[MAXVISSPRITES])
         return &overflowsprite;
     vissprite_p++;
     return vissprite_p - 1;

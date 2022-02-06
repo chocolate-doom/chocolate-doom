@@ -20,7 +20,7 @@
 #ifndef __R_BSP__
 #define __R_BSP__
 
-
+#include "dpplimits.h"
 
 extern seg_t*		curline;
 extern side_t*		sidedef;

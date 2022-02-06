@@ -141,7 +141,7 @@ anim_t* lastanim;
 //      Animating line specials
 //
 // haleyjd 08/29/10: [STRIFE] MAXLINEANIMS raised from 64 to 96
-#define MAXLINEANIMS            96
+#define MAXLINEANIMS            96 * DOOM_PLUS_PLUS_MAXLINEANIMS_FACTOR
 
 extern  short   numlinespecials;
 extern  line_t* linespeciallist[MAXLINEANIMS];
@@ -1964,8 +1964,7 @@ void P_SpawnSpecials (void)
         switch(lines[i].special)
         {
         case 48:  // EFFECT FIRSTCOL SCROLL+
-            if ((!doom_plus_plus_limits && numlinespecials >= MAXLINEANIMS / DOOM_PLUS_PLUS_MAXLINEANIMS_FACTOR)
-                || (doom_plus_plus_limits && numlinespecials >= MAXLINEANIMS))
+            if (numlinespecials >= MAXLINEANIMS)
             {
                 I_Error("Too many scrolling wall linedefs!");
             }

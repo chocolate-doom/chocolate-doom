@@ -22,6 +22,8 @@
 #include "r_local.h"
 #endif
 
+#include "dpplimits.h"
+
 #define STARTREDPALS    1
 #define STARTBONUSPALS  9
 #define STARTPOISONPALS 13

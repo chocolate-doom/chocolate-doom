@@ -74,8 +74,6 @@ void G_ScreenShot (void);
 void G_DrawMouseSpeedBox(void);
 int G_VanillaVersionCode(void);
 
-extern int vanilla_savegame_limit;
-extern int vanilla_demo_limit;
 extern int sprinkled_gibbing;
 #endif
 

@@ -178,9 +178,6 @@ void D_BindVariables(void)
     M_BindIntVariable("messageson",             &messageson);
     M_BindIntVariable("screenblocks",           &screenblocks);
     M_BindIntVariable("snd_channels",           &snd_Channels);
-    M_BindIntVariable("vanilla_savegame_limit", &vanilla_savegame_limit);
-    M_BindIntVariable("vanilla_demo_limit",     &vanilla_demo_limit);
-    M_BindIntVariable("doom_plus_plus_limits",  &doom_plus_plus_limits);
     M_BindIntVariable("sprinkled_gibbing",  	&sprinkled_gibbing);
     M_BindStringVariable("savedir", &SavePathConfig);
 
@@ -672,15 +669,6 @@ static void HandleArgs(void)
     {
         sc_FileScripts = true;
         sc_ScriptsDir = myargv[p+1];
-    }
-    
-    // REMOVE LIMITS (REML)
-
-    p = M_CheckParm("-reml");
-    
-    if (p)
-    {
-        doom_plus_plus_limits = 1;
     }
 
     //!

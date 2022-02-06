@@ -69,7 +69,7 @@
 #include "g_game.h"
 #include "dpplimits.h"
 
-#define SAVEGAMESIZE	0x2c000
+#define SAVEGAMESIZE	0x2c000 * DOOM_PLUS_PLUS_SAVEGAMESIZE_FACTOR
 
 void	G_ReadDemoTiccmd (ticcmd_t* cmd); 
 void	G_WriteDemoTiccmd (ticcmd_t* cmd); 
@@ -233,9 +233,6 @@ int      testcontrols_mousespeed;
 mobj_t*		bodyque[BODYQUESIZE]; 
 //int       bodyqueslot; [STRIFE] unused
  
-int             vanilla_savegame_limit = 1;
-int             vanilla_demo_limit = 1;
-int             doom_plus_plus_limits = 0;
 int             sprinkled_gibbing = 0;
 
 int G_CmdChecksum (ticcmd_t* cmd) 
@@ -1847,11 +1844,9 @@ void G_DoSaveGame (char *path)
 
     P_WriteSaveGameEOF();
 
-    // Enforce the same savegame size limit as in Vanilla Doom, 
-    // except if the vanilla_savegame_limit setting is turned off.
     // [STRIFE]: Verified subject to same limit.
     
-    if (vanilla_savegame_limit && ftell(save_stream) > SAVEGAMESIZE)
+    if (ftell(save_stream) > SAVEGAMESIZE)
     {
         I_Error("Savegame buffer overrun");
     }
@@ -2166,19 +2161,8 @@ void G_WriteDemoTiccmd (ticcmd_t* cmd)
 
     if (demo_p > demoend - 16)
     {
-        if (vanilla_demo_limit)
-        {
-            // no more space 
-            G_CheckDemoStatus (); 
-            return; 
-        }
-        else
-        {
-            // Vanilla demo limit disabled: unlimited
-            // demo lengths!
 
-            IncreaseDemoBuffer();
-        }
+        IncreaseDemoBuffer();
     } 
 
     G_ReadDemoTiccmd (cmd);         // make SURE it is exactly the same 

@@ -460,9 +460,6 @@ void D_BindVariables(void)
     M_BindIntVariable("show_talk",              &dialogshowtext);
     M_BindIntVariable("screensize",             &screenblocks);
     M_BindIntVariable("snd_channels",           &snd_channels);
-    M_BindIntVariable("vanilla_savegame_limit", &vanilla_savegame_limit);
-    M_BindIntVariable("vanilla_demo_limit",     &vanilla_demo_limit);
-    M_BindIntVariable("doom_plus_plus_limits",  &doom_plus_plus_limits);
     M_BindIntVariable("show_endoom",            &show_endoom);
     M_BindIntVariable("show_diskicon",          &show_diskicon);
     M_BindIntVariable("graphical_startup",      &graphical_startup);
@@ -1495,13 +1492,6 @@ void D_DoomMain (void)
     char            demolumpname[9];
 
     I_AtExit(D_Endoom, false);
-    
-    // REMOVE LIMITS (REML)
-
-    if (M_CheckParm("-reml"))
-    {
-        doom_plus_plus_limits = 1;
-    }
 
     // haleyjd 20110206 [STRIFE]: -nograph parameter
 

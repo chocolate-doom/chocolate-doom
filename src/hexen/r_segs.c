@@ -331,8 +331,7 @@ void R_StoreWallRange(int start, int stop)
     fixed_t vtop;
     int lightnum;
 
-    if ((!doom_plus_plus_limits && ds_p == &drawsegs[MAXDRAWSEGS / DOOM_PLUS_PLUS_MAXDRAWSEGS_FACTOR])
-        || (doom_plus_plus_limits && ds_p == &drawsegs[MAXDRAWSEGS]))
+    if (ds_p == &drawsegs[MAXDRAWSEGS])
         return;                 // don't overflow and crash
 
 #ifdef RANGECHECK

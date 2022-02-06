@@ -288,8 +288,7 @@ void P_ActivateInStasis(int tag)
 {
     int i;
 
-    for (i = 0; ((!doom_plus_plus_limits && i < MAXPLATS / DOOM_PLUS_PLUS_MAXPLATS_FACTOR)
-        || (doom_plus_plus_limits && i < MAXPLATS)); i++)
+    for (i = 0; ((i < MAXPLATS)); i++)
         if(activeplats[i]
         && (activeplats[i])->tag == tag
             && (activeplats[i])->status == in_stasis)
@@ -307,8 +306,7 @@ void EV_StopPlat(line_t* line)
 {
     int j;
 
-    for (j = 0; ((!doom_plus_plus_limits && j < MAXPLATS / DOOM_PLUS_PLUS_MAXPLATS_FACTOR)
-        || (doom_plus_plus_limits && j < MAXPLATS)); j++)
+    for (j = 0; ((j < MAXPLATS)); j++)
         if (activeplats[j]
         && ((activeplats[j])->status != in_stasis)
             && ((activeplats[j])->tag == line->tag))
@@ -326,8 +324,7 @@ void P_AddActivePlat(plat_t* plat)
 {
     int i;
 
-    for (i = 0; ((!doom_plus_plus_limits && i < MAXPLATS / DOOM_PLUS_PLUS_MAXPLATS_FACTOR)
-        || (doom_plus_plus_limits && i < MAXPLATS)); i++)
+    for (i = 0; ((i < MAXPLATS)); i++)
     {
         if (activeplats[i] == NULL)
         {
@@ -345,8 +342,7 @@ void P_AddActivePlat(plat_t* plat)
 void P_RemoveActivePlat(plat_t* plat)
 {
     int i;
-    for (i = 0; ((!doom_plus_plus_limits && i < MAXPLATS / DOOM_PLUS_PLUS_MAXPLATS_FACTOR)
-        || (doom_plus_plus_limits && i < MAXPLATS)); i++)
+    for (i = 0; ((i < MAXPLATS)); i++)
     {
         if(plat == activeplats[i])
         {
