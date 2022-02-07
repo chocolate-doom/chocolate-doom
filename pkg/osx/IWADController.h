@@ -34,7 +34,7 @@
 
     id heretic;
     id hexen;
-    id strife;
+    //id strife;
 }
 
 - (void) closeConfigWindow: (id)sender;
