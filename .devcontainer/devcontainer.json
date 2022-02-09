@@ -1,0 +1,39 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
+// https://github.com/microsoft/vscode-dev-containers/tree/v0.209.6/containers/docker-existing-dockerfile
+{
+	"name": "Existing Dockerfile",
+
+	// Sets the run context to one level up instead of the .devcontainer folder.
+	"context": "..",
+
+	// Update the 'dockerFile' property if you aren't using the standard 'Dockerfile' filename.
+	"dockerFile": "./Dockerfile",
+
+	// Set *default* container specific settings.json values on container create.
+	"settings": {},
+	
+	// Add the IDs of extensions you want installed when the container is created.
+	"extensions": [
+		"ms-vscode.cpptools-extension-pack",
+	],
+
+	// Required to not bleed "root" permission files into the volume
+	"containerUser": "chocodev",
+
+	// VSCode on Linux specific, for creating X11 and sound forwarding
+	// Comment out manually if working on non-Linux
+	"initializeCommand": "sh ${localWorkspaceFolder}/.devcontainer/xauth-configure.sh ${localWorkspaceFolder}/.devcontainer/devcontainer.xauth",
+	"mounts": [
+		"source=/tmp/.X11-unix,target=/tmp/.X11-unix,type=bind",
+	],
+	"containerEnv": {
+		"DISPLAY": "${localEnv:DISPLAY}",
+		"XAUTHORITY": "${containerWorkspaceFolder}/.devcontainer/devcontainer.xauth",
+	},
+	"runArgs": [
+		// "--gpus", "all",  // Uncomment for GPU support
+		"--device", "/dev/snd",  // TODO: pulseaudio? https://github.com/mviereck/x11docker/wiki/Container-sound:-ALSA-or-Pulseaudio
+	]
+
+	// TODO: X11/sound forwarding configs for MacOS (XQuartz) and Windows (Xming)
+}
