@@ -222,12 +222,13 @@ void BindMouseVariables(void)
     M_BindIntVariable("mouse_sensitivity",       &mouseSensitivity);
     M_BindIntVariable("mouse_threshold",         &mouse_threshold);
     M_BindFloatVariable("mouse_acceleration",    &mouse_acceleration);
-    if (gamemission == doom) // [crispy]
-    {
+    // [crispy]
     M_BindIntVariable("mouse_sensitivity_x2",    &mouseSensitivity_x2);
     M_BindIntVariable("mouse_sensitivity_y",     &mouseSensitivity_y);
     M_BindIntVariable("mouse_threshold_y",       &mouse_threshold_y);
     M_BindFloatVariable("mouse_acceleration_y",  &mouse_acceleration_y);
+    if (gamemission == doom) // [crispy]
+    {
     M_BindIntVariable("crispy_mouselook",        &crispy->mouselook);
     }
 }
