@@ -123,9 +123,9 @@ Many additional less user-visible features have been implemented, e.g. fixed eng
 
 Binaries for Windows XP / Vista / 7 / 8.1 / 10 (32-bit binaries compatible with both x86 and x64 editions) are available here:
 
-https://github.com/fabiangreffrath/crispy-doom/releases/download/crispy-doom-5.11/crispy-doom-5.11.0-win32.zip
-https://github.com/fabiangreffrath/crispy-doom/releases/download/crispy-doom-5.11/crispy-heretic-5.11.0-win32.zip
-https://github.com/fabiangreffrath/crispy-doom/releases/download/crispy-doom-5.11/crispy-hexen-5.11.0-win32.zip
+https://github.com/fabiangreffrath/crispy-doom/releases/download/crispy-doom-5.11.1/crispy-doom-5.11.1-win32.zip
+https://github.com/fabiangreffrath/crispy-doom/releases/download/crispy-doom-5.11.1/crispy-heretic-5.11.1-win32.zip
+https://github.com/fabiangreffrath/crispy-doom/releases/download/crispy-doom-5.11.1/crispy-hexen-5.11.1-win32.zip
 
 To install on Ubuntu ("Eoan Ermine" 19.10 and later)/Debian ("Buster" 10 and later) based systems:
 ```bash
@@ -169,6 +169,10 @@ to install the prerequisites and then
 After successful compilation the resulting binaries can be found in the `src/` directory.
 
 ## News
+
+### Crispy Doom 5.11.1
+
+Crispy Doom 5.11.1 is released on Feb 10, 2022. It it a bug-fix release to fix Heretic and Hexen config keys getting lost in setup.
 
 ### Crispy Doom 5.11
 
