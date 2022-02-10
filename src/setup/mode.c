@@ -295,7 +295,7 @@ static void OpenGameSelectDialog(GameSelectCallback callback)
         // Do we have any IWADs for this game installed?
         // If so, add a button.
 
-        iwads = D_FindAllIWADs(mission_configs[i].mask & (IWAD_MASK_DOOM|IWAD_MASK_HERETIC)); // [crispy] restrict game choice to Doom and Heretic
+        iwads = D_FindAllIWADs(mission_configs[i].mask & (IWAD_MASK_DOOM|IWAD_MASK_HERETIC|IWAD_MASK_HEXEN)); // [crispy] restrict game choice to Doom, Heretic and Hexen
 
         if (iwads[0] != NULL)
         {
