@@ -14,8 +14,19 @@
 	
 	// Add the IDs of extensions you want installed when the container is created.
 	"extensions": [
-		"ms-vscode.cpptools-extension-pack",
-		"npxms.hide-gitignored",
+		"yzhang.markdown-all-in-one",
+		"bierner.markdown-preview-github-styles",
+		"dotjoshjohnson.xml",
+
+		"eamodio.gitlens",
+		"npxms.hide-gitignored",  // Note: need to run its command manually
+
+		// Build tooling
+		"ms-vscode.cpptools",
+		"cschlosser.doxdocgen",
+		"austin.code-gnu-global",
+		"jeff-hykin.better-cpp-syntax", // Note: runs locally
+		"ms-vscode.cpptools-themes", // Note: runs locally
 	],
 
 	// Required to not bleed "root" permission files into the volume
