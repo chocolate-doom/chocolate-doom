@@ -32,3 +32,7 @@ RUN addgroup $USERNAME audio
 RUN chsh $USERNAME -s /bin/bash
 
 USER $USERNAME
+
+# Make sure we actually own our own local share stuff
+RUN mkdir -p /home/$USERNAME/.local/share && \
+    chown -R $USERNAME:$USERNAME /home/$USERNAME/.local
