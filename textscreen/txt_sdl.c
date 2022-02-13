@@ -255,11 +255,17 @@ int TXT_Init(void)
     if (TXT_SDLWindow == NULL)
         return 0;
 
-    if (!txt_force_software_renderer)
-        renderer = SDL_CreateRenderer(TXT_SDLWindow, -1, SDL_RENDERER_PRESENTVSYNC);
-
-    if (renderer == NULL)
+    if (txt_force_software_renderer || getenv("TXT_FORCE_SOFTWARE_RENDERER") != NULL) {
         renderer = SDL_CreateRenderer(TXT_SDLWindow, -1, SDL_RENDERER_SOFTWARE);
+        printf("force software\n");
+    } else {
+        renderer = SDL_CreateRenderer(TXT_SDLWindow, -1, SDL_RENDERER_PRESENTVSYNC);
+        printf("regular renderer\n");
+        if (renderer == NULL) {
+            renderer = SDL_CreateRenderer(TXT_SDLWindow, -1, SDL_RENDERER_SOFTWARE);
+            printf("fallback software\n");
+        }
+    }
 
     if (renderer == NULL)
         return 0;
