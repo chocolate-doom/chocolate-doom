@@ -269,12 +269,12 @@ int TXT_Init(void)
 
     SDL_RendererInfo rinfo;
     SDL_GetRendererInfo(renderer, &rinfo);
-    printf("Textscreen using SDL renderer %s; software=%s accelerated=%s vsync=%s targettexture=%s\n",
+    printf("TXT_Init: SDL renderer name=%s software=%d accelerated=%d vsync=%d targettexture=%d\n",
         rinfo.name, 
-        rinfo.flags & SDL_RENDERER_SOFTWARE, 
-        rinfo.flags & SDL_RENDERER_ACCELERATED, 
-        rinfo.flags & SDL_RENDERER_ACCELERATED, 
-        rinfo.flags & SDL_RENDERER_TARGETTEXTURE);
+        rinfo.flags & SDL_RENDERER_SOFTWARE ? 1 : 0,
+        rinfo.flags & SDL_RENDERER_ACCELERATED ? 1 : 0,
+        rinfo.flags & SDL_RENDERER_ACCELERATED ? 1 : 0,
+        rinfo.flags & SDL_RENDERER_TARGETTEXTURE ? 1 : 0);
 
     // Special handling for OS X retina display. If we successfully set the
     // highdpi flag, check the output size for the screen renderer. If we get
