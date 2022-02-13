@@ -231,6 +231,7 @@ static void ChooseFont(void)
 int TXT_Init(void)
 {
     int flags = 0;
+    SDL_RendererInfo rinfo;
 
     if (SDL_Init(SDL_INIT_VIDEO) < 0)
     {
@@ -267,7 +268,6 @@ int TXT_Init(void)
     if (renderer == NULL)
         return 0;
 
-    SDL_RendererInfo rinfo;
     SDL_GetRendererInfo(renderer, &rinfo);
     printf("TXT_Init: SDL renderer name=%s software=%d accelerated=%d vsync=%d targettexture=%d\n",
         rinfo.name, 
