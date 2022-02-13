@@ -59,6 +59,8 @@ static SDL_Renderer *renderer;
 // Current input mode.
 static txt_input_mode_t input_mode = TXT_INPUT_NORMAL;
 
+static int txt_force_software_rendering = 0;
+
 // Dimensions of the screen image in screen coordinates (not pixels); this
 // is the value that was passed to SDL_CreateWindow().
 static int screen_image_w, screen_image_h;
@@ -253,7 +255,8 @@ int TXT_Init(void)
     if (TXT_SDLWindow == NULL)
         return 0;
 
-    renderer = SDL_CreateRenderer(TXT_SDLWindow, -1, SDL_RENDERER_PRESENTVSYNC);
+    if (!txt_force_software_rendering)
+        renderer = SDL_CreateRenderer(TXT_SDLWindow, -1, SDL_RENDERER_PRESENTVSYNC);
 
     if (renderer == NULL)
         renderer = SDL_CreateRenderer(TXT_SDLWindow, -1, SDL_RENDERER_SOFTWARE);
@@ -889,6 +892,10 @@ void TXT_Sleep(int timeout)
             SDL_Delay(1);
         }
     }
+}
+
+void TXT_SetForceSoftwareRendering(int force_software_rendering) {
+    txt_force_software_rendering = force_software_rendering;
 }
 
 void TXT_SetInputMode(txt_input_mode_t mode)

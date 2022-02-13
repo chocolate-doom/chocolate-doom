@@ -179,6 +179,11 @@ void TXT_GetMousePosition(int *x, int *y);
 // Optional timeout in ms (timeout == 0 : sleep forever)
 void TXT_Sleep(int timeout);
 
+// Force initialization of textscreen with a software renderer, where applicable
+// Must be called before TXT_Init for the value to apply
+// Default is assumed to be false (0)
+void TXT_SetForceSoftwareRendering(int force_software_rendering);
+
 // Change mode for text input.
 void TXT_SetInputMode(txt_input_mode_t mode);
 
