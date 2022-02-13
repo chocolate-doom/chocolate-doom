@@ -257,18 +257,24 @@ int TXT_Init(void)
 
     if (txt_force_software_renderer || getenv("TXT_FORCE_SOFTWARE_RENDERER") != NULL) {
         renderer = SDL_CreateRenderer(TXT_SDLWindow, -1, SDL_RENDERER_SOFTWARE);
-        printf("force software\n");
     } else {
         renderer = SDL_CreateRenderer(TXT_SDLWindow, -1, SDL_RENDERER_PRESENTVSYNC);
-        printf("regular renderer\n");
         if (renderer == NULL) {
             renderer = SDL_CreateRenderer(TXT_SDLWindow, -1, SDL_RENDERER_SOFTWARE);
-            printf("fallback software\n");
         }
     }
 
     if (renderer == NULL)
         return 0;
+
+    SDL_RendererInfo rinfo;
+    SDL_GetRendererInfo(renderer, &rinfo);
+    printf("Textscreen using SDL renderer %s; software=%s accelerated=%s vsync=%s targettexture=%s\n",
+        rinfo.name, 
+        rinfo.flags & SDL_RENDERER_SOFTWARE, 
+        rinfo.flags & SDL_RENDERER_ACCELERATED, 
+        rinfo.flags & SDL_RENDERER_ACCELERATED, 
+        rinfo.flags & SDL_RENDERER_TARGETTEXTURE);
 
     // Special handling for OS X retina display. If we successfully set the
     // highdpi flag, check the output size for the screen renderer. If we get
