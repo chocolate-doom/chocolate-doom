@@ -306,6 +306,9 @@ static void InitTextscreen(void)
 {
     SetDisplayDriver();
 
+    // If the forced software renderer toggle is set, setup shouild pass it on to textscreen
+    TXT_SetForceSoftwareRenderer(M_GetIntVariable("force_software_renderer"));
+
     if (!TXT_Init())
     {
         fprintf(stderr, "Failed to initialize GUI\n");
