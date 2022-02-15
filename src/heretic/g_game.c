@@ -111,9 +111,9 @@ int totalleveltimes; // [crispy] total time for all completed levels
 
 boolean finalintermission; // [crispy] track intermission at end of episode
 
-int mouseSensitivity;
-int mouseSensitivity_x2;
-int mouseSensitivity_y;
+int mouseSensitivity = 5;
+int mouseSensitivity_x2 = 5;
+int mouseSensitivity_y = 5;
 
 char *demoname;
 static const char *orig_demoname = NULL; // [crispy] the name originally chosen for the demo, i.e. without "-00000"

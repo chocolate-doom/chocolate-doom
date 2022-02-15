@@ -593,12 +593,15 @@ int R_FlatNumForName(const char *name)
     int i;
     char namet[9];
 
-    i = W_CheckNumForName(name);
+    i = W_CheckNumForNameFromTo(name, lastflat, firstflat);
     if (i == -1)
     {
         namet[8] = 0;
         memcpy(namet, name, 8);
-        I_Error("R_FlatNumForName: %s not found", namet);
+        fprintf(stderr, "R_FlatNumForName: %s not found\n", namet);
+        // [crispy] since there is no "No Flat" marker,
+        // render missing flats as SKY
+        return skyflatnum;
     }
     return i - firstflat;
 }
