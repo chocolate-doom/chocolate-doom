@@ -71,6 +71,11 @@ void D_LoadSigilWad (void)
 	i = W_CheckNumForName("E5M1");
 	if (i != -1)
 	{
+		// [crispy] indicate that SIGIL_*.WAD is already loaded as a PWAD
+		if (!strncasecmp(W_WadNameForLump(lumpinfo[i]), "SIGIL", 5))
+		{
+			crispy->havesigil = (char *)-1;
+		}
 		return;
 	}
 
