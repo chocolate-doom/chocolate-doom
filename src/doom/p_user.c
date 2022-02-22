@@ -141,6 +141,9 @@ void P_CalcHeight (player_t* player)
 
     if (player->viewz > player->mo->ceilingz-4*FRACUNIT)
 	player->viewz = player->mo->ceilingz-4*FRACUNIT;
+    // [crispy] prevent the view port from falling below floor level
+    else if (player->viewz < player->mo->floorz+FRACUNIT)
+	player->viewz = player->mo->floorz+FRACUNIT;
 }
 
 
