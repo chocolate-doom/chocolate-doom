@@ -375,7 +375,9 @@ void P_PlayerThink (player_t* player)
     // [crispy] jumping: apply vertical momentum
     if (cmd->arti)
     {
-        if ((cmd->arti & AFLAG_JUMP) && onground && !player->jumpTics)
+        if ((cmd->arti & AFLAG_JUMP) && onground &&
+            player->viewz < player->mo->ceilingz-16*FRACUNIT &&
+            !player->jumpTics)
         {
             // [crispy] Hexen sets 9; Strife adds 8
             player->mo->momz = (7 + crispy->jump) * FRACUNIT;
