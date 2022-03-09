@@ -16,6 +16,8 @@
 
 // P_Spec.c
 
+#include <stdlib.h> // [crispy] free()
+
 #include "doomdef.h"
 #include "deh_str.h"
 #include "i_system.h"
@@ -46,7 +48,9 @@ typedef enum
 
 // Data
 
-int *LevelAmbientSfx[MAX_AMBIENT_SFX];
+// [crispy] remove the ambient sound limit
+static int **LevelAmbientSfx = NULL;
+static int AmbSfxMax = 0;
 int *AmbSfxPtr;
 int AmbSfxCount;
 int AmbSfxTics;
@@ -1266,6 +1270,10 @@ void P_InitAmbientSound(void)
     AmbSfxVolume = 0;
     AmbSfxTics = 10 * TICRATE;
     AmbSfxPtr = AmbSndSeqInit;
+    // [crispy] remove the ambient sound limit
+    AmbSfxMax = 0;
+    free(LevelAmbientSfx);
+    LevelAmbientSfx = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -1278,9 +1286,11 @@ void P_InitAmbientSound(void)
 
 void P_AddAmbientSfx(int sequence)
 {
-    if (AmbSfxCount == MAX_AMBIENT_SFX)
+    // [crispy] remove the ambient sound limit
+    if (AmbSfxCount >= AmbSfxMax)
     {
-        I_Error("Too many ambient sound sequences");
+        AmbSfxMax = AmbSfxMax ? AmbSfxMax * 2 : MAX_AMBIENT_SFX;
+        LevelAmbientSfx = I_Realloc(LevelAmbientSfx, sizeof(*LevelAmbientSfx) * AmbSfxMax);
     }
     LevelAmbientSfx[AmbSfxCount++] = AmbientSfx[sequence];
 }
