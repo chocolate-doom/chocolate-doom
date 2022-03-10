@@ -19,6 +19,7 @@
 #include "SDL.h"
 
 #include "i_timer.h"
+#include "m_fixed.h" // [crispy]
 #include "doomtype.h"
 
 //
@@ -80,3 +81,9 @@ void I_InitTimer(void)
     SDL_Init(SDL_INIT_TIMER);
 }
 
+// [crispy]
+
+fixed_t I_GetFracRealTime(void)
+{
+    return (int64_t)I_GetTimeMS() * TICRATE % 1000 * FRACUNIT / 1000;
+}
