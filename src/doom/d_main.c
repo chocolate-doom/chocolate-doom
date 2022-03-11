@@ -1599,6 +1599,7 @@ void D_DoomMain (void)
     if (!M_ParmExists("-noautoload") && gamemode != shareware)
     {
         char *autoload_dir;
+        DEH_printf("I_Init: Autoloading.\n");
 
         // common auto-loaded files for all Doom flavors
 
@@ -1765,9 +1766,13 @@ void D_DoomMain (void)
 
     DEH_printf("I_Init: Setting up machine state.\n");
     I_CheckIsScreensaver();
+    DEH_printf("I_Init: Setting up timer.\n");
     I_InitTimer();
+    DEH_printf("I_Init: Setting up joystick.\n");
     I_InitJoystick();
+    DEH_printf("I_Init: Setting up sound.\n");
     I_InitSound(true);
+    DEH_printf("I_Init: Setting up music.\n");
     I_InitMusic();
 
     printf ("NET_Init: Init network subsystem.\n");
