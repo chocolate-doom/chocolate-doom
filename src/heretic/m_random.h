@@ -25,6 +25,9 @@ int M_Random(void);
 int P_Random(void);
 // as M_Random, but used only by the play simulation
 
+// [crispy] our own private random function
+int Crispy_Random (void);
+
 void M_ClearRandom(void);
 // fix randoms for demos
 
