@@ -1264,6 +1264,9 @@ void P_SpawnSpecials(void)
 //
 //----------------------------------------------------------------------------
 
+// [crispy] fix ambient sounds stop playing
+static int (*Amb_Random)(void);
+
 void P_InitAmbientSound(void)
 {
     AmbSfxCount = 0;
@@ -1272,8 +1275,13 @@ void P_InitAmbientSound(void)
     AmbSfxPtr = AmbSndSeqInit;
     // [crispy] remove the ambient sound limit
     AmbSfxMax = 0;
-    free(LevelAmbientSfx);
-    LevelAmbientSfx = NULL;
+    if (LevelAmbientSfx)
+    {
+        free(LevelAmbientSfx);
+        LevelAmbientSfx = NULL;
+    }
+    // [crispy] fix ambient sounds stop playing
+    Amb_Random = P_Random;
 }
 
 //----------------------------------------------------------------------------
@@ -1324,7 +1332,7 @@ void P_AmbientSound(void)
         switch (cmd)
         {
             case afxcmd_play:
-                AmbSfxVolume = P_Random() >> 2;
+                AmbSfxVolume = Amb_Random() >> 2;
                 S_StartSoundAtVolume(NULL, *AmbSfxPtr++, AmbSfxVolume);
                 break;
             case afxcmd_playabsvol:
@@ -1350,12 +1358,18 @@ void P_AmbientSound(void)
                 done = true;
                 break;
             case afxcmd_delayrand:
-                AmbSfxTics = P_Random() & (*AmbSfxPtr++);
+                AmbSfxTics = Amb_Random() & (*AmbSfxPtr++);
+                // [crispy] fix ambient sounds stop playing
+                if (AmbSfxTics == 0)
+                {
+                    AmbSfxTics++;
+                    Amb_Random = Crispy_Random;
+                }
                 done = true;
                 break;
             case afxcmd_end:
-                AmbSfxTics = 6 * TICRATE + P_Random();
-                AmbSfxPtr = LevelAmbientSfx[P_Random() % AmbSfxCount];
+                AmbSfxTics = 6 * TICRATE + Amb_Random();
+                AmbSfxPtr = LevelAmbientSfx[Amb_Random() % AmbSfxCount];
                 done = true;
                 break;
             default:
