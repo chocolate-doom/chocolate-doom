@@ -1121,9 +1121,12 @@ void D_DoomMain(void)
     {
         char *autoload_dir;
         autoload_dir = M_GetAutoloadDir("heretic.wad", true);
-        DEH_AutoLoadPatches(autoload_dir);
-        W_AutoLoadWADs(autoload_dir);
-        free(autoload_dir);
+        if (autoload_dir != NULL)
+        {
+            DEH_AutoLoadPatches(autoload_dir);
+            W_AutoLoadWADs(autoload_dir);
+            free(autoload_dir);
+        }
     }
 
     // Load dehacked patches specified on the command line.

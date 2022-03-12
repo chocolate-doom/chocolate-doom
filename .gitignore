@@ -57,3 +57,7 @@ GPATH
 GRTAGS
 GTAGS
 /HTML/
+
+# VSCode settings
+
+/.vscode/

@@ -175,10 +175,12 @@ void D_LoadSigilWad (void)
 	// [crispy] load WAD and DEH files from autoload directories
 	if (!M_ParmExists("-noautoload"))
 	{
-		autoload_dir = M_GetAutoloadDir(sigil_basename, false);
-		W_AutoLoadWADs(autoload_dir);
-		DEH_AutoLoadPatches(autoload_dir);
-		free(autoload_dir);
+		if ((autoload_dir = M_GetAutoloadDir(sigil_basename, false)))
+		{
+			W_AutoLoadWADs(autoload_dir);
+			DEH_AutoLoadPatches(autoload_dir);
+			free(autoload_dir);
+		}
 	}
 
 	// [crispy] regenerate the hashtable
@@ -289,10 +291,12 @@ static void CheckLoadNerve (void)
 	// [crispy] load WAD and DEH files from autoload directories
 	if (!M_ParmExists("-noautoload"))
 	{
-		autoload_dir = M_GetAutoloadDir(nerve_basename, false);
-		W_AutoLoadWADs(autoload_dir);
-		DEH_AutoLoadPatches(autoload_dir);
-		free(autoload_dir);
+		if ((autoload_dir = M_GetAutoloadDir(nerve_basename, false)))
+		{
+			W_AutoLoadWADs(autoload_dir);
+			DEH_AutoLoadPatches(autoload_dir);
+			free(autoload_dir);
+		}
 	}
 
 	// [crispy] regenerate the hashtable
@@ -396,10 +400,12 @@ static boolean CheckLoadMasterlevels (void)
 	// [crispy] load WAD and DEH files from autoload directories
 	if (!M_ParmExists("-noautoload"))
 	{
-		autoload_dir = M_GetAutoloadDir(master_basename, false);
-		W_AutoLoadWADs(autoload_dir);
-		DEH_AutoLoadPatches(autoload_dir);
-		free(autoload_dir);
+		if ((autoload_dir = M_GetAutoloadDir(master_basename, false)))
+		{
+			W_AutoLoadWADs(autoload_dir);
+			DEH_AutoLoadPatches(autoload_dir);
+			free(autoload_dir);
+		}
 	}
 
 	// [crispy] regenerate the hashtable
