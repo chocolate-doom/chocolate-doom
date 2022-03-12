@@ -2406,6 +2406,11 @@ void M_SetMusicPackDir(void)
     }
 
     prefdir = SDL_GetPrefPath("", PACKAGE_TARNAME);
+    if (prefdir == NULL)
+    {
+        printf("M_SetMusicPackDir: SDL_GetPrefPath failed, music pack directory not set\n");
+        return;
+    }
     music_pack_path = M_StringJoin(prefdir, "music-packs", NULL);
 
     M_MakeDirectory(prefdir);
@@ -2502,6 +2507,11 @@ char *M_GetAutoloadDir(const char *iwadname)
     {
         char *prefdir;
         prefdir = SDL_GetPrefPath("", PACKAGE_TARNAME);
+        if (prefdir == NULL)
+        {
+            printf("M_GetAutoloadDir: SDL_GetPrefPath failed\n");
+            return NULL;
+        }
         autoload_path = M_StringJoin(prefdir, "autoload", NULL);
         SDL_free(prefdir);
     }
