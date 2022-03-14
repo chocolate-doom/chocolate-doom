@@ -1575,16 +1575,22 @@ void D_DoomMain (void)
         if (gamemission < pack_chex)
         {
             autoload_dir = M_GetAutoloadDir("doom-all");
-            DEH_AutoLoadPatches(autoload_dir);
-            W_AutoLoadWADs(autoload_dir);
-            free(autoload_dir);
+            if (autoload_dir != NULL)
+            {
+                DEH_AutoLoadPatches(autoload_dir);
+                W_AutoLoadWADs(autoload_dir);
+                free(autoload_dir);
+            }
         }
 
         // auto-loaded files per IWAD
         autoload_dir = M_GetAutoloadDir(D_SaveGameIWADName(gamemission, gamevariant));
-        DEH_AutoLoadPatches(autoload_dir);
-        W_AutoLoadWADs(autoload_dir);
-        free(autoload_dir);
+        if (autoload_dir != NULL)
+        {
+            DEH_AutoLoadPatches(autoload_dir);
+            W_AutoLoadWADs(autoload_dir);
+            free(autoload_dir);
+        }
     }
 
     // Load Dehacked patches specified on the command line with -deh.
