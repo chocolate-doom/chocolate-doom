@@ -894,7 +894,7 @@ F_DrawPatchCol
 		
 	while (count--)
 	{
-	    *dest = source[srccol >> FRACBITS];
+	    *dest = colormaps[source[srccol >> FRACBITS]];
 	    srccol += dyi;
 	    dest += SCREENWIDTH;
 	}
