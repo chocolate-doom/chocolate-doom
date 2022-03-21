@@ -114,7 +114,7 @@ static void Z_RemoveBlock(memblock_t *block)
     {
         if (block->prev->next != block)
         {
-          I_Error("Z_RemoveBlock: Doubly-linked list corrupted!");
+            I_Error("Z_RemoveBlock: Doubly-linked list corrupted!");
         }
         block->prev->next = block->next;
     }
@@ -123,7 +123,7 @@ static void Z_RemoveBlock(memblock_t *block)
     {
         if (block->next->prev != block)
         {
-          I_Error("Z_RemoveBlock: Doubly-linked list corrupted!");
+            I_Error("Z_RemoveBlock: Doubly-linked list corrupted!");
         }
         block->next->prev = block->prev;
     }
