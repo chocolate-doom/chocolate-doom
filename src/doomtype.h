@@ -138,12 +138,5 @@ typedef int16_t dpixel_t;
 
 #define arrlen(array) (sizeof(array) / sizeof(*array))
 
-#ifndef MIN
- #define MIN(a,b) (((a)<(b))?(a):(b))
-#endif
-#ifndef MAX
- #define MAX(a,b) (((a)>(b))?(a):(b))
-#endif
-
 #endif
 
