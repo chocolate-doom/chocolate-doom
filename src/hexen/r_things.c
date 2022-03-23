@@ -324,13 +324,25 @@ void R_DrawMaskedColumn(column_t * column, signed int baseclip)
 {
     int topscreen, bottomscreen;
     fixed_t basetexturemid;
+    int top = -1; // [crispy]
 
     basetexturemid = dc_texturemid;
+    dc_texheight = 0; // [crispy]
 
     for (; column->topdelta != 0xff;)
     {
+        // [crispy] support for DeePsea tall patches
+        if (column->topdelta <= top)
+        {
+            top += column->topdelta;
+        }
+        else
+        {
+            top = column->topdelta;
+        }
+
 // calculate unclipped screen coordinates for post
-        topscreen = sprtopscreen + spryscale * column->topdelta;
+        topscreen = sprtopscreen + spryscale * top;
         bottomscreen = topscreen + spryscale * column->length;
         dc_yl = (topscreen + FRACUNIT - 1) >> FRACBITS;
         dc_yh = (bottomscreen - 1) >> FRACBITS;
@@ -346,7 +358,7 @@ void R_DrawMaskedColumn(column_t * column, signed int baseclip)
         if (dc_yl <= dc_yh)
         {
             dc_source = (byte *) column + 3;
-            dc_texturemid = basetexturemid - (column->topdelta << FRACBITS);
+            dc_texturemid = basetexturemid - (top << FRACBITS);
 //                      dc_source = (byte *)column + 3 - column->topdelta;
             colfunc();          // either R_DrawColumn or R_DrawTLColumn
         }

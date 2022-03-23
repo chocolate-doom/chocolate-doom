@@ -510,6 +510,7 @@ extern int dc_yl;
 extern int dc_yh;
 extern fixed_t dc_iscale;
 extern fixed_t dc_texturemid;
+extern int dc_texheight; // [crispy]
 extern byte *dc_source;         // first pixel in a column
 
 void R_DrawColumn(void);

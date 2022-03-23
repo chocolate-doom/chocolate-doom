@@ -392,6 +392,7 @@ void R_DrawPlanes(void)
     int scrollOffset;
     int frac;
     int fracstep = FRACUNIT >> crispy->hires;
+    int heightmask; // [crispy]
 
     extern byte *ylookup[MAXHEIGHT];
     extern int columnofs[MAXWIDTH];
@@ -445,21 +446,55 @@ void R_DrawPlanes(void)
                         source2 = R_GetColumn(skyTexture2, angle + offset2);
                         dest = ylookup[dc_yl] + columnofs[x];
                         frac = SKYTEXTUREMIDSHIFTED * FRACUNIT + (dc_yl - centery) * fracstep;
-                        do
+                        heightmask = SKYTEXTUREMIDSHIFTED - 1; // [crispy]
+
+                        // not a power of 2 -- killough
+                        if (SKYTEXTUREMIDSHIFTED & heightmask)
                         {
-                            if (source[frac >> FRACBITS])
-                            {
-                                *dest = source[frac >> FRACBITS];
-                                frac += fracstep;
-                            }
+                            heightmask++;
+                            heightmask <<= FRACBITS;
+
+                            if (frac < 0)
+                                while ((frac += heightmask) < 0);
                             else
+                                while (frac >= heightmask)
+                                    frac -= heightmask;
+
+                            do
                             {
-                                *dest = source2[frac >> FRACBITS];
-                                frac += fracstep;
-                            }
-                            dest += SCREENWIDTH;
+                                if (source[frac >> FRACBITS])
+                                {
+                                    *dest = source[frac >> FRACBITS];
+                                }
+                                else
+                                {
+                                    *dest = source2[frac >> FRACBITS];
+                                }
+                                dest += SCREENWIDTH;
+                                if ((frac += fracstep) >= heightmask)
+                                {
+                                    frac -= heightmask;
+                                }
+                            } while (count--);
                         }
-                        while (count--);
+                        // texture height is a power of 2 -- killough
+                        else
+                        {
+                            do
+                            {
+                                if (source[(frac >> FRACBITS) & heightmask])
+                                {
+                                    *dest = source[(frac >> FRACBITS) & heightmask];
+                                }
+                                else
+                                {
+                                    *dest = source2[(frac >> FRACBITS) & heightmask];
+                                }
+
+                                dest += SCREENWIDTH;
+                                frac += fracstep;
+                            } while (count--);
+                        }
                     }
                 }
                 continue;       // Next visplane
@@ -492,13 +527,40 @@ void R_DrawPlanes(void)
                         source = R_GetColumn(skyTexture, angle + offset);
                         dest = ylookup[dc_yl] + columnofs[x];
                         frac = SKYTEXTUREMIDSHIFTED * FRACUNIT + (dc_yl - centery) * fracstep;
-                        do
+                        heightmask = SKYTEXTUREMIDSHIFTED - 1; // [crispy]
+                        // not a power of 2 -- killough
+                        if (SKYTEXTUREMIDSHIFTED & heightmask)
                         {
-                            *dest = source[frac >> FRACBITS];
-                            dest += SCREENWIDTH;
-                            frac += fracstep;
+                            heightmask++;
+                            heightmask <<= FRACBITS;
+
+                            if (frac < 0)
+                                while ((frac += heightmask) < 0);
+                            else
+                                while (frac >= heightmask)
+                                    frac -= heightmask;
+
+                            do
+                            {
+                                *dest = source[frac >> FRACBITS];
+                                dest += SCREENWIDTH;
+
+                                if ((frac += fracstep) >= heightmask)
+                                {
+                                    frac -= heightmask;
+                                }
+                            } while (count--);
                         }
-                        while (count--);
+                        // texture height is a power of 2 -- killough
+                        else
+                        {
+                            do
+                            {
+                                *dest = source[(frac >> FRACBITS) & heightmask];
+                                dest += SCREENWIDTH;
+                                frac += fracstep;
+                            } while (count--);
+                        }
                     }
                 }
                 continue;       // Next visplane

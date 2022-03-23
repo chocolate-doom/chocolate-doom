@@ -112,6 +112,7 @@ void R_DrawColumnLow(void)
     int count;
     byte *dest;
     fixed_t frac, fracstep;
+    int heightmask = dc_texheight - 1; // [crispy]
 
     count = dc_yh - dc_yl;
     if (count < 0)
@@ -128,13 +129,35 @@ void R_DrawColumnLow(void)
     fracstep = dc_iscale;
     frac = dc_texturemid + (dc_yl - centery) * fracstep;
 
-    do
+    if (dc_texheight & heightmask) // not a power of 2 -- killough
     {
-        *dest = dc_colormap[dc_source[(frac >> FRACBITS) & 127]];
-        dest += SCREENWIDTH;
-        frac += fracstep;
+        heightmask++;
+        heightmask <<= FRACBITS;
+
+        if (frac < 0)
+            while ((frac += heightmask) < 0);
+        else
+            while (frac >= heightmask)
+                frac -= heightmask;
+
+        do
+        {
+            *dest = dc_colormap[dc_source[frac >> FRACBITS]];
+            dest += SCREENWIDTH;
+            if ((frac += fracstep) >= heightmask)
+                frac -= heightmask;
+        } while (count--);
     }
-    while (count--);
+    else // texture height is a power of 2 -- killough
+    {
+        do
+        {
+            *dest = dc_colormap[dc_source[(frac >> FRACBITS) & heightmask]];
+            dest += SCREENWIDTH;
+            frac += fracstep;
+        }
+        while (count--);
+    }
 }
 
 // Translucent column draw - blended with background using tinttable.
@@ -144,6 +167,7 @@ void R_DrawTLColumn(void)
     int count;
     byte *dest;
     fixed_t frac, fracstep;
+    int heightmask = dc_texheight - 1; // [crispy]
 
     if (!dc_yl)
         dc_yl = 1;
@@ -164,16 +188,40 @@ void R_DrawTLColumn(void)
     fracstep = dc_iscale;
     frac = dc_texturemid + (dc_yl - centery) * fracstep;
 
-    do
+    if (dc_texheight & heightmask) // not a power of 2 -- killough
     {
-        *dest =
-            tinttable[((*dest) << 8) +
-                      dc_colormap[dc_source[(frac >> FRACBITS) & 127]]];
+        heightmask++;
+        heightmask <<= FRACBITS;
 
-        dest += SCREENWIDTH;
-        frac += fracstep;
+        if (frac < 0)
+            while ((frac += heightmask) < 0);
+        else
+            while (frac >= heightmask)
+                frac -= heightmask;
+
+        do
+        {
+            *dest =
+                tinttable[((*dest) << 8) +
+                          dc_colormap[dc_source[frac >> FRACBITS]]];
+            dest += SCREENWIDTH;
+            if ((frac += fracstep) >= heightmask)
+                frac -= heightmask;
+        } while (count--);
     }
-    while (count--);
+    else // texture height is a power of 2 -- killough
+    {
+        do
+        {
+            *dest =
+                tinttable[((*dest) << 8) +
+                          dc_colormap[dc_source[(frac >> FRACBITS) & heightmask]]];
+
+            dest += SCREENWIDTH;
+            frac += fracstep;
+        }
+        while (count--);
+    }
 }
 
 /*
