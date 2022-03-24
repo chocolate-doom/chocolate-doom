@@ -1777,7 +1777,7 @@ void D_DoomMain (void)
 
         // common auto-loaded files for all Doom flavors
 
-        if (gamemission < pack_chex)
+        if (gamemission < pack_chex && gamevariant != freedoom)
         {
             autoload_dir = M_GetAutoloadDir("doom-all", true);
             if (autoload_dir != NULL)
