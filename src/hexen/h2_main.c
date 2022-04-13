@@ -198,6 +198,7 @@ void D_BindVariables(void)
     M_BindIntVariable("crispy_smoothscaling",   &crispy->smoothscaling);
     M_BindIntVariable("crispy_vsync",           &crispy->vsync);
     M_BindIntVariable("crispy_widescreen",      &crispy->widescreen);
+    M_BindIntVariable("crispy_uncapped",        &crispy->uncapped);
 }
 
 // Set the default directory where hub savegames are saved.

@@ -63,6 +63,10 @@ lighttable_t *scalelight[LIGHTLEVELS][MAXLIGHTSCALE];
 lighttable_t *scalelightfixed[MAXLIGHTSCALE];
 lighttable_t *zlight[LIGHTLEVELS][MAXLIGHTZ];
 
+// [AM] Fractional part of the current tic, in the half-open
+//      range of [0.0, 1.0).  Used for interpolation.
+extern fixed_t          fractionaltic;
+
 int extralight;                 // bumped light from gun blasts
 
 void (*colfunc) (void);
@@ -363,6 +367,26 @@ fixed_t R_ScaleFromGlobalAngle(angle_t visangle)
 }
 
 
+// [AM] Interpolate between two angles.
+angle_t R_InterpolateAngle(angle_t oangle, angle_t nangle, fixed_t scale)
+{
+    if (nangle == oangle)
+        return nangle;
+    else if (nangle > oangle)
+    {
+        if (nangle - oangle < ANG270)
+            return oangle + (angle_t)((nangle - oangle) * FIXED2DOUBLE(scale));
+        else // Wrapped around
+            return oangle - (angle_t)((oangle - nangle) * FIXED2DOUBLE(scale));
+    }
+    else // nangle < oangle
+    {
+        if (oangle - nangle < ANG270)
+            return oangle - (angle_t)((oangle - nangle) * FIXED2DOUBLE(scale));
+        else // Wrapped around
+            return oangle + (angle_t)((nangle - oangle) * FIXED2DOUBLE(scale));
+    }
+}
 
 /*
 =================
@@ -741,27 +765,59 @@ void R_SetupFrame(player_t * player)
     int tableAngle;
     int tempCentery;
     int intensity;
+    static int x_quake, y_quake, quaketime; // [crispy]
 
     //drawbsp = 1;
     viewplayer = player;
     // haleyjd: removed WATCOMC
     // haleyjd FIXME: viewangleoffset handling?
-    viewangle = player->mo->angle + viewangleoffset;
-    tableAngle = viewangle >> ANGLETOFINESHIFT;
-    viewx = player->mo->x;
-    viewy = player->mo->y;
+    if (crispy->uncapped && leveltime > 1 && player->mo->interp == true && leveltime > oldleveltime)
+    {
+        viewx = player->mo->oldx + FixedMul(player->mo->x - player->mo->oldx, fractionaltic);
+        viewy = player->mo->oldy + FixedMul(player->mo->y - player->mo->oldy, fractionaltic);
+        viewz = player->oldviewz + FixedMul(player->viewz - player->oldviewz, fractionaltic);
+        viewangle = R_InterpolateAngle(player->mo->oldangle, player->mo->angle, fractionaltic) + viewangleoffset;
+    }
+    else
+    {
+        viewangle = player->mo->angle + viewangleoffset;
+        viewx = player->mo->x;
+        viewy = player->mo->y;
+        viewz = player->viewz;
+    }
 
     if (localQuakeHappening[displayplayer] && !paused)
     {
-        intensity = localQuakeHappening[displayplayer];
-        viewx += ((M_Random() % (intensity << 2))
-                  - (intensity << 1)) << FRACBITS;
-        viewy += ((M_Random() % (intensity << 2))
-                  - (intensity << 1)) << FRACBITS;
+        // [crispy] only get new quake values once every gametic
+        if (leveltime > quaketime)
+        {
+            intensity = localQuakeHappening[displayplayer];
+            x_quake = ((M_Random() % (intensity << 2))
+                           - (intensity << 1)) << FRACBITS;
+            y_quake = ((M_Random() % (intensity << 2))
+                           - (intensity << 1)) << FRACBITS;
+            quaketime = leveltime;
+        }
+
+        if (crispy->uncapped)
+        {
+            viewx += FixedMul(x_quake, fractionaltic);
+            viewy += FixedMul(y_quake, fractionaltic);
+        }
+        else
+        {
+            viewx += x_quake;
+            viewy += y_quake;
+        }
+    }
+    else if (!localQuakeHappening[displayplayer])
+    {
+        quaketime = 0;
     }
 
     extralight = player->extralight;
-    viewz = player->viewz;
+
+    tableAngle = viewangle >> ANGLETOFINESHIFT;
 
     tempCentery = viewheight / 2 + ((player->lookdir) << crispy->hires) * screenblocks / 10;
     if (centery != tempCentery)
@@ -833,12 +889,17 @@ void R_SetupFrame(player_t * player)
 
 void R_RenderPlayerView(player_t * player)
 {
+    extern void PO_InterpolatePolyObjects(void);
+    extern void R_InterpolateTextureOffset(void);
+
     R_SetupFrame(player);
     R_ClearClipSegs();
     R_ClearDrawSegs();
     R_ClearPlanes();
     R_ClearSprites();
     NetUpdate();                // check for new console commands
+    PO_InterpolatePolyObjects(); // [crispy] Interpolate polyobjects here
+    R_InterpolateTextureOffset(); // [crispy] Smooth texture scrolling
 
     // Make displayed player invisible locally
     if (localQuakeHappening[displayplayer] && gamestate == GS_LEVEL)

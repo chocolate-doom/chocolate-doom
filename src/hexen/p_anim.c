@@ -40,6 +40,8 @@
 #define LIGHTNING_SPECIAL2 	199
 #define SKYCHANGE_SPECIAL 	200
 
+#define TEXTURE_SCROLL_SHIFT    10 // [crispy]
+
 // TYPES -------------------------------------------------------------------
 
 typedef struct
@@ -142,16 +144,28 @@ void P_AnimateSurfaces(void)
         switch (line->special)
         {
             case 100:          // Scroll_Texture_Left
-                sides[line->sidenum[0]].textureoffset += line->arg1 << 10;
+                sides[line->sidenum[0]].basetextureoffset +=
+                    line->arg1 << TEXTURE_SCROLL_SHIFT;
+                sides[line->sidenum[0]].textureoffset =
+                    sides[line->sidenum[0]].basetextureoffset;
                 break;
             case 101:          // Scroll_Texture_Right
-                sides[line->sidenum[0]].textureoffset -= line->arg1 << 10;
+                sides[line->sidenum[0]].basetextureoffset -=
+                    line->arg1 << TEXTURE_SCROLL_SHIFT;
+                sides[line->sidenum[0]].textureoffset =
+                    sides[line->sidenum[0]].basetextureoffset;
                 break;
             case 102:          // Scroll_Texture_Up
-                sides[line->sidenum[0]].rowoffset += line->arg1 << 10;
+                sides[line->sidenum[0]].baserowoffset +=
+                    line->arg1 << TEXTURE_SCROLL_SHIFT;
+                sides[line->sidenum[0]].rowoffset =
+                    sides[line->sidenum[0]].baserowoffset;
                 break;
             case 103:          // Scroll_Texture_Down
-                sides[line->sidenum[0]].rowoffset -= line->arg1 << 10;
+                sides[line->sidenum[0]].baserowoffset -=
+                    line->arg1 << TEXTURE_SCROLL_SHIFT;
+                sides[line->sidenum[0]].rowoffset =
+                    sides[line->sidenum[0]].baserowoffset;
                 break;
         }
     }
@@ -173,6 +187,46 @@ void P_AnimateSurfaces(void)
     }
 }
 
+extern fixed_t fractionaltic; // [crispy]
+
+// [crispy] smooth texture scrolling
+void R_InterpolateTextureOffset(void)
+{
+    const line_t* line;
+    side_t* side;
+    int i;
+
+    if (!(crispy->uncapped && leveltime > oldleveltime))
+    {
+        return;
+    }
+
+    for (i = 0; i < numlinespecials; i++)
+    {
+        line = linespeciallist[i];
+        side = &sides[line->sidenum[0]];
+
+        switch (line->special)
+        {
+            case 100:       // Scroll_Texture_Right
+                side->textureoffset = side->basetextureoffset +
+                    (FixedMul(fractionaltic, line->arg1) << TEXTURE_SCROLL_SHIFT);
+                break;
+            case 101:       // Scroll_Texture_Left
+                side->textureoffset = side->basetextureoffset -
+                    (FixedMul(fractionaltic, line->arg1) << TEXTURE_SCROLL_SHIFT);
+                break;
+            case 102:       // Scroll_Texture_Up
+                side->rowoffset = side->baserowoffset +
+                    (FixedMul(fractionaltic, line->arg1) << TEXTURE_SCROLL_SHIFT);
+                break;
+            case 103:       // Scroll_Texture_Down
+                side->rowoffset = side->baserowoffset -
+                    (FixedMul(fractionaltic, line->arg1) << TEXTURE_SCROLL_SHIFT);
+                break;
+        }
+    }
+}
 //==========================================================================
 //
 // P_LightningFlash

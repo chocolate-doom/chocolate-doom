@@ -24,6 +24,8 @@
 #include "p_local.h"
 #include "r_local.h"
 
+#include "crispy.h"
+
 // MACROS ------------------------------------------------------------------
 
 #define PO_MAXPOLYSEGS 64
@@ -703,6 +705,59 @@ static void UpdateSegBBox(seg_t * seg)
     }
 }
 
+// [crispy]
+static void RotatePolyVertices(polyobj_t *po, angle_t angle)
+{
+    int count;
+    seg_t **segList;
+    vertex_t *originalPts;
+    vertex_t *prevPts;
+    int an;
+
+    an = (po->angle - po->rtheta + angle) >> ANGLETOFINESHIFT;
+    segList = po->segs;
+    originalPts = po->originalPts;
+    prevPts = po->prevPts;
+
+    for (count = po->numsegs; count; count--, segList++, originalPts++,
+         prevPts++)
+    {
+        prevPts->x = (*segList)->v1->x;
+        prevPts->y = (*segList)->v1->y;
+        (*segList)->v1->x = originalPts->x;
+        (*segList)->v1->y = originalPts->y;
+        RotatePt(an, &(*segList)->v1->x, &(*segList)->v1->y, po->startSpot.x,
+                 po->startSpot.y);
+        (*segList)->angle += angle;
+    }
+}
+
+// [crispy]
+static void TranslatePolyVertices(polyobj_t *po, fixed_t dx, fixed_t dy)
+{
+    seg_t **segList;
+    seg_t **veryTempSeg;
+    int count;
+
+    segList = po->segs;
+
+    for (count = po->numsegs; count; count--, segList++)
+    {
+        for (veryTempSeg = po->segs; veryTempSeg != segList; veryTempSeg++)
+        {
+            if ((*veryTempSeg)->v1 == (*segList)->v1)
+            {
+                break;
+            }
+        }
+        if (veryTempSeg == segList)
+        {
+            (*segList)->v1->x += dx;
+            (*segList)->v1->y += dy;
+        }
+    }
+}
+
 //==========================================================================
 //
 // PO_MovePolyobj
@@ -713,7 +768,6 @@ boolean PO_MovePolyobj(int num, int x, int y)
 {
     int count;
     seg_t **segList;
-    seg_t **veryTempSeg;
     polyobj_t *po;
     vertex_t *prevPts;
     boolean blocked;
@@ -729,6 +783,11 @@ boolean PO_MovePolyobj(int num, int x, int y)
     prevPts = po->prevPts;
     blocked = false;
 
+    // [crispy] sync poly vertices every gametic
+    TranslatePolyVertices(po, x + po->rx, y + po->ry);
+    po->rx = 0;
+    po->ry = 0;
+
     validcount++;
     for (count = po->numsegs; count; count--, segList++, prevPts++)
     {
@@ -739,18 +798,6 @@ boolean PO_MovePolyobj(int num, int x, int y)
             (*segList)->linedef->bbox[BOXLEFT] += x;
             (*segList)->linedef->bbox[BOXRIGHT] += x;
             (*segList)->linedef->validcount = validcount;
-        }
-        for (veryTempSeg = po->segs; veryTempSeg != segList; veryTempSeg++)
-        {
-            if ((*veryTempSeg)->v1 == (*segList)->v1)
-            {
-                break;
-            }
-        }
-        if (veryTempSeg == segList)
-        {
-            (*segList)->v1->x += x;
-            (*segList)->v1->y += y;
         }
         (*prevPts).x += x;      // previous points are unique for each seg
         (*prevPts).y += y;
@@ -779,32 +826,124 @@ boolean PO_MovePolyobj(int num, int x, int y)
                 (*segList)->linedef->bbox[BOXRIGHT] -= x;
                 (*segList)->linedef->validcount = validcount;
             }
-            for (veryTempSeg = po->segs; veryTempSeg != segList;
-                 veryTempSeg++)
-            {
-                if ((*veryTempSeg)->v1 == (*segList)->v1)
-                {
-                    break;
-                }
-            }
-            if (veryTempSeg == segList)
-            {
-                (*segList)->v1->x -= x;
-                (*segList)->v1->y -= y;
-            }
             (*prevPts).x -= x;
             (*prevPts).y -= y;
             segList++;
             prevPts++;
         }
+        TranslatePolyVertices(po, -x, -y); // [crispy]
         LinkPolyobj(po);
         return false;
     }
     po->startSpot.x += x;
     po->startSpot.y += y;
     LinkPolyobj(po);
+
+    // [crispy] Move points back after calculating bounding boxes. We'll handle
+    // the actual movement in PO_InterpolatePolyObjects().
+    if (crispy->uncapped)
+    {
+        TranslatePolyVertices(po, -x, -y);
+        po->dx = x;
+        po->dy = y;
+        po->rx = x;
+        po->ry = y;
+    }
+
     return true;
 }
+
+extern fixed_t fractionaltic; // [crispy]
+
+// [crispy]
+void PO_InterpolatePolyObjects(void)
+{
+    polyobj_t *po;
+    int i;
+    static fixed_t old_fractic;
+    fixed_t dfractic, fractic, dx, dy;
+    angle_t interpangle;
+    static int old_gametic;
+
+    if (!(crispy->uncapped && leveltime > oldleveltime))
+    {
+        return;
+    }
+
+    fractic = fractionaltic;
+
+    if (fractic < old_fractic)
+    {
+        dfractic = fractic;
+    }
+    else
+    {
+        if (gametic > old_gametic)
+        {
+            // Covers the case when fractionaltic is very close to 1 and we
+            // roll over to the new tic immediately after it's updated.
+            dfractic = 0;
+            fractic = 0;
+        }
+        else
+        {
+            dfractic = fractic - old_fractic;
+        }
+    }
+
+    old_fractic = fractic;
+    old_gametic = gametic;
+
+    po = polyobjs;
+
+    for (i = 0; i < po_NumPolyobjs; i++, po++)
+    {
+        if (po->rx || po->ry)
+        {
+            dx = dy = 0;
+
+            // Coerce remainder terms to 0. They must never flip sign.
+            if (po->rx)
+            {
+                dx = FixedMul(dfractic, po->dx);
+
+                if (((po->rx - dx) ^ po->rx) < 0)
+                {
+                    dx = po->rx;
+                }
+            }
+
+            if (po->ry)
+            {
+                dy = FixedMul(dfractic, po->dy);
+
+                if (((po->ry - dy) ^ po->ry) < 0)
+                {
+                    dy = po->ry;
+                }
+            }
+
+            TranslatePolyVertices(po, dx, dy);
+            po->rx -= dx;
+            po->ry -= dy;
+        }
+
+        if (po->rtheta)
+        {
+            interpangle = R_InterpolateAngle(0, po->dtheta, dfractic);
+
+            if (((po->rtheta - interpangle) < ANG180 && po->dtheta > ANG180) ||
+                    ((po->rtheta - interpangle) > ANG180 && po->dtheta < ANG180))
+            {
+                interpangle = po->rtheta;
+            }
+
+            RotatePolyVertices(po, interpangle);
+            po->rtheta -= interpangle;
+        }
+    }
+}
+
 
 //==========================================================================
 //
@@ -840,9 +979,7 @@ boolean PO_RotatePolyobj(int num, angle_t angle)
 {
     int count;
     seg_t **segList;
-    vertex_t *originalPts;
     vertex_t *prevPts;
-    int an;
     polyobj_t *po;
     boolean blocked;
 
@@ -850,24 +987,13 @@ boolean PO_RotatePolyobj(int num, angle_t angle)
     {
         I_Error("PO_RotatePolyobj:  Invalid polyobj number: %d\n", num);
     }
-    an = (po->angle + angle) >> ANGLETOFINESHIFT;
 
     UnLinkPolyobj(po);
 
-    segList = po->segs;
-    originalPts = po->originalPts;
-    prevPts = po->prevPts;
+    RotatePolyVertices(po, po->rtheta); // [crispy]
+    po->rtheta = po->dtheta = 0; // [crispy]
+    RotatePolyVertices(po, angle); // [crispy] prevPts get set here.
 
-    for (count = po->numsegs; count; count--, segList++, originalPts++,
-         prevPts++)
-    {
-        prevPts->x = (*segList)->v1->x;
-        prevPts->y = (*segList)->v1->y;
-        (*segList)->v1->x = originalPts->x;
-        (*segList)->v1->y = originalPts->y;
-        RotatePt(an, &(*segList)->v1->x, &(*segList)->v1->y, po->startSpot.x,
-                 po->startSpot.y);
-    }
     segList = po->segs;
     blocked = false;
     validcount++;
@@ -882,7 +1008,6 @@ boolean PO_RotatePolyobj(int num, angle_t angle)
             UpdateSegBBox(*segList);
             (*segList)->linedef->validcount = validcount;
         }
-        (*segList)->angle += angle;
     }
     if (blocked)
     {
@@ -909,6 +1034,21 @@ boolean PO_RotatePolyobj(int num, angle_t angle)
     }
     po->angle += angle;
     LinkPolyobj(po);
+
+    // [crispy] Move points back after calculating bounding boxes. We'll handle
+    // the actual movement in PO_InterpolatePolyObjects().
+    if (crispy->uncapped)
+    {
+        segList = po->segs;
+        prevPts = po->prevPts;
+        for (count = po->numsegs; count; count--, segList++, prevPts++)
+        {
+            (*segList)->v1->x = prevPts->x;
+            (*segList)->v1->y = prevPts->y;
+            (*segList)->angle -= angle;
+        }
+        po->rtheta = po->dtheta = angle;
+    }
     return true;
 }
 
@@ -1233,6 +1373,9 @@ static void SpawnPolyobj(int index, int tag, boolean crush)
             polyobjs[index].crush = crush;
             polyobjs[index].tag = tag;
             polyobjs[index].seqType = segs[i].linedef->arg3;
+            polyobjs[index].rx = 0; // [crispy]
+            polyobjs[index].ry = 0; // [crispy]
+            polyobjs[index].rtheta = 0; // [crispy]
             if (polyobjs[index].seqType < 0
                 || polyobjs[index].seqType >= SEQTYPE_NUMSEQ)
             {
@@ -1306,6 +1449,9 @@ static void SpawnPolyobj(int index, int tag, boolean crush)
             PolySegCount = polyobjs[index].numsegs;     // PolySegCount used globally
             polyobjs[index].crush = crush;
             polyobjs[index].tag = tag;
+            polyobjs[index].rx = 0; // [crispy]
+            polyobjs[index].ry = 0; // [crispy]
+            polyobjs[index].rtheta = 0; // [crispy]
             polyobjs[index].segs = Z_Malloc(polyobjs[index].numsegs
                                             * sizeof(seg_t *), PU_LEVEL, 0);
             for (i = 0; i < polyobjs[index].numsegs; i++)

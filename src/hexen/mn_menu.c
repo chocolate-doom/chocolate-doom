@@ -112,6 +112,7 @@ static boolean SCNetCheck(int option);
 static void CrispyHires(int option);
 static void CrispyToggleWidescreen(int option);
 static void CrispySmoothing(int option);
+static void CrispyUncapped(int option);
 static void CrispyVsync(int option);
 static void SCNetCheck2(int option);
 static void SCLoadGame(int option);
@@ -301,13 +302,14 @@ static MenuItem_t CrispnessItems[] = {
     {ITT_LRFUNC, "HIGH RESOLUTION RENDERING:", CrispyHires, 0, MENU_NONE},
     {ITT_LRFUNC, "ASPECT RATIO:", CrispyToggleWidescreen, 0, MENU_NONE},
     {ITT_LRFUNC, "SMOOTH PIXEL SCALING:", CrispySmoothing, 0, MENU_NONE},
+    {ITT_LRFUNC, "UNCAPPED FRAMERATE:", CrispyUncapped, 0, MENU_NONE},
     {ITT_LRFUNC, "ENABLE VSYNC:", CrispyVsync, 0, MENU_NONE}
 };
 
 static Menu_t CrispnessMenu = {
     68, 40,
     DrawCrispnessMenu,
-    4, CrispnessItems,
+    5, CrispnessItems,
     0,
     MENU_OPTIONS
 };
@@ -1253,6 +1255,11 @@ static void CrispySmoothing(int option)
     crispy->smoothscaling = !crispy->smoothscaling;
 }
 
+static void CrispyUncapped(int option)
+{
+    crispy->uncapped = !crispy->uncapped;
+}
+
 static void CrispyVsyncHook(void)
 {
     crispy->vsync = !crispy->vsync;
@@ -2034,8 +2041,11 @@ static void DrawCrispnessMenu(void)
     // Smooth pixel scaling
     MN_DrTextA(crispy->smoothscaling ? "ON" : "OFF", 216, 60);
 
+    // Uncapped framerate
+    MN_DrTextA(crispy->uncapped ? "ON" : "OFF", 217, 70);
+
     // Vsync
-    MN_DrTextA(crispy->vsync ? "ON" : "OFF", 167, 70);
+    MN_DrTextA(crispy->vsync ? "ON" : "OFF", 167, 80);
 
     dp_translation = NULL;
 }

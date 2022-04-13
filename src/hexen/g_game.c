@@ -1097,6 +1097,9 @@ void G_Ticker(void)
         inventory = false;
         cmd->arti = 0;
     }
+
+    oldleveltime = leveltime; // [crispy] Track if game is running
+
 //
 // do main actions
 //

@@ -46,6 +46,10 @@ fixed_t pspritescale, pspriteiscale;
 
 lighttable_t **spritelights;
 
+// [AM] Fractional part of the current tic, in the half-open
+//      range of [0.0, 1.0).  Used for interpolation.
+extern fixed_t          fractionaltic;
+
 // constant arrays used for psprite clipping and initializing clipping
 short negonearray[MAXWIDTH];
 short screenheightarray[MAXWIDTH];
@@ -492,16 +496,44 @@ void R_ProjectSprite(mobj_t * thing)
     angle_t ang;
     fixed_t iscale;
 
+    fixed_t             interpx;
+    fixed_t             interpy;
+    fixed_t             interpz;
+    fixed_t             interpangle;
+
     if (thing->flags2 & MF2_DONTDRAW)
     {                           // Never make a vissprite when MF2_DONTDRAW is flagged.
         return;
     }
 
+    // [AM] Interpolate between current and last position,
+    //      if prudent.
+    if (crispy->uncapped &&
+        // Don't interpolate if the mobj did something
+        // that would necessitate turning it off for a tic.
+        thing->interp == true &&
+        // Don't interpolate during a paused state.
+        leveltime > oldleveltime)
+    {
+        interpx = thing->oldx + FixedMul(thing->x - thing->oldx, fractionaltic);
+        interpy = thing->oldy + FixedMul(thing->y - thing->oldy, fractionaltic);
+        interpz = thing->oldz + FixedMul(thing->z - thing->oldz, fractionaltic);
+        interpangle = R_InterpolateAngle(thing->oldangle, thing->angle, fractionaltic);
+    }
+
+    else
+    {
+        interpx = thing->x;
+        interpy = thing->y;
+        interpz = thing->z;
+        interpangle = thing->angle;
+    }
+
 //
 // transform the origin point
 //
-    trx = thing->x - viewx;
-    try = thing->y - viewy;
+    trx = interpx - viewx;
+    try = interpy - viewy;
 
     gxt = FixedMul(trx, viewcos);
     gyt = -FixedMul(try, viewsin);
@@ -535,8 +567,8 @@ void R_ProjectSprite(mobj_t * thing)
 
     if (sprframe->rotate)
     {                           // choose a different rotation based on player view
-        ang = R_PointToAngle(thing->x, thing->y);
-        rot = (ang - thing->angle + (unsigned) (ANG45 / 2) * 9) >> 29;
+        ang = R_PointToAngle(interpx, interpy);
+        rot = (ang - interpangle + (unsigned) (ANG45 / 2) * 9) >> 29;
         lump = sprframe->lump[rot];
         flip = (boolean) sprframe->flip[rot];
     }
@@ -566,10 +598,10 @@ void R_ProjectSprite(mobj_t * thing)
     vis->mobjflags = thing->flags;
     vis->psprite = false;
     vis->scale = xscale << detailshift;
-    vis->gx = thing->x;
-    vis->gy = thing->y;
-    vis->gz = thing->z;
-    vis->gzt = thing->z + spritetopoffset[lump];
+    vis->gx = interpx;
+    vis->gy = interpy;
+    vis->gz = interpz;
+    vis->gzt = interpz + spritetopoffset[lump];
     if (thing->flags & MF_TRANSLATION)
     {
         if (thing->player)

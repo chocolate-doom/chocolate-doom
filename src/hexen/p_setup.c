@@ -297,6 +297,16 @@ void P_LoadSectors(int lump)
         ss->tag = SHORT(ms->tag);
         ss->thinglist = NULL;
         ss->seqType = SEQTYPE_STONE;    // default seqType
+
+        // [AM] Sector interpolation.  Even if we're
+        //      not running uncapped, the renderer still
+        //      uses this data.
+        ss->oldfloorheight = ss->floorheight;
+        ss->interpfloorheight = ss->floorheight;
+        ss->oldceilingheight = ss->ceilingheight;
+        ss->interpceilingheight = ss->ceilingheight;
+        // [crispy] inhibit sector interpolation during the 0th gametic
+        ss->oldgametic = -1;
     }
     W_ReleaseLumpNum(lump);
 }
@@ -691,6 +701,7 @@ void P_SetupLevel(int episode, int map, int playermask, skill_t skill)
 
     P_InitThinkers();
     leveltime = 0;
+    oldleveltime = 0;  // [crispy] Track if game is running
 
     M_snprintf(lumpname, sizeof(lumpname), "MAP%02d", map);
     lumpnum = W_GetNumForName(lumpname);
