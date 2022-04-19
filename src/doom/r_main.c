@@ -682,8 +682,8 @@ void R_ExecuteSetViewSize (void)
     }
     else
     {
-    scaledviewwidth = setblocks * SCREENWIDTH / 10;
-    viewheight = (setblocks * (SCREENHEIGHT - ST_HEIGHT) / 10) & ~7;
+	scaledviewwidth = setblocks*32;
+	viewheight = (setblocks*168/10)&~7;
     }
     
     detailshift = setdetail;
