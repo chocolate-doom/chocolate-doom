@@ -109,7 +109,7 @@ static void ConfigExtraButtons(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
     AddMouseControl(buttons_table, "Next weapon", &mousebnextweapon);
     AddMouseControl(buttons_table, "Run", &mousebspeed);
     
-    if (gamemission == heretic)
+    if (gamemission == heretic || gamemission == hexen)
     {
       AddMouseControl(buttons_table, "Inventory left", &mousebinvleft);
       AddMouseControl(buttons_table, "Inventory right", &mousebinvright);

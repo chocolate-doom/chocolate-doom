@@ -817,6 +817,14 @@ static void SetMouseButtons(unsigned int buttons_mask)
             {
                 next_weapon = 1;
             }
+            else if (i == mousebinvleft)
+            {
+                InventoryMoveLeft();
+            }
+            else if (i == mousebinvright)
+            {
+                InventoryMoveRight();
+            }
         }
 
         mousebuttons[i] = button_on;
