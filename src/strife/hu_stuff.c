@@ -534,13 +534,8 @@ boolean HU_Responder(event_t *ev)
     static boolean      altdown = false;
     unsigned char       c;
     int                 i;
-    int                 numplayers;
     
     static int          num_nobrainers = 0;
-
-    numplayers = 0;
-    for (i=0 ; i<MAXPLAYERS ; i++)
-        numplayers += playeringame[i];
 
     if (ev->data1 == KEY_RSHIFT)
     {
