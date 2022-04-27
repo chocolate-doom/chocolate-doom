@@ -555,12 +555,12 @@ void TXT_OpenURL(const char *url)
 #endif
 
     retval = system(cmd);
-    free(cmd);
     if (retval != 0)
     {
         fprintf(stderr, "TXT_OpenURL: error executing '%s'; return code %d\n",
             cmd, retval);
     }
+    free(cmd);
 }
 
 #endif /* #ifndef _WIN32 */
