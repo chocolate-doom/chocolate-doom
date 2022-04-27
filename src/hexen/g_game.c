@@ -361,13 +361,14 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
         look = TOCENTER;
     }
     // Use artifact key
-    if (gamekeydown[key_useartifact])
+    if (gamekeydown[key_useartifact] || mousebuttons[mousebuseartifact])
     {
         if (gamekeydown[key_speed] && artiskip)
         {
             if (players[consoleplayer].inventory[inv_ptr].type != arti_none)
             {                   // Skip an artifact
                 gamekeydown[key_useartifact] = false;
+                mousebuttons[mousebuseartifact] = false;
                 P_PlayerNextArtifact(&players[consoleplayer]);
             }
         }
@@ -805,6 +806,9 @@ static boolean InventoryMoveRight()
 static void SetMouseButtons(unsigned int buttons_mask)
 {
     int i;
+    player_t *plr;
+
+    plr = &players[consoleplayer];
 
     for (i=0; i<MAX_MOUSE_BUTTONS; ++i)
     {
@@ -829,6 +833,14 @@ static void SetMouseButtons(unsigned int buttons_mask)
             else if (i == mousebinvright)
             {
                 InventoryMoveRight();
+            }
+            else if (i == mousebuseartifact)
+            {
+                if (!inventory)
+                {
+                    plr->readyArtifact = plr->inventory[inv_ptr].type;
+                }
+                usearti = true;
             }
         }
 
