@@ -1099,6 +1099,14 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(mouseb_invright),
 
     //!
+    // @game heretic hexen
+    //
+    // Mouse button to use artifact.
+    //
+
+    CONFIG_VARIABLE_INT(mouseb_useartifact),
+
+    //!
     // If non-zero, double-clicking a mouse button acts like pressing
     // the "use" key to use an object in-game, eg. a door or switch.
     //

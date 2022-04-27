@@ -50,6 +50,7 @@ static int *all_mouse_buttons[] = {
     &mousebspeed,
     &mousebinvleft,
     &mousebinvright,
+    &mousebuseartifact,
     &mousebturnleft,
     &mousebturnright,
 };
@@ -113,6 +114,7 @@ static void ConfigExtraButtons(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
     {
       AddMouseControl(buttons_table, "Inventory left", &mousebinvleft);
       AddMouseControl(buttons_table, "Inventory right", &mousebinvright);
+      AddMouseControl(buttons_table, "Use artifact", &mousebuseartifact);
     }
 
     if (gamemission == hexen || gamemission == strife)
