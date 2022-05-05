@@ -802,7 +802,8 @@ void SB_Drawer(void)
         DrawSoundInfo();
     }
     CPlayer = &players[consoleplayer];
-    if (viewheight == SCREENHEIGHT && !automapactive)
+    if (viewheight == SCREENHEIGHT
+        && !(automapactive && !crispy->automapoverlay))
     {
         DrawFullScreenStuff();
         SB_state = -1;
@@ -833,7 +834,7 @@ void SB_Drawer(void)
             if (SB_state != 0)
             {
                 // Main interface
-                if (!automapactive)
+                if (!(automapactive && !crispy->automapoverlay))
                 {
                     V_DrawPatch(38, 162, PatchSTATBAR);
                 }
@@ -851,7 +852,7 @@ void SB_Drawer(void)
                 oldweapon = -1;
                 oldkeys = -1;
             }
-            if (!automapactive)
+            if (!(automapactive && !crispy->automapoverlay))
             {
                 DrawMainBar();
             }

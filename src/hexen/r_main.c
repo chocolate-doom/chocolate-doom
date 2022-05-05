@@ -891,12 +891,20 @@ void R_RenderPlayerView(player_t * player)
 {
     extern void PO_InterpolatePolyObjects(void);
     extern void R_InterpolateTextureOffset(void);
+    extern boolean automapactive;
 
     R_SetupFrame(player);
     R_ClearClipSegs();
     R_ClearDrawSegs();
     R_ClearPlanes();
     R_ClearSprites();
+
+    if (automapactive && !crispy->automapoverlay)
+    {
+        R_RenderBSPNode(numnodes - 1);
+        return;
+    }
+
     NetUpdate();                // check for new console commands
     PO_InterpolatePolyObjects(); // [crispy] Interpolate polyobjects here
     R_InterpolateTextureOffset(); // [crispy] Smooth texture scrolling

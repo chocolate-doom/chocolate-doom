@@ -332,6 +332,7 @@ void R_StoreWallRange(int start, int stop)
     angle_t distangle, offsetangle;
     fixed_t vtop;
     int lightnum;
+    extern boolean automapactive;
 
     if (ds_p == &drawsegs[MAXDRAWSEGS])
         return;                 // don't overflow and crash
@@ -347,6 +348,9 @@ void R_StoreWallRange(int start, int stop)
 // mark the segment as visible for auto map
     linedef->flags |= ML_MAPPED;
 
+    // [crispy] (flags & ML_MAPPED) is all we need to know for automap
+    if (automapactive && !crispy->automapoverlay)
+        return;
 //
 // calculate rw_distance for scale calculation
 //

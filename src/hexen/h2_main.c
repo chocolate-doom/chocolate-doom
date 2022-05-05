@@ -194,6 +194,8 @@ void D_BindVariables(void)
     }
 
     // [crispy] bind "crispness" config variables
+    M_BindIntVariable("crispy_automapoverlay",  &crispy->automapoverlay);
+    M_BindIntVariable("crispy_automaprotate",   &crispy->automaprotate);
     M_BindIntVariable("crispy_hires",           &crispy->hires);
     M_BindIntVariable("crispy_smoothscaling",   &crispy->smoothscaling);
     M_BindIntVariable("crispy_vsync",           &crispy->vsync);
@@ -973,13 +975,20 @@ static void DrawAndBlit(void)
             {
                 break;
             }
-            if (automapactive)
+            if (automapactive && !crispy->automapoverlay)
             {
+                // [crispy] update automap while playing
+                R_RenderPlayerView(&players[displayplayer]);
                 AM_Drawer();
             }
             else
             {
                 R_RenderPlayerView(&players[displayplayer]);
+            }
+            if (automapactive && crispy->automapoverlay)
+            {
+                AM_Drawer();
+                BorderNeedRefresh = true;
             }
             CT_Drawer();
             UpdateState |= I_FULLVIEW;
