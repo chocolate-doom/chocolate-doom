@@ -1029,10 +1029,10 @@ boolean G_Responder (event_t* ev)
 	    (ev->type == ev_mouse && ev->data1) || 
 	    (ev->type == ev_joystick && ev->data1) ) 
 	{ 
-	    M_StartControlPanel (); 
 	    // [crispy] play a sound if the menu is activated with a different key than ESC
-	    if (crispy->soundfix)
+	    if (!menuactive && crispy->soundfix)
 		S_StartSoundOptional(NULL, sfx_mnuopn, sfx_swtchn); // [NS] Optional menu sounds.
+	    M_StartControlPanel (); 
 	    return true; 
 	} 
 	return false; 
