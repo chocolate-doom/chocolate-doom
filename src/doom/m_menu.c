@@ -137,6 +137,10 @@ boolean			menuactive;
 extern boolean		sendpause;
 char			savegamestrings[10][SAVESTRINGSIZE];
 
+// [FG] support up to 8 pages of savegames
+int savepage = 0;
+static const int savepage_max = 7;
+
 char	endstring[160];
 
 static boolean opldev;
@@ -815,6 +819,30 @@ void M_ReadSaveStrings(void)
     }
 }
 
+// [FG] support up to 8 pages of savegames
+void M_DrawSaveLoadBottomLine(void)
+{
+  char pagestr[16];
+  const int y = LoadDef.y+LINEHEIGHT*load_end;
+
+  // [crispy] force status bar refresh
+  inhelpscreens = true;
+
+  M_DrawSaveLoadBorder(LoadDef.x,y);
+
+  dp_translation = cr[CR_GOLD];
+
+  if (savepage > 0)
+    M_WriteText(LoadDef.x, y, "< PGUP");
+  if (savepage < savepage_max)
+    M_WriteText(LoadDef.x+(SAVESTRINGSIZE-6)*8, y, "PGDN >");
+
+  M_snprintf(pagestr, sizeof(pagestr), "page %d/%d", savepage + 1, savepage_max + 1);
+  M_WriteText(ORIGWIDTH/2-M_StringWidth(pagestr)/2, y, pagestr);
+
+  dp_translation = NULL;
+}
+
 
 //
 // M_LoadGame & Cie.
@@ -832,6 +860,8 @@ void M_DrawLoad(void)
 	M_DrawSaveLoadBorder(LoadDef.x,LoadDef.y+LINEHEIGHT*i);
 	M_WriteText(LoadDef.x,LoadDef.y+LINEHEIGHT*i,savegamestrings[i]);
     }
+
+  M_DrawSaveLoadBottomLine();
 }
 
 
@@ -915,6 +945,8 @@ void M_DrawSave(void)
 	i = M_StringWidth(savegamestrings[saveSlot]);
 	M_WriteText(LoadDef.x + i,LoadDef.y+LINEHEIGHT*saveSlot,"_");
     }
+
+  M_DrawSaveLoadBottomLine();
 }
 
 //
@@ -2770,6 +2802,17 @@ boolean M_Responder (event_t* ev)
 	    S_StartSoundOptional(NULL, sfx_mnuact, sfx_swtchn); // [NS] Optional menu sounds.
 	    return true;
 	}
+	else if (currentMenu == &LoadDef || currentMenu == &SaveDef)
+	{
+	    if (savepage > 0)
+	    {
+		savepage--;
+		quickSaveSlot = -1;
+		M_ReadSaveStrings();
+		S_StartSoundOptional(NULL, sfx_mnumov, sfx_pstop);
+	    }
+	    return true;
+	}
     }
     else if (key == KEY_PGDN)
     {
@@ -2778,6 +2821,17 @@ boolean M_Responder (event_t* ev)
 	{
 	    M_CrispnessNext(0);
 	    S_StartSoundOptional(NULL, sfx_mnuact, sfx_swtchn); // [NS] Optional menu sounds.
+	    return true;
+	}
+	else if (currentMenu == &LoadDef || currentMenu == &SaveDef)
+	{
+	    if (savepage < savepage_max)
+	    {
+		savepage++;
+		quickSaveSlot = -1;
+		M_ReadSaveStrings();
+		S_StartSoundOptional(NULL, sfx_mnumov, sfx_pstop);
+	    }
 	    return true;
 	}
     }

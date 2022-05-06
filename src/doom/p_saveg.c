@@ -56,6 +56,9 @@ char *P_TempSaveGameFile(void)
 
 // Get the filename of the save game file to use for the specified slot.
 
+// [FG] support up to 8 pages of savegames
+extern int savepage;
+
 char *P_SaveGameFile(int slot)
 {
     static char *filename = NULL;
@@ -68,7 +71,7 @@ char *P_SaveGameFile(int slot)
         filename = malloc(filename_size);
     }
 
-    DEH_snprintf(basename, 32, SAVEGAMENAME "%d.dsg", slot);
+    DEH_snprintf(basename, 32, SAVEGAMENAME "%d.dsg", 10*savepage+slot);
     M_snprintf(filename, filename_size, "%s%s", savegamedir, basename);
 
     return filename;
