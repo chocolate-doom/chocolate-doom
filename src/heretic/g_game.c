@@ -477,13 +477,14 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
     }
 
     // Use artifact key
-    if (gamekeydown[key_useartifact])
+    if (gamekeydown[key_useartifact] || mousebuttons[mousebuseartifact])
     {
         if (gamekeydown[key_speed] && !noartiskip)
         {
             if (players[consoleplayer].inventory[inv_ptr].type != arti_none)
             {
                 gamekeydown[key_useartifact] = false;
+                mousebuttons[mousebuseartifact] = false;
                 cmd->arti = 0xff;       // skip artifact code
             }
         }
@@ -855,6 +856,11 @@ static void SetJoyButtons(unsigned int buttons_mask)
     }
 }
 
+// If an InventoryMove*() function is called when the inventory is not active,
+// it will instead activate the inventory without attempting to change the
+// selected item. This action is indicated by a return value of false.
+// Otherwise, it attempts to change items and will return a value of true.
+
 static boolean InventoryMoveLeft()
 {
     inventoryTics = 5 * 35;
@@ -911,6 +917,9 @@ static boolean InventoryMoveRight()
 static void SetMouseButtons(unsigned int buttons_mask)
 {
     int i;
+    player_t *plr;
+
+    plr = &players[consoleplayer];
 
     for (i=0; i<MAX_MOUSE_BUTTONS; ++i)
     {
@@ -935,6 +944,14 @@ static void SetMouseButtons(unsigned int buttons_mask)
             else if (i == mousebinvright)
             {
                 InventoryMoveRight();
+            }
+            else if (i == mousebuseartifact)
+            {
+                if (!inventory)
+                {
+                    plr->readyArtifact = plr->inventory[inv_ptr].type;
+                }
+                usearti = true;
             }
         }
 

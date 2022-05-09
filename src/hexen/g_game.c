@@ -366,13 +366,14 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
         look = TOCENTER;
     }
     // Use artifact key
-    if (gamekeydown[key_useartifact])
+    if (gamekeydown[key_useartifact] || mousebuttons[mousebuseartifact])
     {
         if (gamekeydown[key_speed] && artiskip)
         {
             if (players[consoleplayer].inventory[inv_ptr].type != arti_none)
             {                   // Skip an artifact
                 gamekeydown[key_useartifact] = false;
+                mousebuttons[mousebuseartifact] = false;
                 P_PlayerNextArtifact(&players[consoleplayer]);
             }
         }
@@ -750,9 +751,70 @@ static void SetJoyButtons(unsigned int buttons_mask)
     }
 }
 
+// If an InventoryMove*() function is called when the inventory is not active,
+// it will instead activate the inventory without attempting to change the
+// selected item. This action is indicated by a return value of false.
+// Otherwise, it attempts to change items and will return a value of true.
+
+static boolean InventoryMoveLeft()
+{
+    inventoryTics = 5 * 35;
+    if (!inventory)
+    {
+        inventory = true;
+        return false;
+    }
+    inv_ptr--;
+    if (inv_ptr < 0)
+    {
+        inv_ptr = 0;
+    }
+    else
+    {
+        curpos--;
+        if (curpos < 0)
+        {
+            curpos = 0;
+        }
+    }
+    return true;
+}
+
+static boolean InventoryMoveRight()
+{
+    player_t *plr;
+
+    plr = &players[consoleplayer];
+    inventoryTics = 5 * 35;
+    if (!inventory)
+    {
+        inventory = true;
+        return false;
+    }
+    inv_ptr++;
+    if (inv_ptr >= plr->inventorySlotNum)
+    {
+        inv_ptr--;
+        if (inv_ptr < 0)
+            inv_ptr = 0;
+    }
+    else
+    {
+        curpos++;
+        if (curpos > 6)
+        {
+            curpos = 6;
+        }
+    }
+    return true;
+}
+
 static void SetMouseButtons(unsigned int buttons_mask)
 {
     int i;
+    player_t *plr;
+
+    plr = &players[consoleplayer];
 
     for (i=0; i<MAX_MOUSE_BUTTONS; ++i)
     {
@@ -769,6 +831,22 @@ static void SetMouseButtons(unsigned int buttons_mask)
             else if (i == mousebnextweapon)
             {
                 next_weapon = 1;
+            }
+            else if (i == mousebinvleft)
+            {
+                InventoryMoveLeft();
+            }
+            else if (i == mousebinvright)
+            {
+                InventoryMoveRight();
+            }
+            else if (i == mousebuseartifact)
+            {
+                if (!inventory)
+                {
+                    plr->readyArtifact = plr->inventory[inv_ptr].type;
+                }
+                usearti = true;
             }
         }
 
@@ -853,51 +931,19 @@ boolean G_Responder(event_t * ev)
         case ev_keydown:
             if (ev->data1 == key_invleft)
             {
-                inventoryTics = 5 * 35;
-                if (!inventory)
+                if (InventoryMoveLeft())
                 {
-                    inventory = true;
-                    break;
+                    return (true);
                 }
-                inv_ptr--;
-                if (inv_ptr < 0)
-                {
-                    inv_ptr = 0;
-                }
-                else
-                {
-                    curpos--;
-                    if (curpos < 0)
-                    {
-                        curpos = 0;
-                    }
-                }
-                return (true);
+                break;
             }
             if (ev->data1 == key_invright)
             {
-                inventoryTics = 5 * 35;
-                if (!inventory)
+                if (InventoryMoveRight())
                 {
-                    inventory = true;
-                    break;
+                    return (true);
                 }
-                inv_ptr++;
-                if (inv_ptr >= plr->inventorySlotNum)
-                {
-                    inv_ptr--;
-                    if (inv_ptr < 0)
-                        inv_ptr = 0;
-                }
-                else
-                {
-                    curpos++;
-                    if (curpos > 6)
-                    {
-                        curpos = 6;
-                    }
-                }
-                return (true);
+                break;
             }
             if (ev->data1 == key_pause && !MenuActive)
             {

@@ -132,6 +132,7 @@ int mousebprevweapon = 4; // [crispy]
 int mousebnextweapon = 3; // [crispy]
 int mousebinvleft = -1;
 int mousebinvright = -1;
+int mousebuseartifact = -1;
 
 int key_message_refresh = KEY_ENTER;
 int key_pause = KEY_PAUSE;
@@ -309,6 +310,7 @@ void M_BindHereticControls(void)
 
     M_BindIntVariable("mouseb_invleft", &mousebinvleft);
     M_BindIntVariable("mouseb_invright", &mousebinvright);
+    M_BindIntVariable("mouseb_useartifact", &mousebuseartifact);
 
     M_BindIntVariable("key_arti_quartz",        &key_arti_quartz);
     M_BindIntVariable("key_arti_urn",           &key_arti_urn);
