@@ -880,6 +880,8 @@ static void D_Endoom(void)
     I_Endoom(endoom_data);
 }
 
+static const char *const loadparms[] = {"-file", "-merge", NULL}; // [crispy]
+
 //---------------------------------------------------------------------------
 //
 // PROC D_DoomMain
@@ -1139,6 +1141,31 @@ void D_DoomMain(void)
     // Load PWAD files.
     W_ParseCommandLine();
 
+    // [crispy] add wad files from autoload PWAD directories
+
+    if (!M_ParmExists("-noautoload"))
+    {
+        int i;
+
+        for (i = 0; loadparms[i]; i++)
+        {
+            int p;
+            p = M_CheckParmWithArgs(loadparms[i], 1);
+            if (p)
+            {
+                while (++p != myargc && myargv[p][0] != '-')
+                {
+                    char *autoload_dir;
+                    if ((autoload_dir = M_GetAutoloadDir(M_BaseName(myargv[p]), false)))
+                    {
+                        W_AutoLoadWADs(autoload_dir);
+                        free(autoload_dir);
+                    }
+                }
+            }
+        }
+    }
+
     //!
     // @arg <demo>
     // @category demo
@@ -1197,6 +1224,31 @@ void D_DoomMain(void)
 
     // Generate the WAD hash table.  Speed things up a bit.
     W_GenerateHashTable();
+
+    // [crispy] process .deh files from PWADs autoload directories
+
+    if (!M_ParmExists("-noautoload"))
+    {
+        int i;
+
+        for (i = 0; loadparms[i]; i++)
+        {
+            int p;
+            p = M_CheckParmWithArgs(loadparms[i], 1);
+            if (p)
+            {
+                while (++p != myargc && myargv[p][0] != '-')
+                {
+                    char *autoload_dir;
+                    if ((autoload_dir = M_GetAutoloadDir(M_BaseName(myargv[p]), false)))
+                    {
+                        DEH_AutoLoadPatches(autoload_dir);
+                        free(autoload_dir);
+                    }
+                }
+            }
+        }
+    }
 
     //!
     // @category demo

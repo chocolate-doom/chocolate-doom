@@ -364,6 +364,8 @@ void D_SetGameDescription(void)
     }
 }
 
+static const char *const loadparms[] = {"-file", "-merge", NULL}; // [crispy]
+
 //==========================================================================
 //
 // H2_Main
@@ -726,6 +728,31 @@ static void HandleArgs(void)
     {
         startskill = myargv[p+1][0] - '1';
         autostart = true;
+    }
+
+    // [crispy] add wad files from autoload PWAD directories
+
+    if (!M_ParmExists("-noautoload"))
+    {
+        int i;
+
+        for (i = 0; loadparms[i]; i++)
+        {
+            int p;
+            p = M_CheckParmWithArgs(loadparms[i], 1);
+            if (p)
+            {
+                while (++p != myargc && myargv[p][0] != '-')
+                {
+                    char *autoload_dir;
+                    if ((autoload_dir = M_GetAutoloadDir(M_BaseName(myargv[p]), false)))
+                    {
+                        W_AutoLoadWADs(autoload_dir);
+                        free(autoload_dir);
+                    }
+                }
+            }
+        }
     }
 
     //!
