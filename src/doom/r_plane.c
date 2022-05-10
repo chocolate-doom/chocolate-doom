@@ -174,7 +174,7 @@ R_MapPlane
 	    index = MAXLIGHTZ-1;
 
 	ds_colormap[0] = planezlight[index];
-	ds_colormap[1] = zlight[LIGHTLEVELS-1][MAXLIGHTZ-1];
+	ds_colormap[1] = colormaps;
     }
 	
     ds_y = y;
