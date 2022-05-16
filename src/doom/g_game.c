@@ -917,6 +917,7 @@ void G_DoLoadLevel (void)
     sendpause = sendsave = paused = false;
     memset(mousearray, 0, sizeof(mousearray));
     memset(joyarray, 0, sizeof(joyarray));
+    R_SetGoobers(false);
 
     if (testcontrols)
     {

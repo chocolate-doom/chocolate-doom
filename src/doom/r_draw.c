@@ -979,6 +979,64 @@ void R_DrawSpanLow (void)
     } while (count--);
 }
 
+void R_DrawSpanSolid (void)
+{
+    const byte source = *ds_source;
+    pixel_t *dest;
+    int count;
+
+#ifdef RANGECHECK
+    if (ds_x2 < ds_x1
+	|| ds_x1<0
+	|| ds_x2>=SCREENWIDTH
+	|| (unsigned)ds_y>SCREENHEIGHT)
+    {
+	I_Error( "R_DrawSpanSolid: %i to %i at %i",
+		 ds_x1,ds_x2,ds_y);
+    }
+#endif
+
+    count = ds_x2 - ds_x1;
+
+    do
+    {
+	dest = ylookup[ds_y] + columnofs[flipviewwidth[ds_x1++]];
+	*dest = ds_colormap[ds_brightmap[source]][source];
+    } while (count--);
+}
+
+void R_DrawSpanSolidLow (void)
+{
+    const byte source = *ds_source;
+    pixel_t *dest;
+    int count;
+
+#ifdef RANGECHECK
+    if (ds_x2 < ds_x1
+	|| ds_x1<0
+	|| ds_x2>=SCREENWIDTH
+	|| (unsigned)ds_y>SCREENHEIGHT)
+    {
+	I_Error( "R_DrawSpanSolidLow: %i to %i at %i",
+		 ds_x1,ds_x2,ds_y);
+    }
+#endif
+
+    count = ds_x2 - ds_x1;
+
+    // Blocky mode, need to multiply by 2.
+    ds_x1 <<= 1;
+    ds_x2 <<= 1;
+
+    do
+    {
+	dest = ylookup[ds_y] + columnofs[flipviewwidth[ds_x1++]];
+	*dest = ds_colormap[ds_brightmap[source]][source];
+	dest = ylookup[ds_y] + columnofs[flipviewwidth[ds_x1++]];
+	*dest = ds_colormap[ds_brightmap[source]][source];
+    } while (count--);
+}
+
 //
 // R_InitBuffer 
 // Creats lookup tables that avoid

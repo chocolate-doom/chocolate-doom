@@ -90,6 +90,11 @@ void 	R_DrawSpan (void);
 // Low resolution mode, 160x200?
 void 	R_DrawSpanLow (void);
 
+void 	R_DrawSpanSolid (void);
+void 	R_DrawSpanSolidLow (void);
+
+extern boolean goobers_mode;
+void R_SetGoobers (boolean mode);
 
 void
 R_InitBuffer

@@ -1061,6 +1061,8 @@ ST_Responder (event_t* ev)
 
 	EV_DoGoobers();
 
+	R_SetGoobers(true);
+
 	M_snprintf(msg, sizeof(msg), "Get Psyched!");
 	plyr->message = msg;
       }

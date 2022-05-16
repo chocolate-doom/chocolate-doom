@@ -859,7 +859,7 @@ void R_ExecuteSetViewSize (void)
 	fuzzcolfunc = R_DrawFuzzColumn;
 	transcolfunc = R_DrawTranslatedColumn;
 	tlcolfunc = R_DrawTLColumn;
-	spanfunc = R_DrawSpan;
+	spanfunc = goobers_mode ? R_DrawSpanSolid : R_DrawSpan;
     }
     else
     {
@@ -867,7 +867,7 @@ void R_ExecuteSetViewSize (void)
 	fuzzcolfunc = R_DrawFuzzColumnLow;
 	transcolfunc = R_DrawTranslatedColumnLow;
 	tlcolfunc = R_DrawTLColumnLow;
-	spanfunc = R_DrawSpanLow;
+	spanfunc = goobers_mode ? R_DrawSpanSolidLow : R_DrawSpanLow;
     }
 
     R_InitBuffer (scaledviewwidth, viewheight);
@@ -936,6 +936,16 @@ void R_ExecuteSetViewSize (void)
     ST_refreshBackground(true);
 }
 
+boolean goobers_mode = false;
+
+void R_SetGoobers (boolean mode)
+{
+    if (goobers_mode != mode)
+    {
+        goobers_mode = mode;
+        R_ExecuteSetViewSize();
+    }
+}
 
 
 //
