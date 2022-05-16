@@ -103,12 +103,6 @@ boolean         nomonsters;	// checkparm of -nomonsters
 boolean         respawnparm;	// checkparm of -respawn
 boolean         fastparm;	// checkparm of -fast
 
-// Adam - NRFTL
-int is_nrftl;
-
-// Adam - Sigil
-int is_sigil;
-
 //extern int soundVolume;
 //extern  int	sfxVolume;
 //extern  int	musicVolume;
@@ -578,17 +572,53 @@ void D_DoAdvanceDemo(void)
     switch (demosequence)
     {
       case 0:
-	if (gamemode == commercial)
-	    pagetic = TICRATE * 11;
-	else
-	    pagetic = 170;
-	gamestate = GS_DEMOSCREEN;
-	pagename = DEH_String("TITLEPIC");
-	if (gamemode == commercial)
-	  S_StartMusic(mus_dm2ttl);
-	else
-	  S_StartMusic (mus_intro);
-	break;
+    if ( gamemode == commercial )
+        pagetic = TICRATE * 11;
+    else
+        pagetic = 170;
+    gamestate = GS_DEMOSCREEN;
+    pagename = DEH_String("TITLEPIC");
+    if ( gamemode == commercial )
+      S_StartMusic(mus_dm2ttl);
+    else
+      S_StartMusic (mus_intro);
+    break;
+      case 1:
+    G_DeferedPlayDemo(DEH_String("demo1"));
+    break;
+      case 2:
+    pagetic = 200;
+    gamestate = GS_DEMOSCREEN;
+    pagename = DEH_String("CREDIT");
+    break;
+      case 3:
+    G_DeferedPlayDemo(DEH_String("demo2"));
+    break;
+      case 4:
+    gamestate = GS_DEMOSCREEN;
+    if ( gamemode == commercial)
+    {
+        pagetic = TICRATE * 11;
+        pagename = DEH_String("TITLEPIC");
+        S_StartMusic(mus_dm2ttl);
+    }
+    else
+    {
+        pagetic = 200;
+
+        if (gameversion >= exe_ultimate)
+          pagename = DEH_String("CREDIT");
+        else
+          pagename = DEH_String("HELP2");
+    }
+    break;
+      case 5:
+    G_DeferedPlayDemo(DEH_String("demo3"));
+    break;
+        // THE DEFINITIVE DOOM Special Edition demo
+      case 6:
+    G_DeferedPlayDemo(DEH_String("demo4"));
+    break;
     }
 
     // The Doom 3: BFG Edition version of doom2.wad does not have a
@@ -1746,6 +1776,12 @@ void D_DoomMain (void)
     I_InitSound(true);
     I_InitMusic();
 
+    // [crispy] check for presence of a 5th episode
+    haved1e5 = (gameversion == exe_ultimate) &&
+                       (W_CheckNumForName("m_epi5") != -1) &&
+                       (W_CheckNumForName("e5m1") != -1) &&
+                       (W_CheckNumForName("wilv40") != -1);
+
     printf ("NET_Init: Init network subsystem.\n");
     NET_Init ();
 
@@ -1773,22 +1809,6 @@ void D_DoomMain (void)
     {
 	startskill = myargv[p+1][0]-'1';
 	autostart = true;
-    }
-    
-    // NRFTL
-
-    p = M_CheckParm("-nrftl");
-    if (p)
-    {
-        is_nrftl = 1;
-    }
-
-    // Sigil
-
-    p = M_CheckParm("-sigil");
-    if (p)
-    {
-        is_sigil = 1;
     }
 
     //!

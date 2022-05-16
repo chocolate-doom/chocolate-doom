@@ -145,6 +145,17 @@ const char *mapnames[] =    // DOOM shareware/registered/retail (Ultimate) names
     HUSTR_E4M8,
     HUSTR_E4M9,
 
+    // [crispy] Sigil
+    HUSTR_E5M1,
+    HUSTR_E5M2,
+    HUSTR_E5M3,
+    HUSTR_E5M4,
+    HUSTR_E5M5,
+    HUSTR_E5M6,
+    HUSTR_E5M7,
+    HUSTR_E5M8,
+    HUSTR_E5M9,
+
     "NEWLEVEL",
     "NEWLEVEL",
     "NEWLEVEL",
@@ -415,11 +426,14 @@ void HU_Stop(void)
 void HU_Start(void)
 {
 
-    int		i;
+    int     i;
     const char *s;
+    // [crispy] string buffers for map title and WAD file name
+    char    buf[8];
+    const char* ptr;
 
     if (headsupactive)
-	HU_Stop();
+    HU_Stop();
 
     plr = &players[consoleplayer];
     message_on = false;
@@ -429,43 +443,35 @@ void HU_Start(void)
 
     // create the message widget
     HUlib_initSText(&w_message,
-		    HU_MSGX, HU_MSGY, HU_MSGHEIGHT,
-		    hu_font,
-		    HU_FONTSTART, &message_on);
+            HU_MSGX, HU_MSGY, HU_MSGHEIGHT,
+            hu_font,
+            HU_FONTSTART, &message_on);
 
     // create the map title widget
     HUlib_initTextLine(&w_title,
-		       HU_TITLEX, HU_TITLEY,
-		       hu_font,
-		       HU_FONTSTART);
-    
+               HU_TITLEX, HU_TITLEY,
+               hu_font,
+               HU_FONTSTART);
+
     switch ( logical_gamemission )
     {
       case doom:
-	s = HU_TITLE;
-        if (is_sigil)
-        {
-            s = HU_TITLE_SIGIL;
-        }
-	break;
+    s = HU_TITLE;
+    break;
       case doom2:
-	 s = HU_TITLE2;
+     s = HU_TITLE2;
          // Pre-Final Doom compatibility: map33-map35 names don't spill over
          if (gameversion <= exe_doom_1_9 && gamemap >= 33)
          {
              s = "";
          }
-        if (is_nrftl)
-        {
-            s = HU_TITLEN;
-        }
-	 break;
+     break;
       case pack_plut:
-	s = HU_TITLEP;
-	break;
+    s = HU_TITLEP;
+    break;
       case pack_tnt:
-	s = HU_TITLET;
-	break;
+    s = HU_TITLET;
+    break;
       default:
          s = "Unknown level";
          break;
@@ -476,22 +482,44 @@ void HU_Start(void)
         s = HU_TITLE_CHEX;
     }
 
+    // [crispy] explicitly display (episode and) map if the map is from a PWAD
+    if (gamemode == commercial)
+    M_snprintf(buf, sizeof(buf), "map%02d", gamemap);
+    else
+    M_snprintf(buf, sizeof(buf), "e%dm%d", gameepisode, gamemap);
+
+    ptr = M_BaseName(lumpinfo[W_GetNumForName(buf)]->wad_file->path);
+
+    if (gamemission == doom && gameepisode == 1)
+    {
+    // [crispy] add support for Romero's latest E1 additions
+    if (gamemap == 4 && !strcasecmp(ptr, "e1m4b.wad"))
+    {
+        s = HUSTR_E1M4B;
+    }
+    else
+    if (gamemap == 8 && !strcasecmp(ptr, "e1m8b.wad"))
+    {
+        s = HUSTR_E1M8B;
+    }
+    }
+
     // dehacked substitution to get modified level name
 
     s = DEH_String(s);
     
     while (*s)
-	HUlib_addCharToTextLine(&w_title, *(s++));
+    HUlib_addCharToTextLine(&w_title, *(s++));
 
     // create the chat widget
     HUlib_initIText(&w_chat,
-		    HU_INPUTX, HU_INPUTY,
-		    hu_font,
-		    HU_FONTSTART, &chat_on);
+            HU_INPUTX, HU_INPUTY,
+            hu_font,
+            HU_FONTSTART, &chat_on);
 
     // create the inputbuffer widgets
     for (i=0 ; i<MAXPLAYERS ; i++)
-	HUlib_initIText(&w_inputbuffer[i], 0, 0, 0, 0, &always_off);
+    HUlib_initIText(&w_inputbuffer[i], 0, 0, 0, 0, &always_off);
 
     headsupactive = true;
 

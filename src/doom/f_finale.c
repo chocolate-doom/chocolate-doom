@@ -98,6 +98,7 @@ static textscreen_t textscreens[] =
     { doom,      2, 8,  "SFLR6_1",   E2TEXT},
     { doom,      3, 8,  "MFLR8_4",   E3TEXT},
     { doom,      4, 8,  "MFLR8_3",   E4TEXT},
+    { doom,      5, 8,  "FLOOR7_2",  E5TEXT}, // [crispy] Sigil
 
     { doom2,     1, 6,  "SLIME16",   C1TEXT},
     { doom2,     1, 11, "RROCK14",   C2TEXT},
@@ -150,42 +151,8 @@ void F_StartFinale (void)
         S_ChangeMusic(mus_read_m, true);
     }
 
-    // [sprinkled] Sigil and NRFTL ending text screens
-    if (is_sigil)
-    {
-    // Find the right Sigil screen and set the text and background
-    for (i=0; i<arrlen(textscreens_sigil); ++i)
-    {
-        textscreen_sigil_t *screen = &textscreens_sigil[i];
-
-        if (logical_gamemission == screen->mission
-            && (logical_gamemission != doom || gameepisode == screen->episode)
-            && gamemap == screen->level)
-        {
-            finaletext = screen->text;
-            finaleflat = screen->background;
-        }
-    }
-    }
-    else
-    if (is_nrftl)
-    {
-    // Find the right NRFTL screen and set the text and background
-    for (i=0; i<arrlen(textscreens_nrftl); ++i)
-    {
-        textscreen_nrftl_t *screen = &textscreens_nrftl[i];
-
-        if (logical_gamemission == screen->mission
-            && (logical_gamemission != doom || gameepisode == screen->episode)
-            && gamemap == screen->level)
-        {
-            finaletext = screen->text;
-            finaleflat = screen->background;
-        }
-    }
-    }
-    else
     // Find the right screen and set the text and background
+
     for (i=0; i<arrlen(textscreens); ++i)
     {
         textscreen_t *screen = &textscreens[i];
@@ -232,7 +199,7 @@ boolean F_Responder (event_t *event)
 //
 void F_Ticker (void)
 {
-    size_t		i;
+    size_t      i;
     
     // check for skipping
     if ( (gamemode == commercial)
@@ -240,41 +207,51 @@ void F_Ticker (void)
     {
       // go on to the next level
       for (i=0 ; i<MAXPLAYERS ; i++)
-	if (players[i].cmd.buttons)
-	  break;
-				
+    if (players[i].cmd.buttons)
+      break;
+                
       if (i < MAXPLAYERS)
-      {
-          if (is_nrftl && gamemap == 8)
-              F_StartCast ();
-          else
-              if (gamemap == 30)
-                  F_StartCast ();
-              else
-                  gameaction = ga_worlddone;
+      { 
+    if (gamemap == 30)
+      F_StartCast ();
+    else
+      gameaction = ga_worlddone;
       }
     }
-    
+
+    if ( (gamemode == registered || gamemode == retail)
+      && ( finalecount > 50) )
+    {
+        for (i=0 ; i<MAXPLAYERS ; i++)
+            if (players[i].cmd.buttons)
+                break;
+
+        if (i < MAXPLAYERS)
+        {
+            finalecount += 1024;
+        }
+    }
+
     // advance animation
     finalecount++;
-	
+    
     if (finalestage == F_STAGE_CAST)
     {
-	F_CastTicker ();
-	return;
+    F_CastTicker ();
+    return;
     }
-	
+    
     if ( gamemode == commercial)
-	return;
-		
+    return;
+        
     if (finalestage == F_STAGE_TEXT
      && finalecount>strlen (finaletext)*TEXTSPEED + TEXTWAIT)
     {
-	finalecount = 0;
-	finalestage = F_STAGE_ARTSCREEN;
-	wipegamestate = -1;		// force a wipe
-	if (gameepisode == 3)
-	    S_StartMusic (mus_bunny);
+    finalecount = 0;
+    finalestage = F_STAGE_ARTSCREEN;
+    wipegamestate = -1;     // force a wipe
+    if (gameepisode == 3)
+        S_StartMusic (mus_bunny);
     }
 }
 

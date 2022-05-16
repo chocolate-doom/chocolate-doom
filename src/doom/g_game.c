@@ -1304,38 +1304,36 @@ void G_ScreenShot (void)
 
 
 // DOOM Par Times
-static const int pars[6][10] =
+static const int pars[4][10] =
 { 
     {0}, 
     {0,30,75,120,90,165,180,180,30,165}, 
     {0,90,90,90,120,90,360,240,30,170}, 
-    {0,90,45,90,150,90,90,165,30,135},
-
-    // [BH] Episode 4 and 5 Par Times
-    { 0, 165, 255, 135, 150, 180, 390, 135, 360, 180 },
-    { 0,  90, 150, 360, 420, 780, 420, 780, 300, 660 }
+    {0,90,45,90,150,90,90,165,30,135} 
 }; 
 
 // DOOM II Par Times
 static const int cpars[32] =
 {
-    30,90,120,120,90,150,120,120,270,90,	//  1-10
-    210,150,150,150,210,150,420,150,210,150,	// 11-20
-    240,150,180,150,150,300,330,420,300,180,	// 21-30
-    120,30					// 31-32
+    30,90,120,120,90,150,120,120,270,90,    //  1-10
+    210,150,150,150,210,150,420,150,210,150,    // 11-20
+    240,150,180,150,150,300,330,420,300,180,    // 21-30
+    120,30                  // 31-32
 };
 
 // Chex Quest Par Times
 static const int chexpars[6] =
 { 
     0,120,360,480,200,360
+}; 
+ 
+
+// [crispy] Episode 5 par times from Sigil v1.21
+static int e5pars[10] =
+{
+    0,90,150,360,420,780,420,780,300,660
 };
 
-// [crispy] No Rest For The Living par times from the BFG Edition
-static const int npars[9] =
-{
-    75,105,120,105,210,105,165,105,135
-};
 
 //
 // G_DoCompleted 
@@ -1478,9 +1476,12 @@ void G_DoCompleted (void)
         {
             switch(gamemap)
             {
+            // [crispy] display tally screen after ExM8
+            /*
               case 8:
                 gameaction = ga_victory;
                 return;
+            */
               case 9: 
                 for (i=0 ; i<MAXPLAYERS ; i++) 
                     players[i].didsecret = true; 
@@ -1513,21 +1514,6 @@ void G_DoCompleted (void)
     wminfo.last = gamemap -1;
     
     // wminfo.next is 0 biased, unlike gamemap
-    if (is_nrftl && gamemap <= 9 )
-    {
-    if (secretexit)
-        switch(gamemap)
-        {
-            case  4: wminfo.next = 8; break;
-        }
-    else
-        switch(gamemap)
-        {
-            case  9: wminfo.next = 4; break;
-            default: wminfo.next = gamemap;
-        }
-    }
-    else
     if ( gamemode == commercial)
     {
 	if (secretexit)
@@ -1546,29 +1532,30 @@ void G_DoCompleted (void)
     }
     else
     {
-	if (secretexit) 
-	    wminfo.next = 8; 	// go to secret level 
-	else if (gamemap == 9) 
-	{
-	    // returning from secret level 
-	    switch (gameepisode) 
-	    { 
-	      case 1: 
-		wminfo.next = 3; 
-		break; 
-	      case 2: 
-		wminfo.next = 5; 
-		break; 
-	      case 3: 
-		wminfo.next = 6; 
-		break; 
-	      case 4:
-		wminfo.next = 2;
-		break;
-	    }                
-	} 
-	else 
-	    wminfo.next = gamemap;          // go to next level 
+    if (secretexit) 
+        wminfo.next = 8;    // go to secret level 
+    else if (gamemap == 9) 
+    {
+        // returning from secret level 
+        switch (gameepisode) 
+        { 
+          case 1: 
+        wminfo.next = 3; 
+        break; 
+          case 2: 
+        wminfo.next = 5; 
+        break; 
+          case 3: 
+          case 5: // [crispy] Sigil
+        wminfo.next = 6; 
+        break; 
+          case 4:
+        wminfo.next = 2;
+        break;
+        }                
+    } 
+    else 
+        wminfo.next = gamemap;          // go to next level 
     }
 		 
     wminfo.maxkills = totalkills; 
@@ -1590,16 +1577,6 @@ void G_DoCompleted (void)
 
             wminfo.partime = TICRATE*cpars32;
         }
-        // [crispy] support [PARS] sections in BEX files
-        else if (bex_cpars[gamemap-1])
-        {
-            wminfo.partime = TICRATE*bex_cpars[gamemap-1];
-        }
-        // [sprinkled] par times for NRFTL
-        if (is_nrftl)
-        {
-            wminfo.partime = TICRATE*npars[gamemap-1];
-        }
         else
         {
             wminfo.partime = TICRATE*cpars[gamemap-1];
@@ -1607,18 +1584,8 @@ void G_DoCompleted (void)
     }
     // Doom episode 4 doesn't have a par time, so this
     // overflows into the cpars array.
-    else if (gameepisode < 4 ||
-        // [crispy] single player par times for episode 4
-        (gameepisode == 4 ||
-        // [crispy] par times for Sigil
-        gameepisode == 5))
+    else if (gameepisode < 4)
     {
-        // [crispy] support [PARS] sections in BEX files
-        if (bex_pars[gameepisode][gamemap])
-        {
-            wminfo.partime = TICRATE*bex_pars[gameepisode][gamemap];
-        }
-        else
         if (gameversion == exe_chex && gameepisode == 1 && gamemap < 6)
         {
             wminfo.partime = TICRATE*chexpars[gamemap];
@@ -1627,6 +1594,11 @@ void G_DoCompleted (void)
         {
             wminfo.partime = TICRATE*pars[gameepisode][gamemap];
         }
+    }
+    // [crispy] use episode 3 par times for Sigil's episode 5
+    else if (gameepisode == 5)
+    {
+        wminfo.partime = TICRATE*e5pars[gamemap];
     }
     else
     {
@@ -1637,13 +1609,13 @@ void G_DoCompleted (void)
  
     for (i=0 ; i<MAXPLAYERS ; i++) 
     { 
-	wminfo.plyr[i].in = playeringame[i]; 
-	wminfo.plyr[i].skills = players[i].killcount; 
-	wminfo.plyr[i].sitems = players[i].itemcount; 
-	wminfo.plyr[i].ssecret = players[i].secretcount; 
-	wminfo.plyr[i].stime = leveltime; 
-	memcpy (wminfo.plyr[i].frags, players[i].frags 
-		, sizeof(wminfo.plyr[i].frags)); 
+    wminfo.plyr[i].in = playeringame[i]; 
+    wminfo.plyr[i].skills = players[i].killcount; 
+    wminfo.plyr[i].sitems = players[i].itemcount; 
+    wminfo.plyr[i].ssecret = players[i].secretcount; 
+    wminfo.plyr[i].stime = leveltime; 
+    memcpy (wminfo.plyr[i].frags, players[i].frags 
+        , sizeof(wminfo.plyr[i].frags)); 
     } 
  
     gamestate = GS_INTERMISSION; 
@@ -1664,33 +1636,29 @@ void G_WorldDone (void)
     gameaction = ga_worlddone; 
 
     if (secretexit) 
-	players[consoleplayer].didsecret = true;
-    
-    if (is_nrftl)
+    players[consoleplayer].didsecret = true; 
+
+    if ( gamemode == commercial )
     {
     switch (gamemap)
     {
-      case 8:
+      case 15:
+      case 31:
+        if (!secretexit)
+        break;
+      case 6:
+      case 11:
+      case 20:
+      case 30:
         F_StartFinale ();
         break;
     }
     }
+    // [crispy] display tally screen after ExM8
     else
-    if ( gamemode == commercial )
+    if ( gamemap == 8 )
     {
-	switch (gamemap)
-	{
-	  case 15:
-	  case 31:
-	    if (!secretexit)
-		break;
-	  case 6:
-	  case 11:
-	  case 20:
-	  case 30:
-	    F_StartFinale ();
-	    break;
-	}
+    gameaction = ga_victory;
     }
 } 
  
@@ -2047,6 +2015,13 @@ G_InitNew
             break;
           case 4:        // Special Edition sky
             skytexturename = "SKY4";
+            break;
+          case 5:        // [crispy] Sigil
+            skytexturename = "SKY5_ZD";
+            if (R_CheckTextureNumForName(DEH_String(skytexturename)) == -1)
+            {
+                skytexturename = "SKY3";
+            }
             break;
         }
         skytexturename = DEH_String(skytexturename);

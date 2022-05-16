@@ -824,9 +824,6 @@ void WI_drawShowNextLoc(void)
 	if (snl_pointeron)
 	    WI_drawOnLnode(wbs->next, yah); 
     }
-    
-    if (is_nrftl && wbs->last == 7)
-        return;
 
     // draws which level you are entering..
     if ( (gamemode != commercial)
@@ -1470,11 +1467,6 @@ static boolean WI_drawParTime (void)
             result = false;
         }
 
-        // [sprinkled] PWAD: NRFTL has par times
-        if (is_nrftl)
-        {
-            result = true;
-        }
         // [crispy] IWAD/PWAD: BEX patch provided par times
         if (bex_cpars[wbs->last])
         {
@@ -1764,9 +1756,13 @@ static void WI_loadUnloadData(load_callback_t callback)
     {
         M_StringCopy(name, DEH_String("INTERPIC"), sizeof(name));
     }
+    else if (haved1e5 && wbs->epsd == 4 && W_CheckNumForName(DEH_String("SIGILINT")) != -1) // [crispy] Sigil
+    {
+        M_StringCopy(name, DEH_String("SIGILINT"), sizeof(name));
+    }
     else
     {
-	DEH_snprintf(name, sizeof(name), "WIMAP%d", wbs->epsd);
+    DEH_snprintf(name, sizeof(name), "WIMAP%d", wbs->epsd);
     }
 
     // Draw backdrop and save to a temporary buffer
