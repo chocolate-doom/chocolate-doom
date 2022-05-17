@@ -22,6 +22,10 @@
 #include <stdlib.h>
 #include <time.h>
 
+#if defined(_WIN32)
+#include "win_fopen.h"
+#endif
+
 #include "config.h"
 
 #include "h2def.h"

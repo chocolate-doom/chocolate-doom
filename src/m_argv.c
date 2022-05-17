@@ -21,6 +21,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#if defined(_WIN32)
+#include "win_fopen.h"
+#endif
+
 #include "SDL_stdinc.h"
 
 #include "doomtype.h"

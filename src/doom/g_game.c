@@ -21,6 +21,10 @@
 #include <stdlib.h>
 #include <math.h>
 
+#if defined(_WIN32)
+#include "win_fopen.h"
+#endif
+
 #include "doomdef.h" 
 #include "doomkeys.h"
 #include "doomstat.h"

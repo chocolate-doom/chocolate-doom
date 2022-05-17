@@ -18,6 +18,10 @@
 
 #include <stdio.h>
 
+#if defined(_WIN32)
+#include "win_fopen.h"
+#endif
+
 #include "m_misc.h"
 #include "w_file.h"
 #include "z_zone.h"

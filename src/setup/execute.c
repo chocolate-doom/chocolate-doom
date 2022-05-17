@@ -29,6 +29,8 @@
 #include <process.h>
 #include <shellapi.h>
 
+#include "win_fopen.h"
+
 #else
 
 #include <sys/wait.h>

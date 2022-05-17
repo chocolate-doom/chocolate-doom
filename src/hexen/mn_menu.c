@@ -18,6 +18,11 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include <ctype.h>
+
+#if defined(_WIN32)
+#include "win_fopen.h"
+#endif
+
 #include "h2def.h"
 #include "doomkeys.h"
 #include "i_input.h"

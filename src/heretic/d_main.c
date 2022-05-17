@@ -19,6 +19,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#if defined(_WIN32)
+#include "win_fopen.h"
+#endif
+
 #include "txt_main.h"
 #include "txt_io.h"
 

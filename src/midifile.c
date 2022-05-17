@@ -20,6 +20,10 @@
 #include <string.h>
 #include <assert.h>
 
+#if defined(_WIN32)
+#include "win_fopen.h"
+#endif
+
 #include "doomtype.h"
 #include "i_swap.h"
 #include "i_system.h"

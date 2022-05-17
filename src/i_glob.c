@@ -28,6 +28,7 @@
 // For Visual C++, we need to include the win_opendir module.
 #include <win_opendir.h>
 #include <sys/stat.h>
+#include "win_fopen.h"
 #define S_ISDIR(m)      (((m)& S_IFMT) == S_IFDIR)
 #elif defined(HAVE_DIRENT_H)
 #include <dirent.h>

@@ -67,5 +67,12 @@ add_library(doom STATIC
             st_stuff.c      st_stuff.h
             wi_stuff.c      wi_stuff.h)
 
-target_include_directories(doom PRIVATE "../" "${CMAKE_CURRENT_BINARY_DIR}/../../")
+set(DOOM_INCLUDE_DIRS "../" "${CMAKE_CURRENT_BINARY_DIR}/../../")
+
+if(WIN32)
+    list(APPEND DOOM_INCLUDE_DIRS
+         "${PROJECT_SOURCE_DIR}/win32/")
+endif()
+
+target_include_directories(doom PRIVATE ${DOOM_INCLUDE_DIRS})
 target_link_libraries(doom SDL2::SDL2 SDL2::mixer SDL2::net)

@@ -21,6 +21,10 @@
 #include <string.h>
 #include <ctype.h>
 
+#if defined(_WIN32)
+#include "win_fopen.h"
+#endif
+
 #include "m_misc.h"
 #include "w_wad.h"
 #include "z_zone.h"

@@ -26,6 +26,10 @@
 #include <assert.h>
 #include <locale.h>
 
+#if defined(_WIN32)
+#include "win_fopen.h"
+#endif
+
 #include "SDL_filesystem.h"
 
 #include "config.h"

@@ -24,6 +24,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#if defined(_WIN32)
+#include "win_fopen.h"
+#endif
+
 #include "doomtype.h"
 
 #include "i_swap.h"

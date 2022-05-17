@@ -28,6 +28,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <io.h>
+#include "win_fopen.h"
 #ifdef _MSC_VER
 #include <direct.h>
 #endif

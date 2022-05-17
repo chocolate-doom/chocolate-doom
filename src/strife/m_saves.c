@@ -23,6 +23,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#if defined(_WIN32)
+#include "win_fopen.h"
+#endif
+
 #include "z_zone.h"
 #include "i_glob.h"
 #include "i_system.h"

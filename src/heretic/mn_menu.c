@@ -19,6 +19,10 @@
 #include <stdlib.h>
 #include <ctype.h>
 
+#if defined(_WIN32)
+#include "win_fopen.h"
+#endif
+
 #include "deh_str.h"
 #include "doomdef.h"
 #include "doomkeys.h"

@@ -19,6 +19,10 @@
 #include <stdarg.h>
 #include <string.h>
 
+#if defined(_WIN32)
+#include "win_fopen.h"
+#endif
+
 #include "doomtype.h"
 #include "d_mode.h"
 #include "i_system.h"

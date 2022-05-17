@@ -17,6 +17,10 @@
 
 // HEADER FILES ------------------------------------------------------------
 
+#if defined(_WIN32)
+#include "win_fopen.h"
+#endif
+
 #include "h2def.h"
 #include "i_system.h"
 #include "m_misc.h"

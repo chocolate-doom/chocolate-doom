@@ -29,9 +29,17 @@ set(DEDSERV_FILES
     net_structrw.c      net_structrw.h
     z_native.c          z_zone.h)
 
+set(DEDSERV_INCLUDE_DIRS "${CMAKE_CURRENT_BINARY_DIR}/../")
+
+if(WIN32)
+    list(APPEND COMMON_SOURCE_FILES
+         "../win32/win_fopen.c"   "../win32/win_fopen.h")
+    list(APPEND DEDSERV_INCLUDE_DIRS
+         "${PROJECT_SOURCE_DIR}/win32/")
+endif()
+
 add_executable("${PROGRAM_PREFIX}server" WIN32 ${COMMON_SOURCE_FILES} ${DEDSERV_FILES})
-target_include_directories("${PROGRAM_PREFIX}server"
-                           PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/../")
+target_include_directories("${PROGRAM_PREFIX}server" PRIVATE ${DEDSERV_INCLUDE_DIRS})
 target_link_libraries("${PROGRAM_PREFIX}server" SDL2::SDL2main SDL2::net)
 
 # Source files used by the game binaries (chocolate-doom, etc.)
@@ -101,12 +109,14 @@ set(GAME_SOURCE_FILES
 
 set(GAME_INCLUDE_DIRS "${CMAKE_CURRENT_BINARY_DIR}/../")
 
+if(WIN32)
+    list(APPEND GAME_INCLUDE_DIRS
+         "${PROJECT_SOURCE_DIR}/win32/")
+endif()
+
 if(MSVC)
     list(APPEND GAME_SOURCE_FILES
          "../win32/win_opendir.c" "../win32/win_opendir.h")
-
-    list(APPEND GAME_INCLUDE_DIRS
-         "${PROJECT_SOURCE_DIR}/win32/")
 endif()
 
 set(DEHACKED_SOURCE_FILES
@@ -205,14 +215,20 @@ set(SETUP_FILES
     net_structrw.c      net_structrw.h
     z_native.c          z_zone.h)
 
+set(SETUP_INCLUDE_DIRS "${CMAKE_CURRENT_BINARY_DIR}/../")
+
+if(WIN32)
+    list(APPEND SETUP_INCLUDE_DIRS
+         "${PROJECT_SOURCE_DIR}/win32/")
+endif()
+
 if(WIN32)
     add_executable("${PROGRAM_PREFIX}setup" WIN32 ${SETUP_FILES} ${COMMON_SOURCE_FILES} "${CMAKE_CURRENT_BINARY_DIR}/setup-res.rc")
 else()
     add_executable("${PROGRAM_PREFIX}setup" ${SETUP_FILES} ${COMMON_SOURCE_FILES})
 endif()
 
-target_include_directories("${PROGRAM_PREFIX}setup"
-                           PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/../")
+target_include_directories("${PROGRAM_PREFIX}setup" PRIVATE "${SETUP_INCLUDE_DIRS}")
 target_link_libraries("${PROGRAM_PREFIX}setup" SDL2::SDL2main SDL2::SDL2 SDL2::mixer SDL2::net setup textscreen)
 
 if(MSVC)
@@ -220,12 +236,12 @@ if(MSVC)
                           LINK_FLAGS "/MANIFEST:NO")
 endif()
 
-add_executable(midiread midifile.c z_native.c i_system.c m_argv.c m_misc.c d_iwad.c deh_str.c m_config.c)
+add_executable(midiread midifile.c z_native.c i_system.c m_argv.c m_misc.c d_iwad.c deh_str.c m_config.c ../win32/win_fopen.c ../win32/win_fopen.h)
 target_compile_definitions(midiread PRIVATE "-DTEST")
-target_include_directories(midiread PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/../")
+target_include_directories(midiread PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/../" "${PROJECT_SOURCE_DIR}/win32/")
 target_link_libraries(midiread SDL2::SDL2main SDL2::SDL2)
 
-add_executable(mus2mid mus2mid.c memio.c z_native.c i_system.c m_argv.c m_misc.c d_iwad.c deh_str.c m_config.c)
+add_executable(mus2mid mus2mid.c memio.c z_native.c i_system.c m_argv.c m_misc.c d_iwad.c deh_str.c m_config.c ../win32/win_fopen.c ../win32/win_fopen.h)
 target_compile_definitions(mus2mid PRIVATE "-DSTANDALONE")
-target_include_directories(mus2mid PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/../")
+target_include_directories(mus2mid PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/../" "${PROJECT_SOURCE_DIR}/win32/")
 target_link_libraries(mus2mid SDL2::SDL2main SDL2::SDL2)
