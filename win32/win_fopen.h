@@ -25,8 +25,6 @@ FILE* D_fopen(const char *filename, const char *mode);
 int D_remove(const char *path);
 int D_rename(const char *oldname, const char *newname);
 int D_stat(const char *path, struct stat *buffer);
-int D_open(const char *filename, int oflag);
-int D_access(const char *path, int mode);
 int D_mkdir(const char *dirname);
 
 #undef  fopen
