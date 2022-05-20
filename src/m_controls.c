@@ -233,9 +233,6 @@ void M_BindBaseControls(void)
     M_BindIntVariable("key_speed",          &key_speed);
 
     M_BindIntVariable("mouseb_fire",        &mousebfire);
-    M_BindIntVariable("mouseb_strafe",      &mousebstrafe);
-    M_BindIntVariable("mouseb_forward",     &mousebforward);
-    M_BindIntVariable("mouseb_speed",       &mousebspeed);
 
     M_BindIntVariable("joyb_fire",          &joybfire);
     M_BindIntVariable("joyb_strafe",        &joybstrafe);
@@ -249,12 +246,6 @@ void M_BindBaseControls(void)
 
     M_BindIntVariable("joyb_strafeleft",     &joybstrafeleft);
     M_BindIntVariable("joyb_straferight",    &joybstraferight);
-    M_BindIntVariable("mouseb_strafeleft",   &mousebstrafeleft);
-    M_BindIntVariable("mouseb_straferight",  &mousebstraferight);
-    M_BindIntVariable("mouseb_turnleft",     &mousebturnleft);
-    M_BindIntVariable("mouseb_turnright",    &mousebturnright);
-    M_BindIntVariable("mouseb_use",          &mousebuse);
-    M_BindIntVariable("mouseb_backward",     &mousebbackward);
     M_BindIntVariable("dclick_use",          &dclick_use);
     M_BindIntVariable("key_pause",           &key_pause);
     M_BindIntVariable("key_message_refresh", &key_message_refresh);

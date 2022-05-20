@@ -25,8 +25,6 @@
 #include "m_random.h"
 
 #include "deh_main.h"
-#include "deh_bexpars.h" // [crispy] bex_pars[]
-
 #include "i_swap.h"
 #include "i_system.h"
 
@@ -332,7 +330,7 @@ static int		cnt_par;
 static int		cnt_pause;
 
 // # of commercial levels
-static int		NUMCMAPS; 
+static int		NUMCMAPS = 32;
 
 
 //
@@ -392,6 +390,7 @@ static patch_t*		bp[MAXPLAYERS];
 
  // Name graphics of each level (centered)
 static patch_t**	lnames;
+static unsigned int	num_lnames;
 
 // Buffer storing the backdrop
 static patch_t *background;
@@ -403,7 +402,14 @@ static patch_t *background;
 // slam background
 void WI_slamBackground(void)
 {
-    V_DrawPatch(0, 0, background);
+    if (widescreen)
+    {
+        V_DrawPatchCenterClip (0, background);
+    }
+    else
+    {
+        V_DrawPatch (0, 0, background);
+    }
 }
 
 // The ticker is used to detect keys
@@ -419,6 +425,13 @@ void WI_drawLF(void)
 {
     int y = WI_TITLEY;
 
+    // [crispy] prevent crashes with maps without map title graphics lump
+    if (wbs->last >= num_lnames || lnames[wbs->last] == NULL)
+    {
+        V_DrawPatch((SCREENWIDTH - SHORT(finished->width)) / 2, y, finished);
+        return;
+    }
+
     if (gamemode != commercial || wbs->last < NUMCMAPS)
     {
         // draw <LevelName> 
@@ -430,7 +443,7 @@ void WI_drawLF(void)
 
         V_DrawPatch((SCREENWIDTH - SHORT(finished->width)) / 2, y, finished);
     }
-    else if (wbs->last == NUMCMAPS)
+    else if (wbs->last >= NUMCMAPS) // [crispy] prevent crashes with maps > 33
     {
         // MAP33 - draw "Finished!" only
         V_DrawPatch((SCREENWIDTH - SHORT(finished->width)) / 2, y, finished);
@@ -455,6 +468,12 @@ void WI_drawLF(void)
 void WI_drawEL(void)
 {
     int y = WI_TITLEY;
+
+    // [crispy] prevent crashes with maps without map title graphics lump
+    if (wbs->next >= num_lnames || lnames[wbs->next] == NULL)
+    {
+        return;
+    }
 
     // draw "Entering"
     V_DrawPatch((SCREENWIDTH - SHORT(entering->width))/2,
@@ -492,7 +511,7 @@ WI_drawOnLnode
 	bottom = top + SHORT(c[i]->height);
 
 	if (left >= 0
-	    && right < SCREENWIDTH
+	    && right < WIDESCREENWIDTH
 	    && top >= 0
 	    && bottom < SCREENHEIGHT)
 	{
@@ -1444,59 +1463,7 @@ void WI_updateStats(void)
 	    cnt_pause = TICRATE;
 	}
     }
-}
 
-// [crispy] conditionally draw par times on intermission screen
-static boolean WI_drawParTime (void)
-{
-    extern lumpinfo_t *maplumpinfo;
-
-    boolean result = true;
-
-    // [crispy] PWADs have no par times (including The Master Levels)
-    if (!W_IsIWADLump(maplumpinfo))
-    {
-        result = false;
-    }
-
-    if (gamemode == commercial)
-    {
-        // [crispy] IWAD: Final Doom has no par times
-        if (gamemission == pack_tnt || gamemission == pack_plut)
-        {
-            result = false;
-        }
-
-        // [crispy] IWAD/PWAD: BEX patch provided par times
-        if (bex_cpars[wbs->last])
-        {
-            result = true;
-        }
-    }
-    else
-    {
-        // [crispy] IWAD: Episode 4 has no par times
-        // (but we have for singleplayer games)
-        if (wbs->epsd == 3)
-        {
-            result = false;
-        }
-
-        // [crispy] IWAD/PWAD: BEX patch provided par times for Episode 4
-        // (disguised as par times for Doom II MAP02 to MAP10)
-        if (wbs->epsd == 3 && bex_cpars[wbs->last + 1])
-        {
-            result = true;
-        }
-
-        // [crispy] IWAD/PWAD: BEX patch provided par times for Episodes 1-4
-        if (wbs->epsd <= 3 && bex_pars[wbs->epsd + 1][wbs->last + 1])
-        {
-            result = true;
-        }
-    }
-
-    return result;
 }
 
 void WI_drawStats(void)
@@ -1524,19 +1491,6 @@ void WI_drawStats(void)
 
     V_DrawPatch(SP_TIMEX, SP_TIMEY, timepatch);
     WI_drawTime(SCREENWIDTH/2 - SP_TIMEX, SP_TIMEY, cnt_time);
-    
-    // [crispy] conditionally draw par times on intermission screen
-    if (WI_drawParTime())
-    {
-        V_DrawPatch(SCREENWIDTH/2 + SP_TIMEX, SP_TIMEY, par);
-        WI_drawTime(SCREENWIDTH - SP_TIMEX, SP_TIMEY, cnt_par);
-    }
-
-    if (wbs->epsd < 3)
-    {
-        V_DrawPatch(SCREENWIDTH/2 + SP_TIMEX, SP_TIMEY, par);
-        WI_drawTime(SCREENWIDTH - SP_TIMEX, SP_TIMEY, cnt_par);
-    }
 
 }
 
@@ -1762,7 +1716,7 @@ static void WI_loadUnloadData(load_callback_t callback)
     }
     else
     {
-    DEH_snprintf(name, sizeof(name), "WIMAP%d", wbs->epsd);
+	DEH_snprintf(name, sizeof(name), "WIMAP%d", wbs->epsd);
     }
 
     // Draw backdrop and save to a temporary buffer
@@ -1772,7 +1726,11 @@ static void WI_loadUnloadData(load_callback_t callback)
 
 static void WI_loadCallback(const char *name, patch_t **variable)
 {
+  // [crispy] prevent crashes with maps without map title graphics lump
+  if (W_CheckNumForName(name) != -1)
     *variable = W_CacheLumpName(name, PU_STATIC);
+  else
+    *variable = NULL;
 }
 
 void WI_loadData(void)
@@ -1782,11 +1740,13 @@ void WI_loadData(void)
 	NUMCMAPS = 32;
 	lnames = (patch_t **) Z_Malloc(sizeof(patch_t*) * NUMCMAPS,
 				       PU_STATIC, NULL);
+	num_lnames = NUMCMAPS;
     }
     else
     {
 	lnames = (patch_t **) Z_Malloc(sizeof(patch_t*) * NUMMAPS,
 				       PU_STATIC, NULL);
+	num_lnames = NUMMAPS;
     }
 
     WI_loadUnloadData(WI_loadCallback);

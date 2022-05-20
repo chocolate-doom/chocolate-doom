@@ -66,32 +66,6 @@ typedef struct
     const char *text;
 } textscreen_t;
 
-typedef struct
-{
-    GameMission_t mission;
-    int episode, level;
-    const char *background;
-    const char *text;
-} textscreen_sigil_t;
-
-typedef struct
-{
-    GameMission_t mission;
-    int episode, level;
-    const char *background;
-    const char *text;
-} textscreen_nrftl_t;
-
-static textscreen_sigil_t textscreens_sigil[] =
-{
-    { doom,      3, 8,  "FLOOR7_2",  E5TEXT}, // [sprinkled] Sigil
-};
-
-static textscreen_nrftl_t textscreens_nrftl[] =
-{
-    { doom2,     1, 8,  "SLIME16",   N1TEXT}, // [sprinkled] NRFTL
-};
-
 static textscreen_t textscreens[] =
 {
     { doom,      1, 8,  "FLOOR4_8",  E1TEXT},
@@ -276,26 +250,33 @@ void F_TextWrite (void)
     int		c;
     int		cx;
     int		cy;
-    
+
+    int screenwidth;
+
+    if (widescreen)
+        screenwidth = WIDESCREENWIDTH;
+    else
+        screenwidth = SCREENWIDTH;
+
     // erase the entire screen to a tiled background
     src = W_CacheLumpName ( finaleflat , PU_CACHE);
     dest = I_VideoBuffer;
 	
     for (y=0 ; y<SCREENHEIGHT ; y++)
     {
-	for (x=0 ; x<SCREENWIDTH/64 ; x++)
+	for (x=0 ; x<screenwidth/64 ; x++)
 	{
 	    memcpy (dest, src+((y&63)<<6), 64);
 	    dest += 64;
 	}
-	if (SCREENWIDTH&63)
+	if (screenwidth&63)
 	{
-	    memcpy (dest, src+((y&63)<<6), SCREENWIDTH&63);
-	    dest += (SCREENWIDTH&63);
+	    memcpy (dest, src+((y&63)<<6), screenwidth&63);
+	    dest += (screenwidth&63);
 	}
     }
 
-    V_MarkRect (0, 0, SCREENWIDTH, SCREENHEIGHT);
+    V_MarkRect (0, 0, screenwidth, SCREENHEIGHT);
     
     // draw some of the text onto the screen
     cx = 10;
@@ -325,7 +306,7 @@ void F_TextWrite (void)
 	}
 		
 	w = SHORT (hu_font[c]->width);
-	if (cx+w > SCREENWIDTH)
+	if (cx+w > WIDESCREENWIDTH)
 	    break;
 	V_DrawPatch(cx, cy, hu_font[c]);
 	cx+=w;
@@ -588,7 +569,15 @@ void F_CastDrawer (void)
     patch_t*		patch;
     
     // erase the entire screen to a background
-    V_DrawPatch (0, 0, W_CacheLumpName (DEH_String("BOSSBACK"), PU_CACHE));
+    if (widescreen)
+    {
+        V_DrawPatchCenterClip (0, W_CacheLumpName (DEH_String("BOSSBACK"),
+                               PU_CACHE));
+    }
+    else
+    {
+        V_DrawPatch (0, 0, W_CacheLumpName (DEH_String("BOSSBACK"), PU_CACHE));
+    }
 
     F_CastPrint (DEH_String(castorder[castnum].name));
     
@@ -620,7 +609,14 @@ F_DrawPatchCol
     pixel_t*	dest;
     pixel_t*	desttop;
     int		count;
-	
+
+    int screenwidth;
+
+    if (widescreen)
+        screenwidth = WIDESCREENWIDTH;
+    else
+        screenwidth = SCREENWIDTH;
+
     column = (column_t *)((byte *)patch + LONG(patch->columnofs[col]));
     desttop = I_VideoBuffer + x;
 
@@ -628,13 +624,13 @@ F_DrawPatchCol
     while (column->topdelta != 0xff )
     {
 	source = (byte *)column + 3;
-	dest = desttop + column->topdelta*SCREENWIDTH;
+	dest = desttop + column->topdelta*screenwidth;
 	count = column->length;
 		
 	while (count--)
 	{
 	    *dest = *source++;
-	    dest += SCREENWIDTH;
+	    dest += screenwidth;
 	}
 	column = (column_t *)(  (byte *)column + column->length + 4 );
     }
@@ -653,11 +649,39 @@ void F_BunnyScroll (void)
     char	name[10];
     int		stage;
     static int	laststage;
+    int		p2offset, p1offset, pillar_width;
+
+    int screenwidth;
+
+    if (widescreen)
+        screenwidth = WIDESCREENWIDTH;
+    else
+        screenwidth = SCREENWIDTH;
 		
     p1 = W_CacheLumpName (DEH_String("PFUB2"), PU_LEVEL);
     p2 = W_CacheLumpName (DEH_String("PFUB1"), PU_LEVEL);
 
-    V_MarkRect (0, 0, SCREENWIDTH, SCREENHEIGHT);
+    // [crispy] calculate pillarboxes in widescreen mode
+    pillar_width = (screenwidth - p1->width) / 2;
+    if (pillar_width < 0) pillar_width = 0;
+
+    // Calculate the portion of PFUB2 that would be offscreen at original res.
+    p1offset = (SCREENWIDTH - p1->width) / 2;
+
+    if (p2->width == SCREENWIDTH)
+    {
+        // Unity or original PFUBs.
+        // PFUB1 only contains the pixels that scroll off.
+        p2offset = SCREENWIDTH - p1offset;
+    }
+    else
+    {
+        // Widescreen mod PFUBs.
+        // Right side of PFUB2 and left side of PFUB1 are identical.
+        p2offset = SCREENWIDTH + p1offset;
+    }
+
+    V_MarkRect (0, 0, screenwidth, SCREENHEIGHT);
 	
     scrolled = (SCREENWIDTH - ((signed int) finalecount-230)/2);
     if (scrolled > SCREENWIDTH)
@@ -665,12 +689,14 @@ void F_BunnyScroll (void)
     if (scrolled < 0)
 	scrolled = 0;
 		
-    for ( x=0 ; x<SCREENWIDTH ; x++)
+    for ( x=pillar_width ; x<screenwidth - pillar_width; x++)
     {
-	if (x+scrolled < SCREENWIDTH)
-	    F_DrawPatchCol (x, p1, x+scrolled);
-	else
-	    F_DrawPatchCol (x, p2, x+scrolled - SCREENWIDTH);		
+
+    int x2 = x - WIDEWIDTH_DELTA + scrolled;
+    if (x2 < p2offset)
+        F_DrawPatchCol (x, p1, x2 - p1offset);
+    else
+        F_DrawPatchCol (x, p2, x2 - p2offset);
     }
 	
     if (finalecount < 1130)
@@ -741,7 +767,14 @@ static void F_ArtScreenDrawer(void)
 
         lumpname = DEH_String(lumpname);
 
-        V_DrawPatch (0, 0, W_CacheLumpName(lumpname, PU_CACHE));
+        if (widescreen)
+        {
+            V_DrawPatchCenterClip (0, W_CacheLumpName(lumpname, PU_CACHE));
+        }
+        else
+        {
+            V_DrawPatch (0, 0, W_CacheLumpName(lumpname, PU_CACHE));
+        }
     }
 }
 

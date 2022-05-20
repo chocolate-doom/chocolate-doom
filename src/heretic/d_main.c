@@ -44,7 +44,6 @@
 #include "s_sound.h"
 #include "w_main.h"
 #include "v_video.h"
-#include "dpplimits.h"
 
 #define CT_KEY_GREEN    'g'
 #define CT_KEY_YELLOW   'y'
@@ -335,10 +334,47 @@ void D_DoAdvanceDemo(void)
     switch (demosequence)
     {
         case 0:
-            pagetic = 99999;
+            pagetic = 210;
             gamestate = GS_DEMOSCREEN;
             pagename = DEH_String("TITLE");
             S_StartSong(mus_titl, false);
+            break;
+        case 1:
+            pagetic = 140;
+            gamestate = GS_DEMOSCREEN;
+            pagename = DEH_String("TITLE");
+            break;
+        case 2:
+            BorderNeedRefresh = true;
+            UpdateState |= I_FULLSCRN;
+            G_DeferedPlayDemo(DEH_String("demo1"));
+            break;
+        case 3:
+            pagetic = 200;
+            gamestate = GS_DEMOSCREEN;
+            pagename = DEH_String("CREDIT");
+            break;
+        case 4:
+            BorderNeedRefresh = true;
+            UpdateState |= I_FULLSCRN;
+            G_DeferedPlayDemo(DEH_String("demo2"));
+            break;
+        case 5:
+            pagetic = 200;
+            gamestate = GS_DEMOSCREEN;
+            if (gamemode == shareware)
+            {
+                pagename = DEH_String("ORDER");
+            }
+            else
+            {
+                pagename = DEH_String("CREDIT");
+            }
+            break;
+        case 6:
+            BorderNeedRefresh = true;
+            UpdateState |= I_FULLSCRN;
+            G_DeferedPlayDemo(DEH_String("demo3"));
             break;
     }
 }
@@ -648,9 +684,10 @@ void D_BindVariables(void)
     M_BindIntVariable("music_volume",           &snd_MusicVolume);
     M_BindIntVariable("screenblocks",           &screenblocks);
     M_BindIntVariable("snd_channels",           &snd_Channels);
+    M_BindIntVariable("vanilla_savegame_limit", &vanilla_savegame_limit);
+    M_BindIntVariable("vanilla_demo_limit",     &vanilla_demo_limit);
     M_BindIntVariable("show_endoom",            &show_endoom);
     M_BindIntVariable("graphical_startup",      &graphical_startup);
-    M_BindIntVariable("sprinkled_gibbing",      &sprinkled_gibbing);
 
     for (i=0; i<10; ++i)
     {
@@ -694,7 +731,12 @@ void D_DoomMain(void)
     char file[256];
     char demolumpname[9];
 
-    I_PrintBanner(PACKAGE_STRING);
+#ifdef _WIN32
+    freopen("CONOUT$","w",stdout);
+    freopen("CONOUT$","w",stderr);
+#endif
+    //I_PrintBanner(PACKAGE_STRING);
+    I_PrintBanner("Heretic Startup v" PACKAGE_VERSION);
 
     I_AtExit(D_Endoom, false);
 
@@ -842,7 +884,7 @@ void D_DoomMain(void)
     // Load defaults before initing other systems
     DEH_printf("M_LoadDefaults: Load system defaults.\n");
     D_BindVariables();
-    M_SetConfigFilenames("heretic.cfg", PROGRAM_PREFIX "heretic.cfg");
+    M_SetConfigFilenames("defaulth.cfg", PROGRAM_PREFIX "heretic.cfg");
     M_LoadDefaults();
 
     I_AtExit(M_SaveDefaults, false);
@@ -872,12 +914,9 @@ void D_DoomMain(void)
     {
         char *autoload_dir;
         autoload_dir = M_GetAutoloadDir("heretic.wad");
-        if (autoload_dir != NULL)
-        {
-            DEH_AutoLoadPatches(autoload_dir);
-            W_AutoLoadWADs(autoload_dir);
-            free(autoload_dir);
-        }
+        DEH_AutoLoadPatches(autoload_dir);
+        W_AutoLoadWADs(autoload_dir);
+        free(autoload_dir);
     }
 
     // Load dehacked patches specified on the command line.
@@ -1055,7 +1094,7 @@ void D_DoomMain(void)
     IncThermo();
 
 //
-// start the appropriate game based on params
+// start the apropriate game based on parms
 //
 
     D_CheckRecordFrom();

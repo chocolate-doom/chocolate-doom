@@ -27,7 +27,9 @@
 #include "deh_main.h"
 #include "deh_misc.h"
 #include "doomstat.h"
-#include "dpplimits.h"
+
+#include "d_compat.h"
+
 #include "m_random.h"
 #include "i_system.h"
 
@@ -42,7 +44,7 @@
 
 #define BONUSADD	6
 
-
+extern int sprinkled_gibbing;
 
 
 // a weapon is found with two clip loads,
@@ -91,8 +93,7 @@ P_GiveAmmo
 	// you'll need in nightmare
 	num <<= 1;
     }
-    
-		
+
     oldammo = player->ammo[ammo];
     player->ammo[ammo] += num;
 
@@ -165,6 +166,7 @@ P_GiveWeapon
     boolean	gaveammo;
     boolean	gaveweapon;
 	
+
     if (netgame
 	&& (deathmatch!=2)
 	 && !dropped )
@@ -336,7 +338,7 @@ P_TouchSpecialThing
     int		i;
     fixed_t	delta;
     int		sound;
-		
+
     delta = special->z - toucher->z;
 
     if (delta > toucher->height
@@ -382,6 +384,7 @@ P_TouchSpecialThing
 	
       case SPR_BON2:
 	player->armorpoints++;		// can go over 100%
+
 	if (player->armorpoints > deh_max_armor && gameversion > exe_doom_1_2)
 	    player->armorpoints = deh_max_armor;
         // deh_green_armor_class only applies to the green armor shirt;
@@ -481,7 +484,8 @@ P_TouchSpecialThing
 	    player->message = DEH_String(GOTMEDIKIT);
 	break;
 
-	
+
+
 	// power ups
       case SPR_PINV:
 	if (!P_GivePower (player, pw_invulnerability))
@@ -667,6 +671,7 @@ P_TouchSpecialThing
 	S_StartSound (NULL, sound);
 }
 
+
 //
 // KillMobj
 //
@@ -677,6 +682,7 @@ P_KillMobj
 {
     mobjtype_t	item;
     mobj_t*	mo;
+    int p;
 	
     target->flags &= ~(MF_SHOOTABLE|MF_FLOAT|MF_SKULLFLY);
 
@@ -755,6 +761,7 @@ P_KillMobj
     {
       case MT_WOLFSS:
       case MT_POSSESSED:
+      case MT_MISC91:
 	item = MT_CLIP;
 	break;
 	
@@ -765,7 +772,7 @@ P_KillMobj
       case MT_CHAINGUY:
 	item = MT_CHAINGUN;
 	break;
-	
+
       default:
 	return;
     }
@@ -773,6 +780,9 @@ P_KillMobj
     mo = P_SpawnMobj (target->x,target->y,ONFLOORZ, item);
     mo->flags |= MF_DROPPED;	// special versions of items
 }
+
+
+
 
 //
 // P_DamageMobj
@@ -812,7 +822,6 @@ P_DamageMobj
     player = target->player;
     if (player && gameskill == sk_baby)
 	damage >>= 1; 	// take half damage in trainer mode
-		
 
     // Some close combat weapons should not
     // inflict thrust and push the victim out of reach,
@@ -915,6 +924,8 @@ P_DamageMobj
 			
     target->reactiontime = 0;		// we're awake now...	
 
+    // https://doomwiki.org/wiki/Barrel_suicide
+    // FIXME: check should be for <= Doom v1.4
     if ( (!target->threshold || target->type == MT_VILE)
 	 && source && (source != target || gameversion <= exe_doom_1_2)
 	 && source->type != MT_VILE)

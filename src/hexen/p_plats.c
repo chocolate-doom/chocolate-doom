@@ -19,7 +19,6 @@
 #include "m_random.h"
 #include "i_system.h"
 #include "p_local.h"
-#include "dpplimits.h"
 
 plat_t *activeplats[MAXPLATS];
 
@@ -202,7 +201,7 @@ void P_ActivateInStasis(int tag)
 {
     int i;
 
-    for (i = 0; ((i < MAXPLATS)); i++)
+    for (i = 0; i < MAXPLATS; i++)
         if (activeplats[i] &&
             (activeplats[i])->tag == tag &&
             (activeplats[i])->status == PLAT_IN_STASIS)
@@ -217,7 +216,7 @@ void EV_StopPlat(line_t * line, byte * args)
 {
     int i;
 
-    for (i = 0; ((i < MAXPLATS)); i++)
+    for (i = 0; i < MAXPLATS; i++)
     {
         activeplats[i]->tag = args[0];
 
@@ -231,12 +230,28 @@ void EV_StopPlat(line_t * line, byte * args)
             return;
         }
     }
+
+/*
+	int             j;
+
+	for (j = 0;j < MAXPLATS;j++)
+	{
+		if (activeplats[j] && ((activeplats[j])->status != PLAT_IN_STASIS) &&
+			((activeplats[j])->tag == args[0]))
+		{
+			(activeplats[j])->oldstatus = (activeplats[j])->status;
+			(activeplats[j])->status = PLAT_IN_STASIS;
+			(activeplats[j])->thinker.function = NULL;
+			SN_StopSequence((mobj_t *)&(activeplats[j])->sector->soundorg);
+		}
+	}
+*/
 }
 
 void P_AddActivePlat(plat_t * plat)
 {
     int i;
-    for (i = 0; ((i < MAXPLATS)); i++)
+    for (i = 0; i < MAXPLATS; i++)
         if (activeplats[i] == NULL)
         {
             activeplats[i] = plat;
@@ -248,7 +263,7 @@ void P_AddActivePlat(plat_t * plat)
 void P_RemoveActivePlat(plat_t * plat)
 {
     int i;
-    for (i = 0; ((i < MAXPLATS)); i++)
+    for (i = 0; i < MAXPLATS; i++)
         if (plat == activeplats[i])
         {
             (activeplats[i])->sector->specialdata = NULL;

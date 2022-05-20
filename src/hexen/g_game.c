@@ -29,7 +29,6 @@
 #include "m_misc.h"
 #include "p_local.h"
 #include "v_video.h"
-#include "dpplimits.h"
 
 #define AM_STARTKEY	9
 
@@ -93,14 +92,13 @@ int consoleplayer;              // player taking events and displaying
 int displayplayer;              // view being displayed
 int levelstarttic;              // gametic at level start
 
-char *demoname;
+char demoname[32];
 boolean demorecording;
 boolean longtics;               // specify high resolution turning in demos
 boolean lowres_turn;
 boolean shortticfix;            // calculate lowres turning like doom
 boolean demoplayback;
 boolean demoextend;
-boolean netdemo;
 byte *demobuffer, *demo_p, *demoend;
 boolean singledemo;             // quit after playing a demo from cmdline
 
@@ -169,8 +167,8 @@ boolean *joybuttons = &joyarray[1];     // allow [-1]
 int savegameslot;
 char savedescription[32];
 
-int doom_plus_plus_limits = 0;
-int sprinkled_gibbing = 0;
+int vanilla_demo_limit = 1;
+
 int inventoryTics;
 
 // haleyjd: removed externdriver crap
@@ -230,8 +228,7 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
     speed = key_speed >= NUMKEYS
         || joybspeed >= MAX_JOY_BUTTONS
         || gamekeydown[key_speed]
-        || joybuttons[joybspeed]
-        || mousebuttons[mousebspeed];
+        || joybuttons[joybspeed];
 
     // haleyjd: removed externdriver crap
     
@@ -241,8 +238,7 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
 // use two stage accelerative turning on the keyboard and joystick
 //
     if (joyxmove < 0 || joyxmove > 0
-        || gamekeydown[key_right] || gamekeydown[key_left]
-        || mousebuttons[mousebturnright] || mousebuttons[mousebturnleft])
+        || gamekeydown[key_right] || gamekeydown[key_left])
         turnheld += ticdup;
     else
         turnheld = 0;
@@ -273,11 +269,11 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
 //
     if (strafe)
     {
-        if (gamekeydown[key_right] || mousebuttons[mousebturnright])
+        if (gamekeydown[key_right])
         {
             side += sidemove[pClass][speed];
         }
-        if (gamekeydown[key_left] || mousebuttons[mousebturnleft])
+        if (gamekeydown[key_left])
         {
             side -= sidemove[pClass][speed];
         }
@@ -292,9 +288,9 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
     }
     else
     {
-        if (gamekeydown[key_right] || mousebuttons[mousebturnright])
+        if (gamekeydown[key_right])
             cmd->angleturn -= angleturn[tspeed];
-        if (gamekeydown[key_left] || mousebuttons[mousebturnleft])
+        if (gamekeydown[key_left])
             cmd->angleturn += angleturn[tspeed];
         if (joyxmove > 0)
             cmd->angleturn -= angleturn[tspeed];
@@ -362,14 +358,13 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
         look = TOCENTER;
     }
     // Use artifact key
-    if (gamekeydown[key_useartifact] || mousebuttons[mousebuseartifact])
+    if (gamekeydown[key_useartifact])
     {
         if (gamekeydown[key_speed] && artiskip)
         {
             if (players[consoleplayer].inventory[inv_ptr].type != arti_none)
             {                   // Skip an artifact
                 gamekeydown[key_useartifact] = false;
-                mousebuttons[mousebuseartifact] = false;
                 P_PlayerNextArtifact(&players[consoleplayer]);
             }
         }
@@ -746,70 +741,9 @@ static void SetJoyButtons(unsigned int buttons_mask)
     }
 }
 
-// If an InventoryMove*() function is called when the inventory is not active,
-// it will instead activate the inventory without attempting to change the
-// selected item. This action is indicated by a return value of false.
-// Otherwise, it attempts to change items and will return a value of true.
-
-static boolean InventoryMoveLeft()
-{
-    inventoryTics = 5 * 35;
-    if (!inventory)
-    {
-        inventory = true;
-        return false;
-    }
-    inv_ptr--;
-    if (inv_ptr < 0)
-    {
-        inv_ptr = 0;
-    }
-    else
-    {
-        curpos--;
-        if (curpos < 0)
-        {
-            curpos = 0;
-        }
-    }
-    return true;
-}
-
-static boolean InventoryMoveRight()
-{
-    player_t *plr;
-
-    plr = &players[consoleplayer];
-    inventoryTics = 5 * 35;
-    if (!inventory)
-    {
-        inventory = true;
-        return false;
-    }
-    inv_ptr++;
-    if (inv_ptr >= plr->inventorySlotNum)
-    {
-        inv_ptr--;
-        if (inv_ptr < 0)
-            inv_ptr = 0;
-    }
-    else
-    {
-        curpos++;
-        if (curpos > 6)
-        {
-            curpos = 6;
-        }
-    }
-    return true;
-}
-
 static void SetMouseButtons(unsigned int buttons_mask)
 {
     int i;
-    player_t *plr;
-
-    plr = &players[consoleplayer];
 
     for (i=0; i<MAX_MOUSE_BUTTONS; ++i)
     {
@@ -826,22 +760,6 @@ static void SetMouseButtons(unsigned int buttons_mask)
             else if (i == mousebnextweapon)
             {
                 next_weapon = 1;
-            }
-            else if (i == mousebinvleft)
-            {
-                InventoryMoveLeft();
-            }
-            else if (i == mousebinvright)
-            {
-                InventoryMoveRight();
-            }
-            else if (i == mousebuseartifact)
-            {
-                if (!inventory)
-                {
-                    plr->readyArtifact = plr->inventory[inv_ptr].type;
-                }
-                usearti = true;
             }
         }
 
@@ -926,19 +844,51 @@ boolean G_Responder(event_t * ev)
         case ev_keydown:
             if (ev->data1 == key_invleft)
             {
-                if (InventoryMoveLeft())
+                inventoryTics = 5 * 35;
+                if (!inventory)
                 {
-                    return (true);
+                    inventory = true;
+                    break;
                 }
-                break;
+                inv_ptr--;
+                if (inv_ptr < 0)
+                {
+                    inv_ptr = 0;
+                }
+                else
+                {
+                    curpos--;
+                    if (curpos < 0)
+                    {
+                        curpos = 0;
+                    }
+                }
+                return (true);
             }
             if (ev->data1 == key_invright)
             {
-                if (InventoryMoveRight())
+                inventoryTics = 5 * 35;
+                if (!inventory)
                 {
-                    return (true);
+                    inventory = true;
+                    break;
                 }
-                break;
+                inv_ptr++;
+                if (inv_ptr >= plr->inventorySlotNum)
+                {
+                    inv_ptr--;
+                    if (inv_ptr < 0)
+                        inv_ptr = 0;
+                }
+                else
+                {
+                    curpos++;
+                    if (curpos > 6)
+                    {
+                        curpos = 6;
+                    }
+                }
+                return (true);
             }
             if (ev->data1 == key_pause && !MenuActive)
             {
@@ -1069,7 +1019,7 @@ void G_Ticker(void)
             if (demorecording)
                 G_WriteDemoTiccmd(cmd);
 
-            if (netgame && !netdemo && !(gametic % ticdup))
+            if (netgame && !(gametic % ticdup))
             {
                 if (gametic > BACKUPTICS
                     && consistancy[i][buf] != cmd->consistancy)
@@ -1556,72 +1506,6 @@ void G_SecretExitLevel (void)
 }
 */
 
-// [crispy] format time for level statistics
-#define TIMESTRSIZE 16
-static void G_FormatLevelStatTime(char *str, int tics)
-{
-    int exitHours, exitMinutes;
-    float exitTime, exitSeconds;
-
-    exitTime = (float) tics / 35;
-    exitHours = exitTime / 3600;
-    exitTime -= exitHours * 3600;
-    exitMinutes = exitTime / 60;
-    exitTime -= exitMinutes * 60;
-    exitSeconds = exitTime;
-
-    if (exitHours)
-    {
-        M_snprintf(str, TIMESTRSIZE, "%d:%02d:%05.2f",
-                    exitHours, exitMinutes, exitSeconds);
-    }
-    else
-    {
-        M_snprintf(str, TIMESTRSIZE, "%01d:%05.2f", exitMinutes, exitSeconds);
-    }
-}
-
-// [crispy] Write level statistics upon exit
-static void G_WriteLevelStat(void)
-{
-    static FILE *fstream = NULL;
-
-    int i, playerKills = 0, playerItems = 0, playerSecrets = 0, playerType = 0;
-
-    char levelString[8];
-    char levelTimeString[TIMESTRSIZE];
-    char *decimal;
-
-    if (fstream == NULL)
-    {
-        fstream = fopen("hexen_level_statistics.log", "w");
-
-        if (fstream == NULL)
-        {
-            fprintf(stderr, "G_WriteLevelStat: Unable to open log file for writing!\n");
-            return;
-        }
-    }
-    
-    M_snprintf(levelString, sizeof(levelString), "MAP%02d", gamemap);
-
-    G_FormatLevelStatTime(levelTimeString, leveltime);
-
-    for (i = 0; i < maxplayers; i++)
-    {
-        if (playeringame[i])
-        {
-            playerKills += players[i].killcount;
-            playerItems += players[i].itemcount;
-            playerSecrets += players[i].secretcount;
-            playerType += players[i].class = PlayerClass[i];
-        }
-    }
-
-    fprintf(fstream, "%s TIME: %s\n",
-        levelString, levelTimeString);
-}
-
 //==========================================================================
 //
 // G_Completed
@@ -1648,12 +1532,6 @@ void G_DoCompleted(void)
 {
     int i;
 
-    // [crispy] Write level statistics upon exit
-    if (M_ParmExists("-levelstat"))
-    {
-        G_WriteLevelStat();
-    }
-    
     gameaction = ga_nothing;
 
     // quit demo unless -demoextend
@@ -1915,7 +1793,6 @@ void G_InitNew(skill_t skill, int episode, int map)
         // loading a saved one from the menu, and only during playback.
         demorecording = false;
         demoplayback = false;
-        netdemo = false;
         usergame = true;            // will be set false if a demo
     }
     paused = false;
@@ -2044,7 +1921,19 @@ void G_WriteDemoTiccmd(ticcmd_t * cmd)
 
     if (demo_p > demoend - 16)
     {
-       IncreaseDemoBuffer();
+        if (vanilla_demo_limit)
+        {
+            // no more space
+            G_CheckDemoStatus();
+            return;
+        }
+        else
+        {
+            // Vanilla demo limit disabled: unlimited
+            // demo lengths!
+
+            IncreaseDemoBuffer();
+        }
     }
 
     G_ReadDemoTiccmd(cmd);      // make SURE it is exactly the same
@@ -2061,9 +1950,8 @@ void G_WriteDemoTiccmd(ticcmd_t * cmd)
 */
 
 void G_RecordDemo(skill_t skill, int numplayers, int episode, int map,
-                  const char *name)
+                  char *name)
 {
-    size_t demoname_size;
     int i;
     int maxsize;
 
@@ -2090,9 +1978,8 @@ void G_RecordDemo(skill_t skill, int numplayers, int episode, int map,
 
     G_InitNew(skill, episode, map);
     usergame = false;
-    demoname_size = strlen(name) + 5;
-    demoname = Z_Malloc(demoname_size, PU_STATIC, NULL);
-    M_snprintf(demoname, demoname_size, "%s.lmp", name);
+    M_StringCopy(demoname, name, sizeof(demoname));
+    M_StringConcat(demoname, ".lmp", sizeof(demoname));
     maxsize = 0x20000;
 
     //!
@@ -2203,12 +2090,6 @@ void G_DoPlayDemo(void)
         PlayerClass[i] = *demo_p++;
     }
 
-    if (playeringame[1] || M_ParmExists("-solo-net")
-                        || M_ParmExists("-netdemo"))
-    {
-        netgame = true;
-    }
-
     // Initialize world info, etc.
     G_StartNewInit();
 
@@ -2217,11 +2098,6 @@ void G_DoPlayDemo(void)
     precache = true;
     usergame = false;
     demoplayback = true;
-
-    if (netgame)
-    {
-        netdemo = true;
-    }
 }
 
 
@@ -2256,12 +2132,6 @@ void G_TimeDemo(char *name)
         PlayerClass[i] = *demo_p++;
     }
 
-    if (playeringame[1] || M_ParmExists("-solo-net")
-                        || M_ParmExists("-netdemo"))
-    {
-        netgame = true;
-    }
-
     G_InitNew(skill, episode, map);
     starttime = I_GetTime();
 
@@ -2269,11 +2139,6 @@ void G_TimeDemo(char *name)
     demoplayback = true;
     timingdemo = true;
     singletics = true;
-
-    if (netgame)
-    {
-        netdemo = true;
-    }
 }
 
 
@@ -2308,8 +2173,6 @@ boolean G_CheckDemoStatus(void)
 
         W_ReleaseLumpName(defdemoname);
         demoplayback = false;
-        netdemo = false;
-        netgame = false;
         H2_AdvanceDemo();
         return true;
     }

@@ -20,10 +20,9 @@
 #ifndef __R_THINGS__
 #define __R_THINGS__
 
-#include "dpplimits.h"
 
 
-#define MAXVISSPRITES  	1024 * DOOM_PLUS_PLUS_MAXVISSPRITES_FACTOR
+#define MAXVISSPRITES  	128
 
 extern vissprite_t	vissprites[MAXVISSPRITES];
 extern vissprite_t*	vissprite_p;

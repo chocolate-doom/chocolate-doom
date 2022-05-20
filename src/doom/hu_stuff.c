@@ -17,7 +17,6 @@
 
 
 #include <ctype.h>
-#include <stdlib.h>
 
 #include "doomdef.h"
 #include "doomkeys.h"
@@ -46,13 +45,10 @@
 //
 // Locally used constants, shortcuts.
 //
-#define HU_TITLE    (mapnames[(gameepisode-1)*9+gamemap-1])
-#define HU_TITLE_SIGIL   (mapnames_sigil[(gameepisode-3)*9+gamemap-1])
-#define HU_TITLE2    (mapnames_commercial[gamemap-1])
-#define HU_TITLEP    (mapnames_commercial[gamemap-1 + 32])
-#define HU_TITLET    (mapnames_commercial[gamemap-1 + 64])
-#define HU_TITLEN    (mapnames_commercial[gamemap-1 + 96 + 3])
-#define HU_TITLEM    (mapnames_commercial[gamemap-1 + 105 + 3])
+#define HU_TITLE	(mapnames[(gameepisode-1)*9+gamemap-1])
+#define HU_TITLE2	(mapnames_commercial[gamemap-1])
+#define HU_TITLEP	(mapnames_commercial[gamemap-1 + 32])
+#define HU_TITLET	(mapnames_commercial[gamemap-1 + 64])
 #define HU_TITLE_CHEX   (mapnames_chex[(gameepisode-1)*9+gamemap-1])
 #define HU_TITLEHEIGHT	1
 #define HU_TITLEX	0
@@ -66,7 +62,19 @@
 
 
 
-char *chat_macros[10];
+char *chat_macros[10] =
+{
+    HUSTR_CHATMACRO0,
+    HUSTR_CHATMACRO1,
+    HUSTR_CHATMACRO2,
+    HUSTR_CHATMACRO3,
+    HUSTR_CHATMACRO4,
+    HUSTR_CHATMACRO5,
+    HUSTR_CHATMACRO6,
+    HUSTR_CHATMACRO7,
+    HUSTR_CHATMACRO8,
+    HUSTR_CHATMACRO9
+};
 
 const char *player_names[] =
 {
@@ -102,7 +110,7 @@ static boolean		headsupactive = false;
 // The actual names can be found in DStrings.h.
 //
 
-const char *mapnames[] =    // DOOM shareware/registered/retail (Ultimate) names.
+const char *mapnames[] =	// DOOM shareware/registered/retail (Ultimate) names.
 {
 
     HUSTR_E1M1,
@@ -167,29 +175,6 @@ const char *mapnames[] =    // DOOM shareware/registered/retail (Ultimate) names
     "NEWLEVEL"
 };
 
-const char *mapnames_sigil[] =  // Sigil
-{
-    HUSTR_E5M1,
-    HUSTR_E5M2,
-    HUSTR_E5M3,
-    HUSTR_E5M4,
-    HUSTR_E5M5,
-    HUSTR_E5M6,
-    HUSTR_E5M7,
-    HUSTR_E5M8,
-    HUSTR_E5M9,
-    
-    "NEWLEVEL",
-    "NEWLEVEL",
-    "NEWLEVEL",
-    "NEWLEVEL",
-    "NEWLEVEL",
-    "NEWLEVEL",
-    "NEWLEVEL",
-    "NEWLEVEL",
-    "NEWLEVEL"
-};
-
 const char *mapnames_chex[] =   // Chex Quest names.
 {
 
@@ -243,6 +228,7 @@ const char *mapnames_chex[] =   // Chex Quest names.
     "NEWLEVEL",
     "NEWLEVEL"
 };
+
 // List of names for levels in commercial IWADs
 // (doom2.wad, plutonia.wad, tnt.wad).  These are stored in a
 // single large array; WADs like pl2.wad have a MAP33, and rely on
@@ -264,7 +250,7 @@ const char *mapnames_commercial[] =
     HUSTR_9,
     HUSTR_10,
     HUSTR_11,
-    
+	
     HUSTR_12,
     HUSTR_13,
     HUSTR_14,
@@ -274,7 +260,7 @@ const char *mapnames_commercial[] =
     HUSTR_18,
     HUSTR_19,
     HUSTR_20,
-    
+	
     HUSTR_21,
     HUSTR_22,
     HUSTR_23,
@@ -301,7 +287,7 @@ const char *mapnames_commercial[] =
     PHUSTR_9,
     PHUSTR_10,
     PHUSTR_11,
-    
+	
     PHUSTR_12,
     PHUSTR_13,
     PHUSTR_14,
@@ -311,7 +297,7 @@ const char *mapnames_commercial[] =
     PHUSTR_18,
     PHUSTR_19,
     PHUSTR_20,
-    
+	
     PHUSTR_21,
     PHUSTR_22,
     PHUSTR_23,
@@ -338,7 +324,7 @@ const char *mapnames_commercial[] =
     THUSTR_9,
     THUSTR_10,
     THUSTR_11,
-    
+	
     THUSTR_12,
     THUSTR_13,
     THUSTR_14,
@@ -348,7 +334,7 @@ const char *mapnames_commercial[] =
     THUSTR_18,
     THUSTR_19,
     THUSTR_20,
-    
+	
     THUSTR_21,
     THUSTR_22,
     THUSTR_23,
@@ -367,38 +353,6 @@ const char *mapnames_commercial[] =
     "",
     "",
     ""
-    ,
-    NHUSTR_1,
-    NHUSTR_2,
-    NHUSTR_3,
-    NHUSTR_4,
-    NHUSTR_5,
-    NHUSTR_6,
-    NHUSTR_7,
-    NHUSTR_8,
-    NHUSTR_9,
-
-    MHUSTR_1,
-    MHUSTR_2,
-    MHUSTR_3,
-    MHUSTR_4,
-    MHUSTR_5,
-    MHUSTR_6,
-    MHUSTR_7,
-    MHUSTR_8,
-    MHUSTR_9,
-    MHUSTR_10,
-    MHUSTR_11,
-    MHUSTR_12,
-    MHUSTR_13,
-    MHUSTR_14,
-    MHUSTR_15,
-    MHUSTR_16,
-    MHUSTR_17,
-    MHUSTR_18,
-    MHUSTR_19,
-    MHUSTR_20,
-    MHUSTR_21
 };
 
 void HU_Init(void)
@@ -426,14 +380,14 @@ void HU_Stop(void)
 void HU_Start(void)
 {
 
-    int     i;
+    int		i;
     const char *s;
     // [crispy] string buffers for map title and WAD file name
-    char    buf[8];
+    char	buf[8];
     const char* ptr;
 
     if (headsupactive)
-    HU_Stop();
+	HU_Stop();
 
     plr = &players[consoleplayer];
     message_on = false;
@@ -443,35 +397,35 @@ void HU_Start(void)
 
     // create the message widget
     HUlib_initSText(&w_message,
-            HU_MSGX, HU_MSGY, HU_MSGHEIGHT,
-            hu_font,
-            HU_FONTSTART, &message_on);
+		    HU_MSGX - WIDEWIDTH_DELTA, HU_MSGY, HU_MSGHEIGHT,
+		    hu_font,
+		    HU_FONTSTART, &message_on);
 
     // create the map title widget
     HUlib_initTextLine(&w_title,
-               HU_TITLEX, HU_TITLEY,
-               hu_font,
-               HU_FONTSTART);
-
+		       HU_TITLEX - WIDEWIDTH_DELTA, HU_TITLEY,
+		       hu_font,
+		       HU_FONTSTART);
+    
     switch ( logical_gamemission )
     {
       case doom:
-    s = HU_TITLE;
-    break;
+	s = HU_TITLE;
+	break;
       case doom2:
-     s = HU_TITLE2;
+	 s = HU_TITLE2;
          // Pre-Final Doom compatibility: map33-map35 names don't spill over
          if (gameversion <= exe_doom_1_9 && gamemap >= 33)
          {
              s = "";
          }
-     break;
+	 break;
       case pack_plut:
-    s = HU_TITLEP;
-    break;
+	s = HU_TITLEP;
+	break;
       case pack_tnt:
-    s = HU_TITLET;
-    break;
+	s = HU_TITLET;
+	break;
       default:
          s = "Unknown level";
          break;
@@ -484,24 +438,24 @@ void HU_Start(void)
 
     // [crispy] explicitly display (episode and) map if the map is from a PWAD
     if (gamemode == commercial)
-    M_snprintf(buf, sizeof(buf), "map%02d", gamemap);
+	M_snprintf(buf, sizeof(buf), "map%02d", gamemap);
     else
-    M_snprintf(buf, sizeof(buf), "e%dm%d", gameepisode, gamemap);
+	M_snprintf(buf, sizeof(buf), "e%dm%d", gameepisode, gamemap);
 
     ptr = M_BaseName(lumpinfo[W_GetNumForName(buf)]->wad_file->path);
 
     if (gamemission == doom && gameepisode == 1)
     {
-    // [crispy] add support for Romero's latest E1 additions
-    if (gamemap == 4 && !strcasecmp(ptr, "e1m4b.wad"))
-    {
-        s = HUSTR_E1M4B;
-    }
-    else
-    if (gamemap == 8 && !strcasecmp(ptr, "e1m8b.wad"))
-    {
-        s = HUSTR_E1M8B;
-    }
+	// [crispy] add support for Romero's latest E1 additions
+	if (gamemap == 4 && !strcasecmp(ptr, "e1m4b.wad"))
+	{
+	    s = HUSTR_E1M4B;
+	}
+	else
+	if (gamemap == 8 && !strcasecmp(ptr, "e1m8b.wad"))
+	{
+	    s = HUSTR_E1M8B;
+	}
     }
 
     // dehacked substitution to get modified level name
@@ -509,17 +463,17 @@ void HU_Start(void)
     s = DEH_String(s);
     
     while (*s)
-    HUlib_addCharToTextLine(&w_title, *(s++));
+	HUlib_addCharToTextLine(&w_title, *(s++));
 
     // create the chat widget
     HUlib_initIText(&w_chat,
-            HU_INPUTX, HU_INPUTY,
-            hu_font,
-            HU_FONTSTART, &chat_on);
+		    HU_INPUTX, HU_INPUTY,
+		    hu_font,
+		    HU_FONTSTART, &chat_on);
 
     // create the inputbuffer widgets
     for (i=0 ; i<MAXPLAYERS ; i++)
-    HUlib_initIText(&w_inputbuffer[i], 0, 0, 0, 0, &always_off);
+	HUlib_initIText(&w_inputbuffer[i], 0, 0, 0, 0, &always_off);
 
     headsupactive = true;
 

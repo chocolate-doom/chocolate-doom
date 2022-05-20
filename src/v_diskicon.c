@@ -66,10 +66,17 @@ static void SaveDiskData(const char *disk_lump, int xoffs, int yoffs)
     pixel_t *tmpscreen;
     patch_t *disk;
 
+    int screenwidth;
+
+    if (widescreen)
+        screenwidth = WIDESCREENWIDTH;
+    else
+        screenwidth = SCREENWIDTH;
+
     // Allocate a complete temporary screen where we'll draw the patch.
-    tmpscreen = Z_Malloc(SCREENWIDTH * SCREENHEIGHT * sizeof(*tmpscreen),
+    tmpscreen = Z_Malloc(screenwidth * SCREENHEIGHT * sizeof(*tmpscreen),
                          PU_STATIC, NULL);
-    memset(tmpscreen, 0, SCREENWIDTH * SCREENHEIGHT * sizeof(*tmpscreen));
+    memset(tmpscreen, 0, screenwidth * SCREENHEIGHT * sizeof(*tmpscreen));
     V_UseBuffer(tmpscreen);
 
     // Buffer where we'll save the disk data.
@@ -87,7 +94,7 @@ static void SaveDiskData(const char *disk_lump, int xoffs, int yoffs)
     disk = W_CacheLumpName(disk_lump, PU_STATIC);
     V_DrawPatch(loading_disk_xoffs, loading_disk_yoffs, disk);
     CopyRegion(disk_data, LOADING_DISK_W,
-               tmpscreen + yoffs * SCREENWIDTH + xoffs, SCREENWIDTH,
+               tmpscreen + yoffs * screenwidth + xoffs, screenwidth,
                LOADING_DISK_W, LOADING_DISK_H);
     W_ReleaseLumpName(disk_lump);
 
@@ -119,22 +126,34 @@ void V_BeginRead(size_t nbytes)
 
 static pixel_t *DiskRegionPointer(void)
 {
-    return I_VideoBuffer
-         + loading_disk_yoffs * SCREENWIDTH
-         + loading_disk_xoffs;
+    if (widescreen)
+        return I_VideoBuffer
+             + loading_disk_yoffs * WIDESCREENWIDTH
+             + loading_disk_xoffs;
+    else
+        return I_VideoBuffer
+             + loading_disk_yoffs * SCREENWIDTH
+             + loading_disk_xoffs;
 }
 
 void V_DrawDiskIcon(void)
 {
+    int screenwidth;
+
+    if (widescreen)
+        screenwidth = WIDESCREENWIDTH;
+    else
+        screenwidth = SCREENWIDTH;
+
     if (disk_data != NULL && recent_bytes_read > diskicon_threshold)
     {
         // Save the background behind the disk before we draw it.
         CopyRegion(saved_background, LOADING_DISK_W,
-                   DiskRegionPointer(), SCREENWIDTH,
+                   DiskRegionPointer(), screenwidth,
                    LOADING_DISK_W, LOADING_DISK_H);
 
         // Write the disk to the screen buffer.
-        CopyRegion(DiskRegionPointer(), SCREENWIDTH,
+        CopyRegion(DiskRegionPointer(), screenwidth,
                    disk_data, LOADING_DISK_W,
                    LOADING_DISK_W, LOADING_DISK_H);
         disk_drawn = true;
@@ -148,10 +167,14 @@ void V_RestoreDiskBackground(void)
     if (disk_drawn)
     {
         // Restore the background.
-        CopyRegion(DiskRegionPointer(), SCREENWIDTH,
-                   saved_background, LOADING_DISK_W,
-                   LOADING_DISK_W, LOADING_DISK_H);
-
+        if (widescreen)
+            CopyRegion(DiskRegionPointer(), WIDESCREENWIDTH,
+                       saved_background, LOADING_DISK_W,
+                       LOADING_DISK_W, LOADING_DISK_H);
+        else
+            CopyRegion(DiskRegionPointer(), SCREENWIDTH,
+                       saved_background, LOADING_DISK_W,
+                       LOADING_DISK_W, LOADING_DISK_H);
         disk_drawn = false;
     }
 }

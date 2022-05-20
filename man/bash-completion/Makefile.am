@@ -6,7 +6,7 @@ BASH_COMPLETION_TEMPLATES = \
     hexen.template \
     strife.template
 
-if HAVE_BASH_COMPLETION
+if HAVE_PYTHON
 
 BASH_COMPLETION_SCRIPTLETS = \
     @PROGRAM_PREFIX@doom \

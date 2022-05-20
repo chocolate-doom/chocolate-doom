@@ -24,7 +24,6 @@
 #include "p_local.h"
 #include "s_sound.h"
 #include "v_video.h"
-#include "dpplimits.h"
 
 // Macros
 
@@ -1187,10 +1186,6 @@ void P_SpawnSpecials(void)
         switch (lines[i].special)
         {
             case 48:           // Effect_Scroll_Left
-                if (numlinespecials >= MAXLINEANIMS)
-                {
-                    I_Error("Too many scrolling wall linedefs!");
-                }
             case 99:           // Effect_Scroll_Right
                 linespeciallist[numlinespecials] = &lines[i];
                 numlinespecials++;

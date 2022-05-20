@@ -24,7 +24,7 @@
 
 #include <stdlib.h>
 
-
+#include "i_system.h" // [crispy] I_Realloc()
 #include "m_bbox.h"
 
 #include "doomdef.h"
@@ -297,7 +297,7 @@ void P_LineOpening (line_t* linedef)
     sector_t*	front;
     sector_t*	back;
 	
-    if (linedef->sidenum[1] == -1)
+    if (linedef->sidenum[1] == NO_INDEX)
     {
 	// single sided line
 	openrange = 0;
@@ -470,7 +470,7 @@ P_BlockLinesIterator
   boolean(*func)(line_t*) )
 {
     int			offset;
-    short*		list;
+    int32_t*		list; // [crispy] BLOCKMAP limit
     line_t*		ld;
 	
     if (x<0
@@ -487,6 +487,9 @@ P_BlockLinesIterator
 
     for ( list = blockmaplump+offset ; *list != -1 ; list++)
     {
+	if (*list < 0 || *list > numlines)
+	    continue; 	// invalid blockmap
+
 	ld = &lines[*list];
 
 	if (ld->validcount == validcount)
@@ -536,14 +539,34 @@ P_BlockThingsIterator
 //
 // INTERCEPT ROUTINES
 //
-intercept_t	intercepts[MAXINTERCEPTS];
+static intercept_t*	intercepts; // [crispy] remove INTERCEPTS limit
 intercept_t*	intercept_p;
+
+// [crispy] remove INTERCEPTS limit
+// taken from PrBoom+/src/p_maputl.c:422-433
+static void check_intercept(void)
+{
+	static size_t num_intercepts;
+	const size_t offset = intercept_p - intercepts;
+
+	if (offset >= num_intercepts)
+	{
+		int num_intercepts_old = num_intercepts;
+
+		num_intercepts = num_intercepts ? num_intercepts * 2 : MAXINTERCEPTS_ORIGINAL;
+		intercepts = I_Realloc(intercepts, sizeof(*intercepts) * num_intercepts);
+		intercept_p = intercepts + offset;
+
+		if (num_intercepts_old)
+			fprintf(stderr, "PIT_Add*Intercepts: Hit INTERCEPTS limit at %d, raised to %d.\n", num_intercepts_old, (int)num_intercepts);
+	}
+}
 
 divline_t 	trace;
 boolean 	earlyout;
 int		ptflags;
 
-static void InterceptsOverrun(int num_intercepts, intercept_t *intercept);
+// static void InterceptsOverrun(int num_intercepts, intercept_t *intercept);
 
 //
 // PIT_AddLineIntercepts.
@@ -597,16 +620,65 @@ PIT_AddLineIntercepts (line_t* ld)
     }
     
 	
+    check_intercept(); // [crispy] remove INTERCEPTS limit
     intercept_p->frac = frac;
     intercept_p->isaline = true;
     intercept_p->d.line = ld;
-    InterceptsOverrun(intercept_p - intercepts, intercept_p);
     intercept_p++;
 
     return true;	// continue
 }
 
+//
+// PIT_CompatAddLineIntercepts.
+// Old line intercept code for Doom v1.0/v1.1/v1.2 compatibility.
+// Derived from code in P_SightBlockLinesIterator() 
+//     in prboom-plus/src/p_sight.c:133-151.
+// Adjusted to more closely resemble PIT_AddLineIntercepts().
+//
+boolean
+PIT_CompatAddLineIntercepts(line_t *ld)
+{
+    int s1;
+    int s2;
+    fixed_t frac;
+    divline_t dl;
 
+    s1 = P_PointOnDivlineSide(ld->v1->x, ld->v1->y, &trace);
+    s2 = P_PointOnDivlineSide(ld->v2->x, ld->v2->y, &trace);
+
+    if (s1 == s2)
+    {
+        return true; // line isn't crossed
+    }
+
+    // hit the line
+    P_MakeDivline(ld, &dl);
+
+    s1 = P_PointOnDivlineSide(trace.x, trace.y, &dl);
+    s2 = P_PointOnDivlineSide(trace.x + trace.dx, trace.y + trace.dy, &dl);
+
+    if (s1 == s2)
+    {
+        return true; // line isn't crossed
+    }
+
+    frac = P_InterceptVector(&trace, &dl);
+
+    // try to early out the check
+    if (!ld->backsector)
+    {
+        return false; // stop checking
+    }
+
+    check_intercept(); // [crispy] remove INTERCEPTS limit
+    intercept_p->frac = frac;
+    intercept_p->isaline = true;
+    intercept_p->d.line = ld;
+    intercept_p++;
+
+    return true; // continue
+}
 
 //
 // PIT_AddThingIntercepts
@@ -663,10 +735,10 @@ boolean PIT_AddThingIntercepts (mobj_t* thing)
     if (frac < 0)
 	return true;		// behind source
 
+    check_intercept(); // [crispy] remove INTERCEPTS limit
     intercept_p->frac = frac;
     intercept_p->isaline = false;
     intercept_p->d.thing = thing;
-    InterceptsOverrun(intercept_p - intercepts, intercept_p);
     intercept_p++;
 
     return true;		// keep going
@@ -749,7 +821,7 @@ typedef struct
 // Almost all of the values to overwrite are 32-bit integers, except for
 // playerstarts, which is effectively an array of 16-bit integers and
 // must be treated differently.
-
+#if 0  // UNUSED
 static intercepts_overrun_t intercepts_overrun[] =
 {
     {4,   NULL,                          false},
@@ -848,7 +920,7 @@ static void InterceptsOverrun(int num_intercepts, intercept_t *intercept)
     InterceptsMemoryOverrun(location + 4, intercept->isaline);
     InterceptsMemoryOverrun(location + 8, (intptr_t) intercept->d.thing);
 }
-
+#endif
 
 //
 // P_PathTraverse
@@ -975,6 +1047,12 @@ P_PathTraverse
 		return false;	// early out
 	}
 		
+	if (flags & PT_COMPATADDLINES)
+	{
+	    if (!P_BlockLinesIterator (mapx, mapy,PIT_CompatAddLineIntercepts))
+		return false;	// early out
+	}
+
 	if (mapx == xt2
 	    && mapy == yt2)
 	{

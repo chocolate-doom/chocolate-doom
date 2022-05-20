@@ -58,7 +58,19 @@
 #define HU_INPUTWIDTH   64
 #define HU_INPUTHEIGHT  1
 
-char *chat_macros[10];
+char *chat_macros[10] =
+{
+    HUSTR_CHATMACRO0,
+    HUSTR_CHATMACRO1,
+    HUSTR_CHATMACRO2,
+    HUSTR_CHATMACRO3,
+    HUSTR_CHATMACRO4,
+    HUSTR_CHATMACRO5,
+    HUSTR_CHATMACRO6,
+    HUSTR_CHATMACRO7,
+    HUSTR_CHATMACRO8,
+    HUSTR_CHATMACRO9
+};
 
 // villsa [STRIFE]
 char player_names[8][16] =
@@ -534,8 +546,13 @@ boolean HU_Responder(event_t *ev)
     static boolean      altdown = false;
     unsigned char       c;
     int                 i;
+    int                 numplayers;
     
     static int          num_nobrainers = 0;
+
+    numplayers = 0;
+    for (i=0 ; i<MAXPLAYERS ; i++)
+        numplayers += playeringame[i];
 
     if (ev->data1 == KEY_RSHIFT)
     {

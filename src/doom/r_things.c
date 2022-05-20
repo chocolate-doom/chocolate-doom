@@ -32,9 +32,10 @@
 #include "w_wad.h"
 
 #include "r_local.h"
+#include "r_medusa.h"
 
 #include "doomstat.h"
-#include "dpplimits.h"
+
 
 
 #define MINZ				(FRACUNIT*4)
@@ -72,8 +73,8 @@ lighttable_t**	spritelights;
 
 // constant arrays
 //  used for psprite clipping and initializing clipping
-short		negonearray[SCREENWIDTH];
-short		screenheightarray[SCREENWIDTH];
+int		negonearray[WIDESCREENWIDTH]; // [crispy] 32-bit integer math
+int		screenheightarray[WIDESCREENWIDTH]; // [crispy] 32-bit integer math
 
 
 //
@@ -278,9 +279,10 @@ void R_InitSpriteDefs(const char **namelist)
 //
 // GAME FUNCTIONS
 //
-vissprite_t	vissprites[MAXVISSPRITES];
+vissprite_t*	vissprites = NULL;
 vissprite_t*	vissprite_p;
 int		newvissprite;
+static int	numvissprites;
 
 
 
@@ -291,8 +293,15 @@ int		newvissprite;
 void R_InitSprites(const char **namelist)
 {
     int		i;
-	
-    for (i=0 ; i<SCREENWIDTH ; i++)
+
+    int screenwidth;
+
+    if (widescreen)
+        screenwidth = WIDESCREENWIDTH;
+    else
+        screenwidth = SCREENWIDTH;
+
+    for (i=0 ; i<screenwidth ; i++)
     {
 	negonearray[i] = -1;
     }
@@ -319,8 +328,28 @@ vissprite_t	overflowsprite;
 
 vissprite_t* R_NewVisSprite (void)
 {
-    if (vissprite_p == &vissprites[MAXVISSPRITES])
+    // [crispy] remove MAXVISSPRITE Vanilla limit
+    if (vissprite_p == &vissprites[numvissprites])
+    {
+	static int max;
+	int numvissprites_old = numvissprites;
+
+	if (!max && numvissprites == 32 * MAXVISSPRITES)
+	{
+	    fprintf(stderr, "R_NewVisSprite: MAXVISSPRITES limit capped at %d.\n", numvissprites);
+	    max++;
+	}
+
+	if (max)
 	return &overflowsprite;
+
+	numvissprites = numvissprites ? 2 * numvissprites : MAXVISSPRITES;
+	vissprites = I_Realloc(vissprites, numvissprites * sizeof(*vissprites));
+	vissprite_p = vissprites + numvissprites_old;
+
+	if (numvissprites_old)
+	    fprintf(stderr, "R_NewVisSprite: Hit MAXVISSPRITES limit at %d, raised to %d.\n", numvissprites_old, numvissprites);
+    }
     
     vissprite_p++;
     return vissprite_p-1;
@@ -334,16 +363,16 @@ vissprite_t* R_NewVisSprite (void)
 // Masked means: partly transparent, i.e. stored
 //  in posts/runs of opaque pixels.
 //
-short*		mfloorclip;
-short*		mceilingclip;
+int*		mfloorclip; // [crispy] 32-bit integer math
+int*		mceilingclip; // [crispy] 32-bit integer math
 
 fixed_t		spryscale;
-fixed_t		sprtopscreen;
+int64_t		sprtopscreen; // [crispy] WiggleFix
 
-void R_DrawMaskedColumn (column_t* column)
+void R_DrawMaskedColumn (column_t* column, byte *maxextent)
 {
-    int		topscreen;
-    int 	bottomscreen;
+    int64_t	topscreen; // [crispy] WiggleFix
+    int64_t 	bottomscreen; // [crispy] WiggleFix
     fixed_t	basetexturemid;
 	
     basetexturemid = dc_texturemid;
@@ -355,8 +384,8 @@ void R_DrawMaskedColumn (column_t* column)
 	topscreen = sprtopscreen + spryscale*column->topdelta;
 	bottomscreen = topscreen + spryscale*column->length;
 
-	dc_yl = (topscreen+FRACUNIT-1)>>FRACBITS;
-	dc_yh = (bottomscreen-1)>>FRACBITS;
+	dc_yl = (int)((topscreen+FRACUNIT-1)>>FRACBITS); // [crispy] WiggleFix
+	dc_yh = (int)((bottomscreen-1)>>FRACBITS); // [crispy] WiggleFix
 		
 	if (dc_yh >= mfloorclip[dc_x])
 	    dc_yh = mfloorclip[dc_x]-1;
@@ -374,6 +403,16 @@ void R_DrawMaskedColumn (column_t* column)
 	    colfunc ();	
 	}
 	column = (column_t *)(  (byte *)column + column->length + 4);
+
+	// haleyjd 20150224: Medusa Effect emulation: if we have run over the
+	// extent of the texture, then we need to divert to reading from the
+	// Medusa emulation buffer.
+	if (maxextent && (byte *)column >= maxextent)
+	{
+	    byte *buf = R_GetMedusaBuffer(&maxextent);
+	    if (buf != NULL)
+		column = (column_t *)buf;
+	}
     }
 	
     dc_texturemid = basetexturemid;
@@ -421,14 +460,23 @@ R_DrawVisSprite
 	
     for (dc_x=vis->x1 ; dc_x<=vis->x2 ; dc_x++, frac += vis->xiscale)
     {
+	static boolean error = 0;
 	texturecolumn = frac>>FRACBITS;
 #ifdef RANGECHECK
 	if (texturecolumn < 0 || texturecolumn >= SHORT(patch->width))
-	    I_Error ("R_DrawSpriteRange: bad texturecolumn");
+	{
+	    // [crispy] make non-fatal
+	    if (!error)
+	    {
+	    fprintf (stderr, "R_DrawSpriteRange: bad texturecolumn\n");
+	    error++;
+	    }
+	    continue;
+	}
 #endif
 	column = (column_t *) ((byte *)patch +
 			       LONG(patch->columnofs[texturecolumn]));
-	R_DrawMaskedColumn (column);
+	R_DrawMaskedColumn (column, NULL);
     }
 
     colfunc = basecolfunc;
@@ -448,6 +496,7 @@ void R_ProjectSprite (mobj_t* thing)
     
     fixed_t		gxt;
     fixed_t		gyt;
+    fixed_t		gzt; // [JN] killough 3/27/98
     
     fixed_t		tx;
     fixed_t		tz;
@@ -538,6 +587,20 @@ void R_ProjectSprite (mobj_t* thing)
     if (x2 < 0)
 	return;
     
+    // [JN] killough 4/9/98: clip things which are out of view due to height
+    gzt = thing->z + spritetopoffset[lump];
+    if (thing->z > viewz + FixedDiv(viewheight << FRACBITS, xscale) ||
+        gzt < viewz - FixedDiv((viewheight << FRACBITS)-viewheight, xscale))
+    {
+	return;
+    }
+
+    // [JN] quickly reject sprites with bad x ranges
+    if (x1 >= x2)
+    {
+	return;
+    }
+
     // store information in a vissprite
     vis = R_NewVisSprite ();
     vis->mobjflags = thing->flags;
@@ -545,8 +608,8 @@ void R_ProjectSprite (mobj_t* thing)
     vis->gx = thing->x;
     vis->gy = thing->y;
     vis->gz = thing->z;
-    vis->gzt = thing->z + spritetopoffset[lump];
-    vis->texturemid = vis->gzt - viewz;
+    vis->gzt = gzt; // [JN] killough 3/27/98
+    vis->texturemid = gzt - viewz;
     vis->x1 = x1 < 0 ? 0 : x1;
     vis->x2 = x2 >= viewwidth ? viewwidth-1 : x2;	
     iscale = FixedDiv (FRACUNIT, xscale);
@@ -835,8 +898,8 @@ void R_SortVisSprites (void)
 void R_DrawSprite (vissprite_t* spr)
 {
     drawseg_t*		ds;
-    short		clipbot[SCREENWIDTH];
-    short		cliptop[SCREENWIDTH];
+    int		clipbot[WIDESCREENWIDTH]; // [crispy] 32-bit integer math
+    int		cliptop[WIDESCREENWIDTH]; // [crispy] 32-bit integer math
     int			x;
     int			r1;
     int			r2;

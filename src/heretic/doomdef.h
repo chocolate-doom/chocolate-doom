@@ -22,7 +22,6 @@
 #include <string.h>
 //haleyjd: removed WATCOMC
 #include <limits.h>
-#include "dpplimits.h"
 
 #define HERETIC_VERSION 130
 #define HERETIC_VERSION_TEXT "v1.3"
@@ -548,7 +547,7 @@ extern int leveltime;           // tics in game play for par
 
 extern ticcmd_t *netcmds;
 
-#define SAVEGAMESIZE 0x30000 * DOOM_PLUS_PLUS_SAVEGAMESIZE_FACTOR
+#define SAVEGAMESIZE 0x30000*16
 #define SAVESTRINGSIZE 24
 
 extern mapthing_t *deathmatch_p;
@@ -570,6 +569,9 @@ extern boolean autostart;
 
 extern boolean testcontrols;
 extern int testcontrols_mousespeed;
+
+extern int vanilla_savegame_limit;
+extern int vanilla_demo_limit;
 
 /*
 ===============================================================================
@@ -678,7 +680,7 @@ uint32_t SV_ReadLong(void);
 extern char *savegamedir;
 
 void G_RecordDemo(skill_t skill, int numplayers, int episode, int map,
-                  const char *name);
+                  char *name);
 // only called by startup code
 
 void G_PlayDemo(char *name);

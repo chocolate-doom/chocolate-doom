@@ -451,7 +451,7 @@ void DEH_AutoLoadPatches(const char *path)
     glob_t *glob;
 
     glob = I_StartMultiGlob(path, GLOB_FLAG_NOCASE|GLOB_FLAG_SORTED,
-                            "*.deh", "*.bex", "*.hhe", "*.seh", NULL); // [crispy] *.bex
+                            "*.deh", "*.hhe", "*.seh", NULL);
     for (;;)
     {
         filename = I_NextGlob(glob);

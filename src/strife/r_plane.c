@@ -31,7 +31,7 @@
 
 #include "r_local.h"
 #include "r_sky.h"
-#include "dpplimits.h"
+
 
 
 planefunction_t		floorfunc;
@@ -43,14 +43,14 @@ planefunction_t		ceilingfunc;
 
 // Here comes the obnoxious "visplane".
 // haleyjd 08/29/10: [STRIFE] MAXVISPLANES increased to 200
-#define MAXVISPLANES	1024 * DOOM_PLUS_PLUS_MAXVISPLANES_FACTOR
+#define MAXVISPLANES	200
 visplane_t		visplanes[MAXVISPLANES];
 visplane_t*		lastvisplane;
 visplane_t*		floorplane;
 visplane_t*		ceilingplane;
 
 // ?
-#define MAXOPENINGS	SCREENWIDTH*256 * DOOM_PLUS_PLUS_MAXOPENINGS_FACTOR
+#define MAXOPENINGS	SCREENWIDTH*64
 short			openings[MAXOPENINGS];
 short*			lastopening;
 
@@ -369,15 +369,15 @@ void R_DrawPlanes (void)
 				
 #ifdef RANGECHECK
     if (ds_p - drawsegs > MAXDRAWSEGS)
-	I_Error ("R_DrawPlanes: drawsegs overflow (%td)",
+	I_Error ("R_DrawPlanes: drawsegs overflow (%" PRIiPTR ")",
 		 ds_p - drawsegs);
     
     if (lastvisplane - visplanes > MAXVISPLANES)
-	I_Error ("R_DrawPlanes: visplane overflow (%td)",
+	I_Error ("R_DrawPlanes: visplane overflow (%" PRIiPTR ")",
 		 lastvisplane - visplanes);
     
     if (lastopening - openings > MAXOPENINGS)
-	I_Error ("R_DrawPlanes: opening overflow (%td)",
+	I_Error ("R_DrawPlanes: opening overflow (%" PRIiPTR ")",
 		 lastopening - openings);
 #endif
 

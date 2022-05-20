@@ -25,7 +25,7 @@
 #include "SDL.h"
 #include "SDL_mixer.h"
 
-#include "i_winmusic.h"
+#include "i_midipipe.h"
 
 #include "config.h"
 #include "doomtype.h"
@@ -53,12 +53,9 @@ static boolean music_initialized = false;
 
 static boolean sdl_was_initialized = false;
 
-static boolean win_midi_stream_opened = false;
-
 static boolean musicpaused = false;
 static int current_music_volume;
 
-char *fluidsynth_sf_path = "";
 char *timidity_cfg_path = "";
 
 static char *temp_timidity_cfg = NULL;
@@ -95,12 +92,6 @@ static boolean WriteWrapperTimidityConfig(char *write_path)
     return true;
 }
 
-
-// putenv requires a non-const string whose lifetime is the whole program
-// so can't use a string directly, have to do this silliness
-static char sdl_mixer_disable_fluidsynth[] = "SDL_MIXER_DISABLE_FLUIDSYNTH=1";
-
-
 void I_InitTimidityConfig(void)
 {
     char *env_string;
@@ -119,17 +110,11 @@ void I_InitTimidityConfig(void)
 
     // Set the TIMIDITY_CFG environment variable to point to the temporary
     // config file.
+
     if (success)
     {
         env_string = M_StringJoin("TIMIDITY_CFG=", temp_timidity_cfg, NULL);
         putenv(env_string);
-        // env_string deliberately not freed; see putenv manpage
-
-        // If we're explicitly configured to use Timidity (either through
-        // timidity_cfg_path or GUS mode), then disable Fluidsynth, because
-        // SDL_mixer considers Fluidsynth a higher priority than Timidity and
-        // therefore can end up circumventing Timidity entirely.
-        putenv(sdl_mixer_disable_fluidsynth);
     }
     else
     {
@@ -156,11 +141,7 @@ static void I_SDL_ShutdownMusic(void)
     if (music_initialized)
     {
 #if defined(_WIN32)
-        if (win_midi_stream_opened)
-        {
-            I_WIN_ShutdownMusic();
-            win_midi_stream_opened = false;
-        }
+        I_MidiPipe_ShutdownServer();
 #endif
         Mix_HaltMusic();
         music_initialized = false;
@@ -185,8 +166,6 @@ static boolean SDLIsInitialized(void)
 // Initialize music subsystem
 static boolean I_SDL_InitMusic(void)
 {
-    boolean fluidsynth_sf_is_set = false;
-
     // If SDL_mixer is not initialized, we have to initialize it
     // and have the responsibility to shut it down later on.
 
@@ -200,7 +179,7 @@ static boolean I_SDL_InitMusic(void)
         {
             fprintf(stderr, "Unable to set up sound.\n");
         }
-        else if (Mix_OpenAudioDevice(snd_samplerate, AUDIO_S16SYS, 2, 1024, NULL, SDL_AUDIO_ALLOW_FREQUENCY_CHANGE) < 0)
+        else if (Mix_OpenAudio(snd_samplerate, AUDIO_S16SYS, 2, 1024) < 0)
         {
             fprintf(stderr, "Error initializing SDL_mixer: %s\n",
                     Mix_GetError());
@@ -215,33 +194,17 @@ static boolean I_SDL_InitMusic(void)
         }
     }
 
+#if defined(SDL_MIXER_VERSION_ATLEAST)
+#if SDL_MIXER_VERSION_ATLEAST(2,0,2)
     // Initialize SDL_Mixer for MIDI music playback
-    Mix_Init(MIX_INIT_MID);
+    Mix_Init(MIX_INIT_MID | MIX_INIT_FLAC | MIX_INIT_OGG | MIX_INIT_MP3); // [crispy] initialize some more audio formats
+#endif
+#endif
 
     // Once initialization is complete, the temporary Timidity config
     // file can be removed.
 
     RemoveTimidityConfig();
-
-    // When using FluidSynth, proceed to set the soundfont path via
-    // Mix_SetSoundFonts if necessary.
-
-    if (strlen(fluidsynth_sf_path) > 0 && strlen(timidity_cfg_path) == 0)
-    {
-        if (M_FileExists(fluidsynth_sf_path))
-        {
-            fluidsynth_sf_is_set = true;
-        }
-        else
-        {
-            fprintf(stderr, "Can't find Fluidsynth soundfont.\n");
-        }
-    }
-
-    if (fluidsynth_sf_is_set)
-    {
-        Mix_SetSoundFonts(fluidsynth_sf_path);
-    }
 
     // If snd_musiccmd is set, we need to call Mix_SetMusicCMD to
     // configure an external music playback program.
@@ -252,11 +215,11 @@ static boolean I_SDL_InitMusic(void)
     }
 
 #if defined(_WIN32)
-    // Don't enable it for GUS or Fluidsynth, since they handle their own volume
-    // just fine.
-    if (snd_musicdevice != SNDDEVICE_GUS && !fluidsynth_sf_is_set)
+    // [AM] Start up midiproc to handle playing MIDI music.
+    // Don't enable it for GUS, since it handles its own volume just fine.
+    if (snd_musicdevice != SNDDEVICE_GUS)
     {
-        win_midi_stream_opened = I_WIN_InitMusic();
+        I_MidiPipe_InitServer();
     }
 #endif
 
@@ -282,7 +245,7 @@ static void UpdateMusicVolume(void)
     }
 
 #if defined(_WIN32)
-    I_WIN_SetMusicVolume(vol);
+    I_MidiPipe_SetVolume(vol);
 #endif
     Mix_VolumeMusic(vol);
 }
@@ -308,7 +271,7 @@ static void I_SDL_PlaySong(void *handle, boolean looping)
         return;
     }
 
-    if (handle == NULL && !win_midi_stream_opened)
+    if (handle == NULL && !midi_server_registered)
     {
         return;
     }
@@ -323,9 +286,9 @@ static void I_SDL_PlaySong(void *handle, boolean looping)
     }
 
 #if defined(_WIN32)
-    if (win_midi_stream_opened)
+    if (midi_server_registered)
     {
-        I_WIN_PlaySong(looping);
+        I_MidiPipe_PlaySong(loops);
     }
     else
 #endif
@@ -341,18 +304,9 @@ static void I_SDL_PauseSong(void)
         return;
     }
 
-#if defined(_WIN32)
-    if (win_midi_stream_opened)
-    {
-        I_WIN_PauseSong();
-    }
-    else
-#endif
-    {
-        musicpaused = true;
+    musicpaused = true;
 
-        UpdateMusicVolume();
-    }
+    UpdateMusicVolume();
 }
 
 static void I_SDL_ResumeSong(void)
@@ -362,18 +316,9 @@ static void I_SDL_ResumeSong(void)
         return;
     }
 
-#if defined(_WIN32)
-    if (win_midi_stream_opened)
-    {
-        I_WIN_ResumeSong();
-    }
-    else
-#endif
-    {
-        musicpaused = false;
+    musicpaused = false;
 
-        UpdateMusicVolume();
-    }
+    UpdateMusicVolume();
 }
 
 static void I_SDL_StopSong(void)
@@ -384,9 +329,9 @@ static void I_SDL_StopSong(void)
     }
 
 #if defined(_WIN32)
-    if (win_midi_stream_opened)
+    if (midi_server_registered)
     {
-        I_WIN_StopSong();
+        I_MidiPipe_StopSong();
     }
     else
 #endif
@@ -405,9 +350,9 @@ static void I_SDL_UnRegisterSong(void *handle)
     }
 
 #if defined(_WIN32)
-    if (win_midi_stream_opened)
+    if (midi_server_registered)
     {
-        I_WIN_UnRegisterSong();
+        I_MidiPipe_UnregisterSong();
     }
     else
 #endif
@@ -421,10 +366,13 @@ static void I_SDL_UnRegisterSong(void *handle)
 
 // Determine whether memory block is a .mid file 
 
+// [crispy] Reverse Choco's logic from "if (MIDI)" to "if (not MUS)"
+/*
 static boolean IsMid(byte *mem, int len)
 {
     return len > 4 && !memcmp(mem, "MThd", 4);
 }
+*/
 
 static boolean ConvertMus(byte *musdata, int len, const char *filename)
 {
@@ -465,9 +413,15 @@ static void *I_SDL_RegisterSong(void *data, int len)
     // MUS files begin with "MUS"
     // Reject anything which doesnt have this signature
 
-    filename = M_TempFile("doom.mid");
+    filename = M_TempFile("doom"); // [crispy] generic filename
 
+    // [crispy] Reverse Choco's logic from "if (MIDI)" to "if (not MUS)"
+    // MUS is the only format that requires conversion,
+    // let SDL_Mixer figure out the others
+/*
     if (IsMid(data, len) && len < MAXMIDLENGTH)
+*/
+    if (len < 4 || memcmp(data, "MUS\x1a", 4)) // [crispy] MUS_HEADER_MAGIC
     {
         M_WriteFile(filename, data, len);
     }
@@ -483,18 +437,15 @@ static void *I_SDL_RegisterSong(void *data, int len)
     // we have to generate a temporary file.
 
 #if defined(_WIN32)
-    // If we do not have an external music command defined, play
-    // music with the Windows native MIDI.
-    if (win_midi_stream_opened)
+    // [AM] If we do not have an external music command defined, play
+    //      music with the MIDI server.
+    if (midi_server_initialized)
     {
-        if (I_WIN_RegisterSong(filename))
+        music = NULL;
+        if (!I_MidiPipe_RegisterSong(filename))
         {
-            music = (void *) 1;
-        }
-        else
-        {
-            music = NULL;
-            fprintf(stderr, "Error loading midi: Failed to register song.\n");
+            fprintf(stderr, "Error loading midi: %s\n",
+                "Could not communicate with midiproc.");
         }
     }
     else

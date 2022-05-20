@@ -145,10 +145,6 @@ unsigned int MIDI_GetFileTimeDivision(midi_file_t *file);
 
 unsigned int MIDI_NumTracks(midi_file_t *file);
 
-// Get the number of events in a MIDI file.
-
-unsigned int MIDI_NumEvents(midi_file_t *file);
-
 // Start iterating over the events in a track.
 
 midi_track_iter_t *MIDI_IterateTrack(midi_file_t *file, unsigned int track_num);

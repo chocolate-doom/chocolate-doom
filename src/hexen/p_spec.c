@@ -22,7 +22,6 @@
 #include "m_misc.h"
 #include "p_local.h"
 #include "s_sound.h"
-#include "dpplimits.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -866,6 +865,7 @@ boolean P_ActivateLine(line_t * line, mobj_t * mo, int side,
             return false;       // never open secret doors
     }
     repeat = (line->flags & ML_REPEAT_SPECIAL) != 0;
+    buttonSuccess = false;
 
     // Construct args[] array to contain the arguments from the line, as we
     // cannot rely on struct field ordering and layout.
@@ -1145,20 +1145,8 @@ void P_SpawnSpecials(void)
         switch (lines[i].special)
         {
             case 100:          // Scroll_Texture_Left
-                if (numlinespecials >= MAXLINEANIMS)
-                {
-                    I_Error("Too many scrolling wall linedefs!");
-                }
             case 101:          // Scroll_Texture_Right
-                if (numlinespecials >= MAXLINEANIMS)
-                {
-                    I_Error("Too many scrolling wall linedefs!");
-                }
             case 102:          // Scroll_Texture_Up
-                if (numlinespecials >= MAXLINEANIMS)
-                {
-                    I_Error("Too many scrolling wall linedefs!");
-                }
             case 103:          // Scroll_Texture_Down
                 linespeciallist[numlinespecials] = &lines[i];
                 numlinespecials++;

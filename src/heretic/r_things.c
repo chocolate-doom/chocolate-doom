@@ -21,7 +21,6 @@
 #include "i_swap.h"
 #include "i_system.h"
 #include "r_local.h"
-#include "dpplimits.h"
 
 typedef struct
 {
@@ -243,8 +242,9 @@ void R_InitSpriteDefs(const char **namelist)
 ===============================================================================
 */
 
-vissprite_t vissprites[MAXVISSPRITES], *vissprite_p;
+vissprite_t *vissprites = NULL, *vissprite_p;
 int newvissprite;
+static int numvissprites;
 
 
 /*
@@ -296,8 +296,31 @@ vissprite_t overflowsprite;
 
 vissprite_t *R_NewVisSprite(void)
 {
-    if (vissprite_p == &vissprites[MAXVISSPRITES])
+    // [crispy] remove MAXVISSPRITE limit
+    if (vissprite_p == &vissprites[numvissprites])
+    {
+	static int cap;
+	int numvissprites_old = numvissprites;
+
+	// [crispy] cap MAXVISSPRITES limit at 4096
+	if (!cap && numvissprites == 32 * MAXVISSPRITES)
+	{
+	    fprintf(stderr, "R_NewVisSprite: MAXVISSPRITES limit capped at %d.\n", numvissprites);
+	    cap++;
+	}
+
+	if (cap)
         return &overflowsprite;
+
+	numvissprites = numvissprites ? 2 * numvissprites : MAXVISSPRITES;
+	vissprites = I_Realloc(vissprites, numvissprites * sizeof(*vissprites));
+	memset(vissprites + numvissprites_old, 0, (numvissprites - numvissprites_old) * sizeof(*vissprites));
+
+	vissprite_p = vissprites + numvissprites_old;
+
+	if (numvissprites_old)
+	    fprintf(stderr, "R_NewVisSprite: Hit MAXVISSPRITES limit at %d, raised to %d.\n", numvissprites_old, numvissprites);
+    }
     vissprite_p++;
     return vissprite_p - 1;
 }

@@ -243,7 +243,7 @@ fixed_t yspeed[8] =
     { 0, 47000, FRACUNIT, 47000, 0, -47000, -FRACUNIT, -47000 };
 
 #define	MAXSPECIALCROSS		8
-extern line_t *spechit[MAXSPECIALCROSS];
+extern line_t **spechit; // [crispy] remove SPECHIT limit
 extern int numspechit;
 
 boolean P_Move(mobj_t * actor)
@@ -749,7 +749,7 @@ void A_Chase(mobj_t * actor)
 //
     if (actor->info->missilestate)
     {
-        if (gameskill < sk_nightmare && actor->movecount)
+        if (gameskill != sk_nightmare && actor->movecount)
             goto nomissile;
         if (!P_CheckMissileRange(actor))
             goto nomissile;

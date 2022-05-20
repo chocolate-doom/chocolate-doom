@@ -27,7 +27,6 @@
 
 #include "deh_main.h"
 #include "deh_misc.h"
-#include "deh_bexpars.h" // [crispy] bex_pars[]
 
 #include "z_zone.h"
 #include "f_finale.h"
@@ -71,10 +70,12 @@
 #include "r_data.h"
 #include "r_sky.h"
 
-#include "g_game.h"
-#include "dpplimits.h"
 
-#define SAVEGAMESIZE	0x2c0000 * DOOM_PLUS_PLUS_SAVEGAMESIZE_FACTOR
+
+#include "g_game.h"
+
+
+#define SAVEGAMESIZE	0x4c0000
 
 void	G_ReadDemoTiccmd (ticcmd_t* cmd); 
 void	G_WriteDemoTiccmd (ticcmd_t* cmd); 
@@ -99,7 +100,9 @@ gamestate_t     gamestate;
 skill_t         gameskill; 
 boolean		respawnmonsters;
 int             gameepisode; 
-int             gamemap; 
+int             gamemap;
+
+boolean         activated; // tag 667 fix
 
 // If non-zero, exit the level after this number of minutes.
 
@@ -127,7 +130,6 @@ int             consoleplayer;          // player taking events and displaying
 int             displayplayer;          // view being displayed 
 int             levelstarttic;          // gametic at level start 
 int             totalkills, totalitems, totalsecret;    // for intermission 
- 
 char           *demoname;
 boolean         demorecording; 
 boolean         longtics;               // cph's doom 1.91 longtics hack
@@ -152,7 +154,7 @@ byte		consistancy[MAXPLAYERS][BACKUPTICS];
  
 #define MAXPLMOVE		(forwardmove[1]) 
  
-#define TURBOTHRESHOLD	0x32
+#define TURBOTHRESHOLD	MAXPLMOVE
 
 fixed_t         forwardmove[2] = {0x19, 0x32}; 
 fixed_t         sidemove[2] = {0x18, 0x28}; 
@@ -230,7 +232,7 @@ int		bodyqueslot;
 
 int             sprinkled_gibbing = 0;
 
-int G_CmdChecksum (ticcmd_t* cmd) 
+int G_CmdChecksum (ticcmd_t* cmd)
 { 
     size_t		i;
     int		sum = 0; 
@@ -344,7 +346,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
          || joybspeed >= MAX_JOY_BUTTONS
          || gamekeydown[key_speed] 
          || joybuttons[joybspeed]
-         || mousebuttons[mousebspeed];
+         || mousebuttons[mousebspeed];;
  
     forward = side = 0;
     
@@ -536,9 +538,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
             } 
         } 
     }
-
-    forward += mousey; 
-
+    
     if (strafe) 
 	side += mousex*2; 
     else 
@@ -569,7 +569,11 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     if (sendpause) 
     { 
 	sendpause = false; 
+	// [crispy] ignore un-pausing in menus during demo recording
+	if (!(menuactive && demorecording && paused))
+	{
 	cmd->buttons = BT_SPECIAL | BTS_PAUSE; 
+	}
     } 
  
     if (sendsave) 
@@ -655,7 +659,9 @@ void G_DoLoadLevel (void)
 	memset (players[i].frags,0,sizeof(players[i].frags)); 
     } 
 		 
-    P_SetupLevel (gameepisode, gamemap, 0, gameskill);    
+    P_SetupLevel (gameepisode, gamemap, 0, gameskill);
+    if (gamemode == commercial && gamemap == 7)
+	    activated = false; // tag 667 fix
     displayplayer = consoleplayer;		// view the guy you are playing    
     gameaction = ga_nothing; 
     Z_CheckHeap ();
@@ -918,7 +924,7 @@ void G_Ticker (void)
 
 	    if (demoplayback) 
 		G_ReadDemoTiccmd (cmd); 
-	    if (demorecording) 
+	    if (demorecording)
 		G_WriteDemoTiccmd (cmd);
 	    
 	    // check for turbo cheats
@@ -980,6 +986,9 @@ void G_Ticker (void)
 		    break; 
 					 
 		  case BTS_SAVEGAME: 
+		    // [crispy] never override savegames by demo playback
+		    if (demoplayback)
+			break;
 		    if (!savedescription[0]) 
                     {
                         M_StringCopy(savedescription, "NET GAME",
@@ -1086,7 +1095,8 @@ void G_PlayerReborn (int player)
     itemcount = players[player].itemcount; 
     secretcount = players[player].secretcount; 
 	 
-    p = &players[player]; 
+    p = &players[player];
+    
     memset (p, 0, sizeof(*p)); 
  
     memcpy (players[player].frags, frags, sizeof(players[player].frags)); 
@@ -1315,10 +1325,10 @@ static const int pars[4][10] =
 // DOOM II Par Times
 static const int cpars[32] =
 {
-    30,90,120,120,90,150,120,120,270,90,    //  1-10
-    210,150,150,150,210,150,420,150,210,150,    // 11-20
-    240,150,180,150,150,300,330,420,300,180,    // 21-30
-    120,30                  // 31-32
+    30,90,120,120,90,150,120,120,270,90,	//  1-10
+    210,150,150,150,210,150,420,150,210,150,	// 11-20
+    240,150,180,150,150,300,330,420,300,180,	// 21-30
+    120,30					// 31-32
 };
 
 // Chex Quest Par Times
@@ -1326,8 +1336,6 @@ static const int chexpars[6] =
 { 
     0,120,360,480,200,360
 }; 
- 
-
 // [crispy] Episode 5 par times from Sigil v1.21
 static int e5pars[10] =
 {
@@ -1636,7 +1644,7 @@ void G_WorldDone (void)
     gameaction = ga_worlddone; 
 
     if (secretexit) 
-    players[consoleplayer].didsecret = true; 
+	players[consoleplayer].didsecret = true; 
 
     if ( gamemode == commercial )
     {
@@ -1952,7 +1960,11 @@ G_InitNew
     if (fastparm || (skill == sk_nightmare && gameskill != sk_nightmare) )
     {
 	for (i=S_SARG_RUN1 ; i<=S_SARG_PAIN2 ; i++)
+	    // [crispy] Fix infinite loop caused by Demon speed bug
+	    if (states[i].tics != 1)
+	    {
 	    states[i].tics >>= 1;
+	    }
 	mobjinfo[MT_BRUISERSHOT].speed = 20*FRACUNIT;
 	mobjinfo[MT_HEADSHOT].speed = 20*FRACUNIT;
 	mobjinfo[MT_TROOPSHOT].speed = 20*FRACUNIT;
@@ -1978,6 +1990,8 @@ G_InitNew
     gameepisode = episode;
     gamemap = map;
     gameskill = skill;
+
+    viewactive = true;
 
     // Set the sky to use.
     //
@@ -2148,7 +2162,10 @@ void G_RecordDemo (const char *name)
     usergame = false;
     demoname_size = strlen(name) + 5;
     demoname = Z_Malloc(demoname_size, PU_STATIC, NULL);
-    M_snprintf(demoname, demoname_size, "%s.lmp", name);
+    if (!strstr(name, ".lmp") && !strstr(name, ".LMP"))
+        M_snprintf(demoname, demoname_size, "%s.lmp", name);
+    else
+        M_snprintf(demoname, demoname_size, "%s", name);
     maxsize = 0x20000;
 
     //!
@@ -2185,6 +2202,8 @@ int G_VanillaVersionCode(void)
     }
 }
 
+static boolean newdemo;
+
 void G_BeginRecording (void) 
 { 
     int             i; 
@@ -2200,10 +2219,19 @@ void G_BeginRecording (void)
     longtics = D_NonVanillaRecord(M_ParmExists("-longtics"),
                                   "Doom 1.91 demo format");
 
+    newdemo = D_NonVanillaRecord(newdemo,
+                                  "Extended demo format");
+
+    if (newdemo) longtics = true;
+
     // If not recording a longtics demo, record in low res
     lowres_turn = !longtics;
 
-    if (longtics)
+    if (newdemo)
+    {
+        *demo_p++ = EXTENDED_DEMO_VERSION;
+    }
+    else if (longtics)
     {
         *demo_p++ = DOOM_191_VERSION;
     }
@@ -2263,6 +2291,8 @@ static const char *DemoVersionDescription(int version)
             return "v1.9";
         case 111:
             return "v1.91 hack demo?";
+        case 222:
+            return "Extended demo";
         default:
             break;
     }
@@ -2294,6 +2324,14 @@ void G_DoPlayDemo (void)
     demobuffer = W_CacheLumpNum(lumpnum, PU_STATIC);
     demo_p = demobuffer;
 
+    // [crispy] ignore empty demo lumps
+    if (W_LumpLength(W_GetNumForName(defdemoname)) < 0xd)
+    {
+	demoplayback = true;
+	G_CheckDemoStatus();
+	return;
+    }
+
     demoversion = *demo_p++;
 
     if (demoversion >= 0 && demoversion <= 4)
@@ -2304,9 +2342,16 @@ void G_DoPlayDemo (void)
 
     longtics = false;
 
+    // Extended demo format
     // Longtics demos use the modified format that is generated by cph's
     // hacked "v1.91" doom exe. This is a non-vanilla extension.
-    if (D_NonVanillaPlayback(demoversion == DOOM_191_VERSION, lumpnum,
+    if (D_NonVanillaPlayback(demoversion == EXTENDED_DEMO_VERSION, lumpnum,
+                             "Extended demo format"))
+    {
+        newdemo = true;
+        longtics = true;
+    }
+    else if (D_NonVanillaPlayback(demoversion == DOOM_191_VERSION, lumpnum,
                              "Doom 1.91 demo format"))
     {
         longtics = true;
@@ -2323,8 +2368,19 @@ void G_DoPlayDemo (void)
                                         "/info/patches.php\n"
                               "    This appears to be %s.";
 
+        if (singledemo)
         I_Error(message, demoversion, G_VanillaVersionCode(),
                          DemoVersionDescription(demoversion));
+        // [crispy] make non-fatal
+        else
+        {
+        fprintf(stderr, message, demoversion, G_VanillaVersionCode(),
+                         DemoVersionDescription(demoversion));
+	fprintf(stderr, "\n");
+	demoplayback = true;
+	G_CheckDemoStatus();
+	return;
+        }
     }
 
     skill = *demo_p++; 
@@ -2346,8 +2402,8 @@ void G_DoPlayDemo (void)
         nomonsters = 0;
         consoleplayer = 0;
     }
-    
-        
+
+
     for (i=0 ; i<MAXPLAYERS ; i++) 
 	playeringame[i] = *demo_p++; 
 

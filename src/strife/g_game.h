@@ -51,7 +51,7 @@ void G_DoLoadGame (boolean userload);
 void G_SaveGame (int slot, char* description);
 
 // Only called by startup code.
-void G_RecordDemo (const char* name);
+void G_RecordDemo (char* name);
 
 void G_BeginRecording (void);
 
@@ -84,4 +84,6 @@ void G_DrawMouseSpeedBox(void);
 boolean G_WriteSaveName(int slot, const char *charname);
 void    G_ReadCurrent(const char *path);
 
+extern int vanilla_savegame_limit;
+extern int vanilla_demo_limit;
 #endif

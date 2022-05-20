@@ -25,8 +25,8 @@
 #include <stdlib.h>
 
 #include "doomdef.h"
+#include "i_system.h" // [crispy] I_Realloc()
 #include "r_local.h"
-#include "dpplimits.h"
 
 // OPTIMIZE: closed two sided lines as single sided
 
@@ -339,8 +339,20 @@ void R_StoreWallRange(int start, int stop)
     fixed_t vtop;
     int lightnum;
 
-    if (ds_p == &drawsegs[MAXDRAWSEGS])
-        return;                 // don't overflow and crash
+    // [crispy] remove MAXDRAWSEGS limit
+    if (ds_p == &drawsegs[numdrawsegs])
+    {
+	int numdrawsegs_old = numdrawsegs;
+
+	numdrawsegs = numdrawsegs ? 2 * numdrawsegs : MAXDRAWSEGS;
+	drawsegs = I_Realloc(drawsegs, numdrawsegs * sizeof(*drawsegs));
+	memset(drawsegs + numdrawsegs_old, 0, (numdrawsegs - numdrawsegs_old) * sizeof(*drawsegs));
+
+	ds_p = drawsegs + numdrawsegs_old;
+
+	if (numdrawsegs_old)
+	    fprintf(stderr, "R_StoreWallRange: Hit MAXDRAWSEGS limit at %d, raised to %d.\n", numdrawsegs_old, numdrawsegs);
+    }
 
 #ifdef RANGECHECK
     if (start >= viewwidth || start > stop)
@@ -357,7 +369,7 @@ void R_StoreWallRange(int start, int stop)
 // calculate rw_distance for scale calculation
 //
     rw_normalangle = curline->angle + ANG90;
-    offsetangle = abs((int) rw_normalangle - (int) rw_angle1);
+    offsetangle = abs(rw_normalangle - rw_angle1);
     if (offsetangle > ANG90)
         offsetangle = ANG90;
     distangle = ANG90 - offsetangle;

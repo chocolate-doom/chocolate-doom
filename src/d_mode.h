@@ -35,9 +35,6 @@ typedef enum
     heretic,         // Heretic
     hexen,           // Hexen
     strife,          // Strife
-    sigil,           // Sigil
-    nrftl,           // NRFTL
-    doom2f,          // Doom 2: L'Enfer sur Terre
 
     none
 } GameMission_t;
@@ -85,6 +82,7 @@ typedef enum
     freedoom,   // FreeDoom: Phase 1 + 2
     freedm,     // FreeDM
     bfgedition, // Doom Classic (Doom 3: BFG Edition)
+    unityedition,
 } GameVariant_t;
 
 // Skill level.

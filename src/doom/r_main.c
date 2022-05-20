@@ -33,8 +33,10 @@
 #include "m_menu.h"
 
 #include "r_local.h"
+#include "r_medusa.h"
 #include "r_sky.h"
 
+#include "v_video.h"
 
 
 
@@ -95,7 +97,7 @@ int			viewangletox[FINEANGLES/2];
 // The xtoviewangleangle[] table maps a screen pixel
 // to the lowest viewangle that maps back to x ranges
 // from clipangle to -clipangle.
-angle_t			xtoviewangle[SCREENWIDTH+1];
+angle_t			xtoviewangle[WIDESCREENWIDTH+1];
 
 lighttable_t*		scalelight[LIGHTLEVELS][MAXLIGHTSCALE];
 lighttable_t*		scalelightfixed[MAXLIGHTSCALE];
@@ -357,6 +359,26 @@ R_PointToAngle
     return 0;
 }
 
+angle_t
+R_PointToAngleCrispy
+( fixed_t	x,
+  fixed_t	y )
+{
+    // [crispy] fix overflows for very long distances
+    int64_t y_viewy = (int64_t)y - viewy;
+    int64_t x_viewx = (int64_t)x - viewx;
+
+    // [crispy] the worst that could happen is e.g. INT_MIN-INT_MAX = 2*INT_MIN
+    if (x_viewx < INT_MIN || x_viewx > INT_MAX ||
+        y_viewy < INT_MIN || y_viewy > INT_MAX)
+    {
+	// [crispy] preserving the angle by halfing the distance in both directions
+	x = x_viewx / 2 + viewx;
+	y = y_viewy / 2 + viewy;
+    }
+
+    return R_PointToAngle (x, y);
+}
 
 angle_t
 R_PointToAngle2
@@ -439,6 +461,9 @@ void R_InitPointToAngle (void)
 }
 
 
+// [crispy] WiggleFix: move R_ScaleFromGlobalAngle function to r_segs.c,
+// above R_StoreWallRange
+#if 0
 //
 // R_ScaleFromGlobalAngle
 // Returns the texture mapping scale
@@ -496,6 +521,7 @@ fixed_t R_ScaleFromGlobalAngle (angle_t visangle)
 	
     return scale;
 }
+#endif
 
 
 
@@ -543,6 +569,7 @@ void R_InitTextureMapping (void)
     int			x;
     int			t;
     fixed_t		focallength;
+    fixed_t		focalwidth;
     
     // Use tangent table to generate viewangletox:
     //  viewangletox will give the next greatest x
@@ -550,7 +577,10 @@ void R_InitTextureMapping (void)
     //
     // Calc focallength
     //  so FIELDOFVIEW angles covers SCREENWIDTH.
-    focallength = FixedDiv (centerxfrac,
+    // [crispy] in widescreen mode, make sure the same number of horizontal
+    // pixels shows the same part of the game scene as in regular rendering mode
+    focalwidth = widescreen ? ((SCREENWIDTH>>detailshift)/2)<<FRACBITS : centerxfrac;
+    focallength = FixedDiv (focalwidth,
 			    finetangent[FINEANGLES/4+FIELDOFVIEW/2] );
 	
     for (i=0 ; i<FINEANGLES/2 ; i++)
@@ -614,7 +644,14 @@ void R_InitLightTables (void)
     int		level;
     int		startmap; 	
     int		scale;
-    
+
+    int screenwidth;
+
+    if (widescreen)
+        screenwidth = WIDESCREENWIDTH;
+    else
+        screenwidth = SCREENWIDTH;
+
     // Calculate the light levels to use
     //  for each level / distance combination.
     for (i=0 ; i< LIGHTLEVELS ; i++)
@@ -622,7 +659,7 @@ void R_InitLightTables (void)
 	startmap = ((LIGHTLEVELS-1-i)*2)*NUMCOLORMAPS/LIGHTLEVELS;
 	for (j=0 ; j<MAXLIGHTZ ; j++)
 	{
-	    scale = FixedDiv ((SCREENWIDTH/2*FRACUNIT), (j+1)<<LIGHTZSHIFT);
+	    scale = FixedDiv ((screenwidth/2*FRACUNIT), (j+1)<<LIGHTZSHIFT);
 	    scale >>= LIGHTSCALESHIFT;
 	    level = startmap - scale/DISTMAP;
 	    
@@ -673,16 +710,28 @@ void R_ExecuteSetViewSize (void)
     int		level;
     int		startmap; 	
 
+    int screenwidth;
+
+    if (widescreen)
+        screenwidth = WIDESCREENWIDTH;
+    else
+        screenwidth = SCREENWIDTH;
+
     setsizeneeded = false;
 
-    if (setblocks == 11)
+    if (setblocks >= 11) // zoomed view
     {
-	scaledviewwidth = SCREENWIDTH;
+	scaledviewwidth = screenwidth;
 	viewheight = SCREENHEIGHT;
     }
-    else
+    else if (!widescreen)
     {
 	scaledviewwidth = setblocks*32;
+	viewheight = (setblocks*168/10)&~7;
+    }
+	else // real wide
+    {
+	scaledviewwidth = screenwidth;
 	viewheight = (setblocks*168/10)&~7;
     }
     
@@ -693,7 +742,7 @@ void R_ExecuteSetViewSize (void)
     centerx = viewwidth/2;
     centerxfrac = centerx<<FRACBITS;
     centeryfrac = centery<<FRACBITS;
-    projection = centerxfrac;
+    projection = MIN(centerxfrac, ((SCREENWIDTH>>detailshift)/2)<<FRACBITS);
 
     if (!detailshift)
     {
@@ -715,8 +764,8 @@ void R_ExecuteSetViewSize (void)
     R_InitTextureMapping ();
     
     // psprite scales
-    pspritescale = FRACUNIT*viewwidth/SCREENWIDTH;
-    pspriteiscale = FRACUNIT*SCREENWIDTH/viewwidth;
+    pspritescale = FRACUNIT*viewwidth/screenwidth;
+    pspriteiscale = FRACUNIT*screenwidth/viewwidth;
     
     // thing clipping
     for (i=0 ; i<viewwidth ; i++)
@@ -727,7 +776,8 @@ void R_ExecuteSetViewSize (void)
     {
 	dy = ((i-viewheight/2)<<FRACBITS)+FRACUNIT/2;
 	dy = abs(dy);
-	yslope[i] = FixedDiv ( (viewwidth<<detailshift)/2*FRACUNIT, dy);
+	// [crispy] adjust yslope[]
+	yslope[i] = FixedDiv ( MIN(viewwidth<<detailshift, SCREENWIDTH)/2*FRACUNIT, dy);
     }
 	
     for (i=0 ; i<viewwidth ; i++)
@@ -743,7 +793,7 @@ void R_ExecuteSetViewSize (void)
 	startmap = ((LIGHTLEVELS-1-i)*2)*NUMCOLORMAPS/LIGHTLEVELS;
 	for (j=0 ; j<MAXLIGHTSCALE ; j++)
 	{
-	    level = startmap - j*SCREENWIDTH/(viewwidth<<detailshift)/DISTMAP;
+	    level = startmap - j*screenwidth/(viewwidth<<detailshift)/DISTMAP;
 	    
 	    if (level < 0)
 		level = 0;
@@ -782,7 +832,7 @@ void R_Init (void)
     R_InitSkyMap ();
     R_InitTranslationTables ();
     printf (".");
-	
+
     framecount = 0;
 }
 
@@ -842,7 +892,7 @@ void R_SetupFrame (player_t* player)
 	fixedcolormap =
 	    colormaps
 	    + player->fixedcolormap*256;
-	
+
 	walllights = scalelightfixed;
 
 	for (i=0 ; i<MAXLIGHTSCALE ; i++)

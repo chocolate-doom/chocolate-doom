@@ -43,8 +43,9 @@ line_t*		linedef;
 sector_t*	frontsector;
 sector_t*	backsector;
 
-drawseg_t	drawsegs[MAXDRAWSEGS];
+drawseg_t*	drawsegs = NULL;
 drawseg_t*	ds_p;
+int		numdrawsegs = 0;
 
 
 void
@@ -84,7 +85,7 @@ typedef	struct
 // render overage and then bomb out by detecting the overflow after the 
 // fact. -haleyjd
 //#define MAXSEGS 32
-#define MAXSEGS (SCREENWIDTH / 2 + 1) * SCREENHEIGHT
+#define MAXSEGS (WIDESCREENWIDTH / 2 + 1)
 
 // newend is one past the last valid seg
 cliprange_t*	newend;
@@ -424,8 +425,8 @@ boolean R_CheckBBox (fixed_t*	bspcoord)
     y2 = bspcoord[checkcoord[boxpos][3]];
     
     // check clip list for an open space
-    angle1 = R_PointToAngle (x1, y1) - viewangle;
-    angle2 = R_PointToAngle (x2, y2) - viewangle;
+    angle1 = R_PointToAngleCrispy (x1, y1) - viewangle;
+    angle2 = R_PointToAngleCrispy (x2, y2) - viewangle;
 	
     span = angle1 - angle2;
 
@@ -540,8 +541,8 @@ void R_Subsector (int num)
     }
 
     // check for solidsegs overflow - extremely unsatisfactory!
-    if(newend > &solidsegs[32 * SCREENHEIGHT])
-        I_Error("R_Subsector: solidsegs overflow (vanilla may crash here)\n");
+  /*if(newend > &solidsegs[32])
+        printf("R_Subsector: solidsegs overflow (vanilla may crash here)\n");*/
 }
 
 

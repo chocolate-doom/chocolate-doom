@@ -33,7 +33,7 @@ static struct
     { pack_chex, retail,     1, 5 },
     { doom,      shareware,  1, 9 },
     { doom,      registered, 3, 9 },
-    { doom,      retail,     4, 9 },
+    { doom,      retail,     5, 9 }, // SIGIL
     { doom2,     commercial, 1, 32 },
     { pack_tnt,  commercial, 1, 32 },
     { pack_plut, commercial, 1, 32 },
@@ -43,8 +43,6 @@ static struct
     { heretic,   retail,     5, 9 },
     { hexen,     commercial, 1, 60 },
     { strife,    commercial, 1, 34 },
-    { sigil,     commercial, 5, 8  },
-    { nrftl,     commercial, 1, 9 },
 };
 
 // Check that a gamemode+gamemission received over the network is valid.
@@ -145,7 +143,7 @@ boolean D_ValidGameVersion(GameMission_t mission, GameVersion_t version)
     // All Doom variants can use the Doom versions.
 
     if (mission == doom2 || mission == pack_plut || mission == pack_tnt
-     || mission == pack_hacx || mission == pack_chex || mission == nrftl)
+     || mission == pack_hacx || mission == pack_chex)
     {
         mission = doom;
     }
@@ -180,7 +178,6 @@ boolean D_IsEpisodeMap(GameMission_t mission)
         case pack_tnt:
         case pack_plut:
         case strife:
-        case nrftl:
         default:
             return false;
     }

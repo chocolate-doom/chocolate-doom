@@ -26,7 +26,8 @@ side_t *sidedef;
 line_t *linedef;
 sector_t *frontsector, *backsector;
 
-drawseg_t drawsegs[MAXDRAWSEGS], *ds_p;
+drawseg_t *drawsegs = NULL, *ds_p;
+int numdrawsegs = 0;
 
 void R_StoreWallRange(int start, int stop);
 
@@ -67,7 +68,7 @@ typedef struct
 // render overage and then bomb out by detecting the overflow after the 
 // fact. -haleyjd
 //#define MAXSEGS 32
-#define MAXSEGS (SCREENWIDTH / 2 + 1) * SCREENHEIGHT
+#define MAXSEGS (SCREENWIDTH / 2 + 1)
 
 cliprange_t solidsegs[MAXSEGS], *newend;        // newend is one past the last valid seg
 
@@ -448,7 +449,7 @@ void R_Subsector(int num)
     }
 
     // check for solidsegs overflow - extremely unsatisfactory!
-    if(newend > &solidsegs[32 * SCREENHEIGHT])
+    if(newend > &solidsegs[32])
         I_Error("R_Subsector: solidsegs overflow (vanilla may crash here)\n");
 }
 

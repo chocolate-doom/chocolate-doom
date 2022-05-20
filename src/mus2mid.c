@@ -16,6 +16,7 @@
 // mus2mid.c - Ben Ryves 2006 - http://benryves.com - benryves@benryves.com
 // Use to convert a MUS file into a single track, type 0 MIDI file.
 
+#include <stdlib.h>
 #include <stdio.h>
 
 #include "doomtype.h"
@@ -482,6 +483,8 @@ boolean mus2mid(MEMFILE *musinput, MEMFILE *midioutput)
         return true;
     }
 
+// [crispy] enable MUS format header check
+#define CHECK_MUS_HEADER
 #ifdef CHECK_MUS_HEADER
     // Check MUS header
     if (musfileheader.id[0] != 'M'

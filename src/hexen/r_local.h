@@ -19,7 +19,6 @@
 #define __R_LOCAL__
 
 #include "i_video.h"
-#include "dpplimits.h"
 
 #define ANGLETOSKYSHIFT         22      // sky map is 256*128*4 maps
 
@@ -201,8 +200,8 @@ typedef struct
 
 typedef byte lighttable_t;      // this could be wider for >8 bit display
 
-#define MAXVISPLANES    1024 * DOOM_PLUS_PLUS_MAXVISPLANES_FACTOR
-#define MAXOPENINGS             SCREENWIDTH*256 * DOOM_PLUS_PLUS_MAXOPENINGS_FACTOR
+#define MAXVISPLANES    160
+#define MAXOPENINGS             SCREENWIDTH*64
 
 typedef struct
 {
@@ -238,7 +237,7 @@ typedef struct drawseg_s
 #define SIL_TOP         2
 #define SIL_BOTH        3
 
-#define MAXDRAWSEGS             2048 * DOOM_PLUS_PLUS_MAXDRAWSEGS_FACTOR
+#define MAXDRAWSEGS             256
 
 // A vissprite_t is a thing that will be drawn during a refresh
 typedef struct vissprite_s
@@ -467,7 +466,7 @@ void R_PrecacheLevel(void);
 //
 // R_things.c
 //
-#define MAXVISSPRITES   1024 * DOOM_PLUS_PLUS_MAXVISSPRITES_FACTOR
+#define MAXVISSPRITES   192
 
 extern vissprite_t vissprites[MAXVISSPRITES], *vissprite_p;
 extern vissprite_t vsprsortedhead;

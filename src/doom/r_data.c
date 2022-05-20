@@ -248,7 +248,7 @@ void R_GenerateComposite (int texnum)
     
     // Composite the columns together.
     patch = texture->patches;
-
+		
     for (i=0 , patch = texture->patches;
 	 i<texture->patchcount;
 	 i++, patch++)
@@ -303,6 +303,7 @@ void R_GenerateLookup (int texnum)
     int			i;
     short*		collump;
     unsigned short*	colofs;
+    int			err = 0; // killough 10/98
 	
     texture = textures[texnum];
 
@@ -346,10 +347,14 @@ void R_GenerateLookup (int texnum)
 	
     for (x=0 ; x<texture->width ; x++)
     {
-	if (!patchcount[x])
+	if (!patchcount[x] && !err++) // killough 10/98: non-verbose output
 	{
+	    // [crispy] fix absurd texture name in error message
+	    char namet[9];
+	    namet[8] = 0;
+	    memcpy (namet, texture->name, 8);
 	    printf ("R_GenerateLookup: column without a patch (%s)\n",
-		    texture->name);
+		    namet);
 	    return;
 	}
 	// I_Error ("R_GenerateLookup: column without a patch");
@@ -400,6 +405,14 @@ R_GetColumn
     return texturecomposite[tex] + ofs;
 }
 
+//
+// haleyjd 20150224: Return maximum extent of column for Medusa effect 
+// emulation. Call only after R_GetColumn (column must be in cache).
+//
+byte *R_ColumnMaxExtent(int tex)
+{
+    return texturecomposite[tex] + texturecompositesize[tex];
+}
 
 static void GenerateTextureHashTable(void)
 {
@@ -468,6 +481,7 @@ void R_InitTextures (void)
     
     int*		patchlookup;
     
+    int			totalwidth;
     int			nummappatches;
     int			offset;
     int			maxoff;
@@ -526,6 +540,8 @@ void R_InitTextures (void)
     texturewidthmask = Z_Malloc (numtextures * sizeof(*texturewidthmask), PU_STATIC, 0);
     textureheight = Z_Malloc (numtextures * sizeof(*textureheight), PU_STATIC, 0);
 
+    totalwidth = 0;
+    
     //	Really complex printing shit...
     temp1 = W_GetNumForName (DEH_String("S_START"));  // P_???????
     temp2 = W_GetNumForName (DEH_String("S_END")) - 1;
@@ -585,8 +601,10 @@ void R_InitTextures (void)
 	    patch->patch = patchlookup[SHORT(mpatch->patch)];
 	    if (patch->patch == -1)
 	    {
-		I_Error ("R_InitTextures: Missing patch in texture %s",
+		// [crispy] make non-fatal
+		fprintf (stderr, "R_InitTextures: Missing patch in texture %s\n",
 			 texture->name);
+		patch->patch = 0;
 	    }
 	}		
 	texturecolumnlump[i] = Z_Malloc (texture->width*sizeof(**texturecolumnlump), PU_STATIC,0);
@@ -598,6 +616,8 @@ void R_InitTextures (void)
 
 	texturewidthmask[i] = j-1;
 	textureheight[i] = texture->height<<FRACBITS;
+		
+	totalwidth += texture->width;
     }
 
     Z_Free(patchlookup);
@@ -719,11 +739,32 @@ int R_FlatNumForName(const char *name)
 
     i = W_CheckNumForName (name);
 
+    // [crispy] do slow linear search only if the returned
+    // lump number is not within the "flats" range
+    if (i < firstflat || i > lastflat)
+    {
+	int j;
+	// [crispy] restrict lump numbers returned by
+	// R_FlatNumForName() into the "flats" range
+	for (i = -1, j = lastflat; j >= firstflat; j--)
+	{
+	    if (!strncasecmp(lumpinfo[j]->name, name, 8))
+	    {
+		i = j;
+		break;
+	    }
+	}
+    }
+
     if (i == -1)
     {
 	namet[8] = 0;
 	memcpy (namet, name,8);
-	I_Error ("R_FlatNumForName: %s not found",namet);
+	// [crispy] make non-fatal
+	fprintf (stderr, "R_FlatNumForName: %s not found\n", namet);
+	// [crispy] since there is no "No Flat" marker,
+	// render missing flats as SKY
+	return skyflatnum;
     }
     return i - firstflat;
 }
@@ -775,8 +816,14 @@ int R_TextureNumForName(const char *name)
 
     if (i==-1)
     {
-	I_Error ("R_TextureNumForName: %s not found",
-		 name);
+	// [crispy] fix absurd texture name in error message
+	char	namet[9];
+	namet[8] = '\0';
+	memcpy (namet, name, 8);
+	// [crispy] make non-fatal
+	fprintf (stderr, "R_TextureNumForName: %s not found\n",
+		 namet);
+	return 0;
     }
     return i;
 }
@@ -816,8 +863,15 @@ void R_PrecacheLevel (void)
 
     for (i=0 ; i<numsectors ; i++)
     {
+	// [crispy] add overflow guard for the flatpresent[] array
+	if (sectors[i].floorpic < numflats)
+	{
 	flatpresent[sectors[i].floorpic] = 1;
+	}
+	if (sectors[i].ceilingpic < numflats)
+	{
 	flatpresent[sectors[i].ceilingpic] = 1;
+	}
     }
 	
     flatmemory = 0;

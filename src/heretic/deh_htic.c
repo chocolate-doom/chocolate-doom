@@ -72,7 +72,7 @@ deh_section_t *deh_section_types[] =
     NULL
 };
 
-static void SetHHEVersionByName(const char *name)
+static void SetHHEVersionByName(char *name)
 {
     int i;
 

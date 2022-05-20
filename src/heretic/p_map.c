@@ -102,7 +102,7 @@ line_t *ceilingline;
 // keep track of special lines as they are hit, but don't process them
 // until the move is proven valid
 #define	MAXSPECIALCROSS		8
-line_t *spechit[MAXSPECIALCROSS];
+line_t **spechit; // [crispy] remove SPECHIT limit
 int numspechit;
 
 mobj_t *onmobj;                 //generic global onmobj...used for landing on pods/players
@@ -225,6 +225,23 @@ boolean P_TeleportMove(mobj_t * thing, fixed_t x, fixed_t y)
 ===============================================================================
 */
 
+// [crispy] remove SPECHIT limit
+static void check_spechit(void)
+{
+	static int spechit_max;
+
+	if (numspechit >= spechit_max)
+	{
+		spechit_max = spechit_max ? spechit_max * 2 : MAXSPECIALCROSS;
+		spechit = I_Realloc(spechit, sizeof(*spechit) * spechit_max);
+
+		if (spechit_max == 2 * MAXSPECIALCROSS)
+		{
+			fprintf(stderr, "PIT_CheckLine: Hit SPECHIT limit!\n");
+		}
+	}
+}
+
 /*
 ==================
 =
@@ -264,6 +281,7 @@ boolean PIT_CheckLine(line_t * ld)
         {                       // Missiles can trigger impact specials
             if (ld->special)
             {
+                check_spechit(); // [crispy] remove SPECHIT limit
                 spechit[numspechit] = ld;
                 numspechit++;
             }
@@ -299,6 +317,7 @@ boolean PIT_CheckLine(line_t * ld)
     }
     if (ld->special)
     {                           // Contacted a special line, add it to the list
+        check_spechit(); // [crispy] remove SPECHIT limit
         spechit[numspechit] = ld;
         numspechit++;
     }

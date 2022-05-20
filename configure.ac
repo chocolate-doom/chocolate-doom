@@ -34,50 +34,6 @@ PKG_CHECK_MODULES(SDL, [sdl2 >= 2.0.7])
 PKG_CHECK_MODULES(SDLMIXER, [SDL2_mixer >= 2.0.2])
 PKG_CHECK_MODULES(SDLNET, [SDL2_net >= 2.0.0])
 
-# Check for bash-completion.
-AC_ARG_ENABLE([bash-completion],
-AS_HELP_STRING([--disable-bash-completion], [Disable bash-completion])
-)
-AS_IF([test "x$enable_bash_completion" != xno], [
-    AS_IF([test "x$HAVE_PYTHON" = xfalse], [
-        AC_MSG_WARN([Building bash-completion requires Python, but Python not found])
-        enable_bash_completion=no
-    ])
-])
-
-# Check for doc.
-AC_ARG_ENABLE([doc],
-AS_HELP_STRING([--disable-doc], [Disable documentation])
-)
-AS_IF([test "x$enable_doc" != xno], [
-    AS_IF([test "x$HAVE_PYTHON" = xfalse], [
-        AC_MSG_WARN([Building documentation requires Python, but Python not found])
-        enable_doc=no
-    ])
-])
-
-# Check for fonts.
-AC_ARG_ENABLE([fonts],
-AS_HELP_STRING([--disable-fonts], [Disable fonts])
-)
-AS_IF([test "x$enable_fonts" != xno], [
-    AS_IF([test "x$HAVE_PYTHON" = xfalse], [
-        AC_MSG_WARN([Building fonts require Python, but Python not found])
-        enable_fonts=no
-    ])
-])
-
-# Check for icons.
-AC_ARG_ENABLE([icons],
-AS_HELP_STRING([--disable-icons], [Disable icons])
-)
-AS_IF([test "x$enable_icons" != xno], [
-    AS_IF([test "x$HAVE_PYTHON" = xfalse], [
-        AC_MSG_WARN([Building icons require Python, but Python not found])
-        enable_icons=no
-    ])
-])
-
 # Check for libsamplerate.
 AC_ARG_WITH([libsamplerate],
 AS_HELP_STRING([--without-libsamplerate],
@@ -118,13 +74,6 @@ AS_IF([test "x$with_libpng" != xno], [
 # Use the specific library CFLAGS/LIBS variables instead of setting them here.
 CFLAGS="$CFLAGS $SDL_CFLAGS ${SAMPLERATE_CFLAGS:-} ${PNG_CFLAGS:-}"
 LDFLAGS="$LDFLAGS $SDL_LIBS ${SAMPLERATE_LIBS:-} ${PNG_LIBS:-}"
-case "$host" in
-  *-*-mingw* | *-*-cygwin* | *-*-msvc* )
-    LDFLAGS="$LDFLAGS -lwinmm"
-    ;;
-  *)
-esac
-
 AC_CHECK_LIB(m, log)
 
 AC_CHECK_HEADERS([dirent.h linux/kd.h dev/isa/spkrio.h dev/speaker/speaker.h])
@@ -156,10 +105,7 @@ AS_IF([test "x$enable_werror" = "xyes"], [
 ])
 
 AM_CONDITIONAL(HAVE_WINDRES, test "$WINDRES" != "")
-AM_CONDITIONAL(HAVE_BASH_COMPLETION, [test "x$enable_bash_completion" != xno])
-AM_CONDITIONAL(HAVE_DOC, [test "x$enable_doc" != xno])
-AM_CONDITIONAL(HAVE_FONTS, [test "x$enable_fonts" != xno])
-AM_CONDITIONAL(HAVE_ICONS, [test "x$enable_icons" != xno])
+AM_CONDITIONAL(HAVE_PYTHON, $HAVE_PYTHON)
 
 dnl Automake v1.8.0 is required, please upgrade!
 
@@ -179,7 +125,7 @@ AC_DEFINE_UNQUOTED(PROGRAM_PREFIX, "$PROGRAM_PREFIX",
                    Change this when you create your awesome forked version)
 AC_SUBST(PROGRAM_SPREFIX)
 
-AC_CONFIG_HEADERS(config.h:config.hin)
+AM_CONFIG_HEADER(config.h:config.hin)
 
 AC_SUBST(WINDOWS_RC_VERSION)
 AC_SUBST(SDLMIXER_CFLAGS)
@@ -197,12 +143,12 @@ AC_SUBST(PACKAGE_LICENSE)
 AC_SUBST(PACKAGE_MAINTAINER)
 AC_SUBST(PACKAGE_URL)
 AC_SUBST(PACKAGE_RDNS)
-AC_SUBST(PACKAGE_BUGREPORT)
+AC_SUBST(PACKAGE_ISSUES)
 
 dnl Shut up the datarootdir warnings.
 AC_DEFUN([AC_DATAROOTDIR_CHECKED])
 
-AC_CONFIG_FILES([
+AC_OUTPUT([
 Makefile
 man/Makefile
 man/bash-completion/Makefile

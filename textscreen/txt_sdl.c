@@ -253,13 +253,7 @@ int TXT_Init(void)
     if (TXT_SDLWindow == NULL)
         return 0;
 
-    renderer = SDL_CreateRenderer(TXT_SDLWindow, -1, SDL_RENDERER_PRESENTVSYNC);
-
-    if (renderer == NULL)
-        renderer = SDL_CreateRenderer(TXT_SDLWindow, -1, SDL_RENDERER_SOFTWARE);
-
-    if (renderer == NULL)
-        return 0;
+    renderer = SDL_CreateRenderer(TXT_SDLWindow, -1, 0);
 
     // Special handling for OS X retina display. If we successfully set the
     // highdpi flag, check the output size for the screen renderer. If we get

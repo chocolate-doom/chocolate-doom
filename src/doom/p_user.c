@@ -28,6 +28,10 @@
 
 #include "doomstat.h"
 
+#include "deh_str.h"
+#include "dstrings.h"
+
+#include "s_sound.h"
 
 
 // Index of the special effects (INVUL inverse) map.
@@ -42,7 +46,6 @@
 #define MAXBOB	0x100000	
 
 boolean		onground;
-
 
 //
 // P_Thrust
@@ -161,7 +164,7 @@ void P_MovePlayer (player_t* player)
     {
 	P_SetMobjState (player->mo, S_PLAY_RUN1);
     }
-}	
+}
 
 
 
@@ -230,6 +233,7 @@ void P_PlayerThink (player_t* player)
 {
     ticcmd_t*		cmd;
     weapontype_t	newweapon;
+    boolean         justattacked = false;
 	
     // fixme: do this in the cheat code
     if (player->cheats & CF_NOCLIP)
@@ -244,9 +248,9 @@ void P_PlayerThink (player_t* player)
 	cmd->angleturn = 0;
 	cmd->forwardmove = 0xc800/512;
 	cmd->sidemove = 0;
+        justattacked = true;
 	player->mo->flags &= ~MF_JUSTATTACKED;
     }
-			
 	
     if (player->playerstate == PST_DEAD)
     {
@@ -296,7 +300,6 @@ void P_PlayerThink (player_t* player)
 	    newweapon = wp_supershotgun;
 	}
 	
-
 	if (player->weaponowned[newweapon]
 	    && newweapon != player->readyweapon)
 	{
@@ -322,7 +325,7 @@ void P_PlayerThink (player_t* player)
     }
     else
 	player->usedown = false;
-    
+
     // cycle psprites
     P_MovePsprites (player);
     

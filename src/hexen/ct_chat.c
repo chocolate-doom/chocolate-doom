@@ -84,7 +84,18 @@ const char *CT_FromPlrText[MAXPLAYERS] = {
     "PURPLE:  "
 };
 
-char *chat_macros[10];
+char *chat_macros[10] = {
+    HUSTR_CHATMACRO0,
+    HUSTR_CHATMACRO1,
+    HUSTR_CHATMACRO2,
+    HUSTR_CHATMACRO3,
+    HUSTR_CHATMACRO4,
+    HUSTR_CHATMACRO5,
+    HUSTR_CHATMACRO6,
+    HUSTR_CHATMACRO7,
+    HUSTR_CHATMACRO8,
+    HUSTR_CHATMACRO9,
+};
 
 boolean altdown;
 boolean shiftdown;

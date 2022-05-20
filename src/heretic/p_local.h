@@ -183,7 +183,8 @@ typedef struct
 } intercept_t;
 
 #define	MAXINTERCEPTS	128
-extern intercept_t intercepts[MAXINTERCEPTS], *intercept_p;
+extern intercept_t *intercepts, *intercept_p; // [crispy] remove INTERCEPTS limit
+extern void check_intercept(void); // [crispy] remove INTERCEPTS limit
 typedef boolean(*traverser_t) (intercept_t * in);
 
 
@@ -241,8 +242,8 @@ void P_RadiusAttack(mobj_t * spot, mobj_t * source, int damage);
 // ***** P_SETUP *****
 
 extern byte *rejectmatrix;      // for fast sight rejection
-extern short *blockmaplump;     // offsets in blockmap are from here
-extern short *blockmap;
+extern int32_t *blockmaplump;   // offsets in blockmap are from here // [crispy] BLOCKMAP limit
+extern int32_t *blockmap;       // [crispy] BLOCKMAP limit
 extern int bmapwidth, bmapheight;       // in mapblocks
 extern fixed_t bmaporgx, bmaporgy;      // origin of block map
 extern mobj_t **blocklinks;     // for thing chains

@@ -2,10 +2,6 @@ add_library(doom STATIC
             am_map.c        am_map.h
             deh_ammo.c
             deh_bexstr.c
-	    deh_bexincl.c
-	   deh_bexptr.c
-	    deh_bexstr.c
-	   deh_bexpars.c   deh_bexpars.h
             deh_cheat.c
             deh_doom.c
             deh_frame.c
@@ -15,6 +11,7 @@ add_library(doom STATIC
             deh_thing.c
             deh_weapon.c
                             d_englsh.h
+            d_compat.c      d_compat.h
             d_items.c       d_items.h
             d_main.c        d_main.h
             d_net.c

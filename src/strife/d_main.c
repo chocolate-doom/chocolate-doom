@@ -79,7 +79,6 @@
 #include "r_local.h"
 
 #include "d_main.h"
-#include "dpplimits.h"
 
 //
 // D-DoomLoop()
@@ -397,22 +396,6 @@ void D_Display (void)
 // Add configuration file variable bindings.
 //
 
-
-static const char * const chat_macro_defaults[10] =
-{
-    HUSTR_CHATMACRO0,
-    HUSTR_CHATMACRO1,
-    HUSTR_CHATMACRO2,
-    HUSTR_CHATMACRO3,
-    HUSTR_CHATMACRO4,
-    HUSTR_CHATMACRO5,
-    HUSTR_CHATMACRO6,
-    HUSTR_CHATMACRO7,
-    HUSTR_CHATMACRO8,
-    HUSTR_CHATMACRO9
-};
-
-
 void D_BindVariables(void)
 {
     int i;
@@ -460,11 +443,12 @@ void D_BindVariables(void)
     M_BindIntVariable("show_talk",              &dialogshowtext);
     M_BindIntVariable("screensize",             &screenblocks);
     M_BindIntVariable("snd_channels",           &snd_channels);
+    M_BindIntVariable("vanilla_savegame_limit", &vanilla_savegame_limit);
+    M_BindIntVariable("vanilla_demo_limit",     &vanilla_demo_limit);
     M_BindIntVariable("show_endoom",            &show_endoom);
     M_BindIntVariable("show_diskicon",          &show_diskicon);
     M_BindIntVariable("graphical_startup",      &graphical_startup);
-    M_BindIntVariable("sprinkled_gibbing",      &sprinkled_gibbing);
-    
+
     M_BindStringVariable("back_flat",           &back_flat);
     M_BindStringVariable("nickname",            &nickname);
 
@@ -476,7 +460,6 @@ void D_BindVariables(void)
     {
         char buf[12];
 
-        chat_macros[i] = M_StringDuplicate(chat_macro_defaults[i]);
         M_snprintf(buf, sizeof(buf), "chatmacro%i", i);
         M_BindStringVariable(buf, &chat_macros[i]);
     }
@@ -860,7 +843,7 @@ void D_IdentifyVersion(void)
         // filepath.
         if((p = M_CheckParm("-iwad")) && p < myargc - 1)
         {
-            const char *iwad = myargv[p + 1];
+            char   *iwad     = myargv[p + 1];
             size_t  len      = strlen(iwad) + 1;
             char   *iwadpath = Z_Malloc(len, PU_STATIC, NULL);
             char   *voiceswad;
@@ -1761,12 +1744,9 @@ void D_DoomMain (void)
     {
         char *autoload_dir;
         autoload_dir = M_GetAutoloadDir("strife1.wad");
-        if (autoload_dir != NULL)
-        {
-            DEH_AutoLoadPatches(autoload_dir);
-            W_AutoLoadWADs(autoload_dir);
-            free(autoload_dir);
-        }
+        DEH_AutoLoadPatches(autoload_dir);
+        W_AutoLoadWADs(autoload_dir);
+        free(autoload_dir);
     }
 
     // Load dehacked patches specified on the command line.

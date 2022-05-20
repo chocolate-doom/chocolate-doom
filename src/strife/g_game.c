@@ -67,9 +67,9 @@
 #include "p_dialog.h"   // villsa [STRIFE]
 
 #include "g_game.h"
-#include "dpplimits.h"
 
-#define SAVEGAMESIZE	0x2c000 * DOOM_PLUS_PLUS_SAVEGAMESIZE_FACTOR
+
+#define SAVEGAMESIZE	0x2c000
 
 void	G_ReadDemoTiccmd (ticcmd_t* cmd); 
 void	G_WriteDemoTiccmd (ticcmd_t* cmd); 
@@ -233,7 +233,9 @@ int      testcontrols_mousespeed;
 mobj_t*		bodyque[BODYQUESIZE]; 
 //int       bodyqueslot; [STRIFE] unused
  
-int             sprinkled_gibbing = 0;
+int             vanilla_savegame_limit = 1;
+int             vanilla_demo_limit = 1;
+ 
 
 int G_CmdChecksum (ticcmd_t* cmd) 
 { 
@@ -386,8 +388,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     speed = key_speed >= NUMKEYS
          || joybspeed >= MAX_JOY_BUTTONS
          || gamekeydown[key_speed] 
-         || joybuttons[joybspeed]
-         || mousebuttons[mousebspeed];
+         || joybuttons[joybspeed];
  
     forward = side = 0;
 
@@ -404,9 +405,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     if (joyxmove < 0
         || joyxmove > 0  
         || gamekeydown[key_right]
-        || gamekeydown[key_left]
-        || mousebuttons[mousebturnright]
-        || mousebuttons[mousebturnleft])
+        || gamekeydown[key_left]) 
         turnheld += ticdup; 
     else 
         turnheld = 0; 
@@ -419,12 +418,12 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     // let movement keys cancel each other out
     if (strafe) 
     { 
-        if (gamekeydown[key_right] || mousebuttons[mousebturnright])
+        if (gamekeydown[key_right]) 
         {
             // fprintf(stderr, "strafe right\n");
             side += sidemove[speed]; 
         }
-        if (gamekeydown[key_left] || mousebuttons[mousebturnleft])
+        if (gamekeydown[key_left]) 
         {
             //	fprintf(stderr, "strafe left\n");
             side -= sidemove[speed]; 
@@ -437,9 +436,9 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     } 
     else 
     { 
-        if (gamekeydown[key_right] || mousebuttons[mousebturnright])
+        if (gamekeydown[key_right]) 
             cmd->angleturn -= angleturn[tspeed]; 
-        if (gamekeydown[key_left] || mousebuttons[mousebturnleft])
+        if (gamekeydown[key_left]) 
             cmd->angleturn += angleturn[tspeed]; 
         if (joyxmove > 0) 
             cmd->angleturn -= angleturn[tspeed]; 
@@ -1844,11 +1843,13 @@ void G_DoSaveGame (char *path)
 
     P_WriteSaveGameEOF();
 
+    // Enforce the same savegame size limit as in Vanilla Doom, 
+    // except if the vanilla_savegame_limit setting is turned off.
     // [STRIFE]: Verified subject to same limit.
-    
-    if (ftell(save_stream) > SAVEGAMESIZE)
+
+    if (vanilla_savegame_limit && ftell(save_stream) > SAVEGAMESIZE)
     {
-        I_Error("Savegame buffer overrun");
+        I_Error ("Savegame buffer overrun");
     }
     
     // Finish up, close the savegame file.
@@ -2161,8 +2162,19 @@ void G_WriteDemoTiccmd (ticcmd_t* cmd)
 
     if (demo_p > demoend - 16)
     {
+        if (vanilla_demo_limit)
+        {
+            // no more space 
+            G_CheckDemoStatus (); 
+            return; 
+        }
+        else
+        {
+            // Vanilla demo limit disabled: unlimited
+            // demo lengths!
 
-        IncreaseDemoBuffer();
+            IncreaseDemoBuffer();
+        }
     } 
 
     G_ReadDemoTiccmd (cmd);         // make SURE it is exactly the same 
@@ -2175,7 +2187,7 @@ void G_WriteDemoTiccmd (ticcmd_t* cmd)
 // 
 // [STRIFE] Verified unmodified
 //
-void G_RecordDemo (const char* name)
+void G_RecordDemo (char* name)
 {
     size_t demoname_size;
     int             i;

@@ -443,13 +443,6 @@ static default_t	doom_defaults_list[] =
     CONFIG_VARIABLE_INT(mouseb_forward),
 
     //!
-    // Mouse button to turn on running.  When held down, the player
-    // will run while moving.
-    //
-
-    CONFIG_VARIABLE_INT(mouseb_speed),
-
-    //!
     // @game hexen strife
     //
     // Mouse button to jump.
@@ -937,31 +930,31 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_STRING(music_pack_path),
 
     //!
-     // Full path to a soundfont file to use with FluidSynth MIDI playback.
-     //
+    // Full path to a soundfont file to use with FluidSynth MIDI playback.
+    //
 
     CONFIG_VARIABLE_STRING(fluidsynth_sf_path),
 
-     //!
-     // Full path to a Timidity configuration file to use for MIDI
-     // playback. The file will be evaluated from the directory where
-     // it is evaluated, so there is no need to add "dir" commands
-     // into it.
-     //
+    //!
+    // Full path to a Timidity configuration file to use for MIDI
+    // playback. The file will be evaluated from the directory where
+    // it is evaluated, so there is no need to add "dir" commands
+    // into it.
+    //
 
     CONFIG_VARIABLE_STRING(timidity_cfg_path),
 
-     //!
-     // Path to GUS patch files to use when operating in GUS emulation
-     // mode.
-     //
+    //!
+    // Path to GUS patch files to use when operating in GUS emulation
+    // mode.
+    //
 
     CONFIG_VARIABLE_STRING(gus_patch_path),
 
-     //!
-     // Number of kilobytes of RAM to use in GUS emulation mode. Valid
-     // values are 256, 512, 768 or 1024.
-     //
+    //!
+    // Number of kilobytes of RAM to use in GUS emulation mode. Valid
+    // values are 256, 512, 768 or 1024.
+    //
 
     CONFIG_VARIABLE_INT(gus_ram_kb),
 
@@ -986,23 +979,6 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_INT(vanilla_demo_limit),
-    
-    //!
-    // @game doom heretic hexen strife
-    //
-    // If non-zero, static limits will be increased to those of Doom Plus. 
-    // If this has a value of zero, use the limits from Vanilla. 
-    //
-
-    CONFIG_VARIABLE_INT(doom_plus_plus_limits),
-	
-    //!
-    // @game doom hexen
-    //
-    // Extra Gibbing. 
-    //
-
-    CONFIG_VARIABLE_INT(sprinkled_gibbing),
 
     //!
     // If non-zero, the game behaves like Vanilla Doom, always assuming
@@ -1018,6 +994,14 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_STRING(player_name),
+
+    //!
+    // @game doom hexen
+    //
+    // Extra Gibbing. 
+    //
+
+    CONFIG_VARIABLE_INT(sprinkled_gibbing),
 
     //!
     // If this is non-zero, the mouse will be "grabbed" when running
@@ -1064,18 +1048,6 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(mouseb_straferight),
 
     //!
-    // Mouse button to turn left.
-    //
-
-    CONFIG_VARIABLE_INT(mouseb_turnleft),
-
-    //!
-    // Mouse button to turn right.
-    //
-
-    CONFIG_VARIABLE_INT(mouseb_turnright),
-
-    //!
     // Mouse button to "use" an object, eg. a door or switch.
     //
 
@@ -1098,30 +1070,6 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_INT(mouseb_nextweapon),
-    
-    //!
-    // @game heretic
-    //
-    // Mouse button to move to the left in the inventory.
-    //
-
-    CONFIG_VARIABLE_INT(mouseb_invleft),
-
-    //!
-    // @game heretic
-    //
-    // Mouse button to move to the right in the inventory.
-    //
-
-    CONFIG_VARIABLE_INT(mouseb_invright),
-
-    //!
-    // @game heretic hexen
-    //
-    // Mouse button to use artifact.
-    //
-
-    CONFIG_VARIABLE_INT(mouseb_useartifact),
 
     //!
     // If non-zero, double-clicking a mouse button acts like pressing
@@ -1663,14 +1611,6 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_KEY(key_arti_torch),
 
     //!
-    // @game heretic
-    //
-    // Key to use "morph ovum" artifact.
-    //
-
-    CONFIG_VARIABLE_KEY(key_arti_morph),
-
-    //!
     // @game hexen
     //
     // Key to use one of each artifact.
@@ -1807,6 +1747,13 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_KEY(key_multi_msgplayer8),
+
+    //!
+    // @game doom
+    // Wide picture on widescreen resolutions
+    //
+
+    CONFIG_VARIABLE_INT(widescreen),
 };
 
 static default_collection_t extra_defaults =

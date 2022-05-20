@@ -50,8 +50,8 @@ line_t *lines;
 int numsides;
 side_t *sides;
 
-short *blockmaplump;            // offsets in blockmap are from here
-short *blockmap;
+int32_t *blockmap;	            // offsets in blockmap are from here // [crispy] BLOCKMAP limit
+int32_t *blockmaplump;          // [crispy] BLOCKMAP limit
 int bmapwidth, bmapheight;      // in mapblocks
 fixed_t bmaporgx, bmaporgy;     // origin of block map
 mobj_t **blocklinks;            // for thing chains
@@ -427,18 +427,33 @@ void P_LoadBlockMap(int lump)
 {
     int i, count;
     int lumplen;
+    short *wadblockmaplump;
 
     lumplen = W_LumpLength(lump);
 
-    blockmaplump = Z_Malloc(lumplen, PU_LEVEL, NULL);
-    W_ReadLump(lump, blockmaplump);
+    count = lumplen / 2; // [crispy] remove BLOCKMAP limit
+
+    // [crispy] remove BLOCKMAP limit
+    wadblockmaplump = Z_Malloc(lumplen, PU_LEVEL, NULL);
+    W_ReadLump(lump, wadblockmaplump);
+    blockmaplump = Z_Malloc(sizeof(*blockmaplump) * count, PU_LEVEL, NULL);
     blockmap = blockmaplump + 4;
+
+    blockmaplump[0] = SHORT(wadblockmaplump[0]);
+    blockmaplump[1] = SHORT(wadblockmaplump[1]);
+    blockmaplump[2] = (int32_t)(SHORT(wadblockmaplump[2])) & 0xffff;
+    blockmaplump[3] = (int32_t)(SHORT(wadblockmaplump[3])) & 0xffff;
 
     // Swap all short integers to native byte ordering:
 
-    count = lumplen / 2;
-    for (i = 0; i < count; i++)
-        blockmaplump[i] = SHORT(blockmaplump[i]);
+    // count = lumplen / 2; // [crispy] moved up
+    for (i=4; i<count; i++)
+    {
+        short t = SHORT(wadblockmaplump[i]);
+        blockmaplump[i] = (t == -1) ? -1l : (int32_t) t & 0xffff;
+    }
+
+    Z_Free(wadblockmaplump);
 
     bmaporgx = blockmaplump[0] << FRACBITS;
     bmaporgy = blockmaplump[1] << FRACBITS;

@@ -46,7 +46,6 @@
 
 // Data.
 #include "sounds.h"
-#include "dpplimits.h"
 
 
 //
@@ -134,7 +133,7 @@ anim_t*		lastanim;
 //
 //      Animating line specials
 //
-#define MAXLINEANIMS            16384 * DOOM_PLUS_PLUS_MAXLINEANIMS_FACTOR
+#define MAXLINEANIMS            64*256
 
 extern  short	numlinespecials;
 extern  line_t*	linespeciallist[MAXLINEANIMS];
@@ -338,7 +337,20 @@ P_FindNextHighestFloor
     line_t*     check;
     sector_t*   other;
     fixed_t     height = currentheight;
-    fixed_t     heightlist[MAX_ADJOINING_SECTORS + 2];
+    static fixed_t *heightlist = NULL;
+    static int heightlist_size = 0;
+    static fixed_t last_height_0 = 0;
+
+    // [crispy] remove MAX_ADJOINING_SECTORS Vanilla limit
+    // from prboom-plus/src/p_spec.c:404-411
+    if (sec->linecount > heightlist_size)
+    {
+	do
+	{
+	    heightlist_size = heightlist_size ? 2 * heightlist_size : MAX_ADJOINING_SECTORS;
+	} while (sec->linecount > heightlist_size);
+	heightlist = I_Realloc(heightlist, heightlist_size * sizeof(*heightlist));
+    }
 
     for (i=0, h=0; i < sec->linecount; i++)
     {
@@ -358,7 +370,7 @@ P_FindNextHighestFloor
             else if (h == MAX_ADJOINING_SECTORS + 2)
             {
                 // Fatal overflow: game crashes at 22 sectors
-                I_Error("Sector with more than 22 adjoining sectors. "
+                   fprintf(stderr, "P_FindNextHighestFloor: Sector with more than 22 adjoining sectors. "
                         "Vanilla will crash here");
             }
 
@@ -369,9 +381,22 @@ P_FindNextHighestFloor
     // Find lowest height in list
     if (!h)
     {
-        return currentheight;
+        // based on prboom-plus p_spec.c:486-490
+        // comment there:
+        //
+        // cph - my guess at doom v1.2 - 1.4beta compatibility here.
+        // If there are no higher neighbouring sectors, Heretic just returned
+        // heightlist[0] (local variable), i.e. noise off the stack. 0 is right for
+        // RETURN01 E1M2, so let's take that.
+        //
+        // SmileTheory's response:
+        // It's not *quite* random stack noise. If this function is called
+        // as part of a loop, heightlist will be at the same location as in
+        // the previous call. Doing it this way fixes 1_ON_1.WAD.
+        return (gameversion < exe_doom_1_666 ? last_height_0 : currentheight);
     }
         
+    last_height_0 = heightlist[0];
     min = heightlist[0];
     
     // Range checking? 
@@ -510,6 +535,8 @@ P_CrossSpecialLine
 
     line = &lines[linenum];
     
+    // https://doomwiki.org/wiki/Projectiles_triggering_linedefs
+    // FIXME: check should be for <= exe_doom_1_3
     if (gameversion <= exe_doom_1_2)
     {
         if (line->special > 98 && line->special != 104)
@@ -1032,6 +1059,7 @@ P_ShootSpecialLine
 void P_PlayerInSpecialSector (player_t* player)
 {
     sector_t*	sector;
+    static sector_t*	error;
 	
     sector = player->mo->subsector->sector;
 
@@ -1086,9 +1114,14 @@ void P_PlayerInSpecialSector (player_t* player)
 	break;
 			
       default:
-	I_Error ("P_PlayerInSpecialSector: "
-		 "unknown special %i",
+	// [crispy] ignore unknown special sectors
+	if (error != sector)
+	{
+	error = sector;
+	fprintf (stderr, "P_PlayerInSpecialSector: "
+		 "unknown special %i\n",
 		 sector->special);
+	}
 	break;
     };
 }
@@ -1382,6 +1415,20 @@ int EV_DoDonut(line_t*	line)
 short		numlinespecials;
 line_t*		linespeciallist[MAXLINEANIMS];
 
+static unsigned int NumScrollers()
+{
+    unsigned int i, scrollers = 0;
+
+    for (i = 0; i < numlines; i++)
+    {
+        if (48 == lines[i].special)
+        {
+            scrollers++;
+        }
+    }
+    return scrollers;
+}
+
 // Parses command line parameters.
 void P_SpawnSpecials (void)
 {
@@ -1475,7 +1522,8 @@ void P_SpawnSpecials (void)
 	  case 48:
             if (numlinespecials >= MAXLINEANIMS)
             {
-                I_Error("Too many scrolling wall linedefs!");
+                I_Error("Too many scrolling wall linedefs (%d)! "
+                        "(Vanilla limit is 64)", NumScrollers());
             }
 	    // EFFECT FIRSTCOL SCROLL+
 	    linespeciallist[numlinespecials] = &lines[i];

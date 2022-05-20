@@ -21,7 +21,6 @@
 
 
 #include <stdio.h>
-#include <ctype.h>
 
 #include "i_system.h"
 #include "i_video.h"
@@ -260,6 +259,10 @@
 #define ST_MAPTITLEY		0
 #define ST_MAPHEIGHT		1
 
+extern int screenblocks;
+
+extern boolean insavemenu; // redraw status bar
+
 // graphics are drawn to a backing screen and blitted to the real screen
 pixel_t			*st_backing_screen;
 	    
@@ -424,7 +427,14 @@ void ST_refreshBackground(void)
     {
         V_UseBuffer(st_backing_screen);
 
-	V_DrawPatch(ST_X, 0, sbar);
+    if (widescreen)
+    {
+        V_DrawPatchCenterClip (0, sbar);
+    }
+    else
+    {
+        V_DrawPatch (0, 0, sbar);
+    }
 
 	// draw right side of bar if needed (Doom 1.0)
 	if (sbarr)
@@ -435,9 +445,14 @@ void ST_refreshBackground(void)
 
         V_RestoreBuffer();
 
-	V_CopyRect(ST_X, 0, st_backing_screen, ST_WIDTH, ST_HEIGHT, ST_X, ST_Y);
+    if (screenblocks < 12 || automapactive) // [Crispy]
+    {
+	    if (widescreen)
+	        V_CopyRect(ST_X, 0, st_backing_screen, WIDESCREENWIDTH, ST_HEIGHT, ST_X, ST_Y);
+	    else
+	        V_CopyRect(ST_X + WIDEWIDTH_DELTA, 0, st_backing_screen, ST_WIDTH, ST_HEIGHT, ST_X + WIDEWIDTH_DELTA, ST_Y);
     }
-
+    }
 }
 
 
@@ -474,11 +489,12 @@ ST_Responder (event_t* ev)
       // 'dqd' cheat for toggleable god mode
       if (cht_CheckCheat(&cheat_god, ev->data2))
       {
+
 	plyr->cheats ^= CF_GODMODE;
 	if (plyr->cheats & CF_GODMODE)
 	{
 	  if (plyr->mo)
-	    plyr->mo->health = deh_god_mode_health;
+	    plyr->mo->health = 100;
 	  
 	  plyr->health = deh_god_mode_health;
 	  plyr->message = DEH_String(STSTR_DQDON);
@@ -492,6 +508,7 @@ ST_Responder (event_t* ev)
 	plyr->armorpoints = deh_idfa_armor;
 	plyr->armortype = deh_idfa_armor_class;
 	
+
 	for (i=0;i<NUMWEAPONS;i++)
 	  plyr->weaponowned[i] = true;
 	
@@ -506,6 +523,7 @@ ST_Responder (event_t* ev)
 	plyr->armorpoints = deh_idkfa_armor;
 	plyr->armortype = deh_idkfa_armor_class;
 	
+
 	for (i=0;i<NUMWEAPONS;i++)
 	  plyr->weaponowned[i] = true;
 	
@@ -532,12 +550,18 @@ ST_Responder (event_t* ev)
         // in the Ultimate Doom executable so that it would work for
         // the Doom 1 music as well.
 
-	if (gamemode == commercial || gameversion < exe_ultimate)
+	// [JN] Fixed: using a proper IDMUS selection for shareware
+	// and registered game versions.
+	if (gamemode == commercial /* || gameversion < exe_ultimate */ )
 	{
 	  musnum = mus_runnin + (buf[0]-'0')*10 + buf[1]-'0' - 1;
 	  
+	  /*
 	  if (((buf[0]-'0')*10 + buf[1]-'0') > 35
        && gameversion >= exe_doom_1_8)
+	  */
+	  // [crispy] prevent crash with IDMUS00
+	  if (musnum < mus_runnin || musnum >= NUMMUSIC)
 	    plyr->message = DEH_String(STSTR_NOMUS);
 	  else
 	    S_ChangeMusic(musnum, 1);
@@ -546,16 +570,23 @@ ST_Responder (event_t* ev)
 	{
 	  musnum = mus_e1m1 + (buf[0]-'1')*9 + (buf[1]-'1');
 	  
+	  /*
 	  if (((buf[0]-'1')*9 + buf[1]-'1') > 31)
+	  */
+	  // [crispy] prevent crash with IDMUS0x or IDMUSx0
+	  if (musnum < mus_e1m1 || musnum >= mus_runnin ||
+	      // [crispy] support dedicated music tracks for the 4th episode
+	      S_music[musnum].lumpnum == -1)
 	    plyr->message = DEH_String(STSTR_NOMUS);
 	  else
 	    S_ChangeMusic(musnum, 1);
 	}
       }
-      else if ( (logical_gamemission == doom 
-                 && cht_CheckCheat(&cheat_noclip, ev->data2))
-             || (logical_gamemission != doom 
-                 && cht_CheckCheat(&cheat_commercial_noclip,ev->data2)))
+      // [crispy] allow both idspispopd and idclip cheats in all gamemissions
+      else if ( ( /* logical_gamemission == doom
+                 && */ cht_CheckCheat(&cheat_noclip, ev->data2))
+             || ( /* logical_gamemission != doom
+                 && */ cht_CheckCheat(&cheat_commercial_noclip,ev->data2)))
       {	
         // Noclip cheat.
         // For Doom 1, use the idspipsopd cheat; for all others, use
@@ -615,6 +646,8 @@ ST_Responder (event_t* ev)
       int		epsd;
       int		map;
       
+      extern int P_GetNumForMap (int episode, int map, boolean critical);
+
       cht_GetParam(&cheat_clev, buf);
       
       if (gamemode == commercial)
@@ -680,9 +713,13 @@ ST_Responder (event_t* ev)
           }
       }
 
+      // [crispy] prevent idclev to nonexistent levels exiting the game
+      if (P_GetNumForMap(epsd, map, false) >= 0)
+      {
       // So be it.
       plyr->message = DEH_String(STSTR_CLEV);
       G_DeferedInitNew(gameskill, epsd, map);
+      }
     }
   }
   return false;
@@ -1036,6 +1073,8 @@ void ST_drawWidgets(boolean refresh)
     // used by w_frags widget
     st_fragson = deathmatch && st_statusbaron; 
 
+    if (screenblocks < 12 || automapactive)
+    {
     STlib_updateNum(&w_ready, refresh);
 
     for (i=0;i<4;i++)
@@ -1058,7 +1097,9 @@ void ST_drawWidgets(boolean refresh)
 	STlib_updateMultIcon(&w_keyboxes[i], refresh);
 
     STlib_updateNum(&w_frags, refresh);
-
+    }
+	else
+    V_DrawPatch(w_faces.x - 135 - WIDEWIDTH_DELTA, w_faces.y, faces[st_faceindex]);
 }
 
 void ST_doRefresh(void)
@@ -1084,7 +1125,7 @@ void ST_Drawer (boolean fullscreen, boolean refresh)
 {
   
     st_statusbaron = (!fullscreen) || automapactive;
-    st_firsttime = st_firsttime || refresh;
+    st_firsttime = st_firsttime || refresh || insavemenu;
 
     // Do red-/gold-shifts from damage/items
     ST_doPaletteStuff();
@@ -1094,6 +1135,7 @@ void ST_Drawer (boolean fullscreen, boolean refresh)
     // Otherwise, update as little as possible
     else ST_diffDraw();
 
+	insavemenu = false;
 }
 
 typedef void (*load_callback_t)(const char *lumpname, patch_t **variable);
@@ -1449,6 +1491,9 @@ void ST_Stop (void)
 void ST_Init (void)
 {
     ST_loadData();
-    st_backing_screen = (pixel_t *) Z_Malloc(ST_WIDTH * ST_HEIGHT * sizeof(*st_backing_screen), PU_STATIC, 0);
+    if (widescreen)
+        st_backing_screen = (pixel_t *) Z_Malloc(WIDESCREENWIDTH * ST_HEIGHT * sizeof(*st_backing_screen), PU_STATIC, 0);
+    else
+        st_backing_screen = (pixel_t *) Z_Malloc(ST_WIDTH * ST_HEIGHT * sizeof(*st_backing_screen), PU_STATIC, 0);
 }
 

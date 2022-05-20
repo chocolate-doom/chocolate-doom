@@ -31,7 +31,7 @@
 
 #include "r_local.h"
 #include "r_sky.h"
-#include "dpplimits.h"
+
 
 // OPTIMIZE: closed two sided lines as single sided
 
@@ -391,7 +391,7 @@ R_StoreWallRange
     int			lightnum;
 
     // don't overflow and crash
-	if (ds_p == &drawsegs[MAXDRAWSEGS])
+    if (ds_p == &drawsegs[MAXDRAWSEGS])
 	return;		
 		
 #ifdef RANGECHECK
@@ -407,7 +407,7 @@ R_StoreWallRange
     
     // calculate rw_distance for scale calculation
     rw_normalangle = curline->angle + ANG90;
-    offsetangle = abs((int) rw_normalangle - (int) rw_angle1);
+    offsetangle = abs(rw_normalangle-rw_angle1);
     
     if (offsetangle > ANG90)
 	offsetangle = ANG90;

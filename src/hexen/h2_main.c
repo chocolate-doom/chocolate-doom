@@ -41,7 +41,6 @@
 #include "p_local.h"
 #include "v_video.h"
 #include "w_main.h"
-#include "dpplimits.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -105,7 +104,7 @@ boolean ravpic;                 // checkparm of -ravpic
 boolean cdrom = false;          // true if cd-rom mode active
 boolean cmdfrag;                // true if a CMD_FRAG packet should be sent out
 boolean artiskip;               // whether shift-enter skips an artifact
-int maxzone = 0x640000;         // Maximum allocated for zone heap (64meg default)
+int maxzone = 0x800000;         // Maximum allocated for zone heap (8meg default)
 skill_t startskill;
 int startepisode;
 int startmap;
@@ -124,22 +123,6 @@ static const char *pagename;
 static char *SavePathConfig;
 
 // CODE --------------------------------------------------------------------
-
-
-static const char * const chat_macro_defaults[10] =
-{
-    HUSTR_CHATMACRO0,
-    HUSTR_CHATMACRO1,
-    HUSTR_CHATMACRO2,
-    HUSTR_CHATMACRO3,
-    HUSTR_CHATMACRO4,
-    HUSTR_CHATMACRO5,
-    HUSTR_CHATMACRO6,
-    HUSTR_CHATMACRO7,
-    HUSTR_CHATMACRO8,
-    HUSTR_CHATMACRO9,
-};
-
 
 void D_BindVariables(void)
 {
@@ -178,7 +161,9 @@ void D_BindVariables(void)
     M_BindIntVariable("messageson",             &messageson);
     M_BindIntVariable("screenblocks",           &screenblocks);
     M_BindIntVariable("snd_channels",           &snd_Channels);
-    M_BindIntVariable("sprinkled_gibbing",  	&sprinkled_gibbing);
+    M_BindIntVariable("vanilla_savegame_limit", &vanilla_savegame_limit);
+    M_BindIntVariable("vanilla_demo_limit",     &vanilla_demo_limit);
+
     M_BindStringVariable("savedir", &SavePathConfig);
 
     // Multiplayer chat macros
@@ -187,7 +172,6 @@ void D_BindVariables(void)
     {
         char buf[12];
 
-        chat_macros[i] = M_StringDuplicate(chat_macro_defaults[i]);
         M_snprintf(buf, sizeof(buf), "chatmacro%i", i);
         M_BindStringVariable(buf, &chat_macros[i]);
     }
@@ -240,10 +224,10 @@ static void AdjustForMacIWAD(void)
         case SNDDEVICE_SB:
             adjust_music = W_CheckNumForName("GENMIDI") < 0;
             break;
-            
+
         case SNDDEVICE_GUS:
-             adjust_music = W_CheckNumForName("DMXGUS") < 0;
-             break;
+            adjust_music = W_CheckNumForName("DMXGUS") < 0;
+            break;
 
         default:
             break;
@@ -252,12 +236,10 @@ static void AdjustForMacIWAD(void)
     if (adjust_music)
     {
         printf("** Note: You appear to be using the Mac version of the Hexen\n"
-                "** IWAD file. This is missing the lumps required for OPL or\n"
-                "** GUS emulation. Your music configuration is being adjusted\n"
-                "** IWAD file. This is missing the lumps required for OPL emulation.\n"
-                "Your music configuration is being adjusted\n"
-                "** to a different setting that won't cause the game to "
-                "crash.\n");
+               "** IWAD file. This is missing the lumps required for OPL or\n"
+               "** GUS emulation. Your music configuration is being adjusted\n"
+               "** to a different setting that won't cause the game to "
+               "crash.\n");
         snd_musicdevice = SNDDEVICE_GENMIDI;
     }
 }
@@ -449,12 +431,9 @@ void D_DoomMain(void)
     {
         char *autoload_dir;
         autoload_dir = M_GetAutoloadDir("hexen.wad");
-        if (autoload_dir != NULL)
-        {
-            // TODO? DEH_AutoLoadPatches(autoload_dir);
-            W_AutoLoadWADs(autoload_dir);
-            free(autoload_dir);
-        }
+        // TODO? DEH_AutoLoadPatches(autoload_dir);
+        W_AutoLoadWADs(autoload_dir);
+        free(autoload_dir);
     }
 
     HandleArgs();
@@ -1042,10 +1021,40 @@ void H2_DoAdvanceDemo(void)
     switch (demosequence)
     {
         case 0:
-            pagetic = 99999;
+            pagetic = 280;
             gamestate = GS_DEMOSCREEN;
             pagename = "TITLE";
             S_StartSongName("hexen", true);
+            break;
+        case 1:
+            pagetic = 210;
+            gamestate = GS_DEMOSCREEN;
+            pagename = "TITLE";
+            break;
+        case 2:
+            BorderNeedRefresh = true;
+            UpdateState |= I_FULLSCRN;
+            G_DeferedPlayDemo("demo1");
+            break;
+        case 3:
+            pagetic = 200;
+            gamestate = GS_DEMOSCREEN;
+            pagename = "CREDIT";
+            break;
+        case 4:
+            BorderNeedRefresh = true;
+            UpdateState |= I_FULLSCRN;
+            G_DeferedPlayDemo("demo2");
+            break;
+        case 5:
+            pagetic = 200;
+            gamestate = GS_DEMOSCREEN;
+            pagename = "CREDIT";
+            break;
+        case 6:
+            BorderNeedRefresh = true;
+            UpdateState |= I_FULLSCRN;
+            G_DeferedPlayDemo("demo3");
             break;
     }
 }

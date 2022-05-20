@@ -39,6 +39,7 @@
 #include "sounds.h"
 
 
+extern boolean activated; // tag 667 fix
 
 
 typedef enum
@@ -176,6 +177,8 @@ boolean P_CheckMeleeRange (mobj_t*	actor)
     pl = actor->target;
     dist = P_AproxDistance (pl->x-actor->x, pl->y-actor->y);
 
+    // Doom versions prior to v1.5 don't factor in target radius
+    // https://doomwiki.org/wiki/Versions_of_Doom_and_Doom_II#v1.5
     if (gameversion <= exe_doom_1_2)
         range = MELEERANGE;
     else
@@ -504,6 +507,7 @@ P_LookForPlayers
     c = 0;
     stop = (actor->lastlook-1)&3;
 	
+
     for ( ; ; actor->lastlook = (actor->lastlook+1)&3 )
     {
 	if (!playeringame[actor->lastlook])
@@ -810,6 +814,25 @@ void A_PosAttack (mobj_t* actor)
     P_LineAttack (actor, angle, MISSILERANGE, slope, damage);
 }
 
+void A_PosAttackPB (mobj_t* actor) // Point blank
+{
+    int		angle;
+    int		damage;
+    int		slope;
+
+    if (!actor->target)
+	return;
+
+    A_FaceTarget (actor);
+    angle = actor->angle;
+    slope = P_AimLineAttack (actor, angle, MELEERANGE);
+
+    S_StartSound (actor, sfx_pistol);
+    angle += P_SubRandom() << 18;
+    damage = ((P_Random()%5)+1)*5;
+    P_LineAttack (actor, angle, MELEERANGE, slope, damage);
+}
+
 void A_SPosAttack (mobj_t* actor)
 {
     int		i;
@@ -933,6 +956,10 @@ void A_SargAttack (mobj_t* actor)
 		
     A_FaceTarget (actor);
 
+    // Doom versions prior to v1.5 did a P_LineAttack() for melee range
+    // instead of P_CheckMeleeRange() followed by direct P_DamageMobj().
+    // https://doomwiki.org/wiki/Versions_of_Doom_and_Doom_II#v1.5
+    // FIXME: checks should be for > exe_doom_1_4 and <= exe_doom_1_4
     if (gameversion > exe_doom_1_2)
     {
         if (!P_CheckMeleeRange (actor))
@@ -1025,9 +1052,7 @@ void A_Tracer (mobj_t* actor)
     fixed_t	slope;
     mobj_t*	dest;
     mobj_t*	th;
-		
-    if (gametic & 3)
-	return;
+    extern int demostarttic;
     
     // spawn a puff of smoke behind the rocket		
     P_SpawnPuff (actor->x, actor->y, actor->z);
@@ -1683,7 +1708,7 @@ void A_BossDeath (mobj_t* mo)
     {
 	if (gamemap != 7)
 	    return;
-		
+
 	if ((mo->type != MT_FATSO)
 	    && (mo->type != MT_BABY))
 	    return;
@@ -1701,7 +1726,7 @@ void A_BossDeath (mobj_t* mo)
 	if (playeringame[i] && players[i].health > 0)
 	    break;
     
-    if (i==MAXPLAYERS)
+    if (!netgame && i==MAXPLAYERS)
 	return;	// no one left alive, so do not end game
     
     // scan the remaining thinkers to see
@@ -1730,13 +1755,16 @@ void A_BossDeath (mobj_t* mo)
 	    {
 		junk.tag = 666;
 		EV_DoFloor(&junk,lowerFloorToLowest);
-		return;
 	    }
-	    
+
 	    if (mo->type == MT_BABY)
 	    {
-		junk.tag = 667;
-		EV_DoFloor(&junk,raiseToTexture);
+		if (!activated)
+		{
+			junk.tag = 667;
+			EV_DoFloor(&junk,raiseToTexture);
+			activated = true;
+		}
 		return;
 	    }
 	}
@@ -1823,9 +1851,10 @@ A_CloseShotgun2
 
 
 
-mobj_t*		braintargets[32];
-int		numbraintargets;
+mobj_t**		braintargets = NULL;
+int		numbraintargets = 0;
 int		braintargeton = 0;
+static int	maxbraintargets; // [crispy] remove braintargets limit
 
 void A_BrainAwake (mobj_t* mo)
 {
@@ -1835,7 +1864,8 @@ void A_BrainAwake (mobj_t* mo)
     // find all the target spots
     numbraintargets = 0;
     braintargeton = 0;
-
+	
+    thinker = thinkercap.next;
     for (thinker = thinkercap.next ;
 	 thinker != &thinkercap ;
 	 thinker = thinker->next)
@@ -1847,12 +1877,26 @@ void A_BrainAwake (mobj_t* mo)
 
 	if (m->type == MT_BOSSTARGET )
 	{
+	    // [crispy] remove braintargets limit
+	    if (numbraintargets == maxbraintargets)
+	    {
+		maxbraintargets = maxbraintargets ? 2 * maxbraintargets : 32;
+		braintargets = I_Realloc(braintargets, maxbraintargets * sizeof(*braintargets));
+
+		if (maxbraintargets > 32)
+		    fprintf(stderr, "R_BrainAwake: Raised braintargets limit to %d.\n", maxbraintargets);
+	    }
+
 	    braintargets[numbraintargets] = m;
 	    numbraintargets++;
 	}
     }
 	
     S_StartSound (NULL,sfx_bossit);
+
+    // [crispy] no spawn spots available
+    if (numbraintargets == 0)
+	numbraintargets = INT_MIN;
 }
 
 
@@ -1925,6 +1969,14 @@ void A_BrainSpit (mobj_t*	mo)
     if (gameskill <= sk_easy && (!easy))
 	return;
 		
+    // [crispy] avoid division by zero by recalculating the number of spawn spots
+    if (numbraintargets == 0)
+	A_BrainAwake(NULL);
+
+    // [crispy] still no spawn spots available
+    if (numbraintargets == INT_MIN)
+	return;
+
     // shoot a cube at current target
     targ = braintargets[braintargeton];
     if (numbraintargets == 0)

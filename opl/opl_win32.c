@@ -133,7 +133,7 @@ static int OPL_Win32_Init(unsigned int port_base)
     {
         // Install driver.
 
-        if (!IOperm_InstallDriver())
+        if (1 || !IOperm_InstallDriver()) // Disable hardware OPL
         {
             return 0;
         }

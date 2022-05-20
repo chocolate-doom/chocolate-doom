@@ -137,6 +137,7 @@ boolean EV_SpawnLight(line_t * line, byte * arg, lighttype_t type)
 
     secNum = -1;
     rtn = false;
+    think = false;
     while ((secNum = P_FindSectorFromTag(arg[0], secNum)) >= 0)
     {
         think = false;

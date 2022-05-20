@@ -682,6 +682,9 @@ extern boolean autostart;
 extern boolean testcontrols;
 extern int testcontrols_mousespeed;
 
+extern int vanilla_savegame_limit;
+extern int vanilla_demo_limit;
+
 /*
 ===============================================================================
 
@@ -772,7 +775,7 @@ void G_SaveGame(int slot, char *description);
 // called by M_Responder
 
 void G_RecordDemo(skill_t skill, int numplayers, int episode, int map,
-                  const char *name);
+                  char *name);
 // only called by startup code
 
 void G_PlayDemo(char *name);

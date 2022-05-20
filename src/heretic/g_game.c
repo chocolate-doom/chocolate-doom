@@ -32,7 +32,6 @@
 #include "p_local.h"
 #include "s_sound.h"
 #include "v_video.h"
-#include "dpplimits.h"
 
 // Macros
 
@@ -110,13 +109,12 @@ int totalkills, totalitems, totalsecret;        // for intermission
 
 int mouseSensitivity;
 
-char *demoname;
+char demoname[32];
 boolean demorecording;
 boolean longtics;               // specify high resolution turning in demos
 boolean lowres_turn;
 boolean shortticfix;            // calculate lowres turning like doom
 boolean demoplayback;
-boolean netdemo;
 boolean demoextend;
 byte *demobuffer, *demo_p, *demoend;
 boolean singledemo;             // quit after playing a demo from cmdline
@@ -129,6 +127,7 @@ char *savegamedir;
 
 boolean testcontrols = false;
 int testcontrols_mousespeed;
+
 
 //
 // controls (have defaults)
@@ -201,7 +200,8 @@ boolean *joybuttons = &joyarray[1];     // allow [-1]
 int savegameslot;
 char savedescription[32];
 
-int sprinkled_gibbing = 0;
+int vanilla_demo_limit = 1;
+
 int inventoryTics;
 
 // haleyjd: removed WATCOMC
@@ -291,6 +291,7 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
     boolean strafe, bstrafe;
     int speed, tspeed, lspeed;
     int forward, side;
+    static int		joybspeed_old = 2;
     int look, arti;
     int flyheight;
 
@@ -307,10 +308,14 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
 
     strafe = gamekeydown[key_strafe] || mousebuttons[mousebstrafe]
         || joybuttons[joybstrafe];
-    speed = joybspeed >= MAX_JOY_BUTTONS
-         || gamekeydown[key_speed]
-         || joybuttons[joybspeed]
-         || mousebuttons[mousebspeed];
+
+    // fraggle: support the old "joyb_speed = 31" hack which
+    // allowed an autorun effect
+    // [crispy] when autorun is active, pressing the run key results in walking
+    speed = key_speed >= NUMKEYS
+         || joybspeed >= MAX_JOY_BUTTONS;
+    speed ^= (key_speed < NUMKEYS && gamekeydown[key_speed])
+         || (joybspeed < MAX_JOY_BUTTONS && joybuttons[joybspeed]);
 
     // haleyjd: removed externdriver crap
     
@@ -320,8 +325,7 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
 // use two stage accelerative turning on the keyboard and joystick
 //
     if (joyxmove < 0 || joyxmove > 0
-        || gamekeydown[key_right] || gamekeydown[key_left]
-        || mousebuttons[mousebturnright] || mousebuttons[mousebturnleft])
+        || gamekeydown[key_right] || gamekeydown[key_left])
         turnheld += ticdup;
     else
         turnheld = 0;
@@ -352,9 +356,9 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
 //
     if (strafe)
     {
-        if (gamekeydown[key_right] || mousebuttons[mousebturnright])
+        if (gamekeydown[key_right])
             side += sidemove[speed];
-        if (gamekeydown[key_left] || mousebuttons[mousebturnleft])
+        if (gamekeydown[key_left])
             side -= sidemove[speed];
         if (joyxmove > 0)
             side += sidemove[speed];
@@ -363,9 +367,9 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
     }
     else
     {
-        if (gamekeydown[key_right] || mousebuttons[mousebturnright])
+        if (gamekeydown[key_right])
             cmd->angleturn -= angleturn[tspeed];
-        if (gamekeydown[key_left] || mousebuttons[mousebturnleft])
+        if (gamekeydown[key_left])
             cmd->angleturn += angleturn[tspeed];
         if (joyxmove > 0)
             cmd->angleturn -= angleturn[tspeed];
@@ -422,14 +426,13 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
     }
 
     // Use artifact key
-    if (gamekeydown[key_useartifact] || mousebuttons[mousebuseartifact])
+    if (gamekeydown[key_useartifact])
     {
         if (gamekeydown[key_speed] && !noartiskip)
         {
             if (players[consoleplayer].inventory[inv_ptr].type != arti_none)
             {
                 gamekeydown[key_useartifact] = false;
-                mousebuttons[mousebuseartifact] = false;
                 cmd->arti = 0xff;       // skip artifact code
             }
         }
@@ -496,11 +499,6 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
     {
         gamekeydown[key_arti_torch] = false;
         cmd->arti = arti_torch;
-    }
-    else if (gamekeydown[key_arti_morph] && !cmd->arti)
-    {
-        gamekeydown[key_arti_morph] = false;
-        cmd->arti = arti_egg;
     }
 
 //
@@ -779,70 +777,9 @@ static void SetJoyButtons(unsigned int buttons_mask)
     }
 }
 
-// If an InventoryMove*() function is called when the inventory is not active,
-// it will instead activate the inventory without attempting to change the
-// selected item. This action is indicated by a return value of false.
-// Otherwise, it attempts to change items and will return a value of true.
-
-static boolean InventoryMoveLeft()
-{
-    inventoryTics = 5 * 35;
-    if (!inventory)
-    {
-        inventory = true;
-        return false;
-    }
-    inv_ptr--;
-    if (inv_ptr < 0)
-    {
-        inv_ptr = 0;
-    }
-    else
-    {
-        curpos--;
-        if (curpos < 0)
-        {
-            curpos = 0;
-        }
-    }
-    return true;
-}
-
-static boolean InventoryMoveRight()
-{
-    player_t *plr;
-
-    plr = &players[consoleplayer];
-    inventoryTics = 5 * 35;
-    if (!inventory)
-    {
-        inventory = true;
-        return false;
-    }
-    inv_ptr++;
-    if (inv_ptr >= plr->inventorySlotNum)
-    {
-        inv_ptr--;
-        if (inv_ptr < 0)
-            inv_ptr = 0;
-    }
-    else
-    {
-        curpos++;
-        if (curpos > 6)
-        {
-            curpos = 6;
-        }
-    }
-    return true;
-}
-
 static void SetMouseButtons(unsigned int buttons_mask)
 {
     int i;
-    player_t *plr;
-
-    plr = &players[consoleplayer];
 
     for (i=0; i<MAX_MOUSE_BUTTONS; ++i)
     {
@@ -859,22 +796,6 @@ static void SetMouseButtons(unsigned int buttons_mask)
             else if (i == mousebnextweapon)
             {
                 next_weapon = 1;
-            }
-            else if (i == mousebinvleft)
-            {
-                InventoryMoveLeft();
-            }
-            else if (i == mousebinvright)
-            {
-                InventoryMoveRight();
-            }
-            else if (i == mousebuseartifact)
-            {
-                if (!inventory)
-                {
-                    plr->readyArtifact = plr->inventory[inv_ptr].type;
-                }
-                usearti = true;
             }
         }
 
@@ -958,19 +879,51 @@ boolean G_Responder(event_t * ev)
         case ev_keydown:
             if (ev->data1 == key_invleft)
             {
-                if (InventoryMoveLeft())
+                inventoryTics = 5 * 35;
+                if (!inventory)
                 {
-                    return (true);
+                    inventory = true;
+                    break;
                 }
-                break;
+                inv_ptr--;
+                if (inv_ptr < 0)
+                {
+                    inv_ptr = 0;
+                }
+                else
+                {
+                    curpos--;
+                    if (curpos < 0)
+                    {
+                        curpos = 0;
+                    }
+                }
+                return (true);
             }
             if (ev->data1 == key_invright)
             {
-                if (InventoryMoveRight())
+                inventoryTics = 5 * 35;
+                if (!inventory)
                 {
-                    return (true);
+                    inventory = true;
+                    break;
                 }
-                break;
+                inv_ptr++;
+                if (inv_ptr >= plr->inventorySlotNum)
+                {
+                    inv_ptr--;
+                    if (inv_ptr < 0)
+                        inv_ptr = 0;
+                }
+                else
+                {
+                    curpos++;
+                    if (curpos > 6)
+                    {
+                        curpos = 6;
+                    }
+                }
+                return (true);
             }
             if (ev->data1 == key_pause && !MenuActive)
             {
@@ -1089,7 +1042,7 @@ void G_Ticker(void)
             if (demorecording)
                 G_WriteDemoTiccmd(cmd);
 
-            if (netgame && !netdemo && !(gametic % ticdup))
+            if (netgame && !(gametic % ticdup))
             {
                 if (gametic > BACKUPTICS
                     && consistancy[i][buf] != cmd->consistancy)
@@ -1672,8 +1625,6 @@ void G_InitNew(skill_t skill, int episode, int map)
     }
     if (skill < sk_baby)
         skill = sk_baby;
-    if (skill > sk_nightmare)
-        skill = sk_nightmare;
     if (episode < 1)
         episode = 1;
     // Up to 9 episodes for testing
@@ -1710,11 +1661,11 @@ void G_InitNew(skill_t skill, int episode, int map)
     paused = false;
     demorecording = false;
     demoplayback = false;
-    netdemo = false;
     viewactive = true;
     gameepisode = episode;
     gamemap = map;
     gameskill = skill;
+    viewactive = true;
     BorderNeedRefresh = true;
 
     // Set the sky map
@@ -1847,8 +1798,19 @@ void G_WriteDemoTiccmd(ticcmd_t * cmd)
 
     if (demo_p > demoend - 16)
     {
+        if (vanilla_demo_limit)
+        {
+            // no more space
+            G_CheckDemoStatus();
+            return;
+        }
+        else
+        {
+            // Vanilla demo limit disabled: unlimited
+            // demo lengths!
 
-        IncreaseDemoBuffer();
+            IncreaseDemoBuffer();
+        }
     }
 
     G_ReadDemoTiccmd(cmd);      // make SURE it is exactly the same
@@ -1865,9 +1827,8 @@ void G_WriteDemoTiccmd(ticcmd_t * cmd)
 */
 
 void G_RecordDemo(skill_t skill, int numplayers, int episode, int map,
-                  const char *name)
+                  char *name)
 {
-    size_t demoname_size;
     int i;
     int maxsize;
 
@@ -1894,9 +1855,8 @@ void G_RecordDemo(skill_t skill, int numplayers, int episode, int map,
 
     G_InitNew(skill, episode, map);
     usergame = false;
-    demoname_size = strlen(name) + 5;
-    demoname = Z_Malloc(demoname_size, PU_STATIC, NULL);
-    M_snprintf(demoname, demoname_size, "%s.lmp", name);
+    M_StringCopy(demoname, name, sizeof(demoname));
+    M_StringConcat(demoname, ".lmp", sizeof(demoname));
     maxsize = 0x20000;
 
     //!
@@ -1996,22 +1956,11 @@ void G_DoPlayDemo(void)
     for (i = 0; i < MAXPLAYERS; i++)
         playeringame[i] = (*demo_p++) != 0;
 
-    if (playeringame[1] || M_CheckParm("-solo-net") > 0
-                        || M_CheckParm("-netdemo") > 0)
-    {
-    	netgame = true;
-    }
-
     precache = false;           // don't spend a lot of time in loadlevel
     G_InitNew(skill, episode, map);
     precache = true;
     usergame = false;
     demoplayback = true;
-
-    if (netgame == true)
-    {
-      netdemo = true;
-    }
 }
 
 
@@ -2045,12 +1994,6 @@ void G_TimeDemo(char *name)
         playeringame[i] = (*demo_p++) != 0;
     }
 
-    if (playeringame[1] || M_CheckParm("-solo-net") > 0
-                        || M_CheckParm("-netdemo") > 0)
-    {
-      netgame = true;
-    }
-
     G_InitNew(skill, episode, map);
     starttime = I_GetTime();
 
@@ -2058,11 +2001,6 @@ void G_TimeDemo(char *name)
     demoplayback = true;
     timingdemo = true;
     singletics = true;
-
-    if (netgame == true)
-    {
-      netdemo = true;
-    }
 }
 
 
@@ -2097,8 +2035,6 @@ boolean G_CheckDemoStatus(void)
 
         W_ReleaseLumpName(defdemoname);
         demoplayback = false;
-        netdemo = false;
-        netgame = false;
         D_AdvanceDemo();
         return true;
     }

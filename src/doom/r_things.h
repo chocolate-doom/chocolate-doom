@@ -20,31 +20,30 @@
 #ifndef __R_THINGS__
 #define __R_THINGS__
 
-#include "dpplimits.h"
 
 
-#define MAXVISSPRITES  	1024 * DOOM_PLUS_PLUS_MAXVISSPRITES_FACTOR
+#define MAXVISSPRITES  	1024
 
-extern vissprite_t	vissprites[MAXVISSPRITES];
+extern vissprite_t*	vissprites;
 extern vissprite_t*	vissprite_p;
 extern vissprite_t	vsprsortedhead;
 
 // Constant arrays used for psprite clipping
 //  and initializing clipping.
-extern short		negonearray[SCREENWIDTH];
-extern short		screenheightarray[SCREENWIDTH];
+extern int		negonearray[WIDESCREENWIDTH]; // [crispy] 32-bit integer math
+extern int		screenheightarray[WIDESCREENWIDTH]; // [crispy] 32-bit integer math
 
 // vars for R_DrawMaskedColumn
-extern short*		mfloorclip;
-extern short*		mceilingclip;
+extern int*		mfloorclip; // [crispy] 32-bit integer math
+extern int*		mceilingclip; // [crispy] 32-bit integer math
 extern fixed_t		spryscale;
-extern fixed_t		sprtopscreen;
+extern int64_t		sprtopscreen; // [crispy] WiggleFix
 
 extern fixed_t		pspritescale;
 extern fixed_t		pspriteiscale;
 
 
-void R_DrawMaskedColumn (column_t* column);
+void R_DrawMaskedColumn (column_t* column, byte *maxextent);
 
 
 void R_SortVisSprites (void);

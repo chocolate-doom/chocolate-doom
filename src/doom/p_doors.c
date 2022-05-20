@@ -388,9 +388,11 @@ EV_VerticalDoor
 	
     // if the sector has an active thinker, use it
 
-    if (line->sidenum[side^1] == -1)
+    if (line->sidenum[side^1] == NO_INDEX)
     {
-        I_Error("EV_VerticalDoor: DR special type on 1-sided linedef");
+        // [crispy] do not crash if the wrong side of the door is pushed
+        fprintf(stderr, "EV_VerticalDoor: DR special type on 1-sided linedef\n");
+        return;
     }
 
     sec = sides[ line->sidenum[side^1]] .sector;

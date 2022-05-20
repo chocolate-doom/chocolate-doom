@@ -20,7 +20,7 @@
 
 #include "dstrings.h"
 
-const char *doom1_endmsg[] =
+char *doom1_endmsg[] =
 {
   "are you sure you want to\nquit this great game?",
   "please don't leave, there's more\ndemons to toast!",
@@ -32,7 +32,7 @@ const char *doom1_endmsg[] =
   "go ahead and leave. see if i care.",
 };
 
-const char *doom2_endmsg[] =
+char *doom2_endmsg[] =
 {
   // QuitDOOM II messages
   "are you sure you want to\nquit this great game?",

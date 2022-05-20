@@ -21,7 +21,7 @@ extern int *TerrainTypes;
 //      scrolling line specials
 //
 
-#define MAXLINEANIMS 64 * DOOM_PLUS_PLUS_MAXLINEANIMS_FACTOR
+#define MAXLINEANIMS 64
 extern short numlinespecials;
 extern line_t *linespeciallist[MAXLINEANIMS];
 
@@ -274,7 +274,7 @@ typedef struct
 
 #define PLATWAIT 3
 #define PLATSPEED FRACUNIT
-#define MAXPLATS 7680 * DOOM_PLUS_PLUS_MAXPLATS_FACTOR
+#define MAXPLATS 30
 
 extern plat_t *activeplats[MAXPLATS];
 

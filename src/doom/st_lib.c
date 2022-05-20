@@ -38,7 +38,7 @@
 
 // in AM_map.c
 extern boolean		automapactive; 
-
+extern int screenblocks;
 
 
 
@@ -118,7 +118,8 @@ STlib_drawNum
     if (n->y - ST_Y < 0)
 	I_Error("drawNum: n->y - ST_Y < 0");
 
-    V_CopyRect(x, n->y - ST_Y, st_backing_screen, w*numdigits, h, x, n->y);
+    if (screenblocks < 12 || automapactive) // [Crispy]
+    V_CopyRect(x + WIDEWIDTH_DELTA, n->y - ST_Y, st_backing_screen, w*numdigits, h, x + WIDEWIDTH_DELTA, n->y);
 
     // if non-number, do not draw it
     if (num == 1994)
@@ -228,7 +229,8 @@ STlib_updateMultIcon
 	    if (y - ST_Y < 0)
 		I_Error("updateMultIcon: y - ST_Y < 0");
 
-	    V_CopyRect(x, y-ST_Y, st_backing_screen, w, h, x, y);
+	    if (screenblocks < 12 || automapactive) // [Crispy]
+	    V_CopyRect(x + WIDEWIDTH_DELTA, y-ST_Y, st_backing_screen, w, h, x + WIDEWIDTH_DELTA, y);
 	}
 	V_DrawPatch(mi->x, mi->y, mi->p[*mi->inum]);
 	mi->oldinum = *mi->inum;
@@ -280,7 +282,8 @@ STlib_updateBinIcon
 	if (*bi->val)
 	    V_DrawPatch(bi->x, bi->y, bi->p);
 	else
-	    V_CopyRect(x, y-ST_Y, st_backing_screen, w, h, x, y);
+	    if (screenblocks < 12 || automapactive) // [Crispy]
+	    V_CopyRect(x + WIDEWIDTH_DELTA, y-ST_Y, st_backing_screen, w, h, x + WIDEWIDTH_DELTA, y);
 
 	bi->oldval = *bi->val;
     }

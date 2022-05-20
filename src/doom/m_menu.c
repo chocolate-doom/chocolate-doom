@@ -66,6 +66,8 @@ extern boolean		message_dontfuckwithme;
 
 extern boolean		chat_on;		// in heads-up code
 
+boolean insavemenu; // redraw status bar
+
 //
 // defaulted values
 //
@@ -450,6 +452,8 @@ enum
     load4,
     load5,
     load6,
+    load7, // [crispy] up to 8 savegames
+    load8, // [crispy] up to 8 savegames
     load_end
 } load_e;
 
@@ -460,7 +464,9 @@ menuitem_t LoadMenu[]=
     {1,"", M_LoadSelect,'3'},
     {1,"", M_LoadSelect,'4'},
     {1,"", M_LoadSelect,'5'},
-    {1,"", M_LoadSelect,'6'}
+    {1,"", M_LoadSelect,'6'},
+    {1,"", M_LoadSelect,'7'}, // [crispy] up to 8 savegames
+    {1,"", M_LoadSelect,'8'}  // [crispy] up to 8 savegames
 };
 
 menu_t  LoadDef =
@@ -483,7 +489,9 @@ menuitem_t SaveMenu[]=
     {1,"", M_SaveSelect,'3'},
     {1,"", M_SaveSelect,'4'},
     {1,"", M_SaveSelect,'5'},
-    {1,"", M_SaveSelect,'6'}
+    {1,"", M_SaveSelect,'6'},
+    {1,"", M_SaveSelect,'7'}, // [crispy] up to 8 savegames
+    {1,"", M_SaveSelect,'8'}  // [crispy] up to 8 savegames
 };
 
 menu_t  SaveDef =
@@ -509,6 +517,7 @@ void M_ReadSaveStrings(void)
 
     for (i = 0;i < load_end;i++)
     {
+        int retval;
         M_StringCopy(name, P_SaveGameFile(i), sizeof(name));
 
 	handle = fopen(name, "rb");
@@ -518,9 +527,9 @@ void M_ReadSaveStrings(void)
             LoadMenu[i].status = 0;
             continue;
         }
-	fread(&savegamestrings[i], 1, SAVESTRINGSIZE, handle);
+        retval = fread(&savegamestrings[i], 1, SAVESTRINGSIZE, handle);
 	fclose(handle);
-	LoadMenu[i].status = 1;
+        LoadMenu[i].status = retval == SAVESTRINGSIZE;
     }
 }
 
@@ -539,6 +548,7 @@ void M_DrawLoad(void)
     {
 	M_DrawSaveLoadBorder(LoadDef.x,LoadDef.y+LINEHEIGHT*i);
 	M_WriteText(LoadDef.x,LoadDef.y+LINEHEIGHT*i,savegamestrings[i]);
+	insavemenu = true;
     }
 }
 
@@ -615,6 +625,7 @@ void M_DrawSave(void)
 	i = M_StringWidth(savegamestrings[saveSlot]);
 	M_WriteText(LoadDef.x + i,LoadDef.y+LINEHEIGHT*saveSlot,"_");
     }
+	insavemenu = true;
 }
 
 //
@@ -698,8 +709,9 @@ void M_QuickSave(void)
 	quickSaveSlot = -2;	// means to pick a slot now
 	return;
     }
-    DEH_snprintf(tempstring, 80, QSPROMPT, savegamestrings[quickSaveSlot]);
-    M_StartMessage(tempstring,M_QuickSaveResponse,true);
+    DEH_snprintf(tempstring, sizeof(tempstring),
+                 QSPROMPT, savegamestrings[quickSaveSlot]);
+    M_StartMessage(tempstring, M_QuickSaveResponse, true);
 }
 
 
@@ -730,8 +742,9 @@ void M_QuickLoad(void)
 	M_StartMessage(DEH_String(QSAVESPOT),NULL,false);
 	return;
     }
-    DEH_snprintf(tempstring, 80, QLPROMPT, savegamestrings[quickSaveSlot]);
-    M_StartMessage(tempstring,M_QuickLoadResponse,true);
+    DEH_snprintf(tempstring, sizeof(tempstring),
+                 QLPROMPT, savegamestrings[quickSaveSlot]);
+    M_StartMessage(tempstring, M_QuickLoadResponse, true);
 }
 
 
@@ -760,14 +773,28 @@ void M_DrawReadThis2(void)
     // We only ever draw the second page if this is 
     // gameversion == exe_doom_1_9 and gamemode == registered
 
-    V_DrawPatchDirect(0, 0, W_CacheLumpName(DEH_String("HELP1"), PU_CACHE));
+    if (widescreen)
+    {
+        V_DrawPatchCenterClip(0, W_CacheLumpName(DEH_String("HELP1"), PU_CACHE));
+    }
+    else
+    {
+        V_DrawPatchDirect(0, 0, W_CacheLumpName(DEH_String("HELP1"), PU_CACHE));
+    }
 }
 
 void M_DrawReadThisCommercial(void)
 {
     inhelpscreens = true;
 
-    V_DrawPatchDirect(0, 0, W_CacheLumpName(DEH_String("HELP"), PU_CACHE));
+    if (widescreen)
+    {
+        V_DrawPatchCenterClip(0, W_CacheLumpName(DEH_String("HELP"), PU_CACHE));
+    }
+    else
+    {
+        V_DrawPatchDirect(0, 0, W_CacheLumpName(DEH_String("HELP"), PU_CACHE));
+    }
 }
 
 
@@ -932,10 +959,10 @@ void M_DrawOptions(void)
                                       PU_CACHE));
 
     M_DrawThermo(OptionsDef.x, OptionsDef.y + LINEHEIGHT * (mousesens + 1),
-		 10, mouseSensitivity);
+		 20, mouseSensitivity);
 
     M_DrawThermo(OptionsDef.x,OptionsDef.y+LINEHEIGHT*(scrnsize+1),
-		 9,screenSize);
+		 10,screenSize);
 }
 
 void M_Options(int choice)
@@ -1107,7 +1134,7 @@ void M_ChangeSensitivity(int choice)
 	    mouseSensitivity--;
 	break;
       case 1:
-	if (mouseSensitivity < 9)
+	if (mouseSensitivity < 19)
 	    mouseSensitivity++;
 	break;
     }
@@ -1144,14 +1171,19 @@ void M_SizeDisplay(int choice)
 	}
 	break;
       case 1:
-	if (screenSize < 8)
+	if (screenSize < 9)
 	{
 	    screenblocks++;
 	    screenSize++;
 	}
 	break;
     }
-	
+
+    if (widescreen && screenblocks < 10)
+    {
+	    screenblocks = 10;
+	    screenSize = screenblocks -3;
+    }
 
     R_SetViewSize (screenblocks, detailLevel);
 }
@@ -1182,27 +1214,14 @@ M_DrawThermo
     }
     V_DrawPatchDirect(xx, y, W_CacheLumpName(DEH_String("M_THERMR"), PU_CACHE));
 
+    // [crispy] do not crash anymore if value exceeds thermometer range
+    if (thermDot > thermWidth)
+        thermDot = thermWidth;
+
     V_DrawPatchDirect((x + 8) + thermDot * 8, y,
 		      W_CacheLumpName(DEH_String("M_THERMO"), PU_CACHE));
 }
 
-void
-M_DrawEmptyCell
-( menu_t*	menu,
-  int		item )
-{
-    V_DrawPatchDirect(menu->x - 10, menu->y + item * LINEHEIGHT - 1, 
-                      W_CacheLumpName(DEH_String("M_CELL1"), PU_CACHE));
-}
-
-void
-M_DrawSelCell
-( menu_t*	menu,
-  int		item )
-{
-    V_DrawPatchDirect(menu->x - 10, menu->y + item * LINEHEIGHT - 1,
-                      W_CacheLumpName(DEH_String("M_CELL2"), PU_CACHE));
-}
 
 void
 M_StartMessage
@@ -1301,7 +1320,7 @@ M_WriteText
 	}
 		
 	w = SHORT (hu_font[c]->width);
-	if (cx+w > SCREENWIDTH)
+	if (cx+w > WIDESCREENWIDTH)
 	    break;
 	V_DrawPatchDirect(cx, cy, hu_font[c]);
 	cx+=w;
@@ -1860,6 +1879,10 @@ void M_StartControlPanel (void)
     // intro might call this repeatedly
     if (menuactive)
 	return;
+
+    // [crispy] entering menus while recording demos pauses the game
+    if (demorecording && !paused)
+        sendpause = true;
     
     menuactive = 1;
     currentMenu = &MainDef;         // JDC
@@ -1998,6 +2021,11 @@ void M_Drawer (void)
 void M_ClearMenus (void)
 {
     menuactive = 0;
+
+    // [crispy] entering menus while recording demos pauses the game
+    if (demorecording && paused)
+        sendpause = true;
+
     // if (!netgame && usergame && paused)
     //       sendpause = true;
 }
@@ -2038,6 +2066,8 @@ void M_Init (void)
     itemOn = currentMenu->lastOn;
     whichSkull = 0;
     skullAnimCounter = 10;
+    if (widescreen && screenblocks < 10)
+        screenblocks = 10;
     screenSize = screenblocks - 3;
     messageToPrint = 0;
     messageString = NULL;
@@ -2093,5 +2123,13 @@ void M_Init (void)
     }
 
     opldev = M_CheckParm("-opldev") > 0;
+}
+
+// [crispy] indicate game version mismatch
+void M_LoadGameVerMismatch ()
+{
+	M_StartMessage("Game Version Mismatch\n\n"PRESSKEY, NULL, false);
+	messageToPrint = 2;
+	S_StartSound(NULL,sfx_swtchn);
 }
 

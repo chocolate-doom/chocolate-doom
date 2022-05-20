@@ -82,8 +82,9 @@ line_t*		ceilingline;
 // keep track of special lines as they are hit,
 // but don't process them until the move is proven valid
 
-line_t*		spechit[MAXSPECIALCROSS];
+line_t**	spechit; // [crispy] remove SPECHIT limit
 int		numspechit;
+static int spechit_max; // [crispy] remove SPECHIT limit
 
 
 
@@ -227,7 +228,7 @@ boolean PIT_CheckLine (line_t* ld)
     
     if (!ld->backsector)
 	return false;		// one sided line
-		
+
     if (!(tmthing->flags & MF_MISSILE) )
     {
 	if ( ld->flags & ML_BLOCKING )
@@ -256,12 +257,21 @@ boolean PIT_CheckLine (line_t* ld)
     // if contacted a special line, add it to the list
     if (ld->special)
     {
+        // [crispy] remove SPECHIT limit
+        if (numspechit >= spechit_max)
+        {
+            spechit_max = spechit_max ? spechit_max * 2 : MAXSPECIALCROSS;
+            spechit = I_Realloc(spechit, sizeof(*spechit) * spechit_max);
+        }
         spechit[numspechit] = ld;
 	numspechit++;
 
         // fraggle: spechits overrun emulation code from prboom-plus
         if (numspechit > MAXSPECIALCROSS_ORIGINAL)
         {
+            // [crispy] print a warning
+            if (numspechit == MAXSPECIALCROSS_ORIGINAL + 1)
+                fprintf(stderr, "PIT_CheckLine: Triggered SPECHITS overflow!\n");
             SpechitOverrun(ld);
         }
     }
@@ -451,7 +461,7 @@ P_CheckPosition
 
     for (bx=xl ; bx<=xh ; bx++)
 	for (by=yl ; by<=yh ; by++)
-	    if (!P_BlockThingsIterator(bx,by,PIT_CheckThing))
+	    if (!P_BlockThingsIterator(bx,by,PIT_CheckThing) && (thing->type < MT_MISC87 || thing->type > MT_MISC90))
 		return false;
     
     // check lines
@@ -1190,7 +1200,7 @@ void P_UseLines (player_t*	player)
     y1 = player->mo->y;
     x2 = x1 + (USERANGE>>FRACBITS)*finecosine[angle];
     y2 = y1 + (USERANGE>>FRACBITS)*finesine[angle];
-	
+
     P_PathTraverse ( x1, y1, x2, y2, PT_ADDLINES, PTR_UseTraverse );
 }
 
@@ -1317,6 +1327,7 @@ boolean PIT_ChangeSector (mobj_t*	thing)
     {
 	P_SetMobjState (thing, S_GIBS);
 
+
     if (gameversion > exe_doom_1_2)
 	    thing->flags &= ~MF_SOLID;
 	thing->height = 0;
@@ -1327,7 +1338,7 @@ boolean PIT_ChangeSector (mobj_t*	thing)
     }
 
     // crunch dropped items
-    if (thing->flags & MF_DROPPED)
+    if (thing->flags & MF_DROPPED && thing->type < MT_MISC87)
     {
 	P_RemoveMobj (thing);
 	

@@ -140,7 +140,27 @@ static char *ExecReadOutput(char **argv)
 
 #endif
 
+// This is currently disabled on Windows because it doesn't work.
+// Current issues:
+//   * On Windows Vista+ the mouse cursor freezes when the dialog is
+//     opened. This is probably some conflict with SDL (might be
+//     resolved by opening the dialog in a separate thread so that
+//     TXT_UpdateScreen can be run in the background).
+//   * On Windows XP the program exits/crashes when the dialog is
+//     closed.
 #if defined(_WIN32)
+
+int TXT_CanSelectFiles(void)
+{
+    return 0;
+}
+
+char *TXT_SelectFile(const char *window_title, const char **extensions)
+{
+    return NULL;
+}
+
+#elif defined(xxxdisabled_WIN32)
 
 // Windows code. Use comdlg32 to pop up a dialog box.
 
@@ -155,7 +175,7 @@ static BOOL (*MySHGetPathFromIDList)(LPITEMIDLIST, LPTSTR) = NULL;
 
 static int LoadDLLs(void)
 {
-    HMODULE comdlg32, shell32;
+    HMODULE comdlg32, shell32
 
     comdlg32 = LoadLibraryW(L"comdlg32.dll");
     if (comdlg32 == NULL)

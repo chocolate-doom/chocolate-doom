@@ -27,9 +27,15 @@
 #define SCREENWIDTH  320
 #define SCREENHEIGHT 200
 
+// [JN] Wide screen definition.
+
+#define WIDESCREENWIDTH 440
+
 // Screen height used when aspect_ratio_correct=true.
 
 #define SCREENHEIGHT_4_3 240
+
+extern int WIDEWIDTH_DELTA; // [Crispy] Horizontal widescreen offset
 
 typedef boolean (*grabmouse_callback_t)(void);
 
@@ -93,11 +99,14 @@ extern int aspect_ratio_correct;
 extern int integer_scaling;
 extern int vga_porch_flash;
 extern int force_software_renderer;
+extern int widescreen;
 
 extern char *window_position;
 void I_GetWindowPosition(int *x, int *y, int w, int h);
 
 // Joystic/gamepad hysteresis
 extern unsigned int joywait;
+
+extern boolean isunityedition;
 
 #endif

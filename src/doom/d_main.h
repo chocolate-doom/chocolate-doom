@@ -45,5 +45,6 @@ void D_StartTitle (void);
 
 extern  gameaction_t    gameaction;
 
+
 #endif
 

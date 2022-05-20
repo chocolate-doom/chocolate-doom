@@ -72,6 +72,7 @@ i_glob.c             i_glob.h              \
 i_input.c            i_input.h             \
 i_joystick.c         i_joystick.h          \
                      i_swap.h              \
+i_midipipe.c         i_midipipe.h          \
 i_musicpack.c                              \
 i_oplmusic.c                               \
 i_pcsound.c                                \
@@ -81,7 +82,6 @@ i_sound.c            i_sound.h             \
 i_timer.c            i_timer.h             \
 i_video.c            i_video.h             \
 i_videohr.c          i_videohr.h           \
-i_winmusic.c         i_winmusic.h          \
 midifile.c           midifile.h            \
 mus2mid.c            mus2mid.h             \
 m_bbox.c             m_bbox.h              \
@@ -89,6 +89,7 @@ m_cheat.c            m_cheat.h             \
 m_config.c           m_config.h            \
 m_controls.c         m_controls.h          \
 m_fixed.c            m_fixed.h             \
+r_medusa.c           r_medusa.h            \
 net_client.c         net_client.h          \
 net_common.c         net_common.h          \
 net_dedicated.c      net_dedicated.h       \
@@ -271,7 +272,7 @@ CLEANFILES = $(execgames_SCRIPTS) $(app_DATA) $(screensaver_DATA)
 %.o : %.rc
 	$(WINDRES) $< -o $@
 
-if HAVE_ICONS
+if HAVE_PYTHON
 
 icon.c : $(top_builddir)/data/doom.png
 	$(top_builddir)/data/convert-icon $(top_builddir)/data/doom.png $@

@@ -50,7 +50,7 @@ SUBDIRS=textscreen opl pcsound src man
 
 DIST_SUBDIRS=$(SUBDIRS)
 
-if HAVE_DOC
+if HAVE_PYTHON
 
 INSTALL : man/INSTALL.template man/simplecpp
 	./man/simplecpp -DDOOM -DHERETIC -DHEXEN -DSTRIFE \

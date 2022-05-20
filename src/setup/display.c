@@ -63,9 +63,15 @@ static window_size_t window_sizes_scaled[] =
     { 0, 0},
 };
 
+static const char *wide_modes[] =
+{
+    "Vanilla", "Modern",
+};
+static txt_dropdown_list_t *widebutton;
+
 static char *video_driver = "";
 static char *window_position = "";
-static int aspect_ratio_correct = 1;
+static int aspect_ratio_correct = 0;
 static int integer_scaling = 0;
 static int vga_porch_flash = 0;
 static int force_software_renderer = 0;
@@ -80,6 +86,9 @@ int graphical_startup = 1;
 int show_endoom = 1;
 int show_diskicon = 1;
 int png_screenshots = 0;
+
+// [JN] [Crispy] Widescreen
+int widescreen = 0;
 
 static int system_video_env_set;
 
@@ -209,6 +218,15 @@ static void AdvancedDisplayConfig(TXT_UNCAST_ARG(widget),
 #endif
         NULL);
 
+    // [JN] [Crispy] Widescreen
+    if (gamemission == doom)
+    {
+        TXT_AddWidgets(window,
+                       TXT_NewSeparator("Screen Display Mode"),
+                       widebutton = TXT_NewDropdownList(&widescreen, wide_modes, 2),
+                       NULL);
+    }
+
     TXT_SignalConnect(ar_checkbox, "changed", GenerateSizesTable, sizes_table);
 }
 
@@ -271,6 +289,12 @@ void BindDisplayVariables(void)
      || gamemission == strife)
     {
         M_BindIntVariable("show_endoom",               &show_endoom);
+    }
+
+	// [JN] [Crispy] Widescreen
+	if (gamemission == doom)
+    {
+        M_BindIntVariable("widescreen",         &widescreen);
     }
 
     if (gamemission == doom || gamemission == strife)

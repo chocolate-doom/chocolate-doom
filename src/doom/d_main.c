@@ -33,6 +33,7 @@
 #include "dstrings.h"
 #include "sounds.h"
 
+#include "d_compat.h"
 #include "d_iwad.h"
 
 #include "z_zone.h"
@@ -74,7 +75,6 @@
 #include "statdump.h"
 
 #include "d_main.h"
-#include "dpplimits.h"
 
 //
 // D-DoomLoop()
@@ -88,7 +88,6 @@
 void D_DoomLoop (void);
 
 static char *gamedescription;
-
 // Location where savegames are stored
 
 char *          savegamedir;
@@ -179,7 +178,9 @@ boolean D_Display (void)
     int				y;
     boolean			wipe;
     boolean			redrawsbar;
-		
+    
+	// [crispy] catch SlopeDiv overflows
+	SlopeDiv = SlopeDivCrispy;
     redrawsbar = false;
     
     // change the view size if needed
@@ -194,7 +195,10 @@ boolean D_Display (void)
     if (gamestate != wipegamestate)
     {
 	wipe = true;
-	wipe_StartScreen(0, 0, SCREENWIDTH, SCREENHEIGHT);
+	if (widescreen)
+	    wipe_StartScreen(0, 0, WIDESCREENWIDTH, SCREENHEIGHT);
+	else
+	    wipe_StartScreen(0, 0, SCREENWIDTH, SCREENHEIGHT);
     }
     else
 	wipe = false;
@@ -210,6 +214,7 @@ boolean D_Display (void)
 	    break;
 	if (automapactive)
 	    AM_Drawer ();
+
 	if (wipe || (viewheight != SCREENHEIGHT && fullscreen))
 	    redrawsbar = true;
 	if (inhelpscreensstate && !inhelpscreens)
@@ -236,24 +241,31 @@ boolean D_Display (void)
     
     // draw the view directly
     if (gamestate == GS_LEVEL && !automapactive && gametic)
-	R_RenderPlayerView (&players[displayplayer]);
+    {
+        R_RenderPlayerView (&players[displayplayer]);
+        // [crispy]
+        if (screenblocks == 12 || (widescreen && screenblocks == 10))
+            ST_Drawer(false, true);
+    }
 
     if (gamestate == GS_LEVEL && gametic)
 	HU_Drawer ();
     
     // clean up border stuff
     if (gamestate != oldgamestate && gamestate != GS_LEVEL)
-	I_SetPalette (W_CacheLumpName (DEH_String("PLAYPAL"),PU_CACHE));
+    {
+        I_SetPalette (W_CacheLumpName (DEH_String("PLAYPAL"),PU_CACHE));
+    }
 
     // see if the border needs to be initially drawn
-    if (gamestate == GS_LEVEL && oldgamestate != GS_LEVEL)
+    if (gamestate == GS_LEVEL && oldgamestate != GS_LEVEL && !widescreen)
     {
 	viewactivestate = false;        // view was not active
 	R_FillBackScreen ();    // draw the pattern into the back screen
     }
 
     // see if the border needs to be updated to the screen
-    if (gamestate == GS_LEVEL && !automapactive && scaledviewwidth != SCREENWIDTH)
+    if (gamestate == GS_LEVEL && !automapactive && scaledviewwidth != SCREENWIDTH && !widescreen)
     {
 	if (menuactive || menuactivestate || !viewactivestate)
 	    borderdrawcount = 3;
@@ -284,7 +296,7 @@ boolean D_Display (void)
 	    y = 4;
 	else
 	    y = viewwindowy+4;
-	V_DrawPatchDirect(viewwindowx + (scaledviewwidth - 68) / 2, y,
+	V_DrawPatchDirect((viewwindowx + (scaledviewwidth - 68) / 2) - WIDEWIDTH_DELTA, y,
                           W_CacheLumpName (DEH_String("M_PAUSE"), PU_CACHE));
     }
 
@@ -292,6 +304,9 @@ boolean D_Display (void)
     // menus go directly to the screen
     M_Drawer ();          // menu is drawn even on top of everything
     NetUpdate ();         // send out any new accumulation
+
+    // [crispy] back to Vanilla SlopeDiv
+    SlopeDiv = SlopeDivVanilla;
 
     return wipe;
 }
@@ -311,31 +326,20 @@ static void EnableLoadingDisk(void)
             disk_lump_name = DEH_String("STDISK");
         }
 
-        V_EnableLoadingDisk(disk_lump_name,
-                            SCREENWIDTH - LOADING_DISK_W,
-                            SCREENHEIGHT - LOADING_DISK_H);
+        if (widescreen)
+            V_EnableLoadingDisk(disk_lump_name,
+                                WIDESCREENWIDTH - LOADING_DISK_W,
+                                SCREENHEIGHT - LOADING_DISK_H);
+        else
+            V_EnableLoadingDisk(disk_lump_name,
+                                SCREENWIDTH - LOADING_DISK_W,
+                                SCREENHEIGHT - LOADING_DISK_H);
     }
 }
 
 //
 // Add configuration file variable bindings.
 //
-
-
-static const char * const chat_macro_defaults[10] =
-{
-    HUSTR_CHATMACRO0,
-    HUSTR_CHATMACRO1,
-    HUSTR_CHATMACRO2,
-    HUSTR_CHATMACRO3,
-    HUSTR_CHATMACRO4,
-    HUSTR_CHATMACRO5,
-    HUSTR_CHATMACRO6,
-    HUSTR_CHATMACRO7,
-    HUSTR_CHATMACRO8,
-    HUSTR_CHATMACRO9
-};
-
 
 void D_BindVariables(void)
 {
@@ -378,7 +382,6 @@ void D_BindVariables(void)
     {
         char buf[12];
 
-        chat_macros[i] = M_StringDuplicate(chat_macro_defaults[i]);
         M_snprintf(buf, sizeof(buf), "chatmacro%i", i);
         M_BindStringVariable(buf, &chat_macros[i]);
     }
@@ -427,8 +430,12 @@ void D_RunFrame()
         } while (tics <= 0);
 
         wipestart = nowtime;
-        wipe = !wipe_ScreenWipe(wipe_Melt
-                               , 0, 0, SCREENWIDTH, SCREENHEIGHT, tics);
+        if (widescreen)
+            wipe = !wipe_ScreenWipe(wipe_Melt
+                                   , 0, 0, WIDESCREENWIDTH, SCREENHEIGHT, tics);
+        else
+            wipe = !wipe_ScreenWipe(wipe_Melt
+                                   , 0, 0, SCREENWIDTH, SCREENHEIGHT, tics);
         I_UpdateNoBlit ();
         M_Drawer ();                            // menu is drawn even on top of wipes
         I_FinishUpdate ();                      // page flip or blit buffer
@@ -448,8 +455,10 @@ void D_RunFrame()
         if ((wipe = D_Display ()))
         {
             // start wipe on this frame
-            wipe_EndScreen(0, 0, SCREENWIDTH, SCREENHEIGHT);
-
+            if (widescreen)
+                wipe_EndScreen(0, 0, WIDESCREENWIDTH, SCREENHEIGHT);
+            else
+                wipe_EndScreen(0, 0, SCREENWIDTH, SCREENHEIGHT);
             wipestart = I_GetTime () - 1;
         } else {
             // normal update
@@ -528,9 +537,15 @@ void D_PageTicker (void)
 //
 void D_PageDrawer (void)
 {
-    V_DrawPatch (0, 0, W_CacheLumpName(pagename, PU_CACHE));
+    if (widescreen)
+    {
+        V_DrawPatchCenterClip (0, W_CacheLumpName(pagename, PU_CACHE));
+    }
+    else
+    {
+        V_DrawPatch (0, 0, W_CacheLumpName(pagename, PU_CACHE));
+    }
 }
-
 
 //
 // D_AdvanceDemo
@@ -692,52 +707,47 @@ static const char *banners[] =
 // Otherwise, use the name given
 // 
 
-static char *GetGameName(const char *gamename)
+static char *GetGameName(char *gamename)
 {
     size_t i;
-
+    const char *deh_sub;
+    
     for (i=0; i<arrlen(banners); ++i)
     {
-        const char *deh_sub;
         // Has the banner been replaced?
 
         deh_sub = DEH_String(banners[i]);
-
+        
         if (deh_sub != banners[i])
         {
             size_t gamename_size;
             int version;
-            char *deh_gamename;
 
             // Has been replaced.
             // We need to expand via printf to include the Doom version number
             // We also need to cut off spaces to get the basic name
 
             gamename_size = strlen(deh_sub) + 10;
-            deh_gamename = malloc(gamename_size);
-            if (deh_gamename == NULL)
-            {
-                I_Error("GetGameName: Failed to allocate new string");
-            }
+            gamename = Z_Malloc(gamename_size, PU_STATIC, 0);
             version = G_VanillaVersionCode();
-            DEH_snprintf(deh_gamename, gamename_size, banners[i],
-                         version / 100, version % 100);
+            M_snprintf(gamename, gamename_size, deh_sub,
+                       version / 100, version % 100);
 
-            while (deh_gamename[0] != '\0' && isspace(deh_gamename[0]))
+            while (gamename[0] != '\0' && isspace(gamename[0]))
             {
-                memmove(deh_gamename, deh_gamename + 1, gamename_size - 1);
+                memmove(gamename, gamename + 1, gamename_size - 1);
             }
 
-            while (deh_gamename[0] != '\0' && isspace(deh_gamename[strlen(deh_gamename)-1]))
+            while (gamename[0] != '\0' && isspace(gamename[strlen(gamename)-1]))
             {
-                deh_gamename[strlen(deh_gamename) - 1] = '\0';
+                gamename[strlen(gamename) - 1] = '\0';
             }
 
-            return deh_gamename;
+            return gamename;
         }
     }
 
-    return M_StringDuplicate(gamename);
+    return gamename;
 }
 
 static void SetMissionForPackName(const char *pack_name)
@@ -1125,26 +1135,7 @@ static void InitGameVersion(void)
         }
     }
 
-    // Deathmatch 2.0 did not exist until Doom v1.4
-    if (gameversion <= exe_doom_1_2 && deathmatch == 2)
-    {
-        deathmatch = 1;
-    }
-    
-    // The original exe does not support retail - 4th episode not supported
-
-    if (gameversion < exe_ultimate && gamemode == retail)
-    {
-        gamemode = registered;
-    }
-
-    // EXEs prior to the Final Doom exes do not support Final Doom.
-
-    if (gameversion < exe_final && gamemode == commercial
-     && (gamemission == pack_tnt || gamemission == pack_plut))
-    {
-        gamemission = doom2;
-    }
+    D_SetConstantsForGameversion();
 }
 
 void PrintGameVersion(void)
@@ -1485,13 +1476,14 @@ void D_DoomMain (void)
     
     // init subsystems
     DEH_printf("V_Init: allocate screens.\n");
-    V_Init ();
-
+    
     // Load configuration files before initialising other subsystems.
     DEH_printf("M_LoadDefaults: Load system defaults.\n");
     M_SetConfigFilenames("default.cfg", PROGRAM_PREFIX "doom.cfg");
     D_BindVariables();
     M_LoadDefaults();
+
+    V_Init (); // For widescreen
 
     // Save configuration at exit.
     I_AtExit(M_SaveDefaults, false);
@@ -1536,6 +1528,14 @@ void D_DoomMain (void)
     else if (W_CheckNumForName("DMENUPIC") >= 0)
     {
         gamevariant = bfgedition;
+        if (W_CheckNumForName("TITLEPIC") >= 0)
+        {
+            patch_t *titlepic = W_CacheLumpName ("TITLEPIC", PU_CACHE);
+            if (titlepic->width > 320)
+            {
+                gamevariant = unityedition;
+            }
+        }
     }
 
     //!
@@ -1561,7 +1561,7 @@ void D_DoomMain (void)
 
     if (gamevariant == bfgedition)
     {
-        printf("BFG Edition: Using workarounds as needed.\n");
+        DEH_printf("BFG Edition: Using workarounds as needed.\n");
 
         // BFG Edition changes the names of the secret levels to
         // censor the Wolfenstein references. It also has an extra
@@ -1591,6 +1591,19 @@ void D_DoomMain (void)
         DEH_AddStringReplacement("M_SCRNSZ", "M_DISP");
     }
 
+    if (gamevariant == unityedition)
+    {
+        DEH_printf("Unity: Using workarounds as needed.\n");
+
+        // Unity widescreen uses a bitmap font stored outside the IWAD to
+	    // render level name graphics, but retains the old CWILV## 
+	    // level name graphics from the BFG Edition in the IWAD.
+        DEH_AddStringReplacement(HUSTR_31, "level 31: idkfa");
+        DEH_AddStringReplacement(HUSTR_32, "level 32: keen");
+
+        isunityedition = true;
+    }
+
     //!
     // @category mod
     //
@@ -1605,22 +1618,17 @@ void D_DoomMain (void)
         if (gamemission < pack_chex)
         {
             autoload_dir = M_GetAutoloadDir("doom-all");
-            if (autoload_dir != NULL)
-            {
-                DEH_AutoLoadPatches(autoload_dir);
-                W_AutoLoadWADs(autoload_dir);
-                free(autoload_dir);
-            }
-        }
-
-        // auto-loaded files per IWAD
-        autoload_dir = M_GetAutoloadDir(D_SaveGameIWADName(gamemission, gamevariant));
-        if (autoload_dir != NULL)
-        {
             DEH_AutoLoadPatches(autoload_dir);
             W_AutoLoadWADs(autoload_dir);
             free(autoload_dir);
         }
+
+        // auto-loaded files per IWAD
+
+        autoload_dir = M_GetAutoloadDir(D_SaveGameIWADName(gamemission, gamevariant));
+        DEH_AutoLoadPatches(autoload_dir);
+        W_AutoLoadWADs(autoload_dir);
+        free(autoload_dir);
     }
 
     // Load Dehacked patches specified on the command line with -deh.
@@ -1635,7 +1643,7 @@ void D_DoomMain (void)
     modifiedgame = W_ParseCommandLine();
 
     // Debug:
-//    W_PrintDirectory();
+    // W_PrintDirectory();
 
     //!
     // @arg <demo>
@@ -1941,7 +1949,6 @@ void D_DoomMain (void)
 
     DEH_printf("D_CheckNetGame: Checking network game status.\n");
     D_CheckNetGame ();
-
     PrintGameVersion();
 
     DEH_printf("HU_Init: Setting up heads up display.\n");
@@ -2010,4 +2017,3 @@ void D_DoomMain (void)
 
     D_DoomLoop ();  // never returns
 }
-

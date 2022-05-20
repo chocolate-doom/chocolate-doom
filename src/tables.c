@@ -38,7 +38,7 @@
 // which is looked up in the tantoangle[] table.  The +1 size is to handle
 // the case when x==y without additional checking.
 
-int SlopeDiv(unsigned int num, unsigned int den)
+int SlopeDivVanilla(unsigned int num, unsigned int den)
 {
     unsigned ans;
     
@@ -61,7 +61,33 @@ int SlopeDiv(unsigned int num, unsigned int den)
     }
 }
 
-const fixed_t finetangent[4096] =
+// [crispy] catch SlopeDiv overflows, only used in rendering
+int SlopeDivCrispy(unsigned int num, unsigned int den)
+{
+    uint64_t ans;
+
+    if (den < 512)
+    {
+	return SLOPERANGE;
+    }
+    else
+    {
+	ans = ((uint64_t) num << 3) / (den >> 8);
+
+	if (ans <= SLOPERANGE)
+	{
+	    return (int) ans;
+	}
+	else
+	{
+	    return SLOPERANGE;
+	}
+    }
+}
+
+int (* SlopeDiv)(unsigned int num, unsigned int den) = SlopeDivVanilla;
+
+fixed_t finetangent1_2[4096] =
 {
     -170910304,-56965752,-34178904,-24413316,-18988036,-15535599,-13145455,-11392683,
     -10052327,-8994149,-8137527,-7429880,-6835455,-6329090,-5892567,-5512368,
@@ -577,8 +603,10 @@ const fixed_t finetangent[4096] =
     11392683,13145455,15535599,18988036,24413316,34178904,56965752,170910304
 };
 
+const fixed_t *finetangent = &finetangent1_2[0];
 
-const fixed_t finesine[10240] =
+
+fixed_t finesine1_2[10240] =
 {
     25,75,125,175,226,276,326,376,
     427,477,527,578,628,678,728,779,
@@ -1862,9 +1890,11 @@ const fixed_t finesine[10240] =
     65534,65535,65535,65535,65535,65535,65535,65535
 };
 
-const fixed_t *finecosine = &finesine[FINEANGLES/4];
+const fixed_t *finesine = &finesine1_2[0];
+const fixed_t *finecosine = &finesine1_2[FINEANGLES/4];
 
-const angle_t tantoangle[2049] =
+
+angle_t tantoangle1_2[2049] =
 {
     0,333772,667544,1001315,1335086,1668857,2002626,2336395,
     2670163,3003929,3337694,3671457,4005219,4338979,4672736,5006492,
@@ -2125,18 +2155,22 @@ const angle_t tantoangle[2049] =
     536870912
 };
 
+
+const angle_t *tantoangle = &tantoangle1_2[0];
+
+
 // Now where did these came from?
 const byte gammatable[5][256] =
 {
     {
-        1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,
-        17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,
-        33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,
-        49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,
-        65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,
-        81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,
-        97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,
-        113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,
+        0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,
+        16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,
+        32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,
+        48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,
+        64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,
+        80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,
+        96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,
+        112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,
         128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,
         144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,
         160,161,162,163,164,165,166,167,168,169,170,171,172,173,174,175,
