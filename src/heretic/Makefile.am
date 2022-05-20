@@ -50,6 +50,7 @@ p_switch.c                                           \
 p_telept.c                                           \
 p_tick.c                                             \
 p_user.c                                             \
+r_bmaps.c              r_bmaps.h                     \
 r_bsp.c                                              \
 r_data.c                                             \
 r_draw.c                                             \

@@ -113,6 +113,7 @@ static boolean SCInfo(int option);
 static boolean CrispyHires(int option);
 static boolean CrispyToggleWidescreen(int option);
 static boolean CrispySmoothing(int option);
+static boolean CrispyBrightmaps(int option);
 static boolean CrispyAutomapStats(int option);
 static boolean CrispyLevelTime(int option);
 static boolean CrispyPlayerCoords(int option);
@@ -334,6 +335,9 @@ static MenuItem_t CrispnessItems[] = {
     {ITT_LRFUNC, "ENABLE VSYNC:", CrispyVsync, 0, MENU_NONE},
     {ITT_EMPTY, NULL, NULL, 0, MENU_NONE},
     {ITT_EMPTY, NULL, NULL, 0, MENU_NONE},
+    {ITT_LRFUNC, "APPLY BRIGHTMAPS TO:", CrispyBrightmaps, 0, MENU_NONE},
+    {ITT_EMPTY, NULL, NULL, 0, MENU_NONE},
+    {ITT_EMPTY, NULL, NULL, 0, MENU_NONE},
     {ITT_LRFUNC, "SHOW LEVEL STATS:", CrispyAutomapStats, 0, MENU_NONE},
     {ITT_LRFUNC, "SHOW LEVEL TIME:", CrispyLevelTime, 0, MENU_NONE},
     {ITT_LRFUNC, "SHOW PLAYER COORDS:", CrispyPlayerCoords, 0, MENU_NONE},
@@ -343,7 +347,7 @@ static MenuItem_t CrispnessItems[] = {
 static Menu_t CrispnessMenu = {
     68, 40,
     DrawCrispnessMenu,
-    11, CrispnessItems,
+    14, CrispnessItems,
     0,
     MENU_OPTIONS
 };
@@ -1344,6 +1348,12 @@ static boolean CrispyVsync(int option)
     return true;
 }
 
+static boolean CrispyBrightmaps(int option)
+{
+    crispy->brightmaps = (crispy->brightmaps + 1) % NUM_BRIGHTMAPS;
+    return true;
+}
+
 static boolean CrispyAutomapStats(int option)
 {
     crispy->automapstats = (crispy->automapstats + 1) % NUM_WIDGETS;
@@ -2181,7 +2191,8 @@ static void DrawCrispnessMenu(void)
     // Subheaders
     dp_translation = cr[CR_GOLD];
     MN_DrTextA("RENDERING", 63, 30);
-    MN_DrTextA("NAVIGATIONAL", 63, 100);
+    MN_DrTextA("VISUAL", 63, 100);
+    MN_DrTextA("NAVIGATIONAL", 63, 130);
     dp_translation = cr[CR_GREY];
 
     // Hires rendering
@@ -2203,23 +2214,29 @@ static void DrawCrispnessMenu(void)
     // Vsync
     MN_DrTextA(crispy->vsync ? "ON" : "OFF", 167, 80);
 
+    // Brightmaps
+    MN_DrTextA(crispy->brightmaps == BRIGHTMAPS_OFF ? "NONE" :
+               crispy->brightmaps == BRIGHTMAPS_TEXTURES ? "WALLS" :
+               crispy->brightmaps == BRIGHTMAPS_SPRITES ? "ITEMS" :
+                                                         "BOTH", 213, 110);
+
     // Show level stats
     MN_DrTextA(crispy->automapstats == WIDGETS_OFF ? "NEVER" :
                crispy->automapstats == WIDGETS_AUTOMAP ? "IN AUTOMAP" :
-                                                         "ALWAYS", 190, 110);
+                                                         "ALWAYS", 190, 140);
 
     // Show level time
     MN_DrTextA(crispy->leveltime == WIDGETS_OFF ? "NEVER" :
                crispy->leveltime == WIDGETS_AUTOMAP ? "IN AUTOMAP" :
-                                                       "ALWAYS", 179, 120);
+                                                       "ALWAYS", 179, 150);
 
     // Show player coords
-    MN_DrTextA(crispy->playercoords == WIDGETS_OFF ? "NEVER" : "IN AUTOMAP", 211, 130);
+    MN_DrTextA(crispy->playercoords == WIDGETS_OFF ? "NEVER" : "IN AUTOMAP", 211, 160);
 
     // Show secret message
     MN_DrTextA(crispy->secretmessage == SECRETMESSAGE_OFF ? "OFF" :
         crispy->secretmessage == SECRETMESSAGE_ON ? "ON" :
-        "COUNT", 250, 140);
+        "COUNT", 250, 170);
 
     dp_translation = NULL;
 }

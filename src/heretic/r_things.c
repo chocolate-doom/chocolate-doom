@@ -20,6 +20,7 @@
 #include "deh_str.h"
 #include "i_swap.h"
 #include "i_system.h"
+#include "r_bmaps.h"
 #include "r_local.h"
 
 typedef struct
@@ -403,7 +404,10 @@ void R_DrawVisSprite(vissprite_t * vis, int x1, int x2)
 
     patch = W_CacheLumpNum(vis->patch + firstspritelump, PU_CACHE);
 
-    dc_colormap = vis->colormap;
+    // [crispy] brightmaps for select sprites
+    dc_colormap[0] = vis->colormap[0];
+    dc_colormap[1] = vis->colormap[1];
+    dc_brightmap = vis->brightmap;
 
 //      if(!dc_colormap)
 //              colfunc = tlcolfunc;  // NULL colormap = shadow draw
@@ -642,16 +646,20 @@ void R_ProjectSprite(mobj_t * thing)
 //      else ...
 
     if (fixedcolormap)
-        vis->colormap = fixedcolormap;  // fixed map
+        vis->colormap[0] = vis->colormap[1] = fixedcolormap;  // fixed map
     else if (thing->frame & FF_FULLBRIGHT)
-        vis->colormap = colormaps;      // full bright
+        vis->colormap[0] = vis->colormap[1] = colormaps;      // full bright
     else
     {                           // diminished light
         index = xscale >> (LIGHTSCALESHIFT - detailshift + crispy->hires);
         if (index >= MAXLIGHTSCALE)
             index = MAXLIGHTSCALE - 1;
-        vis->colormap = spritelights[index];
+        // [crispy] brightmaps for select sprites
+        vis->colormap[0] = spritelights[index];
+        vis->colormap[1] = colormaps;
     }
+
+    vis->brightmap = R_BrightmapForSprite(thing->state - states);
 }
 
 
@@ -799,24 +807,26 @@ void R_DrawPSprite(pspdef_t * psp)
         viewplayer->powers[pw_invisibility] & 8)
     {
         // Invisibility
-        vis->colormap = spritelights[MAXLIGHTSCALE - 1];
+        vis->colormap[0] = vis->colormap[1] = spritelights[MAXLIGHTSCALE - 1];
         vis->mobjflags |= MF_SHADOW;
     }
     else if (fixedcolormap)
     {
         // Fixed color
-        vis->colormap = fixedcolormap;
+        vis->colormap[0] = vis->colormap[1] = fixedcolormap;
     }
     else if (psp->state->frame & FF_FULLBRIGHT)
     {
         // Full bright
-        vis->colormap = colormaps;
+        vis->colormap[0] = vis->colormap[1] = colormaps;
     }
     else
     {
         // local light
-        vis->colormap = spritelights[MAXLIGHTSCALE - 1];
+        vis->colormap[0] = spritelights[MAXLIGHTSCALE - 1];
+        vis->colormap[1] = colormaps;
     }
+    vis->brightmap = R_BrightmapForState(psp->state - states);
     R_DrawVisSprite(vis, vis->x1, vis->x2);
 }
 

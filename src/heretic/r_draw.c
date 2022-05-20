@@ -44,7 +44,7 @@ byte translations[3][256];      // color tables for different players
 ==================
 */
 
-lighttable_t *dc_colormap;
+lighttable_t *dc_colormap[2];   // [crispy] brightmaps
 int dc_x;
 int dc_yl;
 int dc_yh;
@@ -89,7 +89,9 @@ void R_DrawColumn(void)
 
     do
     {
-	*dest = dc_colormap[dc_source[frac>>FRACBITS]];
+	// [crispy] brightmaps
+	const byte source = dc_source[frac>>FRACBITS];
+	*dest = dc_colormap[dc_brightmap[source]][source];
 	dest += SCREENWIDTH;
 	if ((frac += fracstep) >= heightmask)
 	    frac -= heightmask;
@@ -99,7 +101,9 @@ void R_DrawColumn(void)
   {
     do
     {
-        *dest = dc_colormap[dc_source[(frac >> FRACBITS) & heightmask]];
+        // [crispy] brightmaps
+        const byte source = dc_source[(frac >> FRACBITS) & heightmask];
+        *dest = dc_colormap[dc_brightmap[source]][source];
         dest += SCREENWIDTH;
         frac += fracstep;
     }
@@ -142,7 +146,9 @@ void R_DrawColumnLow(void)
 
         do
         {
-            *dest = dc_colormap[dc_source[frac >> FRACBITS]];
+            // [crispy] brightmaps
+            const byte source = dc_source[frac>>FRACBITS];
+            *dest = dc_colormap[dc_brightmap[source]][source];
             dest += SCREENWIDTH;
             if ((frac += fracstep) >= heightmask)
                 frac -= heightmask;
@@ -152,7 +158,9 @@ void R_DrawColumnLow(void)
     {
         do
         {
-            *dest = dc_colormap[dc_source[(frac >> FRACBITS) & heightmask]];
+            // [crispy] brightmaps
+            const byte source = dc_source[(frac >> FRACBITS) & heightmask];
+            *dest = dc_colormap[dc_brightmap[source]][source];
             dest += SCREENWIDTH;
             frac += fracstep;
         }
@@ -203,7 +211,7 @@ void R_DrawTLColumn(void)
         {
             *dest =
                 tinttable[((*dest) << 8) +
-                          dc_colormap[dc_source[frac >> FRACBITS]]];
+                          dc_colormap[0][dc_source[frac >> FRACBITS]]];
             dest += SCREENWIDTH;
             if ((frac += fracstep) >= heightmask)
                 frac -= heightmask;
@@ -215,7 +223,7 @@ void R_DrawTLColumn(void)
         {
             *dest =
                 tinttable[((*dest) << 8) +
-                          dc_colormap[dc_source[(frac >> FRACBITS) & heightmask]]];
+                          dc_colormap[0][dc_source[(frac >> FRACBITS) & heightmask]]];
 
             dest += SCREENWIDTH;
             frac += fracstep;
@@ -257,7 +265,7 @@ void R_DrawTranslatedColumn(void)
 
     do
     {
-        *dest = dc_colormap[dc_translation[dc_source[frac >> FRACBITS]]];
+        *dest = dc_colormap[0][dc_translation[dc_source[frac >> FRACBITS]]];
         dest += SCREENWIDTH;
         frac += fracstep;
     }
@@ -288,7 +296,7 @@ void R_DrawTranslatedTLColumn(void)
     {
         *dest = tinttable[((*dest) << 8)
                           +
-                          dc_colormap[dc_translation
+                          dc_colormap[0][dc_translation
                                       [dc_source[frac >> FRACBITS]]]];
         dest += SCREENWIDTH;
         frac += fracstep;
@@ -339,12 +347,13 @@ void R_InitTranslationTables(void)
 int ds_y;
 int ds_x1;
 int ds_x2;
-lighttable_t *ds_colormap;
+lighttable_t *ds_colormap[2];   // [crispy] brightmaps
 fixed_t ds_xfrac;
 fixed_t ds_yfrac;
 fixed_t ds_xstep;
 fixed_t ds_ystep;
 byte *ds_source;                // start of a 64*64 tile image
+const byte *ds_brightmap;       // [crispy] brightmaps
 
 int dscount;                    // just for profiling
 
@@ -368,8 +377,10 @@ void R_DrawSpan(void)
     count = ds_x2 - ds_x1;
     do
     {
+        byte source;
         spot = ((yfrac >> (16 - 6)) & (63 * 64)) + ((xfrac >> 16) & 63);
-        *dest++ = ds_colormap[ds_source[spot]];
+        source = ds_source[spot];
+        *dest++ = ds_colormap[ds_brightmap[source]][source];
         xfrac += ds_xstep;
         yfrac += ds_ystep;
     }
@@ -396,8 +407,10 @@ void R_DrawSpanLow(void)
     count = ds_x2 - ds_x1;
     do
     {
+        byte source;
         spot = ((yfrac >> (16 - 6)) & (63 * 64)) + ((xfrac >> 16) & 63);
-        *dest++ = ds_colormap[ds_source[spot]];
+        source = ds_source[spot];
+        *dest = ds_colormap[ds_brightmap[source]][source];
         xfrac += ds_xstep;
         yfrac += ds_ystep;
     }

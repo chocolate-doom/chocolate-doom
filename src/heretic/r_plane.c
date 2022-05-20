@@ -19,6 +19,7 @@
 #include "doomdef.h"
 #include "deh_str.h"
 #include "i_system.h"
+#include "r_bmaps.h" // [crispy] R_BrightmapForTexName()
 #include "r_local.h"
 
 planefunction_t floorfunc, ceilingfunc;
@@ -161,13 +162,14 @@ void R_MapPlane(int y, int x1, int x2)
     ds_yfrac = -viewy - FixedMul(viewsin, distance) + dx * ds_ystep;
 
     if (fixedcolormap)
-        ds_colormap = fixedcolormap;
+        ds_colormap[0] = ds_colormap[1] = fixedcolormap;
     else
     {
         index = distance >> LIGHTZSHIFT;
         if (index >= MAXLIGHTZ)
             index = MAXLIGHTZ - 1;
-        ds_colormap = planezlight[index];
+        ds_colormap[0] = planezlight[index];
+        ds_colormap[1] = colormaps;
     }
 
     ds_y = y;
@@ -439,7 +441,8 @@ void R_DrawPlanes(void)
         if (pl->picnum == skyflatnum)
         {
             dc_iscale = skyiscale;
-            dc_colormap = colormaps;    // sky is allways drawn full bright
+            // [crispy] no brightmaps for sky
+            dc_colormap[0] = dc_colormap[1] = colormaps;    // sky is allways drawn full bright
             dc_texturemid = skytexturemid;
             dc_texheight = textureheight[skytexture]>>FRACBITS;
             for (x = pl->minx; x <= pl->maxx; x++)
@@ -553,6 +556,7 @@ void R_DrawPlanes(void)
             default:
                 ds_source = tempSource;
         }
+        ds_brightmap = R_BrightmapForFlatNum(lumpnum-firstflat);
         planeheight = abs(pl->height - viewz);
         light = (pl->lightlevel >> LIGHTSEGSHIFT) + extralight;
         if (light >= LIGHTLEVELS)
