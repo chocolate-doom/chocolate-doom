@@ -628,7 +628,7 @@ static byte *R_BrightmapForSprite_Doom (const int type)
 			// Cell Charge
 			case SPR_CELL:
 			{
-				return greenonly1;
+				return greenonly2;
 				break;
 			}
 			// Barrel
