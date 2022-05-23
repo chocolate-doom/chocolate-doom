@@ -7,6 +7,8 @@
   <developer_name>@PACKAGE_MAINTAINER@</developer_name>
   <url type="homepage">@PACKAGE_URL@</url>
   <url type="bugtracker">@PACKAGE_ISSUES@</url>
+  <name>@PACKAGE_SHORTNAME@ Doom</name>
+  <summary>Conservative Doom Source Port</summary>
   <description>
     <p>
       @PACKAGE_SHORTNAME@ Doom is a conservative,
