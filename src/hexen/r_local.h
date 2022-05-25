@@ -47,6 +47,9 @@
 #define NUMCOLORMAPS            32      // number of diminishing
 #define INVERSECOLORMAP         32
 
+#define LOOKDIRMIN 110 // [crispy] -110, actually
+#define LOOKDIRMAX 90
+#define LOOKDIRS (LOOKDIRMIN + 1 + LOOKDIRMAX) // [crispy] lookdir range: -110..0..90
 /*
 ==============================================================================
 
@@ -438,7 +441,8 @@ extern short openings[MAXOPENINGS], *lastopening;
 extern short floorclip[MAXWIDTH];
 extern short ceilingclip[MAXWIDTH];
 
-extern fixed_t yslope[MAXHEIGHT];
+extern fixed_t *yslope;
+extern fixed_t yslopes[LOOKDIRS][MAXHEIGHT]; // [crispy]
 extern fixed_t distscale[MAXWIDTH];
 
 void R_InitPlanes(void);

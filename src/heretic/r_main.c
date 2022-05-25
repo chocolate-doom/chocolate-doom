@@ -19,6 +19,7 @@
 #include <math.h>
 #include "doomdef.h"
 #include "m_bbox.h"
+#include "p_local.h" // [crispy] MLOOKUNIT
 #include "r_local.h"
 #include "tables.h"
 #include "v_video.h" // [crispy] V_DrawFilledBox for HOM detector
@@ -574,6 +575,8 @@ void R_SetViewSize(int blocks, int detail)
 ==============
 */
 
+int screenblocks = 10; // [crispy] moved here
+
 void R_ExecuteSetViewSize(void)
 {
     fixed_t cosadj, dy;
@@ -657,10 +660,19 @@ void R_ExecuteSetViewSize(void)
 //
     for (i = 0; i < viewheight; i++)
     {
-        dy = ((i - viewheight / 2) << FRACBITS) + FRACUNIT / 2;
+        // [crispy] re-generate lookup-table for yslope[] (free look)
+        // whenever "detailshift" or "screenblocks" change
+        const fixed_t num = (viewwidth_nonwide<<detailshift)/2*FRACUNIT;
+        for (j = 0; j < LOOKDIRS; j++)
+        {
+        dy = ((i - (viewheight / 2 + ((j - LOOKDIRMIN) * (1 << crispy->hires)) *
+                (screenblocks < 11 ? screenblocks : 11) / 10)) << FRACBITS) +
+                FRACUNIT / 2;
         dy = abs(dy);
-        yslope[i] = FixedDiv((viewwidth_nonwide << detailshift) / 2 * FRACUNIT, dy);
+        yslopes[j][i] = FixedDiv(num, dy);
+        }
     }
+    yslope = yslopes[LOOKDIRMIN];
 
     for (i = 0; i < viewwidth; i++)
     {
@@ -706,7 +718,7 @@ void R_ExecuteSetViewSize(void)
 */
 
 int detailLevel;
-int screenblocks = 10;
+// int screenblocks = 10; [crispy] moved before R_ExecuteSetViewSize
 
 void R_Init(void)
 {
@@ -775,6 +787,7 @@ void R_SetupFrame(player_t * player)
     int i;
     int tableAngle;
     int tempCentery;
+    int pitch; // [crispy]
 
     //drawbsp = 1;
     viewplayer = player;
@@ -796,6 +809,8 @@ void R_SetupFrame(player_t * player)
         viewy = player->mo->oldy + FixedMul(player->mo->y - player->mo->oldy, fractionaltic);
         viewz = player->oldviewz + FixedMul(player->viewz - player->oldviewz, fractionaltic);
         viewangle = R_InterpolateAngle(player->mo->oldangle, player->mo->angle, fractionaltic) + viewangleoffset;
+        pitch = (player->oldlookdir + (player->lookdir - player->oldlookdir) *
+                FIXED2DOUBLE(fractionaltic)) / MLOOKUNIT;
     }
     else
     {
@@ -803,6 +818,7 @@ void R_SetupFrame(player_t * player)
         viewy = player->mo->y;
         viewz = player->viewz;
         viewangle = player->mo->angle + viewangleoffset;
+        pitch = player->lookdir / MLOOKUNIT; // [crispy]
     }
 
     tableAngle = viewangle >> ANGLETOFINESHIFT;
@@ -815,17 +831,15 @@ void R_SetupFrame(player_t * player)
     }
 
     extralight = player->extralight;
-    tempCentery = viewheight / 2 + ((player->lookdir) << crispy->hires) * screenblocks / 10;
+    // [crispy] apply new yslope[] whenever "lookdir", "detailshift" or
+    // "screenblocks" change
+    tempCentery = viewheight / 2 + (pitch * (1 << crispy->hires)) *
+                    (screenblocks < 11 ? screenblocks : 11) / 10;
     if (centery != tempCentery)
     {
         centery = tempCentery;
         centeryfrac = centery << FRACBITS;
-        for (i = 0; i < viewheight; i++)
-        {
-            yslope[i] = FixedDiv((viewwidth_nonwide << detailshift) / 2 * FRACUNIT,
-                                 abs(((i - centery) << FRACBITS) +
-                                     FRACUNIT / 2));
-        }
+        yslope = yslopes[LOOKDIRMIN + pitch];
     }
     viewsin = finesine[tableAngle];
     viewcos = finecosine[tableAngle];

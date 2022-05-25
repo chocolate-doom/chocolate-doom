@@ -538,7 +538,7 @@ typedef struct player_s
     fixed_t bob;                // bounded/scaled total momentum
 
     int flyheight;
-    int lookdir;
+    int lookdir, oldlookdir;
     boolean centering;
     int health;                 // only used between levels, mo->health
     // is used during levels
@@ -683,6 +683,8 @@ extern mapthing_t playerstarts[MAX_PLAYER_STARTS][MAXPLAYERS];
 extern int maxplayers;
 
 extern int mouseSensitivity;
+extern int mouseSensitivity_x2; // [crispy]
+extern int mouseSensitivity_y; // [crispy]
 
 extern boolean precache;        // if true, load all graphics at level load
 

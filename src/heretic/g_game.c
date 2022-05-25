@@ -690,8 +690,14 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
         testcontrols_mousespeed = 0;
     }
 
-    if (!novert)
+    if (crispy->mouselook)
+    {
+        cmd->lookdir = mouse_y_invert ? -mousey : mousey;
+    }
+    else if (!novert)
+    {
         forward += mousey;
+    }
     mousex = mousex2 = mousey = 0;
 
     if (forward > MAXPLMOVE)
@@ -1348,7 +1354,7 @@ void G_PlayerFinishLevel(int player)
     }
     p->messageTics = 0;
     p->centerMessageTics = 0;
-    p->lookdir = 0;
+    p->lookdir = p->oldlookdir = 0;
     p->mo->flags &= ~MF_SHADOW; // Remove invisibility
     p->extralight = 0;          // Remove weapon flashes
     p->fixedcolormap = 0;       // Remove torch

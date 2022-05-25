@@ -148,7 +148,7 @@ void ConfigMouse(TXT_UNCAST_ARG(widget), void *user_data)
     TXT_SetWindowAction(window, TXT_HORIZ_CENTER, TestConfigAction());
     TXT_SetWindowHelpURL(window, WINDOW_HELP_URL);
 
-    if (gamemission == doom || gamemission == heretic) // [crispy]
+    if (gamemission == doom || gamemission == heretic || gamemission == hexen) // [crispy]
     {
     TXT_AddWidgets(window,
                    TXT_NewCheckBox("Enable mouse", &usemouse),
@@ -229,7 +229,7 @@ void BindMouseVariables(void)
     M_BindIntVariable("mouse_sensitivity_y",     &mouseSensitivity_y);
     M_BindIntVariable("mouse_threshold_y",       &mouse_threshold_y);
     M_BindFloatVariable("mouse_acceleration_y",  &mouse_acceleration_y);
-    if (gamemission == doom) // [crispy]
+    if (gamemission == doom || gamemission == heretic || gamemission == hexen)
     {
     M_BindIntVariable("crispy_mouselook",        &crispy->mouselook);
     }

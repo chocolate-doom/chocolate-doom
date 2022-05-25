@@ -109,6 +109,8 @@ boolean precache = true;        // if true, load all graphics at start
 byte consistancy[MAXPLAYERS][BACKUPTICS];
 
 int mouseSensitivity = 5;
+int mouseSensitivity_x2 = 5; // [crispy]
+int mouseSensitivity_y = 5; // [crispy]
 
 int LeaveMap;
 static int LeavePosition;
@@ -153,7 +155,7 @@ int lookheld;
 boolean mousearray[MAX_MOUSE_BUTTONS + 1];
 boolean *mousebuttons = &mousearray[1];
         // allow [-1]
-int mousex, mousey;             // mouse values are used once
+int mousex, mousex2, mousey;             // mouse values are used once
 int dclicktime, dclickstate, dclicks;
 int dclicktime2, dclickstate2, dclicks2;
 
@@ -580,7 +582,7 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
 
     if (strafe)
     {
-        side += mousex * 2;
+        side += mousex2 * 2;
     }
     else
     {
@@ -592,9 +594,15 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
         testcontrols_mousespeed = 0;
     }
 
-    if (!novert)
+    if (crispy->mouselook)
+    {
+        cmd->lookdir = mouse_y_invert ? -mousey : mousey;
+    }
+    else if (!novert)
+    {
         forward += mousey;
-    mousex = mousey = 0;
+    }
+    mousex = mousex2 = mousey = 0;
 
     if (forward > MaxPlayerMove[pClass])
     {
@@ -712,7 +720,7 @@ void G_DoLoadLevel(void)
 
     memset(gamekeydown, 0, sizeof(gamekeydown));
     joyxmove = joyymove = joystrafemove = joylook = 0;
-    mousex = mousey = 0;
+    mousex = mousex2 = mousey = 0;
     sendpause = sendsave = paused = false;
     memset(mousearray, 0, sizeof(mousearray));
     memset(joyarray, 0, sizeof(joyarray));
@@ -965,8 +973,18 @@ boolean G_Responder(event_t * ev)
 
         case ev_mouse:
             SetMouseButtons(ev->data1);
+            if (mouseSensitivity)
             mousex = ev->data2 * (mouseSensitivity + 5) / 10;
-            mousey = ev->data3 * (mouseSensitivity + 5) / 10;
+            else
+                mousex = 0; // [crispy] disable entirely
+            if (mouseSensitivity_x2)
+                mousex2 = ev->data2 * (mouseSensitivity_x2 + 5) / 10; // [crispy] separate sensitivity for strafe
+            else
+                mousex2 = 0; // [crispy] disable entirely
+            if (mouseSensitivity_y)
+            mousey = ev->data3 * (mouseSensitivity_y + 5) / 10; // [crispy] separate sensitivity for y-axis
+            else
+                mousey = 0; // [crispy] disable entirely
             return (true);      // eat events
 
         case ev_joystick:
