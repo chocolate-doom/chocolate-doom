@@ -117,6 +117,7 @@ static void CrispyToggleWidescreen(int option);
 static void CrispySmoothing(int option);
 static void CrispyUncapped(int option);
 static void CrispyVsync(int option);
+static void CrispyBrightmaps(int option);
 static void CrispyMouselook(int option);
 static void SCNetCheck2(int option);
 static void SCLoadGame(int option);
@@ -326,13 +327,16 @@ static MenuItem_t CrispnessItems[] = {
     {ITT_LRFUNC, "ENABLE VSYNC:", CrispyVsync, 0, MENU_NONE},
     {ITT_EMPTY, NULL, NULL, 0, MENU_NONE},
     {ITT_EMPTY, NULL, NULL, 0, MENU_NONE},
+    {ITT_LRFUNC, "BRIGHTMAPS:", CrispyBrightmaps, 0, MENU_NONE},
+    {ITT_EMPTY, NULL, NULL, 0, MENU_NONE},
+    {ITT_EMPTY, NULL, NULL, 0, MENU_NONE},
     {ITT_LRFUNC, "PERMANENT MOUSELOOK:", CrispyMouselook, 0, MENU_NONE},
 };
 
 static Menu_t CrispnessMenu = {
     68, 40,
     DrawCrispnessMenu,
-    8, CrispnessItems,
+    11, CrispnessItems,
     0,
     MENU_OPTIONS
 };
@@ -1336,6 +1340,11 @@ static void CrispyVsync(int option)
     crispy->post_rendering_hook = CrispyVsyncHook;
 }
 
+static void CrispyBrightmaps(int option)
+{
+    crispy->brightmaps = (crispy->brightmaps + 1) % NUM_BRIGHTMAPS;
+}
+
 static void CrispyMouselook(int option)
 {
     crispy->mouselook = !crispy->mouselook;
@@ -2122,7 +2131,8 @@ static void DrawCrispnessMenu(void)
     // Subheaders
     dp_translation = cr[CR_GREEN];
     MN_DrTextA("RENDERING", 63, 30);
-    MN_DrTextA("TACTICAL", 63, 100);
+    MN_DrTextA("VISUAL", 63, 100);
+    MN_DrTextA("TACTICAL", 63, 130);
     dp_translation = cr[CR_GOLD];
 
     // Hires rendering
@@ -2144,8 +2154,14 @@ static void DrawCrispnessMenu(void)
     // Vsync
     MN_DrTextA(crispy->vsync ? "ON" : "OFF", 167, 80);
 
+    // Brightmaps
+    MN_DrTextA(crispy->brightmaps == BRIGHTMAPS_OFF ? "NONE" :
+               crispy->brightmaps == BRIGHTMAPS_TEXTURES ? "WALLS" :
+               crispy->brightmaps == BRIGHTMAPS_SPRITES ? "ITEMS" :
+                                                         "BOTH", 150, 110);
+
     // Mouselook
-    MN_DrTextA(crispy->mouselook ? "ON" : "OFF", 220, 110);
+    MN_DrTextA(crispy->mouselook ? "ON" : "OFF", 220, 140);
 
     dp_translation = NULL;
 }

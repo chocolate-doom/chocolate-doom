@@ -278,7 +278,9 @@ typedef struct vissprite_s
     fixed_t xiscale;            // negative if flipped
     fixed_t texturemid;
     int patch;
-    lighttable_t *colormap;
+    // [crispy] brightmaps for select sprites
+    lighttable_t *colormap[2];
+    const byte *brightmap;
     int mobjflags;              // for color translation and shadow draw
     boolean psprite;            // true if psprite
     int class;                  // player class (used in translation)
@@ -533,7 +535,7 @@ void R_ClipVisSprite(vissprite_t * vis, int xl, int xh);
 //
 //=============================================================================
 
-extern lighttable_t *dc_colormap;
+extern lighttable_t *dc_colormap[2];
 extern int dc_x;
 extern int dc_yl;
 extern int dc_yh;
@@ -541,6 +543,7 @@ extern fixed_t dc_iscale;
 extern fixed_t dc_texturemid;
 extern int dc_texheight; // [crispy]
 extern byte *dc_source;         // first pixel in a column
+extern const byte *dc_brightmap;
 
 void R_DrawColumn(void);
 void R_DrawColumnLow(void);

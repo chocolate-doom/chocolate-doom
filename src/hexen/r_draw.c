@@ -44,7 +44,7 @@ int columnofs[MAXWIDTH];
 ==================
 */
 
-lighttable_t *dc_colormap;
+lighttable_t *dc_colormap[2]; // [crispy] brightmaps
 int dc_x;
 int dc_yl;
 int dc_yh;
@@ -92,7 +92,9 @@ void R_DrawColumn(void)
 
         do
         {
-            *dest = dc_colormap[dc_source[frac >> FRACBITS]];
+            // [crispy] brightmaps
+            const byte source = dc_source[frac >> FRACBITS];
+            *dest = dc_colormap[dc_brightmap[source]][source];
             dest += SCREENWIDTH;
             if ((frac += fracstep) >= heightmask)
                 frac -= heightmask;
@@ -102,7 +104,9 @@ void R_DrawColumn(void)
     {
         do
         {
-            *dest = dc_colormap[dc_source[(frac >> FRACBITS) & heightmask]];
+            // [crispy] brightmaps
+            const byte source = dc_source[(frac >> FRACBITS) & heightmask];
+            *dest = dc_colormap[dc_brightmap[source]][source];
             dest += SCREENWIDTH;
             frac += fracstep;
         } while (count--);
@@ -144,7 +148,9 @@ void R_DrawColumnLow(void)
 
         do
         {
-            *dest = dc_colormap[dc_source[frac >> FRACBITS]];
+            // [crispy] brightmaps
+            const byte source = dc_source[frac >> FRACBITS];
+            *dest = dc_colormap[dc_brightmap[source]][source];
             dest += SCREENWIDTH;
             if ((frac += fracstep) >= heightmask)
                 frac -= heightmask;
@@ -154,7 +160,9 @@ void R_DrawColumnLow(void)
     {
         do
         {
-            *dest = dc_colormap[dc_source[(frac >> FRACBITS) & heightmask]];
+            // [crispy] brightmaps
+            const byte source = dc_source[(frac >> FRACBITS) & heightmask];
+            *dest = dc_colormap[dc_brightmap[source]][source];
             dest += SCREENWIDTH;
             frac += fracstep;
         } while (count--);
@@ -201,7 +209,7 @@ void R_DrawTLColumn(void)
         do
         {
             *dest = tinttable[*dest +
-                              (dc_colormap[dc_source[frac >> FRACBITS]] <<
+                              (dc_colormap[0][dc_source[frac >> FRACBITS]] <<
                                8)];
             dest += SCREENWIDTH;
             if ((frac += fracstep) >= heightmask)
@@ -213,7 +221,7 @@ void R_DrawTLColumn(void)
         do
         {
             *dest = tinttable[*dest +
-                              (dc_colormap[dc_source[(frac >> FRACBITS) & heightmask]] <<
+                              (dc_colormap[0][dc_source[(frac >> FRACBITS) & heightmask]] <<
                                8)];
             dest += SCREENWIDTH;
             frac += fracstep;
@@ -267,7 +275,7 @@ void R_DrawAltTLColumn(void)
         do
         {
             *dest = tinttable[((*dest) << 8)
-                              + dc_colormap[dc_source[frac >> FRACBITS]]];
+                              + dc_colormap[0][dc_source[frac >> FRACBITS]]];
             dest += SCREENWIDTH;
             if ((frac += fracstep) >= heightmask)
                 frac -= heightmask;
@@ -278,7 +286,7 @@ void R_DrawAltTLColumn(void)
         do
         {
             *dest = tinttable[((*dest) << 8)
-                              + dc_colormap[dc_source[(frac >> FRACBITS) & heightmask]]];
+                              + dc_colormap[0][dc_source[(frac >> FRACBITS) & heightmask]]];
             dest += SCREENWIDTH;
             frac += fracstep;
         } while (count--);
@@ -318,7 +326,7 @@ void R_DrawTranslatedColumn(void)
 
     do
     {
-        *dest = dc_colormap[dc_translation[dc_source[frac >> FRACBITS]]];
+        *dest = dc_colormap[0][dc_translation[dc_source[frac >> FRACBITS]]];
         dest += SCREENWIDTH;
         frac += fracstep;
     }
@@ -355,7 +363,7 @@ void R_DrawTranslatedTLColumn(void)
     {
         *dest = tinttable[((*dest) << 8)
                           +
-                          dc_colormap[dc_translation
+                          dc_colormap[0][dc_translation
                                       [dc_source[frac >> FRACBITS]]]];
         dest += SCREENWIDTH;
         frac += fracstep;
