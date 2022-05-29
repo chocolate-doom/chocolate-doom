@@ -44,4 +44,19 @@
       <caption>Doom the Way id Did, on Freedoom. Level 3-2: City of Corpses</caption>
     </screenshot>
   </screenshots>
+  <content_rating type="oars-1.1">
+    <content_attribute id="violence-fantasy">intense</content_attribute>
+    <content_attribute id="violence-realistic">intense</content_attribute>
+    <content_attribute id="violence-bloodshed">intense</content_attribute>
+    <content_attribute id="violence-desecration">intense</content_attribute>
+    <content_attribute id="social-chat">intense</content_attribute>
+  </content_rating>
+  <releases>
+    <release version="3.0.1" date="2020-06-25"/> 
+    <release version="3.0.0 " date="2017-12-30"/>
+    <release version="2.3.0" date="2016-12-29"/>
+    <release version="2.2.1" date="2016-04-09"/>
+    <release version="2.2.0" date="2015-06-10"/>
+    <release version="2.1.0" date="2014-10-22"/>
+  </releases>
 </component>
