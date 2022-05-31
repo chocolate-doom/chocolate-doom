@@ -69,12 +69,5 @@ set(STRIFE_SOURCES
 
 add_library(strife STATIC ${STRIFE_SOURCES})
 
-set(STRIFE_INCLUDE_DIRS "../" "${CMAKE_CURRENT_BINARY_DIR}/../../")
-
-if(WIN32)
-    list(APPEND STRIFE_INCLUDE_DIRS
-         "${PROJECT_SOURCE_DIR}/win32/")
-endif()
-
-target_include_directories(strife PRIVATE ${STRIFE_INCLUDE_DIRS})
+target_include_directories(strife PRIVATE "../" "../../win32/" "${CMAKE_CURRENT_BINARY_DIR}/../../")
 target_link_libraries(strife textscreen SDL2::SDL2 SDL2::mixer SDL2::net)

@@ -149,7 +149,7 @@ void PlayFile(char *filename)
     int running;
     char buf[8];
 
-    timer_data.fstream = fopen(filename, "rb");
+    timer_data.fstream = M_fopen(filename, "rb");
 
     if (timer_data.fstream == NULL)
     {

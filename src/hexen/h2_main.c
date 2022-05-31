@@ -22,10 +22,6 @@
 #include <stdlib.h>
 #include <time.h>
 
-#if defined(_WIN32)
-#include "win_fopen.h"
-#endif
-
 #include "config.h"
 
 #include "h2def.h"
@@ -826,7 +822,7 @@ void H2_GameLoop(void)
     {
         char filename[20];
         M_snprintf(filename, sizeof(filename), "debug%i.txt", consoleplayer);
-        debugfile = fopen(filename, "w");
+        debugfile = M_fopen(filename, "w");
     }
     I_SetWindowTitle(gamedescription);
     I_GraphicsCheckCommandLine();

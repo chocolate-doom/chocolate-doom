@@ -21,10 +21,6 @@
 #include <string.h>
 #include <ctype.h>
 
-#if defined(_WIN32)
-#include "win_fopen.h"
-#endif
-
 #include "m_misc.h"
 #include "w_wad.h"
 #include "z_zone.h"
@@ -92,7 +88,7 @@ deh_context_t *DEH_OpenFile(const char *filename)
     FILE *fstream;
     deh_context_t *context;
 
-    fstream = fopen(filename, "r");
+    fstream = M_fopen(filename, "r");
 
     if (fstream == NULL)
         return NULL;

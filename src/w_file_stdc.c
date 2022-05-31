@@ -18,10 +18,6 @@
 
 #include <stdio.h>
 
-#if defined(_WIN32)
-#include "win_fopen.h"
-#endif
-
 #include "m_misc.h"
 #include "w_file.h"
 #include "z_zone.h"
@@ -39,7 +35,7 @@ static wad_file_t *W_StdC_OpenFile(const char *path)
     stdc_wad_file_t *result;
     FILE *fstream;
 
-    fstream = fopen(path, "rb");
+    fstream = M_fopen(path, "rb");
 
     if (fstream == NULL)
     {

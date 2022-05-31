@@ -1,6 +1,5 @@
 AM_CFLAGS=-I$(top_srcdir)/src                           \
           -I$(top_srcdir)/textscreen                    \
-          -I$(top_srcdir)/win32                         \
           @SDL_CFLAGS@ @SDLMIXER_CFLAGS@ @SDLNET_CFLAGS@
 
 EXTRA_DIST = CMakeLists.txt

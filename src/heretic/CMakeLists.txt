@@ -53,12 +53,5 @@ add_library(heretic STATIC
             sounds.c            sounds.h
             s_sound.c           s_sound.h)
 
-set(HERETIC_INCLUDE_DIRS "../" "${CMAKE_CURRENT_BINARY_DIR}/../../")
-
-if(WIN32)
-    list(APPEND HERETIC_INCLUDE_DIRS
-         "${PROJECT_SOURCE_DIR}/win32/")
-endif()
-
-target_include_directories(heretic PRIVATE ${HERETIC_INCLUDE_DIRS})
+target_include_directories(heretic PRIVATE "../" "${CMAKE_CURRENT_BINARY_DIR}/../../")
 target_link_libraries(heretic textscreen SDL2::SDL2 SDL2::mixer SDL2::net)

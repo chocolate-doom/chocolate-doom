@@ -22,10 +22,6 @@
 #include <string.h>
 #include <ctype.h>
 
-#if defined(_WIN32)
-#include "win_fopen.h"
-#endif
-
 #include "SDL.h"
 #include "SDL_mixer.h"
 
@@ -584,7 +580,7 @@ static void ReadLoopPoints(const char *filename, file_metadata_t *metadata)
     metadata->start_time = 0;
     metadata->end_time = -1;
 
-    fs = fopen(filename, "rb");
+    fs = M_fopen(filename, "rb");
 
     if (fs == NULL)
     {
@@ -1021,7 +1017,7 @@ static void DumpSubstituteConfig(const char *filename)
     unsigned int lumpnum;
     size_t h;
 
-    fs = fopen(filename, "w");
+    fs = M_fopen(filename, "w");
 
     if (fs == NULL)
     {

@@ -21,10 +21,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#if defined(_WIN32)
-#include "win_fopen.h"
-#endif
-
 #include "memio.h"
 #include "mus2mid.h"
 
@@ -1677,7 +1673,7 @@ static void *I_OPL_RegisterSong(void *data, int len)
 
     // remove file now
 
-    remove(filename);
+    M_remove(filename);
     free(filename);
 
     return result;

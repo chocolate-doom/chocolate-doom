@@ -14,14 +14,5 @@ add_library(setup STATIC
             txt_keyinput.c      txt_keyinput.h
             txt_mouseinput.c    txt_mouseinput.h)
 
-set(SETUP_INCLUDE_DIRS "../" "${CMAKE_CURRENT_BINARY_DIR}/../../")
-
-if(WIN32)
-    list(APPEND SETUP_INCLUDE_DIRS
-         "${PROJECT_SOURCE_DIR}/win32/")
-endif()
-
-message("SETUP_INCLUDE_DIRS ${SETUP_INCLUDE_DIRS}")
-
-target_include_directories(setup PRIVATE ${SETUP_INCLUDE_DIRS})
+target_include_directories(setup PRIVATE "../" "${CMAKE_CURRENT_BINARY_DIR}/../../")
 target_link_libraries(setup textscreen SDL2::SDL2 SDL2::mixer)

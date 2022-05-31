@@ -21,10 +21,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#if defined(_WIN32)
-#include "win_fopen.h"
-#endif
-
 #include "SDL_stdinc.h"
 
 #include "doomtype.h"
@@ -90,7 +86,7 @@ static void LoadResponseFile(int argv_index, const char *filename)
     int i, k;
 
     // Read the response file into memory
-    handle = fopen(filename, "rb");
+    handle = M_fopen(filename, "rb");
 
     if (handle == NULL)
     {

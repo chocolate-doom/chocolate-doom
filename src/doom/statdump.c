@@ -23,13 +23,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-#if defined(_WIN32)
-#include "win_fopen.h"
-#endif
-
 #include "d_player.h"
 #include "d_mode.h"
 #include "m_argv.h"
+#include "m_misc.h"
 
 #include "statdump.h"
 
@@ -339,7 +336,7 @@ void StatDump(void)
 
         if (strcmp(myargv[i + 1], "-") != 0)
         {
-            dumpfile = fopen(myargv[i + 1], "w");
+            dumpfile = M_fopen(myargv[i + 1], "w");
         }
         else
         {

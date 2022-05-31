@@ -23,11 +23,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
-
-#if defined(_WIN32)
-#include "win_fopen.h"
-#endif
-
 #include "SDL.h"
 #include "SDL_mixer.h"
 
@@ -557,7 +552,7 @@ static void WriteWAV(char *filename, byte *data,
     unsigned int i;
     unsigned short s;
 
-    wav = fopen(filename, "wb");
+    wav = M_fopen(filename, "wb");
 
     // Header
 

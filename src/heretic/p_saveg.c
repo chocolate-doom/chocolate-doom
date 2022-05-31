@@ -18,10 +18,6 @@
 
 #include <stdlib.h>
 
-#if defined(_WIN32)
-#include "win_fopen.h"
-#endif
-
 #include "doomdef.h"
 #include "i_swap.h"
 #include "i_system.h"
@@ -64,12 +60,12 @@ char *SV_Filename(int slot)
 
 void SV_Open(char *fileName)
 {
-    SaveGameFP = fopen(fileName, "wb");
+    SaveGameFP = M_fopen(fileName, "wb");
 }
 
 void SV_OpenRead(char *filename)
 {
-    SaveGameFP = fopen(filename, "rb");
+    SaveGameFP = M_fopen(filename, "rb");
 
     if (SaveGameFP == NULL)
     {

@@ -19,10 +19,6 @@
 #include <stdlib.h>
 #include <ctype.h>
 
-#if defined(_WIN32)
-#include "win_fopen.h"
-#endif
-
 #include "deh_str.h"
 #include "doomdef.h"
 #include "doomkeys.h"
@@ -648,7 +644,7 @@ void MN_LoadSlotText(void)
     {
         int retval;
         filename = SV_Filename(i);
-        fp = fopen(filename, "rb+");
+        fp = M_fopen(filename, "rb+");
 	free(filename);
 
         if (!fp)

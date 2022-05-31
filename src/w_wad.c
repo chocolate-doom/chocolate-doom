@@ -24,10 +24,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#if defined(_WIN32)
-#include "win_fopen.h"
-#endif
-
 #include "doomtype.h"
 
 #include "i_swap.h"
@@ -512,7 +508,7 @@ void W_Profile (void)
     }
     profilecount++;
 	
-    f = fopen ("waddump.txt","w");
+    f = M_fopen ("waddump.txt","w");
     name[8] = 0;
 
     for (i=0 ; i<numlumps ; i++)

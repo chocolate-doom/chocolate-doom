@@ -21,9 +21,6 @@
 #include <stdlib.h>
 #include <ctype.h>
 
-#if defined(_WIN32)
-#include "win_fopen.h"
-#endif
 
 #include "doomdef.h"
 #include "doomkeys.h"
@@ -555,7 +552,7 @@ void M_ReadSaveStrings(void)
             Z_Free(fname);
         fname = M_SafeFilePath(savegamedir, M_MakeStrifeSaveDir(i, "\\name"));
 
-        handle = fopen(fname, "rb");
+        handle = M_fopen(fname, "rb");
         if(handle == NULL)
         {
             M_StringCopy(savegamestrings[i], DEH_String(EMPTYSTRING),

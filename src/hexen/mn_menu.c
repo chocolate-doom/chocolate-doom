@@ -18,11 +18,6 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include <ctype.h>
-
-#if defined(_WIN32)
-#include "win_fopen.h"
-#endif
-
 #include "h2def.h"
 #include "doomkeys.h"
 #include "i_input.h"
@@ -685,7 +680,7 @@ static boolean ReadDescriptionForSlot(int slot, char *description)
 
     M_snprintf(name, sizeof(name), "%shex%d.hxs", SavePath, slot);
 
-    fp = fopen(name, "rb");
+    fp = M_fopen(name, "rb");
 
     if (fp == NULL)
     {

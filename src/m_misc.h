@@ -22,9 +22,16 @@
 
 #include <stdio.h>
 #include <stdarg.h>
+#ifdef _WIN32
+#include <sys/stat.h>
+#endif
 
 #include "doomtype.h"
 
+FILE* M_fopen(const char *filename, const char *mode);
+int M_remove(const char *path);
+int M_rename(const char *oldname, const char *newname);
+int M_stat(const char *path, struct stat *buf);
 boolean M_WriteFile(const char *name, const void *source, int length);
 int M_ReadFile(const char *name, byte **buffer);
 void M_MakeDirectory(const char *dir);
@@ -49,7 +56,6 @@ boolean M_StringStartsWith(const char *s, const char *prefix);
 boolean M_StringEndsWith(const char *s, const char *suffix);
 int M_vsnprintf(char *buf, size_t buf_len, const char *s, va_list args);
 int M_snprintf(char *buf, size_t buf_len, const char *s, ...) PRINTF_ATTR(3, 4);
-char *M_OEMToUTF8(const char *ansi);
 void M_NormalizeSlashes(char *str);
 
 #endif

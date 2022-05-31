@@ -19,10 +19,6 @@
 #include <stdlib.h>
 #include <math.h>
 
-#if defined(_WIN32)
-#include "win_fopen.h"
-#endif
-
 #include "doomdef.h" 
 #include "doomkeys.h"
 #include "doomstat.h"
@@ -1686,7 +1682,7 @@ void G_DoLoadGame (boolean userload)
 
     gameaction = ga_nothing;
 
-    save_stream = fopen(loadpath, "rb");
+    save_stream = M_fopen(loadpath, "rb");
 
     // [STRIFE] If the file does not exist, G_DoLoadLevel is called.
     if (save_stream == NULL)
@@ -1832,7 +1828,7 @@ void G_DoSaveGame (char *path)
     // This prevents an existing savegame from being overwritten by 
     // a corrupted one, or if a savegame buffer overrun occurs.
 
-    save_stream = fopen(temp_savegame_file, "wb");
+    save_stream = M_fopen(temp_savegame_file, "wb");
 
     if (save_stream == NULL)
     {
@@ -1866,8 +1862,8 @@ void G_DoSaveGame (char *path)
     // Now rename the temporary savegame file to the actual savegame
     // file, overwriting the old savegame if there was one there.
 
-    remove(savegame_file);
-    rename(temp_savegame_file, savegame_file);
+    M_remove(savegame_file);
+    M_rename(temp_savegame_file, savegame_file);
     
     // haleyjd: free the savegame_file path
     Z_Free(savegame_file);

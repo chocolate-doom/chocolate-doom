@@ -30,9 +30,7 @@ EXTRA_DIST=                             \
         TODO.md                         \
         rpm.spec                        \
         win32/win_opendir.c             \
-        win32/win_opendir.h             \
-        win32/win_fopen.c               \
-        win32/win_fopen.h
+        win32/win_opendir.h
 
 doomdocsdir = ${docdir}/../${PROGRAM_PREFIX}doom
 doomdocs_DATA = $(DOC_FILES) NOT-BUGS.md

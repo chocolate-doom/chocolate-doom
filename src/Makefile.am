@@ -21,7 +21,6 @@ execgames_SCRIPTS = $(SETUP_BINARIES)
 AM_CFLAGS = -I$(top_srcdir)/textscreen            \
             -I$(top_srcdir)/opl                   \
             -I$(top_srcdir)/pcsound               \
-            -I$(top_srcdir)/win32                 \
             @SDLMIXER_CFLAGS@ @SDLNET_CFLAGS@
 
 # Common source files used by absolutely everything:
@@ -30,10 +29,7 @@ COMMON_SOURCE_FILES=\
 i_main.c                                   \
 i_system.c           i_system.h            \
 m_argv.c             m_argv.h              \
-m_misc.c             m_misc.h              \
-../win32/win_fopen.c ../win32/win_fopen.h
-
-VPATH= ../win32
+m_misc.c             m_misc.h
 
 # Dedicated server (chocolate-server):
 

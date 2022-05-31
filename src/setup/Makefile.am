@@ -1,7 +1,7 @@
 
 AM_CFLAGS = @SDL_CFLAGS@                                           \
             @SDLMIXER_CFLAGS@                                      \
-            -I$(top_srcdir)/textscreen -I$(top_srcdir)/src -I$(top_srcdir)/win32
+            -I$(top_srcdir)/textscreen -I$(top_srcdir)/src
 
 noinst_LIBRARIES = libsetup.a
 

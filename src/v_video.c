@@ -24,10 +24,6 @@
 #include <string.h>
 #include <math.h>
 
-#if defined(_WIN32)
-#include "win_fopen.h"
-#endif
-
 #include "i_system.h"
 
 #include "doomtype.h"
@@ -756,7 +752,7 @@ void WritePNGfile(char *filename, pixel_t *data,
         h_factor = 1;
     }
 
-    handle = fopen(filename, "wb");
+    handle = M_fopen(filename, "wb");
     if (!handle)
     {
         return;

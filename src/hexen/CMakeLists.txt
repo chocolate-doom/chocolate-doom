@@ -54,12 +54,5 @@ add_library(hexen STATIC
                                 textdefs.h
                                 xddefs.h)
 
-set(HEXEN_INCLUDE_DIRS "../" "${CMAKE_CURRENT_BINARY_DIR}/../../")
-
-if(WIN32)
-    list(APPEND HEXEN_INCLUDE_DIRS
-         "${PROJECT_SOURCE_DIR}/win32/")
-endif()
-
-target_include_directories(hexen PRIVATE ${HEXEN_INCLUDE_DIRS})
+target_include_directories(hexen PRIVATE "../" "${CMAKE_CURRENT_BINARY_DIR}/../../")
 target_link_libraries(hexen SDL2::SDL2 SDL2::mixer SDL2::net)
