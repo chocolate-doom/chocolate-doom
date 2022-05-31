@@ -57,7 +57,7 @@ static wchar_t* ConvertToUtf8(const char *str)
 
     if (!wlen)
     {
-        I_Error("Failed to convert path to UTF8");
+        printf("Warning: Failed to convert path to UTF8");
         return NULL;
     }
 
@@ -65,13 +65,14 @@ static wchar_t* ConvertToUtf8(const char *str)
 
     if (!wstr)
     {
+        I_Error("ConvertToUtf8: Failed to allocate new string");
         return NULL;
     }
 
     if (MultiByteToWideChar(CP_UTF8, 0, str, -1, wstr, wlen) == 0)
     {
+        printf("Warning: Failed to convert path to UTF8");
         free(wstr);
-        I_Error("Failed to convert path to UTF8");
         return NULL;
     }
 
