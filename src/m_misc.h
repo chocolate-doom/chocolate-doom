@@ -22,9 +22,7 @@
 
 #include <stdio.h>
 #include <stdarg.h>
-#ifdef _WIN32
 #include <sys/stat.h>
-#endif
 
 #include "doomtype.h"
 
