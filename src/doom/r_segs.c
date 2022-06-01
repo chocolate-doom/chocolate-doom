@@ -263,8 +263,10 @@ R_RenderMaskedSegRange
 		if (index >=  MAXLIGHTSCALE )
 		    index = MAXLIGHTSCALE-1;
 
-		// [crispy] no brightmaps for mid-textures
-		dc_colormap[0] = dc_colormap[1] = walllights[index];
+		// [crispy] brightmaps for mid-textures
+		dc_brightmap = texturebrightmap[texnum];
+		dc_colormap[0] = walllights[index];
+		dc_colormap[1] = (crispy->brightmaps & BRIGHTMAPS_TEXTURES) ? colormaps : dc_colormap[0];
 	    }
 			
 	    // [crispy] apply Killough's int64 sprtopscreen overflow fix
