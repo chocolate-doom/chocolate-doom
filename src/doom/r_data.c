@@ -156,7 +156,7 @@ unsigned**		texturecolumnofs; // [crispy] column offsets for composited transluc
 unsigned**		texturecolumnofs2; // [crispy] column offsets for composited opaque textures
 byte**			texturecomposite; // [crispy] composited translucent mid-textures on 2S walls
 byte**			texturecomposite2; // [crispy] composited opaque textures
-byte**			texturebrightmap; // [crispy] brightmaps
+const byte**	texturebrightmap; // [crispy] brightmaps
 
 // for global animation
 int*		flattranslation;

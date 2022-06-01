@@ -412,7 +412,7 @@ typedef struct vissprite_s
     //  maxbright frames as well
     // [crispy] brightmaps for select sprites
     lighttable_t*	colormap[2];
-    byte		*brightmap;
+    const byte		*brightmap;
    
     int			mobjflags;
     // [crispy] color translation table for blood colored by monster class

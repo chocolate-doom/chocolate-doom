@@ -766,7 +766,7 @@ int			ds_x1;
 int			ds_x2;
 
 lighttable_t*		ds_colormap[2];
-byte*			ds_brightmap;
+const byte*			ds_brightmap;
 
 fixed_t			ds_xfrac; 
 fixed_t			ds_yfrac; 
