@@ -582,11 +582,12 @@ void V_DrawAltTLPatch(int x, int y, patch_t * patch)
 
     y -= SHORT(patch->topoffset);
     x -= SHORT(patch->leftoffset);
+    x += WIDESCREENDELTA; // [crispy] horizontal widescreen offset
 
     if (x < 0
-     || x + SHORT(patch->width) > ORIGWIDTH
+     || x + SHORT(patch->width) > (SCREENWIDTH >> crispy->hires)
      || y < 0
-     || y + SHORT(patch->height) > ORIGHEIGHT)
+     || y + SHORT(patch->height) > (SCREENHEIGHT >> crispy->hires))
     {
         I_Error("Bad V_DrawAltTLPatch");
     }
