@@ -9,6 +9,9 @@ on:
 
 jobs:
   cpp-linter:
+    strategy:
+      matrix:
+        compiler: [clang]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
