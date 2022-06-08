@@ -180,11 +180,14 @@ int M_stat(const char *path, struct stat *buf)
 
     if (!wpath)
     {
-        return 0;
+        return -1;
     }
 
     ret = _wstat(wpath, &wbuf);
 
+    // The _wstat() function expects a struct _stat* parameter that is
+    // incompatible with struct stat*. We copy only the required compatible
+    // field.
     buf->st_mode = wbuf.st_mode;
 
     free(wpath);
