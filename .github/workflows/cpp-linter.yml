@@ -21,6 +21,15 @@ jobs:
         with:
           style: file
           lines-changed-only: true
+          tidy-checks: >-
+            boost-*
+            ,bugprone-*
+            ,performance-*
+            ,readability-*
+            ,portability-*
+            ,modernize-*
+            ,clang-analyzer-*
+            ,cppcoreguidelines-*
 
       - name: Fail fast?!
         if: steps.linter.outputs.checks-failed > 0
