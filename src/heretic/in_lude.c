@@ -954,10 +954,10 @@ void IN_DrawDMStats(void)
             }
             else
             {
-                V_DrawTLPatch(40, ypos,
+                V_DrawAltTLPatch(40, ypos,
                               W_CacheLumpNum(patchFaceOkayBase + i,
                                              PU_CACHE));
-                V_DrawTLPatch(xpos, 18,
+                V_DrawAltTLPatch(xpos, 18,
                               W_CacheLumpNum(patchFaceDeadBase + i,
                                              PU_CACHE));
             }

@@ -506,7 +506,7 @@ void V_DrawTLPatch(int x, int y, patch_t * patch)
 
             while (count--)
             {
-                *dest = tinttable[((*dest) << 8) + source[srccol >> FRACBITS]];
+                *dest = tinttable[*dest + ((source[srccol >> FRACBITS]) << 8)];
                 srccol += dyi;
                 dest += SCREENWIDTH;
             }
