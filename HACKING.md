@@ -216,6 +216,18 @@ For signed integers, you shouldn’t assume that `(i >> n)` is the same as
 `(i / (1 << n))`.  However, most processors handle bitshifts of signed
 integers properly, so it’s not a huge problem.
 
+Due to Microsoft implementation of the Unicode support in C standard
+library you should use these wrappers to support non-latin paths and
+filenames on Windows.
+
+C library function |   Wrapper
+-------------------|-------------------
+`fopen()`          |  `M_fopen()`
+`remove()`         |  `M_remove()`
+`rename()`         |  `M_rename()`
+`stat()`           |  `M_stat()`
+`mkdir()`          |  `M_MakeDirectory()`
+
 ## GNU GPL and licensing
 
 All code submitted to the project must be licensed under the GNU GPLv2 or a
