@@ -30,6 +30,8 @@ jobs:
             ,modernize-*
             ,clang-analyzer-*
             ,cppcoreguidelines-*
+            ,-cppcoreguidelines-avoid-magic-numbers
+            ,-readability-magic-numbers
 
       - name: Fail fast?!
         if: steps.linter.outputs.checks-failed > 0
