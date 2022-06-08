@@ -56,6 +56,7 @@ typedef struct
 	int flipcorpses;
 	int freeaim;
 	int freelook;
+	int freelook_hh;
 	int hires;
 	int jump;
 	int leveltime;
@@ -193,6 +194,13 @@ enum
     FREELOOK_SPRING,
     FREELOOK_LOCK,
     NUM_FREELOOKS
+};
+
+enum
+{
+    FREELOOK_HH_LOCK,
+    FREELOOK_HH_SPRING,
+    NUM_FREELOOKS_HH
 };
 
 enum

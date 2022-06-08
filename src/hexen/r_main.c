@@ -19,7 +19,6 @@
 #include "m_random.h"
 #include "h2def.h"
 #include "m_bbox.h"
-#include "p_local.h" // [crispy] MLOOKUNIT
 #include "r_local.h"
 
 int viewangleoffset;
@@ -788,8 +787,8 @@ void R_SetupFrame(player_t * player)
         viewy = player->mo->oldy + FixedMul(player->mo->y - player->mo->oldy, fractionaltic);
         viewz = player->oldviewz + FixedMul(player->viewz - player->oldviewz, fractionaltic);
         viewangle = R_InterpolateAngle(player->mo->oldangle, player->mo->angle, fractionaltic) + viewangleoffset;
-        pitch = (player->oldlookdir + (player->lookdir - player->oldlookdir) *
-                FIXED2DOUBLE(fractionaltic)) / MLOOKUNIT;
+        pitch = player->oldlookdir + (player->lookdir - player->oldlookdir) *
+                FIXED2DOUBLE(fractionaltic);
     }
     else
     {
@@ -797,7 +796,7 @@ void R_SetupFrame(player_t * player)
         viewx = player->mo->x;
         viewy = player->mo->y;
         viewz = player->viewz;
-        pitch = player->lookdir / MLOOKUNIT; // [crispy]
+        pitch = player->lookdir; // [crispy]
     }
 
     if (localQuakeHappening[displayplayer] && !paused)
