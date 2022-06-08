@@ -12,6 +12,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - name: Run cmake to generate compilation database
+        run: cmake -S . -B . -G Ninja -DCMAKE_EXPORT_COMPILE_COMMANDS=1
       - uses: cpp-linter/cpp-linter-action@v1
         id: linter
         env:
