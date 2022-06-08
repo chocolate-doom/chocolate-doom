@@ -376,7 +376,7 @@ void D_DoomLoop(void)
     {
         char filename[20];
         M_snprintf(filename, sizeof(filename), "debug%i.txt", consoleplayer);
-        debugfile = fopen(filename, "w");
+        debugfile = M_fopen(filename, "w");
     }
     I_GraphicsCheckCommandLine();
     I_SetGrabMouseCallback(D_GrabMouseCallback);

@@ -1674,7 +1674,7 @@ static void *I_OPL_RegisterSong(void *data, int len)
 
     // remove file now
 
-    remove(filename);
+    M_remove(filename);
     free(filename);
 
     return result;

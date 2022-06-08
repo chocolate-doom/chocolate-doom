@@ -847,7 +847,7 @@ void MN_LoadSlotText(void)
     {
         int retval;
         filename = SV_Filename(i);
-        fp = fopen(filename, "rb+");
+        fp = M_fopen(filename, "rb+");
 	free(filename);
 
         if (!fp)

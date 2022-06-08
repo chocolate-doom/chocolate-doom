@@ -68,7 +68,7 @@ void ClearTmp(void)
         {
             break;
         }
-        remove(path);
+        M_remove(path);
     }
 
     I_EndGlob(glob);
@@ -99,7 +99,7 @@ void ClearSlot(void)
             break;
         }
 
-        remove(filepath);
+        M_remove(filepath);
     }
 
     I_EndGlob(glob);
@@ -207,8 +207,8 @@ void M_SaveMoveMapToHere(void)
     // haleyjd: use M_FileExists, not access
     if(M_FileExists(mapsave))
     {
-        remove(heresave);
-        rename(mapsave, heresave);
+        M_remove(heresave);
+        M_rename(mapsave, heresave);
     }
 
     Z_Free(mapsave);
@@ -234,8 +234,8 @@ void M_SaveMoveHereToMap(void)
 
     if(M_FileExists(heresave))
     {
-        remove(mapsave);
-        rename(heresave, mapsave);
+        M_remove(mapsave);
+        M_rename(heresave, mapsave);
     }
 
     Z_Free(mapsave);
@@ -273,7 +273,7 @@ void M_ReadMisObj(void)
     // haleyjd: use M_SafeFilePath, not sprintf
     srcpath = M_SafeFilePath(savepathtemp, "mis_obj");
 
-    if((f = fopen(srcpath, "rb")))
+    if((f = M_fopen(srcpath, "rb")))
     {
         int retval = fread(mission_objective, 1, OBJECTIVE_LEN, f);
         fclose(f);

@@ -229,7 +229,7 @@ static boolean WriteTimidityConfig(char *path, gus_config_t *config)
     FILE *fstream;
     unsigned int i;
 
-    fstream = fopen(path, "w");
+    fstream = M_fopen(path, "w");
 
     if (fstream == NULL)
     {

@@ -23,6 +23,7 @@
 #include "doomtype.h"
 #include "i_swap.h"
 #include "i_system.h"
+#include "m_misc.h"
 #include "midifile.h"
 
 #define HEADER_CHUNK_ID "MThd"
@@ -598,7 +599,7 @@ midi_file_t *MIDI_LoadFile(char *filename)
 
     // Open file
 
-    stream = fopen(filename, "rb");
+    stream = M_fopen(filename, "rb");
 
     if (stream == NULL)
     {
