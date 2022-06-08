@@ -1586,7 +1586,7 @@ void G_DoLoadGame (void)
 	 
     gameaction = ga_nothing; 
 	 
-    save_stream = fopen(savename, "rb");
+    save_stream = M_fopen(savename, "rb");
 
     if (save_stream == NULL)
     {
@@ -1656,14 +1656,14 @@ void G_DoSaveGame (void)
     // and then rename it at the end if it was successfully written.
     // This prevents an existing savegame from being overwritten by
     // a corrupted one, or if a savegame buffer overrun occurs.
-    save_stream = fopen(temp_savegame_file, "wb");
+    save_stream = M_fopen(temp_savegame_file, "wb");
 
     if (save_stream == NULL)
     {
         // Failed to save the game, so we're going to have to abort. But
         // to be nice, save to somewhere else before we call I_Error().
         recovery_savegame_file = M_TempFile("recovery.dsg");
-        save_stream = fopen(recovery_savegame_file, "wb");
+        save_stream = M_fopen(recovery_savegame_file, "wb");
         if (save_stream == NULL)
         {
             I_Error("Failed to open either '%s' or '%s' to write savegame.",
@@ -1707,8 +1707,8 @@ void G_DoSaveGame (void)
     // Now rename the temporary savegame file to the actual savegame
     // file, overwriting the old savegame if there was one there.
 
-    remove(savegame_file);
-    rename(temp_savegame_file, savegame_file);
+    M_remove(savegame_file);
+    M_rename(temp_savegame_file, savegame_file);
 
     gameaction = ga_nothing;
     M_StringCopy(savedescription, "", sizeof(savedescription));

@@ -680,7 +680,7 @@ static boolean ReadDescriptionForSlot(int slot, char *description)
 
     M_snprintf(name, sizeof(name), "%shex%d.hxs", SavePath, slot);
 
-    fp = fopen(name, "rb");
+    fp = M_fopen(name, "rb");
 
     if (fp == NULL)
     {

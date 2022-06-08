@@ -752,7 +752,7 @@ void WritePNGfile(char *filename, pixel_t *data,
         h_factor = 1;
     }
 
-    handle = fopen(filename, "wb");
+    handle = M_fopen(filename, "wb");
     if (!handle)
     {
         return;

@@ -3199,10 +3199,10 @@ static void ClearSaveSlot(int slot)
     {
         M_snprintf(fileName, sizeof(fileName),
                    "%shex%d%02d.hxs", SavePath, slot, i);
-        remove(fileName);
+        M_remove(fileName);
     }
     M_snprintf(fileName, sizeof(fileName), "%shex%d.hxs", SavePath, slot);
-    remove(fileName);
+    M_remove(fileName);
 }
 
 //==========================================================================
@@ -3262,7 +3262,7 @@ static void CopyFile(char *source_name, char *dest_name)
     FILE *read_handle, *write_handle;
     int buf_count, read_count, write_count;
 
-    read_handle = fopen(source_name, "rb");
+    read_handle = M_fopen(source_name, "rb");
     if (read_handle == NULL)
     {
         I_Error ("Couldn't read file %s", source_name);
@@ -3281,7 +3281,7 @@ static void CopyFile(char *source_name, char *dest_name)
         Z_Free(buffer);
     }
 
-    write_handle = fopen(dest_name, "wb");
+    write_handle = M_fopen(dest_name, "wb");
     if (write_handle == NULL)
     {
         I_Error ("Couldn't read file %s", dest_name);
@@ -3327,7 +3327,7 @@ static boolean ExistingFile(char *name)
 {
     FILE *fp;
 
-    if ((fp = fopen(name, "rb")) != NULL)
+    if ((fp = M_fopen(name, "rb")) != NULL)
     {
         fclose(fp);
         return true;
@@ -3346,7 +3346,7 @@ static boolean ExistingFile(char *name)
 
 static void SV_OpenRead(char *fileName)
 {
-    SavingFP = fopen(fileName, "rb");
+    SavingFP = M_fopen(fileName, "rb");
 
     // Should never happen, only if hex6.hxs cannot ever be created.
     if (SavingFP == NULL)
@@ -3357,7 +3357,7 @@ static void SV_OpenRead(char *fileName)
 
 static void SV_OpenWrite(char *fileName)
 {
-    SavingFP = fopen(fileName, "wb");
+    SavingFP = M_fopen(fileName, "wb");
 }
 
 //==========================================================================

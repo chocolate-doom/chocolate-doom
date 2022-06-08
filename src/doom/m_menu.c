@@ -510,7 +510,7 @@ void M_ReadSaveStrings(void)
         int retval;
         M_StringCopy(name, P_SaveGameFile(i), sizeof(name));
 
-	handle = fopen(name, "rb");
+	handle = M_fopen(name, "rb");
         if (handle == NULL)
         {
             M_StringCopy(savegamestrings[i], EMPTYSTRING, SAVESTRINGSIZE);

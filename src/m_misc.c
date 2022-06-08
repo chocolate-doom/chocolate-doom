@@ -32,7 +32,6 @@
 #include <direct.h>
 #endif
 #else
-#include <sys/stat.h>
 #include <sys/types.h>
 #endif
 
@@ -48,6 +47,159 @@
 #include "w_wad.h"
 #include "z_zone.h"
 
+#ifdef _WIN32
+static wchar_t* ConvertToUtf8(const char *str)
+{
+    wchar_t *wstr = NULL;
+    int wlen = 0;
+
+    wlen = MultiByteToWideChar(CP_UTF8, 0, str, -1, NULL, 0);
+
+    if (!wlen)
+    {
+        errno = EINVAL;
+        printf("Warning: Failed to convert path to UTF8\n");
+        return NULL;
+    }
+
+    wstr = malloc(sizeof(wchar_t) * wlen);
+
+    if (!wstr)
+    {
+        I_Error("ConvertToUtf8: Failed to allocate new string");
+        return NULL;
+    }
+
+    if (MultiByteToWideChar(CP_UTF8, 0, str, -1, wstr, wlen) == 0)
+    {
+        errno = EINVAL;
+        printf("Warning: Failed to convert path to UTF8\n");
+        free(wstr);
+        return NULL;
+    }
+
+    return wstr;
+}
+#endif
+
+FILE* M_fopen(const char *filename, const char *mode)
+{
+#ifdef _WIN32
+    FILE *file;
+    wchar_t *wname = NULL;
+    wchar_t *wmode = NULL;
+
+    wname = ConvertToUtf8(filename);
+
+    if (!wname)
+    {
+        return NULL;
+    }
+
+    wmode = ConvertToUtf8(mode);
+
+    if (!wmode)
+    {
+        free(wname);
+        return NULL;
+    }
+
+    file = _wfopen(wname, wmode);
+
+    free(wname);
+    free(wmode);
+
+    return file;
+#else
+    return fopen(filename, mode);
+#endif
+}
+
+int M_remove(const char *path)
+{
+#ifdef _WIN32
+    wchar_t *wpath = NULL;
+    int ret;
+
+    wpath = ConvertToUtf8(path);
+
+    if (!wpath)
+    {
+        return 0;
+    }
+
+    ret = _wremove(wpath);
+
+    free(wpath);
+
+    return ret;
+#else
+    return remove(path);
+#endif
+}
+
+int M_rename(const char *oldname, const char *newname)
+{
+#ifdef _WIN32
+    wchar_t *wold = NULL;
+    wchar_t *wnew = NULL;
+    int ret;
+
+    wold = ConvertToUtf8(oldname);
+
+    if (!wold)
+    {
+        return 0;
+    }
+
+    wnew = ConvertToUtf8(newname);
+
+    if (!wnew)
+    {
+        free(wold);
+        return 0;
+    }
+
+    ret = _wrename(wold, wnew);
+
+    free(wold);
+    free(wnew);
+
+    return ret;
+#else
+    return rename(oldname, newname);
+#endif
+}
+
+int M_stat(const char *path, struct stat *buf)
+{
+#ifdef _WIN32
+    wchar_t *wpath = NULL;
+    struct _stat wbuf;
+    int ret;
+
+    wpath = ConvertToUtf8(path);
+
+    if (!wpath)
+    {
+        return -1;
+    }
+
+    ret = _wstat(wpath, &wbuf);
+
+    // The _wstat() function expects a struct _stat* parameter that is
+    // incompatible with struct stat*. We copy only the required compatible
+    // field.
+    buf->st_mode = wbuf.st_mode;
+
+    free(wpath);
+
+    return ret;
+#else
+    return stat(path, buf);
+#endif
+}
+
 //
 // Create a directory
 //
@@ -55,7 +207,18 @@
 void M_MakeDirectory(const char *path)
 {
 #ifdef _WIN32
-    mkdir(path);
+    wchar_t *wdir;
+
+    wdir = ConvertToUtf8(path);
+
+    if (!wdir)
+    {
+        return;
+    }
+
+    _wmkdir(wdir);
+
+    free(wdir);
 #else
     mkdir(path, 0755);
 #endif
@@ -67,7 +230,7 @@ boolean M_FileExists(const char *filename)
 {
     FILE *fstream;
 
-    fstream = fopen(filename, "r");
+    fstream = M_fopen(filename, "r");
 
     if (fstream != NULL)
     {
@@ -183,7 +346,7 @@ boolean M_WriteFile(const char *name, const void *source, int length)
     FILE *handle;
     int	count;
 	
-    handle = fopen(name, "wb");
+    handle = M_fopen(name, "wb");
 
     if (handle == NULL)
 	return false;
@@ -208,7 +371,7 @@ int M_ReadFile(const char *name, byte **buffer)
     int	count, length;
     byte *buf;
 	
-    handle = fopen(name, "rb");
+    handle = M_fopen(name, "rb");
     if (handle == NULL)
 	I_Error ("Couldn't read file %s", name);
 
@@ -654,25 +817,6 @@ int M_snprintf(char *buf, size_t buf_len, const char *s, ...)
     va_end(args);
     return result;
 }
-
-#ifdef _WIN32
-
-char *M_OEMToUTF8(const char *oem)
-{
-    unsigned int len = strlen(oem) + 1;
-    wchar_t *tmp;
-    char *result;
-
-    tmp = malloc(len * sizeof(wchar_t));
-    MultiByteToWideChar(CP_OEMCP, 0, oem, len, tmp, len);
-    result = malloc(len * 4);
-    WideCharToMultiByte(CP_UTF8, 0, tmp, len, result, len * 4, NULL, NULL);
-    free(tmp);
-
-    return result;
-}
-
-#endif
 
 //
 // M_NormalizeSlashes
