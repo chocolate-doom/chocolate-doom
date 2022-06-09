@@ -1403,19 +1403,19 @@ static boolean CrispyBrightmaps(int option)
 
 static boolean CrispyAutomapStats(int option)
 {
-    crispy->automapstats = (crispy->automapstats + 1) % NUM_WIDGETS;
+    crispy->automapstats = (crispy->automapstats + 1) % (NUM_WIDGETS - 1);
     return true;
 }
 
 static boolean CrispyLevelTime(int option)
 {
-    crispy->leveltime = (crispy->leveltime + 1) % NUM_WIDGETS;
+    crispy->leveltime = (crispy->leveltime + 1) % (NUM_WIDGETS - 1);
     return true;
 }
 
 static boolean CrispyPlayerCoords(int option)
 {
-    crispy->playercoords = (crispy->playercoords + 1) % (NUM_WIDGETS - 1); // [crispy] disable "always" setting
+    crispy->playercoords = (crispy->playercoords + 1) % (NUM_WIDGETS - 2); // [crispy] disable "always" setting
     return true;
 }
 
