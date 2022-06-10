@@ -103,6 +103,7 @@ static boolean SCSkill(int option);
 static boolean SCMouseSensi(int option);
 static boolean SCMouseSensiX2(int option);
 static boolean SCMouseSensiY(int option);
+static boolean SCMouseInvertY(int option);
 static boolean SCSfxVolume(int option);
 static boolean SCMusicVolume(int option);
 static boolean SCScreenSize(int option);
@@ -119,6 +120,7 @@ static boolean CrispyAutomapStats(int option);
 static boolean CrispyLevelTime(int option);
 static boolean CrispyPlayerCoords(int option);
 static boolean CrispySecretMessage(int option);
+static boolean CrispyFreelook(int option);
 static boolean CrispyMouselook(int option);
 static boolean CrispyUncapped(int option);
 static boolean CrispyVsync(int option);
@@ -300,18 +302,19 @@ static Menu_t OptionsMenu = {
 };
 
 static MenuItem_t MouseItems[] = {
-    {ITT_LRFUNC, "HORIZONTAL: TURN", SCMouseSensi, 0, MENU_NONE},
+    {ITT_LRFUNC, "HORIZONTAL : TURN", SCMouseSensi, 0, MENU_NONE},
     {ITT_EMPTY, NULL, NULL, 0, MENU_NONE},
-    {ITT_LRFUNC, "HORIZONTAL: STRAFE", SCMouseSensiX2, 0, MENU_NONE},
+    {ITT_LRFUNC, "HORIZONTAL : STRAFE", SCMouseSensiX2, 0, MENU_NONE},
     {ITT_EMPTY, NULL, NULL, 0, MENU_NONE},
     {ITT_LRFUNC, "VERTICAL", SCMouseSensiY, 0, MENU_NONE},
     {ITT_EMPTY, NULL, NULL, 0, MENU_NONE},
+    {ITT_LRFUNC, "INVERT Y AXIS :", SCMouseInvertY, 0, MENU_NONE},
 };
 
 static Menu_t MouseMenu = {
-    90, 20,
+    90, 15,
     DrawMouseMenu,
-    6, MouseItems,
+    7, MouseItems,
     0,
     MENU_OPTIONS
 };
@@ -365,6 +368,7 @@ static Menu_t Crispness1Menu = {
 };
 
 static MenuItem_t Crispness2Items[] = {
+    {ITT_LRFUNC, "FREELOOK MODE:", CrispyFreelook, 0, MENU_NONE},
     {ITT_LRFUNC, "PERMANENT MOUSELOOK:", CrispyMouselook, 0, MENU_NONE},
     {ITT_EMPTY, NULL, NULL, 0, MENU_NONE},
     {ITT_EFUNC, "PREV PAGE", CrispyPrevPage, 0, MENU_NONE},
@@ -373,7 +377,7 @@ static MenuItem_t Crispness2Items[] = {
 static Menu_t Crispness2Menu = {
     68, 35,
     DrawCrispness,
-    3, Crispness2Items,
+    4, Crispness2Items,
     0,
     MENU_OPTIONS
 };
@@ -1219,6 +1223,12 @@ static boolean SCMouseSensiY(int option)
     return true;
 }
 
+static boolean SCMouseInvertY(int option)
+{
+    mouse_y_invert = !mouse_y_invert;
+    return true;
+}
+
 //---------------------------------------------------------------------------
 //
 // PROC SCSfxVolume
@@ -1393,25 +1403,31 @@ static boolean CrispyBrightmaps(int option)
 
 static boolean CrispyAutomapStats(int option)
 {
-    crispy->automapstats = (crispy->automapstats + 1) % NUM_WIDGETS;
+    crispy->automapstats = (crispy->automapstats + 1) % (NUM_WIDGETS - 1);
     return true;
 }
 
 static boolean CrispyLevelTime(int option)
 {
-    crispy->leveltime = (crispy->leveltime + 1) % NUM_WIDGETS;
+    crispy->leveltime = (crispy->leveltime + 1) % (NUM_WIDGETS - 1);
     return true;
 }
 
 static boolean CrispyPlayerCoords(int option)
 {
-    crispy->playercoords = (crispy->playercoords + 1) % (NUM_WIDGETS - 1); // [crispy] disable "always" setting
+    crispy->playercoords = (crispy->playercoords + 1) % (NUM_WIDGETS - 2); // [crispy] disable "always" setting
     return true;
 }
 
 static boolean CrispySecretMessage(int option)
 {
     crispy->secretmessage = (crispy->secretmessage + 1) % NUM_SECRETMESSAGE; // [crispy] enable secret message
+    return true;
+}
+
+static boolean CrispyFreelook(int option)
+{
+    crispy->freelook_hh = (crispy->freelook_hh + 1) % NUM_FREELOOKS_HH;
     return true;
 }
 
@@ -2194,6 +2210,9 @@ static void DrawMouseMenu(void)
     DrawSlider(&MouseMenu, 1, 16, mouseSensitivity);
     DrawSlider(&MouseMenu, 3, 16, mouseSensitivity_x2);
     DrawSlider(&MouseMenu, 5, 16, mouseSensitivity_y);
+
+    // Invert mouse y
+    MN_DrTextB(mouse_y_invert ? "ON" : "OFF", 226, 135);
 }
 
 //---------------------------------------------------------------------------
@@ -2321,8 +2340,11 @@ static void DrawCrispness2(void)
     MN_DrTextA("TACTICAL", 63, 25);
     dp_translation = cr[CR_GRAY];
 
+    // Freelook
+    MN_DrTextA(crispy->freelook_hh == FREELOOK_HH_LOCK ? "LOCK" : "SPRING", 175, 35);
+
     // Mouselook
-    MN_DrTextA(crispy->mouselook ? "ON" : "OFF", 220, 35);
+    MN_DrTextA(crispy->mouselook ? "ON" : "OFF", 220, 45);
 
     dp_translation = NULL;
 }

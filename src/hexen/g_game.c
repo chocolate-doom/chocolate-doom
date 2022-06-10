@@ -32,6 +32,8 @@
 
 #define AM_STARTKEY	9
 
+#define MLOOKUNIT 8 // [crispy] for mouselook
+
 // External functions
 
 extern void R_InitSky(int map);
@@ -215,6 +217,9 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
     int flyheight;
     int pClass;
 
+    static unsigned int mbmlookctrl = 0; // [crispy]
+    static unsigned int kbdlookctrl = 0; // [crispy]
+
     extern boolean artiskip;
 
     // haleyjd: removed externdriver crap
@@ -336,18 +341,40 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
     }
 
     // Look up/down/center keys
-    if (gamekeydown[key_lookup] || joylook < 0)
+    // [crispy] Keyboard lookspring
+    if (crispy->freelook_hh == FREELOOK_HH_SPRING)
     {
-        look = lspeed;
+        if (gamekeydown[key_lookup] || joylook < 0)
+        {
+            look = lspeed;
+            kbdlookctrl += ticdup;
+        }
+        else if (gamekeydown[key_lookdown] || joylook > 0)
+        {
+            look = -lspeed;
+            kbdlookctrl += ticdup;
+        }
+        else if (gamekeydown[key_lookcenter] || kbdlookctrl)
+        {
+            look = TOCENTER;
+            kbdlookctrl = 0;
+        }
     }
-    if (gamekeydown[key_lookdown] || joylook > 0)
+    else
     {
-        look = -lspeed;
-    }
-    // haleyjd: removed externdriver crap
-    if (gamekeydown[key_lookcenter])
-    {
-        look = TOCENTER;
+        if (gamekeydown[key_lookup] || joylook < 0)
+        {
+            look = lspeed;
+        }
+        if (gamekeydown[key_lookdown] || joylook > 0)
+        {
+            look = -lspeed;
+        }
+        // haleyjd: removed externdriver crap
+        if (gamekeydown[key_lookcenter])
+        {
+            look = TOCENTER;
+        }
     }
 
     // haleyjd: removed externdriver crap
@@ -594,14 +621,31 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
         testcontrols_mousespeed = 0;
     }
 
-    if (crispy->mouselook)
+    if (crispy->mouselook || mousebuttons[mousebmouselook])
     {
         cmd->lookdir = mouse_y_invert ? -mousey : mousey;
+        cmd->lookdir /= MLOOKUNIT;
     }
     else if (!novert)
     {
         forward += mousey;
     }
+
+    // [crispy] single click on mouse look button centers view
+    if (mousebuttons[mousebmouselook]) // [crispy] clicked
+    {
+        mbmlookctrl += ticdup;
+    }
+    else if (mbmlookctrl) // [crispy] released
+    {
+        if (crispy->freelook_hh == FREELOOK_HH_SPRING ||
+                mbmlookctrl < SLOWTURNTICS) // [crispy] short click
+        {
+            look = TOCENTER;
+        }
+        mbmlookctrl = 0;
+    }
+
     mousex = mousex2 = mousey = 0;
 
     if (forward > MaxPlayerMove[pClass])

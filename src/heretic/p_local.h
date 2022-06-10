@@ -113,8 +113,6 @@ void P_UpdateBeak(player_t * player, pspdef_t * psp);
 
 // ***** P_USER *****
 
-#define MLOOKUNIT 8 // [crispy] for mouselook
-
 void P_PlayerThink(player_t * player);
 void P_Thrust(player_t * player, angle_t angle, fixed_t move);
 void P_PlayerRemoveArtifact(player_t * player, int slot);

@@ -56,6 +56,7 @@ typedef struct
 	int flipcorpses;
 	int freeaim;
 	int freelook;
+	int freelook_hh;
 	int hires;
 	int jump;
 	int leveltime;
@@ -197,6 +198,13 @@ enum
 
 enum
 {
+    FREELOOK_HH_LOCK,
+    FREELOOK_HH_SPRING,
+    NUM_FREELOOKS_HH
+};
+
+enum
+{
     JUMP_OFF,
     JUMP_LOW,
     JUMP_HIGH,
@@ -225,6 +233,7 @@ enum
     WIDGETS_OFF,
     WIDGETS_AUTOMAP,
     WIDGETS_ALWAYS,
+    WIDGETS_STBAR,
     NUM_WIDGETS
 };
 

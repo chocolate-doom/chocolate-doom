@@ -19,7 +19,6 @@
 #include <math.h>
 #include "doomdef.h"
 #include "m_bbox.h"
-#include "p_local.h" // [crispy] MLOOKUNIT
 #include "r_local.h"
 #include "tables.h"
 #include "v_video.h" // [crispy] V_DrawFilledBox for HOM detector
@@ -809,8 +808,8 @@ void R_SetupFrame(player_t * player)
         viewy = player->mo->oldy + FixedMul(player->mo->y - player->mo->oldy, fractionaltic);
         viewz = player->oldviewz + FixedMul(player->viewz - player->oldviewz, fractionaltic);
         viewangle = R_InterpolateAngle(player->mo->oldangle, player->mo->angle, fractionaltic) + viewangleoffset;
-        pitch = (player->oldlookdir + (player->lookdir - player->oldlookdir) *
-                FIXED2DOUBLE(fractionaltic)) / MLOOKUNIT;
+        pitch = player->oldlookdir + (player->lookdir - player->oldlookdir) *
+                FIXED2DOUBLE(fractionaltic);
     }
     else
     {
@@ -818,7 +817,7 @@ void R_SetupFrame(player_t * player)
         viewy = player->mo->y;
         viewz = player->viewz;
         viewangle = player->mo->angle + viewangleoffset;
-        pitch = player->lookdir / MLOOKUNIT; // [crispy]
+        pitch = player->lookdir; // [crispy]
     }
 
     tableAngle = viewangle >> ANGLETOFINESHIFT;

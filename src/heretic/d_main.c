@@ -853,6 +853,7 @@ void D_BindVariables(void)
     M_BindIntVariable("crispy_automaprotate",   &crispy->automaprotate);
     M_BindIntVariable("crispy_automapstats",    &crispy->automapstats);
     M_BindIntVariable("crispy_brightmaps",      &crispy->brightmaps);
+    M_BindIntVariable("crispy_freelook",        &crispy->freelook_hh);
     M_BindIntVariable("crispy_leveltime",       &crispy->leveltime);
     M_BindIntVariable("crispy_mouselook",       &crispy->mouselook);
     M_BindIntVariable("crispy_playercoords",    &crispy->playercoords);
@@ -942,6 +943,7 @@ void D_DoomMain(void)
     startmap = 1;
     autostart = false;
 
+    crispy->freelook = FREELOOK_LOCK;
 //
 // get skill / episode / map from parms
 //

@@ -237,31 +237,31 @@ void P_MovePlayer(player_t * player)
         }
         else
         {
-            player->lookdir += MLOOKUNIT * 5 * look;
-            if (player->lookdir > 90 * MLOOKUNIT ||
-                    player->lookdir < -110 * MLOOKUNIT)
+            player->lookdir += 5 * look;
+            if (player->lookdir > 90 ||
+                    player->lookdir < -110)
             {
-                player->lookdir -= MLOOKUNIT * 5 * look;
+                player->lookdir -= 5 * look;
             }
         }
     }
     // [crispy] Handle mouselook
     if (!demoplayback)
     {
-        player->lookdir = BETWEEN(-110 * MLOOKUNIT, 90 * MLOOKUNIT,
+        player->lookdir = BETWEEN(-110, 90,
                                      player->lookdir + cmd->lookdir);
     }
     if (player->centering)
     {
         if (player->lookdir > 0)
         {
-            player->lookdir -= 8 * MLOOKUNIT;
+            player->lookdir -= 8;
         }
         else if (player->lookdir < 0)
         {
-            player->lookdir += 8 * MLOOKUNIT;
+            player->lookdir += 8;
         }
-        if (abs(player->lookdir) < 8 * MLOOKUNIT)
+        if (abs(player->lookdir) < 8)
         {
             player->lookdir = 0;
             player->centering = false;
