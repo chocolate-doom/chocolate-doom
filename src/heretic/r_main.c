@@ -609,8 +609,6 @@ void R_ExecuteSetViewSize(void)
 		scaledviewwidth = scaledviewwidth_nonwide;
 	}
     }
-    // [crispy] make sure viewheight is always an even number
-    viewheight &= ~1;
 
     detailshift = setdetail;
     viewwidth = scaledviewwidth >> detailshift;
