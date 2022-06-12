@@ -37,6 +37,7 @@ static int mouse_threshold = 10;
 static int mouseSensitivity_y = 5; // [crispy]
 static float mouse_acceleration_y = 1.0; // [crispy]
 static int mouse_threshold_y = 0; // [crispy]
+static int mouse_y_invert = 0; // [crispy]
 static int grabmouse = 1;
 
 int novert = 1;
@@ -230,6 +231,7 @@ void BindMouseVariables(void)
     M_BindIntVariable("mouse_sensitivity_y",     &mouseSensitivity_y);
     M_BindIntVariable("mouse_threshold_y",       &mouse_threshold_y);
     M_BindFloatVariable("mouse_acceleration_y",  &mouse_acceleration_y);
+    M_BindIntVariable("mouse_y_invert",          &mouse_y_invert);
     if (gamemission == doom || gamemission == heretic || gamemission == hexen)
     {
     M_BindIntVariable("crispy_mouselook",        &crispy->mouselook);
