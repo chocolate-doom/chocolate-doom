@@ -38,6 +38,7 @@
 #define AM_STARTKEY     9
 
 #define MLOOKUNIT 8 // [crispy] for mouselook
+#define MLOOKUNITLOWRES 16 // [crispy] for mouselook when recording
 
 // Functions
 
@@ -719,8 +720,23 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
 
     if (crispy->mouselook || mousebuttons[mousebmouselook])
     {
-        cmd->lookdir = mouse_y_invert ? -mousey : mousey;
-        cmd->lookdir /= MLOOKUNIT;
+        if (demorecording || lowres_turn)
+        {
+            // [crispy] Map mouse movement to look variable when recording
+            look += mouse_y_invert ? -mousey / MLOOKUNITLOWRES
+                                        : mousey / MLOOKUNITLOWRES;
+
+            // [crispy] Limit to max speed of keyboard look up/down
+            if (look > 2)
+                look = 2;
+            else if (look < -2)
+                look = -2;
+        }
+        else
+        {
+            cmd->lookdir = mouse_y_invert ? -mousey : mousey;
+            cmd->lookdir /= MLOOKUNIT;
+        }
     }
     else if (!novert)
     {
