@@ -230,7 +230,7 @@ static void ConfigExtraKeys(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
         AddKeyControl(table, "Toggle vert. mouse", &key_togglenovert);
         AddKeyControl(table, "Quick Reverse", &key_reverse);
         }
-        else if (gamemission == heretic)
+        else if (gamemission == heretic || gamemission == hexen)
         {
         AddSectionLabel(table, "View", false);
 
