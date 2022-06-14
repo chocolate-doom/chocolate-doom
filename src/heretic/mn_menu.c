@@ -1403,7 +1403,7 @@ static boolean CrispyBrightmaps(int option)
 
 static boolean CrispyAutomapStats(int option)
 {
-    crispy->automapstats = (crispy->automapstats + 1) % (NUM_WIDGETS - 1);
+    crispy->automapstats = (crispy->automapstats + 1) % (NUM_WIDGETS);
     return true;
 }
 
@@ -2315,7 +2315,8 @@ static void DrawCrispness1(void)
     // Show level stats
     MN_DrTextA(crispy->automapstats == WIDGETS_OFF ? "NEVER" :
                crispy->automapstats == WIDGETS_AUTOMAP ? "IN AUTOMAP" :
-                                                         "ALWAYS", 190, 135);
+               crispy->automapstats == WIDGETS_ALWAYS ? "ALWAYS" :
+                                                         "STATUS BAR", 190, 135);
 
     // Show level time
     MN_DrTextA(crispy->leveltime == WIDGETS_OFF ? "NEVER" :

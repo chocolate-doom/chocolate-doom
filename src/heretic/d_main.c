@@ -163,6 +163,7 @@ void DrawCenterMessage(void)
 //---------------------------------------------------------------------------
 
 int left_widget_w, right_widget_w; // [crispy]
+extern int screenblocks; // [crispy]
 
 static void CrispyDrawStats (void)
 {
@@ -185,7 +186,10 @@ static void CrispyDrawStats (void)
     left_widget_x = 0 - WIDESCREENDELTA;
     right_widget_x = coord_x + WIDESCREENDELTA;
 
-    if (crispy->automapstats == WIDGETS_ALWAYS || (automapactive && crispy->automapstats == WIDGETS_AUTOMAP))
+    if (crispy->automapstats == WIDGETS_ALWAYS
+            || (automapactive && (crispy->automapstats == WIDGETS_AUTOMAP
+                                || crispy->automapstats == WIDGETS_STBAR))
+            || (screenblocks > 10 && crispy->automapstats == WIDGETS_STBAR))
     {
         M_snprintf(str, sizeof(str), "K %d/%d", player->killcount, totalkills);
         MN_DrTextA(str, left_widget_x, 1*height);
@@ -196,6 +200,14 @@ static void CrispyDrawStats (void)
 
         M_snprintf(str, sizeof(str), "S %d/%d", player->secretcount, totalsecret);
         MN_DrTextA(str, left_widget_x, 3*height);
+    }
+    else if (crispy->automapstats == WIDGETS_STBAR)
+    {
+        M_snprintf(str, sizeof(str), "K %d/%d I %d/%d S %d/%d",
+                    player->killcount, totalkills,
+                    player->itemcount, totalitems,
+                    player->secretcount, totalsecret);
+        MN_DrTextA(str, 20, 145); // same location as level name in automap
     }
 
     if (crispy->leveltime == WIDGETS_ALWAYS || (automapactive && crispy->leveltime == WIDGETS_AUTOMAP))
@@ -800,7 +812,6 @@ void InitThermo(int max)
 
 void D_BindVariables(void)
 {
-    extern int screenblocks;
     extern int snd_Channels;
     int i;
 
