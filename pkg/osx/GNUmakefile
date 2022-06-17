@@ -89,12 +89,12 @@ $(STAGING_DIR): launcher $(TOPLEVEL_DOCS) app.icns wadfile.icns
 	cp disk/background.png $(STAGING_DIR)/background.png
 
 app.icns: $(TOPLEVEL)/data/doom.png
-	mkdir app.iconset
+	mkdir -f app.iconset
 	sips -z 64 64 $< --out app.iconset/icon_32x32@2x.png
 	iconutil -c icns app.iconset
 
 wadfile.icns: $(TOPLEVEL)/data/wadfile.png
-	mkdir wadfile.iconset
+	mkdir -f wadfile.iconset
 	sips -z 64 64 $< --out wadfile.iconset/icon_32x32@2x.png
 	iconutil -c icns wadfile.iconset
 
