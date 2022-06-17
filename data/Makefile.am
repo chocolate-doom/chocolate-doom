@@ -7,6 +7,7 @@ EXTRA_DIST=              \
         setup.ico        \
         setup8.ico       \
         setup.png        \
+        wadfile.png      \
         convert-icon
 
 iconsdir = $(prefix)/share/icons/hicolor/128x128/apps
