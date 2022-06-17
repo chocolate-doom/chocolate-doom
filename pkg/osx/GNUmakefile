@@ -44,6 +44,7 @@ $(STAGING_DIR): launcher $(TOPLEVEL_DOCS) app.icns
 	mkdir -p "$(APP_TOP_DIR)"
 	cp -R Resources "$(APP_TOP_DIR)"
 	cp app.icns "$(APP_TOP_DIR)/Resources"
+	cp $(TOPLEVEL)/data/doom.png "$(APP_TOP_DIR)/Resources/128x128.png"
 	cp PkgInfo "$(APP_TOP_DIR)"
 	cp $(SRC_INFO_PLIST) "$(APP_TOP_DIR)"
 
