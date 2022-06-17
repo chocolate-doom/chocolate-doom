@@ -1,4 +1,6 @@
 Info.plist
+app.iconset
+app.icns
 launcher
 *.o
 *.d

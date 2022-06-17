@@ -37,12 +37,13 @@ SRC_INFO_PLIST=Info.plist
 APP_DOC_DIR=$(APP_BIN_DIR)/Documentation
 APP_DOC_RELDIR=$(patsubst $(STAGING_DIR)/%,%,$(APP_DOC_DIR))
 
-$(STAGING_DIR): launcher $(TOPLEVEL_DOCS)
+$(STAGING_DIR): launcher $(TOPLEVEL_DOCS) app.icns
 	rm -rf $(STAGING_DIR)
 	mkdir $(STAGING_DIR)
 
 	mkdir -p "$(APP_TOP_DIR)"
 	cp -R Resources "$(APP_TOP_DIR)"
+	cp app.icns "$(APP_TOP_DIR)/Resources"
 	cp PkgInfo "$(APP_TOP_DIR)"
 	cp $(SRC_INFO_PLIST) "$(APP_TOP_DIR)"
 
@@ -86,9 +87,16 @@ $(STAGING_DIR): launcher $(TOPLEVEL_DOCS)
 	cp disk/dir.DS_Store $(STAGING_DIR)/.DS_Store
 	cp disk/background.png $(STAGING_DIR)/background.png
 
+app.icns: $(TOPLEVEL)/data/doom.png
+	mkdir app.iconset
+	sips -z 64 64 $(TOPLEVEL)/data/doom.png \
+	     --out app.iconset/icon_32x32@2x.png
+	iconutil -c icns app.iconset
+
 clean : launcher_clean
 	rm -f $(DMG)
 	rm -rf $(STAGING_DIR)
+	rm -rf app.icns app.iconset
 
 # Launcher build:
 CFLAGS = -Wall -I$(TOPLEVEL)
