@@ -2,10 +2,8 @@
 EXTRA_DIST=              \
         README           \
         doom.ico         \
-        doom8.ico        \
         doom.png         \
         setup.ico        \
-        setup8.ico       \
         setup.png        \
         wadfile.png      \
         convert-icon
