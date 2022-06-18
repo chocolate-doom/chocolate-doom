@@ -18,6 +18,7 @@
 
 
 #include <stdlib.h>
+#include <string.h>
 
 #include "SDL.h"
 #include "SDL_opengl.h"

@@ -15,6 +15,7 @@
 // Sound control menu
 
 #include <stdlib.h>
+#include <string.h>
 
 #include "SDL_mixer.h"
 
