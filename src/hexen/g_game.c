@@ -408,21 +408,48 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
         gamekeydown[key_arti_all] = false;     // Use one of each artifact
         cmd->arti = NUMARTIFACTS;
     }
+	else if (gamekeydown[key_arti_invulnerability] && !cmd->arti
+             && !players[consoleplayer].powers[pw_invulnerability])
+    {
+        gamekeydown[key_arti_invulnerability] = false;
+        cmd->arti = arti_invulnerability;
+    }
     else if (gamekeydown[key_arti_health] && !cmd->arti
              && (players[consoleplayer].mo->health < MAXHEALTH))
     {
         gamekeydown[key_arti_health] = false;
         cmd->arti = arti_health;
-    }
-    else if (gamekeydown[key_arti_poisonbag] && !cmd->arti)
+	}
+	else if (gamekeydown[key_arti_superhealth] && !cmd->arti
+             && (players[consoleplayer].mo->health < MAXHEALTH))
     {
-        gamekeydown[key_arti_poisonbag] = false;
-        cmd->arti = arti_poisonbag;
+        gamekeydown[key_arti_superhealth] = false;
+        cmd->arti = arti_superhealth;
     }
-    else if (gamekeydown[key_arti_blastradius] && !cmd->arti)
+	else if (gamekeydown[key_arti_healingradius] && !cmd->arti)
+	{
+		gamekeydown[key_arti_healingradius] = false;
+		cmd->arti = arti_healingradius;
+	}
+	else if (gamekeydown[key_arti_torch] && !cmd->arti)
     {
-        gamekeydown[key_arti_blastradius] = false;
-        cmd->arti = arti_blastradius;
+        gamekeydown[key_arti_torch] = false;
+        cmd->arti = arti_torch;
+    }
+    else if (gamekeydown[key_arti_egg] && !cmd->arti)
+    {
+        gamekeydown[key_arti_egg] = false;
+        cmd->arti = arti_egg;
+    }
+    else if (gamekeydown[key_arti_fly] && !cmd->arti)
+    {
+        gamekeydown[key_arti_fly] = false;
+        cmd->arti = arti_fly;
+    }
+	else if (gamekeydown[key_arti_summon] && !cmd->arti)
+    {
+        gamekeydown[key_arti_summon] = false;
+        cmd->arti = arti_summon;
     }
     else if (gamekeydown[key_arti_teleport] && !cmd->arti)
     {
@@ -434,16 +461,30 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
         gamekeydown[key_arti_teleportother] = false;
         cmd->arti = arti_teleportother;
     }
-    else if (gamekeydown[key_arti_egg] && !cmd->arti)
+    else if (gamekeydown[key_arti_poisonbag] && !cmd->arti)
     {
-        gamekeydown[key_arti_egg] = false;
-        cmd->arti = arti_egg;
+        gamekeydown[key_arti_poisonbag] = false;
+        cmd->arti = arti_poisonbag;
     }
-    else if (gamekeydown[key_arti_invulnerability] && !cmd->arti
-             && !players[consoleplayer].powers[pw_invulnerability])
+	else if (gamekeydown[key_arti_speed] && !cmd->arti)
     {
-        gamekeydown[key_arti_invulnerability] = false;
-        cmd->arti = arti_invulnerability;
+        gamekeydown[key_arti_speed] = false;
+        cmd->arti = arti_speed;
+    }
+	else if (gamekeydown[key_arti_boostmana] && !cmd->arti)
+    {
+        gamekeydown[key_arti_boostmana] = false;
+        cmd->arti = arti_boostmana;
+    }
+	else if (gamekeydown[key_arti_boostarmor] && !cmd->arti)
+	{
+		gamekeydown[key_arti_boostarmor] = false;
+		cmd->arti = arti_boostarmor;
+	}
+    else if (gamekeydown[key_arti_blastradius] && !cmd->arti)
+    {
+        gamekeydown[key_arti_blastradius] = false;
+        cmd->arti = arti_blastradius;
     }
 
 //
