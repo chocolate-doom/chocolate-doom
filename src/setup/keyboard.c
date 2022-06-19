@@ -49,10 +49,13 @@ static int *controls[] = { &key_left, &key_right, &key_up, &key_down,
                            &key_arti_tome, &key_arti_ring, &key_arti_chaosdevice,
                            &key_arti_shadowsphere, &key_arti_wings, 
                            &key_arti_torch, &key_arti_morph,
-                           &key_arti_all, &key_arti_health, &key_arti_poisonbag,
-                           &key_arti_blastradius, &key_arti_teleport,
-                           &key_arti_teleportother, &key_arti_egg,
-                           &key_arti_invulnerability,
+                           &key_arti_all, &key_arti_invulnerability,
+						   &key_arti_health, &key_arti_superhealth,
+						   &key_arti_healingradius, &key_arti_fly, &key_arti_egg,
+                           &key_arti_summon, &key_arti_teleport,
+                           &key_arti_teleportother, &key_arti_speed,
+						   &key_arti_poisonbag, &key_arti_boostmana,
+						   &key_arti_boostarmor, &key_arti_blastradius,
                            &key_prevweapon, &key_nextweapon, NULL };
 
 static int *menu_nav[] = { &key_menu_activate, &key_menu_up, &key_menu_down,
@@ -265,14 +268,22 @@ static void ConfigExtraKeys(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
             AddSectionLabel(table, "Artifacts", true);
 
             AddKeyControl(table, "One of each", &key_arti_all);
+			AddKeyControl(table, "Icon of the Defender",
+			              &key_arti_invulnerability);
             AddKeyControl(table, "Quartz Flask", &key_arti_health);
-            AddKeyControl(table, "Flechette", &key_arti_poisonbag);
-            AddKeyControl(table, "Disc of Repulsion", &key_arti_blastradius);
-            AddKeyControl(table, "Chaos Device", &key_arti_teleport);
+			AddKeyControl(table, "Mystic Urn", &key_arti_superhealth);
+			AddKeyControl(table, "Mystic Ambit Incant", &key_arti_healingradius);
+			AddKeyControl(table, "Torch", &key_arti_torch);
+			AddKeyControl(table, "Porkalator", &key_arti_egg);
+			AddKeyControl(table, "Wings of Wrath", &key_arti_fly);
+			AddKeyControl(table, "Dark Servant", &key_arti_summon);
+			AddKeyControl(table, "Chaos Device", &key_arti_teleport);
             AddKeyControl(table, "Banishment Device", &key_arti_teleportother);
-            AddKeyControl(table, "Porkalator", &key_arti_egg);
-            AddKeyControl(table, "Icon of the Defender",
-                          &key_arti_invulnerability);
+            AddKeyControl(table, "Flechette", &key_arti_poisonbag);
+			AddKeyControl(table, "Boots of Speed", &key_arti_speed);
+			AddKeyControl(table, "Krater of Might", &key_arti_boostmana);
+			AddKeyControl(table, "Dragonskin Bracers", &key_arti_boostarmor);
+            AddKeyControl(table, "Disc of Repulsion", &key_arti_blastradius);
         }
     }
     else
@@ -286,10 +297,19 @@ static void ConfigExtraKeys(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
     AddKeyControl(table, "Weapon 2", &key_weapon2);
     AddKeyControl(table, "Weapon 3", &key_weapon3);
     AddKeyControl(table, "Weapon 4", &key_weapon4);
+	
+	if (gamemission != hexen)
+	{
     AddKeyControl(table, "Weapon 5", &key_weapon5);
     AddKeyControl(table, "Weapon 6", &key_weapon6);
     AddKeyControl(table, "Weapon 7", &key_weapon7);
+	}
+	
+	if (gamemission == doom || gamemission == strife)
+	{
     AddKeyControl(table, "Weapon 8", &key_weapon8);
+	}
+	
     AddKeyControl(table, "Previous weapon", &key_prevweapon);
     AddKeyControl(table, "Next weapon", &key_nextweapon);
 }
