@@ -1672,6 +1672,14 @@ static default_t extra_defaults_list[] =
     //!
     // @game hexen
     //
+    // Key to use "mystic urn" artifact.
+    //
+
+    CONFIG_VARIABLE_KEY(key_arti_superhealth),
+
+    //!
+    // @game hexen
+    //
     // Key to use "flechette" artifact.
     //
 
@@ -1704,11 +1712,67 @@ static default_t extra_defaults_list[] =
     //!
     // @game hexen
     //
+    // Key to use "wings of wrath" artifact.
+    //
+
+    CONFIG_VARIABLE_KEY(key_arti_fly),
+
+    //!
+    // @game hexen
+    //
+    // Key to use "torch" artifact.
+    //
+
+    CONFIG_VARIABLE_KEY(key_arti_torch),
+	
+    //!
+    // @game hexen
+    //
     // Key to use "porkalator" artifact.
     //
 
     CONFIG_VARIABLE_KEY(key_arti_egg),
 
+    //!
+    // @game hexen
+    //
+    // Key to use "dark servant" artifact.
+    //
+
+    CONFIG_VARIABLE_KEY(key_arti_summon),
+	
+    //!
+    // @game hexen
+    //
+    // Key to use "boots of speed" artifact.
+    //
+
+    CONFIG_VARIABLE_KEY(key_arti_speed),
+	
+    //!
+    // @game hexen
+    //
+    // Key to use "krater of might" artifact.
+    //
+
+    CONFIG_VARIABLE_KEY(key_arti_boostmana),
+
+    //!
+    // @game hexen
+    //
+    // Key to use "dragonskin bracers" artifact.
+    //
+
+    CONFIG_VARIABLE_KEY(key_arti_boostarmor),
+	
+    //!
+    // @game hexen
+    //
+    // Key to use "mystic ambit incant" artifact.
+    //
+
+    CONFIG_VARIABLE_KEY(key_arti_healingradius),
+	
     //!
     // @game hexen
     //

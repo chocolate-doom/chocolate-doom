@@ -72,13 +72,20 @@ int key_arti_morph = 0;
 int key_jump = '/';
 
 int key_arti_all             = KEY_BACKSPACE;
-int key_arti_health          = '\\';
-int key_arti_poisonbag       = '0';
-int key_arti_blastradius     = '9';
-int key_arti_teleport        = '8';
-int key_arti_teleportother   = '7';
-int key_arti_egg             = '6';
-int key_arti_invulnerability = '5';
+int key_arti_invulnerability = 0;
+int key_arti_health          = 0;
+int key_arti_superhealth     = 0;
+int key_arti_healingradius   = 0;
+int key_arti_egg             = 0;
+int key_arti_fly             = 0;
+int key_arti_summon          = 0;
+int key_arti_teleport        = 0;
+int key_arti_teleportother   = 0;
+int key_arti_poisonbag       = 0;
+int key_arti_speed           = 0;
+int key_arti_boostmana       = 0;
+int key_arti_boostarmor      = 0;
+int key_arti_blastradius     = 0;
 
 //
 // Strife key controls
@@ -297,13 +304,21 @@ void M_BindHexenControls(void)
     M_BindIntVariable("joyb_jump",          &joybjump);
 
     M_BindIntVariable("key_arti_all",             &key_arti_all);
+    M_BindIntVariable("key_arti_invulnerability", &key_arti_invulnerability);
     M_BindIntVariable("key_arti_health",          &key_arti_health);
-    M_BindIntVariable("key_arti_poisonbag",       &key_arti_poisonbag);
-    M_BindIntVariable("key_arti_blastradius",     &key_arti_blastradius);
+	M_BindIntVariable("key_arti_superhealth",     &key_arti_superhealth);
+    M_BindIntVariable("key_arti_healingradius",   &key_arti_healingradius);
+	M_BindIntVariable("key_arti_torch",           &key_arti_torch);
+    M_BindIntVariable("key_arti_egg",             &key_arti_egg);
+	M_BindIntVariable("key_arti_fly",             &key_arti_fly);
+    M_BindIntVariable("key_arti_summon",          &key_arti_summon);
     M_BindIntVariable("key_arti_teleport",        &key_arti_teleport);
     M_BindIntVariable("key_arti_teleportother",   &key_arti_teleportother);
-    M_BindIntVariable("key_arti_egg",             &key_arti_egg);
-    M_BindIntVariable("key_arti_invulnerability", &key_arti_invulnerability);
+    M_BindIntVariable("key_arti_poisonbag",       &key_arti_poisonbag);
+	M_BindIntVariable("key_arti_speed",           &key_arti_speed);
+	M_BindIntVariable("key_arti_boostmana",       &key_arti_boostmana);
+	M_BindIntVariable("key_arti_boostarmor",      &key_arti_boostarmor);
+    M_BindIntVariable("key_arti_blastradius",     &key_arti_blastradius);
 }
 
 void M_BindStrifeControls(void)

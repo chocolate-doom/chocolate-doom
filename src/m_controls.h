@@ -79,13 +79,20 @@ extern int key_arti_torch;
 extern int key_arti_morph;
 
 extern int key_arti_all;
+extern int key_arti_invulnerability;
 extern int key_arti_health;
-extern int key_arti_poisonbag;
-extern int key_arti_blastradius;
+extern int key_arti_superhealth;
+extern int key_arti_healingradius;
+extern int key_arti_egg;
+extern int key_arti_fly;
+extern int key_arti_summon;
 extern int key_arti_teleport;
 extern int key_arti_teleportother;
-extern int key_arti_egg;
-extern int key_arti_invulnerability;
+extern int key_arti_poisonbag;
+extern int key_arti_speed;
+extern int key_arti_boostmana;
+extern int key_arti_boostarmor;
+extern int key_arti_blastradius;
 
 extern int key_demo_quit;
 extern int key_spy;
