@@ -6,6 +6,8 @@ on:
   pull_request:
     types: [opened, reopened, synchronize]
   push:
+    branches:
+      - master
 
 jobs:
   cpp-linter:
@@ -26,6 +28,7 @@ jobs:
         with:
           style: file
           lines-changed-only: true
+          version: 14
           tidy-checks: >-
             boost-*
             ,bugprone-*
