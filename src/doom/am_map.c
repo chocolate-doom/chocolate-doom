@@ -752,25 +752,46 @@ AM_Responder
     // [crispy] zoom and move Automap with the mouse (wheel)
     else if (ev->type == ev_mouse && !crispy->automapoverlay && !menuactive && !inhelpscreens)
     {
-	if (mousebprevweapon >= 0 && ev->data1 & (1 << mousebprevweapon))
+	if (mousebmapzoomout >= 0 && ev->data1 & (1 << mousebmapzoomout))
 	{
 		mtof_zoommul = M2_ZOOMOUT;
 		ftom_zoommul = M2_ZOOMIN;
 		rc = true;
 	}
 	else
-	if (mousebnextweapon >= 0 && ev->data1 & (1 << mousebnextweapon))
+	if (mousebmapzoomin >= 0 && ev->data1 & (1 << mousebmapzoomin))
 	{
 		mtof_zoommul = M2_ZOOMIN;
 		ftom_zoommul = M2_ZOOMOUT;
 		rc = true;
 	}
 	else
+	if (mousebmapmaxzoom >= 0 && ev->data1 & (1 << mousebmapmaxzoom))
+	{
+		bigstate = !bigstate;
+		if (bigstate)
+		{
+			AM_saveScaleAndLoc();
+			AM_minOutWindowScale();
+		}
+		else AM_restoreScaleAndLoc();
+	}
+	else
+	if (mousebmapfollow >= 0 && ev->data1 & (1 << mousebmapfollow))
+	{
+		followplayer = !followplayer;
+		f_oldloc.x = INT_MAX;
+		if (followplayer)
+			plr->message = DEH_String(AMSTR_FOLLOWON);
+		else
+			plr->message = DEH_String(AMSTR_FOLLOWOFF);
+	}
+	else
 	if (!followplayer && (ev->data2 || ev->data3))
 	{
 		// [crispy] mouse sensitivity for strafe
-		m_paninc2.x = FTOM(ev->data2*(mouseSensitivity_x2+5)/80);
-		m_paninc2.y = FTOM(ev->data3*(mouseSensitivity_x2+5)/80);
+		m_paninc2.x = FTOM(ev->data2*(mouseSensitivity_x2+5)/(160 >> crispy->hires));
+		m_paninc2.y = FTOM(ev->data3*(mouseSensitivity_x2+5)/(160 >> crispy->hires));
 		rc = true;
 	}
     }
@@ -783,22 +804,28 @@ AM_Responder
         {
             // [crispy] keep the map static in overlay mode
             // if not following the player
-            if (!followplayer && !crispy->automapoverlay) m_paninc.x = crispy->fliplevels ? -FTOM(F_PANINC) : FTOM(F_PANINC);
+            if (!followplayer)
+                m_paninc.x = crispy->fliplevels ?
+                    -FTOM(F_PANINC << crispy->hires) : FTOM(F_PANINC << crispy->hires);
             else rc = false;
         }
         else if (key == key_map_west)     // pan left
         {
-            if (!followplayer && !crispy->automapoverlay) m_paninc.x = crispy->fliplevels ? FTOM(F_PANINC) : -FTOM(F_PANINC);
+            if (!followplayer)
+                m_paninc.x = crispy->fliplevels ?
+                    FTOM(F_PANINC << crispy->hires) : -FTOM(F_PANINC << crispy->hires);
             else rc = false;
         }
         else if (key == key_map_north)    // pan up
         {
-            if (!followplayer && !crispy->automapoverlay) m_paninc.y = FTOM(F_PANINC);
+            if (!followplayer)
+                m_paninc.y = FTOM(F_PANINC << crispy->hires);
             else rc = false;
         }
         else if (key == key_map_south)    // pan down
         {
-            if (!followplayer && !crispy->automapoverlay) m_paninc.y = -FTOM(F_PANINC);
+            if (!followplayer)
+                m_paninc.y = -FTOM(F_PANINC << crispy->hires);
             else rc = false;
         }
         else if (key == key_map_zoomout)  // zoom out

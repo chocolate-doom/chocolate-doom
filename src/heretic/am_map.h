@@ -73,6 +73,9 @@
 #define M_ZOOMIN        ((int) (1.02*FRACUNIT)) // goes to 2x in 1 second
 // how much zoom-out per tic
 #define M_ZOOMOUT       ((int) (FRACUNIT/1.02)) // pulls out to 0.5x in 1 second
+// [crispy] zoom faster with the mouse wheel
+#define M2_ZOOMIN       ((int) (1.08*FRACUNIT))
+#define M2_ZOOMOUT      ((int) (FRACUNIT/1.08))
 
 // translates between frame-buffer and map distances
 #define FTOM(x) FixedMul(((x)<<16),scale_ftom)
