@@ -96,6 +96,8 @@ extern boolean inhelpscreens; // [crispy]
 // how much the automap moves window per tic in frame-buffer coordinates
 // moves 140 pixels in 1 second
 #define F_PANINC	4
+// [crispy] pan faster by holding run button
+#define F2_PANINC	8
 // how much zoom-in per tic
 // goes to 2x in 1 second
 #define M_ZOOMIN        ((int) (1.02*FRACUNIT))
@@ -105,6 +107,15 @@ extern boolean inhelpscreens; // [crispy]
 // [crispy] zoom faster with the mouse wheel
 #define M2_ZOOMIN       ((int) (1.08*FRACUNIT))
 #define M2_ZOOMOUT      ((int) (FRACUNIT/1.08))
+#define M2_ZOOMINFAST   ((int) (1.5*FRACUNIT))
+#define M2_ZOOMOUTFAST  ((int) (FRACUNIT/1.5))
+// [crispy] toggleable pan/zoom speed
+static int f_paninc;
+static int m_zoomin_kbd;
+static int m_zoomout_kbd;
+static int m_zoomin_mouse;
+static int m_zoomout_mouse;
+static boolean mousewheelzoom;
 
 // translates between frame-buffer and map distances
 // [crispy] fix int overflow that causes map and grid lines to disappear
@@ -504,6 +515,7 @@ void AM_initVariables(void)
     m_paninc.x = m_paninc.y = m_paninc2.x = m_paninc2.y = 0;
     ftom_zoommul = FRACUNIT;
     mtof_zoommul = FRACUNIT;
+    mousewheelzoom = false; // [crispy]
 
     m_w = FTOM(f_w);
     m_h = FTOM(f_h);
@@ -717,6 +729,25 @@ AM_Responder
     static int bigstate=0;
     static char buffer[20];
     int key;
+    extern boolean speedkeydown (void);
+
+    // [crispy] toggleable pan/zoom speed
+    if (speedkeydown())
+    {
+        f_paninc = F2_PANINC;
+        m_zoomin_kbd = M2_ZOOMIN;
+        m_zoomout_kbd = M2_ZOOMOUT;
+        m_zoomin_mouse = M2_ZOOMINFAST;
+        m_zoomout_mouse = M2_ZOOMOUTFAST;
+    }
+    else
+    {
+        f_paninc = F_PANINC;
+        m_zoomin_kbd = M_ZOOMIN;
+        m_zoomout_kbd = M_ZOOMOUT;
+        m_zoomin_mouse = M2_ZOOMIN;
+        m_zoomout_mouse = M2_ZOOMOUT;
+    }
 
     rc = false;
 
@@ -752,17 +783,18 @@ AM_Responder
     // [crispy] zoom and move Automap with the mouse (wheel)
     else if (ev->type == ev_mouse && !crispy->automapoverlay && !menuactive && !inhelpscreens)
     {
+    mousewheelzoom = true;
 	if (mousebmapzoomout >= 0 && ev->data1 & (1 << mousebmapzoomout))
 	{
-		mtof_zoommul = M2_ZOOMOUT;
-		ftom_zoommul = M2_ZOOMIN;
+		mtof_zoommul = m_zoomout_mouse;
+		ftom_zoommul = m_zoomin_mouse;
 		rc = true;
 	}
 	else
 	if (mousebmapzoomin >= 0 && ev->data1 & (1 << mousebmapzoomin))
 	{
-		mtof_zoommul = M2_ZOOMIN;
-		ftom_zoommul = M2_ZOOMOUT;
+		mtof_zoommul = m_zoomin_mouse;
+		ftom_zoommul = m_zoomout_mouse;
 		rc = true;
 	}
 	else
@@ -806,37 +838,37 @@ AM_Responder
             // if not following the player
             if (!followplayer)
                 m_paninc.x = crispy->fliplevels ?
-                    -FTOM(F_PANINC << crispy->hires) : FTOM(F_PANINC << crispy->hires);
+                    -FTOM(f_paninc << crispy->hires) : FTOM(f_paninc << crispy->hires);
             else rc = false;
         }
         else if (key == key_map_west)     // pan left
         {
             if (!followplayer)
                 m_paninc.x = crispy->fliplevels ?
-                    FTOM(F_PANINC << crispy->hires) : -FTOM(F_PANINC << crispy->hires);
+                    FTOM(f_paninc << crispy->hires) : -FTOM(f_paninc << crispy->hires);
             else rc = false;
         }
         else if (key == key_map_north)    // pan up
         {
             if (!followplayer)
-                m_paninc.y = FTOM(F_PANINC << crispy->hires);
+                m_paninc.y = FTOM(f_paninc << crispy->hires);
             else rc = false;
         }
         else if (key == key_map_south)    // pan down
         {
             if (!followplayer)
-                m_paninc.y = -FTOM(F_PANINC << crispy->hires);
+                m_paninc.y = -FTOM(f_paninc << crispy->hires);
             else rc = false;
         }
         else if (key == key_map_zoomout)  // zoom out
         {
-            mtof_zoommul = M_ZOOMOUT;
-            ftom_zoommul = M_ZOOMIN;
+            mtof_zoommul = m_zoomout_kbd;
+            ftom_zoommul = m_zoomin_kbd;
         }
         else if (key == key_map_zoomin)   // zoom in
         {
-            mtof_zoommul = M_ZOOMIN;
-            ftom_zoommul = M_ZOOMOUT;
+            mtof_zoommul = m_zoomin_kbd;
+            ftom_zoommul = m_zoomout_kbd;
         }
         else if (key == key_map_toggle)
         {
@@ -958,10 +990,11 @@ void AM_changeWindowScale(void)
     scale_ftom = FixedDiv(FRACUNIT, scale_mtof);
 
     // [crispy] reset after zooming with the mouse wheel
-    if (ftom_zoommul == M2_ZOOMIN || ftom_zoommul == M2_ZOOMOUT)
+    if (mousewheelzoom)
     {
 	mtof_zoommul = FRACUNIT;
 	ftom_zoommul = FRACUNIT;
+	mousewheelzoom = false;
     }
 
     if (scale_mtof < min_scale_mtof)
@@ -1697,16 +1730,18 @@ AM_rotate
 static void AM_rotatePoint (mpoint_t *pt)
 {
     int64_t tmpx;
+    // [crispy] smooth automap rotation
+    const angle_t smoothangle = followplayer ? ANG90 - viewangle : mapangle;
 
     pt->x -= mapcenter.x;
     pt->y -= mapcenter.y;
 
-    tmpx = (int64_t)FixedMul(pt->x, finecosine[mapangle>>ANGLETOFINESHIFT])
-         - (int64_t)FixedMul(pt->y, finesine[mapangle>>ANGLETOFINESHIFT])
+    tmpx = (int64_t)FixedMul(pt->x, finecosine[smoothangle>>ANGLETOFINESHIFT])
+         - (int64_t)FixedMul(pt->y, finesine[smoothangle>>ANGLETOFINESHIFT])
          + mapcenter.x;
 
-    pt->y = (int64_t)FixedMul(pt->x, finesine[mapangle>>ANGLETOFINESHIFT])
-          + (int64_t)FixedMul(pt->y, finecosine[mapangle>>ANGLETOFINESHIFT])
+    pt->y = (int64_t)FixedMul(pt->x, finesine[smoothangle>>ANGLETOFINESHIFT])
+          + (int64_t)FixedMul(pt->y, finecosine[smoothangle>>ANGLETOFINESHIFT])
           + mapcenter.y;
 
     pt->x = tmpx;
@@ -1774,11 +1809,22 @@ void AM_drawPlayers(void)
     int		their_color = -1;
     int		color;
     mpoint_t	pt;
+    // [crispy] smooth player arrow rotation
+    const angle_t smoothangle = crispy->automaprotate ? plr->mo->angle : viewangle;
 
     if (!netgame)
     {
+	// [crispy] interpolate player arrow in non-follow mode
+	if (!followplayer && leveltime > oldleveltime)
+	{
+	pt.x = plr->mo->oldx + FixedMul(plr->mo->x - plr->mo->oldx, fractionaltic);
+	pt.y = plr->mo->oldy + FixedMul(plr->mo->y - plr->mo->oldy, fractionaltic);
+	}
+	else
+	{
 	pt.x = plr->mo->x;
 	pt.y = plr->mo->y;
+	}
 	if (crispy->automaprotate)
 	{
 	    AM_rotatePoint(&pt);
@@ -1787,10 +1833,10 @@ void AM_drawPlayers(void)
 	if (cheating)
 	    AM_drawLineCharacter
 		(cheat_player_arrow, arrlen(cheat_player_arrow), 0,
-		 plr->mo->angle, WHITE, pt.x, pt.y);
+		 smoothangle, WHITE, pt.x, pt.y);
 	else
 	    AM_drawLineCharacter
-		(player_arrow, arrlen(player_arrow), 0, plr->mo->angle,
+		(player_arrow, arrlen(player_arrow), 0, smoothangle,
 		 WHITE, pt.x, pt.y);
 	return;
     }
@@ -1847,8 +1893,17 @@ AM_drawThings
 		continue;
 	    }
 
+	    // [crispy] interpolate thing triangles movement
+	    if (leveltime > oldleveltime)
+	    {
+	    pt.x = t->oldx + FixedMul(t->x - t->oldx, fractionaltic);
+	    pt.y = t->oldy + FixedMul(t->y - t->oldy, fractionaltic);
+	    }
+	    else
+	    {
 	    pt.x = t->x;
 	    pt.y = t->y;
+	    }
 	    if (crispy->automaprotate)
 	    {
 		AM_rotatePoint(&pt);

@@ -183,6 +183,10 @@ static void AM_rotatePoint(mpoint_t *pt);
 static mpoint_t mapcenter;
 static angle_t mapangle;
 
+// [AM] Fractional part of the current tic, in the half-open
+//      range of [0.0, 1.0).  Used for interpolation.
+extern fixed_t          fractionaltic;
+
 //byte screens[][SCREENWIDTH*SCREENHEIGHT];
 //void V_MarkRect (int x, int y, int width, int height);
 
@@ -834,8 +838,10 @@ void AM_doFollowPlayer(void)
 //  m_y = FTOM(MTOF(plr->mo->y - m_h/2));
 //  m_x = plr->mo->x - m_w/2;
 //  m_y = plr->mo->y - m_h/2;
-        m_x = FTOM(MTOF(plr->mo->x)) - m_w / 2;
-        m_y = FTOM(MTOF(plr->mo->y)) - m_h / 2;
+        // [JN] Use interpolated player coords for smooth
+        // scrolling and static player arrow position.
+        m_x = plr->mo->x - m_w/2;
+        m_y = plr->mo->y - m_h/2;
         m_x2 = m_x + m_w;
         m_y2 = m_y + m_h;
 
@@ -1557,16 +1563,18 @@ void AM_rotate(fixed_t * x, fixed_t * y, angle_t a)
 static void AM_rotatePoint(mpoint_t *pt)
 {
     fixed_t tmpx;
+    // [crispy] smooth automap rotation
+    const angle_t smoothangle = followplayer ? ANG90 - viewangle : mapangle;
 
     pt->x -= mapcenter.x;
     pt->y -= mapcenter.y;
 
-    tmpx = FixedMul(pt->x, finecosine[mapangle>>ANGLETOFINESHIFT])
-         - FixedMul(pt->y, finesine[mapangle>>ANGLETOFINESHIFT])
+    tmpx = FixedMul(pt->x, finecosine[smoothangle>>ANGLETOFINESHIFT])
+         - FixedMul(pt->y, finesine[smoothangle>>ANGLETOFINESHIFT])
          + mapcenter.x;
 
-    pt->y = FixedMul(pt->x, finesine[mapangle>>ANGLETOFINESHIFT])
-          + FixedMul(pt->y, finecosine[mapangle>>ANGLETOFINESHIFT])
+    pt->y = FixedMul(pt->x, finesine[smoothangle>>ANGLETOFINESHIFT])
+          + FixedMul(pt->y, finecosine[smoothangle>>ANGLETOFINESHIFT])
           + mapcenter.y;
 
     pt->x = tmpx;
@@ -1623,6 +1631,8 @@ void AM_drawPlayers(void)
     int their_color = -1;
     int color;
     mpoint_t pt; // [crispy]
+    // [crispy] smooth player arrow rotation
+    const angle_t smoothangle = crispy->automaprotate ? plr->mo->angle : viewangle;
 
     if (!netgame)
     {
@@ -1631,14 +1641,23 @@ void AM_drawPlayers(void)
            plr->mo->angle, WHITE, plr->mo->x, plr->mo->y);
          *///cheat key player pointer is the same as non-cheat pointer..
 
+        // [crispy] interpolate player arrow in non-follow mode
+        if (!followplayer && leveltime > oldleveltime)
+        {
+        pt.x = plr->mo->oldx + FixedMul(plr->mo->x - plr->mo->oldx, fractionaltic);
+        pt.y = plr->mo->oldy + FixedMul(plr->mo->y - plr->mo->oldy, fractionaltic);
+        }
+        else
+        {
         pt.x = plr->mo->x;
         pt.y = plr->mo->y;
+        }
         if (crispy->automaprotate)
         {
             AM_rotatePoint(&pt);
         }
 
-        AM_drawLineCharacter(player_arrow, NUMPLYRLINES, 0, plr->mo->angle,
+        AM_drawLineCharacter(player_arrow, NUMPLYRLINES, 0, smoothangle,
                              WHITE, pt.x, pt.y);
         return;
     }
@@ -1680,8 +1699,24 @@ void AM_drawThings(int colors, int colorrange)
         t = sectors[i].thinglist;
         while (t)
         {
+            // [crispy] do not draw an extra triangle for the player
+            if (t == plr->mo)
+            {
+            t = t->snext;
+            continue;
+            }
+
+            // [crispy] interpolate thing triangles movement
+            if (leveltime > oldleveltime)
+            {
+            pt.x = t->oldx + FixedMul(t->x - t->oldx, fractionaltic);
+            pt.y = t->oldy + FixedMul(t->y - t->oldy, fractionaltic);
+            }
+            else
+            {
             pt.x = t->x;
             pt.y = t->y;
+            }
             if (crispy->automaprotate)
             {
                 AM_rotatePoint(&pt);
