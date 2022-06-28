@@ -201,7 +201,7 @@ int testcontrols_mousespeed;
 extern boolean inventory;
 boolean usearti = true;
 
-static boolean speedkeydown (void)
+boolean speedkeydown (void)
 {
     return (key_speed < NUMKEYS && gamekeydown[key_speed]) ||
            (joybspeed < MAX_JOY_BUTTONS && joybuttons[joybspeed]) ||

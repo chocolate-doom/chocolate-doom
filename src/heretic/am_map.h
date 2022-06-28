@@ -69,6 +69,8 @@
 #define INITSCALEMTOF (.2*FRACUNIT)     // scale on entry
 // how much the automap moves window per tic in frame-buffer coordinates
 #define F_PANINC	4       // moves 140 pixels in 1 second
+// [crispy] pan faster by holding run button
+#define F2_PANINC	8
 // how much zoom-in per tic
 #define M_ZOOMIN        ((int) (1.02*FRACUNIT)) // goes to 2x in 1 second
 // how much zoom-out per tic
@@ -76,6 +78,8 @@
 // [crispy] zoom faster with the mouse wheel
 #define M2_ZOOMIN       ((int) (1.08*FRACUNIT))
 #define M2_ZOOMOUT      ((int) (FRACUNIT/1.08))
+#define M2_ZOOMINFAST   ((int) (1.5*FRACUNIT))
+#define M2_ZOOMOUTFAST  ((int) (FRACUNIT/1.5))
 
 // translates between frame-buffer and map distances
 #define FTOM(x) FixedMul(((x)<<16),scale_ftom)

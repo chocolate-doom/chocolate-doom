@@ -137,6 +137,14 @@ static fixed_t scale_ftom;
 static player_t *plr;           // the player represented by an arrow
 static vertex_t oldplr;
 
+// [crispy] toggleable pan/zoom speed
+static int f_paninc;
+static int m_zoomin_kbd;
+static int m_zoomout_kbd;
+static int m_zoomin_mouse;
+static int m_zoomout_mouse;
+static boolean mousewheelzoom;
+
 //static patch_t *marknums[10]; // numbers used for marking by the automap
 //static mpoint_t markpoints[AM_NUMMARKPOINTS]; // where the points are
 //static int markpointnum = 0; // next point to be assigned
@@ -382,6 +390,7 @@ void AM_initVariables(void)
     m_paninc.x = m_paninc.y = m_paninc2.x = m_paninc2.y = 0;
     ftom_zoommul = FRACUNIT;
     mtof_zoommul = FRACUNIT;
+    mousewheelzoom = false; // [crispy]
 
     m_w = FTOM(f_w);
     m_h = FTOM(f_h);
@@ -567,6 +576,25 @@ boolean AM_Responder(event_t * ev)
     int key;
     static int bigstate = 0;
     static int joywait = 0;
+    extern boolean speedkeydown (void);
+
+    // [crispy] toggleable pan/zoom speed
+    if (speedkeydown())
+    {
+        f_paninc = F2_PANINC;
+        m_zoomin_kbd = M2_ZOOMIN;
+        m_zoomout_kbd = M2_ZOOMOUT;
+        m_zoomin_mouse = M2_ZOOMINFAST;
+        m_zoomout_mouse = M2_ZOOMOUTFAST;
+    }
+    else
+    {
+        f_paninc = F_PANINC;
+        m_zoomin_kbd = M_ZOOMIN;
+        m_zoomout_kbd = M_ZOOMOUT;
+        m_zoomin_mouse = M2_ZOOMIN;
+        m_zoomout_mouse = M2_ZOOMOUT;
+    }
 
     key = ev->data1;
     rc = false;
@@ -604,16 +632,17 @@ boolean AM_Responder(event_t * ev)
     // [crispy] automap mouse controls
     else if (ev->type == ev_mouse && !crispy->automapoverlay)
     {
+        mousewheelzoom = true;
         if (mousebmapzoomout >= 0 && ev->data1 & (1 << mousebmapzoomout))
         {
-            mtof_zoommul = M2_ZOOMOUT;
-            ftom_zoommul = M2_ZOOMIN;
+            mtof_zoommul = m_zoomout_mouse;
+            ftom_zoommul = m_zoomin_mouse;
             rc = true;
         }
         else if (mousebmapzoomin >= 0 && ev->data1 & (1 << mousebmapzoomin))
         {
-            mtof_zoommul = M2_ZOOMIN;
-            ftom_zoommul = M2_ZOOMOUT;
+            mtof_zoommul = m_zoomin_mouse;
+            ftom_zoommul = m_zoomout_mouse;
             rc = true;
         }
         else if (mousebmapmaxzoom >= 0 && ev->data1 & (1 << mousebmapmaxzoom))
@@ -651,40 +680,40 @@ boolean AM_Responder(event_t * ev)
         if (key == key_map_east)                 // pan right
         {
             if (!followplayer)
-                m_paninc.x = FTOM(F_PANINC << crispy->hires);
+                m_paninc.x = FTOM(f_paninc << crispy->hires);
             else
                 rc = false;
         }
         else if (key == key_map_west)            // pan left
         {
             if (!followplayer)
-                m_paninc.x = -FTOM(F_PANINC << crispy->hires);
+                m_paninc.x = -FTOM(f_paninc << crispy->hires);
             else
                 rc = false;
         }
         else if (key == key_map_north)           // pan up
         {
             if (!followplayer)
-                m_paninc.y = FTOM(F_PANINC << crispy->hires);
+                m_paninc.y = FTOM(f_paninc << crispy->hires);
             else
                 rc = false;
         }
         else if (key == key_map_south)           // pan down
         {
             if (!followplayer)
-                m_paninc.y = -FTOM(F_PANINC << crispy->hires);
+                m_paninc.y = -FTOM(f_paninc << crispy->hires);
             else
                 rc = false;
         }
         else if (key == key_map_zoomout)         // zoom out
         {
-            mtof_zoommul = M_ZOOMOUT;
-            ftom_zoommul = M_ZOOMIN;
+            mtof_zoommul = m_zoomout_kbd;
+            ftom_zoommul = m_zoomin_kbd;
         }
         else if (key == key_map_zoomin)          // zoom in
         {
-            mtof_zoommul = M_ZOOMIN;
-            ftom_zoommul = M_ZOOMOUT;
+            mtof_zoommul = m_zoomin_kbd;
+            ftom_zoommul = m_zoomout_kbd;
         }
         else if (key == key_map_toggle)          // toggle map (tab)
         {
@@ -711,12 +740,15 @@ boolean AM_Responder(event_t * ev)
                          followplayer ? AMSTR_FOLLOWON : AMSTR_FOLLOWOFF,
                          true);
         }
-        /*
         else if (key == key_map_grid)
         {
+            // [crispy] support for automap grid
             grid = !grid;
-            plr->message = grid ? AMSTR_GRIDON : AMSTR_GRIDOFF;
+            P_SetMessage(plr,
+                         grid ? AMSTR_GRIDON : AMSTR_GRIDOFF,
+                         true);
         }
+        /*
         else if (key == key_map_mark)
         {
             M_snprintf(buffer, sizeof(buffer), "%s %d",
@@ -816,10 +848,11 @@ void AM_changeWindowScale(void)
     scale_ftom = FixedDiv(FRACUNIT, scale_mtof);
 
     // [crispy] reset after zooming with the mouse wheel
-    if (ftom_zoommul == M2_ZOOMIN || ftom_zoommul == M2_ZOOMOUT)
+    if (mousewheelzoom)
     {
         mtof_zoommul = FRACUNIT;
         ftom_zoommul = FRACUNIT;
+        mousewheelzoom = false;
     }
 
     if (scale_mtof < min_scale_mtof)
@@ -1404,8 +1437,9 @@ void AM_drawGrid(int color)
     {
         start -= m_h / 2;
     }
+    // [crispy] fix losing grid lines near the automap boundary
     if ((start - bmaporgx) % (MAPBLOCKUNITS << FRACBITS))
-        start += (MAPBLOCKUNITS << FRACBITS)
+        start += // (MAPBLOCKUNITS << FRACBITS)
             - ((start - bmaporgx) % (MAPBLOCKUNITS << FRACBITS));
     end = m_x + m_w;
     if (crispy->automaprotate)
@@ -1437,8 +1471,9 @@ void AM_drawGrid(int color)
     {
         start -= m_w / 2;
     }
+    // [crispy] fix losing grid lines near the automap boundary
     if ((start - bmaporgy) % (MAPBLOCKUNITS << FRACBITS))
-        start += (MAPBLOCKUNITS << FRACBITS)
+        start += // (MAPBLOCKUNITS << FRACBITS)
             - ((start - bmaporgy) % (MAPBLOCKUNITS << FRACBITS));
     end = m_y + m_h;
     if (crispy->automaprotate)

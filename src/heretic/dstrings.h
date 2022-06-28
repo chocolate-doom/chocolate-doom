@@ -148,8 +148,8 @@
 #define AMSTR_FOLLOWON		"FOLLOW MODE ON"
 #define AMSTR_FOLLOWOFF		"FOLLOW MODE OFF"
 
-#define AMSTR_GRIDON		"Grid ON"
-#define AMSTR_GRIDOFF		"Grid OFF"
+#define AMSTR_GRIDON		"GRID ON"
+#define AMSTR_GRIDOFF		"GRID OFF"
 
 #define AMSTR_MARKEDSPOT	"Marked Spot"
 #define AMSTR_MARKSCLEARED	"All Marks Cleared"
