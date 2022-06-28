@@ -186,7 +186,6 @@ static boolean SDLIsInitialized(void)
 static boolean I_SDL_InitMusic(void)
 {
     boolean fluidsynth_sf_is_set = false;
-    boolean fluidsynth_requested;
 
     // If SDL_mixer is not initialized, we have to initialize it
     // and have the responsibility to shut it down later on.
@@ -221,10 +220,7 @@ static boolean I_SDL_InitMusic(void)
     // Mix_Init() in order for FluidSynth to be registered as a valid decoder
     // in the Mix_GetMusicDecoder() list.
 
-    fluidsynth_requested =
-        ((strlen(fluidsynth_sf_path) > 0) && (strlen(timidity_cfg_path) == 0));
-
-    if (fluidsynth_requested)
+    if ((strlen(fluidsynth_sf_path) > 0) && (strlen(timidity_cfg_path) == 0))
     {
         if (M_FileExists(fluidsynth_sf_path))
         {
@@ -234,7 +230,6 @@ static boolean I_SDL_InitMusic(void)
         {
             fprintf(stderr,
                     "I_SDL_InitMusic: Can't find FluidSynth soundfont.\n");
-            fluidsynth_requested = false;
         }
     }
 
@@ -246,8 +241,9 @@ static boolean I_SDL_InitMusic(void)
 
     RemoveTimidityConfig();
 
-    // Confirm that FluidSynth is actually available.
-    if (fluidsynth_requested)
+    // If a soundfont has been set (either here on in the environment),
+    // confirm that FluidSynth is actually available before trying to use it.
+    if ((Mix_GetSoundFonts() != NULL) && (strlen(timidity_cfg_path) == 0))
     {
         int total;
 
