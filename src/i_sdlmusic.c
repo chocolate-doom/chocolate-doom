@@ -215,6 +215,24 @@ static boolean I_SDL_InitMusic(void)
         }
     }
 
+    // When using FluidSynth, proceed to set the soundfont path via
+    // Mix_SetSoundFonts if necessary. We need to do this before calling
+    // Mix_Init() in order for FluidSynth to be registered as a valid decoder
+    // in the Mix_GetMusicDecoder() list.
+
+    if ((strlen(fluidsynth_sf_path) > 0) && (strlen(timidity_cfg_path) == 0))
+    {
+        if (M_FileExists(fluidsynth_sf_path))
+        {
+            Mix_SetSoundFonts(fluidsynth_sf_path);
+        }
+        else
+        {
+            fprintf(stderr,
+                    "I_SDL_InitMusic: Can't find FluidSynth soundfont.\n");
+        }
+    }
+
     // Initialize SDL_Mixer for MIDI music playback
     Mix_Init(MIX_INIT_MID);
 
@@ -223,24 +241,33 @@ static boolean I_SDL_InitMusic(void)
 
     RemoveTimidityConfig();
 
-    // When using FluidSynth, proceed to set the soundfont path via
-    // Mix_SetSoundFonts if necessary.
-
-    if (strlen(fluidsynth_sf_path) > 0 && strlen(timidity_cfg_path) == 0)
+    // If a soundfont has been set (either here on in the environment),
+    // confirm that FluidSynth is actually available before trying to use it.
+    if ((Mix_GetSoundFonts() != NULL) && (strlen(timidity_cfg_path) == 0))
     {
-        if (M_FileExists(fluidsynth_sf_path))
+        int total;
+
+        total = Mix_GetNumMusicDecoders();
+
+        // If FluidSynth is present and has a valid soundfont, it will be in
+        // the list of available music decoders.
+        for (int i = 0; i < total; ++i)
         {
-            fluidsynth_sf_is_set = true;
+            if (!strcmp(Mix_GetMusicDecoder(i), "FLUIDSYNTH"))
+            {
+                fluidsynth_sf_is_set = true;
+                break;
+            }
+        }
+
+        if (fluidsynth_sf_is_set)
+        {
+            printf("I_SDL_InitMusic: Using FluidSynth.\n");
         }
         else
         {
-            fprintf(stderr, "Can't find Fluidsynth soundfont.\n");
+            fprintf(stderr, "I_SDL_InitMusic: FluidSynth unavailable.\n");
         }
-    }
-
-    if (fluidsynth_sf_is_set)
-    {
-        Mix_SetSoundFonts(fluidsynth_sf_path);
     }
 
     // If snd_musiccmd is set, we need to call Mix_SetMusicCMD to
