@@ -202,15 +202,79 @@ void I_PrintStartupBanner(const char *gamedescription)
 // Returns true if stdout is a real console, false if it is a file
 //
 
+#ifdef _WIN32
+static boolean stdout_console;
+static UINT orig_code_page;
+#endif
+
 boolean I_ConsoleStdout(void)
 {
 #ifdef _WIN32
-    // SDL "helpfully" always redirects stdout to a file.
-    return false;
+    return stdout_console;
 #else
     return isatty(fileno(stdout));
 #endif
 }
+
+#ifdef _WIN32
+static void CleanupWinConsole(void)
+{
+    HWND console_handle;
+
+    console_handle = GetConsoleWindow();
+
+    if (console_handle)
+    {
+        // Send virtual press of return key. This brings the terminal to the
+        // normal prompt after the program closes.
+        SendMessage(console_handle, WM_CHAR, VK_RETURN, 0);
+        SetConsoleOutputCP(orig_code_page);
+        FreeConsole();
+    }
+}
+
+void I_WinConsole(void)
+{
+    boolean using_existing_console = false;
+
+    // If the program was launched from the command line, AttachConsole() will
+    // return a non-zero value here.
+    if (!AttachConsole(ATTACH_PARENT_PROCESS))
+    {
+        return;
+    }
+
+    // Use _fileno here to confirm that the user is not redirecting a stream to
+    // a file. If so, don't clobber that redirect.
+    if ((_fileno(stdout) < 0) && freopen("CONOUT$", "w", stdout))
+    {
+        using_existing_console = true;
+        stdout_console = true;
+    }
+
+    if ((_fileno(stderr) < 0) && freopen("CONOUT$", "w", stderr))
+    {
+        using_existing_console = true;
+    }
+
+    if (using_existing_console)
+    {
+        atexit(CleanupWinConsole);
+        orig_code_page = GetConsoleOutputCP();
+        SetConsoleOutputCP(CP_UTF8);
+
+        // Start with a clear line.
+        if (stdout_console)
+        {
+            printf("\n");
+        }
+        else
+        {
+            fprintf(stderr, "\n");
+        }
+    }
+}
+#endif
 
 //
 // I_Init

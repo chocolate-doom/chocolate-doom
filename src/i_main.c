@@ -51,6 +51,10 @@ int main(int argc, char **argv)
         myargv[i] = M_StringDuplicate(argv[i]);
     }
 
+#if defined(_WIN32)
+    I_WinConsole();
+#endif
+
     //!
     // Print the program version and exit.
     //

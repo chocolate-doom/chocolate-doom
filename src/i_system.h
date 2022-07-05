@@ -35,7 +35,7 @@ void I_Init (void);
 byte*	I_ZoneBase (int *size);
 
 boolean I_ConsoleStdout(void);
-
+void I_WinConsole(void);
 
 // Asynchronous interrupt functions should maintain private queues
 // that are read by the synchronous functions
