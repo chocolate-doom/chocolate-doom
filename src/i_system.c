@@ -196,16 +196,16 @@ void I_PrintStartupBanner(const char *gamedescription)
     I_PrintDivider();
 }
 
+#ifdef _WIN32
+static boolean stdout_console;
+static UINT orig_code_page;
+#endif
+
 // 
 // I_ConsoleStdout
 //
 // Returns true if stdout is a real console, false if it is a file
 //
-
-#ifdef _WIN32
-static boolean stdout_console;
-static UINT orig_code_page;
-#endif
 
 boolean I_ConsoleStdout(void)
 {
