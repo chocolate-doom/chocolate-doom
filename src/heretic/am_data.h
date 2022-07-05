@@ -18,9 +18,19 @@
 #ifndef __AMDATA_H__
 #define __AMDATA_H__
 
+// [crispy] FRACTOMAPBITS: overflow-safe coordinate system.
+// Written by Andrey Budko (entryway), adapted from prboom-plus/src/am_map.*
+#define MAPBITS 12
+#define MAPUNIT (1<<MAPBITS)
+#define FRACTOMAPBITS (FRACBITS-MAPBITS)
+
+// [crispy] New radius to use with FRACTOMAPBITS, since orginal 
+// PLAYERRADIUS macro can't be used in this implementation.
+#define MAPPLAYERRADIUS (16*(1<<MAPBITS))
+
 // a line drawing of the player pointing right, starting from the middle.
 
-#define R ((8*PLAYERRADIUS)/7)
+#define R ((8*MAPPLAYERRADIUS)/7)
 
 mline_t player_arrow[] = {
   { { -R+R/4, 0 }, { 0, 0} }, // center line.
@@ -60,7 +70,7 @@ mline_t keysquare[] = {
 #define NUMPLYRLINES (sizeof(player_arrow)/sizeof(mline_t))
 #define NUMKEYSQUARELINES (sizeof(keysquare)/sizeof(mline_t))
 
-#define R ((8*PLAYERRADIUS)/7)
+#define R ((8*MAPPLAYERRADIUS)/7)
 mline_t cheat_player_arrow[] = {
   { { -R+R/8, 0 }, { R, 0 } }, // -----
   { { R, 0 }, { R-R/2, R/6 } },  // ----->
