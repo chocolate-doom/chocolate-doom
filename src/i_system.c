@@ -241,6 +241,18 @@ void I_WinConsole(void)
     // return a non-zero value here.
     if (!AttachConsole(ATTACH_PARENT_PROCESS))
     {
+        //!
+        // Spawn a console window. (Windows only)
+        //
+        if (M_ParmExists("-stdout") || M_ParmExists("-console"))
+        {
+            AllocConsole();
+            SetConsoleOutputCP(CP_UTF8);
+            freopen("CONOUT$", "w", stdout);
+            freopen("CONOUT$", "w", stderr);
+            stdout_console = true;
+        }
+
         return;
     }
 
