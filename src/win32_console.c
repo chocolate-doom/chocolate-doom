@@ -18,7 +18,6 @@
 // * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 // * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 // * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-// 
 
 #ifdef _WIN32
 
@@ -47,8 +46,7 @@ static int runproc(char *name, char *cmd)
 
     ZeroMemory(&pi, sizeof(pi));
 
-    if (CreateProcess(name, cmd, NULL, NULL, TRUE, 0,
-                      NULL, NULL, &si, &pi))
+    if (CreateProcess(name, cmd, NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi))
     {
         WaitForSingleObject(pi.hProcess, INFINITE);
         GetExitCodeProcess(pi.hProcess, &retval);

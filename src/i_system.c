@@ -231,8 +231,8 @@ void I_WinConsole(void)
     // Console wrapper will set _console=1 if we were called using the com
     // file.
     if (GetEnvironmentVariable("_console", console_env, 2) &&
-        (!strcmp(console_env, "1")) &&
-        AttachConsole(ATTACH_PARENT_PROCESS))
+            !strcmp(console_env, "1") &&
+            AttachConsole(ATTACH_PARENT_PROCESS))
     {
         // Delete environment variable
         SetEnvironmentVariable("_console", NULL);
@@ -254,7 +254,6 @@ void I_WinConsole(void)
             freopen("CONOUT$", "w", stderr);
         }
     }
-
 }
 #endif
 
