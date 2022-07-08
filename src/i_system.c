@@ -26,6 +26,7 @@
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#include <io.h>
 #else
 #include <unistd.h>
 #endif
@@ -196,11 +197,6 @@ void I_PrintStartupBanner(const char *gamedescription)
     I_PrintDivider();
 }
 
-#ifdef _WIN32
-static boolean stdout_console;
-static UINT orig_code_page;
-#endif
-
 // 
 // I_ConsoleStdout
 //
@@ -210,36 +206,42 @@ static UINT orig_code_page;
 boolean I_ConsoleStdout(void)
 {
 #ifdef _WIN32
-    return stdout_console;
+    return _isatty(_fileno(stdout));
 #else
     return isatty(fileno(stdout));
 #endif
 }
 
 #ifdef _WIN32
-static void CleanupWinConsole(void)
+static void ReopenOutputHandle(DWORD std, FILE *stream)
 {
-    HWND console_handle;
+    HANDLE handle = GetStdHandle(std);
+    DWORD lpmode;
 
-    console_handle = GetConsoleWindow();
-
-    if (console_handle)
+    if (GetConsoleMode(handle, &lpmode))
     {
-        // Send virtual press of return key. This brings the terminal to the
-        // normal prompt after the program closes.
-        SendMessage(console_handle, WM_CHAR, VK_RETURN, 0);
-        SetConsoleOutputCP(orig_code_page);
-        FreeConsole();
+        freopen("CONOUT$", "w", stream);
     }
 }
 
 void I_WinConsole(void)
 {
-    boolean using_existing_console = false;
+    char console_env[2];
 
-    // If the program was launched from the command line, AttachConsole() will
-    // return a non-zero value here.
-    if (!AttachConsole(ATTACH_PARENT_PROCESS))
+    // Console wrapper will set _console=1 if we were called using the com
+    // file.
+    if (GetEnvironmentVariable("_console", console_env, 2) &&
+        (!strcmp(console_env, "1")) &&
+        AttachConsole(ATTACH_PARENT_PROCESS))
+    {
+        // Delete environment variable
+        SetEnvironmentVariable("_console", NULL);
+
+        // Redirect
+        ReopenOutputHandle(STD_OUTPUT_HANDLE, stdout);
+        ReopenOutputHandle(STD_ERROR_HANDLE, stderr);
+    }
+    else
     {
         //!
         // Spawn a console window. (Windows only)
@@ -250,41 +252,9 @@ void I_WinConsole(void)
             SetConsoleOutputCP(CP_UTF8);
             freopen("CONOUT$", "w", stdout);
             freopen("CONOUT$", "w", stderr);
-            stdout_console = true;
-        }
-
-        return;
-    }
-
-    // Use _fileno here to confirm that the user is not redirecting a stream to
-    // a file. If so, don't clobber that redirect.
-    if ((_fileno(stdout) < 0) && freopen("CONOUT$", "w", stdout))
-    {
-        using_existing_console = true;
-        stdout_console = true;
-    }
-
-    if ((_fileno(stderr) < 0) && freopen("CONOUT$", "w", stderr))
-    {
-        using_existing_console = true;
-    }
-
-    if (using_existing_console)
-    {
-        atexit(CleanupWinConsole);
-        orig_code_page = GetConsoleOutputCP();
-        SetConsoleOutputCP(CP_UTF8);
-
-        // Start with a clear line.
-        if (stdout_console)
-        {
-            printf("\n");
-        }
-        else
-        {
-            fprintf(stderr, "\n");
         }
     }
+
 }
 #endif
 
