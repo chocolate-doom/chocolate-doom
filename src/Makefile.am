@@ -18,6 +18,19 @@ SETUP_BINARIES = @PROGRAM_PREFIX@doom-setup$(EXEEXT)    \
 
 execgames_SCRIPTS = $(SETUP_BINARIES)
 
+if BUILD_CONWRAP
+
+noinst_PROGRAMS += @PROGRAM_PREFIX@console
+
+CONWRAP_BINARIES = @PROGRAM_PREFIX@doom.com    \
+                   @PROGRAM_PREFIX@heretic.com \
+                   @PROGRAM_PREFIX@hexen.com   \
+                   @PROGRAM_PREFIX@strife.com
+
+execgames_SCRIPTS += $(CONWRAP_BINARIES)
+
+endif
+
 AM_CFLAGS = -I$(top_srcdir)/textscreen            \
             -I$(top_srcdir)/opl                   \
             -I$(top_srcdir)/pcsound               \
@@ -173,6 +186,16 @@ endif
 
 $(SETUP_BINARIES): @PROGRAM_PREFIX@setup$(EXEEXT)
 	cp @PROGRAM_PREFIX@setup$(EXEEXT) $@
+
+if BUILD_CONWRAP
+
+@PROGRAM_PREFIX@console_SOURCES=win32_console.c
+@PROGRAM_PREFIX@console_CFLAGS = $(CONWRAP_CFLAGS)
+
+$(CONWRAP_BINARIES): @PROGRAM_PREFIX@console$(EXEEXT)
+	cp @PROGRAM_PREFIX@console$(EXEEXT) $@
+
+endif
 
 # Make "make" aware of convenience libraries in subdirectories
 

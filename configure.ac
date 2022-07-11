@@ -156,11 +156,24 @@ AS_IF([test "x$enable_werror" = "xyes"], [
         CFLAGS="$CFLAGS -Werror"
 ])
 
+case "$host" in
+  *-*-mingw* | *-*-cygwin* )
+    CONWRAP_CFLAGS="-mconsole"
+    ;;
+  *-*-msvc* )
+    CONWRAP_CFLAGS="/SUBSYSTEM:CONSOLE"
+    ;;
+  *)
+    CONWRAP_CFLAGS=
+    ;;
+esac
+
 AM_CONDITIONAL(HAVE_WINDRES, test "$WINDRES" != "")
 AM_CONDITIONAL(HAVE_BASH_COMPLETION, [test "x$enable_bash_completion" != xno])
 AM_CONDITIONAL(HAVE_DOC, [test "x$enable_doc" != xno])
 AM_CONDITIONAL(HAVE_FONTS, [test "x$enable_fonts" != xno])
 AM_CONDITIONAL(HAVE_ICONS, [test "x$enable_icons" != xno])
+AM_CONDITIONAL(BUILD_CONWRAP, test "$CONWRAP_CFLAGS" != "")
 
 dnl Automake v1.8.0 is required, please upgrade!
 
@@ -183,6 +196,7 @@ AC_SUBST(PROGRAM_SPREFIX)
 AC_CONFIG_HEADERS(config.h:config.hin)
 
 AC_SUBST(WINDOWS_RC_VERSION)
+AC_SUBST(CONWRAP_CFLAGS)
 AC_SUBST(SDLMIXER_CFLAGS)
 AC_SUBST(SDLMIXER_LIBS)
 

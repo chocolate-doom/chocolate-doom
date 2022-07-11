@@ -229,3 +229,23 @@ add_executable(mus2mid mus2mid.c memio.c z_native.c i_system.c m_argv.c m_misc.c
 target_compile_definitions(mus2mid PRIVATE "-DSTANDALONE")
 target_include_directories(mus2mid PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/../")
 target_link_libraries(mus2mid SDL2::SDL2main SDL2::SDL2)
+
+if(WIN32)
+    add_executable("${PROGRAM_PREFIX}console" win32_console.c)
+    add_custom_command(TARGET "${PROGRAM_PREFIX}console" POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy
+                    ${CMAKE_CURRENT_BINARY_DIR}/${PROGRAM_PREFIX}console.exe
+                    ${CMAKE_CURRENT_BINARY_DIR}/${PROGRAM_PREFIX}doom.com)
+    add_custom_command(TARGET "${PROGRAM_PREFIX}console" POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy
+                    ${CMAKE_CURRENT_BINARY_DIR}/${PROGRAM_PREFIX}console.exe
+                    ${CMAKE_CURRENT_BINARY_DIR}/${PROGRAM_PREFIX}heretic.com)
+    add_custom_command(TARGET "${PROGRAM_PREFIX}console" POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy
+                    ${CMAKE_CURRENT_BINARY_DIR}/${PROGRAM_PREFIX}console.exe
+                    ${CMAKE_CURRENT_BINARY_DIR}/${PROGRAM_PREFIX}hexen.com)
+    add_custom_command(TARGET "${PROGRAM_PREFIX}console" POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy
+                    ${CMAKE_CURRENT_BINARY_DIR}/${PROGRAM_PREFIX}console.exe
+                    ${CMAKE_CURRENT_BINARY_DIR}/${PROGRAM_PREFIX}strife.com)
+endif()
