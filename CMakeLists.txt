@@ -28,9 +28,15 @@ else()
                         "-Wredundant-decls")
 endif()
 
+option(ENABLE_SDL2_NET "Enable SDL2_net" On)
+
 find_package(SDL2 2.0.7)
 find_package(SDL2_mixer 2.0.2)
-find_package(SDL2_net 2.0.0)
+if(ENABLE_SDL2_NET)
+    find_package(SDL2_net 2.0.0)
+else()
+    add_compile_definitions(DISABLE_SDL2NET=1)
+endif()
 
 # Check for libsamplerate.
 find_package(samplerate)
