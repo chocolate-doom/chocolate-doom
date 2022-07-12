@@ -44,6 +44,10 @@
 #include "w_wad.h"
 #include "z_zone.h"
 
+
+char *music_pack_path = "";
+
+
 #define MID_HEADER_MAGIC "MThd"
 #define MUS_HEADER_MAGIC "MUS\x1a"
 
@@ -99,7 +103,6 @@ static boolean music_initialized = false;
 
 static boolean sdl_was_initialized = false;
 
-char *music_pack_path = "";
 
 // If true, we are playing a substitute digital track rather than in-WAD
 // MIDI/MUS track, and file_metadata contains loop metadata.
