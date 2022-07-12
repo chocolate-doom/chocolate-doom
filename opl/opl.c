@@ -50,7 +50,9 @@ static opl_driver_t *drivers[] =
 #ifdef _WIN32
     &opl_win32_driver,
 #endif
+#ifndef DISABLE_SDL2MIXER
     &opl_sdl_driver,
+#endif // DISABLE_SDL2MIXER
     NULL
 };
 

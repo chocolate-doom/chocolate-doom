@@ -126,6 +126,9 @@ void I_InitTimidityConfig(void)
 }
 
 
+#ifndef DISABLE_SDL2MIXER
+
+
 #define MAXMIDLENGTH (96 * 1024)
 
 static boolean music_initialized = false;
@@ -591,3 +594,5 @@ music_module_t music_sdl_module =
     NULL,  // Poll
 };
 
+
+#endif // DISABLE_SDL2MIXER

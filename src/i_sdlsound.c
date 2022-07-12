@@ -53,6 +53,9 @@ int use_libsamplerate = 0;
 float libsamplerate_scale = 0.65f;
 
 
+#ifndef DISABLE_SDL2MIXER
+
+
 #define LOW_PASS_FILTER
 //#define DEBUG_DUMP_WAVS
 #define NUM_CHANNELS 16
@@ -1138,3 +1141,5 @@ sound_module_t sound_sdl_module =
     I_SDL_PrecacheSounds,
 };
 
+
+#endif // DISABLE_SDL2MIXER

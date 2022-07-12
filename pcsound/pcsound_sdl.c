@@ -24,6 +24,10 @@
 #include "pcsound.h"
 #include "pcsound_internal.h"
 
+
+#ifndef DISABLE_SDL2MIXER
+
+
 #define MAX_SOUND_SLICE_TIME 70 /* ms */
 #define SQUARE_WAVE_AMP 0x2000
 
@@ -248,3 +252,5 @@ pcsound_driver_t pcsound_sdl_driver =
     PCSound_SDL_Shutdown,
 };
 
+
+#endif // DISABLE_SDL2MIXER
