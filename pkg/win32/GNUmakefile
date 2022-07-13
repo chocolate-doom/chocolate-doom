@@ -42,8 +42,11 @@ staging-%:
 	LC_ALL=C ./cp-with-libs --ldflags="$(LDFLAGS)" \
 	               $(TOPLEVEL)/src/$(PROGRAM_PREFIX)setup.exe \
 	               $@/$(PROGRAM_PREFIX)$*-setup.exe
+	LC_ALL=C ./cp-with-libs --ldflags="$(LDFLAGS)" \
+	               $(TOPLEVEL)/src/$(PROGRAM_PREFIX)console.exe \
+				   $@/$(PROGRAM_PREFIX)$*.com
 
-	$(STRIP) $@/*.exe $@/*.dll
+	$(STRIP) $@/*.exe $@/*.dll $@/*.com
 
 	-for f in $(DOC_FILES); do                              \
 		pandoc  -f gfm -o $@/$$(basename $$f .md).html  \
