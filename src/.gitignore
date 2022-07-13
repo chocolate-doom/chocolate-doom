@@ -13,6 +13,7 @@ chocolate-hexen-setup
 chocolate-strife-setup
 chocolate-setup
 *.cfg
+*.com
 *.exe
 *.desktop
 *.txt
