@@ -231,7 +231,14 @@ target_include_directories(mus2mid PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/../")
 target_link_libraries(mus2mid SDL2::SDL2main SDL2::SDL2)
 
 if(WIN32)
-    add_executable("${PROGRAM_PREFIX}console" win32_console.c)
+    add_executable("${PROGRAM_PREFIX}console" WIN32 win32_console.c)
+    if(MSVC)
+        set_target_properties("${PROGRAM_PREFIX}console" PROPERTIES
+                              LINK_FLAGS "/MANIFEST:NO /SUBSYSTEM:CONSOLE")
+    else()
+        set_target_properties("${PROGRAM_PREFIX}console" PROPERTIES
+                              LINK_FLAGS "-mconsole")
+    endif()
     add_custom_command(TARGET "${PROGRAM_PREFIX}console" POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy
                     ${CMAKE_CURRENT_BINARY_DIR}/${PROGRAM_PREFIX}console.exe
