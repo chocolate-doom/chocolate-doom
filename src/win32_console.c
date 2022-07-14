@@ -46,7 +46,11 @@ static int runproc(char *name, char *cmd)
 
     ZeroMemory(&pi, sizeof(pi));
 
-    if (CreateProcess(name, cmd, NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi))
+    if (!CreateProcess(name, cmd, NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi))
+    {
+        fprintf(stderr, "Error: Cannot launch %s.\n", name);
+    }
+    else
     {
         WaitForSingleObject(pi.hProcess, INFINITE);
         GetExitCodeProcess(pi.hProcess, &retval);
