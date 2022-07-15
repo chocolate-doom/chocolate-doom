@@ -231,28 +231,28 @@ target_include_directories(mus2mid PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/../")
 target_link_libraries(mus2mid SDL2::SDL2main SDL2::SDL2)
 
 if(WIN32)
-    add_executable("${PROGRAM_PREFIX}console" WIN32 win32_console.c)
+    add_executable("win32_console" WIN32 win32_console.c)
     if(MSVC)
-        set_target_properties("${PROGRAM_PREFIX}console" PROPERTIES
+        set_target_properties("win32_console" PROPERTIES
                               LINK_FLAGS "/MANIFEST:NO /SUBSYSTEM:CONSOLE")
     else()
-        set_target_properties("${PROGRAM_PREFIX}console" PROPERTIES
+        set_target_properties("win32_console" PROPERTIES
                               LINK_FLAGS "-mconsole -municode")
     endif()
-    add_custom_command(TARGET "${PROGRAM_PREFIX}console" POST_BUILD
+    add_custom_command(TARGET "win32_console" POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy
-                    ${CMAKE_CURRENT_BINARY_DIR}/${PROGRAM_PREFIX}console.exe
+                    ${CMAKE_CURRENT_BINARY_DIR}/win32_console.exe
                     ${CMAKE_CURRENT_BINARY_DIR}/${PROGRAM_PREFIX}doom.com)
-    add_custom_command(TARGET "${PROGRAM_PREFIX}console" POST_BUILD
+    add_custom_command(TARGET "win32_console" POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy
-                    ${CMAKE_CURRENT_BINARY_DIR}/${PROGRAM_PREFIX}console.exe
+                    ${CMAKE_CURRENT_BINARY_DIR}/win32_console.exe
                     ${CMAKE_CURRENT_BINARY_DIR}/${PROGRAM_PREFIX}heretic.com)
-    add_custom_command(TARGET "${PROGRAM_PREFIX}console" POST_BUILD
+    add_custom_command(TARGET "win32_console" POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy
-                    ${CMAKE_CURRENT_BINARY_DIR}/${PROGRAM_PREFIX}console.exe
+                    ${CMAKE_CURRENT_BINARY_DIR}/win32_console.exe
                     ${CMAKE_CURRENT_BINARY_DIR}/${PROGRAM_PREFIX}hexen.com)
-    add_custom_command(TARGET "${PROGRAM_PREFIX}console" POST_BUILD
+    add_custom_command(TARGET "win32_console" POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy
-                    ${CMAKE_CURRENT_BINARY_DIR}/${PROGRAM_PREFIX}console.exe
+                    ${CMAKE_CURRENT_BINARY_DIR}/win32_console.exe
                     ${CMAKE_CURRENT_BINARY_DIR}/${PROGRAM_PREFIX}strife.com)
 endif()

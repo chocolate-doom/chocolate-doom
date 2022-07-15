@@ -43,7 +43,7 @@ staging-%:
 	               $(TOPLEVEL)/src/$(PROGRAM_PREFIX)setup.exe \
 	               $@/$(PROGRAM_PREFIX)$*-setup.exe
 	LC_ALL=C ./cp-with-libs --ldflags="$(LDFLAGS)" \
-	               $(TOPLEVEL)/src/$(PROGRAM_PREFIX)console.exe \
+	               $(TOPLEVEL)/src/win32_console.exe \
 				   $@/$(PROGRAM_PREFIX)$*.com
 
 	$(STRIP) $@/*.exe $@/*.dll $@/*.com

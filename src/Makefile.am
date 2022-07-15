@@ -20,7 +20,7 @@ execgames_SCRIPTS = $(SETUP_BINARIES)
 
 if BUILD_CONWRAP
 
-noinst_PROGRAMS += @PROGRAM_PREFIX@console
+noinst_PROGRAMS += win32_console
 
 CONWRAP_BINARIES = @PROGRAM_PREFIX@doom.com    \
                    @PROGRAM_PREFIX@heretic.com \
@@ -189,11 +189,11 @@ $(SETUP_BINARIES): @PROGRAM_PREFIX@setup$(EXEEXT)
 
 if BUILD_CONWRAP
 
-@PROGRAM_PREFIX@console$(EXEEXT) : win32_console.c
+win32_console$(EXEEXT) : win32_console.c
 	$(CC) $(CONWRAP_CFLAGS) @CONWRAP_LDFLAGS@ win32_console.c -o $@
 
-$(CONWRAP_BINARIES): @PROGRAM_PREFIX@console$(EXEEXT)
-	cp @PROGRAM_PREFIX@console$(EXEEXT) $@
+$(CONWRAP_BINARIES): win32_console$(EXEEXT)
+	cp win32_console$(EXEEXT) $@
 
 endif
 
