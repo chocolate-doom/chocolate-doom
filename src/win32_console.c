@@ -24,10 +24,10 @@
 #include <stdio.h>
 #include <windows.h>
 
-static int runproc(char *name, char *cmd)
+static int runproc(wchar_t *name, wchar_t *cmd)
 {
-    STARTUPINFO si;
-    STARTUPINFO our_si;
+    STARTUPINFOW si;
+    STARTUPINFOW our_si;
     PROCESS_INFORMATION pi;
     DWORD retval = 1;
 
@@ -40,15 +40,15 @@ static int runproc(char *name, char *cmd)
 
     // Copy the list of inherited CRT file descriptors to the new process.
     our_si.cb = sizeof(our_si);
-    GetStartupInfo(&our_si);
+    GetStartupInfoW(&our_si);
     si.lpReserved2 = our_si.lpReserved2;
     si.cbReserved2 = our_si.cbReserved2;
 
     ZeroMemory(&pi, sizeof(pi));
 
-    if (!CreateProcess(name, cmd, NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi))
+    if (!CreateProcessW(name, cmd, NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi))
     {
-        fprintf(stderr, "Error: Cannot launch %s.\n", name);
+        fwprintf(stderr, L"Error: Cannot launch %s.\n", name);
     }
     else
     {
@@ -61,21 +61,21 @@ static int runproc(char *name, char *cmd)
     return (int)retval;
 }
 
-int main(int argc, char **argv)
+int main(int argc, wchar_t **argv, wchar_t **envp)
 {
-    char *cmd;
-    char exe[MAX_PATH];
+    wchar_t *cmd;
+    wchar_t exe[MAX_PATH];
     UINT orig_code_page;
     int retval;
 
-    cmd = GetCommandLine();
-    GetModuleFileName(NULL, exe, MAX_PATH);
+    cmd = GetCommandLineW();
+    GetModuleFileNameW(NULL, exe, MAX_PATH);
 
-    strcpy(strchr(exe, '.') + 1, "exe");
+    wcscpy(wcsrchr(exe, '.') + 1, L"exe");
 
     // Set an environment variable so the child process can tell whether it was
     // started from this wrapper and attach to the console accordingly.
-    SetEnvironmentVariable("_console", "1");
+    SetEnvironmentVariableW(L"_console", L"1");
 
     orig_code_page = GetConsoleOutputCP();
     SetConsoleOutputCP(CP_UTF8);

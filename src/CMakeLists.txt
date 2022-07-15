@@ -237,7 +237,7 @@ if(WIN32)
                               LINK_FLAGS "/MANIFEST:NO /SUBSYSTEM:CONSOLE")
     else()
         set_target_properties("${PROGRAM_PREFIX}console" PROPERTIES
-                              LINK_FLAGS "-mconsole")
+                              LINK_FLAGS "-mconsole -municode")
     endif()
     add_custom_command(TARGET "${PROGRAM_PREFIX}console" POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy
