@@ -61,7 +61,7 @@ static int runproc(wchar_t *name, wchar_t *cmd)
     return (int)retval;
 }
 
-int main(int argc, wchar_t **argv, wchar_t **envp)
+int wmain(int argc, wchar_t **argv, wchar_t **envp)
 {
     wchar_t *cmd;
     wchar_t exe[MAX_PATH];
