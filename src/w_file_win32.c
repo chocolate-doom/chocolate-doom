@@ -96,11 +96,10 @@ static wad_file_t *W_Win32_OpenFile(const char *path)
 
     wpath = M_ConvertToUtf8(path);
 
-    if (!wpath)
+    if (wpath == NULL)
     {
        return NULL;
     }
-
 
     handle = CreateFileW(wpath,
                          GENERIC_READ,

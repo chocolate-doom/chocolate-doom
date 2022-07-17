@@ -48,7 +48,7 @@
 #include "z_zone.h"
 
 #ifdef _WIN32
-wchar_t* M_ConvertToUtf8(const char *str)
+wchar_t *M_ConvertToUtf8(const char *str)
 {
     wchar_t *wstr = NULL;
     int wlen = 0;
