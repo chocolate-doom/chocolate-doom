@@ -89,14 +89,18 @@ unsigned int GetFileLength(HANDLE handle)
 static wad_file_t *W_Win32_OpenFile(const char *path)
 {
     win32_wad_file_t *result;
-    wchar_t wpath[MAX_PATH + 1];
+    wchar_t *wpath = NULL;
     HANDLE handle;
 
     // Open the file:
 
-    MultiByteToWideChar(CP_OEMCP, 0,
-                        path, strlen(path) + 1,
-                        wpath, sizeof(wpath));
+    wpath = M_ConvertToUtf8(path);
+
+    if (!wpath)
+    {
+       return NULL;
+    }
+
 
     handle = CreateFileW(wpath,
                          GENERIC_READ,
@@ -105,6 +109,8 @@ static wad_file_t *W_Win32_OpenFile(const char *path)
                          OPEN_EXISTING,
                          FILE_ATTRIBUTE_NORMAL,
                          NULL);
+
+    free(wpath);
 
     if (handle == INVALID_HANDLE_VALUE)
     {
