@@ -94,7 +94,7 @@ static wad_file_t *W_Win32_OpenFile(const char *path)
 
     // Open the file:
 
-    wpath = M_ConvertToUtf8(path);
+    wpath = M_ConvertUtf8ToWide(path);
 
     if (wpath == NULL)
     {
