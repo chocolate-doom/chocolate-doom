@@ -226,15 +226,15 @@ static void ReopenOutputHandle(DWORD std, FILE *stream)
 
 void I_WinConsole(void)
 {
-    char console_env[2];
+    wchar_t console_env[2];
 
     // Console wrapper will set _console=1 if we were called using the com
     // file.
-    if (GetEnvironmentVariable("_console", console_env, 2) &&
-        !strcmp(console_env, "1") && AttachConsole(ATTACH_PARENT_PROCESS))
+    if (GetEnvironmentVariableW(L"_console", console_env, 2) &&
+        !wcscmp(console_env, L"1") && AttachConsole(ATTACH_PARENT_PROCESS))
     {
         // Delete environment variable
-        SetEnvironmentVariable("_console", NULL);
+        SetEnvironmentVariableW(L"_console", NULL);
 
         // Redirect
         ReopenOutputHandle(STD_OUTPUT_HANDLE, stdout);
