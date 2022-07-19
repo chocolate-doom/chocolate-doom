@@ -112,7 +112,7 @@ static opl_init_result_t AutoSelectDriver(unsigned int port_base)
     int i;
     opl_init_result_t result;
 
-    for (i=0; drivers[i] != NULL; ++i)
+    for (i = 0; drivers[i] != NULL; ++i)
     {
         result = InitDriver(drivers[i], port_base);
         if (result != OPL_INIT_NONE)
