@@ -56,7 +56,9 @@ static pcsound_driver_t *drivers[] =
 #ifdef _WIN32
     &pcsound_win32_driver,
 #endif
+#ifndef DISABLE_SDL2MIXER
     &pcsound_sdl_driver,
+#endif // DISABLE_SDL2MIXER
     NULL,
 };
 

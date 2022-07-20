@@ -32,8 +32,23 @@ then
 fi
 
 PKG_CHECK_MODULES(SDL, [sdl2 >= 2.0.7])
-PKG_CHECK_MODULES(SDLMIXER, [SDL2_mixer >= 2.0.2])
-PKG_CHECK_MODULES(SDLNET, [SDL2_net >= 2.0.0])
+# Check for SDL2_mixer
+AC_ARG_ENABLE([sdl2mixer],
+AS_HELP_STRING([--disable-sdl2mixer], [Disable SDL2_mixer support])
+)
+AS_IF([test "x$enable_sdl2mixer" != xno], [
+    PKG_CHECK_MODULES(SDLMIXER, [SDL2_mixer >= 2.0.2])], [
+    AC_DEFINE([DISABLE_SDL2MIXER], [1], [SDL2_mixer disabled])
+])
+
+# Check for networking
+AC_ARG_ENABLE([sdl2net],
+AS_HELP_STRING([--disable-sdl2net], [Disable SDL2_net support])
+)
+AS_IF([test "x$enable_sdl2net" != xno], [
+    PKG_CHECK_MODULES(SDLNET, [SDL2_net >= 2.0.0])], [
+    AC_DEFINE([DISABLE_SDL2NET], [1], [SDL2_net disabled])
+])
 
 # Check for bash-completion.
 AC_ARG_ENABLE([bash-completion],
