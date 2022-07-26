@@ -270,6 +270,7 @@ static fixed_t 	ftom_zoommul; // how far the window zooms in each tic (fb coords
 static int64_t 	m_x, m_y;   // LL x,y where the window is on the map (map coords)
 static int64_t 	m_x2, m_y2; // UR x,y where the window is on the map (map coords)
 static int64_t 	prev_m_x, prev_m_y; // [crispy] for interpolation
+static int64_t 	next_m_x, next_m_y; // [crispy] for interpolation
 
 //
 // width/height of window on map (map coords)
@@ -365,6 +366,8 @@ void AM_activateNewScale(void)
     m_y -= m_h/2;
     m_x2 = m_x + m_w;
     m_y2 = m_y + m_h;
+    next_m_x = m_x; // [crispy]
+    next_m_y = m_y; // [crispy]
 }
 
 //
@@ -396,6 +399,8 @@ void AM_restoreScaleAndLoc(void)
     }
     m_x2 = m_x + m_w;
     m_y2 = m_y + m_h;
+    next_m_x = m_x; // [crispy]
+    next_m_y = m_y; // [crispy]
 
     // Change the scaling multipliers
     scale_mtof = FixedDiv(f_w<<FRACBITS, m_w);
@@ -464,6 +469,29 @@ void AM_findMinMaxBoundaries(void)
 
 }
 
+// [crispy] Function called by AM_Ticker for stable panning interpolation
+static void AM_changeWindowLocTick(void)
+{
+    int64_t incx, incy;
+
+    incx = m_paninc_target.x;
+    incy = m_paninc_target.y;
+
+    if (m_paninc_target.x || m_paninc_target.y)
+    {
+        followplayer = 0;
+    }
+
+    if (crispy->automaprotate)
+    {
+        AM_rotate(&incx, &incy, -mapangle);
+    }
+
+    next_m_x += incx;
+    next_m_y += incy;
+
+    // next_m_x and next_m_y clipping happen in AM_changeWindowLoc
+}
 
 //
 //
@@ -471,22 +499,6 @@ void AM_findMinMaxBoundaries(void)
 void AM_changeWindowLoc(void)
 {
     int64_t incx, incy;
-    static int old_gametic;
-
-    if (gametic > old_gametic)
-    {
-        m_paninc_target.x = m_paninc.x + m_paninc2.x;
-        m_paninc_target.y = m_paninc.y + m_paninc2.y;
-        old_gametic = gametic;
-
-        // [crispy] reset after moving with the mouse
-        m_paninc2.x = m_paninc2.y = 0;
-    }
-
-    if (m_paninc_target.x || m_paninc_target.y)
-    {
-	followplayer = 0;
-    }
 
     // [crispy] accumulate automap panning by keyboard and mouse
     if (crispy->uncapped && leveltime > oldleveltime)
@@ -507,14 +519,14 @@ void AM_changeWindowLoc(void)
     m_y = prev_m_y + incy;
 
     if (m_x + m_w/2 > max_x)
-	m_x = max_x - m_w/2;
+	next_m_x = m_x = max_x - m_w/2;
     else if (m_x + m_w/2 < min_x)
-	m_x = min_x - m_w/2;
+	next_m_x = m_x = min_x - m_w/2;
   
     if (m_y + m_h/2 > max_y)
-	m_y = max_y - m_h/2;
+	next_m_y = m_y = max_y - m_h/2;
     else if (m_y + m_h/2 < min_y)
-	m_y = min_y - m_h/2;
+	next_m_y = m_y = min_y - m_h/2;
 
     m_x2 = m_x + m_w;
     m_y2 = m_y + m_h;
@@ -562,8 +574,8 @@ void AM_initVariables(void)
         }
     }
 
-    m_x = (plr->mo->x >> FRACTOMAPBITS) - m_w/2;
-    m_y = (plr->mo->y >> FRACTOMAPBITS) - m_h/2;
+    next_m_x = (plr->mo->x >> FRACTOMAPBITS) - m_w/2;
+    next_m_y = (plr->mo->y >> FRACTOMAPBITS) - m_h/2;
 
     AM_Ticker(); // [crispy] initialize variables for interpolation
     AM_changeWindowLoc();
@@ -807,11 +819,11 @@ AM_Responder
     // [crispy] zoom and move Automap with the mouse (wheel)
     else if (ev->type == ev_mouse && !crispy->automapoverlay && !menuactive && !inhelpscreens)
     {
-    mousewheelzoom = true;
 	if (mousebmapzoomout >= 0 && ev->data1 & (1 << mousebmapzoomout))
 	{
 		mtof_zoommul = m_zoomout_mouse;
 		ftom_zoommul = m_zoomin_mouse;
+		mousewheelzoom = true;
 		rc = true;
 	}
 	else
@@ -819,6 +831,7 @@ AM_Responder
 	{
 		mtof_zoommul = m_zoomin_mouse;
 		ftom_zoommul = m_zoomout_mouse;
+		mousewheelzoom = true;
 		rc = true;
 	}
 	else
@@ -1034,8 +1047,8 @@ void AM_changeWindowScale(void)
 void AM_doFollowPlayer(void)
 {
 
-	m_x = (viewx >> FRACTOMAPBITS) - m_w/2;
-	m_y = (viewy >> FRACTOMAPBITS) - m_h/2;
+	next_m_x = m_x = (viewx >> FRACTOMAPBITS) - m_w/2;
+	next_m_y = m_y = (viewy >> FRACTOMAPBITS) - m_h/2;
 	m_x2 = m_x + m_w;
 	m_y2 = m_y + m_h;
 
@@ -1079,6 +1092,16 @@ void AM_Ticker (void)
 
     amclock++;
 
+    // [crispy] sync up for interpolation
+    m_x = prev_m_x = next_m_x;
+    m_y = prev_m_y = next_m_y;
+
+    m_paninc_target.x = m_paninc.x + m_paninc2.x;
+    m_paninc_target.y = m_paninc.y + m_paninc2.y;
+
+    // [crispy] reset after moving with the mouse
+    m_paninc2.x = m_paninc2.y = 0;
+
     if (followplayer)
 	AM_doFollowPlayer();
 
@@ -1086,11 +1109,12 @@ void AM_Ticker (void)
     if (ftom_zoommul != FRACUNIT)
 	AM_changeWindowScale();
 
+    if (m_paninc_target.x || m_paninc_target.y)
+        AM_changeWindowLocTick();
+
     // Update light level
     // AM_updateLightLev();
 
-    prev_m_x = m_x;
-    prev_m_y = m_y;
 }
 
 
@@ -2071,8 +2095,7 @@ void AM_Drawer (void)
     }
 
     // Change x,y location
-    if (m_paninc.x || m_paninc.y || m_paninc2.x || m_paninc2.y
-    ||  m_paninc_target.x || m_paninc_target.y)
+    if (m_paninc_target.x || m_paninc_target.y)
     {
         AM_changeWindowLoc();
     }
