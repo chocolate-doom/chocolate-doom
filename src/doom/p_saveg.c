@@ -418,6 +418,13 @@ static void saveg_read_mobj_t(mobj_t *str)
 
     // struct mobj_s* tracer;
     str->tracer = saveg_readp();
+
+    // [crispy] new mobj_t fields used for interpolation
+    str->interp = 0;
+    str->oldx = 0;
+    str->oldy = 0;
+    str->oldz = 0;
+    str->oldangle = 0;
 }
 
 // [crispy] enumerate all thinker pointers
