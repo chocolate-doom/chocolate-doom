@@ -1301,6 +1301,10 @@ void D_DoomMain (void)
     char demolumpname[9];
     int numiwadlumps;
 
+    // Call I_ShutdownGraphics on quit
+
+    I_AtExit(I_ShutdownGraphics, true);
+
     I_AtExit(D_Endoom, false);
 
     // print banner

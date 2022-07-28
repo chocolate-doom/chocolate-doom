@@ -1491,6 +1491,10 @@ void D_DoomMain (void)
     char            file[256];
     char            demolumpname[9];
 
+    // Call I_ShutdownGraphics on quit
+
+    I_AtExit(I_ShutdownGraphics, true);
+
     I_AtExit(D_Endoom, false);
 
     // haleyjd 20110206 [STRIFE]: -nograph parameter
