@@ -525,6 +525,20 @@ boolean P_LookForMonsters(mobj_t * actor)
 ================
 */
 
+extern boolean demorecording;
+
+static int P_NextLook(mobj_t *actor)
+{
+    if (demorecording || demoplayback)
+    {
+        return (actor->lastlook + 1) & 3;
+    }
+    else
+    {
+        return (actor->lastlook + 1) % maxplayers;
+    }
+}
+
 boolean P_LookForPlayers(mobj_t * actor, boolean allaround)
 {
     int c;
@@ -539,15 +553,19 @@ boolean P_LookForPlayers(mobj_t * actor, boolean allaround)
     }
     c = 0;
 
-    // NOTE: This behavior has been changed from the Vanilla behavior, where
-    // an infinite loop can occur if players 0-3 all quit the game. Although
-    // technically this is not what Vanilla does, fixing this is highly
-    // desirable, and having the game simply lock up is not acceptable.
-    // stop = (actor->lastlook - 1) & 3;
-    // for (;; actor->lastlook = (actor->lastlook + 1) & 3)
-
-    stop = (actor->lastlook + maxplayers - 1) % maxplayers;
-    for (;; actor->lastlook = (actor->lastlook + 1) % maxplayers)
+    if (demorecording || demoplayback)
+    {
+        // NOTE: This behaviour can cause an infinite loop in vanilla
+        // if players 0-3 all quit the game.
+        // However, this is essential for maintaining demo compatibility,
+        // so we must use the "broken" behaviour when demos are involved.
+        stop = (actor->lastlook - 1) & 3;
+    }
+    else
+    {
+        stop = (actor->lastlook + maxplayers - 1) % maxplayers;
+    }
+    for (;; actor->lastlook = P_NextLook(actor))
     {
         if (!playeringame[actor->lastlook])
             continue;
