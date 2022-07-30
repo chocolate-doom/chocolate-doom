@@ -177,7 +177,7 @@ Crispy Doom 5.x.x is currently under development.
 **New Features and Improvements**
 * Add mouse smoothing when running uncapped. (by @mikeday0)
 * Support up to 8 pages of savegames.
-* New icon design (thanks @philikiwan).
+* New icon design (thanks @kiwaph).
 * Brightmaps for mid-textures (by @JNechaevsky).
 * Improved brightmap implementation (by @JNechaevsky).
 * New stats widget option: above status bar.
