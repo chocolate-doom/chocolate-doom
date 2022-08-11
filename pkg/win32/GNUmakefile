@@ -3,11 +3,18 @@ include ../config.make
 
 TOPLEVEL=../..
 
-DOOM_ZIP=$(PROGRAM_PREFIX)doom-$(PACKAGE_VERSION)-win32.zip
-HERETIC_ZIP=$(PROGRAM_PREFIX)heretic-$(PACKAGE_VERSION)-win32.zip
-HEXEN_ZIP=$(PROGRAM_PREFIX)hexen-$(PACKAGE_VERSION)-win32.zip
-STRIFE_ZIP=$(PROGRAM_PREFIX)strife-$(PACKAGE_VERSION)-win32.zip
-ZIPS=$(DOOM_ZIP) $(HERETIC_ZIP) $(HEXEN_ZIP) # $(STRIFE_ZIP)
+SYS:=$(shell uname)
+ifneq (, $(findstring MINGW64, $(SYS)))
+  POSTFIX=win64
+else
+  POSTFIX=win32
+endif
+
+DOOM_ZIP=$(PROGRAM_PREFIX)doom-$(PACKAGE_VERSION)-$(POSTFIX).zip
+HERETIC_ZIP=$(PROGRAM_PREFIX)heretic-$(PACKAGE_VERSION)-$(POSTFIX).zip
+HEXEN_ZIP=$(PROGRAM_PREFIX)hexen-$(PACKAGE_VERSION)-$(POSTFIX).zip
+STRIFE_ZIP=$(PROGRAM_PREFIX)strife-$(PACKAGE_VERSION)-$(POSTFIX).zip
+ZIPS=$(DOOM_ZIP) $(HERETIC_ZIP) $(HEXEN_ZIP) $(STRIFE_ZIP)
 
 DLL_FILES=$(TOPLEVEL)/src/SDL.dll                      \
           $(TOPLEVEL)/src/SDL_mixer.dll                \

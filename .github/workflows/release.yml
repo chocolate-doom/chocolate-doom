@@ -1,0 +1,78 @@
+name: release
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  create_release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Version
+        id: get_version
+        run: echo ::set-output name=VERSION::${GITHUB_REF##*-}
+
+      - name: Create Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: Crispy Doom ${{ steps.get_version.outputs.VERSION }}
+
+  build_release:
+    name: Build Release
+    runs-on: windows-latest
+
+    defaults:
+      run:
+        shell: msys2 {0}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { sys: mingw64, env: x86_64 }
+          - { sys: mingw32, env: i686 }
+
+    steps:
+      - name: Install pandoc
+        shell: cmd
+        run: choco install pandoc
+
+      - name: Setup MSYS2
+        uses: msys2/setup-msys2@v2
+        with:
+          update: true
+          msystem: ${{ matrix.sys }}
+          path-type: inherit
+          install: >-
+            autotools
+            zip
+            mingw-w64-${{matrix.env}}-gcc
+            mingw-w64-${{matrix.env}}-SDL2
+            mingw-w64-${{matrix.env}}-SDL2_mixer
+            mingw-w64-${{matrix.env}}-SDL2_net
+            mingw-w64-${{matrix.env}}-libpng
+            mingw-w64-${{matrix.env}}-libsamplerate
+
+      - uses: actions/checkout@v2
+
+      - name: Configure
+        run: |
+          ./autogen.sh
+
+      - name: Build
+        run: make -j4
+
+      - name: Package
+        run: |
+          cd pkg/win32
+          make
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ needs.create_release.outputs.tag-name }}
+          body_path: CHANGELOG.md
+          files: pkg/win32/*.zip
