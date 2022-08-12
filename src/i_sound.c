@@ -99,7 +99,9 @@ static int snd_mport = 0;
 
 static sound_module_t *sound_modules[] = 
 {
+#ifndef DISABLE_SDL2MIXER
     &sound_sdl_module,
+#endif // DISABLE_SDL2MIXER
     &sound_pcsound_module,
     NULL,
 };
@@ -108,7 +110,9 @@ static sound_module_t *sound_modules[] =
 
 static music_module_t *music_modules[] =
 {
+#ifndef DISABLE_SDL2MIXER
     &music_sdl_module,
+#endif // DISABLE_SDL2MIXER
     &music_opl_module,
     NULL,
 };

@@ -33,6 +33,10 @@
 // NETWORKING
 //
 
+
+#ifndef DISABLE_SDL2NET
+
+
 #include <SDL_net.h>
 
 #define DEFAULT_PORT 2342
@@ -376,3 +380,62 @@ net_module_t net_sdl_module =
     NET_SDL_ResolveAddress,
 };
 
+
+#else // DISABLE_SDL2NET
+
+// no-op implementation
+
+
+static boolean NET_NULL_InitClient(void)
+{
+    return false;
+}
+
+
+static boolean NET_NULL_InitServer(void)
+{
+    return false;
+}
+
+
+static void NET_NULL_SendPacket(net_addr_t *addr, net_packet_t *packet)
+{
+}
+
+
+static boolean NET_NULL_RecvPacket(net_addr_t **addr, net_packet_t **packet)
+{
+    return false;
+}
+
+
+static void NET_NULL_AddrToString(net_addr_t *addr, char *buffer, int buffer_len)
+{
+
+}
+
+
+static void NET_NULL_FreeAddress(net_addr_t *addr)
+{
+}
+
+
+net_addr_t *NET_NULL_ResolveAddress(const char *address)
+{
+    return NULL;
+}
+
+
+net_module_t net_sdl_module =
+{
+    NET_NULL_InitClient,
+    NET_NULL_InitServer,
+    NET_NULL_SendPacket,
+    NET_NULL_RecvPacket,
+    NET_NULL_AddrToString,
+    NET_NULL_FreeAddress,
+    NET_NULL_ResolveAddress,
+};
+
+
+#endif // DISABLE_SDL2NET

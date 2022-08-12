@@ -16,6 +16,7 @@
 //     SDL implementation of system-specific input interface.
 //
 
+#include <string.h>
 
 #include "SDL.h"
 #include "SDL_keycode.h"
