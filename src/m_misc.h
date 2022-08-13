@@ -26,6 +26,10 @@
 
 #include "doomtype.h"
 
+#ifdef _WIN32
+wchar_t *M_ConvertUtf8ToWide(const char *str);
+#endif
+
 FILE* M_fopen(const char *filename, const char *mode);
 int M_remove(const char *path);
 int M_rename(const char *oldname, const char *newname);
