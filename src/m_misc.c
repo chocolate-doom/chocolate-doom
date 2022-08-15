@@ -28,6 +28,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <io.h>
+#include "SDL_stdinc.h" // SDL_iconv_string
 #ifdef _MSC_VER
 #include <direct.h>
 #endif
@@ -58,7 +59,7 @@ wchar_t *M_ConvertUtf8ToWide(const char *str)
     if (!wlen)
     {
         errno = EINVAL;
-        printf("Warning: Failed to convert path to UTF8\n");
+        printf("M_ConvertUtf8ToWide: Failed to convert path from UTF8\n");
         return NULL;
     }
 
@@ -73,7 +74,7 @@ wchar_t *M_ConvertUtf8ToWide(const char *str)
     if (MultiByteToWideChar(CP_UTF8, 0, str, -1, wstr, wlen) == 0)
     {
         errno = EINVAL;
-        printf("Warning: Failed to convert path to UTF8\n");
+        printf("M_ConvertUtf8ToWide: Failed to convert path from UTF8\n");
         free(wstr);
         return NULL;
     }
@@ -82,7 +83,7 @@ wchar_t *M_ConvertUtf8ToWide(const char *str)
 }
 #endif
 
-FILE* M_fopen(const char *filename, const char *mode)
+FILE *M_fopen(const char *filename, const char *mode)
 {
 #ifdef _WIN32
     FILE *file;
@@ -197,6 +198,61 @@ int M_stat(const char *path, struct stat *buf)
     return ret;
 #else
     return stat(path, buf);
+#endif
+}
+
+#ifdef _WIN32
+typedef struct {
+    char *var;
+    const char *name;
+} env_var_t;
+
+static env_var_t *env_vars;
+static int num_vars;
+#endif
+
+char *M_getenv(const char *name)
+{
+#ifdef _WIN32
+    int i;
+    wchar_t *wenv = NULL, *wname = NULL;
+    char *env = NULL;
+
+    for (i = 0; i < num_vars; ++i)
+    {
+        if (!strcasecmp(name, env_vars[i].name))
+           return env_vars[i].var;
+    }
+
+    wname = M_ConvertUtf8ToWide(name);
+
+    if (!wname)
+    {
+        return NULL;
+    }
+
+    wenv = _wgetenv(wname);
+
+    free(wname);
+
+    if (wenv)
+    {
+        env = SDL_iconv_string("UTF-8", "UTF-16LE", (const char *)wenv,
+                               (wcslen(wenv) + 1) * sizeof(wchar_t));
+    }
+    else
+    {
+        env = NULL;
+    }
+
+    env_vars = I_Realloc(env_vars, (num_vars + 1) * sizeof(*env_vars));
+    env_vars[num_vars].var = env;
+    env_vars[num_vars].name = M_StringDuplicate(name);
+    ++num_vars;
+
+    return env;
+#else
+    return getenv(name);
 #endif
 }
 
@@ -405,7 +461,7 @@ char *M_TempFile(const char *s)
 
     // Check the TEMP environment variable to find the location.
 
-    tempdir = getenv("TEMP");
+    tempdir = M_getenv("TEMP");
 
     if (tempdir == NULL)
     {

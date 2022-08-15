@@ -30,10 +30,11 @@
 wchar_t *M_ConvertUtf8ToWide(const char *str);
 #endif
 
-FILE* M_fopen(const char *filename, const char *mode);
+FILE *M_fopen(const char *filename, const char *mode);
 int M_remove(const char *path);
 int M_rename(const char *oldname, const char *newname);
 int M_stat(const char *path, struct stat *buf);
+char *M_getenv(const char *name);
 boolean M_WriteFile(const char *name, const void *source, int length);
 int M_ReadFile(const char *name, byte **buffer);
 void M_MakeDirectory(const char *dir);

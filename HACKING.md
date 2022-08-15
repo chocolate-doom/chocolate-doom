@@ -227,6 +227,7 @@ C library function |   Wrapper
 `rename()`         |  `M_rename()`
 `stat()`           |  `M_stat()`
 `mkdir()`          |  `M_MakeDirectory()`
+`getenv()`         |  `M_getenv()`
 
 ## GNU GPL and licensing
 
