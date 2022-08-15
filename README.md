@@ -1,5 +1,5 @@
 # Crispy Doom
-[![Crispy Doom Icon](https://www.chocolate-doom.org/wiki/images/b/be/Crispy-doom.png)](https://github.com/fabiangreffrath/crispy-doom)
+[![Crispy Doom Icon](https://github.com/fabiangreffrath/crispy-doom/blob/master/data/doom.png)](https://github.com/fabiangreffrath/crispy-doom)
 
 [![Top Language](https://img.shields.io/github/languages/top/fabiangreffrath/crispy-doom.svg)](https://github.com/fabiangreffrath/crispy-doom)
 [![Code Size](https://img.shields.io/github/languages/code-size/fabiangreffrath/crispy-doom.svg)](https://github.com/fabiangreffrath/crispy-doom)
@@ -213,4 +213,4 @@ Secret Rabbit Code (libsamplerate) is © 2002-2011 Erik de Castro Lopo and is re
 Libpng is © 1998-2014 Glenn Randers-Pehrson, © 1996-1997 Andreas Dilger, © 1995-1996 Guy Eric Schalnat, Group 42, Inc. and is released under the [libpng license](http://www.libpng.org/pub/png/src/libpng-LICENSE.txt).
 Zlib is © 1995-2013 Jean-loup Gailly and Mark Adler and is released under the [zlib license](http://www.zlib.net/zlib_license.html).
 
-The Crispy Doom icon (as shown at the top of this page) is composed of the [Chocolate Doom icon](https://www.chocolate-doom.org/wiki/images/7/77/Chocolate-logo.png) and a [photo](https://en.wikipedia.org/wiki/File:Potato-Chips.jpg) of potato crisps (Utz-brand, grandma's kettle-cooked style) by [Evan-Amos](https://commons.wikimedia.org/wiki/User:Evan-Amos) who kindly released it into the [public domain](https://en.wikipedia.org/wiki/Public_domain). The current high-resolution version of this icon has been contributed by JNechaevsky (formerly by Zodomaniac).
+The Crispy Doom icon (as shown at the top of this page) has been contributed by [Philip](https://github.com/kiwaph).
