@@ -28,6 +28,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <io.h>
+#include "SDL_stdinc.h" // SDL_iconv_string
 #ifdef _MSC_VER
 #include <direct.h>
 #endif
@@ -48,7 +49,7 @@
 #include "z_zone.h"
 
 #ifdef _WIN32
-static wchar_t* ConvertToUtf8(const char *str)
+wchar_t *M_ConvertUtf8ToWide(const char *str)
 {
     wchar_t *wstr = NULL;
     int wlen = 0;
@@ -58,7 +59,7 @@ static wchar_t* ConvertToUtf8(const char *str)
     if (!wlen)
     {
         errno = EINVAL;
-        printf("Warning: Failed to convert path to UTF8\n");
+        printf("M_ConvertUtf8ToWide: Failed to convert path from UTF8\n");
         return NULL;
     }
 
@@ -66,14 +67,14 @@ static wchar_t* ConvertToUtf8(const char *str)
 
     if (!wstr)
     {
-        I_Error("ConvertToUtf8: Failed to allocate new string");
+        I_Error("M_ConvertUtf8ToWide: Failed to allocate new string");
         return NULL;
     }
 
     if (MultiByteToWideChar(CP_UTF8, 0, str, -1, wstr, wlen) == 0)
     {
         errno = EINVAL;
-        printf("Warning: Failed to convert path to UTF8\n");
+        printf("M_ConvertUtf8ToWide: Failed to convert path from UTF8\n");
         free(wstr);
         return NULL;
     }
@@ -82,21 +83,21 @@ static wchar_t* ConvertToUtf8(const char *str)
 }
 #endif
 
-FILE* M_fopen(const char *filename, const char *mode)
+FILE *M_fopen(const char *filename, const char *mode)
 {
 #ifdef _WIN32
     FILE *file;
     wchar_t *wname = NULL;
     wchar_t *wmode = NULL;
 
-    wname = ConvertToUtf8(filename);
+    wname = M_ConvertUtf8ToWide(filename);
 
     if (!wname)
     {
         return NULL;
     }
 
-    wmode = ConvertToUtf8(mode);
+    wmode = M_ConvertUtf8ToWide(mode);
 
     if (!wmode)
     {
@@ -121,7 +122,7 @@ int M_remove(const char *path)
     wchar_t *wpath = NULL;
     int ret;
 
-    wpath = ConvertToUtf8(path);
+    wpath = M_ConvertUtf8ToWide(path);
 
     if (!wpath)
     {
@@ -145,14 +146,14 @@ int M_rename(const char *oldname, const char *newname)
     wchar_t *wnew = NULL;
     int ret;
 
-    wold = ConvertToUtf8(oldname);
+    wold = M_ConvertUtf8ToWide(oldname);
 
     if (!wold)
     {
         return 0;
     }
 
-    wnew = ConvertToUtf8(newname);
+    wnew = M_ConvertUtf8ToWide(newname);
 
     if (!wnew)
     {
@@ -178,7 +179,7 @@ int M_stat(const char *path, struct stat *buf)
     struct _stat wbuf;
     int ret;
 
-    wpath = ConvertToUtf8(path);
+    wpath = M_ConvertUtf8ToWide(path);
 
     if (!wpath)
     {
@@ -200,6 +201,61 @@ int M_stat(const char *path, struct stat *buf)
 #endif
 }
 
+#ifdef _WIN32
+typedef struct {
+    char *var;
+    const char *name;
+} env_var_t;
+
+static env_var_t *env_vars;
+static int num_vars;
+#endif
+
+char *M_getenv(const char *name)
+{
+#ifdef _WIN32
+    int i;
+    wchar_t *wenv = NULL, *wname = NULL;
+    char *env = NULL;
+
+    for (i = 0; i < num_vars; ++i)
+    {
+        if (!strcasecmp(name, env_vars[i].name))
+           return env_vars[i].var;
+    }
+
+    wname = M_ConvertUtf8ToWide(name);
+
+    if (!wname)
+    {
+        return NULL;
+    }
+
+    wenv = _wgetenv(wname);
+
+    free(wname);
+
+    if (wenv)
+    {
+        env = SDL_iconv_string("UTF-8", "UTF-16LE", (const char *)wenv,
+                               (wcslen(wenv) + 1) * sizeof(wchar_t));
+    }
+    else
+    {
+        env = NULL;
+    }
+
+    env_vars = I_Realloc(env_vars, (num_vars + 1) * sizeof(*env_vars));
+    env_vars[num_vars].var = env;
+    env_vars[num_vars].name = M_StringDuplicate(name);
+    ++num_vars;
+
+    return env;
+#else
+    return getenv(name);
+#endif
+}
+
 //
 // Create a directory
 //
@@ -209,7 +265,7 @@ void M_MakeDirectory(const char *path)
 #ifdef _WIN32
     wchar_t *wdir;
 
-    wdir = ConvertToUtf8(path);
+    wdir = M_ConvertUtf8ToWide(path);
 
     if (!wdir)
     {
@@ -405,7 +461,7 @@ char *M_TempFile(const char *s)
 
     // Check the TEMP environment variable to find the location.
 
-    tempdir = getenv("TEMP");
+    tempdir = M_getenv("TEMP");
 
     if (tempdir == NULL)
     {

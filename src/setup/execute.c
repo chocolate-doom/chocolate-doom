@@ -61,7 +61,7 @@ static char *TempFile(const char *s)
 #ifdef _WIN32
     // Check the TEMP environment variable to find the location.
 
-    tempdir = getenv("TEMP");
+    tempdir = M_getenv("TEMP");
 
     if (tempdir == NULL)
     {
