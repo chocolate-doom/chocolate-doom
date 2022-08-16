@@ -55,7 +55,7 @@ z_native.c           z_zone.h
 
 # Source files used by the game binaries (chocolate-doom, etc.)
 
-GAME_SOURCE_FILES=\
+GAME_BASE_FILES=\
 aes_prng.c           aes_prng.h            \
 d_event.c            d_event.h             \
                      doomkeys.h            \
@@ -115,8 +115,20 @@ w_file.c             w_file.h              \
 w_file_stdc.c                              \
 w_file_posix.c                             \
 w_file_win32.c                             \
-w_merge.c            w_merge.h             \
+w_merge.c            w_merge.h
+
+
+MEMORY_NATIVE_SOURCE_FILES=\
+z_native.c           z_zone.h
+
+MEMORY_ZONE_SOURCE_FILES=\
 z_zone.c             z_zone.h
+
+if HAVE_ZPOOL
+GAME_SOURCE_FILES=$(GAME_BASE_FILES) $(MEMORY_ZONE_SOURCE_FILES)
+else
+GAME_SOURCE_FILES=$(GAME_BASE_FILES) $(MEMORY_NATIVE_SOURCE_FILES)
+endif
 
 DEHACKED_SOURCE_FILES =                    \
 deh_defs.h                                 \

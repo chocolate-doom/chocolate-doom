@@ -94,6 +94,14 @@ AS_IF([test "x$enable_icons" != xno], [
     ])
 ])
 
+# Check for memory pool debugging.
+AC_ARG_ENABLE([zpool],
+AS_HELP_STRING([--disable-zpool], [Disable memory pools for debugging])
+)
+AS_IF([test "x$enable_zpool" != xno], [], [
+    AC_DEFINE([DISABLE_ZPOOL], [1], [Memory pooling disabled])
+])
+
 # Check for libsamplerate.
 AC_ARG_WITH([libsamplerate],
 AS_HELP_STRING([--without-libsamplerate],
@@ -176,6 +184,7 @@ AM_CONDITIONAL(HAVE_BASH_COMPLETION, [test "x$enable_bash_completion" != xno])
 AM_CONDITIONAL(HAVE_DOC, [test "x$enable_doc" != xno])
 AM_CONDITIONAL(HAVE_FONTS, [test "x$enable_fonts" != xno])
 AM_CONDITIONAL(HAVE_ICONS, [test "x$enable_icons" != xno])
+AM_CONDITIONAL(HAVE_ZPOOL, [test "x$enable_zpool" != xno])
 
 dnl Automake v1.8.0 is required, please upgrade!
 
