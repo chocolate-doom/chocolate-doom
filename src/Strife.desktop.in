@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=@PACKAGE_SHORTNAME@ Strife
 Exec=@PROGRAM_PREFIX@strife
-Icon=@PROGRAM_PREFIX@doom
+Icon=@PROGRAM_PREFIX@strife
 Type=Application
 Comment=@PACKAGE_SHORTDESC@
 Categories=Game;ActionGame;
