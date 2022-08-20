@@ -62,3 +62,9 @@ sv_save.c                             \
                     textdefs.h        \
                     xddefs.h
 
+if HAVE_ICONS
+
+hexen_icon.c : $(top_builddir)/data/hexen.png
+	$(top_builddir)/data/convert-icon $(top_builddir)/data/hexen.png $@
+
+endif
