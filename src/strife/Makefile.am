@@ -4,7 +4,7 @@ AM_CFLAGS=-I$(top_srcdir)/src                           \
 
 EXTRA_DIST =                    \
         CMakeLists.txt          \
-        hexen_icon.c
+        strife_icon.c
 
 noinst_LIBRARIES=libstrife.a
 
