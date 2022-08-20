@@ -3,7 +3,9 @@ AM_CFLAGS=-I$(top_srcdir)/src                           \
           -I$(top_srcdir)/textscreen                    \
           @SDL_CFLAGS@ @SDLMIXER_CFLAGS@ @SDLNET_CFLAGS@
 
-EXTRA_DIST = CMakeLists.txt
+EXTRA_DIST =                                         \
+        CMakeLists.txt                               \
+        heretic_icon.c
 
 noinst_LIBRARIES=libheretic.a
 

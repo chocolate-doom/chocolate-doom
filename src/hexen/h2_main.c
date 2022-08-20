@@ -42,6 +42,8 @@
 #include "v_video.h"
 #include "w_main.h"
 
+#include "hexen_icon.c"
+
 // MACROS ------------------------------------------------------------------
 
 #define MAXWADFILES 20
@@ -827,6 +829,7 @@ void H2_GameLoop(void)
     I_SetWindowTitle(gamedescription);
     I_GraphicsCheckCommandLine();
     I_SetGrabMouseCallback(D_GrabMouseCallback);
+    I_RegisterWindowIcon(hexen_icon_data, hexen_icon_w, hexen_icon_h);
     I_InitGraphics();
 
     while (1)
