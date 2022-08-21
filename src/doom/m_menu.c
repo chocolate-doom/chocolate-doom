@@ -2006,7 +2006,7 @@ void M_Drawer (void)
     {
         name = DEH_String(currentMenu->menuitems[i].name);
 
-	if (name[0] && W_CheckNumForName(name) > 0)
+	if (name[0])
 	{
 	    V_DrawPatchDirect (x, y, W_CacheLumpName(name, PU_CACHE));
 	}
@@ -2113,6 +2113,12 @@ void M_Init (void)
     else if (gameversion == exe_chex)
     {
         EpiDef.numitems = 1;
+    }
+
+    // Doom v1.0/v1.1 didn't have nightmare difficulty
+    if (gameversion < exe_doom_1_2)
+    {
+        NewDef.numitems--;
     }
 
     opldev = M_CheckParm("-opldev") > 0;

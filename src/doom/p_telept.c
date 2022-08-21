@@ -93,8 +93,30 @@ EV_Teleport
 		oldy = thing->y;
 		oldz = thing->z;
 				
-		if (!P_TeleportMove (thing, m->x, m->y))
-		    return 0;
+		// v1.1 and below didn't have P_TeleportMove(), they just
+		// temporarily added MF_TELEPORT to thing->flags and used
+		// P_TryMove().
+		if (gameversion <= exe_doom_1_1)
+		{
+		    boolean moved;
+		    int old_flags = thing->flags;
+
+		    thing->flags |= MF_TELEPORT;
+		    moved = P_TryMove(thing, m->x, m->y);
+		    thing->flags = old_flags;
+
+		    if (!moved)
+		    {
+		        return 0;
+		    }
+		}
+		else
+		{
+		    if (!P_TeleportMove (thing, m->x, m->y))
+		    {
+		        return 0;
+		    }
+		}
 
                 // The first Final Doom executable does not set thing->z
                 // when teleporting. This quirk is unique to this

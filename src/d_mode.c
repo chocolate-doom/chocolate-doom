@@ -118,25 +118,27 @@ int D_GetNumEpisodes(GameMission_t mission, GameMode_t mode)
 
 static struct {
     GameMission_t mission;
-    GameVersion_t version;
+    NetGameVersion_t version;
 } valid_versions[] = {
-    { doom,     exe_doom_1_2 },
-    { doom,     exe_doom_1_666 },
-    { doom,     exe_doom_1_7 },
-    { doom,     exe_doom_1_8 },
-    { doom,     exe_doom_1_9 },
-    { doom,     exe_hacx },
-    { doom,     exe_ultimate },
-    { doom,     exe_final },
-    { doom,     exe_final2 },
-    { doom,     exe_chex },
-    { heretic,  exe_heretic_1_3 },
-    { hexen,    exe_hexen_1_1 },
-    { strife,   exe_strife_1_2 },
-    { strife,   exe_strife_1_31 },
+    { doom,     net_doom_1_0 },
+    { doom,     net_doom_1_1 },
+    { doom,     net_doom_1_2 },
+    { doom,     net_doom_1_666 },
+    { doom,     net_doom_1_7 },
+    { doom,     net_doom_1_8 },
+    { doom,     net_doom_1_9 },
+    { doom,     net_hacx },
+    { doom,     net_ultimate },
+    { doom,     net_final },
+    { doom,     net_final2 },
+    { doom,     net_chex },
+    { heretic,  net_heretic_1_3 },
+    { hexen,    net_hexen_1_1 },
+    { strife,   net_strife_1_2 },
+    { strife,   net_strife_1_31 },
 };
 
-boolean D_ValidGameVersion(GameMission_t mission, GameVersion_t version)
+boolean D_ValidNetGameVersion(GameMission_t mission, NetGameVersion_t version)
 {
     int i;
 
@@ -158,6 +160,34 @@ boolean D_ValidGameVersion(GameMission_t mission, GameVersion_t version)
     }
 
     return false;
+}
+
+// Order of these is the same as in GameVersion_t
+const NetGameVersion_t game_to_net_version_table[] =
+{
+    net_doom_1_0,
+    net_doom_1_1,
+    net_doom_1_2,
+    net_doom_1_666,
+    net_doom_1_7,
+    net_doom_1_8,
+    net_doom_1_9,
+    net_hacx,
+    net_ultimate,
+    net_final,
+    net_final2,
+    net_chex,
+
+    net_heretic_1_3,
+
+    net_hexen_1_1,
+    net_strife_1_2,
+    net_strife_1_31
+};
+
+NetGameVersion_t D_NetGameVersion(int gameversion)
+{
+    return game_to_net_version_table[gameversion];
 }
 
 // Does this mission type use ExMy form, rather than MAPxy form?

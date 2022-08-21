@@ -22,6 +22,7 @@
 
 #include "deh_misc.h"
 
+#include "d_compat.h"
 #include "m_bbox.h"
 #include "m_random.h"
 #include "i_system.h"
@@ -1184,13 +1185,13 @@ void P_UseLines (player_t*	player)
 	
     usething = player->mo;
 		
-    angle = player->mo->angle >> ANGLETOFINESHIFT;
+    angle = player->mo->angle >> angletocoarseshift;
 
     x1 = player->mo->x;
     y1 = player->mo->y;
-    x2 = x1 + (USERANGE>>FRACBITS)*finecosine[angle];
-    y2 = y1 + (USERANGE>>FRACBITS)*finesine[angle];
-	
+    x2 = x1 + (USERANGE>>FRACBITS) * coarsecosine[angle];
+    y2 = y1 + (USERANGE>>FRACBITS) * coarsesine[angle];
+
     P_PathTraverse ( x1, y1, x2, y2, PT_ADDLINES, PTR_UseTraverse );
 }
 
@@ -1317,6 +1318,8 @@ boolean PIT_ChangeSector (mobj_t*	thing)
     {
 	P_SetMobjState (thing, S_GIBS);
 
+    // https://doomwiki.org/wiki/Crushed_monsters_block_player_movement
+    // FIXME: check which exact version this was fixed, at least in v1.666
     if (gameversion > exe_doom_1_2)
 	    thing->flags &= ~MF_SOLID;
 	thing->height = 0;

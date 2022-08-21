@@ -1,6 +1,5 @@
 //
-// Copyright(C) 1993-1996 Id Software, Inc.
-// Copyright(C) 2005-2014 Simon Howard
+// Copyright(C) 2019 James Canete
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -12,17 +11,21 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// DESCRIPTION:
-//       Generate a checksum of the WAD directory.
-//
-
-#ifndef W_CHECKSUM_H
-#define W_CHECKSUM_H
 
 #include "doomtype.h"
 
-extern void W_Checksum(sha1_digest_t digest);
-void W_ChecksumLump(sha1_digest_t digest, int lumpnum);
+#include "tables.h"
 
-#endif /* #ifndef W_CHECKSUM_H */
+extern int coarseangles;
+extern int coarsemask;
+extern int angletocoarseshift;
 
+extern const fixed_t *coarsecosine;
+extern const fixed_t *coarsesine;
+
+extern fixed_t turbo_scale;
+extern fixed_t cmd_move_scale;
+
+extern int compat_sfx_getpow;
+
+void D_SetConstantsForGameversion(void);

@@ -176,6 +176,8 @@ boolean P_CheckMeleeRange (mobj_t*	actor)
     pl = actor->target;
     dist = P_AproxDistance (pl->x-actor->x, pl->y-actor->y);
 
+    // Doom versions prior to v1.5 don't factor in target radius
+    // https://doomwiki.org/wiki/Versions_of_Doom_and_Doom_II#v1.5
     if (gameversion <= exe_doom_1_2)
         range = MELEERANGE;
     else
@@ -504,6 +506,14 @@ P_LookForPlayers
     c = 0;
     stop = (actor->lastlook-1)&3;
 	
+    // Doom v1.0 picked a random player to look for first every time,
+    // instead of on spawn in P_SpawnMobj()
+    if (gameversion < exe_doom_1_1)
+    {
+        actor->lastlook = P_Random() & 3;
+        stop = 4;
+    }
+
     for ( ; ; actor->lastlook = (actor->lastlook+1)&3 )
     {
 	if (!playeringame[actor->lastlook])
@@ -933,6 +943,10 @@ void A_SargAttack (mobj_t* actor)
 		
     A_FaceTarget (actor);
 
+    // Doom versions prior to v1.5 did a P_LineAttack() for melee range
+    // instead of P_CheckMeleeRange() followed by direct P_DamageMobj().
+    // https://doomwiki.org/wiki/Versions_of_Doom_and_Doom_II#v1.5
+    // FIXME: checks should be for > exe_doom_1_4 and <= exe_doom_1_4
     if (gameversion > exe_doom_1_2)
     {
         if (!P_CheckMeleeRange (actor))

@@ -61,7 +61,7 @@ int SlopeDiv(unsigned int num, unsigned int den)
     }
 }
 
-const fixed_t finetangent[4096] =
+fixed_t finetangent1_2[4096] =
 {
     -170910304,-56965752,-34178904,-24413316,-18988036,-15535599,-13145455,-11392683,
     -10052327,-8994149,-8137527,-7429880,-6835455,-6329090,-5892567,-5512368,
@@ -577,8 +577,10 @@ const fixed_t finetangent[4096] =
     11392683,13145455,15535599,18988036,24413316,34178904,56965752,170910304
 };
 
+const fixed_t *finetangent = &finetangent1_2[0];
 
-const fixed_t finesine[10240] =
+
+fixed_t finesine1_2[10240] =
 {
     25,75,125,175,226,276,326,376,
     427,477,527,578,628,678,728,779,
@@ -1862,9 +1864,11 @@ const fixed_t finesine[10240] =
     65534,65535,65535,65535,65535,65535,65535,65535
 };
 
-const fixed_t *finecosine = &finesine[FINEANGLES/4];
+const fixed_t *finesine = &finesine1_2[0];
+const fixed_t *finecosine = &finesine1_2[FINEANGLES/4];
 
-const angle_t tantoangle[2049] =
+
+angle_t tantoangle1_2[2049] =
 {
     0,333772,667544,1001315,1335086,1668857,2002626,2336395,
     2670163,3003929,3337694,3671457,4005219,4338979,4672736,5006492,
@@ -2124,6 +2128,10 @@ const angle_t tantoangle[2049] =
     535533216,535700704,535868128,536035456,536202720,536369888,536536992,536704000,
     536870912
 };
+
+
+const angle_t *tantoangle = &tantoangle1_2[0];
+
 
 // Now where did these came from?
 const byte gammatable[5][256] =

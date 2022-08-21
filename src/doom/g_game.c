@@ -153,7 +153,7 @@ byte		consistancy[MAXPLAYERS][BACKUPTICS];
  
 #define MAXPLMOVE		(forwardmove[1]) 
  
-#define TURBOTHRESHOLD	0x32
+#define TURBOTHRESHOLD	MAXPLMOVE
 
 fixed_t         forwardmove[2] = {0x19, 0x32}; 
 fixed_t         sidemove[2] = {0x18, 0x28}; 

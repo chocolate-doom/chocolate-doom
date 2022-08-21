@@ -54,10 +54,13 @@ typedef enum
 } GameMode_t;
 
 // What version are we emulating?
+// NOTE: if you change this, alter game_to_net_version_table[] in d_mode.c
 
 typedef enum
 {
-    exe_doom_1_2,    // Doom 1.2: shareware and registered
+    exe_doom_1_0,    // Doom 1.0: shareware
+    exe_doom_1_1,    // Doom 1.1: shareware and registered
+    exe_doom_1_2,    // Doom 1.2: "
     exe_doom_1_666,  // Doom 1.666: for shareware, registered and commercial
     exe_doom_1_7,    // Doom 1.7/1.7a: "
     exe_doom_1_8,    // Doom 1.8: "
@@ -74,6 +77,33 @@ typedef enum
     exe_strife_1_2,  // Strife v1.2
     exe_strife_1_31  // Strife v1.31
 } GameVersion_t;
+
+// What version are we reporting across the network?
+// This is the old GameVersion_t with the new compatibility options appended
+// NEVER change this order, only add to the end
+
+typedef enum
+{
+    net_doom_1_2,    // Doom 1.2: shareware and registered
+    net_doom_1_666,  // Doom 1.666: for shareware, registered and commercial
+    net_doom_1_7,    // Doom 1.7/1.7a: "
+    net_doom_1_8,    // Doom 1.8: "
+    net_doom_1_9,    // Doom 1.9: "
+    net_hacx,        // Hacx
+    net_ultimate,    // Ultimate Doom (retail)
+    net_final,       // Final Doom
+    net_final2,      // Final Doom (alternate exe)
+    net_chex,        // Chex Quest executable (based on Final Doom)
+
+    net_heretic_1_3, // Heretic 1.3
+
+    net_hexen_1_1,   // Hexen 1.1
+    net_strife_1_2,  // Strife v1.2
+    net_strife_1_31,  // Strife v1.31
+
+    net_doom_1_0,    // Doom 1.0: shareware
+    net_doom_1_1,    // Doom 1.1: shareware and registered
+} NetGameVersion_t;
 
 // What IWAD variant are we using?
 
@@ -98,7 +128,8 @@ typedef enum
 } skill_t;
 
 boolean D_ValidGameMode(GameMission_t mission, GameMode_t mode);
-boolean D_ValidGameVersion(GameMission_t mission, GameVersion_t version);
+boolean D_ValidNetGameVersion(GameMission_t mission, NetGameVersion_t version);
+NetGameVersion_t D_NetGameVersion(int gameversion);
 boolean D_ValidEpisodeMap(GameMission_t mission, GameMode_t mode,
                           int episode, int map);
 int D_GetNumEpisodes(GameMission_t mission, GameMode_t mode);

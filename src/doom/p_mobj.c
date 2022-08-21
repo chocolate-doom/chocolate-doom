@@ -155,7 +155,8 @@ void P_XYMovement (mobj_t* mo)
 	
     do
     {
-	if (xmove > MAXMOVE/2 || ymove > MAXMOVE/2)
+	// Doom v1.0/v1.1 don't do half moves
+	if (gameversion >= exe_doom_1_2 && (xmove > MAXMOVE/2 || ymove > MAXMOVE/2))
 	{
 	    ptryx = mo->x + xmove/2;
 	    ptryy = mo->y + ymove/2;
@@ -541,7 +542,10 @@ P_SpawnMobj
     if (gameskill != sk_nightmare)
 	mobj->reactiontime = info->reactiontime;
     
-    mobj->lastlook = P_Random () % MAXPLAYERS;
+    // Doom v1.0 picked a random player to look for first every time in 
+    // P_LookForPlayers(), instead of here
+    if (gameversion >= exe_doom_1_1)
+        mobj->lastlook = P_Random () % MAXPLAYERS;
     // do not set the state with P_SetMobjState,
     // because action routines can not be called yet
     st = &states[info->spawnstate];

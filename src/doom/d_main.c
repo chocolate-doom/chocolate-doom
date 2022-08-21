@@ -33,6 +33,7 @@
 #include "dstrings.h"
 #include "sounds.h"
 
+#include "d_compat.h"
 #include "d_iwad.h"
 
 #include "z_zone.h"
@@ -73,6 +74,7 @@
 #include "r_local.h"
 #include "statdump.h"
 
+#include "w_checksum.h"
 
 #include "d_main.h"
 
@@ -986,6 +988,8 @@ static struct
     const char *cmdline;
     GameVersion_t version;
 } gameversions[] = {
+    {"Doom 1.0",             "1.0",        exe_doom_1_0},
+    {"Doom 1.1",             "1.1",        exe_doom_1_1},
     {"Doom 1.2",             "1.2",        exe_doom_1_2},
     {"Doom 1.666",           "1.666",      exe_doom_1_666},
     {"Doom 1.7/1.7a",        "1.7",        exe_doom_1_7},
@@ -997,6 +1001,12 @@ static struct
     {"Final Doom (alt)",     "final2",     exe_final2},
     {"Chex Quest",           "chex",       exe_chex},
     { NULL,                  NULL,         0},
+};
+
+sha1_digest_t demo1_doom_1_0_sha1sum =
+{
+    0x2a, 0xa9, 0xf7, 0xfa, 0xe9, 0xf2, 0xa4, 0x4a, 0xf3, 0x43, 0xd3, 0x3b,
+    0xc9, 0x97, 0xab, 0x7e, 0x63, 0xcc, 0xf8, 0x96
 };
 
 // Initialize the game version
@@ -1014,9 +1024,9 @@ static void InitGameVersion(void)
     // @arg <version>
     // @category compat
     //
-    // Emulate a specific version of Doom.  Valid values are "1.2", 
-    // "1.666", "1.7", "1.8", "1.9", "ultimate", "final", "final2",
-    // "hacx" and "chex".
+    // Emulate a specific version of Doom.  Valid values are "1.0", 
+    // "1.1", "1.2", "1.666", "1.7", "1.8", "1.9", "ultimate", "final",
+    // "final2", "hacx" and "chex".
     //
 
     p = M_CheckParmWithArgs("-gameversion", 1);
@@ -1108,6 +1118,28 @@ static void InitGameVersion(void)
                     }
                 }
             }
+
+            // detect v1.0/v1.1 from missing D_INTROA
+            if (gameversion == exe_doom_1_2 && W_CheckNumForName("D_INTROA") < 0)
+            {
+                lumpindex_t demo1 = W_CheckNumForName("demo1");
+
+                gameversion = exe_doom_1_1;
+
+                // detect v1.0 from DEMO1 SHA1
+                if (demo1 > -1)
+                {
+                    sha1_digest_t digest;
+
+                    W_ChecksumLump(digest, demo1);
+
+                    if (memcmp(digest, demo1_doom_1_0_sha1sum, 
+                               sizeof(sha1_digest_t)) == 0)
+                    {
+                        gameversion = exe_doom_1_0;
+                    }
+                }
+            }
         }
         else if (gamemode == retail)
         {
@@ -1125,26 +1157,7 @@ static void InitGameVersion(void)
         }
     }
 
-    // Deathmatch 2.0 did not exist until Doom v1.4
-    if (gameversion <= exe_doom_1_2 && deathmatch == 2)
-    {
-        deathmatch = 1;
-    }
-    
-    // The original exe does not support retail - 4th episode not supported
-
-    if (gameversion < exe_ultimate && gamemode == retail)
-    {
-        gamemode = registered;
-    }
-
-    // EXEs prior to the Final Doom exes do not support Final Doom.
-
-    if (gameversion < exe_final && gamemode == commercial
-     && (gamemission == pack_tnt || gamemission == pack_plut))
-    {
-        gamemission = doom2;
-    }
+    D_SetConstantsForGameversion();
 }
 
 void PrintGameVersion(void)
@@ -1477,6 +1490,10 @@ void D_DoomMain (void)
 	if (scale > 400)
 	    scale = 400;
         DEH_printf("turbo scale: %i%%\n", scale);
+
+        // Need to store turbo scale in case forward/side move change later
+        turbo_scale = scale;
+
 	forwardmove[0] = forwardmove[0]*scale/100;
 	forwardmove[1] = forwardmove[1]*scale/100;
 	sidemove[0] = sidemove[0]*scale/100;
