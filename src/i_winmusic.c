@@ -411,6 +411,26 @@ void I_WIN_StopSong(void)
         midiOutShortMsg((HMIDIOUT)hMidiStream, msg);
         msg = MIDI_EVENT_CONTROLLER | i | 0x65 << 8 | 0x7F << 16;
         midiOutShortMsg((HMIDIOUT)hMidiStream, msg);
+
+        // reset all controllers
+        msg = MIDI_EVENT_CONTROLLER | i | 0x79 << 8 | 0x00 << 16;
+        midiOutShortMsg((HMIDIOUT)hMidiStream, msg);
+
+        // reset pan to 64 (center)
+        msg = MIDI_EVENT_CONTROLLER | i | 0x0A << 8 | 0x40 << 16;
+        midiOutShortMsg((HMIDIOUT)hMidiStream, msg);
+
+        // reset reverb to 40 and other effect controllers to 0
+        msg = MIDI_EVENT_CONTROLLER | i | 0x5B << 8 | 0x28 << 16; // reverb
+        midiOutShortMsg((HMIDIOUT)hMidiStream, msg);
+        msg = MIDI_EVENT_CONTROLLER | i | 0x5C << 8 | 0x00 << 16; // tremolo
+        midiOutShortMsg((HMIDIOUT)hMidiStream, msg);
+        msg = MIDI_EVENT_CONTROLLER | i | 0x5D << 8 | 0x00 << 16; // chorus
+        midiOutShortMsg((HMIDIOUT)hMidiStream, msg);
+        msg = MIDI_EVENT_CONTROLLER | i | 0x5E << 8 | 0x00 << 16; // detune
+        midiOutShortMsg((HMIDIOUT)hMidiStream, msg);
+        msg = MIDI_EVENT_CONTROLLER | i | 0x5F << 8 | 0x00 << 16; // phaser
+        midiOutShortMsg((HMIDIOUT)hMidiStream, msg);
     }
 
     mmr = midiStreamStop(hMidiStream);
