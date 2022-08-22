@@ -216,7 +216,6 @@ endif
 
 EXTRA_DIST =                        \
         CMakeLists.txt              \
-        icon.c                      \
         Doom_Screensaver.desktop.in \
         manifest.xml
 
@@ -270,13 +269,6 @@ CLEANFILES = $(execgames_SCRIPTS) $(app_DATA) $(screensaver_DATA)
 	$(WINDRES) $< -o $@
 %.o : %.rc
 	$(WINDRES) $< -o $@
-
-if HAVE_ICONS
-
-icon.c : $(top_builddir)/data/doom.png
-	$(top_builddir)/data/convert-icon $(top_builddir)/data/doom.png $@
-
-endif
 
 midiread : midifile.c
 	$(CC) -DTEST $(CFLAGS) @LDFLAGS@ midifile.c -o $@
