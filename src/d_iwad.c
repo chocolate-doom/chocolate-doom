@@ -262,6 +262,7 @@ static registry_value_t steam_install_location =
 static char *steam_install_subdirs[] =
 {
     "steamapps\\common\\doom 2\\base",
+    "steamapps\\common\\doom 2\\finaldoombase",
     "steamapps\\common\\final doom\\base",
     "steamapps\\common\\ultimate doom\\base",
     "steamapps\\common\\heretic shadow of the serpent riders\\base",
@@ -710,6 +711,7 @@ static void AddSteamDirs(void)
     steampath = M_StringJoin(homedir, "/.steam/root/steamapps/common", NULL);
 
     AddIWADPath(steampath, "/Doom 2/base");
+    AddIWADPath(steampath, "/Doom 2/finaldoombase");
     AddIWADPath(steampath, "/Master Levels of Doom/doom2");
     AddIWADPath(steampath, "/Ultimate Doom/base");
     AddIWADPath(steampath, "/Final Doom/base");
