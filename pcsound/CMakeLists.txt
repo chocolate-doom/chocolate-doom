@@ -9,6 +9,6 @@ target_include_directories(pcsound
                            INTERFACE "."
                            PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/../")
 target_link_libraries(pcsound SDL2::SDL2)
-if(ENABLE_SDL2_mixer)
+if(ENABLE_SDL2_MIXER)
     target_link_libraries(pcsound SDL2::mixer)
 endif()
