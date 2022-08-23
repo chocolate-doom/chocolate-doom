@@ -538,7 +538,6 @@ void AM_changeWindowLoc(void)
 //
 void AM_initVariables(void)
 {
-    int pnum;
     static event_t st_notify = { ev_keyup, AM_MSGENTERED, 0, 0 };
 
     automapactive = true;
@@ -555,24 +554,8 @@ void AM_initVariables(void)
     m_w = FTOM(f_w);
     m_h = FTOM(f_h);
 
-    // find player to center on initially
-    if (playeringame[consoleplayer])
-    {
-        plr = &players[consoleplayer];
-    }
-    else
-    {
-        plr = &players[0];
-
-	for (pnum=0;pnum<MAXPLAYERS;pnum++)
-        {
-	    if (playeringame[pnum])
-            {
-                plr = &players[pnum];
-		break;
-            }
-        }
-    }
+    // [crispy] find player to center
+    plr = &players[displayplayer];
 
     next_m_x = (plr->mo->x >> FRACTOMAPBITS) - m_w/2;
     next_m_y = (plr->mo->y >> FRACTOMAPBITS) - m_h/2;
@@ -1848,11 +1831,12 @@ void AM_drawPlayers(void)
     int		their_color = -1;
     int		color;
     mpoint_t	pt;
-    // [crispy] smooth player arrow rotation
-    const angle_t smoothangle = crispy->automaprotate ? plr->mo->angle : viewangle;
 
     if (!netgame)
     {
+	// [crispy] smooth player arrow rotation
+	const angle_t smoothangle = crispy->automaprotate ? plr->mo->angle : viewangle;
+
 	// [crispy] interpolate player arrow
 	if (crispy->uncapped && leveltime > oldleveltime)
 	{
@@ -1882,6 +1866,9 @@ void AM_drawPlayers(void)
 
     for (i=0;i<MAXPLAYERS;i++)
     {
+	// [crispy] interpolate other player arrows angle
+	angle_t theirangle;
+
 	their_color++;
 	p = &players[i];
 
@@ -1896,15 +1883,30 @@ void AM_drawPlayers(void)
 	else
 	    color = their_colors[their_color];
 	
-	pt.x = p->mo->x >> FRACTOMAPBITS;
-	pt.y = p->mo->y >> FRACTOMAPBITS;
+	// [crispy] interpolate other player arrows
+	if (crispy->uncapped && leveltime > oldleveltime)
+	{
+	    pt.x = (p->mo->oldx + FixedMul(p->mo->x - p->mo->oldx, fractionaltic)) >> FRACTOMAPBITS;
+	    pt.y = (p->mo->oldy + FixedMul(p->mo->y - p->mo->oldy, fractionaltic)) >> FRACTOMAPBITS;
+	}
+	else
+	{
+	    pt.x = p->mo->x >> FRACTOMAPBITS;
+	    pt.y = p->mo->y >> FRACTOMAPBITS;
+	}
+
 	if (crispy->automaprotate)
 	{
 	    AM_rotatePoint(&pt);
+	    theirangle = p->mo->angle;
+	}
+	else
+	{
+        theirangle = R_InterpolateAngle(p->mo->oldangle, p->mo->angle, fractionaltic);
 	}
 
 	AM_drawLineCharacter
-	    (player_arrow, arrlen(player_arrow), 0, p->mo->angle,
+	    (player_arrow, arrlen(player_arrow), 0, theirangle,
 	     color, pt.x, pt.y);
     }
 

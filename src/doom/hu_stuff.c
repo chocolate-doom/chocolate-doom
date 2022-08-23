@@ -594,7 +594,7 @@ void HU_Start(void)
     if (headsupactive)
 	HU_Stop();
 
-    plr = &players[consoleplayer];
+    plr = &players[displayplayer];
     message_on = false;
     message_dontfuckwithme = false;
     message_nottobefuckedwith = false;

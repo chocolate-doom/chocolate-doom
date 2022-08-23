@@ -208,7 +208,7 @@ P_GiveWeapon
 	// [crispy] show weapon pickup messages in multiplayer games
 	player->message = DEH_String(WeaponPickupMessages[weapon]);
 
-	if (player == &players[consoleplayer])
+	if (player == &players[displayplayer])
 	    S_StartSound (NULL, sfx_wpnup);
 	return false;
     }
@@ -716,7 +716,7 @@ P_TouchSpecialThing
 	player->itemcount++;
     P_RemoveMobj (special);
     player->bonuscount += BONUSADD;
-    if (player == &players[consoleplayer])
+    if (player == &players[displayplayer])
 	S_StartSoundOptional (NULL, sound, sfx_itemup); // [NS] Fallback to itemup.
 }
 
@@ -773,7 +773,8 @@ P_KillMobj
 	target->player->fixedcolormap = target->player->powers[pw_infrared] ? 1 : 0;
 
 	if (target->player == &players[consoleplayer]
-	    && automapactive)
+	    && automapactive
+	    && !demoplayback) // [crispy] killough 11/98: don't switch out in demos, though
 	{
 	    // don't die in auto map,
 	    // switch view prior to dying

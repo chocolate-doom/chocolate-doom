@@ -919,6 +919,11 @@ void G_DoLoadLevel (void)
     memset(joyarray, 0, sizeof(joyarray));
     R_SetGoobers(false);
 
+    // [crispy] jff 4/26/98 wake up the status bar in case were coming out of a DM demo
+    // [crispy] killough 5/13/98: in case netdemo has consoleplayer other than green
+    ST_Start();
+    HU_Start();
+
     if (testcontrols)
     {
         players[consoleplayer].message = "Press escape to quit.";
@@ -1018,6 +1023,13 @@ boolean G_Responder (event_t* ev)
 	    if (displayplayer == MAXPLAYERS) 
 		displayplayer = 0; 
 	} while (!playeringame[displayplayer] && displayplayer != consoleplayer); 
+	// [crispy] killough 3/7/98: switch status bar views too
+	ST_Start();
+	HU_Start();
+	S_UpdateSounds(players[displayplayer].mo);
+	// [crispy] re-init automap variables for correct player arrow angle
+	if (automapactive)
+	AM_initVariables();
 	return true; 
     }
     
@@ -1285,6 +1297,12 @@ void G_Ticker (void)
 	}
     }
     
+    // [crispy] increase demo tics counter
+    if (demoplayback || demorecording)
+    {
+	    defdemotics++;
+    }
+
     // check for special buttons
     for (i=0 ; i<MAXPLAYERS ; i++)
     {
@@ -2684,11 +2702,6 @@ void G_ReadDemoTiccmd (ticcmd_t* cmd)
     }
 
     cmd->buttons = (unsigned char)*demo_p++; 
-
-    // [crispy] increase demo tics counter
-    // applies to both recording and playback,
-    // because G_WriteDemoTiccmd() calls G_ReadDemoTiccmd() once
-    defdemotics++;
 } 
 
 // Increase the size of the demo buffer to allow unlimited demos

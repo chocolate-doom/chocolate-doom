@@ -343,7 +343,7 @@ static patch_t*		keys[NUMCARDS+3]; // [crispy] support combined card and skull k
 static patch_t*		faces[ST_NUMFACES];
 
 // face background
-static patch_t*		faceback;
+static patch_t*		faceback[MAXPLAYERS]; // [crispy] killough 3/7/98: make array
 
  // main bar right
 static patch_t*		armsbg;
@@ -538,8 +538,9 @@ void ST_refreshBackground(boolean force)
 	if (!deathmatch)
 	    V_DrawPatch(ST_ARMSBGX, 0, armsbg);
 
+	// [crispy] killough 3/7/98: make face background change with displayplayer
 	if (netgame)
-	    V_DrawPatch(ST_FX, 0, faceback);
+	    V_DrawPatch(ST_FX, 0, faceback[displayplayer]);
 
         V_RestoreBuffer();
 
@@ -1660,7 +1661,7 @@ void ST_updateWidgets(void)
 
     for (i=0 ; i<MAXPLAYERS ; i++)
     {
-	if (i != consoleplayer)
+	if (i != displayplayer)
 	    st_fragscount += plyr->frags[i];
 	else
 	    st_fragscount -= plyr->frags[i];
@@ -1986,7 +1987,7 @@ void ST_drawWidgets(boolean refresh)
     // [crispy] draw the actual face widget background
     if (st_crispyhud && (screenblocks % 3 == 0))
     {
-	V_CopyRect(ST_FX + WIDESCREENDELTA, 1, st_backing_screen, SHORT(faceback->width), ST_HEIGHT - 1, ST_FX + WIDESCREENDELTA, ST_Y + 1);
+	V_CopyRect(ST_FX + WIDESCREENDELTA, 1, st_backing_screen, SHORT(faceback[0]->width), ST_HEIGHT - 1, ST_FX + WIDESCREENDELTA, ST_Y + 1);
     }
 
     STlib_updateMultIcon(&w_faces, refresh);
@@ -2108,8 +2109,13 @@ static void ST_loadUnloadGraphics(load_callback_t callback)
     }
 
     // face backgrounds for different color players
-    DEH_snprintf(namebuf, 9, "STFB%d", consoleplayer);
-    callback(namebuf, &faceback);
+    // [crispy] killough 3/7/98: add better support for spy mode by loading
+    // all player face backgrounds and using displayplayer to choose them:
+    for (i=0; i<MAXPLAYERS; i++)
+    {
+    DEH_snprintf(namebuf, 9, "STFB%d", i);
+    callback(namebuf, &faceback[i]);
+    }
 
     // status bar background bits
     if (W_CheckNumForName("STBAR") >= 0)
@@ -2209,7 +2215,7 @@ void ST_initData(void)
     int		i;
 
     st_firsttime = true;
-    plyr = &players[consoleplayer];
+    plyr = &players[displayplayer];
 
     st_clock = 0;
     st_chatstate = StartChatState;
@@ -2416,15 +2422,6 @@ void ST_Start (void)
     ST_createWidgets();
     st_stopped = false;
 
-    // [crispy] correctly color the status bar face background in multiplayer
-    // demos recorded by another player than player 1
-    if (netgame && consoleplayer)
-    {
-	char namebuf[8];
-
-	DEH_snprintf(namebuf, 7, "STFB%d", consoleplayer);
-	faceback = W_CacheLumpName(namebuf, PU_STATIC);
-    }
 }
 
 void ST_Stop (void)
