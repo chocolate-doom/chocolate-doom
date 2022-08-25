@@ -1988,7 +1988,8 @@ void D_DoomMain (void)
     {
 	if (gamemode == retail &&
 	    gameversion == exe_ultimate &&
-	    gamevariant != freedoom)
+	    gamevariant != freedoom &&
+	    strncasecmp(M_BaseName(iwadfile), "rekkr", 5))
 	{
 		D_LoadSigilWad();
 	}
