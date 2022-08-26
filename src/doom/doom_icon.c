@@ -1,7 +1,7 @@
-static int icon_w = 128;
-static int icon_h = 128;
+static int doom_icon_w = 128;
+static int doom_icon_h = 128;
 
-static const unsigned int icon_data[] = {
+static const unsigned int doom_icon_data[] = {
     0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 
     0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 
     0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 

@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=@PACKAGE_SHORTNAME@ Heretic
 Exec=@PROGRAM_PREFIX@heretic
-Icon=@PROGRAM_PREFIX@doom
+Icon=@PROGRAM_PREFIX@heretic
 Type=Application
 Comment=@PACKAGE_SHORTDESC@
 Categories=Game;ActionGame;
