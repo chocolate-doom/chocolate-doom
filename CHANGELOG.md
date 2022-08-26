@@ -22,6 +22,9 @@
 * Support up to 8 pages of savegames.
 * Brightmap now applied to SW2HOT texture (by @JNechaevsky).
 * Improved brightmaps for SILVER3, COMPUTE2 and COMPUTE3 textures (by @JNechaevsky).
+* Player arrows in multiplayer games now also interpolated and rotating with correct angles (by @JNechaevsky).
+* Fix incorrect demo timer value and demo bar lenght in multiplayer demos (by @fabiangreffrath, @JNechaevsky and @rfomin).
+* Status bar showing values and face of choosen player in multiplayer spy mode (by @JNechaevsky).
 
 **Crispy Heretic**
 * Remove ambient sound limit.
