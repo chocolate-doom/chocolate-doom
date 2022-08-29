@@ -80,6 +80,8 @@
 
 #include "d_main.h"
 
+#include "strife_icon.c"
+
 //
 // D-DoomLoop()
 // Not a globally visible function,
@@ -528,6 +530,7 @@ void D_DoomLoop (void)
 
     if (!showintro)
     {
+        I_RegisterWindowIcon(strife_icon_data, strife_icon_w, strife_icon_h);
         I_InitGraphics();
     }
 
@@ -1299,6 +1302,7 @@ static void D_InitIntroSequence(void)
         // In vanilla Strife, Mode 13h was initialized directly in D_DoomMain.
         // We have to be a little more courteous of the low-level code here.
         I_SetGrabMouseCallback(D_StartupGrabCallback);
+        I_RegisterWindowIcon(strife_icon_data, strife_icon_h, strife_icon_w);
         I_InitGraphics();
         V_RestoreBuffer(); // make the V_ routines work
 

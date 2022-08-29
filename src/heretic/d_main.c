@@ -47,6 +47,8 @@
 #include "v_video.h"
 #include "v_trans.h" // [crispy] dp_translation
 
+#include "heretic_icon.c"
+
 #define CT_KEY_GREEN    'g'
 #define CT_KEY_YELLOW   'y'
 #define CT_KEY_RED      'r'
@@ -392,6 +394,7 @@ void D_DoomLoop(void)
     }
     I_GraphicsCheckCommandLine();
     I_SetGrabMouseCallback(D_GrabMouseCallback);
+    I_RegisterWindowIcon(heretic_icon_data, heretic_icon_w, heretic_icon_h);
     I_InitGraphics();
 
     main_loop_started = true;

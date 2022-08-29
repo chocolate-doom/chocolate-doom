@@ -56,7 +56,7 @@ z_native.c           z_zone.h
 
 # Source files used by the game binaries (chocolate-doom, etc.)
 
-GAME_SOURCE_FILES=\
+GAME_BASE_FILES=\
 a11y.c               a11y.h                \
 aes_prng.c           aes_prng.h            \
 d_event.c            d_event.h             \
@@ -118,8 +118,20 @@ w_file.c             w_file.h              \
 w_file_stdc.c                              \
 w_file_posix.c                             \
 w_file_win32.c                             \
-w_merge.c            w_merge.h             \
+w_merge.c            w_merge.h
+
+
+MEMORY_NATIVE_SOURCE_FILES=\
+z_native.c           z_zone.h
+
+MEMORY_ZONE_SOURCE_FILES=\
 z_zone.c             z_zone.h
+
+if HAVE_ZPOOL
+GAME_SOURCE_FILES=$(GAME_BASE_FILES) $(MEMORY_ZONE_SOURCE_FILES)
+else
+GAME_SOURCE_FILES=$(GAME_BASE_FILES) $(MEMORY_NATIVE_SOURCE_FILES)
+endif
 
 DEHACKED_SOURCE_FILES =                    \
 deh_defs.h                                 \
@@ -143,7 +155,7 @@ EXTRA_LIBS =                                               \
                @SDLNET_LIBS@
 
 if HAVE_WINDRES
-@PROGRAM_PREFIX@doom_SOURCES=$(SOURCE_FILES_WITH_DEH) resource.rc
+@PROGRAM_PREFIX@doom_SOURCES=$(SOURCE_FILES_WITH_DEH) doom-res.rc
 else
 @PROGRAM_PREFIX@doom_SOURCES=$(SOURCE_FILES_WITH_DEH)
 endif
@@ -151,7 +163,7 @@ endif
 @PROGRAM_PREFIX@doom_LDADD = doom/libdoom.a $(EXTRA_LIBS)
 
 if HAVE_WINDRES
-@PROGRAM_PREFIX@heretic_SOURCES=$(SOURCE_FILES_WITH_DEH) resource.rc
+@PROGRAM_PREFIX@heretic_SOURCES=$(SOURCE_FILES_WITH_DEH) heretic-res.rc
 else
 @PROGRAM_PREFIX@heretic_SOURCES=$(SOURCE_FILES_WITH_DEH)
 endif
@@ -159,7 +171,7 @@ endif
 @PROGRAM_PREFIX@heretic_LDADD = heretic/libheretic.a $(EXTRA_LIBS)
 
 if HAVE_WINDRES
-@PROGRAM_PREFIX@hexen_SOURCES=$(SOURCE_FILES) resource.rc
+@PROGRAM_PREFIX@hexen_SOURCES=$(SOURCE_FILES) hexen-res.rc
 else
 @PROGRAM_PREFIX@hexen_SOURCES=$(SOURCE_FILES)
 endif
@@ -167,7 +179,7 @@ endif
 @PROGRAM_PREFIX@hexen_LDADD = hexen/libhexen.a $(EXTRA_LIBS)
 
 if HAVE_WINDRES
-@PROGRAM_PREFIX@strife_SOURCES=$(SOURCE_FILES_WITH_DEH) resource.rc
+@PROGRAM_PREFIX@strife_SOURCES=$(SOURCE_FILES_WITH_DEH) strife-res.rc
 else
 @PROGRAM_PREFIX@strife_SOURCES=$(SOURCE_FILES_WITH_DEH)
 endif
@@ -219,7 +231,6 @@ endif
 
 EXTRA_DIST =                        \
         CMakeLists.txt              \
-        icon.c                      \
         Doom_Screensaver.desktop.in \
         manifest.xml
 
@@ -273,13 +284,6 @@ CLEANFILES = $(execgames_SCRIPTS) $(app_DATA) $(screensaver_DATA)
 	$(WINDRES) $< -o $@
 %.o : %.rc
 	$(WINDRES) $< -o $@
-
-if HAVE_ICONS
-
-icon.c : $(top_builddir)/data/doom.png
-	$(top_builddir)/data/convert-icon $(top_builddir)/data/doom.png $@
-
-endif
 
 midiread : midifile.c
 	$(CC) -DTEST $(CFLAGS) @LDFLAGS@ midifile.c -o $@

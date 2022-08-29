@@ -30,8 +30,6 @@
 #include <windows.h>
 #endif
 
-#include "icon.c"
-
 #include "crispy.h"
 
 #include "config.h"
@@ -222,6 +220,11 @@ int usegamma = 0;
 
 // Joystick/gamepad hysteresis
 unsigned int joywait = 0;
+
+// Icon RGB data and dimensions
+static const unsigned int *icon_data;
+static int icon_w;
+static int icon_h;
 
 static boolean MouseShouldBeGrabbed()
 {
@@ -1056,6 +1059,13 @@ void I_InitWindowTitle(void)
     buf = M_StringJoin(window_title, " - ", PACKAGE_STRING, NULL);
     SDL_SetWindowTitle(screen, buf);
     free(buf);
+}
+
+void I_RegisterWindowIcon(const unsigned int *icon, int width, int height)
+{
+    icon_data = icon;
+    icon_w = width;
+    icon_h = height;
 }
 
 // Set the application icon
