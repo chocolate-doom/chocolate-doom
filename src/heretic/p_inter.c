@@ -489,7 +489,7 @@ void P_SetDormantArtifact(mobj_t * arti)
 //
 //---------------------------------------------------------------------------
 
-void A_RestoreArtifact(mobj_t * arti)
+void A_RestoreArtifact(mobj_t * arti, player_t *player, pspdef_t *psp)
 {
     arti->flags |= MF_SPECIAL;
     P_SetMobjState(arti, arti->info->spawnstate);
@@ -517,7 +517,7 @@ void P_HideSpecialThing(mobj_t * thing)
 //
 //---------------------------------------------------------------------------
 
-void A_RestoreSpecialThing1(mobj_t * thing)
+void A_RestoreSpecialThing1(mobj_t * thing, player_t *player, pspdef_t *psp)
 {
     if (thing->type == MT_WMACE)
     {                           // Do random mace placement
@@ -533,7 +533,7 @@ void A_RestoreSpecialThing1(mobj_t * thing)
 //
 //---------------------------------------------------------------------------
 
-void A_RestoreSpecialThing2(mobj_t * thing)
+void A_RestoreSpecialThing2(mobj_t * thing, player_t *player, pspdef_t *psp)
 {
     thing->flags |= MF_SPECIAL;
     P_SetMobjState(thing, thing->info->spawnstate);

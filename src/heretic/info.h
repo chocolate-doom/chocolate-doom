@@ -1374,7 +1374,7 @@ typedef struct
     spritenum_t sprite;
     int frame;
     int tics;
-    void (*action) ();
+    void (*action) (struct mobj_s *, struct player_s *, struct pspdef_s *);
     statenum_t nextstate;
     int misc1, misc2;
 } state_t;
