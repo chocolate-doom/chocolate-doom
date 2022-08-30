@@ -1363,6 +1363,12 @@ typedef enum
     NUMSTATES
 } statenum_t;
 
+
+struct mobj_s;
+struct player_s;
+struct pspdef_s;
+
+
 typedef struct
 {
     spritenum_t sprite;
