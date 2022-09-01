@@ -1,6 +1,6 @@
 **New Features and Improvements**
 * Add mouse smoothing when running uncapped. (by @mikeday0)
-* New icon design (thanks @kiwaph).
+* New icon designs for all games and the setup executable (by @kiwaph).
 * Brightmaps now working on mid-textures of two-sided lines (by @JNechaevsky).
 * New stats widget option: above status bar.
 * Many automap improvements: (by @JNechaevsky and @mikeday0)
