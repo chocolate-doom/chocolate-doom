@@ -234,6 +234,7 @@ extern int snd_cachesize;
 extern int snd_maxslicetime_ms;
 extern char *snd_musiccmd;
 extern int snd_pitchshift;
+extern int fluidsynth_force_off;
 
 void I_BindSoundVariables(void);
 

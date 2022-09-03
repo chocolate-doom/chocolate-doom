@@ -47,7 +47,7 @@
 
 char *fluidsynth_sf_path = "";
 char *timidity_cfg_path = "";
-int *fluidsynth_force_off = 0; // force Fluidsynth off
+int fluidsynth_force_off = 0;
 
 static char *temp_timidity_cfg = NULL;
 
@@ -265,7 +265,7 @@ static boolean I_SDL_InitMusic(void)
                 if (!fluidsynth_force_off)
                     fluidsynth_sf_is_set = true;
                 else
-                    fluidsynth_sf_is_set = false; // force Fluidsynth off
+                    fluidsynth_sf_is_set = false;
                 break;
             }
         }

@@ -941,7 +941,7 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_INT(fluidsynth_force_off),
-
+    
     //!
     // Full path to a soundfont file to use with FluidSynth MIDI playback.
     //
