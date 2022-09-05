@@ -935,7 +935,13 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_STRING(music_pack_path),
+	
+    //!
+    // Force Fluidsynth off even when SDL_SOUNDFONTS environmental variable is present.
+    //
 
+    CONFIG_VARIABLE_INT(fluidsynth_force_off),
+    
     //!
     // Full path to a soundfont file to use with FluidSynth MIDI playback.
     //

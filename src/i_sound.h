@@ -234,6 +234,10 @@ extern int snd_cachesize;
 extern int snd_maxslicetime_ms;
 extern char *snd_musiccmd;
 extern int snd_pitchshift;
+extern int fluidsynth_force_off;
+extern char *snd_dmxoption;
+extern int use_libsamplerate;
+extern float libsamplerate_scale;
 
 void I_BindSoundVariables(void);
 
