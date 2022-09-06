@@ -127,6 +127,9 @@ typedef enum
 ===============================================================================
 */
 
+
+struct thinker_s;
+
 // think_t is a function pointer to a routine to handle an actor
 typedef void (*think_t) ();
 
