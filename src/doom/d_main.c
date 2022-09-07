@@ -1470,7 +1470,7 @@ void D_DoomMain (void)
     {
 	int     scale = 200;
 	extern fixed_t forwardmove[2];
-	extern int sidemove[2];
+	extern fixed_t sidemove[2];
 	
 	if (p<myargc-1)
 	    scale = atoi (myargv[p+1]);
