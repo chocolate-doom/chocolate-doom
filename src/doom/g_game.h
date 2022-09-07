@@ -79,6 +79,7 @@ extern int vanilla_savegame_limit;
 extern int vanilla_demo_limit;
 
 extern fixed_t forwardmove[2];
+extern fixed_t sidemove[2];
 
 
 #endif
