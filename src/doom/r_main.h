@@ -49,6 +49,8 @@ extern int		validcount;
 extern int		linecount;
 extern int		loopcount;
 
+extern  boolean setsizeneeded;
+
 
 //
 // Lighting LUT.
