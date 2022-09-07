@@ -32,7 +32,6 @@
 // boolean : whether the screen is always erased
 #define noterased viewwindowx
 
-extern boolean	automapactive;	// in AM_map.c
 
 void HUlib_init(void)
 {
