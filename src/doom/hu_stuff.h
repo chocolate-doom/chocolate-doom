@@ -56,5 +56,8 @@ void HU_Erase(void);
 
 extern char *chat_macros[10];
 
+extern patch_t *hu_font[HU_FONTSIZE];
+
+
 #endif
 
