@@ -20,6 +20,7 @@
 
 #include "doomdef.h"
 #include "doomkeys.h"
+#include "doomstat.h"
 
 #include "v_video.h"
 #include "i_swap.h"
