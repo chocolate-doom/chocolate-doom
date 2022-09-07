@@ -56,6 +56,7 @@ extern int detailLevel;
 extern int screenblocks;
 
 extern boolean inhelpscreens;
+extern int showMessages;
 
 
 #endif
