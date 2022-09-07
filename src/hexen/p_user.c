@@ -1635,7 +1635,7 @@ boolean P_UseArtifact(player_t * player, artitype_t arti)
 //
 //============================================================================
 
-void A_SpeedFade(mobj_t * actor)
+void A_SpeedFade(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     actor->flags |= MF_SHADOW;
     actor->flags &= ~MF_ALTSHADOW;

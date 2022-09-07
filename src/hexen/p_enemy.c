@@ -616,7 +616,7 @@ boolean P_LookForPlayers(mobj_t * actor, boolean allaround)
 ==============
 */
 
-void A_Look(mobj_t * actor)
+void A_Look(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     mobj_t *targ;
 
@@ -668,7 +668,7 @@ void A_Look(mobj_t * actor)
 ==============
 */
 
-void A_Chase(mobj_t * actor)
+void A_Chase(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     int delta;
 
@@ -805,7 +805,7 @@ void A_Chase(mobj_t * actor)
 //
 //----------------------------------------------------------------------------
 
-void A_FaceTarget(mobj_t * actor)
+void A_FaceTarget(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     if (!actor->target)
     {
@@ -826,7 +826,7 @@ void A_FaceTarget(mobj_t * actor)
 //
 //----------------------------------------------------------------------------
 
-void A_Pain(mobj_t * actor)
+void A_Pain(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     if (actor->info->painsound)
     {
@@ -840,7 +840,7 @@ void A_Pain(mobj_t * actor)
 //
 //============================================================================
 
-void A_SetInvulnerable(mobj_t * actor)
+void A_SetInvulnerable(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     actor->flags2 |= MF2_INVULNERABLE;
 }
@@ -851,7 +851,7 @@ void A_SetInvulnerable(mobj_t * actor)
 //
 //============================================================================
 
-void A_UnSetInvulnerable(mobj_t * actor)
+void A_UnSetInvulnerable(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     actor->flags2 &= ~MF2_INVULNERABLE;
 }
@@ -862,13 +862,13 @@ void A_UnSetInvulnerable(mobj_t * actor)
 //
 //============================================================================
 
-void A_SetReflective(mobj_t * actor)
+void A_SetReflective(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     actor->flags2 |= MF2_REFLECTIVE;
 
     if ((actor->type == MT_CENTAUR) || (actor->type == MT_CENTAURLEADER))
     {
-        A_SetInvulnerable(actor);
+        A_SetInvulnerable(actor, player, psp);
     }
 }
 
@@ -878,13 +878,13 @@ void A_SetReflective(mobj_t * actor)
 //
 //============================================================================
 
-void A_UnSetReflective(mobj_t * actor)
+void A_UnSetReflective(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     actor->flags2 &= ~MF2_REFLECTIVE;
 
     if ((actor->type == MT_CENTAUR) || (actor->type == MT_CENTAURLEADER))
     {
-        A_UnSetInvulnerable(actor);
+        A_UnSetInvulnerable(actor, player, psp);
     }
 }
 
@@ -965,13 +965,13 @@ boolean P_UpdateMorphedMonster(mobj_t * actor, int tics)
 //
 //----------------------------------------------------------------------------
 
-void A_PigLook(mobj_t * actor)
+void A_PigLook(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     if (P_UpdateMorphedMonster(actor, 10))
     {
         return;
     }
-    A_Look(actor);
+    A_Look(actor, player, psp);
 }
 
 //----------------------------------------------------------------------------
@@ -980,13 +980,13 @@ void A_PigLook(mobj_t * actor)
 //
 //----------------------------------------------------------------------------
 
-void A_PigChase(mobj_t * actor)
+void A_PigChase(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     if (P_UpdateMorphedMonster(actor, 3))
     {
         return;
     }
-    A_Chase(actor);
+    A_Chase(actor, player, psp);
 }
 
 //============================================================================
@@ -995,7 +995,7 @@ void A_PigChase(mobj_t * actor)
 //
 //============================================================================
 
-void A_PigAttack(mobj_t * actor)
+void A_PigAttack(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     if (P_UpdateMorphedMonster(actor, 18))
     {
@@ -1018,9 +1018,9 @@ void A_PigAttack(mobj_t * actor)
 //
 //============================================================================
 
-void A_PigPain(mobj_t * actor)
+void A_PigPain(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
-    A_Pain(actor);
+    A_Pain(actor, player, psp);
     if (actor->z <= actor->floorz)
     {
         actor->momz = 3.5 * FRACUNIT;
@@ -1074,20 +1074,20 @@ void FaceMovementDirection(mobj_t * actor)
 //      args[4]                 charge duration countdown
 //----------------------------------------------------------------------------
 
-void A_MinotaurFade0(mobj_t * actor)
+void A_MinotaurFade0(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     actor->flags &= ~MF_ALTSHADOW;
     actor->flags |= MF_SHADOW;
 }
 
-void A_MinotaurFade1(mobj_t * actor)
+void A_MinotaurFade1(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     // Second level of transparency
     actor->flags &= ~MF_SHADOW;
     actor->flags |= MF_ALTSHADOW;
 }
 
-void A_MinotaurFade2(mobj_t * actor)
+void A_MinotaurFade2(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     // Make fully visible
     actor->flags &= ~MF_SHADOW;
@@ -1123,7 +1123,7 @@ static boolean CheckMinotaurAge(mobj_t *mo)
     return true;
 }
 
-void A_MinotaurRoam(mobj_t * actor)
+void A_MinotaurRoam(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     actor->flags &= ~MF_SHADOW; // In case pain caused him to 
     actor->flags &= ~MF_ALTSHADOW;      // skip his fade in.
@@ -1134,7 +1134,7 @@ void A_MinotaurRoam(mobj_t * actor)
     }
 
     if (P_Random() < 30)
-        A_MinotaurLook(actor);  // adjust to closest target
+        A_MinotaurLook(actor, player, psp);  // adjust to closest target
 
     if (P_Random() < 6)
     {
@@ -1162,7 +1162,7 @@ void A_MinotaurRoam(mobj_t * actor)
 //----------------------------------------------------------------------------
 #define MINOTAUR_LOOK_DIST		(16*54*FRACUNIT)
 
-void A_MinotaurLook(mobj_t * actor)
+void A_MinotaurLook(mobj_t *actor, player_t *player_, pspdef_t *psp)
 {
     mobj_t *mo = NULL;
     player_t *player;
@@ -1241,7 +1241,7 @@ void A_MinotaurLook(mobj_t * actor)
 
 
 
-void A_MinotaurChase(mobj_t * actor)
+void A_MinotaurChase(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     actor->flags &= ~MF_SHADOW; // In case pain caused him to 
     actor->flags &= ~MF_ALTSHADOW;      // skip his fade in.
@@ -1252,7 +1252,7 @@ void A_MinotaurChase(mobj_t * actor)
     }
 
     if (P_Random() < 30)
-        A_MinotaurLook(actor);  // adjust to closest target
+        A_MinotaurLook(actor, player, psp);  // adjust to closest target
 
     if (!actor->target || (actor->target->health <= 0) ||
         !(actor->target->flags & MF_SHOOTABLE))
@@ -1305,7 +1305,7 @@ void A_MinotaurChase(mobj_t * actor)
 //
 //----------------------------------------------------------------------------
 
-void A_MinotaurAtk1(mobj_t * actor)
+void A_MinotaurAtk1(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     if (!actor->target)
         return;
@@ -1327,7 +1327,7 @@ void A_MinotaurAtk1(mobj_t * actor)
 
 #define MNTR_CHARGE_SPEED (23*FRACUNIT)
 
-void A_MinotaurDecide(mobj_t * actor)
+void A_MinotaurDecide(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     angle_t angle;
     mobj_t *target = actor->target;
@@ -1345,7 +1345,7 @@ void A_MinotaurDecide(mobj_t * actor)
         // Don't call the state function right away
         P_SetMobjStateNF(actor, S_MNTR_ATK4_1);
         actor->flags |= MF_SKULLFLY;
-        A_FaceTarget(actor);
+        A_FaceTarget(actor, player, psp);
         angle = actor->angle >> ANGLETOFINESHIFT;
         actor->momx = FixedMul(MNTR_CHARGE_SPEED, finecosine[angle]);
         actor->momy = FixedMul(MNTR_CHARGE_SPEED, finesine[angle]);
@@ -1359,7 +1359,7 @@ void A_MinotaurDecide(mobj_t * actor)
     }
     else
     {                           // Swing attack
-        A_FaceTarget(actor);
+        A_FaceTarget(actor, player, psp);
         // Don't need to call P_SetMobjState because the current state
         // falls through to the swing attack
     }
@@ -1371,7 +1371,7 @@ void A_MinotaurDecide(mobj_t * actor)
 //
 //----------------------------------------------------------------------------
 
-void A_MinotaurCharge(mobj_t * actor)
+void A_MinotaurCharge(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     mobj_t *puff;
 
@@ -1399,7 +1399,7 @@ void A_MinotaurCharge(mobj_t * actor)
 //
 //----------------------------------------------------------------------------
 
-void A_MinotaurAtk2(mobj_t * actor)
+void A_MinotaurAtk2(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     mobj_t *mo;
     angle_t angle;
@@ -1435,7 +1435,7 @@ void A_MinotaurAtk2(mobj_t * actor)
 //
 //----------------------------------------------------------------------------
 
-void A_MinotaurAtk3(mobj_t * actor)
+void A_MinotaurAtk3(mobj_t *actor, player_t *player_, pspdef_t *psp)
 {
     mobj_t *mo;
     player_t *player;
@@ -1473,7 +1473,7 @@ void A_MinotaurAtk3(mobj_t * actor)
 //
 //----------------------------------------------------------------------------
 
-void A_MntrFloorFire(mobj_t * actor)
+void A_MntrFloorFire(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     mobj_t *mo;
     int r1, r2;
@@ -1497,7 +1497,7 @@ void A_MntrFloorFire(mobj_t * actor)
 //
 //----------------------------------------------------------------------------
 
-void A_Scream(mobj_t * actor)
+void A_Scream(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     int sound;
 
@@ -1610,7 +1610,7 @@ void P_DropItem(mobj_t *source, mobjtype_t type, int special, int chance)
 //
 //----------------------------------------------------------------------------
 
-void A_NoBlocking(mobj_t * actor)
+void A_NoBlocking(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     actor->flags &= ~MF_SOLID;
 
@@ -1635,7 +1635,7 @@ void A_NoBlocking(mobj_t * actor)
 //
 //----------------------------------------------------------------------------
 
-void A_Explode(mobj_t * actor)
+void A_Explode(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     int damage;
     int distance;
@@ -1759,7 +1759,7 @@ int P_Massacre(void)
 //
 //----------------------------------------------------------------------------
 
-void A_SkullPop(mobj_t * actor)
+void A_SkullPop(mobj_t *actor, player_t *player_, pspdef_t *psp)
 {
     mobj_t *mo;
     player_t *player;
@@ -1793,7 +1793,7 @@ void A_SkullPop(mobj_t * actor)
 //
 //----------------------------------------------------------------------------
 
-void A_CheckSkullFloor(mobj_t * actor)
+void A_CheckSkullFloor(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     if (actor->z <= actor->floorz)
     {
@@ -1808,7 +1808,7 @@ void A_CheckSkullFloor(mobj_t * actor)
 //
 //----------------------------------------------------------------------------
 
-void A_CheckSkullDone(mobj_t * actor)
+void A_CheckSkullDone(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     if (actor->special2.i == 666)
     {
@@ -1822,7 +1822,7 @@ void A_CheckSkullDone(mobj_t * actor)
 //
 //----------------------------------------------------------------------------
 
-void A_CheckBurnGone(mobj_t * actor)
+void A_CheckBurnGone(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     if (actor->special2.i == 666)
     {
@@ -1836,7 +1836,7 @@ void A_CheckBurnGone(mobj_t * actor)
 //
 //----------------------------------------------------------------------------
 
-void A_FreeTargMobj(mobj_t * mo)
+void A_FreeTargMobj(mobj_t *mo, player_t *player, pspdef_t *psp)
 {
     mo->momx = mo->momy = mo->momz = 0;
     mo->z = mo->ceilingz + 4 * FRACUNIT;
@@ -1862,7 +1862,7 @@ mobj_t *corpseQueue[CORPSEQUEUESIZE];
 int corpseQueueSlot;
 
 // throw another corpse on the queue
-void A_QueueCorpse(mobj_t * actor)
+void A_QueueCorpse(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     mobj_t *corpse;
 
@@ -1877,7 +1877,7 @@ void A_QueueCorpse(mobj_t * actor)
 }
 
 // Remove a mobj from the queue (for resurrection)
-void A_DeQueueCorpse(mobj_t * actor)
+void A_DeQueueCorpse(mobj_t *actor)
 {
     int slot;
 
@@ -1939,7 +1939,7 @@ void P_InitCreatureCorpseQueue(boolean corpseScan)
             case MT_DEMON2CHUNK5:
             case MT_FIREDEMON_SPLOTCH1:
             case MT_FIREDEMON_SPLOTCH2:
-                A_QueueCorpse(mo);      // Add corpse to queue
+                A_QueueCorpse(mo, NULL, NULL);      // Add corpse to queue
                 break;
             default:
                 break;
@@ -1958,7 +1958,7 @@ void P_InitCreatureCorpseQueue(boolean corpseScan)
 mobj_t *bodyque[BODYQUESIZE];
 int bodyqueslot;
 
-void A_AddPlayerCorpse(mobj_t * actor)
+void A_AddPlayerCorpse(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     if (bodyqueslot >= BODYQUESIZE)
     {                           // Too many player corpses - remove an old one
@@ -1974,7 +1974,7 @@ void A_AddPlayerCorpse(mobj_t * actor)
 //
 //============================================================================
 
-void A_SerpentUnHide(mobj_t * actor)
+void A_SerpentUnHide(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     actor->flags2 &= ~MF2_DONTDRAW;
     actor->floorclip = 24 * FRACUNIT;
@@ -1986,7 +1986,7 @@ void A_SerpentUnHide(mobj_t * actor)
 //
 //============================================================================
 
-void A_SerpentHide(mobj_t * actor)
+void A_SerpentHide(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     actor->flags2 |= MF2_DONTDRAW;
     actor->floorclip = 0;
@@ -1998,7 +1998,7 @@ void A_SerpentHide(mobj_t * actor)
 //
 //============================================================================
 
-void A_SerpentChase(mobj_t * actor)
+void A_SerpentChase(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     int delta;
     int oldX, oldY, oldFloor;
@@ -2115,7 +2115,7 @@ void A_SerpentChase(mobj_t * actor)
 // Raises the hump above the surface by raising the floorclip level
 //============================================================================
 
-void A_SerpentRaiseHump(mobj_t * actor)
+void A_SerpentRaiseHump(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     actor->floorclip -= 4 * FRACUNIT;
 }
@@ -2126,7 +2126,7 @@ void A_SerpentRaiseHump(mobj_t * actor)
 // 
 //============================================================================
 
-void A_SerpentLowerHump(mobj_t * actor)
+void A_SerpentLowerHump(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     actor->floorclip += 4 * FRACUNIT;
 }
@@ -2139,7 +2139,7 @@ void A_SerpentLowerHump(mobj_t * actor)
 //                      to missile attack
 //============================================================================
 
-void A_SerpentHumpDecide(mobj_t * actor)
+void A_SerpentHumpDecide(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     if (actor->type == MT_SERPENTLEADER)
     {
@@ -2177,7 +2177,7 @@ void A_SerpentHumpDecide(mobj_t * actor)
 //
 //============================================================================
 
-void A_SerpentBirthScream(mobj_t * actor)
+void A_SerpentBirthScream(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     S_StartSound(actor, SFX_SERPENT_BIRTH);
 }
@@ -2188,7 +2188,7 @@ void A_SerpentBirthScream(mobj_t * actor)
 //
 //============================================================================
 
-void A_SerpentDiveSound(mobj_t * actor)
+void A_SerpentDiveSound(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     S_StartSound(actor, SFX_SERPENT_ACTIVE);
 }
@@ -2200,7 +2200,7 @@ void A_SerpentDiveSound(mobj_t * actor)
 // Similar to A_Chase, only has a hardcoded entering of meleestate
 //============================================================================
 
-void A_SerpentWalk(mobj_t * actor)
+void A_SerpentWalk(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     int delta;
 
@@ -2298,7 +2298,7 @@ void A_SerpentWalk(mobj_t * actor)
 //
 //============================================================================
 
-void A_SerpentCheckForAttack(mobj_t * actor)
+void A_SerpentCheckForAttack(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     if (!actor->target)
     {
@@ -2335,7 +2335,7 @@ void A_SerpentCheckForAttack(mobj_t * actor)
 //
 //============================================================================
 
-void A_SerpentChooseAttack(mobj_t * actor)
+void A_SerpentChooseAttack(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     if (!actor->target || P_CheckMeleeRange(actor))
     {
@@ -2353,7 +2353,7 @@ void A_SerpentChooseAttack(mobj_t * actor)
 //
 //============================================================================
 
-void A_SerpentMeleeAttack(mobj_t * actor)
+void A_SerpentMeleeAttack(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     if (!actor->target)
     {
@@ -2366,7 +2366,7 @@ void A_SerpentMeleeAttack(mobj_t * actor)
     }
     if (P_Random() < 96)
     {
-        A_SerpentCheckForAttack(actor);
+        A_SerpentCheckForAttack(actor, player, psp);
     }
 }
 
@@ -2376,7 +2376,7 @@ void A_SerpentMeleeAttack(mobj_t * actor)
 //
 //============================================================================
 
-void A_SerpentMissileAttack(mobj_t * actor)
+void A_SerpentMissileAttack(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     if (!actor->target)
     {
@@ -2392,7 +2392,7 @@ void A_SerpentMissileAttack(mobj_t * actor)
 //
 //============================================================================
 
-void A_SerpentHeadPop(mobj_t * actor)
+void A_SerpentHeadPop(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     P_SpawnMobj(actor->x, actor->y, actor->z + 45 * FRACUNIT,
                 MT_SERPENT_HEAD);
@@ -2404,7 +2404,7 @@ void A_SerpentHeadPop(mobj_t * actor)
 //
 //============================================================================
 
-void A_SerpentSpawnGibs(mobj_t * actor)
+void A_SerpentSpawnGibs(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     mobj_t *mo;
     int r1, r2;
@@ -2450,7 +2450,7 @@ void A_SerpentSpawnGibs(mobj_t * actor)
 //
 //============================================================================
 
-void A_FloatGib(mobj_t * actor)
+void A_FloatGib(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     actor->floorclip -= FRACUNIT;
 }
@@ -2461,7 +2461,7 @@ void A_FloatGib(mobj_t * actor)
 //
 //============================================================================
 
-void A_SinkGib(mobj_t * actor)
+void A_SinkGib(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     actor->floorclip += FRACUNIT;
 }
@@ -2472,7 +2472,7 @@ void A_SinkGib(mobj_t * actor)
 //
 //============================================================================
 
-void A_DelayGib(mobj_t * actor)
+void A_DelayGib(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     actor->tics -= P_Random() >> 2;
 }
@@ -2483,7 +2483,7 @@ void A_DelayGib(mobj_t * actor)
 //
 //============================================================================
 
-void A_SerpentHeadCheck(mobj_t * actor)
+void A_SerpentHeadCheck(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     if (actor->z <= actor->floorz)
     {
@@ -2505,7 +2505,7 @@ void A_SerpentHeadCheck(mobj_t * actor)
 //
 //============================================================================
 
-void A_CentaurAttack(mobj_t * actor)
+void A_CentaurAttack(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     if (!actor->target)
     {
@@ -2523,7 +2523,7 @@ void A_CentaurAttack(mobj_t * actor)
 //
 //============================================================================
 
-void A_CentaurAttack2(mobj_t * actor)
+void A_CentaurAttack2(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     if (!actor->target)
     {
@@ -2539,7 +2539,7 @@ void A_CentaurAttack2(mobj_t * actor)
 //
 //      Spawn shield/sword sprites when the centaur pulps //============================================================================
 
-void A_CentaurDropStuff(mobj_t * actor)
+void A_CentaurDropStuff(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     mobj_t *mo;
     angle_t angle;
@@ -2576,12 +2576,12 @@ void A_CentaurDropStuff(mobj_t * actor)
 //
 //============================================================================
 
-void A_CentaurDefend(mobj_t * actor)
+void A_CentaurDefend(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
-    A_FaceTarget(actor);
+    A_FaceTarget(actor, player, psp);
     if (P_CheckMeleeRange(actor) && P_Random() < 32)
     {
-        A_UnSetInvulnerable(actor);
+        A_UnSetInvulnerable(actor, player, psp);
         P_SetMobjState(actor, actor->info->meleestate);
     }
 }
@@ -2592,7 +2592,7 @@ void A_CentaurDefend(mobj_t * actor)
 //
 //============================================================================
 
-void A_BishopAttack(mobj_t * actor)
+void A_BishopAttack(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     if (!actor->target)
     {
@@ -2614,7 +2614,7 @@ void A_BishopAttack(mobj_t * actor)
 //              Spawns one of a string of bishop missiles
 //============================================================================
 
-void A_BishopAttack2(mobj_t * actor)
+void A_BishopAttack2(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     mobj_t *mo;
 
@@ -2639,7 +2639,7 @@ void A_BishopAttack2(mobj_t * actor)
 //
 //============================================================================
 
-void A_BishopMissileWeave(mobj_t * actor)
+void A_BishopMissileWeave(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     fixed_t newX, newY;
     int weaveXY, weaveZ;
@@ -2668,7 +2668,7 @@ void A_BishopMissileWeave(mobj_t * actor)
 //
 //============================================================================
 
-void A_BishopMissileSeek(mobj_t * actor)
+void A_BishopMissileSeek(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     P_SeekerMissile(actor, ANG1 * 2, ANG1 * 3);
 }
@@ -2679,7 +2679,7 @@ void A_BishopMissileSeek(mobj_t * actor)
 //
 //============================================================================
 
-void A_BishopDecide(mobj_t * actor)
+void A_BishopDecide(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     if (P_Random() < 220)
     {
@@ -2697,7 +2697,7 @@ void A_BishopDecide(mobj_t * actor)
 //
 //============================================================================
 
-void A_BishopDoBlur(mobj_t * actor)
+void A_BishopDoBlur(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     actor->special1.i = (P_Random() & 3) + 3;     // Random number of blurs
     if (P_Random() < 120)
@@ -2721,7 +2721,7 @@ void A_BishopDoBlur(mobj_t * actor)
 //
 //============================================================================
 
-void A_BishopSpawnBlur(mobj_t * actor)
+void A_BishopSpawnBlur(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     mobj_t *mo;
 
@@ -2751,7 +2751,7 @@ void A_BishopSpawnBlur(mobj_t * actor)
 //
 //============================================================================
 
-void A_BishopChase(mobj_t * actor)
+void A_BishopChase(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     actor->z -= FloatBobOffsets[actor->special2.i] >> 1;
     actor->special2.i = (actor->special2.i + 4) & 63;
@@ -2764,7 +2764,7 @@ void A_BishopChase(mobj_t * actor)
 //
 //============================================================================
 
-void A_BishopPuff(mobj_t * actor)
+void A_BishopPuff(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     mobj_t *mo;
 
@@ -2782,7 +2782,7 @@ void A_BishopPuff(mobj_t * actor)
 //
 //============================================================================
 
-void A_BishopPainBlur(mobj_t * actor)
+void A_BishopPainBlur(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     mobj_t *mo;
     int r1,r2,r3;
@@ -2943,7 +2943,7 @@ static void DragonSeek(mobj_t * actor, angle_t thresh, angle_t turnMax)
 //
 //============================================================================
 
-void A_DragonInitFlight(mobj_t * actor)
+void A_DragonInitFlight(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     int search;
 
@@ -2967,7 +2967,7 @@ void A_DragonInitFlight(mobj_t * actor)
 //
 //============================================================================
 
-void A_DragonFlight(mobj_t * actor)
+void A_DragonFlight(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     angle_t angle;
 
@@ -3005,9 +3005,9 @@ void A_DragonFlight(mobj_t * actor)
 //
 //============================================================================
 
-void A_DragonFlap(mobj_t * actor)
+void A_DragonFlap(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
-    A_DragonFlight(actor);
+    A_DragonFlight(actor, player, psp);
     if (P_Random() < 240)
     {
         S_StartSound(actor, SFX_DRAGON_WINGFLAP);
@@ -3024,7 +3024,7 @@ void A_DragonFlap(mobj_t * actor)
 //
 //============================================================================
 
-void A_DragonAttack(mobj_t * actor)
+void A_DragonAttack(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     P_SpawnMissile(actor, actor->target, MT_DRAGON_FX);
 }
@@ -3035,7 +3035,7 @@ void A_DragonAttack(mobj_t * actor)
 //
 //============================================================================
 
-void A_DragonFX2(mobj_t * actor)
+void A_DragonFX2(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     mobj_t *mo;
     int i;
@@ -3066,9 +3066,9 @@ void A_DragonFX2(mobj_t * actor)
 //
 //============================================================================
 
-void A_DragonPain(mobj_t * actor)
+void A_DragonPain(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
-    A_Pain(actor);
+    A_Pain(actor, player, psp);
     if (!actor->special1.i)
     {                           // no destination spot yet
         P_SetMobjState(actor, S_DRAGON_INIT);
@@ -3081,7 +3081,7 @@ void A_DragonPain(mobj_t * actor)
 //
 //============================================================================
 
-void A_DragonCheckCrash(mobj_t * actor)
+void A_DragonCheckCrash(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     if (actor->z <= actor->floorz)
     {
@@ -3096,7 +3096,7 @@ void A_DragonCheckCrash(mobj_t * actor)
 //
 // A_DemonAttack1 (melee)
 //
-void A_DemonAttack1(mobj_t * actor)
+void A_DemonAttack1(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     if (P_CheckMeleeRange(actor))
     {
@@ -3108,7 +3108,7 @@ void A_DemonAttack1(mobj_t * actor)
 //
 // A_DemonAttack2 (missile)
 //
-void A_DemonAttack2(mobj_t * actor)
+void A_DemonAttack2(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     mobj_t *mo;
     int fireBall;
@@ -3133,7 +3133,7 @@ void A_DemonAttack2(mobj_t * actor)
 // A_DemonDeath
 //
 
-void A_DemonDeath(mobj_t * actor)
+void A_DemonDeath(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     mobj_t *mo;
     angle_t angle;
@@ -3206,7 +3206,7 @@ void A_DemonDeath(mobj_t * actor)
 //
 //===========================================================================
 
-void A_Demon2Death(mobj_t * actor)
+void A_Demon2Death(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     mobj_t *mo;
     angle_t angle;
@@ -3349,13 +3349,13 @@ boolean A_RaiseMobj(mobj_t * actor)
 // A_WraithInit
 //
 
-void A_WraithInit(mobj_t * actor)
+void A_WraithInit(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     actor->z += 48 << FRACBITS;
     actor->special1.i = 0;        // index into floatbob
 }
 
-void A_WraithRaiseInit(mobj_t * actor)
+void A_WraithRaiseInit(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     actor->flags2 &= ~MF2_DONTDRAW;
     actor->flags2 &= ~MF2_NONSHOOTABLE;
@@ -3363,7 +3363,7 @@ void A_WraithRaiseInit(mobj_t * actor)
     actor->floorclip = actor->info->height;
 }
 
-void A_WraithRaise(mobj_t * actor)
+void A_WraithRaise(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     if (A_RaiseMobj(actor))
     {
@@ -3375,7 +3375,7 @@ void A_WraithRaise(mobj_t * actor)
 }
 
 
-void A_WraithMelee(mobj_t * actor)
+void A_WraithMelee(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     int amount;
 
@@ -3388,7 +3388,7 @@ void A_WraithMelee(mobj_t * actor)
     }
 }
 
-void A_WraithMissile(mobj_t * actor)
+void A_WraithMissile(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     mobj_t *mo;
 
@@ -3404,7 +3404,7 @@ void A_WraithMissile(mobj_t * actor)
 // A_WraithFX2 - spawns sparkle tail of missile
 //
 
-void A_WraithFX2(mobj_t * actor)
+void A_WraithFX2(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     mobj_t *mo;
     angle_t angle;
@@ -3436,7 +3436,7 @@ void A_WraithFX2(mobj_t * actor)
 
 
 // Spawn an FX3 around the actor during attacks
-void A_WraithFX3(mobj_t * actor)
+void A_WraithFX3(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     mobj_t *mo;
     int numdropped = P_Random() % 15;
@@ -3456,7 +3456,7 @@ void A_WraithFX3(mobj_t * actor)
 }
 
 // Spawn an FX4 during movement
-void A_WraithFX4(mobj_t * actor)
+void A_WraithFX4(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     mobj_t *mo;
     int chance = P_Random();
@@ -3508,14 +3508,14 @@ void A_WraithFX4(mobj_t * actor)
 }
 
 
-void A_WraithLook(mobj_t * actor)
+void A_WraithLook(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
 //      A_WraithFX4(actor);             // too expensive
-    A_Look(actor);
+    A_Look(actor, player, psp);
 }
 
 
-void A_WraithChase(mobj_t * actor)
+void A_WraithChase(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     int weaveindex = actor->special1.i;
     actor->z += FloatBobOffsets[weaveindex];
@@ -3525,8 +3525,8 @@ void A_WraithChase(mobj_t * actor)
 //              P_SetMobjState(actor, S_WRAITH_RAISE2);
 //              return;
 //      }
-    A_Chase(actor);
-    A_WraithFX4(actor);
+    A_Chase(actor, player, psp);
+    A_WraithFX4(actor, player, psp);
 }
 
 
@@ -3535,7 +3535,7 @@ void A_WraithChase(mobj_t * actor)
 // Ettin AI
 //============================================================================
 
-void A_EttinAttack(mobj_t * actor)
+void A_EttinAttack(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     if (P_CheckMeleeRange(actor))
     {
@@ -3544,7 +3544,7 @@ void A_EttinAttack(mobj_t * actor)
 }
 
 
-void A_DropMace(mobj_t * actor)
+void A_DropMace(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     mobj_t *mo;
 
@@ -3567,7 +3567,7 @@ void A_DropMace(mobj_t * actor)
 // special2                     whether strafing or not
 //============================================================================
 
-void A_FiredSpawnRock(mobj_t * actor)
+void A_FiredSpawnRock(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     mobj_t *mo;
     int x, y, z;
@@ -3610,16 +3610,16 @@ void A_FiredSpawnRock(mobj_t * actor)
     actor->flags &= ~MF_JUSTATTACKED;
 }
 
-void A_FiredRocks(mobj_t * actor)
+void A_FiredRocks(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
-    A_FiredSpawnRock(actor);
-    A_FiredSpawnRock(actor);
-    A_FiredSpawnRock(actor);
-    A_FiredSpawnRock(actor);
-    A_FiredSpawnRock(actor);
+    A_FiredSpawnRock(actor, player, psp);
+    A_FiredSpawnRock(actor, player, psp);
+    A_FiredSpawnRock(actor, player, psp);
+    A_FiredSpawnRock(actor, player, psp);
+    A_FiredSpawnRock(actor, player, psp);
 }
 
-void A_FiredAttack(mobj_t * actor)
+void A_FiredAttack(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     mobj_t *mo;
     mo = P_SpawnMissile(actor, actor->target, MT_FIREDEMON_FX6);
@@ -3627,7 +3627,7 @@ void A_FiredAttack(mobj_t * actor)
         S_StartSound(actor, SFX_FIRED_ATTACK);
 }
 
-void A_SmBounce(mobj_t * actor)
+void A_SmBounce(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     // give some more momentum (x,y,&z)
     actor->z = actor->floorz + FRACUNIT;
@@ -3639,7 +3639,7 @@ void A_SmBounce(mobj_t * actor)
 
 #define FIREDEMON_ATTACK_RANGE	64*8*FRACUNIT
 
-void A_FiredChase(mobj_t * actor)
+void A_FiredChase(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     int weaveindex = actor->special1.i;
     mobj_t *target = actor->target;
@@ -3728,7 +3728,7 @@ void A_FiredChase(mobj_t * actor)
     }
 }
 
-void A_FiredSplotch(mobj_t * actor)
+void A_FiredSplotch(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     mobj_t *mo;
 
@@ -3755,12 +3755,12 @@ void A_FiredSplotch(mobj_t * actor)
 //
 //============================================================================
 
-void A_IceGuyLook(mobj_t * actor)
+void A_IceGuyLook(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     fixed_t dist;
     fixed_t an;
 
-    A_Look(actor);
+    A_Look(actor, player, psp);
     if (P_Random() < 64)
     {
         dist = ((P_Random() - 128) * actor->radius) >> 7;
@@ -3779,13 +3779,13 @@ void A_IceGuyLook(mobj_t * actor)
 //
 //============================================================================
 
-void A_IceGuyChase(mobj_t * actor)
+void A_IceGuyChase(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     fixed_t dist;
     fixed_t an;
     mobj_t *mo;
 
-    A_Chase(actor);
+    A_Chase(actor, player, psp);
     if (P_Random() < 128)
     {
         dist = ((P_Random() - 128) * actor->radius) >> 7;
@@ -3811,7 +3811,7 @@ void A_IceGuyChase(mobj_t * actor)
 //
 //============================================================================
 
-void A_IceGuyAttack(mobj_t * actor)
+void A_IceGuyAttack(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     fixed_t an;
 
@@ -3840,7 +3840,7 @@ void A_IceGuyAttack(mobj_t * actor)
 //
 //============================================================================
 
-void A_IceGuyMissilePuff(mobj_t * actor)
+void A_IceGuyMissilePuff(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     P_SpawnMobj(actor->x, actor->y, actor->z + 2 * FRACUNIT, MT_ICEFX_PUFF);
 }
@@ -3851,13 +3851,13 @@ void A_IceGuyMissilePuff(mobj_t * actor)
 //
 //============================================================================
 
-void A_IceGuyDie(mobj_t * actor)
+void A_IceGuyDie(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     actor->momx = 0;
     actor->momy = 0;
     actor->momz = 0;
     actor->height <<= 2;
-    A_FreezeDeathChunks(actor);
+    A_FreezeDeathChunks(actor, player, psp);
 }
 
 //============================================================================
@@ -3866,7 +3866,7 @@ void A_IceGuyDie(mobj_t * actor)
 //
 //============================================================================
 
-void A_IceGuyMissileExplode(mobj_t * actor)
+void A_IceGuyMissileExplode(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     mobj_t *mo;
     unsigned int i;
@@ -3931,12 +3931,12 @@ void A_IceGuyMissileExplode(mobj_t * actor)
 
 
 // Spawn spinning balls above head - actor is sorcerer
-void A_SorcSpinBalls(mobj_t * actor)
+void A_SorcSpinBalls(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     mobj_t *mo;
     fixed_t z;
 
-    A_SlowBalls(actor);
+    A_SlowBalls(actor, player, psp);
     actor->args[0] = 0;         // Currently no defense
     actor->args[3] = SORC_NORMAL;
     actor->args[4] = SORCBALL_INITIAL_SPEED;    // Initial orbit speed
@@ -3962,7 +3962,7 @@ void A_SorcSpinBalls(mobj_t * actor)
 // A_SorcBallOrbit() ==========================================
 //
 
-void A_SorcBallOrbit(mobj_t * actor)
+void A_SorcBallOrbit(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     int x, y;
     angle_t angle, baseangle;
@@ -3996,15 +3996,15 @@ void A_SorcBallOrbit(mobj_t * actor)
     switch (mode)
     {
         case SORC_NORMAL:      // Balls rotating normally
-            A_SorcUpdateBallAngle(actor);
+            A_SorcUpdateBallAngle(actor, player, psp);
             break;
         case SORC_DECELERATE:  // Balls decelerating
-            A_DecelBalls(actor);
-            A_SorcUpdateBallAngle(actor);
+            A_DecelBalls(actor, player, psp);
+            A_SorcUpdateBallAngle(actor, player, psp);
             break;
         case SORC_ACCELERATE:  // Balls accelerating
-            A_AccelBalls(actor);
-            A_SorcUpdateBallAngle(actor);
+            A_AccelBalls(actor, player, psp);
+            A_SorcUpdateBallAngle(actor, player, psp);
             break;
         case SORC_STOPPING:    // Balls stopping
             if ((parent->special2.i == actor->type) &&
@@ -4036,7 +4036,7 @@ void A_SorcBallOrbit(mobj_t * actor)
             }
             else
             {
-                A_SorcUpdateBallAngle(actor);
+                A_SorcUpdateBallAngle(actor, player, psp);
             }
             break;
         case SORC_FIRESPELL:   // Casting spell
@@ -4055,7 +4055,7 @@ void A_SorcBallOrbit(mobj_t * actor)
                 }
                 else
                 {
-                    A_CastSorcererSpell(actor);
+                    A_CastSorcererSpell(actor, player, psp);
                     parent->args[3] = SORC_STOPPED;
                 }
             }
@@ -4074,7 +4074,7 @@ void A_SorcBallOrbit(mobj_t * actor)
                 else
                 {
                     // Do rapid fire spell
-                    A_SorcOffense2(actor);
+                    A_SorcOffense2(actor, player, psp);
                 }
             }
             break;
@@ -4101,7 +4101,7 @@ void A_SorcBallOrbit(mobj_t * actor)
 //
 // Set balls to speed mode - actor is sorcerer
 //
-void A_SpeedBalls(mobj_t * actor)
+void A_SpeedBalls(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     actor->args[3] = SORC_ACCELERATE;   // speed mode
     actor->args[2] = SORCBALL_TERMINAL_SPEED;   // target speed
@@ -4111,7 +4111,7 @@ void A_SpeedBalls(mobj_t * actor)
 //
 // Set balls to slow mode - actor is sorcerer
 //
-void A_SlowBalls(mobj_t * actor)
+void A_SlowBalls(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     actor->args[3] = SORC_DECELERATE;   // slow mode
     actor->args[2] = SORCBALL_INITIAL_SPEED;    // target speed
@@ -4122,7 +4122,7 @@ void A_SlowBalls(mobj_t * actor)
 // Instant stop when rotation gets to ball in special2
 //              actor is sorcerer
 //
-void A_StopBalls(mobj_t * actor)
+void A_StopBalls(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     int chance = P_Random();
     actor->args[3] = SORC_STOPPING;     // stopping mode
@@ -4149,7 +4149,7 @@ void A_StopBalls(mobj_t * actor)
 //
 // Increase ball orbit speed - actor is ball
 //
-void A_AccelBalls(mobj_t * actor)
+void A_AccelBalls(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     mobj_t *sorc = actor->target;
 
@@ -4163,14 +4163,14 @@ void A_AccelBalls(mobj_t * actor)
         if (sorc->args[4] >= SORCBALL_TERMINAL_SPEED)
         {
             // Reached terminal velocity - stop balls
-            A_StopBalls(sorc);
+            A_StopBalls(sorc, player, psp);
         }
     }
 }
 
 
 // Decrease ball orbit speed - actor is ball
-void A_DecelBalls(mobj_t * actor)
+void A_DecelBalls(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     mobj_t *sorc = actor->target;
 
@@ -4186,7 +4186,7 @@ void A_DecelBalls(mobj_t * actor)
 
 
 // Update angle if first ball - actor is ball
-void A_SorcUpdateBallAngle(mobj_t * actor)
+void A_SorcUpdateBallAngle(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     if (actor->type == MT_SORCBALL1)
     {
@@ -4196,7 +4196,7 @@ void A_SorcUpdateBallAngle(mobj_t * actor)
 
 
 // actor is ball
-void A_CastSorcererSpell(mobj_t * actor)
+void A_CastSorcererSpell(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     mobj_t *mo;
     int spell = actor->type;
@@ -4213,7 +4213,7 @@ void A_CastSorcererSpell(mobj_t * actor)
     switch (spell)
     {
         case MT_SORCBALL1:     // Offensive
-            A_SorcOffense1(actor);
+            A_SorcOffense1(actor, player, psp);
             break;
         case MT_SORCBALL2:     // Defensive
             z = parent->z - parent->floorclip +
@@ -4267,7 +4267,7 @@ void A_SpawnReinforcements(mobj_t *actor)
 */
 
 // actor is ball
-void A_SorcOffense1(mobj_t * actor)
+void A_SorcOffense1(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     mobj_t *mo;
     angle_t ang1, ang2;
@@ -4295,7 +4295,7 @@ void A_SorcOffense1(mobj_t * actor)
 
 
 // Actor is ball
-void A_SorcOffense2(mobj_t * actor)
+void A_SorcOffense2(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     angle_t ang1;
     mobj_t *mo;
@@ -4323,7 +4323,7 @@ void A_SorcOffense2(mobj_t * actor)
 
 
 // Resume ball spinning
-void A_SorcBossAttack(mobj_t * actor)
+void A_SorcBossAttack(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     actor->args[3] = SORC_ACCELERATE;
     actor->args[2] = SORCBALL_INITIAL_SPEED;
@@ -4331,7 +4331,7 @@ void A_SorcBossAttack(mobj_t * actor)
 
 
 // spell cast magic fizzle
-void A_SpawnFizzle(mobj_t * actor)
+void A_SpawnFizzle(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     fixed_t x, y, z;
     fixed_t dist = 5 * FRACUNIT;
@@ -4362,9 +4362,9 @@ void A_SpawnFizzle(mobj_t * actor)
 // Yellow spell - offense
 //============================================================================
 
-void A_SorcFX1Seek(mobj_t * actor)
+void A_SorcFX1Seek(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
-    A_BounceCheck(actor);
+    A_BounceCheck(actor, player, psp);
     P_SeekerMissile(actor, ANG1 * 2, ANG1 * 6);
 }
 
@@ -4381,7 +4381,7 @@ void A_SorcFX1Seek(mobj_t * actor)
 //============================================================================
 
 // Split ball in two
-void A_SorcFX2Split(mobj_t * actor)
+void A_SorcFX2Split(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     mobj_t *mo;
 
@@ -4406,7 +4406,7 @@ void A_SorcFX2Split(mobj_t * actor)
 
 
 // Orbit FX2 about sorcerer
-void A_SorcFX2Orbit(mobj_t * actor)
+void A_SorcFX2Orbit(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     angle_t angle;
     fixed_t x, y, z;
@@ -4464,7 +4464,7 @@ void A_SorcFX2Orbit(mobj_t * actor)
 // Green spell - spawn bishops
 //============================================================================
 
-void A_SpawnBishop(mobj_t * actor)
+void A_SpawnBishop(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     mobj_t *mo;
     mo = P_SpawnMobj(actor->x, actor->y, actor->z, MT_BISHOP);
@@ -4485,12 +4485,12 @@ void A_SmokePuffEntry(mobj_t *actor)
 }
 */
 
-void A_SmokePuffExit(mobj_t * actor)
+void A_SmokePuffExit(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     P_SpawnMobj(actor->x, actor->y, actor->z, MT_MNTRSMOKEEXIT);
 }
 
-void A_SorcererBishopEntry(mobj_t * actor)
+void A_SorcererBishopEntry(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     P_SpawnMobj(actor->x, actor->y, actor->z, MT_SORCFX3_EXPLOSION);
     S_StartSound(actor, actor->info->seesound);
@@ -4501,7 +4501,7 @@ void A_SorcererBishopEntry(mobj_t * actor)
 // FX4 - rapid fire balls
 //============================================================================
 
-void A_SorcFX4Check(mobj_t * actor)
+void A_SorcFX4Check(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     if (actor->special2.i-- <= 0)
     {
@@ -4513,7 +4513,7 @@ void A_SorcFX4Check(mobj_t * actor)
 // Ball death - spawn stuff
 //============================================================================
 
-void A_SorcBallPop(mobj_t * actor)
+void A_SorcBallPop(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     S_StartSound(NULL, SFX_SORCERER_BALLPOP);
     actor->flags &= ~MF_NOGRAVITY;
@@ -4528,7 +4528,7 @@ void A_SorcBallPop(mobj_t * actor)
 
 
 
-void A_BounceCheck(mobj_t * actor)
+void A_BounceCheck(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     if (actor->args[4]-- <= 0)
     {
@@ -4564,7 +4564,7 @@ void A_BounceCheck(mobj_t * actor)
 //============================================================================
 #define CLASS_BOSS_STRAFE_RANGE	64*10*FRACUNIT
 
-void A_FastChase(mobj_t * actor)
+void A_FastChase(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     int delta;
     fixed_t dist;
@@ -4695,31 +4695,31 @@ void A_FastChase(mobj_t * actor)
 }
 
 
-void A_FighterAttack(mobj_t * actor)
+void A_FighterAttack(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     if (!actor->target)
         return;
-    A_FSwordAttack2(actor);
+    A_FSwordAttack2(actor, player, psp);
 }
 
 
-void A_ClericAttack(mobj_t * actor)
+void A_ClericAttack(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     if (!actor->target)
         return;
-    A_CHolyAttack3(actor);
+    A_CHolyAttack3(actor, player, psp);
 }
 
 
 
-void A_MageAttack(mobj_t * actor)
+void A_MageAttack(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     if (!actor->target)
         return;
-    A_MStaffAttack2(actor);
+    A_MStaffAttack2(actor, player, psp);
 }
 
-void A_ClassBossHealth(mobj_t * actor)
+void A_ClassBossHealth(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     if (netgame && !deathmatch) // co-op only
     {
@@ -4738,7 +4738,7 @@ void A_ClassBossHealth(mobj_t * actor)
 //
 //===========================================================================
 
-void A_CheckFloor(mobj_t * actor)
+void A_CheckFloor(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     if (actor->z <= actor->floorz)
     {
@@ -4754,7 +4754,7 @@ void A_CheckFloor(mobj_t * actor)
 //
 //============================================================================
 
-void A_FreezeDeath(mobj_t * actor)
+void A_FreezeDeath(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     int r = P_Random();
     actor->tics = 75 + r + P_Random();
@@ -4786,7 +4786,7 @@ void A_FreezeDeath(mobj_t * actor)
 //
 //============================================================================
 
-void A_IceSetTics(mobj_t * actor)
+void A_IceSetTics(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     int floor;
 
@@ -4808,7 +4808,7 @@ void A_IceSetTics(mobj_t * actor)
 //
 //============================================================================
 
-void A_IceCheckHeadDone(mobj_t * actor)
+void A_IceCheckHeadDone(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     if (actor->special2.i == 666)
     {
@@ -4822,7 +4822,7 @@ void A_IceCheckHeadDone(mobj_t * actor)
 //
 //============================================================================
 
-void A_FreezeDeathChunks(mobj_t * actor)
+void A_FreezeDeathChunks(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     int i;
     int r1,r2,r3;
@@ -4850,7 +4850,7 @@ void A_FreezeDeathChunks(mobj_t * actor)
         mo->momz = FixedDiv(mo->z - actor->z, actor->height) << 2;
         mo->momx = P_SubRandom() << (FRACBITS - 7);
         mo->momy = P_SubRandom() << (FRACBITS - 7);
-        A_IceSetTics(mo);   // set a random tic wait
+        A_IceSetTics(mo, NULL, NULL);   // set a random tic wait
     }
     for (i = 12 + (P_Random() & 15); i >= 0; i--)
     {
@@ -4867,7 +4867,7 @@ void A_FreezeDeathChunks(mobj_t * actor)
         mo->momz = FixedDiv(mo->z - actor->z, actor->height) << 2;
         mo->momx = P_SubRandom() << (FRACBITS - 7);
         mo->momy = P_SubRandom() << (FRACBITS - 7);
-        A_IceSetTics(mo);   // set a random tic wait
+        A_IceSetTics(mo, NULL, NULL);   // set a random tic wait
     }
     if (actor->player)
     {                           // attach the player's view to a chunk of ice
@@ -4924,7 +4924,7 @@ void KSpiritInit(mobj_t * spirit, mobj_t * korax);
 #define KORAX_FIRST_TELEPORT_TID	(248)
 #define KORAX_TELEPORT_TID			(249)
 
-void A_KoraxChase(mobj_t * actor)
+void A_KoraxChase(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     mobj_t *spot;
     int lastfound;
@@ -4974,18 +4974,18 @@ void A_KoraxChase(mobj_t * actor)
     }
 }
 
-void A_KoraxStep(mobj_t * actor)
+void A_KoraxStep(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
-    A_Chase(actor);
+    A_Chase(actor, player, psp);
 }
 
-void A_KoraxStep2(mobj_t * actor)
+void A_KoraxStep2(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     S_StartSound(NULL, SFX_KORAX_STEP);
-    A_Chase(actor);
+    A_Chase(actor, player, psp);
 }
 
-void A_KoraxBonePop(mobj_t * actor)
+void A_KoraxBonePop(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     mobj_t *mo;
     byte args[5];
@@ -5047,7 +5047,7 @@ void KSpiritInit(mobj_t * spirit, mobj_t * korax)
     tail->special1.m = NULL;         // last tail bit
 }
 
-void A_KoraxDecide(mobj_t * actor)
+void A_KoraxDecide(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     if (P_Random() < 220)
     {
@@ -5059,7 +5059,7 @@ void A_KoraxDecide(mobj_t * actor)
     }
 }
 
-void A_KoraxMissile(mobj_t * actor)
+void A_KoraxMissile(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     int type = P_Random() % 6;
     int sound = 0;
@@ -5106,7 +5106,7 @@ void A_KoraxMissile(mobj_t * actor)
 
 
 // Call action code scripts (250-254)
-void A_KoraxCommand(mobj_t * actor)
+void A_KoraxCommand(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     byte args[5];
     fixed_t x, y, z;
@@ -5261,7 +5261,7 @@ void KoraxFire6(mobj_t * actor, int type)
 }
 
 
-void A_KSpiritWeave(mobj_t * actor)
+void A_KSpiritWeave(mobj_t *actor)
 {
     fixed_t newX, newY;
     int weaveXY, weaveZ;
@@ -5349,7 +5349,7 @@ void A_KSpiritSeeker(mobj_t * actor, angle_t thresh, angle_t turnMax)
 }
 
 
-void A_KSpiritRoam(mobj_t * actor)
+void A_KSpiritRoam(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     if (actor->health-- <= 0)
     {
@@ -5371,7 +5371,7 @@ void A_KSpiritRoam(mobj_t * actor)
     }
 }
 
-void A_KBolt(mobj_t * actor)
+void A_KBolt(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     // Countdown lifetime
     if (actor->special1.i-- <= 0)
@@ -5384,7 +5384,7 @@ void A_KBolt(mobj_t * actor)
 #define KORAX_BOLT_HEIGHT		48*FRACUNIT
 #define KORAX_BOLT_LIFETIME		3
 
-void A_KBoltRaise(mobj_t * actor)
+void A_KBoltRaise(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     mobj_t *mo;
     fixed_t z;

@@ -186,31 +186,31 @@ void P_NoiseAlert(mobj_t * target, mobj_t * emmiter);
 int P_Massacre(void);
 boolean A_RaiseMobj(mobj_t * actor);
 boolean A_SinkMobj(mobj_t * actor);
-void A_NoBlocking(mobj_t * actor);
+void A_NoBlocking(mobj_t *actor, player_t *player, pspdef_t *psp);
 boolean P_LookForMonsters(mobj_t * actor);
 void P_InitCreatureCorpseQueue(boolean corpseScan);
 void A_DeQueueCorpse(mobj_t * actor);
-void A_Explode(mobj_t *actor);
-void A_CHolyAttack3(mobj_t *actor);
-void A_FSwordAttack2(mobj_t *actor);
-void A_MStaffAttack2(mobj_t *actor);
-void A_FreezeDeathChunks(mobj_t *actor);
-void A_SorcBallOrbit(mobj_t *actor);
-void A_SorcSpinBalls(mobj_t *actor);
-void A_SpeedBalls(mobj_t *actor);
-void A_SlowBalls(mobj_t *actor);
-void A_StopBalls(mobj_t *actor);
-void A_AccelBalls(mobj_t *actor);
-void A_DecelBalls(mobj_t *actor);
-void A_SorcBossAttack(mobj_t *actor);
-void A_SpawnFizzle(mobj_t *actor);
-void A_CastSorcererSpell(mobj_t *actor);
-void A_SorcUpdateBallAngle(mobj_t *actor);
-void A_BounceCheck(mobj_t *actor);
-void A_SorcFX1Seek(mobj_t *actor);
-void A_SorcOffense1(mobj_t *actor);
-void A_SorcOffense2(mobj_t *actor);
-void A_MinotaurLook(mobj_t *actor);
+void A_Explode(mobj_t *actor, player_t *player, pspdef_t *psp);
+void A_CHolyAttack3(mobj_t *actor, player_t *player, pspdef_t *psp);
+void A_FSwordAttack2(mobj_t *actor, player_t *player, pspdef_t *psp);
+void A_MStaffAttack2(mobj_t *actor, player_t *player, pspdef_t *psp);
+void A_FreezeDeathChunks(mobj_t *actor, player_t *player, pspdef_t *psp);
+void A_SorcBallOrbit(mobj_t *actor, player_t *player, pspdef_t *psp);
+void A_SorcSpinBalls(mobj_t *actor, player_t *player, pspdef_t *psp);
+void A_SpeedBalls(mobj_t *actor, player_t *player, pspdef_t *psp);
+void A_SlowBalls(mobj_t *actor, player_t *player, pspdef_t *psp);
+void A_StopBalls(mobj_t *actor, player_t *player, pspdef_t *psp);
+void A_AccelBalls(mobj_t *actor, player_t *player, pspdef_t *psp);
+void A_DecelBalls(mobj_t *actor, player_t *player, pspdef_t *psp);
+void A_SorcBossAttack(mobj_t *actor, player_t *player, pspdef_t *psp);
+void A_SpawnFizzle(mobj_t *actor, player_t *player, pspdef_t *psp);
+void A_CastSorcererSpell(mobj_t *actor, player_t *player, pspdef_t *psp);
+void A_SorcUpdateBallAngle(mobj_t *actor, player_t *player, pspdef_t *psp);
+void A_BounceCheck(mobj_t *actor, player_t *player, pspdef_t *psp);
+void A_SorcFX1Seek(mobj_t *actor, player_t *player, pspdef_t *psp);
+void A_SorcOffense1(mobj_t *actor, player_t *player, pspdef_t *psp);
+void A_SorcOffense2(mobj_t *actor, player_t *player, pspdef_t *psp);
+void A_MinotaurLook(mobj_t *actor, player_t *player, pspdef_t *psp);
 
 
 // ***** P_MAPUTL *****
@@ -349,7 +349,7 @@ void AM_Drawer(void);
 boolean A_LocalQuake(byte * args, mobj_t * victim);
 void P_SpawnDirt(mobj_t * actor, fixed_t radius);
 void A_BridgeRemove(mobj_t * actor);
-void A_UnHideThing(mobj_t *actor);
+void A_UnHideThing(mobj_t *actor, player_t *player, pspdef_t *psp);
 
 
 // ***** SB_BAR *****
