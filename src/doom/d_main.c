@@ -1462,7 +1462,6 @@ void D_DoomMain (void)
     if ( (p=M_CheckParm ("-turbo")) )
     {
 	int     scale = 200;
-	extern fixed_t forwardmove[2];
 	extern fixed_t sidemove[2];
 	
 	if (p<myargc-1)
