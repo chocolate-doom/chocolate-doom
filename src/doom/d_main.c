@@ -105,7 +105,6 @@ boolean         respawnparm;	// checkparm of -respawn
 boolean         fastparm;	// checkparm of -fast
 
 
-extern  boolean	inhelpscreens;
 
 skill_t		startskill;
 int             startepisode;
