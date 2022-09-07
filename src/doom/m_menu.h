@@ -52,11 +52,10 @@ void M_Init (void);
 void M_StartControlPanel (void);
 
 
-
 extern int detailLevel;
 extern int screenblocks;
 
-extern  boolean	inhelpscreens;
+extern boolean inhelpscreens;
 
 
-#endif    
+#endif
