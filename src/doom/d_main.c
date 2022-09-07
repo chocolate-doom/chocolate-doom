@@ -468,6 +468,7 @@ void D_BindVariables(void)
     M_BindIntVariable("crispy_leveltime",       &crispy->leveltime);
     M_BindIntVariable("crispy_mouselook",       &crispy->mouselook);
     M_BindIntVariable("crispy_neghealth",       &crispy->neghealth);
+    M_BindIntVariable("crispy_defaultskill",    &crispy->defaultskill);
     M_BindIntVariable("crispy_overunder",       &crispy->overunder);
     M_BindIntVariable("crispy_pitch",           &crispy->pitch);
     M_BindIntVariable("crispy_playercoords",    &crispy->playercoords);
@@ -2149,7 +2150,12 @@ void D_DoomMain (void)
     D_ConnectNetGame();
 
     // get skill / episode / map from parms
-    startskill = sk_medium;
+
+    // HMP (or skill #2) being the default, had to be placed at index 0 when drawn in the menu,
+    // so all difficulties 'real' positions had to be scaled by -2, hence +2 being added
+    // below in order to get the correct skill.
+    startskill = (crispy->defaultskill + SKILL_HMP) % NUM_SKILLS;
+
     startepisode = 1;
     startmap = 1;
     autostart = false;

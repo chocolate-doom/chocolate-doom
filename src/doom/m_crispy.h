@@ -43,6 +43,7 @@ extern multiitem_t multiitem_statsformat[NUM_STATSFORMATS];
 extern multiitem_t multiitem_translucency[NUM_TRANSLUCENCY];
 extern multiitem_t multiitem_widgets[NUM_WIDGETS];
 extern multiitem_t multiitem_widescreen[NUM_RATIOS];
+extern multiitem_t multiitem_difficulties[NUM_SKILLS];
 
 extern void M_CrispyToggleAutomapstats(int choice);
 extern void M_CrispyToggleBobfactor(int choice);
@@ -68,6 +69,7 @@ extern void M_CrispyToggleJumping(int choice);
 extern void M_CrispyToggleLeveltime(int choice);
 extern void M_CrispyToggleMouseLook(int choice);
 extern void M_CrispyToggleNeghealth(int choice);
+extern void M_CrispyToggleDefaultSkill(int choice);
 extern void M_CrispyToggleOverunder(int choice);
 extern void M_CrispyTogglePitch(int choice);
 extern void M_CrispyTogglePlayerCoords(int choice);

@@ -39,6 +39,7 @@ typedef struct
 	int automapoverlay;
 	int automaprotate;
 	int automapstats;
+	int defaultskill;
 	int bobfactor;
 	int brightmaps;
 	int btusetimer;
@@ -244,6 +245,16 @@ enum
     STATSFORMAT_PERCENT,
     STATSFORMAT_BOOLEAN,
     NUM_STATSFORMATS
+};
+
+enum
+{
+    SKILL_ITYTD,
+    SKILL_HNTR,
+    SKILL_HMP,
+    SKILL_UV,
+    SKILL_NIGHTMARE,
+    NUM_SKILLS
 };
 
 enum
