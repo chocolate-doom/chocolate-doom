@@ -70,6 +70,10 @@ static char *timidity_cfg_path = NULL;
 static char *fluidsynth_sf_path = NULL;
 static char *gus_patch_path = NULL;
 static int gus_ram_kb = 1024;
+#ifdef _WIN32
+static int winmm_reverb_level = 40;
+static int winmm_chorus_level = 0;
+#endif
 
 // DOS specific variables: these are unused but should be maintained
 // so that the config file can be shared between chocolate
@@ -225,6 +229,10 @@ void BindSoundVariables(void)
     M_BindStringVariable("music_pack_path",     &music_pack_path);
     M_BindStringVariable("timidity_cfg_path",     &timidity_cfg_path);
     M_BindStringVariable("fluidsynth_sf_path",    &fluidsynth_sf_path);
+#ifdef _WIN32
+    M_BindIntVariable("winmm_reverb_level",       &winmm_reverb_level);
+    M_BindIntVariable("winmm_chorus_level",       &winmm_chorus_level);
+#endif
 
     M_BindIntVariable("snd_sbport",               &snd_sbport);
     M_BindIntVariable("snd_sbirq",                &snd_sbirq);

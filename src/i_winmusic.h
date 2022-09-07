@@ -31,6 +31,9 @@ boolean I_WIN_RegisterSong(char* filename);
 void I_WIN_UnRegisterSong(void);
 void I_WIN_ShutdownMusic(void);
 
+extern int winmm_reverb_level;
+extern int winmm_chorus_level;
+
 #endif
 
 #endif

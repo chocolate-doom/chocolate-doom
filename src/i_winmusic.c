@@ -26,6 +26,16 @@
 #include "m_misc.h"
 #include "midifile.h"
 
+#define BETWEEN(l,u,x) (((l)>(x))?(l):((x)>(u))?(u):(x))
+
+#define REVERB_MIN 0
+#define REVERB_MAX 127
+#define CHORUS_MIN 0
+#define CHORUS_MAX 127
+
+int winmm_reverb_level = 40;
+int winmm_chorus_level = 0;
+
 static HMIDISTRM hMidiStream;
 static HANDLE hBufferReturnEvent;
 static HANDLE hExitEvent;
@@ -335,6 +345,52 @@ static void UpdateVolume(void)
     }
 }
 
+void ResetDevice(void)
+{
+    for (int i = 0; i < MIDI_CHANNELS_PER_TRACK; ++i)
+    {
+        DWORD msg = 0;
+
+        // RPN sequence to adjust pitch bend range (RPN value 0x0000)
+        msg = MIDI_EVENT_CONTROLLER | i | 0x65 << 8 | 0x00 << 16;
+        midiOutShortMsg((HMIDIOUT)hMidiStream, msg);
+        msg = MIDI_EVENT_CONTROLLER | i | 0x64 << 8 | 0x00 << 16;
+        midiOutShortMsg((HMIDIOUT)hMidiStream, msg);
+
+        // reset pitch bend range to central tuning +/- 2 semitones and 0 cents
+        msg = MIDI_EVENT_CONTROLLER | i | 0x06 << 8 | 0x02 << 16;
+        midiOutShortMsg((HMIDIOUT)hMidiStream, msg);
+        msg = MIDI_EVENT_CONTROLLER | i | 0x26 << 8 | 0x00 << 16;
+        midiOutShortMsg((HMIDIOUT)hMidiStream, msg);
+
+        // end of RPN sequence
+        msg = MIDI_EVENT_CONTROLLER | i | 0x64 << 8 | 0x7F << 16;
+        midiOutShortMsg((HMIDIOUT)hMidiStream, msg);
+        msg = MIDI_EVENT_CONTROLLER | i | 0x65 << 8 | 0x7F << 16;
+        midiOutShortMsg((HMIDIOUT)hMidiStream, msg);
+
+        // reset all controllers
+        msg = MIDI_EVENT_CONTROLLER | i | 0x79 << 8 | 0x00 << 16;
+        midiOutShortMsg((HMIDIOUT)hMidiStream, msg);
+
+        // reset pan to 64 (center)
+        msg = MIDI_EVENT_CONTROLLER | i | 0x0A << 8 | 0x40 << 16;
+        midiOutShortMsg((HMIDIOUT)hMidiStream, msg);
+
+        // reset reverb and other effect controllers
+        msg = MIDI_EVENT_CONTROLLER | i | 0x5B << 8 | winmm_reverb_level << 16;
+        midiOutShortMsg((HMIDIOUT)hMidiStream, msg);
+        msg = MIDI_EVENT_CONTROLLER | i | 0x5C << 8 | 0x00 << 16; // tremolo
+        midiOutShortMsg((HMIDIOUT)hMidiStream, msg);
+        msg = MIDI_EVENT_CONTROLLER | i | 0x5D << 8 | winmm_chorus_level << 16;
+        midiOutShortMsg((HMIDIOUT)hMidiStream, msg);
+        msg = MIDI_EVENT_CONTROLLER | i | 0x5E << 8 | 0x00 << 16; // detune
+        midiOutShortMsg((HMIDIOUT)hMidiStream, msg);
+        msg = MIDI_EVENT_CONTROLLER | i | 0x5F << 8 | 0x00 << 16; // phaser
+        midiOutShortMsg((HMIDIOUT)hMidiStream, msg);
+    }
+}
+
 boolean I_WIN_InitMusic(void)
 {
     UINT MidiDevice = MIDI_MAPPER;
@@ -366,6 +422,10 @@ boolean I_WIN_InitMusic(void)
     hBufferReturnEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
     hExitEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
 
+    winmm_reverb_level = BETWEEN(REVERB_MIN, REVERB_MAX, winmm_reverb_level);
+    winmm_chorus_level = BETWEEN(CHORUS_MIN, CHORUS_MAX, winmm_chorus_level);
+    ResetDevice();
+
     return true;
 }
 
@@ -378,7 +438,6 @@ void I_WIN_SetMusicVolume(int volume)
 
 void I_WIN_StopSong(void)
 {
-    int i;
     MMRESULT mmr;
 
     if (hPlayerThread)
@@ -390,48 +449,7 @@ void I_WIN_StopSong(void)
         hPlayerThread = NULL;
     }
 
-    for (i = 0; i < MIDI_CHANNELS_PER_TRACK; ++i)
-    {
-        DWORD msg = 0;
-
-        // RPN sequence to adjust pitch bend range (RPN value 0x0000)
-        msg = MIDI_EVENT_CONTROLLER | i | 0x65 << 8 | 0x00 << 16;
-        midiOutShortMsg((HMIDIOUT)hMidiStream, msg);
-        msg = MIDI_EVENT_CONTROLLER | i | 0x64 << 8 | 0x00 << 16;
-        midiOutShortMsg((HMIDIOUT)hMidiStream, msg);
-
-        // reset pitch bend range to central tuning +/- 2 semitones and 0 cents
-        msg = MIDI_EVENT_CONTROLLER | i | 0x06 << 8 | 0x02 << 16;
-        midiOutShortMsg((HMIDIOUT)hMidiStream, msg);
-        msg = MIDI_EVENT_CONTROLLER | i | 0x26 << 8 | 0x00 << 16;
-        midiOutShortMsg((HMIDIOUT)hMidiStream, msg);
-
-        // end of RPN sequence
-        msg = MIDI_EVENT_CONTROLLER | i | 0x64 << 8 | 0x7F << 16;
-        midiOutShortMsg((HMIDIOUT)hMidiStream, msg);
-        msg = MIDI_EVENT_CONTROLLER | i | 0x65 << 8 | 0x7F << 16;
-        midiOutShortMsg((HMIDIOUT)hMidiStream, msg);
-
-        // reset all controllers
-        msg = MIDI_EVENT_CONTROLLER | i | 0x79 << 8 | 0x00 << 16;
-        midiOutShortMsg((HMIDIOUT)hMidiStream, msg);
-
-        // reset pan to 64 (center)
-        msg = MIDI_EVENT_CONTROLLER | i | 0x0A << 8 | 0x40 << 16;
-        midiOutShortMsg((HMIDIOUT)hMidiStream, msg);
-
-        // reset reverb to 40 and other effect controllers to 0
-        msg = MIDI_EVENT_CONTROLLER | i | 0x5B << 8 | 0x28 << 16; // reverb
-        midiOutShortMsg((HMIDIOUT)hMidiStream, msg);
-        msg = MIDI_EVENT_CONTROLLER | i | 0x5C << 8 | 0x00 << 16; // tremolo
-        midiOutShortMsg((HMIDIOUT)hMidiStream, msg);
-        msg = MIDI_EVENT_CONTROLLER | i | 0x5D << 8 | 0x00 << 16; // chorus
-        midiOutShortMsg((HMIDIOUT)hMidiStream, msg);
-        msg = MIDI_EVENT_CONTROLLER | i | 0x5E << 8 | 0x00 << 16; // detune
-        midiOutShortMsg((HMIDIOUT)hMidiStream, msg);
-        msg = MIDI_EVENT_CONTROLLER | i | 0x5F << 8 | 0x00 << 16; // phaser
-        midiOutShortMsg((HMIDIOUT)hMidiStream, msg);
-    }
+    ResetDevice();
 
     mmr = midiStreamStop(hMidiStream);
     if (mmr != MMSYSERR_NOERROR)
