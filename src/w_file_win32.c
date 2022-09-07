@@ -43,7 +43,6 @@ typedef struct
     HANDLE handle_map;
 } win32_wad_file_t;
 
-extern wad_file_class_t win32_wad_file;
 
 static void MapFile(win32_wad_file_t *wad, const char *filename)
 {

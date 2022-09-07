@@ -36,7 +36,6 @@ typedef struct
     int handle;
 } posix_wad_file_t;
 
-extern wad_file_class_t posix_wad_file;
 
 static void MapFile(posix_wad_file_t *wad, const char *filename)
 {
