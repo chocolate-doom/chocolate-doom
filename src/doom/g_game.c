@@ -1334,7 +1334,6 @@ static const int chexpars[6] =
 // G_DoCompleted 
 //
 boolean		secretexit; 
-extern const char *pagename;
  
 void G_ExitLevel (void) 
 { 
