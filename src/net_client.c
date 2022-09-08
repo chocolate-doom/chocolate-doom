@@ -100,7 +100,6 @@ typedef struct
     net_ticdiff_t cmd;
 } net_server_send_t;
 
-extern fixed_t offsetms;
 
 static net_connection_t client_connection;
 static net_clientstate_t client_state;
