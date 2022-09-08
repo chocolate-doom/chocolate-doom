@@ -123,7 +123,6 @@ boolean			menuactive;
 #define SKULLXOFF		-32
 #define LINEHEIGHT		16
 
-extern boolean		sendpause;
 char			savegamestrings[10][SAVESTRINGSIZE];
 
 char	endstring[160];
