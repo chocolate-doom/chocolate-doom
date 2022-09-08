@@ -2028,7 +2028,7 @@ int M_StringHeight(const char* string)
 {
     size_t             i;
     int             h;
-    int             height = SHORT(hu_font[0]->height);
+    int             height = SHORT(hu_font['A'-HU_FONTSTART]->height);
 	
     h = height;
     for (i = 0;i < strlen(string);i++)
@@ -2980,7 +2980,7 @@ void M_Drawer (void)
 
 	    x = ORIGWIDTH/2 - M_StringWidth(string) / 2;
 	    M_WriteText(x > 0 ? x : 0, y, string); // [crispy] prevent negative x-coords
-	    y += SHORT(hu_font[0]->height);
+	    y += SHORT(hu_font['A'-HU_FONTSTART]->height);
 	}
 
 	return;
