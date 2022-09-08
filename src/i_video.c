@@ -415,8 +415,6 @@ static void I_ToggleFullScreen(void)
 
 void I_GetEvent(void)
 {
-    extern void I_HandleKeyboardEvent(SDL_Event *sdlevent);
-    extern void I_HandleMouseEvent(SDL_Event *sdlevent);
     SDL_Event sdlevent;
 
     SDL_PumpEvents();
