@@ -77,8 +77,6 @@ typedef struct
 
 #define MAXANIMS                32
 
-extern anim_t	anims[MAXANIMS];
-extern anim_t*	lastanim;
 
 //
 // P_InitPicAnims
