@@ -23,6 +23,7 @@
 #include "doomtype.h"
 #include "deh_main.h"
 #include "deh_str.h"
+#include "d_loop.h"
 #include "i_system.h"
 #include "i_timer.h"
 #include "m_argv.h"
