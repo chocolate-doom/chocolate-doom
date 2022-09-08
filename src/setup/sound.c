@@ -71,9 +71,9 @@ static int show_talk = 0;
 int use_libsamplerate = 0;
 float libsamplerate_scale = 0.65;
 
-static char *music_pack_path = NULL;
-static char *timidity_cfg_path = NULL;
-static char *fluidsynth_sf_path = NULL;
+char *music_pack_path = NULL;
+char *timidity_cfg_path = NULL;
+char *fluidsynth_sf_path = NULL;
 static char *gus_patch_path = NULL;
 static int gus_ram_kb = 1024;
 #ifdef _WIN32
