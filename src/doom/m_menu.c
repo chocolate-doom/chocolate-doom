@@ -61,8 +61,6 @@
 #include "m_menu.h"
 
 
-extern boolean		message_dontfuckwithme;
-
 extern boolean		chat_on;		// in heads-up code
 
 //
