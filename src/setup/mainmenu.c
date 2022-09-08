@@ -319,14 +319,6 @@ static void InitTextscreen(void)
     SetWindowTitle();
 }
 
-// Restart the textscreen library.  Used when the video_driver variable
-// is changed.
-
-void RestartTextscreen(void)
-{
-    TXT_Shutdown();
-    InitTextscreen();
-}
 
 // 
 // Initialize and run the textscreen GUI.
