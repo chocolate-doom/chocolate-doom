@@ -33,6 +33,7 @@
 #define CHORUS_MIN 0
 #define CHORUS_MAX 127
 
+int winmm_midi_device = -1;
 int winmm_reverb_level = 40;
 int winmm_chorus_level = 0;
 
@@ -393,9 +394,17 @@ void ResetDevice(void)
 
 boolean I_WIN_InitMusic(void)
 {
-    UINT MidiDevice = MIDI_MAPPER;
+    UINT MidiDevice = (UINT)winmm_midi_device;
     MIDIHDR *hdr = &buffer.MidiStreamHdr;
+    MIDIOUTCAPS mcaps;
     MMRESULT mmr;
+
+    mmr = midiOutGetDevCaps(MidiDevice, &mcaps, sizeof(mcaps));
+    if (mmr != MMSYSERR_NOERROR)
+    {
+        MidiDevice = MIDI_MAPPER;
+        winmm_midi_device = MIDI_MAPPER;
+    }
 
     mmr = midiStreamOpen(&hMidiStream, &MidiDevice, (DWORD)1,
                          (DWORD_PTR)MidiStreamProc, (DWORD_PTR)NULL,

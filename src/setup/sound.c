@@ -14,6 +14,12 @@
 
 // Sound control menu
 
+#ifdef _WIN32
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#include <mmsystem.h>
+#endif
+
 #include <stdlib.h>
 #include <string.h>
 
@@ -71,6 +77,9 @@ static char *fluidsynth_sf_path = NULL;
 static char *gus_patch_path = NULL;
 static int gus_ram_kb = 1024;
 #ifdef _WIN32
+static char **midi_names;
+static int midi_index;
+static int winmm_midi_device = -1;
 static int winmm_reverb_level = 40;
 static int winmm_chorus_level = 0;
 #endif
@@ -129,10 +138,58 @@ static void OpenMusicPackDir(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
     }
 }
 
+#ifdef _WIN32
+static void UpdateMidiDevice(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(data))
+{
+    winmm_midi_device = midi_index - 1;
+}
+
+static txt_dropdown_list_t *MidiDeviceSelector(void)
+{
+    txt_dropdown_list_t *result;
+    UINT device_id;
+    UINT num_devices;
+    MMRESULT mmr;
+    MIDIOUTCAPS mcaps;
+    int i;
+
+    num_devices = midiOutGetNumDevs() + 1; // include MIDI_MAPPER
+    if (num_devices > 20)
+    {
+        num_devices = 20;
+    }
+    midi_names = malloc(num_devices * sizeof(char*));
+
+    device_id = -1; // MIDI_MAPPER
+    for (i = 0; i < num_devices; ++i)
+    {
+        mmr = midiOutGetDevCaps(device_id, &mcaps, sizeof(mcaps));
+        if (mmr == MMSYSERR_NOERROR)
+        {
+            midi_names[i] = malloc(sizeof(mcaps.szPname)); // MAXPNAMELEN := 32
+            memcpy(midi_names[i], mcaps.szPname, sizeof(mcaps.szPname));
+        }
+        device_id++;
+    }
+
+    midi_index = winmm_midi_device + 1;
+    result = TXT_NewDropdownList(&midi_index, (const char**)midi_names,
+                                 num_devices);
+    TXT_SignalConnect(result, "changed", UpdateMidiDevice, NULL);
+
+    return result;
+}
+#endif
+
 void ConfigSound(TXT_UNCAST_ARG(widget), void *user_data)
 {
     txt_window_t *window;
     txt_window_action_t *music_action;
+#ifdef _WIN32
+    int window_ypos = 2;
+#else
+    int window_ypos = 3;
+#endif
 
     // Build the window
 
@@ -141,7 +198,7 @@ void ConfigSound(TXT_UNCAST_ARG(widget), void *user_data)
 
     TXT_SetColumnWidths(window, 40);
     TXT_SetWindowPosition(window, TXT_HORIZ_CENTER, TXT_VERT_TOP,
-                                  TXT_SCREEN_W / 2, 3);
+                                  TXT_SCREEN_W / 2, window_ypos);
 
     music_action = TXT_NewWindowAction('m', "Music Packs");
     TXT_SetWindowAction(window, TXT_HORIZ_CENTER, music_action);
@@ -194,6 +251,14 @@ void ConfigSound(TXT_UNCAST_ARG(widget), void *user_data)
                 NULL)),
 
         TXT_NewRadioButton("Native MIDI", &snd_musicdevice, SNDDEVICE_GENMIDI),
+#ifdef _WIN32
+        TXT_NewConditional(&snd_musicdevice, SNDDEVICE_GENMIDI,
+            TXT_NewHorizBox(
+                TXT_NewStrut(4, 0),
+                TXT_NewLabel("Device: "),
+                MidiDeviceSelector(),
+                NULL)),
+#endif
         TXT_NewConditional(&snd_musicdevice, SNDDEVICE_GENMIDI,
             TXT_MakeTable(2,
                 TXT_NewStrut(4, 0),
@@ -230,6 +295,7 @@ void BindSoundVariables(void)
     M_BindStringVariable("timidity_cfg_path",     &timidity_cfg_path);
     M_BindStringVariable("fluidsynth_sf_path",    &fluidsynth_sf_path);
 #ifdef _WIN32
+    M_BindIntVariable("winmm_midi_device",        &winmm_midi_device);
     M_BindIntVariable("winmm_reverb_level",       &winmm_reverb_level);
     M_BindIntVariable("winmm_chorus_level",       &winmm_chorus_level);
 #endif

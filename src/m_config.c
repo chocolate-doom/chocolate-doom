@@ -967,6 +967,12 @@ static default_t extra_defaults_list[] =
 
 #ifdef _WIN32
     //!
+    // MIDI device for native Windows MIDI, default -1 (MIDI_MAPPER).
+    //
+
+    CONFIG_VARIABLE_INT(winmm_midi_device),
+
+    //!
     // Reverb level for native Windows MIDI, default 40, range 0-127.
     //
 

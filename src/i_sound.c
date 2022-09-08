@@ -86,6 +86,7 @@ extern char *music_pack_path;
 extern char *fluidsynth_sf_path;
 extern char *timidity_cfg_path;
 #ifdef _WIN32
+extern int winmm_midi_device;
 extern int winmm_reverb_level;
 extern int winmm_chorus_level;
 #endif
@@ -518,6 +519,7 @@ void I_BindSoundVariables(void)
     M_BindStringVariable("gus_patch_path",       &gus_patch_path);
     M_BindIntVariable("gus_ram_kb",              &gus_ram_kb);
 #ifdef _WIN32
+    M_BindIntVariable("winmm_midi_device",       &winmm_midi_device);
     M_BindIntVariable("winmm_reverb_level",      &winmm_reverb_level);
     M_BindIntVariable("winmm_chorus_level",      &winmm_chorus_level);
 #endif
