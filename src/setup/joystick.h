@@ -15,6 +15,10 @@
 #ifndef SETUP_JOYSTICK_H
 #define SETUP_JOYSTICK_H
 
+
+#include "i_joystick.h"
+
+
 extern int joystick_index;
 
 void ConfigJoystick(void *widget, void *user_data);
