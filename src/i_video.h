@@ -103,4 +103,7 @@ void I_GetWindowPosition(int *x, int *y, int w, int h);
 // Joystic/gamepad hysteresis
 extern unsigned int joywait;
 
+extern int usemouse;
+
+
 #endif

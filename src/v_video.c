@@ -985,7 +985,6 @@ static void DrawNonAcceleratingBox(int speed)
 
 void V_DrawMouseSpeedBox(int speed)
 {
-    extern int usemouse;
     int bgcolor, bordercolor, black;
 
     // If the mouse is turned off, don't draw the box at all.
