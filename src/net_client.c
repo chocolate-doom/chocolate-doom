@@ -43,7 +43,6 @@
 #include "w_checksum.h"
 #include "w_wad.h"
 
-extern void D_ReceiveTic(ticcmd_t *ticcmds, boolean *playeringame);
 
 typedef enum
 {
