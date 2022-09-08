@@ -66,28 +66,6 @@ static boolean music_packs_active = false;
 // depending on whether the current track is substituted.
 static music_module_t *active_music_module;
 
-// Sound modules
-
-extern void I_InitTimidityConfig(void);
-extern sound_module_t sound_sdl_module;
-extern sound_module_t sound_pcsound_module;
-extern music_module_t music_sdl_module;
-extern music_module_t music_opl_module;
-extern music_module_t music_pack_module;
-
-// For OPL module:
-
-extern int opl_io_port;
-
-// For native music module:
-
-extern char *music_pack_path;
-extern char *fluidsynth_sf_path;
-extern char *timidity_cfg_path;
-#ifdef _WIN32
-extern int winmm_reverb_level;
-extern int winmm_chorus_level;
-#endif
 
 // DOS-specific options: These are unused but should be maintained
 // so that the config file can be shared between chocolate
