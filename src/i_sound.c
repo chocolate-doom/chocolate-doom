@@ -77,7 +77,6 @@ extern music_module_t music_pack_module;
 
 // For OPL module:
 
-extern opl_driver_ver_t opl_drv_ver;
 extern int opl_io_port;
 
 // For native music module:
