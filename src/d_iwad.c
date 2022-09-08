@@ -45,6 +45,7 @@ static const iwad_t iwads[] =
     { "freedoom1.wad", doom,     retail,     "Freedoom: Phase 1" },
     { "freedm.wad",   doom2,     commercial, "FreeDM" },
     { "rekkrsa.wad",  doom,      retail,     "REKKR" }, // [crispy] REKKR
+    { "rekkrsl.wad",  doom,      retail,     "REKKR: Sunken Land" }, // [crispy] REKKR: Sunken Land (Steam retail)
     { "heretic.wad",  heretic,   retail,     "Heretic" },
     { "heretic1.wad", heretic,   shareware,  "Heretic Shareware" },
     { "hexen.wad",    hexen,     commercial, "Hexen" },
