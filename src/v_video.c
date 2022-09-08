@@ -841,7 +841,6 @@ void V_ScreenShot(const char *format)
     // find a file name to save it to
 
 #ifdef HAVE_LIBPNG
-    extern int png_screenshots;
     if (png_screenshots)
     {
         ext = "png";
