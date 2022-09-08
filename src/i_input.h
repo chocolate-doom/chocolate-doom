@@ -22,6 +22,9 @@
 
 #include "doomtype.h"
 
+#include "SDL.h"
+
+
 #define MAX_MOUSE_BUTTONS 8
 
 extern float mouse_acceleration;
