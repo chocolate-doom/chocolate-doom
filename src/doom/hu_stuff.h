@@ -61,6 +61,8 @@ extern patch_t *hu_font[HU_FONTSIZE];
 
 extern boolean message_dontfuckwithme;
 
+extern boolean chat_on;
+
 
 #endif
 
