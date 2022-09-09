@@ -688,6 +688,7 @@ void G_RecordDemo(skill_t skill, int numplayers, int episode, int map,
 
 void G_PlayDemo(char *name);
 void G_TimeDemo(char *name);
+boolean G_CheckDemoStatus(void);
 
 void G_ExitLevel(void);
 void G_SecretExitLevel(void);
