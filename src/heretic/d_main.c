@@ -139,8 +139,6 @@ void DrawMessage(void)
 //
 //---------------------------------------------------------------------------
 
-void R_ExecuteSetViewSize(void);
-
 
 void D_Display(void)
 {
