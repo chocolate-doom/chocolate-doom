@@ -955,7 +955,7 @@ void R_InitTextures (void)
 		// [crispy] make non-fatal
 		fprintf (stderr, "R_InitTextures: Missing patch in texture %s\n",
 			 texturename);
-		patch->patch = W_CheckNumForName("STCFN033"); // [crispy] dummy patch
+		patch->patch = W_CheckNumForName("STCFN036"); // [crispy] dummy patch, dollar sign that is unlikely to be used in the interepisode/menu text
 	    }
 	}		
 	texturecolumnlump[i] = Z_Malloc (texture->width*sizeof(**texturecolumnlump), PU_STATIC,0);
