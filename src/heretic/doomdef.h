@@ -694,6 +694,8 @@ void D_DoAdvanceDemo(void);
 void G_ExitLevel(void);
 void G_SecretExitLevel(void);
 
+void D_ProcessEvents(void);
+
 void G_WorldDone(void);
 
 void G_Ticker(void);
