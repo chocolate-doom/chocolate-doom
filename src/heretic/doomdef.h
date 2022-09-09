@@ -602,6 +602,9 @@ void D_DoomLoop(void);
 // calls all ?_Responder, ?_Ticker, and ?_Drawer functions
 // calls I_GetTime, I_StartFrame, and I_StartTic
 
+void D_StartTitle(void);
+
+
 //---------
 //SYSTEM IO
 //---------

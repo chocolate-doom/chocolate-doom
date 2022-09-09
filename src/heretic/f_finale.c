@@ -38,7 +38,6 @@ static int FontABaseLump;
 
 extern boolean viewactive;
 
-extern void D_StartTitle(void);
 
 /*
 =======================

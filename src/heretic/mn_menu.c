@@ -1044,7 +1044,6 @@ boolean MN_Responder(event_t * event)
     int key;
     int i;
     MenuItem_t *item;
-    extern void D_StartTitle(void);
     extern void G_CheckDemoStatus(void);
     char *textBuffer;
 
