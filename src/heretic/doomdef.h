@@ -811,6 +811,7 @@ void SB_Drawer(void);
 // MENU (MN_menu.c)
 //-----------------
 
+extern boolean askforquit;
 extern boolean MenuActive;
 
 void MN_Init(void);

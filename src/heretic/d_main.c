@@ -142,8 +142,6 @@ void DrawMessage(void)
 
 void D_Display(void)
 {
-    extern boolean askforquit;
-
     // Change the view size if needed
     if (setsizeneeded)
     {
