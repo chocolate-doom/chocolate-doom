@@ -33,7 +33,6 @@
 
 ticcmd_t *netcmds;
 
-extern void D_DoAdvanceDemo(void);
 extern void D_ProcessEvents(void);
 extern void G_BuildTiccmd(ticcmd_t *cmd, int maketic);
 
