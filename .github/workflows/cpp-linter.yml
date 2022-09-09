@@ -21,7 +21,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install libpng-dev libsamplerate0-dev libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-net-dev ninja-build
       - name: Run cmake to generate compilation database
         run: cmake -S . -B . -G Ninja -DCMAKE_EXPORT_COMPILE_COMMANDS=1
-      - uses: cpp-linter/cpp-linter-action@v1
+      - uses: cpp-linter/cpp-linter-action@v2
         id: linter
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
