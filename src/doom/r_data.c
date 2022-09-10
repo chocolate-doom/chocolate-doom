@@ -169,7 +169,6 @@ fixed_t*	spritetopoffset;
 
 lighttable_t	*colormaps;
 
-static int dummy_patch;
 
 //
 // MAPTEXTURE_T CACHING
@@ -956,10 +955,7 @@ void R_InitTextures (void)
 		// [crispy] make non-fatal
 		fprintf (stderr, "R_InitTextures: Missing patch in texture %s\n",
 			 texturename);
-		// [crispy] dummy patch, dollar sign
-		if (!dummy_patch)
-			dummy_patch = W_CheckNumForName("STCFN036");
-		patch->patch = dummy_patch;
+		patch->patch = W_CheckNumForName("WIPCNT"); // [crispy] dummy patch
 	    }
 	}		
 	texturecolumnlump[i] = Z_Malloc (texture->width*sizeof(**texturecolumnlump), PU_STATIC,0);
@@ -1435,10 +1431,6 @@ void R_PrecacheLevel (void)
 	    W_CacheLumpNum(lump , PU_CACHE);
 	}
     }
-
-    // [crispy] whatever we use as a dummy patch, we might still need it later
-    if (dummy_patch)
-	W_CacheLumpNum(dummy_patch , PU_STATIC);
 
     Z_Free(texturepresent);
     
