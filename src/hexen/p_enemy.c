@@ -26,7 +26,6 @@
 // Types
 // Private Data
 // External Data
-extern fixed_t FloatBobOffsets[64];
 
 
 //----------------------------------------------------------------------------

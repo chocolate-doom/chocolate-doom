@@ -136,6 +136,9 @@ enum
 extern mobjtype_t PuffType;
 extern mobj_t *MissileMobj;
 
+extern fixed_t FloatBobOffsets[64];
+
+
 mobj_t *P_SpawnMobj(fixed_t x, fixed_t y, fixed_t z, mobjtype_t type);
 void P_RemoveMobj(mobj_t * th);
 boolean P_SetMobjState(mobj_t * mobj, statenum_t state);

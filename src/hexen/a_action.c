@@ -33,7 +33,6 @@
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
-extern fixed_t FloatBobOffsets[64];
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 int orbitTableX[256] = {
