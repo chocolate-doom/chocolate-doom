@@ -785,6 +785,8 @@ void H2_ProcessEvents(void);
 
 void H2_DoAdvanceDemo(void);
 
+boolean G_CheckDemoStatus(void);
+
 void G_RecordDemo(skill_t skill, int numplayers, int episode, int map,
                   const char *name);
 // only called by startup code

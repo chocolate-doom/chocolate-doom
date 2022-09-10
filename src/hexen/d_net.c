@@ -36,8 +36,6 @@
 
 ticcmd_t *netcmds;
 
-extern boolean G_CheckDemoStatus(void);
-
 
 // Called when a player leaves the game
 
