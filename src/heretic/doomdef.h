@@ -814,6 +814,7 @@ void F_StartFinale(void);
 
 
 extern boolean inventory;
+extern int curpos;
 
 
 void SB_Init(void);
