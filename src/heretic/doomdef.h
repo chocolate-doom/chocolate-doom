@@ -812,6 +812,10 @@ void F_StartFinale(void);
 // STATUS BAR (SB_bar.c)
 //----------------------
 
+
+extern boolean inventory;
+
+
 void SB_Init(void);
 boolean SB_Responder(event_t * event);
 void SB_Ticker(void);

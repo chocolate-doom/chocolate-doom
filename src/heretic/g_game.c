@@ -279,7 +279,6 @@ static int G_NextWeapon(int direction)
 ====================
 */
 
-extern boolean inventory;
 extern int curpos;
 extern int inv_ptr;
 
