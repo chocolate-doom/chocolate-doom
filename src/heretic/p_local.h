@@ -225,6 +225,9 @@ void P_FakeZMovement(mobj_t * mo);
 boolean P_TryMove(mobj_t * thing, fixed_t x, fixed_t y);
 boolean P_TeleportMove(mobj_t * thing, fixed_t x, fixed_t y);
 void P_SlideMove(mobj_t * mo);
+
+extern fixed_t topslope, bottomslope;   // slopes to top and bottom of target
+
 boolean P_CheckSight(mobj_t * t1, mobj_t * t2);
 void P_UseLines(player_t * player);
 
