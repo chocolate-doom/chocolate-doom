@@ -343,6 +343,8 @@ void R_RenderBSPNode(int bspnum);
 // R_segs.c
 //
 extern int rw_angle1;           // angle to line origin
+extern lighttable_t **walllights;
+
 
 void R_RenderMaskedSegRange(drawseg_t * ds, int x1, int x2);
 
