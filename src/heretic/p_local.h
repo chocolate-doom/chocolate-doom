@@ -243,6 +243,11 @@ void P_LineAttack(mobj_t * t1, angle_t angle, fixed_t distance, fixed_t slope,
 
 void P_RadiusAttack(mobj_t * spot, mobj_t * source, int damage);
 
+#define	MAXSPECIALCROSS		8
+extern line_t *spechit[MAXSPECIALCROSS];
+extern int numspechit;
+
+
 // ***** P_SETUP *****
 
 extern byte *rejectmatrix;      // for fast sight rejection
