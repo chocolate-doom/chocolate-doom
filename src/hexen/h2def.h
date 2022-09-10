@@ -781,6 +781,8 @@ void G_DoLoadGame(void);
 void G_SaveGame(int slot, char *description);
 // called by M_Responder
 
+void H2_DoAdvanceDemo(void);
+
 void G_RecordDemo(skill_t skill, int numplayers, int episode, int map,
                   const char *name);
 // only called by startup code
