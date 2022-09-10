@@ -821,6 +821,7 @@ void F_StartFinale(void);
 extern boolean inventory;
 extern int curpos;
 extern int inv_ptr;
+extern int playerkeys;
 
 
 void SB_Init(void);
