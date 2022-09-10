@@ -381,8 +381,6 @@ void R_DrawPlanes(void)
     int count;
     fixed_t frac, fracstep;
 
-    extern byte *ylookup[MAXHEIGHT];
-
 #ifdef RANGECHECK
     if (ds_p - drawsegs > MAXDRAWSEGS)
         I_Error("R_DrawPlanes: drawsegs overflow (%td)",
