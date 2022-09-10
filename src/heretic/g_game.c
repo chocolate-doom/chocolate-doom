@@ -279,7 +279,6 @@ static int G_NextWeapon(int direction)
 ====================
 */
 
-extern int inv_ptr;
 
 boolean usearti = true;
 

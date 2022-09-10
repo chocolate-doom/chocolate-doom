@@ -305,7 +305,6 @@ void P_MovePlayer(player_t * player)
 */
 
 #define         ANG5    (ANG90/18)
-extern int inv_ptr;
 
 void P_DeathThink(player_t * player)
 {
