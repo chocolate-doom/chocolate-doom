@@ -803,6 +803,7 @@ void G_StartNewInit(void);
 
 void G_WorldDone(void);
 
+void G_BuildTiccmd(ticcmd_t *cmd, int maketic);
 void G_Ticker(void);
 boolean G_Responder(event_t * ev);
 
