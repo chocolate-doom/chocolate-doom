@@ -928,8 +928,19 @@ void AM_changeWindowScale(void)
 
 void AM_doFollowPlayer(void)
 {
-    next_m_x = m_x = (viewx >> FRACTOMAPBITS) - m_w/2;
-    next_m_y = m_y = (viewy >> FRACTOMAPBITS) - m_h/2;
+    // [crispy] FTOM(MTOF()) is needed to fix map line jitter in follow mode.
+    if (crispy->hires)
+    {
+        m_x = (viewx >> FRACTOMAPBITS) - m_w/2;
+        m_y = (viewy >> FRACTOMAPBITS) - m_h/2;
+    }
+    else
+    {
+        m_x = FTOM(MTOF(viewx >> FRACTOMAPBITS)) - m_w/2;
+        m_y = FTOM(MTOF(viewy >> FRACTOMAPBITS)) - m_h/2;
+    }
+    next_m_x = m_x;
+    next_m_y = m_y;
     m_x2 = m_x + m_w;
     m_y2 = m_y + m_h;
 
