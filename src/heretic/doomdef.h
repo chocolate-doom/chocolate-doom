@@ -588,6 +588,7 @@ extern int vanilla_demo_limit;
 //BASE LEVEL
 //----------
 void D_DoomMain(void);
+void CheckAbortStartup(void);
 void IncThermo(void);
 void InitThermo(int max);
 void tprintf(const char *string, int initflag);
