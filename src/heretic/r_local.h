@@ -294,6 +294,8 @@ extern fixed_t viewcos, viewsin;
 
 extern int detailshift;         // 0 = high, 1 = low
 
+extern int screenblocks;
+
 extern void (*colfunc) (void);
 extern void (*basecolfunc) (void);
 extern void (*tlcolfunc) (void);

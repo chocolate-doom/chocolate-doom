@@ -651,7 +651,6 @@ void InitThermo(int max)
 
 void D_BindVariables(void)
 {
-    extern int screenblocks;
     int i;
 
     M_ApplyPlatformDefaults();
