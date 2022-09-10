@@ -36,7 +36,6 @@
 
 ticcmd_t *netcmds;
 
-extern void H2_ProcessEvents(void);
 extern void G_BuildTiccmd(ticcmd_t *cmd, int maketic);
 extern boolean G_CheckDemoStatus(void);
 
