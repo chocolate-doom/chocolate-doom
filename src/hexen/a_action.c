@@ -788,8 +788,6 @@ void A_PoisonBagDamage(mobj_t * actor)
 {
     int bobIndex;
 
-    extern void A_Explode(mobj_t * actor);
-
     A_Explode(actor);
 
     bobIndex = actor->special2.i;

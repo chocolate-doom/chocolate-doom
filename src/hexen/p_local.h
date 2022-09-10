@@ -184,6 +184,7 @@ void A_NoBlocking(mobj_t * actor);
 boolean P_LookForMonsters(mobj_t * actor);
 void P_InitCreatureCorpseQueue(boolean corpseScan);
 void A_DeQueueCorpse(mobj_t * actor);
+void A_Explode(mobj_t *actor);
 
 
 // ***** P_MAPUTL *****
