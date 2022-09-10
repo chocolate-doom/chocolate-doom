@@ -259,7 +259,7 @@ enum
 
 enum
 {
-    RATIO_4_3,
+    RATIO_NARROW,
     RATIO_MATCH_SCREEN,
     RATIO_16_10,
     RATIO_16_9,

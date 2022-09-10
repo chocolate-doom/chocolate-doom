@@ -2291,7 +2291,7 @@ static void DrawCrispness1(void)
     MN_DrTextA(crispy->hires ? "ON" : "OFF", 254, 35);
 
     // Widescreen
-    MN_DrTextA(crispy->widescreen == RATIO_4_3 ? "4:3" :
+    MN_DrTextA(crispy->widescreen == RATIO_NARROW ? "NARROW" :
                crispy->widescreen == RATIO_MATCH_SCREEN ? "MATCH SCREEN" :
                crispy->widescreen == RATIO_16_10 ? "16:10" :
                crispy->widescreen == RATIO_16_9 ? "16:9" :

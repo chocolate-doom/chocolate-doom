@@ -156,7 +156,7 @@ multiitem_t multiitem_widgets[NUM_WIDGETS] =
 
 multiitem_t multiitem_widescreen[NUM_RATIOS] =
 {
-    {RATIO_4_3, "4:3"},
+    {RATIO_NARROW, "Narrow"},
     {RATIO_MATCH_SCREEN, "Match screen"},
     {RATIO_16_10, "16:10"},
     {RATIO_16_9, "16:9"},
