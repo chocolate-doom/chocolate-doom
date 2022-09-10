@@ -566,6 +566,7 @@ extern skill_t startskill;
 extern int startepisode;
 extern int startmap;
 extern boolean autostart;
+extern boolean advancedemo;
 
 extern boolean testcontrols;
 extern int testcontrols_mousespeed;
