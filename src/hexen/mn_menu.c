@@ -1017,6 +1017,14 @@ static void SCLoadGame(int option)
 //
 //---------------------------------------------------------------------------
 
+static const char *const class_str[NUMCLASSES] =
+{
+    "FIGHTER",
+    "CLERIC",
+    "MAGE",
+    "PIG",
+};
+
 static void SCSaveGame(int option)
 {
     char *ptr;
@@ -1034,6 +1042,13 @@ static void SCSaveGame(int option)
 
         M_StringCopy(oldSlotText, SlotText[option], sizeof(oldSlotText));
         ptr = SlotText[option];
+        // [crispy] generate a default save slot name when saving to an empty slot
+        if (!oldSlotText[0] || (strlen(oldSlotText) >= 3 && !strncmp(oldSlotText, "HUB", 3)))
+        {
+          M_snprintf(ptr, sizeof(oldSlotText), "HUB %d.%d, %s",
+                     P_GetMapCluster(gamemap), gamemap,
+                     class_str[PlayerClass[consoleplayer]]);
+        }
         while (*ptr)
         {
             ptr++;
