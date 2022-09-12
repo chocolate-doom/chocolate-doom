@@ -836,6 +836,7 @@ void SV_UpdateRebornSlot(void);
 void SV_ClearRebornSlot(void);
 boolean SV_RebornSlotAvailable(void);
 int SV_GetRebornSlot(void);
+void SV_ClearSaveSlot(int slot); // [crispy]
 
 //-----
 //PLAY

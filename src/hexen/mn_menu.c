@@ -568,7 +568,8 @@ const char *QuitEndMsg[] = {
     "ARE YOU SURE YOU WANT TO END THE GAME?",
     "DO YOU WANT TO QUICKSAVE THE GAME NAMED",
     "DO YOU WANT TO QUICKLOAD THE GAME NAMED",
-    "ARE YOU SURE YOU WANT TO SUICIDE?"
+    "ARE YOU SURE YOU WANT TO SUICIDE?",
+    "DO YOU WANT TO DELETE THE GAME NAMED",
 };
 
 void MN_Drawer(void)
@@ -598,6 +599,13 @@ void MN_Drawer(void)
                            MN_TextAWidth(SlotText[quickload - 1]) / 2, 90);
                 MN_DrTextA("?", 160 +
                            MN_TextAWidth(SlotText[quicksave - 1]) / 2, 90);
+            }
+            if (typeofask == 6)
+            {
+                MN_DrTextA(SlotText[CurrentItPos], 160 -
+                           MN_TextAWidth(SlotText[CurrentItPos]) / 2, 90);
+                MN_DrTextA("?", 160 +
+                           MN_TextAWidth(SlotText[CurrentItPos]) / 2, 90);
             }
             UpdateState |= I_FULLSCRN;
         }
@@ -1011,6 +1019,19 @@ static void SCLoadGame(int option)
     }
 }
 
+// [crispy]
+static void SCDeleteGame(int option)
+{
+    if (!SlotStatus[option])
+    {
+        return;
+    }
+
+    SV_ClearSaveSlot(option);
+    MN_LoadSlotText();
+    BorderNeedRefresh = true;
+}
+
 //---------------------------------------------------------------------------
 //
 // PROC SCSaveGame
@@ -1385,6 +1406,14 @@ static void CrispyMouselook(int option)
     crispy->mouselook = !crispy->mouselook;
 }
 
+static void CrispyReturnToMenu()
+{
+	Menu_t *cur = CurrentMenu;
+	MN_ActivateMenu();
+	CurrentMenu = cur;
+	CurrentItPos = CurrentMenu->oldItPos;
+}
+
 //---------------------------------------------------------------------------
 //
 // FUNC MN_Responder
@@ -1530,6 +1559,11 @@ boolean MN_Responder(event_t * event)
                 case 5:
                     BorderNeedRefresh = true;
                     mn_SuicideConsole = true;
+                    break;
+                case 6:
+                    SCDeleteGame(CurrentItPos);
+                    BorderNeedRefresh = true;
+                    CrispyReturnToMenu();
                     break;
                 default:
                     break;
@@ -1877,6 +1911,25 @@ boolean MN_Responder(event_t * event)
             else
             {
                 SetMenu(CurrentMenu->prevMenu);
+            }
+            return (true);
+        }
+        // [crispy] delete a savegame
+        else if (key == key_menu_del)
+        {
+            if (CurrentMenu == &LoadMenu || CurrentMenu == &SaveMenu)
+            {
+                if (SlotStatus[CurrentItPos])
+                {
+                    MenuActive = false;
+                    askforquit = true;
+                    if (!netgame && !demoplayback)
+                    {
+                        paused = true;
+                    }
+                    typeofask = 6;
+                    S_StartSound(NULL, SFX_CHAT);
+                }
             }
             return (true);
         }
