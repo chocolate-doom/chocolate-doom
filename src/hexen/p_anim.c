@@ -68,7 +68,6 @@ static void P_LightningFlash(void);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
-extern boolean DoubleSky;
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 

@@ -409,6 +409,7 @@ extern planefunction_t floorfunc, ceilingfunc;
 extern fixed_t Sky1ColumnOffset;
 extern fixed_t Sky2ColumnOffset;
 extern int skyflatnum;
+extern boolean DoubleSky;
 
 extern short openings[MAXOPENINGS], *lastopening;
 
