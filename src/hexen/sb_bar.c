@@ -1928,7 +1928,6 @@ static void CheatScriptFunc3(player_t * player, Cheat_t * cheat)
     }
 }
 
-extern int cheating;
 
 static void CheatRevealFunc(player_t * player, Cheat_t * cheat)
 {
