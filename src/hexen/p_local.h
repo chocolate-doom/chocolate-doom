@@ -298,6 +298,7 @@ extern mobj_t **blocklinks;     // for thing chains
 // ***** P_INTER *****
 
 extern int clipmana[NUMMANA];
+extern int ArmorIncrement[NUMCLASSES][NUMARMOR];
 extern const char *TextKeyMessages[];
 
 
