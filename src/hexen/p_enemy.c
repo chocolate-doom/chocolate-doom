@@ -4716,8 +4716,6 @@ void A_FastChase(mobj_t * actor)
 
 void A_FighterAttack(mobj_t * actor)
 {
-    extern void A_FSwordAttack2(mobj_t * actor);
-
     if (!actor->target)
         return;
     A_FSwordAttack2(actor);

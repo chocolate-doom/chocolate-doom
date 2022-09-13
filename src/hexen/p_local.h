@@ -187,6 +187,7 @@ void P_InitCreatureCorpseQueue(boolean corpseScan);
 void A_DeQueueCorpse(mobj_t * actor);
 void A_Explode(mobj_t *actor);
 void A_CHolyAttack3(mobj_t *actor);
+void A_FSwordAttack2(mobj_t *actor);
 
 
 // ***** P_MAPUTL *****
