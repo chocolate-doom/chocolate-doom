@@ -282,6 +282,8 @@ extern mobj_t **blocklinks;     // for thing chains
 // ***** P_INTER *****
 
 extern int clipmana[NUMMANA];
+extern const char *TextKeyMessages[];
+
 
 void P_SetMessage(player_t * player, const char *message, boolean ultmsg);
 void P_SetYellowMessage(player_t * player, const char *message, boolean ultmsg);
