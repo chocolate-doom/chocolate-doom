@@ -56,7 +56,6 @@ void G_DoSingleReborn(void);
 void H2_PageTicker(void);
 void H2_AdvanceDemo(void);
 
-extern boolean mn_SuicideConsole;
 
 gameaction_t gameaction;
 gamestate_t gamestate;

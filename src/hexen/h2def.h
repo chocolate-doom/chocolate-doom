@@ -1088,6 +1088,7 @@ int MN_TextBWidth(const char *text);
 extern int messageson;
 extern boolean MenuActive;
 extern boolean askforquit;
+extern boolean mn_SuicideConsole;
 
 
 #include "sounds.h"
