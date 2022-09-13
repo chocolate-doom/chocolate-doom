@@ -381,6 +381,8 @@ enum
 
 extern polyobj_t *polyobjs;     // list of all poly-objects on the level
 extern int po_NumPolyobjs;
+extern polyblock_t **PolyBlockMap;
+
 
 void T_PolyDoor(polydoor_t * pd);
 void T_RotatePoly(polyevent_t * pe);
