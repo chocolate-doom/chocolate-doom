@@ -249,6 +249,9 @@ extern int tmfloorpic;
 extern mobj_t *BlockingMobj;
 
 extern line_t *ceilingline;
+extern line_t *spechit[MAXSPECIALCROSS];
+
+
 boolean P_TestMobjLocation(mobj_t * mobj);
 boolean P_CheckPosition(mobj_t * thing, fixed_t x, fixed_t y);
 mobj_t *P_CheckOnmobj(mobj_t * thing);

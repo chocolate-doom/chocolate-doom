@@ -228,7 +228,6 @@ fixed_t xspeed[8] =
 fixed_t yspeed[8] =
     { 0, 47000, FRACUNIT, 47000, 0, -47000, -FRACUNIT, -47000 };
 
-extern line_t *spechit[MAXSPECIALCROSS];
 extern int numspechit;
 
 boolean P_Move(mobj_t * actor)
