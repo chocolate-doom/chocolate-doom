@@ -383,7 +383,6 @@ void R_DrawPlanes(void)
     int skyTexture2;
     int scrollOffset;
 
-    extern byte *ylookup[MAXHEIGHT];
     extern int columnofs[MAXWIDTH];
 
 #ifdef RANGECHECK
