@@ -814,6 +814,10 @@ boolean G_Responder(event_t * ev);
 
 void G_ScreenShot(void);
 
+
+extern int LeaveMap;
+
+
 //-------
 //SV_SAVE
 //-------
