@@ -114,8 +114,6 @@ boolean         randomparm;     // [STRIFE] haleyjd 20130915: checkparm of -rand
 boolean         showintro = true;   // [STRIFE] checkparm of -nograph, disables intro
 
 
-extern  boolean	inhelpscreens;
-
 skill_t		startskill;
 int             startepisode;
 int		startmap;
