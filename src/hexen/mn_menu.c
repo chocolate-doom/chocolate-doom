@@ -125,7 +125,6 @@ void MN_LoadSlotText(void);
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
 extern int detailLevel;
-extern boolean gamekeydown[256];
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 

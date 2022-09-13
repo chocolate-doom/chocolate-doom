@@ -820,6 +820,7 @@ void G_ScreenShot(void);
 
 
 extern int LeaveMap;
+extern boolean gamekeydown[NUMKEYS];
 
 
 //-------
