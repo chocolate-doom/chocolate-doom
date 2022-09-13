@@ -87,8 +87,6 @@ static void CheatTrackFunc2(player_t * player, Cheat_t * cheat);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
-extern int AutoArmorSave[NUMCLASSES];
-
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
 boolean DebugSound;             // Debug flag for displaying sound info
