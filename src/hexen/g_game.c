@@ -203,8 +203,6 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
     int flyheight;
     int pClass;
 
-    extern boolean artiskip;
-
     // haleyjd: removed externdriver crap
 
     pClass = players[consoleplayer].class;

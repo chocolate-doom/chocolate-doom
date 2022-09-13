@@ -719,6 +719,9 @@ void H2_GameLoop(void);
 // calls all ?_Responder, ?_Ticker, and ?_Drawer functions
 // calls I_GetTime, I_StartFrame, and I_StartTic
 
+extern boolean artiskip;
+
+
 //---------
 //SYSTEM IO
 //---------
