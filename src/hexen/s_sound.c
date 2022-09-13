@@ -65,7 +65,6 @@ static int cd_track_end_time = 0;
 //void *mus_sndptr;
 //byte *soundCurve;
 
-extern musicinfo_t S_music[];
 
 static channel_t Channel[MAX_CHANNELS];
 static void *RegisteredSong;      //the current registered song.
