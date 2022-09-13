@@ -239,6 +239,10 @@ mobj_t *P_RoughMonsterSearch(mobj_t * mo, int distance);
 
 // ***** P_MAP *****
 
+
+#define MAXSPECIALCROSS         8
+
+
 extern boolean floatok;         // if true, move would be ok if
 extern fixed_t tmfloorz, tmceilingz;    // within tmfloorz - tmceilingz
 extern int tmfloorpic;
