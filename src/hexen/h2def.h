@@ -1057,6 +1057,9 @@ void F_StartFinale(void);
 
 extern int inv_ptr;
 extern int curpos;
+extern boolean inventory;
+
+
 void SB_Init(void);
 void SB_SetClassData(void);
 boolean SB_Responder(event_t * event);

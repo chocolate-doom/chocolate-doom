@@ -190,7 +190,6 @@ int testcontrols_mousespeed;
 ====================
 */
 
-extern boolean inventory;
 boolean usearti = true;
 
 void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
