@@ -41,6 +41,7 @@
 #include "p_local.h"
 #include "v_video.h"
 #include "w_main.h"
+#include "am_map.h"
 
 #include "hexen_icon.c"
 

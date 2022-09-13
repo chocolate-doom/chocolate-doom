@@ -24,6 +24,8 @@
 #include "p_local.h"
 #include "v_video.h"
 #include "i_swap.h"
+#include "am_map.h"
+
 
 // MACROS ------------------------------------------------------------------
 

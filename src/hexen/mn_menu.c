@@ -30,6 +30,8 @@
 #include "r_local.h"
 #include "s_sound.h"
 #include "v_video.h"
+#include "am_map.h"
+
 
 // MACROS ------------------------------------------------------------------
 
