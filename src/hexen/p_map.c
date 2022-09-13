@@ -1681,8 +1681,6 @@ boolean PTR_ShootTraverse(intercept_t * in)
     fixed_t dist;
     fixed_t thingtopslope, thingbottomslope;
 
-    extern mobj_t LavaInflictor;
-
     if (in->isaline)
     {
         li = in->d.line;

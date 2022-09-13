@@ -25,6 +25,9 @@ extern int *TerrainTypes;
 extern short numlinespecials;
 extern line_t *linespeciallist[MAXLINEANIMS];
 
+extern mobj_t LavaInflictor;
+
+
 //      Define values for map objects
 #define MO_TELEPORTMAN 14
 

@@ -45,7 +45,6 @@ static void PlayerLandedOnThing(mobj_t * mo, mobj_t * onmobj);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
-extern mobj_t LavaInflictor;
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
