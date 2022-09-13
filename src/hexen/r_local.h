@@ -519,6 +519,7 @@ extern fixed_t dc_iscale;
 extern fixed_t dc_texturemid;
 extern byte *dc_source;         // first pixel in a column
 extern byte *ylookup[MAXHEIGHT];
+extern int columnofs[MAXWIDTH];
 
 
 void R_DrawColumn(void);

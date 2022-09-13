@@ -383,8 +383,6 @@ void R_DrawPlanes(void)
     int skyTexture2;
     int scrollOffset;
 
-    extern int columnofs[MAXWIDTH];
-
 #ifdef RANGECHECK
     if (ds_p - drawsegs > MAXDRAWSEGS)
     {
