@@ -257,6 +257,8 @@ extern line_t *ceilingline;
 extern line_t *spechit[MAXSPECIALCROSS];
 extern int numspechit;
 
+extern fixed_t topslope, bottomslope;   // slopes to top and bottom of target
+
 
 boolean P_TestMobjLocation(mobj_t * mobj);
 boolean P_CheckPosition(mobj_t * thing, fixed_t x, fixed_t y);
