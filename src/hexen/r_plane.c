@@ -35,8 +35,6 @@
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
-extern fixed_t Sky2ScrollDelta;
-
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 int Sky1Texture;

@@ -78,6 +78,7 @@ line_t *P_FindLine(int lineTag, int *searchPosition);
 
 
 extern fixed_t Sky1ScrollDelta;
+extern fixed_t Sky2ScrollDelta;
 
 
 void P_AnimateSurfaces(void);
