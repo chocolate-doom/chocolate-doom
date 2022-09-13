@@ -250,6 +250,7 @@ extern mobj_t *BlockingMobj;
 
 extern line_t *ceilingline;
 extern line_t *spechit[MAXSPECIALCROSS];
+extern int numspechit;
 
 
 boolean P_TestMobjLocation(mobj_t * mobj);
