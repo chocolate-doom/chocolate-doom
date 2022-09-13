@@ -101,6 +101,8 @@ void P_PostMorphWeapon(player_t * player, weapontype_t weapon);
 
 // ***** P_USER *****
 
+
+extern int ArmorMax[NUMCLASSES];
 extern int PStateNormal[NUMCLASSES];
 extern int PStateRun[NUMCLASSES];
 extern int PStateAttack[NUMCLASSES];
