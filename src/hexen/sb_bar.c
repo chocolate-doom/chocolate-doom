@@ -1772,8 +1772,6 @@ static void CheatWarpFunc(player_t * player, Cheat_t * cheat)
 
 static void CheatPigFunc(player_t * player, Cheat_t * cheat)
 {
-    extern boolean P_UndoPlayerMorph(player_t * player);
-
     if (player->morphTics)
     {
         P_UndoPlayerMorph(player);

@@ -117,6 +117,8 @@ boolean P_UseArtifact(player_t * player, artitype_t arti);
 int P_GetPlayerNum(player_t * player);
 void P_TeleportOther(mobj_t * victim);
 void ResetBlasted(mobj_t * mo);
+boolean P_UndoPlayerMorph(player_t *player);
+
 
 // ***** P_MOBJ *****
 
