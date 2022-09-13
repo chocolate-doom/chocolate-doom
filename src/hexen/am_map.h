@@ -117,6 +117,5 @@ typedef struct
     fixed_t slp, islp;
 } islope_t;
 
-// extern int f_x, f_y, f_w, f_h;
 
 #endif
