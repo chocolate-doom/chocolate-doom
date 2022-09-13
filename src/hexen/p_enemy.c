@@ -4726,8 +4726,6 @@ void A_FighterAttack(mobj_t * actor)
 
 void A_ClericAttack(mobj_t * actor)
 {
-    extern void A_CHolyAttack3(mobj_t * actor);
-
     if (!actor->target)
         return;
     A_CHolyAttack3(actor);
