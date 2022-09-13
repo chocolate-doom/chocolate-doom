@@ -35,7 +35,6 @@
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
-extern fixed_t Sky1ScrollDelta;
 extern fixed_t Sky2ScrollDelta;
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------

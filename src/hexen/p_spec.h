@@ -76,6 +76,10 @@ line_t *P_FindLine(int lineTag, int *searchPosition);
 // P_anim.c
 //-------------------------------
 
+
+extern fixed_t Sky1ScrollDelta;
+
+
 void P_AnimateSurfaces(void);
 void P_InitFTAnims(void);
 void P_InitLightning(void);
