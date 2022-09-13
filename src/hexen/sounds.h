@@ -313,4 +313,8 @@ typedef enum
     NUMSFX
 } sfxenum_t;
 
+
+extern sfxinfo_t S_sfx[];
+
+
 #endif
