@@ -33,7 +33,6 @@
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
-extern void P_ExplodeMissile(mobj_t * mo);
 extern void A_UnHideThing(mobj_t * actor);
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------

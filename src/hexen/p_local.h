@@ -174,6 +174,7 @@ void P_CreateTIDList(void);
 void P_RemoveMobjFromTIDList(mobj_t * mobj);
 void P_InsertMobjIntoTIDList(mobj_t * mobj, int tid);
 mobj_t *P_FindMobjFromTID(int tid, int *searchPosition);
+void P_ExplodeMissile(mobj_t *mo);
 mobj_t *P_SpawnKoraxMissile(fixed_t x, fixed_t y, fixed_t z,
                             mobj_t * source, mobj_t * dest, mobjtype_t type);
 
