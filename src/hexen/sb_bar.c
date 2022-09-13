@@ -742,7 +742,6 @@ static int oldpieces = -1;
 static int oldweapon = -1;
 static int oldkeys = -1;
 
-extern boolean automapactive;
 
 void SB_Drawer(void)
 {

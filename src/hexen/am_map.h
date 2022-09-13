@@ -118,4 +118,7 @@ typedef struct
 } islope_t;
 
 
+extern boolean automapactive;
+
+
 #endif

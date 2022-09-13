@@ -50,7 +50,6 @@ static char *GetFinaleText(int sequence);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
-extern boolean automapactive;
 extern boolean viewactive;
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------

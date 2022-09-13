@@ -89,7 +89,6 @@ static void WarpCheck(void);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
-extern boolean automapactive;
 extern boolean MenuActive;
 extern boolean askforquit;
 
