@@ -406,6 +406,7 @@ void R_RenderMaskedSegRange(drawseg_t * ds, int x1, int x2);
 typedef void (*planefunction_t) (int top, int bottom);
 extern planefunction_t floorfunc, ceilingfunc;
 
+extern fixed_t Sky1ColumnOffset;
 extern int skyflatnum;
 
 extern short openings[MAXOPENINGS], *lastopening;

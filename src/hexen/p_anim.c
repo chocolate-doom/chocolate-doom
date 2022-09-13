@@ -68,7 +68,6 @@ static void P_LightningFlash(void);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
-extern fixed_t Sky1ColumnOffset;
 extern fixed_t Sky2ColumnOffset;
 extern boolean DoubleSky;
 
