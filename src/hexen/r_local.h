@@ -426,6 +426,8 @@ visplane_t *R_FindPlane(fixed_t height, int picnum, int lightlevel,
                         int special);
 visplane_t *R_CheckPlane(visplane_t * pl, int start, int stop);
 
+void R_InitSky(int map);
+
 
 //
 // R_debug.m

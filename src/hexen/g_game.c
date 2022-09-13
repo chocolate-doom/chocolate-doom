@@ -34,7 +34,6 @@
 
 // External functions
 
-extern void R_InitSky(int map);
 
 // Functions
 
