@@ -677,7 +677,7 @@ boolean P_StartLockedACS(line_t * line, byte * args, mobj_t * mo, int side)
     byte newArgs[5];
     char LockedBuffer[80];
 
-    extern char *TextKeyMessages[11];
+    extern const char *TextKeyMessages[];
 
     lock = args[4];
     if (!mo->player)
