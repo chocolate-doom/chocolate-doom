@@ -124,7 +124,6 @@ void MN_LoadSlotText(void);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
-extern int detailLevel;
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 

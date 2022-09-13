@@ -1098,6 +1098,7 @@ extern int messageson;
 extern boolean MenuActive;
 extern boolean askforquit;
 extern boolean mn_SuicideConsole;
+extern int detailLevel;
 
 
 #include "sounds.h"
