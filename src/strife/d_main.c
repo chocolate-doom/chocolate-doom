@@ -114,10 +114,6 @@ boolean         randomparm;     // [STRIFE] haleyjd 20130915: checkparm of -rand
 boolean         showintro = true;   // [STRIFE] checkparm of -nograph, disables intro
 
 
-//extern int soundVolume;
-//extern  int	sfxVolume;
-//extern  int	musicVolume;
-
 extern  boolean	inhelpscreens;
 
 skill_t		startskill;
