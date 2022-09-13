@@ -4733,8 +4733,6 @@ void A_ClericAttack(mobj_t * actor)
 
 void A_MageAttack(mobj_t * actor)
 {
-    extern void A_MStaffAttack2(mobj_t * actor);
-
     if (!actor->target)
         return;
     A_MStaffAttack2(actor);
