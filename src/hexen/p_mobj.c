@@ -1749,7 +1749,6 @@ mobj_t *P_FindMobjFromTID(int tid, int *searchPosition)
 //
 //---------------------------------------------------------------------------
 
-extern fixed_t attackrange;
 
 void P_SpawnPuff(fixed_t x, fixed_t y, fixed_t z)
 {
