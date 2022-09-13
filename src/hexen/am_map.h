@@ -121,4 +121,7 @@ typedef struct
 extern boolean automapactive;
 
 
+void AM_Stop(void);
+
+
 #endif

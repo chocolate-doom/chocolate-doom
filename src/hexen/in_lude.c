@@ -95,7 +95,6 @@ static char *HubText;
 //
 //========================================================================
 
-extern void AM_Stop(void);
 
 void IN_Start(void)
 {
