@@ -858,7 +858,6 @@ static void SetMouseButtons(unsigned int buttons_mask)
 boolean G_Responder(event_t * ev)
 {
     player_t *plr;
-    extern boolean MenuActive;
 
     plr = &players[consoleplayer];
     if (ev->type == ev_keyup && ev->data1 == key_useartifact)

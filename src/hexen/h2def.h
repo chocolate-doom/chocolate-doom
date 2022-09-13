@@ -1080,6 +1080,8 @@ void MN_DrTextB(const char *text, int x, int y);
 int MN_TextBWidth(const char *text);
 
 extern int messageson;
+extern boolean MenuActive;
+
 
 #include "sounds.h"
 
