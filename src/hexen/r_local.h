@@ -397,6 +397,8 @@ void R_RenderBSPNode(int bspnum);
 extern int rw_angle1;           // angle to line origin
 extern int TransTextureStart;
 extern int TransTextureEnd;
+extern lighttable_t **walllights;
+
 
 void R_RenderMaskedSegRange(drawseg_t * ds, int x1, int x2);
 
