@@ -407,6 +407,7 @@ typedef void (*planefunction_t) (int top, int bottom);
 extern planefunction_t floorfunc, ceilingfunc;
 
 extern fixed_t Sky1ColumnOffset;
+extern fixed_t Sky2ColumnOffset;
 extern int skyflatnum;
 
 extern short openings[MAXOPENINGS], *lastopening;
