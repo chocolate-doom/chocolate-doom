@@ -140,7 +140,6 @@ static int next_weapon = 0;
 
 #define SLOWTURNTICS    6
 
-#define NUMKEYS 256
 boolean gamekeydown[NUMKEYS];
 int turnheld;                   // for accelerative turning
 int lookheld;

@@ -125,7 +125,7 @@ void MN_LoadSlotText(void);
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
 extern int detailLevel;
-extern boolean gamekeydown[256];        // The NUMKEYS macro is local to g_game
+extern boolean gamekeydown[256];
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
