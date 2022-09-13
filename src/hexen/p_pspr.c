@@ -33,7 +33,6 @@
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
-extern void A_UnHideThing(mobj_t * actor);
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 

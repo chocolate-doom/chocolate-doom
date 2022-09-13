@@ -328,6 +328,8 @@ void AM_Drawer(void);
 boolean A_LocalQuake(byte * args, mobj_t * victim);
 void P_SpawnDirt(mobj_t * actor, fixed_t radius);
 void A_BridgeRemove(mobj_t * actor);
+void A_UnHideThing(mobj_t *actor);
+
 
 // ***** SB_BAR *****
 
