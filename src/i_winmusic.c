@@ -407,6 +407,7 @@ boolean I_WIN_InitMusic(void)
         all_devices = midiOutGetNumDevs() + 1; // include MIDI_MAPPER
         for (i = 0; i < all_devices; ++i)
         {
+            // start from device id -1 (MIDI_MAPPER)
             mmr = midiOutGetDevCaps(i - 1, &mcaps, sizeof(mcaps));
             if (mmr == MMSYSERR_NOERROR)
             {
