@@ -432,8 +432,7 @@ boolean I_WIN_InitMusic(void)
         mmr = midiOutGetDevCaps(MIDI_MAPPER, &mcaps, sizeof(mcaps));
         if (mmr == MMSYSERR_NOERROR)
         {
-            winmm_midi_device = malloc(sizeof(mcaps.szPname));
-            memcpy(winmm_midi_device, mcaps.szPname, sizeof(mcaps.szPname));
+            winmm_midi_device = M_StringDuplicate(mcaps.szPname);
         }
     }
 

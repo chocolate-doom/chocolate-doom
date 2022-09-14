@@ -144,8 +144,7 @@ static void OpenMusicPackDir(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
 static void UpdateMidiDevice(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(data))
 {
     free(winmm_midi_device);
-    winmm_midi_device = malloc(strlen(midi_names[midi_index]) + 1);
-    strcpy(winmm_midi_device, midi_names[midi_index]);
+    winmm_midi_device = M_StringDuplicate(midi_names[midi_index]);
 }
 
 static txt_dropdown_list_t *MidiDeviceSelector(void)
@@ -194,8 +193,7 @@ static txt_dropdown_list_t *MidiDeviceSelector(void)
         mmr = midiOutGetDevCaps(device_ids[i], &mcaps, sizeof(mcaps));
         if (mmr == MMSYSERR_NOERROR)
         {
-            midi_names[i] = malloc(sizeof(mcaps.szPname)); // MAXPNAMELEN := 32
-            memcpy(midi_names[i], mcaps.szPname, sizeof(mcaps.szPname));
+            midi_names[i] = M_StringDuplicate(mcaps.szPname);
         }
     }
 
@@ -213,8 +211,7 @@ static txt_dropdown_list_t *MidiDeviceSelector(void)
             // give up and use MIDI_MAPPER
             midi_index = 0;
             free(winmm_midi_device);
-            winmm_midi_device = malloc(strlen(midi_names[0]) + 1);
-            strcpy(winmm_midi_device, midi_names[0]);
+            winmm_midi_device = M_StringDuplicate(midi_names[0]);
             break;
         }
     }
