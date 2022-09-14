@@ -246,5 +246,9 @@ typedef enum {
 
 void I_SetOPLDriverVer(opl_driver_ver_t ver);
 
+#ifdef _WIN32
+extern char *winmm_midi_device;
+#endif
+
 #endif
 

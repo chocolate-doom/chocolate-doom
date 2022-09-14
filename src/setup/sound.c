@@ -77,9 +77,11 @@ static char *fluidsynth_sf_path = NULL;
 static char *gus_patch_path = NULL;
 static int gus_ram_kb = 1024;
 #ifdef _WIN32
+#define MAX_MIDI_DEVICES 20
 static char **midi_names;
+static int midi_num_devices;
 static int midi_index;
-static int winmm_midi_device = -1;
+char *winmm_midi_device = NULL;
 static int winmm_reverb_level = 40;
 static int winmm_chorus_level = 0;
 #endif
@@ -141,40 +143,84 @@ static void OpenMusicPackDir(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
 #ifdef _WIN32
 static void UpdateMidiDevice(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(data))
 {
-    winmm_midi_device = midi_index - 1;
+    free(winmm_midi_device);
+    winmm_midi_device = malloc(strlen(midi_names[midi_index]) + 1);
+    strcpy(winmm_midi_device, midi_names[midi_index]);
 }
 
 static txt_dropdown_list_t *MidiDeviceSelector(void)
 {
     txt_dropdown_list_t *result;
-    UINT device_id;
-    UINT num_devices;
+    int all_devices;
+    int device_ids[MAX_MIDI_DEVICES];
     MMRESULT mmr;
     MIDIOUTCAPS mcaps;
     int i;
 
-    num_devices = midiOutGetNumDevs() + 1; // include MIDI_MAPPER
-    if (num_devices > 20)
+    if (midi_num_devices > 0)
     {
-        num_devices = 20;
+        for (i = 0; i < midi_num_devices; ++i)
+        {
+            free(midi_names[i]);
+            midi_names[i] = NULL;
+        }
+        free(midi_names);
+        midi_names = NULL;
     }
-    midi_names = malloc(num_devices * sizeof(char*));
+    midi_num_devices = 0;
 
-    device_id = -1; // MIDI_MAPPER
-    for (i = 0; i < num_devices; ++i)
+    // get the number of midi devices on this system
+    all_devices = midiOutGetNumDevs() + 1; // include MIDI_MAPPER
+    if (all_devices > MAX_MIDI_DEVICES)
     {
-        mmr = midiOutGetDevCaps(device_id, &mcaps, sizeof(mcaps));
+        all_devices = MAX_MIDI_DEVICES;
+    }
+
+    // get the valid device ids only, starting from -1 (MIDI_MAPPER)
+    for (i = 0; i < all_devices; ++i)
+    {
+        mmr = midiOutGetDevCaps(i - 1, &mcaps, sizeof(mcaps));
+        if (mmr == MMSYSERR_NOERROR)
+        {
+            device_ids[midi_num_devices] = i - 1;
+            midi_num_devices++;
+        }
+    }
+
+    // get the device names
+    midi_names = malloc(midi_num_devices * sizeof(char *));
+    for (i = 0; i < midi_num_devices; ++i)
+    {
+        mmr = midiOutGetDevCaps(device_ids[i], &mcaps, sizeof(mcaps));
         if (mmr == MMSYSERR_NOERROR)
         {
             midi_names[i] = malloc(sizeof(mcaps.szPname)); // MAXPNAMELEN := 32
             memcpy(midi_names[i], mcaps.szPname, sizeof(mcaps.szPname));
         }
-        device_id++;
     }
 
-    midi_index = winmm_midi_device + 1;
-    result = TXT_NewDropdownList(&midi_index, (const char**)midi_names,
-                                 num_devices);
+    // set the dropdown list index to the previously selected device
+    for (i = 0; i < midi_num_devices; ++i)
+    {
+        if (winmm_midi_device != NULL &&
+            strstr(winmm_midi_device, midi_names[i]))
+        {
+            midi_index = i;
+            break;
+        }
+        else if (winmm_midi_device == NULL || i == midi_num_devices - 1)
+        {
+            // give up and use MIDI_MAPPER
+            midi_index = 0;
+            free(winmm_midi_device);
+            winmm_midi_device = malloc(strlen(midi_names[0]) + 1);
+            strcpy(winmm_midi_device, midi_names[0]);
+            break;
+        }
+    }
+
+    result = TXT_NewDropdownList(&midi_index, (const char **)midi_names,
+                                 midi_num_devices);
     TXT_SignalConnect(result, "changed", UpdateMidiDevice, NULL);
 
     return result;
@@ -295,7 +341,7 @@ void BindSoundVariables(void)
     M_BindStringVariable("timidity_cfg_path",     &timidity_cfg_path);
     M_BindStringVariable("fluidsynth_sf_path",    &fluidsynth_sf_path);
 #ifdef _WIN32
-    M_BindIntVariable("winmm_midi_device",        &winmm_midi_device);
+    M_BindStringVariable("winmm_midi_device",     &winmm_midi_device);
     M_BindIntVariable("winmm_reverb_level",       &winmm_reverb_level);
     M_BindIntVariable("winmm_chorus_level",       &winmm_chorus_level);
 #endif
