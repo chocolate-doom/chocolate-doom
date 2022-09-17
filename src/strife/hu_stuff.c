@@ -95,9 +95,6 @@ static int              message_counter;
 
 static boolean          headsupactive = false;
 
-// haleyjd 20130915 [STRIFE]: need nickname
-extern char *nickname;
-
 // haleyjd 20130915 [STRIFE]: true if setting nickname
 static boolean hu_setting_name = false;
 

@@ -56,6 +56,9 @@ extern  boolean         stonecold;      // villsa [STRIFE]
 extern  boolean         workparm;       // villsa [STRIFE]
 extern boolean advancedemo;
 
+// haleyjd 20130915 [STRIFE]: need nickname
+extern char *nickname;
+
 
 #endif
 
