@@ -36,12 +36,6 @@
 #include "r_local.h"
 
 
-// in AM_map.c
-extern boolean		automapactive; 
-
-
-
-
 //
 // Hack display negative frags.
 //  Loads and store the stminus lump.
