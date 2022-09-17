@@ -184,6 +184,7 @@ extern  boolean	demorecording;
 extern  int     mouse_fire_countdown;   // villsa [STRIFE]
 
 extern fixed_t forwardmove[2];
+extern fixed_t sidemove[2];
 
 // Round angleturn in ticcmds to the nearest 256.  This is used when
 // recording Vanilla demos in netgames.

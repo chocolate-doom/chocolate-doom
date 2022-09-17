@@ -1699,7 +1699,6 @@ void D_DoomMain (void)
     if ( (p=M_CheckParm ("-turbo")) )
     {
         int     scale = 200;
-        extern fixed_t sidemove[2];
 
         if (p<myargc-1)
             scale = atoi (myargv[p+1]);
