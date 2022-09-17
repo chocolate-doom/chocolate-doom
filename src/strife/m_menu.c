@@ -1268,7 +1268,6 @@ void M_FinishReadThis(int choice)
 */
 
 #if 0
-extern void F_StartCast(void);
 
 //
 // M_CheckStartCast
