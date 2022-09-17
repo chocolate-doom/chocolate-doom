@@ -229,6 +229,8 @@ extern line_t      *blockingline; // [STRIFE] New global
 extern int numspechit;
 extern line_t *spechit[];
 
+extern fixed_t attackrange;
+
 
 boolean P_CheckPosition (mobj_t *thing, fixed_t x, fixed_t y);
 boolean P_TryMove (mobj_t* thing, fixed_t x, fixed_t y);

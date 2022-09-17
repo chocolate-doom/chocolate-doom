@@ -1026,7 +1026,6 @@ void P_SpawnMapThing (mapthing_t* mthing)
 // * No spawn tics randomization
 // * Player melee behavior
 //
-extern fixed_t attackrange;
 
 void
 P_SpawnPuff
