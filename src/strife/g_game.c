@@ -1369,7 +1369,6 @@ void G_ScreenShot (void)
 //
 // G_DoCompleted 
 //
-//boolean         secretexit; 
 
 //
 // G_RiftExitLevel

@@ -91,7 +91,6 @@ static boolean          message_nottobefuckedwith;
 static hu_stext_t       w_message;
 static int              message_counter;
 
-//extern int              showMessages; [STRIFE] no such variable
 
 static boolean          headsupactive = false;
 
