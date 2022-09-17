@@ -200,7 +200,6 @@ void D_ProcessEvents (void)
 //
 gamestate_t     wipegamestate = GS_UNKNOWN;
 //extern  int             showMessages; [STRIFE] no such variable
-void R_ExecuteSetViewSize (void);
 
 void D_Display (void)
 {
