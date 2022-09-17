@@ -231,7 +231,9 @@ extern line_t *spechit[];
 
 extern fixed_t attackrange;
 
+// slopes to top and bottom of target
 extern fixed_t topslope;
+extern fixed_t bottomslope;
 
 
 boolean P_CheckPosition (mobj_t *thing, fixed_t x, fixed_t y);
