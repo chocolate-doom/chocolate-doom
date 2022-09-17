@@ -144,7 +144,7 @@ anim_t* lastanim;
 #define MAXLINEANIMS            96
 
 short   numlinespecials = 0;
-extern  line_t* linespeciallist[MAXLINEANIMS];
+line_t *linespeciallist[MAXLINEANIMS];
 
 
 
@@ -1865,7 +1865,6 @@ int EV_DoDonut(line_t*	line)
 // After the map has been loaded, scan for specials
 //  that spawn thinkers
 //
-line_t*		linespeciallist[MAXLINEANIMS];
 
 
 // Parses command line parameters.
