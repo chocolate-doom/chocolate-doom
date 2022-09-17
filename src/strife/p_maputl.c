@@ -772,7 +772,6 @@ P_TraverseIntercepts
     return true;            // everything was traversed
 }
 
-extern fixed_t bulletslope;
 
 #if 0
 // Intercepts Overrun emulation, from PrBoom-plus.
