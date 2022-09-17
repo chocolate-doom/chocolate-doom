@@ -1681,8 +1681,6 @@ static void DonutOverrun(fixed_t *s3_floorheight, short *s3_floorpic,
     static int tmp_s3_floorheight;
     static int tmp_s3_floorpic;
 
-    extern int numflats;
-
     if (first)
     {
         int p;

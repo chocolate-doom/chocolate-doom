@@ -26,6 +26,9 @@
 #include "p_spec.h"    // villsa [STRIFE]
 
 
+extern int numflats;
+
+
 // Retrieve column data for span blitting.
 byte*
 R_GetColumn
