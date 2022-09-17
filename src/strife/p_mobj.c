@@ -31,7 +31,6 @@
 #include "d_main.h"     // villsa [STRIFE]
 
 extern line_t *spechit[];  // haleyjd:
-extern int     numspechit; // [STRIFE] - needed in P_XYMovement
 
 
 void G_PlayerReborn (int player);
