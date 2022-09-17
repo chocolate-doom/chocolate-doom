@@ -199,7 +199,6 @@ void D_ProcessEvents (void)
 // * 20110206: Start wipegamestate at GS_UNKNOWN (STRIFE-TODO: rename?)
 //
 gamestate_t     wipegamestate = GS_UNKNOWN;
-//extern  int             showMessages; [STRIFE] no such variable
 
 void D_Display (void)
 {
