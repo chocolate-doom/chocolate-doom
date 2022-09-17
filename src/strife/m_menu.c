@@ -65,8 +65,6 @@
 extern void M_QuitStrife(int);
 
 
-extern boolean          sendsave;       // [STRIFE]
-
 //
 // defaulted values
 //
