@@ -24,6 +24,7 @@
 #include "v_video.h"
 #include "i_swap.h"
 
+#include "d_main.h"
 #include "hu_lib.h"
 #include "r_local.h"
 #include "r_draw.h"
