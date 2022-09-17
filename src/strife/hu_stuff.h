@@ -63,6 +63,8 @@ extern const char *mapnames[];
 
 // [STRIFE]
 extern patch_t* yfont[HU_FONTSIZE];   // haleyjd 09/18/10: [STRIFE]
+extern patch_t *hu_font[HU_FONTSIZE];
+
 
 #endif
 
