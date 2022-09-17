@@ -1370,7 +1370,6 @@ void G_ScreenShot (void)
 // G_DoCompleted 
 //
 //boolean         secretexit; 
-extern char*	pagename; 
 
 //
 // G_RiftExitLevel
