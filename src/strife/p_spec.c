@@ -143,7 +143,7 @@ anim_t* lastanim;
 // haleyjd 08/29/10: [STRIFE] MAXLINEANIMS raised from 64 to 96
 #define MAXLINEANIMS            96
 
-extern  short   numlinespecials;
+short   numlinespecials = 0;
 extern  line_t* linespeciallist[MAXLINEANIMS];
 
 
@@ -1865,7 +1865,6 @@ int EV_DoDonut(line_t*	line)
 // After the map has been loaded, scan for specials
 //  that spawn thinkers
 //
-short		numlinespecials;
 line_t*		linespeciallist[MAXLINEANIMS];
 
 
