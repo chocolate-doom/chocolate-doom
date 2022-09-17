@@ -383,7 +383,6 @@ boolean P_CheckRobotRange(mobj_t *actor)
 fixed_t	xspeed[8] = {FRACUNIT,47000,0,-47000,-FRACUNIT,-47000,0,47000};
 fixed_t yspeed[8] = {0,47000,FRACUNIT,47000,0,-47000,-FRACUNIT,-47000};
 
-extern	line_t*	spechit[];
 
 boolean P_Move (mobj_t*	actor)
 {

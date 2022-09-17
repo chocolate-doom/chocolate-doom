@@ -30,8 +30,6 @@
 #include "doomstat.h"
 #include "d_main.h"     // villsa [STRIFE]
 
-extern line_t *spechit[];  // haleyjd:
-
 
 void G_PlayerReborn (int player);
 void P_SpawnMapThing (mapthing_t*	mthing);
