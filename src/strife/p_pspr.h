@@ -76,5 +76,7 @@ typedef struct player_s *playerptr;
 
 // haleyjd [STRIFE] Exported
 void P_SetPsprite(playerptr player, int position, statenum_t stnum);
+void P_BulletSlope(mobj_t *mo);
+
 
 #endif

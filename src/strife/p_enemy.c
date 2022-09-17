@@ -710,8 +710,6 @@ void P_NewRandomDir(mobj_t* actor)
     } // end else
 }
 
-// haleyjd 09/05/10: Needed below.
-extern void P_BulletSlope (mobj_t *mo);
 
 //
 // P_LookForPlayers
