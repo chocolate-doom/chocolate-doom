@@ -23,6 +23,7 @@
 // Basic data types.
 // Needs fixed point, and BAM angles.
 #include "m_fixed.h"
+#include "p_mobj.h"
 #include "tables.h"
 
 
