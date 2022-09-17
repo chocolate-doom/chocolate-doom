@@ -35,6 +35,7 @@ extern fixed_t		viewsin;
 extern int		viewwindowx;
 extern int		viewwindowy;
 
+extern boolean setsizeneeded;
 
 
 extern int		centerx;

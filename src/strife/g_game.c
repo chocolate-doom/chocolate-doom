@@ -1659,7 +1659,6 @@ void G_ReadCurrent(const char *path)
 // G_InitFromSavegame
 // Can be called by the startup code or the menu task. 
 //
-extern boolean setsizeneeded;
 void R_ExecuteSetViewSize (void);
 
 char	savename[256];
