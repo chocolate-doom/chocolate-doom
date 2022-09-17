@@ -28,6 +28,7 @@
 #include "i_swap.h"
 #include "i_video.h"
 
+#include "d_main.h"
 #include "hu_stuff.h"
 #include "hu_lib.h"
 #include "m_controls.h"
