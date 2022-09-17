@@ -62,7 +62,7 @@
 #include "p_dialog.h"
 
 
-extern void M_QuitStrife(int);
+void M_QuitStrife(int);
 
 
 //
