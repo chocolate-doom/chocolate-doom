@@ -1272,7 +1272,7 @@ void DrawKeyBar(void)
     if (oldkeys != CPlayer->keys)
     {
         xPosition = 46;
-        for (i = 0; i < NUMKEYS && xPosition <= 126; i++)
+        for (i = 0; i < NUM_KEY_TYPES && xPosition <= 126; i++)
         {
             if (CPlayer->keys & (1 << i))
             {
