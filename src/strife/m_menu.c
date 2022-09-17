@@ -126,7 +126,6 @@ boolean                 menuindialog;   // haleyjd 09/04/10: ditto
 #define CURSORXOFF		-28
 #define LINEHEIGHT		19
 
-extern boolean		sendpause;
 char			savegamestrings[10][SAVESTRINGSIZE];
 
 char	endstring[160];
