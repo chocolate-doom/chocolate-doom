@@ -65,7 +65,6 @@
 extern void M_QuitStrife(int);
 
 
-extern boolean          chat_on;        // in heads-up code
 extern boolean          sendsave;       // [STRIFE]
 
 //
