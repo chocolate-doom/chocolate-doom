@@ -36,8 +36,6 @@
 #define noterased viewwindowx
 
 
-extern boolean D_PatchClipCallback(patch_t *patch, int x, int y); // [STRIFE]
-
 //
 // HUlib_drawYellowText
 //
