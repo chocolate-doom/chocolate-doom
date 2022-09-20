@@ -29,6 +29,7 @@ static FILE *SaveGameFP;
 
 int vanilla_savegame_limit = 1;
 
+int savepage; // [crispy]
 
 //==========================================================================
 //
@@ -47,7 +48,8 @@ char *SV_Filename(int slot)
     filename_len = strlen(savegamedir) + strlen(SAVEGAMENAME) + 8;
     filename = malloc(filename_len);
     M_snprintf(filename, filename_len,
-               "%s" SAVEGAMENAME "%d.hsg", savegamedir, slot);
+               "%s" SAVEGAMENAME "%d.hsg", savegamedir,
+               SAVES_PER_PAGE * savepage + slot);
 
     return filename;
 }

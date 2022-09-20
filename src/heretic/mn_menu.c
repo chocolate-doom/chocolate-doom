@@ -177,9 +177,9 @@ boolean askforquit;
 static int typeofask;
 static boolean FileMenuKeySteal;
 static boolean slottextloaded;
-static char SlotText[8][SLOTTEXTLEN + 2];
+static char SlotText[SAVES_PER_PAGE][SLOTTEXTLEN + 2];
 static char oldSlotText[SLOTTEXTLEN + 2];
-static int SlotStatus[8];
+static int SlotStatus[SAVES_PER_PAGE];
 static int slotptr;
 static int currentSlot;
 static int quicksave;
@@ -237,14 +237,12 @@ static MenuItem_t LoadItems[] = {
     {ITT_EFUNC, NULL, SCLoadGame, 3, MENU_NONE},
     {ITT_EFUNC, NULL, SCLoadGame, 4, MENU_NONE},
     {ITT_EFUNC, NULL, SCLoadGame, 5, MENU_NONE},
-    {ITT_EFUNC, NULL, SCLoadGame, 6, MENU_NONE},
-    {ITT_EFUNC, NULL, SCLoadGame, 7, MENU_NONE},
 };
 
 static Menu_t LoadMenu = {
-    70, 30,
+    70, 27,
     DrawLoadMenu,
-    8, LoadItems,
+    SAVES_PER_PAGE, LoadItems,
     0,
     MENU_FILES
 };
@@ -256,14 +254,12 @@ static MenuItem_t SaveItems[] = {
     {ITT_EFUNC, NULL, SCSaveGame, 3, MENU_NONE},
     {ITT_EFUNC, NULL, SCSaveGame, 4, MENU_NONE},
     {ITT_EFUNC, NULL, SCSaveGame, 5, MENU_NONE},
-    {ITT_EFUNC, NULL, SCSaveGame, 6, MENU_NONE},
-    {ITT_EFUNC, NULL, SCSaveGame, 7, MENU_NONE},
 };
 
 static Menu_t SaveMenu = {
-    70, 30,
+    70, 27,
     DrawSaveMenu,
-    8, SaveItems,
+    SAVES_PER_PAGE, SaveItems,
     0,
     MENU_FILES
 };
@@ -794,6 +790,30 @@ static void DrawFilesMenu(void)
     players[consoleplayer].messageTics = 1;
 }
 
+// [crispy] support additional pages of savegames
+static void DrawSaveLoadBottomLine(const Menu_t *menu)
+{
+    char pagestr[16];
+    static short width;
+    const int y = menu->y + ITEM_HEIGHT * SAVES_PER_PAGE;
+
+    if (!width)
+    {
+        const patch_t *const p = W_CacheLumpName(DEH_String("M_FSLOT"), PU_CACHE);
+        width = SHORT(p->width);
+    }
+    dp_translation = cr[CR_GOLD];
+    if (savepage > 0)
+        MN_DrTextA("- PGUP", menu->x + 1, y);
+    if (savepage < SAVEPAGE_MAX)
+        MN_DrTextA("PGDN +", menu->x + width - MN_TextAWidth("PGDN +"), y);
+
+    M_snprintf(pagestr, sizeof(pagestr), "PAGE %d/%d", savepage + 1, SAVEPAGE_MAX + 1);
+    MN_DrTextA(pagestr, ORIGWIDTH / 2 - MN_TextAWidth(pagestr) / 2, y);
+
+    dp_translation = NULL;
+}
+
 //---------------------------------------------------------------------------
 //
 // PROC DrawLoadMenu
@@ -806,12 +826,13 @@ static void DrawLoadMenu(void)
 
     title = DEH_String("LOAD GAME");
 
-    MN_DrTextB(title, 160 - MN_TextBWidth(title) / 2, 10);
+    MN_DrTextB(title, 160 - MN_TextBWidth(title) / 2, 7);
     if (!slottextloaded)
     {
         MN_LoadSlotText();
     }
     DrawFileSlots(&LoadMenu);
+    DrawSaveLoadBottomLine(&LoadMenu);
 }
 
 //---------------------------------------------------------------------------
@@ -826,12 +847,13 @@ static void DrawSaveMenu(void)
 
     title = DEH_String("SAVE GAME");
 
-    MN_DrTextB(title, 160 - MN_TextBWidth(title) / 2, 10);
+    MN_DrTextB(title, 160 - MN_TextBWidth(title) / 2, 7);
     if (!slottextloaded)
     {
         MN_LoadSlotText();
     }
     DrawFileSlots(&SaveMenu);
+    DrawSaveLoadBottomLine(&SaveMenu);
 }
 
 //===========================================================================
@@ -847,7 +869,7 @@ void MN_LoadSlotText(void)
     int i;
     char *filename;
 
-    for (i = 0; i < 8; i++)
+    for (i = 0; i < SAVES_PER_PAGE; i++)
     {
         int retval;
         filename = SV_Filename(i);
@@ -881,7 +903,7 @@ static void DrawFileSlots(Menu_t * menu)
 
     x = menu->x;
     y = menu->y;
-    for (i = 0; i < 8; i++)
+    for (i = 0; i < SAVES_PER_PAGE; i++)
     {
         V_DrawPatch(x, y, W_CacheLumpName(DEH_String("M_FSLOT"), PU_CACHE));
         if (SlotStatus[i])
@@ -890,9 +912,6 @@ static void DrawFileSlots(Menu_t * menu)
         }
         y += ITEM_HEIGHT;
     }
-    // [crispy] refresh the status bar and border
-    SB_state = -1;
-    BorderNeedRefresh = true;
 }
 
 //---------------------------------------------------------------------------
@@ -1960,6 +1979,35 @@ boolean MN_Responder(event_t * event)
                 }
             }
             return (true);
+        }
+        // [crispy] next/prev savegame page
+        else if (key == KEY_PGUP)
+        {
+            if (CurrentMenu == &LoadMenu || CurrentMenu == &SaveMenu)
+            {
+                if (savepage > 0)
+                {
+                    savepage--;
+                    quicksave = -1;
+                    MN_LoadSlotText();
+                    S_StartSound(NULL, sfx_switch);
+                }
+                return true;
+            }
+        }
+        else if (key == KEY_PGDN)
+        {
+            if (CurrentMenu == &LoadMenu || CurrentMenu == &SaveMenu)
+            {
+                if (savepage < SAVEPAGE_MAX)
+                {
+                    savepage++;
+                    quicksave = -1;
+                    MN_LoadSlotText();
+                    S_StartSound(NULL, sfx_switch);
+                }
+                return true;
+            }
         }
         else if (charTyped != 0)
         {
