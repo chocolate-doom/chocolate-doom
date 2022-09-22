@@ -471,7 +471,7 @@ boolean I_WIN_InitMusic(void)
 
 void I_WIN_SetMusicVolume(int volume)
 {
-    volume_factor = (float)volume / 120;
+    volume_factor = sqrt((float)volume / 120);
 
     UpdateVolume();
 }
