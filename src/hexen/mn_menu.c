@@ -232,9 +232,9 @@ static MenuItem_t LoadItems[] = {
 };
 
 static Menu_t LoadMenu = {
-    70, 30,
+    70, 27,
     DrawLoadMenu,
-    6, LoadItems,
+    SAVES_PER_PAGE, LoadItems,
     0,
     MENU_FILES
 };
@@ -249,9 +249,9 @@ static MenuItem_t SaveItems[] = {
 };
 
 static Menu_t SaveMenu = {
-    70, 30,
+    70, 27,
     DrawSaveMenu,
-    6, SaveItems,
+    SAVES_PER_PAGE, SaveItems,
     0,
     MENU_FILES
 };
@@ -744,6 +744,30 @@ static void DrawFilesMenu(void)
     P_ClearMessage(&players[consoleplayer]);
 }
 
+// [crispy] support additional pages of savegames
+static void DrawSaveLoadBottomLine(const Menu_t *menu)
+{
+    char pagestr[16];
+    static short width;
+    const int y = menu->y + ITEM_HEIGHT * SAVES_PER_PAGE;
+
+    if (!width)
+    {
+        const patch_t *const p = W_CacheLumpName("M_FSLOT", PU_CACHE);
+        width = SHORT(p->width);
+    }
+    dp_translation = cr[CR_GOLD];
+    if (savepage > 0)
+        MN_DrTextA("- PGUP", menu->x + 1, y);
+    if (savepage < SAVEPAGE_MAX)
+        MN_DrTextA("PGDN +", menu->x + width - MN_TextAWidth("PGDN +"), y);
+
+    M_snprintf(pagestr, sizeof(pagestr), "PAGE %d/%d", savepage + 1, SAVEPAGE_MAX + 1);
+    MN_DrTextA(pagestr, ORIGWIDTH / 2 - MN_TextAWidth(pagestr) / 2, y);
+
+    dp_translation = NULL;
+}
+
 //---------------------------------------------------------------------------
 //
 // PROC DrawLoadMenu
@@ -752,12 +776,13 @@ static void DrawFilesMenu(void)
 
 static void DrawLoadMenu(void)
 {
-    MN_DrTextB("LOAD GAME", 160 - MN_TextBWidth("LOAD GAME") / 2, 10);
+    MN_DrTextB("LOAD GAME", 160 - MN_TextBWidth("LOAD GAME") / 2, 7);
     if (!slottextloaded)
     {
         MN_LoadSlotText();
     }
     DrawFileSlots(&LoadMenu);
+    DrawSaveLoadBottomLine(&LoadMenu);
 }
 
 //---------------------------------------------------------------------------
@@ -768,12 +793,13 @@ static void DrawLoadMenu(void)
 
 static void DrawSaveMenu(void)
 {
-    MN_DrTextB("SAVE GAME", 160 - MN_TextBWidth("SAVE GAME") / 2, 10);
+    MN_DrTextB("SAVE GAME", 160 - MN_TextBWidth("SAVE GAME") / 2, 7);
     if (!slottextloaded)
     {
         MN_LoadSlotText();
     }
     DrawFileSlots(&SaveMenu);
+    DrawSaveLoadBottomLine(&SaveMenu);
 }
 
 static boolean ReadDescriptionForSlot(int slot, char *description)
@@ -782,6 +808,8 @@ static boolean ReadDescriptionForSlot(int slot, char *description)
     boolean found;
     char name[100];
     char versionText[HXS_VERSION_TEXT_LENGTH];
+
+    slot += savepage * 10; // [crispy]
 
     M_snprintf(name, sizeof(name), "%shex%d.hxs", SavePath, slot);
 
@@ -845,7 +873,7 @@ static void DrawFileSlots(Menu_t * menu)
 
     x = menu->x;
     y = menu->y;
-    for (i = 0; i < 6; i++)
+    for (i = 0; i < SAVES_PER_PAGE; i++)
     {
         V_DrawPatch(x, y, W_CacheLumpName("M_FSLOT", PU_CACHE));
         if (SlotStatus[i])
@@ -1040,7 +1068,7 @@ static void SCDeleteGame(int option)
 
 static const char *const class_str[NUMCLASSES] =
 {
-    "FIGHTER",
+    "FIGHTR",
     "CLERIC",
     "MAGE",
     "PIG",
@@ -1932,6 +1960,33 @@ boolean MN_Responder(event_t * event)
                 }
             }
             return (true);
+        }
+        // [crispy] next/prev savegame page
+        else if (key == KEY_PGUP)
+        {
+            if (CurrentMenu == &LoadMenu || CurrentMenu == &SaveMenu)
+            {
+                if (savepage > 0)
+                {
+                    savepage--;
+                    quicksave = -1;
+                    MN_LoadSlotText();
+                }
+                return true;
+            }
+        }
+        else if (key == KEY_PGDN)
+        {
+            if (CurrentMenu == &LoadMenu || CurrentMenu == &SaveMenu)
+            {
+                if (savepage < SAVEPAGE_MAX)
+                {
+                    savepage++;
+                    quicksave = -1;
+                    MN_LoadSlotText();
+                }
+                return true;
+            }
         }
         else if (charTyped != 0)
         {

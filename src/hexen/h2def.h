@@ -824,6 +824,12 @@ void G_ScreenShot(void);
 #define HXS_VERSION_TEXT_LENGTH 16
 #define HXS_DESCRIPTION_LENGTH 24
 
+// [crispy] support up to 8 pages of savegames
+#define SAVES_PER_PAGE 6
+#define SAVEPAGE_MAX 7
+
+extern int savepage; // [crispy]
+
 extern char *SavePath;
 
 void SV_SaveGame(int slot, const char *description);
