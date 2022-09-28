@@ -98,4 +98,7 @@ void M_LoadSelect(int choice);
 extern int detailLevel;
 extern int screenblocks;
 
+extern  boolean	inhelpscreens;
+
+
 #endif    

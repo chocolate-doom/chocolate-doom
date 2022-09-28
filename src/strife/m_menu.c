@@ -62,13 +62,8 @@
 #include "p_dialog.h"
 
 
-extern void M_QuitStrife(int);
+void M_QuitStrife(int);
 
-extern patch_t*         hu_font[HU_FONTSIZE];
-extern boolean          message_dontfuckwithme;
-
-extern boolean          chat_on;        // in heads-up code
-extern boolean          sendsave;       // [STRIFE]
 
 //
 // defaulted values
@@ -131,7 +126,6 @@ boolean                 menuindialog;   // haleyjd 09/04/10: ditto
 #define CURSORXOFF		-28
 #define LINEHEIGHT		19
 
-extern boolean		sendpause;
 char			savegamestrings[10][SAVESTRINGSIZE];
 
 char	endstring[160];
@@ -1274,7 +1268,6 @@ void M_FinishReadThis(int choice)
 */
 
 #if 0
-extern void F_StartCast(void);
 
 //
 // M_CheckStartCast

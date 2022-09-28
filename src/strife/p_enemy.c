@@ -383,8 +383,6 @@ boolean P_CheckRobotRange(mobj_t *actor)
 fixed_t	xspeed[8] = {FRACUNIT,47000,0,-47000,-FRACUNIT,-47000,0,47000};
 fixed_t yspeed[8] = {0,47000,FRACUNIT,47000,0,-47000,-FRACUNIT,-47000};
 
-extern	line_t*	spechit[];
-extern	int	numspechit;
 
 boolean P_Move (mobj_t*	actor)
 {
@@ -712,8 +710,6 @@ void P_NewRandomDir(mobj_t* actor)
     } // end else
 }
 
-// haleyjd 09/05/10: Needed below.
-extern void P_BulletSlope (mobj_t *mo);
 
 //
 // P_LookForPlayers

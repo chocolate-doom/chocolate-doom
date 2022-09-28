@@ -35,6 +35,7 @@ extern fixed_t		viewsin;
 extern int		viewwindowx;
 extern int		viewwindowy;
 
+extern boolean setsizeneeded;
 
 
 extern int		centerx;
@@ -156,5 +157,8 @@ void R_Init (void);
 
 // Called by M_Responder.
 void R_SetViewSize (int blocks, int detail);
+
+void R_ExecuteSetViewSize(void);
+
 
 #endif
