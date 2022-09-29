@@ -232,6 +232,9 @@ endif()
 if(ENABLE_SDL2_NET)
     target_link_libraries("${PROGRAM_PREFIX}setup" SDL2::net)
 endif()
+if(WIN32)
+    target_link_libraries("${PROGRAM_PREFIX}setup" winmm)
+endif()
 
 if(MSVC)
     set_target_properties("${PROGRAM_PREFIX}setup" PROPERTIES

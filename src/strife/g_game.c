@@ -1389,8 +1389,6 @@ void G_ScreenShot (void)
 //
 // G_DoCompleted 
 //
-//boolean         secretexit; 
-extern char*	pagename; 
 
 //
 // G_RiftExitLevel
@@ -1679,8 +1677,6 @@ void G_ReadCurrent(const char *path)
 // G_InitFromSavegame
 // Can be called by the startup code or the menu task. 
 //
-extern boolean setsizeneeded;
-void R_ExecuteSetViewSize (void);
 
 char	savename[256];
 

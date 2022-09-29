@@ -30,9 +30,6 @@
 #include "doomstat.h"
 #include "d_main.h"     // villsa [STRIFE]
 
-extern line_t *spechit[];  // haleyjd:
-extern int     numspechit; // [STRIFE] - needed in P_XYMovement
-
 
 void G_PlayerReborn (int player);
 void P_SpawnMapThing (mapthing_t*	mthing);
@@ -1029,7 +1026,6 @@ void P_SpawnMapThing (mapthing_t* mthing)
 // * No spawn tics randomization
 // * Player melee behavior
 //
-extern fixed_t attackrange;
 
 void
 P_SpawnPuff

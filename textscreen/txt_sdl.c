@@ -567,7 +567,7 @@ static int SDLButtonToTXTButton(int button)
         case SDL_BUTTON_MIDDLE:
             return TXT_MOUSE_MIDDLE;
         default:
-            return TXT_MOUSE_BASE + button - 1;
+            return TXT_MOUSE_BASE + button + 1;
     }
 }
 

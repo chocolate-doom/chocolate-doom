@@ -1177,7 +1177,6 @@ void V_ScreenShot(const char *format)
     // find a file name to save it to
 
 #ifdef HAVE_LIBPNG
-    extern int png_screenshots;
     if (png_screenshots)
     {
         ext = "png";
@@ -1332,7 +1331,6 @@ static void DrawNonAcceleratingBox(int speed)
 
 void V_DrawMouseSpeedBox(int speed)
 {
-    extern int usemouse;
     int bgcolor, bordercolor, black;
 
     // If the mouse is turned off, don't draw the box at all.

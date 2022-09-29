@@ -26,6 +26,17 @@
 #include "m_misc.h"
 #include "midifile.h"
 
+#define BETWEEN(l,u,x) (((l)>(x))?(l):((x)>(u))?(u):(x))
+
+#define REVERB_MIN 0
+#define REVERB_MAX 127
+#define CHORUS_MIN 0
+#define CHORUS_MAX 127
+
+char *winmm_midi_device = NULL;
+int winmm_reverb_level = 40;
+int winmm_chorus_level = 0;
+
 static HMIDISTRM hMidiStream;
 static HANDLE hBufferReturnEvent;
 static HANDLE hExitEvent;
@@ -335,62 +346,9 @@ static void UpdateVolume(void)
     }
 }
 
-boolean I_WIN_InitMusic(void)
+void ResetDevice(void)
 {
-    UINT MidiDevice = MIDI_MAPPER;
-    MIDIHDR *hdr = &buffer.MidiStreamHdr;
-    MMRESULT mmr;
-
-    mmr = midiStreamOpen(&hMidiStream, &MidiDevice, (DWORD)1,
-                         (DWORD_PTR)MidiStreamProc, (DWORD_PTR)NULL,
-                         CALLBACK_FUNCTION);
-    if (mmr != MMSYSERR_NOERROR)
-    {
-        MidiErrorMessageBox(mmr);
-        return false;
-    }
-
-    hdr->lpData = (LPSTR)buffer.events;
-    hdr->dwBytesRecorded = 0;
-    hdr->dwBufferLength = STREAM_MAX_EVENTS * sizeof(native_event_t);
-    hdr->dwFlags = 0;
-    hdr->dwOffset = 0;
-
-    mmr = midiOutPrepareHeader((HMIDIOUT)hMidiStream, hdr, sizeof(MIDIHDR));
-    if (mmr != MMSYSERR_NOERROR)
-    {
-        MidiErrorMessageBox(mmr);
-        return false;
-    }
-
-    hBufferReturnEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
-    hExitEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
-
-    return true;
-}
-
-void I_WIN_SetMusicVolume(int volume)
-{
-    volume_factor = (float)volume / 127;
-
-    UpdateVolume();
-}
-
-void I_WIN_StopSong(void)
-{
-    int i;
-    MMRESULT mmr;
-
-    if (hPlayerThread)
-    {
-        SetEvent(hExitEvent);
-        WaitForSingleObject(hPlayerThread, INFINITE);
-
-        CloseHandle(hPlayerThread);
-        hPlayerThread = NULL;
-    }
-
-    for (i = 0; i < MIDI_CHANNELS_PER_TRACK; ++i)
+    for (int i = 0; i < MIDI_CHANNELS_PER_TRACK; ++i)
     {
         DWORD msg = 0;
 
@@ -420,18 +378,118 @@ void I_WIN_StopSong(void)
         msg = MIDI_EVENT_CONTROLLER | i | 0x0A << 8 | 0x40 << 16;
         midiOutShortMsg((HMIDIOUT)hMidiStream, msg);
 
-        // reset reverb to 40 and other effect controllers to 0
-        msg = MIDI_EVENT_CONTROLLER | i | 0x5B << 8 | 0x28 << 16; // reverb
+        // reset reverb and other effect controllers
+        msg = MIDI_EVENT_CONTROLLER | i | 0x5B << 8 | winmm_reverb_level << 16;
         midiOutShortMsg((HMIDIOUT)hMidiStream, msg);
         msg = MIDI_EVENT_CONTROLLER | i | 0x5C << 8 | 0x00 << 16; // tremolo
         midiOutShortMsg((HMIDIOUT)hMidiStream, msg);
-        msg = MIDI_EVENT_CONTROLLER | i | 0x5D << 8 | 0x00 << 16; // chorus
+        msg = MIDI_EVENT_CONTROLLER | i | 0x5D << 8 | winmm_chorus_level << 16;
         midiOutShortMsg((HMIDIOUT)hMidiStream, msg);
         msg = MIDI_EVENT_CONTROLLER | i | 0x5E << 8 | 0x00 << 16; // detune
         midiOutShortMsg((HMIDIOUT)hMidiStream, msg);
         msg = MIDI_EVENT_CONTROLLER | i | 0x5F << 8 | 0x00 << 16; // phaser
         midiOutShortMsg((HMIDIOUT)hMidiStream, msg);
     }
+}
+
+boolean I_WIN_InitMusic(void)
+{
+    UINT MidiDevice;
+    int all_devices;
+    int i;
+    MIDIHDR *hdr = &buffer.MidiStreamHdr;
+    MIDIOUTCAPS mcaps;
+    MMRESULT mmr;
+
+    // find the midi device that matches the saved one
+    if (winmm_midi_device != NULL)
+    {
+        all_devices = midiOutGetNumDevs() + 1; // include MIDI_MAPPER
+        for (i = 0; i < all_devices; ++i)
+        {
+            // start from device id -1 (MIDI_MAPPER)
+            mmr = midiOutGetDevCaps(i - 1, &mcaps, sizeof(mcaps));
+            if (mmr == MMSYSERR_NOERROR)
+            {
+                if (strstr(winmm_midi_device, mcaps.szPname))
+                {
+                    MidiDevice = i - 1;
+                    break;
+                }
+            }
+
+            if (i == all_devices - 1)
+            {
+                // give up and use MIDI_MAPPER
+                free(winmm_midi_device);
+                winmm_midi_device = NULL;
+            }
+        }
+    }
+
+    if (winmm_midi_device == NULL)
+    {
+        MidiDevice = MIDI_MAPPER;
+        mmr = midiOutGetDevCaps(MIDI_MAPPER, &mcaps, sizeof(mcaps));
+        if (mmr == MMSYSERR_NOERROR)
+        {
+            winmm_midi_device = M_StringDuplicate(mcaps.szPname);
+        }
+    }
+
+    mmr = midiStreamOpen(&hMidiStream, &MidiDevice, (DWORD)1,
+                         (DWORD_PTR)MidiStreamProc, (DWORD_PTR)NULL,
+                         CALLBACK_FUNCTION);
+    if (mmr != MMSYSERR_NOERROR)
+    {
+        MidiErrorMessageBox(mmr);
+        return false;
+    }
+
+    hdr->lpData = (LPSTR)buffer.events;
+    hdr->dwBytesRecorded = 0;
+    hdr->dwBufferLength = STREAM_MAX_EVENTS * sizeof(native_event_t);
+    hdr->dwFlags = 0;
+    hdr->dwOffset = 0;
+
+    mmr = midiOutPrepareHeader((HMIDIOUT)hMidiStream, hdr, sizeof(MIDIHDR));
+    if (mmr != MMSYSERR_NOERROR)
+    {
+        MidiErrorMessageBox(mmr);
+        return false;
+    }
+
+    hBufferReturnEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+    hExitEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+
+    winmm_reverb_level = BETWEEN(REVERB_MIN, REVERB_MAX, winmm_reverb_level);
+    winmm_chorus_level = BETWEEN(CHORUS_MIN, CHORUS_MAX, winmm_chorus_level);
+    ResetDevice();
+
+    return true;
+}
+
+void I_WIN_SetMusicVolume(int volume)
+{
+    volume_factor = sqrt((float)volume / 120);
+
+    UpdateVolume();
+}
+
+void I_WIN_StopSong(void)
+{
+    MMRESULT mmr;
+
+    if (hPlayerThread)
+    {
+        SetEvent(hExitEvent);
+        WaitForSingleObject(hPlayerThread, INFINITE);
+
+        CloseHandle(hPlayerThread);
+        hPlayerThread = NULL;
+    }
+
+    ResetDevice();
 
     mmr = midiStreamStop(hMidiStream);
     if (mmr != MMSYSERR_NOERROR)

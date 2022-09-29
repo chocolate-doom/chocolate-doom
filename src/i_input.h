@@ -22,6 +22,9 @@
 
 #include "doomtype.h"
 
+#include "SDL.h"
+
+
 #define MAX_MOUSE_BUTTONS 8
 
 extern float mouse_acceleration;
@@ -42,5 +45,9 @@ void I_StartTextInput(int x1, int y1, int x2, int y2);
 // I_StopTextInput finishes text input, deactivating the on-screen keyboard
 // (if one is used).
 void I_StopTextInput(void);
+
+void I_HandleKeyboardEvent(SDL_Event *sdlevent);
+void I_HandleMouseEvent(SDL_Event *sdlevent);
+
 
 #endif

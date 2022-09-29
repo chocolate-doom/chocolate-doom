@@ -22,7 +22,7 @@
 
 #include "doomdef.h"
 
-
+#include "v_patch.h"
 
 
 // Read events from all input devices
@@ -41,7 +41,10 @@ void D_StartTitle (void);
 void D_QuitGame (void); // [STRIFE]
 
 void D_IntroTick(void); // [STRIFE]
- 
+
+boolean D_PatchClipCallback(patch_t *patch, int x, int y); // [STRIFE]
+
+
 //
 // GLOBAL VARIABLES
 //
@@ -51,6 +54,11 @@ extern  boolean         isregistered;   // villsa [STRIFE]
 extern  boolean        isdemoversion;  // haleyjd [STRIFE]
 extern  boolean         stonecold;      // villsa [STRIFE]
 extern  boolean         workparm;       // villsa [STRIFE]
+extern boolean advancedemo;
+
+// haleyjd 20130915 [STRIFE]: need nickname
+extern char *nickname;
+
 
 #endif
 

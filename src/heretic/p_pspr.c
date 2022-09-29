@@ -339,7 +339,7 @@ void P_SetPsprite(player_t * player, int position, statenum_t stnum)
         }
         if (state->action)
         {                       // Call action routine.
-            state->action(player, psp);
+            state->action(NULL, player, psp);
             if (!psp->state)
             {
                 break;
@@ -584,7 +584,7 @@ void P_DropWeapon(player_t * player)
 //
 //---------------------------------------------------------------------------
 
-void A_WeaponReady(player_t * player, pspdef_t * psp)
+void A_WeaponReady(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     int angle;
 
@@ -661,7 +661,7 @@ void P_UpdateBeak(player_t * player, pspdef_t * psp)
 //
 //---------------------------------------------------------------------------
 
-void A_BeakReady(player_t * player, pspdef_t * psp)
+void A_BeakReady(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     if (player->cmd.buttons & BT_ATTACK)
     {                           // Chicken beak attack
@@ -695,7 +695,7 @@ void A_BeakReady(player_t * player, pspdef_t * psp)
 //
 //---------------------------------------------------------------------------
 
-void A_ReFire(player_t * player, pspdef_t * psp)
+void A_ReFire(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     if ((player->cmd.buttons & BT_ATTACK)
         && player->pendingweapon == wp_nochange && player->health)
@@ -716,7 +716,7 @@ void A_ReFire(player_t * player, pspdef_t * psp)
 //
 //---------------------------------------------------------------------------
 
-void A_Lower(player_t * player, pspdef_t * psp)
+void A_Lower(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     if (player->chickenTics)
     {
@@ -750,7 +750,7 @@ void A_Lower(player_t * player, pspdef_t * psp)
 //
 //---------------------------------------------------------------------------
 
-void A_BeakRaise(player_t * player, pspdef_t * psp)
+void A_BeakRaise(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     psp->sy = WEAPONTOP;
     P_SetPsprite(player, ps_weapon,
@@ -763,7 +763,7 @@ void A_BeakRaise(player_t * player, pspdef_t * psp)
 //
 //---------------------------------------------------------------------------
 
-void A_Raise(player_t * player, pspdef_t * psp)
+void A_Raise(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     psp->sy -= RAISESPEED;
     if (psp->sy > WEAPONTOP)
@@ -832,7 +832,7 @@ void P_BulletSlope(mobj_t * mo)
 //
 //----------------------------------------------------------------------------
 
-void A_BeakAttackPL1(player_t * player, pspdef_t * psp)
+void A_BeakAttackPL1(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     angle_t angle;
     int damage;
@@ -860,7 +860,7 @@ void A_BeakAttackPL1(player_t * player, pspdef_t * psp)
 //
 //----------------------------------------------------------------------------
 
-void A_BeakAttackPL2(player_t * player, pspdef_t * psp)
+void A_BeakAttackPL2(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     angle_t angle;
     int damage;
@@ -888,7 +888,7 @@ void A_BeakAttackPL2(player_t * player, pspdef_t * psp)
 //
 //----------------------------------------------------------------------------
 
-void A_StaffAttackPL1(player_t * player, pspdef_t * psp)
+void A_StaffAttackPL1(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     angle_t angle;
     int damage;
@@ -916,7 +916,7 @@ void A_StaffAttackPL1(player_t * player, pspdef_t * psp)
 //
 //----------------------------------------------------------------------------
 
-void A_StaffAttackPL2(player_t * player, pspdef_t * psp)
+void A_StaffAttackPL2(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     angle_t angle;
     int damage;
@@ -945,7 +945,7 @@ void A_StaffAttackPL2(player_t * player, pspdef_t * psp)
 //
 //----------------------------------------------------------------------------
 
-void A_FireBlasterPL1(player_t * player, pspdef_t * psp)
+void A_FireBlasterPL1(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     mobj_t *mo;
     angle_t angle;
@@ -972,7 +972,7 @@ void A_FireBlasterPL1(player_t * player, pspdef_t * psp)
 //
 //----------------------------------------------------------------------------
 
-void A_FireBlasterPL2(player_t * player, pspdef_t * psp)
+void A_FireBlasterPL2(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     mobj_t *mo;
 
@@ -992,7 +992,7 @@ void A_FireBlasterPL2(player_t * player, pspdef_t * psp)
 //
 //----------------------------------------------------------------------------
 
-void A_FireGoldWandPL1(player_t * player, pspdef_t * psp)
+void A_FireGoldWandPL1(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     mobj_t *mo;
     angle_t angle;
@@ -1018,7 +1018,7 @@ void A_FireGoldWandPL1(player_t * player, pspdef_t * psp)
 //
 //----------------------------------------------------------------------------
 
-void A_FireGoldWandPL2(player_t * player, pspdef_t * psp)
+void A_FireGoldWandPL2(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     int i;
     mobj_t *mo;
@@ -1050,7 +1050,7 @@ void A_FireGoldWandPL2(player_t * player, pspdef_t * psp)
 //
 //----------------------------------------------------------------------------
 
-void A_FireMacePL1B(player_t * player, pspdef_t * psp)
+void A_FireMacePL1B(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     mobj_t *pmo;
     mobj_t *ball;
@@ -1093,13 +1093,13 @@ void A_FireMacePL1B(player_t * player, pspdef_t * psp)
 //
 //----------------------------------------------------------------------------
 
-void A_FireMacePL1(player_t * player, pspdef_t * psp)
+void A_FireMacePL1(mobj_t *mobj, player_t * player, pspdef_t * psp)
 {
     mobj_t *ball;
 
     if (P_Random() < 28)
     {
-        A_FireMacePL1B(player, psp);
+        A_FireMacePL1B(mobj, player, psp);
         return;
     }
     if (player->ammo[am_mace] < USE_MACE_AMMO_1)
@@ -1123,7 +1123,7 @@ void A_FireMacePL1(player_t * player, pspdef_t * psp)
 //
 //----------------------------------------------------------------------------
 
-void A_MacePL1Check(mobj_t * ball)
+void A_MacePL1Check(mobj_t * ball, player_t *player, pspdef_t *psp)
 {
     angle_t angle;
 
@@ -1150,7 +1150,7 @@ void A_MacePL1Check(mobj_t * ball)
 //
 //----------------------------------------------------------------------------
 
-void A_MaceBallImpact(mobj_t * ball)
+void A_MaceBallImpact(mobj_t * ball, player_t *player, pspdef_t *psp)
 {
     if ((ball->z <= ball->floorz) && (P_HitFloor(ball) != FLOOR_SOLID))
     {                           // Landed in some sort of liquid
@@ -1180,7 +1180,7 @@ void A_MaceBallImpact(mobj_t * ball)
 //
 //----------------------------------------------------------------------------
 
-void A_MaceBallImpact2(mobj_t * ball)
+void A_MaceBallImpact2(mobj_t * ball, player_t *player, pspdef_t *psp)
 {
     mobj_t *tiny;
     angle_t angle;
@@ -1233,7 +1233,7 @@ void A_MaceBallImpact2(mobj_t * ball)
 //
 //----------------------------------------------------------------------------
 
-void A_FireMacePL2(player_t * player, pspdef_t * psp)
+void A_FireMacePL2(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     mobj_t *mo;
 
@@ -1258,7 +1258,7 @@ void A_FireMacePL2(player_t * player, pspdef_t * psp)
 //
 //----------------------------------------------------------------------------
 
-void A_DeathBallImpact(mobj_t * ball)
+void A_DeathBallImpact(mobj_t * ball, player_t *player, pspdef_t *psp)
 {
     int i;
     mobj_t *target;
@@ -1328,7 +1328,7 @@ void A_DeathBallImpact(mobj_t * ball)
 //
 //----------------------------------------------------------------------------
 
-void A_SpawnRippers(mobj_t * actor)
+void A_SpawnRippers(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     unsigned int i;
     angle_t angle;
@@ -1353,7 +1353,7 @@ void A_SpawnRippers(mobj_t * actor)
 //
 //----------------------------------------------------------------------------
 
-void A_FireCrossbowPL1(player_t * player, pspdef_t * psp)
+void A_FireCrossbowPL1(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     mobj_t *pmo;
 
@@ -1370,7 +1370,7 @@ void A_FireCrossbowPL1(player_t * player, pspdef_t * psp)
 //
 //----------------------------------------------------------------------------
 
-void A_FireCrossbowPL2(player_t * player, pspdef_t * psp)
+void A_FireCrossbowPL2(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     mobj_t *pmo;
 
@@ -1390,7 +1390,7 @@ void A_FireCrossbowPL2(player_t * player, pspdef_t * psp)
 //
 //----------------------------------------------------------------------------
 
-void A_BoltSpark(mobj_t * bolt)
+void A_BoltSpark(mobj_t * bolt, player_t *player, pspdef_t *psp)
 {
     mobj_t *spark;
 
@@ -1408,7 +1408,7 @@ void A_BoltSpark(mobj_t * bolt)
 //
 //----------------------------------------------------------------------------
 
-void A_FireSkullRodPL1(player_t * player, pspdef_t * psp)
+void A_FireSkullRodPL1(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     mobj_t *mo;
 
@@ -1435,7 +1435,7 @@ void A_FireSkullRodPL1(player_t * player, pspdef_t * psp)
 //
 //----------------------------------------------------------------------------
 
-void A_FireSkullRodPL2(player_t * player, pspdef_t * psp)
+void A_FireSkullRodPL2(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     player->ammo[am_skullrod] -=
         deathmatch ? USE_SKRD_AMMO_1 : USE_SKRD_AMMO_2;
@@ -1464,7 +1464,7 @@ void A_FireSkullRodPL2(player_t * player, pspdef_t * psp)
 //
 //----------------------------------------------------------------------------
 
-void A_SkullRodPL2Seek(mobj_t * actor)
+void A_SkullRodPL2Seek(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     P_SeekerMissile(actor, ANG1_X * 10, ANG1_X * 30);
 }
@@ -1475,7 +1475,7 @@ void A_SkullRodPL2Seek(mobj_t * actor)
 //
 //----------------------------------------------------------------------------
 
-void A_AddPlayerRain(mobj_t * actor)
+void A_AddPlayerRain(mobj_t *actor, player_t *player_, pspdef_t *psp)
 {
     int playerNum;
     player_t *player;
@@ -1526,7 +1526,7 @@ void A_AddPlayerRain(mobj_t * actor)
 //
 //----------------------------------------------------------------------------
 
-void A_SkullRodStorm(mobj_t * actor)
+void A_SkullRodStorm(mobj_t *actor, player_t *player_, pspdef_t *psp)
 {
     fixed_t x;
     fixed_t y;
@@ -1582,7 +1582,7 @@ void A_SkullRodStorm(mobj_t * actor)
 //
 //----------------------------------------------------------------------------
 
-void A_RainImpact(mobj_t * actor)
+void A_RainImpact(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     if (actor->z > actor->floorz)
     {
@@ -1600,7 +1600,7 @@ void A_RainImpact(mobj_t * actor)
 //
 //----------------------------------------------------------------------------
 
-void A_HideInCeiling(mobj_t * actor)
+void A_HideInCeiling(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     actor->z = actor->ceilingz + 4 * FRACUNIT;
 }
@@ -1611,7 +1611,7 @@ void A_HideInCeiling(mobj_t * actor)
 //
 //----------------------------------------------------------------------------
 
-void A_FirePhoenixPL1(player_t * player, pspdef_t * psp)
+void A_FirePhoenixPL1(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     angle_t angle;
 
@@ -1630,7 +1630,7 @@ void A_FirePhoenixPL1(player_t * player, pspdef_t * psp)
 //
 //----------------------------------------------------------------------------
 
-void A_PhoenixPuff(mobj_t * actor)
+void A_PhoenixPuff(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     mobj_t *puff;
     angle_t angle;
@@ -1656,7 +1656,7 @@ void A_PhoenixPuff(mobj_t * actor)
 // The purpose of this object is unknown, as is this function.
 //
 
-void A_RemovedPhoenixFunc(mobj_t *actor)
+void A_RemovedPhoenixFunc(mobj_t *actor, player_t * player, pspdef_t * psp)
 {
     I_Error("Action function invoked for removed Phoenix action!");
 }
@@ -1667,7 +1667,7 @@ void A_RemovedPhoenixFunc(mobj_t *actor)
 //
 //----------------------------------------------------------------------------
 
-void A_InitPhoenixPL2(player_t * player, pspdef_t * psp)
+void A_InitPhoenixPL2(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     player->flamecount = FLAME_THROWER_TICS;
 }
@@ -1680,7 +1680,7 @@ void A_InitPhoenixPL2(player_t * player, pspdef_t * psp)
 //
 //----------------------------------------------------------------------------
 
-void A_FirePhoenixPL2(player_t * player, pspdef_t * psp)
+void A_FirePhoenixPL2(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     mobj_t *mo;
     mobj_t *pmo;
@@ -1725,7 +1725,7 @@ void A_FirePhoenixPL2(player_t * player, pspdef_t * psp)
 //
 //----------------------------------------------------------------------------
 
-void A_ShutdownPhoenixPL2(player_t * player, pspdef_t * psp)
+void A_ShutdownPhoenixPL2(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     player->ammo[am_phoenixrod] -= USE_PHRD_AMMO_2;
 }
@@ -1736,7 +1736,7 @@ void A_ShutdownPhoenixPL2(player_t * player, pspdef_t * psp)
 //
 //----------------------------------------------------------------------------
 
-void A_FlameEnd(mobj_t * actor)
+void A_FlameEnd(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     actor->momz += (fixed_t)(1.5 * FRACUNIT);
 }
@@ -1747,7 +1747,7 @@ void A_FlameEnd(mobj_t * actor)
 //
 //----------------------------------------------------------------------------
 
-void A_FloatPuff(mobj_t * puff)
+void A_FloatPuff(mobj_t * puff, player_t *player, pspdef_t *psp)
 {
     puff->momz += (fixed_t)(1.8 * FRACUNIT);
 }
@@ -1758,7 +1758,7 @@ void A_FloatPuff(mobj_t * puff)
 //
 //---------------------------------------------------------------------------
 
-void A_GauntletAttack(player_t * player, pspdef_t * psp)
+void A_GauntletAttack(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     angle_t angle;
     int damage;
@@ -1836,17 +1836,17 @@ void A_GauntletAttack(player_t * player, pspdef_t * psp)
     player->mo->flags |= MF_JUSTATTACKED;
 }
 
-void A_Light0(player_t * player, pspdef_t * psp)
+void A_Light0(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     player->extralight = 0;
 }
 
-void A_Light1(player_t * player, pspdef_t * psp)
+void A_Light1(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     player->extralight = 1;
 }
 
-void A_Light2(player_t * player, pspdef_t * psp)
+void A_Light2(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     player->extralight = 2;
 }

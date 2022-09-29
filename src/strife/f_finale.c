@@ -518,7 +518,6 @@ void F_Ticker (void)
 // haleyjd 09/13/10: Not present in Strife: Cast drawing functions
 
 #include "hu_stuff.h"
-extern	patch_t *hu_font[HU_FONTSIZE];
 
 /*
 //

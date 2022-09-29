@@ -14,6 +14,12 @@
 
 // Sound control menu
 
+#ifdef _WIN32
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#include <mmsystem.h>
+#endif
+
 #include <stdlib.h>
 #include <string.h>
 
@@ -65,14 +71,23 @@ static int show_talk = 0;
 // [crispy] values 3 and higher might reproduce DOOM.EXE more accurately,
 // but 1 is closer to "use_libsamplerate = 0" which is the default in Choco
 // and causes only a short delay at startup
-static int use_libsamplerate = 1;
-static float libsamplerate_scale = 0.65;
+int use_libsamplerate = 1;
+float libsamplerate_scale = 0.65;
 
 static char *music_pack_path = NULL;
 static char *timidity_cfg_path = NULL;
 static char *fluidsynth_sf_path = NULL;
 static char *gus_patch_path = NULL;
 static int gus_ram_kb = 1024;
+#ifdef _WIN32
+#define MAX_MIDI_DEVICES 20
+static char **midi_names;
+static int midi_num_devices;
+static int midi_index;
+char *winmm_midi_device = NULL;
+static int winmm_reverb_level = 40;
+static int winmm_chorus_level = 0;
+#endif
 
 // DOS specific variables: these are unused but should be maintained
 // so that the config file can be shared between chocolate
@@ -128,10 +143,99 @@ static void OpenMusicPackDir(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
     }
 }
 
+#ifdef _WIN32
+static void UpdateMidiDevice(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(data))
+{
+    free(winmm_midi_device);
+    winmm_midi_device = M_StringDuplicate(midi_names[midi_index]);
+}
+
+static txt_dropdown_list_t *MidiDeviceSelector(void)
+{
+    txt_dropdown_list_t *result;
+    int all_devices;
+    int device_ids[MAX_MIDI_DEVICES];
+    MMRESULT mmr;
+    MIDIOUTCAPS mcaps;
+    int i;
+
+    if (midi_num_devices > 0)
+    {
+        for (i = 0; i < midi_num_devices; ++i)
+        {
+            free(midi_names[i]);
+            midi_names[i] = NULL;
+        }
+        free(midi_names);
+        midi_names = NULL;
+    }
+    midi_num_devices = 0;
+
+    // get the number of midi devices on this system
+    all_devices = midiOutGetNumDevs() + 1; // include MIDI_MAPPER
+    if (all_devices > MAX_MIDI_DEVICES)
+    {
+        all_devices = MAX_MIDI_DEVICES;
+    }
+
+    // get the valid device ids only, starting from -1 (MIDI_MAPPER)
+    for (i = 0; i < all_devices; ++i)
+    {
+        mmr = midiOutGetDevCaps(i - 1, &mcaps, sizeof(mcaps));
+        if (mmr == MMSYSERR_NOERROR)
+        {
+            device_ids[midi_num_devices] = i - 1;
+            midi_num_devices++;
+        }
+    }
+
+    // get the device names
+    midi_names = malloc(midi_num_devices * sizeof(char *));
+    for (i = 0; i < midi_num_devices; ++i)
+    {
+        mmr = midiOutGetDevCaps(device_ids[i], &mcaps, sizeof(mcaps));
+        if (mmr == MMSYSERR_NOERROR)
+        {
+            midi_names[i] = M_StringDuplicate(mcaps.szPname);
+        }
+    }
+
+    // set the dropdown list index to the previously selected device
+    for (i = 0; i < midi_num_devices; ++i)
+    {
+        if (winmm_midi_device != NULL &&
+            strstr(winmm_midi_device, midi_names[i]))
+        {
+            midi_index = i;
+            break;
+        }
+        else if (winmm_midi_device == NULL || i == midi_num_devices - 1)
+        {
+            // give up and use MIDI_MAPPER
+            midi_index = 0;
+            free(winmm_midi_device);
+            winmm_midi_device = M_StringDuplicate(midi_names[0]);
+            break;
+        }
+    }
+
+    result = TXT_NewDropdownList(&midi_index, (const char **)midi_names,
+                                 midi_num_devices);
+    TXT_SignalConnect(result, "changed", UpdateMidiDevice, NULL);
+
+    return result;
+}
+#endif
+
 void ConfigSound(TXT_UNCAST_ARG(widget), void *user_data)
 {
     txt_window_t *window;
     txt_window_action_t *music_action;
+#ifdef _WIN32
+    int window_ypos = 2;
+#else
+    int window_ypos = 3;
+#endif
 
     // Build the window
 
@@ -140,7 +244,7 @@ void ConfigSound(TXT_UNCAST_ARG(widget), void *user_data)
 
     TXT_SetColumnWidths(window, 40);
     TXT_SetWindowPosition(window, TXT_HORIZ_CENTER, TXT_VERT_TOP,
-                                  TXT_SCREEN_W / 2, 3);
+                                  TXT_SCREEN_W / 2, window_ypos);
 
     music_action = TXT_NewWindowAction('m', "Music Packs");
     TXT_SetWindowAction(window, TXT_HORIZ_CENTER, music_action);
@@ -193,6 +297,14 @@ void ConfigSound(TXT_UNCAST_ARG(widget), void *user_data)
                 NULL)),
 
         TXT_NewRadioButton("MIDI/MP3/OGG/FLAC", &snd_musicdevice, SNDDEVICE_GENMIDI), // [crispy] improve ambigious music backend name
+#ifdef _WIN32
+        TXT_NewConditional(&snd_musicdevice, SNDDEVICE_GENMIDI,
+            TXT_NewHorizBox(
+                TXT_NewStrut(4, 0),
+                TXT_NewLabel("Device: "),
+                MidiDeviceSelector(),
+                NULL)),
+#endif
         TXT_NewConditional(&snd_musicdevice, SNDDEVICE_GENMIDI,
             TXT_MakeTable(2,
                 TXT_NewStrut(4, 0),
@@ -228,6 +340,11 @@ void BindSoundVariables(void)
     M_BindStringVariable("music_pack_path",     &music_pack_path);
     M_BindStringVariable("timidity_cfg_path",     &timidity_cfg_path);
     M_BindStringVariable("fluidsynth_sf_path",    &fluidsynth_sf_path);
+#ifdef _WIN32
+    M_BindStringVariable("winmm_midi_device",     &winmm_midi_device);
+    M_BindIntVariable("winmm_reverb_level",       &winmm_reverb_level);
+    M_BindIntVariable("winmm_chorus_level",       &winmm_chorus_level);
+#endif
 
     M_BindIntVariable("snd_sbport",               &snd_sbport);
     M_BindIntVariable("snd_sbirq",                &snd_sbirq);

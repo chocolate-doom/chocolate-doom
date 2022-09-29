@@ -28,6 +28,7 @@
 #include "i_swap.h"
 #include "i_video.h"
 
+#include "d_main.h"
 #include "hu_stuff.h"
 #include "hu_lib.h"
 #include "m_controls.h"
@@ -91,12 +92,8 @@ static boolean          message_nottobefuckedwith;
 static hu_stext_t       w_message;
 static int              message_counter;
 
-//extern int              showMessages; [STRIFE] no such variable
 
 static boolean          headsupactive = false;
-
-// haleyjd 20130915 [STRIFE]: need nickname
-extern char *nickname;
 
 // haleyjd 20130915 [STRIFE]: true if setting nickname
 static boolean hu_setting_name = false;

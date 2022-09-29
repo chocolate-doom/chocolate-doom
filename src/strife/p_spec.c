@@ -143,8 +143,8 @@ anim_t* lastanim;
 // haleyjd 08/29/10: [STRIFE] MAXLINEANIMS raised from 64 to 96
 #define MAXLINEANIMS            96*256
 
-extern  short   numlinespecials;
-extern  line_t* linespeciallist[MAXLINEANIMS];
+short   numlinespecials = 0;
+line_t *linespeciallist[MAXLINEANIMS];
 
 
 
@@ -1681,8 +1681,6 @@ static void DonutOverrun(fixed_t *s3_floorheight, short *s3_floorpic,
     static int tmp_s3_floorheight;
     static int tmp_s3_floorpic;
 
-    extern int numflats;
-
     if (first)
     {
         int p;
@@ -1865,8 +1863,6 @@ int EV_DoDonut(line_t*	line)
 // After the map has been loaded, scan for specials
 //  that spawn thinkers
 //
-short		numlinespecials;
-line_t*		linespeciallist[MAXLINEANIMS];
 
 
 // Parses command line parameters.

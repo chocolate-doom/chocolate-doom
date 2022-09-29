@@ -41,20 +41,8 @@ static const char *hhe_versions[] =
 
 deh_hhe_version_t deh_hhe_version = deh_hhe_1_0;
 
-// deh_ammo.c:
-extern deh_section_t deh_section_ammo;
-// deh_frame.c:
-extern deh_section_t deh_section_frame;
-// deh_ptr.c:
-extern deh_section_t deh_section_pointer;
-// deh_sound.c
-extern deh_section_t deh_section_sound;
 // deh_htext.c:
 extern deh_section_t deh_section_heretic_text;
-// deh_thing.c:
-extern deh_section_t deh_section_thing;
-// deh_weapon.c:
-extern deh_section_t deh_section_weapon;
 
 //
 // List of section types:

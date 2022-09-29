@@ -84,8 +84,14 @@ static void GetMouseButtonDescription(int button, char *buf, size_t buf_len)
         case 2:
             M_StringCopy(buf, "MID", buf_len);
             break;
+        case 3:
+            M_StringCopy(buf, "WHEEL UP", buf_len);
+            break;
+        case 4:
+            M_StringCopy(buf, "WHEEL DOWN", buf_len);
+            break;
         default:
-            M_snprintf(buf, buf_len, "BUTTON #%i", button + 1);
+            M_snprintf(buf, buf_len, "BUTTON #%i", button - 1);
             break;
     }
 }

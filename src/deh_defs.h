@@ -54,6 +54,38 @@ struct deh_section_s
     deh_sha1_hash_t sha1_hash;
 };
 
+
+extern deh_section_t *deh_section_types[];
+extern const char *deh_signatures[];
+
+// deh_ammo.c:
+extern deh_section_t deh_section_ammo;
+// deh_cheat.c:
+extern deh_section_t deh_section_cheat;
+// deh_frame.c:
+extern deh_section_t deh_section_frame;
+// deh_misc.c:
+extern deh_section_t deh_section_misc;
+// deh_ptr.c:
+extern deh_section_t deh_section_pointer;
+// deh_sound.c
+extern deh_section_t deh_section_sound;
+// deh_text.c:
+extern deh_section_t deh_section_text;
+// deh_thing.c:
+extern deh_section_t deh_section_thing;
+// deh_weapon.c:
+extern deh_section_t deh_section_weapon;
+// deh_bexstr.c:
+extern deh_section_t deh_section_bexstr;
+// deh_bexpars.c:
+extern deh_section_t deh_section_bexpars;
+// deh_bexptr.c:
+extern deh_section_t deh_section_bexptr;
+// deh_bexincl.c:
+extern deh_section_t deh_section_bexincl;
+
+
 #endif /* #ifndef DEH_DEFS_H */
 
 

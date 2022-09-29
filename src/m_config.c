@@ -1039,6 +1039,26 @@ static default_t extra_defaults_list[] =
 
     CONFIG_VARIABLE_INT(gus_ram_kb),
 
+#ifdef _WIN32
+    //!
+    // MIDI device for native Windows MIDI.
+    //
+
+    CONFIG_VARIABLE_STRING(winmm_midi_device),
+
+    //!
+    // Reverb level for native Windows MIDI, default 40, range 0-127.
+    //
+
+    CONFIG_VARIABLE_INT(winmm_reverb_level),
+
+    //!
+    // Chorus level for native Windows MIDI, default 0, range 0-127.
+    //
+
+    CONFIG_VARIABLE_INT(winmm_chorus_level),
+#endif
+
     //!
     // @game doom strife
     //

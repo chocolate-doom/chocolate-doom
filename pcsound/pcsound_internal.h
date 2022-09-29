@@ -20,6 +20,13 @@
 
 #include "pcsound.h"
 
+#ifdef HAVE_DEV_ISA_SPKRIO_H
+#define HAVE_BSD_SPEAKER
+#endif
+#ifdef HAVE_DEV_SPEAKER_SPEAKER_H
+#define HAVE_BSD_SPEAKER
+#endif
+
 #define PCSOUND_8253_FREQUENCY 1193280
 
 typedef struct pcsound_driver_s pcsound_driver_t;
@@ -34,6 +41,22 @@ struct pcsound_driver_s
 };
 
 extern int pcsound_sample_rate;
+
+
+#ifdef _WIN32
+extern pcsound_driver_t pcsound_win32_driver;
+#endif
+
+#ifdef HAVE_BSD_SPEAKER
+extern pcsound_driver_t pcsound_bsd_driver;
+#endif
+
+#ifdef HAVE_LINUX_KD_H
+extern pcsound_driver_t pcsound_linux_driver;
+#endif
+
+extern pcsound_driver_t pcsound_sdl_driver;
+
 
 #endif /* #ifndef PCSOUND_INTERNAL_H */
 
