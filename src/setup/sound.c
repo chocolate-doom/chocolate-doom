@@ -301,7 +301,7 @@ void ConfigSound(TXT_UNCAST_ARG(widget), void *user_data)
         TXT_NewConditional(&snd_musicdevice, SNDDEVICE_GENMIDI,
             TXT_NewHorizBox(
                 TXT_NewStrut(4, 0),
-                TXT_NewLabel("Device: "),
+                TXT_NewLabel("Native MIDI Device: "),
                 MidiDeviceSelector(),
                 NULL)),
 #endif
