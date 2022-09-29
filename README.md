@@ -11,7 +11,7 @@ installation for linux (debian)
 ```
 git clone https://github.com/someStranger8/RNG-OF-DOOM
 cd RNG-OF-DOOM
-./configure
+./autogen.sh
 make
 make install
 chocolate-doom -iwad doom2.wad -file nuts.wad
