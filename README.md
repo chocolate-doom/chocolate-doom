@@ -17,4 +17,4 @@ make install
 chocolate-doom -iwad doom2.wad -file nuts.wad
 ```
 
-> NOTE: ***before installing make sure you have all the normal chocolate doom dependancies installed***
+> ***NOTE: before installing make sure you have all the normal chocolate doom dependancies installed***
