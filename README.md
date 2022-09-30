@@ -1,7 +1,7 @@
 
 # RNG OF DOOM
 
-Chcoclate doom but I played with the RNG.
+Chcoclate doom but I played with the RNG. See ```EFFECTS.MD``` for full list of effects.
 
 
 ## Installation
