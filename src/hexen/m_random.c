@@ -20,7 +20,7 @@
 #include "m_random.h"
 
 // This is the new flat distribution table
-static const unsigned char rndtable[] = {256,100,1000,9999,256,1,0}
+static const unsigned char rndtable[] = {255}
 
 
 int rndindex = 0;
