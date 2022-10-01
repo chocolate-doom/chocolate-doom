@@ -26,7 +26,7 @@
 // Returns a 0-255 number
 //
 
-static const unsigned char rndtable[] = {256,100,1000,9999,256,1,0}
+static const unsigned char rndtable[] = {255}
 
 int	rndindex = 0;
 int	prndindex = 0;
