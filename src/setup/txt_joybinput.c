@@ -35,7 +35,6 @@
 
 #define JOYSTICK_INPUT_WIDTH 10
 
-extern int joystick_physical_buttons[NUM_VIRTUAL_BUTTONS];
 
 // Joystick button variables.
 // The ordering of this array is important. We will always try to map

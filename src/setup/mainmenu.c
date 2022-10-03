@@ -274,7 +274,6 @@ static void InitConfig(void)
 
 static void SetIcon(void)
 {
-    extern SDL_Window *TXT_SDLWindow;
     SDL_Surface *surface;
 
     surface = SDL_CreateRGBSurfaceFrom((void *) setup_icon_data, setup_icon_w,
@@ -320,14 +319,6 @@ static void InitTextscreen(void)
     SetWindowTitle();
 }
 
-// Restart the textscreen library.  Used when the video_driver variable
-// is changed.
-
-void RestartTextscreen(void)
-{
-    TXT_Shutdown();
-    InitTextscreen();
-}
 
 // 
 // Initialize and run the textscreen GUI.
