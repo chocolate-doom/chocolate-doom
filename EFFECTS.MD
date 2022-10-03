@@ -1,4 +1,9 @@
 
 # Effects
 
-this file is not finished yet
+## Doom
+### weapons
+
+- weapons do max damage
+
+> ***NOTE: this file is not finished yet***
