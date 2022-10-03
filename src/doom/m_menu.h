@@ -51,6 +51,8 @@ void M_Init (void);
 // does nothing if menu is already up.
 void M_StartControlPanel (void);
 
+// [crispy] Propagate default difficulty setting change
+void M_SetDefaultDifficulty (void);
 
 
 extern int detailLevel;

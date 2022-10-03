@@ -121,6 +121,7 @@ static void CrispyVsync(int option);
 static void CrispyBrightmaps(int option);
 static void CrispyFreelook(int option);
 static void CrispyMouselook(int option);
+static void CrispyDefaultskill(int option);
 static void SCNetCheck2(int option);
 static void SCLoadGame(int option);
 static void SCSaveGame(int option);
@@ -335,12 +336,13 @@ static MenuItem_t CrispnessItems[] = {
     {ITT_EMPTY, NULL, NULL, 0, MENU_NONE},
     {ITT_LRFUNC, "FREELOOK MODE:", CrispyFreelook, 0, MENU_NONE},
     {ITT_LRFUNC, "PERMANENT MOUSELOOK:", CrispyMouselook, 0, MENU_NONE},
+    {ITT_LRFUNC, "DEFAULT DIFFICULTY:", CrispyDefaultskill, 0, MENU_NONE},
 };
 
 static Menu_t CrispnessMenu = {
     68, 40,
     DrawCrispnessMenu,
-    12, CrispnessItems,
+    13, CrispnessItems,
     0,
     MENU_OPTIONS
 };
@@ -385,6 +387,8 @@ void MN_Init(void)
     MenuActive = false;
 //      messageson = true;              // Set by defaults in .CFG
     MauloBaseLump = W_GetNumForName("FBULA0");  // ("M_SKL00");
+    // [crispy] apply default difficulty
+    SkillMenu.oldItPos = (crispy->defaultskill + SKILL_HMP) % NUM_SKILLS;
 }
 
 //---------------------------------------------------------------------------
@@ -1434,6 +1438,20 @@ static void CrispyMouselook(int option)
     crispy->mouselook = !crispy->mouselook;
 }
 
+static void CrispyDefaultskill(int option)
+{
+    if (option == RIGHT_DIR)
+    {
+        crispy->defaultskill = (crispy->defaultskill + 1) % NUM_SKILLS;
+    }
+    else
+    {
+        crispy->defaultskill = (crispy->defaultskill + NUM_SKILLS - 1) % NUM_SKILLS;
+    }
+
+    SkillMenu.oldItPos = (crispy->defaultskill + SKILL_HMP) % NUM_SKILLS;
+}
+
 static void CrispyReturnToMenu()
 {
 	Menu_t *cur = CurrentMenu;
@@ -2266,6 +2284,7 @@ static void M_DrawCrispnessBackground(void)
 static void DrawCrispnessMenu(void)
 {
     static const char *title;
+    int skill;
 
     // Background
     M_DrawCrispnessBackground();
@@ -2311,6 +2330,14 @@ static void DrawCrispnessMenu(void)
 
     // Mouselook
     MN_DrTextA(crispy->mouselook ? "ON" : "OFF", 220, 150);
+
+    // Default difficulty
+    skill = (crispy->defaultskill + SKILL_HMP) % NUM_SKILLS;
+    MN_DrTextA(skill == SKILL_ITYTD ? "VERY EASY" :
+               skill == SKILL_HNTR ? "EASY" :
+               skill == SKILL_HMP ? "MEDIUM" :
+               skill == SKILL_UV ? "HARD" :
+                                    "VERY HARD" , 200, 160);
 
     dp_translation = NULL;
 }

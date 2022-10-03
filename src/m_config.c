@@ -2116,6 +2116,14 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(crispy_crosshairtype),
 
     //!
+    // @game doom heretic hexen
+    //
+    // Default difficulty when starting a new game.
+    //
+
+    CONFIG_VARIABLE_INT(crispy_defaultskill),
+
+    //!
     // @game doom
     //
     // Show a progress bar when playing back a demo.
@@ -2210,14 +2218,6 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_INT(crispy_neghealth),
-
-    //!
-    // @game doom
-    //
-    // Set the default difficulty when starting a new game
-    //
-
-    CONFIG_VARIABLE_INT(crispy_defaultskill),
 
     //!
     // @game doom

@@ -867,6 +867,7 @@ void D_BindVariables(void)
     M_BindIntVariable("crispy_automaprotate",   &crispy->automaprotate);
     M_BindIntVariable("crispy_automapstats",    &crispy->automapstats);
     M_BindIntVariable("crispy_brightmaps",      &crispy->brightmaps);
+    M_BindIntVariable("crispy_defaultskill",    &crispy->defaultskill);
     M_BindIntVariable("crispy_freelook",        &crispy->freelook_hh);
     M_BindIntVariable("crispy_leveltime",       &crispy->leveltime);
     M_BindIntVariable("crispy_mouselook",       &crispy->mouselook);
@@ -952,7 +953,6 @@ void D_DoomMain(void)
     noartiskip = M_ParmExists("-noartiskip");
 
     debugmode = M_ParmExists("-debug");
-    startskill = sk_medium;
     startepisode = 1;
     startmap = 1;
     autostart = false;
@@ -972,22 +972,6 @@ void D_DoomMain(void)
     if (M_ParmExists("-deathmatch"))
     {
         deathmatch = true;
-    }
-
-    //!
-    // @category game
-    // @arg <skill>
-    // @vanilla
-    //
-    // Set the game skill, 1-5 (1: easiest, 5: hardest).  A skill of
-    // 0 disables all monsters.
-    //
-
-    p = M_CheckParmWithArgs("-skill", 1);
-    if (p)
-    {
-        startskill = myargv[p + 1][0] - '1';
-        autostart = true;
     }
 
     //!
@@ -1068,6 +1052,25 @@ void D_DoomMain(void)
     M_LoadDefaults();
 
     I_AtExit(M_SaveDefaults, false);
+
+    // [crispy] Set startskill after loading config to account for defaultskill
+    startskill = (crispy->defaultskill + SKILL_HMP) % NUM_SKILLS; // [crispy]
+
+    //!
+    // @category game
+    // @arg <skill>
+    // @vanilla
+    //
+    // Set the game skill, 1-5 (1: easiest, 5: hardest).  A skill of
+    // 0 disables all monsters.
+    //
+
+    p = M_CheckParmWithArgs("-skill", 1);
+    if (p)
+    {
+        startskill = myargv[p + 1][0] - '1';
+        autostart = true;
+    }
 
     DEH_printf("Z_Init: Init zone memory allocation daemon.\n");
     Z_Init();

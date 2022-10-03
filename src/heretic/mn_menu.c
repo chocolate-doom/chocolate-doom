@@ -122,6 +122,7 @@ static boolean CrispyPlayerCoords(int option);
 static boolean CrispySecretMessage(int option);
 static boolean CrispyFreelook(int option);
 static boolean CrispyMouselook(int option);
+static boolean CrispyDefaultskill(int option);
 static boolean CrispyUncapped(int option);
 static boolean CrispyVsync(int option);
 static boolean CrispyNextPage(int option);
@@ -366,6 +367,7 @@ static Menu_t Crispness1Menu = {
 static MenuItem_t Crispness2Items[] = {
     {ITT_LRFUNC, "FREELOOK MODE:", CrispyFreelook, 0, MENU_NONE},
     {ITT_LRFUNC, "PERMANENT MOUSELOOK:", CrispyMouselook, 0, MENU_NONE},
+    {ITT_LRFUNC, "DEFAULT DIFFICULTY:", CrispyDefaultskill, 0, MENU_NONE},
     {ITT_EMPTY, NULL, NULL, 0, MENU_NONE},
     {ITT_EFUNC, "PREV PAGE", CrispyPrevPage, 0, MENU_NONE},
 };
@@ -373,7 +375,7 @@ static MenuItem_t Crispness2Items[] = {
 static Menu_t Crispness2Menu = {
     68, 35,
     DrawCrispness,
-    4, Crispness2Items,
+    5, Crispness2Items,
     0,
     MENU_OPTIONS
 };
@@ -475,6 +477,9 @@ void MN_Init(void)
         EpisodeMenu.itemCount = 5;
         EpisodeMenu.y -= ITEM_HEIGHT;
     }
+
+    // [crispy] apply default difficulty
+    SkillMenu.oldItPos = (crispy->defaultskill + SKILL_HMP) % NUM_SKILLS;
 }
 
 //---------------------------------------------------------------------------
@@ -1456,6 +1461,22 @@ static boolean CrispyMouselook(int option)
     return true;
 }
 
+static boolean CrispyDefaultskill(int option)
+{
+    if (option == RIGHT_DIR)
+    {
+        crispy->defaultskill = (crispy->defaultskill + 1) % NUM_SKILLS;
+    }
+    else
+    {
+        crispy->defaultskill = (crispy->defaultskill + NUM_SKILLS - 1) % NUM_SKILLS;
+    }
+
+    SkillMenu.oldItPos = (crispy->defaultskill + SKILL_HMP) % NUM_SKILLS;
+
+    return true;
+}
+
 static boolean CrispyNextPage(int option)
 {
     crispnessmenupage++;
@@ -2384,6 +2405,8 @@ static void DrawCrispness1(void)
 
 static void DrawCrispness2(void)
 {
+    int skill;
+
     // Subheaders
     dp_translation = cr[CR_GOLD];
     MN_DrTextA("TACTICAL", 63, 25);
@@ -2394,6 +2417,14 @@ static void DrawCrispness2(void)
 
     // Mouselook
     MN_DrTextA(crispy->mouselook ? "ON" : "OFF", 220, 45);
+
+    // Default difficulty
+    skill = (crispy->defaultskill + SKILL_HMP) % NUM_SKILLS;
+    MN_DrTextA(skill == SKILL_ITYTD ? "WET-NURSE" :
+               skill == SKILL_HNTR ? "YELLOWBELLIES" :
+               skill == SKILL_HMP ? "BRINGEST" :
+               skill == SKILL_UV ? "SMITE-MEISTER" :
+                                    "BLACK PLAGUE" , 200, 55);
 
     dp_translation = NULL;
 }

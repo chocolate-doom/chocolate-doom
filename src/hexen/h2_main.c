@@ -200,6 +200,7 @@ void D_BindVariables(void)
     // [crispy] bind "crispness" config variables
     M_BindIntVariable("crispy_automapoverlay",  &crispy->automapoverlay);
     M_BindIntVariable("crispy_automaprotate",   &crispy->automaprotate);
+    M_BindIntVariable("crispy_defaultskill",    &crispy->defaultskill);
     M_BindIntVariable("crispy_freelook",        &crispy->freelook_hh);
     M_BindIntVariable("crispy_hires",           &crispy->hires);
     M_BindIntVariable("crispy_mouselook",       &crispy->mouselook);
@@ -388,7 +389,6 @@ void D_DoomMain(void)
     I_AtExit(D_HexenQuitMessage, false);
     startepisode = 1;
     autostart = false;
-    startskill = sk_medium;
     startmap = 1;
     gamemode = commercial;
 
@@ -432,6 +432,9 @@ void D_DoomMain(void)
     D_SetDefaultSavePath();
 
     I_AtExit(M_SaveDefaults, false);
+
+    // [crispy] set defaultskill after loading config
+    startskill = (crispy->defaultskill + SKILL_HMP) % NUM_SKILLS;
 
     // Now that the savedir is loaded, make sure it exists
     CreateSavePath();

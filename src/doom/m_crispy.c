@@ -19,6 +19,7 @@
 
 #include "crispy.h"
 #include "doomstat.h"
+#include "m_menu.h" // [crispy] M_SetDefaultDifficulty()
 #include "p_local.h" // [crispy] thinkercap
 #include "s_sound.h"
 #include "r_defs.h" // [crispy] laserpatch
@@ -420,6 +421,7 @@ void M_CrispyToggleDefaultSkill(int choice)
 {
     choice = 0;
     crispy->defaultskill = (crispy->defaultskill + 1) % NUM_SKILLS;
+    M_SetDefaultDifficulty();
 }
 
 void M_CrispyToggleOverunder(int choice)

@@ -39,7 +39,6 @@ typedef struct
 	int automapoverlay;
 	int automaprotate;
 	int automapstats;
-	int defaultskill;
 	int bobfactor;
 	int brightmaps;
 	int btusetimer;
@@ -50,6 +49,7 @@ typedef struct
 	int crosshairhealth;
 	int crosshairtarget;
 	int crosshairtype;
+	int defaultskill;
 	int demotimer;
 	int demotimerdir;
 	int demobar;

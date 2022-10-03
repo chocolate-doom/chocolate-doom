@@ -456,6 +456,7 @@ void D_BindVariables(void)
     M_BindIntVariable("crispy_crosshairhealth", &crispy->crosshairhealth);
     M_BindIntVariable("crispy_crosshairtarget", &crispy->crosshairtarget);
     M_BindIntVariable("crispy_crosshairtype",   &crispy->crosshairtype);
+    M_BindIntVariable("crispy_defaultskill",    &crispy->defaultskill);
     M_BindIntVariable("crispy_demobar",         &crispy->demobar);
     M_BindIntVariable("crispy_demotimer",       &crispy->demotimer);
     M_BindIntVariable("crispy_demotimerdir",    &crispy->demotimerdir);
@@ -468,7 +469,6 @@ void D_BindVariables(void)
     M_BindIntVariable("crispy_leveltime",       &crispy->leveltime);
     M_BindIntVariable("crispy_mouselook",       &crispy->mouselook);
     M_BindIntVariable("crispy_neghealth",       &crispy->neghealth);
-    M_BindIntVariable("crispy_defaultskill",    &crispy->defaultskill);
     M_BindIntVariable("crispy_overunder",       &crispy->overunder);
     M_BindIntVariable("crispy_pitch",           &crispy->pitch);
     M_BindIntVariable("crispy_playercoords",    &crispy->playercoords);
