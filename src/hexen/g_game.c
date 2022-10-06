@@ -37,8 +37,6 @@
 
 // External functions
 
-extern void R_InitSky(int map);
-extern void P_PlayerNextArtifact(player_t * player);
 
 // Functions
 

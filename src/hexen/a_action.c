@@ -33,7 +33,6 @@
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
-extern fixed_t FloatBobOffsets[64];
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 int orbitTableX[256] = {
@@ -788,8 +787,6 @@ void A_PoisonBagCheck(mobj_t * actor)
 void A_PoisonBagDamage(mobj_t * actor)
 {
     int bobIndex;
-
-    extern void A_Explode(mobj_t * actor);
 
     A_Explode(actor);
 

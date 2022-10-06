@@ -431,7 +431,6 @@ boolean P_BlockLinesIterator(int x, int y, boolean(*func) (line_t *))
     int i;
     polyblock_t *polyLink;
     seg_t **tempSeg;
-    extern polyblock_t **PolyBlockMap;
 
     if (x < 0 || y < 0 || x >= bmapwidth || y >= bmapheight)
         return true;

@@ -25,6 +25,9 @@ extern int *TerrainTypes;
 extern short numlinespecials;
 extern line_t *linespeciallist[MAXLINEANIMS];
 
+extern mobj_t LavaInflictor;
+
+
 //      Define values for map objects
 #define MO_TELEPORTMAN 14
 
@@ -72,6 +75,11 @@ line_t *P_FindLine(int lineTag, int *searchPosition);
 //-------------------------------
 // P_anim.c
 //-------------------------------
+
+
+extern fixed_t Sky1ScrollDelta;
+extern fixed_t Sky2ScrollDelta;
+
 
 void P_AnimateSurfaces(void);
 void P_InitFTAnims(void);

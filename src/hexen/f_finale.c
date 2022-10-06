@@ -25,6 +25,8 @@
 #include <ctype.h>
 #include "v_video.h"
 #include "i_swap.h"
+#include "am_map.h"
+
 
 // MACROS ------------------------------------------------------------------
 
@@ -48,7 +50,6 @@ static char *GetFinaleText(int sequence);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
-extern boolean automapactive;
 extern boolean viewactive;
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------

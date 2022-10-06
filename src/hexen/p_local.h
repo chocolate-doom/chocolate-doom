@@ -101,6 +101,8 @@ void P_PostMorphWeapon(player_t * player, weapontype_t weapon);
 
 // ***** P_USER *****
 
+
+extern int ArmorMax[NUMCLASSES];
 extern int PStateNormal[NUMCLASSES];
 extern int PStateRun[NUMCLASSES];
 extern int PStateAttack[NUMCLASSES];
@@ -108,12 +110,15 @@ extern int PStateAttackEnd[NUMCLASSES];
 
 void P_PlayerThink(player_t * player);
 void P_Thrust(player_t * player, angle_t angle, fixed_t move);
+void P_PlayerNextArtifact(player_t *player);
 void P_PlayerRemoveArtifact(player_t * player, int slot);
 void P_PlayerUseArtifact(player_t * player, artitype_t arti);
 boolean P_UseArtifact(player_t * player, artitype_t arti);
 int P_GetPlayerNum(player_t * player);
 void P_TeleportOther(mobj_t * victim);
 void ResetBlasted(mobj_t * mo);
+boolean P_UndoPlayerMorph(player_t *player);
+
 
 // ***** P_MOBJ *****
 
@@ -135,6 +140,9 @@ enum
 
 extern mobjtype_t PuffType;
 extern mobj_t *MissileMobj;
+
+extern fixed_t FloatBobOffsets[64];
+
 
 mobj_t *P_SpawnMobj(fixed_t x, fixed_t y, fixed_t z, mobjtype_t type);
 void P_RemoveMobj(mobj_t * th);
@@ -168,6 +176,7 @@ void P_CreateTIDList(void);
 void P_RemoveMobjFromTIDList(mobj_t * mobj);
 void P_InsertMobjIntoTIDList(mobj_t * mobj, int tid);
 mobj_t *P_FindMobjFromTID(int tid, int *searchPosition);
+void P_ExplodeMissile(mobj_t *mo);
 mobj_t *P_SpawnKoraxMissile(fixed_t x, fixed_t y, fixed_t z,
                             mobj_t * source, mobj_t * dest, mobjtype_t type);
 
@@ -181,6 +190,10 @@ void A_NoBlocking(mobj_t * actor);
 boolean P_LookForMonsters(mobj_t * actor);
 void P_InitCreatureCorpseQueue(boolean corpseScan);
 void A_DeQueueCorpse(mobj_t * actor);
+void A_Explode(mobj_t *actor);
+void A_CHolyAttack3(mobj_t *actor);
+void A_FSwordAttack2(mobj_t *actor);
+void A_MStaffAttack2(mobj_t *actor);
 
 
 // ***** P_MAPUTL *****
@@ -234,12 +247,22 @@ mobj_t *P_RoughMonsterSearch(mobj_t * mo, int distance);
 
 // ***** P_MAP *****
 
+
+#define MAXSPECIALCROSS         8
+
+
 extern boolean floatok;         // if true, move would be ok if
 extern fixed_t tmfloorz, tmceilingz;    // within tmfloorz - tmceilingz
 extern int tmfloorpic;
 extern mobj_t *BlockingMobj;
 
 extern line_t *ceilingline;
+extern line_t *spechit[MAXSPECIALCROSS];
+extern int numspechit;
+
+extern fixed_t topslope, bottomslope;   // slopes to top and bottom of target
+
+
 boolean P_TestMobjLocation(mobj_t * mobj);
 boolean P_CheckPosition(mobj_t * thing, fixed_t x, fixed_t y);
 mobj_t *P_CheckOnmobj(mobj_t * thing);
@@ -277,6 +300,10 @@ extern mobj_t **blocklinks;     // for thing chains
 // ***** P_INTER *****
 
 extern int clipmana[NUMMANA];
+extern int ArmorIncrement[NUMCLASSES][NUMARMOR];
+extern int AutoArmorSave[NUMCLASSES];
+extern const char *TextKeyMessages[];
+
 
 void P_SetMessage(player_t * player, const char *message, boolean ultmsg);
 void P_SetYellowMessage(player_t * player, const char *message, boolean ultmsg);
@@ -305,6 +332,8 @@ void AM_Drawer(void);
 boolean A_LocalQuake(byte * args, mobj_t * victim);
 void P_SpawnDirt(mobj_t * actor, fixed_t radius);
 void A_BridgeRemove(mobj_t * actor);
+void A_UnHideThing(mobj_t *actor);
+
 
 // ***** SB_BAR *****
 
@@ -359,6 +388,8 @@ enum
 
 extern polyobj_t *polyobjs;     // list of all poly-objects on the level
 extern int po_NumPolyobjs;
+extern polyblock_t **PolyBlockMap;
+
 
 void T_PolyDoor(polydoor_t * pd);
 void T_RotatePoly(polyevent_t * pe);

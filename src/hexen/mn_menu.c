@@ -30,8 +30,9 @@
 #include "r_local.h"
 #include "s_sound.h"
 #include "v_video.h"
-#include "v_trans.h" // [crispy] dp_translation
+#include "am_map.h"
 
+#include "v_trans.h" // [crispy] dp_translation
 #include "crispy.h"
 
 // MACROS ------------------------------------------------------------------
