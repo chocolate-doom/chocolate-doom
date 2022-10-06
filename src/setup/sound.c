@@ -82,8 +82,8 @@ static char **midi_names;
 static int midi_num_devices;
 static int midi_index;
 char *winmm_midi_device = NULL;
-static int winmm_reverb_level = 40;
-static int winmm_chorus_level = 0;
+int winmm_reverb_level = 40;
+int winmm_chorus_level = 0;
 #endif
 
 // DOS specific variables: these are unused but should be maintained
