@@ -364,7 +364,7 @@ typedef enum
 	key_yellow,
 	key_green,
 	key_blue,
-	NUMKEYS
+	NUM_KEY_TYPES
 } keytype_t;
 */
 
@@ -381,7 +381,7 @@ typedef enum
     KEY_9,
     KEY_A,
     KEY_B,
-    NUMKEYS
+    NUM_KEY_TYPES
 } keytype_t;
 
 typedef enum

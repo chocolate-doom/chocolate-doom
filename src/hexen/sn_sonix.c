@@ -68,7 +68,6 @@ static int GetSoundOffset(char *name);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
-extern sfxinfo_t S_sfx[];
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 

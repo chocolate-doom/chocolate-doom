@@ -408,7 +408,6 @@ boolean EV_SectorSoundChange(byte * args)
 
 static boolean CheckedLockedDoor(mobj_t * mo, byte lock)
 {
-    extern char *TextKeyMessages[11];
     char LockedBuffer[80];
 
     if (!mo->player)

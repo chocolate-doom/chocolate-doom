@@ -397,6 +397,8 @@ void R_RenderBSPNode(int bspnum);
 extern int rw_angle1;           // angle to line origin
 extern int TransTextureStart;
 extern int TransTextureEnd;
+extern lighttable_t **walllights;
+
 
 void R_RenderMaskedSegRange(drawseg_t * ds, int x1, int x2);
 
@@ -406,7 +408,10 @@ void R_RenderMaskedSegRange(drawseg_t * ds, int x1, int x2);
 typedef void (*planefunction_t) (int top, int bottom);
 extern planefunction_t floorfunc, ceilingfunc;
 
+extern fixed_t Sky1ColumnOffset;
+extern fixed_t Sky2ColumnOffset;
 extern int skyflatnum;
+extern boolean DoubleSky;
 
 extern short openings[MAXOPENINGS], *lastopening;
 
@@ -425,6 +430,8 @@ void R_DrawPlanes(void);
 visplane_t *R_FindPlane(fixed_t height, int picnum, int lightlevel,
                         int special);
 visplane_t *R_CheckPlane(visplane_t * pl, int start, int stop);
+
+void R_InitSky(int map);
 
 
 //
@@ -511,6 +518,9 @@ extern int dc_yh;
 extern fixed_t dc_iscale;
 extern fixed_t dc_texturemid;
 extern byte *dc_source;         // first pixel in a column
+extern byte *ylookup[MAXHEIGHT];
+extern int columnofs[MAXWIDTH];
+
 
 void R_DrawColumn(void);
 void R_DrawColumnLow(void);

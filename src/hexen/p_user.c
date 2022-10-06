@@ -21,7 +21,6 @@
 #include "p_local.h"
 #include "s_sound.h"
 
-void P_PlayerNextArtifact(player_t * player);
 
 // Macros
 

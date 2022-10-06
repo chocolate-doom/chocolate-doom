@@ -567,8 +567,6 @@ boolean P_GiveArmor(player_t * player, armortype_t armortype, int amount)
     int hits;
     int totalArmor;
 
-    extern int ArmorMax[NUMCLASSES];
-
     if (amount == -1)
     {
         hits = ArmorIncrement[player->class][armortype];

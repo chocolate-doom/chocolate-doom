@@ -45,7 +45,6 @@ static void PlayerLandedOnThing(mobj_t * mo, mobj_t * onmobj);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
-extern mobj_t LavaInflictor;
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
@@ -1749,7 +1748,6 @@ mobj_t *P_FindMobjFromTID(int tid, int *searchPosition)
 //
 //---------------------------------------------------------------------------
 
-extern fixed_t attackrange;
 
 void P_SpawnPuff(fixed_t x, fixed_t y, fixed_t z)
 {

@@ -76,7 +76,7 @@ line_t *ceilingline;
 
 // keep track of special lines as they are hit, but don't process them
 // until the move is proven valid
-#define MAXSPECIALCROSS 8
+
 line_t *spechit[MAXSPECIALCROSS];
 int numspechit;
 
@@ -1570,7 +1570,6 @@ fixed_t attackrange;
 
 fixed_t aimslope;
 
-extern fixed_t topslope, bottomslope;   // slopes to top and bottom of target
 
 /*
 ===============================================================================
@@ -1680,8 +1679,6 @@ boolean PTR_ShootTraverse(intercept_t * in)
     fixed_t slope;
     fixed_t dist;
     fixed_t thingtopslope, thingbottomslope;
-
-    extern mobj_t LavaInflictor;
 
     if (in->isaline)
     {

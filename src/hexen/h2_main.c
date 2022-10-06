@@ -41,6 +41,7 @@
 #include "p_local.h"
 #include "v_video.h"
 #include "w_main.h"
+#include "am_map.h"
 
 #include "hexen_icon.c"
 
@@ -88,7 +89,6 @@ static void WarpCheck(void);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
-extern boolean automapactive;
 extern boolean MenuActive;
 extern boolean askforquit;
 
