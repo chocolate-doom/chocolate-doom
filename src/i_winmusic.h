@@ -14,10 +14,10 @@
 // DESCRIPTION:
 //      Windows native MIDI
 
-#ifdef _WIN32
-
 #ifndef __I_WINMUSIC__
 #define __I_WINMUSIC__
+
+#ifdef _WIN32
 
 #include "doomtype.h"
 
@@ -31,9 +31,7 @@ boolean I_WIN_RegisterSong(char* filename);
 void I_WIN_UnRegisterSong(void);
 void I_WIN_ShutdownMusic(void);
 
-extern int winmm_reverb_level;
-extern int winmm_chorus_level;
 
-#endif
+#endif // _WIN32
 
-#endif
+#endif // __I_WINMUSIC__
