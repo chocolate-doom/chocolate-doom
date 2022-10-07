@@ -1058,6 +1058,20 @@ void HU_Ticker(void)
 		players[i].cmd.chatchar = 0;
 	    }
 	}
+    // [crispy] shift widgets one line down so chat typing line may appear
+    if (crispy->automapstats != WIDGETS_STBAR)
+    {
+        const int chat_line = chat_on ? 8 : 0;
+
+        w_kills.y = HU_MSGY + 1 * 8 + chat_line;
+        w_items.y = HU_MSGY + 2 * 8 + chat_line;
+        w_scrts.y = HU_MSGY + 3 * 8 + chat_line;
+        // [crispy] do not shift level time widget if no stats widget is used
+        w_ltime.y = HU_MSGY + 4 * 8 + (crispy->automapstats ? chat_line : 0);
+        w_coordx.y = HU_MSGY + 1 * 8 + chat_line;
+        w_coordy.y = HU_MSGY + 2 * 8 + chat_line;
+        w_coorda.y = HU_MSGY + 3 * 8 + chat_line;
+    }
     }
 
     if (automapactive)
@@ -1096,6 +1110,7 @@ void HU_Ticker(void)
     {
 	crispy_statsline_func_t crispy_statsline = crispy_statslines[crispy->statsformat];
 
+	if (crispy->automapstats == WIDGETS_STBAR)
 	w_kills.y = HU_MSGY + 1 * 8;
 
 	crispy_statsline(str, sizeof(str), kills, plr->killcount, totalkills, extrakills);
