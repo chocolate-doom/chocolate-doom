@@ -148,7 +148,6 @@ void MN_LoadSlotText(void);
 
 extern int detailLevel;
 extern boolean gamekeydown[256];        // The NUMKEYS macro is local to g_game
-extern boolean automapactive; // [crispy]
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
