@@ -14,10 +14,10 @@
 // DESCRIPTION:
 //      Windows native MIDI
 
-#ifdef _WIN32
-
 #ifndef __I_WINMUSIC__
 #define __I_WINMUSIC__
+
+#ifdef _WIN32
 
 #include "doomtype.h"
 
