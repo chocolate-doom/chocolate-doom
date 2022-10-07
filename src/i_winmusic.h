@@ -32,6 +32,6 @@ void I_WIN_UnRegisterSong(void);
 void I_WIN_ShutdownMusic(void);
 
 
-#endif
+#endif // _WIN32
 
-#endif
+#endif // __I_WINMUSIC__
