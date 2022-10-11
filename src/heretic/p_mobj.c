@@ -1187,7 +1187,6 @@ void P_SpawnMapThing(mapthing_t * mthing)
 //
 //---------------------------------------------------------------------------
 
-extern fixed_t attackrange;
 
 void P_SpawnPuff(fixed_t x, fixed_t y, fixed_t z)
 {
