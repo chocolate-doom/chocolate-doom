@@ -30,7 +30,7 @@
 #include "doomkeys.h"
 #include "v_video.h"
 
-vertex_t KeyPoints[NUMKEYS];
+vertex_t KeyPoints[NUM_KEY_TYPES];
 
 #define NUMALIAS 3              // Number of antialiased lines.
 
