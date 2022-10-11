@@ -114,6 +114,7 @@ typedef struct
 
 
 extern boolean automapactive;
+extern vertex_t KeyPoints[];
 
 
 #endif

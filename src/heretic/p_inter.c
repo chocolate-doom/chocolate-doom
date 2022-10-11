@@ -319,7 +319,6 @@ boolean P_GiveArmor(player_t * player, int armortype)
 void P_GiveKey(player_t * player, keytype_t key)
 {
     extern int playerkeys;
-    extern vertex_t KeyPoints[];
 
     if (player->keys[key])
     {
