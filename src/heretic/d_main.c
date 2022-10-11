@@ -141,7 +141,6 @@ void DrawMessage(void)
 
 void R_ExecuteSetViewSize(void);
 
-extern boolean finalestage;
 
 void D_Display(void)
 {
