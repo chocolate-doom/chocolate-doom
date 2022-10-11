@@ -115,6 +115,7 @@ typedef struct
 
 extern boolean automapactive;
 extern vertex_t KeyPoints[];
+extern const char *LevelNames[];
 
 
 #endif
