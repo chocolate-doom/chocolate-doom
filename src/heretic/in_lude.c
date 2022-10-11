@@ -159,7 +159,6 @@ static const char *NameForMap(int map)
 //
 //========================================================================
 
-extern void AM_Stop(void);
 
 void IN_Start(void)
 {

@@ -118,4 +118,7 @@ extern vertex_t KeyPoints[];
 extern const char *LevelNames[];
 
 
+void AM_Stop(void);
+
+
 #endif
