@@ -71,10 +71,7 @@ void S_InitScript(void);
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
-void H2_ProcessEvents(void);
-void H2_DoAdvanceDemo(void);
 void H2_AdvanceDemo(void);
-void H2_StartTitle(void);
 void H2_PageTicker(void);
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
@@ -89,8 +86,6 @@ static void WarpCheck(void);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
-extern boolean MenuActive;
-extern boolean askforquit;
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 

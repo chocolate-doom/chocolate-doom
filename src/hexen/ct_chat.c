@@ -89,7 +89,6 @@ char *chat_macros[10];
 boolean altdown;
 boolean shiftdown;
 
-extern boolean usearti;
 
 //===========================================================================
 //

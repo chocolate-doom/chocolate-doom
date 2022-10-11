@@ -612,6 +612,8 @@ extern boolean altpal;          // checkparm to use an alternate palette routine
 
 extern boolean cdrom;           // true if cd-rom mode active ("-cdrom")
 
+extern boolean viewactive;
+
 extern boolean deathmatch;      // only if started as net death
 
 extern boolean netgame;         // only true if >1 player
@@ -632,6 +634,7 @@ extern player_t players[MAXPLAYERS];
 
 extern boolean DebugSound;      // debug flag for displaying sound info
 
+extern boolean demorecording;
 extern boolean demoplayback;
 extern boolean demoextend;      // allow demos to persist through exit/respawn
 extern int maxzone;             // Maximum chunk allocated for zone heap
@@ -678,12 +681,16 @@ extern skill_t startskill;
 extern int startepisode;
 extern int startmap;
 extern boolean autostart;
+extern boolean advancedemo;
 
 extern boolean testcontrols;
 extern int testcontrols_mousespeed;
 
 extern int vanilla_savegame_limit;
 extern int vanilla_demo_limit;
+
+extern boolean usearti;
+
 
 /*
 ===============================================================================
@@ -711,6 +718,12 @@ void H2_GameLoop(void);
 // manages timing and IO
 // calls all ?_Responder, ?_Ticker, and ?_Drawer functions
 // calls I_GetTime, I_StartFrame, and I_StartTic
+
+void H2_StartTitle(void);
+
+
+extern boolean artiskip;
+
 
 //---------
 //SYSTEM IO
@@ -754,6 +767,10 @@ typedef struct
 //GAME
 //----
 
+
+#define NUMKEYS 256
+
+
 void G_DeathMatchSpawnPlayer(int playernum);
 
 void G_InitNew(skill_t skill, int episode, int map);
@@ -774,6 +791,12 @@ void G_DoLoadGame(void);
 void G_SaveGame(int slot, char *description);
 // called by M_Responder
 
+void H2_ProcessEvents(void);
+
+void H2_DoAdvanceDemo(void);
+
+boolean G_CheckDemoStatus(void);
+
 void G_RecordDemo(skill_t skill, int numplayers, int episode, int map,
                   const char *name);
 // only called by startup code
@@ -792,10 +815,16 @@ void G_StartNewInit(void);
 
 void G_WorldDone(void);
 
+void G_BuildTiccmd(ticcmd_t *cmd, int maketic);
 void G_Ticker(void);
 boolean G_Responder(event_t * ev);
 
 void G_ScreenShot(void);
+
+
+extern int LeaveMap;
+extern boolean gamekeydown[NUMKEYS];
+
 
 //-------
 //SV_SAVE
@@ -1040,6 +1069,9 @@ void F_StartFinale(void);
 
 extern int inv_ptr;
 extern int curpos;
+extern boolean inventory;
+
+
 void SB_Init(void);
 void SB_SetClassData(void);
 boolean SB_Responder(event_t * event);
@@ -1066,6 +1098,11 @@ void MN_DrTextB(const char *text, int x, int y);
 int MN_TextBWidth(const char *text);
 
 extern int messageson;
+extern boolean MenuActive;
+extern boolean askforquit;
+extern boolean mn_SuicideConsole;
+extern int detailLevel;
+
 
 #include "sounds.h"
 

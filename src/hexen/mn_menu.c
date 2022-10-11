@@ -124,8 +124,6 @@ void MN_LoadSlotText(void);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
-extern int detailLevel;
-extern boolean gamekeydown[256];        // The NUMKEYS macro is local to g_game
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
@@ -1148,8 +1146,6 @@ boolean MN_Responder(event_t * event)
     int charTyped;
     int i;
     MenuItem_t *item;
-    extern void H2_StartTitle(void);
-    extern void G_CheckDemoStatus(void);
     char *textBuffer;
 
     // In testcontrols mode, none of the function keys should do anything

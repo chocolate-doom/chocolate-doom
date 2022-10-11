@@ -37,7 +37,6 @@
 
 // Functions
 
-boolean G_CheckDemoStatus(void);
 void G_ReadDemoTiccmd(ticcmd_t * cmd);
 void G_WriteDemoTiccmd(ticcmd_t * cmd);
 
@@ -57,7 +56,6 @@ void G_DoSingleReborn(void);
 void H2_PageTicker(void);
 void H2_AdvanceDemo(void);
 
-extern boolean mn_SuicideConsole;
 
 gameaction_t gameaction;
 gamestate_t gamestate;
@@ -142,7 +140,6 @@ static int next_weapon = 0;
 
 #define SLOWTURNTICS    6
 
-#define NUMKEYS 256
 boolean gamekeydown[NUMKEYS];
 int turnheld;                   // for accelerative turning
 int lookheld;
@@ -191,7 +188,6 @@ int testcontrols_mousespeed;
 ====================
 */
 
-extern boolean inventory;
 boolean usearti = true;
 
 void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
@@ -203,8 +199,6 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
     int look, arti;
     int flyheight;
     int pClass;
-
-    extern boolean artiskip;
 
     // haleyjd: removed externdriver crap
 
@@ -859,7 +853,6 @@ static void SetMouseButtons(unsigned int buttons_mask)
 boolean G_Responder(event_t * ev)
 {
     player_t *plr;
-    extern boolean MenuActive;
 
     plr = &players[consoleplayer];
     if (ev->type == ev_keyup && ev->data1 == key_useartifact)
