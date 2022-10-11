@@ -44,6 +44,7 @@
 #include "s_sound.h"
 #include "w_main.h"
 #include "v_video.h"
+#include "am_map.h"
 
 #include "heretic_icon.c"
 

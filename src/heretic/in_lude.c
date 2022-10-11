@@ -29,6 +29,8 @@
 #include "i_system.h"
 #include "i_video.h"
 #include "v_video.h"
+#include "am_map.h"
+
 
 typedef enum
 {
