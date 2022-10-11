@@ -1073,7 +1073,6 @@ static void CheatNoClipFunc(player_t * player, Cheat_t * cheat)
 static void CheatWeaponsFunc(player_t * player, Cheat_t * cheat)
 {
     int i;
-    //extern boolean *WeaponInShareware;
 
     player->armorpoints = 200;
     player->armortype = 2;
