@@ -969,6 +969,9 @@ void R_AddSprites (sector_t* sec)
 //
 // R_DrawPSprite
 //
+
+boolean pspr_interp = true; // interpolate weapon bobbing
+
 void R_DrawPSprite (pspdef_t* psp, psprnum_t psprnum) // [crispy] differentiate gun from flash sprites
 {
     fixed_t		tx;
@@ -1081,6 +1084,40 @@ void R_DrawPSprite (pspdef_t* psp, psprnum_t psprnum) // [crispy] differentiate 
 #ifdef CRISPY_TRUECOLOR
         vis->blendfunc = I_BlendOver; // I_BlendAdd;
 #endif
+    }
+
+    // interpolate weapon bobbing
+    if (crispy->uncapped)
+    {
+        static int     oldx1, x1_saved;
+        static fixed_t oldtexturemid, texturemid_saved;
+        static int     oldlump = -1;
+        static int     oldgametic = -1;
+
+        if (oldgametic < gametic)
+        {
+            oldx1 = x1_saved;
+            oldtexturemid = texturemid_saved;
+            oldgametic = gametic;
+        }
+
+        x1_saved = vis->x1;
+        texturemid_saved = vis->texturemid;
+
+        if (lump == oldlump && pspr_interp)
+        {
+            int deltax = vis->x2 - vis->x1;
+            vis->x1 = oldx1 + FixedMul(vis->x1 - oldx1, fractionaltic);
+            vis->x2 = vis->x1 + deltax;
+            vis->texturemid = oldtexturemid + FixedMul(vis->texturemid - oldtexturemid, fractionaltic);
+        }
+        else
+        {
+            oldx1 = vis->x1;
+            oldtexturemid = vis->texturemid;
+            oldlump = lump;
+            pspr_interp = true;
+        }
     }
 
     R_DrawVisSprite (vis, vis->x1, vis->x2);

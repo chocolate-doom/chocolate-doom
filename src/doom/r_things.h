@@ -42,6 +42,7 @@ extern int64_t		sprtopscreen; // [crispy] WiggleFix
 extern fixed_t		pspritescale;
 extern fixed_t		pspriteiscale;
 
+extern boolean pspr_interp; // interpolate weapon bobbing
 
 void R_DrawMaskedColumn (column_t* column);
 

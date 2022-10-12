@@ -2127,7 +2127,10 @@ void AM_Drawer (void)
     }
 
     if (!crispy->automapoverlay)
-    AM_clearFB(BACKGROUND);
+    {
+        AM_clearFB(BACKGROUND);
+        pspr_interp = false; // interpolate weapon bobbing
+    }
     if (grid)
 	AM_drawGrid(GRIDCOLORS);
     AM_drawWalls();
