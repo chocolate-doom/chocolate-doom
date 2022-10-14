@@ -93,8 +93,6 @@ static char cheat_kills[] = { 'k', 'i', 'l', 'l', 's' };
 static boolean ShowKills = 0;
 static unsigned ShowKillsCount = 0;
 
-extern boolean viewactive;
-
 // [crispy] gradient table for map normal mode
 static byte antialias_normal[NUMALIAS][8] = {
     {83, 84, 85, 86, 87, 88, 89, 90},
