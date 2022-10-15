@@ -1004,7 +1004,7 @@ void P_SpawnPlayer(mapthing_t * mthing)
     P_SetupPsprites(p);         // setup gun psprite        
     if (deathmatch)
     {                           // Give all keys in death match mode
-        for (i = 0; i < NUMKEYS; i++)
+        for (i = 0; i < NUM_KEY_TYPES; i++)
         {
             p->keys[i] = true;
             if (p == &players[consoleplayer])
@@ -1187,7 +1187,6 @@ void P_SpawnMapThing(mapthing_t * mthing)
 //
 //---------------------------------------------------------------------------
 
-extern fixed_t attackrange;
 
 void P_SpawnPuff(fixed_t x, fixed_t y, fixed_t z)
 {

@@ -409,8 +409,8 @@ static void saveg_read_player_t(player_t *str)
         str->powers[i] = SV_ReadLong();
     }
 
-    // boolean keys[NUMKEYS];
-    for (i=0; i<NUMKEYS; ++i)
+    // boolean keys[NUM_KEY_TYPES];
+    for (i = 0; i < NUM_KEY_TYPES; ++i)
     {
         str->keys[i] = SV_ReadLong();
     }
@@ -579,7 +579,7 @@ static void saveg_write_player_t(player_t *str)
     }
 
     // boolean keys[NUMKEYS];
-    for (i=0; i<NUMKEYS; ++i)
+    for (i = 0; i < NUM_KEY_TYPES; ++i)
     {
         SV_WriteLong(str->keys[i]);
     }

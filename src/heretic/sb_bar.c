@@ -26,6 +26,7 @@
 #include "p_local.h"
 #include "s_sound.h"
 #include "v_video.h"
+#include "am_map.h"
 
 // Types
 
@@ -539,7 +540,6 @@ static int oldkeys = -1;
 
 int playerkeys = 0;
 
-extern boolean automapactive;
 
 void SB_Drawer(void)
 {
@@ -1073,7 +1073,6 @@ static void CheatNoClipFunc(player_t * player, Cheat_t * cheat)
 static void CheatWeaponsFunc(player_t * player, Cheat_t * cheat)
 {
     int i;
-    //extern boolean *WeaponInShareware;
 
     player->armorpoints = 200;
     player->armortype = 2;

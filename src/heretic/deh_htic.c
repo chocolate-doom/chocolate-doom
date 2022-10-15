@@ -41,8 +41,6 @@ static const char *hhe_versions[] =
 
 deh_hhe_version_t deh_hhe_version = deh_hhe_1_0;
 
-// deh_htext.c:
-extern deh_section_t deh_section_heretic_text;
 
 //
 // List of section types:

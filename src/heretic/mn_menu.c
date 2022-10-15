@@ -31,6 +31,7 @@
 #include "r_local.h"
 #include "s_sound.h"
 #include "v_video.h"
+#include "am_map.h"
 
 // Macros
 
@@ -1043,7 +1044,6 @@ boolean MN_Responder(event_t * event)
     int key;
     int i;
     MenuItem_t *item;
-    extern boolean automapactive;
     extern void D_StartTitle(void);
     extern void G_CheckDemoStatus(void);
     char *textBuffer;

@@ -302,7 +302,7 @@ typedef enum
     key_yellow,
     key_green,
     key_blue,
-    NUMKEYS
+    NUM_KEY_TYPES
 } keytype_t;
 
 typedef enum
@@ -439,7 +439,7 @@ typedef struct player_s
     int artifactCount;
     int inventorySlotNum;
     int powers[NUMPOWERS];
-    boolean keys[NUMKEYS];
+    boolean keys[NUM_KEY_TYPES];
     boolean backpack;
     signed int frags[MAXPLAYERS];       // kills of other players
     weapontype_t readyweapon;

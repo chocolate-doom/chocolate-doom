@@ -44,6 +44,7 @@
 #include "s_sound.h"
 #include "w_main.h"
 #include "v_video.h"
+#include "am_map.h"
 
 #include "heretic_icon.c"
 
@@ -73,7 +74,6 @@ static int graphical_startup = 1;
 static boolean using_graphical_startup;
 static boolean main_loop_started = false;
 boolean autostart;
-extern boolean automapactive;
 
 boolean advancedemo;
 
@@ -141,7 +141,6 @@ void DrawMessage(void)
 
 void R_ExecuteSetViewSize(void);
 
-extern boolean finalestage;
 
 void D_Display(void)
 {
@@ -657,7 +656,6 @@ void InitThermo(int max)
 void D_BindVariables(void)
 {
     extern int screenblocks;
-    extern int snd_Channels;
     int i;
 
     M_ApplyPlatformDefaults();
