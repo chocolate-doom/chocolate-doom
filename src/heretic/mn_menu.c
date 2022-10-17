@@ -31,6 +31,7 @@
 #include "r_local.h"
 #include "s_sound.h"
 #include "v_video.h"
+#include "am_map.h"
 #include "v_trans.h" // [crispy] dp_translation
 
 #include "crispy.h"
@@ -155,7 +156,6 @@ extern void AM_initVariables(void);
 
 extern int detailLevel;
 extern int screenblocks;
-extern boolean automapactive;
 
 // Public Data
 

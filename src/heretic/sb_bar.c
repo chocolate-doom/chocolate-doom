@@ -26,6 +26,7 @@
 #include "p_local.h"
 #include "s_sound.h"
 #include "v_video.h"
+#include "am_map.h"
 
 // Types
 
@@ -575,7 +576,6 @@ static int oldkeys = -1;
 
 int playerkeys = 0;
 
-extern boolean automapactive;
 
 // [crispy] Needed to support widescreen status bar.
 void SB_ForceRedraw(void)
@@ -1198,7 +1198,6 @@ static void CheatNoClipFunc(player_t * player, Cheat_t * cheat)
 static void CheatWeaponsFunc(player_t * player, Cheat_t * cheat)
 {
     int i;
-    //extern boolean *WeaponInShareware;
 
     NIGHTMARE_NETGAME_CHECK;
     player->armorpoints = 200;
@@ -1587,13 +1586,13 @@ static void CheatAddRemoveWpnFunc(player_t *player, Cheat_t *cheat)
 static void CheatSpecHitFunc(player_t *player, Cheat_t *cheat)
 {
     int i, speciallines = 0;
-    boolean origkeys[NUMKEYS];
+    boolean origkeys[NUM_KEY_TYPES];
     line_t dummy;
 
     NIGHTMARE_NETGAME_CHECK;
 
     // temporarily give all keys
-    for (i = 0; i < NUMKEYS; i++)
+    for (i = 0; i < NUM_KEY_TYPES; i++)
     {
         origkeys[i] = player->keys[i];
         player->keys[i] = true;
@@ -1631,7 +1630,7 @@ static void CheatSpecHitFunc(player_t *player, Cheat_t *cheat)
     }
 
     // restore original keys
-    for (i = 0; i < NUMKEYS; i++)
+    for (i = 0; i < NUM_KEY_TYPES; i++)
     {
         player->keys[i] = origkeys[i];
     }

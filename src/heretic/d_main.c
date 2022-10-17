@@ -45,6 +45,7 @@
 #include "s_sound.h"
 #include "w_main.h"
 #include "v_video.h"
+#include "am_map.h"
 #include "v_trans.h" // [crispy] dp_translation
 
 #include "heretic_icon.c"
@@ -75,7 +76,6 @@ static int graphical_startup = 0;
 static boolean using_graphical_startup;
 static boolean main_loop_started = false;
 boolean autostart;
-extern boolean automapactive;
 
 boolean advancedemo;
 
@@ -250,7 +250,6 @@ static void CrispyDrawStats (void)
 
 void R_ExecuteSetViewSize(void);
 
-extern boolean finalestage;
 
 void D_Display(void)
 {
@@ -815,7 +814,6 @@ void InitThermo(int max)
 
 void D_BindVariables(void)
 {
-    extern int snd_Channels;
     int i;
 
     M_ApplyPlatformDefaults();

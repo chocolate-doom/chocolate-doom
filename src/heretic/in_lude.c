@@ -29,6 +29,8 @@
 #include "i_system.h"
 #include "i_video.h"
 #include "v_video.h"
+#include "am_map.h"
+
 
 typedef enum
 {
@@ -102,7 +104,6 @@ static fixed_t dSlideY[MAXPLAYERS];
 
 static const char *KillersText[] = { "K", "I", "L", "L", "E", "R", "S" };
 
-extern const char *LevelNames[];
 
 typedef struct
 {
@@ -173,7 +174,6 @@ static const char *NameForMap(int map)
 //
 //========================================================================
 
-extern void AM_Stop(void);
 
 void IN_Start(void)
 {

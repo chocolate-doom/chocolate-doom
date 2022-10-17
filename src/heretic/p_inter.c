@@ -23,6 +23,8 @@
 #include "m_random.h"
 #include "p_local.h"
 #include "s_sound.h"
+#include "am_map.h"
+
 
 #define BONUSADD 6
 
@@ -352,7 +354,6 @@ boolean P_GiveArmor(player_t * player, int armortype)
 void P_GiveKey(player_t * player, keytype_t key)
 {
     extern int playerkeys;
-    extern vertex_t KeyPoints[];
 
     if (player->keys[key])
     {
