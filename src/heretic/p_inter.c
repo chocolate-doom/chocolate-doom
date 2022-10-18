@@ -122,7 +122,6 @@ static boolean GetAmmoChangePL2[NUMWEAPONS][NUMAMMO] =
 //--------------------------------------------------------------------------
 
 boolean ultimatemsg;
-extern boolean messageson;
 
 void P_SetMessage(player_t * player, const char *message, boolean ultmsg)
 {

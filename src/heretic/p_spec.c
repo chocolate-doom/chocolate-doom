@@ -853,7 +853,6 @@ void P_ShootSpecialLine(mobj_t * thing, line_t * line)
 
 void P_PlayerInSpecialSector(player_t * player)
 {
-    extern boolean messageson;
     sector_t *sector;
     static int pushTab[5] = {
         2048 * 5,

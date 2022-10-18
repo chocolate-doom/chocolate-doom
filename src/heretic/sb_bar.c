@@ -1376,8 +1376,6 @@ static void CheatWarpFunc(player_t * player, Cheat_t * cheat)
 
 static void CheatChickenFunc(player_t * player, Cheat_t * cheat)
 {
-    extern boolean P_UndoPlayerChicken(player_t * player);
-
     NIGHTMARE_NETGAME_CHECK;
     if (player->chickenTics)
     {
