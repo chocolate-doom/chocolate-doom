@@ -125,8 +125,6 @@ boolean ultimatemsg;
 
 void P_SetMessage(player_t * player, const char *message, boolean ultmsg)
 {
-    extern boolean messageson;
-
     if ((ultimatemsg || !messageson) && !ultmsg)
     {
         return;

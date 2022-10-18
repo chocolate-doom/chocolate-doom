@@ -1242,8 +1242,6 @@ static void CheatWarpFunc(player_t * player, Cheat_t * cheat)
 
 static void CheatChickenFunc(player_t * player, Cheat_t * cheat)
 {
-    extern boolean P_UndoPlayerChicken(player_t * player);
-
     if (player->chickenTics)
     {
         if (P_UndoPlayerChicken(player))
