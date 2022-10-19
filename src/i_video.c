@@ -863,7 +863,7 @@ void I_FinishUpdate (void)
 
     SDL_RenderClear(renderer);
 
-    if (crispy->smoothscaling)
+    if (crispy->smoothscaling && !force_software_renderer)
     {
     // Render this intermediate texture into the upscaled texture
     // using "nearest" integer scaling.
