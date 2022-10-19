@@ -499,16 +499,16 @@ char *M_DirName(const char *path)
 #else
     pb = NULL;
 #endif
-    if (pf == NULL && pb == NULL)
-    {
-        return M_StringDuplicate(".");
-    }
-    else
+    if (pf != NULL || pb != NULL)
     {
         const char *p = (pf > pb) ? pf : pb;
         result = M_StringDuplicate(path);
         result[p - path] = '\0';
         return result;
+    }
+    else
+    {
+        return M_StringDuplicate(".");
     }
 }
 
@@ -525,14 +525,14 @@ const char *M_BaseName(const char *path)
 #else
     pb = NULL;
 #endif
-    if (pf == NULL && pb == NULL)
-    {
-        return path;
-    }
-    else
+    if (pf != NULL || pb != NULL)
     {
         const char *p = (pf > pb) ? pf : pb;
         return p + 1;
+    }
+    else
+    {
+        return path;
     }
 }
 
