@@ -501,7 +501,7 @@ char *M_DirName(const char *path)
 #endif
     if (pf != NULL || pb != NULL)
     {
-        const char *p = (pf > pb) ? pf : pb;
+        const char *p = (pb > pf) ? pb : pf;
         result = M_StringDuplicate(path);
         result[p - path] = '\0';
         return result;
@@ -527,7 +527,7 @@ const char *M_BaseName(const char *path)
 #endif
     if (pf != NULL || pb != NULL)
     {
-        const char *p = (pf > pb) ? pf : pb;
+        const char *p = (pb > pf) ? pb : pf;
         return p + 1;
     }
     else
