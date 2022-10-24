@@ -93,6 +93,13 @@ typedef struct
     MenuType_t prevMenu;
 } Menu_t;
 
+// [crispy]
+typedef struct
+{
+    int value;
+    const char *name;
+} multiitem_t;
+
 // Private Functions
 
 static void InitFonts(void);
@@ -388,6 +395,53 @@ static void (*CrispnessMenuDrawers[])(void) = {
 static MenuType_t CrispnessMenus[] = {
     MENU_CRISPNESS1,
     MENU_CRISPNESS2,
+};
+
+static multiitem_t multiitem_brightmaps[NUM_BRIGHTMAPS] =
+{
+    {BRIGHTMAPS_OFF, "NONE"},
+    {BRIGHTMAPS_TEXTURES, "WALLS"},
+    {BRIGHTMAPS_SPRITES, "ITEMS"},
+    {BRIGHTMAPS_BOTH, "BOTH"},
+};
+
+static multiitem_t multiitem_widescreen[NUM_RATIOS] =
+{
+    {RATIO_ORIG, "ORIGINAL"},
+    {RATIO_MATCH_SCREEN, "MATCH SCREEN"},
+    {RATIO_16_10, "16:10"},
+    {RATIO_16_9, "16:9"},
+    {RATIO_21_9, "21:9"},
+};
+
+static multiitem_t multiitem_widgets[NUM_WIDGETS] =
+{
+    {WIDGETS_OFF, "NEVER"},
+    {WIDGETS_AUTOMAP, "IN AUTOMAP"},
+    {WIDGETS_ALWAYS, "ALWAYS"},
+    {WIDGETS_STBAR, "STATUS BAR"},
+};
+
+static multiitem_t multiitem_secretmessage[NUM_SECRETMESSAGE] =
+{
+    {SECRETMESSAGE_OFF, "OFF"},
+    {SECRETMESSAGE_ON, "ON"},
+    {SECRETMESSAGE_COUNT, "COUNT"},
+};
+
+static multiitem_t multiitem_freelook_hh[NUM_FREELOOKS_HH] =
+{
+    {FREELOOK_HH_LOCK, "LOCK"},
+    {FREELOOK_HH_SPRING, "SPRING"},
+};
+
+static multiitem_t multiitem_difficulties[NUM_SKILLS] =
+{
+    {SKILL_HMP, "BRINGEST"},
+    {SKILL_UV, "SMITE-MEISTER"},
+    {SKILL_NIGHTMARE, "BLACK PLAGUE"},
+    {SKILL_ITYTD, "WET-NURSE"},
+    {SKILL_HNTR, "YELLOWBELLIES"},
 };
 
 static Menu_t *Menus[] = {
@@ -1346,6 +1400,20 @@ static boolean SCInfo(int option)
 //
 //---------------------------------------------------------------------------
 
+static void ChangeSettingEnum(int *setting, int option, int num_values)
+{
+    if (option == RIGHT_DIR)
+    {
+        *setting += 1;
+    }
+    else
+    {
+        *setting += num_values - 1;
+    }
+
+    *setting %= num_values;
+}
+
 static void CrispyHiresHook(void)
 {
     crispy->hires = !crispy->hires;
@@ -1371,25 +1439,23 @@ static boolean CrispyHires(int option)
     return true;
 }
 
+static int hookoption;
 static void CrispyToggleWidescreenHook (void)
 {
-    crispy->widescreen = (crispy->widescreen + 1) % NUM_RATIOS;
-
-    // [crispy] no need to re-init when switching from wide to compact
-    {
-	// [crispy] re-initialize framebuffers, textures and renderer
-	I_ReInitGraphics(REINIT_FRAMEBUFFERS | REINIT_TEXTURES | REINIT_ASPECTRATIO);
-	// [crispy] re-calculate framebuffer coordinates
-	R_ExecuteSetViewSize();
-	// [crispy] re-calculate automap coordinates
-        AM_LevelInit(true);
-        if (automapactive) {
-            AM_initVariables();
-        }
+    ChangeSettingEnum(&crispy->widescreen, hookoption, NUM_RATIOS);
+    // [crispy] re-initialize framebuffers, textures and renderer
+    I_ReInitGraphics(REINIT_FRAMEBUFFERS | REINIT_TEXTURES | REINIT_ASPECTRATIO);
+    // [crispy] re-calculate framebuffer coordinates
+    R_ExecuteSetViewSize();
+    // [crispy] re-calculate automap coordinates
+    AM_LevelInit(true);
+    if (automapactive) {
+        AM_initVariables();
     }
 }
 static boolean CrispyToggleWidescreen(int option)
 {
+    hookoption = option;
     crispy->post_rendering_hook = CrispyToggleWidescreenHook;
 
     return true;
@@ -1421,37 +1487,39 @@ static boolean CrispyVsync(int option)
 
 static boolean CrispyBrightmaps(int option)
 {
-    crispy->brightmaps = (crispy->brightmaps + 1) % NUM_BRIGHTMAPS;
+    ChangeSettingEnum(&crispy->brightmaps, option, NUM_BRIGHTMAPS);
     return true;
 }
 
 static boolean CrispyAutomapStats(int option)
 {
-    crispy->automapstats = (crispy->automapstats + 1) % (NUM_WIDGETS);
+    ChangeSettingEnum(&crispy->automapstats, option, NUM_WIDGETS);
     return true;
 }
 
 static boolean CrispyLevelTime(int option)
 {
-    crispy->leveltime = (crispy->leveltime + 1) % (NUM_WIDGETS - 1);
+    // disable "status bar" setting
+    ChangeSettingEnum(&crispy->leveltime, option, NUM_WIDGETS - 1);
     return true;
 }
 
 static boolean CrispyPlayerCoords(int option)
 {
-    crispy->playercoords = (crispy->playercoords + 1) % (NUM_WIDGETS - 2); // [crispy] disable "always" setting
+    // disable "always" and "status bar" setting
+    ChangeSettingEnum(&crispy->playercoords, option, NUM_WIDGETS - 2);
     return true;
 }
 
 static boolean CrispySecretMessage(int option)
 {
-    crispy->secretmessage = (crispy->secretmessage + 1) % NUM_SECRETMESSAGE; // [crispy] enable secret message
+    ChangeSettingEnum(&crispy->secretmessage, option, NUM_SECRETMESSAGE);
     return true;
 }
 
 static boolean CrispyFreelook(int option)
 {
-    crispy->freelook_hh = (crispy->freelook_hh + 1) % NUM_FREELOOKS_HH;
+    ChangeSettingEnum(&crispy->freelook_hh, option, NUM_FREELOOKS_HH);
     return true;
 }
 
@@ -1463,17 +1531,8 @@ static boolean CrispyMouselook(int option)
 
 static boolean CrispyDefaultskill(int option)
 {
-    if (option == RIGHT_DIR)
-    {
-        crispy->defaultskill = (crispy->defaultskill + 1) % NUM_SKILLS;
-    }
-    else
-    {
-        crispy->defaultskill = (crispy->defaultskill + NUM_SKILLS - 1) % NUM_SKILLS;
-    }
-
+    ChangeSettingEnum(&crispy->defaultskill, option, NUM_SKILLS);
     SkillMenu.oldItPos = (crispy->defaultskill + SKILL_HMP) % NUM_SKILLS;
-
     return true;
 }
 
@@ -1486,7 +1545,7 @@ static boolean CrispyNextPage(int option)
 
 static boolean CrispyPrevPage(int option)
 {
-    crispnessmenupage--;
+    crispnessmenupage += NUM_CRISPNESS_MENUS - 1;
     crispnessmenupage %= NUM_CRISPNESS_MENUS;
     return true;
 }
@@ -2001,10 +2060,15 @@ boolean MN_Responder(event_t * event)
             }
             return (true);
         }
-        // [crispy] next/prev savegame page
+        // [crispy] next/prev Crispness menu or savegame page
         else if (key == KEY_PGUP)
         {
-            if (CurrentMenu == &LoadMenu || CurrentMenu == &SaveMenu)
+            if (CurrentMenu->drawFunc == DrawCrispness)
+            {
+                CrispyPrevPage(0);
+                S_StartSound(NULL, sfx_switch);
+            }
+            else if (CurrentMenu == &LoadMenu || CurrentMenu == &SaveMenu)
             {
                 if (savepage > 0)
                 {
@@ -2018,7 +2082,12 @@ boolean MN_Responder(event_t * event)
         }
         else if (key == KEY_PGDN)
         {
-            if (CurrentMenu == &LoadMenu || CurrentMenu == &SaveMenu)
+            if (CurrentMenu->drawFunc == DrawCrispness)
+            {
+                CrispyNextPage(0);
+                S_StartSound(NULL, sfx_switch);
+            }
+            else if (CurrentMenu == &LoadMenu || CurrentMenu == &SaveMenu)
             {
                 if (savepage < SAVEPAGE_MAX)
                 {
@@ -2347,84 +2416,73 @@ static void DrawCrispness(void)
     dp_translation = NULL;
 }
 
+static void DrawCrispnessSubheader(const char *name, int y)
+{
+    dp_translation = cr[CR_GOLD];
+    MN_DrTextA(name, 63, y);
+}
+
+static void DrawCrispnessItem(boolean item, int x, int y)
+{
+    dp_translation = item ? cr[CR_GREEN] : cr[CR_GRAY];
+    MN_DrTextA(item ? "ON" : "OFF", x, y);
+}
+
+static void DrawCrispnessMultiItem(int item, int x, int y, const multiitem_t *multi)
+{
+    dp_translation = item ? cr[CR_GREEN] : cr[CR_GRAY];
+    MN_DrTextA(multi[item].name, x, y);
+}
+
 static void DrawCrispness1(void)
 {
-    // Subheaders
-    dp_translation = cr[CR_GOLD];
-    MN_DrTextA("RENDERING", 63, 25);
-    MN_DrTextA("VISUAL", 63, 95);
-    MN_DrTextA("NAVIGATIONAL", 63, 125);
-    dp_translation = cr[CR_GRAY];
+    DrawCrispnessSubheader("RENDERING", 25);
 
     // Hires rendering
-    MN_DrTextA(crispy->hires ? "ON" : "OFF", 254, 35);
+    DrawCrispnessItem(crispy->hires, 254, 35);
 
     // Widescreen
-    MN_DrTextA((crispy->widescreen == RATIO_ORIG || aspect_ratio_correct != 1) ? "ORIGINAL" :
-               crispy->widescreen == RATIO_MATCH_SCREEN ? "MATCH SCREEN" :
-               crispy->widescreen == RATIO_16_10 ? "16:10" :
-               crispy->widescreen == RATIO_16_9 ? "16:9" :
-                                                  "21:9", 164, 45);
+    DrawCrispnessMultiItem(crispy->widescreen, 164, 45, multiitem_widescreen);
 
     // Smooth pixel scaling
-    MN_DrTextA(crispy->smoothscaling ? "ON" : "OFF", 216, 55);
+    DrawCrispnessItem(crispy->smoothscaling, 216, 55);
 
     // Uncapped framerate
-    MN_DrTextA(crispy->uncapped ? "ON" : "OFF", 217, 65);
+    DrawCrispnessItem(crispy->uncapped, 217, 65);
 
     // Vsync
-    MN_DrTextA(crispy->vsync ? "ON" : "OFF", 167, 75);
+    DrawCrispnessItem(crispy->vsync, 167, 75);
+
+    DrawCrispnessSubheader("VISUAL", 95);
 
     // Brightmaps
-    MN_DrTextA(crispy->brightmaps == BRIGHTMAPS_OFF ? "NONE" :
-               crispy->brightmaps == BRIGHTMAPS_TEXTURES ? "WALLS" :
-               crispy->brightmaps == BRIGHTMAPS_SPRITES ? "ITEMS" :
-                                                         "BOTH", 213, 105);
+    DrawCrispnessMultiItem(crispy->brightmaps, 213, 105, multiitem_brightmaps);
+
+    DrawCrispnessSubheader("NAVIGATIONAL", 125);
 
     // Show level stats
-    MN_DrTextA(crispy->automapstats == WIDGETS_OFF ? "NEVER" :
-               crispy->automapstats == WIDGETS_AUTOMAP ? "IN AUTOMAP" :
-               crispy->automapstats == WIDGETS_ALWAYS ? "ALWAYS" :
-                                                         "STATUS BAR", 190, 135);
+    DrawCrispnessMultiItem(crispy->automapstats, 190, 135, multiitem_widgets);
 
     // Show level time
-    MN_DrTextA(crispy->leveltime == WIDGETS_OFF ? "NEVER" :
-               crispy->leveltime == WIDGETS_AUTOMAP ? "IN AUTOMAP" :
-                                                       "ALWAYS", 179, 145);
+    DrawCrispnessMultiItem(crispy->leveltime, 179, 145, multiitem_widgets);
 
     // Show player coords
-    MN_DrTextA(crispy->playercoords == WIDGETS_OFF ? "NEVER" : "IN AUTOMAP", 211, 155);
+    DrawCrispnessMultiItem(crispy->playercoords, 211, 155, multiitem_widgets);
 
     // Show secret message
-    MN_DrTextA(crispy->secretmessage == SECRETMESSAGE_OFF ? "OFF" :
-        crispy->secretmessage == SECRETMESSAGE_ON ? "ON" :
-        "COUNT", 250, 165);
-
-    dp_translation = NULL;
+    DrawCrispnessMultiItem(crispy->secretmessage, 250, 165, multiitem_secretmessage);
 }
 
 static void DrawCrispness2(void)
 {
-    int skill;
-
-    // Subheaders
-    dp_translation = cr[CR_GOLD];
-    MN_DrTextA("TACTICAL", 63, 25);
-    dp_translation = cr[CR_GRAY];
+    DrawCrispnessSubheader("TACTICAL", 25);
 
     // Freelook
-    MN_DrTextA(crispy->freelook_hh == FREELOOK_HH_LOCK ? "LOCK" : "SPRING", 175, 35);
+    DrawCrispnessMultiItem(crispy->freelook_hh, 175, 35, multiitem_freelook_hh);
 
     // Mouselook
-    MN_DrTextA(crispy->mouselook ? "ON" : "OFF", 220, 45);
+    DrawCrispnessItem(crispy->mouselook, 220, 45);
 
     // Default difficulty
-    skill = (crispy->defaultskill + SKILL_HMP) % NUM_SKILLS;
-    MN_DrTextA(skill == SKILL_ITYTD ? "WET-NURSE" :
-               skill == SKILL_HNTR ? "YELLOWBELLIES" :
-               skill == SKILL_HMP ? "BRINGEST" :
-               skill == SKILL_UV ? "SMITE-MEISTER" :
-                                    "BLACK PLAGUE" , 200, 55);
-
-    dp_translation = NULL;
+    DrawCrispnessMultiItem(crispy->defaultskill, 200, 55, multiitem_difficulties);
 }
