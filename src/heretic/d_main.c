@@ -248,9 +248,6 @@ static void CrispyDrawStats (void)
     }
 }
 
-void R_ExecuteSetViewSize(void);
-
-
 void D_Display(void)
 {
     extern boolean askforquit;

@@ -342,6 +342,7 @@ fixed_t R_ScaleFromGlobalAngle(angle_t visangle);
 angle_t R_InterpolateAngle(angle_t oangle, angle_t nangle, fixed_t scale);
 subsector_t *R_PointInSubsector(fixed_t x, fixed_t y);
 void R_AddPointToBox(int x, int y, fixed_t * box);
+void R_ExecuteSetViewSize(void);
 
 
 //
