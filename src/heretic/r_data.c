@@ -25,7 +25,6 @@
 #include "r_local.h"
 #include "p_local.h"
 
-extern void CheckAbortStartup(void);
 
 typedef struct
 {

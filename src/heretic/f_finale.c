@@ -38,7 +38,6 @@ static int FontABaseLump;
 
 extern boolean viewactive;
 
-extern void D_StartTitle(void);
 
 /*
 =======================
@@ -295,7 +294,6 @@ void F_DemonScroll(void)
 void F_DrawUnderwater(void)
 {
     static boolean underwawa = false;
-    extern boolean askforquit;
     const char *lumpname;
     byte *palette;
 

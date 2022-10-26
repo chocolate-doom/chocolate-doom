@@ -39,7 +39,6 @@
 
 // Functions
 
-boolean G_CheckDemoStatus(void);
 void G_ReadDemoTiccmd(ticcmd_t * cmd);
 void G_WriteDemoTiccmd(ticcmd_t * cmd);
 void G_PlayerReborn(int player);
@@ -280,9 +279,6 @@ static int G_NextWeapon(int direction)
 ====================
 */
 
-extern boolean inventory;
-extern int curpos;
-extern int inv_ptr;
 
 boolean usearti = true;
 
