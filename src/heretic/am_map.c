@@ -1026,7 +1026,7 @@ void AM_clearFB(int color)
     int dmapy;
     int x1, x2, x3;
 
-    if (followplayer)
+    if (followplayer && !paused)
     {
         dmapx = (MTOF(plr->mo->x) >> FRACTOMAPBITS) - (MTOF(plr->mo->oldx) >> FRACTOMAPBITS);
         dmapy = (MTOF(plr->mo->oldy) >> FRACTOMAPBITS) - (MTOF(plr->mo->y) >> FRACTOMAPBITS);
