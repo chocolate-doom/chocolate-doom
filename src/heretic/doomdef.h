@@ -591,6 +591,7 @@ extern skill_t startskill;
 extern int startepisode;
 extern int startmap;
 extern boolean autostart;
+extern boolean advancedemo;
 
 extern  boolean nodrawers; // [crispy] for the demowarp feature
 
@@ -614,6 +615,7 @@ extern int vanilla_demo_limit;
 //BASE LEVEL
 //----------
 void D_DoomMain(void);
+void CheckAbortStartup(void);
 void IncThermo(void);
 void InitThermo(int max);
 void tprintf(const char *string, int initflag);
@@ -628,6 +630,9 @@ void D_DoomLoop(void);
 // manages timing and IO
 // calls all ?_Responder, ?_Ticker, and ?_Drawer functions
 // calls I_GetTime, I_StartFrame, and I_StartTic
+
+void D_StartTitle(void);
+
 
 //---------
 //SYSTEM IO
@@ -717,11 +722,17 @@ void G_RecordDemo(skill_t skill, int numplayers, int episode, int map,
 
 void G_PlayDemo(char *name);
 void G_TimeDemo(char *name);
+boolean G_CheckDemoStatus(void);
+void D_DoAdvanceDemo(void);
 
 void G_ExitLevel(void);
 void G_SecretExitLevel(void);
 
+void D_ProcessEvents(void);
+
 void G_WorldDone(void);
+
+void G_BuildTiccmd(ticcmd_t *cmd, int maketic);
 
 void G_Ticker(void);
 boolean G_Responder(event_t * ev);
@@ -835,6 +846,12 @@ void F_StartFinale(void);
 // STATUS BAR (SB_bar.c)
 //----------------------
 
+
+extern boolean inventory;
+extern int curpos;
+extern int inv_ptr;
+
+
 void SB_Init(void);
 boolean SB_Responder(event_t * event);
 void SB_Ticker(void);
@@ -844,6 +861,7 @@ void SB_Drawer(void);
 // MENU (MN_menu.c)
 //-----------------
 
+extern boolean askforquit;
 extern boolean MenuActive;
 
 void MN_Init(void);

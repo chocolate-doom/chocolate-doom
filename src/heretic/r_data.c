@@ -27,7 +27,6 @@
 #include "p_local.h"
 #include "v_trans.h" // [crispy] color translation and color string tables
 
-extern void CheckAbortStartup(void);
 
 typedef struct
 {

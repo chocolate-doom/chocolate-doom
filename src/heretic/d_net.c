@@ -33,10 +33,6 @@
 
 ticcmd_t *netcmds;
 
-extern void D_DoAdvanceDemo(void);
-extern void D_ProcessEvents(void);
-extern void G_BuildTiccmd(ticcmd_t *cmd, int maketic);
-extern boolean G_CheckDemoStatus(void);
 
 // Called when a player leaves the game
 
@@ -71,7 +67,6 @@ static void PlayerQuitGame(player_t *player)
 
 static void RunTic(ticcmd_t *cmds, boolean *ingame)
 {
-    extern boolean advancedemo;
     unsigned int i;
 
     // Check for player quits.

@@ -1386,7 +1386,12 @@ void P_DamageMobj
         ang = R_PointToAngle2(inflictor->x, inflictor->y,
                               target->x, target->y);
         //thrust = damage*(FRACUNIT>>3)*100/target->info->mass;
-        thrust = damage * (FRACUNIT >> 3) * 150 / target->info->mass;
+        // We do this multiplication in unsigned because it might overflow
+        // and signed overflow is undefined behavior
+        // but then we must cast it back to signed for the division
+        // to match original behavior
+        // unsigned to signed cast is implementation defined behavior at worst
+        thrust = ((int) (damage * (FRACUNIT >> 3) * 150u)) / target->info->mass;
         // make fall forwards sometimes
         if ((damage < 40) && (damage > target->health)
             && (target->z - inflictor->z > 64 * FRACUNIT) && (P_Random() & 1))
