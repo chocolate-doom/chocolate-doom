@@ -861,7 +861,11 @@ void WI_drawShowNextLoc(void)
 	// i.e. now, when returning from the level
 	// (and this is not going to change)
 	if (crispy->havee1m10 && wbs->epsd == 0 && wbs->last == 9)
-	    WI_drawOnLnode(9, splat);
+	{
+	    wbs->epsd = 1;
+	    WI_drawOnLnode(0, splat);
+	    wbs->epsd = 0;
+	}
 
 	// draw flashing ptr
 	if (snl_pointeron)
