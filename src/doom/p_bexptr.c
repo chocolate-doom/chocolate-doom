@@ -172,7 +172,8 @@ void A_LineEffect(mobj_t *mo)
       line_t junk = *lines;                          // Fake linedef set to 1st
       if ((junk.special = (short)mo->state->misc1))  // Linedef type
 	{
-	  player_t player, *oldplayer = mo->player;  // Remember player status
+	  static player_t player;                    // [crispy] made static
+	  player_t *oldplayer = mo->player;          // Remember player status
 	  mo->player = &player;                      // Fake player
 	  player.health = 100;                       // Alive player
 	  junk.tag = (short)mo->state->misc2;        // Sector tag for linedef
