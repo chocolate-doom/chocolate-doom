@@ -165,7 +165,6 @@ void DrawCenterMessage(void)
 //---------------------------------------------------------------------------
 
 int left_widget_w, right_widget_w; // [crispy]
-extern int screenblocks; // [crispy]
 
 static void CrispyDrawStats (void)
 {
