@@ -294,6 +294,8 @@ extern fixed_t viewcos, viewsin;
 
 extern int detailshift;         // 0 = high, 1 = low
 
+extern int screenblocks;
+
 extern void (*colfunc) (void);
 extern void (*basecolfunc) (void);
 extern void (*tlcolfunc) (void);
@@ -341,6 +343,8 @@ void R_RenderBSPNode(int bspnum);
 // R_segs.c
 //
 extern int rw_angle1;           // angle to line origin
+extern lighttable_t **walllights;
+
 
 void R_RenderMaskedSegRange(drawseg_t * ds, int x1, int x2);
 
@@ -392,6 +396,9 @@ extern int *flattranslation;    // for global animation
 extern int *texturetranslation; // for global animation
 
 extern int firstspritelump, lastspritelump, numspritelumps;
+
+extern int columnofs[MAXWIDTH];
+
 
 byte *R_GetColumn(int tex, int col);
 void R_InitData(void);

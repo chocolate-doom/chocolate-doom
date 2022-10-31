@@ -382,7 +382,6 @@ void R_DrawPlanes(void)
     fixed_t frac, fracstep;
 
     extern byte *ylookup[MAXHEIGHT];
-    extern int columnofs[MAXWIDTH];
 
 #ifdef RANGECHECK
     if (ds_p - drawsegs > MAXDRAWSEGS)
