@@ -36,8 +36,6 @@ static const char *finaleflat;
 
 static int FontABaseLump;
 
-extern boolean viewactive;
-
 
 /*
 =======================

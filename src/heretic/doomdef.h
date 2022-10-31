@@ -508,6 +508,10 @@ extern boolean altpal;          // checkparm to use an alternate palette routine
 
 extern boolean cdrom;           // true if cd-rom mode active ("-cdrom")
 
+extern boolean noartiskip;      // whether shift-enter skips an artifact
+
+extern boolean viewactive;
+
 extern boolean deathmatch;      // only if started as net death
 
 extern boolean netgame;         // only true if >1 player
@@ -817,6 +821,7 @@ void F_StartFinale(void);
 extern boolean inventory;
 extern int curpos;
 extern int inv_ptr;
+extern int playerkeys;
 
 
 void SB_Init(void);

@@ -291,8 +291,6 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
     int look, arti;
     int flyheight;
 
-    extern boolean noartiskip;
-
     // haleyjd: removed externdriver crap
 
     memset(cmd, 0, sizeof(*cmd));
@@ -1216,7 +1214,6 @@ void G_InitPlayer(int player)
 = Can when a player completes a level
 ====================
 */
-extern int playerkeys;
 
 void G_PlayerFinishLevel(int player)
 {
