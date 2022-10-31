@@ -418,7 +418,6 @@ void R_DrawPlanes(void)
     int heightmask; // [crispy]
 
     extern byte *ylookup[MAXHEIGHT];
-    extern int columnofs[MAXWIDTH];
 
 #ifdef RANGECHECK
     if (ds_p - drawsegs > numdrawsegs)

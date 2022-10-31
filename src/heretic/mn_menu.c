@@ -161,7 +161,6 @@ extern void AM_initVariables(void);
 // External Data
 
 extern int detailLevel;
-extern int screenblocks;
 
 // Public Data
 
