@@ -493,6 +493,7 @@ extern fixed_t dc_texturemid;
 extern int dc_texheight;
 extern byte *dc_source;         // first pixel in a column
 extern const byte *dc_brightmap;  // [crispy] brightmaps
+extern byte *ylookup[MAXHEIGHT];
 
 void R_DrawColumn(void);
 void R_DrawColumnLow(void);

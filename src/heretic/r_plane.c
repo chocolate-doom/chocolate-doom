@@ -417,8 +417,6 @@ void R_DrawPlanes(void)
     fixed_t frac, fracstep;
     int heightmask; // [crispy]
 
-    extern byte *ylookup[MAXHEIGHT];
-
 #ifdef RANGECHECK
     if (ds_p - drawsegs > numdrawsegs)
         I_Error("R_DrawPlanes: drawsegs overflow (%td)",
