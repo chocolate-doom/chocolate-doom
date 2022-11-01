@@ -194,6 +194,23 @@ void A_Explode(mobj_t *actor);
 void A_CHolyAttack3(mobj_t *actor);
 void A_FSwordAttack2(mobj_t *actor);
 void A_MStaffAttack2(mobj_t *actor);
+void A_FreezeDeathChunks(mobj_t *actor);
+void A_SorcBallOrbit(mobj_t *actor);
+void A_SorcSpinBalls(mobj_t *actor);
+void A_SpeedBalls(mobj_t *actor);
+void A_SlowBalls(mobj_t *actor);
+void A_StopBalls(mobj_t *actor);
+void A_AccelBalls(mobj_t *actor);
+void A_DecelBalls(mobj_t *actor);
+void A_SorcBossAttack(mobj_t *actor);
+void A_SpawnFizzle(mobj_t *actor);
+void A_CastSorcererSpell(mobj_t *actor);
+void A_SorcUpdateBallAngle(mobj_t *actor);
+void A_BounceCheck(mobj_t *actor);
+void A_SorcFX1Seek(mobj_t *actor);
+void A_SorcOffense1(mobj_t *actor);
+void A_SorcOffense2(mobj_t *actor);
+void A_MinotaurLook(mobj_t *actor);
 
 
 // ***** P_MAPUTL *****
