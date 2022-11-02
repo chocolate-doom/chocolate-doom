@@ -154,8 +154,6 @@ static char cheat_amap[] = { 'r', 'a', 'v', 'm', 'a', 'p' };
 
 static byte cheatcount = 0;
 
-extern boolean viewactive;
-
 // [crispy] gradient table for map normal mode
 static byte antialias_normal[NUMALIAS][8] = {
     {96, 97, 98, 99, 100, 101, 102, 103},

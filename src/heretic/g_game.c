@@ -311,8 +311,6 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
     static unsigned int mbmlookctrl = 0; // [crispy]
     static unsigned int kbdlookctrl = 0; // [crispy]
 
-    extern boolean noartiskip;
-
     // haleyjd: removed externdriver crap
 
     memset(cmd, 0, sizeof(*cmd));
@@ -1373,7 +1371,6 @@ void G_InitPlayer(int player)
 = Can when a player completes a level
 ====================
 */
-extern int playerkeys;
 
 void G_PlayerFinishLevel(int player)
 {
