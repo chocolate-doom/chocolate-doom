@@ -20,6 +20,7 @@
 
 #include "doomdef.h"
 #include "doomkeys.h"
+#include "doomstat.h"
 
 #include "v_video.h"
 #include "i_swap.h"
@@ -31,7 +32,6 @@
 // boolean : whether the screen is always erased
 #define noterased viewwindowx
 
-extern boolean	automapactive;	// in AM_map.c
 
 void HUlib_init(void)
 {

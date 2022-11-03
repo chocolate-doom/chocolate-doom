@@ -104,9 +104,6 @@ boolean         nomonsters;	// checkparm of -nomonsters
 boolean         respawnparm;	// checkparm of -respawn
 boolean         fastparm;	// checkparm of -fast
 
-//extern int soundVolume;
-//extern  int	sfxVolume;
-//extern  int	musicVolume;
 
 extern  boolean	inhelpscreens;
 
@@ -1469,8 +1466,8 @@ void D_DoomMain (void)
     if ( (p=M_CheckParm ("-turbo")) )
     {
 	int     scale = 200;
-	extern int forwardmove[2];
-	extern int sidemove[2];
+	extern fixed_t forwardmove[2];
+	extern fixed_t sidemove[2];
 	
 	if (p<myargc-1)
 	    scale = atoi (myargv[p+1]);

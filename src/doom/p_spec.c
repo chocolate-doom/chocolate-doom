@@ -77,8 +77,6 @@ typedef struct
 
 #define MAXANIMS                32
 
-extern anim_t	anims[MAXANIMS];
-extern anim_t*	lastanim;
 
 //
 // P_InitPicAnims
@@ -135,8 +133,8 @@ anim_t*		lastanim;
 //
 #define MAXLINEANIMS            64
 
-extern  short	numlinespecials;
-extern  line_t*	linespeciallist[MAXLINEANIMS];
+short numlinespecials;
+line_t *linespeciallist[MAXLINEANIMS];
 
 
 
@@ -1378,8 +1376,6 @@ int EV_DoDonut(line_t*	line)
 // After the map has been loaded, scan for specials
 //  that spawn thinkers
 //
-short		numlinespecials;
-line_t*		linespeciallist[MAXLINEANIMS];
 
 static unsigned int NumScrollers()
 {

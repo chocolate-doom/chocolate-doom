@@ -33,6 +33,7 @@
 #include "hu_lib.h"
 #include "m_controls.h"
 #include "m_misc.h"
+#include "m_menu.h"
 #include "w_wad.h"
 
 #include "s_sound.h"
