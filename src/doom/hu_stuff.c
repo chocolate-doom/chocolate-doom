@@ -33,6 +33,7 @@
 #include "hu_lib.h"
 #include "m_controls.h"
 #include "m_misc.h"
+#include "m_menu.h"
 #include "w_wad.h"
 #include "m_argv.h" // [crispy] M_ParmExists()
 #include "st_stuff.h" // [crispy] ST_HEIGHT
@@ -115,8 +116,6 @@ static int		secret_counter;
 extern int		showMessages;
 
 static boolean		headsupactive = false;
-
-extern int		screenblocks; // [crispy]
 
 //
 // Builtin map names.

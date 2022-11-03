@@ -1274,7 +1274,7 @@ void G_Ticker (void)
              && turbodetected[i])
             {
                 static char turbomessage[80];
-                extern char *player_names[4];
+                extern const char *player_names[4];
                 M_snprintf(turbomessage, sizeof(turbomessage),
                            "%s is turbo!", player_names[i]);
                 players[consoleplayer].message = turbomessage;
@@ -1726,7 +1726,7 @@ static const int npars[9] =
 // G_DoCompleted 
 //
 boolean		secretexit; 
-extern char*	pagename; 
+extern const char *pagename;
  
 void G_ExitLevel (void) 
 { 

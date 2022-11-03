@@ -35,14 +35,9 @@
 #include "st_lib.h"
 #include "r_local.h"
 
+#include "doomstat.h" // [crispy] automapactive
+#include "m_menu.h" // [crispy] screenblocks
 #include "v_trans.h" // [crispy] colored status bar widgets
-
-// in AM_map.c
-extern boolean		automapactive; 
-extern int screenblocks;
-
-
-
 
 //
 // Hack display negative frags.
