@@ -115,7 +115,7 @@ PointerAlignment: Right
 ReflowComments:  false
 SortIncludes:    false
 SortUsingDeclarations: true
-SpaceAfterCStyleCast: false
+SpaceAfterCStyleCast: true
 SpaceAfterLogicalNot: false
 SpaceAfterTemplateKeyword: true
 SpaceBeforeAssignmentOperators: true
