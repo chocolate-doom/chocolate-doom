@@ -143,14 +143,14 @@ typedef struct
 #define	FASTDARK		15
 #define	SLOWDARK		35
 
-void T_LightFlash(lightflash_t * flash);
+void T_LightFlash(thinker_t *thinker);
 void P_SpawnLightFlash(sector_t * sector);
-void T_StrobeFlash(strobe_t * flash);
+void T_StrobeFlash(thinker_t *thinker);
 void P_SpawnStrobeFlash(sector_t * sector, int fastOrSlow, int inSync);
 void EV_StartLightStrobing(line_t * line);
 void EV_TurnTagLightsOff(line_t * line);
 void EV_LightTurnOn(line_t * line, int bright);
-void T_Glow(glow_t * g);
+void T_Glow(thinker_t *thinker);
 void P_SpawnGlowingLight(sector_t * sector);
 
 /*
@@ -237,7 +237,7 @@ typedef struct
 
 extern plat_t *activeplats[MAXPLATS];
 
-void T_PlatRaise(plat_t * plat);
+void T_PlatRaise(thinker_t *thinker);
 int EV_DoPlat(line_t * line, plattype_e type, int amount);
 void P_AddActivePlat(plat_t * plat);
 void P_RemoveActivePlat(plat_t * plat);
@@ -278,7 +278,7 @@ typedef struct
 
 void EV_VerticalDoor(line_t * line, mobj_t * thing);
 int EV_DoDoor(line_t * line, vldoor_e type, fixed_t speed);
-void T_VerticalDoor(vldoor_t * door);
+void T_VerticalDoor(thinker_t *thinker);
 void P_SpawnDoorCloseIn30(sector_t * sec);
 void P_SpawnDoorRaiseIn5Mins(sector_t * sec, int secnum);
 
@@ -318,7 +318,7 @@ typedef struct
 extern ceiling_t *activeceilings[MAXCEILINGS];
 
 int EV_DoCeiling(line_t * line, ceiling_e type);
-void T_MoveCeiling(ceiling_t * ceiling);
+void T_MoveCeiling(thinker_t *thinker);
 void P_AddActiveCeiling(ceiling_t * c);
 void P_RemoveActiveCeiling(ceiling_t * c);
 int EV_CeilingCrushStop(line_t * line);
@@ -376,7 +376,7 @@ result_e T_MovePlane(sector_t * sector, fixed_t speed,
 
 int EV_BuildStairs(line_t * line, fixed_t stepDelta);
 int EV_DoFloor(line_t * line, floor_e floortype);
-void T_MoveFloor(floormove_t * floor);
+void T_MoveFloor(thinker_t *thinker);
 
 /*
 ===============================================================================

@@ -668,8 +668,9 @@ void P_NightmareRespawn(mobj_t * mobj)
 //
 //----------------------------------------------------------------------------
 
-void P_BlasterMobjThinker(mobj_t * mobj)
+void P_BlasterMobjThinker(thinker_t *thinker)
 {
+    mobj_t *mobj = (mobj_t *) thinker;
     int i;
     fixed_t xfrac;
     fixed_t yfrac;
@@ -739,8 +740,9 @@ void P_BlasterMobjThinker(mobj_t * mobj)
 //
 //----------------------------------------------------------------------------
 
-void P_MobjThinker(mobj_t * mobj)
+void P_MobjThinker(thinker_t *thinker)
 {
+    mobj_t *mobj = (mobj_t *) thinker;
     mobj_t *onmo;
 
     // [crispy] suppress interpolation of player missiles for the first tic
