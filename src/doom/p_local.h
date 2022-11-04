@@ -239,6 +239,10 @@ boolean P_ChangeSector (sector_t* sector, boolean crunch);
 
 extern mobj_t*	linetarget;	// who got hit (or NULL)
 
+
+extern fixed_t attackrange;
+
+
 fixed_t
 P_AimLineAttack
 ( mobj_t*	t1,

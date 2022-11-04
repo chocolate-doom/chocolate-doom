@@ -49,6 +49,8 @@ extern int		validcount;
 extern int		linecount;
 extern int		loopcount;
 
+extern  boolean setsizeneeded;
+
 
 //
 // Lighting LUT.
@@ -168,5 +170,8 @@ void R_Init (void);
 
 // Called by M_Responder.
 void R_SetViewSize (int blocks, int detail);
+
+void R_ExecuteSetViewSize(void);
+
 
 #endif

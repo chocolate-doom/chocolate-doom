@@ -44,6 +44,9 @@ void D_StartTitle (void);
 //
 
 extern  gameaction_t    gameaction;
+extern boolean advancedemo;
+
+extern const char *pagename;
 
 
 #endif

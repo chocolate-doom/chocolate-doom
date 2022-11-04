@@ -246,7 +246,6 @@ void F_Ticker (void)
 //
 
 #include "hu_stuff.h"
-extern	patch_t *hu_font[HU_FONTSIZE];
 
 // [crispy] add line breaks for lines exceeding screenwidth
 static inline boolean F_AddLineBreak (char *c)

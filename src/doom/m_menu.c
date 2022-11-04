@@ -64,11 +64,6 @@
 
 #include "v_trans.h" // [crispy] colored "invert mouse" message
 
-extern patch_t*		hu_font[HU_FONTSIZE];
-extern boolean		message_dontfuckwithme;
-
-extern boolean		chat_on;		// in heads-up code
-
 //
 // defaulted values
 //
@@ -134,7 +129,6 @@ boolean			menuactive;
 #define LINEHEIGHT		16
 #define CRISPY_LINEHEIGHT	10 // [crispy] Crispness menu
 
-extern boolean		sendpause;
 char			savegamestrings[10][SAVESTRINGSIZE];
 
 // [FG] support up to 8 pages of savegames

@@ -113,7 +113,6 @@ static int		message_counter;
 static hu_stext_t	w_secret;
 static int		secret_counter;
 
-extern int		showMessages;
 
 static boolean		headsupactive = false;
 

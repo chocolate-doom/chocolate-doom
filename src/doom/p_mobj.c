@@ -1095,7 +1095,6 @@ void P_SpawnMapThing (mapthing_t* mthing)
 //
 // P_SpawnPuff
 //
-extern fixed_t attackrange;
 
 void
 P_SpawnPuff
