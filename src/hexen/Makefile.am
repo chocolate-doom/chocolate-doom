@@ -22,6 +22,7 @@ in_lude.c                             \
 m_random.c          m_random.h        \
 mn_menu.c                             \
 p_acs.c                               \
+                    p_action.h        \
 p_anim.c                              \
 p_ceilng.c                            \
 p_doors.c                             \

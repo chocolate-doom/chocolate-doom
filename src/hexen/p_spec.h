@@ -15,6 +15,10 @@
 //
 
 
+#ifndef P_SPEC_H
+#define P_SPEC_H
+
+
 extern int *TerrainTypes;
 
 //
@@ -577,3 +581,6 @@ boolean EV_ThingActivate(int tid);
 boolean EV_ThingDeactivate(int tid);
 boolean EV_ThingRemove(int tid);
 boolean EV_ThingDestroy(int tid);
+
+
+#endif // P_SPEC_H

@@ -1102,7 +1102,6 @@ void A_MinotaurFade2(mobj_t * actor)
 // 
 //----------------------------------------------------------------------------
 
-void A_MinotaurLook(mobj_t * actor);
 
 // Check the age of the minotaur and stomp it after MAULATORTICS of time
 // have passed. Returns false if killed.
@@ -3854,8 +3853,6 @@ void A_IceGuyMissilePuff(mobj_t * actor)
 
 void A_IceGuyDie(mobj_t * actor)
 {
-    void A_FreezeDeathChunks(mobj_t * actor);
-
     actor->momx = 0;
     actor->momy = 0;
     actor->momz = 0;
@@ -3931,22 +3928,6 @@ void A_IceGuyMissileExplode(mobj_t * actor)
 #define BALL1_ANGLEOFFSET	0
 #define BALL2_ANGLEOFFSET	(ANG_MAX/3)
 #define BALL3_ANGLEOFFSET	((ANG_MAX/3)*2)
-
-void A_SorcBallOrbit(mobj_t * actor);
-void A_SorcSpinBalls(mobj_t * actor);
-void A_SpeedBalls(mobj_t * actor);
-void A_SlowBalls(mobj_t * actor);
-void A_StopBalls(mobj_t * actor);
-void A_AccelBalls(mobj_t * actor);
-void A_DecelBalls(mobj_t * actor);
-void A_SorcBossAttack(mobj_t * actor);
-void A_SpawnFizzle(mobj_t * actor);
-void A_CastSorcererSpell(mobj_t * actor);
-void A_SorcUpdateBallAngle(mobj_t * actor);
-void A_BounceCheck(mobj_t * actor);
-void A_SorcFX1Seek(mobj_t * actor);
-void A_SorcOffense1(mobj_t * actor);
-void A_SorcOffense2(mobj_t * actor);
 
 
 // Spawn spinning balls above head - actor is sorcerer

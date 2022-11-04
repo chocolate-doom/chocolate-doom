@@ -1130,4 +1130,7 @@ extern int detailLevel;
 
 #include "sounds.h"
 
+#include "p_action.h"
+
+
 #endif // __H2DEF__
