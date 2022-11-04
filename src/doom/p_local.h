@@ -242,6 +242,10 @@ extern mobj_t*	linetarget;	// who got hit (or NULL)
 
 extern fixed_t attackrange;
 
+// slopes to top and bottom of target
+extern fixed_t	topslope;
+extern fixed_t	bottomslope;
+
 
 fixed_t
 P_AimLineAttack
