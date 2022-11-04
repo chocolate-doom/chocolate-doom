@@ -45,3 +45,7 @@ jobs:
         if: steps.linter.outputs.checks-failed > 0
         run: |
           echo "Some files failed the linting checks! Fail fast disabled until false posivite issue is fixed"
+
+      - name: Check no extern used in .c files
+        run: |
+          ./check-extern.sh
