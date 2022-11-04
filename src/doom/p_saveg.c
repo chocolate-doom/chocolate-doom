@@ -1609,7 +1609,6 @@ void P_UnArchiveWorld (void)
     {
 	// [crispy] add overflow guard for the flattranslation[] array
 	short floorpic, ceilingpic;
-	extern int numflats;
 	sec->floorheight = saveg_read16() << FRACBITS;
 	sec->ceilingheight = saveg_read16() << FRACBITS;
 	floorpic = saveg_read16();
