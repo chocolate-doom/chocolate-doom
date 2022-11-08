@@ -74,7 +74,7 @@ typedef struct
     think_t thinkerFunc;
     void (*writeFunc)(thinker_t *thinker);
     void (*readFunc)(thinker_t *thinker);
-    void (*restoreFunc) ();
+    void (*restoreFunc)(thinker_t *thinker);
     size_t size;
 } thinkInfo_t;
 
@@ -112,9 +112,9 @@ static void SetMobjArchiveNums(void);
 static void RemoveAllThinkers(void);
 static int GetMobjNum(mobj_t * mobj);
 static void SetMobjPtr(mobj_t **ptr, unsigned int archiveNum);
-static void RestoreSSThinker(ssthinker_t * sst);
-static void RestorePlatRaise(plat_t * plat);
-static void RestoreMoveCeiling(ceiling_t * ceiling);
+static void RestoreSSThinker(thinker_t *sst);
+static void RestorePlatRaise(thinker_t *thinker);
+static void RestoreMoveCeiling(thinker_t *thinker);
 static void AssertSegment(gameArchiveSegment_t segType);
 static void ClearSaveSlot(int slot);
 static void CopySaveSlot(int sourceSlot, int destSlot);
@@ -2927,8 +2927,9 @@ static void UnarchiveThinkers(void)
 //
 //==========================================================================
 
-static void RestoreSSThinker(ssthinker_t *sst)
+static void RestoreSSThinker(thinker_t *thinker)
 {
+    ssthinker_t *sst = (ssthinker_t *) thinker;
     sst->sector->specialdata = sst->thinker.function;
 }
 
@@ -2938,8 +2939,9 @@ static void RestoreSSThinker(ssthinker_t *sst)
 //
 //==========================================================================
 
-static void RestorePlatRaise(plat_t *plat)
+static void RestorePlatRaise(thinker_t *thinker)
 {
+    plat_t *plat = (plat_t *) thinker;
     plat->sector->specialdata = T_PlatRaise;
     P_AddActivePlat(plat);
 }
@@ -2950,8 +2952,9 @@ static void RestorePlatRaise(plat_t *plat)
 //
 //==========================================================================
 
-static void RestoreMoveCeiling(ceiling_t *ceiling)
+static void RestoreMoveCeiling(thinker_t *thinker)
 {
+    ceiling_t *ceiling = (ceiling_t *) thinker;
     ceiling->sector->specialdata = T_MoveCeiling;
     P_AddActiveCeiling(ceiling);
 }
