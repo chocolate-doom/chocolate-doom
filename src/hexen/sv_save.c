@@ -73,7 +73,7 @@ typedef struct
     thinkClass_t tClass;
     think_t thinkerFunc;
     void (*writeFunc)(thinker_t *thinker);
-    void (*readFunc)();
+    void (*readFunc)(thinker_t *thinker);
     void (*restoreFunc) ();
     size_t size;
 } thinkInfo_t;
@@ -1109,8 +1109,10 @@ static void StreamOut_mobj_t(mobj_t *str)
 // floormove_t
 //
 
-static void StreamIn_floormove_t(floormove_t *str)
+static void StreamIn_floormove_t(thinker_t *thinker)
 {
+    floormove_t *str = (floormove_t *) thinker;
+
     int i;
 
     // thinker_t thinker;
@@ -1227,8 +1229,10 @@ static void StreamOut_floormove_t(thinker_t *thinker)
 // plat_t
 //
 
-static void StreamIn_plat_t(plat_t *str)
+static void StreamIn_plat_t(thinker_t *thinker)
 {
+    plat_t *str = (plat_t *) thinker;
+
     int i;
 
     // thinker_t thinker;
@@ -1315,8 +1319,10 @@ static void StreamOut_plat_t(thinker_t *thinker)
 // ceiling_t
 //
 
-static void StreamIn_ceiling_t(ceiling_t *str)
+static void StreamIn_ceiling_t(thinker_t *thinker)
 {
+    ceiling_t *str = (ceiling_t *) thinker;
+
     int i;
 
     // thinker_t thinker;
@@ -1387,8 +1393,10 @@ static void StreamOut_ceiling_t(thinker_t *thinker)
 // light_t
 //
 
-static void StreamIn_light_t(light_t *str)
+static void StreamIn_light_t(thinker_t *thinker)
 {
+    light_t *str = (light_t *) thinker;
+
     int i;
 
     // thinker_t thinker;
@@ -1451,8 +1459,10 @@ static void StreamOut_light_t(thinker_t *thinker)
 // vldoor_t
 //
 
-static void StreamIn_vldoor_t(vldoor_t *str)
+static void StreamIn_vldoor_t(thinker_t *thinker)
 {
+    vldoor_t *str = (vldoor_t *) thinker;
+
     int i;
 
     // thinker_t thinker;
@@ -1515,8 +1525,10 @@ static void StreamOut_vldoor_t(thinker_t *thinker)
 // phase_t
 //
 
-static void StreamIn_phase_t(phase_t *str)
+static void StreamIn_phase_t(thinker_t *thinker)
 {
+    phase_t *str = (phase_t *) thinker;
+
     int i;
 
     // thinker_t thinker;
@@ -1555,8 +1567,10 @@ static void StreamOut_phase_t(thinker_t *thinker)
 // acs_t
 //
 
-static void StreamIn_acs_t(acs_t *str)
+static void StreamIn_acs_t(thinker_t *thinker)
 {
+    acs_t *str = (acs_t *) thinker;
+
     int i;
 
     // thinker_t thinker;
@@ -1666,8 +1680,10 @@ static void StreamOut_acs_t(thinker_t *thinker)
 // polyevent_t
 //
 
-static void StreamIn_polyevent_t(polyevent_t *str)
+static void StreamIn_polyevent_t(thinker_t *thinker)
 {
+    polyevent_t *str = (polyevent_t *) thinker;
+
     // thinker_t thinker;
     StreamIn_thinker_t(&str->thinker);
 
@@ -1721,8 +1737,10 @@ static void StreamOut_polyevent_t(thinker_t *thinker)
 // pillar_t
 //
 
-static void StreamIn_pillar_t(pillar_t *str)
+static void StreamIn_pillar_t(thinker_t *thinker)
 {
+    pillar_t *str = (pillar_t *) thinker;
+
     int i;
 
     // thinker_t thinker;
@@ -1785,8 +1803,10 @@ static void StreamOut_pillar_t(thinker_t *thinker)
 // polydoor_t
 //
 
-static void StreamIn_polydoor_t(polydoor_t *str)
+static void StreamIn_polydoor_t(thinker_t *thinker)
 {
+    polydoor_t *str = (polydoor_t *) thinker;
+
     // thinker_t thinker;
     StreamIn_thinker_t(&str->thinker);
 
@@ -1866,8 +1886,10 @@ static void StreamOut_polydoor_t(thinker_t *thinker)
 // floorWaggle_t
 //
 
-static void StreamIn_floorWaggle_t(floorWaggle_t *str)
+static void StreamIn_floorWaggle_t(thinker_t *thinker)
 {
+    floorWaggle_t *str = (floorWaggle_t *) thinker;
+
     int i;
 
     // thinker_t thinker;
