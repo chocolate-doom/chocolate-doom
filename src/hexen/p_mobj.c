@@ -102,7 +102,7 @@ boolean P_SetMobjState(mobj_t * mobj, statenum_t state)
     mobj->frame = st->frame;
     if (st->action)
     {                           // Call action function
-        st->action(mobj);
+        st->action(mobj, NULL, NULL);
     }
     return (true);
 }
