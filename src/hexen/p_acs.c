@@ -768,8 +768,9 @@ void P_ACSInitNewGame(void)
 //
 //==========================================================================
 
-void T_InterpretACS(acs_t * script)
+void T_InterpretACS(thinker_t *thinker)
 {
+    acs_t *script = (acs_t *) thinker;
     int cmd;
     int action;
 

@@ -31,8 +31,9 @@
 //      T_VerticalDoor
 //
 //==================================================================
-void T_VerticalDoor(vldoor_t * door)
+void T_VerticalDoor(thinker_t *thinker)
 {
+    vldoor_t *door = (vldoor_t *) thinker;
     result_e res;
 
     switch (door->direction)
