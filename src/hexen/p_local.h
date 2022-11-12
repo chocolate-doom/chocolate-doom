@@ -151,8 +151,8 @@ boolean P_SetMobjStateNF(mobj_t * mobj, statenum_t state);
 void P_ThrustMobj(mobj_t * mo, angle_t angle, fixed_t move);
 int P_FaceMobj(mobj_t * source, mobj_t * target, angle_t * delta);
 boolean P_SeekerMissile(mobj_t * actor, angle_t thresh, angle_t turnMax);
-void P_MobjThinker(mobj_t * mobj);
-void P_BlasterMobjThinker(mobj_t * mobj);
+void P_MobjThinker(thinker_t *thinker);
+void P_BlasterMobjThinker(thinker_t *thinker);
 void P_SpawnPuff(fixed_t x, fixed_t y, fixed_t z);
 void P_SpawnBlood(fixed_t x, fixed_t y, fixed_t z, int damage);
 void P_BloodSplatter(fixed_t x, fixed_t y, fixed_t z, mobj_t * originator);
@@ -408,11 +408,11 @@ extern int po_NumPolyobjs;
 extern polyblock_t **PolyBlockMap;
 
 
-void T_PolyDoor(polydoor_t * pd);
-void T_RotatePoly(polyevent_t * pe);
+void T_PolyDoor(thinker_t *thinker);
+void T_RotatePoly(thinker_t *thinker);
 boolean EV_RotatePoly(line_t * line, byte * args, int direction, boolean
                       overRide);
-void T_MovePoly(polyevent_t * pe);
+void T_MovePoly(thinker_t *thinker);
 boolean EV_MovePoly(line_t * line, byte * args, boolean timesEight, boolean
                     overRide);
 boolean EV_OpenPolyDoor(line_t * line, byte * args, podoortype_t type);

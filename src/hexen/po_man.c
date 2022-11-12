@@ -74,8 +74,9 @@ static fixed_t PolyStartY;
 //
 //==========================================================================
 
-void T_RotatePoly(polyevent_t * pe)
+void T_RotatePoly(thinker_t *thinker)
 {
+    polyevent_t *pe = (polyevent_t *) thinker;
     int absSpeed;
     polyobj_t *poly;
 
@@ -208,8 +209,9 @@ boolean EV_RotatePoly(line_t * line, byte * args, int direction, boolean
 //
 //==========================================================================
 
-void T_MovePoly(polyevent_t * pe)
+void T_MovePoly(thinker_t *thinker)
 {
+    polyevent_t *pe = (polyevent_t *) thinker;
     int absSpeed;
     polyobj_t *poly;
 
@@ -326,8 +328,9 @@ boolean EV_MovePoly(line_t * line, byte * args, boolean timesEight, boolean
 //
 //==========================================================================
 
-void T_PolyDoor(polydoor_t * pd)
+void T_PolyDoor(thinker_t *thinker)
 {
+    polydoor_t *pd = (polydoor_t *) thinker;
     int absSpeed;
     polyobj_t *poly;
 
