@@ -2229,7 +2229,7 @@ void A_SerpentWalk(mobj_t *actor, player_t *player, pspdef_t *psp)
 //
     if (actor->movedir < 8)
     {
-        actor->angle &= (7 << 29);
+        actor->angle &= (7u << 29);
         delta = actor->angle - (actor->movedir << 29);
         if (delta > 0)
         {
