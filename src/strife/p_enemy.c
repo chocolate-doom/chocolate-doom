@@ -931,7 +931,7 @@ void A_RandomWalk(mobj_t* actor)
         {
             int delta;
 
-            actor->angle &= (7 << 29);
+            actor->angle &= (7u << 29);
             delta = actor->angle - (actor->movedir << 29);
 
             if(delta < 0)
