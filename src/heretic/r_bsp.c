@@ -209,8 +209,10 @@ void R_ClearClipSegs(void)
 void R_CheckInterpolateSector(sector_t* sector)
 {
     if (crispy->uncapped &&
-        // Only if we moved the sector last tic.
-        sector->oldgametic == gametic - 1)
+        // Only if we moved the sector last tic ...
+        sector->oldgametic == gametic - 1 &&
+        // ... and it has a thinker associated with it.
+        sector->specialdata)
     {
         // Interpolate between current and last floor/ceiling position.
         if (sector->floorheight != sector->oldfloorheight)
