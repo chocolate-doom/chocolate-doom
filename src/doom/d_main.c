@@ -1126,6 +1126,12 @@ static void InitGameVersion(void)
         deathmatch = 1;
     }
     
+    // -fast was not an option until Doom v1.4
+    if (gameversion <= exe_doom_1_2)
+    {
+        fastparm = 0;
+    }
+
     // The original exe does not support retail - 4th episode not supported
 
     if (gameversion < exe_ultimate && gamemode == retail)
