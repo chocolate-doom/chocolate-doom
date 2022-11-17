@@ -697,7 +697,7 @@ void A_Chase(mobj_t *actor, player_t *player, pspdef_t *psp)
 //
     if (actor->movedir < 8)
     {
-        actor->angle &= (7 << 29);
+        actor->angle &= (7u << 29);
         delta = actor->angle - (actor->movedir << 29);
         if (delta > 0)
         {
@@ -1034,28 +1034,28 @@ void FaceMovementDirection(mobj_t * actor)
     switch (actor->movedir)
     {
         case DI_EAST:
-            actor->angle = 0 << 24;
+            actor->angle = 0u << 24;
             break;
         case DI_NORTHEAST:
-            actor->angle = 32 << 24;
+            actor->angle = 32u << 24;
             break;
         case DI_NORTH:
-            actor->angle = 64 << 24;
+            actor->angle = 64u << 24;
             break;
         case DI_NORTHWEST:
-            actor->angle = 96 << 24;
+            actor->angle = 96u << 24;
             break;
         case DI_WEST:
-            actor->angle = 128 << 24;
+            actor->angle = 128u << 24;
             break;
         case DI_SOUTHWEST:
-            actor->angle = 160 << 24;
+            actor->angle = 160u << 24;
             break;
         case DI_SOUTH:
-            actor->angle = 192 << 24;
+            actor->angle = 192u << 24;
             break;
         case DI_SOUTHEAST:
-            actor->angle = 224 << 24;
+            actor->angle = 224u << 24;
             break;
     }
 }
@@ -2028,7 +2028,7 @@ void A_SerpentChase(mobj_t *actor, player_t *player, pspdef_t *psp)
 //
     if (actor->movedir < 8)
     {
-        actor->angle &= (7 << 29);
+        actor->angle &= (7u << 29);
         delta = actor->angle - (actor->movedir << 29);
         if (delta > 0)
         {
@@ -2229,7 +2229,7 @@ void A_SerpentWalk(mobj_t *actor, player_t *player, pspdef_t *psp)
 //
     if (actor->movedir < 8)
     {
-        actor->angle &= (7 << 29);
+        actor->angle &= (7u << 29);
         delta = actor->angle - (actor->movedir << 29);
         if (delta > 0)
         {
@@ -4596,7 +4596,7 @@ void A_FastChase(mobj_t *actor, player_t *player, pspdef_t *psp)
 //
     if (actor->movedir < 8)
     {
-        actor->angle &= (7 << 29);
+        actor->angle &= (7u << 29);
         delta = actor->angle - (actor->movedir << 29);
         if (delta > 0)
         {
