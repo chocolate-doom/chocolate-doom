@@ -257,7 +257,7 @@ void P_LoadSegs (int lump)
                 if (li->sidedef->midtexture)
                 {
                     li->backsector = 0;
-                    fprintf(stderr, "P_LoadSegs: Linedef %d has two-sided flag set, but no second sidedef\n", i);
+                    fprintf(stderr, "P_LoadSegs: Linedef %d has two-sided flag set, but no second sidedef\n", linedef);
                 }
                 else
                 li->backsector = GetSectorAtNullAddress();

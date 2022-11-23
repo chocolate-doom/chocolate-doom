@@ -145,7 +145,7 @@ void P_LoadSegs_DeePBSP (int lump)
 		if (li->sidedef->midtexture)
 		{
 		    li->backsector = 0;
-		    fprintf(stderr, "P_LoadSegs: Linedef %d has two-sided flag set, but no second sidedef\n", i);
+		    fprintf(stderr, "P_LoadSegs: Linedef %d has two-sided flag set, but no second sidedef\n", linedef);
 		}
 		else
 		    li->backsector = GetSectorAtNullAddress();
@@ -442,7 +442,7 @@ void P_LoadNodes_ZDBSP (int lump, boolean compressed)
 		if (li->sidedef->midtexture)
 		{
 		    li->backsector = 0;
-		    fprintf(stderr, "P_LoadSegs: Linedef %u has two-sided flag set, but no second sidedef\n", i);
+		    fprintf(stderr, "P_LoadSegs: Linedef %u has two-sided flag set, but no second sidedef\n", linedef);
 		}
 		else
 		    li->backsector = GetSectorAtNullAddress();
