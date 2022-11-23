@@ -1467,7 +1467,11 @@ void P_SpawnSpecials (void)
 	    break;
 	    
 	  case 17:
-	    P_SpawnFireFlicker(sector);
+	    // first introduced in official v1.4 beta
+	    if (gameversion > exe_doom_1_2)
+	    {
+	        P_SpawnFireFlicker(sector);
+	    }
 	    break;
 	}
     }
