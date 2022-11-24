@@ -1466,13 +1466,13 @@ void P_SpawnSpecials (void)
 	    P_SpawnDoorRaiseIn5Mins (sector, i);
 	    break;
 	    
-	  case 17:
-	    // first introduced in official v1.4 beta
-	    if (gameversion > exe_doom_1_2)
-	    {
-	        P_SpawnFireFlicker(sector);
-	    }
-	    break;
+      case 17:
+        // first introduced in official v1.4 beta
+        if (gameversion > exe_doom_1_2)
+        {
+            P_SpawnFireFlicker(sector);
+        }
+      break;
 	}
     }
 
