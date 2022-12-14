@@ -82,6 +82,7 @@ i_timer.c            i_timer.h             \
 i_video.c            i_video.h             \
 i_videohr.c          i_videohr.h           \
 i_winmusic.c         i_winmusic.h          \
+midifallback.c       midifallback.h        \
 midifile.c           midifile.h            \
 mus2mid.c            mus2mid.h             \
 m_bbox.c             m_bbox.h              \

@@ -1,5 +1,5 @@
 //
-// Copyright(C) 2021 Roman Fomin
+// Copyright(C) 2022 ceski
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -12,26 +12,30 @@
 // GNU General Public License for more details.
 //
 // DESCRIPTION:
-//      Windows native MIDI
-
-#ifndef __I_WINMUSIC__
-#define __I_WINMUSIC__
+//      MIDI instrument fallback support
+//
 
 #ifdef _WIN32
 
 #include "doomtype.h"
+#include "midifile.h"
 
-boolean I_WIN_InitMusic(void);
-void I_WIN_PlaySong(boolean looping);
-void I_WIN_PauseSong(void);
-void I_WIN_ResumeSong(void);
-void I_WIN_StopSong(void);
-void I_WIN_SetMusicVolume(int volume);
-boolean I_WIN_RegisterSong(char* filename);
-void I_WIN_UnRegisterSong(void);
-void I_WIN_ShutdownMusic(void);
+typedef enum midi_fallback_type_t
+{
+    FALLBACK_NONE,
+    FALLBACK_BANK_MSB,
+    FALLBACK_BANK_LSB,
+    FALLBACK_DRUMS,
+} midi_fallback_type_t;
 
+typedef struct midi_fallback_t
+{
+    midi_fallback_type_t type;
+    byte value;
+} midi_fallback_t;
 
-#endif // _WIN32
+void MIDI_CheckFallback(midi_event_t *event, midi_fallback_t *fallback);
+void MIDI_ResetFallback(void);
+void MIDI_InitFallback(void);
 
-#endif // __I_WINMUSIC__
+#endif

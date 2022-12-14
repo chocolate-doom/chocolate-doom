@@ -91,6 +91,9 @@ static sound_module_t *sound_modules[] =
 
 static music_module_t *music_modules[] =
 {
+#ifdef _WIN32
+    &music_win_module,
+#endif
 #ifndef DISABLE_SDL2MIXER
     &music_sdl_module,
 #endif // DISABLE_SDL2MIXER
@@ -162,6 +165,16 @@ static void InitMusicModule(void)
                             music_modules[i]->sound_devices,
                             music_modules[i]->num_sound_devices))
         {
+            // Skip the native Windows MIDI module if using Timidity or
+            // FluidSynth.
+
+            if ((strcmp(timidity_cfg_path, "")
+              || strcmp(fluidsynth_sf_path, ""))
+              && music_modules[i] == &music_win_module)
+            {
+                continue;
+            }
+
             // Initialize the module
 
             if (music_modules[i]->Init())
@@ -492,6 +505,8 @@ void I_BindSoundVariables(void)
     M_BindIntVariable("gus_ram_kb",              &gus_ram_kb);
 #ifdef _WIN32
     M_BindStringVariable("winmm_midi_device",    &winmm_midi_device);
+    M_BindIntVariable("winmm_reset_type",        &winmm_reset_type);
+    M_BindIntVariable("winmm_reset_delay",       &winmm_reset_delay);
     M_BindIntVariable("winmm_reverb_level",      &winmm_reverb_level);
     M_BindIntVariable("winmm_chorus_level",      &winmm_chorus_level);
 #endif
