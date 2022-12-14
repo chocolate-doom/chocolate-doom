@@ -102,6 +102,9 @@ glob_t *I_StartMultiGlob(const char *directory, int flags,
     int num_globs;
     glob_t *result;
     va_list args;
+    char *directory_native;
+
+    directory_native = M_ConvertUtf8ToSysNativeMB(directory);
 
     globs = malloc(sizeof(char *));
     if (globs == NULL)
@@ -140,7 +143,7 @@ glob_t *I_StartMultiGlob(const char *directory, int flags,
         return NULL;
     }
 
-    result->dir = opendir(directory);
+    result->dir = opendir(directory_native);
     if (result->dir == NULL)
     {
         FreeStringList(globs, num_globs);
@@ -148,7 +151,7 @@ glob_t *I_StartMultiGlob(const char *directory, int flags,
         return NULL;
     }
 
-    result->directory = M_StringDuplicate(directory);
+    result->directory = directory_native;
     result->globs = globs;
     result->num_globs = num_globs;
     result->flags = flags;
@@ -242,6 +245,7 @@ static boolean MatchesAnyGlob(const char *name, glob_t *glob)
 static char *NextGlob(glob_t *glob)
 {
     struct dirent *de;
+    char *temp, *ret;
 
     do
     {
@@ -254,7 +258,13 @@ static char *NextGlob(glob_t *glob)
           || !MatchesAnyGlob(de->d_name, glob));
 
     // Return the fully-qualified path, not just the bare filename.
-    return M_StringJoin(glob->directory, DIR_SEPARATOR_S, de->d_name, NULL);
+    temp = M_StringJoin(glob->directory, DIR_SEPARATOR_S, de->d_name, NULL);
+
+    ret = M_ConvertSysNativeMBToUtf8(temp);
+
+    free(temp);
+
+    return ret;
 }
 
 static void ReadAllFilenames(glob_t *glob)
