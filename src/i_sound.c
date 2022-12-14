@@ -165,6 +165,7 @@ static void InitMusicModule(void)
                             music_modules[i]->sound_devices,
                             music_modules[i]->num_sound_devices))
         {
+        #ifdef _WIN32
             // Skip the native Windows MIDI module if using Timidity or
             // FluidSynth.
 
@@ -174,6 +175,7 @@ static void InitMusicModule(void)
             {
                 continue;
             }
+        #endif
 
             // Initialize the module
 
