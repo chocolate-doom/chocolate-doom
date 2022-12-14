@@ -129,11 +129,17 @@ static char *ConvertWideToSysNativeMB(const wchar_t *wstr)
     return ConvertWideToMultiByte(wstr, CP_ACP);
 }
 
+// Convert UTF8 string to a wide string. The result is newly allocated and must
+// be freed by the caller after use.
+
 wchar_t *M_ConvertUtf8ToWide(const char *str)
 {
     return ConvertMultiByteToWide(str, CP_UTF8);
 }
 #endif
+
+// Convert multibyte string in system encoding to UTF8. The result is newly
+// allocated and must be freed by the caller after use.
 
 char *M_ConvertSysNativeMBToUtf8(const char *str)
 {
@@ -157,6 +163,9 @@ char *M_ConvertSysNativeMBToUtf8(const char *str)
     return M_StringDuplicate(str);
 #endif
 }
+
+// Convert UTF8 string to multibyte string in system encoding. The result is
+// newly allocated and must be freed by the caller after use.
 
 char *M_ConvertUtf8ToSysNativeMB(const char *str)
 {
