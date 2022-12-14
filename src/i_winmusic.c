@@ -1354,6 +1354,9 @@ static void *I_WIN_RegisterSong(void *data, int len)
 
     file = MIDI_LoadFile(filename);
 
+    M_remove(filename);
+    free(filename);
+
     if (file == NULL)
     {
         fprintf(stderr, "I_WIN_RegisterSong: Failed to load MID.\n");
@@ -1392,10 +1395,6 @@ static void *I_WIN_RegisterSong(void *data, int len)
 
     ResetEvent(hBufferReturnEvent);
     ResetEvent(hExitEvent);
-
-    M_remove(filename);
-
-    free(filename);
 
     return file;
 }
