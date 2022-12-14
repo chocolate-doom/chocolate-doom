@@ -104,8 +104,6 @@ glob_t *I_StartMultiGlob(const char *directory, int flags,
     va_list args;
     char *directory_native;
 
-    directory_native = M_ConvertUtf8ToSysNativeMB(directory);
-
     globs = malloc(sizeof(char *));
     if (globs == NULL)
     {
@@ -143,11 +141,14 @@ glob_t *I_StartMultiGlob(const char *directory, int flags,
         return NULL;
     }
 
+    directory_native = M_ConvertUtf8ToSysNativeMB(directory);
+
     result->dir = opendir(directory_native);
     if (result->dir == NULL)
     {
         FreeStringList(globs, num_globs);
         free(result);
+        free(directory_native);
         return NULL;
     }
 
