@@ -122,6 +122,7 @@ typedef struct
     unsigned int elapsed_time;
     unsigned int saved_elapsed_time;
     unsigned int num_tracks;
+    boolean registered;
     boolean looping;
     boolean ff_loop;
     boolean ff_restart;
@@ -1226,7 +1227,7 @@ static void I_WIN_SetMusicVolume(int volume)
 
     volume_factor = sqrtf((float)volume / 120);
 
-    update_volume = true;
+    update_volume = song.registered;
 }
 
 static void I_WIN_StopSong(void)
@@ -1392,6 +1393,7 @@ static void *I_WIN_RegisterSong(void *data, int len)
     {
         song.tracks[i].iter = MIDI_IterateTrack(file, i);
     }
+    song.registered = true;
 
     ResetEvent(hBufferReturnEvent);
     ResetEvent(hExitEvent);
@@ -1419,6 +1421,7 @@ static void I_WIN_UnRegisterSong(void *handle)
     song.elapsed_time = 0;
     song.saved_elapsed_time = 0;
     song.num_tracks = 0;
+    song.registered = false;
     song.looping = false;
     song.ff_loop = false;
     song.ff_restart = false;
