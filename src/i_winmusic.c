@@ -50,24 +50,24 @@ enum
 int winmm_reset_type = RESET_TYPE_GS;
 int winmm_reset_delay = 0;
 
-static byte gs_reset[] = {
+static const byte gs_reset[] = {
     0xF0, 0x41, 0x10, 0x42, 0x12, 0x40, 0x00, 0x7F, 0x00, 0x41, 0xF7
 };
 
-static byte gm_system_on[] = {
+static const byte gm_system_on[] = {
     0xF0, 0x7E, 0x7F, 0x09, 0x01, 0xF7
 };
 
-static byte gm2_system_on[] = {
+static const byte gm2_system_on[] = {
     0xF0, 0x7E, 0x7F, 0x09, 0x03, 0xF7
 };
 
-static byte xg_system_on[] = {
+static const byte xg_system_on[] = {
     0xF0, 0x43, 0x10, 0x4C, 0x00, 0x00, 0x7E, 0x00, 0xF7
 };
 
-static byte ff_loopStart[] = {'l', 'o', 'o', 'p', 'S', 't', 'a', 'r', 't'};
-static byte ff_loopEnd[] = {'l', 'o', 'o', 'p', 'E', 'n', 'd'};
+static const byte ff_loopStart[] = {'l', 'o', 'o', 'p', 'S', 't', 'a', 'r', 't'};
+static const byte ff_loopEnd[] = {'l', 'o', 'o', 'p', 'E', 'n', 'd'};
 
 static boolean use_fallback;
 
