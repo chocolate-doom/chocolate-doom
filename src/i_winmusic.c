@@ -1486,7 +1486,11 @@ static boolean I_WIN_MusicIsPlaying(void)
 
 static snddevice_t music_win_devices[] =
 {
+    SNDDEVICE_PAS,
+    SNDDEVICE_WAVEBLASTER,
+    SNDDEVICE_SOUNDCANVAS,
     SNDDEVICE_GENMIDI,
+    SNDDEVICE_AWE32,
 };
 
 music_module_t music_win_module =
