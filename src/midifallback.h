@@ -17,6 +17,9 @@
 
 #ifdef _WIN32
 
+#ifndef MIDIFALLBACK_H
+#define MIDIFALLBACK_H
+
 #include "doomtype.h"
 #include "midifile.h"
 
@@ -34,8 +37,10 @@ typedef struct midi_fallback_t
     byte value;
 } midi_fallback_t;
 
-void MIDI_CheckFallback(midi_event_t *event, midi_fallback_t *fallback);
+void MIDI_CheckFallback(const midi_event_t *event, midi_fallback_t *fallback);
 void MIDI_ResetFallback(void);
 void MIDI_InitFallback(void);
 
-#endif
+#endif // MIDIFALLBACK_H
+
+#endif // _WIN32

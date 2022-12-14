@@ -45,7 +45,7 @@ static byte bank_msb[MIDI_CHANNELS_PER_TRACK];
 static byte drum_map[MIDI_CHANNELS_PER_TRACK];
 static boolean selected[MIDI_CHANNELS_PER_TRACK];
 
-static void UpdateDrumMap(byte *msg, unsigned int length)
+static void UpdateDrumMap(const byte *msg, unsigned int length)
 {
     byte idx;
     byte checksum;
@@ -145,7 +145,7 @@ static boolean GetProgramFallback(byte idx, byte program,
     return false;
 }
 
-void MIDI_CheckFallback(midi_event_t *event, midi_fallback_t *fallback)
+void MIDI_CheckFallback(const midi_event_t *event, midi_fallback_t *fallback)
 {
     byte idx;
     byte program;
