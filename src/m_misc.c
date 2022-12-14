@@ -128,16 +128,12 @@ static char *ConvertWideToSysNativeMB(const wchar_t *wstr)
 {
     return ConvertWideToMultiByte(wstr, CP_ACP);
 }
-#endif
 
 wchar_t *M_ConvertUtf8ToWide(const char *str)
 {
-#ifdef _WIN32
     return ConvertMultiByteToWide(str, CP_UTF8);
-#else
-    return M_StringDuplicate(str);
-#endif
 }
+#endif
 
 char *M_ConvertSysNativeMBToUtf8(const char *str)
 {
