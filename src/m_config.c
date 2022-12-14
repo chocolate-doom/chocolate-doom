@@ -973,13 +973,26 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_STRING(winmm_midi_device),
 
     //!
-    // Reverb level for native Windows MIDI, default 40, range 0-127.
+    // Reset device type for native Windows MIDI, default 1. Valid values are
+    // 0 (None), 1 (GS Mode), 2 (GM Mode), 3 (GM2 Mode), 4 (XG Mode).
+    //
+
+    CONFIG_VARIABLE_INT(winmm_reset_type),
+
+    //!
+    // Reset device delay for native Windows MIDI, default 0, median value 100 ms.
+    //
+
+    CONFIG_VARIABLE_INT(winmm_reset_delay),
+
+    //!
+    // Reverb level for native Windows MIDI, default -1, range 0-127.
     //
 
     CONFIG_VARIABLE_INT(winmm_reverb_level),
 
     //!
-    // Chorus level for native Windows MIDI, default 0, range 0-127.
+    // Chorus level for native Windows MIDI, default -1, range 0-127.
     //
 
     CONFIG_VARIABLE_INT(winmm_chorus_level),
