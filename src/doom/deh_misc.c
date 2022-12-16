@@ -24,6 +24,11 @@
 #include "deh_main.h"
 #include "deh_misc.h"
 
+// Dehacked: "RNG Table"
+// This is the RNG table for the games randomness
+// See rndtable in m_random.c
+int[] deh_rngtable = DEH_DEAFULT_RNG
+
 // Dehacked: "Initial Health" 
 // This is the initial health a player has when starting anew.
 // See G_PlayerReborn in g_game.c
