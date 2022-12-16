@@ -34,6 +34,7 @@
 #define DEH_DEFAULT_IDKFA_ARMOR_CLASS 2
 #define DEH_DEFAULT_BFG_CELLS_PER_SHOT 40
 #define DEH_DEFAULT_SPECIES_INFIGHTING 0
+#define DEH_DEAFULT_RNG [255]
 
 extern int deh_initial_health;
 extern int deh_initial_bullets;
@@ -51,6 +52,7 @@ extern int deh_idkfa_armor;
 extern int deh_idkfa_armor_class;
 extern int deh_bfg_cells_per_shot;
 extern int deh_species_infighting;
+extern int[] deh_rngtable;
 
 #if 0
 
@@ -72,6 +74,7 @@ extern int deh_species_infighting;
 #define deh_idkfa_armor_class   DEH_DEFAULT_IDKFA_ARMOR_CLASS
 #define deh_bfg_cells_per_shot  DEH_DEFAULT_BFG_CELLS_PER_SHOT
 #define deh_species_infighting  DEH_DEFAULT_SPECIES_INFIGHTING
+#define deh_rngtable DEH_DEAFULT_RNG
 
 #endif
 
