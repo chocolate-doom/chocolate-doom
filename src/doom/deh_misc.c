@@ -155,6 +155,7 @@ static struct
     {"IDKFA Armor",         &deh_idkfa_armor},
     {"IDKFA Armor Class",   &deh_idkfa_armor_class},
     {"BFG Cells/Shot",      &deh_bfg_cells_per_shot},
+    {"RNG Table",           &deh_rngtable}
 };
 
 static void *DEH_MiscStart(deh_context_t *context, char *line)
