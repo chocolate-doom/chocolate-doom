@@ -2164,6 +2164,14 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(crispy_flipcorpses),
 
     //!
+    // @game doom heretic hexen
+    //
+    // Limit framerate to this value in frames per second.
+    //
+
+    CONFIG_VARIABLE_INT(crispy_fpslimit),
+
+    //!
     // @game doom
     //
     // Enable vertical aiming.

@@ -55,6 +55,7 @@ typedef struct
 	int demobar;
 	int extautomap;
 	int flipcorpses;
+	int fpslimit;
 	int freeaim;
 	int freelook;
 	int freelook_hh;
