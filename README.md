@@ -1,7 +1,7 @@
 
 # RNG OF DOOM
 
-A extention of chocolate doom where you can edit the rng with Dehacked files.
+A extention of chocolate doom where you can edit the rng with Dehacked files. (only in doom and not hexen, heretic, or strife)
 
 ```
 Patch File for DeHackEd v3.0
