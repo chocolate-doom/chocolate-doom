@@ -1,47 +1,32 @@
 **New Features and Improvements**
-* Add mouse smoothing when running uncapped. (by @mikeday0)
-* New icon designs for all games and the setup executable (by @kiwaph).
-* Brightmaps now working on mid-textures of two-sided lines (by @JNechaevsky).
-* New stats widget option: above status bar.
-* Many automap improvements: (by @JNechaevsky and @mikeday0)
-    - New mouse button bindings for zoom, max zoom and follow.
-    - Pan/zoom faster by holding run button.
-    - Use overflow-safe map coordinate system from prboom-plus.
-    - Apply frame interpolation to automap rendering when running uncapped.
+* Make MIDI device selection less ambiguous.
+* Add default difficulty option (by kiwaph and @mikeday0).
+* Improve smoothness of network games when running uncapped (thanks @rfomin).
+* Disable smooth pixel scaling if software rendering is enforced.
+* Add framerate limiting through crispy_fpslimit config variable (@mikeday0).
 
 **Bug Fixes**
-* Ensure mouse sensitivity values are always initialized to defaults.
-* Fix clipping issue when jumping in Doom.
-* Fix cutscene rendering in truecolor in Doom.
-* Fix potential Heretic crash on x64 systems.
-* Armor icons now drawn in correct locations in widescreen for Hexen.
-* Fix screen border glitch after leaving automap in low res mode in Hexen.
-* Fix shuffling of items on automap after loading savegame.
+* Fix crosshair shifting position after changing resolution.
+* Fix Automap line jitter in low res mode (@mikeday0).
+* Widescreen rendering now requires aspect ratio correction.
+* Fix widgets obscuring chat line (@JNechaevsky).
+* Raven: Disable autoloading in shareware mode (thanks @rzhxiii and @JNechaevsky).
+* Raven: Don't scroll map background when paused (@mikeday0).
+* Fix glitchy drawing of instant moving sectors when running uncapped (@mikeday0).
+* Fix bogus linedef numbers in P_LoadSegs warning (thanks @tpoppins).
 
 **Crispy Doom**
-* Support up to 8 pages of savegames.
-* Brightmap now applied to SW2HOT texture (by @JNechaevsky).
-* Improved brightmaps for SILVER3, COMPUTE2 and COMPUTE3 textures (by @JNechaevsky).
-* Player arrows in multiplayer games now also interpolated and rotating with correct angles (by @JNechaevsky).
-* Fix incorrect demo timer value and demo bar lenght in multiplayer demos (by @fabiangreffrath, @JNechaevsky and @rfomin).
-* Status bar showing values and face of choosen player in multiplayer spy mode (by @JNechaevsky).
+* Add support for loading REKKR as IWAD (@SoDOOManiac).
+* Do not show the "WAD: map" Automap widget for IWAD levels.
+* Improve brightmap for COMPUTE1 texture (@JNechaevsky).
+* Interpolate weapon bobbing (@rrPKrr).
 
 **Crispy Heretic**
-* Remove ambient sound limit.
-* Add automap overlay and rotation (by @mikeday0).
-* Add PWAD autoload directories (by @mikeday0).
-* Add brightmap support (by @JNechaevsky).
-* Add mouselook support (by @mikeday0).
-* Add automap mousewheel zoom and mouse panning (by @mikeday0).
-* Add automap grid (by @JNechaevsky).
+* Support 8 pages of saves (@mikeday0).
+* Colorize Crispness menu (@mikeday0).
 
 **Crispy Hexen**
-* Fix tutti frutti and add DeePsea tall patch support (by @mikeday0).
-* Add uncapped framerate option (by @mikeday0).
-* Add automap overlay and rotation (by @mikeday0).
-* Add PWAD autoload directories (by @mikeday0).
-* Add mouselook support ((by @mikeday0).
-* Add brightmap support (by @JNechaevsky).
-* Add key toggles for autorun and vertical mouse movement (thanks @rxhxiii).
-* Add automap mousewheel zoom and mouse panning (by @mikeday0).
-* Add automap grid (by @JNechaevsky).
+* Generate default save slot name.
+* Allowing deletion of savegames from menu (@mikeday0).
+* Support 8 pages of saves (@mikeday0).
+* Colorize Crispness menu (@mikeday0).
