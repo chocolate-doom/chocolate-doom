@@ -40,6 +40,7 @@ int winmm_chorus_level = -1;
 
 enum
 {
+    RESET_TYPE_DEFAULT = -1,
     RESET_TYPE_NONE,
     RESET_TYPE_GS,
     RESET_TYPE_GM,
@@ -47,7 +48,7 @@ enum
     RESET_TYPE_XG,
 };
 
-int winmm_reset_type = RESET_TYPE_GS;
+int winmm_reset_type = RESET_TYPE_DEFAULT;
 int winmm_reset_delay = 0;
 
 static const byte gs_reset[] = {
