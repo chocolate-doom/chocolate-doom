@@ -17,11 +17,18 @@
 //
 
 //
+// DeHackEd support for RNG ;)
+//
+#include "deh_main.h"
+#include "deh_misc.h"
+
+
+//
 // M_Random
 // Returns a 0-255 number
 //
 
-static const unsigned char rndtable[] = {255};
+static const unsigned char rndtable[] = deh_rngtable;
 
 int	rndindex = 0;
 int	prndindex = 0;
