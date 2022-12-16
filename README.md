@@ -1,7 +1,18 @@
 
 # RNG OF DOOM
 
-Chcoclate doom but I played with the RNG. See ```EFFECTS.MD``` for full list of effects.
+A extention of chocolate doom where you can edit the rng with Dehacked files.
+
+```
+Patch File for DeHackEd v3.0
+Doom version = 19
+Patch format = 6
+
+
+# RNG table uses misc section
+Misc 0
+RNG Table = [1,2,3,4,5] # inside a list
+```
 
 
 ## Installation
@@ -24,5 +35,5 @@ git clone https://github.com/someStranger8/RNG-OF-DOOM
 cd RNG-OF-DOOM
 make
 make install
-chocolate-doom -iwad doom2.wad -file nuts.wad
+chocolate-doom -iwad doom2.wad -file nuts.wad -deh crazy_rng.deh
 ```
