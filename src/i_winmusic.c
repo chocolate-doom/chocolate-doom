@@ -1188,11 +1188,12 @@ static boolean I_WIN_InitMusic(void)
     }
 
     // Is this device MS GS Synth?
-    if (mcaps.wMid == MM_MICROSOFT &&
-        mcaps.wPid == MM_MSFT_GENERIC_MIDISYNTH &&
-        mcaps.wTechnology == MOD_SWSYNTH)
     {
-        ms_gs_synth = MidiDevice;
+        const char pname[] = "Microsoft GS Wavetable";
+        if (!strncasecmp(pname, mcaps.szPname, sizeof(pname) - 1))
+        {
+            ms_gs_synth = MidiDevice;
+        }
     }
 
     mmr = midiStreamOpen(&hMidiStream, &MidiDevice, (DWORD)1,
