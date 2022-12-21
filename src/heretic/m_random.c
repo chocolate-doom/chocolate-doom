@@ -16,12 +16,6 @@
 
 #include "m_random.h"
 
-//
-// DeHackEd support for RNG ;)
-//
-#include "deh_main.h"
-#include "deh_misc.h"
-
 /*
 ===============
 =
@@ -32,7 +26,7 @@
 ===============
 */
 
-static const unsigned char rndtable[] = deh_rngtable;
+static const unsigned char rndtable[] = {};
 
 int rndindex = 0;
 int prndindex = 0;
