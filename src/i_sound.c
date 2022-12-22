@@ -154,6 +154,11 @@ static void InitMusicModule(void)
 {
     int i;
 
+    // [crispy] Always initialize SDL music module.
+#ifndef DISABLE_SDL2MIXER
+    music_sdl_module.Init();
+#endif
+
     music_module = NULL;
 
     for (i=0; music_modules[i] != NULL; ++i)
@@ -284,6 +289,15 @@ void I_ShutdownSound(void)
         music_pack_module.Shutdown();
     }
 
+#ifndef DISABLE_SDL2MIXER
+    music_sdl_module.Shutdown();
+
+    if (music_module == &music_sdl_module)
+    {
+        return;
+    }
+#endif
+
     if (music_module != NULL)
     {
         music_module->Shutdown();
@@ -397,11 +411,11 @@ void I_ShutdownMusic(void)
 
 void I_SetMusicVolume(int volume)
 {
-    if (music_module != NULL)
+    if (active_music_module != NULL)
     {
-        music_module->SetMusicVolume(volume);
+        active_music_module->SetMusicVolume(volume);
 
-        if (music_packs_active && music_module != &music_pack_module)
+        if (music_packs_active && active_music_module != &music_pack_module)
         {
             music_pack_module.SetMusicVolume(volume);
         }
@@ -424,6 +438,20 @@ void I_ResumeSong(void)
     }
 }
 
+// Determine whether memory block is a .mid file
+
+boolean IsMid(byte *mem, int len)
+{
+    return len > 4 && !memcmp(mem, "MThd", 4);
+}
+
+// Determine whether memory block is a .mus file
+
+boolean IsMus(byte *mem, int len)
+{
+    return len > 4 && !memcmp(mem, "MUS\x1a", 4);
+}
+
 void *I_RegisterSong(void *data, int len)
 {
     // If the music pack module is active, check to see if there is a
@@ -440,6 +468,17 @@ void *I_RegisterSong(void *data, int len)
             active_music_module = &music_pack_module;
             return handle;
         }
+    }
+
+
+    if (!IsMid(data, len) && !IsMus(data, len))
+    {
+#ifndef DISABLE_SDL2MIXER
+        active_music_module = &music_sdl_module;
+        return active_music_module->RegisterSong(data, len);
+#else
+        return NULL;
+#endif
     }
 
     // No substitution for this track, so use the main module.
