@@ -25,8 +25,6 @@
 #include "SDL.h"
 #include "SDL_mixer.h"
 
-#include "i_winmusic.h"
-
 #include "config.h"
 #include "doomtype.h"
 #include "memio.h"
@@ -138,12 +136,6 @@ static boolean music_initialized = false;
 
 static boolean sdl_was_initialized = false;
 
-#if defined(_WIN32)
-static boolean win_midi_stream_opened = false;
-#endif
-
-static boolean win_midi_song_registered = false;
-
 static boolean musicpaused = false;
 static int current_music_volume;
 
@@ -165,13 +157,6 @@ static void I_SDL_ShutdownMusic(void)
 {
     if (music_initialized)
     {
-#if defined(_WIN32)
-        if (win_midi_stream_opened)
-        {
-            I_WIN_ShutdownMusic();
-            win_midi_stream_opened = false;
-        }
-#endif
         Mix_HaltMusic();
         music_initialized = false;
 
@@ -288,15 +273,6 @@ static boolean I_SDL_InitMusic(void)
         Mix_SetMusicCMD(snd_musiccmd);
     }
 
-#if defined(_WIN32)
-    // Don't enable it for GUS or Fluidsynth, since they handle their own volume
-    // just fine.
-    if (snd_musicdevice != SNDDEVICE_GUS && !fluidsynth_sf_is_set)
-    {
-        win_midi_stream_opened = I_WIN_InitMusic();
-    }
-#endif
-
     return music_initialized;
 }
 
@@ -318,9 +294,6 @@ static void UpdateMusicVolume(void)
         vol = (current_music_volume * MIX_MAX_VOLUME) / 127;
     }
 
-#if defined(_WIN32)
-    I_WIN_SetMusicVolume(vol);
-#endif
     Mix_VolumeMusic(vol);
 }
 
@@ -345,7 +318,7 @@ static void I_SDL_PlaySong(void *handle, boolean looping)
         return;
     }
 
-    if (handle == NULL && !win_midi_song_registered)
+    if (handle == NULL)
     {
         return;
     }
@@ -359,16 +332,7 @@ static void I_SDL_PlaySong(void *handle, boolean looping)
         loops = 1;
     }
 
-#if defined(_WIN32)
-    if (win_midi_song_registered)
-    {
-        I_WIN_PlaySong(looping);
-    }
-    else
-#endif
-    {
-        Mix_PlayMusic((Mix_Music *) handle, loops);
-    }
+    Mix_PlayMusic((Mix_Music *) handle, loops);
 }
 
 static void I_SDL_PauseSong(void)
@@ -378,18 +342,9 @@ static void I_SDL_PauseSong(void)
         return;
     }
 
-#if defined(_WIN32)
-    if (win_midi_stream_opened)
-    {
-        I_WIN_PauseSong();
-    }
-    else
-#endif
-    {
-        musicpaused = true;
+    musicpaused = true;
 
-        UpdateMusicVolume();
-    }
+    UpdateMusicVolume();
 }
 
 static void I_SDL_ResumeSong(void)
@@ -399,18 +354,9 @@ static void I_SDL_ResumeSong(void)
         return;
     }
 
-#if defined(_WIN32)
-    if (win_midi_stream_opened)
-    {
-        I_WIN_ResumeSong();
-    }
-    else
-#endif
-    {
-        musicpaused = false;
+    musicpaused = false;
 
-        UpdateMusicVolume();
-    }
+    UpdateMusicVolume();
 }
 
 static void I_SDL_StopSong(void)
@@ -420,16 +366,7 @@ static void I_SDL_StopSong(void)
         return;
     }
 
-#if defined(_WIN32)
-    if (win_midi_song_registered)
-    {
-        I_WIN_StopSong();
-    }
-    else
-#endif
-    {
-        Mix_HaltMusic();
-    }
+    Mix_HaltMusic();
 }
 
 static void I_SDL_UnRegisterSong(void *handle)
@@ -441,19 +378,9 @@ static void I_SDL_UnRegisterSong(void *handle)
         return;
     }
 
-#if defined(_WIN32)
-    if (win_midi_song_registered)
+    if (handle != NULL)
     {
-        I_WIN_UnRegisterSong();
-        win_midi_song_registered = false;
-    }
-    else
-#endif
-    {
-        if (handle != NULL)
-        {
-            Mix_FreeMusic(music);
-        }
+        Mix_FreeMusic(music);
     }
 }
 
@@ -532,41 +459,21 @@ static void *I_SDL_RegisterSong(void *data, int len)
     // by now, but Mix_SetMusicCMD() only works with Mix_LoadMUS(), so
     // we have to generate a temporary file.
 
-#if defined(_WIN32)
-    // If we do not have an external music command defined, play
-    // music with the Windows native MIDI.
-    if (win_midi_stream_opened && (IsMus(data, len) || IsMid(data, len)))
+    music = Mix_LoadMUS(filename);
+    if (music == NULL)
     {
-        if (I_WIN_RegisterSong(filename))
-        {
-            music = (void *) 1;
-            win_midi_song_registered = true;
-        }
-        else
-        {
-            music = NULL;
-            fprintf(stderr, "Error loading midi: Failed to register song.\n");
-        }
+        // Failed to load
+        fprintf(stderr, "Error loading midi: %s\n", Mix_GetError());
     }
-    else
-#endif
+
+    // Remove the temporary MIDI file; however, when using an external
+    // MIDI program we can't delete the file. Otherwise, the program
+    // won't find the file to play. This means we leave a mess on
+    // disk :(
+
+    if (strlen(snd_musiccmd) == 0)
     {
-        music = Mix_LoadMUS(filename);
-        if (music == NULL)
-        {
-            // Failed to load
-            fprintf(stderr, "Error loading midi: %s\n", Mix_GetError());
-        }
-
-        // Remove the temporary MIDI file; however, when using an external
-        // MIDI program we can't delete the file. Otherwise, the program
-        // won't find the file to play. This means we leave a mess on
-        // disk :(
-
-        if (strlen(snd_musiccmd) == 0)
-        {
-            M_remove(filename);
-        }
+        M_remove(filename);
     }
 
     free(filename);
