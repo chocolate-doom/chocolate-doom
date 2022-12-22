@@ -1296,13 +1296,6 @@ static void I_WIN_ResumeSong(void)
     }
 }
 
-// Determine whether memory block is a .mid file 
-
-static boolean IsMid(byte *mem, int len)
-{
-    return len > 4 && !memcmp(mem, "MThd", 4);
-}
-
 static boolean ConvertMus(byte *musdata, int len, const char *filename)
 {
     MEMFILE *instream;
