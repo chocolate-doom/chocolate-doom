@@ -28,7 +28,6 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <io.h>
-#include "SDL_stdinc.h" // SDL_iconv_string
 #ifdef _MSC_VER
 #include <direct.h>
 #endif
@@ -49,17 +48,17 @@
 #include "z_zone.h"
 
 #ifdef _WIN32
-wchar_t *M_ConvertUtf8ToWide(const char *str)
+static wchar_t *ConvertMultiByteToWide(const char *str, UINT code_page)
 {
     wchar_t *wstr = NULL;
     int wlen = 0;
 
-    wlen = MultiByteToWideChar(CP_UTF8, 0, str, -1, NULL, 0);
+    wlen = MultiByteToWideChar(code_page, 0, str, -1, NULL, 0);
 
     if (!wlen)
     {
         errno = EINVAL;
-        printf("M_ConvertUtf8ToWide: Failed to convert path from UTF8\n");
+        printf("ConvertMultiByteToWide: Failed to convert path to wide encoding.\n");
         return NULL;
     }
 
@@ -67,21 +66,129 @@ wchar_t *M_ConvertUtf8ToWide(const char *str)
 
     if (!wstr)
     {
-        I_Error("M_ConvertUtf8ToWide: Failed to allocate new string");
+        I_Error("ConvertMultiByteToWide: Failed to allocate new string.");
         return NULL;
     }
 
-    if (MultiByteToWideChar(CP_UTF8, 0, str, -1, wstr, wlen) == 0)
+    if (MultiByteToWideChar(code_page, 0, str, -1, wstr, wlen) == 0)
     {
         errno = EINVAL;
-        printf("M_ConvertUtf8ToWide: Failed to convert path from UTF8\n");
+        printf("ConvertMultiByteToWide: Failed to convert path to wide encoding.\n");
         free(wstr);
         return NULL;
     }
 
     return wstr;
 }
+
+static char *ConvertWideToMultiByte(const wchar_t *wstr, UINT code_page)
+{
+    char *str = NULL;
+    int len = 0;
+
+    len = WideCharToMultiByte(code_page, 0, wstr, -1, NULL, 0, NULL, NULL);
+
+    if (!len)
+    {
+        errno = EINVAL;
+        printf("ConvertWideToMultiByte: Failed to convert path to multibyte encoding.\n");
+        return NULL;
+    }
+
+    str = malloc(sizeof(char) * len);
+
+    if (!str)
+    {
+        I_Error("ConvertWideToMultiByte: Failed to allocate new string.");
+        return NULL;
+    }
+
+    if (WideCharToMultiByte(code_page, 0, wstr, -1, str, len, NULL, NULL) == 0)
+    {
+        errno = EINVAL;
+        printf("ConvertWideToMultiByte: Failed to convert path to multibyte encoding.\n");
+        free(str);
+        return NULL;
+    }
+
+    return str;
+}
+
+static char *ConvertWideToUtf8(const wchar_t *wstr)
+{
+    return ConvertWideToMultiByte(wstr, CP_UTF8);
+}
+
+static wchar_t *ConvertSysNativeMBToWide(const char *str)
+{
+    return ConvertMultiByteToWide(str, CP_ACP);
+}
+
+static char *ConvertWideToSysNativeMB(const wchar_t *wstr)
+{
+    return ConvertWideToMultiByte(wstr, CP_ACP);
+}
+
+// Convert UTF8 string to a wide string. The result is newly allocated and must
+// be freed by the caller after use.
+
+wchar_t *M_ConvertUtf8ToWide(const char *str)
+{
+    return ConvertMultiByteToWide(str, CP_UTF8);
+}
 #endif
+
+// Convert multibyte string in system encoding to UTF8. The result is newly
+// allocated and must be freed by the caller after use.
+
+char *M_ConvertSysNativeMBToUtf8(const char *str)
+{
+#ifdef _WIN32
+    char *ret = NULL;
+    wchar_t *wstr = NULL;
+
+    wstr = ConvertSysNativeMBToWide(str);
+
+    if (!wstr)
+    {
+        return NULL;
+    }
+
+    ret = ConvertWideToUtf8(wstr);
+
+    free(wstr);
+
+    return ret;
+#else
+    return M_StringDuplicate(str);
+#endif
+}
+
+// Convert UTF8 string to multibyte string in system encoding. The result is
+// newly allocated and must be freed by the caller after use.
+
+char *M_ConvertUtf8ToSysNativeMB(const char *str)
+{
+#ifdef _WIN32
+    char *ret = NULL;
+    wchar_t *wstr = NULL;
+
+    wstr = M_ConvertUtf8ToWide(str);
+
+    if (!wstr)
+    {
+        return NULL;
+    }
+
+    ret = ConvertWideToSysNativeMB(wstr);
+
+    free(wstr);
+
+    return ret;
+#else
+    return M_StringDuplicate(str);
+#endif
+}
 
 FILE *M_fopen(const char *filename, const char *mode)
 {
@@ -221,7 +328,9 @@ char *M_getenv(const char *name)
     for (i = 0; i < num_vars; ++i)
     {
         if (!strcasecmp(name, env_vars[i].name))
-           return env_vars[i].var;
+        {
+            return env_vars[i].var;
+        }
     }
 
     wname = M_ConvertUtf8ToWide(name);
@@ -237,8 +346,7 @@ char *M_getenv(const char *name)
 
     if (wenv)
     {
-        env = SDL_iconv_string("UTF-8", "UTF-16LE", (const char *)wenv,
-                               (wcslen(wenv) + 1) * sizeof(wchar_t));
+        env = ConvertWideToUtf8(wenv);
     }
     else
     {
