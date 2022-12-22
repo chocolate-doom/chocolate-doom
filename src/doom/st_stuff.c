@@ -545,7 +545,7 @@ void ST_refreshBackground(boolean force)
         V_RestoreBuffer();
 
 	// [crispy] copy entire SCREENWIDTH, to preserve the pattern
-	// to the left and right of the status bar in widescren mode
+	// to the left and right of the status bar in widescreen mode
 	if (!force)
 	{
 	    V_CopyRect(ST_X, 0, st_backing_screen, SCREENWIDTH >> crispy->hires, ST_HEIGHT, ST_X, ST_Y);
@@ -1987,7 +1987,7 @@ void ST_drawWidgets(boolean refresh)
     // [crispy] draw the actual face widget background
     if (st_crispyhud && (screenblocks % 3 == 0))
     {
-	V_CopyRect(ST_FX + WIDESCREENDELTA, 1, st_backing_screen, SHORT(faceback[0]->width), ST_HEIGHT - 1, ST_FX + WIDESCREENDELTA, ST_Y + 1);
+	V_DrawPatch(ST_FX, ST_Y + 1, faceback[displayplayer]);
     }
 
     STlib_updateMultIcon(&w_faces, refresh);
