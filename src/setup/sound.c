@@ -298,12 +298,12 @@ void ConfigSound(TXT_UNCAST_ARG(widget), void *user_data)
                                     TXT_DIRECTORY),
                 NULL)),
 
-        TXT_NewRadioButton("MIDI/MP3/OGG/FLAC", &snd_musicdevice, SNDDEVICE_GENMIDI), // [crispy] improve ambigious music backend name
+        TXT_NewRadioButton("Native MIDI", &snd_musicdevice, SNDDEVICE_GENMIDI),
 #ifdef _WIN32
         TXT_NewConditional(&snd_musicdevice, SNDDEVICE_GENMIDI,
             TXT_NewHorizBox(
                 TXT_NewStrut(4, 0),
-                TXT_NewLabel("Native MIDI Device: "),
+                TXT_NewLabel("Device: "),
                 MidiDeviceSelector(),
                 NULL)),
 #endif
