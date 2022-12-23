@@ -1987,7 +1987,10 @@ void ST_drawWidgets(boolean refresh)
     // [crispy] draw the actual face widget background
     if (st_crispyhud && (screenblocks % 3 == 0))
     {
-	V_DrawPatch(ST_FX, ST_Y + 1, faceback[displayplayer]);
+		if (netgame)
+		V_DrawPatch(ST_FX, ST_Y + 1, faceback[displayplayer]);
+		else
+		V_CopyRect(ST_FX + WIDESCREENDELTA, 1, st_backing_screen, SHORT(faceback[0]->width), ST_HEIGHT - 1, ST_FX + WIDESCREENDELTA, ST_Y + 1);
     }
 
     STlib_updateMultIcon(&w_faces, refresh);
