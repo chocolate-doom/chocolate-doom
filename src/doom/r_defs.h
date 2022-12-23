@@ -501,6 +501,7 @@ typedef struct
 	int l, w, h;
 } laserpatch_t;
 extern laserpatch_t *laserpatch;
+#define NUM_CROSSHAIRTYPES 3
 
 
 

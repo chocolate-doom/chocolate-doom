@@ -1096,7 +1096,7 @@ void S_StopMusic(void)
 }
 
 // [crispy] variable number of sound channels
-void S_UpdateSndChannels (void)
+void S_UpdateSndChannels (int choice)
 {
 	int i;
 
@@ -1108,10 +1108,22 @@ void S_UpdateSndChannels (void)
 		}
 	}
 
-	snd_channels <<= 1;
+	if (choice)
+	{
+		snd_channels <<= 1;
+	}
+	else
+	{
+		snd_channels >>= 1;
+	}
+
 	if (snd_channels > 32)
 	{
 		snd_channels = 8;
+	}
+	else if (snd_channels < 8)
+	{
+		snd_channels = 32;
 	}
 
 	channels = I_Realloc(channels, snd_channels * sizeof(channel_t));

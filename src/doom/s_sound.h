@@ -90,7 +90,7 @@ void S_SetSfxVolume(int volume);
 
 extern int snd_channels;
 
-void S_UpdateSndChannels (void);
+void S_UpdateSndChannels (int choice);
 void S_UpdateStereoSeparation (void);
 
 #endif

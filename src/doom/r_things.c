@@ -65,7 +65,7 @@ degenmobj_t *laserspot = &laserspot_m;
 
 // [crispy] extendable, but the last char element must be zero,
 // keep in sync with multiitem_t multiitem_crosshairtype[] in m_menu.c
-static laserpatch_t laserpatch_m[] = {
+static laserpatch_t laserpatch_m[NUM_CROSSHAIRTYPES + 1] = {
 	{'+', "cross1", 0, 0, 0},
 	{'^', "cross2", 0, 0, 0},
 	{'.', "cross3", 0, 0, 0},
