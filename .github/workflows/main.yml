@@ -53,3 +53,46 @@ jobs:
         env:
           ANALYZE: true
         run: $GITHUB_WORKSPACE/.travis.sh
+
+  win_msvc:
+    runs-on: windows-latest
+
+    strategy:
+      matrix:
+        arch: [x64, x86]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup devcmd
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: ${{ matrix.arch }}
+
+      - name: Setup ninja
+        run: choco install ninja
+
+      - name: Setup vcpkg
+        uses: lukka/run-vcpkg@v10
+        with:
+          vcpkgDirectory: C:/vcpkg
+          doNotUpdateVcpkg: true  # the preinstalled vcpkg is updated regularly
+
+      - name: Configure
+        run: |
+          cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release `
+            -DCMAKE_TOOLCHAIN_FILE="${{ env.RUNVCPKG_VCPKG_ROOT }}/scripts/buildsystems/vcpkg.cmake"
+
+      - name: Build
+        run: cmake --build build
+
+      - name: Package
+        run: |
+          cd build
+          cpack -G ZIP
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: Win-${{ matrix.arch }}
+          path: build/*.zip
