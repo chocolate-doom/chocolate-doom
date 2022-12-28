@@ -248,3 +248,12 @@ add_executable(mus2mid mus2mid.c memio.c z_native.c i_system.c m_argv.c m_misc.c
 target_compile_definitions(mus2mid PRIVATE "-DSTANDALONE")
 target_include_directories(mus2mid PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/../")
 target_link_libraries(mus2mid SDL2::SDL2main SDL2::SDL2)
+
+if(VCPKG_DIR)
+    install(TARGETS ${PROGRAM_PREFIX}doom ${PROGRAM_PREFIX}setup
+        RUNTIME DESTINATION . COMPONENT doom)
+    install(TARGETS ${PROGRAM_PREFIX}heretic ${PROGRAM_PREFIX}setup
+        RUNTIME DESTINATION . COMPONENT heretic)
+    install(TARGETS ${PROGRAM_PREFIX}hexen ${PROGRAM_PREFIX}setup
+        RUNTIME DESTINATION . COMPONENT hexen)
+endif()

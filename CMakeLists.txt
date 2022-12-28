@@ -1,5 +1,10 @@
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
+# X_VCPKG_APPLOCAL_DEPS_INSTALL automatically installs dependencies if vcpkg is
+# used.
+set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)
+set(X_VCPKG_APPLOCAL_DEPS_INSTALL ON)
+
 cmake_minimum_required(VERSION 3.7.2)
 project("Chocolate Doom" VERSION 3.0.0 LANGUAGES C)
 
@@ -98,3 +103,19 @@ configure_file(src/strife-res.rc.in src/strife-res.rc)
 foreach(SUBDIR textscreen opl pcsound src)
     add_subdirectory("${SUBDIR}")
 endforeach()
+
+# Generate distribution packages with CPack.
+if(VCPKG_DIR)
+    set(CPACK_GENERATOR ZIP)
+    set(CPACK_STRIP_FILES TRUE)
+    set(CPACK_ARCHIVE_COMPONENT_INSTALL ON)
+    if(CMAKE_SIZEOF_VOID_P STREQUAL 8)
+        set(SYS_POSTFIX "win64")
+    else()
+        set(SYS_POSTFIX "win32")
+    endif()
+    set(CPACK_ARCHIVE_DOOM_FILE_NAME "${PROGRAM_PREFIX}doom-${PROJECT_VERSION}-${SYS_POSTFIX}")
+    set(CPACK_ARCHIVE_HERETIC_FILE_NAME "${PROGRAM_PREFIX}heretic-${PROJECT_VERSION}-${SYS_POSTFIX}")
+    set(CPACK_ARCHIVE_HEXEN_FILE_NAME "${PROGRAM_PREFIX}hexen-${PROJECT_VERSION}-${SYS_POSTFIX}")
+    include(CPack)
+endif()
