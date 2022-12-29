@@ -70,6 +70,22 @@ static lumpinfo_t *reloadlumps = NULL;
 static char *reloadname = NULL;
 static int reloadlump = -1;
 
+static char **wad_filenames;
+
+static void AddWADFileName(const char *filename)
+{
+    static int i;
+
+    wad_filenames = I_Realloc(wad_filenames, (i + 2) * sizeof(*wad_filenames));
+    wad_filenames[i++] = M_StringDuplicate(filename);
+    wad_filenames[i] = NULL;
+}
+
+char **W_GetWADFileNames(void)
+{
+    return wad_filenames;
+}
+
 // Hash function used for lump names.
 unsigned int W_LumpNameHash(const char *s)
 {
@@ -238,6 +254,8 @@ wad_file_t *W_AddFile (const char *filename)
         reloadhandle = wad_file;
         reloadlumps = filelumps;
     }
+
+    AddWADFileName(filename);
 
     return wad_file;
 }

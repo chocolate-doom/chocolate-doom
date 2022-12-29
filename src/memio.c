@@ -140,6 +140,16 @@ size_t mem_fwrite(const void *ptr, size_t size, size_t nmemb, MEMFILE *stream)
 	return nmemb;
 }
 
+int mem_fputs(const char *str, MEMFILE *stream)
+{
+	if (str == NULL)
+	{
+		return -1;
+	}
+
+	return mem_fwrite(str, sizeof(char), strlen(str), stream);
+}
+
 void mem_get_buf(MEMFILE *stream, void **buf, size_t *buflen)
 {
 	*buf = stream->buf;

@@ -1288,6 +1288,22 @@ void PrintGameVersion(void)
     }
 }
 
+const char *D_GetGameVersionCmd(void)
+{
+    int i;
+
+    for (i = 0; gameversions[i].description; ++i)
+    {
+        if (gameversions[i].version == gameversion)
+        {
+            return gameversions[i].cmdline;
+            break;
+        }
+    }
+
+    return NULL;
+}
+
 // Function called at exit to display the ENDOOM screen
 
 static void D_Endoom(void)
