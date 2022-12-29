@@ -522,6 +522,7 @@ extern fixed_t sprbotscreen;
 
 extern fixed_t pspritescale, pspriteiscale;
 
+extern boolean pspr_interp; // [crispy] interpolate weapon bobbing
 
 void R_DrawMaskedColumn(column_t * column, signed int baseclip);
 

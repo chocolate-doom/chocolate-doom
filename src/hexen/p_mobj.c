@@ -1399,6 +1399,7 @@ void P_SpawnPlayer(mapthing_t * mthing)
     p->extralight = 0;
     p->fixedcolormap = 0;
     p->viewheight = VIEWHEIGHT;
+    pspr_interp = false; // [crispy]
     P_SetupPsprites(p);
     if (deathmatch)
     {                           // Give all keys in death match mode

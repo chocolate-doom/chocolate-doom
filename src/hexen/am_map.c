@@ -1814,6 +1814,7 @@ void AM_Drawer(void)
     if (!crispy->automapoverlay)
     {
         AM_clearFB(BACKGROUND);
+        pspr_interp = false; // [crispy]
     }
     if (grid)
         AM_drawGrid(GRIDCOLORS);

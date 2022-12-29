@@ -1941,7 +1941,8 @@ void AM_Drawer(void)
     UpdateState |= I_FULLSCRN;
     if (!crispy->automapoverlay)
     {
-    AM_clearFB(BACKGROUND);
+        AM_clearFB(BACKGROUND);
+        pspr_interp = false; // [crispy]
     }
     if (grid)
         AM_drawGrid(GRIDCOLORS);
