@@ -1460,6 +1460,10 @@ static void I_WIN_ShutdownMusic(void)
 
     if (buffer.data)
     {
+        // Windows doesn't always immediately clear the MHDR_INQUEUE flag, even
+        // after midiStreamStop() is called. There doesn't seem to be any side
+        // effect to just forcing the flag off.
+        MidiStreamHdr.dwFlags &= ~MHDR_INQUEUE;
         mmr = midiOutUnprepareHeader((HMIDIOUT)hMidiStream, &MidiStreamHdr,
                                      sizeof(MIDIHDR));
         if (mmr != MMSYSERR_NOERROR)
