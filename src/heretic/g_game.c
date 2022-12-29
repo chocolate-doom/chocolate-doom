@@ -33,6 +33,9 @@
 #include "s_sound.h"
 #include "v_video.h"
 
+#include "deh_main.h" // [crispy] for demo footer
+#include "memio.h"
+
 // Macros
 
 #define AM_STARTKEY     9
@@ -2360,8 +2363,6 @@ void G_TimeDemo(char *name)
     }
 }
 
-#include "deh_main.h"
-#include "memio.h"
 #define DEMO_FOOTER_SEPARATOR "\n"
 
 static void G_AddDemoFooter(void)
@@ -2423,7 +2424,7 @@ static void G_AddDemoFooter(void)
 
     mem_get_buf(stream, (void **)&tmp, &len);
 
-    if (demo_p > demoend - len)
+    while (demo_p > demoend - len)
     {
         IncreaseDemoBuffer();
     }

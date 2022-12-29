@@ -77,6 +77,8 @@
 #include "g_game.h"
 #include "v_trans.h" // [crispy] colored "always run" message
 
+#include "deh_main.h" // [crispy] for demo footer
+#include "memio.h"
 
 #define SAVEGAMESIZE	0x2c000
 
@@ -3128,8 +3130,6 @@ void G_TimeDemo (char* name)
     gameaction = ga_playdemo; 
 } 
  
-#include "deh_main.h"
-#include "memio.h"
 #define DEMO_FOOTER_SEPARATOR "\n"
 
 static void G_AddDemoFooter(void)
@@ -3192,7 +3192,7 @@ static void G_AddDemoFooter(void)
 
     mem_get_buf(stream, (void **)&tmp, &len);
 
-    if (demo_p > demoend - len)
+    while (demo_p > demoend - len)
     {
         IncreaseDemoBuffer();
     }
