@@ -121,7 +121,9 @@ Many additional less user-visible features have been implemented, e.g. fixed eng
 
 ## Download
 
-Source code and Windows binaries (compatible with both x86 and x64 editions) for the latest release can be found on the [Release](https://github.com/fabiangreffrath/crispy-doom/releases/latest) page.
+Source code and Windows binaries (compatible with both x86 and x64 editions) for the latest release can be found on the [Release](https://github.com/fabiangreffrath/crispy-doom/releases/latest) page. 
+
+To install on OSX, get macports and then run "sudo port install crispy-doom".
 
 The most recent list of changes can be found in the [Changelog](https://github.com/fabiangreffrath/crispy-doom/blob/master/CHANGELOG.md).
 
