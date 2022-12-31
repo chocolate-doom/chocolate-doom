@@ -153,12 +153,6 @@ static void InitSfxModule(boolean use_sfx_prefix)
 static void InitMusicModule(void)
 {
     int i;
-
-    // [crispy] Always initialize SDL music module.
-#ifndef DISABLE_SDL2MIXER
-    music_sdl_module.Init();
-#endif
-
     music_module = NULL;
 
     for (i=0; music_modules[i] != NULL; ++i)
@@ -187,6 +181,15 @@ static void InitMusicModule(void)
             if (music_modules[i]->Init())
             {
                 music_module = music_modules[i];
+
+            #ifndef DISABLE_SDL2MIXER
+                // [crispy] Always initialize SDL music module.
+                if (music_module != &music_sdl_module)
+                {
+                    music_sdl_module.Init();
+                }
+            #endif
+
                 return;
             }
         }
