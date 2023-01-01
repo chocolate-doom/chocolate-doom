@@ -1166,7 +1166,7 @@ ST_Responder (event_t* ev)
 	}
       }
       // [crispy] snow
-      else if (cht_CheckCheatSP(&cheat_snow, ev->data2))
+      else if (cht_CheckCheat(&cheat_snow, ev->data2))
       {
     crispy->snowflakes = !crispy->snowflakes;
       }
