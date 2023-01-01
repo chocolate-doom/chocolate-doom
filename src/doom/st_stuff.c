@@ -1165,11 +1165,6 @@ ST_Responder (event_t* ev)
 	    plyr->message = msg;
 	}
       }
-      // [crispy] snow
-      else if (cht_CheckCheat(&cheat_snow, ev->data2))
-      {
-    crispy->snowflakes = !crispy->snowflakes;
-      }
     }
 
 // [crispy] now follow "harmless" Crispy Doom specific cheats
@@ -1213,6 +1208,11 @@ ST_Responder (event_t* ev)
       M_snprintf(msg, sizeof(msg), "Skill: %s",
                  skilltable[BETWEEN(0,5,(int) gameskill+1)]);
       plyr->message = msg;
+    }
+    // [crispy] snow
+    else if (cht_CheckCheat(&cheat_snow, ev->data2))
+    {
+      crispy->snowflakes = !crispy->snowflakes;
     }
     
     // 'clev' change-level cheat
