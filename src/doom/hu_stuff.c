@@ -1285,12 +1285,12 @@ boolean HU_Responder(event_t *ev)
 	    message_counter = HU_MSGTIMEOUT;
 	    eatkey = true;
 	}
-	else if (netgame && ev->data2 == key_multi_msg)
+	else if (netgame && !demoplayback && ev->data2 == key_multi_msg)
 	{
 	    eatkey = true;
             StartChatInput(HU_BROADCAST);
 	}
-	else if (netgame && numplayers > 2)
+	else if (netgame && !demoplayback && numplayers > 2)
 	{
 	    for (i=0; i<MAXPLAYERS ; i++)
 	    {
