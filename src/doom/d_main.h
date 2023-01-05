@@ -48,6 +48,8 @@ extern boolean advancedemo;
 
 extern const char *pagename;
 
+// [crispy] Get game version command line for demo footer.
+const char *D_GetGameVersionCmd(void);
 
 #endif
 

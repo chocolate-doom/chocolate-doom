@@ -3137,7 +3137,6 @@ static void G_AddDemoFooter(void)
     int i;
     size_t len = 0;
     char *tmp, **filenames;
-    extern const char *D_GetGameVersionCmd(void);
 
     MEMFILE *stream = mem_fopen_write();
 
