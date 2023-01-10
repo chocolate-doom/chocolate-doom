@@ -221,6 +221,7 @@ typedef PACKED_STRUCT (
 // BSP node structure.
 
 // Indicate a leaf.
+#define	NF_SUBSECTOR_VANILLA	0x8000
 #define	NF_SUBSECTOR	0x80000000 // [crispy] extended nodes
 #define	NO_INDEX	((unsigned short)-1) // [crispy] extended nodes
 

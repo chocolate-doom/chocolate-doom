@@ -113,6 +113,7 @@ typedef PACKED_STRUCT (
     short offset;
 }) mapseg_t;
 
+#define	NF_SUBSECTOR_VANILLA	0x8000
 #define	NF_SUBSECTOR	0x80000000 // [crispy] extended nodes
 #define	NO_INDEX	((unsigned short)-1) // [crispy] extended nodes
 typedef PACKED_STRUCT (
