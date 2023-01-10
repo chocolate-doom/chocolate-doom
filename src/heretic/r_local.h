@@ -132,9 +132,10 @@ typedef struct line_s
 {
     vertex_t *v1, *v2;
     fixed_t dx, dy;             // v2 - v1 for side checking
-    short flags;
+    unsigned short flags; // [crispy] extended nodes
     short special, tag;
-    short sidenum[2];           // sidenum[1] will be -1 if one sided
+    // sidenum[1] will be NO_INDEX if one sided
+    unsigned short sidenum[2]; // [crispy] extended nodes
     fixed_t bbox[4];
     slopetype_t slopetype;      // to aid move clipping
     sector_t *frontsector, *backsector;
@@ -146,8 +147,8 @@ typedef struct line_s
 typedef struct subsector_s
 {
     sector_t *sector;
-    short numlines;
-    short firstline;
+    int numlines; // [crispy] extended nodes
+    int firstline; // [crispy] extended nodes
 } subsector_t;
 
 typedef struct
@@ -165,7 +166,8 @@ typedef struct
 {
     fixed_t x, y, dx, dy;       // partition line
     fixed_t bbox[2][4];         // bounding box for each child
-    unsigned short children[2]; // if NF_SUBSECTOR its a subsector
+    // if NF_SUBSECTOR its a subsector
+    int children[2]; // [crispy] extended nodes
 } node_t;
 
 

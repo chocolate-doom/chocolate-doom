@@ -1621,7 +1621,7 @@ void P_ArchiveWorld(void)
         SV_WriteWord(li->tag);
         for (j = 0; j < 2; j++)
         {
-            if (li->sidenum[j] == -1)
+            if (li->sidenum[j] == NO_INDEX) // [crispy] extended nodes
             {
                 continue;
             }
@@ -1676,7 +1676,7 @@ void P_UnArchiveWorld(void)
         li->tag = SV_ReadWord();
         for (j = 0; j < 2; j++)
         {
-            if (li->sidenum[j] == -1)
+            if (li->sidenum[j] == NO_INDEX) // [crispy] extended nodes
                 continue;
             si = &sides[li->sidenum[j]];
             si->textureoffset = SV_ReadWord() << FRACBITS;
