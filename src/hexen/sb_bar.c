@@ -85,6 +85,9 @@ static void CheatRevealFunc(player_t * player, Cheat_t * cheat);
 static void CheatTrackFunc1(player_t * player, Cheat_t * cheat);
 static void CheatTrackFunc2(player_t * player, Cheat_t * cheat);
 
+// [crispy] new cheat functions
+static void CheatShowFpsFunc(player_t * player, Cheat_t * cheat);
+
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
@@ -214,6 +217,9 @@ cheatseq_t CheatTrackSeq1 = CHEAT("`", 0);
 
 cheatseq_t CheatTrackSeq2 = CHEAT("`", 2);
 
+// [crispy] new cheat sequences
+cheatseq_t CheatShowFpsSeq = CHEAT("showfps", 0); // Show FPS
+
 static Cheat_t Cheats[] = {
     {CheatTrackFunc1, &CheatTrackSeq1},
     {CheatTrackFunc2, &CheatTrackSeq2},
@@ -242,6 +248,9 @@ static Cheat_t Cheats[] = {
     {CheatScriptFunc2, &CheatScriptSeq2},
     {CheatScriptFunc3, &CheatScriptSeq3},
     {CheatRevealFunc, &CheatRevealSeq},
+
+    // [crispy] new cheats
+    {CheatShowFpsFunc, &CheatShowFpsSeq},
 };
 
 #define SET_CHEAT(cheat, seq) \
@@ -792,6 +801,8 @@ static void RefreshBackground(void)
                    ORIGSBARHEIGHT, 0, ORIGHEIGHT - ORIGSBARHEIGHT);
 }
 
+extern int right_widget_w; // [crispy]
+
 void SB_Drawer(void)
 {
     // Sound info debug stuff
@@ -950,6 +961,7 @@ static void DrawAnimatedIcons(void)
     if (CPlayer->powers[pw_invulnerability])
     {
         spindefense_x = 260 + WIDESCREENDELTA; // [crispy]
+        spindefense_x -= right_widget_w; // [crispy]
 
         if (CPlayer->powers[pw_invulnerability] > BLINKTHRESHOLD
             || !(CPlayer->powers[pw_invulnerability] & 16))
@@ -967,6 +979,7 @@ static void DrawAnimatedIcons(void)
     if (CPlayer->powers[pw_minotaur])
     {
         spinminotaur_x = 300 + WIDESCREENDELTA; // [crispy]
+        spinminotaur_x -= right_widget_w; // [crispy]
 
         if (CPlayer->powers[pw_minotaur] > BLINKTHRESHOLD
             || !(CPlayer->powers[pw_minotaur] & 16))
@@ -2092,5 +2105,19 @@ static void CheatTrackFunc2(player_t * player, Cheat_t * cheat)
         // No error encountered while attempting to play the track
         M_snprintf(buffer, sizeof(buffer), "PLAYING TRACK: %.2d\n", track);
         P_SetMessage(player, buffer, true);
+    }
+}
+
+// [crispy] "Cheat" to show FPS
+static void CheatShowFpsFunc(player_t* player, Cheat_t* cheat)
+{
+    player->cheats ^= CF_SHOWFPS;
+    if (player->cheats & CF_SHOWFPS)
+    {
+        P_SetMessage(player, TXT_SHOWFPSON, false);
+    }
+    else
+    {
+        P_SetMessage(player, TXT_SHOWFPSOFF, false);
     }
 }

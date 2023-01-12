@@ -154,6 +154,10 @@
 #define TXT_CHEATBADINPUT		"BAD INPUT"
 #define TXT_CHEATNOMAP			"CAN'T FIND MAP"
 
+// [crispy] strings for new cheats
+#define TXT_SHOWFPSON			"SHOW FPS ON"
+#define TXT_SHOWFPSOFF			"SHOW FPS OFF"
+
 // G_game.c ----------------------------------------------------------------
 
 #define TXT_GAMESAVED			"GAME SAVED"

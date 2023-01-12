@@ -32,6 +32,7 @@
 #include "s_sound.h"
 #include "i_input.h"
 #include "i_joystick.h"
+#include "i_swap.h" // [crispy] SHORT()
 #include "i_system.h"
 #include "i_timer.h"
 #include "m_argv.h"
@@ -83,6 +84,8 @@ static void CheckRecordFrom(void);
 static void DrawAndBlit(void);
 static void CreateSavePath(void);
 static void WarpCheck(void);
+
+static void CrispyDrawStats(void); // [crispy]
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
@@ -1027,6 +1030,7 @@ static void DrawAndBlit(void)
             CT_Drawer();
             UpdateState |= I_FULLVIEW;
             SB_Drawer();
+            CrispyDrawStats();
             break;
         case GS_INTERMISSION:
             IN_Drawer();
@@ -1094,6 +1098,39 @@ static void DrawMessage(void)
     {
         MN_DrTextA(player->message, 160 - MN_TextAWidth(player->message) / 2,
                    1);
+    }
+}
+
+int right_widget_w, right_widget_h; // [crispy]
+
+static void CrispyDrawStats (void)
+{
+    static short height, coord_x, coord_w;
+    char str[32];
+    player_t *const player = &players[consoleplayer];
+    int right_widget_x;
+
+    if (!height || !coord_x || !coord_w)
+    {
+        const int FontABaseLump = W_GetNumForName("FONTA_S") + 1;
+        const patch_t *const p = W_CacheLumpNum(FontABaseLump + 'A' - 33, PU_CACHE);
+
+        height = SHORT(p->height) + 1;
+        coord_w = 7 * SHORT(p->width);
+        coord_x = ORIGWIDTH - coord_w;
+    }
+
+    right_widget_w = 0;
+    right_widget_h = 0;
+    right_widget_x = coord_x + WIDESCREENDELTA;
+
+    if (player->cheats & CF_SHOWFPS)
+    {
+        right_widget_w = coord_w;
+        right_widget_h = height + 2;
+
+        M_snprintf(str, sizeof(str), "%d FPS", crispy->fps);
+        MN_DrTextA(str, right_widget_x, 1*height);
     }
 }
 
