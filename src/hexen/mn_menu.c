@@ -39,6 +39,7 @@
 
 #define LEFT_DIR 0
 #define RIGHT_DIR 1
+#define ENTER_NUMBER 2 // [crispy] numeric entry
 #define ITEM_HEIGHT 20
 #define SELECTOR_XOFFSET (-28)
 #define SELECTOR_YOFFSET (-1)
@@ -53,6 +54,7 @@ typedef enum
     ITT_EFUNC,
     ITT_LRFUNC,
     ITT_SETMENU,
+    ITT_NUMFUNC, // [crispy] numeric entry
     ITT_INERT
 } ItemType_t;
 
@@ -125,6 +127,7 @@ static void CrispyHires(int option);
 static void CrispyToggleWidescreen(int option);
 static void CrispySmoothing(int option);
 static void CrispyUncapped(int option);
+static void CrispyFpsLimit(int option);
 static void CrispyVsync(int option);
 static void CrispyBrightmaps(int option);
 static void CrispyFreelook(int option);
@@ -184,6 +187,13 @@ static int slotptr;
 static int currentSlot;
 static int quicksave;
 static int quickload;
+
+// [crispy] for entering numeric values
+#define NUMERIC_ENTRY_NUMDIGITS 3
+static boolean numeric_enter;
+static int numeric_entry;
+static char numeric_entry_str[NUMERIC_ENTRY_NUMDIGITS + 1];
+static int numeric_entry_index;
 
 static MenuItem_t MainItems[] = {
     {ITT_SETMENU, "NEW GAME", SCNetCheck2, 1, MENU_CLASS},
@@ -333,6 +343,7 @@ static MenuItem_t CrispnessItems[] = {
     {ITT_LRFUNC, "ASPECT RATIO:", CrispyToggleWidescreen, 0, MENU_NONE},
     {ITT_LRFUNC, "SMOOTH PIXEL SCALING:", CrispySmoothing, 0, MENU_NONE},
     {ITT_LRFUNC, "UNCAPPED FRAMERATE:", CrispyUncapped, 0, MENU_NONE},
+    {ITT_NUMFUNC, "FPS LIMIT:", CrispyFpsLimit, 0, MENU_NONE},
     {ITT_LRFUNC, "ENABLE VSYNC:", CrispyVsync, 0, MENU_NONE},
     {ITT_EMPTY, NULL, NULL, 0, MENU_NONE},
     {ITT_EMPTY, NULL, NULL, 0, MENU_NONE},
@@ -347,7 +358,7 @@ static MenuItem_t CrispnessItems[] = {
 static Menu_t CrispnessMenu = {
     68, 40,
     DrawCrispnessMenu,
-    13, CrispnessItems,
+    14, CrispnessItems,
     0,
     MENU_OPTIONS
 };
@@ -1461,6 +1472,52 @@ static void CrispyUncapped(int option)
     crispy->uncapped = !crispy->uncapped;
 }
 
+static void CrispyFpsLimit(int option)
+{
+    if (!crispy->uncapped)
+    {
+        return;
+    }
+
+    if (option == LEFT_DIR)
+    {
+        crispy->fpslimit--;
+
+        if (crispy->fpslimit < CRISPY_FPSLIMIT_MIN)
+        {
+            crispy->fpslimit = 0;
+        }
+    }
+    else if (option == RIGHT_DIR)
+    {
+        crispy->fpslimit++;
+    }
+    else if (option == ENTER_NUMBER)
+    {
+        if (numeric_enter)
+        {
+            crispy->fpslimit = numeric_entry;
+            numeric_enter = false;
+            I_StopTextInput();
+        }
+        else
+        {
+            numeric_enter = true;
+            I_StartTextInput(0, 0, 0, 0);
+            return;
+        }
+    }
+
+    if (crispy->fpslimit && crispy->fpslimit < CRISPY_FPSLIMIT_MIN)
+    {
+        crispy->fpslimit = CRISPY_FPSLIMIT_MIN;
+    }
+    else if (crispy->fpslimit > CRISPY_FPSLIMIT_MAX)
+    {
+        crispy->fpslimit = CRISPY_FPSLIMIT_MAX;
+    }
+}
+
 static void CrispyVsyncHook(void)
 {
     crispy->vsync = !crispy->vsync;
@@ -1899,7 +1956,7 @@ boolean MN_Responder(event_t * event)
         }
         return (false);
     }
-    if (!FileMenuKeySteal)
+    if (!FileMenuKeySteal && !numeric_enter)
     {
         item = &CurrentMenu->items[CurrentItPos];
 
@@ -1939,7 +1996,8 @@ boolean MN_Responder(event_t * event)
         }
         else if (key == key_menu_left)           // Slider left
         {
-            if (item->type == ITT_LRFUNC && item->func != NULL)
+            if ((item->type == ITT_LRFUNC || item->type == ITT_NUMFUNC) &&
+                    item->func != NULL)
             {
                 item->func(LEFT_DIR);
                 S_StartSound(NULL, SFX_PICKUP_KEY);
@@ -1948,7 +2006,8 @@ boolean MN_Responder(event_t * event)
         }
         else if (key == key_menu_right)          // Slider right
         {
-            if (item->type == ITT_LRFUNC && item->func != NULL)
+            if ((item->type == ITT_LRFUNC || item->type == ITT_NUMFUNC)
+                    && item->func != NULL)
             {
                 item->func(RIGHT_DIR);
                 S_StartSound(NULL, SFX_PICKUP_KEY);
@@ -1975,6 +2034,13 @@ boolean MN_Responder(event_t * event)
                 else if (item->type == ITT_EFUNC)
                 {
                     item->func(item->option);
+                }
+                // [crispy] numeric entry
+                else if (item->type == ITT_NUMFUNC && item->func != NULL)
+                {
+                    item->func(ENTER_NUMBER);
+                    numeric_entry_index = 0;
+                    numeric_entry_str[0] = '\0';
                 }
             }
             S_StartSound(NULL, SFX_DOOR_LIGHT_CLOSE);
@@ -2062,7 +2128,7 @@ boolean MN_Responder(event_t * event)
         }
         return (false);
     }
-    else
+    else if (FileMenuKeySteal)
     {
         // Editing file names
         // When typing a savegame name, we use the fully shifted and
@@ -2121,6 +2187,50 @@ boolean MN_Responder(event_t * event)
                 slotptr++;
                 return (true);
             }
+        }
+        return (true);
+    }
+    else if (numeric_enter) // [crispy] numeric entry
+    {
+        switch(key)
+        {
+            case KEY_BACKSPACE:
+                if (numeric_entry_index > 0)
+                {
+                    numeric_entry_index--;
+                    numeric_entry_str[numeric_entry_index] = '\0';
+                }
+                break;
+            case KEY_ESCAPE:
+                numeric_enter = false;
+                I_StopTextInput();
+                break;
+            case KEY_ENTER:
+                if (numeric_entry_str[0] != '\0')
+                {
+                    numeric_entry = atoi(numeric_entry_str);
+                    item = &CurrentMenu->items[CurrentItPos];
+                    item->func(ENTER_NUMBER);
+                }
+                else
+                {
+                    numeric_enter = false;
+                    I_StopTextInput();
+                }
+                break;
+            default:
+                charTyped = event->data3;
+
+                if (charTyped >= '0' && charTyped <= '9' &&
+                        numeric_entry_index < NUMERIC_ENTRY_NUMDIGITS)
+                {
+                    numeric_entry_str[numeric_entry_index++] = charTyped;
+                    numeric_entry_str[numeric_entry_index] = '\0';
+                }
+                else
+                {
+                    break;
+                }
         }
         return (true);
     }
@@ -2338,6 +2448,38 @@ static void DrawCrispnessMultiItem(int item, int x, int y, const multiitem_t *mu
     MN_DrTextA(multi[item].name, x, y);
 }
 
+static void DrawCrispnessNumericItem(int item, int x, int y, const char *zero,
+        boolean cond, const char *disabled)
+{
+    const int size = NUMERIC_ENTRY_NUMDIGITS + 2;
+    char number[size];
+
+    if (numeric_enter)
+    {
+        M_snprintf(number, size, "%s%c", numeric_entry_str, ASCII_CURSOR);
+    }
+    else
+    {
+        M_snprintf(number, size, "%d", item);
+    }
+
+    dp_translation = cond ? cr[CR_DARK] :
+                    (item || numeric_enter) ? cr[CR_GOLD] : cr[CR_GRAY];
+
+    if (cond)
+    {
+        MN_DrTextA(disabled, x, y);
+    }
+    else if (item || numeric_enter)
+    {
+        MN_DrTextA(number, x, y);
+    }
+    else
+    {
+        MN_DrTextA(zero, x, y);
+    }
+}
+
 static void DrawCrispnessMenu(void)
 {
     static const char *title;
@@ -2363,24 +2505,27 @@ static void DrawCrispnessMenu(void)
     // Uncapped framerate
     DrawCrispnessItem(crispy->uncapped, 217, 70);
 
-    // Vsync
-    DrawCrispnessItem(crispy->vsync, 167, 80);
+    // FPS limit
+    DrawCrispnessNumericItem(crispy->fpslimit, 134, 80, "NONE", !crispy->uncapped, "35");
 
-    DrawCrispnessSubheader("VISUAL", 100);
+    // Vsync
+    DrawCrispnessItem(crispy->vsync, 167, 90);
+
+    DrawCrispnessSubheader("VISUAL", 110);
 
     // Brightmaps
-    DrawCrispnessMultiItem(crispy->brightmaps, 150, 110, multiitem_brightmaps);
+    DrawCrispnessMultiItem(crispy->brightmaps, 150, 120, multiitem_brightmaps);
 
-    DrawCrispnessSubheader("TACTICAL", 130);
+    DrawCrispnessSubheader("TACTICAL", 140);
 
     // Freelook
-    DrawCrispnessMultiItem(crispy->freelook_hh, 175, 140, multiitem_freelook_hh);
+    DrawCrispnessMultiItem(crispy->freelook_hh, 175, 150, multiitem_freelook_hh);
 
     // Mouselook
-    DrawCrispnessItem(crispy->mouselook, 220, 150);
+    DrawCrispnessItem(crispy->mouselook, 220, 160);
 
     // Default difficulty
-    DrawCrispnessMultiItem(crispy->defaultskill, 200, 160, multiitem_difficulties);
+    DrawCrispnessMultiItem(crispy->defaultskill, 200, 170, multiitem_difficulties);
 
     dp_translation = NULL;
 }

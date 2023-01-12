@@ -19,6 +19,7 @@
 
 #include "crispy.h"
 #include "doomstat.h"
+#include "i_input.h" // [crispy] start/stop text input
 #include "m_menu.h" // [crispy] M_SetDefaultDifficulty()
 #include "p_local.h" // [crispy] thinkercap
 #include "s_sound.h"
@@ -332,6 +333,52 @@ static void M_CrispyToggleSkyHook (void)
 {
     players[consoleplayer].lookdir = 0;
     R_InitSkyMap();
+}
+
+void M_CrispyToggleFpsLimit(int choice)
+{
+    if (!crispy->uncapped)
+    {
+        return;
+    }
+
+    if (choice == 0)
+    {
+        crispy->fpslimit--;
+
+        if (crispy->fpslimit < CRISPY_FPSLIMIT_MIN)
+        {
+            crispy->fpslimit = 0;
+        }
+    }
+    else if (choice == 1)
+    {
+        crispy->fpslimit++;
+    }
+    else if (choice == 2)
+    {
+        if (numeric_enter)
+        {
+            crispy->fpslimit = numeric_entry;
+            numeric_enter = false;
+            I_StopTextInput();
+        }
+        else
+        {
+            numeric_enter = true;
+            I_StartTextInput(0, 0, 0, 0);
+            return;
+        }
+    }
+
+    if (crispy->fpslimit && crispy->fpslimit < CRISPY_FPSLIMIT_MIN)
+    {
+        crispy->fpslimit = CRISPY_FPSLIMIT_MIN;
+    }
+    else if (crispy->fpslimit > CRISPY_FPSLIMIT_MAX)
+    {
+        crispy->fpslimit = CRISPY_FPSLIMIT_MAX;
+    }
 }
 
 void M_CrispyToggleFreelook(int choice)

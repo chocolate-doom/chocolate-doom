@@ -64,6 +64,7 @@ extern void M_CrispyToggleFlipcorpses(int choice);
 extern void M_CrispyToggleFreeaim(int choice);
 extern void M_CrispyToggleFreelook(int choice);
 extern void M_CrispyToggleFullsounds(int choice);
+extern void M_CrispyToggleFpsLimit(int choice);
 extern void M_CrispyToggleHires(int choice);
 extern void M_CrispyToggleJumping(int choice);
 extern void M_CrispyToggleLeveltime(int choice);
