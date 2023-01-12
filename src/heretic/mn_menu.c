@@ -2543,8 +2543,8 @@ static void DrawCrispnessMultiItem(int item, int x, int y, const multiitem_t *mu
 static void DrawCrispnessNumericItem(int item, int x, int y, const char *zero,
         boolean cond, const char *disabled)
 {
+    char number[NUMERIC_ENTRY_NUMDIGITS + 2];
     const int size = NUMERIC_ENTRY_NUMDIGITS + 2;
-    char number[size];
 
     if (numeric_enter)
     {
