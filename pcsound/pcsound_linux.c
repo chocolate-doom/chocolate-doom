@@ -89,6 +89,7 @@ static void AdjustedSleep(unsigned int ms)
 
 static int SoundThread(void *unused)
 {
+    int current_freq = 0;
     int frequency;
     int duration;
     int cycles;
@@ -97,16 +98,20 @@ static int SoundThread(void *unused)
     {
         callback(&duration, &frequency);
 
-        if (frequency != 0) 
+        if (current_freq != frequency)
         {
-            cycles = PCSOUND_8253_FREQUENCY / frequency;
-        }
-        else
-        {
-            cycles = 0;
-        }
+            current_freq = frequency;
+            if (frequency != 0)
+            {
+                cycles = PCSOUND_8253_FREQUENCY / frequency;
+            }
+            else
+            {
+                cycles = 0;
+            }
 
-        ioctl(console_handle, KIOCSOUND, cycles);
+            ioctl(console_handle, KIOCSOUND, cycles);
+        }
 
         AdjustedSleep(duration);
     }
