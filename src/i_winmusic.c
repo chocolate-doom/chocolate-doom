@@ -1081,6 +1081,10 @@ static void FillBuffer(void)
                 }
                 else if (song.looping)
                 {
+                    for (i = 0; i < MIDI_CHANNELS_PER_TRACK; ++i)
+                    {
+                        SendShortMsg(0, MIDI_EVENT_CONTROLLER, i, MIDI_CONTROLLER_RESET_ALL_CTRLS, 0);
+                    }
                     RestartTracks();
                     continue;
                 }
@@ -1407,7 +1411,7 @@ static void I_WIN_UnRegisterSong(void *handle)
 {
     if (song.tracks)
     {
-        int i;
+        unsigned int i;
         for (i = 0; i < song.num_tracks; ++i)
         {
             MIDI_FreeIterator(song.tracks[i].iter);
