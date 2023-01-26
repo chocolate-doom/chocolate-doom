@@ -35,6 +35,7 @@ mn_menu.c                                            \
 p_ceilng.c                                           \
 p_doors.c                                            \
 p_enemy.c                                            \
+p_extnodes.c           p_extnodes.h                  \
 p_floor.c                                            \
 p_inter.c                                            \
 p_lights.c                                           \

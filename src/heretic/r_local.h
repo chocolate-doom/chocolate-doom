@@ -18,6 +18,7 @@
 #ifndef __R_LOCAL__
 #define __R_LOCAL__
 
+#include "doomdef.h"
 #include "i_video.h"
 #include "v_patch.h"
 

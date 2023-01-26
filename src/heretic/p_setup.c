@@ -26,6 +26,7 @@
 #include "m_bbox.h"
 #include "p_local.h"
 #include "s_sound.h"
+#include "p_extnodes.h"
 
 void P_SpawnMapThing(mapthing_t * mthing);
 
@@ -61,6 +62,20 @@ byte *rejectmatrix;             // for fast sight rejection
 mapthing_t deathmatchstarts[10], *deathmatch_p;
 mapthing_t playerstarts[MAXPLAYERS];
 boolean playerstartsingame[MAXPLAYERS];
+
+// [crispy] recalculate seg offsets
+// adapted from prboom-plus/src/p_setup.c:474-482
+fixed_t GetOffset(vertex_t *v1, vertex_t *v2)
+{
+    fixed_t dx, dy;
+    fixed_t r;
+
+    dx = (v1->x - v2->x)>>FRACBITS;
+    dy = (v1->y - v2->y)>>FRACBITS;
+    r = (fixed_t)(sqrt(dx*dx + dy*dy))<<FRACBITS;
+
+    return r;
+}
 
 /*
 =================
@@ -135,6 +150,8 @@ void P_LoadSegs(int lump)
         side = SHORT(ml->side);
         li->sidedef = &sides[ldef->sidenum[side]];
         li->frontsector = sides[ldef->sidenum[side]].sector;
+        // [crispy] recalculate
+        li->offset = GetOffset(li->v1, (ml->side ? ldef->v2 : ldef->v1));
         if (ldef->flags & ML_TWOSIDED)
             li->backsector = sides[ldef->sidenum[side ^ 1]].sector;
         else
@@ -659,6 +676,7 @@ void P_SetupLevel(int episode, int map, int playermask, skill_t skill)
     char lumpname[9];
     int lumpnum;
     mobj_t *mobj;
+    mapformat_t crispy_mapformat;
 
     totalkills = totalitems = totalsecret = 0;
     for (i = 0; i < MAXPLAYERS; i++)
@@ -695,6 +713,9 @@ void P_SetupLevel(int episode, int map, int playermask, skill_t skill)
 
     lumpnum = W_GetNumForName(lumpname);
 
+    // [crispy] check and log map and nodes format
+    crispy_mapformat = P_CheckMapFormat(lumpnum);
+
 // note: most of this ordering is important     
     P_LoadBlockMap(lumpnum + ML_BLOCKMAP);
     P_LoadVertexes(lumpnum + ML_VERTEXES);
@@ -702,9 +723,23 @@ void P_SetupLevel(int episode, int map, int playermask, skill_t skill)
     P_LoadSideDefs(lumpnum + ML_SIDEDEFS);
 
     P_LoadLineDefs(lumpnum + ML_LINEDEFS);
+
+    if (crispy_mapformat & (MFMT_ZDBSPX | MFMT_ZDBSPZ))
+    {
+        P_LoadNodes_ZDBSP(lumpnum + ML_NODES, crispy_mapformat & MFMT_ZDBSPZ);
+    }
+    else if (crispy_mapformat & MFMT_DEEPBSP)
+    {
+        P_LoadSubsectors_DeePBSP(lumpnum + ML_SSECTORS);
+        P_LoadNodes_DeePBSP(lumpnum + ML_NODES);
+        P_LoadSegs_DeePBSP(lumpnum + ML_SEGS);
+    }
+    else
+    {
     P_LoadSubsectors(lumpnum + ML_SSECTORS);
     P_LoadNodes(lumpnum + ML_NODES);
     P_LoadSegs(lumpnum + ML_SEGS);
+    }
 
     rejectmatrix = W_CacheLumpNum(lumpnum + ML_REJECT, PU_LEVEL);
     P_GroupLines();
