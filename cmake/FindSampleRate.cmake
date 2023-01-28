@@ -51,7 +51,7 @@ find_library(SAMPLERATE_LIBRARY "samplerate"
     HINTS ${PC_SAMPLERATE_LIBRARY_DIRS})
 
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(samplerate
+find_package_handle_standard_args(SampleRate
     FOUND_VAR SampleRate_FOUND
     REQUIRED_VARS SAMPLERATE_INCLUDE_DIR SAMPLERATE_LIBRARY
     VERSION_VAR SAMPLERATE_VERSION
