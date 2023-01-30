@@ -48,8 +48,8 @@ else()
 endif()
 
 # Check for libsamplerate.
-find_package(samplerate)
-if(SAMPLERATE_FOUND)
+find_package(SampleRate)
+if(SampleRate_FOUND)
     set(HAVE_LIBSAMPLERATE TRUE)
 endif()
 
