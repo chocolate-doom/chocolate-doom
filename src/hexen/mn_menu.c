@@ -356,7 +356,7 @@ static MenuItem_t CrispnessItems[] = {
 };
 
 static Menu_t CrispnessMenu = {
-    68, 40,
+    68, 35,
     DrawCrispnessMenu,
     14, CrispnessItems,
     0,
@@ -2430,21 +2430,27 @@ static void M_DrawCrispnessBackground(void)
     SB_state = -1;
 }
 
+static void DrawCrispnessHeader(const char *item)
+{
+    dp_translation = cr[CR_GOLD];
+    MN_DrTextA(item, 160 - MN_TextAWidth(item) / 2, 6);
+}
+
 static void DrawCrispnessSubheader(const char *name, int y)
 {
-    dp_translation = cr[CR_GREEN];
+    dp_translation = cr[CR_GOLD];
     MN_DrTextA(name, 63, y);
 }
 
 static void DrawCrispnessItem(boolean item, int x, int y)
 {
-    dp_translation = item ? cr[CR_GOLD] : cr[CR_GRAY];
+    dp_translation = item ? cr[CR_GREEN] : cr[CR_DARK];
     MN_DrTextA(item ? "ON" : "OFF", x, y);
 }
 
 static void DrawCrispnessMultiItem(int item, int x, int y, const multiitem_t *multi)
 {
-    dp_translation = item ? cr[CR_GOLD] : cr[CR_GRAY];
+    dp_translation = item ? cr[CR_GREEN] : cr[CR_DARK];
     MN_DrTextA(multi[item].name, x, y);
 }
 
@@ -2463,8 +2469,8 @@ static void DrawCrispnessNumericItem(int item, int x, int y, const char *zero,
         M_snprintf(number, size, "%d", item);
     }
 
-    dp_translation = cond ? cr[CR_DARK] :
-                    (item || numeric_enter) ? cr[CR_GOLD] : cr[CR_GRAY];
+    dp_translation = cond ? cr[CR_GRAY] :
+                    (item || numeric_enter) ? cr[CR_GREEN] : cr[CR_DARK];
 
     if (cond)
     {
@@ -2482,50 +2488,46 @@ static void DrawCrispnessNumericItem(int item, int x, int y, const char *zero,
 
 static void DrawCrispnessMenu(void)
 {
-    static const char *title;
-
     // Background
     M_DrawCrispnessBackground();
 
-    // Title
-    title = "CRISPNESS";
-    MN_DrTextB(title, 160 - MN_TextBWidth(title) / 2, 6);
+    DrawCrispnessHeader("CRISPNESS");
 
-    DrawCrispnessSubheader("RENDERING", 30);
+    DrawCrispnessSubheader("RENDERING", 25);
 
     // Hires rendering
-    DrawCrispnessItem(crispy->hires, 254, 40);
+    DrawCrispnessItem(crispy->hires, 254, 35);
 
     // Widescreen
-    DrawCrispnessMultiItem(crispy->widescreen, 164, 50, multiitem_widescreen);
+    DrawCrispnessMultiItem(crispy->widescreen, 164, 45, multiitem_widescreen);
 
     // Smooth pixel scaling
-    DrawCrispnessItem(crispy->smoothscaling, 216, 60);
+    DrawCrispnessItem(crispy->smoothscaling, 216, 55);
 
     // Uncapped framerate
-    DrawCrispnessItem(crispy->uncapped, 217, 70);
+    DrawCrispnessItem(crispy->uncapped, 217, 65);
 
     // FPS limit
-    DrawCrispnessNumericItem(crispy->fpslimit, 134, 80, "NONE", !crispy->uncapped, "35");
+    DrawCrispnessNumericItem(crispy->fpslimit, 134, 75, "NONE", !crispy->uncapped, "35");
 
     // Vsync
-    DrawCrispnessItem(crispy->vsync, 167, 90);
+    DrawCrispnessItem(crispy->vsync, 167, 85);
 
-    DrawCrispnessSubheader("VISUAL", 110);
+    DrawCrispnessSubheader("VISUAL", 105);
 
     // Brightmaps
-    DrawCrispnessMultiItem(crispy->brightmaps, 150, 120, multiitem_brightmaps);
+    DrawCrispnessMultiItem(crispy->brightmaps, 150, 115, multiitem_brightmaps);
 
-    DrawCrispnessSubheader("TACTICAL", 140);
+    DrawCrispnessSubheader("TACTICAL", 135);
 
     // Freelook
-    DrawCrispnessMultiItem(crispy->freelook_hh, 175, 150, multiitem_freelook_hh);
+    DrawCrispnessMultiItem(crispy->freelook_hh, 175, 145, multiitem_freelook_hh);
 
     // Mouselook
-    DrawCrispnessItem(crispy->mouselook, 220, 160);
+    DrawCrispnessItem(crispy->mouselook, 220, 155);
 
     // Default difficulty
-    DrawCrispnessMultiItem(crispy->defaultskill, 200, 170, multiitem_difficulties);
+    DrawCrispnessMultiItem(crispy->defaultskill, 200, 165, multiitem_difficulties);
 
     dp_translation = NULL;
 }

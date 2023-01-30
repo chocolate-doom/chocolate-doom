@@ -2499,27 +2499,20 @@ static void M_DrawCrispnessBackground(void)
 
 static void DrawCrispness(void)
 {
-    static const char *title;
-    char menupage[6];
-
     SetMenu(CrispnessMenus[crispnessmenupage]);
 
     // Background
     M_DrawCrispnessBackground();
 
-    // Title
-    title = DEH_String("CRISPNESS");
-    MN_DrTextB(title, 160 - MN_TextBWidth(title) / 2, 2);
-
-    // Page number
-    dp_translation = cr[CR_GREEN];
-    M_snprintf(menupage, sizeof(menupage), "%d / %d", crispnessmenupage + 1,
-                NUM_CRISPNESS_MENUS);
-    MN_DrTextA(menupage, 320 - MN_TextAWidth(menupage) - 20, 10);
-
     (*CrispnessMenuDrawers[crispnessmenupage])();
 
     dp_translation = NULL;
+}
+
+static void DrawCrispnessHeader(const char *item)
+{
+    dp_translation = cr[CR_GOLD];
+    MN_DrTextA(item, 160 - MN_TextAWidth(item) / 2, 6);
 }
 
 static void DrawCrispnessSubheader(const char *name, int y)
@@ -2530,13 +2523,13 @@ static void DrawCrispnessSubheader(const char *name, int y)
 
 static void DrawCrispnessItem(boolean item, int x, int y)
 {
-    dp_translation = item ? cr[CR_GREEN] : cr[CR_GRAY];
+    dp_translation = item ? cr[CR_GREEN] : cr[CR_DARK];
     MN_DrTextA(item ? "ON" : "OFF", x, y);
 }
 
 static void DrawCrispnessMultiItem(int item, int x, int y, const multiitem_t *multi)
 {
-    dp_translation = item ? cr[CR_GREEN] : cr[CR_GRAY];
+    dp_translation = item ? cr[CR_GREEN] : cr[CR_DARK];
     MN_DrTextA(multi[item].name, x, y);
 }
 
@@ -2555,8 +2548,8 @@ static void DrawCrispnessNumericItem(int item, int x, int y, const char *zero,
         M_snprintf(number, size, "%d", item);
     }
 
-    dp_translation = cond ? cr[CR_DARK] :
-                    (item || numeric_enter) ? cr[CR_GREEN] : cr[CR_GRAY];
+    dp_translation = cond ? cr[CR_GRAY] :
+                    (item || numeric_enter) ? cr[CR_GREEN] : cr[CR_DARK];
 
     if (cond)
     {
@@ -2574,6 +2567,8 @@ static void DrawCrispnessNumericItem(int item, int x, int y, const char *zero,
 
 static void DrawCrispness1(void)
 {
+    DrawCrispnessHeader("CRISPNESS 1/2");
+
     DrawCrispnessSubheader("RENDERING", 25);
 
     // Hires rendering
@@ -2610,6 +2605,8 @@ static void DrawCrispness1(void)
 
 static void DrawCrispness2(void)
 {
+    DrawCrispnessHeader("CRISPNESS 2/2");
+
     DrawCrispnessSubheader("NAVIGATIONAL CONT.", 25);
 
     // Show player coords
