@@ -8,7 +8,7 @@ CMAKE_FILES=                                   \
         cmake/FindSDL2_mixer.cmake             \
         cmake/FindSDL2_net.cmake               \
         cmake/Findm.cmake                      \
-        cmake/FindSampleRate.cmake             \
+        cmake/Findsamplerate.cmake             \
         cmake/config.h.cin
 
 DOC_FILES=                              \

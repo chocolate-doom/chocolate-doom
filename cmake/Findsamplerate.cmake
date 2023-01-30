@@ -1,4 +1,4 @@
-# FindSampleRate.cmake
+# Findsamplerate.cmake
 #
 # Copyright (c) 2018, Alex Mayfield <alexmax2742@gmail.com>
 # All rights reserved.
