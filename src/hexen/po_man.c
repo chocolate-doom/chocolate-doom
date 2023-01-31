@@ -1040,7 +1040,9 @@ boolean PO_RotatePolyobj(int num, angle_t angle)
 
     // [crispy] Move points back after calculating bounding boxes. We'll handle
     // the actual movement in PO_InterpolatePolyObjects().
-    if (crispy->uncapped)
+    // Note: 180 degree rotations can be called for during loading of the
+    // level. Don't try to interpolate those.
+    if (crispy->uncapped && angle != ANG180)
     {
         segList = po->segs;
         prevPts = po->prevPts;
