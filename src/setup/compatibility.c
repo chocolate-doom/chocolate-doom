@@ -127,6 +127,12 @@ void BindCompatibilityVariables(void)
         M_BindIntVariable("crispy_widescreen",      &crispy->widescreen);
         M_BindIntVariable("crispy_brightmaps",      &crispy->brightmaps);
     }
+    else if (gamemission == strife)
+    {
+        M_BindIntVariable("vanilla_savegame_limit", &vanilla_savegame_limit);
+        M_BindIntVariable("vanilla_demo_limit",     &vanilla_demo_limit);
+        M_BindIntVariable("crispy_hires",           &crispy->hires);
+    }
     else
     {
     M_BindIntVariable("vanilla_savegame_limit", &vanilla_savegame_limit);
