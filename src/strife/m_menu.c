@@ -2427,6 +2427,9 @@ void M_Init (void)
     messageLastMenuActive = menuactive; // STRIFE-FIXME: assigns 0 here...
     quickSaveSlot = -1;
 
+    // [crispy] apply default difficulty (Strife default is SKILL_HNTR)
+    NewDef.lastOn = (crispy->defaultskill + SKILL_HNTR) % NUM_SKILLS;
+
     // [STRIFE]: Initialize savegame paths and clear temporary directory
     G_WriteSaveName(5, "ME");
     ClearTmp();

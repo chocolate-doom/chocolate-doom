@@ -475,6 +475,7 @@ void D_BindVariables(void)
     }
 
     // [crispy] bind "crispness" config variables
+    M_BindIntVariable("crispy_defaultskill",    &crispy->defaultskill);
     M_BindIntVariable("crispy_fpslimit",        &crispy->fpslimit);
     M_BindIntVariable("crispy_hires",           &crispy->hires);
     M_BindIntVariable("crispy_uncapped",        &crispy->uncapped);
@@ -1927,7 +1928,10 @@ void D_DoomMain (void)
     D_IntroTick(); // [STRIFE]
     
     // get skill / episode / map from parms
-    startskill = sk_easy; // [STRIFE]: inits to sk_easy
+
+    // [crispy] set defaultskill (Strife default is SKILL_HNTR)
+    startskill = (crispy->defaultskill + SKILL_HNTR) % NUM_SKILLS;
+
     startepisode = 1;
     startmap = 1;
     autostart = false;
