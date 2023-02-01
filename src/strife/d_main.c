@@ -479,6 +479,7 @@ void D_BindVariables(void)
     M_BindIntVariable("crispy_fpslimit",        &crispy->fpslimit);
     M_BindIntVariable("crispy_hires",           &crispy->hires);
     M_BindIntVariable("crispy_uncapped",        &crispy->uncapped);
+    M_BindIntVariable("crispy_vsync",           &crispy->vsync);
 }
 
 //
