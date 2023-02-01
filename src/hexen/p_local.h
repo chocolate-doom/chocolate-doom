@@ -417,8 +417,9 @@ boolean EV_MovePoly(line_t * line, byte * args, boolean timesEight, boolean
                     overRide);
 boolean EV_OpenPolyDoor(line_t * line, byte * args, podoortype_t type);
 
-boolean PO_MovePolyobj(int num, int x, int y);
-boolean PO_RotatePolyobj(int num, angle_t angle);
+// [crispy] add interp parameter to allow suppression of interpolation
+boolean PO_MovePolyobj(int num, int x, int y, boolean interp);
+boolean PO_RotatePolyobj(int num, angle_t angle, boolean interp);
 void PO_Init(int lump);
 boolean PO_Busy(int polyobj);
 

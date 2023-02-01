@@ -3229,10 +3229,10 @@ static void UnarchivePolyobjs(void)
         {
             I_Error("UnarchivePolyobjs: Invalid polyobj tag");
         }
-        PO_RotatePolyobj(polyobjs[i].tag, (angle_t) SV_ReadLong());
+        PO_RotatePolyobj(polyobjs[i].tag, (angle_t) SV_ReadLong(), false);
         deltaX = SV_ReadLong() - polyobjs[i].startSpot.x;
         deltaY = SV_ReadLong() - polyobjs[i].startSpot.y;
-        PO_MovePolyobj(polyobjs[i].tag, deltaX, deltaY);
+        PO_MovePolyobj(polyobjs[i].tag, deltaX, deltaY, false);
     }
 }
 
