@@ -198,6 +198,13 @@ typedef struct player_s
     // True if secret level has been done.
     //boolean		didsecret;   [STRIFE] Removed this.
 
+    // [AM] Previous position of viewz before think.
+    //      Used to interpolate between camera positions.
+    fixed_t		oldviewz;
+
+    // [crispy] Previous up/down look angle.
+    int			oldpitch;
+
 } player_t;
 
 

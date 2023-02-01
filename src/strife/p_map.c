@@ -209,6 +209,10 @@ boolean P_TeleportMove(mobj_t*  thing, fixed_t  x, fixed_t  y)
     thing->y = y;
     thing->z = tmfloorz; // haleyjd 09/15/10: [STRIFE] Rogue added a z-set here
 
+    // [AM] Don't interpolate mobjs that pass
+    //      through teleporters
+    thing->interp = false;
+
     P_SetThingPosition (thing);
 
     return true;

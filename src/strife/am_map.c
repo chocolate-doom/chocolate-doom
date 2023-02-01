@@ -1398,6 +1398,7 @@ void AM_Drawer (void)
     if (!automapactive) return;
 
     AM_clearFB(BACKGROUND);
+    pspr_interp = false; // [crispy] interpolate weapon bobbing
 
     // villsa [STRIFE] not used
     /*if(grid)

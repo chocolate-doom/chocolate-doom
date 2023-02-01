@@ -528,9 +528,31 @@ void R_ProjectSprite (mobj_t* thing)
     angle_t		ang;
     fixed_t		iscale;
     
+    fixed_t             interpx;
+    fixed_t             interpy;
+    fixed_t             interpz;
+    fixed_t             interpangle;
+
+    // [AM] Interpolate between current and last position, if prudent.
+    if (crispy->uncapped && thing->interp == true &&
+        !paused && !(menupause && !demoplayback && !netgame))
+    {
+        interpx = thing->oldx + FixedMul(thing->x - thing->oldx, fractionaltic);
+        interpy = thing->oldy + FixedMul(thing->y - thing->oldy, fractionaltic);
+        interpz = thing->oldz + FixedMul(thing->z - thing->oldz, fractionaltic);
+        interpangle = R_InterpolateAngle(thing->oldangle, thing->angle, fractionaltic);
+    }
+    else
+    {
+        interpx = thing->x;
+        interpy = thing->y;
+        interpz = thing->z;
+        interpangle = thing->angle;
+    }
+
     // transform the origin point
-    tr_x = thing->x - viewx;
-    tr_y = thing->y - viewy;
+    tr_x = interpx - viewx;
+    tr_y = interpy - viewy;
 	
     gxt = FixedMul(tr_x,viewcos); 
     gyt = -FixedMul(tr_y,viewsin);
@@ -568,8 +590,8 @@ void R_ProjectSprite (mobj_t* thing)
     if (sprframe->rotate)
     {
 	// choose a different rotation based on player view
-	ang = R_PointToAngle (thing->x, thing->y);
-	rot = (ang-thing->angle+(unsigned)(ANG45/2)*9)>>29;
+	ang = R_PointToAngle (interpx, interpy);
+	rot = (ang-interpangle+(unsigned)(ANG45/2)*9)>>29;
 	lump = sprframe->lump[rot];
 	flip = (boolean)sprframe->flip[rot];
     }
@@ -599,9 +621,9 @@ void R_ProjectSprite (mobj_t* thing)
     vis = R_NewVisSprite ();
     vis->mobjflags = thing->flags;
     vis->scale = xscale<<detailshift;
-    vis->gx = thing->x;
-    vis->gy = thing->y;
-    vis->gz = thing->z;
+    vis->gx = interpx;
+    vis->gy = interpy;
+    vis->gz = interpz;
 
     // villsa [STRIFE]
     if(thing->flags & MF_FEETCLIPPED)
@@ -700,6 +722,9 @@ void R_AddSprites (sector_t* sec)
 //
 // R_DrawPSprite
 //
+
+boolean pspr_interp = true; // [crispy] interpolate weapon bobbing
+
 void R_DrawPSprite (pspdef_t* psp)
 {
     fixed_t		tx;
@@ -810,6 +835,40 @@ void R_DrawPSprite (pspdef_t* psp)
     {
         // When MVIS, use invulnerability colormap
         vis->colormap = colormaps + INVERSECOLORMAP * 256 * sizeof(lighttable_t);
+    }
+
+    // [crispy] interpolate weapon bobbing
+    if (crispy->uncapped)
+    {
+        static int     oldx1, x1_saved;
+        static fixed_t oldtexturemid, texturemid_saved;
+        static int     oldlump = -1;
+        static int     oldgametic = -1;
+
+        if (oldgametic < gametic)
+        {
+            oldx1 = x1_saved;
+            oldtexturemid = texturemid_saved;
+            oldgametic = gametic;
+        }
+
+        x1_saved = vis->x1;
+        texturemid_saved = vis->texturemid;
+
+        if (lump == oldlump && pspr_interp)
+        {
+            int deltax = vis->x2 - vis->x1;
+            vis->x1 = oldx1 + FixedMul(vis->x1 - oldx1, fractionaltic);
+            vis->x2 = vis->x1 + deltax;
+            vis->texturemid = oldtexturemid + FixedMul(vis->texturemid - oldtexturemid, fractionaltic);
+        }
+        else
+        {
+            oldx1 = vis->x1;
+            oldtexturemid = vis->texturemid;
+            oldlump = lump;
+            pspr_interp = true;
+        }
     }
 
     R_DrawVisSprite (vis, vis->x1, vis->x2);

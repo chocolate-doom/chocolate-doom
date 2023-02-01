@@ -1612,22 +1612,34 @@ void P_UpdateSpecials (void)
         {
         case 48:
             // EFFECT FIRSTCOL SCROLL +
-            sides[line->sidenum[0]].textureoffset += FRACUNIT;
+            // [crispy] smooth texture scrolling
+            sides[line->sidenum[0]].basetextureoffset += FRACUNIT;
+            sides[line->sidenum[0]].textureoffset =
+            sides[line->sidenum[0]].basetextureoffset;
             break;
 
         case 142:
             // haleyjd 09/25/10 [STRIFE] Scroll Up Slow
-            sides[line->sidenum[0]].rowoffset += FRACUNIT;
+            // [crispy] smooth texture scrolling
+            sides[line->sidenum[0]].baserowoffset += FRACUNIT;
+            sides[line->sidenum[0]].rowoffset =
+            sides[line->sidenum[0]].baserowoffset;
             break;
 
         case 143:
             // haleyjd 09/25/10 [STRIFE] Scroll Down Fast (3 Units/Tic)
-            sides[line->sidenum[0]].rowoffset -= 3*FRACUNIT;
+            // [crispy] smooth texture scrolling
+            sides[line->sidenum[0]].baserowoffset -= 3*FRACUNIT;
+            sides[line->sidenum[0]].rowoffset =
+            sides[line->sidenum[0]].baserowoffset;
             break;
 
         case 149:
             // haleyjd 09/25/10 [STRIFE] Scroll Down Slow
-            sides[line->sidenum[0]].rowoffset -= FRACUNIT;
+            // [crispy] smooth texture scrolling
+            sides[line->sidenum[0]].baserowoffset -= FRACUNIT;
+            sides[line->sidenum[0]].rowoffset =
+            sides[line->sidenum[0]].baserowoffset;
             break;
         }
     }
@@ -1663,6 +1675,39 @@ void P_UpdateSpecials (void)
         }
 }
 
+// [crispy] smooth texture scrolling
+void R_InterpolateTextureOffsets (void)
+{
+    if (crispy->uncapped && !paused && !(menupause && !demoplayback && !netgame))
+    {
+        int i;
+
+        for (i = 0; i < numlinespecials; i++)
+        {
+            const line_t *const line = linespeciallist[i];
+            side_t *const side = &sides[line->sidenum[0]];
+
+            switch (line->special)
+            {
+                case 48: // EFFECT FIRSTCOL SCROLL +
+                    side->textureoffset = side->basetextureoffset + fractionaltic;
+                    break;
+
+                case 142: // [STRIFE] Scroll Up Slow
+                    side->rowoffset = side->baserowoffset + fractionaltic;
+                    break;
+
+                case 143: // [STRIFE] Scroll Down Fast (3 Units/Tic)
+                    side->rowoffset = side->baserowoffset - FixedMul(3*FRACUNIT, fractionaltic);
+                    break;
+
+                case 149: // [STRIFE] Scroll Down Slow
+                    side->rowoffset = side->baserowoffset - fractionaltic;
+                    break;
+            }
+        }
+    }
+}
 
 //
 // Donut overrun emulation

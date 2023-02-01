@@ -500,6 +500,26 @@ fixed_t R_ScaleFromGlobalAngle (angle_t visangle)
 }
 
 
+// [AM] Interpolate between two angles.
+angle_t R_InterpolateAngle(angle_t oangle, angle_t nangle, fixed_t scale)
+{
+    if (nangle == oangle)
+        return nangle;
+    else if (nangle > oangle)
+    {
+        if (nangle - oangle < ANG270)
+            return oangle + (angle_t)((nangle - oangle) * FIXED2DOUBLE(scale));
+        else // Wrapped around
+            return oangle - (angle_t)((oangle - nangle) * FIXED2DOUBLE(scale));
+    }
+    else // nangle < oangle
+    {
+        if (oangle - nangle < ANG270)
+            return oangle - (angle_t)((oangle - nangle) * FIXED2DOUBLE(scale));
+        else // Wrapped around
+            return oangle + (angle_t)((nangle - oangle) * FIXED2DOUBLE(scale));
+    }
+}
 
 //
 // R_InitTables
@@ -761,6 +781,8 @@ void R_ExecuteSetViewSize (void)
 	    scalelight[i][j] = colormaps + level*256;
 	}
     }
+
+    pspr_interp = false; // [crispy] interpolate weapon bobbing
 }
 
 
@@ -854,8 +876,15 @@ void R_SetupPitch(player_t* player)
 
     if(viewpitch != player->pitch)
     {
-        viewpitch   = player->pitch;
-        pitchfrac   = (setblocks * (player->pitch << crispy->hires)) / 10;
+        // [AM] Interpolate the player camera if the feature is enabled.
+        if (crispy->uncapped && leveltime > 1 && player->mo->interp == true &&
+            !paused && !(menupause && !demoplayback && !netgame))
+            viewpitch = player->oldpitch + (player->pitch - player->oldpitch) *
+                        FIXED2DOUBLE(fractionaltic);
+        else
+            viewpitch = player->pitch;
+
+        pitchfrac   = (setblocks * (viewpitch << crispy->hires)) / 10;
         centery     = pitchfrac + viewheight / 2;
         centeryfrac = centery << FRACBITS;
 
@@ -878,12 +907,25 @@ void R_SetupFrame (player_t* player)
     R_SetupPitch(player);  // villsa [STRIFE]
 
     viewplayer = player;
-    viewx = player->mo->x;
-    viewy = player->mo->y;
-    viewangle = player->mo->angle + viewangleoffset;
-    extralight = player->extralight;
 
-    viewz = player->viewz;
+    // [AM] Interpolate the player camera if the feature is enabled.
+    if (crispy->uncapped && leveltime > 1 && player->mo->interp == true &&
+        !paused && !(menupause && !demoplayback && !netgame))
+    {
+        viewx = player->mo->oldx + FixedMul(player->mo->x - player->mo->oldx, fractionaltic);
+        viewy = player->mo->oldy + FixedMul(player->mo->y - player->mo->oldy, fractionaltic);
+        viewz = player->oldviewz + FixedMul(player->viewz - player->oldviewz, fractionaltic);
+        viewangle = R_InterpolateAngle(player->mo->oldangle, player->mo->angle, fractionaltic) + viewangleoffset;
+    }
+    else
+    {
+        viewx = player->mo->x;
+        viewy = player->mo->y;
+        viewz = player->viewz;
+        viewangle = player->mo->angle + viewangleoffset;
+    }
+
+    extralight = player->extralight;
     
     viewsin = finesine[viewangle>>ANGLETOFINESHIFT];
     viewcos = finecosine[viewangle>>ANGLETOFINESHIFT];
@@ -915,6 +957,8 @@ void R_SetupFrame (player_t* player)
 //
 void R_RenderPlayerView (player_t* player)
 {	
+    extern void R_InterpolateTextureOffsets (void);
+
     R_SetupFrame (player);
 
     // Clear buffers.
@@ -925,6 +969,9 @@ void R_RenderPlayerView (player_t* player)
     
     // check for new console commands.
     NetUpdate ();
+
+    // [crispy] smooth texture scrolling
+    R_InterpolateTextureOffsets();
 
     // The head node is the last node output.
     R_RenderBSPNode (numnodes-1);

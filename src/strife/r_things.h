@@ -42,6 +42,7 @@ extern fixed_t		sprtopscreen;
 extern fixed_t		pspritescale;
 extern fixed_t		pspriteiscale;
 
+extern boolean pspr_interp; // [crispy] interpolate weapon bobbing
 
 // villsa [STIFE] new argument
 void R_DrawMaskedColumn (column_t *column, int baseclip);
