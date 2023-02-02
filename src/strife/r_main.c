@@ -955,8 +955,6 @@ void R_SetupFrame (player_t* player)
 //
 void R_RenderPlayerView (player_t* player)
 {	
-    extern void R_InterpolateTextureOffsets (void);
-
     R_SetupFrame (player);
 
     // Clear buffers.
