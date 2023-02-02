@@ -104,6 +104,10 @@ extern void		(*tlcolfunc) (void);
 extern void		(*spanfunc) (void);
 
 
+// [crispy] smooth texture scrolling
+extern void R_InterpolateTextureOffsets (void);
+
+
 //
 // Utility functions.
 int

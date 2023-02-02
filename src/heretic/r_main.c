@@ -889,8 +889,6 @@ void R_SetupFrame(player_t * player)
 
 void R_RenderPlayerView(player_t * player)
 {
-    // [crispy] Smooth texture scrolling
-    extern void R_InterpolateTextureOffsets(void);
     extern boolean automapactive;
 
     R_SetupFrame(player);

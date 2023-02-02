@@ -900,7 +900,6 @@ void R_SetupFrame(player_t * player)
 void R_RenderPlayerView(player_t * player)
 {
     extern void PO_InterpolatePolyObjects(void);
-    extern void R_InterpolateTextureOffset(void);
     extern boolean automapactive;
 
     R_SetupFrame(player);
@@ -917,7 +916,7 @@ void R_RenderPlayerView(player_t * player)
 
     NetUpdate();                // check for new console commands
     PO_InterpolatePolyObjects(); // [crispy] Interpolate polyobjects here
-    R_InterpolateTextureOffset(); // [crispy] Smooth texture scrolling
+    R_InterpolateTextureOffsets(); // [crispy] Smooth texture scrolling
 
     // Make displayed player invisible locally
     if (localQuakeHappening[displayplayer] && gamestate == GS_LEVEL)

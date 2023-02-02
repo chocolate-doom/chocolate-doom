@@ -383,6 +383,9 @@ extern void (*basecolfunc) (void);
 extern void (*tlcolfunc) (void);
 extern void (*spanfunc) (void);
 
+// [crispy] smooth texture scrolling
+extern void R_InterpolateTextureOffsets (void);
+
 int R_PointOnSide(fixed_t x, fixed_t y, node_t * node);
 int R_PointOnSegSide(fixed_t x, fixed_t y, seg_t * line);
 angle_t R_PointToAngle(fixed_t x, fixed_t y);
