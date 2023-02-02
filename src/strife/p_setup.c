@@ -812,6 +812,7 @@ P_SetupLevel
     lumpnum = W_GetNumForName (lumpname);
 
     leveltime = 0;
+    oldleveltime = 0; // [crispy] Track if game is running
 
     // note: most of this ordering is important	
     P_LoadBlockMap (lumpnum+ML_BLOCKMAP);

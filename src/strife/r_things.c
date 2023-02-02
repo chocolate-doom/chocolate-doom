@@ -534,8 +534,7 @@ void R_ProjectSprite (mobj_t* thing)
     fixed_t             interpangle;
 
     // [AM] Interpolate between current and last position, if prudent.
-    if (crispy->uncapped && thing->interp == true &&
-        !paused && !(menupause && !demoplayback && !netgame))
+    if (crispy->uncapped && thing->interp == true && leveltime > oldleveltime)
     {
         interpx = thing->oldx + FixedMul(thing->x - thing->oldx, fractionaltic);
         interpy = thing->oldy + FixedMul(thing->y - thing->oldy, fractionaltic);

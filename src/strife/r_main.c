@@ -877,8 +877,7 @@ void R_SetupPitch(player_t* player)
     if(viewpitch != player->pitch)
     {
         // [AM] Interpolate the player camera if the feature is enabled.
-        if (crispy->uncapped && leveltime > 1 && player->mo->interp == true &&
-            !paused && !(menupause && !demoplayback && !netgame))
+        if (crispy->uncapped && leveltime > 1 && player->mo->interp == true && leveltime > oldleveltime)
             viewpitch = player->oldpitch + (player->pitch - player->oldpitch) *
                         FIXED2DOUBLE(fractionaltic);
         else
@@ -909,8 +908,7 @@ void R_SetupFrame (player_t* player)
     viewplayer = player;
 
     // [AM] Interpolate the player camera if the feature is enabled.
-    if (crispy->uncapped && leveltime > 1 && player->mo->interp == true &&
-        !paused && !(menupause && !demoplayback && !netgame))
+    if (crispy->uncapped && leveltime > 1 && player->mo->interp == true && leveltime > oldleveltime)
     {
         viewx = player->mo->oldx + FixedMul(player->mo->x - player->mo->oldx, fractionaltic);
         viewy = player->mo->oldy + FixedMul(player->mo->y - player->mo->oldy, fractionaltic);
