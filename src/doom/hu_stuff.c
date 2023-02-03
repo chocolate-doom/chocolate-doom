@@ -1108,7 +1108,6 @@ void HU_Ticker(void)
     {
 	crispy_statsline_func_t crispy_statsline = crispy_statslines[crispy->statsformat];
 
-	if (crispy->automapstats == WIDGETS_STBAR)
 	w_kills.y = HU_MSGY + 1 * 8;
 
 	crispy_statsline(str, sizeof(str), kills, plr->killcount, totalkills, extrakills);
