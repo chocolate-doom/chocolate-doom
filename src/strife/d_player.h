@@ -205,6 +205,9 @@ typedef struct player_s
     // [crispy] Previous up/down look angle.
     int			oldpitch;
 
+    // [crispy] variable player view bob
+    fixed_t		bob2;
+
 } player_t;
 
 

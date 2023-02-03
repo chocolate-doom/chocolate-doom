@@ -41,7 +41,7 @@
 
 
 #define MINZ				(FRACUNIT*4)
-#define BASEYCENTER			100
+#define BASEYCENTER			(ORIGHEIGHT/2)
 
 //void R_DrawColumn (void);
 //void R_DrawFuzzColumn (void);
@@ -756,7 +756,7 @@ void R_DrawPSprite (pspdef_t* psp)
     flip = flipparm;
     
     // calculate edges of the shape
-    tx = psp->sx-160*FRACUNIT;
+    tx = psp->sx2-(ORIGWIDTH/2)*FRACUNIT;
 
     tx -= spriteoffset[lump];	
     x1 = (centerxfrac + FixedMul (tx,pspritescale) ) >>FRACBITS;
@@ -791,7 +791,8 @@ void R_DrawPSprite (pspdef_t* psp)
     }
 
     // villsa [STRIFE] calculate y offset with view pitch
-    vis->texturemid = ((BASEYCENTER<<FRACBITS)/*+FRACUNIT/2*/)-(psp->sy-spritetopoffset[lump])
+    // [crispy] weapons drawn 1 pixel too high when player is idle
+    vis->texturemid = ((BASEYCENTER<<FRACBITS)+FRACUNIT/4)-(psp->sy2-spritetopoffset[lump])
         + FixedMul(vis->xiscale, (centery-viewheight/2)<<FRACBITS);
 
     if (vis->x1 > x1)

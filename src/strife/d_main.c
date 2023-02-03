@@ -475,6 +475,8 @@ void D_BindVariables(void)
     }
 
     // [crispy] bind "crispness" config variables
+    M_BindIntVariable("crispy_bobfactor",       &crispy->bobfactor);
+    M_BindIntVariable("crispy_centerweapon",    &crispy->centerweapon);
     M_BindIntVariable("crispy_defaultskill",    &crispy->defaultskill);
     M_BindIntVariable("crispy_fpslimit",        &crispy->fpslimit);
     M_BindIntVariable("crispy_hires",           &crispy->hires);
