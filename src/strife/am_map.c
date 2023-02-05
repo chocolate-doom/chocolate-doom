@@ -69,12 +69,21 @@
 // how much the automap moves window per tic in frame-buffer coordinates
 // moves 140 pixels in 1 second
 #define F_PANINC	4
+// [crispy] pan faster by holding run button
+#define F2_PANINC	12
 // how much zoom-in per tic
 // goes to 2x in 1 second
 #define M_ZOOMIN        ((int) (1.02*FRACUNIT))
 // how much zoom-out per tic
 // pulls out to 0.5x in 1 second
 #define M_ZOOMOUT       ((int) (FRACUNIT/1.02))
+// [crispy] zoom faster
+#define M2_ZOOMIN       ((int) (1.08*FRACUNIT))
+#define M2_ZOOMOUT      ((int) (FRACUNIT/1.08))
+// [crispy] toggleable pan/zoom speed
+static int f_paninc;
+static int m_zoomin_kbd;
+static int m_zoomout_kbd;
 
 // translates between frame-buffer and map distances
 #define FTOM(x) FixedMul(((x)<<16),scale_ftom)
@@ -584,6 +593,20 @@ AM_Responder
     static char buffer[20];
     int key;
 
+    // [crispy] toggleable pan/zoom speed
+    if (speedkeydown())
+    {
+        f_paninc = F2_PANINC;
+        m_zoomin_kbd = M2_ZOOMIN;
+        m_zoomout_kbd = M2_ZOOMOUT;
+    }
+    else
+    {
+        f_paninc = F_PANINC;
+        m_zoomin_kbd = M_ZOOMIN;
+        m_zoomout_kbd = M_ZOOMOUT;
+    }
+
     rc = false;
 
     if (ev->type == ev_joystick && joybautomap >= 0
@@ -623,33 +646,33 @@ AM_Responder
 
         if (key == key_map_east)          // pan right
         {
-            if (!followplayer) m_paninc.x = FTOM(F_PANINC);
+            if (!followplayer) m_paninc.x = FTOM(f_paninc << crispy->hires);
             else rc = false;
         }
         else if (key == key_map_west)     // pan left
         {
-            if (!followplayer) m_paninc.x = -FTOM(F_PANINC);
+            if (!followplayer) m_paninc.x = -FTOM(f_paninc << crispy->hires);
             else rc = false;
         }
         else if (key == key_map_north)    // pan up
         {
-            if (!followplayer) m_paninc.y = FTOM(F_PANINC);
+            if (!followplayer) m_paninc.y = FTOM(f_paninc << crispy->hires);
             else rc = false;
         }
         else if (key == key_map_south)    // pan down
         {
-            if (!followplayer) m_paninc.y = -FTOM(F_PANINC);
+            if (!followplayer) m_paninc.y = -FTOM(f_paninc << crispy->hires);
             else rc = false;
         }
         else if (key == key_map_zoomout)  // zoom out
         {
-            mtof_zoommul = M_ZOOMOUT;
-            ftom_zoommul = M_ZOOMIN;
+            mtof_zoommul = m_zoomout_kbd;
+            ftom_zoommul = m_zoomin_kbd;
         }
         else if (key == key_map_zoomin)   // zoom in
         {
-            mtof_zoommul = M_ZOOMIN;
-            ftom_zoommul = M_ZOOMOUT;
+            mtof_zoommul = m_zoomin_kbd;
+            ftom_zoommul = m_zoomout_kbd;
         }
         else if (key == key_map_toggle)
         {

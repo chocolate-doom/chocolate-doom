@@ -329,7 +329,9 @@ static int G_NextWeapon(int direction)
 // If recording a demo, write it out 
 // 
 
-static boolean speedkeydown (void)
+// [crispy] holding down the "Run" key may trigger special behavior,
+// e.g. quick exit, automap pan/zoom speed
+boolean speedkeydown (void)
 {
     return (key_speed < NUMKEYS && gamekeydown[key_speed]) ||
            (joybspeed < MAX_JOY_BUTTONS && joybuttons[joybspeed]) ||

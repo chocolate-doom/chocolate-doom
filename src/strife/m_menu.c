@@ -1333,6 +1333,10 @@ static char *M_SelectEndMessage(void)
 //
 void M_QuitStrife(int choice)
 {
+    // [crispy] fast exit if "run" key is held down
+    if (speedkeydown())
+        I_Quit();
+
     DEH_snprintf(endstring, sizeof(endstring),
                  "Do you really want to leave?\n\n" DOSY);
   
