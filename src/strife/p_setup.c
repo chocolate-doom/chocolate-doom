@@ -277,6 +277,10 @@ void P_LoadSectors (int lump)
 	ss->interpfloorheight = ss->floorheight;
 	ss->oldceilingheight = ss->ceilingheight;
 	ss->interpceilingheight = ss->ceilingheight;
+
+	// [crispy] Allow sectors to be interpolated by default.
+	ss->interpolate = true;
+
 	// [crispy] inhibit sector interpolation during the 0th gametic
 	ss->oldgametic = -1;
     }

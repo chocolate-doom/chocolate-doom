@@ -145,6 +145,9 @@ typedef	struct
     //      the renderer.
     fixed_t	interpfloorheight;
     fixed_t	interpceilingheight;
+
+    // [crispy] Enable/disable sector interpolation.
+    boolean interpolate;
 } sector_t;
 
 

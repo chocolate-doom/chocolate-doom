@@ -1308,6 +1308,9 @@ void EV_SlidingDoor(line_t* line, mobj_t* thing)
     // Init sliding door vars
     if(!door)
     {
+        // [crispy] Don't interpolate sliding doors.
+        sec->interpolate = false;
+
         door = Z_Malloc (sizeof(*door), PU_LEVSPEC, 0);
         P_AddThinker (&door->thinker);
 
