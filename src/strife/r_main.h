@@ -102,7 +102,7 @@ extern void		(*spanfunc) (void);
 
 
 // [crispy] smooth texture scrolling
-extern void R_InterpolateTextureOffsets (void);
+void R_InterpolateTextureOffsets (void);
 
 
 //
