@@ -33,7 +33,7 @@
 #define HU_BROADCAST    9       // haleyjd [STRIFE] Changed 5 -> 9
 #define HU_CHANGENAME   10      // haleyjd [STRIFE] Special command
 
-#define HU_MSGX         0
+#define HU_MSGX         (0 - WIDESCREENDELTA)
 #define HU_MSGY         (SHORT(hu_font[0]->height) + 1) // [STRIFE]: DOOM bug fix
 #define HU_MSGWIDTH     64      // in characters
 #define HU_MSGHEIGHT    2       // in lines

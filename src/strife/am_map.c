@@ -1397,13 +1397,13 @@ void AM_drawMarks(void)
             //      h = SHORT(marknums[i]->height);
             w = 5; // because something's wrong with the wad, i guess
             h = 6; // because something's wrong with the wad, i guess
-            fx = CXMTOF(markpoints[i].x);
-            fy = CYMTOF(markpoints[i].y);
-            if(fx >= f_x && fx <= f_w - w && fy >= f_y && fy <= f_h - h)
+            fx = (CXMTOF(markpoints[i].x) >> crispy->hires) - WIDESCREENDELTA;
+            fy = (CYMTOF(markpoints[i].y) >> crispy->hires);
+            if (fx >= f_x && fx <= (f_w >> crispy->hires) - w && fy >= f_y && fy <= (f_h >> crispy->hires) - h)
             {
                 // villsa [STRIFE]
                 if(i >= mapmarknum)
-                    V_DrawPatch(fx >> crispy->hires, fy >> crispy->hires, marknums[i]);
+                    V_DrawPatch(fx, fy, marknums[i]);
             }
         }
     }

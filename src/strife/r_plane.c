@@ -117,10 +117,9 @@ R_MapPlane
   int		x1,
   int		x2 )
 {
-    angle_t	angle;
     fixed_t	distance;
-    fixed_t	length;
     unsigned	index;
+    int dx, dy;
 	
 #ifdef RANGECHECK
     if (x2 < x1
@@ -132,12 +131,20 @@ R_MapPlane
     }
 #endif
 
+// [crispy] visplanes with the same flats now match up far better than before
+// adapted from prboom-plus/src/r_plane.c:191-239, translated to fixed-point math
+
+    if (!(dy = abs(centery - y)))
+    {
+	return;
+    }
+
     if (planeheight != cachedheight[y])
     {
 	cachedheight[y] = planeheight;
 	distance = cacheddistance[y] = FixedMul (planeheight, yslope[y]);
-	ds_xstep = cachedxstep[y] = FixedMul (distance,basexscale);
-	ds_ystep = cachedystep[y] = FixedMul (distance,baseyscale);
+	ds_xstep = cachedxstep[y] = (FixedMul (viewsin, planeheight) / dy) << detailshift;
+	ds_ystep = cachedystep[y] = (FixedMul (viewcos, planeheight) / dy) << detailshift;
     }
     else
     {
@@ -145,11 +152,11 @@ R_MapPlane
 	ds_xstep = cachedxstep[y];
 	ds_ystep = cachedystep[y];
     }
-	
-    length = FixedMul (distance,distscale[x1]);
-    angle = (viewangle + xtoviewangle[x1])>>ANGLETOFINESHIFT;
-    ds_xfrac = viewx + FixedMul(finecosine[angle], length);
-    ds_yfrac = -viewy - FixedMul(finesine[angle], length);
+
+    dx = x1 - centerx;
+
+    ds_xfrac = viewx + FixedMul(viewcos, distance) + dx * ds_xstep;
+    ds_yfrac = -viewy - FixedMul(viewsin, distance) + dx * ds_ystep;
 
     if (fixedcolormap)
 	ds_colormap = fixedcolormap;

@@ -48,7 +48,7 @@
 //
 #define HU_TITLE        (mapnames[gamemap-1])
 #define HU_TITLEHEIGHT  1
-#define HU_TITLEX       0
+#define HU_TITLEX       (0 - WIDESCREENDELTA)
 
 // haleyjd 09/01/10: [STRIFE] 167 -> 160 to move up level name
 #define HU_TITLEY       (160 - SHORT(hu_font[0]->height))
@@ -196,6 +196,9 @@ void HU_Stop(void)
 //
 // haleyjd 09/18/10: [STRIFE] Added a hack for nickname at the end.
 //
+
+static int hu_widescreendelta;
+
 void HU_Start(void)
 {
     int         i;
@@ -231,6 +234,10 @@ void HU_Start(void)
         message_dontfuckwithme = false;
         message_nottobefuckedwith = false;
         chat_on = false;
+
+        // [crispy] re-calculate WIDESCREENDELTA
+        I_GetScreenDimensions();
+        hu_widescreendelta = WIDESCREENDELTA;
 
         // create the message widget
         HUlib_initSText(&w_message,
@@ -269,6 +276,12 @@ void HU_Start(void)
 //
 void HU_Drawer(void)
 {
+    // [crispy] re-calculate widget coordinates on demand
+    if (hu_widescreendelta != WIDESCREENDELTA)
+    {
+        HU_Start();
+    }
+
     HUlib_drawSText(&w_message);
     HUlib_drawIText(&w_chat);
     if (automapactive)

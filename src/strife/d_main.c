@@ -344,7 +344,7 @@ void D_Display (void)
             y = 4;
         else
             y = (viewwindowy >> crispy->hires)+4;
-        V_DrawPatchDirect((viewwindowx >> crispy->hires) + ((scaledviewwidth >> crispy->hires) - 68) / 2, y,
+        V_DrawPatchDirect((viewwindowx >> crispy->hires) + ((scaledviewwidth >> crispy->hires) - 68) / 2 - WIDESCREENDELTA, y,
                           W_CacheLumpName (DEH_String("M_PAUSE"), PU_CACHE));
     }
 
@@ -483,6 +483,7 @@ void D_BindVariables(void)
     M_BindIntVariable("crispy_smoothscaling",   &crispy->smoothscaling);
     M_BindIntVariable("crispy_uncapped",        &crispy->uncapped);
     M_BindIntVariable("crispy_vsync",           &crispy->vsync);
+    M_BindIntVariable("crispy_widescreen",      &crispy->widescreen);
 }
 
 //
@@ -598,7 +599,7 @@ void D_PageTicker (void)
 //
 void D_PageDrawer (void)
 {
-    V_DrawPatch (0, 0, W_CacheLumpName(pagename, PU_CACHE));
+    V_DrawPatchFullScreen (W_CacheLumpName(pagename, PU_CACHE), false);
 }
 
 
@@ -1218,8 +1219,8 @@ boolean D_PatchClipCallback(patch_t *patch, int x, int y)
 {
     // note that offsets were already accounted for in V_DrawPatch
     return (x >= 0 && y >= 0 
-            && x + SHORT(patch->width) <= ORIGWIDTH 
-            && y + SHORT(patch->height) <= ORIGHEIGHT);
+            && x + SHORT(patch->width) <= (SCREENWIDTH >> crispy->hires)
+            && y + SHORT(patch->height) <= (SCREENHEIGHT >> crispy->hires));
 }
 
 //
