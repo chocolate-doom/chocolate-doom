@@ -867,7 +867,6 @@ void R_DrawPSprite(pspdef_t * psp)
             int deltax = vis->x2 - vis->x1;
             vis->x1 = oldx1 + FixedMul(vis->x1 - oldx1, fractionaltic);
             vis->x2 = vis->x1 + deltax;
-            vis->x2 = vis->x2 >= viewwidth ? viewwidth - 1 : vis->x2;
             vis->texturemid = oldtexturemid + FixedMul(vis->texturemid - oldtexturemid, fractionaltic);
         }
         else
