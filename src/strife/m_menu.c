@@ -42,6 +42,7 @@
 
 
 #include "hu_stuff.h"
+#include "am_map.h" // [crispy]
 
 #include "g_game.h"
 
