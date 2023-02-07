@@ -18,6 +18,7 @@
 //
 
 #include "crispy.h"
+#include "doomstat.h"
 #include "i_input.h"
 #include "m_menu.h"
 #include "p_local.h"
@@ -57,6 +58,7 @@ multiitem_t multiitem_widescreen[NUM_RATIOS] =
 };
 
 extern void AM_LevelInit (boolean reinit);
+extern void AM_initVariables(void);
 extern void EnableLoadingDisk (void);
 extern void I_ReInitGraphics (int reinit);
 
@@ -150,6 +152,10 @@ static void M_CrispyToggleHiresHook (void)
     EnableLoadingDisk();
     // [crispy] re-calculate automap coordinates
     AM_LevelInit(true);
+    if (automapactive)
+    {
+        AM_initVariables();
+    }
 }
 
 void M_CrispyToggleHires(int choice)
@@ -207,6 +213,10 @@ static void M_CrispyToggleWidescreenHook (void)
     EnableLoadingDisk();
     // [crispy] re-calculate automap coordinates
     AM_LevelInit(true);
+    if (automapactive)
+    {
+        AM_initVariables();
+    }
 }
 
 void M_CrispyToggleWidescreen(int choice)
