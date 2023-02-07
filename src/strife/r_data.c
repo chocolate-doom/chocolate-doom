@@ -33,6 +33,7 @@
 #include "r_sky.h"
 #include "r_data.h"
 #include "sounds.h" // villsa [STRIFE]
+#include "v_trans.h" // [crispy] color translation and color string tables
 
 //
 // Graphics.
@@ -694,6 +695,30 @@ void R_InitColormaps (void)
     // Load in the light tables, 256 byte align tables.
     lump = W_GetNumForName(DEH_String("COLORMAP"));
     colormaps = W_CacheLumpNum(lump, PU_STATIC);
+
+    // [crispy] initialize color translation and color strings tables
+    {
+        byte *playpal = W_CacheLumpName("PLAYPAL", PU_STATIC);
+        char c[3];
+        int i, j;
+
+        if (!crstr)
+            crstr = I_Realloc(NULL, CRMAX * sizeof(*crstr));
+
+        // [crispy] CRMAX - 2: don't override the original GREN and BLUE2 Boom tables
+        for (i = 0; i < CRMAX - 2; i++)
+        {
+            for (j = 0; j < 256; j++)
+            {
+                cr[i][j] = V_Colorize(playpal, i, j, false);
+            }
+
+            M_snprintf(c, sizeof(c), "%c%c", cr_esc, '0' + i);
+            crstr[i] = M_StringDuplicate(c);
+        }
+
+        W_ReleaseLumpName("PLAYPAL");
+    }
 }
 
 

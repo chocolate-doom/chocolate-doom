@@ -358,6 +358,15 @@ void D_Display (void)
     if (!wipe)
     {
         I_FinishUpdate ();              // page flip or blit buffer
+
+        // [crispy] post-rendering function pointer to apply config changes
+        // that affect rendering and that are better applied after the current
+        // frame has finished rendering
+        if (crispy->post_rendering_hook)
+        {
+            crispy->post_rendering_hook();
+            crispy->post_rendering_hook = NULL;
+        }
         return;
     }
     
@@ -516,6 +525,15 @@ static boolean D_StartupGrabCallback(void)
     return false;
 }
 
+// [crispy]
+void EnableLoadingDisk(void)
+{
+    if (show_diskicon)
+    {
+        V_EnableLoadingDisk("STDISK", SCREENWIDTH - LOADING_DISK_W, 3);
+    }
+}
+
 //
 //  D_DoomLoop
 //
@@ -536,10 +554,7 @@ void D_DoomLoop (void)
         I_InitGraphics();
     }
 
-    if (show_diskicon)
-    {
-        V_EnableLoadingDisk("STDISK", SCREENWIDTH - LOADING_DISK_W, 3);
-    }
+    EnableLoadingDisk(); // [crispy]
     I_SetGrabMouseCallback(D_GrabMouseCallback);
 
     V_RestoreBuffer();

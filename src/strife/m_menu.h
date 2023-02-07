@@ -31,6 +31,7 @@
 typedef struct
 {
     // 0 = no cursor here, 1 = ok, 2 = arrows ok
+    // [crispy] 3 = arrows ok, enter for numeric entry
     short	status;
     
     char	name[10];
@@ -38,10 +39,13 @@ typedef struct
     // choice = menu item #.
     // if status = 2,
     //   choice=0:leftarrow,1:rightarrow
+    // [crispy] if status = 3,
+    //   choice=0:leftarrow,1:rightarrow,2:enter
     void	(*routine)(int choice);
     
     // hotkey in menu
     char	alphaKey;			
+    const char	*alttext; // [crispy] alternative text for menu items
 } menuitem_t;
 
 typedef struct menu_s
@@ -53,6 +57,7 @@ typedef struct menu_s
     short		x;
     short		y;		// x,y of menu
     short		lastOn;		// last item user was on in menu
+    short		lumps_missing;	// [crispy] indicate missing menu graphics lumps
 } menu_t;
 
 extern menu_t*	currentMenu;    // villsa [STRIFE] made external
@@ -95,10 +100,16 @@ void M_DialogDimMsg(int x, int y, char *str, boolean useyfont);
 void M_ClearMenus (int choice);
 void M_LoadSelect(int choice);
 
+// [crispy] Propagate default difficulty setting change
+void M_SetDefaultDifficulty (void);
+
 extern int detailLevel;
 extern int screenblocks;
 
 extern  boolean	inhelpscreens;
 
+// [crispy] Numeric entry
+extern boolean numeric_enter;
+extern int numeric_entry;
 
 #endif    

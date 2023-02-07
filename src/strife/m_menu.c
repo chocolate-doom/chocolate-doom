@@ -62,6 +62,9 @@
 #include "m_menu.h"
 #include "p_dialog.h"
 
+#include "m_crispy.h" // [crispy] Crispness menu
+#include "v_trans.h" // [crispy] color translation and color string tables
+
 
 void M_QuitStrife(int);
 
@@ -122,6 +125,13 @@ int			saveCharIndex;	// which char we're editing
 // old save description before edit
 char			saveOldString[SAVESTRINGSIZE];  
 
+// [crispy] for entering numeric values
+#define NUMERIC_ENTRY_NUMDIGITS 3
+boolean numeric_enter;
+int numeric_entry;
+static char numeric_entry_str[NUMERIC_ENTRY_NUMDIGITS + 1];
+static int numeric_entry_index;
+
 boolean                 inhelpscreens;
 boolean                 menuactive;
 boolean                 menupause;      // haleyjd 08/29/10: [STRIFE] New global
@@ -131,6 +141,7 @@ boolean                 menuindialog;   // haleyjd 09/04/10: ditto
 // haleyjd 08/27/10: [STRIFE] SKULLXOFF == -28, LINEHEIGHT == 19
 #define CURSORXOFF		-28
 #define LINEHEIGHT		19
+#define CRISPY_LINEHEIGHT	10 // [crispy] Crispness menu
 
 char			savegamestrings[10][SAVESTRINGSIZE];
 
@@ -142,7 +153,9 @@ char	endstring[160];
 // haleyjd 08/27/10: [STRIFE] skull* stuff changed to cursor* stuff
 short		itemOn;			// menu item skull is on
 short		cursorAnimCounter;	// skull animation counter
+short		cursorAnimCounter2;	// [crispy] Crispness menu cursor animation counter
 short		whichCursor;		// which skull to draw
+short		whichCursor2;		// [crispy] which Crispness menu cursor to draw
 
 // graphic name of cursors
 // haleyjd 08/27/10: [STRIFE] M_SKULL* -> M_CURS*
@@ -211,6 +224,12 @@ int  M_StringHeight(const char *string);
 void M_StartMessage(const char *string,void *routine,boolean input);
 void M_StopMessage(void);
 
+// [crispy] Crispness menu
+static void M_CrispnessCur(int choice);
+static void M_CrispnessNext(int choice);
+static void M_CrispnessPrev(int choice);
+static void M_DrawCrispness1(void);
+static void M_DrawCrispness2(void);
 
 
 
@@ -325,16 +344,18 @@ enum
     scrnsize,
     option_empty1,
     soundvol,
+    crispness, // [crispy] Crispness menu
     opt_end
 } options_e;
 
-menuitem_t OptionsMenu[]=
+menuitem_t OptionsMenu[] =
 {
     // haleyjd 08/28/10: [STRIFE] Removed messages, mouse sens., detail.
-    {1,"M_ENDGAM",	M_EndGame,'e'},
-    {2,"M_SCRNSZ",	M_SizeDisplay,'s'},
+    {1,"M_ENDGAM",	M_EndGame,'e', "End Game"},
+    {2,"M_SCRNSZ",	M_SizeDisplay,'s', "Screen Size"},
     {-1,"",0,'\0'},
-    {1,"M_SVOL",	M_Sound,'s'}
+    {1,"M_SVOL",	M_Sound,'s', "Settings"},
+    {1,"M_CRISPY",	M_CrispnessCur,'c', "Crispness"} // [crispy] Crispness menu
 };
 
 menu_t  OptionsDef =
@@ -346,6 +367,85 @@ menu_t  OptionsDef =
     60,37,
     0
 };
+
+// [crispy] Crispness menu
+enum
+{
+    crispness_sep_rendering,
+    crispness_hires,
+    crispness_widescreen,
+    crispness_smoothscaling,
+    crispness_uncapped,
+    crispness_fpslimit,
+    crispness_vsync,
+    crispness_sep_rendering_,
+
+    crispness1_next,
+    crispness1_end
+} crispness1_e;
+
+static menuitem_t Crispness1Menu[] =
+{
+    {-1, "", 0, '\0'},
+    {2, "", M_CrispyToggleHires, 'h'},
+    {2, "", M_CrispyToggleWidescreen, 'w'},
+    {2, "", M_CrispyToggleSmoothScaling, 's'},
+    {2, "", M_CrispyToggleUncapped, 'u'},
+    {3, "", M_CrispyToggleFpsLimit, 'f'},
+    {2, "", M_CrispyToggleVsync, 'v'},
+    {-1, "", 0, '\0'},
+    {1, "", M_CrispnessNext, 'n'},
+};
+
+static menu_t Crispness1Def =
+{
+    crispness1_end,
+    &OptionsDef,
+    Crispness1Menu,
+    M_DrawCrispness1,
+    48, 30,
+    1
+};
+
+enum
+{
+    crispness_sep_tactical,
+    crispness_bobfactor,
+    crispness_centerweapon,
+    crispness_defaultskill,
+    crispness_sep_tactical_,
+
+    crispness2_prev,
+    crispness2_end
+} crispness2_e;
+
+static menuitem_t Crispness2Menu[] =
+{
+    {-1, "", 0, '\0'},
+    {2, "", M_CrispyToggleBobfactor, 'p'},
+    {2, "", M_CrispyToggleCenterweapon, 'c'},
+    {2, "", M_CrispyToggleDefaultSkill, 'd'},
+    {-1, "", 0, '\0'},
+    {1, "", M_CrispnessPrev, 'p'},
+};
+
+static menu_t Crispness2Def =
+{
+    crispness2_end,
+    &OptionsDef,
+    Crispness2Menu,
+    M_DrawCrispness2,
+    48, 30,
+    1
+};
+
+static menu_t *CrispnessMenus[] =
+{
+    &Crispness1Def,
+    &Crispness2Def,
+};
+
+static int crispness_cur;
 
 //
 // Read This! MENU 1 & 2 & [STRIFE] 3
@@ -1139,9 +1239,164 @@ void M_DrawOptions(void)
                  9,screenSize);
 }
 
+// [crispy] Crispness menu
+static void M_DrawCrispnessBackground(void)
+{
+    byte *src, *dest;
+    int x, y;
+
+    src = W_CacheLumpName(back_flat, PU_CACHE);
+    dest = I_VideoBuffer;
+
+    for (y = 0; y < SCREENHEIGHT; y++)
+    {
+        for (x = 0; x < SCREENWIDTH / 64; x++)
+        {
+            memcpy(dest, src + ((y & 63) << 6), 64);
+            dest += 64;
+        }
+
+        if (SCREENWIDTH & 63)
+        {
+            memcpy(dest, src + ((y & 63) << 6), SCREENWIDTH & 63);
+            dest += (SCREENWIDTH & 63);
+        }
+    }
+
+    // Darker background for better text legibility.
+    for (x = 0; x < SCREENWIDTH * SCREENHEIGHT; x++)
+    {
+        I_VideoBuffer[x] = colormaps[8 * 256 + I_VideoBuffer[x]];
+    }
+
+    inhelpscreens = true;
+}
+
+static char crispy_menu_text[48];
+
+static void M_DrawCrispnessHeader(const char *item)
+{
+    M_snprintf(crispy_menu_text, sizeof(crispy_menu_text),
+               "%s%s", crstr[CR_RED], item);
+    M_WriteText(ORIGWIDTH/2 - M_StringWidth(item) / 2, CRISPY_LINEHEIGHT, crispy_menu_text);
+}
+
+static void M_DrawCrispnessSeparator(int y, const char *item)
+{
+    M_snprintf(crispy_menu_text, sizeof(crispy_menu_text),
+               "%s%s", crstr[CR_RED], item);
+    M_WriteText(currentMenu->x - 8, currentMenu->y + CRISPY_LINEHEIGHT * y, crispy_menu_text);
+}
+
+static void M_DrawCrispnessItem(int y, const char *item, int feat, boolean cond)
+{
+    M_snprintf(crispy_menu_text, sizeof(crispy_menu_text),
+               "%s%s: %s%s", cond ? crstr[CR_NONE] : crstr[CR_DARK], item,
+               cond ? (feat ? crstr[CR_GREEN] : crstr[CR_DARK]) : crstr[CR_DARK],
+               cond && feat ? "On" : "Off");
+    M_WriteText(currentMenu->x, currentMenu->y + CRISPY_LINEHEIGHT * y, crispy_menu_text);
+}
+
+static void M_DrawCrispnessMultiItem(int y, const char *item, multiitem_t *multiitem, int feat, boolean cond)
+{
+    M_snprintf(crispy_menu_text, sizeof(crispy_menu_text),
+               "%s%s: %s%s", cond ? crstr[CR_NONE] : crstr[CR_DARK], item,
+               cond ? (feat ? crstr[CR_GREEN] : crstr[CR_DARK]) : crstr[CR_DARK],
+               cond && feat ? multiitem[feat].name : multiitem[0].name);
+    M_WriteText(currentMenu->x, currentMenu->y + CRISPY_LINEHEIGHT * y, crispy_menu_text);
+}
+
+static void M_DrawCrispnessNumericItem(int y, const char *item, int feat, const char *zero, boolean cond, const char *disabled)
+{
+    char number[NUMERIC_ENTRY_NUMDIGITS + 2];
+    const int size = NUMERIC_ENTRY_NUMDIGITS + 2;
+
+    if (numeric_enter)
+    {
+        M_snprintf(number, size, "%s_", numeric_entry_str);
+    }
+    else
+    {
+        M_snprintf(number, size, "%d", feat);
+    }
+
+    M_snprintf(crispy_menu_text, sizeof(crispy_menu_text),
+               "%s%s: %s%s", cond ? crstr[CR_NONE] : crstr[CR_DARK], item,
+               cond ? (feat || numeric_enter ? crstr[CR_GREEN] : crstr[CR_DARK]) : crstr[CR_DARK],
+               cond ? (feat || numeric_enter ? number : zero) : disabled);
+    M_WriteText(currentMenu->x, currentMenu->y + CRISPY_LINEHEIGHT * y, crispy_menu_text);
+}
+
+static void M_DrawCrispnessGoto(int y, const char *item)
+{
+    M_snprintf(crispy_menu_text, sizeof(crispy_menu_text),
+               "%s%s", crstr[CR_NONE], item);
+    M_WriteText(currentMenu->x, currentMenu->y + CRISPY_LINEHEIGHT * y, crispy_menu_text);
+}
+
+static void M_DrawCrispness1(void)
+{
+    M_DrawCrispnessBackground();
+
+    M_DrawCrispnessHeader("Crispness 1/2");
+
+    M_DrawCrispnessSeparator(crispness_sep_rendering, "Rendering");
+    M_DrawCrispnessItem(crispness_hires, "High Resolution Rendering", crispy->hires, true);
+    M_DrawCrispnessMultiItem(crispness_widescreen, "Aspect Ratio", multiitem_widescreen, crispy->widescreen, aspect_ratio_correct == 1);
+    M_DrawCrispnessItem(crispness_smoothscaling, "Smooth Pixel Scaling", crispy->smoothscaling, !force_software_renderer);
+    M_DrawCrispnessItem(crispness_uncapped, "Uncapped Framerate", crispy->uncapped, true);
+    M_DrawCrispnessNumericItem(crispness_fpslimit, "FPS Limit", crispy->fpslimit, "None", crispy->uncapped, "35");
+    M_DrawCrispnessItem(crispness_vsync, "Enable VSync", crispy->vsync, !force_software_renderer);
+
+    M_DrawCrispnessGoto(crispness1_next, "Next Page >");
+
+    dp_translation = NULL;
+}
+
+static void M_DrawCrispness2(void)
+{
+    M_DrawCrispnessBackground();
+
+    M_DrawCrispnessHeader("Crispness 2/2");
+
+    M_DrawCrispnessSeparator(crispness_sep_tactical, "Tactical");
+    M_DrawCrispnessMultiItem(crispness_bobfactor, "View/Weapon Bobbing", multiitem_bobfactor, crispy->bobfactor, true);
+    M_DrawCrispnessMultiItem(crispness_centerweapon, "Attack Alignment", multiitem_centerweapon, crispy->centerweapon, crispy->bobfactor != BOBFACTOR_OFF);
+    M_DrawCrispnessMultiItem(crispness_defaultskill, "Default Difficulty", multiitem_difficulties, crispy->defaultskill, true);
+
+    M_DrawCrispnessGoto(crispness2_prev, "< Prev Page");
+
+    dp_translation = NULL;
+}
+
 void M_Options(int choice)
 {
     M_SetupNextMenu(&OptionsDef);
+}
+
+static void M_CrispnessCur(int choice)
+{
+    M_SetupNextMenu(CrispnessMenus[crispness_cur]);
+}
+
+static void M_CrispnessNext(int choice)
+{
+    if (++crispness_cur > arrlen(CrispnessMenus) - 1)
+    {
+        crispness_cur = 0;
+    }
+
+    M_CrispnessCur(0);
+}
+
+static void M_CrispnessPrev(int choice)
+{
+    if (--crispness_cur < 0)
+    {
+        crispness_cur = arrlen(CrispnessMenus) - 1;
+    }
+
+    M_CrispnessCur(0);
 }
 
 //
@@ -1569,6 +1824,17 @@ M_WriteText
             continue;
         }
 
+        // [crispy] support multi-colored text
+        if (c == cr_esc)
+        {
+            if (*ch >= '0' && *ch <= '0' + CRMAX - 1)
+            {
+                c = *ch++;
+                dp_translation = cr[(int) (c - '0')];
+                continue;
+            }
+        }
+
         c = toupper(c) - HU_FONTSTART;
         if (c < 0 || c>= HU_FONTSIZE)
         {
@@ -1926,6 +2192,63 @@ boolean M_Responder (event_t* ev)
         return true;
     }
 
+    // [crispy] Enter numeric value
+    if (numeric_enter)
+    {
+        switch (key)
+        {
+            case KEY_BACKSPACE:
+                if (numeric_entry_index > 0)
+                {
+                    numeric_entry_index--;
+                    numeric_entry_str[numeric_entry_index] = '\0';
+                }
+                break;
+            case KEY_ESCAPE:
+                numeric_enter = false;
+                I_StopTextInput();
+                break;
+            case KEY_ENTER:
+                if (numeric_entry_str[0] != '\0')
+                {
+                    numeric_entry = atoi(numeric_entry_str);
+                    currentMenu->menuitems[itemOn].routine(2);
+                }
+                else
+                {
+                    numeric_enter = false;
+                    I_StopTextInput();
+                }
+                break;
+            default:
+                if (ev->type != ev_keydown)
+                {
+                    break;
+                }
+
+                if (vanilla_keyboard_mapping)
+                {
+                    ch = ev->data1;
+                }
+                else
+                {
+                    ch = ev->data3;
+                }
+
+                if (ch >= '0' && ch <= '9' &&
+                    numeric_entry_index < NUMERIC_ENTRY_NUMDIGITS)
+                {
+                    numeric_entry_str[numeric_entry_index++] = ch;
+                    numeric_entry_str[numeric_entry_index] = '\0';
+                }
+                else
+                {
+                    break;
+                }
+        }
+        return true;
+    }
+
     // Take care of any messages that need input
     if (messageToPrint)
     {
@@ -2165,7 +2488,7 @@ boolean M_Responder (event_t* ev)
         // Slide slider left
 
         if (currentMenu->menuitems[itemOn].routine &&
-            currentMenu->menuitems[itemOn].status == 2)
+            currentMenu->menuitems[itemOn].status >= 2)
         {
             S_StartSound(NULL, sfx_stnmov);
             currentMenu->menuitems[itemOn].routine(0);
@@ -2177,7 +2500,7 @@ boolean M_Responder (event_t* ev)
         // Slide slider right
 
         if (currentMenu->menuitems[itemOn].routine &&
-            currentMenu->menuitems[itemOn].status == 2)
+            currentMenu->menuitems[itemOn].status >= 2)
         {
             S_StartSound(NULL, sfx_stnmov);
             currentMenu->menuitems[itemOn].routine(1);
@@ -2196,6 +2519,12 @@ boolean M_Responder (event_t* ev)
             {
                 currentMenu->menuitems[itemOn].routine(1);      // right arrow
                 S_StartSound(NULL, sfx_stnmov);
+            }
+            else if (currentMenu->menuitems[itemOn].status == 3) // [crispy]
+            {
+                currentMenu->menuitems[itemOn].routine(2); // enter key
+                numeric_entry_index = 0;
+                numeric_entry_str[0] = '\0';
             }
             else
             {
@@ -2231,6 +2560,27 @@ boolean M_Responder (event_t* ev)
             S_StartSound(NULL, sfx_swtchn);
         }
         return true;
+    }
+    // [crispy] next/prev Crispness menu
+    else if (key == KEY_PGUP)
+    {
+        currentMenu->lastOn = itemOn;
+        if (currentMenu == CrispnessMenus[crispness_cur])
+        {
+            M_CrispnessPrev(0);
+            S_StartSound(NULL, sfx_swtchn);
+            return true;
+        }
+    }
+    else if (key == KEY_PGDN)
+    {
+        currentMenu->lastOn = itemOn;
+        if (currentMenu == CrispnessMenus[crispness_cur])
+        {
+            M_CrispnessNext(0);
+            S_StartSound(NULL, sfx_swtchn);
+            return true;
+        }
     }
 
     // Keyboard shortcut?
@@ -2352,13 +2702,30 @@ void M_Drawer (void)
     y = currentMenu->y;
     max = currentMenu->numitems;
 
+    // [crispy] check current menu for missing menu graphics lumps - only once
+    if (currentMenu->lumps_missing == 0)
+    {
+        for (i = 0; i < max; i++)
+            if (currentMenu->menuitems[i].name[0])
+                if (W_CheckNumForName(currentMenu->menuitems[i].name) < 0)
+                    currentMenu->lumps_missing++;
+
+        // [crispy] no lump missing, no need to check again
+        if (currentMenu->lumps_missing == 0)
+            currentMenu->lumps_missing = -1;
+    }
+
     for (i=0;i<max;i++)
     {
+        const char *alttext = currentMenu->menuitems[i].alttext;
         name = DEH_String(currentMenu->menuitems[i].name);
 
-        if (name[0])
+        if (name[0] && (W_CheckNumForName(name) > 0 || alttext))
         {
-            V_DrawPatchDirect (x, y, W_CacheLumpName(name, PU_CACHE));
+            if (W_CheckNumForName(name) > 0 && currentMenu->lumps_missing == -1)
+                V_DrawPatchDirect(x, y, W_CacheLumpName(name, PU_CACHE));
+            else if (alttext)
+                M_WriteText(x, y + 12 - (M_StringHeight(alttext) / 2), alttext);
         }
         y += LINEHEIGHT;
     }
@@ -2366,6 +2733,14 @@ void M_Drawer (void)
     
     // haleyjd 08/27/10: [STRIFE] Adjust to draw spinning Sigil
     // DRAW SIGIL
+    if (currentMenu == CrispnessMenus[crispness_cur])
+    {
+        char item[4];
+        M_snprintf(item, sizeof(item), "%s>", whichCursor2 ? crstr[CR_NONE] : crstr[CR_DARK]);
+        M_WriteText(currentMenu->x - 8, currentMenu->y + CRISPY_LINEHEIGHT * itemOn, item);
+        dp_translation = NULL;
+    }
+    else
     V_DrawPatchDirect(x + CURSORXOFF, currentMenu->y - 5 + itemOn*LINEHEIGHT,
                       W_CacheLumpName(DEH_String(cursorName[whichCursor]),
                                       PU_CACHE));
@@ -2411,8 +2786,21 @@ void M_Ticker (void)
         whichCursor = (whichCursor + 1) % 8;
         cursorAnimCounter = 5;
     }
+
+    // [crispy] Crispness menu cursor
+    if (--cursorAnimCounter2 <= 0)
+    {
+        whichCursor2 ^= 1;
+        cursorAnimCounter2 = 8;
+    }
 }
 
+// [crispy]
+void M_SetDefaultDifficulty (void)
+{
+    // Strife default is SKILL_HNTR ("Rookie").
+    NewDef.lastOn = (crispy->defaultskill + SKILL_HNTR) % NUM_SKILLS;
+}
 
 //
 // M_Init
@@ -2425,15 +2813,16 @@ void M_Init (void)
     menuactive = 0;
     itemOn = currentMenu->lastOn;
     whichCursor = 0;
+    whichCursor2 = 0; // [crispy] Crispness menu cursor
     cursorAnimCounter = 10;
+    cursorAnimCounter2 = 10; // [crispy] Crispness menu cursor
     screenSize = screenblocks - 3;
     messageToPrint = 0;
     messageString = NULL;
     messageLastMenuActive = menuactive; // STRIFE-FIXME: assigns 0 here...
     quickSaveSlot = -1;
 
-    // [crispy] apply default difficulty (Strife default is SKILL_HNTR)
-    NewDef.lastOn = (crispy->defaultskill + SKILL_HNTR) % NUM_SKILLS;
+    M_SetDefaultDifficulty(); // [crispy] pre-select default difficulty
 
     // [STRIFE]: Initialize savegame paths and clear temporary directory
     G_WriteSaveName(5, "ME");

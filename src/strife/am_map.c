@@ -505,7 +505,7 @@ void AM_clearMarks(void)
 // should be called at the start of every level
 // right now, i figure it out myself
 //
-void AM_LevelInit(void)
+void AM_LevelInit(boolean reinit)
 {
     leveljuststarted = 0;
 
@@ -513,7 +513,8 @@ void AM_LevelInit(void)
     f_w = SCREENWIDTH;//finit_width;
     f_h = SCREENHEIGHT - (32 << crispy->hires);//finit_height;
 
-    AM_clearMarks();
+    if (!reinit)
+        AM_clearMarks();
 
     AM_findMinMaxBoundaries();
     scale_mtof = FixedDiv(min_scale_mtof, (int) (0.7*FRACUNIT));
@@ -550,7 +551,7 @@ void AM_Start (void)
     stopped = false;
     if (lastlevel != gamemap  /*|| lastepisode != gameepisode*/)
     {
-	AM_LevelInit();
+	AM_LevelInit(false);
 	lastlevel = gamemap;
 	//lastepisode = gameepisode;
     }

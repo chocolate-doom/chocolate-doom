@@ -208,6 +208,10 @@ void HU_Start(void)
     //if (headsupactive)
     //    HU_Stop();
     
+    // [crispy] re-calculate WIDESCREENDELTA
+    I_GetScreenDimensions();
+    hu_widescreendelta = WIDESCREENDELTA;
+
     // haleyjd 20120211: [STRIFE] moved up
     // create the map title widget
     HUlib_initTextLine(&w_title,
@@ -234,10 +238,6 @@ void HU_Start(void)
         message_dontfuckwithme = false;
         message_nottobefuckedwith = false;
         chat_on = false;
-
-        // [crispy] re-calculate WIDESCREENDELTA
-        I_GetScreenDimensions();
-        hu_widescreendelta = WIDESCREENDELTA;
 
         // create the message widget
         HUlib_initSText(&w_message,
@@ -279,6 +279,7 @@ void HU_Drawer(void)
     // [crispy] re-calculate widget coordinates on demand
     if (hu_widescreendelta != WIDESCREENDELTA)
     {
+        HU_Stop();
         HU_Start();
     }
 
