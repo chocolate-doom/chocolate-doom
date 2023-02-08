@@ -173,6 +173,11 @@ void M_CrispyToggleHires(int choice)
     crispy->post_rendering_hook = M_CrispyToggleHiresHook;
 }
 
+void M_CrispyToggleLeveltime(int choice)
+{
+    ChangeSettingEnum(&crispy->leveltime, choice, NUM_WIDGETS - 1);
+}
+
 void M_CrispyTogglePlayerCoords(int choice)
 {
     // [crispy] disable "always" setting

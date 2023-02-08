@@ -86,6 +86,7 @@ static player_t*        plr;
 patch_t*                hu_font[HU_FONTSIZE];
 patch_t*                yfont[HU_FONTSIZE];   // haleyjd 09/18/10: [STRIFE]
 static hu_textline_t    w_title;
+static hu_textline_t    w_ltime; // [crispy] leveltime widget
 static hu_textline_t    w_fps; // [crispy] showfps widget
 static hu_textline_t    w_coordx; // [crispy] playercoords x widget
 static hu_textline_t    w_coordy; // [crispy] playercoords y widget
@@ -230,6 +231,12 @@ void HU_Start(void)
                        hu_font,
                        HU_FONTSTART);
 
+    // [crispy] leveltime widget
+    HUlib_initTextLine(&w_ltime,
+                       HU_TITLEX, HU_MSGY + 1 * 8,
+                       hu_font,
+                       HU_FONTSTART);
+
     // [crispy] showfps widget
     HUlib_initTextLine(&w_fps,
                        HU_COORDX, HU_MSGY,
@@ -319,6 +326,12 @@ void HU_Drawer(void)
     if (automapactive)
         HUlib_drawTextLine(&w_title, false);
 
+    // [crispy] leveltime widget
+    if (crispy->leveltime == WIDGETS_ALWAYS || (automapactive && crispy->leveltime == WIDGETS_AUTOMAP))
+    {
+        HUlib_drawTextLine(&w_ltime, false);
+    }
+
     // [crispy] showfps widget
     if (plr->powers[pw_showfps])
     {
@@ -344,6 +357,7 @@ void HU_Erase(void)
     HUlib_eraseSText(&w_message);
     HUlib_eraseIText(&w_chat);
     HUlib_eraseTextLine(&w_title);
+    HUlib_eraseTextLine(&w_ltime); // [crispy] leveltime widget
     HUlib_eraseTextLine(&w_fps); // [crispy] showfps widget
     HUlib_eraseTextLine(&w_coordx); // [crispy] playercoords x widget
     HUlib_eraseTextLine(&w_coordy); // [crispy] playercoords y widget
@@ -527,6 +541,25 @@ void HU_Ticker(void)
             w_title.y = HU_TITLEY + ST_HEIGHT;
         else
             w_title.y = HU_TITLEY;
+    }
+
+    // [crispy] leveltime widget
+    if (crispy->leveltime == WIDGETS_ALWAYS || (automapactive && crispy->leveltime == WIDGETS_AUTOMAP))
+    {
+        const int time = leveltime / TICRATE;
+        const int hours = time / 3600;
+        const int minutes = (time / 60) % 60;
+        const int seconds = time % 60;
+
+        if (time >= 3600)
+            M_snprintf(str, sizeof(str), "%02d:%02d:%02d", hours, minutes, seconds);
+        else
+            M_snprintf(str, sizeof(str), "%02d:%02d", minutes, seconds);
+
+        HUlib_clearTextLine(&w_ltime);
+        s = str;
+        while (*s)
+            HUlib_addCharToTextLine(&w_ltime, *(s++));
     }
 
     // [crispy] showfps widget

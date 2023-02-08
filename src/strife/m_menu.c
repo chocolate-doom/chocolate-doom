@@ -385,6 +385,7 @@ enum
 
     crispness_sep_navigational,
     crispness_smoothmap,
+    crispness_leveltime,
     crispness_playercoords,
     crispness_sep_navigational_,
 
@@ -403,8 +404,9 @@ static menuitem_t Crispness1Menu[] =
     {2, "", M_CrispyToggleVsync, 'v'},
     {-1, "", 0, '\0'},
     {-1, "", 0, '\0'},
-    {2, "", M_CrispyToggleSmoothMap,'m'},
-    {2, "", M_CrispyTogglePlayerCoords,'p'},
+    {2, "", M_CrispyToggleSmoothMap, 'm'},
+    {2, "", M_CrispyToggleLeveltime, 'l'},
+    {2, "", M_CrispyTogglePlayerCoords, 'p'},
     {-1, "", 0, '\0'},
     {1, "", M_CrispnessNext, 'n'},
 };
@@ -1362,6 +1364,7 @@ static void M_DrawCrispness1(void)
 
     M_DrawCrispnessSeparator(crispness_sep_navigational, "Navigational");
     M_DrawCrispnessItem(crispness_smoothmap, "Smooth Automap Lines", crispy->smoothmap, true);
+    M_DrawCrispnessMultiItem(crispness_leveltime, "Show Level Time", multiitem_widgets, crispy->leveltime, true);
     M_DrawCrispnessMultiItem(crispness_playercoords, "Show Player Coords", multiitem_widgets, crispy->playercoords, true);
 
     M_DrawCrispnessGoto(crispness1_next, "Next Page >");
