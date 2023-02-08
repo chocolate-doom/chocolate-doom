@@ -2091,7 +2091,10 @@ boolean M_Responder (event_t* ev)
     {
         if (ev->type == ev_mouse && mousewait < I_GetTime())
         {
-            mousey += ev->data3;
+            // [crispy] Don't control Crispness menu with y-axis mouse movement.
+            if (!inhelpscreens)
+                mousey += ev->data3;
+
             if (mousey < lasty-30)
             {
                 key = key_menu_down;
@@ -2105,7 +2108,10 @@ boolean M_Responder (event_t* ev)
                 mousey = lasty += 30;
             }
 
-            mousex += ev->data2;
+            // [crispy] Don't control Crispness menu with x-axis mouse movement.
+            if (!inhelpscreens)
+                mousex += ev->data2;
+
             if (mousex < lastx-30)
             {
                 key = key_menu_left;
