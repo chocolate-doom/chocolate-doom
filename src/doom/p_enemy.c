@@ -1565,6 +1565,10 @@ A_PainShootSkull
 	return;
     }
 		
+    // [crispy] Lost Souls bleed Puffs
+    if (crispy->coloredblood == COLOREDBLOOD_ALL)
+        newmobj->flags |= MF_NOBLOOD;
+
     newmobj->target = actor->target;
     A_SkullAttack (newmobj);
 }

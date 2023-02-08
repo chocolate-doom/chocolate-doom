@@ -1073,6 +1073,9 @@ void P_SpawnMapThing (mapthing_t* mthing)
     {
 	mobj->health = 1000 + musid;
     }
+    // [crispy] Lost Souls bleed Puffs
+    if (crispy->coloredblood == COLOREDBLOOD_ALL && i == MT_SKULL)
+        mobj->flags |= MF_NOBLOOD;
 
     // [crispy] blinking key or skull in the status bar
     if (mobj->sprite == SPR_BSKU)
@@ -1158,6 +1161,10 @@ P_SpawnBlood
 
     // [crispy] connect blood object with the monster that bleeds it
     th->target = target;
+
+    // [crispy] Spectres bleed spectre blood
+    if (crispy->coloredblood == COLOREDBLOOD_ALL)
+        th->flags |= (target->flags & MF_SHADOW);
 }
 
 

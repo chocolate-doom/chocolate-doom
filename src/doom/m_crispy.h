@@ -28,6 +28,7 @@ typedef struct
 
 extern multiitem_t multiitem_bobfactor[NUM_BOBFACTORS];
 extern multiitem_t multiitem_brightmaps[NUM_BRIGHTMAPS];
+extern multiitem_t multiitem_coloredblood[NUM_COLOREDBLOOD];
 extern multiitem_t multiitem_centerweapon[NUM_CENTERWEAPON];
 extern multiitem_t multiitem_coloredhud[NUM_COLOREDHUD];
 extern multiitem_t multiitem_crosshair[NUM_CROSSHAIRS];

@@ -43,6 +43,13 @@ multiitem_t multiitem_brightmaps[NUM_BRIGHTMAPS] =
     {BRIGHTMAPS_BOTH, "both"},
 };
 
+multiitem_t multiitem_coloredblood[NUM_COLOREDBLOOD] =
+{
+    {COLOREDBLOOD_OFF, "off"},
+    {COLOREDBLOOD_BLOOD, "blood"},
+    {COLOREDBLOOD_ALL, "all"}
+};
+
 multiitem_t multiitem_centerweapon[NUM_CENTERWEAPON] =
 {
     {CENTERWEAPON_OFF, "off"},
@@ -215,7 +222,7 @@ void M_CrispyToggleColoredblood(int choice)
     }
 
     choice = 0;
-    crispy->coloredblood = !crispy->coloredblood;
+    crispy->coloredblood = (crispy->coloredblood + 1) % NUM_COLOREDBLOOD;
 
     // [crispy] switch NOBLOOD flag for Lost Souls
     for (th = thinkercap.next; th && th != &thinkercap; th = th->next)
@@ -226,7 +233,7 @@ void M_CrispyToggleColoredblood(int choice)
 
 		if (mobj->type == MT_SKULL)
 		{
-			if (crispy->coloredblood)
+			if (crispy->coloredblood == COLOREDBLOOD_ALL)
 			{
 				mobj->flags |= MF_NOBLOOD;
 			}
