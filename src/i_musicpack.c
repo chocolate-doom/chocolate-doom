@@ -355,6 +355,19 @@ static const subst_music_t known_filenames[] = {
     {"ff4a342c8c5ec51b06c3", "d_end.{ext}"},    // Worse ending
     // This conflicts with Doom's d_intro:
     //{"ec8fa484c4e85adbf700", "d_intro.{ext}"},  // 5
+
+    // Sigil tracks
+    {"31e9932f8260b1e8ebd5e110af8749d46aa95365", "d_e5m1.{ext}"}
+    {"7211fc6f2f48cf1f27022690da6ed9b6363cb671", "d_e5m2.{ext}"}
+    {"f7fe0a11e9a5fe6aecdf6a36299df33dd201eaef", "d_e5m3.{ext}"}
+    {"fdcbb17ba408bc90af2bc295a6f6e51dd650d247", "d_e5m4.{ext}"}
+    {"1d8a8dd6b374287b8848f2d65d4f6e0900b835e3", "d_e5m5.{ext}"}
+    {"921f7ac3bcb97e44f2c48b1ae79310848587d47b", "d_e5m6.{ext}"}
+    {"e5b6631a1a657518371f61794cb7ff801ea57a68", "d_e5m7.{ext}"}
+    {"f86a6143fa0d5e38a2e09e011428bc867e3fb9a8", "d_e5m8.{ext}"}
+    {"f86a11a12f525210b973c52583841cea1fc8ec79", "d_e5m9.{ext}"}
+    {"bfac802f3fbbf9008ba0e74bfae46e5c687becb3", "d_sigint.{ext}"} // D_INTER
+    {"b7f165797cd500b351612b73267313f1df20a41e", "d_sigtit.{ext}"} // D_INTRO
 };
 
 #if !USE_SDL_MIXER_LOOPING
