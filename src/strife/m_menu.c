@@ -1693,6 +1693,11 @@ M_DrawThermo
     int         xx;
     int         yy; // [STRIFE] Needs a temp y coordinate variable
     int         i;
+    char        num[4]; // [crispy]
+
+    // [crispy] Darken the slider when the value is zero.
+    if (!thermDot)
+        dp_translation = cr[CR_DARK];
 
     xx = x;
     yy = y + 6; // [STRIFE] +6 to y coordinate
@@ -1705,9 +1710,23 @@ M_DrawThermo
     }
     V_DrawPatchDirect(xx, yy, W_CacheLumpName(DEH_String("M_THERMR"), PU_CACHE));
 
+    // [crispy] Draw value to the right of the slider.
+    M_snprintf(num, 4, "%3d", thermDot);
+    M_WriteText(xx + 18, yy, num);
+
+    // [crispy] Don't crash if value exceeds thermometer range.
+    if (thermDot >= thermWidth)
+    {
+        thermDot = thermWidth - 1;
+        dp_translation = cr[CR_DARK];
+    }
+
     // [STRIFE] +2 to initial y coordinate
     V_DrawPatchDirect((x + 8) + thermDot * 8, y + 2,
                       W_CacheLumpName(DEH_String("M_THERMO"), PU_CACHE));
+
+    // [crispy]
+    dp_translation = NULL;
 }
 
 
