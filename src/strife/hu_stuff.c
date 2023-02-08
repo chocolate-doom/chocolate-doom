@@ -87,6 +87,9 @@ patch_t*                hu_font[HU_FONTSIZE];
 patch_t*                yfont[HU_FONTSIZE];   // haleyjd 09/18/10: [STRIFE]
 static hu_textline_t    w_title;
 static hu_textline_t    w_fps; // [crispy] showfps widget
+static hu_textline_t    w_coordx; // [crispy] playercoords x widget
+static hu_textline_t    w_coordy; // [crispy] playercoords y widget
+static hu_textline_t    w_coorda; // [crispy] playercoords angle widget
 boolean                 chat_on;
 static hu_itext_t       w_chat;
 static boolean          always_off = false;
@@ -233,6 +236,20 @@ void HU_Start(void)
                        hu_font,
                        HU_FONTSTART);
 
+    // [crispy] playercoords widgets
+    HUlib_initTextLine(&w_coordx,
+                       HU_COORDX, HU_MSGY + 1 * 8,
+                       hu_font,
+                       HU_FONTSTART);
+    HUlib_initTextLine(&w_coordy,
+                       HU_COORDX, HU_MSGY + 2 * 8,
+                       hu_font,
+                       HU_FONTSTART);
+    HUlib_initTextLine(&w_coorda,
+                       HU_COORDX, HU_MSGY + 3 * 8,
+                       hu_font,
+                       HU_FONTSTART);
+
     // haleyjd 08/31/10: [STRIFE] Get proper map name.
     s = HU_TITLE;
 
@@ -307,6 +324,14 @@ void HU_Drawer(void)
     {
         HUlib_drawTextLine(&w_fps, false);
     }
+
+    // [crispy] playercoords widgets
+    if (crispy->playercoords == WIDGETS_ALWAYS || (automapactive && crispy->playercoords == WIDGETS_AUTOMAP))
+    {
+        HUlib_drawTextLine(&w_coordx, false);
+        HUlib_drawTextLine(&w_coordy, false);
+        HUlib_drawTextLine(&w_coorda, false);
+    }
 }
 
 //
@@ -320,6 +345,9 @@ void HU_Erase(void)
     HUlib_eraseIText(&w_chat);
     HUlib_eraseTextLine(&w_title);
     HUlib_eraseTextLine(&w_fps); // [crispy] showfps widget
+    HUlib_eraseTextLine(&w_coordx); // [crispy] playercoords x widget
+    HUlib_eraseTextLine(&w_coordy); // [crispy] playercoords y widget
+    HUlib_eraseTextLine(&w_coorda); // [crispy] playercoords angle widget
 }
 
 //
@@ -509,6 +537,28 @@ void HU_Ticker(void)
         s = str;
         while (*s)
             HUlib_addCharToTextLine(&w_fps, *(s++));
+    }
+
+    // [crispy] playercoords widgets
+    if (crispy->playercoords == WIDGETS_ALWAYS || (automapactive && crispy->playercoords == WIDGETS_AUTOMAP))
+    {
+        M_snprintf(str, sizeof(str), "X\t%-5d", (plr->mo->x)>>FRACBITS);
+        HUlib_clearTextLine(&w_coordx);
+        s = str;
+        while (*s)
+            HUlib_addCharToTextLine(&w_coordx, *(s++));
+
+        M_snprintf(str, sizeof(str), "Y\t%-5d", (plr->mo->y)>>FRACBITS);
+        HUlib_clearTextLine(&w_coordy);
+        s = str;
+        while (*s)
+            HUlib_addCharToTextLine(&w_coordy, *(s++));
+
+        M_snprintf(str, sizeof(str), "A\t%-5d", (plr->mo->angle)/ANG1);
+        HUlib_clearTextLine(&w_coorda);
+        s = str;
+        while (*s)
+            HUlib_addCharToTextLine(&w_coorda, *(s++));
     }
 }
 

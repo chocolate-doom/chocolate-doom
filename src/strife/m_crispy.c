@@ -57,6 +57,14 @@ multiitem_t multiitem_widescreen[NUM_RATIOS] =
     {RATIO_21_9, "21:9"},
 };
 
+multiitem_t multiitem_widgets[NUM_WIDGETS] =
+{
+    {WIDGETS_OFF, "Never"},
+    {WIDGETS_AUTOMAP, "In Automap"},
+    {WIDGETS_ALWAYS, "Always"},
+    {WIDGETS_STBAR, "Status Bar"},
+};
+
 extern void AM_LevelInit (boolean reinit);
 extern void AM_initVariables(void);
 extern void EnableLoadingDisk (void);
@@ -163,6 +171,12 @@ void M_CrispyToggleHires(int choice)
     choice = 0;
 
     crispy->post_rendering_hook = M_CrispyToggleHiresHook;
+}
+
+void M_CrispyTogglePlayerCoords(int choice)
+{
+    // [crispy] disable "always" setting
+    ChangeSettingEnum(&crispy->playercoords, choice, NUM_WIDGETS - 2);
 }
 
 void M_CrispyToggleSmoothMap(int choice)
