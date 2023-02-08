@@ -997,7 +997,7 @@ void P_MovePsprites (player_t* player)
     psp = &player->psprites[0];
     psp->sx2 = psp->sx;
     psp->sy2 = psp->sy;
-    if (psp->state && (crispy->bobfactor || crispy->centerweapon))
+    if (psp->state && (crispy->bobfactor || crispy->centerweapon || crispy->uncapped))
     {
 	// [crispy] don't center vertically during lowering and raising states
 	if (psp->state->misc1 ||
