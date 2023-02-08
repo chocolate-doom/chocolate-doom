@@ -261,6 +261,10 @@
 #define STSTR_CHOPPERS          "... doesn't suck - GM"
 #define STSTR_CLEV              "Changing Level..."
 
+// [crispy] showfps widget
+#define STSTR_SHOWFPSON         "Show FPS ON"
+#define STSTR_SHOWFPSOFF        "Show FPS OFF"
+
 //
 //	F_Finale.C
 //

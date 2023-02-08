@@ -119,7 +119,7 @@ typedef struct player_s
     short		armortype;   // [STRIFE] Changed to short
 
     // Power ups. invinc and invis are tic counters.
-    int			powers[NUMPOWERS];
+    int			powers[NUMPOWERS + 2]; // [crispy] showfps widget
 
     // [STRIFE] Additions:
     int			sigiltype;               // Type of Sigil carried

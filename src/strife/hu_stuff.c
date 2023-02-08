@@ -45,6 +45,8 @@
 #include "dstrings.h"
 #include "sounds.h"
 
+#include "v_trans.h" // [crispy] color translation and color string tables
+
 //
 // Locally used constants, shortcuts.
 //
@@ -60,6 +62,9 @@
 #define HU_INPUTY       (HU_MSGY + HU_MSGHEIGHT*(SHORT(hu_font[0]->height) +1))
 #define HU_INPUTWIDTH   64
 #define HU_INPUTHEIGHT  1
+
+// [crispy]
+#define HU_COORDX       ((ORIGWIDTH - 8 * hu_font['A'-HU_FONTSTART]->width) + WIDESCREENDELTA)
 
 char *chat_macros[10];
 
@@ -81,6 +86,7 @@ static player_t*        plr;
 patch_t*                hu_font[HU_FONTSIZE];
 patch_t*                yfont[HU_FONTSIZE];   // haleyjd 09/18/10: [STRIFE]
 static hu_textline_t    w_title;
+static hu_textline_t    w_fps; // [crispy] showfps widget
 boolean                 chat_on;
 static hu_itext_t       w_chat;
 static boolean          always_off = false;
@@ -221,6 +227,12 @@ void HU_Start(void)
                        hu_font,
                        HU_FONTSTART);
 
+    // [crispy] showfps widget
+    HUlib_initTextLine(&w_fps,
+                       HU_COORDX, HU_MSGY,
+                       hu_font,
+                       HU_FONTSTART);
+
     // haleyjd 08/31/10: [STRIFE] Get proper map name.
     s = HU_TITLE;
 
@@ -289,6 +301,12 @@ void HU_Drawer(void)
     HUlib_drawIText(&w_chat);
     if (automapactive)
         HUlib_drawTextLine(&w_title, false);
+
+    // [crispy] showfps widget
+    if (plr->powers[pw_showfps])
+    {
+        HUlib_drawTextLine(&w_fps, false);
+    }
 }
 
 //
@@ -301,6 +319,7 @@ void HU_Erase(void)
     HUlib_eraseSText(&w_message);
     HUlib_eraseIText(&w_chat);
     HUlib_eraseTextLine(&w_title);
+    HUlib_eraseTextLine(&w_fps); // [crispy] showfps widget
 }
 
 //
@@ -404,6 +423,7 @@ void HU_Ticker(void)
     int i, rc;
     char c;
     //char *prefix;  STRIFE-TODO
+    char str[32], *s; // [crispy]
 
     // tick down message counter if message is up
     if (message_counter && !--message_counter)
@@ -479,6 +499,16 @@ void HU_Ticker(void)
             w_title.y = HU_TITLEY + ST_HEIGHT;
         else
             w_title.y = HU_TITLEY;
+    }
+
+    // [crispy] showfps widget
+    if (plr->powers[pw_showfps])
+    {
+        M_snprintf(str, sizeof(str), "%-4d FPS", crispy->fps);
+        HUlib_clearTextLine(&w_fps);
+        s = str;
+        while (*s)
+            HUlib_addCharToTextLine(&w_fps, *(s++));
     }
 }
 

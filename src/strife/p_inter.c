@@ -422,6 +422,10 @@ boolean P_GivePower(player_t* player, powertype_t power)
     case NUMPOWERS:
         // This should never actually happen
         break;
+
+    // [crispy] showfps widget
+    case pw_showfps:
+        break;
     }
 
     return true;

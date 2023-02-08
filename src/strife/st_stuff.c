@@ -254,6 +254,7 @@ cheatseq_t cheat_stealth    = CHEAT("gripper", 0);      // [STRIFE]: new cheat g
 cheatseq_t cheat_midas      = CHEAT("donnytrump", 0);   // [STRIFE]: new cheat
 cheatseq_t cheat_lego       = CHEAT("lego", 0);         // [STRIFE]: new cheat
 cheatseq_t cheat_dev        = CHEAT("dots", 0);         // [STRIFE]: new cheat
+cheatseq_t cheat_showfps    = CHEAT("showfps", 0);      // [crispy] showfps widget
 
 // haleyjd 20110224: enumeration for access to powerup cheats
 enum
@@ -498,6 +499,15 @@ boolean ST_Responder(event_t* ev)
             plyr->message = DEH_String("devparm ON");
         else
             plyr->message = DEH_String("devparm OFF");
+    }
+    // [crispy] showfps widget
+    else if (cht_CheckCheat(&cheat_showfps, ev->data2))
+    {
+        plyr->powers[pw_showfps] ^= 1;
+        if (plyr->powers[pw_showfps])
+            plyr->message = DEH_String(STSTR_SHOWFPSON);
+        else
+            plyr->message = DEH_String(STSTR_SHOWFPSOFF);
     }
 
     // [STRIFE] Cheats below are not allowed in netgames or demos
