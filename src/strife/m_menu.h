@@ -112,4 +112,7 @@ extern  boolean	inhelpscreens;
 extern boolean numeric_enter;
 extern int numeric_entry;
 
+// [crispy]
+extern int show_exitscreen;
+
 #endif    

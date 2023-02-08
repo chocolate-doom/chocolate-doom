@@ -132,6 +132,9 @@ int numeric_entry;
 static char numeric_entry_str[NUMERIC_ENTRY_NUMDIGITS + 1];
 static int numeric_entry_index;
 
+// [crispy]
+int show_exitscreen;
+
 boolean                 inhelpscreens;
 boolean                 menuactive;
 boolean                 menupause;      // haleyjd 08/29/10: [STRIFE] New global
@@ -1573,7 +1576,8 @@ void M_QuitResponse(int key)
     if (key != key_menu_confirm)
         return;
 
-    if(netgame)
+    // [crispy] quit immediately if not showing exit screen
+    if(!show_exitscreen || netgame)
         I_Quit();
     else
     {

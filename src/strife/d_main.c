@@ -1779,6 +1779,9 @@ void D_DoomMain (void)
     D_BindVariables();
     M_LoadDefaults();
 
+    // [crispy] show exit screen only if showing ENDOOM
+    show_exitscreen = show_endoom;
+
     // Save configuration at exit.
     I_AtExit(M_SaveDefaults, false);
 
