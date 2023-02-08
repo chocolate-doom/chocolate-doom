@@ -248,15 +248,19 @@ void D_Display (void)
     case GS_LEVEL:
         if (!gametic)
             break;
-        if (automapactive)
+        if (automapactive && !crispy->automapoverlay)
+        {
+            // [crispy] update automap while playing
+            R_RenderPlayerView (&players[displayplayer]);
             AM_Drawer ();
-        if (wipe || (viewheight != (200 <<crispy->hires) && fullscreen) )
+        }
+        if (wipe || (viewheight != SCREENHEIGHT && fullscreen) )
             redrawsbar = true;
         // haleyjd 08/29/10: [STRIFE] Always redraw sbar if menu is/was active
         if (menuactivestate || (inhelpscreensstate && !inhelpscreens))
             redrawsbar = true;              // just put away the help screen
-        ST_Drawer (viewheight == (200 << crispy->hires), redrawsbar );
-        fullscreen = viewheight == (200 << crispy->hires);
+        ST_Drawer (viewheight == SCREENHEIGHT, redrawsbar );
+        fullscreen = viewheight == SCREENHEIGHT;
         break;
       
      // haleyjd 08/23/2010: [STRIFE] No intermission
@@ -282,7 +286,7 @@ void D_Display (void)
     I_UpdateNoBlit ();
 
     // draw the view directly
-    if (gamestate == GS_LEVEL && !automapactive && gametic)
+    if (gamestate == GS_LEVEL && (!automapactive || crispy->automapoverlay) && gametic)
         R_RenderPlayerView (&players[displayplayer]);
 
     // clean up border stuff
@@ -297,7 +301,7 @@ void D_Display (void)
     }
 
     // see if the border needs to be updated to the screen
-    if (gamestate == GS_LEVEL && !automapactive && scaledviewwidth != (320 << crispy->hires))
+    if (gamestate == GS_LEVEL && (!automapactive || crispy->automapoverlay) && scaledviewwidth != SCREENWIDTH)
     {
         if (menuactive || menuactivestate || !viewactivestate)
         {
@@ -327,6 +331,17 @@ void D_Display (void)
     // haleyjd 20120208: [STRIFE] Rogue moved this down to below border drawing
     if (gamestate == GS_LEVEL && gametic)
     {
+        // [crispy] in automap overlay mode, draw the automap and HUD on top of
+        // everything else (except for Strife popups and exit screen)
+        if (automapactive && crispy->automapoverlay)
+        {
+            AM_Drawer ();
+
+            // [crispy] force redraw of status bar and border
+            viewactivestate = false;
+            inhelpscreensstate = true;
+        }
+
         HU_Drawer ();
         if(ST_DrawExternal()) 
             popupactivestate = true;
@@ -340,7 +355,7 @@ void D_Display (void)
     // draw pause pic
     if (paused)
     {
-        if (automapactive)
+        if (automapactive && !crispy->automapoverlay)
             y = 4;
         else
             y = (viewwindowy >> crispy->hires)+4;
@@ -484,11 +499,14 @@ void D_BindVariables(void)
     }
 
     // [crispy] bind "crispness" config variables
+    M_BindIntVariable("crispy_automapoverlay",  &crispy->automapoverlay);
+    M_BindIntVariable("crispy_automaprotate",   &crispy->automaprotate);
     M_BindIntVariable("crispy_bobfactor",       &crispy->bobfactor);
     M_BindIntVariable("crispy_centerweapon",    &crispy->centerweapon);
     M_BindIntVariable("crispy_defaultskill",    &crispy->defaultskill);
     M_BindIntVariable("crispy_fpslimit",        &crispy->fpslimit);
     M_BindIntVariable("crispy_hires",           &crispy->hires);
+    M_BindIntVariable("crispy_smoothmap",       &crispy->smoothmap);
     M_BindIntVariable("crispy_smoothscaling",   &crispy->smoothscaling);
     M_BindIntVariable("crispy_uncapped",        &crispy->uncapped);
     M_BindIntVariable("crispy_vsync",           &crispy->vsync);
@@ -771,6 +789,7 @@ void D_StartTitle (void)
 {
     gamestate = GS_DEMOSCREEN;
     gameaction = ga_nothing;
+    automapactive = false; // [crispy]
     demosequence = -2;
     D_AdvanceDemo ();
 }

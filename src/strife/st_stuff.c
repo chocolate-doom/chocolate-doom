@@ -1163,7 +1163,7 @@ void ST_doRefresh(void)
 
 void ST_Drawer (boolean fullscreen, boolean refresh)
 {
-    st_statusbaron = (!fullscreen) || automapactive;
+    st_statusbaron = (!fullscreen) || (automapactive && !crispy->automapoverlay);
     st_firsttime = st_firsttime || refresh;
 
     // Do red-/gold-shifts from damage/items

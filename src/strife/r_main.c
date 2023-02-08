@@ -986,6 +986,12 @@ void R_RenderPlayerView (player_t* player)
     R_ClearDrawSegs ();
     R_ClearPlanes ();
     R_ClearSprites ();
+    // [crispy]
+    if (automapactive && !crispy->automapoverlay)
+    {
+        R_RenderBSPNode (numnodes-1);
+        return;
+    }
     
     // check for new console commands.
     NetUpdate ();

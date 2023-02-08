@@ -165,6 +165,14 @@ void M_CrispyToggleHires(int choice)
     crispy->post_rendering_hook = M_CrispyToggleHiresHook;
 }
 
+void M_CrispyToggleSmoothMap(int choice)
+{
+    choice = 0;
+    crispy->smoothmap = !crispy->smoothmap;
+    // Update function pointer used to draw lines
+    AM_LevelInit(true);
+}
+
 void M_CrispyToggleSmoothScaling(int choice)
 {
     choice = 0;

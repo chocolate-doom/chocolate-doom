@@ -36,6 +36,7 @@ void M_CrispyToggleCenterweapon(int choice);
 void M_CrispyToggleDefaultSkill(int choice);
 void M_CrispyToggleFpsLimit(int choice);
 void M_CrispyToggleHires(int choice);
+void M_CrispyToggleSmoothMap(int choice);
 void M_CrispyToggleSmoothScaling(int choice);
 void M_CrispyToggleUncapped(int choice);
 void M_CrispyToggleVsync(int choice);

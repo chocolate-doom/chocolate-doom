@@ -177,20 +177,17 @@ static void ConfigExtraButtons(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
         AddMouseControl(buttons_table, "Jump [*]", &mousebjump);
     }
 
-    if (gamemission == doom || gamemission == heretic || gamemission == hexen)
-    {
-        TXT_AddWidgets(window,
-                       TXT_NewSeparator("Automap"),
-                       am_buttons_table = TXT_NewTable(4),
-                       NULL);
+    TXT_AddWidgets(window,
+                   TXT_NewSeparator("Automap"),
+                   am_buttons_table = TXT_NewTable(4),
+                   NULL);
 
-        TXT_SetColumnWidths(am_buttons_table, 16, 11, 16, 10);
+    TXT_SetColumnWidths(am_buttons_table, 16, 11, 16, 10);
 
-        AddMouseMapControl(am_buttons_table, "Zoom in", &mousebmapzoomin);
-        AddMouseMapControl(am_buttons_table, "Zoom out", &mousebmapzoomout);
-        AddMouseMapControl(am_buttons_table, "Max zoom out", &mousebmapmaxzoom);
-        AddMouseMapControl(am_buttons_table, "Toggle follow", &mousebmapfollow);
-    }
+    AddMouseMapControl(am_buttons_table, "Zoom in", &mousebmapzoomin);
+    AddMouseMapControl(am_buttons_table, "Zoom out", &mousebmapzoomout);
+    AddMouseMapControl(am_buttons_table, "Max zoom out", &mousebmapmaxzoom);
+    AddMouseMapControl(am_buttons_table, "Toggle follow", &mousebmapfollow);
 }
 
 void ConfigMouse(TXT_UNCAST_ARG(widget), void *user_data)

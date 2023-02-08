@@ -33,7 +33,9 @@
 #include "hu_lib.h"
 #include "m_controls.h"
 #include "m_misc.h"
+#include "m_menu.h" // [crispy] screenblocks
 #include "w_wad.h"
+#include "st_stuff.h" // [crispy] ST_HEIGHT
 
 #include "s_sound.h"
 
@@ -468,6 +470,15 @@ void HU_Ticker(void)
                 players[i].cmd.chatchar = 0;
             }
         }
+    }
+
+    if (automapactive)
+    {
+        // [crispy] move map title to the bottom (just above health in Strife)
+        if (crispy->automapoverlay && screenblocks == 11)
+            w_title.y = HU_TITLEY + ST_HEIGHT;
+        else
+            w_title.y = HU_TITLEY;
     }
 }
 
