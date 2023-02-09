@@ -588,7 +588,7 @@ int			dscount;
 // Draws the actual span.
 void R_DrawSpan (void) 
 { 
-    unsigned int position, step;
+//  unsigned int position, step;
     byte *dest;
     int count;
     int spot;
@@ -611,10 +611,12 @@ void R_DrawSpan (void)
     // each 16-bit part, the top 6 bits are the integer part and the
     // bottom 10 bits are the fractional part of the pixel position.
 
+/*
     position = ((ds_xfrac << 10) & 0xffff0000)
              | ((ds_yfrac >> 6)  & 0x0000ffff);
     step = ((ds_xstep << 10) & 0xffff0000)
          | ((ds_ystep >> 6)  & 0x0000ffff);
+*/
 
     dest = ylookup[ds_y] + columnofs[ds_x1];
 
@@ -624,15 +626,18 @@ void R_DrawSpan (void)
     do
     {
 	// Calculate current texture index in u,v.
-        ytemp = (position >> 4) & 0x0fc0;
-        xtemp = (position >> 26);
+        // [crispy] fix flats getting more distorted the closer they are to the right
+        ytemp = (ds_yfrac >> 10) & 0x0fc0;
+        xtemp = (ds_xfrac >> 16) & 0x3f;
         spot = xtemp | ytemp;
 
 	// Lookup pixel from flat texture tile,
 	//  re-index using light/colormap.
 	*dest++ = ds_colormap[ds_source[spot]];
 
-        position += step;
+//      position += step;
+        ds_xfrac += ds_xstep;
+        ds_yfrac += ds_ystep;
 
     } while (count--);
 }
@@ -717,7 +722,7 @@ void R_DrawSpan (void)
 //
 void R_DrawSpanLow (void)
 {
-    unsigned int position, step;
+//  unsigned int position, step;
     unsigned int xtemp, ytemp;
     byte *dest;
     int count;
@@ -735,10 +740,12 @@ void R_DrawSpanLow (void)
 //	dscount++; 
 #endif
 
+/*
     position = ((ds_xfrac << 10) & 0xffff0000)
              | ((ds_yfrac >> 6)  & 0x0000ffff);
     step = ((ds_xstep << 10) & 0xffff0000)
          | ((ds_ystep >> 6)  & 0x0000ffff);
+*/
 
     count = (ds_x2 - ds_x1);
 
@@ -751,8 +758,9 @@ void R_DrawSpanLow (void)
     do
     {
 	// Calculate current texture index in u,v.
-        ytemp = (position >> 4) & 0x0fc0;
-        xtemp = (position >> 26);
+        // [crispy] fix flats getting more distorted the closer they are to the right
+        ytemp = (ds_yfrac >> 10) & 0x0fc0;
+        xtemp = (ds_xfrac >> 16) & 0x3f;
         spot = xtemp | ytemp;
 
 	// Lowres/blocky mode does it twice,
@@ -760,7 +768,9 @@ void R_DrawSpanLow (void)
 	*dest++ = ds_colormap[ds_source[spot]];
 	*dest++ = ds_colormap[ds_source[spot]];
 
-	position += step;
+//	position += step;
+	ds_xfrac += ds_xstep;
+	ds_yfrac += ds_ystep;
 
     } while (count--);
 }
