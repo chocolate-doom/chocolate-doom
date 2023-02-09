@@ -275,6 +275,7 @@ typedef struct
     sector_t*	frontsector;
     sector_t*	backsector;
     
+    uint32_t	length; // [crispy] fix long wall wobble
 } seg_t;
 
 

@@ -212,6 +212,23 @@ void P_LoadSegs (int lump)
     W_ReleaseLumpNum(lump);
 }
 
+// [crispy] fix long wall wobble
+
+void P_SegLengths (void)
+{
+    int i;
+
+    for (i = 0; i < numsegs; i++)
+    {
+        seg_t *const li = &segs[i];
+        int64_t dx, dy;
+
+        dx = li->v2->x - li->v1->x;
+        dy = li->v2->y - li->v1->y;
+
+        li->length = (uint32_t)(sqrt((double)dx*dx + (double)dy*dy)/2);
+    }
+}
 
 //
 // P_LoadSubsectors
@@ -831,6 +848,9 @@ P_SetupLevel
 
     P_GroupLines ();
     P_LoadReject (lumpnum+ML_REJECT);
+
+    // [crispy] fix long wall wobble
+    P_SegLengths();
 
     //bodyqueslot = 0; [STRIFE] unused
     deathmatch_p = deathmatchstarts;
