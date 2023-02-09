@@ -143,6 +143,11 @@ void P_LoadVertexes (int lump)
     {
 	li->x = SHORT(ml->x)<<FRACBITS;
 	li->y = SHORT(ml->y)<<FRACBITS;
+
+	// [crispy] initialize vertex coordinates *only* used in rendering
+	li->r_x = li->x;
+	li->r_y = li->y;
+	li->moved = false;
     }
 
     // Free buffer memory.
@@ -214,6 +219,17 @@ void P_LoadSegs (int lump)
 
 // [crispy] fix long wall wobble
 
+static angle_t anglediff(angle_t a, angle_t b)
+{
+	if (b > a)
+		return anglediff(b, a);
+
+	if (a - b < ANG180)
+		return a - b;
+	else // [crispy] wrap around
+		return b - a;
+}
+
 void P_SegLengths (void)
 {
     int i;
@@ -223,10 +239,21 @@ void P_SegLengths (void)
         seg_t *const li = &segs[i];
         int64_t dx, dy;
 
-        dx = li->v2->x - li->v1->x;
-        dy = li->v2->y - li->v1->y;
+        dx = li->v2->r_x - li->v1->r_x;
+        dy = li->v2->r_y - li->v1->r_y;
 
         li->length = (uint32_t)(sqrt((double)dx*dx + (double)dy*dy)/2);
+
+        // [crispy] re-calculate angle used for rendering
+        viewx = li->v1->r_x;
+        viewy = li->v1->r_y;
+        li->r_angle = R_PointToAngleCrispy(li->v2->r_x, li->v2->r_y);
+        // [crispy] more than just a little adjustment?
+        // back to the original angle then
+        if (anglediff(li->r_angle, li->angle) > ANG60/2)
+        {
+            li->r_angle = li->angle;
+        }
     }
 }
 
@@ -693,6 +720,59 @@ void P_GroupLines (void)
 	
 }
 
+// [crispy] remove slime trails
+// mostly taken from Lee Killough's implementation in mbfsrc/P_SETUP.C:849-924,
+// with the exception that not the actual vertex coordinates are modified,
+// but separate coordinates that are *only* used in rendering,
+// i.e. r_bsp.c:R_AddLine()
+
+static void P_RemoveSlimeTrails(void)
+{
+    int i;
+
+    for (i = 0; i < numsegs; i++)
+    {
+	const line_t *l = segs[i].linedef;
+	vertex_t *v = segs[i].v1;
+
+	// [crispy] ignore exactly vertical or horizontal linedefs
+	if (l->dx && l->dy)
+	{
+	    do
+	    {
+		// [crispy] vertex wasn't already moved
+		if (!v->moved)
+		{
+		    v->moved = true;
+		    // [crispy] ignore endpoints of linedefs
+		    if (v != l->v1 && v != l->v2)
+		    {
+			// [crispy] move the vertex towards the linedef
+			// by projecting it using the law of cosines
+			int64_t dx2 = (l->dx >> FRACBITS) * (l->dx >> FRACBITS);
+			int64_t dy2 = (l->dy >> FRACBITS) * (l->dy >> FRACBITS);
+			int64_t dxy = (l->dx >> FRACBITS) * (l->dy >> FRACBITS);
+			int64_t s = dx2 + dy2;
+
+			// [crispy] MBF actually overrides v->x and v->y here
+			v->r_x = (fixed_t)((dx2 * v->x + dy2 * l->v1->x + dxy * (v->y - l->v1->y)) / s);
+			v->r_y = (fixed_t)((dy2 * v->y + dx2 * l->v1->y + dxy * (v->x - l->v1->x)) / s);
+
+			// [crispy] wait a minute... moved more than 8 map units?
+			// maybe that's a linguortal then, back to the original coordinates
+			if (abs(v->r_x - v->x) > 8*FRACUNIT || abs(v->r_y - v->y) > 8*FRACUNIT)
+			{
+			    v->r_x = v->x;
+			    v->r_y = v->y;
+			}
+		    }
+		}
+	    // [crispy] if v doesn't point to the second vertex of the seg already, point it there
+	    } while ((v != segs[i].v2) && (v = segs[i].v2));
+	}
+    }
+}
+
 // Pad the REJECT lump with extra data when the lump is too small,
 // to simulate a REJECT buffer overflow in Vanilla Doom.
 
@@ -852,6 +932,8 @@ P_SetupLevel
     P_GroupLines ();
     P_LoadReject (lumpnum+ML_REJECT);
 
+    // [crispy] remove slime trails
+    P_RemoveSlimeTrails();
     // [crispy] fix long wall wobble
     P_SegLengths();
 

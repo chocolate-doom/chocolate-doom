@@ -69,6 +69,13 @@ typedef struct
     fixed_t	x;
     fixed_t	y;
     
+// [crispy] remove slime trails
+// vertex coordinates *only* used in rendering that have been
+// moved towards the linedef associated with their seg by projecting them
+// using the law of cosines in p_setup.c:P_RemoveSlimeTrails();
+    fixed_t	r_x;
+    fixed_t	r_y;
+    boolean	moved;
 } vertex_t;
 
 
@@ -280,6 +287,7 @@ typedef struct
     sector_t*	backsector;
     
     uint32_t	length; // [crispy] fix long wall wobble
+    angle_t	r_angle; // [crispy] re-calculated angle used for rendering
 } seg_t;
 
 
