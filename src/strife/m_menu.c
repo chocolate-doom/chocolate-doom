@@ -233,6 +233,7 @@ static void M_CrispnessNext(int choice);
 static void M_CrispnessPrev(int choice);
 static void M_DrawCrispness1(void);
 static void M_DrawCrispness2(void);
+static void M_DrawCrispness3(void);
 
 
 
@@ -383,13 +384,8 @@ enum
     crispness_vsync,
     crispness_sep_rendering_,
 
-    crispness_sep_navigational,
-    crispness_smoothmap,
-    crispness_leveltime,
-    crispness_playercoords,
-    crispness_sep_navigational_,
-
     crispness1_next,
+    crispness1_prev,
     crispness1_end
 } crispness1_e;
 
@@ -403,12 +399,8 @@ static menuitem_t Crispness1Menu[] =
     {3, "", M_CrispyToggleFpsLimit, 'f'},
     {2, "", M_CrispyToggleVsync, 'v'},
     {-1, "", 0, '\0'},
-    {-1, "", 0, '\0'},
-    {2, "", M_CrispyToggleSmoothMap, 'm'},
-    {2, "", M_CrispyToggleLeveltime, 'l'},
-    {2, "", M_CrispyTogglePlayerCoords, 'p'},
-    {-1, "", 0, '\0'},
     {1, "", M_CrispnessNext, 'n'},
+    {1, "", M_CrispnessPrev, 'p'},
 };
 
 static menu_t Crispness1Def =
@@ -423,12 +415,17 @@ static menu_t Crispness1Def =
 
 enum
 {
-    crispness_sep_tactical,
-    crispness_bobfactor,
-    crispness_centerweapon,
-    crispness_defaultskill,
-    crispness_sep_tactical_,
+    crispness_sep_audible,
+    crispness_soundmono,
+    crispness_sep_audible_,
 
+    crispness_sep_navigational,
+    crispness_smoothmap,
+    crispness_leveltime,
+    crispness_playercoords,
+    crispness_sep_navigational_,
+
+    crispness2_next,
     crispness2_prev,
     crispness2_end
 } crispness2_e;
@@ -436,10 +433,14 @@ enum
 static menuitem_t Crispness2Menu[] =
 {
     {-1, "", 0, '\0'},
-    {2, "", M_CrispyToggleBobfactor, 'p'},
-    {2, "", M_CrispyToggleCenterweapon, 'c'},
-    {2, "", M_CrispyToggleDefaultSkill, 'd'},
+    {2, "", M_CrispyToggleSoundMono, 'm'},
     {-1, "", 0, '\0'},
+    {-1, "", 0, '\0'},
+    {2, "", M_CrispyToggleSmoothMap, 'm'},
+    {2, "", M_CrispyToggleLeveltime, 'l'},
+    {2, "", M_CrispyTogglePlayerCoords, 'p'},
+    {-1, "", 0, '\0'},
+    {1, "", M_CrispnessNext, 'n'},
     {1, "", M_CrispnessPrev, 'p'},
 };
 
@@ -453,10 +454,45 @@ static menu_t Crispness2Def =
     1
 };
 
+enum
+{
+    crispness_sep_tactical,
+    crispness_bobfactor,
+    crispness_centerweapon,
+    crispness_defaultskill,
+    crispness_sep_tactical_,
+
+    crispness3_next,
+    crispness3_prev,
+    crispness3_end
+} crispness3_e;
+
+static menuitem_t Crispness3Menu[] =
+{
+    {-1, "", 0, '\0'},
+    {2, "", M_CrispyToggleBobfactor, 'p'},
+    {2, "", M_CrispyToggleCenterweapon, 'c'},
+    {2, "", M_CrispyToggleDefaultSkill, 'd'},
+    {-1, "", 0, '\0'},
+    {1, "", M_CrispnessNext, 'n'},
+    {1, "", M_CrispnessPrev, 'p'},
+};
+
+static menu_t Crispness3Def =
+{
+    crispness3_end,
+    &OptionsDef,
+    Crispness3Menu,
+    M_DrawCrispness3,
+    48, 30,
+    1
+};
+
 static menu_t *CrispnessMenus[] =
 {
     &Crispness1Def,
     &Crispness2Def,
+    &Crispness3Def,
 };
 
 static int crispness_cur;
@@ -1352,7 +1388,7 @@ static void M_DrawCrispness1(void)
 {
     M_DrawCrispnessBackground();
 
-    M_DrawCrispnessHeader("Crispness 1/2");
+    M_DrawCrispnessHeader("Crispness 1/3");
 
     M_DrawCrispnessSeparator(crispness_sep_rendering, "Rendering");
     M_DrawCrispnessItem(crispness_hires, "High Resolution Rendering", crispy->hires, true);
@@ -1362,12 +1398,8 @@ static void M_DrawCrispness1(void)
     M_DrawCrispnessNumericItem(crispness_fpslimit, "FPS Limit", crispy->fpslimit, "None", crispy->uncapped, "35");
     M_DrawCrispnessItem(crispness_vsync, "Enable VSync", crispy->vsync, !force_software_renderer);
 
-    M_DrawCrispnessSeparator(crispness_sep_navigational, "Navigational");
-    M_DrawCrispnessItem(crispness_smoothmap, "Smooth Automap Lines", crispy->smoothmap, true);
-    M_DrawCrispnessMultiItem(crispness_leveltime, "Show Level Time", multiitem_widgets, crispy->leveltime, true);
-    M_DrawCrispnessMultiItem(crispness_playercoords, "Show Player Coords", multiitem_widgets, crispy->playercoords, true);
-
     M_DrawCrispnessGoto(crispness1_next, "Next Page >");
+    M_DrawCrispnessGoto(crispness1_prev, "< Last Page");
 
     dp_translation = NULL;
 }
@@ -1376,14 +1408,35 @@ static void M_DrawCrispness2(void)
 {
     M_DrawCrispnessBackground();
 
-    M_DrawCrispnessHeader("Crispness 2/2");
+    M_DrawCrispnessHeader("Crispness 2/3");
+
+    M_DrawCrispnessSeparator(crispness_sep_audible, "Audible");
+    M_DrawCrispnessItem(crispness_soundmono, "Mono SFX", crispy->soundmono, true);
+
+    M_DrawCrispnessSeparator(crispness_sep_navigational, "Navigational");
+    M_DrawCrispnessItem(crispness_smoothmap, "Smooth Automap Lines", crispy->smoothmap, true);
+    M_DrawCrispnessMultiItem(crispness_leveltime, "Show Level Time", multiitem_widgets, crispy->leveltime, true);
+    M_DrawCrispnessMultiItem(crispness_playercoords, "Show Player Coords", multiitem_widgets, crispy->playercoords, true);
+
+    M_DrawCrispnessGoto(crispness2_next, "Next Page >");
+    M_DrawCrispnessGoto(crispness2_prev, "< Prev Page");
+
+    dp_translation = NULL;
+}
+
+static void M_DrawCrispness3(void)
+{
+    M_DrawCrispnessBackground();
+
+    M_DrawCrispnessHeader("Crispness 3/3");
 
     M_DrawCrispnessSeparator(crispness_sep_tactical, "Tactical");
     M_DrawCrispnessMultiItem(crispness_bobfactor, "View/Weapon Bobbing", multiitem_bobfactor, crispy->bobfactor, true);
     M_DrawCrispnessMultiItem(crispness_centerweapon, "Attack Alignment", multiitem_centerweapon, crispy->centerweapon, crispy->bobfactor != BOBFACTOR_OFF);
     M_DrawCrispnessMultiItem(crispness_defaultskill, "Default Difficulty", multiitem_difficulties, crispy->defaultskill, true);
 
-    M_DrawCrispnessGoto(crispness2_prev, "< Prev Page");
+    M_DrawCrispnessGoto(crispness3_next, "First Page >");
+    M_DrawCrispnessGoto(crispness3_prev, "< Prev Page");
 
     dp_translation = NULL;
 }

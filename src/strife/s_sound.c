@@ -58,6 +58,7 @@
 // Stereo separation
 
 #define S_STEREO_SWING (96 * FRACUNIT)
+static int stereo_swing = S_STEREO_SWING; // [crispy]
 
 #define NORM_PRIORITY 64
 #define NORM_SEP 128
@@ -165,6 +166,9 @@ void S_Init(int sfxVolume, int musicVolume, int voiceVolume)
     }
 
     I_AtExit(S_Shutdown, true);
+
+    // [crispy] handle stereo separation for mono-sfx
+    S_UpdateStereoSeparation();
 }
 
 void S_Shutdown(void)
@@ -383,7 +387,8 @@ static int S_AdjustSoundParams(mobj_t *listener, mobj_t *source,
     angle >>= ANGLETOFINESHIFT;
 
     // stereo separation
-    *sep = 128 - (FixedMul(S_STEREO_SWING, finesine[angle]) >> FRACBITS);
+    // [crispy] mono sound option
+    *sep = 128 - (FixedMul(stereo_swing, finesine[angle]) >> FRACBITS);
 
     // volume calculation
     // [STRIFE] Removed gamemap == 8 hack
@@ -821,5 +826,14 @@ void S_StopMusic(void)
         mus_playing->data = NULL;
         mus_playing = NULL;
     }
+}
+
+void S_UpdateStereoSeparation (void)
+{
+    // [crispy] play all sound effects in mono
+    if (crispy->soundmono)
+        stereo_swing = 0;
+    else
+        stereo_swing = S_STEREO_SWING;
 }
 

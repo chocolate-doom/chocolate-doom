@@ -91,5 +91,8 @@ extern int snd_channels;
 
 extern int disable_voices;
 
+// [crispy]
+void S_UpdateStereoSeparation (void);
+
 #endif
 

@@ -22,6 +22,7 @@
 #include "i_input.h"
 #include "m_menu.h"
 #include "p_local.h"
+#include "s_sound.h"
 #include "r_defs.h"
 #include "m_crispy.h"
 
@@ -197,6 +198,14 @@ void M_CrispyToggleSmoothScaling(int choice)
     choice = 0;
 
     crispy->smoothscaling = !crispy->smoothscaling;
+}
+
+void M_CrispyToggleSoundMono(int choice)
+{
+    choice = 0;
+    crispy->soundmono = !crispy->soundmono;
+
+    S_UpdateStereoSeparation();
 }
 
 void M_CrispyToggleUncapped(int choice)

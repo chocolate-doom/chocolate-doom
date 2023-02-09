@@ -41,6 +41,7 @@ void M_CrispyToggleLeveltime(int choice);
 void M_CrispyTogglePlayerCoords(int choice);
 void M_CrispyToggleSmoothMap(int choice);
 void M_CrispyToggleSmoothScaling(int choice);
+void M_CrispyToggleSoundMono(int choice);
 void M_CrispyToggleUncapped(int choice);
 void M_CrispyToggleVsync(int choice);
 void M_CrispyToggleWidescreen(int choice);
