@@ -384,6 +384,10 @@ enum
     crispness_vsync,
     crispness_sep_rendering_,
 
+    crispness_sep_visual,
+    crispness_smoothlight,
+    crispness_sep_visual_,
+
     crispness1_next,
     crispness1_prev,
     crispness1_end
@@ -398,6 +402,9 @@ static menuitem_t Crispness1Menu[] =
     {2, "", M_CrispyToggleUncapped, 'u'},
     {3, "", M_CrispyToggleFpsLimit, 'f'},
     {2, "", M_CrispyToggleVsync, 'v'},
+    {-1, "", 0, '\0'},
+    {-1, "", 0, '\0'},
+    {2, "", M_CrispyToggleSmoothLighting, 's'},
     {-1, "", 0, '\0'},
     {1, "", M_CrispnessNext, 'n'},
     {1, "", M_CrispnessPrev, 'p'},
@@ -1399,6 +1406,9 @@ static void M_DrawCrispness1(void)
     M_DrawCrispnessItem(crispness_uncapped, "Uncapped Framerate", crispy->uncapped, true);
     M_DrawCrispnessNumericItem(crispness_fpslimit, "FPS Limit", crispy->fpslimit, "None", crispy->uncapped, "35");
     M_DrawCrispnessItem(crispness_vsync, "Enable VSync", crispy->vsync, !force_software_renderer);
+
+    M_DrawCrispnessSeparator(crispness_sep_visual, "Visual");
+    M_DrawCrispnessItem(crispness_smoothlight, "Smooth Diminishing Lighting", crispy->smoothlight, true);
 
     M_DrawCrispnessGoto(crispness1_next, "Next Page >");
     M_DrawCrispnessGoto(crispness1_prev, "< Last Page");

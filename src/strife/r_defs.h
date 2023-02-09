@@ -288,6 +288,7 @@ typedef struct
     
     uint32_t	length; // [crispy] fix long wall wobble
     angle_t	r_angle; // [crispy] re-calculated angle used for rendering
+    int	fakecontrast; // [crispy] smoother fake contrast
 } seg_t;
 
 

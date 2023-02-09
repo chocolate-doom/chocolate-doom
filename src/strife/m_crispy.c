@@ -76,6 +76,8 @@ multiitem_t multiitem_widgets[NUM_WIDGETS] =
 extern void AM_LevelInit (boolean reinit);
 extern void AM_initVariables(void);
 extern void EnableLoadingDisk (void);
+extern void P_SegLengths (boolean contrast_only);
+extern void R_InitLightTables (void);
 extern void I_ReInitGraphics (int reinit);
 
 static void ChangeSettingEnum(int *setting, int choice, int num_values)
@@ -190,6 +192,25 @@ void M_CrispyTogglePlayerCoords(int choice)
 {
     // [crispy] disable "always" setting
     ChangeSettingEnum(&crispy->playercoords, choice, NUM_WIDGETS - 2);
+}
+
+static void M_CrispyToggleSmoothLightingHook (void)
+{
+    crispy->smoothlight = !crispy->smoothlight;
+
+    // [crispy] re-calculate the zlight[][] array
+    R_InitLightTables();
+    // [crispy] re-calculate the scalelight[][] array
+    R_ExecuteSetViewSize();
+    // [crispy] re-calculate fake contrast
+    P_SegLengths(true);
+}
+
+void M_CrispyToggleSmoothLighting(int choice)
+{
+    choice = 0;
+
+    crispy->post_rendering_hook = M_CrispyToggleSmoothLightingHook;
 }
 
 void M_CrispyToggleSmoothMap(int choice)

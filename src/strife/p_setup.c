@@ -230,9 +230,10 @@ static angle_t anglediff(angle_t a, angle_t b)
 		return b - a;
 }
 
-void P_SegLengths (void)
+void P_SegLengths (boolean contrast_only)
 {
     int i;
+    const int rightangle = abs(finesine[(ANG60/2) >> ANGLETOFINESHIFT]);
 
     for (i = 0; i < numsegs; i++)
     {
@@ -242,18 +243,36 @@ void P_SegLengths (void)
         dx = li->v2->r_x - li->v1->r_x;
         dy = li->v2->r_y - li->v1->r_y;
 
-        li->length = (uint32_t)(sqrt((double)dx*dx + (double)dy*dy)/2);
-
-        // [crispy] re-calculate angle used for rendering
-        viewx = li->v1->r_x;
-        viewy = li->v1->r_y;
-        li->r_angle = R_PointToAngleCrispy(li->v2->r_x, li->v2->r_y);
-        // [crispy] more than just a little adjustment?
-        // back to the original angle then
-        if (anglediff(li->r_angle, li->angle) > ANG60/2)
+        if (!contrast_only)
         {
-            li->r_angle = li->angle;
+            li->length = (uint32_t)(sqrt((double)dx*dx + (double)dy*dy)/2);
+
+            // [crispy] re-calculate angle used for rendering
+            viewx = li->v1->r_x;
+            viewy = li->v1->r_y;
+            li->r_angle = R_PointToAngleCrispy(li->v2->r_x, li->v2->r_y);
+            // [crispy] more than just a little adjustment?
+            // back to the original angle then
+            if (anglediff(li->r_angle, li->angle) > ANG60/2)
+            {
+                li->r_angle = li->angle;
+            }
         }
+
+        // [crispy] smoother fake contrast
+        if (!dy)
+            li->fakecontrast = -LIGHTBRIGHT;
+        else
+        if (abs(finesine[li->r_angle >> ANGLETOFINESHIFT]) < rightangle)
+            li->fakecontrast = -(LIGHTBRIGHT >> 1);
+        else
+        if (!dx)
+            li->fakecontrast = LIGHTBRIGHT;
+        else
+        if (abs(finecosine[li->r_angle >> ANGLETOFINESHIFT]) < rightangle)
+            li->fakecontrast = LIGHTBRIGHT >> 1;
+        else
+            li->fakecontrast = 0;
     }
 }
 
@@ -935,7 +954,7 @@ P_SetupLevel
     // [crispy] remove slime trails
     P_RemoveSlimeTrails();
     // [crispy] fix long wall wobble
-    P_SegLengths();
+    P_SegLengths(false);
 
     //bodyqueslot = 0; [STRIFE] unused
     deathmatch_p = deathmatchstarts;
