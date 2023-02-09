@@ -287,6 +287,9 @@ void P_LoadSectors (int lump)
 	ss->tag = SHORT(ms->tag);
 	ss->thinglist = NULL;
 
+	// [crispy] WiggleFix: [kb] for R_FixWiggle()
+	ss->cachedheight = 0;
+
 	// [AM] Sector interpolation.  Even if we're
 	//      not running uncapped, the renderer still
 	//      uses this data.

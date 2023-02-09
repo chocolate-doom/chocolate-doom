@@ -71,15 +71,15 @@ int		worldbottom;
 int		worldhigh;
 int		worldlow;
 
-fixed_t		pixhigh;
-fixed_t		pixlow;
+int64_t		pixhigh; // [crispy] WiggleFix
+int64_t		pixlow; // [crispy] WiggleFix
 fixed_t		pixhighstep;
 fixed_t		pixlowstep;
 
-fixed_t		topfrac;
+int64_t		topfrac; // [crispy] WiggleFix
 fixed_t		topstep;
 
-fixed_t		bottomfrac;
+int64_t		bottomfrac; // [crispy] WiggleFix
 fixed_t		bottomstep;
 
 
@@ -88,6 +88,100 @@ lighttable_t**	walllights;
 short*		maskedtexturecol;
 
 
+// [crispy] WiggleFix: add this code block near the top of r_segs.c
+//
+// R_FixWiggle()
+// Dynamic wall/texture rescaler, AKA "WiggleHack II"
+//  by Kurt "kb1" Baumgardner ("kb") and Andrey "Entryway" Budko ("e6y")
+//
+//  [kb] When the rendered view is positioned, such that the viewer is
+//   looking almost parallel down a wall, the result of the scale
+//   calculation in R_ScaleFromGlobalAngle becomes very large. And, the
+//   taller the wall, the larger that value becomes. If these large
+//   values were used as-is, subsequent calculations would overflow,
+//   causing full-screen HOM, and possible program crashes.
+//
+//  Therefore, vanilla Doom clamps this scale calculation, preventing it
+//   from becoming larger than 0x400000 (64*FRACUNIT). This number was
+//   chosen carefully, to allow reasonably-tight angles, with reasonably
+//   tall sectors to be rendered, within the limits of the fixed-point
+//   math system being used. When the scale gets clamped, Doom cannot
+//   properly render the wall, causing an undesirable wall-bending
+//   effect that I call "floor wiggle". Not a crash, but still ugly.
+//
+//  Modern source ports offer higher video resolutions, which worsens
+//   the issue. And, Doom is simply not adjusted for the taller walls
+//   found in many PWADs.
+//
+//  This code attempts to correct these issues, by dynamically
+//   adjusting the fixed-point math, and the maximum scale clamp,
+//   on a wall-by-wall basis. This has 2 effects:
+//
+//  1. Floor wiggle is greatly reduced and/or eliminated.
+//  2. Overflow is no longer possible, even in levels with maximum
+//     height sectors (65535 is the theoretical height, though Doom
+//     cannot handle sectors > 32767 units in height.
+//
+//  The code is not perfect across all situations. Some floor wiggle can
+//   still be seen, and some texture strips may be slightly misaligned in
+//   extreme cases. These effects cannot be corrected further, without
+//   increasing the precision of various renderer variables, and,
+//   possibly, creating a noticable performance penalty.
+//
+
+static int	max_rwscale = 64 * FRACUNIT;
+static int	heightbits = 12;
+static int	heightunit = (1 << 12);
+static int	invhgtbits = 4;
+
+static const struct
+{
+    int clamp;
+    int heightbits;
+} scale_values[8] = {
+    {2048 * FRACUNIT, 12},
+    {1024 * FRACUNIT, 12},
+    {1024 * FRACUNIT, 11},
+    { 512 * FRACUNIT, 11},
+    { 512 * FRACUNIT, 10},
+    { 256 * FRACUNIT, 10},
+    { 256 * FRACUNIT,  9},
+    { 128 * FRACUNIT,  9}
+};
+
+void R_FixWiggle (sector_t *sector)
+{
+    static int	lastheight = 0;
+    int		height = (sector->interpceilingheight - sector->interpfloorheight) >> FRACBITS;
+
+    // disallow negative heights. using 1 forces cache initialization
+    if (height < 1)
+	height = 1;
+
+    // early out?
+    if (height != lastheight)
+    {
+	lastheight = height;
+
+	// initialize, or handle moving sector
+	if (height != sector->cachedheight)
+	{
+	    sector->cachedheight = height;
+	    sector->scaleindex = 0;
+	    height >>= 7;
+
+	    // calculate adjustment
+	    while (height >>= 1)
+		sector->scaleindex++;
+	}
+
+	// fine-tune renderer for this wall
+	max_rwscale = scale_values[sector->scaleindex].clamp;
+	heightbits = scale_values[sector->scaleindex].heightbits;
+	heightunit = (1 << heightbits);
+	invhgtbits = FRACBITS - heightbits;
+    }
+}
 
 //
 // R_RenderMaskedSegRange
@@ -175,7 +269,32 @@ R_RenderMaskedSegRange
 		dc_colormap = walllights[index];
 	    }
 			
-	    sprtopscreen = centeryfrac - FixedMul(dc_texturemid, spryscale);
+	    // [crispy] apply Killough's int64 sprtopscreen overflow fix
+	    // from winmbf/Source/r_segs.c:174-191
+	    // killough 3/2/98:
+	    //
+	    // This calculation used to overflow and cause crashes in Doom:
+	    //
+	    // sprtopscreen = centeryfrac - FixedMul(dc_texturemid, spryscale);
+	    //
+	    // This code fixes it, by using double-precision intermediate
+	    // arithmetic and by skipping the drawing of 2s normals whose
+	    // mapping to screen coordinates is totally out of range:
+
+	    {
+		int64_t t = ((int64_t) centeryfrac << FRACBITS) -
+		             (int64_t) dc_texturemid * spryscale;
+
+		if (t + (int64_t) textureheight[texnum] * spryscale < 0 ||
+		    t > (int64_t) SCREENHEIGHT << FRACBITS*2)
+		{
+			spryscale += rw_scalestep; // [crispy] MBF had this in the for-loop iterator
+			continue; // skip if the texture is out of screen's range
+		}
+
+		sprtopscreen = (int64_t)(t >> FRACBITS); // [crispy] WiggleFix
+	    }
+
 	    dc_iscale = 0xffffffffu / (unsigned)spryscale;
 	    
 	    // draw the texture
@@ -221,7 +340,7 @@ void R_RenderSegLoop (void)
     for ( ; rw_x < rw_stopx ; rw_x++)
     {
 	// mark floor / ceiling areas
-	yl = (topfrac+HEIGHTUNIT-1)>>HEIGHTBITS;
+	yl = (int)((topfrac+heightunit-1)>>heightbits); // [crispy] WiggleFix
 
 	// no space above wall?
 	if (yl < ceilingclip[rw_x]+1)
@@ -242,7 +361,7 @@ void R_RenderSegLoop (void)
 	    }
 	}
 		
-	yh = bottomfrac>>HEIGHTBITS;
+	yh = (int)(bottomfrac>>heightbits); // [crispy] WiggleFix
 
 	if (yh >= floorclip[rw_x])
 	    yh = floorclip[rw_x]-1;
@@ -302,7 +421,7 @@ void R_RenderSegLoop (void)
 	    if (toptexture)
 	    {
 		// top wall
-		mid = pixhigh>>HEIGHTBITS;
+		mid = (int)(pixhigh>>heightbits); // [crispy] WiggleFix
 		pixhigh += pixhighstep;
 
 		if (mid >= floorclip[rw_x])
@@ -330,7 +449,7 @@ void R_RenderSegLoop (void)
 	    if (bottomtexture)
 	    {
 		// bottom wall
-		mid = (pixlow+HEIGHTUNIT-1)>>HEIGHTBITS;
+		mid = (int)((pixlow+heightunit-1)>>heightbits); // [crispy] WiggleFix
 		pixlow += pixlowstep;
 
 		// no space above wall?
@@ -373,6 +492,32 @@ void R_RenderSegLoop (void)
 
 
 
+// [crispy] WiggleFix: move R_ScaleFromGlobalAngle function to r_segs.c,
+// above R_StoreWallRange
+fixed_t R_ScaleFromGlobalAngle (angle_t visangle)
+{
+    angle_t	anglea = ANG90 + (visangle - viewangle);
+    angle_t	angleb = ANG90 + (visangle - rw_normalangle);
+    int		den = FixedMul(rw_distance, finesine[anglea >> ANGLETOFINESHIFT]);
+    fixed_t	num = FixedMul(projection, finesine[angleb >> ANGLETOFINESHIFT])<<detailshift;
+    fixed_t 	scale;
+
+    if (den > (num >> 16))
+    {
+	scale = FixedDiv(num, den);
+
+	// [kb] When this evaluates True, the scale is clamped,
+	//  and there will be some wiggling.
+	if (scale > max_rwscale)
+	    scale = max_rwscale;
+	else if (scale < 256)
+	    scale = 256;
+    }
+    else
+	scale = max_rwscale;
+
+    return scale;
+}
 
 //
 // R_StoreWallRange
@@ -428,6 +573,10 @@ R_StoreWallRange
     ds_p->curline = curline;
     rw_stopx = stop+1;
     
+    // [crispy] WiggleFix: add this line, in r_segs.c:R_StoreWallRange,
+    // right before calls to R_ScaleFromGlobalAngle:
+    R_FixWiggle(frontsector);
+
     // calculate scale at both ends and step
     ds_p->scale1 = rw_scale = 
 	R_ScaleFromGlobalAngle (viewangle + xtoviewangle[start]);
@@ -679,29 +828,29 @@ R_StoreWallRange
 
     
     // calculate incremental stepping values for texture edges
-    worldtop >>= 4;
-    worldbottom >>= 4;
+    worldtop >>= invhgtbits; // [crispy] WiggleFix
+    worldbottom >>= invhgtbits; // [crispy] WiggleFix
 	
     topstep = -FixedMul (rw_scalestep, worldtop);
-    topfrac = (centeryfrac>>4) - FixedMul (worldtop, rw_scale);
+    topfrac = ((int64_t)centeryfrac>>invhgtbits) - (((int64_t)worldtop * rw_scale)>>FRACBITS); // [crispy] WiggleFix
 
     bottomstep = -FixedMul (rw_scalestep,worldbottom);
-    bottomfrac = (centeryfrac>>4) - FixedMul (worldbottom, rw_scale);
+    bottomfrac = ((int64_t)centeryfrac>>invhgtbits) - (((int64_t)worldbottom * rw_scale)>>FRACBITS); // [crispy] WiggleFix
 	
     if (backsector)
     {	
-	worldhigh >>= 4;
-	worldlow >>= 4;
+	worldhigh >>= invhgtbits; // [crispy] WiggleFix
+	worldlow >>= invhgtbits; // [crispy] WiggleFix
 
 	if (worldhigh < worldtop)
 	{
-	    pixhigh = (centeryfrac>>4) - FixedMul (worldhigh, rw_scale);
+	    pixhigh = ((int64_t)centeryfrac>>invhgtbits) - (((int64_t)worldhigh * rw_scale)>>FRACBITS); // [crispy] WiggleFix
 	    pixhighstep = -FixedMul (rw_scalestep,worldhigh);
 	}
 	
 	if (worldlow > worldbottom)
 	{
-	    pixlow = (centeryfrac>>4) - FixedMul (worldlow, rw_scale);
+	    pixlow = ((int64_t)centeryfrac>>invhgtbits) - (((int64_t)worldlow * rw_scale)>>FRACBITS); // [crispy] WiggleFix
 	    pixlowstep = -FixedMul (rw_scalestep,worldlow);
 	}
     }

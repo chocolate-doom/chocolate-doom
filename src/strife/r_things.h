@@ -37,7 +37,7 @@ extern short		screenheightarray[MAXWIDTH];
 extern short*		mfloorclip;
 extern short*		mceilingclip;
 extern fixed_t		spryscale;
-extern fixed_t		sprtopscreen;
+extern int64_t		sprtopscreen; // [crispy] WiggleFix
 
 extern fixed_t		pspritescale;
 extern fixed_t		pspriteiscale;
