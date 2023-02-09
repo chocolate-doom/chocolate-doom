@@ -49,6 +49,13 @@ multiitem_t multiitem_difficulties[NUM_SKILLS] =
     {SKILL_ITYTD, "Training"},
 };
 
+multiitem_t multiitem_sndchannels[3] =
+{
+    {8, "8"},
+    {16, "16"},
+    {32, "32"},
+};
+
 multiitem_t multiitem_widescreen[NUM_RATIOS] =
 {
     {RATIO_ORIG, "Original"},
@@ -198,6 +205,11 @@ void M_CrispyToggleSmoothScaling(int choice)
     choice = 0;
 
     crispy->smoothscaling = !crispy->smoothscaling;
+}
+
+void M_CrispyToggleSndChannels(int choice)
+{
+    S_UpdateSndChannels(choice);
 }
 
 void M_CrispyToggleSoundMono(int choice)
