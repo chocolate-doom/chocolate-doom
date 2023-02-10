@@ -260,6 +260,8 @@ void R_DrawMVisTLColumn(void)
     fixed_t             frac;
     fixed_t             fracstep;
 
+// [crispy] Show transparent lines at top and bottom of screen.
+/*
     // Adjust borders. Low... 
     if (!dc_yl) 
         dc_yl = 1;
@@ -267,6 +269,7 @@ void R_DrawMVisTLColumn(void)
     // .. and high.
     if (dc_yh == viewheight-1) 
         dc_yh = viewheight - 2; 
+*/
 
     count = dc_yh - dc_yl; 
 
@@ -313,6 +316,8 @@ void R_DrawTLColumn(void)
     fixed_t             frac;
     fixed_t             fracstep;	 
 
+// [crispy] Show transparent lines at top and bottom of screen.
+/*
     // Adjust borders. Low... 
     if (!dc_yl) 
         dc_yl = 1;
@@ -320,6 +325,7 @@ void R_DrawTLColumn(void)
     // .. and high.
     if (dc_yh == viewheight-1) 
         dc_yh = viewheight - 2; 
+*/
 
     count = dc_yh - dc_yl; 
 
