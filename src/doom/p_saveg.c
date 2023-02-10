@@ -1614,6 +1614,7 @@ void P_UnArchiveWorld (void)
 	floorpic = saveg_read16();
 	ceilingpic = saveg_read16();
 	sec->lightlevel = saveg_read16();
+	sec->rlightlevel = sec->lightlevel; // [crispy] A11Y
 	sec->special = saveg_read16();		// needed?
 	sec->tag = saveg_read16();		// needed?
 	sec->specialdata = 0;
