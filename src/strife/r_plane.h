@@ -37,7 +37,8 @@ extern planefunction_t	ceilingfunc_t;
 extern int		floorclip[MAXWIDTH]; // [crispy] 32-bit integer math
 extern int		ceilingclip[MAXWIDTH]; // [crispy] 32-bit integer math
 
-extern fixed_t		yslope[MAXHEIGHT];
+extern fixed_t*	yslope;
+extern fixed_t		yslopes[LOOKDIRS][MAXHEIGHT]; // [crispy] lookup table
 extern fixed_t		distscale[MAXWIDTH];
 
 void R_InitPlanes (void);

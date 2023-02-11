@@ -834,7 +834,7 @@ void R_ExecuteSetViewSize (void)
     viewwidth_nonwide = scaledviewwidth_nonwide>>detailshift;
 	
     // villsa [STRIFE] calculate centery from player's pitch
-    centery = (setblocks*players[consoleplayer].pitch);
+    centery = (setblocks*(players[consoleplayer].pitch << crispy->hires));
     centery = (unsigned int)(centery/10)+viewheight/2;
 
     centerx = viewwidth/2;
@@ -874,11 +874,20 @@ void R_ExecuteSetViewSize (void)
     // planes
     for (i=0 ; i<viewheight ; i++)
     {
-	// haleyjd 20120208: [STRIFE] viewheight/2 -> centery, accounts for up/down look
-        dy = ((i - centery)<<FRACBITS) + FRACUNIT/2;
-	dy = abs(dy);
-	yslope[i] = FixedDiv ( (viewwidth_nonwide<<detailshift)/2*FRACUNIT, dy);
+        // [crispy] regenerate lookup table
+        for (j = 0; j < LOOKDIRS; j++)
+        {
+            const int lut_pitch = j - LOOKDIRMIN;
+            const int lut_pitchfrac = (setblocks * (lut_pitch << crispy->hires)) / 10;
+            const int lut_centery = lut_pitchfrac + viewheight / 2;
+            const fixed_t lut_centeryfrac = (i - lut_centery) << FRACBITS;
+            dy = lut_centeryfrac + FRACUNIT / 2;
+            dy = abs(dy);
+            yslopes[j][i] = FixedDiv(projection, dy);
+        }
     }
+    // [crispy] apply lookup table
+    yslope = yslopes[LOOKDIRMIN + players[consoleplayer].pitch];
 	
     for (i=0 ; i<viewwidth ; i++)
     {
@@ -994,29 +1003,19 @@ R_PointInSubsector
 // Calculate centery/centeryfrac for player viewpitch
 //
 
-void R_SetupPitch(player_t* player)
+void R_SetupPitch(int pitch)
 {
     int pitchfrac;
-    int i = 0;
 
-    if(viewpitch != player->pitch)
+    if (viewpitch != pitch)
     {
-        // [AM] Interpolate the player camera if the feature is enabled.
-        if (crispy->uncapped && leveltime > 1 && player->mo->interp == true && leveltime > oldleveltime)
-            viewpitch = player->oldpitch + (player->pitch - player->oldpitch) *
-                        FIXED2DOUBLE(fractionaltic);
-        else
-            viewpitch = player->pitch;
-
-        pitchfrac   = (setblocks * (viewpitch << crispy->hires)) / 10;
+        viewpitch   = pitch;
+        pitchfrac   = (setblocks * (pitch << crispy->hires)) / 10;
         centery     = pitchfrac + viewheight / 2;
         centeryfrac = centery << FRACBITS;
 
-        for(i = 0; i < viewheight; i++)
-        {
-            yslope[i] = FixedDiv(viewwidth / 2 * FRACUNIT,
-                                 abs(((i - centery) << FRACBITS) + (FRACUNIT/2)));
-        }
+        // [crispy] apply lookup table
+        yslope = yslopes[LOOKDIRMIN + pitch];
     }
 }
 
@@ -1027,9 +1026,8 @@ void R_SetupPitch(player_t* player)
 void R_SetupFrame (player_t* player)
 {		
     int		i;
+    int		pitch;
     
-    R_SetupPitch(player);  // villsa [STRIFE]
-
     viewplayer = player;
 
     // [AM] Interpolate the player camera if the feature is enabled.
@@ -1039,6 +1037,7 @@ void R_SetupFrame (player_t* player)
         viewy = player->mo->oldy + FixedMul(player->mo->y - player->mo->oldy, fractionaltic);
         viewz = player->oldviewz + FixedMul(player->viewz - player->oldviewz, fractionaltic);
         viewangle = R_InterpolateAngle(player->mo->oldangle, player->mo->angle, fractionaltic) + viewangleoffset;
+        pitch = player->oldpitch + (player->pitch - player->oldpitch) * FIXED2DOUBLE(fractionaltic);
     }
     else
     {
@@ -1046,7 +1045,10 @@ void R_SetupFrame (player_t* player)
         viewy = player->mo->y;
         viewz = player->viewz;
         viewangle = player->mo->angle + viewangleoffset;
+        pitch = player->pitch;
     }
+
+    R_SetupPitch(pitch);  // villsa [STRIFE]
 
     extralight = player->extralight;
     

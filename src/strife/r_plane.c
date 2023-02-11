@@ -76,7 +76,8 @@ int			spanstop[MAXHEIGHT];
 lighttable_t**		planezlight;
 fixed_t			planeheight;
 
-fixed_t			yslope[MAXHEIGHT];
+fixed_t*			yslope;
+fixed_t			yslopes[LOOKDIRS][MAXHEIGHT]; // [crispy] lookup table
 fixed_t			distscale[MAXWIDTH];
 fixed_t			basexscale;
 fixed_t			baseyscale;

@@ -25,6 +25,10 @@
 #include "r_state.h"
 #include "p_spec.h"    // villsa [STRIFE]
 
+// [crispy] for yslopes lookup table
+#define LOOKDIRMIN	110
+#define LOOKDIRMAX	90
+#define LOOKDIRS	(LOOKDIRMIN+1+LOOKDIRMAX)
 
 extern int numflats;
 
