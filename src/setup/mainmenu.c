@@ -95,6 +95,7 @@ static void SensibleDefaults(void)
     novert = 1;
     snd_dmxoption = "-opl3 -reverse";
     png_screenshots = 1;
+    runcentering = 0; // [crispy]
 }
 
 static int MainMenuKeyPress(txt_window_t *window, int key, void *user_data)

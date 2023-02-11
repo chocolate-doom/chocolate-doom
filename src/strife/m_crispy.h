@@ -40,6 +40,7 @@ void M_CrispyToggleFpsLimit(int choice);
 void M_CrispyToggleHires(int choice);
 void M_CrispyToggleLeveltime(int choice);
 void M_CrispyTogglePlayerCoords(int choice);
+void M_CrispyToggleRunCentering(int choice);
 void M_CrispyToggleSmoothLighting(int choice);
 void M_CrispyToggleSmoothMap(int choice);
 void M_CrispyToggleSmoothScaling(int choice);

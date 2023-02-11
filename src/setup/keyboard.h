@@ -19,5 +19,6 @@ void ConfigKeyboard(void *widget, void *user_data);
 void BindKeyboardVariables(void);
 
 extern int vanilla_keyboard_mapping;
+extern int runcentering; // [crispy]
 
 #endif /* #ifndef SETUP_KEYBOARD_H */

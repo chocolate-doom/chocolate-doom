@@ -1103,6 +1103,15 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(vanilla_keyboard_mapping),
 
     //!
+    // @game strife
+    //
+    // By default, pressing "run" centers the view in Strife. This behavior can
+    // be toggled with this setting.
+    //
+
+    CONFIG_VARIABLE_INT(runcentering),
+
+    //!
     // If zero, this disables sectors changing their light level.
     //
 

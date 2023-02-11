@@ -466,6 +466,7 @@ static menu_t Crispness2Def =
 enum
 {
     crispness_sep_tactical,
+    crispness_runcentering,
     crispness_bobfactor,
     crispness_centerweapon,
     crispness_defaultskill,
@@ -479,6 +480,7 @@ enum
 static menuitem_t Crispness3Menu[] =
 {
     {-1, "", 0, '\0'},
+    {2, "", M_CrispyToggleRunCentering, 'r'},
     {2, "", M_CrispyToggleBobfactor, 'p'},
     {2, "", M_CrispyToggleCenterweapon, 'c'},
     {2, "", M_CrispyToggleDefaultSkill, 'd'},
@@ -1444,6 +1446,7 @@ static void M_DrawCrispness3(void)
     M_DrawCrispnessHeader("Crispness 3/3");
 
     M_DrawCrispnessSeparator(crispness_sep_tactical, "Tactical");
+    M_DrawCrispnessItem(crispness_runcentering, "\"Run\" Centers View", runcentering, true);
     M_DrawCrispnessMultiItem(crispness_bobfactor, "View/Weapon Bobbing", multiitem_bobfactor, crispy->bobfactor, true);
     M_DrawCrispnessMultiItem(crispness_centerweapon, "Attack Alignment", multiitem_centerweapon, crispy->centerweapon, crispy->bobfactor != BOBFACTOR_OFF);
     M_DrawCrispnessMultiItem(crispness_defaultskill, "Default Difficulty", multiitem_difficulties, crispy->defaultskill, true);

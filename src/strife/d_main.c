@@ -435,6 +435,7 @@ void D_BindVariables(void)
 
     M_ApplyPlatformDefaults();
 
+    I_BindStrifeInputVariables(); // [crispy]
     I_BindInputVariables();
     I_BindVideoVariables();
     I_BindJoystickVariables();

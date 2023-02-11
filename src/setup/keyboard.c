@@ -28,6 +28,7 @@
 #define WINDOW_HELP_URL "https://www.chocolate-doom.org/setup-keyboard"
 
 int vanilla_keyboard_mapping = 1;
+int runcentering = 1; // [crispy]
 
 static int always_run = 0;
 
@@ -491,6 +492,18 @@ void ConfigKeyboard(TXT_UNCAST_ARG(widget), void *user_data)
                    TXT_NewSeparator("Misc."),
                    run_control = TXT_NewCheckBox("Always run", &always_run),
                    TXT_TABLE_EOL,
+                   NULL);
+
+    // [crispy]
+    if (gamemission == strife)
+    {
+        TXT_AddWidgets(window,
+                       TXT_NewCheckBox("Run centers view", &runcentering),
+                       TXT_TABLE_EOL,
+                       NULL);
+    }
+
+    TXT_AddWidgets(window,
                    TXT_NewInvertedCheckBox("Use native keyboard mapping",
                                            &vanilla_keyboard_mapping),
                    TXT_TABLE_EOL,
@@ -503,4 +516,10 @@ void ConfigKeyboard(TXT_UNCAST_ARG(widget), void *user_data)
 void BindKeyboardVariables(void)
 {
     M_BindIntVariable("vanilla_keyboard_mapping", &vanilla_keyboard_mapping);
+
+    // [crispy]
+    if (gamemission == strife)
+    {
+        M_BindIntVariable("runcentering", &runcentering);
+    }
 }

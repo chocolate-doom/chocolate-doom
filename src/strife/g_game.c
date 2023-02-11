@@ -395,6 +395,8 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     // fraggle: support the old "joyb_speed = 31" hack which
     // allowed an autorun effect
 
+    // [crispy] when "always run" is active,
+    // pressing the "run" key will result in walking
     speed = (key_speed >= NUMKEYS
          || joybspeed >= MAX_JOY_BUTTONS);
     speed ^= speedkeydown();
@@ -402,7 +404,8 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     forward = side = 0;
 
     // villsa [STRIFE] running causes centerview to occur
-    if(speed)
+    // [crispy] decouple run from centerview
+    if(speed && runcentering)
         cmd->buttons2 |= BT2_CENTERVIEW;
 
     // villsa [STRIFE] disable running if low on health

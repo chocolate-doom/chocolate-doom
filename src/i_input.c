@@ -109,6 +109,8 @@ float mouse_acceleration_y = 1.0;
 int mouse_threshold_y = 0;
 int mouse_y_invert = 0;
 
+int runcentering = 1; // [crispy]
+
 // Translates the SDL key to a value of the type found in doomkeys.h
 static int TranslateKey(SDL_Keysym *sym)
 {
@@ -516,6 +518,12 @@ void I_ReadMouse(void)
         // this function
         D_PostEvent(&ev);
     }
+}
+
+// [crispy]
+void I_BindStrifeInputVariables(void)
+{
+    M_BindIntVariable("runcentering",              &runcentering);
 }
 
 // Bind all variables controlling input options.

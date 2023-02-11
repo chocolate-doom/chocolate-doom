@@ -194,6 +194,13 @@ void M_CrispyTogglePlayerCoords(int choice)
     ChangeSettingEnum(&crispy->playercoords, choice, NUM_WIDGETS - 2);
 }
 
+void M_CrispyToggleRunCentering(int choice)
+{
+    choice = 0;
+
+    runcentering = !runcentering;
+}
+
 static void M_CrispyToggleSmoothLightingHook (void)
 {
     crispy->smoothlight = !crispy->smoothlight;
