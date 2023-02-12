@@ -350,23 +350,44 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     int		side;
     player_t *const player = &players[consoleplayer]; // [crispy]
     static char playermessage[48]; // [crispy]
+    static unsigned int kbdlookctrl = 0; // [crispy]
 
     memset(cmd, 0, sizeof(ticcmd_t));
 
     cmd->consistancy = 
         consistancy[consoleplayer][maketic%BACKUPTICS]; 
 
-    // [crispy] center view key
-    if (gamekeydown[key_lookcenter])
-        cmd->buttons2 |= BT2_CENTERVIEW;
+    // villsa [STRIFE] look up/down keys
+    // [crispy] center view key and lookspring support
+    if (crispy->freelook_hh == FREELOOK_HH_SPRING)
+    {
+        if (gamekeydown[key_lookup] || joylook < 0)
+        {
+            cmd->buttons2 |= BT2_LOOKUP;
+            kbdlookctrl += ticdup;
+        }
+        else if (gamekeydown[key_lookdown] || joylook > 0)
+        {
+            cmd->buttons2 |= BT2_LOOKDOWN;
+            kbdlookctrl += ticdup;
+        }
+        else if (gamekeydown[key_lookcenter] || kbdlookctrl)
+        {
+            cmd->buttons2 |= BT2_CENTERVIEW;
+            kbdlookctrl = 0;
+        }
+    }
+    else
+    {
+        if (gamekeydown[key_lookup] || joylook < 0)
+            cmd->buttons2 |= BT2_LOOKUP;
 
-    // villsa [STRIFE] look up key
-    if(gamekeydown[key_lookup] || joylook < 0)
-        cmd->buttons2 |= BT2_LOOKUP;
+        if (gamekeydown[key_lookdown] || joylook > 0)
+            cmd->buttons2 |= BT2_LOOKDOWN;
 
-    // villsa [STRIFE] look down key
-    if(gamekeydown[key_lookdown] || joylook > 0)
-        cmd->buttons2 |= BT2_LOOKDOWN;
+        if (gamekeydown[key_lookcenter])
+            cmd->buttons2 |= BT2_CENTERVIEW;
+    }
 
     // villsa [STRIFE] inventory use key
     if(gamekeydown[key_invuse])

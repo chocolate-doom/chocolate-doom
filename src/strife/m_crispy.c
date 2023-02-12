@@ -49,6 +49,12 @@ multiitem_t multiitem_difficulties[NUM_SKILLS] =
     {SKILL_ITYTD, "Training"},
 };
 
+multiitem_t multiitem_freelook[NUM_FREELOOKS_HH] =
+{
+    {FREELOOK_HH_LOCK, "Lock"},
+    {FREELOOK_HH_SPRING, "Spring"},
+};
+
 multiitem_t multiitem_sndchannels[3] =
 {
     {8, "8"},
@@ -154,6 +160,11 @@ void M_CrispyToggleFpsLimit(int choice)
     {
         crispy->fpslimit = CRISPY_FPSLIMIT_MAX;
     }
+}
+
+void M_CrispyToggleFreelook(int choice)
+{
+    ChangeSettingEnum(&crispy->freelook_hh, choice, NUM_FREELOOKS_HH);
 }
 
 static void M_CrispyToggleHiresHook (void)

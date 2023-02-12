@@ -29,6 +29,7 @@ typedef struct
 extern multiitem_t multiitem_bobfactor[NUM_BOBFACTORS];
 extern multiitem_t multiitem_centerweapon[NUM_CENTERWEAPON];
 extern multiitem_t multiitem_difficulties[NUM_SKILLS];
+extern multiitem_t multiitem_freelook[NUM_FREELOOKS_HH];
 extern multiitem_t multiitem_sndchannels[3];
 extern multiitem_t multiitem_widescreen[NUM_RATIOS];
 extern multiitem_t multiitem_widgets[NUM_WIDGETS];
@@ -37,6 +38,7 @@ void M_CrispyToggleBobfactor(int choice);
 void M_CrispyToggleCenterweapon(int choice);
 void M_CrispyToggleDefaultSkill(int choice);
 void M_CrispyToggleFpsLimit(int choice);
+void M_CrispyToggleFreelook(int choice);
 void M_CrispyToggleHires(int choice);
 void M_CrispyToggleLeveltime(int choice);
 void M_CrispyTogglePlayerCoords(int choice);
