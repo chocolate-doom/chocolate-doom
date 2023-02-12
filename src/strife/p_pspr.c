@@ -999,6 +999,10 @@ void P_MovePsprites (player_t* player)
     player->psprites[ps_targright].sx =
         ((100 - player->accuracy) << FRACBITS) + (160*FRACUNIT);
 
+    // [crispy] update targeter position
+    player->psprites[ps_targleft].sx2 = player->psprites[ps_targleft].sx;
+    player->psprites[ps_targright].sx2 = player->psprites[ps_targright].sx;
+
     // [crispy] apply bobbing (or centering) to the player's weapon sprite
     psp = &player->psprites[0];
     psp->sx2 = psp->sx;

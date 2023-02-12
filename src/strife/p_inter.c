@@ -367,6 +367,12 @@ boolean P_GivePower(player_t* player, powertype_t power)
         player->psprites[ps_targleft  ].sy  = (100*FRACUNIT);
         player->psprites[ps_targcenter].sy  = (100*FRACUNIT);
         player->psprites[ps_targright ].sy  = (100*FRACUNIT);
+
+        // [crispy] update targeter position
+        player->psprites[ps_targcenter].sx2 = player->psprites[ps_targcenter].sx;
+        player->psprites[ps_targleft  ].sy2 = player->psprites[ps_targleft  ].sy;
+        player->psprites[ps_targcenter].sy2 = player->psprites[ps_targcenter].sy;
+        player->psprites[ps_targright ].sy2 = player->psprites[ps_targright ].sy;
         return true;
     }
 
