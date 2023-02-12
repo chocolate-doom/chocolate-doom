@@ -344,6 +344,12 @@ void M_BindHexenControls(void)
 
 void M_BindStrifeControls(void)
 {
+    // [crispy] don't override default controls for Strife
+    key_alt_up = 0;
+    key_alt_down = 0;
+    key_alt_strafeleft = 0;
+    key_alt_straferight = 0;
+
     // These are shared with all games, but have different defaults:
     key_message_refresh = '/';
 

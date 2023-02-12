@@ -348,6 +348,8 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     int		tspeed; 
     int		forward;
     int		side;
+    player_t *const player = &players[consoleplayer]; // [crispy]
+    static char playermessage[48]; // [crispy]
 
     memset(cmd, 0, sizeof(ticcmd_t));
 
@@ -365,7 +367,6 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     // villsa [STRIFE] inventory use key
     if(gamekeydown[key_invuse])
     {
-        player_t* player = &players[consoleplayer];
         if(player->numinventory > 0)
         {
             cmd->buttons2 |= BT2_INVUSE;
@@ -376,7 +377,6 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     // villsa [STRIFE] inventory drop key
     if(gamekeydown[key_invdrop])
     {
-        player_t* player = &players[consoleplayer];
         if(player->numinventory > 0)
         {
             cmd->buttons2 |= BT2_INVDROP;
@@ -410,7 +410,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
         cmd->buttons2 |= BT2_CENTERVIEW;
 
     // villsa [STRIFE] disable running if low on health
-    if (players[consoleplayer].health <= 15)
+    if (player->health <= 15)
         speed = 0;
     
     // use two stage accelerative turning
@@ -430,6 +430,44 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     else 
         tspeed = speed;
     
+    // [crispy] toggle "always run"
+    if (gamekeydown[key_toggleautorun])
+    {
+        static int joybspeed_old = 2;
+
+        if (joybspeed >= MAX_JOY_BUTTONS)
+        {
+            joybspeed = joybspeed_old;
+        }
+        else
+        {
+            joybspeed_old = joybspeed;
+            joybspeed = 29;
+        }
+
+        M_snprintf(playermessage, sizeof(playermessage),
+                   "Always Run %s",
+                   (joybspeed >= MAX_JOY_BUTTONS) ? "On" : "Off");
+        player->message = playermessage;
+        S_StartSound(NULL, sfx_stnmov);
+
+        gamekeydown[key_toggleautorun] = false;
+    }
+
+    // [crispy] toggle vertical mouse movement
+    if (gamekeydown[key_togglenovert])
+    {
+        novert = !novert;
+
+        M_snprintf(playermessage, sizeof(playermessage),
+                   "Vertical Mouse Movement %s",
+                   !novert ? "On" : "Off");
+        player->message = playermessage;
+        S_StartSound(NULL, sfx_stnmov);
+
+        gamekeydown[key_togglenovert] = false;
+    }
+
     // let movement keys cancel each other out
     if (strafe) 
     { 
@@ -461,12 +499,12 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
             cmd->angleturn += angleturn[tspeed]; 
     } 
 
-    if (gamekeydown[key_up]) 
+    if (gamekeydown[key_up] || gamekeydown[key_alt_up]) // [crispy] add key_alt_*
     {
         // fprintf(stderr, "up\n");
         forward += forwardmove[speed]; 
     }
-    if (gamekeydown[key_down]) 
+    if (gamekeydown[key_down] || gamekeydown[key_alt_down]) // [crispy] add key_alt_*
     {
         // fprintf(stderr, "down\n");
         forward -= forwardmove[speed]; 
@@ -477,7 +515,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     if (joyymove > 0) 
         forward -= forwardmove[speed]; 
 
-    if (gamekeydown[key_strafeleft]
+    if (gamekeydown[key_strafeleft] || gamekeydown[key_alt_strafeleft] // [crispy] add key_alt_*
      || joybuttons[joybstrafeleft]
      || mousebuttons[mousebstrafeleft]
      || joystrafemove < 0)
@@ -485,7 +523,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
         side -= sidemove[speed];
     }
 
-    if (gamekeydown[key_straferight]
+    if (gamekeydown[key_straferight] || gamekeydown[key_alt_straferight] // [crispy] add key_alt_*
      || joybuttons[joybstraferight]
      || mousebuttons[mousebstraferight]
      || joystrafemove > 0)
@@ -616,6 +654,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
         } 
     }
 
+    // [crispy]
     if (!novert)
         forward += mousey;
 
