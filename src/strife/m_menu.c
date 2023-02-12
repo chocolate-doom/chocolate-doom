@@ -73,6 +73,8 @@ void M_QuitStrife(int);
 // defaulted values
 //
 int			mouseSensitivity = 5;
+int			mouseSensitivity_x2 = 5; // [crispy] mouse sensitivity menu
+int			mouseSensitivity_y = 5; // [crispy] mouse sensitivity menu
 
 // [STRIFE]: removed this entirely
 // Show messages has default, 0 = off, 1 = on
@@ -193,11 +195,15 @@ void M_ReadThis3(int choice); // [STRIFE]
 
 //void M_ChangeMessages(int choice); [STRIFE]
 void M_ChangeSensitivity(int choice);
+void M_ChangeSensitivity_x2(int choice); // [crispy] mouse sensitivity menu
+void M_ChangeSensitivity_y(int choice); // [crispy] mouse sensitivity menu
+void M_MouseInvert(int choice); // [crispy] mouse sensitivity menu
 void M_SfxVol(int choice);
 void M_VoiceVol(int choice); // [STRIFE]
 void M_MusicVol(int choice);
 void M_SizeDisplay(int choice);
 void M_StartGame(int choice);
+void M_Mouse(int choice); // [crispy] mouse sensitivity menu
 void M_Sound(int choice);
 
 //void M_FinishReadThis(int choice); - [STRIFE] unused
@@ -213,6 +219,7 @@ void M_DrawReadThis3(void); // [STRIFE]
 void M_DrawNewGame(void);
 void M_DrawEpisode(void);
 void M_DrawOptions(void);
+void M_DrawMouse(void); // [crispy] mouse sensitivity menu
 void M_DrawSound(void);
 void M_DrawLoad(void);
 void M_DrawSave(void);
@@ -347,6 +354,7 @@ enum
     endgame,
     scrnsize,
     option_empty1,
+    mousesens, // [crispy] mouse sensitivity menu
     soundvol,
     crispness, // [crispy] Crispness menu
     opt_end
@@ -355,11 +363,12 @@ enum
 menuitem_t OptionsMenu[] =
 {
     // haleyjd 08/28/10: [STRIFE] Removed messages, mouse sens., detail.
-    {1,"M_ENDGAM",	M_EndGame,'e', "End Game"},
-    {2,"M_SCRNSZ",	M_SizeDisplay,'s', "Screen Size"},
-    {-1,"",0,'\0'},
-    {1,"M_SVOL",	M_Sound,'s', "Settings"},
-    {1,"M_CRISPY",	M_CrispnessCur,'c', "Crispness"} // [crispy] Crispness menu
+    {1, " ", M_EndGame, 'e', "End Game"},
+    {2, " ", M_SizeDisplay, 's', "Screen Size"},
+    {-1, "", 0, '\0'},
+    {1, " ", M_Mouse, 'm', "Mouse Sensitivity"}, // [crispy] mouse sensitivity menu
+    {1, " ", M_Sound, 's', "Sound Volume"}, // [crispy] no longer "Settings" menu
+    {1, " ", M_CrispnessCur, 'c', "Crispness"} // [crispy] Crispness menu
 };
 
 menu_t  OptionsDef =
@@ -368,7 +377,41 @@ menu_t  OptionsDef =
     &MainDef,
     OptionsMenu,
     M_DrawOptions,
-    60,37,
+    80, 37,
+    0,
+};
+
+// [crispy] mouse sensitivity menu
+enum
+{
+    mouse_horiz,
+    mouse_empty1,
+    mouse_horiz2,
+    mouse_empty2,
+    mouse_vert,
+    mouse_empty3,
+    //mouse_invert,
+    mouse_end
+} mouse_e;
+
+static menuitem_t MouseMenu[] =
+{
+    {2, "", M_ChangeSensitivity, 'h'},
+    {-1, "", 0, '\0'},
+    {2, "", M_ChangeSensitivity_x2, 's'},
+    {-1, "", 0, '\0'},
+    {2, "", M_ChangeSensitivity_y, 'v'},
+    {-1, "", 0, '\0'},
+    //{1, "", M_MouseInvert, 'i'},
+};
+
+static menu_t MouseDef =
+{
+    mouse_end,
+    &OptionsDef,
+    MouseMenu,
+    M_DrawMouse,
+    80, 18,
     0
 };
 
@@ -586,8 +629,6 @@ enum
     sfx_empty2,
     voice_vol,
     sfx_empty3,
-    sfx_mouse,
-    sfx_empty4,
     sound_end
 } sound_e;
 
@@ -603,8 +644,6 @@ menuitem_t SoundMenu[]=
     {-1,"",0,'\0'},
     {2,"M_VOIVOL",M_VoiceVol,'v'}, 
     {-1,"",0,'\0'},
-    {2,"M_MSENS",M_ChangeSensitivity,'m'},
-    {-1,"",0,'\0'}
 };
 
 menu_t  SoundDef =
@@ -1102,8 +1141,6 @@ void M_DrawReadThis3(void)
 //
 void M_DrawSound(void)
 {
-    V_DrawPatchDirect (100, 10, W_CacheLumpName(DEH_String("M_SVOL"), PU_CACHE));
-
     M_DrawThermo(SoundDef.x,SoundDef.y+LINEHEIGHT*(sfx_vol+1),
                  16,sfxVolume);
 
@@ -1112,9 +1149,6 @@ void M_DrawSound(void)
 
     M_DrawThermo(SoundDef.x,SoundDef.y+LINEHEIGHT*(voice_vol+1),
                  16,voiceVolume);
-
-    M_DrawThermo(SoundDef.x,SoundDef.y+LINEHEIGHT*(sfx_mouse+1),
-                 16,mouseSensitivity);
 }
 
 void M_Sound(int choice)
@@ -1300,6 +1334,39 @@ void M_DrawOptions(void)
                  9,screenSize);
 }
 
+// [crispy] mouse sensitivity menu
+void M_DrawMouse(void)
+{
+    //char mouse_menu_text[48];
+
+    M_WriteText(MouseDef.x, MouseDef.y + LINEHEIGHT * mouse_horiz + 9,
+                "Horizontal: Turn");
+
+    M_DrawThermo(MouseDef.x, MouseDef.y + LINEHEIGHT * mouse_empty1,
+                 16, mouseSensitivity);
+
+    M_WriteText(MouseDef.x, MouseDef.y + LINEHEIGHT * mouse_horiz2 + 9,
+                "Horizontal: Strafe");
+
+    M_DrawThermo(MouseDef.x, MouseDef.y + LINEHEIGHT * mouse_empty2,
+                 16, mouseSensitivity_x2);
+
+    M_WriteText(MouseDef.x, MouseDef.y + LINEHEIGHT * mouse_vert + 9,
+                "Vertical");
+
+    M_DrawThermo(MouseDef.x, MouseDef.y + LINEHEIGHT * mouse_empty3,
+                 16, mouseSensitivity_y);
+
+/*
+    M_snprintf(mouse_menu_text, sizeof(mouse_menu_text),
+               "Invert Vertical Axis: %s", mouse_y_invert ? "On" : "Off");
+    M_WriteText(MouseDef.x, MouseDef.y + LINEHEIGHT * mouse_invert + 9,
+                mouse_menu_text);
+*/
+
+    dp_translation = NULL;
+}
+
 // [crispy] Crispness menu
 static void M_DrawCrispnessBackground(void)
 {
@@ -1460,6 +1527,24 @@ static void M_DrawCrispness3(void)
 void M_Options(int choice)
 {
     M_SetupNextMenu(&OptionsDef);
+}
+
+// [crispy] correctly handle inverted y-axis
+void M_Mouse(int choice)
+{
+    if (mouseSensitivity_y < 0)
+    {
+        mouseSensitivity_y = -mouseSensitivity_y;
+        mouse_y_invert = 1;
+    }
+
+    if (mouse_acceleration_y < 0)
+    {
+        mouse_acceleration_y = -mouse_acceleration_y;
+        mouse_y_invert = 1;
+    }
+
+    M_SetupNextMenu(&MouseDef);
 }
 
 static void M_CrispnessCur(int choice)
@@ -1700,10 +1785,46 @@ void M_ChangeSensitivity(int choice)
             mouseSensitivity--;
         break;
     case 1:
-        if (mouseSensitivity < 9)
+        if (mouseSensitivity < 255) // [crispy] extended range
             mouseSensitivity++;
         break;
     }
+}
+
+void M_ChangeSensitivity_x2(int choice)
+{
+    switch(choice)
+    {
+    case 0:
+        if (mouseSensitivity_x2)
+            mouseSensitivity_x2--;
+        break;
+    case 1:
+        if (mouseSensitivity_x2 < 255) // [crispy] extended range
+            mouseSensitivity_x2++;
+        break;
+    }
+}
+
+void M_ChangeSensitivity_y(int choice)
+{
+    switch(choice)
+    {
+    case 0:
+        if (mouseSensitivity_y)
+            mouseSensitivity_y--;
+        break;
+    case 1:
+        if (mouseSensitivity_y < 255) // [crispy] extended range
+            mouseSensitivity_y++;
+        break;
+    }
+}
+
+void M_MouseInvert(int choice)
+{
+    choice = 0;
+    mouse_y_invert = !mouse_y_invert;
 }
 
 /*

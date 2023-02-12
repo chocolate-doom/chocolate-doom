@@ -206,6 +206,7 @@ static boolean *mousebuttons = &mousearray[1];  // allow [-1]
 
 // mouse values are used once 
 int             mousex;
+int             mousex2; // [crispy]
 int             mousey;         
 
 static int      dclicktime;
@@ -619,7 +620,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
         forward += mousey;
 
     if (strafe) 
-        side += mousex*2; 
+        side += mousex2*2; // [crispy]
     else 
         cmd->angleturn -= mousex*0x8;
 
@@ -630,7 +631,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
         testcontrols_mousespeed = 0;
     }
     
-    mousex = mousey = 0; 
+    mousex = mousex2 = mousey = 0; // [crispy]
 
     if (forward > MAXPLMOVE) 
         forward = MAXPLMOVE; 
@@ -729,7 +730,7 @@ void G_DoLoadLevel (void)
 
     memset (gamekeydown, 0, sizeof(gamekeydown));
     joyxmove = joyymove = joystrafemove = joylook = 0;
-    mousex = mousey = 0;
+    mousex = mousex2 = mousey = 0; // [crispy]
     sendpause = sendsave = paused = false;
     memset(mousearray, 0, sizeof(mousearray));
     memset(joyarray, 0, sizeof(joyarray));
@@ -900,8 +901,18 @@ boolean G_Responder (event_t* ev)
 
     case ev_mouse: 
         SetMouseButtons(ev->data1);
-        mousex = ev->data2*(mouseSensitivity+5)/10; 
-        mousey = ev->data3*(mouseSensitivity+5)/10; 
+        if (mouseSensitivity)
+            mousex = ev->data2*(mouseSensitivity+5)/10; 
+        else
+            mousex = 0; // [crispy] disable entirely
+        if (mouseSensitivity_x2)
+            mousex2 = ev->data2*(mouseSensitivity_x2+5)/10; // [crispy] separate sensitivity for strafe
+        else
+            mousex2 = 0; // [crispy] disable entirely
+        if (mouseSensitivity_y)
+            mousey = ev->data3*(mouseSensitivity_y+5)/10; // [crispy] separate sensitivity for y-axis
+        else
+            mousey = 0; // [crispy] disable entirely
         return true;    // eat events 
 
     case ev_joystick: 

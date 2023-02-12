@@ -201,7 +201,7 @@ void ConfigMouse(TXT_UNCAST_ARG(widget), void *user_data)
     TXT_SetWindowAction(window, TXT_HORIZ_CENTER, TestConfigAction());
     TXT_SetWindowHelpURL(window, WINDOW_HELP_URL);
 
-    if (gamemission == doom || gamemission == heretic || gamemission == hexen) // [crispy]
+    if (gamemission == doom || gamemission == heretic || gamemission == hexen || gamemission == strife) // [crispy]
     {
     TXT_AddWidgets(window,
                    TXT_NewCheckBox("Enable mouse", &usemouse),
