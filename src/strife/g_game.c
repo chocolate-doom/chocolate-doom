@@ -356,6 +356,10 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     cmd->consistancy = 
         consistancy[consoleplayer][maketic%BACKUPTICS]; 
 
+    // [crispy] center view key
+    if (gamekeydown[key_lookcenter])
+        cmd->buttons2 |= BT2_CENTERVIEW;
+
     // villsa [STRIFE] look up key
     if(gamekeydown[key_lookup] || joylook < 0)
         cmd->buttons2 |= BT2_LOOKUP;
