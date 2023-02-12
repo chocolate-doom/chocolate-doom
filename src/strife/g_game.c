@@ -374,7 +374,8 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
         else if (gamekeydown[key_lookcenter] || kbdlookctrl)
         {
             cmd->buttons2 |= BT2_CENTERVIEW;
-            kbdlookctrl = 0;
+            if (!player->mo->reactiontime) // teleport delay
+                kbdlookctrl = 0;
         }
     }
     else
