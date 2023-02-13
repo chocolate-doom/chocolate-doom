@@ -476,7 +476,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
                    "Always Run %s",
                    (joybspeed >= MAX_JOY_BUTTONS) ? "On" : "Off");
         player->message = playermessage;
-        S_StartSound(NULL, sfx_stnmov);
+        S_StartSound(NULL, sfx_swtchn);
 
         gamekeydown[key_toggleautorun] = false;
     }
@@ -490,7 +490,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
                    "Vertical Mouse Movement %s",
                    !novert ? "On" : "Off");
         player->message = playermessage;
-        S_StartSound(NULL, sfx_stnmov);
+        S_StartSound(NULL, sfx_swtchn);
 
         gamekeydown[key_togglenovert] = false;
     }
