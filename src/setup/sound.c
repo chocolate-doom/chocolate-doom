@@ -67,7 +67,7 @@ static int numChannels = 8;
 static int sfxVolume = 8;
 static int musicVolume = 8;
 static int voiceVolume = 15;
-static int show_talk = 0;
+static int show_talk = 1; // [crispy] show subtitles by default
 // [crispy] values 3 and higher might reproduce DOOM.EXE more accurately,
 // but 1 is closer to "use_libsamplerate = 0" which is the default in Choco
 // and causes only a short delay at startup
