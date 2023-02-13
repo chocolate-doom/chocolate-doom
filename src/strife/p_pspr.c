@@ -993,11 +993,12 @@ void P_MovePsprites (player_t* player)
     player->psprites[ps_flash].sy = player->psprites[ps_weapon].sy;
 
     // villsa [STRIFE] extra stuff for targeter
+    // [crispy] targeter offset correction
     player->psprites[ps_targleft].sx =
-        (160*FRACUNIT) - ((100 - player->accuracy) << FRACBITS);
+        (160 * FRACUNIT) - ((100 + 4 - player->accuracy) << FRACBITS);
 
     player->psprites[ps_targright].sx =
-        ((100 - player->accuracy) << FRACBITS) + (160*FRACUNIT);
+        ((100 - 4 - player->accuracy) << FRACBITS) + ((160 + 1) * FRACUNIT);
 
     // [crispy] update targeter position
     player->psprites[ps_targleft].sx2 = player->psprites[ps_targleft].sx;

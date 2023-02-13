@@ -506,6 +506,8 @@ void D_BindVariables(void)
     M_BindIntVariable("crispy_automaprotate",   &crispy->automaprotate);
     M_BindIntVariable("crispy_bobfactor",       &crispy->bobfactor);
     M_BindIntVariable("crispy_centerweapon",    &crispy->centerweapon);
+    M_BindIntVariable("crispy_crosshair",       &crispy->crosshair);
+    M_BindIntVariable("crispy_crosshairhealth", &crispy->crosshairhealth);
     M_BindIntVariable("crispy_defaultskill",    &crispy->defaultskill);
     M_BindIntVariable("crispy_fpslimit",        &crispy->fpslimit);
     M_BindIntVariable("crispy_freelook",        &crispy->freelook_hh);

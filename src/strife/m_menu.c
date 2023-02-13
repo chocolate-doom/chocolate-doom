@@ -517,6 +517,11 @@ enum
     crispness_defaultskill,
     crispness_sep_tactical_,
 
+    crispness_sep_crosshair,
+    crispness_crosshair,
+    crispness_crosshairhealth,
+    crispness_sep_crosshair_,
+
     crispness3_next,
     crispness3_prev,
     crispness3_end
@@ -531,6 +536,10 @@ static menuitem_t Crispness3Menu[] =
     {2, "", M_CrispyToggleBobfactor, 'p'},
     {2, "", M_CrispyToggleCenterweapon, 'c'},
     {2, "", M_CrispyToggleDefaultSkill, 'd'},
+    {-1, "", 0, '\0'},
+    {-1, "", 0, '\0'},
+    {2, "", M_CrispyToggleCrosshair, 'd'},
+    {2, "", M_CrispyToggleCrosshairHealth, 'c'},
     {-1, "", 0, '\0'},
     {1, "", M_CrispnessNext, 'n'},
     {1, "", M_CrispnessPrev, 'p'},
@@ -1521,6 +1530,10 @@ static void M_DrawCrispness3(void)
     M_DrawCrispnessMultiItem(crispness_bobfactor, "View/Weapon Bobbing", multiitem_bobfactor, crispy->bobfactor, true);
     M_DrawCrispnessMultiItem(crispness_centerweapon, "Attack Alignment", multiitem_centerweapon, crispy->centerweapon, crispy->bobfactor != BOBFACTOR_OFF);
     M_DrawCrispnessMultiItem(crispness_defaultskill, "Default Difficulty", multiitem_difficulties, crispy->defaultskill, true);
+
+    M_DrawCrispnessSeparator(crispness_sep_crosshair, "Crosshair");
+    M_DrawCrispnessItem(crispness_crosshair, "Draw Crosshair", crispy->crosshair, true);
+    M_DrawCrispnessItem(crispness_crosshairhealth, "Color Indicates Health", crispy->crosshairhealth, crispy->crosshair);
 
     M_DrawCrispnessGoto(crispness3_next, "First Page >");
     M_DrawCrispnessGoto(crispness3_prev, "< Prev Page");

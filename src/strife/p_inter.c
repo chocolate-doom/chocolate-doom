@@ -363,10 +363,11 @@ boolean P_GivePower(player_t* player, powertype_t power)
         P_SetPsprite(player, ps_targleft,   S_TRGT_01); // 11
         P_SetPsprite(player, ps_targright,  S_TRGT_02); // 12
 
-        player->psprites[ps_targcenter].sx  = (160*FRACUNIT);
-        player->psprites[ps_targleft  ].sy  = (100*FRACUNIT);
-        player->psprites[ps_targcenter].sy  = (100*FRACUNIT);
-        player->psprites[ps_targright ].sy  = (100*FRACUNIT);
+        // [crispy] targeter offset correction
+        player->psprites[ps_targcenter].sx  = (160 - 3) * FRACUNIT;
+        player->psprites[ps_targleft  ].sy  = (100 - 3) * FRACUNIT;
+        player->psprites[ps_targcenter].sy  = (100 - 3) * FRACUNIT;
+        player->psprites[ps_targright ].sy  = (100 - 3) * FRACUNIT;
 
         // [crispy] update targeter position
         player->psprites[ps_targcenter].sx2 = player->psprites[ps_targcenter].sx;

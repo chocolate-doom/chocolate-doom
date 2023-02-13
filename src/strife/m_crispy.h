@@ -36,6 +36,8 @@ extern multiitem_t multiitem_widgets[NUM_WIDGETS];
 
 void M_CrispyToggleBobfactor(int choice);
 void M_CrispyToggleCenterweapon(int choice);
+void M_CrispyToggleCrosshair(int choice);
+void M_CrispyToggleCrosshairHealth(int choice);
 void M_CrispyToggleDefaultSkill(int choice);
 void M_CrispyToggleFpsLimit(int choice);
 void M_CrispyToggleFreelook(int choice);

@@ -45,6 +45,7 @@
 #include "dstrings.h"
 #include "sounds.h"
 
+#include "v_video.h" // [crispy] V_DrawPatch() et al.
 #include "v_trans.h" // [crispy] color translation and color string tables
 
 //
@@ -307,6 +308,47 @@ void HU_Start(void)
     }
 }
 
+// [crispy] crosshair color determined by health
+static byte *R_CrosshairColor (void)
+{
+    if (crispy->crosshairhealth)
+    {
+        const int health = players[consoleplayer].health;
+
+        if (health < 25)
+            return cr[CR_RED];
+        else if (health < 50)
+            return cr[CR_NONE];
+        else
+            return cr[CR_GREEN];
+    }
+
+	return NULL;
+}
+
+// [crispy] static, non-projected crosshair
+static void HU_DrawCrosshair (void)
+{
+    if (plr->playerstate != PST_LIVE ||
+        automapactive ||
+        menuactive ||
+        menupause ||
+        menuindialog ||
+        paused)
+    {
+        return;
+    }
+    else
+    {
+        patch_t *const patch = W_CacheLumpName("TRGTA0", PU_STATIC);
+        const int x = ORIGWIDTH / 2 - 3;
+        const int y = ORIGHEIGHT / 2 - 3 - ((screenblocks < 11) ? (ST_HEIGHT / 2) : 0);
+
+        dp_translation = R_CrosshairColor();
+        V_DrawPatch(x, y, patch);
+    }
+}
+
 //
 // HU_Drawer
 //
@@ -345,6 +387,11 @@ void HU_Drawer(void)
         HUlib_drawTextLine(&w_coordy, false);
         HUlib_drawTextLine(&w_coorda, false);
     }
+
+    // [crispy] crosshair
+    if (crispy->crosshair)
+        HU_DrawCrosshair();
+    dp_translation = NULL;
 }
 
 //

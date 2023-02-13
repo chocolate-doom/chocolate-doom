@@ -110,6 +110,20 @@ void M_CrispyToggleCenterweapon(int choice)
     ChangeSettingEnum(&crispy->centerweapon, choice, NUM_CENTERWEAPON);
 }
 
+void M_CrispyToggleCrosshair(int choice)
+{
+    choice = 0;
+
+    crispy->crosshair = !crispy->crosshair;
+}
+
+void M_CrispyToggleCrosshairHealth(int choice)
+{
+    choice = 0;
+
+    crispy->crosshairhealth = !crispy->crosshairhealth;
+}
+
 void M_CrispyToggleDefaultSkill(int choice)
 {
     ChangeSettingEnum(&crispy->defaultskill, choice, NUM_SKILLS);
