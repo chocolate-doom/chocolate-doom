@@ -41,6 +41,7 @@ void M_CrispyToggleFpsLimit(int choice);
 void M_CrispyToggleFreelook(int choice);
 void M_CrispyToggleHires(int choice);
 void M_CrispyToggleLeveltime(int choice);
+void M_CrispyToggleMouseLook(int choice);
 void M_CrispyTogglePlayerCoords(int choice);
 void M_CrispyToggleRunCentering(int choice);
 void M_CrispyToggleSmoothLighting(int choice);

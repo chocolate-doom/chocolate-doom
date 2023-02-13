@@ -165,6 +165,11 @@ static void ConfigExtraButtons(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
       AddMouseControl(buttons_table, "Use artifact", &mousebuseartifact);
     }
 
+    if (gamemission == strife) // [crispy]
+    {
+        AddMouseControl(buttons_table, "Mouselook", &mousebmouselook);
+    }
+
     if (gamemission == hexen || gamemission == strife)
     {
         AddMouseControl(buttons_table, "Jump", &mousebjump);
@@ -283,8 +288,5 @@ void BindMouseVariables(void)
     M_BindIntVariable("mouse_threshold_y",       &mouse_threshold_y);
     M_BindFloatVariable("mouse_acceleration_y",  &mouse_acceleration_y);
     M_BindIntVariable("mouse_y_invert",          &mouse_y_invert);
-    if (gamemission == doom || gamemission == heretic || gamemission == hexen)
-    {
     M_BindIntVariable("crispy_mouselook",        &crispy->mouselook);
-    }
 }

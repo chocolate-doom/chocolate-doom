@@ -263,6 +263,12 @@ void P_MovePlayer (player_t* player)
         }
     }
 
+    // [crispy] handle mouse look
+    if (cmd->lookdir && crispy->singleplayer)
+    {
+        player->pitch += cmd->lookdir;
+        player->pitch = BETWEEN(LOOKDOWNMAX, LOOKUPMAX, player->pitch);
+    }
 }
 
 

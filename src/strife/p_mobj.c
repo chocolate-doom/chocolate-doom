@@ -370,7 +370,9 @@ void P_ZMovement (mobj_t* mo)
 
                 // haleyjd 20110224: *Any* fall centers your view, not just
                 // damaging falls (moved outside the above if).
-                mo->player->centerview = 1;
+                // [crispy] center view when not using mouse look
+                if (!critical->mouselook)
+                    mo->player->centerview = 1;
                 S_StartSound (mo, sfx_oof);
             }
             mo->momz = 0;

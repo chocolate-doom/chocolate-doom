@@ -199,6 +199,19 @@ void M_CrispyToggleLeveltime(int choice)
     ChangeSettingEnum(&crispy->leveltime, choice, NUM_WIDGETS - 1);
 }
 
+void M_CrispyToggleMouseLook(int choice)
+{
+    if (demorecording || netgame)
+        return;
+
+    choice = 0;
+
+    crispy->mouselook = !crispy->mouselook;
+
+    // [crispy] update the "critical" struct
+    CheckCrispySingleplayer(!demorecording && !demoplayback && !netgame);
+}
+
 void M_CrispyTogglePlayerCoords(int choice)
 {
     // [crispy] disable "always" setting

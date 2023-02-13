@@ -350,6 +350,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     int		side;
     player_t *const player = &players[consoleplayer]; // [crispy]
     static char playermessage[48]; // [crispy]
+    static unsigned int mbmlookctrl = 0; // [crispy]
     static unsigned int kbdlookctrl = 0; // [crispy]
 
     memset(cmd, 0, sizeof(ticcmd_t));
@@ -680,9 +681,42 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
         } 
     }
 
-    // [crispy]
-    if (!novert)
+    // [crispy] mouse look
+    cmd->lookdir = 0;
+    if ((crispy->mouselook || mousebuttons[mousebmouselook]) &&
+        crispy->singleplayer)
+    {
+        static fixed_t carry_lookdir = 0;
+        fixed_t desired_lookdir;
+
+        // [crispy] repurpose lookdir and carry error like low-res turning
+        cmd->lookdir = mouse_y_invert ? -mousey : mousey;
+        desired_lookdir = FixedDiv(cmd->lookdir << FRACBITS, MLOOKUNIT << FRACBITS) +
+                          carry_lookdir;
+        cmd->lookdir = desired_lookdir >> FRACBITS;
+        carry_lookdir = desired_lookdir - (cmd->lookdir << FRACBITS);
+    }
+    else if (!novert)
+    {
         forward += mousey;
+    }
+
+    // [crispy] single click on mouse look button centers view
+    if (mousebuttons[mousebmouselook]) // [crispy] clicked
+    {
+        mbmlookctrl += ticdup;
+    }
+    else if (mbmlookctrl) // [crispy] released
+    {
+        if (crispy->freelook_hh == FREELOOK_HH_SPRING ||
+            mbmlookctrl < SLOWTURNTICS) // [crispy] short click
+        {
+            cmd->buttons2 |= BT2_CENTERVIEW;
+        }
+
+        if (!player->mo->reactiontime) // [crispy] teleport delay
+            mbmlookctrl = 0;
+    }
 
     if (strafe) 
         side += mousex2*2; // [crispy]
@@ -2480,6 +2514,9 @@ void G_DoPlayDemo (void)
 
     usergame = false; 
     demoplayback = true; 
+
+    // [crispy] update the "singleplayer" variable
+    CheckCrispySingleplayer(!demorecording && !demoplayback && !netgame);
 } 
 
 //
