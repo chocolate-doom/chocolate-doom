@@ -1056,7 +1056,15 @@ void ST_doRefresh(void)
             RefreshBackground();
 
         // draw main status bar
-        V_DrawPatch(ST_X, ST_Y, invback);
+        // [crispy] support wide status bars with 0 offset
+        if (SHORT(invback->width) > ORIGWIDTH && SHORT(invback->leftoffset) == 0)
+        {
+            V_DrawPatch(ST_X + (ORIGWIDTH - SHORT(invback->width)) / 2, ST_Y, invback);
+        }
+        else
+        {
+            V_DrawPatch(ST_X, ST_Y, invback);
+        }
 
         // draw multiplayer armor backdrop if netgame
         // haleyjd 20131031: BUG - vanilla is accessing a NULL pointer here when
@@ -1378,7 +1386,16 @@ boolean ST_DrawExternal(void)
 
     if(st_statusbaron)
     {
-        V_DrawPatchDirect(0, 160, invtop);
+        // [crispy] support wide status bars with 0 offset
+        if (SHORT(invtop->width) > ORIGWIDTH && SHORT(invtop->leftoffset) == 0)
+        {
+            V_DrawPatchDirect((ORIGWIDTH - SHORT(invtop->width)) / 2, 160, invtop);
+        }
+        else
+        {
+            V_DrawPatchDirect(0, 160, invtop);
+        }
+
         STlib_drawNumPositive(&w_health);
         STlib_drawNumPositive(&w_ready);
     }
