@@ -216,12 +216,14 @@ void V_DrawPatch(int x, int y, patch_t *patch)
     x -= SHORT(patch->leftoffset);
     x += WIDESCREENDELTA; // [crispy] horizontal widescreen offset
 
+/*
     // haleyjd 08/28/10: Strife needs silent error checking here.
     if(patchclip_callback)
     {
         if(!patchclip_callback(patch, x, y))
             return;
     }
+*/
 
 #ifdef RANGECHECK_NOTHANKS
     if (x < 0
@@ -349,12 +351,14 @@ void V_DrawPatchFlipped(int x, int y, patch_t *patch)
     x -= SHORT(patch->leftoffset); 
     x += WIDESCREENDELTA; // [crispy] horizontal widescreen offset
 
+/*
     // haleyjd 08/28/10: Strife needs silent error checking here.
     if(patchclip_callback)
     {
         if(!patchclip_callback(patch, x, y))
             return;
     }
+*/
 
 #ifdef RANGECHECK_NOTHANKS
     if (x < 0
@@ -533,11 +537,13 @@ void V_DrawXlaPatch(int x, int y, patch_t * patch)
     x -= SHORT(patch->leftoffset);
     x += WIDESCREENDELTA; // [crispy] horizontal widescreen offset
 
+/*
     if(patchclip_callback)
     {
         if(!patchclip_callback(patch, x, y))
             return;
     }
+*/
 
     col = 0;
     desttop = dest_screen + ((y * dy) >> FRACBITS) * SCREENWIDTH + ((x * dx) >> FRACBITS);
