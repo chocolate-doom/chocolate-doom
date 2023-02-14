@@ -392,7 +392,8 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     }
 
     // villsa [STRIFE] inventory use key
-    if(gamekeydown[key_invuse])
+    // [crispy] mouse inventory use
+    if(gamekeydown[key_invuse] || mousebuttons[mousebinvuse])
     {
         if(player->numinventory > 0)
         {
@@ -873,6 +874,7 @@ static void SetJoyButtons(unsigned int buttons_mask)
 static void SetMouseButtons(unsigned int buttons_mask)
 {
     int i;
+    player_t *const player = &players[consoleplayer]; // [crispy]
 
     for (i=0; i<MAX_MOUSE_BUTTONS; ++i)
     {
@@ -889,6 +891,16 @@ static void SetMouseButtons(unsigned int buttons_mask)
             else if (i == mousebnextweapon)
             {
                 next_weapon = 1;
+            }
+            else if (i == mousebinvleft) // [crispy] mouse inventory left
+            {
+                if (player->inventorycursor > 0)
+                    player->inventorycursor--;
+            }
+            else if (i == mousebinvright) // [crispy] mouse inventory right
+            {
+                if (player->inventorycursor < player->numinventory - 1)
+                    player->inventorycursor++;
             }
         }
 

@@ -1261,6 +1261,14 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(mouseb_useartifact),
 
     //!
+    // @game strife
+    //
+    // Mouse button to use inventory item.
+    //
+
+    CONFIG_VARIABLE_INT(mouseb_invuse),
+
+    //!
     // If non-zero, double-clicking a mouse button acts like pressing
     // the "use" key to use an object in-game, eg. a door or switch.
     //

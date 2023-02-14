@@ -59,6 +59,7 @@ static int *game_mouse_buttons[] = {
     &mousebinvleft,
     &mousebinvright,
     &mousebuseartifact,
+    &mousebinvuse, // [crispy]
     &mousebturnleft,
     &mousebturnright,
 };
@@ -168,6 +169,9 @@ static void ConfigExtraButtons(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
     if (gamemission == strife) // [crispy]
     {
         AddMouseControl(buttons_table, "Mouselook", &mousebmouselook);
+        AddMouseControl(buttons_table, "Inventory left", &mousebinvleft);
+        AddMouseControl(buttons_table, "Inventory right", &mousebinvright);
+        AddMouseControl(buttons_table, "Use inventory", &mousebinvuse);
     }
 
     if (gamemission == hexen || gamemission == strife)
