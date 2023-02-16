@@ -1344,7 +1344,7 @@ void M_DrawOptions(void)
     // haleyjd 08/26/10: [STRIFE] Removed messages, sensitivity, detail.
 
     M_DrawThermo(OptionsDef.x,OptionsDef.y+LINEHEIGHT*(scrnsize+1),
-                 9,screenSize);
+                 11,screenSize); // [crispy] Crispy HUD
 }
 
 // [crispy] mouse sensitivity menu
@@ -1873,7 +1873,7 @@ void M_SizeDisplay(int choice)
         }
         break;
     case 1:
-        if (screenSize < 8)
+        if (screenSize < 10) // [crispy] Crispy HUD
         {
             screenblocks++;
             screenSize++;

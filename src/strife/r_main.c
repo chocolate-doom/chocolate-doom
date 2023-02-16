@@ -783,7 +783,7 @@ R_SetViewSize
   int		detail )
 {
     setsizeneeded = true;
-    setblocks = blocks;
+    setblocks = MIN(blocks, 11); // [crispy] Crispy HUD
     setdetail = detail;
 }
 

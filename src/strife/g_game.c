@@ -399,6 +399,10 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
         {
             cmd->buttons2 |= BT2_INVUSE;
             cmd->inventory = player->inventory[player->inventorycursor].sprite;
+
+            // [crispy] Crispy HUD: keep inventory visible when using an item
+            if (st_invtics)
+                st_invtics = 5 * 35;
         }
     }
 
@@ -409,6 +413,10 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
         {
             cmd->buttons2 |= BT2_INVDROP;
             cmd->inventory = player->inventory[player->inventorycursor].sprite;
+
+            // [crispy] Crispy HUD: keep inventory visible when dropping an item
+            if (st_invtics)
+                st_invtics = 5 * 35;
         }
     }
 
@@ -896,11 +904,13 @@ static void SetMouseButtons(unsigned int buttons_mask)
             {
                 if (player->inventorycursor > 0)
                     player->inventorycursor--;
+                st_invtics = 5 * 35; // [crispy] Crispy HUD
             }
             else if (i == mousebinvright) // [crispy] mouse inventory right
             {
                 if (player->inventorycursor < player->numinventory - 1)
                     player->inventorycursor++;
+                st_invtics = 5 * 35; // [crispy] Crispy HUD
             }
         }
 

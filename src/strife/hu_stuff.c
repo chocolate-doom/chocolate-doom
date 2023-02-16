@@ -58,6 +58,9 @@
 // haleyjd 09/01/10: [STRIFE] 167 -> 160 to move up level name
 #define HU_TITLEY       (160 - SHORT(hu_font[0]->height))
 
+// [crispy] Crispy HUD
+#define HU_TITLEY2      (ORIGHEIGHT - SHORT(hu_font[0]->height))
+
 #define HU_INPUTTOGGLE  't'
 #define HU_INPUTX       HU_MSGX
 #define HU_INPUTY       (HU_MSGY + HU_MSGHEIGHT*(SHORT(hu_font[0]->height) +1))
@@ -584,8 +587,8 @@ void HU_Ticker(void)
     if (automapactive)
     {
         // [crispy] move map title to the bottom (just above health in Strife)
-        if (crispy->automapoverlay && screenblocks == 11)
-            w_title.y = HU_TITLEY + ST_HEIGHT;
+        if (crispy->automapoverlay && screenblocks >= 11)
+            w_title.y = HU_TITLEY2 - (screenblocks > 11 ? 29 : 11);
         else
             w_title.y = HU_TITLEY;
     }

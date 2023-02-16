@@ -80,6 +80,9 @@ typedef enum
 // [crispy] For status bar background in widescreen mode and widgets.
 extern pixel_t *st_backing_screen;
 
+// [crispy] Crispy HUD
+extern int st_invtics;
+
 extern cheatseq_t cheat_mus;     // [STRIFE]: idmus -> spin
 extern cheatseq_t cheat_god;     // [STRIFE]: iddqd -> omnipotent
 extern cheatseq_t cheat_ammo;    // [STRIFE]: idfa -> boomstix
