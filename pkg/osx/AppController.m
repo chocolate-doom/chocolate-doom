@@ -122,12 +122,12 @@
                                forArgument: @"-deh"];
         [self->launcherManager selectGameByName: "heretic"];
     }
-    //else if (![extension caseInsensitiveCompare: @"seh"])
-    //{
-    //    [self->launcherManager addFileToCommandLine: fileName
-    //                           forArgument: @"-deh"];
-    //    [self->launcherManager selectGameByName: "strife"];
-    //}
+    else if (![extension caseInsensitiveCompare: @"seh"])
+    {
+        [self->launcherManager addFileToCommandLine: fileName
+                               forArgument: @"-deh"];
+        [self->launcherManager selectGameByName: "strife"];
+    }
     else
     {
         return NO;

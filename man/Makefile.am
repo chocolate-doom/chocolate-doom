@@ -26,17 +26,17 @@ GENERATED_MAN_PAGES =               \
            @PROGRAM_PREFIX@heretic.cfg.5  \
            @PROGRAM_PREFIX@hexen.6        \
            hexen.cfg.5              \
-           @PROGRAM_PREFIX@hexen.cfg.5    
-#          @PROGRAM_PREFIX@strife.6       \
-#          strife.cfg.5             \
-#          @PROGRAM_PREFIX@strife.cfg.5   \
-#          @PROGRAM_PREFIX@server.6
+           @PROGRAM_PREFIX@hexen.cfg.5    \
+           @PROGRAM_PREFIX@strife.6       \
+           strife.cfg.5             \
+           @PROGRAM_PREFIX@strife.cfg.5   \
+           @PROGRAM_PREFIX@server.6
 
 SETUP_MAN_PAGES =                          \
            @PROGRAM_PREFIX@doom-setup.6    \
            @PROGRAM_PREFIX@heretic-setup.6 \
-           @PROGRAM_PREFIX@hexen-setup.6   
-#          @PROGRAM_PREFIX@strife-setup.6
+           @PROGRAM_PREFIX@hexen-setup.6   \
+           @PROGRAM_PREFIX@strife-setup.6
 
 man_MANS = $(GENERATED_MAN_PAGES)         \
            $(SETUP_MAN_PAGES)
@@ -44,7 +44,7 @@ man_MANS = $(GENERATED_MAN_PAGES)         \
 doomdocs_DATA    = INSTALL.doom    CMDLINE.doom
 hereticdocs_DATA = INSTALL.heretic CMDLINE.heretic
 hexendocs_DATA   = INSTALL.hexen   CMDLINE.hexen
-#strifedocs_DATA  = INSTALL.strife  CMDLINE.strife
+strifedocs_DATA  = INSTALL.strife  CMDLINE.strife
 
 if HAVE_WINDRES
 
@@ -53,7 +53,7 @@ WIN32=-D_WIN32
 doomdocs_DATA += CMDLINE.doom.md
 hereticdocs_DATA += CMDLINE.heretic.md
 hexendocs_DATA += CMDLINE.hexen.md
-#strifedocs_DATA += CMDLINE.strife.md
+strifedocs_DATA += CMDLINE.strife.md
 
 endif
 
