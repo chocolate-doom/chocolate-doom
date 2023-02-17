@@ -1402,12 +1402,6 @@ static void M_DrawCrispnessBackground(void)
         }
     }
 
-    // Darker background for better text legibility.
-    for (x = 0; x < SCREENWIDTH * SCREENHEIGHT; x++)
-    {
-        I_VideoBuffer[x] = colormaps[8 * 256 + I_VideoBuffer[x]];
-    }
-
     inhelpscreens = true;
 }
 
