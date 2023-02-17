@@ -221,8 +221,7 @@ void M_CrispyToggleColoredblood(int choice)
 	return;
     }
 
-    choice = 0;
-    crispy->coloredblood = (crispy->coloredblood + 1) % NUM_COLOREDBLOOD;
+    ChangeSettingEnum(&crispy->coloredblood, choice, NUM_COLOREDBLOOD);
 
     // [crispy] switch NOBLOOD flag for Lost Souls
     for (th = thinkercap.next; th && th != &thinkercap; th = th->next)

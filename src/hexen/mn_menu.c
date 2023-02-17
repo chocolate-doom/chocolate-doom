@@ -54,6 +54,7 @@ typedef enum
     ITT_EFUNC,
     ITT_LRFUNC,
     ITT_SETMENU,
+    ITT_LRFUNC2, // [crispy] LR non-slider item
     ITT_NUMFUNC, // [crispy] numeric entry
     ITT_INERT
 } ItemType_t;
@@ -290,7 +291,7 @@ static Menu_t SkillMenu = {
 
 static MenuItem_t OptionsItems[] = {
     {ITT_EFUNC, "END GAME", SCEndGame, 0, MENU_NONE},
-    {ITT_EFUNC, "MESSAGES : ", SCMessages, 0, MENU_NONE},
+    {ITT_LRFUNC2, "MESSAGES : ", SCMessages, 0, MENU_NONE},
     {ITT_SETMENU, "MOUSE SENSITIVITY...", NULL, 0, MENU_MOUSE},
     {ITT_SETMENU, "MORE...", NULL, 0, MENU_OPTIONS2},
     {ITT_SETMENU, "CRISPNESS...", NULL, 0, MENU_CRISPNESS}
@@ -311,7 +312,7 @@ static MenuItem_t MouseItems[] = {
     {ITT_EMPTY, NULL, NULL, 0, MENU_NONE},
     {ITT_LRFUNC, "VERTICAL", SCMouseSensiY, 0, MENU_NONE},
     {ITT_EMPTY, NULL, NULL, 0, MENU_NONE},
-    {ITT_LRFUNC, "INVERT Y AXIS :", SCMouseInvertY, 0, MENU_NONE},
+    {ITT_LRFUNC2, "INVERT Y AXIS :", SCMouseInvertY, 0, MENU_NONE},
 };
 
 static Menu_t MouseMenu = {
@@ -339,20 +340,20 @@ static Menu_t Options2Menu = {
 };
 
 static MenuItem_t CrispnessItems[] = {
-    {ITT_LRFUNC, "HIGH RESOLUTION RENDERING:", CrispyHires, 0, MENU_NONE},
-    {ITT_LRFUNC, "ASPECT RATIO:", CrispyToggleWidescreen, 0, MENU_NONE},
-    {ITT_LRFUNC, "SMOOTH PIXEL SCALING:", CrispySmoothing, 0, MENU_NONE},
-    {ITT_LRFUNC, "UNCAPPED FRAMERATE:", CrispyUncapped, 0, MENU_NONE},
+    {ITT_LRFUNC2, "HIGH RESOLUTION RENDERING:", CrispyHires, 0, MENU_NONE},
+    {ITT_LRFUNC2, "ASPECT RATIO:", CrispyToggleWidescreen, 0, MENU_NONE},
+    {ITT_LRFUNC2, "SMOOTH PIXEL SCALING:", CrispySmoothing, 0, MENU_NONE},
+    {ITT_LRFUNC2, "UNCAPPED FRAMERATE:", CrispyUncapped, 0, MENU_NONE},
     {ITT_NUMFUNC, "FPS LIMIT:", CrispyFpsLimit, 0, MENU_NONE},
-    {ITT_LRFUNC, "ENABLE VSYNC:", CrispyVsync, 0, MENU_NONE},
+    {ITT_LRFUNC2, "ENABLE VSYNC:", CrispyVsync, 0, MENU_NONE},
     {ITT_EMPTY, NULL, NULL, 0, MENU_NONE},
     {ITT_EMPTY, NULL, NULL, 0, MENU_NONE},
-    {ITT_LRFUNC, "BRIGHTMAPS:", CrispyBrightmaps, 0, MENU_NONE},
+    {ITT_LRFUNC2, "BRIGHTMAPS:", CrispyBrightmaps, 0, MENU_NONE},
     {ITT_EMPTY, NULL, NULL, 0, MENU_NONE},
     {ITT_EMPTY, NULL, NULL, 0, MENU_NONE},
-    {ITT_LRFUNC, "FREELOOK MODE:", CrispyFreelook, 0, MENU_NONE},
-    {ITT_LRFUNC, "PERMANENT MOUSELOOK:", CrispyMouselook, 0, MENU_NONE},
-    {ITT_LRFUNC, "DEFAULT DIFFICULTY:", CrispyDefaultskill, 0, MENU_NONE},
+    {ITT_LRFUNC2, "FREELOOK MODE:", CrispyFreelook, 0, MENU_NONE},
+    {ITT_LRFUNC2, "PERMANENT MOUSELOOK:", CrispyMouselook, 0, MENU_NONE},
+    {ITT_LRFUNC2, "DEFAULT DIFFICULTY:", CrispyDefaultskill, 0, MENU_NONE},
 };
 
 static Menu_t CrispnessMenu = {
@@ -1996,21 +1997,35 @@ boolean MN_Responder(event_t * event)
         }
         else if (key == key_menu_left)           // Slider left
         {
-            if ((item->type == ITT_LRFUNC || item->type == ITT_NUMFUNC) &&
-                    item->func != NULL)
+            if ((item->type == ITT_LRFUNC || item->type == ITT_LRFUNC2 ||
+                 item->type == ITT_NUMFUNC) && item->func != NULL)
             {
                 item->func(LEFT_DIR);
-                S_StartSound(NULL, SFX_PICKUP_KEY);
+                if (item->type == ITT_LRFUNC2)
+                {
+                    S_StartSound(NULL, SFX_DOOR_LIGHT_CLOSE);
+                }
+                else
+                {
+                    S_StartSound(NULL, SFX_PICKUP_KEY);
+                }
             }
             return (true);
         }
         else if (key == key_menu_right)          // Slider right
         {
-            if ((item->type == ITT_LRFUNC || item->type == ITT_NUMFUNC)
-                    && item->func != NULL)
+            if ((item->type == ITT_LRFUNC || item->type == ITT_LRFUNC2 ||
+                 item->type == ITT_NUMFUNC) && item->func != NULL)
             {
                 item->func(RIGHT_DIR);
-                S_StartSound(NULL, SFX_PICKUP_KEY);
+                if (item->type == ITT_LRFUNC2)
+                {
+                    S_StartSound(NULL, SFX_DOOR_LIGHT_CLOSE);
+                }
+                else
+                {
+                    S_StartSound(NULL, SFX_PICKUP_KEY);
+                }
             }
             return (true);
         }
@@ -2027,7 +2042,7 @@ boolean MN_Responder(event_t * event)
             else if (item->func != NULL)
             {
                 CurrentMenu->oldItPos = CurrentItPos;
-                if (item->type == ITT_LRFUNC)
+                if (item->type == ITT_LRFUNC || item->type == ITT_LRFUNC2)
                 {
                     item->func(RIGHT_DIR);
                 }
@@ -2036,7 +2051,7 @@ boolean MN_Responder(event_t * event)
                     item->func(item->option);
                 }
                 // [crispy] numeric entry
-                else if (item->type == ITT_NUMFUNC && item->func != NULL)
+                else if (item->type == ITT_NUMFUNC)
                 {
                     item->func(ENTER_NUMBER);
                     numeric_entry_index = 0;

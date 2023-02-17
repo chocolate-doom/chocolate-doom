@@ -154,7 +154,8 @@ extern boolean speedkeydown (void);
 typedef struct
 {
     // 0 = no cursor here, 1 = ok, 2 = arrows ok
-    // [crispy] 3 = arrows ok, enter for numeric entry
+    // [crispy] 3 = arrows ok, no mouse x
+    // [crispy] 4 = arrows ok, enter for numeric entry, no mouse x
     short	status;
     
     char	name[10];
@@ -381,8 +382,8 @@ enum
 menuitem_t OptionsMenu[]=
 {
     {1,"M_ENDGAM",	M_EndGame,'e', "End Game"},
-    {1,"M_MESSG",	M_ChangeMessages,'m', "Messages: "},
-    {1,"M_DETAIL",	M_ChangeDetail,'g', "Graphic Detail: "},
+    {3,"M_MESSG",	M_ChangeMessages,'m', "Messages: "},
+    {3,"M_DETAIL",	M_ChangeDetail,'g', "Graphic Detail: "},
     {2,"M_SCRNSZ",	M_SizeDisplay,'s', "Screen Size"},
     {-1,"",0,'\0'},
     {1,"M_MSENS",	M_Mouse,'m', "Mouse Sensitivity"}, // [crispy] mouse sensitivity menu
@@ -421,7 +422,7 @@ static menuitem_t MouseMenu[]=
     {-1,"",0,'\0'},
     {2,"",	M_ChangeSensitivity_y,'v'},
     {-1,"",0,'\0'},
-    {1,"",	M_MouseInvert,'i'},
+    {3,"",	M_MouseInvert,'i'},
 };
 
 static menu_t  MouseDef =
@@ -463,20 +464,20 @@ enum
 static menuitem_t Crispness1Menu[]=
 {
     {-1,"",0,'\0'},
-    {2,"",	M_CrispyToggleHires,'h'},
-    {2,"",	M_CrispyToggleWidescreen,'w'},
-    {2,"",	M_CrispyToggleUncapped,'u'},
-    {3,"",	M_CrispyToggleFpsLimit,'f'},
-    {2,"",	M_CrispyToggleVsync,'v'},
-    {2,"",	M_CrispyToggleSmoothScaling,'s'},
+    {3,"",	M_CrispyToggleHires,'h'},
+    {3,"",	M_CrispyToggleWidescreen,'w'},
+    {3,"",	M_CrispyToggleUncapped,'u'},
+    {4,"",	M_CrispyToggleFpsLimit,'f'},
+    {3,"",	M_CrispyToggleVsync,'v'},
+    {3,"",	M_CrispyToggleSmoothScaling,'s'},
     {-1,"",0,'\0'},
     {-1,"",0,'\0'},
-    {2,"",	M_CrispyToggleColoredhud,'c'},
-    {2,"",	M_CrispyToggleTranslucency,'e'},
-    {2,"",	M_CrispyToggleSmoothLighting,'s'},
-    {2,"",	M_CrispyToggleBrightmaps,'b'},
-    {2,"",	M_CrispyToggleColoredblood,'c'},
-    {2,"",	M_CrispyToggleFlipcorpses,'r'},
+    {3,"",	M_CrispyToggleColoredhud,'c'},
+    {3,"",	M_CrispyToggleTranslucency,'e'},
+    {3,"",	M_CrispyToggleSmoothLighting,'s'},
+    {3,"",	M_CrispyToggleBrightmaps,'b'},
+    {3,"",	M_CrispyToggleColoredblood,'c'},
+    {3,"",	M_CrispyToggleFlipcorpses,'r'},
     {-1,"",0,'\0'},
     {1,"",	M_CrispnessNext,'n'},
     {1,"",	M_CrispnessPrev,'p'},
@@ -519,19 +520,19 @@ enum
 static menuitem_t Crispness2Menu[]=
 {
     {-1,"",0,'\0'},
-    {2,"",	M_CrispyToggleFullsounds,'p'},
-    {2,"",	M_CrispyToggleSoundfixes,'m'},
-    {2,"",	M_CrispyToggleSndChannels,'s'},
-    {2,"",	M_CrispyToggleSoundMono,'m'},
+    {3,"",	M_CrispyToggleFullsounds,'p'},
+    {3,"",	M_CrispyToggleSoundfixes,'m'},
+    {3,"",	M_CrispyToggleSndChannels,'s'},
+    {3,"",	M_CrispyToggleSoundMono,'m'},
     {-1,"",0,'\0'},
     {-1,"",0,'\0'},
-    {2,"",	M_CrispyToggleExtAutomap,'e'},
-    {2,"",	M_CrispyToggleSmoothMap,'m'},
-    {2,"",	M_CrispyToggleAutomapstats,'s'},
-    {2,"",	M_CrispyToggleStatsFormat,'f'},
-    {2,"",	M_CrispyToggleLeveltime,'l'},
-    {2,"",	M_CrispyTogglePlayerCoords,'p'},
-    {2,"",	M_CrispyToggleSecretmessage,'s'},
+    {3,"",	M_CrispyToggleExtAutomap,'e'},
+    {3,"",	M_CrispyToggleSmoothMap,'m'},
+    {3,"",	M_CrispyToggleAutomapstats,'s'},
+    {3,"",	M_CrispyToggleStatsFormat,'f'},
+    {3,"",	M_CrispyToggleLeveltime,'l'},
+    {3,"",	M_CrispyTogglePlayerCoords,'p'},
+    {3,"",	M_CrispyToggleSecretmessage,'s'},
     {-1,"",0,'\0'},
     {1,"",	M_CrispnessNext,'n'},
     {1,"",	M_CrispnessPrev,'p'},
@@ -574,19 +575,19 @@ enum
 static menuitem_t Crispness3Menu[]=
 {
     {-1,"",0,'\0'},
-    {2,"",	M_CrispyToggleFreelook,'a'},
-    {2,"",	M_CrispyToggleMouseLook,'p'},
-    {2,"",	M_CrispyToggleBobfactor,'p'},
-    {2,"",	M_CrispyToggleCenterweapon,'c'},
-    {2,"",	M_CrispyTogglePitch,'w'},
-    {2,"",	M_CrispyToggleNeghealth,'n'},
-    {2,"",	M_CrispyToggleDefaultSkill,'d'},
+    {3,"",	M_CrispyToggleFreelook,'a'},
+    {3,"",	M_CrispyToggleMouseLook,'p'},
+    {3,"",	M_CrispyToggleBobfactor,'p'},
+    {3,"",	M_CrispyToggleCenterweapon,'c'},
+    {3,"",	M_CrispyTogglePitch,'w'},
+    {3,"",	M_CrispyToggleNeghealth,'n'},
+    {3,"",	M_CrispyToggleDefaultSkill,'d'},
     {-1,"",0,'\0'},
     {-1,"",0,'\0'},
-    {2,"",	M_CrispyToggleCrosshair,'d'},
-    {2,"",	M_CrispyToggleCrosshairtype,'c'},
-    {2,"",	M_CrispyToggleCrosshairHealth,'c'},
-    {2,"",	M_CrispyToggleCrosshairTarget,'h'},
+    {3,"",	M_CrispyToggleCrosshair,'d'},
+    {3,"",	M_CrispyToggleCrosshairtype,'c'},
+    {3,"",	M_CrispyToggleCrosshairHealth,'c'},
+    {3,"",	M_CrispyToggleCrosshairTarget,'h'},
     {-1,"",0,'\0'},
     {1,"",	M_CrispnessNext,'n'},
     {1,"",	M_CrispnessPrev,'p'},
@@ -626,15 +627,15 @@ enum
 static menuitem_t Crispness4Menu[]=
 {
     {-1,"",0,'\0'},
-    {2,"",	M_CrispyToggleFreeaim,'v'},
-    {2,"",	M_CrispyToggleJumping,'a'},
-    {2,"",	M_CrispyToggleOverunder,'w'},
+    {3,"",	M_CrispyToggleFreeaim,'v'},
+    {3,"",	M_CrispyToggleJumping,'a'},
+    {3,"",	M_CrispyToggleOverunder,'w'},
     {-1,"",0,'\0'},
     {-1,"",0,'\0'},
-    {2,"",	M_CrispyToggleDemoTimer,'v'},
-    {2,"",	M_CrispyToggleDemoTimerDir,'a'},
-    {2,"",	M_CrispyToggleDemoBar,'w'},
-    {2,"",	M_CrispyToggleDemoUseTimer,'u'},
+    {3,"",	M_CrispyToggleDemoTimer,'v'},
+    {3,"",	M_CrispyToggleDemoTimerDir,'a'},
+    {3,"",	M_CrispyToggleDemoBar,'w'},
+    {3,"",	M_CrispyToggleDemoUseTimer,'u'},
     {-1,"",0,'\0'},
     {1,"",	M_CrispnessNext,'n'},
     {1,"",	M_CrispnessPrev,'p'},
@@ -2270,6 +2271,7 @@ boolean M_Responder (event_t* ev)
     static  int     lasty = 0;
     static  int     mousex = 0;
     static  int     lastx = 0;
+    boolean mousextobutton = false;
 
     // In testcontrols mode, none of the function keys should do anything
     // - the only key is escape to quit.
@@ -2417,12 +2419,14 @@ boolean M_Responder (event_t* ev)
 		key = key_menu_left;
 		mousewait = I_GetTime() + 5;
 		mousex = lastx -= 30;
+		mousextobutton = true;
 	    }
 	    else if (mousex > lastx+30)
 	    {
 		key = key_menu_right;
 		mousewait = I_GetTime() + 5;
 		mousex = lastx += 30;
+		mousextobutton = true;
 	    }
 		
 	    if (ev->data1&1)
@@ -2801,11 +2805,26 @@ boolean M_Responder (event_t* ev)
         // Slide slider left
 
 	if (currentMenu->menuitems[itemOn].routine &&
-	    currentMenu->menuitems[itemOn].status >= 2)
+	    currentMenu->menuitems[itemOn].status)
 	{
-	    S_StartSoundOptional(NULL, sfx_mnusli, sfx_stnmov); // [NS] Optional menu sounds.
-	    currentMenu->menuitems[itemOn].routine(0);
-	}
+            if (currentMenu->menuitems[itemOn].status == 2)
+            {
+                S_StartSoundOptional(NULL, sfx_mnusli, sfx_stnmov); // [NS] Optional menu sounds.
+                currentMenu->menuitems[itemOn].routine(0);
+            }
+            // [crispy] LR non-slider
+            else if (currentMenu->menuitems[itemOn].status == 3 && !mousextobutton)
+            {
+                S_StartSoundOptional(NULL, sfx_mnuact, sfx_pistol); // [NS] Optional menu sounds.
+                currentMenu->menuitems[itemOn].routine(0);
+            }
+            // [crispy] Numeric entry
+            else if (currentMenu->menuitems[itemOn].status == 4 && !mousextobutton)
+            {
+                S_StartSoundOptional(NULL, sfx_mnusli, sfx_stnmov); // [NS] Optional menu sounds.
+                currentMenu->menuitems[itemOn].routine(0);
+            }
+        }
 	return true;
     }
     else if (key == key_menu_right)
@@ -2813,11 +2832,26 @@ boolean M_Responder (event_t* ev)
         // Slide slider right
 
 	if (currentMenu->menuitems[itemOn].routine &&
-	    currentMenu->menuitems[itemOn].status >= 2)
+	    currentMenu->menuitems[itemOn].status)
 	{
-	    S_StartSoundOptional(NULL, sfx_mnusli, sfx_stnmov); // [NS] Optional menu sounds.
-	    currentMenu->menuitems[itemOn].routine(1);
-	}
+            if (currentMenu->menuitems[itemOn].status == 2)
+            {
+                S_StartSoundOptional(NULL, sfx_mnusli, sfx_stnmov); // [NS] Optional menu sounds.
+                currentMenu->menuitems[itemOn].routine(1);
+            }
+            // [crispy] LR non-slider
+            else if (currentMenu->menuitems[itemOn].status == 3 && !mousextobutton)
+            {
+                S_StartSoundOptional(NULL, sfx_mnuact, sfx_pistol); // [NS] Optional menu sounds.
+                currentMenu->menuitems[itemOn].routine(1);
+            }
+            // [crispy] Numeric entry
+            else if (currentMenu->menuitems[itemOn].status == 4 && !mousextobutton)
+            {
+                S_StartSoundOptional(NULL, sfx_mnusli, sfx_stnmov); // [NS] Optional menu sounds.
+                currentMenu->menuitems[itemOn].routine(1);
+            }
+        }
 	return true;
     }
     else if (key == key_menu_forward)
@@ -2833,7 +2867,7 @@ boolean M_Responder (event_t* ev)
 		currentMenu->menuitems[itemOn].routine(1);      // right arrow
 		S_StartSoundOptional(NULL, sfx_mnusli, sfx_stnmov); // [NS] Optional menu sounds.
 	    }
-            else if (currentMenu->menuitems[itemOn].status == 3) // [crispy]
+            else if (currentMenu->menuitems[itemOn].status == 4) // [crispy]
             {
                 currentMenu->menuitems[itemOn].routine(2); // enter key
                 numeric_entry_index = 0;
