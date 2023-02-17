@@ -210,15 +210,13 @@ void ConfigMouse(TXT_UNCAST_ARG(widget), void *user_data)
     TXT_SetWindowAction(window, TXT_HORIZ_CENTER, TestConfigAction());
     TXT_SetWindowHelpURL(window, WINDOW_HELP_URL);
 
-    if (gamemission == doom || gamemission == heretic || gamemission == hexen || gamemission == strife) // [crispy]
-    {
     TXT_AddWidgets(window,
                    TXT_NewCheckBox("Enable mouse", &usemouse),
                    TXT_TABLE_OVERFLOW_RIGHT,
-                   TXT_NewInvertedCheckBox("Allow vertical mouse movement",
+                   TXT_NewInvertedCheckBox("Allow vertical mouse movement", 
                                            &novert),
                    TXT_TABLE_OVERFLOW_RIGHT,
-                   TXT_NewCheckBox("Grab mouse in windowed mode",
+                   TXT_NewCheckBox("Grab mouse in windowed mode", 
                                    &grabmouse),
                    TXT_TABLE_OVERFLOW_RIGHT,
                    TXT_NewCheckBox("Double click acts as \"use\"",
@@ -243,33 +241,6 @@ void ConfigMouse(TXT_UNCAST_ARG(widget), void *user_data)
 
                    TXT_NewSeparator("Buttons"),
                    NULL);
-    }
-    else
-    {
-    TXT_AddWidgets(window,
-                   TXT_NewCheckBox("Enable mouse", &usemouse),
-                   TXT_TABLE_OVERFLOW_RIGHT,
-                   TXT_NewInvertedCheckBox("Allow vertical mouse movement", 
-                                           &novert),
-                   TXT_TABLE_OVERFLOW_RIGHT,
-                   TXT_NewCheckBox("Grab mouse in windowed mode", 
-                                   &grabmouse),
-                   TXT_TABLE_OVERFLOW_RIGHT,
-                   TXT_NewCheckBox("Double click acts as \"use\"",
-                                   &dclick_use),
-                   TXT_TABLE_OVERFLOW_RIGHT,
-
-                   TXT_NewSeparator("Mouse motion"),
-                   TXT_NewLabel("Speed"),
-                   TXT_NewSpinControl(&mouseSensitivity, 1, 256),
-                   TXT_NewLabel("Acceleration"),
-                   TXT_NewFloatSpinControl(&mouse_acceleration, 1.0, 5.0),
-                   TXT_NewLabel("Acceleration threshold"),
-                   TXT_NewSpinControl(&mouse_threshold, 0, 32),
-
-                   TXT_NewSeparator("Buttons"),
-                   NULL);
-    }
 
     AddMouseControl(window, "Fire/Attack", &mousebfire);
     AddMouseControl(window, "Use", &mousebuse);
