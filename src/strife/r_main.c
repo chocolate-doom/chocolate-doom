@@ -1031,7 +1031,8 @@ void R_SetupFrame (player_t* player)
     viewplayer = player;
 
     // [AM] Interpolate the player camera if the feature is enabled.
-    if (crispy->uncapped && leveltime > 1 && player->mo->interp == true && leveltime > oldleveltime)
+    if (crispy->uncapped && leveltime > 1 && player->mo->interp == true &&
+        leveltime > oldleveltime && !screenwipe)
     {
         viewx = player->mo->oldx + FixedMul(player->mo->x - player->mo->oldx, fractionaltic);
         viewy = player->mo->oldy + FixedMul(player->mo->y - player->mo->oldy, fractionaltic);

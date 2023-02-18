@@ -59,6 +59,9 @@ extern boolean advancedemo;
 // haleyjd 20130915 [STRIFE]: need nickname
 extern char *nickname;
 
+// [crispy] track screen wipe
+extern boolean screenwipe;
+
 
 #endif
 

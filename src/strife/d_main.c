@@ -157,6 +157,9 @@ static int comport = 0;
 // fraggle 06/03/11 [STRIFE]: Multiplayer nickname?
 char *nickname = NULL;
 
+// [crispy] track screen wipe
+boolean screenwipe;
+
 void D_ConnectNetGame(void);
 void D_CheckNetGame(void);
 
@@ -233,6 +236,7 @@ void D_Display (void)
     // save the current screen if about to wipe
     if (gamestate != wipegamestate)
     {
+        screenwipe = true; // [crispy]
         wipe = true;
         wipe_StartScreen(0, 0, SCREENWIDTH, SCREENHEIGHT);
     }
@@ -407,6 +411,8 @@ void D_Display (void)
         M_Drawer ();                            // menu is drawn even on top of wipes
         I_FinishUpdate ();                      // page flip or blit buffer
     } while (!done);
+
+    screenwipe = false; // [crispy]
 }
 
 //

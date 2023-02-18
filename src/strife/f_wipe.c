@@ -263,8 +263,6 @@ wipe_ScreenWipe
 	wipe_initMelt, wipe_doMelt, wipe_exitMelt
     };
 
-    ticks <<= crispy->hires;
-
     // initial stuff
     if (!go)
     {
