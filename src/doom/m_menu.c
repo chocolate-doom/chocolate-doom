@@ -2393,7 +2393,7 @@ boolean M_Responder (event_t* ev)
     }
     else
     {
-	if (ev->type == ev_mouse && mousewait < I_GetTime())
+	if (ev->type == ev_mouse && mousewait < I_GetTime() && menuactive)
 	{
 	    // [crispy] novert disables controlling the menus with the mouse
 	    if (!novert)

@@ -51,16 +51,16 @@ find_library(SAMPLERATE_LIBRARY "samplerate"
     HINTS ${PC_SAMPLERATE_LIBRARY_DIRS})
 
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(samplerate
-    FOUND_VAR SAMPLERATE_FOUND
+find_package_handle_standard_args(SampleRate
+    FOUND_VAR SampleRate_FOUND
     REQUIRED_VARS SAMPLERATE_INCLUDE_DIR SAMPLERATE_LIBRARY
     VERSION_VAR SAMPLERATE_VERSION
 )
 
-if(SAMPLERATE_FOUND)
+if(SampleRate_FOUND)
     # Imported target.
-    add_library(samplerate::samplerate UNKNOWN IMPORTED)
-    set_target_properties(samplerate::samplerate PROPERTIES
+    add_library(SampleRate::samplerate UNKNOWN IMPORTED)
+    set_target_properties(SampleRate::samplerate PROPERTIES
         INTERFACE_COMPILE_OPTIONS "${PC_SAMPLERATE_CFLAGS_OTHER}"
         INTERFACE_INCLUDE_DIRECTORIES "${SAMPLERATE_INCLUDE_DIR}"
         IMPORTED_LOCATION "${SAMPLERATE_LIBRARY}")

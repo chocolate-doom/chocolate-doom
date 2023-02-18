@@ -79,8 +79,8 @@ find_package_handle_standard_args(SDL2_net
 
 if(SDL2_NET_FOUND)
     # Imported target.
-    add_library(SDL2::net UNKNOWN IMPORTED)
-    set_target_properties(SDL2::net PROPERTIES
+    add_library(SDL2_net::SDL2_net UNKNOWN IMPORTED)
+    set_target_properties(SDL2_net::SDL2_net PROPERTIES
                           INTERFACE_COMPILE_OPTIONS "${PC_SDL2_NET_CFLAGS_OTHER}"
                           INTERFACE_INCLUDE_DIRECTORIES "${SDL2_NET_INCLUDE_DIR}"
                           INTERFACE_LINK_LIBRARIES SDL2::SDL2

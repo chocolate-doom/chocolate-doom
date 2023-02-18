@@ -18,5 +18,5 @@ add_library(setup STATIC
 target_include_directories(setup PRIVATE "../" "${CMAKE_CURRENT_BINARY_DIR}/../../")
 target_link_libraries(setup textscreen SDL2::SDL2)
 if(ENABLE_SDL2_MIXER)
-    target_link_libraries(setup SDL2::mixer)
+    target_link_libraries(setup SDL2_mixer::SDL2_mixer)
 endif()
