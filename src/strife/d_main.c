@@ -1325,6 +1325,7 @@ static void D_IntroBackground(void)
 
     // Draw a 95-pixel rect from STARTUP0 starting at y=57 to (0,41) on the
     // screen (this was a memcpy directly to 0xA3340 in low DOS memory)
+    // [crispy] use scaled function
     V_DrawScaledBlock(0, 41, 320, 95, rawgfx_startup0 + (320*57));
 }
 
@@ -1455,7 +1456,8 @@ static void D_DrawIntroSequence(void)
         // Draw the laser
         // Blitted 16 bytes for 16 rows starting at 705280 + laserpos
         // (705280 - 0xA0000) / 320 == 156
-        V_DrawBlock(laserpos, 156, 16, 16, rawgfx_startlz[laserpos % 2]);
+        // [crispy] use scaled function
+        V_DrawScaledBlock(laserpos, 156, 16, 16, rawgfx_startlz[laserpos % 2]);
 
         // Robot position
         robotpos = laserpos % 5 - 2;
@@ -1463,12 +1465,14 @@ static void D_DrawIntroSequence(void)
         // Draw the robot
         // Blitted 48 bytes for 48 rows starting at 699534 + (320*robotpos)
         // 699534 - 0xA0000 == 44174, which % 320 == 14, / 320 == 138
+        // [crispy] use scaled function
         V_DrawScaledBlock(14, 138 + robotpos, 48, 48, rawgfx_startbot);
 
         // Draw the peasant
         // Blitted 32 bytes for 64 rows starting at 699142
         // 699142 - 0xA0000 == 43782, which % 320 == 262, / 320 == 136
-        V_DrawBlock(262, 136, 32, 64, rawgfx_startp[laserpos % 4]);
+        // [crispy] use scaled function
+        V_DrawScaledBlock(262, 136, 32, 64, rawgfx_startp[laserpos % 4]);
 
         I_FinishUpdate();
     }

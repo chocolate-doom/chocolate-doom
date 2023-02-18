@@ -738,16 +738,19 @@ void V_DrawBlock(int x, int y, int width, int height, pixel_t *src)
     } 
 } 
 
+// [crispy] scaled version of V_DrawBlock()
 void V_DrawScaledBlock(int x, int y, int width, int height, pixel_t *src)
 {
     pixel_t *dest;
     int i, j;
 
+    x += WIDESCREENDELTA; // [crispy] horizontal widescreen offset
+
 #ifdef RANGECHECK
     if (x < 0
-     || x + width > ORIGWIDTH
+     || x + width > SCREENWIDTH
      || y < 0
-     || y + height > ORIGHEIGHT)
+     || y + height > SCREENWIDTH)
     {
 	I_Error ("Bad V_DrawScaledBlock");
     }
