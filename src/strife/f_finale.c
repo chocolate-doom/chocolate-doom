@@ -464,7 +464,7 @@ static void F_DoSlideShow(void)
     if(gameversion != exe_strife_1_31) // See above. This was removed in 1.31.
     {
        patch = (patch_t *)W_CacheLumpName(DEH_String("PANEL0"), PU_CACHE);
-       V_DrawPatch(0, 0, patch);
+       V_DrawPatchFullScreen(patch, false); // [crispy]
     }
 }
 
@@ -1026,7 +1026,7 @@ void F_Drawer (void)
         // Draw slideshow panel
         {
             patch_t *slide = W_CacheLumpName(slideshow_panel, PU_CACHE);
-            V_DrawPatch(0, 0, slide);
+            V_DrawPatchFullScreen(slide, false); // [crispy]
         }
         break;
     case F_STAGE_ARTSCREEN:
@@ -1034,7 +1034,7 @@ void F_Drawer (void)
         {
             // draw credits
             patch_t *credits = W_CacheLumpName(DEH_String("CREDIT"), PU_CACHE);
-            V_DrawPatch(0, 0, credits);
+            V_DrawPatchFullScreen(credits, false); // [crispy]
         }
         else if(gamemap == 34)
         {
