@@ -69,6 +69,13 @@ typedef struct
     fixed_t	x;
     fixed_t	y;
     
+// [crispy] remove slime trails
+// vertex coordinates *only* used in rendering that have been
+// moved towards the linedef associated with their seg by projecting them
+// using the law of cosines in p_setup.c:P_RemoveSlimeTrails();
+    fixed_t	r_x;
+    fixed_t	r_y;
+    boolean	moved;
 } vertex_t;
 
 
@@ -128,6 +135,30 @@ typedef	struct
     int			linecount;
     struct line_s**	lines;	// [linecount] size
     
+    // [crispy] WiggleFix: [kb] for R_FixWiggle()
+    int		cachedheight;
+    int		scaleindex;
+
+    // [AM] Previous position of floor and ceiling before
+    //      think.  Used to interpolate between positions.
+    fixed_t	oldfloorheight;
+    fixed_t	oldceilingheight;
+
+    // [AM] Gametic when the old positions were recorded.
+    //      Has a dual purpose; it prevents movement thinkers
+    //      from storing old positions twice in a tic, and
+    //      prevents the renderer from attempting to interpolate
+    //      if old values were not updated recently.
+    int         oldgametic;
+
+    // [AM] Interpolated floor and ceiling height.
+    //      Calculated once per tic and used inside
+    //      the renderer.
+    fixed_t	interpfloorheight;
+    fixed_t	interpceilingheight;
+
+    // [crispy] Enable/disable sector interpolation.
+    boolean interpolate;
 } sector_t;
 
 
@@ -154,6 +185,10 @@ typedef struct
     // Sector the SideDef is facing.
     sector_t*	sector;
     
+    // [crispy] smooth texture scrolling
+    fixed_t	basetextureoffset;
+    fixed_t	baserowoffset;
+
 } side_t;
 
 
@@ -251,6 +286,9 @@ typedef struct
     sector_t*	frontsector;
     sector_t*	backsector;
     
+    uint32_t	length; // [crispy] fix long wall wobble
+    angle_t	r_angle; // [crispy] re-calculated angle used for rendering
+    int	fakecontrast; // [crispy] smoother fake contrast
 } seg_t;
 
 
@@ -324,9 +362,9 @@ typedef struct drawseg_s
     
     // Pointers to lists for sprite clipping,
     //  all three adjusted so [x1] is first value.
-    short*		sprtopclip;		
-    short*		sprbottomclip;	
-    short*		maskedtexturecol;
+    int*		sprtopclip; // [crispy] 32-bit integer math
+    int*		sprbottomclip; // [crispy] 32-bit integer math
+    int*		maskedtexturecol; // [crispy] 32-bit integer math
     
 } drawseg_t;
 
@@ -430,15 +468,15 @@ typedef struct
   
   // leave pads for [minx-1]/[maxx+1]
   
-  unsigned short		pad1;
+  unsigned int		pad1; // [crispy] hires / 32-bit integer math
   // Here lies the rub for all
   //  dynamic resize/change of resolution.
-  unsigned short		top[MAXWIDTH];
-  unsigned short		pad2;
-  unsigned short		pad3;
+  unsigned int		top[MAXWIDTH]; // [crispy] hires / 32-bit integer math
+  unsigned int		pad2; // [crispy] hires / 32-bit integer math
+  unsigned int		pad3; // [crispy] hires / 32-bit integer math
   // See above.
-  unsigned short		bottom[MAXWIDTH];
-  unsigned short		pad4;
+  unsigned int		bottom[MAXWIDTH]; // [crispy] hires / 32-bit integer math
+  unsigned int		pad4; // [crispy] hires / 32-bit integer math
 
 } visplane_t;
 

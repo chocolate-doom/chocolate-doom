@@ -56,6 +56,9 @@ static char useinventorymsg[44];    // villsa [STRIFE]
 // 16 pixels of bob
 #define MAXBOB	0x100000	
 
+// [crispy] variable player view bob
+static const fixed_t crispy_bobfactor[3] = {4, 3, 0};
+
 boolean		onground;
 
 
@@ -106,6 +109,9 @@ void P_CalcHeight (player_t* player)
     if (player->bob>MAXBOB)
         player->bob = MAXBOB;
 
+    // [crispy] variable player view bob
+    player->bob2 = crispy_bobfactor[crispy->bobfactor] * player->bob / 4;
+
     // haleyjd 20110205 [STRIFE]: No CF_NOMOMENTUM check, and Rogue also removed
     // the dead code inside.
     if (!onground)
@@ -122,7 +128,7 @@ void P_CalcHeight (player_t* player)
     }
 
     angle = (FINEANGLES/20*leveltime)&FINEMASK;
-    bob = FixedMul ( player->bob/2, finesine[angle]);
+    bob = FixedMul ( player->bob2/2, finesine[angle]); // [crispy] variable player view bob
 
     // move viewheight
     if (player->playerstate == PST_LIVE)
@@ -257,6 +263,12 @@ void P_MovePlayer (player_t* player)
         }
     }
 
+    // [crispy] handle mouse look
+    if (cmd->lookdir && crispy->singleplayer)
+    {
+        player->pitch += cmd->lookdir;
+        player->pitch = BETWEEN(LOOKDOWNMAX, LOOKUPMAX, player->pitch);
+    }
 }
 
 
@@ -340,6 +352,18 @@ void P_PlayerThink (player_t* player)
 {
     ticcmd_t*       cmd;
     weapontype_t    newweapon;
+
+    // [AM] Assume we can interpolate at the beginning
+    //      of the tic.
+    player->mo->interp = true;
+
+    // [AM] Store starting position for player interpolation.
+    player->mo->oldx = player->mo->x;
+    player->mo->oldy = player->mo->y;
+    player->mo->oldz = player->mo->z;
+    player->mo->oldangle = player->mo->angle;
+    player->oldviewz = player->viewz;
+    player->oldpitch = player->pitch;
 
     // villsa [STRIFE] unused code (see ST_Responder)
     /*

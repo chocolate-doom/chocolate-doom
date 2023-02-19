@@ -423,6 +423,13 @@ static void saveg_read_mobj_t(mobj_t *str)
 
     // byte miscdata;
     str->miscdata = saveg_read8(); // [STRIFE] Only change to mobj_t.
+
+    // [crispy] new mobj_t fields used for interpolation
+    str->interp = 0;
+    str->oldx = 0;
+    str->oldy = 0;
+    str->oldz = 0;
+    str->oldangle = 0;
 }
 
 static void saveg_write_mobj_t(mobj_t *str)
@@ -634,6 +641,10 @@ static void saveg_read_pspdef_t(pspdef_t *str)
 
     // fixed_t sy;
     str->sy = saveg_read32();
+
+    // [crispy] variable weapon sprite bob
+    str->sx2 = str->sx;
+    str->sy2 = str->sy;
 }
 
 static void saveg_write_pspdef_t(pspdef_t *str)
@@ -713,6 +724,9 @@ static void saveg_read_player_t(player_t *str)
 
     // fixed_t bob;
     str->bob = saveg_read32();
+
+    // [crispy] variable player view bob
+    str->bob2 = str->bob;
 
     // int health;
     str->health = saveg_read32();

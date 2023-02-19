@@ -216,12 +216,14 @@ void V_DrawPatch(int x, int y, patch_t *patch)
     x -= SHORT(patch->leftoffset);
     x += WIDESCREENDELTA; // [crispy] horizontal widescreen offset
 
+/*
     // haleyjd 08/28/10: Strife needs silent error checking here.
     if(patchclip_callback)
     {
         if(!patchclip_callback(patch, x, y))
             return;
     }
+*/
 
 #ifdef RANGECHECK_NOTHANKS
     if (x < 0
@@ -349,12 +351,14 @@ void V_DrawPatchFlipped(int x, int y, patch_t *patch)
     x -= SHORT(patch->leftoffset); 
     x += WIDESCREENDELTA; // [crispy] horizontal widescreen offset
 
+/*
     // haleyjd 08/28/10: Strife needs silent error checking here.
     if(patchclip_callback)
     {
         if(!patchclip_callback(patch, x, y))
             return;
     }
+*/
 
 #ifdef RANGECHECK_NOTHANKS
     if (x < 0
@@ -531,12 +535,15 @@ void V_DrawXlaPatch(int x, int y, patch_t * patch)
 
     y -= SHORT(patch->topoffset);
     x -= SHORT(patch->leftoffset);
+    x += WIDESCREENDELTA; // [crispy] horizontal widescreen offset
 
+/*
     if(patchclip_callback)
     {
         if(!patchclip_callback(patch, x, y))
             return;
     }
+*/
 
     col = 0;
     desttop = dest_screen + ((y * dy) >> FRACBITS) * SCREENWIDTH + ((x * dx) >> FRACBITS);
@@ -731,16 +738,19 @@ void V_DrawBlock(int x, int y, int width, int height, pixel_t *src)
     } 
 } 
 
+// [crispy] scaled version of V_DrawBlock()
 void V_DrawScaledBlock(int x, int y, int width, int height, pixel_t *src)
 {
     pixel_t *dest;
     int i, j;
 
+    x += WIDESCREENDELTA; // [crispy] horizontal widescreen offset
+
 #ifdef RANGECHECK
     if (x < 0
-     || x + width > ORIGWIDTH
+     || x + width > SCREENWIDTH
      || y < 0
-     || y + height > ORIGHEIGHT)
+     || y + height > SCREENWIDTH)
     {
 	I_Error ("Bad V_DrawScaledBlock");
     }

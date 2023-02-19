@@ -51,8 +51,8 @@ visplane_t*		ceilingplane;
 
 // ?
 #define MAXOPENINGS	MAXWIDTH*64*4
-short			openings[MAXOPENINGS];
-short*			lastopening;
+int			openings[MAXOPENINGS]; // [crispy] 32-bit integer math
+int*			lastopening; // [crispy] 32-bit integer math
 
 
 //
@@ -60,8 +60,8 @@ short*			lastopening;
 //  floorclip starts out SCREENHEIGHT
 //  ceilingclip starts out -1
 //
-short			floorclip[MAXWIDTH];
-short			ceilingclip[MAXWIDTH];
+int			floorclip[MAXWIDTH]; // [crispy] 32-bit integer math
+int			ceilingclip[MAXWIDTH]; // [crispy] 32-bit integer math
 
 //
 // spanstart holds the start of a plane span
@@ -76,7 +76,8 @@ int			spanstop[MAXHEIGHT];
 lighttable_t**		planezlight;
 fixed_t			planeheight;
 
-fixed_t			yslope[MAXHEIGHT];
+fixed_t*			yslope;
+fixed_t			yslopes[LOOKDIRS][MAXHEIGHT]; // [crispy] lookup table
 fixed_t			distscale[MAXWIDTH];
 fixed_t			basexscale;
 fixed_t			baseyscale;
@@ -117,10 +118,9 @@ R_MapPlane
   int		x1,
   int		x2 )
 {
-    angle_t	angle;
     fixed_t	distance;
-    fixed_t	length;
     unsigned	index;
+    int dx, dy;
 	
 #ifdef RANGECHECK
     if (x2 < x1
@@ -132,12 +132,20 @@ R_MapPlane
     }
 #endif
 
+// [crispy] visplanes with the same flats now match up far better than before
+// adapted from prboom-plus/src/r_plane.c:191-239, translated to fixed-point math
+
+    if (!(dy = abs(centery - y)))
+    {
+	return;
+    }
+
     if (planeheight != cachedheight[y])
     {
 	cachedheight[y] = planeheight;
 	distance = cacheddistance[y] = FixedMul (planeheight, yslope[y]);
-	ds_xstep = cachedxstep[y] = FixedMul (distance,basexscale);
-	ds_ystep = cachedystep[y] = FixedMul (distance,baseyscale);
+	ds_xstep = cachedxstep[y] = (FixedMul (viewsin, planeheight) / dy) << detailshift;
+	ds_ystep = cachedystep[y] = (FixedMul (viewcos, planeheight) / dy) << detailshift;
     }
     else
     {
@@ -145,11 +153,11 @@ R_MapPlane
 	ds_xstep = cachedxstep[y];
 	ds_ystep = cachedystep[y];
     }
-	
-    length = FixedMul (distance,distscale[x1]);
-    angle = (viewangle + xtoviewangle[x1])>>ANGLETOFINESHIFT;
-    ds_xfrac = viewx + FixedMul(finecosine[angle], length);
-    ds_yfrac = -viewy - FixedMul(finesine[angle], length);
+
+    dx = x1 - centerx;
+
+    ds_xfrac = viewx + FixedMul(viewcos, distance) + dx * ds_xstep;
+    ds_yfrac = -viewy - FixedMul(viewsin, distance) + dx * ds_ystep;
 
     if (fixedcolormap)
 	ds_colormap = fixedcolormap;
@@ -291,7 +299,7 @@ R_CheckPlane
     }
 
     for (x=intrl ; x<= intrh ; x++)
-	if (pl->top[x] != 0xffff)
+	if (pl->top[x] != 0xffffffffu) // [crispy] hires / 32-bit integer math
 	    break;
 
     if (x > intrh)
@@ -324,10 +332,10 @@ R_CheckPlane
 void
 R_MakeSpans
 ( int		x,
-  int		t1,
-  int		b1,
-  int		t2,
-  int		b2 )
+  unsigned int		t1, // [crispy] 32-bit integer math
+  unsigned int		b1, // [crispy] 32-bit integer math
+  unsigned int		t2, // [crispy] 32-bit integer math
+  unsigned int		b2 ) // [crispy] 32-bit integer math
 {
     while (t1 < t2 && t1<=b1)
     {
@@ -398,12 +406,13 @@ void R_DrawPlanes (void)
 	    //  by INVUL inverse mapping.
 	    dc_colormap = colormaps;
 	    dc_texturemid = skytexturemid;
+	    dc_texheight = textureheight[skytexture]>>FRACBITS; // [crispy] Tutti-Frutti fix
 	    for (x=pl->minx ; x <= pl->maxx ; x++)
 	    {
 		dc_yl = pl->top[x];
 		dc_yh = pl->bottom[x];
 
-		if (dc_yl <= dc_yh)
+		if ((unsigned) dc_yl <= dc_yh) // [crispy] 32-bit integer math
 		{
 		    angle = (viewangle + xtoviewangle[x])>>ANGLETOSKYSHIFT;
 		    dc_x = x;
@@ -419,7 +428,7 @@ void R_DrawPlanes (void)
 	ds_source = W_CacheLumpNum(lumpnum, PU_STATIC);
 	
 	planeheight = abs(pl->height-viewz);
-	light = (pl->lightlevel >> LIGHTSEGSHIFT)+extralight;
+	light = (pl->lightlevel >> LIGHTSEGSHIFT)+(extralight * LIGHTBRIGHT); // [crispy] smooth diminishing lighting
 
 	if (light >= LIGHTLEVELS)
 	    light = LIGHTLEVELS-1;
@@ -429,8 +438,8 @@ void R_DrawPlanes (void)
 
 	planezlight = zlight[light];
 
-	pl->top[pl->maxx+1] = 0xffff;
-	pl->top[pl->minx-1] = 0xffff;
+	pl->top[pl->maxx+1] = 0xffffffffu; // [crispy] hires / 32-bit integer math
+	pl->top[pl->minx-1] = 0xffffffffu; // [crispy] hires / 32-bit integer math
 		
 	stop = pl->maxx + 1;
 

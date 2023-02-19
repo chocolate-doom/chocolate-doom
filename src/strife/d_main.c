@@ -157,6 +157,9 @@ static int comport = 0;
 // fraggle 06/03/11 [STRIFE]: Multiplayer nickname?
 char *nickname = NULL;
 
+// [crispy] track screen wipe
+boolean screenwipe;
+
 void D_ConnectNetGame(void);
 void D_CheckNetGame(void);
 
@@ -233,6 +236,7 @@ void D_Display (void)
     // save the current screen if about to wipe
     if (gamestate != wipegamestate)
     {
+        screenwipe = true; // [crispy]
         wipe = true;
         wipe_StartScreen(0, 0, SCREENWIDTH, SCREENHEIGHT);
     }
@@ -248,15 +252,19 @@ void D_Display (void)
     case GS_LEVEL:
         if (!gametic)
             break;
-        if (automapactive)
+        if (automapactive && !crispy->automapoverlay)
+        {
+            // [crispy] update automap while playing
+            R_RenderPlayerView (&players[displayplayer]);
             AM_Drawer ();
-        if (wipe || (viewheight != (200 <<crispy->hires) && fullscreen) )
+        }
+        if (wipe || (viewheight != SCREENHEIGHT && fullscreen) )
             redrawsbar = true;
         // haleyjd 08/29/10: [STRIFE] Always redraw sbar if menu is/was active
         if (menuactivestate || (inhelpscreensstate && !inhelpscreens))
             redrawsbar = true;              // just put away the help screen
-        ST_Drawer (viewheight == (200 << crispy->hires), redrawsbar );
-        fullscreen = viewheight == (200 << crispy->hires);
+        ST_Drawer (viewheight == SCREENHEIGHT, redrawsbar );
+        fullscreen = viewheight == SCREENHEIGHT;
         break;
       
      // haleyjd 08/23/2010: [STRIFE] No intermission
@@ -282,7 +290,7 @@ void D_Display (void)
     I_UpdateNoBlit ();
 
     // draw the view directly
-    if (gamestate == GS_LEVEL && !automapactive && gametic)
+    if (gamestate == GS_LEVEL && (!automapactive || crispy->automapoverlay) && gametic)
         R_RenderPlayerView (&players[displayplayer]);
 
     // clean up border stuff
@@ -297,7 +305,7 @@ void D_Display (void)
     }
 
     // see if the border needs to be updated to the screen
-    if (gamestate == GS_LEVEL && !automapactive && scaledviewwidth != (320 << crispy->hires))
+    if (gamestate == GS_LEVEL && (!automapactive || crispy->automapoverlay) && scaledviewwidth != SCREENWIDTH)
     {
         if (menuactive || menuactivestate || !viewactivestate)
         {
@@ -327,6 +335,17 @@ void D_Display (void)
     // haleyjd 20120208: [STRIFE] Rogue moved this down to below border drawing
     if (gamestate == GS_LEVEL && gametic)
     {
+        // [crispy] in automap overlay mode, draw the automap and HUD on top of
+        // everything else (except for Strife popups and exit screen)
+        if (automapactive && crispy->automapoverlay)
+        {
+            AM_Drawer ();
+
+            // [crispy] force redraw of status bar and border
+            viewactivestate = false;
+            inhelpscreensstate = true;
+        }
+
         HU_Drawer ();
         if(ST_DrawExternal()) 
             popupactivestate = true;
@@ -340,11 +359,11 @@ void D_Display (void)
     // draw pause pic
     if (paused)
     {
-        if (automapactive)
+        if (automapactive && !crispy->automapoverlay)
             y = 4;
         else
             y = (viewwindowy >> crispy->hires)+4;
-        V_DrawPatchDirect((viewwindowx >> crispy->hires) + ((scaledviewwidth >> crispy->hires) - 68) / 2, y,
+        V_DrawPatchDirect((viewwindowx >> crispy->hires) + ((scaledviewwidth >> crispy->hires) - 68) / 2 - WIDESCREENDELTA, y,
                           W_CacheLumpName (DEH_String("M_PAUSE"), PU_CACHE));
     }
 
@@ -358,6 +377,15 @@ void D_Display (void)
     if (!wipe)
     {
         I_FinishUpdate ();              // page flip or blit buffer
+
+        // [crispy] post-rendering function pointer to apply config changes
+        // that affect rendering and that are better applied after the current
+        // frame has finished rendering
+        if (crispy->post_rendering_hook)
+        {
+            crispy->post_rendering_hook();
+            crispy->post_rendering_hook = NULL;
+        }
         return;
     }
     
@@ -383,6 +411,8 @@ void D_Display (void)
         M_Drawer ();                            // menu is drawn even on top of wipes
         I_FinishUpdate ();                      // page flip or blit buffer
     } while (!done);
+
+    screenwipe = false; // [crispy]
 }
 
 //
@@ -411,6 +441,7 @@ void D_BindVariables(void)
 
     M_ApplyPlatformDefaults();
 
+    I_BindStrifeInputVariables(); // [crispy]
     I_BindInputVariables();
     I_BindVideoVariables();
     I_BindJoystickVariables();
@@ -446,6 +477,8 @@ void D_BindVariables(void)
     // * Added nickname, comport
 
     M_BindIntVariable("mouse_sensitivity",      &mouseSensitivity);
+    M_BindIntVariable("mouse_sensitivity_x2",   &mouseSensitivity_x2); // [crispy]
+    M_BindIntVariable("mouse_sensitivity_y",    &mouseSensitivity_y); // [crispy]
     M_BindIntVariable("sfx_volume",             &sfxVolume);
     M_BindIntVariable("music_volume",           &musicVolume);
     M_BindIntVariable("voice_volume",           &voiceVolume); 
@@ -473,6 +506,28 @@ void D_BindVariables(void)
         M_snprintf(buf, sizeof(buf), "chatmacro%i", i);
         M_BindStringVariable(buf, &chat_macros[i]);
     }
+
+    // [crispy] bind "crispness" config variables
+    M_BindIntVariable("crispy_automapoverlay",  &crispy->automapoverlay);
+    M_BindIntVariable("crispy_automaprotate",   &crispy->automaprotate);
+    M_BindIntVariable("crispy_bobfactor",       &crispy->bobfactor);
+    M_BindIntVariable("crispy_centerweapon",    &crispy->centerweapon);
+    M_BindIntVariable("crispy_crosshair",       &crispy->crosshair);
+    M_BindIntVariable("crispy_crosshairhealth", &crispy->crosshairhealth);
+    M_BindIntVariable("crispy_defaultskill",    &crispy->defaultskill);
+    M_BindIntVariable("crispy_fpslimit",        &crispy->fpslimit);
+    M_BindIntVariable("crispy_freelook",        &crispy->freelook_hh);
+    M_BindIntVariable("crispy_hires",           &crispy->hires);
+    M_BindIntVariable("crispy_leveltime",       &crispy->leveltime);
+    M_BindIntVariable("crispy_mouselook",       &crispy->mouselook);
+    M_BindIntVariable("crispy_playercoords",    &crispy->playercoords);
+    M_BindIntVariable("crispy_smoothlight",     &crispy->smoothlight);
+    M_BindIntVariable("crispy_smoothmap",       &crispy->smoothmap);
+    M_BindIntVariable("crispy_smoothscaling",   &crispy->smoothscaling);
+    M_BindIntVariable("crispy_soundmono",       &crispy->soundmono);
+    M_BindIntVariable("crispy_uncapped",        &crispy->uncapped);
+    M_BindIntVariable("crispy_vsync",           &crispy->vsync);
+    M_BindIntVariable("crispy_widescreen",      &crispy->widescreen);
 }
 
 //
@@ -505,6 +560,15 @@ static boolean D_StartupGrabCallback(void)
     return false;
 }
 
+// [crispy]
+void EnableLoadingDisk(void)
+{
+    if (show_diskicon)
+    {
+        V_EnableLoadingDisk("STDISK", SCREENWIDTH - LOADING_DISK_W, 3);
+    }
+}
+
 //
 //  D_DoomLoop
 //
@@ -525,10 +589,7 @@ void D_DoomLoop (void)
         I_InitGraphics();
     }
 
-    if (show_diskicon)
-    {
-        V_EnableLoadingDisk("STDISK", SCREENWIDTH - LOADING_DISK_W, 3);
-    }
+    EnableLoadingDisk(); // [crispy]
     I_SetGrabMouseCallback(D_GrabMouseCallback);
 
     V_RestoreBuffer();
@@ -588,7 +649,7 @@ void D_PageTicker (void)
 //
 void D_PageDrawer (void)
 {
-    V_DrawPatch (0, 0, W_CacheLumpName(pagename, PU_CACHE));
+    V_DrawPatchFullScreen (W_CacheLumpName(pagename, PU_CACHE), false);
 }
 
 
@@ -618,6 +679,9 @@ void D_DoAdvanceDemo (void)
     paused = false;
     gameaction = ga_nothing;
     
+    // [crispy] update the "singleplayer" variable
+    CheckCrispySingleplayer(!demorecording && !demoplayback && !netgame);
+
     // villsa 09/12/10: [STRIFE] converted pagetics to ticrate
     switch (demosequence)
     {
@@ -745,6 +809,7 @@ void D_StartTitle (void)
 {
     gamestate = GS_DEMOSCREEN;
     gameaction = ga_nothing;
+    automapactive = false; // [crispy]
     demosequence = -2;
     D_AdvanceDemo ();
 }
@@ -1208,8 +1273,8 @@ boolean D_PatchClipCallback(patch_t *patch, int x, int y)
 {
     // note that offsets were already accounted for in V_DrawPatch
     return (x >= 0 && y >= 0 
-            && x + SHORT(patch->width) <= ORIGWIDTH 
-            && y + SHORT(patch->height) <= ORIGHEIGHT);
+            && x + SHORT(patch->width) <= (SCREENWIDTH >> crispy->hires)
+            && y + SHORT(patch->height) <= (SCREENHEIGHT >> crispy->hires));
 }
 
 //
@@ -1266,6 +1331,7 @@ static void D_IntroBackground(void)
 
     // Draw a 95-pixel rect from STARTUP0 starting at y=57 to (0,41) on the
     // screen (this was a memcpy directly to 0xA3340 in low DOS memory)
+    // [crispy] use scaled function
     V_DrawScaledBlock(0, 41, 320, 95, rawgfx_startup0 + (320*57));
 }
 
@@ -1396,7 +1462,8 @@ static void D_DrawIntroSequence(void)
         // Draw the laser
         // Blitted 16 bytes for 16 rows starting at 705280 + laserpos
         // (705280 - 0xA0000) / 320 == 156
-        V_DrawBlock(laserpos, 156, 16, 16, rawgfx_startlz[laserpos % 2]);
+        // [crispy] use scaled function
+        V_DrawScaledBlock(laserpos, 156, 16, 16, rawgfx_startlz[laserpos % 2]);
 
         // Robot position
         robotpos = laserpos % 5 - 2;
@@ -1404,12 +1471,14 @@ static void D_DrawIntroSequence(void)
         // Draw the robot
         // Blitted 48 bytes for 48 rows starting at 699534 + (320*robotpos)
         // 699534 - 0xA0000 == 44174, which % 320 == 14, / 320 == 138
+        // [crispy] use scaled function
         V_DrawScaledBlock(14, 138 + robotpos, 48, 48, rawgfx_startbot);
 
         // Draw the peasant
         // Blitted 32 bytes for 64 rows starting at 699142
         // 699142 - 0xA0000 == 43782, which % 320 == 262, / 320 == 136
-        V_DrawBlock(262, 136, 32, 64, rawgfx_startp[laserpos % 4]);
+        // [crispy] use scaled function
+        V_DrawScaledBlock(262, 136, 32, 64, rawgfx_startp[laserpos % 4]);
 
         I_FinishUpdate();
     }
@@ -1734,6 +1803,9 @@ void D_DoomMain (void)
     D_BindVariables();
     M_LoadDefaults();
 
+    // [crispy] show exit screen only if showing ENDOOM
+    show_exitscreen = show_endoom;
+
     // Save configuration at exit.
     I_AtExit(M_SaveDefaults, false);
 
@@ -1922,7 +1994,10 @@ void D_DoomMain (void)
     D_IntroTick(); // [STRIFE]
     
     // get skill / episode / map from parms
-    startskill = sk_easy; // [STRIFE]: inits to sk_easy
+
+    // [crispy] set defaultskill (Strife default is SKILL_HNTR)
+    startskill = (crispy->defaultskill + SKILL_HNTR) % NUM_SKILLS;
+
     startepisode = 1;
     startmap = 1;
     autostart = false;

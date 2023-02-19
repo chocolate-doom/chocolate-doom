@@ -85,6 +85,9 @@ void P_DropWeapon (player_t* player);
 // P_USER
 //
 
+// [crispy] mouse look
+#define MLOOKUNIT               8
+
 // haleyjd 09/15/10: externalized
 #define INVERSECOLORMAP         32
 

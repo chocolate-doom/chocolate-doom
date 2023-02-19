@@ -191,7 +191,8 @@ typedef enum
     pw_allmap,
     pw_communicator,
     pw_targeter,
-    NUMPOWERS
+    NUMPOWERS,
+    pw_showfps, // [crispy] showfps widget
     
 } powertype_t;
 

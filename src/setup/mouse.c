@@ -59,6 +59,7 @@ static int *game_mouse_buttons[] = {
     &mousebinvleft,
     &mousebinvright,
     &mousebuseartifact,
+    &mousebinvuse, // [crispy]
     &mousebturnleft,
     &mousebturnright,
 };
@@ -165,6 +166,14 @@ static void ConfigExtraButtons(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
       AddMouseControl(buttons_table, "Use artifact", &mousebuseartifact);
     }
 
+    if (gamemission == strife) // [crispy]
+    {
+        AddMouseControl(buttons_table, "Mouselook", &mousebmouselook);
+        AddMouseControl(buttons_table, "Inventory left", &mousebinvleft);
+        AddMouseControl(buttons_table, "Inventory right", &mousebinvright);
+        AddMouseControl(buttons_table, "Use inventory", &mousebinvuse);
+    }
+
     if (gamemission == hexen || gamemission == strife)
     {
         AddMouseControl(buttons_table, "Jump", &mousebjump);
@@ -177,20 +186,17 @@ static void ConfigExtraButtons(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
         AddMouseControl(buttons_table, "Jump [*]", &mousebjump);
     }
 
-    if (gamemission == doom || gamemission == heretic || gamemission == hexen)
-    {
-        TXT_AddWidgets(window,
-                       TXT_NewSeparator("Automap"),
-                       am_buttons_table = TXT_NewTable(4),
-                       NULL);
+    TXT_AddWidgets(window,
+                   TXT_NewSeparator("Automap"),
+                   am_buttons_table = TXT_NewTable(4),
+                   NULL);
 
-        TXT_SetColumnWidths(am_buttons_table, 16, 11, 16, 10);
+    TXT_SetColumnWidths(am_buttons_table, 16, 11, 16, 10);
 
-        AddMouseMapControl(am_buttons_table, "Zoom in", &mousebmapzoomin);
-        AddMouseMapControl(am_buttons_table, "Zoom out", &mousebmapzoomout);
-        AddMouseMapControl(am_buttons_table, "Max zoom out", &mousebmapmaxzoom);
-        AddMouseMapControl(am_buttons_table, "Toggle follow", &mousebmapfollow);
-    }
+    AddMouseMapControl(am_buttons_table, "Zoom in", &mousebmapzoomin);
+    AddMouseMapControl(am_buttons_table, "Zoom out", &mousebmapzoomout);
+    AddMouseMapControl(am_buttons_table, "Max zoom out", &mousebmapmaxzoom);
+    AddMouseMapControl(am_buttons_table, "Toggle follow", &mousebmapfollow);
 }
 
 void ConfigMouse(TXT_UNCAST_ARG(widget), void *user_data)
@@ -204,15 +210,13 @@ void ConfigMouse(TXT_UNCAST_ARG(widget), void *user_data)
     TXT_SetWindowAction(window, TXT_HORIZ_CENTER, TestConfigAction());
     TXT_SetWindowHelpURL(window, WINDOW_HELP_URL);
 
-    if (gamemission == doom || gamemission == heretic || gamemission == hexen) // [crispy]
-    {
     TXT_AddWidgets(window,
                    TXT_NewCheckBox("Enable mouse", &usemouse),
                    TXT_TABLE_OVERFLOW_RIGHT,
-                   TXT_NewInvertedCheckBox("Allow vertical mouse movement",
+                   TXT_NewInvertedCheckBox("Allow vertical mouse movement", 
                                            &novert),
                    TXT_TABLE_OVERFLOW_RIGHT,
-                   TXT_NewCheckBox("Grab mouse in windowed mode",
+                   TXT_NewCheckBox("Grab mouse in windowed mode", 
                                    &grabmouse),
                    TXT_TABLE_OVERFLOW_RIGHT,
                    TXT_NewCheckBox("Double click acts as \"use\"",
@@ -237,33 +241,6 @@ void ConfigMouse(TXT_UNCAST_ARG(widget), void *user_data)
 
                    TXT_NewSeparator("Buttons"),
                    NULL);
-    }
-    else
-    {
-    TXT_AddWidgets(window,
-                   TXT_NewCheckBox("Enable mouse", &usemouse),
-                   TXT_TABLE_OVERFLOW_RIGHT,
-                   TXT_NewInvertedCheckBox("Allow vertical mouse movement", 
-                                           &novert),
-                   TXT_TABLE_OVERFLOW_RIGHT,
-                   TXT_NewCheckBox("Grab mouse in windowed mode", 
-                                   &grabmouse),
-                   TXT_TABLE_OVERFLOW_RIGHT,
-                   TXT_NewCheckBox("Double click acts as \"use\"",
-                                   &dclick_use),
-                   TXT_TABLE_OVERFLOW_RIGHT,
-
-                   TXT_NewSeparator("Mouse motion"),
-                   TXT_NewLabel("Speed"),
-                   TXT_NewSpinControl(&mouseSensitivity, 1, 256),
-                   TXT_NewLabel("Acceleration"),
-                   TXT_NewFloatSpinControl(&mouse_acceleration, 1.0, 5.0),
-                   TXT_NewLabel("Acceleration threshold"),
-                   TXT_NewSpinControl(&mouse_threshold, 0, 32),
-
-                   TXT_NewSeparator("Buttons"),
-                   NULL);
-    }
 
     AddMouseControl(window, "Fire/Attack", &mousebfire);
     AddMouseControl(window, "Use", &mousebuse);
@@ -286,8 +263,5 @@ void BindMouseVariables(void)
     M_BindIntVariable("mouse_threshold_y",       &mouse_threshold_y);
     M_BindFloatVariable("mouse_acceleration_y",  &mouse_acceleration_y);
     M_BindIntVariable("mouse_y_invert",          &mouse_y_invert);
-    if (gamemission == doom || gamemission == heretic || gamemission == hexen)
-    {
     M_BindIntVariable("crispy_mouselook",        &crispy->mouselook);
-    }
 }

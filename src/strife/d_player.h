@@ -119,7 +119,7 @@ typedef struct player_s
     short		armortype;   // [STRIFE] Changed to short
 
     // Power ups. invinc and invis are tic counters.
-    int			powers[NUMPOWERS];
+    int			powers[NUMPOWERS + 2]; // [crispy] showfps widget
 
     // [STRIFE] Additions:
     int			sigiltype;               // Type of Sigil carried
@@ -197,6 +197,16 @@ typedef struct player_s
 
     // True if secret level has been done.
     //boolean		didsecret;   [STRIFE] Removed this.
+
+    // [AM] Previous position of viewz before think.
+    //      Used to interpolate between camera positions.
+    fixed_t		oldviewz;
+
+    // [crispy] Previous up/down look angle.
+    int			oldpitch;
+
+    // [crispy] variable player view bob
+    fixed_t		bob2;
 
 } player_t;
 

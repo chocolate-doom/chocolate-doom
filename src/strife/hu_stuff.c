@@ -33,7 +33,9 @@
 #include "hu_lib.h"
 #include "m_controls.h"
 #include "m_misc.h"
+#include "m_menu.h" // [crispy] screenblocks
 #include "w_wad.h"
+#include "st_stuff.h" // [crispy] ST_HEIGHT
 
 #include "s_sound.h"
 
@@ -43,21 +45,30 @@
 #include "dstrings.h"
 #include "sounds.h"
 
+#include "v_video.h" // [crispy] V_DrawPatch() et al.
+#include "v_trans.h" // [crispy] color translation and color string tables
+
 //
 // Locally used constants, shortcuts.
 //
 #define HU_TITLE        (mapnames[gamemap-1])
 #define HU_TITLEHEIGHT  1
-#define HU_TITLEX       0
+#define HU_TITLEX       (0 - WIDESCREENDELTA)
 
 // haleyjd 09/01/10: [STRIFE] 167 -> 160 to move up level name
 #define HU_TITLEY       (160 - SHORT(hu_font[0]->height))
+
+// [crispy] Crispy HUD
+#define HU_TITLEY2      (ORIGHEIGHT - SHORT(hu_font[0]->height))
 
 #define HU_INPUTTOGGLE  't'
 #define HU_INPUTX       HU_MSGX
 #define HU_INPUTY       (HU_MSGY + HU_MSGHEIGHT*(SHORT(hu_font[0]->height) +1))
 #define HU_INPUTWIDTH   64
 #define HU_INPUTHEIGHT  1
+
+// [crispy]
+#define HU_COORDX       ((ORIGWIDTH - 8 * hu_font['A'-HU_FONTSTART]->width) + WIDESCREENDELTA)
 
 char *chat_macros[10];
 
@@ -79,6 +90,11 @@ static player_t*        plr;
 patch_t*                hu_font[HU_FONTSIZE];
 patch_t*                yfont[HU_FONTSIZE];   // haleyjd 09/18/10: [STRIFE]
 static hu_textline_t    w_title;
+static hu_textline_t    w_ltime; // [crispy] leveltime widget
+static hu_textline_t    w_fps; // [crispy] showfps widget
+static hu_textline_t    w_coordx; // [crispy] playercoords x widget
+static hu_textline_t    w_coordy; // [crispy] playercoords y widget
+static hu_textline_t    w_coorda; // [crispy] playercoords angle widget
 boolean                 chat_on;
 static hu_itext_t       w_chat;
 static boolean          always_off = false;
@@ -196,6 +212,9 @@ void HU_Stop(void)
 //
 // haleyjd 09/18/10: [STRIFE] Added a hack for nickname at the end.
 //
+
+static int hu_widescreendelta;
+
 void HU_Start(void)
 {
     int         i;
@@ -205,10 +224,40 @@ void HU_Start(void)
     //if (headsupactive)
     //    HU_Stop();
     
+    // [crispy] re-calculate WIDESCREENDELTA
+    I_GetScreenDimensions();
+    hu_widescreendelta = WIDESCREENDELTA;
+
     // haleyjd 20120211: [STRIFE] moved up
     // create the map title widget
     HUlib_initTextLine(&w_title,
                        HU_TITLEX, HU_TITLEY,
+                       hu_font,
+                       HU_FONTSTART);
+
+    // [crispy] leveltime widget
+    HUlib_initTextLine(&w_ltime,
+                       HU_TITLEX, HU_MSGY + 1 * 8,
+                       hu_font,
+                       HU_FONTSTART);
+
+    // [crispy] showfps widget
+    HUlib_initTextLine(&w_fps,
+                       HU_COORDX, HU_MSGY,
+                       hu_font,
+                       HU_FONTSTART);
+
+    // [crispy] playercoords widgets
+    HUlib_initTextLine(&w_coordx,
+                       HU_COORDX, HU_MSGY + 1 * 8,
+                       hu_font,
+                       HU_FONTSTART);
+    HUlib_initTextLine(&w_coordy,
+                       HU_COORDX, HU_MSGY + 2 * 8,
+                       hu_font,
+                       HU_FONTSTART);
+    HUlib_initTextLine(&w_coorda,
+                       HU_COORDX, HU_MSGY + 3 * 8,
                        hu_font,
                        HU_FONTSTART);
 
@@ -262,6 +311,47 @@ void HU_Start(void)
     }
 }
 
+// [crispy] crosshair color determined by health
+static byte *R_CrosshairColor (void)
+{
+    if (crispy->crosshairhealth)
+    {
+        const int health = players[consoleplayer].health;
+
+        if (health < 25)
+            return cr[CR_RED];
+        else if (health < 50)
+            return cr[CR_NONE];
+        else
+            return cr[CR_GREEN];
+    }
+
+	return NULL;
+}
+
+// [crispy] static, non-projected crosshair
+static void HU_DrawCrosshair (void)
+{
+    if (plr->playerstate != PST_LIVE ||
+        automapactive ||
+        menuactive ||
+        menupause ||
+        menuindialog ||
+        paused)
+    {
+        return;
+    }
+    else
+    {
+        patch_t *const patch = W_CacheLumpName("TRGTA0", PU_STATIC);
+        const int x = ORIGWIDTH / 2 - 3;
+        const int y = ORIGHEIGHT / 2 - 3 - ((screenblocks < 11) ? (ST_HEIGHT / 2) : 0);
+
+        dp_translation = R_CrosshairColor();
+        V_DrawPatch(x, y, patch);
+    }
+}
+
 //
 // HU_Drawer
 //
@@ -269,10 +359,42 @@ void HU_Start(void)
 //
 void HU_Drawer(void)
 {
+    // [crispy] re-calculate widget coordinates on demand
+    if (hu_widescreendelta != WIDESCREENDELTA)
+    {
+        HU_Stop();
+        HU_Start();
+    }
+
     HUlib_drawSText(&w_message);
     HUlib_drawIText(&w_chat);
     if (automapactive)
         HUlib_drawTextLine(&w_title, false);
+
+    // [crispy] leveltime widget
+    if (crispy->leveltime == WIDGETS_ALWAYS || (automapactive && crispy->leveltime == WIDGETS_AUTOMAP))
+    {
+        HUlib_drawTextLine(&w_ltime, false);
+    }
+
+    // [crispy] showfps widget
+    if (plr->powers[pw_showfps])
+    {
+        HUlib_drawTextLine(&w_fps, false);
+    }
+
+    // [crispy] playercoords widgets
+    if (crispy->playercoords == WIDGETS_ALWAYS || (automapactive && crispy->playercoords == WIDGETS_AUTOMAP))
+    {
+        HUlib_drawTextLine(&w_coordx, false);
+        HUlib_drawTextLine(&w_coordy, false);
+        HUlib_drawTextLine(&w_coorda, false);
+    }
+
+    // [crispy] crosshair
+    if (crispy->crosshair)
+        HU_DrawCrosshair();
+    dp_translation = NULL;
 }
 
 //
@@ -285,6 +407,11 @@ void HU_Erase(void)
     HUlib_eraseSText(&w_message);
     HUlib_eraseIText(&w_chat);
     HUlib_eraseTextLine(&w_title);
+    HUlib_eraseTextLine(&w_ltime); // [crispy] leveltime widget
+    HUlib_eraseTextLine(&w_fps); // [crispy] showfps widget
+    HUlib_eraseTextLine(&w_coordx); // [crispy] playercoords x widget
+    HUlib_eraseTextLine(&w_coordy); // [crispy] playercoords y widget
+    HUlib_eraseTextLine(&w_coorda); // [crispy] playercoords angle widget
 }
 
 //
@@ -388,6 +515,7 @@ void HU_Ticker(void)
     int i, rc;
     char c;
     //char *prefix;  STRIFE-TODO
+    char str[32], *s; // [crispy]
 
     // tick down message counter if message is up
     if (message_counter && !--message_counter)
@@ -454,6 +582,66 @@ void HU_Ticker(void)
                 players[i].cmd.chatchar = 0;
             }
         }
+    }
+
+    if (automapactive)
+    {
+        // [crispy] move map title to the bottom (just above health in Strife)
+        if (crispy->automapoverlay && screenblocks >= 11)
+            w_title.y = HU_TITLEY2 - (screenblocks > 11 ? 29 : 11);
+        else
+            w_title.y = HU_TITLEY;
+    }
+
+    // [crispy] leveltime widget
+    if (crispy->leveltime == WIDGETS_ALWAYS || (automapactive && crispy->leveltime == WIDGETS_AUTOMAP))
+    {
+        const int time = leveltime / TICRATE;
+        const int hours = time / 3600;
+        const int minutes = (time / 60) % 60;
+        const int seconds = time % 60;
+
+        if (time >= 3600)
+            M_snprintf(str, sizeof(str), "%02d:%02d:%02d", hours, minutes, seconds);
+        else
+            M_snprintf(str, sizeof(str), "%02d:%02d", minutes, seconds);
+
+        HUlib_clearTextLine(&w_ltime);
+        s = str;
+        while (*s)
+            HUlib_addCharToTextLine(&w_ltime, *(s++));
+    }
+
+    // [crispy] showfps widget
+    if (plr->powers[pw_showfps])
+    {
+        M_snprintf(str, sizeof(str), "%-4d FPS", crispy->fps);
+        HUlib_clearTextLine(&w_fps);
+        s = str;
+        while (*s)
+            HUlib_addCharToTextLine(&w_fps, *(s++));
+    }
+
+    // [crispy] playercoords widgets
+    if (crispy->playercoords == WIDGETS_ALWAYS || (automapactive && crispy->playercoords == WIDGETS_AUTOMAP))
+    {
+        M_snprintf(str, sizeof(str), "X\t%-5d", (plr->mo->x)>>FRACBITS);
+        HUlib_clearTextLine(&w_coordx);
+        s = str;
+        while (*s)
+            HUlib_addCharToTextLine(&w_coordx, *(s++));
+
+        M_snprintf(str, sizeof(str), "Y\t%-5d", (plr->mo->y)>>FRACBITS);
+        HUlib_clearTextLine(&w_coordy);
+        s = str;
+        while (*s)
+            HUlib_addCharToTextLine(&w_coordy, *(s++));
+
+        M_snprintf(str, sizeof(str), "A\t%-5d", (plr->mo->angle)/ANG1);
+        HUlib_clearTextLine(&w_coorda);
+        s = str;
+        while (*s)
+            HUlib_addCharToTextLine(&w_coorda, *(s++));
     }
 }
 

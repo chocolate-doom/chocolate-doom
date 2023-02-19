@@ -70,7 +70,7 @@ void HUlib_drawYellowText(int x, int y, const char *text)
             patch_t *patch = yfont[(int) c];
             int      width = SHORT(patch->width);
 
-            if(x + width <= (SCREENWIDTH - 20))
+            if(x + width <= (ORIGWIDTH + WIDESCREENDELTA - 20))
             {
                 // haleyjd: STRIFE-TODO: bit different than the exe... for now
                 if(!D_PatchClipCallback(patch, x + SHORT(patch->leftoffset),
@@ -195,7 +195,7 @@ HUlib_drawTextLine
         if (c != ' ' && c >= l->sc && c < '_') // [STRIFE]: Underscores excluded
         {
             w = SHORT(l->f[c - l->sc]->width);
-            if (x+w > SCREENWIDTH)
+            if (x+w > ORIGWIDTH + WIDESCREENDELTA)
                 break;
             V_DrawPatchDirect(x, l->y, l->f[c - l->sc]);
             x += w;
@@ -203,14 +203,14 @@ HUlib_drawTextLine
         else
         {
             x += 4;
-            if (x >= SCREENWIDTH)
+            if (x >= ORIGWIDTH + WIDESCREENDELTA)
                 break;
         }
     }
 
     // draw the cursor if requested
     if (drawcursor
-        && x + SHORT(l->f['_' - l->sc]->width) <= SCREENWIDTH)
+        && x + SHORT(l->f['_' - l->sc]->width) <= ORIGWIDTH + WIDESCREENDELTA)
     {
         V_DrawPatchDirect(x, l->y, l->f['_' - l->sc]);
     }
@@ -236,15 +236,15 @@ void HUlib_eraseTextLine(hu_textline_t* l)
     if (!automapactive &&
         viewwindowx && l->needsupdate)
     {
-        lh = SHORT(l->f[0]->height) + 1;
-        for (y=l->y,yoffset=y*SCREENWIDTH ; y<l->y+lh ; y++,yoffset+=SCREENWIDTH)
+        lh = (SHORT(l->f[0]->height) + 1) << crispy->hires;
+        for (y=(l->y << crispy->hires),yoffset=y*SCREENWIDTH ; y<(l->y << crispy->hires)+lh ; y++,yoffset+=SCREENWIDTH)
         {
             if (y < viewwindowy || y >= viewwindowy + viewheight)
                 R_VideoErase(yoffset, SCREENWIDTH); // erase entire line
             else
             {
                 R_VideoErase(yoffset, viewwindowx); // erase left border
-                R_VideoErase(yoffset + viewwindowx + viewwidth, viewwindowx);
+                R_VideoErase(yoffset + viewwindowx + scaledviewwidth, viewwindowx);
                 // erase right border
             }
         }

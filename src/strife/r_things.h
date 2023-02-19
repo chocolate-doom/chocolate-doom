@@ -30,18 +30,19 @@ extern vissprite_t	vsprsortedhead;
 
 // Constant arrays used for psprite clipping
 //  and initializing clipping.
-extern short		negonearray[MAXWIDTH];
-extern short		screenheightarray[MAXWIDTH];
+extern int		negonearray[MAXWIDTH]; // [crispy] 32-bit integer math
+extern int		screenheightarray[MAXWIDTH]; // [crispy] 32-bit integer math
 
 // vars for R_DrawMaskedColumn
-extern short*		mfloorclip;
-extern short*		mceilingclip;
+extern int*		mfloorclip; // [crispy] 32-bit integer math
+extern int*		mceilingclip; // [crispy] 32-bit integer math
 extern fixed_t		spryscale;
-extern fixed_t		sprtopscreen;
+extern int64_t		sprtopscreen; // [crispy] WiggleFix
 
 extern fixed_t		pspritescale;
 extern fixed_t		pspriteiscale;
 
+extern boolean pspr_interp; // [crispy] interpolate weapon bobbing
 
 // villsa [STIFE] new argument
 void R_DrawMaskedColumn (column_t *column, int baseclip);

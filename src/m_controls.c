@@ -137,6 +137,7 @@ int mousebnextweapon = 3; // [crispy]
 int mousebinvleft = -1;
 int mousebinvright = -1;
 int mousebuseartifact = -1;
+int mousebinvuse = -1; // [crispy]
 
 int key_message_refresh = KEY_ENTER;
 int key_pause = KEY_PAUSE;
@@ -344,6 +345,13 @@ void M_BindHexenControls(void)
 
 void M_BindStrifeControls(void)
 {
+    // [crispy] don't override default controls for Strife
+    key_lookcenter = 0;
+    key_alt_up = 0;
+    key_alt_down = 0;
+    key_alt_strafeleft = 0;
+    key_alt_straferight = 0;
+
     // These are shared with all games, but have different defaults:
     key_message_refresh = '/';
 
@@ -375,6 +383,11 @@ void M_BindStrifeControls(void)
     // manner as Hexen!
     M_BindIntVariable("mouseb_jump",        &mousebjump);
     M_BindIntVariable("joyb_jump",          &joybjump);
+
+    // [crispy]
+    M_BindIntVariable("mouseb_invleft",     &mousebinvleft);
+    M_BindIntVariable("mouseb_invright",    &mousebinvright);
+    M_BindIntVariable("mouseb_invuse",      &mousebinvuse);
 }
 
 void M_BindWeaponControls(void)

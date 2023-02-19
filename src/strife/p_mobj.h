@@ -322,6 +322,16 @@ typedef struct mobj_s
     // * In single-player this tracks dialog state.
     byte                miscdata;
     
+    // [AM] If true, ok to interpolate this tic.
+    int                 interp;
+
+    // [AM] Previous position of mobj before think.
+    //      Used to interpolate between positions.
+    fixed_t		oldx;
+    fixed_t		oldy;
+    fixed_t		oldz;
+    angle_t		oldangle;
+
 } mobj_t;
 
 // haleyjd [STRIFE] Exported

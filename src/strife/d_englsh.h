@@ -234,6 +234,12 @@
 #define AMSTR_MARKEDSPOT        "Marked Spot"
 #define AMSTR_MARKSCLEARED      "Last Mark Cleared" // [STRIFE]
 
+#define AMSTR_OVERLAYON	"Overlay Mode ON"
+#define AMSTR_OVERLAYOFF	"Overlay Mode OFF"
+
+#define AMSTR_ROTATEON	"Rotate Mode ON"
+#define AMSTR_ROTATEOFF	"Rotate Mode OFF"
+
 //
 //	ST_stuff.C
 //
@@ -254,6 +260,10 @@
 
 #define STSTR_CHOPPERS          "... doesn't suck - GM"
 #define STSTR_CLEV              "Changing Level..."
+
+// [crispy] showfps widget
+#define STSTR_SHOWFPSON         "Show FPS ON"
+#define STSTR_SHOWFPSOFF        "Show FPS OFF"
 
 //
 //	F_Finale.C

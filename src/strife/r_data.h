@@ -25,6 +25,11 @@
 #include "r_state.h"
 #include "p_spec.h"    // villsa [STRIFE]
 
+// [crispy] for yslopes lookup table
+// LOOKDIRMAX is 93 due to death view pitching up (P_DeathThink() in p_user.c)
+#define LOOKDIRMIN	110
+#define LOOKDIRMAX	93
+#define LOOKDIRS	(LOOKDIRMIN+1+LOOKDIRMAX)
 
 extern int numflats;
 

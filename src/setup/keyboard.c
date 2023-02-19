@@ -28,6 +28,7 @@
 #define WINDOW_HELP_URL "https://www.chocolate-doom.org/setup-keyboard"
 
 int vanilla_keyboard_mapping = 1;
+int runcentering = 1; // [crispy]
 
 static int always_run = 0;
 
@@ -230,7 +231,7 @@ static void ConfigExtraKeys(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
         AddKeyControl(table, "Toggle vert. mouse", &key_togglenovert);
         AddKeyControl(table, "Quick Reverse", &key_reverse);
         }
-        else if (gamemission == heretic || gamemission == hexen)
+        else
         {
         AddSectionLabel(table, "View", false);
 
@@ -245,14 +246,6 @@ static void ConfigExtraKeys(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
         AddKeyControl(table, "Strafe Right (alt.)", &key_alt_straferight);
         AddKeyControl(table, "Toggle always run", &key_toggleautorun);
         AddKeyControl(table, "Toggle vert. mouse", &key_togglenovert);
-        }
-        else
-        {
-        AddSectionLabel(table, "View", false);
-
-        AddKeyControl(table, "Look up", &key_lookup);
-        AddKeyControl(table, "Look down", &key_lookdown);
-        AddKeyControl(table, "Center view", &key_lookcenter);
         }
 
         if (gamemission == heretic || gamemission == hexen)
@@ -491,6 +484,18 @@ void ConfigKeyboard(TXT_UNCAST_ARG(widget), void *user_data)
                    TXT_NewSeparator("Misc."),
                    run_control = TXT_NewCheckBox("Always run", &always_run),
                    TXT_TABLE_EOL,
+                   NULL);
+
+    // [crispy]
+    if (gamemission == strife)
+    {
+        TXT_AddWidgets(window,
+                       TXT_NewCheckBox("Run centers view", &runcentering),
+                       TXT_TABLE_EOL,
+                       NULL);
+    }
+
+    TXT_AddWidgets(window,
                    TXT_NewInvertedCheckBox("Use native keyboard mapping",
                                            &vanilla_keyboard_mapping),
                    TXT_TABLE_EOL,
@@ -503,4 +508,10 @@ void ConfigKeyboard(TXT_UNCAST_ARG(widget), void *user_data)
 void BindKeyboardVariables(void)
 {
     M_BindIntVariable("vanilla_keyboard_mapping", &vanilla_keyboard_mapping);
+
+    // [crispy]
+    if (gamemission == strife)
+    {
+        M_BindIntVariable("runcentering", &runcentering);
+    }
 }

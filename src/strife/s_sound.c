@@ -58,6 +58,7 @@
 // Stereo separation
 
 #define S_STEREO_SWING (96 * FRACUNIT)
+static int stereo_swing = S_STEREO_SWING; // [crispy]
 
 #define NORM_PRIORITY 64
 #define NORM_SEP 128
@@ -147,7 +148,8 @@ void S_Init(int sfxVolume, int musicVolume, int voiceVolume)
     // Allocating the internal channels for mixing
     // (the maximum numer of sounds rendered
     // simultaneously) within zone memory.
-    channels = Z_Malloc(snd_channels*sizeof(channel_t), PU_STATIC, 0);
+    // [crispy] variable number of sound channels
+    channels = I_Realloc(NULL, snd_channels*sizeof(channel_t));
 
     // Free all channels for use
     for (i=0 ; i<snd_channels ; i++)
@@ -165,6 +167,9 @@ void S_Init(int sfxVolume, int musicVolume, int voiceVolume)
     }
 
     I_AtExit(S_Shutdown, true);
+
+    // [crispy] handle stereo separation for mono-sfx
+    S_UpdateStereoSeparation();
 }
 
 void S_Shutdown(void)
@@ -383,7 +388,8 @@ static int S_AdjustSoundParams(mobj_t *listener, mobj_t *source,
     angle >>= ANGLETOFINESHIFT;
 
     // stereo separation
-    *sep = 128 - (FixedMul(S_STEREO_SWING, finesine[angle]) >> FRACBITS);
+    // [crispy] mono sound option
+    *sep = 128 - (FixedMul(stereo_swing, finesine[angle]) >> FRACBITS);
 
     // volume calculation
     // [STRIFE] Removed gamemap == 8 hack
@@ -821,5 +827,43 @@ void S_StopMusic(void)
         mus_playing->data = NULL;
         mus_playing = NULL;
     }
+}
+
+// [crispy] variable number of sound channels
+void S_UpdateSndChannels (int choice)
+{
+    int i;
+
+    for (i = 0; i < snd_channels; i++)
+    {
+        if (channels[i].sfxinfo)
+            S_StopChannel(i);
+    }
+
+    if (choice)
+        snd_channels <<= 1;
+    else
+        snd_channels >>= 1;
+
+    if (snd_channels > 32)
+        snd_channels = 8;
+    else if (snd_channels < 8)
+        snd_channels = 32;
+
+    channels = I_Realloc(channels, snd_channels * sizeof(channel_t));
+
+    for (i = 0; i < snd_channels; i++)
+    {
+        channels[i].sfxinfo = 0;
+    }
+}
+
+// [crispy] play sound effects in stereo or mono
+void S_UpdateStereoSeparation (void)
+{
+    if (crispy->soundmono)
+        stereo_swing = 0;
+    else
+        stereo_swing = S_STEREO_SWING;
 }
 
