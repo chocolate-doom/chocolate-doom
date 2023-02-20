@@ -2336,7 +2336,10 @@ boolean M_Responder (event_t* ev)
             {
                 key = key_menu_forward;
                 mousewait = I_GetTime() + 15;
+                if (menuindialog) // [crispy] fix mouse fire delay
+                {
                 mouse_fire_countdown = 5;   // villsa [STRIFE]
+                }
             }
 
             if (ev->data1&2)
