@@ -155,8 +155,7 @@ fixed_t         forwardmove[2] = {0x19, 0x32};
 fixed_t         sidemove[2] = {0x18, 0x28}; 
 fixed_t         angleturn[3] = {640, 1280, 320};    // + slow turn 
 
-// [crispy] fix mouse fire
-//int mouse_fire_countdown = 0;    // villsa [STRIFE]
+int mouse_fire_countdown = 0;    // villsa [STRIFE]
 
 static int *weapon_keys[] = {
     &key_weapon1,
@@ -581,10 +580,13 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
         cmd->buttons |= BT_ATTACK;
 
     // villsa [STRIFE]
-    // [crispy] fix mouse fire - remove mouse_fire_countdown check but still
-    // prevent accidental firing while talking to NPCs
-    if (mousebuttons[mousebfire] && !menuindialog)
-        cmd->buttons |= BT_ATTACK;
+    if(mousebuttons[mousebfire])
+    {
+         if(mouse_fire_countdown <= 0)
+             cmd->buttons |= BT_ATTACK;
+         else
+             --mouse_fire_countdown;
+    }
  
     if (gamekeydown[key_use]
      || joybuttons[joybuse]

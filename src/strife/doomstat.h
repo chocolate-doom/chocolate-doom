@@ -182,8 +182,7 @@ extern  boolean	usergame;
 //?
 extern  boolean	demoplayback;
 extern  boolean	demorecording;
-// [crispy] fix mouse fire
-//extern  int     mouse_fire_countdown;   // villsa [STRIFE]
+extern  int     mouse_fire_countdown;   // villsa [STRIFE]
 
 extern fixed_t forwardmove[2];
 extern fixed_t sidemove[2];
