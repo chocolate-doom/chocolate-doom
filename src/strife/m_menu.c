@@ -2982,6 +2982,8 @@ void M_Drawer (void)
     
     // haleyjd 08/27/10: [STRIFE] Adjust to draw spinning Sigil
     // DRAW SIGIL
+    // [crispy] Show ">" cursor in Crispness menu; don't show Sigil cursor on
+    // help screens
     if (currentMenu == CrispnessMenus[crispness_cur])
     {
         char item[4];
@@ -2989,11 +2991,13 @@ void M_Drawer (void)
         M_WriteText(currentMenu->x - 8, currentMenu->y + CRISPY_LINEHEIGHT * itemOn, item);
         dp_translation = NULL;
     }
-    else
+    else if (currentMenu != &ReadDef1 && currentMenu != &ReadDef2 &&
+             currentMenu != &ReadDef3)
+    {
     V_DrawPatchDirect(x + CURSORXOFF, currentMenu->y - 5 + itemOn*LINEHEIGHT,
                       W_CacheLumpName(DEH_String(cursorName[whichCursor]),
                                       PU_CACHE));
-
+    }
 }
 
 
