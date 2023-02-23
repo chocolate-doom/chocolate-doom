@@ -725,7 +725,7 @@ void R_AddSprites (sector_t* sec)
 
 boolean pspr_interp = true; // [crispy] interpolate weapon bobbing
 
-void R_DrawPSprite (pspdef_t* psp)
+void R_DrawPSprite (pspdef_t* psp, psprnum_t psprnum) // [crispy] read psprnum
 {
     fixed_t		tx;
     int			x1;
@@ -838,8 +838,8 @@ void R_DrawPSprite (pspdef_t* psp)
         vis->colormap = colormaps + INVERSECOLORMAP * 256 * sizeof(lighttable_t);
     }
 
-    // [crispy] interpolate weapon bobbing
-    if (crispy->uncapped)
+    // [crispy] interpolate weapon bobbing; don't interpolate targeter
+    if (crispy->uncapped && psprnum < ps_targcenter)
     {
         static int     oldx1, x1_saved;
         static fixed_t oldtexturemid, texturemid_saved;
@@ -909,7 +909,7 @@ void R_DrawPlayerSprites (void)
 	 i++,psp++)
     {
 	if (psp->state)
-	    R_DrawPSprite (psp);
+	    R_DrawPSprite (psp, i); // [crispy] pass psprnum
     }
 }
 
