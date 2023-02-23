@@ -1045,9 +1045,6 @@ void R_DrawPSprite (pspdef_t* psp, psprnum_t psprnum) // [crispy] differentiate 
 	vis->startfrac = 0;
     }
     
-    // [crispy] free look
-    vis->texturemid += FixedMul(((centery - viewheight / 2) << FRACBITS), pspriteiscale) >> detailshift;
-
     if (vis->x1 > x1)
 	vis->startfrac += vis->xiscale*(vis->x1-x1);
 
@@ -1120,6 +1117,9 @@ void R_DrawPSprite (pspdef_t* psp, psprnum_t psprnum) // [crispy] differentiate 
             pspr_interp = true;
         }
     }
+
+    // [crispy] free look
+    vis->texturemid += FixedMul(((centery - viewheight / 2) << FRACBITS), pspriteiscale) >> detailshift;
 
     R_DrawVisSprite (vis, vis->x1, vis->x2);
 }

@@ -792,9 +792,9 @@ void R_DrawPSprite (pspdef_t* psp, psprnum_t psprnum) // [crispy] read psprnum
     }
 
     // villsa [STRIFE] calculate y offset with view pitch
-    // [crispy] weapons drawn 1 pixel too high when player is idle
-    vis->texturemid = ((BASEYCENTER<<FRACBITS)+FRACUNIT/4)-(psp->sy2-spritetopoffset[lump])
-        + FixedMul(vis->xiscale, (centery-viewheight/2)<<FRACBITS);
+    // [crispy] weapons drawn 1 pixel too high when player is idle; moved free
+    // look to end of function after interpolation
+    vis->texturemid = ((BASEYCENTER<<FRACBITS)+FRACUNIT/4)-(psp->sy2-spritetopoffset[lump]);
 
     if (vis->x1 > x1)
         vis->startfrac += vis->xiscale*(vis->x1-x1);
@@ -872,6 +872,9 @@ void R_DrawPSprite (pspdef_t* psp, psprnum_t psprnum) // [crispy] read psprnum
             pspr_interp = true;
         }
     }
+
+    // [crispy] free look
+    vis->texturemid += FixedMul(vis->xiscale, (centery - viewheight / 2) << FRACBITS);
 
     R_DrawVisSprite (vis, vis->x1, vis->x2);
 }
