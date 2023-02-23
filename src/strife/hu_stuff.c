@@ -326,13 +326,14 @@ static byte *R_CrosshairColor (void)
             return cr[CR_GREEN];
     }
 
-	return NULL;
+    return NULL;
 }
 
 // [crispy] static, non-projected crosshair
 static void HU_DrawCrosshair (void)
 {
     if (plr->playerstate != PST_LIVE ||
+        plr->powers[pw_targeter] ||
         automapactive ||
         menuactive ||
         menupause ||
@@ -344,8 +345,10 @@ static void HU_DrawCrosshair (void)
     else
     {
         patch_t *const patch = W_CacheLumpName("TRGTA0", PU_STATIC);
-        const int x = ORIGWIDTH / 2 - 3;
-        const int y = ORIGHEIGHT / 2 - 3 - ((screenblocks < 11) ? (ST_HEIGHT / 2) : 0);
+        const int x = ORIGWIDTH / 2 - SHORT(patch->width) / 2 +
+                      SHORT(patch->leftoffset);
+        const int y = (ORIGHEIGHT - (screenblocks < 11 ? ST_HEIGHT : 0)) / 2 -
+                      SHORT(patch->height) / 2 + SHORT(patch->topoffset);
 
         dp_translation = R_CrosshairColor();
         V_DrawPatch(x, y, patch);
