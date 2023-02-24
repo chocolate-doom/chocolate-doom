@@ -1,13 +1,17 @@
-name: release
+name: msys2
 
 on:
   push:
-    tags:
-      - '*'
+    branches:
+      - "master"
+    paths-ignore:
+      - "**.md"
+  pull_request:
+    branches:
+      - "master"
 
 jobs:
-  build_release:
-    name: Build Release
+  build:
     runs-on: windows-latest
 
     defaults:
@@ -60,7 +64,14 @@ jobs:
           cd pkg/win32
           make
 
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: Win-${{ matrix.env }}
+          path: pkg/win32/*.zip
+
       - name: Release
+        if: ${{ contains(github.ref, 'tags') }}
         uses: ncipollo/release-action@v1
         with:
           name: Crispy Doom ${{ env.VERSION }}
