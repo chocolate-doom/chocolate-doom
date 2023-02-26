@@ -366,7 +366,8 @@ boolean ST_Responder(event_t* ev)
              if(!st_popupdisplaytics)
              {
                  st_displaypopup = false;
-                 if(st_dosizedisplay)
+                 // [crispy] resize only when using original fullscreen HUD
+                 if(st_dosizedisplay && screenblocks == 10)
                      M_SizeDisplay(true);
 
                  st_dosizedisplay = false;
@@ -453,8 +454,8 @@ boolean ST_Responder(event_t* ev)
         if(st_showkeys || st_showobjective || st_showinvpop)
         {
             st_displaypopup = true;
-            // [crispy] don't resize screen for popups when using Crispy HUD
-            if(viewheight == SCREENHEIGHT && !st_crispyhud)
+            // [crispy] resize only when using original fullscreen HUD
+            if(screenblocks == 11)
             {
                 M_SizeDisplay(false);
                 st_dosizedisplay = true;
@@ -859,7 +860,8 @@ void ST_Ticker (void)
             st_showkeys = false;
             st_keypage = -1;
 
-            if(st_dosizedisplay)
+            // [crispy] resize only when using original fullscreen HUD
+            if(st_dosizedisplay && screenblocks == 10)
                 M_SizeDisplay(true);  // mondo hack?
 
             st_dosizedisplay = false;
@@ -1519,6 +1521,10 @@ boolean ST_DrawExternal(void)
 {
     int i;
 
+    // [crispy] don't draw fullscreen HUD for a clean screenshot
+    if (crispy->cleanscreenshot && !st_statusbaron)
+        return false;
+
     if(st_statusbaron)
     {
         // [crispy] support wide status bars with 0 offset
@@ -1548,7 +1554,8 @@ boolean ST_DrawExternal(void)
             ST_drawNumFontY2(310, 194, plyr->ammo[ammo]);
     }
 
-    if(!st_displaypopup)
+    // [crispy] don't draw popups for a clean screenshot
+    if (!st_displaypopup || crispy->cleanscreenshot)
         return false;
 
     // villsa [STRIFE] added 20100926

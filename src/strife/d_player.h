@@ -205,6 +205,9 @@ typedef struct player_s
     // [crispy] Previous up/down look angle.
     int			oldpitch;
 
+    // [crispy] weapon sound source
+    mobj_t*		so;
+
     // [crispy] variable player view bob
     fixed_t		bob2;
 

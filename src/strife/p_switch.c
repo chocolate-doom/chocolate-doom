@@ -1053,6 +1053,9 @@ boolean P_UseSpecialLine(mobj_t* thing, line_t* line, int side)
             DEH_snprintf(usemessage, sizeof(usemessage), 
                          "That doesn't seem to work!");
             thing->player->message = usemessage;
+            // [crispy] play "oof" sound for Irale's door
+            if(crispy->soundfix)
+                S_StartSound(thing, sfx_oof);
         }
         else if(EV_DoDoor(line, vld_normal))
             P_ChangeSwitchTexture(line, 1);

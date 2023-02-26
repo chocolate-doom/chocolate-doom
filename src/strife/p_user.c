@@ -365,6 +365,12 @@ void P_PlayerThink (player_t* player)
     player->oldviewz = player->viewz;
     player->oldpitch = player->pitch;
 
+    // [crispy] update weapon sound source coordinates
+    if (player->so != player->mo)
+    {
+        memcpy(player->so, player->mo, sizeof(degenmobj_t));
+    }
+
     // villsa [STRIFE] unused code (see ST_Responder)
     /*
     // fixme: do this in the cheat code

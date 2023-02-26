@@ -181,6 +181,23 @@ void M_CrispyToggleFreelook(int choice)
     ChangeSettingEnum(&crispy->freelook_hh, choice, NUM_FREELOOKS_HH);
 }
 
+void M_CrispyToggleFullsounds(int choice)
+{
+    int i;
+
+    choice = 0;
+    crispy->soundfull = !crispy->soundfull;
+
+    // [crispy] weapon sound sources
+    for (i = 0; i < MAXPLAYERS; i++)
+    {
+        if (playeringame[i])
+        {
+            players[i].so = Crispy_PlayerSO(i);
+        }
+    }
+}
+
 static void M_CrispyToggleHiresHook (void)
 {
     crispy->hires = !crispy->hires;
@@ -276,6 +293,13 @@ void M_CrispyToggleSmoothScaling(int choice)
 void M_CrispyToggleSndChannels(int choice)
 {
     S_UpdateSndChannels(choice);
+}
+
+void M_CrispyToggleSoundfixes(int choice)
+{
+    choice = 0;
+
+    crispy->soundfix = !crispy->soundfix;
 }
 
 void M_CrispyToggleSoundMono(int choice)

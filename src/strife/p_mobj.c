@@ -373,7 +373,11 @@ void P_ZMovement (mobj_t* mo)
                 // [crispy] center view when not using mouse look
                 if (!critical->mouselook)
                     mo->player->centerview = 1;
+                // [crispy] dead men don't say "oof"
+                if (mo->health > 0 || !crispy->soundfix)
+                {
                 S_StartSound (mo, sfx_oof);
+                }
             }
             mo->momz = 0;
         }
@@ -754,8 +758,16 @@ void P_RemoveMobj (mobj_t* mobj)
     // unlink from sector and block lists
     P_UnsetThingPosition (mobj);
     
+    // [crispy] removed map objects may finish their sounds
+    if (crispy->soundfull)
+    {
+        S_UnlinkSound(mobj);
+    }
+    else
+    {
     // stop any playing sound
     S_StopSound (mobj);
+    }
     
     // free block
     P_RemoveThinker ((thinker_t*)mobj);
@@ -833,6 +845,13 @@ void P_RespawnSpecials (void)
 
 
 
+// [crispy] weapon sound sources
+degenmobj_t muzzles[MAXPLAYERS];
+
+mobj_t *Crispy_PlayerSO (int p)
+{
+    return crispy->soundfull ? (mobj_t *) &muzzles[p] : players[p].mo;
+}
 
 //
 // P_SpawnPlayer
@@ -886,6 +905,9 @@ void P_SpawnPlayer(mapthing_t* mthing)
     p->extralight       = 0;
     p->fixedcolormap    = 0;
     p->viewheight       = VIEWHEIGHT;
+
+    // [crispy] weapon sound source
+    p->so = Crispy_PlayerSO(mthing->type - 1);
 
     pspr_interp = false; // [crispy] interpolate weapon bobbing
 

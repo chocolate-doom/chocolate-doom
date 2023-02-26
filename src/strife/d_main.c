@@ -356,6 +356,18 @@ void D_Display (void)
         }
     }
 
+    // [crispy] draw neither pause pic nor menu when taking a clean screenshot
+    if (crispy->cleanscreenshot && !wipe)
+    {
+        I_FinishUpdate();
+        if (crispy->post_rendering_hook)
+        {
+            crispy->post_rendering_hook();
+            crispy->post_rendering_hook = NULL;
+        }
+        return;
+    }
+
     // draw pause pic
     if (paused)
     {
@@ -524,6 +536,8 @@ void D_BindVariables(void)
     M_BindIntVariable("crispy_smoothlight",     &crispy->smoothlight);
     M_BindIntVariable("crispy_smoothmap",       &crispy->smoothmap);
     M_BindIntVariable("crispy_smoothscaling",   &crispy->smoothscaling);
+    M_BindIntVariable("crispy_soundfix",        &crispy->soundfix);
+    M_BindIntVariable("crispy_soundfull",       &crispy->soundfull);
     M_BindIntVariable("crispy_soundmono",       &crispy->soundmono);
     M_BindIntVariable("crispy_uncapped",        &crispy->uncapped);
     M_BindIntVariable("crispy_vsync",           &crispy->vsync);
@@ -1546,6 +1560,8 @@ static void G_CheckDemoStatusAtExit (void)
     G_CheckDemoStatus();
 }
 
+static const char *const loadparms[] = {"-file", "-merge", NULL}; // [crispy]
+
 //
 // D_DoomMain
 //
@@ -1868,6 +1884,31 @@ void D_DoomMain (void)
     // Debug:
 //    W_PrintDirectory();
 
+    // [crispy] add wad files from autoload PWAD directories
+
+    if (!M_ParmExists("-noautoload") && gamemode != shareware)
+    {
+        int i;
+
+        for (i = 0; loadparms[i]; i++)
+        {
+            int p;
+            p = M_CheckParmWithArgs(loadparms[i], 1);
+            if (p)
+            {
+                while (++p != myargc && myargv[p][0] != '-')
+                {
+                    char *autoload_dir;
+                    if ((autoload_dir = M_GetAutoloadDir(M_BaseName(myargv[p]), false)))
+                    {
+                        W_AutoLoadWADs(autoload_dir);
+                        free(autoload_dir);
+                    }
+                }
+            }
+        }
+    }
+
     //!
     // @arg <demo>
     // @category demo
@@ -1932,6 +1973,31 @@ void D_DoomMain (void)
     // Generate the WAD hash table.  Speed things up a bit.
 
     W_GenerateHashTable();
+
+    // [crispy] process .deh files from PWADs autoload directories
+
+    if (!M_ParmExists("-noautoload") && gamemode != shareware)
+    {
+        int i;
+
+        for (i = 0; loadparms[i]; i++)
+        {
+            int p;
+            p = M_CheckParmWithArgs(loadparms[i], 1);
+            if (p)
+            {
+                while (++p != myargc && myargv[p][0] != '-')
+                {
+                    char *autoload_dir;
+                    if ((autoload_dir = M_GetAutoloadDir(M_BaseName(myargv[p]), false)))
+                    {
+                        DEH_AutoLoadPatches(autoload_dir);
+                        free(autoload_dir);
+                    }
+                }
+            }
+        }
+    }
 
     InitGameVersion();
     InitTitleString();
@@ -2130,6 +2196,8 @@ void D_DoomMain (void)
         startloadgame = -1;
     }
 
+// [crispy] disable meaningless warning, we always use "-merge" anyway
+#if 0
     if (W_CheckNumForName("SS_START") >= 0
      || W_CheckNumForName("FF_END") >= 0)
     {
@@ -2138,6 +2206,7 @@ void D_DoomMain (void)
                " floor textures.  You may want to use the '-merge' command\n"
                " line option instead of '-file'.\n");
     }
+#endif
 
     I_PrintStartupBanner(gamedescription);
     PrintDehackedBanners();

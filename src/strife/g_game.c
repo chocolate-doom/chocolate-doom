@@ -950,7 +950,13 @@ boolean G_Responder (event_t* ev)
             if(devparm && ev->data1 == 'g')
                 D_PageTicker(); // [STRIFE]: wat? o_O
             else
+            {
+                // [crispy] play a sound if the menu is activated with a different key than ESC
+                if (!menuactive && crispy->soundfix)
+                    S_StartSound(NULL, sfx_swtchn);
+
                 M_StartControlPanel (); 
+            }
             return true; 
         } 
         return false; 
@@ -1051,6 +1057,16 @@ boolean G_Responder (event_t* ev)
     return false; 
 } 
 
+// [crispy] take a screenshot after rendering the next frame
+static void G_CrispyScreenShot()
+{
+    // [crispy] increase screenshot filename limit
+    V_ScreenShot("STRIFE%04i.%s"); // [STRIFE] file name, message
+    players[consoleplayer].message = DEH_String("STRIFE  by Rogue entertainment");
+    crispy->cleanscreenshot = 0;
+    crispy->screenshotmsg = 2;
+}
+
 //
 // G_Ticker
 // Make ticcmd_ts for the players.
@@ -1100,8 +1116,16 @@ void G_Ticker (void)
             G_DoWorldDone (); 
             break; 
         case ga_screenshot: 
-            V_ScreenShot("STRIFE%02i.%s"); // [STRIFE] file name, message
-            players[consoleplayer].message = DEH_String("STRIFE  by Rogue entertainment");
+            // [crispy] redraw view without weapons and HUD
+            if (gamestate == GS_LEVEL && (crispy->cleanscreenshot || crispy->screenshotmsg == 1))
+            {
+                crispy->screenshotmsg = 4;
+                crispy->post_rendering_hook = G_CrispyScreenShot;
+            }
+            else
+            {
+                G_CrispyScreenShot();
+            }
             gameaction = ga_nothing; 
             break; 
         case ga_nothing: 
@@ -1833,6 +1857,8 @@ void G_LoadGame (char* name)
 void G_DoLoadGame (boolean userload) 
 {
     int savedleveltime;
+    skill_t currentskill; // [crispy]
+    skill_t skill; // [crispy]
 
     gameaction = ga_nothing;
 
@@ -1847,11 +1873,18 @@ void G_DoLoadGame (boolean userload)
 
     savegame_error = false;
 
+    // [crispy] save current gameskill before calling P_ReadSaveGameHeader()
+    currentskill = gameskill;
+
     if (!P_ReadSaveGameHeader())
     {
         fclose(save_stream);
         return;
     }
+
+    // [crispy] fix skill and gameskill checks in G_InitNew() (haleyjd)
+    skill = gameskill;
+    gameskill = currentskill;
 
     // haleyjd: A comment would be good here, fraggle...
     // Evidently this is a Choco-ism, necessitated by reading the savegame
@@ -1862,7 +1895,7 @@ void G_DoLoadGame (boolean userload)
 
     // STRIFE-TODO: ????
     if(userload)
-        G_InitNew(gameskill, gamemap); 
+        G_InitNew(skill, gamemap); // [crispy] use skill
     else
         G_DoLoadLevel();
  
@@ -1875,6 +1908,7 @@ void G_DoLoadGame (boolean userload)
     P_UnArchiveWorld (); 
     P_UnArchiveThinkers (); 
     P_UnArchiveSpecials (); 
+    P_RestoreTargets (); // [crispy] restore mobj->target and mobj->tracer pointers
  
     if (!P_ReadSaveGameEOF())
         I_Error ("Bad savegame");
@@ -2119,6 +2153,7 @@ G_InitNew
     // BUG: None of this code runs properly when loading save games, so
     // basically it's impossible to play any skill level properly unless
     // you never quit and reload from the command line.
+    // [crispy] fixed in G_DoLoadGame()
     if(!skill && gameskill)
     {
         // Setting to Baby skill... make things easier.

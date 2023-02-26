@@ -113,8 +113,9 @@ void P_BringUpWeapon (player_t* player)
     if (player->pendingweapon == wp_nochange)
         player->pendingweapon = player->readyweapon;
 
+    // [crispy] weapon sound source
     if (player->pendingweapon == wp_flame)
-        S_StartSound (player->mo, sfx_flidl);   // villsa [STRIFE] flame sounds
+        S_StartSound (player->so, sfx_flidl);   // villsa [STRIFE] flame sounds
 
     newstate = weaponinfo[player->pendingweapon].upstate;
 
@@ -263,7 +264,7 @@ void A_WeaponReady( player_t* player, pspdef_t* psp)
     if (player->readyweapon == wp_flame
         && psp->state == &states[S_FLMT_00]) // 62
     {
-        S_StartSound (player->mo, sfx_flidl);
+        S_StartSound (player->so, sfx_flidl); // [crispy] weapon sound source
     }
     
     // check for change
@@ -463,7 +464,7 @@ void A_Punch(player_t* player, pspdef_t* psp)
         else
             sound = sfx_meatht;
 
-        S_StartSound (player->mo, sound);
+        S_StartSound (player->so, sound); // [crispy] weapon sound source
         player->mo->angle = R_PointToAngle2 (player->mo->x,
                                              player->mo->y,
                                              linetarget->x,
@@ -476,7 +477,7 @@ void A_Punch(player_t* player, pspdef_t* psp)
         P_DoPunchAlert(player->mo, linetarget);
     }
     else
-        S_StartSound (player->mo, sfx_swish);
+        S_StartSound (player->so, sfx_swish); // [crispy] weapon sound source
 }
 
 
@@ -613,7 +614,7 @@ void A_FireElectricBolt(player_t* player, pspdef_t* pspr)
     player->ammo[weaponinfo[player->readyweapon].ammo]--;
     P_SpawnPlayerMissile(player->mo, MT_ELECARROW);
     player->mo->angle = an;
-    S_StartSound(player->mo, sfx_xbow);
+    S_StartSound(player->so, sfx_xbow); // [crispy] weapon sound source
 }
 
 //
@@ -632,7 +633,7 @@ void A_FirePoisonBolt(player_t* player, pspdef_t* pspr)
     player->ammo[weaponinfo[player->readyweapon].ammo]--;
     P_SpawnPlayerMissile(player->mo, MT_POISARROW);
     player->mo->angle = an;
-    S_StartSound(player->mo, sfx_xbow);
+    S_StartSound(player->so, sfx_xbow); // [crispy] weapon sound source
 }
 
 //
@@ -709,7 +710,7 @@ P_GunShot
 //
 void A_FireRifle(player_t* player, pspdef_t* pspr)
 {
-    S_StartSound(player->mo, sfx_rifle);
+    S_StartSound(player->so, sfx_rifle); // [crispy] weapon sound source
 
     if(player->ammo[weaponinfo[player->readyweapon].ammo])
     {
@@ -736,7 +737,7 @@ void A_FireMauler1(player_t* player, pspdef_t* pspr)
     {
         player->ammo[weaponinfo[player->readyweapon].ammo] -= 20;
         P_BulletSlope(player->mo);
-        S_StartSound(player->mo, sfx_pgrdat);
+        S_StartSound(player->so, sfx_pgrdat); // [crispy] weapon sound source
 
         for(i = 0; i < 20; i++)
         {
@@ -759,7 +760,7 @@ void A_FireMauler1(player_t* player, pspdef_t* pspr)
 //
 void A_SigilSound(player_t* player, pspdef_t* pspr)
 {
-    S_StartSound(player->mo, sfx_siglup);
+    S_StartSound(player->so, sfx_siglup); // [crispy] weapon sound source
     player->extralight = 2;
 
 }
@@ -786,7 +787,7 @@ void A_FireSigil(player_t* player, pspdef_t* pspr)
     // restore armor
     player->armortype = i;
 
-    S_StartSound(player->mo, sfx_siglup);
+    S_StartSound(player->so, sfx_siglup); // [crispy] weapon sound source
 
     switch(player->sigiltype)
     {
@@ -933,7 +934,7 @@ void A_TorpedoExplode(mobj_t* actor)
 void A_MaulerSound(player_t *player, pspdef_t *psp)
 {
     int t;
-    S_StartSound(player->mo, sfx_proton);
+    S_StartSound(player->so, sfx_proton); // [crispy] weapon sound source
     t = P_Random();
     psp->sx += (t - P_Random()) << 10;
     t = P_Random();

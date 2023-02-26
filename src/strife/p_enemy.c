@@ -187,7 +187,13 @@ static void P_WakeUpThing(mobj_t* puncher, mobj_t* bystander)
     {
         bystander->target = puncher;
         if(bystander->info->seesound)
+        {
             S_StartSound(bystander, bystander->info->seesound);
+
+            // [crispy] make seesounds uninterruptible
+            if (crispy->soundfull)
+                S_UnlinkSound(bystander);
+        }
         P_SetMobjState(bystander, bystander->info->seestate);
     }
 }
@@ -901,7 +907,15 @@ seeyou:
         if (actor->type == MT_INQUISITOR)
             emitter = NULL;
 
-        S_StartSound (emitter, sound);
+        // [crispy] prevent from adding up volume
+        if (crispy->soundfull && actor->type == MT_INQUISITOR)
+            S_StartSoundOnce(NULL, sound);
+        else
+            S_StartSound(emitter, sound);
+
+        // [crispy] make seesounds uninterruptible
+        if (crispy->soundfull)
+            S_UnlinkSound(actor);
     }
 
     // [STRIFE] Set threshold (kinda odd as it's still set to 0 above...)
@@ -2233,7 +2247,11 @@ void A_Scream(mobj_t* actor)
 
     // Check for bosses.
     if(actor->type == MT_ENTITY || actor->type == MT_INQUISITOR)
-        S_StartSound(NULL, actor->info->deathsound);   // full volume
+    {
+        // [crispy] prevent from adding up volume
+        crispy->soundfull ? S_StartSoundOnce(NULL, actor->info->deathsound)
+                          : S_StartSound(NULL, actor->info->deathsound);
+    }
     else
         S_StartSound(actor, actor->info->deathsound);
 }
@@ -3280,7 +3298,27 @@ void A_ActiveSound(mobj_t* actor)
 {
     if(actor->info->activesound)
     {
-        if(!(leveltime & 7)) // haleyjd: added parens
+        int soundtime = leveltime; // [crispy]
+
+        // [crispy] fix ambient sounds to play consistently (haleyjd)
+        if (crispy->soundfix)
+        {
+            switch (actor->type)
+            {
+                case MT_MISC_03: // [crispy] thing 103: floor water drip
+                case MT_MISC_13: // [crispy] thing 104: water splash
+                case MT_MISC_07: // [crispy] thing 112: fountain
+                case MT_TREE7:   // [crispy] thing 215: stick in water
+                    soundtime -= (leveltime % actor->tics);
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        // [crispy] use soundtime
+        if(!(soundtime & 7)) // haleyjd: added parens
             S_StartSound(actor, actor->info->activesound);
     }
 }

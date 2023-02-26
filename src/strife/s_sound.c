@@ -81,6 +81,7 @@ typedef struct
 // The set of channels available
 
 static channel_t *channels;
+static degenmobj_t *sobjs; // [crispy] sound objects
 
 // Maximum volume of a sound effect.
 // Internal default is max out of 0-15.
@@ -150,6 +151,7 @@ void S_Init(int sfxVolume, int musicVolume, int voiceVolume)
     // simultaneously) within zone memory.
     // [crispy] variable number of sound channels
     channels = I_Realloc(NULL, snd_channels*sizeof(channel_t));
+    sobjs = I_Realloc(NULL, snd_channels*sizeof(degenmobj_t)); // [crispy] sound objects
 
     // Free all channels for use
     for (i=0 ; i<snd_channels ; i++)
@@ -264,6 +266,34 @@ void S_StopSound(mobj_t *origin)
         {
             S_StopChannel(cnum);
             break;
+        }
+    }
+}
+
+// [crispy] removed map objects may finish their sounds
+// When map objects are removed from the map by P_RemoveMobj(), instead of
+// stopping their sounds, their coordinates are transfered to "sound objects"
+// so stereo positioning and distance calculations continue to work even after
+// the corresponding map object has already disappeared.
+// Thanks to jeff-d and kb1 for discussing this feature and the former for the
+// original implementation idea: https://www.doomworld.com/vb/post/1585325
+void S_UnlinkSound(mobj_t *origin)
+{
+    int cnum;
+
+    if (origin)
+    {
+        for (cnum=0 ; cnum<snd_channels ; cnum++)
+        {
+            if (channels[cnum].sfxinfo && channels[cnum].origin == origin)
+            {
+                degenmobj_t *const sobj = &sobjs[cnum];
+                sobj->x = origin->x;
+                sobj->y = origin->y;
+                sobj->z = origin->z;
+                channels[cnum].origin = (mobj_t *) sobj;
+                break;
+            }
         }
     }
 }
@@ -452,7 +482,8 @@ void S_StartSound(void *origin_p, int sfx_id)
 
     // Check to see if it is audible,
     //  and if not, modify the params
-    if (origin && origin != players[consoleplayer].mo)
+    if (origin && origin != players[consoleplayer].mo &&
+        origin != players[displayplayer].so) // [crispy] weapon sound source
     {
         rc = S_AdjustSoundParams(players[consoleplayer].mo,
                                  origin,
@@ -499,6 +530,24 @@ void S_StartSound(void *origin_p, int sfx_id)
     }
 
     channels[cnum].handle = I_StartSound(sfx, cnum, volume, sep, pitch);
+}
+
+// [crispy]
+void S_StartSoundOnce (void *origin_p, int sfx_id)
+{
+    int cnum;
+    const sfxinfo_t *const sfx = &S_sfx[sfx_id];
+
+    for (cnum = 0; cnum < snd_channels; cnum++)
+    {
+        if (channels[cnum].sfxinfo == sfx &&
+            channels[cnum].origin == origin_p)
+        {
+            return;
+        }
+    }
+
+    S_StartSound(origin_p, sfx_id);
 }
 
 
@@ -695,7 +744,8 @@ void S_UpdateSounds(mobj_t *listener)
 
                 // check non-local sounds for distance clipping
                 //  or modify their params
-                if (c->origin && listener != c->origin)
+                if (c->origin && listener != c->origin &&
+                    c->origin != players[displayplayer].so) // [crispy] weapon sound source
                 {
                     audible = S_AdjustSoundParams(listener,
                                                   c->origin,
@@ -851,6 +901,7 @@ void S_UpdateSndChannels (int choice)
         snd_channels = 32;
 
     channels = I_Realloc(channels, snd_channels * sizeof(channel_t));
+    sobjs = I_Realloc(sobjs, snd_channels * sizeof(degenmobj_t)); // [crispy] sound objects
 
     for (i = 0; i < snd_channels; i++)
     {

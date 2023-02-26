@@ -362,6 +362,13 @@ static void HU_DrawCrosshair (void)
 //
 void HU_Drawer(void)
 {
+    // [crispy] erase when taking a clean screenshot
+    if (crispy->cleanscreenshot)
+    {
+        HU_Erase();
+        return;
+    }
+
     // [crispy] re-calculate widget coordinates on demand
     if (hu_widescreendelta != WIDESCREENDELTA)
     {
@@ -369,8 +376,17 @@ void HU_Drawer(void)
         HU_Start();
     }
 
+    // [crispy] erase when taking a clean screenshot
+    if (crispy->screenshotmsg == 4)
+    {
+        HUlib_eraseSText(&w_message);
+    }
+    else
+    {
     HUlib_drawSText(&w_message);
     HUlib_drawIText(&w_chat);
+    }
+
     if (automapactive)
         HUlib_drawTextLine(&w_title, false);
 
@@ -525,6 +541,7 @@ void HU_Ticker(void)
     {
         message_on = false;
         message_nottobefuckedwith = false;
+        crispy->screenshotmsg >>= 1; // [crispy]
     }
 
     // haleyjd 20110219: [STRIFE] this condition was removed
@@ -541,6 +558,7 @@ void HU_Ticker(void)
             message_counter = HU_MSGTIMEOUT;
             message_nottobefuckedwith = message_dontfuckwithme;
             message_dontfuckwithme = 0;
+            crispy->screenshotmsg >>= 1; // [crispy]
         }
     //} // else message_on = false;
 
