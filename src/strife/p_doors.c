@@ -219,10 +219,11 @@ int EV_DoLockedDoor(line_t* line, vldoor_e type, mobj_t* thing)
     mobj_t* pmo; // [crispy]
 
     p = thing->player;
-    pmo = p->mo; // [crispy]
 
     if(!p)
         return 0;
+
+    pmo = p->mo; // [crispy]
 
     switch(line->special)
     {
@@ -549,7 +550,7 @@ void EV_VerticalDoor(line_t* line, mobj_t* thing)
 
     //	Check for locks
     player = thing->player;
-    pmo = player->mo; // [crispy]
+    pmo = player ? player->mo : NULL; // [crispy]
 
     // haleyjd 09/15/10: [STRIFE] myriad checks here...
     switch(line->special)
