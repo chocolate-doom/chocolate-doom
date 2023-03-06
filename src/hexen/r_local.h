@@ -86,6 +86,10 @@ typedef struct
     int linecount;
     struct line_s **lines;      // [linecount] size
 
+    // [crispy] WiggleFix: [kb] for R_FixWiggle()
+    int cachedheight;
+    int scaleindex;
+
     // [AM] Previous position of floor and ceiling before
     //      think.  Used to interpolate between positions.
     fixed_t	oldfloorheight;
@@ -170,6 +174,8 @@ typedef struct
     line_t *linedef;
     sector_t *frontsector;
     sector_t *backsector;       // NULL for one sided lines
+
+    uint32_t length; // [crispy] fix long wall wobble
 } seg_t;
 
 // ===== Polyobj data =====
@@ -237,12 +243,13 @@ typedef struct
     int lightlevel;
     int special;
     int minx, maxx;
-    unsigned short pad1;                  // leave pads for [minx-1]/[maxx+1]
-    unsigned short top[MAXWIDTH];
-    unsigned short pad2;
-    unsigned short pad3;
-    unsigned short bottom[MAXWIDTH];
-    unsigned short pad4;
+	// leave pads for [minx-1]/[maxx+1]
+    unsigned int pad1;                  // [crispy] 32-bit integer math
+    unsigned int top[MAXWIDTH];			// [crispy] 32-bit integer math
+    unsigned int pad2;					// [crispy] 32-bit integer math
+    unsigned int pad3;					// [crispy] 32-bit integer math
+    unsigned int bottom[MAXWIDTH];		// [crispy] 32-bit integer math
+    unsigned int pad4;					// [crispy] 32-bit integer math
 } visplane_t;
 
 typedef struct drawseg_s
@@ -253,10 +260,11 @@ typedef struct drawseg_s
     int silhouette;             // 0=none, 1=bottom, 2=top, 3=both
     fixed_t bsilheight;         // don't clip sprites above this
     fixed_t tsilheight;         // don't clip sprites below this
-// pointers to lists for sprite clipping
-    short *sprtopclip;          // adjusted so [x1] is first value
-    short *sprbottomclip;       // adjusted so [x1] is first value
-    short *maskedtexturecol;    // adjusted so [x1] is first value
+	// pointers to lists for sprite clipping,
+	// all three adjusted so [x1] is first value.
+    int *sprtopclip;          // [crispy] 32-bit integer math
+    int *sprbottomclip;       // [crispy] 32-bit integer math
+    int *maskedtexturecol;    // [crispy] 32-bit integer math
 } drawseg_t;
 
 #define SIL_NONE        0
@@ -446,10 +454,10 @@ extern fixed_t Sky2ColumnOffset;
 extern int skyflatnum;
 extern boolean DoubleSky;
 
-extern short openings[MAXOPENINGS], *lastopening;
+extern int openings[MAXOPENINGS], *lastopening; // [crispy] 32-bit integer math
 
-extern short floorclip[MAXWIDTH];
-extern short ceilingclip[MAXWIDTH];
+extern int floorclip[MAXWIDTH]; // [crispy] 32-bit integer math
+extern int ceilingclip[MAXWIDTH]; // [crispy] 32-bit integer math
 
 extern fixed_t *yslope;
 extern fixed_t yslopes[LOOKDIRS][MAXHEIGHT]; // [crispy]
@@ -458,7 +466,9 @@ extern fixed_t distscale[MAXWIDTH];
 void R_InitPlanes(void);
 void R_ClearPlanes(void);
 void R_MapPlane(int y, int x1, int x2);
-void R_MakeSpans(int x, int t1, int b1, int t2, int b2);
+
+// [crispy] 32-bit integer math
+void R_MakeSpans(int x, unsigned int t1, unsigned int b1, unsigned int t2, unsigned int b2);
 void R_DrawPlanes(void);
 
 visplane_t *R_FindPlane(fixed_t height, int picnum, int lightlevel,
@@ -513,14 +523,14 @@ extern vissprite_t vissprites[MAXVISSPRITES], *vissprite_p;
 extern vissprite_t vsprsortedhead;
 
 // constant arrays used for psprite clipping and initializing clipping
-extern short negonearray[MAXWIDTH];
-extern short screenheightarray[MAXWIDTH];
+extern int negonearray[MAXWIDTH];  // [crispy] 32-bit integer math
+extern int screenheightarray[MAXWIDTH];  // [crispy] 32-bit integer math
 
 // vars for R_DrawMaskedColumn
-extern short *mfloorclip;
-extern short *mceilingclip;
+extern int *mfloorclip;  // [crispy] 32-bit integer math
+extern int *mceilingclip;  // [crispy] 32-bit integer math
 extern fixed_t spryscale;
-extern fixed_t sprtopscreen;
+extern int64_t sprtopscreen; // [crispy] WiggleFix
 extern fixed_t sprbotscreen;
 
 extern fixed_t pspritescale, pspriteiscale;

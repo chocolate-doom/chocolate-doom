@@ -36,5 +36,6 @@ void S_Init(void);
 void S_GetChannelInfo(SoundInfo_t * s);
 void S_SetMaxVolume(boolean fullprocess);
 void S_SetMusicVolume(void);
+void S_UpdateSndChannels(int option); // [crispy]
 
 #endif

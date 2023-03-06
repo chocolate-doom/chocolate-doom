@@ -310,6 +310,10 @@ static void StreamIn_pspdef_t(pspdef_t *str)
     // fixed_t sx, sy;
     str->sx = SV_ReadLong();
     str->sy = SV_ReadLong();
+
+    // [crispy] variable weapon sprite bob
+    str->sx2 = str->sx;
+    str->sy2 = str->sy;
 }
 
 static void StreamOut_pspdef_t(pspdef_t *str)
@@ -368,6 +372,9 @@ static void StreamIn_player_t(player_t *str)
 
     // fixed_t bob;
     str->bob = SV_ReadLong();
+
+    // [crispy] variable player view bob
+    str->bob2 = str->bob;
 
     // int flyheight;
     str->flyheight = SV_ReadLong();

@@ -90,5 +90,6 @@ void S_SetMusicVolume(void);
 boolean S_GetSoundPlayingInfo(mobj_t * mobj, int sound_id);
 boolean S_StartCustomCDTrack(int tracknum);
 int S_GetCurrentCDTrack(void);
+void S_UpdateSndChannels (int option); // [crispy]
 
 #endif

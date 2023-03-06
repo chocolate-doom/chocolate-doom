@@ -230,6 +230,23 @@ void P_LoadSegs(int lump)
     W_ReleaseLumpNum(lump);
 }
 
+// [crispy] fix long wall wobble
+
+static void P_SegLengths (void)
+{
+    int i;
+
+    for (i = 0; i < numsegs; i++)
+    {
+        seg_t *const li = &segs[i];
+        int64_t dx, dy;
+
+        dx = li->v2->x - li->v1->x;
+        dy = li->v2->y - li->v1->y;
+
+        li->length = (uint32_t)(sqrt((double)dx*dx + (double)dy*dy)/2);
+    }
+}
 
 /*
 =================
@@ -297,6 +314,9 @@ void P_LoadSectors(int lump)
         ss->tag = SHORT(ms->tag);
         ss->thinglist = NULL;
         ss->seqType = SEQTYPE_STONE;    // default seqType
+
+        // [crispy] WiggleFix: [kb] for R_FixWiggle()
+        ss->cachedheight = 0;
 
         // [AM] Sector interpolation.  Even if we're
         //      not running uncapped, the renderer still
@@ -719,6 +739,10 @@ void P_SetupLevel(int episode, int map, int playermask, skill_t skill)
     P_LoadSegs(lumpnum + ML_SEGS);
     rejectmatrix = W_CacheLumpNum(lumpnum + ML_REJECT, PU_LEVEL);
     P_GroupLines();
+
+    // [crispy] fix long wall wobble
+    P_SegLengths();
+
     bodyqueslot = 0;
     po_NumPolyobjs = 0;
     deathmatch_p = deathmatchstarts;

@@ -96,6 +96,10 @@ typedef struct
     int linecount;
     struct line_s **lines;      // [linecount] size
 
+    // [crispy] WiggleFix: [kb] for R_FixWiggle()
+    int cachedheight;
+    int scaleindex;
+
     // [AM] Previous position of floor and ceiling before
     //      think.  Used to interpolate between positions.
     fixed_t	oldfloorheight;
@@ -161,6 +165,9 @@ typedef struct
     line_t *linedef;
     sector_t *frontsector;
     sector_t *backsector;       // NULL for one sided lines
+
+    uint32_t length; // [crispy] fix long wall wobble
+    angle_t r_angle; // [crispy] recalculated angle used for rendering
 } seg_t;
 
 typedef struct
@@ -345,6 +352,7 @@ extern void R_InterpolateTextureOffsets (void);
 int R_PointOnSide(fixed_t x, fixed_t y, node_t * node);
 int R_PointOnSegSide(fixed_t x, fixed_t y, seg_t * line);
 angle_t R_PointToAngle(fixed_t x, fixed_t y);
+angle_t R_PointToAngleCrispy(fixed_t x, fixed_t y);
 angle_t R_PointToAngle2(fixed_t x1, fixed_t y1, fixed_t x2, fixed_t y2);
 fixed_t R_PointToDist(fixed_t x, fixed_t y);
 fixed_t R_ScaleFromGlobalAngle(angle_t visangle);
@@ -465,7 +473,7 @@ extern int screenheightarray[MAXWIDTH]; // [crispy] 32-bit integer math
 extern int *mfloorclip;   // [crispy] 32-bit integer math
 extern int *mceilingclip; // [crispy] 32-bit integer math
 extern fixed_t spryscale;
-extern fixed_t sprtopscreen;
+extern int64_t sprtopscreen; // [crispy] WiggleFix
 extern fixed_t sprbotscreen;
 
 extern fixed_t pspritescale, pspriteiscale;

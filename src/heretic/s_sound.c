@@ -51,7 +51,7 @@ byte *soundCurve;
 
 int snd_MaxVolume = 10;
 int snd_MusicVolume = 10;
-int snd_Channels = 16;
+int snd_Channels = 8;
 
 int AmbChan;
 
@@ -69,7 +69,7 @@ void S_Start(void)
             S_StopSound(channel[i].mo);
         }
     }
-    memset(channel, 0, 8 * sizeof(channel_t));
+    memset(channel, 0, snd_Channels * sizeof(channel_t));
 }
 
 void S_StartSong(int song, boolean loop)
@@ -260,7 +260,7 @@ void S_StartSound(void *_origin, int sound_id)
 //      vol = (snd_MaxVolume*16 + dist*(-snd_MaxVolume*16)/MAX_SND_DIST)>>9;
     vol = soundCurve[dist];
 
-    if (origin == listener)
+    if (origin == listener || crispy->soundmono)
     {
         sep = 128;
     }
@@ -502,14 +502,21 @@ void S_UpdateSounds(mobj_t * listener)
 //          vol = (*((byte *)W_CacheLumpName("SNDCURVE", PU_CACHE)+dist)*(snd_MaxVolume*8))>>7;
             vol = soundCurve[dist];
 
-            angle = R_PointToAngle2(listener->x, listener->y,
-                                    channel[i].mo->x, channel[i].mo->y);
-            angle = (angle - viewangle) >> 24;
-            sep = angle * 2 - 128;
-            if (sep < 64)
-                sep = -sep;
-            if (sep > 192)
-                sep = 512 - sep;
+            if (crispy->soundmono)
+            {
+                sep = 128;
+            }
+            else
+            {
+                angle = R_PointToAngle2(listener->x, listener->y,
+                                        channel[i].mo->x, channel[i].mo->y);
+                angle = (angle - viewangle) >> 24;
+                sep = angle * 2 - 128;
+                if (sep < 64)
+                    sep = -sep;
+                if (sep > 192)
+                    sep = 512 - sep;
+            }
             // TODO: Pitch shifting.
             I_UpdateSoundParams(channel[i].handle, vol, sep);
             priority = S_sfx[channel[i].sound_id].priority;
@@ -523,10 +530,21 @@ void S_Init(void)
 {
     I_SetOPLDriverVer(opl_doom2_1_666);
     soundCurve = Z_Malloc(MAX_SND_DIST, PU_STATIC, NULL);
-    if (snd_Channels > 8)
+
+    // [crispy] snd_Channels must be 8, 16 or 32
+    if (snd_Channels > MAX_CHANNELS)
+    {
+        snd_Channels = MAX_CHANNELS;
+    }
+    else if (snd_Channels < 16)
     {
         snd_Channels = 8;
     }
+    else if (snd_Channels < 32)
+    {
+        snd_Channels = 16;
+    }
+
     I_SetMusicVolume(snd_MusicVolume * 8);
     S_SetMaxVolume(true);
 
@@ -611,5 +629,29 @@ void S_ShutDown(void)
     I_StopSong();
     I_UnRegisterSong(rs);
     I_ShutdownSound();
+}
+
+// [crispy] variable number of sound channels
+void S_UpdateSndChannels (int option)
+{
+    int i;
+
+    for (i = 0; i < snd_Channels; i++)
+    {
+        if (channel[i].handle)
+            S_StopSound(channel[i].mo);
+    }
+
+    if (option)
+        snd_Channels <<= 1;
+    else
+        snd_Channels >>= 1;
+
+    if (snd_Channels > 32)
+        snd_Channels = 8;
+    else if (snd_Channels < 8)
+        snd_Channels = 32;
+
+    memset(channel, 0, snd_Channels * sizeof(channel_t));
 }
 

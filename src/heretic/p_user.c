@@ -48,6 +48,9 @@ boolean WeaponInShareware[] = {
     true                        // Beak
 };
 
+// [crispy] variable player view bob
+static const fixed_t crispy_bobfactor[3] = {4, 3, 0};
+
 /*
 ==================
 =
@@ -109,6 +112,9 @@ void P_CalcHeight(player_t * player)
         player->bob = FRACUNIT / 2;
     }
 
+    // [crispy] variable player view bob
+    player->bob2 = crispy_bobfactor[crispy->bobfactor] * player->bob / 4;
+
     if ((player->cheats & CF_NOMOMENTUM))
     {
         player->viewz = player->mo->z + VIEWHEIGHT;
@@ -119,7 +125,8 @@ void P_CalcHeight(player_t * player)
     }
 
     angle = (FINEANGLES / 20 * leveltime) & FINEMASK;
-    bob = FixedMul(player->bob / 2, finesine[angle]);
+    // [crispy] variable player view bob
+    bob = FixedMul(player->bob2 / 2, finesine[angle]);
 
 //
 // move viewheight

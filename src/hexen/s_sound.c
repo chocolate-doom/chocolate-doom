@@ -75,7 +75,7 @@ static byte *SoundCurve;
 
 int snd_MaxVolume = 10;                // maximum volume for sound
 int snd_MusicVolume = 10;              // maximum volume for music
-int snd_Channels = 16;
+int snd_Channels = 8;
 
 // int AmbChan;
 
@@ -477,7 +477,7 @@ void S_StartSoundAtVolume(mobj_t * origin, int sound_id, int volume)
     Channel[i].mo = origin;
 
     vol = (SoundCurve[dist] * (snd_MaxVolume * 8) * volume) >> 14;
-    if (origin == listener)
+    if (origin == listener || crispy->soundmono)
     {
         sep = 128;
 //              vol = (volume*(snd_MaxVolume+1)*8)>>7;
@@ -625,7 +625,7 @@ void S_StopAllSound(void)
             S_StopSound(Channel[i].mo);
         }
     }
-    memset(Channel, 0, 8 * sizeof(channel_t));
+    memset(Channel, 0, snd_Channels * sizeof(channel_t));
 }
 
 //==========================================================================
@@ -754,7 +754,7 @@ void S_UpdateSounds(mobj_t * listener)
             vol =
                 (SoundCurve[dist] * (snd_MaxVolume * 8) *
                  Channel[i].volume) >> 14;
-            if (Channel[i].mo == listener)
+            if (Channel[i].mo == listener || crispy->soundmono)
             {
                 sep = 128;
             }
@@ -789,10 +789,20 @@ void S_Init(void)
     SoundCurve = W_CacheLumpName("SNDCURVE", PU_STATIC);
 //      SoundCurve = Z_Malloc(MAX_SND_DIST, PU_STATIC, NULL);
 
-    if (snd_Channels > 8)
+    // [crispy] snd_Channels must be 8, 16 or 32
+    if (snd_Channels > MAX_CHANNELS)
+    {
+        snd_Channels = MAX_CHANNELS;
+    }
+    else if (snd_Channels < 16)
     {
         snd_Channels = 8;
     }
+    else if (snd_Channels < 32)
+    {
+        snd_Channels = 16;
+    }
+
     I_SetMusicVolume(snd_MusicVolume * 8);
 
     I_AtExit(S_ShutDown, true);
@@ -1006,5 +1016,29 @@ void S_InitScript(void)
             M_StringCopy(S_sfx[i].name, "default", sizeof(S_sfx[i].name));
         }
     }
+}
+
+// [crispy] variable number of sound channels
+void S_UpdateSndChannels (int option)
+{
+    int i;
+
+    for (i = 0; i < snd_Channels; i++)
+    {
+        if (Channel[i].handle)
+            S_StopSound(Channel[i].mo);
+    }
+
+    if (option)
+        snd_Channels <<= 1;
+    else
+        snd_Channels >>= 1;
+
+    if (snd_Channels > 32)
+        snd_Channels = 8;
+    else if (snd_Channels < 8)
+        snd_Channels = 32;
+
+    memset(Channel, 0, snd_Channels * sizeof(channel_t));
 }
 
