@@ -94,6 +94,9 @@ static music_module_t *music_modules[] =
 #ifdef _WIN32
     &music_win_module,
 #endif
+#if HAVE_FLUIDSYNTH
+    &music_fl_module,
+#endif // HAVE_FLUIDSYNTH
 #ifndef DISABLE_SDL2MIXER
     &music_sdl_module,
 #endif // DISABLE_SDL2MIXER

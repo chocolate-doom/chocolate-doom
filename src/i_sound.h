@@ -259,6 +259,7 @@ extern music_module_t music_sdl_module;
 extern music_module_t music_opl_module;
 extern music_module_t music_pack_module;
 extern music_module_t music_win_module;
+extern music_module_t music_fl_module;
 
 // For OPL module:
 
