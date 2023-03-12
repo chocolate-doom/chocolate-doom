@@ -4,6 +4,7 @@
 #cmakedefine PACKAGE_STRING "@PACKAGE_STRING@"
 #cmakedefine PROGRAM_PREFIX "@PROGRAM_PREFIX@"
 
+#cmakedefine01 HAVE_FLUIDSYNTH
 #cmakedefine HAVE_LIBSAMPLERATE
 #cmakedefine HAVE_LIBPNG
 #cmakedefine HAVE_DIRENT_H
