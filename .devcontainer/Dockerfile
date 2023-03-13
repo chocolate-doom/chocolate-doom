@@ -4,7 +4,7 @@ FROM ubuntu
 
 ARG system_apt_dependencies="build-essential gdb automake autoconf libtool git pkg-config python3 python3-pip sudo"
 ARG choco_apt_dependencies="gcc make libsdl2-dev libsdl2-net-dev libsdl2-mixer-dev"
-ARG choco_apt_dependencies_optional="libflac-dev libpng-dev libsamplerate-dev libvorbis-dev"
+ARG choco_apt_dependencies_optional="libflac-dev libfluidsynth-dev libpng-dev libsamplerate-dev libvorbis-dev"
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -qq $system_apt_dependencies $choco_apt_dependencies $choco_apt_dependencies_optional
 
