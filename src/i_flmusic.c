@@ -41,9 +41,6 @@ typedef fluid_long_long_t fluid_int_t;
 #include "m_misc.h"
 #include "memio.h"
 #include "mus2mid.h"
-#include "w_wad.h"
-#include "z_zone.h"
-#include "i_glob.h"
 
 char *fsynth_sf_path = "";
 int fsynth_chorus_active = 1;
@@ -60,8 +57,6 @@ float fsynth_reverb_width = 4.0;
 static fluid_synth_t *synth = NULL;
 static fluid_settings_t *settings = NULL;
 static fluid_player_t *player = NULL;
-
-#define SOUNDFONTS_INITIAL_SIZE 16
 
 static void FL_Mix_Callback(void *udata, Uint8 *stream, int len)
 {
