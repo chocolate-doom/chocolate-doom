@@ -4,7 +4,7 @@
     "sdl2-mixer",
     "sdl2-net",
     "libpng",
-    "libsamplerate"
+    "libsamplerate",
     "fluidsynth"
   ]
 }
