@@ -229,13 +229,21 @@ void MainMenu(void)
                        (TxtWidgetSignalFunc) ConfigMouse, NULL),
         TXT_NewButton2("Configure Gamepad/Joystick",
                        (TxtWidgetSignalFunc) ConfigJoystick, NULL),
+        NULL);
 // [crispy]
 /*
         TXT_NewButton2("Compatibility",
                        (TxtWidgetSignalFunc) CompatibilitySettings, NULL),
 */
-        TXT_NewButton2("Accessibility",
-                       (TxtWidgetSignalFunc) AccessibilitySettings, NULL),
+    // [crispy]
+    if (gamemission == doom)
+    {
+        TXT_AddWidget(window,
+            TXT_NewButton2("Accessibility",
+                           (TxtWidgetSignalFunc) AccessibilitySettings, NULL));
+    }
+
+    TXT_AddWidgets(window,
         GetLaunchButton(),
         TXT_NewStrut(0, 1),
         TXT_NewButton2("Start a Network Game",
