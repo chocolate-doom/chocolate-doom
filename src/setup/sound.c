@@ -243,11 +243,6 @@ void ConfigSound(TXT_UNCAST_ARG(widget), void *user_data)
 {
     txt_window_t *window;
     txt_window_action_t *music_action;
-#ifdef _WIN32
-    int window_ypos = 2;
-#else
-    int window_ypos = 3;
-#endif
 
     // Build the window
 
@@ -256,7 +251,7 @@ void ConfigSound(TXT_UNCAST_ARG(widget), void *user_data)
 
     TXT_SetColumnWidths(window, 40);
     TXT_SetWindowPosition(window, TXT_HORIZ_CENTER, TXT_VERT_TOP,
-                                  TXT_SCREEN_W / 2, window_ypos);
+                                  TXT_SCREEN_W / 2, 3);
 
     music_action = TXT_NewWindowAction('m', "Music Packs");
     TXT_SetWindowAction(window, TXT_HORIZ_CENTER, music_action);
