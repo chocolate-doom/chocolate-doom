@@ -48,6 +48,8 @@ float fsynth_chorus_depth = 5.0;
 float fsynth_chorus_level = 0.35;
 int fsynth_chorus_nr = 3;
 float fsynth_chorus_speed = 0.3;
+char *fsynth_midibankselect = "gs";
+int fsynth_polyphony = 256;
 int fsynth_reverb_active = 1;
 float fsynth_reverb_damp = 0.4;
 float fsynth_reverb_level = 0.15;
@@ -89,6 +91,9 @@ static boolean I_FL_InitMusic(void)
     settings = new_fluid_settings();
 
     fluid_settings_setnum(settings, "synth.sample-rate", snd_samplerate);
+    fluid_settings_setstr(settings, "synth.midi-bank-select",
+                          fsynth_midibankselect);
+    fluid_settings_setint(settings, "synth.polyphony", fsynth_polyphony);
 
     fluid_settings_setint(settings, "synth.chorus.active",
                           fsynth_chorus_active);

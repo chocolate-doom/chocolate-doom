@@ -973,6 +973,20 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_FLOAT(fsynth_chorus_speed),
 
     //!
+    // This setting defines how FluidSynth interprets Bank Select messages. The
+    // default is "gs". Other possible values are "gm", "xg" and "mma".
+    //
+
+    CONFIG_VARIABLE_STRING(fsynth_midibankselect),
+
+    //!
+    // Sets the number of FluidSynth voices that can be played in parallel.
+    // Default is 256, range is 1 - 65535.
+    //
+
+    CONFIG_VARIABLE_INT(fsynth_polyphony),
+
+    //!
     // If 1, activate the FluidSynth reverb effects module. If 0, no reverb
     // will be added to the output signal.
     //

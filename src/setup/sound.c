@@ -88,12 +88,14 @@ int winmm_chorus_level = -1;
 #endif
 
 #if HAVE_FLUIDSYNTH
-char *fsynth_sf_path = NULL;
+char *fsynth_sf_path = "";
 int fsynth_chorus_active = 1;
 float fsynth_chorus_depth = 5.0;
 float fsynth_chorus_level = 0.35;
 int fsynth_chorus_nr = 3;
 float fsynth_chorus_speed = 0.3;
+char *fsynth_midibankselect = "gs";
+int fsynth_polyphony = 256;
 int fsynth_reverb_active = 1;
 float fsynth_reverb_damp = 0.4;
 float fsynth_reverb_level = 0.15;
@@ -366,6 +368,8 @@ void BindSoundVariables(void)
     M_BindFloatVariable("fsynth_chorus_level",    &fsynth_chorus_level);
     M_BindIntVariable("fsynth_chorus_nr",         &fsynth_chorus_nr);
     M_BindFloatVariable("fsynth_chorus_speed",    &fsynth_chorus_speed);
+    M_BindStringVariable("fsynth_midibankselect", &fsynth_midibankselect);
+    M_BindIntVariable("fsynth_polyphony",         &fsynth_polyphony);
     M_BindIntVariable("fsynth_reverb_active",     &fsynth_reverb_active);
     M_BindFloatVariable("fsynth_reverb_damp",     &fsynth_reverb_damp);
     M_BindFloatVariable("fsynth_reverb_level",    &fsynth_reverb_level);
@@ -396,7 +400,6 @@ void BindSoundVariables(void)
     music_pack_path = M_StringDuplicate("");
     timidity_cfg_path = M_StringDuplicate("");
     gus_patch_path = M_StringDuplicate("");
-    fsynth_sf_path = M_StringDuplicate("");
 
     // All versions of Heretic and Hexen did pitch-shifting.
     // Most versions of Doom did not and Strife never did.

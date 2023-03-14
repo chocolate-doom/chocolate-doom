@@ -520,6 +520,8 @@ void I_BindSoundVariables(void)
     M_BindFloatVariable("fsynth_chorus_level",      &fsynth_chorus_level);
     M_BindIntVariable("fsynth_chorus_nr",           &fsynth_chorus_nr);
     M_BindFloatVariable("fsynth_chorus_speed",      &fsynth_chorus_speed);
+    M_BindStringVariable("fsynth_midibankselect",   &fsynth_midibankselect);
+    M_BindIntVariable("fsynth_polyphony",           &fsynth_polyphony);
     M_BindIntVariable("fsynth_reverb_active",       &fsynth_reverb_active);
     M_BindFloatVariable("fsynth_reverb_damp",       &fsynth_reverb_damp);
     M_BindFloatVariable("fsynth_reverb_level",      &fsynth_reverb_level);

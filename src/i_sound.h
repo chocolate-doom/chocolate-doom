@@ -287,6 +287,8 @@ extern float fsynth_chorus_depth;
 extern float fsynth_chorus_level;
 extern int fsynth_chorus_nr;
 extern float fsynth_chorus_speed;
+extern char *fsynth_midibankselect;
+extern int fsynth_polyphony;
 extern int fsynth_reverb_active;
 extern float fsynth_reverb_damp;
 extern float fsynth_reverb_level;
