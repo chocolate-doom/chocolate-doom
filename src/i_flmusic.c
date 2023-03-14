@@ -71,7 +71,8 @@ static void FL_Mix_Callback(void *udata, Uint8 *stream, int len)
 
     if (result != FLUID_OK)
     {
-        fprintf(stderr, "FL_Mix_Callback: Error generating FluidSynth audio");
+        fprintf(stderr,
+                "FL_Mix_Callback: Error generating FluidSynth audio.\n");
     }
 }
 
@@ -81,6 +82,8 @@ static boolean I_FL_InitMusic(void)
 
     if (strlen(fsynth_sf_path) == 0)
     {
+        fprintf(stderr,
+                "I_FL_InitMusic: No FluidSynth soundfont file specified.\n");
         return false;
     }
 
@@ -129,12 +132,12 @@ static boolean I_FL_InitMusic(void)
         delete_fluid_synth(synth);
         delete_fluid_settings(settings);
         fprintf(stderr,
-                "I_FL_InitMusic: Error loading FluidSynth soundfont: '%s'\n",
+                "I_FL_InitMusic: Error loading FluidSynth soundfont: '%s'.\n",
                 fsynth_sf_path);
         return false;
     }
 
-    printf("I_FL_InitMusic: Using '%s'\n", fsynth_sf_path);
+    printf("I_FL_InitMusic: Using '%s'.\n", fsynth_sf_path);
 
     return true;
 }
@@ -210,8 +213,7 @@ static void *I_FL_RegisterSong(void *data, int len)
 
     if (result != FLUID_OK)
     {
-        fprintf(stderr,
-                "I_FL_RegisterSong: FluidSynth failed to load in-memory song");
+        fprintf(stderr, "I_FL_RegisterSong: FluidSynth failed to load song.\n");
         return NULL;
     }
 
