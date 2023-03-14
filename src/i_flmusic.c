@@ -45,8 +45,17 @@ typedef fluid_long_long_t fluid_int_t;
 #include "z_zone.h"
 #include "i_glob.h"
 
-boolean mus_chorus = true;
-boolean mus_reverb = true;
+char *fsynth_sf_path = "";
+int fsynth_chorus_active = 1;
+float fsynth_chorus_depth = 5.0;
+float fsynth_chorus_level = 0.35;
+int fsynth_chorus_nr = 3;
+float fsynth_chorus_speed = 0.3;
+int fsynth_reverb_active = 1;
+float fsynth_reverb_damp = 0.4;
+float fsynth_reverb_level = 0.15;
+float fsynth_reverb_roomsize = 0.6;
+float fsynth_reverb_width = 4.0;
 
 static fluid_synth_t *synth = NULL;
 static fluid_settings_t *settings = NULL;
@@ -70,7 +79,7 @@ static boolean I_FL_InitMusic(void)
 {
     int sf_id;
 
-    if (strlen(fluidsynth_sf_path) == 0)
+    if (strlen(fsynth_sf_path) == 0)
     {
         return false;
     }
@@ -83,26 +92,37 @@ static boolean I_FL_InitMusic(void)
 
     fluid_settings_setnum(settings, "synth.sample-rate", snd_samplerate);
 
-    fluid_settings_setint(settings, "synth.chorus.active", mus_chorus);
-    fluid_settings_setint(settings, "synth.reverb.active", mus_reverb);
+    fluid_settings_setint(settings, "synth.chorus.active",
+                          fsynth_chorus_active);
+    fluid_settings_setint(settings, "synth.reverb.active",
+                          fsynth_reverb_active);
 
-    if (mus_reverb)
+    if (fsynth_reverb_active)
     {
-        fluid_settings_setnum(settings, "synth.reverb.room-size", 0.6);
-        fluid_settings_setnum(settings, "synth.reverb.damp", 0.4);
-        fluid_settings_setnum(settings, "synth.reverb.width", 4);
-        fluid_settings_setnum(settings, "synth.reverb.level", 0.15);
+        fluid_settings_setnum(settings, "synth.reverb.room-size",
+                              fsynth_reverb_roomsize);
+        fluid_settings_setnum(settings, "synth.reverb.damp",
+                              fsynth_reverb_damp);
+        fluid_settings_setnum(settings, "synth.reverb.width",
+                              fsynth_reverb_width);
+        fluid_settings_setnum(settings, "synth.reverb.level",
+                              fsynth_reverb_level);
     }
 
-    if (mus_chorus)
+    if (fsynth_chorus_active)
     {
-        fluid_settings_setnum(settings, "synth.chorus.level", 0.35);
-        fluid_settings_setnum(settings, "synth.chorus.depth", 5);
+        fluid_settings_setnum(settings, "synth.chorus.level",
+                              fsynth_chorus_level);
+        fluid_settings_setnum(settings, "synth.chorus.depth",
+                              fsynth_chorus_depth);
+        fluid_settings_setint(settings, "synth.chorus.nr", fsynth_chorus_nr);
+        fluid_settings_setnum(settings, "synth.chorus.speed",
+                              fsynth_chorus_speed);
     }
 
     synth = new_fluid_synth(settings);
 
-    sf_id = fluid_synth_sfload(synth, fluidsynth_sf_path, true);
+    sf_id = fluid_synth_sfload(synth, fsynth_sf_path, true);
     if (sf_id == FLUID_FAILED)
     {
         // deleting the synth also deletes sfloader
@@ -110,11 +130,11 @@ static boolean I_FL_InitMusic(void)
         delete_fluid_settings(settings);
         fprintf(stderr,
                 "I_FL_InitMusic: Error loading FluidSynth soundfont: '%s'\n",
-                fluidsynth_sf_path);
+                fsynth_sf_path);
         return false;
     }
 
-    printf("I_FL_InitMusic: Using '%s'\n", fluidsynth_sf_path);
+    printf("I_FL_InitMusic: Using '%s'\n", fsynth_sf_path);
 
     return true;
 }

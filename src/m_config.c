@@ -936,11 +936,83 @@ static default_t extra_defaults_list[] =
 
     CONFIG_VARIABLE_STRING(music_pack_path),
 
+#if HAVE_FLUIDSYNTH
+    //!
+    // If 1, activate the FluidSynth chorus effects module. If 0, no chorus
+    // will be added to the output signal.
+    //
+
+    CONFIG_VARIABLE_INT(fsynth_chorus_active),
+
+    //!
+    // Specifies the modulation depth of the FluidSynth chorus. Default is
+    // 5.0, range is 0.0 to 256.0.
+    //
+
+    CONFIG_VARIABLE_FLOAT(fsynth_chorus_depth),
+
+    //!
+    // Specifies the output amplitude of the FluidSynth chorus signal. Default
+    // is 0.35, range is 0.0 to 10.0.
+    //
+
+    CONFIG_VARIABLE_FLOAT(fsynth_chorus_level),
+
+    //!
+    // Sets the voice count of the FluidSynth chorus signal. Default is 3,
+    // range is 0 to 99.
+    //
+
+    CONFIG_VARIABLE_INT(fsynth_chorus_nr),
+
+    //!
+    // Sets the FluidSynth chorus modulation speed in Hz. Default is 0.3,
+    // range is 0.1 to 5.0.
+    //
+
+    CONFIG_VARIABLE_FLOAT(fsynth_chorus_speed),
+
+    //!
+    // If 1, activate the FluidSynth reverb effects module. If 0, no reverb
+    // will be added to the output signal.
+    //
+
+    CONFIG_VARIABLE_INT(fsynth_reverb_active),
+
+    //!
+    // Sets the amount of FluidSynth reverb damping. Default is 0.4, range is
+    // 0.0 to 1.0.
+    //
+
+    CONFIG_VARIABLE_FLOAT(fsynth_reverb_damp),
+
+    //!
+    // Sets the FluidSynth reverb amplitude. Default is 0.15, range is 0.0 -
+    // 1.0.
+    //
+
+    CONFIG_VARIABLE_FLOAT(fsynth_reverb_level),
+
+    //!
+    // Sets the room size(i.e. amount of wet) FluidSynth reverb. Default is
+    // 0.6, range is 0.0 - 1.0.
+    //
+
+    CONFIG_VARIABLE_FLOAT(fsynth_reverb_roomsize),
+
+    //!
+    // Sets the stereo spread of the FluidSynth reverb signal. Default is
+    // 0.4, range is 0.0 - 100.0.
+    //
+
+    CONFIG_VARIABLE_FLOAT(fsynth_reverb_width),
+
     //!
     // Full path to a soundfont file to use with FluidSynth MIDI playback.
     //
 
-    CONFIG_VARIABLE_STRING(fluidsynth_sf_path),
+    CONFIG_VARIABLE_STRING(fsynth_sf_path),
+#endif // HAVE_FLUIDSYNTH
 
     //!
     // Full path to a Timidity configuration file to use for MIDI

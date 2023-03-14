@@ -172,9 +172,8 @@ static void InitMusicModule(void)
             // Skip the native Windows MIDI module if using Timidity or
             // FluidSynth.
 
-            if ((strcmp(timidity_cfg_path, "")
-              || strcmp(fluidsynth_sf_path, ""))
-              && music_modules[i] == &music_win_module)
+            if (strcmp(timidity_cfg_path, "") &&
+                music_modules[i] == &music_win_module)
             {
                 continue;
             }
@@ -504,7 +503,6 @@ void I_BindSoundVariables(void)
     M_BindIntVariable("snd_pitchshift",          &snd_pitchshift);
 
     M_BindStringVariable("music_pack_path",      &music_pack_path);
-    M_BindStringVariable("fluidsynth_sf_path",   &fluidsynth_sf_path);
     M_BindStringVariable("timidity_cfg_path",    &timidity_cfg_path);
     M_BindStringVariable("gus_patch_path",       &gus_patch_path);
     M_BindIntVariable("gus_ram_kb",              &gus_ram_kb);
@@ -515,6 +513,20 @@ void I_BindSoundVariables(void)
     M_BindIntVariable("winmm_reverb_level",      &winmm_reverb_level);
     M_BindIntVariable("winmm_chorus_level",      &winmm_chorus_level);
 #endif
+
+#if HAVE_FLUIDSYNTH
+    M_BindIntVariable("fsynth_chorus_active",       &fsynth_chorus_active);
+    M_BindFloatVariable("fsynth_chorus_depth",      &fsynth_chorus_depth);
+    M_BindFloatVariable("fsynth_chorus_level",      &fsynth_chorus_level);
+    M_BindIntVariable("fsynth_chorus_nr",           &fsynth_chorus_nr);
+    M_BindFloatVariable("fsynth_chorus_speed",      &fsynth_chorus_speed);
+    M_BindIntVariable("fsynth_reverb_active",       &fsynth_reverb_active);
+    M_BindFloatVariable("fsynth_reverb_damp",       &fsynth_reverb_damp);
+    M_BindFloatVariable("fsynth_reverb_level",      &fsynth_reverb_level);
+    M_BindFloatVariable("fsynth_reverb_roomsize",   &fsynth_reverb_roomsize);
+    M_BindFloatVariable("fsynth_reverb_width",      &fsynth_reverb_width);
+    M_BindStringVariable("fsynth_sf_path",          &fsynth_sf_path);
+#endif // HAVE_FLUIDSYNTH
 
     M_BindIntVariable("use_libsamplerate",       &use_libsamplerate);
     M_BindFloatVariable("libsamplerate_scale",   &libsamplerate_scale);

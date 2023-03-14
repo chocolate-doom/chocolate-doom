@@ -43,7 +43,6 @@
 #include "z_zone.h"
 
 
-char *fluidsynth_sf_path = "";
 char *timidity_cfg_path = "";
 
 static char *temp_timidity_cfg = NULL;

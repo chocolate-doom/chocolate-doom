@@ -268,7 +268,6 @@ extern int opl_io_port;
 // For native music module:
 
 extern char *music_pack_path;
-extern char *fluidsynth_sf_path;
 extern char *timidity_cfg_path;
 #ifdef _WIN32
 extern char *winmm_midi_device;
@@ -278,5 +277,20 @@ extern int winmm_reverb_level;
 extern int winmm_chorus_level;
 #endif
 
-#endif
+// For FluidSynth module:
 
+#if HAVE_FLUIDSYNTH
+extern char *fsynth_sf_path;
+extern int fsynth_chorus_active;
+extern float fsynth_chorus_depth;
+extern float fsynth_chorus_level;
+extern int fsynth_chorus_nr;
+extern float fsynth_chorus_speed;
+extern int fsynth_reverb_active;
+extern float fsynth_reverb_damp;
+extern float fsynth_reverb_level;
+extern float fsynth_reverb_roomsize;
+extern float fsynth_reverb_width;
+#endif // HAVE_FLUIDSYNTH
+
+#endif
