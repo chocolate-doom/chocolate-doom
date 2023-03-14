@@ -263,7 +263,7 @@ static boolean I_FL_MusicIsPlaying(void)
 
 static snddevice_t music_fl_devices[] =
 {
-    SNDDEVICE_GENMIDI,
+    SNDDEVICE_FSYNTH,
 };
 
 music_module_t music_fl_module =

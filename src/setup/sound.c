@@ -325,13 +325,19 @@ void ConfigSound(TXT_UNCAST_ARG(widget), void *user_data)
                 TXT_NewFileSelector(&timidity_cfg_path, 34,
                                     "Select Timidity config file",
                                     cfg_extension),
+                NULL)),
+#if HAVE_FLUIDSYNTH
+        TXT_NewRadioButton("FluidSynth", &snd_musicdevice, SNDDEVICE_FSYNTH),
+        TXT_NewConditional(&snd_musicdevice, SNDDEVICE_FSYNTH,
+            TXT_MakeTable(2,
                 TXT_NewStrut(4, 0),
-                TXT_NewLabel("FluidSynth soundfont file: "),
+                TXT_NewLabel("Soundfont file: "),
                 TXT_NewStrut(4, 0),
                 TXT_NewFileSelector(&fsynth_sf_path, 34,
                                     "Select FluidSynth soundfont file",
                                     sf_extension),
                 NULL)),
+#endif
         NULL);
 }
 
