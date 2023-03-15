@@ -49,7 +49,10 @@ static const char *opltype_strings[] =
 };
 
 static const char *cfg_extension[] = { "cfg", NULL };
+
+#if HAVE_FLUIDSYNTH
 static const char *sf_extension[] = { "sf2", "sf3", NULL };
+#endif
 
 // Config file variables:
 
