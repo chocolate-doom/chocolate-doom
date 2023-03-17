@@ -33,7 +33,6 @@
 #define BETWEEN(l,u,x) (((l)>(x))?(l):((x)>(u))?(u):(x))
 #endif
 
-#define CRISPY_FPSLIMIT_MIN 35
 #define CRISPY_FPSLIMIT_MAX 500
 
 typedef struct

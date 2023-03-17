@@ -23,6 +23,7 @@
 #include "i_input.h"
 #include "i_system.h"
 #include "i_swap.h"
+#include "i_timer.h" // [crispy] TICRATE
 #include "i_video.h"
 #include "m_controls.h"
 #include "m_misc.h"
@@ -358,7 +359,7 @@ static MenuItem_t Crispness1Items[] = {
     {ITT_LRFUNC2, "ASPECT RATIO:", CrispyToggleWidescreen, 0, MENU_NONE},
     {ITT_LRFUNC2, "SMOOTH PIXEL SCALING:", CrispySmoothing, 0, MENU_NONE},
     {ITT_LRFUNC2, "UNCAPPED FRAMERATE:", CrispyUncapped, 0, MENU_NONE},
-    {ITT_NUMFUNC, "FPS LIMIT:", CrispyFpsLimit, 0, MENU_NONE},
+    {ITT_NUMFUNC, "FRAMERATE LIMIT:", CrispyFpsLimit, 0, MENU_NONE},
     {ITT_LRFUNC2, "ENABLE VSYNC:", CrispyVsync, 0, MENU_NONE},
     {ITT_EMPTY, NULL, NULL, 0, MENU_NONE},
     {ITT_EMPTY, NULL, NULL, 0, MENU_NONE},
@@ -1559,15 +1560,17 @@ static void CrispyFpsLimit(int option)
     if (option == LEFT_DIR)
     {
         crispy->fpslimit--;
-
-        if (crispy->fpslimit < CRISPY_FPSLIMIT_MIN)
-        {
-            crispy->fpslimit = 0;
-        }
     }
     else if (option == RIGHT_DIR)
     {
-        crispy->fpslimit++;
+        if (crispy->fpslimit < TICRATE)
+        {
+            crispy->fpslimit = TICRATE;
+        }
+        else
+        {
+            crispy->fpslimit++;
+        }
     }
     else if (option == ENTER_NUMBER)
     {
@@ -1585,9 +1588,9 @@ static void CrispyFpsLimit(int option)
         }
     }
 
-    if (crispy->fpslimit && crispy->fpslimit < CRISPY_FPSLIMIT_MIN)
+    if (crispy->fpslimit < TICRATE)
     {
-        crispy->fpslimit = CRISPY_FPSLIMIT_MIN;
+        crispy->fpslimit = 0;
     }
     else if (crispy->fpslimit > CRISPY_FPSLIMIT_MAX)
     {
@@ -2664,8 +2667,8 @@ static void DrawCrispness1(void)
     // Uncapped framerate
     DrawCrispnessItem(crispy->uncapped, 217, 65);
 
-    // FPS limit
-    DrawCrispnessNumericItem(crispy->fpslimit, 134, 75, "NONE", !crispy->uncapped, "35");
+    // Framerate limit
+    DrawCrispnessNumericItem(crispy->fpslimit, 181, 75, "NONE", !crispy->uncapped, "35");
 
     // Vsync
     DrawCrispnessItem(crispy->vsync, 167, 85);

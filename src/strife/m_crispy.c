@@ -140,15 +140,17 @@ void M_CrispyToggleFpsLimit(int choice)
     if (choice == 0)
     {
         crispy->fpslimit--;
-
-        if (crispy->fpslimit < CRISPY_FPSLIMIT_MIN)
-        {
-            crispy->fpslimit = 0;
-        }
     }
     else if (choice == 1)
     {
-        crispy->fpslimit++;
+        if (crispy->fpslimit < TICRATE)
+        {
+            crispy->fpslimit = TICRATE;
+        }
+        else
+        {
+            crispy->fpslimit++;
+        }
     }
     else if (choice == 2)
     {
@@ -166,9 +168,9 @@ void M_CrispyToggleFpsLimit(int choice)
         }
     }
 
-    if (crispy->fpslimit && crispy->fpslimit < CRISPY_FPSLIMIT_MIN)
+    if (crispy->fpslimit < TICRATE)
     {
-        crispy->fpslimit = CRISPY_FPSLIMIT_MIN;
+        crispy->fpslimit = 0;
     }
     else if (crispy->fpslimit > CRISPY_FPSLIMIT_MAX)
     {

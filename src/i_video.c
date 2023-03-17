@@ -897,7 +897,7 @@ void I_FinishUpdate (void)
     if (crispy->uncapped)
     {
         // Limit framerate
-        if (crispy->fpslimit > 0)
+        if (crispy->fpslimit >= TICRATE)
         {
             static uint64_t last_frame;
             uint64_t current_frame;
