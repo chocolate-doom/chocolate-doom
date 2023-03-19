@@ -31,6 +31,9 @@ int I_GetTime (void);
 // returns current time in ms
 int I_GetTimeMS (void);
 
+// returns current time in us
+uint64_t I_GetTimeUS(void); // [crispy]
+
 // Pause for a specified number of ms
 void I_Sleep(int ms);
 
