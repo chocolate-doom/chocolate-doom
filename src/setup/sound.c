@@ -93,17 +93,17 @@ int winmm_chorus_level = -1;
 #if HAVE_FLUIDSYNTH
 char *fsynth_sf_path = "";
 int fsynth_chorus_active = 1;
-float fsynth_chorus_depth = 5.0;
-float fsynth_chorus_level = 0.35;
+float fsynth_chorus_depth = 5.0f;
+float fsynth_chorus_level = 0.35f;
 int fsynth_chorus_nr = 3;
-float fsynth_chorus_speed = 0.3;
+float fsynth_chorus_speed = 0.3f;
 char *fsynth_midibankselect = "gs";
 int fsynth_polyphony = 256;
 int fsynth_reverb_active = 1;
-float fsynth_reverb_damp = 0.4;
-float fsynth_reverb_level = 0.15;
-float fsynth_reverb_roomsize = 0.6;
-float fsynth_reverb_width = 4.0;
+float fsynth_reverb_damp = 0.4f;
+float fsynth_reverb_level = 0.15f;
+float fsynth_reverb_roomsize = 0.6f;
+float fsynth_reverb_width = 4.0f;
 #endif // HAVE_FLUIDSYNTH
 
 // DOS specific variables: these are unused but should be maintained
