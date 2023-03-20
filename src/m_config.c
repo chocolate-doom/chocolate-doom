@@ -936,7 +936,7 @@ static default_t extra_defaults_list[] =
 
     CONFIG_VARIABLE_STRING(music_pack_path),
 
-#if HAVE_FLUIDSYNTH
+#ifdef HAVE_FLUIDSYNTH
     //!
     // If 1, activate the FluidSynth chorus effects module. If 0, no chorus
     // will be added to the output signal.

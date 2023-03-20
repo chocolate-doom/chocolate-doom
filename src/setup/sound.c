@@ -50,7 +50,7 @@ static const char *opltype_strings[] =
 
 static const char *cfg_extension[] = { "cfg", NULL };
 
-#if HAVE_FLUIDSYNTH
+#ifdef HAVE_FLUIDSYNTH
 static const char *sf_extension[] = { "sf2", "sf3", NULL };
 #endif
 
@@ -90,7 +90,7 @@ int winmm_reverb_level = -1;
 int winmm_chorus_level = -1;
 #endif
 
-#if HAVE_FLUIDSYNTH
+#ifdef HAVE_FLUIDSYNTH
 char *fsynth_sf_path = "";
 int fsynth_chorus_active = 1;
 float fsynth_chorus_depth = 5.0f;
@@ -326,7 +326,7 @@ void ConfigSound(TXT_UNCAST_ARG(widget), void *user_data)
                                     "Select Timidity config file",
                                     cfg_extension),
                 NULL)),
-#if HAVE_FLUIDSYNTH
+#ifdef HAVE_FLUIDSYNTH
         TXT_NewRadioButton("FluidSynth", &snd_musicdevice, SNDDEVICE_FSYNTH),
         TXT_NewConditional(&snd_musicdevice, SNDDEVICE_FSYNTH,
             TXT_MakeTable(2,
@@ -365,7 +365,7 @@ void BindSoundVariables(void)
     M_BindIntVariable("winmm_chorus_level",       &winmm_chorus_level);
 #endif
 
-#if HAVE_FLUIDSYNTH
+#ifdef HAVE_FLUIDSYNTH
     M_BindIntVariable("fsynth_chorus_active",     &fsynth_chorus_active);
     M_BindFloatVariable("fsynth_chorus_depth",    &fsynth_chorus_depth);
     M_BindFloatVariable("fsynth_chorus_level",    &fsynth_chorus_level);

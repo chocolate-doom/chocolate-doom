@@ -280,7 +280,7 @@ extern int winmm_chorus_level;
 
 // For FluidSynth module:
 
-#if HAVE_FLUIDSYNTH
+#ifdef HAVE_FLUIDSYNTH
 extern char *fsynth_sf_path;
 extern int fsynth_chorus_active;
 extern float fsynth_chorus_depth;

@@ -94,7 +94,7 @@ static music_module_t *music_modules[] =
 #ifdef _WIN32
     &music_win_module,
 #endif
-#if HAVE_FLUIDSYNTH
+#ifdef HAVE_FLUIDSYNTH
     &music_fl_module,
 #endif // HAVE_FLUIDSYNTH
 #ifndef DISABLE_SDL2MIXER
@@ -513,7 +513,7 @@ void I_BindSoundVariables(void)
     M_BindIntVariable("winmm_chorus_level",      &winmm_chorus_level);
 #endif
 
-#if HAVE_FLUIDSYNTH
+#ifdef HAVE_FLUIDSYNTH
     M_BindIntVariable("fsynth_chorus_active",       &fsynth_chorus_active);
     M_BindFloatVariable("fsynth_chorus_depth",      &fsynth_chorus_depth);
     M_BindFloatVariable("fsynth_chorus_level",      &fsynth_chorus_level);

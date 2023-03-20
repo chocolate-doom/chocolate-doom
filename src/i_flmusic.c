@@ -17,7 +17,7 @@
 
 #include "config.h"
 
-#if HAVE_FLUIDSYNTH
+#ifdef HAVE_FLUIDSYNTH
 
 #include "fluidsynth.h"
 
