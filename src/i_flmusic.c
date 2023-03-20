@@ -182,7 +182,7 @@ static boolean IsMid(const byte *mem, int len)
 
 static void *I_FL_RegisterSong(void *data, int len)
 {
-    int result = 0;
+    int result = FLUID_FAILED;
 
     player = new_fluid_player(synth);
 
