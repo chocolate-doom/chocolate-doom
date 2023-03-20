@@ -128,7 +128,6 @@ static boolean I_FL_InitMusic(void)
     sf_id = fluid_synth_sfload(synth, fsynth_sf_path, true);
     if (sf_id == FLUID_FAILED)
     {
-        // deleting the synth also deletes sfloader
         delete_fluid_synth(synth);
         synth = NULL;
         delete_fluid_settings(settings);

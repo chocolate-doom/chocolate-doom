@@ -169,8 +169,7 @@ static void InitMusicModule(void)
                             music_modules[i]->num_sound_devices))
         {
         #ifdef _WIN32
-            // Skip the native Windows MIDI module if using Timidity or
-            // FluidSynth.
+            // Skip the native Windows MIDI module if using Timidity.
 
             if (strcmp(timidity_cfg_path, "") &&
                 music_modules[i] == &music_win_module)
