@@ -130,7 +130,9 @@ static boolean I_FL_InitMusic(void)
     {
         // deleting the synth also deletes sfloader
         delete_fluid_synth(synth);
+        synth = NULL;
         delete_fluid_settings(settings);
+        settings = NULL;
         fprintf(stderr,
                 "I_FL_InitMusic: Error loading FluidSynth soundfont: '%s'.\n",
                 fsynth_sf_path);
