@@ -84,10 +84,6 @@ static boolean I_FL_InitMusic(void)
         return false;
     }
 
-    // quiet FluidSynth
-    fluid_set_log_function(FLUID_ERR, NULL, NULL);
-    fluid_set_log_function(FLUID_WARN, NULL, NULL);
-
     settings = new_fluid_settings();
 
     fluid_settings_setnum(settings, "synth.sample-rate", snd_samplerate);
