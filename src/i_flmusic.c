@@ -186,6 +186,13 @@ static void *I_FL_RegisterSong(void *data, int len)
     if (IsMid(data, len))
     {
         result = fluid_player_add_mem(player, data, len);
+
+        if (result == FLUID_FAILED)
+        {
+            fprintf(stderr,
+                    "I_FL_RegisterSong: FluidSynth failed to load MIDI.\n");
+            return NULL;
+        }
     }
     else
     {
@@ -206,12 +213,13 @@ static void *I_FL_RegisterSong(void *data, int len)
 
         mem_fclose(instream);
         mem_fclose(outstream);
-    }
 
-    if (result != FLUID_OK)
-    {
-        fprintf(stderr, "I_FL_RegisterSong: FluidSynth failed to load song.\n");
-        return NULL;
+        if (result == FLUID_FAILED)
+        {
+            fprintf(stderr,
+                    "I_FL_RegisterSong: FluidSynth failed to load MUS.\n");
+            return NULL;
+        }
     }
 
     Mix_HookMusic(FL_Mix_Callback, NULL);
