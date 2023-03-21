@@ -3289,19 +3289,23 @@ boolean G_CheckDemoStatus (void)
  
     if (demorecording) 
     { 
+	boolean success;
+	char *msg;
+
 	*demo_p++ = DEMOMARKER; 
 	G_AddDemoFooter();
-	M_WriteFile (demoname, demobuffer, demo_p - demobuffer); 
+	success = M_WriteFile (demoname, demobuffer, demo_p - demobuffer);
+	msg = success ? "Demo %s recorded%c" : "Failed to record Demo %s%c";
 	Z_Free (demobuffer); 
 	demorecording = false; 
 	// [crispy] if a new game is started during demo recording, start a new demo
 	if (gameaction != ga_newgame)
 	{
-	I_Error ("Demo %s recorded",demoname); 
+	    I_Error (msg, demoname, '\0');
 	}
 	else
 	{
-	    fprintf(stderr, "Demo %s recorded\n",demoname);
+	    fprintf(stderr, msg, demoname, '\n');
 	}
     } 
 	 
