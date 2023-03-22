@@ -52,6 +52,7 @@ set(GAME_SOURCE_FILES
     gusconf.c           gusconf.h
     i_cdmus.c           i_cdmus.h
     i_endoom.c          i_endoom.h
+    i_flmusic.c
     i_glob.c            i_glob.h
     i_input.c           i_input.h
     i_joystick.c        i_joystick.h
@@ -137,6 +138,9 @@ if(SampleRate_FOUND)
 endif()
 if(PNG_FOUND)
     list(APPEND EXTRA_LIBS PNG::PNG)
+endif()
+if(FluidSynth_FOUND)
+    list(APPEND EXTRA_LIBS FluidSynth::libfluidsynth)
 endif()
 if(WIN32)
 	list(APPEND EXTRA_LIBS winmm)

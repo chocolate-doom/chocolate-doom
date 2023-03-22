@@ -138,10 +138,28 @@ AS_IF([test "x$with_libpng" != xno], [
     ])
 ])
 
+# Check for fluidsynth.
+AC_ARG_WITH([fluidsynth],
+AS_HELP_STRING([--without-fluidsynth],
+    [Build without fluidsynth @<:@default=check@:>@]),
+[],
+[
+    [with_fluidsynth=check]
+])
+AS_IF([test "x$with_fluidsynth" != xno], [
+    PKG_CHECK_MODULES(FLUIDSYNTH, fluidsynth >= 2.2.0, [
+        AC_DEFINE([HAVE_FLUIDSYNTH], [1], [fluidsynth installed])
+    ], [
+        AS_IF([test "x$with_fluidsynth" != xcheck], [AC_MSG_FAILURE(
+            [--with-fluidsynth was given, but test for fluidsynth failed])
+        ])
+    ])
+])
+
 # TODO: We currently link everything against libraries that don't need it.
 # Use the specific library CFLAGS/LIBS variables instead of setting them here.
-CFLAGS="$CFLAGS $SDL_CFLAGS ${SAMPLERATE_CFLAGS:-} ${PNG_CFLAGS:-}"
-LDFLAGS="$LDFLAGS $SDL_LIBS ${SAMPLERATE_LIBS:-} ${PNG_LIBS:-}"
+CFLAGS="$CFLAGS $SDL_CFLAGS ${SAMPLERATE_CFLAGS:-} ${PNG_CFLAGS:-} ${FLUIDSYNTH_CFLAGS:-}"
+LDFLAGS="$LDFLAGS $SDL_LIBS ${SAMPLERATE_LIBS:-} ${PNG_LIBS:-} ${FLUIDSYNTH_LIBS:-}"
 case "$host" in
   *-*-mingw* | *-*-cygwin* | *-*-msvc* )
     LDFLAGS="$LDFLAGS -lwinmm"
