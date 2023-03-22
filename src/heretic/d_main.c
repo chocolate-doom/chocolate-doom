@@ -1183,6 +1183,11 @@ void D_DoomMain(void)
         }
     }
 
+    if (W_CheckNumForName("HEHACKED") != -1)
+    {
+        DEH_LoadLumpByName("HEHACKED", true, true);
+    }
+
     //!
     // @arg <demo>
     // @category demo
