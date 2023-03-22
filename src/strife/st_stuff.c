@@ -317,6 +317,7 @@ boolean ST_Responder(event_t* ev)
     // haleyjd 09/27/10: made static to ST_Responder
     static boolean st_keystate = false;
     int i;
+    boolean eat = false; // [crispy] Handle cheats when using inventory keys
 
     // Filter automap on/off.
     if(ev->type == ev_keyup)
@@ -415,7 +416,7 @@ boolean ST_Responder(event_t* ev)
                     st_showkeys = false;
                     st_displaypopup = false;
                     st_keypage = -1;
-                    return true;
+                    eat = true; // [crispy]
                 }
             }
 
@@ -468,20 +469,20 @@ boolean ST_Responder(event_t* ev)
         if(plyr->inventorycursor > 0)
             plyr->inventorycursor--;
         st_invtics = 5 * 35; // [crispy] Crispy HUD
-        return true;
+        eat = true; // [crispy]
     }
     else if(ev->data1 == key_invright)
     {
         if(plyr->inventorycursor < plyr->numinventory - 1)
             plyr->inventorycursor++;
         st_invtics = 5 * 35; // [crispy] Crispy HUD
-        return true;
+        eat = true; // [crispy]
     }
     else if(ev->data1 == key_invhome)
     {
         plyr->inventorycursor = 0;
         st_invtics = 5 * 35; // [crispy] Crispy HUD
-        return true;
+        eat = true; // [crispy]
     }
     else if(ev->data1 == key_invend)
     {
@@ -490,7 +491,7 @@ boolean ST_Responder(event_t* ev)
         else 
             plyr->inventorycursor = 0;
         st_invtics = 5 * 35; // [crispy] Crispy HUD
-        return true;
+        eat = true; // [crispy]
     }
 
     //
@@ -534,7 +535,7 @@ boolean ST_Responder(event_t* ev)
 
     // [STRIFE] Cheats below are not allowed in netgames or demos
     if(netgame || !usergame)
-        return false;
+        return eat; // [crispy]
 
     if (cht_CheckCheat(&cheat_god, ev->data2))
     {
@@ -683,7 +684,7 @@ boolean ST_Responder(event_t* ev)
     {
         // 'behold' power-up menu
         plyr->message = DEH_String(STSTR_BEHOLD);
-        return false;
+        return eat; // [crispy]
     }
 
     if (cht_CheckCheat(&cheat_mypos, ev->data2))
@@ -717,12 +718,12 @@ boolean ST_Responder(event_t* ev)
         {
             if ((isdemoversion && (map < 32 || map > 34)) ||
                 (isregistered  && (map <= 0 || map > 34)))
-                return false;
+                return eat; // [crispy]
         }
         else
         {
             if (map <= 0 || map > 40)
-                return false;
+                return eat; // [crispy]
         }
 
         // So be it.
@@ -743,7 +744,7 @@ boolean ST_Responder(event_t* ev)
         {
             plyr->message = DEH_String("Spawning to spot");
             G_RiftCheat(spot);
-            return false;
+            return eat; // [crispy]
         }
     }
 
@@ -752,7 +753,7 @@ boolean ST_Responder(event_t* ev)
     {
         stonecold ^= 1;
         plyr->message = DEH_String("Kill 'em.  Kill 'em All");
-        return false;
+        return eat; // [crispy]
     }
 
     // villsa [STRIFE]
@@ -788,7 +789,7 @@ boolean ST_Responder(event_t* ev)
         plyr->pendingweapon = wp_sigil;
     }
 
-    return false;
+    return eat; // [crispy]
 }
 
 
