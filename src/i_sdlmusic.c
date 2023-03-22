@@ -43,7 +43,6 @@
 #include "z_zone.h"
 
 
-char *fluidsynth_sf_path = "";
 char *timidity_cfg_path = "";
 
 static char *temp_timidity_cfg = NULL;
@@ -180,8 +179,6 @@ static boolean SDLIsInitialized(void)
 // Initialize music subsystem
 static boolean I_SDL_InitMusic(void)
 {
-    boolean fluidsynth_sf_is_set = false;
-
     // If SDL_mixer is not initialized, we have to initialize it
     // and have the responsibility to shut it down later on.
 
@@ -210,24 +207,6 @@ static boolean I_SDL_InitMusic(void)
         }
     }
 
-    // When using FluidSynth, proceed to set the soundfont path via
-    // Mix_SetSoundFonts if necessary. We need to do this before calling
-    // Mix_Init() in order for FluidSynth to be registered as a valid decoder
-    // in the Mix_GetMusicDecoder() list.
-
-    if ((strlen(fluidsynth_sf_path) > 0) && (strlen(timidity_cfg_path) == 0))
-    {
-        if (M_FileExists(fluidsynth_sf_path))
-        {
-            Mix_SetSoundFonts(fluidsynth_sf_path);
-        }
-        else
-        {
-            fprintf(stderr,
-                    "I_SDL_InitMusic: Can't find FluidSynth soundfont.\n");
-        }
-    }
-
     // Initialize SDL_Mixer for MIDI music playback
     Mix_Init(MIX_INIT_MID | MIX_INIT_FLAC | MIX_INIT_OGG | MIX_INIT_MP3); // [crispy] initialize some more audio formats
 
@@ -235,35 +214,6 @@ static boolean I_SDL_InitMusic(void)
     // file can be removed.
 
     RemoveTimidityConfig();
-
-    // If a soundfont has been set (either here on in the environment),
-    // confirm that FluidSynth is actually available before trying to use it.
-    if ((Mix_GetSoundFonts() != NULL) && (strlen(timidity_cfg_path) == 0))
-    {
-        int total;
-
-        total = Mix_GetNumMusicDecoders();
-
-        // If FluidSynth is present and has a valid soundfont, it will be in
-        // the list of available music decoders.
-        for (int i = 0; i < total; ++i)
-        {
-            if (!strcmp(Mix_GetMusicDecoder(i), "FLUIDSYNTH"))
-            {
-                fluidsynth_sf_is_set = true;
-                break;
-            }
-        }
-
-        if (fluidsynth_sf_is_set)
-        {
-            printf("I_SDL_InitMusic: Using FluidSynth.\n");
-        }
-        else
-        {
-            fprintf(stderr, "I_SDL_InitMusic: FluidSynth unavailable.\n");
-        }
-    }
 
     // If snd_musiccmd is set, we need to call Mix_SetMusicCMD to
     // configure an external music playback program.

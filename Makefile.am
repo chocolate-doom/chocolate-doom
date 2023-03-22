@@ -7,6 +7,7 @@ CMAKE_FILES=                                   \
         cmake/FindSDL2.cmake                   \
         cmake/FindSDL2_mixer.cmake             \
         cmake/FindSDL2_net.cmake               \
+        cmake/FindFluidSynth.cmake             \
         cmake/Findm.cmake                      \
         cmake/Findsamplerate.cmake             \
         cmake/config.h.cin
