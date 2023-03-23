@@ -91,7 +91,7 @@ int winmm_chorus_level = -1;
 #endif
 
 #ifdef HAVE_FLUIDSYNTH
-char *fsynth_sf_path = "";
+char *fsynth_sf_path = NULL;
 int fsynth_chorus_active = 1;
 float fsynth_chorus_depth = 5.0f;
 float fsynth_chorus_level = 0.35f;
@@ -403,6 +403,10 @@ void BindSoundVariables(void)
     music_pack_path = M_StringDuplicate("");
     timidity_cfg_path = M_StringDuplicate("");
     gus_patch_path = M_StringDuplicate("");
+
+#ifdef HAVE_FLUIDSYNTH
+    fsynth_sf_path = M_StringDuplicate("");
+#endif
 
     // All versions of Heretic and Hexen did pitch-shifting.
     // Most versions of Doom did not and Strife never did.
