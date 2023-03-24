@@ -21,6 +21,7 @@
 #include "i_system.h"
 #include "r_bmaps.h" // [crispy] R_BrightmapForTexName()
 #include "r_local.h"
+#include "r_swirl.h" // [crispy] R_DistortedFlat()
 
 planefunction_t floorfunc, ceilingfunc;
 
@@ -405,6 +406,7 @@ void R_MakeSpans(int x, unsigned int t1, unsigned int b1, unsigned int t2, unsig
 
 void R_DrawPlanes(void)
 {
+    boolean swirling;
     visplane_t *pl;
     int light;
     int x, stop;
@@ -511,6 +513,9 @@ void R_DrawPlanes(void)
         //
         // regular flat
         //
+        swirling = flattranslation[pl->picnum] == -1;
+        if (!swirling) // [crispy] adapt swirl from src/doom to src/heretic
+        {
         lumpnum = firstflat + flattranslation[pl->picnum];
 
         tempSource = W_CacheLumpNum(lumpnum, PU_STATIC);
@@ -554,6 +559,12 @@ void R_DrawPlanes(void)
             default:
                 ds_source = tempSource;
         }
+        }
+        else 
+        {
+            lumpnum = firstflat+pl->picnum;
+            ds_source = R_DistortedFlat(lumpnum);
+        }
         ds_brightmap = R_BrightmapForFlatNum(lumpnum-firstflat);
         planeheight = abs(pl->height - viewz);
         light = (pl->lightlevel >> LIGHTSEGSHIFT) + extralight;
@@ -571,6 +582,7 @@ void R_DrawPlanes(void)
             R_MakeSpans(x, pl->top[x - 1], pl->bottom[x - 1], pl->top[x],
                         pl->bottom[x]);
 
+        if (!swirling)
         W_ReleaseLumpNum(lumpnum);
     }
 }

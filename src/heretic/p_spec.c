@@ -27,6 +27,9 @@
 #include "p_local.h"
 #include "s_sound.h"
 #include "v_video.h"
+#include "i_swap.h" // [crispy] LONG()
+#include "w_wad.h"
+#include "r_swirl.h"
 
 // Macros
 
@@ -180,7 +183,7 @@ int *AmbientSfx[] = {
     AmbSndSeq10                 // FastFootsteps
 };
 
-animdef_t animdefs[] = {
+animdef_t animdefs_vanilla[] = {
     // false = flat
     // true = texture
     {false, "FLTWAWA3", "FLTWAWA1", 8}, // Water
@@ -194,8 +197,10 @@ animdef_t animdefs[] = {
     {-1}
 };
 
-anim_t anims[MAXANIMS];
-anim_t *lastanim;
+// [crispy] remove MAXANIMS limit
+anim_t* anims;
+anim_t* lastanim;
+static size_t maxanims;
 
 int *TerrainTypes;
 struct
@@ -267,10 +272,31 @@ void P_InitPicAnims(void)
     const char *startname;
     const char *endname;
     int i;
+    boolean init_swirl = false;
+    // [crispy] add support for ANIMATED lumps
+    animdef_t *animdefs;
+    const boolean from_lump = (W_CheckNumForName("ANIMATED") != -1);
+
+    if (from_lump)
+    {
+        animdefs = W_CacheLumpName("ANIMATED", PU_STATIC);
+    }
+    else
+    {
+        animdefs = animdefs_vanilla;
+    }
 
     lastanim = anims;
     for (i = 0; animdefs[i].istexture != -1; i++)
     {
+        // [crispy] remove MAXANIMS limit
+        if (lastanim >= anims + maxanims)
+        {
+            size_t newmax = maxanims ? 2 * maxanims : MAXANIMS;
+            anims = I_Realloc(anims, newmax * sizeof(*anims));
+            lastanim = anims + maxanims;
+            maxanims = newmax;
+        }
         startname = DEH_String(animdefs[i].startname);
         endname = DEH_String(animdefs[i].endname);
 
@@ -294,13 +320,29 @@ void P_InitPicAnims(void)
         }
         lastanim->istexture = animdefs[i].istexture;
         lastanim->numpics = lastanim->picnum - lastanim->basepic + 1;
+        lastanim->speed = from_lump ? LONG(animdefs[i].speed) : animdefs[i].speed;
+        // [crispy] add support for SMMU swirling flats
+        if (lastanim->speed > 65535 || lastanim->numpics == 1)
+        {
+                init_swirl = true;
+        }
+        else
         if (lastanim->numpics < 2)
         {
-            I_Error("P_InitPicAnims: bad cycle from %s to %s",
-                    startname, endname);
-        }
-        lastanim->speed = animdefs[i].speed;
+            // [crispy] make non-fatal, skip invalid animation sequences
+            fprintf (stderr, "P_InitPicAnims: bad cycle from %s to %s\n",
+                     startname, endname);
+            continue;
+        }        
         lastanim++;
+    }
+    if (from_lump)
+    {
+        W_ReleaseLumpName("ANIMATED");
+    }
+    if (init_swirl)
+    {
+        R_InitDistortedFlats();
     }
 }
 
@@ -1010,6 +1052,12 @@ void P_UpdateSpecials(void)
             }
             else
             {
+                // [crispy] add support for SMMU swirling flats
+                if (anim->speed > 65535 || anim->numpics == 1)
+                {
+                    flattranslation[i] = -1;
+                }
+                else
                 flattranslation[i] = pic;
             }
         }
