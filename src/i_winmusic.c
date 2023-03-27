@@ -1496,7 +1496,7 @@ static boolean I_WIN_MusicIsPlaying(void)
     return (song.num_tracks > 0);
 }
 
-static snddevice_t music_win_devices[] =
+static const snddevice_t music_win_devices[] =
 {
     SNDDEVICE_PAS,
     SNDDEVICE_WAVEBLASTER,
@@ -1505,7 +1505,7 @@ static snddevice_t music_win_devices[] =
     SNDDEVICE_AWE32,
 };
 
-music_module_t music_win_module =
+const music_module_t music_win_module =
 {
     music_win_devices,
     arrlen(music_win_devices),
