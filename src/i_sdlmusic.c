@@ -430,7 +430,7 @@ static boolean I_SDL_MusicIsPlaying(void)
     return Mix_PlayingMusic();
 }
 
-static snddevice_t music_sdl_devices[] =
+static const snddevice_t music_sdl_devices[] =
 {
     SNDDEVICE_PAS,
     SNDDEVICE_GUS,
@@ -440,7 +440,7 @@ static snddevice_t music_sdl_devices[] =
     SNDDEVICE_AWE32,
 };
 
-music_module_t music_sdl_module =
+const music_module_t music_sdl_module =
 {
     music_sdl_devices,
     arrlen(music_sdl_devices),
