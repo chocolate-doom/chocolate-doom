@@ -1410,7 +1410,7 @@ static void I_MP_PollMusic(void)
 #endif // !USE_SDL_MIXER_LOOPING
 }
 
-music_module_t music_pack_module =
+const music_module_t music_pack_module =
 {
     NULL,
     0,
@@ -1488,7 +1488,7 @@ static void I_NULL_PollMusic(void)
 {
 }
 
-music_module_t music_pack_module =
+const music_module_t music_pack_module =
 {
     NULL,
     0,

@@ -311,12 +311,12 @@ void I_PCS_UpdateSoundParams(int channel, int vol, int sep)
     // no-op.
 }
 
-static snddevice_t sound_pcsound_devices[] = 
+static const snddevice_t sound_pcsound_devices[] =
 {
     SNDDEVICE_PCSPEAKER,
 };
 
-sound_module_t sound_pcsound_module = 
+const sound_module_t sound_pcsound_module =
 {
     sound_pcsound_devices,
     arrlen(sound_pcsound_devices),

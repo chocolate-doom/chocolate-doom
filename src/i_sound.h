@@ -109,7 +109,7 @@ typedef struct
 {
     // List of sound devices that this sound module is used for.
 
-    snddevice_t *sound_devices;
+    const snddevice_t *sound_devices;
     int num_sound_devices;
 
     // Initialise sound module
@@ -168,7 +168,7 @@ typedef struct
 {
     // List of sound devices that this music module is used for.
 
-    snddevice_t *sound_devices;
+    const snddevice_t *sound_devices;
     int num_sound_devices;
 
     // Initialise the music subsystem
@@ -257,13 +257,13 @@ void I_OPL_DevMessages(char *, size_t);
 // Sound modules
 
 void I_InitTimidityConfig(void);
-extern sound_module_t sound_sdl_module;
-extern sound_module_t sound_pcsound_module;
-extern music_module_t music_sdl_module;
-extern music_module_t music_opl_module;
-extern music_module_t music_pack_module;
-extern music_module_t music_win_module;
-extern music_module_t music_fl_module;
+extern const sound_module_t sound_sdl_module;
+extern const sound_module_t sound_pcsound_module;
+extern const music_module_t music_sdl_module;
+extern const music_module_t music_opl_module;
+extern const music_module_t music_pack_module;
+extern const music_module_t music_win_module;
+extern const music_module_t music_fl_module;
 
 // For OPL module:
 

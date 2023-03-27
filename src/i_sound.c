@@ -56,15 +56,15 @@ int snd_musicdevice = SNDDEVICE_SB;
 int snd_sfxdevice = SNDDEVICE_SB;
 
 // Low-level sound and music modules we are using
-static sound_module_t *sound_module;
-static music_module_t *music_module;
+static const sound_module_t *sound_module;
+static const music_module_t *music_module;
 
 // If true, the music pack module was successfully initialized.
 static boolean music_packs_active = false;
 
 // This is either equal to music_module or &music_pack_module,
 // depending on whether the current track is substituted.
-static music_module_t *active_music_module;
+static const music_module_t *active_music_module;
 
 
 // DOS-specific options: These are unused but should be maintained
@@ -78,7 +78,7 @@ static int snd_mport = 0;
 
 // Compiled-in sound modules:
 
-static sound_module_t *sound_modules[] = 
+static const sound_module_t *sound_modules[] =
 {
 #ifndef DISABLE_SDL2MIXER
     &sound_sdl_module,
@@ -89,7 +89,7 @@ static sound_module_t *sound_modules[] =
 
 // Compiled-in music modules:
 
-static music_module_t *music_modules[] =
+static const music_module_t *music_modules[] =
 {
 #ifdef _WIN32
     &music_win_module,
@@ -106,7 +106,7 @@ static music_module_t *music_modules[] =
 
 // Check if a sound device is in the given list of devices
 
-static boolean SndDeviceInList(snddevice_t device, snddevice_t *list,
+static boolean SndDeviceInList(snddevice_t device, const snddevice_t *list,
                                int len)
 {
     int i;

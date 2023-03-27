@@ -164,7 +164,7 @@ AS_HELP_STRING([--without-fluidsynth],
 [
     [with_fluidsynth=check]
 ])
-AS_IF([test "x$with_fluidsynth" != xno], [
+AS_IF([test "x$with_fluidsynth" != xno] && [test "x$enable_sdl2mixer" != xno], [
     PKG_CHECK_MODULES(FLUIDSYNTH, fluidsynth >= 2.2.0, [
         AC_DEFINE([HAVE_FLUIDSYNTH], [1], [fluidsynth installed])
     ], [
