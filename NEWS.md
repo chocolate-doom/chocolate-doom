@@ -28,6 +28,8 @@
   * Mouse movement is no longer read when the game window is inactive
     (thanks Julia Nechaevskaya).
   * Add native support for the FluidSynth midi synthesizer.
+  * It's now possible to play back a demo file by drag-and-dropping it
+    on the executable (Fabian).
 
 ### Refactorings
   * CMake project files have been added, replacing the Microsoft Visual
