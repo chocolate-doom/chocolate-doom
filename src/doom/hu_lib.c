@@ -157,6 +157,8 @@ HUlib_drawTextLine
     {
 	V_DrawPatchDirect(x, y, l->f['_' - l->sc]);
     }
+
+    dp_translation = NULL;
 }
 
 

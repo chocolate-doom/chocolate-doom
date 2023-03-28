@@ -789,7 +789,7 @@ static void HU_DrawCrosshair (void)
 
     if (weaponinfo[plr->readyweapon].ammo == am_noammo ||
         plr->playerstate != PST_LIVE ||
-        automapactive ||
+        (automapactive && !crispy->automapoverlay) ||
         menuactive ||
         paused ||
         secret_on)
@@ -1017,6 +1017,8 @@ void HU_Ticker(void)
 
     } // else message_on = false;
 
+    w_kills.y = HU_MSGY + 1 * 8;
+
     // check for incoming chat characters
     if (netgame)
     {
@@ -1107,8 +1109,6 @@ void HU_Ticker(void)
     if ((crispy->automapstats & WIDGETS_ALWAYS) || (automapactive && crispy->automapstats == WIDGETS_AUTOMAP))
     {
 	crispy_statsline_func_t crispy_statsline = crispy_statslines[crispy->statsformat];
-
-	w_kills.y = HU_MSGY + 1 * 8;
 
 	crispy_statsline(str, sizeof(str), kills, plr->killcount, totalkills, extrakills);
 	HUlib_clearTextLine(&w_kills);
