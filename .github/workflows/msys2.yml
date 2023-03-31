@@ -49,6 +49,7 @@ jobs:
             mingw-w64-${{matrix.env}}-SDL2_net
             mingw-w64-${{matrix.env}}-libpng
             mingw-w64-${{matrix.env}}-libsamplerate
+            mingw-w64-${{matrix.env}}-fluidsynth
 
       - uses: actions/checkout@v3
 

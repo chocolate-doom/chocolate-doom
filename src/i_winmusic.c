@@ -908,6 +908,20 @@ static boolean AddToBuffer(unsigned int delta_time, midi_event_t *event,
                     SendNOPMsg(delta_time);
                     break;
 
+                case MIDI_CONTROLLER_RESET_ALL_CTRLS:
+                    SendShortMsg(delta_time, MIDI_EVENT_CONTROLLER,
+                                 event->data.channel.channel,
+                                 MIDI_CONTROLLER_RESET_ALL_CTRLS, 0);
+
+                    // MS GS Wavetable Synth resets the channel volume after a
+                    // "reset all controllers" event, so reapply the volume
+                    if (MidiDevice == ms_gs_synth)
+                    {
+                        i = event->data.channel.channel;
+                        SendVolumeMsg(0, i, channel_volume[i]);
+                    }
+                    break;
+
                 default:
                     SendShortMsg(delta_time, MIDI_EVENT_CONTROLLER,
                                  event->data.channel.channel,
@@ -1085,6 +1099,17 @@ static void FillBuffer(void)
                     {
                         SendShortMsg(0, MIDI_EVENT_CONTROLLER, i, MIDI_CONTROLLER_RESET_ALL_CTRLS, 0);
                     }
+
+                    // MS GS Wavetable Synth resets the channel volume after a
+                    // "reset all controllers" event, so reapply the volume
+                    if (MidiDevice == ms_gs_synth)
+                    {
+                        for (i = 0; i < MIDI_CHANNELS_PER_TRACK; ++i)
+                        {
+                            SendVolumeMsg(0, i, channel_volume[i]);
+                        }
+                    }
+
                     RestartTracks();
                     continue;
                 }
