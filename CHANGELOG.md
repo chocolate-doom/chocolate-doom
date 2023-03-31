@@ -32,6 +32,9 @@
 * Allow L and R arrow keys in Crispness menu (@mikeday0).
 * Add weapon bobbing interpolation from Woof! (@rrPKrr).
 * Restore colored blood options from previous Crispy Doom versions (@rrPKrr).
+* Add known hashes for Sigil music tracks (@SirYodaJedi).
+* Colored blood setting to change in both directions (@SoDOOManiac).
+* Minor HUD fixes (@SoDOOManiac).
 
 **Crispy Heretic**
 * Support 8 pages of saves (@mikeday0).
@@ -48,6 +51,7 @@
 * Fixed bug with minimal vertical movement of the mouse doesn't affect vertical look (by @Dasperal).
 * DeePBSP and ZDBSP nodes support from Crispy Doom (@rfomin).
 * Introduce a HEHACKED lump for embedded HHE files (@rfomin).
+* Add support for ANIMATED lumps and swirling flats (@SilverMiner).
 
 **Crispy Hexen**
 * Generate default save slot name.
