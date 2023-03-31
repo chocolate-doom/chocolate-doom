@@ -28,7 +28,6 @@
 * Add support for loading REKKR as IWAD (@SoDOOManiac).
 * Do not show the "WAD: map" Automap widget for IWAD levels.
 * Improve brightmap for COMPUTE1 texture (@JNechaevsky).
-* Interpolate weapon bobbing (@rrPKrr).
 * Allow L and R arrow keys in Crispness menu (@mikeday0).
 * Add weapon bobbing interpolation from Woof! (@rrPKrr).
 * Restore colored blood options from previous Crispy Doom versions (@rrPKrr).
