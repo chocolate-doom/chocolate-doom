@@ -2480,6 +2480,11 @@ void P_MovePsprites(player_t * player)
     psp->sy2 = psp->sy;
     if (psp->state && (crispy->bobfactor || crispy->centerweapon || crispy->uncapped))
     {
+        // [crispy] don't align swiping weapons
+        const boolean swiping_weapon = player->class == PCLASS_FIGHTER ||
+                                       (player->class == PCLASS_CLERIC &&
+                                        player->readyweapon == WP_FIRST);
+
         // [crispy] don't center vertically during lowering and raising states
         if (psp->state->action == A_Lower || psp->state->action == A_Raise)
         {
@@ -2487,7 +2492,7 @@ void P_MovePsprites(player_t * player)
         else
         // [crispy] not attacking means idle
         if (!player->attackdown ||
-            crispy->centerweapon == CENTERWEAPON_BOB)
+            (crispy->centerweapon == CENTERWEAPON_BOB && !swiping_weapon))
         {
             angle_t angle = (128 * leveltime) & FINEMASK;
             psp->sx2 = FRACUNIT + FixedMul(player->bob2, finecosine[angle]);
@@ -2496,7 +2501,7 @@ void P_MovePsprites(player_t * player)
         }
         else
         // [crispy] center the weapon sprite horizontally and push up vertically
-        if (crispy->centerweapon == CENTERWEAPON_CENTER)
+        if (crispy->centerweapon == CENTERWEAPON_CENTER && !swiping_weapon)
         {
             psp->sx2 = FRACUNIT;
             psp->sy2 = WEAPONTOP;
