@@ -894,7 +894,7 @@ void I_FinishUpdate (void)
 
     SDL_RenderPresent(renderer);
 
-    if (crispy->uncapped)
+    if (crispy->uncapped && !singletics)
     {
         // Limit framerate
         if (crispy->fpslimit >= TICRATE)
