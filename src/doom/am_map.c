@@ -665,6 +665,8 @@ void AM_LevelInit(boolean reinit)
     // [crispy] Precalculate color lookup tables for antialiased line drawing using COLORMAP
     if (!precalc_once)
     {
+        unsigned char *playpal = W_CacheLumpName("PLAYPAL", PU_STATIC);
+
         precalc_once = 1;
         for (int color = 0; color < 256; ++color)
         {
@@ -681,10 +683,11 @@ void AM_LevelInit(boolean reinit)
             }
         }
 		
-        secretwallcolors = V_GetPaletteIndex(W_CacheLumpName("PLAYPAL", PU_CACHE),
-                                                                     255, 0, 255);
-        revealedsecretwallcolors = V_GetPaletteIndex(W_CacheLumpName("PLAYPAL", PU_CACHE),
-                                                                     119, 255, 111);    
+        // [crispy] Make secret wall colors independent from PLAYPAL color indexes
+        secretwallcolors = V_GetPaletteIndex(playpal, 255, 0, 255);
+        revealedsecretwallcolors = V_GetPaletteIndex(playpal, 119, 255, 111);
+
+        W_ReleaseLumpName("PLAYPAL");
     }
 }
 
