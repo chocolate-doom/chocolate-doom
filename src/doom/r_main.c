@@ -42,7 +42,7 @@
 #include "st_stuff.h" // [crispy] ST_refreshBackground()
 #include "a11y.h" // [crispy] A11Y
 
-#include "w_wad.h" // W_CheckMultipleLumps()
+#include "w_wad.h" // W_GetNumForName(), W_IsIWADLump()
 
 
 
@@ -966,9 +966,10 @@ void R_Init (void)
 	boolean iwad_not_tnt = strncasecmp(M_BaseName(iwadfile), "tnt", 3);
 	boolean iwad_not_freedoom = strncasecmp(M_BaseName(iwadfile), "freedoom", 8);
 	boolean iwad_not_freedm = strncasecmp(M_BaseName(iwadfile), "freedm", 6);
+	lumpindex_t playpal_index = W_GetNumForName("PLAYPAL");
 	
     // [JN] Check for modified PLAYPAL lump.
-    if (W_CheckMultipleLumps("PLAYPAL") > 1 || (iwad_not_doom && iwad_not_plutonia && iwad_not_tnt && iwad_not_freedoom && iwad_not_freedm))
+    if (!W_IsIWADLump(lumpinfo[playpal_index]) || (iwad_not_doom && iwad_not_plutonia && iwad_not_tnt && iwad_not_freedoom && iwad_not_freedm))
     {
         original_playpal = false;
     }
