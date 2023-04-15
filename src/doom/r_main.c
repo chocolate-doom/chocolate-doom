@@ -33,6 +33,8 @@
 #include "m_bbox.h"
 #include "m_menu.h"
 
+#include "m_misc.h" // M_BaseName()
+
 #include "i_system.h" // [crispy] I_Realloc()
 #include "p_local.h" // [crispy] MLOOKUNIT
 #include "r_local.h"
@@ -40,14 +42,15 @@
 #include "st_stuff.h" // [crispy] ST_refreshBackground()
 #include "a11y.h" // [crispy] A11Y
 
-
+#include "w_wad.h" // W_CheckMultipleLumps()
 
 
 
 // Fineangles in the SCREENWIDTH wide window.
 #define FIELDOFVIEW		2048	
 
-
+// [JN] Will be false if modified PLAYPAL lump is loaded.
+boolean original_playpal = true;
 
 int			viewangleoffset;
 
@@ -118,6 +121,7 @@ int LIGHTSCALESHIFT;
 int MAXLIGHTZ;
 int LIGHTZSHIFT;
 
+extern char *iwadfile; // to determine if PLAYPAL is original
 
 void (*colfunc) (void);
 void (*basecolfunc) (void);
@@ -957,6 +961,18 @@ void R_SetGoobers (boolean mode)
 
 void R_Init (void)
 {
+	boolean iwad_not_doom = strncasecmp(M_BaseName(iwadfile), "doom", 4);
+	boolean iwad_not_plutonia = strncasecmp(M_BaseName(iwadfile), "plutonia", 8);
+	boolean iwad_not_tnt = strncasecmp(M_BaseName(iwadfile), "tnt", 3);
+	boolean iwad_not_freedoom = strncasecmp(M_BaseName(iwadfile), "freedoom", 8);
+	boolean iwad_not_freedm = strncasecmp(M_BaseName(iwadfile), "freedm", 6);
+	
+    // [JN] Check for modified PLAYPAL lump.
+    if (W_CheckMultipleLumps("PLAYPAL") > 1 || (iwad_not_doom && iwad_not_plutonia && iwad_not_tnt && iwad_not_freedoom && iwad_not_freedm))
+    {
+        original_playpal = false;
+    }
+
     R_InitData ();
     printf (".");
     R_InitPointToAngle ();

@@ -51,6 +51,7 @@ extern int		loopcount;
 
 extern  boolean setsizeneeded;
 
+extern boolean original_playpal;
 
 //
 // Lighting LUT.

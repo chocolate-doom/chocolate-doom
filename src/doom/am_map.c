@@ -38,6 +38,9 @@
 // Needs access to LFB.
 #include "v_video.h"
 
+// V_GetPaletteIndex
+#include "v_trans.h"
+
 // State.
 #include "doomstat.h"
 #include "r_state.h"
@@ -126,6 +129,9 @@ static int m_zoomout_kbd;
 static int m_zoomin_mouse;
 static int m_zoomout_mouse;
 static boolean mousewheelzoom;
+
+// [JN] Make wall colors of secret sectors palette-independent.
+static int secretwallcolors, revealedsecretwallcolors;
 
 // translates between frame-buffer and map distances
 // [crispy] fix int overflow that causes map and grid lines to disappear
@@ -332,6 +338,27 @@ void AM_rotate (int64_t *x, int64_t *y, angle_t a);
 static void AM_rotatePoint (mpoint_t *pt);
 static mpoint_t mapcenter;
 static angle_t mapangle;
+
+// -----------------------------------------------------------------------------
+// AM_Init
+// [JN] Predefine some variables at program startup.
+// -----------------------------------------------------------------------------
+
+void AM_Init (void)
+{
+    if (original_playpal)
+    {
+        secretwallcolors = SECRETWALLCOLORS;
+        revealedsecretwallcolors = REVEALEDSECRETWALLCOLORS;
+    }
+    else
+    {
+        secretwallcolors = V_GetPaletteIndex(W_CacheLumpName("PLAYPAL", PU_CACHE),
+                                                                     255, 0, 255);
+        revealedsecretwallcolors = V_GetPaletteIndex(W_CacheLumpName("PLAYPAL", PU_CACHE),
+                                                                     119, 255, 111);
+    }
+}
 
 static void AM_drawCrosshair(int color, boolean force);
 
@@ -1672,13 +1699,13 @@ void AM_drawWalls(void)
 		// [crispy] draw 1S secret sector boundaries in purple
 		if (crispy->extautomap &&
 		    cheating && (lines[i].frontsector->special == 9))
-		    AM_drawMline(&l, SECRETWALLCOLORS);
+		    AM_drawMline(&l, secretwallcolors);
 #if defined CRISPY_HIGHLIGHT_REVEALED_SECRETS
 		// [crispy] draw revealed secret sector boundaries in green
 		else
 		if (crispy->extautomap &&
 		    crispy->secretmessage && (lines[i].frontsector->oldspecial == 9))
-		    AM_drawMline(&l, REVEALEDSECRETWALLCOLORS);
+		    AM_drawMline(&l, revealedsecretwallcolors);
 #endif
 		else
 		AM_drawMline(&l, WALLCOLORS+lightlev);
@@ -1697,7 +1724,7 @@ void AM_drawWalls(void)
 		{
 		    // [crispy] NB: Choco has this check, but (SECRETWALLCOLORS == WALLCOLORS)
 		    // Boom/PrBoom+ does not have this check at all
-		    if (false && cheating) AM_drawMline(&l, SECRETWALLCOLORS + lightlev);
+		    if (false && cheating) AM_drawMline(&l, secretwallcolors + lightlev);
 		    else AM_drawMline(&l, WALLCOLORS+lightlev);
 		}
 #if defined CRISPY_HIGHLIGHT_REVEALED_SECRETS
@@ -1706,7 +1733,7 @@ void AM_drawWalls(void)
 		    (lines[i].backsector->oldspecial == 9 ||
 		    lines[i].frontsector->oldspecial == 9))
 		{
-		    AM_drawMline(&l, REVEALEDSECRETWALLCOLORS);
+		    AM_drawMline(&l, revealedsecretwallcolors);
 		}
 #endif
 		// [crispy] draw 2S secret sector boundaries in purple
@@ -1714,7 +1741,7 @@ void AM_drawWalls(void)
 		    (lines[i].backsector->special == 9 ||
 		    lines[i].frontsector->special == 9))
 		{
-		    AM_drawMline(&l, SECRETWALLCOLORS);
+		    AM_drawMline(&l, secretwallcolors);
 		}
 		else if (lines[i].backsector->floorheight
 			   != lines[i].frontsector->floorheight) {
