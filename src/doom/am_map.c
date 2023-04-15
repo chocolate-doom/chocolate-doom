@@ -82,9 +82,8 @@ extern boolean inhelpscreens; // [crispy]
 #define CDWALLRANGE	YELLOWRANGE
 #define THINGCOLORS	GREENS
 #define THINGRANGE	GREENRANGE
-#define SECRETWALLCOLORS	252 // [crispy] purple
+#define SECRETWALLCOLORS WALLCOLORS // preserve the Choco macro
 #define CRISPY_HIGHLIGHT_REVEALED_SECRETS
-#define REVEALEDSECRETWALLCOLORS	112 // [crispy] green
 #define SECRETWALLRANGE WALLRANGE
 #define GRIDCOLORS	(GRAYS + GRAYSRANGE/2)
 #define GRIDRANGE	0
@@ -131,7 +130,8 @@ static int m_zoomout_mouse;
 static boolean mousewheelzoom;
 
 // [JN] Make wall colors of secret sectors palette-independent.
-static int secretwallcolors, revealedsecretwallcolors;
+static int secretwallcolors = -1;
+static int revealedsecretwallcolors = -1;
 
 // translates between frame-buffer and map distances
 // [crispy] fix int overflow that causes map and grid lines to disappear
@@ -662,7 +662,7 @@ void AM_LevelInit(boolean reinit)
 
     f_h_old = f_h;
 
-    // [crispy] Precalculate color lookup tables for antialised line drawing using COLORMAP
+    // [crispy] Precalculate color lookup tables for antialiased line drawing using COLORMAP
     if (!precalc_once)
     {
         precalc_once = 1;
@@ -680,18 +680,11 @@ void AM_LevelInit(boolean reinit)
                 color_shades[color * NUMSHADES + shade] = colormaps[shade_index[shade]];
             }
         }
-        if (original_playpal)
-        {
-            secretwallcolors = SECRETWALLCOLORS;
-            revealedsecretwallcolors = REVEALEDSECRETWALLCOLORS;
-        }
-        else
-        {
-            secretwallcolors = V_GetPaletteIndex(W_CacheLumpName("PLAYPAL", PU_CACHE),
-                                                                         255, 0, 255);
-            revealedsecretwallcolors = V_GetPaletteIndex(W_CacheLumpName("PLAYPAL", PU_CACHE),
-                                                                         119, 255, 111);
-        }
+		
+        secretwallcolors = V_GetPaletteIndex(W_CacheLumpName("PLAYPAL", PU_CACHE),
+                                                                     255, 0, 255);
+        revealedsecretwallcolors = V_GetPaletteIndex(W_CacheLumpName("PLAYPAL", PU_CACHE),
+                                                                     119, 255, 111);    
     }
 }
 
