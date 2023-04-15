@@ -51,6 +51,7 @@ extern int		loopcount;
 
 extern  boolean setsizeneeded;
 
+
 //
 // Lighting LUT.
 // Used for z-depth cuing per column/row,

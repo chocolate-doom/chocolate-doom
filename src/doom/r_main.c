@@ -33,8 +33,6 @@
 #include "m_bbox.h"
 #include "m_menu.h"
 
-#include "m_misc.h" // M_BaseName()
-
 #include "i_system.h" // [crispy] I_Realloc()
 #include "p_local.h" // [crispy] MLOOKUNIT
 #include "r_local.h"
@@ -42,12 +40,13 @@
 #include "st_stuff.h" // [crispy] ST_refreshBackground()
 #include "a11y.h" // [crispy] A11Y
 
-#include "w_wad.h" // W_GetNumForName(), W_IsIWADLump()
+
 
 
 
 // Fineangles in the SCREENWIDTH wide window.
 #define FIELDOFVIEW		2048	
+
 
 
 int			viewangleoffset;
@@ -118,6 +117,7 @@ int MAXLIGHTSCALE;
 int LIGHTSCALESHIFT;
 int MAXLIGHTZ;
 int LIGHTZSHIFT;
+
 
 void (*colfunc) (void);
 void (*basecolfunc) (void);
