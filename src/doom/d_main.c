@@ -2354,10 +2354,7 @@ void D_DoomMain (void)
     DEH_printf("ST_Init: Init status bar.\n");
     ST_Init ();
 
-    // [JN] CRL - predefine some automap variables at program startup.
-    AM_Init ();
-
-	// If Doom II without a MAP01 lump, this is a store demo.
+    // If Doom II without a MAP01 lump, this is a store demo.
     // Moved this here so that MAP01 isn't constantly looked up
     // in the main loop.
 

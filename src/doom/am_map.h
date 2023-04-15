@@ -28,9 +28,6 @@
 #define AM_MSGEXITED (AM_MSGHEADER | ('x'<<8))
 
 // Called by main loop.
-void AM_Init (void);
-
-// Called by main loop.
 boolean AM_Responder (event_t* ev);
 
 // Called by main loop.

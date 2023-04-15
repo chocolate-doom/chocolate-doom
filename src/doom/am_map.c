@@ -339,27 +339,6 @@ static void AM_rotatePoint (mpoint_t *pt);
 static mpoint_t mapcenter;
 static angle_t mapangle;
 
-// -----------------------------------------------------------------------------
-// AM_Init
-// [JN] Predefine some variables at program startup.
-// -----------------------------------------------------------------------------
-
-void AM_Init (void)
-{
-    if (original_playpal)
-    {
-        secretwallcolors = SECRETWALLCOLORS;
-        revealedsecretwallcolors = REVEALEDSECRETWALLCOLORS;
-    }
-    else
-    {
-        secretwallcolors = V_GetPaletteIndex(W_CacheLumpName("PLAYPAL", PU_CACHE),
-                                                                     255, 0, 255);
-        revealedsecretwallcolors = V_GetPaletteIndex(W_CacheLumpName("PLAYPAL", PU_CACHE),
-                                                                     119, 255, 111);
-    }
-}
-
 static void AM_drawCrosshair(int color, boolean force);
 
 // Calculates the slope and slope according to the x-axis of a line
@@ -700,6 +679,18 @@ void AM_LevelInit(boolean reinit)
             {
                 color_shades[color * NUMSHADES + shade] = colormaps[shade_index[shade]];
             }
+        }
+        if (original_playpal)
+        {
+            secretwallcolors = SECRETWALLCOLORS;
+            revealedsecretwallcolors = REVEALEDSECRETWALLCOLORS;
+        }
+        else
+        {
+            secretwallcolors = V_GetPaletteIndex(W_CacheLumpName("PLAYPAL", PU_CACHE),
+                                                                         255, 0, 255);
+            revealedsecretwallcolors = V_GetPaletteIndex(W_CacheLumpName("PLAYPAL", PU_CACHE),
+                                                                         119, 255, 111);
         }
     }
 }
