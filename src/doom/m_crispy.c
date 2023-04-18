@@ -580,7 +580,7 @@ void M_CrispyToggleVsyncHook (void)
 {
     crispy->vsync = !crispy->vsync;
 
-    I_ReInitGraphics(REINIT_RENDERER | REINIT_TEXTURES | REINIT_ASPECTRATIO);
+    I_ToggleVsync();
 }
 
 void M_CrispyToggleVsync(int choice)
