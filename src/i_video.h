@@ -36,6 +36,7 @@ extern int SCREENHEIGHT;
 extern int NONWIDEWIDTH; // [crispy] non-widescreen SCREENWIDTH
 extern int WIDESCREENDELTA; // [crispy] horizontal widescreen offset
 void I_GetScreenDimensions (void); // [crispy] re-calculate WIDESCREENDELTA
+void I_ToggleVsync (void); // [crispy] calls native SDL vsync toggle
 
 // Screen height used when aspect_ratio_correct=true.
 

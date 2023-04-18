@@ -1563,7 +1563,7 @@ static boolean CrispyFpsLimit(int option)
 static void CrispyVsyncHook(void)
 {
     crispy->vsync = !crispy->vsync;
-    I_ReInitGraphics(REINIT_RENDERER | REINIT_TEXTURES | REINIT_ASPECTRATIO);
+    I_ToggleVsync();
 }
 
 static boolean CrispyVsync(int option)
