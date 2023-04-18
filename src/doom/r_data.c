@@ -1224,6 +1224,20 @@ void R_InitColormaps (void)
 	}
 
 	W_ReleaseLumpName("PLAYPAL");
+
+	i = W_CheckNumForName(DEH_String("CRGREEN"));
+	if (i >= 0)
+	{
+	    cr[CR_RED2GREEN] = W_CacheLumpNum(i, PU_STATIC);
+	}
+
+	i = W_CheckNumForName(DEH_String("CRBLUE2"));
+	if (i == -1)
+	    i = W_CheckNumForName(DEH_String("CRBLUE"));
+	if (i >= 0)
+	{
+	    cr[CR_RED2BLUE] = W_CacheLumpNum(i, PU_STATIC);
+	}
     }
 }
 
