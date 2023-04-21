@@ -1,8 +1,20 @@
+- **What's the matter with the TRUECOLOR renderer?**
+
+  Crispy Doom features an experimental Truecolor rendering mode, which needs to be explicitly enabled at compile time by running either `./configure --enable-truecolor` or `cmake -DCRISPY_TRUECOLOR`, respectively.
+
+  Why is this still not enabled by default?
+
+  - The three non-Doom games are in no way prepared for it.
+  - This rendering mode only uses the first palette, so any mod with a custom PLAYPAL (or COLORMAP) will look differently that intended by its author.
+  - It cannot use the foreground/background lookup table for translucency anymore, so all values for all three RGB channels would have to be calculated for each translucent pixel during each rendered frame, which consumes quite a lot of computing time.
+
 - **What's the matter with daily builds and releases?**
 
-  Daily builds are compiled snapshots of the Crispy Doom code base. They are provided as a courtesy of @fragglet and can be found here: http://latest.chocolate-doom.org/.
+  Daily builds are compiled snapshots of the Crispy Doom code base.
+  They are provided as a courtesy of @fragglet and can be found here: http://latest.chocolate-doom.org/.
+  Crispy Doom's daily builds are built in the same environment as Chocolate Doom's daily builds and releases.
 
-  Crispy Doom's daily builds are built in the same environment as Chocolate Doom's daily builds and releases. From version 5.5 on, Crispy Doom releases are nothing more than the daily builds from the same day the release was tagged in the GIT source code repository. This means that from version 5.5 on, both daily and released builds of both Chocolate and Crispy Doom are built in the same environment, using the same compiler and support libraries.
+  From version 6.0 on, Crispy Doom releases are automatically built in a MSYS2 environment using the latest GCC/MinGW compiler and library versions available at the time the release tag was pushed.
 
 - **I am having sound issues on Windows, e.g. distorted or high-pitched SFX or music.**
 
@@ -13,11 +25,6 @@
   - Please try to configure your speaker setup as plain stereo, even if you actually use a more advanced setup like e.g. 5.1 Surround.
   - It may help to disable SFX resampling by setting the `use_libsamplerate` key to `0` in `crispy-doom.cfg`.
   - It may help to update your sound card driver to a version that functions properly with the new Windows Audio Session API ("WASAPI") which SDL (>= 2.0.6) uses as its default backend.
-  - Replacing the SDL2 DLLs with [older versions](https://github.com/fabiangreffrath/crispy-doom/wiki/Sound-pitch-fix-&-Music-Pack) may help.
-
-- **The music volume slider also changes the SFX volume.**
-
-  For some odd reasons it is impossible to set SFX and music volume separately for the same process in some versions of Windows. To mitigate this, make sure `crispy-midiproc.exe` is in the same directory (and of the same version) as `crispy-doom.exe` (in some releases, it was hidden in the `unsup/` subdirectory). However, if you experience erroneous music progression with certain music mods, try to move or rename `crispy-midiproc.exe` out of the way.
 
 - **I have problems downloading, extracting or executing the binary Windows releases.**
 
