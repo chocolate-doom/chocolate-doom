@@ -52,7 +52,7 @@ Furthermore, the following optional user-visible and audible features are availa
  * Demo recording and/or playback timers and progress bar.
  * Demo continue and take-over features, handing controls over to the player when demo playback is finished or interrupted.
 
-Most of these features are disabled by default and need to get enabled either in the in-game "Crispness" menu, in the crispy-doom-setup tool or as command line parameters. They are implemented in a way that preserves demo-compatibility with Vanilla Doom and network game compatibility with Chocolate Doom. Furthermore, Crispy Doom's savegames and config files are compatible, though not identical (see the [Compatibility section in the Wiki](./wiki/compatibility)), to Vanilla Doom's. 
+Most of these features are disabled by default and need to get enabled either in the in-game "Crispness" menu, in the crispy-doom-setup tool or as command line parameters. They are implemented in a way that preserves demo-compatibility with Vanilla Doom and network game compatibility with Chocolate Doom. Furthermore, Crispy Doom's savegames and config files are compatible, though not identical (see the [Compatibility section in the Wiki](https://github.com/fabiangreffrath/crispy-doom/wiki/Compatibility), to Vanilla Doom's. 
 
 Crispy Doom strives for maximum compatibility with all "limit-removing Vanilla" maps -- but not Boom or ZDoom maps. More specifically, Crispy Doom supports some select advanced features such as [ANIMATED](https://doomwiki.org/wiki/ANIMATED) and [SWITCHES](https://doomwiki.org/wiki/SWITCHES) lumps, MBF sky transfers, SMMU swirling flats and [MUSINFO](https://doomwiki.org/wiki/MUSINFO) -- but neither generalized linedef and sector types nor DECORATE and MAPINFO.
 
@@ -66,7 +66,7 @@ Many additional less user-visible features have been implemented, e.g. fixed eng
 
 
 The most recent list of changes can be found in the [Changelog](https://github.com/fabiangreffrath/crispy-doom/blob/master/CHANGELOG.md).
-A complete history of changes and releases can be found in the [Wiki](./wiki/changelog-history) or on the [Releases](https://github.com/fabiangreffrath/crispy-doom/releases) page.
+A complete history of changes and releases can be found in the [Wiki](https://github.com/fabiangreffrath/crispy-doom/wiki/Changelog-History) or on the [Releases](https://github.com/fabiangreffrath/crispy-doom/releases) page.
 
 Daily builds of Crispy Doom can be found here:
 http://latest.chocolate-doom.org/
@@ -84,18 +84,18 @@ or cloned via
 ```
 
 
- * Brief instructions to set up a build system on Windows can be found [in the Crispy Doom Wiki](./wiki/build-windows). A much more detailed guide is provided [in the Chocolate Doom Wiki](https://www.chocolate-doom.org/wiki/index.php/Building_Chocolate_Doom_on_Windows), but applies to Crispy Doom as well for most parts.
- * There are also instructions for building on [Linux](./wiki/build-linux) and [MacOS](./wiki/build-macos)
+ * Brief instructions to set up a build system on Windows can be found [in the Crispy Doom Wiki](https://github.com/fabiangreffrath/crispy-doom/wiki/Building-on-Windows). A much more detailed guide is provided [in the Chocolate Doom Wiki](https://www.chocolate-doom.org/wiki/index.php/Building_Chocolate_Doom_on_Windows), but applies to Crispy Doom as well for most parts.
+ * There are also instructions for building on [Linux](https://github.com/fabiangreffrath/crispy-doom/wiki/Building-on-Linux) and [MacOS](https://github.com/fabiangreffrath/crispy-doom/wiki/Building-on-Mac)
 
 
 ## Documentation
 
- * **[New Cheat Codes](./wiki/cheats)**
- * **[New Command-Line Parameters](./wiki/params)**
- * **[New Controls](./wiki/controls) (With default bindings)**
- * **[Crispness](./wiki/crispness)**
- * **[Compatibility](./wiki/compatibility)**
- * **[FAQ](./wiki/faq)**
+ * **[New Cheat Codes](https://github.com/fabiangreffrath/crispy-doom/wiki/New-Cheats)**
+ * **[New Command-Line Parameters](https://github.com/fabiangreffrath/crispy-doom/wiki/New-Command-line-Parameters)**
+ * **[New Controls](https://github.com/fabiangreffrath/crispy-doom/wiki/New-Controls) (With default bindings)**
+ * **[Crispness](https://github.com/fabiangreffrath/crispy-doom/wiki/Crispness-Menu)**
+ * **[Compatibility](https://github.com/fabiangreffrath/crispy-doom/wiki/Compatibility)**
+ * **[FAQ](https://github.com/fabiangreffrath/crispy-doom/wiki/FAQ)**
 
 ## Contact
 
