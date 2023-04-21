@@ -1,0 +1,45 @@
+name: update wiki
+
+on:
+  push:
+    branches:
+      - "master"
+  workflow_dispatch:
+
+jobs:
+  update-wiki:
+    if: ${{ github.repository == 'fabiangreffrath/crispy-doom' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          path: code
+      - name: Checkout wiki
+        uses: actions/checkout@v3
+        with:
+          repository: ${{github.repository}}.wiki
+          path: wiki
+      - name: Update files
+        run: |
+          cp -af "./code/docs/build-linux.md" "./wiki/Building-on-Linux.md"
+          cp -af "./code/docs/build-windows.md" "./wiki/Building-on-Windows.md"
+          cp -af "./code/docs/build-macos.md" "./wiki/Building-on-Mac.md"
+          cp -af "./code/docs/cheats.md" "./wiki/New-Cheats.md"
+          cp -af "./code/docs/controls.md" "./wiki/New-Controls.md"
+          cp -af "./code/docs/crispness.md" "./wiki/Crispness-Menu.md"
+          cp -af "./code/docs/params.md" "./wiki/New-Command-line-Parameters.md"
+          cp -af "./code/docs/compatibility.md" "./wiki/Compatibility.md"
+          cp -af "./code/docs/faq.md" "./wiki/FAQ.md"
+          cp -af "./code/docs/changelog-history.md" "./wiki/Changelog-History.md"
+      - name: Push to wiki
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        run: |
+          cd wiki
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add .
+          git diff-index --quiet HEAD || git commit -m "Update wiki" && git push
