@@ -1,0 +1,19 @@
+- Move Forward (alt.) <kbd>W</kbd>
+- Move Backward (alt.) <kbd>S</kbd>
+- Strafe Left (alt.) <kbd>A</kbd>
+- Strafe Right (alt.) <kbd>D</kbd>
+- Jump (bindable to joystick and mouse buttons as well) <kbd>/</kbd> (as in Hexen and Strife)
+- Quick Reverse (bindable to mouse buttons as well)
+- Mouse Look (bindable to mouse buttons or permanent)
+- Look up (bindable to joystick axes as well) <kbd>PgDn</kbd> (as in Heretic)
+- Look down (bindable to joystick axes as well) <kbd>Del</kbd> (as in Heretic)
+- Center view <kbd>End</kbd> (as in Heretic)
+- Toggle always run <kbd>&#8682;</kbd>
+- Toggle vertical mouse movement (new in 5.4)
+- Delete savegame <kbd>Del</kbd>
+- Go to next level
+- Reload current level
+- Save a clean screenshot
+- Toggle Automap overlay mode <kbd>O</kbd>
+- Toggle Automap rotate mode <kbd>R</kbd>
+- Resurrect from savegame (single player mode only) "Run" + "Use"

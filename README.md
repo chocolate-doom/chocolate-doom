@@ -52,96 +52,26 @@ Furthermore, the following optional user-visible and audible features are availa
  * Demo recording and/or playback timers and progress bar.
  * Demo continue and take-over features, handing controls over to the player when demo playback is finished or interrupted.
 
-Most of these features are disabled by default and need to get enabled either in the in-game "Crispness" menu, in the crispy-doom-setup tool or as command line parameters. They are implemented in a way that preserves demo-compatibility with Vanilla Doom and network game compatibility with Chocolate Doom. Furthermore, Crispy Doom's savegames and config files are compatible, though not identical (see the [Compatibility section in the Wiki](https://github.com/fabiangreffrath/crispy-doom/wiki/Compatibility)), to Vanilla Doom's.
+Most of these features are disabled by default and need to get enabled either in the in-game "Crispness" menu, in the crispy-doom-setup tool or as command line parameters. They are implemented in a way that preserves demo-compatibility with Vanilla Doom and network game compatibility with Chocolate Doom. Furthermore, Crispy Doom's savegames and config files are compatible, though not identical (see the [Compatibility section in the Wiki](./wiki/compatibility)), to Vanilla Doom's. 
 
 Crispy Doom strives for maximum compatibility with all "limit-removing Vanilla" maps -- but not Boom or ZDoom maps. More specifically, Crispy Doom supports some select advanced features such as [ANIMATED](https://doomwiki.org/wiki/ANIMATED) and [SWITCHES](https://doomwiki.org/wiki/SWITCHES) lumps, MBF sky transfers, SMMU swirling flats and [MUSINFO](https://doomwiki.org/wiki/MUSINFO) -- but neither generalized linedef and sector types nor DECORATE and MAPINFO.
 
 Many additional less user-visible features have been implemented, e.g. fixed engine limitations and crashes, fixed rendering bugs, fixed harmless game logic bugs, full support for DEHACKED files and lumps in BEX format, additional and improved cheat codes, an improved Automap, and many more! Due to the extra DEHACKED states added from [MBF](https://doomwiki.org/wiki/MBF), Crispy Doom supports [enhancer](https://www.doomworld.com/forum/topic/84859-black-ops-smooth-weapons-dehacked-mod) [mods](https://www.doomworld.com/forum/topic/85991-smoothed-smooth-monsters-for-doom-retro-and-crispy-doom) that can make the gameplay even more pleasing to the eyes. For a detailed list of features and changes please refer to the release notes below.
 
-### New controls (with default bindings)
-
- * Move Forward (alt.) <kbd>W</kbd>
- * Move Backward (alt.) <kbd>S</kbd>
- * Strafe Left (alt.) <kbd>A</kbd>
- * Strafe Right (alt.) <kbd>D</kbd>
- * Jump (bindable to joystick and mouse buttons as well) <kbd>/</kbd> (as in Hexen and Strife)
- * Quick Reverse (bindable to mouse buttons as well)
- * Mouse Look (bindable to mouse buttons or permanent)
- * Look up (bindable to joystick axes as well) <kbd>PgDn</kbd> (as in Heretic)
- * Look down (bindable to joystick axes as well) <kbd>Del</kbd> (as in Heretic)
- * Center view <kbd>End</kbd> (as in Heretic)
- * Toggle always run <kbd>&#8682;</kbd>
- * Toggle vertical mouse movement (new in 5.4)
- * Delete savegame <kbd>Del</kbd>
- * Go to next level
- * Reload current level
- * Save a clean screenshot
- * Toggle Automap overlay mode <kbd>O</kbd>
- * Toggle Automap rotate mode <kbd>R</kbd>
- * Resurrect from savegame (single player mode only) "Run" + "Use"
-
-### New command line parameters
-
- * `-dm3` specifies the Deathmatch 3.0 rules (weapons stay, items respawn) for netgames (since 4.1).
- * `-episode 1` launches Hell on Earth and `-episode 2` launches No Rest for the Living episode if the Doom 2 IWAD shipped with the Doom 3: BFG Edition is used.
- * `-warp 1a` warps to the secret level E1M10: Sewers of XBox Doom IWAD (since 2.3).
- * `-mergedump <file>` merges the PWAD file(s) given on the command line with the IWAD file and writes the resulting data into the `<file>` given as argument. May be considered as a replacement for the `DEUSF.EXE` tool (since 2.3).
- * `-lumpdump` dumps raw content of a lump into a file (since 5.7).
- * `-blockmap` forces a (re-)building of the BLOCKMAP lumps for loaded maps (since 2.3).
- * `-playdemo demoname -warp N` plays back fast-forward up to the requested map (since 3.0).
- * `-loadgame N -record demoname` and `-loadgame N -playdemo demoname` allow to record and play demos starting from a savegame instead of the level start (since 4.0).
- * `-playdemo demoname1 -record demoname2` plays back fast-forward until the end of demoname1 and continues recording as demoname2 (new in 5.5).
- * `-fliplevels` loads mirrored versions of the maps (this was the default on April 1st up to version 5.0).
- * `-flipweapons` flips the player's weapons (new in 5.3).
- * `-levelstat` prints a levelstat.txt file with statistics for each completed level (new in 5.9.0).
- * `-pistolstart` reset health, armor and inventory at start of each level in Doom (new in 5.9.2)
- * `-wandstart` reset health, armor and inventory at start of each level in Heretic (new in 5.9.2)
- * `-doubleammo` doubles ammo pickup rate in Doom and Strife (new in 5.11).
- * `-moreammo` increases ammo pickup rate by 50% in Heretic (new in 5.11).
- * `-moremana` increases mana pickup rate by 50% in Hexen (new in 5.11).
- * `-fast` enables fast monsters in Heretic and Hexen (new in 5.11).
- * `-autohealth` enables automatic use of Quartz flasks and Mystic urns in Heretic and Hexen (new in 5.11).
- * `-keysloc` enables display of keys on the automap in Heretic (new in 5.11).
-
-### New cheat codes
-
- * `TNTWEAP` followed by a weapon number gives or removes this weapon (8 = Chainsaw, 9 = SSG). `TNTWEAP0` takes away all weapons and ammo except for the pistol and 50 bullets. Try to load Doom 1 with `DOOM2.WAD` as a PWAD and type `TNTWEAP9` to play the SSG in Doom 1.
- * `TNTEM`, `KILLEM` or `FHHALL` kill all monsters on the current map (and disables all cube spitters).
- * `SPECHITS` triggers all [Linedef actions](https://doomwiki.org/wiki/Linedef_type) on a map at once, no matter if they are enabled by pushing, walking over or shooting or whether they require a key or not. It also triggers all boss monster and Commander Keen actions if possible.
- * `NOTARGET` or `FHSHH` toggle deaf and blind monsters that do not act until attacked.
- * `TNTHOM` toggles the flashing [HOM](https://doomwiki.org/wiki/Hall_of_mirrors_effect) indicator (disabled by default).
- * `SHOWFPS` or `IDRATE` toggle printing the FPS in the upper right corner.
- * `NOMOMENTUM` toggles a debug aid for pixel-perfect positioning on a map (not recommended to use in-game).
- * `GOOBERS` triggers an easter egg, i.e. an "homage to an old friend". ;-)
- * `IDBEHOLD0` disables all currently active power-ups (since 2.2).
- * `IDCLEV00` restarts the current level (since 2.0).
- * `IDMUS00` restarts the current music (new in 5.1).
- * `VERSION` shows the engine version, build date and SDL version (new in 5.1).
- * `SKILL` shows the current skill level (new in 5.5.2).
-
 ## Download
 
-Source code and Windows binaries (compatible with both x86 and x64 editions) for the latest release can be found on the [Release](https://github.com/fabiangreffrath/crispy-doom/releases/latest) page. 
+* Windows: [Get binaries of the latest release](https://github.com/fabiangreffrath/crispy-doom/releases/latest), compatible with both x86 and x64 editions.
+* MacOS: Get macports and then run `sudo port install crispy-doom`.
+* Linux: To install on Ubuntu (“Eoan Ermine” 19.10 and later)/Debian (“Buster” 10 and later) based systems: `sudo apt-get install crispy-doom`
 
-To install on OSX, get macports and then run "sudo port install crispy-doom".
 
 The most recent list of changes can be found in the [Changelog](https://github.com/fabiangreffrath/crispy-doom/blob/master/CHANGELOG.md).
-
-A complete history of changes and releases can be found in the [Wiki](https://github.com/fabiangreffrath/crispy-doom/wiki/Changelog) or on the [Releases](https://github.com/fabiangreffrath/crispy-doom/releases) page.
-
-
-To install on Ubuntu ("Eoan Ermine" 19.10 and later)/Debian ("Buster" 10 and later) based systems:
-```bash
-sudo apt-get install crispy-doom
-```
-
+A complete history of changes and releases can be found in the [Wiki](./wiki/changelog-history) or on the [Releases](https://github.com/fabiangreffrath/crispy-doom/releases) page.
 
 Daily builds of Crispy Doom can be found here:
 http://latest.chocolate-doom.org/
 
-
 Crispy Doom can play nearly all variants of Doom. If you don't own any, you may download the [Shareware version of Doom](http://cdn.debian.net/debian/pool/non-free/d/doom-wad-shareware/doom-wad-shareware_1.9.fixed.orig.tar.gz), extract it and copy the DOOM1.WAD file into your Crispy Doom directory. Alternatively, you may want to play Crispy Doom with [Freedoom](https://www.chocolate-doom.org/wiki/index.php/Freedoom) and a MegaWAD.
-
 ### Sources
 [![Open Hub](https://www.openhub.net/p/crispy-doom/widgets/project_thin_badge?style=flat&format=gif)](https://www.openhub.net/p/crispy-doom)
 
@@ -153,32 +83,19 @@ or cloned via
  git clone https://github.com/fabiangreffrath/crispy-doom.git
 ```
 
-Brief instructions to set up a build system on Windows can be found [in the Crispy Doom Wiki](https://github.com/fabiangreffrath/crispy-doom/wiki/Building-on-Windows). A much more detailed guide is provided [in the Chocolate Doom Wiki](https://www.chocolate-doom.org/wiki/index.php/Building_Chocolate_Doom_on_Windows), but applies to Crispy Doom as well for most parts.
 
-Compilation on Debian systems (Debian 10 "buster" or later) should be as simple as
+ * Brief instructions to set up a build system on Windows can be found [in the Crispy Doom Wiki](./wiki/build-windows). A much more detailed guide is provided [in the Chocolate Doom Wiki](https://www.chocolate-doom.org/wiki/index.php/Building_Chocolate_Doom_on_Windows), but applies to Crispy Doom as well for most parts.
+ * There are also instructions for building on [Linux](./wiki/build-linux) and [MacOS](./wiki/build-macos)
 
-```
- sudo apt install build-essential automake git
- sudo apt build-dep crispy-doom
-```
 
-to install the prerequisites and then
+## Documentation
 
-```
- cd crispy-doom
- autoreconf -fiv
- ./configure
- make
-```
-
-After successful compilation the resulting binaries can be found in the `src/` directory.
-
-## More documentation
-
- * **[Changelog](https://github.com/fabiangreffrath/crispy-doom/wiki/Changelog)**
- * **[Compatibility](https://github.com/fabiangreffrath/crispy-doom/wiki/Compatibility)**
- * **[Crispness](https://github.com/fabiangreffrath/crispy-doom/wiki/Crispness)**
- * **[FAQ](https://github.com/fabiangreffrath/crispy-doom/wiki/FAQ)**
+ * **[New Cheat Codes](./wiki/cheats)**
+ * **[New Command-Line Parameters](./wiki/params)**
+ * **[New Controls](./wiki/controls) (With default bindings)**
+ * **[Crispness](./wiki/crispness)**
+ * **[Compatibility](./wiki/compatibility)**
+ * **[FAQ](./wiki/faq)**
 
 ## Contact
 

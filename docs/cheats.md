@@ -1,0 +1,14 @@
+- `TNTWEAP` followed by a weapon number gives or removes this weapon (8 = Chainsaw, 9 = SSG).
+- `TNTWEAP0` takes away all weapons and ammo except for the pistol and 50 bullets. Try to load Doom 1 with DOOM2.WAD as a PWAD and type TNTWEAP9 to play the SSG in Doom 1.
+- `TNTEM, KILLEM or FHHALL` kill all monsters on the current map (and disables all cube spitters).
+- `SPECHITS` triggers all [Linedef actions](https://doomwiki.org/wiki/Linedef_type) on a map at once, no matter if they are enabled by pushing, walking over or shooting or whether they require a key or not. It also triggers all boss monster and Commander Keen actions if possible.
+- `NOTARGET or FHSHH` toggle deaf and blind monsters that do not act until attacked.
+- `TNTHOM` toggles the flashing [HOM](https://doomwiki.org/wiki/Hall_of_mirrors_effect) indicator (disabled by default).
+- `SHOWFPS or IDRATE` toggle printing the FPS in the upper right corner.
+- `NOMOMENTUM` toggles a debug aid for pixel-perfect positioning on a map (not recommended to use in-game).
+- `GOOBERS` triggers an easter egg, i.e. an "homage to an old friend". ;-)
+- `IDBEHOLD0` disables all currently active power-ups (since 2.2).
+- `IDCLEV00` restarts the current level (since 2.0).
+- `IDMUS00` restarts the current music (new in 5.1).
+- `VERSION` shows the engine version, build date and SDL version (new in 5.1).
+- `SKILL` shows the current skill level (new in 5.5.2).

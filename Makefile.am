@@ -17,8 +17,7 @@ DOC_FILES=                              \
         README.md                       \
         README.Music.md                 \
         NEWS.md                         \
-        PHILOSOPHY.md                   \
-        ChangeLog
+        PHILOSOPHY.md
 
 EXTRA_DIST=                             \
         $(AUX_DIST_GEN)                 \
