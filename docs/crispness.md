@@ -1,4 +1,4 @@
-Crispy Doom provides many optional features. Most if them are disabled by default, but can get enabled in the Crispness menu.
+Crispy Doom provides many optional features. Most of them are disabled by default, but can get enabled in the Crispness menu.
 
 ## Rendering
 
@@ -87,9 +87,9 @@ These options change how sound effects are played back.
 
   The number of sound effects that can be played back simultaneously.
 
-  * 8 (vanilla, default).
-  * 16.
-  * 32.
+  * 8 (vanilla, default)
+  * 16
+  * 32
 
 * Mono SFX
 
