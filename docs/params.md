@@ -19,3 +19,5 @@
 - `-fast` enables fast monsters in Heretic and Hexen (new in 5.11).
 - `-autohealth` enables automatic use of Quartz flasks and Mystic urns in Heretic and Hexen (new in 5.11).
 - `-keysloc` enables display of keys on the automap in Heretic (new in 5.11).
+- `-nosideload` disables automatic loading of Master Levels, No Rest for the Living or Sigil (new in 5.11).
+- `-nodehlump` disables automatic loading of embedded DEHACKED lumps in wads.

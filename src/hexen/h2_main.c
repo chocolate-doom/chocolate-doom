@@ -465,7 +465,6 @@ void D_DoomMain(void)
 
     //!
     // @category game
-    // @category mod
     //
     // Mana pickups give 50% more mana. This option is not allowed when recording a
     // demo, playing back a demo or when starting a network game.
@@ -475,7 +474,6 @@ void D_DoomMain(void)
 
     //!
     // @category game
-    // @category mod
     //
     // Fast monsters. This option is not allowed when recording a demo,
     // playing back a demo or when starting a network game.
@@ -485,7 +483,6 @@ void D_DoomMain(void)
 
     //!
     // @category game
-    // @category mod
     //
     // Automatic use of Quartz flasks and Mystic urns.
     //

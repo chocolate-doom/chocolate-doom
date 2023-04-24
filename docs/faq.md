@@ -1,17 +1,17 @@
-- **What's the matter with the TRUECOLOR renderer?**
+- **What's the TRUECOLOR renderer?**
 
   Crispy Doom features an experimental Truecolor rendering mode, which needs to be explicitly enabled at compile time by running either `./configure --enable-truecolor` or `cmake -DCRISPY_TRUECOLOR`, respectively.
 
   Why is this still not enabled by default?
 
   - The three non-Doom games are in no way prepared for it.
-  - This rendering mode only uses the first palette, so any mod with a custom PLAYPAL (or COLORMAP) will look differently that intended by its author.
+  - This rendering mode only uses the first palette, so any mod with a custom PLAYPAL (or COLORMAP) will look differently than intended by its author.
   - It cannot use the foreground/background lookup table for translucency anymore, so all values for all three RGB channels would have to be calculated for each translucent pixel during each rendered frame, which consumes quite a lot of computing time.
 
-- **What's the matter with daily builds and releases?**
+- **How are the daily builds and releases created?**
 
   Daily builds are compiled snapshots of the Crispy Doom code base.
-  They are provided as a courtesy of @fragglet and can be found here: http://latest.chocolate-doom.org/.
+  They are provided courtesy of @fragglet and can be found here: http://latest.chocolate-doom.org/.
   Crispy Doom's daily builds are built in the same environment as Chocolate Doom's daily builds and releases.
 
   From version 6.0 on, Crispy Doom releases are automatically built in a MSYS2 environment using the latest GCC/MinGW compiler and library versions available at the time the release tag was pushed.

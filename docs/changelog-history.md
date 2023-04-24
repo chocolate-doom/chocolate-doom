@@ -1,3 +1,121 @@
+### Crispy Doom 5.12
+
+**New Features and Improvements**
+* Add mouse smoothing when running uncapped. (by @mikeday0)
+* New icon designs for all games and the setup executable (by @kiwphi).
+* Brightmaps now working on mid-textures of two-sided lines (by @JNechaevsky).
+* New stats widget option: above status bar.
+* Many automap improvements: (by @JNechaevsky and @mikeday0)
+    - New mouse button bindings for zoom, max zoom and follow.
+    - Pan/zoom faster by holding run button.
+    - Use overflow-safe map coordinate system from prboom-plus.
+    - Apply frame interpolation to automap rendering when running uncapped.
+
+**Bug Fixes**
+* Ensure mouse sensitivity values are always initialized to defaults.
+* Fix clipping issue when jumping in Doom.
+* Fix cutscene rendering in truecolor in Doom.
+* Fix potential Heretic crash on x64 systems.
+* Armor icons now drawn in correct locations in widescreen for Hexen.
+* Fix screen border glitch after leaving automap in low res mode in Hexen.
+* Fix shuffling of items on automap after loading savegame.
+
+**Crispy Doom**
+* Support up to 8 pages of savegames.
+* Brightmap now applied to SW2HOT texture (by @JNechaevsky).
+* Improved brightmaps for SILVER3, COMPUTE2 and COMPUTE3 textures (by @JNechaevsky).
+* Player arrows in multiplayer games now also interpolated and rotating with correct angles (by @JNechaevsky).
+* Fix incorrect demo timer value and demo bar lenght in multiplayer demos (by @fabiangreffrath, @JNechaevsky and @rfomin).
+* Status bar showing values and face of choosen player in multiplayer spy mode (by @JNechaevsky).
+
+**Crispy Heretic**
+* Remove ambient sound limit.
+* Add automap overlay and rotation (by @mikeday0).
+* Add PWAD autoload directories (by @mikeday0).
+* Add brightmap support (by @JNechaevsky).
+* Add mouselook support (by @mikeday0).
+* Add automap mousewheel zoom and mouse panning (by @mikeday0).
+* Add automap grid (by @JNechaevsky).
+
+**Crispy Hexen**
+* Fix tutti frutti and add DeePsea tall patch support (by @mikeday0).
+* Add uncapped framerate option (by @mikeday0).
+* Add automap overlay and rotation (by @mikeday0).
+* Add PWAD autoload directories (by @mikeday0).
+* Add mouselook support ((by @mikeday0).
+* Add brightmap support (by @JNechaevsky).
+* Add key toggles for autorun and vertical mouse movement (thanks @rxhxiii).
+* Add automap mousewheel zoom and mouse panning (by @mikeday0).
+* Add automap grid (by @JNechaevsky).
+
+### Crispy Doom 5.11.1
+
+Crispy Doom 5.11.1 is released on Feb 10, 2022. It it a bug-fix release to fix Heretic and Hexen config keys getting lost in setup.
+
+### Crispy Doom 5.11
+
+Crispy Doom 5.11 is released on Feb 09, 2022. It marks the return of Crispy Hexen and features highly appreciated community contributions of the past half year.
+
+**New Features and Improvements**
+
+ * REKKR has been added to the list of recognized IWADs (thanks @Some1NamedNate).
+ * DEHACKED lumps from IWADs are now always loaded.
+ * The Automap is now kept static if not following player in overlay mode (thanks @JNechaevsky).
+ * Patches in PNG format are now detected and trigger an error message.
+ * Custom translucency maps in TRANMAP lumps are now allowed again (by @NeuralStunner).
+ * A customizable Crispness menu background may now be provided in a CRISPYBG lump (by @NeuralStunner).
+ * The beta scepter and bible are now valid gettable things (by @NeuralStunner).
+ * Support for some optional extra sounds has been added (by @NeuralStunner).
+ * The `-nosideload` parameter has been added to prevent automatic loading of NRFTL, Masterlevels and Sigil.
+ * Pre-v1.25 always active plats are now properly emulated (by @SmileTheory).
+ * Some snow has been added as an easter, ne christmas, egg (by @hovertank3d).
+ * A key binding to toggle demo fast-forward has been added (by @tpoppins).
+ * A demo pause feature has been added (by @tpoppins).
+ * Different formats ("ratio", "remaining", "percent" and "boolean") are now available for the level stats (thanks @dftf-stu).
+ * A11Y: set amount of extra light to add to the game scene (thanks @dftf-stu and @JNechaevsky).
+ * Quicksave/quickload questions are now skipped.
+ * Beta BFG support has been improved (by @NeuralStunner).
+ * Command line options to provide for custom difficulty parameters have been added (by @FozzeY):
+   * `-doubleammo` doubles ammo pickup rate in Doom and Strife.
+   * `-moreammo` increases ammo pickup rate by 50% in Heretic.
+   * `-moremana` increases mana pickup rate by 50% in Hexen.
+   * `-fast` enables fast monsters in Heretic and Hexen.
+   * `-autohealth` enables automatic use of Quartz flasks and Mystic urns in Heretic and Hexen.
+   * `-keysloc` enables display of keys on the automap in Heretic.
+
+**Bug Fixes**
+
+ * Boss endings are not triggered for auto-loaded Sigil E5 anymore.
+ * The NRFTL and Masterlevels PWADs are not automatically sideloaded anymore if another PWAD already provides MAP01.
+ * Woof's window size adjustment logic has been adapted.
+ * Never sideload any PWAD if a single demo is played back.
+
+**Possible Regressions**
+
+ * Extended savegames are now mandatory.
+ * All "blood fixes" have been removed from the "colored blood" feature. That is, spectres don't bleed spectre blood anymore and Lost Souls don't bleed puffs anymore, but bloodless objects still don't bleed or leave gibs when crushed.
+ * The "Squat weapon down on impact" feature has been entirely removed.
+ * The "Weapon Recoil Thrust" feature has been entirely removed.
+
+**Crispy Heretic**
+
+ * Extended demos are enabled for all demos again (thanks @thom-wye).
+ * Support for widescreen rendering has been added (by @mikeday0).
+ * Enemies remember their targets across savegames (thanks @SiFi270).
+ * Check if map name starts with a map identifier before skipping it on the intermission screen.
+ * Generate a default save slot name when the user saves to an empty slot or one that already begins with a map identifier.
+ * Support up to 8 savegames.
+ * Allow to delete a savegame from the menu.
+
+**Crispy Hexen**
+
+ * Seg texture clipping has been fixed (from dsda-doom, thanks @kraflab).
+ * Support for widescreen rendering has been added (by @mikeday0).
+ * A basic Crispness menu has been added (by @mikeday0).
+ * Crispy Hexen is now built and installed by default again!
+
+Crispy Doom 5.11 is based on Chocolate Doom 3.0.1 and has merged all changes to the Chocolate Doom master branch up to commit [41865b17](https://github.com/chocolate-doom/chocolate-doom/commit/41865b179684eaf812fc9682936d9b79320f5a1d).
+
 ### Crispy Doom 5.10.3
 
 Crispy Doom 5.10.3 is released on Aug 17, 2021. It is a bug-fix release fixing a regression in savegame restoring introduced by the A11Y features from the 5.10.2 release.

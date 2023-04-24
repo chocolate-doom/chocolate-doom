@@ -1086,7 +1086,6 @@ void D_DoomMain(void)
 
     //!
     // @category game
-    // @category mod
     //
     // Automatic wand start when advancing from one level to the next. At the
     // beginning of each level, the player's health is reset to 100, their
@@ -1099,7 +1098,6 @@ void D_DoomMain(void)
 
     //!
     // @category game
-    // @category mod
     //
     // Ammo pickups give 50% more ammo. This option is not allowed when recording a
     // demo, playing back a demo or when starting a network game.
@@ -1109,7 +1107,6 @@ void D_DoomMain(void)
 
     //!
     // @category game
-    // @category mod
     //
     // Fast monsters. This option is not allowed when recording a demo,
     // playing back a demo or when starting a network game.
@@ -1119,7 +1116,6 @@ void D_DoomMain(void)
 
     //!
     // @category game
-    // @category mod
     //
     // Automatic use of Quartz flasks and Mystic urns.
     //
@@ -1128,7 +1124,6 @@ void D_DoomMain(void)
 
     //!
     // @category game
-    // @category mod
     //
     // Show the location of keys on the automap.
     //

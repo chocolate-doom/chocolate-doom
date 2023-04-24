@@ -1,10 +1,3 @@
-<!---
-Please keep yourself short and precise.
-Try not to use more than one sentence to describe a single item.
-Please create paragraphs by using indentation and lists.
-Features with more than a single on/off setting need one indented paragraph (each one holding one sentence) per individual setting.
--->
-
 Crispy Doom provides many optional features. Most if them are disabled by default, but can get enabled in the Crispness menu.
 
 ## Rendering
@@ -24,6 +17,10 @@ These options affect the rendering of the internal frame buffer to the game wind
 * Uncapped Framerate
 
   Update the frame buffer to the game window as soon as possible and interpolate between frames, instead of updating at Doom's original fixed rate of 35 FPS (default: off).
+
+* Framerate Limit
+
+  When Uncapped Framerate is on, limit the framerate to the value specified here. Press Enter to type in a number directly. A value of "0" corresponds to no frame limit (default: none).
 
 * Enable VSync
 
@@ -64,7 +61,11 @@ These features change the visual appearance of the game.
   
 * Colored Blood and Corpses
 
-  Colorize the blood sprites and the sprites of crushed corpses for certain monsters (e.g. green for Barons of Hell and Hell Knights, blue for Cacodemons). Furthermore, render Spectres' blood sprites with the invisibility blur and turn Lost Souls' blood into puffs. Additionally, randomly colorize decorative marine corpses (default: off).
+  Colorize the blood sprites and the sprites of crushed corpses for certain monsters (e.g. green for Barons of Hell and Hell Knights, blue for Cacodemons). Furthermore, render Spectres' blood sprites with the invisibility blur and turn Lost Souls' blood into puffs.
+
+  * None: Disabled (default).
+  * Blood: Colorize blood for Barons, Hell Knights and Cacodemons.
+  * All: In addition, make Spectres' blood invisible and turn Lost Souls' blood into puffs.
 
 * Randomly Mirrored Corpses
 
@@ -86,9 +87,9 @@ These options change how sound effects are played back.
 
   The number of sound effects that can be played back simultaneously.
 
-  * 8 (as in Vanilla Doom and Strife, default).
-  * 16 (as in Heretic and Hexen).
-  * 32 .
+  * 8 (vanilla, default).
+  * 16.
+  * 32.
 
 * Mono SFX
 
@@ -110,6 +111,13 @@ These features help with navigation within the maps.
   * In Automap.
   * Never (default).
   
+* Level Stats Format
+
+  * Ratio: Show stats as x/y, where x is the current number achieved and y is the total (default).
+  * Remaining: Show the number remaining, counting down to 0.
+  * Percent: Show percentage completion, similar to the stats screen at the end of the map.
+  * Boolean: Show "Yes" if you've found/killed everything for that particular stat, or "No" otherwise.
+
 * Show Level Time
 
   Show the time that has ticked away since the level started in the top left corner of the screen (MM:SS).
@@ -173,10 +181,6 @@ These features provide some tactical advantage by adding to the realism of the g
   * Centered: The weapon sprite gets centered horizontally and pushed up vertically into its idle position, as in e.g. Jaguar Doom.
   * Bobbing: The weapon sprite continues to bob as it does while the player is moving.
 
-* Squat Weapon Down on Impact
-
-  Move the weapon sprite down and up again after falling down from a certain height to give a more realistic impression of the impact on the floor (default: off).
-  
 * Weapon Recoil Pitch
 
   When firing, give an impression of the weapon pushing up by slightly changing the player's vertical view angle without affecting the trajectory (default: off).
@@ -186,6 +190,10 @@ These features provide some tactical advantage by adding to the realism of the g
 * Negative Player Health
 
   Allow the player's health to go below 0, to give an impression of the lethal hit's damage (default: off).
+
+* Default Difficulty
+
+  Set default difficulty when starting a new game (default: Hurt Me Plenty).
 
 ## Crosshair
 
@@ -233,11 +241,6 @@ These features change the game physics. **They are forcefully disabled during de
 
   * Allow the player to walk across monsters' heads or beneath flying monsters (default: off).
 
-* Weapon Recoil Thrust
-
-  * Apply some reverse horizontal momentum to the player when shooting a weapon (default: off).
-
-
 ## Demos
 
 These features provide some additional information when recording or playing back demos.
@@ -253,3 +256,7 @@ These features provide some additional information when recording or playing bac
 * Show Demo Progress Bar
 
   Show a black/white progress bar at the bottom of the screen that fills up from left to right during demo playback (default: off).
+
+* "Use" Button Timer
+
+  Whenever the "Use" button is pressed, momentarily display a timestamp in the upper left of the screen (default: off).
