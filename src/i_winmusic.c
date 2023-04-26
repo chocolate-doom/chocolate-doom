@@ -503,6 +503,31 @@ static void ResetDevice(void)
     }
 }
 
+static boolean IsPartLevel(const byte *msg, int length)
+{
+    if (length == 10 &&
+        msg[0] == 0x41 && // Roland
+        msg[2] == 0x42 && // GS
+        msg[3] == 0x12 && // DT1
+        msg[4] == 0x40 && // Address MSB
+        msg[5] >= 0x10 && // Address
+        msg[5] <= 0x1F && // Address
+        msg[6] == 0x19 && // Address LSB
+        msg[9] == 0xF7)   // SysEx EOX
+    {
+        byte checksum = 128 - ((int)msg[4] + msg[5] + msg[6] + msg[7]) % 128;
+
+        if (msg[8] == checksum)
+        {
+            // GS Part Level (aka Channel Volume)
+            // 41 <dev> 42 12 40 <ch> 19 <vol> <sum> F7
+            return true;
+        }
+    }
+
+    return false;
+}
+
 static boolean IsSysExReset(const byte *msg, int length)
 {
     if (length < 5)
@@ -713,8 +738,33 @@ static boolean AddToBuffer(unsigned int delta_time, midi_event_t *event,
     switch ((int)event->event_type)
     {
         case MIDI_EVENT_SYSEX:
-            SendSysExMsg(delta_time, event->data.sysex.data,
-                         event->data.sysex.length);
+            if (IsPartLevel(event->data.sysex.data, event->data.sysex.length))
+            {
+                const byte *data = event->data.sysex.data;
+                byte channel;
+
+                // Convert "block number" to a channel number.
+                if (data[5] == 0x10) // Channel 10
+                {
+                    channel = 9;
+                }
+                else if (data[5] < 0x1A) // Channels 1-9
+                {
+                    channel = (data[5] & 0x0F) - 1;
+                }
+                else // Channels 11-16
+                {
+                    channel = data[5] & 0x0F;
+                }
+
+                // Replace SysEx part level message with channel volume message.
+                SendVolumeMsg(delta_time, channel, data[7]);
+            }
+            else
+            {
+                SendSysExMsg(delta_time, event->data.sysex.data,
+                             event->data.sysex.length);
+            }
             return false;
 
         case MIDI_EVENT_META:
