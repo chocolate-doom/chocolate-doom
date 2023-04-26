@@ -515,7 +515,8 @@ static boolean IsPartLevel(const byte *msg, int length)
         msg[6] == 0x19 && // Address LSB
         msg[9] == 0xF7)   // SysEx EOX
     {
-        byte checksum = 128 - ((int)msg[4] + msg[5] + msg[6] + msg[7]) % 128;
+        const byte checksum =
+            128 - ((int) msg[4] + msg[5] + msg[6] + msg[7]) % 128;
 
         if (msg[8] == checksum)
         {
