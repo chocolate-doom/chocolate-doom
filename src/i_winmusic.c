@@ -503,6 +503,10 @@ static void ResetDevice(void)
     }
 }
 
+// Normally, volume is controlled by channel volume messages. Roland defined a
+// special SysEx message called "part level" that is equivalent to this. MS GS
+// Wavetable Synth ignores these messages, but other MIDI devices support them.
+
 static boolean IsPartLevel(const byte *msg, int length)
 {
     if (length == 10 &&
