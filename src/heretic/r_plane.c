@@ -259,7 +259,8 @@ visplane_t *R_FindPlane(fixed_t height, int picnum,
 {
     visplane_t *check;
 
-    if (picnum == skyflatnum)
+    // [crispy] add support for MBF sky transfers
+    if (picnum == skyflatnum || picnum & PL_SKYFLAT)
     {
         // all skies map together
         height = 0;
@@ -437,23 +438,40 @@ void R_DrawPlanes(void)
             continue;
         //
         // sky flat
-        //
-        if (pl->picnum == skyflatnum)
+        // [crispy] add support for MBF sky transfers
+        if (pl->picnum == skyflatnum || pl->picnum & PL_SKYFLAT)
         {
+            int texture;
+	    angle_t an = viewangle, flip;
+	    if (pl->picnum & PL_SKYFLAT)
+	    {
+		const line_t *l = &lines[pl->picnum & ~PL_SKYFLAT];
+		const side_t *s = *l->sidenum + sides;
+		texture = texturetranslation[s->toptexture];
+		dc_texturemid = s->rowoffset - 28*FRACUNIT;
+		flip = (l->special == 272) ? 0u : ~0u;
+		an += s->textureoffset;
+	    }
+	    else
+	    {
+		texture = skytexture;
+		dc_texturemid = skytexturemid;
+		flip = 0;
+	    }
             dc_iscale = skyiscale;
             // [crispy] no brightmaps for sky
             dc_colormap[0] = dc_colormap[1] = colormaps;    // sky is allways drawn full bright
-            dc_texturemid = skytexturemid;
-            dc_texheight = textureheight[skytexture]>>FRACBITS;
+            dc_texheight = textureheight[texture]>>FRACBITS;
+
             for (x = pl->minx; x <= pl->maxx; x++)
             {
                 dc_yl = pl->top[x];
                 dc_yh = pl->bottom[x];
                 if ((unsigned) dc_yl <= dc_yh) // [crispy] 32-bit integer math
                 {
-                    angle = (viewangle + xtoviewangle[x]) >> ANGLETOSKYSHIFT;
+                    angle = ((an + xtoviewangle[x]) ^ flip) >> ANGLETOSKYSHIFT;
                     dc_x = x;
-                    dc_source = R_GetColumn(skytexture, angle);
+                    dc_source = R_GetColumn(texture, angle);
 
                     count = dc_yh - dc_yl;
                     if (count < 0)

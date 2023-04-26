@@ -22,6 +22,7 @@
 #include "i_video.h"
 #include "v_patch.h"
 
+#define PL_SKYFLAT (0x80000000)
 #define	ANGLETOSKYSHIFT		22      // sky map is 256*128*4 maps
 
 #define	BASEYCENTER			100
@@ -100,6 +101,8 @@ typedef struct
     int cachedheight;
     int scaleindex;
 
+    // [crispy] add support for MBF sky transfers
+    int		sky;
     // [AM] Previous position of floor and ceiling before
     //      think.  Used to interpolate between positions.
     fixed_t	oldfloorheight;

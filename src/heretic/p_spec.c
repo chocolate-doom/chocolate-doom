@@ -1285,6 +1285,7 @@ void P_SpawnSpecials(void)
     //
     numlinespecials = 0;
     for (i = 0; i < numlines; i++)
+    {
         switch (lines[i].special)
         {
             case 48:           // Effect_Scroll_Left
@@ -1292,7 +1293,22 @@ void P_SpawnSpecials(void)
                 linespeciallist[numlinespecials] = &lines[i];
                 numlinespecials++;
                 break;
+            // [crispy] add support for MBF sky transfers
+            case 271:
+            case 272:
+              {
+                int secnum;
+                for (secnum = 0; secnum < numsectors; secnum++)
+                  {
+                    if (sectors[secnum].tag == lines[i].tag)
+                        {
+                            sectors[secnum].sky = i | PL_SKYFLAT;
+                        }
+                  }
+              }
+             break;
         }
+    }
 
     //
     //      Init other misc stuff
