@@ -3131,24 +3131,19 @@ void G_TimeDemo (char* name)
 } 
  
 #define DEMO_FOOTER_SEPARATOR "\n"
+#define NUM_DEMO_FOOTER_LUMPS 4
 
-static void G_AddDemoFooter(void)
+static size_t WriteCmdLineLump(MEMFILE *stream)
 {
     int i;
-    size_t len = 0;
+    long pos;
     char *tmp, **filenames;
-
-    MEMFILE *stream = mem_fopen_write();
 
     filenames = W_GetWADFileNames();
 
-    if (!filenames)
-    {
-        return;
-    }
+    pos = mem_ftell(stream);
 
-    tmp = M_StringJoin(PACKAGE_STRING, DEMO_FOOTER_SEPARATOR,
-            "-iwad \"", M_BaseName(filenames[0]), "\"", NULL);
+    tmp = M_StringJoin("-iwad \"", M_BaseName(filenames[0]), "\"", NULL);
     mem_fputs(tmp, stream);
     free(tmp);
 
@@ -3178,26 +3173,97 @@ static void G_AddDemoFooter(void)
         }
     }
 
-    tmp = M_StringJoin(" -gameversion ", D_GetGameVersionCmd(), NULL);
-    mem_fputs(tmp, stream);
-    free(tmp);
+    switch (gameversion)
+    {
+        case exe_doom_1_2:
+            mem_fputs(" -complevel 0", stream);
+            break;
+        case exe_doom_1_666:
+            mem_fputs(" -complevel 1", stream);
+            break;
+        case exe_doom_1_9:
+            if (gamemode == commercial)
+            {
+                mem_fputs(" -complevel 2", stream);
+            }
+            else
+            {
+                mem_fputs(" -complevel 3", stream);
+            }
+            break;
+        case exe_final:
+            mem_fputs(" -complevel 4", stream);
+            break;
+        default:
+            break;
+    }
 
     if (M_CheckParm("-solo-net"))
     {
         mem_fputs(" -solo-net", stream);
     }
 
+    return mem_ftell(stream) - pos;
+}
+
+static void WriteFileInfo(const char *name, size_t size, MEMFILE *stream)
+{
+    filelump_t fileinfo = { 0 };
+    static long filepos = sizeof(wadinfo_t);
+
+    fileinfo.filepos = LONG(filepos);
+    fileinfo.size = LONG(size);
+
+    if (name)
+    {
+        size_t len = strnlen(name, 8);
+        if (len < 8)
+        {
+            len++;
+        }
+        memcpy(fileinfo.name, name, len);
+    }
+
+    mem_fwrite(&fileinfo, 1, sizeof(fileinfo), stream);
+
+    filepos += size;
+}
+
+static void G_AddDemoFooter(void)
+{
+    byte *data;
+    size_t size;
+
+    MEMFILE *stream = mem_fopen_write();
+
+    wadinfo_t header = { "PWAD" };
+    header.numlumps = LONG(NUM_DEMO_FOOTER_LUMPS);
+    mem_fwrite(&header, 1, sizeof(header), stream);
+
+    mem_fputs(PACKAGE_STRING, stream);
+    mem_fputs(DEMO_FOOTER_SEPARATOR, stream);
+    size = WriteCmdLineLump(stream);
     mem_fputs(DEMO_FOOTER_SEPARATOR, stream);
 
-    mem_get_buf(stream, (void **)&tmp, &len);
+    header.infotableofs = LONG(mem_ftell(stream));
+    mem_fseek(stream, 0, MEM_SEEK_SET);
+    mem_fwrite(&header, 1, sizeof(header), stream);
+    mem_fseek(stream, 0, MEM_SEEK_END);
 
-    while (demo_p > demoend - len)
+    WriteFileInfo("PORTNAME", strlen(PACKAGE_STRING), stream);
+    WriteFileInfo(NULL, strlen(DEMO_FOOTER_SEPARATOR), stream);
+    WriteFileInfo("CMDLINE", size, stream);
+    WriteFileInfo(NULL, strlen(DEMO_FOOTER_SEPARATOR), stream);
+
+    mem_get_buf(stream, (void **)&data, &size);
+
+    while (demo_p > demoend - size)
     {
         IncreaseDemoBuffer();
     }
 
-    memcpy(demo_p, tmp, len);
-    demo_p += len;
+    memcpy(demo_p, data, size);
+    demo_p += size;
 
     mem_fclose(stream);
 }
