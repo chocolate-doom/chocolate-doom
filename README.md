@@ -61,7 +61,7 @@ Many additional less user-visible features have been implemented, e.g. fixed eng
 ## Download
 
 * Windows: [Get binaries of the latest release](https://github.com/fabiangreffrath/crispy-doom/releases/latest), compatible with both x86 and x64 editions.
-* MacOS: Get macports and then run `sudo port install crispy-doom`.
+* MacOS: Use MacPorts: `sudo port install crispy-doom` or Homebrew: `brew install crispy-doom`.
 * Linux: To install on Ubuntu (“Eoan Ermine” 19.10 and later)/Debian (“Buster” 10 and later) based systems: `sudo apt-get install crispy-doom`
 
 
