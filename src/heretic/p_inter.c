@@ -173,7 +173,7 @@ boolean P_GiveAmmo(player_t * player, ammotype_t ammo, int count)
     {
         return (false);
     }
-    if ((unsigned int) ammo > NUMAMMO)
+    if ((unsigned int) ammo >= NUMAMMO)
     {
         I_Error("P_GiveAmmo: bad type %i", ammo);
     }
