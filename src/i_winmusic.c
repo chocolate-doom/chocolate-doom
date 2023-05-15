@@ -940,7 +940,10 @@ static boolean AddToBuffer(unsigned int delta_time, midi_event_t *event,
                     {
                         song.tracks[i].emidi_loop_count = count;
                         MIDI_SetLoopPoint(song.tracks[i].iter);
+                        song.tracks[i].saved_end_of_track = song.tracks[i].end_of_track;
+                        song.tracks[i].saved_elapsed_time = song.tracks[i].elapsed_time;
                     }
+                    song.saved_elapsed_time = song.elapsed_time;
                     SendNOPMsg(delta_time);
                     break;
 
@@ -952,6 +955,9 @@ static boolean AddToBuffer(unsigned int delta_time, midi_event_t *event,
                             if (song.tracks[i].emidi_loop_count != 0)
                             {
                                 MIDI_RestartAtLoopPoint(song.tracks[i].iter);
+                                song.tracks[i].end_of_track = song.tracks[i].saved_end_of_track;
+                                song.tracks[i].elapsed_time = song.tracks[i].saved_elapsed_time;
+                                song.elapsed_time = song.saved_elapsed_time;
                             }
 
                             if (song.tracks[i].emidi_loop_count > 0)
