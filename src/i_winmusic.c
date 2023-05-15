@@ -36,6 +36,13 @@
 
 enum
 {
+    COMP_VANILLA,
+    COMP_STANDARD,
+    COMP_FULL,
+};
+
+enum
+{
     RESET_TYPE_NONE,
     RESET_TYPE_GM,
     RESET_TYPE_GS,
@@ -43,6 +50,7 @@ enum
 };
 
 char *winmm_midi_device = NULL;
+int winmm_complevel = COMP_VANILLA;
 int winmm_reset_type = RESET_TYPE_GM;
 int winmm_reset_delay = 0;
 
@@ -260,6 +268,15 @@ static void SendLongMsg(unsigned int delta_time, const byte *ptr,
     WriteBufferPad();
 }
 
+static void SendNullRPN(unsigned int delta_time, const midi_event_t *event)
+{
+    const byte channel = event->data.channel.channel;
+    SendShortMsg(delta_time, MIDI_EVENT_CONTROLLER, channel,
+                 MIDI_CONTROLLER_RPN_LSB, MIDI_RPN_NULL);
+    SendShortMsg(0, MIDI_EVENT_CONTROLLER, channel,
+                 MIDI_CONTROLLER_RPN_MSB, MIDI_RPN_NULL);
+}
+
 static void SendNOPMsg(unsigned int delta_time)
 {
     native_event_t native_event;
@@ -383,7 +400,7 @@ static void ResetDevice(void)
 
         case RESET_TYPE_GS:
             SendLongMsg(0, gs_reset, sizeof(gs_reset));
-            use_fallback = true;
+            use_fallback = (winmm_complevel != COMP_VANILLA);
             break;
 
         case RESET_TYPE_XG:
@@ -812,7 +829,10 @@ static void SendMetaMsg(unsigned int delta_time, const midi_event_t *event,
             break;
 
         case MIDI_META_MARKER:
-            CheckFFLoop(event);
+            if (winmm_complevel != COMP_VANILLA)
+            {
+                CheckFFLoop(event);
+            }
             SendNOPMsg(delta_time);
             break;
 
@@ -822,20 +842,96 @@ static void SendMetaMsg(unsigned int delta_time, const midi_event_t *event,
     }
 }
 
-static boolean AddToBuffer(unsigned int delta_time, const midi_event_t *event,
-                           win_midi_track_t *track)
+static boolean AddToBuffer_Vanilla(unsigned int delta_time,
+                                   const midi_event_t *event,
+                                   win_midi_track_t *track)
+{
+    switch ((int) event->event_type)
+    {
+        case MIDI_EVENT_SYSEX:
+            SendNOPMsg(delta_time);
+            return false;
+
+        case MIDI_EVENT_META:
+            SendMetaMsg(delta_time, event, track);
+            break;
+
+        case MIDI_EVENT_CONTROLLER:
+            switch (event->data.channel.param1)
+            {
+                case MIDI_CONTROLLER_BANK_SELECT_MSB:
+                case MIDI_CONTROLLER_BANK_SELECT_LSB:
+                    // DMX has broken bank select support and runs in GM mode.
+                    SendChannelMsg(delta_time, event, false);
+                    break;
+
+                case MIDI_CONTROLLER_MODULATION:
+                case MIDI_CONTROLLER_PAN:
+                case MIDI_CONTROLLER_EXPRESSION:
+                case MIDI_CONTROLLER_HOLD1_PEDAL:
+                case MIDI_CONTROLLER_SOFT_PEDAL:
+                case MIDI_CONTROLLER_REVERB:
+                case MIDI_CONTROLLER_CHORUS:
+                case MIDI_CONTROLLER_ALL_SOUND_OFF:
+                case MIDI_CONTROLLER_ALL_NOTES_OFF:
+                    SendChannelMsg(delta_time, event, true);
+                    break;
+
+                case MIDI_CONTROLLER_VOLUME_MSB:
+                    SendVolumeMsg(delta_time, event);
+                    break;
+
+                case MIDI_CONTROLLER_RESET_ALL_CTRLS:
+                    // MS GS Wavetable Synth resets volume if param2 isn't zero.
+                    SendChannelMsg(delta_time, event, false);
+                    break;
+
+                default:
+                    SendNOPMsg(delta_time);
+                    break;
+            }
+            break;
+
+        case MIDI_EVENT_NOTE_OFF:
+        case MIDI_EVENT_NOTE_ON:
+        case MIDI_EVENT_PITCH_BEND:
+            SendChannelMsg(delta_time, event, true);
+            break;
+
+        case MIDI_EVENT_PROGRAM_CHANGE:
+            SendChannelMsg(delta_time, event, false);
+            break;
+
+        default:
+            SendNOPMsg(delta_time);
+            break;
+    }
+
+    return true;
+}
+
+static boolean AddToBuffer_Standard(unsigned int delta_time,
+                                    const midi_event_t *event,
+                                    win_midi_track_t *track)
 {
     midi_fallback_t fallback = {FALLBACK_NONE, 0};
 
     if (use_fallback)
     {
-        MIDI_CheckFallback(event, &fallback, true);
+        MIDI_CheckFallback(event, &fallback, winmm_complevel == COMP_FULL);
     }
 
     switch ((int) event->event_type)
     {
         case MIDI_EVENT_SYSEX:
-            SendSysExMsg(delta_time, event);
+            if (winmm_complevel == COMP_FULL)
+            {
+                SendSysExMsg(delta_time, event);
+            }
+            else
+            {
+                SendNOPMsg(delta_time);
+            }
             return false;
 
         case MIDI_EVENT_META:
@@ -851,11 +947,28 @@ static boolean AddToBuffer(unsigned int delta_time, const midi_event_t *event,
         return true;
     }
 
-    switch ((int)event->event_type)
+    switch ((int) event->event_type)
     {
         case MIDI_EVENT_CONTROLLER:
             switch (event->data.channel.param1)
             {
+                case MIDI_CONTROLLER_BANK_SELECT_MSB:
+                case MIDI_CONTROLLER_MODULATION:
+                case MIDI_CONTROLLER_DATA_ENTRY_MSB:
+                case MIDI_CONTROLLER_PAN:
+                case MIDI_CONTROLLER_EXPRESSION:
+                case MIDI_CONTROLLER_DATA_ENTRY_LSB:
+                case MIDI_CONTROLLER_HOLD1_PEDAL:
+                case MIDI_CONTROLLER_SOFT_PEDAL:
+                case MIDI_CONTROLLER_REVERB:
+                case MIDI_CONTROLLER_CHORUS:
+                case MIDI_CONTROLLER_ALL_SOUND_OFF:
+                case MIDI_CONTROLLER_ALL_NOTES_OFF:
+                case MIDI_CONTROLLER_POLY_MODE_OFF:
+                case MIDI_CONTROLLER_POLY_MODE_ON:
+                    SendChannelMsg(delta_time, event, true);
+                    break;
+
                 case MIDI_CONTROLLER_VOLUME_MSB:
                     if (track->emidi_volume)
                     {
@@ -876,6 +989,65 @@ static boolean AddToBuffer(unsigned int delta_time, const midi_event_t *event,
                                    fallback.type != FALLBACK_BANK_LSB);
                     break;
 
+                case MIDI_CONTROLLER_NRPN_LSB:
+                case MIDI_CONTROLLER_NRPN_MSB:
+                    if (winmm_complevel == COMP_FULL)
+                    {
+                        SendChannelMsg(delta_time, event, true);
+                    }
+                    else
+                    {
+                        // MS GS Wavetable Synth nulls RPN for any NRPN.
+                        SendNullRPN(delta_time, event);
+                    }
+                    break;
+
+                case MIDI_CONTROLLER_RPN_LSB:
+                    switch (event->data.channel.param2)
+                    {
+                        case MIDI_RPN_PITCH_BEND_SENS_LSB:
+                        case MIDI_RPN_FINE_TUNING_LSB:
+                        case MIDI_RPN_COARSE_TUNING_LSB:
+                        case MIDI_RPN_NULL:
+                            SendChannelMsg(delta_time, event, true);
+                            break;
+
+                        default:
+                            if (winmm_complevel == COMP_FULL)
+                            {
+                                SendChannelMsg(delta_time, event, true);
+                            }
+                            else
+                            {
+                                // MS GS Wavetable Synth ignores other RPNs.
+                                SendNullRPN(delta_time, event);
+                            }
+                            break;
+                    }
+                    break;
+
+                case MIDI_CONTROLLER_RPN_MSB:
+                    switch (event->data.channel.param2)
+                    {
+                        case MIDI_RPN_MSB:
+                        case MIDI_RPN_NULL:
+                            SendChannelMsg(delta_time, event, true);
+                            break;
+
+                        default:
+                            if (winmm_complevel == COMP_FULL)
+                            {
+                                SendChannelMsg(delta_time, event, true);
+                            }
+                            else
+                            {
+                                // MS GS Wavetable Synth ignores other RPNs.
+                                SendNullRPN(delta_time, event);
+                            }
+                            break;
+                    }
+                    break;
+
                 case EMIDI_CONTROLLER_TRACK_DESIGNATION:
                 case EMIDI_CONTROLLER_TRACK_EXCLUSION:
                 case EMIDI_CONTROLLER_PROGRAM_CHANGE:
@@ -893,14 +1065,20 @@ static boolean AddToBuffer(unsigned int delta_time, const midi_event_t *event,
                     break;
 
                 default:
-                    SendChannelMsg(delta_time, event, true);
+                    if (winmm_complevel == COMP_FULL)
+                    {
+                        SendChannelMsg(delta_time, event, true);
+                    }
+                    else
+                    {
+                        SendNOPMsg(delta_time);
+                    }
                     break;
             }
             break;
 
         case MIDI_EVENT_NOTE_OFF:
         case MIDI_EVENT_NOTE_ON:
-        case MIDI_EVENT_AFTERTOUCH:
         case MIDI_EVENT_PITCH_BEND:
             SendChannelMsg(delta_time, event, true);
             break;
@@ -917,8 +1095,26 @@ static boolean AddToBuffer(unsigned int delta_time, const midi_event_t *event,
             }
             break;
 
+        case MIDI_EVENT_AFTERTOUCH:
+            if (winmm_complevel == COMP_FULL)
+            {
+                SendChannelMsg(delta_time, event, true);
+            }
+            else
+            {
+                SendNOPMsg(delta_time);
+            }
+            break;
+
         case MIDI_EVENT_CHAN_AFTERTOUCH:
-            SendChannelMsg(delta_time, event, false);
+            if (winmm_complevel == COMP_FULL)
+            {
+                SendChannelMsg(delta_time, event, false);
+            }
+            else
+            {
+                SendNOPMsg(delta_time);
+            }
             break;
 
         default:
@@ -928,6 +1124,10 @@ static boolean AddToBuffer(unsigned int delta_time, const midi_event_t *event,
 
     return true;
 }
+
+static boolean (*AddToBuffer)(unsigned int delta_time,
+                              const midi_event_t *event,
+                              win_midi_track_t *track) = AddToBuffer_Vanilla;
 
 static void RestartLoop(void)
 {
@@ -1181,6 +1381,8 @@ static boolean I_WIN_InitMusic(void)
     hBufferReturnEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
     hExitEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
 
+    AddToBuffer = (winmm_complevel == COMP_VANILLA) ? AddToBuffer_Vanilla
+                                                    : AddToBuffer_Standard;
     MIDI_InitFallback();
 
     return true;

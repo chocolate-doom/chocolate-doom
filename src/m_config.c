@@ -1059,6 +1059,13 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_STRING(winmm_midi_device),
 
     //!
+    // Compatibility level for native Windows MIDI, default 0. Valid values are
+    // 0 (Vanilla), 1 (Standard), 2 (Full).
+    //
+
+    CONFIG_VARIABLE_INT(winmm_complevel),
+
+    //!
     // Reset device type for native Windows MIDI, default 1. Valid values are
     // 0 (None), 1 (GM Mode), 2 (GS Mode), 3 (XG Mode).
     //

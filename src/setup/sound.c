@@ -84,6 +84,7 @@ static char **midi_names;
 static int midi_num_devices;
 static int midi_index;
 char *winmm_midi_device = NULL;
+int winmm_complevel = 0;
 int winmm_reset_type = 1;
 int winmm_reset_delay = 0;
 #endif
@@ -357,6 +358,7 @@ void BindSoundVariables(void)
     M_BindStringVariable("timidity_cfg_path",     &timidity_cfg_path);
 #ifdef _WIN32
     M_BindStringVariable("winmm_midi_device",     &winmm_midi_device);
+    M_BindIntVariable("winmm_complevel",          &winmm_complevel);
     M_BindIntVariable("winmm_reset_type",         &winmm_reset_type);
     M_BindIntVariable("winmm_reset_delay",        &winmm_reset_delay);
 #endif

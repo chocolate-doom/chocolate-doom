@@ -272,6 +272,7 @@ extern char *music_pack_path;
 extern char *timidity_cfg_path;
 #ifdef _WIN32
 extern char *winmm_midi_device;
+extern int winmm_complevel;
 extern int winmm_reset_type;
 extern int winmm_reset_delay;
 #endif
