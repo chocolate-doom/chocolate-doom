@@ -64,7 +64,7 @@ static const byte ff_loopEnd[] = {'l', 'o', 'o', 'p', 'E', 'n', 'd'};
 static boolean use_fallback;
 
 #define DEFAULT_VOLUME 100
-static int channel_volume[MIDI_CHANNELS_PER_TRACK];
+static byte channel_volume[MIDI_CHANNELS_PER_TRACK];
 static float volume_factor = 0.0f;
 static boolean update_volume = false;
 
@@ -230,26 +230,29 @@ static void StreamOut(void)
     }
 }
 
-static void SendShortMsg(int time, int status, int channel, int param1, int param2)
+static void SendShortMsg(unsigned int delta_time, byte status, byte channel,
+                         byte param1, byte param2)
 {
     native_event_t native_event;
-    native_event.dwDeltaTime = time;
+    native_event.dwDeltaTime = delta_time;
     native_event.dwStreamID = 0;
     native_event.dwEvent = MAKE_EVT(status | channel, param1, param2, MEVT_SHORTMSG);
     WriteBuffer((byte *)&native_event, sizeof(native_event_t));
 }
 
-static void SendChannelMsg(int time, const midi_event_t *event, boolean use_param2)
+static void SendChannelMsg(unsigned int delta_time, const midi_event_t *event,
+                           boolean use_param2)
 {
-    SendShortMsg(time, event->event_type, event->data.channel.channel,
+    SendShortMsg(delta_time, event->event_type, event->data.channel.channel,
                  event->data.channel.param1,
                  use_param2 ? event->data.channel.param2 : 0);
 }
 
-static void SendLongMsg(int time, const byte *ptr, int length)
+static void SendLongMsg(unsigned int delta_time, const byte *ptr,
+                        unsigned int length)
 {
     native_event_t native_event;
-    native_event.dwDeltaTime = time;
+    native_event.dwDeltaTime = delta_time;
     native_event.dwStreamID = 0;
     native_event.dwEvent = MAKE_EVT(length, 0, 0, MEVT_LONGMSG);
     WriteBuffer((byte *)&native_event, sizeof(native_event_t));
@@ -257,46 +260,47 @@ static void SendLongMsg(int time, const byte *ptr, int length)
     WriteBufferPad();
 }
 
-static void SendNOPMsg(int time)
+static void SendNOPMsg(unsigned int delta_time)
 {
     native_event_t native_event;
-    native_event.dwDeltaTime = time;
+    native_event.dwDeltaTime = delta_time;
     native_event.dwStreamID = 0;
     native_event.dwEvent = MAKE_EVT(0, 0, 0, MEVT_NOP);
     WriteBuffer((byte *)&native_event, sizeof(native_event_t));
 }
 
-static void SendDelayMsg(int time_ms)
+static void SendDelayMsg(unsigned int time_ms)
 {
     // Convert ms to ticks (see "Standard MIDI Files 1.0" page 14).
-    int time_ticks = (float)time_ms * 1000 * timediv / tempo + 0.5f;
-    SendNOPMsg(time_ticks);
+    const unsigned int ticks = (float) time_ms * 1000 * timediv / tempo + 0.5f;
+    SendNOPMsg(ticks);
 }
 
-static void UpdateTempo(int time, const midi_event_t *event)
+static void UpdateTempo(unsigned int delta_time, const midi_event_t *event)
 {
     native_event_t native_event;
 
     tempo = MAKE_EVT(event->data.meta.data[2], event->data.meta.data[1],
                      event->data.meta.data[0], 0);
 
-    native_event.dwDeltaTime = time;
+    native_event.dwDeltaTime = delta_time;
     native_event.dwStreamID = 0;
     native_event.dwEvent = MAKE_EVT(tempo, 0, 0, MEVT_TEMPO);
     WriteBuffer((byte *)&native_event, sizeof(native_event_t));
 }
 
-static void SendManualVolumeMsg(int time, int channel, int volume)
+static void SendManualVolumeMsg(unsigned int delta_time, byte channel,
+                                byte volume)
 {
-    int scaled_volume = volume * volume_factor + 0.5f;
-    SendShortMsg(time, MIDI_EVENT_CONTROLLER, channel,
+    const byte scaled_volume = volume * volume_factor + 0.5f;
+    SendShortMsg(delta_time, MIDI_EVENT_CONTROLLER, channel,
                  MIDI_CONTROLLER_VOLUME_MSB, scaled_volume);
     channel_volume[channel] = volume;
 }
 
-static void SendVolumeMsg(int time, const midi_event_t *event)
+static void SendVolumeMsg(unsigned int delta_time, const midi_event_t *event)
 {
-    SendManualVolumeMsg(time, event->data.channel.channel,
+    SendManualVolumeMsg(delta_time, event->data.channel.channel,
                         event->data.channel.param2);
 }
 
@@ -413,7 +417,7 @@ static void ResetDevice(void)
 // special SysEx message called "part level" that is equivalent to this. MS GS
 // Wavetable Synth ignores these messages, but other MIDI devices support them.
 
-static boolean IsPartLevel(const byte *msg, int length)
+static boolean IsPartLevel(const byte *msg, unsigned int length)
 {
     if (length == 10 &&
         msg[0] == 0x41 && // Roland
@@ -439,7 +443,7 @@ static boolean IsPartLevel(const byte *msg, int length)
     return false;
 }
 
-static boolean IsSysExReset(const byte *msg, int length)
+static boolean IsSysExReset(const byte *msg, unsigned int length)
 {
     if (length < 5)
     {
@@ -598,24 +602,25 @@ static void SendSysExMsg(unsigned int delta_time, const midi_event_t *event)
     }
 }
 
-static void SendProgramMsg(int time, int channel, int program,
+static void SendProgramMsg(unsigned int delta_time, byte channel, byte program,
                            const midi_fallback_t *fallback)
 {
     switch ((int)fallback->type)
     {
         case FALLBACK_BANK_MSB:
-            SendShortMsg(time, MIDI_EVENT_CONTROLLER, channel,
+            SendShortMsg(delta_time, MIDI_EVENT_CONTROLLER, channel,
                          MIDI_CONTROLLER_BANK_SELECT_MSB, fallback->value);
             SendShortMsg(0, MIDI_EVENT_PROGRAM_CHANGE, channel, program, 0);
             break;
 
         case FALLBACK_DRUMS:
-            SendShortMsg(time, MIDI_EVENT_PROGRAM_CHANGE, channel,
+            SendShortMsg(delta_time, MIDI_EVENT_PROGRAM_CHANGE, channel,
                          fallback->value, 0);
             break;
 
         default:
-            SendShortMsg(time, MIDI_EVENT_PROGRAM_CHANGE, channel, program, 0);
+            SendShortMsg(delta_time, MIDI_EVENT_PROGRAM_CHANGE, channel,
+                         program, 0);
             break;
     }
 }
