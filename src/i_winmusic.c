@@ -542,13 +542,38 @@ static boolean IsSysExReset(const byte *msg, int length)
     return false;
 }
 
-static void SendSysExMsg(int time, const byte *data, int length)
+static void SendSysExMsg(unsigned int delta_time, const midi_event_t *event)
 {
     native_event_t native_event;
     const byte event_type = MIDI_EVENT_SYSEX;
+    const byte *data = event->data.sysex.data;
+    const unsigned int length = event->data.sysex.length;
+
+    if (IsPartLevel(data, length))
+    {
+        byte channel;
+
+        // Convert "block number" to a channel number.
+        if (data[5] == 0x10) // Channel 10
+        {
+            channel = 9;
+        }
+        else if (data[5] < 0x1A) // Channels 1-9
+        {
+            channel = (data[5] & 0x0F) - 1;
+        }
+        else // Channels 11-16
+        {
+            channel = data[5] & 0x0F;
+        }
+
+        // Replace SysEx part level message with channel volume message.
+        SendManualVolumeMsg(delta_time, channel, data[7]);
+        return;
+    }
 
     // Send the SysEx message.
-    native_event.dwDeltaTime = time;
+    native_event.dwDeltaTime = delta_time;
     native_event.dwStreamID = 0;
     native_event.dwEvent = MAKE_EVT(length + sizeof(byte), 0, 0, MEVT_LONGMSG);
     WriteBuffer((byte *)&native_event, sizeof(native_event_t));
@@ -777,36 +802,10 @@ static boolean AddToBuffer(unsigned int delta_time, const midi_event_t *event,
         MIDI_CheckFallback(event, &fallback);
     }
 
-    switch ((int)event->event_type)
+    switch ((int) event->event_type)
     {
         case MIDI_EVENT_SYSEX:
-            if (IsPartLevel(event->data.sysex.data, event->data.sysex.length))
-            {
-                const byte *data = event->data.sysex.data;
-                byte channel;
-
-                // Convert "block number" to a channel number.
-                if (data[5] == 0x10) // Channel 10
-                {
-                    channel = 9;
-                }
-                else if (data[5] < 0x1A) // Channels 1-9
-                {
-                    channel = (data[5] & 0x0F) - 1;
-                }
-                else // Channels 11-16
-                {
-                    channel = data[5] & 0x0F;
-                }
-
-                // Replace SysEx part level message with channel volume message.
-                SendManualVolumeMsg(delta_time, channel, data[7]);
-            }
-            else
-            {
-                SendSysExMsg(delta_time, event->data.sysex.data,
-                             event->data.sysex.length);
-            }
+            SendSysExMsg(delta_time, event);
             return false;
 
         case MIDI_EVENT_META:
