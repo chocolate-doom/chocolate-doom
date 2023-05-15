@@ -792,6 +792,31 @@ static void SendEMIDI(unsigned int delta_time, const midi_event_t *event,
     }
 }
 
+static void SendMetaMsg(unsigned int delta_time, const midi_event_t *event,
+                        win_midi_track_t *track)
+{
+    switch (event->data.meta.type)
+    {
+        case MIDI_META_END_OF_TRACK:
+            track->end_of_track = true;
+            SendNOPMsg(delta_time);
+            break;
+
+        case MIDI_META_SET_TEMPO:
+            UpdateTempo(delta_time, event);
+            break;
+
+        case MIDI_META_MARKER:
+            CheckFFLoop(event);
+            SendNOPMsg(delta_time);
+            break;
+
+        default:
+            SendNOPMsg(delta_time);
+            break;
+    }
+}
+
 static boolean AddToBuffer(unsigned int delta_time, const midi_event_t *event,
                            win_midi_track_t *track)
 {
@@ -809,26 +834,7 @@ static boolean AddToBuffer(unsigned int delta_time, const midi_event_t *event,
             return false;
 
         case MIDI_EVENT_META:
-            switch (event->data.meta.type)
-            {
-                case MIDI_META_END_OF_TRACK:
-                    track->end_of_track = true;
-                    SendNOPMsg(delta_time);
-                    break;
-
-                case MIDI_META_SET_TEMPO:
-                    UpdateTempo(delta_time, event);
-                    break;
-
-                case MIDI_META_MARKER:
-                    CheckFFLoop(event);
-                    SendNOPMsg(delta_time);
-                    break;
-
-                default:
-                    SendNOPMsg(delta_time);
-                    break;
-            }
+            SendMetaMsg(delta_time, event, track);
             return true;
     }
 
