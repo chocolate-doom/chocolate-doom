@@ -1060,7 +1060,7 @@ static default_t extra_defaults_list[] =
 
     //!
     // Reset device type for native Windows MIDI, default 1. Valid values are
-    // 0 (None), 1 (GS Mode), 2 (GM Mode), 3 (GM2 Mode), 4 (XG Mode).
+    // 0 (None), 1 (GM Mode), 2 (GS Mode), 3 (XG Mode).
     //
 
     CONFIG_VARIABLE_INT(winmm_reset_type),

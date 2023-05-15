@@ -34,31 +34,24 @@
 #include "midifile.h"
 #include "midifallback.h"
 
-char *winmm_midi_device = NULL;
-
 enum
 {
-    RESET_TYPE_DEFAULT = -1,
     RESET_TYPE_NONE,
-    RESET_TYPE_GS,
     RESET_TYPE_GM,
-    RESET_TYPE_GM2,
+    RESET_TYPE_GS,
     RESET_TYPE_XG,
 };
 
-int winmm_reset_type = RESET_TYPE_DEFAULT;
+char *winmm_midi_device = NULL;
+int winmm_reset_type = RESET_TYPE_GM;
 int winmm_reset_delay = 0;
-
-static const byte gs_reset[] = {
-    0xF0, 0x41, 0x10, 0x42, 0x12, 0x40, 0x00, 0x7F, 0x00, 0x41, 0xF7
-};
 
 static const byte gm_system_on[] = {
     0xF0, 0x7E, 0x7F, 0x09, 0x01, 0xF7
 };
 
-static const byte gm2_system_on[] = {
-    0xF0, 0x7E, 0x7F, 0x09, 0x03, 0xF7
+static const byte gs_reset[] = {
+    0xF0, 0x41, 0x10, 0x42, 0x12, 0x40, 0x00, 0x7F, 0x00, 0x41, 0xF7
 };
 
 static const byte xg_system_on[] = {
@@ -84,9 +77,6 @@ static MIDIHDR MidiStreamHdr;
 static HANDLE hBufferReturnEvent;
 static HANDLE hExitEvent;
 static HANDLE hPlayerThread;
-
-// MS GS Wavetable Synth Device ID.
-static int ms_gs_synth = MIDI_MAPPER;
 
 // This is a reduced Windows MIDIEVENT structure for MEVT_F_SHORT
 // type of events.
@@ -357,7 +347,6 @@ static void ResetPitchBendSensitivity(void)
 static void ResetDevice(void)
 {
     int i;
-    int reset_type;
 
     for (i = 0; i < MIDI_CHANNELS_PER_TRACK; ++i)
     {
@@ -366,50 +355,10 @@ static void ResetDevice(void)
         SendShortMsg(0, MIDI_EVENT_CONTROLLER, i, MIDI_CONTROLLER_ALL_SOUND_OFF, 0);
     }
 
-    if (MidiDevice == ms_gs_synth)
-    {
-        // MS GS Wavetable Synth lacks instrument fallback in GS mode which can
-        // cause wrong or silent notes (MAYhem19.wad D_DM2TTL). It also responds
-        // to XG System On when it should ignore it.
-        switch (winmm_reset_type)
-        {
-            case RESET_TYPE_NONE:
-                reset_type = RESET_TYPE_NONE;
-                break;
-
-            case RESET_TYPE_GS:
-                reset_type = RESET_TYPE_GS;
-                break;
-
-            default:
-                reset_type = RESET_TYPE_GM;
-                break;
-        }
-    }
-    else // Unknown device
-    {
-        // Most devices support GS mode. Exceptions are some older hardware and
-        // a few older VSTis. Some devices lack instrument fallback in GS mode.
-        switch (winmm_reset_type)
-        {
-            case RESET_TYPE_NONE:
-            case RESET_TYPE_GM:
-            case RESET_TYPE_GM2:
-            case RESET_TYPE_XG:
-                reset_type = winmm_reset_type;
-                break;
-
-            default:
-                reset_type = RESET_TYPE_GS;
-                break;
-        }
-    }
-
-    // Use instrument fallback in GS mode.
     MIDI_ResetFallback();
-    use_fallback = (reset_type == RESET_TYPE_GS);
+    use_fallback = false;
 
-    switch (reset_type)
+    switch (winmm_reset_type)
     {
         case RESET_TYPE_NONE:
             ResetControllers();
@@ -417,30 +366,23 @@ static void ResetDevice(void)
 
         case RESET_TYPE_GS:
             SendLongMsg(0, gs_reset, sizeof(gs_reset));
-            break;
-
-        case RESET_TYPE_GM:
-            SendLongMsg(0, gm_system_on, sizeof(gm_system_on));
-            break;
-
-        case RESET_TYPE_GM2:
-            SendLongMsg(0, gm2_system_on, sizeof(gm2_system_on));
+            use_fallback = true;
             break;
 
         case RESET_TYPE_XG:
             SendLongMsg(0, xg_system_on, sizeof(xg_system_on));
             break;
+
+        default:
+            SendLongMsg(0, gm_system_on, sizeof(gm_system_on));
+            break;
     }
 
-    if (reset_type == RESET_TYPE_NONE || MidiDevice == ms_gs_synth)
-    {
-        // MS GS Wavetable Synth doesn't reset pitch bend sensitivity, even
-        // when sending a GM/GS reset, so do it manually.
-        ResetPitchBendSensitivity();
-    }
+    // MS GS Wavetable Synth doesn't reset pitch bend sensitivity.
+    ResetPitchBendSensitivity();
 
     // Reset volume (initial playback or on shutdown if no SysEx reset).
-    if (initial_playback || reset_type == RESET_TYPE_NONE)
+    if (initial_playback || winmm_reset_type == RESET_TYPE_NONE)
     {
         // Scale by slider on initial playback, max on shutdown.
         volume_factor = initial_playback ? volume_factor : 1.0f;
@@ -590,17 +532,7 @@ static boolean IsSysExReset(const byte *msg, int length)
 static void SendSysExMsg(int time, const byte *data, int length)
 {
     native_event_t native_event;
-    boolean is_sysex_reset;
     const byte event_type = MIDI_EVENT_SYSEX;
-
-    is_sysex_reset = IsSysExReset(data, length);
-
-    if (is_sysex_reset && MidiDevice == ms_gs_synth)
-    {
-        // Ignore SysEx reset from MIDI file for MS GS Wavetable Synth.
-        SendNOPMsg(time);
-        return;
-    }
 
     // Send the SysEx message.
     native_event.dwDeltaTime = time;
@@ -611,7 +543,7 @@ static void SendSysExMsg(int time, const byte *data, int length)
     WriteBuffer(data, length);
     WriteBufferPad();
 
-    if (is_sysex_reset)
+    if (IsSysExReset(data, length))
     {
         // SysEx reset also resets volume. Take the default channel volumes
         // and scale them by the user's volume slider.
@@ -620,8 +552,11 @@ static void SendSysExMsg(int time, const byte *data, int length)
         // Disable instrument fallback and give priority to MIDI file. Fallback
         // assumes GS (SC-55 level) and the MIDI file could be GM, GM2, XG, or
         // GS (SC-88 or higher). Preserve the composer's intent.
-        MIDI_ResetFallback();
-        use_fallback = false;
+        if (use_fallback)
+        {
+            MIDI_ResetFallback();
+            use_fallback = false;
+        }
     }
 }
 
@@ -1205,15 +1140,6 @@ static boolean I_WIN_InitMusic(void)
         if (mmr == MMSYSERR_NOERROR)
         {
             winmm_midi_device = M_StringDuplicate(mcaps.szPname);
-        }
-    }
-
-    // Is this device MS GS Synth?
-    {
-        const char pname[] = "Microsoft GS Wavetable";
-        if (!strncasecmp(pname, mcaps.szPname, sizeof(pname) - 1))
-        {
-            ms_gs_synth = MidiDevice;
         }
     }
 
