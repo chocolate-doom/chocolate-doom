@@ -1070,18 +1070,6 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_INT(winmm_reset_delay),
-
-    //!
-    // Reverb level for native Windows MIDI, default -1, range 0-127.
-    //
-
-    CONFIG_VARIABLE_INT(winmm_reverb_level),
-
-    //!
-    // Chorus level for native Windows MIDI, default -1, range 0-127.
-    //
-
-    CONFIG_VARIABLE_INT(winmm_chorus_level),
 #endif
 
     //!

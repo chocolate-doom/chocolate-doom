@@ -35,8 +35,6 @@
 #include "midifallback.h"
 
 char *winmm_midi_device = NULL;
-int winmm_reverb_level = -1;
-int winmm_chorus_level = -1;
 
 enum
 {
@@ -319,46 +317,6 @@ static void ResetVolume(void)
     }
 }
 
-static void ResetReverb(int reset_type)
-{
-    int i;
-    int reverb = winmm_reverb_level;
-
-    if (reverb == -1 && reset_type == RESET_TYPE_NONE)
-    {
-        // No reverb specified and no SysEx reset selected. Use GM default.
-        reverb = 40;
-    }
-
-    if (reverb > -1)
-    {
-        for (i = 0; i < MIDI_CHANNELS_PER_TRACK; ++i)
-        {
-            SendShortMsg(0, MIDI_EVENT_CONTROLLER, i, MIDI_CONTROLLER_REVERB, reverb);
-        }
-    }
-}
-
-static void ResetChorus(int reset_type)
-{
-    int i;
-    int chorus = winmm_chorus_level;
-
-    if (chorus == -1 && reset_type == RESET_TYPE_NONE)
-    {
-        // No chorus specified and no SysEx reset selected. Use GM default.
-        chorus = 0;
-    }
-
-    if (chorus > -1)
-    {
-        for (i = 0; i < MIDI_CHANNELS_PER_TRACK; ++i)
-        {
-            SendShortMsg(0, MIDI_EVENT_CONTROLLER, i, MIDI_CONTROLLER_CHORUS, chorus);
-        }
-    }
-}
-
 static void ResetControllers(void)
 {
     int i;
@@ -371,6 +329,8 @@ static void ResetControllers(void)
         SendShortMsg(0, MIDI_EVENT_CONTROLLER, i, MIDI_CONTROLLER_BANK_SELECT_MSB, 0);
         SendShortMsg(0, MIDI_EVENT_CONTROLLER, i, MIDI_CONTROLLER_BANK_SELECT_LSB, 0);
         SendShortMsg(0, MIDI_EVENT_PROGRAM_CHANGE, i, 0, 0);
+        SendShortMsg(0, MIDI_EVENT_CONTROLLER, i, MIDI_CONTROLLER_REVERB, 40);
+        SendShortMsg(0, MIDI_EVENT_CONTROLLER, i, MIDI_CONTROLLER_CHORUS, 0);
     }
 }
 
@@ -478,9 +438,6 @@ static void ResetDevice(void)
         // when sending a GM/GS reset, so do it manually.
         ResetPitchBendSensitivity();
     }
-
-    ResetReverb(reset_type);
-    ResetChorus(reset_type);
 
     // Reset volume (initial playback or on shutdown if no SysEx reset).
     if (initial_playback || reset_type == RESET_TYPE_NONE)
