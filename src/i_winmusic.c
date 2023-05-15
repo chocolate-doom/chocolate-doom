@@ -239,6 +239,13 @@ static void SendShortMsg(int time, int status, int channel, int param1, int para
     WriteBuffer((byte *)&native_event, sizeof(native_event_t));
 }
 
+static void SendChannelMsg(int time, const midi_event_t *event, boolean use_param2)
+{
+    SendShortMsg(time, event->event_type, event->data.channel.channel,
+                 event->data.channel.param1,
+                 use_param2 ? event->data.channel.param2 : 0);
+}
+
 static void SendLongMsg(int time, const byte *ptr, int length)
 {
     native_event_t native_event;
@@ -279,12 +286,18 @@ static void UpdateTempo(int time, const midi_event_t *event)
     WriteBuffer((byte *)&native_event, sizeof(native_event_t));
 }
 
-static void SendVolumeMsg(int time, int channel, int volume)
+static void SendManualVolumeMsg(int time, int channel, int volume)
 {
     int scaled_volume = volume * volume_factor + 0.5f;
     SendShortMsg(time, MIDI_EVENT_CONTROLLER, channel,
                  MIDI_CONTROLLER_VOLUME_MSB, scaled_volume);
     channel_volume[channel] = volume;
+}
+
+static void SendVolumeMsg(int time, const midi_event_t *event)
+{
+    SendManualVolumeMsg(time, event->data.channel.channel,
+                        event->data.channel.param2);
 }
 
 static void UpdateVolume(void)
@@ -293,7 +306,7 @@ static void UpdateVolume(void)
 
     for (i = 0; i < MIDI_CHANNELS_PER_TRACK; ++i)
     {
-        SendVolumeMsg(0, i, channel_volume[i]);
+        SendManualVolumeMsg(0, i, channel_volume[i]);
     }
 }
 
@@ -303,7 +316,7 @@ static void ResetVolume(void)
 
     for (i = 0; i < MIDI_CHANNELS_PER_TRACK; ++i)
     {
-        SendVolumeMsg(0, i, DEFAULT_VOLUME);
+        SendManualVolumeMsg(0, i, DEFAULT_VOLUME);
     }
 }
 
@@ -646,7 +659,7 @@ static boolean AddToBuffer(unsigned int delta_time, const midi_event_t *event,
                 }
 
                 // Replace SysEx part level message with channel volume message.
-                SendVolumeMsg(delta_time, channel, data[7]);
+                SendManualVolumeMsg(delta_time, channel, data[7]);
             }
             else
             {
@@ -699,8 +712,7 @@ static boolean AddToBuffer(unsigned int delta_time, const midi_event_t *event,
                     }
                     else
                     {
-                        SendVolumeMsg(delta_time, event->data.channel.channel,
-                                      event->data.channel.param2);
+                        SendVolumeMsg(delta_time, event);
                     }
                     break;
 
@@ -709,20 +721,8 @@ static boolean AddToBuffer(unsigned int delta_time, const midi_event_t *event,
                     break;
 
                 case MIDI_CONTROLLER_BANK_SELECT_LSB:
-                    if (fallback.type == FALLBACK_BANK_LSB)
-                    {
-                        SendShortMsg(delta_time, MIDI_EVENT_CONTROLLER,
-                                     event->data.channel.channel,
-                                     MIDI_CONTROLLER_BANK_SELECT_LSB,
-                                     fallback.value);
-                    }
-                    else
-                    {
-                        SendShortMsg(delta_time, MIDI_EVENT_CONTROLLER,
-                                     event->data.channel.channel,
-                                     MIDI_CONTROLLER_BANK_SELECT_LSB,
-                                     event->data.channel.param2);
-                    }
+                    SendChannelMsg(delta_time, event,
+                                   fallback.type != FALLBACK_BANK_LSB);
                     break;
 
                 case EMIDI_CONTROLLER_TRACK_DESIGNATION:
@@ -784,8 +784,7 @@ static boolean AddToBuffer(unsigned int delta_time, const midi_event_t *event,
                     if (track->emidi_volume || track->elapsed_time < timediv)
                     {
                         track->emidi_volume = true;
-                        SendVolumeMsg(delta_time, event->data.channel.channel,
-                                      event->data.channel.param2);
+                        SendVolumeMsg(delta_time, event);
                     }
                     else
                     {
@@ -855,16 +854,11 @@ static boolean AddToBuffer(unsigned int delta_time, const midi_event_t *event,
 
                 case MIDI_CONTROLLER_RESET_ALL_CTRLS:
                     // MS GS Wavetable Synth resets volume if param2 isn't zero.
-                    SendShortMsg(delta_time, MIDI_EVENT_CONTROLLER,
-                                 event->data.channel.channel,
-                                 MIDI_CONTROLLER_RESET_ALL_CTRLS, 0);
+                    SendChannelMsg(delta_time, event, false);
                     break;
 
                 default:
-                    SendShortMsg(delta_time, MIDI_EVENT_CONTROLLER,
-                                 event->data.channel.channel,
-                                 event->data.channel.param1,
-                                 event->data.channel.param2);
+                    SendChannelMsg(delta_time, event, true);
                     break;
             }
             break;
@@ -873,10 +867,7 @@ static boolean AddToBuffer(unsigned int delta_time, const midi_event_t *event,
         case MIDI_EVENT_NOTE_ON:
         case MIDI_EVENT_AFTERTOUCH:
         case MIDI_EVENT_PITCH_BEND:
-            SendShortMsg(delta_time, event->event_type,
-                         event->data.channel.channel,
-                         event->data.channel.param1,
-                         event->data.channel.param2);
+            SendChannelMsg(delta_time, event, true);
             break;
 
         case MIDI_EVENT_PROGRAM_CHANGE:
@@ -892,9 +883,7 @@ static boolean AddToBuffer(unsigned int delta_time, const midi_event_t *event,
             break;
 
         case MIDI_EVENT_CHAN_AFTERTOUCH:
-            SendShortMsg(delta_time, MIDI_EVENT_CHAN_AFTERTOUCH,
-                         event->data.channel.channel,
-                         event->data.channel.param1, 0);
+            SendChannelMsg(delta_time, event, false);
             break;
 
         default:
