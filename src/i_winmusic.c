@@ -266,7 +266,7 @@ static void SendDelayMsg(int time_ms)
     SendNOPMsg(time_ticks);
 }
 
-static void UpdateTempo(int time, midi_event_t *event)
+static void UpdateTempo(int time, const midi_event_t *event)
 {
     native_event_t native_event;
 
@@ -561,7 +561,7 @@ static void SendSysExMsg(int time, const byte *data, int length)
 }
 
 static void SendProgramMsg(int time, int channel, int program,
-                           midi_fallback_t *fallback)
+                           const midi_fallback_t *fallback)
 {
     switch ((int)fallback->type)
     {
@@ -595,7 +595,7 @@ static void SetLoopPoint(void)
     song.saved_elapsed_time = song.elapsed_time;
 }
 
-static void CheckFFLoop(midi_event_t *event)
+static void CheckFFLoop(const midi_event_t *event)
 {
     if (event->data.meta.length == sizeof(ff_loopStart) &&
         !memcmp(event->data.meta.data, ff_loopStart, sizeof(ff_loopStart)))
@@ -610,7 +610,7 @@ static void CheckFFLoop(midi_event_t *event)
     }
 }
 
-static boolean AddToBuffer(unsigned int delta_time, midi_event_t *event,
+static boolean AddToBuffer(unsigned int delta_time, const midi_event_t *event,
                            win_midi_track_t *track)
 {
     unsigned int i;
