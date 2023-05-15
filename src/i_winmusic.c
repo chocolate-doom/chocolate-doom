@@ -623,12 +623,153 @@ static void CheckFFLoop(const midi_event_t *event)
     }
 }
 
-static boolean AddToBuffer(unsigned int delta_time, const midi_event_t *event,
-                           win_midi_track_t *track)
+static void SendEMIDI(unsigned int delta_time, const midi_event_t *event,
+                      win_midi_track_t *track, const midi_fallback_t *fallback)
 {
     unsigned int i;
     unsigned int flag;
     int count;
+
+    switch ((int) event->event_type)
+    {
+        case EMIDI_CONTROLLER_TRACK_DESIGNATION:
+            if (track->elapsed_time < timediv)
+            {
+                flag = event->data.channel.param2;
+
+                if (flag == EMIDI_DEVICE_ALL)
+                {
+                    track->emidi_device_flags = UINT_MAX;
+                    track->emidi_designated = true;
+                }
+                else if (flag <= EMIDI_DEVICE_ULTRASOUND)
+                {
+                    track->emidi_device_flags |= 1 << flag;
+                    track->emidi_designated = true;
+                }
+            }
+            SendNOPMsg(delta_time);
+            break;
+
+        case EMIDI_CONTROLLER_TRACK_EXCLUSION:
+            if (song.rpg_loop)
+            {
+                SetLoopPoint();
+            }
+            else if (track->elapsed_time < timediv)
+            {
+                flag = event->data.channel.param2;
+
+                if (!track->emidi_designated)
+                {
+                    track->emidi_device_flags = UINT_MAX;
+                    track->emidi_designated = true;
+                }
+
+                if (flag <= EMIDI_DEVICE_ULTRASOUND)
+                {
+                    track->emidi_device_flags &= ~(1 << flag);
+                }
+            }
+            SendNOPMsg(delta_time);
+            break;
+
+        case EMIDI_CONTROLLER_PROGRAM_CHANGE:
+            if (track->emidi_program || track->elapsed_time < timediv)
+            {
+                track->emidi_program = true;
+                SendProgramMsg(delta_time, event->data.channel.channel,
+                               event->data.channel.param2, fallback);
+            }
+            else
+            {
+                SendNOPMsg(delta_time);
+            }
+            break;
+
+        case EMIDI_CONTROLLER_VOLUME:
+            if (track->emidi_volume || track->elapsed_time < timediv)
+            {
+                track->emidi_volume = true;
+                SendVolumeMsg(delta_time, event);
+            }
+            else
+            {
+                SendNOPMsg(delta_time);
+            }
+            break;
+
+        case EMIDI_CONTROLLER_LOOP_BEGIN:
+            count = event->data.channel.param2;
+            count = (count == 0) ? (-1) : count;
+            track->emidi_loop_count = count;
+            MIDI_SetLoopPoint(track->iter);
+            SendNOPMsg(delta_time);
+            break;
+
+        case EMIDI_CONTROLLER_LOOP_END:
+            if (event->data.channel.param2 == EMIDI_LOOP_FLAG)
+            {
+                if (track->emidi_loop_count != 0)
+                {
+                    MIDI_RestartAtLoopPoint(track->iter);
+                }
+
+                if (track->emidi_loop_count > 0)
+                {
+                    track->emidi_loop_count--;
+                }
+            }
+            SendNOPMsg(delta_time);
+            break;
+
+        case EMIDI_CONTROLLER_GLOBAL_LOOP_BEGIN:
+            count = event->data.channel.param2;
+            count = (count == 0) ? (-1) : count;
+            for (i = 0; i < song.num_tracks; ++i)
+            {
+                song.tracks[i].emidi_loop_count = count;
+                MIDI_SetLoopPoint(song.tracks[i].iter);
+                song.tracks[i].saved_end_of_track = song.tracks[i].end_of_track;
+                song.tracks[i].saved_elapsed_time = song.tracks[i].elapsed_time;
+            }
+            song.saved_elapsed_time = song.elapsed_time;
+            SendNOPMsg(delta_time);
+            break;
+
+        case EMIDI_CONTROLLER_GLOBAL_LOOP_END:
+            if (event->data.channel.param2 == EMIDI_LOOP_FLAG)
+            {
+                for (i = 0; i < song.num_tracks; ++i)
+                {
+                    if (song.tracks[i].emidi_loop_count != 0)
+                    {
+                        MIDI_RestartAtLoopPoint(song.tracks[i].iter);
+                        song.tracks[i].end_of_track =
+                            song.tracks[i].saved_end_of_track;
+                        song.tracks[i].elapsed_time =
+                            song.tracks[i].saved_elapsed_time;
+                        song.elapsed_time = song.saved_elapsed_time;
+                    }
+
+                    if (song.tracks[i].emidi_loop_count > 0)
+                    {
+                        song.tracks[i].emidi_loop_count--;
+                    }
+                }
+            }
+            SendNOPMsg(delta_time);
+            break;
+
+        default:
+            SendNOPMsg(delta_time);
+            break;
+    }
+}
+
+static boolean AddToBuffer(unsigned int delta_time, const midi_event_t *event,
+                           win_midi_track_t *track)
+{
     midi_fallback_t fallback = {FALLBACK_NONE, 0};
 
     if (use_fallback)
@@ -726,130 +867,14 @@ static boolean AddToBuffer(unsigned int delta_time, const midi_event_t *event,
                     break;
 
                 case EMIDI_CONTROLLER_TRACK_DESIGNATION:
-                    if (track->elapsed_time < timediv)
-                    {
-                        flag = event->data.channel.param2;
-
-                        if (flag == EMIDI_DEVICE_ALL)
-                        {
-                            track->emidi_device_flags = UINT_MAX;
-                            track->emidi_designated = true;
-                        }
-                        else if (flag <= EMIDI_DEVICE_ULTRASOUND)
-                        {
-                            track->emidi_device_flags |= 1 << flag;
-                            track->emidi_designated = true;
-                        }
-                    }
-                    SendNOPMsg(delta_time);
-                    break;
-
                 case EMIDI_CONTROLLER_TRACK_EXCLUSION:
-                    if (song.rpg_loop)
-                    {
-                        SetLoopPoint();
-                    }
-                    else if (track->elapsed_time < timediv)
-                    {
-                        flag = event->data.channel.param2;
-
-                        if (!track->emidi_designated)
-                        {
-                            track->emidi_device_flags = UINT_MAX;
-                            track->emidi_designated = true;
-                        }
-
-                        if (flag <= EMIDI_DEVICE_ULTRASOUND)
-                        {
-                            track->emidi_device_flags &= ~(1 << flag);
-                        }
-                    }
-                    SendNOPMsg(delta_time);
-                    break;
-
                 case EMIDI_CONTROLLER_PROGRAM_CHANGE:
-                    if (track->emidi_program || track->elapsed_time < timediv)
-                    {
-                        track->emidi_program = true;
-                        SendProgramMsg(delta_time, event->data.channel.channel,
-                                       event->data.channel.param2, &fallback);
-                    }
-                    else
-                    {
-                        SendNOPMsg(delta_time);
-                    }
-                    break;
-
                 case EMIDI_CONTROLLER_VOLUME:
-                    if (track->emidi_volume || track->elapsed_time < timediv)
-                    {
-                        track->emidi_volume = true;
-                        SendVolumeMsg(delta_time, event);
-                    }
-                    else
-                    {
-                        SendNOPMsg(delta_time);
-                    }
-                    break;
-
                 case EMIDI_CONTROLLER_LOOP_BEGIN:
-                    count = event->data.channel.param2;
-                    count = (count == 0) ? (-1) : count;
-                    track->emidi_loop_count = count;
-                    MIDI_SetLoopPoint(track->iter);
-                    SendNOPMsg(delta_time);
-                    break;
-
                 case EMIDI_CONTROLLER_LOOP_END:
-                    if (event->data.channel.param2 == EMIDI_LOOP_FLAG)
-                    {
-                        if (track->emidi_loop_count != 0)
-                        {
-                            MIDI_RestartAtLoopPoint(track->iter);
-                        }
-
-                        if (track->emidi_loop_count > 0)
-                        {
-                            track->emidi_loop_count--;
-                        }
-                    }
-                    SendNOPMsg(delta_time);
-                    break;
-
                 case EMIDI_CONTROLLER_GLOBAL_LOOP_BEGIN:
-                    count = event->data.channel.param2;
-                    count = (count == 0) ? (-1) : count;
-                    for (i = 0; i < song.num_tracks; ++i)
-                    {
-                        song.tracks[i].emidi_loop_count = count;
-                        MIDI_SetLoopPoint(song.tracks[i].iter);
-                        song.tracks[i].saved_end_of_track = song.tracks[i].end_of_track;
-                        song.tracks[i].saved_elapsed_time = song.tracks[i].elapsed_time;
-                    }
-                    song.saved_elapsed_time = song.elapsed_time;
-                    SendNOPMsg(delta_time);
-                    break;
-
                 case EMIDI_CONTROLLER_GLOBAL_LOOP_END:
-                    if (event->data.channel.param2 == EMIDI_LOOP_FLAG)
-                    {
-                        for (i = 0; i < song.num_tracks; ++i)
-                        {
-                            if (song.tracks[i].emidi_loop_count != 0)
-                            {
-                                MIDI_RestartAtLoopPoint(song.tracks[i].iter);
-                                song.tracks[i].end_of_track = song.tracks[i].saved_end_of_track;
-                                song.tracks[i].elapsed_time = song.tracks[i].saved_elapsed_time;
-                                song.elapsed_time = song.saved_elapsed_time;
-                            }
-
-                            if (song.tracks[i].emidi_loop_count > 0)
-                            {
-                                song.tracks[i].emidi_loop_count--;
-                            }
-                        }
-                    }
-                    SendNOPMsg(delta_time);
+                    SendEMIDI(delta_time, event, track, &fallback);
                     break;
 
                 case MIDI_CONTROLLER_RESET_ALL_CTRLS:
