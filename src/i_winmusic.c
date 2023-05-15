@@ -829,7 +829,7 @@ static boolean AddToBuffer(unsigned int delta_time, const midi_event_t *event,
 
     if (use_fallback)
     {
-        MIDI_CheckFallback(event, &fallback);
+        MIDI_CheckFallback(event, &fallback, true);
     }
 
     switch ((int) event->event_type)

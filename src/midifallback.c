@@ -145,7 +145,8 @@ static boolean GetProgramFallback(byte idx, byte program,
     return false;
 }
 
-void MIDI_CheckFallback(const midi_event_t *event, midi_fallback_t *fallback)
+void MIDI_CheckFallback(const midi_event_t *event, midi_fallback_t *fallback,
+                        boolean allow_sysex)
 {
     byte idx;
     byte program;
@@ -153,7 +154,10 @@ void MIDI_CheckFallback(const midi_event_t *event, midi_fallback_t *fallback)
     switch ((int)event->event_type)
     {
         case MIDI_EVENT_SYSEX:
-            UpdateDrumMap(event->data.sysex.data, event->data.sysex.length);
+            if (allow_sysex)
+            {
+                UpdateDrumMap(event->data.sysex.data, event->data.sysex.length);
+            }
             break;
 
         case MIDI_EVENT_CONTROLLER:
