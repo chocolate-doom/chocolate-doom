@@ -140,7 +140,8 @@ static buffer_t buffer;
 
 #define STREAM_MAX_EVENTS   4
 
-#define MAKE_EVT(a, b, c, d) ((DWORD)((a) | ((b) << 8) | ((c) << 16) | ((d) << 24)))
+#define MAKE_EVT(a, b, c, d)                                                   \
+    ((DWORD)(a) | ((DWORD)(b) << 8) | ((DWORD)(c) << 16) | ((DWORD)(d) << 24))
 
 #define PADDED_SIZE(x) (((x) + sizeof(DWORD) - 1) & ~(sizeof(DWORD) - 1))
 
