@@ -146,19 +146,19 @@ static buffer_t buffer;
 
 static boolean initial_playback = false;
 
-// Message box for midiStream errors.
+// Check for midiStream errors.
 
 static void MidiError(const char *prefix, DWORD dwError)
 {
-    char szErrorBuf[MAXERRORLENGTH];
+    wchar_t werror[MAXERRORLENGTH];
     MMRESULT mmr;
 
-    mmr = midiOutGetErrorText(dwError, (LPSTR) szErrorBuf, MAXERRORLENGTH);
+    mmr = midiOutGetErrorTextW(dwError, (LPWSTR) werror, MAXERRORLENGTH);
     if (mmr == MMSYSERR_NOERROR)
     {
-        char *msg = M_StringJoin(prefix, ": ", szErrorBuf, NULL);
-        MessageBox(NULL, msg, "midiStream Error", MB_ICONEXCLAMATION);
-        free(msg);
+        char *error = M_ConvertWideToUtf8(werror);
+        fprintf(stderr, "%s: %s.\n", prefix, error);
+        free(error);
     }
     else
     {
