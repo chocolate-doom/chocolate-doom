@@ -309,9 +309,18 @@ static void UpdateTempo(unsigned int delta_time, const midi_event_t *event)
 static void SendManualVolumeMsg(unsigned int delta_time, byte channel,
                                 byte volume)
 {
-    const byte scaled_volume = volume * volume_factor + 0.5f;
+    unsigned int scaled_volume;
+
+    scaled_volume = volume * volume_factor + 0.5f;
+
+    if (scaled_volume > 127)
+    {
+        scaled_volume = 127;
+    }
+
     SendShortMsg(delta_time, MIDI_EVENT_CONTROLLER, channel,
                  MIDI_CONTROLLER_VOLUME_MSB, scaled_volume);
+
     channel_volume[channel] = volume;
 }
 
