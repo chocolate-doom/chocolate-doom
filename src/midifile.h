@@ -23,6 +23,12 @@ typedef struct midi_track_iter_s midi_track_iter_t;
 
 #define MIDI_CHANNELS_PER_TRACK 16
 
+#define MIDI_RPN_MSB                 0x00
+#define MIDI_RPN_PITCH_BEND_SENS_LSB 0x00
+#define MIDI_RPN_FINE_TUNING_LSB     0x01
+#define MIDI_RPN_COARSE_TUNING_LSB   0x02
+#define MIDI_RPN_NULL                0x7F
+
 typedef enum
 {
     MIDI_EVENT_NOTE_OFF        = 0x80,
@@ -48,20 +54,29 @@ typedef enum
     MIDI_CONTROLLER_DATA_ENTRY_MSB  = 0x06,
     MIDI_CONTROLLER_VOLUME_MSB      = 0x07,
     MIDI_CONTROLLER_PAN             = 0x0A,
+    MIDI_CONTROLLER_EXPRESSION      = 0x0B,
 
     MIDI_CONTROLLER_BANK_SELECT_LSB = 0x20,
     MIDI_CONTROLLER_DATA_ENTRY_LSB  = 0x26,
     MIDI_CONTROLLER_VOLUME_LSB      = 0X27,
 
+    MIDI_CONTROLLER_HOLD1_PEDAL     = 0x40,
+    MIDI_CONTROLLER_SOFT_PEDAL      = 0x43,
+
     MIDI_CONTROLLER_REVERB          = 0x5B,
     MIDI_CONTROLLER_CHORUS          = 0x5D,
 
+    MIDI_CONTROLLER_NRPN_LSB        = 0x62,
+    MIDI_CONTROLLER_NRPN_MSB        = 0x63,
     MIDI_CONTROLLER_RPN_LSB         = 0x64,
     MIDI_CONTROLLER_RPN_MSB         = 0x65,
 
     MIDI_CONTROLLER_ALL_SOUND_OFF   = 0x78,
     MIDI_CONTROLLER_RESET_ALL_CTRLS = 0x79,
     MIDI_CONTROLLER_ALL_NOTES_OFF   = 0x7B,
+
+    MIDI_CONTROLLER_POLY_MODE_OFF   = 0x7E,
+    MIDI_CONTROLLER_POLY_MODE_ON    = 0x7F,
 } midi_controller_t;
 
 typedef enum

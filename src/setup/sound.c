@@ -84,10 +84,9 @@ static char **midi_names;
 static int midi_num_devices;
 static int midi_index;
 char *winmm_midi_device = NULL;
-int winmm_reset_type = -1;
+int winmm_complevel = 0;
+int winmm_reset_type = 1;
 int winmm_reset_delay = 0;
-int winmm_reverb_level = -1;
-int winmm_chorus_level = -1;
 #endif
 
 #ifdef HAVE_FLUIDSYNTH
@@ -359,10 +358,9 @@ void BindSoundVariables(void)
     M_BindStringVariable("timidity_cfg_path",     &timidity_cfg_path);
 #ifdef _WIN32
     M_BindStringVariable("winmm_midi_device",     &winmm_midi_device);
+    M_BindIntVariable("winmm_complevel",          &winmm_complevel);
     M_BindIntVariable("winmm_reset_type",         &winmm_reset_type);
     M_BindIntVariable("winmm_reset_delay",        &winmm_reset_delay);
-    M_BindIntVariable("winmm_reverb_level",       &winmm_reverb_level);
-    M_BindIntVariable("winmm_chorus_level",       &winmm_chorus_level);
 #endif
 
 #ifdef HAVE_FLUIDSYNTH

@@ -37,7 +37,8 @@ typedef struct midi_fallback_t
     byte value;
 } midi_fallback_t;
 
-void MIDI_CheckFallback(const midi_event_t *event, midi_fallback_t *fallback);
+void MIDI_CheckFallback(const midi_event_t *event, midi_fallback_t *fallback,
+                        boolean allow_sysex);
 void MIDI_ResetFallback(void);
 void MIDI_InitFallback(void);
 
