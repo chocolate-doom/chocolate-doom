@@ -87,7 +87,7 @@ static char **midi_names;
 static int midi_num_devices;
 static int midi_index;
 char *winmm_midi_device = NULL;
-int winmm_complevel = 0;
+int winmm_complevel = 1;
 int winmm_reset_type = 1;
 int winmm_reset_delay = 0;
 #endif

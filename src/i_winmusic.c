@@ -50,7 +50,7 @@ enum
 };
 
 char *winmm_midi_device = NULL;
-int winmm_complevel = COMP_VANILLA;
+int winmm_complevel = COMP_STANDARD;
 int winmm_reset_type = RESET_TYPE_GM;
 int winmm_reset_delay = 0;
 
@@ -1137,7 +1137,7 @@ static boolean AddToBuffer_Standard(unsigned int delta_time,
 
 static boolean (*AddToBuffer)(unsigned int delta_time,
                               const midi_event_t *event,
-                              win_midi_track_t *track) = AddToBuffer_Vanilla;
+                              win_midi_track_t *track) = AddToBuffer_Standard;
 
 static void RestartLoop(void)
 {

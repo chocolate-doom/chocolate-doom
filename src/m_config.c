@@ -1133,7 +1133,7 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_STRING(winmm_midi_device),
 
     //!
-    // Compatibility level for native Windows MIDI, default 0. Valid values are
+    // Compatibility level for native Windows MIDI, default 1. Valid values are
     // 0 (Vanilla), 1 (Standard), 2 (Full).
     //
 
