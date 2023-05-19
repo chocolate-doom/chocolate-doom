@@ -907,9 +907,9 @@ static boolean InventoryMoveRight()
     else
     {
         curpos++;
-        if (curpos > 6)
+        if (curpos > CURPOS_MAX)
         {
-            curpos = 6;
+            curpos = CURPOS_MAX;
         }
     }
     return true;

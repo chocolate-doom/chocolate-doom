@@ -978,9 +978,9 @@ static boolean InventoryMoveRight()
     else
     {
         curpos++;
-        if (curpos > 6)
+        if (curpos > CURPOS_MAX)
         {
-            curpos = 6;
+            curpos = CURPOS_MAX;
         }
     }
     return true;
@@ -1834,6 +1834,9 @@ void G_DoLoadGame(void)
     int a, b, c;
     char savestr[SAVESTRINGSIZE];
     char vcheck[VERSIONSIZE], readversion[VERSIONSIZE];
+    const player_t *p; // [crispy]
+
+    p = &players[consoleplayer]; // [crispy]
 
     gameaction = ga_nothing;
 
@@ -1875,6 +1878,17 @@ void G_DoLoadGame(void)
     P_UnArchiveThinkers();
     P_UnArchiveSpecials();
     P_RestoreTargets();
+
+    // [crispy] point to active artifact after load
+    for (i = 0; i < p->inventorySlotNum; i++)
+    {
+        if (p->inventory[i].type == p->readyArtifact)
+        {
+            curpos = inv_ptr = i;
+            curpos = (curpos > CURPOS_MAX) ? CURPOS_MAX : curpos;
+            break;
+        }
+    }
 
     if (SV_ReadByte() != SAVE_GAME_TERMINATOR)
     {                           // Missing savegame termination marker

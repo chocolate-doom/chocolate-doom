@@ -857,6 +857,7 @@ void F_StartFinale(void);
 // STATUS BAR (SB_bar.c)
 //----------------------
 
+#define CURPOS_MAX 6 // [crispy] 7 total artifact frames
 
 extern boolean inventory;
 extern int curpos;

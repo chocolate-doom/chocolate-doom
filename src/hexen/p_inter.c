@@ -845,9 +845,9 @@ boolean P_GiveArtifact(player_t * player, artitype_t arti, mobj_t * mo)
     {
         inv_ptr++;
         curpos++;
-        if (curpos > 6)
+        if (curpos > CURPOS_MAX)
         {
-            curpos = 6;
+            curpos = CURPOS_MAX;
         }
     }
     player->artifactCount++;

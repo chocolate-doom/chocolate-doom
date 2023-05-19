@@ -2088,6 +2088,9 @@ void SV_LoadGame(int slot)
     char version_text[HXS_VERSION_TEXT_LENGTH];
     player_t playerBackup[MAXPLAYERS];
     mobj_t *mobj;
+    player_t *p; // [crispy]
+
+    p = &players[consoleplayer]; // [crispy]
 
     // [crispy] get expanded save slot number
     if (slot != BASE_SLOT && slot != REBORN_SLOT)
@@ -2162,16 +2165,26 @@ void SV_LoadGame(int slot)
     // Restore player structs
     inv_ptr = 0;
     curpos = 0;
+
     for (i = 0; i < maxplayers; i++)
     {
         mobj = players[i].mo;
         players[i] = playerBackup[i];
         players[i].mo = mobj;
-        if (i == consoleplayer)
+    }
+
+    // [crispy] point to active artifact after load
+    for (i = 0; i < p->inventorySlotNum; i++)
+    {
+        if (p->inventory[i].type == p->readyArtifact)
         {
-            players[i].readyArtifact = players[i].inventory[inv_ptr].type;
+            curpos = inv_ptr = i;
+            curpos = (curpos > CURPOS_MAX) ? CURPOS_MAX : curpos;
+            p->readyArtifact = p->inventory[inv_ptr].type;
+            break;
         }
     }
+
 }
 
 //==========================================================================
