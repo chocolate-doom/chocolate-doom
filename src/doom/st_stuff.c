@@ -140,9 +140,6 @@ extern boolean inhelpscreens; // [crispy] prevent palette changes
 //       into a buffer,
 //       or into the frame buffer?
 
-// [crispy] in non-widescreen mode WIDESCREENDELTA is 0 anyway
-#define ST_WIDESCREENDELTA ((screenblocks >= CRISPY_HUD + 3 && (!automapactive || crispy->automapoverlay)) ? WIDESCREENDELTA : 0)
-
 // AMMO number pos.
 #define ST_AMMOWIDTH		3	
 #define ST_AMMOX			(44 - ST_WIDESCREENDELTA)

@@ -31,6 +31,9 @@
 #define ST_WIDTH	ORIGWIDTH
 #define ST_Y		(ORIGHEIGHT - ST_HEIGHT)
 
+// [crispy] in non-widescreen mode WIDESCREENDELTA is 0 anyway
+#define ST_WIDESCREENDELTA ((screenblocks >= CRISPY_HUD + 3 && (!automapactive || crispy->automapoverlay)) ? WIDESCREENDELTA : 0)
+
 #define CRISPY_HUD 12
 
 // [crispy] Demo Timer widget
