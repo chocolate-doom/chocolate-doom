@@ -36,7 +36,7 @@
 #include "m_menu.h"
 #include "w_wad.h"
 #include "m_argv.h" // [crispy] M_ParmExists()
-#include "st_stuff.h" // [crispy] ST_HEIGHT
+#include "st_stuff.h" // [crispy] ST_HEIGHT, ST_WIDESCREENDELTA
 #include "p_setup.h" // maplumpinfo
 
 #include "s_sound.h"
@@ -1086,6 +1086,8 @@ void HU_Ticker(void)
     if (crispy->automapstats == WIDGETS_STBAR && (!automapactive || w_title.y != HU_TITLEY))
     {
 	crispy_statsline_func_t crispy_statsline = crispy_statslines[crispy->statsformat];
+
+	w_kills.x = - ST_WIDESCREENDELTA;
 
 	w_kills.y = HU_TITLEY;
 
