@@ -1111,9 +1111,9 @@ void HU_Ticker(void)
     if ((crispy->automapstats & WIDGETS_ALWAYS) || (automapactive && crispy->automapstats == WIDGETS_AUTOMAP))
     {
 
-	w_kills.x = HU_TITLEX; // to handle switching from Status bar to Always and Automap kills line options
-
 	crispy_statsline_func_t crispy_statsline = crispy_statslines[crispy->statsformat];
+
+	w_kills.x = HU_TITLEX; // to handle switching from Status bar to Always and Automap kills line options
 
 	crispy_statsline(str, sizeof(str), kills, plr->killcount, totalkills, extrakills);
 	HUlib_clearTextLine(&w_kills);
