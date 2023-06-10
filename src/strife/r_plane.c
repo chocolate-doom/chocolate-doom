@@ -134,18 +134,24 @@ R_MapPlane
 
 // [crispy] visplanes with the same flats now match up far better than before
 // adapted from prboom-plus/src/r_plane.c:191-239, translated to fixed-point math
+//
+// SoM: because centery is an actual row of pixels (and it isn't really the
+// center row because there are an even number of rows) some corrections need
+// to be made depending on where the row lies relative to the centery row.
 
-    if (!(dy = abs(centery - y)))
+    if (centery == y)
     {
 	return;
     }
+
+    dy = (abs(centery - y) << FRACBITS) + (y < centery ? -FRACUNIT : FRACUNIT) / 2;
 
     if (planeheight != cachedheight[y])
     {
 	cachedheight[y] = planeheight;
 	distance = cacheddistance[y] = FixedMul (planeheight, yslope[y]);
-	ds_xstep = cachedxstep[y] = (FixedMul (viewsin, planeheight) / dy) << detailshift;
-	ds_ystep = cachedystep[y] = (FixedMul (viewcos, planeheight) / dy) << detailshift;
+	ds_xstep = cachedxstep[y] = FixedDiv(FixedMul (viewsin, planeheight), dy) << detailshift;
+	ds_ystep = cachedystep[y] = FixedDiv(FixedMul (viewcos, planeheight), dy) << detailshift;
     }
     else
     {
