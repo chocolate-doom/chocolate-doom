@@ -20,13 +20,17 @@
 #include "p_local.h"
 #include "s_sound.h"
 #include "v_video.h"
+#include "i_swap.h" // [crispy] SHORT()
+#include "w_wad.h" // [crispy] W_CheckNumForName()
+#include "z_zone.h" // [crispy] Z_ChangeTag()
 
 //==================================================================
 //
 //      CHANGE THE TEXTURE OF A WALL SWITCH TO ITS OPPOSITE
 //
 //==================================================================
-switchlist_t alphSwitchList[] = {
+// [crispy] add support for SWITCHES lumps
+switchlist_t alphSwitchList_vanilla[] = {
     {"SW1OFF", "SW1ON", 1},
     {"SW2OFF", "SW2ON", 1},
 
@@ -83,10 +87,14 @@ switchlist_t alphSwitchList[] = {
     {"SW1VINE", "SW2VINE", 2},
     {"SW1WOOD", "SW2WOOD", 2},
 #endif
+    // [crispy] SWITCHES lumps are supposed to end like this
+    {"\0",		"\0",		0}
 };
 
-int switchlist[MAXSWITCHES * 2];
-int numswitches;
+// [crispy] remove MAXSWITCHES limit
+int		*switchlist;
+int		numswitches;
+static size_t	maxswitches;
 button_t buttonlist[MAXBUTTONS];
 
 /*
@@ -102,7 +110,20 @@ button_t buttonlist[MAXBUTTONS];
 void P_InitSwitchList(void)
 {
     int i, slindex, episode;
+    
+    // [crispy] add support for SWITCHES lumps
+    switchlist_t *alphSwitchList;
+    boolean from_lump;
 
+    if ((from_lump = (W_CheckNumForName("SWITCHES") != -1)))
+    {
+        alphSwitchList = W_CacheLumpName("SWITCHES", PU_STATIC);
+    }
+    else
+    {
+        alphSwitchList = alphSwitchList_vanilla;
+    }
+    
     // Note that this is called "episode" here but it's actually something
     // quite different. As we progress from Shareware->Registered->Doom II
     // we support more switch textures.
@@ -117,19 +138,51 @@ void P_InitSwitchList(void)
 
     slindex = 0;
 
-    for (i = 0; i < arrlen(alphSwitchList); i++)
+    for (i = 0; alphSwitchList[i].episode; i++)
     {
-	if (alphSwitchList[i].episode <= episode)
+	const short alphSwitchList_episode = from_lump ?
+	    SHORT(alphSwitchList[i].episode) :
+	    alphSwitchList[i].episode;
+
+	// [crispy] remove MAXSWITCHES limit
+	if (slindex + 1 >= maxswitches)
 	{
-	    switchlist[slindex++] =
-                R_TextureNumForName(DEH_String(alphSwitchList[i].name1));
-	    switchlist[slindex++] =
-                R_TextureNumForName(DEH_String(alphSwitchList[i].name2));
+	    size_t newmax = maxswitches ? 2 * maxswitches : MAXSWITCHES;
+	    switchlist = I_Realloc(switchlist, newmax * sizeof(*switchlist));
+	    maxswitches = newmax;
+	}
+	
+	// [crispy] ignore switches referencing unknown texture names,
+	// warn if either one is missing, but only add if both are valid
+	if (alphSwitchList_episode <= episode)
+	{
+	    int texture1, texture2;
+	    const char *name1 = DEH_String(alphSwitchList[i].name1);
+	    const char *name2 = DEH_String(alphSwitchList[i].name2);
+
+	    texture1 = R_CheckTextureNumForName(name1);
+	    texture2 = R_CheckTextureNumForName(name2);
+
+	    if (texture1 == -1 || texture2 == -1)
+	    {
+		fprintf(stderr, "P_InitSwitchList: could not add %s(%d)/%s(%d)\n",
+		        name1, texture1, name2, texture2);
+	    }
+	    else
+	    {
+		switchlist[slindex++] = texture1;
+		switchlist[slindex++] = texture2;
+	    }
 	}
     }
 
     numswitches = slindex / 2;
     switchlist[slindex] = -1;
+    // [crispy] add support for SWITCHES lumps
+    if (from_lump)
+    {
+        W_ReleaseLumpName("SWITCHES");
+    }
 }
 
 //==================================================================

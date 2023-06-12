@@ -159,12 +159,12 @@ void P_SpawnGlowingLight(sector_t * sector);
 
 ===============================================================================
 */
-typedef struct
+typedef PACKED_STRUCT (
 {
     char name1[9];
     char name2[9];
     short episode;
-} switchlist_t;
+}) switchlist_t;
 
 typedef enum
 {
