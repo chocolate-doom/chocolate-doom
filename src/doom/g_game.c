@@ -3182,14 +3182,10 @@ static size_t WriteCmdLineLump(MEMFILE *stream)
             mem_fputs(" -complevel 1", stream);
             break;
         case exe_doom_1_9:
-            if (gamemode == commercial)
-            {
-                mem_fputs(" -complevel 2", stream);
-            }
-            else
-            {
-                mem_fputs(" -complevel 3", stream);
-            }
+            mem_fputs(" -complevel 2", stream);
+            break;
+        case exe_ultimate:
+            mem_fputs(" -complevel 3", stream);
             break;
         case exe_final:
             mem_fputs(" -complevel 4", stream);
