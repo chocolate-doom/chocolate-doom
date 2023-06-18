@@ -30,6 +30,7 @@
 #define DEH_VANILLA_NUMSFX 107
 
 void DEH_Init(void); // [crispy] un-static
+char *CleanString(char *s); // [crispy] un-static
 
 void DEH_ParseCommandLine(void);
 int DEH_LoadFile(const char *filename);

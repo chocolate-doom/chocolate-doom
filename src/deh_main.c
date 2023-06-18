@@ -159,7 +159,7 @@ static boolean IsWhitespace(char *s)
 
 // Strip whitespace from the start and end of a string
 
-static char *CleanString(char *s)
+char *CleanString(char *s) // [crispy] un-static
 {
     char *strending;
 

@@ -23,6 +23,7 @@
 #include "config.h"
 #include "doomstat.h"
 #include "doomtype.h"
+#include "deh_main.h"
 #include "m_misc.h"
 #include "p_extsaveg.h"
 #include "p_local.h"
@@ -63,9 +64,9 @@ static void P_ReadWadFileName (const char *key)
 		if (sscanf(line, "%s", string) == 1 &&
 		    !strncmp(string, key, MAX_STRING_LEN))
 		{
-			if (sscanf(line, "%*s %s", string) == 1)
+			if (strlen(line) > strlen(key) + 1)
 			{
-				savewadfilename = strdup(string);
+				savewadfilename = strdup(CleanString(line + strlen(key) + 1));
 			}
 		}
 	}
