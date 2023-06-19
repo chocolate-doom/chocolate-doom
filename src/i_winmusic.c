@@ -1383,6 +1383,7 @@ static boolean I_WIN_InitMusic(void)
     if (mmr != MMSYSERR_NOERROR)
     {
         MidiError("midiStreamOpen", mmr);
+        hMidiStream = NULL;
         return false;
     }
 
@@ -1429,6 +1430,11 @@ static void I_WIN_StopSong(void)
     CloseHandle(hPlayerThread);
     hPlayerThread = NULL;
 
+    if (!hMidiStream)
+    {
+        return;
+    }
+
     mmr = midiStreamStop(hMidiStream);
     if (mmr != MMSYSERR_NOERROR)
     {
@@ -1439,6 +1445,11 @@ static void I_WIN_StopSong(void)
 static void I_WIN_PlaySong(void *handle, boolean looping)
 {
     MMRESULT mmr;
+
+    if (!hMidiStream)
+    {
+        return;
+    }
 
     song.looping = looping;
 
@@ -1461,6 +1472,11 @@ static void I_WIN_PauseSong(void)
 {
     MMRESULT mmr;
 
+    if (!hMidiStream)
+    {
+        return;
+    }
+
     mmr = midiStreamPause(hMidiStream);
     if (mmr != MMSYSERR_NOERROR)
     {
@@ -1471,6 +1487,11 @@ static void I_WIN_PauseSong(void)
 static void I_WIN_ResumeSong(void)
 {
     MMRESULT mmr;
+
+    if (!hMidiStream)
+    {
+        return;
+    }
 
     mmr = midiStreamRestart(hMidiStream);
     if (mmr != MMSYSERR_NOERROR)
@@ -1521,6 +1542,11 @@ static void *I_WIN_RegisterSong(void *data, int len)
     MIDIPROPTIMEDIV prop_timediv;
     MIDIPROPTEMPO prop_tempo;
     MMRESULT mmr;
+
+    if (!hMidiStream)
+    {
+        return NULL;
+    }
 
     // MUS files begin with "MUS"
     // Reject anything which doesnt have this signature
