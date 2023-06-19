@@ -76,6 +76,9 @@ static byte channel_volume[MIDI_CHANNELS_PER_TRACK];
 static float volume_factor = 0.0f;
 static boolean update_volume = false;
 
+static boolean playing;
+static boolean paused;
+
 static DWORD timediv;
 static DWORD tempo;
 
@@ -357,6 +360,17 @@ static void ResetVolume(void)
     }
 }
 
+static void StopSound(void)
+{
+    int i;
+
+    for (i = 0; i < MIDI_CHANNELS_PER_TRACK; ++i)
+    {
+        SendShortMsg(0, MIDI_EVENT_CONTROLLER, i, MIDI_CONTROLLER_ALL_NOTES_OFF, 0);
+        SendShortMsg(0, MIDI_EVENT_CONTROLLER, i, MIDI_CONTROLLER_ALL_SOUND_OFF, 0);
+    }
+}
+
 static void ResetControllers(void)
 {
     int i;
@@ -396,14 +410,8 @@ static void ResetPitchBendSensitivity(void)
 
 static void ResetDevice(void)
 {
-    int i;
-
-    for (i = 0; i < MIDI_CHANNELS_PER_TRACK; ++i)
-    {
-        // Stop sound prior to reset to prevent volume spikes.
-        SendShortMsg(0, MIDI_EVENT_CONTROLLER, i, MIDI_CONTROLLER_ALL_NOTES_OFF, 0);
-        SendShortMsg(0, MIDI_EVENT_CONTROLLER, i, MIDI_CONTROLLER_ALL_SOUND_OFF, 0);
-    }
+    // Stop sound prior to reset to prevent volume spikes.
+    StopSound();
 
     MIDI_ResetFallback();
     use_fallback = false;
@@ -1238,6 +1246,21 @@ static void FillBuffer(void)
         return;
     }
 
+    if (paused)
+    {
+        if (playing)
+        {
+            playing = false;
+            StopSound();
+        }
+        // Send a NOP every 100 ms while paused.
+        SendDelayMsg(100);
+        StreamOut();
+        return;
+    }
+
+    playing = true;
+
     for (num_events = 0; num_events < STREAM_MAX_EVENTS; )
     {
         midi_event_t *event = NULL;
@@ -1464,6 +1487,7 @@ static void I_WIN_PlaySong(void *handle, boolean looping)
     SetThreadPriority(hPlayerThread, THREAD_PRIORITY_TIME_CRITICAL);
 
     initial_playback = true;
+    paused = false;
 
     SetEvent(hBufferReturnEvent);
 
@@ -1476,34 +1500,22 @@ static void I_WIN_PlaySong(void *handle, boolean looping)
 
 static void I_WIN_PauseSong(void)
 {
-    MMRESULT mmr;
-
     if (!hMidiStream)
     {
         return;
     }
 
-    mmr = midiStreamPause(hMidiStream);
-    if (mmr != MMSYSERR_NOERROR)
-    {
-        MidiError("midiStreamPause", mmr);
-    }
+    paused = true;
 }
 
 static void I_WIN_ResumeSong(void)
 {
-    MMRESULT mmr;
-
     if (!hMidiStream)
     {
         return;
     }
 
-    mmr = midiStreamRestart(hMidiStream);
-    if (mmr != MMSYSERR_NOERROR)
-    {
-        MidiError("midiStreamRestart", mmr);
-    }
+    paused = false;
 }
 
 // Determine whether memory block is a .mid file 
