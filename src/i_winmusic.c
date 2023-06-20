@@ -76,8 +76,14 @@ static byte channel_volume[MIDI_CHANNELS_PER_TRACK];
 static float volume_factor = 0.0f;
 static boolean update_volume = false;
 
-static boolean playing;
-static boolean paused;
+typedef enum
+{
+    STATE_PLAYING,
+    STATE_STOPPED,
+    STATE_PAUSED
+} player_state_t;
+
+static player_state_t player_state;
 
 static DWORD timediv;
 static DWORD tempo;
@@ -1246,20 +1252,21 @@ static void FillBuffer(void)
         return;
     }
 
-    if (paused)
+    if (player_state == STATE_STOPPED)
     {
-        if (playing)
-        {
-            playing = false;
-            StopSound();
-        }
+        StopSound();
+        StreamOut();
+        player_state = STATE_PAUSED;
+        return;
+    }
+
+    if (player_state == STATE_PAUSED)
+    {
         // Send a NOP every 100 ms while paused.
         SendDelayMsg(100);
         StreamOut();
         return;
     }
-
-    playing = true;
 
     for (num_events = 0; num_events < STREAM_MAX_EVENTS; )
     {
@@ -1487,7 +1494,7 @@ static void I_WIN_PlaySong(void *handle, boolean looping)
     SetThreadPriority(hPlayerThread, THREAD_PRIORITY_TIME_CRITICAL);
 
     initial_playback = true;
-    paused = false;
+    player_state = STATE_PLAYING;
 
     SetEvent(hBufferReturnEvent);
 
@@ -1505,7 +1512,7 @@ static void I_WIN_PauseSong(void)
         return;
     }
 
-    paused = true;
+    player_state = STATE_STOPPED;
 }
 
 static void I_WIN_ResumeSong(void)
@@ -1515,7 +1522,7 @@ static void I_WIN_ResumeSong(void)
         return;
     }
 
-    paused = false;
+    player_state = STATE_PLAYING;
 }
 
 // Determine whether memory block is a .mid file 
