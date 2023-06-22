@@ -1471,11 +1471,11 @@ static void I_WIN_StopSong(void)
         return;
     }
 
-    win_midi_state = STATE_STOPPED;
     SetEvent(hExitEvent);
     WaitForSingleObject(hPlayerThread, PLAYER_THREAD_WAIT_TIME);
     CloseHandle(hPlayerThread);
     hPlayerThread = NULL;
+    win_midi_state = STATE_STOPPED;
 
     if (!hMidiStream)
     {
