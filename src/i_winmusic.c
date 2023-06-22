@@ -1253,20 +1253,27 @@ static void FillBuffer(void)
         return;
     }
 
-    if (win_midi_state == STATE_PAUSE)
+    switch ((int) win_midi_state)
     {
-        StopSound();
-        StreamOut();
-        win_midi_state = STATE_PAUSED;
-        return;
-    }
+        case STATE_PLAYING:
+            break;
 
-    if (win_midi_state == STATE_PAUSED)
-    {
-        // Send a NOP every 100 ms while paused.
-        SendDelayMsg(100);
-        StreamOut();
-        return;
+        case STATE_PAUSE:
+            // Stop sound to prevent hanging notes.
+            StopSound();
+            StreamOut();
+            win_midi_state = STATE_PAUSED;
+            return;
+
+        case STATE_PAUSED:
+            // Send a NOP every 100 ms while paused.
+            SendDelayMsg(100);
+            StreamOut();
+            return;
+
+        default:
+            // Stopped or unknown state.
+            return;
     }
 
     for (num_events = 0; num_events < STREAM_MAX_EVENTS; )
