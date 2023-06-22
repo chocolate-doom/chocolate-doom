@@ -78,8 +78,8 @@ static boolean update_volume = false;
 
 typedef enum
 {
-    STATE_PLAYING,
     STATE_STOPPED,
+    STATE_PLAYING,
     STATE_PAUSED
 } player_state_t;
 
