@@ -81,9 +81,9 @@ typedef enum
     STATE_STOPPED,
     STATE_PLAYING,
     STATE_PAUSED
-} player_state_t;
+} win_midi_state_t;
 
-static player_state_t player_state;
+static win_midi_state_t win_midi_state;
 
 static DWORD timediv;
 static DWORD tempo;
@@ -1252,15 +1252,15 @@ static void FillBuffer(void)
         return;
     }
 
-    if (player_state == STATE_STOPPED)
+    if (win_midi_state == STATE_STOPPED)
     {
         StopSound();
         StreamOut();
-        player_state = STATE_PAUSED;
+        win_midi_state = STATE_PAUSED;
         return;
     }
 
-    if (player_state == STATE_PAUSED)
+    if (win_midi_state == STATE_PAUSED)
     {
         // Send a NOP every 100 ms while paused.
         SendDelayMsg(100);
@@ -1494,7 +1494,7 @@ static void I_WIN_PlaySong(void *handle, boolean looping)
     SetThreadPriority(hPlayerThread, THREAD_PRIORITY_TIME_CRITICAL);
 
     initial_playback = true;
-    player_state = STATE_PLAYING;
+    win_midi_state = STATE_PLAYING;
 
     SetEvent(hBufferReturnEvent);
 
@@ -1512,7 +1512,7 @@ static void I_WIN_PauseSong(void)
         return;
     }
 
-    player_state = STATE_STOPPED;
+    win_midi_state = STATE_STOPPED;
 }
 
 static void I_WIN_ResumeSong(void)
@@ -1522,7 +1522,7 @@ static void I_WIN_ResumeSong(void)
         return;
     }
 
-    player_state = STATE_PLAYING;
+    win_midi_state = STATE_PLAYING;
 }
 
 // Determine whether memory block is a .mid file 
