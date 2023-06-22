@@ -80,6 +80,7 @@ typedef enum
 {
     STATE_STOPPED,
     STATE_PLAYING,
+    STATE_PAUSE,
     STATE_PAUSED
 } win_midi_state_t;
 
@@ -1252,7 +1253,7 @@ static void FillBuffer(void)
         return;
     }
 
-    if (win_midi_state == STATE_STOPPED)
+    if (win_midi_state == STATE_PAUSE)
     {
         StopSound();
         StreamOut();
@@ -1432,6 +1433,8 @@ static boolean I_WIN_InitMusic(void)
                                                     : AddToBuffer_Standard;
     MIDI_InitFallback();
 
+    win_midi_state = STATE_STOPPED;
+
     return true;
 }
 
@@ -1461,6 +1464,7 @@ static void I_WIN_StopSong(void)
         return;
     }
 
+    win_midi_state = STATE_STOPPED;
     SetEvent(hExitEvent);
     WaitForSingleObject(hPlayerThread, PLAYER_THREAD_WAIT_TIME);
     CloseHandle(hPlayerThread);
@@ -1512,7 +1516,7 @@ static void I_WIN_PauseSong(void)
         return;
     }
 
-    win_midi_state = STATE_STOPPED;
+    win_midi_state = STATE_PAUSE;
 }
 
 static void I_WIN_ResumeSong(void)
