@@ -367,7 +367,7 @@ static void ResetVolume(void)
     }
 }
 
-static void StopSound(void)
+static void SendNotesSoundOff(void)
 {
     int i;
 
@@ -417,8 +417,8 @@ static void ResetPitchBendSensitivity(void)
 
 static void ResetDevice(void)
 {
-    // Stop sound prior to reset to prevent volume spikes.
-    StopSound();
+    // Send notes/sound off prior to reset to prevent volume spikes.
+    SendNotesSoundOff();
 
     MIDI_ResetFallback();
     use_fallback = false;
@@ -1259,8 +1259,8 @@ static void FillBuffer(void)
             break;
 
         case STATE_PAUSE:
-            // Stop sound to prevent hanging notes.
-            StopSound();
+            // Send notes/sound off to prevent hanging notes.
+            SendNotesSoundOff();
             StreamOut();
             win_midi_state = STATE_PAUSED;
             return;
