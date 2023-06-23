@@ -32,12 +32,31 @@ DLL_NAME_RE = re.compile('\s+DLL Name: (.*\.dll)')
 # DLLs that are bundled with Windows, and we don't need to copy.
 # Thanks to Martin Preisler; this is from mingw-bundledlls.
 WIN32_DLLS = {
-	"advapi32.dll", "kernel32.dll", "msvcrt.dll", "ole32.dll",
-        "user32.dll", "ws2_32.dll", "comdlg32.dll", "gdi32.dll", "imm32.dll",
-        "oleaut32.dll", "shell32.dll", "winmm.dll", "winspool.drv",
-        "wldap32.dll", "ntdll.dll", "d3d9.dll", "mpr.dll", "crypt32.dll",
-        "dnsapi.dll", "shlwapi.dll", "version.dll", "iphlpapi.dll",
-        "msimg32.dll", "setupapi.dll", "dsound.dll",
+	"advapi32.dll",
+	"comdlg32.dll",
+	"crypt32.dll",
+	"d3d9.dll",
+	"dnsapi.dll",
+	"dsound.dll",
+	"gdi32.dll",
+	"imm32.dll",
+	"iphlpapi.dll",
+	"kernel32.dll",
+	"mpr.dll",
+	"msimg32.dll",
+	"msvcrt.dll",
+	"ntdll.dll",
+	"ole32.dll",
+	"oleaut32.dll",
+	"setupapi.dll",
+	"shell32.dll",
+	"shlwapi.dll",
+	"user32.dll",
+	"version.dll",
+	"winmm.dll",
+	"winspool.drv",
+	"wldap32.dll",
+	"ws2_32.dll",
 }
 
 parser = argparse.ArgumentParser(description='Copy EXE with DLLs.')
