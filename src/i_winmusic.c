@@ -76,6 +76,16 @@ static byte channel_volume[MIDI_CHANNELS_PER_TRACK];
 static float volume_factor = 0.0f;
 static boolean update_volume = false;
 
+typedef enum
+{
+    STATE_STOPPED,
+    STATE_PLAYING,
+    STATE_PAUSING,
+    STATE_PAUSED
+} win_midi_state_t;
+
+static win_midi_state_t win_midi_state;
+
 static DWORD timediv;
 static DWORD tempo;
 
@@ -357,6 +367,17 @@ static void ResetVolume(void)
     }
 }
 
+static void SendNotesSoundOff(void)
+{
+    int i;
+
+    for (i = 0; i < MIDI_CHANNELS_PER_TRACK; ++i)
+    {
+        SendShortMsg(0, MIDI_EVENT_CONTROLLER, i, MIDI_CONTROLLER_ALL_NOTES_OFF, 0);
+        SendShortMsg(0, MIDI_EVENT_CONTROLLER, i, MIDI_CONTROLLER_ALL_SOUND_OFF, 0);
+    }
+}
+
 static void ResetControllers(void)
 {
     int i;
@@ -396,14 +417,8 @@ static void ResetPitchBendSensitivity(void)
 
 static void ResetDevice(void)
 {
-    int i;
-
-    for (i = 0; i < MIDI_CHANNELS_PER_TRACK; ++i)
-    {
-        // Stop sound prior to reset to prevent volume spikes.
-        SendShortMsg(0, MIDI_EVENT_CONTROLLER, i, MIDI_CONTROLLER_ALL_NOTES_OFF, 0);
-        SendShortMsg(0, MIDI_EVENT_CONTROLLER, i, MIDI_CONTROLLER_ALL_SOUND_OFF, 0);
-    }
+    // Send notes/sound off prior to reset to prevent volume spikes.
+    SendNotesSoundOff();
 
     MIDI_ResetFallback();
     use_fallback = false;
@@ -1238,6 +1253,28 @@ static void FillBuffer(void)
         return;
     }
 
+    switch (win_midi_state)
+    {
+        case STATE_PLAYING:
+            break;
+
+        case STATE_PAUSING:
+            // Send notes/sound off to prevent hanging notes.
+            SendNotesSoundOff();
+            StreamOut();
+            win_midi_state = STATE_PAUSED;
+            return;
+
+        case STATE_PAUSED:
+            // Send a NOP every 100 ms while paused.
+            SendDelayMsg(100);
+            StreamOut();
+            return;
+
+        case STATE_STOPPED:
+            return;
+    }
+
     for (num_events = 0; num_events < STREAM_MAX_EVENTS; )
     {
         midi_event_t *event = NULL;
@@ -1402,6 +1439,8 @@ static boolean I_WIN_InitMusic(void)
                                                     : AddToBuffer_Standard;
     MIDI_InitFallback();
 
+    win_midi_state = STATE_STOPPED;
+
     return true;
 }
 
@@ -1435,6 +1474,7 @@ static void I_WIN_StopSong(void)
     WaitForSingleObject(hPlayerThread, PLAYER_THREAD_WAIT_TIME);
     CloseHandle(hPlayerThread);
     hPlayerThread = NULL;
+    win_midi_state = STATE_STOPPED;
 
     if (!hMidiStream)
     {
@@ -1464,6 +1504,7 @@ static void I_WIN_PlaySong(void *handle, boolean looping)
     SetThreadPriority(hPlayerThread, THREAD_PRIORITY_TIME_CRITICAL);
 
     initial_playback = true;
+    win_midi_state = STATE_PLAYING;
 
     SetEvent(hBufferReturnEvent);
 
@@ -1476,34 +1517,22 @@ static void I_WIN_PlaySong(void *handle, boolean looping)
 
 static void I_WIN_PauseSong(void)
 {
-    MMRESULT mmr;
-
     if (!hMidiStream)
     {
         return;
     }
 
-    mmr = midiStreamPause(hMidiStream);
-    if (mmr != MMSYSERR_NOERROR)
-    {
-        MidiError("midiStreamPause", mmr);
-    }
+    win_midi_state = STATE_PAUSING;
 }
 
 static void I_WIN_ResumeSong(void)
 {
-    MMRESULT mmr;
-
     if (!hMidiStream)
     {
         return;
     }
 
-    mmr = midiStreamRestart(hMidiStream);
-    if (mmr != MMSYSERR_NOERROR)
-    {
-        MidiError("midiStreamRestart", mmr);
-    }
+    win_midi_state = STATE_PLAYING;
 }
 
 // Determine whether memory block is a .mid file 
