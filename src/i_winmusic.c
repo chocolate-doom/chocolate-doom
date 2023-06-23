@@ -1271,8 +1271,7 @@ static void FillBuffer(void)
             StreamOut();
             return;
 
-        default:
-            // Stopped or unknown state.
+        case STATE_STOPPED:
             return;
     }
 
