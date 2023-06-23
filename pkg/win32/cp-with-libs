@@ -96,6 +96,9 @@ def file_dependencies(filename, objdump):
 			m = DLL_NAME_RE.match(line.decode())
 			if m:
 				dll = m.group(1)
+				# APISet forwarder DLLs
+				if dll.lower().startswith("api-ms-win-"):
+					continue
 				if dll.lower() not in WIN32_DLLS:
 					result.append(dll)
 
