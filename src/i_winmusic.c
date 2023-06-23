@@ -1253,7 +1253,7 @@ static void FillBuffer(void)
         return;
     }
 
-    switch ((int) win_midi_state)
+    switch (win_midi_state)
     {
         case STATE_PLAYING:
             break;
