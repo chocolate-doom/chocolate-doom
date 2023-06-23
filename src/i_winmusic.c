@@ -80,7 +80,7 @@ typedef enum
 {
     STATE_STOPPED,
     STATE_PLAYING,
-    STATE_PAUSE,
+    STATE_PAUSING,
     STATE_PAUSED
 } win_midi_state_t;
 
@@ -1258,7 +1258,7 @@ static void FillBuffer(void)
         case STATE_PLAYING:
             break;
 
-        case STATE_PAUSE:
+        case STATE_PAUSING:
             // Send notes/sound off to prevent hanging notes.
             SendNotesSoundOff();
             StreamOut();
@@ -1523,7 +1523,7 @@ static void I_WIN_PauseSong(void)
         return;
     }
 
-    win_midi_state = STATE_PAUSE;
+    win_midi_state = STATE_PAUSING;
 }
 
 static void I_WIN_ResumeSong(void)
