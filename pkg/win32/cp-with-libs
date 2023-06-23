@@ -33,12 +33,14 @@ DLL_NAME_RE = re.compile('\s+DLL Name: (.*\.dll)')
 # Thanks to Martin Preisler; this is from mingw-bundledlls.
 WIN32_DLLS = {
 	"advapi32.dll",
+	"comctl32.dll",
 	"comdlg32.dll",
 	"crypt32.dll",
 	"d3d9.dll",
 	"dnsapi.dll",
 	"dsound.dll",
 	"gdi32.dll",
+	"glu32.dll",
 	"imm32.dll",
 	"iphlpapi.dll",
 	"kernel32.dll",
@@ -48,6 +50,7 @@ WIN32_DLLS = {
 	"ntdll.dll",
 	"ole32.dll",
 	"oleaut32.dll",
+	"opengl32.dll",
 	"setupapi.dll",
 	"shell32.dll",
 	"shlwapi.dll",
