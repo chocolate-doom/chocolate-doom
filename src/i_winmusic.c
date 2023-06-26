@@ -76,6 +76,16 @@ static byte channel_volume[MIDI_CHANNELS_PER_TRACK];
 static float volume_factor = 0.0f;
 static boolean update_volume = false;
 
+typedef enum
+{
+    STATE_STOPPED,
+    STATE_PLAYING,
+    STATE_PAUSING,
+    STATE_PAUSED
+} win_midi_state_t;
+
+static win_midi_state_t win_midi_state;
+
 static DWORD timediv;
 static DWORD tempo;
 
@@ -125,7 +135,9 @@ typedef struct
 
 static win_midi_song_t song;
 
-#define BUFFER_INITIAL_SIZE 1024
+#define BUFFER_INITIAL_SIZE 8192
+
+#define PLAYER_THREAD_WAIT_TIME 3000
 
 typedef struct
 {
@@ -186,6 +198,10 @@ static void AllocateBuffer(const unsigned int size)
 
     if (buffer.data)
     {
+        // Windows doesn't always immediately clear the MHDR_INQUEUE flag, even
+        // after midiStreamStop() is called. There doesn't seem to be any side
+        // effect to just forcing the flag off.
+        hdr->dwFlags &= ~MHDR_INQUEUE;
         mmr = midiOutUnprepareHeader((HMIDIOUT)hMidiStream, hdr, sizeof(MIDIHDR));
         if (mmr != MMSYSERR_NOERROR)
         {
@@ -351,6 +367,17 @@ static void ResetVolume(void)
     }
 }
 
+static void SendNotesSoundOff(void)
+{
+    int i;
+
+    for (i = 0; i < MIDI_CHANNELS_PER_TRACK; ++i)
+    {
+        SendShortMsg(0, MIDI_EVENT_CONTROLLER, i, MIDI_CONTROLLER_ALL_NOTES_OFF, 0);
+        SendShortMsg(0, MIDI_EVENT_CONTROLLER, i, MIDI_CONTROLLER_ALL_SOUND_OFF, 0);
+    }
+}
+
 static void ResetControllers(void)
 {
     int i;
@@ -390,14 +417,8 @@ static void ResetPitchBendSensitivity(void)
 
 static void ResetDevice(void)
 {
-    int i;
-
-    for (i = 0; i < MIDI_CHANNELS_PER_TRACK; ++i)
-    {
-        // Stop sound prior to reset to prevent volume spikes.
-        SendShortMsg(0, MIDI_EVENT_CONTROLLER, i, MIDI_CONTROLLER_ALL_NOTES_OFF, 0);
-        SendShortMsg(0, MIDI_EVENT_CONTROLLER, i, MIDI_CONTROLLER_ALL_SOUND_OFF, 0);
-    }
+    // Send notes/sound off prior to reset to prevent volume spikes.
+    SendNotesSoundOff();
 
     MIDI_ResetFallback();
     use_fallback = false;
@@ -1232,6 +1253,28 @@ static void FillBuffer(void)
         return;
     }
 
+    switch (win_midi_state)
+    {
+        case STATE_PLAYING:
+            break;
+
+        case STATE_PAUSING:
+            // Send notes/sound off to prevent hanging notes.
+            SendNotesSoundOff();
+            StreamOut();
+            win_midi_state = STATE_PAUSED;
+            return;
+
+        case STATE_PAUSED:
+            // Send a NOP every 100 ms while paused.
+            SendDelayMsg(100);
+            StreamOut();
+            return;
+
+        case STATE_STOPPED:
+            return;
+    }
+
     for (num_events = 0; num_events < STREAM_MAX_EVENTS; )
     {
         midi_event_t *event = NULL;
@@ -1383,6 +1426,7 @@ static boolean I_WIN_InitMusic(void)
     if (mmr != MMSYSERR_NOERROR)
     {
         MidiError("midiStreamOpen", mmr);
+        hMidiStream = NULL;
         return false;
     }
 
@@ -1394,6 +1438,8 @@ static boolean I_WIN_InitMusic(void)
     AddToBuffer = (winmm_complevel == COMP_VANILLA) ? AddToBuffer_Vanilla
                                                     : AddToBuffer_Standard;
     MIDI_InitFallback();
+
+    win_midi_state = STATE_STOPPED;
 
     return true;
 }
@@ -1425,9 +1471,15 @@ static void I_WIN_StopSong(void)
     }
 
     SetEvent(hExitEvent);
-    WaitForSingleObject(hPlayerThread, INFINITE);
+    WaitForSingleObject(hPlayerThread, PLAYER_THREAD_WAIT_TIME);
     CloseHandle(hPlayerThread);
     hPlayerThread = NULL;
+    win_midi_state = STATE_STOPPED;
+
+    if (!hMidiStream)
+    {
+        return;
+    }
 
     mmr = midiStreamStop(hMidiStream);
     if (mmr != MMSYSERR_NOERROR)
@@ -1440,6 +1492,11 @@ static void I_WIN_PlaySong(void *handle, boolean looping)
 {
     MMRESULT mmr;
 
+    if (!hMidiStream)
+    {
+        return;
+    }
+
     song.looping = looping;
 
     hPlayerThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)PlayerProc,
@@ -1447,6 +1504,7 @@ static void I_WIN_PlaySong(void *handle, boolean looping)
     SetThreadPriority(hPlayerThread, THREAD_PRIORITY_TIME_CRITICAL);
 
     initial_playback = true;
+    win_midi_state = STATE_PLAYING;
 
     SetEvent(hBufferReturnEvent);
 
@@ -1459,24 +1517,22 @@ static void I_WIN_PlaySong(void *handle, boolean looping)
 
 static void I_WIN_PauseSong(void)
 {
-    MMRESULT mmr;
-
-    mmr = midiStreamPause(hMidiStream);
-    if (mmr != MMSYSERR_NOERROR)
+    if (!hMidiStream)
     {
-        MidiError("midiStreamPause", mmr);
+        return;
     }
+
+    win_midi_state = STATE_PAUSING;
 }
 
 static void I_WIN_ResumeSong(void)
 {
-    MMRESULT mmr;
-
-    mmr = midiStreamRestart(hMidiStream);
-    if (mmr != MMSYSERR_NOERROR)
+    if (!hMidiStream)
     {
-        MidiError("midiStreamRestart", mmr);
+        return;
     }
+
+    win_midi_state = STATE_PLAYING;
 }
 
 static boolean ConvertMus(byte *musdata, int len, const char *filename)
@@ -1514,6 +1570,11 @@ static void *I_WIN_RegisterSong(void *data, int len)
     MIDIPROPTIMEDIV prop_timediv;
     MIDIPROPTEMPO prop_tempo;
     MMRESULT mmr;
+
+    if (!hMidiStream)
+    {
+        return NULL;
+    }
 
     // MUS files begin with "MUS"
     // Reject anything which doesnt have this signature
@@ -1627,30 +1688,15 @@ static void I_WIN_ShutdownMusic(void)
     {
         MidiError("midiStreamRestart", mmr);
     }
-    WaitForSingleObject(hBufferReturnEvent, INFINITE);
+    WaitForSingleObject(hBufferReturnEvent, PLAYER_THREAD_WAIT_TIME);
     mmr = midiStreamStop(hMidiStream);
     if (mmr != MMSYSERR_NOERROR)
     {
         MidiError("midiStreamStop", mmr);
     }
 
-    if (buffer.data)
-    {
-        // Windows doesn't always immediately clear the MHDR_INQUEUE flag, even
-        // after midiStreamStop() is called. There doesn't seem to be any side
-        // effect to just forcing the flag off.
-        MidiStreamHdr.dwFlags &= ~MHDR_INQUEUE;
-        mmr = midiOutUnprepareHeader((HMIDIOUT)hMidiStream, &MidiStreamHdr,
-                                     sizeof(MIDIHDR));
-        if (mmr != MMSYSERR_NOERROR)
-        {
-            MidiError("midiOutUnprepareHeader", mmr);
-        }
-        free(buffer.data);
-        buffer.data = NULL;
-        buffer.size = 0;
-        buffer.position = 0;
-    }
+    // Don't free the buffer to avoid calling midiOutUnprepareHeader() which
+    // contains a memory error (detected by ASan).
 
     mmr = midiStreamClose(hMidiStream);
     if (mmr != MMSYSERR_NOERROR)

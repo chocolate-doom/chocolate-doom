@@ -280,7 +280,7 @@ screensaver_DATA = @PACKAGE_RDNS@.Doom_Screensaver.desktop
 @PACKAGE_RDNS@.Doom_Screensaver.desktop: Doom_Screensaver.desktop
 	cp Doom_Screensaver.desktop $@
 
-CLEANFILES = $(execgames_SCRIPTS) $(app_DATA) $(screensaver_DATA)
+CLEANFILES = $(execgames_SCRIPTS) $(metainfo_DATA) $(app_DATA) $(screensaver_DATA)
 
 .rc.o:
 	$(WINDRES) $< -o $@
