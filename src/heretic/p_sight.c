@@ -100,6 +100,10 @@ boolean P_SightBlockLinesIterator(int x, int y)
 
     offset = *(blockmap + offset);
 
+    // Invalid block, ignore this one
+    if (offset < 0)
+        return true;
+
     for (list = blockmaplump + offset; *list != -1; list++)
     {
         ld = &lines[*list];
