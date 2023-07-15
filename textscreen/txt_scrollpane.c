@@ -173,9 +173,9 @@ static void TXT_ScrollPaneDrawer(TXT_UNCAST_ARG(scrollpane))
 
     // We set a clipping area of the scroll pane.
 
-    x1 = scrollpane->widget.x,
-    y1 = scrollpane->widget.y,
-    x2 = x1 + scrollpane->w,
+    x1 = scrollpane->widget.x;
+    y1 = scrollpane->widget.y;
+    x2 = x1 + scrollpane->w;
     y2 = y1 + scrollpane->h;
 
     scrollbars = NeedsScrollbars(scrollpane);
