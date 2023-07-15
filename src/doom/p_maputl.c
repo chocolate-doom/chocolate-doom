@@ -26,6 +26,7 @@
 
 
 #include "m_bbox.h"
+#include "m_misc.h"
 
 #include "doomdef.h"
 #include "doomstat.h"
@@ -519,6 +520,8 @@ P_BlockThingsIterator
     {
         return true;
     }
+
+    LINKED_LIST_CHECK_NO_CYCLE(mobj_t, blocklinks[y*bmapwidth+x], bnext);
 
     for (mobj = blocklinks[y*bmapwidth+x] ;
          mobj ;
