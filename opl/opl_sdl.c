@@ -24,7 +24,9 @@
 #include <assert.h>
 
 #include "SDL.h"
+#ifndef DISABLE_SDL2MIXER
 #include "SDL_mixer.h"
+#endif  // DISABLE_SDL2MIXER
 
 #include "opl3.h"
 
