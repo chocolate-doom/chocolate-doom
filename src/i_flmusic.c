@@ -161,7 +161,7 @@ static void I_FL_PauseSong(void)
 {
     if (player)
     {
-        fluid_player_stop(player);
+        Mix_HookMusic(NULL, NULL);
     }
 }
 
@@ -169,7 +169,7 @@ static void I_FL_ResumeSong(void)
 {
     if (player)
     {
-        fluid_player_play(player);
+        Mix_HookMusic(FL_Mix_Callback, NULL);
     }
 }
 

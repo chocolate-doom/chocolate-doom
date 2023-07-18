@@ -31,7 +31,7 @@ jobs:
         with:
           style: file
           lines-changed-only: true
-          version: 14
+          version: 16
           tidy-checks: >-
             boost-*
             ,bugprone-*
@@ -47,7 +47,7 @@ jobs:
       - name: Fail fast?!
         if: steps.linter.outputs.checks-failed > 0
         run: |
-          echo "Some files failed the linting checks! Fail fast disabled until false posivite issue is fixed"
+          echo "Some files failed the linting checks! Fail fast disabled until false positive issue is fixed"
 
       - name: Check no extern used in .c files
         run: |

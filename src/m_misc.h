@@ -64,5 +64,46 @@ int M_vsnprintf(char *buf, size_t buf_len, const char *s, va_list args);
 int M_snprintf(char *buf, size_t buf_len, const char *s, ...) PRINTF_ATTR(3, 4);
 void M_NormalizeSlashes(char *str);
 
+
+// debugging code to check there are no loops in a linked list
+// disabled unless explicitly requested
+#ifdef DEBUG_LINKED_LISTS
+
+
+#define LINKED_LIST_CHECK_NO_CYCLE(list_type, list, next_member)  \
+    do                                                            \
+    {                                                             \
+        if (list != NULL) {                                       \
+            list_type *slow, *fast;                               \
+            slow = list;                                          \
+            fast = list->next_member;                             \
+            while (fast) {                                        \
+                if (!fast->next_member) {                         \
+                    break;                                        \
+                }                                                 \
+                fast = fast->next_member->next_member;            \
+                slow = slow->next_member;                         \
+                if (slow == fast) {                               \
+                    fprintf(stderr, "loop in linked list " # list " in %s:%d", __FILE__, __LINE__); \
+                    __builtin_trap();                             \
+                }                                                 \
+            }                                                     \
+        }                                                         \
+    } while (0)                                                   \
+
+
+
+#else  // DEBUG_LINKED_LISTS
+
+
+#define LINKED_LIST_CHECK_NO_CYCLE(list_type, list, next_member)  \
+    do                                                            \
+    {                                                             \
+    } while (0)                                                   \
+
+
+#endif  // DEBUG_LINKED_LISTS
+
+
 #endif
 
