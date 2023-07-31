@@ -413,6 +413,25 @@ void TXT_ConfigureJoystickAxis(txt_joystick_axis_t *joystick_axis,
     joystick_axis->callback = callback;
 }
 
+void TXT_ConfigureGamepadAxis(txt_joystick_axis_t *joystick_axis,
+                              int using_button,
+                              txt_joystick_axis_callback_t callback)
+{
+    // Build the prompt window.
+
+    joystick_axis->config_window = TXT_NewWindow("Configure axis");
+    TXT_SetColumnWidths(joystick_axis->config_window, 14);
+    TXT_AddWidgets(joystick_axis->config_window, TXT_NewStrut(0, 1),
+                   TXT_NewCheckBox("Invert", joystick_axis->invert),
+                   TXT_NewStrut(0, 1), NULL);
+
+    TXT_SetWindowAction(joystick_axis->config_window, TXT_HORIZ_LEFT, NULL);
+    TXT_SetWindowAction(joystick_axis->config_window, TXT_HORIZ_CENTER,
+                        TXT_NewWindowAbortAction(joystick_axis->config_window));
+    TXT_SetWindowAction(joystick_axis->config_window, TXT_HORIZ_RIGHT, NULL);
+    TXT_SetWidgetAlign(joystick_axis->config_window, TXT_HORIZ_CENTER);
+}
+
 static void TXT_JoystickAxisSizeCalc(TXT_UNCAST_ARG(joystick_axis))
 {
     TXT_CAST_ARG(txt_joystick_axis_t, joystick_axis);
@@ -467,6 +486,32 @@ static void TXT_JoystickAxisDrawer(TXT_UNCAST_ARG(joystick_axis))
     }
 }
 
+static void TXT_GamepadAxisDrawer(TXT_UNCAST_ARG(joystick_axis))
+{
+    TXT_CAST_ARG(txt_joystick_axis_t, joystick_axis);
+    char buf[JOYSTICK_AXIS_WIDTH + 1];
+    int i;
+
+    if (*joystick_axis->axis < 0)
+    {
+        M_StringCopy(buf, "(none)", sizeof(buf));
+    }
+    else
+    {
+        M_snprintf(buf, sizeof(buf), "AXIS #%i", *joystick_axis->axis);
+    }
+
+    TXT_SetWidgetBG(joystick_axis);
+    TXT_FGColor(TXT_COLOR_BRIGHT_WHITE);
+
+    TXT_DrawString(buf);
+
+    for (i = TXT_UTF8_Strlen(buf); i < joystick_axis->widget.w; ++i)
+    {
+        TXT_DrawString(" ");
+    }
+}
+
 static void TXT_JoystickAxisDestructor(TXT_UNCAST_ARG(joystick_axis))
 {
 }
@@ -478,6 +523,24 @@ static int TXT_JoystickAxisKeyPress(TXT_UNCAST_ARG(joystick_axis), int key)
     if (key == KEY_ENTER)
     {
         TXT_ConfigureJoystickAxis(joystick_axis, -1, NULL);
+        return 1;
+    }
+
+    if (key == KEY_BACKSPACE || key == KEY_DEL)
+    {
+        *joystick_axis->axis = -1;
+    }
+
+    return 0;
+}
+
+static int TXT_GamepadAxisKeyPress(TXT_UNCAST_ARG(joystick_axis), int key)
+{
+    TXT_CAST_ARG(txt_joystick_axis_t, joystick_axis);
+
+    if (key == KEY_ENTER)
+    {
+        TXT_ConfigureGamepadAxis(joystick_axis, -1, NULL);
         return 1;
     }
 
@@ -502,6 +565,19 @@ static void TXT_JoystickAxisMousePress(TXT_UNCAST_ARG(widget),
     }
 }
 
+static void TXT_GamepadAxisMousePress(TXT_UNCAST_ARG(widget), int x, int y,
+                                      int b)
+{
+    TXT_CAST_ARG(txt_joystick_axis_t, widget);
+
+    // Clicking is like pressing enter
+
+    if (b == TXT_MOUSE_LEFT)
+    {
+        TXT_GamepadAxisKeyPress(widget, KEY_ENTER);
+    }
+}
+
 txt_widget_class_t txt_joystick_axis_class =
 {
     TXT_AlwaysSelectable,
@@ -513,6 +589,17 @@ txt_widget_class_t txt_joystick_axis_class =
     NULL,
 };
 
+txt_widget_class_t txt_gamepad_axis_class =
+{
+    TXT_AlwaysSelectable,
+    TXT_JoystickAxisSizeCalc,
+    TXT_GamepadAxisDrawer,
+    TXT_GamepadAxisKeyPress,
+    TXT_JoystickAxisDestructor,
+    TXT_GamepadAxisMousePress,
+    NULL,
+};
+
 txt_joystick_axis_t *TXT_NewJoystickAxis(int *axis, int *invert,
                                          txt_joystick_axis_direction_t dir)
 {
@@ -520,7 +607,14 @@ txt_joystick_axis_t *TXT_NewJoystickAxis(int *axis, int *invert,
 
     joystick_axis = malloc(sizeof(txt_joystick_axis_t));
 
-    TXT_InitWidget(joystick_axis, &txt_joystick_axis_class);
+    if (use_gamepad)
+    {
+        TXT_InitWidget(joystick_axis, &txt_gamepad_axis_class);
+    }
+    else
+    {
+        TXT_InitWidget(joystick_axis, &txt_joystick_axis_class);
+    }
     joystick_axis->axis = axis;
     joystick_axis->invert = invert;
     joystick_axis->dir = dir;
