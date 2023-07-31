@@ -596,6 +596,60 @@ static const known_joystick_t known_joysticks[] =
     },
 };
 
+// Use SDL_GameController interface
+int use_gamepad = 0;
+
+// Based on Unity Doom mapping
+static const joystick_config_t modern_gamepad[] =
+{
+    {"joystick_x_axis", SDL_CONTROLLER_AXIS_RIGHTX},
+    {"joystick_y_axis", SDL_CONTROLLER_AXIS_LEFTY},
+    {"joystick_strafe_axis", SDL_CONTROLLER_AXIS_LEFTX},
+    {"joystick_look_axis", SDL_CONTROLLER_AXIS_RIGHTY},
+    {"joyb_fire", GAMEPAD_BUTTON_TRIGGERRIGHT},
+    {"joyb_speed", GAMEPAD_BUTTON_TRIGGERLEFT},
+    {"joyb_use", SDL_CONTROLLER_BUTTON_B},
+    {"joyb_jump", SDL_CONTROLLER_BUTTON_A},
+    {"joyb_prevweapon", SDL_CONTROLLER_BUTTON_LEFTSHOULDER},
+    {"joyb_nextweapon", SDL_CONTROLLER_BUTTON_RIGHTSHOULDER},
+    {"joyb_menu_activate", SDL_CONTROLLER_BUTTON_START},
+    {"joyb_toggle_automap", SDL_CONTROLLER_BUTTON_Y},
+    {NULL, 0},
+};
+
+// Based on the SNES Doom mapping
+static const joystick_config_t classic_gamepad[] =
+{
+    {"joystick_x_axis", SDL_CONTROLLER_AXIS_LEFTX},
+    {"joystick_y_axis", SDL_CONTROLLER_AXIS_LEFTY},
+    {"joyb_fire", SDL_CONTROLLER_BUTTON_X},                    // SNES Y
+    {"joyb_speed", SDL_CONTROLLER_BUTTON_A},                   // SNES B
+    {"joyb_use", SDL_CONTROLLER_BUTTON_B},                     // SNES A
+    {"joyb_strafeleft", SDL_CONTROLLER_BUTTON_LEFTSHOULDER},   // SNES L
+    {"joyb_straferight", SDL_CONTROLLER_BUTTON_RIGHTSHOULDER}, // SNES R
+    {"joyb_nextweapon", SDL_CONTROLLER_BUTTON_Y},              // SNES X
+    {"joyb_menu_activate", SDL_CONTROLLER_BUTTON_START},       // SNES Start
+    {"joyb_toggle_automap", SDL_CONTROLLER_BUTTON_BACK},       // SNES Select
+    {NULL, 0},
+};
+
+// SNES Doom mapping with extra shoulder buttons
+static const joystick_config_t classic_gamepad_plus[] =
+{
+    {"joystick_x_axis", SDL_CONTROLLER_AXIS_LEFTX},
+    {"joystick_y_axis", SDL_CONTROLLER_AXIS_LEFTY},
+    {"joyb_fire", SDL_CONTROLLER_BUTTON_X},                    // SNES Y
+    {"joyb_speed", SDL_CONTROLLER_BUTTON_A},                   // SNES B
+    {"joyb_use", SDL_CONTROLLER_BUTTON_B},                     // SNES A
+    {"joyb_strafeleft", SDL_CONTROLLER_BUTTON_LEFTSHOULDER},   // L1
+    {"joyb_straferight", SDL_CONTROLLER_BUTTON_RIGHTSHOULDER}, // R1
+    {"joyb_prevweapon", GAMEPAD_BUTTON_TRIGGERLEFT},           // L2
+    {"joyb_nextweapon", GAMEPAD_BUTTON_TRIGGERRIGHT},          // R2
+    {"joyb_menu_activate", SDL_CONTROLLER_BUTTON_START},       // SNES Start
+    {"joyb_toggle_automap", SDL_CONTROLLER_BUTTON_BACK},       // SNES Select
+    {NULL, 0},
+};
+
 static const known_joystick_t *GetJoystickType(int index)
 {
     SDL_Joystick *joystick;
@@ -665,7 +719,8 @@ static void LoadConfigurationSet(const joystick_config_t *configs)
         config = &configs[i];
 
         // Don't overwrite autorun if it is set.
-        if (!strcmp(config->name, "joyb_speed") && joybspeed >= 20)
+        if (!strcmp(config->name, "joyb_speed") &&
+            joybspeed >= MAX_VIRTUAL_BUTTONS)
         {
             continue;
         }
@@ -867,14 +922,46 @@ static boolean SetJoystickGUID(SDL_JoystickID joy_id)
         if (SDL_JoystickInstanceID(all_joysticks[i]) == joy_id)
         {
             guid = SDL_JoystickGetGUID(all_joysticks[i]);
-            joystick_guid = malloc(33);
-            SDL_JoystickGetGUIDString(guid, joystick_guid, 33);
+            joystick_guid = malloc(GUID_STRING_BUF_SIZE);
+            SDL_JoystickGetGUIDString(guid, joystick_guid,
+                                      GUID_STRING_BUF_SIZE);
             joystick_index = i;
+
             return true;
         }
     }
 
     return false;
+}
+
+static void GetGamepadDefaultConfig(void)
+{
+    boolean have_four_shoulder, have_dual_sticks;
+    char *mapping;
+    SDL_JoystickGUID guid;
+
+    guid = SDL_JoystickGetGUID(all_joysticks[joystick_index]);
+    mapping = SDL_GameControllerMappingForGUID(guid);
+    have_four_shoulder =
+        strstr(mapping, "leftshoulder") && strstr(mapping, "rightshoulder") &&
+        strstr(mapping, "lefttrigger") && strstr(mapping, "righttrigger");
+    have_dual_sticks = strstr(mapping, "leftx") && strstr(mapping, "rightx");
+    SDL_free(mapping);
+
+    LoadConfigurationSet(empty_defaults);
+
+    if (have_four_shoulder && have_dual_sticks)
+    {
+        LoadConfigurationSet(modern_gamepad);
+    }
+    else if (have_four_shoulder)
+    {
+        LoadConfigurationSet(classic_gamepad_plus);
+    }
+    else
+    {
+        LoadConfigurationSet(classic_gamepad);
+    }
 }
 
 static int CalibrationEventCallback(SDL_Event *event, void *user_data)
@@ -887,6 +974,16 @@ static int CalibrationEventCallback(SDL_Event *event, void *user_data)
     if (!SetJoystickGUID(event->jbutton.which))
     {
         return 0;
+    }
+
+    if (SDL_IsGameController(joystick_index))
+    {
+        usejoystick = 1;
+        use_gamepad = 1;
+        LoadConfigurationSet(empty_defaults);
+        GetGamepadDefaultConfig();
+        TXT_CloseWindow(calibration_window);
+        return 1;
     }
 
     // At this point, we have a button press.
@@ -923,6 +1020,7 @@ static void NoJoystick(void)
                          "some drivers or otherwise configure it.");
 
     usejoystick = 0;
+    use_gamepad = 0;
     joystick_index = -1;
     SetJoystickButtonLabel();
 }
@@ -965,6 +1063,7 @@ static void CalibrateJoystick(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
 
     // Start calibration
     usejoystick = 0;
+    use_gamepad = 0;
     joystick_index = -1;
 }
 
@@ -1061,7 +1160,7 @@ void ConfigJoystick(TXT_UNCAST_ARG(widget), void *user_data)
     // trick in Vanilla Doom.  If this has been enabled, not only is the
     // joybspeed value meaningless, but the control itself is useless.
 
-    if (joybspeed < 20)
+    if (joybspeed < MAX_VIRTUAL_BUTTONS)
     {
         AddJoystickControl(window, "Run", &joybspeed);
     }
@@ -1089,6 +1188,7 @@ void BindJoystickVariables(void)
     int i;
 
     M_BindIntVariable("use_joystick",           &usejoystick);
+    M_BindIntVariable("use_gamepad",            &use_gamepad);
     M_BindStringVariable("joystick_guid",       &joystick_guid);
     M_BindIntVariable("joystick_index",         &joystick_index);
     M_BindIntVariable("joystick_x_axis",        &joystick_x_axis);

@@ -104,8 +104,9 @@ static void CanonicalizeButtons(void)
 
         // Don't remap the speed key if it's bound to "always run".
         // Also preserve "unbound" variables.
-        if ((all_joystick_buttons[i] == &joybspeed && vbutton >= 20)
-         || vbutton < 0)
+        if ((all_joystick_buttons[i] == &joybspeed &&
+             vbutton >= MAX_VIRTUAL_BUTTONS) ||
+            vbutton < 0)
         {
             new_mapping[i] = i;
         }
