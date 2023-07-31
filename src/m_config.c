@@ -1370,6 +1370,13 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(joystick_physical_button10),
 
     //!
+    // If non-zero, use the SDL_GameController interface instead of the
+    // SDL_Joystick interface.
+    //
+
+    CONFIG_VARIABLE_INT(use_gamepad),
+
+    //!
     // Joystick virtual button to make the player strafe left.
     //
 
