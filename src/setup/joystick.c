@@ -1025,15 +1025,30 @@ static void NoJoystick(void)
     SetJoystickButtonLabel();
 }
 
-static void CalibrateWindowClosed(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
+static void RefreshJoystickWindow(TXT_UNCAST_ARG(widget),
+                                  TXT_UNCAST_ARG(unused))
 {
+    ConfigJoystick(NULL, NULL);
+}
+
+static void CalibrateWindowClosed(TXT_UNCAST_ARG(widget),
+                                  TXT_UNCAST_ARG(joystick_window))
+{
+    TXT_CAST_ARG(txt_window_t, joystick_window);
     TXT_SDL_SetEventCallback(NULL, NULL);
     SetJoystickButtonLabel();
     CloseAllJoysticks();
+
+    // Refresh Joystick window to update button and axis widgets.
+    TXT_SignalConnect(joystick_window, "closed", RefreshJoystickWindow, NULL);
+    TXT_CloseWindow(joystick_window);
 }
 
-static void CalibrateJoystick(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
+static void CalibrateJoystick(TXT_UNCAST_ARG(widget),
+                              TXT_UNCAST_ARG(joystick_window))
 {
+    TXT_CAST_ARG(txt_window_t, joystick_window);
+
     // Try to open all available joysticks.  If none are opened successfully,
     // bomb out with an error.
 
@@ -1059,7 +1074,8 @@ static void CalibrateJoystick(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
 
     TXT_SDL_SetEventCallback(CalibrationEventCallback, NULL);
 
-    TXT_SignalConnect(calibration_window, "closed", CalibrateWindowClosed, NULL);
+    TXT_SignalConnect(calibration_window, "closed", CalibrateWindowClosed,
+                      joystick_window);
 
     // Start calibration
     usejoystick = 0;
@@ -1174,7 +1190,7 @@ void ConfigJoystick(TXT_UNCAST_ARG(widget), void *user_data)
 
     AddJoystickControl(window, "Toggle Automap", &joybautomap);
 
-    TXT_SignalConnect(joystick_button, "pressed", CalibrateJoystick, NULL);
+    TXT_SignalConnect(joystick_button, "pressed", CalibrateJoystick, window);
     TXT_SetWindowAction(window, TXT_HORIZ_CENTER, TestConfigAction());
 
     InitJoystick();

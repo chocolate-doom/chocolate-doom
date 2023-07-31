@@ -17,6 +17,7 @@
 #include <string.h>
 
 #include "SDL_joystick.h"
+#include "SDL_gamecontroller.h"
 
 #include "doomkeys.h"
 #include "joystick.h"
@@ -176,6 +177,64 @@ static int EventCallback(SDL_Event *event, TXT_UNCAST_ARG(joystick_input))
     return 0;
 }
 
+static int EventCallbackGamepad(SDL_Event *event,
+                                TXT_UNCAST_ARG(joystick_input))
+{
+    TXT_CAST_ARG(txt_joystick_input_t, joystick_input);
+
+    // Got the joystick button press?
+
+    if (event->type == SDL_CONTROLLERBUTTONDOWN ||
+        event->type == SDL_CONTROLLERAXISMOTION)
+    {
+        int vbutton, physbutton, axis;
+
+        // Before changing anything, remap button configuration into
+        // canonical form, to avoid conflicts.
+        CanonicalizeButtons();
+
+        vbutton = VirtualButtonForVariable(joystick_input->variable);
+        axis = event->caxis.axis;
+
+        if (event->type == SDL_CONTROLLERAXISMOTION &&
+            (axis == SDL_CONTROLLER_AXIS_TRIGGERLEFT ||
+             axis == SDL_CONTROLLER_AXIS_TRIGGERRIGHT) &&
+            event->caxis.value > TRIGGER_THRESHOLD)
+        {
+            if (axis == SDL_CONTROLLER_AXIS_TRIGGERLEFT)
+            {
+                physbutton = GAMEPAD_BUTTON_TRIGGERLEFT;
+            }
+            else
+            {
+                physbutton = GAMEPAD_BUTTON_TRIGGERRIGHT;
+            }
+        }
+        else if (event->type == SDL_CONTROLLERBUTTONDOWN)
+        {
+            physbutton = event->cbutton.button;
+        }
+        else
+        {
+            return 0;
+        }
+
+        if (joystick_input->check_conflicts)
+        {
+            ClearVariablesUsingButton(physbutton);
+        }
+
+        // Set mapping.
+        *joystick_input->variable = vbutton;
+        joystick_physical_buttons[vbutton] = physbutton;
+
+        TXT_CloseWindow(joystick_input->prompt_window);
+        return 1;
+    }
+
+    return 0;
+}
+
 // When the prompt window is closed, disable the event callback function;
 // we are no longer interested in receiving notification of events.
 
@@ -187,6 +246,18 @@ static void PromptWindowClosed(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(joystick))
     TXT_SDL_SetEventCallback(NULL, NULL);
     SDL_JoystickEventState(SDL_DISABLE);
     SDL_QuitSubSystem(SDL_INIT_JOYSTICK);
+}
+
+static void PromptWindowClosedGamepad(TXT_UNCAST_ARG(widget),
+                                      TXT_UNCAST_ARG(joystick))
+{
+    TXT_CAST_ARG(SDL_GameController, joystick);
+
+    SDL_GameControllerClose(joystick);
+    TXT_SDL_SetEventCallback(NULL, NULL);
+    SDL_JoystickEventState(SDL_DISABLE);
+    SDL_GameControllerEventState(SDL_DISABLE);
+    SDL_QuitSubSystem(SDL_INIT_GAMECONTROLLER);
 }
 
 static void OpenErrorWindow(void)
@@ -227,6 +298,43 @@ static void OpenPromptWindow(txt_joystick_input_t *joystick_input)
     joystick_input->prompt_window = window;
 
     SDL_JoystickEventState(SDL_ENABLE);
+}
+
+static void OpenPromptWindowGamepad(txt_joystick_input_t *joystick_input)
+{
+    txt_window_t *window;
+    SDL_GameController *gamepad;
+
+    // Silently update when the shift button is held down.
+
+    joystick_input->check_conflicts = !TXT_GetModifierState(TXT_MOD_SHIFT);
+
+    if (SDL_Init(SDL_INIT_GAMECONTROLLER) < 0)
+    {
+        return;
+    }
+
+    // Check the current joystick is valid
+
+    gamepad = SDL_GameControllerOpen(joystick_index);
+
+    if (gamepad == NULL)
+    {
+        OpenErrorWindow();
+        return;
+    }
+
+    // Open the prompt window
+
+    window = TXT_MessageBox(NULL, "Press the new button on the controller...");
+
+    TXT_SDL_SetEventCallback(EventCallbackGamepad, joystick_input);
+    TXT_SignalConnect(window, "closed", PromptWindowClosedGamepad, gamepad);
+    joystick_input->prompt_window = window;
+
+    // GameController events do not fire if Joystick events are disabled.
+    SDL_JoystickEventState(SDL_ENABLE);
+    SDL_GameControllerEventState(SDL_ENABLE);
 }
 
 static void TXT_JoystickInputSizeCalc(TXT_UNCAST_ARG(joystick_input))
@@ -284,8 +392,27 @@ static int TXT_JoystickInputKeyPress(TXT_UNCAST_ARG(joystick_input), int key)
     if (key == KEY_ENTER)
     {
         // Open a window to prompt for the new joystick press
-
         OpenPromptWindow(joystick_input);
+
+        return 1;
+    }
+
+    if (key == KEY_BACKSPACE || key == KEY_DEL)
+    {
+        *joystick_input->variable = -1;
+    }
+
+    return 0;
+}
+
+static int TXT_GamepadInputKeyPress(TXT_UNCAST_ARG(joystick_input), int key)
+{
+    TXT_CAST_ARG(txt_joystick_input_t, joystick_input);
+
+    if (key == KEY_ENTER)
+    {
+        // Open a window to prompt for the new joystick press
+        OpenPromptWindowGamepad(joystick_input);
 
         return 1;
     }
@@ -311,6 +438,19 @@ static void TXT_JoystickInputMousePress(TXT_UNCAST_ARG(widget),
     }
 }
 
+static void TXT_GamepadInputMousePress(TXT_UNCAST_ARG(widget), int x, int y,
+                                       int b)
+{
+    TXT_CAST_ARG(txt_joystick_input_t, widget);
+
+    // Clicking is like pressing enter
+
+    if (b == TXT_MOUSE_LEFT)
+    {
+        TXT_GamepadInputKeyPress(widget, KEY_ENTER);
+    }
+}
+
 txt_widget_class_t txt_joystick_input_class =
 {
     TXT_AlwaysSelectable,
@@ -322,13 +462,31 @@ txt_widget_class_t txt_joystick_input_class =
     NULL,
 };
 
+txt_widget_class_t txt_gamepad_input_class =
+{
+    TXT_AlwaysSelectable,
+    TXT_JoystickInputSizeCalc,
+    TXT_JoystickInputDrawer,
+    TXT_GamepadInputKeyPress,
+    TXT_JoystickInputDestructor,
+    TXT_GamepadInputMousePress,
+    NULL,
+};
+
 txt_joystick_input_t *TXT_NewJoystickInput(int *variable)
 {
     txt_joystick_input_t *joystick_input;
 
     joystick_input = malloc(sizeof(txt_joystick_input_t));
 
-    TXT_InitWidget(joystick_input, &txt_joystick_input_class);
+    if (use_gamepad)
+    {
+        TXT_InitWidget(joystick_input, &txt_gamepad_input_class);
+    }
+    else
+    {
+        TXT_InitWidget(joystick_input, &txt_joystick_input_class);
+    }
     joystick_input->variable = variable;
 
     return joystick_input;
