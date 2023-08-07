@@ -49,6 +49,9 @@ static int usejoystick = 0;
 // Use SDL_gamecontroller interface for the selected device
 static int use_gamepad = 0;
 
+// SDL_GameControllerType of gamepad
+static int gamepad_type = 0;
+
 // SDL GUID and index of the joystick to use.
 static char *joystick_guid = "";
 static int joystick_index = -1;
@@ -194,6 +197,7 @@ void I_InitGamepad(void)
     }
 
     joystick_index = index;
+    gamepad_type = SDL_GameControllerTypeForIndex(index);
 
     if (strcmp(joystick_guid, ""))
     {
@@ -633,6 +637,7 @@ void I_BindJoystickVariables(void)
 
     M_BindIntVariable("use_joystick",          &usejoystick);
     M_BindIntVariable("use_gamepad",           &use_gamepad);
+    M_BindIntVariable("gamepad_type",          &gamepad_type);
     M_BindStringVariable("joystick_guid",      &joystick_guid);
     M_BindIntVariable("joystick_index",        &joystick_index);
     M_BindIntVariable("joystick_x_axis",       &joystick_x_axis);

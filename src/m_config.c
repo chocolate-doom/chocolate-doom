@@ -1377,6 +1377,12 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(use_gamepad),
 
     //!
+    // Stores the SDL_GameControllerType of the last configured gamepad.
+    //
+
+    CONFIG_VARIABLE_INT(gamepad_type),
+
+    //!
     // Joystick virtual button to make the player strafe left.
     //
 
