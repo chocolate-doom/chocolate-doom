@@ -60,6 +60,199 @@ static int *all_joystick_buttons[NUM_VIRTUAL_BUTTONS] =
     &joybautomap,
 };
 
+// For indirection so that we're not dependent on item ordering in the
+// SDL_GameControllerButton enum.
+static const int gamepad_buttons[GAMEPAD_BUTTON_MAX] =
+{
+   SDL_CONTROLLER_BUTTON_A,
+   SDL_CONTROLLER_BUTTON_B,
+   SDL_CONTROLLER_BUTTON_X,
+   SDL_CONTROLLER_BUTTON_Y,
+   SDL_CONTROLLER_BUTTON_BACK,
+   SDL_CONTROLLER_BUTTON_GUIDE,
+   SDL_CONTROLLER_BUTTON_START,
+   SDL_CONTROLLER_BUTTON_LEFTSTICK,
+   SDL_CONTROLLER_BUTTON_RIGHTSTICK,
+   SDL_CONTROLLER_BUTTON_LEFTSHOULDER,
+   SDL_CONTROLLER_BUTTON_RIGHTSHOULDER,
+   SDL_CONTROLLER_BUTTON_DPAD_UP,
+   SDL_CONTROLLER_BUTTON_DPAD_DOWN,
+   SDL_CONTROLLER_BUTTON_DPAD_LEFT,
+   SDL_CONTROLLER_BUTTON_DPAD_RIGHT,
+   SDL_CONTROLLER_BUTTON_MISC1,
+   SDL_CONTROLLER_BUTTON_PADDLE1,
+   SDL_CONTROLLER_BUTTON_PADDLE2,
+   SDL_CONTROLLER_BUTTON_PADDLE3,
+   SDL_CONTROLLER_BUTTON_PADDLE4,
+   SDL_CONTROLLER_BUTTON_TOUCHPAD,
+   GAMEPAD_BUTTON_TRIGGERLEFT,
+   GAMEPAD_BUTTON_TRIGGERRIGHT,
+};
+
+// Items in the following button lists are ordered according to gamepad_buttons
+// above.
+static const char *xbox360_buttons[GAMEPAD_BUTTON_MAX] =
+{
+    "A",
+    "B",
+    "X",
+    "Y",
+    "BACK",
+    "GUIDE",
+    "START",
+    "LSB",
+    "RSB",
+    "LB",
+    "RB",
+    "DPAD U",
+    "DPAD D",
+    "DPAD L",
+    "DPAD R",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "LT",
+    "RT",
+};
+
+static const char *xboxone_buttons[GAMEPAD_BUTTON_MAX] =
+{
+    "A",
+    "B",
+    "X",
+    "Y",
+    "VIEW",
+    "XBOX",
+    "MENU",
+    "LSB",
+    "RSB",
+    "LB",
+    "RB",
+    "DPAD U",
+    "DPAD D",
+    "DPAD L",
+    "DPAD R",
+    "PROFILE",
+    "P1",
+    "P2",
+    "P3",
+    "P4",
+    "",
+    "LT",
+    "RT",
+};
+
+static const char *ps3_buttons[GAMEPAD_BUTTON_MAX] =
+{
+    "X",
+    "CIRCLE",
+    "SQUARE",
+    "TRIANGLE",
+    "SELECT",
+    "PS",
+    "START",
+    "L3",
+    "R3",
+    "L1",
+    "R1",
+    "DPAD U",
+    "DPAD D",
+    "DPAD L",
+    "DPAD R",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "L2",
+    "R2",
+};
+
+static const char *ps4_buttons[GAMEPAD_BUTTON_MAX] =
+{
+    "X",
+    "CIRCLE",
+    "SQUARE",
+    "TRIANGLE",
+    "SHARE",
+    "PS",
+    "OPTIONS",
+    "L3",
+    "R3",
+    "L1",
+    "R1",
+    "DPAD U",
+    "DPAD D",
+    "DPAD L",
+    "DPAD R",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "TOUCH",
+    "L2",
+    "R2",
+};
+
+static const char *ps5_buttons[GAMEPAD_BUTTON_MAX] =
+{
+    "X",
+    "CIRCLE",
+    "SQUARE",
+    "TRIANGLE",
+    "SHARE",
+    "PS",
+    "OPTIONS",
+    "L3",
+    "R3",
+    "L1",
+    "R1",
+    "DPAD U",
+    "DPAD D",
+    "DPAD L",
+    "DPAD R",
+    "MUTE",
+    "",
+    "",
+    "",
+    "",
+    "TOUCH",
+    "L2",
+    "R2",
+};
+
+static const char *switchpro_buttons[GAMEPAD_BUTTON_MAX] =
+{
+    "B",
+    "A",
+    "Y",
+    "X",
+    "MINUS",
+    "HOME",
+    "PLUS",
+    "LSB",
+    "RSB",
+    "L",
+    "R",
+    "DPAD U",
+    "DPAD D",
+    "DPAD L",
+    "DPAD R",
+    "CAPTURE",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "ZL",
+    "ZR",
+};
+
 static int PhysicalForVirtualButton(int vbutton)
 {
     if (vbutton < NUM_VIRTUAL_BUTTONS)
@@ -381,6 +574,93 @@ static void TXT_JoystickInputDrawer(TXT_UNCAST_ARG(joystick_input))
     }
 }
 
+static int GetGamepadButtonIndex(int button)
+{
+    int i;
+
+    for (i = 0; i < arrlen(gamepad_buttons); ++i)
+    {
+        if (button == gamepad_buttons[i])
+        {
+            return i;
+        }
+    }
+
+    return -1;
+}
+
+static void GetGamepadButtonDescription(int vbutton, char *buf, size_t buf_len)
+{
+    int index;
+
+    index = GetGamepadButtonIndex(PhysicalForVirtualButton(vbutton));
+
+    if (index < 0)
+    {
+        M_StringCopy(buf, "(unknown)", buf_len);
+        return;
+    }
+
+    switch (gamepad_type)
+    {
+        case SDL_CONTROLLER_TYPE_XBOX360:
+            M_snprintf(buf, buf_len, "%s", xbox360_buttons[index]);
+            break;
+
+        case SDL_CONTROLLER_TYPE_XBOXONE:
+            M_snprintf(buf, buf_len, "%s", xboxone_buttons[index]);
+            break;
+
+        case SDL_CONTROLLER_TYPE_PS3:
+            M_snprintf(buf, buf_len, "%s", ps3_buttons[index]);
+            break;
+
+        case SDL_CONTROLLER_TYPE_PS4:
+            M_snprintf(buf, buf_len, "%s", ps4_buttons[index]);
+            break;
+
+        case SDL_CONTROLLER_TYPE_PS5:
+            M_snprintf(buf, buf_len, "%s", ps5_buttons[index]);
+            break;
+
+        case SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_PRO:
+            M_snprintf(buf, buf_len, "%s", switchpro_buttons[index]);
+            break;
+
+        default:
+            M_snprintf(buf, buf_len, "BUTTON #%i",
+                       PhysicalForVirtualButton(vbutton) + 1);
+            break;
+    }
+}
+
+static void TXT_GamepadInputDrawer(TXT_UNCAST_ARG(joystick_input))
+{
+    TXT_CAST_ARG(txt_joystick_input_t, joystick_input);
+    char buf[20]; // Need to fit "BUTTON #XX"
+    int i;
+
+    if (*joystick_input->variable < 0)
+    {
+        M_StringCopy(buf, "(none)", sizeof(buf));
+    }
+    else
+    {
+        GetGamepadButtonDescription(*joystick_input->variable, buf,
+                                    sizeof(buf));
+    }
+
+    TXT_SetWidgetBG(joystick_input);
+    TXT_FGColor(TXT_COLOR_BRIGHT_WHITE);
+
+    TXT_DrawString(buf);
+
+    for (i = TXT_UTF8_Strlen(buf); i < JOYSTICK_INPUT_WIDTH; ++i)
+    {
+        TXT_DrawString(" ");
+    }
+}
+
 static void TXT_JoystickInputDestructor(TXT_UNCAST_ARG(joystick_input))
 {
 }
@@ -466,7 +746,7 @@ txt_widget_class_t txt_gamepad_input_class =
 {
     TXT_AlwaysSelectable,
     TXT_JoystickInputSizeCalc,
-    TXT_JoystickInputDrawer,
+    TXT_GamepadInputDrawer,
     TXT_GamepadInputKeyPress,
     TXT_JoystickInputDestructor,
     TXT_GamepadInputMousePress,

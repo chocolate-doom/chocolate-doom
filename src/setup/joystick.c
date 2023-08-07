@@ -599,6 +599,9 @@ static const known_joystick_t known_joysticks[] =
 // Use SDL_GameController interface
 int use_gamepad = 0;
 
+// SDL_GameControllerType of gamepad
+int gamepad_type = 0;
+
 // Based on Unity Doom mapping
 static const joystick_config_t modern_gamepad[] =
 {
@@ -980,6 +983,7 @@ static int CalibrationEventCallback(SDL_Event *event, void *user_data)
     {
         usejoystick = 1;
         use_gamepad = 1;
+        gamepad_type = SDL_GameControllerTypeForIndex(joystick_index);
         LoadConfigurationSet(empty_defaults);
         GetGamepadDefaultConfig();
         TXT_CloseWindow(calibration_window);
@@ -990,6 +994,7 @@ static int CalibrationEventCallback(SDL_Event *event, void *user_data)
     // In the first "center" stage, we're just trying to work out which
     // joystick is being configured and which button the user is pressing.
     usejoystick = 1;
+    gamepad_type = SDL_CONTROLLER_TYPE_UNKNOWN;
     calibrate_button = event->jbutton.button;
 
     // If the joystick is a known one, auto-load default
@@ -1205,6 +1210,7 @@ void BindJoystickVariables(void)
 
     M_BindIntVariable("use_joystick",           &usejoystick);
     M_BindIntVariable("use_gamepad",            &use_gamepad);
+    M_BindIntVariable("gamepad_type",           &gamepad_type);
     M_BindStringVariable("joystick_guid",       &joystick_guid);
     M_BindIntVariable("joystick_index",         &joystick_index);
     M_BindIntVariable("joystick_x_axis",        &joystick_x_axis);

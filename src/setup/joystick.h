@@ -22,6 +22,7 @@
 extern int joystick_index;
 extern int joystick_physical_buttons[NUM_VIRTUAL_BUTTONS];
 extern int use_gamepad;
+extern int gamepad_type;
 
 
 void ConfigJoystick(void *widget, void *user_data);
