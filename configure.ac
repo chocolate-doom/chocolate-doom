@@ -31,7 +31,7 @@ then
         CFLAGS="-O$OPT_LEVEL -g $WARNINGS $orig_CFLAGS"
 fi
 
-PKG_CHECK_MODULES(SDL, [sdl2 >= 2.0.7])
+PKG_CHECK_MODULES(SDL, [sdl2 >= 2.0.14])
 # Check for SDL2_mixer
 AC_ARG_ENABLE([sdl2mixer],
 AS_HELP_STRING([--disable-sdl2mixer], [Disable SDL2_mixer support])
