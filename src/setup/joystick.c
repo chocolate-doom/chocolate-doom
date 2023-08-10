@@ -1106,6 +1106,28 @@ static void AddJoystickControl(TXT_UNCAST_ARG(table), const char *label, int *va
                    NULL);
 }
 
+static void SwapLRSticks(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
+{
+    // Single pad/stick controllers don't get a joystick_strafe_axis value
+    if (joystick_strafe_axis >= 0)
+    {
+        if (joystick_x_axis == SDL_CONTROLLER_AXIS_LEFTX)
+        {
+            joystick_x_axis = SDL_CONTROLLER_AXIS_RIGHTX;
+            joystick_y_axis = SDL_CONTROLLER_AXIS_LEFTY;
+            joystick_strafe_axis = SDL_CONTROLLER_AXIS_LEFTX;
+            joystick_look_axis = SDL_CONTROLLER_AXIS_RIGHTY;
+        }
+        else
+        {
+            joystick_x_axis = SDL_CONTROLLER_AXIS_LEFTX;
+            joystick_y_axis = SDL_CONTROLLER_AXIS_RIGHTY;
+            joystick_strafe_axis = SDL_CONTROLLER_AXIS_RIGHTX;
+            joystick_look_axis = SDL_CONTROLLER_AXIS_LEFTY;
+        }
+    }
+}
+
 void ConfigJoystick(TXT_UNCAST_ARG(widget), void *user_data)
 {
     txt_window_t *window;
@@ -1163,6 +1185,17 @@ void ConfigJoystick(TXT_UNCAST_ARG(widget), void *user_data)
                    TXT_TABLE_EMPTY,
                    NULL);
     }
+
+    TXT_AddWidget(window,
+        TXT_NewConditional(&use_gamepad, 1,
+            TXT_MakeTable(6,
+                   TXT_NewButton2("Swap L and R sticks", SwapLRSticks, NULL),
+                   TXT_TABLE_OVERFLOW_RIGHT,
+                   TXT_TABLE_OVERFLOW_RIGHT,
+                   TXT_TABLE_EMPTY,
+                   TXT_TABLE_EMPTY,
+                   TXT_TABLE_EMPTY,
+                   NULL)));
 
     TXT_AddWidget(window, TXT_NewSeparator("Buttons"));
 
