@@ -32,11 +32,6 @@
 #include "m_config.h"
 #include "m_misc.h"
 
-// When an axis is within the dead zone, it is set to zero.
-// This is 5% of the full range:
-
-#define DEAD_ZONE (32768 / 3)
-
 static SDL_GameController *gamepad = NULL;
 static SDL_Joystick *joystick = NULL;
 
@@ -77,6 +72,13 @@ static int joystick_strafe_invert = 0;
 
 static int joystick_look_axis = -1;
 static int joystick_look_invert = 0;
+
+// Configurable dead zone for each axis, specified as a percentage of the axis
+// max value.
+static int joystick_x_dead_zone = 33;
+static int joystick_y_dead_zone = 33;
+static int joystick_strafe_dead_zone = 33;
+static int joystick_look_dead_zone = 33;
 
 // Virtual to physical button joystick button mapping. By default this
 // is a straight mapping.
@@ -274,7 +276,7 @@ static int GetButtonsStateGamepad(void)
 
 // Read the state of an axis, inverting if necessary.
 
-static int GetAxisStateGamepad(int axis, int invert)
+static int GetAxisStateGamepad(int axis, int invert, int dead_zone)
 {
     int result;
 
@@ -285,9 +287,12 @@ static int GetAxisStateGamepad(int axis, int invert)
         return 0;
     }
 
+    // Dead zone is expressed as percentage of axis max value
+    dead_zone = 32768 * dead_zone / 100;
+
     result = SDL_GameControllerGetAxis(gamepad, axis);
 
-    if (result < DEAD_ZONE && result > -DEAD_ZONE)
+    if (result < dead_zone && result > -dead_zone)
     {
         result = 0;
     }
@@ -308,12 +313,15 @@ void I_UpdateGamepad(void)
 
         ev.type = ev_joystick;
         ev.data1 = GetButtonsStateGamepad();
-        ev.data2 = GetAxisStateGamepad(joystick_x_axis, joystick_x_invert);
-        ev.data3 = GetAxisStateGamepad(joystick_y_axis, joystick_y_invert);
+        ev.data2 = GetAxisStateGamepad(joystick_x_axis, joystick_x_invert,
+                                       joystick_x_dead_zone);
+        ev.data3 = GetAxisStateGamepad(joystick_y_axis, joystick_y_invert,
+                                       joystick_y_dead_zone);
         ev.data4 =
-            GetAxisStateGamepad(joystick_strafe_axis, joystick_strafe_invert);
-        ev.data5 =
-            GetAxisStateGamepad(joystick_look_axis, joystick_look_invert);
+            GetAxisStateGamepad(joystick_strafe_axis, joystick_strafe_invert,
+                                joystick_strafe_dead_zone);
+        ev.data5 = GetAxisStateGamepad(joystick_look_axis, joystick_look_invert,
+                                       joystick_look_dead_zone);
 
         D_PostEvent(&ev);
     }
@@ -535,7 +543,7 @@ static int GetButtonsState(void)
 
 // Read the state of an axis, inverting if necessary.
 
-static int GetAxisState(int axis, int invert)
+static int GetAxisState(int axis, int invert, int dead_zone)
 {
     int result;
 
@@ -594,7 +602,10 @@ static int GetAxisState(int axis, int invert)
     {
         result = SDL_JoystickGetAxis(joystick, axis);
 
-        if (result < DEAD_ZONE && result > -DEAD_ZONE)
+        // Dead zone is expressed as percentage of axis max value
+        dead_zone = 32768 * dead_zone / 100;
+
+        if (result < dead_zone && result > -dead_zone)
         {
             result = 0;
         }
@@ -622,10 +633,14 @@ void I_UpdateJoystick(void)
 
         ev.type = ev_joystick;
         ev.data1 = GetButtonsState();
-        ev.data2 = GetAxisState(joystick_x_axis, joystick_x_invert);
-        ev.data3 = GetAxisState(joystick_y_axis, joystick_y_invert);
-        ev.data4 = GetAxisState(joystick_strafe_axis, joystick_strafe_invert);
-        ev.data5 = GetAxisState(joystick_look_axis, joystick_look_invert);
+        ev.data2 = GetAxisState(joystick_x_axis, joystick_x_invert,
+                                joystick_x_dead_zone);
+        ev.data3 = GetAxisState(joystick_y_axis, joystick_y_invert,
+                                joystick_y_dead_zone);
+        ev.data4 = GetAxisState(joystick_strafe_axis, joystick_strafe_invert,
+                                joystick_strafe_dead_zone);
+        ev.data5 = GetAxisState(joystick_look_axis, joystick_look_invert,
+                                joystick_look_dead_zone);
 
         D_PostEvent(&ev);
     }
@@ -648,6 +663,10 @@ void I_BindJoystickVariables(void)
     M_BindIntVariable("joystick_strafe_invert",&joystick_strafe_invert);
     M_BindIntVariable("joystick_look_axis",    &joystick_look_axis);
     M_BindIntVariable("joystick_look_invert",  &joystick_look_invert);
+    M_BindIntVariable("joystick_x_dead_zone", &joystick_x_dead_zone);
+    M_BindIntVariable("joystick_y_dead_zone", &joystick_y_dead_zone);
+    M_BindIntVariable("joystick_strafe_dead_zone", &joystick_strafe_dead_zone);
+    M_BindIntVariable("joystick_look_dead_zone", &joystick_look_dead_zone);
 
     for (i = 0; i < NUM_VIRTUAL_BUTTONS; ++i)
     {

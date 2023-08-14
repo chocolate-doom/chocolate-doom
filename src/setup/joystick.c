@@ -85,6 +85,13 @@ static int joystick_strafe_invert = 0;
 static int joystick_look_axis = -1;
 static int joystick_look_invert = 0;
 
+// Configurable dead zone for each axis, specified as a percentage of the axis
+// max value.
+static int joystick_x_dead_zone = 33;
+static int joystick_y_dead_zone = 33;
+static int joystick_strafe_dead_zone = 33;
+static int joystick_look_dead_zone = 33;
+
 // Virtual to physical mapping.
 int joystick_physical_buttons[NUM_VIRTUAL_BUTTONS] = {
     0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
@@ -1146,6 +1153,7 @@ void ConfigJoystick(TXT_UNCAST_ARG(widget), void *user_data)
                    TXT_NewLabel("Forward/backward"),
                    y_axis_widget = TXT_NewJoystickAxis(&joystick_y_axis,
                                                        &joystick_y_invert,
+                                                       &joystick_y_dead_zone,
                                                        JOYSTICK_AXIS_VERTICAL),
                    TXT_TABLE_OVERFLOW_RIGHT,
                    TXT_TABLE_OVERFLOW_RIGHT,
@@ -1156,6 +1164,7 @@ void ConfigJoystick(TXT_UNCAST_ARG(widget), void *user_data)
                    x_axis_widget =
                         TXT_NewJoystickAxis(&joystick_x_axis,
                                             &joystick_x_invert,
+                                            &joystick_x_dead_zone,
                                             JOYSTICK_AXIS_HORIZONTAL),
                    TXT_TABLE_OVERFLOW_RIGHT,
                    TXT_TABLE_OVERFLOW_RIGHT,
@@ -1165,6 +1174,7 @@ void ConfigJoystick(TXT_UNCAST_ARG(widget), void *user_data)
                    TXT_NewLabel("Strafe left/right"),
                    TXT_NewJoystickAxis(&joystick_strafe_axis,
                                        &joystick_strafe_invert,
+                                       &joystick_strafe_dead_zone,
                                         JOYSTICK_AXIS_HORIZONTAL),
                    TXT_TABLE_OVERFLOW_RIGHT,
                    TXT_TABLE_OVERFLOW_RIGHT,
@@ -1178,6 +1188,7 @@ void ConfigJoystick(TXT_UNCAST_ARG(widget), void *user_data)
                    TXT_NewLabel("Look up/down"),
                    TXT_NewJoystickAxis(&joystick_look_axis,
                                        &joystick_look_invert,
+                                       &joystick_look_dead_zone,
                                         JOYSTICK_AXIS_VERTICAL),
                    TXT_TABLE_OVERFLOW_RIGHT,
                    TXT_TABLE_OVERFLOW_RIGHT,
@@ -1254,6 +1265,10 @@ void BindJoystickVariables(void)
     M_BindIntVariable("joystick_strafe_invert", &joystick_strafe_invert);
     M_BindIntVariable("joystick_look_axis",   &joystick_look_axis);
     M_BindIntVariable("joystick_look_invert", &joystick_look_invert);
+    M_BindIntVariable("joystick_x_dead_zone", &joystick_x_dead_zone);
+    M_BindIntVariable("joystick_y_dead_zone", &joystick_y_dead_zone);
+    M_BindIntVariable("joystick_strafe_dead_zone", &joystick_strafe_dead_zone);
+    M_BindIntVariable("joystick_look_dead_zone", &joystick_look_dead_zone);
 
     for (i = 0; i < NUM_VIRTUAL_BUTTONS; ++i)
     {
