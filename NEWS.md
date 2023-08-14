@@ -30,6 +30,10 @@
   * Add native support for the FluidSynth midi synthesizer.
   * It's now possible to play back a demo file by drag-and-dropping it
     on the executable (Fabian).
+  * Add improved gamepad support via the SDL\_GameController interface. This
+    includes support for analog triggers, modern dual-stick default bindings
+    (based on Unity Doom), descriptive button names for common controller types
+    and configurable dead zones for stick axes. (Michael Day)
 
 ### Refactorings
   * CMake project files have been added, replacing the Microsoft Visual
