@@ -420,14 +420,19 @@ void TXT_ConfigureGamepadAxis(txt_joystick_axis_t *joystick_axis,
     // Build the prompt window.
 
     joystick_axis->config_window = TXT_NewWindow("Configure axis");
-    TXT_SetColumnWidths(joystick_axis->config_window, 14);
-    TXT_AddWidgets(joystick_axis->config_window, TXT_NewStrut(0, 1),
+    TXT_SetTableColumns(joystick_axis->config_window, 2);
+    TXT_SetColumnWidths(joystick_axis->config_window, 10, 5);
+    TXT_AddWidgets(joystick_axis->config_window,
                    TXT_NewCheckBox("Invert", joystick_axis->invert),
-                   TXT_NewStrut(0, 1), NULL);
+                   TXT_TABLE_EMPTY,
+                   TXT_NewLabel("Dead zone"),
+                   TXT_NewSpinControl(joystick_axis->dead_zone, 10, 90),
+                   NULL);
 
     TXT_SetWindowAction(joystick_axis->config_window, TXT_HORIZ_LEFT, NULL);
-    TXT_SetWindowAction(joystick_axis->config_window, TXT_HORIZ_CENTER,
-                        TXT_NewWindowAbortAction(joystick_axis->config_window));
+    TXT_SetWindowAction(
+        joystick_axis->config_window, TXT_HORIZ_CENTER,
+        TXT_NewWindowEscapeAction(joystick_axis->config_window));
     TXT_SetWindowAction(joystick_axis->config_window, TXT_HORIZ_RIGHT, NULL);
     TXT_SetWidgetAlign(joystick_axis->config_window, TXT_HORIZ_CENTER);
 }
@@ -623,7 +628,7 @@ txt_widget_class_t txt_gamepad_axis_class =
     NULL,
 };
 
-txt_joystick_axis_t *TXT_NewJoystickAxis(int *axis, int *invert,
+txt_joystick_axis_t *TXT_NewJoystickAxis(int *axis, int *invert, int *dead_zone,
                                          txt_joystick_axis_direction_t dir)
 {
     txt_joystick_axis_t *joystick_axis;
@@ -640,6 +645,7 @@ txt_joystick_axis_t *TXT_NewJoystickAxis(int *axis, int *invert,
     }
     joystick_axis->axis = axis;
     joystick_axis->invert = invert;
+    joystick_axis->dead_zone = dead_zone;
     joystick_axis->dir = dir;
     joystick_axis->bad_axis = NULL;
 
