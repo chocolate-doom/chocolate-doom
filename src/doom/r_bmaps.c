@@ -505,6 +505,9 @@ static const fullbright_t fullbright_doom[] = {
 	{"SW2SATYR", DOOM1AND2, brighttan},
 	{"SW2LION",  DOOM1AND2, brighttan},
 	{"SW2GARG",  DOOM1AND2, brighttan},
+};
+
+static const fullbright_t fullbright_finaldoom[] = {
 	// [crispy] Final Doom textures
 	// TNT - Evilution exclusive
 	{"PNK4EXIT", DOOM2ONLY, redonly},
@@ -646,6 +649,20 @@ static const byte *R_BrightmapForTexName_Doom (const char *texname)
 		if (!strncasecmp(fullbright->texture, texname, 8))
 		{
 			return fullbright->colormask;
+		}
+	}
+
+	// Final Doom: Plutonia has no exclusive brightmaps
+	if (gamemission == pack_tnt /* || gamemission == pack_plut */ )
+	{
+		for (i = 0; i < arrlen(fullbright_finaldoom); i++)
+		{
+			const fullbright_t *fullbright = &fullbright_finaldoom[i];
+
+			if (!strncasecmp(fullbright->texture, texname, 8))
+			{
+				return fullbright->colormask;
+			}
 		}
 	}
 
