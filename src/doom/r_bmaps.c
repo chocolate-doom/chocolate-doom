@@ -152,7 +152,7 @@ static const byte redonly[256] =
 {
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -485,7 +485,9 @@ static const fullbright_t fullbright_doom[] = {
 	{"SW2STON2", DOOM1ONLY, redonly},
 	{"SW2STON2", DOOM2ONLY, greenonly2},
 	{"SW2STON6", DOOM1AND2, redonly},
-	{"SW2STONE", DOOM1AND2, greenonly2},
+	// [crispy] beware!
+	{"SW2STONE", DOOM1ONLY, greenonly1},
+	{"SW2STONE", DOOM2ONLY, greenonly2},
 	{"SW2STRTN", DOOM1AND2, greenonly1},
 	{"SW2TEK",   DOOM1AND2, greenonly1},
 	{"SW2VINE",  DOOM1AND2, greenonly1},
