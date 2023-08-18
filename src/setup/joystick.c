@@ -1001,6 +1001,7 @@ static int CalibrationEventCallback(SDL_Event *event, void *user_data)
     // In the first "center" stage, we're just trying to work out which
     // joystick is being configured and which button the user is pressing.
     usejoystick = 1;
+    use_gamepad = 0;
     gamepad_type = SDL_CONTROLLER_TYPE_UNKNOWN;
     calibrate_button = event->jbutton.button;
 
@@ -1090,9 +1091,6 @@ static void CalibrateJoystick(TXT_UNCAST_ARG(widget),
                       joystick_window);
 
     // Start calibration
-    usejoystick = 0;
-    use_gamepad = 0;
-    joystick_index = -1;
 }
 
 //
