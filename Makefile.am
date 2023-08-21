@@ -9,7 +9,7 @@ CMAKE_FILES=                                   \
         cmake/FindSDL2_net.cmake               \
         cmake/FindFluidSynth.cmake             \
         cmake/Findm.cmake                      \
-        cmake/Findsamplerate.cmake             \
+        cmake/FindSampleRate.cmake             \
         cmake/config.h.cin
 
 DOC_FILES=                              \
