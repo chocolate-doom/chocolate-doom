@@ -359,7 +359,7 @@ void TXT_ConfigureJoystickAxis(txt_joystick_axis_t *joystick_axis,
                                txt_joystick_axis_callback_t callback)
 {
     // Open the joystick first.
-    if (SDL_Init(SDL_INIT_JOYSTICK) < 0)
+    if (SDL_InitSubSystem(SDL_INIT_JOYSTICK) < 0)
     {
         return;
     }

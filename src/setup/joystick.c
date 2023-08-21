@@ -770,7 +770,7 @@ static void InitJoystick(void)
 {
     if (!joystick_initted)
     {
-        joystick_initted = SDL_Init(SDL_INIT_JOYSTICK) >= 0;
+        joystick_initted = SDL_InitSubSystem(SDL_INIT_JOYSTICK) >= 0;
     }
 }
 

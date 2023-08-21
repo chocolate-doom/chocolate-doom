@@ -175,7 +175,7 @@ void I_InitGamepad(void)
         return;
     }
 
-    if (SDL_Init(SDL_INIT_GAMECONTROLLER) < 0)
+    if (SDL_InitSubSystem(SDL_INIT_GAMECONTROLLER) < 0)
     {
         return;
     }
@@ -410,7 +410,7 @@ void I_InitJoystick(void)
         return;
     }
 
-    if (SDL_Init(SDL_INIT_JOYSTICK) < 0)
+    if (SDL_InitSubSystem(SDL_INIT_JOYSTICK) < 0)
     {
         return;
     }

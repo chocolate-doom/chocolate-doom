@@ -467,7 +467,7 @@ static void OpenPromptWindow(txt_joystick_input_t *joystick_input)
 
     joystick_input->check_conflicts = !TXT_GetModifierState(TXT_MOD_SHIFT);
 
-    if (SDL_Init(SDL_INIT_JOYSTICK) < 0)
+    if (SDL_InitSubSystem(SDL_INIT_JOYSTICK) < 0)
     {
         return;
     }
@@ -502,7 +502,7 @@ static void OpenPromptWindowGamepad(txt_joystick_input_t *joystick_input)
 
     joystick_input->check_conflicts = !TXT_GetModifierState(TXT_MOD_SHIFT);
 
-    if (SDL_Init(SDL_INIT_GAMECONTROLLER) < 0)
+    if (SDL_InitSubSystem(SDL_INIT_GAMECONTROLLER) < 0)
     {
         return;
     }
