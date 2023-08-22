@@ -31,11 +31,6 @@
 #include "m_config.h"
 #include "m_misc.h"
 
-// When an axis is within the dead zone, it is set to zero.
-// This is 5% of the full range:
-
-#define DEAD_ZONE (32768 / 3)
-
 static SDL_Joystick *joystick = NULL;
 
 // Configuration variables:
@@ -43,6 +38,12 @@ static SDL_Joystick *joystick = NULL;
 // Standard default.cfg Joystick enable/disable
 
 static int usejoystick = 0;
+
+// Use analog joystick input
+int joystick_analog = 0;
+
+// Percentage size of the dead zone
+static int joystick_dead_zone = 33;
 
 // SDL GUID and index of the joystick to use.
 static char *joystick_guid = "";
@@ -344,11 +345,26 @@ static int GetAxisState(int axis, int invert)
     }
     else
     {
+        int dead_zone = joystick_dead_zone * 327.68f;
+
         result = SDL_JoystickGetAxis(joystick, axis);
 
-        if (result < DEAD_ZONE && result > -DEAD_ZONE)
+        if (result < -dead_zone)
+        {
+            result += dead_zone;
+        }
+        else if (result > dead_zone)
+        {
+            result -= dead_zone;
+        }
+        else
         {
             result = 0;
+        }
+
+        if (result != 0)
+        {
+            result = (result * 32768) / (float)(32768 - dead_zone) + 1;
         }
     }
 
@@ -382,6 +398,8 @@ void I_BindJoystickVariables(void)
     int i;
 
     M_BindIntVariable("use_joystick",          &usejoystick);
+    M_BindIntVariable("joystick_analog",       &joystick_analog);
+    M_BindIntVariable("joystick_dead_zone",    &joystick_dead_zone);
     M_BindStringVariable("joystick_guid",      &joystick_guid);
     M_BindIntVariable("joystick_index",        &joystick_index);
     M_BindIntVariable("joystick_x_axis",       &joystick_x_axis);

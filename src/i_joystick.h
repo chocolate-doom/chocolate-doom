@@ -60,6 +60,8 @@
 #define HAT_AXIS_HORIZONTAL 1
 #define HAT_AXIS_VERTICAL   2
 
+extern int joystick_analog;
+
 void I_InitJoystick(void);
 void I_ShutdownJoystick(void);
 void I_UpdateJoystick(void);

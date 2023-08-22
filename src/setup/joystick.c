@@ -52,6 +52,12 @@ static int joystick_initted = 0;
 
 static int usejoystick = 0;
 
+// Use analog joystick axis input
+int joystick_analog = 0;
+
+// Joystick dead zone size in percents
+static int joystick_dead_zone = 33;
+
 // GUID and index of joystick to use.
 
 char *joystick_guid = "";
@@ -986,6 +992,24 @@ static void AddJoystickControl(TXT_UNCAST_ARG(table), const char *label, int *va
                    NULL);
 }
 
+static void AnalogJoystickSettings(TXT_UNCAST_ARG(widget), void *user_data)
+{
+    txt_window_t *window;
+
+    window = TXT_NewWindow("Analog Input");
+    TXT_SetTableColumns(window, 2);
+    TXT_SetColumnWidths(window, 20, 5);
+
+    TXT_AddWidgets(window,
+                   TXT_NewCheckBox("Use analog input", &joystick_analog),
+                   TXT_TABLE_OVERFLOW_RIGHT,
+
+                   TXT_NewLabel("Dead zone size (%)"),
+                   TXT_NewSpinControl(&joystick_dead_zone, 0, 99),
+
+                   NULL);
+}
+
 void ConfigJoystick(TXT_UNCAST_ARG(widget), void *user_data)
 {
     txt_window_t *window;
@@ -998,6 +1022,12 @@ void ConfigJoystick(TXT_UNCAST_ARG(widget), void *user_data)
     TXT_AddWidgets(window,
                    TXT_NewLabel("Controller"),
                    joystick_button = TXT_NewButton("zzzz"),
+                   TXT_TABLE_EOL,
+
+                   TXT_TABLE_EMPTY,
+                   TXT_NewButton2("Analog input...",
+                                  (TxtWidgetSignalFunc) AnalogJoystickSettings,
+                                  NULL),
                    TXT_TABLE_EOL,
 
                    TXT_NewSeparator("Axes"),
@@ -1089,6 +1119,8 @@ void BindJoystickVariables(void)
     int i;
 
     M_BindIntVariable("use_joystick",           &usejoystick);
+    M_BindIntVariable("joystick_analog",        &joystick_analog);
+    M_BindIntVariable("joystick_dead_zone",     &joystick_dead_zone);
     M_BindStringVariable("joystick_guid",       &joystick_guid);
     M_BindIntVariable("joystick_index",         &joystick_index);
     M_BindIntVariable("joystick_x_axis",        &joystick_x_axis);

@@ -1228,6 +1228,18 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(dclick_use),
 
     //!
+    // If non-zero, joystick input is handled as analog
+    //
+
+    CONFIG_VARIABLE_INT(joystick_analog),
+
+    //!
+    // Joystick dead zone size percentage
+    //
+
+    CONFIG_VARIABLE_INT(joystick_dead_zone),
+
+    //!
     // SDL GUID string indicating the joystick to use. An empty string
     // indicates that no joystick is configured.
     //
