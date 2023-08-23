@@ -1499,6 +1499,47 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(joystick_physical_button10),
 
     //!
+    // If non-zero, use the SDL_GameController interface instead of the
+    // SDL_Joystick interface.
+    //
+
+    CONFIG_VARIABLE_INT(use_gamepad),
+
+    //!
+    // Stores the SDL_GameControllerType of the last configured gamepad.
+    //
+
+    CONFIG_VARIABLE_INT(gamepad_type),
+
+    //!
+    // Joystick x axis dead zone, specified as a percentage of the axis max
+    // value.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_x_dead_zone),
+
+    //!
+    // Joystick y axis dead zone, specified as a percentage of the axis max
+    // value.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_y_dead_zone),
+
+    //!
+    // Joystick strafe axis dead zone, specified as a percentage of the axis
+    // max value.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_strafe_dead_zone),
+
+    //!
+    // Joystick look axis dead zone, specified as a percentage of the axis max
+    // value.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_look_dead_zone),
+
+    //!
     // Joystick virtual button to make the player strafe left.
     //
 
