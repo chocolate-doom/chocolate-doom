@@ -380,7 +380,7 @@ void P_PlayerThink (player_t* player)
             !player->jumpTics)
         {
             // [crispy] Hexen sets 9; Strife adds 8
-            player->mo->momz = (7 + crispy->jump) * FRACUNIT;
+            player->mo->momz = (7 + critical->jump) * FRACUNIT;
             player->jumpTics = 18;
             // [NS] Jump sound.
             S_StartSoundOptional(player->mo, sfx_pljump, -1);
