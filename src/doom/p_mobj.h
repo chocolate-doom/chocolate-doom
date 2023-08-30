@@ -191,7 +191,8 @@ typedef enum
     // If 0x4 0x8 or 0xc,
     //  use a translation table for player colormaps
     MF_TRANSLATION  	= 0xc000000,
-    // Turns MF_TRANSLATION into player index and vice versa
+    // Hmm ???.
+    // [crispy] Turns MF_TRANSLATION into player index and vice versa
     MF_TRANSSHIFT	= 26,
 
     // [NS] Beta projectile bouncing.
