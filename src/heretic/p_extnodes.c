@@ -225,7 +225,7 @@ void P_LoadNodes_ZDBSP (int lump, boolean compressed)
     byte *data;
     unsigned int i;
 #ifdef HAVE_LIBZ
-    byte *output;
+    byte *output = NULL;
 #endif
 
     unsigned int orgVerts, newVerts;
@@ -449,7 +449,7 @@ void P_LoadNodes_ZDBSP (int lump, boolean compressed)
     }
 
 #ifdef HAVE_LIBZ
-    if (compressed)
+    if (compressed && output)
     {
         Z_Free(output);
     }
