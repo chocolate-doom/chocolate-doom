@@ -515,6 +515,7 @@ void D_RunFrame()
     int tics;
     static int wipestart;
     static boolean wipe;
+    static int oldgametic;
 
     if (wipe)
     {
@@ -539,7 +540,11 @@ void D_RunFrame()
 
     TryRunTics (); // will run at least one tic
 
-    S_UpdateSounds (players[displayplayer].mo);// move positional sounds
+    if (oldgametic < gametic)
+    {
+        S_UpdateSounds (players[displayplayer].mo);// move positional sounds
+        oldgametic = gametic;
+    }
 
     // Update display, next frame, with current state if no profiling is on
     if (screenvisible && !nodrawers)

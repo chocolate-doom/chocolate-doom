@@ -394,6 +394,7 @@ void D_DoomLoop(void)
 
     while (1)
     {
+        static int oldgametic;
         // Frame syncronous IO operations
         I_StartFrame();
 
@@ -401,8 +402,12 @@ void D_DoomLoop(void)
         // Will run at least one tic
         TryRunTics();
 
-        // Move positional sounds
-        S_UpdateSounds(players[consoleplayer].mo);
+        if (oldgametic < gametic)
+        {
+            // Move positional sounds
+            S_UpdateSounds(players[consoleplayer].mo);
+            oldgametic = gametic;
+        }
         D_Display();
 
         // [crispy] post-rendering function pointer to apply config changes
