@@ -1,0 +1,27 @@
+name: macos
+
+on:
+  push:
+    branches:
+      - "master"
+    paths-ignore:
+      - "**.md"
+  pull_request:
+    branches:
+      - "master"
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+      - name: Install dependencies
+        run: brew install automake sdl2 sdl2_image sdl2_mixer sdl2_net
+
+      - uses: actions/checkout@v2
+
+      - name: Configure
+        run: ./autogen.sh
+
+      - name: Build
+        run: make -j4
