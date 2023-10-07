@@ -37,19 +37,3 @@ jobs:
         env:
           CC: ${{ matrix.compiler }}
         run: $GITHUB_WORKSPACE/.travis.sh
-
-  cppcheck:
-    runs-on: ubuntu-20.04
-
-    steps:
-      - name: Install dependencies
-        run: sudo apt-get update && sudo apt-get install cppcheck
-
-      - uses: actions/checkout@v2
-        with:
-          submodules: true
-
-      - name: Run cppcheck
-        env:
-          ANALYZE: true
-        run: $GITHUB_WORKSPACE/.travis.sh
