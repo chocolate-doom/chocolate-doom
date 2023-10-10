@@ -121,6 +121,7 @@ static struct {
     GameVersion_t version;
 } valid_versions[] = {
     { doom,     exe_doom_1_2 },
+    { doom,     exe_doom_1_5 },
     { doom,     exe_doom_1_666 },
     { doom,     exe_doom_1_7 },
     { doom,     exe_doom_1_8 },
