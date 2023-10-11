@@ -16,7 +16,7 @@ jobs:
 
     steps:
       - name: Install dependencies
-        run: brew install automake sdl2 sdl2_image sdl2_mixer sdl2_net
+        run: brew install automake libpng sdl2 sdl2_mixer sdl2_net
 
       - uses: actions/checkout@v2
 
