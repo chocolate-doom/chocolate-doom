@@ -93,6 +93,19 @@
   * Sehacked replacements of the "empty slot" string now work.
   * VOICES.WAD is now found in a case-insensitive way (thanks Mike Francis).
 
+## 3.0.1 (2020-06-24)
+
+This is a point release that includes two security fixes related to Chocolate
+Doom server logic.
+
+Thanks to Michał Dardas from LogicalTrust for discovering the vulnerability.
+
+### Bug fixes
+  * ([CVE-2020-14983](https://nvd.nist.gov/vuln/detail/CVE-2020-14983)) Fixed a vulnerability where
+    an unchecked `num_players` field in the server logic could allow a malicious attacker to trigger
+    arbitrary code execution against Chocolate Doom servers.
+  * Fixed an issue where a client could crash if the server sent an invalid `ticdup` setting.
+
 ## 3.0.0 (2017-12-30)
 
   Chocolate Doom 3.0 is a new major revision. The main change is that
