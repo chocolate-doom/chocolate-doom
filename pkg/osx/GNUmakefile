@@ -16,6 +16,7 @@ TOPLEVEL_DOCS=$(patsubst %,../../%,$(DOC_FILES))
 
 $(DMG) : tmp.dmg
 	rm -f $@
+	sleep 2 # pause to workaround occasional "Can’t get disk" (-1728) issues
 	./dmgfix "$(realpath tmp.dmg)" "$(PACKAGE_STRING)" "$(PACKAGE_NAME).app"
 	hdiutil convert -format UDBZ -o $@ tmp.dmg
 	rm -f tmp.dmg
