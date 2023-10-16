@@ -1243,6 +1243,12 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(joystick_index),
 
     //!
+    // If non-zero, use analog movement when playing with a gamepad.
+    //
+
+    CONFIG_VARIABLE_INT(use_analog),
+
+    //!
     // Joystick axis to use to for horizontal (X) movement.
     //
 
@@ -1253,6 +1259,12 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_INT(joystick_x_invert),
+
+    //!
+    // Joystick turn analog sensitivity, specified as a value between 0 and 20.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_turn_sensitivity),
 
     //!
     // Joystick axis to use to for vertical (Y) movement.
@@ -1280,6 +1292,12 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(joystick_strafe_invert),
 
     //!
+    // Joystick move and strafe analog sensitivity, specified as a value
+    // between 0 and 20.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_move_sensitivity),
+    //!
     // Joystick axis to use to for looking up and down.
     //
 
@@ -1291,6 +1309,12 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_INT(joystick_look_invert),
+
+    //!
+    // Joystick look analog sensitivity, specified as a value between 0 and 20.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_look_sensitivity),
 
     //!
     // The physical joystick button that corresponds to joystick
