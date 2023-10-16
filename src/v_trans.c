@@ -284,7 +284,7 @@ byte V_Colorize (byte *playpal, int cr, byte source, boolean keepgray109)
 	if (cr == CR_GREEN)
 	{
 //	    hsv.x = 135./360.;
-	    hsv.x = (145. * hsv.z + 120. * (1. - hsv.z))/360.;
+	    hsv.x = (144. * hsv.z + 120. * (1. - hsv.z))/360.;
 	}
 	else
 	if (cr == CR_GOLD)
