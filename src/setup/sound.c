@@ -80,8 +80,7 @@ static char *gus_patch_path = NULL;
 static int gus_ram_kb = 1024;
 #ifdef _WIN32
 #define MAX_MIDI_DEVICES 20
-static char **midi_names;
-static int midi_num_devices;
+static char *midi_names[MAX_MIDI_DEVICES] = {"Microsoft MIDI Mapper"};
 static int midi_index;
 char *winmm_midi_device = NULL;
 int winmm_complevel = 0;
@@ -169,74 +168,43 @@ static void UpdateMidiDevice(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(data))
 static txt_dropdown_list_t *MidiDeviceSelector(void)
 {
     txt_dropdown_list_t *result;
+    int num_devices;
     int all_devices;
-    int device_ids[MAX_MIDI_DEVICES];
-    MMRESULT mmr;
-    MIDIOUTCAPS mcaps;
     int i;
 
-    if (midi_num_devices > 0)
-    {
-        for (i = 0; i < midi_num_devices; ++i)
-        {
-            free(midi_names[i]);
-            midi_names[i] = NULL;
-        }
-        free(midi_names);
-        midi_names = NULL;
-    }
-    midi_num_devices = 0;
+    midi_index = 0;
+    num_devices = 1; // Always show MIDI_MAPPER.
+    all_devices = midiOutGetNumDevs(); // Does not include MIDI_MAPPER.
 
-    // get the number of midi devices on this system
-    all_devices = midiOutGetNumDevs() + 1; // include MIDI_MAPPER
-    if (all_devices > MAX_MIDI_DEVICES)
+    if (all_devices > MAX_MIDI_DEVICES - num_devices)
     {
-        all_devices = MAX_MIDI_DEVICES;
+        all_devices = MAX_MIDI_DEVICES - num_devices;
     }
 
-    // get the valid device ids only, starting from -1 (MIDI_MAPPER)
-    for (i = 0; i < all_devices; ++i)
+    for (i = 0; i < all_devices; i++)
     {
-        mmr = midiOutGetDevCaps(i - 1, &mcaps, sizeof(mcaps));
-        if (mmr == MMSYSERR_NOERROR)
+        MIDIOUTCAPS caps;
+
+        if (midiOutGetDevCaps(i, &caps, sizeof(caps)) == MMSYSERR_NOERROR)
         {
-            device_ids[midi_num_devices] = i - 1;
-            midi_num_devices++;
+            free(midi_names[num_devices]);
+            midi_names[num_devices] = M_StringDuplicate(caps.szPname);
+
+            if (!strcasecmp(winmm_midi_device, midi_names[num_devices]))
+            {
+                // Set the dropdown list index to the saved device.
+                midi_index = num_devices;
+            }
+
+            num_devices++;
         }
     }
 
-    // get the device names
-    midi_names = malloc(midi_num_devices * sizeof(char *));
-    for (i = 0; i < midi_num_devices; ++i)
-    {
-        mmr = midiOutGetDevCaps(device_ids[i], &mcaps, sizeof(mcaps));
-        if (mmr == MMSYSERR_NOERROR)
-        {
-            midi_names[i] = M_StringDuplicate(mcaps.szPname);
-        }
-    }
-
-    // set the dropdown list index to the previously selected device
-    for (i = 0; i < midi_num_devices; ++i)
-    {
-        if (winmm_midi_device != NULL &&
-            strstr(winmm_midi_device, midi_names[i]))
-        {
-            midi_index = i;
-            break;
-        }
-        else if (winmm_midi_device == NULL || i == midi_num_devices - 1)
-        {
-            // give up and use MIDI_MAPPER
-            midi_index = 0;
-            free(winmm_midi_device);
-            winmm_midi_device = M_StringDuplicate(midi_names[0]);
-            break;
-        }
-    }
+    free(winmm_midi_device);
+    winmm_midi_device = M_StringDuplicate(midi_names[midi_index]);
 
     result = TXT_NewDropdownList(&midi_index, (const char **)midi_names,
-                                 midi_num_devices);
+                                 num_devices);
     TXT_SignalConnect(result, "changed", UpdateMidiDevice, NULL);
 
     return result;
