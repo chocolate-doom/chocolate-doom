@@ -293,6 +293,7 @@ extern float fsynth_reverb_damp;
 extern float fsynth_reverb_level;
 extern float fsynth_reverb_roomsize;
 extern float fsynth_reverb_width;
+extern float fsynth_gain;
 #endif // HAVE_FLUIDSYNTH
 
 #endif
