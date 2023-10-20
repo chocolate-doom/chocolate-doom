@@ -103,6 +103,7 @@ float fsynth_reverb_damp = 0.4f;
 float fsynth_reverb_level = 0.15f;
 float fsynth_reverb_roomsize = 0.6f;
 float fsynth_reverb_width = 4.0f;
+float fsynth_gain = 1.0f;
 #endif // HAVE_FLUIDSYNTH
 
 // DOS specific variables: these are unused but should be maintained
@@ -376,6 +377,7 @@ void BindSoundVariables(void)
     M_BindFloatVariable("fsynth_reverb_level",    &fsynth_reverb_level);
     M_BindFloatVariable("fsynth_reverb_roomsize", &fsynth_reverb_roomsize);
     M_BindFloatVariable("fsynth_reverb_width",    &fsynth_reverb_width);
+    M_BindFloatVariable("fsynth_gain",            &fsynth_gain);
     M_BindStringVariable("fsynth_sf_path",        &fsynth_sf_path);
 #endif // HAVE_FLUIDSYNTH
 
