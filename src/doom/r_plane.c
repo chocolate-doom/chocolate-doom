@@ -263,8 +263,15 @@ R_FindPlane
     // [crispy] add support for MBF sky tranfers
     if (picnum == skyflatnum || picnum & PL_SKYFLAT)
     {
-	height = 0;			// all skys map together
-	lightlevel = 0;
+	lightlevel = 0;   // killough 7/19/98: most skies map together
+
+	// haleyjd 05/06/08: but not all. If height > viewpoint.z, set height to 1
+	// instead of 0, to keep ceilings mapping with ceilings, and floors mapping
+	// with floors.
+	if (height > viewz)
+	    height = 1;
+	else
+	    height = 0;
     }
 	
     for (check=visplanes; check<lastvisplane; check++)
@@ -456,11 +463,6 @@ void R_DrawPlanes (void)
 		const side_t *s = *l->sidenum + sides;
 		texture = texturetranslation[s->toptexture];
 		dc_texturemid = s->rowoffset - 28*FRACUNIT;
-		// [crispy] stretch sky
-		if (crispy->stretchsky)
-		{
-		    dc_texturemid = dc_texturemid * (textureheight[texture]>>FRACBITS) / SKYSTRETCH_HEIGHT;
-		}
 		flip = (l->special == 272) ? 0u : ~0u;
 		an += s->textureoffset;
 	    }
@@ -478,11 +480,15 @@ void R_DrawPlanes (void)
 	    //  by INVUL inverse mapping.
 	    // [crispy] no brightmaps for sky
 	    dc_colormap[0] = dc_colormap[1] = colormaps;
-//	    dc_texturemid = skytexturemid;
 	    dc_texheight = textureheight[texture]>>FRACBITS; // [crispy] Tutti-Frutti fix
-	    // [crispy] stretch sky
-	    if (crispy->stretchsky)
+
+	    // [crispy] stretch short skies
+	    if (crispy->stretchsky && dc_texheight < 200)
+	    {
 	        dc_iscale = dc_iscale * dc_texheight / SKYSTRETCH_HEIGHT;
+	        dc_texturemid = dc_texturemid * dc_texheight / SKYSTRETCH_HEIGHT;
+	    }
+
 	    for (x=pl->minx ; x <= pl->maxx ; x++)
 	    {
 		dc_yl = pl->top[x];

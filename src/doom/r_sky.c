@@ -46,16 +46,21 @@ int			skytexturemid;
 //
 void R_InitSkyMap (void)
 {
-  // skyflatnum = R_FlatNumForName ( SKYFLATNAME );
-    // [crispy] stretch sky
+    int skyheight;
+
+    // [crispy] stretch short skies
     if (skytexture == -1)
     {
         return;
     }
-    if ((crispy->stretchsky = crispy->freelook || crispy->mouselook || crispy->pitch))
-    {
-        skytexturemid = -28*FRACUNIT * (textureheight[skytexture] >> FRACBITS) / SKYSTRETCH_HEIGHT;
-    }
+
+    crispy->stretchsky = crispy->freelook || crispy->mouselook || crispy->pitch;
+    skyheight = textureheight[skytexture] >> FRACBITS;
+
+    if (crispy->stretchsky && skyheight < 200)
+        skytexturemid = -28*FRACUNIT;
+    else if (skyheight >= 200)
+        skytexturemid = 200*FRACUNIT;
     else
     skytexturemid = ORIGHEIGHT/2*FRACUNIT;
 }
