@@ -1294,7 +1294,6 @@ void D_DoomMain (void)
     int p;
     char file[256];
     char demolumpname[9];
-    int numiwadlumps;
 
     I_AtExit(D_Endoom, false);
 
@@ -1504,7 +1503,6 @@ void D_DoomMain (void)
 
     DEH_printf("W_Init: Init WADfiles.\n");
     D_AddFile(iwadfile);
-    numiwadlumps = numlumps;
 
     W_CheckCorrectIWAD(doom);
 
@@ -1706,6 +1704,12 @@ void D_DoomMain (void)
     if (M_ParmExists("-dehlump"))
     {
         int i, loaded = 0;
+        int numiwadlumps = numlumps;
+
+        while (!W_IsIWADLump(lumpinfo[numiwadlumps - 1]))
+        {
+            numiwadlumps--;
+        }
 
         for (i = numiwadlumps; i < numlumps; ++i)
         {
