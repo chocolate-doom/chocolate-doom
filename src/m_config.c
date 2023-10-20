@@ -1023,7 +1023,7 @@ static default_t extra_defaults_list[] =
 
     //!
     // Fine tune the FluidSynth output level. Default is 1.0,
-    // range is 0.1 - 10.0.
+    // range is 0.0 - 10.0.
     //
 
     CONFIG_VARIABLE_FLOAT(fsynth_gain),

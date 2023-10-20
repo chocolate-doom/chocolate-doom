@@ -120,9 +120,9 @@ static boolean I_FL_InitMusic(void)
                               fsynth_chorus_speed);
     }
 
-    if (fsynth_gain < 0.1f)
+    if (fsynth_gain < 0.0f)
     {
-        fsynth_gain = 0.1f;
+        fsynth_gain = 0.0f;
     }
     if (fsynth_gain > 10.0f)
     {
