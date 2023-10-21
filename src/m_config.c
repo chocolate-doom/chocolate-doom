@@ -1096,6 +1096,13 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_FLOAT(fsynth_reverb_width),
 
     //!
+    // Fine tune the FluidSynth output level. Default is 1.0,
+    // range is 0.0 - 10.0.
+    //
+
+    CONFIG_VARIABLE_FLOAT(fsynth_gain),
+
+    //!
     // Full path to a soundfont file to use with FluidSynth MIDI playback.
     //
 

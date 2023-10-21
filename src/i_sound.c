@@ -573,6 +573,7 @@ void I_BindSoundVariables(void)
     M_BindFloatVariable("fsynth_reverb_level",      &fsynth_reverb_level);
     M_BindFloatVariable("fsynth_reverb_roomsize",   &fsynth_reverb_roomsize);
     M_BindFloatVariable("fsynth_reverb_width",      &fsynth_reverb_width);
+    M_BindFloatVariable("fsynth_gain",              &fsynth_gain);
     M_BindStringVariable("fsynth_sf_path",          &fsynth_sf_path);
 #endif // HAVE_FLUIDSYNTH
 

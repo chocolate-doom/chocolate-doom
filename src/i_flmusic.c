@@ -55,6 +55,7 @@ float fsynth_reverb_damp = 0.4f;
 float fsynth_reverb_level = 0.15f;
 float fsynth_reverb_roomsize = 0.6f;
 float fsynth_reverb_width = 4.0f;
+float fsynth_gain = 1.0f;
 
 static fluid_synth_t *synth = NULL;
 static fluid_settings_t *settings = NULL;
@@ -119,6 +120,15 @@ static boolean I_FL_InitMusic(void)
                               fsynth_chorus_speed);
     }
 
+    if (fsynth_gain < 0.0f)
+    {
+        fsynth_gain = 0.0f;
+    }
+    if (fsynth_gain > 10.0f)
+    {
+        fsynth_gain = 10.0f;
+    }
+
     synth = new_fluid_synth(settings);
 
     if (synth == NULL)
@@ -154,7 +164,7 @@ static void I_FL_SetMusicVolume(int volume)
     }
     // FluidSynth's default is 0.2. Make 1.0 the maximum.
     // 0 -- 0.2 -- 10.0
-    fluid_synth_set_gain(synth, (float) volume / 127);
+    fluid_synth_set_gain(synth, ((float) volume / 127) * fsynth_gain);
 }
 
 static void I_FL_PauseSong(void)

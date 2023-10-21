@@ -404,6 +404,7 @@ txt_spincontrol_t *TXT_NewSpinControl(int *value, int min, int max)
     spincontrol->min.i = min;
     spincontrol->max.i = max;
     spincontrol->step.i = 1;
+    SetBuffer(spincontrol);
 
     return spincontrol;
 }
@@ -418,6 +419,7 @@ txt_spincontrol_t *TXT_NewFloatSpinControl(float *value, float min, float max)
     spincontrol->min.f = min;
     spincontrol->max.f = max;
     spincontrol->step.f = 0.1f;
+    SetBuffer(spincontrol);
 
     return spincontrol;
 }

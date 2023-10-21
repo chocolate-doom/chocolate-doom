@@ -1439,7 +1439,6 @@ void D_DoomMain (void)
     int p;
     char file[256];
     char demolumpname[9] = {0};
-    int numiwadlumps;
 
     // [crispy] unconditionally initialize DEH tables
     DEH_Init();
@@ -1663,7 +1662,6 @@ void D_DoomMain (void)
 
     DEH_printf("W_Init: Init WADfiles.\n");
     D_AddFile(iwadfile);
-    numiwadlumps = numlumps;
 
     W_CheckCorrectIWAD(doom);
 
@@ -2019,6 +2017,12 @@ void D_DoomMain (void)
     if (!M_ParmExists("-nodehlump") && !M_ParmExists("-nodeh"))
     {
         int i, loaded = 0;
+        int numiwadlumps = numlumps;
+
+        while (!W_IsIWADLump(lumpinfo[numiwadlumps - 1]))
+        {
+            numiwadlumps--;
+        }
 
         for (i = numiwadlumps; i < numlumps; ++i)
         {
