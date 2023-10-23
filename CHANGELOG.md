@@ -1,6 +1,6 @@
 **New Features and Improvements**
 * Make MIDI device selection less ambiguous.
-* Add default difficulty option (by @kiwphi and @mikeday0).
+* Add default difficulty option (by Philip and @mikeday0).
 * Improve smoothness of network games when running uncapped (thanks @rfomin).
 * Disable smooth pixel scaling if software rendering is enforced.
 * Add framerate limiting option (@mikeday0 and @rfomin).
