@@ -1388,7 +1388,7 @@ static boolean I_WIN_InitMusic(void)
         MIDIOUTCAPS caps;
 
         if (midiOutGetDevCaps(i, &caps, sizeof(caps)) == MMSYSERR_NOERROR &&
-            !strcasecmp(winmm_midi_device, caps.szPname))
+            !strncasecmp(winmm_midi_device, caps.szPname, MAXPNAMELEN))
         {
             MidiDevice = i;
             break;
