@@ -80,7 +80,7 @@ static char *gus_patch_path = NULL;
 static int gus_ram_kb = 1024;
 #ifdef _WIN32
 #define MAX_MIDI_DEVICES 20
-static char *midi_names[MAX_MIDI_DEVICES] = {"Microsoft MIDI Mapper"};
+static char *midi_names[MAX_MIDI_DEVICES];
 static int midi_index;
 char *winmm_midi_device = NULL;
 int winmm_complevel = 0;
@@ -168,13 +168,13 @@ static void UpdateMidiDevice(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(data))
 static txt_dropdown_list_t *MidiDeviceSelector(void)
 {
     txt_dropdown_list_t *result;
-    int num_devices;
-    int all_devices;
+    int num_devices = 1;
+    int all_devices = midiOutGetNumDevs();
     int i;
 
     midi_index = 0;
-    num_devices = 1; // Always show MIDI_MAPPER.
-    all_devices = midiOutGetNumDevs(); // Does not include MIDI_MAPPER.
+    free(midi_names[0]);
+    midi_names[0] = M_StringDuplicate("Microsoft MIDI Mapper");
 
     if (all_devices > MAX_MIDI_DEVICES - num_devices)
     {

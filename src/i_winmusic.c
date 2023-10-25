@@ -1379,11 +1379,9 @@ static DWORD WINAPI PlayerProc(void)
 
 static boolean I_WIN_InitMusic(void)
 {
-    int all_devices;
+    const int all_devices = midiOutGetNumDevs();
     int i;
     MMRESULT mmr;
-
-    all_devices = midiOutGetNumDevs(); // Does not include MIDI_MAPPER.
 
     for (i = 0; i < all_devices; i++)
     {
