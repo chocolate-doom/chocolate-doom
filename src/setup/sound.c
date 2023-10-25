@@ -204,7 +204,7 @@ static txt_dropdown_list_t *MidiDeviceSelector(void)
     free(winmm_midi_device);
     winmm_midi_device = M_StringDuplicate(midi_names[midi_index]);
 
-    result = TXT_NewDropdownList(&midi_index, (const char **)midi_names,
+    result = TXT_NewDropdownList(&midi_index, (const char **) midi_names,
                                  num_devices);
     TXT_SignalConnect(result, "changed", UpdateMidiDevice, NULL);
 
