@@ -33,7 +33,7 @@
 static boolean pcs_initialized = false;
 
 static SDL_mutex *sound_lock;
-static boolean use_sfx_prefix;
+static GameMission_t gamemission;
 
 static uint8_t *current_sound_lump = NULL;
 static uint8_t *current_sound_pos = NULL;
@@ -184,7 +184,14 @@ static int I_PCS_StartSound(sfxinfo_t *sfxinfo,
         return -1;
     }
 
-    if (IsDisabledSound(sfxinfo))
+    if (gamemission == strife)
+    {
+        if (!strcmp(sfxinfo->name, "rifle"))
+        {
+            return -1;
+        }
+    }
+    else if (IsDisabledSound(sfxinfo))
     {
         return -1;
     }
@@ -244,9 +251,19 @@ static int I_PCS_GetSfxLumpNum(sfxinfo_t* sfx)
 {
     char namebuf[9];
 
-    if (use_sfx_prefix)
+    if (gamemission == doom)
     {
         M_snprintf(namebuf, sizeof(namebuf), "dp%s", DEH_String(sfx->name));
+    }
+    else if (gamemission == strife)
+    {
+        M_snprintf(namebuf, sizeof(namebuf), "dp%s", DEH_String(sfx->name));
+
+        if (W_CheckNumForName(namebuf) == -1)
+        {
+            // Missing sounds replaced with DPRIFLE, which is then disabled.
+            M_snprintf(namebuf, sizeof(namebuf), "dp%s", DEH_String("rifle"));
+        }
     }
     else
     {
@@ -272,9 +289,9 @@ static boolean I_PCS_SoundIsPlaying(int handle)
     return current_sound_lump != NULL && current_sound_remaining > 0;
 }
 
-static boolean I_PCS_InitSound(boolean _use_sfx_prefix)
+static boolean I_PCS_InitSound(GameMission_t mission)
 {
-    use_sfx_prefix = _use_sfx_prefix;
+    gamemission = mission;
 
     // Use the sample rate from the configuration file
 

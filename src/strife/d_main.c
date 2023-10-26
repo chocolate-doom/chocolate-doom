@@ -1860,7 +1860,7 @@ void D_DoomMain (void)
     // fraggle 20130405: I_InitTimer is needed here for the netgame
     // startup. Start low-level sound init here too.
     I_InitTimer();
-    I_InitSound(true);
+    I_InitSound(strife);
     I_InitMusic();
 
     if(devparm) // [STRIFE]

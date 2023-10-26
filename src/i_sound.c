@@ -125,7 +125,7 @@ static boolean SndDeviceInList(snddevice_t device, const snddevice_t *list,
 // Find and initialize a sound_module_t appropriate for the setting
 // in snd_sfxdevice.
 
-static void InitSfxModule(boolean use_sfx_prefix)
+static void InitSfxModule(GameMission_t mission)
 {
     int i;
 
@@ -142,7 +142,7 @@ static void InitSfxModule(boolean use_sfx_prefix)
         {
             // Initialize the module
 
-            if (sound_modules[i]->Init(use_sfx_prefix))
+            if (sound_modules[i]->Init(mission))
             {
                 sound_module = sound_modules[i];
                 return;
@@ -195,7 +195,7 @@ static void InitMusicModule(void)
 //  allocates channel buffer, sets S_sfx lookup.
 //
 
-void I_InitSound(boolean use_sfx_prefix)
+void I_InitSound(GameMission_t mission)
 {
     boolean nosound, nosfx, nomusic, nomusicpacks;
 
@@ -250,7 +250,7 @@ void I_InitSound(boolean use_sfx_prefix)
 
         if (!nosfx)
         {
-            InitSfxModule(use_sfx_prefix);
+            InitSfxModule(mission);
         }
 
         if (!nomusic)
