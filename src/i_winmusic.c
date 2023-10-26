@@ -1379,45 +1379,27 @@ static DWORD WINAPI PlayerProc(void)
 
 static boolean I_WIN_InitMusic(void)
 {
-    int all_devices;
+    const int all_devices = midiOutGetNumDevs();
     int i;
-    MIDIOUTCAPS mcaps;
     MMRESULT mmr;
 
-    // find the midi device that matches the saved one
-    if (winmm_midi_device != NULL)
+    for (i = 0; i < all_devices; i++)
     {
-        all_devices = midiOutGetNumDevs() + 1; // include MIDI_MAPPER
-        for (i = 0; i < all_devices; ++i)
-        {
-            // start from device id -1 (MIDI_MAPPER)
-            mmr = midiOutGetDevCaps(i - 1, &mcaps, sizeof(mcaps));
-            if (mmr == MMSYSERR_NOERROR)
-            {
-                if (strstr(winmm_midi_device, mcaps.szPname))
-                {
-                    MidiDevice = i - 1;
-                    break;
-                }
-            }
+        MIDIOUTCAPS caps;
 
-            if (i == all_devices - 1)
-            {
-                // give up and use MIDI_MAPPER
-                free(winmm_midi_device);
-                winmm_midi_device = NULL;
-            }
+        if (midiOutGetDevCaps(i, &caps, sizeof(caps)) == MMSYSERR_NOERROR &&
+            !strncasecmp(winmm_midi_device, caps.szPname, MAXPNAMELEN))
+        {
+            MidiDevice = i;
+            break;
         }
     }
 
-    if (winmm_midi_device == NULL)
+    if (i == all_devices)
     {
+        free(winmm_midi_device);
+        winmm_midi_device = M_StringDuplicate("Microsoft MIDI Mapper");
         MidiDevice = MIDI_MAPPER;
-        mmr = midiOutGetDevCaps(MIDI_MAPPER, &mcaps, sizeof(mcaps));
-        if (mmr == MMSYSERR_NOERROR)
-        {
-            winmm_midi_device = M_StringDuplicate(mcaps.szPname);
-        }
     }
 
     mmr = midiStreamOpen(&hMidiStream, &MidiDevice, (DWORD)1,
