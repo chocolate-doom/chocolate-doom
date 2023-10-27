@@ -771,6 +771,11 @@ ST_Responder (event_t* ev)
 	    an = plyr->mo->angle >> ANGLETOFINESHIFT;
 	    P_SpawnMobj(plyr->mo->x+20*finecosine[an], plyr->mo->y+20*finesine[an], plyr->mo->z, MT_TFOG);
 	    S_StartSound(plyr, sfx_slop);
+
+	    // Fix reviving as "zombie" if god mode was already enabled
+	    if (plyr->mo)
+	        plyr->mo->health = deh_god_mode_health;
+	    plyr->health = deh_god_mode_health;
 	}
 
 	plyr->cheats ^= CF_GODMODE;
