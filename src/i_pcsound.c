@@ -245,15 +245,11 @@ static int I_PCS_GetSfxLumpNum(sfxinfo_t* sfx)
 {
     char namebuf[9];
 
-    if (gamemission == doom)
-    {
-        M_snprintf(namebuf, sizeof(namebuf), "dp%s", DEH_String(sfx->name));
-    }
-    else if (gamemission == strife)
+    if (gamemission == doom || gamemission == strife)
     {
         M_snprintf(namebuf, sizeof(namebuf), "dp%s", DEH_String(sfx->name));
 
-        if (W_CheckNumForName(namebuf) == -1)
+        if (gamemission == strife && W_CheckNumForName(namebuf) == -1)
         {
             // Missing sounds replaced with DPRIFLE.
             M_snprintf(namebuf, sizeof(namebuf), "dp%s", DEH_String("rifle"));
