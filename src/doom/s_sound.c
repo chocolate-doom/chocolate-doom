@@ -37,6 +37,7 @@
 #include "p_local.h"
 #include "w_wad.h"
 #include "z_zone.h"
+#include "g_game.h" // [crispy] demo_gotonextlvl
 
 // when to clip out sounds
 // Does not fit the large outdoor areas.
@@ -440,7 +441,7 @@ void S_Start(void)
     {
 	const short curmap = (gameepisode << 8) + gamemap;
 
-	if (prevmap == curmap || (nodrawers && singletics))
+	if (prevmap == curmap || (nodrawers && singletics && !demo_gotonextlvl))
 	    return;
 
 	prevmap = curmap;
@@ -933,7 +934,7 @@ void S_ChangeMusic(int musicnum, int looping)
     musinfo.current_item = -1;
 
     // [crispy] play no music if this is not the right map
-    if (nodrawers && singletics)
+    if (nodrawers && singletics && !demo_gotonextlvl)
 	return;
 
     // [crispy] restart current music if IDMUS00 is entered
