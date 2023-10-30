@@ -2749,11 +2749,11 @@ boolean M_Responder (event_t* ev)
         else if ((!netgame || netdemo) && key != 0 && key == key_menu_reloadlevel)
         {
 	    if (demoplayback)         
-        {
+	    {
 		// [crispy] replay demo lump or file
 		G_DoPlayDemo();
 		return true;
-        }
+	    }
 	    else
 	    if (G_ReloadLevel())
 		return true;
@@ -2761,12 +2761,12 @@ boolean M_Responder (event_t* ev)
         else if ((!netgame || netdemo) && key != 0 && key == key_menu_nextlevel)
         {
 	    if (demoplayback)
-        {
+	    {
 		// [crispy] go to next level
 		demo_gotonextlvl = true;
 		G_DemoGotoNextLevel(true);
 		return true;
-        }
+	    }
 	    else
 	    if (G_GotoNextLevel())
 		return true;
