@@ -158,6 +158,7 @@ static boolean IsDisabledSound(sfxinfo_t *sfxinfo)
         "dmpain",
         "popain",
         "sawidl",
+        "rifle",
     };
 
     for (i=0; i<arrlen(disabled_sounds); ++i)
@@ -184,14 +185,7 @@ static int I_PCS_StartSound(sfxinfo_t *sfxinfo,
         return -1;
     }
 
-    if (gamemission == strife)
-    {
-        if (!strcmp(sfxinfo->name, "rifle"))
-        {
-            return -1;
-        }
-    }
-    else if (IsDisabledSound(sfxinfo))
+    if (IsDisabledSound(sfxinfo))
     {
         return -1;
     }
