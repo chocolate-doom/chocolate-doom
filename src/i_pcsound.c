@@ -261,7 +261,7 @@ static int I_PCS_GetSfxLumpNum(sfxinfo_t* sfx)
 
         if (W_CheckNumForName(namebuf) == -1)
         {
-            // Missing sounds replaced with DPRIFLE, which is then disabled.
+            // Missing sounds replaced with DPRIFLE.
             M_snprintf(namebuf, sizeof(namebuf), "dp%s", DEH_String("rifle"));
         }
     }
