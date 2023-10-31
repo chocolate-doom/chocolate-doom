@@ -1452,7 +1452,7 @@ static void SetVideoMode(void)
     }
 
     // Turn on vsync if we aren't in a -timedemo
-    if (!singletics && mode.refresh_rate > 0)
+    if ((!singletics && mode.refresh_rate > 0) || crispy->demowarp)
     {
         if (crispy->vsync) // [crispy] uncapped vsync
         {
