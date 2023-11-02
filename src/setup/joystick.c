@@ -1008,7 +1008,6 @@ static int CalibrationEventCallback(SDL_Event *event, void *user_data)
     // joystick is being configured and which button the user is pressing.
     usejoystick = 1;
     use_gamepad = 0;
-    use_analog = 0;
     gamepad_type = SDL_CONTROLLER_TYPE_UNKNOWN;
     calibrate_button = event->jbutton.button;
 
@@ -1236,8 +1235,7 @@ void ConfigJoystick(TXT_UNCAST_ARG(widget), void *user_data)
     TXT_AddWidget(window, TXT_TABLE_EOL);
 
     TXT_AddWidget(window,
-        TXT_NewConditional(&use_gamepad, 1,
-                   TXT_NewButton2("Analog settings", AdjustAnalog, NULL)));
+                   TXT_NewButton2("Analog settings", AdjustAnalog, NULL));
     TXT_AddWidget(window, TXT_TABLE_EOL);
 
     TXT_AddWidget(window, TXT_NewSeparator("Buttons"));

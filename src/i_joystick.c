@@ -625,6 +625,8 @@ static int GetAxisState(int axis, int invert, int dead_zone)
         result = -result;
     }
 
+    result *= FRACUNIT / 32768; // Want FXP number between -1 and 1
+
     return result;
 }
 
