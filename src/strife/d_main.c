@@ -1694,10 +1694,10 @@ void D_DoomMain (void)
     // @category obscure
     // @vanilla
     //
-    // Flip player gun sprites (broken).
+    // Flip player gun sprites.
     //
 
-    flipparm = M_CheckParm ("-flip");
+    flipparm = M_CheckParm("-flip") || M_CheckParm("-flipweapons"); // [crispy]
 
     //!
     // @category game

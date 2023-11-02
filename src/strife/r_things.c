@@ -759,7 +759,8 @@ void R_DrawPSprite (pspdef_t* psp, psprnum_t psprnum) // [crispy] read psprnum
     // calculate edges of the shape
     tx = psp->sx2-(ORIGWIDTH/2)*FRACUNIT;
 
-    tx -= spriteoffset[lump];	
+    // [crispy] fix sprite offsets for mirrored sprites
+    tx -= flip ? 2 * tx - spriteoffset[lump] + spritewidth[lump] : spriteoffset[lump];
     x1 = (centerxfrac + FixedMul (tx,pspritescale) ) >>FRACBITS;
 
     // off the right side
@@ -874,7 +875,7 @@ void R_DrawPSprite (pspdef_t* psp, psprnum_t psprnum) // [crispy] read psprnum
     }
 
     // [crispy] free look
-    vis->texturemid += FixedMul(vis->xiscale, (centery - viewheight / 2) << FRACBITS);
+    vis->texturemid += FixedMul(pspriteiscale, (centery - viewheight / 2) << FRACBITS);
 
     R_DrawVisSprite (vis, vis->x1, vis->x2);
 }
