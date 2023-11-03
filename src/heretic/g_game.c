@@ -359,7 +359,7 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
             joyxmove = (joyxmove < -FRACUNIT) ? -FRACUNIT : joyxmove;
             side += FixedMul(sidemove[speed], joyxmove);
         }
-        else
+        else if (joystick_move_sensitivity)
         {
             if (joyxmove > 0)
                 side += sidemove[speed];
@@ -381,7 +381,7 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
             joyxmove = joyxmove * joystick_turn_sensitivity / 10;
             cmd->angleturn -= FixedMul(angleturn[1], joyxmove);
         }
-        else
+        else if (joystick_turn_sensitivity)
         {
             if (joyxmove > 0)
                 cmd->angleturn -= angleturn[tspeed];
@@ -401,7 +401,7 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
         joyymove = (joyymove < -FRACUNIT) ? FRACUNIT : joyymove;
         forward -= FixedMul(forwardmove[speed], joyymove);
     }
-    else
+    else if (joystick_move_sensitivity)
     {
         if (joyymove < 0)
             forward += forwardmove[speed];
@@ -422,7 +422,7 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
         joystrafemove = (joystrafemove < -FRACUNIT) ? -FRACUNIT : joystrafemove;
         side += FixedMul(sidemove[speed], joystrafemove);
     }
-    else
+    else if (joystick_move_sensitivity)
     {
         if (joystrafemove < 0)
             side -= sidemove[speed];
@@ -445,7 +445,7 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
         joylook = (joylook < -FRACUNIT) ? -FRACUNIT : joylook;
         look = -FixedMul(2, joylook);
     }
-    else
+    else if (joystick_look_sensitivity)
     {
         if (joylook < 0)
         {

@@ -1154,7 +1154,7 @@ static void AdjustAnalog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
         TXT_NewLabel("Turn"),
         TXT_NewSpinControl(&joystick_turn_sensitivity, 0, 20),
         NULL);
-    if (gamemission == heretic || gamemission == hexen)
+    if (gamemission == heretic || gamemission == hexen || gamemission == strife)
     {
         TXT_AddWidgets(window,
             TXT_NewLabel("Look"),
