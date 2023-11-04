@@ -2750,6 +2750,12 @@ boolean M_Responder (event_t* ev)
         {
 	    if (demoplayback)         
 	    {
+		if (crispy->demowarp)
+		{
+		// [crispy] enable screen render back before replaying
+		nodrawers = false;
+		singletics = false;
+		}
 		// [crispy] replay demo lump or file
 		G_DoPlayDemo();
 		return true;
