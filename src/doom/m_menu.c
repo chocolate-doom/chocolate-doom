@@ -2745,13 +2745,35 @@ boolean M_Responder (event_t* ev)
 	}
         // [crispy] those two can be considered as shortcuts for the IDCLEV cheat
         // and should be treated as such, i.e. add "if (!netgame)"
-        else if (!netgame && key != 0 && key == key_menu_reloadlevel)
+        // hovewer, allow while multiplayer demos
+        else if ((!netgame || netdemo) && key != 0 && key == key_menu_reloadlevel)
         {
+	    if (demoplayback)         
+	    {
+		if (crispy->demowarp)
+		{
+		// [crispy] enable screen render back before replaying
+		nodrawers = false;
+		singletics = false;
+		}
+		// [crispy] replay demo lump or file
+		G_DoPlayDemo();
+		return true;
+	    }
+	    else
 	    if (G_ReloadLevel())
 		return true;
         }
-        else if (!netgame && key != 0 && key == key_menu_nextlevel)
+        else if ((!netgame || netdemo) && key != 0 && key == key_menu_nextlevel)
         {
+	    if (demoplayback)
+	    {
+		// [crispy] go to next level
+		demo_gotonextlvl = true;
+		G_DemoGotoNextLevel(true);
+		return true;
+	    }
+	    else
 	    if (G_GotoNextLevel())
 		return true;
         }

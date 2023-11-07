@@ -90,7 +90,6 @@ void	G_DoReborn (int playernum);
  
 void	G_DoLoadLevel (void); 
 void	G_DoNewGame (void); 
-void	G_DoPlayDemo (void); 
 void	G_DoCompleted (void); 
 void	G_DoVictory (void); 
 void	G_DoWorldDone (void); 
@@ -3374,5 +3373,23 @@ boolean G_CheckDemoStatus (void)
     return false; 
 } 
  
+//
+// G_DemoGotoNextLevel
+// [crispy] fast forward to next level while demo playback
+//
+
+boolean demo_gotonextlvl;
+
+void G_DemoGotoNextLevel (boolean start)
+{
+    // disable screen rendering while fast forwarding
+    nodrawers = start;
+
+    // switch to fast tics running mode if not in -timedemo
+    if (!timingdemo)
+    {
+        singletics = start;
+    }
+} 
  
  
