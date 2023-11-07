@@ -134,7 +134,7 @@ byte *I_ZoneBase (int *size)
     // @category obscure
     // @arg <mb>
     //
-    // Specify the heap size, in MiB (default 16).
+    // Specify the heap size, in MiB.
     //
 
     p = M_CheckParmWithArgs("-mb", 1);
@@ -146,7 +146,21 @@ byte *I_ZoneBase (int *size)
     }
     else
     {
-        default_ram = DEFAULT_RAM;
+        // Because of the 8-byte pointer size in a 64-bit build, the default
+        // heap size (16 MiB) is insufficient compared to a 32-bit build. For
+        // example, the Alien Vendetta avm62402.lmp demo completes successfully
+        // on a 32-bit build, but terminates with an out of memory error on a
+        // 64-bit build. Therefore, to maintain consistency with a 32-bit
+        // build, the heap size should be increased.
+
+        if (sizeof(void *) == 8)
+        {
+            default_ram = DEFAULT_RAM * 2;
+        }
+        else
+        {
+            default_ram = DEFAULT_RAM;
+        }
         min_ram = MIN_RAM;
     }
 
