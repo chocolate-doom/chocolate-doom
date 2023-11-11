@@ -96,6 +96,8 @@ static HANDLE hBufferReturnEvent;
 static HANDLE hExitEvent;
 static HANDLE hPlayerThread;
 
+#define EMIDI_DEVICE (1U << EMIDI_DEVICE_GENERAL_MIDI)
+
 // This is a reduced Windows MIDIEVENT structure for MEVT_F_SHORT
 // type of events.
 
@@ -708,7 +710,7 @@ static void SendEMIDI(unsigned int delta_time, const midi_event_t *event,
     unsigned int flag;
     int count;
 
-    switch ((int) event->event_type)
+    switch (event->data.channel.param1)
     {
         case EMIDI_CONTROLLER_TRACK_DESIGNATION:
             if (track->elapsed_time < timediv)
@@ -722,7 +724,7 @@ static void SendEMIDI(unsigned int delta_time, const midi_event_t *event,
                 }
                 else if (flag <= EMIDI_DEVICE_ULTRASOUND)
                 {
-                    track->emidi_device_flags |= 1 << flag;
+                    track->emidi_device_flags |= 1U << flag;
                     track->emidi_designated = true;
                 }
             }
@@ -746,7 +748,7 @@ static void SendEMIDI(unsigned int delta_time, const midi_event_t *event,
 
                 if (flag <= EMIDI_DEVICE_ULTRASOUND)
                 {
-                    track->emidi_device_flags &= ~(1 << flag);
+                    track->emidi_device_flags &= ~(1U << flag);
                 }
             }
             SendNOPMsg(delta_time);
@@ -836,10 +838,6 @@ static void SendEMIDI(unsigned int delta_time, const midi_event_t *event,
                     }
                 }
             }
-            SendNOPMsg(delta_time);
-            break;
-
-        default:
             SendNOPMsg(delta_time);
             break;
     }
@@ -970,8 +968,7 @@ static boolean AddToBuffer_Standard(unsigned int delta_time,
             return true;
     }
 
-    if (track->emidi_designated &&
-        (EMIDI_DEVICE_GENERAL_MIDI & ~track->emidi_device_flags))
+    if (track->emidi_designated && (EMIDI_DEVICE & ~track->emidi_device_flags))
     {
         // Send NOP if this device has been excluded from this track.
         SendNOPMsg(delta_time);
