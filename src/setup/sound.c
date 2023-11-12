@@ -234,7 +234,7 @@ void ConfigSound(TXT_UNCAST_ARG(widget), void *user_data)
     TXT_AddWidgets(window,
         TXT_NewSeparator("Sound effects"),
         TXT_NewRadioButton("Disabled", &snd_sfxdevice, SNDDEVICE_NONE),
-        TXT_If(gamemission == doom,
+        TXT_If(gamemission == doom || gamemission == strife,
             TXT_NewRadioButton("PC speaker effects", &snd_sfxdevice,
                                SNDDEVICE_PCSPEAKER)),
         TXT_NewRadioButton("Digital sound effects",
