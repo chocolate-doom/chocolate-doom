@@ -92,6 +92,12 @@ static int joystick_y_dead_zone = 33;
 static int joystick_strafe_dead_zone = 33;
 static int joystick_look_dead_zone = 33;
 
+int use_analog = 0;
+
+int joystick_turn_sensitivity = 10;
+int joystick_move_sensitivity = 10;
+int joystick_look_sensitivity = 10;
+
 // Virtual to physical mapping.
 int joystick_physical_buttons[NUM_VIRTUAL_BUTTONS] = {
     0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
@@ -1133,6 +1139,34 @@ static void SwapLRSticks(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
     }
 }
 
+static void AdjustAnalog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
+{
+    txt_window_t *window;
+
+    window = TXT_NewWindow("Analog Settings");
+    TXT_SetTableColumns(window, 2);
+    TXT_SetColumnWidths(window, 10, 6);
+    TXT_AddWidgets(window,
+        TXT_NewCheckBox("Use analog controls", &use_analog),
+        TXT_NewSeparator("Sensitivity"),
+        TXT_NewLabel("Movement"),
+        TXT_NewSpinControl(&joystick_move_sensitivity, 0, 20),
+        TXT_NewLabel("Turn"),
+        TXT_NewSpinControl(&joystick_turn_sensitivity, 0, 20),
+        NULL);
+    if (gamemission == heretic || gamemission == hexen || gamemission == strife)
+    {
+        TXT_AddWidgets(window,
+            TXT_NewLabel("Look"),
+            TXT_NewSpinControl(&joystick_look_sensitivity, 0, 20), NULL);
+    }
+    TXT_SetWindowAction(window, TXT_HORIZ_LEFT, NULL);
+    TXT_SetWindowAction(window, TXT_HORIZ_CENTER,
+        TXT_NewWindowEscapeAction(window));
+    TXT_SetWindowAction(window, TXT_HORIZ_RIGHT, NULL);
+    TXT_SetWidgetAlign(window, TXT_HORIZ_CENTER);
+}
+
 void ConfigJoystick(TXT_UNCAST_ARG(widget), void *user_data)
 {
     txt_window_t *window;
@@ -1197,14 +1231,12 @@ void ConfigJoystick(TXT_UNCAST_ARG(widget), void *user_data)
 
     TXT_AddWidget(window,
         TXT_NewConditional(&use_gamepad, 1,
-            TXT_MakeTable(6,
-                   TXT_NewButton2("Swap L and R sticks", SwapLRSticks, NULL),
-                   TXT_TABLE_OVERFLOW_RIGHT,
-                   TXT_TABLE_OVERFLOW_RIGHT,
-                   TXT_TABLE_EMPTY,
-                   TXT_TABLE_EMPTY,
-                   TXT_TABLE_EMPTY,
-                   NULL)));
+                   TXT_NewButton2("Swap L and R sticks", SwapLRSticks, NULL)));
+    TXT_AddWidget(window, TXT_TABLE_EOL);
+
+    TXT_AddWidget(window,
+                   TXT_NewButton2("Analog settings", AdjustAnalog, NULL));
+    TXT_AddWidget(window, TXT_TABLE_EOL);
 
     TXT_AddWidget(window, TXT_NewSeparator("Buttons"));
 
@@ -1267,6 +1299,10 @@ void BindJoystickVariables(void)
     M_BindIntVariable("joystick_y_dead_zone", &joystick_y_dead_zone);
     M_BindIntVariable("joystick_strafe_dead_zone", &joystick_strafe_dead_zone);
     M_BindIntVariable("joystick_look_dead_zone", &joystick_look_dead_zone);
+    M_BindIntVariable("use_analog", &use_analog);
+    M_BindIntVariable("joystick_turn_sensitivity", &joystick_turn_sensitivity);
+    M_BindIntVariable("joystick_move_sensitivity", &joystick_move_sensitivity);
+    M_BindIntVariable("joystick_look_sensitivity", &joystick_look_sensitivity);
 
     for (i = 0; i < NUM_VIRTUAL_BUTTONS; ++i)
     {
