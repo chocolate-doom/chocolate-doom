@@ -1337,17 +1337,16 @@ ST_Responder (event_t* ev)
       // [crisp] allow IDCLEV during demo playback and warp to the requested map
       if (demoplayback)
       {
-          if (map > gamemap)
+          crispy->demowarp = map;
+          nodrawers = true;
+          singletics = true;
+
+          if (map <= gamemap)
           {
-              crispy->demowarp = map;
-              nodrawers = true;
-              singletics = true;
-              return true;
+              G_DoPlayDemo();
           }
-          else
-          {
-              return false;
-          }
+
+           return true;
       }
       else
       G_DeferedInitNew(gameskill, epsd, map);
