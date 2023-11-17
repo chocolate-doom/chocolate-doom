@@ -275,9 +275,6 @@ static int		lu_palette;
 // used for making messages go away
 static int		st_msgcounter=0;
 
-// used when in chat 
-static st_chatstateenum_t	st_chatstate;
-
 // whether left-side main status bar is active
 static boolean		st_statusbaron;
 
@@ -1221,8 +1218,6 @@ void ST_initData(void)
 
     st_firsttime = true;
     plyr = &players[consoleplayer];
-
-    st_chatstate = StartChatState;
 
     st_statusbaron = true;
     st_oldchat = st_chat = false;

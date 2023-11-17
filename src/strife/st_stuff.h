@@ -58,17 +58,6 @@ void ST_Init (void);
 
 
 
-// States for the chat code.
-typedef enum
-{
-    StartChatState,
-    WaitDestState,
-    GetChatState
-    
-} st_chatstateenum_t;
-
-
-
 extern byte *st_backing_screen;
 
 extern cheatseq_t cheat_mus;     // [STRIFE]: idmus -> spin
