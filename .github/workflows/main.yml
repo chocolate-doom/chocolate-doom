@@ -1,4 +1,4 @@
-name: Chocolate Doom
+name: Continuous Integration
 
 on:
   push:
@@ -9,31 +9,134 @@ on:
   pull_request:
     branches:
       - "master"
+    paths-ignore:
+      - "**.md"
   workflow_dispatch:
 
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
-
+    name: ${{ matrix.config.name }}
+    runs-on: ${{ matrix.config.os }}
+    defaults:
+      run:
+        shell: ${{ matrix.config.shell }}
     strategy:
+      fail-fast: false
       matrix:
-        compiler: [clang, gcc]
-        os: [ubuntu-latest]
+        config:
+          - name: Linux GCC
+            os: ubuntu-latest
+            compiler: gcc
+            shell: bash
+
+          - name: macOS Clang
+            os: macos-latest
+            compiler: clang
+            shell: bash
+
+          - name: MSYS2 UCRT64
+            os: windows-latest
+            compiler: gcc
+            shell: 'msys2 {0}'
+            msystem: ucrt64
+            msys-env: mingw-w64-ucrt-x86_64
+
+          - name: MSYS2 MINGW32
+            os: windows-latest
+            compiler: gcc
+            shell: 'msys2 {0}'
+            msystem: mingw32
+            msys-env: mingw-w64-i686
 
     steps:
-      - name: Install dependencies
-        run: sudo apt-get update && sudo apt-get install libfluidsynth-dev libpng-dev libsamplerate0-dev libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-net-dev ninja-build
+      - name: Install pandoc
+        if: runner.os == 'Windows'
+        shell: cmd
+        run: choco install pandoc
 
-      - uses: actions/checkout@v2
+      - name: Install dependencies (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install \
+            libsdl2-dev \
+            libsdl2-mixer-dev \
+            libsdl2-net-dev \
+            libpng-dev \
+            libsamplerate0-dev \
+            libfluidsynth-dev
+
+      - name: Install dependencies (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          brew install \
+            automake \
+            dylibbundler \
+            sdl2 \
+            sdl2_mixer \
+            sdl2_net \
+            libpng \
+            libsamplerate \
+            fluid-synth
+
+      - name: Install dependencies (MSYS2)
+        if: runner.os == 'Windows'
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: ${{ matrix.config.msystem }}
+          update: false
+          path-type: inherit
+          install: >-
+            autotools
+            zip
+            ${{ matrix.config.msys-env }}-gcc
+            ${{ matrix.config.msys-env }}-SDL2
+            ${{ matrix.config.msys-env }}-SDL2_mixer
+            ${{ matrix.config.msys-env }}-SDL2_net
+            ${{ matrix.config.msys-env }}-libpng
+            ${{ matrix.config.msys-env }}-libsamplerate
+            ${{ matrix.config.msys-env }}-fluidsynth
+
+      - uses: actions/checkout@v4
         with:
           submodules: true
 
-      - name: CMake
+      - name: Configure
         env:
-          CC: ${{ matrix.compiler }}
-        run: cmake -S . -B build -G Ninja && ninja -C build
+          CC: ${{ matrix.config.compiler }}
+        run: |
+          ./autogen.sh
 
-      - name: Make
-        env:
-          CC: ${{ matrix.compiler }}
-        run: $GITHUB_WORKSPACE/.travis.sh
+      - name: Build
+        run: make -j4
+
+      - name: Test
+        run: |
+          PREFIX=`sed -n '/PROGRAM_PREFIX/p' ${PWD}/config.h | cut -d '"' -f 2`
+          make -j4 -C quickcheck check SOURCE_PORT=$PWD/src/${PREFIX}doom
+
+      - name: Package (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          cd pkg/osx
+          make
+
+      - name: Package (MSYS2)
+        if: runner.os == 'Windows'
+        run: |
+          cd pkg/win32
+          make
+
+      - name: Upload artifacts (macOS)
+        if: runner.os == 'macOS'
+        uses: actions/upload-artifact@v3
+        with:
+          name: macOS
+          path: pkg/osx/*.dmg
+
+      - name: Upload artifacts (MSYS2)
+        if: runner.os == 'Windows'
+        uses: actions/upload-artifact@v3
+        with:
+          name: Win-${{ matrix.config.msystem }}
+          path: pkg/win32/*.zip
