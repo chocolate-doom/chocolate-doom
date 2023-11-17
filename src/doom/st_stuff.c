@@ -73,23 +73,12 @@
 // Radiation suit, green shift.
 #define RADIATIONPAL		13
 
-// N/256*100% probability
-//  that the normal face state will change
-#define ST_FACEPROBABILITY		96
-
-// For Responder
-#define ST_TOGGLECHAT		KEY_ENTER
-
 // Location of status bar
 #define ST_X				0
 #define ST_X2				104
 
 #define ST_FX  			143
 #define ST_FY  			169
-
-// Should be set to patch width
-//  for tall numbers later on
-#define ST_TALLNUMWIDTH		(tallnum[0]->width)
 
 // Number of status faces.
 #define ST_NUMPAINFACES		5
@@ -203,62 +192,8 @@
 #define ST_MAXAMMO3X		314
 #define ST_MAXAMMO3Y		185
 
-// pistol
-#define ST_WEAPON0X			110 
-#define ST_WEAPON0Y			172
-
-// shotgun
-#define ST_WEAPON1X			122 
-#define ST_WEAPON1Y			172
-
-// chain gun
-#define ST_WEAPON2X			134 
-#define ST_WEAPON2Y			172
-
-// missile launcher
-#define ST_WEAPON3X			110 
-#define ST_WEAPON3Y			181
-
-// plasma gun
-#define ST_WEAPON4X			122 
-#define ST_WEAPON4Y			181
-
- // bfg
-#define ST_WEAPON5X			134
-#define ST_WEAPON5Y			181
-
-// WPNS title
-#define ST_WPNSX			109 
-#define ST_WPNSY			191
-
- // DETH title
-#define ST_DETHX			109
-#define ST_DETHY			191
-
-//Incoming messages window location
-//UNUSED
-// #define ST_MSGTEXTX	   (viewwindowx)
-// #define ST_MSGTEXTY	   (viewwindowy+viewheight-18)
-#define ST_MSGTEXTX			0
-#define ST_MSGTEXTY			0
 // Dimensions given in characters.
 #define ST_MSGWIDTH			52
-// Or shall I say, in lines?
-#define ST_MSGHEIGHT		1
-
-#define ST_OUTTEXTX			0
-#define ST_OUTTEXTY			6
-
-// Width, in characters again.
-#define ST_OUTWIDTH			52 
- // Height, in lines. 
-#define ST_OUTHEIGHT		1
-
-#define ST_MAPTITLEX \
-    (SCREENWIDTH - ST_MAPWIDTH * ST_CHATFONTWIDTH)
-
-#define ST_MAPTITLEY		0
-#define ST_MAPHEIGHT		1
 
 // graphics are drawn to a backing screen and blitted to the real screen
 pixel_t			*st_backing_screen;
