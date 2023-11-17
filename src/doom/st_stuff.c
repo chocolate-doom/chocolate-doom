@@ -293,9 +293,6 @@ static boolean		st_chat;
 // value of st_chat before message popped up
 static boolean		st_oldchat;
 
-// whether chat window has the cursor on
-static boolean		st_cursoron;
-
 // !deathmatch
 static boolean		st_notdeathmatch; 
 
@@ -1240,7 +1237,6 @@ void ST_initData(void)
 
     st_statusbaron = true;
     st_oldchat = st_chat = false;
-    st_cursoron = false;
 
     st_faceindex = 0;
     st_palette = -1;
