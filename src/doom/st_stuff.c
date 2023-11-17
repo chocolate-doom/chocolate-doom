@@ -278,9 +278,6 @@ static int		st_msgcounter=0;
 // used when in chat 
 static st_chatstateenum_t	st_chatstate;
 
-// whether in automap or first-person
-static st_stateenum_t	st_gamestate;
-
 // whether left-side main status bar is active
 static boolean		st_statusbaron;
 
@@ -449,13 +446,11 @@ ST_Responder (event_t* ev)
     switch(ev->data1)
     {
       case AM_MSGENTERED:
-	st_gamestate = AutomapState;
 	st_firsttime = true;
 	break;
 	
       case AM_MSGEXITED:
 	//	fprintf(stderr, "AM exited\n");
-	st_gamestate = FirstPersonState;
 	break;
     }
   }
@@ -1228,7 +1223,6 @@ void ST_initData(void)
     plyr = &players[consoleplayer];
 
     st_chatstate = StartChatState;
-    st_gamestate = FirstPersonState;
 
     st_statusbaron = true;
     st_oldchat = st_chat = false;
