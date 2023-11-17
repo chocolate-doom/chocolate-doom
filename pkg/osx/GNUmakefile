@@ -12,6 +12,12 @@ DMG=$(PACKAGE_TARNAME)-$(PACKAGE_VERSION).dmg
 TOPLEVEL=../..
 TOPLEVEL_DOCS=$(patsubst %,../../%,$(DOC_FILES))
 
+ifeq (, $(shell which dylibbundler))
+	CP=./cp-with-libs
+else
+	CP=cp
+endif
+
 # DMG file containing package:
 
 $(DMG) : tmp.dmg
@@ -63,16 +69,25 @@ $(STAGING_DIR): launcher $(TOPLEVEL_DOCS) app.icns wadfile.icns
 	cp launcher "$(APP_BIN_DIR)"
 	$(STRIP) "$(APP_BIN_DIR)/launcher"
 
-	./cp-with-libs $(TOPLEVEL)/src/$(PROGRAM_PREFIX)doom "$(APP_BIN_DIR)"
+	$(CP) $(TOPLEVEL)/src/$(PROGRAM_PREFIX)doom "$(APP_BIN_DIR)"
 	$(STRIP) "$(APP_BIN_DIR)/$(PROGRAM_PREFIX)doom"
-	./cp-with-libs $(TOPLEVEL)/src/$(PROGRAM_PREFIX)heretic "$(APP_BIN_DIR)"
+	$(CP) $(TOPLEVEL)/src/$(PROGRAM_PREFIX)heretic "$(APP_BIN_DIR)"
 	$(STRIP) "$(APP_BIN_DIR)/$(PROGRAM_PREFIX)heretic"
-	./cp-with-libs $(TOPLEVEL)/src/$(PROGRAM_PREFIX)hexen "$(APP_BIN_DIR)"
+	$(CP) $(TOPLEVEL)/src/$(PROGRAM_PREFIX)hexen "$(APP_BIN_DIR)"
 	$(STRIP) "$(APP_BIN_DIR)/$(PROGRAM_PREFIX)hexen"
-	./cp-with-libs $(TOPLEVEL)/src/$(PROGRAM_PREFIX)strife "$(APP_BIN_DIR)"
+	$(CP) $(TOPLEVEL)/src/$(PROGRAM_PREFIX)strife "$(APP_BIN_DIR)"
 	$(STRIP) "$(APP_BIN_DIR)/$(PROGRAM_PREFIX)strife"
-	./cp-with-libs $(TOPLEVEL)/src/$(PROGRAM_PREFIX)setup "$(APP_BIN_DIR)"
+	$(CP) $(TOPLEVEL)/src/$(PROGRAM_PREFIX)setup "$(APP_BIN_DIR)"
 	$(STRIP) "$(APP_BIN_DIR)/$(PROGRAM_PREFIX)setup"
+
+	-dylibbundler --bundle-deps --overwrite-files                      \
+		      --install-path "@executable_path/"                   \
+		      --dest-dir "$(APP_BIN_DIR)"                          \
+		      --fix-file "$(APP_BIN_DIR)/$(PROGRAM_PREFIX)doom"    \
+		      --fix-file "$(APP_BIN_DIR)/$(PROGRAM_PREFIX)heretic" \
+		      --fix-file "$(APP_BIN_DIR)/$(PROGRAM_PREFIX)hexen"   \
+		      --fix-file "$(APP_BIN_DIR)/$(PROGRAM_PREFIX)strife"  \
+		      --fix-file "$(APP_BIN_DIR)/$(PROGRAM_PREFIX)setup"
 
 	$(TOPLEVEL)/man/simplecpp -DPRECOMPILED -D__MACOSX__  \
 	                -DDOOM -DHERETIC -DHEXEN -DSTRIFE     \
