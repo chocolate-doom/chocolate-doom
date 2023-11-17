@@ -272,9 +272,6 @@ static boolean		st_firsttime;
 // lump number for PLAYPAL
 static int		lu_palette;
 
-// used for timing
-static unsigned int	st_clock;
-
 // used for making messages go away
 static int		st_msgcounter=0;
 
@@ -947,7 +944,6 @@ void ST_updateWidgets(void)
 void ST_Ticker (void)
 {
 
-    st_clock++;
     st_randomnumber = M_Random();
     ST_updateWidgets();
     st_oldhealth = plyr->health;
@@ -1231,7 +1227,6 @@ void ST_initData(void)
     st_firsttime = true;
     plyr = &players[consoleplayer];
 
-    st_clock = 0;
     st_chatstate = StartChatState;
     st_gamestate = FirstPersonState;
 
