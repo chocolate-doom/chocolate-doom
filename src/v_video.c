@@ -311,14 +311,24 @@ void V_DrawPatch(int x, int y, patch_t *patch)
 void V_DrawPatchFullScreen(patch_t *patch, boolean flipped)
 {
     int x = ((SCREENWIDTH >> crispy->hires) - SHORT(patch->width)) / 2 - WIDESCREENDELTA;
+    static int black = -1;
 
     patch->leftoffset = 0;
     patch->topoffset = 0;
 
+    if (black == -1)
+    {
+#ifndef CRISPY_TRUECOLOR
+        black = I_GetPaletteIndex(0x00, 0x00, 0x00);
+#else
+        black = I_MapRGB(0x00, 0x00, 0x00);
+#endif
+    }
+
     // [crispy] fill pillarboxes in widescreen mode
     if (SCREENWIDTH != NONWIDEWIDTH)
     {
-        V_DrawFilledBox(0, 0, SCREENWIDTH, SCREENHEIGHT, 0);
+        V_DrawFilledBox(0, 0, SCREENWIDTH, SCREENHEIGHT, black);
     }
 
     if (flipped)
