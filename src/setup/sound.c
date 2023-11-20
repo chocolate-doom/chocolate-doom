@@ -373,6 +373,10 @@ void BindSoundVariables(void)
     timidity_cfg_path = M_StringDuplicate("");
     gus_patch_path = M_StringDuplicate("");
 
+#ifdef _WIN32
+    winmm_midi_device = M_StringDuplicate("");
+#endif
+
 #ifdef HAVE_FLUIDSYNTH
     fsynth_sf_path = M_StringDuplicate("");
 #endif

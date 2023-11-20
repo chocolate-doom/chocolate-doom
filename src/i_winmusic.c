@@ -1553,6 +1553,11 @@ static boolean I_WIN_InitMusic(void)
     int i;
     MMRESULT mmr;
 
+    if (winmm_midi_device == NULL)
+    {
+        winmm_midi_device = M_StringDuplicate("");
+    }
+
     for (i = 0; i < all_devices; i++)
     {
         MIDIOUTCAPS caps;
