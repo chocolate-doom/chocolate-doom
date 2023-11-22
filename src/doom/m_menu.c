@@ -161,9 +161,9 @@ typedef struct
     char	name[10];
     
     // choice = menu item #.
-    // if status = 2,
+    // if status = 2 or 3,
     //   choice=0:leftarrow,1:rightarrow
-    // [crispy] if status = 3,
+    // [crispy] if status = 4,
     //   choice=0:leftarrow,1:rightarrow,2:enter
     void	(*routine)(int choice);
     
@@ -2889,6 +2889,11 @@ boolean M_Responder (event_t* ev)
 		currentMenu->menuitems[itemOn].routine(1);      // right arrow
 		S_StartSoundOptional(NULL, sfx_mnusli, sfx_stnmov); // [NS] Optional menu sounds.
 	    }
+            else if (currentMenu->menuitems[itemOn].status == 3)
+            {
+                currentMenu->menuitems[itemOn].routine(1); // right arrow
+                S_StartSoundOptional(NULL, sfx_mnuact, sfx_pistol); // [NS] Optional menu sounds.
+            }
             else if (currentMenu->menuitems[itemOn].status == 4) // [crispy]
             {
                 currentMenu->menuitems[itemOn].routine(2); // enter key
