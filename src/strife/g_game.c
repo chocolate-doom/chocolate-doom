@@ -35,6 +35,7 @@
 #include "m_saves.h" // STRIFE
 #include "m_random.h"
 #include "i_input.h"
+#include "i_joystick.h"
 #include "i_system.h"
 #include "i_timer.h"
 #include "i_video.h"
@@ -362,12 +363,12 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     // [crispy] center view key and lookspring support
     if (crispy->freelook_hh == FREELOOK_HH_SPRING)
     {
-        if (gamekeydown[key_lookup] || joylook < 0)
+        if (gamekeydown[key_lookup] || (joylook < 0 && joystick_look_sensitivity))
         {
             cmd->buttons2 |= BT2_LOOKUP;
             kbdlookctrl += ticdup;
         }
-        else if (gamekeydown[key_lookdown] || joylook > 0)
+        else if (gamekeydown[key_lookdown] || (joylook > 0 && joystick_look_sensitivity))
         {
             cmd->buttons2 |= BT2_LOOKDOWN;
             kbdlookctrl += ticdup;
@@ -381,10 +382,10 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     }
     else
     {
-        if (gamekeydown[key_lookup] || joylook < 0)
+        if (gamekeydown[key_lookup] || (joylook < 0 && joystick_look_sensitivity))
             cmd->buttons2 |= BT2_LOOKUP;
 
-        if (gamekeydown[key_lookdown] || joylook > 0)
+        if (gamekeydown[key_lookdown] || (joylook > 0 && joystick_look_sensitivity))
             cmd->buttons2 |= BT2_LOOKDOWN;
 
         if (gamekeydown[key_lookcenter])
@@ -517,10 +518,20 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
             //	fprintf(stderr, "strafe left\n");
             side -= sidemove[speed]; 
         }
-        if (joyxmove > 0) 
-            side += sidemove[speed]; 
-        if (joyxmove < 0) 
-            side -= sidemove[speed]; 
+        if (use_analog && joyxmove)
+        {
+            joyxmove = joyxmove * joystick_move_sensitivity / 10;
+            joyxmove = (joyxmove > FRACUNIT) ? FRACUNIT : joyxmove;
+            joyxmove = (joyxmove < -FRACUNIT) ? -FRACUNIT : joyxmove;
+            side += FixedMul(sidemove[speed], joyxmove);
+        }
+        else if (joystick_move_sensitivity)
+        {
+            if (joyxmove > 0)
+                side += sidemove[speed];
+            if (joyxmove < 0)
+                side -= sidemove[speed];
+        }
 
     } 
     else 
@@ -529,10 +540,21 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
             cmd->angleturn -= angleturn[tspeed]; 
         if (gamekeydown[key_left] || mousebuttons[mousebturnleft])
             cmd->angleturn += angleturn[tspeed]; 
-        if (joyxmove > 0) 
-            cmd->angleturn -= angleturn[tspeed]; 
-        if (joyxmove < 0) 
-            cmd->angleturn += angleturn[tspeed]; 
+        if (use_analog && joyxmove)
+        {
+            // Cubic response curve allows for finer control when stick
+            // deflection is small.
+            joyxmove = FixedMul(FixedMul(joyxmove, joyxmove), joyxmove);
+            joyxmove = joyxmove * joystick_turn_sensitivity / 10;
+            cmd->angleturn -= FixedMul(angleturn[1], joyxmove);
+        }
+        else if (joystick_turn_sensitivity)
+        {
+            if (joyxmove > 0)
+                cmd->angleturn -= angleturn[tspeed];
+            if (joyxmove < 0)
+                cmd->angleturn += angleturn[tspeed];
+        }
     } 
 
     if (gamekeydown[key_up] || gamekeydown[key_alt_up]) // [crispy] add key_alt_*
@@ -546,27 +568,49 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
         forward -= forwardmove[speed]; 
     }
 
-    if (joyymove < 0) 
-        forward += forwardmove[speed]; 
-    if (joyymove > 0) 
-        forward -= forwardmove[speed]; 
+    if (use_analog && joyymove)
+    {
+        joyymove = joyymove * joystick_move_sensitivity / 10;
+        joyymove = (joyymove > FRACUNIT) ? FRACUNIT : joyymove;
+        joyymove = (joyymove < -FRACUNIT) ? FRACUNIT : joyymove;
+        forward -= FixedMul(forwardmove[speed], joyymove);
+    }
+    else if (joystick_move_sensitivity)
+    {
+        if (joyymove < 0)
+            forward += forwardmove[speed];
+        if (joyymove > 0)
+            forward -= forwardmove[speed];
+    }
 
     if (gamekeydown[key_strafeleft] || gamekeydown[key_alt_strafeleft] // [crispy] add key_alt_*
      || joybuttons[joybstrafeleft]
-     || mousebuttons[mousebstrafeleft]
-     || joystrafemove < 0)
+     || mousebuttons[mousebstrafeleft])
     {
         side -= sidemove[speed];
     }
 
     if (gamekeydown[key_straferight] || gamekeydown[key_alt_straferight] // [crispy] add key_alt_*
      || joybuttons[joybstraferight]
-     || mousebuttons[mousebstraferight]
-     || joystrafemove > 0)
+     || mousebuttons[mousebstraferight])
     {
         side += sidemove[speed]; 
     }
 
+    if (use_analog && joystrafemove)
+    {
+        joystrafemove = joystrafemove * joystick_move_sensitivity / 10;
+        joystrafemove = (joystrafemove > FRACUNIT) ? FRACUNIT : joystrafemove;
+        joystrafemove = (joystrafemove < -FRACUNIT) ? -FRACUNIT : joystrafemove;
+        side += FixedMul(sidemove[speed], joystrafemove);
+    }
+    else if (joystick_move_sensitivity)
+    {
+        if (joystrafemove < 0)
+            side -= sidemove[speed];
+        if (joystrafemove > 0)
+            side += sidemove[speed];
+    }
     // buttons
     cmd->chatchar = HU_dequeueChatChar(); 
 

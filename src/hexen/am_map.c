@@ -33,8 +33,6 @@
 int cheating = 0;
 static int grid = 0;
 
-static int leveljuststarted = 1;        // kluge until AM_LevelInit() is called
-
 boolean automapactive = false;
 static int finit_width;// = SCREENWIDTH;
 static int finit_height;// = SCREENHEIGHT - SBARHEIGHT - (3 << crispy->hires);
@@ -459,8 +457,6 @@ void AM_LevelInit(boolean reinit)
 {
     // [crispy] Used for reinit
     static int f_h_old;
-
-    leveljuststarted = 0;
 
     finit_width = SCREENWIDTH;
     finit_height = SCREENHEIGHT - ((ORIGSBARHEIGHT + 3) << crispy->hires);

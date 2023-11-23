@@ -30,6 +30,7 @@
 #include "i_system.h"
 
 #include "m_config.h"
+#include "m_fixed.h"
 #include "m_misc.h"
 
 static SDL_GameController *gamepad = NULL;
@@ -79,6 +80,12 @@ static int joystick_x_dead_zone = 33;
 static int joystick_y_dead_zone = 33;
 static int joystick_strafe_dead_zone = 33;
 static int joystick_look_dead_zone = 33;
+
+int use_analog = 0;
+
+int joystick_turn_sensitivity = 10;
+int joystick_move_sensitivity = 10;
+int joystick_look_sensitivity = 10;
 
 // Virtual to physical button joystick button mapping. By default this
 // is a straight mapping.
@@ -294,13 +301,15 @@ static int GetAxisStateGamepad(int axis, int invert, int dead_zone)
 
     if (result < dead_zone && result > -dead_zone)
     {
-        result = 0;
+        return 0;
     }
 
     if (invert)
     {
         result = -result;
     }
+
+    result *= FRACUNIT / 32768; // Want FXP number between -1 and 1
 
     return result;
 }
@@ -616,6 +625,8 @@ static int GetAxisState(int axis, int invert, int dead_zone)
         result = -result;
     }
 
+    result *= FRACUNIT / 32768; // Want FXP number between -1 and 1
+
     return result;
 }
 
@@ -667,6 +678,10 @@ void I_BindJoystickVariables(void)
     M_BindIntVariable("joystick_y_dead_zone", &joystick_y_dead_zone);
     M_BindIntVariable("joystick_strafe_dead_zone", &joystick_strafe_dead_zone);
     M_BindIntVariable("joystick_look_dead_zone", &joystick_look_dead_zone);
+    M_BindIntVariable("use_analog", &use_analog);
+    M_BindIntVariable("joystick_turn_sensitivity", &joystick_turn_sensitivity);
+    M_BindIntVariable("joystick_move_sensitivity", &joystick_move_sensitivity);
+    M_BindIntVariable("joystick_look_sensitivity", &joystick_look_sensitivity);
 
     for (i = 0; i < NUM_VIRTUAL_BUTTONS; ++i)
     {
