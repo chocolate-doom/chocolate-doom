@@ -21,6 +21,7 @@
 #define __I_SOUND__
 
 #include "doomtype.h"
+#include "d_mode.h"
 
 // so that the individual game logic and sound driver code agree
 #define NORM_PITCH 127
@@ -115,7 +116,7 @@ typedef struct
     // Initialise sound module
     // Returns true if successfully initialised
 
-    boolean (*Init)(boolean use_sfx_prefix);
+    boolean (*Init)(GameMission_t mission);
 
     // Shutdown sound module
 
@@ -152,7 +153,7 @@ typedef struct
 
 } sound_module_t;
 
-void I_InitSound(boolean use_sfx_prefix);
+void I_InitSound(GameMission_t mission);
 void I_ShutdownSound(void);
 int I_GetSfxLumpNum(sfxinfo_t *sfxinfo);
 void I_UpdateSound(void);

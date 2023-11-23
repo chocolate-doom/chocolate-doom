@@ -249,8 +249,6 @@ static mline_t square_mark[] = {
 static int 	cheating = 0;
 static int 	grid = 0;
 
-static int 	leveljuststarted = 1; 	// kluge until AM_LevelInit() is called
-
 boolean    	automapactive = false;
 //static int 	finit_width = SCREENWIDTH;
 //static int 	finit_height = SCREENHEIGHT - (ST_HEIGHT << crispy->hires);
@@ -629,8 +627,6 @@ void AM_LevelInit(boolean reinit)
     static int f_h_old;
     // [crispy] Only need to precalculate color lookup tables once
     static int precalc_once;
-
-    leveljuststarted = 0;
 
     f_x = f_y = 0;
     f_w = SCREENWIDTH;

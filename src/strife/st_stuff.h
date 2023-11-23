@@ -67,16 +67,6 @@ typedef enum
 } st_stateenum_t;
 
 
-// States for the chat code.
-typedef enum
-{
-    StartChatState,
-    WaitDestState,
-    GetChatState
-    
-} st_chatstateenum_t;
-
-
 // [crispy] For status bar background in widescreen mode and widgets.
 extern pixel_t *st_backing_screen;
 

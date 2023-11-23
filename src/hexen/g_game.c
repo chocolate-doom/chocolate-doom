@@ -21,6 +21,7 @@
 #include "s_sound.h"
 #include "doomkeys.h"
 #include "i_input.h"
+#include "i_joystick.h"
 #include "i_video.h"
 #include "i_system.h"
 #include "i_timer.h"
@@ -323,13 +324,23 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
         {
             side -= sidemove[pClass][speed];
         }
-        if (joyxmove > 0)
+        if (use_analog && joyxmove)
         {
-            side += sidemove[pClass][speed];
+            joyxmove = joyxmove * joystick_move_sensitivity / 10;
+            joyxmove = (joyxmove > FRACUNIT) ? FRACUNIT : joyxmove;
+            joyxmove = (joyxmove < -FRACUNIT) ? -FRACUNIT : joyxmove;
+            side += FixedMul(sidemove[pClass][speed], joyxmove);
         }
-        if (joyxmove < 0)
+        else if (joystick_move_sensitivity)
         {
-            side -= sidemove[pClass][speed];
+            if (joyxmove > 0)
+            {
+                side += sidemove[pClass][speed];
+            }
+            if (joyxmove < 0)
+            {
+                side -= sidemove[pClass][speed];
+            }
         }
     }
     else
@@ -338,10 +349,21 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
             cmd->angleturn -= angleturn[tspeed];
         if (gamekeydown[key_left] || mousebuttons[mousebturnleft])
             cmd->angleturn += angleturn[tspeed];
-        if (joyxmove > 0)
-            cmd->angleturn -= angleturn[tspeed];
-        if (joyxmove < 0)
-            cmd->angleturn += angleturn[tspeed];
+        if (use_analog && joyxmove)
+        {
+            // Cubic response curve allows for finer control when stick
+            // deflection is small.
+            joyxmove = FixedMul(FixedMul(joyxmove, joyxmove), joyxmove);
+            joyxmove = joyxmove * joystick_turn_sensitivity / 10;
+            cmd->angleturn -= FixedMul(angleturn[1], joyxmove);
+        }
+        else if (joystick_turn_sensitivity)
+        {
+            if (joyxmove > 0)
+                cmd->angleturn -= angleturn[tspeed];
+            if (joyxmove < 0)
+                cmd->angleturn += angleturn[tspeed];
+        }
     }
 
     if (gamekeydown[key_up] || gamekeydown[key_alt_up]) // [crispy] add key_alt_*
@@ -352,38 +374,85 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
     {
         forward -= forwardmove[pClass][speed];
     }
-    if (joyymove < 0)
+    if (use_analog && joyymove)
     {
-        forward += forwardmove[pClass][speed];
+        joyymove = joyymove * joystick_move_sensitivity / 10;
+        joyymove = (joyymove > FRACUNIT) ? FRACUNIT : joyymove;
+        joyymove = (joyymove < -FRACUNIT) ? FRACUNIT : joyymove;
+        forward -= FixedMul(forwardmove[pClass][speed], joyymove);
     }
-    if (joyymove > 0)
+    else if (joystick_move_sensitivity)
     {
-        forward -= forwardmove[pClass][speed];
+        if (joyymove < 0)
+        {
+            forward += forwardmove[pClass][speed];
+        }
+        if (joyymove > 0)
+        {
+            forward -= forwardmove[pClass][speed];
+        }
     }
     if (gamekeydown[key_straferight] || gamekeydown[key_alt_straferight] || mousebuttons[mousebstraferight] // [crispy] add key_alt_*
-     || joystrafemove > 0 || joybuttons[joybstraferight])
+     || joybuttons[joybstraferight])
     {
         side += sidemove[pClass][speed];
     }
     if (gamekeydown[key_strafeleft] || gamekeydown[key_alt_strafeleft] || mousebuttons[mousebstrafeleft] // [crispy] add key_alt_*
-     || joystrafemove < 0 || joybuttons[joybstrafeleft])
+     || joybuttons[joybstrafeleft])
     {
         side -= sidemove[pClass][speed];
+    }
+
+    if (use_analog && joystrafemove)
+    {
+        joystrafemove = joystrafemove * joystick_move_sensitivity / 10;
+        joystrafemove = (joystrafemove > FRACUNIT) ? FRACUNIT : joystrafemove;
+        joystrafemove = (joystrafemove < -FRACUNIT) ? -FRACUNIT : joystrafemove;
+        side += FixedMul(sidemove[pClass][speed], joystrafemove);
+    }
+    else if (joystick_move_sensitivity)
+    {
+        if (joystrafemove < 0)
+            side -= sidemove[pClass][speed];
+        if (joystrafemove > 0)
+            side += sidemove[pClass][speed];
     }
 
     // Look up/down/center keys
     // [crispy] Keyboard lookspring
     if (crispy->freelook_hh == FREELOOK_HH_SPRING)
     {
-        if (gamekeydown[key_lookup] || joylook < 0)
+        if (gamekeydown[key_lookup])
         {
             look = lspeed;
             kbdlookctrl += ticdup;
         }
-        else if (gamekeydown[key_lookdown] || joylook > 0)
+        else if (gamekeydown[key_lookdown])
         {
             look = -lspeed;
             kbdlookctrl += ticdup;
+        }
+        else if (use_analog && joylook)
+        {
+            joylook = joylook * joystick_look_sensitivity / 10;
+            joylook = (joylook > FRACUNIT) ? FRACUNIT : joylook;
+            joylook = (joylook < -FRACUNIT) ? -FRACUNIT : joylook;
+            look = -FixedMul(2, joylook);
+            kbdlookctrl += ticdup;
+        }
+        else if (joystick_look_sensitivity && joylook)
+        {
+            if (joylook < 0)
+            {
+                look = lspeed;
+                kbdlookctrl += ticdup;
+            }
+
+            if (joylook > 0)
+            {
+                look = -lspeed;
+                kbdlookctrl += ticdup;
+            }
         }
         else if (gamekeydown[key_lookcenter] || kbdlookctrl)
         {
@@ -393,13 +462,32 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
     }
     else
     {
-        if (gamekeydown[key_lookup] || joylook < 0)
+        if (gamekeydown[key_lookup])
         {
             look = lspeed;
         }
-        if (gamekeydown[key_lookdown] || joylook > 0)
+        if (gamekeydown[key_lookdown])
         {
             look = -lspeed;
+        }
+        if (use_analog && joylook)
+        {
+            joylook = joylook * joystick_look_sensitivity / 10;
+            joylook = (joylook > FRACUNIT) ? FRACUNIT : joylook;
+            joylook = (joylook < -FRACUNIT) ? -FRACUNIT : joylook;
+            look = -FixedMul(2, joylook);
+        }
+        else if (joystick_look_sensitivity)
+        {
+            if (joylook < 0)
+            {
+                look = lspeed;
+            }
+
+            if (joylook > 0)
+            {
+                look = -lspeed;
+            }
         }
         // haleyjd: removed externdriver crap
         if (gamekeydown[key_lookcenter])

@@ -124,9 +124,6 @@ boolean         storedemo;
 // If true, the main game loop has started.
 boolean         main_loop_started = false;
 
-char		wadfile[1024];		// primary wad file
-char		mapdir[1024];           // directory of development maps
-
 int             show_endoom = 0; // [crispy] disable
 int             show_diskicon = 1;
 
@@ -2111,7 +2108,7 @@ void D_DoomMain (void)
     I_CheckIsScreensaver();
     I_InitTimer();
     I_InitJoystick();
-    I_InitSound(true);
+    I_InitSound(doom);
     I_InitMusic();
 
     // [crispy] check for SSG resources

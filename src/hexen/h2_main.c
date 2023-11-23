@@ -530,7 +530,7 @@ void D_DoomMain(void)
     I_CheckIsScreensaver();
     I_InitTimer();
     I_InitJoystick();
-    I_InitSound(false);
+    I_InitSound(hexen);
     I_InitMusic();
 
     ST_Message("NET_Init: Init networking subsystem.\n");
