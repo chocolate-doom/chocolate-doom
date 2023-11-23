@@ -18,6 +18,7 @@
 #include "SDL.h"
 #include <string.h>
 
+#include "crispy.h"
 #include "doomtype.h"
 
 #include "deh_str.h"
@@ -160,6 +161,12 @@ static boolean IsDisabledSound(sfxinfo_t *sfxinfo)
         "sawidl",
         "rifle",
     };
+
+    // [crispy] Restore missing assault rifle PC speaker sound.
+    if (gamemission == strife && crispy->soundfix)
+    {
+        return false;
+    }
 
     for (i=0; i<arrlen(disabled_sounds); ++i)
     {
