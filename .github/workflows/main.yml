@@ -150,6 +150,6 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           name: ${{ env.PACKAGE_STRING }}
-          bodyFile: CHANGELOG.md
+          bodyFile: RELEASE_NOTES.md
           allowUpdates: true
           artifacts: ${{ matrix.config.pkg-path }}
