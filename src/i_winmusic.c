@@ -222,6 +222,9 @@ static void UnprepareHeader(void)
 #endif
 }
 
+// Allocate buffer. The calling thread must have exclusive access to the shared
+// resources in this function.
+
 static void AllocateBuffer(const unsigned int size)
 {
     buffer.size = PADDED_SIZE(size);
@@ -277,6 +280,7 @@ static void StreamOut(void)
     if (mmr != MMSYSERR_NOERROR)
     {
         MidiError("midiOutPrepareHeader", mmr);
+        return;
     }
 
     buffer.prepared = true;
