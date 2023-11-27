@@ -251,7 +251,6 @@ static void WriteBuffer(const byte *ptr, unsigned int size)
     {
         UnprepareHeader();
         buffer.prepared = false;
-        buffer.position = 0;
     }
 
     if (buffer.position + size >= buffer.size)
@@ -275,6 +274,9 @@ static void StreamOut(void)
     hdr->lpData = (LPSTR)buffer.data;
     hdr->dwBytesRecorded = buffer.position;
     hdr->dwBufferLength = buffer.size;
+
+    // Reset buffer position even if midiStreamOut fails.
+    buffer.position = 0;
 
     mmr = midiOutPrepareHeader((HMIDIOUT)hMidiStream, hdr, sizeof(MIDIHDR));
     if (mmr != MMSYSERR_NOERROR)
