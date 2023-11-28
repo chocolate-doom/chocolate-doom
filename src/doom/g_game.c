@@ -805,6 +805,7 @@ boolean G_Responder (event_t* ev)
 	    (ev->type == ev_joystick && ev->data1) ) 
 	{ 
 	    M_StartControlPanel (); 
+	    joywait = I_GetTime() + 5;
 	    return true; 
 	} 
 	return false; 
