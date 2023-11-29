@@ -1172,12 +1172,10 @@ void R_InitColormaps (void)
 	byte *playpal;
 	int c, i, j = 0;
 	byte r, g, b;
-	extern byte **gamma2table;
 
 	// [crispy] intermediate gamma levels
 	if (!gamma2table)
 	{
-		extern void I_SetGammaTable (void);
 		I_SetGammaTable();
 	}
 

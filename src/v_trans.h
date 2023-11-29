@@ -63,6 +63,7 @@ extern const pixel_t (*blendfunc) (const pixel_t fg, const pixel_t bg);
 extern const pixel_t I_BlendAdd (const pixel_t bg, const pixel_t fg);
 extern const pixel_t I_BlendDark (const pixel_t bg, const int d);
 extern const pixel_t I_BlendOver (const pixel_t bg, const pixel_t fg);
+extern const pixel_t I_BlendOverTinttab (const pixel_t bg, const pixel_t fg);
 #endif
 
 int V_GetPaletteIndex(byte *palette, int r, int g, int b);

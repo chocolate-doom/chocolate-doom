@@ -874,6 +874,9 @@ void D_BindVariables(void)
     M_BindIntVariable("crispy_playercoords",    &crispy->playercoords);
     M_BindIntVariable("crispy_secretmessage",   &crispy->secretmessage);
     M_BindIntVariable("crispy_soundmono",       &crispy->soundmono);
+#ifdef CRISPY_TRUECOLOR
+    M_BindIntVariable("crispy_truecolor",       &crispy->truecolor);
+#endif
     M_BindIntVariable("crispy_uncapped",        &crispy->uncapped);
     M_BindIntVariable("crispy_vsync",           &crispy->vsync);
     M_BindIntVariable("crispy_widescreen",      &crispy->widescreen);

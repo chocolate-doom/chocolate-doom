@@ -177,7 +177,11 @@ static const char *NameForMap(int map)
 
 void IN_Start(void)
 {
+#ifndef CRISPY_TRUECOLOR
     I_SetPalette(W_CacheLumpName(DEH_String("PLAYPAL"), PU_CACHE));
+#else
+    I_SetPalette(0);
+#endif
     IN_LoadPics();
     IN_InitStats();
     intermission = true;
@@ -618,13 +622,14 @@ void IN_DrawStatBack(void)
     int y;
 
     byte *src;
-    byte *dest;
+    pixel_t *dest;
 
     src = W_CacheLumpName(DEH_String("FLOOR16"), PU_CACHE);
     dest = I_VideoBuffer;
 
     for (y = 0; y < SCREENHEIGHT; y++)
     {
+#ifndef CRISPY_TRUECOLOR
         for (x = 0; x < SCREENWIDTH / 64; x++)
         {
             memcpy(dest, src + ((y & 63) << 6), 64);
@@ -635,6 +640,12 @@ void IN_DrawStatBack(void)
             memcpy(dest, src + ((y & 63) << 6), SCREENWIDTH & 63);
             dest += (SCREENWIDTH & 63);
         }
+#else
+        for (x = 0; x < SCREENWIDTH; x++)
+        {
+            *dest++ = colormaps[src[((y & 63) << 6) + (x & 63)]];
+        }
+#endif
     }
 }
 

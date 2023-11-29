@@ -190,7 +190,7 @@ typedef struct
 ==============================================================================
 */
 
-typedef byte lighttable_t;      // this could be wider for >8 bit display
+typedef pixel_t lighttable_t;      // this could be wider for >8 bit display
 
 #define	MAXVISPLANES	128
 #define	MAXOPENINGS		MAXWIDTH*64*4
@@ -249,6 +249,9 @@ typedef struct vissprite_s
     int mobjflags;              // for color translation and shadow draw
     boolean psprite;            // true if psprite
     fixed_t footclip;           // foot clipping
+#ifdef CRISPY_TRUECOLOR
+    const pixel_t (*blendfunc)(const pixel_t fg, const pixel_t bg);
+#endif
 } vissprite_t;
 
 
@@ -459,6 +462,10 @@ byte *R_GetColumn(int tex, int col);
 void R_InitData(void);
 void R_PrecacheLevel(void);
 
+extern void R_InitColormaps(void);
+#ifdef CRISPY_TRUECOLOR
+extern void R_SetUnderwaterPalette(byte *palette);
+#endif
 
 //
 // R_things.c
@@ -511,7 +518,7 @@ extern fixed_t dc_texturemid;
 extern int dc_texheight;
 extern byte *dc_source;         // first pixel in a column
 extern const byte *dc_brightmap;  // [crispy] brightmaps
-extern byte *ylookup[MAXHEIGHT];
+extern pixel_t *ylookup[MAXHEIGHT];
 
 void R_DrawColumn(void);
 void R_DrawColumnLow(void);

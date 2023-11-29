@@ -879,7 +879,7 @@ void R_SetupFrame(player_t * player)
     if (player->fixedcolormap)
     {
         fixedcolormap = colormaps + player->fixedcolormap
-            * 256 * sizeof(lighttable_t);
+            * 256 /* * sizeof(lighttable_t)*/;
         walllights = scalelightfixed;
         for (i = 0; i < MAXLIGHTSCALE; i++)
         {

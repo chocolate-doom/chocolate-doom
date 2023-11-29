@@ -99,6 +99,7 @@ static SDL_Texture *grnpane = NULL;
 static int pane_alpha;
 static unsigned int rmask, gmask, bmask, amask; // [crispy] moved up here
 static const uint8_t blend_alpha = 0xa8;
+static const uint8_t blend_alpha_tinttab = 0x60;
 extern pixel_t* colormaps; // [crispy] evil hack to get FPS dots working as in Vanilla
 #else
 static SDL_Color palette[256];
@@ -2047,6 +2048,16 @@ const pixel_t I_BlendOver (const pixel_t bg, const pixel_t fg)
 	const uint32_t r = ((blend_alpha * (fg & rmask) + (0xff - blend_alpha) * (bg & rmask)) >> 8) & rmask;
 	const uint32_t g = ((blend_alpha * (fg & gmask) + (0xff - blend_alpha) * (bg & gmask)) >> 8) & gmask;
 	const uint32_t b = ((blend_alpha * (fg & bmask) + (0xff - blend_alpha) * (bg & bmask)) >> 8) & bmask;
+
+	return amask | r | g | b;
+}
+
+// [crispy] TINTTAB blending emulation, used for Heretic and Hexen
+const pixel_t I_BlendOverTinttab (const pixel_t bg, const pixel_t fg)
+{
+	const uint32_t r = ((blend_alpha_tinttab * (fg & rmask) + (0xff - blend_alpha_tinttab) * (bg & rmask)) >> 8) & rmask;
+	const uint32_t g = ((blend_alpha_tinttab * (fg & gmask) + (0xff - blend_alpha_tinttab) * (bg & gmask)) >> 8) & gmask;
+	const uint32_t b = ((blend_alpha_tinttab * (fg & bmask) + (0xff - blend_alpha_tinttab) * (bg & bmask)) >> 8) & bmask;
 
 	return amask | r | g | b;
 }

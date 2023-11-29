@@ -421,7 +421,7 @@ void R_DrawPlanes(void)
     int angle;
     byte *tempSource;
 
-    byte *dest;
+    pixel_t *dest;
     int count;
     fixed_t frac, fracstep;
     int heightmask; // [crispy]
@@ -508,7 +508,11 @@ void R_DrawPlanes(void)
                                 frac -= heightmask;
                         do
                         {
+#ifndef CRISPY_TRUECOLOR
                             *dest = dc_source[frac >> FRACBITS];
+#else
+                            *dest = colormaps[dc_source[frac >> FRACBITS]];
+#endif
                             dest += SCREENWIDTH;
 
                             if ((frac += fracstep) >= heightmask)
@@ -524,7 +528,11 @@ void R_DrawPlanes(void)
                     {
                         do
                         {
+#ifndef CRISPY_TRUECOLOR
                             *dest = dc_source[(frac >> FRACBITS) & heightmask];
+#else
+                            *dest = colormaps[dc_source[(frac >> FRACBITS) & heightmask]];
+#endif
                             dest += SCREENWIDTH;
                             frac += fracstep;
                         } while (count--);

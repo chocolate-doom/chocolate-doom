@@ -65,6 +65,9 @@ void I_SetPalette (int palette);
 extern const pixel_t I_MapRGB (const uint8_t r, const uint8_t g, const uint8_t b);
 #endif
 
+extern byte **gamma2table;
+void I_SetGammaTable (void);
+
 void I_UpdateNoBlit (void);
 void I_FinishUpdate (void);
 

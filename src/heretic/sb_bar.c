@@ -27,6 +27,9 @@
 #include "s_sound.h"
 #include "v_video.h"
 #include "am_map.h"
+#ifdef CRISPY_TRUECOLOR
+#include "v_trans.h" // [crispy] I_BlendDark()
+#endif
 
 // Types
 
@@ -434,20 +437,31 @@ static void DrSmallNumber(int val, int x, int y)
 
 static void ShadeLine(int x, int y, int height, int shade)
 {
-    byte *dest;
+    pixel_t *dest;
+#ifndef CRISPY_TRUECOLOR
     byte *shades;
+#endif
 
     x <<= crispy->hires;
     y <<= crispy->hires;
     height <<= crispy->hires;
 
+#ifndef CRISPY_TRUECOLOR
     shades = colormaps + 9 * 256 + shade * 2 * 256;
+#else
+    shade = 0xFF - (((9 + shade * 2) << 8) / NUMCOLORMAPS);
+#endif
     dest = I_VideoBuffer + y * SCREENWIDTH + x + (WIDESCREENDELTA << crispy->hires);
     while (height--)
     {
         if (crispy->hires)
+#ifndef CRISPY_TRUECOLOR
             *(dest + 1) = *(shades + *dest);
         *(dest) = *(shades + *dest);
+#else
+            *(dest + 1) = I_BlendDark(*dest, shade);
+        *(dest) = I_BlendDark(*dest, shade);
+#endif
         dest += SCREENWIDTH;
     }
 }
@@ -606,7 +620,11 @@ static void RefreshBackground()
         {
             for (x = 0; x < SCREENWIDTH; x++)
             {
+#ifndef CRISPY_TRUECOLOR
                 *dest++ = src[((y & 63) << 6) + (x & 63)];
+#else
+                *dest++ = colormaps[src[((y & 63) << 6) + (x & 63)]];
+#endif
             }
         }
 
@@ -802,7 +820,9 @@ void SB_PaletteFlash(void)
 {
     static int sb_palette = 0;
     int palette;
+#ifndef CRISPY_TRUECOLOR
     byte *pal;
+#endif
 
     CPlayer = &players[consoleplayer];
 
@@ -831,8 +851,12 @@ void SB_PaletteFlash(void)
     if (palette != sb_palette)
     {
         sb_palette = palette;
+#ifndef CRISPY_TRUECOLOR
         pal = (byte *) W_CacheLumpNum(playpalette, PU_CACHE) + palette * 768;
         I_SetPalette(pal);
+#else
+        I_SetPalette(palette);
+#endif
     }
 }
 
