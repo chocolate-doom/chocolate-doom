@@ -40,6 +40,7 @@ typedef fluid_long_long_t fluid_int_t;
 #include "i_sound.h"
 #include "m_misc.h"
 #include "memio.h"
+#include "midifile.h"
 #include "mus2mid.h"
 
 char *fsynth_sf_path = "";
@@ -222,7 +223,10 @@ static void *I_FL_RegisterSong(void *data, int len)
 
     if (IsMid(data, len))
     {
-        result = fluid_player_add_mem(player, data, len);
+        if (MIDI_CheckFile(data, len))
+        {
+            result = fluid_player_add_mem(player, data, len);
+        }
 
         if (result == FLUID_FAILED)
         {

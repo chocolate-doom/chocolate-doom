@@ -1642,6 +1642,7 @@ static void *I_OPL_RegisterSong(void *data, int len)
 {
     midi_file_t *result;
     char *filename;
+    boolean valid = false;
 
     if (!music_initialized)
     {
@@ -1656,15 +1657,16 @@ static void *I_OPL_RegisterSong(void *data, int len)
     if (IsMid(data, len) && len < MAXMIDLENGTH)
     {
         M_WriteFile(filename, data, len);
+        valid = MIDI_CheckFile(data, len);
     }
     else
     {
         // Assume a MUS file and try to convert
 
-        ConvertMus(data, len, filename);
+        valid = (ConvertMus(data, len, filename) == 0);
     }
 
-    result = MIDI_LoadFile(filename);
+    result = valid ? MIDI_LoadFile(filename) : NULL;
 
     if (result == NULL)
     {

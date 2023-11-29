@@ -18,6 +18,8 @@
 #ifndef MIDIFILE_H
 #define MIDIFILE_H
 
+#include "doomtype.h"
+
 typedef struct midi_file_s midi_file_t;
 typedef struct midi_track_iter_s midi_track_iter_t;
 
@@ -183,6 +185,10 @@ typedef struct
         midi_sysex_event_data_t sysex;
     } data;
 } midi_event_t;
+
+// Check if MIDI file is valid.
+
+boolean MIDI_CheckFile(void *data, int len);
 
 // Load a MIDI file.
 

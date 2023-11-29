@@ -20,10 +20,10 @@
 #include <string.h>
 #include <assert.h>
 
-#include "doomtype.h"
 #include "i_swap.h"
 #include "i_system.h"
 #include "m_misc.h"
+#include "memio.h"
 #include "midifile.h"
 
 #define HEADER_CHUNK_ID "MThd"
@@ -556,11 +556,91 @@ static boolean ReadFileHeader(midi_file_t *file, FILE *stream)
     if ((format_type != 0 && format_type != 1)
      || file->num_tracks < 1)
     {
-        fprintf(stderr, "ReadFileHeader: Only type 0/1 "
-                                         "MIDI files supported!\n");
+        fprintf(stderr, "ReadFileHeader: Only format 1 "
+                        "MIDI files supported!\n");
         return false;
     }
 
+    return true;
+}
+
+// Check if MIDI file is valid.
+
+boolean MIDI_CheckFile(void *data, int len)
+{
+    unsigned int format_type = 0;
+    midi_file_t file;
+    MEMFILE *stream = mem_fopen_read(data, len);
+
+    if (stream == NULL)
+    {
+        return false;
+    }
+
+    // Read header chunk.
+    if (!mem_fread(&file.header, sizeof(midi_header_t), 1, stream))
+    {
+        mem_fclose(stream);
+        return false;
+    }
+
+    // Check header chunk.
+    if (!CheckChunkHeader(&file.header.chunk_header, HEADER_CHUNK_ID) ||
+        SDL_SwapBE32(file.header.chunk_header.chunk_size) != 6)
+    {
+        mem_fclose(stream);
+        return false;
+    }
+
+    // Check file info.
+    format_type = SDL_SwapBE16(file.header.format_type);
+    file.num_tracks = SDL_SwapBE16(file.header.num_tracks);
+    if (format_type > 1 || file.num_tracks < 1)
+    {
+        mem_fclose(stream);
+        return false;
+    }
+
+    // Handle format 0 special case.
+    if (format_type == 0)
+    {
+        chunk_header_t chunk_header;
+        unsigned int reported_len = 0;
+        long actual_len = 0;
+
+        // Read track chunk.
+        if (file.num_tracks != 1 ||
+            !mem_fread(&chunk_header, sizeof(chunk_header_t), 1, stream))
+        {
+            mem_fclose(stream);
+            return false;
+        }
+
+        // Check track chunk.
+        if (!CheckChunkHeader(&chunk_header, TRACK_CHUNK_ID))
+        {
+            mem_fclose(stream);
+            return false;
+        }
+
+        // Reported track data length.
+        reported_len = SDL_SwapBE32(chunk_header.chunk_size);
+
+        // Actual track data length.
+        actual_len = mem_ftell(stream);
+        mem_fseek(stream, 0, MEM_SEEK_END);
+        actual_len = mem_ftell(stream) - actual_len;
+
+        // In Vanilla Doom, loading a format 0 MIDI file causes heap corruption
+        // unless 3 or more dummy bytes are added to the end of the file.
+        // Source: https://www.doomworld.com/forum/post/2541624
+        if (reported_len + 3 > actual_len)
+        {
+            I_Error("MIDI_CheckFile: Format 0 MIDI files not supported!\n");
+        }
+    }
+
+    mem_fclose(stream);
     return true;
 }
 

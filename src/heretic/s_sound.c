@@ -85,6 +85,7 @@ void S_StartSong(int song, boolean loop)
     {
         I_StopSong();
         I_UnRegisterSong(rs);
+        rs = NULL;
     }
 
     if (song < mus_e1m1 || song > NUMMUSIC)

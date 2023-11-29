@@ -1736,6 +1736,7 @@ static void *I_WIN_RegisterSong(void *data, int len)
     unsigned int i;
     char *filename;
     midi_file_t *file;
+    boolean valid = false;
 
     MIDIPROPTIMEDIV prop_timediv;
     MIDIPROPTEMPO prop_tempo;
@@ -1754,15 +1755,16 @@ static void *I_WIN_RegisterSong(void *data, int len)
     if (IsMid(data, len))
     {
         M_WriteFile(filename, data, len);
+        valid = MIDI_CheckFile(data, len);
     }
     else
     {
         // Assume a MUS file and try to convert
 
-        ConvertMus(data, len, filename);
+        valid = (ConvertMus(data, len, filename) == 0);
     }
 
-    file = MIDI_LoadFile(filename);
+    file = valid ? MIDI_LoadFile(filename) : NULL;
 
     M_remove(filename);
     free(filename);

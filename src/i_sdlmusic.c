@@ -28,6 +28,7 @@
 #include "config.h"
 #include "doomtype.h"
 #include "memio.h"
+#include "midifile.h"
 #include "mus2mid.h"
 
 #include "deh_str.h"
@@ -371,6 +372,7 @@ static void *I_SDL_RegisterSong(void *data, int len)
 {
     char *filename;
     Mix_Music *music;
+    boolean valid = false;
 
     if (!music_initialized)
     {
@@ -385,23 +387,25 @@ static void *I_SDL_RegisterSong(void *data, int len)
     if (IsMid(data, len) && len < MAXMIDLENGTH)
     {
         M_WriteFile(filename, data, len);
+        valid = MIDI_CheckFile(data, len);
     }
     else
     {
 	// Assume a MUS file and try to convert
 
-        ConvertMus(data, len, filename);
+        valid = (ConvertMus(data, len, filename) == 0);
     }
 
     // Load the MIDI. In an ideal world we'd be using Mix_LoadMUS_RW()
     // by now, but Mix_SetMusicCMD() only works with Mix_LoadMUS(), so
     // we have to generate a temporary file.
 
-    music = Mix_LoadMUS(filename);
+    music = valid ? Mix_LoadMUS(filename) : NULL;
     if (music == NULL)
     {
         // Failed to load
-        fprintf(stderr, "Error loading midi: %s\n", Mix_GetError());
+        fprintf(stderr, "I_SDL_RegisterSong: %s\n",
+                valid ? Mix_GetError() : "Failed to load MID.");
     }
 
     // Remove the temporary MIDI file; however, when using an external
