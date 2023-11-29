@@ -182,7 +182,7 @@ int mem_fseek(MEMFILE *stream, signed long position, mem_rel_t whence)
 			return -1;
 	}
 
-	if (newpos < stream->buflen)
+	if (newpos <= stream->buflen)
 	{
 		stream->position = newpos;
 		return 0;
