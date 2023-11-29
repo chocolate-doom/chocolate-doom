@@ -1432,12 +1432,12 @@ boolean M_Responder (event_t* ev)
             if (dir & JOY_DIR_LEFT)
             {
                 key = key_menu_left;
-                joywait = I_GetTime() + 2;
+                joywait = I_GetTime() + 5;
             }
             else if (dir & JOY_DIR_RIGHT)
             {
                 key = key_menu_right;
-                joywait = I_GetTime() + 2;
+                joywait = I_GetTime() + 5;
             }
 
 #define JOY_BUTTON_MAPPED(x) ((x) >= 0)
