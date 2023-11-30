@@ -949,6 +949,27 @@ void V_DrawFullscreenRawOrPatch(lumpindex_t index)
         I_Error("Invalid fullscreen graphic.");
     }
 }
+
+// [crispy] Unified function of flat filling. Used for intermission
+// and finale screens, view border and status bar's wide screen mode.
+void V_FillFlat(int y_start, int y_stop, int x_start, int x_stop,
+                const byte *src, pixel_t *dest)
+{
+    int x, y;
+
+    for (y = y_start; y < y_stop; y++)
+    {
+        for (x = x_start; x < x_stop; x++)
+        {
+#ifndef CRISPY_TRUECOLOR
+            *dest++ = src[((y & 63) * 64) + (x & 63)];
+#else
+            *dest++ = colormaps[src[((y & 63) * 64) + (x & 63)]];
+#endif
+        }
+    }
+}
+
 //
 // V_Init
 // 

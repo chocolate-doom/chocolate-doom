@@ -1386,25 +1386,11 @@ void M_DrawMouse(void)
 static void M_DrawCrispnessBackground(void)
 {
     byte *src, *dest;
-    int x, y;
 
     src = W_CacheLumpName(back_flat, PU_CACHE);
     dest = I_VideoBuffer;
 
-    for (y = 0; y < SCREENHEIGHT; y++)
-    {
-        for (x = 0; x < SCREENWIDTH / 64; x++)
-        {
-            memcpy(dest, src + ((y & 63) << 6), 64);
-            dest += 64;
-        }
-
-        if (SCREENWIDTH & 63)
-        {
-            memcpy(dest, src + ((y & 63) << 6), SCREENWIDTH & 63);
-            dest += (SCREENWIDTH & 63);
-        }
-    }
+    V_FillFlat(0, SCREENHEIGHT, 0, SCREENWIDTH, src, dest);
 
     inhelpscreens = true;
 }

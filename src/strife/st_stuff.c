@@ -1015,7 +1015,6 @@ void ST_drawLine(int x, int y, int len, int color)
 // surround the non-fullscreen game window.
 static void RefreshBackground(void)
 {
-    int x, y;
     byte *src;
     pixel_t *dest;
 
@@ -1023,17 +1022,12 @@ static void RefreshBackground(void)
     src = W_CacheLumpName(back_flat, PU_CACHE);
     dest = st_backing_screen;
 
-    for (y = SCREENHEIGHT-(ST_HEIGHT<<crispy->hires); y < SCREENHEIGHT; y++)
-    {
-        for (x = 0; x < SCREENWIDTH; x++)
-        {
-            *dest++ = colormaps[src[((y&63)<<6) + (x&63)]];
-        }
-    }
+    V_FillFlat(SCREENHEIGHT-(ST_HEIGHT<<crispy->hires), SCREENHEIGHT, 0, SCREENWIDTH, src, dest);
 
     // [crispy] preserve bezel bottom edge
     if (scaledviewwidth == SCREENWIDTH)
     {
+        int x;
         patch_t *const patch = W_CacheLumpName(DEH_String("brdr_b"), PU_CACHE);
 
         for (x = 0; x < WIDESCREENDELTA; x += 8)

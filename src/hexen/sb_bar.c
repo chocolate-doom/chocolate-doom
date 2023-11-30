@@ -768,24 +768,18 @@ static void RefreshBackground(void)
 
     if ((SCREENWIDTH >> crispy->hires) != ORIGWIDTH)
     {
-        int x, y;
         byte *src;
         pixel_t *dest;
 
         src = W_CacheLumpName("F_022", PU_CACHE);
         dest = st_backing_screen;
 
-        for (y = SCREENHEIGHT - SBARHEIGHT; y < SCREENHEIGHT; y++)
-        {
-            for (x = 0; x < SCREENWIDTH; x++)
-            {
-                *dest++ = src[((y & 63) << 6) + (x & 63)];
-            }
-        }
+        V_FillFlat(SCREENHEIGHT - SBARHEIGHT, SCREENHEIGHT, 0, SCREENWIDTH, src, dest);
 
         // [crispy] preserve bezel bottom edge
         if (scaledviewwidth == SCREENWIDTH)
         {
+            int x;
             patch_t *const patch = W_CacheLumpName("bordb", PU_CACHE);
 
             for (x = 0; x < WIDESCREENDELTA; x += 16)

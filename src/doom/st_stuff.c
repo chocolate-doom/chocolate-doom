@@ -407,7 +407,6 @@ void ST_refreshBackground(boolean force)
 	// so it appears to the left and right of the status bar in widescreen mode
 	if ((SCREENWIDTH >> crispy->hires) != ST_WIDTH)
 	{
-		int x, y;
 		byte *src;
 		pixel_t *dest;
 		const char *name = (gamemode == commercial) ? DEH_String("GRNROCK") : DEH_String("FLOOR7_2");
@@ -415,21 +414,13 @@ void ST_refreshBackground(boolean force)
 		src = W_CacheLumpName(name, PU_CACHE);
 		dest = st_backing_screen;
 
-		for (y = SCREENHEIGHT-(ST_HEIGHT<<crispy->hires); y < SCREENHEIGHT; y++)
-		{
-			for (x = 0; x < SCREENWIDTH; x++)
-			{
-#ifndef CRISPY_TRUECOLOR
-				*dest++ = src[((y&63)<<6) + (x&63)];
-#else
-				*dest++ = colormaps[src[((y&63)<<6) + (x&63)]];
-#endif
-			}
-		}
+		// [crispy] use unified flat filling function
+		V_FillFlat(SCREENHEIGHT-(ST_HEIGHT<<crispy->hires), SCREENHEIGHT, 0, SCREENWIDTH, src, dest);
 
 		// [crispy] preserve bezel bottom edge
 		if (scaledviewwidth == SCREENWIDTH)
 		{
+			int x;
 			patch_t *const patch = W_CacheLumpName(DEH_String("brdr_b"), PU_CACHE);
 
 			for (x = 0; x < WIDESCREENDELTA; x += 8)
