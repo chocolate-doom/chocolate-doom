@@ -856,8 +856,6 @@ boolean PO_MovePolyobj(int num, int x, int y, boolean interp)
     return true;
 }
 
-extern fixed_t fractionaltic; // [crispy]
-
 // [crispy]
 void PO_InterpolatePolyObjects(void)
 {

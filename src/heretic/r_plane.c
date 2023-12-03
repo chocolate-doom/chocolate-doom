@@ -415,8 +415,6 @@ void R_MakeSpans(int x, unsigned int t1, unsigned int b1, unsigned int t2, unsig
 ================
 */
 
-extern fixed_t fractionaltic; // [crispy]
-
 #define SKYTEXTUREMIDSHIFTED 200 // [crispy]
 
 void R_DrawPlanes(void)

@@ -187,10 +187,6 @@ static void AM_rotatePoint(mpoint_t *pt);
 static mpoint_t mapcenter;
 static angle_t mapangle;
 
-// [AM] Fractional part of the current tic, in the half-open
-//      range of [0.0, 1.0).  Used for interpolation.
-extern fixed_t          fractionaltic;
-
 //byte screens[][SCREENWIDTH*SCREENHEIGHT];
 //void V_MarkRect (int x, int y, int width, int height);
 

@@ -219,10 +219,6 @@ struct
 
 mobj_t LavaInflictor;
 
-// [AM] Fractional part of the current tic, in the half-open
-//      range of [0.0, 1.0).  Used for interpolation.
-extern fixed_t          fractionaltic;
-
 //----------------------------------------------------------------------------
 //
 // PROC P_InitLava

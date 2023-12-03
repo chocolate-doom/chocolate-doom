@@ -184,8 +184,6 @@ void P_AnimateSurfaces(void)
     }
 }
 
-extern fixed_t fractionaltic; // [crispy]
-
 // [crispy] smooth texture scrolling
 void R_InterpolateTextureOffsets(void)
 {

@@ -46,10 +46,6 @@ fixed_t pspritescale, pspriteiscale;
 
 lighttable_t **spritelights;
 
-// [AM] Fractional part of the current tic, in the half-open
-//      range of [0.0, 1.0).  Used for interpolation.
-extern fixed_t          fractionaltic;
-
 // constant arrays used for psprite clipping and initializing clipping
 int negonearray[MAXWIDTH];       // [crispy] 32-bit integer math
 int screenheightarray[MAXWIDTH]; // [crispy] 32-bit integer math

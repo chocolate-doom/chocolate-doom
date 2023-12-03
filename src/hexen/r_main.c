@@ -62,10 +62,6 @@ lighttable_t *scalelight[LIGHTLEVELS][MAXLIGHTSCALE];
 lighttable_t *scalelightfixed[MAXLIGHTSCALE];
 lighttable_t *zlight[LIGHTLEVELS][MAXLIGHTZ];
 
-// [AM] Fractional part of the current tic, in the half-open
-//      range of [0.0, 1.0).  Used for interpolation.
-extern fixed_t          fractionaltic;
-
 int extralight;                 // bumped light from gun blasts
 
 void (*colfunc) (void);

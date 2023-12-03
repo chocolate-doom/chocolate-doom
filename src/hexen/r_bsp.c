@@ -27,10 +27,6 @@ sector_t *frontsector, *backsector;
 
 drawseg_t drawsegs[MAXDRAWSEGS], *ds_p;
 
-// [AM] Fractional part of the current tic, in the half-open
-//      range of [0.0, 1.0).  Used for interpolation.
-extern fixed_t          fractionaltic;
-
 void R_StoreWallRange(int start, int stop);
 
 /*

@@ -21,6 +21,7 @@
 #define __I_VIDEO__
 
 #include "doomtype.h"
+#include "m_fixed.h" // [crispy] fixed_t
 #include "crispy.h"
 
 // Screen width and height.
@@ -67,6 +68,8 @@ extern const pixel_t I_MapRGB (const uint8_t r, const uint8_t g, const uint8_t b
 
 extern byte **gamma2table;
 void I_SetGammaTable (void);
+
+extern fixed_t fractionaltic;
 
 void I_UpdateNoBlit (void);
 void I_FinishUpdate (void);
