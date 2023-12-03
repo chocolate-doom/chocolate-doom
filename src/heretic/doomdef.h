@@ -531,6 +531,8 @@ extern boolean usergame;        // ok to save / end game
 
 extern boolean ravpic;          // checkparm of -ravpic
 
+extern boolean coop_spawns;     // [crispy] checkparm of -coop_spawns
+
 extern boolean altpal;          // checkparm to use an alternate palette routine
 
 extern boolean cdrom;           // true if cd-rom mode active ("-cdrom")

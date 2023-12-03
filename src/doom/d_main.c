@@ -107,6 +107,7 @@ boolean		devparm;	// started game with -devparm
 boolean         nomonsters;	// checkparm of -nomonsters
 boolean         respawnparm;	// checkparm of -respawn
 boolean         fastparm;	// checkparm of -fast
+boolean         coop_spawns = false;	// [crispy] checkparm of -coop_spawns
 
 
 
@@ -2360,6 +2361,19 @@ void D_DoomMain (void)
     {
         I_AtExit(StatDump, true);
         DEH_printf("External statistics registered.\n");
+    }
+
+    //!
+    // @category game
+    //
+    // Start single player game with items spawns as in cooperative netgame.
+    //
+
+    p = M_ParmExists("-coop_spawns");
+
+    if (p)
+    {
+        coop_spawns = true;
     }
 
     //!
