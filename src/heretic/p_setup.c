@@ -543,6 +543,7 @@ void P_GroupLines(void)
 
 //=============================================================================
 
+lumpinfo_t *maplumpinfo;
 
 /*
 =================
@@ -585,6 +586,8 @@ void P_SetupLevel(int episode, int map, int playermask, skill_t skill)
     leveltime = 0;
 
     lumpnum = W_GetNumForName(lumpname);
+
+    maplumpinfo = lumpinfo[lumpnum];
 
 // note: most of this ordering is important     
     P_LoadBlockMap(lumpnum + ML_BLOCKMAP);
