@@ -855,6 +855,8 @@ int SV_GetRebornSlot(void);
 //PLAY
 //-----
 
+extern lumpinfo_t *maplumpinfo;
+
 void P_Ticker(void);
 // called by C_Ticker
 // can call G_PlayerExited
