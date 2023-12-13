@@ -2371,6 +2371,14 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(crispy_freelook),
 
     //!
+    // @game doom heretic hexen strife
+    //
+    // Crispy's variable to support intermediate and negative gamma levels.
+    //
+
+    CONFIG_VARIABLE_INT(crispy_gamma),
+
+    //!
     // @game doom
     //
     // High Resolution Rendering.

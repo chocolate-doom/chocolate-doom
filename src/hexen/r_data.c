@@ -535,6 +535,8 @@ void R_InitData(void)
     R_InitTextures();
     R_InitFlats();
     R_InitSpriteLumps();
+    // [crispy] Initialize and generate gamma-correction levels.
+    I_SetGammaTable();
     R_InitColormaps();
 }
 

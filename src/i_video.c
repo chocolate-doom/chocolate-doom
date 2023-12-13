@@ -946,29 +946,38 @@ void I_ReadScreen (pixel_t* scr)
 // I_SetPalette
 //
 // [crispy] intermediate gamma levels
-byte **gamma2table = NULL;
+byte gamma2table[18][256];
+
+static const float gammalevels[9] =
+{
+    // Darker
+    0.50f, 0.55f, 0.60f, 0.65f, 0.70f, 0.75f, 0.80f, 0.85f, 0.90f,
+};
+
 void I_SetGammaTable (void)
 {
-	int i;
+	int i, j, k;
 
-	gamma2table = malloc(9 * sizeof(*gamma2table));
+	for (i = 0; i < 9; ++i)
+	{
+		for (j = 0; j < 256; ++j)
+		{
+			gamma2table[i][j] = (byte)(pow(j / 255.0, 1.0 / gammalevels[i]) * 255.0 + 0.5);
+		}
+	}
 
 	// [crispy] 5 original gamma levels
-	for (i = 0; i < 5; i++)
+	for (i = 9, k = 0; i < 18 && k < 5; i += 2, k++)
 	{
-		gamma2table[2*i] = (byte *)gammatable[i];
+		memcpy(gamma2table[i], gammatable[k], 256);
 	}
 
 	// [crispy] 4 intermediate gamma levels
-	for (i = 0; i < 4; i++)
+	for (i = 10, k = 0; i < 18 && k < 4; i += 2, k++)
 	{
-		int j;
-
-		gamma2table[2*i+1] = malloc(256 * sizeof(**gamma2table));
-
 		for (j = 0; j < 256; j++)
 		{
-			gamma2table[2*i+1][j] = (gamma2table[2*i][j] + gamma2table[2*i+2][j]) / 2;
+			gamma2table[i][j] = (gammatable[k][j] + gammatable[k + 1][j]) / 2;
 		}
 	}
 }
@@ -978,21 +987,15 @@ void I_SetPalette (byte *doompalette)
 {
     int i;
 
-    // [crispy] intermediate gamma levels
-    if (!gamma2table)
-    {
-        I_SetGammaTable();
-    }
-
     for (i=0; i<256; ++i)
     {
         // Zero out the bottom two bits of each channel - the PC VGA
         // controller only supports 6 bits of accuracy.
 
         // [crispy] intermediate gamma levels
-        palette[i].r = gamma2table[usegamma][*doompalette++] & ~3;
-        palette[i].g = gamma2table[usegamma][*doompalette++] & ~3;
-        palette[i].b = gamma2table[usegamma][*doompalette++] & ~3;
+        palette[i].r = gamma2table[crispy->gamma][*doompalette++] & ~3;
+        palette[i].g = gamma2table[crispy->gamma][*doompalette++] & ~3;
+        palette[i].b = gamma2table[crispy->gamma][*doompalette++] & ~3;
     }
 
     palette_to_set = true;

@@ -456,6 +456,7 @@ void D_BindVariables(void)
     M_BindIntVariable("crispy_fpslimit",        &crispy->fpslimit);
     M_BindIntVariable("crispy_freeaim",         &crispy->freeaim);
     M_BindIntVariable("crispy_freelook",        &crispy->freelook);
+    M_BindIntVariable("crispy_gamma",           &crispy->gamma);
     M_BindIntVariable("crispy_hires",           &crispy->hires);
     M_BindIntVariable("crispy_jump",            &crispy->jump);
     M_BindIntVariable("crispy_leveltime",       &crispy->leveltime);

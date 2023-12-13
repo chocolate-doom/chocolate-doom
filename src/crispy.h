@@ -61,6 +61,7 @@ typedef struct
 	int freeaim;
 	int freelook;
 	int freelook_hh;
+	int gamma;
 	int hires;
 	int jump;
 	int leveltime;

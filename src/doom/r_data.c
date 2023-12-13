@@ -1173,12 +1173,6 @@ void R_InitColormaps (void)
 	int c, i, j = 0;
 	byte r, g, b;
 
-	// [crispy] intermediate gamma levels
-	if (!gamma2table)
-	{
-		I_SetGammaTable();
-	}
-
 	playpal = W_CacheLumpName("PLAYPAL", PU_STATIC);
 
 	if (!colormaps)
@@ -1194,9 +1188,9 @@ void R_InitColormaps (void)
 
 			for (i = 0; i < 256; i++)
 			{
-				r = gamma2table[usegamma][playpal[3 * i + 0]] * (1. - scale) + gamma2table[usegamma][0] * scale;
-				g = gamma2table[usegamma][playpal[3 * i + 1]] * (1. - scale) + gamma2table[usegamma][0] * scale;
-				b = gamma2table[usegamma][playpal[3 * i + 2]] * (1. - scale) + gamma2table[usegamma][0] * scale;
+				r = gamma2table[crispy->gamma][playpal[3 * i + 0]] * (1. - scale) + gamma2table[crispy->gamma][0] * scale;
+				g = gamma2table[crispy->gamma][playpal[3 * i + 1]] * (1. - scale) + gamma2table[crispy->gamma][0] * scale;
+				b = gamma2table[crispy->gamma][playpal[3 * i + 2]] * (1. - scale) + gamma2table[crispy->gamma][0] * scale;
 
 				colormaps[j++] = 0xff000000 | (r << 16) | (g << 8) | b;
 			}
@@ -1209,7 +1203,7 @@ void R_InitColormaps (void)
 			     (byte) (0.299 * playpal[3 * i + 0] +
 			             0.587 * playpal[3 * i + 1] +
 			             0.114 * playpal[3 * i + 2]);
-			r = g = b = gamma2table[usegamma][gray];
+			r = g = b = gamma2table[crispy->gamma][gray];
 
 			colormaps[j++] = 0xff000000 | (r << 16) | (g << 8) | b;
 		}
@@ -1222,9 +1216,9 @@ void R_InitColormaps (void)
 		{
 			for (i = 0; i < 256; i++)
 			{
-				r = gamma2table[usegamma][playpal[3 * colormap[c * 256 + i] + 0]] & ~3;
-				g = gamma2table[usegamma][playpal[3 * colormap[c * 256 + i] + 1]] & ~3;
-				b = gamma2table[usegamma][playpal[3 * colormap[c * 256 + i] + 2]] & ~3;
+				r = gamma2table[crispy->gamma][playpal[3 * colormap[c * 256 + i] + 0]] & ~3;
+				g = gamma2table[crispy->gamma][playpal[3 * colormap[c * 256 + i] + 1]] & ~3;
+				b = gamma2table[crispy->gamma][playpal[3 * colormap[c * 256 + i] + 2]] & ~3;
 
 				colormaps[j++] = 0xff000000 | (r << 16) | (g << 8) | b;
 			}
@@ -1301,6 +1295,8 @@ void R_InitData (void)
     printf (".");
     R_InitSpriteLumps ();
     printf (".");
+    // [crispy] Initialize and generate gamma-correction levels.
+    I_SetGammaTable ();
     R_InitColormaps ();
 #ifndef CRISPY_TRUECOLOR
     R_InitTranMap(); // [crispy] prints a mark itself

@@ -732,6 +732,8 @@ void R_InitColormaps (void)
 void R_InitData (void)
 {
     R_InitTextures ();
+    // [crispy] Initialize and generate gamma-correction levels.
+    I_SetGammaTable();
     if(devparm)
         printf (".");
     else
