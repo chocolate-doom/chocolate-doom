@@ -319,6 +319,7 @@ void SB_Ticker(void)
         }
         HealthMarker += delta;
     }
+    SB_PaletteFlash();
 }
 
 //---------------------------------------------------------------------------
@@ -709,7 +710,6 @@ void SB_Drawer(void)
             SB_state = 1;
         }
     }
-    SB_PaletteFlash();
 
     // Flight icons
     if (CPlayer->powers[pw_flight])

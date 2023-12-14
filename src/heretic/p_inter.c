@@ -911,7 +911,6 @@ void P_TouchSpecialThing(mobj_t * special, mobj_t * toucher)
     if (player == &players[consoleplayer])
     {
         S_StartSound(NULL, sound);
-        SB_PaletteFlash();
     }
 }
 
@@ -1475,7 +1474,6 @@ void P_DamageMobj
         if (player == &players[consoleplayer])
         {
             I_Tactile(40, 10, 40 + temp * 2);
-            SB_PaletteFlash();
         }
     }
 

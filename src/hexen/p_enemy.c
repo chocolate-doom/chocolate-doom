@@ -4768,10 +4768,6 @@ void A_FreezeDeath(mobj_t *actor, player_t *player, pspdef_t *psp)
         actor->player->damagecount = 0;
         actor->player->poisoncount = 0;
         actor->player->bonuscount = 0;
-        if (actor->player == &players[consoleplayer])
-        {
-            SB_PaletteFlash(false);
-        }
     }
     else if (actor->flags & MF_COUNTKILL && actor->special)
     {

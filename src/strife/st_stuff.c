@@ -815,6 +815,8 @@ void ST_updateWidgets(void)
 }
 */
 
+static void ST_doPaletteStuff(void);
+
 //
 // ST_Ticker
 //
@@ -864,6 +866,9 @@ void ST_Ticker (void)
         }
     }
 
+    // Do red-/gold-shifts from damage/items
+    ST_doPaletteStuff();
+
     // haleyjd 20100901: [STRIFE] Keys are handled on a popup
     // haleyjd 20100831: [STRIFE] No face widget
     // haleyjd 20100901: [STRIFE] Armor, weapons, frags, etc. handled elsewhere
@@ -883,7 +888,7 @@ static int st_palette = 0;
 // * Changed radsuit palette handling for Strife nukagecount.
 // * All other logic verified to be unmodified.
 //
-void ST_doPaletteStuff(void)
+static void ST_doPaletteStuff(void)
 {
 
     int		palette;
@@ -1203,9 +1208,6 @@ void ST_Drawer (boolean fullscreen, boolean refresh)
 
     // [crispy] Crispy HUD
     st_crispyhud = screenblocks > 11 && (!automapactive || crispy->automapoverlay);
-
-    // Do red-/gold-shifts from damage/items
-    ST_doPaletteStuff();
 
     // If just after ST_Start(), refresh all
     ST_doRefresh();

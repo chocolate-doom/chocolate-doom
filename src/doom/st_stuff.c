@@ -1587,6 +1587,7 @@ void ST_updateWidgets(void)
 }
 
 static int st_widescreendelta;
+static void ST_doPaletteStuff(void);
 
 void ST_Ticker (void)
 {
@@ -1595,11 +1596,13 @@ void ST_Ticker (void)
     ST_updateWidgets();
     st_oldhealth = plyr->health;
 
+    // Do red-/gold-shifts from damage/items
+    ST_doPaletteStuff();
 }
 
 static int st_palette = 0;
 
-void ST_doPaletteStuff(void)
+static void ST_doPaletteStuff(void)
 {
 
     int		palette;
@@ -1964,9 +1967,6 @@ void ST_Drawer (boolean fullscreen, boolean refresh)
 
     if (crispy->cleanscreenshot == 2)
         return;
-
-    // Do red-/gold-shifts from damage/items
-    ST_doPaletteStuff();
 
     // [crispy] translucent HUD
     if (st_crispyhud && (screenblocks % 3 == 2))

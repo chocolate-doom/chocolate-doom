@@ -428,6 +428,7 @@ void SB_Ticker(void)
         }
         HealthMarker += delta;
     }
+    SB_PaletteFlash(false);
 }
 
 //==========================================================================
@@ -871,7 +872,6 @@ void SB_Drawer(void)
             SB_state = 1;
         }
     }
-    SB_PaletteFlash(false);
     DrawAnimatedIcons();
 }
 
