@@ -150,6 +150,7 @@ typedef struct
     byte *data;
     unsigned int size;
     unsigned int position;
+    boolean prepared;
 } buffer_t;
 
 static buffer_t buffer;
@@ -195,41 +196,39 @@ static void CALLBACK MidiStreamProc(HMIDIOUT hMidi, UINT uMsg,
     }
 }
 
-// Allocates the buffer and prepares the MIDI header. Set during initialization
-// by the main thread. BUFFER_INITIAL_SIZE should be large enough to avoid
-// reallocation by the MIDI thread during playback, due to a known memory bug
-// with midiOutUnprepareHeader() (detected by ASan). The calling thread must
-// have exclusive access to the shared resources in this function.
+// Unprepare MIDI header. The calling thread must have exclusive access to the
+// shared resources in this function.
 
-static void AllocateBuffer(const unsigned int size)
+static void UnprepareHeader(void)
 {
+    // Avoid ASan detection. Commentary by Microsoft: "It looks like
+    // midiOutPrepareHeader() allocates with HeapAlloc(), and then
+    // midiOutUnprepareHeader() deallocates with GlobalFree(GlobalHandle
+    // (...)). By design, this kind of allocator mismatch is an issue that ASan
+    // is designed to catch. It is theoretically possible for us to support
+    // this kind of code, but it’s not very high priority since it is undefined
+    // behavior, though it happens to work right now outside of ASan."
+    // https://developercommunity.visualstudio.com/t/1597288
+
+#ifndef __SANITIZE_ADDRESS__
     MIDIHDR *hdr = &MidiStreamHdr;
     MMRESULT mmr;
 
-    if (buffer.data)
-    {
-        // Windows doesn't always immediately clear the MHDR_INQUEUE flag, even
-        // after midiStreamStop() is called. There doesn't seem to be any side
-        // effect to just forcing the flag off.
-        hdr->dwFlags &= ~MHDR_INQUEUE;
-        mmr = midiOutUnprepareHeader((HMIDIOUT)hMidiStream, hdr, sizeof(MIDIHDR));
-        if (mmr != MMSYSERR_NOERROR)
-        {
-            MidiError("midiOutUnprepareHeader", mmr);
-        }
-    }
-
-    buffer.size = PADDED_SIZE(size);
-    buffer.data = I_Realloc(buffer.data, buffer.size);
-
-    hdr->lpData = (LPSTR)buffer.data;
-    hdr->dwBytesRecorded = 0;
-    hdr->dwBufferLength = buffer.size;
-    mmr = midiOutPrepareHeader((HMIDIOUT)hMidiStream, hdr, sizeof(MIDIHDR));
+    mmr = midiOutUnprepareHeader((HMIDIOUT)hMidiStream, hdr, sizeof(MIDIHDR));
     if (mmr != MMSYSERR_NOERROR)
     {
-        MidiError("midiOutPrepareHeader", mmr);
+        MidiError("midiOutUnprepareHeader", mmr);
     }
+#endif
+}
+
+// Allocate buffer. The calling thread must have exclusive access to the shared
+// resources in this function.
+
+static void AllocateBuffer(const unsigned int size)
+{
+    buffer.size = PADDED_SIZE(size);
+    buffer.data = I_Realloc(buffer.data, buffer.size);
 }
 
 // Pads the buffer with zeros so that an integral number of DWORDs are stored.
@@ -248,6 +247,12 @@ static void WriteBufferPad(void)
 
 static void WriteBuffer(const byte *ptr, unsigned int size)
 {
+    if (buffer.prepared)
+    {
+        UnprepareHeader();
+        buffer.prepared = false;
+    }
+
     if (buffer.position + size >= buffer.size)
     {
         AllocateBuffer(size + buffer.size * 2);
@@ -265,8 +270,22 @@ static void StreamOut(void)
     MIDIHDR *hdr = &MidiStreamHdr;
     MMRESULT mmr;
 
+    memset(hdr, 0, sizeof(*hdr));
     hdr->lpData = (LPSTR)buffer.data;
     hdr->dwBytesRecorded = buffer.position;
+    hdr->dwBufferLength = buffer.size;
+
+    // Reset buffer position even if midiStreamOut fails.
+    buffer.position = 0;
+
+    mmr = midiOutPrepareHeader((HMIDIOUT)hMidiStream, hdr, sizeof(MIDIHDR));
+    if (mmr != MMSYSERR_NOERROR)
+    {
+        MidiError("midiOutPrepareHeader", mmr);
+        return;
+    }
+
+    buffer.prepared = true;
 
     mmr = midiStreamOut(hMidiStream, hdr, sizeof(MIDIHDR));
     if (mmr != MMSYSERR_NOERROR)
@@ -1457,8 +1476,6 @@ static DWORD WINAPI PlayerProc(void)
         // the end of the current loop iteration or when the thread exits.
         EnterCriticalSection(&CriticalSection);
 
-        buffer.position = 0;
-
         switch (win_midi_state)
         {
             case STATE_STARTUP:
@@ -1839,8 +1856,11 @@ static void I_WIN_ShutdownMusic(void)
     }
     StreamStop();
 
-    // Don't free the buffer to avoid calling midiOutUnprepareHeader() which
-    // contains a memory error (detected by ASan).
+    if (buffer.prepared)
+    {
+        UnprepareHeader();
+        buffer.prepared = false;
+    }
 
     mmr = midiStreamClose(hMidiStream);
     if (mmr != MMSYSERR_NOERROR)
@@ -1848,6 +1868,11 @@ static void I_WIN_ShutdownMusic(void)
         MidiError("midiStreamClose", mmr);
     }
     hMidiStream = NULL;
+
+    free(buffer.data);
+    buffer.data = NULL;
+    buffer.size = 0;
+    buffer.position = 0;
 
     CloseHandle(hBufferReturnEvent);
     CloseHandle(hStoppedEvent);
