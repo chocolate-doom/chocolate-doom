@@ -312,6 +312,7 @@ void R_AddLine(seg_t * line)
     if (backsector->ceilingpic == frontsector->ceilingpic
         && backsector->floorpic == frontsector->floorpic
         && backsector->lightlevel == frontsector->lightlevel
+        && backsector->special == frontsector->special // [crispy] check for special as well
         && curline->sidedef->midtexture == 0)
         return;
 

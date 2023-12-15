@@ -671,7 +671,8 @@ void R_StoreWallRange(int start, int stop)
 
         if (worldlow != worldbottom
             || backsector->floorpic != frontsector->floorpic
-            || backsector->lightlevel != frontsector->lightlevel)
+            || backsector->lightlevel != frontsector->lightlevel
+            || backsector->special != frontsector->special) // [crispy] check for special as well
             markfloor = true;
         else
             markfloor = false;  // same plane on both sides
