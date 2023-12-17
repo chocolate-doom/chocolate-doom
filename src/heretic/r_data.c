@@ -735,7 +735,11 @@ int R_TextureNumForName(const char *name)
 
     i = R_CheckTextureNumForName(name);
     if (i == -1)
-        I_Error("R_TextureNumForName: %s not found", name);
+    {
+        // [crispy] make missing texture non-fatal
+        printf("R_TextureNumForName: %.8s not found\n", name);
+        return 0;
+    }
 
     return i;
 }

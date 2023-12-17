@@ -95,7 +95,8 @@ switchlist_t alphSwitchList_vanilla[] = {
 int		*switchlist;
 int		numswitches;
 static size_t	maxswitches;
-button_t buttonlist[MAXBUTTONS];
+button_t *buttonlist; // [crispy] remove MAXBUTTONS limit
+int		maxbuttons; // [crispy] remove MAXBUTTONS limit
 
 /*
 ===============
@@ -183,6 +184,10 @@ void P_InitSwitchList(void)
     {
         W_ReleaseLumpName("SWITCHES");
     }
+
+    // [crispy] pre-allocate some memory for the buttonlist[] array
+    buttonlist = I_Realloc(NULL, sizeof(*buttonlist) * (maxbuttons = MAXBUTTONS));
+    memset(buttonlist, 0, sizeof(*buttonlist) * maxbuttons);
 }
 
 //==================================================================
@@ -194,7 +199,7 @@ void P_StartButton(line_t * line, bwhere_e w, int texture, int time)
 {
     int i;
 
-    for (i = 0; i < MAXBUTTONS; i++)
+    for (i = 0; i < maxbuttons; i++)
         if (!buttonlist[i].btimer)
         {
             buttonlist[i].line = line;
@@ -204,6 +209,14 @@ void P_StartButton(line_t * line, bwhere_e w, int texture, int time)
             buttonlist[i].soundorg = &line->frontsector->soundorg;
             return;
         }
+
+    // [crispy] remove MAXBUTTONS limit
+    {
+        maxbuttons = 2 * maxbuttons;
+        buttonlist = I_Realloc(buttonlist, sizeof(*buttonlist) * maxbuttons);
+        memset(buttonlist + maxbuttons/2, 0, sizeof(*buttonlist) * maxbuttons/2);
+        return P_StartButton(line, w, texture, time);
+    }
 
     I_Error("P_StartButton: no button slots left!");
 }
