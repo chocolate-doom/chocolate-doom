@@ -655,6 +655,7 @@ void P_GroupLines(void)
 
 //=============================================================================
 
+lumpinfo_t *maplumpinfo;
 
 /*
 =================
@@ -694,6 +695,9 @@ void P_SetupLevel(int episode, int map, int playermask, skill_t skill)
 
     M_snprintf(lumpname, sizeof(lumpname), "MAP%02d", map);
     lumpnum = W_GetNumForName(lumpname);
+
+    maplumpinfo = lumpinfo[lumpnum];
+
     //
     // Begin processing map lumps
     // Note: most of this ordering is important

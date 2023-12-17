@@ -283,7 +283,8 @@ static int GetButtonsStateGamepad(void)
 
 // Read the state of an axis, inverting if necessary.
 
-static int GetAxisStateGamepad(int axis, int invert, int dead_zone)
+static int GetAxisStateGamepad(const int *axis_values, int axis, int invert,
+                               int dead_zone)
 {
     int result;
 
@@ -297,7 +298,7 @@ static int GetAxisStateGamepad(int axis, int invert, int dead_zone)
     // Dead zone is expressed as percentage of axis max value
     dead_zone = 32768 * dead_zone / 100;
 
-    result = SDL_GameControllerGetAxis(gamepad, axis);
+    result = axis_values[axis];
 
     if (result < dead_zone && result > -dead_zone)
     {
@@ -314,23 +315,130 @@ static int GetAxisStateGamepad(int axis, int invert, int dead_zone)
     return result;
 }
 
+#define DIRECTION_DEADZONE (50 * 32768 / 100)
+
+static int GetDirectionalInputGamepad(const int *axis_values)
+{
+    int value;
+    int dpad = JOY_DIR_NONE;
+    int leftstick = JOY_DIR_NONE;
+    int rightstick = JOY_DIR_NONE;
+
+    // Dpad.
+    if (SDL_GameControllerGetButton(gamepad, SDL_CONTROLLER_BUTTON_DPAD_UP))
+    {
+        dpad |=  JOY_DIR_UP;
+    }
+
+    if (SDL_GameControllerGetButton(gamepad, SDL_CONTROLLER_BUTTON_DPAD_DOWN))
+    {
+        dpad |=  JOY_DIR_DOWN;
+    }
+
+    if (SDL_GameControllerGetButton(gamepad, SDL_CONTROLLER_BUTTON_DPAD_LEFT))
+    {
+        dpad |=  JOY_DIR_LEFT;
+    }
+
+    if (SDL_GameControllerGetButton(gamepad, SDL_CONTROLLER_BUTTON_DPAD_RIGHT))
+    {
+        dpad |= JOY_DIR_RIGHT;
+    }
+
+    // Left stick.
+    value = axis_values[SDL_CONTROLLER_AXIS_LEFTY];
+
+    if (value > DIRECTION_DEADZONE || value < -DIRECTION_DEADZONE)
+    {
+        if (value > 0)
+        {
+            leftstick |= JOY_DIR_DOWN;
+        }
+        else
+        {
+            leftstick |= JOY_DIR_UP;
+        }
+    }
+
+    value = axis_values[SDL_CONTROLLER_AXIS_LEFTX];
+
+    if (value > DIRECTION_DEADZONE || value < -DIRECTION_DEADZONE)
+    {
+        if (value > 0)
+        {
+            leftstick |= JOY_DIR_RIGHT;
+        }
+        else
+        {
+            leftstick |= JOY_DIR_LEFT;
+        }
+    }
+
+    // Right stick.
+    value = axis_values[SDL_CONTROLLER_AXIS_RIGHTX];
+
+    if (value > DIRECTION_DEADZONE || value < -DIRECTION_DEADZONE)
+    {
+        if (value > 0)
+        {
+            rightstick |= JOY_DIR_RIGHT;
+        }
+        else
+        {
+            rightstick |= JOY_DIR_LEFT;
+        }
+    }
+
+    value = axis_values[SDL_CONTROLLER_AXIS_RIGHTY];
+
+    if (value > DIRECTION_DEADZONE || value < -DIRECTION_DEADZONE)
+    {
+        if (value > 0)
+        {
+            rightstick |= JOY_DIR_DOWN;
+        }
+        else
+        {
+            rightstick |= JOY_DIR_UP;
+        }
+    }
+
+    return ((dpad << DPAD_SHIFT) | (leftstick << LSTICK_SHIFT) |
+            (rightstick << RSTICK_SHIFT));
+}
+
 void I_UpdateGamepad(void)
 {
     if (gamepad != NULL)
     {
         event_t ev;
+        int axis_values[SDL_CONTROLLER_AXIS_MAX];
+
+        axis_values[SDL_CONTROLLER_AXIS_LEFTX] =
+            SDL_GameControllerGetAxis(gamepad, SDL_CONTROLLER_AXIS_LEFTX);
+
+        axis_values[SDL_CONTROLLER_AXIS_LEFTY] =
+            SDL_GameControllerGetAxis(gamepad, SDL_CONTROLLER_AXIS_LEFTY);
+
+        axis_values[SDL_CONTROLLER_AXIS_RIGHTX] =
+            SDL_GameControllerGetAxis(gamepad, SDL_CONTROLLER_AXIS_RIGHTX);
+
+        axis_values[SDL_CONTROLLER_AXIS_RIGHTY] =
+            SDL_GameControllerGetAxis(gamepad, SDL_CONTROLLER_AXIS_RIGHTY);
 
         ev.type = ev_joystick;
         ev.data1 = GetButtonsStateGamepad();
-        ev.data2 = GetAxisStateGamepad(joystick_x_axis, joystick_x_invert,
-                                       joystick_x_dead_zone);
-        ev.data3 = GetAxisStateGamepad(joystick_y_axis, joystick_y_invert,
-                                       joystick_y_dead_zone);
-        ev.data4 =
-            GetAxisStateGamepad(joystick_strafe_axis, joystick_strafe_invert,
-                                joystick_strafe_dead_zone);
-        ev.data5 = GetAxisStateGamepad(joystick_look_axis, joystick_look_invert,
+        ev.data2 = GetAxisStateGamepad(axis_values, joystick_x_axis,
+                                       joystick_x_invert, joystick_x_dead_zone);
+        ev.data3 = GetAxisStateGamepad(axis_values, joystick_y_axis,
+                                       joystick_y_invert, joystick_y_dead_zone);
+        ev.data4 = GetAxisStateGamepad(axis_values, joystick_strafe_axis,
+                                       joystick_strafe_invert,
+                                       joystick_strafe_dead_zone);
+        ev.data5 = GetAxisStateGamepad(axis_values, joystick_look_axis,
+                                       joystick_look_invert,
                                        joystick_look_dead_zone);
+        ev.data6 = GetDirectionalInputGamepad(axis_values);
 
         D_PostEvent(&ev);
     }
@@ -630,6 +738,31 @@ static int GetAxisState(int axis, int invert, int dead_zone)
     return result;
 }
 
+static int GetDirectionalInput(int x, int y)
+{
+    int retval = JOY_DIR_NONE;
+
+    if (x > 0)
+    {
+        retval |= JOY_DIR_RIGHT;
+    }
+    else if (x < 0)
+    {
+        retval |= JOY_DIR_LEFT;
+    }
+
+    if (y > 0)
+    {
+        retval |= JOY_DIR_DOWN;
+    }
+    else if (y < 0)
+    {
+        retval |= JOY_DIR_UP;
+    }
+
+    return (retval << DPAD_SHIFT);
+}
+
 void I_UpdateJoystick(void)
 {
     if (use_gamepad)
@@ -652,7 +785,7 @@ void I_UpdateJoystick(void)
                                 joystick_strafe_dead_zone);
         ev.data5 = GetAxisState(joystick_look_axis, joystick_look_invert,
                                 joystick_look_dead_zone);
-
+        ev.data6 = GetDirectionalInput(ev.data2, ev.data3);
         D_PostEvent(&ev);
     }
 }

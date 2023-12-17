@@ -74,6 +74,24 @@
 // To be used with SDL_JoystickGetGUIDString; see SDL_joystick.h
 #define GUID_STRING_BUF_SIZE 33
 
+// Helper macros for bitpacked directional data from gamepad inputs.
+#define DPAD_SHIFT 0
+#define LSTICK_SHIFT 4
+#define RSTICK_SHIFT 8
+#define JOY_GET_DPAD(x) (((x) >> DPAD_SHIFT) & 0xf)
+#define JOY_GET_LSTICK(x) (((x) >> LSTICK_SHIFT) & 0xf)
+#define JOY_GET_RSTICK(x) (((x) >> RSTICK_SHIFT) & 0xf)
+
+// 4-way direction data for gamepad directional inputs.
+enum
+{
+    JOY_DIR_NONE = 0x0,
+    JOY_DIR_UP = 0x1,
+    JOY_DIR_DOWN = 0x2,
+    JOY_DIR_LEFT = 0x4,
+    JOY_DIR_RIGHT = 0x8
+};
+
 // Extend the SDL_GameControllerButton enum to include the triggers.
 enum
 {
