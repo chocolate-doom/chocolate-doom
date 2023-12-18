@@ -123,6 +123,16 @@ typedef enum
     mus_read_m,
     mus_dm2ttl,
     mus_dm2int,
+    // [crispy] NRFTL
+    mus_nrftl1,
+    mus_nrftl2,
+    mus_nrftl3,
+    mus_nrftl4,
+    mus_nrftl5,
+    mus_nrftl6,
+    mus_nrftl7,
+    mus_nrftl8,
+    mus_nrftl9,
     NUMMUSIC,
     mus_musinfo
 } musicenum_t;

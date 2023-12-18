@@ -122,6 +122,16 @@ musicinfo_t S_music[] =
     MUSIC("read_m"),
     MUSIC("dm2ttl"),
     MUSIC("dm2int"),
+    // [crispy] NRFTL
+    MUSIC("nrftl1"),
+    MUSIC("nrftl2"),
+    MUSIC("nrftl3"),
+    MUSIC("nrftl4"),
+    MUSIC("nrftl5"),
+    MUSIC("nrftl6"),
+    MUSIC("nrftl7"),
+    MUSIC("nrftl8"),
+    MUSIC("nrftl9"),
     MUSIC(NULL),
     MUSIC("musinfo")
 };

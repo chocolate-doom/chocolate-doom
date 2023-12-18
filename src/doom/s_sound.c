@@ -379,23 +379,30 @@ void S_Start(void)
 
     if (gamemode == commercial)
     {
-        const int nmus[] =
+        const int nmus[9][2] =
         {
-            mus_messag,
-            mus_ddtblu,
-            mus_doom,
-            mus_shawn,
-            mus_in_cit,
-            mus_the_da,
-            mus_in_cit,
-            mus_shawn2,
-            mus_ddtbl2,
+            {mus_nrftl1, mus_messag},
+            {mus_nrftl2, mus_ddtblu},
+            {mus_nrftl3, mus_doom},
+            {mus_nrftl4, mus_shawn},
+            {mus_nrftl5, mus_in_cit},
+            {mus_nrftl6, mus_the_da},
+            {mus_nrftl7, mus_in_cit},
+            {mus_nrftl8, mus_shawn2},
+            {mus_nrftl9, mus_ddtbl2},
         };
 
         if ((gameepisode == 2 || gamemission == pack_nerve) &&
             gamemap <= arrlen(nmus))
         {
-            mnum = nmus[gamemap - 1];
+            char name[9];
+
+            mnum = nmus[gamemap - 1][0];
+            M_snprintf(name, sizeof(name), "d_%s", S_music[mnum].name);
+            if (W_CheckNumForName(name) == -1)
+            {
+                mnum = nmus[gamemap - 1][1];
+            }
         }
         else
         mnum = mus_runnin + gamemap - 1;
