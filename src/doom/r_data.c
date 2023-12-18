@@ -672,6 +672,26 @@ R_GetColumnMod
     return texturecomposite[tex] + ofs;
 }
 
+// [crispy] wrapping column getter function for non-power-of-two wide sky textures
+byte*
+R_GetColumnMod2
+( int		tex,
+  int		col )
+{
+    int		ofs;
+
+    while (col < 0)
+	col += texturewidth[tex];
+
+    col %= texturewidth[tex];
+    ofs = texturecolumnofs2[tex][col];
+
+    if (!texturecomposite2[tex])
+	R_GenerateComposite(tex);
+
+    return texturecomposite2[tex] + ofs;
+}
+
 
 static void GenerateTextureHashTable(void)
 {
