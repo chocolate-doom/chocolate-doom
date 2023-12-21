@@ -854,7 +854,8 @@ AM_Responder
 	if (!followplayer && (ev->data2 || ev->data3))
 	{
 		// [crispy] mouse sensitivity for strafe
-		m_paninc2.x = FTOM(ev->data2*(mouseSensitivity_x2+5)/(160 >> crispy->hires));
+		const int flip_x = (ev->data2*(mouseSensitivity_x2+5)/(160 >> crispy->hires));
+		m_paninc2.x = crispy->fliplevels ? -FTOM(flip_x) : FTOM(flip_x);
 		m_paninc2.y = FTOM(ev->data3*(mouseSensitivity_x2+5)/(160 >> crispy->hires));
 		rc = true;
 	}
@@ -2051,6 +2052,7 @@ AM_drawThings
 void AM_drawMarks(void)
 {
     int i, fx, fy, w, h;
+    int fx_flip; // [crispy] support for marks drawing in flipped levels
     mpoint_t pt;
 
     for (i=0;i<AM_NUMMARKPOINTS;i++)
@@ -2068,10 +2070,11 @@ void AM_drawMarks(void)
 	    {
 		AM_rotatePoint(&pt);
 	    }
-	    fx = (flipscreenwidth[CXMTOF(pt.x)] >> crispy->hires) - 1 - WIDESCREENDELTA;
+	    fx = (CXMTOF(pt.x) >> crispy->hires) - 1;
 	    fy = (CYMTOF(pt.y) >> crispy->hires) - 2;
+	    fx_flip = (flipscreenwidth[CXMTOF(pt.x)] >> crispy->hires) - 1;
 	    if (fx >= f_x && fx <= (f_w >> crispy->hires) - w && fy >= f_y && fy <= (f_h >> crispy->hires) - h)
-		V_DrawPatch(fx, fy, marknums[i]);
+		V_DrawPatch(fx_flip - WIDESCREENDELTA, fy, marknums[i]);
 	}
     }
 
