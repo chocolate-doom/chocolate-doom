@@ -886,6 +886,8 @@ void SV_ClearSaveSlot(int slot); // [crispy]
 //PLAY
 //-----
 
+extern lumpinfo_t *maplumpinfo;
+
 void P_Ticker(void);
 // called by C_Ticker
 // can call G_PlayerExited

@@ -30,6 +30,7 @@
 #include "deh_main.h"
 
 #include "i_input.h"
+#include "i_joystick.h"
 #include "i_swap.h"
 #include "i_system.h"
 #include "i_timer.h"
@@ -2270,6 +2271,7 @@ boolean M_Responder (event_t* ev)
     static  int     mousex = 0;
     static  int     lastx = 0;
     boolean mousextobutton = false;
+    int dir;
 
     // In testcontrols mode, none of the function keys should do anything
     // - the only key is escape to quit.
@@ -2317,25 +2319,38 @@ boolean M_Responder (event_t* ev)
 
         if (menuactive)
         {
-            if (ev->data3 < 0)
+            if (JOY_GET_DPAD(ev->data6) != JOY_DIR_NONE)
+            {
+                dir = JOY_GET_DPAD(ev->data6);
+            }
+            else if (JOY_GET_LSTICK(ev->data6) != JOY_DIR_NONE)
+            {
+                dir = JOY_GET_LSTICK(ev->data6);
+            }
+            else
+            {
+                dir = JOY_GET_RSTICK(ev->data6);
+            }
+
+            if (dir & JOY_DIR_UP)
             {
                 key = key_menu_up;
                 joywait = I_GetTime() + 5;
             }
-            else if (ev->data3 > 0)
+            else if (dir & JOY_DIR_DOWN)
             {
                 key = key_menu_down;
                 joywait = I_GetTime() + 5;
             }
-            if (ev->data2 < 0)
+            if (dir & JOY_DIR_LEFT)
             {
                 key = key_menu_left;
-                joywait = I_GetTime() + 2;
+                joywait = I_GetTime() + 5;
             }
-            else if (ev->data2 > 0)
+            else if (dir & JOY_DIR_RIGHT)
             {
                 key = key_menu_right;
-                joywait = I_GetTime() + 2;
+                joywait = I_GetTime() + 5;
             }
 
 #define JOY_BUTTON_MAPPED(x) ((x) >= 0)

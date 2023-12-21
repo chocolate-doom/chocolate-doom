@@ -703,6 +703,8 @@ static void P_RemoveSlimeTrails(void)
     }
 }
 
+lumpinfo_t *maplumpinfo;
+
 /*
 =================
 =
@@ -757,6 +759,8 @@ void P_SetupLevel(int episode, int map, int playermask, skill_t skill)
 
     // [crispy] check and log map and nodes format
     crispy_mapformat = P_CheckMapFormat(lumpnum);
+
+    maplumpinfo = lumpinfo[lumpnum];
 
 // note: most of this ordering is important     
     P_LoadBlockMap(lumpnum + ML_BLOCKMAP);

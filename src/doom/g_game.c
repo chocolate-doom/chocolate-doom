@@ -1091,6 +1091,7 @@ boolean G_Responder (event_t* ev)
 	    if (!menuactive && crispy->soundfix)
 		S_StartSoundOptional(NULL, sfx_mnuopn, sfx_swtchn); // [NS] Optional menu sounds.
 	    M_StartControlPanel (); 
+	    joywait = I_GetTime() + 5;
 	    return true; 
 	} 
 	return false; 
