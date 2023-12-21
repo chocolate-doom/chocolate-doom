@@ -91,7 +91,7 @@ void R_DrawColumn(void)
     do
     {
 	// [crispy] brightmaps
-	const byte source = dc_source[frac>>FRACBITS];
+	const byte source = dc_source[frac >> FRACBITS];
 	*dest = dc_colormap[dc_brightmap[source]][source];
 	dest += SCREENWIDTH;
 	if ((frac += fracstep) >= heightmask)
@@ -213,12 +213,14 @@ void R_DrawTLColumn(void)
 
         do
         {
+            // [crispy] brightmaps
+            const byte source = dc_source[frac >> FRACBITS];
 #ifndef CRISPY_TRUECOLOR
             *dest =
                 tinttable[((*dest) << 8) +
-                          dc_colormap[0][dc_source[frac >> FRACBITS]]];
+                          dc_colormap[dc_brightmap[source]][source]];
 #else
-            const pixel_t destrgb = dc_colormap[0][dc_source[frac >> FRACBITS]];
+            const pixel_t destrgb = dc_colormap[dc_brightmap[source]][source];
             *dest = blendfunc(*dest, destrgb);
 #endif
             dest += SCREENWIDTH;
@@ -230,12 +232,14 @@ void R_DrawTLColumn(void)
     {
         do
         {
+            // [crispy] brightmaps
+            const byte source = dc_source[(frac >> FRACBITS) & heightmask];
 #ifndef CRISPY_TRUECOLOR
             *dest =
                 tinttable[((*dest) << 8) +
-                          dc_colormap[0][dc_source[(frac >> FRACBITS) & heightmask]]];
+                          dc_colormap[dc_brightmap[source]][source]];
 #else
-            const pixel_t destrgb = dc_colormap[0][dc_source[(frac >> FRACBITS) & heightmask]];
+            const pixel_t destrgb = dc_colormap[dc_brightmap[source]][source];
             *dest = blendfunc(*dest, destrgb);
 #endif
 
@@ -279,7 +283,9 @@ void R_DrawTranslatedColumn(void)
 
     do
     {
-        *dest = dc_colormap[0][dc_translation[dc_source[frac >> FRACBITS]]];
+        // [crispy] brightmaps
+        const byte source = dc_source[frac>>FRACBITS];
+        *dest = dc_colormap[dc_brightmap[source]][dc_translation[source]];
         dest += SCREENWIDTH;
         frac += fracstep;
     }
@@ -308,11 +314,12 @@ void R_DrawTranslatedTLColumn(void)
 
     do
     {
+        // [crispy] brightmaps
+        byte src = dc_translation[dc_source[frac >> FRACBITS]];
 #ifndef CRISPY_TRUECOLOR
         *dest = tinttable[((*dest) << 8)
                           +
-                          dc_colormap[0][dc_translation
-                                      [dc_source[frac >> FRACBITS]]]];
+                          dc_colormap[dc_brightmap[src]][src]];
 #else
         const pixel_t destrgb = dc_colormap[0][dc_translation[dc_source[frac >> FRACBITS]]];
         *dest = blendfunc(*dest, destrgb);
