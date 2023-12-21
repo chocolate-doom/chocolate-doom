@@ -321,7 +321,7 @@ void R_DrawTranslatedTLColumn(void)
                           +
                           dc_colormap[dc_brightmap[src]][src]];
 #else
-        const pixel_t destrgb = dc_colormap[0][dc_translation[dc_source[frac >> FRACBITS]]];
+        const pixel_t destrgb = dc_colormap[dc_brightmap[src]][src];
         *dest = blendfunc(*dest, destrgb);
 #endif
         dest += SCREENWIDTH;
