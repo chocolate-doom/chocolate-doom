@@ -175,6 +175,17 @@ const char *mapnames[] =	// DOOM shareware/registered/retail (Ultimate) names.
     HUSTR_E5M8,
     HUSTR_E5M9,
 
+    // [crispy] Sigil II
+    HUSTR_E6M1,
+    HUSTR_E6M2,
+    HUSTR_E6M3,
+    HUSTR_E6M4,
+    HUSTR_E6M5,
+    HUSTR_E6M6,
+    HUSTR_E6M7,
+    HUSTR_E6M8,
+    HUSTR_E6M9,
+
     "NEWLEVEL",
     "NEWLEVEL",
     "NEWLEVEL",

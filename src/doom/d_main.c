@@ -1993,7 +1993,7 @@ void D_DoomMain (void)
 	    gamevariant != freedoom &&
 	    strncasecmp(M_BaseName(iwadfile), "rekkr", 5))
 	{
-		D_LoadSigilWad();
+		D_LoadSigilWads();
 	}
 
 	if (gamemission == doom2)
@@ -2131,6 +2131,12 @@ void D_DoomMain (void)
                        (W_CheckNumForName("m_epi5") != -1) &&
                        (W_CheckNumForName("e5m1") != -1) &&
                        (W_CheckNumForName("wilv40") != -1);
+
+    // [crispy] check for presence of a 6th episode
+    crispy->haved1e6 = (gameversion == exe_ultimate) &&
+                       (W_CheckNumForName("m_epi6") != -1) &&
+                       (W_CheckNumForName("e6m1") != -1) &&
+                       (W_CheckNumForName("wilv50") != -1);
 
     // [crispy] check for presence of E1M10
     crispy->havee1m10 = (gamemode == retail) &&

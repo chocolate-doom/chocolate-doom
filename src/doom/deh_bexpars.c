@@ -22,7 +22,7 @@
 #include "deh_bexpars.h"
 #include "deh_io.h"
 
-int bex_pars[6][10] = {{0}};
+int bex_pars[7][10] = {{0}};
 int bex_cpars[32] = {0};
 
 static void *DEH_BEXParsStart(deh_context_t *context, char *line)
@@ -43,7 +43,7 @@ static void DEH_BEXParsParseLine(deh_context_t *context, char *line, void *tag)
 
     if (sscanf(line, "par %32d %32d %32d", &episode, &map, &partime) == 3)
     {
-	if (episode >= 1 && episode <= 5 && map >= 1 && map <= 9)
+	if (episode >= 1 && episode <= 6 && map >= 1 && map <= 9)
 	    bex_pars[episode][map] = partime;
 	else
 	{

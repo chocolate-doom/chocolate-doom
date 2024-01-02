@@ -1734,7 +1734,7 @@ void G_ScreenShot (void)
 
 
 // DOOM Par Times
-static const int pars[6][10] =
+static const int pars[7][10] =
 { 
     {0}, 
     {0,30,75,120,90,165,180,180,30,165}, 
@@ -1744,6 +1744,8 @@ static const int pars[6][10] =
    ,{0,165,255,135,150,180,390,135,360,180}
     // [crispy] Episode 5 par times from Sigil v1.21
    ,{0,90,150,360,420,780,420,780,300,660}
+    // [crispy] Episode 6 par times from Sigil II v1.0
+   ,{0,480,300,240,420,510,840,960,390,450}
 }; 
 
 // DOOM II Par Times
@@ -2012,6 +2014,7 @@ void G_DoCompleted (void)
 	    switch (gameepisode) 
 	    { 
 	      case 1: 
+	      case 6:
 		wminfo.next = 3; 
 		break; 
 	      case 2: 
@@ -2073,7 +2076,9 @@ void G_DoCompleted (void)
         // [crispy] single player par times for episode 4
         (gameepisode == 4 && crispy->singleplayer) ||
         // [crispy] par times for Sigil
-        gameepisode == 5)
+        gameepisode == 5 ||
+        // [crispy] par times for Sigil II
+        gameepisode == 6)
     {
         // [crispy] support [PARS] sections in BEX files
         if (bex_pars[gameepisode][gamemap])
@@ -2582,6 +2587,14 @@ G_InitNew
 
     M_ClearRandom ();
 
+    // [crispy] Spider Mastermind gets increased health in Sigil II. Normally
+    // the Sigil II DEH handles this, but we don't load the DEH if the WAD gets
+    // sideloaded.
+    if (crispy->havesigil2 && crispy->havesigil2 != (char *)-1)
+    {
+        mobjinfo[MT_SPIDER].spawnhealth = (episode == 6) ? 9000 : 3000;
+    }
+
     if (skill == sk_nightmare || respawnparm )
 	respawnmonsters = true;
     else
@@ -2668,6 +2681,13 @@ G_InitNew
             break;
           case 5:        // [crispy] Sigil
             skytexturename = "SKY5_ZD";
+            if (R_CheckTextureNumForName(DEH_String(skytexturename)) == -1)
+            {
+                skytexturename = "SKY3";
+            }
+            break;
+          case 6:        // [crispy] Sigil II
+            skytexturename = "SKY6_ZD";
             if (R_CheckTextureNumForName(DEH_String(skytexturename)) == -1)
             {
                 skytexturename = "SKY3";

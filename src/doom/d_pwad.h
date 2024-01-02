@@ -21,7 +21,7 @@
 #ifndef __D_PWAD__
 #define __D_PWAD__
 
-void D_LoadSigilWad(void);
+void D_LoadSigilWads(void);
 void D_LoadNerveWad(void);
 void D_LoadMasterlevelsWad(void);
 

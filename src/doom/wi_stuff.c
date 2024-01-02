@@ -1555,7 +1555,7 @@ static boolean WI_drawParTime (void)
 		}
 
 		// [crispy] PWAD: par times for Sigil
-		if (wbs->epsd == 4)
+		if (wbs->epsd == 4 || wbs->epsd == 5)
 		{
 			result = true;
 		}
@@ -1676,6 +1676,9 @@ void WI_Ticker(void)
 	// [crispy] Sigil
 	else if (crispy->haved1e5 && wbs->epsd == 4 && W_CheckNumForName(DEH_String("D_SIGINT")) != -1)
 	  S_ChangeMusic(mus_sigint, true);
+	// [crispy] Sigil II
+	else if (crispy->haved1e6 && wbs->epsd == 5 && W_CheckNumForName(DEH_String("D_SG2INT")) != -1)
+	  S_ChangeMusic(mus_sg2int, true);
 	else
 	  S_ChangeMusic(mus_inter, true); 
     }
@@ -1874,6 +1877,10 @@ static void WI_loadUnloadData(load_callback_t callback)
     else if (crispy->haved1e5 && wbs->epsd == 4 && W_CheckNumForName(DEH_String("SIGILINT")) != -1) // [crispy] Sigil
     {
         M_StringCopy(name, DEH_String("SIGILINT"), sizeof(name));
+    }
+    else if (crispy->haved1e6 && wbs->epsd == 5 && W_CheckNumForName(DEH_String("SIGILIN2")) != -1) // [crispy] Sigil
+    {
+        M_StringCopy(name, DEH_String("SIGILIN2"), sizeof(name));
     }
     else
     {
