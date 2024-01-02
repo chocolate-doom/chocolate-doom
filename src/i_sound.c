@@ -415,14 +415,18 @@ void I_ShutdownMusic(void)
 
 void I_SetMusicVolume(int volume)
 {
-    if (active_music_module != NULL)
+    if (music_module != NULL)
     {
-        active_music_module->SetMusicVolume(volume);
+        music_module->SetMusicVolume(volume);
 
-        if (music_packs_active && active_music_module != &music_pack_module)
+#ifndef DISABLE_SDL2MIXER
+        // [crispy] always broadcast volume changes to SDL. This also covers
+        // the musicpack module.
+        if (music_module != &music_sdl_module)
         {
-            music_pack_module.SetMusicVolume(volume);
+            music_sdl_module.SetMusicVolume(volume);
         }
+#endif
     }
 }
 
