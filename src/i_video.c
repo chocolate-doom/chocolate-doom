@@ -1116,10 +1116,20 @@ void I_InitWindowIcon(void)
 
 static void SetScaleFactor(int factor)
 {
+    int height;
+
     // Pick 320x200 or 320x240, depending on aspect ratio correct
+    if (aspect_ratio_correct)
+    {
+        height = SCREENHEIGHT_4_3;
+    }
+    else
+    {
+        height = SCREENHEIGHT;
+    }
 
     window_width = factor * SCREENWIDTH;
-    window_height = factor * actualheight;
+    window_height = factor * height;
     fullscreen = false;
 }
 

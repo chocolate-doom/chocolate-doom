@@ -1372,7 +1372,7 @@ static void LoadIwadDeh(void)
                     "The dehacked file is required in order to emulate\n"
                     "chex.exe correctly.  It can be found in your nearest\n"
                     "/idgames repository mirror at:\n\n"
-                    "   utils/exe_edit/patches/chexdeh.zip");
+                    "   themes/chex/chexdeh.zip");
         }
 
         if (!DEH_LoadFile(chex_deh))
