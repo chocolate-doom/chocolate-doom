@@ -406,6 +406,19 @@ const byte *R_BrightmapForSprite (const int state)
             case S_SOR2_ATK1:
             case S_SOR2_ATK2:
             case S_SOR2_ATK3:
+            // Walking D'Sparil (teleport states)
+            case S_SOR2_TELE1:
+            case S_SOR2_TELE2:
+            case S_SOR2_TELE3:
+            case S_SOR2_TELE4:
+            case S_SOR2_TELE5:
+            case S_SOR2_TELE6:
+            case S_SOR2TELEFADE1:
+            case S_SOR2TELEFADE2:
+            case S_SOR2TELEFADE3:
+            case S_SOR2TELEFADE4:
+            case S_SOR2TELEFADE5:
+            case S_SOR2TELEFADE6:
             // Walking D'Sparil (death states)
             case S_SOR2_DIE1:
             case S_SOR2_DIE2:
