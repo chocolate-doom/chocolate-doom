@@ -21,6 +21,7 @@ add_library(heretic STATIC
             m_random.c          m_random.h
             mn_menu.c
                                 p_action.h
+            p_blockmap.c
             p_ceilng.c
             p_doors.c
             p_enemy.c

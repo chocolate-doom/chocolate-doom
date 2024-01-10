@@ -763,6 +763,9 @@ void P_Ticker(void);
 // can call G_PlayerExited
 // carries out all thinking of monsters and players
 
+// [crispy] (re-)create BLOCKMAP if necessary
+void P_CreateBlockMap(void);
+
 void P_SetupLevel(int episode, int map, int playermask, skill_t skill);
 // called by W_Ticker
 

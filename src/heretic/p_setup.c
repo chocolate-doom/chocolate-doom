@@ -515,15 +515,20 @@ void P_LoadSideDefs(int lump)
 =================
 */
 
-void P_LoadBlockMap(int lump)
+boolean P_LoadBlockMap(int lump)
 {
     int i, count;
     int lumplen;
     short *wadblockmaplump;
 
-    lumplen = W_LumpLength(lump);
-
-    count = lumplen / 2; // [crispy] remove BLOCKMAP limit
+    // [crispy] (re-)create BLOCKMAP if necessary
+    if (M_CheckParm("-blockmap") ||
+        lump >= numlumps ||
+        (lumplen = W_LumpLength(lump)) < 8 ||
+        (count = lumplen / 2) >= 0x10000)
+    {
+        return false;
+    }
 
     // [crispy] remove BLOCKMAP limit
     wadblockmaplump = Z_Malloc(lumplen, PU_LEVEL, NULL);
@@ -556,6 +561,9 @@ void P_LoadBlockMap(int lump)
     count = sizeof(*blocklinks) * bmapwidth * bmapheight;
     blocklinks = Z_Malloc(count, PU_LEVEL, 0);
     memset(blocklinks, 0, count);
+
+    // [crispy] (re-)create BLOCKMAP if necessary
+    return true;
 }
 
 
@@ -568,6 +576,8 @@ void P_LoadBlockMap(int lump)
 =
 = Builds sector line lists and subsector sector numbers
 = Finds block bounding boxes for sectors
+= [crispy] updated old Doom 1.2 code with actual implementation of P_GroupLines
+= from Chocolate Doom for better handling and faster loading of complex levels
 =================
 */
 
@@ -606,23 +616,51 @@ void P_GroupLines(void)
 
 // build line tables for each sector    
     linebuffer = Z_Malloc(total * sizeof(line_t *), PU_LEVEL, 0);
+    for (i = 0; i < numsectors; ++i)
+    {
+        // Assign the line buffer for this sector
+        sectors[i].lines = linebuffer;
+        linebuffer += sectors[i].linecount;
+
+        // Reset linecount to zero so in the next stage we can count
+        // lines into the list.
+        sectors[i].linecount = 0;
+    }
+
+// [crispy] assign lines to sectors
+    for (i = 0; i < numlines; ++i)
+    { 
+        li = &lines[i];
+
+        if (li->frontsector != NULL)
+        {
+            sector = li->frontsector;
+
+            sector->lines[sector->linecount] = li;
+            ++sector->linecount;
+        }
+
+        if (li->backsector != NULL && li->frontsector != li->backsector)
+        {
+            sector = li->backsector;
+
+            sector->lines[sector->linecount] = li;
+            ++sector->linecount;
+        }
+    }
+
+// [crispy] generate bounding boxes for sectors
     sector = sectors;
     for (i = 0; i < numsectors; i++, sector++)
     {
         M_ClearBox(bbox);
-        sector->lines = linebuffer;
-        li = lines;
-        for (j = 0; j < numlines; j++, li++)
+        for (j = 0; j < sector->linecount; j++)
         {
-            if (li->frontsector == sector || li->backsector == sector)
-            {
-                *linebuffer++ = li;
+                li = sector->lines[j];
+        
                 M_AddToBox(bbox, li->v1->x, li->v1->y);
                 M_AddToBox(bbox, li->v2->x, li->v2->y);
-            }
         }
-        if (linebuffer - sector->lines != sector->linecount)
-            I_Error("P_GroupLines: miscounted");
 
         // set the degenmobj_t to the middle of the bounding box
         sector->soundorg.x = (bbox[BOXRIGHT] + bbox[BOXLEFT]) / 2;
@@ -720,6 +758,7 @@ void P_SetupLevel(int episode, int map, int playermask, skill_t skill)
     char lumpname[9];
     int lumpnum;
     mobj_t *mobj;
+    boolean crispy_validblockmap;
     mapformat_t crispy_mapformat;
 
     totalkills = totalitems = totalsecret = 0;
@@ -763,12 +802,18 @@ void P_SetupLevel(int episode, int map, int playermask, skill_t skill)
     maplumpinfo = lumpinfo[lumpnum];
 
 // note: most of this ordering is important     
-    P_LoadBlockMap(lumpnum + ML_BLOCKMAP);
+    crispy_validblockmap = P_LoadBlockMap(lumpnum + ML_BLOCKMAP); // [crispy] (re-)create BLOCKMAP if necessary
     P_LoadVertexes(lumpnum + ML_VERTEXES);
     P_LoadSectors(lumpnum + ML_SECTORS);
     P_LoadSideDefs(lumpnum + ML_SIDEDEFS);
 
     P_LoadLineDefs(lumpnum + ML_LINEDEFS);
+
+    // [crispy] (re-)create BLOCKMAP if necessary
+    if (!crispy_validblockmap)
+    {
+        P_CreateBlockMap();
+    }
 
     if (crispy_mapformat & (MFMT_ZDBSPX | MFMT_ZDBSPZ))
     {
