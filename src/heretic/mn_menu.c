@@ -1260,6 +1260,12 @@ static boolean SCSaveGame(int option)
 {
     char *ptr;
 
+    // [crispy] check if saving is allowed
+    if (!usergame)
+    {
+        return false;
+    }
+
     if (!FileMenuKeySteal)
     {
         int x, y;
