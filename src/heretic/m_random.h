@@ -35,6 +35,7 @@ extern int rndindex;
 
 // Defined version of P_Random() - P_Random()
 int P_SubRandom (void);
+int Crispy_SubRandom (void);
 
 #endif // HERETIC_M_RANDOM_H
 

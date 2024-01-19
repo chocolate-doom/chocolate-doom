@@ -146,6 +146,7 @@ boolean P_SeekerMissile(mobj_t * actor, angle_t thresh, angle_t turnMax);
 void P_MobjThinker(thinker_t *thinker);
 void P_BlasterMobjThinker(thinker_t *thinker);
 void P_SpawnPuff(fixed_t x, fixed_t y, fixed_t z);
+void P_SpawnPuffSafe(fixed_t x, fixed_t y, fixed_t z, boolean safe);
 void P_SpawnBlood(fixed_t x, fixed_t y, fixed_t z, int damage);
 void P_BloodSplatter(fixed_t x, fixed_t y, fixed_t z, mobj_t * originator);
 void P_RipperBlood(mobj_t * mo);
