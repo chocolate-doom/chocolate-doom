@@ -1,32 +1,32 @@
-.TH @PROGRAM_SPREFIX@\-doom.cfg 5
+.TH @PROGRAM_SPREFIX@\-@GAME@.cfg 5
 .SH NAME
-@PROGRAM_SPREFIX@\-doom.cfg \- @PACKAGE_NAME@ configuration file
+@PROGRAM_SPREFIX@\-@GAME@.cfg \- @PACKAGE_SHORTNAME@ @GAME_UPPER@ configuration file
 .SH DESCRIPTION
 .PP
-\fI@PROGRAM_SPREFIX@\-doom.cfg\fR
-is a configuration file for \fB@PROGRAM_SPREFIX@\-doom\fR(6).  This file acts
+\fI@PROGRAM_SPREFIX@\-@GAME@.cfg\fR
+is a configuration file for \fB@PROGRAM_SPREFIX@\-@GAME@\fR(6).  This file acts
 as an auxiliary configuration file; the main configuration options
-are stored in \fBdefault.cfg\fR, which contains the same configuration
-options as Vanilla Doom (for compatibility).  \fI@PROGRAM_SPREFIX@\-doom.cfg\fR
-contains configuration options that are specific to @PACKAGE_NAME@
+are stored in \fB@CFGFILE@\fR, which contains the same configuration
+options as Vanilla @GAME_UPPER@ (for compatibility).  \fI@PROGRAM_SPREFIX@\-@GAME@.cfg\fR
+contains configuration options that are specific to @PACKAGE_SHORTNAME@\-@GAME_UPPER@
 only.
 .PP
-\fI@PROGRAM_SPREFIX@\-doom.cfg\fR is normally stored in the user's home directory,
-as \fI~/.local/share/@PROGRAM_SPREFIX@\-doom/@PROGRAM_SPREFIX@\-doom.cfg\fR.  The path can be
+\fI@PROGRAM_SPREFIX@\-@GAME@.cfg\fR is normally stored in the user's home directory,
+as \fI~/.local/share/@PROGRAM_SPREFIX@\-@GAME@/@PROGRAM_SPREFIX@\-@GAME@.cfg\fR.  The path can be
 overridden using the \fBXDG_DATA_HOME\fR environment variable (see the XDG
 Base Directory Specification).
 .PP
-The \fB@PROGRAM_SPREFIX@\-setup\fR(6) tool provides a simple to use front-end
-for editing \fI@PROGRAM_SPREFIX@\-doom.cfg\fR.
+The \fB@PROGRAM_SPREFIX@\-@GAME@\-setup\fR(6) tool provides a simple to use front-end
+for editing \fI@PROGRAM_SPREFIX@\-@GAME@.cfg\fR.
 .SH FILE FORMAT
 .PP
-The file format is the same as that used for \fBdefault.cfg\fR(5).
+The file format is the same as that used for \fB@CFGFILE@\fR(5).
 .br
 
 @content
 
 .SH SEE ALSO
-\fB@PROGRAM_SPREFIX@\-doom\fR(6),
-\fBdefault.cfg\fR(5),
-\fB@PROGRAM_SPREFIX@\-setup\fR(6)
+\fB@PROGRAM_SPREFIX@\-@GAME@\fR(6),
+\fB@CFGFILE@\fR(5),
+\fB@PROGRAM_SPREFIX@\-@GAME@\-setup\fR(6)
 
