@@ -33,9 +33,6 @@
 vertex_t KeyPoints[NUM_KEY_TYPES];
 
 #define NUMALIAS 3              // Number of antialiased lines.
-// [crispy] precalculated color LUT for antialiased line drawing using COLORMAP
-#define NUMSHADES 8
-static pixel_t color_shades[NUMSHADES * 256];
 
 const char *LevelNames[] = {
     // EPISODE 1 - THE CITY OF THE DAMNED
@@ -155,17 +152,21 @@ static char cheat_amap[] = { 'r', 'a', 'v', 'm', 'a', 'p' };
 
 static byte cheatcount = 0;
 
-// [crispy] line colors for map normal mode
-static byte antialias_normal[NUMALIAS] = {
-    96, 110, 75
+// [crispy] gradient table for map normal mode
+static byte antialias_normal[NUMALIAS][8] = {
+    {96, 97, 98, 99, 100, 101, 102, 103},
+    {110, 109, 108, 107, 106, 105, 104, 103},
+    {75, 76, 77, 78, 79, 80, 81, 103}
 };
 
-// [crispy] line colors for map overlay mode
-static byte antialias_overlay[NUMALIAS] = {
-    100, 110, 75
+// [crispy] gradient table for map overlay mode
+static byte antialias_overlay[NUMALIAS][8] = {
+    {100, 99, 98, 97, 96, 95, 95, 95},
+    {110, 109, 108, 105, 102, 99, 97, 95},
+    {75, 74, 73, 72, 71, 70, 69, 95}
 };
 
-static byte (*antialias)[NUMALIAS]; // [crispy]
+static byte (*antialias)[NUMALIAS][8]; // [crispy]
 /*
 static byte *aliasmax[NUMALIAS] = {
 	&antialias[0][7], &antialias[1][7], &antialias[2][7]
@@ -192,7 +193,7 @@ static angle_t mapangle;
 
 // Functions
 
-void DrawWuLine(int X0, int Y0, int X1, int Y1, int Color,
+void DrawWuLine(int X0, int Y0, int X1, int Y1, byte * BaseColor,
                 int NumLevels, unsigned short IntensityBits);
 
 // Calculates the slope and slope according to the x-axis of a line
@@ -538,8 +539,6 @@ void AM_LevelInit(boolean reinit)
 {
     // [crispy] Used for reinit
     static int f_h_old;
-    // [crispy] Only need to precalculate color lookup tables once
-    static boolean precalc_once;
 
     finit_width = SCREENWIDTH;
     finit_height = SCREENHEIGHT - (42 << crispy->hires);
@@ -571,26 +570,6 @@ void AM_LevelInit(boolean reinit)
     scale_ftom = FixedDiv(FRACUNIT, scale_mtof);
 
     f_h_old = f_h;
-
-    // [crispy] Precalculate color lookup tables for antialiased line drawing using COLORMAP
-    if (!precalc_once)
-    {
-        precalc_once = true;
-        for (int color = 0; color < 256; ++color)
-        {
-#define REINDEX(I) (color + I * 256)
-            // Pick a range of shades for a steep gradient to keep lines thin
-            int shade_index[NUMSHADES] =
-            {
-                REINDEX(0), REINDEX(1), REINDEX(2), REINDEX(3), REINDEX(4), REINDEX(5), REINDEX(6), REINDEX(7),
-            };
-#undef REINDEX
-            for (int shade = 0; shade < NUMSHADES; ++shade)
-            {
-                color_shades[color * NUMSHADES + shade] = colormaps[shade_index[shade]];
-            }
-        }
-    }
 }
 
 static boolean stopped = true;
@@ -1268,15 +1247,15 @@ void AM_drawFline(fline_t * fl, int color)
     switch (color)
     {
         case WALLCOLORS:
-            DrawWuLine(fl->a.x, fl->a.y, fl->b.x, fl->b.y, (*antialias)[0],
+            DrawWuLine(fl->a.x, fl->a.y, fl->b.x, fl->b.y, &(*antialias)[0][0],
                        8, 3);
             break;
         case FDWALLCOLORS:
-            DrawWuLine(fl->a.x, fl->a.y, fl->b.x, fl->b.y, (*antialias)[1],
+            DrawWuLine(fl->a.x, fl->a.y, fl->b.x, fl->b.y, &(*antialias)[1][0],
                        8, 3);
             break;
         case CDWALLCOLORS:
-            DrawWuLine(fl->a.x, fl->a.y, fl->b.x, fl->b.y, (*antialias)[2],
+            DrawWuLine(fl->a.x, fl->a.y, fl->b.x, fl->b.y, &(*antialias)[2][0],
                        8, 3);
             break;
         default:
@@ -1355,11 +1334,11 @@ void AM_drawFline(fline_t * fl, int color)
  * IntensityBits = log base 2 of NumLevels; the # of bits used to describe
  *          the intensity of the drawing color. 2**IntensityBits==NumLevels
  */
-void PUTDOT(short xx, short yy, pixel_t * cc, pixel_t * cm)
+void PUTDOT(short xx, short yy, byte * cc, byte * cm)
 {
     static int oldyy;
     static int oldyyshifted;
-    pixel_t *oldcc = cc;
+    byte *oldcc = cc;
 
     if (xx < 32)
         cc += 7 - (xx >> 2);
@@ -1395,17 +1374,20 @@ void PUTDOT(short xx, short yy, pixel_t * cc, pixel_t * cm)
         oldyy = yy;
         oldyyshifted = yy * f_w;
     }
+#ifndef CRISPY_TRUECOLOR
     fb[oldyyshifted + xx] = *(cc);
+#else
+    fb[oldyyshifted + xx] = colormaps[*(cc)];
+#endif
 //      fb[(yy)*f_w+(xx)]=*(cc);
 }
 
-void DrawWuLine(int X0, int Y0, int X1, int Y1, int Color,
+void DrawWuLine(int X0, int Y0, int X1, int Y1, byte * BaseColor,
                 int NumLevels, unsigned short IntensityBits)
 {
     unsigned short IntensityShift, ErrorAdj, ErrorAcc;
     unsigned short ErrorAccTemp, Weighting, WeightingComplementMask;
     short DeltaX, DeltaY, Temp, XDir;
-    pixel_t *BaseColor = &color_shades[Color * NUMSHADES];
 
     /* Make sure the line runs top to bottom */
     if (Y0 > Y1)
