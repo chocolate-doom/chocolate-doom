@@ -46,10 +46,7 @@ static boolean LoadSigilWad (const char *iwaddir, boolean pwadtexture)
 		"SIGIL.wad"
 	};
 
-	static const struct {
-		const char *name;
-		const char new_name[8];
-	} sigil_lumps [] = {
+	static const lump_rename_t sigil_lumps [] = {
 		{"CREDIT",   "SIGCREDI"},
 		{"HELP1",    "SIGHELP1"},
 		{"TITLEPIC", "SIGTITLE"},
@@ -164,7 +161,7 @@ static boolean LoadSigilWad (const char *iwaddir, boolean pwadtexture)
 	{
 		if ((autoload_dir = M_GetAutoloadDir(sigil_basename, false)))
 		{
-			W_AutoLoadWADs(autoload_dir);
+			W_AutoLoadWADsRename(autoload_dir, sigil_lumps, arrlen(sigil_lumps));
 			DEH_AutoLoadPatches(autoload_dir);
 			free(autoload_dir);
 		}
@@ -185,10 +182,7 @@ static boolean LoadSigil2Wad (const char *iwaddir, boolean pwadtexture)
         "SIGIL_II_V1_0.WAD",
     };
 
-    static const struct {
-        const char *name;
-        const char new_name[8];
-    } sigil2_lumps [] = {
+    static const lump_rename_t sigil2_lumps [] = {
         {"CREDIT",   "SG2CREDI"},
         {"HELP1",    "SG2HELP1"},
         {"TITLEPIC", "SG2TITLE"},
@@ -268,7 +262,7 @@ static boolean LoadSigil2Wad (const char *iwaddir, boolean pwadtexture)
     {
         if ((autoload_dir = M_GetAutoloadDir(sigil2_basename, false)))
         {
-            W_AutoLoadWADs(autoload_dir);
+            W_AutoLoadWADsRename(autoload_dir, sigil2_lumps, arrlen(sigil2_lumps));
             DEH_AutoLoadPatches(autoload_dir);
             free(autoload_dir);
         }
@@ -351,10 +345,7 @@ static void CheckLoadNerve (void)
 	char *autoload_dir;
 	int i, j;
 
-	static const struct {
-		const char *name;
-		const char new_name[8];
-	} nerve_lumps [] = {
+	static const lump_rename_t nerve_lumps [] = {
 		{"TITLEPIC", "NERVEPIC"},
 		{"INTERPIC", "NERVEINT"},
 	};
@@ -423,7 +414,7 @@ static void CheckLoadNerve (void)
 	{
 		if ((autoload_dir = M_GetAutoloadDir(nerve_basename, false)))
 		{
-			W_AutoLoadWADs(autoload_dir);
+			W_AutoLoadWADsRename(autoload_dir, nerve_lumps, arrlen(nerve_lumps));
 			DEH_AutoLoadPatches(autoload_dir);
 			free(autoload_dir);
 		}
@@ -462,6 +453,11 @@ static boolean CheckMasterlevelsLoaded (void)
 
 	return false;
 }
+
+static const lump_rename_t master_lumps [] = {
+	{"TITLEPIC", "MASTRPIC"},
+	{"INTERPIC", "MASTRINT"},
+};
 
 // [crispy] auto-load the single MASTERLEVELS.WAD if available
 static boolean CheckLoadMasterlevels (void)
@@ -532,7 +528,7 @@ static boolean CheckLoadMasterlevels (void)
 	{
 		if ((autoload_dir = M_GetAutoloadDir(master_basename, false)))
 		{
-			W_AutoLoadWADs(autoload_dir);
+			W_AutoLoadWADsRename(autoload_dir, master_lumps, arrlen(master_lumps));
 			DEH_AutoLoadPatches(autoload_dir);
 			free(autoload_dir);
 		}
@@ -634,6 +630,7 @@ static void LoadMasterlevelsWads (void)
 {
 	int i, j;
 	char lumpname[9];
+	char *autoload_dir;
 
 	const char *const sky_lumps[] = {
 		"RSKY1",
@@ -676,6 +673,17 @@ static void LoadMasterlevelsWads (void)
 
 	// [crispy] indicate this is not the single MASTERLEVELS.WAD
 	crispy->havemaster = (char *)-1;
+
+	// [crispy] autoload from MASTERLEVELS.WAD autoload directory
+	if (!M_ParmExists("-noautoload"))
+	{
+		if ((autoload_dir = M_GetAutoloadDir("MASTERLEVELS.WAD", false)))
+		{
+			W_AutoLoadWADsRename(autoload_dir, master_lumps, arrlen(master_lumps));
+			DEH_AutoLoadPatches(autoload_dir);
+			free(autoload_dir);
+		}
+	}
 
 	// [crispy] regenerate the hashtable
 	W_GenerateHashTable();

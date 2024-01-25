@@ -1865,6 +1865,10 @@ static void WI_loadUnloadData(load_callback_t callback)
         {
             M_StringCopy(name, DEH_String("NERVEINT"), sizeof(name));
         }
+        else if (crispy->havemaster && wbs->epsd == 2 && W_CheckNumForName(DEH_String("MASTRINT")) != -1) // [crispy] gamemission == pack_master
+        {
+            M_StringCopy(name, DEH_String("MASTRINT"), sizeof(name));
+        }
         else
         {
         M_StringCopy(name, DEH_String("INTERPIC"), sizeof(name));
