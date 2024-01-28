@@ -416,6 +416,8 @@ void R_MakeSpans(int x, unsigned int t1, unsigned int b1, unsigned int t2, unsig
 */
 
 #define SKYTEXTUREMIDSHIFTED 200 // [crispy]
+#define FLATSCROLL(X) \
+    ((interpfactor << (X)) - (((63 - ((leveltime >> 1) & 63)) << (X) & 63) * FRACUNIT))
 
 void R_DrawPlanes(void)
 {
@@ -579,6 +581,7 @@ void R_DrawPlanes(void)
             interpfactor = 0;
         }
 
+        //[crispy] use smoothscrolloffsets to unconditonally animate all scrolling floors
         switch (pl->special)
         {
             case 25:
@@ -587,7 +590,7 @@ void R_DrawPlanes(void)
             case 28:
             case 29:           // Scroll_North
                 xsmoothscrolloffset = 0;
-                ysmoothscrolloffset = 0;
+                ysmoothscrolloffset = FLATSCROLL(pl->special - 25);
                 ds_source = tempSource;
                 break;
             case 20:
@@ -595,10 +598,13 @@ void R_DrawPlanes(void)
             case 22:
             case 23:
             case 24:           // Scroll_East
-                xsmoothscrolloffset = -(interpfactor << (pl->special - 20));
+                // [crispy] vanilla Heretic animates Eastward scrollers by adding to tempSource.
+                // this directly offsets the position the flat is read from, and results in
+                // visual artifacts (tutti-frutti on flats that aren't at least 65px tall, jittery
+                // animation, unwanted visplane merging of adjacent flats with different scrollers)
+                xsmoothscrolloffset = -FLATSCROLL(pl->special - 20);
                 ysmoothscrolloffset = 0;
-                ds_source = tempSource + ((63 - ((leveltime >> 1) & 63)) <<
-                                          (pl->special - 20) & 63);
+                ds_source = tempSource;
                 //ds_source = tempSource+((leveltime>>1)&63);
                 break;
             case 30:
@@ -607,7 +613,7 @@ void R_DrawPlanes(void)
             case 33:
             case 34:           // Scroll_South
                 xsmoothscrolloffset = 0;
-                ysmoothscrolloffset = 0;
+                ysmoothscrolloffset = -FLATSCROLL(pl->special - 30);
                 ds_source = tempSource;
                 break;
             case 35:
@@ -615,15 +621,15 @@ void R_DrawPlanes(void)
             case 37:
             case 38:
             case 39:           // Scroll_West
-                xsmoothscrolloffset = 0;
+                xsmoothscrolloffset = FLATSCROLL(pl->special - 35);
                 ysmoothscrolloffset = 0;
                 ds_source = tempSource;
                 break;
             case 4:            // Scroll_EastLavaDamage
-                xsmoothscrolloffset = -(interpfactor << 3);
+                // [crispy] calculation moved from tempSource, see Scroll_East above
+                xsmoothscrolloffset = -FLATSCROLL(3);
                 ysmoothscrolloffset = 0;
-                ds_source =
-                    tempSource + (((63 - ((leveltime >> 1) & 63)) << 3) & 63);
+                ds_source = tempSource;
                 break;
             default:
                 xsmoothscrolloffset = 0;
