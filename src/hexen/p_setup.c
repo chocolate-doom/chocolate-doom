@@ -178,6 +178,10 @@ void P_LoadVertexes(int lump)
     {
         li->x = SHORT(ml->x) << FRACBITS;
         li->y = SHORT(ml->y) << FRACBITS;
+
+        // [crispy] initialize vertex coordinates *only* used in rendering
+        li->r_x = li->x;
+        li->r_y = li->y;
     }
 
     W_ReleaseLumpNum(lump);
@@ -214,6 +218,7 @@ void P_LoadSegs(int lump)
         li->v2 = &vertexes[SHORT(ml->v2)];
 
         li->angle = (SHORT(ml->angle)) << 16;
+        li->r_angle = li->angle; // [crispy] initialize rendering angle
         li->offset = (SHORT(ml->offset)) << 16;
         linedef = SHORT(ml->linedef);
         ldef = &lines[linedef];

@@ -717,7 +717,7 @@ static void RotatePolyVertices(polyobj_t *po, angle_t angle)
     vertex_t *prevPts;
     int an;
 
-    an = (po->angle - po->rtheta + angle) >> ANGLETOFINESHIFT;
+    an = (po->angle + angle) >> ANGLETOFINESHIFT;
     segList = po->segs;
     originalPts = po->originalPts;
     prevPts = po->prevPts;
@@ -731,7 +731,29 @@ static void RotatePolyVertices(polyobj_t *po, angle_t angle)
         (*segList)->v1->y = originalPts->y;
         RotatePt(an, &(*segList)->v1->x, &(*segList)->v1->y, po->startSpot.x,
                  po->startSpot.y);
-        (*segList)->angle += angle;
+        (*segList)->v1->r_x = (*segList)->v1->x;
+        (*segList)->v1->r_y = (*segList)->v1->y;
+    }
+}
+
+static void RotatePolyVerticesRendering(polyobj_t *po, angle_t angle)
+{
+    int count;
+    seg_t **segList;
+    vertex_t *originalPts;
+    int an;
+
+    an = (po->angle - po->rtheta + angle) >> ANGLETOFINESHIFT;
+    segList = po->segs;
+    originalPts = po->originalPts;
+
+    for (count = po->numsegs; count; count--, segList++, originalPts++)
+    {
+        (*segList)->v1->r_x = originalPts->x;
+        (*segList)->v1->r_y = originalPts->y;
+        RotatePt(an, &(*segList)->v1->r_x, &(*segList)->v1->r_y, po->startSpot.x,
+                 po->startSpot.y);
+        (*segList)->r_angle += angle;
     }
 }
 
@@ -757,6 +779,34 @@ static void TranslatePolyVertices(polyobj_t *po, fixed_t dx, fixed_t dy)
         {
             (*segList)->v1->x += dx;
             (*segList)->v1->y += dy;
+            (*segList)->v1->r_x = (*segList)->v1->x;
+            (*segList)->v1->r_y = (*segList)->v1->y;
+        }
+    }
+}
+
+// [crispy]
+static void TranslatePolyVerticesRendering(polyobj_t *po, fixed_t dx, fixed_t dy)
+{
+    seg_t **segList;
+    seg_t **veryTempSeg;
+    int count;
+
+    segList = po->segs;
+
+    for (count = po->numsegs; count; count--, segList++)
+    {
+        for (veryTempSeg = po->segs; veryTempSeg != segList; veryTempSeg++)
+        {
+            if ((*veryTempSeg)->v1 == (*segList)->v1)
+            {
+                break;
+            }
+        }
+        if (veryTempSeg == segList)
+        {
+            (*segList)->v1->r_x += dx;
+            (*segList)->v1->r_y += dy;
         }
     }
 }
@@ -786,8 +836,7 @@ boolean PO_MovePolyobj(int num, int x, int y, boolean interp)
     prevPts = po->prevPts;
     blocked = false;
 
-    // [crispy] sync poly vertices every gametic
-    TranslatePolyVertices(po, x + po->rx, y + po->ry);
+    TranslatePolyVertices(po, x, y);
     po->rx = 0;
     po->ry = 0;
 
@@ -842,11 +891,11 @@ boolean PO_MovePolyobj(int num, int x, int y, boolean interp)
     po->startSpot.y += y;
     LinkPolyobj(po);
 
-    // [crispy] Move points back after calculating bounding boxes. We'll handle
-    // the actual movement in PO_InterpolatePolyObjects().
+    // [crispy] Handle the rendering vertex movement in
+    // PO_InterpolatePolyObjects().
     if (crispy->uncapped && interp)
     {
-        TranslatePolyVertices(po, -x, -y);
+        TranslatePolyVerticesRendering(po, -x, -y);
         po->dx = x;
         po->dy = y;
         po->rx = x;
@@ -924,7 +973,7 @@ void PO_InterpolatePolyObjects(void)
                 }
             }
 
-            TranslatePolyVertices(po, dx, dy);
+            TranslatePolyVerticesRendering(po, dx, dy);
             po->rx -= dx;
             po->ry -= dy;
         }
@@ -939,7 +988,7 @@ void PO_InterpolatePolyObjects(void)
                 interpangle = po->rtheta;
             }
 
-            RotatePolyVertices(po, interpangle);
+            RotatePolyVerticesRendering(po, interpangle);
             po->rtheta -= interpangle;
         }
     }
@@ -991,7 +1040,6 @@ boolean PO_RotatePolyobj(int num, angle_t angle, boolean interp)
 
     UnLinkPolyobj(po);
 
-    RotatePolyVertices(po, po->rtheta); // [crispy]
     po->rtheta = po->dtheta = 0; // [crispy]
     RotatePolyVertices(po, angle); // [crispy] prevPts get set here.
 
@@ -1009,6 +1057,8 @@ boolean PO_RotatePolyobj(int num, angle_t angle, boolean interp)
             UpdateSegBBox(*segList);
             (*segList)->linedef->validcount = validcount;
         }
+        (*segList)->angle += angle;
+        (*segList)->r_angle = (*segList)->angle;
     }
     if (blocked)
     {
@@ -1036,19 +1086,18 @@ boolean PO_RotatePolyobj(int num, angle_t angle, boolean interp)
     po->angle += angle;
     LinkPolyobj(po);
 
-    // [crispy] Move points back after calculating bounding boxes. We'll handle
-    // the actual movement in PO_InterpolatePolyObjects().
-    // Note: 180 degree rotations can be called for during loading of the
-    // level. Don't try to interpolate those.
+    // [crispy] Handle the movement of rendering angle and vertices in
+    // PO_InterpolatePolyObjects().  Note: 180 degree rotations can be called
+    // for during loading of the level. Don't try to interpolate those.
     if (crispy->uncapped && interp && angle != ANG180)
     {
         segList = po->segs;
         prevPts = po->prevPts;
         for (count = po->numsegs; count; count--, segList++, prevPts++)
         {
-            (*segList)->v1->x = prevPts->x;
-            (*segList)->v1->y = prevPts->y;
-            (*segList)->angle -= angle;
+            (*segList)->v1->r_x = prevPts->x;
+            (*segList)->v1->r_y = prevPts->y;
+            (*segList)->r_angle -= angle;
         }
         po->rtheta = po->dtheta = angle;
     }
@@ -1540,6 +1589,8 @@ static void TranslateToStartSpot(int tag, int originX, int originY)
         {                       // the point hasn't been translated, yet
             (*tempSeg)->v1->x -= deltaX;
             (*tempSeg)->v1->y -= deltaY;
+            (*tempSeg)->v1->r_x -= deltaX;
+            (*tempSeg)->v1->r_y -= deltaY;
         }
         avg.x += (*tempSeg)->v1->x >> FRACBITS;
         avg.y += (*tempSeg)->v1->y >> FRACBITS;

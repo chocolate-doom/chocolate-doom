@@ -63,6 +63,7 @@
 typedef struct
 {
     fixed_t x, y;
+    fixed_t r_x, r_y; // [crispy] for rendering only
 } vertex_t;
 
 struct line_s;
@@ -170,6 +171,7 @@ typedef struct
     vertex_t *v1, *v2;
     fixed_t offset;
     angle_t angle;
+    angle_t r_angle; // [crispy] for rendering only
     side_t *sidedef;
     line_t *linedef;
     sector_t *frontsector;
