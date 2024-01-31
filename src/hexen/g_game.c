@@ -1072,6 +1072,14 @@ boolean G_Responder(event_t * ev)
         usearti = true;
     }
 
+    // [crispy] demo fast-forward
+    if (ev->type == ev_keydown && ev->data1 == key_demospeed && 
+        (demoplayback || gamestate == GS_DEMOSCREEN))
+    {
+        singletics = !singletics;
+        return true;
+    }
+
     // Check for spy mode player cycle
     if (gamestate == GS_LEVEL && ev->type == ev_keydown
         && ev->data1 == key_spy && !deathmatch)
@@ -2049,7 +2057,9 @@ void G_InitNew(skill_t skill, int episode, int map)
     }
 
     // Set up a bunch of globals
-    if (!demoextend)
+    // [crispy] since demoextend is the default, we also want to check to
+    // make sure we're not playing a demo
+    if (!demoextend || (!demorecording && !demoplayback))
     {
         // This prevents map-loading from interrupting a demo.
         // demoextend is set back to false only if starting a new game or

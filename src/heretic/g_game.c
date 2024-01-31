@@ -1142,6 +1142,14 @@ boolean G_Responder(event_t * ev)
         usearti = true;
     }
 
+    // [crispy] demo fast-forward
+    if (ev->type == ev_keydown && ev->data1 == key_demospeed && 
+        (demoplayback || gamestate == GS_DEMOSCREEN))
+    {
+        singletics = !singletics;
+        return true;
+    }
+
     // Check for spy mode player cycle
     if (gamestate == GS_LEVEL && ev->type == ev_keydown
         && ev->data1 == KEY_F12 && !deathmatch)
