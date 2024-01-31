@@ -19,6 +19,8 @@ PACKAGE_STRING = @PACKAGE_STRING@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 
+TARGET_OS = @TARGET_OS@
+
 # Documentation files to distribute with packages.
 
 DOC_FILES = README.md        \
