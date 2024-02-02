@@ -879,7 +879,7 @@ F_DrawPatchCol
 #ifndef CRISPY_TRUECOLOR
 	    *dest = source[srccol >> FRACBITS];
 #else
-	    *dest = colormaps[source[srccol >> FRACBITS]];
+	    *dest = pal_color[source[srccol >> FRACBITS]];
 #endif
 	    srccol += dyi;
 	    dest += SCREENWIDTH;

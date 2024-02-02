@@ -167,7 +167,8 @@ fixed_t*	spritewidth;
 fixed_t*	spriteoffset;
 fixed_t*	spritetopoffset;
 
-lighttable_t	*colormaps, *pal_color;
+lighttable_t	*colormaps;
+lighttable_t	*pal_color; // [crispy] array holding palette colors for true color mode
 
 // [FG] check if the lump can be a Doom patch
 // taken from PrBoom+ prboom2/src/r_patch.c:L350-L390
@@ -1189,18 +1190,16 @@ void R_InitColormaps (void)
     lump = W_GetNumForName(DEH_String("COLORMAP"));
     colormaps = W_CacheLumpNum(lump, PU_STATIC);
 #else
-	byte *playpal;
 	int c, i, j = 0;
 	byte r, g, b;
 
-	playpal = W_CacheLumpName("PLAYPAL", PU_STATIC);
+	byte *const playpal = W_CacheLumpName("PLAYPAL", PU_STATIC);
+	byte *const colormap = W_CacheLumpName("COLORMAP", PU_STATIC);
 
 	if (!colormaps)
 	{
 		colormaps = (lighttable_t*) Z_Malloc((NUMCOLORMAPS + 1) * 256 * sizeof(lighttable_t), PU_STATIC, 0);
 	}
-
-	pal_color = colormaps;
 
 	if (crispy->truecolor)
 	{
@@ -1210,9 +1209,11 @@ void R_InitColormaps (void)
 
 			for (i = 0; i < 256; i++)
 			{
-				r = gamma2table[crispy->gamma][playpal[3 * i + 0]] * (1. - scale) + gamma2table[crispy->gamma][0] * scale;
-				g = gamma2table[crispy->gamma][playpal[3 * i + 1]] * (1. - scale) + gamma2table[crispy->gamma][0] * scale;
-				b = gamma2table[crispy->gamma][playpal[3 * i + 2]] * (1. - scale) + gamma2table[crispy->gamma][0] * scale;
+				const byte k = colormap[i];
+
+				r = gamma2table[crispy->gamma][playpal[3 * k + 0]] * (1. - scale) + gamma2table[crispy->gamma][0] * scale;
+				g = gamma2table[crispy->gamma][playpal[3 * k + 1]] * (1. - scale) + gamma2table[crispy->gamma][0] * scale;
+				b = gamma2table[crispy->gamma][playpal[3 * k + 2]] * (1. - scale) + gamma2table[crispy->gamma][0] * scale;
 
 				colormaps[j++] = 0xff000000 | (r << 16) | (g << 8) | b;
 			}
@@ -1232,8 +1233,6 @@ void R_InitColormaps (void)
 	}
 	else
 	{
-		byte *const colormap = W_CacheLumpName("COLORMAP", PU_STATIC);
-
 		for (c = 0; c <= NUMCOLORMAPS; c++)
 		{
 			for (i = 0; i < 256; i++)
@@ -1245,13 +1244,31 @@ void R_InitColormaps (void)
 				colormaps[j++] = 0xff000000 | (r << 16) | (g << 8) | b;
 			}
 		}
-
-		W_ReleaseLumpName("COLORMAP");
 	}
-#endif
 
-    // [crispy] initialize color translation and color strings tables
-    {
+	W_ReleaseLumpName("COLORMAP");
+
+	if (!pal_color)
+	{
+		pal_color = (pixel_t*) Z_Malloc(256 * sizeof(pixel_t), PU_STATIC, 0);
+	}
+
+	for (i = 0, j = 0; i < 256; i++)
+	{
+		r = gamma2table[crispy->gamma][playpal[3 * i + 0]];
+		g = gamma2table[crispy->gamma][playpal[3 * i + 1]];
+		b = gamma2table[crispy->gamma][playpal[3 * i + 2]];
+
+		pal_color[j++] = 0xff000000 | (r << 16) | (g << 8) | b;
+	}
+
+	W_ReleaseLumpName("PLAYPAL");
+#endif
+}
+
+// [crispy] initialize color translation and color string tables
+static void R_InitHSVColors(void)
+{
 	byte *playpal = W_CacheLumpName("PLAYPAL", PU_STATIC);
 	char c[3];
 	int i, j;
@@ -1291,7 +1308,6 @@ void R_InitColormaps (void)
 	{
 	    cr[CR_RED2BLUE] = W_CacheLumpNum(i, PU_STATIC);
 	}
-    }
 }
 
 
@@ -1320,6 +1336,8 @@ void R_InitData (void)
     // [crispy] Initialize and generate gamma-correction levels.
     I_SetGammaTable ();
     R_InitColormaps ();
+    // [crispy] Initialize color translation and color string tables.
+    R_InitHSVColors ();
 #ifndef CRISPY_TRUECOLOR
     R_InitTranMap(); // [crispy] prints a mark itself
 #endif

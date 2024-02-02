@@ -1101,21 +1101,21 @@ void AM_clearFB(int color)
 
         for (z = 0; z < x3; z++)
         {
-            dest[z] = colormaps[src[z]];
+            dest[z] = pal_color[src[z]];
         }
 
         dest += x3;
         src += x3 - x2;
         for (z = 0; z < x2; z++)
         {
-            dest[z] = colormaps[src[z]];
+            dest[z] = pal_color[src[z]];
         }
 
         dest += x2;
         src = maplump + j;
         for (z = 0; z < x1; z++)
         {
-            dest[z] = colormaps[src[z]];
+            dest[z] = pal_color[src[z]];
         }
 #endif
         j += MAPBGROUNDWIDTH << crispy->hires;
@@ -1273,7 +1273,7 @@ void AM_drawFline(fline_t * fl, int color)
 #ifndef CRISPY_TRUECOLOR
 #define DOT(xx,yy,cc) fb[(yy)*f_w+(xx)]=(cc)    //the MACRO!
 #else
-#define DOT(xx,yy,cc) fb[(yy)*f_w+(xx)]=(colormaps[cc])
+#define DOT(xx,yy,cc) fb[(yy)*f_w+(xx)]=(pal_color[cc])
 #endif
 
                 dx = fl->b.x - fl->a.x;
@@ -1377,7 +1377,7 @@ void PUTDOT(short xx, short yy, byte * cc, byte * cm)
 #ifndef CRISPY_TRUECOLOR
     fb[oldyyshifted + xx] = *(cc);
 #else
-    fb[oldyyshifted + xx] = colormaps[*(cc)];
+    fb[oldyyshifted + xx] = pal_color[*(cc)];
 #endif
 //      fb[(yy)*f_w+(xx)]=*(cc);
 }

@@ -520,7 +520,7 @@ void R_DrawPlanes(void)
 #ifndef CRISPY_TRUECOLOR
                             *dest = dc_source[frac >> FRACBITS];
 #else
-                            *dest = colormaps[dc_source[frac >> FRACBITS]];
+                            *dest = pal_color[dc_source[frac >> FRACBITS]];
 #endif
                             dest += SCREENWIDTH;
 
@@ -540,7 +540,7 @@ void R_DrawPlanes(void)
 #ifndef CRISPY_TRUECOLOR
                             *dest = dc_source[(frac >> FRACBITS) & heightmask];
 #else
-                            *dest = colormaps[dc_source[(frac >> FRACBITS) & heightmask]];
+                            *dest = pal_color[dc_source[(frac >> FRACBITS) & heightmask]];
 #endif
                             dest += SCREENWIDTH;
                             frac += fracstep;

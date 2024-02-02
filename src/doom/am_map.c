@@ -1309,7 +1309,7 @@ AM_drawFline_Vanilla
 #ifndef CRISPY_TRUECOLOR
 #define PUTDOT(xx,yy,cc) PUTDOT_RAW(xx,yy,cc)
 #else
-#define PUTDOT(xx,yy,cc) PUTDOT_RAW(xx,yy,(colormaps[(cc)]))
+#define PUTDOT(xx,yy,cc) PUTDOT_RAW(xx,yy,(pal_color[(cc)]))
 #endif
 
     dx = fl->b.x - fl->a.x;
@@ -2104,7 +2104,7 @@ static void AM_drawCrosshair(int color, boolean force)
 #ifndef CRISPY_TRUECOLOR
     fb[(f_w*(f_h+1))/2] = color; // single point for now
 #else
-    fb[(f_w*(f_h+1))/2] = colormaps[color]; // single point for now
+    fb[(f_w*(f_h+1))/2] = pal_color[color]; // single point for now
 #endif
 */
 

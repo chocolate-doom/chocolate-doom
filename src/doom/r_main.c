@@ -1128,7 +1128,7 @@ void R_RenderPlayerView (player_t* player)
 #ifndef CRISPY_TRUECOLOR
             176 + (gametic % 16));
 #else
-            colormaps[176 + (gametic % 16)]);
+            pal_color[176 + (gametic % 16)]);
 #endif
     }
 

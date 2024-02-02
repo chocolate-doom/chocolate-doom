@@ -66,7 +66,8 @@ fixed_t *spritewidth;           // needed for pre rendering
 fixed_t *spriteoffset;
 fixed_t *spritetopoffset;
 
-lighttable_t *colormaps, *pal_color;
+lighttable_t *colormaps;
+lighttable_t *pal_color; // [crispy] array holding palette colors for true color mode
 
 
 /*

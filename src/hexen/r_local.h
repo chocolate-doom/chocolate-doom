@@ -504,7 +504,7 @@ extern fixed_t *textureheight;  // needed for texture pegging
 extern fixed_t *spritewidth;    // needed for pre rendering (fracs)
 extern fixed_t *spriteoffset;
 extern fixed_t *spritetopoffset;
-extern lighttable_t *colormaps;
+extern lighttable_t *colormaps, *pal_color;
 extern int firstflat;
 extern int numflats;
 
