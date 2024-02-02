@@ -134,7 +134,7 @@ jobs:
 
       - name: Upload artifacts
         if: ${{ matrix.config.artifacts }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.config.name }}
           path: ${{ matrix.config.pkg-path }}
