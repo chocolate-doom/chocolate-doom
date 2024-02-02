@@ -39,7 +39,7 @@ static int finit_height;// = SCREENHEIGHT - SBARHEIGHT - (3 << crispy->hires);
 static int f_x, f_y;            // location of window on screen
 static int f_w, f_h;            // size of window on screen
 static int lightlev;            // used for funky strobing effect
-static byte *fb;                // pseudo-frame buffer
+static pixel_t *fb;             // pseudo-frame buffer
 static int amclock;
 
 static mpoint_t m_paninc;       // how far the window pans each tic (map coords)
@@ -989,6 +989,7 @@ void AM_clearFB(int color)
 
     for (i = 0; i < SCREENHEIGHT - SBARHEIGHT; i++)
     {
+#ifndef CRISPY_TRUECOLOR
         memcpy(I_VideoBuffer + i * finit_width,
                maplump + j + (MAPBGROUNDWIDTH << crispy->hires) - x3, x3);
 
@@ -997,6 +998,30 @@ void AM_clearFB(int color)
 
         memcpy(I_VideoBuffer + i * finit_width + x2 + x3,
                maplump + j, x1);
+#else
+        int z;
+        pixel_t *dest = I_VideoBuffer + i * finit_width;
+        byte *src = maplump + j + (MAPBGROUNDWIDTH << crispy->hires) - x3;
+
+        for (z = 0; z < x3; z++)
+        {
+            dest[z] = colormaps[src[z]];
+        }
+
+        dest += x3;
+        src += x3 - x2;
+        for (z = 0; z < x2; z++)
+        {
+            dest[z] = colormaps[src[z]];
+        }
+
+        dest += x2;
+        src = maplump + j;
+        for (z = 0; z < x1; z++)
+        {
+            dest[z] = colormaps[src[z]];
+        }
+#endif
 
         j += MAPBGROUNDWIDTH << crispy->hires;
         if (j >= MAPBGROUNDHEIGHT * MAPBGROUNDWIDTH)
@@ -1149,7 +1174,11 @@ void AM_drawFline(fline_t * fl, int color)
                     return;
                 }
 
+#ifndef CRISPY_TRUECOLOR
 #define DOT(xx,yy,cc) fb[(yy)*f_w+(xx)]=(cc)    //the MACRO!
+#else
+#define DOT(xx,yy,cc) fb[(yy)*f_w+(xx)]=(colormaps[cc])
+#endif
 
                 dx = fl->b.x - fl->a.x;
                 ax = 2 * (dx < 0 ? -dx : dx);
@@ -1249,7 +1278,11 @@ void PUTDOT(short xx, short yy, byte * cc, byte * cm)
         oldyy = yy;
         oldyyshifted = yy * f_w;
     }
+#ifndef CRISPY_TRUECOLOR
     fb[oldyyshifted + xx] = *(cc);
+#else
+    fb[oldyyshifted + xx] = colormaps[*(cc)];
+#endif
 //      fb[(yy)*f_w+(xx)]=*(cc);
 }
 

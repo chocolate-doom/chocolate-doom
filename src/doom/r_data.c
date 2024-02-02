@@ -167,7 +167,7 @@ fixed_t*	spritewidth;
 fixed_t*	spriteoffset;
 fixed_t*	spritetopoffset;
 
-lighttable_t	*colormaps;
+lighttable_t	*colormaps, *pal_color;
 
 // [FG] check if the lump can be a Doom patch
 // taken from PrBoom+ prboom2/src/r_patch.c:L350-L390
@@ -1199,6 +1199,8 @@ void R_InitColormaps (void)
 	{
 		colormaps = (lighttable_t*) Z_Malloc((NUMCOLORMAPS + 1) * 256 * sizeof(lighttable_t), PU_STATIC, 0);
 	}
+
+	pal_color = colormaps;
 
 	if (crispy->truecolor)
 	{

@@ -99,7 +99,11 @@ static char *HubText;
 void IN_Start(void)
 {
     int i;
+#ifndef CRISPY_TRUECOLOR
     I_SetPalette(W_CacheLumpName("PLAYPAL", PU_CACHE));
+#else
+    I_SetPalette(0);
+#endif
     InitStats();
     LoadPics();
     intermission = true;

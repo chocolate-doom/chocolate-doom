@@ -70,7 +70,7 @@ fixed_t *spritewidth;           // needed for pre rendering
 fixed_t *spriteoffset;
 fixed_t *spritetopoffset;
 
-lighttable_t *colormaps;
+lighttable_t *colormaps, *pal_color;
 
 
 /*
@@ -541,6 +541,8 @@ void R_InitColormaps(void)
 	{
 		colormaps = (lighttable_t*) Z_Malloc((NUMCOLORMAPS + 1) * 256 * sizeof(lighttable_t), PU_STATIC, 0);
 	}
+
+	pal_color = colormaps;
 
 	if (crispy->truecolor)
 	{

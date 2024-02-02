@@ -157,7 +157,7 @@ fixed_t*	spritewidth;
 fixed_t*	spriteoffset;
 fixed_t*	spritetopoffset;
 
-lighttable_t	*colormaps;
+lighttable_t	*colormaps, *pal_color;
 
 
 //
@@ -695,6 +695,7 @@ void R_InitColormaps (void)
     // Load in the light tables, 256 byte align tables.
     lump = W_GetNumForName(DEH_String("COLORMAP"));
     colormaps = W_CacheLumpNum(lump, PU_STATIC);
+    pal_color = colormaps;
 
     // [crispy] initialize color translation and color strings tables
     {

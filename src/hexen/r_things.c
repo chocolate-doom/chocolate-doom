@@ -22,6 +22,7 @@
 #include "i_swap.h"
 #include "r_bmaps.h"
 #include "r_local.h"
+#include "v_trans.h" // [crispy] blending functions
 
 //void R_DrawTranslatedAltTLColumn(void);
 
@@ -415,6 +416,9 @@ void R_DrawVisSprite(vissprite_t * vis, int x1, int x2)
         {
             colfunc = R_DrawAltTLColumn;
         }
+#ifdef CRISPY_TRUECOLOR
+        blendfunc = vis->blendfunc;
+#endif
     }
     else if (vis->mobjflags & MF_TRANSLATION)
     {
@@ -465,6 +469,9 @@ void R_DrawVisSprite(vissprite_t * vis, int x1, int x2)
     }
 
     colfunc = basecolfunc;
+#ifdef CRISPY_TRUECOLOR
+    blendfunc = I_BlendOverTinttab;
+#endif
 }
 
 
@@ -660,6 +667,19 @@ void R_ProjectSprite(mobj_t * thing)
     }
 
     vis->brightmap = R_BrightmapForSprite(thing->state - states);
+#ifdef CRISPY_TRUECOLOR
+    // [crispy] not using additive blending (I_BlendAdd) here for full
+    // bright states to preserve look & feel of original Hexen's translucency
+    if (thing->flags & MF_SHADOW)
+    {
+        vis->blendfunc = I_BlendOverTinttab;
+    }
+    else
+    if (thing->flags & MF_ALTSHADOW)
+    {
+        vis->blendfunc = I_BlendOverAltTinttab;
+    }
+#endif
 }
 
 
@@ -811,15 +831,24 @@ void R_DrawPSprite(pspdef_t * psp)
             if (viewplayer->mo->flags2 & MF2_DONTDRAW)
             {                   // don't draw the psprite
                 vis->mobjflags |= MF_SHADOW;
+#ifdef CRISPY_TRUECOLOR
+                vis->blendfunc = I_BlendOverTinttab;
+#endif
             }
             else if (viewplayer->mo->flags & MF_SHADOW)
             {
                 vis->mobjflags |= MF_ALTSHADOW;
+#ifdef CRISPY_TRUECOLOR
+                vis->blendfunc = I_BlendOverAltTinttab;
+#endif
             }
         }
         else if (viewplayer->powers[pw_invulnerability] & 8)
         {
             vis->mobjflags |= MF_SHADOW;
+#ifdef CRISPY_TRUECOLOR
+            vis->blendfunc = I_BlendOverTinttab;
+#endif
         }
     }
     else if (fixedcolormap)

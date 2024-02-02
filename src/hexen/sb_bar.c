@@ -1001,7 +1001,9 @@ void SB_PaletteFlash(boolean forceChange)
 {
     static int sb_palette = 0;
     int palette;
+#ifndef CRISPY_TRUECOLOR
     byte *pal;
+#endif
 
     if (forceChange)
     {
@@ -1054,8 +1056,12 @@ void SB_PaletteFlash(boolean forceChange)
     if (palette != sb_palette)
     {
         sb_palette = palette;
+#ifndef CRISPY_TRUECOLOR
         pal = (byte *) W_CacheLumpNum(PlayPalette, PU_CACHE) + palette * 768;
         I_SetPalette(pal);
+#else
+        I_SetPalette(palette);
+#endif
     }
 }
 

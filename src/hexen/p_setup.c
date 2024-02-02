@@ -812,6 +812,12 @@ void P_SetupLevel(int episode, int map, int playermask, skill_t skill)
         LevelUseFullBright = false;
     }
 
+#ifdef CRISPY_TRUECOLOR
+    // [crispy] If true color is compiled in but disabled as an option,
+    // we still need to re-generate colormaps for proper colormaps[] array colors.
+    R_InitTrueColormaps(LevelUseFullBright ? "COLORMAP" : "FOGMAP");
+#endif
+
 // preload graphics
     if (precache)
         R_PrecacheLevel();

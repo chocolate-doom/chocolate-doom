@@ -1948,7 +1948,11 @@ boolean MN_Responder(event_t * event)
                     askforquit = false;
                     typeofask = 0;
                     paused = false;
+#ifndef CRISPY_TRUECOLOR
                     I_SetPalette(W_CacheLumpName("PLAYPAL", PU_CACHE));
+#else
+                    I_SetPalette(0);
+#endif
                     H2_StartTitle();    // go to intro/demo mode.
                     return false;
                 case 3:
@@ -2187,6 +2191,11 @@ boolean MN_Responder(event_t * event)
                 crispy->gamma = 0;
             }
             SB_PaletteFlash(true);  // force change
+#ifdef CRISPY_TRUECOLOR
+            R_InitTrueColormaps(LevelUseFullBright ? "COLORMAP" : "FOGMAP");
+            BorderNeedRefresh = true;
+            SB_state = -1;
+#endif
             P_SetMessage(&players[consoleplayer], GammaText[crispy->gamma],
                          false);
             return true;
@@ -2594,7 +2603,11 @@ void MN_DrawInfo(void)
 {
     lumpindex_t lumpindex; // [crispy]
 
+#ifndef CRISPY_TRUECOLOR
     I_SetPalette(W_CacheLumpName("PLAYPAL", PU_CACHE));
+#else
+    I_SetPalette(0);
+#endif
 
     // [crispy] Refactor to allow for use of V_DrawFullscreenRawOrPatch
 
@@ -2700,7 +2713,8 @@ static void DrawMouseMenu(void)
 
 static void M_DrawCrispnessBackground(void)
 {
-    byte *src, *dest;
+    byte *src;
+    pixel_t *dest;
 
     src = W_CacheLumpName("F_022", PU_CACHE);
     dest = I_VideoBuffer;
