@@ -169,6 +169,10 @@ extern int joybnextweapon;
 extern int joybmenu;
 extern int joybautomap;
 
+extern int joybuseartifact;
+extern int joybinvleft;
+extern int joybinvright;
+
 extern int dclick_use;
 
 void M_BindBaseControls(void);

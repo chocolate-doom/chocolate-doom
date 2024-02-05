@@ -1401,6 +1401,27 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(joystick_physical_button10),
 
     //!
+    // The physical joystick button that corresponds to joystick
+    // virtual button #11.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_physical_button11),
+
+    //!
+    // The physical joystick button that corresponds to joystick
+    // virtual button #12.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_physical_button12),
+
+    //!
+    // The physical joystick button that corresponds to joystick
+    // virtual button #13.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_physical_button13),
+
+    //!
     // If non-zero, use the SDL_GameController interface instead of the
     // SDL_Joystick interface.
     //
@@ -1476,6 +1497,27 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_INT(joyb_nextweapon),
+
+    //!
+    // @game heretic hexen
+    // Joystick virtual button to activate artifact.
+    //
+
+    CONFIG_VARIABLE_INT(joyb_useartifact),
+
+    //!
+    // @game heretic hexen
+    // Joystick virtual button to move left in the inventory.
+    //
+
+    CONFIG_VARIABLE_INT(joyb_invleft),
+
+    //!
+    // @game heretic hexen
+    // Joystick virtual button to move right in the inventory.
+    //
+
+    CONFIG_VARIABLE_INT(joyb_invright),
 
     //!
     // Key to pause or unpause the game.

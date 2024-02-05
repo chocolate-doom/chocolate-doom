@@ -58,6 +58,9 @@ static int *all_joystick_buttons[NUM_VIRTUAL_BUTTONS] =
     &joybjump,
     &joybmenu,
     &joybautomap,
+    &joybuseartifact,
+    &joybinvleft,
+    &joybinvright,
 };
 
 // For indirection so that we're not dependent on item ordering in the

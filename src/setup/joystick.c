@@ -100,7 +100,7 @@ int joystick_look_sensitivity = 10;
 
 // Virtual to physical mapping.
 int joystick_physical_buttons[NUM_VIRTUAL_BUTTONS] = {
-    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13
 };
 
 static txt_button_t *joystick_button;
@@ -164,6 +164,9 @@ static const joystick_config_t empty_defaults[] =
     {"joyb_jump",                  -1},
     {"joyb_menu_activate",         -1},
     {"joyb_toggle_automap",        -1},
+    {"joyb_useartifact",           -1},
+    {"joyb_invleft",               -1},
+    {"joyb_invright",              -1},
     {"joystick_physical_button0",  0},
     {"joystick_physical_button1",  1},
     {"joystick_physical_button2",  2},
@@ -174,6 +177,10 @@ static const joystick_config_t empty_defaults[] =
     {"joystick_physical_button7",  7},
     {"joystick_physical_button8",  8},
     {"joystick_physical_button9",  9},
+    {"joystick_physical_button10",  10},
+    {"joystick_physical_button11",  11},
+    {"joystick_physical_button12",  12},
+    {"joystick_physical_button13",  13},
     {NULL, 0},
 };
 
@@ -630,6 +637,9 @@ static const joystick_config_t modern_gamepad[] =
     {"joyb_nextweapon", SDL_CONTROLLER_BUTTON_RIGHTSHOULDER},
     {"joyb_menu_activate", SDL_CONTROLLER_BUTTON_START},
     {"joyb_toggle_automap", SDL_CONTROLLER_BUTTON_Y},
+    {"joyb_useartifact", SDL_CONTROLLER_BUTTON_X},
+    {"joyb_invleft", SDL_CONTROLLER_BUTTON_DPAD_LEFT},
+    {"joyb_invright", SDL_CONTROLLER_BUTTON_DPAD_RIGHT},
     {NULL, 0},
 };
 
@@ -1173,7 +1183,7 @@ void ConfigJoystick(TXT_UNCAST_ARG(widget), void *user_data)
 
     window = TXT_NewWindow("Gamepad/Joystick configuration");
     TXT_SetTableColumns(window, 6);
-    TXT_SetColumnWidths(window, 18, 10, 1, 15, 10, 0);
+    TXT_SetColumnWidths(window, 18, 10, 1, 18, 10, 0);
     TXT_SetWindowHelpURL(window, WINDOW_HELP_URL);
 
     TXT_AddWidgets(window,
@@ -1268,6 +1278,13 @@ void ConfigJoystick(TXT_UNCAST_ARG(widget), void *user_data)
     AddJoystickControl(window, "Activate menu", &joybmenu);
 
     AddJoystickControl(window, "Toggle Automap", &joybautomap);
+
+    if (gamemission == heretic || gamemission == hexen)
+    {
+        AddJoystickControl(window, "Use artifact", &joybuseartifact);
+        AddJoystickControl(window, "Inventory left", &joybinvleft);
+        AddJoystickControl(window, "Inventory right", &joybinvright);
+    }
 
     TXT_SignalConnect(joystick_button, "pressed", CalibrateJoystick, window);
     TXT_SetWindowAction(window, TXT_HORIZ_CENTER, TestConfigAction());
