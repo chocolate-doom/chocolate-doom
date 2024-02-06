@@ -407,15 +407,15 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
     // haleyjd: removed externdriver crap
 
     // Fly up/down/drop keys
-    if (gamekeydown[key_flyup])
+    if (gamekeydown[key_flyup] || joybuttons[joybflyup])
     {
         flyheight = 5;          // note that the actual flyheight will be twice this
     }
-    if (gamekeydown[key_flydown])
+    if (gamekeydown[key_flydown] || joybuttons[joybflydown])
     {
         flyheight = -5;
     }
-    if (gamekeydown[key_flycenter])
+    if (gamekeydown[key_flycenter] || joybuttons[joybflycenter])
     {
         flyheight = TOCENTER;
         // haleyjd: removed externdriver crap

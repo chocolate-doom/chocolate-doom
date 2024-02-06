@@ -100,7 +100,7 @@ int joystick_look_sensitivity = 10;
 
 // Virtual to physical mapping.
 int joystick_physical_buttons[NUM_VIRTUAL_BUTTONS] = {
-    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16
 };
 
 static txt_button_t *joystick_button;
@@ -167,6 +167,9 @@ static const joystick_config_t empty_defaults[] =
     {"joyb_useartifact",           -1},
     {"joyb_invleft",               -1},
     {"joyb_invright",              -1},
+    {"joyb_flyup",                 -1},
+    {"joyb_flydown",               -1},
+    {"joyb_flycenter",             -1},
     {"joystick_physical_button0",  0},
     {"joystick_physical_button1",  1},
     {"joystick_physical_button2",  2},
@@ -181,6 +184,9 @@ static const joystick_config_t empty_defaults[] =
     {"joystick_physical_button11",  11},
     {"joystick_physical_button12",  12},
     {"joystick_physical_button13",  13},
+    {"joystick_physical_button14",  14},
+    {"joystick_physical_button15",  15},
+    {"joystick_physical_button16",  16},
     {NULL, 0},
 };
 
@@ -640,6 +646,9 @@ static const joystick_config_t modern_gamepad[] =
     {"joyb_useartifact", SDL_CONTROLLER_BUTTON_X},
     {"joyb_invleft", SDL_CONTROLLER_BUTTON_DPAD_LEFT},
     {"joyb_invright", SDL_CONTROLLER_BUTTON_DPAD_RIGHT},
+    {"joyb_flyup", SDL_CONTROLLER_BUTTON_DPAD_UP},
+    {"joyb_flydown", SDL_CONTROLLER_BUTTON_DPAD_DOWN},
+    {"joyb_flycenter", SDL_CONTROLLER_BUTTON_LEFTSTICK},
     {NULL, 0},
 };
 
@@ -1284,6 +1293,9 @@ void ConfigJoystick(TXT_UNCAST_ARG(widget), void *user_data)
         AddJoystickControl(window, "Use artifact", &joybuseartifact);
         AddJoystickControl(window, "Inventory left", &joybinvleft);
         AddJoystickControl(window, "Inventory right", &joybinvright);
+        AddJoystickControl(window, "Fly up", &joybflyup);
+        AddJoystickControl(window, "Fly down", &joybflydown);
+        AddJoystickControl(window, "Fly center", &joybflycenter);
     }
 
     TXT_SignalConnect(joystick_button, "pressed", CalibrateJoystick, window);

@@ -214,6 +214,10 @@ int joybuseartifact = -1;
 int joybinvleft = -1;
 int joybinvright = -1;
 
+int joybflyup = -1;
+int joybflydown = -1;
+int joybflycenter = -1;
+
 // Control whether if a mouse button is double clicked, it acts like 
 // "use" has been pressed
 
@@ -285,6 +289,10 @@ void M_BindHereticControls(void)
     M_BindIntVariable("joyb_invleft", &joybinvleft);
     M_BindIntVariable("joyb_invright", &joybinvright);
     M_BindIntVariable("joyb_useartifact", &joybuseartifact);
+
+    M_BindIntVariable("joyb_flyup", &joybflyup);
+    M_BindIntVariable("joyb_flydown", &joybflydown);
+    M_BindIntVariable("joyb_flycenter", &joybflycenter);
 
     M_BindIntVariable("key_arti_quartz",        &key_arti_quartz);
     M_BindIntVariable("key_arti_urn",           &key_arti_urn);

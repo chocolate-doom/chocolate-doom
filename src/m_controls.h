@@ -173,6 +173,10 @@ extern int joybuseartifact;
 extern int joybinvleft;
 extern int joybinvright;
 
+extern int joybflyup;
+extern int joybflydown;
+extern int joybflycenter;
+
 extern int dclick_use;
 
 void M_BindBaseControls(void);

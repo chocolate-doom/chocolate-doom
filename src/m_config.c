@@ -1422,6 +1422,27 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(joystick_physical_button13),
 
     //!
+    // The physical joystick button that corresponds to joystick
+    // virtual button #14.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_physical_button14),
+
+    //!
+    // The physical joystick button that corresponds to joystick
+    // virtual button #15.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_physical_button15),
+
+    //!
+    // The physical joystick button that corresponds to joystick
+    // virtual button #16.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_physical_button16),
+
+    //!
     // If non-zero, use the SDL_GameController interface instead of the
     // SDL_Joystick interface.
     //
@@ -1518,6 +1539,27 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_INT(joyb_invright),
+
+    //!
+    // @game heretic hexen
+    // Joystick virtual button to fly up.
+    //
+
+    CONFIG_VARIABLE_INT(joyb_flyup),
+
+    //!
+    // @game heretic hexen
+    // Joystick virtual button to fly down.
+    //
+
+    CONFIG_VARIABLE_INT(joyb_flydown),
+
+    //!
+    // @game heretic hexen
+    // Joystick virtual button to center flying.
+    //
+
+    CONFIG_VARIABLE_INT(joyb_flycenter),
 
     //!
     // Key to pause or unpause the game.
