@@ -149,6 +149,26 @@ static const byte flame[256] =
     0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
 };
 
+static const byte serptorch[256] =
+{
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+    1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+};
+
 static const byte ethereal[256] =
 {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -326,10 +346,6 @@ const byte *R_BrightmapForSprite (const int state)
             case S_FIREBRAZIER6:
             case S_FIREBRAZIER7:
             case S_FIREBRAZIER8:
-            // Serpent Torch
-            case S_SERPTORCH1:
-            case S_SERPTORCH2:
-            case S_SERPTORCH3:
             // Torch (artifact)
             case S_ARTI_TRCH1:
             case S_ARTI_TRCH2:
@@ -353,6 +369,14 @@ const byte *R_BrightmapForSprite (const int state)
             case S_CLINK_DIE6:
             {
                 return flame;
+                break;
+            }
+            // Serpent Torch, has stray pixels with 'flame' map
+            case S_SERPTORCH1:
+            case S_SERPTORCH2:
+            case S_SERPTORCH3:
+            {
+                return serptorch;
                 break;
             }
             // Iron Lich (idle and attack states)
