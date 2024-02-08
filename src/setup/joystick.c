@@ -1186,6 +1186,28 @@ static void AdjustAnalog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
     TXT_SetWidgetAlign(window, TXT_HORIZ_CENTER);
 }
 
+static void MoreControls(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
+{
+    txt_window_t *window;
+
+    window = TXT_NewWindow("Additional Gamepad/Joystick buttons");
+    TXT_SetTableColumns(window, 6);
+    TXT_SetColumnWidths(window, 18, 10, 1, 18, 10, 0);
+
+    AddJoystickControl(window, "Use artifact", &joybuseartifact);
+    AddJoystickControl(window, "Inventory left", &joybinvleft);
+    AddJoystickControl(window, "Inventory right", &joybinvright);
+    AddJoystickControl(window, "Fly up", &joybflyup);
+    AddJoystickControl(window, "Fly down", &joybflydown);
+    AddJoystickControl(window, "Fly center", &joybflycenter);
+
+    TXT_SetWindowAction(window, TXT_HORIZ_LEFT, NULL);
+    TXT_SetWindowAction(window, TXT_HORIZ_CENTER,
+        TXT_NewWindowEscapeAction(window));
+    TXT_SetWindowAction(window, TXT_HORIZ_RIGHT, NULL);
+    TXT_SetWidgetAlign(window, TXT_HORIZ_CENTER);
+}
+
 void ConfigJoystick(TXT_UNCAST_ARG(widget), void *user_data)
 {
     txt_window_t *window;
@@ -1290,12 +1312,9 @@ void ConfigJoystick(TXT_UNCAST_ARG(widget), void *user_data)
 
     if (gamemission == heretic || gamemission == hexen)
     {
-        AddJoystickControl(window, "Use artifact", &joybuseartifact);
-        AddJoystickControl(window, "Inventory left", &joybinvleft);
-        AddJoystickControl(window, "Inventory right", &joybinvright);
-        AddJoystickControl(window, "Fly up", &joybflyup);
-        AddJoystickControl(window, "Fly down", &joybflydown);
-        AddJoystickControl(window, "Fly center", &joybflycenter);
+        TXT_AddWidget(window,
+                       TXT_NewButton2("More controls...", MoreControls, NULL));
+        TXT_AddWidget(window, TXT_TABLE_EOL);
     }
 
     TXT_SignalConnect(joystick_button, "pressed", CalibrateJoystick, window);
