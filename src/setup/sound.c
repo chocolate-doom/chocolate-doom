@@ -75,7 +75,7 @@ static int show_talk = 1; // [crispy] show subtitles by default
 // but 1 is closer to "use_libsamplerate = 0" which is the default in Choco
 // and causes only a short delay at startup
 int use_libsamplerate = 1;
-float libsamplerate_scale = 0.65;
+float libsamplerate_scale = 1.0f; // [crispy]
 
 char *music_pack_path = NULL;
 char *timidity_cfg_path = NULL;

@@ -53,7 +53,10 @@ int use_libsamplerate = 1;
 // of the time: with all the Doom IWAD sound effects, at least. If a PWAD
 // is used, clipping might occur.
 
-float libsamplerate_scale = 0.65f;
+// [crispy] Get full output from libsamplerate. Our default is to use linear
+// interpolation, which means the resampling process will not introduce any new
+// clipping. This will also better match vanilla's volume.
+float libsamplerate_scale = 1.0f;
 
 
 #ifndef DISABLE_SDL2MIXER
