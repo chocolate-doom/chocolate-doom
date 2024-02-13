@@ -95,7 +95,7 @@ jobs:
         uses: msys2/setup-msys2@v2
         with:
           msystem: ${{ matrix.config.msystem }}
-          update: false
+          update: true
           path-type: inherit
           install: >-
             autotools
