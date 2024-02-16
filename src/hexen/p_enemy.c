@@ -534,16 +534,8 @@ boolean P_LookForPlayers(mobj_t * actor, boolean allaround)
         return (P_LookForMonsters(actor));
     }
     c = 0;
-
-    // NOTE: This behavior has been changed from the Vanilla behavior, where
-    // an infinite loop can occur if players 0-3 all quit the game. Although
-    // technically this is not what Vanilla does, fixing this is highly
-    // desirable, and having the game simply lock up is not acceptable.
-    // stop = (actor->lastlook - 1) & 3;
-    // for (;; actor->lastlook = (actor->lastlook + 1) & 3)
-
-    stop = (actor->lastlook + maxplayers - 1) % maxplayers;
-    for (;; actor->lastlook = (actor->lastlook + 1) % maxplayers)
+    stop = (actor->lastlook - 1) & 3;
+    for (;; actor->lastlook = (actor->lastlook + 1) & 3)
     {
         if (!playeringame[actor->lastlook])
             continue;

@@ -787,17 +787,9 @@ P_LookForPlayers
     }
 
     c = 0;
+    stop = (actor->lastlook-1)&3;
 
-    // NOTE: This behavior has been changed from the Vanilla behavior, where
-    // an infinite loop can occur if players 0-3 all quit the game. Although
-    // technically this is not what Vanilla does, fixing this is highly
-    // desirable, and having the game simply lock up is not acceptable.
-    // stop = (actor->lastlook - 1) & 3;
-    // for (;; actor->lastlook = (actor->lastlook + 1) & 3)
-
-    stop = (actor->lastlook + MAXPLAYERS - 1) % MAXPLAYERS;
-
-    for ( ; ; actor->lastlook = (actor->lastlook + 1) % MAXPLAYERS)
+    for ( ; ; actor->lastlook = (actor->lastlook+1)&3 )
     {
         if (!playeringame[actor->lastlook])
             continue;
