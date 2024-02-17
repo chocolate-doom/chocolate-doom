@@ -1280,7 +1280,7 @@ void P_SpawnPuffSafe(fixed_t x, fixed_t y, fixed_t z, boolean safe)
     mobj_t *puff;
 
     z += safe ? (Crispy_SubRandom() << 10) : (P_SubRandom() << 10);
-    puff = P_SpawnMobj(x, y, z, PuffType);
+    puff = P_SpawnMobjSafe(x, y, z, PuffType, safe);
     if (puff->info->attacksound)
     {
         S_StartSound(puff, puff->info->attacksound);
