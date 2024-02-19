@@ -731,6 +731,7 @@ P_LookForPlayers
     angle_t     an;
     fixed_t     dist;
     mobj_t  *   master = players[actor->miscdata].mo;
+    int consecutive_missing = 0; // for breaking infinite loop
 
     // haleyjd 09/05/10: handle Allies
     if(actor->flags & MF_ALLY)
@@ -787,12 +788,40 @@ P_LookForPlayers
     }
 
     c = 0;
+
+    // The 3 below is probably a mistake (it should be MAXPLAYERS - 1, or 7)
+    // and in vanilla this can potentially cause an infinite loop in
+    // multiplayer. Unfortunately we can't correct the mistake - doing so will
+    // cause desyncs. Upon spawning, each enemy's lastlook is initialized to a
+    // random value between 0 and 7 (i.e MAXPLAYERS - 1). There's a chance
+    // that the first call of this function for that enemy will return early
+    // courtesy of the actor->lastlook == stop condition. In a single-player
+    // game this occurs when (actor->lastlook - 1) & 3 equals 0, or when
+    // lastlook equals 1 or 5.
+
+    // If you use MAXPLAYERS - 1, it has the side effect of altering which
+    // enemies are affected by an early actor->lastlook == stop return. Now it
+    // happens when (actor->lastlook - 1) & 7 equals 0, or when lastlook equals
+    // 1, *not* 1 and 5 as above.
+
     stop = (actor->lastlook-1)&3;
 
     for ( ; ; actor->lastlook = (actor->lastlook+1)&3 )
     {
         if (!playeringame[actor->lastlook])
+        {
+            // Break the vanilla infinite loop here. It can occur if there are
+            // > 4 players and players 0 - 3 all quit the game. Error out
+            // instead.
+            if (consecutive_missing == 4)
+            {
+                I_Error("P_LookForPlayers: No player 1 - 4.\n");
+            }
+            consecutive_missing++;
             continue;
+        }
+
+        consecutive_missing = 0;
 
         if (c++ == 2
             || actor->lastlook == stop)
