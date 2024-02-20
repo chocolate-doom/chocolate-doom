@@ -24,7 +24,7 @@
 // Number of "virtual" joystick buttons defined in configuration files.
 // This needs to be at least as large as the number of different key
 // bindings supported by the higher-level game code (joyb* variables).
-#define NUM_VIRTUAL_BUTTONS 11
+#define NUM_VIRTUAL_BUTTONS 17
 
 // Max allowed number of virtual mappings. Chosen to be less than joybspeed
 // autorun value.
