@@ -1201,7 +1201,7 @@ boolean PTR_AimTraverse(intercept_t * in)
 
         // Added checks if there is no backsector to prevent crashing.
         // Crashes didn't happen in the DOS version of Heretic
-        // because reading of NULL pointer produces random but 
+        // because reading NULL pointer produces unpredictable but
         // deterministic values instead of crashing.
         // See https://github.com/chocolate-doom/chocolate-doom/issues/1665
         if (li->backsector == NULL
