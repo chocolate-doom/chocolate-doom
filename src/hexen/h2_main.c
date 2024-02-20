@@ -369,7 +369,6 @@ static const struct
 static void InitGameVersion(void)
 {
     int p;
-    int i;
 
     //!
     // @arg <version>
@@ -383,6 +382,7 @@ static void InitGameVersion(void)
 
     if (p)
     {
+        int i;
         for (i=0; gameversions[i].description != NULL; ++i)
         {
             if (!strcmp(myargv[p+1], gameversions[i].cmdline))
