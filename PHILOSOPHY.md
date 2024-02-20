@@ -26,7 +26,7 @@ of compatibility:
 
  * DOS Doom 1.9 (although there are actually multiple “1.9”s).
  * DOS Heretic 1.3.
- * DOS Hexen 1.1.
+ * DOS Hexen 1.1 (although there are actually two known “1.1”s).
  * DOS Strife 1.31.
  * DOS Chex Quest.
 

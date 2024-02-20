@@ -27,6 +27,9 @@ _@PROGRAM_SPREFIX@_hexen()
     esac
 
     case $prev in
+        -gameversion)
+            COMPREPLY=(1.1 1.1r2)
+            ;;
         -setmem)
             COMPREPLY=(dos622 dos71 dosbox)
             ;;
