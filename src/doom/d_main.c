@@ -972,7 +972,7 @@ void PrintDehackedBanners(void)
     }
 }
 
-static struct
+static const struct
 {
     const char *description;
     const char *cmdline;

@@ -353,7 +353,7 @@ void D_SetGameDescription(void)
     }
 }
 
-static struct
+static const struct
 {
     const char *description;
     const char *cmdline;
