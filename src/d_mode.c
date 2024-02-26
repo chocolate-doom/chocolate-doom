@@ -134,6 +134,7 @@ static struct {
     { doom,     exe_chex },
     { heretic,  exe_heretic_1_3 },
     { hexen,    exe_hexen_1_1 },
+    { hexen,    exe_hexen_1_1r2 },
     { strife,   exe_strife_1_2 },
     { strife,   exe_strife_1_31 },
 };

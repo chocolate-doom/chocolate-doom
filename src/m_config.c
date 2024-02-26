@@ -1530,6 +1530,48 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(joystick_physical_button10),
 
     //!
+    // The physical joystick button that corresponds to joystick
+    // virtual button #11.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_physical_button11),
+
+    //!
+    // The physical joystick button that corresponds to joystick
+    // virtual button #12.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_physical_button12),
+
+    //!
+    // The physical joystick button that corresponds to joystick
+    // virtual button #13.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_physical_button13),
+
+    //!
+    // The physical joystick button that corresponds to joystick
+    // virtual button #14.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_physical_button14),
+
+    //!
+    // The physical joystick button that corresponds to joystick
+    // virtual button #15.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_physical_button15),
+
+    //!
+    // The physical joystick button that corresponds to joystick
+    // virtual button #16.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_physical_button16),
+
+    //!
     // If non-zero, use the SDL_GameController interface instead of the
     // SDL_Joystick interface.
     //
@@ -1605,6 +1647,48 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_INT(joyb_nextweapon),
+
+    //!
+    // @game heretic hexen
+    // Joystick virtual button to activate artifact.
+    //
+
+    CONFIG_VARIABLE_INT(joyb_useartifact),
+
+    //!
+    // @game heretic hexen
+    // Joystick virtual button to move left in the inventory.
+    //
+
+    CONFIG_VARIABLE_INT(joyb_invleft),
+
+    //!
+    // @game heretic hexen
+    // Joystick virtual button to move right in the inventory.
+    //
+
+    CONFIG_VARIABLE_INT(joyb_invright),
+
+    //!
+    // @game heretic hexen
+    // Joystick virtual button to fly up.
+    //
+
+    CONFIG_VARIABLE_INT(joyb_flyup),
+
+    //!
+    // @game heretic hexen
+    // Joystick virtual button to fly down.
+    //
+
+    CONFIG_VARIABLE_INT(joyb_flydown),
+
+    //!
+    // @game heretic hexen
+    // Joystick virtual button to center flying.
+    //
+
+    CONFIG_VARIABLE_INT(joyb_flycenter),
 
     //!
     // Key to pause or unpause the game.

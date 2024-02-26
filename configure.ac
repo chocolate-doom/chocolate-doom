@@ -3,7 +3,7 @@ AC_INIT(Crispy Doom, 6.0.0,
 
 PACKAGE_SHORTNAME=${PACKAGE_NAME% Doom}
 PACKAGE_SHORTDESC="Limit-removing enhanced-resolution Doom source port"
-PACKAGE_COPYRIGHT="Copyright (C) 1993-2023"
+PACKAGE_COPYRIGHT="Copyright (C) 1993-2024"
 PACKAGE_LICENSE="GNU General Public License, version 2"
 PACKAGE_MAINTAINER="Fabian Greffrath"
 PACKAGE_URL="http://fabiangreffrath.github.io/crispy-doom"
@@ -30,6 +30,19 @@ then
         WARNINGS="-Wall -Wdeclaration-after-statement -Wredundant-decls"
         CFLAGS="-O$OPT_LEVEL -g $WARNINGS $orig_CFLAGS"
 fi
+
+AC_CANONICAL_TARGET
+TARGET_OS=""
+AS_CASE([$target_cpu],
+        [x86_64|aarch64*],
+        [
+            TARGET_OS="64"
+        ],
+        [i?86|arm*],
+        [
+            TARGET_OS="32"
+        ])
+AC_SUBST([TARGET_OS])
 
 PKG_CHECK_MODULES(SDL, [sdl2 >= 2.0.14])
 # Check for SDL2_mixer

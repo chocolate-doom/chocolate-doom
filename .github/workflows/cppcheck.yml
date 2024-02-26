@@ -9,13 +9,13 @@ on:
 
 jobs:
   cppcheck:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Install dependencies
         run: sudo apt-get update && sudo apt-get install cppcheck
 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Run cppcheck
         env:

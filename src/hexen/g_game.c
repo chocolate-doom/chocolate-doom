@@ -60,6 +60,9 @@ void G_DoSingleReborn(void);
 void H2_PageTicker(void);
 void H2_AdvanceDemo(void);
 
+static boolean InventoryMoveLeft();
+static boolean InventoryMoveRight();
+
 
 gameaction_t gameaction;
 gamestate_t gamestate;
@@ -499,22 +502,23 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
     // haleyjd: removed externdriver crap
 
     // Fly up/down/drop keys
-    if (gamekeydown[key_flyup])
+    if (gamekeydown[key_flyup] || joybuttons[joybflyup])
     {
         flyheight = 5;          // note that the actual flyheight will be twice this
     }
-    if (gamekeydown[key_flydown])
+    if (gamekeydown[key_flydown] || joybuttons[joybflydown])
     {
         flyheight = -5;
     }
-    if (gamekeydown[key_flycenter])
+    if (gamekeydown[key_flycenter] || joybuttons[joybflycenter])
     {
         flyheight = TOCENTER;
         // haleyjd: removed externdriver crap
         look = TOCENTER;
     }
     // Use artifact key
-    if (gamekeydown[key_useartifact] || mousebuttons[mousebuseartifact])
+    if (gamekeydown[key_useartifact] || mousebuttons[mousebuseartifact]
+        || joybuttons[joybuseartifact])
     {
         if (gamekeydown[key_speed] && artiskip)
         {
@@ -522,6 +526,7 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
             {                   // Skip an artifact
                 gamekeydown[key_useartifact] = false;
                 mousebuttons[mousebuseartifact] = false;
+                joybuttons[joybuseartifact] = false;
                 P_PlayerNextArtifact(&players[consoleplayer]);
             }
         }
@@ -920,6 +925,9 @@ void G_DoLoadLevel(void)
 static void SetJoyButtons(unsigned int buttons_mask)
 {
     int i;
+    player_t *plr;
+
+    plr = &players[consoleplayer];
 
     for (i=0; i<MAX_JOY_BUTTONS; ++i)
     {
@@ -938,6 +946,22 @@ static void SetJoyButtons(unsigned int buttons_mask)
             else if (i == joybnextweapon)
             {
                 next_weapon = 1;
+            }
+            else if (i == joybinvleft)
+            {
+                InventoryMoveLeft();
+            }
+            else if (i == joybinvright)
+            {
+                InventoryMoveRight();
+            }
+            else if (i == joybuseartifact)
+            {
+                if (!inventory)
+                {
+                    plr->readyArtifact = plr->inventory[inv_ptr].type;
+                }
+                usearti = true;
             }
         }
 

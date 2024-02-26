@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - "master"
+    tags:
+      - "*"
     paths-ignore:
       - "**.md"
   pull_request:
@@ -33,6 +35,9 @@ jobs:
             os: macos-latest
             compiler: clang
             shell: bash
+            artifacts: true
+            pkg-path: pkg/osx/*.dmg
+            pkg-dir: pkg/osx
 
           - name: MSYS2 UCRT64
             os: windows-latest
@@ -40,6 +45,9 @@ jobs:
             shell: 'msys2 {0}'
             msystem: ucrt64
             msys-env: mingw-w64-ucrt-x86_64
+            artifacts: true
+            pkg-path: pkg/win32/*.zip
+            pkg-dir: pkg/win32
 
           - name: MSYS2 MINGW32
             os: windows-latest
@@ -47,6 +55,9 @@ jobs:
             shell: 'msys2 {0}'
             msystem: mingw32
             msys-env: mingw-w64-i686
+            artifacts: true
+            pkg-path: pkg/win32/*.zip
+            pkg-dir: pkg/win32
 
     steps:
       - name: Install pandoc
@@ -84,7 +95,7 @@ jobs:
         uses: msys2/setup-msys2@v2
         with:
           msystem: ${{ matrix.config.msystem }}
-          update: false
+          update: true
           path-type: inherit
           install: >-
             autotools
@@ -115,28 +126,30 @@ jobs:
           PREFIX=`sed -n '/PROGRAM_PREFIX/p' ${PWD}/config.h | cut -d '"' -f 2`
           make -j4 -C quickcheck check SOURCE_PORT=$PWD/src/${PREFIX}doom
 
-      - name: Package (macOS)
-        if: runner.os == 'macOS'
+      - name: Package
+        if: ${{ matrix.config.artifacts }}
         run: |
-          cd pkg/osx
+          cd ${{ matrix.config.pkg-dir }}
           make
 
-      - name: Package (MSYS2)
-        if: runner.os == 'Windows'
+      - name: Upload artifacts
+        if: ${{ matrix.config.artifacts }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.config.name }}
+          path: ${{ matrix.config.pkg-path }}
+
+      - name: Extract Package String
+        if: ${{ contains(github.ref, 'tags') }}
         run: |
-          cd pkg/win32
-          make
+          PACKAGE_STRING=`sed -n '/PACKAGE_STRING/p' ${PWD}/config.h | cut -d '"' -f 2`
+          echo "PACKAGE_STRING=${PACKAGE_STRING}" >> $GITHUB_ENV
 
-      - name: Upload artifacts (macOS)
-        if: runner.os == 'macOS'
-        uses: actions/upload-artifact@v3
+      - name: Release
+        if: ${{ contains(github.ref, 'tags') && matrix.config.artifacts }}
+        uses: ncipollo/release-action@v1
         with:
-          name: macOS
-          path: pkg/osx/*.dmg
-
-      - name: Upload artifacts (MSYS2)
-        if: runner.os == 'Windows'
-        uses: actions/upload-artifact@v3
-        with:
-          name: Win-${{ matrix.config.msystem }}
-          path: pkg/win32/*.zip
+          name: ${{ env.PACKAGE_STRING }}
+          bodyFile: RELEASE_NOTES.md
+          allowUpdates: true
+          artifacts: ${{ matrix.config.pkg-path }}

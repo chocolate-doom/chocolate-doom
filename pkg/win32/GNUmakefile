@@ -3,11 +3,10 @@ include ../config.make
 
 TOPLEVEL=../..
 
-SYS:=$(shell uname)
-ifneq (, $(findstring MINGW64, $(SYS)))
-  POSTFIX=win64
+ifeq ($(TARGET_OS),64)
+    POSTFIX=win64
 else
-  POSTFIX=win32
+    POSTFIX=win32
 endif
 
 DOOM_ZIP=$(PROGRAM_PREFIX)doom-$(PACKAGE_VERSION)-$(POSTFIX).zip

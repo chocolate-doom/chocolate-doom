@@ -320,6 +320,12 @@ static int G_NextWeapon(int direction)
         }
     }
 
+    // The current weapon must be present in weapon_order_table
+    // otherwise something has gone terribly wrong
+    if (i >= arrlen(weapon_order_table)) {
+        I_Error("Internal error: weapon %d not present in weapon_order_table", weapon);
+    }
+
     // Switch weapon. Don't loop forever.
     start_i = i;
     do
