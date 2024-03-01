@@ -148,6 +148,66 @@ static const byte firebull[256] =
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 };
 
+static const byte brazier[256] =
+{
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+};
+
+static const byte fireskull[256] =
+{
+    0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0,
+    0, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1,
+    1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1,
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+    1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+};
+
+static const byte twintorch[256] =
+{
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1,
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0,
+    1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+};
+
 static const byte greenonly[256] =
 {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -335,6 +395,51 @@ const byte *R_BrightmapForSprite (const int state)
                 return firebull;
                 break;
             }
+            // Brazier
+            case S_ZBRASSTORCH1:
+            case S_ZBRASSTORCH2:
+            case S_ZBRASSTORCH3:
+            case S_ZBRASSTORCH4:
+            case S_ZBRASSTORCH5:
+            case S_ZBRASSTORCH6:
+            case S_ZBRASSTORCH7:
+            case S_ZBRASSTORCH8:
+            case S_ZBRASSTORCH9:
+            case S_ZBRASSTORCH10:
+            case S_ZBRASSTORCH11:
+            case S_ZBRASSTORCH12:
+            case S_ZBRASSTORCH13:
+            {
+                return brazier;
+                break;
+            }
+            // Skull with Flame
+            case S_ZFIRETHING1:
+            case S_ZFIRETHING2:
+            case S_ZFIRETHING3:
+            case S_ZFIRETHING4:
+            case S_ZFIRETHING5:
+            case S_ZFIRETHING6:
+            case S_ZFIRETHING7:
+            case S_ZFIRETHING8:
+            case S_ZFIRETHING9:
+            {
+                return fireskull;
+                break;
+            }
+            // Twined Torch
+            case S_ZTWINEDTORCH_1:
+            case S_ZTWINEDTORCH_2:
+            case S_ZTWINEDTORCH_3:
+            case S_ZTWINEDTORCH_4:
+            case S_ZTWINEDTORCH_5:
+            case S_ZTWINEDTORCH_6:
+            case S_ZTWINEDTORCH_7:
+            case S_ZTWINEDTORCH_8:
+            {
+                return twintorch;
+                break;
+            }
             // Wendigo
             case S_ICEGUY_LOOK:
             case S_ICEGUY_DORMANT:
@@ -435,6 +540,39 @@ const byte *R_BrightmapForSprite (const int state)
             case S_ZFIREBULL7:
             case S_ZFIREBULL_DEATH2:
             case S_ZFIREBULL_BIRTH2:
+            // Brazier
+            case S_ZBRASSTORCH1:
+            case S_ZBRASSTORCH2:
+            case S_ZBRASSTORCH3:
+            case S_ZBRASSTORCH4:
+            case S_ZBRASSTORCH5:
+            case S_ZBRASSTORCH6:
+            case S_ZBRASSTORCH7:
+            case S_ZBRASSTORCH8:
+            case S_ZBRASSTORCH9:
+            case S_ZBRASSTORCH10:
+            case S_ZBRASSTORCH11:
+            case S_ZBRASSTORCH12:
+            case S_ZBRASSTORCH13:
+            // Skull with Flame
+            case S_ZFIRETHING1:
+            case S_ZFIRETHING2:
+            case S_ZFIRETHING3:
+            case S_ZFIRETHING4:
+            case S_ZFIRETHING5:
+            case S_ZFIRETHING6:
+            case S_ZFIRETHING7:
+            case S_ZFIRETHING8:
+            case S_ZFIRETHING9:
+            // Twined Torch
+            case S_ZTWINEDTORCH_1:
+            case S_ZTWINEDTORCH_2:
+            case S_ZTWINEDTORCH_3:
+            case S_ZTWINEDTORCH_4:
+            case S_ZTWINEDTORCH_5:
+            case S_ZTWINEDTORCH_6:
+            case S_ZTWINEDTORCH_7:
+            case S_ZTWINEDTORCH_8:
             {
                 return fullbright;
                 break;
