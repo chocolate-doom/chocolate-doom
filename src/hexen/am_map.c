@@ -100,9 +100,9 @@ static byte antialias_normal[NUMALIAS][8] = {
 
 // [crispy] gradient table for map overlay mode
 static byte antialias_overlay[NUMALIAS][8] = {
-    {86, 85, 84, 83, 82, 81, 100, 99},
-    {96, 93, 90, 87, 85, 83, 81, 99},
-    {107, 105, 104, 103, 102, 101, 100, 99}
+    {86, 85, 85, 84, 83, 83, 82, 81},
+    {93, 93, 92, 91, 90, 89, 88, 87},
+    {107, 107, 106, 105, 104, 103, 102, 101}
 };
 
 static byte (*antialias)[NUMALIAS][8]; // [crispy]
