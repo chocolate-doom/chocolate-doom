@@ -1200,6 +1200,7 @@ static boolean SCDeleteGame(int option)
     remove(filename);
     free(filename);
 
+    CurrentMenu->oldItPos = CurrentItPos;
     MN_LoadSlotText();
     BorderNeedRefresh = true;
 
