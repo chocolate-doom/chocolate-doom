@@ -407,6 +407,7 @@ void R_DrawPlanes(void)
     int fracstep = FRACUNIT >> crispy->hires;
     static int interpfactor; // [crispy]
     int heightmask; // [crispy]
+    int angle2, smoothDelta1 = 0, smoothDelta2 = 0; // [crispy] smooth sky scrolling
 
 #ifdef RANGECHECK
     if (ds_p - drawsegs > MAXDRAWSEGS)
@@ -436,10 +437,20 @@ void R_DrawPlanes(void)
         {                       // Sky flat
             if (DoubleSky)
             {                   // Render 2 layers, sky 1 in front
-                offset = Sky1ColumnOffset >> 16;
                 skyTexture = texturetranslation[Sky1Texture];
-                offset2 = Sky2ColumnOffset >> 16;
                 skyTexture2 = texturetranslation[Sky2Texture];
+                if (crispy->uncapped)
+                {
+                    offset = 0;
+                    offset2 = 0;
+                    smoothDelta1 = Sky1ColumnOffset << 6;
+                    smoothDelta2 = Sky2ColumnOffset << 6;
+                }
+                else
+                {
+                    offset = Sky1ColumnOffset >> 16;
+                    offset2 = Sky2ColumnOffset >> 16;
+                }
                 for (x = pl->minx; x <= pl->maxx; x++)
                 {
                     dc_yl = pl->top[x];
@@ -451,10 +462,12 @@ void R_DrawPlanes(void)
                         {
                             return;
                         }
-                        angle = (viewangle + xtoviewangle[x])
+                        angle = (viewangle + smoothDelta1 + xtoviewangle[x])
+                            >> ANGLETOSKYSHIFT;
+                        angle2 = (viewangle + smoothDelta2 + xtoviewangle[x])
                             >> ANGLETOSKYSHIFT;
                         source = R_GetColumn(skyTexture, angle + offset);
-                        source2 = R_GetColumn(skyTexture2, angle + offset2);
+                        source2 = R_GetColumn(skyTexture2, angle2 + offset2);
                         dest = ylookup[dc_yl] + columnofs[x];
                         frac = SKYTEXTUREMIDSHIFTED * FRACUNIT + (dc_yl - centery) * fracstep;
                         heightmask = SKYTEXTUREMIDSHIFTED - 1; // [crispy]
@@ -535,7 +548,15 @@ void R_DrawPlanes(void)
                 }
                 else
                 {               // Use sky 1
-                    offset = Sky1ColumnOffset >> 16;
+                    if (crispy->uncapped)
+                    {
+                        offset = 0;
+                        smoothDelta1 = Sky1ColumnOffset << 6;
+                    }
+                    else
+                    {
+                        offset = Sky1ColumnOffset >> 16;
+                    }
                     skyTexture = texturetranslation[Sky1Texture];
                 }
                 for (x = pl->minx; x <= pl->maxx; x++)
@@ -549,7 +570,7 @@ void R_DrawPlanes(void)
                         {
                             return;
                         }
-                        angle = (viewangle + xtoviewangle[x])
+                        angle = (viewangle + smoothDelta1 + xtoviewangle[x])
                             >> ANGLETOSKYSHIFT;
                         source = R_GetColumn(skyTexture, angle + offset);
                         dest = ylookup[dc_yl] + columnofs[x];
