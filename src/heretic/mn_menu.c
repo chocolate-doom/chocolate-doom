@@ -2415,7 +2415,20 @@ boolean MN_Responder(event_t * event)
         {
             // Jump to menu item based on first letter:
 
-            for (i = 0; i < CurrentMenu->itemCount; i++)
+            // [crispy] allow multiple jumps over menu items with same first letters.
+            for (i = CurrentItPos + 1; i < CurrentMenu->itemCount; i++)
+            {
+                if (CurrentMenu->items[i].text)
+                {
+                    if (toupper(charTyped)
+                        == toupper(DEH_String(CurrentMenu->items[i].text)[0]))
+                    {
+                        CurrentItPos = i;
+                        return (true);
+                    }
+                }
+            }
+            for (i = 0; i <= CurrentItPos; i++)
             {
                 if (CurrentMenu->items[i].text)
                 {

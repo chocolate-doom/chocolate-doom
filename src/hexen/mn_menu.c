@@ -2416,7 +2416,20 @@ boolean MN_Responder(event_t * event)
         }
         else if (charTyped != 0)
         {
-            for (i = 0; i < CurrentMenu->itemCount; i++)
+            // [crispy] allow multiple jumps over menu items with same first letters.
+            for (i = CurrentItPos + 1; i < CurrentMenu->itemCount; i++)
+            {
+                if (CurrentMenu->items[i].text)
+                {
+                    if (toupper(charTyped)
+                        == toupper(CurrentMenu->items[i].text[0]))
+                    {
+                        CurrentItPos = i;
+                        return (true);
+                    }
+                }
+            }
+            for (i = 0; i <= CurrentItPos; i++)
             {
                 if (CurrentMenu->items[i].text)
                 {
