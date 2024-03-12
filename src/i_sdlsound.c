@@ -24,7 +24,6 @@
 #include <string.h>
 #include <assert.h>
 #include "SDL.h"
-#include "SDL_mixer.h"
 
 #ifdef HAVE_LIBSAMPLERATE
 #include <samplerate.h>
@@ -54,6 +53,8 @@ float libsamplerate_scale = 0.65f;
 
 
 #ifndef DISABLE_SDL2MIXER
+
+#include "SDL_mixer.h"
 
 
 #define LOW_PASS_FILTER
