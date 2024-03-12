@@ -23,8 +23,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "SDL_mixer.h"
-
 #include "textscreen.h"
 #include "m_config.h"
 #include "m_misc.h"
@@ -32,6 +30,13 @@
 #include "execute.h"
 #include "mode.h"
 #include "sound.h"
+
+#ifndef DISABLE_SDL2MIXER
+
+#include "SDL_mixer.h"
+
+#endif  // DISABLE_SDL2MIXER
+
 
 #define WINDOW_HELP_URL "https://www.chocolate-doom.org/setup-sound"
 
