@@ -85,7 +85,7 @@
   * AppData files were updated to the AppStream standard (thanks Mike).
   * Many abuses of the extern keyword have been cleaned up to prevent
     undefined behavior (thanks turol).
-  * Install of bash completion scripts was fixed (thanks Mike).
+  * Install of bash completion scripts was fixed (thanks Mike Swanson).
 
 ### Bug fixes
   * Fixed an exception thrown by the Windows kernel when debugging with
