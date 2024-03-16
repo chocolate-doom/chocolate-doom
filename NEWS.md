@@ -85,6 +85,7 @@
   * AppData files were updated to the AppStream standard (thanks Mike).
   * Many abuses of the extern keyword have been cleaned up to prevent
     undefined behavior (thanks turol).
+  * Install of bash completion scripts was fixed (thanks Mike).
 
 ### Bug fixes
   * Fixed an exception thrown by the Windows kernel when debugging with
@@ -144,6 +145,7 @@
   * Multiplayer demo playback was fixed (thanks Ryan Krafnick).
   * The GOG.com release is now detected (thanks Mike Swanson).
   * Mouse buttons are now bindable to turn left/right (thanks Fabian).
+  * Fix NULL backsector crash (thanks kitchen-ace and Julia Nechaevskaya).
 
 ### Hexen
   * ACS code has been hardened against potential security vulnerabilities.
@@ -154,12 +156,16 @@
   * Multiplayer demo playback was fixed (thanks Ryan Krafnick).
   * The GOG.com release is now detected (thanks Mike Swanson).
   * Mouse buttons are now bindable to turn left/right (thanks Fabian).
+  * Fixed demo desyncs in P_LookForPlayers (thanks Michael Day)
+  * Add support for two different v1.1 variants through -gameversion
+    argument (thank NY00123).
 
 ### Strife
   * Sehacked replacements of the "empty slot" string now work.
   * VOICES.WAD is now found in a case-insensitive way (thanks Michael Francis).
   * PC speaker sound effects are now supported (thanks ceski).
   * Mouse buttons are now bindable to turn left/right (thanks Fabian).
+  * Fixed demo desyncs in P_LookForPlayers (thanks Michael Day)
 
 ## 3.0.1 (2020-06-24)
 
