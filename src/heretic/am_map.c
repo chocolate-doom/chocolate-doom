@@ -1846,8 +1846,8 @@ void AM_drawThings(int colors, int colorrange)
             // [crispy] interpolate thing triangles movement
             if (leveltime > oldleveltime)
             {
-            pt.x = (t->oldx + FixedMul(t->x - t->oldx, fractionaltic)) >> FRACTOMAPBITS;
-            pt.y = (t->oldy + FixedMul(t->y - t->oldy, fractionaltic)) >> FRACTOMAPBITS;
+            pt.x = LerpFixed(t->oldx, t->x) >> FRACTOMAPBITS;
+            pt.y = LerpFixed(t->oldy, t->y) >> FRACTOMAPBITS;
             }
             else
             {

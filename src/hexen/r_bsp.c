@@ -210,11 +210,13 @@ void R_CheckInterpolateSector(sector_t* sector)
     {
         // Interpolate between current and last floor/ceiling position.
         if (sector->floorheight != sector->oldfloorheight)
-            sector->interpfloorheight = sector->oldfloorheight + FixedMul(sector->floorheight - sector->oldfloorheight, fractionaltic);
+            sector->interpfloorheight =
+                LerpFixed(sector->oldfloorheight, sector->floorheight);
         else
             sector->interpfloorheight = sector->floorheight;
         if (sector->ceilingheight != sector->oldceilingheight)
-            sector->interpceilingheight = sector->oldceilingheight + FixedMul(sector->ceilingheight - sector->oldceilingheight, fractionaltic);
+            sector->interpceilingheight =
+                LerpFixed(sector->oldceilingheight, sector->ceilingheight);
         else
             sector->interpceilingheight = sector->ceilingheight;
     }
