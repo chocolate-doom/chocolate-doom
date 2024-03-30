@@ -21,16 +21,12 @@ if HAVE_DOC
 
 GENERATED_MAN_PAGES =               \
            @PROGRAM_PREFIX@doom.6         \
-           default.cfg.5            \
            @PROGRAM_PREFIX@doom.cfg.5     \
            @PROGRAM_PREFIX@heretic.6      \
-           heretic.cfg.5            \
            @PROGRAM_PREFIX@heretic.cfg.5  \
            @PROGRAM_PREFIX@hexen.6        \
-           hexen.cfg.5              \
            @PROGRAM_PREFIX@hexen.cfg.5    \
            @PROGRAM_PREFIX@strife.6       \
-           strife.cfg.5             \
            @PROGRAM_PREFIX@strife.cfg.5   \
            @PROGRAM_PREFIX@server.6
 
