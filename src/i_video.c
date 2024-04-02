@@ -540,6 +540,18 @@ void I_StartTic (void)
     }
 }
 
+void I_StartDisplay(void) // [crispy]
+{
+    SDL_PumpEvents();
+
+    // [AM] Figure out how far into the current tic we're in as a fixed_t.
+    fractionaltic = I_GetFracRealTime();
+
+    if (usemouse && !nomouse && window_focused)
+    {
+        I_ReadMouseUncapped();
+    }
+}
 
 //
 // I_UpdateNoBlit
@@ -929,9 +941,6 @@ void I_FinishUpdate (void)
                 }
             }
         }
-
-        // [AM] Figure out how far into the current tic we're in as a fixed_t.
-        fractionaltic = I_GetFracRealTime();
     }
 
     // Restore background and undo the disk indicator, if it was drawn.

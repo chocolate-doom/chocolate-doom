@@ -163,6 +163,12 @@ void P_MovePlayer (player_t* player)
     // [crispy] give full control in no-clipping mode
     onground |= (player->mo->flags & MF_NOCLIP);
 	
+    if (player == &players[consoleplayer])
+    {
+        localview.ticangle += localview.ticangleturn << 16;
+        localview.ticangleturn = 0;
+    }
+
     if (cmd->forwardmove && onground)
 	P_Thrust (player, player->mo->angle, cmd->forwardmove*2048);
     else
@@ -288,6 +294,11 @@ void P_PlayerThink (player_t* player)
     player->oldviewz = player->viewz;
     player->oldlookdir = player->lookdir;
     player->oldrecoilpitch = player->recoilpitch;
+
+    if (player == &players[consoleplayer])
+    {
+        localview.oldticangle = localview.ticangle;
+    }
 
     // [crispy] update weapon sound source coordinates
     if (player->so != player->mo)

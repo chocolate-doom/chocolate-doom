@@ -135,7 +135,10 @@ typedef enum
 } buttoncode2_t;
 
 
+// [crispy] For fast polling
+extern event_t fastmouse;
 
+extern boolean newfastmouse;
 
 // Called by IO functions when input is detected.
 void D_PostEvent (event_t *ev);
