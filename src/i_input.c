@@ -425,14 +425,99 @@ void I_HandleMouseEvent(SDL_Event *sdlevent)
     }
 }
 
+// [crispy] Adjustable mouse accel threshold when running uncapped.
+static float x_threshold;
+static float y_threshold;
+
+// [crispy] Track the last gametic's worth of mouse movement in ring buffers.
+// Each element is a bin for the mouse movement recorded in that millisecond.
+// The running total is used to determine if mouse acceleration should be
+// applied.
+
+#define MOUSE_BUFFER_SIZE 32
+#define MOUSE_BUFFER_DEPTH_MS 28
+
+typedef struct
+{
+    int values[MOUSE_BUFFER_SIZE];
+    int head;
+    int tail;
+    int size;
+    int total;
+} mousebuffer_t;
+
+static mousebuffer_t mousex;
+static mousebuffer_t mousey;
+
+static void ResetMouseBuffer(mousebuffer_t *buf)
+{
+    buf->head = buf->tail = buf->size = buf->total = 0;
+}
+
+static void UpdateMouseBuffer(mousebuffer_t *buf, int value, int delta_ms)
+{
+    for (int i = 0; i < delta_ms; i++)
+    {
+        if (buf->size == MOUSE_BUFFER_DEPTH_MS)
+        {
+            buf->tail = (buf->tail + 1) & (MOUSE_BUFFER_SIZE - 1);
+            buf->total -= buf->values[buf->tail];
+        }
+        else
+        {
+            buf->size++;
+        }
+        buf->head = (buf->head + 1) & (MOUSE_BUFFER_SIZE - 1);
+        buf->values[buf->head] = 0;
+    }
+
+    buf->total += value;
+    buf->values[buf->head] += value;
+}
+
+static void UpdateMouseAccel(int x, int y)
+{
+    static uint64_t last_read;
+    const uint64_t current_read = I_GetTimeMS();
+    uint64_t delta_t;
+
+    delta_t = current_read - last_read;
+    last_read = current_read;
+
+    if (!crispy->uncapped)
+    {
+        x_threshold = mouse_threshold;
+        y_threshold = mouse_threshold_y;
+        mousex.total = x;
+        mousey.total = y;
+    }
+    else if (delta_t > MOUSE_BUFFER_DEPTH_MS)
+    {
+        ResetMouseBuffer(&mousex);
+        ResetMouseBuffer(&mousey);
+        UpdateMouseBuffer(&mousex, x, 1);
+        UpdateMouseBuffer(&mousey, y, 1);
+        x_threshold = mouse_threshold;
+        y_threshold = mouse_threshold_y;
+    }
+    else
+    {
+        UpdateMouseBuffer(&mousex, x, delta_t);
+        UpdateMouseBuffer(&mousey, y, delta_t);
+        x_threshold = mouse_threshold * delta_t * TICRATE / 1000.0;
+        y_threshold = mouse_threshold_y * delta_t * TICRATE / 1000.0;
+    }
+
+}
+
 static int AccelerateMouse(int val)
 {
     if (val < 0)
         return -AccelerateMouse(-val);
 
-    if (val > mouse_threshold)
+    if (abs(mousex.total) > mouse_threshold)
     {
-        return (int)((val - mouse_threshold) * mouse_acceleration + mouse_threshold);
+        return (int)((val - x_threshold) * mouse_acceleration + x_threshold);
     }
     else
     {
@@ -446,9 +531,9 @@ static int AccelerateMouseY(int val)
     if (val < 0)
         return -AccelerateMouseY(-val);
 
-    if (val > mouse_threshold_y)
+    if (abs(mousey.total) > mouse_threshold_y)
     {
-        return (int)((val - mouse_threshold_y) * mouse_acceleration_y + mouse_threshold_y);
+        return (int)((val - y_threshold) * mouse_acceleration_y + y_threshold);
     }
     else
     {
@@ -467,6 +552,7 @@ void I_ReadMouse(void)
     event_t ev;
 
     SDL_GetRelativeMouseState(&x, &y);
+    UpdateMouseAccel(x, y); // [crispy]
 
     if (x != 0 || y != 0) 
     {
@@ -494,6 +580,7 @@ void I_ReadMouseUncapped(void)
     int x, y;
 
     SDL_GetRelativeMouseState(&x, &y);
+    UpdateMouseAccel(x, y);
 
     if (x != 0 || y != 0)
     {
