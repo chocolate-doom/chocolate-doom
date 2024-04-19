@@ -2146,7 +2146,7 @@ const pixel_t I_BlendOver (const pixel_t bg, const pixel_t fg, const int amount)
 // [crispy] TRANMAP blending emulation, used for Doom
 const pixel_t I_BlendOverTranmap (const pixel_t bg, const pixel_t fg)
 {
-	return I_BlendOver(bg, fg, 224); // 168 (66% opacity)
+	return I_BlendOver(bg, fg, 0xA8); // 168 (66% opacity)
 }
 
 // [crispy] TINTTAB blending emulation, used for Heretic and Hexen
