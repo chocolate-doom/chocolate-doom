@@ -45,6 +45,8 @@ staging-%:
 	mkdir $@
 	LC_ALL=C ./cp-with-libs --ldflags="$(LDFLAGS)" --dll_path="$(MSYSTEM_PREFIX)/bin" \
 	               $(TOPLEVEL)/src/$(PROGRAM_PREFIX)$*.exe $@
+	-LC_ALL=C ./cp-with-libs --ldflags="$(LDFLAGS)" --dll_path="$(MSYSTEM_PREFIX)/bin" \
+	               $(TOPLEVEL)/src/$(PROGRAM_PREFIX)$*-truecolor.exe $@
 	LC_ALL=C ./cp-with-libs --ldflags="$(LDFLAGS)" --dll_path="$(MSYSTEM_PREFIX)/bin" \
 	               $(TOPLEVEL)/src/$(PROGRAM_PREFIX)setup.exe \
 	               $@/$(PROGRAM_PREFIX)$*-setup.exe

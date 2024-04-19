@@ -118,6 +118,15 @@ jobs:
         run: |
           ./autogen.sh
 
+      - name: Build true-color on Windows
+        if: runner.os == 'Windows'
+        run: |
+          make distclean
+          ./configure --enable-truecolor
+          make -j4
+          for i in doom heretic hexen strife ; do mv src/crispy-${i}.exe src/crispy-${i}-truecolor.exe ; done
+          make distclean
+          ./configure
       - name: Build
         run: make -j4
 
