@@ -32,6 +32,7 @@
 #include "w_wad.h"
 
 #include "r_local.h"
+#include "v_trans.h" // [crispy] blending functions
 
 #include "doomstat.h"
 
@@ -445,6 +446,9 @@ R_DrawVisSprite
             colfunc = R_DrawTRTLColumn;
             dc_translation = translationtables - 256 + (translation >> (MF_TRANSSHIFT - 8));
         }
+#ifdef CRISPY_TRUECOLOR
+	blendfunc = vis->blendfunc;
+#endif
     }
     else if(vis->mobjflags & MF_MVIS)
     {
@@ -490,6 +494,9 @@ R_DrawVisSprite
     }
 
     colfunc = basecolfunc;
+#ifdef CRISPY_TRUECOLOR
+    blendfunc = I_BlendOverXlatab;
+#endif
 }
 
 
@@ -680,6 +687,15 @@ void R_ProjectSprite (mobj_t* thing)
 
 	vis->colormap = spritelights[index];
     }	
+
+#ifdef CRISPY_TRUECOLOR
+    if (thing->flags & MF_SHADOW)
+    {
+        // [crispy] not using additive blending (I_BlendAdd) here 
+        // to preserve look & feel of original Strife translucency
+        vis->blendfunc = I_BlendOverAltXlatab;
+    }
+#endif
 }
 
 

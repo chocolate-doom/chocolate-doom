@@ -292,7 +292,11 @@ void D_Display (void)
 
     // clean up border stuff
     if (gamestate != oldgamestate && gamestate != GS_LEVEL)
+#ifndef CRISPY_TRUECOLOR
         I_SetPalette (W_CacheLumpName (DEH_String("PLAYPAL"),PU_CACHE));
+#else
+        I_SetPalette (0);
+#endif
 
     // see if the border needs to be initially drawn
     if (gamestate == GS_LEVEL && oldgamestate != GS_LEVEL)
@@ -537,6 +541,9 @@ void D_BindVariables(void)
     M_BindIntVariable("crispy_soundfix",        &crispy->soundfix);
     M_BindIntVariable("crispy_soundfull",       &crispy->soundfull);
     M_BindIntVariable("crispy_soundmono",       &crispy->soundmono);
+#ifdef CRISPY_TRUECOLOR
+    M_BindIntVariable("crispy_truecolor",       &crispy->truecolor);
+#endif
     M_BindIntVariable("crispy_uncapped",        &crispy->uncapped);
     M_BindIntVariable("crispy_vsync",           &crispy->vsync);
     M_BindIntVariable("crispy_widescreen",      &crispy->widescreen);
@@ -2023,6 +2030,11 @@ void D_DoomMain (void)
     M_CreateSaveDirs(savegamedir);
 
     I_GraphicsCheckCommandLine();
+
+    // [crispy] Initialize and generate gamma-correction levels and
+    // colormaps/pal_color arrays before introduction sequence.
+    I_SetGammaTable();
+    R_InitColormaps();
 
     // haleyjd 20110206 [STRIFE] Startup the introduction sequence
     D_InitIntroSequence();

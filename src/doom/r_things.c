@@ -544,7 +544,7 @@ R_DrawVisSprite
 
     colfunc = basecolfunc;
 #ifdef CRISPY_TRUECOLOR
-    blendfunc = I_BlendOver;
+    blendfunc = I_BlendOverTranmap;
 #endif
 }
 
@@ -817,7 +817,7 @@ void R_ProjectSprite (mobj_t* thing)
     // [crispy] translucent sprites
     if (thing->flags & MF_TRANSLUCENT)
     {
-	vis->blendfunc = (thing->frame & FF_FULLBRIGHT) ? I_BlendAdd : I_BlendOver;
+	vis->blendfunc = (thing->frame & FF_FULLBRIGHT) ? I_BlendAdd : I_BlendOverTranmap;
     }
 #endif
 }
@@ -1079,7 +1079,7 @@ void R_DrawPSprite (pspdef_t* psp, psprnum_t psprnum) // [crispy] differentiate 
     {
         vis->mobjflags |= MF_TRANSLUCENT;
 #ifdef CRISPY_TRUECOLOR
-        vis->blendfunc = I_BlendOver; // I_BlendAdd;
+        vis->blendfunc = I_BlendOverTranmap; // I_BlendAdd;
 #endif
     }
 

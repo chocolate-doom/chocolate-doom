@@ -29,6 +29,7 @@
 #include "w_wad.h"
 
 #include "r_local.h"
+#include "v_trans.h" // [crispy] blending functions
 
 // Needs access to LFB (guess what).
 #include "v_video.h"
@@ -61,7 +62,7 @@ int		scaledviewwidth;
 int		viewheight;
 int		viewwindowx;
 int		viewwindowy; 
-byte*		ylookup[MAXHEIGHT]; 
+pixel_t*		ylookup[MAXHEIGHT]; 
 int		columnofs[MAXWIDTH]; 
 
 // Color tables for different players,
@@ -74,7 +75,7 @@ int		columnofs[MAXWIDTH];
 // Backing buffer containing the bezel drawn around the screen and 
 // surrounding background.
 
-static byte *background_buffer = NULL;
+static pixel_t *background_buffer = NULL;
 
 // haleyjd 08/29/10: [STRIFE] Rogue added the ability to customize the view
 // border flat by storing it in the configuration file.
@@ -111,7 +112,7 @@ int			dccount;
 void R_DrawColumn (void) 
 { 
     int			count; 
-    byte*		dest; 
+    pixel_t*		dest; 
     fixed_t		frac;
     fixed_t		fracstep;	 
     int			heightmask = dc_texheight - 1;
@@ -256,7 +257,7 @@ void R_DrawColumn (void)
 void R_DrawMVisTLColumn(void)
 {
     int                 count; 
-    byte*               dest; 
+    pixel_t*               dest; 
     fixed_t             frac;
     fixed_t             fracstep;
 
@@ -294,9 +295,15 @@ void R_DrawMVisTLColumn(void)
 
     do
     {
-        byte src = dc_colormap[dc_source[(frac>>FRACBITS)&127]];
-        byte col = xlatab[*dest + (src << 8)];
+        pixel_t src = dc_colormap[dc_source[(frac>>FRACBITS)&127]];
+#ifndef CRISPY_TRUECOLOR
+        pixel_t col = xlatab[*dest + (src << 8)];
         *dest = col;
+#else
+        // [crispy] 75% opacity
+        const pixel_t destrgb = src;
+        *dest = I_BlendOverXlatab(*dest, destrgb);
+#endif
         dest += SCREENWIDTH;
         frac += fracstep;
     } while(count--);
@@ -312,7 +319,7 @@ void R_DrawMVisTLColumn(void)
 void R_DrawTLColumn(void)
 {
     int                 count; 
-    byte*               dest; 
+    pixel_t*               dest; 
     fixed_t             frac;
     fixed_t             fracstep;	 
 
@@ -350,9 +357,15 @@ void R_DrawTLColumn(void)
 
     do
     {
-        byte src = dc_colormap[dc_source[(frac>>FRACBITS)&127]];
-        byte col = xlatab[(*dest << 8) + src];
+        pixel_t src = dc_colormap[dc_source[(frac>>FRACBITS)&127]];
+#ifndef CRISPY_TRUECOLOR
+        pixel_t col = xlatab[(*dest << 8) + src];
         *dest = col;
+#else
+        // [crispy] 25% opacity
+        const pixel_t destrgb = src;
+        *dest = I_BlendOverAltXlatab(*dest, destrgb);
+#endif
         dest += SCREENWIDTH;
         frac += fracstep;
     } while(count--);
@@ -375,7 +388,7 @@ byte*	translationtables;
 void R_DrawTranslatedColumn (void) 
 { 
     int                 count; 
-    byte*               dest; 
+    pixel_t*               dest; 
     fixed_t             frac;
     fixed_t             fracstep;
 
@@ -425,7 +438,7 @@ void R_DrawTranslatedColumn (void)
 void R_DrawTRTLColumn(void)
 {
     int                 count; 
-    byte*               dest; 
+    pixel_t*               dest; 
     fixed_t             frac;
     fixed_t             fracstep;
 
@@ -452,9 +465,14 @@ void R_DrawTRTLColumn(void)
     // Here we do an additional index re-mapping.
     do 
     {
-        byte src = dc_colormap[dc_translation[dc_source[frac>>FRACBITS&127]]];
-        byte col = xlatab[(*dest << 8) + src];
+        pixel_t src = dc_colormap[dc_translation[dc_source[frac>>FRACBITS&127]]];
+#ifndef CRISPY_TRUECOLOR
+        pixel_t col = xlatab[(*dest << 8) + src];
         *dest = col;
+#else
+        const pixel_t destrgb = src;
+        *dest = blendfunc(*dest, destrgb);
+#endif
         dest += SCREENWIDTH;
         frac += fracstep; 
     } while (count--); 
@@ -487,7 +505,9 @@ void R_InitTranslationTables (void)
     // strictly portable, all we need to do is this:
 
     // villsa [STRIFE] 09/26/10: load table through this function instead
+#ifndef CRISPY_TRUECOLOR
     V_LoadXlaTable();
+#endif
 
     // villsa [STRIFE] allocate a larger size for translation tables
     translationtables = Z_Malloc (256*8, PU_STATIC, 0);
@@ -625,7 +645,7 @@ int			dscount;
 void R_DrawSpan (void) 
 { 
 //  unsigned int position, step;
-    byte *dest;
+    pixel_t *dest;
     int count;
     int spot;
     unsigned int xtemp, ytemp;
@@ -760,7 +780,7 @@ void R_DrawSpanLow (void)
 {
 //  unsigned int position, step;
     unsigned int xtemp, ytemp;
-    byte *dest;
+    pixel_t *dest;
     int count;
     int spot;
 
@@ -859,7 +879,7 @@ R_InitBuffer
 void R_FillBackScreen (void) 
 { 
     byte*	src;
-    byte*	dest; 
+    pixel_t*	dest; 
     int		x;
     int		y; 
     patch_t*	patch;
@@ -884,7 +904,7 @@ void R_FillBackScreen (void)
 	
     if (background_buffer == NULL)
     {
-        background_buffer = Z_Malloc(MAXWIDTH * (MAXHEIGHT - SBARHEIGHT),
+        background_buffer = Z_Malloc(MAXWIDTH * (MAXHEIGHT - SBARHEIGHT) * sizeof(*background_buffer),
                                      PU_STATIC, NULL);
     }
 
@@ -955,7 +975,7 @@ R_VideoErase
 
     if (background_buffer != NULL)
     {
-        memcpy(I_VideoBuffer + ofs, background_buffer + ofs, count); 
+        memcpy(I_VideoBuffer + ofs, background_buffer + ofs, count * sizeof(*I_VideoBuffer)); 
     }
 } 
 

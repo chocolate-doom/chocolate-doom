@@ -333,7 +333,7 @@ typedef struct
 //  precalculating 24bpp lightmap/colormap LUT.
 //  from darkening PLAYPAL to all black.
 // Could even us emore than 32 levels.
-typedef byte	lighttable_t;	
+typedef pixel_t	lighttable_t;	
 
 
 
@@ -407,6 +407,9 @@ typedef struct vissprite_s
    
     int			mobjflags;
     
+#ifdef CRISPY_TRUECOLOR
+    const pixel_t	(*blendfunc)(const pixel_t fg, const pixel_t bg);
+#endif
 } vissprite_t;
 
 

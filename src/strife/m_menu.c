@@ -1395,7 +1395,8 @@ void M_DrawMouse(void)
 // [crispy] Crispness menu
 static void M_DrawCrispnessBackground(void)
 {
-    byte *src, *dest;
+    byte *src;
+    pixel_t *dest;
 
     src = W_CacheLumpName(back_flat, PU_CACHE);
     dest = I_VideoBuffer;
@@ -2715,7 +2716,15 @@ boolean M_Responder (event_t* ev)
             if (crispy->gamma > 4+13) // [crispy] intermediate gamma levels
                 crispy->gamma = 0;
             players[consoleplayer].message = DEH_String(gammamsg[crispy->gamma]);
+#ifndef CRISPY_TRUECOLOR
             I_SetPalette (W_CacheLumpName (DEH_String("PLAYPAL"),PU_CACHE));
+#else
+            I_SetPalette(0);
+            R_InitColormaps();
+            inhelpscreens = true;
+            R_FillBackScreen();
+            viewactive = false;
+#endif
             return true;
         }
         else if(gameversion == exe_strife_1_31 && key == key_spy)

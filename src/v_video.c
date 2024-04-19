@@ -184,14 +184,14 @@ static const inline pixel_t drawpatchpx10 (const pixel_t dest, const pixel_t sou
 #ifndef CRISPY_TRUECOLOR
 {return tranmap[(dest<<8)+source];}
 #else
-{return I_BlendOver(dest, pal_color[source]);}
+{return I_BlendOverTranmap(dest, pal_color[source]);}
 #endif
 // (4) color-translated, translucent patch
 static const inline pixel_t drawpatchpx11 (const pixel_t dest, const pixel_t source)
 #ifndef CRISPY_TRUECOLOR
 {return tranmap[(dest<<8)+dp_translation[source]];}
 #else
-{return I_BlendOver(dest, pal_color[dp_translation[source]]);}
+{return I_BlendOverTranmap(dest, pal_color[dp_translation[source]]);}
 #endif
 
 // [crispy] TINTTAB rendering functions:
@@ -215,6 +215,13 @@ static const inline pixel_t drawalttinttab (const pixel_t dest, const pixel_t so
 {return tinttable[(dest<<8)+source];}
 #else
 {return I_BlendOverAltTinttab(dest, pal_color[source]);}
+#endif
+// V_DrawXlaPatch (translucent patch, no coloring or color-translation are used)
+static const inline pixel_t drawxlatab (const pixel_t dest, const pixel_t source)
+#ifndef CRISPY_TRUECOLOR
+{return xlatab[dest+(source<<8)];}
+#else
+{return I_BlendOverXlatab(dest, pal_color[source]);}
 #endif
 
 // [crispy] array of function pointers holding the different rendering functions
@@ -570,6 +577,9 @@ void V_DrawXlaPatch(int x, int y, patch_t * patch)
     byte *source;
     int w;
 
+    // [crispy] translucent patch, no coloring or color-translation are used
+    drawpatchpx_t *const drawpatchpx = drawxlatab;
+
     y -= SHORT(patch->topoffset);
     x -= SHORT(patch->leftoffset);
     x += WIDESCREENDELTA; // [crispy] horizontal widescreen offset
@@ -601,7 +611,7 @@ void V_DrawXlaPatch(int x, int y, patch_t * patch)
 
             while(count--)
             {
-                *dest = xlatab[*dest + (source[srccol >> FRACBITS] << 8)];
+                *dest = drawpatchpx(*dest, source[srccol >> FRACBITS]);
                 srccol += dyi;
                 dest += SCREENWIDTH;
             }
@@ -784,7 +794,7 @@ void V_DrawBlock(int x, int y, int width, int height, pixel_t *src)
 } 
 
 // [crispy] scaled version of V_DrawBlock()
-void V_DrawScaledBlock(int x, int y, int width, int height, pixel_t *src)
+void V_DrawScaledBlock(int x, int y, int width, int height, byte *src)
 {
     pixel_t *dest;
     int i, j;
@@ -809,7 +819,11 @@ void V_DrawScaledBlock(int x, int y, int width, int height, pixel_t *src)
     {
         for (j = 0; j < (width << crispy->hires); j++)
         {
+#ifndef CRISPY_TRUECOLOR
             *(dest + i * SCREENWIDTH + j) = *(src + (i >> crispy->hires) * width + (j >> crispy->hires));
+#else
+            *(dest + i * SCREENWIDTH + j) = pal_color[*(src + (i >> crispy->hires) * width + (j >> crispy->hires))];
+#endif
         }
     }
 }

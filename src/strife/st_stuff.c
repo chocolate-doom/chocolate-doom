@@ -892,7 +892,9 @@ static void ST_doPaletteStuff(void)
 {
 
     int		palette;
+#ifndef CRISPY_TRUECOLOR
     byte*	pal;
+#endif
     int		cnt;
     int		bzc;
 
@@ -940,8 +942,12 @@ static void ST_doPaletteStuff(void)
     if (palette != st_palette)
     {
         st_palette = palette;
+#ifndef CRISPY_TRUECOLOR
         pal = (byte *) W_CacheLumpNum (lu_palette, PU_CACHE)+palette*768;
         I_SetPalette (pal);
+#else
+        I_SetPalette (palette);
+#endif
     }
 
 }
@@ -1003,14 +1009,19 @@ void ST_drawNumFontY2(int x, int y, int num)
 void ST_drawLine(int x, int y, int len, int color)
 {
     byte putcolor = (byte)(color);
-    byte *drawpos = I_VideoBuffer + (y << crispy->hires) * SCREENWIDTH + ((x + WIDESCREENDELTA) << crispy->hires);
+    pixel_t *drawpos = I_VideoBuffer + (y << crispy->hires) * SCREENWIDTH + ((x + WIDESCREENDELTA) << crispy->hires);
     int i = 0;
 
     while(i < (len << crispy->hires))
     {
         if (crispy->hires)
+#ifndef CRISPY_TRUECOLOR
             *(drawpos + SCREENWIDTH) = putcolor;
         *drawpos++ = putcolor;
+#else
+            *(drawpos + SCREENWIDTH) = pal_color[putcolor];
+        *drawpos++ = pal_color[putcolor];
+#endif
         ++i;
     }
 }
@@ -1805,7 +1816,11 @@ void ST_Stop (void)
     if (st_stopped)
         return;
 
+#ifndef CRISPY_TRUECOLOR
     I_SetPalette (W_CacheLumpNum (lu_palette, PU_CACHE));
+#else
+    I_SetPalette (0);
+#endif
 
     st_stopped = true;
 }

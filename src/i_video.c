@@ -103,9 +103,6 @@ static SDL_Texture *graypane = NULL;
 static SDL_Texture *orngpane = NULL;
 static int pane_alpha;
 static unsigned int rmask, gmask, bmask, amask; // [crispy] moved up here
-static const uint8_t blend_alpha = 0xa8;
-static const uint8_t blend_alpha_tinttab = 0x60; // 96
-static const uint8_t blend_alpha_alttinttab = 0x8E; // 142
 extern pixel_t* pal_color; // [crispy] evil hack to get FPS dots working as in Vanilla
 #else
 static SDL_Color palette[256];
@@ -2136,36 +2133,47 @@ const pixel_t I_BlendDark (const pixel_t bg, const int d)
 	return amask | sag | srb;
 }
 
-const pixel_t I_BlendOver (const pixel_t bg, const pixel_t fg)
+// [crispy] Main overlay blending function
+const pixel_t I_BlendOver (const pixel_t bg, const pixel_t fg, const int amount)
 {
-	const uint32_t r = ((blend_alpha * (fg & rmask) + (0xff - blend_alpha) * (bg & rmask)) >> 8) & rmask;
-	const uint32_t g = ((blend_alpha * (fg & gmask) + (0xff - blend_alpha) * (bg & gmask)) >> 8) & gmask;
-	const uint32_t b = ((blend_alpha * (fg & bmask) + (0xff - blend_alpha) * (bg & bmask)) >> 8) & bmask;
+	const uint32_t r = ((amount * (fg & rmask) + (0xff - amount) * (bg & rmask)) >> 8) & rmask;
+	const uint32_t g = ((amount * (fg & gmask) + (0xff - amount) * (bg & gmask)) >> 8) & gmask;
+	const uint32_t b = ((amount * (fg & bmask) + (0xff - amount) * (bg & bmask)) >> 8) & bmask;
 
 	return amask | r | g | b;
+}
+
+// [crispy] TRANMAP blending emulation, used for Doom
+const pixel_t I_BlendOverTranmap (const pixel_t bg, const pixel_t fg)
+{
+	return I_BlendOver(bg, fg, 224); // 168 (66% opacity)
 }
 
 // [crispy] TINTTAB blending emulation, used for Heretic and Hexen
 const pixel_t I_BlendOverTinttab (const pixel_t bg, const pixel_t fg)
 {
-	const uint32_t r = ((blend_alpha_tinttab * (fg & rmask) + (0xff - blend_alpha_tinttab) * (bg & rmask)) >> 8) & rmask;
-	const uint32_t g = ((blend_alpha_tinttab * (fg & gmask) + (0xff - blend_alpha_tinttab) * (bg & gmask)) >> 8) & gmask;
-	const uint32_t b = ((blend_alpha_tinttab * (fg & bmask) + (0xff - blend_alpha_tinttab) * (bg & bmask)) >> 8) & bmask;
-
-	return amask | r | g | b;
+	return I_BlendOver(bg, fg, 0x60); // 96 (38% opacity)
 }
 
 // [crispy] More opaque ("Alt") TINTTAB blending emulation, used for Hexen's MF_ALTSHADOW drawing
 const pixel_t I_BlendOverAltTinttab (const pixel_t bg, const pixel_t fg)
 {
-	const uint32_t r = ((blend_alpha_alttinttab * (fg & rmask) + (0xff - blend_alpha_alttinttab) * (bg & rmask)) >> 8) & rmask;
-	const uint32_t g = ((blend_alpha_alttinttab * (fg & gmask) + (0xff - blend_alpha_alttinttab) * (bg & gmask)) >> 8) & gmask;
-	const uint32_t b = ((blend_alpha_alttinttab * (fg & bmask) + (0xff - blend_alpha_alttinttab) * (bg & bmask)) >> 8) & bmask;
-
-	return amask | r | g | b;
+	return I_BlendOver(bg, fg, 0x8E); // 142 (56% opacity)
 }
 
-const pixel_t (*blendfunc) (const pixel_t fg, const pixel_t bg) = I_BlendOver;
+// [crispy] More opaque XLATAB blending emulation, used for Strife
+const pixel_t I_BlendOverXlatab (const pixel_t bg, const pixel_t fg)
+{
+	return I_BlendOver(bg, fg, 0xC0); // 192 (75% opacity)
+}
+
+// [crispy] Less opaque ("Alt") XLATAB blending emulation, used for Strife
+const pixel_t I_BlendOverAltXlatab (const pixel_t bg, const pixel_t fg)
+{
+	return I_BlendOver(bg, fg, 0x40); // 64 (25% opacity)
+}
+
+const pixel_t (*blendfunc) (const pixel_t fg, const pixel_t bg) = I_BlendOverTranmap;
 
 const pixel_t I_MapRGB (const uint8_t r, const uint8_t g, const uint8_t b)
 {

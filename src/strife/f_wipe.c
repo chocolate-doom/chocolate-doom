@@ -20,6 +20,7 @@
 
 #include "z_zone.h"
 #include "i_video.h"
+#include "v_trans.h" // [crispy] blending functions
 #include "v_video.h"
 #include "m_random.h"
 
@@ -37,28 +38,30 @@
 // when zero, stop the wipe
 static boolean	go = 0;
 
-static byte*	wipe_scr_start;
-static byte*	wipe_scr_end;
-static byte*	wipe_scr;
+static pixel_t*	wipe_scr_start;
+static pixel_t*	wipe_scr_end;
+static pixel_t*	wipe_scr;
 
+// [crispy] Additional fail-safe counter for performing crossfade effect.
+static int fade_counter;
 
 void
 wipe_shittyColMajorXform
-( short*	array,
+( dpixel_t*	array,
   int		width,
   int		height )
 {
     int		x;
     int		y;
-    short*	dest;
+    dpixel_t*	dest;
 
-    dest = (short*) Z_Malloc(width*height*2, PU_STATIC, 0);
+    dest = (dpixel_t*) Z_Malloc(width*height*sizeof(*dest), PU_STATIC, 0);
 
     for(y=0;y<height;y++)
 	for(x=0;x<width;x++)
 	    dest[x*height+y] = array[y*width+x];
 
-    memcpy(array, dest, width*height*2);
+    memcpy(array, dest, width*height*sizeof(*dest));
 
     Z_Free(dest);
 
@@ -71,7 +74,10 @@ wipe_initColorXForm
   int	height,
   int	ticks )
 {
-    memcpy(wipe_scr, wipe_scr_start, width*height);
+    memcpy(wipe_scr, wipe_scr_start, width*height*sizeof(*wipe_scr));
+    // [crispy] arm fail-safe crossfade counter with
+    // 13 screen transitions, "zero" count won't be used.
+    fade_counter = 14;
     return 0;
 }
 
@@ -88,18 +94,27 @@ wipe_doColorXForm
   int	height,
   int	ticks )
 {
-    byte *cur_screen = wipe_scr;
-    byte *end_screen = wipe_scr_end;
+    pixel_t *cur_screen = wipe_scr;
+    pixel_t *end_screen = wipe_scr_end;
     int   pix = width*height;
     int   i;
     boolean changed = false;
 
+    // [crispy] reduce fail-safe crossfade counter tics
+    fade_counter--;
+
     for(i = pix; i > 0; i--)
     {
-        if(*cur_screen != *end_screen)
+        if(*cur_screen != *end_screen && fade_counter)
         {
             changed = true;
+#ifndef CRISPY_TRUECOLOR
             *cur_screen = xlatab[(*cur_screen << 8) + *end_screen];
+#else
+            // [crispy] perform crossfading effect with 13 given opacity steps, multipled by 19:
+            // 247, 228, 209, 190, 171, 152, 133, 114, 95, 76, 57, 38, 19
+            *cur_screen = I_BlendOver(*end_screen, *cur_screen, fade_counter * 19);
+#endif
         }
         ++cur_screen;
         ++end_screen;
@@ -130,12 +145,12 @@ wipe_initMelt
     int i, r;
     
     // copy start screen to main screen
-    memcpy(wipe_scr, wipe_scr_start, width*height);
+    memcpy(wipe_scr, wipe_scr_start, width*height*sizeof(*wipe_scr));
     
     // makes this wipe faster (in theory)
     // to have stuff in column-major format
-    wipe_shittyColMajorXform((short*)wipe_scr_start, width/2, height);
-    wipe_shittyColMajorXform((short*)wipe_scr_end, width/2, height);
+    wipe_shittyColMajorXform((dpixel_t*)wipe_scr_start, width/2, height);
+    wipe_shittyColMajorXform((dpixel_t*)wipe_scr_end, width/2, height);
     
     // setup initial column positions
     // (y<0 => not ready to scroll yet)
@@ -163,8 +178,8 @@ wipe_doMelt
     int		dy;
     int		idx;
     
-    short*	s;
-    short*	d;
+    dpixel_t*	s;
+    dpixel_t*	d;
     boolean	done = true;
 
     width/=2;
@@ -181,8 +196,8 @@ wipe_doMelt
 	    {
 		dy = (y[i] < 16) ? y[i]+1 : 8;
 		if (y[i]+dy >= height) dy = height - y[i];
-		s = &((short *)wipe_scr_end)[i*height+y[i]];
-		d = &((short *)wipe_scr)[y[i]*width+i];
+		s = &((dpixel_t *)wipe_scr_end)[i*height+y[i]];
+		d = &((dpixel_t *)wipe_scr)[y[i]*width+i];
 		idx = 0;
 		for (j=dy;j;j--)
 		{
@@ -190,8 +205,8 @@ wipe_doMelt
 		    idx += width;
 		}
 		y[i] += dy;
-		s = &((short *)wipe_scr_start)[i*height];
-		d = &((short *)wipe_scr)[y[i]*width+i];
+		s = &((dpixel_t *)wipe_scr_start)[i*height];
+		d = &((dpixel_t *)wipe_scr)[y[i]*width+i];
 		idx = 0;
 		for (j=height-y[i];j;j--)
 		{
@@ -227,7 +242,7 @@ wipe_StartScreen
   int	width,
   int	height )
 {
-    wipe_scr_start = Z_Malloc(SCREENWIDTH * SCREENHEIGHT, PU_STATIC, NULL);
+    wipe_scr_start = Z_Malloc(SCREENWIDTH * SCREENHEIGHT * sizeof(*wipe_scr_start), PU_STATIC, NULL);
     I_ReadScreen(wipe_scr_start);
     return 0;
 }
@@ -240,7 +255,7 @@ wipe_EndScreen
   int	width,
   int	height )
 {
-    wipe_scr_end = Z_Malloc(SCREENWIDTH * SCREENHEIGHT, PU_STATIC, NULL);
+    wipe_scr_end = Z_Malloc(SCREENWIDTH * SCREENHEIGHT * sizeof(*wipe_scr_end), PU_STATIC, NULL);
     I_ReadScreen(wipe_scr_end);
     V_DrawBlock(x, y, width, height, wipe_scr_start); // restore start scr.
     return 0;
@@ -268,7 +283,7 @@ wipe_ScreenWipe
     {
 	go = 1;
         // haleyjd 20110629 [STRIFE]: We *must* use a temp buffer here.
-	wipe_scr = (byte *) Z_Malloc(width*height, PU_STATIC, 0); // DEBUG
+	wipe_scr = (pixel_t *) Z_Malloc(width*height*sizeof(*wipe_scr), PU_STATIC, 0); // DEBUG
 	//wipe_scr = I_VideoBuffer;
 	(*wipes[wipeno*3])(width, height, ticks);
     }

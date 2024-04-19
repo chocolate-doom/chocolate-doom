@@ -166,6 +166,8 @@ void R_RenderPlayerView (player_t *player);
 // Called by startup code.
 void R_Init (void);
 
+void R_InitColormaps (void);
+
 // Called by M_Responder.
 void R_SetViewSize (int blocks, int detail);
 
