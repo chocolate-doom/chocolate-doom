@@ -1892,6 +1892,75 @@ boolean MN_Responder(event_t * event)
             return true;
         }
     }
+    else // [crispy] allow menu control with the mouse
+    {
+        static int mousewait = 0;
+        static int mousey = 0;
+        static int lasty = 0;
+
+        if (event->type == ev_mouse && mousewait < I_GetTime())
+        {
+            // [crispy] novert disables up/down cursor movement with the mouse
+            if (!novert)
+            {
+                mousey += event->data3;
+            }
+
+            if (mousey < lasty - 30)
+            {
+                key = key_menu_down;
+                mousewait = I_GetTime() + 5;
+                mousey = lasty -= 30;
+            }
+            else if (mousey > lasty + 30)
+            {
+                key = key_menu_up;
+                mousewait = I_GetTime() + 5;
+                mousey = lasty += 30;
+            }
+
+            if (event->data1 & 1)
+            {
+                key = key_menu_forward;
+                mousewait = I_GetTime() + 5;
+            }
+
+            if (event->data1 & 2)
+            {
+                if (FileMenuKeySteal)
+                {
+                    key = KEY_ESCAPE;
+                    FileMenuKeySteal = false;
+                }
+                else
+                {
+                    key = key_menu_back;
+                }
+                mousewait = I_GetTime() + 5;
+            }
+
+            // [crispy] scroll menus with mouse wheel
+            if (event->data1 & (1 << 4))
+            {
+                key = key_menu_down;
+                mousewait = I_GetTime() + 1;
+            }
+            else
+            if (event->data1 & (1 << 3))
+            {
+                key = key_menu_up;
+                mousewait = I_GetTime() + 1;
+            }
+        }
+        else
+        {
+            if (event->type == ev_keydown)
+            {
+                key = event->data1;
+                charTyped = event->data2;
+            }
+        }
+    }
 
     if (event->type != ev_keydown && key == -1)
     {
@@ -1938,7 +2007,9 @@ boolean MN_Responder(event_t * event)
 
     if (askforquit)
     {
-        if (key == key_menu_confirm)
+        if (key == key_menu_confirm
+        // [crispy] allow to confirm quit (1) and end game (2) by pressing Enter key
+        || (key == key_menu_forward && (typeofask == 1 || typeofask == 2)))
         {
             switch (typeofask)
             {
@@ -2178,7 +2249,8 @@ boolean MN_Responder(event_t * event)
         }
         else if (key == key_menu_quit)            // F10 (quit)
         {
-            if (gamestate == GS_LEVEL)
+            // [crispy] allow to invoke quit in any game state
+            // if (gamestate == GS_LEVEL)
             {
                 SCQuitGame(0);
                 S_StartSound(NULL, sfx_chat);

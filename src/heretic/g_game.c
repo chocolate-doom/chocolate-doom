@@ -1052,6 +1052,11 @@ static void SetJoyButtons(unsigned int buttons_mask)
 static boolean InventoryMoveLeft()
 {
     inventoryTics = 5 * 35;
+
+    if (MenuActive)
+    {
+        return false;
+    }
     if (!inventory)
     {
         inventory = true;
@@ -1079,6 +1084,11 @@ static boolean InventoryMoveRight()
 
     plr = &players[consoleplayer];
     inventoryTics = 5 * 35;
+
+    if (MenuActive)
+    {
+        return false;
+    }
     if (!inventory)
     {
         inventory = true;

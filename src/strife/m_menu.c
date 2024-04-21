@@ -1646,7 +1646,8 @@ void M_ChangeMessages(int choice)
 //
 void M_EndGameResponse(int key)
 {
-    if (key != key_menu_confirm)
+    // [crispy] allow to confirm by pressing Enter key
+    if (key != key_menu_confirm && key != key_menu_forward)
         return;
 
     currentMenu->lastOn = itemOn;
@@ -1747,7 +1748,8 @@ void M_QuitResponse(int key)
 {
     char buffer[20];
 
-    if (key != key_menu_confirm)
+    // [crispy] allow to confirm by pressing Enter key
+    if (key != key_menu_confirm && key != key_menu_forward)
         return;
 
     // [crispy] quit immediately if not showing exit screen
@@ -2334,7 +2336,8 @@ boolean M_Responder (event_t* ev)
         if (ev->type == ev_mouse && mousewait < I_GetTime())
         {
             // [crispy] Don't control Crispness menu with y-axis mouse movement.
-            if (!inhelpscreens)
+            // "novert" disables up/down cursor movement with the mouse.
+            if (!inhelpscreens && !novert)
                 mousey += ev->data3;
 
             if (mousey < lasty-30)
@@ -2370,7 +2373,7 @@ boolean M_Responder (event_t* ev)
             if (ev->data1&1)
             {
                 key = key_menu_forward;
-                mousewait = I_GetTime() + 15;
+                mousewait = I_GetTime() + 5;
                 if (menuindialog) // [crispy] fix mouse fire delay
                 {
                 mouse_fire_countdown = 5;   // villsa [STRIFE]
@@ -2380,7 +2383,20 @@ boolean M_Responder (event_t* ev)
             if (ev->data1&2)
             {
                 key = key_menu_back;
-                mousewait = I_GetTime() + 15;
+                mousewait = I_GetTime() + 5;
+            }
+
+            // [crispy] scroll menus with mouse wheel
+            if (mousebprevweapon >= 0 && ev->data1 & (1 << mousebprevweapon))
+            {
+                key = key_menu_down;
+                mousewait = I_GetTime() + 1;
+            }
+            else
+            if (mousebnextweapon >= 0 && ev->data1 & (1 << mousebnextweapon))
+            {
+                key = key_menu_up;
+                mousewait = I_GetTime() + 1;
             }
         }
         else
@@ -2539,7 +2555,9 @@ boolean M_Responder (event_t* ev)
         if (messageNeedsInput)
         {
             if (key != ' ' && key != KEY_ESCAPE
-                && key != key_menu_confirm && key != key_menu_abort)
+                && key != key_menu_confirm && key != key_menu_abort
+                // [crispy] allow to confirm end game and quit by pressing Enter key
+                && key != key_menu_forward)
             {
                 return false;
             }

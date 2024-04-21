@@ -1335,7 +1335,8 @@ void M_DrawEpisode(void)
 
 void M_VerifyNightmare(int key)
 {
-    if (key != key_menu_confirm)
+    // [crispy] allow to confirm by pressing Enter key
+    if (key != key_menu_confirm && key != key_menu_forward)
 	return;
 		
     G_DeferedInitNew(nightmare,epi+1,1);
@@ -1720,7 +1721,8 @@ void M_ChangeMessages(int choice)
 //
 void M_EndGameResponse(int key)
 {
-    if (key != key_menu_confirm)
+    // [crispy] allow to confirm by pressing Enter key
+    if (key != key_menu_confirm && key != key_menu_forward)
 	return;
 		
     // [crispy] killough 5/26/98: make endgame quit if recording or playing back demo
@@ -1812,7 +1814,8 @@ void M_QuitResponse(int key)
 {
     extern int show_endoom;
 
-    if (key != key_menu_confirm)
+    // [crispy] allow to confirm by pressing Enter key
+    if (key != key_menu_confirm && key != key_menu_forward)
 	return;
     // [crispy] play quit sound only if the ENDOOM screen is also shown
     if (!netgame && show_endoom)
@@ -2466,13 +2469,13 @@ boolean M_Responder (event_t* ev)
 	    if (ev->data1&1)
 	    {
 		key = key_menu_forward;
-		mousewait = I_GetTime() + 15;
+		mousewait = I_GetTime() + 5;
 	    }
 			
 	    if (ev->data1&2)
 	    {
 		key = key_menu_back;
-		mousewait = I_GetTime() + 15;
+		mousewait = I_GetTime() + 5;
 	    }
 
 	    // [crispy] scroll menus with mouse wheel
@@ -2634,7 +2637,9 @@ boolean M_Responder (event_t* ev)
 	if (messageNeedsInput)
         {
             if (key != ' ' && key != KEY_ESCAPE
-             && key != key_menu_confirm && key != key_menu_abort)
+             && key != key_menu_confirm && key != key_menu_abort
+             // [crispy] allow to confirm nightmare, end game and quit by pressing Enter key
+             && key != key_menu_forward)
             {
                 return false;
             }
