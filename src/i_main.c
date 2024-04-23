@@ -22,6 +22,7 @@
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <locale.h> // [crispy] setlocale
 
 #include "SDL.h"
 
@@ -51,6 +52,9 @@ int main(int argc, char **argv)
     {
         myargv[i] = M_StringDuplicate(argv[i]);
     }
+
+    // [crispy] Print date and time in the Load/Save Game menus in the current locale
+    setlocale(LC_TIME, "");
 
     //!
     // Print the program version and exit.

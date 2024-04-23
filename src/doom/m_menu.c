@@ -20,6 +20,7 @@
 
 #include <stdlib.h>
 #include <ctype.h>
+#include <time.h> // [crispy] strftime, localtime
 
 
 #include "doomdef.h"
@@ -851,15 +852,10 @@ void M_ReadSaveStrings(void)
 }
 
 // [FG] support up to 8 pages of savegames
-void M_DrawSaveLoadBottomLine(void)
+static void M_DrawSaveLoadBottomLine(void)
 {
   char pagestr[16];
-  const int y = LoadDef.y+LINEHEIGHT*load_end;
-
-  // [crispy] force status bar refresh
-  inhelpscreens = true;
-
-  M_DrawSaveLoadBorder(LoadDef.x,y);
+  const int y = 152;
 
   dp_translation = cr[CR_GOLD];
 
@@ -870,6 +866,26 @@ void M_DrawSaveLoadBottomLine(void)
 
   M_snprintf(pagestr, sizeof(pagestr), "page %d/%d", savepage + 1, savepage_max + 1);
   M_WriteText(ORIGWIDTH/2-M_StringWidth(pagestr)/2, y, pagestr);
+
+  // [crispy] print "modified" (or created initially) time of savegame file
+  if (LoadMenu[itemOn].status)
+  {
+    struct stat st;
+    char filedate[32];
+
+    stat(P_SaveGameFile(itemOn), &st);
+
+// [FG] suppress the most useless compiler warning ever
+#if defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-y2k"
+#endif
+    strftime(filedate, sizeof(filedate), "%x %X", localtime(&st.st_mtime));
+#if defined(__GNUC__)
+#pragma GCC diagnostic pop
+#endif
+    M_WriteText(ORIGWIDTH/2-M_StringWidth(filedate)/2, y + 8, filedate);
+  }
 
   dp_translation = NULL;
 }
@@ -3457,7 +3473,7 @@ void M_Init (void)
 	{
 		LoadDef_y = vstep + captionheight - SHORT(patchl->height) + SHORT(patchl->topoffset);
 		SaveDef_y = vstep + captionheight - SHORT(patchs->height) + SHORT(patchs->topoffset);
-		LoadDef.y = SaveDef.y = vstep + captionheight + vstep + SHORT(patchm->topoffset) - 7; // [crispy] see M_DrawSaveLoadBorder()
+		LoadDef.y = SaveDef.y = vstep + captionheight + vstep + SHORT(patchm->topoffset) - 15; // [crispy] moved up, so savegame date/time may appear above status bar
 		MouseDef.y = LoadDef.y;
 	}
     }
