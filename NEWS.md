@@ -132,6 +132,8 @@
   * The "Sky never changes in Doom II" bug is now accurately emulated
     (thanks Michael Francis).
   * Mouse buttons are now bindable to turn left/right (thanks Fabian).
+  * Fix possible undefined behavior and accurately emulate vanilla when -skill
+    parameter is given a negative value (thanks Henrique Jorge).
 
 ### Heretic
   * P\_FindNextHighestFloor was changed to match vanilla behavior (thanks
@@ -166,6 +168,8 @@
   * PC speaker sound effects are now supported (thanks ceski).
   * Mouse buttons are now bindable to turn left/right (thanks Fabian).
   * Fixed demo desyncs in P_LookForPlayers (thanks Michael Day)
+  * Fix possible undefined behavior and accurately emulate vanilla when -skill
+    parameter is given a negative value (thanks Henrique Jorge).
 
 ## 3.0.1 (2020-06-24)
 
