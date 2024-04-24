@@ -35,6 +35,10 @@ extern int mouse_y_invert; // [crispy]
 extern int novert; // [crispy]
 extern int runcentering; // [crispy]
 
+// [crispy]
+double I_AccelerateMouse(int val);
+double I_AccelerateMouseY(int val);
+
 void I_BindStrifeInputVariables(void); // [crispy]
 void I_BindInputVariables(void);
 void I_ReadMouse(void);

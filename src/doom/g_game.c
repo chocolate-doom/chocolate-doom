@@ -222,7 +222,8 @@ typedef struct carry_s
 {
     double angle;
     double pitch;
-    short lowres;
+    double side;
+    double vert;
 } carry_t;
 
 static carry_t prevcarry;
@@ -375,6 +376,43 @@ static short CarryAngle(double angle)
 static short CarryPitch(double pitch)
 {
     return CarryError(pitch, &prevcarry.pitch, &carry.pitch);
+}
+
+static int CarryMouseVert(double vert)
+{
+    return CarryError(vert, &prevcarry.vert, &carry.vert);
+}
+
+static int CarryMouseSide(double side)
+{
+    const double desired = side + prevcarry.side;
+    const int actual = lround(side * 0.5) * 2; // Even values only.
+    carry.side = desired - actual;
+    return actual;
+}
+
+static double CalcMouseAngle(int mousex)
+{
+    if (!mouseSensitivity)
+        return 0.0;
+
+    return (I_AccelerateMouse(mousex) * (mouseSensitivity + 5) * 8 / 10);
+}
+
+static double CalcMouseSide(int mousex)
+{
+    if (!mouseSensitivity_x2)
+        return 0.0;
+
+    return (I_AccelerateMouse(mousex) * (mouseSensitivity_x2 + 5) * 2 / 10);
+}
+
+static double CalcMouseVert(int mousey)
+{
+    if (!mouseSensitivity_y)
+        return 0.0;
+
+    return (I_AccelerateMouseY(mousey) * (mouseSensitivity_y + 5) / 10);
 }
 
 //
@@ -778,12 +816,13 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     if ((crispy->freelook && mousebuttons[mousebmouselook]) ||
          crispy->mouselook)
     {
-        cmd->lookdir += mouse_y_invert ? -mousey : mousey;
+        const double vert = CalcMouseVert(mousey);
+        cmd->lookdir += mouse_y_invert ? CarryPitch(-vert) : CarryPitch(vert);
     }
     else
     if (!novert)
     {
-    forward += mousey;
+    forward += CarryMouseVert(CalcMouseVert(mousey));
     }
 
     // [crispy] single click on mouse look button centers view
@@ -809,7 +848,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     }
 
     if (strafe && !cmd->angleturn)
-	side += mousex2*2;
+	side += CarryMouseSide(CalcMouseSide(mousex));
 
     if (mousex == 0)
     {
@@ -1222,18 +1261,8 @@ boolean G_Responder (event_t* ev)
 		 
       case ev_mouse: 
         SetMouseButtons(ev->data1);
-	if (mouseSensitivity)
-	mousex = ev->data2*(mouseSensitivity+5)/10; 
-	else
-	    mousex = 0; // [crispy] disable entirely
-	if (mouseSensitivity_x2)
-	mousex2 = ev->data2*(mouseSensitivity_x2+5)/10; // [crispy] separate sensitivity for strafe
-	else
-	    mousex2 = 0; // [crispy] disable entirely
-	if (mouseSensitivity_y)
-	mousey = ev->data3*(mouseSensitivity_y+5)/10; // [crispy] separate sensitivity for y-axis
-	else
-	    mousey = 0; // [crispy] disable entirely
+        mousex += ev->data2;
+        mousey += ev->data3;
 	return true;    // eat events 
  
       case ev_joystick: 
@@ -1256,18 +1285,8 @@ void G_FastResponder (void)
 {
     if (newfastmouse)
     {
-        if (mouseSensitivity)
-            mousex += fastmouse.data2*(mouseSensitivity+5)/10;
-        else
-            mousex = 0;
-        if (mouseSensitivity_x2)
-            mousex2 += fastmouse.data2*(mouseSensitivity_x2+5)/10;
-        else
-            mousex2 = 0;
-        if (mouseSensitivity_y)
-            mousey += fastmouse.data3*(mouseSensitivity_y+5)/10;
-        else
-            mousey = 0;
+        mousex += fastmouse.data2;
+        mousey += fastmouse.data3;
 
         newfastmouse = false;
     }
@@ -1281,7 +1300,7 @@ void G_PrepTiccmd (void)
 
     if (mousex && !strafe)
     {
-        localview.rawangle -= 8 * mousex;
+        localview.rawangle -= CalcMouseAngle(mousex);
         basecmd.angleturn = CarryAngle(localview.rawangle);
         localview.angle = crispy->fliplevels ?
             -(basecmd.angleturn << 16) : (basecmd.angleturn << 16);
@@ -1290,8 +1309,9 @@ void G_PrepTiccmd (void)
 
     if (mousey && crispy->mouselook)
     {
+        const double vert = CalcMouseVert(mousey);
         basecmd.lookdir += mouse_y_invert ?
-                            -CarryPitch(mousey): CarryPitch(mousey);
+                            CarryPitch(-vert): CarryPitch(vert);
         mousey = 0;
     }
 }

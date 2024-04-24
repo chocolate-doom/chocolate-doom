@@ -510,14 +510,15 @@ static void UpdateMouseAccel(int x, int y)
 
 }
 
-static int AccelerateMouse(int val)
+// [crispy] Change to double
+double I_AccelerateMouse(int val)
 {
     if (val < 0)
-        return -AccelerateMouse(-val);
+        return -I_AccelerateMouse(-val);
 
     if (abs(mousex.total) > mouse_threshold)
     {
-        return (int)((val - x_threshold) * mouse_acceleration + x_threshold);
+        return (val - x_threshold) * mouse_acceleration + x_threshold;
     }
     else
     {
@@ -525,15 +526,15 @@ static int AccelerateMouse(int val)
     }
 }
 
-// [crispy]
-static int AccelerateMouseY(int val)
+// [crispy] Change to double
+double I_AccelerateMouseY(int val)
 {
     if (val < 0)
-        return -AccelerateMouseY(-val);
+        return -I_AccelerateMouseY(-val);
 
     if (abs(mousey.total) > mouse_threshold_y)
     {
-        return (int)((val - y_threshold) * mouse_acceleration_y + y_threshold);
+        return (val - y_threshold) * mouse_acceleration_y + y_threshold;
     }
     else
     {
@@ -558,11 +559,11 @@ void I_ReadMouse(void)
     {
         ev.type = ev_mouse;
         ev.data1 = mouse_button_state;
-        ev.data2 = AccelerateMouse(x);
+        ev.data2 = x;
 
         if (true || !novert) // [crispy] moved to src/*/g_game.c
         {
-            ev.data3 = -AccelerateMouseY(y); // [crispy]
+            ev.data3 = -y; // [crispy]
         }
         else
         {
@@ -584,11 +585,11 @@ void I_ReadMouseUncapped(void)
 
     if (x != 0 || y != 0)
     {
-        fastmouse.data2 = AccelerateMouse(x);
+        fastmouse.data2 = x;
 
         if (true || !novert) // [crispy] moved to src/*/g_game.c
         {
-            fastmouse.data3 = -AccelerateMouseY(y); // [crispy]
+            fastmouse.data3 = -y; // [crispy]
         }
         else
         {
