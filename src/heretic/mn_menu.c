@@ -612,6 +612,33 @@ static void InitFonts(void)
     FontBBaseLump = W_GetNumForName(DEH_String("FONTB_S")) + 1;
 }
 
+// [crispy] Check if printable character is existing in FONTA/FONTB sets
+// and do a replacement or case correction if needed.
+
+enum {
+    big_font, small_font
+} fontsize_t;
+
+static const char MN_CheckValidChar (char ascii_index, int have_cursor)
+{
+    if ((ascii_index > 'Z' + have_cursor && ascii_index < 'a') || ascii_index > 'z')
+    {
+        // Replace "\]^_`" and "{|}~" with spaces,
+        // allow "[" (cursor symbol) only in small fonts.
+        return ' ';
+    }
+    else if (ascii_index >= 'a' && ascii_index <= 'z')
+    {
+        // Force lowercase "a...z" characters to uppercase "A...Z".
+        return ascii_index + 'A' - 'a';
+    }
+    else
+    {
+        // Valid char, do not modify it's ASCII index.
+        return ascii_index;
+    }
+}
+
 //---------------------------------------------------------------------------
 //
 // PROC MN_DrTextA
@@ -627,7 +654,9 @@ void MN_DrTextA(const char *text, int x, int y)
 
     while ((c = *text++) != 0)
     {
-        if (c < 33 || c > 91) // [crispy] fail-safe: draw patches above FONTA59 as spaces
+        c = MN_CheckValidChar(c, small_font); // [crispy] check for valid characters
+
+        if (c < 33)
         {
             x += 5;
         }
@@ -657,7 +686,9 @@ int MN_TextAWidth(const char *text)
     width = 0;
     while ((c = *text++) != 0)
     {
-        if (c < 33 || c > 91) // [crispy] fail-safe: consider patches above FONTA59 as spaces
+        c = MN_CheckValidChar(c, small_font); // [crispy] check for valid characters
+
+        if (c < 33)
         {
             width += 5;
         }
@@ -685,7 +716,9 @@ void MN_DrTextB(const char *text, int x, int y)
 
     while ((c = *text++) != 0)
     {
-        if (c < 33 || c > 90) // [crispy] fail-safe: draw patches above FONTB58 as spaces
+        c = MN_CheckValidChar(c, big_font); // [crispy] check for valid characters
+
+        if (c < 33)
         {
             x += 8;
         }
@@ -715,7 +748,9 @@ int MN_TextBWidth(const char *text)
     width = 0;
     while ((c = *text++) != 0)
     {
-        if (c < 33 || c > 90) // [crispy] fail-safe: consider patches above FONTB58 as spaces
+        c = MN_CheckValidChar(c, big_font); // [crispy] check for valid characters
+
+        if (c < 33)
         {
             width += 5;
         }
@@ -950,7 +985,7 @@ static void DrawSaveLoadBottomLine(const Menu_t *menu)
 #if defined(__GNUC__)
 #  pragma GCC diagnostic pop
 #endif
-        MN_DrTextA(filedate, ORIGWIDTH / 2 - MN_TextAWidth(pagestr), y + 10);
+        MN_DrTextA(filedate, ORIGWIDTH / 2 - MN_TextAWidth(filedate) / 2, y + 10);
     }
 
     dp_translation = NULL;
