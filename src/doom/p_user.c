@@ -163,6 +163,7 @@ void P_MovePlayer (player_t* player)
     // [crispy] give full control in no-clipping mode
     onground |= (player->mo->flags & MF_NOCLIP);
 	
+    // [crispy] fast polling
     if (player == &players[consoleplayer])
     {
         localview.ticangle += localview.ticangleturn << 16;
@@ -295,6 +296,7 @@ void P_PlayerThink (player_t* player)
     player->oldlookdir = player->lookdir;
     player->oldrecoilpitch = player->recoilpitch;
 
+    // [crispy] fast polling
     if (player == &players[consoleplayer])
     {
         localview.oldticangle = localview.ticangle;

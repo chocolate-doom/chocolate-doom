@@ -218,6 +218,7 @@ int             mousex;
 int             mousex2;
 int             mousey;         
 
+// [crispy] for rounding error
 typedef struct carry_s
 {
     double angle;
@@ -359,6 +360,7 @@ boolean speedkeydown (void)
            (mousebspeed < MAX_MOUSE_BUTTONS && mousebuttons[mousebspeed]);
 }
 
+// [crispy] for carrying rounding error
 static int CarryError(double value, const double *prevcarry, double *carry)
 {
     const double desired = value + *prevcarry;
@@ -1053,9 +1055,9 @@ void G_DoLoadLevel (void)
     memset (gamekeydown, 0, sizeof(gamekeydown));
     joyxmove = joyymove = joystrafemove = joylook = 0;
     mousex = mousex2 = mousey = 0;
-    memset(&localview, 0, sizeof(localview));
-    memset(&carry, 0, sizeof(carry));
-    memset(&prevcarry, 0, sizeof(prevcarry));
+    memset(&localview, 0, sizeof(localview)); // [crispy]
+    memset(&carry, 0, sizeof(carry)); // [crispy]
+    memset(&prevcarry, 0, sizeof(prevcarry)); // [crispy]
     memset(&basecmd, 0, sizeof(basecmd)); // [crispy]
     sendpause = sendsave = paused = false;
     memset(mousearray, 0, sizeof(mousearray));

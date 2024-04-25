@@ -987,6 +987,7 @@ R_PointInSubsector
 }
 
 
+// [crispy]
 static inline boolean CheckLocalView(const player_t *player)
 {
   return (
