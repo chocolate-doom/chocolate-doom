@@ -39,6 +39,7 @@ int sscount, linecount, loopcount;
 
 fixed_t viewx, viewy, viewz;
 angle_t viewangle;
+localview_t localview; // [crispy]
 fixed_t viewcos, viewsin;
 player_t *viewplayer;
 
@@ -792,6 +793,23 @@ subsector_t *R_PointInSubsector(fixed_t x, fixed_t y)
 
 }
 
+// [crispy]
+static inline boolean CheckLocalView(const player_t *player)
+{
+  return (
+    // Don't use localview if the player is spying.
+    player == &players[consoleplayer] &&
+    // Don't use localview if the player is dead.
+    player->playerstate != PST_DEAD &&
+    // Don't use localview if the player just teleported.
+    !player->mo->reactiontime &&
+    // Don't use localview if a demo is playing.
+    !demoplayback &&
+    // Don't use localview during a netgame (single-player only).
+    !netgame
+  );
+}
+
 //----------------------------------------------------------------------------
 //
 // PROC R_SetupFrame
@@ -813,10 +831,22 @@ void R_SetupFrame(player_t * player)
     // haleyjd FIXME: viewangleoffset handling?
     if (crispy->uncapped && leveltime > 1 && player->mo->interp == true && leveltime > oldleveltime)
     {
+        const boolean use_localview = CheckLocalView(player);
+
         viewx = LerpFixed(player->mo->oldx, player->mo->x);
         viewy = LerpFixed(player->mo->oldy, player->mo->y);
         viewz = LerpFixed(player->oldviewz, player->viewz);
-        viewangle = LerpAngle(player->mo->oldangle, player->mo->angle) + viewangleoffset;
+        if (use_localview)
+        {
+            viewangle = (player->mo->angle + localview.angle -
+                        localview.ticangle + LerpAngle(localview.oldticangle,
+                                                       localview.ticangle)) + viewangleoffset;
+        }
+        else
+        {
+            viewangle = LerpAngle(player->mo->oldangle, player->mo->angle) + viewangleoffset;
+        }
+
         pitch = LerpInt(player->oldlookdir, player->lookdir);
     }
     else
