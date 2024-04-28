@@ -210,6 +210,18 @@ int             mousex;
 int             mousex2; // [crispy]
 int             mousey;         
 
+// [crispy] for rounding error
+typedef struct carry_s
+{
+    double angle;
+    double pitch;
+    double side;
+    double vert;
+} carry_t;
+
+static carry_t prevcarry;
+static carry_t carry;
+
 static int      dclicktime;
 static boolean  dclickstate;
 static int      dclicks; 
@@ -228,6 +240,8 @@ static boolean *joybuttons = &joyarray[1];		// allow [-1]
 static int      savegameslot = 6; // [STRIFE] initialized to 6
 static char     savedescription[32]; 
  
+static ticcmd_t basecmd; // [crispy]
+
 int      testcontrols_mousespeed;
  
 #define	BODYQUESIZE	32
@@ -330,13 +344,6 @@ static int G_NextWeapon(int direction)
     return weapon_order_table[i].weapon_num;
 }
 
-//
-// G_BuildTiccmd
-// Builds a ticcmd from all of the available inputs
-// or reads it from the demo buffer. 
-// If recording a demo, write it out 
-// 
-
 // [crispy] holding down the "Run" key may trigger special behavior,
 // e.g. quick exit, automap pan/zoom speed
 boolean speedkeydown (void)
@@ -346,6 +353,70 @@ boolean speedkeydown (void)
            (mousebspeed < MAX_MOUSE_BUTTONS && mousebuttons[mousebspeed]);
 }
 
+// [crispy] for carrying rounding error
+static int CarryError(double value, const double *prevcarry, double *carry)
+{
+    const double desired = value + *prevcarry;
+    const int actual = lround(desired);
+    *carry = desired - actual;
+
+    return actual;
+}
+
+static short CarryAngle(double angle)
+{
+    return CarryError(angle, &prevcarry.angle, &carry.angle);
+}
+
+static short CarryPitch(double pitch)
+{
+    return CarryError(pitch, &prevcarry.pitch, &carry.pitch);
+}
+
+static int CarryMouseVert(double vert)
+{
+    return CarryError(vert, &prevcarry.vert, &carry.vert);
+}
+
+static int CarryMouseSide(double side)
+{
+    const double desired = side + prevcarry.side;
+    const int actual = lround(side * 0.5) * 2; // Even values only.
+    carry.side = desired - actual;
+    return actual;
+}
+
+static double CalcMouseAngle(int mousex)
+{
+    if (!mouseSensitivity)
+        return 0.0;
+
+    return (I_AccelerateMouse(mousex) * (mouseSensitivity + 5) * 8 / 10);
+}
+
+static double CalcMouseSide(int mousex)
+{
+    if (!mouseSensitivity_x2)
+        return 0.0;
+
+    return (I_AccelerateMouse(mousex) * (mouseSensitivity_x2 + 5) * 2 / 10);
+}
+
+static double CalcMouseVert(int mousey)
+{
+    if (!mouseSensitivity_y)
+        return 0.0;
+
+    return (I_AccelerateMouseY(mousey) * (mouseSensitivity_y + 5) / 10);
+}
+
+//
+// G_BuildTiccmd
+// Builds a ticcmd from all of the available inputs
+// or reads it from the demo buffer.
+// If recording a demo, write it out
+//
+
 void G_BuildTiccmd (ticcmd_t* cmd, int maketic) 
 { 
     int		i; 
@@ -353,6 +424,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     boolean	bstrafe; 
     int		speed;
     int		tspeed; 
+    int		angle = 0; // [crispy]
     int		forward;
     int		side;
     player_t *const player = &players[consoleplayer]; // [crispy]
@@ -360,7 +432,10 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     static unsigned int mbmlookctrl = 0; // [crispy]
     static unsigned int kbdlookctrl = 0; // [crispy]
 
-    memset(cmd, 0, sizeof(ticcmd_t));
+    // [crispy] For fast polling.
+    G_PrepTiccmd();
+    memcpy(cmd, &basecmd, sizeof(*cmd));
+    memset(&basecmd, 0, sizeof(ticcmd_t));
 
     cmd->consistancy = 
         consistancy[consoleplayer][maketic%BACKUPTICS]; 
@@ -543,23 +618,23 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     else 
     { 
         if (gamekeydown[key_right] || mousebuttons[mousebturnright])
-            cmd->angleturn -= angleturn[tspeed]; 
+            angle -= angleturn[tspeed];
         if (gamekeydown[key_left] || mousebuttons[mousebturnleft])
-            cmd->angleturn += angleturn[tspeed]; 
+            angle += angleturn[tspeed];
         if (use_analog && joyxmove)
         {
             // Cubic response curve allows for finer control when stick
             // deflection is small.
             joyxmove = FixedMul(FixedMul(joyxmove, joyxmove), joyxmove);
             joyxmove = joyxmove * joystick_turn_sensitivity / 10;
-            cmd->angleturn -= FixedMul(angleturn[1], joyxmove);
+            angle -= FixedMul(angleturn[1], joyxmove);
         }
         else if (joystick_turn_sensitivity)
         {
             if (joyxmove > 0)
-                cmd->angleturn -= angleturn[tspeed];
+                angle -= angleturn[tspeed];
             if (joyxmove < 0)
-                cmd->angleturn += angleturn[tspeed];
+                angle += angleturn[tspeed];
         }
     } 
 
@@ -741,15 +816,12 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     }
 
     // [crispy] mouse look
-    cmd->lookdir = 0;
-    if ((crispy->mouselook || mousebuttons[mousebmouselook]) &&
-        crispy->singleplayer)
+    if (cmd->lookdir && crispy->singleplayer)
     {
         static fixed_t carry_lookdir = 0;
         fixed_t desired_lookdir;
 
         // [crispy] repurpose lookdir and carry error like low-res turning
-        cmd->lookdir = mouse_y_invert ? -mousey : mousey;
         desired_lookdir = FixedDiv(cmd->lookdir << FRACBITS, MLOOKUNIT << FRACBITS) +
                           carry_lookdir;
         cmd->lookdir = desired_lookdir >> FRACBITS;
@@ -757,7 +829,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     }
     else if (!novert)
     {
-        forward += mousey;
+        forward += CarryMouseVert(CalcMouseVert(mousey));
     }
 
     // [crispy] single click on mouse look button centers view
@@ -777,10 +849,8 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
             mbmlookctrl = 0;
     }
 
-    if (strafe) 
-        side += mousex2*2; // [crispy]
-    else 
-        cmd->angleturn -= mousex*0x8;
+    if (strafe && !cmd->angleturn)
+        side += CarryMouseSide(CalcMouseSide(mousex));
 
     if (mousex == 0)
     {
@@ -789,6 +859,14 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
         testcontrols_mousespeed = 0;
     }
     
+    if (angle)
+    {
+        const short old_angleturn = cmd->angleturn;
+        cmd->angleturn = CarryAngle(localview.rawangle + angle);
+        localview.ticangleturn = crispy->fliplevels ?
+            (old_angleturn - cmd->angleturn) : (cmd->angleturn - old_angleturn);
+    }
+
     mousex = mousex2 = mousey = 0; // [crispy]
 
     if (forward > MAXPLMOVE) 
@@ -803,6 +881,11 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     cmd->forwardmove += forward; 
     cmd->sidemove += side;
     
+    // [crispy]
+    localview.angle = 0;
+    localview.rawangle = 0.0;
+    prevcarry = carry;
+
     // special buttons
     if (sendpause) 
     { 
@@ -889,6 +972,10 @@ void G_DoLoadLevel (void)
     memset (gamekeydown, 0, sizeof(gamekeydown));
     joyxmove = joyymove = joystrafemove = joylook = 0;
     mousex = mousex2 = mousey = 0; // [crispy]
+    memset(&localview, 0, sizeof(localview)); // [crispy]
+    memset(&carry, 0, sizeof(carry)); // [crispy]
+    memset(&prevcarry, 0, sizeof(prevcarry)); // [crispy]
+    memset(&basecmd, 0, sizeof(basecmd)); // [crispy]
     sendpause = sendsave = paused = false;
     memset(mousearray, 0, sizeof(mousearray));
     memset(joyarray, 0, sizeof(joyarray));
@@ -1078,18 +1165,8 @@ boolean G_Responder (event_t* ev)
 
     case ev_mouse: 
         SetMouseButtons(ev->data1);
-        if (mouseSensitivity)
-            mousex = ev->data2*(mouseSensitivity+5)/10; 
-        else
-            mousex = 0; // [crispy] disable entirely
-        if (mouseSensitivity_x2)
-            mousex2 = ev->data2*(mouseSensitivity_x2+5)/10; // [crispy] separate sensitivity for strafe
-        else
-            mousex2 = 0; // [crispy] disable entirely
-        if (mouseSensitivity_y)
-            mousey = ev->data3*(mouseSensitivity_y+5)/10; // [crispy] separate sensitivity for y-axis
-        else
-            mousey = 0; // [crispy] disable entirely
+        mousex += ev->data2;
+        mousey += ev->data3;
         return true;    // eat events 
 
     case ev_joystick: 
@@ -1106,6 +1183,42 @@ boolean G_Responder (event_t* ev)
 
     return false; 
 } 
+
+// [crispy] For fast polling.
+void G_FastResponder (void)
+{
+    if (newfastmouse)
+    {
+        mousex += fastmouse.data2;
+        mousey += fastmouse.data3;
+
+        newfastmouse = false;
+    }
+}
+
+// [crispy]
+void G_PrepTiccmd (void)
+{
+    const boolean strafe = gamekeydown[key_strafe] ||
+        mousebuttons[mousebstrafe] || joybuttons[joybstrafe];
+
+    if (mousex && !strafe)
+    {
+        localview.rawangle -= CalcMouseAngle(mousex);
+        basecmd.angleturn = CarryAngle(localview.rawangle);
+        localview.angle = crispy->fliplevels ?
+            -(basecmd.angleturn << 16) : (basecmd.angleturn << 16);
+        mousex = 0;
+    }
+
+    if (mousey && (crispy->mouselook || mousebuttons[mousebmouselook]))
+    {
+        const double vert = CalcMouseVert(mousey);
+        basecmd.lookdir += mouse_y_invert ?
+                            CarryPitch(-vert): CarryPitch(vert);
+        mousey = 0;
+    }
+}
 
 // [crispy] take a screenshot after rendering the next frame
 static void G_CrispyScreenShot()

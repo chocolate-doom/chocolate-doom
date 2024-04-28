@@ -188,6 +188,13 @@ void P_MovePlayer (player_t* player)
     //  if not onground.
     onground = (player->mo->z <= player->mo->floorz);
 
+    // [crispy] fast polling
+    if (player == &players[consoleplayer])
+    {
+        localview.ticangle += localview.ticangleturn << 16;
+        localview.ticangleturn = 0;
+    }
+
     // villsa [STRIFE] allows player to climb over things by jumping
     // haleyjd 20110205: air control thrust should be 256, not cmd->forwardmove
     if(!onground)
@@ -364,6 +371,12 @@ void P_PlayerThink (player_t* player)
     player->mo->oldangle = player->mo->angle;
     player->oldviewz = player->viewz;
     player->oldpitch = player->pitch;
+
+    // [crispy] fast polling
+    if (player == &players[consoleplayer])
+    {
+        localview.oldticangle = localview.ticangle;
+    }
 
     // [crispy] update weapon sound source coordinates
     if (player->so != player->mo)

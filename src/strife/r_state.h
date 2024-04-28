@@ -90,6 +90,15 @@ extern line_t*		lines;
 extern int		numsides;
 extern side_t*		sides;
 
+// [crispy]
+typedef struct localview_s
+{
+    angle_t oldticangle;
+    angle_t ticangle;
+    short ticangleturn;
+    double rawangle;
+    angle_t angle;
+} localview_t;
 
 //
 // POV data.
@@ -99,6 +108,7 @@ extern fixed_t		viewy;
 extern fixed_t		viewz;
 
 extern angle_t		viewangle;
+extern localview_t      localview; // [crispy]
 extern player_t*	viewplayer;
 
 
