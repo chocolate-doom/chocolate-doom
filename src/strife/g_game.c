@@ -207,7 +207,6 @@ static boolean *mousebuttons = &mousearray[1];  // allow [-1]
 
 // mouse values are used once 
 int             mousex;
-int             mousex2; // [crispy]
 int             mousey;         
 
 // [crispy] for rounding error
@@ -867,7 +866,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
             (old_angleturn - cmd->angleturn) : (cmd->angleturn - old_angleturn);
     }
 
-    mousex = mousex2 = mousey = 0; // [crispy]
+    mousex = mousey = 0;
 
     if (forward > MAXPLMOVE) 
         forward = MAXPLMOVE; 
@@ -971,7 +970,7 @@ void G_DoLoadLevel (void)
 
     memset (gamekeydown, 0, sizeof(gamekeydown));
     joyxmove = joyymove = joystrafemove = joylook = 0;
-    mousex = mousex2 = mousey = 0; // [crispy]
+    mousex = mousey = 0;
     memset(&localview, 0, sizeof(localview)); // [crispy]
     memset(&carry, 0, sizeof(carry)); // [crispy]
     memset(&prevcarry, 0, sizeof(prevcarry)); // [crispy]

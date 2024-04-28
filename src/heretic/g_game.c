@@ -203,7 +203,7 @@ int lookheld;
 boolean mousearray[MAX_MOUSE_BUTTONS + 1];
 boolean *mousebuttons = &mousearray[1];
         // allow [-1]
-int mousex, mousex2, mousey;             // mouse values are used once
+int mousex, mousey;             // mouse values are used once
 int dclicktime, dclickstate, dclicks;
 int dclicktime2, dclickstate2, dclicks2;
 
@@ -939,7 +939,7 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
         mbmlookctrl = 0;
     }
 
-    mousex = mousex2 = mousey = 0;
+    mousex = mousey = 0;
 
     if (forward > MAXPLMOVE)
         forward = MAXPLMOVE;
@@ -1070,7 +1070,7 @@ void G_DoLoadLevel(void)
 
     memset(gamekeydown, 0, sizeof(gamekeydown));
     joyxmove = joyymove = joystrafemove = joylook = 0;
-    mousex = mousex2 = mousey = 0;
+    mousex = mousey = 0;
     memset(&localview, 0, sizeof(localview)); // [crispy]
     memset(&carry, 0, sizeof(carry)); // [crispy]
     memset(&prevcarry, 0, sizeof(prevcarry)); // [crispy]
