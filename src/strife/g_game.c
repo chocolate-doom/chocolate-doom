@@ -588,31 +588,33 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     // let movement keys cancel each other out
     if (strafe) 
     { 
-        if (gamekeydown[key_right] || mousebuttons[mousebturnright])
+        if (!cmd->angleturn)
         {
-            // fprintf(stderr, "strafe right\n");
-            side += sidemove[speed]; 
-        }
-        if (gamekeydown[key_left] || mousebuttons[mousebturnleft])
-        {
-            //	fprintf(stderr, "strafe left\n");
-            side -= sidemove[speed]; 
-        }
-        if (use_analog && joyxmove)
-        {
-            joyxmove = joyxmove * joystick_move_sensitivity / 10;
-            joyxmove = (joyxmove > FRACUNIT) ? FRACUNIT : joyxmove;
-            joyxmove = (joyxmove < -FRACUNIT) ? -FRACUNIT : joyxmove;
-            side += FixedMul(sidemove[speed], joyxmove);
-        }
-        else if (joystick_move_sensitivity)
-        {
-            if (joyxmove > 0)
+            if (gamekeydown[key_right] || mousebuttons[mousebturnright])
+            {
+                // fprintf(stderr, "strafe right\n");
                 side += sidemove[speed];
-            if (joyxmove < 0)
+            }
+            if (gamekeydown[key_left] || mousebuttons[mousebturnleft])
+            {
+                //	fprintf(stderr, "strafe left\n");
                 side -= sidemove[speed];
+            }
+            if (use_analog && joyxmove)
+            {
+                joyxmove = joyxmove * joystick_move_sensitivity / 10;
+                joyxmove = (joyxmove > FRACUNIT) ? FRACUNIT : joyxmove;
+                joyxmove = (joyxmove < -FRACUNIT) ? -FRACUNIT : joyxmove;
+                side += FixedMul(sidemove[speed], joyxmove);
+            }
+            else if (joystick_move_sensitivity)
+            {
+                if (joyxmove > 0)
+                    side += sidemove[speed];
+                if (joyxmove < 0)
+                    side -= sidemove[speed];
+            }
         }
-
     } 
     else 
     { 

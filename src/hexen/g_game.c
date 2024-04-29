@@ -395,30 +395,33 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
 //
     if (strafe)
     {
-        if (gamekeydown[key_right] || mousebuttons[mousebturnright])
+        if (!cmd->angleturn)
         {
-            side += sidemove[pClass][speed];
-        }
-        if (gamekeydown[key_left] || mousebuttons[mousebturnleft])
-        {
-            side -= sidemove[pClass][speed];
-        }
-        if (use_analog && joyxmove)
-        {
-            joyxmove = joyxmove * joystick_move_sensitivity / 10;
-            joyxmove = (joyxmove > FRACUNIT) ? FRACUNIT : joyxmove;
-            joyxmove = (joyxmove < -FRACUNIT) ? -FRACUNIT : joyxmove;
-            side += FixedMul(sidemove[pClass][speed], joyxmove);
-        }
-        else if (joystick_move_sensitivity)
-        {
-            if (joyxmove > 0)
+            if (gamekeydown[key_right] || mousebuttons[mousebturnright])
             {
                 side += sidemove[pClass][speed];
             }
-            if (joyxmove < 0)
+            if (gamekeydown[key_left] || mousebuttons[mousebturnleft])
             {
                 side -= sidemove[pClass][speed];
+            }
+            if (use_analog && joyxmove)
+            {
+                joyxmove = joyxmove * joystick_move_sensitivity / 10;
+                joyxmove = (joyxmove > FRACUNIT) ? FRACUNIT : joyxmove;
+                joyxmove = (joyxmove < -FRACUNIT) ? -FRACUNIT : joyxmove;
+                side += FixedMul(sidemove[pClass][speed], joyxmove);
+            }
+            else if (joystick_move_sensitivity)
+            {
+                if (joyxmove > 0)
+                {
+                    side += sidemove[pClass][speed];
+                }
+                if (joyxmove < 0)
+                {
+                    side -= sidemove[pClass][speed];
+                }
             }
         }
     }
