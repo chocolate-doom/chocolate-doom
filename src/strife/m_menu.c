@@ -806,8 +806,10 @@ void M_ReadSaveStrings(void)
 void M_DrawNameChar(void)
 {
     int i;
+    const char *Name_Char = DEH_String("Name Your Character"); // [crispy]
 
-    M_WriteText(72, 28, DEH_String("Name Your Character"));
+    // [crispy] print "Name Your Character" centered and slightly higher
+    M_WriteText(ORIGWIDTH/2-M_StringWidth(Name_Char)/2, NameCharDef.y/2, Name_Char);
 
     for (i = 0;i < load_end; i++)
     {
@@ -3193,7 +3195,7 @@ void M_Init (void)
 
         LoadDef_x = (ORIGWIDTH - SHORT(patchl->width)) / 2 + SHORT(patchl->leftoffset);
         SaveDef_x = (ORIGWIDTH - SHORT(patchs->width)) / 2 + SHORT(patchs->leftoffset);
-        LoadDef.x = SaveDef.x = (ORIGWIDTH - 24 * 8) / 2 + SHORT(patchm->leftoffset);
+        NameCharDef.x = LoadDef.x = SaveDef.x = (ORIGWIDTH - 24 * 8) / 2 + SHORT(patchm->leftoffset);
 
         captionheight = MAX(SHORT(patchl->height), SHORT(patchs->height));
 
@@ -3207,7 +3209,7 @@ void M_Init (void)
             LoadDef_y = vstep + captionheight - SHORT(patchl->height) + SHORT(patchl->topoffset);
             SaveDef_y = vstep + captionheight - SHORT(patchs->height) + SHORT(patchs->topoffset);
             LoadDef.y = SaveDef.y = vstep + captionheight + vstep + SHORT(patchm->topoffset) - 19; // [crispy] moved up, so savegame date/time may appear above status bar
-            MouseDef.y = LoadDef.y;
+            NameCharDef.y = MouseDef.y = LoadDef.y;
         }
     }
 
