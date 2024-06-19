@@ -43,6 +43,9 @@ static pixel_t*	wipe_scr_end;
 static pixel_t*	wipe_scr;
 
 // [crispy] Additional fail-safe counter for performing crossfade effect.
+// Vanilla Strife goes into an infinite loop when using an imprecise XLATAB
+// during a crossfade, so we stop it when the counter reaches zero. It also
+// acts as an opacity multiplier in TrueColor mode.
 static int fade_counter;
 
 void
@@ -75,9 +78,9 @@ wipe_initColorXForm
   int	ticks )
 {
     memcpy(wipe_scr, wipe_scr_start, width*height*sizeof(*wipe_scr));
-    // [crispy] arm fail-safe crossfade counter with
-    // 13 screen transitions, "zero" count won't be used.
-    fade_counter = 14;
+    // [crispy] arm fail-safe crossfade counter with 13 screen transitions
+    // to make crossfading duration identical to Vanilla Strife
+    fade_counter = 13;
     return 0;
 }
 
@@ -101,23 +104,24 @@ wipe_doColorXForm
     boolean changed = false;
 
     // [crispy] reduce fail-safe crossfade counter tics
-    fade_counter--;
-
+    if (fade_counter--)
+    {
     for(i = pix; i > 0; i--)
     {
-        if(*cur_screen != *end_screen && fade_counter)
+        if(*cur_screen != *end_screen)
         {
             changed = true;
 #ifndef CRISPY_TRUECOLOR
             *cur_screen = xlatab[(*cur_screen << 8) + *end_screen];
 #else
-            // [crispy] perform crossfading effect with 13 given opacity steps, multipled by 19:
-            // 247, 228, 209, 190, 171, 152, 133, 114, 95, 76, 57, 38, 19
-            *cur_screen = I_BlendOver(*end_screen, *cur_screen, fade_counter * 19);
+            // [crispy] perform TrueColour blending with the following 13 opacity levels:
+            // 250, 230, 210, 190, 170, 150, 130, 110, 90, 70, 50, 30, 10
+            *cur_screen = I_BlendOver(*end_screen, *cur_screen, (fade_counter * 20) + 10);
 #endif
         }
         ++cur_screen;
         ++end_screen;
+    }
     }
 
     return !changed;
@@ -130,6 +134,11 @@ wipe_exitColorXForm
   int	height,
   int	ticks )
 {
+    // [crispy] fix memory leak - crossfade calls wipe_exitColorXForm instead of
+    // wipe_exitMelt, so we need to do a memory cleanup in this function
+    Z_Free(wipe_scr_start);
+    Z_Free(wipe_scr_end);
+    Z_Free(wipe_scr);
     return 0;
 }
 
