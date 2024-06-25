@@ -862,15 +862,15 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     if (strafe && !cmd->angleturn)
         side += CarryMouseSide(CalcMouseSide(mousex));
 
-    if (mousex == 0)
+    mousex_angleturn = cmd->angleturn;
+
+    if (mousex_angleturn == 0)
     {
         // No movement in the previous frame
 
         testcontrols_mousespeed = 0;
     }
     
-    mousex_angleturn = cmd->angleturn;
-
     if (angle)
     {
         cmd->angleturn = CarryAngle(cmd->angleturn + angle);

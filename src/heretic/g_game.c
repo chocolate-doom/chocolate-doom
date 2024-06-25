@@ -892,12 +892,12 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
 
     // No mouse movement in previous frame?
 
-    if (mousex == 0)
+    mousex_angleturn = cmd->angleturn;
+
+    if (mousex_angleturn == 0)
     {
         testcontrols_mousespeed = 0;
     }
-
-    mousex_angleturn = cmd->angleturn;
 
     if (angle)
     {
