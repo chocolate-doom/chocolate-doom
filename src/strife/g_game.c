@@ -364,7 +364,15 @@ static int CarryError(double value, const double *prevcarry, double *carry)
 
 static short CarryAngle(double angle)
 {
-    return CarryError(angle, &prevcarry.angle, &carry.angle);
+    if (lowres_turn && abs(angle + prevcarry.angle) < 128)
+    {
+        carry.angle = angle + prevcarry.angle;
+        return 0;
+    }
+    else
+    {
+        return CarryError(angle, &prevcarry.angle, &carry.angle);
+    }
 }
 
 static short CarryPitch(double pitch)
@@ -424,6 +432,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     int		speed;
     int		tspeed; 
     int		angle = 0; // [crispy]
+    int		mousex_angleturn; // [crispy]
     int		forward;
     int		side;
     player_t *const player = &players[consoleplayer]; // [crispy]
@@ -860,12 +869,12 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
         testcontrols_mousespeed = 0;
     }
     
+    mousex_angleturn = cmd->angleturn;
+
     if (angle)
     {
-        const short old_angleturn = cmd->angleturn;
-        cmd->angleturn = CarryAngle(localview.rawangle + angle);
-        localview.ticangleturn = crispy->fliplevels ?
-            (old_angleturn - cmd->angleturn) : (cmd->angleturn - old_angleturn);
+        cmd->angleturn = CarryAngle(cmd->angleturn + angle);
+        localview.ticangleturn = cmd->angleturn - mousex_angleturn;
     }
 
     mousex = mousey = 0;
@@ -904,20 +913,24 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
 
     if (lowres_turn)
     {
-        static signed short carry = 0;
         signed short desired_angleturn;
 
-        desired_angleturn = cmd->angleturn + carry;
+        desired_angleturn = cmd->angleturn;
 
         // round angleturn to the nearest 256 unit boundary
         // for recording demos with single byte values for turn
 
         cmd->angleturn = (desired_angleturn + 128) & 0xff00;
 
+        if (angle)
+        {
+            localview.ticangleturn = cmd->angleturn - mousex_angleturn;
+        }
+
         // Carry forward the error from the reduced resolution to the
         // next tic, so that successive small movements can accumulate.
 
-        carry = desired_angleturn - cmd->angleturn;
+        prevcarry.angle += desired_angleturn - cmd->angleturn;
     }
 } 
  
@@ -1207,8 +1220,7 @@ void G_PrepTiccmd (void)
     {
         localview.rawangle -= CalcMouseAngle(mousex);
         basecmd.angleturn = CarryAngle(localview.rawangle);
-        localview.angle = crispy->fliplevels ?
-            -(basecmd.angleturn << 16) : (basecmd.angleturn << 16);
+        localview.angle = basecmd.angleturn << 16;
         mousex = 0;
     }
 
