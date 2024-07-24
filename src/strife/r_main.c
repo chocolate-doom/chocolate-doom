@@ -744,6 +744,7 @@ void R_InitLightTables (void)
     //  for each level / distance combination.
     for (i=0 ; i< LIGHTLEVELS ; i++)
     {
+	scalelight[i] = malloc(MAXLIGHTSCALE * sizeof(**scalelight));
 	zlight[i] = malloc(MAXLIGHTZ * sizeof(**zlight));
 
 	startmap = ((LIGHTLEVELS-LIGHTBRIGHT-i)*2)*NUMCOLORMAPS/LIGHTLEVELS;
@@ -899,7 +900,6 @@ void R_ExecuteSetViewSize (void)
     //  for each level / scale combination.
     for (i=0 ; i< LIGHTLEVELS ; i++)
     {
-	scalelight[i] = malloc(MAXLIGHTSCALE * sizeof(**scalelight));
 
 	startmap = ((LIGHTLEVELS-LIGHTBRIGHT-i)*2)*NUMCOLORMAPS/LIGHTLEVELS;
 	for (j=0 ; j<MAXLIGHTSCALE ; j++)
