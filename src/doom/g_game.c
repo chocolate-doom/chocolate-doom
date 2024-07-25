@@ -807,7 +807,8 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     }
     
     // special buttons
-    if (sendpause) 
+    // [crispy] suppress pause when a new game is started
+    if (sendpause && gameaction != ga_newgame) 
     { 
 	sendpause = false; 
 	// [crispy] ignore un-pausing in menus during demo recording

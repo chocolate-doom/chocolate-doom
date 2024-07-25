@@ -891,7 +891,8 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
 //
 // special buttons
 //
-    if (sendpause)
+    // [crispy] suppress pause when a new game is started
+    if (sendpause && gameaction != ga_newgame)
     {
         sendpause = false;
         cmd->buttons = BT_SPECIAL | BTS_PAUSE;
