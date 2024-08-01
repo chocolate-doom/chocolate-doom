@@ -32,6 +32,7 @@ static crispy_t crispy_s = {
 	.truecolor = 1,
 #endif
 	.vsync = 1,
+	.widescreen = 1, // match screen by default
 };
 crispy_t *const crispy = &crispy_s;
 
