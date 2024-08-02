@@ -1723,8 +1723,8 @@ void AM_drawPlayers(void)
 	// [crispy] interpolate other player arrows
 	if (crispy->uncapped && leveltime > oldleveltime)
 	{
-	    pt.x = (p->mo->oldx + FixedMul(p->mo->x - p->mo->oldx, fractionaltic)) >> FRACTOMAPBITS;
-	    pt.y = (p->mo->oldy + FixedMul(p->mo->y - p->mo->oldy, fractionaltic)) >> FRACTOMAPBITS;
+	    pt.x = LerpFixed(p->mo->oldx, p->mo->x) >> FRACTOMAPBITS;
+	    pt.y = LerpFixed(p->mo->oldy, p->mo->y) >> FRACTOMAPBITS;
 	}
 	else
 	{
@@ -1739,7 +1739,7 @@ void AM_drawPlayers(void)
 	}
 	else
 	{
-        theirangle = R_InterpolateAngle(p->mo->oldangle, p->mo->angle, fractionaltic);
+        theirangle = LerpAngle(p->mo->oldangle, p->mo->angle);
 	}
 
 	AM_drawLineCharacter
@@ -1779,8 +1779,8 @@ void AM_drawThings(void)
             // [crispy] interpolate thing triangles movement
             if (leveltime > oldleveltime)
             {
-                pt.x = (t->oldx + FixedMul(t->x - t->oldx, fractionaltic)) >> FRACTOMAPBITS;
-                pt.y = (t->oldy + FixedMul(t->y - t->oldy, fractionaltic)) >> FRACTOMAPBITS;
+                pt.x = LerpFixed(t->oldx, t->x) >> FRACTOMAPBITS;
+                pt.y = LerpFixed(t->oldy, t->y) >> FRACTOMAPBITS;
             }
             else
             {

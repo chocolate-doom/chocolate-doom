@@ -39,6 +39,7 @@ int sscount, linecount, loopcount;
 
 fixed_t viewx, viewy, viewz;
 angle_t viewangle;
+localview_t localview; // [crispy]
 fixed_t viewcos, viewsin;
 player_t *viewplayer;
 
@@ -792,6 +793,23 @@ subsector_t *R_PointInSubsector(fixed_t x, fixed_t y)
 
 }
 
+// [crispy]
+static inline boolean CheckLocalView(const player_t *player)
+{
+  return (
+    // Don't use localview if the player is spying.
+    player == &players[consoleplayer] &&
+    // Don't use localview if the player is dead.
+    player->playerstate != PST_DEAD &&
+    // Don't use localview if the player just teleported.
+    !player->mo->reactiontime &&
+    // Don't use localview if a demo is playing.
+    !demoplayback &&
+    // Don't use localview during a netgame (single-player only).
+    !netgame
+  );
+}
+
 //----------------------------------------------------------------------------
 //
 // PROC R_SetupFrame
@@ -813,12 +831,23 @@ void R_SetupFrame(player_t * player)
     // haleyjd FIXME: viewangleoffset handling?
     if (crispy->uncapped && leveltime > 1 && player->mo->interp == true && leveltime > oldleveltime)
     {
-        viewx = player->mo->oldx + FixedMul(player->mo->x - player->mo->oldx, fractionaltic);
-        viewy = player->mo->oldy + FixedMul(player->mo->y - player->mo->oldy, fractionaltic);
-        viewz = player->oldviewz + FixedMul(player->viewz - player->oldviewz, fractionaltic);
-        viewangle = R_InterpolateAngle(player->mo->oldangle, player->mo->angle, fractionaltic) + viewangleoffset;
-        pitch = player->oldlookdir + (player->lookdir - player->oldlookdir) *
-                FIXED2DOUBLE(fractionaltic);
+        const boolean use_localview = CheckLocalView(player);
+
+        viewx = LerpFixed(player->mo->oldx, player->mo->x);
+        viewy = LerpFixed(player->mo->oldy, player->mo->y);
+        viewz = LerpFixed(player->oldviewz, player->viewz);
+        if (use_localview)
+        {
+            viewangle = (player->mo->angle + localview.angle -
+                        localview.ticangle + LerpAngle(localview.oldticangle,
+                                                       localview.ticangle)) + viewangleoffset;
+        }
+        else
+        {
+            viewangle = LerpAngle(player->mo->oldangle, player->mo->angle) + viewangleoffset;
+        }
+
+        pitch = LerpInt(player->oldlookdir, player->lookdir);
     }
     else
     {

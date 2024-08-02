@@ -100,6 +100,8 @@ void I_StartFrame (void);
 
 void I_StartTic (void);
 
+void I_StartDisplay (void); // [crispy]
+
 // Enable the loading disk image displayed when reading from disk.
 
 void I_EnableLoadingDisk(int xoffs, int yoffs);

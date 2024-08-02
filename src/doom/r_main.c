@@ -76,6 +76,7 @@ fixed_t			viewy;
 fixed_t			viewz;
 
 angle_t			viewangle;
+localview_t		localview; // [crispy]
 
 fixed_t			viewcos;
 fixed_t			viewsin;
@@ -551,27 +552,6 @@ fixed_t R_ScaleFromGlobalAngle (angle_t visangle)
 #endif
 
 
-// [AM] Interpolate between two angles.
-angle_t R_InterpolateAngle(angle_t oangle, angle_t nangle, fixed_t scale)
-{
-    if (nangle == oangle)
-        return nangle;
-    else if (nangle > oangle)
-    {
-        if (nangle - oangle < ANG270)
-            return oangle + (angle_t)((nangle - oangle) * FIXED2DOUBLE(scale));
-        else // Wrapped around
-            return oangle - (angle_t)((oangle - nangle) * FIXED2DOUBLE(scale));
-    }
-    else // nangle < oangle
-    {
-        if (oangle - nangle < ANG270)
-            return oangle - (angle_t)((oangle - nangle) * FIXED2DOUBLE(scale));
-        else // Wrapped around
-            return oangle + (angle_t)((nangle - oangle) * FIXED2DOUBLE(scale));
-    }
-}
-
 //
 // R_InitTables
 //
@@ -1007,6 +987,23 @@ R_PointInSubsector
 }
 
 
+// [crispy]
+static inline boolean CheckLocalView(const player_t *player)
+{
+  return (
+    // Don't use localview if the player is spying.
+    player == &players[consoleplayer] &&
+    // Don't use localview if the player is dead.
+    player->playerstate != PST_DEAD &&
+    // Don't use localview if the player just teleported.
+    !player->mo->reactiontime &&
+    // Don't use localview if a demo is playing.
+    !demoplayback &&
+    // Don't use localview during a netgame (single-player only).
+    !netgame
+  );
+}
+
 
 //
 // R_SetupFrame
@@ -1030,14 +1027,25 @@ void R_SetupFrame (player_t* player)
         // Don't interpolate during a paused state
         leveltime > oldleveltime)
     {
-        // Interpolate player camera from their old position to their current one.
-        viewx = player->mo->oldx + FixedMul(player->mo->x - player->mo->oldx, fractionaltic);
-        viewy = player->mo->oldy + FixedMul(player->mo->y - player->mo->oldy, fractionaltic);
-        viewz = player->oldviewz + FixedMul(player->viewz - player->oldviewz, fractionaltic);
-        viewangle = R_InterpolateAngle(player->mo->oldangle, player->mo->angle, fractionaltic) + viewangleoffset;
+        const boolean use_localview = CheckLocalView(player);
 
-        pitch = (player->oldlookdir + (player->lookdir - player->oldlookdir) * FIXED2DOUBLE(fractionaltic)) / MLOOKUNIT
-                + (player->oldrecoilpitch + FixedMul(player->recoilpitch - player->oldrecoilpitch, fractionaltic));
+        // Interpolate player camera from their old position to their current one.
+        viewx = LerpFixed(player->mo->oldx, player->mo->x);
+        viewy = LerpFixed(player->mo->oldy, player->mo->y);
+        viewz = LerpFixed(player->oldviewz, player->viewz);
+        if (use_localview)
+        {
+            viewangle = (player->mo->angle + localview.angle -
+                        localview.ticangle + LerpAngle(localview.oldticangle,
+                                                       localview.ticangle)) + viewangleoffset;
+        }
+        else
+        {
+            viewangle = LerpAngle(player->mo->oldangle, player->mo->angle) + viewangleoffset;
+        }
+
+        pitch = LerpInt(player->oldlookdir, player->lookdir) / MLOOKUNIT
+                + LerpFixed(player->oldrecoilpitch, player->recoilpitch);
     }
     else
     {

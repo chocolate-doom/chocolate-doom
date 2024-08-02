@@ -425,14 +425,100 @@ void I_HandleMouseEvent(SDL_Event *sdlevent)
     }
 }
 
-static int AccelerateMouse(int val)
+// [crispy] Adjustable mouse accel threshold when running uncapped.
+static float x_threshold;
+static float y_threshold;
+
+// [crispy] Track the last gametic's worth of mouse movement in ring buffers.
+// Each element is a bin for the mouse movement recorded in that millisecond.
+// The running total is used to determine if mouse acceleration should be
+// applied.
+
+#define MOUSE_BUFFER_SIZE 32
+#define MOUSE_BUFFER_DEPTH_MS 28
+
+typedef struct
+{
+    int values[MOUSE_BUFFER_SIZE];
+    int head;
+    int tail;
+    int size;
+    int total;
+} mousebuffer_t;
+
+static mousebuffer_t mousex;
+static mousebuffer_t mousey;
+
+static void ResetMouseBuffer(mousebuffer_t *buf)
+{
+    buf->head = buf->tail = buf->size = buf->total = 0;
+}
+
+static void UpdateMouseBuffer(mousebuffer_t *buf, int value, int delta_ms)
+{
+    for (int i = 0; i < delta_ms; i++)
+    {
+        if (buf->size == MOUSE_BUFFER_DEPTH_MS)
+        {
+            buf->tail = (buf->tail + 1) & (MOUSE_BUFFER_SIZE - 1);
+            buf->total -= buf->values[buf->tail];
+        }
+        else
+        {
+            buf->size++;
+        }
+        buf->head = (buf->head + 1) & (MOUSE_BUFFER_SIZE - 1);
+        buf->values[buf->head] = 0;
+    }
+
+    buf->total += value;
+    buf->values[buf->head] += value;
+}
+
+static void UpdateMouseAccel(int x, int y)
+{
+    static uint64_t last_read;
+    const uint64_t current_read = I_GetTimeMS();
+    uint64_t delta_t;
+
+    delta_t = current_read - last_read;
+    last_read = current_read;
+
+    if (!crispy->uncapped)
+    {
+        x_threshold = mouse_threshold;
+        y_threshold = mouse_threshold_y;
+        mousex.total = x;
+        mousey.total = y;
+    }
+    else if (delta_t > MOUSE_BUFFER_DEPTH_MS)
+    {
+        ResetMouseBuffer(&mousex);
+        ResetMouseBuffer(&mousey);
+        UpdateMouseBuffer(&mousex, x, 1);
+        UpdateMouseBuffer(&mousey, y, 1);
+        x_threshold = mouse_threshold;
+        y_threshold = mouse_threshold_y;
+    }
+    else
+    {
+        UpdateMouseBuffer(&mousex, x, delta_t);
+        UpdateMouseBuffer(&mousey, y, delta_t);
+        x_threshold = mouse_threshold * delta_t * TICRATE / 1000.0;
+        y_threshold = mouse_threshold_y * delta_t * TICRATE / 1000.0;
+    }
+
+}
+
+// [crispy] Change to double
+double I_AccelerateMouse(int val)
 {
     if (val < 0)
-        return -AccelerateMouse(-val);
+        return -I_AccelerateMouse(-val);
 
-    if (val > mouse_threshold)
+    if (abs(mousex.total) > mouse_threshold)
     {
-        return (int)((val - mouse_threshold) * mouse_acceleration + mouse_threshold);
+        return (val - x_threshold) * mouse_acceleration + x_threshold;
     }
     else
     {
@@ -440,46 +526,20 @@ static int AccelerateMouse(int val)
     }
 }
 
-// [crispy]
-static int AccelerateMouseY(int val)
+// [crispy] Change to double
+double I_AccelerateMouseY(int val)
 {
     if (val < 0)
-        return -AccelerateMouseY(-val);
+        return -I_AccelerateMouseY(-val);
 
-    if (val > mouse_threshold_y)
+    if (abs(mousey.total) > mouse_threshold_y)
     {
-        return (int)((val - mouse_threshold_y) * mouse_acceleration_y + mouse_threshold_y);
+        return (val - y_threshold) * mouse_acceleration_y + y_threshold;
     }
     else
     {
         return val;
     }
-}
-
-// [crispy] Distribute the mouse movement between the current tic and the next
-// based on how far we are into the current tic. Compensates for mouse sampling
-// jitter.
-static void SmoothMouse(int* x, int* y)
-{
-    static int x_remainder_old = 0;
-    static int y_remainder_old = 0;
-    int x_remainder, y_remainder;
-    fixed_t correction_factor;
-    fixed_t fractic;
-
-    *x += x_remainder_old;
-    *y += y_remainder_old;
-
-    fractic = I_GetFracRealTime();
-    correction_factor = FixedDiv(fractic, FRACUNIT + fractic);
-
-    x_remainder = FixedMul(*x, correction_factor);
-    *x -= x_remainder;
-    x_remainder_old = x_remainder;
-
-    y_remainder = FixedMul(*y, correction_factor);
-    *y -= y_remainder;
-    y_remainder_old = y_remainder;
 }
 
 //
@@ -493,21 +553,17 @@ void I_ReadMouse(void)
     event_t ev;
 
     SDL_GetRelativeMouseState(&x, &y);
-
-    if (crispy->uncapped)
-    {
-        SmoothMouse(&x, &y);
-    }
+    UpdateMouseAccel(x, y); // [crispy]
 
     if (x != 0 || y != 0) 
     {
         ev.type = ev_mouse;
         ev.data1 = mouse_button_state;
-        ev.data2 = AccelerateMouse(x);
+        ev.data2 = x;
 
         if (true || !novert) // [crispy] moved to src/*/g_game.c
         {
-            ev.data3 = -AccelerateMouseY(y); // [crispy]
+            ev.data3 = -y; // [crispy]
         }
         else
         {
@@ -517,6 +573,30 @@ void I_ReadMouse(void)
         // XXX: undefined behaviour since event is scoped to
         // this function
         D_PostEvent(&ev);
+    }
+}
+
+void I_ReadMouseUncapped(void)
+{
+    int x, y;
+
+    SDL_GetRelativeMouseState(&x, &y);
+    UpdateMouseAccel(x, y);
+
+    if (x != 0 || y != 0)
+    {
+        fastmouse.data2 = x;
+
+        if (true || !novert) // [crispy] moved to src/*/g_game.c
+        {
+            fastmouse.data3 = -y; // [crispy]
+        }
+        else
+        {
+            fastmouse.data3 = 0;
+        }
+
+        newfastmouse = true;
     }
 }
 

@@ -178,6 +178,13 @@ boolean D_Display (void)
 		
     redrawsbar = false;
     
+    if (crispy->uncapped)
+    {
+        I_StartDisplay();
+        G_FastResponder();
+        G_PrepTiccmd();
+    }
+
     // change the view size if needed
     if (setsizeneeded)
     {

@@ -250,6 +250,13 @@ static void CrispyDrawStats (void)
 
 void D_Display(void)
 {
+    if (crispy->uncapped)
+    {
+        I_StartDisplay();
+        G_FastResponder();
+        G_PrepTiccmd();
+    }
+
     // Change the view size if needed
     if (setsizeneeded)
     {

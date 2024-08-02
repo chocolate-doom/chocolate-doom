@@ -198,6 +198,13 @@ void P_MovePlayer(player_t * player)
     onground = (player->mo->z <= player->mo->floorz
                 || (player->mo->flags2 & MF2_ONMOBJ));
 
+    // [crispy] fast polling
+    if (player == &players[consoleplayer])
+    {
+        localview.ticangle += localview.ticangleturn << 16;
+        localview.ticangleturn = 0;
+    }
+
     if (player->chickenTics)
     {                           // Chicken speed
         if (cmd->forwardmove && (onground || player->mo->flags2 & MF2_FLY))
@@ -563,6 +570,12 @@ void P_PlayerThink(player_t * player)
     player->oldviewz = player->viewz;
     player->oldlookdir = player->lookdir;
     // player->oldrecoilpitch = player->recoilpitch;
+
+    // [crispy] fast polling
+    if (player == &players[consoleplayer])
+    {
+        localview.oldticangle = localview.ticangle;
+    }
 
     // No-clip cheat
     if (player->cheats & CF_NOCLIP)

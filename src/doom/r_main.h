@@ -21,6 +21,7 @@
 #define __R_MAIN__
 
 #include "d_player.h"
+#include "i_video.h" // [crispy] fractionaltic
 #include "r_data.h"
 
 
@@ -155,8 +156,36 @@ R_AddPointToBox
   fixed_t*	box );
 
 
+inline static fixed_t LerpFixed(fixed_t oldvalue, fixed_t newvalue)
+{
+    return (oldvalue + FixedMul(newvalue - oldvalue, fractionaltic));
+}
+
+inline static int LerpInt(int oldvalue, int newvalue)
+{
+    return (oldvalue + (int)((newvalue - oldvalue) * FIXED2DOUBLE(fractionaltic)));
+}
+
 // [AM] Interpolate between two angles.
-angle_t R_InterpolateAngle(angle_t oangle, angle_t nangle, fixed_t scale);
+inline static angle_t LerpAngle(angle_t oangle, angle_t nangle)
+{
+    if (nangle == oangle)
+        return nangle;
+    else if (nangle > oangle)
+    {
+        if (nangle - oangle < ANG270)
+            return oangle + (angle_t)((nangle - oangle) * FIXED2DOUBLE(fractionaltic));
+        else // Wrapped around
+            return oangle - (angle_t)((oangle - nangle) * FIXED2DOUBLE(fractionaltic));
+    }
+    else // nangle < oangle
+    {
+        if (oangle - nangle < ANG270)
+            return oangle - (angle_t)((oangle - nangle) * FIXED2DOUBLE(fractionaltic));
+        else // Wrapped around
+            return oangle + (angle_t)((nangle - oangle) * FIXED2DOUBLE(fractionaltic));
+    }
+}
 
 //
 // REFRESH - the actual rendering functions.
