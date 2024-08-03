@@ -34,9 +34,13 @@ fi
 AC_CANONICAL_TARGET
 TARGET_OS=""
 AS_CASE([$target_cpu],
-        [x86_64|aarch64*],
+        [x86_64],
         [
-            TARGET_OS="64"
+            TARGET_OS="x64"
+        ],
+        [aarch64*|arm*],
+        [
+            TARGET_OS="arm"
         ],
         [i?86|arm*],
         [
