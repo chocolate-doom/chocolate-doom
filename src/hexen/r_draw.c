@@ -177,10 +177,13 @@ void R_DrawTLColumn(void)
     fixed_t frac, fracstep;
     int heightmask = dc_texheight - 1; // [crispy]
 
+    // [crispy] Show transparent lines at top and bottom of screen.
+    /*
     if (!dc_yl)
         dc_yl = 1;
     if (dc_yh == viewheight - 1)
         dc_yh = viewheight - 2;
+    */
 
     count = dc_yh - dc_yl;
     if (count < 0)
@@ -257,10 +260,13 @@ void R_DrawAltTLColumn(void)
     fixed_t frac, fracstep;
     int heightmask = dc_texheight - 1; // [crispy]
 
+    // [crispy] Show transparent lines at top and bottom of screen.
+    /*
     if (!dc_yl)
         dc_yl = 1;
     if (dc_yh == viewheight - 1)
         dc_yh = viewheight - 2;
+    */
 
     count = dc_yh - dc_yl;
     if (count < 0)
