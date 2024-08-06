@@ -23,7 +23,6 @@
 #include <ctype.h>
 
 #include "SDL.h"
-#include "SDL_mixer.h"
 
 #include "i_glob.h"
 
@@ -50,6 +49,7 @@ char *music_pack_path = "";
 
 #ifndef DISABLE_SDL2MIXER
 
+#include "SDL_mixer.h"
 
 #define MID_HEADER_MAGIC "MThd"
 #define MUS_HEADER_MAGIC "MUS\x1a"

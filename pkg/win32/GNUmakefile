@@ -3,7 +3,7 @@ include ../config.make
 
 TOPLEVEL=../..
 
-ifeq ($(TARGET_OS),64)
+ifeq ($(TARGET_OS),x64)
     POSTFIX=win64
 else
     POSTFIX=win32

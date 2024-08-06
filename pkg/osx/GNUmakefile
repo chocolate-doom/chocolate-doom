@@ -6,8 +6,14 @@ DOC_FILES += README.Strife.md NOT-BUGS.md
 
 export MACOSX_DEPLOYMENT_TARGET=10.7
 
+ifeq ($(TARGET_OS),arm)
+    POSTFIX=arm64
+else
+    POSTFIX=x86
+endif
+
 STAGING_DIR=staging
-DMG=$(PACKAGE_TARNAME)-$(PACKAGE_VERSION).dmg
+DMG=$(PACKAGE_TARNAME)-$(PACKAGE_VERSION)-$(POSTFIX).dmg
 
 TOPLEVEL=../..
 TOPLEVEL_DOCS=$(patsubst %,../../%,$(DOC_FILES))

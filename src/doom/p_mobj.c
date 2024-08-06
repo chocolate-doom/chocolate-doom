@@ -1012,7 +1012,11 @@ void P_SpawnMapThing (mapthing_t* mthing)
     else if (gameskill == sk_nightmare)
 	bit = 4;
     else
-	bit = 1<<(gameskill-1);
+        // avoid undefined behavior (left shift by negative value and rhs too big)
+        // by accurately emulating what doom.exe did: reduce mod 32.
+        // For more details check:
+        // https://github.com/chocolate-doom/chocolate-doom/issues/1677
+        bit = (int) (1U << ((gameskill - 1) & 0x1F));
 
     // [crispy] warn about mapthings without any skill tag set
     if (!(mthing->options & (MTF_EASY|MTF_NORMAL|MTF_HARD)))

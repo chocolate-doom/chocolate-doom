@@ -18,8 +18,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "SDL_mixer.h"
-
 #include "config.h"
 #include "doomtype.h"
 
@@ -28,6 +26,13 @@
 #include "i_video.h"
 #include "m_argv.h"
 #include "m_config.h"
+
+#ifndef DISABLE_SDL2MIXER
+
+#include "SDL_mixer.h"
+
+#endif  // DISABLE_SDL2MIXER
+
 
 // Sound sample rate to use for digital output (Hz)
 
