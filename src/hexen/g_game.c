@@ -417,8 +417,7 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
             if (use_analog && joyxmove)
             {
                 joyxmove = joyxmove * joystick_move_sensitivity / 10;
-                joyxmove = (joyxmove > FRACUNIT) ? FRACUNIT : joyxmove;
-                joyxmove = (joyxmove < -FRACUNIT) ? -FRACUNIT : joyxmove;
+                joyxmove = BETWEEN(-FRACUNIT, FRACUNIT, joyxmove);
                 side += FixedMul(sidemove[pClass][speed], joyxmove);
             }
             else if (joystick_move_sensitivity)
@@ -468,8 +467,7 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
     if (use_analog && joyymove)
     {
         joyymove = joyymove * joystick_move_sensitivity / 10;
-        joyymove = (joyymove > FRACUNIT) ? FRACUNIT : joyymove;
-        joyymove = (joyymove < -FRACUNIT) ? FRACUNIT : joyymove;
+        joyymove = BETWEEN(-FRACUNIT, FRACUNIT, joyymove);
         forward -= FixedMul(forwardmove[pClass][speed], joyymove);
     }
     else if (joystick_move_sensitivity)
@@ -497,8 +495,7 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
     if (use_analog && joystrafemove)
     {
         joystrafemove = joystrafemove * joystick_move_sensitivity / 10;
-        joystrafemove = (joystrafemove > FRACUNIT) ? FRACUNIT : joystrafemove;
-        joystrafemove = (joystrafemove < -FRACUNIT) ? -FRACUNIT : joystrafemove;
+        joystrafemove = BETWEEN(-FRACUNIT, FRACUNIT, joystrafemove);
         side += FixedMul(sidemove[pClass][speed], joystrafemove);
     }
     else if (joystick_move_sensitivity)
@@ -526,12 +523,11 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
         else if (use_analog && joylook)
         {
             joylook = joylook * joystick_look_sensitivity / 10;
-            joylook = (joylook > FRACUNIT) ? FRACUNIT : joylook;
-            joylook = (joylook < -FRACUNIT) ? -FRACUNIT : joylook;
+            joylook = BETWEEN(-FRACUNIT, FRACUNIT, joylook);
             look = -FixedMul(2, joylook);
             kbdlookctrl += ticdup;
         }
-        else if (joystick_look_sensitivity && joylook)
+        else if (joystick_look_sensitivity)
         {
             if (joylook < 0)
             {
@@ -564,8 +560,7 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
         if (use_analog && joylook)
         {
             joylook = joylook * joystick_look_sensitivity / 10;
-            joylook = (joylook > FRACUNIT) ? FRACUNIT : joylook;
-            joylook = (joylook < -FRACUNIT) ? -FRACUNIT : joylook;
+            joylook = BETWEEN(-FRACUNIT, FRACUNIT, joylook);
             look = -FixedMul(2, joylook);
         }
         else if (joystick_look_sensitivity)

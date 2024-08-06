@@ -92,7 +92,7 @@ static int joystick_y_dead_zone = 33;
 static int joystick_strafe_dead_zone = 33;
 static int joystick_look_dead_zone = 33;
 
-int use_analog = 0;
+int use_analog = 1; // [crispy] use analog by default
 
 int joystick_turn_sensitivity = 10;
 int joystick_move_sensitivity = 10;
@@ -1173,12 +1173,9 @@ static void AdjustAnalog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
         TXT_NewLabel("Turn"),
         TXT_NewSpinControl(&joystick_turn_sensitivity, 0, 20),
         NULL);
-    if (gamemission == heretic || gamemission == hexen || gamemission == strife)
-    {
         TXT_AddWidgets(window,
             TXT_NewLabel("Look"),
             TXT_NewSpinControl(&joystick_look_sensitivity, 0, 20), NULL);
-    }
     TXT_SetWindowAction(window, TXT_HORIZ_LEFT, NULL);
     TXT_SetWindowAction(window, TXT_HORIZ_CENTER,
         TXT_NewWindowEscapeAction(window));

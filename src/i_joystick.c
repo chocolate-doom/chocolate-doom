@@ -81,7 +81,7 @@ static int joystick_y_dead_zone = 33;
 static int joystick_strafe_dead_zone = 33;
 static int joystick_look_dead_zone = 33;
 
-int use_analog = 0;
+int use_analog = 1; // [crispy] use analog by default
 
 int joystick_turn_sensitivity = 10;
 int joystick_move_sensitivity = 10;

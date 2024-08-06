@@ -587,8 +587,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
             if (use_analog && joyxmove)
             {
                 joyxmove = joyxmove * joystick_move_sensitivity / 10;
-                joyxmove = (joyxmove > FRACUNIT) ? FRACUNIT : joyxmove;
-                joyxmove = (joyxmove < -FRACUNIT) ? -FRACUNIT : joyxmove;
+                joyxmove = BETWEEN(-FRACUNIT, FRACUNIT, joyxmove);
                 side += FixedMul(sidemove[speed], joyxmove);
             }
             else if (joystick_move_sensitivity)
@@ -637,8 +636,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     if (use_analog && joyymove)
     {
         joyymove = joyymove * joystick_move_sensitivity / 10;
-        joyymove = (joyymove > FRACUNIT) ? FRACUNIT : joyymove;
-        joyymove = (joyymove < -FRACUNIT) ? -FRACUNIT : joyymove;
+        joyymove = BETWEEN(-FRACUNIT, FRACUNIT, joyymove);
         forward -= FixedMul(forwardmove[speed], joyymove);
     }
     else if (joystick_move_sensitivity)
@@ -666,8 +664,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     if (use_analog && joystrafemove)
     {
         joystrafemove = joystrafemove * joystick_move_sensitivity / 10;
-        joystrafemove = (joystrafemove > FRACUNIT) ? FRACUNIT : joystrafemove;
-        joystrafemove = (joystrafemove < -FRACUNIT) ? -FRACUNIT : joystrafemove;
+        joystrafemove = BETWEEN(-FRACUNIT, FRACUNIT, joystrafemove);
         side += FixedMul(sidemove[speed], joystrafemove);
     }
     else if (joystick_move_sensitivity)
@@ -683,15 +680,38 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     {
         static unsigned int kbdlookctrl = 0;
 
-        if (gamekeydown[key_lookup] || joylook < 0)
+        if (gamekeydown[key_lookup])
         {
             look = lspeed;
             kbdlookctrl += ticdup;
         }
         else
-        if (gamekeydown[key_lookdown] || joylook > 0)
+        if (gamekeydown[key_lookdown])
         {
             look = -lspeed;
+            kbdlookctrl += ticdup;
+        }
+        else
+        if (joylook && joystick_look_sensitivity)
+        {
+            if (use_analog)
+            {
+                joylook = joylook * joystick_look_sensitivity / 10;
+                joylook = BETWEEN(-FRACUNIT, FRACUNIT, joylook);
+                look = -FixedMul(2, joylook);
+            }
+            else
+            {
+                if (joylook < 0)
+                {
+                    look = lspeed;
+                }
+
+                if (joylook > 0)
+                {
+                    look = -lspeed;
+                }
+            }
             kbdlookctrl += ticdup;
         }
         else
