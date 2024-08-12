@@ -204,6 +204,30 @@ static registry_value_t root_path_keys[] =
         "PATH",
     },
 
+    // [crispy] DOOM Unity port (not Chocolate Doom compatible)
+
+    {
+        HKEY_LOCAL_MACHINE,
+        SOFTWARE_KEY "\\GOG.com\\Games\\2015545325",
+        "PATH"
+    },
+
+    // [crispy] DOOM II Unity port (not Chocolate Doom compatible)
+
+    {
+        HKEY_LOCAL_MACHINE,
+        SOFTWARE_KEY "\\GOG.com\\Games\\1426071866",
+        "PATH"
+    },
+
+    // [crispy] DOOM + DOOM II (not Chocolate Doom compatible)
+
+    {
+        HKEY_LOCAL_MACHINE,
+        SOFTWARE_KEY "\\GOG.com\\Games\\1413291984",
+        "PATH"
+    },
+
     // Strife: Veteran Edition
 
     {
@@ -274,6 +298,12 @@ static char *steam_install_subdirs[] =
     // From Doom 3: BFG Edition:
 
     "steamapps\\common\\DOOM 3 BFG Edition\\base\\wads",
+
+    // [crispy] Doom 1 + Doom 2 (not Chocolate Doom compatible):
+
+    "steamapps\\common\\Doom 2\\rerelease\\DOOM II_Data\\StreamingAssets",
+    "steamapps\\common\\Ultimate Doom\\rerelease",
+    "steamapps\\common\\Ultimate Doom\\rerelease\\DOOM_Data\\StreamingAssets",
 
     // From Strife: Veteran Edition:
 
