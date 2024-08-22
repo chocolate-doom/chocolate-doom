@@ -2738,7 +2738,7 @@ boolean M_Responder (event_t* ev)
         {
 	    M_StartControlPanel ();
 	    currentMenu = &SoundDef;
-	    itemOn = sfx_vol;
+	    itemOn = currentMenu->lastOn; // [crispy] remember cursor position
 	    S_StartSoundOptional(NULL, sfx_mnuopn, sfx_swtchn); // [NS] Optional menu sounds.
 	    return true;
 	}
