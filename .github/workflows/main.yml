@@ -90,7 +90,6 @@ jobs:
         run: |
           brew install \
             automake \
-            dylibbundler \
             sdl2 \
             sdl2_mixer \
             sdl2_net \
