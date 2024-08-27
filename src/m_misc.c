@@ -302,6 +302,7 @@ int M_stat(const char *path, struct stat *buf)
     // incompatible with struct stat*. We copy only the required compatible
     // field.
     buf->st_mode = wbuf.st_mode;
+    buf->st_mtime = wbuf.st_mtime; // [crispy]
 
     free(wpath);
 

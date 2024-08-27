@@ -953,7 +953,8 @@ static void DrawSaveLoadBottomLine(const Menu_t *menu)
         char filename[100];
 
         M_snprintf(filename, sizeof(filename), "%shex%d.hxs", SavePath, CurrentItPos + (savepage * 10));
-        stat(filename, &st);
+        if (M_stat(filename, &st) == 0)
+        {
 // [FG] suppress the most useless compiler warning ever
 #if defined(__GNUC__)
 #  pragma GCC diagnostic push
@@ -964,6 +965,7 @@ static void DrawSaveLoadBottomLine(const Menu_t *menu)
 #  pragma GCC diagnostic pop
 #endif
         MN_DrTextA(filedate, ORIGWIDTH / 2 - MN_TextAWidth(filedate) / 2, y + 10);
+        }
     }
 
     dp_translation = NULL;

@@ -975,7 +975,8 @@ static void DrawSaveLoadBottomLine(const Menu_t *menu)
         struct stat st;
         char filedate[32];
 
-        stat(SV_Filename(CurrentItPos), &st);
+        if (M_stat(SV_Filename(CurrentItPos), &st) == 0)
+        {
 // [FG] suppress the most useless compiler warning ever
 #if defined(__GNUC__)
 #  pragma GCC diagnostic push
@@ -986,6 +987,7 @@ static void DrawSaveLoadBottomLine(const Menu_t *menu)
 #  pragma GCC diagnostic pop
 #endif
         MN_DrTextA(filedate, ORIGWIDTH / 2 - MN_TextAWidth(filedate) / 2, y + 10);
+        }
     }
 
     dp_translation = NULL;

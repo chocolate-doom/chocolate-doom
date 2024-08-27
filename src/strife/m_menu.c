@@ -864,8 +864,8 @@ static void M_DrawSaveLoadBottomLine(void)
         struct stat st;
         char filedate[32];
 
-        stat(P_SaveGameFile(itemOn), &st);
-
+        if (M_stat(P_SaveGameFile(itemOn), &st) == 0)
+        {
 // [FG] suppress the most useless compiler warning ever
 #if defined(__GNUC__)
 #pragma GCC diagnostic push
@@ -876,6 +876,7 @@ static void M_DrawSaveLoadBottomLine(void)
 #pragma GCC diagnostic pop
 #endif
         M_WriteText(ORIGWIDTH/2-M_StringWidth(filedate)/2, y, filedate);
+        }
     }
 }
 

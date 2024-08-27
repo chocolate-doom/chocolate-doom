@@ -72,7 +72,9 @@ char *P_SaveGameFile(int slot)
         filename = malloc(filename_size);
     }
 
-    DEH_snprintf(basename, 32, SAVEGAMENAME "%d.dsg", slot);
+    // [crispy] changed to Strife savegame file name,
+    // used by M_DrawSaveLoadBottomLine to show savegame date and time
+    DEH_snprintf(basename, 32, "strfsav%d.ssg/name", slot);
 
     M_snprintf(filename, filename_size, "%s%s", savegamedir, basename);
 
