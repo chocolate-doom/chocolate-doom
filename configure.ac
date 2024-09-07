@@ -179,7 +179,7 @@ CFLAGS="$CFLAGS $SDL_CFLAGS ${SAMPLERATE_CFLAGS:-} ${PNG_CFLAGS:-} ${FLUIDSYNTH_
 LDFLAGS="$LDFLAGS $SDL_LIBS ${SAMPLERATE_LIBS:-} ${PNG_LIBS:-} ${FLUIDSYNTH_LIBS:-}"
 case "$host" in
   *-*-mingw* | *-*-cygwin* | *-*-msvc* )
-    LDFLAGS="$LDFLAGS -lwinmm"
+    LDFLAGS="$LDFLAGS -lwinmm -lshlwapi"
     ;;
   *)
 esac

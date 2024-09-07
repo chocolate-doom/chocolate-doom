@@ -24,8 +24,7 @@
 #include "m_misc.h"
 #include "config.h"
 
-#if defined(_MSC_VER)
-// For Visual C++, we need to include the win_opendir module.
+#if defined(_WIN32)
 #include <win_opendir.h>
 #define S_ISDIR(m)      (((m)& S_IFMT) == S_IFDIR)
 #elif defined(HAVE_DIRENT_H)
@@ -102,7 +101,6 @@ glob_t *I_StartMultiGlob(const char *directory, int flags,
     int num_globs;
     glob_t *result;
     va_list args;
-    char *directory_native;
 
     globs = malloc(sizeof(char *));
     if (globs == NULL)
@@ -141,18 +139,15 @@ glob_t *I_StartMultiGlob(const char *directory, int flags,
         return NULL;
     }
 
-    directory_native = M_ConvertUtf8ToSysNativeMB(directory);
-
-    result->dir = opendir(directory_native);
+    result->dir = opendir(directory);
     if (result->dir == NULL)
     {
         FreeStringList(globs, num_globs);
         free(result);
-        free(directory_native);
         return NULL;
     }
 
-    result->directory = directory_native;
+    result->directory = M_StringDuplicate(directory);
     result->globs = globs;
     result->num_globs = num_globs;
     result->flags = flags;
@@ -246,7 +241,6 @@ static boolean MatchesAnyGlob(const char *name, glob_t *glob)
 static char *NextGlob(glob_t *glob)
 {
     struct dirent *de;
-    char *temp, *ret;
 
     do
     {
@@ -259,13 +253,7 @@ static char *NextGlob(glob_t *glob)
           || !MatchesAnyGlob(de->d_name, glob));
 
     // Return the fully-qualified path, not just the bare filename.
-    temp = M_StringJoin(glob->directory, DIR_SEPARATOR_S, de->d_name, NULL);
-
-    ret = M_ConvertSysNativeMBToUtf8(temp);
-
-    free(temp);
-
-    return ret;
+    return M_StringJoin(glob->directory, DIR_SEPARATOR_S, de->d_name, NULL);
 }
 
 static void ReadAllFilenames(glob_t *glob)
