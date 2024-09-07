@@ -383,11 +383,35 @@ static net_client_t *NET_SV_Controller(void)
     return best;
 }
 
+typedef enum
+{
+    RANGE_LOCALHOST,   // Same process or 127.x
+    RANGE_PRIVATE,     // RFC 1918
+    RANGE_PUBLIC,      // The public Internet
+} ip_range_t;
+
+static ip_range_t ClientAddressRange(const char *addr)
+{
+    if (!strcmp(addr, "local client")
+     || M_StringStartsWith(addr, "127."))
+    {
+        return RANGE_LOCALHOST;
+    }
+    if (M_StringStartsWith(addr, "10.")
+     || M_StringStartsWith(addr, "192.168."))
+    {
+        return RANGE_PRIVATE;
+    }
+    return RANGE_PUBLIC;
+}
+
 static void NET_SV_SendWaitingData(net_client_t *client)
 {
     net_waitdata_t wait_data;
     net_packet_t *packet;
     net_client_t *controller;
+    ip_range_t client_range, player_range;
+    const char *addr;
     int i;
 
     NET_SV_AssignPlayers();
@@ -416,6 +440,11 @@ static void NET_SV_SendWaitingData(net_client_t *client)
            sizeof(sha1_digest_t));
     wait_data.is_freedoom = controller->is_freedoom;
 
+    // We only send IP addresses to locally-connected clients (including
+    // the 127.* loopback range):
+    addr = NET_AddrToString(client->connection.addr);
+    client_range = ClientAddressRange(addr);
+
     // set name and address of each player:
 
     for (i = 0; i < wait_data.num_players; ++i)
@@ -423,9 +452,28 @@ static void NET_SV_SendWaitingData(net_client_t *client)
         M_StringCopy(wait_data.player_names[i],
                      sv_players[i]->name,
                      MAXPLAYERNAME);
-        M_StringCopy(wait_data.player_addrs[i],
-                     NET_AddrToString(sv_players[i]->addr),
-                     MAXPLAYERNAME);
+
+        // For privacy, only local clients or those on a LAN get to see
+        // addresses. Public clients only get to see their own address,
+        // though we do reveal localhost addresses since they're harmless,
+        // and we do reveal when a client is connected via LAN.
+        addr = NET_AddrToString(sv_players[i]->addr);
+        player_range = ClientAddressRange(addr);
+        if (client_range == RANGE_LOCALHOST || client_range == RANGE_PRIVATE
+         || i == wait_data.consoleplayer || player_range == RANGE_LOCALHOST)
+        {
+            M_StringCopy(wait_data.player_addrs[i], addr, MAXPLAYERNAME);
+        }
+        else if (player_range == RANGE_PRIVATE)
+        {
+            M_snprintf(wait_data.player_addrs[i], MAXPLAYERNAME,
+                       "[LAN player]");
+        }
+        else
+        {
+            M_snprintf(wait_data.player_addrs[i], MAXPLAYERNAME,
+                       "[address hidden]");
+        }
     }
 
     // Construct packet:

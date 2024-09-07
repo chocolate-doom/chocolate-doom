@@ -2,6 +2,7 @@
 
 <component type="desktop">
   <id>@PACKAGE_RDNS@.Hexen</id>
+  <launchable type="desktop-id">@PACKAGE_RDNS@.Hexen.desktop</launchable>
   <name>@PACKAGE_SHORTNAME@ Hexen</name>
   <summary>@PACKAGE_SHORTDESC@</summary>
   <metadata_license>CC0-1.0</metadata_license>

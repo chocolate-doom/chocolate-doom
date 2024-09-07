@@ -236,8 +236,8 @@ are needed:
  * The IWAD file “chex.wad”, from the Chex Quest CD.
 
  * The dehacked patch “chex.deh”, which can be found here:
-   https://www.doomworld.com/idgames/utils/exe_edit/patches/chexdeh
-   (utils/exe_edit/patches/chexdeh.zip in your nearest /idgames mirror)
+   https://www.doomworld.com/idgames/themes/chex/chexdeh
+   (themes/chex/chexdeh.zip in your nearest /idgames mirror)
 
 Copy these files into a directory together and use the `-iwad` command
 line parameter to specify the Chex Quest IWAD file:

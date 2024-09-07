@@ -1,39 +1,162 @@
-name: Chocolate Doom
+name: Continuous Integration
 
 on:
   push:
     branches:
       - "master"
+    tags:
+      - "*"
     paths-ignore:
       - "**.md"
   pull_request:
     branches:
       - "master"
+    paths-ignore:
+      - "**.md"
   workflow_dispatch:
 
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
-
+    name: ${{ matrix.config.name }}
+    runs-on: ${{ matrix.config.os }}
+    defaults:
+      run:
+        shell: ${{ matrix.config.shell }}
     strategy:
+      fail-fast: false
       matrix:
-        compiler: [clang, gcc]
-        os: [ubuntu-latest]
+        config:
+          - name: Linux GCC
+            os: ubuntu-latest
+            compiler: gcc
+            shell: bash
+
+          - name: macOS Clang
+            os: macos-latest
+            compiler: clang
+            shell: bash
+            artifacts: true
+            pkg-path: pkg/osx/*.dmg
+            pkg-dir: pkg/osx
+
+          - name: macOS x86 Clang
+            os: macos-13
+            compiler: clang
+            shell: bash
+            artifacts: true
+            pkg-path: pkg/osx/*.dmg
+            pkg-dir: pkg/osx
+
+          - name: MSYS2 UCRT64
+            os: windows-latest
+            compiler: gcc
+            shell: 'msys2 {0}'
+            msystem: ucrt64
+            msys-env: mingw-w64-ucrt-x86_64
+            artifacts: true
+            pkg-path: pkg/win32/*.zip
+            pkg-dir: pkg/win32
+
+          - name: MSYS2 MINGW32
+            os: windows-latest
+            compiler: gcc
+            shell: 'msys2 {0}'
+            msystem: mingw32
+            msys-env: mingw-w64-i686
+            artifacts: true
+            pkg-path: pkg/win32/*.zip
+            pkg-dir: pkg/win32
 
     steps:
-      - name: Install dependencies
-        run: sudo apt-get update && sudo apt-get install libfluidsynth-dev libpng-dev libsamplerate0-dev libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-net-dev ninja-build
+      - name: Install pandoc
+        if: runner.os == 'Windows'
+        shell: cmd
+        run: choco install pandoc
 
-      - uses: actions/checkout@v2
+      - name: Install dependencies (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install \
+            libsdl2-dev \
+            libsdl2-mixer-dev \
+            libsdl2-net-dev \
+            libpng-dev \
+            libsamplerate0-dev \
+            libfluidsynth-dev
+
+      - name: Install dependencies (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          brew install \
+            automake \
+            sdl2 \
+            sdl2_mixer \
+            sdl2_net \
+            libpng \
+            libsamplerate \
+            fluid-synth
+
+      - name: Install dependencies (MSYS2)
+        if: runner.os == 'Windows'
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: ${{ matrix.config.msystem }}
+          update: true
+          path-type: inherit
+          install: >-
+            autotools
+            zip
+            ${{ matrix.config.msys-env }}-gcc
+            ${{ matrix.config.msys-env }}-SDL2
+            ${{ matrix.config.msys-env }}-SDL2_mixer
+            ${{ matrix.config.msys-env }}-SDL2_net
+            ${{ matrix.config.msys-env }}-libpng
+            ${{ matrix.config.msys-env }}-libsamplerate
+            ${{ matrix.config.msys-env }}-fluidsynth
+
+      - uses: actions/checkout@v4
         with:
           submodules: true
 
-      - name: CMake
+      - name: Configure
         env:
-          CC: ${{ matrix.compiler }}
-        run: cmake -S . -B build -G Ninja && ninja -C build
+          CC: ${{ matrix.config.compiler }}
+        run: |
+          ./autogen.sh
 
-      - name: Make
-        env:
-          CC: ${{ matrix.compiler }}
-        run: $GITHUB_WORKSPACE/.travis.sh
+      - name: Build
+        run: make -j4
+
+      - name: Test
+        run: |
+          PREFIX=`sed -n '/PROGRAM_PREFIX/p' ${PWD}/config.h | cut -d '"' -f 2`
+          make -j4 -C quickcheck check SOURCE_PORT=$PWD/src/${PREFIX}doom
+
+      - name: Package
+        if: ${{ matrix.config.artifacts }}
+        run: |
+          cd ${{ matrix.config.pkg-dir }}
+          make
+
+      - name: Upload artifacts
+        if: ${{ matrix.config.artifacts }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.config.name }}
+          path: ${{ matrix.config.pkg-path }}
+
+      - name: Extract Package String
+        if: ${{ contains(github.ref, 'tags') }}
+        run: |
+          PACKAGE_STRING=`sed -n '/PACKAGE_STRING/p' ${PWD}/config.h | cut -d '"' -f 2`
+          echo "PACKAGE_STRING=${PACKAGE_STRING}" >> $GITHUB_ENV
+
+      - name: Release
+        if: ${{ contains(github.ref, 'tags') && matrix.config.artifacts }}
+        uses: ncipollo/release-action@v1
+        with:
+          name: ${{ env.PACKAGE_STRING }}
+          bodyFile: RELEASE_NOTES.md
+          allowUpdates: true
+          artifacts: ${{ matrix.config.pkg-path }}

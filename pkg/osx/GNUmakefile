@@ -6,8 +6,14 @@ DOC_FILES += README.Strife.md NOT-BUGS.md
 
 export MACOSX_DEPLOYMENT_TARGET=10.7
 
+ifeq ($(TARGET_OS),arm)
+    POSTFIX=arm64
+else
+    POSTFIX=x86
+endif
+
 STAGING_DIR=staging
-DMG=$(PACKAGE_TARNAME)-$(PACKAGE_VERSION).dmg
+DMG=$(PACKAGE_TARNAME)-$(PACKAGE_VERSION)-$(POSTFIX).dmg
 
 TOPLEVEL=../..
 TOPLEVEL_DOCS=$(patsubst %,../../%,$(DOC_FILES))
@@ -16,6 +22,7 @@ TOPLEVEL_DOCS=$(patsubst %,../../%,$(DOC_FILES))
 
 $(DMG) : tmp.dmg
 	rm -f $@
+	sleep 2 # pause to workaround occasional "Can’t get disk" (-1728) issues
 	./dmgfix "$(realpath tmp.dmg)" "$(PACKAGE_STRING)" "$(PACKAGE_NAME).app"
 	hdiutil convert -format UDBZ -o $@ tmp.dmg
 	rm -f tmp.dmg

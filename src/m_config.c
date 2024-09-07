@@ -1022,6 +1022,13 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_FLOAT(fsynth_reverb_width),
 
     //!
+    // Fine tune the FluidSynth output level. Default is 1.0,
+    // range is 0.0 - 10.0.
+    //
+
+    CONFIG_VARIABLE_FLOAT(fsynth_gain),
+
+    //!
     // Full path to a soundfont file to use with FluidSynth MIDI playback.
     //
 
@@ -1243,6 +1250,12 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(joystick_index),
 
     //!
+    // If non-zero, use analog movement when playing with a gamepad.
+    //
+
+    CONFIG_VARIABLE_INT(use_analog),
+
+    //!
     // Joystick axis to use to for horizontal (X) movement.
     //
 
@@ -1253,6 +1266,12 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_INT(joystick_x_invert),
+
+    //!
+    // Joystick turn analog sensitivity, specified as a value between 0 and 20.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_turn_sensitivity),
 
     //!
     // Joystick axis to use to for vertical (Y) movement.
@@ -1280,6 +1299,12 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(joystick_strafe_invert),
 
     //!
+    // Joystick move and strafe analog sensitivity, specified as a value
+    // between 0 and 20.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_move_sensitivity),
+    //!
     // Joystick axis to use to for looking up and down.
     //
 
@@ -1291,6 +1316,12 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_INT(joystick_look_invert),
+
+    //!
+    // Joystick look analog sensitivity, specified as a value between 0 and 20.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_look_sensitivity),
 
     //!
     // The physical joystick button that corresponds to joystick
@@ -1370,6 +1401,48 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(joystick_physical_button10),
 
     //!
+    // The physical joystick button that corresponds to joystick
+    // virtual button #11.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_physical_button11),
+
+    //!
+    // The physical joystick button that corresponds to joystick
+    // virtual button #12.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_physical_button12),
+
+    //!
+    // The physical joystick button that corresponds to joystick
+    // virtual button #13.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_physical_button13),
+
+    //!
+    // The physical joystick button that corresponds to joystick
+    // virtual button #14.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_physical_button14),
+
+    //!
+    // The physical joystick button that corresponds to joystick
+    // virtual button #15.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_physical_button15),
+
+    //!
+    // The physical joystick button that corresponds to joystick
+    // virtual button #16.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_physical_button16),
+
+    //!
     // If non-zero, use the SDL_GameController interface instead of the
     // SDL_Joystick interface.
     //
@@ -1445,6 +1518,48 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_INT(joyb_nextweapon),
+
+    //!
+    // @game heretic hexen
+    // Joystick virtual button to activate artifact.
+    //
+
+    CONFIG_VARIABLE_INT(joyb_useartifact),
+
+    //!
+    // @game heretic hexen
+    // Joystick virtual button to move left in the inventory.
+    //
+
+    CONFIG_VARIABLE_INT(joyb_invleft),
+
+    //!
+    // @game heretic hexen
+    // Joystick virtual button to move right in the inventory.
+    //
+
+    CONFIG_VARIABLE_INT(joyb_invright),
+
+    //!
+    // @game heretic hexen
+    // Joystick virtual button to fly up.
+    //
+
+    CONFIG_VARIABLE_INT(joyb_flyup),
+
+    //!
+    // @game heretic hexen
+    // Joystick virtual button to fly down.
+    //
+
+    CONFIG_VARIABLE_INT(joyb_flydown),
+
+    //!
+    // @game heretic hexen
+    // Joystick virtual button to center flying.
+    //
+
+    CONFIG_VARIABLE_INT(joyb_flycenter),
 
     //!
     // Key to pause or unpause the game.

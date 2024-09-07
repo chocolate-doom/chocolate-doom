@@ -94,8 +94,6 @@ const char *LevelNames[] = {
 static int cheating = 0;
 static int grid = 0;
 
-static int leveljuststarted = 1;        // kluge until AM_LevelInit() is called
-
 boolean automapactive = false;
 static int finit_width = SCREENWIDTH;
 static int finit_height = SCREENHEIGHT - 42;
@@ -433,8 +431,6 @@ void AM_clearMarks(void)
 
 void AM_LevelInit(void)
 {
-    leveljuststarted = 0;
-
     f_x = f_y = 0;
     f_w = finit_width;
     f_h = finit_height;

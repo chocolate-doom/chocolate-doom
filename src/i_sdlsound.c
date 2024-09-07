@@ -24,7 +24,6 @@
 #include <string.h>
 #include <assert.h>
 #include "SDL.h"
-#include "SDL_mixer.h"
 
 #ifdef HAVE_LIBSAMPLERATE
 #include <samplerate.h>
@@ -54,6 +53,8 @@ float libsamplerate_scale = 0.65f;
 
 
 #ifndef DISABLE_SDL2MIXER
+
+#include "SDL_mixer.h"
 
 
 #define LOW_PASS_FILTER
@@ -1059,11 +1060,11 @@ static int GetSliceSize(void)
     return 1024;
 }
 
-static boolean I_SDL_InitSound(boolean _use_sfx_prefix)
+static boolean I_SDL_InitSound(GameMission_t mission)
 {
     int i;
 
-    use_sfx_prefix = _use_sfx_prefix;
+    use_sfx_prefix = (mission == doom || mission == strife);
 
     // No sounds yet
     for (i=0; i<NUM_CHANNELS; ++i)

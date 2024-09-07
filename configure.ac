@@ -1,9 +1,9 @@
-AC_INIT(Chocolate Doom, 3.0.0,
+AC_INIT(Chocolate Doom, 3.1.0,
         chocolate-doom-dev-list@chocolate-doom.org, chocolate-doom)
 
 PACKAGE_SHORTNAME=${PACKAGE_NAME% Doom}
 PACKAGE_SHORTDESC="Conservative source port"
-PACKAGE_COPYRIGHT="Copyright (C) 1993-2023"
+PACKAGE_COPYRIGHT="Copyright (C) 1993-2024"
 PACKAGE_LICENSE="GNU General Public License, version 2"
 PACKAGE_MAINTAINER="Simon Howard"
 PACKAGE_URL="https://www.chocolate-doom.org/"
@@ -30,6 +30,23 @@ then
         WARNINGS="-Wall -Wdeclaration-after-statement -Wredundant-decls"
         CFLAGS="-O$OPT_LEVEL -g $WARNINGS $orig_CFLAGS"
 fi
+
+AC_CANONICAL_TARGET
+TARGET_OS=""
+AS_CASE([$target_cpu],
+        [x86_64],
+        [
+            TARGET_OS="x64"
+        ],
+        [aarch64*|arm*],
+        [
+            TARGET_OS="arm"
+        ],
+        [i?86|arm*],
+        [
+            TARGET_OS="32"
+        ])
+AC_SUBST([TARGET_OS])
 
 PKG_CHECK_MODULES(SDL, [sdl2 >= 2.0.14])
 # Check for SDL2_mixer

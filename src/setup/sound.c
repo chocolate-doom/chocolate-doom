@@ -23,8 +23,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "SDL_mixer.h"
-
 #include "textscreen.h"
 #include "m_config.h"
 #include "m_misc.h"
@@ -32,6 +30,13 @@
 #include "execute.h"
 #include "mode.h"
 #include "sound.h"
+
+#ifndef DISABLE_SDL2MIXER
+
+#include "SDL_mixer.h"
+
+#endif  // DISABLE_SDL2MIXER
+
 
 #define WINDOW_HELP_URL "https://www.chocolate-doom.org/setup-sound"
 
@@ -80,8 +85,7 @@ static char *gus_patch_path = NULL;
 static int gus_ram_kb = 1024;
 #ifdef _WIN32
 #define MAX_MIDI_DEVICES 20
-static char **midi_names;
-static int midi_num_devices;
+static char *midi_names[MAX_MIDI_DEVICES];
 static int midi_index;
 char *winmm_midi_device = NULL;
 int winmm_complevel = 0;
@@ -103,6 +107,7 @@ float fsynth_reverb_damp = 0.4f;
 float fsynth_reverb_level = 0.15f;
 float fsynth_reverb_roomsize = 0.6f;
 float fsynth_reverb_width = 4.0f;
+float fsynth_gain = 1.0f;
 #endif // HAVE_FLUIDSYNTH
 
 // DOS specific variables: these are unused but should be maintained
@@ -169,74 +174,44 @@ static void UpdateMidiDevice(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(data))
 static txt_dropdown_list_t *MidiDeviceSelector(void)
 {
     txt_dropdown_list_t *result;
-    int all_devices;
-    int device_ids[MAX_MIDI_DEVICES];
-    MMRESULT mmr;
-    MIDIOUTCAPS mcaps;
+    int num_devices = 1;
+    int all_devices = midiOutGetNumDevs();
     int i;
 
-    if (midi_num_devices > 0)
-    {
-        for (i = 0; i < midi_num_devices; ++i)
-        {
-            free(midi_names[i]);
-            midi_names[i] = NULL;
-        }
-        free(midi_names);
-        midi_names = NULL;
-    }
-    midi_num_devices = 0;
+    midi_index = 0;
+    free(midi_names[0]);
+    midi_names[0] = M_StringDuplicate("Microsoft MIDI Mapper");
 
-    // get the number of midi devices on this system
-    all_devices = midiOutGetNumDevs() + 1; // include MIDI_MAPPER
-    if (all_devices > MAX_MIDI_DEVICES)
+    if (all_devices > MAX_MIDI_DEVICES - num_devices)
     {
-        all_devices = MAX_MIDI_DEVICES;
+        all_devices = MAX_MIDI_DEVICES - num_devices;
     }
 
-    // get the valid device ids only, starting from -1 (MIDI_MAPPER)
-    for (i = 0; i < all_devices; ++i)
+    for (i = 0; i < all_devices; i++)
     {
-        mmr = midiOutGetDevCaps(i - 1, &mcaps, sizeof(mcaps));
-        if (mmr == MMSYSERR_NOERROR)
-        {
-            device_ids[midi_num_devices] = i - 1;
-            midi_num_devices++;
-        }
-    }
+        MIDIOUTCAPS caps;
 
-    // get the device names
-    midi_names = malloc(midi_num_devices * sizeof(char *));
-    for (i = 0; i < midi_num_devices; ++i)
-    {
-        mmr = midiOutGetDevCaps(device_ids[i], &mcaps, sizeof(mcaps));
-        if (mmr == MMSYSERR_NOERROR)
+        if (midiOutGetDevCaps(i, &caps, sizeof(caps)) == MMSYSERR_NOERROR)
         {
-            midi_names[i] = M_StringDuplicate(mcaps.szPname);
+            free(midi_names[num_devices]);
+            midi_names[num_devices] = M_StringDuplicate(caps.szPname);
+
+            if (!strncasecmp(winmm_midi_device, midi_names[num_devices],
+                             MAXPNAMELEN))
+            {
+                // Set the dropdown list index to the saved device.
+                midi_index = num_devices;
+            }
+
+            num_devices++;
         }
     }
 
-    // set the dropdown list index to the previously selected device
-    for (i = 0; i < midi_num_devices; ++i)
-    {
-        if (winmm_midi_device != NULL &&
-            strstr(winmm_midi_device, midi_names[i]))
-        {
-            midi_index = i;
-            break;
-        }
-        else if (winmm_midi_device == NULL || i == midi_num_devices - 1)
-        {
-            // give up and use MIDI_MAPPER
-            midi_index = 0;
-            free(winmm_midi_device);
-            winmm_midi_device = M_StringDuplicate(midi_names[0]);
-            break;
-        }
-    }
+    free(winmm_midi_device);
+    winmm_midi_device = M_StringDuplicate(midi_names[midi_index]);
 
-    result = TXT_NewDropdownList(&midi_index, (const char **)midi_names,
-                                 midi_num_devices);
+    result = TXT_NewDropdownList(&midi_index, (const char **) midi_names,
+                                 num_devices);
     TXT_SignalConnect(result, "changed", UpdateMidiDevice, NULL);
 
     return result;
@@ -264,7 +239,7 @@ void ConfigSound(TXT_UNCAST_ARG(widget), void *user_data)
     TXT_AddWidgets(window,
         TXT_NewSeparator("Sound effects"),
         TXT_NewRadioButton("Disabled", &snd_sfxdevice, SNDDEVICE_NONE),
-        TXT_If(gamemission == doom,
+        TXT_If(gamemission == doom || gamemission == strife,
             TXT_NewRadioButton("PC speaker effects", &snd_sfxdevice,
                                SNDDEVICE_PCSPEAKER)),
         TXT_NewRadioButton("Digital sound effects",
@@ -376,6 +351,7 @@ void BindSoundVariables(void)
     M_BindFloatVariable("fsynth_reverb_level",    &fsynth_reverb_level);
     M_BindFloatVariable("fsynth_reverb_roomsize", &fsynth_reverb_roomsize);
     M_BindFloatVariable("fsynth_reverb_width",    &fsynth_reverb_width);
+    M_BindFloatVariable("fsynth_gain",            &fsynth_gain);
     M_BindStringVariable("fsynth_sf_path",        &fsynth_sf_path);
 #endif // HAVE_FLUIDSYNTH
 
@@ -401,6 +377,10 @@ void BindSoundVariables(void)
     music_pack_path = M_StringDuplicate("");
     timidity_cfg_path = M_StringDuplicate("");
     gus_patch_path = M_StringDuplicate("");
+
+#ifdef _WIN32
+    winmm_midi_device = M_StringDuplicate("");
+#endif
 
 #ifdef HAVE_FLUIDSYNTH
     fsynth_sf_path = M_StringDuplicate("");

@@ -18,8 +18,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "SDL_mixer.h"
-
 #include "config.h"
 #include "doomtype.h"
 
@@ -28,6 +26,13 @@
 #include "i_video.h"
 #include "m_argv.h"
 #include "m_config.h"
+
+#ifndef DISABLE_SDL2MIXER
+
+#include "SDL_mixer.h"
+
+#endif  // DISABLE_SDL2MIXER
+
 
 // Sound sample rate to use for digital output (Hz)
 
@@ -125,7 +130,7 @@ static boolean SndDeviceInList(snddevice_t device, const snddevice_t *list,
 // Find and initialize a sound_module_t appropriate for the setting
 // in snd_sfxdevice.
 
-static void InitSfxModule(boolean use_sfx_prefix)
+static void InitSfxModule(GameMission_t mission)
 {
     int i;
 
@@ -142,7 +147,7 @@ static void InitSfxModule(boolean use_sfx_prefix)
         {
             // Initialize the module
 
-            if (sound_modules[i]->Init(use_sfx_prefix))
+            if (sound_modules[i]->Init(mission))
             {
                 sound_module = sound_modules[i];
                 return;
@@ -195,7 +200,7 @@ static void InitMusicModule(void)
 //  allocates channel buffer, sets S_sfx lookup.
 //
 
-void I_InitSound(boolean use_sfx_prefix)
+void I_InitSound(GameMission_t mission)
 {
     boolean nosound, nosfx, nomusic, nomusicpacks;
 
@@ -250,7 +255,7 @@ void I_InitSound(boolean use_sfx_prefix)
 
         if (!nosfx)
         {
-            InitSfxModule(use_sfx_prefix);
+            InitSfxModule(mission);
         }
 
         if (!nomusic)
@@ -525,6 +530,7 @@ void I_BindSoundVariables(void)
     M_BindFloatVariable("fsynth_reverb_level",      &fsynth_reverb_level);
     M_BindFloatVariable("fsynth_reverb_roomsize",   &fsynth_reverb_roomsize);
     M_BindFloatVariable("fsynth_reverb_width",      &fsynth_reverb_width);
+    M_BindFloatVariable("fsynth_gain",              &fsynth_gain);
     M_BindStringVariable("fsynth_sf_path",          &fsynth_sf_path);
 #endif // HAVE_FLUIDSYNTH
 

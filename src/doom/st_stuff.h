@@ -53,26 +53,6 @@ void ST_Init (void);
 
 
 
-// States for status bar code.
-typedef enum
-{
-    AutomapState,
-    FirstPersonState
-    
-} st_stateenum_t;
-
-
-// States for the chat code.
-typedef enum
-{
-    StartChatState,
-    WaitDestState,
-    GetChatState
-    
-} st_chatstateenum_t;
-
-
-
 extern pixel_t *st_backing_screen;
 extern cheatseq_t cheat_mus;
 extern cheatseq_t cheat_god;
