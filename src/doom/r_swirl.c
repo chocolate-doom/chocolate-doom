@@ -30,20 +30,20 @@
 // swirl factors determine the number of waves per flat width
 
 // 1 cycle per 64 units
-#define swirlfactor (8192/64)
+#define swirlfactor (FINEANGLES / 64)
 
 // 1 cycle per 32 units (2 in 64)
-#define swirlfactor2 (8192/32)
+#define swirlfactor2 (FINEANGLES / 32)
 
-#define SEQUENCE 1024
+#define SEQUENCE 256
 #define FLATSIZE (64 * 64)
 
-static int *offsets;
+static int *offsets = NULL;
 static int *offset;
 
 #define AMP 2
 #define AMP2 2
-#define SPEED 40
+#define SPEED 32
 
 void R_InitDistortedFlats()
 {
@@ -51,7 +51,7 @@ void R_InitDistortedFlats()
 	{
 		int i;
 
-		offsets = I_Realloc(NULL, SEQUENCE * FLATSIZE * sizeof(*offsets));
+		offsets = I_Realloc(offsets, SEQUENCE * FLATSIZE * sizeof(*offsets));
 		offset = offsets;
 
 		for (i = 0; i < SEQUENCE; i++)
@@ -65,14 +65,14 @@ void R_InitDistortedFlats()
 					int x1, y1;
 					int sinvalue, sinvalue2;
 
-					sinvalue = (y * swirlfactor + i * SPEED * 5 + 900) & 8191;
-					sinvalue2 = (x * swirlfactor2 + i * SPEED * 4 + 300) & 8191;
+					sinvalue = (y * swirlfactor + i * SPEED * 5 + 900) & FINEMASK;
+					sinvalue2 = (x * swirlfactor2 + i * SPEED * 4 + 300) & FINEMASK;
 					x1 = x + 128
 					   + ((finesine[sinvalue] * AMP) >> FRACBITS)
 					   + ((finesine[sinvalue2] * AMP2) >> FRACBITS);
 
-					sinvalue = (x * swirlfactor + i * SPEED * 3 + 700) & 8191;
-					sinvalue2 = (y * swirlfactor2 + i * SPEED * 4 + 1200) & 8191;
+					sinvalue = (x * swirlfactor + i * SPEED * 3 + 700) & FINEMASK;
+					sinvalue2 = (y * swirlfactor2 + i * SPEED * 4 + 1200) & FINEMASK;
 					y1 = y + 128
 					   + ((finesine[sinvalue] * AMP) >> FRACBITS)
 					   + ((finesine[sinvalue2] * AMP2) >> FRACBITS);
