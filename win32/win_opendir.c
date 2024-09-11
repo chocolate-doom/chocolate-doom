@@ -174,7 +174,6 @@ static DIR *__internal_opendir(wchar_t *wname, int size)
 {
     struct __dir *data = NULL;
     struct dirent *tmp_entries = NULL;
-    static wchar_t *prefix = L"\\\\?\\";
     static wchar_t *suffix = L"\\*.*";
     static int extra_prefix = 4; /* use prefix "\\?\" to handle long file names */
     static int extra_suffix = 4; /* use suffix "\*.*" to find everything */
