@@ -1353,7 +1353,9 @@ static void SetVideoMode(void)
 
     if (argbbuffer == NULL)
     {
-        argbbuffer = SDL_CreateRGBSurfaceWithFormatFrom(
+	    // pixels and pitch will be filled with the texture's values
+	    // in I_FinishUpdate()
+	    argbbuffer = SDL_CreateRGBSurfaceWithFormatFrom(
                      NULL, w, h, 0, 0, SDL_PIXELFORMAT_ARGB8888);
     }
 
