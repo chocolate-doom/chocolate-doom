@@ -125,6 +125,8 @@ static __ino_t __inode(const wchar_t *name)
     typedef BOOL(__stdcall * pfnGetFileInformationByHandleEx)(
         HANDLE hFile, dirent_FILE_INFO_BY_HANDLE_CLASS FileInformationClass,
         LPVOID lpFileInformation, DWORD dwBufferSize);
+    pfnGetFileInformationByHandleEx fnGetFileInformationByHandleEx;
+    HANDLE hFile;
 
     HANDLE hKernel32 = GetModuleHandleW(L"kernel32.dll");
     if (!hKernel32)
@@ -132,7 +134,7 @@ static __ino_t __inode(const wchar_t *name)
         return value;
     }
 
-    pfnGetFileInformationByHandleEx fnGetFileInformationByHandleEx =
+    fnGetFileInformationByHandleEx =
         (pfnGetFileInformationByHandleEx) GetProcAddress(
             hKernel32, "GetFileInformationByHandleEx");
     if (!fnGetFileInformationByHandleEx)
@@ -140,8 +142,8 @@ static __ino_t __inode(const wchar_t *name)
         return value;
     }
 
-    HANDLE hFile = CreateFileW(name, GENERIC_READ, FILE_SHARE_READ, NULL,
-                               OPEN_EXISTING, 0, 0);
+    hFile = CreateFileW(name, GENERIC_READ, FILE_SHARE_READ, NULL,
+                        OPEN_EXISTING, 0, 0);
     if (hFile == INVALID_HANDLE_VALUE)
     {
         return value;
