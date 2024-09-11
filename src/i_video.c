@@ -775,13 +775,13 @@ void I_FinishUpdate (void)
     }
 
     // Blit from the paletted 8-bit screen buffer to the intermediate
-    // 32-bit RGBA buffer that we can load into the texture.
+    // 32-bit RGBA buffer and update the intermediate texture with the
+    // contents of the RGBA buffer.
 
+    SDL_LockTexture(texture, &blit_rect, &argbbuffer->pixels,
+                    &argbbuffer->pitch);
     SDL_LowerBlit(screenbuffer, &blit_rect, argbbuffer, &blit_rect);
-
-    // Update the intermediate texture with the contents of the RGBA buffer.
-
-    SDL_UpdateTexture(texture, NULL, argbbuffer->pixels, argbbuffer->pitch);
+    SDL_UnlockTexture(texture);
 
     // Make sure the pillarboxes are kept clear each frame.
 
@@ -1186,8 +1186,6 @@ static void SetVideoMode(void)
 {
     int w, h;
     int x, y;
-    unsigned int rmask, gmask, bmask, amask;
-    int bpp;
     int window_flags = 0, renderer_flags = 0;
     SDL_DisplayMode mode;
 
@@ -1355,12 +1353,10 @@ static void SetVideoMode(void)
 
     if (argbbuffer == NULL)
     {
-        SDL_PixelFormatEnumToMasks(SDL_PIXELFORMAT_ARGB8888, &bpp,
-                                   &rmask, &gmask, &bmask, &amask);
-        argbbuffer = SDL_CreateRGBSurface(0,
-                                          SCREENWIDTH, SCREENHEIGHT, bpp,
-                                          rmask, gmask, bmask, amask);
-        SDL_FillRect(argbbuffer, NULL, 0);
+	    // pixels and pitch will be filled with the texture's values
+	    // in I_FinishUpdate()
+	    argbbuffer = SDL_CreateRGBSurfaceWithFormatFrom(
+                     NULL, w, h, 0, 0, SDL_PIXELFORMAT_ARGB8888);
     }
 
     if (texture != NULL)
