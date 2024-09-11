@@ -26,7 +26,9 @@
 
 #if defined(_WIN32)
 #include <win_opendir.h>
+#ifndef S_ISDIR
 #define S_ISDIR(m)      (((m)& S_IFMT) == S_IFDIR)
+#endif
 #elif defined(HAVE_DIRENT_H)
 #include <dirent.h>
 #include <sys/stat.h>
