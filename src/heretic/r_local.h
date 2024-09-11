@@ -41,13 +41,16 @@
 //
 // lighting constants
 //
-#define	LIGHTLEVELS			16
-#define	LIGHTSEGSHIFT		4
-#define	MAXLIGHTSCALE		48
-#define	LIGHTSCALESHIFT		12
-#define	MAXLIGHTZ			128
-#define	LIGHTZSHIFT			20
-#define	NUMCOLORMAPS		32      // number of diminishing
+// [crispy] parameterized for smooth diminishing lighting
+extern int LIGHTLEVELS;
+extern int LIGHTSEGSHIFT;
+extern int LIGHTBRIGHT;
+extern int MAXLIGHTSCALE;
+extern int LIGHTSCALESHIFT;
+extern int MAXLIGHTZ;
+extern int LIGHTZSHIFT;
+// [crispy] parameterized for smooth diminishing lighting
+extern int NUMCOLORMAPS;      // number of diminishing
 #define	INVERSECOLORMAP		32
 
 #define LOOKDIRMIN 110 // [crispy] -110, actually
@@ -171,6 +174,7 @@ typedef struct
 
     uint32_t length; // [crispy] fix long wall wobble
     angle_t r_angle; // [crispy] recalculated angle used for rendering
+    int fakecontrast;
 } seg_t;
 
 typedef struct
@@ -342,9 +346,9 @@ extern fixed_t projection;
 extern int validcount;
 
 extern int sscount, linecount, loopcount;
-extern lighttable_t *scalelight[LIGHTLEVELS][MAXLIGHTSCALE];
-extern lighttable_t *scalelightfixed[MAXLIGHTSCALE];
-extern lighttable_t *zlight[LIGHTLEVELS][MAXLIGHTZ];
+extern lighttable_t ***scalelight;
+extern lighttable_t  **scalelightfixed;
+extern lighttable_t ***zlight;
 
 extern int extralight;
 extern lighttable_t *fixedcolormap;

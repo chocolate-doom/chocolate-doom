@@ -2789,7 +2789,6 @@ boolean M_Responder (event_t* ev)
             I_SetPalette (W_CacheLumpName (DEH_String("PLAYPAL"),PU_CACHE));
 #else
             {
-		extern void R_InitColormaps (void);
 		I_SetPalette (0);
 		R_InitColormaps();
 		inhelpscreens = true;

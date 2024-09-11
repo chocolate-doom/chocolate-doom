@@ -264,13 +264,13 @@ void P_SegLengths (boolean contrast_only)
             li->fakecontrast = -LIGHTBRIGHT;
         else
         if (abs(finesine[li->r_angle >> ANGLETOFINESHIFT]) < rightangle)
-            li->fakecontrast = -(LIGHTBRIGHT >> 1);
+            li->fakecontrast = -LIGHTBRIGHT / 2;
         else
         if (!dx)
             li->fakecontrast = LIGHTBRIGHT;
         else
         if (abs(finecosine[li->r_angle >> ANGLETOFINESHIFT]) < rightangle)
-            li->fakecontrast = LIGHTBRIGHT >> 1;
+            li->fakecontrast = LIGHTBRIGHT / 2;
         else
             li->fakecontrast = 0;
     }

@@ -78,7 +78,8 @@ extern lighttable_t*	fixedcolormap;
 
 // Number of diminishing brightness levels.
 // There a 0-31, i.e. 32 LUT in the COLORMAP lump.
-#define NUMCOLORMAPS		32
+// [crispy] parameterized for smooth diminishing lighting
+extern int NUMCOLORMAPS;
 
 // Blocky/low detail mode.
 //B remove this?

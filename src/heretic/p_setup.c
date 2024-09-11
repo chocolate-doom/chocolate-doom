@@ -174,9 +174,10 @@ static angle_t anglediff(angle_t a, angle_t b)
         return b - a;
 }
 
-static void P_SegLengths(void)
+void P_SegLengths(boolean contrast_only)
 {
     int i;
+    const int rightangle = abs(finesine[(ANG60/2) >> ANGLETOFINESHIFT]);
 
     for (i = 0; i < numsegs; i++)
     {
@@ -186,6 +187,8 @@ static void P_SegLengths(void)
         dx = li->v2->r_x - li->v1->r_x;
         dy = li->v2->r_y - li->v1->r_y;
 
+        if (!contrast_only)
+        {
         li->length = (uint32_t)(sqrt((double)dx * dx + (double)dy * dy) / 2);
 
         // [crispy] re-calculate angle used for rendering
@@ -198,6 +201,22 @@ static void P_SegLengths(void)
         {
             li->r_angle = li->angle;
         }
+        }
+
+        // [crispy] smoother fake contrast
+        if (!dy)
+            li->fakecontrast = -LIGHTBRIGHT;
+        else
+        if (abs(finesine[li->r_angle >> ANGLETOFINESHIFT]) < rightangle)
+            li->fakecontrast = -LIGHTBRIGHT / 2;
+        else
+        if (!dx)
+            li->fakecontrast = LIGHTBRIGHT;
+        else
+        if (abs(finecosine[li->r_angle >> ANGLETOFINESHIFT]) < rightangle)
+            li->fakecontrast = LIGHTBRIGHT / 2;
+        else
+            li->fakecontrast = 0;
     }
 }
 
@@ -839,7 +858,7 @@ void P_SetupLevel(int episode, int map, int playermask, skill_t skill)
     P_RemoveSlimeTrails();
 
     // [crispy] fix long wall wobble
-    P_SegLengths();
+    P_SegLengths(false);
 
     bodyqueslot = 0;
     deathmatch_p = deathmatchstarts;

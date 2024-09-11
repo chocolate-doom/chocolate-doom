@@ -131,6 +131,7 @@ static boolean CrispyHires(int option);
 static boolean CrispyToggleWidescreen(int option);
 static boolean CrispySmoothing(int option);
 static boolean CrispyBrightmaps(int option);
+static boolean CrispySmoothLighting(int option);
 static boolean CrispySoundMono(int option);
 static boolean CrispySndChannels(int option);
 static boolean CrispyAutomapStats(int option);
@@ -169,6 +170,8 @@ void MN_LoadSlotText(void);
 extern void I_ReInitGraphics(int reinit);
 extern void AM_LevelInit(boolean reinit);
 extern void AM_initVariables(void);
+extern void P_SegLengths (boolean contrast_only);
+extern void R_InitLightTables (void);
 
 // Public Data
 
@@ -368,6 +371,7 @@ static MenuItem_t Crispness1Items[] = {
     {ITT_EMPTY, NULL, NULL, 0, MENU_NONE},
     {ITT_EMPTY, NULL, NULL, 0, MENU_NONE},
     {ITT_LRFUNC2, "APPLY BRIGHTMAPS TO:", CrispyBrightmaps, 0, MENU_NONE},
+    {ITT_LRFUNC2, "SMOOTH DIMINISHING LIGHTING:", CrispySmoothLighting, 0, MENU_NONE},
     {ITT_EMPTY, NULL, NULL, 0, MENU_NONE},
     {ITT_EMPTY, NULL, NULL, 0, MENU_NONE},
     {ITT_LRFUNC2, "MONO SFX:", CrispySoundMono, 0, MENU_NONE},
@@ -379,7 +383,7 @@ static MenuItem_t Crispness1Items[] = {
 static Menu_t Crispness1Menu = {
     68, 35,
     DrawCrispness,
-    15, Crispness1Items,
+    16, Crispness1Items,
     0,
     MENU_OPTIONS
 };
@@ -1704,6 +1708,27 @@ static boolean CrispyBrightmaps(int option)
     return true;
 }
 
+static void CrispySmoothLightingHook (void)
+{
+    crispy->smoothlight = !crispy->smoothlight;
+#ifdef CRISPY_TRUECOLOR
+    // [crispy] re-calculate amount of colormaps and light tables
+    R_InitColormaps();
+#endif
+    // [crispy] re-calculate the zlight[][] array
+    R_InitLightTables();
+    // [crispy] re-calculate the scalelight[][] array
+    R_ExecuteSetViewSize();
+    // [crispy] re-calculate fake contrast
+    P_SegLengths(true);
+}
+
+static boolean CrispySmoothLighting(int option)
+{
+    crispy->post_rendering_hook = CrispySmoothLightingHook;
+    return true;
+}
+
 static boolean CrispySoundMono(int option)
 {
     crispy->soundmono = !crispy->soundmono;
@@ -2982,13 +3007,16 @@ static void DrawCrispness1(void)
     // Brightmaps
     DrawCrispnessMultiItem(crispy->brightmaps, 213, 115, multiitem_brightmaps, false);
 
-    DrawCrispnessSubheader("AUDIBLE", 135);
+    // Smooth Diminishing Lighting
+    DrawCrispnessItem(crispy->smoothlight, 257, 125);
+
+    DrawCrispnessSubheader("AUDIBLE", 145);
 
     // Mono SFX
-    DrawCrispnessItem(crispy->soundmono, 137, 145);
+    DrawCrispnessItem(crispy->soundmono, 137, 155);
 
     // Sound Channels
-    DrawCrispnessMultiItem(snd_Channels >> 4, 181, 155, multiitem_sndchannels, false);
+    DrawCrispnessMultiItem(snd_Channels >> 4, 181, 165, multiitem_sndchannels, false);
 }
 
 static void DrawCrispness2(void)
