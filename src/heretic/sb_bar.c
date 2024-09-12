@@ -450,7 +450,7 @@ static void ShadeLine(int x, int y, int height, int shade)
 #ifndef CRISPY_TRUECOLOR
     shades = colormaps + 9 * 256 + shade * 2 * 256;
 #else
-    shade = 0xFF - (((9 + shade * 2) << 8) / NUMCOLORMAPS);
+    shade = 0xFF - (((9 + shade * 2) << 8) / 32); // [crispy] shade to darkest 32nd COLORMAP row
 #endif
     dest = I_VideoBuffer + y * SCREENWIDTH + x + (WIDESCREENDELTA << crispy->hires);
     while (height--)
