@@ -1,73 +1,130 @@
-//
-// 03/10/2006 James Haley
-//
-// For this module only: 
-// This code is public domain. No change sufficient enough to constitute a
-// significant or original work has been made, and thus it remains as such.
-//
-//
-// DESCRIPTION:
-//
-// Implementation of POSIX opendir for Visual C++.
-// Derived from the MinGW C Library Extensions Source (released to the
-//  public domain).
-//
+/*
+MIT License
+Copyright (c) 2019 win32ports
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
 
-#ifndef I_OPNDIR_H__
-#define I_OPNDIR_H__
+#ifdef _WIN32
 
-#include <io.h>
+#ifndef WIN_OPENDIR_H
+#define WIN_OPENDIR_H
 
-#ifndef FILENAME_MAX
-#define FILENAME_MAX 260
-#endif
+#include <sys/types.h>
+
+#ifndef NAME_MAX
+#define NAME_MAX 260
+#endif /* NAME_MAX */
+
+#ifndef DT_UNKNOWN
+#define DT_UNKNOWN 0
+#endif /* DT_UNKNOWN */
+
+#ifndef DT_FIFO
+#define DT_FIFO 1
+#endif /* DT_FIFO */
+
+#ifndef DT_CHR
+#define DT_CHR 2
+#endif /* DT_CHR */
+
+#ifndef DT_DIR
+#define DT_DIR 4
+#endif /* DT_DIR */
+
+#ifndef DT_BLK
+#define DT_BLK 6
+#endif /* DT_BLK */
+
+#ifndef DT_REG
+#define DT_REG 8
+#endif /* DT_REF */
+
+#ifndef DT_LNK
+#define DT_LNK 10
+#endif /* DT_LNK */
+
+#ifndef DT_SOCK
+#define DT_SOCK 12
+#endif /* DT_SOCK */
+
+#ifndef DT_WHT
+#define DT_WHT 14
+#endif /* DT_WHT */
+
+#ifndef _DIRENT_HAVE_D_NAMLEN
+#define _DIRENT_HAVE_D_NAMLEN 1
+#endif /* _DIRENT_HAVE_D_NAMLEN */
+
+#ifndef _DIRENT_HAVE_D_RECLEN
+#define _DIRENT_HAVE_D_RECLEN 1
+#endif /* _DIRENT_HAVE_D_RECLEN */
+
+#ifndef _DIRENT_HAVE_D_OFF
+#define _DIRENT_HAVE_D_OFF 1
+#endif /* _DIRENT_HAVE_D_OFF */
+
+#ifndef _DIRENT_HAVE_D_TYPE 
+#define _DIRENT_HAVE_D_TYPE 1
+#endif /* _DIRENT_HAVE_D_TYPE  */
+
+typedef void *DIR;
+
+typedef struct ino_t
+{
+    unsigned long long serial;
+    unsigned char fileid[16];
+} __ino_t;
 
 struct dirent
 {
-   long		  d_ino;    /* Always zero. */
-   unsigned short d_reclen; /* Always zero. */
-   unsigned short d_namlen; /* Length of name in d_name. */
-   char           d_name[FILENAME_MAX]; /* File name. */
+    __ino_t d_ino;
+    off_t d_off;
+    unsigned short d_reclen;
+    unsigned char d_namelen;
+    unsigned char d_type;
+    char d_name[NAME_MAX];
 };
 
-/*
- * This is an internal data structure. Good programmers will not use it
- * except as an argument to one of the functions below.
- * dd_stat field is now int (was short in older versions).
- */
-typedef struct
+struct __dir
 {
-   /* disk transfer area for this dir */
-   struct _finddata_t dd_dta;
+    struct dirent *entries;
+    intptr_t fd;
+    long int count;
+    long int index;
+};
 
-   /* dirent struct to return from dir (NOTE: this makes this thread
-    * safe as long as only one thread uses a particular DIR struct at
-    * a time) */
-   struct dirent dd_dir;
+int closedir(DIR *dirp);
 
-   /* _findnext handle */
-   intptr_t	dd_handle;
+DIR *opendir(const char *name);
 
-   /*
-    * Status of search:
-    *   0 = not started yet (next entry to read is first entry)
-    *  -1 = off the end
-    *   positive = 0 based index of next entry
-    */
-   int dd_stat;
+DIR *_wopendir(const wchar_t *name);
 
-   /* given path for dir with search pattern (struct is extended) */
-   char dd_name[1];
-} DIR;
+DIR *fdopendir(intptr_t fd);
 
-DIR *opendir(const char *);
-struct dirent *readdir(DIR *);
-int closedir(DIR *);
-void rewinddir(DIR *);
-long telldir(DIR *);
-void seekdir(DIR *, long);
+struct dirent *readdir(DIR *dirp);
 
-#endif
+void seekdir(DIR *dirp, long int offset);
 
-// EOF
+void rewinddir(DIR *dirp);
 
+long int telldir(DIR *dirp);
+
+intptr_t dirfd(DIR *dirp);
+
+#endif /* WIN_OPENDIR_H */
+
+#endif /* _WIN32 */

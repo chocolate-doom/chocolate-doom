@@ -109,7 +109,7 @@ set(GAME_SOURCE_FILES
 
 set(GAME_INCLUDE_DIRS "${CMAKE_CURRENT_BINARY_DIR}/../")
 
-if(MSVC)
+if(WIN32)
     list(APPEND GAME_SOURCE_FILES
          "../win32/win_opendir.c" "../win32/win_opendir.h")
 
@@ -146,7 +146,7 @@ if(FluidSynth_FOUND)
     list(APPEND EXTRA_LIBS FluidSynth::libfluidsynth)
 endif()
 if(WIN32)
-	list(APPEND EXTRA_LIBS winmm)
+	list(APPEND EXTRA_LIBS winmm shlwapi)
 endif()
 
 if(WIN32)

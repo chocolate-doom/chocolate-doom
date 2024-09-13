@@ -42,6 +42,9 @@ jobs:
             ,clang-analyzer-*
             ,cppcoreguidelines-*
             ,-cppcoreguidelines-avoid-magic-numbers
+            ,-cppcoreguidelines-init-variables
+            ,-readability-identifier-length
+            ,-readability-isolate-declaration
             ,-readability-magic-numbers
 
       - name: Fail fast?!

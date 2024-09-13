@@ -87,8 +87,6 @@ static SDL_Rect blit_rect = {
 };
 #endif
 
-static uint32_t pixel_format;
-
 // palette
 
 #ifdef CRISPY_TRUECOLOR
@@ -733,7 +731,7 @@ static void CreateUpscaledTexture(boolean force)
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
 
     new_texture = SDL_CreateTexture(renderer,
-                                pixel_format,
+                                SDL_PIXELFORMAT_ARGB8888,
                                 SDL_TEXTUREACCESS_TARGET,
                                 w_upscale*SCREENWIDTH,
                                 h_upscale*SCREENHEIGHT);
@@ -866,14 +864,16 @@ void I_FinishUpdate (void)
     }
 
     // Blit from the paletted 8-bit screen buffer to the intermediate
-    // 32-bit RGBA buffer that we can load into the texture.
+    // 32-bit RGBA buffer and update the intermediate texture with the
+    // contents of the RGBA buffer.
 
+    SDL_LockTexture(texture, &blit_rect, &argbbuffer->pixels,
+                    &argbbuffer->pitch);
     SDL_LowerBlit(screenbuffer, &blit_rect, argbbuffer, &blit_rect);
-#endif
-
-    // Update the intermediate texture with the contents of the RGBA buffer.
-
+    SDL_UnlockTexture(texture);
+#else
     SDL_UpdateTexture(texture, NULL, argbbuffer->pixels, argbbuffer->pitch);
+#endif
 
     // Make sure the pillarboxes are kept clear each frame.
 
@@ -1005,6 +1005,7 @@ void I_SetPalette (byte *doompalette)
         // controller only supports 6 bits of accuracy.
 
         // [crispy] intermediate gamma levels
+        palette[i].a = 0xFFU;
         palette[i].r = gamma2table[crispy->gamma][*doompalette++] & ~3;
         palette[i].g = gamma2table[crispy->gamma][*doompalette++] & ~3;
         palette[i].b = gamma2table[crispy->gamma][*doompalette++] & ~3;
@@ -1456,10 +1457,6 @@ static void SetVideoMode(void)
 {
     int w, h;
     int x, y;
-#ifndef CRISPY_TRUECOLOR
-    unsigned int rmask, gmask, bmask, amask;
-#endif
-    int bpp;
     int window_flags = 0, renderer_flags = 0;
     SDL_DisplayMode mode;
 
@@ -1516,8 +1513,6 @@ static void SetVideoMode(void)
             I_Error("Error creating window for video startup: %s",
             SDL_GetError());
         }
-
-        pixel_format = SDL_GetWindowPixelFormat(screen);
 
         SDL_SetWindowMinimumSize(screen, SCREENWIDTH, actualheight);
 
@@ -1635,12 +1630,10 @@ static void SetVideoMode(void)
 
     if (argbbuffer == NULL)
     {
-        SDL_PixelFormatEnumToMasks(pixel_format, &bpp,
-                                   &rmask, &gmask, &bmask, &amask);
-        argbbuffer = SDL_CreateRGBSurface(0,
-                                          SCREENWIDTH, SCREENHEIGHT, bpp,
-                                          rmask, gmask, bmask, amask);
 #ifdef CRISPY_TRUECOLOR
+        argbbuffer = SDL_CreateRGBSurfaceWithFormat(
+                     0, SCREENWIDTH, SCREENHEIGHT, 32, SDL_PIXELFORMAT_ARGB8888);
+
         SDL_FillRect(argbbuffer, NULL, I_MapRGB(0xff, 0x0, 0x0));
         redpane = SDL_CreateTextureFromSurface(renderer, argbbuffer);
         SDL_SetTextureBlendMode(redpane, SDL_BLENDMODE_BLEND);
@@ -1668,8 +1661,12 @@ static void SetVideoMode(void)
         SDL_FillRect(argbbuffer, NULL, I_MapRGB(0x96, 0x6e, 0x0)); // 150, 110, 0
         orngpane = SDL_CreateTextureFromSurface(renderer, argbbuffer);
         SDL_SetTextureBlendMode(orngpane, SDL_BLENDMODE_BLEND);
+#else
+	    // pixels and pitch will be filled with the texture's values
+	    // in I_FinishUpdate()
+	    argbbuffer = SDL_CreateRGBSurfaceWithFormatFrom(
+                     NULL, w, h, 0, 0, SDL_PIXELFORMAT_ARGB8888);
 #endif
-        SDL_FillRect(argbbuffer, NULL, 0);
     }
 
     if (texture != NULL)
@@ -1688,7 +1685,7 @@ static void SetVideoMode(void)
     // is going to change frequently.
 
     texture = SDL_CreateTexture(renderer,
-                                pixel_format,
+                                SDL_PIXELFORMAT_ARGB8888,
                                 SDL_TEXTUREACCESS_STREAMING,
                                 SCREENWIDTH, SCREENHEIGHT);
 
@@ -1898,9 +1895,6 @@ void I_ReInitGraphics (int reinit)
 	// [crispy] re-set rendering resolution and re-create framebuffers
 	if (reinit & REINIT_FRAMEBUFFERS)
 	{
-		unsigned int rmask, gmask, bmask, amask;
-		int unused_bpp;
-
 		I_GetScreenDimensions();
 
 #ifndef CRISPY_TRUECOLOR
@@ -1919,11 +1913,9 @@ void I_ReInitGraphics (int reinit)
 #endif
 
 		SDL_FreeSurface(argbbuffer);
-		SDL_PixelFormatEnumToMasks(pixel_format, &unused_bpp,
-		                           &rmask, &gmask, &bmask, &amask);
-		argbbuffer = SDL_CreateRGBSurface(0,
-		                                  SCREENWIDTH, SCREENHEIGHT, 32,
-		                                  rmask, gmask, bmask, amask);
+		argbbuffer = SDL_CreateRGBSurfaceWithFormat(0,
+				                    SCREENWIDTH, SCREENHEIGHT, 32,
+				                    SDL_PIXELFORMAT_ARGB8888);
 #ifndef CRISPY_TRUECOLOR
 		// [crispy] re-set the framebuffer pointer
 		I_VideoBuffer = screenbuffer->pixels;
@@ -1968,7 +1960,7 @@ void I_ReInitGraphics (int reinit)
 		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");
 
 		texture = SDL_CreateTexture(renderer,
-		                            pixel_format,
+		                            SDL_PIXELFORMAT_ARGB8888,
 		                            SDL_TEXTUREACCESS_STREAMING,
 		                            SCREENWIDTH, SCREENHEIGHT);
 

@@ -21,6 +21,7 @@ execgames_SCRIPTS = $(SETUP_BINARIES)
 AM_CFLAGS = -I$(top_srcdir)/textscreen            \
             -I$(top_srcdir)/opl                   \
             -I$(top_srcdir)/pcsound               \
+            -I$(top_srcdir)/win32                 \
             @SDLMIXER_CFLAGS@ @SDLNET_CFLAGS@
 
 # Common source files used by absolutely everything:
@@ -120,7 +121,9 @@ w_file.c             w_file.h              \
 w_file_stdc.c                              \
 w_file_posix.c                             \
 w_file_win32.c                             \
-w_merge.c            w_merge.h
+w_merge.c            w_merge.h             \
+$(top_builddir)/win32/win_opendir.c        \
+$(top_builddir)/win32/win_opendir.h
 
 
 MEMORY_NATIVE_SOURCE_FILES=\

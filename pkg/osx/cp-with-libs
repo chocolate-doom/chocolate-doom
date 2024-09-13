@@ -27,6 +27,9 @@ is_sys_lib() {
 		/System/*)
 			true
 			;;
+		/usr/local/*)  # homebrew/manual install
+			false
+			;;
 		/usr/*)
 			true
 			;;
@@ -54,7 +57,7 @@ install_with_deps() {
 
 	if [ -e "$dest_file" ]; then
 		return
-	fi	
+	fi
 
 	echo "Installing $bin_name..."
 
@@ -65,7 +68,6 @@ install_with_deps() {
 	# Copy libraries that this file depends on:
 
 	otool -L "$src_file" | tail -n +2 | sed 's/^.//; s/ (.*//' | while read; do
-		
 		# Don't copy system libraries
 
 		if is_sys_lib "$REPLY"; then
@@ -92,6 +94,11 @@ install_with_deps() {
 	if is_dylib "$dest_file"; then
 		install_name_tool -id "@executable_path/$bin_name" "$dest_file"
 	fi
+
+	# The install_name_tool calls above break signatures. Recent versions
+	# of macOS make signatures mandatory, even if just ad-hoc ones.
+	codesign --remove-signature "$dest_file"
+	codesign --force -s - "$dest_file"  # ad-hoc signature
 }
 
 # Install the file, and recursively install any libraries:
