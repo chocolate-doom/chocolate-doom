@@ -536,6 +536,7 @@ def usage():
     print("         (matches the given tag name in the source file)")
     print("   -s :  Package name, e.g. Chocolate Doom (for substitution)")
     print("   -z :  Package short-name, e.g. Chocolate (for substitution)")
+    print("   -v :  Package version e.g. 7.0 (for substitution)")
     print("   -n :  Program name, e.g. chocolate (for substitution)")
     print("   -M :  Markdown output")
     print("   -m :  Manpage output")
@@ -548,7 +549,7 @@ def usage():
 
 # Parse command line
 
-opts, args = getopt.getopt(sys.argv[1:], "n:s:z:M:m:wp:b:c:g:V")
+opts, args = getopt.getopt(sys.argv[1:], "n:s:z:v:M:m:wp:b:c:g:V")
 
 output_function = None
 template = None
@@ -563,6 +564,8 @@ for opt in opts:
         substs["@PACKAGE_NAME@"] = opt[1]
     if opt[0] == "-z":
         substs["@PACKAGE_SHORTNAME@"] = opt[1]
+    if opt[0] == "-v":
+        substs["@VERSION@"] = opt[1]
     if opt[0] == "-m":
         output_function = manpage_output
         template = opt[1]
