@@ -3,7 +3,7 @@
 @PROGRAM_SPREFIX@\-strife \- historically compatible Strife engine
 .SH SYNOPSIS
 .B @PROGRAM_SPREFIX@\-strife
-[\fIOPTIONS\fR]
+.RI [ options ]
 .SH DESCRIPTION
 .PP
 @PACKAGE_SHORTNAME@ Strife is an accurate and complete recreation of Rogue

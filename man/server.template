@@ -3,7 +3,7 @@
 @PROGRAM_SPREFIX@\-server \- dedicated server for @PROGRAM_SPREFIX@\-doom
 .SH SYNOPSIS
 .B @PROGRAM_SPREFIX@\-server
-[OPTIONS]
+.RI [ options ]
 .SH DESCRIPTION
 .PP
 @PACKAGE_NAME@ is a modern doom engine designed to behave

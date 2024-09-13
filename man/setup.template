@@ -3,7 +3,7 @@
 @PROGRAM_SPREFIX@\-@GAME@-setup \- configuration tool for @PROGRAM_SPREFIX@\-@GAME@
 .SH SYNOPSIS
 .B @PROGRAM_SPREFIX@\-@GAME@-setup
-[OPTIONS]
+.RI [ options ]
 .SH DESCRIPTION
 .PP
 @PACKAGE_SHORTNAME@ @GAME_UPPER@ is a modern @GAME_UPPER@ engine designed to behave

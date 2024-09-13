@@ -3,7 +3,7 @@
 @PROGRAM_SPREFIX@\-doom \- historically compatible Doom engine
 .SH SYNOPSIS
 .B @PROGRAM_SPREFIX@\-doom
-[\fIOPTIONS\fR]
+.RI [ options ]
 .SH DESCRIPTION
 .PP
 @PACKAGE_SHORTNAME@ Doom is a port of Id Software's 1993 game "Doom" that is designed

@@ -3,7 +3,7 @@
 @PROGRAM_SPREFIX@\-heretic \- historically compatible Heretic engine
 .SH SYNOPSIS
 .B @PROGRAM_SPREFIX@\-heretic
-[\fIOPTIONS\fR]
+.RI [ options ]
 .SH DESCRIPTION
 .PP
 @PACKAGE_SHORTNAME@ Heretic is a port of Raven Software's 1994 game "Heretic" that

@@ -3,7 +3,7 @@
 @PROGRAM_SPREFIX@\-hexen \- historically compatible Hexen engine
 .SH SYNOPSIS
 .B @PROGRAM_SPREFIX@\-hexen
-[\fIOPTIONS\fR]
+.RI [ options ]
 .SH DESCRIPTION
 .PP
 @PACKAGE_SHORTNAME@ Hexen is a port of Raven Software's 1995 game "Hexen" that
