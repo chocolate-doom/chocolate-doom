@@ -19,11 +19,15 @@ can also be used to start and join network games.
 .PP
 .SH OPTIONS
 .TP
-\fB-config <file>\fR
-Load configuration from the specified file, instead of @CFGFILE@.
+.BI \-config\~ file
+Load configuration from the specified file,
+instead of
+.IR @CFGFILE@ .
 .TP
-\fB-extraconfig <file>\fR
-Load extra configuration from the specified file, instead of @PROGRAM_SPREFIX@\-@GAME@.cfg. 
+.BI \-extraconfig\~ file
+Load extra configuration from the specified file,
+instead of
+.IR @PROGRAM_SPREFIX@\-@GAME@.cfg .
 .SH SEE ALSO
 \fB@PROGRAM_SPREFIX@\-@GAME@\fR(6),
 \fBdefault.cfg\fR(5),
