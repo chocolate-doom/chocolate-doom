@@ -45,11 +45,8 @@ Some options are used for keyboard key bindings; these are stored as
 integer values containing the keyboard scan code of the key to be bound to.
 Boolean values are also stored as integers, with a value of zero usually
 indicating "false" and a non-zero value indicating "true".
-
 @content
-
 .SH SEE ALSO
 \fB@PROGRAM_SPREFIX@\-@GAME@\fR(6),
 \fB@PROGRAM_SPREFIX@\-@GAME@.cfg\fR(5),
 \fB@PROGRAM_SPREFIX@\-@GAME@\-setup\fR(6)
-

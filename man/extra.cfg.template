@@ -21,12 +21,8 @@ for editing \fI@PROGRAM_SPREFIX@\-@GAME@.cfg\fR.
 .SH FILE FORMAT
 .PP
 The file format is the same as that used for \fB@CFGFILE@\fR(5).
-.br
-
 @content
-
 .SH SEE ALSO
 \fB@PROGRAM_SPREFIX@\-@GAME@\fR(6),
 \fB@CFGFILE@\fR(5),
 \fB@PROGRAM_SPREFIX@\-@GAME@\-setup\fR(6)
-
