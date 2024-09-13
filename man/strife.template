@@ -1,4 +1,4 @@
-.TH @PROGRAM_SPREFIX@\-strife 6 2018-01-15 "@PACKAGE_NAME@"
+.TH @PROGRAM_SPREFIX@\-strife 6 2018-01-15 "@PACKAGE_NAME@ @VERSION@"
 .SH NAME
 @PROGRAM_SPREFIX@\-strife \- historically compatible Strife engine
 .SH SYNOPSIS
