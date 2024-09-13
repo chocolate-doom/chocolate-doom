@@ -17,7 +17,6 @@ Base Directory Specification).
 .PP
 The \fB@PROGRAM_SPREFIX@\-@GAME@\-setup\fR(6) tool provides a simple to use front-end
 for editing \fI@CFGFILE@\fR.
-.br
 .SH FILE FORMAT
 The file is a plain-text file, consisting of a list of configuration
 options and their values, separated by whitespace.  Each option is stored

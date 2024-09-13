@@ -19,7 +19,6 @@ Game options are not specified to the server, which merely acts to
 retransmit data between players in the game; parameters for the
 game should be specified by the first player to connect to the server,
 who is designated the controlling player.
-.br
 .SH OPTIONS
 .TP
 \fB-ignoreversion\fR
