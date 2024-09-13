@@ -1,4 +1,4 @@
-.TH @PROGRAM_SPREFIX@\-heretic 6 2017-11-27
+.TH @PROGRAM_SPREFIX@\-heretic 6 2017-11-27 "@PACKAGE_NAME@"
 .SH NAME
 @PROGRAM_SPREFIX@\-heretic \- historically compatible Heretic engine
 .SH SYNOPSIS
