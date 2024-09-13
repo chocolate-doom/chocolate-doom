@@ -35,7 +35,7 @@ This manual was written by Jonathan Dowland.
 .SH COPYRIGHT
 Copyright \(co id Software Inc.
 Copyright \(co 2005-8 Simon Howard.
-.br
+.PP
 This is free software.  You may redistribute copies of it under the terms of
 the GNU General Public License <http://www.gnu.org/licenses/gpl.html>.
 There is NO WARRANTY, to the extent permitted by law.
