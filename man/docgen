@@ -491,7 +491,7 @@ def manpage_output(targets, substs, template_file):
     content = ""
 
     for t in targets:
-        content += t.manpage_output() + "\n"
+        content += t.manpage_output()
 
     content = content.replace("-", "\\-")
 
