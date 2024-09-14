@@ -1186,8 +1186,8 @@ static void CheckRecordFrom(void)
     // @category demo
     // @arg <save-num> <demo-name>
     //
-    // Record a demo, loading from the given filename.  Equivalent
-    // to -loadgame <save-num> -record <demo-name>.
+    // Load a game from the given savegame slot and record a demo from
+    // it.  Equivalent to -loadgame <save-num> -record <demo-name>.
     //
     p = M_CheckParm("-recordfrom");
     if (!p || p > myargc - 2)

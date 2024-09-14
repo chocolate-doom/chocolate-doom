@@ -1132,8 +1132,8 @@ static boolean I_MP_InitMusic(void)
     // @category obscure
     // @arg <file>
     //
-    // Read all MIDI files from loaded WAD files, dump an example substitution
-    // music config file to the specified filename and quit.
+    // Read all MIDI files from loaded WAD files, dump an example
+    // substitution music config file to the specified file, and quit.
     //
     i = M_CheckParmWithArgs("-dumpsubstconfig", 1);
 
