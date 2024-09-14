@@ -1173,7 +1173,7 @@ void H2_StartTitle(void)
 //
 // CheckRecordFrom
 //
-// -recordfrom <savegame num> <demoname>
+// -recordfrom <save-num> <demo-name>
 //
 //==========================================================================
 
@@ -1184,10 +1184,10 @@ static void CheckRecordFrom(void)
     //!
     // @vanilla
     // @category demo
-    // @arg <savenum> <demofile>
+    // @arg <save-num> <demo-name>
     //
     // Record a demo, loading from the given filename.  Equivalent
-    // to -loadgame <savenum> -record <demofile>.
+    // to -loadgame <save-num> -record <demo-name>.
     //
     p = M_CheckParm("-recordfrom");
     if (!p || p > myargc - 2)

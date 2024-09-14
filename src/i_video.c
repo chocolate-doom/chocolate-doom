@@ -1006,7 +1006,7 @@ void I_GraphicsCheckCommandLine(void)
 
     //!
     // @category video
-    // @arg <x>
+    // @arg <W>
     //
     // Specify the screen width, in pixels.  Implies -window.
     //
@@ -1021,7 +1021,7 @@ void I_GraphicsCheckCommandLine(void)
 
     //!
     // @category video
-    // @arg <y>
+    // @arg <H>
     //
     // Specify the screen height, in pixels.  Implies -window.
     //
@@ -1036,7 +1036,7 @@ void I_GraphicsCheckCommandLine(void)
 
     //!
     // @category video
-    // @arg <WxY>
+    // @arg <WxH>
     //
     // Specify the dimensions of the window.  Implies -window.
     //

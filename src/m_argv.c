@@ -286,7 +286,7 @@ void M_FindResponseFile(void)
     for (;;)
     {
         //!
-        // @arg <filename>
+        // @arg <file>
         //
         // Load extra command line arguments from the given response file.
         // Arguments read from the file will be inserted into the command
