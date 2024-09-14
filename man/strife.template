@@ -6,8 +6,10 @@
 .RI [ options ]
 .SH DESCRIPTION
 .PP
-@PACKAGE_SHORTNAME@ Strife is an accurate and complete recreation of Rogue
-Entertainment's "Strife: Quest for the Sigil". It was created through
+@PACKAGE_SHORTNAME@ Strife is an accurate and complete recreation of
+Rogue Entertainment's
+.IR "Strife: Quest for the Sigil" .
+It was created through
 more than two years of reverse engineering effort with the blessings
 of the original programmers of the game (see the section HISTORY below).
 @content

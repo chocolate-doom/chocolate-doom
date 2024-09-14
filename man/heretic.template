@@ -6,8 +6,9 @@
 .RI [ options ]
 .SH DESCRIPTION
 .PP
-@PACKAGE_SHORTNAME@ Heretic is a port of Raven Software's 1994 game "Heretic" that
-aims to behave as similar to the original DOS version of Heretic as
+@PACKAGE_SHORTNAME@ Heretic is a port of Raven Software's 1994 game
+.I Heretic
+that aims to behave as similar to the original DOS version of Heretic as
 possible.
 @content
 .SH IWAD SEARCH PATHS

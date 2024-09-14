@@ -6,8 +6,9 @@
 .RI [ options ]
 .SH DESCRIPTION
 .PP
-@PACKAGE_SHORTNAME@ Hexen is a port of Raven Software's 1995 game "Hexen" that
-aims to behave as similar to the original DOS version of Hexen as
+@PACKAGE_SHORTNAME@ Hexen is a port of Raven Software's 1995 game
+.I Hexen
+that aims to behave as similar to the original DOS version of Hexen as
 possible.
 @content
 .SH IWAD SEARCH PATHS
