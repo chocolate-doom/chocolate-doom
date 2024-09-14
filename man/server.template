@@ -9,11 +9,13 @@
 @PACKAGE_NAME@ is a modern doom engine designed to behave
 as similar to the original doom game as is possible.
 .PP
-.B @PROGRAM_SPREFIX@\-server
-is a dedicated server for @PACKAGE_SHORTNAME@. It is equivalent to 
-running 
-.B @PROGRAM_SPREFIX@\-doom
-with the "\-dedicated" option.
+.I \%@PROGRAM_SPREFIX@\-server
+is a dedicated server for @PACKAGE_SHORTNAME@.
+It is equivalent to running
+\fB@PROGRAM_SPREFIX@-doom\fR(6)
+with the
+.B \%\-dedicated
+option.
 .PP
 Game options are not specified to the server, which merely acts to
 retransmit data between players in the game; parameters for the

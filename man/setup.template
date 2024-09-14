@@ -9,12 +9,12 @@
 @PACKAGE_SHORTNAME@ @GAME_UPPER@ is a modern @GAME_UPPER@ engine designed to behave
 as similar to the original @GAME_UPPER@ game as is possible.
 .PP
-.B @PROGRAM_SPREFIX@\-@GAME@-setup
+.I @PROGRAM_SPREFIX@\-@GAME@-setup
 is a tool for configuring @PACKAGE_SHORTNAME@ @GAME_UPPER@. It provides a menu\-based
 interface for the display, joystick, keyboard, mouse, sound and
 compatibility settings.
 .PP
-.B @PROGRAM_SPREFIX@\-@GAME@-setup
+.I @PROGRAM_SPREFIX@\-@GAME@-setup
 can also be used to start and join network games.
 .PP
 .SH OPTIONS
