@@ -125,6 +125,8 @@ static __ino_t __inode(const wchar_t *name)
     typedef BOOL(__stdcall * pfnGetFileInformationByHandleEx)(
         HANDLE hFile, dirent_FILE_INFO_BY_HANDLE_CLASS FileInformationClass,
         LPVOID lpFileInformation, DWORD dwBufferSize);
+    pfnGetFileInformationByHandleEx fnGetFileInformationByHandleEx;
+    HANDLE hFile;
 
     HANDLE hKernel32 = GetModuleHandleW(L"kernel32.dll");
     if (!hKernel32)
@@ -132,7 +134,7 @@ static __ino_t __inode(const wchar_t *name)
         return value;
     }
 
-    pfnGetFileInformationByHandleEx fnGetFileInformationByHandleEx =
+    fnGetFileInformationByHandleEx =
         (pfnGetFileInformationByHandleEx) GetProcAddress(
             hKernel32, "GetFileInformationByHandleEx");
     if (!fnGetFileInformationByHandleEx)
@@ -140,8 +142,8 @@ static __ino_t __inode(const wchar_t *name)
         return value;
     }
 
-    HANDLE hFile = CreateFileW(name, GENERIC_READ, FILE_SHARE_READ, NULL,
-                               OPEN_EXISTING, 0, 0);
+    hFile = CreateFileW(name, GENERIC_READ, FILE_SHARE_READ, NULL,
+                        OPEN_EXISTING, 0, 0);
     if (hFile == INVALID_HANDLE_VALUE)
     {
         return value;
@@ -172,8 +174,6 @@ static DIR *__internal_opendir(wchar_t *wname, int size)
 {
     struct __dir *data = NULL;
     struct dirent *tmp_entries = NULL;
-    static char default_char = '?';
-    static wchar_t *prefix = L"\\\\?\\";
     static wchar_t *suffix = L"\\*.*";
     static int extra_prefix = 4; /* use prefix "\\?\" to handle long file names */
     static int extra_suffix = 4; /* use suffix "\*.*" to find everything */
@@ -225,7 +225,7 @@ static DIR *__internal_opendir(wchar_t *wname, int size)
     {
         WideCharToMultiByte(CP_UTF8, 0, w32fd.cFileName, -1,
                             data->entries[data->index].d_name, NAME_MAX,
-                            &default_char, NULL);
+                            NULL, NULL);
 
         memcpy(wname + size, w32fd.cFileName, sizeof(wchar_t) * NAME_MAX);
 
