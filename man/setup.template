@@ -11,9 +11,9 @@ designed to behave as similarly to the original @GAME_UPPER@ game as is
 possible.
 .PP
 .I @PROGRAM_SPREFIX@\-@GAME@-setup
-is a tool for configuring @PACKAGE_SHORTNAME@ @GAME_UPPER@. It provides a menu\-based
-interface for the display, joystick, keyboard, mouse, sound and
-compatibility settings.
+is a tool for configuring @PACKAGE_SHORTNAME@ @GAME_UPPER@.
+It provides a menu-based interface for the display, joystick, keyboard,
+mouse, sound and compatibility settings.
 .PP
 .I @PROGRAM_SPREFIX@\-@GAME@-setup
 can also be used to start and join network games.
