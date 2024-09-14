@@ -21,12 +21,14 @@ This section describes environment variables that control
 @include environ.man
 .SH FILES
 .TP
-\fB$HOME/.local/share/@PROGRAM_SPREFIX@\-doom/strife.cfg\fR
-The main configuration file for @PACKAGE_SHORTNAME@ Strife.  See \fBstrife.cfg\fR(5).
+.I $HOME/.local/share/@PROGRAM_SPREFIX@\-doom/strife.cfg
+The main configuration file for @PACKAGE_SHORTNAME@ Strife.
+See \fBstrife.cfg\fR(5).
 .TP
-\fB$HOME/.local/share/@PROGRAM_SPREFIX@\-doom/@PROGRAM_SPREFIX@\-strife.cfg\fR
-Extra configuration values that are specific to @PACKAGE_SHORTNAME@ Strife and not
-present in Vanilla Strife.  See \fB@PROGRAM_SPREFIX@\-strife.cfg\fR(5).
+.I $HOME/.local/share/@PROGRAM_SPREFIX@\-doom/@PROGRAM_SPREFIX@\-strife.cfg
+Extra configuration values that are specific to @PACKAGE_SHORTNAME@
+Strife and not present in Vanilla Strife.
+See \fB@PROGRAM_SPREFIX@\-strife.cfg\fR(5).
 .SH SEE ALSO
 \fB@PROGRAM_SPREFIX@\-doom\fR(6),
 \fB@PROGRAM_SPREFIX@\-server\fR(6),
