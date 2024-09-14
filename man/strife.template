@@ -67,9 +67,9 @@ case, @PACKAGE_SHORTNAME@ Strife has erred on the side of not crashing the progr
 for example by initializing pointers to NULL rather than using them without
 setting a value first.
 .SH AUTHORS
-Chocolate Strife is part of the Chocolate Doom project. It was reverse
-engineered from the DOS versions of Strife by James Haley and Samuel
-Villarreal.
+Chocolate Strife is part of the Chocolate Doom project.
+It was reverse engineered from the DOS versions of Strife by James Haley
+and Samuel Villarreal.
 Chocolate Doom was written and maintained by Simon Howard, and is based
 on the LinuxDoom source code released by Id Software.
 .SH COPYRIGHT

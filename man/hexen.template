@@ -34,7 +34,8 @@ See \fB@PROGRAM_SPREFIX@\-hexen.cfg\fR(5).
 \fB@PROGRAM_SPREFIX@\-setup\fR(6)
 .SH AUTHOR
 Chocolate Hexen is part of the Chocolate Doom project, written and
-maintained by Simon Howard. It is based on the Hexen source code,
+maintained by Simon Howard.
+It is based on the Hexen source code,
 released by Raven Software.
 .SH COPYRIGHT
 Copyright \(co id Software Inc.
