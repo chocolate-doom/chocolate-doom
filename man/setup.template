@@ -6,8 +6,9 @@
 .RI [ options ]
 .SH DESCRIPTION
 .PP
-@PACKAGE_SHORTNAME@ @GAME_UPPER@ is a modern @GAME_UPPER@ engine designed to behave
-as similar to the original @GAME_UPPER@ game as is possible.
+@PACKAGE_SHORTNAME@ @GAME_UPPER@ is a modern @GAME_UPPER@ engine
+designed to behave as similarly to the original @GAME_UPPER@ game as is
+possible.
 .PP
 .I @PROGRAM_SPREFIX@\-@GAME@-setup
 is a tool for configuring @PACKAGE_SHORTNAME@ @GAME_UPPER@. It provides a menu\-based

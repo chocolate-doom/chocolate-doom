@@ -6,8 +6,8 @@
 .RI [ options ]
 .SH DESCRIPTION
 .PP
-@PACKAGE_NAME@ is a modern doom engine designed to behave
-as similar to the original doom game as is possible.
+@PACKAGE_NAME@ is a modern Doom engine designed to behave
+as similarly to the original Doom game as is possible.
 .PP
 .I \%@PROGRAM_SPREFIX@\-server
 is a dedicated server for @PACKAGE_SHORTNAME@.
