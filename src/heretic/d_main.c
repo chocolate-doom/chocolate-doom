@@ -809,7 +809,7 @@ void D_DoomMain(void)
     // @arg <n>
     // @vanilla
     //
-    // Start playing on episode n (1-4)
+    // Start playing on episode n (1-4).
     //
 
     p = M_CheckParmWithArgs("-episode", 1);
