@@ -1186,7 +1186,7 @@ static void CheckRecordFrom(void)
     // @category demo
     // @arg <savenum> <demofile>
     //
-    // Record a demo, loading from the given filename. Equivalent
+    // Record a demo, loading from the given filename.  Equivalent
     // to -loadgame <savenum> -record <demofile>.
     //
     p = M_CheckParm("-recordfrom");
