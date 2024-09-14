@@ -23,18 +23,21 @@ game should be specified by the first player to connect to the server,
 who is designated the controlling player.
 .SH OPTIONS
 .TP
-\fB-ignoreversion\fR
-Ignore version mismatches between the server and the client. Using this
-option may cause game desyncs to occur, or differences in protocol may
-mean the netgame will simply not function at all. 
+.B \-ignoreversion
+Ignore version mismatches between the server and the client.
+Using this option may cause game desyncs to occur,
+or differences in protocol may mean the netgame will simply not function
+at all.
 .TP
-\fB-port <n>\fR
-Use the specified UDP port for communications, instead of the default (2342). 
+.BI \-port\~ n
+Use UDP port
+.I n
+for communications instead of the default (2342).
 .TP
-\fB-privateserver\fR
+.B \-privateserver
 Don't register with the global master server.
 .TP
-\fB-servername <name>\fR
+.BI \-servername\~ name
 Specify a name for the server.
 .SH SEE ALSO
 \fB@PROGRAM_SPREFIX@-doom\fR(6),
