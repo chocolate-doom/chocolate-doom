@@ -241,14 +241,26 @@ class Parameter:
             return ""
 
     def manpage_output(self):
-        result = self.name
-
         if self.args:
-            result += " " + self.args
-
-        result = '\\fB' + result + '\\fR'
-
-        result += "\n"
+            # Special cases -- GBR is not proud.
+            if self.args == "[<x> <y> | <xy>]":
+                result = ".BR " + self.name + " \\~\\c\n" \
+                    + ".RI [ x\~y | xy ]\n"
+            elif self.args == "<WxH>":
+                result = ".BI " + self.name + "\\~ W x H\n"
+            elif self.args == "<x> <y>":
+                result = ".BI " + self.name + "\\~ \"x y\"\n"
+            elif self.args == "<files>":
+                result = ".BI " + self.name + "\\~ \"file\\~\c\n" \
+                    + "\\&.\\|.\\|.\n"
+            elif self.args == "<save-num> <demo-name>":
+                result = ".BI " + self.name \
+                    + "\\~ \"save-num demo-name\"\n"
+            else:
+                self.args = re.sub(r'[<>]', '', self.args)
+                result = ".BI " + self.name + "\\~ " + self.args + "\n"
+        else:
+            result = ".B " + self.name + "\n"
 
         if self.platform:
             result += "[%s only] " % self.platform
@@ -536,7 +548,7 @@ def usage():
     print("         (matches the given tag name in the source file)")
     print("   -s :  Package name, e.g. Chocolate Doom (for substitution)")
     print("   -z :  Package short-name, e.g. Chocolate (for substitution)")
-    print("   -v :  Package version e.g. 7.0 (for substitution)")
+    print("   -v :  Package version, e.g. 7.0 (for substitution)")
     print("   -n :  Program name, e.g. chocolate (for substitution)")
     print("   -M :  Markdown output")
     print("   -m :  Manpage output")
