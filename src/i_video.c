@@ -1631,6 +1631,10 @@ static void SetVideoMode(void)
     if (argbbuffer == NULL)
     {
 #ifdef CRISPY_TRUECOLOR
+        int bpp;
+
+        SDL_PixelFormatEnumToMasks(SDL_PIXELFORMAT_ARGB8888, &bpp,
+                                   &rmask, &gmask, &bmask, &amask);
         argbbuffer = SDL_CreateRGBSurfaceWithFormat(
                      0, SCREENWIDTH, SCREENHEIGHT, 32, SDL_PIXELFORMAT_ARGB8888);
 
