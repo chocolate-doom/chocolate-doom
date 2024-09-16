@@ -2094,7 +2094,8 @@ void G_LoadGame(int slot)
 void G_DoLoadGame(void)
 {
     gameaction = ga_nothing;
-    SV_LoadGame(GameLoadSlot);
+    // [crispy] support multiple pages of saves
+    SV_LoadGame(GameLoadSlot + savepage * 10);
     if (!netgame)
     {                           // Copy the base slot to the reborn slot
         SV_UpdateRebornSlot();
@@ -2127,7 +2128,8 @@ void G_SaveGame(int slot, char *description)
 
 void G_DoSaveGame(void)
 {
-    SV_SaveGame(savegameslot, savedescription);
+    // [crispy] support multiple pages of saves
+    SV_SaveGame(savegameslot + savepage * 10, savedescription);
     gameaction = ga_nothing;
     savedescription[0] = 0;
     P_SetMessage(&players[consoleplayer], TXT_GAMESAVED, true);

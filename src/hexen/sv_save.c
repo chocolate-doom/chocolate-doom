@@ -143,8 +143,6 @@ char *SavePath = DEFAULT_SAVEPATH;
 
 int vanilla_savegame_limit = 1;
 
-int savepage; // [crispy] support 8 pages of savegames
-
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static int MobjCount;
@@ -1980,12 +1978,6 @@ void SV_SaveGame(int slot, const char *description)
     char versionText[HXS_VERSION_TEXT_LENGTH];
     unsigned int i;
 
-    // [crispy] get expanded save slot number
-    if (slot != BASE_SLOT && slot != REBORN_SLOT)
-    {
-        slot += savepage * 10;
-    }
-
     // Open the output file
     M_snprintf(fileName, sizeof(fileName), "%shex%d.hxs", SavePath, BASE_SLOT);
     SV_OpenWrite(fileName);
@@ -2091,12 +2083,6 @@ void SV_LoadGame(int slot)
     player_t *p; // [crispy]
 
     p = &players[consoleplayer]; // [crispy]
-
-    // [crispy] get expanded save slot number
-    if (slot != BASE_SLOT && slot != REBORN_SLOT)
-    {
-        slot += savepage * 10;
-    }
 
     // Copy all needed save files to the base slot
     if (slot != BASE_SLOT)
@@ -3283,12 +3269,6 @@ void SV_ClearSaveSlot(int slot)
 {
     int i;
     char fileName[100];
-
-    // [crispy] get expanded save slot number
-    if (slot != BASE_SLOT && slot != REBORN_SLOT)
-    {
-        slot += savepage * 10;
-    }
 
     for (i = 0; i < MAX_MAPS; i++)
     {

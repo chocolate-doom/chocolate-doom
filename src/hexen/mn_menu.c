@@ -181,6 +181,8 @@ int InfoType;
 int messageson = true;
 boolean mn_SuicideConsole;
 
+int savepage; // [crispy] support 8 pages of savegames
+
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static int FontABaseLump;
@@ -1263,7 +1265,7 @@ static void SCDeleteGame(int option)
         return;
     }
 
-    SV_ClearSaveSlot(option);
+    SV_ClearSaveSlot(option + savepage * 10);
     CurrentMenu->oldItPos = CurrentItPos;
     MN_LoadSlotText();
     BorderNeedRefresh = true;
