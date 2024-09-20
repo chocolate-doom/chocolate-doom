@@ -78,6 +78,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install \
+            python3-yaml \
             libsdl2-dev \
             libsdl2-mixer-dev \
             libsdl2-net-dev \
@@ -95,7 +96,11 @@ jobs:
             sdl2_net \
             libpng \
             libsamplerate \
+            python3 \
             fluid-synth
+          # Since we're running CI inside a VM it doesn't really
+          # matter if we're "breaking" anything:
+          pip3 install --break-system-packages pyyaml
 
       - name: Install dependencies (MSYS2)
         if: runner.os == 'Windows'
@@ -114,6 +119,7 @@ jobs:
             ${{ matrix.config.msys-env }}-libpng
             ${{ matrix.config.msys-env }}-libsamplerate
             ${{ matrix.config.msys-env }}-fluidsynth
+            ${{ matrix.config.msys-env }}-python3-yaml
 
       - uses: actions/checkout@v4
         with:
