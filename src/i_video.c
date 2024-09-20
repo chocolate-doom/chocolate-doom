@@ -2107,87 +2107,8 @@ void I_BindVideoVariables(void)
 }
 
 #ifdef CRISPY_TRUECOLOR
-#define amask (0xFF000000U)
-#define rmask (0x00FF0000U)
-#define gmask (0x0000FF00U)
-#define bmask (0x000000FFU)
-
-const pixel_t I_BlendAdd (const pixel_t bg, const pixel_t fg)
-{
-	uint32_t r, g, b;
-
-	if ((r = (fg & rmask) + (bg & rmask)) > rmask) r = rmask;
-	if ((g = (fg & gmask) + (bg & gmask)) > gmask) g = gmask;
-	if ((b = (fg & bmask) + (bg & bmask)) > bmask) b = bmask;
-
-	return amask | r | g | b;
-}
-
-// [crispy] http://stereopsis.com/doubleblend.html
-const pixel_t I_BlendDark (const pixel_t bg, const int d)
-{
-	const uint32_t ag = (bg & 0xff00ff00) >> 8;
-	const uint32_t rb =  bg & 0x00ff00ff;
-
-	uint32_t sag = d * ag;
-	uint32_t srb = d * rb;
-
-	sag = sag & 0xff00ff00;
-	srb = (srb >> 8) & 0x00ff00ff;
-
-	return amask | sag | srb;
-}
-
-// [crispy] Main overlay blending function
-const pixel_t I_BlendOver (const pixel_t bg, const pixel_t fg, const int amount)
-{
-	const uint32_t r = ((amount * (fg & rmask) + (0xff - amount) * (bg & rmask)) >> 8) & rmask;
-	const uint32_t g = ((amount * (fg & gmask) + (0xff - amount) * (bg & gmask)) >> 8) & gmask;
-	const uint32_t b = ((amount * (fg & bmask) + (0xff - amount) * (bg & bmask)) >> 8) & bmask;
-
-	return amask | r | g | b;
-}
-
-// [crispy] TRANMAP blending emulation, used for Doom
-const pixel_t I_BlendOverTranmap (const pixel_t bg, const pixel_t fg)
-{
-	return I_BlendOver(bg, fg, 0xA8); // 168 (66% opacity)
-}
-
-// [crispy] TINTTAB blending emulation, used for Heretic and Hexen
-const pixel_t I_BlendOverTinttab (const pixel_t bg, const pixel_t fg)
-{
-	return I_BlendOver(bg, fg, 0x60); // 96 (38% opacity)
-}
-
-// [crispy] More opaque ("Alt") TINTTAB blending emulation, used for Hexen's MF_ALTSHADOW drawing
-const pixel_t I_BlendOverAltTinttab (const pixel_t bg, const pixel_t fg)
-{
-	return I_BlendOver(bg, fg, 0x8E); // 142 (56% opacity)
-}
-
-// [crispy] More opaque XLATAB blending emulation, used for Strife
-const pixel_t I_BlendOverXlatab (const pixel_t bg, const pixel_t fg)
-{
-	return I_BlendOver(bg, fg, 0xC0); // 192 (75% opacity)
-}
-
-// [crispy] Less opaque ("Alt") XLATAB blending emulation, used for Strife
-const pixel_t I_BlendOverAltXlatab (const pixel_t bg, const pixel_t fg)
-{
-	return I_BlendOver(bg, fg, 0x40); // 64 (25% opacity)
-}
-
-const pixel_t (*blendfunc) (const pixel_t fg, const pixel_t bg) = I_BlendOverTranmap;
-
 const pixel_t I_MapRGB (const uint8_t r, const uint8_t g, const uint8_t b)
 {
-/*
-	return amask |
-	        (((r * rmask) >> 8) & rmask) |
-	        (((g * gmask) >> 8) & gmask) |
-	        (((b * bmask) >> 8) & bmask);
-*/
 	return SDL_MapRGB(argbbuffer->format, r, g, b);
 }
 #endif

@@ -21,6 +21,7 @@
 #define __I_VIDEO__
 
 #include "doomtype.h"
+#include "i_truecolor.h"
 #include "m_fixed.h" // [crispy] fixed_t
 #include "crispy.h"
 
