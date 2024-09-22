@@ -39,6 +39,10 @@ void I_Endoom(byte *endoom_data)
 
     // Set up text mode screen
 
+    // textscreen does not know Doom's force software renderer settings, 
+    // but it should follow them anyway when rendering endoom
+    TXT_SetForceSoftwareRenderer(force_software_renderer); 
+
     TXT_Init();
 
     TXT_SetWindowTitle(PACKAGE_STRING);
