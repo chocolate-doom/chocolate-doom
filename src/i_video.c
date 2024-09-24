@@ -1906,19 +1906,23 @@ void I_ReInitGraphics (int reinit)
 
 #ifndef CRISPY_TRUECOLOR
 		SDL_FreeSurface(screenbuffer);
-		screenbuffer = SDL_CreateRGBSurface(0,
-				                    SCREENWIDTH, SCREENHEIGHT, 8,
-				                    0, 0, 0, 0);
-#endif
+		screenbuffer = SDL_CreateRGBSurface(
+			0, SCREENWIDTH, SCREENHEIGHT, 8,
+			0, 0, 0, 0);
 
+		// pixels and pitch will be filled with the texture's values
+		// in I_FinishUpdate()
 		SDL_FreeSurface(argbbuffer);
-		argbbuffer = SDL_CreateRGBSurfaceWithFormat(0,
-				                    SCREENWIDTH, SCREENHEIGHT, 32,
-				                    SDL_PIXELFORMAT_ARGB8888);
-#ifndef CRISPY_TRUECOLOR
+		argbbuffer = SDL_CreateRGBSurfaceWithFormatFrom(
+			NULL, SCREENWIDTH, SCREENHEIGHT, 0, 0, SDL_PIXELFORMAT_ARGB8888);
+
 		// [crispy] re-set the framebuffer pointer
 		I_VideoBuffer = screenbuffer->pixels;
 #else
+		SDL_FreeSurface(argbbuffer);
+		argbbuffer = SDL_CreateRGBSurfaceWithFormat(
+			0, SCREENWIDTH, SCREENHEIGHT, 32, SDL_PIXELFORMAT_ARGB8888);
+
 		I_VideoBuffer = argbbuffer->pixels;
 #endif
 		V_RestoreBuffer();
