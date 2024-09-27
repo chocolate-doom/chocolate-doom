@@ -348,6 +348,13 @@ static void CheckLoadNerve (void)
 	static const lump_rename_t nerve_lumps [] = {
 		{"TITLEPIC", "NERVEPIC"},
 		{"INTERPIC", "NERVEINT"},
+		{"M_DOOM",   "M_DOOM_N"},
+		{"DEMO1",    "DEMO1N"},
+		{"DEMO2",    "DEMO2N"},
+		{"DEMO3",    "DEMO3N"},
+		{"RSKY1",    "RSKY1N"},
+		{"RSKY2",    "RSKY2N"},
+		{"RSKY3",    "RSKY3N"},
 	};
 
 	// [crispy] don't load if another PWAD already provides MAP01
@@ -403,7 +410,7 @@ static void CheckLoadNerve (void)
 	{
 		j = W_CheckNumForName(nerve_lumps[i].name);
 
-		if (j != -1 && !strcasecmp(W_WadNameForLump(lumpinfo[j]), "NERVE.WAD"))
+		if (j != -1 && !strcasecmp(W_WadNameForLump(lumpinfo[j]), nerve_basename))
 		{
 			memcpy(lumpinfo[j]->name, nerve_lumps[i].new_name, 8);
 		}
@@ -457,6 +464,13 @@ static boolean CheckMasterlevelsLoaded (void)
 static const lump_rename_t master_lumps [] = {
 	{"TITLEPIC", "MASTRPIC"},
 	{"INTERPIC", "MASTRINT"},
+	{"M_DOOM",   "M_DOOM_M"},
+	{"DEMO1",    "DEMO1M"},
+	{"DEMO2",    "DEMO2M"},
+	{"DEMO3",    "DEMO3M"},
+	{"RSKY1",    "RSKY1M"},
+	{"RSKY2",    "RSKY2M"},
+	{"RSKY3",    "RSKY3M"},
 };
 
 // [crispy] auto-load the single MASTERLEVELS.WAD if available
@@ -507,7 +521,7 @@ static boolean CheckLoadMasterlevels (void)
 
 		M_snprintf(lumpname, 9, "CWILV%2.2d", i);
 		j = W_GetNumForName(lumpname);
-		if (!strcasecmp(W_WadNameForLump(lumpinfo[j]), "MASTERLEVELS.WAD"))
+		if (!strcasecmp(W_WadNameForLump(lumpinfo[j]), master_basename))
 		{
 			lumpinfo[j]->name[0] = 'M';
 		}
@@ -521,6 +535,17 @@ static boolean CheckLoadMasterlevels (void)
 		M_snprintf(lumpname, 9, "MAP%02d", i + 1);
 		j = W_GetNumForName(lumpname);
 		strcat(lumpinfo[j]->name, "M");
+	}
+
+	// [crispy] if MASTERLEVELS.WAD contains TITLEPIC and INTERPIC, rename them
+	for (i = 0; i < arrlen(master_lumps); i++)
+	{
+		j = W_CheckNumForName(master_lumps[i].name);
+
+		if (j != -1 && !strcasecmp(W_WadNameForLump(lumpinfo[j]), master_basename))
+		{
+			memcpy(lumpinfo[j]->name, master_lumps[i].new_name, 8);
+		}
 	}
 
 	// [crispy] load WAD and DEH files from autoload directories
