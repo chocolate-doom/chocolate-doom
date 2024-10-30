@@ -216,21 +216,33 @@ static void DEH_ThingParseLine(deh_context_t *context, char *line, void *tag)
     // all values are integers
 
     ivalue = atoi(value);
-    
+
     // [crispy] support BEX bits mnemonics in Things fields
-    if (!ivalue && !strcasecmp(variable_name, "bits"))
+    if (!strcasecmp(variable_name, "bits"))
     {
-	for ( ; (value = strtok(value, ",+| \t\f\r")); value = NULL)
-	{
-	    int i;
-	    for (i = 0; i < arrlen(bex_thingbitstable); i++)
-		if (!strcasecmp(value, bex_thingbitstable[i].flag))
-		{
-		    ivalue |= bex_thingbitstable[i].bits;
-		    break;
-		}
-	}
+        if (!ivalue)
+        {
+            for ( ; (value = strtok(value, ",+| \t\f\r")); value = NULL)
+            {
+                int i;
+                for (i = 0; i < arrlen(bex_thingbitstable); i++)
+                {
+                    if (!strcasecmp(value, bex_thingbitstable[i].flag))
+                    {
+                        ivalue |= bex_thingbitstable[i].bits;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if ((ivalue & (MF_NOBLOCKMAP | MF_MISSILE)) == MF_MISSILE)
+        {
+            DEH_Warning(context, "Thing %ld has MF_MISSILE without MF_NOBLOCKMAP",
+                                 (long)(mobj - mobjinfo) + 1);
+        }
     }
+
     // [crispy] Thing ids in dehacked are 1-based, convert dropped item to 0-based
     if (!strcasecmp(variable_name, "dropped item"))
     {
