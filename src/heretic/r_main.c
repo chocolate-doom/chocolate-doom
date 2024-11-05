@@ -840,7 +840,7 @@ void R_Init(void)
     R_InitTables();
     // viewwidth / viewheight / detailLevel are set by the defaults
     printf (".");
-    R_SetViewSize(screenblocks, detailLevel);
+    R_SetViewSize(BETWEEN(3, 11, screenblocks), detailLevel);
     //tprintf("R_InitPlanes\n", 0);
     R_InitPlanes();
     printf (".");
