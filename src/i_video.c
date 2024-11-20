@@ -822,16 +822,27 @@ void I_ReadScreen (pixel_t* scr)
 void I_SetPalette (byte *doompalette)
 {
     int i;
+    byte r, g, b;
 
     for (i=0; i<256; ++i)
     {
-        // Zero out the bottom two bits of each channel - the PC VGA
-        // controller only supports 6 bits of accuracy.
+        // Get rid of the bottom two bits of each channel - the VGA DAC only
+        // supports 6 bits of accuracy.
+        r = gammatable[usegamma][*doompalette++] >> 2;
+        g = gammatable[usegamma][*doompalette++] >> 2;
+        b = gammatable[usegamma][*doompalette++] >> 2;
 
+        // We have to expand 6-bit color components to 8 bits.
+        // The naive way: c << 2
+        // More accurate: (c << 2) | (c >> 4) (very common, used in DOSBox)
+        // Most accurate: round(255 * c / 63.0) == (255 * c + 31) / 63
+        //
+        // We can get rid of the division by replacing the denominator with a
+        // power of two. 64 happens to work: (259 * c + 33) >> 6
         palette[i].a = 0xFFU;
-        palette[i].r = gammatable[usegamma][*doompalette++] & ~3;
-        palette[i].g = gammatable[usegamma][*doompalette++] & ~3;
-        palette[i].b = gammatable[usegamma][*doompalette++] & ~3;
+        palette[i].r = (259 * r + 33) >> 6;
+        palette[i].g = (259 * g + 33) >> 6;
+        palette[i].b = (259 * b + 33) >> 6;
     }
 
     palette_to_set = true;
