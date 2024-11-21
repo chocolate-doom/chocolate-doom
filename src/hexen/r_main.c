@@ -835,7 +835,7 @@ void R_Init(void)
     R_InitPointToAngle();
     R_InitTables();
     // viewwidth / viewheight / detailLevel are set by the defaults
-    R_SetViewSize(screenblocks, detailLevel);
+    R_SetViewSize(BETWEEN(3, 11, screenblocks), detailLevel);
     R_InitPlanes();
     R_InitLightTables();
     R_InitSkyMap();

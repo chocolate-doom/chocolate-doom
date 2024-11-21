@@ -1061,6 +1061,13 @@ void DrawFullScreenStuff(void)
     // TODO Do not always render, only if update needed
     if(screenblocks == 12)
     {
+        int xPosGem2;
+        int xPosKeys;
+
+        xPosGem2 = 270;
+        xPosKeys = 214 + WIDESCREENDELTA;
+
+        // Health
         temp = CPlayer->mo->health;
         if (temp > 0)
         {
@@ -1070,30 +1077,9 @@ void DrawFullScreenStuff(void)
         {
             DrINumber(0, 5 - WIDESCREENDELTA, 180);
         }
-        // Ammo
-        temp = CPlayer->ammo[wpnlev1info[CPlayer->readyweapon].ammo];
-        if (temp && CPlayer->readyweapon > 0 && CPlayer->readyweapon < 7)
-        {
-            V_DrawPatch(55 - WIDESCREENDELTA, 182,
-                        W_CacheLumpName(DEH_String(ammopic[CPlayer->readyweapon - 1]),
-                                        PU_CACHE));
-            DrINumber(temp, 53 - WIDESCREENDELTA, 172);
-        }
-        // Keys
-        if (CPlayer->keys[key_yellow])
-        {
-            V_DrawPatch(214 + WIDESCREENDELTA, 174, W_CacheLumpName(DEH_String("ykeyicon"), PU_CACHE));
-        }
-        if (CPlayer->keys[key_green])
-        {
-            V_DrawPatch(214 + WIDESCREENDELTA, 182, W_CacheLumpName(DEH_String("gkeyicon"), PU_CACHE));
-        }
-        if (CPlayer->keys[key_blue])
-        {
-            V_DrawPatch(214 + WIDESCREENDELTA, 190, W_CacheLumpName(DEH_String("bkeyicon"), PU_CACHE));
-        }
         // Armor
         DrINumber(CPlayer->armorpoints, 286 + WIDESCREENDELTA, 180);
+        // Frags
         if (deathmatch)
         {
             temp = 0;
@@ -1106,6 +1092,7 @@ void DrawFullScreenStuff(void)
             }
             DrINumber(temp, 5 - WIDESCREENDELTA, 165);
         }
+        // Items, Itemflash and Selection Bar
         if (!inventory)
         {
             if (ArtifactFlash)
@@ -1126,29 +1113,56 @@ void DrawFullScreenStuff(void)
             x = inv_ptr - curpos;
             for (i = 0; i < 7; i++)
             {
-                V_DrawPatch(50 + i * 31, 170,
+                V_DrawPatch(50 + i * 31, 168,
                               W_CacheLumpName(DEH_String("ARTIBOX"), PU_CACHE));
                 if (CPlayer->inventorySlotNum > x + i
                     && CPlayer->inventory[x + i].type != arti_none)
                 {
                     patch = DEH_String(patcharti[CPlayer->inventory[x + i].type]);
-                    V_DrawPatch(50 + i * 31, 170,
+                    V_DrawPatch(50 + i * 31, 168,
                                 W_CacheLumpName(patch, PU_CACHE));
                     DrSmallNumber(CPlayer->inventory[x + i].count, 69 + i * 31,
-                                  192);
+                                  190);
                 }
             }
-            V_DrawPatch(50 + curpos * 31, 199, PatchSELECTBOX);
+            V_DrawPatch(50 + curpos * 31, 197, PatchSELECTBOX);
             if (x != 0)
             {
-                V_DrawPatch(38, 169, !(leveltime & 4) ? PatchINVLFGEM1 :
+                V_DrawPatch(38, 167, !(leveltime & 4) ? PatchINVLFGEM1 :
                             PatchINVLFGEM2);
             }
             if (CPlayer->inventorySlotNum - x > 7)
             {
-                V_DrawPatch(269, 169, !(leveltime & 4) ?
+                V_DrawPatch(xPosGem2, 167, !(leveltime & 4) ?
                             PatchINVRTGEM1 : PatchINVRTGEM2);
             }
+            // Check for Intersect
+            if (xPosGem2 + 10 >= xPosKeys)
+            {
+                return; // Stop drawing further widgets
+            }
+        }
+        // Ammo
+        temp = CPlayer->ammo[wpnlev1info[CPlayer->readyweapon].ammo];
+        if (temp && CPlayer->readyweapon > 0 && CPlayer->readyweapon < 7)
+        {
+            V_DrawPatch(55 - WIDESCREENDELTA, 182,
+                        W_CacheLumpName(DEH_String(ammopic[CPlayer->readyweapon - 1]),
+                                        PU_CACHE));
+            DrINumber(temp, 53 - WIDESCREENDELTA, 172);
+        }
+        // Keys
+        if (CPlayer->keys[key_yellow])
+        {
+            V_DrawPatch(xPosKeys, 174, W_CacheLumpName(DEH_String("ykeyicon"), PU_CACHE));
+        }
+        if (CPlayer->keys[key_green])
+        {
+            V_DrawPatch(xPosKeys, 182, W_CacheLumpName(DEH_String("gkeyicon"), PU_CACHE));
+        }
+        if (CPlayer->keys[key_blue])
+        {
+            V_DrawPatch(xPosKeys, 190, W_CacheLumpName(DEH_String("bkeyicon"), PU_CACHE));
         }
         return;
     }

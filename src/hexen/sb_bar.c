@@ -1479,6 +1479,229 @@ void DrawFullScreenStuff(void)
     int temp;
 
     UpdateState |= I_FULLSCRN;
+    // [crispy] Crispy Hud
+    // TODO Do not always render, only if update needed
+    if(screenblocks == 12)
+    {
+        int j, k;
+        int xPosGem1;
+        int xPosManaPatch2;
+        patch_t *manaPatch1, *manaPatch2;
+        patch_t *manaVialPatch1, *manaVialPatch2;
+
+        manaPatch1 = NULL;
+        manaPatch2 = NULL;
+        manaVialPatch1 = NULL;
+        manaVialPatch2 = NULL;
+        xPosGem1 = 40;
+        xPosManaPatch2 = 75 - WIDESCREENDELTA;
+
+        // Health
+        temp = CPlayer->mo->health;
+        if (temp >= 25)
+        {
+            DrINumber(temp, 5 - WIDESCREENDELTA, 182);
+        }
+        else
+        {
+            DrRedINumber(temp, 5 - WIDESCREENDELTA, 182);
+        }
+        // Armor
+        temp = AutoArmorSave[CPlayer->class]
+            + CPlayer->armorpoints[ARMOR_ARMOR] +
+            CPlayer->armorpoints[ARMOR_SHIELD] +
+            CPlayer->armorpoints[ARMOR_HELMET] +
+            CPlayer->armorpoints[ARMOR_AMULET];
+            oldarmor = temp;
+        DrINumber(FixedDiv(temp, 5 * FRACUNIT) >> FRACBITS, 288 + WIDESCREENDELTA, 182);
+        // Frags
+        if (deathmatch)
+        {
+            temp = 0;
+            for (i = 0; i < maxplayers; i++)
+            {
+                if (playeringame[i])
+                {
+                    temp += CPlayer->frags[i];
+                }
+            }
+            DrINumber(temp, 5 - WIDESCREENDELTA, 165);
+        }
+        // Items, Itemflash and Selection Bar
+        if (!inventory)
+        {
+            if (ArtifactFlash)
+            {
+                V_DrawPatch(113 - WIDESCREENDELTA, 170, W_CacheLumpNum(W_GetNumForName("useartia")
+                                                     + ArtifactFlash - 1, PU_CACHE));
+                ArtifactFlash--;
+            }
+            else if (CPlayer->readyArtifact > 0)
+            {
+                V_DrawPatch(108 - WIDESCREENDELTA, 169,
+                            W_CacheLumpName(patcharti[CPlayer->readyArtifact],
+                                            PU_CACHE));
+                if (CPlayer->inventory[inv_ptr].count > 1)
+                {
+                    DrSmallNumber(CPlayer->inventory[inv_ptr].count, 127 - WIDESCREENDELTA, 190);
+                }
+            }
+        }
+        else
+        {
+            x = inv_ptr - curpos;
+            for (i = 0; i < 7; i++)
+            {
+                V_DrawPatch(50 + i * 31, 168, W_CacheLumpName("ARTIBOX",
+                                                                PU_CACHE));
+                if (CPlayer->inventorySlotNum > x + i
+                    && CPlayer->inventory[x + i].type != arti_none)
+                {
+                    V_DrawPatch(48 + i * 31, 167,
+                                W_CacheLumpName(patcharti
+                                                [CPlayer->inventory[x + i].type],
+                                                PU_CACHE));
+                    if (CPlayer->inventory[x + i].count > 1)
+                    {
+                        DrSmallNumber(CPlayer->inventory[x + i].count,
+                                      66 + i * 31, 189);
+                    }
+                }
+            }
+            V_DrawPatch(48 + curpos * 31, 167, PatchSELECTBOX);
+            if (x != 0)
+            {
+                V_DrawPatch(xPosGem1, 167, !(leveltime & 4) ? PatchINVLFGEM1 :
+                            PatchINVLFGEM2);
+            }
+            if (CPlayer->inventorySlotNum - x > 7)
+            {
+                V_DrawPatch(268, 167, !(leveltime & 4) ?
+                            PatchINVRTGEM1 : PatchINVRTGEM2);
+            }
+            // Check for Intersect
+            if (xPosManaPatch2 + 15 >= xPosGem1)
+            {
+                return; // Stop drawing further widgets
+            }
+        }
+        // Mana
+        temp = CPlayer->mana[0];
+        DrSmallNumber(temp, 44 - WIDESCREENDELTA, 187);
+        manaVialPatch1 = (patch_t *) 1; // force a vial update
+        if (temp == 0)
+        {                       // Draw Dim Mana icon
+            manaPatch1 = PatchMANADIM1;
+        }
+        else if (oldmana1 == 0)
+        {
+            manaPatch1 = PatchMANABRIGHT1;
+        }
+        temp = CPlayer->mana[1];
+        DrSmallNumber(temp, 76 - WIDESCREENDELTA, 187);
+        manaVialPatch1 = (patch_t *) 1; // force a vial update
+        if (temp == 0)
+        {                       // Draw Dim Mana icon
+            manaPatch2 = PatchMANADIM2;
+        }
+        else if (oldmana2 == 0)
+        {
+            manaPatch2 = PatchMANABRIGHT2;
+        }
+        // Update mana graphics based upon mana count/weapon type
+        if (CPlayer->readyweapon == WP_FIRST)
+        {
+            manaPatch1 = PatchMANADIM1;
+            manaPatch2 = PatchMANADIM2;
+            manaVialPatch1 = PatchMANAVIALDIM1;
+            manaVialPatch2 = PatchMANAVIALDIM2;
+        }
+        else if (CPlayer->readyweapon == WP_SECOND)
+        {
+            if (!manaPatch1)
+            {
+                manaPatch1 = PatchMANABRIGHT1;
+            }
+            manaVialPatch1 = PatchMANAVIAL1;
+            manaPatch2 = PatchMANADIM2;
+            manaVialPatch2 = PatchMANAVIALDIM2;
+        }
+        else if (CPlayer->readyweapon == WP_THIRD)
+        {
+            manaPatch1 = PatchMANADIM1;
+            manaVialPatch1 = PatchMANAVIALDIM1;
+            if (!manaPatch2)
+            {
+                manaPatch2 = PatchMANABRIGHT2;
+            }
+            manaVialPatch2 = PatchMANAVIAL2;
+        }
+        else
+        {
+            manaVialPatch1 = PatchMANAVIAL1;
+            manaVialPatch2 = PatchMANAVIAL2;
+            if (!manaPatch1)
+            {
+                manaPatch1 = PatchMANABRIGHT1;
+            }
+            if (!manaPatch2)
+            {
+                manaPatch2 = PatchMANABRIGHT2;
+            }
+        }
+        V_DrawPatch(42 - WIDESCREENDELTA, 170, manaPatch1);
+        V_DrawPatch(xPosManaPatch2, 170, manaPatch2);
+        V_DrawPatch(59 - WIDESCREENDELTA, 170, manaVialPatch1);
+        for (i = 171; i < 193 - (22 * CPlayer->mana[0]) / MAX_MANA; i++)
+        {
+         for (j = 0; j <= crispy->hires; j++)
+          for (k = 0; k <= crispy->hires; k++)
+          {
+            I_VideoBuffer[SCREENWIDTH * ((i << crispy->hires) + j)
+                          + (60 << crispy->hires) + k] = 0;
+            I_VideoBuffer[SCREENWIDTH * ((i << crispy->hires) + j)
+                          + (61 << crispy->hires) + k] = 0;
+            I_VideoBuffer[SCREENWIDTH * ((i << crispy->hires) + j)
+                          + (62 << crispy->hires) + k] = 0;
+          }
+        }
+        V_DrawPatch(67 - WIDESCREENDELTA, 170, manaVialPatch2);
+        for (i = 171; i < 193 - (22 * CPlayer->mana[1]) / MAX_MANA; i++)
+        {
+         for (j = 0; j <= crispy->hires; j++)
+          for (k = 0; k <= crispy->hires; k++)
+          {
+            I_VideoBuffer[SCREENWIDTH * ((i << crispy->hires) + j)
+                          + (68 << crispy->hires) + k] = 0;
+            I_VideoBuffer[SCREENWIDTH * ((i << crispy->hires) + j)
+                          + (69 << crispy->hires) + k] = 0;
+            I_VideoBuffer[SCREENWIDTH * ((i << crispy->hires) + j)
+                          + (70 << crispy->hires) + k] = 0;
+          }
+        }
+        // Weapon Pieces
+        if (CPlayer->pieces == 7)
+        {
+            V_DrawPatch(228 + WIDESCREENDELTA, 168, PatchWEAPONFULL);
+        }
+        else
+        {
+            V_DrawPatch(228 + WIDESCREENDELTA, 168, PatchWEAPONSLOT);
+            if (CPlayer->pieces & WPIECE1)
+            {
+                V_DrawPatch(PieceX[PlayerClass[consoleplayer]][0] + 38 + WIDESCREENDELTA, 168, PatchPIECE1);
+            }
+            if (CPlayer->pieces & WPIECE2)
+            {
+                V_DrawPatch(PieceX[PlayerClass[consoleplayer]][1] + 38 + WIDESCREENDELTA, 168, PatchPIECE2);
+            }
+            if (CPlayer->pieces & WPIECE3)
+            {
+                V_DrawPatch(PieceX[PlayerClass[consoleplayer]][2] + 38 + WIDESCREENDELTA, 168, PatchPIECE3);
+            }
+        }
+        return;
+    }
     if (CPlayer->mo->health > 0)
     {
         DrBNumber(CPlayer->mo->health, 5, 180);

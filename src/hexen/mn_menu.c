@@ -1120,7 +1120,7 @@ static void DrawOptionsMenu(void)
 
 static void DrawOptions2Menu(void)
 {
-    DrawSlider(&Options2Menu, 1, 9, screenblocks - 3);
+    DrawSlider(&Options2Menu, 1, 9, BETWEEN(3, 11, screenblocks) - 3);
     DrawSlider(&Options2Menu, 3, 16, snd_MaxVolume);
     DrawSlider(&Options2Menu, 5, 16, snd_MusicVolume);
 }
@@ -1569,7 +1569,7 @@ static void SCScreenSize(int option)
 {
     if (option == RIGHT_DIR)
     {
-        if (screenblocks < 11)
+        if (screenblocks < 12)
         {
             screenblocks++;
         }
@@ -1578,7 +1578,7 @@ static void SCScreenSize(int option)
     {
         screenblocks--;
     }
-    R_SetViewSize(screenblocks, detailLevel);
+    R_SetViewSize(BETWEEN(3, 11, screenblocks), detailLevel);
 }
 
 //---------------------------------------------------------------------------
