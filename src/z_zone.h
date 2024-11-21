@@ -25,6 +25,7 @@
 #define __Z_ZONE__
 
 #include <stdio.h>
+#include <string.h>
 
 //
 // ZONE MEMORY
@@ -69,5 +70,14 @@ unsigned int Z_ZoneSize(void);
 #define Z_ChangeTag(p,t)                                       \
     Z_ChangeTag2((p), (t), __FILE__, __LINE__)
 
+static inline char* Z_StringCopy(const char *src, int tag)
+{
+    size_t len;
+    char *dst;
+    len = strlen(src) + 1;
+    dst = Z_Malloc(len, tag, NULL);
+    strcpy(dst, src);
+    return dst;
+}
 
 #endif
