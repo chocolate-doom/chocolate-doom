@@ -160,6 +160,7 @@ static void ConfigExtraButtons(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
     
     if (gamemission == heretic || gamemission == hexen)
     {
+      AddMouseControl(buttons_table, "Quick Reverse", &mousebreverse);
       AddMouseControl(buttons_table, "Mouselook", &mousebmouselook);
       AddMouseControl(buttons_table, "Inventory left", &mousebinvleft);
       AddMouseControl(buttons_table, "Inventory right", &mousebinvright);

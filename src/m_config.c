@@ -508,7 +508,7 @@ static default_t	doom_defaults_list[] =
     CONFIG_VARIABLE_INT(mouseb_mouselook),
 
     //!
-    // @game doom
+    // @game doom heretic hexen
     //
     // Quick 180° reverse.
     //
@@ -2251,7 +2251,7 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_KEY(key_multi_msgplayer8),
 
     //!
-    // @game doom
+    // @game doom heretic hexen
     // Quick 180° reverse.
     //
 
