@@ -37,6 +37,7 @@
 #include "i_system.h"
 #include "i_timer.h"
 #include "i_video.h"
+#include "a11y.h" // [crispy] A11Y
 #include "m_argv.h"
 #include "m_config.h"
 #include "m_controls.h"
@@ -852,6 +853,7 @@ void D_BindVariables(void)
     M_BindIntVariable("music_volume",           &snd_MusicVolume);
     M_BindIntVariable("screenblocks",           &screenblocks);
     M_BindIntVariable("snd_channels",           &snd_Channels);
+    M_BindIntVariable("a11y_sector_lighting",   &a11y_sector_lighting);
     M_BindIntVariable("vanilla_savegame_limit", &vanilla_savegame_limit);
     M_BindIntVariable("vanilla_demo_limit",     &vanilla_demo_limit);
     M_BindIntVariable("show_endoom",            &show_endoom);

@@ -40,25 +40,36 @@ void AccessibilitySettings(TXT_UNCAST_ARG(widget), void *user_data)
 
     TXT_SetWindowHelpURL(window, WINDOW_HELP_URL);
 
-    TXT_AddWidgets(window,
-                   TXT_NewCheckBox("Flickering Sector Lighting",
-                                   &a11y_sector_lighting),
-                   TXT_NewCheckBox("Weapon Flash Lighting",
-                                   &a11y_weapon_flash),
-                   TXT_NewCheckBox("Weapon Flash Sprite",
-                                   &a11y_weapon_pspr),
-                   TXT_NewCheckBox("Palette Changes",
-                                   &a11y_palette_changes),
-                   TXT_NewCheckBox("Invulnerability Colormap",
-                                   &a11y_invul_colormap),
-                   NULL);
+    if (gamemission == doom || gamemission == heretic)
+    {
+        TXT_AddWidget(window, 
+                      TXT_NewCheckBox("Flickering Sector Lighting",
+                                      &a11y_sector_lighting));
+    }
+    
+    if (gamemission == doom)
+    {
+        TXT_AddWidgets(window,
+                      TXT_NewCheckBox("Weapon Flash Lighting",
+                                      &a11y_weapon_flash),
+                      TXT_NewCheckBox("Weapon Flash Sprite",
+                                      &a11y_weapon_pspr),
+                      TXT_NewCheckBox("Palette Changes",
+                                      &a11y_palette_changes),
+                      TXT_NewCheckBox("Invulnerability Colormap",
+                                      &a11y_invul_colormap),
+                      NULL);
+    }
 
     TXT_SetTableColumns(window, 2);
 
-    TXT_AddWidgets(window,
-                   TXT_NewLabel("Extra Lighting"),
-                   TXT_NewSpinControl(&a11y_extra_lighting, 0, 8),
-                   NULL);
+    if (gamemission == doom)
+    {
+        TXT_AddWidgets(window,
+                    TXT_NewLabel("Extra Lighting"),
+                    TXT_NewSpinControl(&a11y_extra_lighting, 0, 8),
+                    NULL);
+    }
 
 }
 

@@ -313,7 +313,7 @@ void R_AddLine(seg_t * line)
 // reject empty lines used for triggers and special events
     if (backsector->ceilingpic == frontsector->ceilingpic
         && backsector->floorpic == frontsector->floorpic
-        && backsector->lightlevel == frontsector->lightlevel
+        && backsector->rlightlevel == frontsector->rlightlevel
         && backsector->special == frontsector->special // [crispy] check for special as well
         && curline->sidedef->midtexture == 0)
         return;
@@ -469,7 +469,7 @@ void R_Subsector(int num)
                                  frontsector->floorpic == skyflatnum &&
                                  frontsector->sky & PL_SKYFLAT ? frontsector->sky :
                                  frontsector->floorpic,
-                                 frontsector->lightlevel,
+                                 frontsector->rlightlevel, // [crispy] A11Y
                                  frontsector->special);
     else
         floorplane = NULL;
@@ -480,7 +480,8 @@ void R_Subsector(int num)
                                    frontsector->ceilingpic == skyflatnum &&
                                    frontsector->sky & PL_SKYFLAT ? frontsector->sky :
                                    frontsector->ceilingpic,
-                                   frontsector->lightlevel, 0);
+                                   frontsector->rlightlevel, // [crispy] A11Y
+                                   0);
     else
         ceilingplane = NULL;
 

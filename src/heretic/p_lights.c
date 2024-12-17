@@ -17,6 +17,7 @@
 #include "m_random.h"
 #include "p_local.h"
 #include "v_video.h"
+#include "a11y.h" // [crispy] A11Y
 
 //==================================================================
 //==================================================================
@@ -52,6 +53,11 @@ void T_LightFlash(thinker_t *thinker)
         flash->count = (P_Random() & flash->maxtime) + 1;
     }
 
+    // [crispy] A11Y
+    if (a11y_sector_lighting)
+	flash->sector->rlightlevel = flash->sector->lightlevel;
+    else
+	flash->sector->rlightlevel = flash->maxlight;
 }
 
 
@@ -111,6 +117,11 @@ void T_StrobeFlash(thinker_t *thinker)
         flash->count = flash->darktime;
     }
 
+    // [crispy] A11Y
+    if (a11y_sector_lighting)
+	flash->sector->rlightlevel = flash->sector->lightlevel;
+    else
+	flash->sector->rlightlevel = flash->maxlight;
 }
 
 //==================================================================
@@ -193,6 +204,8 @@ void EV_TurnTagLightsOff(line_t * line)
                     min = tsec->lightlevel;
             }
             sector->lightlevel = min;
+            // [crispy] A11Y
+            sector->rlightlevel = sector->lightlevel;
         }
 }
 
@@ -231,6 +244,8 @@ void EV_LightTurnOn(line_t * line, int bright)
                 }
             }
             sector->lightlevel = bright;
+            // [crispy] A11Y
+            sector->rlightlevel = sector->lightlevel;
         }
 }
 
@@ -262,6 +277,12 @@ void T_Glow(thinker_t *thinker)
             }
             break;
     }
+
+    // [crispy] A11Y
+    if (a11y_sector_lighting)
+	g->sector->rlightlevel = g->sector->lightlevel;
+    else
+	g->sector->rlightlevel = g->maxlight;
 }
 
 void P_SpawnGlowingLight(sector_t * sector)

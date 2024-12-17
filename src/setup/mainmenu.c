@@ -236,7 +236,7 @@ void MainMenu(void)
                        (TxtWidgetSignalFunc) CompatibilitySettings, NULL),
 */
     // [crispy]
-    if (gamemission == doom)
+    if (gamemission == doom || gamemission == heretic)
     {
         TXT_AddWidget(window,
             TXT_NewButton2("Accessibility",

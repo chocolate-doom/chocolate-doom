@@ -1667,6 +1667,7 @@ void P_UnArchiveWorld(void)
         sec->floorpic = SV_ReadWord();
         sec->ceilingpic = SV_ReadWord();
         sec->lightlevel = SV_ReadWord();
+        sec->rlightlevel = sec->lightlevel; // [crispy] A11Y
         sec->special = SV_ReadWord();  // needed?
         sec->tag = SV_ReadWord();      // needed?
         sec->specialdata = 0;
