@@ -728,7 +728,7 @@ R_StoreWallRange
 			
 	if (worldlow != worldbottom 
 	    || backsector->floorpic != frontsector->floorpic
-	    || backsector->lightlevel != frontsector->lightlevel)
+	    || backsector->rlightlevel != frontsector->rlightlevel)
 	{
 	    markfloor = true;
 	}
@@ -741,7 +741,7 @@ R_StoreWallRange
 			
 	if (worldhigh != worldtop 
 	    || backsector->ceilingpic != frontsector->ceilingpic
-	    || backsector->lightlevel != frontsector->lightlevel)
+	    || backsector->rlightlevel != frontsector->rlightlevel)
 	{
 	    markceiling = true;
 	}

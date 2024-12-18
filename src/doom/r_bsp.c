@@ -374,7 +374,7 @@ void R_AddLine (seg_t*	line)
     // and no middle texture.
     if (backsector->ceilingpic == frontsector->ceilingpic
 	&& backsector->floorpic == frontsector->floorpic
-	&& backsector->lightlevel == frontsector->lightlevel
+	&& backsector->rlightlevel == frontsector->rlightlevel
 	&& curline->sidedef->midtexture == 0)
     {
 	return;
