@@ -1985,7 +1985,7 @@ static void G_FormatLevelStatTime(char *str, int tics)
 // [crispy] Write level statistics upon exit
 static void G_WriteLevelStat(void)
 {
-    static FILE *fstream = NULL;
+    FILE *fstream;
 
     int i, playerKills = 0, playerItems = 0, playerSecrets = 0;
 
@@ -1994,15 +1994,22 @@ static void G_WriteLevelStat(void)
     char totalTimeString[TIMESTRSIZE];
     char *decimal;
 
+    static boolean firsttime = true;
+
+    if (firsttime)
+    {
+        firsttime = false;
+        fstream = M_fopen("levelstat.txt", "w");
+    }
+    else
+    {
+        fstream = M_fopen("levelstat.txt", "a");
+    }
+
     if (fstream == NULL)
     {
-        fstream = fopen("levelstat.txt", "w");
-
-        if (fstream == NULL)
-        {
-            fprintf(stderr, "G_WriteLevelStat: Unable to open levelstat.txt for writing!\n");
-            return;
-        }
+        fprintf(stderr, "G_WriteLevelStat: Unable to open levelstat.txt for writing!\n");
+        return;
     }
     
     if (gamemode == commercial)
@@ -2039,6 +2046,8 @@ static void G_WriteLevelStat(void)
             levelString, (secretexit ? "s" : ""),
             levelTimeString, totalTimeString, playerKills, totalkills, 
             playerItems, totalitems, playerSecrets, totalsecret);
+
+    fclose(fstream);
 }
  
 void G_DoCompleted (void) 
