@@ -2591,7 +2591,7 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(crispy_statsformat),
 
     //!
-    // @game doom
+    // @game doom heretic
     //
     // Enable translucency.
     //
