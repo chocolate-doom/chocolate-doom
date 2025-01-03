@@ -1343,7 +1343,8 @@ static void saveg_read_strobe_t(strobe_t *str)
     // int brighttime;
     str->brighttime = saveg_read32();
 
-    if (!a11y_sector_lighting)
+    if (!a11y_sector_lighting && 
+            str->sector->rlightlevel < str->maxlight) // [crispy] Ensure maxlight among competing thinkers. 
         str->sector->rlightlevel = str->maxlight;
 }
 

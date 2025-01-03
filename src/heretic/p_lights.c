@@ -56,8 +56,6 @@ void T_LightFlash(thinker_t *thinker)
     // [crispy] A11Y
     if (a11y_sector_lighting)
 	flash->sector->rlightlevel = flash->sector->lightlevel;
-    else
-	flash->sector->rlightlevel = flash->maxlight;
 }
 
 
@@ -120,8 +118,6 @@ void T_StrobeFlash(thinker_t *thinker)
     // [crispy] A11Y
     if (a11y_sector_lighting)
 	flash->sector->rlightlevel = flash->sector->lightlevel;
-    else
-	flash->sector->rlightlevel = flash->maxlight;
 }
 
 //==================================================================
@@ -281,8 +277,6 @@ void T_Glow(thinker_t *thinker)
     // [crispy] A11Y
     if (a11y_sector_lighting)
 	g->sector->rlightlevel = g->sector->lightlevel;
-    else
-	g->sector->rlightlevel = g->maxlight;
 }
 
 void P_SpawnGlowingLight(sector_t * sector)
