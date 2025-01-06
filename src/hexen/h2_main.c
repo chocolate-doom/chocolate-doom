@@ -1308,6 +1308,7 @@ void H2_DoAdvanceDemo(void)
     advancedemo = false;
     usergame = false;           // can't save/end game here
     paused = false;
+    demoextend = false; // [crispy] at this point demos should no longer be extended (demo-reel)
     gameaction = ga_nothing;
     demosequence = (demosequence + 1) % 7;
     switch (demosequence)
