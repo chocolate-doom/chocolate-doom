@@ -28,6 +28,10 @@
 
 //#define OPL_DEBUG_TRACE
 
+#ifdef EMSCRIPTEN
+#include <emscripten.h>
+#endif
+
 
 static opl_driver_t *drivers[] =
 {
@@ -472,6 +476,11 @@ void OPL_Delay(uint64_t us)
         return;
     }
 
+#ifdef EMSCRIPTEN
+    // Use async sleep when compiled with emscripten
+    emscripten_sleep(us);
+#else
+
     // Create a callback that will signal this thread after the
     // specified time.
 
@@ -496,6 +505,7 @@ void OPL_Delay(uint64_t us)
 
     SDL_DestroyMutex(delay_data.mutex);
     SDL_DestroyCond(delay_data.cond);
+#endif
 }
 
 void OPL_SetPaused(int paused)

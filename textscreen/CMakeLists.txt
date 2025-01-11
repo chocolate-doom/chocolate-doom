@@ -25,4 +25,9 @@ add_library(textscreen STATIC
 target_include_directories(textscreen
                            INTERFACE "."
                            PRIVATE "../src/")
-target_link_libraries(textscreen m SDL2::SDL2)
+if (DEFINED EMSCRIPTEN)
+    set_target_properties(textscreen PROPERTIES COMPILE_FLAGS "-s USE_SDL=2")
+    set_target_properties(textscreen PROPERTIES LINK_FLAGS "-s USE_SDL=2")
+else()
+    target_link_libraries(textscreen m SDL2::SDL2)
+endif()

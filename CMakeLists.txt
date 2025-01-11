@@ -34,18 +34,25 @@ option(CMAKE_FIND_PACKAGE_PREFER_CONFIG
 option(ENABLE_SDL2_NET "Enable SDL2_net" On)
 option(ENABLE_SDL2_MIXER "Enable SDL2_mixer" On)
 
-find_package(SDL2 2.0.14)
+if (NOT DEFINED EMSCRIPTEN)
+    find_package(SDL2 2.0.14)
+endif()
 if(ENABLE_SDL2_MIXER)
-    find_package(SDL2_mixer 2.0.2)
+    if (NOT DEFINED EMSCRIPTEN)
+        find_package(SDL2_mixer 2.0.2)
+    endif()
 else()
     add_compile_definitions(DISABLE_SDL2MIXER=1)
 endif()
 
 if(ENABLE_SDL2_NET)
-    find_package(SDL2_net 2.0.0)
+    if (NOT DEFINED EMSCRIPTEN)
+        find_package(SDL2_net 2.0.0)
+    endif()
 else()
     add_compile_definitions(DISABLE_SDL2NET=1)
 endif()
+
 
 # Check for libsamplerate.
 find_package(SampleRate)
