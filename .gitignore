@@ -61,3 +61,7 @@ GTAGS
 # VSCode settings
 
 /.vscode/
+
+# clangd settings
+/.cache/clangd
+compile_commands.json
