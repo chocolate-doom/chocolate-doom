@@ -478,7 +478,7 @@ void OPL_Delay(uint64_t us)
 
 #ifdef EMSCRIPTEN
     // Use async sleep when compiled with emscripten
-    emscripten_sleep(us);
+    emscripten_sleep(us / 1000);
 #else
 
     // Create a callback that will signal this thread after the
