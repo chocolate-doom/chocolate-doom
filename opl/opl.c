@@ -476,11 +476,6 @@ void OPL_Delay(uint64_t us)
         return;
     }
 
-#ifdef EMSCRIPTEN
-    // Use async sleep when compiled with emscripten
-    emscripten_sleep(us / 1000);
-#else
-
     // Create a callback that will signal this thread after the
     // specified time.
 
@@ -497,6 +492,11 @@ void OPL_Delay(uint64_t us)
     while (!delay_data.finished)
     {
         SDL_CondWait(delay_data.cond, delay_data.mutex);
+#ifdef EMSCRIPTEN
+        // Use async sleep to avoid locking browser main thread
+        emscripten_sleep(us / 1000);
+#endif
+
     }
 
     SDL_UnlockMutex(delay_data.mutex);
@@ -505,7 +505,6 @@ void OPL_Delay(uint64_t us)
 
     SDL_DestroyMutex(delay_data.mutex);
     SDL_DestroyCond(delay_data.cond);
-#endif
 }
 
 void OPL_SetPaused(int paused)
