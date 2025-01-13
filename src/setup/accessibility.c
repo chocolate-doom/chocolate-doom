@@ -42,14 +42,9 @@ void AccessibilitySettings(TXT_UNCAST_ARG(widget), void *user_data)
 
     if (gamemission == doom || gamemission == heretic)
     {
-        TXT_AddWidget(window, 
-                      TXT_NewCheckBox("Flickering Sector Lighting",
-                                      &a11y_sector_lighting));
-    }
-    
-    if (gamemission == doom)
-    {
         TXT_AddWidgets(window,
+                      TXT_NewCheckBox("Flickering Sector Lighting",
+                                      &a11y_sector_lighting),
                       TXT_NewCheckBox("Weapon Flash Lighting",
                                       &a11y_weapon_flash),
                       TXT_NewCheckBox("Weapon Flash Sprite",
@@ -63,12 +58,12 @@ void AccessibilitySettings(TXT_UNCAST_ARG(widget), void *user_data)
 
     TXT_SetTableColumns(window, 2);
 
-    if (gamemission == doom)
+    if (gamemission == doom || gamemission == heretic)
     {
         TXT_AddWidgets(window,
-                    TXT_NewLabel("Extra Lighting"),
-                    TXT_NewSpinControl(&a11y_extra_lighting, 0, 8),
-                    NULL);
+                      TXT_NewLabel("Extra Lighting"),
+                      TXT_NewSpinControl(&a11y_extra_lighting, 0, 8),
+                      NULL);
     }
 
 }

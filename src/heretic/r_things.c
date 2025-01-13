@@ -23,6 +23,7 @@
 #include "r_bmaps.h"
 #include "r_local.h"
 #include "v_trans.h" // [crispy] blending functions
+#include "a11y.h" // [crispy] A11Y
 
 typedef struct
 {
@@ -949,7 +950,7 @@ void R_DrawPSprite(pspdef_t * psp, int psyoffset, int translucent) // [crispy] y
 void R_DrawPlayerSprites(void)
 {
     int i, lightnum;
-    int tmpframe, offset, translucent = 0; // [crispy] temps for drawing translucent psrites
+    int tmpframe, offset, drawbase = 0; // [crispy] for drawing base frames
     pspdef_t *psp;
 
 //
@@ -977,11 +978,12 @@ void R_DrawPlayerSprites(void)
     {
         if (psp->state)
         {
-            // [crispy] Draw offset base frame and translucent current frame
-            if (crispy->translucency & TRANSLUCENCY_ITEM &&
-                    !(viewplayer->powers[pw_invisibility] > 4*32 || viewplayer->powers[pw_invisibility] & 8))
+            // [crispy] draw base frame for transparent or deactivated weapon flashes
+            if (!a11y_weapon_pspr ||
+                    (crispy->translucency & TRANSLUCENCY_ITEM &&
+                    !(viewplayer->powers[pw_invisibility] > 4*32 || viewplayer->powers[pw_invisibility] & 8)))
             {
-                translucent = 1;
+                drawbase = 1;
                 tmpframe = psp->state->frame;
 
                 switch (psp->state->sprite)
@@ -996,7 +998,7 @@ void R_DrawPlayerSprites(void)
                         if (tmpframe == 3)
                             offset = spriteoffsets[SPR_GWND_F3].offset;
                         else
-                            translucent = 0;
+                            drawbase = 0;
                         break;
                     case SPR_BLSR:
                         if (tmpframe == 1)
@@ -1008,7 +1010,7 @@ void R_DrawPlayerSprites(void)
                         if (tmpframe == 3)
                             offset = spriteoffsets[SPR_BLSR_F3].offset;
                         else
-                            translucent = 0;
+                            drawbase = 0;
                         break;
                     case SPR_HROD:
                         if (tmpframe == 1)
@@ -1020,7 +1022,7 @@ void R_DrawPlayerSprites(void)
                         if (tmpframe == 6)
                             offset = spriteoffsets[SPR_HROD_F6].offset;
                         else
-                            translucent = 0;
+                            drawbase = 0;
                         break;
                     case SPR_PHNX:
                         if (tmpframe == 1)
@@ -1032,21 +1034,23 @@ void R_DrawPlayerSprites(void)
                         if (tmpframe == 3)
                             offset = spriteoffsets[SPR_PHNX_F3].offset;
                         else
-                            translucent = 0;
+                            drawbase = 0;
                         break;
                     default:
                         offset = 0x0;
-                        translucent = 0;
+                        drawbase = 0;
                         break;
                 }
-                if (translucent && psp->state->sprite != SPR_GAUN)
+                if (drawbase && psp->state->sprite != SPR_GAUN)
                 {
-                    psp->state->frame = 0; // draw base frame
+                    psp->state->frame = 0; // set base frame
                     R_DrawPSprite(psp, offset, 0);
-                    psp->state->frame = tmpframe; // restore frame
+                    psp->state->frame = tmpframe; // restore attack frame
                 }
             }
-            R_DrawPSprite(psp, 0x0, translucent);
+            if (!a11y_weapon_pspr && drawbase) 
+                continue; // [crispy] A11Y no weapon flash, use base instead
+            R_DrawPSprite(psp, 0x0, drawbase); // [crispy] translucent when base was drawn
         }      
     }
 }

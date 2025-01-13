@@ -30,6 +30,7 @@
 #ifdef CRISPY_TRUECOLOR
 #include "v_trans.h" // [crispy] I_BlendDark()
 #endif
+#include "a11y.h" // [crispy] A11Y
 
 // Types
 
@@ -816,7 +817,12 @@ void SB_PaletteFlash(void)
 
     CPlayer = &players[consoleplayer];
 
-    if (CPlayer->damagecount)
+    // [crispy] A11Y
+    if (!a11y_palette_changes)
+    {
+        palette = 0;
+    }
+    else if (CPlayer->damagecount)
     {
         palette = (CPlayer->damagecount + 7) >> 3;
         if (palette >= NUMREDPALS)

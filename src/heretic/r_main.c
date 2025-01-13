@@ -22,6 +22,7 @@
 #include "r_local.h"
 #include "tables.h"
 #include "v_video.h" // [crispy] V_DrawFilledBox for HOM detector
+#include "a11y.h" // [crispy] A11Y
 
 int viewangleoffset;
 
@@ -913,6 +914,7 @@ void R_SetupFrame(player_t * player)
     int tableAngle;
     int tempCentery;
     int pitch; // [crispy]
+    int tmpColormap; // [crispy] to overwrite colormap
 
     //drawbsp = 1;
     viewplayer = player;
@@ -966,7 +968,16 @@ void R_SetupFrame(player_t * player)
         viewy += player->chickenPeck * finesine[tableAngle];
     }
 
+    // [crispy] A11Y
+    if (a11y_weapon_flash)
+    {
     extralight = player->extralight;
+    }
+    else
+        extralight = 0;
+    // [crispy] A11Y
+    extralight += a11y_extra_lighting;
+
     // [crispy] apply new yslope[] whenever "lookdir", "detailshift" or
     // "screenblocks" change
     tempCentery = viewheight / 2 + (pitch * (1 << crispy->hires)) *
@@ -982,7 +993,15 @@ void R_SetupFrame(player_t * player)
     sscount = 0;
     if (player->fixedcolormap)
     {
-        fixedcolormap = colormaps + player->fixedcolormap
+        tmpColormap = player->fixedcolormap;
+        // [crispy] A11Y - overwrite to disable invul-colormap or torch flickering
+        if ((!a11y_invul_colormap && player->powers[pw_invulnerability]) ||
+            (!a11y_weapon_flash && player->powers[pw_infrared] && !player->powers[pw_invulnerability]))
+        {
+            tmpColormap = 1; // [crispy] A11Y - static infrared map
+        }
+
+        fixedcolormap = colormaps + tmpColormap
             * (NUMCOLORMAPS / 32) // [crispy] smooth diminishing lighting
             * 256 /* * sizeof(lighttable_t)*/;
         walllights = scalelightfixed;
