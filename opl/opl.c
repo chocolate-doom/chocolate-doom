@@ -467,6 +467,8 @@ static void DelayCallback(void *_delay_data)
     SDL_UnlockMutex(delay_data->mutex);
 }
 
+// Delay for specified number of microseconds after OPL subsystem is initialized
+
 void OPL_Delay(uint64_t us)
 {
     delay_data_t delay_data;
@@ -476,13 +478,12 @@ void OPL_Delay(uint64_t us)
         return;
     }
 
-#ifdef EMSCRIPTEN
-    // Use async sleep when compiled with emscripten
-    emscripten_sleep(us);
-#else
-
     // Create a callback that will signal this thread after the
     // specified time.
+
+    // Note that this is not just a simple time-based delay, it will ensure
+    // that the OPL system is initialized and the queue has begun processing
+    // before releasing the mutex lock
 
     delay_data.finished = 0;
     delay_data.mutex = SDL_CreateMutex();
@@ -497,6 +498,10 @@ void OPL_Delay(uint64_t us)
     while (!delay_data.finished)
     {
         SDL_CondWait(delay_data.cond, delay_data.mutex);
+#ifdef EMSCRIPTEN
+        // Use async sleep to avoid locking browser main thread
+        emscripten_sleep(us / 1000);
+#endif
     }
 
     SDL_UnlockMutex(delay_data.mutex);
@@ -505,7 +510,6 @@ void OPL_Delay(uint64_t us)
 
     SDL_DestroyMutex(delay_data.mutex);
     SDL_DestroyCond(delay_data.cond);
-#endif
 }
 
 void OPL_SetPaused(int paused)
