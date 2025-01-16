@@ -100,9 +100,9 @@
 
 #include <inttypes.h>
 
-#if defined(__cplusplus) || defined(__bool_true_false_are_defined)
+#if defined(__cplusplus) || defined(__bool_true_false_are_defined) || (__STDC_VERSION__ >= 202311L)
 
-// Use builtin bool type with C++.
+// Use builtin bool type with C++ and C23.
 
 typedef bool boolean;
 
