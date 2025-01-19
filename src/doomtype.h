@@ -103,6 +103,10 @@
 
 #if defined(__cplusplus) || defined(__bool_true_false_are_defined)
 
+// The C++/C99 bool type (or _Bool that is) can only have two values:
+// 0 or 1. However, the Doom source code assumes any non-zero value
+// to evaluate to true, so we have to use an int type here.
+
 typedef int boolean;
 
 #else
