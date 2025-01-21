@@ -1,0 +1,55 @@
+name: Undefined behavior check
+
+on:
+  push:
+    branches:
+      - "master"
+    tags:
+      - "*"
+    paths-ignore:
+      - "**.md"
+  pull_request:
+    branches:
+      - "master"
+    paths-ignore:
+      - "**.md"
+  workflow_dispatch:
+
+jobs:
+  ubsan:
+    name: ubsan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install dependencies (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install \
+            python3-yaml \
+            libsdl2-dev \
+            libsdl2-mixer-dev \
+            libsdl2-net-dev \
+            libpng-dev \
+            libsamplerate0-dev \
+            libfluidsynth-dev
+
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Configure
+        env:
+          CC: ${{ matrix.config.compiler }}
+        run: |
+          CFLAGS="-g -O -fsanitize=undefined -fno-sanitize-recover=all"
+          LDFLAGS="-g -fsanitize=undefined -fno-sanitize-recover=all"
+          ./autogen.sh
+
+      - name: Build
+        run: make -j4
+
+      - name: Test
+        run: |
+          PREFIX=`sed -n '/PROGRAM_PREFIX/p' ${PWD}/config.h | cut -d '"' -f 2`
+          make -j4 -C quickcheck check SOURCE_PORT=$PWD/src/${PREFIX}doom
