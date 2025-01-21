@@ -41,9 +41,9 @@ jobs:
       - name: Configure
         env:
           CC: ${{ matrix.config.compiler }}
+          CFLAGS: -g -O -fsanitize=undefined -fno-sanitize-recover=all
+          LDFLAGS: -g -fsanitize=undefined -fno-sanitize-recover=all
         run: |
-          CFLAGS="-g -O -fsanitize=undefined -fno-sanitize-recover=all"
-          LDFLAGS="-g -fsanitize=undefined -fno-sanitize-recover=all"
           ./autogen.sh
 
       - name: Build
