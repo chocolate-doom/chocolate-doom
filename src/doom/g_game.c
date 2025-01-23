@@ -3466,6 +3466,7 @@ static void G_AddDemoFooter(void)
 {
     byte *data;
     size_t size;
+    long filepos;
 
     MEMFILE *stream = mem_fopen_write();
 
@@ -3483,7 +3484,7 @@ static void G_AddDemoFooter(void)
     mem_fwrite(&header, 1, sizeof(header), stream);
     mem_fseek(stream, 0, MEM_SEEK_END);
 
-    long filepos = sizeof(wadinfo_t);
+    filepos = sizeof(wadinfo_t);
     filepos = WriteFileInfo("PORTNAME", strlen(PACKAGE_STRING), filepos, stream);
     filepos = WriteFileInfo(NULL, strlen(DEMO_FOOTER_SEPARATOR), filepos, stream);
     filepos = WriteFileInfo("CMDLINE", size, filepos, stream);
