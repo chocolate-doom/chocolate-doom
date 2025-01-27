@@ -980,10 +980,6 @@ void P_KillMobj(mobj_t * source, mobj_t * target)
     if (target->type == MT_POD)
         target->flags |= MF_TRANSLUCENT;
 
-    // [crispy] Undo Mummyleader translucency
-    if (target->type == MT_MUMMYLEADER)
-        target->flags &= ~MF_TRANSLUCENT;
-
     if (target->health < -(target->info->spawnhealth >> 1)
         && target->info->xdeathstate)
     {                           // Extreme death

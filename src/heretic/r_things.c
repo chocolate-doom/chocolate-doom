@@ -752,7 +752,24 @@ void R_AddSprites(sector_t * sec)
 
 
     for (thing = sec->thinglist; thing; thing = thing->snext)
+    {
+        // [crispy] draw base frame and translucent current frame for mummyleader attack
+        if (crispy->translucency & TRANSLUCENCY_MISSILE)
+        {
+            if (thing->state->sprite == SPR_MUMM && thing->frame == (24 | FF_FULLBRIGHT))
+            {
+                thing->frame = (thing->frame & FF_FRAMEMASK) - 1; // [crispy] set attack stance without fire
+                R_ProjectSprite(thing);
+                thing->frame = 24 | FF_FULLBRIGHT; // [crispy] restore attack stance with fire
+                thing->flags |= MF_TRANSLUCENT;
+            }
+        }
         R_ProjectSprite(thing);
+        if (thing->state->sprite == SPR_MUMM && thing->flags & MF_TRANSLUCENT)
+        {
+            thing->flags &= ~MF_TRANSLUCENT;
+        }
+    }
 }
 
 
