@@ -182,7 +182,7 @@ void P_MovePlayer (player_t* player)
     else
     // [crispy] in-air movement is only possible with jumping enabled
     if (cmd->sidemove && critical->jump)
-            P_Thrust(player, player->mo->angle, FRACUNIT >> 8);
+            P_Thrust(player, player->mo->angle-ANG90, FRACUNIT >> 8);
 
     if ( (cmd->forwardmove || cmd->sidemove) 
 	 && player->mo->state == &states[S_PLAY] )
