@@ -491,24 +491,15 @@ void P_PlayerThink (player_t* player)
 	player->bonuscount--;
 
     
-    // [crispy] A11Y
-    if (!a11y_invul_colormap)
-    {
-	if (player->powers[pw_invulnerability] || player->powers[pw_infrared])
-	    player->fixedcolormap = 1;
-	else
-	    player->fixedcolormap = 0;
-    }
-    else
     // Handling colormaps.
     if (player->powers[pw_invulnerability])
     {
 	if (player->powers[pw_invulnerability] > 4*32
 	    || (player->powers[pw_invulnerability]&8) )
-	    player->fixedcolormap = INVERSECOLORMAP;
+	    player->fixedcolormap = a11y_invul_colormap ? INVERSECOLORMAP : 1; // [crispy] A11Y
 	else
 	    // [crispy] Visor effect when Invulnerability is fading out
-	    player->fixedcolormap = player->powers[pw_infrared] ? 1 : 0;
+	    player->fixedcolormap = (player->powers[pw_infrared] && a11y_invul_colormap) ? 1 : 0; // [crispy] A11Y
     }
     else if (player->powers[pw_infrared])	
     {
