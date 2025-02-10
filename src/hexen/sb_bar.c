@@ -101,6 +101,15 @@ int ArtifactFlash;
 // [crispy] for widescreen status bar background
 pixel_t *st_backing_screen;
 
+// [crispy] for conditional drawing of status bar elements
+void (*V_DrawSBPatch)(int x, int y, patch_t *patch) = V_DrawPatch;
+
+// [crispy] on/off status bar translucency
+void SB_Translucent(boolean translucent)
+{
+    V_DrawSBPatch = translucent ? V_DrawAltTLPatch : V_DrawPatch;
+}
+
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static int DisplayTicker = 0;
@@ -455,32 +464,32 @@ static void DrINumber(signed int val, int x, int y)
         if (val > 9)
         {
             patch = PatchINumbers[val / 10];
-            V_DrawPatch(x + 8, y, patch);
-            V_DrawPatch(x, y, PatchNEGATIVE);
+            V_DrawSBPatch(x + 8, y, patch);
+            V_DrawSBPatch(x, y, PatchNEGATIVE);
         }
         else
         {
-            V_DrawPatch(x + 8, y, PatchNEGATIVE);
+            V_DrawSBPatch(x + 8, y, PatchNEGATIVE);
         }
         val = val % 10;
         patch = PatchINumbers[val];
-        V_DrawPatch(x + 16, y, patch);
+        V_DrawSBPatch(x + 16, y, patch);
         return;
     }
     if (val > 99)
     {
         patch = PatchINumbers[val / 100];
-        V_DrawPatch(x, y, patch);
+        V_DrawSBPatch(x, y, patch);
     }
     val = val % 100;
     if (val > 9 || oldval > 99)
     {
         patch = PatchINumbers[val / 10];
-        V_DrawPatch(x + 8, y, patch);
+        V_DrawSBPatch(x + 8, y, patch);
     }
     val = val % 10;
     patch = PatchINumbers[val];
-    V_DrawPatch(x + 16, y, patch);
+    V_DrawSBPatch(x + 16, y, patch);
 }
 
 //==========================================================================
@@ -505,18 +514,18 @@ static void DrRedINumber(signed int val, int x, int y)
     {
         patch =
             W_CacheLumpNum(W_GetNumForName("inred0") + val / 100, PU_CACHE);
-        V_DrawPatch(x, y, patch);
+        V_DrawSBPatch(x, y, patch);
     }
     val = val % 100;
     if (val > 9 || oldval > 99)
     {
         patch =
             W_CacheLumpNum(W_GetNumForName("inred0") + val / 10, PU_CACHE);
-        V_DrawPatch(x + 8, y, patch);
+        V_DrawSBPatch(x + 8, y, patch);
     }
     val = val % 10;
     patch = W_CacheLumpNum(W_GetNumForName("inred0") + val, PU_CACHE);
-    V_DrawPatch(x + 16, y, patch);
+    V_DrawSBPatch(x + 16, y, patch);
 }
 
 //==========================================================================
@@ -580,18 +589,18 @@ static void DrSmallNumber(int val, int x, int y)
     if (val > 99)
     {
         patch = PatchSmNumbers[val / 100];
-        V_DrawPatch(x, y, patch);
+        V_DrawSBPatch(x, y, patch);
         patch = PatchSmNumbers[(val % 100) / 10];
-        V_DrawPatch(x + 4, y, patch);
+        V_DrawSBPatch(x + 4, y, patch);
     }
     else if (val > 9)
     {
         patch = PatchSmNumbers[val / 10];
-        V_DrawPatch(x + 4, y, patch);
+        V_DrawSBPatch(x + 4, y, patch);
     }
     val %= 10;
     patch = PatchSmNumbers[val];
-    V_DrawPatch(x + 8, y, patch);
+    V_DrawSBPatch(x + 8, y, patch);
 }
 
 /*
@@ -900,13 +909,13 @@ static void DrawAnimatedIcons(void)
             {
                 if (hitCenterFrame && (frame != 15 && frame != 0))
                 {
-                    V_DrawPatch(spinfly_x, 19,
+                    V_DrawSBPatch(spinfly_x, 19,
                                 W_CacheLumpNum(SpinFlylump + 15,
                                                 PU_CACHE));
                 }
                 else
                 {
-                    V_DrawPatch(spinfly_x, 19,
+                    V_DrawSBPatch(spinfly_x, 19,
                                 W_CacheLumpNum(SpinFlylump + frame,
                                                 PU_CACHE));
                     hitCenterFrame = false;
@@ -916,14 +925,14 @@ static void DrawAnimatedIcons(void)
             {
                 if (!hitCenterFrame && (frame != 15 && frame != 0))
                 {
-                    V_DrawPatch(spinfly_x, 19,
+                    V_DrawSBPatch(spinfly_x, 19,
                                 W_CacheLumpNum(SpinFlylump + frame,
                                                 PU_CACHE));
                     hitCenterFrame = false;
                 }
                 else
                 {
-                    V_DrawPatch(spinfly_x, 19,
+                    V_DrawSBPatch(spinfly_x, 19,
                                 W_CacheLumpNum(SpinFlylump + 15,
                                                 PU_CACHE));
                     hitCenterFrame = true;
@@ -943,7 +952,7 @@ static void DrawAnimatedIcons(void)
             || !(CPlayer->powers[pw_speed] & 16))
         {
             frame = (leveltime / 3) & 15;
-            V_DrawPatch(spinspeed_x, 19,
+            V_DrawSBPatch(spinspeed_x, 19,
                         W_CacheLumpNum(SpinSpeedLump + frame,
                                         PU_CACHE));
         }
@@ -961,7 +970,7 @@ static void DrawAnimatedIcons(void)
             || !(CPlayer->powers[pw_invulnerability] & 16))
         {
             frame = (leveltime / 3) & 15;
-            V_DrawPatch(spindefense_x, 19,
+            V_DrawSBPatch(spindefense_x, 19,
                         W_CacheLumpNum(SpinDefenseLump + frame,
                                         PU_CACHE));
         }
@@ -979,7 +988,7 @@ static void DrawAnimatedIcons(void)
             || !(CPlayer->powers[pw_minotaur] & 16))
         {
             frame = (leveltime / 3) & 15;
-            V_DrawPatch(spinminotaur_x, 19,
+            V_DrawSBPatch(spinminotaur_x, 19,
                         W_CacheLumpNum(SpinMinotaurLump + frame,
                                         PU_CACHE));
         }
@@ -1477,15 +1486,26 @@ void DrawFullScreenStuff(void)
     int i;
     int x;
     int temp;
+    int xPosGem1; // [crispy] for intersect detection
+    int xPosManaPatch2; // [crispy] for intersect detection
+    int sboffset; // [crispy] to apply WIDESCREENDELTA
 
     UpdateState |= I_FULLSCRN;
+    
+    // [crispy] check for widescreen HUD
+    if (screenblocks == 12 || screenblocks >= 15)
+    {
+        sboffset = WIDESCREENDELTA;
+    }
+    else
+    {
+        sboffset = 0;
+    }
+
     // [crispy] Crispy Hud
-    // TODO Do not always render, only if update needed
-    if(screenblocks == 12)
+    if(screenblocks >= 13)
     {
         int j, k;
-        int xPosGem1;
-        int xPosManaPatch2;
         patch_t *manaPatch1, *manaPatch2;
         patch_t *manaVialPatch1, *manaVialPatch2;
 
@@ -1494,17 +1514,17 @@ void DrawFullScreenStuff(void)
         manaVialPatch1 = NULL;
         manaVialPatch2 = NULL;
         xPosGem1 = 40;
-        xPosManaPatch2 = 75 - WIDESCREENDELTA;
+        xPosManaPatch2 = 75 - sboffset;
 
         // Health
         temp = CPlayer->mo->health;
         if (temp >= 25)
         {
-            DrINumber(temp, 5 - WIDESCREENDELTA, 182);
+            DrINumber(temp, 5 - sboffset, 182);
         }
         else
         {
-            DrRedINumber(temp, 5 - WIDESCREENDELTA, 182);
+            DrRedINumber(temp, 5 - sboffset, 182);
         }
         // Armor
         temp = AutoArmorSave[CPlayer->class]
@@ -1513,7 +1533,7 @@ void DrawFullScreenStuff(void)
             CPlayer->armorpoints[ARMOR_HELMET] +
             CPlayer->armorpoints[ARMOR_AMULET];
             oldarmor = temp;
-        DrINumber(FixedDiv(temp, 5 * FRACUNIT) >> FRACBITS, 288 + WIDESCREENDELTA, 182);
+        DrINumber(FixedDiv(temp, 5 * FRACUNIT) >> FRACBITS, 288 + sboffset, 182);
         // Frags
         if (deathmatch)
         {
@@ -1525,25 +1545,25 @@ void DrawFullScreenStuff(void)
                     temp += CPlayer->frags[i];
                 }
             }
-            DrINumber(temp, 5 - WIDESCREENDELTA, 165);
+            DrINumber(temp, 5 - sboffset, 165);
         }
         // Items, Itemflash and Selection Bar
         if (!inventory)
         {
             if (ArtifactFlash)
             {
-                V_DrawPatch(113 - WIDESCREENDELTA, 170, W_CacheLumpNum(W_GetNumForName("useartia")
+                V_DrawSBPatch(113 - sboffset, 170, W_CacheLumpNum(W_GetNumForName("useartia")
                                                      + ArtifactFlash - 1, PU_CACHE));
                 ArtifactFlash--;
             }
             else if (CPlayer->readyArtifact > 0)
             {
-                V_DrawPatch(108 - WIDESCREENDELTA, 169,
+                V_DrawSBPatch(108 - sboffset, 169,
                             W_CacheLumpName(patcharti[CPlayer->readyArtifact],
                                             PU_CACHE));
                 if (CPlayer->inventory[inv_ptr].count > 1)
                 {
-                    DrSmallNumber(CPlayer->inventory[inv_ptr].count, 127 - WIDESCREENDELTA, 190);
+                    DrSmallNumber(CPlayer->inventory[inv_ptr].count, 127 - sboffset, 190);
                 }
             }
         }
@@ -1552,12 +1572,13 @@ void DrawFullScreenStuff(void)
             x = inv_ptr - curpos;
             for (i = 0; i < 7; i++)
             {
-                V_DrawPatch(50 + i * 31, 168, W_CacheLumpName("ARTIBOX",
+                V_DrawSBPatch(50 + i * 31, 168, W_CacheLumpName("ARTIBOX",
                                                                 PU_CACHE));
+                SB_Translucent(false); // listed artifacts are always opaque
                 if (CPlayer->inventorySlotNum > x + i
                     && CPlayer->inventory[x + i].type != arti_none)
                 {
-                    V_DrawPatch(48 + i * 31, 167,
+                    V_DrawSBPatch(48 + i * 31, 167,
                                 W_CacheLumpName(patcharti
                                                 [CPlayer->inventory[x + i].type],
                                                 PU_CACHE));
@@ -1567,16 +1588,18 @@ void DrawFullScreenStuff(void)
                                       66 + i * 31, 189);
                     }
                 }
+                // [crispy] check for translucent HUD
+                SB_Translucent(TRANSLUCENT_HUD);
             }
-            V_DrawPatch(48 + curpos * 31, 167, PatchSELECTBOX);
+            V_DrawSBPatch(48 + curpos * 31, 167, PatchSELECTBOX);
             if (x != 0)
             {
-                V_DrawPatch(xPosGem1, 167, !(leveltime & 4) ? PatchINVLFGEM1 :
+                V_DrawSBPatch(xPosGem1, 167, !(leveltime & 4) ? PatchINVLFGEM1 :
                             PatchINVLFGEM2);
             }
             if (CPlayer->inventorySlotNum - x > 7)
             {
-                V_DrawPatch(268, 167, !(leveltime & 4) ?
+                V_DrawSBPatch(268, 167, !(leveltime & 4) ?
                             PatchINVRTGEM1 : PatchINVRTGEM2);
             }
             // Check for Intersect
@@ -1587,7 +1610,7 @@ void DrawFullScreenStuff(void)
         }
         // Mana
         temp = CPlayer->mana[0];
-        DrSmallNumber(temp, 44 - WIDESCREENDELTA, 187);
+        DrSmallNumber(temp, 44 - sboffset, 187);
         manaVialPatch1 = (patch_t *) 1; // force a vial update
         if (temp == 0)
         {                       // Draw Dim Mana icon
@@ -1598,7 +1621,7 @@ void DrawFullScreenStuff(void)
             manaPatch1 = PatchMANABRIGHT1;
         }
         temp = CPlayer->mana[1];
-        DrSmallNumber(temp, 76 - WIDESCREENDELTA, 187);
+        DrSmallNumber(temp, 76 - sboffset, 187);
         manaVialPatch1 = (patch_t *) 1; // force a vial update
         if (temp == 0)
         {                       // Draw Dim Mana icon
@@ -1649,66 +1672,66 @@ void DrawFullScreenStuff(void)
                 manaPatch2 = PatchMANABRIGHT2;
             }
         }
-        V_DrawPatch(42 - WIDESCREENDELTA, 170, manaPatch1);
-        V_DrawPatch(xPosManaPatch2, 170, manaPatch2);
-        V_DrawPatch(59 - WIDESCREENDELTA, 170, manaVialPatch1);
+        V_DrawSBPatch(42 - sboffset, 170, manaPatch1);
+        V_DrawSBPatch(xPosManaPatch2, 170, manaPatch2);
+        V_DrawSBPatch(59 - sboffset, 170, manaVialPatch1);
         for (i = 171; i < 193 - (22 * CPlayer->mana[0]) / MAX_MANA; i++)
         {
          for (j = 0; j <= crispy->hires; j++)
           for (k = 0; k <= crispy->hires; k++)
           {
             I_VideoBuffer[SCREENWIDTH * ((i << crispy->hires) + j)
-                          + (60 << crispy->hires) + k] = 0;
+                          + ((60 + (sboffset > 0 ? 0 : WIDESCREENDELTA))<< crispy->hires) + k] = 0;
             I_VideoBuffer[SCREENWIDTH * ((i << crispy->hires) + j)
-                          + (61 << crispy->hires) + k] = 0;
+                          + ((61 + (sboffset > 0 ? 0 : WIDESCREENDELTA))<< crispy->hires) + k] = 0;
             I_VideoBuffer[SCREENWIDTH * ((i << crispy->hires) + j)
-                          + (62 << crispy->hires) + k] = 0;
+                          + ((62 + (sboffset > 0 ? 0 : WIDESCREENDELTA))<< crispy->hires) + k] = 0;
           }
         }
-        V_DrawPatch(67 - WIDESCREENDELTA, 170, manaVialPatch2);
+        V_DrawSBPatch(67 - sboffset, 170, manaVialPatch2);
         for (i = 171; i < 193 - (22 * CPlayer->mana[1]) / MAX_MANA; i++)
         {
          for (j = 0; j <= crispy->hires; j++)
           for (k = 0; k <= crispy->hires; k++)
           {
             I_VideoBuffer[SCREENWIDTH * ((i << crispy->hires) + j)
-                          + (68 << crispy->hires) + k] = 0;
+                          + ((68 + (sboffset > 0 ? 0 : WIDESCREENDELTA))<< crispy->hires) + k] = 0;
             I_VideoBuffer[SCREENWIDTH * ((i << crispy->hires) + j)
-                          + (69 << crispy->hires) + k] = 0;
+                          + ((69 + (sboffset > 0 ? 0 : WIDESCREENDELTA))<< crispy->hires) + k] = 0;
             I_VideoBuffer[SCREENWIDTH * ((i << crispy->hires) + j)
-                          + (70 << crispy->hires) + k] = 0;
+                          + ((70 + (sboffset > 0 ? 0 : WIDESCREENDELTA))<< crispy->hires) + k] = 0;
           }
         }
         // Weapon Pieces
         if (CPlayer->pieces == 7)
         {
-            V_DrawPatch(228 + WIDESCREENDELTA, 168, PatchWEAPONFULL);
+            V_DrawSBPatch(228 + sboffset, 168, PatchWEAPONFULL);
         }
         else
         {
-            V_DrawPatch(228 + WIDESCREENDELTA, 168, PatchWEAPONSLOT);
+            V_DrawSBPatch(228 + sboffset, 168, PatchWEAPONSLOT);
             if (CPlayer->pieces & WPIECE1)
             {
-                V_DrawPatch(PieceX[PlayerClass[consoleplayer]][0] + 38 + WIDESCREENDELTA, 168, PatchPIECE1);
+                V_DrawSBPatch(PieceX[PlayerClass[consoleplayer]][0] + 38 + sboffset, 168, PatchPIECE1);
             }
             if (CPlayer->pieces & WPIECE2)
             {
-                V_DrawPatch(PieceX[PlayerClass[consoleplayer]][1] + 38 + WIDESCREENDELTA, 168, PatchPIECE2);
+                V_DrawSBPatch(PieceX[PlayerClass[consoleplayer]][1] + 38 + sboffset, 168, PatchPIECE2);
             }
             if (CPlayer->pieces & WPIECE3)
             {
-                V_DrawPatch(PieceX[PlayerClass[consoleplayer]][2] + 38 + WIDESCREENDELTA, 168, PatchPIECE3);
+                V_DrawSBPatch(PieceX[PlayerClass[consoleplayer]][2] + 38 + sboffset, 168, PatchPIECE3);
             }
         }
         return;
     }
     if (CPlayer->mo->health > 0)
     {
-        DrBNumber(CPlayer->mo->health, 5, 180);
+        DrBNumber(CPlayer->mo->health, 5 - sboffset, 180);
     }
     else
     {
-        DrBNumber(0, 5, 180);
+        DrBNumber(0, 5 - sboffset, 180);
     }
     if (deathmatch)
     {
@@ -1720,19 +1743,19 @@ void DrawFullScreenStuff(void)
                 temp += CPlayer->frags[i];
             }
         }
-        DrINumber(temp, 45, 185);
+        DrINumber(temp, 45 - sboffset, 185);
     }
     if (!inventory)
     {
         if (CPlayer->readyArtifact > 0)
         {
-            V_DrawTLPatch(286, 170, W_CacheLumpName("ARTIBOX", PU_CACHE));
-            V_DrawPatch(284, 169,
+            V_DrawTLPatch(286 + sboffset, 170, W_CacheLumpName("ARTIBOX", PU_CACHE));
+            V_DrawPatch(284 + sboffset, 169,
                         W_CacheLumpName(patcharti[CPlayer->readyArtifact],
                                         PU_CACHE));
             if (CPlayer->inventory[inv_ptr].count > 1)
             {
-                DrSmallNumber(CPlayer->inventory[inv_ptr].count, 302, 192);
+                DrSmallNumber(CPlayer->inventory[inv_ptr].count, 302 + sboffset, 192);
             }
         }
     }

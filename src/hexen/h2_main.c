@@ -1109,6 +1109,8 @@ static void DrawAndBlit(void)
             {
                 break;
             }
+            // [crispy] check for translucent HUD
+            SB_Translucent(TRANSLUCENT_HUD && (!automapactive || crispy->automapoverlay));
             if (automapactive && !crispy->automapoverlay)
             {
                 // [crispy] update automap while playing
@@ -1128,6 +1130,7 @@ static void DrawAndBlit(void)
             UpdateState |= I_FULLVIEW;
             SB_Drawer();
             CrispyDrawStats();
+            SB_Translucent(false);
             break;
         case GS_INTERMISSION:
             IN_Drawer();
@@ -1158,8 +1161,13 @@ static void DrawAndBlit(void)
         }
     }
 
+    // [crispy] check for translucent HUD
+    SB_Translucent(TRANSLUCENT_HUD && (!automapactive || crispy->automapoverlay));
+
     // Draw current message
     DrawMessage();
+
+    SB_Translucent(false);
 
     // Draw Menu
     MN_Drawer();

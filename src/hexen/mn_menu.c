@@ -599,7 +599,7 @@ void MN_DrTextA(const char *text, int x, int y)
         else
         {
             p = W_CacheLumpNum(FontABaseLump + c - 33, PU_CACHE);
-            V_DrawPatch(x, y, p);
+            V_DrawSBPatch(x, y, p);
             x += SHORT(p->width) - 1;
         }
     }
@@ -627,7 +627,7 @@ void MN_DrTextAYellow(const char *text, int x, int y)
         else
         {
             p = W_CacheLumpNum(FontAYellowBaseLump + c - 33, PU_CACHE);
-            V_DrawPatch(x, y, p);
+            V_DrawSBPatch(x, y, p);
             x += SHORT(p->width) - 1;
         }
     }
@@ -1120,7 +1120,7 @@ static void DrawOptionsMenu(void)
 
 static void DrawOptions2Menu(void)
 {
-    DrawSlider(&Options2Menu, 1, 9, BETWEEN(3, 11, screenblocks) - 3);
+    DrawSlider(&Options2Menu, 1, 14, screenblocks - 3);
     DrawSlider(&Options2Menu, 3, 16, snd_MaxVolume);
     DrawSlider(&Options2Menu, 5, 16, snd_MusicVolume);
 }
@@ -1569,7 +1569,7 @@ static void SCScreenSize(int option)
 {
     if (option == RIGHT_DIR)
     {
-        if (screenblocks < 12)
+        if (screenblocks < 16)
         {
             screenblocks++;
         }
