@@ -295,7 +295,7 @@ static void OpenGameSelectDialog(GameSelectCallback callback)
         // Do we have any IWADs for this game installed?
         // If so, add a button.
 
-        iwads = D_FindAllIWADs(mission_configs[i].mask);
+        iwads = D_FindAllIWADs(mission_configs[i].mask | -1u); // [crispy] always all games
 
         if (iwads[0] != NULL)
         {
