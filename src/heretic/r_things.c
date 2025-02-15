@@ -520,7 +520,7 @@ void R_DrawVisSprite(vissprite_t * vis, int x1, int x2)
 
     colfunc = basecolfunc;
 #ifdef CRISPY_TRUECOLOR
-    blendfunc = I_BlendOverTinttab;
+    blendfunc = I_BlendOverAltTinttab;
 #endif
 }
 
@@ -715,7 +715,7 @@ void R_ProjectSprite(mobj_t * thing)
     {
         // [crispy] not using additive blending (I_BlendAdd) here 
         // to preserve look & feel of original Heretic's translucency
-        vis->blendfunc = I_BlendOverTinttab;
+        vis->blendfunc = I_BlendOverAltTinttab;
     }
 #endif
 }
@@ -891,7 +891,7 @@ void R_DrawPSprite(pspdef_t * psp, int psyoffset, int translucent) // [crispy] y
                                               spritelights[MAXLIGHTSCALE - 1];
         vis->mobjflags |= MF_SHADOW;
 #ifdef CRISPY_TRUECOLOR
-        vis->blendfunc = I_BlendOverTinttab;
+        vis->blendfunc = I_BlendOverAltTinttab;
 #endif
     }
     else if (fixedcolormap)

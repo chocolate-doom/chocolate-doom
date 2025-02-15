@@ -26,6 +26,12 @@
 
 const uint32_t (*blendfunc) (const uint32_t fg, const uint32_t bg) = I_BlendOverTranmap;
 
+const uint32_t (*I_BlendOverTinttab) (const uint32_t fg, const uint32_t bg); // [crispy] points to function for heretic/hexen normal blending
+const uint32_t (*I_BlendOverAltTinttab) (const uint32_t fg, const uint32_t bg); // [crispy] points to function for heretic/hexen alternative blending
+
+static const uint32_t I_BlendWeakOverTinttab (const uint32_t bg, const uint32_t fg);
+static const uint32_t I_BlendStrongOverTinttab (const uint32_t bg, const uint32_t fg);
+
 typedef union
 {
     uint32_t i;
@@ -36,6 +42,20 @@ typedef union
         uint8_t a;
     };
 } tcpixel_t;
+
+void I_InitTinttab (GameMission_t mission)
+{
+    if (mission == heretic)
+    {
+        I_BlendOverTinttab = I_BlendStrongOverTinttab;
+        I_BlendOverAltTinttab = I_BlendWeakOverTinttab;
+    }
+    else
+    {
+        I_BlendOverTinttab = I_BlendWeakOverTinttab;
+        I_BlendOverAltTinttab = I_BlendStrongOverTinttab;
+    }
+}
 
 const uint32_t I_BlendAdd (const uint32_t bg_i, const uint32_t fg_i)
 {
@@ -87,14 +107,14 @@ const uint32_t I_BlendOverTranmap (const uint32_t bg, const uint32_t fg)
     return I_BlendOver(bg, fg, 0xA8); // 168 (66% opacity)
 }
 
-// [crispy] TINTTAB blending emulation, used for Heretic and Hexen
-const uint32_t I_BlendOverTinttab (const uint32_t bg, const uint32_t fg)
+// [crispy] TINTTAB blending emulation, Heretic AltTinttab - Hexen Tinttab
+static const uint32_t I_BlendWeakOverTinttab (const uint32_t bg, const uint32_t fg)
 {
     return I_BlendOver(bg, fg, 0x60); // 96 (38% opacity)
 }
 
-// [crispy] More opaque ("Alt") TINTTAB blending emulation, used for Hexen's MF_ALTSHADOW drawing
-const uint32_t I_BlendOverAltTinttab (const uint32_t bg, const uint32_t fg)
+// [crispy] TINTTAB blending emulation, Heretic Tinttab - Hexen AltTinttab
+static const uint32_t I_BlendStrongOverTinttab (const uint32_t bg, const uint32_t fg)
 {
     return I_BlendOver(bg, fg, 0x8E); // 142 (56% opacity)
 }

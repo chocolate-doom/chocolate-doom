@@ -465,6 +465,8 @@ void R_InitTranslationTables(void)
 
 #ifndef CRISPY_TRUECOLOR
     V_LoadTintTable();
+#else
+    I_InitTinttab((GameMission_t) hexen);
 #endif
 
     // Allocate translation tables
