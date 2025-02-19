@@ -18,6 +18,7 @@
 #include "h2def.h"
 #include "m_random.h"
 #include "p_local.h"
+#include "a11y.h" // [crispy] A11Y
 
 //============================================================================
 //
@@ -100,6 +101,10 @@ void T_Light(thinker_t *thinker)
         default:
             break;
     }
+    
+    // [crispy] A11Y
+    if (a11y_sector_lighting || light->type == LITE_FADE)
+        light->sector->rlightlevel = light->sector->lightlevel;
 }
 
 //============================================================================
@@ -147,6 +152,7 @@ boolean EV_SpawnLight(line_t * line, byte * arg, lighttype_t type)
         light->type = type;
         light->sector = sec;
         light->count = 0;
+        light->value1 = 0; // [crispy] initialize value1 for A11Y usage
         rtn = true;
         switch (type)
         {
@@ -222,6 +228,17 @@ boolean EV_SpawnLight(line_t * line, byte * arg, lighttype_t type)
                 rtn = false;
                 break;
         }
+
+        // [crispy] A11Y
+        if (!a11y_sector_lighting && type >= LITE_GLOW) // [crispy] for glow, flicker and strobe
+        {
+            light->sector->rlightlevel = MAX(light->sector->rlightlevel, light->value1);
+        }
+        else
+        {
+            light->sector->rlightlevel = light->sector->lightlevel;
+        }            
+            
         if (think)
         {
             P_AddThinker(&light->thinker);
@@ -257,6 +274,10 @@ void T_Phase(thinker_t *thinker)
     phase_t *phase = (phase_t *) thinker;
     phase->index = (phase->index + 1) & 63;
     phase->sector->lightlevel = phase->base + PhaseTable[phase->index];
+
+    // [crispy] A11Y
+    if (a11y_sector_lighting)
+        phase->sector->rlightlevel = phase->sector->lightlevel;
 }
 
 //==========================================================================
@@ -283,6 +304,16 @@ void P_SpawnPhasedLight(sector_t * sector, int base, int index)
     phase->base = base & 255;
     sector->lightlevel = phase->base + PhaseTable[phase->index];
     phase->thinker.function = T_Phase;
+   
+    // [crispy] A11Y
+    if (!a11y_sector_lighting)
+    {
+        phase->sector->rlightlevel = MAX(phase->base + MAXPHASE, phase->sector->rlightlevel);
+    }
+    else
+    {
+        phase->sector->rlightlevel = phase->sector->lightlevel;
+    }
 
     sector->special = 0;
 }

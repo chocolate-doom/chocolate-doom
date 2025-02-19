@@ -61,6 +61,8 @@
 #define MELEERANGE (64*FRACUNIT)
 #define MISSILERANGE (32*64*FRACUNIT)
 
+#define MAXPHASE 128 // [crispy] Max value out of the p_lights.c PhaseTable
+
 typedef enum
 {
     DI_EAST,

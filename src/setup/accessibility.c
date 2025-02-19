@@ -40,11 +40,17 @@ void AccessibilitySettings(TXT_UNCAST_ARG(widget), void *user_data)
 
     TXT_SetWindowHelpURL(window, WINDOW_HELP_URL);
 
-    if (gamemission == doom || gamemission == heretic)
+    if (gamemission == doom || gamemission == heretic || gamemission == hexen)
     {
         TXT_AddWidgets(window,
                       TXT_NewCheckBox("Flickering Sector Lighting",
                                       &a11y_sector_lighting),
+                      NULL);
+    }
+
+    if (gamemission == doom || gamemission == heretic)
+    {
+        TXT_AddWidgets(window,
                       TXT_NewCheckBox("Weapon Flash Lighting",
                                       &a11y_weapon_flash),
                       TXT_NewCheckBox("Weapon Flash Sprite",
