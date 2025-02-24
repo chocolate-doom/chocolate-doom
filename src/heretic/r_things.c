@@ -476,7 +476,12 @@ void R_DrawVisSprite(vissprite_t * vis, int x1, int x2)
     {
     	if ((crispy->translucency & TRANSLUCENCY_MISSILE) ||
             (vis->psprite && crispy->translucency & TRANSLUCENCY_ITEM))
-	        colfunc = tlcolfunc;
+            {
+	            colfunc = tlcolfunc;
+            }
+#ifdef CRISPY_TRUECOLOR
+            blendfunc = vis->blendfunc;
+#endif
     }
     
     dc_iscale = abs(vis->xiscale) >> detailshift;
@@ -711,7 +716,7 @@ void R_ProjectSprite(mobj_t * thing)
     vis->brightmap = R_BrightmapForSprite(thing->state - states);
 
 #ifdef CRISPY_TRUECOLOR
-    if (thing->flags & MF_SHADOW)
+    if (thing->flags & MF_SHADOW || thing->flags & MF_TRANSLUCENT) 
     {
         // [crispy] not using additive blending (I_BlendAdd) here 
         // to preserve look & feel of original Heretic's translucency
@@ -916,6 +921,9 @@ void R_DrawPSprite(pspdef_t * psp, int psyoffset, int translucent) // [crispy] y
     if (translucent)
     {
         vis->mobjflags |= MF_TRANSLUCENT;
+#ifdef CRISPY_TRUECOLOR
+        vis->blendfunc = I_BlendOverAltTinttab;
+#endif
     }
 
     // [crispy] interpolate weapon bobbing
