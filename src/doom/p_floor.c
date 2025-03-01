@@ -410,7 +410,8 @@ EV_DoFloor
 		    {
 			sec = getSector(secnum,i,1);
 
-			if (sec->floorheight == floor->floordestheight)
+			if (gameversion < exe_doom_1_5 ||
+			    sec->floorheight == floor->floordestheight)
 			{
 			    floor->texture = sec->floorpic;
 			    floor->newspecial = sec->special;
@@ -421,7 +422,8 @@ EV_DoFloor
 		    {
 			sec = getSector(secnum,i,0);
 
-			if (sec->floorheight == floor->floordestheight)
+			if (gameversion < exe_doom_1_5 ||
+			    sec->floorheight == floor->floordestheight)
 			{
 			    floor->texture = sec->floorpic;
 			    floor->newspecial = sec->special;
