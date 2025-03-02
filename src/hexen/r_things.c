@@ -61,6 +61,9 @@ boolean LevelUseFullBright;
 ===============================================================================
 */
 
+// [crispy] check if player sprite is translucent due to active power
+static boolean R_CheckPowerBasedTranslucency(void);
+
 // variables used to look up and range check thing_t sprites patches
 spritedef_t *sprites;
 int numsprites;
@@ -428,6 +431,18 @@ void R_DrawVisSprite(vissprite_t * vis, int x1, int x2)
             + vis->class * ((maxplayers - 1) * 256) +
             ((vis->mobjflags & MF_TRANSLATION) >> (MF_TRANSSHIFT - 8));
     }
+    // [crispy] translucent sprites
+    else if (crispy->translucency && vis->mobjflags & MF_TRANSLUCENT)
+    {
+    	if ((crispy->translucency & TRANSLUCENCY_MISSILE) ||
+            (vis->psprite && crispy->translucency & TRANSLUCENCY_ITEM))
+            {
+	            colfunc = tlcolfunc;
+            }
+#ifdef CRISPY_TRUECOLOR
+            blendfunc = vis->blendfunc;
+#endif
+    }
 
     dc_iscale = abs(vis->xiscale) >> detailshift;
     dc_texturemid = vis->texturemid;
@@ -670,7 +685,7 @@ void R_ProjectSprite(mobj_t * thing)
 #ifdef CRISPY_TRUECOLOR
     // [crispy] not using additive blending (I_BlendAdd) here for full
     // bright states to preserve look & feel of original Hexen's translucency
-    if (thing->flags & MF_SHADOW)
+    if (thing->flags & MF_SHADOW || thing->flags & MF_TRANSLUCENT)
     {
         vis->blendfunc = I_BlendOverTinttab;
     }
@@ -735,7 +750,7 @@ int PSpriteSY[NUMCLASSES][NUMWEAPONS] = {
 
 boolean pspr_interp = true; // [crispy] interpolate weapon bobbing
 
-void R_DrawPSprite(pspdef_t * psp)
+void R_DrawPSprite(pspdef_t * psp, int translucent) // [crispy] translucency for weapon flash translucency
 {
     fixed_t tx;
     int x1, x2;
@@ -869,6 +884,15 @@ void R_DrawPSprite(pspdef_t * psp)
     }
     vis->brightmap = R_BrightmapForState(psp->state - states);
 
+    // [crispy] translucent weapon flash sprites
+    if (translucent)
+    {
+        vis->mobjflags |= MF_TRANSLUCENT;
+#ifdef CRISPY_TRUECOLOR
+        vis->blendfunc = I_BlendOverTinttab;
+#endif        
+    }
+
     // [crispy] interpolate weapon bobbing
     if (crispy->uncapped)
     {
@@ -918,6 +942,7 @@ void R_DrawPSprite(pspdef_t * psp)
 void R_DrawPlayerSprites(void)
 {
     int i, lightnum;
+    int tmpframe, drawbase = 0; // [crispy] for drawing base frames
     pspdef_t *psp;
 
 //
@@ -942,11 +967,67 @@ void R_DrawPlayerSprites(void)
 // add all active psprites
 //
     for (i = 0, psp = viewplayer->psprites; i < NUMPSPRITES; i++, psp++)
+    {
         if (psp->state)
-            R_DrawPSprite(psp);
+        {
+            // [crispy] draw base frame for transparent or deactivated weapon flashes
+            if (crispy->translucency & TRANSLUCENCY_ITEM && !R_CheckPowerBasedTranslucency())
+            {
+                tmpframe = psp->state->frame;
 
+                switch (psp->state->sprite)
+                {         
+                    case SPR_MWND:
+                        if (tmpframe == (1 | FF_FULLBRIGHT))
+                            drawbase = 1;
+                        break;
+                    case SPR_MSTF:
+                        if ((tmpframe >= 6 && tmpframe <= 9) ||
+                                tmpframe == (7 | FF_FULLBRIGHT))
+                            drawbase = 1;
+                        break;
+                    case SPR_CSSF:
+                        if (tmpframe == 9)
+                            drawbase = 1;
+                        break;
+                    case SPR_CHLY:
+                        if (tmpframe >= (0 | FF_FULLBRIGHT) && tmpframe <= (5 | FF_FULLBRIGHT))
+                            drawbase = 1;
+                        break;
+                    default:
+                        drawbase = 0;
+                        break;
+                }
+                if (drawbase)
+                {
+                    psp->state->frame = 0; // set base frame
+                    R_DrawPSprite(psp, 0);
+                    psp->state->frame = tmpframe; // restore attack frame
+                }
+            }
+            R_DrawPSprite(psp, drawbase); // [crispy] translucent when base was drawn
+        }      
+    }
 }
 
+/*
+========================
+=
+= [crispy] R_CheckPowerBasedTranslucency
+=
+= Check if player sprite is translucent due to active power
+========================
+*/
+
+static boolean R_CheckPowerBasedTranslucency(void)
+{
+    if (viewplayer->class == PCLASS_CLERIC && viewplayer->powers[pw_invulnerability] &&
+        ((viewplayer->powers[pw_invulnerability] > 4*32 || viewplayer->powers[pw_invulnerability] & 8) && 
+         viewplayer->mo->flags & MF_SHADOW))
+        return true;
+    else
+        return false;
+}
 
 /*
 ========================

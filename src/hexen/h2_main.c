@@ -211,6 +211,7 @@ void D_BindVariables(void)
     M_BindIntVariable("crispy_mouselook",       &crispy->mouselook);
     M_BindIntVariable("crispy_playercoords",    &crispy->playercoords);
     M_BindIntVariable("crispy_soundmono",       &crispy->soundmono);
+    M_BindIntVariable("crispy_translucency",    &crispy->translucency);
 #ifdef CRISPY_TRUECOLOR
     M_BindIntVariable("crispy_truecolor",       &crispy->truecolor);
 #endif
