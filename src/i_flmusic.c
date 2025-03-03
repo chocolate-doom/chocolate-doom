@@ -42,6 +42,8 @@ typedef fluid_long_long_t fluid_int_t;
 #include "memio.h"
 #include "mus2mid.h"
 
+#include <string.h>
+
 char *fsynth_sf_path = "";
 int fsynth_chorus_active = 1;
 float fsynth_chorus_depth = 5.0f;

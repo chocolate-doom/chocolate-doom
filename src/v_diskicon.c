@@ -27,6 +27,8 @@
 
 #include "v_diskicon.h"
 
+#include <string.h>
+
 // Only display the disk icon if more then this much bytes have been read
 // during the previous tic.
 

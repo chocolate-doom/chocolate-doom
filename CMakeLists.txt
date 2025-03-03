@@ -3,6 +3,8 @@ set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 cmake_minimum_required(VERSION 3.7.2)
 project("Crispy Doom" VERSION 7.0.0 LANGUAGES C)
 
+set(CMAKE_C_STANDARD 99)
+
 # Autotools variables
 set(top_srcdir ${CMAKE_CURRENT_SOURCE_DIR})
 set(top_builddir ${CMAKE_CURRENT_BINARY_DIR})
@@ -34,15 +36,21 @@ option(CMAKE_FIND_PACKAGE_PREFER_CONFIG
 option(ENABLE_SDL2_NET "Enable SDL2_net" On)
 option(ENABLE_SDL2_MIXER "Enable SDL2_mixer" On)
 
-find_package(SDL2 2.0.14)
+if (NOT DEFINED EMSCRIPTEN)
+    find_package(SDL2 2.0.14)
+endif()
 if(ENABLE_SDL2_MIXER)
-    find_package(SDL2_mixer 2.0.2)
+    if (NOT DEFINED EMSCRIPTEN)
+        find_package(SDL2_mixer 2.0.2)
+    endif()
 else()
     add_compile_definitions(DISABLE_SDL2MIXER=1)
 endif()
 
 if(ENABLE_SDL2_NET)
-    find_package(SDL2_net 2.0.0)
+    if (NOT DEFINED EMSCRIPTEN)
+        find_package(SDL2_net 2.0.0)
+    endif()
 else()
     add_compile_definitions(DISABLE_SDL2NET=1)
 endif()

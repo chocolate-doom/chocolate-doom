@@ -33,10 +33,30 @@ set(DEDSERV_FILES
 add_executable("${PROGRAM_PREFIX}server" WIN32 ${COMMON_SOURCE_FILES} ${DEDSERV_FILES})
 target_include_directories("${PROGRAM_PREFIX}server"
                            PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/../")
-target_link_libraries("${PROGRAM_PREFIX}server" SDL2::SDL2main SDL2::SDL2)
-if(ENABLE_SDL2_NET)
-    target_link_libraries("${PROGRAM_PREFIX}server" SDL2_net::SDL2_net)
+
+if (DEFINED EMSCRIPTEN)
+    set(SDL_FLAGS "-s USE_SDL=2")
+    if(ENABLE_SDL2_MIXER)
+        set(SDL_FLAGS "${SDL_FLAGS} -s USE_SDL_MIXER=2")
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s USE_SDL_MIXER=2")
+    endif()
+    if(ENABLE_SDL2_NET)
+        set(SDL_FLAGS "${SDL_FLAGS} -s USE_SDL_NET=2")
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s USE_SDL_NET=2")
+    endif()
+else()
+    set(SDL_LINK_LIBS SDL2::SDL2main SDL2::SDL2)
+    if(ENABLE_SDL2_MIXER)
+        list(APPEND SDL_LINK_LIBS SDL2_mixer::SDL2_mixer)
+    endif()
+    if(ENABLE_SDL2_NET)
+        list(APPEND SDL_LINK_LIBS SDL2_net::SDL2_net)
+    endif()
 endif()
+
+target_link_libraries("${PROGRAM_PREFIX}server" ${SDL_LINK_LIBS})
+set_target_properties("${PROGRAM_PREFIX}server" PROPERTIES COMPILE_FLAGS "${SDL_FLAGS}")
+set_target_properties("${PROGRAM_PREFIX}server" PROPERTIES LINK_FLAGS "${SDL_FLAGS}")
 
 # Source files used by the game binaries (chocolate-doom, etc.)
 
@@ -130,13 +150,7 @@ set(DEHACKED_SOURCE_FILES
 set(SOURCE_FILES ${COMMON_SOURCE_FILES} ${GAME_SOURCE_FILES})
 set(SOURCE_FILES_WITH_DEH ${SOURCE_FILES} ${DEHACKED_SOURCE_FILES})
 
-set(EXTRA_LIBS SDL2::SDL2main SDL2::SDL2 textscreen pcsound opl)
-if(ENABLE_SDL2_MIXER)
-    list(APPEND EXTRA_LIBS SDL2_mixer::SDL2_mixer)
-endif()
-if(ENABLE_SDL2_NET)
-    list(APPEND EXTRA_LIBS SDL2_net::SDL2_net)
-endif()
+set(EXTRA_LIBS ${SDL_LINK_LIBS} textscreen pcsound opl)
 if(SampleRate_FOUND)
     list(APPEND EXTRA_LIBS SampleRate::samplerate)
 endif()
@@ -158,6 +172,7 @@ endif()
 
 target_include_directories("${PROGRAM_PREFIX}doom" PRIVATE ${GAME_INCLUDE_DIRS})
 target_link_libraries("${PROGRAM_PREFIX}doom" doom ${EXTRA_LIBS})
+set_target_properties("${PROGRAM_PREFIX}doom" PROPERTIES COMPILE_FLAGS "${SDL_FLAGS}")
 
 if(MSVC)
     set_target_properties("${PROGRAM_PREFIX}doom" PROPERTIES
@@ -172,6 +187,7 @@ endif()
 
 target_include_directories("${PROGRAM_PREFIX}heretic" PRIVATE ${GAME_INCLUDE_DIRS})
 target_link_libraries("${PROGRAM_PREFIX}heretic" heretic ${EXTRA_LIBS})
+set_target_properties("${PROGRAM_PREFIX}heretic" PROPERTIES COMPILE_FLAGS "${SDL_FLAGS}")
 
 if(MSVC)
     set_target_properties("${PROGRAM_PREFIX}heretic" PROPERTIES
@@ -186,6 +202,7 @@ endif()
 
 target_include_directories("${PROGRAM_PREFIX}hexen" PRIVATE ${GAME_INCLUDE_DIRS})
 target_link_libraries("${PROGRAM_PREFIX}hexen" hexen ${EXTRA_LIBS})
+set_target_properties("${PROGRAM_PREFIX}hexen" PROPERTIES COMPILE_FLAGS "${SDL_FLAGS}")
 
 if(MSVC)
     set_target_properties("${PROGRAM_PREFIX}hexen" PROPERTIES
@@ -200,6 +217,7 @@ endif()
 
 target_include_directories("${PROGRAM_PREFIX}strife" PRIVATE ${GAME_INCLUDE_DIRS})
 target_link_libraries("${PROGRAM_PREFIX}strife" strife ${EXTRA_LIBS})
+set_target_properties("${PROGRAM_PREFIX}strife" PROPERTIES COMPILE_FLAGS "${SDL_FLAGS}")
 
 if(MSVC)
     set_target_properties("${PROGRAM_PREFIX}strife" PROPERTIES
@@ -231,13 +249,9 @@ endif()
 
 target_include_directories("${PROGRAM_PREFIX}setup"
                            PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/../")
-target_link_libraries("${PROGRAM_PREFIX}setup" SDL2::SDL2main SDL2::SDL2 setup textscreen)
-if(ENABLE_SDL2_MIXER)
-    target_link_libraries("${PROGRAM_PREFIX}setup" SDL2_mixer::SDL2_mixer)
-endif()
-if(ENABLE_SDL2_NET)
-    target_link_libraries("${PROGRAM_PREFIX}setup" SDL2_net::SDL2_net)
-endif()
+target_link_libraries("${PROGRAM_PREFIX}setup" ${SDL_LINK_LIBS} setup textscreen)
+set_target_properties("${PROGRAM_PREFIX}setup" PROPERTIES COMPILE_FLAGS "${SDL_FLAGS}")
+
 if(WIN32)
     target_link_libraries("${PROGRAM_PREFIX}setup" winmm)
 endif()
@@ -247,12 +261,30 @@ if(MSVC)
                           LINK_FLAGS "/MANIFEST:NO")
 endif()
 
+if (DEFINED EMSCRIPTEN)
+    set_target_properties("${PROGRAM_PREFIX}setup" PROPERTIES LINK_FLAGS "${SDL_FLAGS} -s ALLOW_MEMORY_GROWTH=1 -s ASYNCIFY=1 -s EXPORTED_FUNCTIONS=_main,ccall,cwrap,FS,ENV,PATH,ERRNO_CODES")
+    set_target_properties("${PROGRAM_PREFIX}strife" PROPERTIES LINK_FLAGS "${SDL_FLAGS} -s ALLOW_MEMORY_GROWTH=1 -s ASYNCIFY=1 -s EXPORTED_FUNCTIONS=_main,ccall,cwrap,FS,ENV,PATH,ERRNO_CODES")
+    set_target_properties("${PROGRAM_PREFIX}doom" PROPERTIES LINK_FLAGS "${SDL_FLAGS} -s ALLOW_MEMORY_GROWTH=1 -s ASYNCIFY=1 -s EXPORTED_FUNCTIONS=_main,ccall,cwrap,FS,ENV,PATH,ERRNO_CODES")
+    set_target_properties("${PROGRAM_PREFIX}heretic" PROPERTIES LINK_FLAGS "${SDL_FLAGS} -s ALLOW_MEMORY_GROWTH=1 -s ASYNCIFY=1 -s EXPORTED_FUNCTIONS=_main,ccall,cwrap,FS,ENV,PATH,ERRNO_CODES")
+    set_target_properties("${PROGRAM_PREFIX}hexen" PROPERTIES LINK_FLAGS "${SDL_FLAGS} -s ALLOW_MEMORY_GROWTH=1 -s ASYNCIFY=1 -s EXPORTED_FUNCTIONS=_main,ccall,cwrap,FS,ENV,PATH,ERRNO_CODES")
+endif()
+
 add_executable(midiread midifile.c z_native.c i_system.c m_argv.c m_misc.c d_iwad.c deh_str.c m_config.c)
 target_compile_definitions(midiread PRIVATE "-DTEST")
 target_include_directories(midiread PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/../")
-target_link_libraries(midiread SDL2::SDL2)
+if (DEFINED EMSCRIPTEN)
+    set_target_properties(midiread PROPERTIES COMPILE_FLAGS "-s USE_SDL=2")
+    set_target_properties(midiread PROPERTIES LINK_FLAGS "-s USE_SDL=2")
+else()
+    target_link_libraries(midiread SDL2::SDL2)
+endif()
 
 add_executable(mus2mid mus2mid.c memio.c z_native.c i_system.c m_argv.c m_misc.c d_iwad.c deh_str.c m_config.c)
 target_compile_definitions(mus2mid PRIVATE "-DSTANDALONE")
 target_include_directories(mus2mid PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/../")
-target_link_libraries(mus2mid SDL2::SDL2)
+if (DEFINED EMSCRIPTEN)
+    set_target_properties(mus2mid PROPERTIES COMPILE_FLAGS "-s USE_SDL=2")
+    set_target_properties(mus2mid PROPERTIES LINK_FLAGS "-s USE_SDL=2")
+else()
+    target_link_libraries(mus2mid SDL2::SDL2)
+endif()

@@ -10,13 +10,36 @@ PACKAGE_URL="http://fabiangreffrath.github.io/crispy-doom"
 PACKAGE_RDNS="io.github.fabiangreffrath"
 PACKAGE_BUGREPORT="https://github.com/fabiangreffrath/crispy-doom/issues"
 
+dnl Check for Emscripten environment so we can set necessary environment variables
+AC_ARG_ENABLE(
+  [emscripten],
+  [AS_HELP_STRING([--enable-emscripten=@<:@no/yes@:>@],[compile to JavaScript using Emscripten])],,
+  [AS_CASE([$CC],
+           [*emcc.py], [enable_emscripten="yes"],
+           [*emcc], [enable_emscripten="yes"],
+           [enable_emscripten="no"]
+	  )
+ ]
+)
+
+AS_IF([test "x$enable_emscripten" = "xyes"],
+  AC_MSG_NOTICE([auto-detected use of Emscripten])
+  SDL_CFLAGS="-s USE_SDL=2"
+  SDL_LIBS="-s USE_SDL=2"
+  SDLMIXER_CFLAGS="-s USE_SDL=2 -s USE_SDL_MIXER=2"
+  SDLMIXER_LIBS="-s USE_SDL=2 -s USE_SDL_MIXER=2"
+  SDLNET_CFLAGS="-s USE_SDL=2 -s USE_SDL_NET=2"
+  SDLNET_LIBS="-s USE_SDL=2 -s USE_SDL_NET=2"
+  EM_LDFLAGS="-s ALLOW_MEMORY_GROWTH=1 -s ASYNCIFY=1 -s EXPORTED_RUNTIME_METHODS=[ccall,cwrap,FS,ENV,PATH,ERRNO_CODES] -s FORCE_FILESYSTEM"
+)
+
 AC_CONFIG_AUX_DIR(autotools)
 AC_CANONICAL_HOST
 
 orig_CFLAGS="$CFLAGS"
 
 AM_PROG_AR
-AC_PROG_CC
+AC_PROG_CC_C99
 AC_PROG_RANLIB
 AC_CHECK_PROG(HAVE_PYTHON, python3, true, false)
 
@@ -273,6 +296,7 @@ AC_CONFIG_HEADERS(config.h:config.hin)
 AC_SUBST(WINDOWS_RC_VERSION)
 AC_SUBST(SDLMIXER_CFLAGS)
 AC_SUBST(SDLMIXER_LIBS)
+AC_SUBST(EM_LDFLAGS)
 
 AC_SUBST(SDLNET_CFLAGS)
 AC_SUBST(SDLNET_LIBS)
@@ -290,6 +314,10 @@ AC_SUBST(PACKAGE_BUGREPORT)
 
 dnl Shut up the datarootdir warnings.
 AC_DEFUN([AC_DATAROOTDIR_CHECKED])
+
+AS_IF([test "x$enable_emscripten" = "xyes"],
+  EXEEXT=".html"
+)
 
 AC_CONFIG_FILES([
 Makefile

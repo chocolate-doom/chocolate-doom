@@ -17,6 +17,7 @@
 // Use to convert a MUS file into a single track, type 0 MIDI file.
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "doomtype.h"
 #include "i_swap.h"

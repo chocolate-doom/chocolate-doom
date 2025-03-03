@@ -156,6 +156,7 @@ EXTRA_LIBS =                                               \
                $(top_builddir)/pcsound/libpcsound.a        \
                $(top_builddir)/opl/libopl.a                \
                @LDFLAGS@                                   \
+               @EM_LDFLAGS@                                \
                @SDL_LIBS@                                  \
                @SDLMIXER_LIBS@                             \
                @SDLNET_LIBS@
