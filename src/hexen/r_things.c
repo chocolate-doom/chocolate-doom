@@ -61,6 +61,9 @@ boolean LevelUseFullBright;
 ===============================================================================
 */
 
+// [crispy] check if player sprite base frame has to be drawn
+static int R_CheckPSpriteDrawbase(pspdef_t * psp);
+
 // [crispy] check if player sprite is translucent due to active power
 static boolean R_CheckPowerBasedTranslucency(void);
 
@@ -974,30 +977,7 @@ void R_DrawPlayerSprites(void)
             if (crispy->translucency & TRANSLUCENCY_ITEM && !R_CheckPowerBasedTranslucency())
             {
                 tmpframe = psp->state->frame;
-
-                switch (psp->state->sprite)
-                {         
-                    case SPR_MWND:
-                        if (tmpframe == (1 | FF_FULLBRIGHT))
-                            drawbase = 1;
-                        break;
-                    case SPR_MSTF:
-                        if ((tmpframe >= 6 && tmpframe <= 9) ||
-                                tmpframe == (7 | FF_FULLBRIGHT))
-                            drawbase = 1;
-                        break;
-                    case SPR_CSSF:
-                        if (tmpframe == 9)
-                            drawbase = 1;
-                        break;
-                    case SPR_CHLY:
-                        if (tmpframe >= (0 | FF_FULLBRIGHT) && tmpframe <= (5 | FF_FULLBRIGHT))
-                            drawbase = 1;
-                        break;
-                    default:
-                        drawbase = 0;
-                        break;
-                }
+                drawbase = R_CheckPSpriteDrawbase(psp);
                 if (drawbase)
                 {
                     psp->state->frame = 0; // set base frame
@@ -1008,6 +988,46 @@ void R_DrawPlayerSprites(void)
             R_DrawPSprite(psp, drawbase); // [crispy] translucent when base was drawn
         }      
     }
+}
+
+/*
+========================
+=
+= [crispy] R_CheckPSpriteDrawbase
+=
+= Check if player sprite base frame has to be drawn
+========================
+*/
+
+static int R_CheckPSpriteDrawbase(pspdef_t * psp)
+{
+    int drawbase = 0;
+    int frame = psp->state->frame;
+
+    switch (psp->state->sprite)
+    {         
+        case SPR_MWND:
+            if (frame == (1 | FF_FULLBRIGHT))
+                drawbase = 1;
+            break;
+        case SPR_MSTF:
+            if ((frame >= 6 && frame <= 9) ||
+                    frame == (7 | FF_FULLBRIGHT))
+                drawbase = 1;
+            break;
+        case SPR_CSSF:
+            if (frame == 9)
+                drawbase = 1;
+            break;
+        case SPR_CHLY:
+            if (frame >= (0 | FF_FULLBRIGHT) && frame <= (5 | FF_FULLBRIGHT))
+                drawbase = 1;
+            break;
+        default:
+            drawbase = 0;
+            break;
+    }
+    return drawbase;
 }
 
 /*

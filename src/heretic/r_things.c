@@ -82,6 +82,9 @@ int screenheightarray[MAXWIDTH]; // [crispy] 32-bit integer math
 ===============================================================================
 */
 
+// [crispy] check if player sprite base frame has to be drawn
+static int R_CheckPSpriteDrawbase(pspdef_t * psp, int * offset);
+
 // variables used to look up and range check thing_t sprites patches
 spritedef_t *sprites;
 int numsprites;
@@ -1008,64 +1011,8 @@ void R_DrawPlayerSprites(void)
                     (crispy->translucency & TRANSLUCENCY_ITEM &&
                     !(viewplayer->powers[pw_invisibility] > 4*32 || viewplayer->powers[pw_invisibility] & 8)))
             {
-                drawbase = 1;
                 tmpframe = psp->state->frame;
-
-                switch (psp->state->sprite)
-                {         
-                    case SPR_GWND:
-                        if (tmpframe == 1)
-                            offset = spriteoffsets[SPR_GWND_F1].offset;
-                        else 
-                        if (tmpframe == 2)
-                            offset = spriteoffsets[SPR_GWND_F2].offset;
-                        else 
-                        if (tmpframe == 3)
-                            offset = spriteoffsets[SPR_GWND_F3].offset;
-                        else
-                            drawbase = 0;
-                        break;
-                    case SPR_BLSR:
-                        if (tmpframe == 1)
-                            offset = spriteoffsets[SPR_BLSR_F1].offset;
-                        else 
-                        if (tmpframe == 2)
-                            offset = spriteoffsets[SPR_BLSR_F2].offset;
-                        else 
-                        if (tmpframe == 3)
-                            offset = spriteoffsets[SPR_BLSR_F3].offset;
-                        else
-                            drawbase = 0;
-                        break;
-                    case SPR_HROD:
-                        if (tmpframe == 1)
-                            offset = spriteoffsets[SPR_HROD_F1].offset;
-                        else 
-                        if (tmpframe > 1 && tmpframe < 6)
-                            offset = spriteoffsets[SPR_HROD_F2_5].offset;
-                        else 
-                        if (tmpframe == 6)
-                            offset = spriteoffsets[SPR_HROD_F6].offset;
-                        else
-                            drawbase = 0;
-                        break;
-                    case SPR_PHNX:
-                        if (tmpframe == 1)
-                            offset = spriteoffsets[SPR_PHNX_F1].offset;
-                        else 
-                        if (tmpframe == 2 || tmpframe > 3)
-                            offset = spriteoffsets[SPR_PHNX_F2].offset;
-                        else 
-                        if (tmpframe == 3)
-                            offset = spriteoffsets[SPR_PHNX_F3].offset;
-                        else
-                            drawbase = 0;
-                        break;
-                    default:
-                        offset = 0x0;
-                        drawbase = 0;
-                        break;
-                }
+                drawbase = R_CheckPSpriteDrawbase(psp, &offset);
                 if (drawbase && psp->state->sprite != SPR_GAUN)
                 {
                     psp->state->frame = 0; // set base frame
@@ -1080,6 +1027,77 @@ void R_DrawPlayerSprites(void)
     }
 }
 
+/*
+========================
+=
+= [crispy] R_CheckPSpriteDrawbase
+=
+= Check if player sprite base frame has to be drawn
+========================
+*/
+
+static int R_CheckPSpriteDrawbase(pspdef_t * psp, int * offset)
+{
+    int drawbase = 1;
+    int frame = psp->state->frame;
+
+    switch (psp->state->sprite)
+    {         
+        case SPR_GWND:
+            if (frame == 1)
+                *offset = spriteoffsets[SPR_GWND_F1].offset;
+            else 
+            if (frame == 2)
+                *offset = spriteoffsets[SPR_GWND_F2].offset;
+            else 
+            if (frame == 3)
+                *offset = spriteoffsets[SPR_GWND_F3].offset;
+            else
+                drawbase = 0;
+            break;
+        case SPR_BLSR:
+            if (frame == 1)
+                *offset = spriteoffsets[SPR_BLSR_F1].offset;
+            else 
+            if (frame == 2)
+                *offset = spriteoffsets[SPR_BLSR_F2].offset;
+            else 
+            if (frame == 3)
+                *offset = spriteoffsets[SPR_BLSR_F3].offset;
+            else
+                drawbase = 0;
+            break;
+        case SPR_HROD:
+            if (frame == 1)
+                *offset = spriteoffsets[SPR_HROD_F1].offset;
+            else 
+            if (frame > 1 && frame < 6)
+                *offset = spriteoffsets[SPR_HROD_F2_5].offset;
+            else 
+            if (frame == 6)
+                *offset = spriteoffsets[SPR_HROD_F6].offset;
+            else
+                drawbase = 0;
+            break;
+        case SPR_PHNX:
+            if (frame == 1)
+                *offset = spriteoffsets[SPR_PHNX_F1].offset;
+            else 
+            if (frame == 2 || frame > 3)
+                *offset = spriteoffsets[SPR_PHNX_F2].offset;
+            else 
+            if (frame == 3)
+                *offset = spriteoffsets[SPR_PHNX_F3].offset;
+            else
+                drawbase = 0;
+            break;
+        default:
+            *offset = 0x0;
+            drawbase = 0;
+            break;
+    }
+    return drawbase;
+}
 
 /*
 ========================
