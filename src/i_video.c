@@ -129,6 +129,9 @@ int fullscreen = true;
 int aspect_ratio_correct = true;
 static int actualheight;
 
+// Smooth pixel scaling
+int smooth_pixel_scaling = true;
+
 // Force integer scales for resolution-independent rendering
 
 int integer_scaling = false;
@@ -789,7 +792,10 @@ void I_FinishUpdate (void)
 
     // Render this intermediate texture into the upscaled texture
     // using "nearest" integer scaling.
-
+    if (smooth_pixel_scaling && !force_software_renderer)
+    {
+    // Render this intermediate texture into the upscaled texture
+    // using "nearest" integer scaling.
     SDL_SetRenderTarget(renderer, texture_upscaled);
     SDL_RenderCopy(renderer, texture, NULL, NULL);
 
@@ -797,6 +803,13 @@ void I_FinishUpdate (void)
 
     SDL_SetRenderTarget(renderer, NULL);
     SDL_RenderCopy(renderer, texture_upscaled, NULL, NULL);
+    }
+    else
+    {
+        SDL_SetRenderTarget(renderer, NULL);
+        SDL_RenderCopy(renderer, texture, NULL, NULL);
+    }
+
 
     // Draw!
 
@@ -1503,6 +1516,7 @@ void I_BindVideoVariables(void)
     M_BindIntVariable("video_display",             &video_display);
     M_BindIntVariable("aspect_ratio_correct",      &aspect_ratio_correct);
     M_BindIntVariable("integer_scaling",           &integer_scaling);
+    M_BindIntVariable("smooth_pixel_scaling",      &smooth_pixel_scaling);
     M_BindIntVariable("vga_porch_flash",           &vga_porch_flash);
     M_BindIntVariable("startup_delay",             &startup_delay);
     M_BindIntVariable("fullscreen_width",          &fullscreen_width);
