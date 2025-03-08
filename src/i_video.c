@@ -790,9 +790,7 @@ void I_FinishUpdate (void)
 
     SDL_RenderClear(renderer);
 
-    // Render this intermediate texture into the upscaled texture
-    // using "nearest" integer scaling.
-    if (smooth_pixel_scaling && !force_software_renderer)
+    if (smoothscaling && !force_software_renderer)
     {
     // Render this intermediate texture into the upscaled texture
     // using "nearest" integer scaling.
