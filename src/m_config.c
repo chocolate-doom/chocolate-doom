@@ -1213,10 +1213,16 @@ static default_t extra_defaults_list[] =
 
     //!
     // If zero, this disables weapon flashes changing the ambient light
-    // level.
+    // level and flickering of torches.
     //
 
     CONFIG_VARIABLE_INT(a11y_weapon_flash),
+
+    //!
+    // If zero, this disables weapon palette changes 
+    //
+
+    CONFIG_VARIABLE_INT(a11y_weapon_palette),
 
     //!
     // If zero, this disables rendering of weapon flashes sprites.

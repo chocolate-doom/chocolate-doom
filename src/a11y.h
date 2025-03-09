@@ -25,6 +25,7 @@ extern int a11y_sector_lighting;
 extern int a11y_extra_lighting;
 extern int a11y_weapon_flash;
 extern int a11y_weapon_pspr;
+extern int a11y_weapon_palette;
 extern int a11y_palette_changes;
 extern int a11y_invul_colormap;
 

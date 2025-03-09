@@ -29,6 +29,7 @@ int a11y_sector_lighting = 1;
 int a11y_extra_lighting = 0;
 int a11y_weapon_flash = 1;
 int a11y_weapon_pspr = 1;
+int a11y_weapon_palette = 1;
 int a11y_palette_changes = 1;
 int a11y_invul_colormap = 1;
 
@@ -40,37 +41,56 @@ void AccessibilitySettings(TXT_UNCAST_ARG(widget), void *user_data)
 
     TXT_SetWindowHelpURL(window, WINDOW_HELP_URL);
 
-    if (gamemission == doom || gamemission == heretic || gamemission == hexen)
+    TXT_AddWidget(window,
+                    TXT_NewCheckBox("Flickering Sector Lighting",
+                                    &a11y_sector_lighting));
+
+    if (gamemission == doom)
     {
-        TXT_AddWidgets(window,
-                      TXT_NewCheckBox("Flickering Sector Lighting",
-                                      &a11y_sector_lighting),
-                      NULL);
+        TXT_AddWidget(window,
+                        TXT_NewCheckBox("Weapon Flash Lighting",
+                                        &a11y_weapon_flash));
+    } 
+    else if (gamemission == heretic)
+    {
+        TXT_AddWidget(window,
+                        TXT_NewCheckBox("Gauntlet & Torch Flash",
+                                        &a11y_weapon_flash));
     }
+    else if (gamemission == hexen)
+    {
+        TXT_AddWidget(window,
+                        TXT_NewCheckBox("Torch Flash",
+                                        &a11y_weapon_flash));
+    }
+  
+    TXT_AddWidgets(window,
+                    TXT_NewCheckBox("Weapon Flash Sprite",
+                                    &a11y_weapon_pspr),
+                    TXT_NewCheckBox("Palette Changes",
+                                    &a11y_palette_changes),                                      
+                    NULL);
 
     if (gamemission == doom || gamemission == heretic)
     {
-        TXT_AddWidgets(window,
-                      TXT_NewCheckBox("Weapon Flash Lighting",
-                                      &a11y_weapon_flash),
-                      TXT_NewCheckBox("Weapon Flash Sprite",
-                                      &a11y_weapon_pspr),
-                      TXT_NewCheckBox("Palette Changes",
-                                      &a11y_palette_changes),
-                      TXT_NewCheckBox("Invulnerability Colormap",
-                                      &a11y_invul_colormap),
-                      NULL);
+        TXT_AddWidget(window,
+                        TXT_NewCheckBox("Invulnerability Colormap",
+                                        &a11y_invul_colormap));
+    } 
+
+    if (gamemission == hexen)
+    {
+        TXT_AddWidget(window,
+                        TXT_NewCheckBox("Ultimate Weapon Palette",
+                                        &a11y_weapon_palette));
     }
 
     TXT_SetTableColumns(window, 2);
 
-    if (gamemission == doom || gamemission == heretic)
-    {
-        TXT_AddWidgets(window,
-                      TXT_NewLabel("Extra Lighting"),
-                      TXT_NewSpinControl(&a11y_extra_lighting, 0, 8),
-                      NULL);
-    }
+    TXT_AddWidgets(window,
+                    TXT_NewLabel("Extra Lighting"),
+                    TXT_NewSpinControl(&a11y_extra_lighting, 0, 8),
+                    NULL);
 
 }
 
@@ -80,6 +100,7 @@ void BindAccessibilityVariables(void)
     M_BindIntVariable("a11y_extra_lighting",  &a11y_extra_lighting);
     M_BindIntVariable("a11y_weapon_flash",    &a11y_weapon_flash);
     M_BindIntVariable("a11y_weapon_pspr",     &a11y_weapon_pspr);
+    M_BindIntVariable("a11y_weapon_palette",  &a11y_weapon_palette);
     M_BindIntVariable("a11y_palette_changes", &a11y_palette_changes);
     M_BindIntVariable("a11y_invul_colormap",  &a11y_invul_colormap);
 }

@@ -23,6 +23,7 @@
 #include "r_bmaps.h"
 #include "r_local.h"
 #include "v_trans.h" // [crispy] blending functions
+#include "a11y.h" // [crispy] A11Y
 
 //void R_DrawTranslatedAltTLColumn(void);
 
@@ -974,7 +975,8 @@ void R_DrawPlayerSprites(void)
         if (psp->state)
         {
             // [crispy] draw base frame for transparent or deactivated weapon flashes
-            if (crispy->translucency & TRANSLUCENCY_ITEM && !R_CheckPowerBasedTranslucency())
+            if (!a11y_weapon_pspr || 
+                (crispy->translucency & TRANSLUCENCY_ITEM && !R_CheckPowerBasedTranslucency()))
             {
                 tmpframe = psp->state->frame;
                 drawbase = R_CheckPSpriteDrawbase(psp);
@@ -985,6 +987,8 @@ void R_DrawPlayerSprites(void)
                     psp->state->frame = tmpframe; // restore attack frame
                 }
             }
+            if (!a11y_weapon_pspr && drawbase) 
+                continue; // [crispy] A11Y no weapon flash, use base instead
             R_DrawPSprite(psp, drawbase); // [crispy] translucent when base was drawn
         }      
     }

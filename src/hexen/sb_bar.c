@@ -28,6 +28,7 @@
 #include "v_video.h"
 #include "i_swap.h"
 #include "am_map.h"
+#include "a11y.h" // [crispy] A11Y
 
 
 // TYPES -------------------------------------------------------------------
@@ -1021,7 +1022,12 @@ void SB_PaletteFlash(boolean forceChange)
     if (gamestate == GS_LEVEL)
     {
         CPlayer = &players[consoleplayer];
-        if (CPlayer->poisoncount)
+        // [crispy] A11Y
+        if (!a11y_palette_changes)
+        {
+            palette = 0;
+        }
+        else if (CPlayer->poisoncount)
         {
             palette = 0;
             palette = (CPlayer->poisoncount + 7) >> 3;

@@ -182,6 +182,11 @@ void D_BindVariables(void)
     M_BindIntVariable("screenblocks",           &screenblocks);
     M_BindIntVariable("snd_channels",           &snd_Channels);
     M_BindIntVariable("a11y_sector_lighting",   &a11y_sector_lighting);
+    M_BindIntVariable("a11y_extra_lighting",    &a11y_extra_lighting);
+    M_BindIntVariable("a11y_weapon_flash",      &a11y_weapon_flash);
+    M_BindIntVariable("a11y_weapon_pspr",       &a11y_weapon_pspr);
+    M_BindIntVariable("a11y_palette_changes",   &a11y_palette_changes);
+    M_BindIntVariable("a11y_weapon_palette",    &a11y_weapon_palette);
     M_BindIntVariable("vanilla_savegame_limit", &vanilla_savegame_limit);
     M_BindIntVariable("vanilla_demo_limit",     &vanilla_demo_limit);
 
