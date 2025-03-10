@@ -1578,9 +1578,11 @@ void DrawFullScreenStuff(void)
             x = inv_ptr - curpos;
             for (i = 0; i < 7; i++)
             {
+                // [crispy] check for translucent HUD
+                SB_Translucent(TRANSLUCENT_HUD);
                 V_DrawSBPatch(50 + i * 31, 168, W_CacheLumpName("ARTIBOX",
                                                                 PU_CACHE));
-                SB_Translucent(false); // listed artifacts are always opaque
+                SB_Translucent(false); // listed artifacts and selectbox are always opaque
                 if (CPlayer->inventorySlotNum > x + i
                     && CPlayer->inventory[x + i].type != arti_none)
                 {
@@ -1594,10 +1596,10 @@ void DrawFullScreenStuff(void)
                                       66 + i * 31, 189);
                     }
                 }
-                // [crispy] check for translucent HUD
-                SB_Translucent(TRANSLUCENT_HUD);
             }
             V_DrawSBPatch(48 + curpos * 31, 167, PatchSELECTBOX);
+            // [crispy] check for translucent HUD
+            SB_Translucent(TRANSLUCENT_HUD);
             if (x != 0)
             {
                 V_DrawSBPatch(xPosGem1, 167, !(leveltime & 4) ? PatchINVLFGEM1 :
