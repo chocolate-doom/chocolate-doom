@@ -134,6 +134,7 @@ static boolean CrispySmoothing(int option);
 static boolean CrispyBrightmaps(int option);
 static boolean CrispySmoothLighting(int option);
 static boolean CrispySoundMono(int option);
+static boolean CrispyLvlWpnSnd(int option);
 static boolean CrispyTranslucency(int option);
 static boolean CrispySndChannels(int option);
 static boolean CrispyAutomapStats(int option);
@@ -392,13 +393,13 @@ static Menu_t Crispness1Menu = {
 static MenuItem_t Crispness2Items[] = {
     {ITT_LRFUNC2, "MONO SFX:", CrispySoundMono, 0, MENU_NONE},
     {ITT_LRFUNC2, "SOUND CHANNELS:", CrispySndChannels, 0, MENU_NONE},
+    {ITT_LRFUNC2, "ALIGN WEAPON VOLUMES:", CrispyLvlWpnSnd, 0, MENU_NONE},
     {ITT_EMPTY, NULL, NULL, 0, MENU_NONE},
     {ITT_EMPTY, NULL, NULL, 0, MENU_NONE},
     {ITT_LRFUNC2, "SHOW LEVEL STATS:", CrispyAutomapStats, 0, MENU_NONE},
     {ITT_LRFUNC2, "SHOW LEVEL TIME:", CrispyLevelTime, 0, MENU_NONE},
     {ITT_LRFUNC2, "SHOW PLAYER COORDS:", CrispyPlayerCoords, 0, MENU_NONE},
     {ITT_LRFUNC2, "REPORT REVEALED SECRETS:", CrispySecretMessage, 0, MENU_NONE},
-    {ITT_EMPTY, NULL, NULL, 0, MENU_NONE},
     {ITT_EMPTY, NULL, NULL, 0, MENU_NONE},
     {ITT_EMPTY, NULL, NULL, 0, MENU_NONE},
     {ITT_EMPTY, NULL, NULL, 0, MENU_NONE},
@@ -1773,6 +1774,12 @@ static boolean CrispySoundMono(int option)
     return true;
 }
 
+static boolean CrispyLvlWpnSnd(int option)
+{
+    crispy->lvlwpnsnd = !crispy->lvlwpnsnd;
+    return true;
+}
+
 static boolean CrispyTranslucency(int choice)
 {
     ChangeSettingEnum(&crispy->translucency, choice, NUM_TRANSLUCENCY);
@@ -3070,18 +3077,21 @@ static void DrawCrispness2(void)
     // Sound Channels
     DrawCrispnessMultiItem(snd_Channels >> 4, 181, 45, multiitem_sndchannels, false);
 
-    DrawCrispnessSubheader("NAVIGATIONAL", 65);
+    // Align weapon volumes
+    DrawCrispnessItem(crispy->lvlwpnsnd, 219, 55);
+
+    DrawCrispnessSubheader("NAVIGATIONAL", 75);
 
     // Show level stats
-    DrawCrispnessMultiItem(crispy->automapstats, 190, 75, multiitem_widgets, false);
+    DrawCrispnessMultiItem(crispy->automapstats, 190, 85, multiitem_widgets, false);
 
     // Show level time
-    DrawCrispnessMultiItem(crispy->leveltime, 179, 85, multiitem_widgets, false);
+    DrawCrispnessMultiItem(crispy->leveltime, 179, 95, multiitem_widgets, false);
     // Show player coords
-    DrawCrispnessMultiItem(crispy->playercoords, 211, 95, multiitem_widgets, false);
+    DrawCrispnessMultiItem(crispy->playercoords, 211, 105, multiitem_widgets, false);
 
     // Show secret message
-    DrawCrispnessMultiItem(crispy->secretmessage, 250, 105, multiitem_secretmessage, false);
+    DrawCrispnessMultiItem(crispy->secretmessage, 250, 115, multiitem_secretmessage, false);
 }
 
 static void DrawCrispness3(void)

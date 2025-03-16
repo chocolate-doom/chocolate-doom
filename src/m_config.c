@@ -2589,6 +2589,14 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(crispy_soundmono),
 
     //!
+    // @game heretic
+    //
+    // Level Weapon Sounds
+    //
+
+    CONFIG_VARIABLE_INT(crispy_lvlwpnsnd),
+
+    //!
     // @game doom
     //
     // Level Stats Format.
