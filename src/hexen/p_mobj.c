@@ -146,6 +146,9 @@ void P_ExplodeMissile(mobj_t * mo)
     //mo->tics -= P_Random()&3;
     mo->flags &= ~MF_MISSILE;
 
+    if (mo->type == MT_RIPPERBALL)
+        mo->flags |= MF_TRANSLUCENT;
+
     switch (mo->type)
     {
         case MT_SORCBALL1:

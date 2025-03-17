@@ -132,6 +132,7 @@ void P_ClearMessage(player_t * player)
 
 void P_HideSpecialThing(mobj_t * thing)
 {
+    thing->flags |= MF_TRANSLUCENT; // [crispy] special translucent
     thing->flags &= ~MF_SPECIAL;
     thing->flags2 |= MF2_DONTDRAW;
     P_SetMobjState(thing, S_HIDESPECIAL1);
@@ -861,6 +862,7 @@ boolean P_GiveArtifact(player_t * player, artitype_t arti, mobj_t * mo)
 static void SetDormantArtifact(mobj_t * arti)
 {
     arti->flags &= ~MF_SPECIAL;
+    arti->flags |= MF_TRANSLUCENT; // [crispy] artifact pickup translucent
     if (deathmatch && !(arti->flags2 & MF2_DROPPED))
     {
         if (arti->type == MT_ARTIINVULNERABILITY)
@@ -890,6 +892,7 @@ static void SetDormantArtifact(mobj_t * arti)
 
 void A_RestoreArtifact(mobj_t *arti, player_t *player, pspdef_t *psp)
 {
+    arti->flags &= ~MF_TRANSLUCENT; // [crispy] artifact respawn opaque
     arti->flags |= MF_SPECIAL;
     P_SetMobjState(arti, arti->info->spawnstate);
     S_StartSound(arti, SFX_RESPAWN);
@@ -917,6 +920,7 @@ void A_RestoreSpecialThing1(mobj_t * thing, player_t *player, pspdef_t *psp)
 
 void A_RestoreSpecialThing2(mobj_t * thing, player_t *player, pspdef_t *psp)
 {
+    thing->flags &= ~MF_TRANSLUCENT; // [crispy] thing respawn opaque
     thing->flags |= MF_SPECIAL;
     P_SetMobjState(thing, thing->info->spawnstate);
 }
