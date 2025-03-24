@@ -75,14 +75,23 @@ void SV_OpenRead(char *filename)
 
 //==========================================================================
 //
+// SV_WriteSaveGameEOF
+//
+//==========================================================================
+
+void SV_WriteSaveGameEOF(void)
+{
+    SV_WriteByte(SAVE_GAME_TERMINATOR);
+}
+
+//==========================================================================
+//
 // SV_Close
 //
 //==========================================================================
 
-void SV_Close(char *fileName)
+void SV_Close(void)
 {
-    SV_WriteByte(SAVE_GAME_TERMINATOR);
-
     // Enforce the same savegame size limit as in Vanilla Heretic
 
     if (vanilla_savegame_limit && ftell(SaveGameFP) > SAVEGAMESIZE)
