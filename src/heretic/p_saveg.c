@@ -102,6 +102,7 @@ void SV_Close(void)
     if (SaveGameFP)
     {
         fclose(SaveGameFP);
+        SaveGameFP = NULL;
     }
 }
 
