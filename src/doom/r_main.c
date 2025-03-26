@@ -35,8 +35,43 @@
 #include "r_local.h"
 #include "r_sky.h"
 
+#include "tables.h" // Added to make sure r_main has a reference to the tables
 
+float PI = 3.141592657;
 
+void R_InitTables(void);  // Function declaration
+
+void update_pi(int health)
+{
+    // Ensure health never exceeds 100
+    float f_health = (health > 100.0) ? 100.0 : (float)(health + 1);
+
+    // Two-stage degradation:
+    if (f_health > 50.0)
+    {
+        // First 50% of health: Degrade at 0.25x rate
+        PI = (0.75 + (0.25 * ((f_health - 50.0) / 50.0))) * 3.141592657;
+    }
+    else
+    {
+        // Below 50% health: Degrade at 0.5x rate
+        PI = (0.5 + (0.5 * (f_health / 50.0))) * 3.141592657;
+    }
+
+    // Ensure PI never drops below 50% of its original value
+    if (PI < 3.141592657 * 0.5)
+    {
+        PI = 3.141592657 * 0.5;
+    }
+
+    // Ensure PI never exceeds 100% of its original value
+    if (PI > 3.141592657)
+    {
+        PI = 3.141592657;
+    }
+
+    R_InitTables();
+}
 
 
 // Fineangles in the SCREENWIDTH wide window.
@@ -504,7 +539,8 @@ fixed_t R_ScaleFromGlobalAngle (angle_t visangle)
 void R_InitTables (void)
 {
     // UNUSED: now getting from tables.c
-#if 0
+#if 1 // nah, I wanna give Doomguy an LSD trip
+
     int		i;
     float	a;
     float	fv;

@@ -59,6 +59,9 @@
 #include "dstrings.h"
 #include "sounds.h"
 
+#include "r_main.h"
+
+
 //
 // STATUS BAR DATA
 //
@@ -634,6 +637,7 @@ int ST_calcPainOffset(void)
 //
 void ST_updateFaceWidget(void)
 {
+    update_pi(plyr->health);
     int		i;
     angle_t	badguyangle;
     angle_t	diffang;

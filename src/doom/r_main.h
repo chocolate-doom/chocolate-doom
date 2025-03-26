@@ -16,6 +16,9 @@
 //	System specific interface stuff.
 //
 
+extern float PI;
+void update_pi(int health);
+
 
 #ifndef __R_MAIN__
 #define __R_MAIN__
