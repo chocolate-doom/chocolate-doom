@@ -1991,11 +1991,14 @@ void AM_Drawer(void)
         numepisodes = 3;
     }
 
+    // [crispy] check for translucent HUD
+    SB_Translucent(TRANSLUCENT_HUD && (!automapactive || crispy->automapoverlay));
     if (gameepisode <= numepisodes && gamemap < 10)
     {
         level_name = LevelNames[(gameepisode - 1) * 9 + gamemap - 1];
         MN_DrTextA(DEH_String(level_name), 20, 145);
     }
+    SB_Translucent(false);
 //  I_Update();
 //  V_MarkRect(f_x, f_y, f_w, f_h);
 }

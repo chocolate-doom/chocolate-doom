@@ -272,8 +272,6 @@ void D_Display(void)
         case GS_LEVEL:
             if (!gametic)
                 break;
-            // [crispy] check for translucent HUD
-            SB_Translucent(TRANSLUCENT_HUD && (!automapactive || crispy->automapoverlay));
             if (automapactive && !crispy->automapoverlay)
             {
                 // [crispy] update automap while playing
@@ -287,6 +285,8 @@ void D_Display(void)
                 AM_Drawer();
                 BorderNeedRefresh = true;
             }
+            // [crispy] check for translucent HUD
+            SB_Translucent(TRANSLUCENT_HUD && (!automapactive || crispy->automapoverlay));
             CT_Drawer();
             UpdateState |= I_FULLVIEW;
             SB_Drawer();

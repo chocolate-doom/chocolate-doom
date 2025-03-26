@@ -1117,8 +1117,6 @@ static void DrawAndBlit(void)
             {
                 break;
             }
-            // [crispy] check for translucent HUD
-            SB_Translucent(TRANSLUCENT_HUD && (!automapactive || crispy->automapoverlay));
             if (automapactive && !crispy->automapoverlay)
             {
                 // [crispy] update automap while playing
@@ -1134,6 +1132,8 @@ static void DrawAndBlit(void)
                 AM_Drawer();
                 BorderNeedRefresh = true;
             }
+            // [crispy] check for translucent HUD
+            SB_Translucent(TRANSLUCENT_HUD && (!automapactive || crispy->automapoverlay));
             CT_Drawer();
             UpdateState |= I_FULLVIEW;
             SB_Drawer();
