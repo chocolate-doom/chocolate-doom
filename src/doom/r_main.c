@@ -43,32 +43,11 @@ void R_InitTables(void);  // Function declaration
 
 void update_pi(int health)
 {
-    // Ensure health never exceeds 100
-    float f_health = (health > 100.0) ? 100.0 : (float)(health + 1);
+    // Ensure health never exceeds 100 and never drops below 0
+    float f_health = (health > 100.0) ? 100.0 : (health < 0 ? 0 : (float)health);
 
-    // Two-stage degradation:
-    if (f_health > 50.0)
-    {
-        // First 50% of health: Degrade at 0.25x rate
-        PI = (0.75 + (0.25 * ((f_health - 50.0) / 50.0))) * 3.141592657;
-    }
-    else
-    {
-        // Below 50% health: Degrade at 0.5x rate
-        PI = (0.5 + (0.5 * (f_health / 50.0))) * 3.141592657;
-    }
-
-    // Ensure PI never drops below 50% of its original value
-    if (PI < 3.141592657 * 0.5)
-    {
-        PI = 3.141592657 * 0.5;
-    }
-
-    // Ensure PI never exceeds 100% of its original value
-    if (PI > 3.141592657)
-    {
-        PI = 3.141592657;
-    }
+    // Apply the new formula
+    PI = (0.75 + (0.0025 * f_health)) * 3.141592657;
 
     R_InitTables();
 }
