@@ -59,7 +59,7 @@
 #define SECRETWALLRANGE WALLRANGE
 #define GRIDCOLORS	(GRAYS + GRAYSRANGE/2)
 #define GRIDRANGE	0
-#define XHAIRCOLORS	GRAYS
+#define XHAIRCOLORS	WHITE
 
 // drawing stuff
 #define	FB		0

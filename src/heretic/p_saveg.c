@@ -26,7 +26,7 @@
 #include "v_video.h"
 #include "a11y.h"
 
-static FILE *SaveGameFP;
+FILE *SaveGameFP;
 
 int vanilla_savegame_limit = 1;
 

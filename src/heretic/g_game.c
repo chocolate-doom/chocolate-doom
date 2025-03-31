@@ -37,6 +37,7 @@
 
 #include "deh_main.h" // [crispy] for demo footer
 #include "memio.h"
+#include "p_extsaveg.h" // [crispy] for extended savegame information
 
 // Macros
 
@@ -2162,9 +2163,11 @@ void G_DoLoadGame(void)
         I_Error("Bad savegame");
     }
 
+    // [crispy] read more extended savegame data
+    P_ReadExtendedSaveGameData();
+
     SV_Close();
 }
-
 
 /*
 ====================
@@ -2892,6 +2895,8 @@ void G_DoSaveGame(void)
     P_ArchiveThinkers();
     P_ArchiveSpecials();
     SV_WriteSaveGameEOF();
+    // [crispy] write extended savegame data
+    P_WriteExtendedSaveGameData();
     SV_Close();
 
     gameaction = ga_nothing;

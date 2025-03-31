@@ -47,6 +47,7 @@ p_mobj.c                                             \
 p_plats.c                                            \
 p_pspr.c                                             \
 p_saveg.c                                            \
+p_extsaveg.c           p_extsaveg.h                  \
 p_setup.c                                            \
 p_sight.c                                            \
 p_spec.c               p_spec.h                      \

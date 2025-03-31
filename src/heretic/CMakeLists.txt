@@ -26,6 +26,7 @@ add_library(heretic STATIC
             p_doors.c
             p_enemy.c
             p_extnodes.c        p_extnodes.h
+            p_extsaveg.c        p_extsaveg.h
             p_floor.c
             p_inter.c
             p_lights.c
