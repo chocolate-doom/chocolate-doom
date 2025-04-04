@@ -27,6 +27,7 @@
 #include "am_map.h"
 #include "am_data.h"
 #include "v_video.h"
+#include "m_misc.h" // [crispy]
 
 #define NUMALIAS 3              // Number of antialiased lines.
 
@@ -81,9 +82,10 @@ static int m_zoomin_mouse;
 static int m_zoomout_mouse;
 static boolean mousewheelzoom;
 
-//static patch_t *marknums[10]; // numbers used for marking by the automap
-//static mpoint_t markpoints[AM_NUMMARKPOINTS]; // where the points are
-//static int markpointnum = 0; // next point to be assigned
+// [crispy] restore mapmarker functionality
+static patch_t *marknums[10]; // numbers used for marking by the automap
+static mpoint_t markpoints[AM_NUMMARKPOINTS]; // where the points are
+static int markpointnum = 0; // next point to be assigned
 
 static int followplayer = 1;    // specifies whether to follow the player around
 
@@ -125,6 +127,7 @@ static short next_mapxstart, next_mapystart; // [crispy] for interpolation
 // [crispy] automap rotate
 void AM_rotate(fixed_t* x, fixed_t* y, angle_t a);
 static void AM_rotatePoint(mpoint_t *pt);
+static void AM_drawCrosshair(int color, boolean force); // [crispy] restore crosshair
 static mpoint_t mapcenter;
 static angle_t mapangle;
 
@@ -207,15 +210,24 @@ void AM_restoreScaleAndLoc(void)
 
 // adds a marker at the current location
 
-/*
+// [crispy] restore mapmarker functionality
 void AM_addMark(void)
 {
-  markpoints[markpointnum].x = m_x + m_w/2;
-  markpoints[markpointnum].y = m_y + m_h/2;
-  markpointnum = (markpointnum + 1) % AM_NUMMARKPOINTS;
-
+    // [crispy] keep the map static in overlay mode
+    // if not following the player
+    if (!(!followplayer && crispy->automapoverlay))
+    {
+        markpoints[markpointnum].x = m_x + m_w/2;
+        markpoints[markpointnum].y = m_y + m_h/2;
+    }
+    else
+    {
+        markpoints[markpointnum].x = plr->mo->x >> FRACTOMAPBITS;
+        markpoints[markpointnum].y = plr->mo->y >> FRACTOMAPBITS;
+    }
+    markpointnum = (markpointnum + 1) % AM_NUMMARKPOINTS;
 }
-*/
+
 void AM_findMinMaxBoundaries(void)
 {
     int i;
@@ -431,20 +443,41 @@ void AM_initVariables(void)
 //c  ST_Responder(&st_notify);
 }
 
+// [crispy] restore mapmarker functionality
 void AM_loadPics(void)
 {
+    int i;
+    char namebuf[9];
+    for (i=0;i<10;i++)
+    {
+        M_snprintf(namebuf, sizeof(namebuf), "SMALLIN%d", i);
+        marknums[i] = W_CacheLumpName(namebuf, PU_STATIC);
+    }
     maplump = W_CacheLumpName("AUTOPAGE", PU_STATIC);
 }
 
+// [crispy] restore mapmarker functionality
+void AM_unloadPics(void)
+{
+    int i;
+    char namebuf[9];
+  
+    for (i=0;i<10;i++)
+    {
+        M_snprintf(namebuf, 9, "SMALLIN%d", i);
+        W_ReleaseLumpName(namebuf);
+    }
+}
 
-/*
+// [crispy] restore mapmarker functionality
 void AM_clearMarks(void)
 {
-  int i;
-  for (i=0;i<AM_NUMMARKPOINTS;i++) markpoints[i].x = -1; // means empty
-  markpointnum = 0;
+    int i;
+
+    for (i=0;i<AM_NUMMARKPOINTS;i++) 
+        markpoints[i].x = -1; // means empty
+    markpointnum = 0;
 }
-*/
 
 // should be called at the start of every level
 // right now, i figure it out myself
@@ -461,9 +494,11 @@ void AM_LevelInit(boolean reinit)
     f_w = finit_width;
     f_h = finit_height;
     next_mapxstart = next_mapystart = mapxstart = mapystart = 0;
+    fb = I_VideoBuffer; // [crispy] to consider highres toggle
 
-
-//  AM_clearMarks();
+    // [crispy] restore mapmarker functionality
+    if (!reinit)
+        AM_clearMarks();
 
     AM_findMinMaxBoundaries();
 
@@ -471,6 +506,7 @@ void AM_LevelInit(boolean reinit)
     if (reinit && f_h_old)
     {
         scale_mtof = scale_mtof * f_h / f_h_old;
+        AM_drawCrosshair(XHAIRCOLORS, true);
     }
     else
     {
@@ -493,17 +529,17 @@ void AM_Stop(void)
 {
     //static event_t st_notify = { 0, ev_keyup, AM_MSGEXITED };
 
-//  AM_unloadPics();
+    AM_unloadPics(); // [crispy] restore mapmarker functionality
     automapactive = false;
 //  ST_Responder(&st_notify);
     stopped = true;
     BorderNeedRefresh = true;
 }
 
+// [crispy] moved here for extended savegames
+static int lastlevel = -1, lastepisode = -1;
 void AM_Start(void)
 {
-    static int lastlevel = -1, lastepisode = -1;
-
     if (!stopped)
         AM_Stop();
     stopped = false;
@@ -545,6 +581,7 @@ boolean AM_Responder(event_t * ev)
     int key;
     static int bigstate = 0;
     static int joywait = 0;
+    static char buffer[20]; // [crispy] to store mapmarkers
     extern boolean speedkeydown (void);
 
     // [crispy] toggleable pan/zoom speed
@@ -719,6 +756,19 @@ boolean AM_Responder(event_t * ev)
             P_SetMessage(plr,
                          grid ? AMSTR_GRIDON : AMSTR_GRIDOFF,
                          true);
+        }
+        // [crispy] restore mapmarker functionality
+        else if (key == key_map_mark)
+        {
+            M_snprintf(buffer, sizeof(buffer), "%s %d",
+                       AMSTR_MARKEDSPOT, markpointnum);
+            P_SetMessage(plr, buffer, true);
+            AM_addMark();
+        }
+        else if (key == key_map_clearmark)
+        {
+            AM_clearMarks();
+            P_SetMessage(plr, AMSTR_MARKSCLEARED, true);
         }
         else if (key == key_map_overlay)
         {
@@ -1759,25 +1809,35 @@ void AM_drawThings(int colors, int colorrange)
     }
 }
 
-/*
+// [crispy] restore mapmarker functionality
 void AM_drawMarks(void)
 {
-  int i, fx, fy, w, h;
+    int i, fx, fy, w, h;
+    mpoint_t pt;
 
-  for (i=0;i<AM_NUMMARKPOINTS;i++)
-  {
-    if (markpoints[i].x != -1)
+    for (i=0;i<AM_NUMMARKPOINTS;i++)
     {
-      w = SHORT(marknums[i]->width);
-      h = SHORT(marknums[i]->height);
-      fx = CXMTOF(markpoints[i].x);
-      fy = CYMTOF(markpoints[i].y);
-      if (fx >= f_x && fx <= f_w - w && fy >= f_y && fy <= f_h - h)
-  			V_DrawPatch(fx, fy, marknums[i]);
+        if (markpoints[i].x != -1)
+        {
+            //   w = SHORT(marknums[i]->width);
+            //   h = SHORT(marknums[i]->height);
+            w = 6; // [crispy] based on doom +1 for increased size
+            h = 7; // [crispy] based on doom +1 for increased size
+            // [crispy] center marks around player
+            pt.x = markpoints[i].x;
+            pt.y = markpoints[i].y;
+            if (crispy->automaprotate)
+            {
+                AM_rotatePoint(&pt);
+            }
+            fx = (CXMTOF(pt.x) >> crispy->hires) - 1;
+            fy = (CYMTOF(pt.y) >> crispy->hires) - 2;
+            if (fx >= f_x && fx <= (f_w >> crispy->hires) - w && fy >= f_y && fy <= (f_h >> crispy->hires) - h)
+                V_DrawPatch(fx - WIDESCREENDELTA, fy, marknums[i]);
+        }
     }
-  }
 }
-*/
+
 /*
 void AM_drawkeys(void)
 {
@@ -1799,12 +1859,35 @@ void AM_drawkeys(void)
 }
 */
 
-/*
-void AM_drawCrosshair(int color)
+static void AM_drawCrosshair(int color, boolean force)
 {
-  fb[(f_w*(f_h+1))/2] = color; // single point for now
-}
+    // [crispy] draw an actual crosshair
+    if (!followplayer || force)
+    {
+        static fline_t h, v;
+
+        if (!h.a.x || force)
+        {
+            h.a.x = h.b.x = v.a.x = v.b.x = f_x + f_w / 2;
+            h.a.y = h.b.y = v.a.y = v.b.y = f_y + f_h / 2;
+            h.a.x -= 2; h.b.x += 2;
+            v.a.y -= 2; v.b.y += 2;
+        }
+
+        AM_drawFline(&h, color);
+        AM_drawFline(&v, color);
+    }
+// [crispy] do not draw the useless dot on the player arrow
+/*
+    else
+#ifndef CRISPY_TRUECOLOR
+    fb[(f_w*(f_h+1))/2] = color; // single point for now
+#else
+    fb[(f_w*(f_h+1))/2] = pal_color[color]; // single point for now
+#endif
 */
+
+}
 
 void AM_Drawer(void)
 {
@@ -1844,23 +1927,22 @@ void AM_Drawer(void)
     if (grid)
         AM_drawGrid(GRIDCOLORS);
     AM_drawWalls();
+    AM_drawMarks(); // [crispy] restore mapmarker functionality
     AM_drawPlayers();
+    if (cheating == 2)
+        AM_drawThings(THINGCOLORS, THINGRANGE);
+    AM_drawCrosshair(XHAIRCOLORS, false);
+//      if(gameskill == sk_baby) AM_drawkeys();
+
     // [crispy] check for translucent HUD
     SB_Translucent(TRANSLUCENT_HUD && (!automapactive || crispy->automapoverlay));
     DrawWorldTimer();
-
-    if (cheating == 2)
-        AM_drawThings(THINGCOLORS, THINGRANGE);
-
-//  AM_drawCrosshair(XHAIRCOLORS);
-//  AM_drawMarks();
-//      if(gameskill == sk_baby) AM_drawkeys();
     MN_DrTextA(P_GetMapName(gamemap), 38, 144);
-    SB_Translucent(false);
     if (ShowKills && netgame && deathmatch)
     {
         AM_DrawDeathmatchStats();
     }
+    SB_Translucent(false);
 //  I_Update();
 //  V_MarkRect(f_x, f_y, f_w, f_h);
 
@@ -1996,5 +2078,46 @@ static void DrawWorldTimer(void)
         {
             MN_DrTextA("YOU FREAK!!!", 230, 35 + right_widget_h);
         }
+    }
+}
+
+//===========================================================================
+//
+// [crispy] Get & Set marks for extended savegame
+//
+//===========================================================================
+
+void AM_GetMarkPoints (int *n, long *p)
+{
+    int i;
+
+    *n = markpointnum;
+    *p = -1L;
+
+    // [crispy] prevent saving markpoints from previous map
+    if (lastlevel == gamemap && lastepisode == gameepisode)
+    {
+        for (i = 0; i < AM_NUMMARKPOINTS; i++)
+        {
+            *p++ = (long)markpoints[i].x;
+            *p++ = (markpoints[i].x == -1) ? 0L : (long)markpoints[i].y;
+        }
+    }
+}
+
+void AM_SetMarkPoints (int n, long *p)
+{
+    int i;
+
+    AM_LevelInit(false);
+    lastlevel = gamemap;
+    lastepisode = gameepisode;
+
+    markpointnum = n;
+
+    for (i = 0; i < AM_NUMMARKPOINTS; i++)
+    {
+        markpoints[i].x = (int64_t)*p++;
+        markpoints[i].y = (int64_t)*p++;
     }
 }

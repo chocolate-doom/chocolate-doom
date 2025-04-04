@@ -719,6 +719,8 @@ extern int testcontrols_mousespeed;
 extern int vanilla_savegame_limit;
 extern int vanilla_demo_limit;
 
+extern FILE *SavingFP; // [crispy] for usage in extsavg
+
 extern boolean usearti;
 
 extern int right_widget_h; // [crispy]

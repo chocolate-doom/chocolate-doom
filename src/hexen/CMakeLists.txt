@@ -53,6 +53,7 @@ add_library(hexen STATIC
             sounds.c            sounds.h
             st_start.c          st_start.h
             sv_save.c
+            sv_extsaveg.c       sv_extsaveg.h
                                 textdefs.h
                                 xddefs.h)
 
