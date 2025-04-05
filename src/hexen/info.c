@@ -11823,7 +11823,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
      100,                       // mass
      0,                         // damage
      SFX_NONE,                  // activesound
-     MF_NOBLOCKMAP,             // flags
+     MF_NOBLOCKMAP | MF_TRANSLUCENT,             // flags
      MF2_NOTELEPORT | MF2_FIREDAMAGE | MF2_DONTDRAW     // flags2
      },
 
