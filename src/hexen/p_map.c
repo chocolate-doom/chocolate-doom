@@ -1482,7 +1482,6 @@ boolean PTR_BounceTraverse(intercept_t * in)
         I_Error("PTR_BounceTraverse: not a line?");
 
     li = in->d.line;
-
     if (!(li->flags & ML_TWOSIDED))
     {
         if (P_PointOnLineSide(slidemo->x, slidemo->y, li))
