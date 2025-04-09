@@ -639,6 +639,10 @@ static void AddXdgDirs(void)
     const char *env;
     char *tmp_env;
 
+#ifdef __HAIKU__
+    const char *haikuhome;
+#endif
+
     // Quote:
     // > $XDG_DATA_HOME defines the base directory relative to which
     // > user specific data files should be stored. If $XDG_DATA_HOME
@@ -663,6 +667,14 @@ static void AddXdgDirs(void)
     // ~/.local/share/games/doom) as a user-writeable extension to
     // the usual /usr/share/games/doom location.
     AddIWADDir(M_StringJoin(env, "/games/doom", NULL));
+#ifdef __HAIKU__
+    AddIWADDir(M_StringJoin(env, "/doom", NULL));
+    AddIWADDir(M_StringJoin(env, "/doomdata", NULL));
+    AddIWADDir(M_StringJoin(env, "/chocolate-doom", NULL));
+    haikuhome = getenv("HOME");
+    AddIWADDir(M_StringJoin(haikuhome, "/doom", NULL));
+    AddIWADDir(M_StringJoin(haikuhome, "/config/data/doomdata", NULL));
+#endif
     free(tmp_env);
 
     // Quote:
