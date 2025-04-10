@@ -1694,6 +1694,7 @@ void A_Explode(mobj_t *actor, player_t *player, pspdef_t *psp)
         case MT_SORCBALL3:
             distance = 255;
             damage = 255;
+            actor->flags |= MF_TRANSLUCENT; // [crispy]
             actor->args[0] = 1; // don't play bounce
             break;
         case MT_SORCFX1:       // Sorcerer spell 1
