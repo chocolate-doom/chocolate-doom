@@ -1459,14 +1459,15 @@ void P_SlideMove(mobj_t * mo)
 void P_InitSlideLine(void)
 {
     // use relevant parts from first bestslideline in demo1 (hexen.wad)
-    static vertex_t initvertex1 = {-77594624,37748736};
-    static line_t initslideline = {&initvertex1, NULL, 0, 6291456, 0, 0, 0, 0, 0, 0, 0, 
-                                                {0,0}, {0,0,0,0}, 0, NULL, NULL, 0, NULL};  
+    static vertex_t initvertex1 = {-77594624, 37748736};
+    static line_t initslideline = {&initvertex1, NULL, 0, 6291456, 0, 0, 0, 0,
+                    0, 0, 0, { 0, 0 }, { 0, 0, 0, 0 }, 0, NULL, NULL, 0, NULL};
     
     if (bestslideline == NULL)
+    {
         bestslideline = &initslideline;
+    }
 }
-
 
 //============================================================================
 //
@@ -1553,7 +1554,9 @@ void P_BounceWall(mobj_t * mo)
     // https://github.com/chocolate-doom/chocolate-doom/issues/1732
     // https://github.com/chocolate-doom/chocolate-doom/issues/1160
     if (bestslideline == NULL)
+    {
         I_Error("P_BounceWall: No bestslideline was set. Try bumping walls.");
+    }
     
     side = P_PointOnLineSide(mo->x, mo->y, bestslideline);
     lineangle = R_PointToAngle2(0, 0, bestslideline->dx, bestslideline->dy);
