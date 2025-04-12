@@ -1547,6 +1547,12 @@ void P_BounceWall(mobj_t * mo)
     P_PathTraverse(leadx, leady, leadx + mo->momx, leady + mo->momy,
                    PT_ADDLINES, PTR_BounceTraverse);
 
+    // P_BounceWall call on a tall sector after fresh game start
+    // without the player sliding along any walls before.
+    // For more details check:
+    // https://github.com/chocolate-doom/chocolate-doom/issues/1732
+    // https://github.com/chocolate-doom/chocolate-doom/issues/1160
+
     if (bestslideline == NULL)
         I_Error("P_BounceWall: No bestslideline was set. Try bumping walls.");
     
