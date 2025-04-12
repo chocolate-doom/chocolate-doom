@@ -1552,7 +1552,6 @@ void P_BounceWall(mobj_t * mo)
     // For more details check:
     // https://github.com/chocolate-doom/chocolate-doom/issues/1732
     // https://github.com/chocolate-doom/chocolate-doom/issues/1160
-
     if (bestslideline == NULL)
         I_Error("P_BounceWall: No bestslideline was set. Try bumping walls.");
     
