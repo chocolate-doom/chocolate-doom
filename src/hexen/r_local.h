@@ -571,6 +571,7 @@ void R_PrecacheLevel(void);
 #ifdef CRISPY_TRUECOLOR
 extern void R_InitTrueColormaps(char *current_colormap);
 #endif
+extern int R_GetPatchHeight(int texture_num, int patch_index);
 
 //
 // R_things.c

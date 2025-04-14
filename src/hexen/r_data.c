@@ -815,6 +815,15 @@ void R_InitData(void)
 
 //=============================================================================
 
+// [crispy] Used to grab actual height of sky textures
+int R_GetPatchHeight(int texture_num, int patch_index)
+{
+    texpatch_t *texpatch = &textures[texture_num]->patches[patch_index];
+    patch_t *patch = W_CacheLumpNum(texpatch->patch, PU_CACHE);
+
+    return  SHORT(patch->height);
+}
+
 /*
 ================
 =

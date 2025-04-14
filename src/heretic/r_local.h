@@ -514,6 +514,7 @@ extern void R_InitColormaps(void);
 #ifdef CRISPY_TRUECOLOR
 extern void R_SetUnderwaterPalette(byte *palette);
 #endif
+extern int R_GetPatchHeight(int texture_num, int patch_index);
 
 //
 // R_things.c

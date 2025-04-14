@@ -415,7 +415,6 @@ void R_MakeSpans(int x, unsigned int t1, unsigned int b1, unsigned int t2, unsig
 ================
 */
 
-#define SKYTEXTUREMIDSHIFTED 200 // [crispy]
 #define FLATSCROLL(X) \
     ((interpfactor << (X)) - (((63 - ((leveltime >> 1) & 63)) << (X) & 63) * FRACUNIT))
 
@@ -432,7 +431,8 @@ void R_DrawPlanes(void)
     pixel_t *dest;
     int count;
     fixed_t frac, fracstep;
-    int heightmask; // [crispy]
+    int texture, heightmask; // [crispy]
+    static int prev_texture, skyheight; // [crispy]
     static int interpfactor; // [crispy]
 
 #ifdef RANGECHECK
@@ -456,7 +456,6 @@ void R_DrawPlanes(void)
         // [crispy] add support for MBF sky transfers
         if (pl->picnum == skyflatnum || pl->picnum & PL_SKYFLAT)
         {
-            int texture;
 	    angle_t an = viewangle, flip;
 	    if (pl->picnum & PL_SKYFLAT)
 	    {
@@ -473,6 +472,13 @@ void R_DrawPlanes(void)
 		dc_texturemid = skytexturemid;
 		flip = 0;
 	    }
+
+            if (texture != prev_texture)
+            {
+                skyheight = R_GetPatchHeight(texture, 0);
+                prev_texture = texture;
+            }
+
             dc_iscale = skyiscale;
             // [crispy] no brightmaps for sky
             dc_colormap[0] = dc_colormap[1] = colormaps;    // sky is allways drawn full bright
@@ -503,12 +509,10 @@ void R_DrawPlanes(void)
 
                     fracstep = dc_iscale;
                     frac = dc_texturemid + (dc_yl - centery) * fracstep;
-                    heightmask = SKYTEXTUREMIDSHIFTED - 1; // [crispy]
                     // not a power of 2 -- killough
-                    if (SKYTEXTUREMIDSHIFTED & heightmask)
+                    if (skyheight & (skyheight - 1))
                     {
-                        heightmask++;
-                        heightmask <<= FRACBITS;
+                        heightmask = skyheight << FRACBITS;
 
                         if (frac < 0)
                             while ((frac += heightmask) < 0);
@@ -535,6 +539,8 @@ void R_DrawPlanes(void)
                     // texture height is a power of 2 -- killough
                     else
                     {
+                        heightmask = skyheight - 1;
+
                         do
                         {
 #ifndef CRISPY_TRUECOLOR

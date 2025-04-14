@@ -407,6 +407,7 @@ void R_DrawPlanes(void)
     int fracstep = FRACUNIT >> crispy->hires;
     static int interpfactor; // [crispy]
     int heightmask; // [crispy]
+    static int prev_skyTexture, prev_skyTexture2, skyheight; // [crispy]
     int angle2, smoothDelta1 = 0, smoothDelta2 = 0; // [crispy] smooth sky scrolling
 
 #ifdef RANGECHECK
@@ -451,6 +452,16 @@ void R_DrawPlanes(void)
                     offset = Sky1ColumnOffset >> 16;
                     offset2 = Sky2ColumnOffset >> 16;
                 }
+
+                if (skyTexture != prev_skyTexture ||
+                    skyTexture2 != prev_skyTexture2)
+                {
+                    skyheight = MIN(R_GetPatchHeight(skyTexture, 0),
+                                    R_GetPatchHeight(skyTexture2, 0));
+                    prev_skyTexture = skyTexture;
+                    prev_skyTexture2 = skyTexture2;
+                }
+
                 for (x = pl->minx; x <= pl->maxx; x++)
                 {
                     dc_yl = pl->top[x];
@@ -470,13 +481,11 @@ void R_DrawPlanes(void)
                         source2 = R_GetColumn(skyTexture2, angle2 + offset2);
                         dest = ylookup[dc_yl] + columnofs[x];
                         frac = SKYTEXTUREMIDSHIFTED * FRACUNIT + (dc_yl - centery) * fracstep;
-                        heightmask = SKYTEXTUREMIDSHIFTED - 1; // [crispy]
 
                         // not a power of 2 -- killough
-                        if (SKYTEXTUREMIDSHIFTED & heightmask)
+                        if (skyheight & (skyheight - 1))
                         {
-                            heightmask++;
-                            heightmask <<= FRACBITS;
+                            heightmask = skyheight << FRACBITS;
 
                             if (frac < 0)
                                 while ((frac += heightmask) < 0);
@@ -512,6 +521,8 @@ void R_DrawPlanes(void)
                         // texture height is a power of 2 -- killough
                         else
                         {
+                            heightmask = skyheight - 1;
+
                             do
                             {
                                 if (source[(frac >> FRACBITS) & heightmask])
@@ -559,6 +570,13 @@ void R_DrawPlanes(void)
                     }
                     skyTexture = texturetranslation[Sky1Texture];
                 }
+
+                if (skyTexture != prev_skyTexture)
+                {
+                    skyheight = R_GetPatchHeight(skyTexture, 0);
+                    prev_skyTexture = skyTexture;
+                }
+
                 for (x = pl->minx; x <= pl->maxx; x++)
                 {
                     dc_yl = pl->top[x];
@@ -575,12 +593,10 @@ void R_DrawPlanes(void)
                         source = R_GetColumn(skyTexture, angle + offset);
                         dest = ylookup[dc_yl] + columnofs[x];
                         frac = SKYTEXTUREMIDSHIFTED * FRACUNIT + (dc_yl - centery) * fracstep;
-                        heightmask = SKYTEXTUREMIDSHIFTED - 1; // [crispy]
                         // not a power of 2 -- killough
-                        if (SKYTEXTUREMIDSHIFTED & heightmask)
+                        if (skyheight & (skyheight - 1))
                         {
-                            heightmask++;
-                            heightmask <<= FRACBITS;
+                            heightmask = skyheight << FRACBITS;
 
                             if (frac < 0)
                                 while ((frac += heightmask) < 0);
@@ -606,6 +622,8 @@ void R_DrawPlanes(void)
                         // texture height is a power of 2 -- killough
                         else
                         {
+                            heightmask = skyheight - 1;
+
                             do
                             {
 #ifndef CRISPY_TRUECOLOR
