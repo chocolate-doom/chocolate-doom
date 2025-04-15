@@ -2151,6 +2151,9 @@ void SV_LoadGame(int slot)
             players[i].readyArtifact = players[i].inventory[inv_ptr].type;
         }
     }
+
+    // Set Bestslideline after loading
+    P_InitSlideLine();
 }
 
 //==========================================================================
