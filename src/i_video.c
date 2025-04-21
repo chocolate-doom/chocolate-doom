@@ -792,15 +792,15 @@ void I_FinishUpdate (void)
 
     if (smooth_pixel_scaling && !force_software_renderer)
     {
-    // Render this intermediate texture into the upscaled texture
-    // using "nearest" integer scaling.
-    SDL_SetRenderTarget(renderer, texture_upscaled);
-    SDL_RenderCopy(renderer, texture, NULL, NULL);
+        // Render this intermediate texture into the upscaled texture
+        // using "nearest" integer scaling.
+        SDL_SetRenderTarget(renderer, texture_upscaled);
+        SDL_RenderCopy(renderer, texture, NULL, NULL);
 
-    // Finally, render this upscaled texture to screen using linear scaling.
+        // Finally, render this upscaled texture to screen using linear scaling.
 
-    SDL_SetRenderTarget(renderer, NULL);
-    SDL_RenderCopy(renderer, texture_upscaled, NULL, NULL);
+        SDL_SetRenderTarget(renderer, NULL);
+        SDL_RenderCopy(renderer, texture_upscaled, NULL, NULL);
     }
     else
     {
