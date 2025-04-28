@@ -29,5 +29,6 @@
 void P_Ticker (void);
 
 
+extern int init_thinkers_count;
 
 #endif

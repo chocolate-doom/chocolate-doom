@@ -40,6 +40,7 @@ int	leveltime;
 // Both the head and tail of the thinker list.
 thinker_t	thinkercap;
 
+int init_thinkers_count = 0;
 
 //
 // P_InitThinkers
@@ -47,6 +48,7 @@ thinker_t	thinkercap;
 void P_InitThinkers (void)
 {
     thinkercap.prev = thinkercap.next  = &thinkercap;
+    ++init_thinkers_count;
 }
 
 

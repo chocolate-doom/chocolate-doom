@@ -27,6 +27,7 @@
 #include "st_stuff.h"
 #include "p_local.h"
 #include "w_wad.h"
+#include "p_tick.h"
 
 #include "m_cheat.h"
 #include "m_controls.h"
@@ -317,6 +318,9 @@ static int markpointnum = 0; // next point to be assigned
 static int followplayer = 1; // specifies whether to follow the player around
 
 cheatseq_t cheat_amap = CHEAT("iddt", 0);
+cheatseq_t cheat_iddst = CHEAT("iddst", 0);
+cheatseq_t cheat_iddit = CHEAT("iddit", 0);
+cheatseq_t cheat_iddkt = CHEAT("iddkt", 0);
 
 static boolean stopped = true;
 
@@ -728,6 +732,129 @@ void AM_ResetIDDTcheat (void)
 	cheating = 0;
 }
 
+// [crispy] center automap on point
+static void AM_SetMapCenter(fixed_t px, fixed_t py)
+{
+	// [crispy] FTOM(MTOF()) is needed to fix map line jitter in follow mode.
+	if (crispy->hires)
+	{
+		m_x = (px >> FRACTOMAPBITS) - m_w/2;
+		m_y = (py >> FRACTOMAPBITS) - m_h/2;
+	}
+	else
+	{
+		m_x = FTOM(MTOF(px >> FRACTOMAPBITS)) - m_w/2;
+		m_y = FTOM(MTOF(py >> FRACTOMAPBITS)) - m_h/2;
+	}
+	next_m_x = m_x;
+	next_m_y = m_y;
+	m_x2 = m_x + m_w;
+	m_y2 = m_y + m_h;
+}
+
+// [woof] center the automap around the lowest numbered unfound secret sector
+static void AM_CheatRevealSecret(void)
+{
+	static int last_secret = -1;
+
+	if (automapactive)
+	{
+		int i, start_i;
+
+		i = last_secret + 1;
+		if (i >= numsectors)
+			i = 0;
+		start_i = i;
+
+		do
+		{
+			sector_t *sec = &sectors[i];
+
+			if (sec->special == 9)
+			{
+				followplayer = false;
+
+				// This is probably not necessary
+				if (sec->lines && sec->lines[0] && sec->lines[0]->v1)
+				{
+					AM_SetMapCenter(sec->lines[0]->v1->x, sec->lines[0]->v1->y);
+					last_secret = i;
+					break;
+				}
+			}
+
+			i++;
+			if (i >= numsectors)
+				i = 0;
+		} while (i != start_i);
+	}
+}
+
+
+// [woof] auxiliary function for "reveal item" and "reveal kill" cheats
+static void AM_CycleMobj(mobj_t **last_mobj, int *last_count, int flags, int alive)
+{
+	thinker_t *th, *start_th;
+
+	// If the thinkers have been wiped, addresses are invalid
+	if (*last_count != init_thinkers_count)
+	{
+		*last_count = init_thinkers_count;
+		*last_mobj = NULL;
+	}
+
+	if (*last_mobj)
+		th = &(*last_mobj)->thinker;
+	else
+		th = &thinkercap;
+
+	start_th = th;
+
+	do
+	{
+		th = th->next;
+		if (th->function.acp1 == (actionf_p1)P_MobjThinker)
+		{
+			mobj_t *mobj;
+
+			mobj = (mobj_t *) th;
+
+			if ((!alive || mobj->health > 0) && mobj->flags & flags)
+			{
+				followplayer = false;
+				AM_SetMapCenter(mobj->x, mobj->y);
+				*last_mobj = mobj;
+				break;
+			}
+		}
+	} while (th != start_th);
+}
+
+
+// [woof] center the automap around the lowest numbered alive monster that counts towards the kill percentage
+static void AM_CheatRevealKill(void)
+{
+	if (automapactive)
+	{
+		static int last_count;
+		static mobj_t *last_mobj;
+
+		AM_CycleMobj(&last_mobj, &last_count, MF_COUNTKILL, true);
+	}
+}
+
+// [woof] center the automap around the lowest numbered uncollected item that counts towards the item percentage
+static void AM_CheatRevealItem(void)
+{
+	if (automapactive)
+	{
+		static int last_count;
+		static mobj_t *last_mobj;
+
+		AM_CycleMobj(&last_mobj, &last_count, MF_COUNTITEM, false);
+	}
+}
+
 //
 // set the window scale to the maximum size
 //
@@ -977,6 +1104,12 @@ AM_Responder
             rc = false;
             cheating = (cheating + 1) % 3;
         }
+        else if (cht_CheckCheat(&cheat_iddst, ev->data2))
+	        AM_CheatRevealSecret();
+        else if (cht_CheckCheat(&cheat_iddkt, ev->data2))
+	        AM_CheatRevealKill();
+        else if (cht_CheckCheat(&cheat_iddit, ev->data2))
+	        AM_CheatRevealItem();
     }
     else if (ev->type == ev_keyup)
     {
@@ -1037,34 +1170,12 @@ void AM_changeWindowScale(void)
 	AM_activateNewScale();
 }
 
-
 //
 //
 //
 void AM_doFollowPlayer(void)
 {
-    // [crispy] FTOM(MTOF()) is needed to fix map line jitter in follow mode.
-    if (crispy->hires)
-    {
-        m_x = (viewx >> FRACTOMAPBITS) - m_w/2;
-        m_y = (viewy >> FRACTOMAPBITS) - m_h/2;
-    }
-    else
-    {
-        m_x = FTOM(MTOF(viewx >> FRACTOMAPBITS)) - m_w/2;
-        m_y = FTOM(MTOF(viewy >> FRACTOMAPBITS)) - m_h/2;
-    }
-        next_m_x = m_x;
-        next_m_y = m_y;
-	m_x2 = m_x + m_w;
-	m_y2 = m_y + m_h;
-
-	//  m_x = FTOM(MTOF(plr->mo->x - m_w/2));
-	//  m_y = FTOM(MTOF(plr->mo->y - m_h/2));
-	//  m_x = plr->mo->x - m_w/2;
-	//  m_y = plr->mo->y - m_h/2;
-
-
+	AM_SetMapCenter(viewx, viewy);
 }
 
 //
