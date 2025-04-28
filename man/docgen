@@ -433,7 +433,7 @@ def process_file(filename):
                 else:
                     # More documentation text
 
-                    munged_line = re.sub(r'\s*\/\/\s*', '', line, 1)
+                    munged_line = re.sub(r'\s*\/\/\s*', '', line, count=1)
                     munged_line = re.sub(r'\s*$', '', munged_line)
                     param.add_text(munged_line)
 
