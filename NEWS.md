@@ -1,3 +1,31 @@
+## 3.1.1 (2025-??-??)
+
+### General
+  * Fix compilation on GCC 15 (thanks Fabian).
+  * Hide public IP addresses for privacy.
+  * Use native OpenGL texture format for better performance (thanks Fabian).
+  * Improved directory handling on Windows (thank Roman Fomin):
+      * Fixes problems with postfix "." for non-relative paths.
+      * Support for long NTFS paths (up to 32768 characters).
+  * Fixed metainfo files for latest AppStream spec compliance (thanks Fabian).
+
+### Build systems
+  * Can now be built with Emscripten (thanks James Baicoianu).
+
+### Setup
+  * Use correct EGA palette colors (thanks Henrique Jorge).
+
+### Doom
+  * Initial support for Doom version 1.5 (thanks Michael Francis).
+
+### Heretic
+  * Fix crash after loading too many saved games (thanks Noseey).
+
+### Hexen
+  * Fix crash with Heresiarch fireballs if player has never touched a wall (thank Noseey).
+
+### Strife
+
 ## 3.1.0 (2024-08-01)
 
 ### General
