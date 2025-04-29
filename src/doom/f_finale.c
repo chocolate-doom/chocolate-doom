@@ -113,7 +113,7 @@ void	F_CastTicker (void);
 boolean F_CastResponder (event_t *ev);
 void	F_CastDrawer (void);
 
-extern void A_RandomJump();
+extern void A_RandomJump(void *, void *, void *);
 
 //
 // F_StartFinale
@@ -562,7 +562,7 @@ void F_CastTicker (void)
 	    goto stopattack;	// Oh, gross hack!
 	*/
 	// [crispy] Allow A_RandomJump() in deaths in cast sequence
-	if (caststate->action.acp1 == A_RandomJump && Crispy_Random() < caststate->misc2)
+	if (caststate->action.acp3 == A_RandomJump && Crispy_Random() < caststate->misc2)
 	{
 	    st = caststate->misc1;
 	}
@@ -655,7 +655,7 @@ void F_CastTicker (void)
     if (casttics == -1)
     {
 	// [crispy] Allow A_RandomJump() in deaths in cast sequence
-	if (caststate->action.acp1 == A_RandomJump)
+	if (caststate->action.acp3 == A_RandomJump)
 	{
 	    if (Crispy_Random() < caststate->misc2)
 	    {
@@ -730,7 +730,7 @@ boolean F_CastResponder (event_t* ev)
     caststate = &states[mobjinfo[castorder[castnum].type].deathstate];
     casttics = caststate->tics;
     // [crispy] Allow A_RandomJump() in deaths in cast sequence
-    if (casttics == -1 && caststate->action.acp1 == A_RandomJump)
+    if (casttics == -1 && caststate->action.acp3 == A_RandomJump)
     {
         if (Crispy_Random() < caststate->misc2)
         {
