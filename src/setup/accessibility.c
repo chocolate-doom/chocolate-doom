@@ -64,12 +64,15 @@ void AccessibilitySettings(TXT_UNCAST_ARG(widget), void *user_data)
                                         &a11y_weapon_flash));
     }
   
-    TXT_AddWidgets(window,
-                    TXT_NewCheckBox("Weapon Flash Sprite",
-                                    &a11y_weapon_pspr),
-                    TXT_NewCheckBox("Palette Changes",
-                                    &a11y_palette_changes),                                      
-                    NULL);
+    if (gamemission != strife)
+    {
+        TXT_AddWidgets(window,
+                        TXT_NewCheckBox("Weapon Flash Sprite",
+                                        &a11y_weapon_pspr),
+                        TXT_NewCheckBox("Palette Changes",
+                                        &a11y_palette_changes),                                      
+                        NULL);
+    }
 
     if (gamemission == doom || gamemission == heretic)
     {
@@ -85,12 +88,15 @@ void AccessibilitySettings(TXT_UNCAST_ARG(widget), void *user_data)
                                         &a11y_weapon_palette));
     }
 
-    TXT_SetTableColumns(window, 2);
+    if (gamemission != strife)
+    {
+        TXT_SetTableColumns(window, 2);
 
-    TXT_AddWidgets(window,
-                    TXT_NewLabel("Extra Lighting"),
-                    TXT_NewSpinControl(&a11y_extra_lighting, 0, 8),
-                    NULL);
+        TXT_AddWidgets(window,
+                        TXT_NewLabel("Extra Lighting"),
+                        TXT_NewSpinControl(&a11y_extra_lighting, 0, 8),
+                        NULL);
+    }
 
 }
 

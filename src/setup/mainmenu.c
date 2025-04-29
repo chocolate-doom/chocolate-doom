@@ -235,13 +235,10 @@ void MainMenu(void)
         TXT_NewButton2("Compatibility",
                        (TxtWidgetSignalFunc) CompatibilitySettings, NULL),
 */
-    // [crispy]
-    if (gamemission == doom || gamemission == heretic || gamemission == hexen)
-    {
-        TXT_AddWidget(window,
-            TXT_NewButton2("Accessibility",
-                           (TxtWidgetSignalFunc) AccessibilitySettings, NULL));
-    }
+    // [crispy] A11Y Feature
+    TXT_AddWidget(window,
+        TXT_NewButton2("Accessibility",
+                        (TxtWidgetSignalFunc) AccessibilitySettings, NULL));
 
     TXT_AddWidgets(window,
         GetLaunchButton(),

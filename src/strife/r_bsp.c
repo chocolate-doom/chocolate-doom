@@ -373,7 +373,7 @@ void R_AddLine (seg_t*	line)
     // and no middle texture.
     if (backsector->ceilingpic == frontsector->ceilingpic
 	&& backsector->floorpic == frontsector->floorpic
-	&& backsector->lightlevel == frontsector->lightlevel
+	&& backsector->rlightlevel == frontsector->rlightlevel
 	&& curline->sidedef->midtexture == 0)
     {
 	return;
@@ -554,7 +554,7 @@ void R_Subsector (int num)
     {
 	floorplane = R_FindPlane (frontsector->interpfloorheight,
 				  frontsector->floorpic,
-				  frontsector->lightlevel);
+				  frontsector->rlightlevel); // [crispy] A11Y
     }
     else
 	floorplane = NULL;
@@ -564,7 +564,7 @@ void R_Subsector (int num)
     {
 	ceilingplane = R_FindPlane (frontsector->interpceilingheight,
 				    frontsector->ceilingpic,
-				    frontsector->lightlevel);
+				    frontsector->rlightlevel); // [crispy] A11Y
     }
     else
 	ceilingplane = NULL;

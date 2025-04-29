@@ -159,6 +159,9 @@ typedef	struct
 
     // [crispy] Enable/disable sector interpolation.
     boolean interpolate;
+
+    // [crispy] A11Y light level used for rendering
+    short	rlightlevel;
 } sector_t;
 
 

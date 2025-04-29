@@ -2658,6 +2658,7 @@ void A_CrystalExplode(mobj_t* actor)
 
     sector = actor->subsector->sector;
     sector->lightlevel = 0;
+    sector->rlightlevel = sector->lightlevel; // [crispy] A11Y
     sector->floorheight = P_FindLowestFloorSurrounding(sector);
 
     // spawn rubble

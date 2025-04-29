@@ -720,7 +720,7 @@ void R_AddSprites (sector_t* sec)
     // Well, now it will be done.
     sec->validcount = validcount;
 	
-    lightnum = (sec->lightlevel >> LIGHTSEGSHIFT)+(extralight * LIGHTBRIGHT); // [crispy] smooth diminishing lighting
+    lightnum = (sec->rlightlevel >> LIGHTSEGSHIFT)+(extralight * LIGHTBRIGHT); // [crispy] smooth diminishing lighting, A11Y
 
     if (lightnum < 0)		
 	spritelights = scalelight[0];
@@ -909,8 +909,8 @@ void R_DrawPlayerSprites (void)
     
     // get light level
     lightnum =
-	(viewplayer->mo->subsector->sector->lightlevel >> LIGHTSEGSHIFT) 
-	+(extralight * LIGHTBRIGHT); // [crispy] smooth diminishing lighting
+	(viewplayer->mo->subsector->sector->rlightlevel >> LIGHTSEGSHIFT) 
+	+(extralight * LIGHTBRIGHT); // [crispy] smooth diminishing lighting, A11Y
 
     if (lightnum < 0)		
 	spritelights = scalelight[0];
