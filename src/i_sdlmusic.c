@@ -177,6 +177,11 @@ static boolean SDLIsInitialized(void)
     return Mix_QuerySpec(&freq, &format, &channels) != 0;
 }
 
+#ifdef _WIN32
+// putenv requires a non-const string whose lifetime is the whole program
+static char sdl_mixer_disable_nativemidi[] = "SDL_MIXER_DISABLE_NATIVEMIDI=1";
+#endif
+
 // Initialize music subsystem
 static boolean I_SDL_InitMusic(void)
 {
@@ -207,6 +212,12 @@ static boolean I_SDL_InitMusic(void)
             music_initialized = true;
         }
     }
+
+    #ifdef _WIN32
+    // Never let SDL Mixer use native midi on Windows. Avoids SDL Mixer bug
+    // where music volume affects global application volume.
+    putenv(sdl_mixer_disable_nativemidi);
+    #endif
 
     // Initialize SDL_Mixer for MIDI music playback
     Mix_Init(MIX_INIT_MID);
