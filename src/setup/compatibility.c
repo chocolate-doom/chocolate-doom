@@ -83,7 +83,6 @@ void BindCompatibilityVariables(void)
         M_BindIntVariable("crispy_secretmessage",   &crispy->secretmessage);
         M_BindIntVariable("crispy_smoothlight",     &crispy->smoothlight);
         M_BindIntVariable("crispy_smoothmap",       &crispy->smoothmap);
-        M_BindIntVariable("crispy_smoothscaling",   &crispy->smoothscaling);
         M_BindIntVariable("crispy_soundfix",        &crispy->soundfix);
         M_BindIntVariable("crispy_soundfull",       &crispy->soundfull);
         M_BindIntVariable("crispy_soundmono",       &crispy->soundmono);
@@ -111,7 +110,6 @@ void BindCompatibilityVariables(void)
         M_BindIntVariable("crispy_leveltime",       &crispy->leveltime);
         M_BindIntVariable("crispy_playercoords",    &crispy->playercoords);
         M_BindIntVariable("crispy_secretmessage",   &crispy->secretmessage);
-        M_BindIntVariable("crispy_smoothscaling",   &crispy->smoothscaling);
         M_BindIntVariable("crispy_soundmono",       &crispy->soundmono);
         M_BindIntVariable("crispy_lvlwpnsnd",       &crispy->lvlwpnsnd);
         M_BindIntVariable("crispy_translucency",    &crispy->translucency);
@@ -130,7 +128,6 @@ void BindCompatibilityVariables(void)
         M_BindIntVariable("crispy_freelook",        &crispy->freelook_hh);
         M_BindIntVariable("crispy_hires",           &crispy->hires);
         M_BindIntVariable("crispy_playercoords",    &crispy->playercoords);
-        M_BindIntVariable("crispy_smoothscaling",   &crispy->smoothscaling);
         M_BindIntVariable("crispy_soundmono",       &crispy->soundmono);
         M_BindIntVariable("crispy_translucency",    &crispy->translucency);
         M_BindIntVariable("crispy_uncapped",        &crispy->uncapped);
@@ -157,7 +154,6 @@ void BindCompatibilityVariables(void)
         M_BindIntVariable("crispy_playercoords",    &crispy->playercoords);
         M_BindIntVariable("crispy_smoothlight",     &crispy->smoothlight);
         M_BindIntVariable("crispy_smoothmap",       &crispy->smoothmap);
-        M_BindIntVariable("crispy_smoothscaling",   &crispy->smoothscaling);
         M_BindIntVariable("crispy_soundfix",        &crispy->soundfix);
         M_BindIntVariable("crispy_soundfull",       &crispy->soundfull);
         M_BindIntVariable("crispy_soundmono",       &crispy->soundmono);

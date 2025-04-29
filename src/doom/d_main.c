@@ -475,7 +475,7 @@ void D_BindVariables(void)
     M_BindIntVariable("crispy_secretmessage",   &crispy->secretmessage);
     M_BindIntVariable("crispy_smoothlight",     &crispy->smoothlight);
     M_BindIntVariable("crispy_smoothmap",       &crispy->smoothmap);
-    M_BindIntVariable("crispy_smoothscaling",   &crispy->smoothscaling);
+    M_BindIntVariable("crispy_smoothscaling",   &smooth_pixel_scaling);
     M_BindIntVariable("crispy_soundfix",        &crispy->soundfix);
     M_BindIntVariable("crispy_soundfull",       &crispy->soundfull);
     M_BindIntVariable("crispy_soundmono",       &crispy->soundmono);

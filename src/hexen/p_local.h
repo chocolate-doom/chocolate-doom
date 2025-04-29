@@ -294,6 +294,7 @@ boolean P_CheckSight(mobj_t * t1, mobj_t * t2);
 void P_UseLines(player_t * player);
 boolean P_UsePuzzleItem(player_t * player, int itemType);
 void PIT_ThrustSpike(mobj_t * actor);
+void P_InitSlideLine(void);
 
 boolean P_ChangeSector(sector_t * sector, int crunch);
 

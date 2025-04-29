@@ -293,7 +293,7 @@ void M_CrispyToggleSmoothScaling(int choice)
 {
     choice = 0;
 
-    crispy->smoothscaling = !crispy->smoothscaling;
+    smooth_pixel_scaling = !smooth_pixel_scaling;
 }
 
 void M_CrispyToggleSndChannels(int choice)

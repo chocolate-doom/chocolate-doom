@@ -221,7 +221,7 @@ void D_BindVariables(void)
     M_BindIntVariable("crispy_truecolor",       &crispy->truecolor);
 #endif
     M_BindIntVariable("crispy_smoothlight",     &crispy->smoothlight);
-    M_BindIntVariable("crispy_smoothscaling",   &crispy->smoothscaling);
+    M_BindIntVariable("crispy_smoothscaling",   &smooth_pixel_scaling);
     M_BindIntVariable("crispy_vsync",           &crispy->vsync);
     M_BindIntVariable("crispy_widescreen",      &crispy->widescreen);
     M_BindIntVariable("crispy_uncapped",        &crispy->uncapped);

@@ -72,6 +72,7 @@ static char *window_position = "";
 static int video_display = 0;
 static int aspect_ratio_correct = 1;
 static int integer_scaling = 0;
+static int smooth_pixel_scaling = 1;
 static int vga_porch_flash = 0;
 static int force_software_renderer = 0;
 static int fullscreen = 1;
@@ -212,6 +213,7 @@ static void AdvancedDisplayConfig(TXT_UNCAST_ARG(widget),
         TXT_NewCheckBox("Save screenshots in PNG format",
                         &png_screenshots),
 #endif
+        TXT_NewCheckBox("Smooth pixel scaling", &smooth_pixel_scaling),
         NULL);
 
     TXT_SignalConnect(ar_checkbox, "changed", GenerateSizesTable, sizes_table);
@@ -259,6 +261,7 @@ void BindDisplayVariables(void)
     M_BindIntVariable("video_display",             &video_display);
     M_BindIntVariable("aspect_ratio_correct",      &aspect_ratio_correct);
     M_BindIntVariable("integer_scaling",           &integer_scaling);
+    M_BindIntVariable("smooth_pixel_scaling",      &smooth_pixel_scaling);
     M_BindIntVariable("fullscreen",                &fullscreen);
     M_BindIntVariable("fullscreen_width",          &fullscreen_width);
     M_BindIntVariable("fullscreen_height",         &fullscreen_height);

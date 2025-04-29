@@ -57,16 +57,6 @@ jobs:
             pkg-path: pkg/win32/*.zip
             pkg-dir: pkg/win32
 
-          - name: MSYS2 MINGW32
-            os: windows-latest
-            compiler: gcc
-            shell: 'msys2 {0}'
-            msystem: mingw32
-            msys-env: mingw-w64-i686
-            artifacts: true
-            pkg-path: pkg/win32/*.zip
-            pkg-dir: pkg/win32
-
     steps:
       - name: Install pandoc
         if: runner.os == 'Windows'

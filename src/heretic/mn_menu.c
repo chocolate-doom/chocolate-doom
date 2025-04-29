@@ -1668,7 +1668,7 @@ static boolean CrispyToggleWidescreen(int option)
 }
 static boolean CrispySmoothing(int option)
 {
-    crispy->smoothscaling = !crispy->smoothscaling;
+    smooth_pixel_scaling = !smooth_pixel_scaling;
     return true;
 }
 
@@ -3042,7 +3042,7 @@ static void DrawCrispness1(void)
     DrawCrispnessMultiItem(crispy->widescreen, 164, 45, multiitem_widescreen, false);
 
     // Smooth pixel scaling
-    DrawCrispnessItem(crispy->smoothscaling, 216, 55);
+    DrawCrispnessItem(smooth_pixel_scaling, 216, 55);
 
     // Uncapped framerate
     DrawCrispnessItem(crispy->uncapped, 217, 65);

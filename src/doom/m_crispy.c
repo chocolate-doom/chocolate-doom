@@ -509,7 +509,7 @@ void M_CrispyToggleSecretmessage(int choice)
 void M_CrispyToggleSmoothScaling(int choice)
 {
     choice = 0;
-    crispy->smoothscaling = !crispy->smoothscaling;
+    smooth_pixel_scaling = !smooth_pixel_scaling;
 }
 
 static void M_CrispyToggleSmoothLightingHook (void)

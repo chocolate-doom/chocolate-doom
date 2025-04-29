@@ -73,7 +73,6 @@ typedef struct
 	int secretmessage;
 	int smoothlight;
 	int smoothmap;
-	int smoothscaling;
 	int soundfix;
 	int soundfull;
 	int soundmono;
