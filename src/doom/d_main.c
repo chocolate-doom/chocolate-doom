@@ -180,9 +180,14 @@ boolean D_Display (void)
     
     if (crispy->uncapped)
     {
-        I_StartDisplay();
-        G_FastResponder();
-        G_PrepTiccmd();
+        I_UpdateFracTic();
+
+        if (!automapactive || crispy->automapoverlay)
+        {
+            I_StartDisplay();
+            G_FastResponder();
+            G_PrepTiccmd();
+        }
     }
 
     // change the view size if needed

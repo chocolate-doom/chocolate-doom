@@ -537,11 +537,14 @@ void I_StartTic (void)
     }
 }
 
-void I_StartDisplay(void) // [crispy]
+void I_UpdateFracTic(void) // [crispy]
 {
     // [AM] Figure out how far into the current tic we're in as a fixed_t.
     fractionaltic = I_GetFracRealTime();
+}
 
+void I_StartDisplay(void) // [crispy]
+{
     SDL_PumpEvents();
 
     if (usemouse && !nomouse && window_focused)
