@@ -309,25 +309,10 @@ void TXT_Shutdown(void)
 {
     free(screendata);
     screendata = NULL;
-
-    if (screenbuffer)
-    {
-        SDL_FreeSurface(screenbuffer);
-        screenbuffer = NULL;
-    }
-
-    if (renderer)
-    {
-        SDL_DestroyRenderer(renderer);
-        renderer = NULL;
-    }
-
-    if (TXT_SDLWindow)
-    {
-        SDL_DestroyWindow(TXT_SDLWindow);
-        TXT_SDLWindow = NULL;
-    }
-
+    SDL_FreeSurface(screenbuffer);
+    screenbuffer = NULL;
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(TXT_SDLWindow);
     SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
 
