@@ -165,7 +165,7 @@ static const txt_font_t *FontForName(const char *name)
 
 static void ChooseFont(void)
 {
-    SDL_DisplayMode desktop_info;
+    const SDL_DisplayMode *desktop_info;
     char *env;
 
     // Allow normal selection to be overridden from an environment variable:
@@ -183,7 +183,8 @@ static void ChooseFont(void)
     // Get desktop resolution.
     // If in doubt and we can't get a list, always prefer to
     // fall back to the normal font:
-    if (SDL_GetCurrentDisplayMode(0, &desktop_info))
+    desktop_info = SDL_GetCurrentDisplayMode(0);
+    if (desktop_info == NULL)
     {
         font = &highdpi_font;
         return;
@@ -194,7 +195,7 @@ static void ChooseFont(void)
     // a modern high-resolution display, and we can use the
     // large font.
 
-    if (desktop_info.w < 640 || desktop_info.h < 480)
+    if (desktop_info->w < 640 || desktop_info->h < 480)
     {
         font = &small_font;
     }
@@ -231,7 +232,7 @@ int TXT_Init(void)
 {
     int flags = 0;
 
-    if (SDL_Init(SDL_INIT_VIDEO) < 0)
+    if (!SDL_Init(SDL_INIT_VIDEO))
     {
         return 0;
     }
@@ -247,17 +248,13 @@ int TXT_Init(void)
         flags |= SDL_WINDOW_HIGH_PIXEL_DENSITY;
     }
 
-    TXT_SDLWindow =
-        SDL_CreateWindow("", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-                         screen_image_w, screen_image_h, flags);
+    TXT_SDLWindow = SDL_CreateWindow("", screen_image_w, screen_image_h,
+                                     flags);
 
     if (TXT_SDLWindow == NULL)
         return 0;
 
-    renderer = SDL_CreateRenderer(TXT_SDLWindow, -1, SDL_RENDERER_PRESENTVSYNC);
-
-    if (renderer == NULL)
-        renderer = SDL_CreateRenderer(TXT_SDLWindow, -1, SDL_RENDERER_SOFTWARE);
+    renderer = SDL_CreateRenderer(TXT_SDLWindow, NULL);
 
     if (renderer == NULL)
         return 0;
@@ -291,10 +288,10 @@ int TXT_Init(void)
     // Instead, we draw everything into an intermediate 8-bit surface
     // the same dimensions as the screen. SDL then takes care of all the
     // 8->32 bit (or whatever depth) color conversions for us.
-    screenbuffer = SDL_CreateRGBSurface(0,
-                                        TXT_SCREEN_W * font->w,
-                                        TXT_SCREEN_H * font->h,
-                                        8, 0, 0, 0, 0);
+    screenbuffer = SDL_CreateSurface(
+        TXT_SCREEN_W * font->w,
+        TXT_SCREEN_H * font->h,
+        SDL_GetPixelFormatForMasks(8, 0, 0, 0, 0));
 
     SDL_LockSurface(screenbuffer);
     SDL_SetPaletteColors(screenbuffer->format->palette, ega_colors, 0, 16);
@@ -894,13 +891,13 @@ void TXT_Sleep(int timeout)
 
 void TXT_SetInputMode(txt_input_mode_t mode)
 {
-    if (mode == TXT_INPUT_TEXT && !SDL_TextInputActive())
+    if (mode == TXT_INPUT_TEXT && !SDL_TextInputActive(TXT_SDLWindow))
     {
-        SDL_StartTextInput();
+        SDL_StartTextInput(TXT_SDLWindow);
     }
-    else if (SDL_TextInputActive() && mode != TXT_INPUT_TEXT)
+    else if (SDL_TextInputActive(TXT_SDLWindow) && mode != TXT_INPUT_TEXT)
     {
-        SDL_StopTextInput();
+        SDL_StopTextInput(TXT_SDLWindow);
     }
 
     input_mode = mode;
