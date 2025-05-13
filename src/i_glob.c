@@ -26,11 +26,11 @@
 #include "m_misc.h"
 #include "config.h"
 
-#if defined(_MSC_VER)
-// For Visual C++, we need to include the win_opendir module.
+#if defined(_WIN32)
 #include <win_opendir.h>
-#include <sys/stat.h>
+#ifndef S_ISDIR
 #define S_ISDIR(m)      (((m)& S_IFMT) == S_IFDIR)
+#endif
 #elif defined(HAVE_DIRENT_H)
 #include <dirent.h>
 #include <sys/stat.h>
@@ -62,7 +62,7 @@ static boolean IsDirectory(char *dir, struct dirent *de)
         int result;
 
         filename = M_StringJoin(dir, DIR_SEPARATOR_S, de->d_name, NULL);
-        result = stat(filename, &sb);
+        result = M_stat(filename, &sb);
         free(filename);
 
         if (result != 0)

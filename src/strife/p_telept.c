@@ -75,7 +75,6 @@ EV_Teleport
     {
         if (sectors[ i ].tag == tag )
         {
-            thinker = thinkercap.next;
             for (thinker = thinkercap.next;
                 thinker != &thinkercap;
                 thinker = thinker->next)

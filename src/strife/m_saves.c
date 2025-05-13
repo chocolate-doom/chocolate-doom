@@ -70,7 +70,7 @@ void ClearTmp(void)
         {
             break;
         }
-        remove(path);
+        M_remove(path);
     }
 
     I_EndGlob(glob);
@@ -101,7 +101,7 @@ void ClearSlot(void)
             break;
         }
 
-        remove(filepath);
+        M_remove(filepath);
     }
 
     I_EndGlob(glob);
@@ -209,8 +209,8 @@ void M_SaveMoveMapToHere(void)
     // haleyjd: use M_FileExists, not access
     if(M_FileExists(mapsave))
     {
-        remove(heresave);
-        rename(mapsave, heresave);
+        M_remove(heresave);
+        M_rename(mapsave, heresave);
     }
 
     Z_Free(mapsave);
@@ -236,8 +236,8 @@ void M_SaveMoveHereToMap(void)
 
     if(M_FileExists(heresave))
     {
-        remove(mapsave);
-        rename(heresave, mapsave);
+        M_remove(mapsave);
+        M_rename(heresave, mapsave);
     }
 
     Z_Free(mapsave);
@@ -275,7 +275,7 @@ void M_ReadMisObj(void)
     // haleyjd: use M_SafeFilePath, not sprintf
     srcpath = M_SafeFilePath(savepathtemp, "mis_obj");
 
-    if((f = fopen(srcpath, "rb")))
+    if((f = M_fopen(srcpath, "rb")))
     {
         int retval = fread(mission_objective, 1, OBJECTIVE_LEN, f);
         fclose(f);
@@ -361,40 +361,6 @@ int M_StringAlloc(char **str, int numstrs, size_t extra, const char *str1, ...)
     *str = (char *)(M_Calloc(1, len));
 
     return len;
-}
-
-//
-// M_NormalizeSlashes
-//
-// Remove trailing slashes, translate backslashes to slashes
-// The string to normalize is passed and returned in str
-//
-// killough 11/98: rewritten
-//
-// [STRIFE] - haleyjd 20110210: Borrowed from Eternity and adapted to respect 
-// the DIR_SEPARATOR define used by Choco Doom. This routine originated in
-// BOOM.
-//
-void M_NormalizeSlashes(char *str)
-{
-    char *p;
-   
-    // Convert all slashes/backslashes to DIR_SEPARATOR
-    for(p = str; *p; p++)
-    {
-        if((*p == '/' || *p == '\\') && *p != DIR_SEPARATOR)
-            *p = DIR_SEPARATOR;
-    }
-
-    // Remove trailing slashes
-    while(p > str && *--p == DIR_SEPARATOR)
-        *p = 0;
-
-    // Collapse multiple slashes
-    for(p = str; (*str++ = *p); )
-        if(*p++ == DIR_SEPARATOR)
-            while(*p == DIR_SEPARATOR)
-                p++;
 }
 
 //

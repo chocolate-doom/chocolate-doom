@@ -97,7 +97,6 @@ boolean P_SightBlockLinesIterator(int x, int y)
     polyblock_t *polyLink;
     seg_t **segList;
     int i;
-    extern polyblock_t **PolyBlockMap;
 
     offset = y * bmapwidth + x;
 

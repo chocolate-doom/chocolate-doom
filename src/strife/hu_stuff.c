@@ -30,6 +30,7 @@
 #include "i_swap.h"
 #include "i_video.h"
 
+#include "d_main.h"
 #include "hu_stuff.h"
 #include "hu_lib.h"
 #include "m_controls.h"
@@ -60,19 +61,7 @@
 #define HU_INPUTWIDTH   64
 #define HU_INPUTHEIGHT  1
 
-char *chat_macros[10] =
-{
-    HUSTR_CHATMACRO0,
-    HUSTR_CHATMACRO1,
-    HUSTR_CHATMACRO2,
-    HUSTR_CHATMACRO3,
-    HUSTR_CHATMACRO4,
-    HUSTR_CHATMACRO5,
-    HUSTR_CHATMACRO6,
-    HUSTR_CHATMACRO7,
-    HUSTR_CHATMACRO8,
-    HUSTR_CHATMACRO9
-};
+char *chat_macros[10];
 
 // villsa [STRIFE]
 char player_names[8][16] =
@@ -105,12 +94,8 @@ static boolean          message_nottobefuckedwith;
 static hu_stext_t       w_message;
 static int              message_counter;
 
-//extern int              showMessages; [STRIFE] no such variable
 
 static boolean          headsupactive = false;
-
-// haleyjd 20130915 [STRIFE]: need nickname
-extern char *nickname;
 
 // haleyjd 20130915 [STRIFE]: true if setting nickname
 static boolean hu_setting_name = false;
@@ -548,13 +533,8 @@ boolean HU_Responder(event_t *ev)
     static boolean      altdown = false;
     unsigned char       c;
     int                 i;
-    int                 numplayers;
     
     static int          num_nobrainers = 0;
-
-    numplayers = 0;
-    for (i=0 ; i<MAXPLAYERS ; i++)
-        numplayers += playeringame[i];
 
     if (ev->data1 == KEY_RSHIFT)
     {

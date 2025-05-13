@@ -176,7 +176,7 @@ boolean P_CheckMeleeRange (mobj_t*	actor)
     pl = actor->target;
     dist = P_AproxDistance (pl->x-actor->x, pl->y-actor->y);
 
-    if (gameversion <= exe_doom_1_2)
+    if (gameversion < exe_doom_1_5)
         range = MELEERANGE;
     else
         range = MELEERANGE-20*FRACUNIT+pl->info->radius;
@@ -684,7 +684,7 @@ void A_Chase (mobj_t*	actor)
     // turn towards movement direction if not there yet
     if (actor->movedir < 8)
     {
-	actor->angle &= (7<<29);
+        actor->angle &= (7u << 29);
 	delta = actor->angle - (actor->movedir << 29);
 	
 	if (delta > 0)
@@ -933,7 +933,7 @@ void A_SargAttack (mobj_t* actor)
 		
     A_FaceTarget (actor);
 
-    if (gameversion > exe_doom_1_2)
+    if (gameversion >= exe_doom_1_5)
     {
         if (!P_CheckMeleeRange (actor))
             return;
@@ -1831,8 +1831,7 @@ void A_BrainAwake (mobj_t* mo)
     // find all the target spots
     numbraintargets = 0;
     braintargeton = 0;
-	
-    thinker = thinkercap.next;
+
     for (thinker = thinkercap.next ;
 	 thinker != &thinkercap ;
 	 thinker = thinker->next)

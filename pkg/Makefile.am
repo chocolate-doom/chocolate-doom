@@ -1,10 +1,6 @@
 
 OSX_FILES=                                                              \
-osx/Resources/128x128.png                                               \
-osx/Resources/app.icns                                                  \
 osx/Resources/app.png                                                   \
-osx/Resources/wadfile.icns                                              \
-osx/Resources/wadfile.png                                               \
 osx/Resources/launcher.nib/designable.nib                               \
 osx/Resources/launcher.nib/keyedobjects.nib                             \
 osx/disk/dir.DS_Store                                                   \
@@ -25,5 +21,5 @@ win32/GNUmakefile                                                       \
 win32/cp-with-libs                                                      \
 win32/README
 
-EXTRA_DIST=$(OSX_FILES) $(WIN32_FILES)
+EXTRA_DIST=style.html $(OSX_FILES) $(WIN32_FILES)
 

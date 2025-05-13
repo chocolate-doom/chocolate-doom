@@ -24,7 +24,9 @@
 #include <assert.h>
 
 #include "SDL.h"
+#ifndef DISABLE_SDL2MIXER
 #include "SDL_mixer.h"
+#endif  // DISABLE_SDL2MIXER
 
 #include "safe.h"
 
@@ -34,6 +36,10 @@
 #include "opl_internal.h"
 
 #include "opl_queue.h"
+
+
+#ifndef DISABLE_SDL2MIXER
+
 
 #define MAX_SOUND_SLICE_TIME 100 /* ms */
 
@@ -174,9 +180,10 @@ static void FillBuffer(uint8_t *buffer, unsigned int nsamples)
 
 // Callback function to fill a new sound buffer:
 
-static void OPL_Mix_Callback(void *udata, Uint8 *buffer, int len)
+static void OPL_Mix_Callback(int chan, void *stream, int len, void *udata)
 {
     unsigned int filled, buffer_samples;
+    Uint8 *buffer = (Uint8*)stream;
 
     // Repeatedly call the OPL emulator update function until the buffer is
     // full.
@@ -295,7 +302,7 @@ static int OPL_SDL_Init(unsigned int port_base)
             return 0;
         }
 
-        if (Mix_OpenAudio(opl_sample_rate, AUDIO_S16SYS, 2, GetSliceSize()) < 0)
+        if (Mix_OpenAudioDevice(opl_sample_rate, AUDIO_S16SYS, 2, GetSliceSize(), NULL, SDL_AUDIO_ALLOW_FREQUENCY_CHANGE) < 0)
         {
             fprintf(stderr, "Error initialising SDL_mixer: %s\n", Mix_GetError());
 
@@ -353,7 +360,7 @@ static int OPL_SDL_Init(unsigned int port_base)
     // Set postmix that adds the OPL music. This is deliberately done
     // as a postmix and not using Mix_HookMusic() as the latter disables
     // normal SDL_mixer music mixing.
-    Mix_SetPostMix(OPL_Mix_Callback, NULL);
+    Mix_RegisterEffect(MIX_CHANNEL_POST, OPL_Mix_Callback, NULL, NULL);
 
     return 1;
 }
@@ -427,7 +434,7 @@ static void WriteRegister(unsigned int reg_num, unsigned int value)
 
                 if ((value & 0x20) == 0)
                 {
-                    timer1.enabled = (value & 0x02) != 0;
+                    timer2.enabled = (value & 0x02) != 0;
                     OPLTimer_CalculateEndTime(&timer2);
                 }
             }
@@ -512,3 +519,5 @@ opl_driver_t opl_sdl_driver =
     OPL_SDL_AdjustCallbacks,
 };
 
+
+#endif // DISABLE_SDL2MIXER

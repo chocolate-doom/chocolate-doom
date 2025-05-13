@@ -14,6 +14,7 @@ add_library(hexen STATIC
             m_random.c          m_random.h
             mn_menu.c
             p_acs.c
+                                p_action.h
             p_anim.c
             p_ceilng.c
             p_doors.c
@@ -55,4 +56,23 @@ add_library(hexen STATIC
                                 xddefs.h)
 
 target_include_directories(hexen PRIVATE "../" "${CMAKE_CURRENT_BINARY_DIR}/../../")
-target_link_libraries(hexen SDL2::SDL2 SDL2::mixer SDL2::net)
+if (DEFINED EMSCRIPTEN)
+    set(SDL_FLAGS "-s USE_SDL=2")
+    if(ENABLE_SDL2_MIXER)
+        set(SDL_FLAGS "${SDL_FLAGS} -s USE_SDL_MIXER=2")
+    endif()
+    if(ENABLE_SDL2_NET)
+        set(SDL_FLAGS "${SDL_FLAGS} -s USE_SDL_NET=2")
+    endif()
+else()
+    set(SDL_LINK_LIBS SDL2::SDL2)
+    if(ENABLE_SDL2_MIXER)
+        list(APPEND SDL_LINK_LIBS SDL2_mixer::SDL2_mixer)
+    endif()
+    if(ENABLE_SDL2_NET)
+        list(APPEND SDL_LINK_LIBS SDL2_net::SDL2_net)
+    endif()
+endif()
+target_link_libraries(hexen ${SDL_LINK_LIBS})
+set_target_properties(hexen PROPERTIES COMPILE_FLAGS "${SDL_FLAGS}")
+set_target_properties(hexen PROPERTIES LINK_FLAGS "${SDL_FLAGS}")

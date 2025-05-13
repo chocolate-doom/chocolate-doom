@@ -21,6 +21,7 @@
 #define __I_SOUND__
 
 #include "doomtype.h"
+#include "d_mode.h"
 
 // so that the individual game logic and sound driver code agree
 #define NORM_PITCH 127
@@ -100,6 +101,7 @@ typedef enum
     SNDDEVICE_GENMIDI = 8,
     SNDDEVICE_AWE32 = 9,
     SNDDEVICE_CD = 10,
+    SNDDEVICE_FSYNTH = 11,
 } snddevice_t;
 
 // Interface for sound modules
@@ -108,13 +110,13 @@ typedef struct
 {
     // List of sound devices that this sound module is used for.
 
-    snddevice_t *sound_devices;
+    const snddevice_t *sound_devices;
     int num_sound_devices;
 
     // Initialise sound module
     // Returns true if successfully initialised
 
-    boolean (*Init)(boolean use_sfx_prefix);
+    boolean (*Init)(GameMission_t mission);
 
     // Shutdown sound module
 
@@ -151,7 +153,7 @@ typedef struct
 
 } sound_module_t;
 
-void I_InitSound(boolean use_sfx_prefix);
+void I_InitSound(GameMission_t mission);
 void I_ShutdownSound(void);
 int I_GetSfxLumpNum(sfxinfo_t *sfxinfo);
 void I_UpdateSound(void);
@@ -167,7 +169,7 @@ typedef struct
 {
     // List of sound devices that this music module is used for.
 
-    snddevice_t *sound_devices;
+    const snddevice_t *sound_devices;
     int num_sound_devices;
 
     // Initialise the music subsystem
@@ -234,6 +236,9 @@ extern int snd_cachesize;
 extern int snd_maxslicetime_ms;
 extern char *snd_musiccmd;
 extern int snd_pitchshift;
+extern char *snd_dmxoption;
+extern int use_libsamplerate;
+extern float libsamplerate_scale;
 
 void I_BindSoundVariables(void);
 
@@ -245,6 +250,51 @@ typedef enum {
 } opl_driver_ver_t;
 
 void I_SetOPLDriverVer(opl_driver_ver_t ver);
+void I_OPL_DevMessages(char *, size_t);
 
+// Sound modules
+
+void I_InitTimidityConfig(void);
+extern const sound_module_t sound_sdl_module;
+extern const sound_module_t sound_pcsound_module;
+extern const music_module_t music_sdl_module;
+extern const music_module_t music_opl_module;
+extern const music_module_t music_pack_module;
+extern const music_module_t music_win_module;
+extern const music_module_t music_fl_module;
+
+// For OPL module:
+
+extern int opl_io_port;
+
+// For native music module:
+
+extern char *music_pack_path;
+extern char *timidity_cfg_path;
+#ifdef _WIN32
+extern char *winmm_midi_device;
+extern int winmm_complevel;
+extern int winmm_reset_type;
+extern int winmm_reset_delay;
 #endif
 
+// For FluidSynth module:
+
+#ifdef HAVE_FLUIDSYNTH
+extern char *fsynth_sf_path;
+extern int fsynth_chorus_active;
+extern float fsynth_chorus_depth;
+extern float fsynth_chorus_level;
+extern int fsynth_chorus_nr;
+extern float fsynth_chorus_speed;
+extern char *fsynth_midibankselect;
+extern int fsynth_polyphony;
+extern int fsynth_reverb_active;
+extern float fsynth_reverb_damp;
+extern float fsynth_reverb_level;
+extern float fsynth_reverb_roomsize;
+extern float fsynth_reverb_width;
+extern float fsynth_gain;
+#endif // HAVE_FLUIDSYNTH
+
+#endif

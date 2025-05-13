@@ -410,7 +410,6 @@ boolean EV_SectorSoundChange(byte * args)
 
 static boolean CheckedLockedDoor(mobj_t * mo, byte lock)
 {
-    extern char *TextKeyMessages[11];
     char LockedBuffer[80];
 
     if (!mo->player)
@@ -867,7 +866,6 @@ boolean P_ActivateLine(line_t * line, mobj_t * mo, int side,
             return false;       // never open secret doors
     }
     repeat = (line->flags & ML_REPEAT_SPECIAL) != 0;
-    buttonSuccess = false;
 
     // Construct args[] array to contain the arguments from the line, as we
     // cannot rely on struct field ordering and layout.

@@ -31,6 +31,7 @@
 #include "deh_main.h"
 
 #include "i_input.h"
+#include "i_joystick.h"
 #include "i_swap.h"
 #include "i_system.h"
 #include "i_timer.h"
@@ -63,13 +64,8 @@
 #include "p_dialog.h"
 
 
-extern void M_QuitStrife(int);
+void M_QuitStrife(int);
 
-extern patch_t*         hu_font[HU_FONTSIZE];
-extern boolean          message_dontfuckwithme;
-
-extern boolean          chat_on;        // in heads-up code
-extern boolean          sendsave;       // [STRIFE]
 
 //
 // defaulted values
@@ -132,7 +128,6 @@ boolean                 menuindialog;   // haleyjd 09/04/10: ditto
 #define CURSORXOFF		-28
 #define LINEHEIGHT		19
 
-extern boolean		sendpause;
 char			savegamestrings[10][SAVESTRINGSIZE];
 
 char	endstring[160];
@@ -553,7 +548,7 @@ void M_ReadSaveStrings(void)
             Z_Free(fname);
         fname = M_SafeFilePath(savegamedir, M_MakeStrifeSaveDir(i, "\\name"));
 
-        handle = fopen(fname, "rb");
+        handle = M_fopen(fname, "rb");
         if(handle == NULL)
         {
             X_StringCopy(savegamestrings[i], DEH_String(EMPTYSTRING),
@@ -1275,7 +1270,6 @@ void M_FinishReadThis(int choice)
 */
 
 #if 0
-extern void F_StartCast(void);
 
 //
 // M_CheckStartCast
@@ -1705,6 +1699,7 @@ boolean M_Responder (event_t* ev)
     static  int     lasty = 0;
     static  int     mousex = 0;
     static  int     lastx = 0;
+    int dir;
 
     // In testcontrols mode, none of the function keys should do anything
     // - the only key is escape to quit.
@@ -1748,39 +1743,70 @@ boolean M_Responder (event_t* ev)
 
     if (ev->type == ev_joystick && joywait < I_GetTime())
     {
-        if (ev->data3 < 0)
+        if (JOY_GET_DPAD(ev->data6) != JOY_DIR_NONE)
+        {
+            dir = JOY_GET_DPAD(ev->data6);
+        }
+        else if (JOY_GET_LSTICK(ev->data6) != JOY_DIR_NONE)
+        {
+            dir = JOY_GET_LSTICK(ev->data6);
+        }
+        else
+        {
+            dir = JOY_GET_RSTICK(ev->data6);
+        }
+
+        if (dir & JOY_DIR_UP)
         {
             key = key_menu_up;
             joywait = I_GetTime() + 5;
         }
-        else if (ev->data3 > 0)
+        else if (dir & JOY_DIR_DOWN)
         {
             key = key_menu_down;
             joywait = I_GetTime() + 5;
         }
-
-        if (ev->data2 < 0)
+        if (dir & JOY_DIR_LEFT)
         {
             key = key_menu_left;
-            joywait = I_GetTime() + 2;
+            joywait = I_GetTime() + 5;
         }
-        else if (ev->data2 > 0)
+        else if (dir & JOY_DIR_RIGHT)
         {
             key = key_menu_right;
-            joywait = I_GetTime() + 2;
+            joywait = I_GetTime() + 5;
         }
 
-        if (ev->data1&1)
+#define JOY_BUTTON_MAPPED(x) ((x) >= 0)
+#define JOY_BUTTON_PRESSED(x) (JOY_BUTTON_MAPPED(x) && (ev->data1 & (1 << (x))) != 0)
+
+        if (JOY_BUTTON_PRESSED(joybfire))
         {
-            key = key_menu_forward;
+            // Simulate a 'Y' keypress when Doom show a Y/N dialog with Fire button.
+            if (messageToPrint && messageNeedsInput)
+            {
+                key = key_menu_confirm;
+            }
+            else
+            {
+                key = key_menu_forward;
+            }
             joywait = I_GetTime() + 5;
         }
-        if (ev->data1&2)
+        if (JOY_BUTTON_PRESSED(joybuse))
         {
-            key = key_menu_back;
+            // Simulate a 'N' keypress when Doom show a Y/N dialog with Use button.
+            if (messageToPrint && messageNeedsInput)
+            {
+                key = key_menu_abort;
+            }
+            else
+            {
+                key = key_menu_back;
+            }
             joywait = I_GetTime() + 5;
         }
-        if (joybmenu >= 0 && (ev->data1 & (1 << joybmenu)) != 0)
+        if (JOY_BUTTON_PRESSED(joybmenu))
         {
             key = key_menu_activate;
             joywait = I_GetTime() + 5;

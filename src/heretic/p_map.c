@@ -1167,7 +1167,6 @@ fixed_t attackrange;
 
 fixed_t aimslope;
 
-extern fixed_t topslope, bottomslope;   // slopes to top and bottom of target
 
 /*
 ===============================================================================
@@ -1200,14 +1199,21 @@ boolean PTR_AimTraverse(intercept_t * in)
 
         dist = FixedMul(attackrange, in->frac);
 
-        if (li->frontsector->floorheight != li->backsector->floorheight)
+        // Added checks if there is no backsector to prevent crashing.
+        // Crashes didn't happen in the DOS version of Heretic
+        // because reading NULL pointer produces unpredictable but
+        // deterministic values instead of crashing.
+        // See https://github.com/chocolate-doom/chocolate-doom/issues/1665
+        if (li->backsector == NULL
+            || li->frontsector->floorheight != li->backsector->floorheight)
         {
             slope = FixedDiv(openbottom - shootz, dist);
             if (slope > bottomslope)
                 bottomslope = slope;
         }
 
-        if (li->frontsector->ceilingheight != li->backsector->ceilingheight)
+        if (li->backsector == NULL
+            || li->frontsector->ceilingheight != li->backsector->ceilingheight)
         {
             slope = FixedDiv(opentop - shootz, dist);
             if (slope < topslope)

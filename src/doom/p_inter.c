@@ -73,7 +73,7 @@ P_GiveAmmo
     if (ammo == am_noammo)
 	return false;
 		
-    if (ammo > NUMAMMO)
+    if (ammo >= NUMAMMO)
 	I_Error ("P_GiveAmmo: bad type %i", ammo);
 		
     if ( player->ammo[ammo] == player->maxammo[ammo]  )
@@ -915,7 +915,7 @@ P_DamageMobj
     target->reactiontime = 0;		// we're awake now...	
 
     if ( (!target->threshold || target->type == MT_VILE)
-	 && source && (source != target || gameversion <= exe_doom_1_2)
+	 && source && (source != target || gameversion < exe_doom_1_5)
 	 && source->type != MT_VILE)
     {
 	// if not intent on another player,

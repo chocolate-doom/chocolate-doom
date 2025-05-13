@@ -48,5 +48,9 @@ void DEH_SuggestHereticVersion(deh_hhe_version_t version);
 
 extern deh_hhe_version_t deh_hhe_version;
 
+// deh_htext.c:
+extern deh_section_t deh_section_heretic_text;
+
+
 #endif /* #ifndef DEH_HTIC_H */
 

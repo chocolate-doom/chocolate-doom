@@ -2,13 +2,14 @@
 
 <component type="desktop">
   <id>@PACKAGE_RDNS@.Doom</id>
+  <launchable type="desktop-id">@PACKAGE_RDNS@.Doom.desktop</launchable>
   <name>@PACKAGE_SHORTNAME@ Doom</name>
   <summary>@PACKAGE_SHORTDESC@</summary>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>GPL-2.0+</project_license>
   <developer_name>@PACKAGE_MAINTAINER@</developer_name>
   <url type="homepage">@PACKAGE_URL@</url>
-  <url type="bugtracker">@PACKAGE_ISSUES@</url>
+  <url type="bugtracker">@PACKAGE_BUGREPORT@</url>
   <description>
     <p>
       @PACKAGE_SHORTNAME@ Doom is a conservative,
@@ -24,6 +25,17 @@
       the original executable, network play is implemented on the IP
       network stack, allowing it to function on modern LANs and the
       Internet.
+    </p>
+    <p>
+      The easiest way to run @PACKAGE_SHORTNAME@ Doom is to copy a
+      supported game file (known as a "WAD") to the root of your home
+      directory and launch the application.  If you have trouble with
+      the automatic game file detection or need to manage multiple WAD
+      files, you can run the application from the command line with a
+      path to the selected game file:
+    </p>
+    <p>
+      flatpak run @PACKAGE_RDNS@.Doom -iwad ~/PATH/TO/GAME.WAD
     </p>
   </description>
   <screenshots>
@@ -44,4 +56,19 @@
       <caption>Doom the Way id Did, on Freedoom. Level 3-2: City of Corpses</caption>
     </screenshot>
   </screenshots>
+  <content_rating type="oars-1.1">
+    <content_attribute id="violence-fantasy">intense</content_attribute>
+    <content_attribute id="violence-realistic">intense</content_attribute>
+    <content_attribute id="violence-bloodshed">intense</content_attribute>
+    <content_attribute id="violence-desecration">intense</content_attribute>
+    <content_attribute id="social-chat">intense</content_attribute>
+  </content_rating>
+  <releases>
+    <release version="3.0.1" date="2020-06-25"/> 
+    <release version="3.0.0 " date="2017-12-30"/>
+    <release version="2.3.0" date="2016-12-29"/>
+    <release version="2.2.1" date="2016-04-09"/>
+    <release version="2.2.0" date="2015-06-10"/>
+    <release version="2.1.0" date="2014-10-22"/>
+  </releases>
 </component>

@@ -6,8 +6,14 @@ DOC_FILES += README.Strife.md NOT-BUGS.md
 
 export MACOSX_DEPLOYMENT_TARGET=10.7
 
+ifeq ($(TARGET_OS),arm)
+    POSTFIX=arm64
+else
+    POSTFIX=x86
+endif
+
 STAGING_DIR=staging
-DMG=$(PACKAGE_TARNAME)-$(PACKAGE_VERSION).dmg
+DMG=$(PACKAGE_TARNAME)-$(PACKAGE_VERSION)-$(POSTFIX).dmg
 
 TOPLEVEL=../..
 TOPLEVEL_DOCS=$(patsubst %,../../%,$(DOC_FILES))
@@ -16,6 +22,7 @@ TOPLEVEL_DOCS=$(patsubst %,../../%,$(DOC_FILES))
 
 $(DMG) : tmp.dmg
 	rm -f $@
+	sleep 2 # pause to workaround occasional "Can’t get disk" (-1728) issues
 	./dmgfix "$(realpath tmp.dmg)" "$(PACKAGE_STRING)" "$(PACKAGE_NAME).app"
 	hdiutil convert -format UDBZ -o $@ tmp.dmg
 	rm -f tmp.dmg
@@ -37,12 +44,14 @@ SRC_INFO_PLIST=Info.plist
 APP_DOC_DIR=$(APP_BIN_DIR)/Documentation
 APP_DOC_RELDIR=$(patsubst $(STAGING_DIR)/%,%,$(APP_DOC_DIR))
 
-$(STAGING_DIR): launcher $(TOPLEVEL_DOCS)
+$(STAGING_DIR): launcher $(TOPLEVEL_DOCS) app.icns wadfile.icns
 	rm -rf $(STAGING_DIR)
 	mkdir $(STAGING_DIR)
 
 	mkdir -p "$(APP_TOP_DIR)"
 	cp -R Resources "$(APP_TOP_DIR)"
+	cp app.icns wadfile.icns "$(APP_TOP_DIR)/Resources"
+	cp $(TOPLEVEL)/data/doom.png "$(APP_TOP_DIR)/Resources/128x128.png"
 	cp PkgInfo "$(APP_TOP_DIR)"
 	cp $(SRC_INFO_PLIST) "$(APP_TOP_DIR)"
 
@@ -86,9 +95,20 @@ $(STAGING_DIR): launcher $(TOPLEVEL_DOCS)
 	cp disk/dir.DS_Store $(STAGING_DIR)/.DS_Store
 	cp disk/background.png $(STAGING_DIR)/background.png
 
+app.icns: $(TOPLEVEL)/data/doom.png
+	mkdir -p app.iconset
+	sips -z 64 64 $< --out app.iconset/icon_32x32@2x.png
+	iconutil -c icns app.iconset
+
+wadfile.icns: $(TOPLEVEL)/data/wadfile.png
+	mkdir -p wadfile.iconset
+	sips -z 64 64 $< --out wadfile.iconset/icon_32x32@2x.png
+	iconutil -c icns wadfile.iconset
+
 clean : launcher_clean
 	rm -f $(DMG)
 	rm -rf $(STAGING_DIR)
+	rm -rf app.icns app.iconset wadfile.icns wadfile.iconset
 
 # Launcher build:
 CFLAGS = -Wall -I$(TOPLEVEL)

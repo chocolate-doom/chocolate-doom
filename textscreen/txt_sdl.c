@@ -89,21 +89,21 @@ static const short code_page_to_unicode[] = CODE_PAGE_TO_UNICODE;
 static const SDL_Color ega_colors[] =
 {
     {0x00, 0x00, 0x00, 0xff},          // 0: Black
-    {0x00, 0x00, 0xa8, 0xff},          // 1: Blue
-    {0x00, 0xa8, 0x00, 0xff},          // 2: Green
-    {0x00, 0xa8, 0xa8, 0xff},          // 3: Cyan
-    {0xa8, 0x00, 0x00, 0xff},          // 4: Red
-    {0xa8, 0x00, 0xa8, 0xff},          // 5: Magenta
-    {0xa8, 0x54, 0x00, 0xff},          // 6: Brown
-    {0xa8, 0xa8, 0xa8, 0xff},          // 7: Grey
-    {0x54, 0x54, 0x54, 0xff},          // 8: Dark grey
-    {0x54, 0x54, 0xfe, 0xff},          // 9: Bright blue
-    {0x54, 0xfe, 0x54, 0xff},          // 10: Bright green
-    {0x54, 0xfe, 0xfe, 0xff},          // 11: Bright cyan
-    {0xfe, 0x54, 0x54, 0xff},          // 12: Bright red
-    {0xfe, 0x54, 0xfe, 0xff},          // 13: Bright magenta
-    {0xfe, 0xfe, 0x54, 0xff},          // 14: Yellow
-    {0xfe, 0xfe, 0xfe, 0xff},          // 15: Bright white
+    {0x00, 0x00, 0xaa, 0xff},          // 1: Blue
+    {0x00, 0xaa, 0x00, 0xff},          // 2: Green
+    {0x00, 0xaa, 0xaa, 0xff},          // 3: Cyan
+    {0xaa, 0x00, 0x00, 0xff},          // 4: Red
+    {0xaa, 0x00, 0xaa, 0xff},          // 5: Magenta
+    {0xaa, 0x55, 0x00, 0xff},          // 6: Brown
+    {0xaa, 0xaa, 0xaa, 0xff},          // 7: Grey
+    {0x55, 0x55, 0x55, 0xff},          // 8: Dark grey
+    {0x55, 0x55, 0xff, 0xff},          // 9: Bright blue
+    {0x55, 0xff, 0x55, 0xff},          // 10: Bright green
+    {0x55, 0xff, 0xff, 0xff},          // 11: Bright cyan
+    {0xff, 0x55, 0x55, 0xff},          // 12: Bright red
+    {0xff, 0x55, 0xff, 0xff},          // 13: Bright magenta
+    {0xff, 0xff, 0x55, 0xff},          // 14: Yellow
+    {0xff, 0xff, 0xff, 0xff},          // 15: Bright white
 };
 
 #ifdef _WIN32
@@ -254,7 +254,13 @@ int TXT_Init(void)
     if (TXT_SDLWindow == NULL)
         return 0;
 
-    renderer = SDL_CreateRenderer(TXT_SDLWindow, -1, 0);
+    renderer = SDL_CreateRenderer(TXT_SDLWindow, -1, SDL_RENDERER_PRESENTVSYNC);
+
+    if (renderer == NULL)
+        renderer = SDL_CreateRenderer(TXT_SDLWindow, -1, SDL_RENDERER_SOFTWARE);
+
+    if (renderer == NULL)
+        return 0;
 
     // Special handling for OS X retina display. If we successfully set the
     // highdpi flag, check the output size for the screen renderer. If we get
@@ -562,7 +568,7 @@ static int SDLButtonToTXTButton(int button)
         case SDL_BUTTON_MIDDLE:
             return TXT_MOUSE_MIDDLE;
         default:
-            return TXT_MOUSE_BASE + button - 1;
+            return TXT_MOUSE_BASE + button + 1;
     }
 }
 

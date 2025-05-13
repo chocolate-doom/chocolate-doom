@@ -47,8 +47,12 @@ static int *all_mouse_buttons[] = {
     &mousebjump,
     &mousebprevweapon,
     &mousebnextweapon,
+    &mousebspeed,
     &mousebinvleft,
-    &mousebinvright
+    &mousebinvright,
+    &mousebuseartifact,
+    &mousebturnleft,
+    &mousebturnright,
 };
 
 static void MouseSetCallback(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(variable))
@@ -95,7 +99,7 @@ static void ConfigExtraButtons(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
                    buttons_table = TXT_NewTable(4),
                    NULL);
 
-    TXT_SetColumnWidths(buttons_table, 16, 11, 14, 10);
+    TXT_SetColumnWidths(buttons_table, 16, 11, 16, 10);
 
     AddMouseControl(buttons_table, "Move forward", &mousebforward);
     AddMouseControl(buttons_table, "Strafe left", &mousebstrafeleft);
@@ -104,11 +108,13 @@ static void ConfigExtraButtons(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
     AddMouseControl(buttons_table, "Previous weapon", &mousebprevweapon);
     AddMouseControl(buttons_table, "Strafe on", &mousebstrafe);
     AddMouseControl(buttons_table, "Next weapon", &mousebnextweapon);
+    AddMouseControl(buttons_table, "Run", &mousebspeed);
     
-    if (gamemission == heretic)
+    if (gamemission == heretic || gamemission == hexen)
     {
       AddMouseControl(buttons_table, "Inventory left", &mousebinvleft);
       AddMouseControl(buttons_table, "Inventory right", &mousebinvright);
+      AddMouseControl(buttons_table, "Use artifact", &mousebuseartifact);
     }
 
     if (gamemission == hexen || gamemission == strife)

@@ -325,6 +325,7 @@ static void NET_Query_ParseResponse(net_addr_t *addr, net_packet_t *packet,
         // Create new target.
 
         target = GetTargetForAddr(addr, true);
+        broadcast_target = GetTargetForAddr(NULL, false);
         target->state = QUERY_TARGET_QUERIED;
         target->query_time = broadcast_target->query_time;
     }
@@ -810,7 +811,7 @@ void NET_MasterQuery(void)
     }
 }
 
-void NET_QueryAddress(char *addr_str)
+void NET_QueryAddress(const char *addr_str)
 {
     net_addr_t *addr;
     query_target_t *target;

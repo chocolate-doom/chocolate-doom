@@ -1,14 +1,37 @@
-AC_INIT(Chocolate Doom, 3.0.0,
+AC_INIT(Chocolate Doom, 3.1.0,
         chocolate-doom-dev-list@chocolate-doom.org, chocolate-doom)
 
 PACKAGE_SHORTNAME=${PACKAGE_NAME% Doom}
 PACKAGE_SHORTDESC="Conservative source port"
-PACKAGE_COPYRIGHT="Copyright (C) 1993-2020"
+PACKAGE_COPYRIGHT="Copyright (C) 1993-2024"
 PACKAGE_LICENSE="GNU General Public License, version 2"
 PACKAGE_MAINTAINER="Simon Howard"
 PACKAGE_URL="https://www.chocolate-doom.org/"
 PACKAGE_RDNS="org.chocolate_doom"
-PACKAGE_ISSUES="https://github.com/chocolate-doom/chocolate-doom/issues"
+PACKAGE_BUGREPORT="https://github.com/chocolate-doom/chocolate-doom/issues"
+
+dnl Check for Emscripten environment so we can set necessary environment variables
+AC_ARG_ENABLE(
+  [emscripten],
+  [AS_HELP_STRING([--enable-emscripten=@<:@no/yes@:>@],[compile to JavaScript using Emscripten])],,
+  [AS_CASE([$CC],
+           [*emcc.py], [enable_emscripten="yes"],
+           [*emcc], [enable_emscripten="yes"],
+           [enable_emscripten="no"]
+	  )
+ ]
+)
+
+AS_IF([test "x$enable_emscripten" = "xyes"],
+  AC_MSG_NOTICE([auto-detected use of Emscripten])
+  SDL_CFLAGS="-s USE_SDL=2"
+  SDL_LIBS="-s USE_SDL=2"
+  SDLMIXER_CFLAGS="-s USE_SDL=2 -s USE_SDL_MIXER=2"
+  SDLMIXER_LIBS="-s USE_SDL=2 -s USE_SDL_MIXER=2"
+  SDLNET_CFLAGS="-s USE_SDL=2 -s USE_SDL_NET=2"
+  SDLNET_LIBS="-s USE_SDL=2 -s USE_SDL_NET=2"
+  EM_LDFLAGS="-s ALLOW_MEMORY_GROWTH=1 -s ASYNCIFY=1 -s EXPORTED_RUNTIME_METHODS=[ccall,cwrap,FS,ENV,PATH,ERRNO_CODES] -s FORCE_FILESYSTEM"
+)
 
 AC_CONFIG_AUX_DIR(autotools)
 AC_CANONICAL_HOST
@@ -16,9 +39,9 @@ AC_CANONICAL_HOST
 orig_CFLAGS="$CFLAGS"
 
 AM_PROG_AR
-AC_PROG_CC
+AC_PROG_CC_C99
 AC_PROG_RANLIB
-AC_CHECK_PROG(HAVE_PYTHON, python, true, false)
+AC_CHECK_PROG(HAVE_PYTHON, python3, true, false)
 
 OPT_LEVEL=2
 
@@ -31,9 +54,93 @@ then
         CFLAGS="-O$OPT_LEVEL -g $WARNINGS $orig_CFLAGS"
 fi
 
-PKG_CHECK_MODULES(SDL, [sdl2 >= 2.0.1])
-PKG_CHECK_MODULES(SDLMIXER, [SDL2_mixer >= 2.0.0])
-PKG_CHECK_MODULES(SDLNET, [SDL2_net >= 2.0.0])
+AC_CANONICAL_TARGET
+TARGET_OS=""
+AS_CASE([$target_cpu],
+        [x86_64],
+        [
+            TARGET_OS="x64"
+        ],
+        [aarch64*|arm*],
+        [
+            TARGET_OS="arm"
+        ],
+        [i?86|arm*],
+        [
+            TARGET_OS="32"
+        ])
+AC_SUBST([TARGET_OS])
+
+PKG_CHECK_MODULES(SDL, [sdl2 >= 2.0.14])
+# Check for SDL2_mixer
+AC_ARG_ENABLE([sdl2mixer],
+AS_HELP_STRING([--disable-sdl2mixer], [Disable SDL2_mixer support])
+)
+AS_IF([test "x$enable_sdl2mixer" != xno], [
+    PKG_CHECK_MODULES(SDLMIXER, [SDL2_mixer >= 2.0.2])], [
+    AC_DEFINE([DISABLE_SDL2MIXER], [1], [SDL2_mixer disabled])
+])
+
+# Check for networking
+AC_ARG_ENABLE([sdl2net],
+AS_HELP_STRING([--disable-sdl2net], [Disable SDL2_net support])
+)
+AS_IF([test "x$enable_sdl2net" != xno], [
+    PKG_CHECK_MODULES(SDLNET, [SDL2_net >= 2.0.0])], [
+    AC_DEFINE([DISABLE_SDL2NET], [1], [SDL2_net disabled])
+])
+
+# Check for bash-completion.
+AC_ARG_ENABLE([bash-completion],
+AS_HELP_STRING([--disable-bash-completion], [Disable bash-completion])
+)
+AS_IF([test "x$enable_bash_completion" != xno], [
+    AS_IF([test "x$HAVE_PYTHON" = xfalse], [
+        AC_MSG_WARN([Building bash-completion requires Python, but Python not found])
+        enable_bash_completion=no
+    ])
+])
+
+# Check for doc.
+AC_ARG_ENABLE([doc],
+AS_HELP_STRING([--disable-doc], [Disable documentation])
+)
+AS_IF([test "x$enable_doc" != xno], [
+    AS_IF([test "x$HAVE_PYTHON" = xfalse], [
+        AC_MSG_WARN([Building documentation requires Python, but Python not found])
+        enable_doc=no
+    ])
+])
+
+# Check for fonts.
+AC_ARG_ENABLE([fonts],
+AS_HELP_STRING([--disable-fonts], [Disable fonts])
+)
+AS_IF([test "x$enable_fonts" != xno], [
+    AS_IF([test "x$HAVE_PYTHON" = xfalse], [
+        AC_MSG_WARN([Building fonts require Python, but Python not found])
+        enable_fonts=no
+    ])
+])
+
+# Check for icons.
+AC_ARG_ENABLE([icons],
+AS_HELP_STRING([--disable-icons], [Disable icons])
+)
+AS_IF([test "x$enable_icons" != xno], [
+    AS_IF([test "x$HAVE_PYTHON" = xfalse], [
+        AC_MSG_WARN([Building icons require Python, but Python not found])
+        enable_icons=no
+    ])
+])
+
+# Check for memory pool debugging.
+AC_ARG_ENABLE([zpool],
+AS_HELP_STRING([--disable-zpool], [Disable memory pools for debugging])
+)
+AS_IF([test "x$enable_zpool" != xno], [], [
+    AC_DEFINE([DISABLE_ZPOOL], [1], [Memory pooling disabled])
+])
 
 # Check for libsamplerate.
 AC_ARG_WITH([libsamplerate],
@@ -71,10 +178,35 @@ AS_IF([test "x$with_libpng" != xno], [
     ])
 ])
 
+# Check for fluidsynth.
+AC_ARG_WITH([fluidsynth],
+AS_HELP_STRING([--without-fluidsynth],
+    [Build without fluidsynth @<:@default=check@:>@]),
+[],
+[
+    [with_fluidsynth=check]
+])
+AS_IF([test "x$with_fluidsynth" != xno] && [test "x$enable_sdl2mixer" != xno], [
+    PKG_CHECK_MODULES(FLUIDSYNTH, fluidsynth >= 2.2.0, [
+        AC_DEFINE([HAVE_FLUIDSYNTH], [1], [fluidsynth installed])
+    ], [
+        AS_IF([test "x$with_fluidsynth" != xcheck], [AC_MSG_FAILURE(
+            [--with-fluidsynth was given, but test for fluidsynth failed])
+        ])
+    ])
+])
+
 # TODO: We currently link everything against libraries that don't need it.
 # Use the specific library CFLAGS/LIBS variables instead of setting them here.
-CFLAGS="$CFLAGS $SDL_CFLAGS ${SAMPLERATE_CFLAGS:-} ${PNG_CFLAGS:-}"
-LDFLAGS="$LDFLAGS $SDL_LIBS ${SAMPLERATE_LIBS:-} ${PNG_LIBS:-}"
+CFLAGS="$CFLAGS $SDL_CFLAGS ${SAMPLERATE_CFLAGS:-} ${PNG_CFLAGS:-} ${FLUIDSYNTH_CFLAGS:-}"
+LDFLAGS="$LDFLAGS $SDL_LIBS ${SAMPLERATE_LIBS:-} ${PNG_LIBS:-} ${FLUIDSYNTH_LIBS:-}"
+case "$host" in
+  *-*-mingw* | *-*-cygwin* | *-*-msvc* )
+    LDFLAGS="$LDFLAGS -lwinmm -lshlwapi"
+    ;;
+  *)
+esac
+
 AC_CHECK_LIB(m, log)
 
 AC_CHECK_HEADERS([dirent.h linux/kd.h dev/isa/spkrio.h dev/speaker/speaker.h])
@@ -106,7 +238,11 @@ AS_IF([test "x$enable_werror" = "xyes"], [
 ])
 
 AM_CONDITIONAL(HAVE_WINDRES, test "$WINDRES" != "")
-AM_CONDITIONAL(HAVE_PYTHON, $HAVE_PYTHON)
+AM_CONDITIONAL(HAVE_BASH_COMPLETION, [test "x$enable_bash_completion" != xno])
+AM_CONDITIONAL(HAVE_DOC, [test "x$enable_doc" != xno])
+AM_CONDITIONAL(HAVE_FONTS, [test "x$enable_fonts" != xno])
+AM_CONDITIONAL(HAVE_ICONS, [test "x$enable_icons" != xno])
+AM_CONDITIONAL(HAVE_ZPOOL, [test "x$enable_zpool" != xno])
 
 dnl Automake v1.8.0 is required, please upgrade!
 
@@ -126,11 +262,12 @@ AC_DEFINE_UNQUOTED(PROGRAM_PREFIX, "$PROGRAM_PREFIX",
                    Change this when you create your awesome forked version)
 AC_SUBST(PROGRAM_SPREFIX)
 
-AM_CONFIG_HEADER(config.h:config.hin)
+AC_CONFIG_HEADERS(config.h:config.hin)
 
 AC_SUBST(WINDOWS_RC_VERSION)
 AC_SUBST(SDLMIXER_CFLAGS)
 AC_SUBST(SDLMIXER_LIBS)
+AC_SUBST(EM_LDFLAGS)
 
 AC_SUBST(SDLNET_CFLAGS)
 AC_SUBST(SDLNET_LIBS)
@@ -144,12 +281,16 @@ AC_SUBST(PACKAGE_LICENSE)
 AC_SUBST(PACKAGE_MAINTAINER)
 AC_SUBST(PACKAGE_URL)
 AC_SUBST(PACKAGE_RDNS)
-AC_SUBST(PACKAGE_ISSUES)
+AC_SUBST(PACKAGE_BUGREPORT)
 
 dnl Shut up the datarootdir warnings.
 AC_DEFUN([AC_DATAROOTDIR_CHECKED])
 
-AC_OUTPUT([
+AS_IF([test "x$enable_emscripten" = "xyes"],
+  EXEEXT=".html"
+)
+
+AC_CONFIG_FILES([
 Makefile
 man/Makefile
 man/bash-completion/Makefile
@@ -157,7 +298,6 @@ man/bash-completion/doom.template
 man/bash-completion/heretic.template
 man/bash-completion/hexen.template
 man/bash-completion/strife.template
-midiproc/Makefile
 opl/Makefile
 opl/examples/Makefile
 pcsound/Makefile
@@ -168,21 +308,24 @@ rpm.spec
 data/Makefile
 safe/Makefile
 src/Makefile
+src/doom-res.rc
 src/Doom.metainfo.xml
 src/Doom.desktop
 src/Doom_Screensaver.desktop
 src/doom/Makefile
+src/heretic-res.rc
 src/Heretic.metainfo.xml
 src/Heretic.desktop
 src/heretic/Makefile
+src/hexen-res.rc
 src/Hexen.metainfo.xml
 src/Hexen.desktop
 src/hexen/Makefile
-src/resource.rc
 src/setup-res.rc
 src/setup/Makefile
 src/setup/Setup.desktop
 src/setup/setup-manifest.xml
+src/strife-res.rc
 src/Strife.metainfo.xml
 src/Strife.desktop
 src/strife/Makefile
@@ -190,4 +333,4 @@ textscreen/Makefile
 textscreen/examples/Makefile
 textscreen/fonts/Makefile
 ])
-
+AC_OUTPUT

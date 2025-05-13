@@ -3,7 +3,9 @@ AM_CFLAGS = \
     -I$(top_srcdir)/src  \
     @SDL_CFLAGS@ @SDLMIXER_CFLAGS@ @SDLNET_CFLAGS@
 
-EXTRA_DIST = CMakeLists.txt
+EXTRA_DIST =                    \
+        CMakeLists.txt          \
+        doom_icon.c
 
 noinst_LIBRARIES=libdoom.a
 
@@ -76,3 +78,9 @@ st_lib.c           st_lib.h     \
 st_stuff.c         st_stuff.h   \
 wi_stuff.c         wi_stuff.h
 
+if HAVE_ICONS
+
+doom_icon.c : $(top_builddir)/data/doom.png
+	$(top_builddir)/data/convert-icon $(top_builddir)/data/doom.png $@
+
+endif

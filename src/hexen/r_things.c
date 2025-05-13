@@ -845,7 +845,7 @@ void R_SortVisSprites(void)
 {
     int i, count;
     vissprite_t *ds, *best;
-    vissprite_t unsorted;
+    static vissprite_t unsorted;
     fixed_t bestscale;
 
     count = vissprite_p - vissprites;

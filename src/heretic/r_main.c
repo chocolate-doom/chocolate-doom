@@ -29,7 +29,6 @@ int viewangleoffset;
 int validcount = 1;             // increment every time a check is made
 
 lighttable_t *fixedcolormap;
-extern lighttable_t **walllights;
 
 int centerx, centery;
 fixed_t centerxfrac, centeryfrac;

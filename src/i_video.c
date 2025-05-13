@@ -18,6 +18,7 @@
 
 
 #include <stdlib.h>
+#include <string.h>
 
 #include "SDL.h"
 #include "SDL_opengl.h"
@@ -30,9 +31,6 @@
 #endif
 
 #include "safe.h"
-
-#include "icon.c"
-
 #include "config.h"
 #include "d_loop.h"
 #include "deh_str.h"
@@ -79,8 +77,6 @@ static SDL_Rect blit_rect = {
     SCREENWIDTH,
     SCREENHEIGHT
 };
-
-static uint32_t pixel_format;
 
 // palette
 
@@ -133,6 +129,9 @@ int fullscreen = true;
 
 int aspect_ratio_correct = true;
 static int actualheight;
+
+// Smooth pixel scaling
+int smooth_pixel_scaling = true;
 
 // Force integer scales for resolution-independent rendering
 
@@ -202,6 +201,11 @@ int usegamma = 0;
 
 // Joystick/gamepad hysteresis
 unsigned int joywait = 0;
+
+// Icon RGB data and dimensions
+static const unsigned int *icon_data;
+static int icon_w;
+static int icon_h;
 
 static boolean MouseShouldBeGrabbed()
 {
@@ -413,8 +417,6 @@ static void I_ToggleFullScreen(void)
 
 void I_GetEvent(void)
 {
-    extern void I_HandleKeyboardEvent(SDL_Event *sdlevent);
-    extern void I_HandleMouseEvent(SDL_Event *sdlevent);
     SDL_Event sdlevent;
 
     SDL_PumpEvents();
@@ -677,7 +679,7 @@ static void CreateUpscaledTexture(boolean force)
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
 
     new_texture = SDL_CreateTexture(renderer,
-                                pixel_format,
+                                SDL_PIXELFORMAT_ARGB8888,
                                 SDL_TEXTUREACCESS_TARGET,
                                 w_upscale*SCREENWIDTH,
                                 h_upscale*SCREENHEIGHT);
@@ -777,28 +779,36 @@ void I_FinishUpdate (void)
     }
 
     // Blit from the paletted 8-bit screen buffer to the intermediate
-    // 32-bit RGBA buffer that we can load into the texture.
+    // 32-bit RGBA buffer and update the intermediate texture with the
+    // contents of the RGBA buffer.
 
+    SDL_LockTexture(texture, &blit_rect, &argbbuffer->pixels,
+                    &argbbuffer->pitch);
     SDL_LowerBlit(screenbuffer, &blit_rect, argbbuffer, &blit_rect);
-
-    // Update the intermediate texture with the contents of the RGBA buffer.
-
-    SDL_UpdateTexture(texture, NULL, argbbuffer->pixels, argbbuffer->pitch);
+    SDL_UnlockTexture(texture);
 
     // Make sure the pillarboxes are kept clear each frame.
 
     SDL_RenderClear(renderer);
 
-    // Render this intermediate texture into the upscaled texture
-    // using "nearest" integer scaling.
+    if (smooth_pixel_scaling && !force_software_renderer)
+    {
+        // Render this intermediate texture into the upscaled texture
+        // using "nearest" integer scaling.
+        SDL_SetRenderTarget(renderer, texture_upscaled);
+        SDL_RenderCopy(renderer, texture, NULL, NULL);
 
-    SDL_SetRenderTarget(renderer, texture_upscaled);
-    SDL_RenderCopy(renderer, texture, NULL, NULL);
+        // Finally, render this upscaled texture to screen using linear scaling.
 
-    // Finally, render this upscaled texture to screen using linear scaling.
+        SDL_SetRenderTarget(renderer, NULL);
+        SDL_RenderCopy(renderer, texture_upscaled, NULL, NULL);
+    }
+    else
+    {
+        SDL_SetRenderTarget(renderer, NULL);
+        SDL_RenderCopy(renderer, texture, NULL, NULL);
+    }
 
-    SDL_SetRenderTarget(renderer, NULL);
-    SDL_RenderCopy(renderer, texture_upscaled, NULL, NULL);
 
     // Draw!
 
@@ -830,6 +840,7 @@ void I_SetPalette (byte *doompalette)
         // Zero out the bottom two bits of each channel - the PC VGA
         // controller only supports 6 bits of accuracy.
 
+        palette[i].a = 0xFFU;
         palette[i].r = gammatable[usegamma][*doompalette++] & ~3;
         palette[i].g = gammatable[usegamma][*doompalette++] & ~3;
         palette[i].b = gammatable[usegamma][*doompalette++] & ~3;
@@ -891,6 +902,13 @@ void I_InitWindowTitle(void)
     free(buf);
 }
 
+void I_RegisterWindowIcon(const unsigned int *icon, int width, int height)
+{
+    icon_data = icon;
+    icon_w = width;
+    icon_h = height;
+}
+
 // Set the application icon
 
 void I_InitWindowIcon(void)
@@ -899,8 +917,8 @@ void I_InitWindowIcon(void)
 
     surface = SDL_CreateRGBSurfaceFrom((void *) icon_data, icon_w, icon_h,
                                        32, icon_w * 4,
-                                       0xff << 24, 0xff << 16,
-                                       0xff << 8, 0xff << 0);
+                                       0xffu << 24, 0xffu << 16,
+                                       0xffu << 8, 0xffu << 0);
 
     SDL_SetWindowIcon(screen, surface);
     SDL_FreeSurface(surface);
@@ -910,10 +928,20 @@ void I_InitWindowIcon(void)
 
 static void SetScaleFactor(int factor)
 {
+    int height;
+
     // Pick 320x200 or 320x240, depending on aspect ratio correct
+    if (aspect_ratio_correct)
+    {
+        height = SCREENHEIGHT_4_3;
+    }
+    else
+    {
+        height = SCREENHEIGHT;
+    }
 
     window_width = factor * SCREENWIDTH;
-    window_height = factor * actualheight;
+    window_height = factor * height;
     fullscreen = false;
 }
 
@@ -1020,6 +1048,24 @@ void I_GraphicsCheckCommandLine(void)
             window_width = w;
             window_height = h;
             fullscreen = false;
+        }
+    }
+
+    //!
+    // @category video
+    // @arg <x>
+    //
+    // Specify the display number on which to show the screen.
+    //
+
+    i = M_CheckParmWithArgs("-display", 1);
+
+    if (i > 0)
+    {
+        int display = atoi(myargv[i + 1]);
+        if (display >= 0)
+        {
+            video_display = display;
         }
     }
 
@@ -1152,8 +1198,6 @@ static void SetVideoMode(void)
 {
     int w, h;
     int x, y;
-    unsigned int rmask, gmask, bmask, amask;
-    int bpp;
     int window_flags = 0, renderer_flags = 0;
     SDL_DisplayMode mode;
 
@@ -1210,8 +1254,6 @@ static void SetVideoMode(void)
             I_Error("Error creating window for video startup: %s",
             SDL_GetError());
         }
-
-        pixel_format = SDL_GetWindowPixelFormat(screen);
 
         SDL_SetWindowMinimumSize(screen, SCREENWIDTH, actualheight);
 
@@ -1287,9 +1329,7 @@ static void SetVideoMode(void)
 
     // Force integer scales for resolution-independent rendering.
 
-#if SDL_VERSION_ATLEAST(2, 0, 5)
     SDL_RenderSetIntegerScale(renderer, integer_scaling);
-#endif
 
     // Blank out the full screen area in case there is any junk in
     // the borders that won't otherwise be overwritten.
@@ -1325,12 +1365,10 @@ static void SetVideoMode(void)
 
     if (argbbuffer == NULL)
     {
-        SDL_PixelFormatEnumToMasks(pixel_format, &bpp,
-                                   &rmask, &gmask, &bmask, &amask);
-        argbbuffer = SDL_CreateRGBSurface(0,
-                                          SCREENWIDTH, SCREENHEIGHT, bpp,
-                                          rmask, gmask, bmask, amask);
-        SDL_FillRect(argbbuffer, NULL, 0);
+	    // pixels and pitch will be filled with the texture's values
+	    // in I_FinishUpdate()
+	    argbbuffer = SDL_CreateRGBSurfaceWithFormatFrom(
+                     NULL, w, h, 0, 0, SDL_PIXELFORMAT_ARGB8888);
     }
 
     if (texture != NULL)
@@ -1349,9 +1387,21 @@ static void SetVideoMode(void)
     // is going to change frequently.
 
     texture = SDL_CreateTexture(renderer,
-                                pixel_format,
+                                SDL_PIXELFORMAT_ARGB8888,
                                 SDL_TEXTUREACCESS_STREAMING,
                                 SCREENWIDTH, SCREENHEIGHT);
+
+    // Workaround for SDL 2.0.14+ alt-tab bug (taken from Doom Retro via Prboom-plus and Woof)
+#if defined(_WIN32)
+    {
+        SDL_version ver;
+        SDL_GetVersion(&ver);
+        if (ver.major == 2 && ver.minor == 0 && (ver.patch == 14 || ver.patch == 16))
+        {
+           SDL_SetHintWithPriority(SDL_HINT_VIDEO_MINIMIZE_ON_FOCUS_LOSS, "1", SDL_HINT_OVERRIDE);
+        }
+    }
+#endif
 
     // Initially create the upscaled texture for rendering to screen
 
@@ -1373,10 +1423,10 @@ void I_InitGraphics(void)
     if (env != NULL)
     {
         char winenv[30];
-        int winid;
+        unsigned int winid;
 
         sscanf(env, "0x%x", &winid);
-        X_snprintf(winenv, sizeof(winenv), "SDL_WINDOWID=%i", winid);
+        X_snprintf(winenv, sizeof(winenv), "SDL_WINDOWID=%u", winid);
 
         putenv(winenv);
     }
@@ -1465,6 +1515,7 @@ void I_BindVideoVariables(void)
     M_BindIntVariable("video_display",             &video_display);
     M_BindIntVariable("aspect_ratio_correct",      &aspect_ratio_correct);
     M_BindIntVariable("integer_scaling",           &integer_scaling);
+    M_BindIntVariable("smooth_pixel_scaling",      &smooth_pixel_scaling);
     M_BindIntVariable("vga_porch_flash",           &vga_porch_flash);
     M_BindIntVariable("startup_delay",             &startup_delay);
     M_BindIntVariable("fullscreen_width",          &fullscreen_width);

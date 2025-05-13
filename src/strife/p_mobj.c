@@ -30,9 +30,6 @@
 #include "doomstat.h"
 #include "d_main.h"     // villsa [STRIFE]
 
-extern line_t *spechit[];  // haleyjd:
-extern int     numspechit; // [STRIFE] - needed in P_XYMovement
-
 
 void G_PlayerReborn (int player);
 void P_SpawnMapThing (mapthing_t*	mthing);
@@ -946,7 +943,7 @@ void P_SpawnMapThing (mapthing_t* mthing)
         return;
     }
 
-    // check for apropriate skill level
+    // check for appropriate skill level
     if (!netgame && (mthing->options & 16) )
         return;
 
@@ -955,7 +952,11 @@ void P_SpawnMapThing (mapthing_t* mthing)
     else if (gameskill == sk_nightmare)
         bit = 4;
     else
-        bit = 1<<(gameskill-1);
+        // avoid undefined behavior (left shift by negative value and rhs too big)
+        // by accurately emulating what doom.exe did: reduce mod 32.
+        // For more details check:
+        // https://github.com/chocolate-doom/chocolate-doom/issues/1677
+        bit = (int) (1U << ((gameskill - 1) & 0x1F));
 
     if (!(mthing->options & bit) )
         return;
@@ -1029,7 +1030,6 @@ void P_SpawnMapThing (mapthing_t* mthing)
 // * No spawn tics randomization
 // * Player melee behavior
 //
-extern fixed_t attackrange;
 
 void
 P_SpawnPuff

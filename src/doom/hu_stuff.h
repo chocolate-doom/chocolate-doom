@@ -19,6 +19,7 @@
 #define __HU_STUFF_H__
 
 #include "d_event.h"
+#include "v_patch.h"
 
 
 //
@@ -53,7 +54,15 @@ void HU_Drawer(void);
 char HU_dequeueChatChar(void);
 void HU_Erase(void);
 
+extern const char *player_names[4];
 extern char *chat_macros[10];
+
+extern patch_t *hu_font[HU_FONTSIZE];
+
+extern boolean message_dontfuckwithme;
+
+extern boolean chat_on;
+
 
 #endif
 

@@ -15,6 +15,10 @@
 //
 
 
+#ifndef P_SPEC_H
+#define P_SPEC_H
+
+
 extern int *TerrainTypes;
 
 //
@@ -24,6 +28,9 @@ extern int *TerrainTypes;
 #define MAXLINEANIMS 64
 extern short numlinespecials;
 extern line_t *linespeciallist[MAXLINEANIMS];
+
+extern mobj_t LavaInflictor;
+
 
 //      Define values for map objects
 #define MO_TELEPORTMAN 14
@@ -73,6 +80,11 @@ line_t *P_FindLine(int lineTag, int *searchPosition);
 // P_anim.c
 //-------------------------------
 
+
+extern fixed_t Sky1ScrollDelta;
+extern fixed_t Sky2ScrollDelta;
+
+
 void P_AnimateSurfaces(void);
 void P_InitFTAnims(void);
 void P_InitLightning(void);
@@ -121,8 +133,8 @@ typedef struct
 #define LIGHT_SEQUENCE          3
 #define LIGHT_SEQUENCE_ALT      4
 
-void T_Phase(phase_t * phase);
-void T_Light(light_t * light);
+void T_Phase(thinker_t *thinker);
+void T_Light(thinker_t *thinker);
 void P_SpawnPhasedLight(sector_t * sector, int base, int index);
 void P_SpawnLightSequence(sector_t * sector, int indexStep);
 boolean EV_SpawnLight(line_t * line, byte * arg, lighttype_t type);
@@ -278,7 +290,7 @@ typedef struct
 
 extern plat_t *activeplats[MAXPLATS];
 
-void T_PlatRaise(plat_t * plat);
+void T_PlatRaise(thinker_t *thinker);
 int EV_DoPlat(line_t * line, byte * args, plattype_e type, int amount);
 void P_AddActivePlat(plat_t * plat);
 void P_RemoveActivePlat(plat_t * plat);
@@ -317,7 +329,7 @@ typedef struct
 
 boolean EV_VerticalDoor(line_t * line, mobj_t * thing);
 int EV_DoDoor(line_t * line, byte * args, vldoor_e type);
-void T_VerticalDoor(vldoor_t * door);
+void T_VerticalDoor(thinker_t *thinker);
 //void P_SpawnDoorCloseIn30(sector_t *sec);
 //void P_SpawnDoorRaiseIn5Mins(sector_t *sec, int secnum);
 
@@ -360,7 +372,7 @@ typedef struct
 extern ceiling_t *activeceilings[MAXCEILINGS];
 
 int EV_DoCeiling(line_t * line, byte * args, ceiling_e type);
-void T_MoveCeiling(ceiling_t * ceiling);
+void T_MoveCeiling(thinker_t *thinker);
 void P_AddActiveCeiling(ceiling_t * c);
 void P_RemoveActiveCeiling(ceiling_t * c);
 int EV_CeilingCrushStop(line_t * line, byte * args);
@@ -458,9 +470,9 @@ result_e T_MovePlane(sector_t * sector, fixed_t speed,
 
 int EV_BuildStairs(line_t * line, byte * args, int direction, stairs_e type);
 int EV_DoFloor(line_t * line, byte * args, floor_e floortype);
-void T_MoveFloor(floormove_t * floor);
-void T_BuildPillar(pillar_t * pillar);
-void T_FloorWaggle(floorWaggle_t * waggle);
+void T_MoveFloor(thinker_t *thinker);
+void T_BuildPillar(thinker_t *thinker);
+void T_FloorWaggle(thinker_t *thinker);
 int EV_BuildPillar(line_t * line, byte * args, boolean crush);
 int EV_OpenPillar(line_t * line, byte * args);
 int EV_DoFloorAndCeiling(line_t * line, byte * args, boolean raise);
@@ -541,7 +553,7 @@ boolean P_StartACS(int number, int map, byte * args, mobj_t * activator,
 boolean P_StartLockedACS(line_t * line, byte * args, mobj_t * mo, int side);
 boolean P_TerminateACS(int number, int map);
 boolean P_SuspendACS(int number, int map);
-void T_InterpretACS(acs_t * script);
+void T_InterpretACS(thinker_t *thinker);
 void P_TagFinished(int tag);
 void P_PolyobjFinished(int po);
 void P_ACSInitNewGame(void);
@@ -569,3 +581,6 @@ boolean EV_ThingActivate(int tid);
 boolean EV_ThingDeactivate(int tid);
 boolean EV_ThingRemove(int tid);
 boolean EV_ThingDestroy(int tid);
+
+
+#endif // P_SPEC_H

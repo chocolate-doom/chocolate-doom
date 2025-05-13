@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # 
 # Chocolate Doom self-documentation tool.  This works similar to javadoc
 # or doxygen, but documents command line parameters and configuration
@@ -36,7 +36,7 @@ import glob
 import getopt
 
 TEXT_WRAP_WIDTH = 78
-INCLUDE_STATEMENT_RE = re.compile("@include\s+(\S+)")
+INCLUDE_STATEMENT_RE = re.compile(r"@include\s+(\S+)")
 
 # Use appropriate stdout function for Python 2 or 3
 
@@ -209,7 +209,7 @@ class Parameter:
         if len(text) <= 0:
             pass
         elif text[0] == "@":
-            match = re.match('@(\S+)\s*(.*)', text)
+            match = re.match(r'@(\S+)\s*(.*)', text)
 
             if not match:
                 raise "Malformed option line: %s" % text
@@ -253,7 +253,7 @@ class Parameter:
         if self.platform:
             result += "[%s only] " % self.platform
 
-        escaped = re.sub('\\\\', '\\\\\\\\', self.text)
+        escaped = re.sub(r'\\', r'\\\\', self.text)
 
         result += escaped + self._games_only_text() + "\n"
 
@@ -315,7 +315,7 @@ class Parameter:
         # Build the complete text for the argument
         # Split the description into words and add a word at a time
         result = ""
-        words = [word for word in re.split('\s+', description) if word]
+        words = [word for word in re.split(r'\s+', description) if word]
         maxlen = TEXT_WRAP_WIDTH - indent
         outlines = [[]]
         for word in words:
@@ -345,7 +345,7 @@ def read_wikipages():
         for line in f:
             line = line.rstrip()
 
-            line = re.sub('\#.*$', '', line)
+            line = re.sub(r'\#.*$', '', line)
 
             if not re.match(r'^\s*$', line):
                 wikipages.append(line)
@@ -378,7 +378,7 @@ def add_parameter(param, line, config_file):
 
     # Is this documenting a command line parameter?
 
-    match = re.search('(M_CheckParm(WithArgs)|M_ParmExists)?\s*\(\s*"(.*?)"',
+    match = re.search(r'(M_CheckParm(WithArgs)|M_ParmExists)?\s*\(\s*"(.*?)"',
                       line)
 
     if match:
@@ -389,7 +389,7 @@ def add_parameter(param, line, config_file):
 
     # Documenting a configuration file variable?
 
-    match = re.search('CONFIG_VARIABLE_\S+\s*\(\s*(\S+?)\),', line)
+    match = re.search(r'CONFIG_VARIABLE_\S+\s*\(\s*(\S+?)\),', line)
 
     if match:
         param.name = match.group(1)
@@ -413,7 +413,7 @@ def process_file(filename):
 
             # Ignore empty lines
 
-            if re.match('\s*$', line):
+            if re.match(r'\s*$', line):
                 continue
 
             # Currently reading a doc comment?
@@ -421,7 +421,7 @@ def process_file(filename):
             if param:
                 # End of doc comment
 
-                if not re.match('\s*//', line):
+                if not re.match(r'\s*//', line):
                     waiting_for_checkparm = True
 
                 # The first non-empty line after the documentation comment
@@ -433,14 +433,14 @@ def process_file(filename):
                 else:
                     # More documentation text
 
-                    munged_line = re.sub('\s*\/\/\s*', '', line, 1)
-                    munged_line = re.sub('\s*$', '', munged_line)
+                    munged_line = re.sub(r'\s*\/\/\s*', '', line, count=1)
+                    munged_line = re.sub(r'\s*$', '', munged_line)
                     param.add_text(munged_line)
 
             # Check for start of a doc comment
 
             if re.search("//!", line):
-                match = re.search("@begin_config_file\s*(\S+)", line)
+                match = re.search(r"@begin_config_file\s*(\S+)", line)
 
                 if match:
                     # Beginning a configuration file

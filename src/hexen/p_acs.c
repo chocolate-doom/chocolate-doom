@@ -679,8 +679,6 @@ boolean P_StartLockedACS(line_t * line, byte * args, mobj_t * mo, int side)
     byte newArgs[5];
     char LockedBuffer[80];
 
-    extern char *TextKeyMessages[11];
-
     lock = args[4];
     if (!mo->player)
     {
@@ -772,8 +770,9 @@ void P_ACSInitNewGame(void)
 //
 //==========================================================================
 
-void T_InterpretACS(acs_t * script)
+void T_InterpretACS(thinker_t *thinker)
 {
+    acs_t *script = (acs_t *) thinker;
     int cmd;
     int action;
 

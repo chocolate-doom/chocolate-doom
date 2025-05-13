@@ -7,8 +7,9 @@ CMAKE_FILES=                                   \
         cmake/FindSDL2.cmake                   \
         cmake/FindSDL2_mixer.cmake             \
         cmake/FindSDL2_net.cmake               \
+        cmake/FindFluidSynth.cmake             \
         cmake/Findm.cmake                      \
-        cmake/Findsamplerate.cmake             \
+        cmake/FindSampleRate.cmake             \
         cmake/config.h.cin
 
 DOC_FILES=                              \
@@ -46,16 +47,16 @@ strifedocs_DATA = $(DOC_FILES) README.Strife.md
 
 MAINTAINERCLEANFILES =  $(AUX_DIST_GEN)
 
-SUBDIRS=safe textscreen midiproc opl pcsound data src man
+SUBDIRS=safe textscreen opl pcsound data src man
 
 DIST_SUBDIRS=pkg $(SUBDIRS)
 
-if HAVE_PYTHON
+if HAVE_DOC
 
 INSTALL : man/INSTALL.template man/simplecpp
-	./man/simplecpp -DDOOM -DHERETIC -DHEXEN -DSTRIFE \
+	$(srcdir)/man/simplecpp -DDOOM -DHERETIC -DHEXEN -DSTRIFE \
             -DLONG_GAME_NAME="@PACKAGE_SHORTNAME@ Doom" \
             -DLONG_EXE_NAME="@PROGRAM_PREFIX@doom" \
-	                < man/INSTALL.template > $@
+	                < $(srcdir)/man/INSTALL.template > $@
 
 endif

@@ -21,6 +21,7 @@
 #define __R_SEGS__
 
 
+extern lighttable_t **walllights;
 
 
 void

@@ -35,7 +35,8 @@ Writeable directory in the user's home directory. The path can be overridden
 using the \fBXDG_DATA_HOME\fR environment variable (see the XDG Base Directory
 Specification).
 .TP
-\fB/usr/local/share/games/doom, /usr/share/games/doom\fR
+\fB/usr/local/share/doom, /usr/local/share/games/doom, /usr/share/doom,
+/usr/share/games/doom\fR
 System-wide locations that can be accessed by all users. The path
 \fB/usr/share/games/doom\fR is a standard path that is supported by most
 Doom source ports. These paths can be overridden using the \fBXDG_DATA_DIRS\fR

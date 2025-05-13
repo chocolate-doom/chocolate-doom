@@ -75,23 +75,12 @@
 // Radiation suit, green shift.
 #define RADIATIONPAL		13
 
-// N/256*100% probability
-//  that the normal face state will change
-#define ST_FACEPROBABILITY		96
-
-// For Responder
-#define ST_TOGGLECHAT		KEY_ENTER
-
 // Location of status bar
 #define ST_X				0
 #define ST_X2				104
 
 #define ST_FX  			143
 #define ST_FY  			169
-
-// Should be set to patch width
-//  for tall numbers later on
-#define ST_TALLNUMWIDTH		(tallnum[0]->width)
 
 // Number of status faces.
 #define ST_NUMPAINFACES		5
@@ -205,62 +194,8 @@
 #define ST_MAXAMMO3X		314
 #define ST_MAXAMMO3Y		185
 
-// pistol
-#define ST_WEAPON0X			110 
-#define ST_WEAPON0Y			172
-
-// shotgun
-#define ST_WEAPON1X			122 
-#define ST_WEAPON1Y			172
-
-// chain gun
-#define ST_WEAPON2X			134 
-#define ST_WEAPON2Y			172
-
-// missile launcher
-#define ST_WEAPON3X			110 
-#define ST_WEAPON3Y			181
-
-// plasma gun
-#define ST_WEAPON4X			122 
-#define ST_WEAPON4Y			181
-
- // bfg
-#define ST_WEAPON5X			134
-#define ST_WEAPON5Y			181
-
-// WPNS title
-#define ST_WPNSX			109 
-#define ST_WPNSY			191
-
- // DETH title
-#define ST_DETHX			109
-#define ST_DETHY			191
-
-//Incoming messages window location
-//UNUSED
-// #define ST_MSGTEXTX	   (viewwindowx)
-// #define ST_MSGTEXTY	   (viewwindowy+viewheight-18)
-#define ST_MSGTEXTX			0
-#define ST_MSGTEXTY			0
 // Dimensions given in characters.
 #define ST_MSGWIDTH			52
-// Or shall I say, in lines?
-#define ST_MSGHEIGHT		1
-
-#define ST_OUTTEXTX			0
-#define ST_OUTTEXTY			6
-
-// Width, in characters again.
-#define ST_OUTWIDTH			52 
- // Height, in lines. 
-#define ST_OUTHEIGHT		1
-
-#define ST_MAPTITLEX \
-    (SCREENWIDTH - ST_MAPWIDTH * ST_CHATFONTWIDTH)
-
-#define ST_MAPTITLEY		0
-#define ST_MAPHEIGHT		1
 
 // graphics are drawn to a backing screen and blitted to the real screen
 pixel_t			*st_backing_screen;
@@ -274,17 +209,8 @@ static boolean		st_firsttime;
 // lump number for PLAYPAL
 static int		lu_palette;
 
-// used for timing
-static unsigned int	st_clock;
-
 // used for making messages go away
 static int		st_msgcounter=0;
-
-// used when in chat 
-static st_chatstateenum_t	st_chatstate;
-
-// whether in automap or first-person
-static st_stateenum_t	st_gamestate;
 
 // whether left-side main status bar is active
 static boolean		st_statusbaron;
@@ -294,9 +220,6 @@ static boolean		st_chat;
 
 // value of st_chat before message popped up
 static boolean		st_oldchat;
-
-// whether chat window has the cursor on
-static boolean		st_cursoron;
 
 // !deathmatch
 static boolean		st_notdeathmatch; 
@@ -457,13 +380,11 @@ ST_Responder (event_t* ev)
     switch(ev->data1)
     {
       case AM_MSGENTERED:
-	st_gamestate = AutomapState;
 	st_firsttime = true;
 	break;
 	
       case AM_MSGEXITED:
 	//	fprintf(stderr, "AM exited\n");
-	st_gamestate = FirstPersonState;
 	break;
     }
   }
@@ -480,7 +401,7 @@ ST_Responder (event_t* ev)
 	if (plyr->cheats & CF_GODMODE)
 	{
 	  if (plyr->mo)
-	    plyr->mo->health = 100;
+	    plyr->mo->health = deh_god_mode_health;
 	  
 	  plyr->health = deh_god_mode_health;
 	  plyr->message = DEH_String(STSTR_DQDON);
@@ -952,7 +873,6 @@ void ST_updateWidgets(void)
 void ST_Ticker (void)
 {
 
-    st_clock++;
     st_randomnumber = M_Random();
     ST_updateWidgets();
     st_oldhealth = plyr->health;
@@ -1236,13 +1156,8 @@ void ST_initData(void)
     st_firsttime = true;
     plyr = &players[consoleplayer];
 
-    st_clock = 0;
-    st_chatstate = StartChatState;
-    st_gamestate = FirstPersonState;
-
     st_statusbaron = true;
     st_oldchat = st_chat = false;
-    st_cursoron = false;
 
     st_faceindex = 0;
     st_palette = -1;

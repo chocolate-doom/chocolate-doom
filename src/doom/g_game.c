@@ -37,6 +37,7 @@
 #include "m_misc.h"
 #include "m_menu.h"
 #include "m_random.h"
+#include "i_joystick.h"
 #include "i_system.h"
 #include "i_timer.h"
 #include "i_input.h"
@@ -306,6 +307,12 @@ static int G_NextWeapon(int direction)
         }
     }
 
+    // The current weapon must be present in weapon_order_table
+    // otherwise something has gone terribly wrong
+    if (i >= arrlen(weapon_order_table)) {
+        I_Error("Internal error: weapon %d not present in weapon_order_table", weapon);
+    }
+
     // Switch weapon. Don't loop forever.
     start_i = i;
     do
@@ -347,7 +354,8 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     speed = key_speed >= NUMKEYS
          || joybspeed >= MAX_JOY_BUTTONS
          || gamekeydown[key_speed] 
-         || joybuttons[joybspeed];
+         || joybuttons[joybspeed]
+         || mousebuttons[mousebspeed];
  
     forward = side = 0;
     
@@ -356,7 +364,9 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     if (joyxmove < 0
 	|| joyxmove > 0  
 	|| gamekeydown[key_right]
-	|| gamekeydown[key_left]) 
+	|| gamekeydown[key_left]
+	|| mousebuttons[mousebturnright]
+	|| mousebuttons[mousebturnleft])
 	turnheld += ticdup; 
     else 
 	turnheld = 0; 
@@ -369,32 +379,52 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     // let movement keys cancel each other out
     if (strafe) 
     { 
-	if (gamekeydown[key_right]) 
+	if (gamekeydown[key_right] || mousebuttons[mousebturnright])
 	{
 	    // fprintf(stderr, "strafe right\n");
 	    side += sidemove[speed]; 
 	}
-	if (gamekeydown[key_left]) 
+	if (gamekeydown[key_left] || mousebuttons[mousebturnleft])
 	{
 	    //	fprintf(stderr, "strafe left\n");
 	    side -= sidemove[speed]; 
 	}
-	if (joyxmove > 0) 
-	    side += sidemove[speed]; 
-	if (joyxmove < 0) 
-	    side -= sidemove[speed]; 
- 
+        if (use_analog && joyxmove)
+        {
+            joyxmove = joyxmove * joystick_move_sensitivity / 10;
+            joyxmove = (joyxmove > FRACUNIT) ? FRACUNIT : joyxmove;
+            joyxmove = (joyxmove < -FRACUNIT) ? -FRACUNIT : joyxmove;
+            side += FixedMul(sidemove[speed], joyxmove);
+        }
+        else if (joystick_move_sensitivity)
+        {
+            if (joyxmove > 0)
+                side += sidemove[speed];
+            if (joyxmove < 0)
+                side -= sidemove[speed];
+        }
     } 
     else 
     { 
-	if (gamekeydown[key_right]) 
+	if (gamekeydown[key_right] || mousebuttons[mousebturnright])
 	    cmd->angleturn -= angleturn[tspeed]; 
-	if (gamekeydown[key_left]) 
+	if (gamekeydown[key_left] || mousebuttons[mousebturnleft])
 	    cmd->angleturn += angleturn[tspeed]; 
-	if (joyxmove > 0) 
-	    cmd->angleturn -= angleturn[tspeed]; 
-	if (joyxmove < 0) 
-	    cmd->angleturn += angleturn[tspeed]; 
+        if (use_analog && joyxmove)
+        {
+            // Cubic response curve allows for finer control when stick
+            // deflection is small.
+            joyxmove = FixedMul(FixedMul(joyxmove, joyxmove), joyxmove);
+            joyxmove = joyxmove * joystick_turn_sensitivity / 10;
+            cmd->angleturn -= FixedMul(angleturn[1], joyxmove);
+        }
+        else if (joystick_turn_sensitivity)
+        {
+            if (joyxmove > 0)
+                cmd->angleturn -= angleturn[tspeed];
+            if (joyxmove < 0)
+                cmd->angleturn += angleturn[tspeed];
+        }
     } 
  
     if (gamekeydown[key_up]) 
@@ -408,25 +438,48 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
 	forward -= forwardmove[speed]; 
     }
 
-    if (joyymove < 0) 
-        forward += forwardmove[speed]; 
-    if (joyymove > 0) 
-        forward -= forwardmove[speed]; 
+    if (use_analog && joyymove)
+    {
+        joyymove = joyymove * joystick_move_sensitivity / 10;
+        joyymove = (joyymove > FRACUNIT) ? FRACUNIT : joyymove;
+        joyymove = (joyymove < -FRACUNIT) ? -FRACUNIT : joyymove;
+        forward -= FixedMul(forwardmove[speed], joyymove);
+    }
+    else if (joystick_move_sensitivity)
+    {
+        if (joyymove < 0)
+            forward += forwardmove[speed];
+        if (joyymove > 0)
+            forward -= forwardmove[speed];
+    }
 
     if (gamekeydown[key_strafeleft]
      || joybuttons[joybstrafeleft]
-     || mousebuttons[mousebstrafeleft]
-     || joystrafemove < 0)
+     || mousebuttons[mousebstrafeleft])
     {
         side -= sidemove[speed];
     }
 
     if (gamekeydown[key_straferight]
      || joybuttons[joybstraferight]
-     || mousebuttons[mousebstraferight]
-     || joystrafemove > 0)
+     || mousebuttons[mousebstraferight])
     {
         side += sidemove[speed]; 
+    }
+
+    if (use_analog && joystrafemove)
+    {
+        joystrafemove = joystrafemove * joystick_move_sensitivity / 10;
+        joystrafemove = (joystrafemove > FRACUNIT) ? FRACUNIT : joystrafemove;
+        joystrafemove = (joystrafemove < -FRACUNIT) ? -FRACUNIT : joystrafemove;
+        side += FixedMul(sidemove[speed], joystrafemove);
+    }
+    else if (joystick_move_sensitivity)
+    {
+        if (joystrafemove < 0)
+            side -= sidemove[speed];
+        if (joystrafemove > 0)
+            side += sidemove[speed];
     }
 
     // buttons
@@ -760,6 +813,7 @@ boolean G_Responder (event_t* ev)
 	    (ev->type == ev_joystick && ev->data1) ) 
 	{ 
 	    M_StartControlPanel (); 
+	    joywait = I_GetTime() + 5;
 	    return true; 
 	} 
 	return false; 
@@ -940,7 +994,6 @@ void G_Ticker (void)
              && turbodetected[i])
             {
                 static char turbomessage[80];
-                extern char *player_names[4];
                 X_snprintf(turbomessage, sizeof(turbomessage),
                            "%s is turbo!", player_names[i]);
                 players[consoleplayer].message = turbomessage;
@@ -1305,7 +1358,7 @@ void G_ScreenShot (void)
 
 
 // DOOM Par Times
-int pars[4][10] = 
+static const int pars[4][10] =
 { 
     {0}, 
     {0,30,75,120,90,165,180,180,30,165}, 
@@ -1314,20 +1367,25 @@ int pars[4][10] =
 }; 
 
 // DOOM II Par Times
-int cpars[32] =
+static const int cpars[32] =
 {
     30,90,120,120,90,150,120,120,270,90,	//  1-10
     210,150,150,150,210,150,420,150,210,150,	// 11-20
     240,150,180,150,150,300,330,420,300,180,	// 21-30
     120,30					// 31-32
 };
+
+// Chex Quest Par Times
+static const int chexpars[6] =
+{ 
+    0,120,360,480,200,360
+}; 
  
 
 //
 // G_DoCompleted 
 //
 boolean		secretexit; 
-extern char*	pagename; 
  
 void G_ExitLevel (void) 
 { 
@@ -1482,7 +1540,14 @@ void G_DoCompleted (void)
     // overflows into the cpars array.
     else if (gameepisode < 4)
     {
-        wminfo.partime = TICRATE*pars[gameepisode][gamemap];
+        if (gameversion == exe_chex && gameepisode == 1 && gamemap < 6)
+        {
+            wminfo.partime = TICRATE*chexpars[gamemap];
+        }
+        else
+        {
+            wminfo.partime = TICRATE*pars[gameepisode][gamemap];
+        }
     }
     else
     {
@@ -1555,8 +1620,6 @@ void G_DoWorldDone (void)
 // G_InitFromSavegame
 // Can be called by the startup code or the menu task. 
 //
-extern boolean setsizeneeded;
-void R_ExecuteSetViewSize (void);
 
 char	savename[256];
 
@@ -1572,7 +1635,7 @@ void G_DoLoadGame (void)
 	 
     gameaction = ga_nothing; 
 	 
-    save_stream = fopen(savename, "rb");
+    save_stream = M_fopen(savename, "rb");
 
     if (save_stream == NULL)
     {
@@ -1642,14 +1705,14 @@ void G_DoSaveGame (void)
     // and then rename it at the end if it was successfully written.
     // This prevents an existing savegame from being overwritten by
     // a corrupted one, or if a savegame buffer overrun occurs.
-    save_stream = fopen(temp_savegame_file, "wb");
+    save_stream = M_fopen(temp_savegame_file, "wb");
 
     if (save_stream == NULL)
     {
         // Failed to save the game, so we're going to have to abort. But
         // to be nice, save to somewhere else before we call I_Error().
         recovery_savegame_file = M_TempFile("recovery.dsg");
-        save_stream = fopen(recovery_savegame_file, "wb");
+        save_stream = M_fopen(recovery_savegame_file, "wb");
         if (save_stream == NULL)
         {
             I_Error("Failed to open either '%s' or '%s' to write savegame.",
@@ -1693,8 +1756,8 @@ void G_DoSaveGame (void)
     // Now rename the temporary savegame file to the actual savegame
     // file, overwriting the old savegame if there was one there.
 
-    remove(savegame_file);
-    rename(temp_savegame_file, savegame_file);
+    M_remove(savegame_file);
+    M_rename(temp_savegame_file, savegame_file);
 
     gameaction = ga_nothing;
     X_StringCopy(savedescription, "", sizeof(savedescription));
@@ -1860,8 +1923,6 @@ G_InitNew
     gamemap = map;
     gameskill = skill;
 
-    viewactive = true;
-
     // Set the sky to use.
     //
     // Note: This IS broken, but it is how Vanilla Doom behaves.
@@ -2026,7 +2087,7 @@ void G_WriteDemoTiccmd (ticcmd_t* cmd)
 //
 // G_RecordDemo
 //
-void G_RecordDemo (char *name)
+void G_RecordDemo (const char *name)
 {
     size_t demoname_size;
     int i;

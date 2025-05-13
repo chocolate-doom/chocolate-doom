@@ -150,9 +150,6 @@ static boolean          st_firsttime;
 // lump number for PLAYPAL
 static int              lu_palette;
 
-// whether in automap or first-person
-static st_stateenum_t   st_gamestate;
-
 // whether left-side main status bar is active
 static boolean          st_statusbaron;
 
@@ -309,12 +306,10 @@ boolean ST_Responder(event_t* ev)
             switch(ev->data1)
             {
             case AM_MSGENTERED:
-                st_gamestate = AutomapState;
                 st_firsttime = true;
                 break;
 
             case AM_MSGEXITED:
-                st_gamestate = FirstPersonState;
                 break;
             }
 
@@ -1530,8 +1525,6 @@ void ST_initData(void)
 {
     st_firsttime = true;
     plyr = &players[consoleplayer];
-
-    st_gamestate = FirstPersonState;
 
     st_statusbaron = true;
 

@@ -29,6 +29,8 @@
 #include "s_sound.h"
 #include "v_video.h"
 #include "i_swap.h"
+#include "am_map.h"
+
 
 // TYPES -------------------------------------------------------------------
 
@@ -86,9 +88,6 @@ static void CheatTrackFunc1(player_t * player, Cheat_t * cheat);
 static void CheatTrackFunc2(player_t * player, Cheat_t * cheat);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
-
-extern int ArmorIncrement[NUMCLASSES][NUMARMOR];
-extern int AutoArmorSave[NUMCLASSES];
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
@@ -742,7 +741,6 @@ static int oldpieces = -1;
 static int oldweapon = -1;
 static int oldkeys = -1;
 
-extern boolean automapactive;
 
 void SB_Drawer(void)
 {
@@ -1274,7 +1272,7 @@ void DrawKeyBar(void)
     if (oldkeys != CPlayer->keys)
     {
         xPosition = 46;
-        for (i = 0; i < NUMKEYS && xPosition <= 126; i++)
+        for (i = 0; i < NUM_KEY_TYPES && xPosition <= 126; i++)
         {
             if (CPlayer->keys & (1 << i))
             {
@@ -1641,7 +1639,6 @@ static void CheatNoClipFunc(player_t * player, Cheat_t * cheat)
 static void CheatWeaponsFunc(player_t * player, Cheat_t * cheat)
 {
     int i;
-    //extern boolean *WeaponInShareware;
 
     for (i = 0; i < NUMARMOR; i++)
     {
@@ -1777,8 +1774,6 @@ static void CheatWarpFunc(player_t * player, Cheat_t * cheat)
 
 static void CheatPigFunc(player_t * player, Cheat_t * cheat)
 {
-    extern boolean P_UndoPlayerMorph(player_t * player);
-
     if (player->morphTics)
     {
         P_UndoPlayerMorph(player);
@@ -1930,7 +1925,6 @@ static void CheatScriptFunc3(player_t * player, Cheat_t * cheat)
     }
 }
 
-extern int cheating;
 
 static void CheatRevealFunc(player_t * player, Cheat_t * cheat)
 {

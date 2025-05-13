@@ -40,6 +40,7 @@ static const iwad_t iwads[] =
     { "tnt.wad",      pack_tnt,  commercial, "Final Doom: TNT: Evilution" },
     { "doom.wad",     doom,      retail,     "Doom" },
     { "doom1.wad",    doom,      shareware,  "Doom Shareware" },
+    { "doom2f.wad",   doom2,     commercial, "Doom II: L'Enfer sur Terre" },
     { "chex.wad",     pack_chex, retail,     "Chex Quest" },
     { "hacx.wad",     pack_hacx, commercial, "Hacx" },
     { "freedoom2.wad", doom2,    commercial, "Freedoom: Phase 2" },
@@ -74,10 +75,10 @@ boolean D_IsIWADName(const char *name)
 #define MAX_IWAD_DIRS 128
 
 static boolean iwad_dirs_built = false;
-static char *iwad_dirs[MAX_IWAD_DIRS];
+static const char *iwad_dirs[MAX_IWAD_DIRS];
 static int num_iwad_dirs = 0;
 
-static void AddIWADDir(char *dir)
+static void AddIWADDir(const char *dir)
 {
     if (num_iwad_dirs < MAX_IWAD_DIRS)
     {
@@ -210,6 +211,30 @@ static registry_value_t root_path_keys[] =
         SOFTWARE_KEY "\\GOG.com\\Games\\1432899949",
         "PATH",
     },
+
+    // Heretic
+
+    {
+        HKEY_LOCAL_MACHINE,
+        SOFTWARE_KEY "\\GOG.com\\Games\\1290366318",
+        "PATH",
+    },
+
+    // Hexen
+
+    {
+        HKEY_LOCAL_MACHINE,
+        SOFTWARE_KEY "\\GOG.com\\Games\\1247951670",
+        "PATH",
+    },
+
+    // Hexen: Deathkings of a Dark Citadel
+
+    {
+        HKEY_LOCAL_MACHINE,
+        SOFTWARE_KEY "\\GOG.com\\Games\\1983497091",
+        "PATH",
+    },
 };
 
 // Subdirectories of the above install path, where IWADs are installed.
@@ -239,6 +264,7 @@ static registry_value_t steam_install_location =
 static char *steam_install_subdirs[] =
 {
     "steamapps\\common\\doom 2\\base",
+    "steamapps\\common\\doom 2\\finaldoombase",
     "steamapps\\common\\final doom\\base",
     "steamapps\\common\\ultimate doom\\base",
     "steamapps\\common\\heretic shadow of the serpent riders\\base",
@@ -612,7 +638,8 @@ static void AddIWADPath(const char *path, const char *suffix)
 // <http://standards.freedesktop.org/basedir-spec/basedir-spec-latest.html>
 static void AddXdgDirs(void)
 {
-    char *env, *tmp_env;
+    const char *env;
+    char *tmp_env;
 
     // Quote:
     // > $XDG_DATA_HOME defines the base directory relative to which
@@ -624,7 +651,7 @@ static void AddXdgDirs(void)
 
     if (env == NULL)
     {
-        char *homedir = getenv("HOME");
+        const char *homedir = getenv("HOME");
         if (homedir == NULL)
         {
             homedir = "/";
@@ -659,6 +686,7 @@ static void AddXdgDirs(void)
     // source ports is /usr/share/games/doom - we support this through the
     // XDG_DATA_DIRS mechanism, through which it can be overridden.
     AddIWADPath(env, "/games/doom");
+    AddIWADPath(env, "/doom");
 
     // The convention set by RBDOOM-3-BFG is to install Doom 3: BFG
     // Edition into this directory, under which includes the Doom
@@ -674,7 +702,8 @@ static void AddXdgDirs(void)
 // about everyone.
 static void AddSteamDirs(void)
 {
-    char *homedir, *steampath;
+    const char *homedir;
+    char *steampath;
 
     homedir = getenv("HOME");
     if (homedir == NULL)
@@ -684,6 +713,7 @@ static void AddSteamDirs(void)
     steampath = M_StringJoin(homedir, "/.steam/root/steamapps/common", NULL);
 
     AddIWADPath(steampath, "/Doom 2/base");
+    AddIWADPath(steampath, "/Doom 2/finaldoombase");
     AddIWADPath(steampath, "/Master Levels of Doom/doom2");
     AddIWADPath(steampath, "/Ultimate Doom/base");
     AddIWADPath(steampath, "/Final Doom/base");
@@ -718,14 +748,14 @@ static void BuildIWADDirList(void)
     AddIWADDir(M_DirName(myargv[0]));
 
     // Add DOOMWADDIR if it is in the environment
-    env = getenv("DOOMWADDIR");
+    env = M_getenv("DOOMWADDIR");
     if (env != NULL)
     {
         AddIWADDir(env);
     }
 
     // Add dirs from DOOMWADPATH:
-    env = getenv("DOOMWADPATH");
+    env = M_getenv("DOOMWADPATH");
     if (env != NULL)
     {
         AddIWADPath(env, "");
@@ -842,7 +872,7 @@ char *D_TryFindWADByName(const char *filename)
 char *D_FindIWAD(int mask, GameMission_t *mission)
 {
     char *result;
-    char *iwadfile;
+    const char *iwadfile;
     int iwadparm;
     int i;
 
@@ -929,7 +959,7 @@ const iwad_t **D_FindAllIWADs(int mask)
 // Get the IWAD name used for savegames.
 //
 
-const char *D_SaveGameIWADName(GameMission_t gamemission)
+const char *D_SaveGameIWADName(GameMission_t gamemission, GameVariant_t gamevariant)
 {
     size_t i;
 
@@ -939,6 +969,22 @@ const char *D_SaveGameIWADName(GameMission_t gamemission)
     // Note that we match on gamemission rather than on IWAD name.
     // This ensures that doom1.wad and doom.wad saves are stored
     // in the same place.
+
+    if (gamevariant == freedoom)
+    {
+        if (gamemission == doom)
+        {
+            return "freedoom1.wad";
+        }
+        else if (gamemission == doom2)
+        {
+            return "freedoom2.wad";
+        }
+    }
+    else if (gamevariant == freedm && gamemission == doom2)
+    {
+        return "freedm.wad";
+    }
 
     for (i=0; i<arrlen(iwads); ++i)
     {

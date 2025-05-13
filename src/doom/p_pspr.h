@@ -68,4 +68,8 @@ typedef struct
 
 } pspdef_t;
 
+
+extern fixed_t bulletslope;
+
+
 #endif

@@ -31,6 +31,7 @@
 #include "deh_main.h"
 
 #include "i_input.h"
+#include "i_joystick.h"
 #include "i_swap.h"
 #include "i_system.h"
 #include "i_timer.h"
@@ -61,11 +62,6 @@
 
 #include "m_menu.h"
 
-
-extern patch_t*		hu_font[HU_FONTSIZE];
-extern boolean		message_dontfuckwithme;
-
-extern boolean		chat_on;		// in heads-up code
 
 //
 // defaulted values
@@ -124,7 +120,6 @@ boolean			menuactive;
 #define SKULLXOFF		-32
 #define LINEHEIGHT		16
 
-extern boolean		sendpause;
 char			savegamestrings[10][SAVESTRINGSIZE];
 
 char	endstring[160];
@@ -511,7 +506,7 @@ void M_ReadSaveStrings(void)
         int retval;
         X_StringCopy(name, P_SaveGameFile(i), sizeof(name));
 
-	handle = fopen(name, "rb");
+	handle = M_fopen(name, "rb");
         if (handle == NULL)
         {
             X_StringCopy(savegamestrings[i], EMPTYSTRING, SAVESTRINGSIZE);
@@ -1364,6 +1359,7 @@ boolean M_Responder (event_t* ev)
     static  int     lasty = 0;
     static  int     mousex = 0;
     static  int     lastx = 0;
+    int dir;
 
     // In testcontrols mode, none of the function keys should do anything
     // - the only key is escape to quit.
@@ -1411,25 +1407,38 @@ boolean M_Responder (event_t* ev)
 
         if (menuactive)
         {
-            if (ev->data3 < 0)
+            if (JOY_GET_DPAD(ev->data6) != JOY_DIR_NONE)
+            {
+                dir = JOY_GET_DPAD(ev->data6);
+            }
+            else if (JOY_GET_LSTICK(ev->data6) != JOY_DIR_NONE)
+            {
+                dir = JOY_GET_LSTICK(ev->data6);
+            }
+            else
+            {
+                dir = JOY_GET_RSTICK(ev->data6);
+            }
+
+            if (dir & JOY_DIR_UP)
             {
                 key = key_menu_up;
                 joywait = I_GetTime() + 5;
             }
-            else if (ev->data3 > 0)
+            else if (dir & JOY_DIR_DOWN)
             {
                 key = key_menu_down;
                 joywait = I_GetTime() + 5;
             }
-            if (ev->data2 < 0)
+            if (dir & JOY_DIR_LEFT)
             {
                 key = key_menu_left;
-                joywait = I_GetTime() + 2;
+                joywait = I_GetTime() + 5;
             }
-            else if (ev->data2 > 0)
+            else if (dir & JOY_DIR_RIGHT)
             {
                 key = key_menu_right;
-                joywait = I_GetTime() + 2;
+                joywait = I_GetTime() + 5;
             }
 
 #define JOY_BUTTON_MAPPED(x) ((x) >= 0)
@@ -1485,7 +1494,7 @@ boolean M_Responder (event_t* ev)
     }
     else
     {
-	if (ev->type == ev_mouse && mousewait < I_GetTime())
+	if (ev->type == ev_mouse && mousewait < I_GetTime() && menuactive)
 	{
 	    mousey += ev->data3;
 	    if (mousey < lasty-30)
@@ -1900,7 +1909,6 @@ void M_StartControlPanel (void)
 
 static void M_DrawOPLDev(void)
 {
-    extern void I_OPL_DevMessages(char *, size_t);
     char debug[1024];
     char *curr, *p;
     int line;

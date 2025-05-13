@@ -76,7 +76,7 @@ line_t *ceilingline;
 
 // keep track of special lines as they are hit, but don't process them
 // until the move is proven valid
-#define MAXSPECIALCROSS 8
+
 line_t *spechit[MAXSPECIALCROSS];
 int numspechit;
 
@@ -1452,6 +1452,25 @@ void P_SlideMove(mobj_t * mo)
 
 //============================================================================
 //
+// P_InitSlideLine
+//
+//============================================================================
+
+void P_InitSlideLine(void)
+{
+    // use relevant parts from first bestslideline in demo1 (hexen.wad)
+    static vertex_t initvertex1 = {-77594624, 37748736};
+    static line_t initslideline = {&initvertex1, NULL, 0, 6291456, 0, 0, 0, 0,
+                    0, 0, 0, { 0, 0 }, { 0, 0, 0, 0 }, 0, NULL, NULL, 0, NULL};
+    
+    if (bestslideline == NULL)
+    {
+        bestslideline = &initslideline;
+    }
+}
+
+//============================================================================
+//
 // PTR_BounceTraverse
 //
 //============================================================================
@@ -1529,6 +1548,16 @@ void P_BounceWall(mobj_t * mo)
     P_PathTraverse(leadx, leady, leadx + mo->momx, leady + mo->momy,
                    PT_ADDLINES, PTR_BounceTraverse);
 
+    // P_BounceWall call on a tall sector after fresh game start
+    // without the player sliding along any walls before.
+    // For more details check:
+    // https://github.com/chocolate-doom/chocolate-doom/issues/1732
+    // https://github.com/chocolate-doom/chocolate-doom/issues/1160
+    if (bestslideline == NULL)
+    {
+        I_Error("P_BounceWall: No bestslideline was set. Try bumping walls.");
+    }
+    
     side = P_PointOnLineSide(mo->x, mo->y, bestslideline);
     lineangle = R_PointToAngle2(0, 0, bestslideline->dx, bestslideline->dy);
     if (side == 1)
@@ -1570,7 +1599,6 @@ fixed_t attackrange;
 
 fixed_t aimslope;
 
-extern fixed_t topslope, bottomslope;   // slopes to top and bottom of target
 
 /*
 ===============================================================================
@@ -1680,8 +1708,6 @@ boolean PTR_ShootTraverse(intercept_t * in)
     fixed_t slope;
     fixed_t dist;
     fixed_t thingtopslope, thingbottomslope;
-
-    extern mobj_t LavaInflictor;
 
     if (in->isaline)
     {

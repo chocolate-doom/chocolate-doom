@@ -23,6 +23,7 @@
 #include "doomtype.h"
 #include "deh_main.h"
 #include "deh_str.h"
+#include "d_loop.h"
 #include "i_system.h"
 #include "i_timer.h"
 #include "m_argv.h"
@@ -42,7 +43,6 @@
 #include "w_checksum.h"
 #include "w_wad.h"
 
-extern void D_ReceiveTic(ticcmd_t *ticcmds, boolean *playeringame);
 
 typedef enum
 {
@@ -99,7 +99,6 @@ typedef struct
     net_ticdiff_t cmd;
 } net_server_send_t;
 
-extern fixed_t offsetms;
 
 static net_connection_t client_connection;
 static net_clientstate_t client_state;

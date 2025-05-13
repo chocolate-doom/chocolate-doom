@@ -22,9 +22,20 @@
 
 #include <stdio.h>
 #include <stdarg.h>
+#include <sys/stat.h>
 
 #include "doomtype.h"
 
+#ifdef _WIN32
+wchar_t *M_ConvertUtf8ToWide(const char *str);
+char *M_ConvertWideToUtf8(const wchar_t *wstr);
+#endif
+
+FILE *M_fopen(const char *filename, const char *mode);
+int M_remove(const char *path);
+int M_rename(const char *oldname, const char *newname);
+int M_stat(const char *path, struct stat *buf);
+char *M_getenv(const char *name);
 boolean M_WriteFile(const char *name, const void *source, int length);
 int M_ReadFile(const char *name, byte **buffer);
 void M_MakeDirectory(const char *dir);
@@ -45,6 +56,47 @@ char *M_StringJoin(const char *s, ...);
 boolean M_StringStartsWith(const char *s, const char *prefix);
 boolean M_StringEndsWith(const char *s, const char *suffix);
 char *M_OEMToUTF8(const char *ansi);
+void M_NormalizeSlashes(char *str);
+
+
+// debugging code to check there are no loops in a linked list
+// disabled unless explicitly requested
+#ifdef DEBUG_LINKED_LISTS
+
+
+#define LINKED_LIST_CHECK_NO_CYCLE(list_type, list, next_member)  \
+    do                                                            \
+    {                                                             \
+        if (list != NULL) {                                       \
+            list_type *slow, *fast;                               \
+            slow = list;                                          \
+            fast = list->next_member;                             \
+            while (fast) {                                        \
+                if (!fast->next_member) {                         \
+                    break;                                        \
+                }                                                 \
+                fast = fast->next_member->next_member;            \
+                slow = slow->next_member;                         \
+                if (slow == fast) {                               \
+                    fprintf(stderr, "loop in linked list " # list " in %s:%d", __FILE__, __LINE__); \
+                    __builtin_trap();                             \
+                }                                                 \
+            }                                                     \
+        }                                                         \
+    } while (0)                                                   \
+
+
+
+#else  // DEBUG_LINKED_LISTS
+
+
+#define LINKED_LIST_CHECK_NO_CYCLE(list_type, list, next_member)  \
+    do                                                            \
+    {                                                             \
+    } while (0)                                                   \
+
+
+#endif  // DEBUG_LINKED_LISTS
 
 #endif
 

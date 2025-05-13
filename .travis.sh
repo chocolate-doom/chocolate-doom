@@ -1,6 +1,7 @@
 #!/bin/sh
 if [ "$ANALYZE" = "true" ] ; then
-	cppcheck --error-exitcode=1 -j2 -UTESTING -Iopl -Isrc -Isrc/setup opl pcsound src textscreen 2> stderr.txt
+	# -D__GNUC__ is required for cppcheck to know about noreturn functions
+	cppcheck --error-exitcode=1 -j2 -UTESTING -D__GNUC__ -Iopl -Isrc -Isrc/setup opl pcsound src textscreen 2> stderr.txt
 	RET=$?
 	if [ -s stderr.txt ]
 	then

@@ -43,6 +43,8 @@
 #define TXT_MOUSE_MIDDLE       (TXT_MOUSE_BASE + 2)
 #define TXT_MOUSE_SCROLLUP     (TXT_MOUSE_BASE + 3)
 #define TXT_MOUSE_SCROLLDOWN   (TXT_MOUSE_BASE + 4)
+#define TXT_MOUSE_X1           (TXT_MOUSE_BASE + 5)
+#define TXT_MOUSE_X2           (TXT_MOUSE_BASE + 6)
 #define TXT_MAX_MOUSE_BUTTONS  16
 
 #define TXT_KEY_TO_MOUSE_BUTTON(x)                                        \

@@ -24,6 +24,7 @@
 #include <ctype.h>
 #include <errno.h>
 #include <assert.h>
+#include <locale.h>
 
 #include "safe.h"
 
@@ -444,6 +445,13 @@ static default_t	doom_defaults_list[] =
     CONFIG_VARIABLE_INT(mouseb_forward),
 
     //!
+    // Mouse button to turn on running.  When held down, the player
+    // will run while moving.
+    //
+
+    CONFIG_VARIABLE_INT(mouseb_speed),
+
+    //!
     // @game hexen strife
     //
     // Mouse button to jump.
@@ -733,6 +741,12 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(aspect_ratio_correct),
 
     //!
+    // If non-zero, the screen will have smooth scaling.
+    //
+
+    CONFIG_VARIABLE_INT(smooth_pixel_scaling),
+
+    //!
     // If non-zero, forces integer scales for resolution-independent rendering.
     //
 
@@ -930,6 +944,105 @@ static default_t extra_defaults_list[] =
 
     CONFIG_VARIABLE_STRING(music_pack_path),
 
+#ifdef HAVE_FLUIDSYNTH
+    //!
+    // If 1, activate the FluidSynth chorus effects module. If 0, no chorus
+    // will be added to the output signal.
+    //
+
+    CONFIG_VARIABLE_INT(fsynth_chorus_active),
+
+    //!
+    // Specifies the modulation depth of the FluidSynth chorus. Default is
+    // 5.0, range is 0.0 to 256.0.
+    //
+
+    CONFIG_VARIABLE_FLOAT(fsynth_chorus_depth),
+
+    //!
+    // Specifies the output amplitude of the FluidSynth chorus signal. Default
+    // is 0.35, range is 0.0 to 10.0.
+    //
+
+    CONFIG_VARIABLE_FLOAT(fsynth_chorus_level),
+
+    //!
+    // Sets the voice count of the FluidSynth chorus signal. Default is 3,
+    // range is 0 to 99.
+    //
+
+    CONFIG_VARIABLE_INT(fsynth_chorus_nr),
+
+    //!
+    // Sets the FluidSynth chorus modulation speed in Hz. Default is 0.3,
+    // range is 0.1 to 5.0.
+    //
+
+    CONFIG_VARIABLE_FLOAT(fsynth_chorus_speed),
+
+    //!
+    // This setting defines how FluidSynth interprets Bank Select messages. The
+    // default is "gs". Other possible values are "gm", "xg" and "mma".
+    //
+
+    CONFIG_VARIABLE_STRING(fsynth_midibankselect),
+
+    //!
+    // Sets the number of FluidSynth voices that can be played in parallel.
+    // Default is 256, range is 1 - 65535.
+    //
+
+    CONFIG_VARIABLE_INT(fsynth_polyphony),
+
+    //!
+    // If 1, activate the FluidSynth reverb effects module. If 0, no reverb
+    // will be added to the output signal.
+    //
+
+    CONFIG_VARIABLE_INT(fsynth_reverb_active),
+
+    //!
+    // Sets the amount of FluidSynth reverb damping. Default is 0.4, range is
+    // 0.0 to 1.0.
+    //
+
+    CONFIG_VARIABLE_FLOAT(fsynth_reverb_damp),
+
+    //!
+    // Sets the FluidSynth reverb amplitude. Default is 0.15, range is 0.0 -
+    // 1.0.
+    //
+
+    CONFIG_VARIABLE_FLOAT(fsynth_reverb_level),
+
+    //!
+    // Sets the room size(i.e. amount of wet) FluidSynth reverb. Default is
+    // 0.6, range is 0.0 - 1.0.
+    //
+
+    CONFIG_VARIABLE_FLOAT(fsynth_reverb_roomsize),
+
+    //!
+    // Sets the stereo spread of the FluidSynth reverb signal. Default is
+    // 0.4, range is 0.0 - 100.0.
+    //
+
+    CONFIG_VARIABLE_FLOAT(fsynth_reverb_width),
+
+    //!
+    // Fine tune the FluidSynth output level. Default is 1.0,
+    // range is 0.0 - 10.0.
+    //
+
+    CONFIG_VARIABLE_FLOAT(fsynth_gain),
+
+    //!
+    // Full path to a soundfont file to use with FluidSynth MIDI playback.
+    //
+
+    CONFIG_VARIABLE_STRING(fsynth_sf_path),
+#endif // HAVE_FLUIDSYNTH
+
     //!
     // Full path to a Timidity configuration file to use for MIDI
     // playback. The file will be evaluated from the directory where
@@ -952,6 +1065,34 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_INT(gus_ram_kb),
+
+#ifdef _WIN32
+    //!
+    // MIDI device for native Windows MIDI.
+    //
+
+    CONFIG_VARIABLE_STRING(winmm_midi_device),
+
+    //!
+    // Compatibility level for native Windows MIDI, default 0. Valid values are
+    // 0 (Vanilla), 1 (Standard), 2 (Full).
+    //
+
+    CONFIG_VARIABLE_INT(winmm_complevel),
+
+    //!
+    // Reset device type for native Windows MIDI, default 1. Valid values are
+    // 0 (None), 1 (GM Mode), 2 (GS Mode), 3 (XG Mode).
+    //
+
+    CONFIG_VARIABLE_INT(winmm_reset_type),
+
+    //!
+    // Reset device delay for native Windows MIDI, default 0, median value 100 ms.
+    //
+
+    CONFIG_VARIABLE_INT(winmm_reset_delay),
+#endif
 
     //!
     // @game doom strife
@@ -1035,6 +1176,18 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(mouseb_straferight),
 
     //!
+    // Mouse button to turn left.
+    //
+
+    CONFIG_VARIABLE_INT(mouseb_turnleft),
+
+    //!
+    // Mouse button to turn right.
+    //
+
+    CONFIG_VARIABLE_INT(mouseb_turnright),
+
+    //!
     // Mouse button to "use" an object, eg. a door or switch.
     //
 
@@ -1075,6 +1228,14 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(mouseb_invright),
 
     //!
+    // @game heretic hexen
+    //
+    // Mouse button to use artifact.
+    //
+
+    CONFIG_VARIABLE_INT(mouseb_useartifact),
+
+    //!
     // If non-zero, double-clicking a mouse button acts like pressing
     // the "use" key to use an object in-game, eg. a door or switch.
     //
@@ -1097,6 +1258,12 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(joystick_index),
 
     //!
+    // If non-zero, use analog movement when playing with a gamepad.
+    //
+
+    CONFIG_VARIABLE_INT(use_analog),
+
+    //!
     // Joystick axis to use to for horizontal (X) movement.
     //
 
@@ -1107,6 +1274,12 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_INT(joystick_x_invert),
+
+    //!
+    // Joystick turn analog sensitivity, specified as a value between 0 and 20.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_turn_sensitivity),
 
     //!
     // Joystick axis to use to for vertical (Y) movement.
@@ -1134,6 +1307,12 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(joystick_strafe_invert),
 
     //!
+    // Joystick move and strafe analog sensitivity, specified as a value
+    // between 0 and 20.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_move_sensitivity),
+    //!
     // Joystick axis to use to for looking up and down.
     //
 
@@ -1145,6 +1324,12 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_INT(joystick_look_invert),
+
+    //!
+    // Joystick look analog sensitivity, specified as a value between 0 and 20.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_look_sensitivity),
 
     //!
     // The physical joystick button that corresponds to joystick
@@ -1224,6 +1409,89 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(joystick_physical_button10),
 
     //!
+    // The physical joystick button that corresponds to joystick
+    // virtual button #11.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_physical_button11),
+
+    //!
+    // The physical joystick button that corresponds to joystick
+    // virtual button #12.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_physical_button12),
+
+    //!
+    // The physical joystick button that corresponds to joystick
+    // virtual button #13.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_physical_button13),
+
+    //!
+    // The physical joystick button that corresponds to joystick
+    // virtual button #14.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_physical_button14),
+
+    //!
+    // The physical joystick button that corresponds to joystick
+    // virtual button #15.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_physical_button15),
+
+    //!
+    // The physical joystick button that corresponds to joystick
+    // virtual button #16.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_physical_button16),
+
+    //!
+    // If non-zero, use the SDL_GameController interface instead of the
+    // SDL_Joystick interface.
+    //
+
+    CONFIG_VARIABLE_INT(use_gamepad),
+
+    //!
+    // Stores the SDL_GameControllerType of the last configured gamepad.
+    //
+
+    CONFIG_VARIABLE_INT(gamepad_type),
+
+    //!
+    // Joystick x axis dead zone, specified as a percentage of the axis max
+    // value.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_x_dead_zone),
+
+    //!
+    // Joystick y axis dead zone, specified as a percentage of the axis max
+    // value.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_y_dead_zone),
+
+    //!
+    // Joystick strafe axis dead zone, specified as a percentage of the axis
+    // max value.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_strafe_dead_zone),
+
+    //!
+    // Joystick look axis dead zone, specified as a percentage of the axis max
+    // value.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_look_dead_zone),
+
+    //!
     // Joystick virtual button to make the player strafe left.
     //
 
@@ -1258,6 +1526,48 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_INT(joyb_nextweapon),
+
+    //!
+    // @game heretic hexen
+    // Joystick virtual button to activate artifact.
+    //
+
+    CONFIG_VARIABLE_INT(joyb_useartifact),
+
+    //!
+    // @game heretic hexen
+    // Joystick virtual button to move left in the inventory.
+    //
+
+    CONFIG_VARIABLE_INT(joyb_invleft),
+
+    //!
+    // @game heretic hexen
+    // Joystick virtual button to move right in the inventory.
+    //
+
+    CONFIG_VARIABLE_INT(joyb_invright),
+
+    //!
+    // @game heretic hexen
+    // Joystick virtual button to fly up.
+    //
+
+    CONFIG_VARIABLE_INT(joyb_flyup),
+
+    //!
+    // @game heretic hexen
+    // Joystick virtual button to fly down.
+    //
+
+    CONFIG_VARIABLE_INT(joyb_flydown),
+
+    //!
+    // @game heretic hexen
+    // Joystick virtual button to center flying.
+    //
+
+    CONFIG_VARIABLE_INT(joyb_flycenter),
 
     //!
     // Key to pause or unpause the game.
@@ -1614,6 +1924,14 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_KEY(key_arti_torch),
 
     //!
+    // @game heretic
+    //
+    // Key to use "morph ovum" artifact.
+    //
+
+    CONFIG_VARIABLE_KEY(key_arti_morph),
+
+    //!
     // @game hexen
     //
     // Key to use one of each artifact.
@@ -1813,7 +2131,7 @@ static void SaveDefaultCollection(default_collection_t *collection)
     int i, v;
     FILE *f;
 	
-    f = fopen (collection->filename, "w");
+    f = M_fopen(collection->filename, "w");
     if (!f)
 	return; // can't write the file, but don't complain
 
@@ -1917,7 +2235,7 @@ static int ParseIntParameter(const char *strparm)
     int parm;
 
     if (strparm[0] == '0' && strparm[1] == 'x')
-        sscanf(strparm+2, "%x", &parm);
+        sscanf(strparm+2, "%x", (unsigned int *) &parm);
     else
         sscanf(strparm, "%i", &parm);
 
@@ -1962,7 +2280,41 @@ static void SetVariable(default_t *def, const char *value)
             break;
 
         case DEFAULT_FLOAT:
-            *def->location.f = (float) atof(value);
+        {
+            // Different locales use different decimal separators.
+            // However, the choice of the current locale isn't always
+            // under our own control. If the atof() function fails to
+            // parse the string representing the floating point number
+            // using the current locale's decimal separator, it will
+            // return 0, resulting in silent sound effects. To
+            // mitigate this, we replace the first non-digit,
+            // non-minus character in the string with the current
+            // locale's decimal separator before passing it to atof().
+            struct lconv *lc = localeconv();
+            char dec, *str;
+            int i = 0;
+
+            dec = lc->decimal_point[0];
+            str = M_StringDuplicate(value);
+
+            // Skip sign indicators.
+            if (str[i] == '-' || str[i] == '+')
+            {
+                i++;
+            }
+
+            for ( ; str[i] != '\0'; i++)
+            {
+                if (!isdigit(str[i]))
+                {
+                    str[i] = dec;
+                    break;
+                }
+            }
+
+            *def->location.f = (float) atof(str);
+            free(str);
+        }
             break;
     }
 }
@@ -1975,7 +2327,7 @@ static void LoadDefaultCollection(default_collection_t *collection)
     char strparm[100];
 
     // read the file in, overriding any set defaults
-    f = fopen(collection->filename, "r");
+    f = M_fopen(collection->filename, "r");
 
     if (f == NULL)
     {
@@ -2285,7 +2637,7 @@ static char *GetDefaultConfigDir(void)
         return copy;
     }
 #endif /* #ifndef _WIN32 */
-    return X_StringDuplicate("");
+    return X_StringDuplicate(exedir);
 }
 
 // 
@@ -2308,7 +2660,7 @@ void M_SetConfigDir(const char *dir)
         configdir = GetDefaultConfigDir();
     }
 
-    if (strcmp(configdir, "") != 0)
+    if (strcmp(configdir, exedir) != 0)
     {
         printf("Using %s for configuration and saves\n", configdir);
     }
@@ -2340,6 +2692,11 @@ void M_SetMusicPackDir(void)
     }
 
     prefdir = SDL_GetPrefPath("", PACKAGE_TARNAME);
+    if (prefdir == NULL)
+    {
+        printf("M_SetMusicPackDir: SDL_GetPrefPath failed, music pack directory not set\n");
+        return;
+    }
     music_pack_path = M_StringJoin(prefdir, "music-packs", NULL);
 
     M_MakeDirectory(prefdir);
@@ -2400,7 +2757,7 @@ char *M_GetSaveGameDir(const char *iwadname)
 #endif
     // If not "doing" a configuration directory (Windows), don't "do"
     // a savegame directory, either.
-    else if (!strcmp(configdir, ""))
+    else if (!strcmp(configdir, exedir))
     {
 	savegamedir = X_StringDuplicate("");
     }
@@ -2436,6 +2793,11 @@ char *M_GetAutoloadDir(const char *iwadname)
     {
         char *prefdir;
         prefdir = SDL_GetPrefPath("", PACKAGE_TARNAME);
+        if (prefdir == NULL)
+        {
+            printf("M_GetAutoloadDir: SDL_GetPrefPath failed\n");
+            return NULL;
+        }
         autoload_path = M_StringJoin(prefdir, "autoload", NULL);
         SDL_free(prefdir);
     }
@@ -2449,4 +2811,3 @@ char *M_GetAutoloadDir(const char *iwadname)
 
     return result;
 }
-

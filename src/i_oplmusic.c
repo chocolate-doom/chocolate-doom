@@ -1199,7 +1199,7 @@ static void ControllerEvent(opl_track_data_t *track, midi_event_t *event)
 
     switch (controller)
     {
-        case MIDI_CONTROLLER_MAIN_VOLUME:
+        case MIDI_CONTROLLER_VOLUME_MSB:
             SetChannelVolume(channel, param, true);
             break;
 
@@ -1675,7 +1675,7 @@ static void *I_OPL_RegisterSong(void *data, int len)
 
     // remove file now
 
-    remove(filename);
+    M_remove(filename);
     free(filename);
 
     return result;
@@ -1717,7 +1717,7 @@ static void I_OPL_ShutdownMusic(void)
 
 static boolean I_OPL_InitMusic(void)
 {
-    char *dmxoption;
+    const char *dmxoption;
     opl_init_result_t chip_type;
 
     OPL_SetSampleRate(snd_samplerate);
@@ -1773,13 +1773,13 @@ static boolean I_OPL_InitMusic(void)
     return true;
 }
 
-static snddevice_t music_opl_devices[] =
+const static snddevice_t music_opl_devices[] =
 {
     SNDDEVICE_ADLIB,
     SNDDEVICE_SB,
 };
 
-music_module_t music_opl_module =
+const music_module_t music_opl_module =
 {
     music_opl_devices,
     arrlen(music_opl_devices),

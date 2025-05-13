@@ -119,6 +119,8 @@ void P_PlayerRemoveArtifact(player_t * player, int slot);
 void P_PlayerUseArtifact(player_t * player, artitype_t arti);
 boolean P_UseArtifact(player_t * player, artitype_t arti);
 int P_GetPlayerNum(player_t * player);
+boolean P_UndoPlayerChicken(player_t *player);
+
 
 // ***** P_MOBJ *****
 
@@ -141,8 +143,8 @@ boolean P_SetMobjStateNF(mobj_t * mobj, statenum_t state);
 void P_ThrustMobj(mobj_t * mo, angle_t angle, fixed_t move);
 int P_FaceMobj(mobj_t * source, mobj_t * target, angle_t * delta);
 boolean P_SeekerMissile(mobj_t * actor, angle_t thresh, angle_t turnMax);
-void P_MobjThinker(mobj_t * mobj);
-void P_BlasterMobjThinker(mobj_t * mobj);
+void P_MobjThinker(thinker_t *thinker);
+void P_BlasterMobjThinker(thinker_t *thinker);
 void P_SpawnPuff(fixed_t x, fixed_t y, fixed_t z);
 void P_SpawnBlood(fixed_t x, fixed_t y, fixed_t z, int damage);
 void P_BloodSplatter(fixed_t x, fixed_t y, fixed_t z, mobj_t * originator);
@@ -225,6 +227,9 @@ void P_FakeZMovement(mobj_t * mo);
 boolean P_TryMove(mobj_t * thing, fixed_t x, fixed_t y);
 boolean P_TeleportMove(mobj_t * thing, fixed_t x, fixed_t y);
 void P_SlideMove(mobj_t * mo);
+
+extern fixed_t topslope, bottomslope;   // slopes to top and bottom of target
+
 boolean P_CheckSight(mobj_t * t1, mobj_t * t2);
 void P_UseLines(player_t * player);
 
@@ -237,6 +242,11 @@ void P_LineAttack(mobj_t * t1, angle_t angle, fixed_t distance, fixed_t slope,
                   int damage);
 
 void P_RadiusAttack(mobj_t * spot, mobj_t * source, int damage);
+
+#define	MAXSPECIALCROSS		8
+extern line_t *spechit[MAXSPECIALCROSS];
+extern int numspechit;
+
 
 // ***** P_SETUP *****
 
@@ -251,6 +261,9 @@ extern mobj_t **blocklinks;     // for thing chains
 
 extern int maxammo[NUMAMMO];
 extern int clipammo[NUMAMMO];
+
+extern boolean messageson;
+
 
 void P_SetMessage(player_t * player, const char *message, boolean ultmsg);
 void P_TouchSpecialThing(mobj_t * special, mobj_t * toucher);

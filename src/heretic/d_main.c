@@ -46,6 +46,9 @@
 #include "s_sound.h"
 #include "w_main.h"
 #include "v_video.h"
+#include "am_map.h"
+
+#include "heretic_icon.c"
 
 #define CT_KEY_GREEN    'g'
 #define CT_KEY_YELLOW   'y'
@@ -73,7 +76,6 @@ static int graphical_startup = 1;
 static boolean using_graphical_startup;
 static boolean main_loop_started = false;
 boolean autostart;
-extern boolean automapactive;
 
 boolean advancedemo;
 
@@ -139,14 +141,9 @@ void DrawMessage(void)
 //
 //---------------------------------------------------------------------------
 
-void R_ExecuteSetViewSize(void);
-
-extern boolean finalestage;
 
 void D_Display(void)
 {
-    extern boolean askforquit;
-
     // Change the view size if needed
     if (setsizeneeded)
     {
@@ -240,10 +237,11 @@ void D_DoomLoop(void)
     {
         char filename[20];
         X_snprintf(filename, sizeof(filename), "debug%i.txt", consoleplayer);
-        debugfile = fopen(filename, "w");
+        debugfile = M_fopen(filename, "w");
     }
     I_GraphicsCheckCommandLine();
     I_SetGrabMouseCallback(D_GrabMouseCallback);
+    I_RegisterWindowIcon(heretic_icon_data, heretic_icon_w, heretic_icon_h);
     I_InitGraphics();
 
     main_loop_started = true;
@@ -655,8 +653,6 @@ void InitThermo(int max)
 
 void D_BindVariables(void)
 {
-    extern int screenblocks;
-    extern int snd_Channels;
     int i;
 
     M_ApplyPlatformDefaults();
@@ -911,9 +907,12 @@ void D_DoomMain(void)
     {
         char *autoload_dir;
         autoload_dir = M_GetAutoloadDir("heretic.wad");
-        DEH_AutoLoadPatches(autoload_dir);
-        W_AutoLoadWADs(autoload_dir);
-        free(autoload_dir);
+        if (autoload_dir != NULL)
+        {
+            DEH_AutoLoadPatches(autoload_dir);
+            W_AutoLoadWADs(autoload_dir);
+            free(autoload_dir);
+        }
     }
 
     // Load dehacked patches specified on the command line.
@@ -1023,7 +1022,7 @@ void D_DoomMain(void)
     }
 
     I_InitTimer();
-    I_InitSound(false);
+    I_InitSound(heretic);
     I_InitMusic();
 
     tprintf("NET_Init: Init network subsystem.\n", 1);
@@ -1091,7 +1090,7 @@ void D_DoomMain(void)
     IncThermo();
 
 //
-// start the apropriate game based on parms
+// start the appropriate game based on params
 //
 
     D_CheckRecordFrom();

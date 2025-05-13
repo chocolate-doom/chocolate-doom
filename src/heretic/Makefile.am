@@ -5,7 +5,9 @@ AM_CFLAGS = \
     -I$(top_srcdir)/textscreen   \
     @SDL_CFLAGS@ @SDLMIXER_CFLAGS@ @SDLNET_CFLAGS@
 
-EXTRA_DIST = CMakeLists.txt
+EXTRA_DIST =                                         \
+        CMakeLists.txt                               \
+        heretic_icon.c
 
 noinst_LIBRARIES=libheretic.a
 
@@ -64,3 +66,9 @@ sb_bar.c                                             \
 sounds.c               sounds.h                      \
 s_sound.c              s_sound.h
 
+if HAVE_ICONS
+
+heretic_icon.c : $(top_builddir)/data/heretic.png
+	$(top_builddir)/data/convert-icon $(top_builddir)/data/heretic.png $@
+
+endif

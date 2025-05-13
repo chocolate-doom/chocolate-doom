@@ -35,6 +35,7 @@
 #include "hu_lib.h"
 #include "m_controls.h"
 #include "m_misc.h"
+#include "m_menu.h"
 #include "w_wad.h"
 
 #include "s_sound.h"
@@ -65,19 +66,7 @@
 
 
 
-char *chat_macros[10] =
-{
-    HUSTR_CHATMACRO0,
-    HUSTR_CHATMACRO1,
-    HUSTR_CHATMACRO2,
-    HUSTR_CHATMACRO3,
-    HUSTR_CHATMACRO4,
-    HUSTR_CHATMACRO5,
-    HUSTR_CHATMACRO6,
-    HUSTR_CHATMACRO7,
-    HUSTR_CHATMACRO8,
-    HUSTR_CHATMACRO9
-};
+char *chat_macros[10];
 
 const char *player_names[] =
 {
@@ -104,7 +93,6 @@ static boolean		message_nottobefuckedwith;
 static hu_stext_t	w_message;
 static int		message_counter;
 
-extern int		showMessages;
 
 static boolean		headsupactive = false;
 

@@ -35,8 +35,6 @@
 int cheating = 0;
 static int grid = 0;
 
-static int leveljuststarted = 1;        // kluge until AM_LevelInit() is called
-
 boolean automapactive = false;
 static int finit_width = SCREENWIDTH;
 static int finit_height = SCREENHEIGHT - SBARHEIGHT - 3;
@@ -86,8 +84,6 @@ static int followplayer = 1;    // specifies whether to follow the player around
 static char cheat_kills[] = { 'k', 'i', 'l', 'l', 's' };
 static boolean ShowKills = 0;
 static unsigned ShowKillsCount = 0;
-
-extern boolean viewactive;
 
 static byte antialias[NUMALIAS][8] = {
     {83, 84, 85, 86, 87, 88, 89, 90},
@@ -350,8 +346,6 @@ void AM_clearMarks(void)
 
 void AM_LevelInit(void)
 {
-    leveljuststarted = 0;
-
     f_x = f_y = 0;
     f_w = finit_width;
     f_h = finit_height;

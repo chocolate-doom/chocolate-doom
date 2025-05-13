@@ -24,7 +24,9 @@
 #include "h2def.h"
 #include "doomkeys.h"
 #include "i_input.h"
+#include "i_joystick.h"
 #include "i_system.h"
+#include "i_timer.h"
 #include "i_swap.h"
 #include "i_video.h"
 #include "m_controls.h"
@@ -33,6 +35,8 @@
 #include "r_local.h"
 #include "s_sound.h"
 #include "v_video.h"
+#include "am_map.h"
+
 
 // MACROS ------------------------------------------------------------------
 
@@ -125,8 +129,6 @@ void MN_LoadSlotText(void);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
-extern int detailLevel;
-extern boolean gamekeydown[256];        // The NUMKEYS macro is local to g_game
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
@@ -151,6 +153,7 @@ boolean askforquit;
 static int typeofask;
 static boolean FileMenuKeySteal;
 static boolean slottextloaded;
+static boolean joypadsave;
 static char SlotText[6][SLOTTEXTLEN + 2];
 static char oldSlotText[SLOTTEXTLEN + 2];
 static int SlotStatus[6];
@@ -683,7 +686,7 @@ static boolean ReadDescriptionForSlot(int slot, char *description)
 
     X_snprintf(name, sizeof(name), "%shex%d.hxs", SavePath, slot);
 
-    fp = fopen(name, "rb");
+    fp = M_fopen(name, "rb");
 
     if (fp == NULL)
     {
@@ -918,6 +921,37 @@ static void SCLoadGame(int option)
     }
 }
 
+//
+// Generate a default save slot name when the user saves to
+// an empty slot via the joypad.
+//
+static void SetDefaultSaveName(int slot)
+{
+    // map from IWAD or PWAD?
+    if (W_IsIWADLump(maplumpinfo) && strcmp(SavePath, ""))
+    {
+        M_snprintf(SlotText[slot], SLOTTEXTLEN,
+                   "%s", maplumpinfo->name);
+    }
+    else
+    {
+        char *wadname = M_StringDuplicate(W_WadNameForLump(maplumpinfo));
+        char *ext = strrchr(wadname, '.');
+
+        if (ext != NULL)
+        {
+            *ext = '\0';
+        }
+
+        M_snprintf(SlotText[slot], SLOTTEXTLEN,
+                   "%s (%s)", maplumpinfo->name,
+                   wadname);
+        free(wadname);
+    }
+    M_ForceUppercase(SlotText[slot]);
+    joypadsave = false;
+}
+
 //---------------------------------------------------------------------------
 //
 // PROC SCSaveGame
@@ -941,6 +975,12 @@ static void SCSaveGame(int option)
 
         X_StringCopy(oldSlotText, SlotText[option], sizeof(oldSlotText));
         ptr = SlotText[option];
+
+        if (!strcmp(ptr, "") && joypadsave)
+        {
+            SetDefaultSaveName(option);
+        }
+
         while (*ptr)
         {
             ptr++;
@@ -1149,10 +1189,8 @@ boolean MN_Responder(event_t * event)
     int charTyped;
     int i;
     MenuItem_t *item;
-    extern boolean automapactive;
-    extern void H2_StartTitle(void);
-    extern void G_CheckDemoStatus(void);
     char *textBuffer;
+    int dir;
 
     // In testcontrols mode, none of the function keys should do anything
     // - the only key is escape to quit.
@@ -1191,26 +1229,117 @@ boolean MN_Responder(event_t * event)
         return true;
     }
 
-    // Allow the menu to be activated from a joystick button if a button
-    // is bound for joybmenu.
+    charTyped = 0;
+    key = -1;
+
     if (event->type == ev_joystick)
     {
-        if (joybmenu >= 0 && (event->data1 & (1 << joybmenu)) != 0)
+        // Simulate key presses from joystick events to interact with the menu.
+
+        if (MenuActive)
+        {
+            if (JOY_GET_DPAD(event->data6) != JOY_DIR_NONE)
+            {
+                dir = JOY_GET_DPAD(event->data6);
+            }
+            else if (JOY_GET_LSTICK(event->data6) != JOY_DIR_NONE)
+            {
+                dir = JOY_GET_LSTICK(event->data6);
+            }
+            else
+            {
+                dir = JOY_GET_RSTICK(event->data6);
+            }
+
+            if (dir & JOY_DIR_UP)
+            {
+                key = key_menu_up;
+                joywait = I_GetTime() + 5;
+            }
+            else if (dir & JOY_DIR_DOWN)
+            {
+                key = key_menu_down;
+                joywait = I_GetTime() + 5;
+            }
+            if (dir & JOY_DIR_LEFT)
+            {
+                key = key_menu_left;
+                joywait = I_GetTime() + 5;
+            }
+            else if (dir & JOY_DIR_RIGHT)
+            {
+                key = key_menu_right;
+                joywait = I_GetTime() + 5;
+            }
+
+#define JOY_BUTTON_MAPPED(x) ((x) >= 0)
+#define JOY_BUTTON_PRESSED(x) (JOY_BUTTON_MAPPED(x) && (event->data1 & (1 << (x))) != 0)
+
+            if (JOY_BUTTON_PRESSED(joybfire))
+            {
+                // Simulate pressing "Enter" when we are supplying a save slot name
+                if (FileMenuKeySteal)
+                {
+                    key = KEY_ENTER;
+                }
+                else
+                {
+                    // if selecting a save slot via joypad, set a flag
+                    if (CurrentMenu == &SaveMenu)
+                    {
+                        joypadsave = true;
+                    }
+                    key = key_menu_forward;
+                }
+                joywait = I_GetTime() + 5;
+            }
+            if (JOY_BUTTON_PRESSED(joybuse))
+            {
+                // If user was entering a save name, back out
+                if (FileMenuKeySteal)
+                {
+                    key = KEY_ESCAPE;
+                }
+                else
+                {
+                    key = key_menu_back;
+                }
+                joywait = I_GetTime() + 5;
+            }
+        }
+        else if (askforquit)
+        {
+            if (JOY_BUTTON_PRESSED(joybfire))
+            {
+                // Simulate a 'Y' keypress
+                key = key_menu_confirm;
+                joywait = I_GetTime() + 5;
+            }
+            if (JOY_BUTTON_PRESSED(joybuse))
+            {
+                // Simulate a 'N' keypress
+                key = key_menu_abort;
+                joywait = I_GetTime() + 5;
+            }
+        }
+        if (JOY_BUTTON_PRESSED(joybmenu))
         {
             MN_ActivateMenu();
+            joywait = I_GetTime() + 5;
             return true;
         }
     }
 
-    // Only care about keypresses beyond this point.
-
-    if (event->type != ev_keydown)
+    if (event->type != ev_keydown && key == -1)
     {
         return false;
     }
 
-    key = event->data1;
-    charTyped = event->data2;
+    if (event->type == ev_keydown)
+    {
+        key = event->data1;
+        charTyped = event->data2;
+    }
 
     if (InfoType)
     {
@@ -1661,9 +1790,10 @@ boolean MN_Responder(event_t * event)
         {
             if (slotptr)
             {
-                *textBuffer-- = 0;
-                *textBuffer = ASCII_CURSOR;
+                *textBuffer = 0;
                 slotptr--;
+                textBuffer = &SlotText[currentSlot][slotptr];
+                *textBuffer = ASCII_CURSOR;
             }
             return (true);
         }

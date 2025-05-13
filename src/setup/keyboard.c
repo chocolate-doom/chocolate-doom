@@ -50,7 +50,8 @@ static int *controls[] = { &key_left, &key_right, &key_up, &key_down,
                            &key_weapon7, &key_weapon8,
                            &key_arti_quartz, &key_arti_urn, &key_arti_bomb,
                            &key_arti_tome, &key_arti_ring, &key_arti_chaosdevice,
-                           &key_arti_shadowsphere, &key_arti_wings, &key_arti_torch,
+                           &key_arti_shadowsphere, &key_arti_wings, 
+                           &key_arti_torch, &key_arti_morph,
                            &key_arti_all, &key_arti_health, &key_arti_poisonbag,
                            &key_arti_blastradius, &key_arti_teleport,
                            &key_arti_teleportother, &key_arti_egg,
@@ -69,7 +70,7 @@ static int *shortcuts[] = { &key_menu_help, &key_menu_save, &key_menu_load,
                             &key_menu_screenshot,
                             &key_message_refresh, &key_multi_msg,
                             &key_multi_msgplayer[0], &key_multi_msgplayer[1],
-                            &key_multi_msgplayer[2], &key_multi_msgplayer[3] };
+                            &key_multi_msgplayer[2], &key_multi_msgplayer[3], NULL };
 
 static int *map_keys[] = { &key_map_north, &key_map_south, &key_map_east,
                            &key_map_west, &key_map_zoomin, &key_map_zoomout,
@@ -259,6 +260,7 @@ static void ConfigExtraKeys(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
             AddKeyControl(table, "Shadowsphere", &key_arti_shadowsphere);
             AddKeyControl(table, "Wings of Wrath", &key_arti_wings);
             AddKeyControl(table, "Torch", &key_arti_torch);
+            AddKeyControl(table, "Morph Ovum", &key_arti_morph);
         }
 
         if (gamemission == hexen)
@@ -408,7 +410,7 @@ void ConfigKeyboard(TXT_UNCAST_ARG(widget), void *user_data)
 
     AddKeyControl(window, "Turn Left", &key_left);
     TXT_AddWidget(window, TXT_TABLE_EMPTY);
-    AddKeyControl(window, "Speed On", &key_speed);
+    AddKeyControl(window, "Run", &key_speed);
 
     AddKeyControl(window, "Turn Right", &key_right);
     TXT_AddWidget(window, TXT_TABLE_EMPTY);

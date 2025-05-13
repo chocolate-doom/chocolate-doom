@@ -62,6 +62,7 @@ void I_DisplayFPSDots(boolean dots_on);
 void I_BindVideoVariables(void);
 
 void I_InitWindowTitle(void);
+void I_RegisterWindowIcon(const unsigned int *icon, int width, int height);
 void I_InitWindowIcon(void);
 
 // Called before processing any tics in a frame (just after displaying a frame).
@@ -91,13 +92,19 @@ extern int screen_height;
 extern int fullscreen;
 extern int aspect_ratio_correct;
 extern int integer_scaling;
+extern int smooth_pixel_scaling;
 extern int vga_porch_flash;
 extern int force_software_renderer;
+
+extern int png_screenshots;
 
 extern char *window_position;
 void I_GetWindowPosition(int *x, int *y, int w, int h);
 
 // Joystic/gamepad hysteresis
 extern unsigned int joywait;
+
+extern int usemouse;
+
 
 #endif

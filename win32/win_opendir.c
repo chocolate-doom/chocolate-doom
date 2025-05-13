@@ -1,336 +1,353 @@
-//
-// 03/10/2006 James Haley
-//
-// For this module only: 
-// This code is public domain. No change sufficient enough to constitute a
-// significant or original work has been made, and thus it remains as such.
-//
-//
-// DESCRIPTION:
-//
-// Implementation of POSIX opendir for Visual C++.
-// Derived from the MinGW C Library Extensions Source (released to the
-// public domain). As with other Win32 modules, don't include most DOOM
-// headers into this or conflicts will occur.
-//
-// Original Header:
-//
-// * dirent.c
-// * This file has no copyright assigned and is placed in the Public Domain.
-// * This file is a part of the mingw-runtime package.
-// * No warranty is given; refer to the file DISCLAIMER within the package.
-// *
-// * Derived from DIRLIB.C by Matt J. Weinstein 
-// * This note appears in the DIRLIB.H
-// * DIRLIB.H by M. J. Weinstein   Released to public domain 1-Jan-89
-// *
-// * Updated by Jeremy Bettis <jeremy@hksys.com>
-// * Significantly revised and rewinddir, seekdir and telldir added by Colin
-// * Peters <colin@fu.is.saga-u.ac.jp>
-//
+/*
+MIT License
+Copyright (c) 2019 win32ports
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
 
-#ifndef _MSC_VER
-#error i_opndir.c is for Microsoft Visual C++ only
-#endif
-
-#include <stdlib.h>
-#include <errno.h>
-#include <string.h>
-
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h> /* for GetFileAttributes */
-
-#include <tchar.h>
-#define SUFFIX	_T("*")
-#define	SLASH	_T("\\")
+#ifdef _WIN32
 
 #include "win_opendir.h"
 
-//
-// opendir
-// 
-// Returns a pointer to a DIR structure appropriately filled in to begin
-// searching a directory.
-//
-DIR *opendir(const _TCHAR *szPath)
+#include <stdint.h>
+#include <errno.h>
+
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#include <shlwapi.h>
+
+#ifdef _MSC_VER
+#pragma comment(lib, "Shlwapi.lib")
+#endif
+
+#ifndef NTFS_MAX_PATH
+#define NTFS_MAX_PATH 32768
+#endif /* NTFS_MAX_PATH */
+
+#ifndef FSCTL_GET_REPARSE_POINT
+#define FSCTL_GET_REPARSE_POINT 0x900a8
+#endif /* FSCTL_GET_REPARSE_POINT */
+
+#ifndef FILE_NAME_NORMALIZED
+#define FILE_NAME_NORMALIZED 0
+#endif /* FILE_NAME_NORMALIZED */
+
+struct __dir
 {
-   DIR *nd;
-   unsigned int rc;
-   _TCHAR szFullPath[MAX_PATH];
-	
-   errno = 0;
-   
-   if(!szPath)
-   {
-      errno = EFAULT;
-      return (DIR *)0;
-   }
-   
-   if(szPath[0] == _T('\0'))
-   {
-      errno = ENOTDIR;
-      return (DIR *)0;
-   }
+    struct dirent *entries;
+    intptr_t fd;
+    long int count;
+    long int index;
+};
 
-   /* Attempt to determine if the given path really is a directory. */
-   rc = GetFileAttributes(szPath);
-   if(rc == (unsigned int)-1)
-   {
-      /* call GetLastError for more error info */
-      errno = ENOENT;
-      return (DIR *)0;
-   }
-   if(!(rc & FILE_ATTRIBUTE_DIRECTORY))
-   {
-      /* Error, entry exists but not a directory. */
-      errno = ENOTDIR;
-      return (DIR *)0;
-   }
-
-   /* Make an absolute pathname.  */
-   _tfullpath(szFullPath, szPath, MAX_PATH);
-
-   /* Allocate enough space to store DIR structure and the complete
-   * directory path given. */
-   nd = (DIR *)(malloc(sizeof(DIR) + (_tcslen(szFullPath)
-                                       + _tcslen(SLASH)
-                                       + _tcslen(SUFFIX) + 1)
-                                     * sizeof(_TCHAR)));
-
-   if(!nd)
-   {
-      /* Error, out of memory. */
-      errno = ENOMEM;
-      return (DIR *)0;
-   }
-
-   /* Create the search expression. */
-   _tcscpy(nd->dd_name, szFullPath);
-
-   /* Add on a slash if the path does not end with one. */
-   if(nd->dd_name[0] != _T('\0')
-      && _tcsrchr(nd->dd_name, _T('/'))  != nd->dd_name
-					    + _tcslen(nd->dd_name) - 1
-      && _tcsrchr(nd->dd_name, _T('\\')) != nd->dd_name
-      					    + _tcslen(nd->dd_name) - 1)
-   {
-      _tcscat(nd->dd_name, SLASH);
-   }
-
-   /* Add on the search pattern */
-   _tcscat(nd->dd_name, SUFFIX);
-   
-   /* Initialize handle to -1 so that a premature closedir doesn't try
-   * to call _findclose on it. */
-   nd->dd_handle = -1;
-
-   /* Initialize the status. */
-   nd->dd_stat = 0;
-
-   /* Initialize the dirent structure. ino and reclen are invalid under
-    * Win32, and name simply points at the appropriate part of the
-    * findfirst_t structure. */
-   nd->dd_dir.d_ino = 0;
-   nd->dd_dir.d_reclen = 0;
-   nd->dd_dir.d_namlen = 0;
-   memset(nd->dd_dir.d_name, 0, FILENAME_MAX);
-  
-   return nd;
-}
-
-//
-// readdir
-//
-// Return a pointer to a dirent structure filled with the information on the
-// next entry in the directory.
-//
-struct dirent *readdir(DIR *dirp)
-{
-   errno = 0;
-   
-   /* Check for valid DIR struct. */
-   if(!dirp)
-   {
-      errno = EFAULT;
-      return (struct dirent *)0;
-   }
-
-   if (dirp->dd_stat < 0)
-   {
-     /* We have already returned all files in the directory
-      * (or the structure has an invalid dd_stat). */
-      return (struct dirent *)0;
-   }
-   else if (dirp->dd_stat == 0)
-   {
-      /* We haven't started the search yet. */
-      /* Start the search */
-      dirp->dd_handle = _tfindfirst(dirp->dd_name, &(dirp->dd_dta));
-
-      if(dirp->dd_handle == -1)
-      {
-         /* Whoops! Seems there are no files in that
-          * directory. */
-         dirp->dd_stat = -1;
-      }
-      else
-      {
-         dirp->dd_stat = 1;
-      }
-   }
-   else
-   {
-      /* Get the next search entry. */
-      if(_tfindnext(dirp->dd_handle, &(dirp->dd_dta)))
-      {
-         /* We are off the end or otherwise error.	
-            _findnext sets errno to ENOENT if no more file
-            Undo this. */ 
-         DWORD winerr = GetLastError();
-         if(winerr == ERROR_NO_MORE_FILES)
-            errno = 0;
-         _findclose(dirp->dd_handle);
-         dirp->dd_handle = -1;
-         dirp->dd_stat = -1;
-      }
-      else
-      {
-         /* Update the status to indicate the correct
-          * number. */
-         dirp->dd_stat++;
-      }
-   }
-
-   if (dirp->dd_stat > 0)
-   {
-      /* Successfully got an entry. Everything about the file is
-       * already appropriately filled in except the length of the
-       * file name. */
-      dirp->dd_dir.d_namlen = _tcslen(dirp->dd_dta.name);
-      _tcscpy(dirp->dd_dir.d_name, dirp->dd_dta.name);
-      return &dirp->dd_dir;
-   }
-
-   return (struct dirent *)0;
-}
-
-
-//
-// closedir
-//
-// Frees up resources allocated by opendir.
-//
 int closedir(DIR *dirp)
 {
-   int rc;
-   
-   errno = 0;
-   rc = 0;
-   
-   if(!dirp)
-   {
-      errno = EFAULT;
-      return -1;
-   }
-
-   if(dirp->dd_handle != -1)
-   {
-      rc = _findclose(dirp->dd_handle);
-   }
-
-   /* Delete the dir structure. */
-   free(dirp);
-   
-   return rc;
+    struct __dir *data = NULL;
+    if (!dirp)
+    {
+        errno = EBADF;
+        return -1;
+    }
+    data = (struct __dir *) dirp;
+    CloseHandle((HANDLE) data->fd);
+    free(data->entries);
+    free(data);
+    return 0;
 }
 
-//
-// rewinddir
-//
-// Return to the beginning of the directory "stream". We simply call findclose
-// and then reset things like an opendir.
-//
-void rewinddir(DIR * dirp)
+static void __seterrno(int value)
 {
-   errno = 0;
-   
-   if(!dirp)
-   {
-      errno = EFAULT;
-      return;
-   }
-
-   if(dirp->dd_handle != -1)
-   {
-      _findclose(dirp->dd_handle);
-   }
-   
-   dirp->dd_handle = -1;
-   dirp->dd_stat = 0;
+#ifdef _MSC_VER
+    _set_errno(value);
+#else  /* _MSC_VER */
+    errno = value;
+#endif /* _MSC_VER */
 }
 
-//
-// telldir
-//
-// Returns the "position" in the "directory stream" which can be used with
-// seekdir to go back to an old entry. We simply return the value in stat.
-//
-long telldir(DIR *dirp)
+static int __islink(const wchar_t *name, char *buffer)
 {
-   errno = 0;
-   
-   if(!dirp)
-   {
-      errno = EFAULT;
-      return -1;
-   }
-   return dirp->dd_stat;
+    DWORD io_result = 0;
+    DWORD bytes_returned = 0;
+    HANDLE hFile = CreateFileW(
+        name, 0, 0, NULL, OPEN_EXISTING,
+        FILE_FLAG_OPEN_REPARSE_POINT | FILE_FLAG_BACKUP_SEMANTICS, 0);
+    if (hFile == INVALID_HANDLE_VALUE)
+    {
+        return 0;
+    }
+
+    io_result = DeviceIoControl(hFile, FSCTL_GET_REPARSE_POINT, NULL, 0, buffer,
+                                MAXIMUM_REPARSE_DATA_BUFFER_SIZE,
+                                &bytes_returned, NULL);
+
+    CloseHandle(hFile);
+
+    if (io_result == 0)
+    {
+        return 0;
+    }
+
+    return ((REPARSE_GUID_DATA_BUFFER *) buffer)->ReparseTag ==
+           IO_REPARSE_TAG_SYMLINK;
 }
 
-//
-// seekdir
-//
-// Seek to an entry previously returned by telldir. We rewind the directory
-// and call readdir repeatedly until either dd_stat is the position number
-// or -1 (off the end). This is not perfect, in that the directory may
-// have changed while we weren't looking. But that is probably the case with
-// any such system.
-//
-void seekdir(DIR *dirp, long lPos)
+#pragma pack(push, 1)
+
+typedef struct dirent_FILE_ID_128
 {
-   errno = 0;
-   
-   if(!dirp)
-   {
-      errno = EFAULT;
-      return;
-   }
+    BYTE Identifier[16];
+} dirent_FILE_ID_128;
 
-   if(lPos < -1)
-   {
-      /* Seeking to an invalid position. */
-      errno = EINVAL;
-      return;
-   }
-   else if(lPos == -1)
-   {
-      /* Seek past end. */
-      if(dirp->dd_handle != -1)
-      {
-         _findclose(dirp->dd_handle);
-      }
-      dirp->dd_handle = -1;
-      dirp->dd_stat = -1;
-   }
-   else
-   {
-      /* Rewind and read forward to the appropriate index. */
-      rewinddir(dirp);
-      
-      while((dirp->dd_stat < lPos) && readdir(dirp))
-         ; /* do-nothing loop */
-   }
+typedef struct _dirent_FILE_ID_INFO
+{
+    ULONGLONG VolumeSerialNumber;
+    dirent_FILE_ID_128 FileId;
+} dirent_FILE_ID_INFO;
+
+#pragma pack(pop)
+
+typedef enum dirent_FILE_INFO_BY_HANDLE_CLASS
+{
+    dirent_FileIdInfo = 18
+} dirent_FILE_INFO_BY_HANDLE_CLASS;
+
+static __ino_t __inode(const wchar_t *name)
+{
+    __ino_t value = {0};
+    BOOL result;
+    dirent_FILE_ID_INFO fileid;
+    BY_HANDLE_FILE_INFORMATION info;
+    typedef BOOL(__stdcall * pfnGetFileInformationByHandleEx)(
+        HANDLE hFile, dirent_FILE_INFO_BY_HANDLE_CLASS FileInformationClass,
+        LPVOID lpFileInformation, DWORD dwBufferSize);
+    pfnGetFileInformationByHandleEx fnGetFileInformationByHandleEx;
+    HANDLE hFile;
+
+    HANDLE hKernel32 = GetModuleHandleW(L"kernel32.dll");
+    if (!hKernel32)
+    {
+        return value;
+    }
+
+    fnGetFileInformationByHandleEx =
+        (pfnGetFileInformationByHandleEx) GetProcAddress(
+            hKernel32, "GetFileInformationByHandleEx");
+    if (!fnGetFileInformationByHandleEx)
+    {
+        return value;
+    }
+
+    hFile = CreateFileW(name, GENERIC_READ, FILE_SHARE_READ, NULL,
+                        OPEN_EXISTING, 0, 0);
+    if (hFile == INVALID_HANDLE_VALUE)
+    {
+        return value;
+    }
+
+    result = fnGetFileInformationByHandleEx(hFile, dirent_FileIdInfo, &fileid,
+                                            sizeof(fileid));
+    if (result)
+    {
+        value.serial = fileid.VolumeSerialNumber;
+        memcpy(value.fileid, fileid.FileId.Identifier, 16);
+    }
+    else
+    {
+        result = GetFileInformationByHandle(hFile, &info);
+        if (result)
+        {
+            value.serial = info.dwVolumeSerialNumber;
+            memcpy(value.fileid + 8, &info.nFileIndexHigh, 4);
+            memcpy(value.fileid + 12, &info.nFileIndexLow, 4);
+        }
+    }
+    CloseHandle(hFile);
+    return value;
 }
 
-// EOF
+static DIR *__internal_opendir(wchar_t *wname, int size)
+{
+    struct __dir *data = NULL;
+    struct dirent *tmp_entries = NULL;
+    static wchar_t *suffix = L"\\*.*";
+    static int extra_prefix = 4; /* use prefix "\\?\" to handle long file names */
+    static int extra_suffix = 4; /* use suffix "\*.*" to find everything */
+    WIN32_FIND_DATAW w32fd = {0};
+    HANDLE hFindFile = INVALID_HANDLE_VALUE;
+    static int grow_factor = 2;
+    char *buffer = NULL;
 
+    BOOL relative = PathIsRelativeW(wname + extra_prefix);
+
+    memcpy(wname + size - 1, suffix, sizeof(wchar_t) * extra_suffix);
+    wname[size + extra_suffix - 1] = 0;
+
+    if (relative)
+    {
+        wname += extra_prefix;
+        size -= extra_prefix;
+    }
+    hFindFile = FindFirstFileW(wname, &w32fd);
+    if (INVALID_HANDLE_VALUE == hFindFile)
+    {
+        __seterrno(ENOENT);
+        return NULL;
+    }
+
+    data = (struct __dir *) malloc(sizeof(struct __dir));
+    if (!data)
+    {
+        goto out_of_memory;
+    }
+    wname[size - 1] = 0;
+    data->fd = (intptr_t) CreateFileW(wname, 0, 0, NULL, OPEN_EXISTING,
+                                      FILE_FLAG_BACKUP_SEMANTICS, 0);
+    wname[size - 1] = L'\\';
+    data->count = 16;
+    data->index = 0;
+    data->entries = (struct dirent *) malloc(sizeof(struct dirent) * data->count);
+    if (!data->entries)
+    {
+        goto out_of_memory;
+    }
+    buffer = malloc(MAXIMUM_REPARSE_DATA_BUFFER_SIZE);
+    if (!buffer)
+    {
+        goto out_of_memory;
+    }
+
+    do
+    {
+        WideCharToMultiByte(CP_UTF8, 0, w32fd.cFileName, -1,
+                            data->entries[data->index].d_name, NAME_MAX,
+                            NULL, NULL);
+
+        memcpy(wname + size, w32fd.cFileName, sizeof(wchar_t) * NAME_MAX);
+
+        if (((w32fd.dwFileAttributes & FILE_ATTRIBUTE_REPARSE_POINT) ==
+             FILE_ATTRIBUTE_REPARSE_POINT)
+            && __islink(wname, buffer))
+        {
+            data->entries[data->index].d_type = DT_LNK;
+        }
+        else if ((w32fd.dwFileAttributes & FILE_ATTRIBUTE_DEVICE) ==
+                 FILE_ATTRIBUTE_DEVICE)
+        {
+            data->entries[data->index].d_type = DT_CHR;
+        }
+        else if ((w32fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) ==
+                 FILE_ATTRIBUTE_DIRECTORY)
+        {
+            data->entries[data->index].d_type = DT_DIR;
+        }
+        else
+        {
+            data->entries[data->index].d_type = DT_REG;
+        }
+
+        data->entries[data->index].d_ino = __inode(wname);
+        data->entries[data->index].d_reclen = sizeof(struct dirent);
+        data->entries[data->index].d_namelen =
+            (unsigned char) wcslen(w32fd.cFileName);
+        data->entries[data->index].d_off = 0;
+
+        if (++data->index == data->count)
+        {
+            tmp_entries = (struct dirent *) realloc(
+                data->entries,
+                sizeof(struct dirent) * data->count * grow_factor);
+            if (!tmp_entries)
+            {
+                goto out_of_memory;
+            }
+            data->entries = tmp_entries;
+            data->count *= grow_factor;
+        }
+    } while (FindNextFileW(hFindFile, &w32fd) != 0);
+
+    free(buffer);
+    FindClose(hFindFile);
+
+    data->count = data->index;
+    data->index = 0;
+    return (DIR *) data;
+
+out_of_memory:
+    if (data)
+    {
+        if (INVALID_HANDLE_VALUE != (HANDLE) data->fd)
+        {
+            CloseHandle((HANDLE) data->fd);
+        }
+        free(data->entries);
+    }
+    free(buffer);
+    free(data);
+    if (INVALID_HANDLE_VALUE != hFindFile)
+    {
+        FindClose(hFindFile);
+    }
+    __seterrno(ENOMEM);
+    return NULL;
+}
+
+static wchar_t *__get_buffer()
+{
+    wchar_t *name = malloc(sizeof(wchar_t) * (NTFS_MAX_PATH + NAME_MAX + 8));
+    if (name)
+    {
+        memcpy(name, L"\\\\?\\", sizeof(wchar_t) * 4);
+    }
+    return name;
+}
+
+DIR *opendir(const char *name)
+{
+    DIR *dirp = NULL;
+    wchar_t *wname = __get_buffer();
+    int size = 0;
+    if (!wname)
+    {
+        errno = ENOMEM;
+        return NULL;
+    }
+    size = MultiByteToWideChar(CP_UTF8, 0, name, -1, wname + 4, NTFS_MAX_PATH);
+    if (0 == size)
+    {
+        free(wname);
+        return NULL;
+    }
+    dirp = __internal_opendir(wname, size + 4);
+    free(wname);
+    return dirp;
+}
+
+struct dirent *readdir(DIR *dirp)
+{
+    struct __dir *data = (struct __dir *) dirp;
+    if (!data)
+    {
+        errno = EBADF;
+        return NULL;
+    }
+    if (data->index < data->count)
+    {
+        return &data->entries[data->index++];
+    }
+    return NULL;
+}
+
+#endif /* _WIN32 */

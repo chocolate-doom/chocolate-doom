@@ -75,8 +75,9 @@
 #include "r_local.h"
 #include "statdump.h"
 
-
 #include "d_main.h"
+
+#include "doom_icon.c"
 
 //
 // D-DoomLoop()
@@ -105,11 +106,7 @@ boolean         nomonsters;	// checkparm of -nomonsters
 boolean         respawnparm;	// checkparm of -respawn
 boolean         fastparm;	// checkparm of -fast
 
-//extern int soundVolume;
-//extern  int	sfxVolume;
-//extern  int	musicVolume;
 
-extern  boolean	inhelpscreens;
 
 skill_t		startskill;
 int             startepisode;
@@ -124,9 +121,6 @@ boolean         storedemo;
 
 // If true, the main game loop has started.
 boolean         main_loop_started = false;
-
-char		wadfile[1024];		// primary wad file
-char		mapdir[1024];           // directory of development maps
 
 int             show_endoom = 1;
 int             show_diskicon = 1;
@@ -166,9 +160,6 @@ void D_ProcessEvents (void)
 
 // wipegamestate can be set to -1 to force a wipe on the next draw
 gamestate_t     wipegamestate = GS_DEMOSCREEN;
-extern  boolean setsizeneeded;
-extern  int             showMessages;
-void R_ExecuteSetViewSize (void);
 
 boolean D_Display (void)
 {
@@ -323,6 +314,22 @@ static void EnableLoadingDisk(void)
 // Add configuration file variable bindings.
 //
 
+
+static const char * const chat_macro_defaults[10] =
+{
+    HUSTR_CHATMACRO0,
+    HUSTR_CHATMACRO1,
+    HUSTR_CHATMACRO2,
+    HUSTR_CHATMACRO3,
+    HUSTR_CHATMACRO4,
+    HUSTR_CHATMACRO5,
+    HUSTR_CHATMACRO6,
+    HUSTR_CHATMACRO7,
+    HUSTR_CHATMACRO8,
+    HUSTR_CHATMACRO9
+};
+
+
 void D_BindVariables(void)
 {
     int i;
@@ -365,6 +372,7 @@ void D_BindVariables(void)
     {
         char buf[12];
 
+        chat_macros[i] = M_StringDuplicate(chat_macro_defaults[i]);
         X_snprintf(buf, sizeof(buf), "chatmacro%i", i);
         M_BindStringVariable(buf, &chat_macros[i]);
     }
@@ -466,6 +474,7 @@ void D_DoomLoop (void)
     I_SetWindowTitle(gamedescription);
     I_GraphicsCheckCommandLine();
     I_SetGrabMouseCallback(D_GrabMouseCallback);
+    I_RegisterWindowIcon(doom_icon_data, doom_icon_w, doom_icon_h);
     I_InitGraphics();
     EnableLoadingDisk();
 
@@ -961,13 +970,14 @@ void PrintDehackedBanners(void)
     }
 }
 
-static struct 
+static const struct
 {
     const char *description;
     const char *cmdline;
     GameVersion_t version;
 } gameversions[] = {
     {"Doom 1.2",             "1.2",        exe_doom_1_2},
+    {"Doom 1.5",             "1.5",        exe_doom_1_5},
     {"Doom 1.666",           "1.666",      exe_doom_1_666},
     {"Doom 1.7/1.7a",        "1.7",        exe_doom_1_7},
     {"Doom 1.8",             "1.8",        exe_doom_1_8},
@@ -991,13 +1001,13 @@ static void InitGameVersion(void)
     int i;
     boolean status;
 
-    //! 
+    //!
     // @arg <version>
     // @category compat
     //
-    // Emulate a specific version of Doom.  Valid values are "1.2", 
-    // "1.666", "1.7", "1.8", "1.9", "ultimate", "final", "final2",
-    // "hacx" and "chex".
+    // Emulate a specific version of Doom. Valid values are "1.2", 
+    // "1.5", "1.666", "1.7", "1.8", "1.9", "ultimate", "final", 
+    // "final2", "hacx" and "chex".
     //
 
     p = M_CheckParmWithArgs("-gameversion", 1);
@@ -1012,8 +1022,8 @@ static void InitGameVersion(void)
                 break;
             }
         }
-        
-        if (gameversions[i].description == NULL) 
+
+        if (gameversions[i].description == NULL)
         {
             printf("Supported game versions:\n");
 
@@ -1022,7 +1032,7 @@ static void InitGameVersion(void)
                 printf("\t%s (%s)\n", gameversions[i].cmdline,
                         gameversions[i].description);
             }
-            
+
             I_Error("Unknown game version '%s'", myargv[p+1]);
         }
     }
@@ -1111,7 +1121,7 @@ static void InitGameVersion(void)
     {
         deathmatch = 1;
     }
-    
+
     // The original exe does not support retail - 4th episode not supported
 
     if (gameversion < exe_ultimate && gamemode == retail)
@@ -1164,6 +1174,14 @@ static void D_Endoom(void)
     I_Endoom(endoom);
 }
 
+boolean IsFrenchIWAD(void)
+{
+    return (gamemission == doom2 && W_CheckNumForName("M_RDTHIS") < 0
+          && W_CheckNumForName("M_EPISOD") < 0 && W_CheckNumForName("M_EPI1") < 0
+          && W_CheckNumForName("M_EPI2") < 0 && W_CheckNumForName("M_EPI3") < 0
+          && W_CheckNumForName("WIOSTF") < 0 && W_CheckNumForName("WIOBJ") >= 0);
+}
+
 // Load dehacked patches needed for certain IWADs.
 static void LoadIwadDeh(void)
 {
@@ -1213,12 +1231,48 @@ static void LoadIwadDeh(void)
                     "The dehacked file is required in order to emulate\n"
                     "chex.exe correctly.  It can be found in your nearest\n"
                     "/idgames repository mirror at:\n\n"
-                    "   utils/exe_edit/patches/chexdeh.zip");
+                    "   themes/chex/chexdeh.zip");
         }
 
         if (!DEH_LoadFile(chex_deh))
         {
             I_Error("Failed to load chex.deh needed for emulating chex.exe.");
+        }
+    }
+
+    if (IsFrenchIWAD())
+    {
+        char *french_deh = NULL;
+        char *dirname;
+
+        // Look for french.deh in the same directory as the IWAD file.
+        dirname = M_DirName(iwadfile);
+        french_deh = M_StringJoin(dirname, DIR_SEPARATOR_S, "french.deh", NULL);
+        printf("French version\n");
+        free(dirname);
+
+        // If the dehacked patch isn't found, try searching the WAD
+        // search path instead.  We might find it...
+        if (!M_FileExists(french_deh))
+        {
+            free(french_deh);
+            french_deh = D_FindWADByName("french.deh");
+        }
+
+        // Still not found?
+        if (french_deh == NULL)
+        {
+            I_Error("Unable to find French Doom II dehacked file\n"
+                    "(french.deh).  The dehacked file is required in order to\n"
+                    "emulate French doom2.exe correctly.  It can be found in\n"
+                    "your nearest /idgames repository mirror at:\n\n"
+                    "   utils/exe_edit/patches/french.zip");
+        }
+
+        if (!DEH_LoadFile(french_deh))
+        {
+            I_Error("Failed to load french.deh needed for emulating French\n"
+                    "doom2.exe.");
         }
     }
 }
@@ -1236,7 +1290,6 @@ void D_DoomMain (void)
     int p;
     char file[256];
     char demolumpname[9];
-    int numiwadlumps;
 
     I_AtExit(D_Endoom, false);
 
@@ -1404,8 +1457,6 @@ void D_DoomMain (void)
     if ( (p=M_CheckParm ("-turbo")) )
     {
 	int     scale = 200;
-	extern int forwardmove[2];
-	extern int sidemove[2];
 	
 	if (p<myargc-1)
 	    scale = atoi (myargv[p+1]);
@@ -1448,7 +1499,6 @@ void D_DoomMain (void)
 
     DEH_printf("W_Init: Init WADfiles.\n");
     D_AddFile(iwadfile);
-    numiwadlumps = numlumps;
 
     W_CheckCorrectIWAD(doom);
 
@@ -1542,17 +1592,22 @@ void D_DoomMain (void)
         if (gamemission < pack_chex)
         {
             autoload_dir = M_GetAutoloadDir("doom-all");
+            if (autoload_dir != NULL)
+            {
+                DEH_AutoLoadPatches(autoload_dir);
+                W_AutoLoadWADs(autoload_dir);
+                free(autoload_dir);
+            }
+        }
+
+        // auto-loaded files per IWAD
+        autoload_dir = M_GetAutoloadDir(D_SaveGameIWADName(gamemission, gamevariant));
+        if (autoload_dir != NULL)
+        {
             DEH_AutoLoadPatches(autoload_dir);
             W_AutoLoadWADs(autoload_dir);
             free(autoload_dir);
         }
-
-        // auto-loaded files per IWAD
-
-        autoload_dir = M_GetAutoloadDir(D_SaveGameIWADName(gamemission));
-        DEH_AutoLoadPatches(autoload_dir);
-        W_AutoLoadWADs(autoload_dir);
-        free(autoload_dir);
     }
 
     // Load Dehacked patches specified on the command line with -deh.
@@ -1645,6 +1700,12 @@ void D_DoomMain (void)
     if (M_ParmExists("-dehlump"))
     {
         int i, loaded = 0;
+        int numiwadlumps = numlumps;
+
+        while (!W_IsIWADLump(lumpinfo[numiwadlumps - 1]))
+        {
+            numiwadlumps--;
+        }
 
         for (i = numiwadlumps; i < numlumps; ++i)
         {
@@ -1662,7 +1723,7 @@ void D_DoomMain (void)
     // we've finished loading Dehacked patches.
     D_SetGameDescription();
 
-    savegamedir = M_GetSaveGameDir(D_SaveGameIWADName(gamemission));
+    savegamedir = M_GetSaveGameDir(D_SaveGameIWADName(gamemission, gamevariant));
 
     // Check for -file in shareware
     if (modifiedgame && (gamevariant != freedoom))
@@ -1705,7 +1766,7 @@ void D_DoomMain (void)
     I_CheckIsScreensaver();
     I_InitTimer();
     I_InitJoystick();
-    I_InitSound(true);
+    I_InitSound(doom);
     I_InitMusic();
 
     printf ("NET_Init: Init network subsystem.\n");

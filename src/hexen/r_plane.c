@@ -20,6 +20,8 @@
 #include "h2def.h"
 #include "i_system.h"
 #include "r_local.h"
+#include "p_spec.h"
+
 
 // MACROS ------------------------------------------------------------------
 
@@ -32,9 +34,6 @@
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
-
-extern fixed_t Sky1ScrollDelta;
-extern fixed_t Sky2ScrollDelta;
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
@@ -384,23 +383,20 @@ void R_DrawPlanes(void)
     int skyTexture2;
     int scrollOffset;
 
-    extern byte *ylookup[MAXHEIGHT];
-    extern int columnofs[MAXWIDTH];
-
 #ifdef RANGECHECK
     if (ds_p - drawsegs > MAXDRAWSEGS)
     {
-        I_Error("R_DrawPlanes: drawsegs overflow (%" PRIiPTR ")",
+        I_Error("R_DrawPlanes: drawsegs overflow (%td)",
                 ds_p - drawsegs);
     }
     if (lastvisplane - visplanes > MAXVISPLANES)
     {
-        I_Error("R_DrawPlanes: visplane overflow (%" PRIiPTR ")",
+        I_Error("R_DrawPlanes: visplane overflow (%td)",
                 lastvisplane - visplanes);
     }
     if (lastopening - openings > MAXOPENINGS)
     {
-        I_Error("R_DrawPlanes: opening overflow (%" PRIiPTR ")",
+        I_Error("R_DrawPlanes: opening overflow (%td)",
                 lastopening - openings);
     }
 #endif

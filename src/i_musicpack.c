@@ -25,10 +25,8 @@
 #include "safe.h"
 
 #include "SDL.h"
-#include "SDL_mixer.h"
 
 #include "i_glob.h"
-#include "i_midipipe.h"
 
 #include "config.h"
 #include "doomtype.h"
@@ -47,9 +45,32 @@
 #include "w_wad.h"
 #include "z_zone.h"
 
+
+char *music_pack_path = "";
+
+
+#ifndef DISABLE_SDL2MIXER
+
+#include "SDL_mixer.h"
+
 #define MID_HEADER_MAGIC "MThd"
 #define MUS_HEADER_MAGIC "MUS\x1a"
 
+// Starting with 2.6.0, SDL_mixer supports OGG and FLAC looping natively.
+// TODO: Once SDL_mixer 2.6.0+ is a requirement, delete the old looping code.
+#if !defined(USE_SDL_MIXER_LOOPING)
+#if defined(SDL_MIXER_VERSION_ATLEAST)
+#if SDL_MIXER_VERSION_ATLEAST(2, 6, 0)
+#define USE_SDL_MIXER_LOOPING 1
+#else
+#define USE_SDL_MIXER_LOOPING 0
+#endif // SDL_MIXER_VERSION_ATLEAST(2, 6, 0)
+#else
+#define USE_SDL_MIXER_LOOPING 0
+#endif // defined(SDL_MIXER_VERSION_ATLEAST)
+#endif // !defined(USE_SDL_MIXER_LOOPING)
+
+#if !USE_SDL_MIXER_LOOPING
 #define FLAC_HEADER "fLaC"
 #define OGG_HEADER "OggS"
 
@@ -67,6 +88,7 @@
 // Ogg metadata headers that we care about.
 #define OGG_ID_HEADER        1
 #define OGG_COMMENT_HEADER   3
+#endif // !USE_SDL_MIXER_LOOPING
 
 // Structure for music substitution.
 // We store a mapping based on SHA1 checksum -> filename of substitute music
@@ -84,6 +106,7 @@ typedef struct
     const char *filename;
 } subst_music_t;
 
+#if !USE_SDL_MIXER_LOOPING
 // Structure containing parsed metadata read from a digital music track:
 typedef struct
 {
@@ -91,6 +114,7 @@ typedef struct
     unsigned int samplerate_hz;
     int start_time, end_time;
 } file_metadata_t;
+#endif // !USE_SDL_MIXER_LOOPING
 
 static subst_music_t *subst_music = NULL;
 static unsigned int subst_music_len = 0;
@@ -102,8 +126,7 @@ static boolean music_initialized = false;
 
 static boolean sdl_was_initialized = false;
 
-char *music_pack_path = "";
-
+#if !USE_SDL_MIXER_LOOPING
 // If true, we are playing a substitute digital track rather than in-WAD
 // MIDI/MUS track, and file_metadata contains loop metadata.
 static file_metadata_t file_metadata;
@@ -111,6 +134,7 @@ static file_metadata_t file_metadata;
 // Position (in samples) that we have reached in the current track.
 // This is updated by the TrackPositionCallback function.
 static unsigned int current_track_pos;
+#endif // !USE_SDL_MIXER_LOOPING
 
 // Currently playing music track.
 static Mix_Music *current_track_music = NULL;
@@ -335,6 +359,7 @@ static const subst_music_t known_filenames[] = {
     //{"ec8fa484c4e85adbf700", "d_intro.{ext}"},  // 5
 };
 
+#if !USE_SDL_MIXER_LOOPING
 // Given a time string (for LOOP_START/LOOP_END), parse it and return
 // the time (in # samples since start of track) it represents.
 static unsigned int ParseVorbisTime(unsigned int samplerate_hz, char *value)
@@ -582,7 +607,7 @@ static void ReadLoopPoints(const char *filename, file_metadata_t *metadata)
     metadata->start_time = 0;
     metadata->end_time = -1;
 
-    fs = fopen(filename, "rb");
+    fs = M_fopen(filename, "rb");
 
     if (fs == NULL)
     {
@@ -619,6 +644,7 @@ static void ReadLoopPoints(const char *filename, file_metadata_t *metadata)
         metadata->valid = false;
     }
 }
+#endif // !USE_SDL_MIXER_LOOPING
 
 // Given a MUS lump, look up a substitute MUS file to play instead
 // (or NULL to just use normal MIDI playback).
@@ -929,7 +955,7 @@ static void LoadSubstituteConfigs(void)
     {
         musicdir = M_StringJoin(music_pack_path, DIR_SEPARATOR_S, NULL);
     }
-    else if (!strcmp(configdir, ""))
+    else if (!strcmp(configdir, exedir))
     {
         musicdir = X_StringDuplicate("");
     }
@@ -1004,7 +1030,7 @@ static boolean IsMusicLump(int lumpnum)
 // Dump an example config file containing checksums for all MIDI music
 // found in the WAD directory.
 
-static void DumpSubstituteConfig(char *filename)
+static void DumpSubstituteConfig(const char *filename)
 {
     sha1_context_t context;
     sha1_digest_t digest;
@@ -1014,7 +1040,7 @@ static void DumpSubstituteConfig(char *filename)
     unsigned int lumpnum;
     size_t h;
 
-    fs = fopen(filename, "w");
+    fs = M_fopen(filename, "w");
 
     if (fs == NULL)
     {
@@ -1084,12 +1110,14 @@ static boolean SDLIsInitialized(void)
     return Mix_QuerySpec(&freq, &format, &channels) != 0;
 }
 
+#if !USE_SDL_MIXER_LOOPING
 // Callback function that is invoked to track current track position.
 void TrackPositionCallback(int chan, void *stream, int len, void *udata)
 {
     // Position is doubled up twice: for 16-bit samples and for stereo.
     current_track_pos += len / 4;
 }
+#endif // !USE_SDL_MIXER_LOOPING
 
 // Initialize music subsystem
 static boolean I_MP_InitMusic(void)
@@ -1130,7 +1158,7 @@ static boolean I_MP_InitMusic(void)
     {
         fprintf(stderr, "Unable to set up sound.\n");
     }
-    else if (Mix_OpenAudio(snd_samplerate, AUDIO_S16SYS, 2, 1024) < 0)
+    else if (Mix_OpenAudioDevice(snd_samplerate, AUDIO_S16SYS, 2, 1024, NULL, SDL_AUDIO_ALLOW_FREQUENCY_CHANGE) < 0)
     {
         fprintf(stderr, "Error initializing SDL_mixer: %s\n",
                 Mix_GetError());
@@ -1147,8 +1175,10 @@ static boolean I_MP_InitMusic(void)
     // Initialize SDL_Mixer for digital music playback
     Mix_Init(MIX_INIT_FLAC | MIX_INIT_OGG | MIX_INIT_MP3);
 
+#if !USE_SDL_MIXER_LOOPING
     // Register an effect function to track the music position.
     Mix_RegisterEffect(MIX_CHANNEL_POST, TrackPositionCallback, NULL, NULL);
+#endif // !USE_SDL_MIXER_LOOPING
 
     return music_initialized;
 }
@@ -1188,6 +1218,7 @@ static void I_MP_PlaySong(void *handle, boolean looping)
         loops = 1;
     }
 
+#if !USE_SDL_MIXER_LOOPING
     // Don't loop when playing substitute music, as we do it
     // ourselves instead.
     if (file_metadata.valid)
@@ -1197,6 +1228,7 @@ static void I_MP_PlaySong(void *handle, boolean looping)
         current_track_pos = 0;  // start of track
         SDL_UnlockAudio();
     }
+#endif // !USE_SDL_MIXER_LOOPING
 
     if (Mix_PlayMusic(current_track_music, loops) == -1)
     {
@@ -1280,9 +1312,11 @@ static void *I_MP_RegisterSong(void *data, int len)
         return NULL;
     }
 
+#if !USE_SDL_MIXER_LOOPING
     // Read loop point metadata from the file so that we know where
     // to loop the music.
     ReadLoopPoints(filename, &file_metadata);
+#endif // !USE_SDL_MIXER_LOOPING
     return music;
 }
 
@@ -1297,6 +1331,7 @@ static boolean I_MP_MusicIsPlaying(void)
     return Mix_PlayingMusic();
 }
 
+#if !USE_SDL_MIXER_LOOPING
 // Get position in substitute music track, in seconds since start of track.
 static double GetMusicPosition(void)
 {
@@ -1328,11 +1363,13 @@ static void RestartCurrentTrack(void)
     current_track_pos = file_metadata.start_time;
     SDL_UnlockAudio();
 }
+#endif // !USE_SDL_MIXER_LOOPING
 
 // Poll music position; if we have passed the loop point end position
 // then we need to go back.
 static void I_MP_PollMusic(void)
 {
+#if !USE_SDL_MIXER_LOOPING
     // When playing substitute tracks, loop tags only apply if we're playing
     // a looping track. Tracks like the title screen music have the loop
     // tags ignored.
@@ -1353,9 +1390,10 @@ static void I_MP_PollMusic(void)
             RestartCurrentTrack();
         }
     }
+#endif // !USE_SDL_MIXER_LOOPING
 }
 
-music_module_t music_pack_module =
+const music_module_t music_pack_module =
 {
     NULL,
     0,
@@ -1372,3 +1410,83 @@ music_module_t music_pack_module =
     I_MP_PollMusic,
 };
 
+
+#else // DISABLE_SDL2MIXER
+
+
+static boolean I_NULL_InitMusic(void)
+{
+    return false;
+}
+
+
+static void I_NULL_ShutdownMusic(void)
+{
+}
+
+
+static void I_NULL_SetMusicVolume(int volume)
+{
+}
+
+
+static void I_NULL_PauseSong(void)
+{
+}
+
+
+static void I_NULL_ResumeSong(void)
+{
+}
+
+
+static void *I_NULL_RegisterSong(void *data, int len)
+{
+    return NULL;
+}
+
+
+static void I_NULL_UnRegisterSong(void *handle)
+{
+}
+
+
+static void I_NULL_PlaySong(void *handle, boolean looping)
+{
+}
+
+
+static void I_NULL_StopSong(void)
+{
+}
+
+
+static boolean I_NULL_MusicIsPlaying(void)
+{
+    return false;
+}
+
+
+static void I_NULL_PollMusic(void)
+{
+}
+
+const music_module_t music_pack_module =
+{
+    NULL,
+    0,
+    I_NULL_InitMusic,
+    I_NULL_ShutdownMusic,
+    I_NULL_SetMusicVolume,
+    I_NULL_PauseSong,
+    I_NULL_ResumeSong,
+    I_NULL_RegisterSong,
+    I_NULL_UnRegisterSong,
+    I_NULL_PlaySong,
+    I_NULL_StopSong,
+    I_NULL_MusicIsPlaying,
+    I_NULL_PollMusic,
+};
+
+
+#endif // DISABLE_SDL2MIXER

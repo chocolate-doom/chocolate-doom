@@ -27,7 +27,6 @@
 #include "safe.h"
 
 #include "SDL.h"
-#include "SDL_mixer.h"
 
 #ifdef HAVE_LIBSAMPLERATE
 #include <samplerate.h>
@@ -43,6 +42,23 @@
 #include "z_zone.h"
 
 #include "doomtype.h"
+
+
+int use_libsamplerate = 0;
+
+// Scale factor used when converting libsamplerate floating point numbers
+// to integers. Too high means the sounds can clip; too low means they
+// will be too quiet. This is an amount that should avoid clipping most
+// of the time: with all the Doom IWAD sound effects, at least. If a PWAD
+// is used, clipping might occur.
+
+float libsamplerate_scale = 0.65f;
+
+
+#ifndef DISABLE_SDL2MIXER
+
+#include "SDL_mixer.h"
+
 
 #define LOW_PASS_FILTER
 //#define DEBUG_DUMP_WAVS
@@ -80,15 +96,6 @@ static allocated_sound_t *allocated_sounds_head = NULL;
 static allocated_sound_t *allocated_sounds_tail = NULL;
 static int allocated_sounds_size = 0;
 
-int use_libsamplerate = 0;
-
-// Scale factor used when converting libsamplerate floating point numbers
-// to integers. Too high means the sounds can clip; too low means they
-// will be too quiet. This is an amount that should avoid clipping most
-// of the time: with all the Doom IWAD sound effects, at least. If a PWAD
-// is used, clipping might occur.
-
-float libsamplerate_scale = 0.65f;
 
 // Hook a sound into the linked list at the head.
 
@@ -555,7 +562,7 @@ static void WriteWAV(char *filename, byte *data,
     unsigned int i;
     unsigned short s;
 
-    wav = fopen(filename, "wb");
+    wav = M_fopen(filename, "wb");
 
     // Header
 
@@ -810,21 +817,12 @@ static void GetSfxLumpName(sfxinfo_t *sfx, char *buf, size_t buf_len)
     }
 }
 
-#ifdef HAVE_LIBSAMPLERATE
-
 // Preload all the sound effects - stops nasty ingame freezes
 
 static void I_SDL_PrecacheSounds(sfxinfo_t *sounds, int num_sounds)
 {
     char namebuf[9];
     int i;
-
-    // Don't need to precache the sounds unless we are using libsamplerate.
-
-    if (use_libsamplerate == 0)
-    {
-	return;
-    }
 
     printf("I_SDL_PrecacheSounds: Precaching all sound effects..");
 
@@ -848,15 +846,6 @@ static void I_SDL_PrecacheSounds(sfxinfo_t *sounds, int num_sounds)
 
     printf("\n");
 }
-
-#else
-
-static void I_SDL_PrecacheSounds(sfxinfo_t *sounds, int num_sounds)
-{
-    // no-op
-}
-
-#endif
 
 // Load a SFX chunk into memory and ensure that it is locked.
 
@@ -1073,23 +1062,11 @@ static int GetSliceSize(void)
     return 1024;
 }
 
-static boolean I_SDL_InitSound(boolean _use_sfx_prefix)
+static boolean I_SDL_InitSound(GameMission_t mission)
 {
     int i;
 
-    // SDL 2.0.6 has a bug that makes it unusable.
-    if (SDL_COMPILEDVERSION == SDL_VERSIONNUM(2, 0, 6))
-    {
-        I_Error(
-            "I_SDL_InitSound: "
-            "You are trying to launch with SDL 2.0.6 which has a known bug "
-            "that makes the game crash. Please either downgrade to "
-            "SDL 2.0.5 or upgrade to 2.0.7. See the following bug for some "
-            "additional context:\n"
-            "<https://github.com/chocolate-doom/chocolate-doom/issues/945>");
-    }
-
-    use_sfx_prefix = _use_sfx_prefix;
+    use_sfx_prefix = (mission == doom || mission == strife);
 
     // No sounds yet
     for (i=0; i<NUM_CHANNELS; ++i)
@@ -1103,7 +1080,7 @@ static boolean I_SDL_InitSound(boolean _use_sfx_prefix)
         return false;
     }
 
-    if (Mix_OpenAudio(snd_samplerate, AUDIO_S16SYS, 2, GetSliceSize()) < 0)
+    if (Mix_OpenAudioDevice(snd_samplerate, AUDIO_S16SYS, 2, GetSliceSize(), NULL, SDL_AUDIO_ALLOW_FREQUENCY_CHANGE) < 0)
     {
         fprintf(stderr, "Error initialising SDL_mixer: %s\n", Mix_GetError());
         return false;
@@ -1142,7 +1119,7 @@ static boolean I_SDL_InitSound(boolean _use_sfx_prefix)
     return true;
 }
 
-static snddevice_t sound_sdl_devices[] = 
+static const snddevice_t sound_sdl_devices[] =
 {
     SNDDEVICE_SB,
     SNDDEVICE_PAS,
@@ -1152,7 +1129,7 @@ static snddevice_t sound_sdl_devices[] =
     SNDDEVICE_AWE32,
 };
 
-sound_module_t sound_sdl_module = 
+const sound_module_t sound_sdl_module =
 {
     sound_sdl_devices,
     arrlen(sound_sdl_devices),
@@ -1167,3 +1144,5 @@ sound_module_t sound_sdl_module =
     I_SDL_PrecacheSounds,
 };
 
+
+#endif // DISABLE_SDL2MIXER

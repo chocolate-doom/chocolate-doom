@@ -3,7 +3,9 @@ AM_CFLAGS = \
     -I$(top_srcdir)/src  \
     @SDL_CFLAGS@ @SDLMIXER_CFLAGS@ @SDLNET_CFLAGS@
 
-EXTRA_DIST = CMakeLists.txt
+EXTRA_DIST =                          \
+        CMakeLists.txt                \
+        hexen_icon.c
 
 noinst_LIBRARIES=libhexen.a
 
@@ -23,6 +25,7 @@ in_lude.c                             \
 m_random.c          m_random.h        \
 mn_menu.c                             \
 p_acs.c                               \
+                    p_action.h        \
 p_anim.c                              \
 p_ceilng.c                            \
 p_doors.c                             \
@@ -63,3 +66,9 @@ sv_save.c                             \
                     textdefs.h        \
                     xddefs.h
 
+if HAVE_ICONS
+
+hexen_icon.c : $(top_builddir)/data/hexen.png
+	$(top_builddir)/data/convert-icon $(top_builddir)/data/hexen.png $@
+
+endif

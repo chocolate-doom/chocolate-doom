@@ -34,7 +34,7 @@
 static boolean pcs_initialized = false;
 
 static SDL_mutex *sound_lock;
-static boolean use_sfx_prefix;
+static GameMission_t gamemission;
 
 static uint8_t *current_sound_lump = NULL;
 static uint8_t *current_sound_pos = NULL;
@@ -159,6 +159,7 @@ static boolean IsDisabledSound(sfxinfo_t *sfxinfo)
         "dmpain",
         "popain",
         "sawidl",
+        "rifle",
     };
 
     for (i=0; i<arrlen(disabled_sounds); ++i)
@@ -245,9 +246,15 @@ static int I_PCS_GetSfxLumpNum(sfxinfo_t* sfx)
 {
     char namebuf[9];
 
-    if (use_sfx_prefix)
+    if (gamemission == doom || gamemission == strife)
     {
         X_snprintf(namebuf, sizeof(namebuf), "dp%s", DEH_String(sfx->name));
+
+        if (gamemission == strife && W_CheckNumForName(namebuf) == -1)
+        {
+            // Missing sounds replaced with DPRIFLE.
+            X_snprintf(namebuf, sizeof(namebuf), "dp%s", DEH_String("rifle"));
+        }
     }
     else
     {
@@ -273,9 +280,9 @@ static boolean I_PCS_SoundIsPlaying(int handle)
     return current_sound_lump != NULL && current_sound_remaining > 0;
 }
 
-static boolean I_PCS_InitSound(boolean _use_sfx_prefix)
+static boolean I_PCS_InitSound(GameMission_t mission)
 {
-    use_sfx_prefix = _use_sfx_prefix;
+    gamemission = mission;
 
     // Use the sample rate from the configuration file
 
@@ -311,12 +318,12 @@ void I_PCS_UpdateSoundParams(int channel, int vol, int sep)
     // no-op.
 }
 
-static snddevice_t sound_pcsound_devices[] = 
+static const snddevice_t sound_pcsound_devices[] =
 {
     SNDDEVICE_PCSPEAKER,
 };
 
-sound_module_t sound_pcsound_module = 
+const sound_module_t sound_pcsound_module =
 {
     sound_pcsound_devices,
     arrlen(sound_pcsound_devices),

@@ -19,10 +19,16 @@
 #ifndef __I_JOYSTICK__
 #define __I_JOYSTICK__
 
+#include "SDL_gamecontroller.h"
+
 // Number of "virtual" joystick buttons defined in configuration files.
 // This needs to be at least as large as the number of different key
 // bindings supported by the higher-level game code (joyb* variables).
-#define NUM_VIRTUAL_BUTTONS 11
+#define NUM_VIRTUAL_BUTTONS 17
+
+// Max allowed number of virtual mappings. Chosen to be less than joybspeed
+// autorun value.
+#define MAX_VIRTUAL_BUTTONS 20
 
 // If this bit is set in a configuration file axis value, the axis is
 // not actually a joystick axis, but instead is a "button axis". This
@@ -59,6 +65,45 @@
 
 #define HAT_AXIS_HORIZONTAL 1
 #define HAT_AXIS_VERTICAL   2
+
+// When a trigger reads greater than this, consider it to be pressed.  30 comes
+// from XINPUT_GAMEPAD_TRIGGER_THRESHOLD in xinput.h, and is scaled here for
+// the SDL_GameController trigger max value.
+#define TRIGGER_THRESHOLD (30 * 32767 / 255)
+
+// To be used with SDL_JoystickGetGUIDString; see SDL_joystick.h
+#define GUID_STRING_BUF_SIZE 33
+
+// Helper macros for bitpacked directional data from gamepad inputs.
+#define DPAD_SHIFT 0
+#define LSTICK_SHIFT 4
+#define RSTICK_SHIFT 8
+#define JOY_GET_DPAD(x) (((x) >> DPAD_SHIFT) & 0xf)
+#define JOY_GET_LSTICK(x) (((x) >> LSTICK_SHIFT) & 0xf)
+#define JOY_GET_RSTICK(x) (((x) >> RSTICK_SHIFT) & 0xf)
+
+// 4-way direction data for gamepad directional inputs.
+enum
+{
+    JOY_DIR_NONE = 0x0,
+    JOY_DIR_UP = 0x1,
+    JOY_DIR_DOWN = 0x2,
+    JOY_DIR_LEFT = 0x4,
+    JOY_DIR_RIGHT = 0x8
+};
+
+// Extend the SDL_GameControllerButton enum to include the triggers.
+enum
+{
+    GAMEPAD_BUTTON_TRIGGERLEFT = SDL_CONTROLLER_BUTTON_MAX,
+    GAMEPAD_BUTTON_TRIGGERRIGHT,
+    GAMEPAD_BUTTON_MAX
+};
+
+extern int use_analog;
+extern int joystick_turn_sensitivity;
+extern int joystick_move_sensitivity;
+extern int joystick_look_sensitivity;
 
 void I_InitJoystick(void);
 void I_ShutdownJoystick(void);

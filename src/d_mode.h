@@ -35,6 +35,7 @@ typedef enum
     heretic,         // Heretic
     hexen,           // Hexen
     strife,          // Strife
+    doom2f,          // Doom 2: L'Enfer sur Terre
 
     none
 } GameMission_t;
@@ -57,6 +58,7 @@ typedef enum
 typedef enum
 {
     exe_doom_1_2,    // Doom 1.2: shareware and registered
+    exe_doom_1_5,    // Doom 1.5: "
     exe_doom_1_666,  // Doom 1.666: for shareware, registered and commercial
     exe_doom_1_7,    // Doom 1.7/1.7a: "
     exe_doom_1_8,    // Doom 1.8: "
@@ -70,6 +72,7 @@ typedef enum
     exe_heretic_1_3, // Heretic 1.3
 
     exe_hexen_1_1,   // Hexen 1.1
+    exe_hexen_1_1r2, // Hexen 1.1 (alternate exe)
     exe_strife_1_2,  // Strife v1.2
     exe_strife_1_31  // Strife v1.31
 } GameVersion_t;
