@@ -1152,17 +1152,36 @@ boolean NET_CL_Connect(net_addr_t *addr, net_connect_data_t *data)
 
 // read game settings received from server
 
-boolean NET_CL_GetSettings(net_gamesettings_t *_settings)
+void NET_CL_GetSettings(net_gamesettings_t *_settings)
 {
-    if (client_state != CLIENT_STATE_IN_GAME)
+    memcpy(_settings, &settings, sizeof(net_gamesettings_t));
+}
+
+boolean NET_CL_WaitForStart(net_startup_callback_t callback)
+{
+    while (net_client_connected)
     {
-        return false;
+        NET_CL_Run();
+        NET_SV_Run();
+
+        if (client_state == CLIENT_STATE_IN_GAME)
+        {
+            return true;
+        }
+
+        if (callback != NULL
+         && !callback(net_client_wait_data.ready_players,
+                      net_client_wait_data.num_players))
+        {
+            break;
+        }
+
+        I_Sleep(100);
     }
 
-    memcpy(_settings, &settings, sizeof(net_gamesettings_t));
-
-    return true;
+    return false;
 }
+
 
 // disconnect from the server
 

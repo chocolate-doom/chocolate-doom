@@ -138,6 +138,35 @@ static struct {
     { strife,   exe_strife_1_31 },
 };
 
+int D_GameVersionCode(GameVersion_t version)
+{
+    switch (version)
+    {
+        case exe_doom_1_2:
+            return 102;
+        case exe_doom_1_666:
+            return 106;
+        case exe_doom_1_7:
+            return 107;
+        case exe_doom_1_8:
+            return 108;
+        case exe_doom_1_9:
+        case exe_hacx:
+        case exe_ultimate:
+        case exe_final:
+        case exe_final2:
+        case exe_chex:
+            return 109;
+        case exe_heretic_1_3:
+            return 130;
+        case exe_hexen_1_1:
+            return 110;
+        case exe_strife_1_2:
+        case exe_strife_1_31:
+            return 101;
+    }
+}
+
 boolean D_ValidGameVersion(GameMission_t mission, GameVersion_t version)
 {
     int i;

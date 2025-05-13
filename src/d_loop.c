@@ -23,6 +23,7 @@
 
 #include "d_event.h"
 #include "d_loop.h"
+#include "d_mode.h"
 #include "d_ticcmd.h"
 
 #include "i_system.h"
@@ -31,6 +32,7 @@
 
 #include "m_argv.h"
 #include "m_fixed.h"
+#include "m_misc.h"
 
 #include "net_client.h"
 #include "net_gui.h"
@@ -39,6 +41,7 @@
 #include "net_server.h"
 #include "net_sdl.h"
 #include "net_loop.h"
+#include "net_vanilla.h"
 
 // The complete set of data for a particular tic.
 
@@ -119,6 +122,8 @@ static boolean local_playeringame[NET_MAXPLAYERS];
 
 static int player_class;
 
+// If true, we're playing a vanilla-compatible peer-to-peer game.
+boolean net_vanilla_game;
 
 // 35 fps clock adjusted by offsetms milliseconds
 
@@ -165,7 +170,8 @@ static boolean BuildNewTic(void)
        // If playing single player, do not allow tics to buffer
        // up very far
 
-       if (!net_client_connected && maketic - gameticdiv > 2)
+       if (!net_client_connected && !net_vanilla_game
+        && maketic - gameticdiv > 2)
            return false;
 
        // Never go more than ~200ms ahead
@@ -186,6 +192,10 @@ static boolean BuildNewTic(void)
     if (net_client_connected)
     {
         NET_CL_SendTiccmd(&cmd, maketic);
+    }
+    if (net_vanilla_game)
+    {
+        NET_VanillaSendTiccmd(&cmd, maketic);
     }
 
     ticdata[maketic % BACKUPTICS].cmds[localplayer] = cmd;
@@ -216,9 +226,9 @@ void NetUpdate (void)
         return;
 
     // Run network subsystems
-
     NET_CL_Run();
     NET_SV_Run();
+    NET_VanillaRun();
 
     // check time
     nowtime = GetAdjustedTime() / ticdup;
@@ -306,35 +316,8 @@ void D_StartGameLoop(void)
     lasttime = GetAdjustedTime() / ticdup;
 }
 
-//
-// Block until the game start message is received from the server.
-//
-
-static void BlockUntilStart(net_gamesettings_t *settings,
-                            netgame_startup_callback_t callback)
-{
-    while (!NET_CL_GetSettings(settings))
-    {
-        NET_CL_Run();
-        NET_SV_Run();
-
-        if (!net_client_connected)
-        {
-            I_Error("Lost connection to server");
-        }
-
-        if (callback != NULL && !callback(net_client_wait_data.ready_players,
-                                          net_client_wait_data.num_players))
-        {
-            I_Error("Netgame startup aborted.");
-        }
-
-        I_Sleep(100);
-    }
-}
-
 void D_StartNetGame(net_gamesettings_t *settings,
-                    netgame_startup_callback_t callback)
+                    net_startup_callback_t callback)
 {
     int i;
 
@@ -389,11 +372,17 @@ void D_StartNetGame(net_gamesettings_t *settings,
         // from the server.
 
         NET_CL_StartGame(settings);
-        BlockUntilStart(settings, callback);
+        if (!NET_CL_WaitForStart(callback))
+        {
+            I_Error("Game start aborted.");
+        }
 
         // Read the game settings that were received.
-
         NET_CL_GetSettings(settings);
+    }
+    if (net_vanilla_game && !NET_VanillaSyncSettings(settings, callback))
+    {
+        I_Error("Game start aborted.");
     }
 
     if (drone)
@@ -427,6 +416,124 @@ void D_StartNetGame(net_gamesettings_t *settings,
     //}
 }
 
+static net_vanilla_protocol_t VanillaProtocol(int mission)
+{
+    switch (mission)
+    {
+        default:
+            I_Error("No vanilla protocol for game mission '%s'.",
+                    D_GameMissionString(mission));
+        case doom:
+        case doom2:
+        case pack_tnt:
+        case pack_plut:
+        case pack_chex:
+        case pack_hacx:
+            return NET_VANILLA_PROTO_DOOM;
+        case heretic:
+            return NET_VANILLA_PROTO_HERETIC;
+        case hexen:
+            return NET_VANILLA_PROTO_HEXEN;
+    }
+}
+
+// Initialize a peer-to-peer game with the -net command line argument.
+static void ParseVanillaNet(int mission, int p)
+{
+    net_context_t *vcontext;
+    net_vanilla_settings_t vsettings;
+    int i;
+
+    vcontext = NET_NewContext();
+    net_udp_module.InitServer();
+    NET_AddModule(vcontext, &net_udp_module);
+
+    vsettings.protocol = VanillaProtocol(mission);
+    vsettings.consoleplayer = atoi(myargv[p]);
+    vsettings.player_class = player_class;
+    vsettings.num_nodes = 0;
+    vsettings.num_players = 1;
+
+    ++p;
+    for (i = 0; i < NET_MAXPLAYERS && p < myargc; ++i)
+    {
+        if (M_StringStartsWith(myargv[p], "-"))
+        {
+            break;
+        }
+        vsettings.addrs[i] = NET_ResolveAddress(vcontext, myargv[p]);
+        if (vsettings.addrs[i] == NULL)
+        {
+            I_Error("Unable to parse address '%s'", myargv[p]);
+        }
+        ++p;
+        ++vsettings.num_nodes;
+        ++vsettings.num_players;
+    }
+
+    NET_VanillaInit(vcontext, &vsettings);
+    net_vanilla_game = true;
+}
+
+// Initialize an IPX game by connecting to a DOSbox IPX server.
+static void IPXConnect(int mission, char *address)
+{
+    net_context_t *context;
+    net_vanilla_settings_t settings;
+    int want_nodes = 2;
+    int p;
+
+    //!
+    // @category vnet
+    // @arg <n>
+    //
+    // Number of players when starting a game with the -dbconnect command
+    // line argument. If this is not provided then a two-player game is
+    // started by default.
+    //
+    p = M_CheckParmWithArgs("-nodes", 1);
+    if (p > 0)
+    {
+        want_nodes = atoi(myargv[p + 1]);
+    }
+
+    context = NET_DBIPX_Connect(address);
+    settings.player_class = player_class;
+    settings.protocol = VanillaProtocol(mission);
+    NET_DBIPX_ArbitrateGame(&settings, want_nodes);
+    NET_VanillaInit(context, &settings);
+    net_vanilla_game = true;
+}
+
+// Initialize a serial game connecting to a DOSBox modem server.
+static void SerialDial(int mission, char *address)
+{
+    net_context_t *context;
+    net_vanilla_settings_t settings;
+
+    context = NET_Serial_Connect(address);
+    settings.player_class = player_class;
+    settings.protocol = VanillaProtocol(mission);
+    NET_Serial_ArbitrateGame(context, &settings);
+    NET_VanillaInit(context, &settings);
+    net_vanilla_game = true;
+}
+
+// Initialize a serial game listening for a connection from a DOSBox
+// emulated "modem".
+static void SerialAnswer(int mission)
+{
+    net_context_t *context;
+    net_vanilla_settings_t settings;
+
+    context = NET_Serial_Answer();
+    settings.protocol = VanillaProtocol(mission);
+    settings.player_class = player_class;
+    NET_Serial_ArbitrateGame(context, &settings);
+    NET_VanillaInit(context, &settings);
+    net_vanilla_game = true;
+}
+
 boolean D_InitNetGame(net_connect_data_t *connect_data)
 {
     boolean result = false;
@@ -434,10 +541,57 @@ boolean D_InitNetGame(net_connect_data_t *connect_data)
     int i;
 
     // Call D_QuitNetGame on exit:
-
     I_AtExit(D_QuitNetGame, true);
 
     player_class = connect_data->player_class;
+
+    i = M_CheckParmWithArgs("-net", 2);
+    if (i > 0)
+    {
+        ParseVanillaNet(connect_data->gamemission, i + 1);
+        return true;
+    }
+
+    //!
+    // @category vnet
+    // @arg <address:port>
+    //
+    // Connect to a DOSBox IPX server, to play a multiplayer game against
+    // vanilla Doom with ipxsetup.exe.
+    //
+
+    i = M_CheckParmWithArgs("-dbconnect", 1);
+    if (i > 0)
+    {
+        IPXConnect(connect_data->gamemission, myargv[i + 1]);
+        return true;
+    }
+
+    //!
+    // @category vnet
+    //
+    // Listen for a TCP connection ("call") from a DOSBox emulated modem,
+    // to play a multiplayer game against vanilla Doom with sersetup.exe.
+
+    if (M_ParmExists("-dbanswer"))
+    {
+        SerialAnswer(connect_data->gamemission);
+        return true;
+    }
+
+    //!
+    // @category vnet
+    // @arg <address:port>
+    //
+    // Connect to a DOSBox virtual modem, to play a multiplayer game against
+    // vanilla Doom with sersetup.exe.
+
+    i = M_CheckParmWithArgs("-dbdial", 1);
+    if (i > 0)
+    {
+        SerialDial(connect_data->gamemission, myargv[i + 1]);
+        return true;
+    }
 
     //!
     // @category net
@@ -450,7 +604,7 @@ boolean D_InitNetGame(net_connect_data_t *connect_data)
     {
         NET_SV_Init();
         NET_SV_AddModule(&net_loop_server_module);
-        NET_SV_AddModule(&net_sdl_module);
+        NET_SV_AddModule(&net_udp_module);
         NET_SV_RegisterWithMaster();
 
         net_loop_client_module.InitClient();
@@ -490,8 +644,8 @@ boolean D_InitNetGame(net_connect_data_t *connect_data)
 
         if (i > 0)
         {
-            net_sdl_module.InitClient();
-            addr = net_sdl_module.ResolveAddress(myargv[i+1]);
+            net_udp_module.InitClient();
+            addr = net_udp_module.ResolveAddress(myargv[i+1]);
             NET_ReferenceAddress(addr);
 
             if (addr == NULL)
@@ -537,6 +691,7 @@ void D_QuitNetGame (void)
 {
     NET_SV_Shutdown();
     NET_CL_Disconnect();
+    NET_VanillaQuit();
 }
 
 static int GetLowTic(void)
@@ -545,7 +700,7 @@ static int GetLowTic(void)
 
     lowtic = maketic;
 
-    if (net_client_connected)
+    if (net_client_connected || net_vanilla_game)
     {
         if (drone || recvtic < lowtic)
         {
@@ -619,7 +774,7 @@ static boolean PlayersInGame(void)
     // If we are connected to a server, check if there are any players
     // in the game.
 
-    if (net_client_connected)
+    if (net_client_connected || net_vanilla_game)
     {
         for (i = 0; i < NET_MAXPLAYERS; ++i)
         {
@@ -725,7 +880,7 @@ void TryRunTics (void)
         if (counts < 1)
             counts = 1;
 
-        if (net_client_connected)
+        if (net_client_connected || net_vanilla_game)
         {
             OldNetSync();
         }
@@ -771,7 +926,7 @@ void TryRunTics (void)
 
         set = &ticdata[(gametic / ticdup) % BACKUPTICS];
 
-        if (!net_client_connected)
+        if (!net_client_connected && !net_vanilla_game)
         {
             SinglePlayerClear(set);
         }

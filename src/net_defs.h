@@ -44,6 +44,11 @@
 
 #define BACKUPTICS 128
 
+// Callback function invoked while waiting for the netgame to start.
+// The callback is invoked when new players are ready. The callback
+// should return true, or return false to abort startup.
+typedef boolean (*net_startup_callback_t)(int ready_players, int num_players);
+
 typedef struct _net_module_s net_module_t;
 typedef struct _net_packet_s net_packet_t;
 typedef struct _net_addr_s net_addr_t;

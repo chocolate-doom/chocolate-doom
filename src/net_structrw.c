@@ -199,6 +199,8 @@ void NET_WriteTiccmdDiff(net_packet_t *packet, net_ticdiff_t *diff,
     }
     if (diff->diff & NET_TICDIFF_BUTTONS)
         NET_WriteInt8(packet, diff->cmd.buttons);
+    // NOTE: Because of a historical mistake we only send the bottom 8 bits
+    // of the 16-bit consistency value.
     if (diff->diff & NET_TICDIFF_CONSISTANCY)
         NET_WriteInt8(packet, diff->cmd.consistancy);
     if (diff->diff & NET_TICDIFF_CHATCHAR)

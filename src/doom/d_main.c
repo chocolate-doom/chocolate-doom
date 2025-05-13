@@ -709,7 +709,7 @@ static char *GetGameName(const char *gamename)
 
             gamename_size = strlen(deh_sub) + 10;
             deh_gamename = X_AllocArray(char, gamename_size);
-            version = G_VanillaVersionCode();
+            version = D_GameVersionCode(gameversion);
             DEH_snprintf(deh_gamename, gamename_size, banners[i],
                          version / 100, version % 100);
 

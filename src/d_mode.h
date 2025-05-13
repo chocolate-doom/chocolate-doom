@@ -107,6 +107,7 @@ int D_GetNumEpisodes(GameMission_t mission, GameMode_t mode);
 boolean D_IsEpisodeMap(GameMission_t mission);
 const char *D_GameMissionString(GameMission_t mission);
 const char *D_GameModeString(GameMode_t mode);
+int D_GameVersionCode(GameVersion_t version);
 
 #endif /* #ifndef __D_MODE__ */
 

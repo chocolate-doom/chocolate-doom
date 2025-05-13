@@ -152,7 +152,7 @@ int             testcontrols_mousespeed;
  
 wbstartstruct_t wminfo;               	// parms for world map / intermission 
  
-byte		consistancy[MAXPLAYERS][BACKUPTICS]; 
+short		consistancy[MAXPLAYERS][BACKUPTICS]; 
  
 #define MAXPLMOVE		(forwardmove[1]) 
  
@@ -324,6 +324,20 @@ static int G_NextWeapon(int direction)
     return weapon_order_table[i].weapon_num;
 }
 
+// We store consistency values in a circular buffer and check consistency from
+// several tics in the past. In vanilla Doom the buffer size is 12 tics, but
+// Chocolate Doom bumped it up to a larger value for the new networking code.
+// However, if we're playing a vanilla game then we need to use the original
+// vanilla value.
+static unsigned int NumBackupTics(void)
+{
+    if (net_vanilla_game)
+    {
+        return 12;
+    }
+    return BACKUPTICS;
+}
+
 //
 // G_BuildTiccmd
 // Builds a ticcmd from all of the available inputs
@@ -342,9 +356,8 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
 
     memset(cmd, 0, sizeof(ticcmd_t));
 
-    cmd->consistancy = 
-	consistancy[consoleplayer][maketic%BACKUPTICS]; 
- 
+    cmd->consistancy = consistancy[consoleplayer][maketic % NumBackupTics()];
+
     strafe = gamekeydown[key_strafe] || mousebuttons[mousebstrafe] 
 	|| joybuttons[joybstrafe]; 
 
@@ -961,7 +974,7 @@ void G_Ticker (void)
     
     // get commands, check consistancy,
     // and build new consistancy check
-    buf = (gametic/ticdup)%BACKUPTICS; 
+    buf = (gametic / ticdup) % NumBackupTics();
  
     for (i=0 ; i<MAXPLAYERS ; i++)
     {
@@ -1000,10 +1013,15 @@ void G_Ticker (void)
                 turbodetected[i] = false;
             }
 
-	    if (netgame && !netdemo && !(gametic%ticdup) ) 
-	    { 
-		if (gametic > BACKUPTICS 
-		    && consistancy[i][buf] != cmd->consistancy) 
+	    if (netgame && !netdemo && !(gametic%ticdup) )
+	    {
+                // For historical reasons, the Chocolate Doom network protocol
+                // only sends the lower byte of the consistency field. So we
+                // actually allow a consistency value where we only have the
+                // bottom 8 bits.
+                if (gametic > NumBackupTics()
+                 && cmd->consistancy != consistancy[i][buf]
+                 && cmd->consistancy != (consistancy[i][buf] & 0xff))
 		{ 
 		    I_Error ("consistency failure (%i should be %i)",
 			     cmd->consistancy, consistancy[i][buf]); 
@@ -2139,6 +2157,11 @@ void G_BeginRecording (void)
 
     demo_p = demobuffer;
 
+    if (gameversion == exe_doom_1_2)
+    {
+        I_Error("Recording of v1.2 demos not supported yet.");
+    }
+
     //!
     // @category demo
     //
@@ -2157,7 +2180,7 @@ void G_BeginRecording (void)
     }
     else if (gameversion > exe_doom_1_2)
     {
-        *demo_p++ = G_VanillaVersionCode();
+        *demo_p++ = D_GameVersionCode(gameversion);
     }
 
     *demo_p++ = gameskill; 
@@ -2259,7 +2282,7 @@ void G_DoPlayDemo (void)
     {
         longtics = true;
     }
-    else if (demoversion != G_VanillaVersionCode() &&
+    else if (demoversion != D_GameVersionCode(gameversion) &&
              !(gameversion <= exe_doom_1_2 && olddemo))
     {
         const char *message = "Demo is from a different game version!\n"
@@ -2271,8 +2294,8 @@ void G_DoPlayDemo (void)
                                         "/info/patches.php\n"
                               "    This appears to be %s.";
 
-        I_Error(message, demoversion, G_VanillaVersionCode(),
-                         DemoVersionDescription(demoversion));
+        I_Error(message, demoversion, D_GameVersionCode(gameversion),
+                DemoVersionDescription(demoversion));
     }
 
     skill = *demo_p++; 

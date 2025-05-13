@@ -148,7 +148,7 @@ boolean         testcontrols = false;    // Invoked by setup to test controls
  
 wbstartstruct_t wminfo;                 // parms for world map / intermission 
  
-byte            consistancy[MAXPLAYERS][BACKUPTICS]; 
+static short consistancy[MAXPLAYERS][BACKUPTICS]; 
  
 #define MAXPLMOVE		(forwardmove[1]) 
  
@@ -1049,11 +1049,16 @@ void G_Ticker (void)
 
             if (netgame && !netdemo && !(gametic%ticdup) ) 
             { 
+                // For historical reasons, the Chocolate Doom network protocol
+                // only sends the lower byte of the consistency field. So we
+                // actually allow a consistency value where we only have the
+                // bottom 8 bits.
                 if (gametic > BACKUPTICS 
-                    && consistancy[i][buf] != cmd->consistancy) 
-                { 
+                 && cmd->consistancy != consistancy[i][buf]
+                 && cmd->consistancy != (consistancy[i][buf] & 0xff))
+                {
                     I_Error ("consistency failure (%i should be %i)",
-                             cmd->consistancy, consistancy[i][buf]); 
+                             cmd->consistancy, consistancy[i][buf]);
                 } 
                 if (players[i].mo) 
                     consistancy[i][buf] = players[i].mo->x; 

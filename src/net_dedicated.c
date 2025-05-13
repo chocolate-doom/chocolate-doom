@@ -67,7 +67,7 @@ void NET_DedicatedServer(void)
 
     NET_OpenLog();
     NET_SV_Init();
-    NET_SV_AddModule(&net_sdl_module);
+    NET_SV_AddModule(&net_udp_module);
     NET_SV_RegisterWithMaster();
 
     while (true)

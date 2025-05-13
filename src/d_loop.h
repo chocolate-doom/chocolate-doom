@@ -23,13 +23,6 @@
 #include "m_fixed.h"
 
 
-// Callback function invoked while waiting for the netgame to start.
-// The callback is invoked when new players are ready. The callback
-// should return true, or return false to abort startup.
-
-typedef boolean (*netgame_startup_callback_t)(int ready_players,
-                                              int num_players);
-
 typedef struct
 {
     // Read events from the event queue, and process them.
@@ -74,10 +67,11 @@ boolean D_InitNetGame(net_connect_data_t *connect_data);
 // with the actual settings for the game.
 
 void D_StartNetGame(net_gamesettings_t *settings,
-                    netgame_startup_callback_t callback);
+                    net_startup_callback_t callback);
 
 extern boolean singletics;
 extern int gametic, ticdup;
+extern boolean net_vanilla_game;
 
 // Check if it is permitted to record a demo with a non-vanilla feature.
 boolean D_NonVanillaRecord(boolean conditional, const char *feature);
