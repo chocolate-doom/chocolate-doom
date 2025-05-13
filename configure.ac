@@ -71,7 +71,7 @@ AS_CASE([$target_cpu],
         ])
 AC_SUBST([TARGET_OS])
 
-PKG_CHECK_MODULES(SDL, [sdl2 >= 2.0.14])
+PKG_CHECK_MODULES(SDL, [sdl3 >= 3.2.0])
 # Check for SDL2_mixer
 AC_ARG_ENABLE([sdl2mixer],
 AS_HELP_STRING([--disable-sdl2mixer], [Disable SDL2_mixer support])
