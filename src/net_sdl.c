@@ -184,13 +184,13 @@ static net_addr_t *ResolveAddress(ip_protocol_t protocol, const char *address)
 
     if (colon != NULL)
     {
-	addr_hostname = M_StringDuplicate(address);
+	addr_hostname = X_StringDuplicate(address);
 	addr_hostname[colon - address] = '\0';
 	addr_port = atoi(colon + 1);
     }
     else
     {
-	addr_hostname = M_StringDuplicate(address);
+	addr_hostname = X_StringDuplicate(address);
 	addr_port = port;
     }
 
@@ -230,7 +230,7 @@ static void NET_SDL_AddrToString(net_addr_t *addr, char *buffer,
     {
         char portbuf[10];
         X_snprintf(portbuf, sizeof(portbuf), ":%i", port);
-        M_StringConcat(buffer, portbuf, buffer_len);
+        X_StringConcat(buffer, portbuf, buffer_len);
     }
 }
 

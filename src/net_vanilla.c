@@ -15,6 +15,8 @@
 // Vanilla Doom networking protocol
 //
 
+#include <string.h>
+
 #include "d_mode.h"
 
 #include "i_system.h"
