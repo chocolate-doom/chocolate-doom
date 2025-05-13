@@ -176,7 +176,7 @@ static int GetTypedChar(SDL_Keysym *sym)
 
         // If shift is held down, apply the original uppercase
         // translation table used under DOS.
-        if ((SDL_GetModState() & KMOD_SHIFT) != 0
+        if ((SDL_GetModState() & SDL_KMOD_SHIFT) != 0
          && result >= 0 && result < arrlen(shiftxform))
         {
             result = shiftxform[result];
@@ -203,7 +203,7 @@ static int GetTypedChar(SDL_Keysym *sym)
         // with this keypress - correct keyboard layout, appropriately
         // transformed by any modifier keys, etc. So peek ahead in the SDL
         // event queue and see if the key press is immediately followed by
-        // an SDL_TEXTINPUT event. If it is, it's reasonable to assume the
+        // an SDL_EVENT_TEXT_INPUT event. If it is, it's reasonable to assume the
         // key press and the text input are connected. Technically the SDL
         // API does not guarantee anything of the sort, but in practice this
         // is what happens and I've verified it through manual inspect of
@@ -220,10 +220,10 @@ static int GetTypedChar(SDL_Keysym *sym)
         // So we're stuck with this as a rather fragile alternative.
 
         if (SDL_PeepEvents(&next_event, 1, SDL_PEEKEVENT,
-                           SDL_FIRSTEVENT, SDL_LASTEVENT) == 1
-         && next_event.type == SDL_TEXTINPUT)
+                           SDL_EVENT_FIRST, SDL_EVENT_LAST) == 1
+         && next_event.type == SDL_EVENT_TEXT_INPUT)
         {
-            // If an SDL_TEXTINPUT event is found, we always assume it
+            // If an SDL_EVENT_TEXT_INPUT event is found, we always assume it
             // matches the key press. The input text must be a single
             // ASCII character - if it isn't, it's possible the input
             // char is a Unicode value instead; better to send a null
@@ -248,7 +248,7 @@ void I_HandleKeyboardEvent(SDL_Event *sdlevent)
 
     switch (sdlevent->type)
     {
-        case SDL_KEYDOWN:
+        case SDL_EVENT_KEY_DOWN:
             event.type = ev_keydown;
             event.data1 = TranslateKey(&sdlevent->key.keysym);
             event.data2 = GetLocalizedKey(&sdlevent->key.keysym);
@@ -260,7 +260,7 @@ void I_HandleKeyboardEvent(SDL_Event *sdlevent)
             }
             break;
 
-        case SDL_KEYUP:
+        case SDL_EVENT_KEY_UP:
             event.type = ev_keyup;
             event.data1 = TranslateKey(&sdlevent->key.keysym);
 
@@ -397,15 +397,15 @@ void I_HandleMouseEvent(SDL_Event *sdlevent)
 {
     switch (sdlevent->type)
     {
-        case SDL_MOUSEBUTTONDOWN:
+        case SDL_EVENT_MOUSE_BUTTON_DOWN:
             UpdateMouseButtonState(sdlevent->button.button, true);
             break;
 
-        case SDL_MOUSEBUTTONUP:
+        case SDL_EVENT_MOUSE_BUTTON_UP:
             UpdateMouseButtonState(sdlevent->button.button, false);
             break;
 
-        case SDL_MOUSEWHEEL:
+        case SDL_EVENT_MOUSE_WHEEL:
             MapMouseWheelToButtons(&(sdlevent->wheel));
             break;
 

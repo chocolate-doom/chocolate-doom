@@ -1451,14 +1451,14 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(joystick_physical_button16),
 
     //!
-    // If non-zero, use the SDL_GameController interface instead of the
+    // If non-zero, use the SDL_Gamepad interface instead of the
     // SDL_Joystick interface.
     //
 
     CONFIG_VARIABLE_INT(use_gamepad),
 
     //!
-    // Stores the SDL_GameControllerType of the last configured gamepad.
+    // Stores the SDL_GamepadType of the last configured gamepad.
     //
 
     CONFIG_VARIABLE_INT(gamepad_type),

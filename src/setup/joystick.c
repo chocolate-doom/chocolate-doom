@@ -624,66 +624,66 @@ static const known_joystick_t known_joysticks[] =
     },
 };
 
-// Use SDL_GameController interface
+// Use SDL_Gamepad interface
 int use_gamepad = 0;
 
-// SDL_GameControllerType of gamepad
+// SDL_GamepadType of gamepad
 int gamepad_type = 0;
 
 // Based on Unity Doom mapping
 static const joystick_config_t modern_gamepad[] =
 {
-    {"joystick_x_axis", SDL_CONTROLLER_AXIS_RIGHTX},
-    {"joystick_y_axis", SDL_CONTROLLER_AXIS_LEFTY},
-    {"joystick_strafe_axis", SDL_CONTROLLER_AXIS_LEFTX},
-    {"joystick_look_axis", SDL_CONTROLLER_AXIS_RIGHTY},
+    {"joystick_x_axis", SDL_GAMEPAD_AXIS_RIGHTX},
+    {"joystick_y_axis", SDL_GAMEPAD_AXIS_LEFTY},
+    {"joystick_strafe_axis", SDL_GAMEPAD_AXIS_LEFTX},
+    {"joystick_look_axis", SDL_GAMEPAD_AXIS_RIGHTY},
     {"joyb_fire", GAMEPAD_BUTTON_TRIGGERRIGHT},
     {"joyb_speed", GAMEPAD_BUTTON_TRIGGERLEFT},
-    {"joyb_use", SDL_CONTROLLER_BUTTON_B},
-    {"joyb_jump", SDL_CONTROLLER_BUTTON_A},
-    {"joyb_prevweapon", SDL_CONTROLLER_BUTTON_LEFTSHOULDER},
-    {"joyb_nextweapon", SDL_CONTROLLER_BUTTON_RIGHTSHOULDER},
-    {"joyb_menu_activate", SDL_CONTROLLER_BUTTON_START},
-    {"joyb_toggle_automap", SDL_CONTROLLER_BUTTON_Y},
-    {"joyb_useartifact", SDL_CONTROLLER_BUTTON_X},
-    {"joyb_invleft", SDL_CONTROLLER_BUTTON_DPAD_LEFT},
-    {"joyb_invright", SDL_CONTROLLER_BUTTON_DPAD_RIGHT},
-    {"joyb_flyup", SDL_CONTROLLER_BUTTON_DPAD_UP},
-    {"joyb_flydown", SDL_CONTROLLER_BUTTON_DPAD_DOWN},
-    {"joyb_flycenter", SDL_CONTROLLER_BUTTON_LEFTSTICK},
+    {"joyb_use", SDL_GAMEPAD_BUTTON_EAST},
+    {"joyb_jump", SDL_GAMEPAD_BUTTON_SOUTH},
+    {"joyb_prevweapon", SDL_GAMEPAD_BUTTON_LEFT_SHOULDER},
+    {"joyb_nextweapon", SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER},
+    {"joyb_menu_activate", SDL_GAMEPAD_BUTTON_START},
+    {"joyb_toggle_automap", SDL_GAMEPAD_BUTTON_NORTH},
+    {"joyb_useartifact", SDL_GAMEPAD_BUTTON_WEST},
+    {"joyb_invleft", SDL_GAMEPAD_BUTTON_DPAD_LEFT},
+    {"joyb_invright", SDL_GAMEPAD_BUTTON_DPAD_RIGHT},
+    {"joyb_flyup", SDL_GAMEPAD_BUTTON_DPAD_UP},
+    {"joyb_flydown", SDL_GAMEPAD_BUTTON_DPAD_DOWN},
+    {"joyb_flycenter", SDL_GAMEPAD_BUTTON_LEFT_STICK},
     {NULL, 0},
 };
 
 // Based on the SNES Doom mapping
 static const joystick_config_t classic_gamepad[] =
 {
-    {"joystick_x_axis", SDL_CONTROLLER_AXIS_LEFTX},
-    {"joystick_y_axis", SDL_CONTROLLER_AXIS_LEFTY},
-    {"joyb_fire", SDL_CONTROLLER_BUTTON_X},                    // SNES Y
-    {"joyb_speed", SDL_CONTROLLER_BUTTON_A},                   // SNES B
-    {"joyb_use", SDL_CONTROLLER_BUTTON_B},                     // SNES A
-    {"joyb_strafeleft", SDL_CONTROLLER_BUTTON_LEFTSHOULDER},   // SNES L
-    {"joyb_straferight", SDL_CONTROLLER_BUTTON_RIGHTSHOULDER}, // SNES R
-    {"joyb_nextweapon", SDL_CONTROLLER_BUTTON_Y},              // SNES X
-    {"joyb_menu_activate", SDL_CONTROLLER_BUTTON_START},       // SNES Start
-    {"joyb_toggle_automap", SDL_CONTROLLER_BUTTON_BACK},       // SNES Select
+    {"joystick_x_axis", SDL_GAMEPAD_AXIS_LEFTX},
+    {"joystick_y_axis", SDL_GAMEPAD_AXIS_LEFTY},
+    {"joyb_fire", SDL_GAMEPAD_BUTTON_WEST},                    // SNES Y
+    {"joyb_speed", SDL_GAMEPAD_BUTTON_SOUTH},                   // SNES B
+    {"joyb_use", SDL_GAMEPAD_BUTTON_EAST},                     // SNES A
+    {"joyb_strafeleft", SDL_GAMEPAD_BUTTON_LEFT_SHOULDER},   // SNES L
+    {"joyb_straferight", SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER}, // SNES R
+    {"joyb_nextweapon", SDL_GAMEPAD_BUTTON_NORTH},              // SNES X
+    {"joyb_menu_activate", SDL_GAMEPAD_BUTTON_START},       // SNES Start
+    {"joyb_toggle_automap", SDL_GAMEPAD_BUTTON_BACK},       // SNES Select
     {NULL, 0},
 };
 
 // SNES Doom mapping with extra shoulder buttons
 static const joystick_config_t classic_gamepad_plus[] =
 {
-    {"joystick_x_axis", SDL_CONTROLLER_AXIS_LEFTX},
-    {"joystick_y_axis", SDL_CONTROLLER_AXIS_LEFTY},
-    {"joyb_fire", SDL_CONTROLLER_BUTTON_X},                    // SNES Y
-    {"joyb_speed", SDL_CONTROLLER_BUTTON_A},                   // SNES B
-    {"joyb_use", SDL_CONTROLLER_BUTTON_B},                     // SNES A
-    {"joyb_strafeleft", SDL_CONTROLLER_BUTTON_LEFTSHOULDER},   // L1
-    {"joyb_straferight", SDL_CONTROLLER_BUTTON_RIGHTSHOULDER}, // R1
+    {"joystick_x_axis", SDL_GAMEPAD_AXIS_LEFTX},
+    {"joystick_y_axis", SDL_GAMEPAD_AXIS_LEFTY},
+    {"joyb_fire", SDL_GAMEPAD_BUTTON_WEST},                    // SNES Y
+    {"joyb_speed", SDL_GAMEPAD_BUTTON_SOUTH},                   // SNES B
+    {"joyb_use", SDL_GAMEPAD_BUTTON_EAST},                     // SNES A
+    {"joyb_strafeleft", SDL_GAMEPAD_BUTTON_LEFT_SHOULDER},   // L1
+    {"joyb_straferight", SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER}, // R1
     {"joyb_prevweapon", GAMEPAD_BUTTON_TRIGGERLEFT},           // L2
     {"joyb_nextweapon", GAMEPAD_BUTTON_TRIGGERRIGHT},          // R2
-    {"joyb_menu_activate", SDL_CONTROLLER_BUTTON_START},       // SNES Start
-    {"joyb_toggle_automap", SDL_CONTROLLER_BUTTON_BACK},       // SNES Select
+    {"joyb_menu_activate", SDL_GAMEPAD_BUTTON_START},       // SNES Start
+    {"joyb_toggle_automap", SDL_GAMEPAD_BUTTON_BACK},       // SNES Select
     {NULL, 0},
 };
 
@@ -695,10 +695,10 @@ static const known_joystick_t *GetJoystickType(int index)
     int i;
 
     joystick = all_joysticks[index];
-    name = SDL_JoystickName(joystick);
-    axes = SDL_JoystickNumAxes(joystick);
-    buttons = SDL_JoystickNumButtons(joystick);
-    hats = SDL_JoystickNumHats(joystick);
+    name = SDL_GetJoystickName(joystick);
+    axes = SDL_GetNumJoystickAxes(joystick);
+    buttons = SDL_GetNumJoystickButtons(joystick);
+    hats = SDL_GetNumJoystickHats(joystick);
 
     for (i = 0; i < arrlen(known_joysticks); ++i)
     {
@@ -816,16 +816,16 @@ static void UnInitJoystick(void)
 // updates it as appropriate.
 static void UpdateJoystickIndex(void)
 {
-    SDL_JoystickGUID guid, dev_guid;
+    SDL_GUID guid, dev_guid;
     int i;
 
-    guid = SDL_JoystickGetGUIDFromString(joystick_guid);
+    guid = SDL_StringToGUID(joystick_guid);
 
     // Is joystick_index already correct?
     if (joystick_index >= 0 && joystick_index < SDL_NumJoysticks())
     {
         dev_guid = SDL_JoystickGetDeviceGUID(joystick_index);
-        if (!memcmp(&guid, &dev_guid, sizeof(SDL_JoystickGUID)))
+        if (!memcmp(&guid, &dev_guid, sizeof(SDL_GUID)))
         {
             return;
         }
@@ -836,7 +836,7 @@ static void UpdateJoystickIndex(void)
     for (i = 0; i < SDL_NumJoysticks(); ++i)
     {
         dev_guid = SDL_JoystickGetDeviceGUID(i);
-        if (!memcmp(&guid, &dev_guid, sizeof(SDL_JoystickGUID)))
+        if (!memcmp(&guid, &dev_guid, sizeof(SDL_GUID)))
         {
             joystick_index = i;
             return;
@@ -851,7 +851,7 @@ static void UpdateJoystickIndex(void)
 // Set the label showing the name of the currently selected joystick
 static void SetJoystickButtonLabel(void)
 {
-    SDL_JoystickGUID guid, dev_guid;
+    SDL_GUID guid, dev_guid;
     const char *name;
 
     if (!usejoystick || !strcmp(joystick_guid, ""))
@@ -865,11 +865,11 @@ static void SetJoystickButtonLabel(void)
         // Use the device name if the GUID and index match.
         if (joystick_index >= 0 && joystick_index < SDL_NumJoysticks())
         {
-            guid = SDL_JoystickGetGUIDFromString(joystick_guid);
+            guid = SDL_StringToGUID(joystick_guid);
             dev_guid = SDL_JoystickGetDeviceGUID(joystick_index);
-            if (!memcmp(&guid, &dev_guid, sizeof(SDL_JoystickGUID)))
+            if (!memcmp(&guid, &dev_guid, sizeof(SDL_GUID)))
             {
-                name = SDL_JoystickNameForIndex(joystick_index);
+                name = SDL_GetJoystickNameForIndex(joystick_index);
             }
         }
     }
@@ -886,7 +886,7 @@ static int OpenAllJoysticks(void)
 
     InitJoystick();
 
-    // SDL_JoystickOpen() all joysticks.
+    // SDL_OpenJoystick() all joysticks.
 
     all_joysticks_len = SDL_NumJoysticks();
     all_joysticks = X_AllocArray(SDL_Joystick *, all_joysticks_len);
@@ -895,7 +895,7 @@ static int OpenAllJoysticks(void)
 
     for (i = 0; i < all_joysticks_len; ++i)
     {
-        all_joysticks[i] = SDL_JoystickOpen(i);
+        all_joysticks[i] = SDL_OpenJoystick(i);
 
         // If any joystick is successfully opened, return true.
 
@@ -930,7 +930,7 @@ static void CloseAllJoysticks(void)
     {
         if (all_joysticks[i] != NULL)
         {
-            SDL_JoystickClose(all_joysticks[i]);
+            SDL_CloseJoystick(all_joysticks[i]);
         }
     }
 
@@ -951,14 +951,14 @@ static void CalibrateXAxis(void)
 // joystick_guid and joystick_index config variables.
 static boolean SetJoystickGUID(SDL_JoystickID joy_id)
 {
-    SDL_JoystickGUID guid;
+    SDL_GUID guid;
     int i;
 
     for (i = 0; i < all_joysticks_len; ++i)
     {
-        if (SDL_JoystickInstanceID(all_joysticks[i]) == joy_id)
+        if (SDL_GetJoystickID(all_joysticks[i]) == joy_id)
         {
-            guid = SDL_JoystickGetGUID(all_joysticks[i]);
+            guid = SDL_GetJoystickGUID(all_joysticks[i]);
             joystick_guid = X_AllocArray(char, GUID_STRING_BUF_SIZE);
             SDL_JoystickGetGUIDString(guid, joystick_guid,
                                       GUID_STRING_BUF_SIZE);
@@ -975,10 +975,10 @@ static void GetGamepadDefaultConfig(void)
 {
     boolean have_four_shoulder, have_dual_sticks;
     char *mapping;
-    SDL_JoystickGUID guid;
+    SDL_GUID guid;
 
-    guid = SDL_JoystickGetGUID(all_joysticks[joystick_index]);
-    mapping = SDL_GameControllerMappingForGUID(guid);
+    guid = SDL_GetJoystickGUID(all_joysticks[joystick_index]);
+    mapping = SDL_GetGamepadMappingForGUID(guid);
     have_four_shoulder =
         strstr(mapping, "leftshoulder") && strstr(mapping, "rightshoulder") &&
         strstr(mapping, "lefttrigger") && strstr(mapping, "righttrigger");
@@ -1003,7 +1003,7 @@ static void GetGamepadDefaultConfig(void)
 
 static int CalibrationEventCallback(SDL_Event *event, void *user_data)
 {
-    if (event->type != SDL_JOYBUTTONDOWN)
+    if (event->type != SDL_EVENT_JOYSTICK_BUTTON_DOWN)
     {
         return 0;
     }
@@ -1013,7 +1013,7 @@ static int CalibrationEventCallback(SDL_Event *event, void *user_data)
         return 0;
     }
 
-    if (SDL_IsGameController(joystick_index))
+    if (SDL_IsGamepad(joystick_index))
     {
         usejoystick = 1;
         use_gamepad = 1;
@@ -1029,7 +1029,7 @@ static int CalibrationEventCallback(SDL_Event *event, void *user_data)
     // joystick is being configured and which button the user is pressing.
     usejoystick = 1;
     use_gamepad = 0;
-    gamepad_type = SDL_CONTROLLER_TYPE_UNKNOWN;
+    gamepad_type = SDL_GAMEPAD_TYPE_STANDARD;
     calibrate_button = event->jbutton.button;
 
     // If the joystick is a known one, auto-load default
@@ -1143,19 +1143,19 @@ static void SwapLRSticks(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
     // Single pad/stick controllers don't get a joystick_strafe_axis value
     if (joystick_strafe_axis >= 0)
     {
-        if (joystick_x_axis == SDL_CONTROLLER_AXIS_LEFTX)
+        if (joystick_x_axis == SDL_GAMEPAD_AXIS_LEFTX)
         {
-            joystick_x_axis = SDL_CONTROLLER_AXIS_RIGHTX;
-            joystick_y_axis = SDL_CONTROLLER_AXIS_LEFTY;
-            joystick_strafe_axis = SDL_CONTROLLER_AXIS_LEFTX;
-            joystick_look_axis = SDL_CONTROLLER_AXIS_RIGHTY;
+            joystick_x_axis = SDL_GAMEPAD_AXIS_RIGHTX;
+            joystick_y_axis = SDL_GAMEPAD_AXIS_LEFTY;
+            joystick_strafe_axis = SDL_GAMEPAD_AXIS_LEFTX;
+            joystick_look_axis = SDL_GAMEPAD_AXIS_RIGHTY;
         }
         else
         {
-            joystick_x_axis = SDL_CONTROLLER_AXIS_LEFTX;
-            joystick_y_axis = SDL_CONTROLLER_AXIS_RIGHTY;
-            joystick_strafe_axis = SDL_CONTROLLER_AXIS_RIGHTX;
-            joystick_look_axis = SDL_CONTROLLER_AXIS_LEFTY;
+            joystick_x_axis = SDL_GAMEPAD_AXIS_LEFTX;
+            joystick_y_axis = SDL_GAMEPAD_AXIS_RIGHTY;
+            joystick_strafe_axis = SDL_GAMEPAD_AXIS_RIGHTX;
+            joystick_look_axis = SDL_GAMEPAD_AXIS_LEFTY;
         }
     }
 }

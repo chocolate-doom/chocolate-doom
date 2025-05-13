@@ -82,14 +82,14 @@ static int FindPressedAxisButton(txt_joystick_axis_t *joystick_axis)
 {
     int i;
 
-    for (i = 0; i < SDL_JoystickNumButtons(joystick_axis->joystick); ++i)
+    for (i = 0; i < SDL_GetNumJoystickButtons(joystick_axis->joystick); ++i)
     {
         if (i == joystick_axis->config_button)
         {
             continue;
         }
 
-        if (SDL_JoystickGetButton(joystick_axis->joystick, i))
+        if (SDL_GetJoystickButton(joystick_axis->joystick, i))
         {
             return i;
         }
@@ -104,9 +104,9 @@ static int FindUncenteredHat(SDL_Joystick *joystick, int *axis_invert)
 {
     int i, hatval;
 
-    for (i = 0; i < SDL_JoystickNumHats(joystick); ++i)
+    for (i = 0; i < SDL_GetNumJoystickHats(joystick); ++i)
     {
-        hatval = SDL_JoystickGetHat(joystick, i);
+        hatval = SDL_GetJoystickHat(joystick, i);
 
         switch (hatval)
         {
@@ -150,9 +150,9 @@ static boolean CalibrateAxis(txt_joystick_axis_t *joystick_axis)
     best_value = 0;
     best_invert = 0;
 
-    for (i = 0; i < SDL_JoystickNumAxes(joystick_axis->joystick); ++i)
+    for (i = 0; i < SDL_GetNumJoystickAxes(joystick_axis->joystick); ++i)
     {
-        axis_value = SDL_JoystickGetAxis(joystick_axis->joystick, i);
+        axis_value = SDL_GetJoystickAxis(joystick_axis->joystick, i);
 
         if (joystick_axis->bad_axis[i])
         {
@@ -229,13 +229,13 @@ static void IdentifyBadAxes(txt_joystick_axis_t *joystick_axis)
     free(joystick_axis->bad_axis);
 
     joystick_axis->bad_axis = X_AllocArray(
-        boolean, SDL_JoystickNumAxes(joystick_axis->joystick));
+        boolean, SDL_GetNumJoystickAxes(joystick_axis->joystick));
 
     // Look for uncentered axes.
 
-    for (i = 0; i < SDL_JoystickNumAxes(joystick_axis->joystick); ++i)
+    for (i = 0; i < SDL_GetNumJoystickAxes(joystick_axis->joystick); ++i)
     {
-        val = SDL_JoystickGetAxis(joystick_axis->joystick, i);
+        val = SDL_GetJoystickAxis(joystick_axis->joystick, i);
 
         joystick_axis->bad_axis[i] = abs(val) > (32768 / 5);
 
@@ -278,7 +278,7 @@ static int EventCallback(SDL_Event *event, TXT_UNCAST_ARG(joystick_axis))
     TXT_CAST_ARG(txt_joystick_axis_t, joystick_axis);
     boolean advance;
 
-    if (event->type != SDL_JOYBUTTONDOWN)
+    if (event->type != SDL_EVENT_JOYSTICK_BUTTON_DOWN)
     {
         return 0;
     }
@@ -301,7 +301,7 @@ static int EventCallback(SDL_Event *event, TXT_UNCAST_ARG(joystick_axis))
     // In subsequent stages, the user is asked to push in a specific
     // direction and press the button. They must push the same button
     // as they did before; this is necessary to support button axes.
-    if (event->jbutton.which == SDL_JoystickInstanceID(joystick_axis->joystick)
+    if (event->jbutton.which == SDL_GetJoystickID(joystick_axis->joystick)
      && event->jbutton.button == joystick_axis->config_button)
     {
         switch (joystick_axis->config_stage)
@@ -349,7 +349,7 @@ static void CalibrateWindowClosed(TXT_UNCAST_ARG(widget),
     free(joystick_axis->bad_axis);
     joystick_axis->bad_axis = NULL;
 
-    SDL_JoystickClose(joystick_axis->joystick);
+    SDL_CloseJoystick(joystick_axis->joystick);
     SDL_JoystickEventState(SDL_DISABLE);
     SDL_QuitSubSystem(SDL_INIT_JOYSTICK);
     TXT_SDL_SetEventCallback(NULL, NULL);
@@ -365,7 +365,7 @@ void TXT_ConfigureJoystickAxis(txt_joystick_axis_t *joystick_axis,
         return;
     }
 
-    joystick_axis->joystick = SDL_JoystickOpen(joystick_index);
+    joystick_axis->joystick = SDL_OpenJoystick(joystick_index);
     if (joystick_axis->joystick == NULL)
     {
         TXT_MessageBox(NULL, "Please configure a controller first!");
@@ -496,23 +496,23 @@ static void GetAxisDescription(int axis, char *buf, size_t buf_len)
 {
     switch (axis)
     {
-        case SDL_CONTROLLER_AXIS_INVALID:
+        case SDL_GAMEPAD_AXIS_INVALID:
             X_StringCopy(buf, "(none)", sizeof(buf));
             break;
 
-        case SDL_CONTROLLER_AXIS_LEFTX:
+        case SDL_GAMEPAD_AXIS_LEFTX:
             X_StringCopy(buf, "Left X", sizeof(buf));
             break;
 
-        case SDL_CONTROLLER_AXIS_LEFTY:
+        case SDL_GAMEPAD_AXIS_LEFTY:
             X_StringCopy(buf, "Left Y", sizeof(buf));
             break;
 
-        case SDL_CONTROLLER_AXIS_RIGHTX:
+        case SDL_GAMEPAD_AXIS_RIGHTX:
             X_StringCopy(buf, "Right X", sizeof(buf));
             break;
 
-        case SDL_CONTROLLER_AXIS_RIGHTY:
+        case SDL_GAMEPAD_AXIS_RIGHTY:
             X_StringCopy(buf, "Right Y", sizeof(buf));
             break;
 

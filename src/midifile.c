@@ -426,7 +426,7 @@ static boolean ReadTrackHeader(midi_track_t *track, FILE *stream)
         return false;
     }
 
-    track->data_len = SDL_SwapBE32(chunk_header.chunk_size);
+    track->data_len = SDL_Swap32BE(chunk_header.chunk_size);
 
     return true;
 }
@@ -527,16 +527,16 @@ static boolean ReadFileHeader(midi_file_t *file, FILE *stream)
     }
 
     if (!CheckChunkHeader(&file->header.chunk_header, HEADER_CHUNK_ID)
-     || SDL_SwapBE32(file->header.chunk_header.chunk_size) != 6)
+     || SDL_Swap32BE(file->header.chunk_header.chunk_size) != 6)
     {
         fprintf(stderr, "ReadFileHeader: Invalid MIDI chunk header! "
                         "chunk_size=%i\n",
-                        SDL_SwapBE32(file->header.chunk_header.chunk_size));
+                        SDL_Swap32BE(file->header.chunk_header.chunk_size));
         return false;
     }
 
-    format_type = SDL_SwapBE16(file->header.format_type);
-    file->num_tracks = SDL_SwapBE16(file->header.num_tracks);
+    format_type = SDL_Swap16BE(file->header.format_type);
+    file->num_tracks = SDL_Swap16BE(file->header.num_tracks);
 
     if ((format_type != 0 && format_type != 1)
      || file->num_tracks < 1)
@@ -677,7 +677,7 @@ int MIDI_GetNextEvent(midi_track_iter_t *iter, midi_event_t **event)
 
 unsigned int MIDI_GetFileTimeDivision(midi_file_t *file)
 {
-    short result = SDL_SwapBE16(file->header.time_division);
+    short result = SDL_Swap16BE(file->header.time_division);
 
     // Negative time division indicates SMPTE time and must be handled
     // differently.

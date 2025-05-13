@@ -25,11 +25,7 @@
 #include "pcsound.h"
 #include "pcsound_internal.h"
 
-
 #ifndef DISABLE_SDL2MIXER
-
-#include "SDL_mixer.h"
-
 
 #define MAX_SOUND_SLICE_TIME 70 /* ms */
 #define SQUARE_WAVE_AMP 0x2000
@@ -202,7 +198,7 @@ static int PCSound_SDL_Init(pcsound_callback_func callback_func)
 
         slicesize = GetSliceSize();
 
-        if (Mix_OpenAudioDevice(pcsound_sample_rate, AUDIO_S16SYS, 2, slicesize, NULL, SDL_AUDIO_ALLOW_FREQUENCY_CHANGE) < 0)
+        if (Mix_OpenAudioDevice(pcsound_sample_rate, SDL_AUDIO_S16, 2, slicesize, NULL, SDL_AUDIO_ALLOW_FREQUENCY_CHANGE) < 0)
         {
             fprintf(stderr, "Error initializing SDL_mixer: %s\n", Mix_GetError());
 
@@ -222,9 +218,9 @@ static int PCSound_SDL_Init(pcsound_callback_func callback_func)
 
     Mix_QuerySpec(&mixing_freq, &mixing_format, &mixing_channels);
 
-    // Only supports AUDIO_S16SYS
+    // Only supports SDL_AUDIO_S16
 
-    if (mixing_format != AUDIO_S16SYS || mixing_channels != 2)
+    if (mixing_format != SDL_AUDIO_S16 || mixing_channels != 2)
     {
         fprintf(stderr, 
                 "PCSound_SDL only supports native signed 16-bit LSB, "

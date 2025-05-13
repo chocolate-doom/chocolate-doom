@@ -47,12 +47,12 @@ static uint64_t pause_offset = 0;
 // or current_time is being accessed.
 
 static opl_callback_queue_t *callback_queue;
-static SDL_mutex *callback_queue_mutex;
+static SDL_Mutex *callback_queue_mutex;
 
 // The timer mutex is held while timer callback functions are being
 // invoked, so that the calling code can prevent clashes.
 
-static SDL_mutex *timer_mutex;
+static SDL_Mutex *timer_mutex;
 
 // Returns true if there is a callback at the head of the queue ready
 // to be invoked.  Otherwise, next_time is set to the time when the

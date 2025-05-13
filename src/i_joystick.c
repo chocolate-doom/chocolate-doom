@@ -45,7 +45,7 @@ static int usejoystick = 0;
 // Use SDL_gamecontroller interface for the selected device
 static int use_gamepad = 0;
 
-// SDL_GameControllerType of gamepad
+// SDL_GamepadType of gamepad
 static int gamepad_type = 0;
 
 // SDL GUID and index of the joystick to use.

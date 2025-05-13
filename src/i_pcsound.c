@@ -33,7 +33,7 @@
 
 static boolean pcs_initialized = false;
 
-static SDL_mutex *sound_lock;
+static SDL_Mutex *sound_lock;
 static GameMission_t gamemission;
 
 static uint8_t *current_sound_lump = NULL;

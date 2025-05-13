@@ -68,7 +68,7 @@
 
 // When a trigger reads greater than this, consider it to be pressed.  30 comes
 // from XINPUT_GAMEPAD_TRIGGER_THRESHOLD in xinput.h, and is scaled here for
-// the SDL_GameController trigger max value.
+// the SDL_Gamepad trigger max value.
 #define TRIGGER_THRESHOLD (30 * 32767 / 255)
 
 // To be used with SDL_JoystickGetGUIDString; see SDL_joystick.h
@@ -92,10 +92,10 @@ enum
     JOY_DIR_RIGHT = 0x8
 };
 
-// Extend the SDL_GameControllerButton enum to include the triggers.
+// Extend the SDL_GamepadButton enum to include the triggers.
 enum
 {
-    GAMEPAD_BUTTON_TRIGGERLEFT = SDL_CONTROLLER_BUTTON_MAX,
+    GAMEPAD_BUTTON_TRIGGERLEFT = SDL_GAMEPAD_BUTTON_COUNT,
     GAMEPAD_BUTTON_TRIGGERRIGHT,
     GAMEPAD_BUTTON_MAX
 };

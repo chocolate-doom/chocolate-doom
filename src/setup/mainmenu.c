@@ -283,7 +283,7 @@ static void SetIcon(void)
                                        0xffu << 8, 0xffu << 0);
 
     SDL_SetWindowIcon(TXT_SDLWindow, surface);
-    SDL_FreeSurface(surface);
+    SDL_DestroySurface(surface);
 }
 
 static void SetWindowTitle(void)

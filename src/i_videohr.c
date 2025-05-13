@@ -75,7 +75,7 @@ void I_UnsetVideoModeHR(void)
     {
         SDL_QuitSubSystem(SDL_INIT_VIDEO);
         hr_screen = NULL;
-        SDL_FreeSurface(hr_surface);
+        SDL_DestroySurface(hr_surface);
         hr_surface = NULL;
     }
 }
@@ -84,7 +84,7 @@ void I_ClearScreenHR(void)
 {
     SDL_Rect area = { 0, 0, HR_SCREENWIDTH, HR_SCREENHEIGHT };
 
-    SDL_FillRect(hr_surface, &area, 0);
+    SDL_FillSurfaceRect(hr_surface, &area, 0);
 }
 
 void I_SlamBlockHR(int x, int y, int w, int h, const byte *src)
@@ -246,7 +246,7 @@ boolean I_CheckAbortHR(void)
 
     while (SDL_PollEvent(&ev))
     {
-        if (ev.type == SDL_KEYDOWN && ev.key.keysym.sym == SDLK_ESCAPE)
+        if (ev.type == SDL_EVENT_KEY_DOWN && ev.key.keysym.sym == SDLK_ESCAPE)
         {
             result = true;
         }

@@ -68,30 +68,30 @@ static int *all_joystick_buttons[NUM_VIRTUAL_BUTTONS] =
 };
 
 // For indirection so that we're not dependent on item ordering in the
-// SDL_GameControllerButton enum.
+// SDL_GamepadButton enum.
 static const int gamepad_buttons[GAMEPAD_BUTTON_MAX] =
 {
-   SDL_CONTROLLER_BUTTON_A,
-   SDL_CONTROLLER_BUTTON_B,
-   SDL_CONTROLLER_BUTTON_X,
-   SDL_CONTROLLER_BUTTON_Y,
-   SDL_CONTROLLER_BUTTON_BACK,
-   SDL_CONTROLLER_BUTTON_GUIDE,
-   SDL_CONTROLLER_BUTTON_START,
-   SDL_CONTROLLER_BUTTON_LEFTSTICK,
-   SDL_CONTROLLER_BUTTON_RIGHTSTICK,
-   SDL_CONTROLLER_BUTTON_LEFTSHOULDER,
-   SDL_CONTROLLER_BUTTON_RIGHTSHOULDER,
-   SDL_CONTROLLER_BUTTON_DPAD_UP,
-   SDL_CONTROLLER_BUTTON_DPAD_DOWN,
-   SDL_CONTROLLER_BUTTON_DPAD_LEFT,
-   SDL_CONTROLLER_BUTTON_DPAD_RIGHT,
-   SDL_CONTROLLER_BUTTON_MISC1,
-   SDL_CONTROLLER_BUTTON_PADDLE1,
-   SDL_CONTROLLER_BUTTON_PADDLE2,
-   SDL_CONTROLLER_BUTTON_PADDLE3,
-   SDL_CONTROLLER_BUTTON_PADDLE4,
-   SDL_CONTROLLER_BUTTON_TOUCHPAD,
+   SDL_GAMEPAD_BUTTON_SOUTH,
+   SDL_GAMEPAD_BUTTON_EAST,
+   SDL_GAMEPAD_BUTTON_WEST,
+   SDL_GAMEPAD_BUTTON_NORTH,
+   SDL_GAMEPAD_BUTTON_BACK,
+   SDL_GAMEPAD_BUTTON_GUIDE,
+   SDL_GAMEPAD_BUTTON_START,
+   SDL_GAMEPAD_BUTTON_LEFT_STICK,
+   SDL_GAMEPAD_BUTTON_RIGHT_STICK,
+   SDL_GAMEPAD_BUTTON_LEFT_SHOULDER,
+   SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER,
+   SDL_GAMEPAD_BUTTON_DPAD_UP,
+   SDL_GAMEPAD_BUTTON_DPAD_DOWN,
+   SDL_GAMEPAD_BUTTON_DPAD_LEFT,
+   SDL_GAMEPAD_BUTTON_DPAD_RIGHT,
+   SDL_GAMEPAD_BUTTON_MISC1,
+   SDL_GAMEPAD_BUTTON_RIGHT_PADDLE1,
+   SDL_GAMEPAD_BUTTON_LEFT_PADDLE1,
+   SDL_GAMEPAD_BUTTON_RIGHT_PADDLE2,
+   SDL_GAMEPAD_BUTTON_LEFT_PADDLE2,
+   SDL_GAMEPAD_BUTTON_TOUCHPAD,
    GAMEPAD_BUTTON_TRIGGERLEFT,
    GAMEPAD_BUTTON_TRIGGERRIGHT,
 };
@@ -350,7 +350,7 @@ static int EventCallback(SDL_Event *event, TXT_UNCAST_ARG(joystick_input))
 
     // Got the joystick button press?
 
-    if (event->type == SDL_JOYBUTTONDOWN)
+    if (event->type == SDL_EVENT_JOYSTICK_BUTTON_DOWN)
     {
         int vbutton, physbutton;
 
@@ -384,8 +384,8 @@ static int EventCallbackGamepad(SDL_Event *event,
 
     // Got the joystick button press?
 
-    if (event->type == SDL_CONTROLLERBUTTONDOWN ||
-        event->type == SDL_CONTROLLERAXISMOTION)
+    if (event->type == SDL_EVENT_GAMEPAD_BUTTON_DOWN ||
+        event->type == SDL_EVENT_GAMEPAD_AXIS_MOTION)
     {
         int vbutton, physbutton, axis;
 
@@ -396,12 +396,12 @@ static int EventCallbackGamepad(SDL_Event *event,
         vbutton = VirtualButtonForVariable(joystick_input->variable);
         axis = event->caxis.axis;
 
-        if (event->type == SDL_CONTROLLERAXISMOTION &&
-            (axis == SDL_CONTROLLER_AXIS_TRIGGERLEFT ||
-             axis == SDL_CONTROLLER_AXIS_TRIGGERRIGHT) &&
+        if (event->type == SDL_EVENT_GAMEPAD_AXIS_MOTION &&
+            (axis == SDL_GAMEPAD_AXIS_LEFT_TRIGGER ||
+             axis == SDL_GAMEPAD_AXIS_RIGHT_TRIGGER) &&
             event->caxis.value > TRIGGER_THRESHOLD)
         {
-            if (axis == SDL_CONTROLLER_AXIS_TRIGGERLEFT)
+            if (axis == SDL_GAMEPAD_AXIS_LEFT_TRIGGER)
             {
                 physbutton = GAMEPAD_BUTTON_TRIGGERLEFT;
             }
@@ -410,7 +410,7 @@ static int EventCallbackGamepad(SDL_Event *event,
                 physbutton = GAMEPAD_BUTTON_TRIGGERRIGHT;
             }
         }
-        else if (event->type == SDL_CONTROLLERBUTTONDOWN)
+        else if (event->type == SDL_EVENT_GAMEPAD_BUTTON_DOWN)
         {
             physbutton = event->cbutton.button;
         }
@@ -442,7 +442,7 @@ static void PromptWindowClosed(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(joystick))
 {
     TXT_CAST_ARG(SDL_Joystick, joystick);
 
-    SDL_JoystickClose(joystick);
+    SDL_CloseJoystick(joystick);
     TXT_SDL_SetEventCallback(NULL, NULL);
     SDL_JoystickEventState(SDL_DISABLE);
     SDL_QuitSubSystem(SDL_INIT_JOYSTICK);
@@ -451,13 +451,13 @@ static void PromptWindowClosed(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(joystick))
 static void PromptWindowClosedGamepad(TXT_UNCAST_ARG(widget),
                                       TXT_UNCAST_ARG(joystick))
 {
-    TXT_CAST_ARG(SDL_GameController, joystick);
+    TXT_CAST_ARG(SDL_Gamepad, joystick);
 
-    SDL_GameControllerClose(joystick);
+    SDL_CloseGamepad(joystick);
     TXT_SDL_SetEventCallback(NULL, NULL);
     SDL_JoystickEventState(SDL_DISABLE);
     SDL_GameControllerEventState(SDL_DISABLE);
-    SDL_QuitSubSystem(SDL_INIT_GAMECONTROLLER);
+    SDL_QuitSubSystem(SDL_INIT_GAMEPAD);
 }
 
 static void OpenErrorWindow(void)
@@ -481,7 +481,7 @@ static void OpenPromptWindow(txt_joystick_input_t *joystick_input)
 
     // Check the current joystick is valid
 
-    joystick = SDL_JoystickOpen(joystick_index);
+    joystick = SDL_OpenJoystick(joystick_index);
 
     if (joystick == NULL)
     {
@@ -503,20 +503,20 @@ static void OpenPromptWindow(txt_joystick_input_t *joystick_input)
 static void OpenPromptWindowGamepad(txt_joystick_input_t *joystick_input)
 {
     txt_window_t *window;
-    SDL_GameController *gamepad;
+    SDL_Gamepad *gamepad;
 
     // Silently update when the shift button is held down.
 
     joystick_input->check_conflicts = !TXT_GetModifierState(TXT_MOD_SHIFT);
 
-    if (SDL_InitSubSystem(SDL_INIT_GAMECONTROLLER) < 0)
+    if (SDL_InitSubSystem(SDL_INIT_GAMEPAD) < 0)
     {
         return;
     }
 
     // Check the current joystick is valid
 
-    gamepad = SDL_GameControllerOpen(joystick_index);
+    gamepad = SDL_OpenGamepad(joystick_index);
 
     if (gamepad == NULL)
     {
@@ -610,27 +610,27 @@ static void GetGamepadButtonDescription(int vbutton, char *buf, size_t buf_len)
 
     switch (gamepad_type)
     {
-        case SDL_CONTROLLER_TYPE_XBOX360:
+        case SDL_GAMEPAD_TYPE_XBOX360:
             X_snprintf(buf, buf_len, "%s", xbox360_buttons[index]);
             break;
 
-        case SDL_CONTROLLER_TYPE_XBOXONE:
+        case SDL_GAMEPAD_TYPE_XBOXONE:
             X_snprintf(buf, buf_len, "%s", xboxone_buttons[index]);
             break;
 
-        case SDL_CONTROLLER_TYPE_PS3:
+        case SDL_GAMEPAD_TYPE_PS3:
             X_snprintf(buf, buf_len, "%s", ps3_buttons[index]);
             break;
 
-        case SDL_CONTROLLER_TYPE_PS4:
+        case SDL_GAMEPAD_TYPE_PS4:
             X_snprintf(buf, buf_len, "%s", ps4_buttons[index]);
             break;
 
-        case SDL_CONTROLLER_TYPE_PS5:
+        case SDL_GAMEPAD_TYPE_PS5:
             X_snprintf(buf, buf_len, "%s", ps5_buttons[index]);
             break;
 
-        case SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_PRO:
+        case SDL_GAMEPAD_TYPE_NINTENDO_SWITCH_PRO:
             X_snprintf(buf, buf_len, "%s", switchpro_buttons[index]);
             break;
 

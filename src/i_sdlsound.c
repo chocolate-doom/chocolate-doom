@@ -638,7 +638,7 @@ static boolean ExpandSoundData_SDL(sfxinfo_t *sfxinfo,
     if (samplerate <= mixer_freq
      && ConvertibleRatio(samplerate, mixer_freq)
      && SDL_BuildAudioCVT(&convertor,
-                          AUDIO_U8, 1, samplerate,
+                          SDL_AUDIO_U8, 1, samplerate,
                           mixer_format, mixer_channels, mixer_freq))
     {
         convertor.len = length;
@@ -1080,7 +1080,7 @@ static boolean I_SDL_InitSound(GameMission_t mission)
         return false;
     }
 
-    if (Mix_OpenAudioDevice(snd_samplerate, AUDIO_S16SYS, 2, GetSliceSize(), NULL, SDL_AUDIO_ALLOW_FREQUENCY_CHANGE) < 0)
+    if (Mix_OpenAudioDevice(snd_samplerate, SDL_AUDIO_S16, 2, GetSliceSize(), NULL, SDL_AUDIO_ALLOW_FREQUENCY_CHANGE) < 0)
     {
         fprintf(stderr, "Error initialising SDL_mixer: %s\n", Mix_GetError());
         return false;

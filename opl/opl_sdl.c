@@ -54,7 +54,7 @@ typedef struct
 // When the callback mutex is locked using OPL_Lock, callback functions
 // are not invoked.
 
-static SDL_mutex *callback_mutex = NULL;
+static SDL_Mutex *callback_mutex = NULL;
 
 // Queue of callbacks waiting to be invoked.
 
@@ -62,7 +62,7 @@ static opl_callback_queue_t *callback_queue;
 
 // Mutex used to control access to the callback queue.
 
-static SDL_mutex *callback_queue_mutex = NULL;
+static SDL_Mutex *callback_queue_mutex = NULL;
 
 // Current time, in us since startup:
 
@@ -174,7 +174,7 @@ static void FillBuffer(uint8_t *buffer, unsigned int nsamples)
     // OPL output is generated into temporary buffer and then mixed
     // (to avoid overflows etc.)
     OPL3_GenerateStream(&opl_chip, (Bit16s *) mix_buffer, nsamples);
-    SDL_MixAudioFormat(buffer, mix_buffer, AUDIO_S16SYS, nsamples * 4,
+    SDL_MixAudio(buffer, mix_buffer, SDL_AUDIO_S16, nsamples * 4,
                        SDL_MIX_MAXVOLUME);
 }
 
@@ -302,7 +302,7 @@ static int OPL_SDL_Init(unsigned int port_base)
             return 0;
         }
 
-        if (Mix_OpenAudioDevice(opl_sample_rate, AUDIO_S16SYS, 2, GetSliceSize(), NULL, SDL_AUDIO_ALLOW_FREQUENCY_CHANGE) < 0)
+        if (Mix_OpenAudioDevice(opl_sample_rate, SDL_AUDIO_S16, 2, GetSliceSize(), NULL, SDL_AUDIO_ALLOW_FREQUENCY_CHANGE) < 0)
         {
             fprintf(stderr, "Error initialising SDL_mixer: %s\n", Mix_GetError());
 
@@ -334,9 +334,9 @@ static int OPL_SDL_Init(unsigned int port_base)
 
     Mix_QuerySpec(&mixing_freq, &mixing_format, &mixing_channels);
 
-    // Only supports AUDIO_S16SYS
+    // Only supports SDL_AUDIO_S16
 
-    if (mixing_format != AUDIO_S16SYS || mixing_channels != 2)
+    if (mixing_format != SDL_AUDIO_S16 || mixing_channels != 2)
     {
         fprintf(stderr, 
                 "OPL_SDL only supports native signed 16-bit LSB, "

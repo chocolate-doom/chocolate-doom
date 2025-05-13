@@ -451,8 +451,8 @@ typedef struct
 {
     int finished;
 
-    SDL_mutex *mutex;
-    SDL_cond *cond;
+    SDL_Mutex *mutex;
+    SDL_Condition *cond;
 } delay_data_t;
 
 static void DelayCallback(void *_delay_data)
@@ -462,7 +462,7 @@ static void DelayCallback(void *_delay_data)
     SDL_LockMutex(delay_data->mutex);
     delay_data->finished = 1;
 
-    SDL_CondSignal(delay_data->cond);
+    SDL_SignalCondition(delay_data->cond);
 
     SDL_UnlockMutex(delay_data->mutex);
 }
@@ -487,7 +487,7 @@ void OPL_Delay(uint64_t us)
 
     delay_data.finished = 0;
     delay_data.mutex = SDL_CreateMutex();
-    delay_data.cond = SDL_CreateCond();
+    delay_data.cond = SDL_CreateCondition();
 
     OPL_SetCallback(us, DelayCallback, &delay_data);
 
@@ -497,7 +497,7 @@ void OPL_Delay(uint64_t us)
 
     while (!delay_data.finished)
     {
-        SDL_CondWait(delay_data.cond, delay_data.mutex);
+        SDL_WaitCondition(delay_data.cond, delay_data.mutex);
 #ifdef EMSCRIPTEN
         // Use async sleep to avoid locking browser main thread
         emscripten_sleep(us / 1000);
@@ -509,7 +509,7 @@ void OPL_Delay(uint64_t us)
     // Clean up.
 
     SDL_DestroyMutex(delay_data.mutex);
-    SDL_DestroyCond(delay_data.cond);
+    SDL_DestroyCondition(delay_data.cond);
 }
 
 void OPL_SetPaused(int paused)
