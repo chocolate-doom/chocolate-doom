@@ -642,8 +642,8 @@ static uint32_t aes_ror32(uint32_t word, unsigned int shift)
     return (word >> shift) | (word << (32 - shift));
 }
 
-#define cpu_to_le32(x) SDL_SwapLE32(x)
-#define le32_to_cpu(x) SDL_SwapLE32(x)
+#define cpu_to_le32(x) SDL_Swap32LE(x)
+#define le32_to_cpu(x) SDL_Swap32LE(x)
 
 #define star_x(x) (((x) & 0x7f7f7f7f) << 1) ^ ((((x) & 0x80808080) >> 7) * 0x1b)
 
