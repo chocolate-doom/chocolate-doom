@@ -51,7 +51,7 @@ int main(int argc, char **argv)
 
     for (int i = 0; i < argc; i++)
     {
-        myargv[i] = M_StringDuplicate(argv[i]);
+        myargv[i] = X_StringDuplicate(argv[i]);
     }
 
     //!

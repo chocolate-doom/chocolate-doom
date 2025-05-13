@@ -289,7 +289,7 @@ char *M_getenv(const char *name)
 
     env_vars = I_Realloc(env_vars, (num_vars + 1) * sizeof(*env_vars));
     env_vars[num_vars].var = env;
-    env_vars[num_vars].name = M_StringDuplicate(name);
+    env_vars[num_vars].name = X_StringDuplicate(name);
     ++num_vars;
 
     return env;

@@ -1080,7 +1080,7 @@ void A_MLightningAttack2(mobj_t *actor, player_t *player, pspdef_t *psp)
 void A_MLightningAttack(mobj_t *actor, player_t *player, pspdef_t *psp)
 {
     A_MLightningAttack2(player->mo, player, psp);
-    player->mana[MANA_2] -= WeaponManaUse[player->class][player->readyweapon];
+    player->mana[MANA_2] -= WeaponManaUse[player->pclass][player->readyweapon];
 }
 
 //============================================================================

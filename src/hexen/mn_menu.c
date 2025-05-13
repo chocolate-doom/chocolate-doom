@@ -930,12 +930,12 @@ static void SetDefaultSaveName(int slot)
     // map from IWAD or PWAD?
     if (W_IsIWADLump(maplumpinfo) && strcmp(SavePath, ""))
     {
-        M_snprintf(SlotText[slot], SLOTTEXTLEN,
+        X_snprintf(SlotText[slot], SLOTTEXTLEN,
                    "%s", maplumpinfo->name);
     }
     else
     {
-        char *wadname = M_StringDuplicate(W_WadNameForLump(maplumpinfo));
+        char *wadname = X_StringDuplicate(W_WadNameForLump(maplumpinfo));
         char *ext = strrchr(wadname, '.');
 
         if (ext != NULL)
@@ -943,7 +943,7 @@ static void SetDefaultSaveName(int slot)
             *ext = '\0';
         }
 
-        M_snprintf(SlotText[slot], SLOTTEXTLEN,
+        X_snprintf(SlotText[slot], SLOTTEXTLEN,
                    "%s (%s)", maplumpinfo->name,
                    wadname);
         free(wadname);

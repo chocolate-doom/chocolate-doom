@@ -170,7 +170,7 @@ static void OpenMusicPackDir(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
 static void UpdateMidiDevice(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(data))
 {
     free(winmm_midi_device);
-    winmm_midi_device = M_StringDuplicate(midi_names[midi_index]);
+    winmm_midi_device = X_StringDuplicate(midi_names[midi_index]);
 }
 
 static txt_dropdown_list_t *MidiDeviceSelector(void)
@@ -182,7 +182,7 @@ static txt_dropdown_list_t *MidiDeviceSelector(void)
 
     midi_index = 0;
     free(midi_names[0]);
-    midi_names[0] = M_StringDuplicate("Microsoft MIDI Mapper");
+    midi_names[0] = X_StringDuplicate("Microsoft MIDI Mapper");
 
     if (all_devices > MAX_MIDI_DEVICES - num_devices)
     {
@@ -196,7 +196,7 @@ static txt_dropdown_list_t *MidiDeviceSelector(void)
         if (midiOutGetDevCaps(i, &caps, sizeof(caps)) == MMSYSERR_NOERROR)
         {
             free(midi_names[num_devices]);
-            midi_names[num_devices] = M_StringDuplicate(caps.szPname);
+            midi_names[num_devices] = X_StringDuplicate(caps.szPname);
 
             if (!strncasecmp(winmm_midi_device, midi_names[num_devices],
                              MAXPNAMELEN))
@@ -210,7 +210,7 @@ static txt_dropdown_list_t *MidiDeviceSelector(void)
     }
 
     free(winmm_midi_device);
-    winmm_midi_device = M_StringDuplicate(midi_names[midi_index]);
+    winmm_midi_device = X_StringDuplicate(midi_names[midi_index]);
 
     result = TXT_NewDropdownList(&midi_index, (const char **) midi_names,
                                  num_devices);
@@ -381,11 +381,11 @@ void BindSoundVariables(void)
     gus_patch_path = X_StringDuplicate("");
 
 #ifdef _WIN32
-    winmm_midi_device = M_StringDuplicate("");
+    winmm_midi_device = X_StringDuplicate("");
 #endif
 
 #ifdef HAVE_FLUIDSYNTH
-    fsynth_sf_path = M_StringDuplicate("");
+    fsynth_sf_path = X_StringDuplicate("");
 #endif
 
     // All versions of Heretic and Hexen did pitch-shifting.

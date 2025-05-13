@@ -1572,7 +1572,7 @@ static boolean I_WIN_InitMusic(void)
 
     if (winmm_midi_device == NULL)
     {
-        winmm_midi_device = M_StringDuplicate("");
+        winmm_midi_device = X_StringDuplicate("");
     }
 
     for (i = 0; i < all_devices; i++)
@@ -1590,7 +1590,7 @@ static boolean I_WIN_InitMusic(void)
     if (i == all_devices)
     {
         free(winmm_midi_device);
-        winmm_midi_device = M_StringDuplicate("Microsoft MIDI Mapper");
+        winmm_midi_device = X_StringDuplicate("Microsoft MIDI Mapper");
         MidiDevice = MIDI_MAPPER;
     }
 

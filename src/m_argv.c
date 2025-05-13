@@ -198,7 +198,7 @@ static void LoadResponseFile(int argv_index, const char *filename)
                 I_Error("Too many arguments in the response file!");
             }
 
-            newargv[newargc++] = M_StringDuplicate(argstart);
+            newargv[newargc++] = X_StringDuplicate(argstart);
         }
         else
         {
@@ -222,7 +222,7 @@ static void LoadResponseFile(int argv_index, const char *filename)
                 I_Error("Too many arguments in the response file!");
             }
 
-            newargv[newargc++] = M_StringDuplicate(argstart);
+            newargv[newargc++] = X_StringDuplicate(argstart);
         }
     }
 
@@ -305,7 +305,7 @@ void M_FindResponseFile(void)
         // an argument beginning with a '-' is encountered, we keep something
         // that starts with a '-'.
         free(myargv[i]);
-        myargv[i] = M_StringDuplicate("-_");
+        myargv[i] = X_StringDuplicate("-_");
         LoadResponseFile(i + 1, myargv[i + 1]);
     }
 }
@@ -512,7 +512,7 @@ void M_AddLooseFiles(void)
     }
     if (types & FILETYPE_DEMO)
     {
-        arguments[myargc].str = M_StringDuplicate("-playdemo");
+        arguments[myargc].str = X_StringDuplicate("-playdemo");
         arguments[myargc].type = FILETYPE_DEMO - 1;
         myargc++;
     }

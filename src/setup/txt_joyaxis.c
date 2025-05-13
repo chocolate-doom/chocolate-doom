@@ -497,27 +497,27 @@ static void GetAxisDescription(int axis, char *buf, size_t buf_len)
     switch (axis)
     {
         case SDL_CONTROLLER_AXIS_INVALID:
-            M_StringCopy(buf, "(none)", sizeof(buf));
+            X_StringCopy(buf, "(none)", sizeof(buf));
             break;
 
         case SDL_CONTROLLER_AXIS_LEFTX:
-            M_StringCopy(buf, "Left X", sizeof(buf));
+            X_StringCopy(buf, "Left X", sizeof(buf));
             break;
 
         case SDL_CONTROLLER_AXIS_LEFTY:
-            M_StringCopy(buf, "Left Y", sizeof(buf));
+            X_StringCopy(buf, "Left Y", sizeof(buf));
             break;
 
         case SDL_CONTROLLER_AXIS_RIGHTX:
-            M_StringCopy(buf, "Right X", sizeof(buf));
+            X_StringCopy(buf, "Right X", sizeof(buf));
             break;
 
         case SDL_CONTROLLER_AXIS_RIGHTY:
-            M_StringCopy(buf, "Right Y", sizeof(buf));
+            X_StringCopy(buf, "Right Y", sizeof(buf));
             break;
 
         default:
-            M_StringCopy(buf, "(unknown)", sizeof(buf));
+            X_StringCopy(buf, "(unknown)", sizeof(buf));
             break;
     }
 }

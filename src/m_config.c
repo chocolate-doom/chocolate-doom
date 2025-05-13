@@ -2295,7 +2295,7 @@ static void SetVariable(default_t *def, const char *value)
             int i = 0;
 
             dec = lc->decimal_point[0];
-            str = M_StringDuplicate(value);
+            str = X_StringDuplicate(value);
 
             // Skip sign indicators.
             if (str[i] == '-' || str[i] == '+')
