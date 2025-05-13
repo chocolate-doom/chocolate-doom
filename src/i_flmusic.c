@@ -33,7 +33,7 @@ typedef fluid_long_long_t fluid_int_t;
 
 #endif
 
-#include "SDL_mixer.h"
+#include <SDL3/SDL.h>
 
 #include "doomtype.h"
 #include "i_system.h"

@@ -23,7 +23,7 @@
 #include <errno.h>
 #include <assert.h>
 
-#include "SDL.h"
+#include <SDL3/SDL.h>
 #ifndef DISABLE_SDL2MIXER
 #include "SDL_mixer.h"
 #endif  // DISABLE_SDL2MIXER

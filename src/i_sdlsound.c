@@ -26,7 +26,7 @@
 
 #include "safe.h"
 
-#include "SDL.h"
+#include <SDL3/SDL.h>
 
 #ifdef HAVE_LIBSAMPLERATE
 #include <samplerate.h>

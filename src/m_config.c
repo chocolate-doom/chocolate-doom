@@ -28,7 +28,7 @@
 
 #include "safe.h"
 
-#include "SDL_filesystem.h"
+#include <SDL3/SDL.h>
 
 #include "config.h"
 

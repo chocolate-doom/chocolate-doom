@@ -22,7 +22,7 @@
 #include <string.h>
 #include <ctype.h>
 
-#include "SDL.h"
+#include <SDL3/SDL.h>
 
 #include "config.h"
 #include "doomtype.h"

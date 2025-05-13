@@ -29,7 +29,7 @@
 
 #ifndef DISABLE_SDL2MIXER
 
-#include "SDL_mixer.h"
+#include <SDL3/SDL.h>
 
 #endif  // DISABLE_SDL2MIXER
 

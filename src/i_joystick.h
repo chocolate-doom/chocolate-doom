@@ -19,7 +19,7 @@
 #ifndef __I_JOYSTICK__
 #define __I_JOYSTICK__
 
-#include "SDL_gamecontroller.h"
+#include <SDL3/SDL.h>
 
 // Number of "virtual" joystick buttons defined in configuration files.
 // This needs to be at least as large as the number of different key

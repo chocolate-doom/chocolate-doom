@@ -22,8 +22,7 @@
 
 #include "doomtype.h"
 
-#include "SDL.h"
-
+#include <SDL3/SDL.h>
 
 #define MAX_MOUSE_BUTTONS 8
 

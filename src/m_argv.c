@@ -23,7 +23,7 @@
 
 #include "safe.h"
 
-#include "SDL_stdinc.h"
+#include <SDL3/SDL.h>
 
 #include "doomtype.h"
 #include "d_iwad.h"

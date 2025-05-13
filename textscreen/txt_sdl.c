@@ -15,7 +15,7 @@
 // Text mode emulation in SDL
 //
 
-#include "SDL.h"
+#include <SDL3/SDL.h>
 
 #include <ctype.h>
 #include <stdio.h>

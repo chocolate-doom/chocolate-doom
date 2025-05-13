@@ -22,7 +22,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "SDL.h"
+#include <SDL3/SDL.h>
 
 #include "safe.h"
 #include "doomtype.h"

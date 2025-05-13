@@ -16,8 +16,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "SDL_joystick.h"
-#include "SDL_gamecontroller.h"
+#include <SDL3/SDL.h>
 
 #include "safe.h"
 
