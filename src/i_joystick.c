@@ -33,7 +33,7 @@
 #include "m_fixed.h"
 #include "m_misc.h"
 
-static SDL_GameController *gamepad = NULL;
+static SDL_Gamepad *gamepad = NULL;
 static SDL_Joystick *joystick = NULL;
 
 // Configuration variables:
@@ -97,9 +97,9 @@ void I_ShutdownGamepad(void)
 {
     if (gamepad != NULL)
     {
-        SDL_GameControllerClose(gamepad);
+        SDL_CloseGamepad(gamepad);
         gamepad = NULL;
-        SDL_QuitSubSystem(SDL_INIT_GAMECONTROLLER);
+        SDL_QuitSubSystem(SDL_INIT_GAMEPAD);
     }
 }
 
@@ -110,7 +110,7 @@ static int FindFirstGamepad(void)
 
     for (i = 0; i < SDL_NumJoysticks(); ++i)
     {
-        if (SDL_IsGameController(i))
+        if (SDL_IsGamepad(i))
         {
             gamepadindex = i;
             break;
@@ -120,16 +120,16 @@ static int FindFirstGamepad(void)
     return gamepadindex;
 }
 
-static int FindSpecificGamepad(SDL_JoystickGUID guid)
+static int FindSpecificGamepad(SDL_GUID guid)
 {
-    SDL_JoystickGUID dev_guid;
+    SDL_GUID dev_guid;
     int i;
     int gamepadindex = -1;
 
     for (i = 0; i < SDL_NumJoysticks(); ++i)
     {
         dev_guid = SDL_JoystickGetDeviceGUID(i);
-        if (!memcmp(&guid, &dev_guid, sizeof(SDL_JoystickGUID)))
+        if (!memcmp(&guid, &dev_guid, sizeof(SDL_GUID)))
         {
             gamepadindex = i;
             break;
@@ -141,18 +141,18 @@ static int FindSpecificGamepad(SDL_JoystickGUID guid)
 
 static int DeviceIndexGamepad(void)
 {
-    SDL_JoystickGUID guid, dev_guid;
+    SDL_GUID guid, dev_guid;
     int index = -1;
 
     if (strcmp(joystick_guid, ""))
     {
-        guid = SDL_JoystickGetGUIDFromString(joystick_guid);
+        guid = SDL_StringToGUID(joystick_guid);
 
         // First, look for the gamepad at the previously-used index.
         if (joystick_index >= 0 && joystick_index < SDL_NumJoysticks())
         {
             dev_guid = SDL_JoystickGetDeviceGUID(joystick_index);
-            if (!memcmp(&guid, &dev_guid, sizeof(SDL_JoystickGUID)))
+            if (!memcmp(&guid, &dev_guid, sizeof(SDL_GUID)))
             {
                 return joystick_index;
             }
@@ -174,7 +174,7 @@ static int DeviceIndexGamepad(void)
 
 void I_InitGamepad(void)
 {
-    SDL_JoystickGUID guid;
+    SDL_GUID guid;
     int index;
 
     if (!use_gamepad)
@@ -182,7 +182,7 @@ void I_InitGamepad(void)
         return;
     }
 
-    if (SDL_InitSubSystem(SDL_INIT_GAMECONTROLLER) < 0)
+    if (SDL_InitSubSystem(SDL_INIT_GAMEPAD) < 0)
     {
         return;
     }
@@ -192,16 +192,16 @@ void I_InitGamepad(void)
     if (index < 0)
     {
         printf("I_InitGamepad: No gamepad found.\n");
-        SDL_QuitSubSystem(SDL_INIT_GAMECONTROLLER);
+        SDL_QuitSubSystem(SDL_INIT_GAMEPAD);
         return;
     }
 
-    gamepad = SDL_GameControllerOpen(index);
+    gamepad = SDL_OpenGamepad(index);
 
     if (gamepad == NULL)
     {
         printf("I_InitGamepad: Failed to open gamepad: %s\n", SDL_GetError());
-        SDL_QuitSubSystem(SDL_INIT_GAMECONTROLLER);
+        SDL_QuitSubSystem(SDL_INIT_GAMEPAD);
         return;
     }
 
@@ -220,13 +220,13 @@ void I_InitGamepad(void)
     SDL_JoystickEventState(SDL_ENABLE);
     SDL_GameControllerEventState(SDL_ENABLE);
 
-    printf("I_InitGamepad: %s\n", SDL_GameControllerName(gamepad));
+    printf("I_InitGamepad: %s\n", SDL_GetGamepadName(gamepad));
     I_AtExit(I_ShutdownGamepad, true);
 }
 
-static int GetTriggerStateGamepad(SDL_GameControllerAxis trigger)
+static int GetTriggerStateGamepad(SDL_GamepadAxis trigger)
 {
-    return (SDL_GameControllerGetAxis(gamepad, trigger) > TRIGGER_THRESHOLD);
+    return (SDL_GetGamepadAxis(gamepad, trigger) > TRIGGER_THRESHOLD);
 }
 
 // Get the state of the given virtual button.
@@ -248,15 +248,15 @@ static int ReadButtonStateGamepad(int vbutton)
     switch (physbutton)
     {
         case GAMEPAD_BUTTON_TRIGGERLEFT:
-            state = GetTriggerStateGamepad(SDL_CONTROLLER_AXIS_TRIGGERLEFT);
+            state = GetTriggerStateGamepad(SDL_GAMEPAD_AXIS_TRIGGERLEFT);
             break;
 
         case GAMEPAD_BUTTON_TRIGGERRIGHT:
-            state = GetTriggerStateGamepad(SDL_CONTROLLER_AXIS_TRIGGERRIGHT);
+            state = GetTriggerStateGamepad(SDL_GAMEPAD_AXIS_TRIGGERRIGHT);
             break;
 
         default:
-            state = SDL_GameControllerGetButton(gamepad, physbutton);
+            state = SDL_GetGamepadButton(gamepad, physbutton);
             break;
     }
 
@@ -325,28 +325,28 @@ static int GetDirectionalInputGamepad(const int *axis_values)
     int rightstick = JOY_DIR_NONE;
 
     // Dpad.
-    if (SDL_GameControllerGetButton(gamepad, SDL_CONTROLLER_BUTTON_DPAD_UP))
+    if (SDL_GetGamepadButton(gamepad, SDL_GAMEPAD_BUTTON_DPAD_UP))
     {
         dpad |=  JOY_DIR_UP;
     }
 
-    if (SDL_GameControllerGetButton(gamepad, SDL_CONTROLLER_BUTTON_DPAD_DOWN))
+    if (SDL_GetGamepadButton(gamepad, SDL_GAMEPAD_BUTTON_DPAD_DOWN))
     {
         dpad |=  JOY_DIR_DOWN;
     }
 
-    if (SDL_GameControllerGetButton(gamepad, SDL_CONTROLLER_BUTTON_DPAD_LEFT))
+    if (SDL_GetGamepadButton(gamepad, SDL_GAMEPAD_BUTTON_DPAD_LEFT))
     {
         dpad |=  JOY_DIR_LEFT;
     }
 
-    if (SDL_GameControllerGetButton(gamepad, SDL_CONTROLLER_BUTTON_DPAD_RIGHT))
+    if (SDL_GetGamepadButton(gamepad, SDL_GAMEPAD_BUTTON_DPAD_RIGHT))
     {
         dpad |= JOY_DIR_RIGHT;
     }
 
     // Left stick.
-    value = axis_values[SDL_CONTROLLER_AXIS_LEFTY];
+    value = axis_values[SDL_GAMEPAD_AXIS_LEFTY];
 
     if (value > DIRECTION_DEADZONE || value < -DIRECTION_DEADZONE)
     {
@@ -360,7 +360,7 @@ static int GetDirectionalInputGamepad(const int *axis_values)
         }
     }
 
-    value = axis_values[SDL_CONTROLLER_AXIS_LEFTX];
+    value = axis_values[SDL_GAMEPAD_AXIS_LEFTX];
 
     if (value > DIRECTION_DEADZONE || value < -DIRECTION_DEADZONE)
     {
@@ -375,7 +375,7 @@ static int GetDirectionalInputGamepad(const int *axis_values)
     }
 
     // Right stick.
-    value = axis_values[SDL_CONTROLLER_AXIS_RIGHTX];
+    value = axis_values[SDL_GAMEPAD_AXIS_RIGHTX];
 
     if (value > DIRECTION_DEADZONE || value < -DIRECTION_DEADZONE)
     {
@@ -389,7 +389,7 @@ static int GetDirectionalInputGamepad(const int *axis_values)
         }
     }
 
-    value = axis_values[SDL_CONTROLLER_AXIS_RIGHTY];
+    value = axis_values[SDL_GAMEPAD_AXIS_RIGHTY];
 
     if (value > DIRECTION_DEADZONE || value < -DIRECTION_DEADZONE)
     {
@@ -412,19 +412,19 @@ void I_UpdateGamepad(void)
     if (gamepad != NULL)
     {
         event_t ev;
-        int axis_values[SDL_CONTROLLER_AXIS_MAX];
+        int axis_values[SDL_GAMEPAD_AXIS_MAX];
 
-        axis_values[SDL_CONTROLLER_AXIS_LEFTX] =
-            SDL_GameControllerGetAxis(gamepad, SDL_CONTROLLER_AXIS_LEFTX);
+        axis_values[SDL_GAMEPAD_AXIS_LEFTX] =
+            SDL_GetGamepadAxis(gamepad, SDL_GAMEPAD_AXIS_LEFTX);
 
-        axis_values[SDL_CONTROLLER_AXIS_LEFTY] =
-            SDL_GameControllerGetAxis(gamepad, SDL_CONTROLLER_AXIS_LEFTY);
+        axis_values[SDL_GAMEPAD_AXIS_LEFTY] =
+            SDL_GetGamepadAxis(gamepad, SDL_GAMEPAD_AXIS_LEFTY);
 
-        axis_values[SDL_CONTROLLER_AXIS_RIGHTX] =
-            SDL_GameControllerGetAxis(gamepad, SDL_CONTROLLER_AXIS_RIGHTX);
+        axis_values[SDL_GAMEPAD_AXIS_RIGHTX] =
+            SDL_GetGamepadAxis(gamepad, SDL_GAMEPAD_AXIS_RIGHTX);
 
-        axis_values[SDL_CONTROLLER_AXIS_RIGHTY] =
-            SDL_GameControllerGetAxis(gamepad, SDL_CONTROLLER_AXIS_RIGHTY);
+        axis_values[SDL_GAMEPAD_AXIS_RIGHTY] =
+            SDL_GetGamepadAxis(gamepad, SDL_GAMEPAD_AXIS_RIGHTY);
 
         ev.type = ev_joystick;
         ev.data1 = GetButtonsStateGamepad();
@@ -448,7 +448,7 @@ void I_ShutdownJoystick(void)
 {
     if (joystick != NULL)
     {
-        SDL_JoystickClose(joystick);
+        SDL_CloseJoystick(joystick);
         joystick = NULL;
         SDL_QuitSubSystem(SDL_INIT_JOYSTICK);
     }
@@ -470,20 +470,20 @@ static boolean IsValidAxis(int axis)
 
     if (IS_HAT_AXIS(axis))
     {
-        return HAT_AXIS_HAT(axis) < SDL_JoystickNumHats(joystick);
+        return HAT_AXIS_HAT(axis) < SDL_GetNumJoystickHats(joystick);
     }
 
-    num_axes = SDL_JoystickNumAxes(joystick);
+    num_axes = SDL_GetNumJoystickAxes(joystick);
 
     return axis < num_axes;
 }
 
 static int DeviceIndex(void)
 {
-    SDL_JoystickGUID guid, dev_guid;
+    SDL_GUID guid, dev_guid;
     int i;
 
-    guid = SDL_JoystickGetGUIDFromString(joystick_guid);
+    guid = SDL_StringToGUID(joystick_guid);
 
     // GUID identifies a class of device rather than a specific device.
     // Check if joystick_index has the expected GUID, as this can act
@@ -491,7 +491,7 @@ static int DeviceIndex(void)
     if (joystick_index >= 0 && joystick_index < SDL_NumJoysticks())
     {
         dev_guid = SDL_JoystickGetDeviceGUID(joystick_index);
-        if (!memcmp(&guid, &dev_guid, sizeof(SDL_JoystickGUID)))
+        if (!memcmp(&guid, &dev_guid, sizeof(SDL_GUID)))
         {
             return joystick_index;
         }
@@ -501,7 +501,7 @@ static int DeviceIndex(void)
     for (i = 0; i < SDL_NumJoysticks(); ++i)
     {
         dev_guid = SDL_JoystickGetDeviceGUID(i);
-        if (!memcmp(&guid, &dev_guid, sizeof(SDL_JoystickGUID)))
+        if (!memcmp(&guid, &dev_guid, sizeof(SDL_GUID)))
         {
             printf("I_InitJoystick: Joystick moved to index %d.\n", i);
             return i;
@@ -545,7 +545,7 @@ void I_InitJoystick(void)
 
     // Open the joystick
 
-    joystick = SDL_JoystickOpen(index);
+    joystick = SDL_OpenJoystick(index);
 
     if (joystick == NULL)
     {
@@ -563,7 +563,7 @@ void I_InitJoystick(void)
         printf("I_InitJoystick: Invalid joystick axis for configured joystick "
                "(run joystick setup again)\n");
 
-        SDL_JoystickClose(joystick);
+        SDL_CloseJoystick(joystick);
         joystick = NULL;
         SDL_QuitSubSystem(SDL_INIT_JOYSTICK);
     }
@@ -572,7 +572,7 @@ void I_InitJoystick(void)
 
     // Initialized okay!
 
-    printf("I_InitJoystick: %s\n", SDL_JoystickName(joystick));
+    printf("I_InitJoystick: %s\n", SDL_GetJoystickName(joystick));
 
     I_AtExit(I_ShutdownJoystick, true);
 }
@@ -637,7 +637,7 @@ static int ReadButtonState(int vbutton)
         return 0;
     }
 
-    return SDL_JoystickGetButton(joystick, physbutton);
+    return SDL_GetJoystickButton(joystick, physbutton);
 }
 
 // Get a bitmask of all currently-pressed buttons
@@ -678,11 +678,11 @@ static int GetAxisState(int axis, int invert, int dead_zone)
 
     if (IS_BUTTON_AXIS(axis))
     {
-        if (SDL_JoystickGetButton(joystick, BUTTON_AXIS_NEG(axis)))
+        if (SDL_GetJoystickButton(joystick, BUTTON_AXIS_NEG(axis)))
         {
             result -= 32767;
         }
-        if (SDL_JoystickGetButton(joystick, BUTTON_AXIS_POS(axis)))
+        if (SDL_GetJoystickButton(joystick, BUTTON_AXIS_POS(axis)))
         {
             result += 32767;
         }
@@ -690,7 +690,7 @@ static int GetAxisState(int axis, int invert, int dead_zone)
     else if (IS_HAT_AXIS(axis))
     {
         int direction = HAT_AXIS_DIRECTION(axis);
-        int hatval = SDL_JoystickGetHat(joystick, HAT_AXIS_HAT(axis));
+        int hatval = SDL_GetJoystickHat(joystick, HAT_AXIS_HAT(axis));
 
         if (direction == HAT_AXIS_HORIZONTAL)
         {
@@ -717,7 +717,7 @@ static int GetAxisState(int axis, int invert, int dead_zone)
     }
     else
     {
-        result = SDL_JoystickGetAxis(joystick, axis);
+        result = SDL_GetJoystickAxis(joystick, axis);
 
         // Dead zone is expressed as percentage of axis max value
         dead_zone = 32768 * dead_zone / 100;
