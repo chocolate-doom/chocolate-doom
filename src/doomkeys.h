@@ -89,6 +89,8 @@
 #define KEYP_EQUALS     KEY_EQUALS
 #define KEYP_ENTER      KEY_ENTER
 
+#define KEY_NONUSBACKSLASH '\\'
+
 #define SCANCODE_TO_KEYS_ARRAY {                                            \
     0,   0,   0,   0,   'a',                                  /* 0-9 */     \
     'b', 'c', 'd', 'e', 'f',                                                \
@@ -111,7 +113,7 @@
     KEYP_MULTIPLY, KEYP_MINUS, KEYP_PLUS, KEYP_ENTER, KEYP_1,               \
     KEYP_2, KEYP_3, KEYP_4, KEYP_5, KEYP_6,                   /* 90-99 */   \
     KEYP_7, KEYP_8, KEYP_9, KEYP_0, KEYP_PERIOD,                            \
-    0, 0, 0, KEYP_EQUALS,                                     /* 100-103 */ \
+    KEY_NONUSBACKSLASH, 0, 0, KEYP_EQUALS,                    /* 100-103 */ \
 }
 
 // Default names for keys, to use in English or as fallback.
