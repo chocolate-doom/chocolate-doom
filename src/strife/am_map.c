@@ -60,6 +60,7 @@ extern boolean inhelpscreens; // [crispy]
 #define THINGCOLORS     233         // villsa [STRIFE]
 #define MISSILECOLORS   227         // villsa [STRIFE]
 #define SHOOTABLECOLORS 235         // villsa [STRIFE]
+#define XHAIRCOLORS     5           // [crispy]
 
 // [crispy] FRACTOMAPBITS: overflow-safe coordinate system.
 // Written by Andrey Budko (entryway), adapted from prboom-plus/src/am_map.*
@@ -284,6 +285,7 @@ void (*AM_drawFline)(fline_t*, int) = AM_drawFline_Vanilla;
 // [crispy] automap rotate mode needs these early on
 void AM_rotate (int64_t *x, int64_t *y, angle_t a);
 static void AM_rotatePoint (mpoint_t *pt);
+static void AM_drawCrosshair(int color, boolean force); // [crispy] restore crosshair
 static mpoint_t mapcenter;
 static angle_t mapangle;
 
@@ -366,8 +368,19 @@ void AM_restoreScaleAndLoc(void)
 //
 void AM_addMark(void)
 {
-    markpoints[markpointnum].x = plr->mo->x >> FRACTOMAPBITS; // 20160306 [STRIFE]: use player position
-    markpoints[markpointnum].y = plr->mo->y >> FRACTOMAPBITS;
+    // [crispy] keep the map static in overlay mode
+    // if not following the player
+    if (!(!followplayer && crispy->automapoverlay))
+    {
+        markpoints[markpointnum].x = m_x + m_w/2;
+        markpoints[markpointnum].y = m_y + m_h/2;
+    }
+    else
+    {
+        markpoints[markpointnum].x = plr->mo->x >> FRACTOMAPBITS; // 20160306 [STRIFE]: use player position
+        markpoints[markpointnum].y = plr->mo->y >> FRACTOMAPBITS;
+    }
+    
     //markpointnum = (markpointnum + 1) % AM_NUMMARKPOINTS;
     ++markpointnum; // haleyjd 20141101: [STRIFE] does not wrap around
 }
@@ -584,6 +597,7 @@ void AM_LevelInit(boolean reinit)
     if (reinit && f_h_old)
     {
         scale_mtof = scale_mtof * f_h / f_h_old;
+        AM_drawCrosshair(XHAIRCOLORS, true);
     }
     else
     {
@@ -636,12 +650,13 @@ void AM_Stop (void)
     stopped = true;
 }
 
+// [crispy] moved here for extended savegames
+static int lastlevel = -1;
 //
 //
 //
 void AM_Start (void)
 {
-    static int lastlevel = -1;
     //static int lastepisode = -1;
 
     if (!stopped) AM_Stop();
@@ -1853,11 +1868,36 @@ void AM_drawMarks(void)
 
 }
 
-// villsa [STRIFE] unused
-/*void AM_drawCrosshair(int color)
+// [crispy] activate crosshair
+static void AM_drawCrosshair(int color, boolean force)
 {
+    // [crispy] draw an actual crosshair
+    if (!followplayer || force)
+    {
+        static fline_t h, v;
+
+        if (!h.a.x || force)
+        {
+            h.a.x = h.b.x = v.a.x = v.b.x = f_x + f_w / 2;
+            h.a.y = h.b.y = v.a.y = v.b.y = f_y + f_h / 2;
+            h.a.x -= 2; h.b.x += 2;
+            v.a.y -= 2; v.b.y += 2;
+        }
+
+        AM_drawFline(&h, color);
+        AM_drawFline(&v, color);
+    }
+// [crispy] do not draw the useless dot on the player arrow
+/*
+    else
+#ifndef CRISPY_TRUECOLOR
     fb[(f_w*(f_h+1))/2] = color; // single point for now
-}*/
+#else
+    fb[(f_w*(f_h+1))/2] = pal_color[color]; // single point for now
+#endif
+*/
+
+}
 
 void AM_Drawer (void)
 {
@@ -1909,10 +1949,52 @@ void AM_Drawer (void)
     if(cheating == 2 || plr->powers[pw_allmap] > 1)
         AM_drawThings();
 
-    // villsa [STRIFE] not used
-    //AM_drawCrosshair(XHAIRCOLORS);
+    // [crispy] activate crosshair
+    AM_drawCrosshair(XHAIRCOLORS, false);
 
     AM_drawMarks();
     V_MarkRect(f_x, f_y, f_w, f_h);
 
+}
+
+
+//===========================================================================
+//
+// [crispy] Get & Set marks for extended savegame
+//
+//===========================================================================
+
+void AM_GetMarkPoints (int *n, long *p)
+{
+    int i;
+
+    *n = markpointnum;
+    *p = -1L;
+
+    // [crispy] prevent saving markpoints from previous map
+    if (lastlevel == gamemap /* && lastepisode == gameepisode */)
+    {
+        for (i = 0; i < AM_NUMMARKPOINTS; i++)
+        {
+            *p++ = (long)markpoints[i].x;
+            *p++ = (markpoints[i].x == -1) ? 0L : (long)markpoints[i].y;
+        }
+    }
+}
+
+void AM_SetMarkPoints (int n, long *p)
+{
+    int i;
+
+    AM_LevelInit(false);
+    lastlevel = gamemap;
+    // lastepisode = gameepisode;
+
+    markpointnum = n;
+
+    for (i = 0; i < AM_NUMMARKPOINTS; i++)
+    {
+        markpoints[i].x = (int64_t)*p++;
+        markpoints[i].y = (int64_t)*p++;
+    }
 }

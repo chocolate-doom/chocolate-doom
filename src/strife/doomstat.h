@@ -248,6 +248,9 @@ extern  wbstartstruct_t		wminfo;
 // File handling stuff.
 extern  char *          savegamedir;
 
+// [crispy]
+extern FILE *save_stream;
+
 // if true, load all graphics at level load
 extern  boolean         precache;
 

@@ -47,6 +47,7 @@
 #include "hu_stuff.h"
 #include "st_stuff.h"
 #include "am_map.h"
+#include "p_extsaveg.h" // [crispy] for extended savegame information
 
 // Needs access to LFB.
 #include "v_video.h"
@@ -2094,6 +2095,9 @@ void G_DoLoadGame (boolean userload)
     if (!P_ReadSaveGameEOF())
         I_Error ("Bad savegame");
 
+    // [crispy] read more extended savegame data
+    P_ReadExtendedSaveGameData();
+
     fclose(save_stream);
     
     if (setsizeneeded)
@@ -2214,6 +2218,9 @@ void G_DoSaveGame (char *path)
     P_ArchiveSpecials (); 
 
     P_WriteSaveGameEOF();
+
+    // [crispy] write extended savegame data
+    P_WriteExtendedSaveGameData();
 
     // [crispy] unconditionally disable savegame and demo limits
     /*

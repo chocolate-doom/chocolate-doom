@@ -21,6 +21,7 @@
 #define __P_SAVEG__
 
 #include <stdio.h>
+#include "doomstat.h"
 
 // maximum size of a savegame description
 
@@ -56,7 +57,6 @@ void P_ArchiveSpecials (void);
 void P_UnArchiveSpecials (void);
 void P_RestoreTargets (void); // [crispy]
 
-extern FILE *save_stream;
 extern boolean savegame_error;
 
 
