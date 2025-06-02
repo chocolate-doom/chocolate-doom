@@ -146,6 +146,9 @@ static boolean CrispyMouselook(int option);
 static boolean CrispyBobfactor(int option);
 static boolean CrispyCenterWeapon(int option);
 static boolean CrispyDefaultskill(int option);
+static boolean CrispyCrosshair(int option);
+static boolean CrispyCrosshairShape(int option);
+static boolean CrispyCrosshairColor(int option);
 static boolean CrispyUncapped(int option);
 static boolean CrispyFpsLimit(int option);
 static boolean CrispyVsync(int option);
@@ -423,9 +426,9 @@ static MenuItem_t Crispness3Items[] = {
     {ITT_LRFUNC2, "DEFAULT DIFFICULTY:", CrispyDefaultskill, 0, MENU_NONE},
     {ITT_EMPTY, NULL, NULL, 0, MENU_NONE},
     {ITT_EMPTY, NULL, NULL, 0, MENU_NONE},
-    {ITT_EMPTY, NULL, NULL, 0, MENU_NONE},
-    {ITT_EMPTY, NULL, NULL, 0, MENU_NONE},
-    {ITT_EMPTY, NULL, NULL, 0, MENU_NONE},
+    {ITT_LRFUNC2, "DRAW CROSSHAIR:", CrispyCrosshair, 0, MENU_NONE},
+    {ITT_LRFUNC2, "CROSSHAIR SHAPE:", CrispyCrosshairShape, 0, MENU_NONE},
+    {ITT_LRFUNC2, "CROSSHAIR COLOR:", CrispyCrosshairColor, 0, MENU_NONE},
     {ITT_EMPTY, NULL, NULL, 0, MENU_NONE},
     {ITT_EMPTY, NULL, NULL, 0, MENU_NONE},
     {ITT_EFUNC, "FIRST PAGE", CrispyNextPage, 0, MENU_NONE},
@@ -511,6 +514,33 @@ static const multiitem_t multiitem_difficulties[NUM_SKILLS] =
     {SKILL_NIGHTMARE, "BLACK PLAGUE"},
     {SKILL_ITYTD, "WET-NURSE"},
     {SKILL_HNTR, "YELLOWBELLIES"},
+};
+
+multiitem_t multiitem_he_crosshair[NUM_HE_CROSSHAIRS] =
+{
+    {CROSSHAIR_HE_OFF, "off"},
+    {CROSSHAIR_HE_OPAQUE, "opaque"},
+    {CROSSHAIR_HE_TRANSLUCENT, "translucent"},
+};
+
+multiitem_t multiitem_he_crosshairtype[] =
+{
+    {-1, "none"},
+    {CROSSHAIRTYPE_HE_DOT, "dot"},
+    {CROSSHAIRTYPE_HE_CROSS1, "cross1"},
+    {CROSSHAIRTYPE_HE_CROSS2, "cross2"},
+};
+
+// [crispy] crosshair colors for heretic
+// gold: corresponding with normal hud / crispy hud font
+// white: corresponding with hud messages / providing high visibility
+// green: corresponding with vanilla fullscreen hud font
+multiitem_t multiitem_he_crosshaircolor[] =
+{
+    {-1, "none"},
+    {CROSSHAIRCOLOR_HE_GOLD, "gold"},
+    {CROSSHAIRCOLOR_HE_WHITE, "white"},
+    {CROSSHAIRCOLOR_HE_FSHUD, "green"},
 };
 
 multiitem_t multiitem_translucency[NUM_TRANSLUCENCY] =
@@ -1854,6 +1884,34 @@ static boolean CrispyDefaultskill(int option)
     return true;
 }
 
+static boolean CrispyCrosshair(int option)
+{
+    ChangeSettingEnum(&crispy->crosshair, option, NUM_HE_CROSSHAIRS);
+    return true;
+}
+
+static boolean CrispyCrosshairShape(int option)
+{
+    if (!crispy->crosshair)
+    {
+	    return true;
+    }
+
+    ChangeSettingEnum(&crispy->crosshairtype, option, NUM_HE_CROSSHAIRTYPE);
+    return true;
+}
+
+static boolean CrispyCrosshairColor(int option)
+{
+    if (!crispy->crosshair)
+    {
+	    return true;
+    }
+
+    ChangeSettingEnum(&crispy->crosshaircolor, option, NUM_HE_CROSSHAIRCOLOR);
+    return true;
+}
+
 static boolean CrispyNextPage(int option)
 {
     crispnessmenupage++;
@@ -3115,4 +3173,15 @@ static void DrawCrispness3(void)
 
     // Default difficulty
     DrawCrispnessMultiItem(crispy->defaultskill, 200, 75, multiitem_difficulties, false);
+
+    DrawCrispnessSubheader("CROSSHAIR", 95);
+
+    // Crosshair
+    DrawCrispnessMultiItem(crispy->crosshair, 180, 105, multiitem_he_crosshair, false);
+
+    // Crosshair Type
+    DrawCrispnessMultiItem(crispy->crosshairtype+1, 188, 115, multiitem_he_crosshairtype, !crispy->crosshair);
+
+    // Crosshair Color
+    DrawCrispnessMultiItem(crispy->crosshaircolor+1, 185, 125, multiitem_he_crosshaircolor, !crispy->crosshair);
 }

@@ -51,6 +51,7 @@ typedef struct
 	int crosshairhealth;
 	int crosshairtarget;
 	int crosshairtype;
+	int crosshaircolor;
 	int defaultskill;
 	int demotimer;
 	int demotimerdir;
@@ -184,6 +185,30 @@ enum
     CROSSHAIR_PROJECTED,
     NUM_CROSSHAIRS,
     CROSSHAIR_INTERCEPT = 0x10
+};
+
+enum
+{
+    CROSSHAIR_HE_OFF,
+    CROSSHAIR_HE_OPAQUE,
+    CROSSHAIR_HE_TRANSLUCENT,
+    NUM_HE_CROSSHAIRS
+};
+
+enum
+{
+    CROSSHAIRTYPE_HE_DOT,
+    CROSSHAIRTYPE_HE_CROSS1,
+    CROSSHAIRTYPE_HE_CROSS2,
+    NUM_HE_CROSSHAIRTYPE
+};
+
+enum
+{
+    CROSSHAIRCOLOR_HE_GOLD,
+    CROSSHAIRCOLOR_HE_WHITE,
+    CROSSHAIRCOLOR_HE_FSHUD,
+    NUM_HE_CROSSHAIRCOLOR
 };
 
 enum

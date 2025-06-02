@@ -265,6 +265,11 @@ typedef struct vissprite_s
 
 extern visplane_t *floorplane, *ceilingplane;
 
+typedef struct
+{
+    int l, w, h, loffset, toffset;
+} crosshairpatch_t;
+
 // Sprites are patches with a special naming convention so they can be 
 // recognized by R_InitSprites.  The sprite and frame specified by a 
 // thing_t is range checked at run time.

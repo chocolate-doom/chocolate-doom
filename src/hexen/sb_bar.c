@@ -29,6 +29,7 @@
 #include "i_swap.h"
 #include "am_map.h"
 #include "a11y.h" // [crispy] A11Y
+#include "v_trans.h" // [crispy] dp_translation
 
 
 // TYPES -------------------------------------------------------------------
@@ -89,6 +90,10 @@ static void CheatTrackFunc2(player_t * player, Cheat_t * cheat);
 // [crispy] new cheat functions
 static void CheatShowFpsFunc(player_t * player, Cheat_t * cheat);
 
+// [crispy] player crosshair functions
+static void HU_DrawCrosshair(void);
+static byte *R_CrosshairColor(void);
+
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
@@ -121,6 +126,14 @@ static int SpinFlylump;
 static int SpinMinotaurLump;
 static int SpinSpeedLump;
 static int SpinDefenseLump;
+
+// [crispy] keep in sync with multiitem_t multiitem_he_crosshairtype[] in mn_menu.c
+static crosshairpatch_t crosshairpatch_m[NUM_HE_CROSSHAIRTYPE] = {
+    {0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0},
+};
+static crosshairpatch_t *crosshairpatch = crosshairpatch_m;
 
 static int FontBNumBase;
 static int PlayPalette;
@@ -322,6 +335,32 @@ void SB_Init(void)
     SpinMinotaurLump = W_GetNumForName("SPMINO0");
     SpinSpeedLump = W_GetNumForName("SPBOOT0");
     SpinDefenseLump = W_GetNumForName("SPSHLD0");
+
+    // [crispy] initialize the crosshair types
+    for (i = 0; i < NUM_HE_CROSSHAIRTYPE; i++)
+    {
+        patch_t *patch = NULL;
+
+        if (i == CROSSHAIRTYPE_HE_DOT)
+        {
+            crosshairpatch[i].l = W_GetNumForName("FONTB28");
+        }
+        else if (i == CROSSHAIRTYPE_HE_CROSS1)
+        {
+            crosshairpatch[i].l = W_GetNumForName("TLGLC0");
+        }
+        else
+        {
+            crosshairpatch[i].l = W_GetNumForName("TLGLA0");
+        }
+
+        patch = W_CacheLumpNum(crosshairpatch[i].l, PU_STATIC);
+
+        crosshairpatch[i].w = SHORT(patch->width) / 2;
+        crosshairpatch[i].h = SHORT(patch->height) / 2;
+        crosshairpatch[i].loffset = SHORT(patch->leftoffset);
+        crosshairpatch[i].toffset = SHORT(patch->topoffset); 
+    }
 
     st_backing_screen = (pixel_t *) Z_Malloc(MAXWIDTH * (ORIGSBARHEIGHT << 1) * sizeof(*st_backing_screen), PU_STATIC, 0);
     if (deathmatch)
@@ -883,6 +922,14 @@ void SB_Drawer(void)
         }
     }
     DrawAnimatedIcons();
+
+    // [crispy] draw player crosshair
+    if (crispy->crosshair)
+    {
+        SB_Translucent(crispy->crosshair == CROSSHAIR_HE_TRANSLUCENT);
+        HU_DrawCrosshair();
+        SB_Translucent(TRANSLUCENT_HUD);
+    }
 }
 
 //==========================================================================
@@ -2374,4 +2421,54 @@ static void CheatShowFpsFunc(player_t* player, Cheat_t* cheat)
     {
         P_SetMessage(player, TXT_SHOWFPSOFF, false);
     }
+}
+
+// [crispy] crosshair color selection
+static byte *R_CrosshairColor (void)
+{
+    if (crispy->crosshaircolor == CROSSHAIRCOLOR_HE_GOLD)
+    {
+        return cr[CR_GOLD];
+    }
+    else if (crispy->crosshaircolor == CROSSHAIRCOLOR_HE_WHITE)
+    {
+        return cr[CR_GRAY];
+    }
+    else
+    {
+        return cr[CR_RED];
+    }
+}
+
+// [crispy] static, non-projected crosshair
+static void HU_DrawCrosshair (void)
+{
+    static int		lump;
+    static patch_t*	patch;
+    CPlayer = &players[consoleplayer];
+
+    if (WeaponInfo[CPlayer->readyweapon][CPlayer->class].atkstate == S_PUNCHATK1_1 ||
+        WeaponInfo[CPlayer->readyweapon][CPlayer->class].atkstate == S_CMACEATK_1 ||
+        WeaponInfo[CPlayer->readyweapon][CPlayer->class].atkstate == S_SNOUTATK1 ||
+        WeaponInfo[CPlayer->readyweapon][CPlayer->class].atkstate == S_FAXEATK_1 ||
+        CPlayer->playerstate != PST_LIVE ||
+        (automapactive && !crispy->automapoverlay) ||
+        MenuActive ||
+        paused)
+	    return;
+
+    if (lump != crosshairpatch[crispy->crosshairtype].l)
+    {
+        lump = crosshairpatch[crispy->crosshairtype].l;
+        patch = W_CacheLumpNum(lump, PU_STATIC);
+    }
+
+    // crosshair color
+    dp_translation = R_CrosshairColor();
+    V_DrawSBPatch(ORIGWIDTH / 2 -
+            crosshairpatch[crispy->crosshairtype].w + crosshairpatch[crispy->crosshairtype].loffset,
+            ((screenblocks < 11) ? (ORIGHEIGHT - (SBARHEIGHT >> crispy->hires)) / 2 : ORIGHEIGHT / 2) -
+            crosshairpatch[crispy->crosshairtype].h + crosshairpatch[crispy->crosshairtype].toffset,
+            patch);
+    dp_translation = NULL;
 }

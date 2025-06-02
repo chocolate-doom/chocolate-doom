@@ -76,6 +76,7 @@ typedef enum
     MENU_MOUSE,
     MENU_CRISPNESS1,
     MENU_CRISPNESS2,
+    MENU_CRISPNESS3,
     MENU_NONE
 } MenuType_t;
 
@@ -147,6 +148,9 @@ static void CrispyMouselook(int option);
 static void CrispyBobfactor(int option);
 static void CrispyCenterWeapon(int option);
 static void CrispyDefaultskill(int option);
+static void CrispyCrosshair(int option);
+static void CrispyCrosshairShape(int option);
+static void CrispyCrosshairColor(int option);
 static void CrispyNextPage(int option);
 static void CrispyPrevPage(int option);
 static void SCNetCheck2(int option);
@@ -170,6 +174,7 @@ static void DrawMouseMenu(void);
 static void DrawCrispnessMenu(void);
 static void DrawCrispness1(void);
 static void DrawCrispness2(void);
+static void DrawCrispness3(void);
 void MN_LoadSlotText(void);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
@@ -361,7 +366,7 @@ static Menu_t Options2Menu = {
 
 static int crispnessmenupage;
 
-#define NUM_CRISPNESS_MENUS 2
+#define NUM_CRISPNESS_MENUS 3
 
 static MenuItem_t Crispness1Items[] = {
     {ITT_LRFUNC2, "HIGH RESOLUTION RENDERING:", CrispyHires, 0, MENU_NONE},
@@ -376,13 +381,15 @@ static MenuItem_t Crispness1Items[] = {
     {ITT_LRFUNC2, "SMOOTH DIMINISHING LIGHTING:", CrispySmoothLighting, 0, MENU_NONE},
     {ITT_LRFUNC2, "ENABLE TRANSLUCENCY:", CrispyTranslucency, 0, MENU_NONE},
     {ITT_EMPTY, NULL, NULL, 0, MENU_NONE},
+    {ITT_EMPTY, NULL, NULL, 0, MENU_NONE},
     {ITT_EFUNC, "NEXT PAGE", CrispyNextPage, 0, MENU_NONE},
+    {ITT_EFUNC, "LAST PAGE", CrispyPrevPage, 0, MENU_NONE},
 };
 
 static Menu_t Crispness1Menu = {
     68, 35,
     DrawCrispnessMenu,
-    13, Crispness1Items,
+    15, Crispness1Items,
     0,
     MENU_OPTIONS
 };
@@ -401,13 +408,40 @@ static MenuItem_t Crispness2Items[] = {
     {ITT_LRFUNC2, "WEAPON ATTACK ALIGNMENT:", CrispyCenterWeapon, 0, MENU_NONE},
     {ITT_LRFUNC2, "DEFAULT DIFFICULTY:", CrispyDefaultskill, 0, MENU_NONE},
     {ITT_EMPTY, NULL, NULL, 0, MENU_NONE},
+    {ITT_EFUNC, "NEXT PAGE", CrispyNextPage, 0, MENU_NONE},
     {ITT_EFUNC, "PREV PAGE", CrispyPrevPage, 0, MENU_NONE},
 };
 
 static Menu_t Crispness2Menu = {
     68, 35,
     DrawCrispnessMenu,
-    14, Crispness2Items,
+    15, Crispness2Items,
+    0,
+    MENU_OPTIONS
+};
+
+static MenuItem_t Crispness3Items[] = {
+    {ITT_LRFUNC2, "DRAW CROSSHAIR:", CrispyCrosshair, 0, MENU_NONE},
+    {ITT_LRFUNC2, "CROSSHAIR SHAPE:", CrispyCrosshairShape, 0, MENU_NONE},
+    {ITT_LRFUNC2, "CROSSHAIR COLOR:", CrispyCrosshairColor, 0, MENU_NONE},
+    {ITT_EMPTY, NULL, NULL, 0, MENU_NONE},   
+    {ITT_EMPTY, NULL, NULL, 0, MENU_NONE},
+    {ITT_EMPTY, NULL, NULL, 0, MENU_NONE},
+    {ITT_EMPTY, NULL, NULL, 0, MENU_NONE},
+    {ITT_EMPTY, NULL, NULL, 0, MENU_NONE},
+    {ITT_EMPTY, NULL, NULL, 0, MENU_NONE},
+    {ITT_EMPTY, NULL, NULL, 0, MENU_NONE},
+    {ITT_EMPTY, NULL, NULL, 0, MENU_NONE},
+    {ITT_EMPTY, NULL, NULL, 0, MENU_NONE},
+    {ITT_EMPTY, NULL, NULL, 0, MENU_NONE},
+    {ITT_EFUNC, "FIRST PAGE", CrispyNextPage, 0, MENU_NONE},
+    {ITT_EFUNC, "PREV PAGE", CrispyPrevPage, 0, MENU_NONE},
+};
+
+static Menu_t Crispness3Menu = {
+    68, 35,
+    DrawCrispnessMenu,
+    15, Crispness3Items,
     0,
     MENU_OPTIONS
 };
@@ -415,11 +449,13 @@ static Menu_t Crispness2Menu = {
 static void (*CrispnessMenuDrawers[])(void) = {
     &DrawCrispness1,
     &DrawCrispness2,
+    &DrawCrispness3,
 };
 
 static MenuType_t CrispnessMenus[] = {
     MENU_CRISPNESS1,
     MENU_CRISPNESS2,
+    MENU_CRISPNESS3,
 };
 
 static const multiitem_t multiitem_bobfactor[NUM_BOBFACTORS] =
@@ -476,6 +512,33 @@ static const multiitem_t multiitem_difficulties[NUM_SKILLS] =
     {SKILL_HNTR, "EASY"},
 };
 
+multiitem_t multiitem_he_crosshair[NUM_HE_CROSSHAIRS] =
+{
+    {CROSSHAIR_HE_OFF, "off"},
+    {CROSSHAIR_HE_OPAQUE, "opaque"},
+    {CROSSHAIR_HE_TRANSLUCENT, "translucent"},
+};
+
+multiitem_t multiitem_he_crosshairtype[] =
+{
+    {-1, "none"},
+    {CROSSHAIRTYPE_HE_DOT, "dot"},
+    {CROSSHAIRTYPE_HE_CROSS1, "cross1"},
+    {CROSSHAIRTYPE_HE_CROSS2, "cross2"},
+};
+
+// [crispy] crosshair colors for hexen
+// gold: corresponding with normal hud / crispy hud font
+// white: corresponding with hud messages / providing high visibility
+// red: corresponding with vanilla fullscreen hud font
+multiitem_t multiitem_he_crosshaircolor[] =
+{
+    {-1, "none"},
+    {CROSSHAIRCOLOR_HE_GOLD, "gold"},
+    {CROSSHAIRCOLOR_HE_WHITE, "white"},
+    {CROSSHAIRCOLOR_HE_FSHUD, "red"},
+};
+
 multiitem_t multiitem_translucency[NUM_TRANSLUCENCY] =
 {
     {TRANSLUCENCY_OFF, "OFF"},
@@ -503,6 +566,7 @@ static Menu_t *Menus[] = {
     &MouseMenu,
     &Crispness1Menu,
     &Crispness2Menu,
+    &Crispness3Menu,
 };
 
 // [crispy] intermediate gamma levels
@@ -1814,6 +1878,31 @@ static void CrispyDefaultskill(int option)
     SkillMenu.oldItPos = (crispy->defaultskill + SKILL_HMP) % NUM_SKILLS;
 }
 
+static void CrispyCrosshair(int option)
+{
+    ChangeSettingEnum(&crispy->crosshair, option, NUM_HE_CROSSHAIRS);
+}
+
+static void CrispyCrosshairShape(int option)
+{
+    if (!crispy->crosshair)
+    {
+	    return;
+    }
+
+    ChangeSettingEnum(&crispy->crosshairtype, option, NUM_HE_CROSSHAIRTYPE);
+}
+
+static void CrispyCrosshairColor(int option)
+{
+    if (!crispy->crosshair)
+    {
+	    return;
+    }
+
+    ChangeSettingEnum(&crispy->crosshaircolor, option, NUM_HE_CROSSHAIRCOLOR);
+}
+
 static void CrispyNextPage(int option)
 {
     crispnessmenupage++;
@@ -2983,7 +3072,7 @@ static void DrawCrispnessNumericItem(int item, int x, int y, const char *zero,
 
 static void DrawCrispness1(void)
 {
-    DrawCrispnessHeader("CRISPNESS 1/2");
+    DrawCrispnessHeader("CRISPNESS 1/3");
 
     DrawCrispnessSubheader("RENDERING", 25);
 
@@ -3019,7 +3108,7 @@ static void DrawCrispness1(void)
 
 static void DrawCrispness2(void)
 {
-    DrawCrispnessHeader("CRISPNESS 2/2");
+    DrawCrispnessHeader("CRISPNESS 2/3");
 
     DrawCrispnessSubheader("AUDIBLE", 25);
 
@@ -3051,4 +3140,20 @@ static void DrawCrispness2(void)
 
     // Default difficulty
     DrawCrispnessMultiItem(crispy->defaultskill, 200, 145, multiitem_difficulties, false);
+}
+
+static void DrawCrispness3(void)
+{
+    DrawCrispnessHeader("CRISPNESS 3/3");
+
+    DrawCrispnessSubheader("CROSSHAIR", 25);
+
+    // Crosshair
+    DrawCrispnessMultiItem(crispy->crosshair, 180, 35, multiitem_he_crosshair, false);
+
+    // Crosshair Type
+    DrawCrispnessMultiItem(crispy->crosshairtype+1, 188, 45, multiitem_he_crosshairtype, !crispy->crosshair);
+
+    // Crosshair Color
+    DrawCrispnessMultiItem(crispy->crosshaircolor+1, 185, 55, multiitem_he_crosshaircolor, !crispy->crosshair);
 }
