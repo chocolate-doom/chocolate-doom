@@ -313,14 +313,14 @@ static void S_LevelWeaponSound(mobj_t *origin, int sound_id, int *vol)
             case sfx_gntuse:
             case sfx_gntact:
                 // [crispy] lower gauntlet sfx
-                *vol -= snd_MaxVolume * 3 + (snd_MaxVolume/2+1);
+                *vol -= snd_MaxVolume * 3;
                 break;
             case sfx_blshit:
             case sfx_blssht:
             case sfx_gldhit:
                 // [crispy] lower dragonclaw sfx
                 if (viewplayer->readyweapon == wp_blaster)
-                    *vol -= snd_MaxVolume * 3 + (snd_MaxVolume/2+1);
+                    *vol -= snd_MaxVolume * 3;
                 break;
         }        
     }
