@@ -512,12 +512,12 @@ char *M_TempFile(const char *s)
 	
     // Check the $TMPDIR environment variable to find the location.
 
-    tempdir = getenv("TMPDIR");
+    tempdir = M_getenv("TMPDIR");
 
-	if (tempdir == NULL)
-	{
-		tempdir = "/tmp";
-	}
+    if (tempdir == NULL)
+    {
+        tempdir = "/tmp";
+    }
 #endif
 
     return M_StringJoin(tempdir, DIR_SEPARATOR_S, s, NULL);
