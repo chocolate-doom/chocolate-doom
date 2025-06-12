@@ -514,10 +514,10 @@ char *M_TempFile(const char *s)
 
     tempdir = getenv("TMPDIR");
 
-	if (tempdir == NULL)
-	{
-		tempdir = "/tmp";
-	}
+    if (tempdir == NULL)
+    {
+        tempdir = "/tmp";
+    }
 #endif
 
     return M_StringJoin(tempdir, DIR_SEPARATOR_S, s, NULL);
