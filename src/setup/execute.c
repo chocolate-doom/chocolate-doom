@@ -71,7 +71,7 @@ static char *TempFile(const char *s)
     
     // Check the TEMP environment variable to find the location.
 
-    tempdir = M_getenv("TMPDIR");
+    tempdir = getenv("TMPDIR");
 
     if (tempdir == NULL)
     {
