@@ -509,7 +509,6 @@ char *M_TempFile(const char *s)
         tempdir = ".";
     }
 #else
-	
     // Check the $TMPDIR environment variable to find the location.
 
     tempdir = getenv("TMPDIR");
