@@ -68,9 +68,14 @@ static char *TempFile(const char *s)
         tempdir = ".";
     }
 #else
-    // In Unix, just use /tmp.
+    // Check the $TMPDIR environment variable to find the location.
 
-    tempdir = "/tmp";
+    tempdir = getenv("TMPDIR");
+
+    if (tempdir == NULL)
+    {
+        tempdir = "/tmp";
+    }
 #endif
 
     return M_StringJoin(tempdir, DIR_SEPARATOR_S, s, NULL);
