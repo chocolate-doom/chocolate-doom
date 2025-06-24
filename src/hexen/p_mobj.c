@@ -1701,6 +1701,13 @@ void P_InsertMobjIntoTIDList(mobj_t * mobj, int tid)
     int i;
     int index;
 
+    // [crispy] fix wyvern + porkalator bug
+    if (tid == 0)
+    {
+        fprintf(stderr, "P_InsertMobjIntoTIDList: attempting to insert an mobj with TID 0 into the TID list!\n");
+        return;
+    }
+
     index = -1;
     for (i = 0; TIDList[i] != 0; i++)
     {
