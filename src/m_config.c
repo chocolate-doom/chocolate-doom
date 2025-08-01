@@ -2726,8 +2726,8 @@ char *M_GetSaveGameDir(const char *iwadname)
     //!
     // @arg <directory>
     //
-    // Specify a path from which to load and save games. If the directory
-    // does not exist then it will automatically be created.
+    // Specify a path from which to load and save games.  If the
+    // directory does not exist then it will automatically be created.
     //
 
     p = M_CheckParmWithArgs("-savedir", 1);

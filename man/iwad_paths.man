@@ -1,49 +1,73 @@
-To play, an IWAD file is needed. This is a large file containing all of the
-levels, graphics, sound effects, music and other material that make up the
-game. IWAD files are named according to the game; the standard names are:
+To play, an IWAD file is needed.
+This is a large file containing all of the levels, graphics,
+sound effects, music and other material that make up the game.
+IWAD files are named according to the game; the standard names are:
 .TP
-\fBdoom.wad, doom1.wad, doom2.wad, tnt.wad, plutonia.wad\fR
+.IR doom.wad ,\~\c
+.IR doom1.wad ,\~\c
+.IR doom2.wad ,\~\c
+.IR tnt.wad ,\~\c
+.I plutonia.wad
 Doom, Doom II, Final Doom
 .TP
-\fBheretic.wad, heretic1.wad, hexen.wad, strife1.wad\fR
+.IR heretic.wad ,\~\c
+.IR hexen.wad ,\~\c
+.I strife.wad
 Heretic, Hexen and Strife (commercial Doom engine games).
 .TP
-\fBhacx.wad, chex.wad\fR
+.IR hacx.wad ,\~\c
+.I chex.wad
 Hacx and Chex Quest - more obscure games based on the Doom engine.
 .TP
-\fBfreedm.wad, freedoom1.wad, freedoom2.wad\fR
+.IR freedm.wad ,\~\c
+.IR freedoom1.wad ,\~\c
+.I freedoom2.wad
 The Freedoom open content IWAD files.
 .LP
 The following directory paths are searched in order to find an IWAD:
 .TP
-\fBCurrent working directory\fR
+Current working directory
 Any IWAD files found in the current working directory will be used in
 preference to IWADs found in any other directories.
 .TP
-\fBDOOMWADDIR\fR
-This environment variable can be set to contain a path to a single directory
-in which to look for IWAD files. This environment variable is supported by
-most Doom source ports.
+.I DOOMWADDIR
+This environment variable can be set to contain a path to a single
+directory in which to look for IWAD files.
+This environment variable is supported by most Doom source ports.
 .TP
-\fBDOOMWADPATH\fR
+.I DOOMWADPATH
 This environment variable, if set, can contain a colon-separated list of
 directories in which to look for IWAD files, or alternatively full paths to
 specific IWAD files.
 .TP
-\fB$HOME/.local/share/games/doom\fR
-Writeable directory in the user's home directory. The path can be overridden
-using the \fBXDG_DATA_HOME\fR environment variable (see the XDG Base Directory
-Specification).
+.I $HOME/.local/share/games/doom
+Writeable directory in the user's home directory.
+The path can be overridden using the
+.I \%XDG_DATA_HOME
+environment variable (see the XDG Base Directory Specification).
 .TP
-\fB/usr/local/share/doom, /usr/local/share/games/doom, /usr/share/doom,
-/usr/share/games/doom\fR
-System-wide locations that can be accessed by all users. The path
-\fB/usr/share/games/doom\fR is a standard path that is supported by most
-Doom source ports. These paths can be overridden using the \fBXDG_DATA_DIRS\fR
+.I /usr/local/share/doom
+.TQ
+.I /usr/local/share/games/doom
+.TQ
+.I /usr/share/doom
+.TQ
+.I /usr/share/games/doom
+System-wide locations that can be accessed by all users.
+The path
+.I /usr/share/games/doom
+is a standard path that is supported by most Doom source ports.
+These paths can be overridden using the
+.I \%XDG_DATA_DIRS
 environment variable (see the XDG Base Directory Specification).
 .LP
-The above can be overridden on a one-time basis by using the \fB\-iwad\fR
-command line parameter to provide the path to an IWAD file to use. This
+The above can be overridden on a one-time basis by using the
+.B \-iwad
+command line parameter to provide the path to an IWAD file to use.This
 parameter can also be used to specify the name of a particular IWAD to use
-from one of the above paths. For example, '\fB-iwad doom.wad\fR' will search
-the above paths for the file \fBdoom.wad\fR to use.
+from one of the above paths.
+For example,
+.RB \(lq "\-iwad doom.wad" \(rq
+will search the above paths for the file
+.I doom.wad
+to use.

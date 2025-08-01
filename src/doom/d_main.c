@@ -1805,7 +1805,7 @@ void D_DoomMain (void)
     // @arg <n>
     // @vanilla
     //
-    // Start playing on episode n (1-4)
+    // Start playing episode n (1-4).
     //
 
     p = M_CheckParmWithArgs("-episode", 1);
@@ -1854,7 +1854,7 @@ void D_DoomMain (void)
     // @vanilla
     //
     // Start a game immediately, warping to ExMy (Doom 1) or MAPxy
-    // (Doom 2)
+    // (Doom 2).
     //
 
     p = M_CheckParmWithArgs("-warp", 1);

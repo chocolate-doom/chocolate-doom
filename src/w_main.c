@@ -175,7 +175,9 @@ boolean W_ParseCommandLine(void)
     // @arg <files>
     // @vanilla
     //
-    // Load the specified PWAD files.
+    // Load the specified PWAD files.  Each succeeding argument is
+    // treated as a PWAD file name until one starts with a dash or the
+    // argument list is exhausted.
     //
 
     p = M_CheckParmWithArgs ("-file", 1);

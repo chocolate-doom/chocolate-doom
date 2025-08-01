@@ -1,4 +1,4 @@
-.TH @PROGRAM_SPREFIX@\-@GAME@.cfg 5
+.TH @PROGRAM_SPREFIX@\-@GAME@.cfg 5 2024-01-23 "@PACKAGE_NAME@ @VERSION@"
 .SH NAME
 @PROGRAM_SPREFIX@\-@GAME@.cfg \- @PACKAGE_SHORTNAME@ @GAME_UPPER@ configuration file
 .SH DESCRIPTION
@@ -21,12 +21,8 @@ for editing \fI@PROGRAM_SPREFIX@\-@GAME@.cfg\fR.
 .SH FILE FORMAT
 .PP
 The file format is the same as that used for \fB@CFGFILE@\fR(5).
-.br
-
 @content
-
 .SH SEE ALSO
 \fB@PROGRAM_SPREFIX@\-@GAME@\fR(6),
 \fB@CFGFILE@\fR(5),
 \fB@PROGRAM_SPREFIX@\-@GAME@\-setup\fR(6)
-
