@@ -399,7 +399,7 @@ void D_StartTitle(void)
 =
 = D_CheckRecordFrom
 =
-= -recordfrom <savegame num> <demoname>
+= -recordfrom <save-num> <demo-name>
 ==============
 */
 
@@ -411,10 +411,10 @@ void D_CheckRecordFrom(void)
     //!
     // @vanilla
     // @category demo
-    // @arg <savenum> <demofile>
+    // @arg <save-num> <demo-name>
     //
-    // Record a demo, loading from the given filename. Equivalent
-    // to -loadgame <savenum> -record <demofile>.
+    // Load a game from the given savegame slot and record a demo from
+    // it.  Equivalent to -loadgame <save-num> -record <demo-name>.
 
     p = M_CheckParmWithArgs("-recordfrom", 2);
     if (!p)
@@ -809,7 +809,7 @@ void D_DoomMain(void)
     // @arg <n>
     // @vanilla
     //
-    // Start playing on episode n (1-4)
+    // Start playing episode n (1-4).
     //
 
     p = M_CheckParmWithArgs("-episode", 1);

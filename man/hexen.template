@@ -1,30 +1,32 @@
-.TH @PROGRAM_SPREFIX@\-hexen 6
+.TH @PROGRAM_SPREFIX@\-hexen 6 2017-11-27 "@PACKAGE_NAME@ @VERSION@"
 .SH NAME
 @PROGRAM_SPREFIX@\-hexen \- historically compatible Hexen engine
 .SH SYNOPSIS
 .B @PROGRAM_SPREFIX@\-hexen
-[\fIOPTIONS\fR]
+.RI [ options ]
 .SH DESCRIPTION
 .PP
-@PACKAGE_SHORTNAME@ Hexen is a port of Raven Software's 1995 game "Hexen" that
-aims to behave as similar to the original DOS version of Hexen as
+@PACKAGE_SHORTNAME@ Hexen is a port of Raven Software's 1995 game
+.I Hexen
+that aims to behave as similar to the original DOS version of Hexen as
 possible.
-.br
 @content
 .SH IWAD SEARCH PATHS
 @include iwad_paths.man
 .SH ENVIRONMENT
-This section describes environment variables that control @PACKAGE_SHORTNAME@ Hexen's
-behavior.
+This section describes environment variables that control
+@PACKAGE_SHORTNAME@ Hexen's behavior.
 @include environ.man
 .SH FILES
 .TP
-\fB$HOME/.local/share/@PROGRAM_SPREFIX@\-doom/hexen.cfg\fR
-The main configuration file for @PACKAGE_SHORTNAME@ Hexen.  See \fBhexen.cfg\fR(5).
+.I $HOME/.local/share/@PROGRAM_SPREFIX@\-doom/hexen.cfg
+The main configuration file for @PACKAGE_SHORTNAME@ Hexen.
+See \fBhexen.cfg\fR(5).
 .TP
-\fB$HOME/.local/share/@PROGRAM_SPREFIX@\-doom/@PROGRAM_SPREFIX@\-hexen.cfg\fR
-Extra configuration values that are specific to @PACKAGE_SHORTNAME@ Hexen and not
-present in Vanilla Hexen.  See \fB@PROGRAM_SPREFIX@\-hexen.cfg\fR(5).
+.I $HOME/.local/share/@PROGRAM_SPREFIX@\-doom/@PROGRAM_SPREFIX@\-hexen.cfg
+Extra configuration values that are specific to @PACKAGE_SHORTNAME@
+Hexen and not present in Vanilla Hexen.
+See \fB@PROGRAM_SPREFIX@\-hexen.cfg\fR(5).
 .SH SEE ALSO
 \fB@PROGRAM_SPREFIX@\-doom\fR(6),
 \fB@PROGRAM_SPREFIX@\-heretic\fR(6),
@@ -32,14 +34,14 @@ present in Vanilla Hexen.  See \fB@PROGRAM_SPREFIX@\-hexen.cfg\fR(5).
 \fB@PROGRAM_SPREFIX@\-setup\fR(6)
 .SH AUTHOR
 Chocolate Hexen is part of the Chocolate Doom project, written and
-maintained by Simon Howard. It is based on the Hexen source code,
+maintained by Simon Howard.
+It is based on the Hexen source code,
 released by Raven Software.
 .SH COPYRIGHT
 Copyright \(co id Software Inc.
 Copyright \(co Raven Software Inc.
 Copyright \(co 2005-2013 Simon Howard.
-.br
+.PP
 This is free software.  You may redistribute copies of it under the terms of
 the GNU General Public License <http://www.gnu.org/licenses/gpl.html>.
 There is NO WARRANTY, to the extent permitted by law.
-

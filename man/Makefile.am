@@ -63,7 +63,10 @@ CLEANFILES = $(GENERATED_MAN_PAGES) $(SETUP_MAN_PAGES) \
              $(doomdocs_DATA) $(hereticdocs_DATA) \
              $(hexendocs_DATA) $(strifedocs_DATA)
 DOCGEN = $(srcdir)/docgen
-DOCGEN_COMMON_ARGS = -n "@PROGRAM_SPREFIX@" -s "@PACKAGE_NAME@" -z "@PACKAGE_SHORTNAME@"
+DOCGEN_COMMON_ARGS = -n "@PROGRAM_SPREFIX@" \
+		     -s "@PACKAGE_NAME@" \
+		     -z "@PACKAGE_SHORTNAME@" \
+		     -v "@VERSION@"
 
 @PROGRAM_PREFIX@doom.6: $(top_srcdir)/src $(MANPAGE_GEN_FILES)
 	$(DOCGEN) $(DOCGEN_COMMON_ARGS) \

@@ -1,29 +1,34 @@
-.TH @PROGRAM_SPREFIX@\-@GAME@-setup 6
+.TH @PROGRAM_SPREFIX@\-@GAME@-setup 6 2017-11-30 "@PACKAGE_NAME@ @VERSION@"
 .SH NAME
 @PROGRAM_SPREFIX@\-@GAME@-setup \- configuration tool for @PROGRAM_SPREFIX@\-@GAME@
 .SH SYNOPSIS
 .B @PROGRAM_SPREFIX@\-@GAME@-setup
-[OPTIONS]
+.RI [ options ]
 .SH DESCRIPTION
 .PP
-@PACKAGE_SHORTNAME@ @GAME_UPPER@ is a modern @GAME_UPPER@ engine designed to behave
-as similar to the original @GAME_UPPER@ game as is possible.
+@PACKAGE_SHORTNAME@ @GAME_UPPER@ is a modern @GAME_UPPER@ engine
+designed to behave as similarly to the original @GAME_UPPER@ game as is
+possible.
 .PP
-.B @PROGRAM_SPREFIX@\-@GAME@-setup
-is a tool for configuring @PACKAGE_SHORTNAME@ @GAME_UPPER@. It provides a menu\-based
-interface for the display, joystick, keyboard, mouse, sound and
-compatibility settings.
+.I @PROGRAM_SPREFIX@\-@GAME@-setup
+is a tool for configuring @PACKAGE_SHORTNAME@ @GAME_UPPER@.
+It provides a menu-based interface for the display, joystick, keyboard,
+mouse, sound and compatibility settings.
 .PP
-.B @PROGRAM_SPREFIX@\-@GAME@-setup
+.I @PROGRAM_SPREFIX@\-@GAME@-setup
 can also be used to start and join network games.
 .PP
 .SH OPTIONS
 .TP
-\fB-config <file>\fR
-Load configuration from the specified file, instead of @CFGFILE@.
+.BI \-config\~ file
+Load configuration from the specified file,
+instead of
+.IR @CFGFILE@ .
 .TP
-\fB-extraconfig <file>\fR
-Load extra configuration from the specified file, instead of @PROGRAM_SPREFIX@\-@GAME@.cfg. 
+.BI \-extraconfig\~ file
+Load extra configuration from the specified file,
+instead of
+.IR @PROGRAM_SPREFIX@\-@GAME@.cfg .
 .SH SEE ALSO
 \fB@PROGRAM_SPREFIX@\-@GAME@\fR(6),
 \fBdefault.cfg\fR(5),
@@ -35,8 +40,7 @@ This manual was written by Jonathan Dowland.
 .SH COPYRIGHT
 Copyright \(co id Software Inc.
 Copyright \(co 2005-8 Simon Howard.
-.br
+.PP
 This is free software.  You may redistribute copies of it under the terms of
 the GNU General Public License <http://www.gnu.org/licenses/gpl.html>.
 There is NO WARRANTY, to the extent permitted by law.
-

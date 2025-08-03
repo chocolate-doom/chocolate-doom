@@ -286,12 +286,12 @@ void M_FindResponseFile(void)
     for (;;)
     {
         //!
-        // @arg <filename>
+        // @arg <file>
         //
-        // Load extra command line arguments from the given response file.
-        // Arguments read from the file will be inserted into the command
-        // line replacing this argument. A response file can also be loaded
-        // using the abbreviated syntax '@filename.rsp'.
+        // Load extra command-line arguments from the given response
+        // file.  Arguments read from the file are inserted into the
+        // command line, replacing this argument.  A response file can
+        // also be loaded using the abbreviated syntax '@file.rsp'.
         //
         i = M_CheckParmWithArgs("-response", 1);
         if (i <= 0)

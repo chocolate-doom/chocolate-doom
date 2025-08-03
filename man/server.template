@@ -1,39 +1,43 @@
-.TH @PROGRAM_SPREFIX@\-server 6
+.TH @PROGRAM_SPREFIX@\-server 6 2018-01-15 "@PACKAGE_NAME@ @VERSION@"
 .SH NAME
 @PROGRAM_SPREFIX@\-server \- dedicated server for @PROGRAM_SPREFIX@\-doom
 .SH SYNOPSIS
 .B @PROGRAM_SPREFIX@\-server
-[OPTIONS]
+.RI [ options ]
 .SH DESCRIPTION
 .PP
-@PACKAGE_NAME@ is a modern doom engine designed to behave
-as similar to the original doom game as is possible.
+@PACKAGE_NAME@ is a modern Doom engine designed to behave
+as similarly to the original Doom game as is possible.
 .PP
-.B @PROGRAM_SPREFIX@\-server
-is a dedicated server for @PACKAGE_SHORTNAME@. It is equivalent to 
-running 
-.B @PROGRAM_SPREFIX@\-doom
-with the "\-dedicated" option.
+.I \%@PROGRAM_SPREFIX@\-server
+is a dedicated server for @PACKAGE_SHORTNAME@.
+It is equivalent to running
+\fB@PROGRAM_SPREFIX@-doom\fR(6)
+with the
+.B \%\-dedicated
+option.
 .PP
 Game options are not specified to the server, which merely acts to
 retransmit data between players in the game; parameters for the
 game should be specified by the first player to connect to the server,
 who is designated the controlling player.
-.br
 .SH OPTIONS
 .TP
-\fB-ignoreversion\fR
-Ignore version mismatches between the server and the client. Using this
-option may cause game desyncs to occur, or differences in protocol may
-mean the netgame will simply not function at all. 
+.B \-ignoreversion
+Ignore version mismatches between the server and the client.
+Using this option may cause game desyncs to occur,
+or differences in protocol may mean the netgame will simply not function
+at all.
 .TP
-\fB-port <n>\fR
-Use the specified UDP port for communications, instead of the default (2342). 
+.BI \-port\~ n
+Use UDP port
+.I n
+for communications instead of the default (2342).
 .TP
-\fB-privateserver\fR
+.B \-privateserver
 Don't register with the global master server.
 .TP
-\fB-servername <name>\fR
+.BI \-servername\~ name
 Specify a name for the server.
 .SH SEE ALSO
 \fB@PROGRAM_SPREFIX@-doom\fR(6),
@@ -45,8 +49,7 @@ This manual was written by Jonathan Dowland.
 .SH COPYRIGHT
 Copyright \(co id Software Inc.
 Copyright \(co 2005-8 Simon Howard.
-.br
+.PP
 This is free software.  You may redistribute copies of it under the terms of
 the GNU General Public License <http://www.gnu.org/licenses/gpl.html>.
 There is NO WARRANTY, to the extent permitted by law.
-

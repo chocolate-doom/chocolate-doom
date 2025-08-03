@@ -241,14 +241,26 @@ class Parameter:
             return ""
 
     def manpage_output(self):
-        result = self.name
-
         if self.args:
-            result += " " + self.args
-
-        result = '\\fB' + result + '\\fR'
-
-        result += "\n"
+            # Special cases -- GBR is not proud.
+            if self.args == "[<x> <y> | <xy>]":
+                result = ".BR " + self.name + " \\~\\c\n" \
+                    + ".RI [ x\~y | xy ]\n"
+            elif self.args == "<WxH>":
+                result = ".BI " + self.name + "\\~ W x H\n"
+            elif self.args == "<x> <y>":
+                result = ".BI " + self.name + "\\~ \"x y\"\n"
+            elif self.args == "<files>":
+                result = ".BI " + self.name + "\\~ \"file\\~\c\n" \
+                    + "\\&.\\|.\\|.\n"
+            elif self.args == "<save-num> <demo-name>":
+                result = ".BI " + self.name \
+                    + "\\~ \"save-num demo-name\"\n"
+            else:
+                self.args = re.sub(r'[<>]', '', self.args)
+                result = ".BI " + self.name + "\\~ " + self.args + "\n"
+        else:
+            result = ".B " + self.name + "\n"
 
         if self.platform:
             result += "[%s only] " % self.platform
@@ -491,7 +503,7 @@ def manpage_output(targets, substs, template_file):
     content = ""
 
     for t in targets:
-        content += t.manpage_output() + "\n"
+        content += t.manpage_output()
 
     content = content.replace("-", "\\-")
 
@@ -536,6 +548,7 @@ def usage():
     print("         (matches the given tag name in the source file)")
     print("   -s :  Package name, e.g. Chocolate Doom (for substitution)")
     print("   -z :  Package short-name, e.g. Chocolate (for substitution)")
+    print("   -v :  Package version, e.g. 7.0 (for substitution)")
     print("   -n :  Program name, e.g. chocolate (for substitution)")
     print("   -M :  Markdown output")
     print("   -m :  Manpage output")
@@ -548,7 +561,7 @@ def usage():
 
 # Parse command line
 
-opts, args = getopt.getopt(sys.argv[1:], "n:s:z:M:m:wp:b:c:g:V")
+opts, args = getopt.getopt(sys.argv[1:], "n:s:z:v:M:m:wp:b:c:g:V")
 
 output_function = None
 template = None
@@ -563,6 +576,8 @@ for opt in opts:
         substs["@PACKAGE_NAME@"] = opt[1]
     if opt[0] == "-z":
         substs["@PACKAGE_SHORTNAME@"] = opt[1]
+    if opt[0] == "-v":
+        substs["@VERSION@"] = opt[1]
     if opt[0] == "-m":
         output_function = manpage_output
         template = opt[1]
