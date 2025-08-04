@@ -8,9 +8,16 @@
       * Fixes problems with postfix "." for non-relative paths.
       * Support for long NTFS paths (up to 32768 characters).
   * Fixed metainfo files for latest AppStream spec compliance (thanks Fabian).
+  * Add option to enable or disable smooth pixel scaling (thanks StevenSYS).
+  * Allow spaces in GUS patch folder path (thanks Michael Day).
+  * Add support for non-US backslash key (thanks Michael Day).
+  * Never let SDL Mixer use native midi on Windows (thanks Michael Day).
+  * Use $TMPDIR to find tempdir on Unix (thanks Mr. Myth).
+  * Improve man page formatting (thanks g-branden-robinson).
 
 ### Build systems
   * Can now be built with Emscripten (thanks James Baicoianu).
+  * Misc. improvements (thanks suve, Emmanuel Ferdman, Gabriele Simoni, et al.)
 
 ### Setup
   * Use correct EGA palette colors (thanks Henrique Jorge).
@@ -25,6 +32,7 @@
   * Fix crash with Heresiarch fireballs if player has never touched a wall (thank Noseey).
 
 ### Strife
+  * Initialize floor->type and floor->crush fields in EV_BuildStairs() (thanks Fabian).
 
 ## 3.1.0 (2024-08-01)
 
