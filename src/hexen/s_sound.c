@@ -416,7 +416,7 @@ void S_StartSoundAtVolume(mobj_t * origin, int sound_id, int volume)
     #endif
     for (i = 0; i < snd_Channels; i++)
     {
-        if (origin->player)
+        if (origin->thinker.function != P_DegenMobjThinker && origin->player)
         {
             i = snd_Channels;
             break;              // let the player have more than one sound.
