@@ -20,11 +20,7 @@
 #ifndef __P_REJECTPAD__
 #define __P_REJECTPAD__
 
-#include <stdio.h>
-#include <string.h>
-
 #include "doomtype.h"
-#include "m_argv.h"
 
 // Padding of Reject Lump
 void PadRejectArray(byte *array, unsigned int len, int totallines);
