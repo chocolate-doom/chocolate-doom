@@ -105,6 +105,7 @@ net_query.c          net_query.h           \
 net_sdl.c            net_sdl.h             \
 net_server.c         net_server.h          \
 net_structrw.c       net_structrw.h        \
+p_rejectpad.C        p_rejectpad.h         \
 sha1.c               sha1.h                \
 memio.c              memio.h               \
 tables.c             tables.h              \
