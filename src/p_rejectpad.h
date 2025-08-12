@@ -21,6 +21,7 @@
 #define __P_REJECTPAD__
 
 #include <stdio.h>
+#include <string.h>
 
 #include "doomtype.h"
 #include "m_argv.h"
