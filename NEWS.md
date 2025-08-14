@@ -1,4 +1,4 @@
-## 3.1.1 (2025-??-??)
+## 3.1.1 (2025-08-14)
 
 ### General
   * Fix compilation on GCC 15 (thanks Fabian).
