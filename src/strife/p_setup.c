@@ -35,6 +35,7 @@
 
 #include "doomdef.h"
 #include "p_local.h"
+#include "p_rejectpad.h"
 
 #include "s_sound.h"
 
@@ -656,62 +657,6 @@ void P_GroupLines (void)
 	
 }
 
-// Pad the REJECT lump with extra data when the lump is too small,
-// to simulate a REJECT buffer overflow in Vanilla Doom.
-
-static void PadRejectArray(byte *array, unsigned int len)
-{
-    unsigned int i;
-    unsigned int byte_num;
-    byte *dest;
-    unsigned int padvalue;
-
-    // Values to pad the REJECT array with:
-
-    unsigned int rejectpad[4] =
-    {
-        0,                                    // Size
-        0,                                    // Part of z_zone block header
-        50,                                   // PU_LEVEL
-        0x1d4a11                              // DOOM_CONST_ZONEID
-    };
-
-    rejectpad[0] = ((totallines * 4 + 3) & ~3) + 24;
-
-    // Copy values from rejectpad into the destination array.
-
-    dest = array;
-
-    for (i=0; i<len && i<sizeof(rejectpad); ++i)
-    {
-        byte_num = i % 4;
-        *dest = (rejectpad[i / 4] >> (byte_num * 8)) & 0xff;
-        ++dest;
-    }
-
-    // We only have a limited pad size.  Print a warning if the
-    // REJECT lump is too small.
-
-    if (len > sizeof(rejectpad))
-    {
-        fprintf(stderr,
-                "PadRejectArray: REJECT lump too short to pad! (%u > %i)\n",
-                len, (int) sizeof(rejectpad));
-
-        // Pad remaining space with 0 (or 0xff, if specified on command line).
-
-        if (M_CheckParm("-reject_pad_with_ff"))
-        {
-            padvalue = 0xff;
-        }
-        else
-        {
-            padvalue = 0xf00;
-        }
-
-        memset(array + sizeof(rejectpad), padvalue, len - sizeof(rejectpad));
-    }
-}
 
 static void P_LoadReject(int lumpnum)
 {
@@ -737,7 +682,7 @@ static void P_LoadReject(int lumpnum)
         rejectmatrix = Z_Malloc(minlength, PU_LEVEL, &rejectmatrix);
         W_ReadLump(lumpnum, rejectmatrix);
 
-        PadRejectArray(rejectmatrix + lumplen, minlength - lumplen);
+        PadRejectArray(rejectmatrix + lumplen, minlength - lumplen, totallines);
     }
 }
 
