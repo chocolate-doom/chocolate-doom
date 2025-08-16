@@ -576,6 +576,12 @@ void P_LoadBlockMap(int lump)
 =================
 */
 
+void P_DegenMobjThinker(thinker_t *thinker)
+{
+  (void) thinker;
+  // no-op
+}
+
 void P_GroupLines(void)
 {
     line_t **linebuffer;
@@ -632,6 +638,7 @@ void P_GroupLines(void)
         // set the degenmobj_t to the middle of the bounding box
         sector->soundorg.x = (bbox[BOXRIGHT] + bbox[BOXLEFT]) / 2;
         sector->soundorg.y = (bbox[BOXTOP] + bbox[BOXBOTTOM]) / 2;
+        sector->soundorg.thinker.function = (think_t) P_DegenMobjThinker;
 
         // adjust bounding box to map blocks
         block = (bbox[BOXTOP] - bmaporgy + MAXRADIUS) >> MAPBLOCKSHIFT;
