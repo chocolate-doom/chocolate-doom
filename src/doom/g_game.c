@@ -2291,6 +2291,10 @@ void G_DoPlayDemo (void)
         fastparm = 0;
         nomonsters = 0;
         consoleplayer = 0;
+
+        // Ability to force -nomonsters and -respawn for playback of v1.2 demos
+        respawnparm = M_CheckParm("-respawn");
+        nomonsters = M_CheckParm("-nomonsters");
     }
     
         
