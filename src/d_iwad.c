@@ -273,6 +273,11 @@ static char *steam_install_subdirs[] =
 
     "steamapps\\common\\DOOM 3 BFG Edition\\base\\wads",
 
+    // From Heretic + Hexen Rerelease:
+
+    "steamapps\\common\\Heretic + Hexen\\dos\\base\\heretic",
+    "steamapps\\common\\Heretic + Hexen\\dos\\base\\hexen",
+
     // From Strife: Veteran Edition:
 
     "steamapps\\common\\Strife",
@@ -719,6 +724,8 @@ static void AddSteamDirs(void)
     AddIWADPath(steampath, "/Heretic Shadow of the Serpent Riders/base");
     AddIWADPath(steampath, "/Hexen/base");
     AddIWADPath(steampath, "/Hexen Deathkings of the Dark Citadel/base");
+    AddIWADPath(steampath, "/Heretic + Hexen/dos/base/heretic");
+    AddIWADPath(steampath, "/Heretic + Hexen/dos/base/hexen");
     AddIWADPath(steampath, "/Strife");
     free(steampath);
 }
