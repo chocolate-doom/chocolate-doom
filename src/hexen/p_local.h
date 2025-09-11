@@ -152,6 +152,7 @@ void P_ThrustMobj(mobj_t * mo, angle_t angle, fixed_t move);
 int P_FaceMobj(mobj_t * source, mobj_t * target, angle_t * delta);
 boolean P_SeekerMissile(mobj_t * actor, angle_t thresh, angle_t turnMax);
 void P_MobjThinker(thinker_t *thinker);
+void P_DegenMobjThinker(thinker_t *thinker);
 void P_BlasterMobjThinker(thinker_t *thinker);
 void P_SpawnPuff(fixed_t x, fixed_t y, fixed_t z);
 void P_SpawnBlood(fixed_t x, fixed_t y, fixed_t z, int damage);
