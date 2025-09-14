@@ -579,7 +579,7 @@ void P_LoadBlockMap(int lump)
 void P_DegenMobjThinker(thinker_t *thinker)
 {
   (void) thinker;
-  // no-op
+  I_Error("This function should never get called.");
 }
 
 void P_GroupLines(void)
