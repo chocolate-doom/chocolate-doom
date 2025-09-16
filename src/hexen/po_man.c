@@ -1449,6 +1449,7 @@ void PO_Init(int lump)
         {                       // Polyobj StartSpot Pt.
             polyobjs[polyIndex].startSpot.x = spawnthing.x << FRACBITS;
             polyobjs[polyIndex].startSpot.y = spawnthing.y << FRACBITS;
+            polyobjs[polyIndex].startSpot.thinker.function = (think_t) P_DegenMobjThinker;
             SpawnPolyobj(polyIndex, spawnthing.angle,
                          (spawnthing.type == PO_SPAWNCRUSH_TYPE));
             polyIndex++;

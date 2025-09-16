@@ -416,7 +416,11 @@ void S_StartSoundAtVolume(mobj_t * origin, int sound_id, int volume)
     #endif
     for (i = 0; i < snd_Channels; i++)
     {
-        if (origin->player)
+        // The origin pointer may point to an object of type degenmobj_t
+        // (i.e. sector_t.soundorg and polyobj_t.startSpot) which does not have
+        // a player element. Thus the origin->player pointer may point to
+        // random memory which most likely evaluates to true.
+        if (origin->thinker.function == P_DegenMobjThinker || origin->player)
         {
             i = snd_Channels;
             break;              // let the player have more than one sound.
