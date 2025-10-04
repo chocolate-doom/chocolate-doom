@@ -1398,7 +1398,7 @@ void P_SpawnSpecials (void)
 {
     sector_t*	sector;
     int		i;
-    short maxlineanims = gameversion <= exe_doom_1_2 ? MAXLINEANIMS1_2
+    short maxlineanims = (gameversion <= exe_doom_1_2) ? MAXLINEANIMS1_2
         : MAXLINEANIMS;
 
     // See if -TIMER was specified.
