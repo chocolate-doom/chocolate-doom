@@ -182,9 +182,9 @@ static DIR *__internal_opendir(wchar_t *wname, int size)
 {
     struct __dir *data = NULL;
     struct dirent *tmp_entries = NULL;
-    static wchar_t *suffix = L"*.*";
+    static wchar_t *suffix = L"\\*.*";
     static int extra_prefix = 4; /* use prefix "\\?\" to handle long file names */
-    static int extra_suffix = 3; /* use suffix "*.*" to find everything */
+    static int extra_suffix = 4; /* use suffix "\*.*" to find everything */
     WIN32_FIND_DATAW w32fd = {0};
     HANDLE hFindFile = INVALID_HANDLE_VALUE;
     static int grow_factor = 2;
@@ -330,19 +330,12 @@ DIR *opendir(const char *name)
         free(wname);
         return NULL;
     }
-    /* Add on a slash if the path does not end with one. */
+    /* Ensure path has no trailing backslash before __internal_opendir. */
     /* Mind that size includes NULL, thus -2 for last character. */
-    if (wname[size+4-2] != L'\\')
+    if (wname[size+4-2] == L'\\')
     {
-        if (PathAddBackslashW(wname))
-        {
-            size++;
-        }
-        else
-        {
-            free(wname);
-            return NULL;
-        }
+        wname[size+4-2] = 0;
+        size--;
     }
     dirp = __internal_opendir(wname, size + 4);
     free(wname);
