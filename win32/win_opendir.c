@@ -330,6 +330,13 @@ DIR *opendir(const char *name)
         free(wname);
         return NULL;
     }
+    /* Ensure path has no trailing backslash before __internal_opendir. */
+    /* Mind that size includes NULL, thus -2 for last character. */
+    if (wname[size+4-2] == L'\\')
+    {
+        wname[size+4-2] = 0;
+        size--;
+    }
     dirp = __internal_opendir(wname, size + 4);
     free(wname);
     return dirp;
