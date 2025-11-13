@@ -370,7 +370,7 @@ void D_BindVariables(void)
     {
         char buf[12];
 
-        chat_macros[i] = M_StringDuplicate(chat_macro_defaults[i]);
+        chat_macros[i] = Z_StringCopy(chat_macro_defaults[i], PU_STATIC);
         M_snprintf(buf, sizeof(buf), "chatmacro%i", i);
         M_BindStringVariable(buf, &chat_macros[i]);
     }
