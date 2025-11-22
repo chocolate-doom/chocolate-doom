@@ -473,8 +473,15 @@ void NET_WriteWaitData(net_packet_t *packet, net_waitdata_t *data)
     {
         NET_WriteString(packet, data->player_names[i]);
         
-        if (M_CheckParm("-privateserver"))
+        if (M_CheckParm("-privateserver")) 
+        {
+            NET_WriteString(packet, "");
+        } 
+        else 
+        {
             NET_WriteString(packet, data->player_addrs[i]);
+        }
+
     }
 
     NET_WriteSHA1Sum(packet, data->wad_sha1sum);
