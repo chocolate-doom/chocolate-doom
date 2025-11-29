@@ -73,17 +73,18 @@ Make it look like an expert explaining the concept on a whiteboard.
 
 ### Step 4: Generate the Image
 
-Run the visualization script:
+Run the visualization script with a descriptive filename based on the topic:
 
 ```bash
-export REPLICATE_API_TOKEN="your_token_here"
-uv run .claude/skills/whiteboard-visualizer/scripts/visualize_concept.py "YOUR CRAFTED PROMPT" --output concept_name.png
+uv run .claude/skills/whiteboard-visualizer/scripts/visualize_concept.py "YOUR CRAFTED PROMPT" --output topic_name_explained.png
 ```
+
+**Output naming convention:** Use `{topic}_explained.png` (e.g., `bsp_rendering_explained.png`, `hash_table_explained.png`). This saves in the current directory (repo root).
 
 Or for longer prompts, use a file:
 
 ```bash
-uv run .claude/skills/whiteboard-visualizer/scripts/visualize_concept.py --prompt-file /tmp/my_prompt.txt --output diagram.png
+uv run .claude/skills/whiteboard-visualizer/scripts/visualize_concept.py --prompt-file /tmp/my_prompt.txt --output topic_name_explained.png
 ```
 
 ## Prompt Crafting Guidelines
@@ -157,7 +158,7 @@ Make it look like a game developer explaining on a whiteboard.
 
 **Step 4 - Generate:**
 ```bash
-uv run .claude/skills/whiteboard-visualizer/scripts/visualize_concept.py "Create a whiteboard-style..." --output bsp.png
+uv run .claude/skills/whiteboard-visualizer/scripts/visualize_concept.py "Create a whiteboard-style..." --output bsp_rendering_explained.png
 ```
 
 ## Tips

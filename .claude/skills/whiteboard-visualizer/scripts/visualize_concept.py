@@ -85,7 +85,7 @@ Visual Style:
 
 def generate_visualization(
     prompt: str,
-    output_path: str = "whiteboard_diagram.png",
+    output_path: str = "whiteboard_visualization.png",
     aspect_ratio: str = "16:9",
     auto_style: bool = True
 ) -> str:
@@ -117,25 +117,45 @@ def generate_visualization(
             }
         )
 
-        # Handle different output formats
-        if isinstance(output, str):
-            image_url = output
+        # Handle different output formats from Replicate
+        # Modern replicate returns FileOutput objects with .read() method
+        if hasattr(output, 'read'):
+            # FileOutput object - use read() to get bytes
+            print(f"Downloading image from Replicate...")
+            image_data = output.read()
+            Path(output_path).write_bytes(image_data)
+        elif isinstance(output, bytes):
+            # Direct binary output
+            print(f"Received image data directly...")
+            Path(output_path).write_bytes(output)
+        elif isinstance(output, str):
+            # URL to download
+            print(f"Downloading image from URL...")
+            response = httpx.get(output, timeout=60.0)
+            response.raise_for_status()
+            Path(output_path).write_bytes(response.content)
         elif hasattr(output, '__iter__'):
             output_list = list(output)
-            image_url = output_list[0] if output_list else None
+            if not output_list:
+                print("Error: No output received from model")
+                sys.exit(1)
+            first_output = output_list[0]
+            if hasattr(first_output, 'read'):
+                # FileOutput object
+                print(f"Downloading image from Replicate...")
+                image_data = first_output.read()
+                Path(output_path).write_bytes(image_data)
+            elif isinstance(first_output, bytes):
+                print(f"Received image data directly...")
+                Path(output_path).write_bytes(first_output)
+            else:
+                print(f"Downloading image from URL...")
+                response = httpx.get(str(first_output), timeout=60.0)
+                response.raise_for_status()
+                Path(output_path).write_bytes(response.content)
         else:
-            image_url = str(output)
-
-        if not image_url:
-            print("Error: No output received from model")
+            print("Error: Unexpected output format from model")
             sys.exit(1)
-
-        # Download the image
-        print(f"Downloading image...")
-        response = httpx.get(image_url, timeout=60.0)
-        response.raise_for_status()
-
-        Path(output_path).write_bytes(response.content)
         print(f"Saved to: {output_path}")
 
         return output_path
@@ -189,8 +209,8 @@ Prompt Tips:
     )
     parser.add_argument(
         "--output", "-o",
-        default="whiteboard_diagram.png",
-        help="Output filename (default: whiteboard_diagram.png)"
+        default="whiteboard_visualization.png",
+        help="Output filename (default: whiteboard_visualization.png in current directory)"
     )
     parser.add_argument(
         "--aspect", "-a",
