@@ -162,7 +162,7 @@ export REPLICATE_API_TOKEN="your_token_here"
 
 4. **Claude runs the visualization script:**
 ```bash
-uvx .claude/skills/whiteboard-visualizer/scripts/visualize_concept.py "Create a whiteboard diagram showing..." -o bsp.png
+uv run .claude/skills/whiteboard-visualizer/scripts/visualize_concept.py "Create a whiteboard diagram showing..." -o bsp.png
 ```
 
 **Example prompts to try:**
@@ -176,7 +176,7 @@ uvx .claude/skills/whiteboard-visualizer/scripts/visualize_concept.py "Create a 
 - **Agent-driven**: Claude researches before visualizing
 - **General purpose**: Works with any codebase, not just Doom
 - **Uses Nano Banana Pro**: Google's state-of-the-art image model via Replicate
-- **No install needed**: uvx handles dependencies automatically
+- **No install needed**: `uv run` handles inline dependencies automatically
 
 ### Part 7: Three.js Preview (5 min)
 
@@ -284,7 +284,7 @@ Physics constants. Gravity, friction, collision.
 **General-purpose** AI whiteboard diagram generator. Claude first researches
 the topic (codebase + web), then crafts an optimized prompt for Nano Banana Pro.
 Works with any codebase, not just Doom!
-Script: `uvx .claude/skills/whiteboard-visualizer/scripts/visualize_concept.py "<prompt>" -o output.png`
+Script: `uv run .claude/skills/whiteboard-visualizer/scripts/visualize_concept.py "<prompt>" -o output.png`
 
 ### doom-to-threejs
 Data extraction for web recreation. Level geometry, colors, sprites.

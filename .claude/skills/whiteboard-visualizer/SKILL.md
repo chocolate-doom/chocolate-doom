@@ -77,13 +77,13 @@ Run the visualization script:
 
 ```bash
 export REPLICATE_API_TOKEN="your_token_here"
-uvx .claude/skills/whiteboard-visualizer/scripts/visualize_concept.py "YOUR CRAFTED PROMPT" --output concept_name.png
+uv run .claude/skills/whiteboard-visualizer/scripts/visualize_concept.py "YOUR CRAFTED PROMPT" --output concept_name.png
 ```
 
 Or for longer prompts, use a file:
 
 ```bash
-uvx .claude/skills/whiteboard-visualizer/scripts/visualize_concept.py --prompt-file /tmp/my_prompt.txt --output diagram.png
+uv run .claude/skills/whiteboard-visualizer/scripts/visualize_concept.py --prompt-file /tmp/my_prompt.txt --output diagram.png
 ```
 
 ## Prompt Crafting Guidelines
@@ -157,7 +157,7 @@ Make it look like a game developer explaining on a whiteboard.
 
 **Step 4 - Generate:**
 ```bash
-uvx .claude/skills/whiteboard-visualizer/scripts/visualize_concept.py "Create a whiteboard-style..." --output bsp.png
+uv run .claude/skills/whiteboard-visualizer/scripts/visualize_concept.py "Create a whiteboard-style..." --output bsp.png
 ```
 
 ## Tips

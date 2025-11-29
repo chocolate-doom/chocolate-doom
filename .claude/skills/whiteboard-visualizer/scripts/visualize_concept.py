@@ -14,17 +14,17 @@ after researching a topic.
 
 Usage:
     # Direct prompt (for short prompts)
-    uvx scripts/visualize_concept.py "Create a whiteboard diagram of..."
+    uv run visualize_concept.py "Create a whiteboard diagram of..."
 
     # From file (for longer, detailed prompts)
-    uvx scripts/visualize_concept.py --prompt-file /tmp/my_prompt.txt
+    uv run visualize_concept.py --prompt-file /tmp/my_prompt.txt
 
     # Specify output
-    uvx scripts/visualize_concept.py "..." --output my_diagram.png
+    uv run visualize_concept.py "..." --output my_diagram.png
 
     # Different aspect ratios
-    uvx scripts/visualize_concept.py "..." --aspect 1:1
-    uvx scripts/visualize_concept.py "..." --aspect 9:16  # vertical
+    uv run visualize_concept.py "..." --aspect 1:1
+    uv run visualize_concept.py "..." --aspect 9:16  # vertical
 
 Requires REPLICATE_API_TOKEN environment variable.
 Get your token at: https://replicate.com/account/api-tokens
