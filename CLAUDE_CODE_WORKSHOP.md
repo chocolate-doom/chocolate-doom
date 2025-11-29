@@ -19,7 +19,7 @@ Chocolate Doom is the perfect showcase for AI-assisted coding:
 
 ## Skills Available
 
-We've created 7 specialized skills for this workshop:
+We've created 8 specialized skills for this workshop:
 
 | Skill | Purpose | Fun Factor |
 |-------|---------|------------|
@@ -27,6 +27,7 @@ We've created 7 specialized skills for this workshop:
 | `doom-weapon-forge` | Create overpowered weapons | ⭐⭐⭐⭐⭐ |
 | `doom-monster-tuner` | Adjust enemy difficulty | ⭐⭐⭐⭐ |
 | `doom-physics-lab` | Moon gravity, ice physics | ⭐⭐⭐⭐ |
+| `doom-visualizer` | AI whiteboard diagrams | ⭐⭐⭐⭐⭐ |
 | `doom-to-threejs` | Export data for web recreation | ⭐⭐⭐ |
 | `doom-map-analyzer` | Understand level structure | ⭐⭐⭐ |
 | `doom-explainer` | Learn engine architecture | ⭐⭐ |
@@ -135,7 +136,48 @@ damage = 5*(P_Random()%3+1);  // 5-15 damage, change to 500!
 #define FRICTION        (0xe800)      // ~0.9 - change to 0xf800 for ice
 ```
 
-### Part 6: Three.js Preview (5 min)
+### Part 6: AI Visualization Demo (10 min)
+
+**Goal:** Generate whiteboard-style diagrams of Doom concepts using Nano Banana Pro
+
+**Setup (one-time):**
+```bash
+export REPLICATE_API_TOKEN="your_token_here"
+```
+
+**Generate diagrams with uvx (no install needed!):**
+```bash
+# List available concepts
+uvx scripts/visualize_concept.py --list
+
+# Generate BSP algorithm explanation
+uvx scripts/visualize_concept.py bsp
+
+# Generate game loop diagram
+uvx scripts/visualize_concept.py game-loop
+
+# Custom topic
+uvx scripts/visualize_concept.py "how Doom renders sprites"
+```
+
+**Available predefined concepts:**
+- `bsp` - Binary Space Partitioning
+- `fixed-point` - 16.16 math system
+- `game-loop` - Main loop architecture
+- `monster-ai` - AI state machine
+- `rendering` - 2.5D pipeline
+- `wad` - WAD file format
+- `collision` - Blockmap collision
+- `thinkers` - Update system
+- `codebase` - Source organization
+
+**Key talking points:**
+- Uses Google's Nano Banana Pro model via Replicate API
+- Prompts optimized for whiteboard-style educational diagrams
+- Great for explaining complex concepts visually
+- Can generate custom diagrams for any topic
+
+### Part 7: Three.js Preview (5 min)
 
 **Goal:** Show cross-technology potential
 
@@ -236,6 +278,11 @@ Enemy stats. Health, speed, damage, behavior flags.
 
 ### doom-physics-lab
 Physics constants. Gravity, friction, collision.
+
+### doom-visualizer
+AI-powered whiteboard diagrams using Nano Banana Pro via Replicate.
+Generates educational visualizations of BSP, game loop, AI states, etc.
+Run with: `uvx scripts/visualize_concept.py <concept>`
 
 ### doom-to-threejs
 Data extraction for web recreation. Level geometry, colors, sprites.
