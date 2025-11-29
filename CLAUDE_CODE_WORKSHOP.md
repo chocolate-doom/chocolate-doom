@@ -27,7 +27,7 @@ We've created 8 specialized skills for this workshop:
 | `doom-weapon-forge` | Create overpowered weapons | ⭐⭐⭐⭐⭐ |
 | `doom-monster-tuner` | Adjust enemy difficulty | ⭐⭐⭐⭐ |
 | `doom-physics-lab` | Moon gravity, ice physics | ⭐⭐⭐⭐ |
-| `doom-visualizer` | AI whiteboard diagrams | ⭐⭐⭐⭐⭐ |
+| `whiteboard-visualizer` | AI whiteboard diagrams (general) | ⭐⭐⭐⭐⭐ |
 | `doom-to-threejs` | Export data for web recreation | ⭐⭐⭐ |
 | `doom-map-analyzer` | Understand level structure | ⭐⭐⭐ |
 | `doom-explainer` | Learn engine architecture | ⭐⭐ |
@@ -138,44 +138,45 @@ damage = 5*(P_Random()%3+1);  // 5-15 damage, change to 500!
 
 ### Part 6: AI Visualization Demo (10 min)
 
-**Goal:** Generate whiteboard-style diagrams of Doom concepts using Nano Banana Pro
+**Goal:** Show how Claude can research a concept and generate a whiteboard-style diagram
 
 **Setup (one-time):**
 ```bash
 export REPLICATE_API_TOKEN="your_token_here"
 ```
 
-**Generate diagrams with uvx (no install needed!):**
+**The Agent Workflow:**
+
+1. **Ask Claude to visualize a concept:**
+> "Create a whiteboard visualization explaining how BSP rendering works in this codebase"
+
+2. **Claude researches first:**
+   - Searches codebase for BSP-related code
+   - Reads `r_bsp.c`, `r_main.c` to understand implementation
+   - May web search for additional context
+
+3. **Claude crafts an optimized prompt** based on what it learned:
+   - Identifies key components (tree structure, traversal, render order)
+   - Determines best layout (split view: floor plan + tree)
+   - Adds insights from the actual code
+
+4. **Claude runs the visualization script:**
 ```bash
-# List available concepts
-uvx scripts/visualize_concept.py --list
-
-# Generate BSP algorithm explanation
-uvx scripts/visualize_concept.py bsp
-
-# Generate game loop diagram
-uvx scripts/visualize_concept.py game-loop
-
-# Custom topic
-uvx scripts/visualize_concept.py "how Doom renders sprites"
+uvx scripts/visualize_concept.py "Create a whiteboard diagram showing..." -o bsp.png
 ```
 
-**Available predefined concepts:**
-- `bsp` - Binary Space Partitioning
-- `fixed-point` - 16.16 math system
-- `game-loop` - Main loop architecture
-- `monster-ai` - AI state machine
-- `rendering` - 2.5D pipeline
-- `wad` - WAD file format
-- `collision` - Blockmap collision
-- `thinkers` - Update system
-- `codebase` - Source organization
+**Example prompts to try:**
+> "Visualize how the monster AI state machine works"
+
+> "Create a diagram explaining the fixed-point math system"
+
+> "Draw how the thinker update loop processes objects"
 
 **Key talking points:**
-- Uses Google's Nano Banana Pro model via Replicate API
-- Prompts optimized for whiteboard-style educational diagrams
-- Great for explaining complex concepts visually
-- Can generate custom diagrams for any topic
+- **Agent-driven**: Claude researches before visualizing
+- **General purpose**: Works with any codebase, not just Doom
+- **Uses Nano Banana Pro**: Google's state-of-the-art image model via Replicate
+- **No install needed**: uvx handles dependencies automatically
 
 ### Part 7: Three.js Preview (5 min)
 
@@ -279,10 +280,11 @@ Enemy stats. Health, speed, damage, behavior flags.
 ### doom-physics-lab
 Physics constants. Gravity, friction, collision.
 
-### doom-visualizer
-AI-powered whiteboard diagrams using Nano Banana Pro via Replicate.
-Generates educational visualizations of BSP, game loop, AI states, etc.
-Run with: `uvx scripts/visualize_concept.py <concept>`
+### whiteboard-visualizer
+**General-purpose** AI whiteboard diagram generator. Claude first researches
+the topic (codebase + web), then crafts an optimized prompt for Nano Banana Pro.
+Works with any codebase, not just Doom!
+Script: `uvx scripts/visualize_concept.py "<prompt>" -o output.png`
 
 ### doom-to-threejs
 Data extraction for web recreation. Level geometry, colors, sprites.
