@@ -4,6 +4,7 @@
 # dependencies = [
 #     "replicate",
 #     "httpx",
+#     "python-dotenv",
 # ]
 # ///
 """
@@ -26,7 +27,7 @@ Usage:
     uv run visualize_concept.py "..." --aspect 1:1
     uv run visualize_concept.py "..." --aspect 9:16  # vertical
 
-Requires REPLICATE_API_TOKEN environment variable.
+Requires REPLICATE_API_TOKEN in .env file or environment variable.
 Get your token at: https://replicate.com/account/api-tokens
 """
 
@@ -37,6 +38,23 @@ from pathlib import Path
 
 import httpx
 import replicate
+from dotenv import load_dotenv
+
+
+def load_env():
+    """Load .env file from current directory or parent directories."""
+    # Try current directory first
+    if Path(".env").exists():
+        load_dotenv(".env")
+        return
+
+    # Walk up to find .env in parent directories
+    current = Path.cwd()
+    for parent in [current] + list(current.parents):
+        env_file = parent / ".env"
+        if env_file.exists():
+            load_dotenv(env_file)
+            return
 
 
 def wrap_prompt_with_style(prompt: str) -> str:
@@ -74,8 +92,11 @@ def generate_visualization(
     """Generate a whiteboard visualization using Nano Banana Pro via Replicate."""
 
     if not os.environ.get("REPLICATE_API_TOKEN"):
-        print("Error: REPLICATE_API_TOKEN environment variable not set")
-        print("Get your token at: https://replicate.com/account/api-tokens")
+        print("Error: REPLICATE_API_TOKEN not found")
+        print("Either:")
+        print("  1. Create a .env file with: REPLICATE_API_TOKEN=your_token")
+        print("  2. Or set the environment variable directly")
+        print("\nGet your token at: https://replicate.com/account/api-tokens")
         sys.exit(1)
 
     # Optionally wrap with whiteboard style
@@ -128,19 +149,26 @@ def generate_visualization(
 
 
 def main():
+    # Load .env file for REPLICATE_API_TOKEN
+    load_env()
+
     parser = argparse.ArgumentParser(
         description="Generate whiteboard-style diagrams using Nano Banana Pro",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
   # Simple prompt
-  uvx visualize_concept.py "Explain how a hash table works with chaining"
+  uv run visualize_concept.py "Explain how a hash table works with chaining"
 
   # Detailed prompt from file
-  uvx visualize_concept.py --prompt-file /tmp/bsp_prompt.txt -o bsp.png
+  uv run visualize_concept.py --prompt-file /tmp/bsp_prompt.txt -o bsp.png
 
   # Vertical diagram for mobile
-  uvx visualize_concept.py "API request flow" --aspect 9:16
+  uv run visualize_concept.py "API request flow" --aspect 9:16
+
+Setup:
+  Create a .env file with: REPLICATE_API_TOKEN=your_token
+  Get your token at: https://replicate.com/account/api-tokens
 
 Prompt Tips:
   - Be specific about what to include
