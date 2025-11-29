@@ -1,3 +1,9 @@
+---
+name: doom-to-threejs
+description: Extract Doom level geometry and data for Three.js web recreation.
+  Use when the user wants to export map data or recreate Doom in the browser.
+---
+
 # Doom to Three.js - Data Extractor & Converter
 
 Extract Doom level geometry, sprites, and data for recreation in Three.js.
@@ -46,16 +52,6 @@ typedef struct {
     char floorpic[9];       // Floor texture name
     char ceilingpic[9];     // Ceiling texture name
 } sector_t;
-```
-
-### Thing (object placement)
-```c
-typedef struct {
-    short x, y;             // Position
-    short angle;            // Facing (0-359)
-    short type;             // Monster/item type
-    short options;          // Skill flags
-} mapthing_t;
 ```
 
 ## Three.js Conversion Strategy
@@ -110,21 +106,6 @@ function createWall(line, frontSector, backSector) {
 }
 ```
 
-### 4. Color Palette
-```javascript
-// Doom's 256-color palette (extract from PLAYPAL lump)
-const doomPalette = [
-    [0, 0, 0],       // Color 0
-    [31, 23, 11],    // Color 1
-    // ... 254 more colors
-];
-
-function doomColorToHex(index) {
-    const [r, g, b] = doomPalette[index];
-    return (r << 16) | (g << 8) | b;
-}
-```
-
 ## Data Export Script
 
 Create a C program to dump level data as JSON:
@@ -142,49 +123,6 @@ void DumpLevelToJSON(void) {
     printf("]}");
 }
 ```
-
-## Three.js Scene Template
-
-```javascript
-import * as THREE from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-
-// Load exported Doom level data
-import levelData from './e1m1.json';
-
-const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x000000);
-
-// Create geometry from Doom data
-levelData.sectors.forEach(sector => {
-    const { floor, ceiling } = createSector(sector);
-    scene.add(floor, ceiling);
-});
-
-levelData.linedefs.forEach(line => {
-    const wall = createWall(line);
-    scene.add(wall);
-});
-
-// Add lighting based on sector light levels
-levelData.sectors.forEach(sector => {
-    const light = new THREE.PointLight(0xffffff, sector.lightlevel / 255);
-    light.position.set(sector.centerX, sector.ceilingheight, sector.centerY);
-    scene.add(light);
-});
-
-// Doom-style camera (no vertical look)
-const camera = new THREE.PerspectiveCamera(90, width/height, 0.1, 1000);
-camera.position.set(playerX, playerZ + 41, playerY); // 41 = eye height
-```
-
-## Sprite Extraction
-
-Doom sprites are column-based. To convert:
-1. Extract sprite lump from WAD
-2. Decode column format (posts with transparent gaps)
-3. Convert to PNG/canvas with transparency
-4. Use THREE.Sprite or billboarded planes
 
 ## Example Task
 "Create a JSON export function that dumps E1M1's geometry (vertices, linedefs, sectors) in a format suitable for Three.js"

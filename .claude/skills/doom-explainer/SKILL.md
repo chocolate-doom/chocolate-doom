@@ -1,3 +1,9 @@
+---
+name: doom-explainer
+description: Explain any part of the Doom engine codebase in detail.
+  Use when the user wants to understand how something works in the engine.
+---
+
 # Doom Explainer - Code Archaeologist
 
 Explain any part of the Doom engine codebase in detail. Navigate and document ancient C code.
@@ -23,15 +29,10 @@ src/
 │   ├── s_*.c       # "Sound" - audio
 │   ├── st_*.c      # "Status" - HUD
 │   ├── am_*.c      # "Automap"
-│   ├── hu_*.c      # "Heads-up" - messages
-│   ├── wi_*.c      # "Intermission" - between levels
-│   ├── f_*.c       # "Finale" - end screens
-│   ├── m_*.c       # "Menu"
 │   └── info.c      # Game data tables (139KB!)
 ├── heretic/        # Heretic game code
 ├── hexen/          # Hexen game code
-├── strife/         # Strife game code
-└── *.c             # Shared engine code
+└── strife/         # Strife game code
 ```
 
 ## Core Concepts
@@ -44,28 +45,10 @@ src/
 // Represents 1.5 in fixed-point:
 fixed_t value = FRACUNIT + FRACUNIT/2;  // 98304
 
-// Conversion
-int integer = value >> FRACBITS;        // To integer
-fixed_t fixed = integer << FRACBITS;    // From integer
-
 // Multiplication (watch for overflow!)
 fixed_t FixedMul(fixed_t a, fixed_t b) {
     return (fixed_t)(((int64_t)a * b) >> FRACBITS);
 }
-```
-
-### Binary Angles
-```c
-// Doom uses 32-bit angles (not degrees or radians)
-#define ANG45   0x20000000
-#define ANG90   0x40000000
-#define ANG180  0x80000000
-#define ANG270  0xc0000000
-
-// Fine angles for lookup tables (8192 values)
-#define FINEANGLES  8192
-#define ANGLETOFINESHIFT  19
-int fineangle = angle >> ANGLETOFINESHIFT;
 ```
 
 ### Thinkers (Update System)
@@ -76,7 +59,6 @@ typedef struct thinker_s {
     think_t function;  // Update function pointer
 } thinker_t;
 
-// Every game object (mobj_t) starts with thinker_t
 // P_RunThinkers() calls each thinker's function every tick
 ```
 
@@ -89,13 +71,10 @@ typedef struct mobj_s {
     fixed_t momx, momy, momz; // Momentum
     angle_t angle;          // Facing direction
     mobjtype_t type;        // What kind of thing
-    mobjinfo_t *info;       // Pointer to type info
     int health;
     int flags;              // MF_SOLID, MF_SHOOTABLE, etc.
     state_t *state;         // Current animation state
     struct mobj_s *target;  // For AI: who to attack
-    struct player_s *player; // If this is a player
-    // ... more fields
 } mobj_t;
 ```
 
@@ -122,31 +101,6 @@ Monsters use state-based AI:
 {SPR_SARG, 4, 8, A_FaceTarget, S_SARG_ATK2}, // Attacking
 ```
 
-### Sound System
-- OPL synthesis for original PC speaker style
-- SDL for modern audio
-- Positional audio based on player-relative position
-
-## Common Questions
-
-### "How does Doom render 3D without a Z-buffer?"
-Doom uses BSP tree traversal to render from front-to-back, combined with a "visplane" system for floors/ceilings. Walls are rendered as vertical columns, sprites are clipped against these columns.
-
-### "Why fixed-point instead of floats?"
-Original 386/486 CPUs had slow floating-point units. Integer math was 10-100x faster. Fixed-point gives sub-pixel precision with integer speed.
-
-### "How does the WAD file work?"
-WAD = "Where's All the Data". Contains:
-- Header (type, lump count, directory offset)
-- Lumps (raw data blobs)
-- Directory (lump names, offsets, sizes)
-
-### "What are linedef specials?"
-Special actions triggered by walls: doors, lifts, teleporters, switches. Numbers 1-141 in original Doom, each with specific behavior.
-
-### "How does multiplayer work?"
-Peer-to-peer with deterministic lockstep. All clients run the same simulation. Only player inputs are transmitted. Uses UDP or IPX.
-
 ## File Quick Reference
 
 | File | Purpose |
@@ -169,8 +123,6 @@ Peer-to-peer with deterministic lockstep. All clients run the same simulation. O
 3. "How are doors implemented?"
 4. "What happens when a level loads?"
 5. "How does the automap draw walls?"
-6. "Explain the pain chance system"
-7. "How does telefragging work?"
 
 ## Research Tips
 

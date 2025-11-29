@@ -1,3 +1,9 @@
+---
+name: doom-weapon-forge
+description: Modify Doom weapon damage, fire rates, and projectile behavior.
+  Use when the user wants to create overpowered or custom weapons.
+---
+
 # Doom Weapon Forge - Weapon Modifier
 
 Create custom weapons by modifying damage, fire rates, and projectile behavior.

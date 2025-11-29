@@ -1,3 +1,9 @@
+---
+name: doom-physics-lab
+description: Modify Doom physics like gravity, friction, and collision.
+  Use when the user wants to change how movement and physics feel in the game.
+---
+
 # Doom Physics Lab - Physics Experimenter
 
 Modify gravity, friction, collision, and movement physics.
@@ -83,45 +89,6 @@ In `src/doom/info.c`, modify monster radius:
 20*FRACUNIT,    // radius - increase for larger hitbox
 56*FRACUNIT,    // height - increase for taller hitbox
 ```
-
-### Player Size
-In `src/doom/p_mobj.c`, find player spawn and modify:
-```c
-mobj->radius = 16*FRACUNIT;  // Default player radius
-mobj->height = 56*FRACUNIT;  // Default player height
-```
-
-## Movement Speed
-
-### Player Speed
-In `src/doom/p_user.c`, function `P_CalcHeight` and movement code:
-```c
-#define MAXBOB          (0x100000)  // Max view bobbing
-```
-
-In `src/doom/g_game.c`, find `G_BuildTiccmd`:
-```c
-#define SLOWTURNTICS    6
-// forward/side movement calculation uses forwardmove[] and sidemove[] arrays
-```
-
-### Run Speed Multiplier
-In `src/doom/g_game.c`:
-```c
-#define TURBOTHRESHOLD  0x32  // Turbo speed threshold
-```
-
-## Jumping (Doom doesn't have it!)
-
-To add basic jumping in `src/doom/p_user.c`:
-```c
-// In P_MovePlayer or similar, add:
-if (cmd->buttons & BT_JUMP && player->mo->z == player->mo->floorz)
-{
-    player->mo->momz = 8*FRACUNIT;  // Jump velocity
-}
-```
-Note: Requires adding BT_JUMP button definition.
 
 ## Example Modifications
 

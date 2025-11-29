@@ -1,3 +1,9 @@
+---
+name: doom-god-mode
+description: Modify Doom player stats like health, speed, and damage resistance.
+  Use when the user wants to tweak player parameters or make the player overpowered.
+---
+
 # Doom God Mode - Player Parameter Tweaker
 
 Modify player stats and game parameters for fun gameplay experiments.

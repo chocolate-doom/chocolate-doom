@@ -162,7 +162,7 @@ export REPLICATE_API_TOKEN="your_token_here"
 
 4. **Claude runs the visualization script:**
 ```bash
-uvx scripts/visualize_concept.py "Create a whiteboard diagram showing..." -o bsp.png
+uvx .claude/skills/whiteboard-visualizer/scripts/visualize_concept.py "Create a whiteboard diagram showing..." -o bsp.png
 ```
 
 **Example prompts to try:**
@@ -284,7 +284,7 @@ Physics constants. Gravity, friction, collision.
 **General-purpose** AI whiteboard diagram generator. Claude first researches
 the topic (codebase + web), then crafts an optimized prompt for Nano Banana Pro.
 Works with any codebase, not just Doom!
-Script: `uvx scripts/visualize_concept.py "<prompt>" -o output.png`
+Script: `uvx .claude/skills/whiteboard-visualizer/scripts/visualize_concept.py "<prompt>" -o output.png`
 
 ### doom-to-threejs
 Data extraction for web recreation. Level geometry, colors, sprites.

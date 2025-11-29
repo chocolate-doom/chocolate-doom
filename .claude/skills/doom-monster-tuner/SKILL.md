@@ -1,3 +1,9 @@
+---
+name: doom-monster-tuner
+description: Modify Doom monster health, speed, damage, and behavior.
+  Use when the user wants to adjust enemy difficulty or create custom monsters.
+---
+
 # Doom Monster Tuner - Enemy Stat Editor
 
 Modify monster health, speed, damage, and behavior through the mobjinfo array.
@@ -87,13 +93,6 @@ mobjinfo[MT_SERGEANT].speed = 40;  // Super fast pinky
 ```c
 // Set damage to 0 for all monsters
 mobjinfo[MT_TROOP].damage = 0;
-```
-
-### Glass Cannon Monsters
-```c
-// Low health, high damage
-mobjinfo[MT_TROOP].spawnhealth = 1;
-mobjinfo[MT_TROOP].damage = 100;
 ```
 
 ## Monster Health Reference

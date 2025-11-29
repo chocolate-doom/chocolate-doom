@@ -1,3 +1,10 @@
+---
+name: whiteboard-visualizer
+description: Generate whiteboard-style visual explanations of any concept.
+  Use when the user asks to visualize, diagram, or draw how something works.
+  First research the topic, then craft an optimized image generation prompt.
+---
+
 # Whiteboard Visualizer - AI Concept Explanation Generator
 
 Generate whiteboard-style visual explanations of any concept by first researching it, then crafting an optimal image generation prompt.
@@ -70,20 +77,18 @@ Run the visualization script:
 
 ```bash
 export REPLICATE_API_TOKEN="your_token_here"
-uvx scripts/visualize_concept.py "YOUR CRAFTED PROMPT" --output concept_name.png
+uvx .claude/skills/whiteboard-visualizer/scripts/visualize_concept.py "YOUR CRAFTED PROMPT" --output concept_name.png
 ```
 
-Or for custom prompts, create a temp file and pass it:
+Or for longer prompts, use a file:
 
 ```bash
-uvx scripts/visualize_concept.py --prompt-file /tmp/my_prompt.txt --output diagram.png
+uvx .claude/skills/whiteboard-visualizer/scripts/visualize_concept.py --prompt-file /tmp/my_prompt.txt --output diagram.png
 ```
 
 ## Prompt Crafting Guidelines
 
 ### Layout Patterns
-
-Choose based on what you're explaining:
 
 | Concept Type | Layout Pattern |
 |--------------|----------------|
@@ -112,14 +117,7 @@ Include these for whiteboard aesthetic:
 > "Show how the algorithm works"
 
 **Good (specific from research):**
-> "Show the 3 phases: 1) Input parsing with the tokenizer splitting on whitespace, 2) AST construction with recursive descent, 3) Code generation walking the tree. Include the key data structures: Token{type, value}, Node{left, right, op}"
-
-### Annotations
-
-Always include insights you learned:
-- "Why: [reason this design was chosen]"
-- "Note: [common misconception clarified]"
-- "Key: [the important takeaway]"
+> "Show the 3 phases: 1) Input parsing with the tokenizer, 2) AST construction, 3) Code generation. Include the key data structures: Token{type, value}, Node{left, right, op}"
 
 ## Example: Full Workflow
 
@@ -138,30 +136,28 @@ Always include insights you learned:
 
 **Step 3 - Craft prompt:**
 ```
-Create a whiteboard-style educational diagram explaining BSP (Binary Space Partitioning) rendering.
+Create a whiteboard-style educational diagram explaining BSP rendering.
 
-Visual Style: Hand-drawn marker sketch on white background, black/blue markers, red for key insights.
+Visual Style: Hand-drawn marker sketch on white background.
 
-Layout: Split into two sides - LEFT shows a 2D floor plan being divided, RIGHT shows the resulting binary tree.
+Layout: Split view - LEFT shows 2D floor plan being divided, RIGHT shows binary tree.
 
-Content to include:
-1. Simple 2D room with walls, divided by partition lines (numbered 1, 2, 3)
-2. Binary tree with nodes showing "front/back" at each split
+Content:
+1. Simple 2D room divided by partition lines (numbered 1, 2, 3)
+2. Binary tree with "front/back" at each split
 3. Camera icon showing player position
 4. Numbers showing render traversal order
-5. Arrow from tree back to rendered result
 
 Key annotations:
-- "Divide space recursively along walls"
 - "Traverse front-to-back from camera"
-- "KEY: No Z-buffer needed - order guarantees correctness!"
+- "KEY: No Z-buffer needed!"
 
 Make it look like a game developer explaining on a whiteboard.
 ```
 
 **Step 4 - Generate:**
 ```bash
-uvx scripts/visualize_concept.py "Create a whiteboard-style..." --output bsp_rendering.png
+uvx .claude/skills/whiteboard-visualizer/scripts/visualize_concept.py "Create a whiteboard-style..." --output bsp.png
 ```
 
 ## Tips
@@ -170,15 +166,7 @@ uvx scripts/visualize_concept.py "Create a whiteboard-style..." --output bsp_ren
 2. **Be specific** - Vague prompts = vague images
 3. **Use actual names** - Include real function/class names from the code
 4. **Add the "why"** - Don't just show what, explain why it matters
-5. **Keep it focused** - One concept per diagram, split complex topics
-6. **Iterate** - If first result isn't right, refine the prompt
-
-## Limitations
-
-- AI may produce factually incorrect diagrams - always verify
-- Complex concepts may need multiple diagrams
-- Text rendering quality varies - keep labels short
-- May need 2-3 iterations to get layout right
+5. **Keep it focused** - One concept per diagram
 
 ## Prerequisites
 
