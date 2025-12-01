@@ -15,7 +15,7 @@ jobs:
       - name: Install dependencies
         run: sudo apt-get update && sudo apt-get install cppcheck
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Run cppcheck
         env:
