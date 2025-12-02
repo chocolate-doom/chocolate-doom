@@ -132,9 +132,13 @@ anim_t*		lastanim;
 //      Animating line specials
 //
 #define MAXLINEANIMS            64
+// version <= 1.2 did not have a limit and could handle up to 66 scrolling
+// linedefs before displaying adverse effects. All other versions have a limit
+// of 64.
+#define MAXLINEANIMS1_2         66
 
 short numlinespecials;
-line_t *linespeciallist[MAXLINEANIMS];
+line_t *linespeciallist[MAXLINEANIMS1_2];
 
 
 
@@ -1394,6 +1398,8 @@ void P_SpawnSpecials (void)
 {
     sector_t*	sector;
     int		i;
+    short maxlineanims = (gameversion <= exe_doom_1_2) ? MAXLINEANIMS1_2
+        : MAXLINEANIMS;
 
     // See if -TIMER was specified.
 
@@ -1484,10 +1490,11 @@ void P_SpawnSpecials (void)
 	switch(lines[i].special)
 	{
 	  case 48:
-            if (numlinespecials >= MAXLINEANIMS)
+            if (numlinespecials >= maxlineanims)
             {
-                I_Error("Too many scrolling wall linedefs (%d)! "
-                        "(Vanilla limit is 64)", NumScrollers());
+                I_Error("P_SpawnSpecials: Too many scrolling wall linedefs "
+                        "(%d)! (Vanilla limit is %d)", NumScrollers(),
+                        maxlineanims);
             }
 	    // EFFECT FIRSTCOL SCROLL+
 	    linespeciallist[numlinespecials] = &lines[i];
