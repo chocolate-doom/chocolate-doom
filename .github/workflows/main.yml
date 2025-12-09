@@ -37,7 +37,7 @@ jobs:
             shell: bash
 
           - name: macOS x86 Clang
-            os: macos-13
+            os: macos-15-intel
             compiler: clang
             shell: bash
 
