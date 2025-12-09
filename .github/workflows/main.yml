@@ -35,17 +35,11 @@ jobs:
             os: macos-latest
             compiler: clang
             shell: bash
-            artifacts: true
-            pkg-path: pkg/osx/*.dmg
-            pkg-dir: pkg/osx
 
           - name: macOS x86 Clang
             os: macos-13
             compiler: clang
             shell: bash
-            artifacts: true
-            pkg-path: pkg/osx/*.dmg
-            pkg-dir: pkg/osx
 
           - name: MSYS2 UCRT64
             os: windows-latest
