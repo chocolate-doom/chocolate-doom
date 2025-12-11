@@ -179,6 +179,7 @@ boolean P_BlockThingsIterator (int x, int y, boolean(*func)(mobj_t*) );
 #define PT_ADDLINES		1
 #define PT_ADDTHINGS	2
 #define PT_EARLYOUT		4
+#define PT_COMPATADDLINES	8
 
 extern divline_t	trace;
 
