@@ -396,12 +396,12 @@ int DEH_LoadFile(const char *filename)
 
     DEH_ParseContext(context);
 
-    DEH_CloseFile(context);
-
     if (DEH_HadError(context))
     {
         I_Error("Error parsing dehacked file");
     }
+
+    DEH_CloseFile(context);
 
     return 1;
 }
@@ -455,14 +455,14 @@ int DEH_LoadLump(int lumpnum, boolean allow_long, boolean allow_error)
 
     DEH_ParseContext(context);
 
-    DEH_CloseFile(context);
-
     // If there was an error while parsing, abort with an error, but allow
     // errors to just be ignored if allow_error=true.
     if (!allow_error && DEH_HadError(context))
     {
         I_Error("Error parsing dehacked lump");
     }
+
+    DEH_CloseFile(context);
 
     return 1;
 }
