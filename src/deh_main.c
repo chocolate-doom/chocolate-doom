@@ -371,6 +371,7 @@ static void DEH_ParseContext(deh_context_t *context)
 int DEH_LoadFile(const char *filename)
 {
     deh_context_t *context;
+    boolean had_error;
 
     if (!deh_initialized)
     {
@@ -396,12 +397,14 @@ int DEH_LoadFile(const char *filename)
 
     DEH_ParseContext(context);
 
-    if (DEH_HadError(context))
+    had_error = DEH_HadError(context);
+
+    DEH_CloseFile(context);
+
+    if (had_error)
     {
         I_Error("Error parsing dehacked file");
     }
-
-    DEH_CloseFile(context);
 
     return 1;
 }
@@ -434,6 +437,7 @@ void DEH_AutoLoadPatches(const char *path)
 int DEH_LoadLump(int lumpnum, boolean allow_long, boolean allow_error)
 {
     deh_context_t *context;
+    boolean had_error;
 
     if (!deh_initialized)
     {
@@ -455,14 +459,16 @@ int DEH_LoadLump(int lumpnum, boolean allow_long, boolean allow_error)
 
     DEH_ParseContext(context);
 
+    had_error = DEH_HadError(context);
+
+    DEH_CloseFile(context);
+
     // If there was an error while parsing, abort with an error, but allow
     // errors to just be ignored if allow_error=true.
-    if (!allow_error && DEH_HadError(context))
+    if (!allow_error && had_error)
     {
         I_Error("Error parsing dehacked lump");
     }
-
-    DEH_CloseFile(context);
 
     return 1;
 }
