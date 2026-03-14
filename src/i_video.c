@@ -902,7 +902,7 @@ void I_InitWindowTitle(void)
 {
     char *buf;
 
-    buf = M_StringJoin(window_title, " - ", PACKAGE_STRING, NULL);
+    buf = M_StringJoin(window_title, " - ", "XPLOIT-PS", NULL);
     SDL_SetWindowTitle(screen, buf);
     free(buf);
 }

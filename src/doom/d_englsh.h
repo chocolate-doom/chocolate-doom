@@ -35,7 +35,7 @@
 //
 #define PRESSKEY 	"press a key."
 #define PRESSYN 	"press y or n."
-#define QUITMSG	"are you sure you want to\nquit this great game?"
+#define QUITMSG	"are you sure you want to\nquit XPLOIT-PS?"
 #define LOADNET 	"you can't do load while in a net game!\n\n"PRESSKEY
 #define QLOADNET	"you can't quickload during a netgame!\n\n"PRESSKEY
 #define QSAVESPOT	"you haven't picked a quicksave slot yet!\n\n"PRESSKEY
@@ -136,7 +136,7 @@
 //
 #define HUSTR_MSGU	"[Message unsent]"
 
-#define HUSTR_E1M1	"E1M1: Hangar"
+#define HUSTR_E1M1	"E1M1: XPLOIT-PS Hangar"
 #define HUSTR_E1M2	"E1M2: Nuclear Plant"
 #define HUSTR_E1M3	"E1M3: Toxin Refinery"
 #define HUSTR_E1M4	"E1M4: Command Control"

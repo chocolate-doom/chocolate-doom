@@ -202,6 +202,7 @@ void I_PrintStartupBanner(const char *gamedescription)
     I_PrintDivider();
     
     printf(
+    " XPLOIT-PS Challenge!\n"
     " " PACKAGE_NAME " is free software, covered by the GNU General Public\n"
     " License.  There is NO warranty; not even for MERCHANTABILITY or FITNESS\n"
     " FOR A PARTICULAR PURPOSE. You are welcome to change and distribute\n"

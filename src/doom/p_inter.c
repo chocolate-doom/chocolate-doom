@@ -802,6 +802,8 @@ P_DamageMobj
 		
     if (target->health <= 0)
 	return;
+    if (source && (source->flags & MF_FRIENDLY) && target->player)
+	return;
 
     if ( target->flags & MF_SKULLFLY )
     {

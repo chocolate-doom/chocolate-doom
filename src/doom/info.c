@@ -4657,6 +4657,31 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
 	sfx_None,		// activesound
 	MF_NOBLOCKMAP,		// flags
 	S_NULL		// raisestate
+    },
+    {		// MT_COMPANION
+	-1,
+	S_POSS_STND,
+	100,
+	S_POSS_RUN1,
+	sfx_posit1,
+	8,
+	sfx_pistol,
+	S_POSS_PAIN,
+	200,
+	sfx_popain,
+	0,
+	S_POSS_ATK1,
+	S_POSS_DIE1,
+	S_POSS_XDIE1,
+	sfx_podth1,
+	10,
+	20*FRACUNIT,
+	56*FRACUNIT,
+	100,
+	0,
+	sfx_posact,
+	MF_SOLID|MF_SHOOTABLE|MF_FRIENDLY,
+	S_POSS_RAISE1
     }
 };
 

@@ -1,0 +1,43 @@
+file(REMOVE_RECURSE
+  "CMakeFiles/chocolate-setup.dir/d_iwad.c.o"
+  "CMakeFiles/chocolate-setup.dir/d_iwad.c.o.d"
+  "CMakeFiles/chocolate-setup.dir/d_mode.c.o"
+  "CMakeFiles/chocolate-setup.dir/d_mode.c.o.d"
+  "CMakeFiles/chocolate-setup.dir/deh_str.c.o"
+  "CMakeFiles/chocolate-setup.dir/deh_str.c.o.d"
+  "CMakeFiles/chocolate-setup.dir/i_main.c.o"
+  "CMakeFiles/chocolate-setup.dir/i_main.c.o.d"
+  "CMakeFiles/chocolate-setup.dir/i_system.c.o"
+  "CMakeFiles/chocolate-setup.dir/i_system.c.o.d"
+  "CMakeFiles/chocolate-setup.dir/i_timer.c.o"
+  "CMakeFiles/chocolate-setup.dir/i_timer.c.o.d"
+  "CMakeFiles/chocolate-setup.dir/m_argv.c.o"
+  "CMakeFiles/chocolate-setup.dir/m_argv.c.o.d"
+  "CMakeFiles/chocolate-setup.dir/m_config.c.o"
+  "CMakeFiles/chocolate-setup.dir/m_config.c.o.d"
+  "CMakeFiles/chocolate-setup.dir/m_controls.c.o"
+  "CMakeFiles/chocolate-setup.dir/m_controls.c.o.d"
+  "CMakeFiles/chocolate-setup.dir/m_misc.c.o"
+  "CMakeFiles/chocolate-setup.dir/m_misc.c.o.d"
+  "CMakeFiles/chocolate-setup.dir/net_io.c.o"
+  "CMakeFiles/chocolate-setup.dir/net_io.c.o.d"
+  "CMakeFiles/chocolate-setup.dir/net_packet.c.o"
+  "CMakeFiles/chocolate-setup.dir/net_packet.c.o.d"
+  "CMakeFiles/chocolate-setup.dir/net_petname.c.o"
+  "CMakeFiles/chocolate-setup.dir/net_petname.c.o.d"
+  "CMakeFiles/chocolate-setup.dir/net_query.c.o"
+  "CMakeFiles/chocolate-setup.dir/net_query.c.o.d"
+  "CMakeFiles/chocolate-setup.dir/net_sdl.c.o"
+  "CMakeFiles/chocolate-setup.dir/net_sdl.c.o.d"
+  "CMakeFiles/chocolate-setup.dir/net_structrw.c.o"
+  "CMakeFiles/chocolate-setup.dir/net_structrw.c.o.d"
+  "CMakeFiles/chocolate-setup.dir/z_native.c.o"
+  "CMakeFiles/chocolate-setup.dir/z_native.c.o.d"
+  "chocolate-setup"
+  "chocolate-setup.pdb"
+)
+
+# Per-language clean rules from dependency scanning.
+foreach(lang C)
+  include(CMakeFiles/chocolate-setup.dir/cmake_clean_${lang}.cmake OPTIONAL)
+endforeach()

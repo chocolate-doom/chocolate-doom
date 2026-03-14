@@ -1,0 +1,2 @@
+/usr/bin/ar qc libopl.a CMakeFiles/opl.dir/opl.c.o CMakeFiles/opl.dir/opl_linux.c.o CMakeFiles/opl.dir/opl_obsd.c.o CMakeFiles/opl.dir/opl_queue.c.o CMakeFiles/opl.dir/opl_sdl.c.o CMakeFiles/opl.dir/opl_timer.c.o CMakeFiles/opl.dir/opl_win32.c.o CMakeFiles/opl.dir/ioperm_sys.c.o CMakeFiles/opl.dir/opl3.c.o
+/usr/bin/ranlib libopl.a

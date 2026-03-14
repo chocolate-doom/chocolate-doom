@@ -593,10 +593,37 @@ void A_KeenDie (mobj_t* mo)
 // A_Look
 // Stay in state until a player is sighted.
 //
+boolean P_LookForEnemies (mobj_t* actor)
+{
+    thinker_t*  th;
+    mobj_t*     mo;
+    fixed_t     dist;
+    fixed_t     bestdist = 0x7fffffff;
+    mobj_t*     besttarget = NULL;
+    for (th = thinkercap.next; th != &thinkercap; th = th->next)
+    {
+        if (th->function.acp1 != (actionf_p1)P_MobjThinker) continue;
+        mo = (mobj_t*)th;
+        if (!(mo->flags & MF_SHOOTABLE)) continue;
+        if (mo->flags & MF_FRIENDLY)     continue;
+        if (mo->player)                  continue;
+        if (mo->health <= 0)             continue;
+        if (!P_CheckSight(actor, mo))    continue;
+        dist = P_AproxDistance(actor->x - mo->x, actor->y - mo->y);
+        if (dist < bestdist) { bestdist = dist; besttarget = mo; }
+    }
+    if (besttarget) { actor->target = besttarget; return true; }
+    return false;
+}
+
 void A_Look (mobj_t* actor)
 {
     mobj_t*	targ;
-	
+    if (actor->flags & MF_FRIENDLY)
+    {
+        if (P_LookForEnemies(actor)) P_SetMobjState(actor, actor->info->seestate);
+        return;
+    }
     actor->threshold = 0;	// any shot will wake up
     targ = actor->subsector->sector->soundtarget;
 
@@ -694,12 +721,18 @@ void A_Chase (mobj_t*	actor)
     }
 
     if (!actor->target
-	|| !(actor->target->flags&MF_SHOOTABLE))
+	|| !(actor->target->flags&MF_SHOOTABLE)
+	|| actor->target->health <= 0)
     {
-	// look for a new target
-	if (P_LookForPlayers(actor,true))
-	    return; 	// got a new target
-	
+	if (actor->flags & MF_FRIENDLY)
+	{
+	    if (P_LookForEnemies(actor)) return;
+	    if (playeringame[0] && players[0].mo && players[0].mo->health > 0)
+	    { actor->target = players[0].mo; P_NewChaseDir(actor); return; }
+	    P_SetMobjState(actor, actor->info->spawnstate);
+	    return;
+	}
+	if (P_LookForPlayers(actor,true)) return;
 	P_SetMobjState (actor, actor->info->spawnstate);
 	return;
     }
@@ -715,7 +748,8 @@ void A_Chase (mobj_t*	actor)
     
     // check for melee attack
     if (actor->info->meleestate
-	&& P_CheckMeleeRange (actor))
+	&& P_CheckMeleeRange (actor)
+	&& !((actor->flags & MF_FRIENDLY) && actor->target && actor->target->player))
     {
 	if (actor->info->attacksound)
 	    S_StartSound (actor, actor->info->attacksound);
@@ -735,7 +769,8 @@ void A_Chase (mobj_t*	actor)
 	
 	if (!P_CheckMissileRange (actor))
 	    goto nomissile;
-	
+	if ((actor->flags & MF_FRIENDLY) && actor->target && actor->target->player)
+	    goto nomissile;
 	P_SetMobjState (actor, actor->info->missilestate);
 	actor->flags |= MF_JUSTATTACKED;
 	return;
