@@ -1254,6 +1254,10 @@ G_CheckSpot
                 xa = finecosine[an];
                 ya = finesine[an];
                 break;
+            case 8192:  // 360 deg:
+                xa = tantoangle[0];        // finecosine[8192]
+                ya = finesine[8192];       // finesine[8192]
+                break;
             default:
                 I_Error("G_CheckSpot: unexpected angle %d\n", an);
                 xa = ya = 0;
