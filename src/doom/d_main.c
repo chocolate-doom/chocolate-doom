@@ -1277,6 +1277,42 @@ static void LoadIwadDeh(void)
                     "doom2.exe.");
         }
     }
+
+    // Doom 1.2 needs a separate Dehacked patch which must be downloaded and
+    // installed next to the IWAD.
+    if (gameversion == exe_doom_1_2)
+    {
+        char *doom12_deh = NULL;
+        char *dirname;
+
+        // Look for doom12.deh in the same directory as the IWAD file.
+        dirname = M_DirName(iwadfile);
+        doom12_deh = M_StringJoin(dirname, DIR_SEPARATOR_S, "doom12.deh", NULL);
+        free(dirname);
+
+        // If the dehacked patch isn't found, try searching the WAD
+        // search path instead.  We might find it...
+        if (!M_FileExists(doom12_deh))
+        {
+            free(doom12_deh);
+            doom12_deh = D_FindWADByName("doom12.deh");
+        }
+
+        // Still not found?
+        if (doom12_deh == NULL)
+        {
+            I_Error("Unable to find Doom 1.2 dehacked file (doom12.deh).\n"
+                    "The dehacked file is required in order to emulate\n"
+                    "Doom 1.2 correctly.  It can be found in your nearest\n"
+                    "/idgames repository mirror at:\n\n"
+                    "   <url placeholder>");
+        }
+
+        if (!DEH_LoadFile(doom12_deh))
+        {
+            I_Error("Failed to load doom12.deh needed for emulating v1.2.");
+        }
+    }
 }
 
 static void G_CheckDemoStatusAtExit (void)
