@@ -245,13 +245,13 @@ class Parameter:
             # Special cases -- GBR is not proud.
             if self.args == "[<x> <y> | <xy>]":
                 result = ".BR " + self.name + " \\~\\c\n" \
-                    + ".RI [ x\~y | xy ]\n"
+                    + ".RI [ x\\~y | xy ]\n"
             elif self.args == "<WxH>":
                 result = ".BI " + self.name + "\\~ W x H\n"
             elif self.args == "<x> <y>":
                 result = ".BI " + self.name + "\\~ \"x y\"\n"
             elif self.args == "<files>":
-                result = ".BI " + self.name + "\\~ \"file\\~\c\n" \
+                result = ".BI " + self.name + "\\~ \"file\\~\\c\n" \
                     + "\\&.\\|.\\|.\n"
             elif self.args == "<save-num> <demo-name>":
                 result = ".BI " + self.name \
