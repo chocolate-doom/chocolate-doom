@@ -1791,6 +1791,7 @@ boolean M_Responder (event_t* ev)
                 key = key_menu_forward;
             }
             joywait = I_GetTime() + 5;
+            joystick_fire_countdown = 5;
         }
         if (JOY_BUTTON_PRESSED(joybuse))
         {

@@ -157,6 +157,7 @@ fixed_t         sidemove[2] = {0x18, 0x28};
 fixed_t         angleturn[3] = {640, 1280, 320};    // + slow turn 
 
 int mouse_fire_countdown = 0;    // villsa [STRIFE]
+int joystick_fire_countdown = 0;
 
 static int *weapon_keys[] = {
     &key_weapon1,
@@ -540,7 +541,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
         cmd->buttons2 |= BT2_JUMP;
  
     // villsa [STRIFE]: Moved mousebuttons[mousebfire] to below
-    if (gamekeydown[key_fire] || joybuttons[joybfire]) 
+    if (gamekeydown[key_fire])
         cmd->buttons |= BT_ATTACK;
 
     // villsa [STRIFE]
@@ -550,6 +551,13 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
              cmd->buttons |= BT_ATTACK;
          else
              --mouse_fire_countdown;
+    }
+    if(joybuttons[joybfire])
+    {
+         if(joystick_fire_countdown <= 0)
+             cmd->buttons |= BT_ATTACK;
+         else
+             --joystick_fire_countdown;
     }
  
     if (gamekeydown[key_use]
