@@ -1192,14 +1192,17 @@ static void MoreControls(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
 
     window = TXT_NewWindow("Additional Gamepad/Joystick buttons");
     TXT_SetTableColumns(window, 6);
-    TXT_SetColumnWidths(window, 18, 10, 1, 18, 10, 0);
+    TXT_SetColumnWidths(window, 20, 10, 1, 20, 10, 0);
 
-    AddJoystickControl(window, "Use artifact", &joybuseartifact);
+    AddJoystickControl(window, "Use inventory item", &joybuseartifact);
     AddJoystickControl(window, "Inventory left", &joybinvleft);
     AddJoystickControl(window, "Inventory right", &joybinvright);
-    AddJoystickControl(window, "Fly up", &joybflyup);
-    AddJoystickControl(window, "Fly down", &joybflydown);
-    AddJoystickControl(window, "Fly center", &joybflycenter);
+    if (gamemission == heretic || gamemission == hexen)
+    {
+        AddJoystickControl(window, "Fly up", &joybflyup);
+        AddJoystickControl(window, "Fly down", &joybflydown);
+        AddJoystickControl(window, "Fly center", &joybflycenter);
+    }
 
     TXT_SetWindowAction(window, TXT_HORIZ_LEFT, NULL);
     TXT_SetWindowAction(window, TXT_HORIZ_CENTER,
@@ -1310,7 +1313,7 @@ void ConfigJoystick(TXT_UNCAST_ARG(widget), void *user_data)
 
     AddJoystickControl(window, "Toggle Automap", &joybautomap);
 
-    if (gamemission == heretic || gamemission == hexen)
+    if (gamemission == heretic || gamemission == hexen || gamemission == strife)
     {
         TXT_AddWidget(window,
                        TXT_NewButton2("More controls...", MoreControls, NULL));

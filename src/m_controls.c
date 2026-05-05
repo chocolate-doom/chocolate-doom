@@ -355,6 +355,12 @@ void M_BindStrifeControls(void)
     // manner as Hexen!
     M_BindIntVariable("mouseb_jump",        &mousebjump);
     M_BindIntVariable("joyb_jump",          &joybjump);
+
+    // Subset of inventory actions common to Heretic/Hexen and Strife.
+    M_BindIntVariable("joyb_invleft",       &joybinvleft);
+    M_BindIntVariable("joyb_invright",      &joybinvright);
+    // This is technically "invuse" in Strife, but let's reuse the value.
+    M_BindIntVariable("joyb_useartifact",   &joybuseartifact);
 }
 
 void M_BindWeaponControls(void)
