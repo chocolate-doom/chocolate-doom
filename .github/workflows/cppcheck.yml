@@ -18,6 +18,10 @@ jobs:
       - uses: actions/checkout@v6
 
       - name: Run cppcheck
-        env:
-          ANALYZE: true
-        run: $GITHUB_WORKSPACE/.travis.sh
+        run: |
+          cppcheck --error-exitcode=1 -j2 -UTESTING -D__GNUC__ -Iopl -Isrc -Isrc/setup opl pcsound src textscreen 2> stderr.txt
+          RET=$?
+          if [ -s stderr.txt ]; then
+            cat stderr.txt
+          fi
+          exit $RET
