@@ -17,5 +17,6 @@ libopl_a_SOURCES =                                \
         opl_timer.c         opl_timer.h           \
         opl_win32.c                               \
         ioperm_sys.c        ioperm_sys.h          \
-        opl3.c              opl3.h
+        opl3.c              opl3.h                \
+        wf_rom.h
 
