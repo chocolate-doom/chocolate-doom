@@ -408,6 +408,11 @@ void I_SetMusicVolume(int volume)
     }
 }
 
+void I_SetSfxVolume(int volume)
+{
+    (void) volume;
+}
+
 void I_PauseSong(void)
 {
     if (active_music_module != NULL)
@@ -537,4 +542,3 @@ void I_BindSoundVariables(void)
     M_BindIntVariable("use_libsamplerate",       &use_libsamplerate);
     M_BindFloatVariable("libsamplerate_scale",   &libsamplerate_scale);
 }
-

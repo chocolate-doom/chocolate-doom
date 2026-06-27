@@ -32,6 +32,36 @@ typedef enum
     ShowNextLoc,
 } stateenum_t;
 
+typedef enum
+{
+    sysop_intermission_none,
+    sysop_intermission_stats,
+    sysop_intermission_next,
+} sysop_intermission_mode_t;
+
+typedef struct
+{
+    int active;
+    sysop_intermission_mode_t mode;
+    int deathmatch;
+    int netgame;
+    int show_frags;
+    int show_par;
+    int episode;
+    int last;
+    int next;
+    int me;
+    int player_in_game[MAXPLAYERS];
+    int kills[MAXPLAYERS];
+    int items[MAXPLAYERS];
+    int secrets[MAXPLAYERS];
+    int frags[MAXPLAYERS];
+    int dm_frags[MAXPLAYERS][MAXPLAYERS];
+    int dm_totals[MAXPLAYERS];
+    int time;
+    int par;
+} sysop_intermission_snapshot_t;
+
 // Called by main loop, animate the intermission.
 void WI_Ticker (void);
 
@@ -44,5 +74,7 @@ void WI_Start(wbstartstruct_t*	 wbstartstruct);
 
 // Shut down the intermission screen
 void WI_End(void);
+
+void WI_GetSysopIntermissionSnapshot(sysop_intermission_snapshot_t *snapshot);
 
 #endif

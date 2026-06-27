@@ -94,6 +94,58 @@ static int		message_counter;
 
 static boolean		headsupactive = false;
 
+#define C64_HUD_MESSAGE_MAX 80
+
+#if defined(__GNUC__)
+__attribute__((weak)) int sysop_hud_messages_enabled;
+__attribute__((weak)) char hu_current_message[C64_HUD_MESSAGE_MAX + 1];
+__attribute__((weak)) int hu_current_message_counter;
+#else
+int sysop_hud_messages_enabled;
+char hu_current_message[C64_HUD_MESSAGE_MAX + 1];
+int hu_current_message_counter;
+#endif
+
+static boolean SysopHudMessagesActive(void)
+{
+    return sysop_hud_messages_enabled != 0;
+}
+
+static void SysopHudPublishMessage(const char *prefix, const char *message)
+{
+    if (!SysopHudMessagesActive())
+    {
+        return;
+    }
+
+    if (message == NULL)
+    {
+        hu_current_message[0] = '\0';
+        hu_current_message_counter = 0;
+        return;
+    }
+
+    if (prefix != NULL && prefix[0] != '\0')
+    {
+        M_snprintf(hu_current_message, sizeof(hu_current_message),
+                   "%s: %s", prefix, message);
+    }
+    else
+    {
+        M_StringCopy(hu_current_message, message, sizeof(hu_current_message));
+    }
+
+    hu_current_message_counter = HU_MSGTIMEOUT;
+}
+
+static void SysopHudSyncMessageTimer(void)
+{
+    if (SysopHudMessagesActive())
+    {
+        hu_current_message_counter = message_counter;
+    }
+}
+
 //
 // Builtin map names.
 // The actual names can be found in DStrings.h.
@@ -435,7 +487,10 @@ void HU_Start(void)
 void HU_Drawer(void)
 {
 
-    HUlib_drawSText(&w_message);
+    if (!SysopHudMessagesActive())
+    {
+        HUlib_drawSText(&w_message);
+    }
     HUlib_drawIText(&w_chat);
     if (automapactive)
 	HUlib_drawTextLine(&w_title, false);
@@ -463,6 +518,7 @@ void HU_Ticker(void)
 	message_on = false;
 	message_nottobefuckedwith = false;
     }
+    SysopHudSyncMessageTimer();
 
     if (showMessages || message_dontfuckwithme)
     {
@@ -471,12 +527,21 @@ void HU_Ticker(void)
 	if ((plr->message && !message_nottobefuckedwith)
 	    || (plr->message && message_dontfuckwithme))
 	{
-	    HUlib_addMessageToSText(&w_message, 0, plr->message);
+	    if (SysopHudMessagesActive())
+	    {
+		SysopHudPublishMessage(NULL, plr->message);
+		message_on = false;
+	    }
+	    else
+	    {
+		HUlib_addMessageToSText(&w_message, 0, plr->message);
+		message_on = true;
+	    }
 	    plr->message = 0;
-	    message_on = true;
 	    message_counter = HU_MSGTIMEOUT;
 	    message_nottobefuckedwith = message_dontfuckwithme;
 	    message_dontfuckwithme = 0;
+	    SysopHudSyncMessageTimer();
 	}
 
     } // else message_on = false;
@@ -502,13 +567,23 @@ void HU_Ticker(void)
 			    && (chat_dest[i] == consoleplayer+1
 				|| chat_dest[i] == HU_BROADCAST))
 			{
-			    HUlib_addMessageToSText(&w_message,
-						    DEH_String(player_names[i]),
-						    w_inputbuffer[i].l.l);
-			    
+			    if (SysopHudMessagesActive())
+			    {
+				SysopHudPublishMessage(DEH_String(player_names[i]),
+						       w_inputbuffer[i].l.l);
+				message_on = false;
+			    }
+			    else
+			    {
+				HUlib_addMessageToSText(&w_message,
+							DEH_String(player_names[i]),
+							w_inputbuffer[i].l.l);
+				message_on = true;
+			    }
+
 			    message_nottobefuckedwith = true;
-			    message_on = true;
 			    message_counter = HU_MSGTIMEOUT;
+			    SysopHudSyncMessageTimer();
 			    if ( gamemode == commercial )
 			      S_StartSound(0, sfx_radio);
 			    else if (gameversion > exe_doom_1_2)
@@ -610,8 +685,9 @@ boolean HU_Responder(event_t *ev)
     {
 	if (ev->data1 == key_message_refresh)
 	{
-	    message_on = true;
+	    message_on = !SysopHudMessagesActive();
 	    message_counter = HU_MSGTIMEOUT;
+	    SysopHudSyncMessageTimer();
 	    eatkey = true;
 	}
 	else if (netgame && ev->data2 == key_multi_msg)

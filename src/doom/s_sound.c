@@ -640,6 +640,7 @@ void S_SetSfxVolume(int volume)
     }
 
     snd_SfxVolume = volume;
+    I_SetSfxVolume(volume);
 }
 
 //
@@ -721,4 +722,3 @@ void S_StopMusic(void)
         mus_playing = NULL;
     }
 }
-

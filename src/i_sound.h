@@ -221,6 +221,7 @@ typedef struct
 void I_InitMusic(void);
 void I_ShutdownMusic(void);
 void I_SetMusicVolume(int volume);
+void I_SetSfxVolume(int volume);
 void I_PauseSong(void);
 void I_ResumeSong(void);
 void *I_RegisterSong(void *data, int len);

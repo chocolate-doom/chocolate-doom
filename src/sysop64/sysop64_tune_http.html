@@ -1,0 +1,683 @@
+<!--
+Copyright(C) 2026 Sysop-64 contributors
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+DESCRIPTION:
+    Browser UI for live Sysop-64 mega converter tuning.
+-->
+
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Sysop-64 Doom Mega Tuner</title>
+  <style>
+    body {
+      margin: 0;
+      background: #101214;
+      color: #e7ecec;
+      font: 14px system-ui, sans-serif;
+    }
+
+    main {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 18px;
+    }
+
+    h1 {
+      font-size: 20px;
+      margin: 0 0 14px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 10px;
+    }
+
+    .row {
+      background: #1a1f22;
+      border: 1px solid #31393d;
+      border-radius: 6px;
+      padding: 10px;
+    }
+
+    #presetPanel,
+    #palettePanel {
+      margin-bottom: 10px;
+    }
+
+    .presetbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .presetbar select {
+      width: auto;
+      min-width: 110px;
+    }
+
+    .swatches {
+      display: grid;
+      grid-template-columns: repeat(8, minmax(0, 1fr));
+      gap: 6px;
+    }
+
+    .swatch {
+      min-width: 0;
+      overflow: hidden;
+      background: #0b0d0e;
+      border: 1px solid #31393d;
+      border-radius: 4px;
+    }
+
+    .chip {
+      height: 30px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+    }
+
+    .meta {
+      padding: 4px;
+      color: #b9c4c4;
+      font-size: 11px;
+      line-height: 1.2;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .meta b {
+      display: block;
+      color: #fff;
+      font-size: 12px;
+    }
+
+    .swatch input {
+      width: 100%;
+      box-sizing: border-box;
+      border: 0;
+      border-top: 1px solid #31393d;
+      background: #0b0d0e;
+      color: #dbe5e5;
+      font: 11px ui-monospace, monospace;
+      padding: 3px;
+    }
+
+    .swatch input[type="color"] {
+      height: 24px;
+      padding: 0;
+    }
+
+    label {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 6px;
+    }
+
+    input[type="range"] {
+      width: 100%;
+    }
+
+    select,
+    input[type="number"] {
+      width: 100%;
+      box-sizing: border-box;
+      background: #0b0d0e;
+      color: #fff;
+      border: 1px solid #3a454a;
+      border-radius: 4px;
+      padding: 6px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 72px;
+      box-sizing: border-box;
+      margin-top: 8px;
+      background: #0b0d0e;
+      color: #dbe5e5;
+      border: 1px solid #3a454a;
+      border-radius: 4px;
+      padding: 6px;
+      font: 12px ui-monospace, monospace;
+    }
+
+    button {
+      background: #d4df38;
+      color: #111;
+      border: 0;
+      border-radius: 4px;
+      padding: 8px 10px;
+      font-weight: 700;
+    }
+
+    #status {
+      color: #9ab;
+      margin: 8px 0 14px;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Sysop-64 Doom Mega Tuner</h1>
+    <div id="status">Loading...</div>
+
+    <div class="row" id="presetPanel">
+      <label>
+        <span>presets</span>
+        <span id="presetStatus"></span>
+      </label>
+      <div class="presetbar">
+        <select id="presetSlot"></select>
+        <button id="savePreset">Save</button>
+        <button id="loadPreset">Load</button>
+        <button id="resetDefaults">Reset default</button>
+        <button id="copySettings">Copy settings</button>
+      </div>
+      <textarea id="shareText" readonly placeholder="Copied settings will appear here"></textarea>
+    </div>
+
+    <div class="row" id="palettePanel">
+      <label>
+        <span>palette colors</span>
+        <span id="paletteName"></span>
+      </label>
+      <div class="swatches" id="paletteSwatches"></div>
+    </div>
+
+    <div class="grid" id="controls"></div>
+
+    <p><button id="refresh">Refresh</button></p>
+
+    <script>
+      const specs = [
+        ["adaptive_palette", "select", ["off", "on"]],
+        ["fast_tables", "select", ["on", "off"]],
+        ["dither", "select", ["off", "bayer2", "bayer4", "bayer8", "bayer8x16", "checker", "diagonal", "dot", "hash"]],
+        ["palette", "select", [["current", "Sysop default"], ["custom", "Custom"]]],
+        ["dither_strength", "range", 0, 150],
+        ["brightness", "range", -96, 96],
+        ["contrast", "range", 25, 250],
+        ["gamma", "range", 35, 220],
+        ["saturation", "range", 0, 240],
+        ["vibrance", "range", 0, 160],
+        ["detail_pop", "range", 0, 240],
+        ["surface_detail", "range", 0, 200],
+        ["luma_weight", "range", 0, 16],
+        ["chroma_weight", "range", 0, 16],
+        ["red_weight", "range", 0, 16],
+        ["green_weight", "range", 0, 16],
+        ["blue_weight", "range", 0, 16],
+        ["black_penalty", "range", 0, 240],
+        ["yellow_penalty", "range", 0, 240],
+        ["neutral_guard", "range", 0, 240],
+        ["candidate_budget", "range", 3, 8],
+        ["background_color", "range", -1, 15],
+      ];
+
+      const optionKeys = specs.map((spec) => spec[0]);
+      const presetPrefix = "sysop64.doom.mega.preset.";
+      const lastPresetKey = "sysop64.doom.mega.lastPreset";
+
+      const box = document.getElementById("controls");
+      const status = document.getElementById("status");
+      const presetSlot = document.getElementById("presetSlot");
+      const presetStatus = document.getElementById("presetStatus");
+      const shareText = document.getElementById("shareText");
+
+      let state = {};
+      let timer = null;
+      let seq = 0;
+
+      for (let i = 1; i <= 10; i++) {
+        const option = document.createElement("option");
+        option.value = String(i);
+        option.textContent = "Preset " + i;
+        presetSlot.append(option);
+      }
+
+      if (localStorage.getItem(lastPresetKey)) {
+        presetSlot.value = localStorage.getItem(lastPresetKey);
+      }
+
+      // Convert option keys into labels that fit the compact control cards.
+      function labelFor(key) {
+        return key.replace(/_/g, " ");
+      }
+
+      // Normalize palette/select option entries into their submitted value.
+      function optionValue(option) {
+        if (Array.isArray(option)) {
+          return option[0];
+        }
+        return option && option.value !== undefined ? option.value : option;
+      }
+
+      // Normalize palette/select option entries into their displayed label.
+      function optionLabel(option) {
+        if (Array.isArray(option)) {
+          return option[1];
+        }
+        return option && option.label !== undefined ? option.label : optionValue(option);
+      }
+
+      // Replace a select element's options while preserving its current value
+      // when the new option list still contains it.
+      function setSelectOptions(element, options) {
+        const old = element.value;
+        element.innerHTML = "";
+
+        for (const option of options) {
+          const node = document.createElement("option");
+          node.value = optionValue(option);
+          node.textContent = optionLabel(option);
+          element.append(node);
+        }
+
+        if ([...element.options].some((option) => option.value === old)) {
+          element.value = old;
+        }
+      }
+
+      // Refresh option lists that come from live backend state, such as palette
+      // choices loaded from the compiled VICE palette table.
+      function updateDynamicOptions() {
+        const palette = document.getElementById("palette");
+
+        if (palette && Array.isArray(state.palette_options)) {
+          setSelectOptions(palette, state.palette_options);
+        }
+      }
+
+      // Return a user-facing value string for the live value readout.
+      function displayValue(element, value) {
+        if (element && element.tagName === "SELECT") {
+          const hit = [...element.options].find((option) => option.value === String(value));
+          if (hit) {
+            return hit.textContent;
+          }
+        }
+
+        return value;
+      }
+
+      // Build the localStorage key for one numbered browser preset.
+      function presetKey(slot) {
+        return presetPrefix + slot;
+      }
+
+      // Collect the current option state into a serializable preset/share object.
+      function collectOptions() {
+        const options = {};
+
+        for (const key of optionKeys) {
+          const value = key === "dither" ? state.dither : state[key];
+          if (value !== undefined) {
+            options[key] = value;
+          }
+        }
+
+        if (state.palette === "custom" && Array.isArray(state.custom_palette_rgb)) {
+          state.custom_palette_rgb.forEach((rgb, index) => {
+            options["palette_color_" + index] = "#" + hex2(rgb[0]) + hex2(rgb[1]) + hex2(rgb[2]);
+          });
+        }
+
+        return options;
+      }
+
+      // Convert an option object into URLSearchParams accepted by /set.
+      function paramsForOptions(options) {
+        const params = new URLSearchParams();
+
+        for (const key of Object.keys(options)) {
+          if (options[key] !== undefined) {
+            params.set(key, options[key]);
+          }
+        }
+
+        return params;
+      }
+
+      // Load and parse one numbered preset from browser localStorage.
+      function loadPresetObject(slot) {
+        try {
+          return JSON.parse(localStorage.getItem(presetKey(slot)) || "null");
+        } catch (error) {
+          return null;
+        }
+      }
+
+      // Remember the last selected preset slot so refreshes can auto-apply it.
+      function rememberPreset(slot) {
+        localStorage.setItem(lastPresetKey, String(slot));
+        presetSlot.value = String(slot);
+      }
+
+      // Format the current settings as command-line switches that can be copied
+      // into a bug report or pasted back to a developer.
+      function shareCommand() {
+        const options = collectOptions();
+        const parts = [];
+
+        for (const key of Object.keys(options)) {
+          if (options[key] === undefined) {
+            continue;
+          }
+
+          if (key === "adaptive_palette") {
+            if (options[key] === "on") {
+              parts.push("--sysop-palette=adaptive");
+            }
+            continue;
+          }
+
+          parts.push("--sysop-mega-set=" + key + "=" + options[key]);
+        }
+
+        return parts.join(" ");
+      }
+
+      // Refresh the visible copy/share text area.
+      function updateShareText() {
+        shareText.value = shareCommand();
+      }
+
+      // Format one RGB component as two uppercase hex digits.
+      function hex2(value) {
+        return Math.max(0, Math.min(255, value | 0)).toString(16).padStart(2, "0").toUpperCase();
+      }
+
+      // Push one edited custom palette color to the backend and refresh state.
+      async function setPaletteColor(index, value) {
+        const params = new URLSearchParams();
+        params.set("palette_color_" + index, value);
+        status.textContent = "Updating palette";
+
+        try {
+          const response = await fetch("/set?" + params.toString());
+          state = await response.json();
+          apply();
+          status.textContent = "Updated palette";
+        } catch (error) {
+          status.textContent = "Palette update failed: " + error;
+        }
+      }
+
+      // Render the active target palette as editable color swatches.
+      function renderPalette() {
+        const holder = document.getElementById("paletteSwatches");
+        const name = document.getElementById("paletteName");
+
+        name.textContent = state.palette_label || state.palette || "";
+        holder.innerHTML = "";
+
+        if (!Array.isArray(state.palette_rgb)) {
+          return;
+        }
+
+        state.palette_rgb.forEach((rgb, index) => {
+          const red = rgb[0] | 0;
+          const green = rgb[1] | 0;
+          const blue = rgb[2] | 0;
+          const hex = hex2(red) + hex2(green) + hex2(blue);
+
+          const swatch = document.createElement("div");
+          const chip = document.createElement("div");
+          const meta = document.createElement("div");
+          const indexLabel = document.createElement("b");
+          const picker = document.createElement("input");
+          const text = document.createElement("input");
+
+          swatch.className = "swatch";
+          chip.className = "chip";
+          meta.className = "meta";
+          chip.style.backgroundColor = "#" + hex;
+          indexLabel.textContent = index;
+          meta.append(indexLabel, document.createTextNode("#" + hex));
+
+          picker.type = "color";
+          picker.value = "#" + hex;
+          text.type = "text";
+          text.value = "#" + hex;
+
+          // Preview palette edits locally while the user is dragging the color
+          // picker, then send the final value on change.
+          picker.oninput = () => {
+            chip.style.backgroundColor = picker.value;
+            text.value = picker.value.toUpperCase();
+          };
+          // Commit color-picker changes to the backend when the picker closes.
+          picker.onchange = () => setPaletteColor(index, picker.value);
+          // Let users paste or type a hex color directly into the palette cell.
+          text.onchange = () => setPaletteColor(index, text.value);
+
+          swatch.title = index + "  #" + hex + "  rgb(" + red + "," + green + "," + blue + ")";
+          swatch.append(chip, meta, picker, text);
+          holder.append(swatch);
+        });
+      }
+
+      // Build one tuner control row from the compact specs table.
+      function control(spec) {
+        const key = spec[0];
+        const wrapper = document.createElement("div");
+        const label = document.createElement("label");
+        const name = document.createElement("span");
+        const value = document.createElement("span");
+        let input;
+
+        wrapper.className = "row";
+        name.textContent = labelFor(key);
+        value.id = "v_" + key;
+        label.append(name, value);
+        wrapper.append(label);
+
+        if (spec[1] === "select") {
+          input = document.createElement("select");
+          setSelectOptions(input, spec[2]);
+        } else {
+          input = document.createElement("input");
+          input.type = "range";
+          input.min = spec[2];
+          input.max = spec[3];
+          input.step = 1;
+        }
+
+        input.id = key;
+        // Send changes through the debounced update path while keeping the
+        // local value readout responsive.
+        input.oninput = input.onchange = () => {
+          value.textContent = displayValue(input, input.value);
+          send(key, input.value);
+        };
+
+        wrapper.append(input);
+        return wrapper;
+      }
+
+      for (const spec of specs) {
+        box.append(control(spec));
+      }
+
+      // Apply a group of options to the backend, used by preset loading.
+      async function applyOptions(options, message) {
+        state = Object.assign(state, options);
+        apply();
+
+        const params = paramsForOptions(options);
+
+        try {
+          const response = await fetch("/set?" + params.toString());
+          state = await response.json();
+          apply();
+
+          if (message) {
+            status.textContent = message;
+          }
+        } catch (error) {
+          status.textContent = "Apply failed: " + error;
+        }
+      }
+
+      // Debounce one control change so sliders do not overwhelm the tiny HTTP
+      // server while still feeling live.
+      function send(key, value) {
+        if (key === "dither") {
+          state.dither = value;
+        }
+
+        state[key] = value;
+        status.textContent = "Updating";
+        clearTimeout(timer);
+
+        const mySeq = ++seq;
+        // Delay the backend request a hair so continuous slider input coalesces
+        // into a single update.
+        timer = setTimeout(async () => {
+          const params = new URLSearchParams();
+          params.set(key, value);
+
+          try {
+            const response = await fetch("/set?" + params.toString());
+            const next = await response.json();
+
+            if (mySeq === seq) {
+              state = Object.assign(state, next);
+              apply(key);
+              status.textContent = "Updated";
+            }
+          } catch (error) {
+            status.textContent = "Update failed: " + error;
+          }
+        }, 70);
+      }
+
+      // Reconcile backend state into controls, palette swatches, and share text.
+      function apply(skip) {
+        updateDynamicOptions();
+
+        for (const spec of specs) {
+          const key = spec[0];
+          const element = document.getElementById(key);
+          const valueLabel = document.getElementById("v_" + key);
+          const value = key === "dither" ? state.dither : state[key];
+
+          if (value === undefined) {
+            continue;
+          }
+
+          if (key !== skip && document.activeElement !== element) {
+            element.value = value;
+          }
+
+          valueLabel.textContent = displayValue(element, key === skip ? element.value : value);
+        }
+
+        renderPalette();
+        updateShareText();
+      }
+
+      // Fetch initial state and optionally auto-apply the last browser preset.
+      async function load() {
+        try {
+          const response = await fetch("/state");
+          state = await response.json();
+          apply();
+
+          const slot = localStorage.getItem(lastPresetKey);
+          const preset = slot ? loadPresetObject(slot) : null;
+
+          if (preset) {
+            rememberPreset(slot);
+            presetStatus.textContent = "auto " + slot;
+            await applyOptions(preset, "Loaded preset " + slot);
+            return;
+          }
+
+          status.textContent = "Listening";
+        } catch (error) {
+          status.textContent = "Load failed: " + error;
+        }
+      }
+
+      // Save current options into the selected browser preset slot.
+      document.getElementById("savePreset").onclick = () => {
+        const slot = presetSlot.value;
+        localStorage.setItem(presetKey(slot), JSON.stringify(collectOptions()));
+        rememberPreset(slot);
+        presetStatus.textContent = "saved " + slot;
+        status.textContent = "Saved preset " + slot;
+        updateShareText();
+      };
+
+      // Load the selected browser preset and push it to the backend.
+      document.getElementById("loadPreset").onclick = async () => {
+        const slot = presetSlot.value;
+        const preset = loadPresetObject(slot);
+
+        if (!preset) {
+          status.textContent = "Preset " + slot + " is empty";
+          return;
+        }
+
+        rememberPreset(slot);
+        presetStatus.textContent = "loaded " + slot;
+        await applyOptions(preset, "Loaded preset " + slot);
+      };
+
+      // Reset backend tuning state and forget the auto-loaded preset slot.
+      document.getElementById("resetDefaults").onclick = async () => {
+        try {
+          const response = await fetch("/reset");
+          state = await response.json();
+          localStorage.removeItem(lastPresetKey);
+          presetStatus.textContent = "";
+          apply();
+          status.textContent = "Defaults restored";
+        } catch (error) {
+          status.textContent = "Reset failed: " + error;
+        }
+      };
+
+      // Copy shareable command-line settings to the clipboard with a text-area
+      // fallback for older browsers.
+      document.getElementById("copySettings").onclick = async () => {
+        updateShareText();
+
+        try {
+          await navigator.clipboard.writeText(shareText.value);
+          status.textContent = "Copied settings";
+        } catch (error) {
+          shareText.focus();
+          shareText.select();
+
+          try {
+            document.execCommand("copy");
+            status.textContent = "Copied settings";
+          } catch (_) {
+            status.textContent = "Copy failed; select the text";
+          }
+        }
+      };
+
+      document.getElementById("refresh").onclick = load;
+      load();
+    </script>
+  </main>
+</body>
+</html>

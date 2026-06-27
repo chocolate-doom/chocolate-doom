@@ -1,4 +1,12 @@
-🚧 Under Construction - Coming Soon 🚧
+# Chocolate Doom Sysop-64 Fork
+
+This fork adds a Sysop-64 backend for running Chocolate Doom through the
+Sysop-64 cartridge on real C64 hardware.
+
+For build instructions, runtime options, architecture notes, and Sysop-specific
+developer documentation, see [README.Sysop64.md](README.Sysop64.md).
+
+The original Chocolate Doom README continues below.
 
 # Chocolate Doom
 

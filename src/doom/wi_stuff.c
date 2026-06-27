@@ -18,6 +18,7 @@
 
 
 #include <stdio.h>
+#include <string.h>
 
 #include "z_zone.h"
 
@@ -1773,6 +1774,81 @@ void WI_Drawer (void)
       case NoState:
 	WI_drawNoState();
 	break;
+    }
+}
+
+void WI_GetSysopIntermissionSnapshot(sysop_intermission_snapshot_t *snapshot)
+{
+    int i;
+    int j;
+
+    if (snapshot == NULL)
+    {
+        return;
+    }
+
+    memset(snapshot, 0, sizeof(*snapshot));
+    snapshot->me = me;
+    snapshot->episode = -1;
+    snapshot->last = -1;
+    snapshot->next = -1;
+
+    if (gamestate != GS_INTERMISSION || wbs == NULL || plrs == NULL)
+    {
+        return;
+    }
+
+    snapshot->active = 1;
+    snapshot->deathmatch = deathmatch;
+    snapshot->netgame = netgame;
+    snapshot->episode = wbs->epsd;
+    snapshot->last = wbs->last;
+    snapshot->next = wbs->next;
+
+    if (state == StatCount)
+    {
+        snapshot->mode = sysop_intermission_stats;
+    }
+    else if (state == ShowNextLoc || state == NoState)
+    {
+        snapshot->mode = sysop_intermission_next;
+    }
+    else
+    {
+        snapshot->mode = sysop_intermission_none;
+    }
+
+    if (state != StatCount)
+    {
+        return;
+    }
+
+    snapshot->show_frags = deathmatch || (netgame && dofrags);
+    snapshot->show_par = !deathmatch && !netgame && wbs->epsd < 3;
+
+    for (i = 0; i < MAXPLAYERS; ++i)
+    {
+        snapshot->player_in_game[i] = playeringame[i] ? 1 : 0;
+        snapshot->kills[i] = cnt_kills[i];
+        snapshot->items[i] = cnt_items[i];
+        snapshot->secrets[i] = cnt_secret[i];
+        snapshot->frags[i] = netgame ? cnt_frags[i] : 0;
+        snapshot->dm_totals[i] = dm_totals[i];
+
+        for (j = 0; j < MAXPLAYERS; ++j)
+        {
+            snapshot->dm_frags[i][j] = dm_frags[i][j];
+        }
+    }
+
+    if (!deathmatch && !netgame && me >= 0 && me < MAXPLAYERS)
+    {
+        snapshot->player_in_game[me] = 1;
+        snapshot->kills[me] = cnt_kills[0];
+        snapshot->items[me] = cnt_items[0];
+        snapshot->secrets[me] = cnt_secret[0];
+        snapshot->time = cnt_time;
+        snapshot->par = cnt_par;
     }
 }
 

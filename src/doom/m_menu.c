@@ -73,7 +73,7 @@ int			showMessages = 1;
 
 // Blocky mode, has default, 0 = high, 1 = normal
 int			detailLevel = 0;
-int			screenblocks = 9;
+int			screenblocks = 10;
 
 // temp for screenblocks (0-9)
 int			screenSize;
@@ -167,6 +167,28 @@ const char *skullName[2] = {"M_SKULL1","M_SKULL2"};
 
 // current menudef
 menu_t*	currentMenu;                          
+#if defined(__GNUC__)
+__attribute__((weak)) int sysop_clean_menu_enabled;
+#else
+int sysop_clean_menu_enabled;
+#endif
+
+#define SYSOP_MENU_MAX_ITEMS 12
+#define SYSOP_MENU_TITLE_MAX 32
+#define SYSOP_MENU_ITEM_MAX 40
+#define SYSOP_MENU_MESSAGE_MAX 256
+
+typedef struct
+{
+    int active;
+    int is_message;
+    int selected;
+    int item_count;
+    char title[SYSOP_MENU_TITLE_MAX];
+    char items[SYSOP_MENU_MAX_ITEMS][SYSOP_MENU_ITEM_MAX];
+    int item_status[SYSOP_MENU_MAX_ITEMS];
+    char message[SYSOP_MENU_MESSAGE_MAX];
+} sysop_menu_snapshot_t;
 
 //
 // PROTOTYPES
@@ -494,7 +516,198 @@ menu_t  SaveDef =
 // M_ReadSaveStrings
 //  read the strings from the savegame files
 //
-void M_ReadSaveStrings(void)
+
+static void SysopMenuCopyText(char *dst, size_t dst_size, const char *src)
+{
+    if (dst_size == 0) {
+        return;
+    }
+
+    if (src == NULL) {
+        dst[0] = '\0';
+        return;
+    }
+
+    M_StringCopy(dst, src, dst_size);
+}
+
+static const char *SysopMenuPatchLabel(const char *name)
+{
+    if (name == NULL || name[0] == '\0') return "";
+    if (!strcmp(name, "M_NGAME")) return "NEW GAME";
+    if (!strcmp(name, "M_OPTION")) return "OPTIONS";
+    if (!strcmp(name, "M_LOADG")) return "LOAD GAME";
+    if (!strcmp(name, "M_SAVEG")) return "SAVE GAME";
+    if (!strcmp(name, "M_RDTHIS")) return "READ THIS";
+    if (!strcmp(name, "M_QUITG")) return "QUIT GAME";
+    if (!strcmp(name, "M_EPI1")) return "KNEE-DEEP";
+    if (!strcmp(name, "M_EPI2")) return "SHORES OF HELL";
+    if (!strcmp(name, "M_EPI3")) return "INFERNO";
+    if (!strcmp(name, "M_EPI4")) return "THY FLESH";
+    if (!strcmp(name, "M_JKILL")) return "I'M TOO YOUNG";
+    if (!strcmp(name, "M_ROUGH")) return "HEY NOT TOO ROUGH";
+    if (!strcmp(name, "M_HURT")) return "HURT ME PLENTY";
+    if (!strcmp(name, "M_ULTRA")) return "ULTRA-VIOLENCE";
+    if (!strcmp(name, "M_NMARE")) return "NIGHTMARE";
+    if (!strcmp(name, "M_ENDGAM")) return "END GAME";
+    if (!strcmp(name, "M_MESSG")) return "MESSAGES";
+    if (!strcmp(name, "M_DETAIL")) return "DETAIL";
+    if (!strcmp(name, "M_SCRNSZ")) return "SCREEN SIZE";
+    if (!strcmp(name, "M_MSENS")) return "MOUSE SENS";
+    if (!strcmp(name, "M_SVOL")) return "SOUND VOLUME";
+    if (!strcmp(name, "M_SFXVOL")) return "SFX VOLUME";
+    if (!strcmp(name, "M_MUSVOL")) return "MUSIC VOLUME";
+
+    if (name[0] == 'M' && name[1] == '_') {
+        return name + 2;
+    }
+
+    return name;
+}
+
+static const char *SysopMenuTitle(void)
+{
+    if (currentMenu == &MainDef) return "DOOM";
+    if (currentMenu == &EpiDef) return "EPISODE";
+    if (currentMenu == &NewDef) return "SKILL LEVEL";
+    if (currentMenu == &OptionsDef) return "OPTIONS";
+    if (currentMenu == &SoundDef) return "SOUND";
+    if (currentMenu == &LoadDef) return "LOAD GAME";
+    if (currentMenu == &SaveDef) return "SAVE GAME";
+    return "MENU";
+}
+
+static boolean SysopMenuKeepVanilla(void)
+{
+    return currentMenu == &ReadDef1 || currentMenu == &ReadDef2;
+}
+
+static boolean SysopCleanAllRequested(void)
+{
+    return M_CheckParm("--sysop-clean-all") > 0
+        || M_CheckParm("-sysop-clean-all") > 0
+        || M_CheckParm("--sysop-all-clean") > 0
+        || M_CheckParm("-sysop-all-clean") > 0
+        || M_CheckParm("--sysop-clean=all") > 0
+        || M_CheckParm("-sysop-clean=all") > 0;
+}
+
+static boolean SysopCleanMenuRequested(void)
+{
+    return sysop_clean_menu_enabled || SysopCleanAllRequested();
+}
+
+static boolean M_UseSysopCleanMenu(void)
+{
+    return SysopCleanMenuRequested() && menuactive && currentMenu != NULL
+        && !SysopMenuKeepVanilla();
+}
+
+static const char *SysopMenuItemText(int item, char *buffer, size_t buffer_size)
+{
+    const char *name;
+
+    if (currentMenu == &LoadDef || currentMenu == &SaveDef) {
+        if (currentMenu == &SaveDef && saveStringEnter && item == saveSlot) {
+            M_snprintf(buffer, buffer_size, "%d %s_", item + 1, savegamestrings[item]);
+        } else {
+            M_snprintf(buffer, buffer_size, "%d %s", item + 1, savegamestrings[item]);
+        }
+        return buffer;
+    }
+
+    if (currentMenu == &OptionsDef) {
+        switch (item) {
+            case endgame:
+                return "END GAME";
+            case messages:
+                M_snprintf(buffer, buffer_size, "MESSAGES: %s", showMessages ? "ON" : "OFF");
+                return buffer;
+            case detail:
+                M_snprintf(buffer, buffer_size, "DETAIL: %s", detailLevel ? "LOW" : "HIGH");
+                return buffer;
+            case scrnsize:
+                M_snprintf(buffer, buffer_size, "SCREEN SIZE: %d", screenSize);
+                return buffer;
+            case mousesens:
+                M_snprintf(buffer, buffer_size, "MOUSE SENS: %d", mouseSensitivity);
+                return buffer;
+            case soundvol:
+                return "SOUND VOLUME";
+            default:
+                return "";
+        }
+    }
+
+    if (currentMenu == &SoundDef) {
+        switch (item) {
+            case sfx_vol:
+                M_snprintf(buffer, buffer_size, "SFX VOLUME: %d", sfxVolume);
+                return buffer;
+            case music_vol:
+                M_snprintf(buffer, buffer_size, "MUSIC VOLUME: %d", musicVolume);
+                return buffer;
+            default:
+                return "";
+        }
+    }
+
+    name = DEH_String(currentMenu->menuitems[item].name);
+    return SysopMenuPatchLabel(name);
+}
+
+void M_GetSysopMenuSnapshot(sysop_menu_snapshot_t *snapshot)
+{
+    int out = 0;
+
+    if (snapshot == NULL) {
+        return;
+    }
+
+    memset(snapshot, 0, sizeof(*snapshot));
+    snapshot->selected = -1;
+
+    if (messageToPrint && messageString != NULL) {
+        snapshot->active = 1;
+        snapshot->is_message = 1;
+        SysopMenuCopyText(snapshot->title, sizeof(snapshot->title), "MESSAGE");
+        SysopMenuCopyText(snapshot->message, sizeof(snapshot->message), messageString);
+        return;
+    }
+
+    if (!menuactive || currentMenu == NULL || SysopMenuKeepVanilla()) {
+        return;
+    }
+
+    snapshot->active = 1;
+    SysopMenuCopyText(snapshot->title, sizeof(snapshot->title), SysopMenuTitle());
+
+    for (int i = 0; i < currentMenu->numitems && out < SYSOP_MENU_MAX_ITEMS; i++) {
+        char buffer[SYSOP_MENU_ITEM_MAX];
+        const char *item_text;
+
+        if (currentMenu->menuitems[i].status == -1) {
+            continue;
+        }
+
+        item_text = SysopMenuItemText(i, buffer, sizeof(buffer));
+        if (item_text == NULL || item_text[0] == '\0') {
+            continue;
+        }
+
+        if (i == itemOn) {
+            snapshot->selected = out;
+        }
+
+        SysopMenuCopyText(snapshot->items[out], sizeof(snapshot->items[out]), item_text);
+        snapshot->item_status[out] = currentMenu->menuitems[i].status > 0;
+        out++;
+    }
+
+    snapshot->item_count = out;
+}
+
+static void M_ReadSaveStrings(void)
 {
     FILE   *handle;
     int     i;
@@ -1957,6 +2170,11 @@ void M_Drawer (void)
     // Horiz. & Vertically center string and print it.
     if (messageToPrint)
     {
+        if (SysopCleanMenuRequested())
+        {
+            return;
+        }
+
 	start = 0;
 	y = SCREENHEIGHT/2 - M_StringHeight(messageString) / 2;
 	while (messageString[start] != '\0')
@@ -2001,6 +2219,10 @@ void M_Drawer (void)
 
     if (!menuactive)
 	return;
+
+
+    if (M_UseSysopCleanMenu())
+        return;
 
     if (currentMenu->routine)
 	currentMenu->routine();         // call Draw routine
@@ -2125,4 +2347,3 @@ void M_Init (void)
 
     opldev = M_CheckParm("-opldev") > 0;
 }
-
