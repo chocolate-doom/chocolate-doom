@@ -71,7 +71,7 @@ void P_SetMessage(player_t * player, const char *message, boolean ultmsg)
     }
 
     M_StringCopy(player->message, message, sizeof(player->message));
-//    strupr(player->message);
+    M_ForceUppercase(player->message);
     player->messageTics = MESSAGETICS;
     player->yellowMessage = false;
     if (ultmsg)
