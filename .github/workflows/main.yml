@@ -161,7 +161,9 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           name: ${{ env.PACKAGE_STRING }}
-          bodyFile: RELEASE_NOTES.md
+          body: |
+            These are development builds, automatically generated from the `master` branch. \
+            Please report any problems you may find.
           allowUpdates: true
           artifacts: ${{ matrix.config.pkg-path }}
 
