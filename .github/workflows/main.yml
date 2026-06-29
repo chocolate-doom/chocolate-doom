@@ -137,7 +137,7 @@ jobs:
           path: ${{ matrix.config.pkg-path }}
 
       - name: Extract Package String [Nightly]
-        if: ${{ contains(github.ref, 'tags') }}
+        if: ${{ !contains(github.ref, 'tags') }}
         run: |
           PACKAGE_NAME=`sed -n '/PACKAGE_NAME/p' ${PWD}/config.h | cut -d '"' -f 2`
           echo "PACKAGE_STRING=\"[Nightly] ${PACKAGE_NAME} ${GITHUB_SHA::7}\"" >> $GITHUB_ENV
