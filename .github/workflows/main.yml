@@ -136,11 +136,36 @@ jobs:
           name: ${{ matrix.config.name }}
           path: ${{ matrix.config.pkg-path }}
 
+      - name: Extract Package String [Nightly]
+        if: ${{ !contains(github.ref, 'tags') }}
+        run: |
+          PACKAGE_NAME=`sed -n '/PACKAGE_NAME/p' ${PWD}/config.h | cut -d '"' -f 2`
+          echo "PACKAGE_STRING=\"[Nightly] ${PACKAGE_NAME} ${GITHUB_SHA::7}\"" >> $GITHUB_ENV
+
       - name: Extract Package String
         if: ${{ contains(github.ref, 'tags') }}
         run: |
           PACKAGE_STRING=`sed -n '/PACKAGE_STRING/p' ${PWD}/config.h | cut -d '"' -f 2`
           echo "PACKAGE_STRING=${PACKAGE_STRING}" >> $GITHUB_ENV
+
+      - name: Update Nightly Tag
+        if: ${{ !contains(github.ref, 'tags') && github.ref == 'refs/heads/master' }}
+        run: |
+          git tag -d nightly || true
+          git push origin :refs/tags/nightly || true
+          git tag nightly HEAD
+          git push origin nightly
+
+      - name: Release [Nightly]
+        if: ${{ !contains(github.ref, 'tags') && matrix.config.artifacts }}
+        uses: ncipollo/release-action@v1
+        with:
+          name: ${{ env.PACKAGE_STRING }}
+          body: |
+            These are development builds, automatically generated from the `master` branch. \
+            Please report any problems you may find.
+          allowUpdates: true
+          artifacts: ${{ matrix.config.pkg-path }}
 
       - name: Release
         if: ${{ contains(github.ref, 'tags') && matrix.config.artifacts }}
