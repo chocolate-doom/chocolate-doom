@@ -1150,12 +1150,14 @@ void P_DamageMobj(mobj_t* target, mobj_t* inflictor, mobj_t* source, int damage)
                         source->x,
                         source->y) >> ANGLETOFINESHIFT;
 
-                target->momx += FixedMul(finecosine[ang], (12750*FRACUNIT) / target->info->mass);
-                target->momy += FixedMul(finesine[ang],   (12750*FRACUNIT) / target->info->mass);
+                thrust = 1020 * (FRACUNIT>>3) * 100 / target->info->mass;
+
+                target->momx += FixedMul(thrust, finecosine[ang]);
+                target->momy += FixedMul(thrust, finesine[ang]);
                 target->reactiontime += 10;
 
                 temp = P_AproxDistance(target->x - source->x, target->y - source->y);
-                temp /= target->info->mass;
+                temp /= thrust;
 
                 if(temp < 1)
                     temp = 1;
