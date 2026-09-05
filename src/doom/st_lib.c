@@ -22,6 +22,7 @@
 
 #include "deh_main.h"
 #include "doomdef.h"
+#include "doomstat.h"
 
 #include "z_zone.h"
 #include "v_video.h"
@@ -114,8 +115,17 @@ STlib_drawNum
 
     V_CopyRect(x, n->y - ST_Y, st_backing_screen, w*numdigits, h, x, n->y);
 
+    // Early versions did not draw if number was negative, nor did they have
+    // the "1994" special case
+    if (gameversion < exe_doom_1_5)
+    {
+        if (neg)
+        {
+            return;
+        }
+    }
     // if non-number, do not draw it
-    if (num == 1994)
+    else if (num == 1994)
 	return;
 
     x = n->x;

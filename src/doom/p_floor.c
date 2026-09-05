@@ -241,7 +241,12 @@ void T_MoveFloor(floormove_t* floor)
 	}
 	P_RemoveThinker(&floor->thinker);
 
-	S_StartSound(&floor->sector->soundorg, sfx_pstop);
+	// Moving floors (but not plats) in versions <= v1.2 did not make a
+	// stop sound.
+	if (gameversion > exe_doom_1_2)
+	{
+	    S_StartSound(&floor->sector->soundorg, sfx_pstop);
+	}
     }
 
 }
@@ -410,7 +415,8 @@ EV_DoFloor
 		    {
 			sec = getSector(secnum,i,1);
 
-			if (sec->floorheight == floor->floordestheight)
+			if (gameversion < exe_doom_1_5 ||
+			    sec->floorheight == floor->floordestheight)
 			{
 			    floor->texture = sec->floorpic;
 			    floor->newspecial = sec->special;
@@ -421,7 +427,8 @@ EV_DoFloor
 		    {
 			sec = getSector(secnum,i,0);
 
-			if (sec->floorheight == floor->floordestheight)
+			if (gameversion < exe_doom_1_5 ||
+			    sec->floorheight == floor->floordestheight)
 			{
 			    floor->texture = sec->floorpic;
 			    floor->newspecial = sec->special;
