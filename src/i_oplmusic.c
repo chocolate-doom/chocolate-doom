@@ -1394,6 +1394,7 @@ static void TrackTimerCallback(void *arg)
 
     if (!MIDI_GetNextEvent(track->iter, &event))
     {
+        OPL_Unlock();
         return;
     }
 
@@ -1418,6 +1419,7 @@ static void TrackTimerCallback(void *arg)
             OPL_SetCallback(5000, RestartSong, NULL);
         }
 
+        OPL_Unlock();
         return;
     }
 
@@ -1598,12 +1600,12 @@ static void I_OPL_StopSong(void)
 
 static void I_OPL_UnRegisterSong(void *handle)
 {
-    OPL_Lock();
-
     if (!music_initialized)
     {
         return;
     }
+
+    OPL_Lock();
 
     if (handle != NULL)
     {
