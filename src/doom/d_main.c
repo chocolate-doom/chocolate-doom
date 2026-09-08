@@ -1305,7 +1305,7 @@ static void LoadIwadDeh(void)
                     "The dehacked file is required in order to emulate\n"
                     "Doom 1.2 correctly.  It can be found in your nearest\n"
                     "/idgames repository mirror at:\n\n"
-                    "   <url placeholder>");
+                    "   utils/exe_edit/patches/doom12.zip");
         }
 
         if (!DEH_LoadFile(doom12_deh))
