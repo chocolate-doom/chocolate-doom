@@ -296,6 +296,9 @@ static char *steam_install_subdirs[] =
 #define STEAM_BFG_GUS_PATCHES \
     "steamapps\\common\\DOOM 3 BFG Edition\\base\\classicmusic\\instruments"
 
+#define STEAM_LIBRARY_FOLDERS \
+    "steamapps\\libraryfolders.vdf"
+
 static char *GetRegistryString(registry_value_t *reg_val)
 {
     HKEY key;
@@ -410,11 +413,229 @@ static void CheckInstallRootPaths(void)
 
 // Check for Doom downloaded via Steam
 
+static void AddSteamLibraryDir(char *dir)
+{
+    char *subpath;
+    size_t i;
+
+    for (i=0; i<arrlen(steam_install_subdirs); ++i)
+    {
+        subpath = M_StringJoin(dir, DIR_SEPARATOR_S, steam_install_subdirs[i],
+                               NULL);
+
+        AddIWADDir(subpath);
+    }
+}
+
+//Read whole of libraryfolders.vdf as string
+//silently fail is something goes wrong reading the file
+
+static char *GetSteamLibText(char *library_path)
+{
+    char *library_file_buffer;
+    size_t library_file_size;
+    size_t count;
+    char *probe;
+    FILE *library_file;
+
+    probe = M_FileCaseExists(library_path);
+
+    if (probe == NULL)
+    {
+        return NULL;
+    }
+
+    library_file = fopen(probe, "rb");
+
+    if (library_file == NULL)
+    {
+        return NULL;
+    }
+
+    library_file_size = M_FileLength(library_file);
+    library_file_buffer = malloc(library_file_size + 1);
+    count = fread(library_file_buffer, 1, library_file_size, library_file);
+    fclose(library_file);
+
+    if (library_file_size != count)
+    {
+        free(library_file_buffer);
+        return NULL;
+    }
+
+    library_file_buffer[library_file_size] = '\0';
+    return library_file_buffer;
+}
+
+//Retrieve tokens from file in Valve Data File (VDF) format
+
+static char *GetNextSteamLibToken(char **lib_file_buffer)
+{
+    char c, *buffer, *token;
+    size_t i, j, buff_size, token_size;
+    boolean success, quote;
+
+    token = NULL;  //In VDF a token is anything surrounded by white space.
+                   //Token may or may not be in double quotes.
+                   //Special characters can be escaped with a back slash.
+
+    success = false;
+    buffer = *lib_file_buffer;
+    buff_size = strlen(buffer);
+
+    for (i=0; i<buff_size; ++i)
+    {
+        c = buffer[i];
+
+        //{ and } are control characters in VDF used to indicate subkeys.
+        //If we treat } as white space and allow { to be treated as a regular
+        //token, then we can ignore the concept of subkeys in a VDF file.
+        //This allows us to treat a VDF file as key value pairs.
+
+        if (isspace(c) || c == '}')
+        {
+            continue;
+        }
+
+        quote = c == '"';
+        token = &buffer[i++];
+        break;
+    }
+
+    for (; i<buff_size; ++i)
+    {
+        c = buffer[i];
+
+        if (quote)
+        {
+            if (c == '\\')
+            {
+                ++i; //next character is escaped, skip it
+            }
+            else if (c == '"')
+            {
+                quote = false;
+            }
+        }
+        else
+        {
+            if (isspace(c) || c == '}')
+            {
+                success = true;
+                break;
+            }
+        }
+    }
+
+    if(success)
+    {
+        quote = token[0] == '"';
+        token_size = &buffer[i] - token;
+        *lib_file_buffer += i + 1; //move lib_file_buffer ahead of last token
+
+        //remove escape characters and quotes from token
+        for (i=0, j=0; i<token_size; ++i, ++j)
+        {
+            if (quote && (j == 0 || j == token_size - 1) && token[j] == '"')
+            {
+                ++j;
+            }
+
+            if (token[j] == '\\' && (token[j-1] != '\\' || j == 0))
+            {
+                ++j;
+            }
+
+            if (j >= token_size)
+            {
+                token[i] = '\0';
+            }
+            else
+            {
+                token[i] = token[j];
+            }
+        }
+
+        token[token_size] = '\0';
+
+        return token;
+    }
+    else
+    {
+        return NULL;
+    }
+}
+
+static boolean IsValidSteamLibKey(char* key)
+{
+    size_t i;
+    for (i=0; i<strlen(key); ++i)
+    {
+        if (!isdigit(key[i]))
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+static char *GetSteamNextLibPath(char **lib_file_buffer)
+{
+    char *keyToken;
+    char *valueToken;
+
+    for (;;)
+    {
+        keyToken = GetNextSteamLibToken(lib_file_buffer);
+        valueToken = GetNextSteamLibToken(lib_file_buffer);
+
+        if (keyToken == NULL || valueToken == NULL)
+        {
+            return NULL;
+        }
+
+        if (IsValidSteamLibKey(keyToken))
+        {
+            return valueToken;
+        }
+    }
+}
+
+static void CheckSteamLibraries(char *lib_file_path)
+{
+    char *library_file_buffer;
+    char *buffer;
+    char *library_path;
+
+    library_file_buffer = buffer = GetSteamLibText(lib_file_path);
+
+    if (library_file_buffer == NULL)
+    {
+        return;
+    }
+
+    for (;;)
+    {
+        library_path = GetSteamNextLibPath(&buffer);
+
+        if (library_path != NULL)
+        {
+            AddSteamLibraryDir(library_path);
+        }
+        else
+        {
+            break;
+        }
+    }
+
+    free(library_file_buffer);
+}
+
 static void CheckSteamEdition(void)
 {
     char *install_path;
-    char *subpath;
-    size_t i;
+    char *library_path;
 
     install_path = GetRegistryString(&steam_install_location);
 
@@ -423,14 +644,14 @@ static void CheckSteamEdition(void)
         return;
     }
 
-    for (i=0; i<arrlen(steam_install_subdirs); ++i)
-    {
-        subpath = M_StringJoin(install_path, DIR_SEPARATOR_S,
-                               steam_install_subdirs[i], NULL);
+    AddSteamLibraryDir(install_path);
 
-        AddIWADDir(subpath);
-    }
+    library_path = M_StringJoin(install_path, DIR_SEPARATOR_S,
+                                STEAM_LIBRARY_FOLDERS, NULL);
 
+    CheckSteamLibraries(library_path);
+
+    free(library_path);
     free(install_path);
 }
 
