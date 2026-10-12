@@ -62,24 +62,26 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install \
+            libfluidsynth-dev \
+            libpng-dev \
+            libsamplerate0-dev \
             libsdl2-dev \
             libsdl2-mixer-dev \
             libsdl2-net-dev \
-            libpng-dev \
-            libsamplerate0-dev \
-            libfluidsynth-dev
+            ninja-build
 
       - name: Install dependencies (macOS)
         if: runner.os == 'macOS'
         run: |
           brew install \
-            automake \
-            sdl2 \
-            sdl2_mixer \
-            sdl2_net \
+            cmake \
+            fluid-synth \
             libpng \
             libsamplerate \
-            fluid-synth
+            ninja \
+            sdl2 \
+            sdl2_mixer \
+            sdl2_net
 
       - name: Install dependencies (MSYS2)
         if: runner.os == 'Windows'
@@ -108,20 +110,37 @@ jobs:
         env:
           CC: ${{ matrix.config.compiler }}
         run: |
-          ./autogen.sh
+          if [ "$RUNNER_OS" == "Windows" ]; then
+            ./autogen.sh
+          else
+            mkdir -p build
+            cd build
+            cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release
+          fi
 
       - name: Build
-        run: make -j4
+        run: |
+          if [ "$RUNNER_OS" == "Windows" ]; then
+            make -j4
+          else
+            cd build
+            ninja
+          fi
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.x'
 
       - name: Test
         run: |
           pip install pyyaml
-          PREFIX=`sed -n '/PROGRAM_PREFIX/p' ${PWD}/config.h | cut -d '"' -f 2`
-          make -j4 -C quickcheck check SOURCE_PORT=$PWD/src/${PREFIX}doom
+          if [ "$RUNNER_OS" == "Windows" ]; then
+            PREFIX=`sed -n '/PROGRAM_PREFIX/p' ${PWD}/config.h | cut -d '"' -f 2`
+            make -j4 -C quickcheck check SOURCE_PORT=$PWD/src/${PREFIX}doom
+          else
+            PREFIX=`sed -n '/PROGRAM_PREFIX/p' ${PWD}/build/config.h | cut -d '"' -f 2`
+            make -j4 -C quickcheck check SOURCE_PORT=$PWD/build/src/${PREFIX}doom
+          fi
 
       - name: Package
         if: ${{ matrix.config.artifacts }}
@@ -139,7 +158,11 @@ jobs:
       - name: Extract Package String
         if: ${{ contains(github.ref, 'tags') }}
         run: |
-          PACKAGE_STRING=`sed -n '/PACKAGE_STRING/p' ${PWD}/config.h | cut -d '"' -f 2`
+          if [ "$RUNNER_OS" == "Windows" ]; then
+            PACKAGE_STRING=`sed -n '/PACKAGE_STRING/p' ${PWD}/config.h | cut -d '"' -f 2`
+          else
+            PACKAGE_STRING=`sed -n '/PACKAGE_STRING/p' ${PWD}/build/config.h | cut -d '"' -f 2`
+          fi
           echo "PACKAGE_STRING=${PACKAGE_STRING}" >> $GITHUB_ENV
 
       - name: Release
