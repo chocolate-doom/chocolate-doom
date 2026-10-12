@@ -1222,12 +1222,11 @@ G_CheckSpot
 
     {
         fixed_t xa, ya;
-        signed int an;
 
-        // This calculation overflows in Vanilla Doom, but here we deliberately
-        // avoid integer overflow as it is undefined behavior, so the value of
-        // 'an' will always be positive.
-        an = (ANG45 >> ANGLETOFINESHIFT) * ((signed int) mthing->angle / 45);
+        // This calculation overflows in Vanilla Doom, so use unsigned arithmetic
+        // for a defined wraparound. 'an' is then always within [0, 8191].
+        const uint32_t k = (uint32_t)((signed int) mthing->angle / 45);
+        const int an = (int)(((uint32_t)ANG45 * k) >> ANGLETOFINESHIFT);
 
         switch (an)
         {
@@ -1254,17 +1253,16 @@ G_CheckSpot
                 xa = finecosine[an];
                 ya = finesine[an];
                 break;
-            case 8192:  // 360 deg:
-                xa = tantoangle[0];        // finecosine[8192]
-                ya = finesine[8192];       // finesine[8192]
-                break;
             default:
                 I_Error("G_CheckSpot: unexpected angle %d\n", an);
                 xa = ya = 0;
                 break;
         }
-        mo = P_SpawnMobj(x + 20 * xa, y + 20 * ya,
-                         ss->sector->floorheight, MT_TFOG);
+
+        // Vanilla Doom wraps around here (20 * finetangent[0] overflows).
+        mo = P_SpawnMobj((fixed_t)(x + 20 * (int64_t)xa),
+                         (fixed_t)(y + 20 * (int64_t)ya),
+                             ss->sector->floorheight, MT_TFOG);
     }
 
     if (players[consoleplayer].viewz != 1) 
