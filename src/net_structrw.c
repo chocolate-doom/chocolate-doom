@@ -20,6 +20,7 @@
 
 #include "doomtype.h"
 #include "i_system.h"
+#include "m_argv.h"
 #include "m_misc.h"
 #include "net_packet.h"
 #include "net_structrw.h"
@@ -471,7 +472,16 @@ void NET_WriteWaitData(net_packet_t *packet, net_waitdata_t *data)
     for (i = 0; i < data->num_players && i < NET_MAXPLAYERS; ++i)
     {
         NET_WriteString(packet, data->player_names[i]);
-        NET_WriteString(packet, data->player_addrs[i]);
+        
+        if (M_CheckParm("-privateserver")) 
+        {
+            NET_WriteString(packet, "");
+        } 
+        else 
+        {
+            NET_WriteString(packet, data->player_addrs[i]);
+        }
+
     }
 
     NET_WriteSHA1Sum(packet, data->wad_sha1sum);
