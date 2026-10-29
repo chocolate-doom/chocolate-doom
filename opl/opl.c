@@ -281,6 +281,12 @@ opl_init_result_t OPL_Detect(void)
     int result1, result2;
     int i;
 
+#ifdef __EMSCRIPTEN__
+    // The OPL timer only advances in the audio callback, which cannot run
+    // during this synchronous detection, so assume an OPL3 is present.
+    return OPL_INIT_OPL3;
+#endif
+
     // Reset both timers:
     OPL_WriteRegister(OPL_REG_TIMER_CTRL, 0x60);
 
@@ -477,6 +483,12 @@ void OPL_Delay(uint64_t us)
     {
         return;
     }
+
+#ifdef __EMSCRIPTEN__
+    // The audio callback runs on the browser main thread, so blocking
+    // here would prevent it from ever firing.
+    return;
+#endif
 
     // Create a callback that will signal this thread after the
     // specified time.
