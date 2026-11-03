@@ -168,7 +168,6 @@ static void DEH_AddToHashtable(deh_substitution_t *sub)
 void DEH_AddStringReplacement(const char *from_text, const char *to_text)
 {
     deh_substitution_t *sub;
-    size_t len;
 
     // Initialize the hash table if this is the first time
     if (hash_table_length < 0)
@@ -183,9 +182,7 @@ void DEH_AddStringReplacement(const char *from_text, const char *to_text)
     {
         Z_Free(sub->to_text);
 
-        len = strlen(to_text) + 1;
-        sub->to_text = Z_Malloc(len, PU_STATIC, NULL);
-        memcpy(sub->to_text, to_text, len);
+        sub->to_text = Z_StringCopy(to_text, PU_STATIC);
     }
     else
     {
@@ -193,13 +190,8 @@ void DEH_AddStringReplacement(const char *from_text, const char *to_text)
         sub = Z_Malloc(sizeof(*sub), PU_STATIC, 0);
 
         // We need to create our own duplicates of the provided strings.
-        len = strlen(from_text) + 1;
-        sub->from_text = Z_Malloc(len, PU_STATIC, NULL);
-        memcpy(sub->from_text, from_text, len);
-
-        len = strlen(to_text) + 1;
-        sub->to_text = Z_Malloc(len, PU_STATIC, NULL);
-        memcpy(sub->to_text, to_text, len);
+        sub->from_text = Z_StringCopy(from_text, PU_STATIC);
+        sub->to_text = Z_StringCopy(to_text, PU_STATIC);
 
         DEH_AddToHashtable(sub);
     }
