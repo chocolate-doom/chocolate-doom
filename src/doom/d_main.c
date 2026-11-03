@@ -992,6 +992,16 @@ static const struct
     { NULL,                  NULL,         0},
 };
 
+boolean IsAnthologyIWAD(void)
+{
+    // DMAPINFO check prevents false positives with attempts to load the Classic
+    // Unity IWADs.
+    return ((gamemission == pack_tnt || gamemission == pack_plut)
+          && W_CheckNumForName("P1_START") >= 0 && W_CheckNumForName("P1_END") >= 0
+          && W_CheckNumForName("F1_START") >= 0 && W_CheckNumForName("F1_END") >= 0
+          && W_CheckNumForName("DMAPINFO") < 0);
+}
+
 // Initialize the game version
 
 static void InitGameVersion(void)
@@ -1109,12 +1119,20 @@ static void InitGameVersion(void)
         else if (gamemode == commercial)
         {
             // Final Doom: tnt or plutonia
-            // Defaults to emulating the first Final Doom executable,
-            // which has the crash in the demo loop; however, having
-            // this as the default should mean that it plays back
-            // most demos correctly.
+            // Final Doom Anthology IWADs should default to the Anthology EXE.
+            if (IsAnthologyIWAD())
+            {
+                gameversion = exe_final2;
+            }
 
-            gameversion = exe_final;
+            // Otherwise, defaults to emulating the first Final Doom
+            // executable, which has the crash in the demo loop; however,
+            // having this as the default should mean that it plays back
+            // most demos correctly.
+            else
+            {
+                gameversion = exe_final;
+            }
         }
     }
 
