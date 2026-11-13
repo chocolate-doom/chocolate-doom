@@ -45,15 +45,34 @@
 // 0x100000000 to 0x2000
 #define ANGLETOFINESHIFT	19		
 
+// finetangent[] and finesine[] are stored back to back in one array, in
+// the same order as in the original executables:
+//
+//   finetables[]:  | finetangent[0..4095] | finesine[0..10239] |
+//
+// The renderers index both tables out of bounds, and in vanilla these
+// reads land in the adjacent table:
+//
+//   - R_RenderSegLoop() reads finetangent[4096..8191],
+//     which is finesine[0..4095].
+//
+//   - R_ScaleFromGlobalAngle() in Heretic and Hexen reads
+//     finesine[-4096..-1], which is finetangent[0..4095].
+//
+// Within one array these reads stay in bounds and return the same values
+// as in vanilla. CHERI does not trap on them, and AddressSanitizer does
+// not report them.
+extern const fixed_t finetables[FINEANGLES/2 + 5*FINEANGLES/4];
+
 // Effective size is 10240.
-extern const fixed_t finesine[5*FINEANGLES/4];
+#define finesine (&finetables[FINEANGLES/2])
 
 // Re-use data, is just PI/2 pahse shift.
 extern const fixed_t *finecosine;
 
 
 // Effective size is 4096.
-extern const fixed_t finetangent[FINEANGLES/2];
+#define finetangent (&finetables[0])
 
 // Gamma correction tables.
 extern const byte gammatable[5][256];
