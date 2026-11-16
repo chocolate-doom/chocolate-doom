@@ -59,6 +59,8 @@ static SDL_Renderer *renderer;
 // Current input mode.
 static txt_input_mode_t input_mode = TXT_INPUT_NORMAL;
 
+static int txt_force_software_renderer = 0;
+
 // Dimensions of the screen image in screen coordinates (not pixels); this
 // is the value that was passed to SDL_CreateWindow().
 static int screen_image_w, screen_image_h;
@@ -229,6 +231,7 @@ static void ChooseFont(void)
 int TXT_Init(void)
 {
     int flags = 0;
+    SDL_RendererInfo rinfo;
 
     if (SDL_Init(SDL_INIT_VIDEO) < 0)
     {
@@ -253,13 +256,25 @@ int TXT_Init(void)
     if (TXT_SDLWindow == NULL)
         return 0;
 
-    renderer = SDL_CreateRenderer(TXT_SDLWindow, -1, SDL_RENDERER_PRESENTVSYNC);
-
-    if (renderer == NULL)
+    if (txt_force_software_renderer || getenv("TXT_FORCE_SOFTWARE_RENDERER") != NULL) {
         renderer = SDL_CreateRenderer(TXT_SDLWindow, -1, SDL_RENDERER_SOFTWARE);
+    } else {
+        renderer = SDL_CreateRenderer(TXT_SDLWindow, -1, SDL_RENDERER_PRESENTVSYNC);
+        if (renderer == NULL) {
+            renderer = SDL_CreateRenderer(TXT_SDLWindow, -1, SDL_RENDERER_SOFTWARE);
+        }
+    }
 
     if (renderer == NULL)
         return 0;
+
+    SDL_GetRendererInfo(renderer, &rinfo);
+    printf("TXT_Init: SDL renderer name=%s software=%d accelerated=%d vsync=%d targettexture=%d\n",
+        rinfo.name, 
+        rinfo.flags & SDL_RENDERER_SOFTWARE ? 1 : 0,
+        rinfo.flags & SDL_RENDERER_ACCELERATED ? 1 : 0,
+        rinfo.flags & SDL_RENDERER_ACCELERATED ? 1 : 0,
+        rinfo.flags & SDL_RENDERER_TARGETTEXTURE ? 1 : 0);
 
     // Special handling for OS X retina display. If we successfully set the
     // highdpi flag, check the output size for the screen renderer. If we get
@@ -891,6 +906,10 @@ void TXT_Sleep(int timeout)
             SDL_Delay(1);
         }
     }
+}
+
+void TXT_SetForceSoftwareRenderer(int force_software_renderer) {
+    txt_force_software_renderer = force_software_renderer;
 }
 
 void TXT_SetInputMode(txt_input_mode_t mode)
